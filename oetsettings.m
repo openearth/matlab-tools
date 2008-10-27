@@ -1,0 +1,83 @@
+function oetsettings(varargin)
+%OETSETTINGS   enable the Open EarthTools toolbox oet_matlab by adding all relevant paths.
+%
+% For more information on McTools refer to the following two sources:
+%
+% * wiki:        http://mctools.deltares.nl
+% * help blocks: Scroll through the McTools directories and read interesting help blocks.
+%
+%See also: wlsettings (within Deltares), mcsettings, addpathfast
+
+%   --------------------------------------------------------------------
+%   Copyright (C) <2004-2008> <Deltares>
+%
+%       <M.vanKoningsveld@tudelft.nl>
+%          <gerben.deboer@deltares.nl>
+%             <g.j.deboer@tudelft.nl>
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software; you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation; either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library; if not, write to the Free Software
+%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+%   USA
+%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
+%   --------------------------------------------------------------------
+
+% $Id: mcsettings.m 1677 2008-08-21 07:40:00Z heijer $ 
+% $Date: 2008-08-21 09:40:00 +0200 (do, 21 aug 2008) $
+% $Author: heijer $
+% $Revision: 1677 $
+
+%% TO DO remove quickstart option or include in help block
+%% TO DO rename quickstart (too general name) to DB_mcstart for example ??
+
+%% Collect warning and directory state
+%% ---------------------
+   state.warning = warning;
+   state.pwd     = cd;
+
+%% Add paths
+%% ---------------------
+   basepath = fileparts(which(mfilename));
+   warning off
+   path(path, fullfile(basepath, 'oet_general'));
+   addpathfast(basepath);
+   
+%% Exclude the .svn directories from the path
+%% ---------------------
+    s = strread(path, '%s', 'delimiter', pathsep); % read path as cell
+    % clear cells which contain [filesep '.svn']
+    s = s(cellfun('isempty', regexp(s, [filesep '.svn'])))'; % keep only paths not containing [filesep '.svn']
+    % create string with remaining paths
+    s = [s; repmat({pathsep}, size(s))];
+    newpath = [s{:}];
+    % reset path
+    path(newpath);
+
+%% Restore warning and directory state
+%% ---------------------
+   warning(state.warning)
+        cd(state.pwd)
+
+   clear state
+
+%% Report
+%% ---------------------
+   help oetsettings
+   fprintf('\n*** oetsettings enabled! ***\n');
+   
+%% EOF
