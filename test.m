@@ -1,5 +1,0 @@
-
-$Id$ 
-$Date$
-$Author$
-$Revision$
