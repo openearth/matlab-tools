@@ -43,7 +43,7 @@ function varargout = knmi_climate(varargin)
 %
 % NOTE THAT THE VALUES FROM THE FILE HAVE BEEN MULTIPLIED WITH A FACTOR TO GET SI-UNITS.
 %
-% See also: KNMIHYDRA
+% See also: KNMI_POTWIND
 
 mfile_version = 0.0;
 

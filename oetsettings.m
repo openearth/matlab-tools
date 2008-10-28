@@ -1,19 +1,18 @@
 function oetsettings(varargin)
-%OETSETTINGS   enable the Open EarthTools toolbox oet_matlab by adding all relevant paths.
+%OETSETTINGS   enable the OpenEarthTools matlab tools by adding all relevant matlab paths.
 %
 % For more information on McTools refer to the following two sources:
 %
 % * wiki:        http://mctools.deltares.nl
-% * help blocks: Scroll through the McTools directories and read interesting help blocks.
+% * repository:  http://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab
+% * help blocks: Scroll through the OpenEarthTools directories and read interesting help blocks.
 %
-%See also: wlsettings (within Deltares), mcsettings, addpathfast
+%See also: wlsettings, mcsettings, addpathfast
 
 %   --------------------------------------------------------------------
 %   Copyright (C) <2004-2008> <Deltares>
 %
-%       <M.vanKoningsveld@tudelft.nl>
 %          <gerben.deboer@deltares.nl>
-%             <g.j.deboer@tudelft.nl>
 %
 %       Deltares
 %       P.O. Box 177
@@ -78,6 +77,6 @@ function oetsettings(varargin)
 %% Report
 %% ---------------------
    help oetsettings
-   fprintf('\n*** oetsettings enabled! ***\n');
+   fprintf('\n*** OpenEarthTools settings enabled! ***\n');
    
 %% EOF

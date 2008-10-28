@@ -32,6 +32,7 @@ function varargout = readKNMIhydra(varargin)
 % (C) G.J. de Boer, TU Delft, 2005-8
 %
 % See also: CART2POL, POL2CART, DEGN2DEGUC, DEGUC2DEGN, HMCZ_WIND_READ
+%           KNMI_ETMGEG
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005-8 Delft University of Technology
@@ -61,7 +62,7 @@ function varargout = readKNMIhydra(varargin)
 %   USA
 %   -------------------------------------------------------------------
 
-mfile_version = ' 7 Apr. 2008';
+mfile_version = ' 28 oct 2008';
 
       %
       % >   N-360  >
