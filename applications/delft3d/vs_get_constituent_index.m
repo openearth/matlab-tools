@@ -1,0 +1,225 @@
+function varargout = vs_get_constituent_index(NFSstruct,varargin)
+%VS_GET_CONSTITUENT_INDEX   get index information required to read constituents by name.
+%
+% INDEX = vs_get_constituent_index(NFSstruct)
+%    returns a struct INDEX with a field per parameter (lower case)
+%       'salinity'
+%       'temperature'
+%       'sediment_mud'
+%       'turbulent_energy'
+%       'energy_dissipation'
+%    each with subfields
+%       'index' index in dimenson dim
+%       'dim'
+%       'elementname'
+%       'groupname'
+%
+% vs_get_constituent_index(NFSstruct)
+%    Displays the above tree on the command line.
+%
+% INDEX = vs_get_constituent_index(NFSstruct,'parameter') returns only 
+%    the subffield for parameter
+%
+% STRUCT                            = vs_get_constituent_index(NFSstruct,'parameter'); 
+%
+% [index,dim                      ] = vs_get_constituent_index(NFSstruct,'parameter'); 
+% [index,dim,elementname          ] = vs_get_constituent_index(NFSstruct,'parameter'); 
+% [index,dim,groupname,elementname] = vs_get_constituent_index(NFSstruct,'parameter'); 
+%
+% [index                          ] = vs_get_constituent_index(NFSstruct,'parameter','index'); 
+% [dim                            ] = vs_get_constituent_index(NFSstruct,'parameter','dim'); 
+% [groupname                      ] = vs_get_constituent_index(NFSstruct,'parameter','groupname'); 
+% [elementname                    ] = vs_get_constituent_index(NFSstruct,'parameter','elementname'); 
+%
+% Implemented are trihfile and trimfile
+%
+% G.J. de Boer, April 2006 - Feb 2007
+
+   [m,n,k] = vs_mnk(NFSstruct);
+   
+%   Salinity            
+%   Sediment Mud        
+%   Turbulent energy    
+%   Energy dissipation  
+
+   returntype = [];
+if nargin>1
+   parameter = lower(varargin{1});
+   if nargin>2
+   returntype = varargin{2};
+   end
+else
+   parameter = [];
+end
+
+IND = [];
+
+   if strcmp(NFSstruct.SubType,'Delft3D-trim')
+
+      %Groupname:map-const        Dimensions:(1)
+      %  No attributes
+      %    LSTCI           INTEGER *  4                  [   -   ]        ( 1 )
+      %        Number of constituents
+      %    LTUR            INTEGER *  4                  [   -   ]        ( 1 )
+      %        Number of turbulence quantities
+      %    LSED            INTEGER *  4                  [   -   ]        ( 1 )
+      %        Number of sediment constituents
+      %
+      %Groupname:map-series       Dimensions:(109)
+      %  No attributes
+      %    R1              REAL    *  4                  [   -   ]        ( 236 156 16 1 )
+      %        Concentrations per layer in zeta point
+      %    RTUR1           REAL    *  4                  [   -   ]        ( 236 156 17 2 )
+      %        Turbulent quantity per layer in zeta point
+
+      names                   = vs_let(NFSstruct,'map-const','NAMCON','quiet');
+      names                   = shiftdim(names,1); % remove first dummy dimension
+      groupname               = 'map-series';
+      dim                     = 4; % for k=1 and k >1
+      constituent_elementname = 'R1';
+      turbulence_elementname  = 'RTUR1';
+
+     %no_constituents         = vs_get_elm_size(NFSstruct,constituent_elementname,4)
+     %no_turbulent_quantities = vs_get_elm_size(NFSstruct,turbulence_elementname ,4)
+     
+      no_constituents         = vs_let(NFSstruct,'map-const','LSTCI','quiet');
+      no_turbulent_quantities = vs_let(NFSstruct,'map-const','LTUR' ,'quiet');
+
+   elseif strcmp(NFSstruct.SubType,'Delft3D-trih')
+   
+      %Groupname:his-const        Dimensions:(1)
+      %  No attributes
+      %    LSTCI           INTEGER *  4                  [   -   ]        ( 1 )
+      %        Number of constituents
+      %    LTUR            INTEGER *  4                  [   -   ]        ( 1 )
+      %        Number of turbulence quantities   
+      %    NAMCON          CHARACTE* 20                  [   -   ]        ( 1 )
+      %        Name of constituents / turbulent quantities
+      %    LSED            INTEGER *  4                  [   -   ]        ( 1 )
+      %        Number of sediment constituents
+      %    LSEDBL          INTEGER *  4                  [   -   ]        ( 1 )
+      %        Number of bedload sediment fractions
+      %    NAMSED          CHARACTE* 20                  [   -   ]        ( 1 )
+      %        Name of sediment fractio
+      %
+      %Groupname:his-series       Dimensions:(865)
+      %  No attributes
+      %    GRO             REAL    *  4                  [   -   ]        ( 1 )
+      %        Concentrations per layer in station (zeta point)
+      %    ZTUR            REAL    *  4                  [   -   ]        ( 1 )
+      %        Turbulent quantity per layer in station (zeta point)
+
+      names                   = vs_let         (NFSstruct,'his-const','NAMCON','quiet');
+      
+      groupname               = 'his-series';
+      names                   = shiftdim(names,1); % remove first dummy dimension
+      dim                     = 3; % for k=1 and k >1
+      constituent_elementname = 'GRO';
+      turbulence_elementname  = 'ZTUR';
+
+     %no_constituents         = vs_get_elm_size(NFSstruct,constituent_elementname,4)
+     %no_turbulent_quantities = vs_get_elm_size(NFSstruct,turbulence_elementname ,4)
+     
+      no_constituents         = vs_let(NFSstruct,'his-const','LSTCI','quiet');
+      no_turbulent_quantities = vs_let(NFSstruct,'his-const','LTUR' ,'quiet');
+
+   elseif strcmp(NFSstruct.SubType,'Delft3D-com') & ~isempty(parameter)
+
+      if strcmp(lower(parameter),'salinity')
+         IND.(parameter).index                   = 1; 
+         IND.(parameter).dim                     = 3; 
+         IND.(parameter).groupname               = 'DWQTIM';
+         IND.(parameter).elementname             = 'RSAL';
+      elseif strcmp(lower(parameter),'temperature')
+         IND.(parameter).index                   = 1; 
+         IND.(parameter).dim                     = 3; 
+         IND.(parameter).groupname               = 'DWQTIM';
+         IND.(parameter).elementname             = 'RTEM';
+      else
+         error(['Parameter not implemented yet/not found in file: ',parameter])
+      end
+
+   else
+  
+      error('Invalid NEFIS file for this action.');
+
+   end
+   
+   if strcmp(NFSstruct.SubType,'Delft3D-trim') | ...
+      strcmp(NFSstruct.SubType,'Delft3D-trih')
+      names                     = squeeze(names);
+      constituents              = names(1:no_constituents,:);
+      for in =1:size(constituents,1)
+         name                   = lower(mkvar(deblank(constituents(in,:))));
+         IND.(name).index       = in;
+         IND.(name).dim         = dim;
+         IND.(name).groupname   = groupname;
+         IND.(name).elementname = constituent_elementname;
+      end
+      
+      if k >1
+      turbulent_quantities     = names(no_constituents+1:end,:);
+      for in =1:size(turbulent_quantities,1)
+         name                   = lower(mkvar(deblank(turbulent_quantities(in,:))));
+         IND.(name).index       = in;
+         IND.(name).dim         = dim;
+         IND.(name).groupname   = groupname;
+         IND.(name).elementname = turbulence_elementname;
+      end
+      end
+   end
+   
+   fldnames = fieldnames(IND);
+
+   if    nargout==0
+      if isempty(IND)
+         disp('No constituents found.')
+      else
+      for i=1:length(fldnames)
+         name = fldnames{i};
+         disp(['   ',name,':'])
+         disp(['      index      : ',num2str(IND.(name).index       )]);
+         disp(['      dim        : ',num2str(IND.(name).dim         )]);
+         disp(['      groupname  : ',        IND.(name).groupname    ]);
+         disp(['      elementname: ',        IND.(name).elementname  ]);
+      end
+      end
+   else
+      if ~ isempty(parameter) & ...
+         ~any(strcmp(fldnames,parameter))
+            disp(['Parameter not implemented yet/not found in file: ',parameter])
+            IND.(parameter).index       = [];
+            IND.(parameter).dim         = [];
+            IND.(parameter).groupname   = [];
+            IND.(parameter).elementname = [];
+      end
+      if     nargout==1 & isempty(parameter)
+         varargout = {IND};
+      elseif nargout==1
+         if isempty(returntype)
+         varargout = {IND.(parameter)};
+         elseif strcmp(returntype,'index')
+            varargout = {IND.(parameter).index};
+         elseif strcmp(returntype,'dim')
+            varargout = {IND.(parameter).dim};
+         elseif strcmp(returntype,'groupname')
+            varargout = {IND.(parameter).groupname};
+         elseif strcmp(returntype,'elementname')
+            varargout = {IND.(parameter).elementname};
+         end
+      elseif nargout==2  & ~isempty(parameter)
+         varargout = {IND.(parameter).index,...
+                      IND.(parameter).dim};
+      elseif nargout==4  & ~isempty(parameter)
+         varargout = {IND.(parameter).index,...
+                      IND.(parameter).dim,...
+                      IND.(parameter).elementname};
+      elseif nargout==4  & ~isempty(parameter)
+         varargout = {IND.(parameter).index,...
+                      IND.(parameter).dim,...
+                      IND.(parameter).groupname,...
+                      IND.(parameter).elementname};
+      else
+         error('invalid argument combination')
+      end
+   end      
