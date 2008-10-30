@@ -36,10 +36,10 @@ function oetsettings(varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% $Id: mcsettings.m 1677 2008-08-21 07:40:00Z heijer $ 
-% $Date: 2008-08-21 09:40:00 +0200 (do, 21 aug 2008) $
-% $Author: heijer $
-% $Revision: 1677 $
+% $Id$ 
+% $Date$
+% $Author$
+% $Revision$
 
 %% TO DO remove quickstart option or include in help block
 %% TO DO rename quickstart (too general name) to DB_mcstart for example ??
