@@ -4,7 +4,7 @@ function oetsettings(varargin)
 % For more information on McTools refer to the following two sources:
 %
 % * wiki:        http://mctools.deltares.nl
-% * repository:  http://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab
+% * repository:  https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab
 % * help blocks: Scroll through the OpenEarthTools directories and read interesting help blocks.
 %
 %See also: wlsettings, mcsettings, addpathfast
