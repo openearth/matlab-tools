@@ -66,15 +66,15 @@ function G = delwaq_flowmeshgrid2dcorcen(lganame)
       %% account for change in delwaq.m dd feb 2008
       %% G.Index is now [m x n
       %% whereas flow2waq3d_coupling only accepts [n x m]
-      G.flow2waqcoupling2D        = flow2waq3d_coupling(permute(G.Index(:,:,1),[2 1 3]),G.NoSegPerLayer,'i');
-      G.flow2waqcoupling3D        = flow2waq3d_coupling(permute(G.Index       ,[2 1 3]),G.NoSeg        ,'i');
+      G.flow2waqcoupling2D        = flow2waq3d_coupling(permute(G.Index(:,:,1),[2 1 3]),G.NoSegPerLayer,'mn');
+      G.flow2waqcoupling3D        = flow2waq3d_coupling(permute(G.Index       ,[2 1 3]),G.NoSeg        ,'mnk');
       else
-      G.flow2waqcoupling2D        = flow2waq3d_coupling(        G.Index(:,:,1)         ,G.NoSegPerLayer,'i');
-      G.flow2waqcoupling3D        = flow2waq3d_coupling(        G.Index                ,G.NoSeg        ,'i');
+      G.flow2waqcoupling2D        = flow2waq3d_coupling(        G.Index(:,:,1)         ,G.NoSegPerLayer,'mn');
+      G.flow2waqcoupling3D        = flow2waq3d_coupling(        G.Index                ,G.NoSeg        ,'mnk');
       end
    else
-      G.flow2waqcoupling2D        = flow2waq3d_coupling(        G.Index(:,:,1)         ,G.NoSegPerLayer,'i');
-      G.flow2waqcoupling3D        = flow2waq3d_coupling(        G.Index                ,G.NoSeg        ,'i');
+      G.flow2waqcoupling2D        = flow2waq3d_coupling(        G.Index(:,:,1)         ,G.NoSegPerLayer,'mn');
+      G.flow2waqcoupling3D        = flow2waq3d_coupling(        G.Index                ,G.NoSeg        ,'mnk');
    end
 
 %% EOF

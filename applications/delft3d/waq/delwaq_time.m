@@ -47,7 +47,7 @@ function varargout = delwaq_time(Struct,varargin)
    %% Set defaults for keywords
    %% ----------------------
 
-      OPT.mod       = 100; % displey notification eveyr 100 steps
+      OPT.mod       = 100; % display notification eveyr 100 steps, set 1 or Inf for no disp
       OPT.ndigits   = ceil(log10(Struct.NTimes));
       OPT.fmt       = ['%0.',num2str(OPT.ndigits),'d'];
       OPT.datenum   = 0; 
@@ -102,8 +102,8 @@ function varargout = delwaq_time(Struct,varargin)
           
          % disp([num2str(it),' ',datestr(T.datenum(it),31)])
          
-         if mod(it,OPT.mod)==1
-            disp([num2str(it,OPT.fmt),' / ',num2str(Struct.NTimes,OPT.fmt)])
+         if mod(it+1,OPT.mod)==1
+            disp(['delwaq_time progress: ',num2str(it,OPT.fmt),' / ',num2str(Struct.NTimes,OPT.fmt)])
          end
       
       end % for it=1:Struct.NTimes

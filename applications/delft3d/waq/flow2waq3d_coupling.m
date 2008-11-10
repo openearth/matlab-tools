@@ -5,7 +5,7 @@ function coupling = flow2waq3d_coupling(pointerarray,NoSeg,varargin)
 % segmentnumbering. The struct has fields according to your choice
 % depending on how you like your flow array to be indexed:
 %
-% - 1D array indexing where you simply index the 3D (n x m x k) 
+% - 1D array indexing where you simply index the 3D (n x m x k) !!!!!!!!!!!!!!!!!!!!!!!
 %   matrix M as M(:) rather than M(:,:,:). Do make sure that the dimensions
 %   of M are nmax by mmax by kmax, as the WAQ indexing assumes this order.
 %   This is fastest (~2.5 times) in making the coupling struct, for 
@@ -86,7 +86,7 @@ function coupling = flow2waq3d_coupling(pointerarray,NoSeg,varargin)
   %NoSeg = max(pointerarray(:)); % removed 2008 May 13, this works only for spatial aggegration, not for full FLOW matrix.
 
    index_type = 'i';
-   if nargin==2
+   if nargin>2
       index_type = varargin{1};
    end
 
@@ -97,9 +97,9 @@ switch lower(index_type)
       coupling = repmat(struct('m',[],'n',[]),[NoSeg 1]);
       for n=1:size(pointerarray,1);
       for m=1:size(pointerarray,2);
-         if pointerarray(m,n)>0
+         if pointerarray(n,m)>0
          
-            WAQ_cel = pointerarray(m,n);
+            WAQ_cel = pointerarray(n,m);
       
             coupling(WAQ_cel).m = [coupling(WAQ_cel).m m];
             coupling(WAQ_cel).n = [coupling(WAQ_cel).n n];
@@ -114,9 +114,9 @@ switch lower(index_type)
       for n=1:size(pointerarray,1);
       for m=1:size(pointerarray,2);
       for k=1:size(pointerarray,3);
-         if pointerarray(m,n,k)>0
+         if pointerarray(n,m,k)>0
          
-            WAQ_cel = pointerarray(m,n,k);
+            WAQ_cel = pointerarray(n,m,k);
       
             coupling(WAQ_cel).m = [coupling(WAQ_cel).m m];
             coupling(WAQ_cel).n = [coupling(WAQ_cel).n n];

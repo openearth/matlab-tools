@@ -47,6 +47,8 @@ mfile_version = '1.0, Oct. 2006, beta';
 %% so we try to avoid them
 no_cellstr    = 1;
 
+   global fid
+
    %% 0 - command line file name or 
    %%     Launch file open GUI
    %% ------------------------------------------
@@ -258,7 +260,7 @@ no_cellstr    = 1;
               DAT.data.monitoring.name = [];
 
               for im = 1:DAT.data.number_of_monitoring_points_areas
-              
+
               quotes = strfind(string,'''');
               name            = string(quotes(1)+1:1:quotes(end)-1);
               string          = string(quotes(end)+1:end);
@@ -270,7 +272,18 @@ no_cellstr    = 1;
               DAT.data.monitoring.number_of_segments(im) = str2num(number_of_segments);
               
               DAT.data.monitoring.indices{im} = sscanf(string,'%d',DAT.data.monitoring.number_of_segments(im));
-           
+              
+              while length(DAT.data.monitoring.indices{im}) < DAT.data.monitoring.number_of_segments(im)
+
+                 number_of_segments_left = DAT.data.monitoring.number_of_segments(im) - ...
+                                    length(DAT.data.monitoring.indices{im});
+
+                 indices = fscanf(fid(end),'%d',number_of_segments_left);
+                 
+                 DAT.data.monitoring.indices{im} = [DAT.data.monitoring.indices{im} num2str(indices)];
+                 
+              end
+              
               [string,n] = waq_fgetl(fid,n,comment);
               
               end
@@ -378,48 +391,52 @@ no_cellstr    = 1;
            [DAT.data.features(2)    ,n] = waq_fgetl_number(fid,n,comment);% number of items
            [DAT.data.features(3)    ,n] = waq_fgetl_number(fid,n,comment);% only feature 2 is specified
            [DAT.data.features(4)    ,n] = waq_fgetl_number(fid,n,comment);% input in this file
+           [DAT.data.features(5)    ,n] = waq_fgetl_number(fid,n,comment);% input option without defaults
+           [DAT.data.features(6)    ,n] = waq_fgetl_number(fid,n,comment);% top segments
+           [DAT.data.features(7)    ,n] = waq_fgetl_number(fid,n,comment);% middle segments
+           [DAT.data.features(8)    ,n] = waq_fgetl_number(fid,n,comment);% bottom segments
+           [DAT.data.features(9)    ,n] = waq_fgetl_number(fid,n,comment);% no time-dependent contributions
            
            end
            
-           [string,n]                   = waq_fgetl(fid,n,comment);
-            string                      = deblank2(string);
-            
-            if strcmpi(strtok(string),'INCLUDE')
-            
-              [dummy,value]               = strtok(string);
-              DAT.data.attributes.INCLUDE = deblank2(value);
-           
-           % attributes_file looks like:
-           %     1                ; Input option without Defaults 
-           % 18878*1
-           % 94390*2
-           % 18878*3            
-               
-            DAT.data.features(5)        = NaN;
-            DAT.data.features(6)        = NaN;
-            DAT.data.features(7)        = NaN;
-            DAT.data.features(8)        = NaN;
-               
-            else
-           [DAT.data.features(9)    ,n] = waq_fgetl_number(fid,n,comment);% 
-           [DAT.data.features(9)    ,n] = waq_fgetl_number(fid,n,comment);% 
-           [DAT.data.features(9)    ,n] = waq_fgetl_number(fid,n,comment);% 
-           [DAT.data.features(9)    ,n] = waq_fgetl_number(fid,n,comment);% 
-            end
-
-           [DAT.data.features(9)    ,n] = waq_fgetl_number(fid,n,comment);% time-dependent contributions
+%-%        [string,n]                   = waq_fgetl(fid,n,comment);
+%-%         string                      = deblank2(string);
+%-%         
+%-%         if strcmpi(strtok(string),'INCLUDE')
+%-%         
+%-%           [dummy,value]               = strtok(string);
+%-%           DAT.data.attributes.INCLUDE = deblank2(value);
+%-%        
+%-%        % attributes_file looks like:
+%-%        %     1                ; Input option without Defaults 
+%-%        % 18878*1
+%-%        % 94390*2
+%-%        % 18878*3            
+%-%            
+%-%         DAT.data.features(5)        = NaN;
+%-%         DAT.data.features(6)        = NaN;
+%-%         DAT.data.features(7)        = NaN;
+%-%         DAT.data.features(8)        = NaN;
+%-%            
+%-%         else
+%-%        [DAT.data.features(9)    ,n] = waq_fgetl_number(fid,n,comment);% 
+%-%        [DAT.data.features(9)    ,n] = waq_fgetl_number(fid,n,comment);% 
+%-%        [DAT.data.features(9)    ,n] = waq_fgetl_number(fid,n,comment);% 
+%-%        [DAT.data.features(9)    ,n] = waq_fgetl_number(fid,n,comment);% 
+%-%         end
+%-%
+%-%        [DAT.data.features(9)    ,n] = waq_fgetl_number(fid,n,comment);% time-dependent contributions
            
             %% Volumes
             %% ------------------------------------------
             
-
            [DAT.data.first_volume_option,n] = waq_fgetl_number(fid,n,comment);
            [DAT.data.volumes_file       ,n] = waq_fgetl_string(fid,n,comment);
 
             %% +-----------------------------------------+
-            %% |                                          |
+            %% |                                         |
             %% | fourth block of model input (transport) |
-            %% |                                          |
+            %% |                                         |
             %% +-----------------------------------------+
             
            [DAT.data.exchanges_in_directions_123(1)     ,n] = waq_fgetl_number(fid,n,comment);% exchanges in direction 1
@@ -516,7 +533,7 @@ no_cellstr    = 1;
             
           DAT.number_of_lines_read       = n;
 
-	  disp('waq_io_inp IN PROGRESS, read WAQ *.inp file up to #7 PARAMETERS.')
+	  disp('waq_io_inp IN PROGRESS, read WAQ *.inp file up to #4 BC.')
 
 %         catch
 %         
@@ -550,18 +567,36 @@ no_cellstr    = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function varargout = waq_fgetl(fid,nbefore,varargin)
+function varargout = waq_fgetl(varargin)
 
-   if nargin==3
-      commentcharacter = [varargin{1},'#'];
+   %global fid
+   
+   fid     = varargin{1};
+   nbefore = varargin{2};
+
+   if nargin>2
+      commentcharacter = [varargin{3},'#'];
    else
-      commentcharacter = ';#';
+      commentcharacter = DAT.commentcharacter; %';#'; % DAT is 'global' due because waq_fgetl* are nested functions
    end
    
-      [rec,n]            = fgetl_no_comment_line(fid,commentcharacter,0); % 0 = allow no empty lines
+   if nargin>3
+      basedir = varargin{4};
+   else
+      basedir = filepathstr(DAT.filename);
+   end
+
+      [rec,n]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
       
       if strcmpi(strtok(rec),'INCLUDE')
-         error(['INCLUDE statement on line ',num2str(nbefore+n)])
+         indices = strfind(rec,'''');
+         fname   = rec(indices(1)+1:indices(2)-1);
+         fid(length(fid)+1) = fopen([basedir,filesep,fname],'r');
+      [rec,n]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
+         disp(['INCLUDE statement on line ',num2str(nbefore+n)])
+      elseif isempty(rec)
+         fid = fid(1:end-1);
+      [rec,n]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
       end
       
       %% remove part at end of line after comment character
@@ -592,27 +627,44 @@ end % waq_fgetl
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function varargout = waq_fgetl_string(fid,nbefore,varargin)
+function varargout = waq_fgetl_string(varargin)
 
-   if nargin==3
-      commentcharacter = [varargin{1},'#'];
+   %global fid
+
+   fid     = varargin{1};
+   nbefore = varargin{2};
+
+   if nargin>2
+      commentcharacter = [varargin{3},'#'];
    else
-      commentcharacter = ';#';
+      commentcharacter = DAT.commentcharacter; %';#'; % DAT is 'global' due because waq_fgetl* are nested functions
    end
    
-   
-   [rec,n]            = fgetl_no_comment_line(fid,commentcharacter,0); % 0 = allow no empty lines
-   
-      if strcmpi(strtok(rec),'INCLUDE')
-         error(['INCLUDE statement on line ',num2str(nbefore+n)])
-      end
+   if nargin>3
+      basedir = varargin{4};
+   else
+      basedir = filepathstr(DAT.filename);
+   end
+
+     [rec,n]           = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
       
-   commas             = strfind(rec,'''');
-   string             = rec(commas(1) +1:commas(2)-1);
-   
-   if nargin>1
-      n = n + nbefore;
-   end
+      if strcmpi(strtok(rec),'INCLUDE')
+         indices = strfind(rec,'''');
+         fname   = rec(indices(1)+1:indices(2)-1);
+         fid(length(fid)+1) = fopen([basedir,filesep,fname],'r');
+      [rec,n]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
+         disp(['INCLUDE statement on line ',num2str(nbefore+n)])
+      elseif isempty(rec)
+         fid = fid(1:end-1);
+      [rec,n]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
+      end
+         
+      commas             = strfind(rec,'''');
+      string             = rec(commas(1) +1:commas(2)-1);
+      
+      if nargin>1
+         n = n + nbefore;
+      end
    
    if nargout==1
       varargout = {string};
@@ -625,19 +677,37 @@ end % waq_fgetl_string
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function varargout = waq_fgetl_number(fid,nbefore,varargin)
+function varargout = waq_fgetl_number(varargin)
+
+   %global fid
  
-   if nargin==3
-      commentcharacter = [varargin{1},'#'];
+   fid     = varargin{1};
+   nbefore = varargin{2};
+
+   if nargin>2
+      commentcharacter = [varargin{3},'#'];
    else
-      commentcharacter = ';#';
+      commentcharacter = DAT.commentcharacter; %';#'; % DAT is 'global' due because waq_fgetl* are nested functions
    end
    
-   [rec,n]            = fgetl_no_comment_line(fid,commentcharacter,0); % 0 = allow no empty lines
+   if nargin>3
+      basedir = varargin{4};
+   else
+      basedir = filepathstr(DAT.filename);
+   end
    
-      if strcmpi(strtok(rec),'INCLUDE')
-         error(['INCLUDE statement on line ',num2str(nbefore+n)])
-      end   
+   [rec,n]             = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
+   
+   if strcmpi(strtok(rec),'INCLUDE')
+         indices = strfind(rec,'''');
+         fname   = rec(indices(1)+1:indices(2)-1);
+         fid(length(fid)+1) = fopen([basedir,filesep,fname],'r');
+      [rec,n]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
+         disp(['INCLUDE statement on line ',num2str(nbefore+n)])
+      elseif isempty(rec)
+         fid = fid(1:end-1);
+      [rec,n]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
+   end
    
    start_of_comment   = Inf;
    for ic = 1:length(commentcharacter)
