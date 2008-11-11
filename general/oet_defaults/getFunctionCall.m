@@ -46,10 +46,10 @@ function [str funinfo] = getFunctionCall(fun)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% $Id: $ 
-% $Date: $
-% $Author: $
-% $Revision: $
+% $Id$ 
+% $Date$
+% $Author$
+% $Revision$
 
 %% check input
 if nargin==0

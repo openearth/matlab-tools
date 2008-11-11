@@ -41,10 +41,10 @@ function result = createEmptyDUROSResult()
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% $Id: $ 
-% $Date: $
-% $Author: $
-% $Revision: $
+% $Id$ 
+% $Date$
+% $Author$
+% $Revision$
 
 %%
 result = struct('info', [],...

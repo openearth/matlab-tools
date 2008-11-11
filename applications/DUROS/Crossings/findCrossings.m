@@ -48,10 +48,10 @@ function [xcr zcr x1_new_out z1_new_out x2_new_out z2_new_out] = findCrossings(x
 % USA
 % --------------------------------------------------------------------
 
-% $Id: $ 
-% $Date: $
-% $Author: $
-% $Revision: $
+% $Id$ 
+% $Date$
+% $Author$
+% $Revision$
 
 %% input check
 if ~all([isvector(x1)...
