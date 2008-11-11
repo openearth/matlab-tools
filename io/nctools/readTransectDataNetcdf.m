@@ -1,9 +1,10 @@
-function [transect] = readTransectDataNetcdf(filename, TransectID, SoundingID)
+function [transect] = readTransectDataNetcdf(filename, varargin)
 %READTRANSECTDATA   transforms processed data to proper meta data format
 %
 % input:
 %   filename
-%   TransectID
+%   AreaID
+%   transectId
 %   SoundingID
 %
 %   See also readGridData, readLineData, readPointData
@@ -15,27 +16,54 @@ function [transect] = readTransectDataNetcdf(filename, TransectID, SoundingID)
 % -------------------------------------------------------------
 % d = readTransectdata('output.nc', 3000380, 2004);
 
-
-areaname = cellstr(nc_varget(filename, 'areaname'));
-areacode = nc_varget(filename, 'areacode');
-
-
-% areanameIndex ~cellfun(@isempty, strfind(a,area)) 
-% areacodeIndex areacodes == area
-
-% coastwardDistanceIndex = num2str(nc_varget(filename, 'coastward_distance'), '%05d') == id;
-% id_index = id((areanameIndex | areacodeIndex)  & coastwardDistanceIndex )
-
-
-
-id = nc_varget(filename, 'id');
-id_index = find(id == TransectID);
-if isempty(id_index)
-    error(['transect not found with id: ' num2str(TransectID)]);
+if (nargin == 4)
+    areaId = cell2mat(varargin(1));
+    transectId = cell2mat(varargin(2));
+    soundingId = str2num(cell2mat(varargin(3)));
+elseif (nargin == 3)
+    transectId = varargin(1);
+    soundingId = varargin(2);
+else 
+    error('expecting 3 or 4 arguments')
 end
 
+
+
+% we need to lookup the index of transect and the year 
+
+
+%% lookup the header variables
+areaname = cellstr(nc_varget(filename, 'areaname'));
+areacode = nc_varget(filename, 'areacode');
+coastwardDistances = nc_varget(filename, 'coastward_distance');
+
+
+%% first lookup the transect index
+
+if (nargin == 4)
+    % we use a double key, areaId + transectId
+    % first find the areaIndices
+    if isempty(str2num(areaId))
+        areaIndex = ~cellfun(@isempty, strfind(areaname, areaId));
+    else
+        areaIndex = areacode == str2num(areaId);
+    end
+    % next find the coastward indices
+    coastwardIndex = str2num(transectId) == coastwardDistances;
+    id_index = find(areaIndex & coastwardIndex);
+elseif (nargin == 3)
+    % we use the id as stored in the file
+    id = nc_varget(filename, 'id');
+    id_index = find(id == transectId);
+    if isempty(id_index)
+        error(['transect not found with id: ' num2str(transectId)]);
+    end
+end
+
+
+
 year = nc_varget(filename, 'year');
-year_index = find(year == SoundingID);
+year_index = find(year == soundingId);
 if isempty(year_index)
     error(['year not found: ' year_index]);
 end
@@ -78,7 +106,7 @@ transect.yRD = y(id_index, seawardDistanceZeroIndex); %in EPSG:28992
 % TODO: store and lookup
 transect.GRAD = 0; % 0 - 360
 
-transect.contour = [minmax(x(id_index,:)); minmax(y(id_index,:))]; %[2x2 double]
+transect.contour = [min(x(id_index,:)),max(x(id_index,:)) ; min(y(id_index,:)), max(y(id_index,:))]; %[2x2 double]
 
 transect.contourunit = 'm';
 

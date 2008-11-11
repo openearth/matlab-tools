@@ -3,6 +3,12 @@ addpath snctools
 javaaddpath ( './toolsUI-2.2.22.jar' )
 setpref ('SNCTOOLS', 'USE_JAVA', true); % this requires SNCTOOLS 2.4.8 or better
 
+% server at deltares
+url = 'http://micore.wldelft.nl/opendap/rijkswaterstaat/jarkus/transect.nc';
+info = nc_info(url); % this takes about 9seconds on my machine
+
+data = nc_varget(url, 'height', [1,1,1], [40,1,1924]); % get all data for first transect
+plot(data)
 
 %%remote file
 info = nc_info('http://iridl.ldeo.columbia.edu/SOURCES/.WORLDBATH432/.bath/dods');
