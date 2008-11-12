@@ -14,15 +14,15 @@ function [transect] = readTransectDataNetcdf(filename, varargin)
 % Version:      Version 1.2, January 2007 (Version 1.0, February 2004)
 % By:           <M. van Koningsveld (email: mark.vankoningsveld@wldelft.nl>
 % -------------------------------------------------------------
-% d = readTransectdata('output.nc', 3000380, 2004);
+% d = readTransectDataNetcdf('output.nc', 3000380, 2004);
 
 if (nargin == 4)
-    areaId = cell2mat(varargin(1));
-    transectId = cell2mat(varargin(2));
-    soundingId = str2num(cell2mat(varargin(3)));
+    areaId = varargin{1};
+    transectId = varargin{2};
+    soundingId = str2double(varargin{3});
 elseif (nargin == 3)
-    transectId = varargin(1);
-    soundingId = varargin(2);
+    transectId = varargin{1};
+    soundingId = varargin{2};
 else 
     error('expecting 3 or 4 arguments')
 end
