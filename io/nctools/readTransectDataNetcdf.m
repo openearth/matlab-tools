@@ -52,7 +52,10 @@ end
 if isempty(coastwardDistances)
     coastwardDistances = nc_varget(filename, 'coastward_distance');
 end
-
+global id
+if isempty(id)
+    id = nc_varget(filename, 'id');
+end
 
 %% first lookup the transect index
 
@@ -72,10 +75,7 @@ if (nargin == 4)
     end    
 elseif (nargin == 3)
     % we use the id as stored in the file
-    global id
-    if isempty(id)
-        id = nc_varget(filename, 'id');
-    end
+
     id_index = find(id == transectId);
     if isempty(id_index)
         error(['transect not found with id: ' num2str(transectId)]);
