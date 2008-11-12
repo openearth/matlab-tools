@@ -19,13 +19,22 @@ function [transect] = readTransectDataNetcdf(filename, varargin)
 if (nargin == 4)
     areaId = varargin{1};
     transectId = varargin{2};
-    soundingId = str2double(varargin{3});
+    soundingId = varargin{3};
 elseif (nargin == 3)
     transectId = varargin{1};
     soundingId = varargin{2};
 else 
     error('expecting 3 or 4 arguments')
 end
+
+% make sure that transectId and soundingId are doubles
+if ischar(transectId)
+    transectId = str2double(transectId);
+end
+if ischar(soundingId)
+    soundingId = str2double(soundingId);
+end
+
 
 
 
@@ -56,7 +65,7 @@ if (nargin == 4)
         areaIndex = areacode == str2num(areaId);
     end
     % next find the coastward indices
-    coastwardIndex = str2num(transectId) == coastwardDistances;
+    coastwardIndex = transectId == coastwardDistances;
     id_index = find(areaIndex & coastwardIndex);
     if isempty(id_index)
         error(['transect not found with id: ' num2str(transectId)]);
