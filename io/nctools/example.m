@@ -1,13 +1,35 @@
+%% setup netcdf
 addpath mexnc
 addpath snctools
-javaaddpath ( './toolsUI-2.2.22.jar' )
+javaaddpath ( './toolsUI-2.2.22-fb.jar' )
 setpref ('SNCTOOLS', 'USE_JAVA', true); % this requires SNCTOOLS 2.4.8 or better
-
-% server at deltares
+%% server at deltares
 url = 'http://micore.wldelft.nl/opendap/rijkswaterstaat/jarkus/transect.nc';
 info = nc_info(url); % this takes about 9seconds on my machine
 
-data = nc_varget(url, 'height', [1,1,1], [40,1,1924]); % get all data for first transect
+%% lookup dimensions, variables and global attributes
+{info.Dimension.Name}
+{info.Dataset.Name}
+{info.Attribute.Name}
+
+% overview of the dataset
+nc_dump(url)
+
+
+x = nc_varget(url, 'x');
+y = nc_varget(url, 'y');
+
+plot(x,y, '.');
+
+% get 40 years of data for all 1925 seaward points for first 5 transects
+data = nc_varget(url, 'height', [0,0,0], [40,10,1925]); 
+
+% plot 
+for i=1:40
+    point3(x(1:10,:),y(1:10,:),squeeze(data(i,:,:)), '.');
+    pause(1);
+end
+
 plot(data)
 
 %%remote file

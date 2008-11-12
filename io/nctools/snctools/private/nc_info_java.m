@@ -23,6 +23,11 @@ else
 		jncid = NetcdfFile.open ( ncfile )
 	catch
 		try
+			% try not to use preloading ... 
+			try
+				DODSNetcdfFile.setPreload(false);
+			catch
+			end
 			jncid = DODSNetcdfFile(ncfile);
 		catch
 			msg = sprintf ( 'Could not open ''%s'' as either a local file, a regular URL, or as a DODS URL.', ncfile );

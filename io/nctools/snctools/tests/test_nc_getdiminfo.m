@@ -283,6 +283,11 @@ if getpref('SNCTOOLS','USE_JAVA',false)
 	if exist(ncfile,'file')
 		jncid = NetcdfFile.open(ncfile);
 	else
+		% try not to use preloading ... 
+		try
+			DODSNetcdfFile.setPreload(false);
+		catch
+		end	
 		jncid = DODSNetcdfFile(ncfile);
 	end
 	dim = jncid.findDimension('t');
@@ -325,6 +330,11 @@ if getpref('SNCTOOLS','USE_JAVA',false)
 	if exist(ncfile,'file')
 		jncid = NetcdfFile.open(ncfile);
 	else
+		% try not to use preloading ... 
+		try
+			DODSNetcdfFile.setPreload(false);
+		catch
+		end	
 		jncid = DODSNetcdfFile(ncfile);
 	end
 	dim = jncid.findDimension('s');

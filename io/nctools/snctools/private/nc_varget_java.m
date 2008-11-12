@@ -21,6 +21,11 @@ else
 		jncid = NetcdfFile.open ( ncfile )
 	catch
 		try
+			% try not to use preloading ... 
+% 			try
+% 				DODSNetcdfFile.setPreload(false);
+% 			catch
+% 			end		
 			jncid = DODSNetcdfFile(ncfile);
 		catch
 			msg = sprintf ( 'Could not open ''%s'' as either a local file, a regular URL, or as a DODS URL.', ncfile );
@@ -184,7 +189,7 @@ function values = nc_var_get_java ( jvarid, theDataTypeString )
 
 values = jvarid.read();
 switch ( theDataTypeString )
-    case 'char'
+    case { 'char', 'String' }
         values = copyToNDJavaArray(values);
     case { 'double', 'float', 'int', 'short', 'byte' }
         values = copyToNDJavaArray(values);

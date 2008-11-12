@@ -33,9 +33,16 @@ end
 
 
 %% lookup the header variables
-areaname = cellstr(nc_varget(filename, 'areaname'));
-areacode = nc_varget(filename, 'areacode');
-coastwardDistances = nc_varget(filename, 'coastward_distance');
+global areaname areacode coastwardDistances;
+if isempty(areaname)
+    areaname = cellstr(nc_varget(filename, 'areaname'));
+end
+if isempty(areacode)
+    areacode = nc_varget(filename, 'areacode');
+end
+if isempty(coastwardDistances)
+    coastwardDistances = nc_varget(filename, 'coastward_distance');
+end
 
 
 %% first lookup the transect index
@@ -51,9 +58,15 @@ if (nargin == 4)
     % next find the coastward indices
     coastwardIndex = str2num(transectId) == coastwardDistances;
     id_index = find(areaIndex & coastwardIndex);
+    if isempty(id_index)
+        error(['transect not found with id: ' num2str(transectId)]);
+    end    
 elseif (nargin == 3)
     % we use the id as stored in the file
-    id = nc_varget(filename, 'id');
+    global id
+    if isempty(id)
+        id = nc_varget(filename, 'id');
+    end
     id_index = find(id == transectId);
     if isempty(id_index)
         error(['transect not found with id: ' num2str(transectId)]);
@@ -61,8 +74,10 @@ elseif (nargin == 3)
 end
 
 
-
-year = nc_varget(filename, 'year');
+global year
+if isempty(year)
+    year = nc_varget(filename, 'year');
+end
 year_index = find(year == soundingId);
 if isempty(year_index)
     error(['year not found: ' year_index]);
@@ -70,22 +85,21 @@ end
 
 
 transect.seq = 0;
-
-title = nc_attget(filename, nc_global, 'title');
+global title
+if isempty(title)
+    title = nc_attget(filename, nc_global, 'title');
+end
 transect.datatypeinfo = title;
 
 transect.datatype = 1;
 
 transect.datatheme = '';
 
-areanames = cellstr(nc_varget(filename, 'areaname'));
-transect.area = areanames(id_index);
+transect.area = areaname(id_index);
 
-areacodes = nc_varget(filename, 'areacode');
-transect.areacode = num2str(areacodes(id_index));
+transect.areacode = num2str(areacode(id_index));
 
-coastwardDistance = nc_varget(filename, 'coastward_distance');
-transect.transectID = num2str(coastwardDistance(id_index), '%05d');
+transect.transectID = num2str(coastwardDistances(id_index), '%05d');
 
 transect.year = num2str(year(year_index)); %'1965'
 
@@ -94,13 +108,23 @@ transect.year = num2str(year(year_index)); %'1965'
 % transect.dateBathy = num2str(transect.dateBathy); % '1708'
 transect.soundingID = num2str(year(year_index)); % '1965'
 
-seawardDistance = nc_varget(filename, 'seaward_distance');
+
+global seawardDistance
+if isempty(seawardDistance)
+    seawardDistance = nc_varget(filename, 'seaward_distance');
+end
 seawardDistanceZeroIndex = find(seawardDistance == 0);
 
-x = nc_varget(filename,'x');
+global x
+if isempty(x)
+    x = nc_varget(filename,'x');
+end
 transect.xRD = x(id_index, seawardDistanceZeroIndex); %in EPSG:28992
 
-y = nc_varget(filename,'y');
+global y 
+if isempty(y)
+    y = nc_varget(filename,'y');
+end
 transect.yRD = y(id_index, seawardDistanceZeroIndex); %in EPSG:28992
 
 % TODO: store and lookup

@@ -223,6 +223,11 @@ import ucar.nc2.*          % have to import this (NetcdfFile) as well for local 
 if exist(ncfile,'file')
 	jncid = NetcdfFile.open(ncfile);
 else
+	% try not to use preloading ... 
+	try
+		DODSNetcdfFile.setPreload(false);
+	catch
+	end
 	jncid = DODSNetcdfFile(ncfile);
 end
 
