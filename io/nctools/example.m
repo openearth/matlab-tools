@@ -1,7 +1,7 @@
 %% setup netcdf
 addpath mexnc
 addpath snctools
-javaaddpath ( './toolsUI-2.2.22-fb.jar' )
+javaaddpath ( './toolsUI-2.2.22.jar' )
 setpref ('SNCTOOLS', 'USE_JAVA', true); % this requires SNCTOOLS 2.4.8 or better
 %% server at deltares
 url = 'http://micore.wldelft.nl/opendap/rijkswaterstaat/jarkus/transect.nc';
