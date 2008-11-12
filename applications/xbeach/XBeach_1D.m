@@ -1,8 +1,10 @@
-function XB = XBeach_2D(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t, T, morfac)
-% XBeach_2D  generic XB-structure for cross-shore XBeach calculation
+function XB = XBeach_1D(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t, T, morfac)
+% XBeach_1D  generate XB-structure for cross-shore XBeach calculation
 %
-% % syntax:
-% XB = XBeach_2D(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t, T, morfac)
+%
+%
+% syntax:
+% XB = XBeach_1D(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t, T, morfac)
 %
 % input:
 %
@@ -52,7 +54,7 @@ XB = CreateEmptyXBeachVar;
 
 XB.settings.Grid.dx = 5;
 XB.settings.Grid.dy = 5;
-XB.settings.Grid.nx = length(min(x_XB):XB.settings.Grid.dx:max(x_XB))-1;
+XB.settings.Grid.nx = length(min(XB.Input.xInitial):XB.settings.Grid.dx:max(XB.Input.xInitial))-1;
 XB.settings.Grid.ny = 2;
 
 XB.settings.Flow.zs0 = WL_t;
