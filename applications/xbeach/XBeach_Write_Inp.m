@@ -69,7 +69,7 @@ if isempty(XB.settings.Flow.zs0)
     zs0=0;
 else
     zs0=XB.settings.Flow.zs0;
-    XB.settings.Flow.zs0=0;
+%     XB.settings.Flow.zs0=0;
     if length(zs0)>1
         % time series
         zs0(:,1)=zs0(:,1)*3600/XB.settings.SedInput.morfac;
@@ -80,7 +80,7 @@ else
         zs0 = 0;
     end
 end
-dlmwrite([calcdir filesep XB.settings.Grid.depfile],repmat(z-zs0,length(ygrid),1),'delimiter','\t','Precision','%5.3f');
+dlmwrite([calcdir filesep XB.settings.Grid.depfile],repmat(z,length(ygrid),1),'delimiter','\t','Precision','%5.3f');
 
 %% make wave boundary file
 if ~isempty(XB.settings.Waves.Hrms) && ~isempty(XB.settings.Waves.Tm01)
