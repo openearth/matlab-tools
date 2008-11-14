@@ -3,7 +3,7 @@ function addpathfast(basepath)
 %
 % addpathfast(basepath)
 %
-% where basepath is the root of whcoh al, subdirectories will be added to your path.
+% where basepath is the root of which all subdirectories will be added to your path.
 %
 % Is much faster than addpath(genpath(basepath)), because genpath uses too much java.
 %

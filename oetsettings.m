@@ -1,7 +1,9 @@
 function oetsettings(varargin)
 %OETSETTINGS   enable the OpenEarthTools matlab tools by adding all relevant matlab paths.
 %
-% For more information on McTools refer to the following two sources:
+% OpenEarthTools is a collected of open source tools (GNU (Lesser) Public License).
+%
+% For more information on OpenEarthTools refer to the following two sources:
 %
 % * wiki:        http://mctools.deltares.nl
 % * repository:  https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab
