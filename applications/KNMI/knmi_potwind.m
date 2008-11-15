@@ -34,6 +34,11 @@ function varargout = readKNMIhydra(varargin)
 % See also: CART2POL, POL2CART, DEGN2DEGUC, DEGUC2DEGN, HMCZ_WIND_READ
 %           KNMI_ETMGEG
 
+% uses deblank2
+%      ctransdv
+%      time2datenum
+%      deg2rad
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005-8 Delft University of Technology
 %       Gerben J. de Boer
@@ -236,8 +241,7 @@ mfile_version = ' 28 oct 2008';
            'headerlines',22);
          
          w.UP            = w.UP/10; % to [m/s]
-         
-         w.datenum       = tdelft3d(itdate,hour.*10000);
+         w.datenum       = time2datenum(itdate) + hour./24; % make matlab days
          
          %% Add u,v
          %% --------------------------------------
