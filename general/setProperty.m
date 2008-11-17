@@ -50,10 +50,10 @@ function [OPT Set Default] = setProperty(OPT, varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% $Id: keyword_value.m 40 2008-11-12 16:09:19Z heijer $ 
-% $Date: 2008-11-12 17:09:19 +0100 (Wed, 12 Nov 2008) $
-% $Author: heijer $
-% $Revision: 40 $
+% $Id$ 
+% $Date$
+% $Author$
+% $Revision$
 
 %%
 PropertyNames = fieldnames(OPT); % read PropertyNames from structure fieldnames
