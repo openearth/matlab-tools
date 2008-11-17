@@ -53,7 +53,7 @@ inpfile = fullfile(inpath, [fname fext]);
 OPT = struct(...
     'exefile', 'xbeach.exe');
 
-OPT = keyword_value(OPT, varargin{:});
+OPT = setProperty(OPT, varargin{:});
 
 %% path of executable
 getdefaults('exepath', fileparts(inpfile), 0);
