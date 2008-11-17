@@ -19,7 +19,7 @@ function XB = XBeach_Write_Inp(calcdir, XB)
 %   Copyright (C) 2008 Deltares
 %       Pieter van Geer
 %
-%       Pieter.vanGeer@deltares.nl	
+%       Pieter.vanGeer@deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -43,44 +43,64 @@ function XB = XBeach_Write_Inp(calcdir, XB)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% $Id$ 
+% $Id$
 % $Date$
 % $Author$
 % $Revision$
 
+%% default properties
+OPT = struct(...
+    'calcdir', calcdir,...
+    'paramsfile', 'params.txt',...
+    'xfile', 'x.dep',...
+    'yfile', 'y.dep',...
+    'depfile', 'bath.dep');
+
 %% make grid and dep file
-xgrid = (0:1:XB.settings.Grid.nx)*XB.settings.Grid.dx+XB.settings.Grid.xori;
-ygrid = (0:1:XB.settings.Grid.ny)*XB.settings.Grid.dy+XB.settings.Grid.yori;
-
-% Initial bottom (specific for delta flume)
-if max(xgrid)>max(XB.Input.xInitial)
-    XB.Input.xInitial = [XB.Input.xInitial;max(xgrid)];
-    XB.Input.zInitial = [XB.Input.zInitial;XB.Input.zInitial(end)];
-end
-if min(xgrid)<min(XB.Input.xInitial)
-    XB.Input.xInitial = [min(xgrid); XB.Input.xInitial];
-    XB.Input.zInitial = [XB.Input.zInitial(1);XB.Input.zInitial];
-end
-
-z = interp1(XB.Input.xInitial,XB.Input.zInitial,xgrid);
-% write dep file
-XB.settings.Info.initialzs0 = XB.settings.Flow.zs0;
-if isempty(XB.settings.Flow.zs0)
-    zs0=0;
-else
-    zs0=XB.settings.Flow.zs0;
-%     XB.settings.Flow.zs0=0;
-    if length(zs0)>1
-        % time series
-        zs0(:,1)=zs0(:,1)*3600/XB.settings.SedInput.morfac;
-        dlmwrite([calcdir filesep 'waterlevels.wls'],zs0,'delimiter','\t','Precision','%5.3f');
-        XB.settings.Flow.zs0file = 'waterlevels.wls';
-        XB.settings.Flow.tidelen = size(zs0,1);
-        XB.settings.Flow.tideloc = size(zs0,2)-1;
-        zs0 = 0;
+if XB.settings.Grid.vardx
+    if isequal(size(XB.Input.zInitial)-1, [XB.settings.Grid.nx XB.settings.Grid.ny])
+        if isempty(XB.settings.Grid.depfile)
+            XB.settings.Grid.depfile = OPT.depfile;
+        end
+        dlmwrite(fullfile(OPT.calcdir, XB.settings.Grid.depfile), XB.Input.zInitial,...
+            'delimiter', '\t',...
+            'Precision', '%5.3f');
     end
+    % TODO: write x and y in case of vardx
+else
+    xgrid = (0:1:XB.settings.Grid.nx)*XB.settings.Grid.dx+XB.settings.Grid.xori;
+    ygrid = (0:1:XB.settings.Grid.ny)*XB.settings.Grid.dy+XB.settings.Grid.yori;
+
+    % Initial bottom (specific for delta flume)
+    if max(xgrid)>max(XB.Input.xInitial)
+        XB.Input.xInitial = [XB.Input.xInitial;max(xgrid)];
+        XB.Input.zInitial = [XB.Input.zInitial;XB.Input.zInitial(end)];
+    end
+    if min(xgrid)<min(XB.Input.xInitial)
+        XB.Input.xInitial = [min(xgrid); XB.Input.xInitial];
+        XB.Input.zInitial = [XB.Input.zInitial(1);XB.Input.zInitial];
+    end
+
+    z = interp1(XB.Input.xInitial,XB.Input.zInitial,xgrid);
+    % write dep file
+    XB.settings.Info.initialzs0 = XB.settings.Flow.zs0;
+    if isempty(XB.settings.Flow.zs0)
+        zs0=0;
+    else
+        zs0=XB.settings.Flow.zs0;
+        %     XB.settings.Flow.zs0=0;
+        if length(zs0)>1
+            % time series
+            zs0(:,1)=zs0(:,1)*3600/XB.settings.SedInput.morfac;
+            dlmwrite(fullfile(OPT.calcdir, 'waterlevels.wls'),zs0,'delimiter','\t','Precision','%5.3f');
+            XB.settings.Flow.zs0file = 'waterlevels.wls';
+            XB.settings.Flow.tidelen = size(zs0,1);
+            XB.settings.Flow.tideloc = size(zs0,2)-1;
+            zs0 = 0;
+        end
+    end
+    dlmwrite(fullfile(OPT.calcdir, XB.settings.Grid.depfile), repmat(z,length(ygrid),1),'delimiter','\t','Precision','%5.3f');
 end
-dlmwrite([calcdir filesep XB.settings.Grid.depfile],repmat(z,length(ygrid),1),'delimiter','\t','Precision','%5.3f');
 
 %% make wave boundary file
 if ~isempty(XB.settings.Waves.Hrms) && ~isempty(XB.settings.Waves.Tm01)
@@ -127,7 +147,7 @@ if ~isempty(XB.settings.Waves.Hrms) && ~isempty(XB.settings.Waves.Tm01)
     [dummy basefile] = fileparts(XB.settings.Waves.bcfile);
     basefile = strrep(basefile,'.','_');
     XB.settings.Waves.bcfile = 'WaveBoundaryFilelist.bcw';
-    fid1  = fopen([calcdir filesep XB.settings.Waves.bcfile],'w');
+    fid1  = fopen(fullfile(OPT.calcdir, XB.settings.Waves.bcfile), 'w');
     fprintf(fid1,'%s\n','FILELIST');
 
     if isfield(XB.settings.Waves,'df')
@@ -168,7 +188,7 @@ if ~isempty(XB.settings.Waves.Hrms) && ~isempty(XB.settings.Waves.Tm01)
                 Hm0t= 4*sqrt(nansum1(Ef*df));
                 Ef   = WaveCond(iwavbound,2)^2/Hm0t^2*Ef;
         end
-        spectrumfile([calcdir filesep basefile ,'.bc' num2str(iwavbound)],f,Ef);
+        spectrumfile([OPT.calcdir filesep basefile ,'.bc' num2str(iwavbound)],f,Ef);
 
         nr = 1;
         dur = WaveCond(iwavbound,1);
@@ -194,7 +214,7 @@ end
 % get precision
 [dummy Precision]=CreateEmptyXBeachVar;
 
-fid = fopen([calcdir filesep 'params.txt'],'w');
+fid = fopen(fullfile(OPT.calcdir, OPT.paramsfile), 'w');
 fprintf(fid,'%s\n\n',['Automatic generated XBeach parameter settings input file (created: ' datestr(now) ')']);
 
 %% Grid input
