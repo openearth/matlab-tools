@@ -72,7 +72,7 @@ if ~configpathEXIST
     fprintf(fid, '%s', configstr);
     fclose(fid);
     % display link to config file
-    fprintf('Local settings store in: <a href="matlab:opentoline(''%s'',1)">%s</a>\n', configfile, configfile);
+    fprintf('Local settings stored in: <a href="matlab:opentoline(''%s'',1)">%s</a>\n', configfile, configfile);
 else
     % read config file
     fid = fopen(configfile);

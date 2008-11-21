@@ -55,5 +55,5 @@ function str = createconfig
 str = sprintf('config = struct(...\n');
 str = sprintf('%s\t%s\n', str, ['''NAME'', ''' getenv('USERNAME') ''',...']);
 str = sprintf('%s\t%s\n', str, '''COMPANY'', ''<COMPANY>'',...');
-str = sprintf('%s\t%s\n', str, '''ADDRESS'', {{''<ADDRESS>''}},...');
+str = sprintf('%s\t%s\n', str, '''ADDRESS'', {{''<ADDRESS>''}},... % address must be written as: {{''line1'' ''line2'' ''line3'' ''linen''}}');
 str = sprintf('%s\t%s\n', str, '''EMAIL'', ''<EMAIL>'');');
