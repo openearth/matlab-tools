@@ -48,11 +48,11 @@ setpref ('SNCTOOLS', 'USE_JAVA', false); % I couldnt get java to work correctly.
 %% Define path settings
 dataType='Transects';
 dataSet='rijkswaterstaat/jarkus';
-rawDataDir='d:\checkouts\OpenEarthRawData\trunk';
-outputDir='d:\download';
-dataDir = [rawDataDir filesep dataSet ];
-rawFileDir = [dataDir filesep 'raw' filesep 'total'];
-rawFileArray = dir([dataDir filesep 'raw' filesep 'total' filesep '*.txt']);       % lists all available area data files (15 areas with transect data)
+rawDataDir = strrep(openearthtoolsroot, 'OpenEarthTools', fullfile('OpenEarthRawData', 'trunk'));
+outputDir = fullfile(rawDataDir(1:2), 'download');
+dataDir = fullfile(rawDataDir, dataSet);
+rawFileDir = fullfile(dataDir, 'raw', 'total');
+rawFileArray = dir(fullfile(dataDir, 'raw', 'total', '*.txt'));       % lists all available area data files (15 areas with transect data)
 
 
 %% Allocate structure for dataset. 
