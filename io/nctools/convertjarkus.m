@@ -48,7 +48,7 @@ setpref ('SNCTOOLS', 'USE_JAVA', false); % I couldnt get java to work correctly.
 %% Define path settings
 dataType='Transects';
 dataSet='rijkswaterstaat/jarkus';
-rawDataDir='d:\sources\mcdata\trunk';
+rawDataDir='d:\checkouts\OpenEarthRawData\trunk';
 outputDir='d:\download';
 dataDir = [rawDataDir filesep dataSet ];
 rawFileDir = [dataDir filesep 'raw' filesep 'total'];

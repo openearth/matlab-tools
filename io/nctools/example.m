@@ -90,3 +90,12 @@ y_index = find(x >= 1380 & x < 1400);
 h = randn(2000,2000);
 
 h(x_index, y_index)
+
+%% Fitting STL Loess
+year = nc_varget(url, 'year');
+distance = nc_varget(url, 'seaward_distance');
+data = nc_varget(url, 'height', [0,1282,0], [length(year),1, length(distance)]);
+id = nc_varget(url, 'id', 1282, 1);
+notnans = ~all(isnan(data));
+data = data(:,notnans);
+distance = distance(notnans);
