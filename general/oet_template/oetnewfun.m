@@ -14,18 +14,8 @@ function oetnewfun(varargin)
 % varargin  = 'filename'
 % PropertyNames: 
 %   'description' = One line description
-%   'Company'     = string containing company name
-%   'address'     = cell array of strings with the address
-%   'email'       = string containing email address
-%   'Author'      = string containing the author name
 %
 % Example:
-% %% create relevant fields in your PC (only once)
-% setenv('COMPANY', 'Deltares')
-% setenv('ADDRESS', '{''Deltares'' ''P.O. Box 177'' ''2600 MH Delft'' ''The Netherlands''}')
-% setenv('EMAIL', 'your.email@Deltares.nl')
-% setenv('NAME', 'Your Name')
-% %% create new function
 % oetnewfun('filename',...
 %     'description', 'This is an example of a new function.')
 %
@@ -38,7 +28,7 @@ function oetnewfun(varargin)
 %       C.denHeijer@TUDelft.nl	
 %
 %       Faculty of Civil Engineering and Geosciences
-%       PO Box 5048
+%       P.O. Box 5048
 %       2600 GA Delft
 %       The Netherlands
 %
@@ -66,31 +56,14 @@ function oetnewfun(varargin)
 % $HeadURL$
 
 %% defaults
-fields = {'COMPANY' 'ADDRESS' 'EMAIL' 'NAME'};
-for ifield = 1:length(fields)
-    % read various fields using getenv
-    temp.(fields{ifield}) = getenv(fields{ifield});
-    if isempty(temp.(fields{ifield}))
-        % fields not available, create dummy
-        temp.(fields{ifield}) = ['<' fields{ifield} '>'];
-    end
-end
-try
-    % try to evaluate the address, aiming to get a cell array
-    temp.(fields{ifield}) = eval(temp.ADDRESS);
-end
-OPT = struct(...
-    'description', 'One line description goes here.',...
-    'Company', temp.COMPANY,...
-    'address', {temp.ADDRESS},...
-    'email', temp.EMAIL,...
-    'Author', temp.NAME);
+OPT = getlocalsettings;
+
+OPT.description = 'One line description goes here.';
 
 OPT = setProperty(OPT, varargin{2:end});
 
-% make sure that address is a cell array
-if ischar(OPT.address)
-    OPT.address = {OPT.address};
+if ischar(OPT.ADDRESS)
+    OPT.ADDRESS = {OPT.ADDRESS};
 end
 
 %%
@@ -113,10 +86,10 @@ str = strrep(str, '$FILENAME', upper(fname));
 str = strrep(str, '$description', OPT.description);
 str = strrep(str, '$date(dd mmm yyyy)', datestr(now, 'dd mmm yyyy'));
 str = strrep(str, '$date(yyyy)', datestr(now, 'yyyy'));
-str = strrep(str, '$Company', OPT.Company);
-str = strrep(str, '$author', OPT.Author);
-str = strrep(str, '$email', OPT.email);
-address = sprintf('%%       %s\n', OPT.address{:});
+str = strrep(str, '$Company', OPT.COMPANY);
+str = strrep(str, '$author', OPT.NAME);
+str = strrep(str, '$email', OPT.EMAIL);
+address = sprintf('%%       %s\n', OPT.ADDRESS{:});
 address = address(1:end-1);
 str = strrep(str, '%       $address', address);
 str = strrep(str, '$version', version);
