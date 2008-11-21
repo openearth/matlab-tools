@@ -66,12 +66,25 @@ function oetnewfun(varargin)
 % $HeadURL$
 
 %% defaults
+fields = {'COMPANY' 'ADDRESS' 'EMAIL' 'NAME'};
+for ifield = 1:length(fields)
+    % read various fields using getenv
+    temp.(fields{ifield}) = getenv(fields{ifield});
+    if isempty(temp.(fields{ifield}))
+        % fields not available, create dummy
+        temp.(fields{ifield}) = ['<' fields{ifield} '>'];
+    end
+end
+try
+    % try to evaluate the address, aiming to get a cell array
+    temp.(fields{ifield}) = eval(temp.ADDRESS);
+end
 OPT = struct(...
     'description', 'One line description goes here.',...
-    'Company', getenv('COMPANY'),...
-    'address', {eval(getenv('ADDRESS'))},...
-    'email', getenv('EMAIL'),...
-    'Author', getenv('NAME'));
+    'Company', temp.COMPANY,...
+    'address', {temp.ADDRESS},...
+    'email', temp.EMAIL,...
+    'Author', temp.NAME);
 
 OPT = setProperty(OPT, varargin{2:end});
 
