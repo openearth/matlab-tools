@@ -70,7 +70,7 @@ end
 if nargin ~= 0 && ischar(varargin{1})
     DefaultName = varargin{1};
 else
-    DefaultName = '';
+    DefaultName = 'Untitled';
 end
 
 [fpath fname] = fileparts(fullfile(cd, DefaultName));

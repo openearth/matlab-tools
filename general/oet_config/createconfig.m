@@ -1,7 +1,7 @@
 function str = createconfig
-%CREATECONFIGFILE  One line description goes here.
+%CREATECONFIGFILE  Create string with local config settings
 %
-%   More detailed description goes here.
+%   Create an evalstr of a structure containing local config information
 %
 %   Syntax:
 %   str = createconfig
@@ -12,7 +12,7 @@ function str = createconfig
 %   Example
 %   createconfigfile
 %
-%   See also
+%   See also getenv
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Delft University of Technology
@@ -52,9 +52,8 @@ function str = createconfig
 % $HeadURL$
 
 %%
-
 str = sprintf('config = struct(...\n');
 str = sprintf('%s\t%s\n', str, ['''NAME'', ''' getenv('USERNAME') ''',...']);
 str = sprintf('%s\t%s\n', str, '''COMPANY'', ''<COMPANY>'',...');
-str = sprintf('%s\t%s\n', str, '''ADDRESS'', ''<ADDRESS>'',...');
+str = sprintf('%s\t%s\n', str, '''ADDRESS'', {{''<ADDRESS>''}},...');
 str = sprintf('%s\t%s\n', str, '''EMAIL'', ''<EMAIL>'');');

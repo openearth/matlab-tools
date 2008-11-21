@@ -1,16 +1,14 @@
-function varargout = getlocalsettings(varargin)
-%GETLOCALSETTINGS  One line description goes here.
+function varargout = getlocalsettings
+%GETLOCALSETTINGS  Get local config information or write template
 %
-%   More detailed description goes here.
+%   Routine to read local config file or, if it does not exist, saves a
+%   template of such a file.
 %
 %   Syntax:
 %   varargout = getlocalsettings(varargin)
 %
-%   Input:
-%   varargin  =
-%
 %   Output:
-%   varargout =
+%   varargout = structure containing local config information
 %
 %   Example
 %   getlocalsettings
