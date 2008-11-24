@@ -61,8 +61,11 @@ for iargin = 1:length(varargin)
     else
         error([upper(mfilename) ':UnknownType'], 'Wrong input or unknown Type')
     end
+    warning off
     % get the factory defaults for the specified Type
     factoryDefaults = get(0, ['Factory' Type]);
+    warning on
+%     factoryDefaults = get(0, ['Default' Type]);
     % remove the first part of the fieldnames to only keep the property
     % names
     PropertyNames = cellfun(@(x) strrep(x, ['factory' Type], ''), fieldnames(factoryDefaults),...
