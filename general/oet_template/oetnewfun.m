@@ -2,9 +2,9 @@ function oetnewfun(varargin)
 % OETNEWFUN  Create a new function given the filename
 %
 % Routine to create a new function including help block template and
-% copyright block. Description, company, address, email and author can be
-% specified using property value pairs. Except the description, all
-% properties are by default obtained using the command getenv function. 
+% copyright block. The description can be specified using property value 
+% pairs. Company, address, email and author are obtained using from the
+% application data with getlocalsettings.
 %
 % Syntax:
 % oetnewfun('filename')
@@ -19,7 +19,7 @@ function oetnewfun(varargin)
 % oetnewfun('filename',...
 %     'description', 'This is an example of a new function.')
 %
-% See also: newfun getenv setenv
+% See also: newfun getlocalsettings
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Delft University of Technology
