@@ -34,6 +34,12 @@
 <icon>$toolbox/matlab/icons/webicon.gif</icon>
 </listitem>
 
+<listitem>
+<label>Repository</label>
+<callback>web https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab -browser;</callback>
+<icon>$toolbox/matlab/icons/webicon.gif</icon>
+</listitem>
+
 </list>
 
 </productinfo>

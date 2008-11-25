@@ -13,7 +13,8 @@ function addpathfast(basepath)
       [a,b]=system(['dir /b /ad /s ' '"' basepath '"']); % "'s added to enable spaces in directory and filenames
    else
       [a,b]=system(['find ' basepath ' -type d']);
-   end
+  end
+   b = [basepath char(10) b];
    s = strrep(b, char(10), pathsep);
    path(path, s);
 
