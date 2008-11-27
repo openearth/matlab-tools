@@ -1,0 +1,290 @@
+function varargout = struct2xls(fname,S,varargin)
+%Beta version of STRUCT2XLS   Save 1D data + fieldnames from matlab struct into xls file 
+%
+% STRUCT2XLS(filename,struct) converts a matlab struct 
+% with 1D numerical fields !! to an excel file. Non-numeric 
+% arrays are only allowed with xlswrite in matlab 2006b and above.
+% Character arrays can be 2D. By default the 2nd dimension of all 
+% 1D arrays should be  equal, and are taken as the column 
+% length in the excel sheet.
+%
+%  Example of resulting *.xls file:
+% 
+%  +---------------+---------------+---------------+---------------+
+%  |# textline 1   |               |               |               |
+%  |# textline 2   |               |               |               |
+%  |# textline 3   |               |               |               |
+%  | columnname_01 | columnname_02 | columnname_03 | columnname_04 |  
+%  | units         | units         | units         | units         |
+%  | number/string | number/string | number/string | number/string |
+%  | number/string | number/string | number/string | number/string |
+%  | number/string | number/string | number/string | number/string |
+%  | ...           | ...           | ...           | ...           |
+%  | number/string | number/string | number/string | number/string |
+%  +---------------+---------------+---------------+---------------+
+%
+% * Requires xlswrite from matlab 2006b depends upon Excel as a COM server.
+% - Does not use xlswrite from file exchange, which uses ActiveX.
+%   which due to bug in xlswrite files while writing to other directories, the 
+%   xlsfile is created locally with a tmp file and and then copied to 
+%   the destination directory. So you need write access where you run struct2xls.
+% * Beta version.
+% * Is not (by default) reciprocal of xls2struct (due to units line below column headers)
+%   and cell aray for 2D char arrays
+%
+% STRUCT2XLS(filename,struct,<keyword,value>) where 
+% implemented key words are:
+% * units : - 0 = not,
+%           - 1 = empty line
+%           - cell array is yes
+%           - struct with a fieldnames matching the struct field names is yes
+% * coldimnum: dim ension of fieldname input arrays to be used as column in excel (1 or 2)
+%             (default 2) after option oneD has optionally reshaped so the 1st dimension is 1. 
+% * coldimchar: dim ension of fieldname input arrays to be used as column in excel (1 or 2)
+%             (default 2) after option oneD has optionally reshaped so the 1st dimension is 1. 
+% * oneD: makes sure that both numeric matrix columns and matrix rows are written as Excel 
+%         columns (default 1), only works for arrays where either 1st or 2nd dimension has lenght 1..
+% * header: cell array of comment lines above column names
+% * overwrite which can be 
+%   'o' = overwrite
+%   'c' = cancel
+%   'p' = prompt (default, after which o/a/c can be chosen)
+%
+% [success]   = STRUCT2XLS(...)
+% [success,M] = STRUCT2XLS(...) where M is the cell array passed to XLSWRITE.
+%
+% G.J. de Boer aug 2006
+%
+% See also: XLSWRITE (2006b, otherwise mathsworks downloadcentral), 
+%           XLSREAD, XLS2STRUCT
+
+%   --------------------------------------------------------------------
+%   Copyright (C) 2006-2008 Delft University of Technology
+%       Gerben J. de Boer
+%
+%       g.j.deboer@tudelft.nl	
+%
+%       Fluid Mechanics Section
+%       Faculty of Civil Engineering and Geosciences
+%       PO Box 5048
+%       2600 GA Delft
+%       The Netherlands
+%
+%   This library is free software; you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation; either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library; if not, write to the Free Software
+%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+%   USA
+%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
+%   --------------------------------------------------------------------
+
+%% Jan 15 2008: added logicals
+
+%% Key words
+%% -----------------
+
+   OPT.coldimchar = 1;
+   OPT.coldimnum  = 2;
+   OPT.addunits   = 1; % empty line
+   OPT.units      = [];
+   OPT.header{1}  = ['* This file has been created with struct2xls.m and xlswrite.m @ ',datestr(now)];
+   OPT.oned       = 1; %reshape 1D matlab rows and columns into excel columns
+ 
+   iargin         = 1;
+   
+   while iargin<nargin-2,
+     if ischar(varargin{iargin}),
+       switch lower(varargin{iargin})
+       case 'coldimchar';iargin=iargin+1;OPT.coldimchar = varargin{iargin};
+       case 'coldimnum' ;iargin=iargin+1;OPT.coldimnum  = varargin{iargin};
+       case 'oned'      ;iargin=iargin+1;OPT.oned       = varargin{iargin};
+       case 'units'     ;iargin=iargin+1;OPT.units      = varargin{iargin};OPT.addunits  =1;
+       case 'header'    ;iargin=iargin+1;OPT.header     = varargin{iargin};
+       case 'overwrite' ;iargin=iargin+1;OPT.overwrite  = varargin{iargin};
+       otherwise
+          error(['Invalid string argument: ''',varargin{iargin},'''']);
+       end
+     end;
+     iargin=iargin+1;
+   end; 
+   
+   if ischar(OPT.header)
+     OPT.header = cellstr(OPT.header);
+   end
+   
+%% Check if file already exists
+%% -----------------
+
+   OPT.overwrite  = 'p'; % prompt
+   if exist(fname,'file')==2
+      
+      if strcmp(OPT.overwrite,'p')
+         disp(['File ',fname,' alreay exists. '])
+         OPT.overwrite = input(['Overwrite/cancel ? (o/c): '],'s');
+         % for some reason input in Matlab R14 SP3 removes slashes
+         % OPT.overwrite = input(['File ',fname,' alreay exists. Overwrite/cancel ? (o/a/c)'],'s');
+         while isempty(strfind('oac',OPT.overwrite))
+             OPT.overwrite = input(['Overwrite/cancel ? (o/c): '],'s');
+         end
+      end
+      
+      if strcmp(lower(OPT.overwrite),'o')
+         disp (['File ',fname,' overwritten as it alreay exists.'])
+         delete(fname)
+      end      
+      
+      if strcmp(lower(OPT.overwrite),'c')
+         if nargout==0
+            error(['File ',fname,' not saved as it alreay exists.'])
+         else
+            success = -2;
+            disp(['File ',fname,' not saved as it alreay exists.'])
+         end
+      end        
+      
+   else
+      OPT.overwrite = 'o'; % create
+   end
+
+
+%% Transform into cell array
+%% that can contain all 1D arrays
+%% -----------------
+
+   fldnames  = fieldnames(S);
+   nfld      = length(fldnames);
+
+%% Make 1D vectors (rowwise and columnwise) 1D in right dimension for excel columns
+%% -----------------
+      
+   if OPT.oned
+      for ifld=1:nfld
+         fldname   = char(fldnames(ifld));
+         if isnumeric(S.(fldname)) | ...
+            islogical(S.(fldname))
+            if length(size(S.(fldname)))==2
+               if (size(S.(fldname),2)==1)
+                  S.(fldname) = S.(fldname)';
+               end
+            end
+         end
+      end
+   end
+
+%% Initialize cell array
+%% -----------------
+
+   maxlength = 0;
+   for ifld=1:nfld
+      fldname   = char(fldnames(ifld));
+      maxlength = max(maxlength,length(S.(fldname)));
+   end
+   
+
+   nheader = length(OPT.header);
+   nextra  = nheader + 1 + (OPT.addunits==1 || iscell(OPT.addunits));
+   M       = cell (maxlength + nextra,nfld);
+   
+%% Add header and column names
+%% -----------------
+
+   for iheader=1:nheader
+      M{iheader,1} = OPT.header{iheader};
+   end
+         
+%% Fill cell array
+%% -----------------
+
+   for ifld=1:nfld
+   
+      fldname             = char(fldnames(ifld));
+      fldsize             = size(S.(fldname));
+      
+      M{nheader + 1,ifld}    = fldname;
+      if ~isempty(OPT.units)
+         if iscell(OPT.units)
+            M{nheader + 2,ifld}    = char(OPT.units{ifld});
+         elseif isstruct(OPT.units)
+            if isfield(OPT.units,fldname)
+            M{nheader + 2,ifld}    = OPT.units.(fldname);
+            end
+         end
+      end
+
+      %if strcmp(version('-release'),'14')    | ...
+      %
+      %   M = zeros(maxlength,nfld);
+      %
+      %   %% uses xlswrite from download central
+      %   %% ---------------------
+      %   if OPT.coldim==1
+      %      M(1:fldsize(OPT.coldim),ifld) = S.(fldname)';
+      %   elseif OPT.coldim==2
+      %      M(1:fldsize(OPT.coldim),ifld) = S.(fldname);
+      %   end
+      %
+      %   colnames = fldnames;
+      %   if isempty(filepathstr(fname))
+      %     xlswrite(M,OPT.header,colnames,fname); % download central
+      %   else
+      %     tmpfilename = gettmpfilename('','.xls'); % download central
+      %     xlswrite(M,OPT.header,colnames,tmpfilename);
+      %     copyfile(tmpfilename,fname)
+      %     delete  (tmpfilename)
+      %   end
+      %
+      %else
+      
+      if iscellstr(S.(fldname))
+         S.(fldname) = char(S.(fldname));
+      end
+
+         if isnumeric(S.(fldname)) | ...
+            islogical(S.(fldname))
+            %% uses xlswrite shipped with matlab 
+            %% ---------------------
+            if OPT.coldimnum==1
+               for irow=1:1:fldsize(OPT.coldimnum)
+               M{irow + nextra,ifld} = S.(fldname)(irow,:);
+               end
+            elseif OPT.coldimnum==2
+               for irow=1:1:fldsize(OPT.coldimnum)
+               M{irow + nextra,ifld} = S.(fldname)(:,irow);
+               end
+            end
+         elseif ischar(S.(fldname))
+
+            %% uses xlswrite shipped with matlab 
+            %% ---------------------
+            if OPT.coldimchar==1
+               for irow=1:1:fldsize(OPT.coldimchar)
+               M{irow + nextra,ifld} = S.(fldname)(irow,:);
+               end
+            elseif OPT.coldimchar==2
+               for irow=1:1:fldsize(OPT.coldimchar)
+               M{irow + nextra,ifld} = S.(fldname)(:,irow);
+               end
+            end
+         end
+
+      %end
+   end
+   
+   success = xlswrite(fname,M);
+
+   if nargout==1
+      varargout = {success};
+   elseif nargout==2
+      varargout = {success,M};
+   end
+   
+%% EOF   
