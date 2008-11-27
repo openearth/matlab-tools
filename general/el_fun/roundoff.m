@@ -57,10 +57,10 @@ function Xround = roundoff(X, n, varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% $Id$ 
-% $Date$
-% $Author$
-% $Revision$
+% $Id: roundoff.m 30 2008-11-11 14:46:34Z heijer $ 
+% $Date: 2008-11-11 15:46:34 +0100 (di, 11 nov 2008) $
+% $Author: heijer $
+% $Revision: 30 $
 
 %% check input
 if nargin == 1
