@@ -18,7 +18,7 @@
 
 <listitem>
 <label>Help</label>
-<callback>doc ucit/</callback>
+<callback>doc help</callback>
 <icon>$toolbox/matlab/icons/book_mat.gif</icon>
 </listitem>
 
@@ -26,6 +26,12 @@
 <label>Demos</label>
 <callback>demo toolbox OpenEarthTools</callback>
 <icon>$toolbox/matlab/icons/demoicon.gif</icon>
+</listitem>
+
+<listitem>
+<label>Edit personal config</label>
+<callback>edit(fullfile(getenv('APPDATA'), 'OET', 'config'))</callback>
+<icon>$toolbox/matlab/icons/webicon.gif</icon>
 </listitem>
 
 <listitem>
