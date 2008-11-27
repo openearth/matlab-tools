@@ -1,32 +1,12 @@
-function PATHSTR = filepathstr(fullfilename,varargin)
-%FILEPATHSTR   Returns PATHSTR from [PATHSTR,NAME,EXT,VERSN] = FILEPARTS(FILE).
-% 
-% By default PATHSTR does NOT end with a filesep.
-% PATHSTR(fullfilename,1) adds a filesep.
+function y = year(datenums);
+%YEAR   returns year of datenumber
 %
-% Note that FILEPATHSTR is vectorized, whereas FILEPARTS is not.
+% y = year(datenum) returns the year.
 %
-% See also:
-% FILEPARTS, FILENAME, FILEEXT, FILENAMEEXT, FULLFILE
+%See also: YEARDAY, MONTH, DATENUM
 
-for iname=1:size(fullfilename,1)
-
-   [PATHSTR{iname},NAME{iname},EXT{iname},VERSN{iname}] = fileparts(fullfilename(iname,:));
-
-end 
-
-PATHSTR = char(PATHSTR);
-
-if nargin==2
-   if varrgin{1}
-   PATHSTR = [PATHSTR,filesep];
-   end
-end
-
-% Feb 2008, vectorized.
-   
 %   --------------------------------------------------------------------
-%   Copyright (C) 2005-8 Delft University of Technology
+%   Copyright (C) 2008 Delft University of Technology
 %       Gerben J. de Boer
 %
 %       g.j.deboer@tudelft.nl	
@@ -51,7 +31,8 @@ end
 %   License along with this library; if not, write to the Free Software
 %   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 %   USA
-%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+[y,m,d,h,mi,s] = datevec(datenums);
 
 %% EOF

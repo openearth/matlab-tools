@@ -4,7 +4,7 @@ function EXT = fileext(fullfilename)
 % Note that FILEEXT is vectorized, whereas FILEPARTS is not.
 %
 % See also:
-% FILEPARTS, FILEPATHSTR, FILENAME, FILENAMEEXT
+% FILEPARTS, FILEPATHSTR, FILENAME, FILENAMEEXT, FULLFILE
 
 for iname=1:size(fullfilename,1)
 

@@ -4,7 +4,7 @@ function NAME = filename(fullfilename)
 % Note that FILENAME is vectorized, whereas FILEPARTS is not.
 %
 % See also:
-% FILEPARTS, FILEPATHSTR, FILEEXT, FILENAMEEXT
+% FILEPARTS, FILEPATHSTR, FILEEXT, FILENAMEEXT, FULLFILE
 
 for iname=1:size(fullfilename,1)
 
