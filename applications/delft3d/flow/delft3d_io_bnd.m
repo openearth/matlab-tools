@@ -6,18 +6,18 @@ function varargout=delft3d_io_bnd(cmd,varargin),
 %
 %       delft3d_io_bnd('write',filename,DATA);
 %
-% See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
-%           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
-%           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf, 
-%           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src, 
-%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd, 
+% See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd,
+%           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva,
+%           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf,
+%           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src,
+%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd,
 %           bct2bca
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
 %       Gerben J. de Boer
 %
-%       g.j.deboer@tudelft.nl	
+%       g.j.deboer@tudelft.nl
 %
 %       Fluid Mechanics Section
 %       Faculty of Civil Engineering and Geosciences
@@ -38,10 +38,12 @@ function varargout=delft3d_io_bnd(cmd,varargin),
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library; if not, write to the Free Software
 %   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA or 
+%   USA or
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% 2008 Nov 28: * corrected test for 3d-profile (missing dash) [Yann Friocourt]
+%
 % 2008 Jul 11: * made it work when Labels have length < 11 [Anton de Fockert]
 %              * removed useless threeD keyword [Anton de Fockert]
 
@@ -88,13 +90,13 @@ STRUCT.filename = varargin{1};
 
    mmax = Inf;
    nmax = Inf;
-if nargin==3 
+if nargin==3
    mmax = varargin{2};
    nmax = varargin{3};
-elseif nargin==4 
+elseif nargin==4
    mmax = varargin{3};
    nmax = varargin{4};
-end   
+end
 
 fid          = fopen(STRUCT.filename,'r');
 if fid==-1
@@ -102,16 +104,16 @@ if fid==-1
 else
    STRUCT.iostat   = -1;
    i            = 0;
-   
+
    while ~feof(fid)
-   
+
       i = i + 1;
-   
-      STRUCT.DATA(i).name         = fscanf(fid,'%20c',1); 
+
+      STRUCT.DATA(i).name         = fscanf(fid,'%20c',1);
       STRUCT.DATA(i).bndtype      = fscanf(fid,'%1s' ,1);
       STRUCT.DATA(i).datatype     = fscanf(fid,'%1s' ,1);
       STRUCT.DATA(i).mn           = fscanf(fid,'%i'  ,4);
-      
+
       % turn the endpoint-description along gridlines into vectors
 
       [STRUCT.DATA(i).m,...
@@ -130,9 +132,9 @@ else
       if STRUCT.DATA(i).mn(4)==nmax+1
          STRUCT.DATA(i).mn(4)= nmax;
       end
-      
+
       STRUCT.DATA(i).alfa         = fscanf(fid,'%f'  ,1);
-      
+
       rec = fgetl(fid);
 
       %if threeD
@@ -140,44 +142,44 @@ else
          strcmpi('Q',STRUCT.DATA(i).bndtype) | ...
          strcmpi('T',STRUCT.DATA(i).bndtype) | ...
          strcmpi('R',STRUCT.DATA(i).bndtype)
-      
+
      [STRUCT.DATA(i).vert_profile,rec] = strtok(rec); %,fscanf(fid,'%20c',1);
-     
+
         if strcmpi(STRUCT.DATA(i).vert_profile,'3D')
 
         [dummy,rec] = strtok(rec); %,fscanf(fid,'%20c',1);
-     
-         STRUCT.DATA(i).vert_profile = '3D profile';
+
+         STRUCT.DATA(i).vert_profile = '3d-profile';
 
         end
 
         if ~(strcmpi(STRUCT.DATA(i).vert_profile,'uniform')     | ...
              strcmpi(STRUCT.DATA(i).vert_profile,'Logarithmic') | ...
-             strcmpi(STRUCT.DATA(i).vert_profile,'3D profile'))
-           
+             strcmpi(STRUCT.DATA(i).vert_profile,'3d-profile'))
+
            error(['Not a valid profile: ''',STRUCT.DATA(i).vert_profile])
-           
+
         end
-      
+
       end
       %end
 
       if strcmp('A',STRUCT.DATA(i).datatype)
 
-          
+
          [STRUCT.DATA(i).labelA,rec]  = strtok(rec); %[letter,fscanf(fid,'%11c',1)];
           STRUCT.DATA(i).labelB       = strtok(rec); %[letter,fscanf(fid,'%11c',1)];
-          
+
       end
-      
-   end   
-   
+
+   end
+
    STRUCT.iostat   = 1;
    STRUCT.NTables  = i;
-   
+
    %% (m,n) coordinates as used for D3D matrices with dummy rows and columns
    %% ---------------------------
-   
+
    for i=1:STRUCT.NTables
       STRUCT.m(i,:) = [STRUCT.DATA(i).mn(1) STRUCT.DATA(i).mn(3)];
       STRUCT.n(i,:) = [STRUCT.DATA(i).mn(2) STRUCT.DATA(i).mn(4)];
@@ -185,11 +187,11 @@ else
 
    STRUCT.m(i,:) = [STRUCT.DATA(i).mn(1) STRUCT.DATA(i).mn(3)];
    STRUCT.n(i,:) = [STRUCT.DATA(i).mn(2) STRUCT.DATA(i).mn(4)];
-   
+
    %% (m,n) coordinates as used for matrices without dummy rows
    %% boundaries defined at faces (so each segment is spanned between two corners)
    %% ---------------------------
-   
+
    fclose(fid);
    iostat=1;
 
@@ -222,13 +224,13 @@ for i=1:length(STRUCT.DATA)
            STRUCT.DATA(i).mn(3)   ,...
            STRUCT.DATA(i).mn(4)   ,...
            STRUCT.DATA(i).alfa    );
-   
-   if STRUCT.DATA(i).threeD	
+
+   if STRUCT.DATA(i).threeD
    if strcmp('C',STRUCT.DATA(i).bndtype) | ...
       strcmp('Q',STRUCT.DATA(i).bndtype) | ...
       strcmp('T',STRUCT.DATA(i).bndtype) | ...
       strcmp('R',STRUCT.DATA(i).bndtype)
-   
+
       if ~isfield(STRUCT.DATA(i),'vert_profile')
          % DEFAULT
          vert_profile = 'Uniform';
@@ -238,10 +240,10 @@ for i=1:length(STRUCT.DATA)
       end
       fprintf(fid,'%1c',' ');
       fprintfstringpad(fid,20,vert_profile,' ');
-      
+
    end
    end
-   
+
    if strcmp('A',STRUCT.DATA(i).datatype)
    % print only labels for *.bca file if present
    if isfield(STRUCT.DATA(i),'labelA')
@@ -249,8 +251,8 @@ for i=1:length(STRUCT.DATA)
            STRUCT.DATA(i).labelA,...
            STRUCT.DATA(i).labelB);
    end
-   end           
-           
+   end
+
    if     strcmp(lower(OS(1)),'u')
       fprintf(fid,'\n');
    elseif strcmp(lower(OS(1)),'w')
