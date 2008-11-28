@@ -1,9 +1,9 @@
 function varargout=vs_meshgrid2dcorcen(varargin),
-% VS_MESHGRID2DCORCEN   Reads 2D time-independent grid info from NEFIS file.
+%VS_MESHGRID2DCORCEN   Reads 2D time-independent grid info from NEFIS file.
 %
 %  G = VS_MESHGRID2DCORCEN(NFSstruct);
 %
-% where NEFISstruct is a NEFIS struct as returned by vs_use()
+% where NEFISstruct is a NEFIS struct as returned by VS_USE(...)
 % 
 % reads all the relevant 2D time-invariant griddata 
 % from NEFIS struct as returned by vs_use()
@@ -53,35 +53,35 @@ function varargout=vs_meshgrid2dcorcen(varargin),
 %   the corner array is at point (n-1:n,m-1:m) with size 2x1,
 %
 % Option, value pairs are:
-% * 'geometry' to read grid distances as well (default off)
-%              guu and gvv calculated form trim file data are NaN at boundaries
-%              while the comfile contains 'mirrored' values here.
-% * 'face'     to grid face positions as well (default off)
-% * 'area'     grid cell areas (where cen.area is area between corners)
-% * 'mdf'      reads dpsopt and dpuopt from *.mdf file (default []).
-% * 'dpsopt'   method to calculate depths at center points  (only valid when 'mdf' isempty)
-% * 'dpuopt'   method to calculate depths at velocity faces (only valid when 'mdf' isempty)
-% * 'timestep' timestep for time dependent wave grid (default 1)
-% Implemented are:
-% - comfile 
-% - trimfile
-% - wavmfile (hwgxy), all co-ordimnates are read, not subset, and only cor, u and v
+%
+%  * 'geometry' to read grid distances as well (default off)
+%               guu and gvv calculated form trim file data are NaN at boundaries
+%               while the comfile contains 'mirrored' values here.
+%  * 'face'     to grid face positions as well (default off)
+%  * 'area'     grid cell areas (where cen.area is area between corners)
+%  * 'mdf'      reads dpsopt and dpuopt from *.mdf file (default []).
+%  * 'dpsopt'   method to calculate depths at center points  (only valid when 'mdf' isempty)
+%  * 'dpuopt'   method to calculate depths at velocity faces (only valid when 'mdf' isempty)
+%  * 'timestep' timestep for time dependent wave grid (default 1)
+%
+%  Implemented are:
+%  - comfile 
+%  - trimfile
+%  - wavmfile (hwgxy), all co-ordimnates are read, not subset, and only cor, u and v
 %
 % Remarks:
-% * The depth is the initial depth.
-% * The depth is positive up, like the water level, unlike the depth input file.
-% * the depth at center/face points depends on the settings of the 
-%   keywords dpsopt and dpuopt in the *.mdf file.
-% * The masks are NaN at inactive points, and 1 at active points.
-% * The dimension of the arrays are [n,m]
+%  * The depth is the initial depth.
+%  * The depth is positive up, like the water level, unlike the depth input file.
+%  * the depth at center/face points depends on the settings of the 
+%    keywords dpsopt and dpuopt in the *.mdf file.
+%  * The masks are NaN at inactive points, and 1 at active points.
+%  * The dimension of the arrays are [n,m]
 %
 % Note
 % G.u.guu should be G.u.gu as 2nd letter is direction and first letter is location.
 % G.v.gvv should be G.v.gv as 2nd letter is direction and first letter is location.
 %
-% See also: VS_USE, VS_LET, VS_DISP,
-%           VS_MESHGRID2DCORCEN,
-%           VS_MESHGRID2D0 (for which this is a replacement)
+% See also: VS_USE, VS_LET, VS_DISP, VS_MESHGRID2DCORCEN 
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004-2007 Technische Universiteit Delft, 

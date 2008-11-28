@@ -1,27 +1,29 @@
-function varargout = vs_trih_station(trih,station_id)
-%VS_TRIH_STATION
+function varargout = vs_trih_station(trih,varargin)
+%VS_TRIH_STATION   get [x,y,m,n,name] information of history stations (obs point)
 %
-% ST = vs_trih_station(trih,station_id)
+% ST = VS_TRIH_STATION(trih,<station_id>)
 %
-% returns a struct with fields:
-%  - m
-%  - n
-%  - x
-%  - y
-%  - index
-%  - name
+% where trih = VS_USE(...) and ST is a struct with fields:
+%    - m
+%    - n
+%    - x
+%    - y
+%    - index
+%    - name
 % 
 % where station_id can be :
-% - the index(es) in the trih file 
-% - station name(s) as a multidimensional characters array.
-%   where stations are counted in the first dimension.
-% - a cell array of station name(s)
+%    - the index(es) in the trih file 
+%    - station name(s) as a multidimensional characters array.
+%      where stations are counted in the first dimension.
+%    - a cell array of station name(s)
+%    - absent or empty to load all stations
 % 
 % Examples: 
 %
-% st = vs_trih_station(trihfile(i),{'coast05','coast06'});
-% st = vs_trih_station(trihfile(i),['coast05';'coast06']);
-% st = vs_trih_station(trihfile(i),[10 11]);
+%   ST = VS_TRIH_STATION(trih);
+%   ST = VS_TRIH_STATION(trih,{'coast05','coast06'});
+%   ST = VS_TRIH_STATION(trih,['coast05';'coast06']);
+%   ST = VS_TRIH_STATION(trih,[10 11]);
 %
 % [ST,iostat] = vs_trih_station(trih,station_id)
 % returns iostat=1 when succesfull, and iostat=-1 when failed.
@@ -60,7 +62,16 @@ function varargout = vs_trih_station(trih,station_id)
 
    iostat =  1;
    
-   %% Get names from indices of vv.
+   %% Input
+   %% ------------------------------
+
+   if nargin==1
+      station_id = [];
+   else
+      station_id = varargin{1};
+   end
+   
+   %% Get names from indices or vv.
    %% ------------------------------
 
    if iscell(station_id)
@@ -68,11 +79,20 @@ function varargout = vs_trih_station(trih,station_id)
    end
    
    if ischar(station_id)
+   
       ST.name  = station_id;
       ST.index = vs_trih_station_index(trih,station_id,'strcmp'); % Only one station with exact name match, with multiple stations this function fails.
+      
+   elseif isempty(station_id) % BEFORE isnumeric because [] is also numeric!!!
+   
+      ST.index = 1:vs_get_elm_size(trih,'NAMST'); % get all stations
+      ST.name  = permute(vs_let(trih,'his-const','NAMST',{ST.index}),[2 3 1]);
+      
    elseif isnumeric(station_id)
+   
       ST.index = station_id;
       ST.name  = permute(vs_let(trih,'his-const','NAMST',{ST.index}),[2 3 1]);
+      
    end
    
    if ~(length(ST.index)==size(ST.name,1))
@@ -132,3 +152,5 @@ function varargout = vs_trih_station(trih,station_id)
    elseif nargout==2
      varargout = {ST,iostat};
    end
+   
+%% EOF   

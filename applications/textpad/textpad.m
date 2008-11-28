@@ -1,8 +1,9 @@
-function textpad(mfile,varargin)
-%TEXTPAD   launches textpad and opens specified (m)file
+function textpad(varargin)
+%TEXTPAD   launches textpad and optionally opens specified (m)file at specified line
 %
-%   TEXTPAD(mfile,<line>)
-%   TEXTPAD(mfile,<line>,<col>)
+%   TEXTPAD(<mfile>)
+%   TEXTPAD(<mfile>,<line>)
+%   TEXTPAD(<mfile>,<line>,<col>)
 %
 %   puts the cursor in specified line en column number.
 %
@@ -38,25 +39,42 @@ function textpad(mfile,varargin)
 %   http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-   OPT.line = 1;
-   OPT.col  = 1;
+   OPT.line  = 1;
+   OPT.col   = 1;
+   OPT.mfile = [];
    
+   if nargin>0
+      OPT.mfile = varargin{1};
+   end
    if nargin>1
-      OPT.line = varargin{1};
+      OPT.line  = varargin{2};
    end
    if nargin>2
-      OPT.col  = varargin{2};
+      OPT.col   = varargin{3};
    end
 
-   fullmfile = which(mfile);
+   if isempty(OPT.mfile)
 
-       if exist('c:\progra~1\textPad\textpad.exe')==2
-   eval(['!c:\progra~1\textPad\textpad.exe -q ',fullmfile,' (',num2str(OPT.line),',',num2str(OPT.col),')&']);
-   elseif exist('c:\progra~1\textPad 4\textpad.exe')==2
-   eval(['!c:\progra~1\textPa~1\textpad.exe -q ',fullmfile,' (',num2str(OPT.line),',',num2str(OPT.col),')&']);
-   elseif exist('c:\progra~1\textPad 5\textpad.exe')==2
-   eval(['!c:\progra~1\textPa~1\textpad.exe -q ',fullmfile,' (',num2str(OPT.line),',',num2str(OPT.col),')&']);
+          if exist('c:\progra~1\textPad\textpad.exe')==2
+            eval(['!c:\progra~1\textPad\textpad.exe  &']);
+      elseif exist('c:\progra~1\textPad 4\textpad.exe')==2
+            eval(['!c:\progra~1\textPa~1\textpad.exe &']);
+      elseif exist('c:\progra~1\textPad 5\textpad.exe')==2
+            eval(['!c:\progra~1\textPa~1\textpad.exe &']);
+      end
+
+
+   else
+      fullmfile = which(OPT.mfile);
+
+          if exist('c:\progra~1\textPad\textpad.exe')==2
+            eval(['!c:\progra~1\textPad\textpad.exe -q ' ,fullmfile,' (',num2str(OPT.line),',',num2str(OPT.col),')&']);
+      elseif exist('c:\progra~1\textPad 4\textpad.exe')==2
+            eval(['!c:\progra~1\textPa~1\textpad.exe -q ',fullmfile,' (',num2str(OPT.line),',',num2str(OPT.col),')&']);
+      elseif exist('c:\progra~1\textPad 5\textpad.exe')==2
+            eval(['!c:\progra~1\textPa~1\textpad.exe -q ',fullmfile,' (',num2str(OPT.line),',',num2str(OPT.col),')&']);
+      end
+     
    end
-  %eval(['!c:\Program Files\textPad\textpad.exe ...'); % does not work
 
 %% EOF

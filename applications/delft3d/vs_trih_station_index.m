@@ -1,15 +1,14 @@
 function indices = vs_get_trih_station_index(trih,varargin)
-%VS_GET_TRIH_STATION_INDEX
+%VS_GET_TRIH_STATION_INDEX   get index of history station (obs point)
 %
-% index = vs_get_trih_station_index(trih,stationname)
+% index = VS_GET_TRIH_STATION_INDEX(trih,stationname)
 %
 % returns the index of a station called stationname.
 %
-% trih can be a struct as loaded by vs_use(...)
-% or a NEFIS history file name to be loaded by vs_use
-% internally.
+% trih can be a struct as loaded by vs_use(...) or a
+% NEFIS history file name to be loaded by vs_use internally.
 %
-% Leading and traling blanks of the station name are ignored,
+% Leading and trailing blanks of the station name are ignored,
 % both in the specified names, as in the names as present
 % in the history file.
 %
@@ -137,10 +136,10 @@ case 'strcmp'
 
    indices = [];
    
-   for istat=1:nstat
-
-      for i=1:size(stationname,1)
+   for i=1:size(stationname,1)
    
+      for istat=1:nstat
+
          if strcmp(deblank2(stationname(i,:)),...
                    deblank2(namst(istat,:)))
 
@@ -167,5 +166,4 @@ case 'strmatch'
    
 end
 
-
- 
+%% EOF

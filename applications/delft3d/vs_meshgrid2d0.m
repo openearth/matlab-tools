@@ -16,6 +16,7 @@ function varargout=vs_meshgrid2d0(varargin),
 %
 % See also: vs_use, vs_let, vs_disp
 
+warning('deprecated, use VS_MESHGRID2DCORCEN instead')
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004-2007 Technische Universiteit Delft, 

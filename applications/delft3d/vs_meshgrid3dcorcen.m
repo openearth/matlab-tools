@@ -1,7 +1,7 @@
 function varargout=vs_meshgrid3dcorcen(varargin),
-% beta version of VS_MESHGRID3DCORCEN   Reads 3D time-dependent grid info from NEFIS file.
+%VS_MESHGRID3DCORCEN   Reads 3D time-dependent grid info from NEFIS file.
 %
-%  G = VS_MESHGRID3DCORCEN(NFSstruct,TimeStep,G);
+%  G = VS_MESHGRID3DCORCEN(NFSstruct,TimeStep,G,<'keyword',value>);
 %
 % where G is the time independent G as obtained with
 % VS_MESHGRID2DCORCEN, or an empty [], so that it will be 
@@ -9,18 +9,16 @@ function varargout=vs_meshgrid3dcorcen(varargin),
 %
 % Works for fully for sigma and partially (cell centers only) for z planes.
 %
-%         ...,'optionname',optionval,...
-%         supported options:
-% 'centres',struct with fields 1 or more of the fields
-%    - cor (default 0)
-%    - cen (default 1)
-%    - u   (default 0)
-%    - v   (default 0)
-%  with value 0 indicating to not calulcate them, and 1 to calculate them
-% 'intface',same as for keyword 'centres' 
+% Implemented optional <'keyword',value> pairs are:
+% * 'centres',struct with fields 1 or more of the fields
+%      - cor (default 0)
+%      - cen (default 1)
+%      - u   (default 0)
+%      - v   (default 0)
+%    with value 0 indicating to not calulcate them, and 1 to calculate them
+% * 'intface',same as for keyword 'centres' 
 %
-% See also: VS_USE, VS_LET, VS_DISP,
-%           VS_MESHGRID2DCORCEN
+% See also: VS_USE, VS_LET, VS_DISP, VS_MESHGRID3DCORCEN
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Technische Universiteit Delft, 

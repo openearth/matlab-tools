@@ -17,6 +17,8 @@ function varargout=vs_meshgrid3d(varargin),
 %  with value 0 indicating to not calulcate them, and 1 to calculate them
 % 'intface',same as for keyword 'centres' 
 
+warning('deprecated, use VS_MESHGRID3DCORCEN instead')
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004 Technische Universiteit Delft, 
 %       Gerben J. de Boer

@@ -23,7 +23,7 @@ function varargout=vs_meshgrid2d(varargin),
 %         * 'geometry'
 %            1: calculates grid distances guu,gvv, guv, gvu
 
- 
+warning('deprecated, use VS_MESHGRID2DCORCEN instead')
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004 Technische Universiteit Delft, 
