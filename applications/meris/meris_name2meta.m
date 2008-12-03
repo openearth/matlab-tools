@@ -183,8 +183,6 @@ function varargout = meris_name2meta(name),
 
    DAT.counter                 = str2num(name(56:59)); % QQQQ
 
-   DAT.satellite               = name(61:62); % SS
-
 %% Place
 %% --------------------------------------------
 
@@ -196,15 +194,21 @@ function varargout = meris_name2meta(name),
 %% Not quite waterproof, because storing meta-info in filename is not a professional approach.
 %% --------------------------------------------
 
-if strcmp(DAT.satellite,'E1') || ...
-   strcmp(DAT.satellite,'E2') || ...
-   strcmp(DAT.satellite,'N1')
+if length(name) > 60
+   DAT.satellite               = name(61:62); % SS
 
-else   
+   if strcmp(DAT.satellite,'E1') || ...
+      strcmp(DAT.satellite,'E2') || ...
+      strcmp(DAT.satellite,'N1')
+   
+      DAT.algorithm            = '?';
 
-   DAT.satellite               = 'N1';
-   DAT.algorithm               = name(61:end);
-
+   else   
+   
+      DAT.satellite            = '?';
+      DAT.algorithm            = filename(name(60:end)); % remove extension
+   
+   end
 end
 
 if nargout==1

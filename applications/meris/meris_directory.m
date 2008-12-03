@@ -1,8 +1,8 @@
 function varargout = meris_directory(directory,varargin)
 %MERIS_DIRECTORY   retrieves all image and SIOP names from directory with meris images
 %
-%  IMAGE_names             = MERIS_TST(directory,<extension>)
-% [IMAGE_names,SIOP_names] = MERIS_TST(directory,<extension>)
+%  IMAGE_names             = MERIS_DIRECTORY(directory,<extension>)
+% [IMAGE_names,SIOP_names] = MERIS_DIRECTORY(directory,<extension>)
 %
 % Example: a directory with the following 2 files:
 %
