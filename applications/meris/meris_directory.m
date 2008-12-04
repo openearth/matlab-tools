@@ -19,7 +19,7 @@ function varargout = meris_directory(directory,varargin)
 %See also: MERIS_NAME2META, MERIS_FLAGS, MERIS_MASK
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2008 Oct. Deltares
+%   Copyright (C) 2008 Dec. Deltares
 %       G.J.de Boer
 %
 %       gerben.deboer@deltares.nl	

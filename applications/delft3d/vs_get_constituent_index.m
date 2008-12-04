@@ -138,6 +138,22 @@ IND = [];
       else
          error(['Parameter not implemented yet/not found in file: ',parameter])
       end
+      
+   elseif strcmp(NFSstruct.SubType,'Delft3D-com') & isempty(parameter)
+
+      parameter = 'salinity';
+         IND.(parameter).index                   = 1; 
+         IND.(parameter).dim                     = 3; 
+         IND.(parameter).groupname               = 'DWQTIM';
+         IND.(parameter).elementname             = 'RSAL';
+
+      parameter = 'temperature';
+         IND.(parameter).index                   = 1; 
+         IND.(parameter).dim                     = 3; 
+         IND.(parameter).groupname               = 'DWQTIM';
+         IND.(parameter).elementname             = 'RTEM';
+         
+      parameter = [];      
 
    else
   
