@@ -1,7 +1,9 @@
 function oetsettings(varargin)
 %OETSETTINGS   enable the OpenEarthTools matlab tools by adding all relevant matlab paths.
 %
-% OpenEarthTools is a collected of open source tools (GNU (Lesser) Public License).
+% OpenEarthTools is a collection of open source tools 
+% intended to be licensed under the GNU (Lesser) Public License
+% (http://www.gnu.org/licenses/licenses.html).
 %
 % For more information on OpenEarthTools refer to the following two sources:
 %
@@ -56,7 +58,7 @@ function oetsettings(varargin)
    basepath = fileparts(which(mfilename));
    warning off
    path(path, fullfile(basepath, 'oet_general'));
-   addpathfast(basepath);
+   addpathfast(basepath); % excludes *.svn directories!
 
 %% Restore warning and directory state
 %% ---------------------
