@@ -4,7 +4,8 @@ function start_of_PATHSTR = first_subdir(fullfilename,varargin)
 % returns first subdirectory names from filename
 %
 % subdir = first_subdir(file) 
-% subdir = first_subdir(file,n) returns first n subdirectories
+% (n > 0): subdir = first_subdir(file,n) returns first n subdirectories
+% (n < 0): subdir = first_subdir(file,n) returns all subdirectories except last n
 %
 % See also: FILEPARTS, filepathstr, filename, filenameext, last_subdir
 
@@ -37,22 +38,43 @@ function start_of_PATHSTR = first_subdir(fullfilename,varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-[PATHSTR,NAME,EXT,VERSN] = fileparts(fullfilename);
+   %% Make sure traling directory end with a slash
+   %% ---------------------------------------------
+   
+   if isdir(fullfilename) & ~strcmp(fullfilename(end),filesep)
+      fullfilename = [fullfilename filesep];
+   end
 
-PATHSTR                  = path2os(PATHSTR);
+   %% Chop directory into parts
+   %% ---------------------------------------------
 
-slash_positions          = findstr(PATHSTR,filesep);
-slash_positions          = [slash_positions length(fullfilename)-1];
+   [PATHSTR,NAME,EXT,VERSN] = fileparts(fullfilename);
+   
+   PATHSTR                  = path2os(PATHSTR);
 
-if nargin==2
-   nsubdir = varargin{1};
-else
-   nsubdir = 1;
-end
+   slash_positions          = findstr(PATHSTR,filesep);
+   slash_positions          = [slash_positions length(fullfilename)-1];
+   
+   if nargin==2
+      nsubdir = varargin{1};
+   else
+      nsubdir = 1;
+   end
 
-if nsubdir > (length(slash_positions));
-   nsubdir = length(slash_positions);
-   disp(['Warning: n truncated to : ',num2str(nsubdir)])
-end
+   if abs(nsubdir) > (length(slash_positions));
+      nsubdir = sign(nsubdir).*length(slash_positions);
+      disp(['Warning: n truncated to : ',num2str(nsubdir)])
+   end
+   
+   %% Gather relevant directory parts
+   %% ---------------------------------------------
+   
+   if sign(nsubdir) > 0
+   start_of_PATHSTR  = PATHSTR(1:1+slash_positions(nsubdir)-1);
+   else
+   length(slash_positions) 
+   nsubdir
+   start_of_PATHSTR  = PATHSTR(1:slash_positions(length(slash_positions) + nsubdir));
+   end
 
-start_of_PATHSTR  = PATHSTR(1:1+slash_positions(nsubdir)-1);
+%% EOF
