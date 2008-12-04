@@ -57,17 +57,6 @@ function oetsettings(varargin)
    warning off
    path(path, fullfile(basepath, 'oet_general'));
    addpathfast(basepath);
-   
-%% Exclude the .svn directories from the path
-%% ---------------------
-    s = strread(path, '%s', 'delimiter', pathsep); % read path as cell
-    % clear cells which contain [filesep '.svn']
-    s = s(cellfun('isempty', regexp(s, [filesep '.svn'])))'; % keep only paths not containing [filesep '.svn']
-    % create string with remaining paths
-    s = [s; repmat({pathsep}, size(s))];
-    newpath = [s{:}];
-    % reset path
-    path(newpath);
 
 %% Restore warning and directory state
 %% ---------------------
