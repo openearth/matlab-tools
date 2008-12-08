@@ -6,7 +6,7 @@
 <matlabrelease>13</matlabrelease>
 <name>OpenEarth</name>
 <type>toolbox</type>
-<icon>$toolbox/matlab/icons/matlabicon.gif</icon>
+<icon>DeltaresLogo16.png</icon>
 <help_location>$docroot/toolbox/database</help_location>
 
 <list>
