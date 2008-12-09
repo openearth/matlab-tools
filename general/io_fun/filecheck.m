@@ -1,17 +1,18 @@
-function varargout = filecheck(file_name)
+function varargout = filecheck(file_name,varargin)
 %FILECHECK   Check whether file exists and aborts with message as speficied
 %
 %    FILECHECK(file_name)
 %    FILECHECK(file_name,mode)
 %
-% [FILEexists]     =FILECHECK(file_name)
-% [FILEexists,mode]=FILECHECK(file_name,mode)
+% [FILEexists]     = FILECHECK(file_name)
+% [FILEexists,mode]= FILECHECK(file_name,mode)
 %
 % where FILEexists is 1 if the file exists and
 % where mode can be 
-% 'o' = overwrite (default when file does not exist)
-% 'c' = cancel,    leads to error when no output arguments
-% 'p' = prompt    (default when file does exist, after which o/c can be chosen)
+%
+%  'o' = overwrite (default when file does NOT exist)
+%  'c' = cancel     leads to error when no output arguments
+%  'p' = prompt    (default when file does exist, after which o/c can be chosen)
 %
 %See also: EXIST
 
@@ -44,7 +45,11 @@ function varargout = filecheck(file_name)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-   overwrite = 'p';
+   if nargin>1
+      overwrite = varargin{1};
+   else
+      overwrite = 'p';
+   end
    
    tmp = dir(file_name);
    

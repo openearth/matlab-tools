@@ -4,8 +4,12 @@ function start_of_PATHSTR = first_subdir(fullfilename,varargin)
 % returns first subdirectory names from filename
 %
 % subdir = first_subdir(file) 
-% (n > 0): subdir = first_subdir(file,n) returns first n subdirectories
-% (n < 0): subdir = first_subdir(file,n) returns all subdirectories except last n
+% (n  > 0): subdir = first_subdir(file,n) returns first n subdirectories
+% (n <= 0): subdir = first_subdir(file,n) returns all subdirectories except last n
+%
+% Example
+% subdir = first_subdir(file,0)   gives full path
+% subdir = first_subdir(file,1)   gives drive (e.g. d:\)
 %
 % See also: FILEPARTS, filepathstr, filename, filenameext, last_subdir
 
