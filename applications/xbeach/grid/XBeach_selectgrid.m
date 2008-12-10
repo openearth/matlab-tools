@@ -1,0 +1,219 @@
+function XB = XBeach_selectgrid(X, Y, Z, varargin)
+% XBEACH_SELECTGRID grid generator for XBeach
+%
+% deepval and dryval are both considered as positive. In addition, it is
+% assumed that the reference level is in between the deepval and dryval
+% level
+%
+% OPT = struct(...
+%     'dx', 2,...
+%     'dy', 2,...
+%     'dryval', 10,...
+%     'maxslp', .2,...
+%     'seaslp', .02,...
+%     'deepval', -10,...
+%     'dxmax', 20,...
+%     'dxmin', 2,...
+%     'dymax', 50,...
+%     'dymin', 10,...
+%     'finepart', 0.3);
+
+
+%% default Input section
+OPT = struct(...
+    'WL_t', 0,...
+    'xori', 0,...
+    'yori', 0,...
+    'alfa', 0,...
+    'dx', 2,...
+    'dy', 2,...
+    'dryval', 10,...
+    'maxslp', .2,...
+    'seaslp', .02,...
+    'deepval', 10,...
+    'dxmax', 20,...
+    'dxmin', 2,...
+    'dymax', 50,...
+    'dymin', 10,...
+    'finepart', 0.3,...
+    'posdwn', 1);
+
+% check whether XB-structure is given as input
+XBid = find(cellfun(@isstruct, varargin));
+if ~isempty(XBid)
+    XB = varargin{XBid};
+    varargin(XBid) = [];
+end
+try %#ok<TRYNC>
+    % the functions keyword_value and CreateEmptyXBeachVar are available in OpenEarthTools
+    OPT = setProperty(OPT, varargin{:});
+    if ~exist('XB', 'var')
+        XB = CreateEmptyXBeachVar;
+    end
+catch
+    if ~isempty(varargin)
+        warning(['Properties ' sprintf('"%s" ', varargin{1:2:end}) 'have not been set']) %#ok<WNTAG>
+    end
+end
+
+% modify deepval and dryval to make them correspond with posdwm (and so,
+% with Z)
+OPT.deepval = OPT.posdwn * abs(OPT.deepval);
+OPT.dryval = -OPT.posdwn * abs(OPT.dryval);
+
+
+
+
+% figure(2);
+% scatter(Xbathy,Ybathy,5,Zbathy,'filled');axis equal;colorbar;hold on
+% plot([0 xn xn 0 0],[0 0 yn yn 0],'r-')
+% % Select polygon to include in bathy
+% xi = [];yi=[];
+% n = 0;
+% % Loop, picking up the points.
+% disp('Select polygon to include in bathy')
+% disp('Left mouse button picks points.')
+% disp('Right mouse button picks last point.')
+% but = 1;
+% while but == 1
+%     n = n+1;
+%     [xi(n),yi(n),but] = ginput(1);
+%     plot(xi,yi,'r-o');
+% end
+% xi = [0 0 xn xn];
+% yi = [0 yn yn 0];
+% % Interpolate to grid
+% in = inpolygon(X,Y,xi,yi);
+% Z(~in) = NaN;
+% 
+% figure;
+% surf(X,Y,Z);shading interp;colorbar
+
+% Extrapolate to sides
+[nX nY] = size(X);
+for i=1:nX
+    for j=floor(nY/2):nY
+        if isnan(Z(i,j))
+            Z(i,j)=Z(i,j-1);
+        end
+    end
+    for j=floor(nY/2)-1:-1:1
+        if isnan(Z(i,j))
+            Z(i,j)=Z(i,j+1);
+        end
+    end
+end
+for j=1:nY
+    % Extrapolate to land
+    for i=floor(nX/2):nX
+        if isnan(Z(i,j));
+            Z(i,j) = OPT.posdwn*max(OPT.posdwn*Z(i-1,j)-OPT.maxslp*OPT.dx,OPT.posdwn*OPT.dryval);
+%             Z(i,j) = min(Z(i-1,j)+OPT.maxslp*OPT.dx,OPT.dryval);
+        end
+    end
+    % Extrapolate to sea
+    for i=floor(nX/2):-1:1
+        if isnan(Z(i,j));
+            Z(i,j) = OPT.posdwn * min(OPT.posdwn*Z(i+1,j)+OPT.seaslp*OPT.dx, OPT.posdwn*OPT.deepval);            
+%             Z(i,j) = max(Z(i+1,j)-OPT.seaslp*OPT.dx,OPT.deepval);
+        end
+    end
+end
+figure;
+surf(X,Y,Z);shading interp;colorbar
+
+%% x-grid
+xnew = X(:,1);
+d0 = min(OPT.WL_t) + mean(OPT.posdwn*Z(1,:)); % mean depth at seaward boundary
+i = 1; % start at seaward boundary
+
+while xnew(i)<X(end,1);
+    % interpolate for each y the corresponding z with the newly
+    % chosen x value
+    znew = interp2(X', Y', Z', repmat(xnew(i), 1, nY), Y(1,:));
+    d = min(OPT.WL_t) + min(OPT.posdwn*znew); % use the minimum z value to base the grid size on (shouldn't this be the maximum z)???
+    % dx = dxmax* sqrt(d/d0) (why divide by d0? isn't it a matter of depth
+    % difference?)
+    dxnew = max(OPT.dxmax*sqrt(max(d,.1)/d0), OPT.dxmin);
+    i = i+1;
+    xnew(i) = xnew(i-1)+dxnew;
+end
+xnew(i+1:end) = [];
+nxnew = length(xnew); % number of grid points in x direction
+
+%% y-grid
+ynew = Y(1,:);
+yrefine = [0 0.5-OPT.finepart/2 0.5+OPT.finepart/2 1]*Y(1,end);
+dyrefine = [OPT.dymax OPT.dymin OPT.dymin  OPT.dymax];
+i = 1;
+while ynew(i)<Y(1,end);
+    dynew = interp1(yrefine, dyrefine, ynew(i));
+    i = i+1;
+    ynew(i)=ynew(i-1)+dynew;
+end
+ynew(i+1:end) = [];
+nynew = length(ynew); % number of grid points in y direction
+
+%% plot grid
+Xnew = repmat(xnew, 1, nynew);
+Ynew = repmat(ynew, nxnew, 1);
+Znew = interp2(X', Y', Z', Xnew, Ynew);
+% figure
+% pcolor(Xnew,Ynew,Znew);axis equal
+
+XB.Input.xInitial = Xnew;
+XB.Input.yInitial = Ynew;
+XB.Input.zInitial = Znew;
+
+XB.settings.Grid = struct(...
+    'nx', nxnew-1,...
+    'ny', nynew-1,...
+    'vardx', 1,...
+    'depfile', '',...
+    'xfile', '',...
+    'yfile', '',...
+    'dx', OPT.dx,...
+    'dy', OPT.dy,...
+    'xori', OPT.xori,...
+    'yori', OPT.yori,...
+    'alfa', OPT.alfa*180/pi,...
+    'posdwn', -1);
+
+
+
+% fi=fopen('bathy.dep','wt');
+% for j=1:nynew
+%     fprintf(fi,'%7.3f ',Znew(:,j));
+%     fprintf(fi,'\n');
+% end
+% fclose(fi);
+% 
+% fi=fopen('x.dep','wt');
+% for j=1:nynew
+%     fprintf(fi,'%7.3f ',Xnew(:,j));
+%     fprintf(fi,'\n');
+% end
+% fclose(fi);
+% 
+% fi=fopen('y.dep','wt');
+% for j=1:nynew
+%     fprintf(fi,'%7.3f ',Ynew(:,j));
+%     fprintf(fi,'\n');
+% end
+% fclose(fi);
+% 
+% fi=fopen('griddata.txt','wt');
+% fprintf(fi,'nx      = %3i \n',nxnew-1);
+% fprintf(fi,'ny      = %3i \n',nynew-1);
+% fprintf(fi,'dx      = %6.1f \n',OPT.dx);
+% fprintf(fi,'dy      = %6.1f \n',OPT.dy);
+% fprintf(fi,'xori    = %10.2f \n',xori);
+% fprintf(fi,'yori    = %10.2f \n',yori);
+% fprintf(fi,'alfa    = %10.2f \n',alfa*180/pi);
+% fprintf(fi,'depfile = bathy.dep \n');
+% fprintf(fi,'vardx   = 1 \n');
+% fprintf(fi,'xfile = x.dep \n');
+% fprintf(fi,'yfile = y.dep \n');
+% fprintf(fi,'posdwn  = -1 \n');
+% fclose(fi);
+% 
