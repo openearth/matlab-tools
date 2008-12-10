@@ -1,5 +1,7 @@
 % Example to create XBeach grid
 
+%TODO: make XBeach_Write_Inp suitable for 2D grids 
+
 close all
 clear
 clc

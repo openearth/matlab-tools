@@ -48,6 +48,8 @@ function XB = XBeach_Write_Inp(calcdir, XB)
 % $Author$
 % $Revision$
 
+%TODO: make this function suitable for 2D grids
+
 %% default properties
 OPT = struct(...
     'calcdir', calcdir,...
