@@ -35,6 +35,12 @@
 </listitem>
 
 <listitem>
+<label>Edit Subversion config</label>
+<callback>edit(fullfile(getenv('APPDATA'), 'Subversion', 'config'))</callback>
+<icon>$toolbox/matlab/icons/webicon.gif</icon>
+</listitem>
+
+<listitem>
 <label>Product Page (Web)</label>
 <callback>web https://public.deltares.nl/display/MCTDOC/McTools+Website -browser;</callback>
 <icon>$toolbox/matlab/icons/webicon.gif</icon>
