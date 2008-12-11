@@ -48,11 +48,11 @@ function [mfilestr]=TODO(txt)
 % Created: 09 Dec 2008
 % Created with Matlab version: 7.6.0.324 (R2008a)
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 %% Look in stack
 mfilestr=dbstack(1);
