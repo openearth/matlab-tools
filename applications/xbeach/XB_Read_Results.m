@@ -7,6 +7,9 @@ function XB = XB_Read_Results(resdir, XB, varargin)
 % Input:
 % resdir = dir in which result can be found
 % XB 	 = XBeach communication structure created with CreateEmptyXBeachVar
+% varargin = Names of variables that have to be loaded
+% 'nodisp' = Do not display messages in the command window
+% 'quiet' = Do not show progress bar
 %
 % Output:
 % XB      = XBeach communication structure
@@ -48,6 +51,8 @@ function XB = XB_Read_Results(resdir, XB, varargin)
 
 %%
 ddd = false;
+quiet = false;
+nodisp = false;
 varsdef = false;
 if nargin==1
     XB = CreateEmptyXBeachVar;
@@ -57,6 +62,14 @@ if nargin>2
         ddd = true;
         varargin(strcmpi(varargin,'3d'))=[];
     end
+    if any(strcmpi(varargin,'nodisp'))
+        nodisp = true;
+        varargin(strcmpi(varargin,'nodisp'))=[];
+    end
+    if any(strcmpi(varargin,'quiet'))
+        quiet = true;
+        varargin(strcmpi(varargin,'quiet'))=[];
+    end
     varsdef = false;
     if ~isempty(varargin)
         varsdef = true;
@@ -64,6 +77,9 @@ if nargin>2
     end
 end
 %% dimensions
+if ~quiet
+    hwb = waitbar(0,'Reading dims.dat');
+end
 try
     fid = fopen([resdir filesep 'dims.dat'],'r');
     temp = fread(fid,[3,1],'double');
@@ -72,11 +88,16 @@ try
     XB.Output.ny = temp(3)+1;
     fclose(fid);
 catch
-    disp(['Could not find the file: ' resdir filesep 'dims.dat']);
-    return
+    if ~quiet
+        close(hwb);
+    end
+    error('XBEACHREAD:NODIMS',['Could not find the file: ' resdir filesep 'dims.dat']);
 end
 
 %% read grid coordinates
+if ~quiet
+    hwb = waitbar(0,hwb,'Reading xy.dat');
+end
 try
     fid = fopen([resdir filesep 'xy.dat'],'r');
     XB.Output.xw = fread(fid,[XB.Output.nx,XB.Output.ny],'double');
@@ -85,7 +106,10 @@ try
     XB.Output.y = fread(fid,[XB.Output.nx,XB.Output.ny],'double');
     fclose(fid);
 catch
-    disp(['Could not find the file: ' resdir filesep 'xy.dat']);
+    if ~quiet
+        close(hwb);
+    end
+    error('XBEACHREAD:NOXY',['Could not find the file: ' resdir filesep 'xy.dat']);
 end
     
 %% read XBeach output
@@ -105,10 +129,15 @@ nam(~cellfun(@isempty,strfind(nam,XB.settings.Flow.zs0file)))=[];
 nam(~cellfun(@isempty,strfind(nam,XB.settings.Waves.bcfile)))=[];
 
 for j = 1:length(nam)
+    if ~quiet
+        hwb = waitbar(j/length(nam),hwb,['Reading ' nam{j}]);
+    end
     temp = zeros(XB.Output.nx,XB.Output.ny,XB.Output.nt);
     fid = fopen([resdir filesep nam{j}],'r');
     if fid==-1
-        disp(['Could not find file: ' resdir filesep nam{j}]);
+        if ~nodisp
+            disp(['Could not find file: ' resdir filesep nam{j}]);
+        end
         continue
     end
     for i = 1:XB.Output.nt
@@ -122,4 +151,7 @@ for j = 1:length(nam)
         XB.Output.(name) = zeros(XB.Output.nx,XB.Output.nt);
         XB.Output.(name) = squeeze(temp(:,2,:));
     end
+end
+if ~quiet
+    close(hwb);
 end
