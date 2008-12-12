@@ -1,4 +1,4 @@
-function [mfilestr]=TODO(txt)
+function [mfilestr]=TODO(txt,n)
 %TODO  Display a TODO message while running code
 %
 %   This function displays a custom TODO message whenever matlab executes
@@ -6,10 +6,11 @@ function [mfilestr]=TODO(txt)
 %   the code is included (like an error message).
 %
 %   Syntax:
-%   mfilestr = TODO(txt)
+%   mfilestr = TODO(txt,n)
 %
 %   Input:
 %   txt  = TODO message that has to be displayed
+%   n   = number of frames to omit (see dbstack)
 %
 %   Output:
 %   mfilestr = struct that follows from a dbstack call at the location
@@ -18,7 +19,7 @@ function [mfilestr]=TODO(txt)
 %   Example
 %   TODO('Edit this code');
 %
-%   See also warning error
+%   See also warning error dbstack
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
@@ -54,15 +55,20 @@ function [mfilestr]=TODO(txt)
 % $Revision$
 % $HeadURL$
 
+%% process input
+if nargin<2
+    n=0;
+end
+
 %% Look in stack
-mfilestr=dbstack(1);
+mfilestr=dbstack(n+1,'-completenames');
 
 CalledFromFile = ~isempty(mfilestr);
 
 if CalledFromFile
     %% Retrieve function/m-file name and line
-    mfile = mfilestr(1).file;
-    fullmfile = which(mfile);
+    mfile = mfilestr(1).name;
+    fullmfile = mfilestr(1).file;
     lineno = num2str(mfilestr(1).line);
     
     %% Build string with link info
