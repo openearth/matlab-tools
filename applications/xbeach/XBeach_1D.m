@@ -1,5 +1,5 @@
 function XB = XBeach_1D(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t, T, morfac)
-% XBeach_1D  generate XB-structure for cross-shore XBeach calculation
+% XBEACH_1D  generate XB-structure for cross-shore XBeach calculation
 %
 %
 %

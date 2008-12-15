@@ -1,4 +1,4 @@
-function XB = XBeach_selectgrid(xw, yw, Zbathy, varargin)
+function XB = selectgrid(xw, yw, Zbathy, varargin)
 % XBEACH_SELECTGRID grid generator for XBeach
 
 
