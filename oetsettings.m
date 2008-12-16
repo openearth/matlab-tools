@@ -45,8 +45,8 @@ function oetsettings(varargin)
 % $Author$
 % $Revision$
 
-%% TO DO remove quickstart option or include in help block
-%% TO DO rename quickstart (too general name) to DB_mcstart for example ??
+%% TODO remove quickstart option or include in help block
+%% TODO rename quickstart (too general name) to DB_mcstart for example ??
 
    disp('Adding OpenEarthTools, please wait ...')
 
