@@ -122,7 +122,7 @@ function print2a4(fname,varargin)
        'PaperPosition'   ,[0 0 Longside Shortside],...
        'PaperOrientation',PaperOrientation)
 
-   [fileexist,action]=filecheck([filepathstr(fname),filesep,filename(fname),'.png']);
+   [fileexist,action]=filecheck(fullfile(filepathstr(fname),[filename(fname),'.png']));
    if strcmpi(action,'o')
       mkpath(filepathstr(fname))
       print('-dpng'  ,fname,resolution);

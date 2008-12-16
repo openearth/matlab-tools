@@ -132,7 +132,7 @@ Shortside   = (( height) + dh)./resolution;
        'PaperPosition'   ,[0 0 Longside Shortside],...
        'PaperOrientation','portrait'); % size in inches as resolution is dots per inch
 
-   [fileexist,action]=filecheck([filename(fname),'.png']);
+   [fileexist,action]=filecheck(fullfile(filepathstr(fname),[filename(fname),'.png']));
    if strcmpi(action,'o')
       mkpath(filepathstr(fname))
       print(gcf,imageformat,['-r',num2str(resolution)],fname);

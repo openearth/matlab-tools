@@ -48,6 +48,8 @@ function oetsettings(varargin)
 %% TO DO remove quickstart option or include in help block
 %% TO DO rename quickstart (too general name) to DB_mcstart for example ??
 
+   disp('Adding OpenEarthTools, please wait ...')
+
 %% Collect warning and directory state
 %% ---------------------
    state.warning = warning;
