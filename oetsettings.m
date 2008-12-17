@@ -69,6 +69,9 @@ function oetsettings(varargin)
 
    clear state
 
+%% set svn:keywords automatically to any new m-file
+   autosetSVNkeywords
+   
 %% Report
 %% ---------------------
    help oetsettings
