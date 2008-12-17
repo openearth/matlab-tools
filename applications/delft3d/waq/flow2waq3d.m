@@ -61,23 +61,25 @@ if isfield(couplingarray,'i') | isfield(couplingarray,'nmk')
 
    if isfield(couplingarray,'i') | isfield(couplingarray,'nmk')
        
-   if     isfield(couplingarray,'i')
-       fldname = 'i';
-   elseif isfield(couplingarray,'nmk')
-       fldname = 'nmk';
-   end
-       
-   for iWAQ=1:length(couplingarray)
-   
-      iFLOW          = round(couplingarray(iWAQ).i(fldname));
-   
-      WAQarray(iWAQ) = nanmean(FLOWarray(iFLOW));
+      if     isfield(couplingarray,'i')
+          fldname = 'i';
+      elseif isfield(couplingarray,'nmk')
+          fldname = 'nmk';
+      end
+          
+      for iWAQ=1:length(couplingarray)
       
-      %if mod(iWAQ,round((nWAQ/number_of_messages)))==1
-      %   disp(['flow2waq3D finished :',num2str(round(100*iWAQ/nWAQ)),' %'])
-      %end
+         iFLOW          = round(couplingarray(iWAQ).i(fldname));
+      
+         WAQarray(iWAQ) = nanmean(FLOWarray(iFLOW));
+         
+         %if mod(iWAQ,round((nWAQ/number_of_messages)))==1
+         %   disp(['flow2waq3D finished :',num2str(round(100*iWAQ/nWAQ)),' %'])
+         %end
+      
+      end % for iWAQ=1:length(couplingarray)
    
-   end
+   end % if isfield(couplingarray,'i') | isfield(couplingarray,'nmk')
 
 elseif (isfield(couplingarray,'m') & ...
         isfield(couplingarray,'n') & ...
@@ -103,7 +105,7 @@ elseif (isfield(couplingarray,'m') & ...
          disp(['flow2waq3D finished :',num2str(round(100*iWAQ/nWAQ)),' %'])
       end      
       
-   end
+   end % for iWAQ=1:length(couplingarray)
 
 elseif (isfield(couplingarray,'m') & ...
         isfield(couplingarray,'n'))
@@ -127,8 +129,8 @@ elseif (isfield(couplingarray,'m') & ...
          disp(['flow2waq3D finished :',num2str(round(100*iWAQ/nWAQ)),' %'])
       end
       
-   end
+   end % for iWAQ=1:length(couplingarray)
 
-end
+end % isfield(couplingarray,...)
    
 %% EOF
