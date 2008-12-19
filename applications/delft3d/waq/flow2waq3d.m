@@ -1,7 +1,7 @@
-function WAQarray = flow2waq3D(FLOWarray,couplingarray)
+function WAQarray = flow2waq3D(FLOWarray,couplingarray,varargin)
 %FLOW2WAQ3D   Maps 3D FlOW matrix to 1D WAQ array
 %
-% WAQarray = flow2waq3D(FLOWarray,couplingarray)
+% WAQarray = flow2waq3D(FLOWarray,couplingarray,<keyword,value>)
 %
 % where couplingarray comes from flow2waq3d_coupling(f.cco.Index)
 % and f.cco.Index = Delwaq('open','*.lga') or 
@@ -16,11 +16,14 @@ function WAQarray = flow2waq3D(FLOWarray,couplingarray)
 %         the 2nd dimension m
 %         the 3rd dimension k
 %
+% Implemented <keyword,value> pairs are:3
+% * number_of_messages:   default 10, displays every 100/10=10 % progress
+%
 % See also:
-% FLOW2WAQ3D_COUPLING, WAQ2FLOW2D, WAQ2FLOW3D, DELWAQ,
-% DELWAQ_MESHGRID2DCORCEN
+% FLOW2WAQ3D_COUPLING, WAQ2FLOW2D, WAQ2FLOW3D, DELWAQ,DELWAQ_MESHGRID2DCORCEN
 
 % 2008, Oct 08: Added field 'nmk'
+% 2008, Dec 19: Added setProperty
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
@@ -51,86 +54,93 @@ function WAQarray = flow2waq3D(FLOWarray,couplingarray)
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-nWAQ = length(couplingarray);
-number_of_messages = 20;
+   nWAQ = length(couplingarray);
+   
+   %% Options
+   %% ------------------
+   
+   % TODO: allow for other inout matrix shape ([nxm] and [mxn])
 
-if isfield(couplingarray,'i') | isfield(couplingarray,'nmk')
-
-%% 1D indexing  
-%% ------------------
+   OPT.number_of_messages = 10;
+   OPT                    = setProperty(OPT, varargin{:});
 
    if isfield(couplingarray,'i') | isfield(couplingarray,'nmk')
-       
-      if     isfield(couplingarray,'i')
-          fldname = 'i';
-      elseif isfield(couplingarray,'nmk')
-          fldname = 'nmk';
-      end
+   
+   %% 1D indexing  
+   %% ------------------
+   
+      if isfield(couplingarray,'i') | isfield(couplingarray,'nmk')
           
+         if     isfield(couplingarray,'i')
+             fldname = 'i';
+         elseif isfield(couplingarray,'nmk')
+             fldname = 'nmk';
+         end
+             
+         for iWAQ=1:length(couplingarray)
+         
+            iFLOW          = round(couplingarray(iWAQ).i(fldname));
+         
+            WAQarray(iWAQ) = nanmean(FLOWarray(iFLOW));
+            
+            %if mod(iWAQ,round((nWAQ/OPT.number_of_messages)))==1
+            %   disp(['flow2waq3D finished :',num2str(round(100*iWAQ/nWAQ)),' %'])
+            %end
+         
+         end % for iWAQ=1:length(couplingarray)
+      
+      end % if isfield(couplingarray,'i') | isfield(couplingarray,'nmk')
+   
+   elseif (isfield(couplingarray,'m') & ...
+           isfield(couplingarray,'n') & ...
+           isfield(couplingarray,'k'))
+           
+   %% 3D indexing        
+   %% ------------------
+   
       for iWAQ=1:length(couplingarray)
       
-         iFLOW          = round(couplingarray(iWAQ).i(fldname));
+         mFLOW = round(couplingarray(iWAQ).m);
+         nFLOW = round(couplingarray(iWAQ).n);
+         kFLOW = round(couplingarray(iWAQ).k);
       
-         WAQarray(iWAQ) = nanmean(FLOWarray(iFLOW));
+         temporary = 0.*mFLOW;
+         for i = 1:length(mFLOW)
+            temporary(i) =FLOWarray(nFLOW(i),mFLOW(i),kFLOW(i));
+         end
          
-         %if mod(iWAQ,round((nWAQ/number_of_messages)))==1
-         %   disp(['flow2waq3D finished :',num2str(round(100*iWAQ/nWAQ)),' %'])
-         %end
-      
+         WAQarray(iWAQ) = nanmean(temporary);
+         
+         if mod(iWAQ,round((nWAQ/OPT.number_of_messages)))==1
+            disp(['flow2waq3D finished :',num2str(round(100*iWAQ/nWAQ)),' %'])
+         end      
+         
       end % for iWAQ=1:length(couplingarray)
    
-   end % if isfield(couplingarray,'i') | isfield(couplingarray,'nmk')
-
-elseif (isfield(couplingarray,'m') & ...
-        isfield(couplingarray,'n') & ...
-        isfield(couplingarray,'k'))
-        
-%% 3D indexing        
-%% ------------------
-
-   for iWAQ=1:length(couplingarray)
+   elseif (isfield(couplingarray,'m') & ...
+           isfield(couplingarray,'n'))
    
-      mFLOW = round(couplingarray(iWAQ).m);
-      nFLOW = round(couplingarray(iWAQ).n);
-      kFLOW = round(couplingarray(iWAQ).k);
+   %% 2D indexing        
+   %% ------------------
    
-      temporary = 0.*mFLOW;
-      for i = 1:length(mFLOW)
-         temporary(i) =FLOWarray(nFLOW(i),mFLOW(i),kFLOW(i));
-      end
+      for iWAQ=1:length(couplingarray)
       
-      WAQarray(iWAQ) = nanmean(temporary);
+         mFLOW = round(couplingarray(iWAQ).m);
+         nFLOW = round(couplingarray(iWAQ).n);
       
-      if mod(iWAQ,round((nWAQ/number_of_messages)))==1
-         disp(['flow2waq3D finished :',num2str(round(100*iWAQ/nWAQ)),' %'])
-      end      
+         temporary = 0.*mFLOW;
+         for i = 1:length(mFLOW)
+            temporary(i) =FLOWarray(nFLOW(i),mFLOW(i));
+         end
+         
+         WAQarray(iWAQ) = nanmean(temporary);
       
-   end % for iWAQ=1:length(couplingarray)
-
-elseif (isfield(couplingarray,'m') & ...
-        isfield(couplingarray,'n'))
-
-%% 2D indexing        
-%% ------------------
-
-   for iWAQ=1:length(couplingarray)
+         if mod(iWAQ,round((nWAQ/OPT.number_of_messages)))==1
+            disp(['flow2waq3D finished :',num2str(round(100*iWAQ/nWAQ)),' %'])
+         end
+         
+      end % for iWAQ=1:length(couplingarray)
    
-      mFLOW = round(couplingarray(iWAQ).m);
-      nFLOW = round(couplingarray(iWAQ).n);
-   
-      temporary = 0.*mFLOW;
-      for i = 1:length(mFLOW)
-         temporary(i) =FLOWarray(nFLOW(i),mFLOW(i));
-      end
-      
-      WAQarray(iWAQ) = nanmean(temporary);
-   
-      if mod(iWAQ,round((nWAQ/number_of_messages)))==1
-         disp(['flow2waq3D finished :',num2str(round(100*iWAQ/nWAQ)),' %'])
-      end
-      
-   end % for iWAQ=1:length(couplingarray)
-
-end % isfield(couplingarray,...)
+   end % isfield(couplingarray,...)
    
 %% EOF
