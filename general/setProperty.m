@@ -1,12 +1,13 @@
 function [OPT Set Default] = setProperty(OPT, varargin)
 % SETPROPERTY generic routine to set values in PropertyName-PropertyValue pairs
 %
-% Routine to set properties based on PropertyName-PropertyValue pairs. Can
-% be used in any function where PropertyName-PropertyValue pairs are used.
+% Routine to set properties based on PropertyName-PropertyValue 
+% pairs (aka <keyword,value> pairs). Can be used in any function 
+% where PropertyName-PropertyValue pairs are used.
 %   
 % syntax:
-% [OPT Set Default] = setProperty(OPT, varargin)
-% OPT = setProperty(OPT, 'PropertyName', PropertyValue,...)
+% [OPT Set Default] = setProperty(OPT, varargin{:})
+%  OPT              = setProperty(OPT, 'PropertyName', PropertyValue,...)
 %
 % input:
 % OPT      = structure in which fieldnames are the keywords and the values are the defaults 
@@ -20,7 +21,18 @@ function [OPT Set Default] = setProperty(OPT, varargin)
 % Default = structure, similar to OPT, values are true where the values of
 %           OPT are equal to the original OPT
 %
-% See also: 
+% Example:
+%
+% +------------------------------------------->
+% | function y = dosomething(x,'debug',1)
+% | OPT.debug  = 0;
+% | OPT        = setProperty(OPT, varargin{1:end});
+% | y          = x.^2;
+% | if OPT.debug; plot(x,y);pause; end
+% | 
+% +------------------------------------------->
+%
+% See also: varargin, struct
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
@@ -103,3 +115,5 @@ for iargin = i0:2:iend
         error([upper(mfilename) ':UnknownPropertyName'], 'PropertyName should be char')
     end
 end
+
+%% EOF
