@@ -96,7 +96,7 @@ elseif (isfield(couplingarray,'m') & ...
    
       temporary = 0.*mFLOW;
       for i = 1:length(mFLOW)
-         temporary(i) =FLOWarray(mFLOW(i),nFLOW(i),kFLOW(i));
+         temporary(i) =FLOWarray(nFLOW(i),mFLOW(i),kFLOW(i));
       end
       
       WAQarray(iWAQ) = nanmean(temporary);
@@ -120,7 +120,7 @@ elseif (isfield(couplingarray,'m') & ...
    
       temporary = 0.*mFLOW;
       for i = 1:length(mFLOW)
-         temporary(i) =FLOWarray(mFLOW(i),nFLOW(i));
+         temporary(i) =FLOWarray(nFLOW(i),mFLOW(i));
       end
       
       WAQarray(iWAQ) = nanmean(temporary);
