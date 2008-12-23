@@ -221,7 +221,7 @@ for ix=1:3
       %% ---------------------------
       ticklabels.(AX) = cellstr(ticklabels.(AX));
       for it=1:length(ticklabels.(AX))
-         ticklabels.(AX){it} = deblank2(ticklabels.(AX){it});
+         ticklabels.(AX){it} = strtrim(ticklabels.(AX){it});
       end
       
       %% Apply specials
