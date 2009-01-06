@@ -87,18 +87,21 @@ else
     % write dep file
     XB.settings.Info.initialzs0 = XB.settings.Flow.zs0;
     if isempty(XB.settings.Flow.zs0)
-        zs0=0;
+        XB.settings.Flow.zs0=0;
     else
         zs0=XB.settings.Flow.zs0;
-        %     XB.settings.Flow.zs0=0;
+        XB.settings.Flow.zs0=[];
         if length(zs0)>1
             % time series
-            zs0(:,1)=zs0(:,1)*3600/XB.settings.SedInput.morfac;
+            %             zs0(:,1)=zs0(:,1)*3600/XB.settings.SedInput.morfac;
+            %         TODO('adjust this line that it only accepts [s] and not hours as interval times');
+            % New version of xbeach times do not have to be multiplied ith the
+            % morfac
+            zs0(:,1)=zs0(:,1)*3600;
             dlmwrite(fullfile(OPT.calcdir, 'waterlevels.wls'),zs0,'delimiter','\t','Precision','%5.3f');
             XB.settings.Flow.zs0file = 'waterlevels.wls';
             XB.settings.Flow.tidelen = size(zs0,1);
             XB.settings.Flow.tideloc = size(zs0,2)-1;
-            zs0 = 0;
         end
     end
     dlmwrite(fullfile(OPT.calcdir, XB.settings.Grid.depfile), repmat(z,length(ygrid),1),'delimiter','\t','Precision','%5.3f');
@@ -109,12 +112,21 @@ if ~isempty(XB.settings.Waves.Hrms) && ~isempty(XB.settings.Waves.Tm01)
     if length(XB.settings.Waves.Hrms)==1
         XB.settings.Waves.Hrms = [XB.settings.Flow.tstop XB.settings.Waves.Hrms];
     else
-        XB.settings.Waves.Hrms(:,1) = XB.settings.Waves.Hrms(:,1)*3600/XB.settings.SedInput.morfac;
+%         XB.settings.Waves.Hrms(:,1) = XB.settings.Waves.Hrms(:,1)*3600/XB.settings.SedInput.morfac;
+        XB.settings.Waves.Hrms(:,1) = XB.settings.Waves.Hrms(:,1)*3600;
+%         TODO('adjust this line that it only accepts [s] and not hours as interval times');
+        % New version of xbeach times do not have to be multiplied ith the
+        % morfac 
+
     end
     if length(XB.settings.Waves.Tm01)==1
         XB.settings.Waves.Tm01 = [XB.settings.Flow.tstop XB.settings.Waves.Tm01];
     else
-        XB.settings.Waves.Tm01(:,1) = XB.settings.Waves.Tm01(:,1)*3600/XB.settings.SedInput.morfac;
+%         XB.settings.Waves.Tm01(:,1) = XB.settings.Waves.Tm01(:,1)*3600/XB.settings.SedInput.morfac;
+        XB.settings.Waves.Tm01(:,1) = XB.settings.Waves.Tm01(:,1)*3600;
+        % New version of xbeach times do not have to be multiplied ith the
+        % morfac
+%         TODO('adjust this line that it only accepts [s] and not hours as interval times');
     end
 
     Hrmstimes = cumsum(XB.settings.Waves.Hrms(:,1));
