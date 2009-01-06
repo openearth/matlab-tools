@@ -11,7 +11,7 @@ function oetsettings(varargin)
 % * repository:  https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab
 % * help blocks: Scroll through the OpenEarthTools directories and read interesting help blocks.
 %
-%See also: wlsettings, mcsettings, addpathfast
+%See also: ADDPATHFAST, RESTOREDEFAULTPATH
 
 %   --------------------------------------------------------------------
 %   Copyright (C) <2004-2008> <Deltares>
