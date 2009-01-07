@@ -49,7 +49,7 @@ function inputSize  = getInputSize(variables)
 % $Revision$
 
 %%
-n = evalin('caller','nargin'); % get number of input arguments of the caller function
+n = min([evalin('caller','nargin') length(variables)]); % get number of input arguments of the caller function
 inputSize = zeros(length(variables),2); % preallocate inputSize with zeros
 for a = 1 : n
     inputSize(a,:) = evalin('caller',['size(' variables{a} ')']);

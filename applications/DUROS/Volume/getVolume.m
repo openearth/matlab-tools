@@ -1,4 +1,4 @@
-function [Volume, result, Boundaries] = getVolume(x, z, UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary, x2, z2, NoErosion)
+function [Volume, result, Boundaries] = getVolume(x, z, UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary, x2, z2, varargin)
 %GETVOLUME   generic routine to determine volumes on transects
 %
 %   Routine determines volumes on transects. In case of no second profile (x2, z2),
@@ -25,6 +25,8 @@ function [Volume, result, Boundaries] = getVolume(x, z, UpperBoundary, LowerBoun
 %       SeawardBoundary     = seaward vertical plane of volume area (not specified please enter [] as argument)
 %       x2                  = column array with x2 points (increasing index and positive x in seaward direction)
 %       z2                  = column array with z2 points
+%       varargin            = propertyname propertyvalue pairs:
+%           suppressMessEqualBoundaries     boolean (true/false)
 %
 %   example:
 %
@@ -39,10 +41,10 @@ function [Volume, result, Boundaries] = getVolume(x, z, UpperBoundary, LowerBoun
 
 tic;
 %% check and inventorise input
-if nargin<9 % geen getdefaults omdat er dan een melding wordt gemaakt.
-    % TODO: switch in getdefaults om ook writemessage te onderdrukken?
-    NoErosion = false;
-end
+OPT = struct(...
+    'suppressMessEqualBoundaries', false);
+
+OPT = setProperty(OPT, varargin{:});
 
 variables  = getInputVariables(mfilename);
 inputSize  = getInputSize(variables);
@@ -81,7 +83,7 @@ if LandwardBoundary == SeawardBoundary
     [result.Volumes.Volume, Volume, result.Volumes.Accretion, result.Volumes.Erosion] = deal(0);
     result.info.time = toc;
     [Boundaries.Upper, Boundaries.Lower, Boundaries.Landward, Boundaries.Seaward] = deal(UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary);
-    if ~NoErosion
+    if ~OPT.suppressMessEqualBoundaries
         writemessage(-3, 'LandwardBoundary and SeawardBoundary are equal');
     end
     return
