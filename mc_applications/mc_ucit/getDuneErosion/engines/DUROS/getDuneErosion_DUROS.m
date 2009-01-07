@@ -173,7 +173,8 @@ end
 if ~NoDUROSResult
     writemessage(200,'Start second step: Fit A volume');
     
-    [Volume, result(end+1)] = getVolume(xInitial, zInitial, [], WL_t, min(result(end).xActive), max(xcrossWL_t), [result(end).xActive; result(end).xSea], [result(end).z2Active; result(end).zSea],true); %TODO: combine several active profiles in case of breach
+    [Volume, result(end+1)] = getVolume(xInitial, zInitial, [], WL_t, min(result(end).xActive), max(xcrossWL_t), [result(end).xActive; result(end).xSea], [result(end).z2Active; result(end).zSea],...
+        'suppressMessEqualBoundaries', true); %TODO: combine several active profiles in case of breach
 
     if Volume<0
         result(end).info.ID = [result(end-1).info.ID,' Erosion above SSL'];
