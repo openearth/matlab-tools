@@ -22,8 +22,9 @@ function WAQarray = flow2waq3D(FLOWarray,couplingarray,varargin)
 % See also:
 % FLOW2WAQ3D_COUPLING, WAQ2FLOW2D, WAQ2FLOW3D, DELWAQ,DELWAQ_MESHGRID2DCORCEN
 
-% 2008, Oct 08: Added field 'nmk'
-% 2008, Dec 19: Added setProperty
+% 2008, Oct 08: Added field 'nmk' [GJdB]
+% 2008, Dec 19: Added setProperty [GJdB]
+% 2009, Jan 12: Removed double .i(fldname) adressing [Claire van Oeveren]
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
@@ -79,7 +80,7 @@ function WAQarray = flow2waq3D(FLOWarray,couplingarray,varargin)
              
          for iWAQ=1:length(couplingarray)
          
-            iFLOW          = round(couplingarray(iWAQ).i(fldname));
+            iFLOW          = round(couplingarray(iWAQ).(fldname));
          
             WAQarray(iWAQ) = nanmean(FLOWarray(iFLOW));
             
