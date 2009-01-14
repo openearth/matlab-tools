@@ -59,21 +59,24 @@ function oetnewfun(varargin)
 OPT = getlocalsettings;
 
 OPT.description = 'One line description goes here.';
+OPT.feval = [];
 
-OPT = setProperty(OPT, varargin{2:end});
+FuntionName = 'Untitled';
+i0 = 2;
+if nargin > 1 && any(strcmp(fieldnames(OPT), varargin{1}))
+    i0 = 1;
+elseif nargin > 0
+    FuntionName = varargin{1};
+end    
+
+OPT = setProperty(OPT, varargin{i0:end});
 
 if ischar(OPT.ADDRESS)
     OPT.ADDRESS = {OPT.ADDRESS};
 end
 
 %%
-if nargin ~= 0 && ischar(varargin{1})
-    DefaultName = varargin{1};
-else
-    DefaultName = 'Untitled';
-end
-
-[fpath fname] = fileparts(fullfile(cd, DefaultName));
+[fpath fname] = fileparts(fullfile(cd, FuntionName));
 
 % read template file
 fid = fopen(which('oettemplate.m'));
@@ -93,6 +96,10 @@ address = sprintf('%%       %s\n', OPT.ADDRESS{:});
 address = address(1:end-1);
 str = strrep(str, '%       $address', address);
 str = strrep(str, '$version', version);
+
+if ~isempty(OPT.feval)
+    str = feval(OPT.feval, str);
+end
 
 %% open new file in editor
 com.mathworks.mlservices.MLEditorServices.newDocument(str)
