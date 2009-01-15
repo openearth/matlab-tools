@@ -117,8 +117,8 @@ if ~isempty(x0except) && result.info.x0 < max(x0except(:,2))
         ResultInValley = any(result.info.x0 > x0except(:,1) & result.info.x0 < x0except(:,2));
         if max(ValleyWidth)>=100 && ResultInValley
             Hsig_t_new = min([max([.5 .7 * max(ValleyDepth(ValleyWidth>=100))]) Hsig_t]); % Hsig_t_new = .7*Valleydepth, but minimal .5 m and maximal Hsig_t
-            % disp(['New wave heigth Hsig_t_new has been set to ',num2str(Hsig_t_new,'%.2f'),' m']);
-            writemessage(61, ['New wave heigth Hsig_t_new has been set to ',num2str(Hsig_t_new,'%.2f'),' m']);
+            % disp(['New wave height Hsig_t_new has been set to ',num2str(Hsig_t_new,'%.2f'),' m']);
+            writemessage(61, ['New wave height Hsig_t_new has been set to ',num2str(Hsig_t_new,'%.2f'),' m']);
             [xInitial_new, zInitial_new] = deal([result.xLand; result.xActive; result.xSea], [result.zLand; result.z2Active; result.zSea]);
             result_new = getDuneErosion_DUROS(xInitial_new, zInitial_new, D50, WL_t, Hsig_t_new, Tp_t, true);
             if isempty(result_new(1).z2Active)

@@ -33,7 +33,7 @@ Start of steps in calculation
 22, 'Seaward boundary based on point of contact of parabolic profile with initial profile'...          %12
 
 60, ['Dune row number ',int2str(breachnr),' has been breached']
-61, ['New wave heigth Hsig_t_new has been set to ',num2str(Hsig_t_new,'%.2f'),' m']
+61, ['New wave height Hsig_t_new has been set to ',num2str(Hsig_t_new,'%.2f'),' m']
 
 51, ['Additional retreat of ' num2str(G, '%.1f') ' due to coastal bend']
 52, 'Warning: consider this cross section in detail because of coastal bend'
