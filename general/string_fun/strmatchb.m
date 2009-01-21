@@ -2,22 +2,25 @@ function booleans = strmatcb(varargin)
 %STRMATCHB Find possible matches for string.
 %
 %   Same as STRMATCH, but returns boolean matrix instead if indices.
+%   This allows for easy combining with numeric selections as:
+%   find(strmatchb('OBAMA',P.names) | P.number==44) where P.number 
+%   and P.names are database entries of the same length.
 %
-%   I = STRMATCH(STR, STRARRAY) looks through the rows of the character
+%   B = STRMATCHB(STR, STRARRAY) looks through the rows of the character
 %   array or cell array of strings STRARRAY to find strings that begin
 %   with the string contained in STR, and returns the matching row indices. 
 %   Any trailing space characters in STR or STRARRAY are ignored when 
-%   matching. STRMATCH is fastest when STRARRAY is a character array. 
+%   matching. STRMATCHB is fastest when STRARRAY is a character array. 
 %
-%   I = STRMATCH(STR, STRARRAY, 'exact') compares STR with each row of
+%   B = STRMATCHB(STR, STRARRAY, 'exact') compares STR with each row of
 %   STRARRAY, looking for an exact match of the entire strings. Any 
 %   trailing space characters in STR or STRARRAY are ignored when matching.
 %
 %   Examples
-%     i = strmatch('max',strvcat('max','minimax','maximum'))
-%   returns i = [1; 3] since rows 1 and 3 begin with 'max', and
-%     i = strmatch('max',strvcat('max','minimax','maximum'),'exact')
-%   returns i = 1, since only row 1 matches 'max' exactly.
+%     b = strmatchb('max',strvcat('max','minimax','maximum'))
+%   returns b = [1 0 1] since rows 1 and 3 begin with 'max', and
+%     b = strmatchb('max',strvcat('max','minimax','maximum'),'exact')
+%   returns b = [1 0 0], since only row 1 matches 'max' exactly.
 %   
 %   See also STRMATCH, STRFIND, STRVCAT, STRCMP, STRNCMP, REGEXP.
 
