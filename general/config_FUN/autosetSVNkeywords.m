@@ -52,7 +52,12 @@ function autosetSVNkeywords
 
 %%
 % create filename of config file
-filename = fullfile(getenv('APPDATA'), 'Subversion', 'config');
+if ispc
+    subversiondir = fullfile(getenv('APPDATA'), 'Subversion');
+else
+    subversiondir = fullfile(getenv('HOME'), '.subversion');
+end
+filename = fullfile(subversiondir, 'config');
 
 % read config file
 fid = fopen(filename);
