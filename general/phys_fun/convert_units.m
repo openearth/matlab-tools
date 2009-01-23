@@ -1,6 +1,6 @@
 function Factor=convert_units(InUnits,OutUnits);
 %CONVERT_UNITS    Unit conversion function
-
+%
 % factor = convert_units(InUnits,OutUnits)
 %
 %                            Given an input and output strings
