@@ -3,47 +3,41 @@ function Factor=convert_units(InUnits,OutUnits);
 %
 % factor = convert_units(InUnits,OutUnits)
 %
-%                            Given an input and output strings
-%                            containing units - return the conversion
-%                            multiplication factor needed for converting
-%                            the input units to the output units.
-%                            Note: the user is responsible for the
-%                                  balance of the transformation.
+%  Given an input and output strings containing units 
+%  CONVERT_UNITS returns the conversion multiplication 
+%  factor needed for converting the input units to the output units.
 %
-%                            Type of units:
-%                              Length:
-%                                'mm' ; 'cm' ; 'inch' ; 'feet' ;
-%                                'm' - meter ; 'km' ; 'mile' ;
-%                                'erad' - Earth radius ; 'au' ;
-%                                'ly' - light year ; 'pc'; 'yard'
-%                              Time:
-%                                's' ; 'min' ; 'hour' ;
-%                                'sday' - sidereal day ; week ;
-%                                'year'; 'cen' - century
-%                              Force:
-%                                 'dyne' ; 'N'
-%                              Mass:
-%                                'gr'; 'kg'; 'emass' - Earth mass;
-%                                'jmass' - Jupiter mass;
-%                                'smass' - Solar mass;
-%                                'mp' - proton mass;
-%                                'me' - electron mass;
-%                                'libra';'pound'
-%                              Angle:
-%                                'rad' ; 'deg' ;
-%                                'amin' - arcmin ; 'asec' - arcsec
-%                              Solid Angle:
-%                                'ster' ; 'sdeg' - square degree ;
-%                                'smin' - square arcmin ;
-%                                'ssec' - square arcsec
+%  Type of units:
 %
-% Input  : - InUnits:  String containing the input units.
-%          - OutUnits: String containing the output units.
-% Output : - factor:   Multiplication factor for converting input units to
-%                      output units.
+%    Length:
+%           'mm' ; 'cm' ; 'inch' ; 'feet' ; 'm' - meter ; 'km' ; 'mile' ;
+%           'au' ; 'pc'; 'yard'
+%    Time:
+%           's' ; 'min' ; 'hour' ; 'sday' - sidereal day ; week ;
+%           'year'; 'cen' - century
+%    Pressure:
+%           'Pa' ; 'hPa' ; 'bar' ; 'mbar'
+%    Force:
+%           'dyne' ; 'N'
+%    Mass:
+%           'gr'; 'kg'; 'libra'; 'pound'
+%    Angle:
+%           'rad' ; 'deg' ; 'amin' - arcmin ; 'asec' - arcsec
+%    Solid Angle:
+%           'ster' ; 'sdeg' - square degree ;
+%           'smin' - square arcmin ;
+%           'ssec' - square arcsec
 %
-% Example : 
-% a = convert_units('m^3 * kg^-1 * s^-2','cm^3 * gr^-1 * s^-2').*b;
+%   Input  : - InUnits:  String containing the input units.
+%            - OutUnits: String containing the output units.
+%   Output : - factor:   Multiplication factor for converting input units to
+%                        output units.
+%
+%   Example : 
+%   a = convert_units('m^3 * kg^-1 * s^-2','cm^3 * gr^-1 * s^-2').*b;
+%
+%  Note 1: the user is responsible for the balance of the transformation.
+%  Note 2: units are case-sensitive.
 %
 %See also:
 
@@ -65,6 +59,7 @@ function Factor=convert_units(InUnits,OutUnits);
    feet   = 0.30480;                      % foot
    yard   = 0.9144;                       % yard
    m      = 1;                            % meter
+   meter  = 1;                            % meter
    km     = 1000;                         % km
    mile   = 1609;                         % mile
   %erad   = refellipsoid('WGS84');
