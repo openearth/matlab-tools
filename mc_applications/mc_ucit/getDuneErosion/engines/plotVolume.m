@@ -15,8 +15,11 @@ color = {'b'};
 for i = 1 : length(result)
     if ~isempty(result(i).z2Active)
         volumepatch = [result(i).xActive' fliplr(result(i).xActive'); result(i).z2Active' fliplr(result(i).zActive')]';
-        hp(i) = patch(volumepatch(:,1), volumepatch(:,2), ones(size(volumepatch(:,2)))*-(length(result)-i),color{i},...
-            'DisplayName', ['Volume: ' num2str(result(i).Volumes.Volume, '%.2f') 'm^3/m^1']);
+        hp(i) = patch(volumepatch(:,1), volumepatch(:,2), ones(size(volumepatch(:,2)))*-(length(result)-i),color{i});
+        try
+            set(hp(i),...
+                'DisplayName', ['Volume: ' num2str(result(i).Volumes.Volume, '%.2f') 'm^3/m^1']);
+        end
     end
 end
 
