@@ -1,7 +1,7 @@
 function xout = smooth1(xin,varargin);
 %SMOOTH1   Calculates moving average on 1D array.
 %
-% use: x_smoothed = smooth(x_raw,<one_sided_span>)
+% use: x_smoothed = smooth1(x_raw,<one_sided_span>)
 % By default the moving average contains 5 points. This
 % number can be passed as an additional argument. Note, however,
 % that not the stencil width should be passed, but the 
@@ -20,6 +20,8 @@ function xout = smooth1(xin,varargin);
 %  .  points not used in moving average
 %
 % (c) G.J. de Boer
+%
+% x_smoothed = smooth1('test') for testing plot
 %
 % See also: SMOOTH2, SMOOTH3
 
@@ -58,6 +60,7 @@ function xout = smooth1(xin,varargin);
       if ischar(xin)
          if strcmpi(xin,'test')
          smooth1test
+         xout = [];
          return
          else
            error('syntax wrong')
@@ -118,7 +121,7 @@ TMP = figure;
 plot(tmp)
 hold on
 
-stencils = 3:11;
+stencils = 3:100;
 
 colors =clrmap(jet,length(stencils));
 
@@ -131,7 +134,10 @@ for i=1:length(stencils)
 end
 
 caxis([stencils(1) stencils(end)])
-colorbarwithtext('stencil');
+colorbarwithtitle('stencil');
 
 pause
+try
 close(TMP)
+end
+
