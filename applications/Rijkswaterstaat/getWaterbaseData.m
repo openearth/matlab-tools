@@ -5,10 +5,38 @@ function OutputName = getWaterbaseData(varargin);
 % substance at one or more specified locations during one specified 
 % year. All available data are written in a specified ascii file.
 %
-% See also: DONAR_READ, www.waterbase.nl
-
-% Version 1.0 October 2008
+% Without input arguments a GUI is launched.
 %
+%    D = getWaterbaseData(<Code>    ) % or
+%    D = getWaterbaseData(<FullName>) % NOTE: NOT CodeName
+%
+% where Code or FullName are the unique DONAR numeric or string 
+% substance identifier respectively (e.g. 22).
+%
+%    D = getWaterbaseData( Code     ,<ID>)
+%    D = getWaterbaseData( FullName ,<ID>)
+%
+% where ID is  the unique DONAR string location identifier (e.g. 'AUKFPFM').
+%
+%    D = getWaterbaseData( Code     ,ID,<datenum>)
+%    D = getWaterbaseData( FullName ,ID,<datenum>)
+%
+% where datenum is a 2 element vector with teh start and end time
+% of teh query in datenumbers (e.g. datenum([1961 2008],1,1)).
+%
+%    D = getWaterbaseData( Code     ,ID,datenum,<FileName>)
+%    D = getWaterbaseData( FullName ,ID,datenum,<FileName>)
+%
+% where FileName is the name of the output file. When it is a directory
+% the FileName will be chosen as DONAR does (with extension '.txt').
+%
+% Example:
+%
+%    getWaterbaseData(22,'AUKFPFM',datenum([1961 2008],1,1),pwd)
+%
+% See also: DONAR_READ, www.waterbase.nl, 
+%           GETWATERBASEDATA_SUBSTANCES, GETWATERBASEDATA_LOCATIONS
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
 %       Y. Friocourt
@@ -21,31 +49,26 @@ function OutputName = getWaterbaseData(varargin);
 %       The Netherlands
 %   --------------------------------------------------------------------
 
+% 2009 jan 27: moved pieces to separate functions getWaterbaseData_locations and getWaterbaseData_substances [Gerben de Boer]
+% 2009 jan 27: allow for argument input of all chocie, to allow for batch running [Gerben de Boer]
+% 2009 jan 27: use urlwrite for query of one location, as urlwrite often returns status=0 somehow [Gerben de Boer]
+
 %% Substance names
 %% ------------------------------------
-   fid = fopen('donar_substances.csv', 'r+');
-   s1   = fscanf(fid, '%c', [1 inf]);
-   fclose(fid);
-   IndLine               = regexp(s1, '\n');
-   nSub                  = length(IndLine);
-   IndSubs               =  regexp(s1(        1:IndLine(1)-1), ';');
-   Substance.FullName{1} =         s1(        2:IndSubs   -2);
-   Substance.CodeName{1} =         s1(IndSubs+2:IndLine(1)-2);
-   IndCode               =  regexp(s1(IndSubs+1:IndLine(1)-1), '%');
-   Substance.Code(1)     = str2num(s1(IndSubs+2:IndSubs+IndCode(1)-1));
-   for iSub = 1:nSub-1
-       IndSubs                    =  regexp(s1(IndLine(iSub)+1        :IndLine(iSub+1)                   -1), ';');
-       Substance.FullName{iSub+1} =         s1(IndLine(iSub)+2        :IndLine(iSub  )+IndSubs           -2);
-       Substance.CodeName{iSub+1} =         s1(IndLine(iSub)+IndSubs+2:IndLine(iSub+1)                   -2);
-       IndCode                    =  regexp(s1(IndLine(iSub)+IndSubs+1:IndLine(iSub+1)                   -1), '%');
-       Substance.Code(iSub+1)     = str2num(s1(IndLine(iSub)+IndSubs+2:IndLine(iSub  )+IndSubs+IndCode(1)-1));
-   end
+
+   Substance = getWaterbaseData_substances('donar_substances.csv');
 
 %% Select substance name
 %% ------------------------------------
-   if nargin>1
-      indSub = varargin{1}; 
-      ok     = 1;
+
+   if nargin>0
+      indSub = varargin{1};
+      
+      if    isnumeric(indSub);indSub = find    (indSub==Substance.Code    );
+      else ~isnumeric(indSub);indSub = strmatch(indSub, Substance.FullName);
+      end
+      ok        = 1;
+      
    else
       [indSub, ok] = listdlg('ListString', Substance.FullName, .....
                           'SelectionMode', 'single', ...
@@ -54,34 +77,30 @@ function OutputName = getWaterbaseData(varargin);
                                'ListSize', [500, 300]);
       
       if (ok == 0) 
-          return;
+         OutputName = [];
+         return;
       end
+      
    end
 
+   disp(['message: getWaterbaseData: loading Substance # ',num2str(indSub                ,'%0.3d'),': ',...
+                                                           num2str(Substance.Code(indSub),'%0.3d'),' "',...
+                                                           Substance.FullName{indSub},'"'])
+                                                           
 %% Location names
 %% ------------------------------------
-   [s status] = urlread(['http://www.waterbase.nl/getGML.cfm?wbwns=' ...
-       sprintf('%d', Substance.Code(indSub))]);
-   if (status == 0)
-       warndlg('www.waterbase.nl may be offline or you are not connected to the internet','Online source not available');
-       close(h);
-       return;
-   end
-   exprFullName = '<property typeName="FullName">[^<>]*</property>';
-   sFullName    = regexp(s, exprFullName,'match');
-   exprID       = '<property typeName="ID">[^<>]*</property>';
-   sID = regexp(s, exprID,'match');
-   for iStation = 1:length(sFullName)
-       sTemp                      = sFullName{iStation};
-       Station.FullName{iStation} = sTemp(31:end-11);
-       sTemp                      = sID{iStation};
-       Station.ID{iStation}       = sTemp(25:end-11);
-   end
+
+   Station = getWaterbaseData_locations(Substance.Code(indSub));
 
 %% Select Location names
 %% ------------------------------------
-   if nargin>2
+
+   if nargin>1
       indLoc = varargin{2}; 
+
+      if   ~isnumeric(indLoc);indLoc = strmatch(indLoc, Station.ID);
+      end
+
       ok     = 1;
    else
       [indLoc, ok] = listdlg('ListString', Station.FullName, ...
@@ -91,24 +110,32 @@ function OutputName = getWaterbaseData(varargin);
                                    'Name', 'Selection of locations');
       
       if (ok == 0) 
-          return;
+         OutputName = [];
+         return;
       end
    end
    
-   %% Times
-   %% ------------------------------------
-   ListYear = '1961';
-   for iYear = 1962:str2num(datestr(date,'yyyy'))
-       ListYear = strvcat(ListYear, sprintf('%d', iYear));
-   end
-   ListYear = cellstr(ListYear);
-
-%% Select Times
-%% ------------------------------------
-   if nargin>3
-      indDate = varargin{3};
-      ok     = 1;
+   if length(indLoc)>1
+   disp(['message: getWaterbaseData: loading Location    ',num2str(length(indLoc),'%0.3d'),'x #s ',num2str(indLoc,'%0.3d & ')])
    else
+   disp(['message: getWaterbaseData: loading Location  # ',num2str(indLoc,'%0.3d'),': ',Station.ID{indLoc},' "',Station.FullName{indLoc},'"'])
+   end
+   
+%% Times
+%% ------------------------------------
+
+   if nargin>2
+      indDate   = varargin{3};
+      startdate = [datestr(indDate(1),'yyyymmddHHMM')]; %,'01010000'];
+      enddate   = [datestr(indDate(2),'yyyymmddHHMM')]; %,'12312359'];
+      ok        = 1;
+   else
+      ListYear  = '1961';
+      for iYear = 1962:str2num(datestr(date,'yyyy'))
+          ListYear = strvcat(ListYear, sprintf('%d', iYear));
+      end
+      ListYear  = cellstr(ListYear);
+
       [indDate, ok] = listdlg('ListString', ListYear, ...
                            'SelectionMode', 'single', ...
                             'InitialValue', [length(ListYear)], ...
@@ -116,49 +143,103 @@ function OutputName = getWaterbaseData(varargin);
                                     'Name', 'Selection of year');
       
       if (ok == 0) 
+         OutputName = [];
+         return;
+      end
+      startdate = [ListYear{indDate} '01010000'];
+      enddate   = [ListYear{indDate} '12312359'];
+   end
+   
+   disp(['message: getWaterbaseData: loading startdate        ',startdate]);
+   disp(['message: getWaterbaseData: loading enddate          ',enddate]);
+   
+%% Select Times
+%% ------------------------------------
+
+   if nargin>3
+      indName  = varargin{4};
+      if exist(indName)==7
+         FilePath = indName;
+         FileName = ['id',num2str(Substance.Code(indSub)),'-',Station.ID{indLoc(1)},'-',startdate,'-',enddate,'.txt'];
+      else
+         [FilePath,FileName,EXT,VERSN] = fileparts(indName);
+      end
+   else
+      [FileName, FilePath] = uiputfile('*.txt','Save data');
+      if (isequal(FileName, 0))
           return;
+          OutputName = [];
       end
    end
-   
-   startdate = [ListYear{indDate} '01010000'];
-   enddate   = [ListYear{indDate} '12312359'];
-   
-   [FileName, FilePath] = uiputfile('*.txt','Save data');
-   if (isequal(FileName, 0))
-       return;
-   end
-   
-   h = waitbar(0,'Downloading data...');
+
+   disp(['message: getWaterbaseData: loading file             ',fullfile(FilePath,FileName)]);
 
 %% get data = f(Substance.Code, Station.ID, startdate, enddate
 %% ------------------------------------
-   fid = fopen([FilePath FileName], 'w+');
-   for iLoc = 1:length(indLoc)
-          [s status] = urlread(['http://www.waterbase.nl/Sites/waterbase/wbGETDATA.xitng?ggt=id' ...
-              sprintf('%d', Substance.Code(indSub)) '&site=MIV&lang=nl&a=getData&gaverder=GaVerder&from=' ...
-              startdate '&loc=' Station.ID{indLoc(iLoc)} '&to=' enddate '&fmt=text']);
-          if (status == 0)
-            warndlg('www.waterbase.nl may be offline or you are not connected to the internet','Online source not available');
-            close(h);
-            return;
-          end
-          ind    = regexp(s, '\n');
-          nLines = length(ind);
-          if (iLoc == 1)
-           for iLine = 1:6
-            fprintf(fid, '%s', s(ind(iLine):ind(iLine+1)-1));
-           end
-          end
-          if (length(regexp(s, 'Geen data beschikbaar')) == 0)
-            for iLine = 7:nLines-1
-              if (length(s(ind(iLine):ind(iLine+1)-1)) > 5)
-                      fprintf(fid, '%s', s(ind(iLine):ind(iLine+1)-1));
+   
+   %% Directly write file returned for one location
+   %% ------------------------------------
+
+   if length(indLoc)==1
+   
+      iLoc = 1;
+   
+      urlName = ['http://www.waterbase.nl/Sites/waterbase/wbGETDATA.xitng?ggt=id' ...
+             sprintf('%d', Substance.Code(indSub)) '&site=MIV&lang=nl&a=getData&gaverder=GaVerder&from=' ...
+          startdate '&loc=' Station.ID{indLoc(iLoc)} '&to=' enddate '&fmt=text'];
+   
+      disp(urlName)
+   
+      [s status] = urlwrite([urlName],fullfile(FilePath,FileName));
+      
+      if (status == 0)
+        warndlg('www.waterbase.nl may be offline or you are not connected to the internet','Online source not available');
+        close(h);
+   
+        return;
+      end
+   
+   else
+   
+   %% Pad multiple files returned for multiplelocations
+   %% ------------------------------------
+
+      h = waitbar(0,'Downloading data...');
+   
+      fid = fopen(fullfile(FilePath,FileName), 'w+');
+      for iLoc = 1:length(indLoc)
+   
+            urlName = ['http://www.waterbase.nl/Sites/waterbase/wbGETDATA.xitng?ggt=id' ...
+                   sprintf('%d', Substance.Code(indSub)) '&site=MIV&lang=nl&a=getData&gaverder=GaVerder&from=' ...
+                startdate '&loc=' Station.ID{indLoc(iLoc)} '&to=' enddate '&fmt=text'];
+   
+            disp(urlName)
+   
+            [s status] = urlread([urlName]);
+            if (status == 0)
+              warndlg('www.waterbase.nl may be offline or you are not connected to the internet','Online source not available');
+              close(h);
+   
+              return;
+            end
+            ind    = regexp(s, '\n');
+            nLines = length(ind);
+            if (iLoc == 1)
+             for iLine = 1:6
+              fprintf(fid, '%s', s(ind(iLine):ind(iLine+1)-1));
+             end
+            end
+            if (length(regexp(s, 'Geen data beschikbaar')) == 0)
+              for iLine = 7:nLines-1
+                if (length(s(ind(iLine):ind(iLine+1)-1)) > 5)
+                        fprintf(fid, '%s', s(ind(iLine):ind(iLine+1)-1));
+                end
               end
             end
-          end
-          waitbar(iLoc/length(indLoc),h)
-      end
-      close  (h)
-      fprintf(fid, '\n');
-      fclose (fid);
-   end
+   
+            waitbar(iLoc/length(indLoc),h)
+         end
+         
+   end      
+
+%% EOF   
