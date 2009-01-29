@@ -42,6 +42,6 @@ function S = openearthtoolsroot
 %%
 S = which(mfilename); % fulle filename of current file
 
-ind = findstr(S, [filesep 'matlab' filesep 'general' filesep]);
+ind = findstr(S, [filesep 'general' filesep]);
 
 S = S(1:ind-1); % this is the openearthtoolsroot
