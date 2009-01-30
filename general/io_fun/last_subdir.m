@@ -39,8 +39,13 @@ function end_of_PATHSTR = last_subdir(fullfilename,varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-   [PATHSTR,NAME,EXT,VERSN] = fileparts(fullfilename);
+   %% Make sure any trailing directories end with a filesep
+   if exist(fullfilename)==7
+   fullfilename = [fullfilename,filesep];
+   end
    
+   %% Remove any trailing file names 
+   [PATHSTR,NAME,EXT,VERSN] = fileparts(fullfilename);
    PATHSTR                  = path2os(PATHSTR);
    
    slash_positions          = findstr(PATHSTR,filesep);
