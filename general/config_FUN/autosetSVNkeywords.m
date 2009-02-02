@@ -61,8 +61,12 @@ filename = fullfile(subversiondir, 'config');
 
 % read config file
 fid = fopen(filename);
-str = fread(fid, '*char')';
-fclose(fid);
+if fid == -1
+    return
+else
+    str = fread(fid, '*char')';
+    fclose(fid);
+end
 
 % create cell array of strings containing the config info
 strcell = strread(str, '%s',...
