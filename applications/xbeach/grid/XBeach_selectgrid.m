@@ -59,7 +59,7 @@ function XB = XBeach_selectgrid(X, Y, Z, varargin)
 
 %% default Input section
 OPT = struct(...
-    'manual', false,...
+    'manual', true,...
     'WL_t', 0,...
     'xori', 0,...
     'yori', 0,...
@@ -75,7 +75,9 @@ OPT = struct(...
     'dymax', 50,...
     'dymin', 10,...
     'finepart', 0.3,...
-    'posdwn', 1);
+    'posdwn', 1,...
+    'polygon', [],...
+    'bathy', {{[] [] []}});
 
 % check whether XB-structure is given as input
 XBid = find(cellfun(@isstruct, varargin));
@@ -95,6 +97,12 @@ catch
     end
 end
 
+if isempty(OPT.polygon)
+    OPT.manual = true;
+else
+    [xi yi] = deal(OPT.polygon(1,:), OPT.polygon(2,:));
+end
+
 % modify deepval and dryval to make them correspond with posdwm (and so,
 % with Z)
 OPT.deepval = OPT.posdwn * abs(OPT.deepval);
@@ -103,11 +111,17 @@ OPT.dryval = -OPT.posdwn * abs(OPT.dryval);
 
 
 if OPT.manual
-    figure(2);
-    scatter(Xbathy,Ybathy,5,Zbathy,'filled');axis equal;colorbar;hold on
+    figure;
+    scatter(OPT.bathy{1}, OPT.bathy{2}, 5, OPT.bathy{3}, 'filled');
+    axis equal;
+    colorbar;
+    hold on
+    xn = max(max(X));
+    yn = max(max(Y));
     plot([0 xn xn 0 0],[0 0 yn yn 0],'r-')
     % Select polygon to include in bathy
-    xi = [];yi=[];
+    xi = [];
+    yi = [];
     n = 0;
     % Loop, picking up the points.
     disp('Select polygon to include in bathy')
@@ -116,18 +130,18 @@ if OPT.manual
     but = 1;
     while but == 1
         n = n+1;
-        [xi(n) yi(n)] = ginput(1);
+        [xi(n) yi(n) but] = ginput(1);
         plot(xi, yi, 'r-o');
     end
-    xi = [0 0 xn xn];
-    yi = [0 yn yn 0];
-    % Interpolate to grid
-    in = inpolygon(X,Y,xi,yi);
-    Z(~in) = NaN;
 end
+% Interpolate to grid
+in = inpolygon(X, Y, xi, yi);
+Z(~in) = NaN;
 
 figure;
-surf(X,Y,Z);shading interp;colorbar
+surf(X, Y, Z);
+shading interp;
+colorbar
 
 % Extrapolate to sides
 [nX nY] = size(X);
