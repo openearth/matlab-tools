@@ -24,14 +24,14 @@ function [X Y Z] = readhtmldata(filename, varargin)
 %   See also
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2008 Delft University of Technology
-%       C.(Kees) den Heijer
+%   Copyright (C) 2009 Deltares
+%       Dano Roelvink / Ap van Dongeren / C.(Kees) den Heijer
 %
-%       C.denHeijer@TUDelft.nl
+%       Kees.denHeijer@Deltares.nl	
 %
-%       Faculty of Civil Engineering and Geosciences
-%       P.O. Box 5048
-%       2600 GA Delft
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
 %       The Netherlands
 %
 %   This library is free software; you can redistribute it and/or
@@ -51,8 +51,8 @@ function [X Y Z] = readhtmldata(filename, varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% Created: 26 Nov 2008
-% Created with Matlab version: 7.4.0.287 (R2007a)
+% Created: 03 Feb 2009
+% Created with Matlab version: 7.6.0.324 (R2008a)
 
 % $Id$
 % $Date$
