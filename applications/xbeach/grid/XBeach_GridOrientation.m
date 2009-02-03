@@ -83,10 +83,7 @@ if OPT.manual
     disp('Click grid corner x=0,y=0')
     disp('Then click point x=xn,y=0')
     disp('Finally click to select extent of y')
-    for n = 1:3
-        [xi(n) yi(n)] = ginput(1);
-        plot(xi,yi,'r-o');
-    end
+    [xi yi] = getline;
     OPT.xori = xi(1);
     OPT.yori = yi(1);
     OPT.xend_y0 = [xi(2) yi(2)];
@@ -104,7 +101,8 @@ X = repmat(xx, 1, length(yy));
 Y = repmat(yy, length(xx), 1);
 try
     Z = griddata(Xbathy, Ybathy, Zbathy, X, Y);
-catch Err
+catch
+    Err = lasterror;
     if strcmp(Err.identifier, 'MATLAB:qhullmx:UndefinedError')
         Z = griddata(Xbathy,Ybathy,Zbathy,X,Y,'linear',{'QJ'});
     else
