@@ -112,7 +112,15 @@ xx = (0:OPT.dx:xn)';
 yy = 0:OPT.dy:yn;
 X = repmat(xx, 1, length(yy));
 Y = repmat(yy, length(xx), 1);
-Z = griddata(Xbathy,Ybathy,Zbathy,X,Y);
+try
+    Z = griddata(Xbathy,Ybathy,Zbathy,X,Y);
+catch Err
+    if strcmp(Err.indentifier, 'MATLAB:qhullmx:UndefinedError')
+        Z = griddata(Xbathy,Ybathy,Zbathy,X,Y,'linear',{'QJ'});
+    else
+        rethrow(Err)
+    end
+end
 
 propertyVar = {...
     'dx', OPT.dx,...
