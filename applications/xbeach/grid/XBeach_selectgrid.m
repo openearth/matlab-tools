@@ -228,6 +228,11 @@ nynew = length(ynew); % number of grid points in y direction
 Xnew = repmat(xnew, 1, nynew);
 Ynew = repmat(ynew, nxnew, 1);
 Znew = interp2(X', Y', Z', Xnew, Ynew);
+
+% prevent NaNs at the boundaries
+Znew(end,:) = Znew(end-1,:);
+Znew(:,end) = Znew(:, end-1);
+
 % figure
 % pcolor(Xnew,Ynew,Znew);axis equal
 
