@@ -82,8 +82,15 @@ if OPT.manual
     % Loop, picking up the points.
     disp('Click grid corner x=0,y=0')
     disp('Then click point x=xn,y=0')
-    disp('Finally click to select extent of y')
-    [xi yi] = getline;
+    disp('Finally right-click to select extent of y')
+    try
+        [xi yi] = getline;
+    catch
+        for n = 1:3
+            [xi(n) yi(n)] = ginput(1);
+            plot(xi,yi,'r-o');
+        end
+    end
     OPT.xori = xi(1);
     OPT.yori = yi(1);
     OPT.xend_y0 = [xi(2) yi(2)];

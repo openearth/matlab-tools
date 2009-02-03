@@ -124,7 +124,19 @@ if OPT.manual
     disp('Select polygon to include in bathy')
     disp('Left mouse button picks points.')
     disp('Right mouse button picks last point.')
-    [xi yi] = getline;
+    try
+        [xi yi] = getline;
+    catch
+        xi = [];
+        yi = [];
+        n = 0;
+        but = 1;
+        while but == 1
+            n = n+1;
+            [xi(n) yi(n) but] = ginput(1);
+            plot(xi, yi, 'r-o');
+        end
+    end
 end
 % Interpolate to grid
 in = inpolygon(X, Y, xi, yi);
