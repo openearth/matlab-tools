@@ -18,14 +18,14 @@ function [X Y Z alfa propertyVar] = XBeach_GridOrientation(xw, yw, Zbathy, varar
 %   See also
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2008 Delft University of Technology
-%       C.(Kees) den Heijer
+%   Copyright (C) 2009 Deltares
+%       Dano Roelvink / Ap van Dongeren / C.(Kees) den Heijer
 %
-%       C.denHeijer@TUDelft.nl	
+%       Kees.denHeijer@Deltares.nl	
 %
-%       Faculty of Civil Engineering and Geosciences
-%       P.O. Box 5048
-%       2600 GA Delft
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
 %       The Netherlands
 %
 %   This library is free software; you can redistribute it and/or
@@ -45,8 +45,8 @@ function [X Y Z alfa propertyVar] = XBeach_GridOrientation(xw, yw, Zbathy, varar
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% Created: 12 Dec 2008
-% Created with Matlab version: 7.4.0.287 (R2007a)
+% Created: 03 Feb 2009
+% Created with Matlab version: 7.6.0.324 (R2008a)
 
 % $Id$
 % $Date$
@@ -63,23 +63,13 @@ OPT = struct(...
     'yori', 0,...
     'xend_y0', [max(max(xw)) 0],...
     'x_yend', [0 max(max(yw))]);
-% ,...
-%     'xmax', max(max(xw)),...
-%     'ymin', 0,...
-%     'ymax', max(max(yw)));
+
 % apply custom properties
 OPT = setProperty(OPT, varargin{:});
-
-% propertyVar = {...
-%     'dx', OPT.dx,...
-%     'dy', OPT.dy,...
-%     'xori', OPT.xori,...
-%     'yori', OPT.yori};
-    
-%%
+   
 %% show data, for selection
 if OPT.manual
-    figure(1);
+    figure;
     scatter(xw, yw, 5, Zbathy, 'filled');
     axis([min(xw)-.5*(max(xw)-min(xw)) ...
         max(xw)+.5*(max(xw)-min(xw)) ...
@@ -93,10 +83,10 @@ if OPT.manual
     disp('Click grid corner x=0,y=0')
     disp('Then click point x=xn,y=0')
     disp('Finally click to select extent of y')
-    [xi yi] = ginput(3);
-    plot(xi, yi, 'r-o')
-%     xi = [max(xw) min(xw) min(xw)];
-%     yi = [max(yw) max(yw) min(yw)];
+    for n = 1:3
+        [xi(n) yi(n)] = ginput(1);
+        plot(xi,yi,'r-o');
+    end
     OPT.xori = xi(1);
     OPT.yori = yi(1);
     OPT.xend_y0 = [xi(2) yi(2)];
@@ -113,7 +103,7 @@ yy = 0:OPT.dy:yn;
 X = repmat(xx, 1, length(yy));
 Y = repmat(yy, length(xx), 1);
 try
-    Z = griddata(Xbathy,Ybathy,Zbathy,X,Y);
+    Z = griddata(Xbathy, Ybathy, Zbathy, X, Y);
 catch Err
     if strcmp(Err.identifier, 'MATLAB:qhullmx:UndefinedError')
         Z = griddata(Xbathy,Ybathy,Zbathy,X,Y,'linear',{'QJ'});

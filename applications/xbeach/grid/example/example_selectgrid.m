@@ -1,5 +1,5 @@
 function XB = example_selectgrid
-%EXAMPLE_SELECTGRID  Example to create XBeach grid
+%EXAMPLE_SELECTGRID  One line description goes here.
 %
 %   More detailed description goes here.
 %
@@ -18,14 +18,14 @@ function XB = example_selectgrid
 %   See also
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2008 Delft University of Technology
-%       C.(Kees) den Heijer
+%   Copyright (C) 2009 Deltares
+%       Dano Roelvink / Ap van Dongeren / C.(Kees) den Heijer
 %
-%       C.denHeijer@TUDelft.nl	
+%       Kees.denHeijer@Deltares.nl	
 %
-%       Faculty of Civil Engineering and Geosciences
-%       P.O. Box 5048
-%       2600 GA Delft
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
 %       The Netherlands
 %
 %   This library is free software; you can redistribute it and/or
@@ -45,8 +45,8 @@ function XB = example_selectgrid
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% Created: 12 Dec 2008
-% Created with Matlab version: 7.4.0.287 (R2007a)
+% Created: 03 Feb 2009
+% Created with Matlab version: 7.6.0.324 (R2008a)
 
 % $Id$
 % $Date$
@@ -55,8 +55,6 @@ function XB = example_selectgrid
 % $HeadURL$
 
 %% Example to create XBeach grid
-
-%TODO: make XBeach_Write_Inp suitable for 2D grids 
 
 close all
 clear
@@ -69,7 +67,7 @@ fname = 'frfsurvey.htm';
 
 %%
 [X Y Z alfa propertyCell] = XBeach_GridOrientation(X, Y, Z,...
-...    'manual', true,...
+    'manual', true,...
     'xori', max(X),...
     'yori', max(Y),...
     'xend_y0', [min(X) max(Y)],...
@@ -77,6 +75,7 @@ fname = 'frfsurvey.htm';
 
 %% make grid
 XB = XBeach_selectgrid(X, Y, Z,...
+    'manual', false,...
     CreateEmptyXBeachVar,...
     propertyCell{:},...
     'alfa', alfa,...
