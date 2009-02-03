@@ -115,7 +115,7 @@ Y = repmat(yy, length(xx), 1);
 try
     Z = griddata(Xbathy,Ybathy,Zbathy,X,Y);
 catch Err
-    if strcmp(Err.indentifier, 'MATLAB:qhullmx:UndefinedError')
+    if strcmp(Err.identifier, 'MATLAB:qhullmx:UndefinedError')
         Z = griddata(Xbathy,Ybathy,Zbathy,X,Y,'linear',{'QJ'});
     else
         rethrow(Err)
