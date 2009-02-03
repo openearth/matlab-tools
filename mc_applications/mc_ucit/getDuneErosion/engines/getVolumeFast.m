@@ -41,8 +41,8 @@ temp=find(x>=SeawardBoundary,1,'first');
 if x(temp)==SeawardBoundary
     z_SB=z(temp);
 else
-    x1=x(temp); x2=x(temp+1);
-    z1=z(temp); z2=z(temp+1);
+    x1=x(temp-1); x2=x(temp);
+    z1=z(temp-1); z2=z(temp);
     z_SB=z1+((SeawardBoundary-x1)/(x2-x1)*(z2-z1));
 end
 x_SB=SeawardBoundary;
@@ -122,3 +122,4 @@ Volume=sum(Poly(:,5));
 % plot(Poly(:,1),Poly(:,2),'r.')
 % 
 % hold off
+% grid on
