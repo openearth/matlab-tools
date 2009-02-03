@@ -130,35 +130,39 @@ OPT.dryval = -OPT.posdwn * abs(OPT.dryval);
 % Extrapolate to sides
 [nX nY] = size(X);
 for i=1:nX
-    for j=floor(nY/2):nY
+    for j = floor(nY/2):nY
+%         if j == nY
+%             dbstopcurrent
+%         end
+%         dbclear all
         if isnan(Z(i,j))
-            Z(i,j)=Z(i,j-1);
+            Z(i,j) = Z(i,j-1);
         end
     end
-    for j=floor(nY/2)-1:-1:1
+    for j = floor(nY/2)-1:-1:1
         if isnan(Z(i,j))
-            Z(i,j)=Z(i,j+1);
+            Z(i,j) = Z(i,j+1);
         end
     end
 end
 for j=1:nY
     % Extrapolate to land
-    for i=floor(nX/2):nX
+    for i = floor(nX/2):nX
         if isnan(Z(i,j));
-            Z(i,j) = OPT.posdwn*max(OPT.posdwn*Z(i-1,j)-OPT.maxslp*OPT.dx,OPT.posdwn*OPT.dryval);
-%             Z(i,j) = min(Z(i-1,j)+OPT.maxslp*OPT.dx,OPT.dryval);
+            Z(i,j) = OPT.posdwn * max(OPT.posdwn*Z(i-1,j)-OPT.maxslp*OPT.dx, OPT.posdwn*OPT.dryval);
         end
     end
     % Extrapolate to sea
-    for i=floor(nX/2):-1:1
+    for i = floor(nX/2):-1:1
         if isnan(Z(i,j));
             Z(i,j) = OPT.posdwn * min(OPT.posdwn*Z(i+1,j)+OPT.seaslp*OPT.dx, OPT.posdwn*OPT.deepval);            
-%             Z(i,j) = max(Z(i+1,j)-OPT.seaslp*OPT.dx,OPT.deepval);
         end
     end
 end
 figure;
-surf(X,Y,Z);shading interp;colorbar
+surf(X,Y,Z);
+shading interp;
+colorbar
 
 %% x-grid
 xnew = X(:,1);
@@ -169,9 +173,7 @@ while xnew(i)<X(end,1);
     % interpolate for each y the corresponding z with the newly
     % chosen x value
     znew = interp2(X', Y', Z', repmat(xnew(i), 1, nY), Y(1,:));
-    d = min(OPT.WL_t) + min(OPT.posdwn*znew); % use the minimum z value to base the grid size on (shouldn't this be the maximum z)???
-    % dx = dxmax* sqrt(d/d0) (why divide by d0? isn't it a matter of depth
-    % difference?)
+    d = min(OPT.WL_t) + min(OPT.posdwn*znew);
     dxnew = max(OPT.dxmax*sqrt(max(d,.1)/d0), OPT.dxmin);
     i = i+1;
     xnew(i) = xnew(i-1)+dxnew;

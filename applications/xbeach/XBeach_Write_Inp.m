@@ -1,4 +1,4 @@
-function XB = XBeach_Write_Inp(calcdir, XB)
+function XB = XBeach_Write_Inp(calcdir, XB, varargin)
 % XBEACH_WRITE_INP writes input file for xbeach calculation
 %
 % Routine writes an input file params.txt containing the information
@@ -58,17 +58,36 @@ OPT = struct(...
     'yfile', 'y.dep',...
     'depfile', 'bath.dep');
 
+OPT = setProperty(OPT, varargin{:});
+
 %% make grid and dep file
 if XB.settings.Grid.vardx
+    % non-equidistant grid
     if isequal(size(XB.Input.zInitial)-1, [XB.settings.Grid.nx XB.settings.Grid.ny])
+        % write bathimetry (z)
         if isempty(XB.settings.Grid.depfile)
             XB.settings.Grid.depfile = OPT.depfile;
         end
         dlmwrite(fullfile(OPT.calcdir, XB.settings.Grid.depfile), XB.Input.zInitial,...
             'delimiter', '\t',...
             'Precision', '%5.3f');
+        
+        % write x grid
+        if isempty(XB.settings.Grid.xfile)
+            XB.settings.Grid.xfile = OPT.xfile;
+        end
+        dlmwrite(fullfile(OPT.calcdir, XB.settings.Grid.xfile), XB.Input.xInitial,...
+            'delimiter', '\t',...
+            'Precision', '%5.3f');
+        
+        % write y grid
+        if isempty(XB.settings.Grid.yfile)
+            XB.settings.Grid.yfile = OPT.yfile;
+        end
+        dlmwrite(fullfile(OPT.calcdir, XB.settings.Grid.yfile), XB.Input.yInitial,...
+            'delimiter', '\t',...
+            'Precision', '%5.3f');
     end
-    % TODO: write x and y in case of vardx
 else
     xgrid = (0:1:XB.settings.Grid.nx)*XB.settings.Grid.dx+XB.settings.Grid.xori;
     ygrid = (0:1:XB.settings.Grid.ny)*XB.settings.Grid.dy+XB.settings.Grid.yori;

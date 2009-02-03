@@ -56,6 +56,7 @@ function [X Y Z alfa propertyVar] = XBeach_GridOrientation(xw, yw, Zbathy, varar
 
 %% default properties
 OPT = struct(...
+    'manual', false,...
     'dx', 2,...
     'dy', 2,...
     'xori', 0,...
@@ -77,26 +78,31 @@ OPT = setProperty(OPT, varargin{:});
     
 %%
 %% show data, for selection
-% figure(1);
-% scatter(xw,yw,5,Zbathy,'filled');
-% axis([min(xw)-.5*(max(xw)-min(xw)) ...
-%     max(xw)+.5*(max(xw)-min(xw)) ...
-%     min(yw)-.5*(max(yw)-min(yw)) ...
-%     max(yw)+.5*(max(yw)-min(yw)) ])
-% axis equal
-% colorbar
-% hold on
-% 
-% % Loop, picking up the points.
-% disp('Click grid corner x=0,y=0')
-% disp('Then click point x=xn,y=0')
-% disp('Finally click to select extent of y')
-% [xi yi] = ginput(3);
-% plot(xi,yi,'r-o')
-% xi = [max(xw) min(xw) min(xw)];
-% yi = [max(yw) max(yw) min(yw)];
-% xori = xi(1);
-% yori = yi(1);
+if OPT.manual
+    figure(1);
+    scatter(xw, yw, 5, Zbathy, 'filled');
+    axis([min(xw)-.5*(max(xw)-min(xw)) ...
+        max(xw)+.5*(max(xw)-min(xw)) ...
+        min(yw)-.5*(max(yw)-min(yw)) ...
+        max(yw)+.5*(max(yw)-min(yw)) ])
+    axis equal
+    colorbar
+    hold on
+
+    % Loop, picking up the points.
+    disp('Click grid corner x=0,y=0')
+    disp('Then click point x=xn,y=0')
+    disp('Finally click to select extent of y')
+    [xi yi] = ginput(3);
+    plot(xi, yi, 'r-o')
+%     xi = [max(xw) min(xw) min(xw)];
+%     yi = [max(yw) max(yw) min(yw)];
+    OPT.xori = xi(1);
+    OPT.yori = yi(1);
+    OPT.xend_y0 = [xi(2) yi(2)];
+    OPT.x_yend = [xi(3) yi(3)];
+end
+
 alfa = atan2(OPT.xend_y0(2)-OPT.yori, OPT.xend_y0(1)-OPT.xori);
 Xbathy = cos(alfa)*(xw-OPT.xori)+sin(alfa)*(yw-OPT.yori);
 Ybathy = -sin(alfa)*(xw-OPT.xori)+cos(alfa)*(yw-OPT.yori);
