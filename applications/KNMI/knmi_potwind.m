@@ -185,10 +185,16 @@ mfile_version = ' 28 oct 2008';
       %% Read header
       %% ----------------------------
          fid             = fopen(w.filename);
-         for iline = 1:22
+         w.comments{1}   = fgetl(fid);
+         if isempty(strfind(w.comments{1},'POTENTIAL WIND'))
+            error(['incorrect file type: 1st line does not start with ''POTENTIAL WIND'' but with ''',w.comments{1},''''])
+         end
+
+         for iline = 2:22
             w.comments{iline} = fgetl(fid);
          end
          fclose(fid);
+         
       
       %% Extract meta-info from header
       %% ----------------------------
