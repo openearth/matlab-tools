@@ -1,5 +1,5 @@
-function [XB Precision] = CreateEmptyXBeachVar()
-% CREATEEMPTYXBEACHVAR creates communication variable for XBeach in- and output
+function [XB Precision] = CreateEmptyXBeachVar(varargin)
+%CREATEEMPTYXBEACHVAR  creates communication variable for XBeach in- and output
 %
 % The variable contains three main fields:
 %   - settings :    In which calculation settings as well as output
@@ -7,12 +7,17 @@ function [XB Precision] = CreateEmptyXBeachVar()
 %   - Input :       This contains input like the initial profile, Hs, Tp,
 %               grid specification, start and stop times etc.
 %   - Output :      In which calculation results can be stored.
+%   By use of PropertyName-PropertyValue pairs, the various elements of
+%   settings and Input can be set.
 %
-% See also XB_run XBeach_Write_Inp XB_Read_Results
+%   Example
+%   createEmptyXBeachVar
+%
+%   See also XB_run XBeach_Write_Inp XB_Read_Results
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2008 Deltares
-%       Pieter van Geer
+%   Copyright (C) 2009 Deltares
+%       Pieter van Geer / Kees den Heijer
 %
 %       Pieter.vanGeer@deltares.nl	
 %
@@ -38,17 +43,22 @@ function [XB Precision] = CreateEmptyXBeachVar()
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% $Id$ 
+% Created: 04 Feb 2009
+% Created with Matlab version: 7.4.0.287 (R2007a)
+
+% $Id$
 % $Date$
 % $Author$
 % $Revision$
+% $HeadURL: $
 
-%%
+%% main structure
 XB = struct(...
     'settings', [],...
     'Input', [],...
     'Output', []);
 
+%% settings
 XB.settings = struct(...
     'Info', [],...
     'Grid', [],...
@@ -58,13 +68,15 @@ XB.settings = struct(...
 
 %% info settings
 XB.settings.Info = struct(...
-    'WaveBoundType', {''},...
+    'WaveBoundType', '',...
     'n_d', 1,...
     'n_w', 1,...
     'S', 1,...
     'nVarOutDef', 20);
 
-%% Grid settins
+XB.settings.Info = applyInput(XB.settings.Info, varargin{:});
+
+%% Grid settings
 XB.settings.Grid = struct(...
     'nx', [],...
     'ny', [],...
@@ -78,6 +90,8 @@ XB.settings.Grid = struct(...
     'yori', 0,...
     'alfa', 0,...
     'posdwn', -1);
+
+XB.settings.Grid = applyInput(XB.settings.Grid, varargin{:});
 
 %% Wave settings
 XB.settings.Waves = struct(...
@@ -107,6 +121,8 @@ XB.settings.Waves = struct(...
     'random', 1,...
     'back', 1);
 
+XB.settings.Waves = applyInput(XB.settings.Waves, varargin{:});
+
 %% Flow settings
 XB.settings.Flow = struct(...
     'nonh', 0,...
@@ -123,6 +139,8 @@ XB.settings.Flow = struct(...
     'tstop', 2261,...
     'CFL', 0.9');
 
+XB.settings.Flow = applyInput(XB.settings.Flow, varargin{:});
+
 %% Sediment settings
 XB.settings.SedInput = struct(...
     'A', .002,...
@@ -137,17 +155,24 @@ XB.settings.SedInput = struct(...
     'wetslp', .15,...
     'hswitch', .1);
 
+XB.settings.SedInput = applyInput(XB.settings.SedInput, varargin{:});
+
+%% Output option settings
 XB.settings.OutputOptions = struct(...
     'nglobalvar', [],...
     'OutVars', []);
 XB.settings.OutputOptions.OutVars = {'cc' 'dims' 'D' 'E' 'Fx' 'Fy' 'Gd' 'hh' 'H' 'R' 'Su' 'Sv' 'u' 'ue' 'urms' 'v' 've' 'zb' 'zs'};
 XB.settings.OutputOptions.nglobalvar = length(XB.settings.OutputOptions.OutVars);
 
+XB.settings.OutputOptions = applyInput(XB.settings.OutputOptions, varargin{:});
+
 %% input
 XB.Input = struct(...
     'xInitial', [],...
     'yInitial', [],...
     'zInitial', []);
+
+XB.Input = applyInput(XB.Input, varargin{:});
 
 %% specification of precision to write in the input files
 Precision = {...
@@ -179,3 +204,15 @@ Precision = {...
     'bcfile', '%s';...
     'depfile', '%s';...
     'nglobalvar', '%f'};
+
+%% apply predefined input
+function varargout = applyInput(OPT, varargin)
+% subfunction to assign values which are specified in varargin to the
+% related fields of the XB structure
+
+id = false(size(varargin));
+for i = 1:2:length(varargin)
+    [id(i) id(i+1)] = deal(any(strcmpi(varargin{i}, fieldnames(OPT))));
+end
+
+varargout = {setProperty(OPT, varargin{id})};
