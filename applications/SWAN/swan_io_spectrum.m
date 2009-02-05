@@ -1,5 +1,5 @@
 function varargout = swan_io_spectrum(varargin)
-%SWAN_IO_SPECTRUM   Reads a 1D or 2D SWAN spectrum file (BETA VERSION).
+%SWAN_IO_SPECTRUM   read SWAN 1D or 2D spectrum file    (BETA VERSION).
 %
 % DAT = SWAN_IO_SPECTRUM(fname)
 % DAT = SWAN_IO_SPECTRUM  % launches file load GUI

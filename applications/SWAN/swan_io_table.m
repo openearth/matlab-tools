@@ -1,5 +1,5 @@
 function swan = swan_io_table(fname,varargin)
-%SWAN_IO_TABLE    Reads a SWAN ASCII output table (BETA VERSION).
+%SWAN_IO_TABLE    read SWAN ASCII output table        (BETA VERSION).
 %
 % DATA = SWAN_IO_TABLE(fname)
 % DATA = SWAN_IO_TABLE(fname,mnmax)
@@ -35,8 +35,6 @@ function swan = swan_io_table(fname,varargin)
 %                                INP.table(itab).myc+1],...
 %                                INP.table(itab).parameter.names)
 %   end
-%
-% © WL | Delft Hydraulics, G.J. de Boer, May 2006-2008
 %
 % See also: SWAN_IO_SPECTRUM, SWAN_IO_INPUT
 

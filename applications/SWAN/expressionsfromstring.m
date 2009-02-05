@@ -1,8 +1,9 @@
 function DAT = expressionsfromstring(string,var_names,varargin)
-%EXPRESSIONSFROMSTRING
+%EXPRESSIONSFROMSTRING   interprets space delimited expressions like a=3
 %
 % DAT = expressionsfromstring(string,var_names)
-% reads space delimited expressions expressions like a=3
+%
+% reads space delimited  expressions like a=3
 % from a string for the variable names passed in the cell
 % var_names into a struct.
 % Example of string:
@@ -15,13 +16,38 @@ function DAT = expressionsfromstring(string,var_names,varargin)
 %     layer: 0.0100
 %     alpha: []
 %
-%
 % Keyword,values paris are:
 % * 'empty' false/true (default)  Var_names that are not present 
 %                                 are added as empty matrices by
-%                                 default, this can be swithced off.
+% See also: STRTOKENS2CELL
+
+%   --------------------------------------------------------------------
+%   Copyright (C) 2006 Deltares
+%       Gerben de Boer
 %
-% G.J. de Boer, April-Aug. 2006
+%       gerben.deboer@deltares.nl	
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software; you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation; either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library; if not, write to the Free Software
+%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+%   USA
+%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
+%   --------------------------------------------------------------------
 
 %% for testing/debugging
 % clear DAT
@@ -80,4 +106,4 @@ function DAT = expressionsfromstring(string,var_names,varargin)
    end
    end
 
-   
+%% EOF

@@ -1,5 +1,5 @@
 function varargout = swan_io_input(varargin)
-%SWAN_IO_INPUT   Reads SWAN input file into struct (BETA VERSION).
+%SWAN_IO_INPUT   read SWAN input file into struct    (BETA VERSION).
 %
 % DAT = SWAN_IO_INPUT        %launches load GUI.
 % DAT = SWAN_IO_INPUT(fname)
@@ -1413,4 +1413,4 @@ DAT.table(N.tables).parameter.names = swan_name2shortname(DAT.table(N.tables).pa
 
    end % function, so all variables above are global within the scope of this file (part bewteen 'function' and this 'end')
 
-%%EOF
+%% EOF

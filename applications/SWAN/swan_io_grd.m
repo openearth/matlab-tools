@@ -1,5 +1,5 @@
 function varargout = swan_io_grd(cmd,fname,varargin)
-%BETA version of SWAN_IO_GRD    read/write SWAN ASCII grid file
+%SWAN_IO_GRD    read/write SWAN ASCII grid file     (BETA VERSION)
 %
 % dep = swan_io_grd('load' ,fname,mxc,myc,xexc,yexc,<IDLA>)
 % dep = swan_io_grd('read' ,fname,mxc,myc,xexc,yexc,<IDLA>)
@@ -30,10 +30,35 @@ function varargout = swan_io_grd(cmd,fname,varargin)
 %     the Delft3d-FLOW adds one dummy row and column of nodes.
 %    NOTE 3. Only default IDLA option (see SWAN manual) currently implemented.
 %
-% G.J. de Boer, July 2006
+% See also: SWAN_SPECTRUM, SWAN_TABLE, SWAN_IO_BOT, SWAN_INPUT
+
+%   --------------------------------------------------------------------
+%   Copyright (C) 2006-2009 Deltares
+%       Gerben de Boer
 %
-% See also:
-% SWAN_SPECTRUM, SWAN_TABLE, SWAN_IO_BOT, SWAN_INPUT
+%       gerben.deboer@deltares.nl	
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software; you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation; either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library; if not, write to the Free Software
+%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+%   USA
+%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
+%   --------------------------------------------------------------------
 
 if     strcmp(cmd,'read') | ...
        strcmp(cmd,'load')
@@ -215,3 +240,5 @@ else
    error('syntax: dep = swan_io_grd(''write''/''load''/''read'',...)')
 
 end   
+
+%% EOF
