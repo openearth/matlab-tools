@@ -254,6 +254,7 @@ if Volume(iterid)>0
     x2 = [xtemp(1); xInitial(id); xtemp(2); x0(iterid)];
     z2 = [ztemp(1); zInitial(id); ztemp(2); WL_t];
 else
+    NoAddErosion = Volume(iterid) == 0;
     if NoAddErosion
         [x1, z1, x2, z2] = deal([]);
     else
@@ -293,7 +294,7 @@ end
 if NoAddErosion
     result = iterresult(iterid);
 else
-    [dum result] = getVolume(xa,za,[],WL_t,min(xa),max(xa),xa,z2a);
+    [dum result] = getVolume(xa, za, [], WL_t, min(xa), max(xa), xa, z2a);
     result.xActive = xa;
     result.zActive = za;
     result.z2Active = z2a;
