@@ -1,5 +1,5 @@
 function Station = getWaterbaseData_locations(Code)
-%GETWATERBASEDATA_SUBSTANCES   reads all avilable location info for 1 DONAR Substance
+%GETWATERBASEDATA_LOCATIONS   reads all avilable location info for 1 DONAR Substance
 %
 % Station = getWaterbaseData_locations(Code)
 %

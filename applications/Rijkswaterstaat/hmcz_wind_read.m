@@ -31,7 +31,7 @@ function DAT = hmcz_wind_read(varargin)
 %   * Lines with a * are treated as NaNs.
 %   * Note that the returned units are [m/s] whereas the file cointaisn [dm/s]
 %
-% See also: KNMIHYDRA
+% See also: KNMI_POTWIND
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares

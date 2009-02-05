@@ -83,7 +83,7 @@ function varargout = donar_read(fnames,varargin)
 %
 %   © G.J. de Boer, Feb 2006 - Jul 2007
 %
-%   See also:
+%   See also: HMCZ_WIND_READ, KNMI_POTWIND, KNMI_ETMGEG,
 %   LOAD, XLSREAD, www.waterbase.nl, www.epsg.org/guides/
 
 %   --------------------------------------------------------------------
