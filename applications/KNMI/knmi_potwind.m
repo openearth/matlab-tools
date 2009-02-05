@@ -1,7 +1,7 @@
-function varargout = readKNMIhydra(varargin)
-%KNMIHYDRA   Reads ASCII wind file from KNMI website
+function varargout = knmi_potwind(varargin)
+%KNMI_POTWIND   Reads ASCII wind file from KNMI website
 %
-% W = readKNMIhydra(filename) 
+% W = knmi_potwind(filename) 
 %
 % reads a wind file from
 %    <http://www.knmi.nl/samenw/hydra>
@@ -14,13 +14,13 @@ function varargout = readKNMIhydra(varargin)
 %    QUP     = quality code up
 %    DATENUM = matlab datenumber
 %
-% [W,iostat] = readKNMIhydra(filename) 
+% [W,iostat] = knmi_potwind(filename) 
 %
 % returns error status in iostat
 %
 % OK/cancel/file not found/
 %
-% W = readKNMIhydra(filename,<keyword,value>) 
+% W = knmi_potwind(filename,<keyword,value>) 
 %
 % where the following optional <keyword,value> pairs are implemented:
 % (see: http://www.knmi.nl/samenw/hydra/meta_data/dir_codes.htm
@@ -34,10 +34,9 @@ function varargout = readKNMIhydra(varargin)
 % See also: CART2POL, POL2CART, DEGN2DEGUC, DEGUC2DEGN, HMCZ_WIND_READ
 %           KNMI_ETMGEG
 
-% uses deblank2
-%      ctransdv
-%      time2datenum
-%      deg2rad
+% uses <ctransdv>   (optional)
+%      time2datenum (OET)
+%      deg2rad      (matlab)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005-8 Delft University of Technology
@@ -205,14 +204,16 @@ mfile_version = ' 28 oct 2008';
          % POTENTIAL WIND STATION  235    De Kooy           
          % MOST RECENT COORDINATES  X :     114254; Y :     549042
 
-         w.stationnumber = deblank2(w.comments{1}(24:28));
-         w.stationname   = deblank2(w.comments{1}(29:end));
+         w.stationnumber = strtrim (w.comments{1}(24:28));
+         w.stationname   = strtrim (w.comments{1}(29:end));
          
          semicolon       = strfind (w.comments{2},':');
          delimiter       = strfind (w.comments{2},';');
-         w.xpar          = str2num (w.comments{2}(semicolon(1)+1:delimiter-1));%str2num(deblank2(line2(30:40)));
-         w.ypar          = str2num (w.comments{2}(semicolon(2)+1:end        ));%str2num(deblank2(line2(48:end)));
+         w.xpar          = str2num (w.comments{2}(semicolon(1)+1:delimiter-1));%str2num(strtrim(line2(30:40)));
+         w.ypar          = str2num (w.comments{2}(semicolon(2)+1:end        ));%str2num(strtrim(line2(48:end)));
+         if exist('ctransdv')==2
          [w.lon,w.lat]   = ctransdv(w.xpar,w.ypar,'par','ll');
+         end
          
          char1           = strfind (w.comments{ 3},'MEASURED AT')+11;
          char2           = strfind (w.comments{ 3},'METER');
@@ -223,9 +224,9 @@ mfile_version = ' 28 oct 2008';
          char2           = strfind (w.comments{ 6},'METER');
          w.roughness     = str2num (w.comments{ 6}(char1+1:char2-2));
          
-         w.version       = deblank2(w.comments{14}(10:end));
+         w.version       = strtrim (w.comments{14}(10:end));
          
-         w.timezone      = deblank2(w.comments{16}(9:end));
+         w.timezone      = strtrim (w.comments{16}(9:end));
       
       %% Read legend
       %% ----------------------------
@@ -301,7 +302,7 @@ mfile_version = ' 28 oct 2008';
          
    end % if length(tmp)==0
    
-   w.iomethod = ['© knmihydra.m  by G.J. de Boer (TU Delft), g.j.deboer@tudelft.nl,',mfile_version]; 
+   w.iomethod = ['© knmi_potwind.m  by G.J. de Boer (TU Delft), g.j.deboer@tudelft.nl,',mfile_version]; 
    w.read_at  = datestr(now);
    w.iostatus = iostat;
    

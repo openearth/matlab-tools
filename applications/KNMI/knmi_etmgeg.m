@@ -1,7 +1,7 @@
-function varargout = knmi_climate(varargin)
-%KNMI_CLIMATE   Reads KNMI ASCII climate time series
+function varargout = knmi_etmgeg(varargin)
+%KNMI_ETMGEG   Reads KNMI ASCII climate time series
 %
-% W = KNMI_CLIMATE(filename) 
+% W = knmi_etmgeg(filename) 
 %
 % reads a wind file from
 %    <http://www.knmi.nl/klimatologie/daggegevens/download.cgi>
@@ -27,13 +27,13 @@ function varargout = knmi_climate(varargin)
 %   NG      = cloud cover                                      [octants] (9=sky invisible)
 %   UG      = daily mean relative atmospheric humidity         [%]
 %
-% [W,iostat] = KNMI_CLIMATE(filename) 
+% [W,iostat] = knmi_etmgeg(filename) 
 %
 % returns error status in iostat
 %
 % OK/cancel/file not found/
 %
-% W = KNMI_CLIMATE(filename,<keyword,value>) 
+% W = knmi_etmgeg(filename,<keyword,value>) 
 %
 % where the following optional <keyword,value> pairs are implemented:
 % (see: http://www.knmi.nl/samenw/hydra/meta_data/dir_codes.htm
@@ -44,6 +44,8 @@ function varargout = knmi_climate(varargin)
 % NOTE THAT THE VALUES FROM THE FILE HAVE BEEN MULTIPLIED WITH A FACTOR TO GET SI-UNITS.
 %
 % See also: KNMI_POTWIND
+
+% uses <sortfieldnames>   (optional)
 
 mfile_version = 0.0;
 
@@ -281,13 +283,15 @@ mfile_version = 0.0;
             
          end      
          
+         if exist('sortfieldnames')==2
          W.data = sortfieldnames(W.data);
+         end
 
          fclose(fid);
          
    end % if length(tmp)==0
    
-   W.iomethod = ['© knmi_climate.m  by G.J. de Boer (Deltares), gerben.deboer@Deltares.nl,',mfile_version]; 
+   W.iomethod = ['© knmi_etmgeg.m  by G.J. de Boer (Deltares), gerben.deboer@Deltares.nl,',mfile_version]; 
    W.read_at  = datestr(now);
    W.iostatus = iostat;
    
