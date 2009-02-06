@@ -42,10 +42,10 @@ function values = nc_varget(ncfile, varname, varargin )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: nc_varget.m 2420 2007-11-10 13:39:51Z johnevans007 $
-% $LastChangedDate: 2007-11-10 08:39:51 -0500 (Sat, 10 Nov 2007) $
-% $LastChangedRevision: 2420 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

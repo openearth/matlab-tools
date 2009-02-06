@@ -14,10 +14,10 @@ function a = clim(arg1, arg2)
 %   See also PBASPECT, DASPECT, XLIM<1>, YLIM<1>, ZLIM<1>, CAXIS, CLIM.
  
 %   Copyright 1984-2002 The MathWorks, Inc. 
-%   $Revision: 1.7 $  $Date: 2002/04/15 04:28:47 $
+%   $Revision$  $Date$
 %   G.J. de Boer, Feb 2006, edited form xlim.m. April 7th 2008: Added option to get lower/upper limit of current axes
 %   Copyright 1984-2005 The MathWorks, Inc.
-%   $Revision: 1.7.4.1 $  $Date: 2005/09/12 19:00:07 $
+%   $Revision$  $Date$
 
 if nargin == 0
   a = get(gca,'clim');

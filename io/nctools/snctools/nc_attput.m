@@ -14,10 +14,10 @@ function nc_attput ( ncfile, varname, attribute_name, attval )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: nc_attput.m 2344 2007-09-21 21:33:08Z johnevans007 $
-% $LastChangedDate: 2007-09-21 17:33:08 -0400 (Fri, 21 Sep 2007) $
-% $LastChangedRevision: 2344 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

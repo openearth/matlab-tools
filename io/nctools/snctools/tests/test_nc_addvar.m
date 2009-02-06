@@ -25,10 +25,10 @@ function test_nc_addvar ( ncfile )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: test_nc_addvar.m 2315 2007-09-03 16:07:33Z johnevans007 $
-% $LastChangedDate: 2007-09-03 12:07:33 -0400 (Mon, 03 Sep 2007) $
-% $LastChangedRevision: 2315 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

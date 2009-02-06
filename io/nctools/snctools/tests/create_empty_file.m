@@ -5,10 +5,10 @@ function create_empty_file ( ncfile )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: create_empty_file.m 1781 2006-09-08 11:12:02Z johnevans007 $
-% $LastChangedDate: 2006-09-08 07:12:02 -0400 (Fri, 08 Sep 2006) $
-% $LastChangedRevision: 1781 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %

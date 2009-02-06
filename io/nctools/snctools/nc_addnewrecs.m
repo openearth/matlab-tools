@@ -81,10 +81,10 @@ function new_data = nc_addnewrecs ( ncfile, input_buffer, record_variable )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: nc_addnewrecs.m 2178 2007-04-23 13:05:21Z johnevans007 $
-% $LastChangedDate: 2007-04-23 09:05:21 -0400 (Mon, 23 Apr 2007) $
-% $LastChangedRevision: 2178 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

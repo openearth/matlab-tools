@@ -24,10 +24,10 @@ function test_nc_addnewrecs ( ncfile )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: test_nc_addnewrecs.m 2505 2008-05-05 15:39:14Z johnevans007 $
-% $LastChangedDate: 2008-05-05 11:39:14 -0400 (Mon, 05 May 2008) $
-% $LastChangedRevision: 2505 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

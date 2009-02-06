@@ -3,10 +3,10 @@ function test_snctools()
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: test_snctools.m 2445 2007-11-13 16:06:10Z johnevans007 $
-% $LastChangedDate: 2007-11-13 11:06:10 -0500 (Tue, 13 Nov 2007) $
-% $LastChangedRevision: 2445 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -17,10 +17,10 @@ function test_nc_dump ( )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: test_nc_dump.m 2450 2007-11-28 21:35:07Z johnevans007 $
-% $LastChangedDate: 2007-11-28 16:35:07 -0500 (Wed, 28 Nov 2007) $
-% $LastChangedRevision: 2450 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

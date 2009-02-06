@@ -36,10 +36,10 @@ function values = nc_attget(ncfile, varname, attribute_name )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: nc_attget.m 2380 2007-10-26 12:26:44Z johnevans007 $
-% $LastChangedDate: 2007-10-26 08:26:44 -0400 (Fri, 26 Oct 2007) $
-% $LastChangedRevision: 2380 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

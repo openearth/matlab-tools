@@ -50,7 +50,7 @@ function [XB Precision] = CreateEmptyXBeachVar(varargin)
 % $Date$
 % $Author$
 % $Revision$
-% $HeadURL: $
+% $HeadURL$
 
 %% main structure
 XB = struct(...

@@ -24,10 +24,10 @@ function bool = nc_iscoordvar ( ncfile, varname )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: nc_iscoordvar.m 2407 2007-11-10 03:38:30Z johnevans007 $
-% $LastChangedDate: 2007-11-09 22:38:30 -0500 (Fri, 09 Nov 2007) $
-% $LastChangedRevision: 2407 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

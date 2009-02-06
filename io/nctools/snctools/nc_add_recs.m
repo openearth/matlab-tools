@@ -24,10 +24,10 @@ function nc_add_recs ( ncfile, new_data, varargin )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: nc_add_recs.m 2309 2007-08-31 20:30:56Z johnevans007 $
-% $LastChangedDate: 2007-08-31 16:30:56 -0400 (Fri, 31 Aug 2007) $
-% $LastChangedRevision: 2309 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

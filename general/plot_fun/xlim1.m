@@ -14,10 +14,10 @@ function a = xlim(arg1, arg2)
 %   See also PBASPECT, DASPECT, YLIM, ZLIM.
  
 %   Copyright 1984-2002 The MathWorks, Inc. 
-%   $Revision: 1.7 $  $Date: 2002/04/15 04:28:47 $
+%   $Revision$  $Date$
 %   G.J. de Boer, April 24th 2006: Added option to get lower/upper limit of current axes
 %   Copyright 1984-2005 The MathWorks, Inc.
-%   $Revision: 1.7.4.1 $  $Date: 2005/09/12 19:00:07 $
+%   $Revision$  $Date$
 
 if nargin == 0
   a = get(gca,'xlim');

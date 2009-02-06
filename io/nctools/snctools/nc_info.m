@@ -76,10 +76,10 @@ function fileinfo = nc_info ( ncfile )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: nc_info.m 2340 2007-09-21 18:46:07Z johnevans007 $
-% $LastChangedDate: 2007-09-21 14:46:07 -0400 (Fri, 21 Sep 2007) $
-% $LastChangedRevision: 2340 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

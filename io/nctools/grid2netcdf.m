@@ -20,7 +20,7 @@ STRINGSIZE = 100;
     nc_attput( filename, nc_global, 'history', ['data received from Rijkswaterstaat, converted to netcdf on ' date]);    
     nc_attput( filename, nc_global, 'references', ['Original source: http://www.watermarkt.nl/kustenzeebodem/ ' ...
         'Deltares storage: https://repos.deltares.nl/repos/mcdata/trunk/jarkus/' ...
-        'Converted with script with $Id: grid2netcdf.m 1912 2008-11-11 10:49:49Z baart_f $' ]);
+        'Converted with script with $Id$' ]);
     nc_attput( filename, nc_global, 'Conventions', 'CF-1.3');    
     
 %% Define dimensions    

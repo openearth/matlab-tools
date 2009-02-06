@@ -47,7 +47,7 @@ function result = createEmptyDUROSResult(varargin)
 % $Date$
 % $Author$
 % $Revision$
-% $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/applications/durosta/CreateDurostaVar.m $
+% $HeadURL$
 
 %%
 result = struct(...

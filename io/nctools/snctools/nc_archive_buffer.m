@@ -67,10 +67,10 @@ function new_data = nc_archive_buffer ( input_buffer, ncfile, record_variable )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: nc_archive_buffer.m 1870 2006-10-09 12:08:53Z johnevans007 $
-% $LastChangedDate: 2006-10-09 08:08:53 -0400 (Mon, 09 Oct 2006) $
-% $LastChangedRevision: 1870 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

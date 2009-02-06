@@ -16,10 +16,10 @@ function test_nc_addhist ( ncfile )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: test_nc_addhist.m 2311 2007-08-31 20:35:46Z johnevans007 $
-% $LastChangedDate: 2007-08-31 16:35:46 -0400 (Fri, 31 Aug 2007) $
-% $LastChangedRevision: 2311 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

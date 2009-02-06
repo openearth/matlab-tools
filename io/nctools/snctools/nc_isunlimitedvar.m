@@ -7,10 +7,10 @@ function bool = nc_isunlimitedvar ( ncfile, varname )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: nc_isunlimitedvar.m 2413 2007-11-10 06:19:43Z johnevans007 $
-% $LastChangedDate: 2007-11-10 01:19:43 -0500 (Sat, 10 Nov 2007) $
-% $LastChangedRevision: 2413 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

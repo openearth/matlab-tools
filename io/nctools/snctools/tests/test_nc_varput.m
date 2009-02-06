@@ -61,10 +61,10 @@ function test_nc_varput ( ncfile )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: test_nc_varput.m 2429 2007-11-11 13:28:49Z johnevans007 $
-% $LastChangedDate: 2007-11-11 08:28:49 -0500 (Sun, 11 Nov 2007) $
-% $LastChangedRevision: 2429 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -19,10 +19,10 @@ function nc_add_dimension ( ncfile, dimension_name, dimension_length )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: nc_add_dimension.m 2305 2007-08-31 15:24:15Z johnevans007 $
-% $LastChangedDate: 2007-08-31 11:24:15 -0400 (Fri, 31 Aug 2007) $
-% $LastChangedRevision: 2305 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

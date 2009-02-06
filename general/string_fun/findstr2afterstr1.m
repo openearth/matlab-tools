@@ -46,10 +46,10 @@ function [k] = findstr2afterstr1(str, str1, str2)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% $Id: findstr2afterstr1.m 43 2008-11-13 14:03:15Z heijer $ 
-% $Date: 2008-11-13 15:03:15 +0100 (do, 13 nov 2008) $
-% $Author: heijer $
-% $Revision: 43 $
+% $Id$ 
+% $Date$
+% $Author$
+% $Revision$
 
 %% 
 str1loc = min(findstr(str, str1));

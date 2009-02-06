@@ -7,10 +7,10 @@ function nc_dump(file_name, varargin )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: nc_dump.m 2338 2007-09-21 18:41:58Z johnevans007 $
-% $LastChangedDate: 2007-09-21 14:41:58 -0400 (Fri, 21 Sep 2007) $
-% $LastChangedRevision: 2338 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

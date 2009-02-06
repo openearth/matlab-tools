@@ -19,10 +19,10 @@ function test_nc_iscoordvar ( )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: test_nc_iscoordvar.m 2406 2007-11-10 03:37:19Z johnevans007 $
-% $LastChangedDate: 2007-11-09 22:37:19 -0500 (Fri, 09 Nov 2007) $
-% $LastChangedRevision: 2406 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -28,10 +28,10 @@ function test_nc_getbuffer ( )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: test_nc_getbuffer.m 2426 2007-11-11 03:56:45Z johnevans007 $
-% $LastChangedDate: 2007-11-10 22:56:45 -0500 (Sat, 10 Nov 2007) $
-% $LastChangedRevision: 2426 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

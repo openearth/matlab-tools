@@ -19,10 +19,10 @@ function test_nc_attget ( )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: test_nc_attget_attput.m 2394 2007-11-08 13:27:30Z johnevans007 $
-% $LastChangedDate: 2007-11-08 08:27:30 -0500 (Thu, 08 Nov 2007) $
-% $LastChangedRevision: 2394 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

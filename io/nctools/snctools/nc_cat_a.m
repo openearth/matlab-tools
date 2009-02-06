@@ -52,10 +52,10 @@ function nc_cat_a ( input_ncfiles, output_ncfile, abscissa_var )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id:$
-% $LastChangedDate:$
-% $LastChangedRevision:$
-% $LastChangedBy:$
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

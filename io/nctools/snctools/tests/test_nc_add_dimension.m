@@ -15,10 +15,10 @@ function test_nc_add_dimension ( ncfile )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: test_nc_add_dimension.m 2306 2007-08-31 15:24:55Z johnevans007 $
-% $LastChangedDate: 2007-08-31 11:24:55 -0400 (Fri, 31 Aug 2007) $
-% $LastChangedRevision: 2306 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

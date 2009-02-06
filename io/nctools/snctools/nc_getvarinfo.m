@@ -43,10 +43,10 @@ function Dataset = nc_getvarinfo ( arg1, arg2 )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: nc_getvarinfo.m 2441 2007-11-13 13:29:47Z johnevans007 $
-% $LastChangedDate: 2007-11-13 08:29:47 -0500 (Tue, 13 Nov 2007) $
-% $LastChangedRevision: 2441 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

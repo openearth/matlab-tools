@@ -18,10 +18,10 @@ function test_nc_isunlimitedvar ( )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: test_nc_isunlimitedvar.m 2416 2007-11-10 13:09:55Z johnevans007 $
-% $LastChangedDate: 2007-11-10 08:09:55 -0500 (Sat, 10 Nov 2007) $
-% $LastChangedRevision: 2416 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

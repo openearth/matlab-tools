@@ -22,10 +22,10 @@ function test_nc_getdiminfo ( )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: test_nc_getdiminfo.m 2457 2008-01-04 18:19:39Z johnevans007 $
-% $LastChangedDate: 2008-01-04 13:19:39 -0500 (Fri, 04 Jan 2008) $
-% $LastChangedRevision: 2457 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

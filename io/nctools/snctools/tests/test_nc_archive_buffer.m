@@ -20,10 +20,10 @@ function test_nc_archive_buffer ( ncfile )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: test_nc_archive_buffer.m 1808 2006-09-15 16:11:51Z johnevans007 $
-% $LastChangedDate: 2006-09-15 12:11:51 -0400 (Fri, 15 Sep 2006) $
-% $LastChangedRevision: 1808 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

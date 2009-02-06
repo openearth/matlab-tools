@@ -33,10 +33,10 @@ function nc_varput( ncfile, varname, data, varargin )
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% $Id: nc_varput.m 2364 2007-10-08 20:28:39Z johnevans007 $
-% $LastChangedDate: 2007-10-08 16:28:39 -0400 (Mon, 08 Oct 2007) $
-% $LastChangedRevision: 2364 $
-% $LastChangedBy: johnevans007 $
+% $Id$
+% $LastChangedDate$
+% $LastChangedRevision$
+% $LastChangedBy$
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
