@@ -9,6 +9,7 @@ function varargout = DuneErosionSettings(varargin)
 % [paramsout] = DuneErosionSettings('get',paramsinreq)
 % DuneErosionSettings('set',paramnames,paramvals,...)
 % DuneErosionSettings('load',filename)
+% DuneErosionSettings('load', DESettingsstructure)
 % DuneErosionSettings('save',filename)
 % DuneErosionSettings('default')
 %
@@ -192,6 +193,8 @@ if isempty(varargin)
 else
     if strcmp(varargin{1},'default')
         DESettings = getDefaultDESettings;
+    elseif isstruct(varargin{1})
+        DESettings = varargin{1};
     else
         try
             load(varargin{1});
