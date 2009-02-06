@@ -83,11 +83,11 @@ function [result, messages] = getDuneErosion(xInitial, zInitial, D50, WL_t, Hsig
 % Created: $date(dd mmm yyyy)
 % Created with Matlab version: $version
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: dune dunes erosion DUROS DUROS+ VTV beach
 
 %% Initiate variables

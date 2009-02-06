@@ -44,10 +44,10 @@ function [x z] = erosionPoint(xInitial, zInitial, WL_t, x0)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% $Id: plotDuneErosion.m 1790 2008-09-26 11:34:28Z heijer $ 
-% $Date: 2008-09-26 13:34:28 +0200 (vr, 26 sep 2008) $
-% $Author: heijer $
-% $Revision: 1790 $
+% $Id$ 
+% $Date$
+% $Author$
+% $Revision$
 
 %%
 % create 1:1 line above the water level, reaching up to maximum profile

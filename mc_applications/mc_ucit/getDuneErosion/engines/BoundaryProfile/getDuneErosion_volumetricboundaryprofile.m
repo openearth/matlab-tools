@@ -31,10 +31,10 @@ function result = getDuneErosion_volumetricboundaryprofile(xInitial, zInitial, x
 % By:           <C.(Kees) den Heijer (email: C.denHeijer@tudelft.nl)>
 % --------------------------------------------------------------------------
 
-% $Id: getDuneErosion_additional.m 1694 2008-08-27 14:41:21Z heijer $ 
-% $Date: 2008-08-27 16:41:21 +0200 (wo, 27 aug 2008) $
-% $Author: heijer $
-% $Revision: 1694 $
+% $Id$ 
+% $Date$
+% $Author$
+% $Revision$
 
 %% Initiate variables
 tic;

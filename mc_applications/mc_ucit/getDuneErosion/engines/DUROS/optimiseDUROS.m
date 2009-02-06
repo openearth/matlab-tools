@@ -29,10 +29,10 @@ function result = optimiseDUROS(xInitial, zInitial, WL_t, x0min, x0max, x0except
 % By:           <C.(Kees) den Heijer (email: C.denHeijer@tudelft.nl)>
 % --------------------------------------------------------------------------
 
-% $Id: plotDuneErosion.m 1738 2008-09-17 12:22:34Z heijer $ 
-% $Date: 2008-09-17 14:22:34 +0200 (wo, 17 sep 2008) $
-% $Author: heijer $
-% $Revision: 1738 $
+% $Id$ 
+% $Date$
+% $Author$
+% $Revision$
 % $Keywords: dune dunes erosion optimise DUROS DUROS+
 
 %% Initiate variables
