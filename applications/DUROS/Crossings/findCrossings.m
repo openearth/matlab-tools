@@ -52,6 +52,7 @@ function [xcr zcr x1_new_out z1_new_out x2_new_out z2_new_out] = findCrossings(x
 % $Date$
 % $Author$
 % $Revision$
+% $Keywords: Crossing Crossings line polygon intersect intersection
 
 %% input check
 if ~all([isvector(x1)...

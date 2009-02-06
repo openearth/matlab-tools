@@ -50,5 +50,6 @@ function varargout = $filename(varargin)
 % $Author: $
 % $Revision: $
 % $HeadURL: $
+% $Keywords:
 
 %%
