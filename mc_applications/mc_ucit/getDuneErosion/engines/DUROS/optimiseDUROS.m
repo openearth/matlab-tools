@@ -21,7 +21,7 @@ function result = optimiseDUROS(xInitial, zInitial, WL_t, x0min, x0max, x0except
 %
 % Output:       Eventual output is stored in a structure result
 %
-%   See also getDuneErosion_DUROS
+%   See also getDuneErosion getDuneErosion_DUROS
 
 % --------------------------------------------------------------------------
 % Copyright (c) WL|Delft Hydraulics 2004-2007 FOR INTERNAL USE ONLY
@@ -33,6 +33,7 @@ function result = optimiseDUROS(xInitial, zInitial, WL_t, x0min, x0max, x0except
 % $Date: 2008-09-17 14:22:34 +0200 (wo, 17 sep 2008) $
 % $Author: heijer $
 % $Revision: 1738 $
+% $Keywords: dune dunes erosion optimise DUROS DUROS+
 
 %% Initiate variables
 tic;
