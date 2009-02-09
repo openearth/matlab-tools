@@ -53,7 +53,7 @@ function X = norm_inv(P, mu, sigma)
 % $HeadURL$
 
 %%
-if ~(max(P)<=1 && min(P)>=0)
+if max(P)>1 & min(P)<0 %#ok<AND2>
     error('values should be between 0 and 1')
 end
 
