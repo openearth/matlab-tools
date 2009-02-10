@@ -85,7 +85,7 @@ OPT = struct(...
     'Resistance', 0,...      % Resistance value(s) to be (optionally) used in z-function       
     'P2xFunction', @P2x,...  % Function to transform P to x
     'x2zFunction', @x2z,...  % Function to transform x to z
-    'variables', {{}} ...
+    'variables', {{}} ...    % aditional variables to use in x2zFunction
     );
 % overrule default settings by property pairs, given in varargin
 OPT = setProperty(OPT, varargin{:});

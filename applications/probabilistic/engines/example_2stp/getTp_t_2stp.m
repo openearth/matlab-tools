@@ -1,31 +1,31 @@
-function x = conditionalWeibull(P, omega, rho, alpha, sigma, lambda)
-%CONDITIONALWEIBULL  routine to get probability density function
+function Tp_t = getTp_t_2stp(P, Hsig_t, alpha1, beta1, alpha2, beta2, lambda, sigma1, sigma2)
+%GETTP_T_2STP  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   x = conditionalWeibull(P, omega, rho, alpha, sigma)
+%   varargout = getTp_t_2stp(varargin)
 %
 %   Input:
 %   varargin  =
 %
 %   Output:
-%   x =
+%   varargout =
 %
 %   Example
-%   conditionalWeibull
+%   getTp_t_2stp
 %
 %   See also
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2009 Delft University of Technology
+%   Copyright (C) 2009 Deltares
 %       C.(Kees) den Heijer
 %
-%       C.denHeijer@TUDelft.nl	
+%       Kees.denHeijer@Deltares.nl	
 %
-%       Faculty of Civil Engineering and Geosciences
-%       P.O. Box 5048
-%       2600 GA Delft
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
 %       The Netherlands
 %
 %   This library is free software; you can redistribute it and/or
@@ -45,30 +45,39 @@ function x = conditionalWeibull(P, omega, rho, alpha, sigma, lambda)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% Created: 06 Feb 2009
-% Created with Matlab version: 7.4.0.287 (R2007a)
+% Created: 10 Feb 2009
+% Created with Matlab version: 7.6.0.324 (R2008a)
 
 % $Id$
 % $Date$
 % $Author$
 % $Revision$
 % $HeadURL$
+% $Keywords:
 
 %%
-if length(omega) == 2 && lambda ~= 1
-    % in case of interpolation between 2 reference points: get x values of
-    % reference point 2
-    x2 = conditionalWeibull(P, omega(2), rho(2), alpha(2), sigma(2));
-end
-    
-% transform P (probability of non-exceedance) to Fe (frequency of
-% exceedance)
-Fe = -log(P);
+[Hsig_t1 Hsig_t2] = deal(Hsig_t(:,1), Hsig_t(:,1));
 
-% get the x, using Fe(P) and the coefficients
-x = sigma(1).*(log(rho(1)) + (omega(1)./sigma(1)).^alpha(1) - log(Fe)).^(1./alpha(1));
+% eerst: station 1 (soms wordt geinterpoleerd tussen stations)
+Tp1 = bepaal_Tp(Hsig_t1, P, alpha1, beta1, sigma1);
 
-if length(omega) == 2 && lambda ~= 1
-    % interpolate between reference points based on lambda value
-    x = [x x2 lambda*x + (1-lambda)*x2];
+% dan: station 2 
+if isempty(sigma2)
+    Tp2 = 0;     %dummy waarde als er sprake is van slechts 1 station
+else
+    Tp2 = bepaal_Tp(Hsig_t2, P, alpha2, beta2, sigma2);
 end
+
+% ten slotte: interpolatie 
+Tp_t = [Tp1 Tp2 lambda*Tp1+(1-lambda)*Tp2];
+
+
+
+% =========================================================================
+% =========================   hulpfunctie ================================
+% =========================================================================
+
+function Tp = bepaal_Tp(Hsig_t, P, alpha, beta, sigma)
+
+mu_Tp = alpha + beta*Hsig_t;
+Tp = norm_inv(P, mu_Tp, sigma);           % bereken Tp

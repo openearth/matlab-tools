@@ -1,10 +1,10 @@
-function [z ErosionVolume] = x2z(x, varnames, Resistance)
+function [z ErosionVolume] = x2z(x, varnames, Resistance, varargin)
 %X2Z  Limit state function
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   [z ErosionVolume] = x2z(x, varnames, Resistance)
+%   [z ErosionVolume] = x2z(x, varnames, Resistance, varargin)
 %
 %   Input:
 %   varargin  =
@@ -55,8 +55,15 @@ function [z ErosionVolume] = x2z(x, varnames, Resistance)
 % $HeadURL$
 
 %% cross-shore profile
-xInitial = [-250; -24.375; 5.625; 55.725; 230.625; 1950];
-zInitial = [15; 15; 3; 0; -3; -14.4625];
+if ~isempty(varargin)
+    xInitial = varargin{1};
+    zInitial = varargin{2};
+    xInitial = xInitial(~isnan(zInitial));
+    zInitial = zInitial(~isnan(zInitial));
+else
+    xInitial = [-250; -24.375; 5.625; 55.725; 230.625; 1950];
+    zInitial = [15; 15; 3; 0; -3; -14.4625];
+end
 
 % reference for retreat distance
 zRef = 5;

@@ -68,6 +68,13 @@ for i = 1:length(stochast)
                     Params{j} = evaluate(Params{j}, stochast, X);
                 end
             end
+        elseif any(cellfun(@ischar, Params))
+            id = find(cellfun(@ischar, Params));
+            for j = id
+                for k = find(strcmp({stochast.Name}, Params{j}))
+                    Params{j} = X.(stochast(k).Name);
+                end
+            end
         end
     end
     
@@ -81,7 +88,7 @@ for i = 1:length(stochast)
     end
     
     % fill column of x
-    x(:,i) = X.(stochast(i).Name);
+    x(:,i) = X.(stochast(i).Name)(:,end);
 end
 
 %% sub function

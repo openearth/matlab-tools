@@ -59,12 +59,13 @@ OPT = struct(...
     'DerivativeSides', 1,... % 1 or 2 sided derivatives
     'startU', 0,...          % start value for elements of u-vector
     'du', .3,...             % step size for dz/du / Perturbation Value
-    'Resistance', 25,...     % Resistance value(s) to be (optionally) used in z-function
+    'Resistance', 0,...      % Resistance value(s) to be (optionally) used in z-function
     'epsZ', .01,...          % stop criteria for change in z-value
     'epsBeta', .01,...       % stop criteria for change in Beta-value
     'Relaxation', .25,...    % Relaxation value
     'P2xFunction', @P2x,...  % Function to transform P to x
-    'x2zFunction', @x2z ...  % Function to transform x to z
+    'x2zFunction', @x2z,...  % Function to transform x to z
+    'variables', {{}} ...    % aditional variables to use in x2zFunction
     );
 % overrule default settings by property pairs, given in varargin
 OPT = setProperty(OPT, varargin{:});
@@ -149,7 +150,8 @@ while NextIter
     end
     
     % derive z based on x
-    z(Calc,1) = feval(OPT.x2zFunction, x(Calc,:), {stochast.Name}, OPT.Resistance);  %#ok<AGROW> % bepaal z(u) uit x(u)
+    z(Calc,1) = feval(OPT.x2zFunction, x(Calc,:), {stochast.Name}, OPT.Resistance,...
+        OPT.variables{:});  %#ok<AGROW> % bepaal z(u) uit x(u)
 
     if Converged || maxIterReached
         % exit while loop
