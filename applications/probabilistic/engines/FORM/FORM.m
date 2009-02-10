@@ -8,7 +8,7 @@ function result = FORM(stochast, varargin)
 %
 % input:
 % stochast = structure with stochastic variables
-% varargin = series of keyword-value pairs to set
+% varargin = series of keyword-value pairs to set properties
 %
 % output:
 % result = structure with settings, input and output
@@ -99,14 +99,12 @@ active = ~cellfun(@isempty, {stochast.Distr});
 [id_low id_upp] = deal(NaN(1,Nstoch));
 if OPT.DerivativeSides == 1
     % one sided derivatives
-%     du = [0 OPT.du]/OPT.DerivativeSides;
     du = [eye(Nstoch)*OPT.du; zeros(1,Nstoch)];
     du([~active false],:) = [];
     id_low(active) = deal(size(du,1));
     id_upp(active) = 1:sum(active);
 elseif OPT.DerivativeSides == 2
     % two sided derivatives
-%     du = [-1 1] * OPT.du/OPT.DerivativeSides;
     du = [eye(Nstoch)*-OPT.du/2; eye(Nstoch)*OPT.du/2; zeros(1,Nstoch)];
     du([~active ~active false],:) = [];
     id_low(active) = 1:sum(active);
@@ -145,6 +143,10 @@ while NextIter
     
     % transform P to x
     x(Calc,:) = feval(OPT.P2xFunction, stochast, P(Calc,:)); %#ok<AGROW>
+    
+    if any(any(~isfinite(x(Calc,:))))
+        error('FORM:xBecameNonFinite', 'One or more x-values became Inf or NaN')
+    end
     
     % derive z based on x
     z(Calc,1) = feval(OPT.x2zFunction, x(Calc,:), {stochast.Name}, OPT.Resistance);  %#ok<AGROW> % bepaal z(u) uit x(u)
@@ -222,5 +224,10 @@ if ~isempty(u)
     currentU = diff([u(end,:); currentU])*Relaxation + u(end,:);
 end
 u = [u; repmat(currentU, size(du,1), 1) + du];
+
+if any(any(isnan(u)))
+    error('FORM:ubecameNaN', 'One or more u-values became NaN')
+end
+
 id_low = Calc + rel_ids{1};
 id_upp = Calc + rel_ids{2};
