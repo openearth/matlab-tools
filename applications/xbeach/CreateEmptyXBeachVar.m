@@ -162,9 +162,10 @@ XB.settings.OutputOptions = struct(...
     'nglobalvar', [],...
     'OutVars', []);
 XB.settings.OutputOptions.OutVars = {'cc' 'dims' 'D' 'E' 'Fx' 'Fy' 'Gd' 'hh' 'H' 'R' 'Su' 'Sv' 'u' 'ue' 'urms' 'v' 've' 'zb' 'zs'};
-XB.settings.OutputOptions.nglobalvar = length(XB.settings.OutputOptions.OutVars);
 
 XB.settings.OutputOptions = applyInput(XB.settings.OutputOptions, varargin{:});
+
+XB.settings.OutputOptions.nglobalvar = length(XB.settings.OutputOptions.OutVars);
 
 %% input
 XB.Input = struct(...
