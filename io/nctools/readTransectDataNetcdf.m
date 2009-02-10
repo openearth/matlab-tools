@@ -44,7 +44,8 @@ end
 %% lookup the header variables
 global areaname areacode coastwardDistances;
 if isempty(areaname)
-    areaname = cellstr(nc_varget(filename, 'areaname'));
+    % temporary read from local file until website is updated
+    areaname = cellstr(nc_varget('output.nc', 'areaname'));
 end
 if isempty(areacode)
     areacode = nc_varget(filename, 'areacode');
