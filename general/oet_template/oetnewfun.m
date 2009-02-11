@@ -59,6 +59,8 @@ function oetnewfun(varargin)
 OPT = getlocalsettings;
 
 OPT.description = 'One line description goes here.';
+OPT.input = {'varargin'};
+OPT.output = {'varargout'};
 OPT.feval = [];
 
 FuntionName = 'Untitled';
@@ -75,6 +77,43 @@ if ischar(OPT.ADDRESS)
     OPT.ADDRESS = {OPT.ADDRESS};
 end
 
+if ischar(OPT.input)
+    OPT.input = {OPT.input};
+end
+
+if ~isscalar(OPT.input)
+    % create list of input arguments
+    OPT.varargin = sprintf('%%   %s =\n', OPT.input{:});
+    OPT.varargin = OPT.varargin(1:end-1);
+    
+    % prepare input syntax
+    OPT.input(1:2:2*length(OPT.input)) = OPT.input;
+    OPT.input(2:2:length(OPT.input)) = {', '};
+else
+    OPT.varargin = sprintf('%%   %s =', OPT.input{:});
+end
+% create input syntax
+OPT.input = sprintf('%s', OPT.input{:});
+
+if ischar(OPT.output)
+    OPT.output = {OPT.output};
+end
+
+if ~isscalar(OPT.output)
+    % create list of output arguments
+    OPT.varargout = sprintf('%%   %s =\n', OPT.output{:});
+    OPT.varargout = OPT.varargout(1:end-1);
+
+    % prepare output syntax
+    OPT.output(1:2:2*length(OPT.output)) = OPT.output;
+    OPT.output(2:2:length(OPT.output)) = {' '};
+    OPT.output = [{'['} OPT.output {']'}];
+else
+    OPT.varargout = sprintf('%%   %s =', OPT.output{:});
+end
+% create output syntax
+OPT.output = sprintf('%s', OPT.output{:});
+
 %%
 [fpath fname] = fileparts(fullfile(cd, FuntionName));
 
@@ -84,7 +123,11 @@ str = fread(fid, '*char')';
 fclose(fid);
 
 % replace strings in template
+str = strrep(str, '$output', OPT.output);
 str = strrep(str, '$filename', fname);
+str = strrep(str, '$input', OPT.input);
+str = strrep(str, '%   $varargin  =', OPT.varargin);
+str = strrep(str, '%   $varargout =', OPT.varargout);
 str = strrep(str, '$FILENAME', upper(fname));
 str = strrep(str, '$description', OPT.description);
 str = strrep(str, '$date(dd mmm yyyy)', datestr(now, 'dd mmm yyyy'));

@@ -1,16 +1,16 @@
-function varargout = $filename(varargin)
+function $output = $filename($input)
 %$FILENAME  $description
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = $filename(varargin)
+%   $output = $filename($input)
 %
 %   Input:
-%   varargin  =
+%   $varargin  =
 %
 %   Output:
-%   varargout =
+%   $varargout =
 %
 %   Example
 %   $filename
