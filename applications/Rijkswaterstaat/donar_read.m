@@ -12,13 +12,13 @@ function varargout = donar_read(fnames,varargin)
 %
 %   Implemented <keyword,value> pairs are:
 %
-%   * 'headerlines' = 'auto' (default) finds automatically 1st line starting with:
-%                        start_last_header_line which is by default 
-%                        "locatie;waarnemingssoort;datum;tijd"
-%                        This option also reads the headerlines into DAT.
-%                      or a number 7, or 5 or 4 for older files
-%                        where the EPSG names of the coordinates 
-%                        were not yet added.
+%   * 'headerlines' = 'auto'  (default) finds automatically 1st line starting with:
+%                             start_last_header_line which is by default 
+%                             "locatie;waarnemingssoort;datum;tijd"
+%                             This option also reads the headerlines into DAT.
+%                      number 7, or 5 or 4 for older files
+%                             where the EPSG names of the coordinates 
+%                             were not yet added.
 %
 %   * 'start_last_header_line': "locatie;waarnemingssoort;datum;tijd"
 %
@@ -45,22 +45,18 @@ function varargout = donar_read(fnames,varargin)
 %     location per file is allowed.
 %
 %   * 'preallocate' = integer value (only for method = 'fgetl')
-%     The method fgetl is not vectorized, and is therefore exceptionally 
-%     slow for large data sets. But, it requires significantly less memory 
-%     then textread. If you set fgetl to Inf, DONAR_READ, first scrolls 
-%     the entire file to count the number of lines, 
-%     and then reads the file again with just a little bit over-preallocation
-%     with the # of header lines (default).
+%     The method fgetl is not vectorized, and is therefore exceptionally slow 
+%     for large data sets. But, it requires significantly less memory than 
+%     textread. If you set fgetl to Inf, DONAR_READ, first scrolls the entire 
+%     file to count the number of lines, and then reads the file again with 
+%     just a little bit over-preallocation with the # of header lines (default).
 %
-%   * ntmax, default Inf for mehtod=fgetl
+%   * ntmax, default Inf for method=fgetl
 %
-%     Maybe try to edit the file first and get rid of all ascii crap (> 90%).
-%
-%     preallocate is the maximum number of timesteps per location. 
-%     Setting this equal to or larger then the number of 
-%     timesteps, considerably speeds up. Any excessive number of 
-%     allocated times is removed at the end. When a too small 
-%     number is passed, the arrays are dynamically
+%     preallocate is the maximum number of timesteps per location. Setting 
+%     this equal to or larger than the number of timesteps, considerably 
+%     speeds up. Any excessive number of  allocated times is removed at the 
+%     end. When a too small number is passed, the arrays are dynamically
 %     adjusted every line. This is SLOW. Idea: to preallocate 
 %     an 11-year 10-minute time series you need: 11*366*24*6 = 579744.
 %
@@ -71,13 +67,12 @@ function varargout = donar_read(fnames,varargin)
 %
 % LOACTIONS:
 %
-%    On www.waterbase.nl/metis there is a table where the locations including coordinates 
+%    On <a href="http://www.waterbase.nl/metis">waterbase.nl/metis</a> there is a table where the locations including coordinates 
 %    can be found. The following <a href="http://www.epsg.org/guides/">epsg</a> codes are used:
 %    
-%    * 4230 ED50  (lon,lat) degrees, minutes, seconds and tenths of seconds (1st longitude (Ol), 2nd latitude (Nb))
-%    * 4326 WGS84 (lon,lat) degrees, minutes, seconds and tenths of seconds (1st longitude (Ol), 2nd latitude (Nb))
-%    * ?    UTM   (x  ,y  ) cm (Eastling. Northling) 
-%    * 7415 RD    (x  ,y  ) cm
+%    * 4230 ED50  (lon,lat) [degrees, minutes, seconds and tenths of seconds] (longitude (Ol.),latitude (Nb.))
+%    * 4326 WGS84 (lon,lat) [degrees, minutes, seconds and tenths of seconds] (longitude (Ol.),latitude (Nb.))
+%    * 7415 RD    (x  ,y  ) [cm] (East, North) 
 %
 %   © G.J. de Boer, Feb 2006 - 2009 (TU Delft)
 %
@@ -121,10 +116,11 @@ function varargout = donar_read(fnames,varargin)
 
    OPT.xscale                 = 1;
    OPT.yscale                 = 1;
+   OPT.valuescale             = 1;
+   
    OPT.value                  = 'waarde';
    OPT.method                 = 'textread';
    OPT.preallocate            = Inf; %11*366*24*6; % 11 years every 10 minute for method = 'fgetl'
-   OPT.valuescale             = 1;
    OPT.headerlines            = 'auto'; %changed from 4 to 5 after inclusion of EPSG names of coordinates and is 7 on 2007 june 27th
    OPT.start_last_header_line = 'locatie;waarnemingssoort;datum;tijd';
    OPT.display                = 1;
@@ -147,14 +143,16 @@ function varargout = donar_read(fnames,varargin)
                                             OPT.yscale                 = varargin{i};
        case 'fieldnamescale';         i=i+1;OPT.valuescale             = varargin{i};
        case 'fieldname';              i=i+1;OPT.value                  = varargin{i};
-       case 'headerlines';            i=i+1;OPT.headerlines            = varargin{i};
-       case 'start_last_header_line'; i=i+1;OPT.start_last_header_line = varargin{i};
+
        case 'method';                 i=i+1;OPT.method                 = varargin{i};
        case 'preallocate';            i=i+1;OPT.preallocate            = varargin{i};
+       case 'headerlines';            i=i+1;OPT.headerlines            = varargin{i};
+       case 'start_last_header_line'; i=i+1;OPT.start_last_header_line = varargin{i};
        case 'display';                i=i+1;OPT.display                = varargin{i};
        case 'displayskip';            i=i+1;OPT.displayskip            = varargin{i};
        case 'ntmax';                  i=i+1;OPT.ntmax                  = varargin{i};
        case 'locationcode';           i=i+1;OPT.locationcode           = varargin{i};
+       case 'ctransdv';               i=i+1;OPT.ctransdv               = varargin{i};
        otherwise
          error(sprintf('Invalid string argument (caps?): "%s".',...
          varargin{i}));
