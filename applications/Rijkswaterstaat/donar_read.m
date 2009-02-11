@@ -71,20 +71,18 @@ function varargout = donar_read(fnames,varargin)
 %
 % LOACTIONS:
 %
-%    op www.waterbase.nl/metis staat een tabel waarin de 
-%    locaties inclusief de coördinaten te vinden zijn.
+%    On www.waterbase.nl/metis there is a table where the locations including coordinates 
+%    can be found. The following <a href="http://www.epsg.org/guides/">epsg</a> codes are used:
 %    
-%    epsg 4230 ED50  wordt weergegeven in graden, minuten, seconden en tienden van seconden, 
-%                    eerst Ol. dan NB.
-%    epsg 4326 WGS84 wordt weergegeven in graden, minuten, seconden en tienden van seconden, 
-%                    eerst Ol. dan NB.
-%    epsg ?    UTM   wordt wordt weergegeven in cm (Eastling Northling) (x,y)
-%    epsg 7415 RD    wordt weergegeven in cm. (x,y) 
+%    * 4230 ED50  (lon,lat) degrees, minutes, seconds and tenths of seconds (1st longitude (Ol), 2nd latitude (Nb))
+%    * 4326 WGS84 (lon,lat) degrees, minutes, seconds and tenths of seconds (1st longitude (Ol), 2nd latitude (Nb))
+%    * ?    UTM   (x  ,y  ) cm (Eastling. Northling) 
+%    * 7415 RD    (x  ,y  ) cm
 %
-%   © G.J. de Boer, Feb 2006 - Jul 2007
+%   © G.J. de Boer, Feb 2006 - 2009 (TU Delft)
 %
-%   See also: HMCZ_WIND_READ, KNMI_POTWIND, KNMI_ETMGEG,
-%   LOAD, XLSREAD, www.waterbase.nl, www.epsg.org/guides/
+%   See web : <a href="http://www.epsg.org/guides/">www.epsg.org</a>, <a href="http://www.waterbase.nl"    >www.waterbase.nl</a>
+%   See also: LOAD, XLSREAD
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
@@ -116,6 +114,7 @@ function varargout = donar_read(fnames,varargin)
 %   -------------------------------------------------------------------- 
 
 % uses: time2datenum
+%       ctransdv (optionally)
 
 %% Defaults
 %% ----------------------
@@ -132,6 +131,7 @@ function varargout = donar_read(fnames,varargin)
    OPT.displayskip            = 1000;
    OPT.ntmax                  = -1;
    OPT.locationcode           = 1;
+   OPT.ctransdv               = exist('ctransdv')==2; % only required for parijs RD coordiantes
 
 %% Key words
 %% ----------------------
@@ -369,26 +369,33 @@ for ifile=1:length(fnames)
          %D.data(istat).orgaan             = 
          %D.data(istat).biotaxon           = 
          
-          D.data(istat).(OPT.value) = waarde(mask);
-          D.data(istat).datenum     = datenumbers(mask);
+          D.data(istat).(OPT.value)        = waarde(mask);
+          D.data(istat).datenum            = datenumbers(mask);
 
-          %% Get uniform co-ordinates
+          %% Get uniform co-ordinates (lat,lon)
           %% ------------------------
-          D.data(istat).lon = repmat(nan,size(D.data(istat).x));
-          D.data(istat).lat = repmat(nan,size(D.data(istat).x));
           
-                               geomask.utm    =         D.data(istat).epsg==4230;
-            [D.data(istat).lon(geomask.utm),...
-             D.data(istat).lat(geomask.utm)]  =ctransdv(D.data(istat).x(geomask.utm),...
-                                                        D.data(istat).y(geomask.utm),'ll','par',[1],[],'ed50');
+             D.data(istat).lon = repmat(nan,size(D.data(istat).x));
+             D.data(istat).lat = repmat(nan,size(D.data(istat).x));
+          
+                               geomask.ed50   =         D.data(istat).epsg==4230;
+             D.data(istat).lon(geomask.ed50)  =         D.data(istat).x(geomask.ed50);
+             D.data(istat).lat(geomask.ed50)  =         D.data(istat).y(geomask.ed50);
+
+                               geomask.ll     =         D.data(istat).epsg==4326;
+             D.data(istat).lon(geomask.ll )   =         D.data(istat).x(geomask.ll );
+             D.data(istat).lat(geomask.ll )   =         D.data(istat).y(geomask.ll );
+
+          if OPT.ctransdv 
                                geomask.par    =         D.data(istat).epsg==7415;
             [D.data(istat).lon(geomask.par),...
              D.data(istat).lat(geomask.par)]  =ctransdv(D.data(istat).x(geomask.par),...
                                                         D.data(istat).y(geomask.par),'par','ll');
-                               geomask.ll     =         D.data(istat).epsg==4326;
-             D.data(istat).lon(geomask.ll )   =         D.data(istat).x(geomask.ll );
-             D.data(istat).lat(geomask.ll )   =         D.data(istat).y(geomask.ll );
-                               geomask.unknow = ~(geomask.utm | geomask.par | geomask.ll);
+
+                               geomask.unknow = ~(geomask.ed50 | geomask.par | geomask.ll);
+          else
+             % try different mapping toolbox, m_map, or matlab mapping toolbox or upcoming supertrans
+          end
           
           
        end
@@ -417,7 +424,7 @@ for ifile=1:length(fnames)
             end
          end
          fclose(fid);      
-         disp(['Number of lines is ',num2str(nt)])
+         disp(['Slow scanning file to read data on # ',num2str(nt),' lines is.'])
       else
          nt = OPT.preallocate;
       end
@@ -428,11 +435,14 @@ for ifile=1:length(fnames)
       %% ----------------------------------------
 
       D.readme           = ['Except the for five fields datenum,',OPT.value,',x,y,epsg the fields contain only the first record !!!'];
-      D.data.datenum     = repmat(nan,[1 nt]);
-      D.data.(OPT.value) = repmat(nan,[1 nt]);
-      D.data.x           = repmat(nan,[1 nt]);
-      D.data.y           = repmat(nan,[1 nt]);
-      D.data.epsg        = repmat(nan,[1 nt]);
+      D.data.datenum     = repmat(nan,[1 nt]); % 1
+      D.data.(OPT.value) = repmat(nan,[1 nt]); % 2
+      D.data.x           = repmat(nan,[1 nt]); % 3
+      D.data.y           = repmat(nan,[1 nt]); % 4
+      D.data.lon         = repmat(nan,[1 nt]); % 5
+      D.data.lat         = repmat(nan,[1 nt]); % 6
+      D.data.epsg        = repmat(nan,[1 nt]); % 7
+      % pre-allocate any extra vector !!!
 
       nt              = 0; % number of time per location
       nloc            = 1;
@@ -449,6 +459,7 @@ for ifile=1:length(fnames)
       end
    
       while 1
+      
           rec = fgetl(fid); % read one record
           if ~ischar(rec) | isempty(rec) %%%-%%% | nt==10
              break
@@ -496,16 +507,16 @@ for ifile=1:length(fnames)
                 end
              end         
    
-             D(nloc).data.epsg               (nt) = str2num(rec(dlm(13)+1:dlm(14)-1));
-             D(nloc).data.x                  (nt) = str2num(rec(dlm(14)+1:dlm(15)-1));
-             D(nloc).data.y                  (nt) = str2num(rec(dlm(15)+1:dlm(16)-1));
+             D(nloc).data.epsg               (nt) = str2num(rec(dlm(13)+1:dlm(14)-1)); % 7
+             D(nloc).data.x                  (nt) = str2num(rec(dlm(14)+1:dlm(15)-1)); % 3
+             D(nloc).data.y                  (nt) = str2num(rec(dlm(15)+1:dlm(16)-1)); % 4
    
              if nt==1
              D(nloc).meta1.orgaan                 =         rec(dlm(16)+1:dlm(17)-1);
              D(nloc).meta1.biotaxon               =         rec(dlm(17)+1:end      );
              end
              
-             D(nloc).data.(OPT.value)(nt) = str2double(rec(dlm(5)+1:dlm(6)-1));
+             D(nloc).data.(OPT.value)(nt) = str2double(rec(dlm(5)+1:dlm(6)-1)); % 2
              
              datestring          = rec(dlm(2)+1:dlm(3)-1);
              timestring          = rec(dlm(3)+1:dlm(4)-1);
@@ -516,22 +527,51 @@ for ifile=1:length(fnames)
              HH                  = str2double(timestring( 1: 2));
              MI                  = str2double(timestring( 4: 5));
              
-             D(nloc).data.datenum(nt) = datenum(yyyy,mm,dd,HH,MI,0);
+             D(nloc).data.datenum(nt) = datenum(yyyy,mm,dd,HH,MI,0); % 1
    
           end
           
       end % while
+      
+             
+      %% Get uniform co-ordinates (lat,lon)
+      %% ------------------------
+
+         D(nloc).data.lon = repmat(nan,size(D(nloc).data.x)); % 5
+         D(nloc).data.lat = repmat(nan,size(D(nloc).data.x)); % 6
+      
+                          geomask.ed50   =         D(nloc).data.epsg==4230;
+         D(nloc).data.lon(geomask.ed50)  =         D(nloc).data.x(geomask.ed50);
+         D(nloc).data.lat(geomask.ed50)  =         D(nloc).data.y(geomask.ed50);
+
+                          geomask.ll     =         D(nloc).data.epsg==4326;
+         D(nloc).data.lon(geomask.ll )   =         D(nloc).data.x(geomask.ll );
+         D(nloc).data.lat(geomask.ll )   =         D(nloc).data.y(geomask.ll );
+
+      if OPT.ctransdv
+      
+                          geomask.par    =         D(nloc).data.epsg==7415;
+        [D(nloc).data.lon(geomask.par),...
+         D(nloc).data.lat(geomask.par)]  =ctransdv(D(nloc).data.x(geomask.par),...
+                                                   D(nloc).data.y(geomask.par),'par','ll');
+
+                          geomask.unknow = ~(geomask.ed50 | geomask.par | geomask.ll);
+      else
+         % try different mapping toolbox, m_map, or matlab mapping toolbox or upcoming supertrans
+      end      
       
       %% Remove too much pre-allocated data,
       %% even when OPT.preallocate, because
       %% the fast scanning also counted the number of header lines.
       %% ----------------------------------
       
-      D.data.datenum     = D.data.datenum    (1:nt);
-      D.data.(OPT.value) = D.data.(OPT.value)(1:nt);
-      D.data.x           = D.data.x          (1:nt);
-      D.data.y           = D.data.y          (1:nt);
-      D.data.epsg        = D.data.epsg       (1:nt);
+      D.data.datenum     = D.data.datenum    (1:nt); % 1
+      D.data.(OPT.value) = D.data.(OPT.value)(1:nt); % 2
+      D.data.x           = D.data.x          (1:nt); % 3
+      D.data.y           = D.data.y          (1:nt); % 4
+      D.data.epsg        = D.data.epsg       (1:nt); % 5
+      D.data.lon         = D.data.epsg       (1:nt); % 6
+      D.data.lat         = D.data.epsg       (1:nt); % 7
       
       D.locations{1} = D(nloc).meta1.location;
    
