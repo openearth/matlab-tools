@@ -25,7 +25,8 @@ function [result, messages, waveconversioninfo] = getDuneErosion_deshoal(xInitia
 %   WL_t               -    Maximum storm search level
 %   Hsig_t             -    Significant wave height during the storm
 %   Tp_t               -    Peak wave period during the storm
-%   d                  -    Depth at wich the wave height is given
+%   d                  -    Bottom height at the location of the given wave 
+%			    height [m].
 %
 %   Output:
 %   result             -    a struc that contains the results for each
@@ -98,7 +99,7 @@ function [result, messages, waveconversioninfo] = getDuneErosion_deshoal(xInitia
 % $Keywords: dune dunes erosion DUROS DUROS+ VTV beach
 
 %% Deshoal the Hs
-Hs = deshoal(Hsig_t, Tp_t, d, 20);
+Hs = deshoal(Hsig_t, Tp_t, d+WL_t, 20+WL_t);
 
 %% Calculate dune erosion
 
