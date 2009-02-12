@@ -7,7 +7,7 @@ function oetsettings(varargin)
 %
 % For more information on OpenEarthTools refer to the following two sources:
 %
-% * wiki:        http://mctools.deltares.nl
+% * wiki:        http://OpenEarth.deltares.nl
 % * repository:  https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab
 % * help blocks: Scroll through the OpenEarthTools directories and read interesting help blocks.
 %
