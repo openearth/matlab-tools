@@ -69,6 +69,13 @@ if nargin > 1 && any(strcmp(fieldnames(OPT), varargin{1}))
     i0 = 1;
 elseif nargin > 0
     FuntionName = varargin{1};
+    if ~isempty(which(FuntionName))
+        % function is available in search path
+        % get input and output variables and remove leading and trailing
+        % spaces
+        OPT.input = getInputVariables(FuntionName)';
+        OPT.output = getOutputVariables(FuntionName)';
+    end 
 end    
 
 OPT = setProperty(OPT, varargin{i0:end});
@@ -81,27 +88,37 @@ if ischar(OPT.input)
     OPT.input = {OPT.input};
 end
 
+if ischar(OPT.output)
+    OPT.output = {OPT.output};
+end
+
+MaxNrChars = max(cellfun(@length, [OPT.input OPT.output]));
+
 if ~isscalar(OPT.input)
     % create list of input arguments
-    OPT.varargin = sprintf('%%   %s =\n', OPT.input{:});
+    OPT.varargin = '';
+    for i = 1:length(OPT.input)
+        Nrblanks = MaxNrChars - length(OPT.input{i});
+        OPT.varargin = sprintf('%s%%   %s%s =\n', OPT.varargin, OPT.input{i}, blanks(Nrblanks));
+    end
     OPT.varargin = OPT.varargin(1:end-1);
     
     % prepare input syntax
     OPT.input(1:2:2*length(OPT.input)) = OPT.input;
     OPT.input(2:2:length(OPT.input)) = {', '};
 else
-    OPT.varargin = sprintf('%%   %s =', OPT.input{:});
+    OPT.varargin = sprintf('%%   %s%s =', OPT.input{1}, blanks(MaxNrChars - length(OPT.input{1})));
 end
 % create input syntax
 OPT.input = sprintf('%s', OPT.input{:});
 
-if ischar(OPT.output)
-    OPT.output = {OPT.output};
-end
-
 if ~isscalar(OPT.output)
     % create list of output arguments
-    OPT.varargout = sprintf('%%   %s =\n', OPT.output{:});
+    OPT.varargout = '';
+    for i = 1:length(OPT.output)
+        Nrblanks = MaxNrChars - length(OPT.output{i});
+        OPT.varargout = sprintf('%s%%   %s%s =\n', OPT.varargout, OPT.output{i}, blanks(Nrblanks));
+    end
     OPT.varargout = OPT.varargout(1:end-1);
 
     % prepare output syntax
@@ -109,7 +126,7 @@ if ~isscalar(OPT.output)
     OPT.output(2:2:length(OPT.output)) = {' '};
     OPT.output = [{'['} OPT.output {']'}];
 else
-    OPT.varargout = sprintf('%%   %s =', OPT.output{:});
+    OPT.varargout = sprintf('%%   %s%s =', OPT.output{1}, blanks(MaxNrChars - length(OPT.output{1})));
 end
 % create output syntax
 OPT.output = sprintf('%s', OPT.output{:});
