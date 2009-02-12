@@ -15,12 +15,16 @@ function [d] = readGridData(datatype, name, year, soundingID)
 % By:           <M. van Koningsveld (email: mark.vankoningsveld@wldelft.nl>
 % -------------------------------------------------------------
 
+% datatype -> number or string
+% name -> 
+% year 
+% soundingID
 switch nargin
     case 0
         return
     case 1
         if ~isempty(str2num(datatype)) %#ok<ST2NM>
-            temp=DBGetTableEntry('grid','datatype',datatype);
+            % datatype number
         else
             temp=DBGetTableEntry('grid','datatypeinfo',datatype);
         end
@@ -45,6 +49,12 @@ switch nargin
 end
 
 d=rearrangeData(temp);
+
+% d.fielddata.interpx -> vector
+% d.fielddata.interpy -> vector
+% d.X
+% d.Y
+% d.Z
 
 function d = rearrangeData(temp)
 d=temp;
