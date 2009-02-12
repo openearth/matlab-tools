@@ -1,22 +1,21 @@
-function [inputVariables str] = getInputVariables(fun)
-%GETINPUTVARIABLES  routine derives the input variable names of the caller function
+function [varsout str] = getOutputVariables(fun)
+%GETOUTPUTVARIABLES  routine derives the output variable names of the caller function
 %
-%   Routine determines the input variable names of function 'fun', as well
-%   as the complete call of the function. If 'fun'
-%   not specified, the 'caller' function will be scanned.
+%   Routine determines the output variable names of function "fun", as well
+%   as the complete call of the function.
 %
 %   Syntax:
-%   [inputVariables str] = getInputVariables(fun)
+%   [varsout str] = getOutputVariables(fun)
 %
 %   Input:
-%   fun            = string containing the name of a function
+%   fun     = string containing the name of a function
 %
 %   Output:
-%   inputVariables = cell array containing the input variable names
-%   str            = string containing syntax
+%   varsout = cell array containing the output variables of "fun"
+%   str     = string containing syntax
 %
 %   Example
-%   getInputVariables
+%   getOutputVariables
 %
 %   See also
 
@@ -58,30 +57,26 @@ function [inputVariables str] = getInputVariables(fun)
 % $HeadURL$
 % $Keywords:
 
-%% check input
-if ~exist('fun','var') % get filename of caller function if 'fun' not specified
-    ST = dbstack;
-    if length(ST)>1
-        fun = ST(2).file; % derives the file name of the caller function
-    else % it should be possible to add the functionality that the variables of the workspace will be assigned to 'inputVariables'
-        return
-        % this will produce an error whereas none of the output vars have 
-        % been determined yet......
-    end
+%%
+% maybe add same functionality as in getInputVariables???
+if nargin==0
+    error('not enough input parameters');
 end
 
-%% turn fun into a function handle
+%% get function handle
 [fun fl] = checkfhandle(fun);
 
 if ~fl
-   error('GETVARIABLES:NotExistingFile',['File ', fun, ' does not exist']);
+    error('Specified function could not be found');
 end
 
-%% read relevant part of caller function
-
+%% get fuinction call
 str = getFunctionCall(fun);
 
-ids = [strfind(str, '(')+1 strfind(str, ')')-1];
-        
-%% read input variables from string
-inputVariables = strread(strrep(str(min(ids):max(ids)), ',', ' '), '%s');
+%% isolate output variables
+id = strfind(str, '=');
+outstr = strtrim(str(1:id-1));
+outstr = strrep(outstr, '[', '');
+outstr = strrep(outstr, ']', '');
+outstr = strrep(outstr, ',', ' ');
+varsout = strread(outstr, '%s');
