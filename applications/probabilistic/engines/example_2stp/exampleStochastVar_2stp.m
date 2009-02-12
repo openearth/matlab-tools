@@ -1,10 +1,10 @@
-function stochast = stochastVar_2stp(varargin)
-%STOCHASTVAR_2STP  One line description goes here.
+function stochast = exampleStochastVar_2stp(varargin)
+%EXAMPLESTOCHASTVAR_2STP  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = stochastVar_2stp(varargin)
+%   varargout = exampleStochastVar_2stp(varargin)
 %
 %   Input:
 %   varargin  =
@@ -13,7 +13,7 @@ function stochast = stochastVar_2stp(varargin)
 %   varargout =
 %
 %   Example
-%   stochastVar_2stp
+%   exampleStochastVar_2stp
 %
 %   See also
 

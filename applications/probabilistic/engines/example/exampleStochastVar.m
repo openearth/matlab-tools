@@ -1,5 +1,5 @@
-function stochast = createStochastVar(varargin)
-%CREATESTOCHASTVAR  routine to create example of stochast variable
+function stochast = exampleStochastVar(varargin)
+%EXAMPLESTOCHASTVAR  routine to create example of stochast variable
 %
 % Routine creates structure with fields 'Name', 'Distr' and 'Params'. The
 % structure should be a row vector. The field 'Name' contains the variable
@@ -15,7 +15,7 @@ function stochast = createStochastVar(varargin)
 % corresponding variable will be applied.
 %
 %   Syntax:
-%   varargout = createStochastVar(varargin)
+%   varargout = exampleStochastVar(varargin)
 %
 %   Input:
 %   varargin  =
@@ -24,7 +24,7 @@ function stochast = createStochastVar(varargin)
 %   varargout =
 %
 %   Example
-%   createStochastVar
+%   exampleStochastVar
 %
 %   See also
 
