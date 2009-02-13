@@ -8,8 +8,8 @@ function [grid] = updategrid(grid, filename)
     data = dlmread(filename, '\t', 1,0);
     transect.areacode = data(:,1);
     transect.metre = floor(data(:,2) / 10); 
-    transect.x = data(:,3);
-    transect.y = data(:,4);
+    transect.x = data(:,3)./100;
+    transect.y = data(:,4)./100;
     % from 0.1 degrees to radiants and from pos clockwise 0 north to pos
     % counterclockwise 0 east
     transect.angle = 0.5*pi - 2*pi*(data(:,5)/(100*360)); 
@@ -17,7 +17,7 @@ function [grid] = updategrid(grid, filename)
 
     % find points in the transect which are also in the grid
     [c, ia, ib] = intersect(transect.id, grid.id);
-    assert(length(c) == length(grid.id));
+%    assert(length(c) == length(grid.id));
 
     % use the angle to compute the coordinates in projected cartesian
     % coordinates. (for jarkus Amsersfoort RD new)
