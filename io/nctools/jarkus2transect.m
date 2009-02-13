@@ -64,7 +64,12 @@ function [transectStruct] = jarkus2transect(filename)
         transect.origin = origin(keep_indices);
         transect.seawardDistance = seawardDistance(keep_indices);
         transect.height = height(keep_indices);
-
+        
+        %optional: linear interpolation to 5m spacing (as in ucit)
+        
+        transect.height = interp1(transect.seawardDistance,transect.height,transect.seawardDistance(1):5:transect.seawardDistance(end));   % interpolate results on a 5m grid
+        transect.seawardDistance = transect.seawardDistance(1):5:transect.seawardDistance(end);
+        
         % store the results in the big array
         transectStruct(i+1) = transect;
         i = i + 1;
