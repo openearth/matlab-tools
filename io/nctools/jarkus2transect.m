@@ -56,7 +56,7 @@ function [transectStruct] = jarkus2transect(filename)
         % the last digit in the 2nd number is a code. See createRayStruct
         % creation for definition
         origin = mod(abs(datapoints(:,2)), 10); % use last digit
-        height = floor(datapoints(:,2) / 10) ; % bathymetry, set last digit to 0
+        height = (datapoints(:,2)- origin.*datapoints(:,2)./abs(datapoints(:,2))) / 1000 ; % bathymetry, set last digit to 0
         seawardDistance = datapoints(:,1); %length seaward
        
         %strip out data where origin is not 1,3,5
