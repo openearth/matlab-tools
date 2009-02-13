@@ -7,7 +7,7 @@ function [grid] = transect2grid(transectStruct)
     % we have to determine how much data we want to allocate to store all
     % transects.
     % find all id's
-    [transect_ids, unique_indices] = unique([transectStruct.id], 'first');
+    [transect_ids, unique_indices] = unique([transectStruct.id]);
     [transect_ids, sorted_indices] = sort(transect_ids);
     
     grid.id = transect_ids;
