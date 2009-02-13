@@ -64,7 +64,7 @@ function varargout = tickmap(varargin)
 %   -------------------------------------------------------------------
 
 %%  Defaults
-%% ---------------
+%% -----------------------------
 
    OPT.format               = '%.0f';
    OPT.stride               = 1;
@@ -79,7 +79,7 @@ function varargout = tickmap(varargin)
    handles                  = []; % to store handles of texttype (optional)
 
 %% Chek for latitude/longitude
-%% -------------------
+%% -----------------------------
 
    ax = varargin{1};
    
@@ -90,7 +90,7 @@ function varargout = tickmap(varargin)
    end
    
 %% Get limits
-%% -------------------
+%% -----------------------------
 
    if odd(nargin)
        if any(findstr(lower(ax),'x'))
@@ -112,29 +112,10 @@ function varargout = tickmap(varargin)
    end
 
   
-%%  Input
-%% ---------------
-
-    i = nextarg;
-    %% remaining number of arguments is always even now
-    while i<=nargin,
-        switch lower ( varargin{i  })
-        % all keywords lower case
-        case 'format';                i=i+1;OPT.format              = varargin{i};
-          case 'stride';              i=i+1;OPT.stride              = varargin{i};
-          case 'units';               i=i+1;OPT.units               = varargin{i};
-          case 'scale';               i=i+1;OPT.scale               = varargin{i};
-          case 'offset';              i=i+1;OPT.offset              = varargin{i};
-          case 'texttype';            i=i+1;OPT.texttype            = varargin{i};
-          case 'dellast';             i=i+1;OPT.dellast             = varargin{i};
-          case 'delfirst';            i=i+1;OPT.delfirst            = varargin{i};
-          case 'horizontalalignment'; i=i+1;OPT.horizontalalignment = varargin{i};
-          otherwise
-          error(sprintf('Invalid string argument (caps?): "%s".',...
-          varargin{i}));
-        end
-        i=i+1;
-    end
+%%  Keywords
+%% -----------------------------
+    
+   OPT = setproperty(OPT,varargin{nextarg:end});
     
 %% Generate tick labels
 %% -----------------------------
@@ -143,7 +124,9 @@ function varargout = tickmap(varargin)
    %% for the rest add spaces.
    
    if ischar(OPT.units)
-      OPT.units{1} = OPT.units;
+      units        = OPT.units;
+      OPT          = rmfield(OPT,'units');
+      OPT.units{1} = units;
       OPT.units{2} = OPT.units{1};
       OPT.units{3} = OPT.units{1};
    end
@@ -194,18 +177,18 @@ for ix=1:3
   if any(findstr(lower(ax),AX))
        
   %% Set ticks
-  %% ---------------------------
+  %% -----------------------------
   set (gca,[AX,'tick']     ,ticks.(AX))
          
   %% Set tick labels
-  %% ---------------------------
+  %% -----------------------------
 
     if ~isempty(OPT.format)
         
       ticklabels.(AX) = addrowcol(num2str((ticks.(AX)(:) - OPT.offset)./OPT.scale,OPT.format),0,1,spaces);
          
       %% Fill all those tick that are not in the stride vector with spaces
-      %% ---------------------------
+      %% -----------------------------
       remove          = ~isnan(ticks.(AX));
       keep            = 1:OPT.stride:length(ticks.(AX));
       remove(keep)    = false;
@@ -214,18 +197,18 @@ for ix=1:3
       
       %% Add units to last tick that is not removed ( and mind whether last tick
       %% is removed !!)
-      %% ---------------------------
+      %% -----------------------------
       ticklabels.(AX)(keep(end-OPT.dellast),end-nspaces+1:end) = OPT.units{ix}';
       
       %% Remove redundant spaces (so labels are centered at ticks)
-      %% ---------------------------
+      %% -----------------------------
       ticklabels.(AX) = cellstr(ticklabels.(AX));
       for it=1:length(ticklabels.(AX))
          ticklabels.(AX){it} = strtrim(ticklabels.(AX){it});
       end
       
       %% Apply specials
-      %% ---------------------------
+      %% -----------------------------
 
       if OPT.dellast
          ticklabels.(AX){end} = '';
@@ -235,7 +218,7 @@ for ix=1:3
       end
 
       %% Set tick labels
-      %% ---------------------------
+      %% -----------------------------
       if     strcmp(OPT.texttype,'axes') | ...
              strcmp(OPT.texttype,'axis')
          set (gca,[AX,'ticklabel'],ticklabels.(AX))
