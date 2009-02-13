@@ -1,5 +1,5 @@
 function a = ylim(arg1, arg2)
-%YLIM Y limits.
+%YLIM1 Y limits with option to get 1st or 2nd value only.
 %   YL = YLIM             gets the y limits of the current axes.
 %   YL = YLIM(1)          gets lower y limit of the current axes.
 %   YL = YLIM(2)          gets upper y limit of the current axes.

@@ -1,5 +1,5 @@
 function a = xlim(arg1, arg2)
-%XLIM X limits.
+%XLIM1 X limits with option to get 1st or 2nd value only.
 %   XL = XLIM             gets the x limits of the current axes.
 %   XL = XLIM(1)          gets lower x limit of the current axes.
 %   XL = XLIM(2)          gets upper x limit of the current axes.

@@ -1,5 +1,5 @@
 function varargout = subplot_meshgrid(nx,ny,dx1,dy1,varargin)
-%SUBPLOTGRID  create non-equidistant mesh of subplots
+%SUBPLOT_MESHGRID  create non-equidistant mesh of subplots
 %
 % subplot_meshgrid(nx,ny,dx1,dy1)
 % subplot_meshgrid(nx,ny,dx1,dy1,dx2,dy2)

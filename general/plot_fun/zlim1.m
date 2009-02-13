@@ -1,5 +1,5 @@
 function a = zlim(arg1, arg2)
-%ZLIM Z limits.
+%ZLIM1 Z limits with option to get 1st or 2nd value only.
 %   ZL = ZLIM             gets the z limits of the current axes.
 %   ZL = ZLIM(1)          gets lower z limit of the current axes.
 %   ZL = ZLIM(2)          gets upper z limit of the current axes.

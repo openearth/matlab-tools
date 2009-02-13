@@ -1,5 +1,5 @@
 function varargout = arrow2(varargin)
-%ARROW2 Quiver plot.
+%ARROW2 Quiver plot with option to adapt arrows to aspect ratio.
 %
 %   ARROW2(X,Y,U,V) plots velocity vectors as arrows with components (u,v)
 %   at the points (x,y).  The matrices X,Y,U,V must all be the same size

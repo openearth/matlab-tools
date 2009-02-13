@@ -1,5 +1,5 @@
 function hhh=hline(y,in1,in2,varargin)
-%HLINE
+%HLINE  draw horizontal line
 %
 % function h=hline(y, linetype, label)
 % function h=hline(y, linetype, label,'on')

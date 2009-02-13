@@ -1,5 +1,5 @@
 function a = clim(arg1, arg2)
-%CLIM C limits.
+%CLIM1 C limits with option to get 1st or 2nd value only.
 %   CL = CLIM             gets the c limits of the current axes.
 %   CL = CLIM(1)          gets lower c limit of the current axes.
 %   CL = CLIM(2)          gets upper c limit of the current axes.
