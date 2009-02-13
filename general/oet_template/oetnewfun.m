@@ -124,7 +124,9 @@ if ~isscalar(OPT.output)
     % prepare output syntax
     OPT.output(1:2:2*length(OPT.output)) = OPT.output;
     OPT.output(2:2:length(OPT.output)) = {' '};
-    OPT.output = [{'['} OPT.output {']'}];
+    if length(OPT.output) > 1
+        OPT.output = [{'['} OPT.output {']'}];
+    end
 else
     OPT.varargout = sprintf('%%   %s%s =', OPT.output{1}, blanks(MaxNrChars - length(OPT.output{1})));
 end
@@ -140,11 +142,17 @@ str = fread(fid, '*char')';
 fclose(fid);
 
 % replace strings in template
-str = strrep(str, '$output', OPT.output);
+if ~isempty(OPT.output)
+    str = strrep(str, '$output', OPT.output);
+    str = strrep(str, '%   $varargout =', OPT.varargout);
+else
+    str = strrep(str, '$output = ', OPT.output);
+    str = strrep(str, '%   Output:', '%');
+    str = strrep(str, '%   $varargout =', '%');
+end
 str = strrep(str, '$filename', fname);
 str = strrep(str, '$input', OPT.input);
 str = strrep(str, '%   $varargin  =', OPT.varargin);
-str = strrep(str, '%   $varargout =', OPT.varargout);
 str = strrep(str, '$FILENAME', upper(fname));
 str = strrep(str, '$description', OPT.description);
 str = strrep(str, '$date(dd mmm yyyy)', datestr(now, 'dd mmm yyyy'));
