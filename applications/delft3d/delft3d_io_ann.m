@@ -6,8 +6,10 @@ function varargout = delft3d_io_ann(cmd,varargin)
 %
 %    ANN = DELFT3D_IO_ANN('read',filename) returns the x and y
 %    (or lat and lon) vertices in the struct fields
-%    DAT.x and DAT.y respectively. The etxts are returned
+%    DAT.x and DAT.y respectively. The texts are returned
 %    in DAT.txt
+%
+%    [x,y,<annotation>] = DELFT3D_IO_ANN('read',filename);
 %
 %    ANN = DELFT3D_IO_ANN('read',filename,scale) 
 %    multiplies x and y with scale
@@ -16,9 +18,7 @@ function varargout = delft3d_io_ann(cmd,varargin)
 %    multiplies x and y with xscale and yscale
 %    respectively.
 %
-
 %    iostat = DELFT3D_IO_ANN('write',filename,ANN.DATA) 
-
 %
 % See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
@@ -30,6 +30,7 @@ function varargout = delft3d_io_ann(cmd,varargin)
 % 2005 Jan 01
 % 2008 Jul 21: made read a sub-function
 % 2008 Jul 22: added write option
+% 2009 feb 13: made also [x,y,text] output
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004-2008 Delft University of Technology
@@ -70,8 +71,12 @@ case 'read',
    [STRUCT,iostat]=Local_read(varargin{:});
   if nargout==1
      varargout = {STRUCT};
-  elseif nargout >1
-    error('too much output paramters: 0 or 1')
+  elseif nargout ==2
+     varargout = {STRUCT.DATA.x,STRUCT.DATA.y};
+  elseif nargout ==3
+     varargout = {STRUCT.DATA.x,STRUCT.DATA.y,STRUCT.DATA.txt};
+  elseif nargout ==4
+    error('too much output parameters: [1..3]')
   end
   if STRUCT.iostat<0,
      error(['Error opening file: ',varargin{1}])
@@ -82,7 +87,7 @@ case 'write',
   if nargout==1
      varargout = {iostat};
   elseif nargout >1
-    error('too much output paramters: 0 or 1')
+    error('too much output parameters: [0..1]')
   end
   if iostat<0,
      error(['Error opening file: ',varargin{1}])
@@ -121,8 +126,8 @@ function [DAT,iostat]=Local_read(varargin)
    if strcmp(RAWDATA.Check,'OK')
       for i=1:length(RAWDATA.Field)
          SUBSET           = tekal('read',RAWDATA,i);
-         DAT.DATA(i).x    = SUBSET{1}(1,:).*xscale;
-         DAT.DATA(i).y    = SUBSET{1}(2,:).*yscale;
+         DAT.DATA(i).x    = SUBSET{1}(:,1).*xscale;
+         DAT.DATA(i).y    = SUBSET{1}(:,2).*yscale;
          DAT.DATA(i).txt  = SUBSET{2};
       end
       DAT.iostat   = 1;
