@@ -22,7 +22,7 @@ function [str funinfo] = getFunctionCall(fun)
 %   Copyright (C) 2008 Deltares
 %       Pieter van Geer
 %
-%       Pieter.vanGeer@deltares.nl	
+%       Pieter.vanGeer@deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -46,7 +46,7 @@ function [str funinfo] = getFunctionCall(fun)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% $Id$ 
+% $Id$
 % $Date$
 % $Author$
 % $Revision$
@@ -65,6 +65,8 @@ if fl
 
     if strcmp(funinfo.file, 'MATLAB built-in function')
         warning([fname ' is a MATLAB built-in function, ' mfilename ' is not able to get the function call.'])
+        str = '';
+    elseif isempty(funinfo.file)
         str = '';
     else
         % open the m-file and read lines until start of call is encountered
@@ -88,8 +90,8 @@ if fl
             if ~isempty(strfind(str,')'))
                 strcomplete = true;
             end
+            fclose(fid);
         end
-        fclose(fid);
         % remove function from call line
         str = strtrim(strrep(str,'function',''));
     end
