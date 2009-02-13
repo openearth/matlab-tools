@@ -45,7 +45,7 @@ end
 global areaname areacode coastwardDistances;
 if isempty(areaname)
     % temporary read from local file until website is updated
-    areaname = cellstr(nc_varget('output.nc', 'areaname'));
+    areaname = cellstr(nc_varget('D:\OpenEarthTools\matlab\io\nctools\output.nc', 'areaname'));
 end
 if isempty(areacode)
     areacode = nc_varget(filename, 'areacode');
@@ -105,7 +105,7 @@ transect.datatype = 1;
 
 transect.datatheme = '';
 
-transect.area = areaname(id_index);
+transect.area = areaname{id_index};
 
 transect.areacode = num2str(areacode(id_index));
 
@@ -137,8 +137,12 @@ if isempty(y)
 end
 transect.yRD = y(id_index, seawardDistanceZeroIndex); %in EPSG:28992
 
-% TODO: store and lookup
-transect.GRAD = 0; % 0 - 360
+global angle 
+if isempty(angle)
+    angle = nc_varget(filename,'angle');
+end
+
+transect.GRAD = angle(id_index); %in degrees
 
 transect.contour = [min(x(id_index,:)),max(x(id_index,:)) ; min(y(id_index,:)), max(y(id_index,:))]; %[2x2 double]
 
@@ -153,10 +157,18 @@ transect.ls_fielddata = 'parentSeq';
 timestamp = 0; %1.1933e+009;?
 %TODO: Check where these are calculated
 transect.fielddata = []; %[1x1 struct]
-%TODO: Check where these are calculated
-transect.MLW = 0; % -0.8000
-%TODO: Check where these are calculated
-transect.MHW = 0; %0.8000
+
+global MHW 
+if isempty(MHW)
+    MHW = nc_varget(filename,'MHW');
+end
+transect.MHW = MHW(id_index); 
+
+global MLW
+if isempty(MLW)
+    MLW = nc_varget(filename,'MLW');
+end
+transect.MLW = MLW(id_index); 
 
 transect.xi = seawardDistance; %[1264x1 double]
 height  = nc_varget(filename, 'height', [year_index-1, id_index-1, 0], [1, 1, length(seawardDistance)]);

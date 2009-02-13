@@ -50,10 +50,10 @@ dataType='Transects';
 dataSet='rijkswaterstaat/jarkus';
 rawDataDir = strrep(openearthtoolsroot, 'OpenEarthTools', fullfile('OpenEarthRawData', 'trunk'));
 outputDir = fullfile(rawDataDir(1:2), 'download');
-dataDir = fullfile(rawDataDir, dataSet);
+dataDir = 'F:\temp';%fullfile(rawDataDir, dataSet);
 rawFileDir = fullfile(dataDir, 'raw', 'total');
 rawFileArray = dir(fullfile(dataDir, 'raw', 'total', '*.txt'));       % lists all available area data files (15 areas with transect data)
-
+infoDir = fullfile(dataDir, 'raw', 'info');
 
 %% Allocate structure for dataset. 
 % This might be faster with a preallocated size
@@ -80,7 +80,7 @@ end
 
 %% define a grid based on the transectStruct
 grid = transect2grid(transectStruct);
-grid = updategrid(grid, [rawFileDir filesep 'raaien.txt']); % this file contains extra information
+grid = updategrid(grid, [infoDir filesep 'raaien.txt'], [infoDir filesep 'TIDEINFO.txt']); % these file contain extra information
 
 %% store grid and transects to a netcdf file
 grid2netcdf('output.nc', grid);
@@ -88,6 +88,8 @@ grid2netcdf('output.nc', grid);
 % time is the year, transect is the transect and lenght is the difference along
 % the line starting from the measurement pole.
 transect2netcdf('output.nc', transectStruct)
+
+disp('Done')
 
 
 

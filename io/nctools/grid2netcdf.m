@@ -13,7 +13,7 @@ STRINGSIZE = 100;
 %     putting attributes
     nc_padheader ( filename, 200000 );   
 %% Put global attributes    
-    nc_attput( filename, nc_global, 'title', 'Jarkus');
+    nc_attput( filename, nc_global, 'title', 'Jarkus Data');
     nc_attput( filename, nc_global, 'institution', 'Rijkswaterstaat');
     nc_attput( filename, nc_global, 'source', 'on shore and off shore measurements');
     nc_attput( filename, nc_global, 'source', 'on shore and off shore measurements');
@@ -70,6 +70,21 @@ STRINGSIZE = 100;
     s.Dimension = {'transect', 'seaward'};
     nc_addvar(filename, s);
     
+    s.Name      = 'angle';
+    s.Nctype    = nc_double;
+    s.Dimension = {'transect'};
+    nc_addvar(filename, s);
+    
+    s.Name      = 'MHW';
+    s.Nctype    = nc_double;
+    s.Dimension = {'transect'};
+    nc_addvar(filename, s);
+    
+    s.Name      = 'MLW';
+    s.Nctype    = nc_double;
+    s.Dimension = {'transect'};
+    nc_addvar(filename, s);
+    
 %% Define attributes
     nc_attput( filename, 'id', 'comment', 'sum of areacode (x1000000) and coastward_distance');    
     nc_attput( filename, 'id', 'long_name', 'unique identifier for transect');    
@@ -97,6 +112,9 @@ STRINGSIZE = 100;
     nc_varput(filename, 'seaward_distance', grid.seawardDistance);
     nc_varput(filename, 'x', grid.X);
     nc_varput(filename, 'y', grid.Y);
+    nc_varput(filename, 'angle', grid.angle);
+    nc_varput(filename, 'MHW', grid.MHW);
+    nc_varput(filename, 'MLW', grid.MLW);
 
 
 %% Height is big therefor done seperate
@@ -113,10 +131,10 @@ STRINGSIZE = 100;
     nc_attput( filename, 'height', '_FillValue', -99999);
 
 %% Print header    
-    try	
-    	system(['ncdump -vyear,id,seaward_distance ' filename]);
-    catch
-    end
+%     try	
+%     	system(['ncdump -vyear,id,seaward_distance ' filename]);
+%     catch
+%     end
 
 end % function grid2netcdf
 
