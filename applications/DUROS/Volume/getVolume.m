@@ -1,4 +1,4 @@
-function [Volume, result, Boundaries] = getVolume(x, z, UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary, x2, z2, varargin)
+function [Volume result Boundaries] = getVolume(varargin)
 %GETVOLUME   generic routine to determine volumes on transects
 %
 %   Routine determines volumes on transects. In case of no second profile (x2, z2),
@@ -11,9 +11,11 @@ function [Volume, result, Boundaries] = getVolume(x, z, UpperBoundary, LowerBoun
 %   the volume will be considered as accretion (positive).
 %   The horizontal boundaries (UpperBoundary and LowerBoundary) do not
 %   have to be straight (the x-coordinates of these boundaries have to be ascending).
+%   Input can specified in the order of the input list below, or as PropertyName 
+%   PropertyValue pairs.
 %
 %   syntax:
-%   [Volume, result, Boundaries] =
+%   [Volume result Boundaries] =
 %   getVolume(x, z, UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary, x2, z2)
 %
 %   input:
@@ -25,11 +27,10 @@ function [Volume, result, Boundaries] = getVolume(x, z, UpperBoundary, LowerBoun
 %       SeawardBoundary     = seaward vertical plane of volume area (not specified please enter [] as argument)
 %       x2                  = column array with x2 points (increasing index and positive x in seaward direction)
 %       z2                  = column array with z2 points
-%       varargin            = propertyname propertyvalue pairs:
+%       propertyname propertyvalue pairs:
 %           suppressMessEqualBoundaries     boolean (true/false)
 %
 %   example:
-%
 %
 %   See also getInputSize
 %
@@ -41,45 +42,106 @@ function [Volume, result, Boundaries] = getVolume(x, z, UpperBoundary, LowerBoun
 
 tic;
 %% check and inventorise input
-OPT = struct(...
-    'suppressMessEqualBoundaries', false);
+idPropName = cellfun(@ischar, varargin);
+id = nargin;
+if any(idPropName)
+    id = find(idPropName)-1;
+end
+OPTstructArgs = [repmat({[]}, 1, 16)...
+    {'suppressMessEqualBoundaries', false}];
+OPTstructArgs(1:2:16) = {...
+    'x'...
+    'z'...
+    'UpperBoundary'...
+    'LowerBoundary'...
+    'LandwardBoundary'...
+    'SeawardBoundary'...
+    'x2'...
+    'z2'};
+OPTstructArgs(2:2:2*id) = varargin(1:id);
+OPT = struct(OPTstructArgs{:});
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setProperty(OPT, varargin{id+1:end});
 
-variables  = getInputVariables(mfilename);
-inputSize  = getInputSize(variables);
-for i = [1 7]
-    if sum(inputSize(i,:) == inputSize(i+1,:)) ~= 2 % number of rows and columns of x must be equal to z (also holds for x2 and z2)
-        error('GETVOLUME:SizeInputs', ['Size of input argument ',variables{i},' must be equal to ',variables{i+1},'.']);
+inputSize = structfun(@size, OPT,...
+    'UniformOutput', false);
+
+%% input check
+inputAdjusted = false;
+if sum(inputSize.x) ~= sum(inputSize.z)
+    error('GETVOLUME:SizeInputs', 'Input arguments "x" and "z" must be of same size');
+end
+
+if sum(inputSize.x) <= 2 || all(inputSize.x ~= 1)
+    error('GETVOLUME:SizeInputs', 'Input arguments "x" and "z" must be vectors');
+end
+
+if any(isnan(OPT.z))
+    % remove NaNs
+    ZnonNaN = ~isnan(OPT.z);
+    [OPT.x OPT.z] = deal(OPT.x(ZnonNaN), OPT.z(ZnonNaN));
+    
+    % check whether the remaining non-NaN part is still a vector
+    if sum(size(OPT.x)) <= 2
+        error('GETVOLUME:SizeInputs', 'Input arguments "x" and "z" must contain at least two non-NaN data points.');
     end
-    eval([variables{i} '=' variables{i} '(~isnan(' variables{i+1} '));' variables{i+1} '=' variables{i+1} '(~isnan(' variables{i+1} '));']) % use only non-NaN values
-    if sign(diff(size(eval(variables{i}))))==1 % in case of rows
-        eval([variables{i} '=' variables{i} ''';' variables{i+1} '=' variables{i+1} ''';']) % transpose x and z to column vectors
+    inputAdjusted = true;
+end
+
+if sum(inputSize.x2) ~= sum(inputSize.z2)
+    error('GETVOLUME:SizeInputs', 'Input arguments "x2" and "z2" must be of same size');
+end
+
+if isscalar(OPT.x2)
+    % x2 and z2 must be either empty or vector
+    error('GETVOLUME:SizeInputs', 'Input arguments "x2" and "z2" must be vectors');
+end
+
+if any(isnan(OPT.z2))
+    % remove NaNs
+    Z2nonNaN = ~isnan(OPT.z2);
+    [OPT.x2 OPT.z2] = deal(OPT.x2(Z2nonNaN), OPT.z2(Z2nonNaN));
+    
+    % check whether the remaining non-NaN part is still a vector
+    if sum(size(OPT.x2)) <= 2
+        error('GETVOLUME:SizeInputs', 'Input arguments "x2" and "z2" must contain at least two non-NaN data points.');
     end
-    [inputSize(i,:), inputSize(i+1,:)] = deal(size(eval(variables{i}))); % update inputSize
-    if i == 1 && sum(inputSize(i,:))<= 2 || i == 7 && sum(inputSize(i,:)) == 2 % no input arguments, empty x and z, or only one non-NaN data point
-        error('GETVOLUME:NotEnoughPts',['There must be at least two non-NaN data points in ',variables{i},' and ',variables{i+1},'.'])
+    inputAdjusted = true;
+end
+
+for var = {'x' 'z' 'x2' 'z2'}
+    if sign(diff(inputSize.(var{1}))) == 1 % in case of rows
+        OPT.(var{1}) = OPT.(var{1})';
+        inputAdjusted = true;
     end
 end
-[xold, zold] = deal(x, z);
+
+if inputAdjusted
+    inputSize = structfun(@size, OPT,...
+        'UniformOutput', false);
+end
+
+% create separate variables (conform old version of getVolume) out of the OPT-structure
+finalInput = struct2cell(OPT);
+[x z UpperBoundary LowerBoundary LandwardBoundary SeawardBoundary x2 z2] = deal(finalInput{1:8});
 
 result = createEmptyDUROSResult;
 
 %% determine Upper and Lower boundaries and set LandwardBoundary and SeawardBoundary
 x_min = min(x); x_max = max(x);
-if inputSize(3,1)>1; x_min = max([x_min min(UpperBoundary(:,1))]); x_max = min([x_max max(UpperBoundary(:,1))]); end
-if inputSize(4,1)>1; x_min = max([x_min min(LowerBoundary(:,1))]); x_max = min([x_max max(LowerBoundary(:,1))]); end
-if inputSize(5,1)>1; LandwardBoundary = LandwardBoundary(1,1); end
-if inputSize(6,1)>1; SeawardBoundary = SeawardBoundary(1,1); end
-if inputSize(7,1)>1; x_min = max([x_min min(x2)]); x_max = min([x_max max(x2)]); end
-LandwardBoundary = max([LandwardBoundary x_min]); inputSize(5,:) = size(LandwardBoundary);
-SeawardBoundary = min([SeawardBoundary x_max]); inputSize(6,:) = size(SeawardBoundary);
+if inputSize.UpperBoundary(1)>1; x_min = max([x_min min(UpperBoundary(:,1))]); x_max = min([x_max max(UpperBoundary(:,1))]); end
+if inputSize.LowerBoundary(1)>1; x_min = max([x_min min(LowerBoundary(:,1))]); x_max = min([x_max max(LowerBoundary(:,1))]); end
+if inputSize.LandwardBoundary(1)>1; LandwardBoundary = LandwardBoundary(1,1); end
+if inputSize.SeawardBoundary(1)>1; SeawardBoundary = SeawardBoundary(1,1); end
+if inputSize.x2(1)>1; x_min = max([x_min min(x2)]); x_max = min([x_max max(x2)]); end
+LandwardBoundary = max([LandwardBoundary x_min]); inputSize.LandwardBoundary(:) = size(LandwardBoundary);
+SeawardBoundary = min([SeawardBoundary x_max]); inputSize.SeawardBoundary(:) = size(SeawardBoundary);
 
 if LandwardBoundary == SeawardBoundary
     result.xActive = LandwardBoundary;
-    [result.z2Active, result.zActive] = deal(interp1(xold, zold, LandwardBoundary));
-    [idLand, idSea] = deal(xold<min(result.xActive), xold>max(result.xActive));
-    [result.xLand, result.zLand, result.xSea, result.zSea] = deal(xold(idLand), zold(idLand), xold(idSea), zold(idSea));
+    [result.z2Active, result.zActive] = deal(interp1(OPT.x, OPT.z, LandwardBoundary));
+    [idLand, idSea] = deal(OPT.x<min(result.xActive), OPT.x>max(result.xActive));
+    [result.xLand, result.zLand, result.xSea, result.zSea] = deal(OPT.x(idLand), OPT.z(idLand), OPT.x(idSea), OPT.z(idSea));
     [result.Volumes.Volume, Volume, result.Volumes.Accretion, result.Volumes.Erosion] = deal(0);
     result.info.time = toc;
     [Boundaries.Upper, Boundaries.Lower, Boundaries.Landward, Boundaries.Seaward] = deal(UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary);
@@ -90,38 +152,38 @@ if LandwardBoundary == SeawardBoundary
 end;
 
 %% set UpperBoundary and LowerBoundary
-if inputSize(3,1)<2 && inputSize(3,2)<2
+if inputSize.UpperBoundary(1)<2 && inputSize.UpperBoundary(2)<2
     z_max = min([max([max(z) max(z2)]) UpperBoundary]);
     UpperBoundary = [LandwardBoundary SeawardBoundary; z_max z_max]';
-elseif inputSize(3,1)==1 && inputSize(3,2)==2
+elseif inputSize.UpperBoundary(1)==1 && inputSize.UpperBoundary(2)==2
     z_max = min([max([max(z) max(z2)]) UpperBoundary(1,2)]);
     UpperBoundary = [LandwardBoundary SeawardBoundary; z_max z_max]';
 end
-inputSize(3,:) = size(UpperBoundary);
+inputSize.UpperBoundary(:) = size(UpperBoundary);
 
-if inputSize(4,1)==0 && inputSize(4,2)==0
+if inputSize.LowerBoundary(1)==0 && inputSize.LowerBoundary(2)==0
     z_min = max([min([min(z) min(z2)]) LowerBoundary]);
     LowerBoundary = [LandwardBoundary SeawardBoundary; z_min z_min]';
-elseif inputSize(4,1)==1 && inputSize(4,2)==1
+elseif inputSize.LowerBoundary(1)==1 && inputSize.LowerBoundary(2)==1
     z_min = LowerBoundary;
     LowerBoundary = [LandwardBoundary SeawardBoundary; z_min z_min]';
-elseif inputSize(4,1)==1 && inputSize(4,2)==2
+elseif inputSize.LowerBoundary(1)==1 && inputSize.LowerBoundary(2)==2
     z_min = min([min([min(z) min(z2)]) LowerBoundary(1,2)]);
     LowerBoundary = [LandwardBoundary SeawardBoundary; z_min z_min]';
 end
-inputSize(4,:) = size(LowerBoundary);
+inputSize.LowerBoundary(:) = size(LowerBoundary);
 
 %% get intersections of profiles with x-boundaries and strip profiles
 [x, z] = removeDoublePoints(x, z);
 z_new = interp1(x, z, [LandwardBoundary SeawardBoundary]);
 z = [z_new(1); z(x>LandwardBoundary & x<SeawardBoundary); z_new(2)];
 x = [LandwardBoundary; x(x>LandwardBoundary & x<SeawardBoundary); SeawardBoundary];
-if inputSize(3,1)>=2 % MvK 06-04-2008: '=' added because points should be added also when UpperBoundary is a horizontal line 
+if inputSize.UpperBoundary(1)>=2 % MvK 06-04-2008: '=' added because points should be added also when UpperBoundary is a horizontal line 
     z_new = interp1(UpperBoundary(:,1), UpperBoundary(:,2), [LandwardBoundary SeawardBoundary]);
     ids = UpperBoundary(:,1)>LandwardBoundary & UpperBoundary(:,1)<SeawardBoundary;
     UpperBoundary = [LandwardBoundary z_new(1); UpperBoundary(ids,:); SeawardBoundary z_new(2)];
 end
-if inputSize(4,1)>=2 % MvK 06-04-2008: '=' added because points should be added also when LowerBoundary is a horizontal line 
+if inputSize.LowerBoundary(1)>=2 % MvK 06-04-2008: '=' added because points should be added also when LowerBoundary is a horizontal line 
     z_new = interp1(LowerBoundary(:,1), LowerBoundary(:,2), [LandwardBoundary SeawardBoundary]);
     ids = LowerBoundary(:,1)>LandwardBoundary & LowerBoundary(:,1)<SeawardBoundary;
     LowerBoundary = [LandwardBoundary z_new(1); LowerBoundary(ids,:); SeawardBoundary z_new(2)];
@@ -205,10 +267,10 @@ for i = 1:length(diffX)
     Xvolume(i) = mean(x(i:i+1));
 end
 
-% [xold, zold] = deal(x, z);
+% [OPT.x, OPT.z] = deal(x, z);
 
-[idLand, idSea] = deal(xold<min(x), xold>max(x));
-[result.xLand, result.zLand, result.xActive, result.zActive, result.z2Active, result.xSea, result.zSea] = deal(xold(idLand), zold(idLand), x, Zlimits(:,1), Zlimits(:,2), xold(idSea), zold(idSea));
+[idLand, idSea] = deal(OPT.x<min(x), OPT.x>max(x));
+[result.xLand, result.zLand, result.xActive, result.zActive, result.z2Active, result.xSea, result.zSea] = deal(OPT.x(idLand), OPT.z(idLand), x, Zlimits(:,1), Zlimits(:,2), OPT.x(idSea), OPT.z(idSea));
 [Volume, result.Volumes.Volume] = deal(sum(volume));
 [result.Volumes.volumes, result.Volumes.Accretion, result.Volumes.Erosion] = deal(volume, sum(volume(volume>0)), -sum(volume(volume<0)));
 result.info.time = toc;
