@@ -32,7 +32,7 @@ function varargout = knmi_potwind(varargin)
 % (C) G.J. de Boer, TU Delft, 2005-8
 %
 % See also: CART2POL, POL2CART, DEGN2DEGUC, DEGUC2DEGN, HMCZ_WIND_READ
-%           KNMI_ETMGEG
+%           KNMI_ETMGEG, KNMI_POTWIND_MULTI
 
 % uses <ctransdv>   (optional)
 %      time2datenum (OET)
