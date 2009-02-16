@@ -1,15 +1,15 @@
-%KNMI_HYDRA2DELFT3D_WND_example     script that transforms KNMI hydra file to delft3d *.wnd file
+%KNMI_POTWIND2DELFT3D_WND_EXAMPLE     script that transforms KNMI hydra file to delft3d *.wnd file
 %
-%  KNMI_HYDRA2DELFT3D_WND(fname,ref_datenum)
+%  knmi_potwind2delft3d_wnd_example(fname,ref_datenum)
 %
 % writes *.wnd file from knmi_hydra file valied for ref_datenum in mdf file
 %
-%See also: KNMIHYDRA, DELFT3D_IO_WND
+%See also: KNMI_POTWIND, DELFT3D_IO_WND, KNMI_ETMGEG2DELFT3D_TEM_EXAMPLE
 
-   OPT.filename   = 'P:\mctools\mc_data\KNMI\potwind\potwind_249_2001';
-   OPT.refdatenum = datenum(2007,1,1);%!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   OPT.filename   = 'potwind_249_2001';
+   OPT.refdatenum = datenum(2007,1,1) ; % same as in MDF !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   W = knmihydra(OPT.filename,'calms',0,'variables',0,'pol2cart',1)
+   W = knmi_potwind(OPT.filename,'calms',0,'variables',0,'pol2cart',1)
 
 %% Negative with respect to reference date not posible
 %% ----------------
