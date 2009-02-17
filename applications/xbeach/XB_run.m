@@ -1,4 +1,4 @@
-function [runflag runtime msg] = XB_run(inpfile, exepath, varargin)
+function [runflag runtime msg] = XB_run(varargin)
 % XB_RUN runs xbeach calculation
 %
 % Routine calls "xbeach.exe" (by default; another exefile can be specified
@@ -35,72 +35,50 @@ function [runflag runtime msg] = XB_run(inpfile, exepath, varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% $Id$ 
+% $Id$
 % $Date$
 % $Author$
 % $Revision$
+% $HeadURL$
+% $Keywords:
 
-%% input file
-getdefaults('inpfile', fullfile(cd, 'params.txt'), 0);
-
-if ~exist(inpfile, 'file')
-    error('XB_RUN:NoInpfileFound', ['No inputfile "' inpfile '" found.'])
-end
-[inpath fname fext] = fileparts(which(inpfile));
-inpfile = fullfile(inpath, [fname fext]);
-
-%% name of executable
+%%
 OPT = struct(...
-    'exefile', 'xbeach.exe');
+    'inpfile', fullfile(cd, 'params.txt'),...
+    'exepath', cd,...
+    'exefile', 'xbeach.exe',...
+    'mpiexe', 'mpiexec.exe',...
+    'NrNodes', 1);
+
+% provide backward compatibility
+if isvector(varargin) && ~any(strcmp(fieldnames(OPT), varargin{1}))
+    OPT.inpfile = varargin{1};
+    if nargin >= 2 && ~any(strcmp(fieldnames(OPT), varargin{2}))
+        OPT.exepath = varargin{2};
+    end
+end
 
 OPT = setProperty(OPT, varargin{:});
 
-%% path of executable
-getdefaults('exepath', fileparts(inpfile), 0);
+%% input file
+if ~exist(OPT.inpfile, 'file')
+    error('XB_RUN:NoInpfileFound', ['No inputfile "' OPT.inpfile '" found.'])
+end
+[inpath fname fext] = fileparts(which(OPT.inpfile));
+OPT.inpfile = fullfile(inpath, [fname fext]);
 
-if ~exist(fullfile(exepath, 'xbeach.exe'), 'file')
+%% path of executable
+if ~exist(fullfile(OPT.exepath, OPT.exefile), 'file')
     error('XB_RUN:NoExecutableFound', ['"' OPT.exefile '" not found.'])
 end
 
 msg = '';
 
-% if nargin<2 || ~ischar(exepath)
-%     %% get default exepath
-%     if exist('exepath','var') && iscell(exepath)
-%         try
-%             year = exepath{3};
-%             month = exepath{2};
-%             day = exepath{1};
-%             DateVector = [year month day 0 0 0];
-%             exepath = [fileparts(mfilename('fullpath')),filesep,'xbeach_' datestr(DateVector, 'yyyy_mm_dd') '_exe'];
-%             if ~exist(exepath,'dir')
-%                 error('exepath is not a directory');
-%             end
-%         catch
-%             exepath = [];
-%             disp('Exe path could not be found. Newest version is used.');
-%         end
-%     end
-%     if exist('exepath','var') && isnumeric(exepath) && ~isempty(exepath)
-%         id = exepath;
-%         exepath = [];
-%     end
-%     if ~exist('exepath','var') || isempty(exepath) || (ischar(exepath) && ~isdir(exepath))
-%         files = dir([fileparts(mfilename('fullpath')),filesep, 'xbeach*']);
-%         exedirs = {files([files.isdir]).name}';
-%         if ~exist('id','var')
-%             id = length(exedirs);
-%         end
-%         exepath = [fileparts(mfilename('fullpath')),filesep,exedirs{id}];
-%     end
-% end
-
 %% derive date of xbeach.exe and create message
-exeinfo = dir(fullfile(exepath, OPT.exefile));
+exeinfo = dir(fullfile(OPT.exepath, OPT.exefile));
 try %#ok<TRYNC>
     msg = sprintf('Version: %s\n', datestr(exeinfo.datenum, 'yyyy-mmm-dd'));
 end
-
 
 cdtemp = cd;
 if ~strcmp(inpath, cd)
@@ -109,7 +87,7 @@ if ~strcmp(inpath, cd)
 end
 
 %% read expected number of timesteps from params.txt
-fid = fopen(inpfile, 'r');
+fid = fopen(OPT.inpfile, 'r');
 strtext = fread(fid, '*char')';
 searchstr = {'morstart' 'tint' 'tstop'};
 for i = 1:length(searchstr)
@@ -131,13 +109,18 @@ if ~DIMSisoutput
     nglobalvar = nglobalvar + 1; %#ok<NODEF>
     nglobalvarstr = sprintf('%s %g\n', evalstr(1:findstr(evalstr, '=') + 1), nglobalvar);
     strtext = sprintf('%s', strtext(1:strbgn-1), nglobalvarstr, 'dims', strtext(strend+1:end));
-    fid = fopen(inpfile, 'w');
+    fid = fopen(OPT.inpfile, 'w');
     fprintf(fid, '%s', strtext);
     fclose(fid);
 end
 
 tic
-system(['"' exepath filesep 'xbeach.exe" ' '"' fname fext '"']);
+if OPT.NrNodes == 1
+    system(['"' fullfile(OPT.exepath, OPT.exefile) '" "' fname fext '"']);
+else
+    system(['"' OPT.mpiexe '" -np ' num2str(OPT.NrNodes) ' -localonly -priority 1:1 "' fullfile(OPT.exepath, OPT.exefile) '" "' fname fext '"']);
+end
+
 runtime = toc;
 
 %% read actual number of timesteps from dims.dat
