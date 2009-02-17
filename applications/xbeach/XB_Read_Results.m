@@ -1,18 +1,28 @@
 function XB = XB_Read_Results(resdir, XB, varargin)
-% XB_READ_RESULTS reads outputfiles
+% XB_Read_Results reads outputfiles
 %
 % Routine reads output files and stores the results in the XBeach
 % communication variable XB.
 %
+% Syntax:
+%   XB = XB_Read_Results(resdir, XB, 'outparam1', 'outparam2')
+%   XB = XB_Read_Results(resdir, XB,'all')
+%   XB = XB_Read_Results(resdir, XB)
+%   XB = XB_Read_Results(...,'nodisp')
+%   XB = XB_Read_Results(...,'quiet')
+%
 % Input:
-% resdir = dir in which result can be found
-% XB 	 = XBeach communication structure created with CreateEmptyXBeachVar
-% varargin = Names of variables that have to be loaded
-% 'nodisp' = Do not display messages in the command window
-% 'quiet' = Do not show progress bar
+%   resdir  = dir in which result can be found
+%   XB      = XBeach communication structure created with CreateEmptyXBeachVar
+%   outparam= Names of the (Xbeach output-)variables that have to be loaded
+%   'nodisp'= Do not display messages in the command window
+%   'quiet' = Do not show progress bar
+%   '3d'    = Reads all output variables as 3D matrices (n*m*nt). Omitting
+%               this specification leads to the same result, but only at
+%               m=2;
 %
 % Output:
-% XB      = XBeach communication structure
+%   XB      = XBeach communication structure
 %
 % See also CreateEmptyXBeachVar XBeach_Write_Inp XB_Run
 
