@@ -13,7 +13,7 @@ function result = FORM(stochast, varargin)
 % output:
 % result = structure with settings, input and output
 %
-% See also setProperty createStochastVar
+% See also setProperty exampleStochastVar
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -70,7 +70,7 @@ OPT = struct(...
 % overrule default settings by property pairs, given in varargin
 OPT = setProperty(OPT, varargin{:});
 
-getdefaults('stochast', createStochastVar, 0);
+getdefaults('stochast', exampleStochastVar, 0);
 
 %% series of FORM calculations
 % in case of multiple Resistance-values

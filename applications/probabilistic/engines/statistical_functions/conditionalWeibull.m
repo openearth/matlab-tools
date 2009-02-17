@@ -67,6 +67,9 @@ Fe = -log(P);
 
 % get the x, using Fe(P) and the coefficients
 x = sigma(1).*(log(rho(1)) + (omega(1)./sigma(1)).^alpha(1) - log(Fe)).^(1./alpha(1));
+if ~isreal(x)
+    x = real(x);
+end
 
 if length(omega) == 2 && lambda ~= 1
     % interpolate between reference points based on lambda value

@@ -15,7 +15,7 @@ function result = MC(stochast, varargin)
 %   Example
 %   MC
 %
-%   See also
+%   See also exampleStochastVar
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -57,17 +57,17 @@ function result = MC(stochast, varargin)
 %%
 %{
 % example of MC
-result = MC(createStochastVar,...
+result = MC(exampleStochastVar,...
  'Resistance', 25:5:100);
 
 % example of MC with simple importance sampling
-result = MC(createStochastVar,...
+result = MC(exampleStochastVar,...
  'Resistance', 25:5:100,...
  'ISvariable', 'WL_t',...
  'W', 100);
 
 % example of MC with advanced importance sampling
-result = MC(createStochastVar,...
+result = MC(exampleStochastVar,...
  'Resistance', 25:5:100,...
  'ISvariable', 'WL_t',...
  'f1', 1,...
@@ -90,7 +90,7 @@ OPT = struct(...
 % overrule default settings by property pairs, given in varargin
 OPT = setProperty(OPT, varargin{:});
 
-getdefaults('stochast', createStochastVar, 0);
+getdefaults('stochast', exampleStochastVar, 0);
 
 Nstoch = length(stochast); % number of stochastic variables
 
@@ -132,16 +132,16 @@ if OPT.f1 < Inf && OPT.f2 > 0
         % die noodzakelijk is bij importance sampling
         cdf = feval(stochast(idIS).Distr, Ponder, stochast(idIS).Params{:});
 
-        [xcentr dPdx] = cdf2pdf(Ponder, cdf);
+        [xcentr dPdx] = cdf2pdf(Ponder, cdf(:,end));
 
         % bepaal grenzen voor waterstand-sampling:
         Pgrens = exp(-[OPT.f1 OPT.f2]);    % onderschrijdingskans grenswaarden
-        Hgrens = feval(stochast(idIS).Distr, Pgrens, stochast(idIS).Params{:});    % grenswaarden uit CDF
-        Hgrens = [0.9 1.1].*Hgrens; % neem deze grenzen wat ruimer, vanwege meer/minder afslag door golven:
+        Hgrens = feval(stochast(idIS).Distr, Pgrens', stochast(idIS).Params{:});    % grenswaarden uit CDF
+        Hgrens = [0.9; 1.1].*Hgrens(:,end); % neem deze grenzen wat ruimer, vanwege meer/minder afslag door golven:
 
         % sample H-waarden
         H = Hgrens(1) + P(:,idIS)*(Hgrens(2)-Hgrens(1));
-        P(:,idIS) = interp1(cdf, Ponder, H);
+        P(:,idIS) = interp1(cdf(:,end), Ponder, H);
 
         if all(~any(isnan(P)))
             NaNsinP = false;
