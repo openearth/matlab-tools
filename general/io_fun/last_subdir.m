@@ -41,7 +41,7 @@ function end_of_PATHSTR = last_subdir(fullfilename,varargin)
 
    %% Make sure any trailing directories end with a filesep
    if exist(fullfilename)==7
-   fullfilename = [fullfilename,filesep];
+   fullfilename = fullfile(fullfilename,filesep,'');
    end
    
    %% Remove any trailing file names 

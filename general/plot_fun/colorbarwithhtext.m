@@ -1,29 +1,32 @@
 function [varargout]=colorbarwithtext(colorbartxt,varargin)
 %COLORBARWITHhTEXT  (re)draws the colorbar with horizontal text inside it.
 %
-%   colorbarwithhtext(colorbartxt) (re)draws the colorbar
-%   with text inside it.
+%         colorbarwithtext(colorbartxt,<ctick>) 
 %
-%   colorbarwithhtext(colorbartxt,ctick) (re)draws the colorbar
-%   with tick marks at positions ctick.
+%  (re)draws the colorbar with text inside it <with tick marks at positions ctick>.
 %
-%   [h]=colorbarwithhtext(colorbartxt) does the same
-%   and returns the handle h of the colorbar.
+%   [<ax>, h] =colorbarwithtext(colorbartxt) 
 %
-%   [ax, h]=colorbarwithhtext(colorbartxt,<ctick>) 
-%   returns both the handle h of the colorbar and
-%   the handle ax of the axes. NOTE that ax is
+%   returns the handle h of the colorbar and optionally 
+%   the handle ax of the axes. NOTE that with 2 output arguments ax is
 %   returned first to follow the syntax of ax = colorbar.
 %
+%      colorbarwithtext(colorbartxt,      arguments)
+%      colorbarwithtext(colorbartxt,[]   ,arguments)
+%      colorbarwithtext(colorbartxt,ctick,arguments) 
+%
+%   passes arguments to colorbar. E.g. to to locate a colorbar 
+%   in a pre-defined axis with handle AX, use
+%
+%      colorbar('position',get(AX,'position'))
+%
 %   Example:  
-%   [ax, h]=colorbarwithtext('wind direction',[0:90:360]) 
-%   set(ax,'YTickLabel',{'E','N','W','S'})
 %
-%   colorbarwithhtext(colorbartxt,arguments) or
-%   colorbarwithhtext(colorbartxt,ctick,arguments) passes arguments
-%   to colorbar
+%      caxis(0 360])
+%      [ax, h]=colorbarwithtext('wind direction',[0:90:360]) 
+%      set(ax,'YTickLabel',{'E','N','W','S'})
 %
-%   See also: COLORBAR, SET(gca), GET(gca), COLORBARWITHTITLE,
+%   See also: COLORBAR, SET(gca), GET(gca), colorbarwithtext,
 %             COLORBARWITHxLABEL, COLORBARWITHyLABEL, COLORBARWITHvTEXT
 
 %   --------------------------------------------------------------------
@@ -66,6 +69,11 @@ if nargin>1
     if isnumeric(varargin{1}) & ~istype(varargin{1},'axes');
     nextarg = 2;
     ctick   = varargin{1};
+    end
+    
+    if isempty(varargin{1})
+    nextarg = 2;
+    ctick   = varargin{1}; % [] default
     end    
 end
 

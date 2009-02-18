@@ -1,27 +1,30 @@
 function [varargout]=colorbarwithvtext(colorbartxt,varargin)
 %COLORBARWITHvTEXT  (re)draws the colorbar with vertical text inside it at 90.
 %
-%   colorbarwithvtext(colorbartxt) (re)draws the colorbar
-%   with text inside it.
+%         colorbarwithvtext(colorbartxt,<ctick>) 
 %
-%   colorbarwithvtext(colorbartxt,ctick) (re)draws the colorbar
-%   with tick marks at positions ctick.
+%  (re)draws the colorbar with text inside it <with tick marks at positions ctick>.
 %
-%   [h]=colorbarwithvtext(colorbartxt) does the same
-%   and returns the handle h of the colorbar.
+%   [<ax>, h] =colorbarwithvtext(colorbartxt) 
 %
-%   [ax, h]=colorbarwithvtext(colorbartxt,<ctick>) 
-%   returns both the handle h of the colorbar and
-%   the handle ax of the axes. NOTE that ax is
+%   returns the handle h of the colorbar and optionally 
+%   the handle ax of the axes. NOTE that with 2 output arguments ax is
 %   returned first to follow the syntax of ax = colorbar.
 %
-%   Example:  
-%   [ax, h]=colorbarwithvtext('wind direction',[0:90:360]) 
-%   set(ax,'YTickLabel',{'E','N','W','S'})
+%      colorbarwithvtext(colorbartxt,      arguments)
+%      colorbarwithvtext(colorbartxt,[]   ,arguments)
+%      colorbarwithvtext(colorbartxt,ctick,arguments) 
 %
-%   colorbarwithvtext(colorbartxt,arguments) or
-%   colorbarwithvtext(colorbartxt,ctick,arguments) passes arguments
-%   to colorbar
+%   passes arguments to colorbar. E.g. to to locate a colorbar 
+%   in a pre-defined axis with handle AX, use
+%
+%      colorbar('position',get(AX,'position'))
+%
+%   Example:  
+%
+%      caxis(0 360])
+%      [ax, h]=colorbarwithvtext('wind direction',[0:90:360]) 
+%      set(ax,'YTickLabel',{'E','N','W','S'})
 %
 %   See also: COLORBAR, SET(gca), GET(gca), COLORBARWITHTITLE,
 %             COLORBARWITHxLABEL, COLORBARWITHyLABEL, COLORBARWITHhTEXT
@@ -66,6 +69,11 @@ if nargin>1
     if isnumeric(varargin{1}) & ~istype(varargin{1},'axes');
     nextarg = 2;
     ctick   = varargin{1};
+    end    
+
+    if isempty(varargin{1})
+    nextarg = 2;
+    ctick   = varargin{1}; % [] default
     end    
 end
 
