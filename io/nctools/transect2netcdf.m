@@ -27,15 +27,10 @@ for i = 1 : length(yearArray)
                 lengthOfData(k) = length(transect(k).height);
             end
             transect = transect(find(lengthOfData==max(lengthOfData))); %HACK: take the longest. This should not happen if data is sound.
-
-            [c, ia, ib] = intersect(seawardDistanceArray, transect.seawardDistance);
-            datablock(j, ia) = transect.height(ib);
         end
-        nc_varput(filename, 'height', datablock, [i-1, 0, 0], [1, size(datablock)]); % (/i-1, 0, 0/) -> in fortran
+        [c, ia, ib] = intersect(seawardDistanceArray, transect.seawardDistance);
+        datablock(j, ia) = transect.height(ib);
     end
-
-
-
-
-
+    nc_varput(filename, 'height', datablock, [i-1, 0, 0], [1, size(datablock)]); % (/i-1, 0, 0/) -> in fortran
 end
+
