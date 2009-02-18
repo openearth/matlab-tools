@@ -117,6 +117,12 @@ if DuneErosionSettings('get', 'DUROS')
     %% STEP 1; get DUROS erosion
     writemessage(100,'Start first step: Get and fit DUROS profile');
     [result, Volume, x00min, x0max, x0except] = getDuneErosion_DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t,false);
+    
+    % update initial profile with minor modification by findCrossings
+    [xInitial zInitial] = deal(...
+        [result(1).xLand; result(1).xActive; result(1).xSea],...
+        [result(1).zLand; result(1).zActive; result(1).zSea]);
+    
     if isempty(Volume)
         NoDUROSResult = true;
     end
