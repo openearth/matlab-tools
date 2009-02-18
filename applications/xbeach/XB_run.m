@@ -48,7 +48,8 @@ OPT = struct(...
     'exepath', cd,...
     'exefile', 'xbeach.exe',...
     'mpiexe', 'mpiexec.exe',...
-    'NrNodes', 1);
+    'np', 1,...
+    'priority', '1:1');
 
 % provide backward compatibility
 if isvector(varargin) && ~any(strcmp(fieldnames(OPT), varargin{1}))
@@ -115,10 +116,10 @@ if ~DIMSisoutput
 end
 
 tic
-if OPT.NrNodes == 1
+if OPT.np == 1
     system(['"' fullfile(OPT.exepath, OPT.exefile) '" "' fname fext '"']);
 else
-    system(['"' OPT.mpiexe '" -np ' num2str(OPT.NrNodes) ' -localonly -priority 1:1 "' fullfile(OPT.exepath, OPT.exefile) '" "' fname fext '"']);
+    system(['"' OPT.mpiexe '" -np ' num2str(OPT.np) ' -localonly -priority ' OPT.priority ' "' fullfile(OPT.exepath, OPT.exefile) '" "' fname fext '"']);
 end
 
 runtime = toc;
@@ -126,8 +127,8 @@ runtime = toc;
 %% read actual number of timesteps from dims.dat
 dimsfile = 'dims.dat';
 if exist(dimsfile, 'file')
-    fid = fopen(dimsfile,'r');
-    temp = fread(fid,[3,1],'double');
+    fid = fopen(dimsfile, 'r');
+    temp = fread(fid, [3,1], 'double');
     nt = temp(1);
     fclose(fid);
 else
@@ -138,7 +139,7 @@ end
 %% set runflag and create message
 if Nrtimesteps == nt
     runflag = true;
-    msg = sprintf('%sRun successfully completed: %s', msg, datestr(now));
+    msg = sprintf('%s', msg, 'Run successfully completed: ', datestr(now));
 else
     runflag = false;
     if ~isnan(nt)
