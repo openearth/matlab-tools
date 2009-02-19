@@ -22,11 +22,18 @@ for i = 1 : length(yearArray)
         transect = transectsForYearStruct([transectsForYearStruct.id] == id);
         if isempty(transect)
             continue
-        elseif length(transect) > 1
+        elseif length(transect) > 1 % if multiple datablocks exist with same id take longest one and fill up with shorter one
             for k = 1 : length(transect)
                 lengthOfData(k) = length(transect(k).height);
             end
-            transect = transect(find(lengthOfData==max(lengthOfData))); %HACK: take the longest. This should not happen if data is sound.
+            new_x = unique([transect.seawardDistance]);
+            [u, v] = intersect(new_x , transect(find(lengthOfData==min(lengthOfData))).seawardDistance);
+            new_h(v) = transect(find(lengthOfData==min(lengthOfData))).height;
+            [w, q] = intersect(new_x , transect(find(lengthOfData==max(lengthOfData))).seawardDistance);
+            new_h(q) = transect(find(lengthOfData==max(lengthOfData))).height;
+            transect=transect(find(lengthOfData==max(lengthOfData)));
+            transect.seawardDistance = new_x;
+            transect.height = new_h;            
         end
         [c, ia, ib] = intersect(seawardDistanceArray, transect.seawardDistance);
         datablock(j, ia) = transect.height(ib);
