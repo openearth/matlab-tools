@@ -144,7 +144,7 @@ end
 
 transect.GRAD = angle(id_index); %in degrees
 
-transect.contour = [min(x(id_index,:)),max(x(id_index,:)) ; min(y(id_index,:)), max(y(id_index,:))]; %[2x2 double]
+transect.contour = [max(x(id_index,:)), min(y(id_index,:)); min(x(id_index,:)) , max(y(id_index,:))]; %[2x2 double]
 
 transect.contourunit = 'm';
 
