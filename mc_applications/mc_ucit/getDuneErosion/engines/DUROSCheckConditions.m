@@ -48,7 +48,21 @@ end
 % remove nan values
 nanid = isnan(zInitial) | isnan(xInitial);
 xInitial(nanid) = []; 
-zInitial(nanid) = []; 
+zInitial(nanid) = [];
+
+% make sure that profile is expressed as column vectors
+if issorted(size(xInitial))
+    xInitial = xInitial';
+end
+if issorted(size(zInitial))
+    zInitial = zInitial';
+end
+
+%{
+% optional: make sure that profile is positive seaward
+[xInitial zInitial] = checkCrossShoreProfile(xInitial, zInitial,...
+    'x_direction', -1);
+%}
 
 %% Check additional volume formulation
 try
