@@ -63,7 +63,7 @@ ReferencePath = cd;
 if nargin > 0
     ReferencePath = varargin{1};
     if exist(ReferencePath, 'dir') && strcmp(ReferencePath(end), filesep) ||...
-            exist(ReferencePath, 'file')
+            exist(ReferencePath, 'file') == 2
         % make sure that ReferencePath is a directory (not a file) not
         % ending with a filesep
         ReferencePath = fileparts(ReferencePath);
