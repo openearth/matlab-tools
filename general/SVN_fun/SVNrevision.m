@@ -62,6 +62,12 @@ v = 0;
 ReferencePath = cd;
 if nargin > 0
     ReferencePath = varargin{1};
+    if exist(ReferencePath, 'dir') && strcmp(ReferencePath(end), filesep) ||...
+            exist(ReferencePath, 'file')
+        % make sure that ReferencePath is a directory (not a file) not
+        % ending with a filesep
+        ReferencePath = fileparts(ReferencePath);
+    end
 end
 
 % call subversion to find out version control revision
