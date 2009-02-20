@@ -22,7 +22,7 @@ function [varargout]=colorbarwithxlabel(colorbartxt,varargin)
 %
 %   Example:  
 %
-%      caxis(0 360])
+%      caxis([0 360])
 %      [ax, h]=colorbarwithxlabel('wind direction',[0:90:360]) 
 %      set(ax,'YTickLabel',{'E','N','W','S'})
 %

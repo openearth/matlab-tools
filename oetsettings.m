@@ -3,12 +3,12 @@ function oetsettings(varargin)
 %
 % OpenEarthTools is a collection of open source tools 
 % intended to be licensed under the GNU (Lesser) Public License
-% (http://www.gnu.org/licenses/licenses.html).
+% (<a href="http://www.gnu.org/licenses/licenses.html">http://www.gnu.org/licenses/licenses.html</a>).
 %
 % For more information on OpenEarthTools refer to the following two sources:
 %
-% * wiki:        http://OpenEarth.deltares.nl
-% * repository:  https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab
+% * wiki:        <a href="http://OpenEarth.deltares.nl"                               >http://OpenEarth.Deltares.nl</a>
+% * repository:  <a href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab">https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab</a>
 % * help blocks: Scroll through the OpenEarthTools directories and read interesting help blocks.
 %
 %See also: ADDPATHFAST, RESTOREDEFAULTPATH
@@ -48,8 +48,9 @@ function oetsettings(varargin)
 %% TODO remove quickstart option or include in help block
 %% TODO rename quickstart (too general name) to DB_mcstart for example ??
 
-   disp('Adding OpenEarthTools, please wait ...')
-
+   disp('Adding <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a>, please wait ...')
+   disp(' ')
+      
 %% Collect warning and directory state
 %% ---------------------
    state.warning = warning;

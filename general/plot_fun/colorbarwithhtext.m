@@ -1,19 +1,19 @@
-function [varargout]=colorbarwithtext(colorbartxt,varargin)
+function [varargout]=colorbarwithhtext(colorbartxt,varargin)
 %COLORBARWITHhTEXT  (re)draws the colorbar with horizontal text inside it.
 %
-%         colorbarwithtext(colorbartxt,<ctick>) 
+%         colorbarwithhtext(colorbartxt,<ctick>) 
 %
 %  (re)draws the colorbar with text inside it <with tick marks at positions ctick>.
 %
-%   [<ax>, h] =colorbarwithtext(colorbartxt) 
+%   [<ax>, h] =colorbarwithhtext(colorbartxt) 
 %
 %   returns the handle h of the colorbar and optionally 
 %   the handle ax of the axes. NOTE that with 2 output arguments ax is
 %   returned first to follow the syntax of ax = colorbar.
 %
-%      colorbarwithtext(colorbartxt,      arguments)
-%      colorbarwithtext(colorbartxt,[]   ,arguments)
-%      colorbarwithtext(colorbartxt,ctick,arguments) 
+%      colorbarwithhtext(colorbartxt,      arguments)
+%      colorbarwithhtext(colorbartxt,[]   ,arguments)
+%      colorbarwithhtext(colorbartxt,ctick,arguments) 
 %
 %   passes arguments to colorbar. E.g. to to locate a colorbar 
 %   in a pre-defined axis with handle AX, use
@@ -22,11 +22,11 @@ function [varargout]=colorbarwithtext(colorbartxt,varargin)
 %
 %   Example:  
 %
-%      caxis(0 360])
-%      [ax, h]=colorbarwithtext('wind direction',[0:90:360]) 
+%      caxis([0 360])
+%      [ax, h]=colorbarwithhtext('wind direction',[0:90:360]) 
 %      set(ax,'YTickLabel',{'E','N','W','S'})
 %
-%   See also: COLORBAR, SET(gca), GET(gca), colorbarwithtext,
+%   See also: COLORBAR, SET(gca), GET(gca), colorbarwithhtext,
 %             COLORBARWITHxLABEL, COLORBARWITHyLABEL, COLORBARWITHvTEXT
 
 %   --------------------------------------------------------------------

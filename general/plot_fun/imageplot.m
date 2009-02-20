@@ -21,7 +21,7 @@ function varargout = deltares_logo(varargin)
 % * stackopt : passed to UITSTACK, be default 'bottom'
 % * file     : name of image, for example 'deltares_woordbeeldmerk_rgb.jpg'
 %
-% Note that you should call IMAGEPLOT after clalling any PCOLORm
+% Note that you should call IMAGEPLOT after calling any PCOLOR
 % otherwise colorbar cticlabels DO not work after calling image.
 %
 % Remember to set AXIS EQUAL, to avoid deformation of the image.
