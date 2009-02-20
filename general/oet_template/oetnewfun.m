@@ -62,6 +62,8 @@ OPT.description = 'One line description goes here.';
 OPT.input = {'varargin'};
 OPT.output = {'varargout'};
 OPT.feval = [];
+OPT.code = '';
+OPT.seeAlso = '';
 
 FuntionName = 'Untitled';
 i0 = 2;
@@ -150,6 +152,7 @@ else
     str = strrep(str, '%   Output:', '%');
     str = strrep(str, '%   $varargout =', '%');
 end
+str = strrep(str, '$seeAlso', OPT.seeAlso);
 str = strrep(str, '$filename', fname);
 str = strrep(str, '$input', OPT.input);
 str = strrep(str, '%   $varargin  =', OPT.varargin);
@@ -167,6 +170,11 @@ str = strrep(str, '$version', version);
 
 if ~isempty(OPT.feval)
     str = feval(OPT.feval, str);
+end
+
+if ~isempty(OPT.code)
+    % add predefined code
+    str = sprintf('%s', str, OPT.code);
 end
 
 %% open new file in editor

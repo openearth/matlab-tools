@@ -15,7 +15,7 @@ function $output = $filename($input)
 %   Example
 %   $filename
 %
-%   See also
+%   See also $seeAlso
 
 %   --------------------------------------------------------------------
 %   Copyright (C) $date(yyyy) $Company
