@@ -52,11 +52,11 @@ function w = getFallVelocity(D50, a, b, c)
 % Created: 20 Feb 2009
 % Created with Matlab version: 7.4.0.287 (R2007a)
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords:
 
 %% check input / set defaults
