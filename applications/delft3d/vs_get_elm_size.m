@@ -43,6 +43,7 @@ function Sz = vs_get_elm_size(NFSstruct,ElmName,varargin)
 %   USA
 %   --------------------------------------------------------------------
 
+   Sz = [];
    for i=1:length(NFSstruct.ElmDef)
       if strcmp(upper(NFSstruct.ElmDef(i).Name),...
                                  upper(ElmName))
