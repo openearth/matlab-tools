@@ -116,33 +116,34 @@ end
    %% Input
    %% ----------------------
 
-   OPTIONS.addunits = true;   
-   OPTIONS.units    = true;
-   OPTIONS.sheet    = [];
+   OPT.addunits = true;   
+   OPT.units    = true;
+   OPT.sheet    = [];
+   OPT.debug    = 1;
    
    if ~odd(nargin)
-      OPTIONS.sheet = varargin{1};
+      OPT.sheet = varargin{1};
       i     = 2;
    else
       i     = 1;
    end
    
-   while i<=nargin-2,
-     if ischar(varargin{i}),
-       switch lower(varargin{i})
-       case 'addunits'   ;i=i+1;OPTIONS.addunits  = varargin{i};
-       case 'units'      ;i=i+1;OPTIONS.units     = varargin{i};
-       otherwise
-          error(sprintf('Invalid string argument: %s.',varargin{i}));
-       end
-     end;
-     i=i+1;
-   end;   
-   
-   META.filename     = fname;
-   iostat           = 1;
-   
-   tmp = dir(fname);
+%    while i<=nargin-2,
+%      if ischar(varargin{i}),
+%        switch lower(varargin{i})
+%        case 'addunits'   ;i=i+1;OPT.addunits  = varargin{i};
+%        case 'units'      ;i=i+1;OPT.units     = varargin{i};
+%        otherwise
+%           error(sprintf('Invalid string argument: %s.',varargin{i}));
+%        end
+%      end;
+%      i=i+1;
+%    end;   
+
+   OPT           = SetProperty(OPT,varargin{i:end});
+   META.filename = fname;
+   iostat        = 1;
+   tmp           = dir(fname);
    
    if length(tmp)==0
       
@@ -164,10 +165,10 @@ end
       %% Load raw data
       %% ----------------------
    
-      if ~isempty(OPTIONS.sheet)
+      if ~isempty(OPT.sheet)
          if strfind(version('-release'),'13')==1
              
-             [tstdat,tsttxt] = xlsread(fname,OPTIONS.sheet); % ,'basic'
+             [tstdat,tsttxt] = xlsread(fname,OPT.sheet); % ,'basic'
              
              dimtxt = size(tsttxt);
              dimdat = size(tstdat);
@@ -191,7 +192,7 @@ end
                 end % i2
              end % i1
          else
-             [tstdat,tsttxt,tstraw] = xlsread(fname,OPTIONS.sheet); % ,'basic'
+             [tstdat,tsttxt,tstraw] = xlsread(fname,OPT.sheet); % ,'basic'
              maxdim = size(tstraw);
              for i1=1:maxdim(1)
                 for i2=1:maxdim(2)
@@ -267,28 +268,32 @@ end
      %row_skipped_in_numeric_data = size(tstraw,1) - size(tstdat,1);
      %col_skipped_in_numeric_data = size(tstraw,2) - size(tstdat,2);
       
-      numeric_columns = zeros(1,size(tstraw,2));
-      txt_columns     = zeros(1,size(tstraw,2));
+      %% Test entire columns for presence of non-numbers.
+      %% One single non-number is sufficient to treat entirte column as text.
+      %% --------------------------------------
+
+      numeric_columns = repmat(true ,[1 size(tstraw,2)]);
+      txt_columns     = repmat(false,[1 size(tstraw,2)]);
       
+      if OPT.units
+         rowoffset = 1;
+      else
+         rowoffset = 0;
+      end
+      
+      % Per column ...
       for i2=1:size(tstraw,2)
-         %[tstraw{i1, i2}]
-         if OPTIONS.units
-            index = find(~commentlines);
-           %if isnumeric(tstraw{sum(commentlines)+3,j})
-            if all(isnumeric([tstraw{index(3), i2}]))
-               numeric_columns(i2) = true;
-            else
+
+         % ... check all rows
+         index = find(~commentlines);
+         for irow=index(2+rowoffset):size(tstraw,1)
+            if ~isnumeric(tstraw{irow, i2});
+               numeric_columns(i2) = false;
                txt_columns    (i2) = true;
-            end
-         else
-            index = find(~commentlines);
-           %if isnumeric(tstraw{sum(commentlines)+2,j})
-            if all(isnumeric([tstraw{index(2), i2}]))
-               numeric_columns(i2) = true;
-            else
-               txt_columns    (i2) = true;
+               break
             end
          end
+            
       end
       
       %% Take care of nans
@@ -311,7 +316,7 @@ end
       not_a_comment_line = find(~commentlines);
       
       fldnames           = tsttxt(not_a_comment_line(1),:);
-      if OPTIONS.units
+      if OPT.units
       units              = tsttxt(not_a_comment_line(2),:);
       end
       
@@ -335,15 +340,23 @@ end
 
       for ifld   = 1:nfld
       
-         if ifld==nfld
-            ifld2 = size(tstraw,2);
-         else
+         % no good idea, as crap without a column name ends up in your last column
+         %if ifld==nfld
+         %   ifld2 = size(tstraw,2);
+         %else
             ifld2 = ifld;
-         end
+         %end
       
          fldname         = mkvar(char(fldnames{ifld}));
          
-         if OPTIONS.units
+         if OPT.debug
+             disp([num2str(ifld,'%0.3d'),'/',num2str(nfld,'%0.3d'),...
+                   ' [text type: '    ,num2str(txt_columns(ifld)),...
+                   ' or numeric type ',num2str(numeric_columns(ifld)),']',...
+                   ': fldname: "',fldname,'"',]);
+         end
+         
+         if OPT.units
             unit            = char(units   {ifld});
             UNITS.(fldname) = unit;
          end
@@ -352,7 +365,7 @@ end
             break
          end
          
-         if OPTIONS.units
+         if OPT.units
             if numeric_columns(ifld)
                DAT.(fldname)    = tstraw(not_a_comment_line(3:end),ifld:ifld2);
                DAT.(fldname)    = cell2mat(DAT.(fldname));
@@ -398,7 +411,7 @@ end
       META.iostatus = iostat;
    
    if nargout<2
-      if OPTIONS.units & OPTIONS.addunits
+      if OPT.units & OPT.addunits
          DAT.units = UNITS;
       end
       varargout = {DAT};
