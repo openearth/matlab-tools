@@ -78,4 +78,9 @@ function oetsettings(varargin)
    help oetsettings
    fprintf('\n*** OpenEarthTools settings enabled! ***\n');
    
+%% NETCDF
+    javaaddpath ( './io/nctools/toolsUI-2.2.22.jar' )
+    setpref ('SNCTOOLS', 'USE_JAVA', true); % this requires SNCTOOLS 2.4.8 or better
 %% EOF
+
+
