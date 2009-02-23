@@ -287,14 +287,20 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
      G.nmax        =  vs_let(NFSstruct,'map-const','NMAX'             ,'quiet');
      G.kmax        =  vs_let(NFSstruct,'map-const','KMAX'             ,'quiet');
      G.sigma_dz    =  vs_let(NFSstruct,'map-const','THICK'            ,'quiet');     
-     G.layer_model =  vs_let(NFSstruct,'map-const','LAYER_MODEL'      ,'quiet');
-     G.coordinates =  vs_let(NFSstruct,'map-const','COORDINATES'      ,'quiet');
-     G.layer_model =  permute(G.layer_model,[1 3 2]);
-     G.coordinates =  permute(G.coordinates,[1 3 2]);     
      G.dryflp      =  vs_get(NFSstruct,'map-const','DRYFLP'           ,'quiet');
-     
-     if strmatch('Z-MODEL', G.layer_model)
-     G.ZK          =  vs_let(NFSstruct,'map-const','ZK'               ,'quiet');
+
+     %% Checks for Z model legacy
+     %% -----------------------------------
+     if ~isempty(vs_get_elm_size(NFSstruct,'LAYER_MODEL'))
+      G.layer_model =  vs_let(NFSstruct,'map-const','LAYER_MODEL'      ,'quiet');
+      G.layer_model =  permute(G.layer_model,[1 3 2]);
+      if strmatch('Z-MODEL', G.layer_model)
+      G.ZK          =  vs_let(NFSstruct,'map-const','ZK'               ,'quiet');
+      end
+     end
+     if ~isempty(vs_get_elm_size(NFSstruct,'COORDINATES')) % Z model legacy check
+      G.coordinates =  vs_let(NFSstruct,'map-const','COORDINATES'      ,'quiet');
+      G.coordinates =  permute(G.coordinates,[1 3 2]);     
      end
 
        u.KCU       =  vs_get(NFSstruct,'map-const','KCU'  ,{nu  ,mu  },'quiet');%'
@@ -331,9 +337,10 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
      G.cor.dep_comment = 'positive up; speficied in *.dep input file.';
   end
   else
-     error('No sensible depth data on trim file.')
+     warning('error: No sensible depth data on trim file.')
+     G.cor.dep     = nan.*cor.CODB;
+     G.cen.dep     = nan.*cen.CODW;
   end
-     
      
 %    DP0             REAL    *  4                  [   M   ]        ( 7 6 )
 %        Initial bottom depth (positive down) [NOT extrapolated to corner points as in comfile, but simple copy of *.dep file??]
