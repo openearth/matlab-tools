@@ -1,37 +1,40 @@
-function [x, z, Xdir, z0, Shift] = checkCrossShoreProfile(x, z, varargin)
-% CHECKCROSSSHOREPROFILE routine to derive and/or change x-direction and/or 
-% x-origin of a cross-shore profile
+function [x z current_Xdir z0 Shift] = checkCrossShoreProfile(x, z, varargin)
+%CHECKCROSSSHOREPROFILE  derive/change x-direction/x-origin of a cross-shore profile
 %
-% Routine detects whether the profile specified by x and z is positive seaward 
-% or positive landward, and derives the z-value at x=0. If specified, the 
-% positive x-direction can be changed. Furthermore can be chosen either to 
-% make the x-origin at the landward or at the seaward side.
+%   Routine detects whether the profile specified by x and z is positive seaward 
+%   or positive landward, and derives the z-value at x=0. If specified, the 
+%   positive x-direction can be changed. Furthermore can be chosen either to 
+%   make the x-origin at the landward or at the seaward side.
 %
-% Syntax:
-% [x, z, Xdir, z0, Shift] = checkCrossShoreProfile (x, z, varargin)
+%   Syntax:
+%   [x z Xdir z0 Shift] = checkCrossShoreProfile(x, z, varargin)
 %
-% Input:
-% x        = column array with x-coordinates
-% z        = column array with z-coordinates
-% varargin = property value pairs
-%               'x_direction' - 1 for positive landward
-%                               -1 for positive seaward
-%               'x_origin'    - either 'landside' or 'seaside'
+%   Input:
+%   x        = column array with x-coordinates
+%   z        = column array with z-coordinates
+%   varargin = property value pairs
+%               'poslndwrd' - 1 for positive landward
+%                             -1 for positive seaward
+%               'x_origin'  - either 'landside' or 'seaside'
+%               'Shift'     - horizontal distance to shift the profile
 %
-% Output:
-% x        = column array with x-coordinates
-% z        = column array with z-coordinates
-% Xdir     = x-direction: 1 for positive landward and -1 for positive seaward
-% z0       = z-value at x=0
-% Shift    = horizontal distance over which the profile has been shifted
+%   Output:
+%   x        = column array with x-coordinates
+%   z        = column array with z-coordinates
+%   Xdir     = x-direction (original): 1 for positive landward and -1 for positive seaward
+%   z0       = z-value at x=0 (new profile)
+%   Shift    = horizontal distance over which the profile has been shifted
 %
-% See also: 
- 
+%   Example
+%   checkCrossShoreProfile
+%
+%   See also 
+
 %   --------------------------------------------------------------------
-%   Copyright (C) 2008 Deltares
+%   Copyright (C) 2009 Deltares
 %       C.(Kees) den Heijer
 %
-%       Kees.denHeijer@deltares.nl	
+%       Kees.denHeijer@Deltares.nl	
 %
 %       Deltares
 %       P.O. Box 177
@@ -55,52 +58,55 @@ function [x, z, Xdir, z0, Shift] = checkCrossShoreProfile(x, z, varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% $Id$ 
+% Created: 24 Feb 2009
+% Created with Matlab version: 7.6.0.324 (R2008a)
+
+% $Id$
 % $Date$
 % $Author$
 % $Revision$
+% $HeadURL$
+% $Keywords:
+
+%%
+OPT = struct(...
+    'poslndwrd', [],...
+    'x_origin', [],...
+    'Shift', 0);
+
+OPT = setProperty(OPT, varargin{:});
 
 %% sort x ascending and derive current positive x-direction
 [x IX] = sort(x); % sort x ascending, get permutation vector
 z = z(IX); % rearrange z based on permutation vector
-[UpperBoundary LowerBoundary] = deal([]);
-LandwardBoundary1 = min(x);
-SeawardBoundary2 = max(x);
-[SeawardBoundary1, LandwardBoundary2] = deal(mean([LandwardBoundary1 SeawardBoundary2]));
-Volume1 = getVolume(x, z, UpperBoundary, LowerBoundary, LandwardBoundary1, SeawardBoundary1);
-Volume2 = getVolume(x, z, UpperBoundary, LowerBoundary, LandwardBoundary2, SeawardBoundary2);
+[LandwardBoundary1 SeawardBoundary2] = deal(min(x), max(x));
+[SeawardBoundary1 LandwardBoundary2] = deal(mean([LandwardBoundary1 SeawardBoundary2]));
+Volume1 = getVolume(x, z,...
+    'LandwardBoundary', LandwardBoundary1,...
+    'SeawardBoundary', SeawardBoundary1);
+Volume2 = getVolume(x, z,...
+    'LandwardBoundary', LandwardBoundary2,...
+    'SeawardBoundary', SeawardBoundary2);
 
-if Volume1 > Volume2 %i.e. x-direction positive seaward
+if Volume1 > Volume2 % i.e. x-direction positive seaward
     current_Xdir = -1; % positive seaward
 else
     current_Xdir = 1; % positive landward
 end
 
-%% check whether x-direction has been specified, otherwise take current
-if any(strcmpi(varargin, 'x_direction'))
-    x_directionid = find(strcmpi(varargin, 'x_direction'));
-    Xdir = varargin{x_directionid+1};
+%% flip x and z if required
+if OPT.poslndwrd ~= current_Xdir
+    x = flipud(-x); % change x-direction into positive landward, flipud to keep the x-order ascending
+    z = flipud(z);
+    Xdir = OPT.poslndwrd;
 else
     Xdir = current_Xdir;
 end
 
-%% flip x and z if required
-if Xdir ~= current_Xdir
-    x = flipud(-x); % change x-direction into positive landward, flipud to keep the x-order ascending
-    z = flipud(z);
-end
-
 %% check whether x_origin has been specified
-if any(strcmpi(varargin, 'x_origin'))
-    x_originid = find(strcmpi(varargin, 'x_origin'));
-    x_origin = varargin{x_originid+1};
-else
-    x_origin = [];
-end
-
-if ~isempty(x_origin)
-    if strcmpi(x_origin, 'landside') && Xdir == 1 ||...
-            strcmpi(x_origin, 'seaside') && Xdir == -1
+if ~isempty(OPT.x_origin)
+    if strcmpi(OPT.x_origin, 'landside') && Xdir == 1 ||...
+            strcmpi(OPT.x_origin, 'seaside') && Xdir == -1
         refX = max(x);
     else
         refX = min(x);
@@ -111,6 +117,9 @@ if ~isempty(x_origin)
     else
         Shift = 0;
     end
+elseif OPT.Shift ~= 0
+    Shift = OPT.Shift; % cross-shore distance to shift the profile
+    x = x + Shift; % change the x-values
 else
     Shift = 0;
 end
