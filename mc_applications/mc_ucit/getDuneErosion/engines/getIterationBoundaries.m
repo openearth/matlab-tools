@@ -6,7 +6,8 @@ function [x00min, x0min, x0max, x0except, xInitial, zInitial, SeawardBoundaryofI
 % xparab, zparab
 %
 % Syntax:
-% [x00min, x0min, x0max, x0except, xInitial, zInitial, SeawardBoundaryofInterest] = getIterationBoundaries(xInitial, zInitial, xparab, zparab, Hsig_t, Tp_t, WL_t, w)                      zInitial, WL_t, xparab, zparab)
+% [x00min, x0min, x0max, x0except, xInitial, zInitial,
+% SeawardBoundaryofInterest] = getIterationBoundaries(xInitial, zInitial, xparab, zparab, Hsig_t, Tp_t, WL_t, w)
 %
 % Input:
 %               xInitial  = column array with x points (increasing index and
