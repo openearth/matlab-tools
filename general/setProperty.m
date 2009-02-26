@@ -1,4 +1,4 @@
-function [OPT Set Default] = setProperty(OPT, varargin)
+function [OPT, Set, Default] = setProperty(OPT, varargin)
 % SETPROPERTY generic routine to set values in PropertyName-PropertyValue pairs
 %
 % Routine to set properties based on PropertyName-PropertyValue 
@@ -35,14 +35,14 @@ function [OPT Set Default] = setProperty(OPT, varargin)
 % See also: varargin, struct
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2008 Deltares
+%   Copyright (C) 2009 Delft University of Technology
 %       C.(Kees) den Heijer
 %
-%       Kees.denHeijer@deltares.nl	
+%       C.denHeijer@TUDelft.nl	
 %
-%       Deltares
-%       P.O. Box 177
-%       2600 MH Delft
+%       Faculty of Civil Engineering and Geosciences
+%       P.O. Box 5048
+%       2600 GA Delft
 %       The Netherlands
 %
 %   This library is free software; you can redistribute it and/or
@@ -62,15 +62,20 @@ function [OPT Set Default] = setProperty(OPT, varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% $Id$ 
+% Created: 26 Feb 2009
+% Created with Matlab version: 7.4.0.287 (R2007a)
+
+% $Id$
 % $Date$
 % $Author$
 % $Revision$
+% $HeadURL$
+% $Keywords:
 
 %%
 PropertyNames = fieldnames(OPT); % read PropertyNames from structure fieldnames
 
-if isscalar(varargin) && iscell(varargin)
+if length(varargin) == 1
     % to prevent errors when this function is called as "OPT =
     % setProperty(OPT, varargin);" instead of "OPT = setProperty(OPT,
     % varargin{:})"
@@ -115,5 +120,3 @@ for iargin = i0:2:iend
         error([upper(mfilename) ':UnknownPropertyName'], 'PropertyName should be char')
     end
 end
-
-%% EOF
