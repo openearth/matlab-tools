@@ -1,17 +1,19 @@
-function w = getFallVelocity(D50, a, b, c)
+function w = getFallVelocity(varargin)
 %GETFALLVELOCITY  routine to compute fall velocity of sediment in water
 %
 %   This routine returns the fall velocity of sediment with grain size D50
 %   in water
 %
 %   Syntax:
-%   w = getFallVelocity(D50, a, b, c)
+%   w = getFallVelocity(varargin)
+%   backward compatible with old syntax: w = getFallVelocity(D50, a, b, c)
 %
 %   Input:
-%   D50 = Grain size D50 [m]
-%   a   = coefficient in fall velocity formulation
-%   b   = coefficient in fall velocity formulation
-%   c   = coefficient in fall velocity formulation
+%   varargin = 'PropertyName' - PropertyValue pairs:
+%       D50 - Grain size D50 [m]
+%       a   - coefficient in fall velocity formulation
+%       b   - coefficient in fall velocity formulation
+%       c   - coefficient in fall velocity formulation
 %
 %   Output:
 %   w   = fall velocity [m/s]
@@ -60,12 +62,22 @@ function w = getFallVelocity(D50, a, b, c)
 % $Keywords:
 
 %% check input / set defaults
-getdefaults('D50', 225e-6, 1);
+% backward compatible with old syntax: w = getFallVelocity(D50, a, b, c)
+idPropName = cellfun(@ischar, varargin);
+id = nargin;
+if any(idPropName)
+    id = find(idPropName)-1;
+end
+OPTstructArgs = {...
+    'D50', 225e-6,...
+    'a', 0.476,... % coefficient for 5 degrees celcius
+    'b', 2.18,...  % coefficient for 5 degrees celcius
+    'c', 3.226};   % coefficient for 5 degrees celcius
 
-if nargin <= 1
-    % use default values for the Dutch situation
-    [a b c] = deal(.476, 2.18, 3.226);
-end    
+OPTstructArgs(2:2:2*id) = varargin(1:id);
+OPT = struct(OPTstructArgs{:});
+
+OPT = setProperty(OPT, varargin{id+1:end});
 
 %% fall velocity formulation
-w = 1. / (10.^(a * (log10(D50)).^2 + b * log10(D50) + c));
+w = 1. / (10.^(OPT.a * (log10(OPT.D50)).^2 + OPT.b * log10(OPT.D50) + OPT.c));

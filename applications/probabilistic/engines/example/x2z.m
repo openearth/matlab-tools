@@ -79,8 +79,9 @@ for i = 1:size(x,1)
         %% set calculation values for additional volume
         DuneErosionSettings('set',...
             'AdditionalVolume', [num2str(Duration(i)) '*Volume + ' num2str(Accuracy(i)) '*Volume'],... string voor het bepalen van het toeslagvolume gedurende de berekening (afslagvolume is negatief)
-            'BoundaryProfile', false);       % Grensprofiel berekenen is niet nodig, gebruiken we niet
-
+            'BoundaryProfile', false,...       % Grensprofiel berekenen is niet nodig, gebruiken we niet
+            'FallVelocity', {@getFallVelocity 'a' 0.476 'b' 2.18 'c' 3.226 'D50'});
+        
         %% carry out DUROS+ computation
         result = getDuneErosion(xInitial, zInitial, D50(i), WL_t(i), Hsig_t(i), Tp_t(i));
         Tp_t(i) = result(1).info.input.Tp_t;
