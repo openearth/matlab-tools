@@ -98,7 +98,8 @@ if nargin==6
     %
     %% calculate boundaries etc.
     [xdum, zdum, h.xInitial, h.zInitial] = findCrossings(h.xInitial, h.zInitial, h.xInitial([1 end]), ones(2,1)*h.WL, 'keeporiginalgrid');
-    h.w =  getFallVelocity(h.D50);
+    FallvelocityArgs = [DuneErosionSettings('get', 'FallVelocity') {h.D50}];
+    h.w = feval(FallvelocityArgs{:});
     FloatingProfile = getDUROSprofile(h.xInitial, [], 0, h.Hs, h.Tp, h.WL, h.w, [],false);
 
     h.xparab = FloatingProfile.xActive;

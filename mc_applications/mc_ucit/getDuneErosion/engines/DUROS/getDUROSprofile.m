@@ -29,9 +29,14 @@ function [result zparabmin] = getDUROSprofile(xInitial, zInitial, x0, Hsig_t, Tp
 
 %% default values
 
-getdefaults('w',getFallVelocity(225e-6),1,...
-    'SeawardBoundaryofInterest',xInitial(end),0,...
-    'ChannelCalc',false,0);
+getdefaults(...
+    'w', [DuneErosionSettings('get', 'FallVelocity') {225e-6}], 1,...
+    'SeawardBoundaryofInterest', xInitial(end), 0,...
+    'ChannelCalc', false, 0);
+
+if iscell(w)
+    w = feval(w{:});
+end
 
 %% Create emtpy result structure
 

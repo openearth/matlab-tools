@@ -57,7 +57,8 @@ if max(zInitial) < WL_t
 end
 
 %% STEP 1; get DUROS profile
-w = getFallVelocity(D50);
+FallvelocityArgs = [DuneErosionSettings('get', 'FallVelocity') {D50}];
+w = feval(FallvelocityArgs{:});
 [FloatingProfile zparabmin] = getDUROSprofile(xInitial, [], 0, Hsig_t, Tp_t, WL_t, w, [],false);
 
 ParabZminUnderLowestPointProfile = zparabmin < min(zInitial);

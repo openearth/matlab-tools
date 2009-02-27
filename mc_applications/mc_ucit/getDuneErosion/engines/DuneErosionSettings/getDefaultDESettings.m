@@ -30,7 +30,12 @@ DESettings.Other = struct(...
     'ProfileFluct',0, ...                           % Profile fluctuation
     'maxRetreat',15,...                             % Limitation of additional erosion length
     'maxiter', 50, ...                              % Maximum number of iterations
-    'verbosemessages',[45,1,3,60,61,-4,-5]...       % Messages that have to be displayed whem verbose is set to true
+    'verbosemessages',[45,1,3,60,61,-4,-5],...      % Messages that have to be displayed whem verbose is set to true
+    'FallVelocity', {{@getFallVelocity ...          % Fall velocity function
+        'a' 0.476 ...                               % Fall velocity input arguments; these arguments will be passed through to the fall velocity function together with the D50
+        'b' 2.18 ...
+        'c' 3.226 ...
+        'D50'}} ... % because getFallVelocity uses propertyname propertyvalue pairs for all variables, the last arguments is therefore the propertyname (!) D50, since the property value of D50 is included during the process
     );
 
 DESettings.Actions = struct(...
