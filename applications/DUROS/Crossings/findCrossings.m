@@ -1,9 +1,9 @@
-function [xcr zcr x1_new_out z1_new_out x2_new_out z2_new_out] = findCrossings(x1, z1, x2, z2, flag)
+function [xcr zcr x1_new_out z1_new_out x2_new_out z2_new_out crossdir] = findCrossings(x1, z1, x2, z2, flag)
 % FINDCROSSINGS  routine to find crossings of 2 profiles
 %
 % routine to find crossings of 2 profiles
 %
-% Syntax:       [xcr zcr x1_new_out z1_new_out x2_new_out z2_new_out] =
+% Syntax:       [xcr zcr x1_new_out z1_new_out x2_new_out z2_new_out crossdir] =
 % findCrossings(x1, z1, x2, z2, flag)
 %
 % Input:
@@ -130,6 +130,26 @@ z2_new(xrecalculate | id_x2add) = z1_new(xrecalculate | id_x2add); % designate t
 id = z1_new == z2_new;                                      % identifier of crossings
 xcr = x_new(id);                                            % x-values of crossings
 zcr = z1_new(id);                                           % z-values of crossings
+
+% distinguish between upcrossings and downcrossings
+[crossdirpos crossdirneg] = deal(zeros(size(id)));
+idpos = [false; id(1:end-1)]; % identifier of points neighbouring to the crossings at the positive side
+crossdirpos([idpos(2:end); false]) = sign(z2_new(idpos) - z1_new(idpos));
+crossdirpos(isnan(crossdirpos)) = 0;
+idneg = [id(2:end); false]; % identifier of points neighbouring to the crossings at the negative side
+crossdirneg([false; idneg(1:end-1)]) = - sign(z2_new(idneg) - z1_new(idneg));
+crossdirneg(isnan(crossdirneg)) = 0;
+% crossdir has the same size as xcr and zcr
+% crossdir = -2 : line 2 is above line 1 at the negative x-side of the
+%                 crossing AND below line 1 at the positive x-side
+% crossdir = -1 : line 2 is above line 1 at the negative x-side of the
+%                 crossing OR below line 1 at the positive x-side
+% crossdir =  0 : line 2 has a point of contact (raakpunt) with line 1
+% crossdir =  1 : line 2 is below line 1 at the negative x-side of the
+%                 crossing OR above line 1 at the positive x-side
+% crossdir =  2 : line 2 is below line 1 at the negative x-side of the
+%                 crossing AND above line 1 at the positive x-side
+crossdir = crossdirpos(id) + crossdirneg(id);
 
 % MvK 06-04-2008: here the added points are not included anymore because not the new variables are used 
 if MatchGrid
