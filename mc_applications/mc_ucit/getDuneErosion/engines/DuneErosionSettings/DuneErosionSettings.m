@@ -144,18 +144,14 @@ for iinp = 1:length(inpprops)
         if ~isempty(fieldnames(DESettings.(DESfieldnames{itypes}))) && any(strcmp(fieldnames(DESettings.(DESfieldnames{itypes})),inpprops{iinp}));
             inpfound = true;
             currentvar = DuneErosionSettings('get', (inpprops{iinp})); % current value of the variable
-            if ischar(currentvar) && ischar(inpvars{iinp})
-                VariableChanges = ~strcmp(currentvar, inpvars{iinp});
-            elseif isnumeric(currentvar) && isnumeric(inpvars{iinp})
-                VariableChanges = currentvar ~= inpvars{iinp};
-            else
-                VariableChanges = true;
-            end
+            VariableChanges = ~isequal(currentvar, inpvars{iinp});
             if VariableChanges
                 if ischar(inpvars{iinp})
                     variablevaluestring = inpvars{iinp};
                 elseif isnumeric(inpvars{iinp})
                     variablevaluestring = num2str(inpvars{iinp});
+                elseif iscell(inpvars{iinp})
+                    variablevaluestring = 'cell array'; %TODO: use var2evalstr to display the cell content
                 elseif islogical(inpvars{iinp})
                     if inpvars{iinp}
                         variablevaluestring = 'true';
