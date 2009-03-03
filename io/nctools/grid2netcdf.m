@@ -131,10 +131,11 @@ STRINGSIZE = 100;
     nc_attput( filename, 'height', '_FillValue', -99999);
 
 %% Print header    
-%     try	
-%     	system(['ncdump -vyear,id,seaward_distance ' filename]);
-%     catch
-%     end
+    try	
+    	system(['ncdump -vyear,id,seaward_distance ' filename]);
+    catch
+        'can not find the ncdump command, not a problem';
+    end
 
 end % function grid2netcdf
 

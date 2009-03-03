@@ -47,6 +47,7 @@ switch nargin
             temp=DBGetTableEntry('grid','datatypeinfo',datatype,'name',name,'year',year,'soundingID',soundingID);
         end
 end
+d = creategridstruct();
 
 d=rearrangeData(temp);
 
