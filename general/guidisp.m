@@ -1,5 +1,5 @@
 function guidisp(varargin)
-% GUIDISP
+% GUIDISP   guidisp
 %
 % 
 %

@@ -1,5 +1,5 @@
 function varargout = godin_filter(time,data)
-%GODIN
+%GODIN   GODIN tide filter for tiem series
 %
 % godin(time,data)
 %

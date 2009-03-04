@@ -106,6 +106,11 @@ if nargin==1
    P = pcolor(c);
    set(P,'edgecolor','interp');
    set(P,'facecolor','interp');
+   elseif  islogical(varargin{1})
+   c = squeeze(double(varargin{1}));
+   P = pcolor(c);
+   set(P,'edgecolor','interp');
+   set(P,'facecolor','interp');
    else
       error('syntax pcolorcorcen(c) where c is numeric (so not logical)')
    end

@@ -1,22 +1,23 @@
 function varargout=drawpolygon(varargin)
-%drawpolygon
+%DRAWPOLYGON   draw polygon manually in current axes
 %
-% [x,y]=drawpolygon(varargin)
+%  [x,y]= drawpolygon(varargin)
 %
-% s = drawpolygon(varargin) where s has fields x, y and n
+%  s    = drawpolygon(varargin) where s has fields x, y and n
 %
 % Draw a polygon by left clicking the mouse.
 % Terminate with a right click of by ESC
-% optional arguments can be anything one can also pass to plot(x,y,<options>)
-% E.g. 
+% Optional arguments can be anything one can also pass to plot(x,y,<options>)
+% E.g. for a thick red line.
 % [x,y]=drawpolygon('r','linewidth',2) 
-% for a thick red line.
+% 
+% See also: POLYSPLIT, POLYJOIN
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004 Delft University of Technology
 %       Gerben J. de Boer
 %
-%       g.j.deboer@citg.tudelft.nl	
+%       g.j.deboer@tudelft.nl	
 %
 %       Fluid Mechanics Section
 %       Faculty of Civil Engineering and Geosciences
@@ -40,46 +41,53 @@ function varargout=drawpolygon(varargin)
 %   USA
 %   --------------------------------------------------------------------
 
-holdstate = ishold;
-first     = 1;
-
-hold on
-
-true = 1;
-x    = [];
-y    = [];
-
-while true
-
-   [x0,y0,button]=ginput(1);
-
-   if button==3 | ...
-      button==27 % right mouse of <ESC>
-      true  =0;
-   else
-     x = [x x0];
-     y = [y y0];
-     if first
-     pp = plot(x,y,varargin{:})
-     first=0;
-     else
-        set(pp,'xdata',x);
-        set(pp,'ydata',y);
-     end
-   end
+   holdstate = ishold;
+   first     = 1;
    
-end   
+   hold on
+   
+   true = 1;
+   x    = [];
+   y    = [];
 
-if ~holdstate
-   hold off
-end   
+%% draw
+%-----------------------
 
+   while true
+   
+      [x0,y0,button]=ginput(1);
+   
+      if button==3 | ...
+         button==27 % <right mouse> or <ESC>
+         true  =0;
+      else
+        x = [x x0];
+        y = [y y0];
+        if first
+           pp    = plot(x,y,varargin{:})
+           first = 0;
+        else
+           set(pp,'xdata',x);
+           set(pp,'ydata',y);
+        end
+      end
+      
+   end   
+   
+   if ~holdstate
+      hold off
+   end   
 
-if nargout==0 | nargout==1
-    pol.x = x;
-    pol.y = y;
-    pol.n = length(pol.x);
-    varargout = {pol};
-elseif nargout==2
-    varargout = {x,y};
-end    
+%% Output
+%-----------------------
+
+   if nargout==0 | nargout==1
+       pol.x = x;
+       pol.y = y;
+       pol.n = length(pol.x);
+       varargout = {pol};
+   elseif nargout==2
+       varargout = {x,y};
+   end    
+   
+%% EOF   

@@ -1,5 +1,5 @@
 function varargout  = load_template(fname,varargin)
-%LOAD_TEMPLATE
+%LOAD_TEMPLATE   template for making a function that rads/loads a file
 %
 % [DATA,<iostat>] = load_template(filename)
 % where <iostat> is optional
