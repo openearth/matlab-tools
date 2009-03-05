@@ -1,4 +1,8 @@
 function [transectStruct] = jarkus2transect(filename)
+%JARKUS2TRANSECT
+%
+%See also: 
+
     % Read a jarkus transect file
     
     % The file looks like this:

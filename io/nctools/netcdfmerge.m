@@ -1,4 +1,9 @@
+%NETCDFMERGE
+%
+%See also:
+
 %% Define library settings
+
 addpath mexnc % native netcdf interface
 addpath snctools % convenience matlab toolbox
 setpref ('SNCTOOLS', 'USE_JAVA', false); % I couldnt get java to work correctly. 

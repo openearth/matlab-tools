@@ -1,6 +1,9 @@
 function transect2netcdf(filename, transectStruct)
-% TODO: define the function header here ...
+%TRANSECT2NETCDF
+%
+%See also:
 
+% TODO: define the function header here ...
 
 %% Lookup variables
 % This assumes a grid already has been saved to the file

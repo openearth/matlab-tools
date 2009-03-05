@@ -1,3 +1,7 @@
+%EXAMPLE
+%
+%See also: 
+
 %% setup netcdf
 addpath mexnc
 addpath snctools

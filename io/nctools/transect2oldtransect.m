@@ -1,3 +1,7 @@
+%TRANSECT2OLDTRANSECT
+%
+%See also:
+
 transect.areacode = 0;
 transect.areaname = '';
 transect.year = 0;

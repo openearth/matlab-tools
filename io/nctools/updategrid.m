@@ -1,4 +1,8 @@
 function [grid] = updategrid(grid, filename,tidefile)
+%UPDATEGRID
+%
+%See also:
+
     % TODO: insert function header here
     % First part: update grid with information from raaien.txt
     disp(['Extracting info from ' filename])

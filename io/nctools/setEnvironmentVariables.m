@@ -1,3 +1,7 @@
+%SETENVIRONMENTVARIABLES
+%
+%See also:
+
 % @echo off
 % REM ==========================================================================
 % REM This script is normally invoked from FWTools\setfw.bat

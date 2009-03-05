@@ -20,5 +20,10 @@
 %   struct_fun          - struct related
 %   time_fun            - time related
 %
-% See also: applications
+% You can walk down the OpenEarthTools general tree by calling 
+% help on any of the above, e.g.
+%
+%   help string_fun
+%
+% See also: OETSETTINGS, OET_APPLICATIONS, OET_IO
 %

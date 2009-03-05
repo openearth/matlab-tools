@@ -1,5 +1,5 @@
 function [transect] = readTransectDataNetcdf(filename, varargin)
-%READTRANSECTDATA   transforms processed data to proper meta data format
+%READTRANSECTDATANETCDF   transforms processed data to proper meta data format
 %
 % input:
 %   filename

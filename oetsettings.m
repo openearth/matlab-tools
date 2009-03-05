@@ -5,13 +5,21 @@ function oetsettings(varargin)
 % intended to be licensed under the GNU (Lesser) Public License
 % (<a href="http://www.gnu.org/licenses/licenses.html">http://www.gnu.org/licenses/licenses.html</a>).
 %
-% For more information on OpenEarthTools refer to the following two sources:
+% For more information on OpenEarthTools refer to the following sources:
 %
 % * wiki:        <a href="http://OpenEarth.deltares.nl"                               >OpenEarth.Deltares.nl</a>
 % * repository:  <a href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab">https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab</a>
 % * help blocks: Scroll through the OpenEarthTools directories and read interesting help blocks.
+% * walk down OpenEarthTools tree with:
+%
+%    help oet_general
+%    help oet_applications
+%    help oet_io
 %
 %See also: ADDPATHFAST, RESTOREDEFAULTPATH
+%          oet_general
+%          oet_applications
+%          oet_io
 
 %   --------------------------------------------------------------------
 %   Copyright (C) <2004-2008> <Deltares>

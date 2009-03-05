@@ -1,4 +1,8 @@
 function [transect] = createtransectstruct()
+%CREATETRANSECTSTRUCT
+%
+%See also: 
+
     % Create a transect structure with default values
     
     % this should be a general transect structure not specific to 1

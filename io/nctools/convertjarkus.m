@@ -1,3 +1,7 @@
+%CONVERTJARKUS   script in progress
+%
+%See also: 
+
 % function convertjarkus()
 % Insert header doc here....
 

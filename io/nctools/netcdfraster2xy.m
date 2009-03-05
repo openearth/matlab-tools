@@ -1,4 +1,8 @@
 function [x,y, mappingVarinfo] = netcdfraster2xy(filename)
+%NETCDFRASTER2XY
+%
+%See also:
+
     % TODO: comment
     fileinfo = nc_info(filename);
     % Look for all 2 dimensional variables because that's the only ones

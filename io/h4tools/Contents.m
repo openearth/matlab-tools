@@ -20,6 +20,12 @@
 % sdload.m, sdsave.m        -- read and write HDF4 SD's and NetCDF
 %                              files as a structure of arrays
 % 
+% sdload_char               -- same as sdload but with added functionality
+%                              to load character arrays
+% 
+% sdsave_char               -- same as sdsave but with added functionality
+%                              to save character arrays
+%
 % h4sdread.m, h4sdwrite.m   -- read and write HDF4 SD's and NetCDF
 %                              files as a cell list of arrays
 % 
@@ -64,4 +70,5 @@
 % mat2sdsid.m, sdsid2mat.m  -- write and read a matlab array as an HDF4
 %                              SDS, to an open HDF4 SD ID
 % 
+%See also: hdftool, hdfinfo, hdfread, hdf, hdf5, <a href="http://www.hdfgroup.org/hdf-java-html/hdfview/">HDFView</a>
 

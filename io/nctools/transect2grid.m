@@ -1,4 +1,8 @@
 function [grid] = transect2grid(transectStruct)
+%TRANSECT2GRID
+%
+%See also:
+
     % TODO: define function header here ....
     %Define a grid to store all transect data on
     % TODO: Replace this by a transect independent grid structure or better

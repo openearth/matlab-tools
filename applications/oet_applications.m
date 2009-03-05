@@ -14,5 +14,10 @@
 %   tide            - application
 %   xbeach          - model: XBeach
 %
-% See also: general
+% You can walk down the OpenEarthTools applications tree by calling 
+% help on any of the above, e.g.
+%
+%   help Rijkswaterstaat
+%
+% See also: OETSETTINGS, OET_GENERAL, OET_IO
 %
