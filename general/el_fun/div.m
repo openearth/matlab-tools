@@ -1,5 +1,5 @@
 function intdiv = div(x,y)
-%DIV
+%DIV   Number of times y fits into x
 %
 %   DIV(x,y) floor(x./y) if y < 0.
 %            ceil (x./y) if y > 0.
@@ -8,6 +8,8 @@ function intdiv = div(x,y)
 %
 % Note that rem  = mod in fortran
 %           mod ~= mod in fortran
+%
+%See also:  REM, MOD, REMCOUNT, DIVCOUNT
 
 %  if x>=0
 %   intdiv = floor(x./y);

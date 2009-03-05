@@ -1,5 +1,5 @@
 function [k] = findstr2afterstr1(str, str1, str2)
-% FINDSTR2AFTERSTR1 searches occurences of str2 after str1 within str
+%FINDSTR2AFTERSTR1 searches occurences of str2 after str1 within str
 %
 % searches within string 'str' for any occurrences of 'str2' after the first 
 % occurence of 'str1', returning the starting index of each such occurrence 

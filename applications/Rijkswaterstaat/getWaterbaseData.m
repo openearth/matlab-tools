@@ -1,5 +1,5 @@
 function OutputName = getWaterbaseData(varargin);
-% GETWATERBASEDATA   load data from www.waterbase.nl
+%GETWATERBASEDATA   load data from www.waterbase.nl
 %
 % Download data from the www.waterbase.nl website for one specified 
 % substance at one or more specified locations during one specified 

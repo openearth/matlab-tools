@@ -1,5 +1,5 @@
 function varargout=vs_meshgrid3d(varargin),
-% VS_MESHGRID3D reads all the relevant griddata
+%VS_MESHGRID3D reads all the relevant griddata
 %         G = vs_meshgrid3d(NFSstruct,TimeStep,G);
 %
 % where G is the time independent G as obtained with

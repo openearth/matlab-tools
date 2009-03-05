@@ -1,5 +1,5 @@
 function XB = XBeach_Write_Inp(calcdir, XB, varargin)
-% XBEACH_WRITE_INP writes input file for xbeach calculation
+%XBEACH_WRITE_INP  writes input file for xbeach calculation
 %
 % Routine writes an input file params.txt containing the information
 % available in the XBeach communication structure XB.

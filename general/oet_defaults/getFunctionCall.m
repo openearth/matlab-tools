@@ -1,5 +1,5 @@
 function [str funinfo] = getFunctionCall(fun)
-% GETFUNCTIONCALL isolates the function call from a function file
+%GETFUNCTIONCALL  isolates the function call from a function file
 %
 % It looks for the first not commented line containing a function
 % statement. Also function calls that are continued on the next line will

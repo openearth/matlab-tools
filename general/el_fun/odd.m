@@ -1,5 +1,6 @@
 function out = odd(in)
-%ODD
+%ODD   test whether number if odd
+%
 % out = odd(x) is 1 where x is odd.
 %
 % SEE ALSO: mod, sign
@@ -33,3 +34,6 @@ function out = odd(in)
 %   --------------------------------------------------------------------
 
 out = mod(in,2)==1;
+
+
+%% EOF

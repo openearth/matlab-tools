@@ -1,3 +1,7 @@
+%GETAREATRIANGLE_TEST   test for getAreaCurvilineargrid
+%
+%See also: GETAREATRIANGLE
+
 
 X = [ 0  2; 1 3];
 Y = [-1 -2; 0 1];

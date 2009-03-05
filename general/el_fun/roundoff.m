@@ -1,5 +1,5 @@
 function Xround = roundoff(X, n, varargin)
-% ROUNDOFF   routine rounds number to predefined number of decimal digits
+%ROUNDOFF   routine rounds number to predefined number of decimal digits
 % 
 % This routine returns a rounded number to a specified number of decimal
 % digits

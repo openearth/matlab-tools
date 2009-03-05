@@ -1,5 +1,5 @@
 function varargout = fprintfstringpad(fid, totallength, string, varargin)
-% FPRINTFSTRINGPAD   print string to file with precise length
+%FPRINTFSTRINGPAD   print string to file with precise length
 %
 % FPRINTFSTRINGPAD(fid, totallength, string, padcharacter <optional>)
 % writes a string to file and to pads stringlength with spaces, or with 

@@ -1,5 +1,5 @@
 function Y = make1D(X)
-%MAKE1D
+%MAKE1D   reshape multi-dimensial matrix as matrix(:)
 %
 % same as Y = X(:) but very useful in
 % expressions with subindexing like 
@@ -7,7 +7,7 @@ function Y = make1D(X)
 %
 % G.J. de Boer, 2004
 %
-% See also: reshape
+% See also: RESHAPE, PERMUTE
 
 %Y = reshape(X,[prod(size(X)),1]);
 

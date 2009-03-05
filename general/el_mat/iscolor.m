@@ -1,11 +1,13 @@
 function out = iscolor(in)
-%ISCOLOR
+%ISCOLOR  check whether is color (rgb triplet or matlab lettercode as 'r')
 %
 % out = iscolor(in)
 % returns true when one of
 % * 'r','g','b','c','y','m','k' or 'w'
 % or
 % * rgb triplet (checkes for size and values)
+%
+%See also: 
 
 % G.J. de Boer, March 7 2006
 

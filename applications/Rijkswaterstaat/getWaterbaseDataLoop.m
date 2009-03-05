@@ -1,4 +1,4 @@
-%getWaterbaseDataLoop   example script to download waterbase data in loop
+%GETWATERBASEDATALOOP   example script to download waterbase data in loop
 %
 % See also: GETWATERBASEDATA, DONAR_READ, www.waterbase.nl,  
 %           GETWATERBASEDATA_SUBSTANCES, GETWATERBASEDATA_LOCATIONS

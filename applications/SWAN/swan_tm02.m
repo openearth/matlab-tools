@@ -1,5 +1,5 @@
 function Tm02 = swan_tm02(f,E,varargin)
-%swan_tm02   calculates average absolute period Tm01 from wave spectrum as in SWAN
+%SWAN_TM02   calculates average absolute period Tm01 from wave spectrum as in SWAN
 %
 % Tm02 = swan_tm02(f,E,<pwtail>)
 %

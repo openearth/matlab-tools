@@ -1,4 +1,6 @@
-%%KNMI_POTWIND2NC_TEST This is a first test to get wind timeseries into netcdf
+%KNMI_POTWIND2NC_TEST This is a first test to get wind timeseries into netcdf
+%
+%See also: KNMI_POTWIND, SNCTOOLS
 
 OPT.fillvalue = 0; % NaNs do not work in netcdf API
 D             = knmi_potwind('potwind_210_1981.txt','variables',OPT.fillvalue)

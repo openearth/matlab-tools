@@ -1,5 +1,5 @@
 function XB = XB_Read_Results(resdir, XB, varargin)
-% XB_Read_Results reads outputfiles
+%XB_READ_RESULTS  reads outputfiles
 %
 % Routine reads output files and stores the results in the XBeach
 % communication variable XB.

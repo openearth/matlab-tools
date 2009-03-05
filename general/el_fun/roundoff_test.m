@@ -1,5 +1,5 @@
 function t = roundoff_test(t)
-% ROUNDOFF_TEST test defintion routine
+%ROUNDOFF_TEST test defintion routine
 %
 % see also roundoff
 

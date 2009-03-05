@@ -1,5 +1,5 @@
 function W = knmi_potwind_multi(fnames,varargin)
-% KNMI_POTWIND_MULTI   read multiple knmi_potwind files
+%KNMI_POTWIND_MULTI   read multiple knmi_potwind files
 %
 % read multiple knmi_potwind files and make one timeseries 
 % over overlapping data.

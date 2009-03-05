@@ -1,7 +1,5 @@
 function dbstopcurrent(varargin)
-% DBSTOPCURRENT
-%
-% 
+%DBSTOPCURRENT
 %
 % Syntax:
 % dbstopcurrent(varargin)
@@ -10,7 +8,7 @@ function dbstopcurrent(varargin)
 %
 % Output:
 %
-% See also
+% See also: DBSTATE, DBSTOP, DBSTATUS, DBQUIT, DBUP, DBDOWN, DBCONT, DBCLEAR
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares

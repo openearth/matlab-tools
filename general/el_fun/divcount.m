@@ -1,5 +1,6 @@
 function divcount = divcount(x,y)
-%DIVCOUNT
+%DIVCOUNT   Number of times y fits into x
+%
 % divcount = divcount(x,y)
 %
 % divcount = div(x-1,y)+1;
@@ -10,15 +11,42 @@ function divcount = divcount(x,y)
 %  x         1  2  3  4  5  6  7  8  9 10 11 12
 %
 %  rem       1  2  0  1  2  0  1  2  0  1  2  0
-%  mod       1  2  0  1  2  0  1  2  0  1  2  0
-%  div       0  0  1  1  1  2  2  2  3  3  3  4
 %
+%  mod       1  2  0  1  2  0  1  2  0  1  2  0
 %  remcount  1  2  3  1  2  3  1  2  3  1  2  3
+%
+%  div       0  0  1  1  1  2  2  2  3  3  3  4
 %  divcount  1  1  1  2  2  2  3  3  3  4  4  4 
 %
-% SEE ALSO: rem, mod, div, remcount, divcount
+% SEE ALSO: REM, MOD, DIV, REMCOUNT
 
-% G.J. de Boer, March 2005
+%   --------------------------------------------------------------------
+%   Copyright (C) 2005 Delft University of Technology
+%       Gerben J. de Boer
+%
+%       g.j.deboer@tudelft.nl	
+%
+%       Fluid Mechanics Section
+%       Faculty of Civil Engineering and Geosciences
+%       PO Box 5048
+%       2600 GA Delft
+%       The Netherlands
+%
+%   This library is free software; you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation; either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library; if not, write to the Free Software
+%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+%   USA
+%   --------------------------------------------------------------------
 
 % divcount = floor((x - remcount(x,y))./y)+1;
 

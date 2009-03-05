@@ -1,3 +1,6 @@
+%GETAREACURVILINEARGRID_TEST   test for getAreaCurvilineargrid
+%
+%See also: GETAREACURVILINEARGRID
 
    [Xcorner,Ycorner]=meshgrid(1:3,1:4);
 

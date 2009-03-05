@@ -1,5 +1,5 @@
 function s = distance(x,y,varargin);
-%DISTANCE
+%DISTANCE   calculate disctance along polygon
 %
 % s = distance(x,y) calculates distance along line. 
 %
@@ -17,6 +17,8 @@ function s = distance(x,y,varargin);
 % distance([0 1 nan 2 3],[0 1 nan 2 3],1) = 0    1.4142       NaN    1.4142    4.2426
 %
 % Copyright, G.J. de Boer, Dec 2004
+%
+%See also: poly_fun
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004 Delft University of Technology

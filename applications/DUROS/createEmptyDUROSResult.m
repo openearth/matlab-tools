@@ -1,5 +1,5 @@
 function result = createEmptyDUROSResult(varargin)
-% CREATEEMPTYDUROSRESULT
+%CREATEEMPTYDUROSRESULT
 %
 % routine to create an empty structure containing various field which are
 % relevant for a DUROS calculation

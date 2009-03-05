@@ -1,5 +1,6 @@
 function OUT = addrowcol(IN,varargin);
-%ADDROWCOL
+%ADDROWCOL   expand matrix with rows/columns on either of 4 sides
+%
 %  addrowcol adds a row and column to an array
 % (by default filled with nans).
 %
