@@ -1,5 +1,5 @@
 function [Volume, Volumechange, CorrectionApplied, DuneCorrected, x, z, z2] = getVolumeCorrection(x, z, z2, WL)
-% getVolumeCorrection corrects found profiles for landward transport
+%GETVOLUMECORRECTION corrects found profiles for landward transport
 
 %% initiate variables
 CorrectionApplied = false;

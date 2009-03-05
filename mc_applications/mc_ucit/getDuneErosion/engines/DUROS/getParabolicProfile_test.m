@@ -1,5 +1,5 @@
 function t = getParabolicProfile_test(t)
-% GETPARABOLICPROFILE_TEST test defintion routine
+%GETPARABOLICPROFILE_TEST test defintion routine
 %
 % see also getParabolicProfile
 
