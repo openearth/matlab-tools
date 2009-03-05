@@ -125,7 +125,7 @@ if OPT.f1 < Inf && OPT.f2 > 0
         Iplus = Iplus + 1;
         maxpgrid = -log10(OPT.f2) + Iplus;
         pgrid = (0.01:0.01:maxpgrid)';
-        Ponder = [flipud(0.5*(10.^-pgrid)); (0.489:0.001:0.511)';  (1-0.5*10.^-pgrid)];
+        Ponder = unique([flipud(0.5*(10.^-pgrid)); (0.489:0.001:0.511)';  (1-0.5*10.^-pgrid)]);
 
         % bepaal kansverdeling en kansdichtheid van H in tabelvorm
         % deze kansverdeling is nodig om de correctie te bepalen
@@ -141,6 +141,7 @@ if OPT.f1 < Inf && OPT.f2 > 0
 
         % sample H-waarden
         H = Hgrens(1) + P(:,idIS)*(Hgrens(2)-Hgrens(1));
+        
         P(:,idIS) = interp1(cdf(:,end), Ponder, H);
 
         if all(~any(isnan(P)))

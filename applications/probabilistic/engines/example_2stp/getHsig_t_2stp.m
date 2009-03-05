@@ -56,15 +56,16 @@ function Hsig_t = getHsig_t_2stp(P, WL_t, hgrid1, EHs_tabel1, hgrid2, EHs_tabel2
 % $Keywords:
 
 %%
-[WL_t1 WL_t2] = deal(WL_t(:,1), WL_t(:,2));
+WL_t1 = WL_t(:,1);
 
 % eerst: station 1 (soms wordt geinterpoleerd tussen stations)
 Hsig_t1 = interpolate_Hsig(WL_t1, P, hgrid1, EHs_tabel1, sigma1);
 
 % dan: station 2 
-if isempty(sigma2)
-    Hsig_t2 = 0;     %dummy waarde als er sprake is van slechts 1 station
+if isempty(sigma2) || lambda == 1
+    Hsig_t2 = zeros(size(P));     %dummy waarde als er sprake is van slechts 1 station
 else
+	WL_t2 = WL_t(:,2);
     Hsig_t2 = interpolate_Hsig(WL_t2, P, hgrid2, EHs_tabel2, sigma2);
 end
 
