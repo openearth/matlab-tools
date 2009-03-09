@@ -45,7 +45,7 @@ end
 global areaname areacode coastwardDistances;
 if isempty(areaname)
     % temporary read from local file until website is updated
-    areaname = cellstr(nc_varget('D:\OpenEarthTools\matlab\io\nctools\output.nc', 'areaname'));
+    areaname = cellstr(nc_varget(filename, 'areaname'));
 end
 if isempty(areacode)
     areacode = nc_varget(filename, 'areacode');

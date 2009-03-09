@@ -5,28 +5,22 @@ function transect2netcdf(filename, transectStruct)
 
 % TODO: define the function header here ...
 function transect = mergetransects(transects)
-    maximum = zeros(length(transects),1);
+    % create sorting columns, most precise data at the end
+    col1 = arrayfun(@(x) (-max(x.seawardDistance)), transects); % most landward maximum seaward last
+    col2 = arrayfun(@(x) (x.dateBathy), transects); % latest dates at the end
+    col3 = arrayfun(@(x) (x.dateTopo), transects); % latest dates at the end
+    col4 = arrayfun(@(x) (x.n), transects); % largest at the end
+    
+    [a, ia] = sortrows([col1;col2;col3;col4]);
+    transect=transects(1);
+    new_x = sort(unique([transects.seawardDistance]));
+    new_h = zeros(size(new_x)) * NaN;
     for k = 1 : length(transects)
-        maximum(k) = max(transects(k).seawardDistance);
-    end            
-    jarkus_id = find(maximum==min(maximum)); % most landward datapoints are jarkus
-    doorlood_id = find(maximum==max(maximum)); % most seaward datapoints are doorlodingen (considered less reliable) 
-    if (jarkus_id == doorlood_id)
-        msg = sprintf('found same jarkus transect more than once %d', transects(1).id);
-        warning(msg)
-        % just choose one
-        jarkus_id = jarkus_id(1);
-        doorlood_id = doorlood_id(end);
+        [c, ia, ib] = intersect(new_x , transects(k).seawardDistance); % find ids transect k
+        new_h(ia) = transects(k).height(ib);
     end
-    new_x = unique([transects.seawardDistance]); % make new unique grid
-    [u, v] = intersect(new_x , transects(doorlood_id).seawardDistance); % find ids of doorlodingen
-    new_h(v) = transects(doorlood_id).height; % interpolate them on new grid
-    [w, q] = intersect(new_x , transects(jarkus_id).seawardDistance); % find ids of vaklodingen
-    new_h(q) = transects(jarkus_id).height; % interpolate them on grid (and overwrite doorlodingen)
-    transect=transects(jarkus_id); % keep structure of jarkus
     transect.seawardDistance = new_x; % assign new grid
     transect.height = new_h; % assign new heights
-
 end
 
 %% Lookup variables

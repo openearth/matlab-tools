@@ -8,7 +8,20 @@ addpath snctools
 javaaddpath ( './toolsUI-2.2.22.jar' )
 setpref ('SNCTOOLS', 'USE_JAVA', true); % this requires SNCTOOLS 2.4.8 or better
 %% server at deltares
-url = 'http://micore.wldelft.nl/opendap/rijkswaterstaat/jarkus/transect.nc';
+% test server
+url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/test/transect.nc';
+% url = 'http://micore.wldelft.nl/opendap/rijkswaterstaat/jarkus/transect.nc';
+
+%% Load transect data from the internet using old functions
+% first call takes over 200 seconds on the test server.
+% mainly bacause an array of 2000x2000x2 coordinates  are pre-loaded 
+% this takes over 170 seconds (through vpn on adsl)
+% next calls take 0.25seconds
+d = readTransectDataNetcdf(url, 'Ameland', '0300', '2005');
+
+
+%% Below shows the way to work with the data in the netcdf way
+% look up metadata
 info = nc_info(url); % this takes about 9seconds on my machine
 
 %% lookup dimensions, variables and global attributes
@@ -19,10 +32,11 @@ info = nc_info(url); % this takes about 9seconds on my machine
 % overview of the dataset
 nc_dump(url)
 
-
+% query variables
 x = nc_varget(url, 'x');
 y = nc_varget(url, 'y');
 
+% big plot (4M points)
 plot(x,y, '.');
 
 % get 40 years of data for all 1925 seaward points for first 5 transects
@@ -36,7 +50,26 @@ end
 
 plot(data)
 
-%%remote file
+
+%% create an animation from the transects
+yearArray = nc_varget(url, 'year');
+seawardDistanceArray =  nc_varget(url, 'seaward_distance');
+idArray =  nc_varget(url, 'id');
+
+find(yearArray == 2004);
+find(idArray == 7003800);
+
+for i = 1:length(yearArray)
+    year = yearArray(i);
+    d = readTransectDataNetcdf(url, 3000380, year);
+    plot(d.x,  d.height);
+    pause(1);
+end
+
+% d = readTransectdata('JARKUS data', 'Noord-Holland', '03800', '2004')
+
+
+%% examples of other  remote file
 info = nc_info('http://iridl.ldeo.columbia.edu/SOURCES/.WORLDBATH432/.bath/dods');
 
 x = nc_varget('http://iridl.ldeo.columbia.edu/SOURCES/.WORLDBATH432/.bath/dods', 'X');
@@ -58,48 +91,3 @@ axis off
 surfacem(Y,X,Z,Z/100000);
 
 
-yearArray = nc_varget('output.nc', 'year');
-seawardDistanceArray =  nc_varget('output.nc', 'seaward_distance');
-idArray =  nc_varget('output.nc', 'id');
-
-% for i = 1:length(yearArray)
-%     year = yearArray(i);
-%     h = nc_varget('output.nc', 'height', [i-1, 0, 0], [1, length(idArray), length(seawardDistanceArray)]);
-%     image(squeeze(h));
-%     pause(5)
-% end
-
-
-find(yearArray == 2004);
-find(idArray == 7003800);
-X = nc_varget('output.nc', 'x');
-Y = nc_varget('output.nc', 'y');
-
-for i = 1:length(yearArray)
-    year = yearArray(i);
-    d = readTransectDataNetcdf('output.nc', 3000380, year);
-    plot(d.x,  d.height);
-    pause(1);
-end
-
-% d = readTransectdata('JARKUS data', 'Noord-Holland', '03800', '2004')
-
-
-x = 1:20000;
-y = 1:20000;
-
-x_index = find(x >= 1000 & x < 1020);
-y_index = find(x >= 1380 & x < 1400);
-
-h = randn(2000,2000);
-
-h(x_index, y_index)
-
-%% Fitting STL Loess
-year = nc_varget(url, 'year');
-distance = nc_varget(url, 'seaward_distance');
-data = nc_varget(url, 'height', [0,1282,0], [length(year),1, length(distance)]);
-id = nc_varget(url, 'id', 1282, 1);
-notnans = ~all(isnan(data));
-data = data(:,notnans);
-distance = distance(notnans);
