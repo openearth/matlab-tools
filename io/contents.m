@@ -6,14 +6,6 @@
 %   mexnc               - MATLAB gateway to NetCDF interface (low-level)
 %   snctools            - netCDF tools (high-level)
 %
-% You can walk down the OpenEarthTools io tree by calling 
-% help on any of the above, e.g.
-%
-%   help snctools
-%
-% See also: OETSETTINGS, OET_APPLICATIONS, OET_IO, SNCTOOLS
-%
 
-
-% Except for the see also line this file '../io/oet_io.m' is the same as:
-% '../io/contents.m'
+% Except for the see also line this file '../io/contents.m' is the same as:
+% '../io/oet_io.m' 

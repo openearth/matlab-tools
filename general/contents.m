@@ -20,13 +20,6 @@
 %   struct_fun          - struct related
 %   time_fun            - time related
 %
-% You can walk down the OpenEarthTools general tree by calling 
-% help on any of the above, e.g.
-%
-%   help string_fun
-%
-% See also: OETSETTINGS, OET_APPLICATIONS, OET_IO
-%
 
 % Except for the see also line this file '../general/oet_general.m' is the same as:
 % '../general/contents.m'
