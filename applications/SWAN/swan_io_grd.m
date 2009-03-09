@@ -30,7 +30,7 @@ function varargout = swan_io_grd(cmd,fname,varargin)
 %     the Delft3d-FLOW adds one dummy row and column of nodes.
 %    NOTE 3. Only default IDLA option (see SWAN manual) currently implemented.
 %
-% See also: SWAN_SPECTRUM, SWAN_TABLE, SWAN_IO_BOT, SWAN_INPUT
+% See also: SWAN_IO_SPECTRUM, SWAN_IO_INPUT, SWAN_IO_TABLE, SWAN_IO_BOT
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006-2009 Deltares

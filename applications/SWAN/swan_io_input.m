@@ -1091,11 +1091,19 @@ DAT.table(N.tables).parameter.names = swan_name2shortname(DAT.table(N.tables).pa
                
                if strcmpi(strtrim(DAT.table(N.tables).sname),'COMPGRID')
                
-                  DAT.table(N.tables).type = DAT.cgrid.type;
-                  DAT.table(N.tables).mxc  = DAT.cgrid.mxc ;
-                  DAT.table(N.tables).myc  = DAT.cgrid.myc ;
-                  DAT.table(N.tables).xexc = DAT.cgrid.xexc;
-                  DAT.table(N.tables).yexc = DAT.cgrid.yexc;
+                     DAT.table(N.tables).type = DAT.cgrid.type;
+                  if     strcmpi(DAT.cgrid.type(1:3),'reg')
+                     DAT.table(N.tables).xpc  = DAT.cgrid.xpc  ;
+                     DAT.table(N.tables).ypc  = DAT.cgrid.ypc  ;
+                     DAT.table(N.tables).alcp = DAT.cgrid.alcp ;
+                     DAT.table(N.tables).xlenc= DAT.cgrid.xlenc;
+                     DAT.table(N.tables).ylenc= DAT.cgrid.ylenc;
+                  elseif strcmpi(DAT.cgrid.type(1:3),'cur')
+                     DAT.table(N.tables).xexc = DAT.cgrid.xexc ;
+                     DAT.table(N.tables).yexc = DAT.cgrid.yexc ;
+                  end
+                     DAT.table(N.tables).mxc  = DAT.cgrid.mxc  ;
+                     DAT.table(N.tables).myc  = DAT.cgrid.myc  ;
                   
                elseif isfield(DAT,'curve')
                

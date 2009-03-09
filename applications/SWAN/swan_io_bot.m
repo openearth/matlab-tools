@@ -37,7 +37,7 @@ function varargout = swan_io_bot(cmd,fname,varargin)
 %    % valid for IDLA  = 4, same as 3, but no new lines required.
 %    % ---------------------------
 %
-% See also: SWAN_SPECTRUM, SWAN_TABLE, SWAN_IO_GRD, SWAN_INPUT
+% See also: SWAN_IO_SPECTRUM, SWAN_IO_INPUT, SWAN_IO_TABLE, SWAN_IO_GRD
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006-2009 Deltares

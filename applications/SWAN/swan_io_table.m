@@ -16,7 +16,7 @@ function swan = swan_io_table(fname,varargin)
 %    with the field names for each column, which are by default 
 %    the small case SHORT names as defined for SWAN input file code:
 %    Use SWAN_INPUT to get to read these. Use SWAN_QUANTITY to
-%    get info rgearidng these.
+%    get info regarding these.
 %    ------------------------------------------------------
 %    TABLE 'COMPGRID' NOHEAD 'SWANOUT'  _                                        
 %     HSIGN    DIR      TM01     DEPTH    VELOC    TRANSP _                          
@@ -36,7 +36,9 @@ function swan = swan_io_table(fname,varargin)
 %                                INP.table(itab).parameter.names)
 %   end
 %
-% See also: SWAN_IO_SPECTRUM, SWAN_IO_INPUT
+% See also: SWAN_IO_SPECTRUM, SWAN_IO_INPUT, SWAN_IO_GRD, SWAN_IO_BOT
+
+% to do: add option to read based on solely table struct as read by SWAN_IO_INPUT
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
