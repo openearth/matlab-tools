@@ -4,6 +4,30 @@ function transect2netcdf(filename, transectStruct)
 %See also:
 
 % TODO: define the function header here ...
+function transect = mergetransects(transects)
+    maximum = zeros(length(transects),1);
+    for k = 1 : length(transects)
+        maximum(k) = max(transects(k).seawardDistance);
+    end            
+    jarkus_id = find(maximum==min(maximum)); % most landward datapoints are jarkus
+    doorlood_id = find(maximum==max(maximum)); % most seaward datapoints are doorlodingen (considered less reliable) 
+    if (jarkus_id == doorlood_id)
+        msg = sprintf('found same jarkus transect more than once %d', transects(1).id);
+        warning(msg)
+        % just choose one
+        jarkus_id = jarkus_id(1);
+        doorlood_id = doorlood_id(end);
+    end
+    new_x = unique([transects.seawardDistance]); % make new unique grid
+    [u, v] = intersect(new_x , transects(doorlood_id).seawardDistance); % find ids of doorlodingen
+    new_h(v) = transects(doorlood_id).height; % interpolate them on new grid
+    [w, q] = intersect(new_x , transects(jarkus_id).seawardDistance); % find ids of vaklodingen
+    new_h(q) = transects(jarkus_id).height; % interpolate them on grid (and overwrite doorlodingen)
+    transect=transects(jarkus_id); % keep structure of jarkus
+    transect.seawardDistance = new_x; % assign new grid
+    transect.height = new_h; % assign new heights
+
+end
 
 %% Lookup variables
 % This assumes a grid already has been saved to the file
@@ -26,19 +50,7 @@ for i = 1 : length(yearArray)
         if isempty(transect)
             continue
         elseif length(transect) > 1 % if more than one dataset per year and per ray is present, the data is merged
-            for k = 1 : length(transect)
-                maximum(k) = max(transect(k).seawardDistance);
-            end            
-            jarkus_id = find(maximum==min(maximum)); % most landward datapoints are jarkus
-            doorlood_id = find(maximum==max(maximum)); % most seaward datapoints are doorlodingen (considered less reliable)                       
-            new_x = unique([transect.seawardDistance]); % make new unique grid
-            [u, v] = intersect(new_x , transect(doorlood_id).seawardDistance); % find ids of doorlodingen
-            new_h(v) = transect(doorlood_id).height; % interpolate them on new grid
-            [w, q] = intersect(new_x , transect(jarkus_id).seawardDistance); % find ids of vaklodingen
-            new_h(q) = transect(jarkus_id).height; % interpolate them on grid (and overwrite doorlodingen)
-            transect=transect(jarkus_id); % keep structure of jarkus
-            transect.seawardDistance = new_x; % assign new grid
-            transect.height = new_h; % assign new heights
+            transect = mergetransects(transect);
         end
         [c, ia, ib] = intersect(seawardDistanceArray, transect.seawardDistance);
         datablock(j, ia) = transect.height(ib);
@@ -46,3 +58,4 @@ for i = 1 : length(yearArray)
     nc_varput(filename, 'height', datablock, [i-1, 0, 0], [1, size(datablock)]); % (/i-1, 0, 0/) -> in fortran
 end
 
+end

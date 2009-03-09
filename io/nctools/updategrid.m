@@ -22,8 +22,28 @@ function [grid] = updategrid(grid, filename,tidefile)
 
     % find points in the transect which are also in the grid
     [c, ia, ib] = intersect(transect.id, grid.id);
-%    assert(length(c) == length(grid.id)); % assert.m is not compatible
-
+    if (length(c) ~= length(grid.id))
+        warning('found grids which are not present in meta information or vice versa'); 
+        % assert.m is not compatible
+    end
+    nnodata = length(setdiff(transect.id, grid.id));
+    if (nnodata)
+        msg = sprintf('found %d transects in metadata without data', nnodata);
+        warning(msg);
+    end
+    nnodata = length(setdiff(grid.id, transect.id));
+    if (nnodata)
+        msg = sprintf('found %d transects in data without metadata', nnodata);
+        warning(msg);
+    end    
+    
+    %remove points without metadata
+    grid.id = grid.id(ib);
+    grid.areacode = grid.areacode(ib);
+    grid.areaname = grid.areaname(ib,:);
+    grid.coastwardDistance = grid.coastwardDistance(ib);
+    
+        
     % use the angle to compute the coordinates in projected cartesian
     % coordinates. (for jarkus Amersfoort RD new)
     relativeX = cos(transect.angle(ia)) * grid.seawardDistance;
