@@ -113,30 +113,30 @@ OPT.dryval = -OPT.posdwn * abs(OPT.dryval);
 if OPT.manual
     figure;
     scatter(OPT.bathy{1}, OPT.bathy{2}, 5, OPT.bathy{3}, 'filled');
-    axis equal;
     colorbar;
     hold on
     xn = max(max(X));
     yn = max(max(Y));
     plot([0 xn xn 0 0],[0 0 yn yn 0],'r-')
+    axis ([0 xn 0 yn]);axis equal
     % Select polygon to include in bathy
     % Loop, picking up the points.
     disp('Select polygon to include in bathy')
     disp('Left mouse button picks points.')
     disp('Right mouse button picks last point.')
-    try
-        [xi yi] = getline;
-    catch
-        xi = [];
-        yi = [];
-        n = 0;
-        but = 1;
-        while but == 1
-            n = n+1;
-            [xi(n) yi(n) but] = ginput(1);
-            plot(xi, yi, 'r-o');
-        end
-    end
+    [xi yi]=select_oblique_rectangle
+
+
+
+
+
+
+
+
+
+
+
+
 end
 % Interpolate to grid
 in = inpolygon(X, Y, xi, yi);
