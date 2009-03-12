@@ -83,6 +83,7 @@ elseif (nargin == 3)
     end
 end
 
+%% lookup the year
 
 global year
 if isempty(year)
@@ -94,6 +95,7 @@ if isempty(year_index)
 end
 
 
+%% create transect structure
 transect.seq = 0;
 global title
 if isempty(title)
@@ -125,17 +127,11 @@ if isempty(seawardDistance)
 end
 seawardDistanceZeroIndex = find(seawardDistance == 0);
 
-global x
-if isempty(x)
-    x = nc_varget(filename,'x');
-end
-transect.xRD = x(id_index, seawardDistanceZeroIndex); %in EPSG:28992
+x = nc_varget(filename,'x', [id_index, 0], [1, length(seawardDistance)]);
+transect.xRD = x(seawardDistanceZeroIndex); %in EPSG:28992
 
-global y 
-if isempty(y)
-    y = nc_varget(filename,'y');
-end
-transect.yRD = y(id_index, seawardDistanceZeroIndex); %in EPSG:28992
+y = nc_varget(filename,'y', [id_index, 0], [1, length(seawardDistance)]);
+transect.yRD = y(seawardDistanceZeroIndex); %in EPSG:28992
 
 global angle 
 if isempty(angle)
@@ -144,7 +140,7 @@ end
 
 transect.GRAD = angle(id_index); %in degrees
 
-transect.contour = [max(x(id_index,:)), min(y(id_index,:)); min(x(id_index,:)) , max(y(id_index,:))]; %[2x2 double]
+transect.contour = [max(x), min(y); min(x) , max(y)]; %[2x2 double]
 
 transect.contourunit = 'm';
 
