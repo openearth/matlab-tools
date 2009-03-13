@@ -17,7 +17,8 @@ function DAT = swan_defaults
 %  DAT.set.printf   = 4;
 %  DAT.set.prtest   = 4;
 %
-%See also: SWAN_IO_INPUT, SWAN_IO_SPECTRUM, SWAN_QUANTITY, SWAN_IO_TABLE
+%See also: SWAN_IO_SPECTRUM, SWAN_IO_INPUT, SWAN_IO_TABLE, SWAN_IO_GRD, SWAN_IO_BOT, 
+%          SWAN_SHORTNAME2KEYWORD, SWAN_QUANTITY
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Deltares

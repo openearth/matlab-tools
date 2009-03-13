@@ -4,6 +4,8 @@ function varargout = swan_quantity
 %  DAT       = SWAN_QUANTITY returns properties per parameter
 % [DAT,DAT0] = SWAN_QUANTITY returns also properties per property
 %
+% where DAT is struct with field names as returned by 
+% SWAN_SHORTNAME2KEYWORD, each with subfields
 %
 %  OVKEYW(IVTYPE) =    keyword used in SWAN command      
 %  OVSNAM(IVTYPE) =    short name                        
@@ -16,7 +18,8 @@ function varargout = swan_quantity
 %  OVHEXP(IVTYPE) =                                      
 %  OVEXCV(IVTYPE) =    exception value                   
 %
-%See also: SWAN_INPUT, SWAN_SPECTRUM, SWAN_TABLE, SWAN_DEFAULTS
+%See also: SWAN_IO_SPECTRUM, SWAN_IO_INPUT, SWAN_IO_TABLE, SWAN_IO_GRD, SWAN_IO_BOT, 
+%          SWAN_SHORTNAME2KEYWORD, SWAN_DEFAULTS, SWAN_QUANTITYTEX
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Deltares
@@ -822,10 +825,10 @@ function varargout = swan_quantity
       DAT0.OVEXCV = OVEXCV;
       
       
-%% Restructure per paramter rahther than per property
+%% Restructure per parameter rather than per property
 %% ----------------------
 
-      for ipar=1:length(DAT0.OVEXCV)
+      for ipar=1:length(DAT0.OVKEYW)
        
          parname = DAT0.OVKEYW{ipar};
 

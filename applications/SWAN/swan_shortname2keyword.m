@@ -1,15 +1,22 @@
-function OUT = swan_name2shortname(IN)
-%SWAN_NAME2SHORTNAME   find short name equivalent of SWAN output parameters
+function OUT = swan_shortname2keyword(IN)
+%SWAN_SHORTNAME2KEYWORD   get SWAN SWAN code (OVKEYW) from associated short name (OVSNAM)
 %
-% OUT = SWAN_NAME2SHORTNAME(IN) finds short name equivalents of SWAN 
-%                               output parameters based in 1st characters
+% OUT = swan_shortname2keyword(IN) finds short name equivalents of SWAN 
+%                               output parameters based on 1st characters
 %                               via conversion table.
 %
 % 1) Case-insensitive to input name, output name is UPPER CASE.
 % 2) If name is not in table, input name is returned
 % 3) In can be a cell array, output is a cell array.
 %
-%See also: SWAN_INPUT, SWAN_SPECTRUM, SWAN_TABLE, SWAN_DEFAULTS, SWAN_QUANTITY
+%See also: SWAN_IO_SPECTRUM, SWAN_IO_INPUT, SWAN_IO_TABLE, SWAN_IO_GRD, SWAN_IO_BOT, 
+%          SWAN_QUANTITY, SWAN_DEFAULTS,
+%          SWAN_KEYWORD2SHORTNAME, SWAN_KEYWORD2LONGNAME, SWAN_KEYWORD2TEXNAME, 
+
+%% 2009 mar 13 renamed this function from SWAN_NAME2SHORTNAME to SWAN_SHORTNAME2KEYWORD [Gerben de Boer]
+%%             added links to new SWAN_KEYWORD2* [Gerben de Boer]
+
+%% to do: use table in swan_quantity to make conversion
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Deltares
@@ -42,7 +49,6 @@ function OUT = swan_name2shortname(IN)
 if ischar(IN)
    IN = cellstr(IN);
 end
-
 
 for iname = 1:length(IN)
 

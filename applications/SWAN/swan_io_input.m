@@ -1053,12 +1053,8 @@ function varargout = swan_io_input(varargin)
                DAT.table(N.tables).parameterlist   = DAT.table(N.tables).parameters;
                DAT.table(N.tables).parameter.names = strtokens2cell(DAT.table(N.tables).parameters);
                
-               
-%% >>>>>>>>>>>>
-%% Use short name to match quantity properties in SWAN_QUANTITY
-DAT.table(N.tables).parameter.names = swan_name2shortname(DAT.table(N.tables).parameter.names);
-%% >>>>>>>>>>>>
-
+               %%  Use keyword (OVKEYW), not short name (OVSNAM) to match quantity properties in SWAN_QUANTITY
+               DAT.table(N.tables).parameter.names = swan_shortname2keyword(DAT.table(N.tables).parameter.names);
                
                %% Get vector yes(2)/no(1)
                %% -----------------------
