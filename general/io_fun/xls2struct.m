@@ -4,6 +4,7 @@ function varargout = xls2struct(fname,varargin)
 % DATA = xls2struct(fname)
 % DATA = xls2struct(fname,work_sheet_name)
 % DATA = xls2struct(fname,work_sheet_name,<keyword,value>)
+% DATA = xls2struct(fname,<keyword,value>)
 %
 % [DATA,units         ] = xls2struct(fname,work_sheet_name,<keyword,value>)
 % [DATA,units,metainfo] = xls2struct(fname,work_sheet_name,<keyword,value>)
@@ -36,6 +37,10 @@ function varargout = xls2struct(fname,varargin)
 %             there is only 1 output argument.
 % * units   , true by default, specifies whether the units at 
 %             the second line are present.
+% * fillstr , str that represents dummy string values that should be replaced with number fillnum
+%             (Default {}, suggestion: {'NA'})
+% * fillnum , number that replaces fillstr 
+%             (Default NaN)
 %
 % Notes:
 % 
@@ -48,12 +53,12 @@ function varargout = xls2struct(fname,varargin)
 %   are already loaded to a field called 'units', with a subield
 %   for every main field.
 %
-% Tested for matlab releases 2006B and 6.5
-%
-% G.J. de Boer, Apr.-Nov. 2006
+% G.J. de Boer, Apr.-Nov. 2006 - 2009
 %
 % See also: XLSWRITE (2006b, otherwise mathsworks downloadcentral), 
 %           XLSREAD, STRUCT2XLS
+
+% Tested for matlab releases 2008a, 2007ab, 2006B and 6.5 and 
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006-2008 Delft University of Technology
@@ -120,6 +125,8 @@ end
    OPT.units    = true;
    OPT.sheet    = [];
    OPT.debug    = 1;
+   OPT.fillstr  = {};
+   OPT.fillnum  = NaN;
    
    if ~odd(nargin)
       OPT.sheet = varargin{1};
@@ -140,7 +147,7 @@ end
 %      i=i+1;
 %    end;   
 
-   OPT           = SetProperty(OPT,varargin{i:end});
+   OPT           = setProperty(OPT,varargin{i:end});
    META.filename = fname;
    iostat        = 1;
    tmp           = dir(fname);
@@ -283,14 +290,20 @@ end
       
       % Per column ...
       for i2=1:size(tstraw,2)
-
+      
          % ... check all rows
          index = find(~commentlines);
          for irow=index(2+rowoffset):size(tstraw,1)
+
+            % apply string codes for numeric missing values
+            tstraw(irow, i2)    = cellstrrepnum(tstraw(irow, i2),OPT.fillstr,OPT.fillnum);
+            
             if ~isnumeric(tstraw{irow, i2});
+
                numeric_columns(i2) = false;
                txt_columns    (i2) = true;
                break
+               
             end
          end
             
@@ -383,7 +396,7 @@ end
                    if ~isnan(tstraw{not_a_comment_line(irow),ifld_per_column})
                      irow_not_nan = irow_not_nan + 1;
                      DAT.(fldname)(irow_not_nan            ,1)    = ...
-                            tstraw(not_a_comment_line(irow),ifld_per_column); 
+                            tstraw(not_a_comment_line(irow),ifld_per_column);
                    end % isnan
                  end % irow
                end % ifld_per_column
