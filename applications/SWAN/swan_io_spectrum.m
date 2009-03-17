@@ -215,8 +215,7 @@ OPT.mod   = 1000; % for OPT.debug(2)
             raw = fscanf(fid,'%f',2*DAT.number_of_locations);
             DAT.x = raw(1:2:end);
             DAT.y = raw(2:2:end);
-%-%           
-
+%-% end NEW          
             DAT.x = reshape(DAT.x,DAT.myc, DAT.mxc);
             DAT.y = reshape(DAT.y,DAT.myc, DAT.mxc);
             
@@ -313,8 +312,10 @@ OPT.mod   = 1000; % for OPT.debug(2)
             DAT.direction_convention  = 'nautical';
          elseif strcmp(strtok(upper(rec)),'CDIR') 
             DAT.dimension_of_spectrum = 2;
-            DAT.direction_convention = 'cartesian';
-         elseif ~(isfield(DAT,'dimension_of_spectrum')) % see above: When no frequencies present: file contains integral parameters form TEST command
+            DAT.direction_convention  = 'cartesian';
+         elseif ~(isfield(DAT,'dimension_of_spectrum'))
+         % see above: When no frequencies present: file contains integral parameters form TEST command
+         % or MUDFILE (only frequencies, no directions)
             DAT.dimension_of_spectrum = 1;
          end
 
@@ -452,11 +453,9 @@ OPT.mod   = 1000; % for OPT.debug(2)
                          DAT.(quantity_name)(location_index,:,iteration) = array;
                       end  
                end
-
                DAT.data_description = ['1st dimension = number_of_locations          ';
                                        '2st dimension = number_of_frequencies        ';
                                        '3rd dimension = number_of_iterations         '];
-
             end
 
          %% read S1D
@@ -482,9 +481,6 @@ OPT.mod   = 1000; % for OPT.debug(2)
                   end
                end
                
-               DAT.data_description = ['1st dimension = number_of_locations          ';
-                                       '2st dimension = number_of_frequencies        '];
-                                       
                rec = fgetl_no_comment_line(fid,'$');
                
                if strcmp(strtok(upper(rec)),'LOCATION')
@@ -537,6 +533,23 @@ OPT.mod   = 1000; % for OPT.debug(2)
                end   
                      
             end % for i=1:DAT.number_of_locations
+            
+            if DAT.myc==1
+               DAT.data_description = ['1st dimension = number_of_locations          ';
+                                       '2st dimension = number_of_frequencies        '];
+            elseif DAT.myc>1
+            
+            %% reshape locations into 2D matrix if present
+            
+               DAT.data_description = ['1st dimension = mxc                          ';
+                                       '2nd dimension = myc                          ';
+                                       '3rd dimension = number_of_frequencies        '];
+               for j=1:DAT.number_of_quantities
+                  quantity_name = char(DAT.quantity_names{j});
+                  DAT.(quantity_name) = reshape(DAT.(quantity_name),...
+                                               [DAT.mxc DAT.myc DAT.number_of_frequencies]);
+               end  
+            end            
             
          %% read test points S2D
          %% ------------------------------
