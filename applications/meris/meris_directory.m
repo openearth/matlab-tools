@@ -48,23 +48,24 @@ function varargout = meris_directory(directory,varargin)
 %   http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-
       ext = '.mat';
    if nargin>1
       ext = varargin{1};
    end
    
-   dirlist = dir([directory,filesep,'*',ext]);
-   iname   = 0;
-   isiop   = 0;
+   S.filenames = dir([directory,filesep,'*',ext]);
+   S.n         = length(S.filenames);
    
    %% Check for double occurences of images after removal of extensions (SIOPS)
-   %% ----------------------------------
+   %------------------------------------
    
-   for ifile=2:length(dirlist)
+   iname       = 0;
+   isiop       = 0;
+
+   for ifile=2:length(S.filenames)
    
-      meris.name = dirlist(ifile).name( 1:59 );
-      meris.siop = dirlist(ifile).name(60:end);
+      meris.name = S.filenames(ifile).name( 1:59 );
+      meris.siop = S.filenames(ifile).name(60:end);
       
       if iname==0
       
@@ -81,7 +82,7 @@ function varargout = meris_directory(directory,varargin)
       end
       
       %% Check for double occurences of extensions (SIOPS)
-      %% ----------------------------------
+      %------------------------------------
 
          if ~isempty(meris.siop)
          
@@ -104,7 +105,7 @@ function varargout = meris_directory(directory,varargin)
    end
    
    %% Output
-   %% ----------------------------------
+   %------------------------------------
 
    if nargout<2
       varargout = {NAMEs};
