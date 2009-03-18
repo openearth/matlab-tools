@@ -1,8 +1,9 @@
-function varargout = deltares_logo(varargin)
-%IMAGEPLOT   adds image to current axes
+function varargout = deltares_logo(fname,varargin)
+%IMAGEPLOT   adds image to current axes on specified position
 %
-% IMAGEPLOT(..)
+%    handle = imageplot(fname,<keyword,value>)
 %
+% where fname is the name of an image file to be read with IMREAD
 % adds image to currect axes at speficied position.
 %
 % give two of: dx, x(1), x(2)
@@ -11,7 +12,7 @@ function varargout = deltares_logo(varargin)
 % give one of:     x(1), x(2), dx is calculated from aspect ratio of image
 %  and two of: dy, y(1), y(2)
 %
-% Specify all them as <keyword,value> pairs, where a missing value for 
+% Specify all input as <keyword,value> pairs, where a missing value for 
 % x(1), x(2), y(1), y(2) must be specified as NaN.
 % Implemented <keyword,value> pairs are:
 % * x        : default []
@@ -19,7 +20,8 @@ function varargout = deltares_logo(varargin)
 % * y        : default [nan nan]
 % * dy       : default [nan nan]
 % * stackopt : passed to UITSTACK, be default 'bottom'
-% * file     : name of image, for example 'deltares_woordbeeldmerk_rgb.jpg'
+% * clipping : whether nimage is also visible outside current axes
+%              Default: 'off' (unlike matlab default.)
 %
 % Note that you should call IMAGEPLOT after calling any PCOLOR
 % otherwise colorbar cticlabels DO not work after calling image.
@@ -61,57 +63,43 @@ function varargout = deltares_logo(varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-      %% Set defaults for keywords
-      %% ----------------------
+   if ~odd(nargin)
+      error('syntyax: imageplot(fname,<keyword,value>)')
+   end
+
+   %% Set defaults for keywords
+   %------------------------
+
+      LOGO.file     = fname;
 
       LOGO.dx       = [];
       LOGO.dy       = [];
       LOGO.x        = [nan nan];
       LOGO.y        = [nan nan];
       LOGO.stackopt = 'bottom';
-      LOGO.file     = 'DELTARES_WOORDBEELDMERK_RGB.jpg';
+      LOGO.clipping = 'off';
       
-      %LOGO.dx    = 10e3;
-      %LOGO.x     = [nan 161e3];
-      %LOGO.y     = [nan 522.9e3];
+     %LOGO.dx       = 10e3;
+     %LOGO.x        = [nan 161e3];
+     %LOGO.y        = [nan 522.9e3];
    
-      %% Return defaults
-      %% ----------------------
+   %% Return defaults
+   %------------------------
 
       if nargin==0
          varargout = {LOGO};
          return
       end
       
-      %% Cycle keywords in input argument list to overwrite default values.
-      %% Align code lines as much as possible to allow for block editing in textpad.
-      %% Only start <keyword,value> pairs after the REQUIRED arguments. 
-      %% ----------------------
+   %% Update defaults
+   %------------------------
+   
+      LOGO   = setProperty(LOGO,varargin{:});
       
-      x      = varargin{1};
-      iargin = 1;
       
-      while iargin<=nargin,
-        if isstruct(varargin{iargin})
-           LOGO = mergestructs('overwrite',LOGO,varargin{iargin});
-        elseif ischar(varargin{iargin}),
-          switch lower(varargin{iargin})
-          case 'dx'       ;iargin=iargin+1;LOGO.dx       = varargin{iargin};
-          case 'dy'       ;iargin=iargin+1;LOGO.dy       = varargin{iargin};
-          case 'x'        ;iargin=iargin+1;LOGO.x        = varargin{iargin};
-          case 'y'        ;iargin=iargin+1;LOGO.y        = varargin{iargin};
-          case 'stackopt' ;iargin=iargin+1;LOGO.stackopt = varargin{iargin};
-          case 'file'     ;iargin=iargin+1;LOGO.file     = varargin{iargin};
-          otherwise
-             error(['Invalid string argument: ',varargin{iargin}]);
-          end
-        end;
-        iargin=iargin+1;
-      end; 
-      
-      %% Now get last of three of [dx, x(1), x(2)] OR
-      %%                          [dy, y(1), y(2)] to be known
-      %% -------------------------------
+   %% Now get last of three of [dx, x(1), x(2)] OR
+   %                           [dy, y(1), y(2)] to be known
+   %---------------------------------
 
       if ~any(isnan(LOGO.x))
       LOGO.dx = LOGO.x(2) - LOGO.x(1);
@@ -121,16 +109,16 @@ function varargout = deltares_logo(varargin)
       LOGO.dy = LOGO.y(2) - LOGO.y(1);
       end
       
-      %% Load logo
-      %% -------------------------------
+   %% Load logo
+   %% -------------------------------
 
       LOGO.image = imread(LOGO.file);
       LOGO.image = flipdim(LOGO.image,1);
       LOGO.nx    = size(LOGO.image,2);
       LOGO.ny    = size(LOGO.image,1);
 
-      %% Now get dx/dx based on aspect ratio of loaded image
-      %% -------------------------------
+   %% Now get dx/dx based on aspect ratio of loaded image
+   %---------------------------------
 
       if isempty(LOGO.dy)
       LOGO.dy    = LOGO.ny/LOGO.nx.*LOGO.dx;
@@ -140,8 +128,8 @@ function varargout = deltares_logo(varargin)
       LOGO.dx    = LOGO.nx/LOGO.ny.*LOGO.dy;
       end
 
-      %% Now get start/end of unknown x/y positions
-      %% -------------------------------
+   %% Now get start/end of unknown x/y positions
+   %---------------------------------
 
       if     isnan(LOGO.x(1));LOGO.x     = linspace(LOGO.x(2)-LOGO.dx,LOGO.x(2)        ,LOGO.nx);
       elseif isnan(LOGO.x(2));LOGO.x     = linspace(LOGO.x(1)        ,LOGO.x(1)+LOGO.dx,LOGO.nx);
@@ -151,20 +139,23 @@ function varargout = deltares_logo(varargin)
       elseif isnan(LOGO.y(2));LOGO.y     = linspace(LOGO.y(1)        ,LOGO.y(1)+LOGO.dy,LOGO.ny);
       end
 
-      %% Plot
-      %% -------------------------------
+   %% Plot
+   %---------------------------------
 
       state.hold = ishold;
       hold on
       handle.image = image(LOGO.x,LOGO.y,LOGO.image); % image reverses it, so reverse back
-      set(gca,'ydir','normal')
+
+      set(gca             ,'ydir','normal')
+      set(handle.image,'clipping',LOGO.clipping);
+      
      %axis equal
       if ~(state.hold)
          hold off
       end
 
    %% Move this latest logo object to back
-   %% -------------------------------
+   %---------------------------------
 
       %ch = get(gca,'children');
       %ch2 = [ch(end);ch(1:end-1)];
@@ -173,7 +164,7 @@ function varargout = deltares_logo(varargin)
       uistack(handle.image,LOGO.stackopt);
       
    %% Out
-   %% -------------------------------
+   %---------------------------------
 
       if nargout==1
          varargout  = {handle.image};     

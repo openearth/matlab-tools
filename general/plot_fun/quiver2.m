@@ -25,7 +25,7 @@ function varargout = quiver2(varargin)
 %    dimension of x,y,u and v. Works as:
 %    x(1:scaling(1):end,1:scaling(2):end);
 %
-% quiver2(x,y,u,v,fieldthinning,scaling,zposition) 
+% quiver2(x,y,u,v,scaling,fieldthinning,zposition) 
 %    Positions the arrows at vertical position zposition
 %    to be sure the arrows are for example not hidden 
 %    below a surface.
@@ -36,7 +36,7 @@ function varargout = quiver2(varargin)
 %    (R14 allows more but is not used in quiver2 as it
 %    plots erronous arrows.)
 %
-% fieldthinning,scaling,zposition can be set to [] or nan 
+% scaling,fieldthinning,zposition can be set to [] or nan 
 %    to allow for defaults and linespec.
 %
 % quiver2('method',...) 
