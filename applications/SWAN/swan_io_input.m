@@ -1034,6 +1034,12 @@ function varargout = swan_io_input(varargin)
                [keyword                      ,rec] = strtok(rec);
                 quotes                             = strfind(keyword,'''');
                 DAT.table(N.tables).fname          = keyword(quotes(1)+1:quotes(end)-1);
+                
+                %% add absolute directory of table file too
+                tmp = dir(DAT.table(N.tables).fname);
+                if length(tmp)==0
+                DAT.table(N.tables).fullfilename = [filepathstr(DAT.fullfilename) filesep DAT.table(N.tables).fname];
+                end
 
                %% remove double quotes (removes one letter with singel quotes)
                %quotes = find(DAT.table(N.tables).fname, '''')

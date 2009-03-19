@@ -52,6 +52,7 @@ function varargout = swan_io_table(varargin)
 %              fields when parameter names are specified, changed 
 %              order of input into (...,fieldcolumnnames,<mxyc>). [Gerben de Boer]
 %              
+% 2009 mar 19: added loading of fname incl. path (as added to table struct in SWAN_IO_INPUT)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
@@ -110,7 +111,8 @@ function varargout = swan_io_table(varargin)
       end
       
    elseif ischar(varargin{1})
-      INP.table.fname = varargin{1};
+
+      INP.table.fullfilename = varargin{1};
 
       %% column names
       %-------------------------
@@ -198,7 +200,7 @@ function varargout = swan_io_table(varargin)
 %% Load full raw matrix
 %-------------------------
 
-   dat = load(INP.table.fname); %load(TAB.fname);
+   dat = load(INP.table.fullfilename); %load(TAB.fname);
    
 %%  split into scalar/vector columns and give names
 %-------------------------
