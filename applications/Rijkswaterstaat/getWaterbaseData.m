@@ -1,8 +1,8 @@
 function OutputName = getWaterbaseData(varargin);
 %GETWATERBASEDATA   load data from www.waterbase.nl
 %
-% Download data from the www.waterbase.nl website for one specified 
-% substance at one or more specified locations during one specified 
+% Download data from the www.waterbase.nl website for one specified
+% substance at one or more specified locations during one specified
 % year. All available data are written in a specified ascii file.
 %
 % Without input arguments a GUI is launched.
@@ -10,7 +10,7 @@ function OutputName = getWaterbaseData(varargin);
 %    D = getWaterbaseData(<Code>    ) % or
 %    D = getWaterbaseData(<FullName>) % NOTE: NOT CodeName
 %
-% where Code or FullName are the unique DONAR numeric or string 
+% where Code or FullName are the unique DONAR numeric or string
 % substance identifier respectively (e.g. 22).
 %
 %    D = getWaterbaseData( Code     ,<ID>)
@@ -34,14 +34,14 @@ function OutputName = getWaterbaseData(varargin);
 %
 %    getWaterbaseData(22,'AUKFPFM',datenum([1961 2008],1,1),pwd)
 %
-% See also: DONAR_READ, www.waterbase.nl, 
+% See also: DONAR_READ, www.waterbase.nl,
 %           GETWATERBASEDATA_SUBSTANCES, GETWATERBASEDATA_LOCATIONS
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
 %       Y. Friocourt
 %
-%       yann.friocourt@deltares.nl	
+%       yann.friocourt@deltares.nl
 %
 %       Deltares (former Delft Hydraulics)
 %       P.O. Box 177
@@ -49,6 +49,7 @@ function OutputName = getWaterbaseData(varargin);
 %       The Netherlands
 %   --------------------------------------------------------------------
 
+% 2009 mar 19: allow for selection of multiple years (all years between 1st and last) [Yann Friocourt]
 % 2009 jan 27: moved pieces to separate functions getWaterbaseData_locations and getWaterbaseData_substances [Gerben de Boer]
 % 2009 jan 27: allow for argument input of all chocie, to allow for batch running [Gerben de Boer]
 % 2009 jan 27: use urlwrite for query of one location, as urlwrite often returns status=0 somehow [Gerben de Boer]
@@ -63,30 +64,30 @@ function OutputName = getWaterbaseData(varargin);
 
    if nargin>0
       indSub = varargin{1};
-      
+
       if    isnumeric(indSub);indSub = find    (indSub==Substance.Code    );
       else ~isnumeric(indSub);indSub = strmatch(indSub, Substance.FullName);
       end
       ok        = 1;
-      
+
    else
       [indSub, ok] = listdlg('ListString', Substance.FullName, .....
                           'SelectionMode', 'single', ...
                            'PromptString', 'Select the substance to download', ....
                                    'Name', 'Selection of substance',...
                                'ListSize', [500, 300]);
-      
-      if (ok == 0) 
+
+      if (ok == 0)
          OutputName = [];
          return;
       end
-      
+
    end
 
    disp(['message: getWaterbaseData: loading Substance # ',num2str(indSub                ,'%0.3d'),': ',...
                                                            num2str(Substance.Code(indSub),'%0.3d'),' "',...
                                                            Substance.FullName{indSub},'"'])
-                                                           
+
 %% Location names
 %% ------------------------------------
 
@@ -96,7 +97,7 @@ function OutputName = getWaterbaseData(varargin);
 %% ------------------------------------
 
    if nargin>1
-      indLoc = varargin{2}; 
+      indLoc = varargin{2};
 
       if   ~isnumeric(indLoc);indLoc = strmatch(indLoc, Station.ID);
       end
@@ -108,19 +109,19 @@ function OutputName = getWaterbaseData(varargin);
                            'InitialValue', [1:length(Station.FullName)], ...
                            'PromptString', 'Select the locations', ....
                                    'Name', 'Selection of locations');
-      
-      if (ok == 0) 
+
+      if (ok == 0)
          OutputName = [];
          return;
       end
    end
-   
+
    if length(indLoc)>1
    disp(['message: getWaterbaseData: loading Location    ',num2str(length(indLoc),'%0.3d'),'x #s ',num2str(indLoc,'%0.3d & ')])
    else
    disp(['message: getWaterbaseData: loading Location  # ',num2str(indLoc,'%0.3d'),': ',Station.ID{indLoc},' "',Station.FullName{indLoc},'"'])
    end
-   
+
 %% Times
 %% ------------------------------------
 
@@ -137,22 +138,22 @@ function OutputName = getWaterbaseData(varargin);
       ListYear  = cellstr(ListYear);
 
       [indDate, ok] = listdlg('ListString', ListYear, ...
-                           'SelectionMode', 'single', ...
+                           'SelectionMode', 'multiple', ...
                             'InitialValue', [length(ListYear)], ...
                             'PromptString', 'Select the year', ....
                                     'Name', 'Selection of year');
-      
-      if (ok == 0) 
+
+      if (ok == 0)
          OutputName = [];
          return;
       end
-      startdate = [ListYear{indDate} '01010000'];
-      enddate   = [ListYear{indDate} '12312359'];
+      startdate = [ListYear{min(indDate)} '01010000'];
+      enddate   = [ListYear{max(indDate)} '12312359'];
    end
-   
+
    disp(['message: getWaterbaseData: loading startdate        ',startdate]);
    disp(['message: getWaterbaseData: loading enddate          ',enddate]);
-   
+
 %% Select Times
 %% ------------------------------------
 
@@ -176,50 +177,50 @@ function OutputName = getWaterbaseData(varargin);
 
 %% get data = f(Substance.Code, Station.ID, startdate, enddate
 %% ------------------------------------
-   
+
    %% Directly write file returned for one location
    %% ------------------------------------
 
    if length(indLoc)==1
-   
+
       iLoc = 1;
-   
+
       urlName = ['http://www.waterbase.nl/Sites/waterbase/wbGETDATA.xitng?ggt=id' ...
              sprintf('%d', Substance.Code(indSub)) '&site=MIV&lang=nl&a=getData&gaverder=GaVerder&from=' ...
           startdate '&loc=' Station.ID{indLoc(iLoc)} '&to=' enddate '&fmt=text'];
-   
+
       disp(urlName)
-   
+
       [s status] = urlwrite([urlName],fullfile(FilePath,FileName));
-      
+
       if (status == 0)
         warndlg('www.waterbase.nl may be offline or you are not connected to the internet','Online source not available');
         close(h);
-   
+
         return;
       end
-   
+
    else
-   
+
    %% Pad multiple files returned for multiplelocations
    %% ------------------------------------
 
       h = waitbar(0,'Downloading data...');
-   
+
       fid = fopen(fullfile(FilePath,FileName), 'w+');
       for iLoc = 1:length(indLoc)
-   
+
             urlName = ['http://www.waterbase.nl/Sites/waterbase/wbGETDATA.xitng?ggt=id' ...
                    sprintf('%d', Substance.Code(indSub)) '&site=MIV&lang=nl&a=getData&gaverder=GaVerder&from=' ...
                 startdate '&loc=' Station.ID{indLoc(iLoc)} '&to=' enddate '&fmt=text'];
-   
+
             disp(urlName)
-   
+
             [s status] = urlread([urlName]);
             if (status == 0)
               warndlg('www.waterbase.nl may be offline or you are not connected to the internet','Online source not available');
               close(h);
-   
+
               return;
             end
             ind    = regexp(s, '\n');
@@ -236,10 +237,11 @@ function OutputName = getWaterbaseData(varargin);
                 end
               end
             end
-   
+
             waitbar(iLoc/length(indLoc),h)
          end
-         
-   end      
+         close(h);
 
-%% EOF   
+   end
+
+%% EOF
