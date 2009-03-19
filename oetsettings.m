@@ -86,9 +86,20 @@ function oetsettings(varargin)
    help oetsettings
    fprintf('\n*** OpenEarthTools settings enabled! ***\n');
    
-%% NETCDF
-    javaaddpath ( './io/nctools/toolsUI-2.2.22.jar' )
+%% NETCDF (if not present yet)
+%  (NB RESTOREDEFAULTPATH does not restore java paths)
+%% ---------------------
+    java2add         = path2os([openearthtoolsroot,'/io/nctools/toolsUI-2.2.22.jar']);
+    dynjavaclasspath = path2os(javaclasspath);
+    indices  = strfind(dynjavaclasspath,java2add);
+    
+    if isempty(cell2mat(indices))
+       javaaddpath (java2add)
+    else
+       disp(['Java path not added, already there: ',java2add])
+    end
     setpref ('SNCTOOLS', 'USE_JAVA', true); % this requires SNCTOOLS 2.4.8 or better
+    
 %% EOF
 
 
