@@ -95,3 +95,13 @@ stochast = struct(...
             'Hsig_t' 'linear' 'extrap'} 1}...
         } ...
     );
+
+%%
+OPT = struct(...
+    'active', true(size(stochast)));
+
+OPT = setProperty(OPT, varargin{:});
+
+for i = find(~OPT.active)
+    stochast(i).Distr = @deterministic;
+end
