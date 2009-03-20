@@ -1,22 +1,3 @@
-function $output = $filename($input)
-%$FILENAME  $description
-%
-%   More detailed description goes here.
-%
-%   Syntax:
-%   $output = $filename($input)
-%
-%   Input:
-%   $varargin  =
-%
-%   Output:
-%   $varargout =
-%
-%   Example
-%   $filename
-%
-%   See also $seeAlso
-
 %   --------------------------------------------------------------------
 %   Copyright (C) $date(yyyy) $Company
 %       $author
@@ -42,11 +23,11 @@ function $output = $filename($input)
 % Created: $date(dd mmm yyyy)
 % Created with Matlab version: $version
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords:
 
 %%
