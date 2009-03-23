@@ -112,9 +112,16 @@ STRINGSIZE = 100;
     nc_varput(filename, 'seaward_distance', grid.seawardDistance);
     nc_varput(filename, 'x', grid.X);
     nc_varput(filename, 'y', grid.Y);
-    nc_varput(filename, 'angle', grid.angle);
-    nc_varput(filename, 'MHW', grid.MHW);
-    nc_varput(filename, 'MLW', grid.MLW);
+
+    if strmatch('angle', fieldnames(grid))
+        nc_varput(filename, 'angle', grid.angle);
+    end
+    if strmatch('MHW', fieldnames(grid))
+        nc_varput(filename, 'MHW', grid.MHW);
+    end
+    if strmatch('MLW', fieldnames(grid))
+        nc_varput(filename, 'MLW', grid.MLW);
+    end
 
 
 %% Height is big therefor done seperate

@@ -48,7 +48,7 @@ d.contourreference = 'origin';
 d.ls_fielddata = 'parentSeq';
 d.timestamp = 0;
 d.fielddata = struct;
-d.X = zeros(625,407);
-d.Y = zeros(625,407);
-d.Z = zeros(625,407);
+d.X = zeros(1,1)*NaN;
+d.Y = zeros(1,1)*NaN;
+d.Z = zeros(1,1)*NaN;
 
