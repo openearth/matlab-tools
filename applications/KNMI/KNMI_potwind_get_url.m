@@ -1,4 +1,4 @@
-function KNMI_potwind_get_url(basepath)
+function KNMI_potwind_get_url(basepath,varargin)
 %KNMI_POTWIND_GET_URL   gets all potwind data from KNMI website
 %
 %   KNMI_POTWIND_GET_URL(basepath)
@@ -7,6 +7,14 @@ function KNMI_potwind_get_url(basepath)
 %
 %   .\OpenEarthRawData\KNMI\potwind\cache\
 %   .\OpenEarthRawData\KNMI\potwind\raw\
+%
+% Implemented <keyword,value> pairs are:
+% * download : switch whether to download from url (default 1)
+% * unzip    : switch whether unzip downloaded data (default 1)
+% * nc       : switch whether to make netCDF from unzipped data (default 0)
+% * opendap  : switch whether to put netCDF files on OPeNDAP server (default 0)
+% * url      : base url from where to download (default 
+%              http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/)
 %
 %See also: KNMI_POTWIND, KNMI_ETMGEG, KNMI_ETMGEG_GET_URL
 
@@ -45,7 +53,7 @@ function KNMI_potwind_get_url(basepath)
    end
 
 %% Settings
-%% --------------------
+%----------------------
 
    DIR.url      =  'http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/'; %datafiles/
    DIR.cache    = [basepath,'\OpenEarthRawData\KNMI\potwind\cache\'];
@@ -69,9 +77,16 @@ function KNMI_potwind_get_url(basepath)
    
    OPT.download = 1;
    OPT.unzip    = 1;
+   OPT.nc       = 1;
+   OPT.opendap  = 1; 
+
+%% Set <keyword,value> pairs
+%----------------------
+
+   OPT = setProperty(OPT,varargin{:});
 
 %% Load website
-%% --------------------
+%----------------------
 
    website   = urlread ('http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/');
 
@@ -80,7 +95,7 @@ function KNMI_potwind_get_url(basepath)
                         [DIR.cache,'download.html']);
 
 %% Extract names of files to be downloaded from webpage
-%% --------------------
+%----------------------
 
    indices   = strfind(website,'"potwind_');
    
@@ -99,7 +114,7 @@ function KNMI_potwind_get_url(basepath)
    nfile = length(OPT.files);
    
 %% Download *.zip files
-%% --------------------
+%----------------------
 
    if OPT.download
       for ifile=1:nfile
@@ -115,7 +130,7 @@ function KNMI_potwind_get_url(basepath)
    end
 
 %% Extract *.zip files
-%% --------------------
+%----------------------
 
    if OPT.unzip
       
@@ -127,6 +142,19 @@ function KNMI_potwind_get_url(basepath)
                   [DIR.raw                       ]);
          
       end   
+   end
+   
+%% Transform to *.nc files
+%----------------------
+
+   if OPT.nc
+   %knmi_potwind2nc_time_direct
+   end
+   
+%% Copy to OPeNDAP server 
+%----------------------
+
+   if OPT.opendap
    end
 
 %% EOF
