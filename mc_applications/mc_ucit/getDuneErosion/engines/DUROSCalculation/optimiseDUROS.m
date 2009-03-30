@@ -52,7 +52,7 @@ Iter = 0;               % Iteration number
 iterid = 1;             % dummy value for iteration number which gives the best possible solution;
 maxiter = DuneErosionSettings('get', 'maxiter');           % specify maximum number of iterations
 precision = 1e-2;       % specify maximum error
-[x0precision Volume] = deal(NaN(1,maxiter));% Preallocation of variable to store calculated volumes
+Volume = NaN(1,maxiter);% Preallocation of variable to store calculated volumes
 CorrectionApplied = false(1, maxiter); % preallocation of variable to know if volume correction has been applied
 NextIteration = true;   % Condition of while loop
 
@@ -65,9 +65,6 @@ while NextIteration
     % Get DUROS profile based on hydraulic conditions and profile shift x0.
     result(Iter) = getDUROSprofile(xInitial, zInitial, x0(Iter), Hsig_t, Tp_t, WL_t, w, SeawardBoundaryofInterest,false);
     Volume(Iter) = result(Iter).Volumes.Volume;
-    % precision holds for a volume. Dividing this by the height of the
-    % erosion profile gives a precision for the horizontal length scale
-    x0precision(Iter) = precision / ((result(Iter).z2Active(1) - result(Iter).z2Active(end))/2);
 
     % create conditions if statement
     SecondIter = Iter==2;
@@ -92,26 +89,9 @@ while NextIteration
     MaxNrItersReached = Iter==maxiter;
     if FirstTwoItersCompleted
         VollDiffSmall = abs(diff(Volume(Iter-1:Iter)))<precision;
-        % The following code is not tested (with various cases). Errors
-        % therefore could occur. If so, just comment this statement and
-        % comment the if statment (line 114) as well. The code will slow
-        % down but definately work...
-        ChannelSlopeEffect = ...
-            any(...
-            find(...
-            abs((Volume - Volume(Iter))) < precision... Volume difference small
-            &...
-            (cat(2,abs((x0 - x0(Iter))),nan(1,maxiter-Iter)) - x0precision) < 0 ... x0 difference small
-            )...
-            ~=Iter); % excluding the iteration position itself of course....
     end
 
-    if FirstTwoItersCompleted &&...
-            PrecisionNotReached &&...
-            SolutionPossibleWithinBoundaries &&...
-            ~MaxNrItersReached &&...
-            ~VollDiffSmall &&...
-            ~ChannelSlopeEffect
+    if FirstTwoItersCompleted && PrecisionNotReached && SolutionPossibleWithinBoundaries && ~MaxNrItersReached && ~VollDiffSmall
         % new profile shift has to be calculated.
 
         x0(Iter+1) = getNextx0(Volume,ProfileFluct,x0);
@@ -242,15 +222,10 @@ SteepPointsExist = ~isempty(channelslope_xpoints);
 if ChannelSlopes && SteepPointsExist...
         && SolutionPossibleWithinBoundaries && PrecisionNotReached
     [dum idpos idneg] = getNextx0(Volume,ProfileFluct,x0);
-    xpos = x0(idpos);
-    xneg = x0(idneg);
-    if any(channelslope_xpoints(:,1)<xpos & channelslope_xpoints(:,1)>xneg)
-        % compare the x0 positions of the closest solutions to x0 positions of
-        % possible channel problems. If one of the channelslope_points x0
-        % positions is between the x0 of the solutions closest to
-        % ProfileFluct (positive and negative), influence of a channelslope
-        % is present.
-        chpid = find(channelslope_xpoints(:,1)<xpos & channelslope_xpoints(:,1)>xneg,1,'first');
+    xpos = max(result(idpos).xActive);
+    xneg = max(result(idneg).xActive);
+    if any(channelslope_xpoints(:,2)<xpos & channelslope_xpoints(:,2)>xneg)
+        chpid = find(channelslope_xpoints(:,2)<xpos & channelslope_xpoints(:,2)>xneg,1,'first');
         if ~isempty(chpid)
             % in this case the problems are caused by a channel slope.
             writemessage(-6, ['Solution influenced by non-erodible channel slope at = (',num2str(channelslope_xpoints(chpid,2),'%.2f'),', ',num2str(channelslope_xpoints(chpid,3),'%.2f'),') [m]']);

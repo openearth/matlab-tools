@@ -1,5 +1,5 @@
 function t = getVolumeCorrection_test(t)
-%GETVOLUMECORRECTION_TEST test defintion routine
+% GETVOLUMECORRECTION_TEST test defintion routine
 %
 % see also getVolumeCorrection
 
