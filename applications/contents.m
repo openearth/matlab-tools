@@ -9,6 +9,7 @@
 %   probabilistic   - application
 %   Rijkswaterstaat - data: Rijkswaterstaat
 %   sobek           - model: SOKEB
+%   SuperTrans      - global coordinate transformations
 %   SWAN            - model: SWAN
 %   textpad         - program: textpad
 %   tide            - application

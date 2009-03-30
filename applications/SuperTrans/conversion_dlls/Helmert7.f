@@ -14,7 +14,7 @@ C     multiple the first input by the second input
       
 C     This is a MEX file for MATLAB.
 C     Copyright 1984-2004 The MathWorks, Inc. 
-C     $Revision: 1.12.2.1 $
+C     $Revision$
       
       subroutine mexFunction(nlhs, plhs, nrhs, prhs)
 C-----------------------------------------------------------------------
