@@ -1,7 +1,7 @@
 function OutputName = getWaterbaseData(varargin);
-%GETWATERBASEDATA   load data from www.waterbase.nl
+%GETWATERBASEDATA   load data from <a href="http://www.waterbase.nl">www.waterbase.nl</a>
 %
-% Download data from the www.waterbase.nl website for one specified
+% Download data from the <a href="http://www.waterbase.nl">www.waterbase.nl</a> website for one specified
 % substance at one or more specified locations during one specified
 % year. All available data are written in a specified ascii file.
 %
@@ -22,7 +22,7 @@ function OutputName = getWaterbaseData(varargin);
 %    D = getWaterbaseData( FullName ,ID,<datenum>)
 %
 % where datenum is a 2 element vector with teh start and end time
-% of teh query in datenumbers (e.g. datenum([1961 2008],1,1)).
+% of the query in datenumbers (e.g. datenum([1961 2008],1,1)).
 %
 %    D = getWaterbaseData( Code     ,ID,datenum,<FileName>)
 %    D = getWaterbaseData( FullName ,ID,datenum,<FileName>)
@@ -34,7 +34,7 @@ function OutputName = getWaterbaseData(varargin);
 %
 %    getWaterbaseData(22,'AUKFPFM',datenum([1961 2008],1,1),pwd)
 %
-% See also: DONAR_READ, www.waterbase.nl,
+% See also: DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>,
 %           GETWATERBASEDATA_SUBSTANCES, GETWATERBASEDATA_LOCATIONS
 
 %   --------------------------------------------------------------------

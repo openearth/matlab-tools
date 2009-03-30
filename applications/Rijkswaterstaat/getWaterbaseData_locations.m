@@ -16,7 +16,7 @@ function Station = getWaterbaseData_locations(Code)
 % * FullName, e.g. 'Aukfield platform'
 % * ID      , e.g. 'AUKFPFM'
 %
-% See also: DONAR_READ, www.waterbase.nl, GETWATERBASEDATA, GETWATERBASEDATA_SUBSTANCES
+% See also: DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>, GETWATERBASEDATA, GETWATERBASEDATA_SUBSTANCES
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares

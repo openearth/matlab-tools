@@ -11,7 +11,7 @@ function Substance = getWaterbaseData_substances(fname)
 % * CodeName, e.g. 22%7CSignificante+golfhoogte+uit+energiespectrum+van+30-500+mhz+in+cm+in+oppervlaktewater"
 % * Code    , e.g. 22
 %
-% See also: DONAR_READ, www.waterbase.nl, GETWATERBASEDATA, GETWATERBASEDATA_LOCATIONS
+% See also: DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>, GETWATERBASEDATA, GETWATERBASEDATA_LOCATIONS
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares

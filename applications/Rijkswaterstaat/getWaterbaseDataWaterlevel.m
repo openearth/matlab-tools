@@ -4,18 +4,13 @@
 %           GETWATERBASEDATA_SUBSTANCES, GETWATERBASEDATA_LOCATIONS
 
 % 
-% CodeName :22%7CSignificante+golfhoogte+uit+energiespectrum+van+30-500+mhz+in+cm+in+oppervlaktewater"
-% FullName :Significante golfhoogte uit energiespectrum van 30-500 mhz in cm in oppervlaktewater
-% Code     :22
-% indSub   :509
-% 
-% CodeName :
-% FullName :
-% Code     :24
-% indSub   :
+% CodeName :54%7CWaterhoogte+in+cm+t.o.v.+mean+sea+level+in+oppervlaktewater"
+% FullName :Waterhoogte in cm t.o.v. mean sea level in oppervlaktewater
+% Code     :54
+% indSub   :653
 % 
 
-OPT.Code   = 24;
+OPT.Code   = 54;
 
 %% Match and check Substance
 % --------------------------------
@@ -42,7 +37,7 @@ OPT.Code   = 24;
       disp(['ID       :',        LOC.ID{indLoc} ])
       
       getWaterbaseData(SUB.Code(OPT.indSub),LOC.ID{indLoc},datenum([1961 2008],1,1),...
-                      'P:\z3945_Maasvlakte2\z4103-zandwin\wave\golvenSvasek\waterbase\')   
+                      'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\raw\')   
    end
    
 % AUKFPFM     Aukfield platform          
