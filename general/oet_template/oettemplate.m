@@ -47,6 +47,6 @@ function $output = $filename($input)
 % $Author: $
 % $Revision: $
 % $HeadURL: $
-% $Keywords:
+% $Keywords: $
 
 %%

@@ -50,7 +50,7 @@ function [fout,abort] = awaitbar(x,whichbar,varargin)
 % Copyright 2007 by Durga Lal Shrestha.
 % eMail: durgals@hotmail.com
 % $Date: 2007/06/07
-% $Revision: 1.0.0 $ $Date: 2007/06/07 $
+% $Revision$ $Date$
 %
 %% Argument check
 figTitle = 'Progress'; % default title

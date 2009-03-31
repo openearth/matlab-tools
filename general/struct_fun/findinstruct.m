@@ -54,7 +54,7 @@ function n=findinstruct(h,fld1,val1,varargin)
 % $Author$
 % $Revision$
 % $HeadURL$
-% $Keywords:
+% $Keywords$
 
 % 2009 mar 30: added comments [Gerben de Boer]
 
