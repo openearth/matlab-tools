@@ -568,8 +568,8 @@ for ifile=1:length(fnames)
       D.data.x           = D.data.x          (1:nt); % 3
       D.data.y           = D.data.y          (1:nt); % 4
       D.data.epsg        = D.data.epsg       (1:nt); % 5
-      D.data.lon         = D.data.epsg       (1:nt); % 6
-      D.data.lat         = D.data.epsg       (1:nt); % 7
+      D.data.lon         = D.data.lon        (1:nt); % 6
+      D.data.lat         = D.data.lat        (1:nt); % 7
       
       D.locations{1} = D(nloc).meta1.location;
    
