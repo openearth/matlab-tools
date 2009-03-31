@@ -52,6 +52,7 @@ function XB = XBeach_Write_Inp(calcdir, XB, varargin)
 
 %% default properties
 OPT = struct(...
+    'timefactor', 1,... % optionally change 
     'calcdir', calcdir,...
     'paramsfile', 'params.txt',...
     'xfile', 'x.dep',...
@@ -112,11 +113,11 @@ else
         XB.settings.Flow.zs0=[];
         if length(zs0)>1
             % time series
-            %             zs0(:,1)=zs0(:,1)*3600/XB.settings.SedInput.morfac;
+            %             zs0(:,1)=zs0(:,1)*OPT.timefactor/XB.settings.SedInput.morfac;
             %         TODO('adjust this line that it only accepts [s] and not hours as interval times');
             % New version of xbeach times do not have to be multiplied ith the
             % morfac
-            zs0(:,1)=zs0(:,1)*3600;
+            zs0(:,1)=zs0(:,1)*OPT.timefactor;
             dlmwrite(fullfile(OPT.calcdir, 'waterlevels.wls'),zs0,'delimiter','\t','Precision','%5.3f');
             XB.settings.Flow.zs0file = 'waterlevels.wls';
             XB.settings.Flow.tidelen = size(zs0,1);
@@ -131,8 +132,8 @@ if ~isempty(XB.settings.Waves.Hrms) && ~isempty(XB.settings.Waves.Tm01)
     if length(XB.settings.Waves.Hrms)==1
         XB.settings.Waves.Hrms = [XB.settings.Flow.tstop XB.settings.Waves.Hrms];
     else
-%         XB.settings.Waves.Hrms(:,1) = XB.settings.Waves.Hrms(:,1)*3600/XB.settings.SedInput.morfac;
-        XB.settings.Waves.Hrms(:,1) = XB.settings.Waves.Hrms(:,1)*3600;
+%         XB.settings.Waves.Hrms(:,1) = XB.settings.Waves.Hrms(:,1)*OPT.timefactor/XB.settings.SedInput.morfac;
+        XB.settings.Waves.Hrms(:,1) = XB.settings.Waves.Hrms(:,1)*OPT.timefactor;
 %         TODO('adjust this line that it only accepts [s] and not hours as interval times');
         % New version of xbeach times do not have to be multiplied ith the
         % morfac 
@@ -141,18 +142,18 @@ if ~isempty(XB.settings.Waves.Hrms) && ~isempty(XB.settings.Waves.Tm01)
     if length(XB.settings.Waves.Tm01)==1
         XB.settings.Waves.Tm01 = [XB.settings.Flow.tstop XB.settings.Waves.Tm01];
     else
-%         XB.settings.Waves.Tm01(:,1) = XB.settings.Waves.Tm01(:,1)*3600/XB.settings.SedInput.morfac;
-        XB.settings.Waves.Tm01(:,1) = XB.settings.Waves.Tm01(:,1)*3600;
+%         XB.settings.Waves.Tm01(:,1) = XB.settings.Waves.Tm01(:,1)*OPT.timefactor/XB.settings.SedInput.morfac;
+        XB.settings.Waves.Tm01(:,1) = XB.settings.Waves.Tm01(:,1)*OPT.timefactor;
         % New version of xbeach times do not have to be multiplied ith the
         % morfac
 %         TODO('adjust this line that it only accepts [s] and not hours as interval times');
     end
 
-    Hrmstimes = cumsum(XB.settings.Waves.Hrms(:,1));
-    Tm01times = cumsum(XB.settings.Waves.Tm01(:,1));
-    endtime = XB.settings.Flow.tstop;
+    Hrmstimes = cumsum(XB.settings.Waves.Hrms(:,1)); % time series Hrms
+    Tm01times = cumsum(XB.settings.Waves.Tm01(:,1)); % time series Tm01
     starttime = 0;
-    WaveConditions = sort(unique([Tm01times; Hrmstimes; endtime; starttime]));
+    endtime = XB.settings.Flow.tstop;
+    WaveConditions = sort(unique([Tm01times; Hrmstimes; endtime; starttime])); % joined time series
     for icond = 1:length(WaveConditions)
         if any(Hrmstimes==WaveConditions(icond,1))
             WaveConditions(icond,2) = XB.settings.Waves.Hrms(Hrmstimes==WaveConditions(icond,1),2);
@@ -173,9 +174,9 @@ if ~isempty(XB.settings.Waves.Hrms) && ~isempty(XB.settings.Waves.Tm01)
             WaveConditions(icond,3) = XB.settings.Waves.Tm01(id,2);
         end
     end
-    WaveCond(:,1) = diff(WaveConditions(:,1));
-    WaveCond(:,2) = WaveConditions(1:end-1,2);
-    WaveCond(:,3) = WaveConditions(1:end-1,3);
+    WaveCond(:,1) = diff(WaveConditions(:,1)); % time (duration)
+    WaveCond(:,2) = WaveConditions(1:end-1,2); % Hrms
+    WaveCond(:,3) = WaveConditions(1:end-1,3); % Tm01
 
     [dummy basefile] = fileparts(XB.settings.Waves.bcfile);
     basefile = strrep(basefile,'.','_');
@@ -218,7 +219,7 @@ if ~isempty(XB.settings.Waves.Hrms) && ~isempty(XB.settings.Waves.Tm01)
                 sigma= 0.08;
                 gammajs=3.3;
                 Ef   = g^2*(2*pi)^-4*f.^-5.*exp(-5/4*(f./fpeak).^-4).*gammajs.^exp(-0.5*((f./fpeak-1)/sigma).^2);
-                Hm0t= 4*sqrt(nansum1(Ef*df));
+                Hm0t= 4*sqrt(nansum(Ef*df));
                 Ef   = WaveCond(iwavbound,2)^2/Hm0t^2*Ef;
         end
         spectrumfile([OPT.calcdir filesep basefile ,'.bc' num2str(iwavbound)],f,Ef);

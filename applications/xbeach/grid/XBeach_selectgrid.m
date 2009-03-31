@@ -60,6 +60,7 @@ function XB = XBeach_selectgrid(X, Y, Z, varargin)
 %% default Input section
 OPT = struct(...
     'manual', true,...
+    'plot', true,...
     'WL_t', 0,...
     'xori', 0,...
     'yori', 0,...
@@ -125,64 +126,68 @@ if OPT.manual
     disp('Left mouse button picks points.')
     disp('Right mouse button picks last point.')
     [xi yi]=select_oblique_rectangle
-
-
-
-
-
-
-
-
-
-
-
-
 end
+
 % Interpolate to grid
 in = inpolygon(X, Y, xi, yi);
 Z(~in) = NaN;
 
-figure;
-surf(X, Y, Z);
-shading interp;
-colorbar
+if OPT.plot
+    figure;
+    if ~isvector(X)
+        surf(X, Y, Z);
+        shading interp;
+        colorbar
+    else
+        plot(X, Z)
+    end
+end
 
 % Extrapolate to sides
 [nX nY] = size(X);
-for i = 1:nX
-    for j = floor(nY/2):nY
-        %         if j == nY
-        %             dbstopcurrent
-        %         end
-        %         dbclear all
-        if isnan(Z(i,j))
-            Z(i,j) = Z(i,j-1);
+if any(isnan(Z))
+    for i = 1:nX
+        for j = floor(nY/2):nY
+            %         if j == nY
+            %             dbstopcurrent
+            %         end
+            %         dbclear all
+            if isnan(Z(i,j))
+                Z(i,j) = Z(i,j-1);
+            end
+        end
+        for j = floor(nY/2)-1:-1:1
+            if isnan(Z(i,j))
+                Z(i,j) = Z(i,j+1);
+            end
         end
     end
-    for j = floor(nY/2)-1:-1:1
-        if isnan(Z(i,j))
-            Z(i,j) = Z(i,j+1);
+    for j = 1:nY
+        % Extrapolate to land
+        for i = floor(nX/2):nX
+            if isnan(Z(i,j));
+                Z(i,j) = OPT.posdwn * max(OPT.posdwn*Z(i-1,j)-OPT.maxslp*OPT.dx, OPT.posdwn*OPT.dryval);
+            end
+        end
+        % Extrapolate to sea
+        for i = floor(nX/2):-1:1
+            if isnan(Z(i,j));
+                Z(i,j) = OPT.posdwn * min(OPT.posdwn*Z(i+1,j)+OPT.seaslp*OPT.dx, OPT.posdwn*OPT.deepval);
+            end
         end
     end
 end
-for j = 1:nY
-    % Extrapolate to land
-    for i = floor(nX/2):nX
-        if isnan(Z(i,j));
-            Z(i,j) = OPT.posdwn * max(OPT.posdwn*Z(i-1,j)-OPT.maxslp*OPT.dx, OPT.posdwn*OPT.dryval);
-        end
-    end
-    % Extrapolate to sea
-    for i = floor(nX/2):-1:1
-        if isnan(Z(i,j));
-            Z(i,j) = OPT.posdwn * min(OPT.posdwn*Z(i+1,j)+OPT.seaslp*OPT.dx, OPT.posdwn*OPT.deepval);
-        end
+
+if OPT.plot
+    figure;
+    if ~isvector(X)
+        surf(X, Y, Z);
+        shading interp;
+        colorbar
+    else
+        plot(X, Z)
     end
 end
-figure;
-surf(X,Y,Z);
-shading interp;
-colorbar
 
 %% x-grid
 xnew = X(:,1);
