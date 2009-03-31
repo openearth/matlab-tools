@@ -55,11 +55,12 @@ for ifile=1:length(OPT.files)
 						   
    nc_attput(outputfile, nc_global, 'Conventions'  , 'CF-1.4');
    
+   nc_attput(outputfile, nc_global, 'timezone'     , 'GMT');
+
    nc_attput(outputfile, nc_global, 'stationnumber', D.stationnumber);
    nc_attput(outputfile, nc_global, 'stationname'  , D.stationname);
    nc_attput(outputfile, nc_global, 'over'         , D.over);
    nc_attput(outputfile, nc_global, 'height'       , num2str(D.height));
-   nc_attput(outputfile, nc_global, 'timezone'     , 'GMT');
 
 %% 2 Create dimensions
 %------------------
