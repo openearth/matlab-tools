@@ -1,16 +1,22 @@
-function [CS,ok]=SelectCoordinateSystem(CoordinateSystems,tp,varargin)
-%SELECTCOORDINATESYSTEM
+function varargout=SelectCoordinateSystem(CoordinateSystems,tp,varargin)
+%SELECTCOORDINATESYSTEM   GUI to pick xy or loglat coordinate system from database
 %
-% [CS,ok]=SelectCoordinateSystem(CoordinateSystems,tp)
+% [CS,ok]=SelectCoordinateSystem(CoordinateSystems,tp,<cs0>)
 %
-% launches GUI from which you can select a CoordinateSystem.
+% launches GUI from which you can select a CoordinateSystem where:
+% tp is the type of coordinates to be transformed 
+%           ('cartesian' or 'xy' for projected Eastings/Northings, otherwise Latitude/Longitude)
+% CS is the field coord_ref_sys_name of the selection made from the CoordinateSystems 
+%           struct that was returned by GETCOORDINATESYSTEMS. (e.g.)
+% cs0 is the coordinate system that is pre-selected in
+%           in the GUI (default 'Amersfoort / RD New')
 %
-% tp is the type of coordinates to be transformed ('xy' or 'geo')
-% CS is the field coord_ref_sys_name of the choice made from the CoordinateSystems 
-%            struct that was returned by GETCOORDINATESYSTEMS.
+% Note that a coordinate system can also be selected manually, to facilitate
+% batch processing, for example
 %
-% [CS,ok]=SelectCoordinateSystem(CoordinateSystems,tp,cs0)
-% where cs0 is ? (default 'Amersfoort / RD New')
+%    index = findinstruct   (CoordinateSystems,'coord_ref_sys_code',28992)
+%    index = findstrinstruct(CoordinateSystems,'coord_ref_sys_name','Amersfoort / RD New')
+%    CS    = CoordinateSystems(index).coord_ref_sys_name
 %
 %See also: SuperTrans = GetCoordinateSystems > SelectCoordinateSystem > ConvertCoordinates
 
@@ -44,7 +50,12 @@ function [CS,ok]=SelectCoordinateSystem(CoordinateSystems,tp,varargin)
 % $Author$
 % $Revision$
 % $HeadURL$
-% $Keywords:
+% $Keywords:$
+
+% 2009 mar 31: added documentation [Gerben de Boer]
+
+   %% Initialize
+   %------------------------------------------
 
    handles.ok=0;
    
@@ -55,26 +66,27 @@ function [CS,ok]=SelectCoordinateSystem(CoordinateSystems,tp,varargin)
    end
    handles.CS=cs0;
    
+   %% Fill GUI list
+   %------------------------------------------
    nproj=0;
    ngeo =0;
    for i=1:length(CoordinateSystems)
        switch lower(CoordinateSystems(i).coord_ref_sys_kind),
            case{'projected'}
-               nproj=nproj+1;
-               handles.CSProj(nproj)=CoordinateSystems(i);
-               handles.StrProj{nproj}=handles.CSProj(nproj).coord_ref_sys_name;
+               nproj                  = nproj+1;
+               handles.CSProj(nproj)  = CoordinateSystems(i);
+               handles.StrProj{nproj} = handles.CSProj(nproj).coord_ref_sys_name;
            case{'geographic 2d'}
-               ngeo=ngeo+1;
-               handles.CSGeo(ngeo)=CoordinateSystems(i);
-               handles.StrGeo{ngeo}=handles.CSGeo(ngeo).coord_ref_sys_name;
+               ngeo                   = ngeo+1;
+               handles.CSGeo(ngeo)    = CoordinateSystems(i);
+               handles.StrGeo{ngeo}   = handles.CSGeo(ngeo).coord_ref_sys_name;
        end
    end
    
-   handles.Window=MakeNewWindow('Select Coordinate System',[400 480]);
-   
+   handles.Window   = MakeNewWindow('Select Coordinate System',[400 480]);
    handles.SelectCS = uicontrol(gcf,'Style','listbox','String','','Position', [ 30 70 340 390],'BackgroundColor',[1 1 1]);
    
-   if strcmpi(tp,'Cartesian')
+   if strcmpi(tp,'cartesian') | strcmpi(tp,'xy') % same as ConvertCoordinates.m
        set(handles.SelectCS,'String',handles.StrProj);
        ii=strmatch(cs0,handles.StrProj,'exact');
    else
@@ -94,19 +106,23 @@ function [CS,ok]=SelectCoordinateSystem(CoordinateSystems,tp,varargin)
    pause(0.2);
    
    guidata(gcf,handles);
-   
    uiwait;
-   
    handles=guidata(gcf);
    
    if handles.ok
-       ok=1;
-       CS=handles.CS;
+       ok = 1;
+       CS = handles.CS;
    else
-       ok=0;
-       CS=cs0;
+       ok = 0;
+       CS = cs0;
    end    
    close(gcf);
+   
+   if nargout==1
+      varargout = {CS};
+   else
+      varargout = {CS,ok};
+   end
    
    %%------------------------------------------
    function PushOK_CallBack(hObject,eventdata)

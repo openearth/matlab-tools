@@ -4,9 +4,9 @@ function varargout=GetCoordinateSystems(handles)
 % handles = GetCoordinateSystems
 %
 % [CoordinateSystems,...
-%  <Operations,...
-%  <CoordSysCart,...
-%  <CoordSysGeo>>>]= GetCoordinateSystems
+%  Operations,...
+%  CoordSysCart,...
+%  CoordSysGeo]= GetCoordinateSystems
 %
 % loads struct handles with (meta-)info of all CoordinateSystems
 % as stored in CoordinateSystems.mat (can take ~ 7 seconds) sorted in fields
@@ -14,6 +14,8 @@ function varargout=GetCoordinateSystems(handles)
 %  * Operations
 %  * CoordSysCart
 %  * CoordSysGeo
+%
+% The database was created from elements of the <a href="http://trac.osgeo.org/gdal/wiki/DownloadSource">gdal library</a>.
 %
 %See also: SuperTrans = GetCoordinateSystems > SelectCoordinateSystem > ConvertCoordinates
 
@@ -47,7 +49,9 @@ function varargout=GetCoordinateSystems(handles)
 % $Author$
 % $Revision$
 % $HeadURL$
-% $Keywords:
+% $Keywords:$
+
+% 2009 mar 31: added documentation [Gerben de Boer]
 
    curdir=fileparts(which('SuperTrans'));
    load([curdir '\data\CoordinateSystems.mat']);
