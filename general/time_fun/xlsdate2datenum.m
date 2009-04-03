@@ -1,5 +1,5 @@
 function matlabDates = xlsdate2datenum(excelDates)
-%XLSDATE2DATENUM
+%XLSDATE2DATENUM   calculate matlab datenumber from xls code
 %
 % matlabDates = xlsdate2datenum(excelDates)
 %
@@ -11,10 +11,9 @@ function matlabDates = xlsdate2datenum(excelDates)
 %    or for midnights:
 %    datenum(excelDates,'dd-mm-yyyy         ')
 %
+% See also: XLSREAD, DATENUM, DATESTR, TIME2DATENUM
+
 % © G.J. de Boer, Delft University of Technology 2006
-%
-% See also:
-% XLSREAD, DATENUM, DATESTR, TIME2DATENUM
 
 OPT.debug = 0;
 
@@ -48,4 +47,4 @@ OPT.debug = 0;
       
    end
 
-
+%% EOF

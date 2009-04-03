@@ -58,7 +58,7 @@ function varargout = xls2struct(fname,varargin)
 % See also: XLSWRITE (2006b, otherwise mathsworks downloadcentral), 
 %           XLSREAD, STRUCT2XLS
 
-% Tested for matlab releases 2008a, 2007ab, 2006B and 6.5 and 
+% Tested for matlab releases 2008a, 2007ab, 2006B and 6.5
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006-2008 Delft University of Technology
@@ -72,9 +72,9 @@ function varargout = xls2struct(fname,varargin)
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -83,17 +83,14 @@ function varargout = xls2struct(fname,varargin)
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
-%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
 % 2008, Apr 18: made fldname always valid with mkvbar
+% 2009, Apr 03: check whether first cell of line is number, do not call iscommentline on numbers
 
 % TO DO:
-% Add keywords/properties above columns:
-
+% * Add keywords/properties above columns: as in:
 % +---------------+---------------+---------------+---------------+
 % |# textline 1   |               |               |               |
 % |# textline 2   |               |               |               |
@@ -119,12 +116,12 @@ if strcmp(version('-release'),'13')
 end
 
    %% Input
-   %% ----------------------
+   %------------------------
 
    OPT.addunits = true;   
    OPT.units    = true;
    OPT.sheet    = [];
-   OPT.debug    = 1;
+   OPT.debug    = 0;
    OPT.fillstr  = {};
    OPT.fillnum  = NaN;
    
@@ -170,7 +167,7 @@ end
       sptfilenameshort = filename(fname);
          
       %% Load raw data
-      %% ----------------------
+      %------------------------
    
       if ~isempty(OPT.sheet)
          if strfind(version('-release'),'13')==1
@@ -258,14 +255,18 @@ end
       end
       
       %% Take care of fact that excel skips certain rows/columns
-      %% depending on data type (numerical/string)
-      %% --------------------------------------
+      %  depending on data type (numerical/string)
+      %----------------------------------------
 
       if iscell(tsttxt) 
          commentlines       = zeros(1,size(tstraw,1));
          for j=1:size(tstraw,1)
             if ~isnan(tstraw{j,1})
+            if ~isnumeric(tstraw{j,1})
             commentlines(j) = iscommentline(char(tstraw{j,1}(1)),'%*#');
+            else
+            commentlines(j) = 0;
+            end
             end
          end
       elseif iscell(tsttxt) 
@@ -276,8 +277,8 @@ end
      %col_skipped_in_numeric_data = size(tstraw,2) - size(tstdat,2);
       
       %% Test entire columns for presence of non-numbers.
-      %% One single non-number is sufficient to treat entirte column as text.
-      %% --------------------------------------
+      %  One single non-number is sufficient to treat entirte column as text.
+      %----------------------------------------
 
       numeric_columns = repmat(true ,[1 size(tstraw,2)]);
       txt_columns     = repmat(false,[1 size(tstraw,2)]);
@@ -310,7 +311,7 @@ end
       end
       
       %% Take care of nans
-      %% --------------------------------------
+      %----------------------------------------
       
       % for i=1:size(tsttxt,1)
       % for j=1:size(tsttxt,2)
@@ -324,7 +325,7 @@ end
       % end
       
       %% Take care of commentlines and header
-      %% --------------------------------------
+      %----------------------------------------
    
       not_a_comment_line = find(~commentlines);
       
@@ -334,7 +335,7 @@ end
       end
       
       %% Remove empty field names at end of row
-      %% --------------------------------------
+      %----------------------------------------
       
       nfld         = length(fldnames);
       fldnamesmask = ones(1,nfld);
@@ -349,7 +350,7 @@ end
       nfld               = length(fldnames);
       
    %% Read data
-   %% ----------------------
+   %------------------------
 
       for ifld   = 1:nfld
       
@@ -436,8 +437,4 @@ end
       error('syntax [DATA,<units>] = xls2struct(...)')
    end
    
-   
-   
-   
-   
-   
+%% EOF
