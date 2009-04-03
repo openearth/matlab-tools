@@ -154,7 +154,11 @@ else
 end
 str = strrep(str, '$seeAlso', OPT.seeAlso);
 str = strrep(str, '$filename', fname);
-str = strrep(str, '$input', OPT.input);
+if ~isempty(OPT.input)
+    str = strrep(str, '$input', OPT.input);
+else
+    str = strrep(str, '($input)', OPT.input);
+end
 str = strrep(str, '%   $varargin  =', OPT.varargin);
 str = strrep(str, '$FILENAME', upper(fname));
 str = strrep(str, '$description', OPT.description);
