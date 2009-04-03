@@ -222,7 +222,7 @@ result = struct(...
 
 designpoint = cell(1, 2*size(x,2));
 designpoint(1:2:length(designpoint)) = {stochast.Name};
-designpoint(2:2:length(designpoint)) = mat2cell(x(end,:), 1, ones(1,6));
+designpoint(2:2:length(designpoint)) = mat2cell(x(end,:), 1, ones(1,size(x,2)));
 result.Output.designpoint = struct(designpoint{:});
 
 %% subfunction to predefine a series of u-values
