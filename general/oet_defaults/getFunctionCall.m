@@ -80,7 +80,7 @@ if fl
             end
         end
         strcomplete = true;
-        if isempty(strfind(str,')'))
+        if ~isempty(strfind(str,'(')) && isempty(strfind(str,')'))
             % the call is not closed yet, search for the end of the call ( ")" )
             strcomplete = false;
         end
