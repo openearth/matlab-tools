@@ -17,15 +17,15 @@ end
 %% Initialize
 %------------------
 
-   OPT.standard_name = 'sea_surface_height'; % http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
-   OPT.long_name     = 'sea surface height';
    OPT.fillvalue     = 0; % NaNs do not work in netcdf API
    OPT.dump          = 0;
-   OPT.directory.raw = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\raw\';
-   OPT.directory.nc  = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\nc\';
+   OPT.directory.raw = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\raw\sea_surface_height\';
+   OPT.directory.nc  = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\nc\sea_surface_height\';
    OPT.files         = dir([OPT.directory.raw filesep 'id*.txt']);
+   OPT.standard_name = 'sea_surface_height'; % http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
+   OPT.long_name     = 'sea surface height';
 
-for ifile=3:length(OPT.files)  
+for ifile=1:length(OPT.files)  
 
    disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)  )])
 
@@ -35,7 +35,7 @@ for ifile=3:length(OPT.files)
 %------------------
 
    if exist([OPT.filename,'.mat'])
-   D = load([OPT.filename,'.mat']);
+   D = load([OPT.filename,'.mat']);% speeds up considerably
    else
    D             = donar_read(OPT.filename,'locationcode',1,...
                                               'fieldname',OPT.standard_name,...
@@ -44,6 +44,7 @@ for ifile=3:length(OPT.files)
                                                  
    save([OPT.filename,'.mat'],'-struct','D'); % to save time 2nd attempt
    end
+   D.version = '';
    
 %% 1a Create file
 %------------------
@@ -58,16 +59,20 @@ for ifile=3:length(OPT.files)
 
    nc_attput(outputfile, nc_global, 'title'           , '');
    nc_attput(outputfile, nc_global, 'institution'     , 'Rijkswaterstaat');
-   nc_attput(outputfile, nc_global, 'source'          , 'www.waterbase.nl');
-   nc_attput(outputfile, nc_global, 'history'         , ['Original filename: ',filenameext(OPT.filename),...%' version:',D.version,...
-                                                       ' tranformed to NetCDF by G.J. de Boer <g.j.deboer@deltares.nl>, ',datestr(now,31),' by: $HeadURL$ $Revision$ $Date$ $Author$']);
-   nc_attput(outputfile, nc_global, 'references'      , '<http://www.waterbase.nl>');
+   nc_attput(outputfile, nc_global, 'source'          , 'surface observation');
+   nc_attput(outputfile, nc_global, 'history'       , ['Original filename: ',filename(D.name),...
+                                                       ', version:' ,D.version,...
+                                                       ', filedate:',D.date,...
+                                                       ', tranformation to NetCDF: $HeadURL$ $Revision$ $Date$ $Author$']);
+   nc_attput(outputfile, nc_global, 'references'      , '<http://www.waterbase.nl>,<http://openearth.deltares.nl>');
+   nc_attput(outputfile, nc_global, 'email'         , '<servicedesk-data@rws.nl>');
+
    nc_attput(outputfile, nc_global, 'comment'         , '');
+   nc_attput(outputfile, nc_global, 'version'         , D.version);
 						   
    nc_attput(outputfile, nc_global, 'Conventions'     , 'CF-1.4');
+   nc_attput(outputfile, nc_global, 'CF:featureType'  , 'stationTimeSeries');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
    
-   nc_attput(outputfile, nc_global, 'timezone'        , 'GMT+1');
-
    nc_attput(outputfile, nc_global, 'stationname'     , D.data.location);
    nc_attput(outputfile, nc_global, 'location'        , D.data.location);
    nc_attput(outputfile, nc_global, 'donar_code'      , D.data.locationcode);
@@ -75,6 +80,11 @@ for ifile=3:length(OPT.files)
 
    nc_attput(outputfile, nc_global, 'waarnemingssoort', D.meta1.waarnemingssoort);
    nc_attput(outputfile, nc_global, 'reference_level' , D.meta1.what);
+
+  %nc_attput(outputfile, nc_global, 'timezone'      , 'GMT+1'); add to time units instead
+
+   nc_attput(outputfile, nc_global, 'terms_for_use' , 'These data can be used freely for research purposes provided that the following source is acknowledged: Rijkswaterstaat.');
+   nc_attput(outputfile, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
 
 %% 2 Create dimensions
 %------------------
@@ -84,6 +94,17 @@ for ifile=3:length(OPT.files)
 
 %% 3 Create variables
 %------------------
+
+   %% Station number: allows for exactly same variables when multiple timeseries in one netCDF file
+   %------------------
+
+   ifld=1;clear nc
+   nc(ifld) = struct(...
+   'Name'     , 'id', ...
+   'Nctype'   , 'int', ...
+   'Dimension', {{'locations'}});
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station identification number');
+   nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id');
 
    %% Define dimensions in this order:
    %  time,z,y,x
@@ -95,11 +116,11 @@ for ifile=3:length(OPT.files)
    % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
    %------------------
    
-   nc(ifld) = struct(...
-   'Name'     , 'lon', ...
-   'Nctype'   , 'float', ...
-   'Dimension', {{'locations'}});
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'longitude');
+   ifld=ifld+1;
+   nc(ifld).Name         = 'lon';
+   nc(ifld).Nctype       = 'float';
+   nc(ifld).Dimension    = {'locations'};
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station longitude');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_east');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'longitude');
     
@@ -107,11 +128,11 @@ for ifile=3:length(OPT.files)
    % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
    %------------------
    
-   nc(ifld) = struct(...
-   'Name'     , 'lat', ...
-   'Nctype'   , 'float', ...
-   'Dimension', {{'locations'}});
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'latitude');
+   ifld=ifld+1;
+   nc(ifld).Name         = 'lat';
+   nc(ifld).Nctype       = 'float';
+   nc(ifld).Dimension    = {'locations'};
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station latitude');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_north');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'latitude');
 
@@ -124,23 +145,25 @@ for ifile=3:length(OPT.files)
    %   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984605
    %------------------
    
-   nc(ifld) = struct(...
-       'Name'     , 'time', ...
-       'Nctype'   , 'float', ...
-       'Dimension', {{'time'}});
+   ifld=ifld+1;
+   nc(ifld).Name         = 'time';
+   nc(ifld).Nctype       = 'float';
+   nc(ifld).Dimension    = {'time'};
+  %nc_attput(outputfile, nc_global, 'timezone'        , 'GMT+1');
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'time');
+   OPT.timezone = timezone_code2iso('CET');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'days since 0000-1-1 0:0:0'); % matlab datenumber convention
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'time');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
    
-   %% Parameter
+   %% Parameters with standard names
    % * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
    %------------------
 
-   nc(ifld) = struct(...
-       'Name'     , 'sea_surface_height', ...
-       'Nctype'   , 'float', ...
-       'Dimension', {{'time'}});
+   ifld=ifld+1;
+   nc(ifld).Name         = 'sea_surface_height';
+   nc(ifld).Nctype       = 'float';
+   nc(ifld).Dimension    = {'time'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', OPT.long_name);
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
@@ -162,6 +185,7 @@ for ifile=3:length(OPT.files)
 %% 5 Fill variables
 %------------------
 
+   nc_varput(outputfile, 'id'                , 1);
    nc_varput(outputfile, 'lon'               , unique(D.data.lon));
    nc_varput(outputfile, 'lat'               , unique(D.data.lat));
    nc_varput(outputfile, 'time'              , D.data.datenum);

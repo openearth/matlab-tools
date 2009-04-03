@@ -3,7 +3,7 @@
 % See also: GETWATERBASEDATA, DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>,  
 %           GETWATERBASEDATA_SUBSTANCES, GETWATERBASEDATA_LOCATIONS
 
-% 
+
 % CodeName :1%7CWaterhoogte+in+cm+t.o.v.+normaal+amsterdams+peil+in+oppervlaktewater"
 % FullName :Waterhoogte in cm t.o.v. normaal amsterdams peil in oppervlaktewater
 % Code     :1
@@ -18,12 +18,6 @@
    OPT.nc            = 0; % not implemented yet
    OPT.opendap       = 0; % not implemented yet
    
-% error
-%message: getWaterbaseData: loading Location  # 024: BRUINSE "Bruinisse (Zijpe)"
-%message: getWaterbaseData: loading Location  # 026: BURGHSS "Burghsluis"
-%message: getWaterbaseData: loading Location  # 027: CADZD "Cadzand"
-%message: getWaterbaseData: loading Location  # 029: COLPT "Colijnsplaat"
-
 %% Match and check Substance
 % --------------------------------
 
@@ -40,15 +34,17 @@
 % --------------------------------
 
    LOC = getWaterbaseData_locations(SUB.Code(OPT.indSub));
+   
+   if ~exist([OPT.directory.raw,filesep,OPT.standard_name])
+      mkdir([OPT.directory.raw,filesep,OPT.standard_name])
+   end
 
-   for indLoc=24:length(LOC.ID)
+   for indLoc=1:length(LOC.ID)
    
       disp(['----------------------------------------'])
       disp(['indLoc   :',num2str(             indLoc ),' of ',num2str(length(LOC.ID))])
       disp(['FullName :',        LOC.FullName{indLoc} ])
       disp(['ID       :',        LOC.ID{indLoc} ])
-      
-      mkdir([OPT.directory.raw,filesep,OPT.standard_name])
       
       getWaterbaseData(SUB.Code(OPT.indSub),LOC.ID{indLoc},...
                        OPT.period,...

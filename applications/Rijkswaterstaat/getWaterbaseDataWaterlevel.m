@@ -34,6 +34,10 @@
 
    LOC = getWaterbaseData_locations(SUB.Code(OPT.indSub));
 
+   if ~exist([OPT.directory.raw,filesep,OPT.standard_name])
+      mkdir([OPT.directory.raw,filesep,OPT.standard_name])
+   end
+
    for indLoc=1:length(LOC.ID)
    
       disp(['----------------------------------------'])
