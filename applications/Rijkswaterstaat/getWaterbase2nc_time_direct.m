@@ -10,6 +10,8 @@
 %
 %See also: GETWATERBASEDATA, DONAR_READ
 
+% TO DO: handle NaNs with OPT.fillvalue
+
 try
    rmpath('Y:\app\matlab\toolbox\wl_mexnc\')
 end   
@@ -95,10 +97,12 @@ for ifile=1:length(OPT.files)
 %% 3 Create variables
 %------------------
 
+   clear nc
+
    %% Station number: allows for exactly same variables when multiple timeseries in one netCDF file
    %------------------
 
-   ifld=1;clear nc
+   ifld=1;
    nc(ifld) = struct(...
    'Name'     , 'id', ...
    'Nctype'   , 'int', ...
@@ -118,7 +122,7 @@ for ifile=1:length(OPT.files)
    
    ifld=ifld+1;
    nc(ifld).Name         = 'lon';
-   nc(ifld).Nctype       = 'float';
+   nc(ifld).Nctype       = 'float'; % no double needed
    nc(ifld).Dimension    = {'locations'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station longitude');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_east');
@@ -130,7 +134,7 @@ for ifile=1:length(OPT.files)
    
    ifld=ifld+1;
    nc(ifld).Name         = 'lat';
-   nc(ifld).Nctype       = 'float';
+   nc(ifld).Nctype       = 'float'; % no double needed
    nc(ifld).Dimension    = {'locations'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station latitude');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_north');
@@ -147,12 +151,12 @@ for ifile=1:length(OPT.files)
    
    ifld=ifld+1;
    nc(ifld).Name         = 'time';
-   nc(ifld).Nctype       = 'float';
+   nc(ifld).Nctype       = 'double';% float as datenums are big
    nc(ifld).Dimension    = {'time'};
-  %nc_attput(outputfile, nc_global, 'timezone'        , 'GMT+1');
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'time');
+  %nc_attput(outputfile, nc_global, 'timezone'        , 'GMT+1');
    OPT.timezone = timezone_code2iso('CET');
-   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'days since 0000-1-1 0:0:0'); % matlab datenumber convention
+   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', [ ,OPT.timezone]); % matlab datenumber convention
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'time');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
    
@@ -162,7 +166,7 @@ for ifile=1:length(OPT.files)
 
    ifld=ifld+1;
    nc(ifld).Name         = 'sea_surface_height';
-   nc(ifld).Nctype       = 'float';
+   nc(ifld).Nctype       = 'float'; % no double needed
    nc(ifld).Dimension    = {'time'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', OPT.long_name);
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm');

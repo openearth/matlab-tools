@@ -1,49 +1,51 @@
 function varargout = donar_read(fnames,varargin)
 %DONAR_READ   Read ASCII text file from www.waterbase.nl
 %
-%   DAT = donar_read(fname)
 %   DAT = donar_read(fname,<keyword,value>)
 %
-%   reads ONE txt file (as downloaded from www.waterbase.nl) of just 
-%   ONE parameter at MULTIPLE locations to ONE structure DAT
+% reads ONE txt file of ONE parameter at MULTIPLE locations to ONE structure DAT.
 %       or
-%   reads MULTIPLE txt files (as downloaded from www.waterbase.nl) of just 
-%   ONE parameter at ONE location to ONE structure DAT.
+% reads MULTIPLE txt files of ONE parameter at ONE location to ONE structure DAT.
 %
-%   Implemented <keyword,value> pairs are:
+% Implemented optional <keyword,value> pairs are:
+%  * 'locationcode':            obtain locationcode from waterbase filename (only for ONE location per file)
+%  * 'fieldname':               fieldname for parameter to be read, default 'waarde' (as in DONAR file).
+%  * 'fieldnamescale':          real value (default 1), field is DIVIDED by fieldnamescale.
+%  * 'start_last_header_line':  "locatie;waarnemingssoort;datum;tijd"
+%  * 'headerlines':             auto':(default) finds automatically 1st line starting with:
+%                               start_last_header_line which is by default 
+%                               "locatie;waarnemingssoort;datum;tijd"
+%                               This option also reads the headerlines into DAT.
+%                               number 7, or 5 or 4 for older files where the 
+%                               EPSG names of the coordinates were not yet added.
+%  * 'scale','xscale','yscale': real value. x and y fields can optionally be divided by 100 
+%                               so they are  in SI units (meters etc.). (default all scales 1).
+%  * 'method':                  'textread' (default) or 'fgetl'.
+%          'textread':          is used by default, which is perfect for relatively small files
+%                               (up to tens of Mb's). But NOTE that loading a large text file with 
+%                               textread requires an exceptional amount of memory (e.g ~ 1.3 Gb of 
+%                               memory for 150 MB file). With textread all meta-data vectors are read.
+%             'fgetl':          is very fast and uses no more memory then needed. However, with 
+%                               fgetl only 5 columns are read (datenum,waarde,x,y,epsg. With
+%                               fgetl the other meta-data are ONLY read for the first location.
+% LIMITATIONS: with method 'textread' DONAR_READ cannot handle lines with empty values as:
 %
-%   * 'headerlines' = 'auto'  (default) finds automatically 1st line starting with:
-%                             start_last_header_line which is by default 
-%                             "locatie;waarnemingssoort;datum;tijd"
-%                             This option also reads the headerlines into DAT.
-%                      number 7, or 5 or 4 for older files
-%                             where the EPSG names of the coordinates 
-%                             were not yet added.
+%      Maasmond;Debiet in m3/s in oppervlaktewater;;;;Geen data beschikbaar/No data available;;9;9;9;9;9;9;9;9;9;9;9,9,9
 %
-%   * 'start_last_header_line': "locatie;waarnemingssoort;datum;tijd"
+% LOCATIONS: On <a href="http://www.waterbase.nl/metis">waterbase.nl/metis</a> there is a table where the locations including coordinates 
+%    can be found. The following <a href="http://www.epsg.org/guides/">epsg</a> codes are used:
+%    
+%    * 4230 ED50  (lon,lat) [degrees, minutes, seconds and tenths of seconds] (longitude (Ol.),latitude (Nb.))
+%    * 4326 WGS84 (lon,lat) [degrees, minutes, seconds and tenths of seconds] (longitude (Ol.),latitude (Nb.))
+%    * 7415 RD    (x  ,y  ) [cm] (East, North) 
 %
-%   * 'locationcode': obtain locationcode from waterbase filename
-%                     (only in case with ONE location per file)
-%
-%   * 'fieldname' = character
-%      is the fieldname of the parameter to be read, by
-%      default 'waarde' (as in DONAR file).
-%
-%   * 'fieldnamescale' = real value (default 1), fields is DIVIDED by fieldnamescale.
-%
-%   * 'scale','xscale','yscale' = real value
-%     The x and y fields can optionally be divided by 100 so they are 
-%     in SI units (meters etc.). (default all scales 1).
-%
-%   * 'method' = 'textread' (default) or 'fgetl'
-%     donar_read uses textread by default, which is OK for small files
-%     (up to tens of Mb's). But NOTE that loading a 150 MB txt 
-%     file with textread requires ~ 1.3 Gb of memory!!, whereas method 
-%     fgetl uses no more memory then needed. Use preallocate with fgetl to 
-%     speed up. textread reads a number of meta-data, where fgetl only 
-%     reads 5 fields:: datenum,waarde,x,y,epsg. With fgetl only one
-%     location per file is allowed.
-%
+%   See web : <a href="http://www.epsg.org/guides/">www.epsg.org</a>, <a href="http://www.waterbase.nl"    >www.waterbase.nl</a>
+%   See also: LOAD, XLSREAD
+
+%   © G.J. de Boer, Feb 2006 - 2009 (TU Delft)
+
+%  SUpersedied with ntmax=Inf
+% -------------------------------------------------------
 %   * 'preallocate' = integer value (only for method = 'fgetl')
 %     The method fgetl is not vectorized, and is therefore exceptionally slow 
 %     for large data sets. But, it requires significantly less memory than 
@@ -51,7 +53,7 @@ function varargout = donar_read(fnames,varargin)
 %     file to count the number of lines, and then reads the file again with 
 %     just a little bit over-preallocation with the # of header lines (default).
 %
-%   * ntmax, default Inf for method=fgetl
+%   * ntmax, (default Inf for method='fgetl')
 %
 %     preallocate is the maximum number of timesteps per location. Setting 
 %     this equal to or larger than the number of timesteps, considerably 
@@ -59,25 +61,8 @@ function varargout = donar_read(fnames,varargin)
 %     end. When a too small number is passed, the arrays are dynamically
 %     adjusted every line. This is SLOW. Idea: to preallocate 
 %     an 11-year 10-minute time series you need: 11*366*24*6 = 579744.
-%
-% LIMITATIONS: DONAR_READ cannot handle lines with ampty values as:
-%
-%    Lauwersoog;Debiet in m3/s in oppervlaktewater;;;;Geen data beschikbaar/No data available;;9;9;9;9;9;9;9;9;9;9;9,9,9
-%    Maasmond;Debiet in m3/s in oppervlaktewater;;;;Geen data beschikbaar/No data available;;9;9;9;9;9;9;9;9;9;9;9,9,9
-%
-% LOACTIONS:
-%
-%    On <a href="http://www.waterbase.nl/metis">waterbase.nl/metis</a> there is a table where the locations including coordinates 
-%    can be found. The following <a href="http://www.epsg.org/guides/">epsg</a> codes are used:
-%    
-%    * 4230 ED50  (lon,lat) [degrees, minutes, seconds and tenths of seconds] (longitude (Ol.),latitude (Nb.))
-%    * 4326 WGS84 (lon,lat) [degrees, minutes, seconds and tenths of seconds] (longitude (Ol.),latitude (Nb.))
-%    * 7415 RD    (x  ,y  ) [cm] (East, North) 
-%
-%   © G.J. de Boer, Feb 2006 - 2009 (TU Delft)
-%
-%   See web : <a href="http://www.epsg.org/guides/">www.epsg.org</a>, <a href="http://www.waterbase.nl"    >www.waterbase.nl</a>
-%   See also: LOAD, XLSREAD
+% -------------------------------------------------------
+
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
@@ -487,10 +472,10 @@ for ifile=1:length(fnames)
              if nt==1
              D(nloc).meta1.location               =         rec(1        :dlm( 1)-1);
              D(nloc).meta1.waarnemingssoort       =         rec(dlm( 1)+1:dlm( 2)-1);
-             D(nloc).meta1.datum                  =         rec(dlm( 2)+1:dlm( 3)-1);
-             D(nloc).meta1.tijd                   =         rec(dlm( 3)+1:dlm( 4)-1);
+                                                                   % 2
+                                                                   % 3
              D(nloc).meta1.bepalingsgrenscode     =         rec(dlm( 4)+1:dlm( 5)-1);
-             D(nloc).meta1.waarde                 =         rec(dlm( 5)+1:dlm( 6)-1);
+                                                                   % 5
              D(nloc).meta1.units                  =         rec(dlm( 6)+1:dlm( 7)-1);
              D(nloc).meta1.what                   =         rec(dlm( 7)+1:dlm( 8)-1);
              D(nloc).meta1.anamet                 =         rec(dlm( 8)+1:dlm( 9)-1);
@@ -498,6 +483,11 @@ for ifile=1:length(fnames)
              D(nloc).meta1.vat                    =         rec(dlm(10)+1:dlm(11)-1);
              D(nloc).meta1.bemhgt                 =         rec(dlm(11)+1:dlm(12)-1);
              D(nloc).meta1.refvlk                 =         rec(dlm(12)+1:dlm(13)-1);
+                                                                   %13
+                                                                   %14
+                                                                   %15
+             D(nloc).meta1.orgaan                 =         rec(dlm(16)+1:dlm(17)-1);
+             D(nloc).meta1.biotaxon               =         rec(dlm(17)+1:end      );
              else
                 location                          =         rec(1        :dlm( 1)-1);
                 if ~strcmpi(D(nloc).meta1.location,location)
@@ -505,28 +495,34 @@ for ifile=1:length(fnames)
                 end
              end         
    
-             D(nloc).data.epsg               (nt) = str2num(rec(dlm(13)+1:dlm(14)-1)); % 7
-             D(nloc).data.x                  (nt) = str2num(rec(dlm(14)+1:dlm(15)-1)); % 3
-             D(nloc).data.y                  (nt) = str2num(rec(dlm(15)+1:dlm(16)-1)); % 4
-   
-             if nt==1
-             D(nloc).meta1.orgaan                 =         rec(dlm(16)+1:dlm(17)-1);
-             D(nloc).meta1.biotaxon               =         rec(dlm(17)+1:end      );
+             datestring          = rec(dlm( 2)+1:dlm( 3)-1);
+             timestring          = rec(dlm( 3)+1:dlm( 4)-1);
+             
+             if ~isempty(datestring)
+              
+                yyyy                         = str2double(datestring( 1: 4));
+                mm                           = str2double(datestring( 6: 7));
+                dd                           = str2double(datestring( 9:10));
+                HH                           = str2double(timestring( 1: 2));
+                MI                           = str2double(timestring( 4: 5));
+                
+                D(nloc).data.datenum    (nt) = datenum(yyyy,mm,dd,HH,MI,0);          % 1
+                D(nloc).data.(OPT.value)(nt) = str2double(rec(dlm( 5)+1:dlm( 6)-1)); % 2
+                D(nloc).data.epsg       (nt) = str2num   (rec(dlm(13)+1:dlm(14)-1)); % 7
+                D(nloc).data.x          (nt) = str2num   (rec(dlm(14)+1:dlm(15)-1)); % 3
+                D(nloc).data.y          (nt) = str2num   (rec(dlm(15)+1:dlm(16)-1)); % 4
+   	        
+             else
+
+                D(nloc).data.datenum    (nt) = nan;
+                D(nloc).data.(OPT.value)(nt) = nan;
+                D(nloc).data.epsg       (nt) = nan;
+                D(nloc).data.x          (nt) = nan;
+                D(nloc).data.y          (nt) = nan;
+             
              end
              
-             D(nloc).data.(OPT.value)(nt) = str2double(rec(dlm(5)+1:dlm(6)-1)); % 2
              
-             datestring          = rec(dlm(2)+1:dlm(3)-1);
-             timestring          = rec(dlm(3)+1:dlm(4)-1);
-              
-             yyyy                = str2double(datestring( 1: 4));
-             mm                  = str2double(datestring( 6: 7));
-             dd                  = str2double(datestring( 9:10));
-             HH                  = str2double(timestring( 1: 2));
-             MI                  = str2double(timestring( 4: 5));
-             
-             D(nloc).data.datenum(nt) = datenum(yyyy,mm,dd,HH,MI,0); % 1
-   
           end
           
       end % while

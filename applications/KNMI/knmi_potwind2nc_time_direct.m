@@ -1,4 +1,5 @@
 % function knmi_potwind2nc_time_direct(varargin)
+
 %KNMI_POTWIND2NC_TIME_DIRECT  This is a first test to get wind timeseries into NetCDF
 %
 %  Timeseries data, see example:
@@ -8,6 +9,8 @@
 % The datenum values do not show up as a parameter in ncBrowse.
 %
 %See also: KNMI_POTWIND2NC_TIME_INDIRECT, SNCTOOLS, KNMI_POTWIND, SEDIMENTATLAS_KORREL2NC
+
+% TO DO: handle NaNs with OPT.fillvalue
 
 try
    rmpath('Y:\app\matlab\toolbox\wl_mexnc\')
@@ -78,8 +81,9 @@ for ifile=1:length(OPT.files)
 %% 3 Create variables
 %------------------
 
-   %% Longitude
-   % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
+   clear nc
+   
+   %% Station number: allows for exactly same variables when multiple timeseries in one netCDF file
    %------------------
    
    nc.id = struct(...
@@ -102,7 +106,7 @@ for ifile=1:length(OPT.files)
    
    nc.lon = struct(...
    'Name'     , 'lon', ...
-   'Nctype'   , 'float', ...
+   'Nctype'   , 'float', ...% no double needed
    'Dimension', {{'locations'}});
    nc.lon.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station longitude');
    nc.lon.Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_east');
@@ -114,7 +118,7 @@ for ifile=1:length(OPT.files)
    
    nc.lat = struct(...
    'Name'     , 'lat', ...
-   'Nctype'   , 'float', ...
+   'Nctype'   , 'float', ...% no double needed
    'Dimension', {{'locations'}});
    nc.lat.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station latitude');
    nc.lat.Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_north');
@@ -131,13 +135,11 @@ for ifile=1:length(OPT.files)
    
    nc.time = struct(...
        'Name'     , 'time', ...
-       'Nctype'   , 'float', ...
+       'Nctype'   , 'double', ...% float as datenums are big
        'Dimension', {{'time'}});
    nc.time.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'time');
-   
-   OPT.timezone = timezone_code2iso(D.timezone);
   %nc_attput(outputfile, nc_global, 'timezone'      , 'GMT'); add to time units instead
-  
+   OPT.timezone = timezone_code2iso(D.timezone);
    nc.time.Attribute(2) = struct('Name', 'units'          ,'Value',['days since 0000-1-1 00:00:00 ',OPT.timezone]); % matlab datenumber convention
    nc.time.Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'time');
    nc.time.Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
