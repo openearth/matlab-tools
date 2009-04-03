@@ -86,6 +86,10 @@ end
 
 evalstr = '';
 for i = 1:length(varargin)
+    if length(size(varargin{i})) > 2
+        warning('var2evalstr is not suitable for variables with 3 or more dimensions');
+        continue
+    end
     if NameIsDummy && ~isempty(inputname(i))
         basevarname = inputname(i);
     elseif NameIsDummy
