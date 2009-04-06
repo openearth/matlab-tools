@@ -8,10 +8,7 @@
 % In this example time is both a dimension and a variables.
 % The datenum values do not show up as a parameter in ncBrowse.
 %
-%See also: KNMI_POTWIND2NC_TIME_INDIRECT, SNCTOOLS, KNMI_POTWIND, SEDIMENTATLAS_KORREL2NC
-
-% TO DO: handle NaNs with OPT.fillvalue
-% TO DO: check wind_direction convenction nautical/cartesian: from_direction units degrees
+%See also: KNMI_POTWIND, SNCTOOLS, KNMI_POTWIND_GET_URL, KNMI_ETMGEG2NC_TIME_DIRECT
 
 try
    rmpath('Y:\app\matlab\toolbox\wl_mexnc\')
@@ -20,7 +17,7 @@ end
 %% Initialize
 %------------------
 
-   OPT.fillvalue     = 0; % NaNs do not work in netcdf API
+   OPT.fillvalue     = nan; % NaNs do work in netcdf API
    OPT.dump          = 0;
    OPT.directory.raw = 'F:\checkouts\OpenEarthRawData\knmi\potwind\raw\';
    OPT.directory.nc  = 'F:\checkouts\OpenEarthRawData\knmi\potwind\nc\';
@@ -68,7 +65,6 @@ for ifile=1:length(OPT.files)
    nc_attput(outputfile, nc_global, 'stationname'   , D.stationname);
    nc_attput(outputfile, nc_global, 'over'          , D.over);
    nc_attput(outputfile, nc_global, 'height'        , num2str(D.height));
-  %nc_attput(outputfile, nc_global, 'timezone'      , 'GMT'); add to time units instead
    
    nc_attput(outputfile, nc_global, 'terms_for_use' , 'These data can be used freely for research purposes provided that the following source is acknowledged: KNMI.');
    nc_attput(outputfile, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
@@ -78,6 +74,7 @@ for ifile=1:length(OPT.files)
 
    nc_add_dimension(outputfile, 'time'     , length(D.datenum))
    nc_add_dimension(outputfile, 'locations', 1)
+  %nc_add_dimension(outputfile, 'stringlength', ) % to add station long_name array
 
 %% 3 Create variables
 %------------------
@@ -197,11 +194,10 @@ for ifile=1:length(OPT.files)
 
    %------------------
 
-      ifld = ifld + 1; % 26
-   nc(ifld) = struct(... % wind_from_direction
-       'Name'     , 'wind_from_direction_quality', ...
-       'Nctype'   , 'int', ...
-       'Dimension', {{'time'}});
+      ifld = ifld + 1;
+   nc(ifld).Name         = 'wind_from_direction_quality';
+   nc(ifld).Nctype       = 'int';
+   nc(ifld).Dimension    = {'time'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'quality code nautical wind direction');
    nc(ifld).Attribute(2) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
    nc(ifld).Attribute(3) = struct('Name', 'comment'        ,'Value',['-1 = no data,',...
@@ -214,8 +210,8 @@ for ifile=1:length(OPT.files)
    nc(ifld).Attribute(4) = struct('Name', 'KNMI_name'      ,'Value', 'QQD');
    nc(ifld).Attribute(5) = struct('Name', 'cell_bounds'    ,'Value', 'point');
 
-   %% Add
-   %------------------
+%% 4 Create attibutes
+%------------------
 
    for ifld=1:length(nc)
       nc_addvar(outputfile, nc(ifld));   
@@ -223,12 +219,6 @@ for ifile=1:length(OPT.files)
 
    end
 
-%% 4 Create attibutes
-%------------------
-
-   % already done with creation of variables.
-   % This is more efficient.
-   
 %% 5 Fill variables
 %------------------
 

@@ -1,4 +1,5 @@
 % function knmi_etmgeg2nc_time_direct(varargin)
+
 %KNMI_ETMGEG2NC_TIME_DIRECT  This is a first test to get meteo timeseries into NetCDF
 %
 %  Timeseries data, see example:
@@ -7,10 +8,7 @@
 % In this example time is both a dimension and a variables.
 % The datenum values do not show up as a parameter in ncBrowse.
 %
-%See also: KNMI_POTWIND2NC_TIME_DIRECT, SNCTOOLS, KNMI_ETMGEG, SEDIMENTATLAS_KORREL2NC
-
-% TO DO: handle NaNs with OPT.fillvalue
-% TO DO: check wind_direction convenction nautical/cartesian
+%See also: KNMI_ETMGEG, SNCTOOLS, KNMI_ETMGEG_GET_URL, KNMI_POTWIND2NC_TIME_DIRECT
 
 try
    rmpath('Y:\app\matlab\toolbox\wl_mexnc\')
@@ -19,7 +17,7 @@ end
 %% Initialize
 %------------------
 
-   OPT.fillvalue     = 0; % NaNs do not work in netcdf API
+   OPT.fillvalue     = nan; % NaNs do work in netcdf API
    OPT.dump          = 0;
    OPT.directory.raw = 'F:\checkouts\OpenEarthRawData\knmi\etmgeg\raw\';
    OPT.directory.nc  = 'F:\checkouts\OpenEarthRawData\knmi\etmgeg\nc\';
@@ -34,10 +32,15 @@ for ifile=1:length(OPT.files)
 %% 0 Read raw data
 %------------------
 
-   D             = knmi_etmgeg(OPT.filename);
-   D.version     = '';
-   D.lon         = NaN;
-   D.lat         = NaN;
+
+   D                                = knmi_etmgeg(OPT.filename);
+   break
+   D.version                        = '';
+
+%% 1a get station meta-info
+%------------------
+
+   [D.code,D.long_name,D.lon,D.lat] = KNMI_etmgeg_stations(unique(D.data.STN));
    
 %% 1a Create file
 %------------------
@@ -65,10 +68,8 @@ for ifile=1:length(OPT.files)
    nc_attput(outputfile, nc_global, 'Conventions'  , 'CF-1.4');
    nc_attput(outputfile, nc_global, 'CF:featureType', 'stationTimeSeries');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
    
-   %nc_attput(outputfile, nc_global, 'timezone'     , 'GMT');
-
-   %nc_attput(outputfile, nc_global, 'stationnumber', unique(D.data.STN));
-   %nc_attput(outputfile, nc_global, 'stationname'  , KNMI_etmgeg_stations(unique(D.data.STN)));
+   nc_attput(outputfile, nc_global, 'stationnumber', unique(D.data.STN));
+   nc_attput(outputfile, nc_global, 'stationname'  , D.long_name;
 
    nc_attput(outputfile, nc_global, 'terms_for_use' , 'These data can be used freely for research purposes provided that the following source is acknowledged: KNMI.');
    nc_attput(outputfile, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
@@ -78,6 +79,7 @@ for ifile=1:length(OPT.files)
 
    nc_add_dimension(outputfile, 'time'     , length(D.data.datenum))
    nc_add_dimension(outputfile, 'locations', 1)
+  %nc_add_dimension(outputfile, 'stringlength', ) % to add station long_name array
 
 %% 3 Create variables
 %------------------
@@ -449,19 +451,13 @@ for ifile=1:length(OPT.files)
    nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
    nc(ifld).Attribute(6) = struct('Name', 'KNMI_name'      ,'Value', 'UX');
 
-   %% Add
-   %------------------
+%% 4 Create attibutes
+%------------------
 
    for ifld=1:length(nc)
       nc_addvar(outputfile, nc(ifld));   
    end
 
-%% 4 Create attibutes
-%------------------
-
-   % already done with creation of variables.
-   % This is more efficient.
-   
 %% 5 Fill variables
 %------------------
 

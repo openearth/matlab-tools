@@ -1,5 +1,10 @@
-function station_name = KNMI_etmgeg_stations(station_number)
-%KNMI_ETMGEG_STATIONS   returns name of WMO KNMI station number
+function varargout = KNMI_etmgeg_stations(station)
+%KNMI_ETMGEG_STATIONS   returns meta-info of WMO KNMI station number
+%
+%    S = KNMI_etmgeg_stations(<station>) % returns data struct for all or one station
+%    [code,long_name,lon,lat] = KNMI_etmgeg_stations(station) 
+%
+% where station can be code or long_name:
 %
 %   code long_name           
 %   210  Valkenburg          
@@ -7,7 +12,7 @@ function station_name = KNMI_etmgeg_stations(station_number)
 %   240  Schiphol            
 %   242  Vlieland            
 %   249  Berkhout            
-%   251  Hoorn (Terschelling)
+%   251  Hoorn Terschelling
 %   257  Wijk aan Zee        
 %   260  De Bilt             
 %   265  Soesterberg         
@@ -38,6 +43,18 @@ function station_name = KNMI_etmgeg_stations(station_number)
 %   380  Maastricht          
 %   391  Arcen               
 %
+% Example:
+%
+%                         S = KNMI_etmgeg_stations('schiphol')
+%                         S = KNMI_etmgeg_stations('amsterdam')
+%  [code,long_name,lon,lat] = KNMI_etmgeg_stations(240)
+%                         S = KNMI_etmgeg_stations
+%
+%See web:<a href="http://www.knmi.nl/klimatologie/metadata/stationslijst.html">http://www.knmi.nl/klimatologie/metadata/stationslijst.html</a>
+%        <a href="http://www.knmi.nl/klimatologie/metadata/index.html">http://www.knmi.nl/klimatologie/metadata/index.html</a>
+%        <a href="http://www.ncdc.noaa.gov/oa/climate/rcsg/cdrom/ismcs/alphanum.html">http://www.ncdc.noaa.gov/oa/climate/rcsg/cdrom/ismcs/alphanum.htm</a>
+%        <a href="http://weather.gladstonefamily.net/site">http://weather.gladstonefamily.net/site</a>
+
 %See also: KNMI_ETMGEG
 
 % TO DO: add coordinates
@@ -72,50 +89,64 @@ function station_name = KNMI_etmgeg_stations(station_number)
 %   http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-   if ischar(station_number)
-      station_number = num2str(station_number);
+%% Load data file
+%------------------
+
+   OPT.xlsfile = [filepathstr(mfilename('fullpath')),filesep,'KNMI_etmgeg_stations.xls'];
+
+   D           = xls2struct(OPT.xlsfile);
+   
+%% Calculate decimal coordinates
+%------------------
+  
+   for ival=1:length(D.code)
+   icirc       = strfind(D.position{ival},'°');
+   iprime      = strfind(D.position{ival},'''');
+   
+   D.londeg(ival)= str2num(D.position{ival}(icirc(1)-2:icirc (1)-1));
+   D.lonmin(ival)= str2num(D.position{ival}(icirc(1)+1:iprime(1)-1));
+   D.latdeg(ival)= str2num(D.position{ival}(icirc(2)-2:icirc (2)-1));
+   D.latmin(ival)= str2num(D.position{ival}(icirc(2)+1:iprime(2)-1));
+   
    end
+   
+   D.lat   = D.londeg + D.lonmin./60;  
+   D.lon   = D.latdeg + D.latmin./60;
 
-   names{210}='Valkenburg';
-   names{235}='De Kooy';% Den Helder 
-   names{240}='Schiphol';% Groningen
-   names{242}='Vlieland';
-   names{249}='Berkhout';
-   names{251}='Hoorn (Terschelling)';
-   names{257}='Wijk aan Zee';
-   names{260}='De Bilt';
-   names{265}='Soesterberg';
-   names{267}='Stavoren';
-   names{269}='Lelystad';
-   names{270}='Leeuwarden';
-   names{273}='Marknesse';
-   names{275}='Deelen';
-   names{277}='Lauwersoog';
-   names{278}='Heino';
-   names{279}='Hoogeveen';
-   names{280}='Eelde';%Groningen
-   names{283}='Hupsel';
-   names{286}='Nieuw Beerta';
-   names{290}='Twenthe';
-   names{310}='Vlissingen';
-   names{319}='Westdorpe';
-   names{323}='Wilhelminadorp';
-   names{330}='Hoek van Holland';
-   names{340}='Woensdrecht';
-   names{344}='Rotterdam';
-   names{348}='Cabauw';
-   names{350}='Gilze-Rijen';
-   names{356}='Herwijnen';
-   names{370}='Eindhoven';
-   names{375}='Volkel';
-   names{377}='Ell';
-   names{380}='Maastricht';% (Beek)
-   names{391}='Arcen';
+%% Select station
+%------------------
 
-   station_name = names{station_number};
+   if nargin==1
+   if ischar(station)
+   i   = find(strcmpi(D.long_name,station));
+      if isempty(i)
+      i   = find(strcmpi(D.long_name_alt,station));
+      end
+      if isempty(i)
+         disp('no station found')
+         varargout = {[],[],[],[]};
+         return
+      end
+   else
+   i   = find(D.code==station);
+   end
+   S.code      = D.code(i);
+   S.long_name = D.long_name{i};
+   S.lon       = D.lon(i);
+   S.lat       = D.lat(i);
+   end
+   
+%% Return
+%------------------
 
-   if isempty(station_name)
-     station_name = '?';
+   if nargin==0
+      varargout = {D};
+   elseif nargin==1
+   if     nargout==1
+      varargout = {S};
+   elseif nargout==4
+      varargout = {S.code,S.long_name,S.lon,S.lat};
+   end
    end
 
 %% EOF
