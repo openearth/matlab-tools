@@ -47,27 +47,36 @@ function XB = XBeach_Write_Inp(calcdir, XB, varargin)
 % $Date$
 % $Author$
 % $Revision$
-
-%TODO: make this function suitable for 2D grids
+% $HeadURL$
+% $Keywords:
 
 %% default properties
 OPT = struct(...
-    'timefactor', 1,... % optionally change 
+    'timefactor', 1,... % optional, to change time unit
     'calcdir', calcdir,...
     'paramsfile', 'params.txt',...
     'xfile', 'x.dep',...
     'yfile', 'y.dep',...
-    'depfile', 'bath.dep');
+    'depfile', 'bath.dep',...
+    'zs0file', 'waterlevels.wls');
 
 OPT = setProperty(OPT, varargin{:});
 
 %% make grid and dep file
 if XB.settings.Grid.vardx
     % non-equidistant grid
-    if isequal(size(XB.Input.zInitial)-1, [XB.settings.Grid.nx XB.settings.Grid.ny])
+    if any(XB.settings.Grid.nx == size(XB.Input.zInitial)-1) &&...
+            any(XB.settings.Grid.ny == size(XB.Input.zInitial)-1)
+        % check whether both nx and ny correspond with the size of zInitial
+        
         % write bathimetry (z)
         if isempty(XB.settings.Grid.depfile)
+            % take default depfile, if not specified
             XB.settings.Grid.depfile = OPT.depfile;
+        end
+        if XB.settings.Grid.nx ~= size(XB.Input.zInitial,2)-1
+            % transpose zInitial if necessary
+            XB.Input.zInitial = XB.Input.zInitial';
         end
         dlmwrite(fullfile(OPT.calcdir, XB.settings.Grid.depfile), XB.Input.zInitial,...
             'delimiter', '\t',...
@@ -75,7 +84,12 @@ if XB.settings.Grid.vardx
         
         % write x grid
         if isempty(XB.settings.Grid.xfile)
+            % take default xfile, if not specified
             XB.settings.Grid.xfile = OPT.xfile;
+        end
+        if XB.settings.Grid.nx ~= size(XB.Input.xInitial,2)-1
+            % transpose xInitial if necessary
+            XB.Input.xInitial = XB.Input.xInitial';
         end
         dlmwrite(fullfile(OPT.calcdir, XB.settings.Grid.xfile), XB.Input.xInitial,...
             'delimiter', '\t',...
@@ -83,7 +97,12 @@ if XB.settings.Grid.vardx
         
         % write y grid
         if isempty(XB.settings.Grid.yfile)
+            % take default yfile, if not specified
             XB.settings.Grid.yfile = OPT.yfile;
+        end
+        if XB.settings.Grid.nx ~= size(XB.Input.yInitial,2)-1
+            % transpose yInitial if necessary
+            XB.Input.yInitial = XB.Input.yInitial';
         end
         dlmwrite(fullfile(OPT.calcdir, XB.settings.Grid.yfile), XB.Input.yInitial,...
             'delimiter', '\t',...
@@ -118,13 +137,19 @@ else
             % New version of xbeach times do not have to be multiplied ith the
             % morfac
             zs0(:,1)=zs0(:,1)*OPT.timefactor;
-            dlmwrite(fullfile(OPT.calcdir, 'waterlevels.wls'),zs0,'delimiter','\t','Precision','%5.3f');
-            XB.settings.Flow.zs0file = 'waterlevels.wls';
+            if isempty(XB.settings.Flow.zs0file)
+                XB.settings.Flow.zs0file = OPT.zs0file;
+            end                
+            dlmwrite(fullfile(OPT.calcdir, XB.settings.Flow.zs0file), zs0,...
+                'delimiter', '\t',...
+                'Precision', '%5.3f');
             XB.settings.Flow.tidelen = size(zs0,1);
             XB.settings.Flow.tideloc = size(zs0,2)-1;
         end
     end
-    dlmwrite(fullfile(OPT.calcdir, XB.settings.Grid.depfile), repmat(z,length(ygrid),1),'delimiter','\t','Precision','%5.3f');
+    dlmwrite(fullfile(OPT.calcdir, XB.settings.Grid.depfile), repmat(z,length(ygrid),1),...
+        'delimiter', '\t',...
+        'Precision', '%5.3f');
 end
 
 %% make wave boundary file
