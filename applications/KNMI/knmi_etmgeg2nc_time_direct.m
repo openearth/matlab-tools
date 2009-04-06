@@ -295,12 +295,12 @@ for ifile=1:length(OPT.files)
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily global radiation');
-   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'J/cm*2');
-   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', '?'); % <<<<<<<<<<<< standard_name
-   nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-   nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
-   nc(ifld).Attribute(6) = struct('Name', 'KNMI_name'      ,'Value', 'Q');
-   nc(ifld).Attribute(7) = struct('Name', 'cell_methods'   ,'Value', 'mean or sum');
+   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'J/cm^2');
+  %nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', '?'); % <<<<<<<<<<<< standard_name
+   nc(ifld).Attribute(3) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+   nc(ifld).Attribute(4) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
+   nc(ifld).Attribute(5) = struct('Name', 'KNMI_name'      ,'Value', 'Q');
+   nc(ifld).Attribute(6) = struct('Name', 'cell_methods'   ,'Value', 'mean');
 
 
       ifld = ifld + 1; % 15
@@ -309,11 +309,11 @@ for ifile=1:length(OPT.files)
    nc(ifld).Dimension    = {'time'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily duration of precipitation');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'hour');
-   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', '?'); % <<<<<<<<<<<< standard_name
-   nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-   nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
-   nc(ifld).Attribute(6) = struct('Name', 'KNMI_name'      ,'Value', 'DR');
-   nc(ifld).Attribute(7) = struct('Name', 'cell_methods'   ,'Value', 'sum');
+  %nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', '?'); % <<<<<<<<<<<< standard_name
+   nc(ifld).Attribute(3) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+   nc(ifld).Attribute(4) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
+   nc(ifld).Attribute(5) = struct('Name', 'KNMI_name'      ,'Value', 'DR');
+   nc(ifld).Attribute(6) = struct('Name', 'cell_methods'   ,'Value', 'sum');
 
       ifld = ifld + 1; % 16
    nc(ifld).Name         = 'precipitation_amount';
@@ -398,11 +398,11 @@ for ifile=1:length(OPT.files)
    nc(ifld).Dimension    = {'time'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily mean cloud cover');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'octant');
-   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', '?'); % <<<<<<<<<<<< standard_name
-   nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-   nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
-   nc(ifld).Attribute(6) = struct('Name', 'KNMI_name'      ,'Value', 'NG');
-   nc(ifld).Attribute(7) = struct('Name', 'cell_methods'   ,'Value', 'mean');
+  %nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', '?'); % <<<<<<<<<<<< standard_name
+   nc(ifld).Attribute(3) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+   nc(ifld).Attribute(4) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
+   nc(ifld).Attribute(5) = struct('Name', 'KNMI_name'      ,'Value', 'NG');
+   nc(ifld).Attribute(6) = struct('Name', 'cell_methods'   ,'Value', 'mean');
 
       ifld = ifld + 1; % 23
    nc(ifld).Name         = 'relative_humidity_mean';
@@ -446,10 +446,10 @@ for ifile=1:length(OPT.files)
    nc(ifld).Dimension    = {'time'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'Potential evapotranspiration (Makkink)');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'percent');
-   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value',  '?'); % <<<<<<<<<<<< standard_name
-   nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-   nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
-   nc(ifld).Attribute(6) = struct('Name', 'KNMI_name'      ,'Value', 'UX');
+  %nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value',  '?'); % <<<<<<<<<<<< standard_name
+   nc(ifld).Attribute(3) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+   nc(ifld).Attribute(4) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
+   nc(ifld).Attribute(5) = struct('Name', 'KNMI_name'      ,'Value', 'UX');
 
 %% 4 Create attibutes
 %------------------
