@@ -34,7 +34,6 @@ for ifile=1:length(OPT.files)
 
 
    D                                = knmi_etmgeg(OPT.filename);
-   break
    D.version                        = '';
 
 %% 1a get station meta-info
@@ -69,7 +68,7 @@ for ifile=1:length(OPT.files)
    nc_attput(outputfile, nc_global, 'CF:featureType', 'stationTimeSeries');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
    
    nc_attput(outputfile, nc_global, 'stationnumber', unique(D.data.STN));
-   nc_attput(outputfile, nc_global, 'stationname'  , D.long_name;
+   nc_attput(outputfile, nc_global, 'stationname'  , D.long_name);
 
    nc_attput(outputfile, nc_global, 'terms_for_use' , 'These data can be used freely for research purposes provided that the following source is acknowledged: KNMI.');
    nc_attput(outputfile, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
@@ -84,11 +83,12 @@ for ifile=1:length(OPT.files)
 %% 3 Create variables
 %------------------
    clear nc
+   ifld = 0;
 
    %% Station number: allows for exactly same variables when multiple timeseries in one netCDF file
    %------------------
 
-     ifld = 1;
+     ifld = ifld + 1;
    nc(ifld).Name         = 'id';
    nc(ifld).Nctype       = 'float'; % no double needed
    nc(ifld).Dimension    = {'locations'};
@@ -156,7 +156,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'wind_from_direction_mean';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'prevaling daily wind direction');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily prevaling wind direction');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degree_true');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'wind_from_direction');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -169,7 +169,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'wind_speed_mean';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'mean daily wind speed');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily mean wind speed');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm/s');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'wind_speed');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -181,7 +181,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'wind_speed_maximum';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'maximum daily wind speed');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily maximum wind speed');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm/s');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'wind_speed');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -193,7 +193,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'wind_speed_minimum';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'minimum daily wind speed');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily minimum wind speed');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm/s');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'wind_speed');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -205,7 +205,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'wind_speed_maximum_gust';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'maximum daily wind speed gust');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily maximum wind speed gust');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm/s');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'wind_speed');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -270,7 +270,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'duration_of_sunshine';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'duration of sunshine');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily duration of sunshine');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'hour');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'duration_of_sunshine');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -282,7 +282,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'percentage_maximum_possible_duration_of_sunshine';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'percentage of maximum possible sunshine duration');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily percentage of maximum possible sunshine duration');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'percent');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'duration_of_sunshine');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -294,7 +294,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'global_radiation';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'global radiation');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily global radiation');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'J/cm*2');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', '?'); % <<<<<<<<<<<< standard_name
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -307,7 +307,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'duration_of_precipitation';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'duration precipitation');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily duration of precipitation');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'hour');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', '?'); % <<<<<<<<<<<< standard_name
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -319,7 +319,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'precipitation_amount';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'duration precipitation');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily precipitation amount');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'mm');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'precipitation_amount');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -332,7 +332,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'surface_air_pressure';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'surface air pressure');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily mean surface air pressure');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'hPa');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'surface_air_pressure');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -344,7 +344,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'surface_air_pressure_maximum';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'surface air pressure');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily maximum surface air pressure');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'hPa');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'surface_air_pressure');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -356,7 +356,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'surface_air_pressure_minimum';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'surface air pressure');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily minimum surface air pressure');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'hPa');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'surface_air_pressure');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -369,7 +369,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'visibility_in_air_minimum';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'visibility in air');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily minimum visibility in air');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', '');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'visibility_in_air');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -382,7 +382,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'visibility_in_air_maximum';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'visibility in air');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily maximum visibility in air');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', '');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'visibility_in_air');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -396,7 +396,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'cloud_cover';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', '');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily mean cloud cover');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'octant');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', '?'); % <<<<<<<<<<<< standard_name
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -408,7 +408,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'relative_humidity_mean';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'minimum relative humidity');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily minimum relative humidity');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'percent');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'relative_humidity');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -420,7 +420,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'relative_humidity_minimum';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'minimum relative humidity');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily minimum relative humidity');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'percent');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'relative_humidity');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -432,7 +432,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Name         = 'relative_humidity_maximum';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'maximum relative humidity');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'daily maximum relative humidity');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'percent');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'relative_humidity');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
