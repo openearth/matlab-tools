@@ -14,18 +14,27 @@ function varargout = knmi_etmgeg(varargin)
 %   DDVEC   = prevailing wind direction in degrees             (360=North, 180=South, 270=West, 0=calm/variable)
 %   FG      = daily mean windspeed                             [m/s] (let op! inhomogene reeks door meethoogte wijzigingen /
 %   FHX     = maximum hourly mean windspeed                    [m/s]
+%   FHN     = minimum hourly mean windspeed                    [m/s]
 %   FX      = maximum wind gust                                [m/s]
-%   TG      = daily mean temperature                           [deg Celsius]
-%   TN      = minimum temperature                              [deg Celsius]
-%   TX      = maximum temperature                              [deg Celsius]
+%   TG      = daily mean temperature                           [degrees Celsius]
+%   TN      = minimum temperature                              [degrees Celsius]
+%   TX      = maximum temperature                              [degrees Celsius]
+%   T10N    = minimum temperature (surface)                    [degrees Celsius]
 %   SQ      = sunshine duration                                [hour] (NaN for <0.05 hour)
 %   SP      = percentage of maximum possible sunshine duration [%]
+%   Q       = global radiation                                 [J/cm2]
 %   DR      = precipitation duration                           [hour]
 %   RH      = daily precipitation amount                       [mm]   (NaN for <0,05 mm)
-%   PG      = daily mean surface air pressure                  [0,1 hPa]
-%   VVN     = minimum visibility                               (0=less than 100m, 1=100-200m, 2=200-300m,..., 49=4900-500m, 50=5-6km, 56=6-7km, 57=7-8km,..., 79=29-30km, 80=30-35km, 81=35-40km,..., 89=more than 70km)
+%   PG      = daily mean surface air pressure                  [hPa]
+%   PGX     = maximum surface air pressure                     [hPa]
+%   PGN     = minimum surface air pressure                     [hPa]
+%   VVN     = minimum visibility                               (0=less than 100m, 1=100-200m, 2=200-300m,..., 49=4900-5000m, 50=5-6km, 56=6-7km, 57=7-8km,..., 79=29-30km, 80=30-35km, 81=35-40km,..., 89=more than 70km)
+%   VVX     = maximum visibility                               (0=less than 100m, 1=100-200m, 2=200-300m,..., 49=4900-5000m, 50=5-6km, 56=6-7km, 57=7-8km,..., 79=29-30km, 80=30-35km, 81=35-40km,..., 89=more than 70km)
 %   NG      = cloud cover                                      [octants] (9=sky invisible)
 %   UG      = daily mean relative atmospheric humidity         [%]
+%   UX      = maximum relative atmospheric humidity            [%]
+%   UN      = minimum relative atmospheric humidity            [%]
+%   EV24    = Potential evapotranspiration (Makkink)           [mm]
 %
 % [W,iostat] = knmi_etmgeg(filename) 
 %
@@ -118,7 +127,7 @@ mfile_version = 0.0;
    %% -----------------
 
       OPT.debug         = 0;
-      OPT.header.n      = 27;
+      OPT.header.n      = 35; % 27; due to 9 extra parameters
       OPT.header.offset = 6;
 
       if nargin>2
@@ -168,44 +177,59 @@ mfile_version = 0.0;
       %% Extract meta-info from header
       %% ----------------------------
       
-         W.parameter_names          = {'STN','YYYYMMDD','DDVEC','FG','FHX','FX','TG','TN','TX','SQ','SP','DR','RH','PG','VVN','NG','UG'};
-         W.parameter_names          = {'STN','YYYYMMDD','DDVEC','FG','FHX','FX','TG','TN','TX','SQ','SP','DR','RH','PG','VVN','NG','UG'};
+        %W.parameter_names          = {'STN','YYYYMMDD','DDVEC','FG','FHX','FX','TG','TN','TX','SQ','SP','DR','RH','PG','VVN','NG','UG'};
+         W.parameter_names          = {'STN','YYYYMMDD','DDVEC','FG','FHX','FHN','FX','TG','TN','TX','T10N','SQ','SP','Q','DR','RH','PG','PGX','PGN','VVN','VVX','NG','UG','UX','UN','EV24'};
          
          W.parameter_long_name { 1} =  'STN      = WMO-number';
          W.parameter_long_name { 2} =  'YYYYMMDD = date';
          W.parameter_long_name { 3} =  'DDVEC    = revailing wind direction in degrees';
          W.parameter_long_name { 4} =  'FG       = daily mean windspeed';
          W.parameter_long_name { 5} =  'FHX      = maximum hourly mean windspeed';
-         W.parameter_long_name { 6} =  'FX       = maximum wind gust';
-         W.parameter_long_name { 7} =  'TG       = daily mean temperature';
-         W.parameter_long_name { 8} =  'TN       = minimum temperature';
-         W.parameter_long_name { 9} =  'TX       = maximum temperature';
-         W.parameter_long_name {10} =  'SQ       = sunshine duration in hour';
-         W.parameter_long_name {11} =  'SP       = percentage of maximum possible sunshine duration';
-         W.parameter_long_name {12} =  'DR       = precipitation duration';
-         W.parameter_long_name {13} =  'RH       = daily precipitation amount in ';
-         W.parameter_long_name {14} =  'PG       = daily mean surface air pressure';
-         W.parameter_long_name {15} =  'VVN      = minimum visibility';
-         W.parameter_long_name {16} =  'NG       = cloud cover in octants';
-         W.parameter_long_name {17} =  'UG       = daily mean relative atmospheric humidity';
+         W.parameter_long_name { 6} =  'FHN      = minimum hourly mean windspeed';
+         W.parameter_long_name { 7} =  'FX       = maximum wind gust';
+
+         W.parameter_long_name { 8} =  'TG       = daily mean temperature';
+         W.parameter_long_name { 9} =  'TN       = minimum temperature';
+         W.parameter_long_name {10} =  'TX       = maximum temperature';
+         W.parameter_long_name {11} =  'TN10     = minimum temperature (surface)';
+
+         W.parameter_long_name {12} =  'SQ       = sunshine duration in hour';
+         W.parameter_long_name {13} =  'SP       = percentage of maximum possible sunshine duration';
+         W.parameter_long_name {14} =  'Q        = global radiation';
+
+         W.parameter_long_name {15} =  'DR       = precipitation duration';
+         W.parameter_long_name {16} =  'RH       = daily precipitation amount in ';
+
+         W.parameter_long_name {17} =  'PG       = daily mean surface air pressure';
+         W.parameter_long_name {18} =  'PGX      = maximum surface air pressure';
+         W.parameter_long_name {19} =  'PGN      = minimum surface air pressure';
+
+         W.parameter_long_name {20} =  'VVN      = minimum visibility';
+         W.parameter_long_name {21} =  'VVX      = maximum visibility';
+         W.parameter_long_name {22} =  'NG       = cloud cover in octants';
+
+         W.parameter_long_name {23} =  'UG       = daily mean relative atmospheric humidity';
+         W.parameter_long_name {24} =  'UX       = maximum relative atmospheric humidity';
+         W.parameter_long_name {25} =  'UN       = minimum relative atmospheric humidity';
+         W.parameter_long_name {26} =  'EV24     = Potential evapotranspiration (Makkink)';
          
-         W.parameter_lange_naam{ 1} =  'STN      = stationsnummer';
-         W.parameter_lange_naam{ 2} =  'YYYYMMDD = datum';
-         W.parameter_lange_naam{ 3} =  'DDVEC    = overheersende windrichting';
-         W.parameter_lange_naam{ 4} =  'FG       = etmaalgemiddelde windsnelheid';
-         W.parameter_lange_naam{ 5} =  'FHX      = hoogste uurgemiddelde windsnelheid';
-         W.parameter_lange_naam{ 6} =  'FX       = hoogste windstoot';
-         W.parameter_lange_naam{ 7} =  'TG       = etmaalgemiddelde temperatuur';
-         W.parameter_lange_naam{ 8} =  'TN       = minimum temperatuur';
-         W.parameter_lange_naam{ 9} =  'TX       = maximum temperatuur';
-         W.parameter_lange_naam{10} =  'SQ       = zonneschijnduur';
-         W.parameter_lange_naam{11} =  'SP       = percentage van de langst mogelijke zonneschijnduur';
-         W.parameter_lange_naam{12} =  'DR       = duur van de neerslag';
-         W.parameter_lange_naam{13} =  'RH       = etmaalsom van de neerslag';
-         W.parameter_lange_naam{14} =  'PG       = etmaalgemiddelde luchtdruk';
-         W.parameter_lange_naam{15} =  'VVN      = minimum opgetreden zicht';
-         W.parameter_lange_naam{16} =  'NG       = bedekkingsgraad van de bovenlucht';
-         W.parameter_lange_naam{17} =  'UG       = etmaalgemiddelde relatieve vochtigheid';
+       %  W.parameter_lange_naam{ 1} =  'STN      = stationsnummer';
+       %  W.parameter_lange_naam{ 2} =  'YYYYMMDD = datum';
+       %  W.parameter_lange_naam{ 3} =  'DDVEC    = overheersende windrichting';
+       %  W.parameter_lange_naam{ 4} =  'FG       = etmaalgemiddelde windsnelheid';
+       %  W.parameter_lange_naam{ 5} =  'FHX      = hoogste uurgemiddelde windsnelheid';
+       %  W.parameter_lange_naam{ 6} =  'FX       = hoogste windstoot';
+       %  W.parameter_lange_naam{ 7} =  'TG       = etmaalgemiddelde temperatuur';
+       %  W.parameter_lange_naam{ 8} =  'TN       = minimum temperatuur';
+       %  W.parameter_lange_naam{ 9} =  'TX       = maximum temperatuur';
+       %  W.parameter_lange_naam{10} =  'SQ       = zonneschijnduur';
+       %  W.parameter_lange_naam{11} =  'SP       = percentage van de langst mogelijke zonneschijnduur';
+       %  W.parameter_lange_naam{12} =  'DR       = duur van de neerslag';
+       %  W.parameter_lange_naam{13} =  'RH       = etmaalsom van de neerslag';
+       %  W.parameter_lange_naam{14} =  'PG       = etmaalgemiddelde luchtdruk';
+       %  W.parameter_lange_naam{15} =  'VVN      = minimum opgetreden zicht';
+       %  W.parameter_lange_naam{16} =  'NG       = bedekkingsgraad van de bovenlucht';
+       %  W.parameter_lange_naam{17} =  'UG       = etmaalgemiddelde relatieve vochtigheid';
 
          %-% for icol=1:length(W.parameter_names)
          %-% 
@@ -225,12 +249,16 @@ mfile_version = 0.0;
       
 %    1        2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17
 %  ------------------------------------------------------------------------------------------------------
-%  STN,YYYYMMDD,DDVEC,   FG,  FHX,   FX,   TG,   TN,   TX,   SQ,   SP,   DR,   RH,   PG,  VVN,   NG,   UG
+%old  STN,YYYYMMDD,DDVEC,   FG,  FHX,   FX,   TG,   TN,   TX,   SQ,   SP,   DR,   RH,   PG,  VVN,   NG,   UG
+%old
+%old  235,20010101,  177,   88,  110,  170,   40,    9,   76,    0,    0,   71,   88, 9944,   22,    8,   93
+%  ------------------------------------------------------------------------------------------------------
+% STN,YYYYMMDD,DDVEC,   FG,  FHX,  FHN,   FX,   TG,   TN,   TX, T10N,   SQ,   SP,    Q,   DR,   RH,   PG,  PGX,  PGN,  VVN,  VVX,   NG,   UG,   UX,   UN, EV24
 %
-%  235,20010101,  177,   88,  110,  170,   40,    9,   76,    0,    0,   71,   88, 9944,   22,    8,   93
+% 210,19510101,  202,  108,  190,   51,     ,   15,   -9,   42,     ,     ,     ,     ,     ,     , 9882, 9947, 9821,     ,     ,    7,     ,     ,     ,     ,
 %  ------------------------------------------------------------------------------------------------------
          
-         RAW = textscan(fid,'%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n','delimiter',',');
+         RAW = textscan(fid,'%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n','delimiter',',');
          
          for icol=1:length(W.parameter_names)
          
@@ -252,20 +280,35 @@ mfile_version = 0.0;
          W.data.DDVEC    = W.data.DDVEC     ; W.parameter_units{ 3} =  'deg';
          W.data.FG       = W.data.FG ./10   ; W.parameter_units{ 4} =  'm/s';
          W.data.FHX      = W.data.FHX./10   ; W.parameter_units{ 5} =  'm/s';
-         W.data.FX       = W.data.FX ./10   ; W.parameter_units{ 6} =  'm/s';
-         W.data.TG       = W.data.TG ./10   ; W.parameter_units{ 7} =  'deg C';
-         W.data.TN       = W.data.TN ./10   ; W.parameter_units{ 8} =  'deg C';
-         W.data.TX       = W.data.TX ./10   ; W.parameter_units{ 9} =  'deg C';
+         W.data.FHN      = W.data.FHN./10   ; W.parameter_units{ 6} =  'm/s';
+         W.data.FX       = W.data.FX ./10   ; W.parameter_units{ 7} =  'm/s';
+
+         W.data.TG       = W.data.TG  ./10  ; W.parameter_units{ 8} =  'deg C';
+         W.data.TN       = W.data.TN  ./10  ; W.parameter_units{ 9} =  'deg C';
+         W.data.TX       = W.data.TX  ./10  ; W.parameter_units{10} =  'deg C';
+         W.data.T10N     = W.data.T10N./10  ; W.parameter_units{11} =  'deg C';
+
          W.data.SQ(W.data.SQ==-1) = nan;
-         W.data.SQ       = W.data.SQ ./10   ; W.parameter_units{10} =  'hour';
-         W.data.SP       = W.data.SP        ; W.parameter_units{11} =  '%';
-         W.data.DR       = W.data.DR ./10   ; W.parameter_units{12} =  'hour';
+         W.data.SQ       = W.data.SQ ./10   ; W.parameter_units{12} =  'hour';
+         W.data.SP       = W.data.SP        ; W.parameter_units{13} =  '%';
+         W.data.Q        = W.data.Q         ; W.parameter_units{14} =  'J/cm^2';
+
+         W.data.DR       = W.data.DR ./10   ; W.parameter_units{15} =  'hour';
          W.data.RH(W.data.RH==-1) = nan;
-         W.data.RH       = W.data.RH ./10   ; W.parameter_units{13} =  'mm';
-         W.data.PG       = W.data.PG        ; W.parameter_units{14} =  '0,1 hPa';
-         W.data.VVN      = W.data.VVN       ; W.parameter_units{15} =  '#';
-         W.data.NG       = W.data.NG        ; W.parameter_units{16} =  'octants';
-         W.data.UG       = W.data.UG        ; W.parameter_units{17} =  '%';
+         W.data.RH       = W.data.RH ./10   ; W.parameter_units{16} =  'mm';
+
+         W.data.PG       = W.data.PG ./10   ; W.parameter_units{17} =  'hPa';
+         W.data.PGX      = W.data.PGX./10   ; W.parameter_units{18} =  'hPa';
+         W.data.PGN      = W.data.PGN./10   ; W.parameter_units{19} =  'hPa';
+
+         W.data.VVN      = W.data.VVN       ; W.parameter_units{20} =  '#';
+         W.data.VVX      = W.data.VVX       ; W.parameter_units{21} =  '#';
+         W.data.NG       = W.data.NG        ; W.parameter_units{22} =  'octants';
+
+         W.data.UG       = W.data.UG        ; W.parameter_units{23} =  '%';
+         W.data.UX       = W.data.UX        ; W.parameter_units{24} =  '%';
+         W.data.UN       = W.data.UN        ; W.parameter_units{25} =  '%';
+         W.data.EV24     = W.data.EV24./10  ; W.parameter_units{26} =  'mm';
          
          %% Copy explanation to data substruct
          %% -----------------------------

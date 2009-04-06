@@ -11,6 +11,7 @@
 %See also: KNMI_POTWIND2NC_TIME_INDIRECT, SNCTOOLS, KNMI_POTWIND, SEDIMENTATLAS_KORREL2NC
 
 % TO DO: handle NaNs with OPT.fillvalue
+% TO DO: check wind_direction convenction nautical/cartesian: from_direction units degrees
 
 try
    rmpath('Y:\app\matlab\toolbox\wl_mexnc\')
@@ -27,9 +28,9 @@ end
    
 for ifile=1:length(OPT.files)  
 
-   disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)  )])
-
    OPT.filename = [OPT.directory.raw, filesep, OPT.files(ifile).name]; % e.g. 'potwind_210_1981'
+
+   disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)])
 
 %% 0 Read raw data
 %------------------
@@ -86,12 +87,12 @@ for ifile=1:length(OPT.files)
    %% Station number: allows for exactly same variables when multiple timeseries in one netCDF file
    %------------------
    
-   nc.id = struct(...
-   'Name'     , 'id', ...
-   'Nctype'   , 'int', ...
-   'Dimension', {{'locations'}});
-   nc.id.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station identification number');
-   nc.id.Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id');
+     ifld = 1;
+   nc(ifld).Name         = 'id';
+   nc(ifld).Nctype       = 'float'; % no double needed
+   nc(ifld).Dimension    = {'locations'};
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station identification number');
+   nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id');
 
    %% Define dimensions in this order:
    %  time,z,y,x
@@ -104,25 +105,25 @@ for ifile=1:length(OPT.files)
    % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
    %------------------
    
-   nc.lon = struct(...
-   'Name'     , 'lon', ...
-   'Nctype'   , 'float', ...% no double needed
-   'Dimension', {{'locations'}});
-   nc.lon.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station longitude');
-   nc.lon.Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_east');
-   nc.lon.Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'longitude');
+      ifld = ifld + 1;
+   nc(ifld).Name         = 'lon';
+   nc(ifld).Nctype       = 'float'; % no double needed
+   nc(ifld).Dimension    = {'locations'};
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station longitude');
+   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_east');
+   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'longitude');
     
    %% Latitude
    % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
    %------------------
    
-   nc.lat = struct(...
-   'Name'     , 'lat', ...
-   'Nctype'   , 'float', ...% no double needed
-   'Dimension', {{'locations'}});
-   nc.lat.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station latitude');
-   nc.lat.Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_north');
-   nc.lat.Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'latitude');
+      ifld = ifld + 1;
+   nc(ifld).Name         = 'lat';
+   nc(ifld).Nctype       = 'float'; % no double needed
+   nc(ifld).Dimension    = {'locations'};
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station latitude');
+   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_north');
+   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'latitude');
 
    %% Time
    % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
@@ -133,83 +134,93 @@ for ifile=1:length(OPT.files)
    %   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984605
    %------------------
    
-   nc.time = struct(...
-       'Name'     , 'time', ...
-       'Nctype'   , 'double', ...% float as datenums are big
-       'Dimension', {{'time'}});
-   nc.time.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'time');
-  %nc_attput(outputfile, nc_global, 'timezone'      , 'GMT'); add to time units instead
    OPT.timezone = timezone_code2iso(D.timezone);
-   nc.time.Attribute(2) = struct('Name', 'units'          ,'Value',['days since 0000-1-1 00:00:00 ',OPT.timezone]); % matlab datenumber convention
-   nc.time.Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'time');
-   nc.time.Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+
+      ifld = ifld + 1;
+   nc(ifld).Name         = 'time';
+   nc(ifld).Nctype       = 'double'; % float not sufficient as datenums are big: doubble
+   nc(ifld).Dimension    = {'time'};
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'time');
+   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value',['days since 0000-1-1 00:00:00 ',OPT.timezone]); % matlab datenumber convention
+   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'time');
+   nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+  %nc(ifld).Attribute(5) = struct('Name', 'bounds'         ,'Value', '');
    
    %% Parameters with standard names
    % * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
    %------------------
 
-   nc.wind_speed = struct(...
-       'Name'     , 'wind_speed', ...
-       'Nctype'   , 'float', ...
-       'Dimension', {{'time'}});
-   nc.wind_speed.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'wind speed');
-   nc.wind_speed.Attribute(2) = struct('Name', 'units'          ,'Value', 'm/s');
-   nc.wind_speed.Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'wind_speed');
-   nc.wind_speed.Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-   nc.wind_speed.Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
+      ifld = ifld + 1;
+   nc(ifld).Name         = 'wind_speed';
+   nc(ifld).Nctype       = 'float';
+   nc(ifld).Dimension    = {'time'};
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'wind speed');
+   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm/s');
+   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'wind_speed');
+   nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+   nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
+   nc(ifld).Attribute(6) = struct('Name', 'KNMI_name'      ,'Value', 'UP');
+   nc(ifld).Attribute(7) = struct('Name', 'cell_bounds'    ,'Value', 'point');
 
    %------------------
 
-   nc.wind_to_direction = struct(... % wind_from_direction
-       'Name'     , 'wind_to_direction', ...
-       'Nctype'   , 'float', ...
-       'Dimension', {{'time'}});
-   nc.wind_to_direction.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'nautical wind direction');
-   nc.wind_to_direction.Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees');
-   nc.wind_to_direction.Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'wind_to_direction');
-   nc.wind_to_direction.Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-   nc.wind_to_direction.Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
+      ifld = ifld + 1;
+   nc(ifld).Name         = 'wind_from_direction';
+   nc(ifld).Nctype       = 'float';
+   nc(ifld).Dimension    = {'time'};
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'nautical wind direction');
+   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degree_true');
+   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'wind_from_direction');
+   nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+   nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
+   nc(ifld).Attribute(6) = struct('Name', 'KNMI_name'      ,'Value', 'DD');
+   nc(ifld).Attribute(7) = struct('Name', 'cell_bounds'    ,'Value', 'point');
 
    %% Parameters without standard names
    %------------------
 
-   nc.wind_speed_quality = struct(...
-       'Name'     , 'wind_speed_quality', ...
-       'Nctype'   , 'int', ...
-       'Dimension', {{'time'}});
-   nc.wind_speed_quality.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'quality code wind speed');
-   nc.wind_speed_quality.Attribute(2) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
-   nc.wind_speed_quality.Attribute(3) = struct('Name', 'comment'        ,'Value',['-1 = no data,',...
+      ifld = ifld + 1;
+   nc(ifld).Name         = 'wind_speed_quality';
+   nc(ifld).Nctype       = 'int';
+   nc(ifld).Dimension    = {'time'};
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'quality code wind speed');
+   nc(ifld).Attribute(2) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
+   nc(ifld).Attribute(3) = struct('Name', 'comment'        ,'Value',['-1 = no data,',...
                                                                                   '0   = valid data,',...
                                                                                   '2   = data taken from WIKLI-archives,',...
                                                                                   '3   = wind direction in degrees computed from points of the compass,',...
                                                                                   '6   = added data,',...
                                                                                   '7   = missing data,',...
                                                                                   '100 = suspected data']);
+   nc(ifld).Attribute(4) = struct('Name', 'KNMI_name'      ,'Value', 'QUP');
+   nc(ifld).Attribute(5) = struct('Name', 'cell_bounds'    ,'Value', 'point');
 
    %------------------
 
-   nc.wind_to_direction_quality = struct(... % wind_from_direction
-       'Name'     , 'wind_to_direction_quality', ...
+      ifld = ifld + 1; % 26
+   nc(ifld) = struct(... % wind_from_direction
+       'Name'     , 'wind_from_direction_quality', ...
        'Nctype'   , 'int', ...
        'Dimension', {{'time'}});
-   nc.wind_to_direction_quality.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'quality code nautical wind direction');
-   nc.wind_to_direction_quality.Attribute(2) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
-   nc.wind_to_direction_quality.Attribute(3) = struct('Name', 'comment'        ,'Value',['-1 = no data,',...
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'quality code nautical wind direction');
+   nc(ifld).Attribute(2) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
+   nc(ifld).Attribute(3) = struct('Name', 'comment'        ,'Value',['-1 = no data,',...
                                                                                          '0   = valid data,',...
                                                                                          '2   = data taken from WIKLI-archives,',...
                                                                                          '3   = wind direction in degrees computed from points of the compass,',...
                                                                                          '6   = added data,',...
                                                                                          '7   = missing data,',...
                                                                                          '100 = suspected data']);
+   nc(ifld).Attribute(4) = struct('Name', 'KNMI_name'      ,'Value', 'QQD');
+   nc(ifld).Attribute(5) = struct('Name', 'cell_bounds'    ,'Value', 'point');
 
    %% Add
    %------------------
 
-   fldnames = fieldnames(nc);
-   for ifld=1:length(fldnames)
-      fldname = fldnames{ifld};
-      nc_addvar(outputfile, nc.(fldname));   
+   for ifld=1:length(nc)
+      nc_addvar(outputfile, nc(ifld));   
+
+
    end
 
 %% 4 Create attibutes
@@ -221,14 +232,14 @@ for ifile=1:length(OPT.files)
 %% 5 Fill variables
 %------------------
 
-   nc_varput(outputfile, 'id'                       , str2num(D.stationnumber));
-   nc_varput(outputfile, 'lon'                      , D.lon);
-   nc_varput(outputfile, 'lat'                      , D.lat);
-   nc_varput(outputfile, 'time'                     , D.datenum);
-   nc_varput(outputfile, 'wind_speed'               , D.UP);
-   nc_varput(outputfile, 'wind_to_direction'        , D.DD); % does not work with NaNs.
-   nc_varput(outputfile, 'wind_speed_quality'       , int8(D.QUP));
-   nc_varput(outputfile, 'wind_to_direction_quality', int8(D.QQD));
+   nc_varput(outputfile, 'lon'                        , D.lon);
+   nc_varput(outputfile, 'lat'                        , D.lat);
+   nc_varput(outputfile, 'id'                         , str2num(D.stationnumber));
+   nc_varput(outputfile, 'time'                       , D.datenum);
+   nc_varput(outputfile, 'wind_speed'                 , D.UP);
+   nc_varput(outputfile, 'wind_from_direction'        , D.DD); % does not work with NaNs.
+   nc_varput(outputfile, 'wind_speed_quality'         , int8(D.QUP));
+   nc_varput(outputfile, 'wind_from_direction_quality', int8(D.QQD));
    
 %% 6 Check
 %------------------

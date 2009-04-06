@@ -1,4 +1,4 @@
-function KNMI_potwind_get_url(basepath,varargin)
+function varargout = KNMI_potwind_get_url(basepath,varargin)
 %KNMI_POTWIND_GET_URL   gets all potwind data from KNMI website
 %
 %   KNMI_POTWIND_GET_URL(basepath)
@@ -10,7 +10,7 @@ function KNMI_potwind_get_url(basepath,varargin)
 %
 % Implemented <keyword,value> pairs are:
 % * download : switch whether to download from url (default 1)
-% * unzip    : switch whether unzip downloaded data (default 1)
+% * unzip    : switch whether to unzip downloaded data (default 1)
 % * nc       : switch whether to make netCDF from unzipped data (default 0)
 % * opendap  : switch whether to put netCDF files on OPeNDAP server (default 0)
 % * url      : base url from where to download (default 
@@ -52,6 +52,17 @@ function KNMI_potwind_get_url(basepath,varargin)
       error('syntax: KNMI_potwind_get_url(basepath)')
    end
 
+%% Set <keyword,value> pairs
+%----------------------
+   
+   OPT.debug    = 1; % load local download.html from DIR.cache
+   OPT.download = 1;
+   OPT.unzip    = 1;
+   OPT.nc       = 1;
+   OPT.opendap  = 1; 
+
+   OPT = setProperty(OPT,varargin{:});
+
 %% Settings
 %----------------------
 
@@ -69,30 +80,24 @@ function KNMI_potwind_get_url(basepath,varargin)
    
    if ~(exist(DIR.raw)==7)
       disp('The following target path ')
-      disp(DIR.cache)
+      disp(DIR.raw)
       disp('does not exist, create? Press <CTRL> + <C> to quit, <enter> to continue.')
       pause
       mkpath(DIR.raw)
    end   
-   
-   OPT.download = 1;
-   OPT.unzip    = 1;
-   OPT.nc       = 1;
-   OPT.opendap  = 1; 
-
-%% Set <keyword,value> pairs
-%----------------------
-
-   OPT = setProperty(OPT,varargin{:});
 
 %% Load website
 %----------------------
 
+   if ~(OPT.debug)
    website   = urlread ('http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/');
 
    
                urlwrite('http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/',...
                         [DIR.cache,'download.html']);
+   else
+   website = urlread(['file:///',DIR.cache,filesep,'download.html'])
+   end
 
 %% Extract names of files to be downloaded from webpage
 %----------------------
@@ -106,7 +111,7 @@ function KNMI_potwind_get_url(basepath,varargin)
       
       nfile  = nfile +1;
       
-      %% remove "" brackets
+      %% mind to leave out "" brackets
       OPT.files{nfile} = website(index+1:index+dindex(2)-1);
    
    end
@@ -155,6 +160,13 @@ function KNMI_potwind_get_url(basepath,varargin)
 %----------------------
 
    if OPT.opendap
+   end
+   
+%% Output 
+%----------------------
+
+   if nargout==1
+      varargout = {OPT};
    end
 
 %% EOF
