@@ -183,6 +183,8 @@ if ~isempty(zInitial)
     if dbstate
         dbPlotDuneErosion;
     end
+    
+    result.info.x0 = x0;
 
     %
     %% Calculate volumes and CumVolume

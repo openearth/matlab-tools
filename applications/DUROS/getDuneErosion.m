@@ -134,7 +134,8 @@ if DuneErosionSettings('get', 'DUROS')
             FallvelocityArgs = [DuneErosionSettings('get', 'FallVelocity') {D50}];
             w = feval(FallvelocityArgs{:});
             G = getG(TargetVolume + Volume, Hsig_t, w, Bend);
-            result(end+1) = getDUROSprofile(xInitial, zInitial, result(1).info.x0 - G, Hsig_t, Tp_t, WL_t, w);
+            g = G/diff(result(1).zActive([end 1])); % G = g * z ==> g = G/z; see Basisrapport Zandige Kust pp 469
+            result(end+1) = getDUROSprofile(xInitial, zInitial, result(1).info.x0 - g, Hsig_t, Tp_t, WL_t, w);
             idAddProf = 3;
         else
             idAddProf = 1;
