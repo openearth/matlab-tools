@@ -451,7 +451,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Attribute(4) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
    nc(ifld).Attribute(5) = struct('Name', 'KNMI_name'      ,'Value', 'UX');
 
-%% 4 Create attibutes
+%% 4 Create variables with attibutes
 %------------------
 
    for ifld=1:length(nc)

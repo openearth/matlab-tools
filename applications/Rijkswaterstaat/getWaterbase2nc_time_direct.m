@@ -8,9 +8,7 @@
 % In this example time is both a dimension and a variables.
 % The datenum values do not show up as a parameter in ncBrowse.
 %
-%See also: GETWATERBASEDATA, DONAR_READ
-
-% TO DO: handle NaNs with OPT.fillvalue
+%See also: GETWATERBASEDATA, DONAR_READ, SNCTOOLS
 
 try
    rmpath('Y:\app\matlab\toolbox\wl_mexnc\')
@@ -19,33 +17,51 @@ end
 %% Initialize
 %------------------
 
-   OPT.fillvalue     = 0; % NaNs do not work in netcdf API
+   OPT.fillvalue     = nan; % NaNs do work in netcdf API
    OPT.dump          = 0;
    OPT.directory.raw = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\raw\sea_surface_height\';
    OPT.directory.nc  = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\nc\sea_surface_height\';
    OPT.files         = dir([OPT.directory.raw filesep 'id*.txt']);
+
    OPT.standard_name = 'sea_surface_height'; % http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
    OPT.long_name     = 'sea surface height';
+   OPT.load          = 1; % load slow *.txt file
 
+   OPT.files         = dir([OPT.directory.raw filesep 'id*.zip']);
+   OPT.unzip         = 1; % process only zipped files: unzip them, and delete if afterwards
+   
 for ifile=1:length(OPT.files)  
 
-   disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)  )])
+   OPT.filename = ([OPT.directory.raw, filesep, OPT.files(ifile).name(1:end-4)]); % id1-AMRGBVN-196101010000-200801010000.txt
 
-   OPT.filename = [OPT.directory.raw, filesep, OPT.files(ifile).name]; % e.g. 'potwind_210_1981'
-
+   disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)])
+   
 %% 0 Read raw data
 %------------------
 
-   if exist([OPT.filename,'.mat'])
-   D = load([OPT.filename,'.mat']);% speeds up considerably
+   if    exist([OPT.filename,'.mat'])==2
+      D = load([OPT.filename,'.mat']);% speeds up considerably
    else
-   D             = donar_read(OPT.filename,'locationcode',1,...
-                                              'fieldname',OPT.standard_name,...
-                                         'fieldnamescale',100,...
-                                                 'method','fgetl');
-                                                 
-   save([OPT.filename,'.mat'],'-struct','D'); % to save time 2nd attempt
-   end
+      if OPT.unzip
+         OPT.zipname  = [OPT.filename,'.zip']
+         unzip(OPT.zipname,filepathstr(OPT.filename))
+      end
+      
+      if OPT.load
+      D             = donar_read(OPT.filename,'locationcode',1,...
+                                                 'fieldname',OPT.standard_name,...
+                                            'fieldnamescale',100,...
+                                                    'method','fgetl');
+      end
+      
+      if OPT.unzip
+      delete(OPT.filename);
+      end
+                                                    
+      save([OPT.filename,'.mat'],'-struct','D'); % to save time 2nd attempt
+   
+   end % exist([OPT.filename,'.mat'])
+   
    D.version = '';
    
 %% 1a Create file
@@ -83,8 +99,6 @@ for ifile=1:length(OPT.files)
    nc_attput(outputfile, nc_global, 'waarnemingssoort', D.meta1.waarnemingssoort);
    nc_attput(outputfile, nc_global, 'reference_level' , D.meta1.what);
 
-  %nc_attput(outputfile, nc_global, 'timezone'      , 'GMT+1'); add to time units instead
-
    nc_attput(outputfile, nc_global, 'terms_for_use' , 'These data can be used freely for research purposes provided that the following source is acknowledged: Rijkswaterstaat.');
    nc_attput(outputfile, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
 
@@ -93,20 +107,21 @@ for ifile=1:length(OPT.files)
 
    nc_add_dimension(outputfile, 'time'     , length(D.data.datenum))
    nc_add_dimension(outputfile, 'locations', 1)
+  %nc_add_dimension(outputfile, 'stringlength', ) % to add station long_name array
 
 %% 3 Create variables
 %------------------
 
    clear nc
+   ifld = 0;
 
    %% Station number: allows for exactly same variables when multiple timeseries in one netCDF file
    %------------------
 
-   ifld=1;
-   nc(ifld) = struct(...
-   'Name'     , 'id', ...
-   'Nctype'   , 'int', ...
-   'Dimension', {{'locations'}});
+     ifld = ifld + 1;
+   nc(ifld).Name         = 'id';
+   nc(ifld).Nctype       = 'float'; % no double needed
+   nc(ifld).Dimension    = {'locations'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station identification number');
    nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id');
 
@@ -120,7 +135,7 @@ for ifile=1:length(OPT.files)
    % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
    %------------------
    
-   ifld=ifld+1;
+     ifld = ifld + 1;
    nc(ifld).Name         = 'lon';
    nc(ifld).Nctype       = 'float'; % no double needed
    nc(ifld).Dimension    = {'locations'};
@@ -132,7 +147,7 @@ for ifile=1:length(OPT.files)
    % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
    %------------------
    
-   ifld=ifld+1;
+     ifld = ifld + 1;
    nc(ifld).Name         = 'lat';
    nc(ifld).Nctype       = 'float'; % no double needed
    nc(ifld).Dimension    = {'locations'};
@@ -149,22 +164,23 @@ for ifile=1:length(OPT.files)
    %   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984605
    %------------------
    
-   ifld=ifld+1;
+   OPT.timezone = timezone_code2iso('MET');
+
+     ifld = ifld + 1;
    nc(ifld).Name         = 'time';
-   nc(ifld).Nctype       = 'double';% float as datenums are big
+   nc(ifld).Nctype       = 'double'; % float not sufficient as datenums are big: doubble
    nc(ifld).Dimension    = {'time'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'time');
-  %nc_attput(outputfile, nc_global, 'timezone'        , 'GMT+1');
-   OPT.timezone = timezone_code2iso('CET');
-   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', [ ,OPT.timezone]); % matlab datenumber convention
+   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', ['days since 0000-1-1 00:00:00 ',OPT.timezone]); % matlab datenumber convention
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'time');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+  %nc(ifld).Attribute(5) = struct('Name', 'bounds'         ,'Value', '');
    
    %% Parameters with standard names
    % * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
    %------------------
 
-   ifld=ifld+1;
+     ifld = ifld + 1;
    nc(ifld).Name         = 'sea_surface_height';
    nc(ifld).Nctype       = 'float'; % no double needed
    nc(ifld).Dimension    = {'time'};
@@ -172,19 +188,15 @@ for ifile=1:length(OPT.files)
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+   nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
+   nc(ifld).Attribute(6) = struct('Name', 'cell_methods'   ,'Value', 'point');
 
-   %% Add
-   %------------------
+%% 4 Create variables with attibutes
+%------------------
 
    for ifld=1:length(nc)
       nc_addvar(outputfile, nc(ifld));   
    end
-
-%% 4 Create attibutes
-%------------------
-
-   % already done with creation of variables.
-   % This is more efficient.
    
 %% 5 Fill variables
 %------------------
@@ -201,7 +213,7 @@ for ifile=1:length(OPT.files)
    if OPT.dump
    nc_dump(outputfile);
    end
-
+   
 end %for ifile=1:length(OPT.files)   
 
 %% EOF

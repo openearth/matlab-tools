@@ -171,8 +171,7 @@ function sanitized_attname = matlab_sanitize_attname ( attname )
 	elseif ( attname(1) == '_' )
 		sanitized_attname = ['SNC_' attname];
 	else
-		sanitized_attname = attname;
-
+		sanitized_attname = mkvar(attname); % fix colon in names as 'CF:featureType'
 		%
 		% Does the attribute have non-letters in the leading 
 		% position?  Convert these to underscores.  

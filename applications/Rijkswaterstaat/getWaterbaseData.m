@@ -3,39 +3,41 @@ function OutputName = getWaterbaseData(varargin);
 %
 % Download data from the <a href="http://www.waterbase.nl">www.waterbase.nl</a> website for one specified
 % substance at one or more specified locations during one specified
-% year. All available data are written in a specified ascii file.
+% year. All available data are written to a specified ASCII file.
 %
 % Without input arguments a GUI is launched.
 %
-%    D = getWaterbaseData(<Code>    ) % or
-%    D = getWaterbaseData(<FullName>) % NOTE: NOT CodeName
+%    getWaterbaseData(<Code>    ) % or
+%    getWaterbaseData(<FullName>) % NOTE: NOT CodeName
 %
 % where Code or FullName are the unique DONAR numeric or string
 % substance identifier respectively (e.g. 22).
 %
-%    D = getWaterbaseData( Code     ,<ID>)
-%    D = getWaterbaseData( FullName ,<ID>)
+%    getWaterbaseData( Code     ,<ID>)
+%    getWaterbaseData( FullName ,<ID>)
 %
 % where ID is  the unique DONAR string location identifier (e.g. 'AUKFPFM').
 %
-%    D = getWaterbaseData( Code     ,ID,<datenum>)
-%    D = getWaterbaseData( FullName ,ID,<datenum>)
+%    getWaterbaseData( Code     ,ID,<datenum>)
+%    getWaterbaseData( FullName ,ID,<datenum>)
 %
 % where datenum is a 2 element vector with teh start and end time
 % of the query in datenumbers (e.g. datenum([1961 2008],1,1)).
 %
-%    D = getWaterbaseData( Code     ,ID,datenum,<FileName>)
-%    D = getWaterbaseData( FullName ,ID,datenum,<FileName>)
+%    getWaterbaseData( Code     ,ID,datenum,<FileName>)
+%    getWaterbaseData( FullName ,ID,datenum,<FileName>)
 %
 % where FileName is the name of the output file. When it is a directory
 % the FileName will be chosen as DONAR does (with extension '.txt').
+%
+%    name = getWaterbaseData(...) returns the local filename to which the data was written.
 %
 % Example:
 %
 %    getWaterbaseData(22,'AUKFPFM',datenum([1961 2008],1,1),pwd)
 %
-% See also: DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>,
-%           GETWATERBASEDATA_SUBSTANCES, GETWATERBASEDATA_LOCATIONS
+% See web:  <a href="http://www.waterbase.nl">www.waterbase.nl</a>,
+% See also: DONAR_READ, GETWATERBASEDATA_SUBSTANCES, GETWATERBASEDATA_LOCATIONS
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
@@ -180,9 +182,11 @@ function OutputName = getWaterbaseData(varargin);
    end
 
    disp(['message: getWaterbaseData: loading file             ',fullfile(FilePath,FileName)]);
-
+   
 %% get data = f(Substance.Code, Station.ID, startdate, enddate
 %--------------------------------------
+
+   OutputName = fullfile(FilePath,FileName);
 
    %% Directly write file returned for one location
    %--------------------------------------
@@ -197,7 +201,7 @@ function OutputName = getWaterbaseData(varargin);
 
       disp(urlName)
 
-      [s status] = urlwrite([urlName],fullfile(FilePath,FileName));
+      [s status] = urlwrite([urlName],OutputName);
 
       if (status == 0)
         warndlg('www.waterbase.nl may be offline or you are not connected to the internet','Online source not available');
@@ -213,7 +217,7 @@ function OutputName = getWaterbaseData(varargin);
 
       h = waitbar(0,'Downloading data...');
 
-      fid = fopen(fullfile(FilePath,FileName), 'w+');
+      fid = fopen(OutputName, 'w+');
       for iLoc = 1:length(indLoc)
 
             urlName = ['http://www.waterbase.nl/Sites/waterbase/wbGETDATA.xitng?ggt=id' ...

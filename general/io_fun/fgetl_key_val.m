@@ -13,7 +13,8 @@ function varargout = fgetl_key_val(fid,commentchar,varargin);
 % [keyword,value,rec  ]= fgetl_key_val(); returns remainder of line after value
 % [keyword,value,rec,n]= fgetl_key_val(); returns number of read lines n.
 %
-% © G.J. de Boer, June 2008.
+% Example:
+% [keyword,value] = fgetl_key_val(fid) % to read following line in file: "Parameter=H10"
 %
 % See also: FGETL, ISCOMMENTLINE, FGETL_NO_COMMENT_LINE
 
@@ -55,9 +56,9 @@ function varargout = fgetl_key_val(fid,commentchar,varargin);
       index_comment_sign = length(rec)+1;
    end
    
-   keyword = deblank2(rec(                    1:index_equal_sign-1));
-   value   = deblank2(rec(index_equal_sign+1   :index_comment_sign(1)-1));
-   rec     =          rec(index_comment_sign(1):end);
+   keyword = strtrim(rec(                    1:index_equal_sign-1));
+   value   = strtrim(rec(index_equal_sign+1   :index_comment_sign(1)-1));
+   rec     =         rec(index_comment_sign(1):end);
 
    %[keyword,rec] = strtok(rec)
    %[issign ,rec] = strtok(rec)

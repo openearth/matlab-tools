@@ -15,6 +15,7 @@
    OPT.standard_name = 'sea_surface_height'; % http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
    OPT.directory.raw = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\raw\';
    OPT.period        = datenum([1961 2008],1,1);
+   OPT.zip           = 1; % zip txt file and delete it
    OPT.nc            = 0; % not implemented yet
    OPT.opendap       = 0; % not implemented yet
    
@@ -46,10 +47,19 @@
       disp(['FullName :',        LOC.FullName{indLoc} ])
       disp(['ID       :',        LOC.ID{indLoc} ])
       
+      OPT.filename = ...
       getWaterbaseData(SUB.Code(OPT.indSub),LOC.ID{indLoc},...
                        OPT.period,...
-                      [OPT.directory.raw,filesep,OPT.standard_name])   
-   end
+                      [OPT.directory.raw,filesep,OPT.standard_name]);
+   %% Zip
+   %----------------------
+
+      if OPT.zip
+         zip   (OPT.filename,OPT.filename);
+         delete(OPT.filename)
+      end
+      
+   end % for indLoc=1:length(LOC.ID)
    
 %% Transform to *.nc files
 %----------------------

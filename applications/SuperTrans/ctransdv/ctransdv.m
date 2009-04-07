@@ -49,11 +49,11 @@ function varargout = CTRANSDV(varargin)
 %  * XY_PAR2LONLAT  :conversion of RD    coordinates into geographical coordinates
 %  * XY_UTM2LONLAT  :conversion of Paris coordinates into geographical coordinates
 %
+% See web: pctrans.exe (<a href="http://www.hydro.nl/pgs/en/pctrans_en.htm">www.hydro.nl/pgs/en/pctrans_en.htm</a>)
 % See also: GETELLIPSOID,LONLAT2XY_UTM,XY_UTM2LONLAT,
 %                        LONLAT2XY_RD , XY_RD2LONLAT ,
 %                        LONLAT2XY_PAR,XY_PAR2LONLAT
 %    MFWDTRAN,MINVTRAN, (from mapping toolbox), SuperTrans,
-%    pctrans.exe (<a href="http://www.hydro.nl/pgs/en/pctrans_en.htm">www.hydro.nl/pgs/en/pctrans_en.htm</a>)
 
 
 % -----------------------------------------------------------------------------
