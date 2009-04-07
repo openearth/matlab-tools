@@ -131,6 +131,8 @@ if DuneErosionSettings('get', 'DUROS')
         TargetVolume = eval(DuneErosionSettings('AdditionalVolume'));  % Attention, TargetVolume represents an additional amount of erosion, which is a negative number (!)
         AdditionalErosionforCoastalBend = Bend > 6;
         if AdditionalErosionforCoastalBend
+            FallvelocityArgs = [DuneErosionSettings('get', 'FallVelocity') {D50}];
+            w = feval(FallvelocityArgs{:});
             G = getG(TargetVolume + Volume, Hsig_t, w, Bend);
             result(end+1) = getDUROSprofile(xInitial, zInitial, result(1).info.x0 - G, Hsig_t, Tp_t, WL_t, w);
             idAddProf = 3;
