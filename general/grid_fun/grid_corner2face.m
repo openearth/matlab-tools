@@ -1,5 +1,5 @@
 function varargout = grid_corner2face(varargin)
-%CORNER2FACE   get cell face coordinates from cell corner coordinates
+%GRID_CORNER2FACE   get cell face coordinates from cell corner coordinates
 %
 %   corner2face returns the co-ordinates of the middle of all faces 
 %   of a curvilear grid, given the co-ordinates of all corner 

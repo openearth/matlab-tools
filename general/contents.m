@@ -7,11 +7,14 @@
 %   SVN_fun             - SubVersion configuration
 %   
 % General toolboxes.
-%   debug_fun           - denug functions
+%   colormaps           - colormaps
+%   debug_fun           - debug functions
 %   el_fun              - elementary functions
 %   el_mat              - elementary matrix functions
+%   GUI_fun             - GUI related
 %   grid_fun            - grid related
 %   io_fun              - input/output rerlatred
+%   nan_fun             - nansum, nanmin, nanmax, nanstd, nanmean, ...
 %   phys_fun            - physics related
 %   plot_fun            - plot related
 %   poly_fun            - polygon related

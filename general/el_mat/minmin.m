@@ -1,5 +1,5 @@
 function [varargout] = minmin(x,varargin);
-%MINMIM    Calculates minimum of all dimensions of an array.
+%MINMIN    Calculates minimum of all dimensions of an array.
 %
 %   min_of_x = minmin(x) calculates minimum of all dimensions
 %   of array x. Similar to min(array(:)), but useful when you 
@@ -15,7 +15,7 @@ function [varargout] = minmin(x,varargin);
 %    minmin(array(1:floor(end/2),ceil(end/2):end,:))
 %
 %   See also: MAXMAX
-%
+
 %   G.J. de Boer, Delft Univeristy of Technology
 %   Feb 2004, version 1.0
 

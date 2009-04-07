@@ -1,5 +1,6 @@
 function out = angle2domain(in,rangemin, rangemax,varargin);
-%ANGLE2DOMAIN
+%ANGLE2DOMAIN   truncates ngle to domain
+%
 % out = angle2domain(in,rangemin, rangemax)
 %
 % Adds an integer number of range = rangemax-rangemin
@@ -18,8 +19,7 @@ function out = angle2domain(in,rangemin, rangemax,varargin);
 %    sets all input elements with value equal to
 %    rangemin or rangemax get rangeMIN.
 %
-% See also:
-% DEG2RAD, RAD2DEG, UNWRAP, DOMAIN2ANGLE
+% See also: DEG2RAD, RAD2DEG, UNWRAP, DOMAIN2ANGLE
 
 % © G.J. de Boer
 % Delft University of Technology Nov 2004

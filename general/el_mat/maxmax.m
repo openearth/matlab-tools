@@ -15,7 +15,7 @@ function [varargout] = maxmax(x,varargin);
 %    maxmax(array(1:floor(end/2),ceil(end/2):end,:))
 %
 %   See also: MINMIN
-%
+
 %   G.J. de Boer, Delft Univeristy of Technology
 %   Feb 2004, version 1.0
 

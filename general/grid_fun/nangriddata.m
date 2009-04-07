@@ -1,5 +1,5 @@
 function ZI = nangriddata(varargin)
-%NANGRIDDATA   GRIDDATA for matrices with NaNs
+%NANGRIDDATA   griddata for matrices with NaNs
 %
 % ZI = NANGRIDDATA(X,Y,Z,XI,YI,<...>) does same as GRIDDATA, but handles
 % cases where X,Y and/or Z are NaN in source data X,Y,Z differently 

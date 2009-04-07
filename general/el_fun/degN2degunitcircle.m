@@ -1,5 +1,5 @@
 function degUC = degN2degunitcirle(degN)
-%DEGN2DEGUNITCIRLE   convert directions between conventions
+%DEGN2DEGUNITCIRCLE   convert directions between conventions
 %
 % degUC = DEGN2DEGUNITCIRLE(degN) converts a wind direction
 % on a unit circle (degrees cartesian) to a direction in a
