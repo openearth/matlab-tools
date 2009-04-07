@@ -135,7 +135,8 @@ if DuneErosionSettings('get', 'DUROS')
             w = feval(FallvelocityArgs{:});
             G = getG(TargetVolume + Volume, Hsig_t, w, Bend);
             g = G/diff(result(1).zActive([end 1])); % G = g * z ==> g = G/z; see Basisrapport Zandige Kust pp 469
-            result(end+1) = getDUROSprofile(xInitial, zInitial, result(1).info.x0 - g, Hsig_t, Tp_t, WL_t, w);
+            result(end+1) = getDUROSprofile(xInitial, zInitial, result(1).info.x0 + g, Hsig_t, Tp_t, WL_t, w);
+            result(end).info.ID = [result(1).info.ID ' (shifted for coastal bend)'];
             idAddProf = 3;
         else
             idAddProf = 1;
@@ -208,7 +209,7 @@ if DuneErosionSettings('get', 'BoundaryProfile') && ~NoDUROSResult
         writemessage(400,'Start fourth step: fit boundary profile');
         x2 = [result(end).xLand; result(end).xActive; result(end).xSea];
         z2 = [result(end).zLand; result(end).z2Active; result(end).zSea];
-        result(end+1) = fitBoundaryProfile(xInitial, zInitial, x2, z2, WL_t, Tp_t, Hsig_t, x00min, result(3).info.x0, x0except);
+        result(end+1) = fitBoundaryProfile(xInitial, zInitial, x2, z2, WL_t, Tp_t, Hsig_t, x00min, result(end).info.x0, x0except);
     else
         result(end+1) = createEmptyDUROSResult;
         result(end).info.ID = 'BoundaryProfile';
