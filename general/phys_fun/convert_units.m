@@ -50,7 +50,11 @@ function Factor=convert_units(InUnits,OutUnits);
 % 2008 jan 23: started forces and pressure section [gerben J. de Boer]
 % 2008 jan 23: removed refs to constants [gerben J. de Boer]
 
+   %%--- Definitions  ---
    RAD    = 180./pi;
+   cyc    = 1;
+   cycle  = 1;
+   cycles = 1;
    
    %%--- Length units ---
    mm     = 1e-3;                         % mm
@@ -72,6 +76,7 @@ function Factor=convert_units(InUnits,OutUnits);
    s      = 1;                            % sec
    min    = 60;                           % minute
    hour   = 3600;                         % hour
+   hr     = hour;                         % hour
    sday   = 86164.09053;                  % sidereal day
    day    = 86400;                        % day
    week   = 7.*day;                       % week

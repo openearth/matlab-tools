@@ -45,8 +45,8 @@ function num = timezone_code2iso(code)
 
    OPT.xlsfile = [filepathstr(mfilename('fullpath')),filesep,'timezone.xls'];
    
-   x   = xls2struct(OPT.xlsfile);
-   i   = strmatch(upper(code),upper(x.civilian_code));
-   num = num2str(x.offset(i),'%+0.2d:00');
+   DAT = xls2struct(OPT.xlsfile);
+   i   = strmatch(upper(code),upper(DAT.civilian_code));
+   num = num2str(DAT.offset(i),'%+0.2d:00');
    
 %% EOF   
