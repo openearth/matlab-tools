@@ -74,13 +74,16 @@ if ischar(call)
             varargout = getDESettings(DESettings,varargin{2:end});
         case 'set'
             DESettings = setDESettings(DESettings, varargin{2:end});
+            varargout = {DESettings};
         case 'load'
             DESettings = loadDESettings(varargin{2:end});
+            varargout = {DESettings};
             if isempty(DESettings)
                 return
             end
         case 'save'
             saveDESettings(DESettings,varargin{2:end});
+            varargout = {true};
         case 'default'
             DESettings = getDefaultDESettings;
             DESfieldnames = fieldnames(DESettings);
@@ -94,6 +97,7 @@ if ischar(call)
                 end
             end
             DESettings = setDESettings(DESettings, varargin{:});
+            varargout = {DESettings};
         case 'all'
             varargout = {DESettings};
         otherwise % get settings (default)

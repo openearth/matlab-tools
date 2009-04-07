@@ -185,6 +185,33 @@ if AdditionalRetreatExceedsmaximum
     % new x0 at the maximum retreat distance
     x0(Iter) = x0max - maxRetreat;
     xcross = findCrossings(xInitial, zInitial, x0(Iter)+x2, z2, 'keeporiginalgrid');
+%     if ~isempty(xcross)
+%         % In my opinion comparing x2+x0 / z2 with the initial profile will
+%         % not be empty (ever!!) if there is a DUROS solution (profile sticks
+%         % above the water line and therefore always crosses x2+x0(iter),z2). 
+%         % All points seaward of the Duros solution should be removed to 
+%         % judge whether we really have a solution that is inside a valley. 
+%         
+%         xcross(xcross>=x0(1))=[];
+%         
+%         % In that case:
+%         %   - no crossings left means:
+%         %       Our main solution is inside a valley. The (restricted)
+%         %       additional erosion lies in that same valley and thus is
+%         %       restricted to a volume of.... 0!! Xr equals Xp (but where
+%         %       is the question..??).
+%         %   - one or more crossings means:
+%         %       Our Duros solution crosses a dune. Some of the
+%         %       additional volume can be met. If the most landward crossing
+%         %       is smaller than x0(Iter, The imposed 15 m maximum
+%         %       distance) -> Xp(with additional erosion) lies inside a dune 
+%         %       and therefore equals x0(Iter). Xr equals the minimum value
+%         %       of xcross (as normal so far). In case min(xcross) is larger 
+%         %       than x0(Iter), the imposed maximum retreat lies in a valley. 
+%         %       We have to correct that, because Xp cannot be drifting in 
+%         %       the air.In this case both Xp and Xr (with additional 
+%         %       erosion volume) equal min(xcross).
+%     end
     if isempty(xcross)
         % no crossings means that the additional erosion is restricted
         % within the dune valley
