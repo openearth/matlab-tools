@@ -49,7 +49,8 @@ OPT = struct(...
     'exefile', 'xbeach.exe',...
     'mpiexe', 'mpiexec.exe',...
     'np', 1,...
-    'priority', '1:1');
+    'priority', '1:1',...
+    'passphrase', '');
 
 % provide backward compatibility
 if isvector(varargin) && ~any(strcmp(fieldnames(OPT), varargin{1}))
@@ -65,7 +66,10 @@ OPT = setProperty(OPT, varargin{:});
 if ~exist(OPT.inpfile, 'file')
     error('XB_RUN:NoInpfileFound', ['No inputfile "' OPT.inpfile '" found.'])
 end
-[inpath fname fext] = fileparts(which(OPT.inpfile));
+if ~isempty(which(OPT.inpfile))
+    OPT.inpfile = which(OPT.inpfile);
+end
+[inpath fname fext] = fileparts(OPT.inpfile);
 OPT.inpfile = fullfile(inpath, [fname fext]);
 
 %% path of executable
@@ -119,7 +123,15 @@ tic
 if OPT.np == 1
     system(['"' fullfile(OPT.exepath, OPT.exefile) '" "' fname fext '"']);
 else
-    system(['"' OPT.mpiexe '" -np ' num2str(OPT.np) ' -localonly -priority ' OPT.priority ' "' fullfile(OPT.exepath, OPT.exefile) '" "' fname fext '"']);
+    if isempty(OPT.passphrase) && any(strcmp(varargin, 'passphrase'))
+        % work around, in case of empty passphrase
+        passphrase = ' < NUL';
+    elseif any(strcmp(varargin, 'passphrase'))
+        passphrase = [' -phrase "' OPT.passphrase '"'];
+    else
+        passphrase = '';
+    end
+    system(['"' OPT.mpiexe '" -np ' num2str(OPT.np) ' -localonly -priority ' OPT.priority ' "' fullfile(OPT.exepath, OPT.exefile) '" "' fname fext '"' passphrase]);
 end
 
 runtime = toc;
