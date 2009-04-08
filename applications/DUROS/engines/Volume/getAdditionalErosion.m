@@ -1,4 +1,6 @@
 function varargout = getAdditionalErosion(x, z, varargin)
+% This document is being edited. Don't trust the results!!!!!
+
 %GETADDITIONALEROSION  iteratively fit additional erosion in cross-shore profile
 %
 %   Routine iteratively fits a predefined volume into a cross-shore
@@ -84,10 +86,18 @@ if isempty(OPT.poslndwrd)
     [x z OPT.poslndwrd] = checkCrossShoreProfile(x, z);
 end
 
+profileSwitched = false;
+if OPT.poslndwrd == 1
+    x = 0-x;
+    profileSwitched = true;
+end
+
 %%
 [xcr zcr x1_new_out z1_new_out x2_new_out z2_new_out crossdir] = findCrossings(x, z, x, repmat(OPT.zmin,size(x)));
 
+%% determine x0except, x0min and x0max
 if OPT.poslndwrd == 1
+    %% redundant
     % x direction is positive landward
     
     % dune face is defined as the first downward crossing of the zmin level
@@ -155,27 +165,32 @@ end
 
 if OPT.x0max == max(x)
     % end of profile is above zmin
-    OPT.x0max = max(x) + OPT.poslndwrd * -diff([OPT.zmin z(x == max(x))])/OPT.slope;
+    OPT.x0max = max(x) + diff([OPT.zmin z(x == max(x))])/OPT.slope;
+%     OPT.x0max = max(x) + OPT.poslndwrd * -diff([OPT.zmin z(x == max(x))])/OPT.slope;
 end
 
 if OPT.x0min == min(x)
     % begin of profile is above zmin
-    OPT.x0min = min(x) + OPT.poslndwrd * -diff([OPT.zmin z(x == min(x))])/OPT.slope;
+    OPT.x0min = min(x) + diff([OPT.zmin z(x == min(x))])/OPT.slope;
+%     OPT.x0min = min(x) + OPT.poslndwrd * -diff([OPT.zmin z(x == min(x))])/OPT.slope;
 end
 
 x0 = [OPT.x0max OPT.x0min]; % predefine both ultimate situations
 
 OPT.x0except = [xcr(idValleyupwrd & idValley) xcr(idValleydwnwrd & idValley)];
 m = size(OPT.x0except,1);
-x0exceptID = zeros(m,1);
+x0exceptID = ones(m,1)*2;
 
+%% Initialize iteration parameters
 Iter = 0;               % Iteration number
 iterid = 1;             % dummy value for iteration number which gives the best possible solution;
-NoAddErosion = false;   % predefinition: initially, no additional erosion has been specified
+% NoAddErosion = false;   % predefinition: initially, no additional erosion has been specified
 [Volume xmax xmin] = deal(repmat(NaN, 1, OPT.maxiter)); % Preallocation of variable to store calculated volumes
 NextIteration = true;
-x2 = -OPT.poslndwrd * [diff([min(x) max(x)]) 0 -diff([OPT.zmin max(z)])/OPT.slope];
+% x2 = -OPT.poslndwrd * [diff([min(x) max(x)]) 0 -diff([OPT.zmin max(z)])/OPT.slope];
+x2 = [diff([min(x) max(x)]) 0 -diff([OPT.zmin max(z)])/OPT.slope];
 z2 = [OPT.zmin OPT.zmin max(z)];
+iterresult = createEmptyDUROSResult;
 
 %% iteration loop
 % First perform two iterations with the most landward and seaward profiles possible,
@@ -192,22 +207,34 @@ while NextIteration
             x0InValley = true;
             % set x0 to one of the boundaries of the exception area
             % starting from the seaward boundary
-            x0(Iter) = OPT.x0except(i,x0exceptID(i)+1);
-            % by highering the x0exceptID by 1, next time, the landward
+            x0(Iter) = OPT.x0except(i,x0exceptID);
+            % by lowering the x0exceptID by 1, next time, the landward
             % boundary will be chosen
-            x0exceptID(i) = x0exceptID(i)+1;
+            x0exceptID(i) = x0exceptID(i)-1;
             break
         end
     end
-    % find crossings for this particular iteration
-    xcross = findCrossings(x, z, x0(Iter)+x2, z2, 'keeporiginalgrid');
-    [xmin(Iter) xmax(Iter)] = deal(min(xcross), max(xcross));
-    [Volume(Iter) iterresult(Iter)] = getVolume(x, z,...
-        'LowerBoundary', OPT.zmin,...
-        'LandwardBoundary', xmin(Iter),...
-        'SeawardBoundary', xmax(Iter),...
-        'x2', x0(Iter)+x2,...
-        'z2', z2);
+%     if x0eexceptID(i) == 0
+%         % This is the second time a calculation is done for one of the
+%         % boundaries of an exception. In theory these outcomes are
+%         % identical. No new calculation needs to be performed. Just take
+%         % the earlier result
+%         oldcalcid = x0==OPT.x0except(i,2);
+%         xmin(Iter) = xmin(oldcalcid);
+%         xmax(Iter) = xmax(oldcalcid);
+%         Volume(Iter) = Volume(oldcalcid);
+%         % iterresult should be taken as well but needs to be adapted to the new x position should be adapted ...
+%     else
+        % find crossings for this particular iteration
+        xcross = findCrossings(x, z, x0(Iter)+x2, z2, 'keeporiginalgrid');
+        [xmin(Iter) xmax(Iter)] = deal(min(xcross), max(xcross));
+        [Volume(Iter) iterresult(Iter)] = getVolume(x, z,...
+            'LowerBoundary', OPT.zmin,...
+            'LandwardBoundary', xmin(Iter),...
+            'SeawardBoundary', xmax(Iter),...
+            'x2', x0(Iter)+x2,...
+            'z2', z2);
+%     end
     
     % create conditions for if statement to adjust profile shift x0
     FirstTwoItersCompleted = Iter==numel(x0); % after the second iteration, x0 is extended for each next iteration
@@ -221,19 +248,19 @@ while NextIteration
         VollDiffSmall = false;
     end
 
-    if x0InValley
-        if Volume(Iter) < OPT.TargetVolume
-            % x0 was located in valley, landward valley side results appears to
-            % be too far landward. Theoretically, choosing the x0 at the
-            % seaward side of the valley should result in the same volume (in
-            % practice, this can differ, even so that the latter results in
-            % more volume...) By setting the x0 for this situation to the
-            % seaward side of the valley prevents this problem
-            x0(Iter) = OPT.x0except(fliplr(OPT.x0except==x0(Iter)));
-        elseif Volume(Iter) > OPT.TargetVolume
-            x0(Iter) = OPT.x0except(fliplr(OPT.x0except==x0(Iter)));
-        end
-    end
+%     if x0InValley
+%         if Volume(Iter) < OPT.TargetVolume
+%             % x0 was located in valley, landward valley side results appears to
+%             % be too far landward. Theoretically, choosing the x0 at the
+%             % seaward side of the valley should result in the same volume (in
+%             % practice, this can differ, even so that the latter results in
+%             % more volume...) By setting the x0 for this situation to the
+%             % seaward side of the valley prevents this problem
+%             x0(Iter) = OPT.x0except(fliplr(OPT.x0except==x0(Iter)));
+%         elseif Volume(Iter) > OPT.TargetVolume
+%             x0(Iter) = OPT.x0except(fliplr(OPT.x0except==x0(Iter)));
+%         end
+%     end
 
     if FirstTwoItersCompleted && PrecisionNotReached && SolutionPossibleWithinBoundaries && ~MaxNrItersReached && ~VollDiffSmall
         % new profile shift has to be calculated.
@@ -280,4 +307,10 @@ result.info.time = toc;
 result.info.resultinboundaries = SolutionPossibleWithinBoundaries;
 result.info.ID = 'Additional Erosion';
 
+if profileSwitched
+    result.info.x0 = 0 - result.info.x0;
+    result.xActive = 0 - result.xActive;
+    result.xLand = 0 - result.xLand;
+    result.xSea = 0 - result.xSea;
+end
 varargout = {result};
