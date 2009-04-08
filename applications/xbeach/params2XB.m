@@ -97,7 +97,7 @@ if exist(OPT.filename, 'file')
     end
     % create XB-structure using PropertyName-propertyValue pairs as
     % specified in file
-    varargout = {CreateEmptyXBeachVar(Inputargs{:})};
+    varargout = {CreateEmptyXBeachVar(Inputargs{:}, 'empty')};
 else
     warning('PARAMS2XB:FileNotFound', ['File ' OPT.filename ' not found.'])
 end
