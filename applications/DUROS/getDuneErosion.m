@@ -135,8 +135,28 @@ if DuneErosionSettings('get', 'DUROS')
             w = feval(FallvelocityArgs{:});
             G = getG(TargetVolume + Volume, Hsig_t, w, Bend);
             g = G/diff(result(1).zActive([end 1])); % G = g * z ==> g = G/z; see Basisrapport Zandige Kust pp 469
-            result(end+1) = getDUROSprofile(xInitial, zInitial, result(1).info.x0 + g, Hsig_t, Tp_t, WL_t, w);
+            xInitialpreBend = [result(1).xLand; result(1).xActive; result(1).xSea];
+            zInitialpreBend = [result(1).zLand; result(1).zActive; result(1).zSea];
+            result(end+1) = getDUROSprofile(xInitialpreBend, zInitialpreBend, result(1).info.x0 + g, Hsig_t, Tp_t, WL_t, w);
             result(end).info.ID = [result(1).info.ID ' (shifted for coastal bend)'];
+            
+            % the shifted DUROS profile has been constructed with respect
+            % to the initial profile. To create the correct patch, the
+            % active profile has to adapted, to the original DUROS result.
+            
+            % part of the seaward tail has to become part of the active
+            % profile
+            idSea = result(end).xSea <= result(1).xActive(end);
+            result(end).xActive = [result(end).xActive; result(end).xSea(idSea)];
+            result(end).xSea = result(end).xSea(~idSea);
+            result(end).z2Active = [result(end).z2Active; result(end).zSea(idSea)];
+            result(end).zSea = result(end).zSea(~idSea);
+            % zActive can now be interpolated based on the original DUROS
+            % result
+            result(end).zActive = interp1([result(1).xLand; result(1).xActive; result(1).xSea],...
+                [result(1).zLand; result(1).z2Active; result(1).zSea],...
+                result(end).xActive);
+            
             idAddProf = 3;
         else
             idAddProf = 1;

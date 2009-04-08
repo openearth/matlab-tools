@@ -84,6 +84,9 @@ restoreAxisLimits = uipushtool('CData',repmat(0,[315,315,3]),...
     'TooltipString','Reset axis');
 
 color = {[255 222 111]/255, [150 116 0]/255, [0 0.8 0], [1 0.6 1]};
+if length(result) > length(color)
+    color = [color(1:2) {.9*color{1}} color(3:end)];
+end
 hp = NaN(size(result));
 txt = cell(size(result));
 for i = 1 : LastFilledField
