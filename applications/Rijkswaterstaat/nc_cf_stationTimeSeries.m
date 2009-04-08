@@ -66,6 +66,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varname,varargin)
 %TO DO: allow to get all time related parameters, and plot them on by one (with pause in between)
 %TO DO: throw pop-up GUIU to select a variable name instead of specifying input argument varname
 %TO DO: document <keyword,value> pairs
+% TO DO: move to scntools
 
 %% Load time series
 %------------------

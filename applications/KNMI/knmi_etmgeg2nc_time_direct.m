@@ -1,5 +1,3 @@
-% function knmi_etmgeg2nc_time_direct(varargin)
-
 %KNMI_ETMGEG2NC_TIME_DIRECT  This is a first test to get meteo timeseries into NetCDF
 %
 %  Timeseries data, see example:
@@ -9,6 +7,8 @@
 % The datenum values do not show up as a parameter in ncBrowse.
 %
 %See also: KNMI_ETMGEG, SNCTOOLS, KNMI_ETMGEG_GET_URL, KNMI_POTWIND2NC_TIME_DIRECT
+
+% function knmi_etmgeg2nc_time_direct(varargin)
 
 try
    rmpath('Y:\app\matlab\toolbox\wl_mexnc\')

@@ -1,3 +1,7 @@
+%DONAR_READ_TEST   test script for DONAR_READ
+%
+%See also: DONAR_READ
+
 D = donar_read('id44-K13APFM-1998.txt')
 plot(D.data.datenum,D.data.waarde)
 

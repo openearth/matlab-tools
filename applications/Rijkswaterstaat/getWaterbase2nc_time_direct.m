@@ -1,5 +1,3 @@
-% function getWaterbase2nc_time_direct(OPT.standard_name,directory.raw,directory.nc)
-
 %WATERBASE2NC  rewrite text file with timeseries from from watrbase.nl into NetCDF
 %
 %  Timeseries data, see example:
@@ -9,6 +7,8 @@
 % The datenum values do not show up as a parameter in ncBrowse.
 %
 %See also: GETWATERBASEDATA, DONAR_READ, SNCTOOLS
+
+% function getWaterbase2nc_time_direct(OPT.standard_name,directory.raw,directory.nc)
 
 try
    rmpath('Y:\app\matlab\toolbox\wl_mexnc\')

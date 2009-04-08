@@ -1,12 +1,15 @@
 function unit=ConvertUnitString(unit)
-%CONVERTUNITSTRING
+%CONVERTUNITSTRING   converts unit from longname (metre) to short name (m)
 %
 % unit=ConvertUnitString(unit)
 %
-%See also:
+% See web: <a href="http://www.unidata.ucar.edu/software/udunit">http://www.unidata.ucar.edu/software/udunit</a>
+% See also: CONVERT_UNITS
 
 switch lower(unit),
     case{'metre'}
+        unit='m';
+    case{'meter'}
         unit='m';
     case{'foot'}
         unit='ft';

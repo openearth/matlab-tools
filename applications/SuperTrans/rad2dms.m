@@ -1,5 +1,5 @@
 function dms=rad2dms(rad)
-% RAD2DMS  Converts radians to degrees-minutes-seconds (vectorized).
+%RAD2DMS  Converts radians to degrees-minutes-seconds (vectorized).
 %
 % Version: 12 Mar 00
 % Useage:  dms=rad2dms(rad)

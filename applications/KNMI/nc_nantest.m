@@ -1,10 +1,14 @@
 %NC_NANTEST  This how NaNs behaven in snctools
 %
 % Values indentical to _Fillvalue are returned as NaN.
-% NaNs in the data are returned as NaN, so ther eis no nead to specify 
+% NaNs in the data are returned as NaN, so there is no nead to specify 
 % NaN as _Fillvalue
 %
 %See also: nan, scntools
+
+% TO DO: check also for C interface in addition to java interface
+% TO DO: check also for native 2009a matlab interface in addition to java interface
+% TO DO: move to scntools
 
 try
    rmpath('Y:\app\matlab\toolbox\wl_mexnc\')

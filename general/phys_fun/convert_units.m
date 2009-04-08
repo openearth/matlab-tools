@@ -39,7 +39,8 @@ function Factor=convert_units(InUnits,OutUnits);
 %  Note 1: the user is responsible for the balance of the transformation.
 %  Note 2: units are case-sensitive.
 %
-%See also:
+% See web: <a href="http://www.unidata.ucar.edu/software/udunit">http://www.unidata.ucar.edu/software/udunit</a>
+% See also: CONVERTUNITSTRING
 
 %-----------------------------------------------------------------------
 % Tested : Matlab 6.5

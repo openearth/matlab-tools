@@ -1,5 +1,3 @@
-% function knmi_potwind2nc_time_direct(varargin)
-
 %KNMI_POTWIND2NC_TIME_DIRECT  This is a first test to get wind timeseries into NetCDF
 %
 %  Timeseries data, see example:
@@ -9,6 +7,8 @@
 % The datenum values do not show up as a parameter in ncBrowse.
 %
 %See also: KNMI_POTWIND, SNCTOOLS, KNMI_POTWIND_GET_URL, KNMI_ETMGEG2NC_TIME_DIRECT
+
+% function knmi_potwind2nc_time_direct(varargin)
 
 try
    rmpath('Y:\app\matlab\toolbox\wl_mexnc\')
