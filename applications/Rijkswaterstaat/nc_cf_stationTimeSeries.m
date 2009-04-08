@@ -1,18 +1,27 @@
-function [D,M] = nc_cf_stationTimeSeries(ncfile,varname)
+function [D,M] = nc_cf_stationTimeSeries(ncfile,varname,varargin)
 %NC_CF_STATIONTIMESERIES   load/plot stationTimeSeries netCDF file
 %
 %  [D,M] = nc_cf_stationTimeSeries(ncfile,varname)
 %
+% plots/loads timeseries of variable varname from netCDF 
+% file ncfile and returns data and meta-data
 % where ncfile is the netCDF file name (or OPeNDAP adress)
 %       varname is the variable name to be extracted (must have dimension time)
 %       D contains the data struct
 %       M contains the metadata struct (attributes)
 %
-% A stationTimeSeries netCDF file as defined in
+% A stationTimeSeries netCDF file is defined in
 %    https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
-% must have global attributes
+% and must have global attributes:
 %   Conventions   : CF-1.4
 %   CF:featureType: stationTimeSeries
+%
+% Examples:
+% nc_cf_stationTimeSeries('http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/waterbase.nl/sea_surface_height/id1-DENHDR-196101010000-200801010000_time_direct.nc',...
+%                         'sea_surface_height')
+%
+% nc_cf_stationTimeSeries('http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/knmi/etmgeg/etmgeg_269_time_direct.nc',...
+%                         'wind_speed_mean')
 %
 %See also: snctools
 
@@ -49,12 +58,21 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varname)
 % $HeadURL$
 % $Keywords$
 
-   OPT.substance_code = 'id1';
-   OPT.station_code   = 'DENHDR';
-   ncfile  = ['http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/waterbase.nl/sea_surface_height/',OPT.substance_code,'-',OPT.station_code,'-196101010000-200801010000_time_direct.nc'];
-   varname = 'sea_surface_height'
+%TO DO: D.datenum = time2datenum(D.datenum,M.datenum.units);
+%TO DO: M.(varname) = nc_attget(ncfile,varname); % get all attributes (incl units)
+%TO DO: plot 'varname [units]' on y-axis
+%TO DO: handle indirect time mapping where there is no variable time(time)
+%TO DO: handle multiple stations in one file 
+%TO DO: allow to get all time related parameters, and plot them on by one (with pause in between)
+%TO DO: throw pop-up GUIU to select a variable name instead of specifying input argument varname
+%TO DO: document <keyword,value> pairs
 
-   nc_dump(ncfile);
+%% Load time series
+%------------------
+
+   OPT.plot = 1;
+
+   OPT = setProperty(OPT,varargin{:});
 
 %% Load time series
 %------------------
@@ -67,7 +85,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varname)
    if isempty(index)
       error(['netCDF file is not stationTimeSeries: needs Attribute Name=CF:featureType'])
    end
-   
+
 %% get datenum
 %------------------
 
@@ -88,20 +106,20 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varname)
 
   %idname         = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'station_id')
   %M.id.units     = nc_attget(ncfile,idname,'units');
-  %D.id           = nc_varget(ncfile,idname);
+  %D.id           = nc_varget(ncfile,idname); % TO DO
 
 %% convert units to datenum
 %------------------
 
   %D.datenum = time2datenum(D.datenum,M.datenum.units); % TO DO
    
-%% find all parameters that have time as dimension
+%% find specified (or all parameters) that have time as dimension
 %------------------
 
    if ~isempty(varname)
    
       D.(varname) = nc_varget(ncfile,varname);
-     %M.(varname) = nc_attget(ncfile,varname); % get all
+     %M.(varname) = nc_attget(ncfile,varname); % get all  % TO DO
 
    else
    
@@ -123,15 +141,27 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varname)
 %% Plot
 %------------------
    
+   if OPT.plot
    if ~isempty(varname)
 
       plot    (D.datenum,D.(varname))
       datetick('x')
       grid     on
       title   (mktex(M.info.Filename))
-      ylabel  (varname);
+      ylabel  (mktex(varname));
      %ylabel  ([M.(varname).Attribute(1).Value,' [',...
-     %          M.(varname).Attribute(2).Value,']']);
+     %          M.(varname).Attribute(2).Value,']']); % TO DO
    
    end
+   end
    
+%% Output
+%------------------
+
+   if     nargout==1
+      varargout = {D};
+   elseif nargout==2
+      varargout = {D};
+   end
+   
+%% EOF   
