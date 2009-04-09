@@ -75,15 +75,13 @@ XB = CreateEmptyXBeachVar(...
     'dryslp', 5,...
     'OutVars', {'dims','zb'});
 
-OPT = setProperty(OPT, varargin{:});
-
 if ~strcmp(varargin, 'D90')
     XB.settings.SedInput.D90 = XB.settings.SedInput.D50 * 1.5;
 end
 
 %%
 [XB.Input.xInitial, XB.Input.zInitial] = checkCrossShoreProfile(XB.Input.xInitial, XB.Input.zInitial,...
-    'x_direction', 1,...
+    'poslndwrd', 1,...
     'x_origin', 'seaside');
 XB.settings.Grid.nx = length(min(XB.Input.xInitial):XB.settings.Grid.dx:max(XB.Input.xInitial))-1;
 XB.settings.SedInput.morstart = XB.settings.Flow.tint;
