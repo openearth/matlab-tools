@@ -20,7 +20,10 @@ function [ThetaCrZanke, ThetaCrBrownlie, ThetaCrVanRijn, Ddim] = criticalbedshea
 %       rhow = 1000;
 %       [ThetaCrZanke, ThetaCrBrownlie, ThetaCrVanRijn, Ddim] =  criticalbedshearstress(D,rhos,rhow)
 %
-
+%
+%   for the dimensional critical shear stress:
+%       TauCr = ThetaCr.* (g .* (rhos - rhow) .* D50)
+%   
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Alkyon Hydraulic Consultancy & Research
 %       Bart Grasmeijer
