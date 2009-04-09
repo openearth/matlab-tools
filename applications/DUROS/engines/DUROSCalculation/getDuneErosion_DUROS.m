@@ -1,4 +1,4 @@
-function [result, Volume, x00min, x0max, x0except] = getDuneErosion_DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t, DuneBreachOccured)
+function [result, Volume, x00min, x0max, x0except, x0min] = getDuneErosion_DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t, DuneBreachOccured)
 %GETDUNEEROSION_DUROS routine to find the balanced location of the DUROS profile
 %
 % This routine returns the x-location of the DUROS profile such that
