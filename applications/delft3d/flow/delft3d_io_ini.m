@@ -327,7 +327,7 @@ function iostat=Local_write_ini(filename,varargin),
    %% delft3d_io_ini('write',filename,PLATFORM,DATA);
    
       DATASTRUCT = varargin{nextarg};
-      fldnames   = fieldnames(DATASTRUCT);
+      fldnames   = fieldnames(DATASTRUCT.data);
       ndata      = length(fldnames);
       datatype   = 'struct';
    else
@@ -343,7 +343,7 @@ function iostat=Local_write_ini(filename,varargin),
          dataset = varargin{nextarg + idata - 1};
       elseif strcmp(datatype,'struct')
          fldname = fldnames{idata};
-         dataset = DATASTRUCT.(fldname);
+         dataset = DATASTRUCT.data.(fldname);
       end
       
       mmax    = size(dataset,1);
