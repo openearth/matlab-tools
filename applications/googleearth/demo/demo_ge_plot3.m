@@ -1,0 +1,18 @@
+function demo_ge_plot3()
+
+t = 0:pi/50:10*pi;
+alt = 1e6;
+
+X = sin(t);
+Y = cos(t);
+Z = t*alt;
+
+output = ge_plot3(X,Y,Z,...
+                    'lineWidth',1.2,...
+                    'lineColor','ffffa432',...
+                         'name','out01');
+
+kmlFileName = 'demo_ge_plot3.kml';
+kmlTargetDir = [''];%..',filesep,'kml',filesep];
+ge_output([kmlTargetDir,kmlFileName],output,...
+                                     'name',kmlFileName);
