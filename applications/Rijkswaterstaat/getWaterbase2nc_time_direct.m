@@ -31,6 +31,9 @@ end
    OPT.unzip         = 1; % process only zipped files: unzip them, and delete if afterwards
    OPT.pause         = 0;
    
+   OPT.refdatenum    = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
+   OPT.refdatenum    = datenum(1970,1,1); % lunix  datenumber convention
+   
 for ifile=1:length(OPT.files)  
 
    OPT.filename = ([OPT.directory.raw, filesep, OPT.files(ifile).name(1:end-4)]); % id1-AMRGBVN-196101010000-200801010000.txt
@@ -79,7 +82,7 @@ for ifile=1:length(OPT.files)
    nc_attput(outputfile, nc_global, 'title'           , '');
    nc_attput(outputfile, nc_global, 'institution'     , 'Rijkswaterstaat');
    nc_attput(outputfile, nc_global, 'source'          , 'surface observation');
-   nc_attput(outputfile, nc_global, 'history'       , ['Original filename: ',filename(D.name),...
+   nc_attput(outputfile, nc_global, 'history'       , ['Original filename: ',filename(OPT.filename),...
                                                        ', version:' ,D.version,...
                                                        ', filedate:',D.date,...
                                                        ', tranformation to NetCDF: $HeadURL$ $Revision$ $Date$ $Author$']);
@@ -91,6 +94,9 @@ for ifile=1:length(OPT.files)
 						   
    nc_attput(outputfile, nc_global, 'Conventions'     , 'CF-1.4');
    nc_attput(outputfile, nc_global, 'CF:featureType'  , 'stationTimeSeries');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
+
+   nc_attput(outputfile, nc_global, 'terms_for_use'   , 'These data can be used freely for research purposes provided that the following source is acknowledged: Rijkswaterstaat.');
+   nc_attput(outputfile, nc_global, 'disclaimer'      , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
    
    nc_attput(outputfile, nc_global, 'stationname'     , D.data.location);
    nc_attput(outputfile, nc_global, 'location'        , D.data.location);
@@ -99,9 +105,6 @@ for ifile=1:length(OPT.files)
 
    nc_attput(outputfile, nc_global, 'waarnemingssoort', D.meta1.waarnemingssoort);
    nc_attput(outputfile, nc_global, 'reference_level' , D.meta1.what);
-
-   nc_attput(outputfile, nc_global, 'terms_for_use'   , 'These data can be used freely for research purposes provided that the following source is acknowledged: Rijkswaterstaat.');
-   nc_attput(outputfile, nc_global, 'disclaimer'      , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
 
 %% 2 Create dimensions
 %------------------
@@ -172,7 +175,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Nctype       = 'double'; % float not sufficient as datenums are big: doubble
    nc(ifld).Dimension    = {'time'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'time');
-   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', ['days since 0000-1-1 00:00:00 ',OPT.timezone]); % matlab datenumber convention
+   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'time');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
   %nc(ifld).Attribute(5) = struct('Name', 'bounds'         ,'Value', '');
@@ -205,7 +208,7 @@ for ifile=1:length(OPT.files)
    nc_varput(outputfile, 'id'                , D.data.locationcode);
    nc_varput(outputfile, 'lon'               , unique(D.data.lon));
    nc_varput(outputfile, 'lat'               , unique(D.data.lat));
-   nc_varput(outputfile, 'time'              , D.data.datenum');
+   nc_varput(outputfile, 'time'              , D.data.datenum' - OPT.refdatenum);
    nc_varput(outputfile, 'sea_surface_height', D.data.(OPT.standard_name)');
    
 %% 6 Check

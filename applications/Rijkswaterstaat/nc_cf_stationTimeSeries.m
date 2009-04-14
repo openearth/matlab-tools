@@ -69,7 +69,6 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 % $HeadURL$
 % $Keywords$
 
-%TO DO: D.datenum = time2datenum(D.datenum,M.datenum.units);
 %TO DO: handle indirect time mapping where there is no variable time(time)
 %TO DO: handle multiple stations in one file 
 %TO DO: allow to get all time related parameters, and plot them on by one (with pause in between)
@@ -106,8 +105,9 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    timename        = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'time');
    M.datenum.units = nc_attget(ncfile,timename,'units');
    D.datenum       = nc_varget(ncfile,timename);
-
-%% Get location
+   D.datenum       = udunits2datenum(D.datenum,M.datenum.units); % convert units to datenum
+   
+%% Get location info
 %------------------
 
    lonname        = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'longitude');
@@ -119,7 +119,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    D.lat          = nc_varget(ncfile,latname);
 
    idname         = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'station_id');
-   D.station_id   = nc_varget(ncfile,idname)
+   D.station_id   = nc_varget(ncfile,idname);
 
    if isnumeric(D.station_id)
    D.station_name = num2str(D.station_id);
@@ -127,13 +127,8 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    D.station_name =         D.station_id;
    end
 
-%% convert units to datenum
-%------------------
-
-  %D.datenum = time2datenum(D.datenum,M.datenum.units); % TO DO
-   
 %% Find specified (or all parameters) that have time as dimension
-% and select one.
+%  and select one.
 %------------------
 
    if isempty(OPT.varname)
@@ -147,7 +142,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
       end
       
       
-      timevarlist = cellstr(char(INF.Dataset(timevar).Name))
+      timevarlist = cellstr(char(INF.Dataset(timevar).Name));
 
 
       [ii, ok] = listdlg('ListString', timevarlist, .....
@@ -157,10 +152,13 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
                            'ListSize', [500, 300]); 
                                
       
-      varindex    = timevar(ii)
+      varindex    = timevar(ii);
       OPT.varname = timevarlist{ii};
       
    else
+   
+   %% get index
+   %------------------
    
       nvar = length(INF.Dataset);
       
@@ -171,9 +169,6 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
          end
       end
    end
-   
-%% get index
-%------------------
    
 %% get data
 %------------------

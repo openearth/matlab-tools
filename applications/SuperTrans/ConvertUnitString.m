@@ -7,37 +7,23 @@ function unit=ConvertUnitString(unit)
 % See also: CONVERT_UNITS
 
 switch lower(unit),
-    case{'metre'}
-        unit='m';
-    case{'meter'}
-        unit='m';
-    case{'foot'}
-        unit='ft';
-    case{'us survey foot'}
-        unit='ft (US)';
-    case{'nautical mile'}
-        unit='NM';
-    case{'kilometre'}
-        unit='km';
-    case{'radian'}
-        unit='rad';
-    case{'microradian'}
-        unit='microrad';
-    case{'degree'}
-        unit='deg';
-    case{'arc-minute'}
-        unit='min';
-    case{'arc-second'}
-        unit='s';
+    case{'metre'};                        unit='m';
+    case{'meter'};                        unit='m';
+    case{'foot'};                         unit='ft';
+    case{'us survey foot'};               unit='ft (US)';
+    case{'nautical mile'};                unit='NM';
+    case{'kilometre'};                    unit='km';
+    case{'radian'};                       unit='rad';
+    case{'microradian'};                  unit='microrad';
+    case{'degree'};                       unit='deg';
+    case{'arc-minute'};                   unit='min';
+    case{'arc-second'};                   unit='s';
     case{'degree','degree minute second','degree minute second hemisphere','sexagesimal dms','sexagesimal dm', ...
             'sexagesimal dm.s','degree minute','degree hemisphere','hemisphere degree','degree minute hemisphere','hemisphere degree minute','hemisphere degree minute second'}
         unit='deg';
-    case{'coefficient','unity'}
-        unit='-';
-    case{'parts per million'}
-        unit='ppm';
-    case{'british chain (benoit 1895 b)'}
-        unit='British chain';
+    case{'coefficient','unity'};          unit='-';
+    case{'parts per million'};            unit='ppm';
+    case{'british chain (benoit 1895 b)'};unit='British chain';
 end        
 
 % 9094,Gold Coast foot,length,9001,6378300,20926201,"Used in Ghana and some adjacent parts of British west Africa prior to metrication, except for the metrication of projection defining parameters when British foot (Sears 1922) used.",Ordnance Survey International,EPSG,2001-01-21,2000.86,0

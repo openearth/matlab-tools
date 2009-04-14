@@ -4,6 +4,7 @@
 %   delft3d         - model: delft3d
 %   DUROS           - model: duros
 %   durosta         - model: durosta
+%   googleearth     - Google Earth Toolbox
 %   KNMI            - data:  KNMI
 %   meris           - data:  MERIS
 %   probabilistic   - application

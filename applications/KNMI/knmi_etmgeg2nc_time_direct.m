@@ -23,6 +23,9 @@ end
    OPT.directory.nc  = 'F:\checkouts\OpenEarthRawData\knmi\etmgeg\nc\';
    OPT.files         = dir([OPT.directory.raw filesep '\etmgeg*.txt']);
    
+   OPT.refdatenum    = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
+   OPT.refdatenum    = datenum(1970,1,1); % lunix  datenumber convention
+   
 for ifile=1:length(OPT.files)  
 
    OPT.filename = [OPT.directory.raw, filesep, OPT.files(ifile).name]; % e.g. 'etmgeg_273.txt'
@@ -142,7 +145,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Nctype       = 'double'; % float not sufficient as datenums are big: doubble
    nc(ifld).Dimension    = {'time'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'time');
-   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', ['days since 0000-1-1 00:00:00 ',OPT.timezone]); % matlab datenumber convention
+   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'time');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
   %nc(ifld).Attribute(5) = struct('Name', 'bounds'         ,'Value', '');
@@ -464,7 +467,7 @@ for ifile=1:length(OPT.files)
    nc_varput(outputfile, 'lon'                                             , D.lon);
    nc_varput(outputfile, 'lat'                                             , D.lat);
    nc_varput(outputfile, 'id'                                              , unique(D.data.STN)); %  1
-   nc_varput(outputfile, 'time'                                            , D.data.datenum);     %  2
+   nc_varput(outputfile, 'time'                                            , D.data.datenum - OPT.refdatenum);     %  2
    nc_varput(outputfile, 'wind_from_direction_mean'                        , D.data.DDVEC);       %  3 
    nc_varput(outputfile, 'wind_speed_mean'                                 , D.data.FG);          %  4
    nc_varput(outputfile, 'wind_speed_maximum'                              , D.data.FHX);         %  5

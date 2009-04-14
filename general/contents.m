@@ -2,6 +2,7 @@
 %
 % OpenEarthTools toolbox management toolboxes.
 %   config_FUN          - OpenEarthTools configuration
+%   matlabinterface_fun - matlab interface fun
 %   oet_defaults        - OpenEarthTools defaults
 %   oet_template        - OpenEarthTools templates
 %   SVN_fun             - SubVersion configuration
@@ -11,8 +12,8 @@
 %   debug_fun           - debug functions
 %   el_fun              - elementary functions
 %   el_mat              - elementary matrix functions
-%   GUI_fun             - GUI related
 %   grid_fun            - grid related
+%   GUI_fun             - GUI related
 %   io_fun              - input/output rerlatred
 %   nan_fun             - nansum, nanmin, nanmax, nanstd, nanmean, ...
 %   phys_fun            - physics related
