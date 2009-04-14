@@ -1,21 +1,32 @@
-function [D,M] = nc_cf_stationTimeSeries(ncfile,varname,varargin)
-%NC_CF_STATIONTIMESERIES   load/plot stationTimeSeries netCDF file
+function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
+%NC_CF_STATIONTIMESERIES   load/plot one variable from stationTimeSeries netCDF file
 %
+%  [D,M] = nc_cf_stationTimeSeries(ncfile)
 %  [D,M] = nc_cf_stationTimeSeries(ncfile,varname)
 %
 % plots/loads timeseries of variable varname from netCDF 
 % file ncfile and returns data and meta-data
-% where ncfile is the netCDF file name (or OPeNDAP adress)
-%       varname is the variable name to be extracted (must have dimension time)
-%       D contains the data struct
-%       M contains the metadata struct (attributes)
+% where * ncfile is the netCDF file name (or OPeNDAP adress)
+%       * D contains the data struct
+%       * M contains the metadata struct (attributes)
+%       * varname is the variable name to be extracted (must have dimension time)
+%         When varname is not supplied, a dialog box is offered.
 %
 % A stationTimeSeries netCDF file is defined in
 %    https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
 % and must have global attributes:
-%   Conventions   : CF-1.4
-%   CF:featureType: stationTimeSeries
+%  *  Conventions   : CF-1.4
+%  *  CF:featureType: stationTimeSeries
+% the following assumption must be valid:
+%  * lat, lon and time coordinates must always exist.
 %
+% The plot contains (ncfile, station_id, lon, lat in title) and (long_name, units) on as ylabel.
+%
+%  [D,M] = nc_cf_stationTimeSeries(ncfile,varname,<keyword,value>)
+%
+% The following <keyword,value> are implemented
+% * plot   (default 1)
+
 % Examples:
 % nc_cf_stationTimeSeries('http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/waterbase.nl/sea_surface_height/id1-DENHDR-196101010000-200801010000_time_direct.nc',...
 %                         'sea_surface_height')
@@ -59,42 +70,44 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varname,varargin)
 % $Keywords$
 
 %TO DO: D.datenum = time2datenum(D.datenum,M.datenum.units);
-%TO DO: M.(varname) = nc_attget(ncfile,varname); % get all attributes (incl units)
-%TO DO: plot 'varname [units]' on y-axis
 %TO DO: handle indirect time mapping where there is no variable time(time)
 %TO DO: handle multiple stations in one file 
 %TO DO: allow to get all time related parameters, and plot them on by one (with pause in between)
-%TO DO: throw pop-up GUIU to select a variable name instead of specifying input argument varname
 %TO DO: document <keyword,value> pairs
-% TO DO: move to scntools
+%TO DO: move to scntools
 
-%% Load time series
+%% Keyword,values
 %------------------
 
-   OPT.plot = 1;
-
-   OPT = setProperty(OPT,varargin{:});
-
-%% Load time series
-%------------------
-
-   M.info=nc_info(ncfile);
+   OPT.plot    = 1;
+   OPT.varname = [];
    
-%% Chek whether is time series
+   if nargin > 1
+   OPT.varname = varargin{1};
+   end
+   
+   OPT = setProperty(OPT,varargin{2:end});
+
+%% Load file info
 %------------------
-   index = findstrinstruct(M.info.Attribute,'Name','CF:featureType');
+
+   INF = nc_info(ncfile);
+   
+%% Check whether is time series
+%------------------
+   index = findstrinstruct(INF.Attribute,'Name','CF:featureType');
    if isempty(index)
       error(['netCDF file is not stationTimeSeries: needs Attribute Name=CF:featureType'])
    end
 
-%% get datenum
+%% Get datenum
 %------------------
 
    timename        = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'time');
    M.datenum.units = nc_attget(ncfile,timename,'units');
    D.datenum       = nc_varget(ncfile,timename);
 
-%% get location
+%% Get location
 %------------------
 
    lonname        = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'longitude');
@@ -105,53 +118,94 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varname,varargin)
    M.lat.units    = nc_attget(ncfile,latname,'units');
    D.lat          = nc_varget(ncfile,latname);
 
-  %idname         = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'station_id')
-  %M.id.units     = nc_attget(ncfile,idname,'units');
-  %D.id           = nc_varget(ncfile,idname); % TO DO
+   idname         = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'station_id');
+   D.station_id   = nc_varget(ncfile,idname)
+
+   if isnumeric(D.station_id)
+   D.station_name = num2str(D.station_id);
+   else
+   D.station_name =         D.station_id;
+   end
 
 %% convert units to datenum
 %------------------
 
   %D.datenum = time2datenum(D.datenum,M.datenum.units); % TO DO
    
-%% find specified (or all parameters) that have time as dimension
+%% Find specified (or all parameters) that have time as dimension
+% and select one.
 %------------------
 
-   if ~isempty(varname)
-   
-      D.(varname) = nc_varget(ncfile,varname);
-     %M.(varname) = nc_attget(ncfile,varname); % get all  % TO DO
-
-   else
+   if isempty(OPT.varname)
    
       timevar = [];
-      for ivar=1:length(M.info.Dataset)
-         index = strcmpi(M.info.Dataset(ivar).Dimension,'time')
+      for ivar=1:length(INF.Dataset)
+         index = strcmpi(INF.Dataset(ivar).Dimension,'time');
          if index==1
             timevar = [timevar ivar];
          end
       end
-   
-      for ivar=timevar
-         D.(varname) = nc_varget(ncfile,F.info.Dataset(ivar).Name);
-         M.(varname) = nc_attget(ncfile,F.info.Dataset(ivar).Name); % all
-      end
+      
+      
+      timevarlist = cellstr(char(INF.Dataset(timevar).Name))
 
+
+      [ii, ok] = listdlg('ListString', timevarlist, .....
+                      'SelectionMode', 'single', ...
+                       'PromptString', 'Select one variable', ....
+                               'Name', 'Selection of variable',...
+                           'ListSize', [500, 300]); 
+                               
+      
+      varindex    = timevar(ii)
+      OPT.varname = timevarlist{ii};
+      
+   else
+   
+      nvar = length(INF.Dataset);
+      
+      for ivar=1:nvar
+         if strcmp(INF.Dataset(ivar).Name,OPT.varname)
+         varindex = ivar;
+         break
+         end
+      end
    end
+   
+%% get index
+%------------------
+   
+%% get data
+%------------------
+
+      D.(OPT.varname) = nc_varget(ncfile,OPT.varname);
+      
+%% get Attributes
+%------------------
+
+      nAttr = length(INF.Dataset(varindex).Attribute);
+      for iAttr = 1:nAttr
+      Name  = mkvar(INF.Dataset(varindex).Attribute(iAttr).Name);
+      Value =       INF.Dataset(varindex).Attribute(iAttr).Value;
+      M.(OPT.varname).(Name) = Value; % get all  % TO DO
+      end
 
 %% Plot
 %------------------
    
    if OPT.plot
-   if ~isempty(varname)
+   if ~isempty(OPT.varname)
 
-      plot    (D.datenum,D.(varname))
+      plot    (D.datenum,D.(OPT.varname))
       datetick('x')
       grid     on
-      title   (mktex(M.info.Filename))
-      ylabel  (mktex(varname));
-     %ylabel  ([M.(varname).Attribute(1).Value,' [',...
-     %          M.(varname).Attribute(2).Value,']']); % TO DO
+      title   ({mktex(INF.Filename),...
+               ['"',D.station_name,'"',...
+                ' (',num2str(D.lon),'\circE',...
+                ',',num2str(D.lat),'\circN',...
+                ')']})
+      ylabel  ([M.(OPT.varname).long_name,' [',...
+                M.(OPT.varname).units    ,']']);
    
    end
    end

@@ -8,9 +8,10 @@ function varargout = donar_read(fnames,varargin)
 % reads MULTIPLE txt files of ONE parameter at ONE location to ONE structure DAT.
 %
 % Implemented optional <keyword,value> pairs are:
-%  * 'locationcode':            obtain locationcode from waterbase filename (only for ONE location per file)
-%  * 'fieldname':               fieldname for parameter to be read, default 'waarde' (as in DONAR file).
-%  * 'fieldnamescale':          real value (default 1), field is DIVIDED by fieldnamescale.
+%  * 'locationcode':            obtain locationcode from waterbase filename 
+%                               N.B. works only for ONE location per file! (default 1)
+%  * 'fieldname':               fieldname for parameter to be read (default 'waarde' as in DONAR file).
+%  * 'fieldnamescale':          real value, field is DIVIDED by fieldnamescale (default 1).
 %  * 'start_last_header_line':  "locatie;waarnemingssoort;datum;tijd"
 %  * 'headerlines':             auto':(default) finds automatically 1st line starting with:
 %                               start_last_header_line which is by default 

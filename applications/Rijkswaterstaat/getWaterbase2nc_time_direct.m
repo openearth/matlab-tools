@@ -29,6 +29,7 @@ end
 
    OPT.files         = dir([OPT.directory.raw filesep 'id*.zip']);
    OPT.unzip         = 1; % process only zipped files: unzip them, and delete if afterwards
+   OPT.pause         = 0;
    
 for ifile=1:length(OPT.files)  
 
@@ -99,15 +100,15 @@ for ifile=1:length(OPT.files)
    nc_attput(outputfile, nc_global, 'waarnemingssoort', D.meta1.waarnemingssoort);
    nc_attput(outputfile, nc_global, 'reference_level' , D.meta1.what);
 
-   nc_attput(outputfile, nc_global, 'terms_for_use' , 'These data can be used freely for research purposes provided that the following source is acknowledged: Rijkswaterstaat.');
-   nc_attput(outputfile, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
+   nc_attput(outputfile, nc_global, 'terms_for_use'   , 'These data can be used freely for research purposes provided that the following source is acknowledged: Rijkswaterstaat.');
+   nc_attput(outputfile, nc_global, 'disclaimer'      , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
 
 %% 2 Create dimensions
 %------------------
 
-   nc_add_dimension(outputfile, 'time'     , length(D.data.datenum))
-   nc_add_dimension(outputfile, 'locations', 1)
-  %nc_add_dimension(outputfile, 'stringlength', ) % to add station long_name array
+   nc_add_dimension(outputfile, 'time'       , length(D.data.datenum))
+   nc_add_dimension(outputfile, 'locations'  , 1)
+   nc_add_dimension(outputfile, 'name_strlen', length(D.data.locationcode)); % for multiple stations get max length
 
 %% 3 Create variables
 %------------------
@@ -120,10 +121,10 @@ for ifile=1:length(OPT.files)
 
      ifld = ifld + 1;
    nc(ifld).Name         = 'id';
-   nc(ifld).Nctype       = 'float'; % no double needed
-   nc(ifld).Dimension    = {'locations'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station identification number');
-   nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id');
+   nc(ifld).Nctype       = 'char';
+   nc(ifld).Dimension    = {'locations','name_strlen'};
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station identification code');
+   nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id'); % standard name
 
    %% Define dimensions in this order:
    %  time,z,y,x
@@ -201,17 +202,24 @@ for ifile=1:length(OPT.files)
 %% 5 Fill variables
 %------------------
 
-   nc_varput(outputfile, 'id'                , 1);
+   nc_varput(outputfile, 'id'                , D.data.locationcode);
    nc_varput(outputfile, 'lon'               , unique(D.data.lon));
    nc_varput(outputfile, 'lat'               , unique(D.data.lat));
-   nc_varput(outputfile, 'time'              , D.data.datenum);
-   nc_varput(outputfile, 'sea_surface_height', D.data.(OPT.standard_name));
+   nc_varput(outputfile, 'time'              , D.data.datenum');
+   nc_varput(outputfile, 'sea_surface_height', D.data.(OPT.standard_name)');
    
 %% 6 Check
 %------------------
 
    if OPT.dump
    nc_dump(outputfile);
+   end
+   
+%% Pause
+%------------------
+
+   if OPT.pause
+      pausedisp
    end
    
 end %for ifile=1:length(OPT.files)   
