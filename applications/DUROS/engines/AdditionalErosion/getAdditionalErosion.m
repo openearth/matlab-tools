@@ -177,19 +177,19 @@ if x0min == min(x)
     x0min = min(x) + diff([OPT.zmin z(x == min(x))])/OPT.slope;
 end
 
-%% check if x0max and x0min were specified
+%% check if x0max and x0min were (correctly) specified
 if ~isnan(OPT.x0max)
     if OPT.x0max > x0max
-        % x0max outside of possible calculation range ==> throw error or
-        % adjust boundary and throw warning?
+        % x0max outside of possible calculation range
+        writemessage(23, 'Original x0max outside of possible calculation range; x0max adjusted');
         OPT.x0max = x0max;
     end
 end
 if ~isnan(OPT.x0min)
     if OPT.x0min < x0min
-        % x0max outside of possible calculation range ==> throw error or
-        % adjust boundary and throw warning?
+        % x0min outside of possible calculation range
         OPT.x0min = x0min;
+        writemessage(24, 'Original x0min outside of possible calculation range; x0min adjusted');
     end
 end
 
