@@ -66,6 +66,12 @@ end
 hsc = [];
 [x, z] = deal([result(1).xLand; result(1).xActive; result(1).xSea], [result(1).zLand; result(1).zActive; result(1).zSea]);
 
+if ~issorted(x)
+    % relevant if poslndwrd == 1
+    [x IX] = sort(x);
+    z = z(IX);
+end
+
 hinitprofile = plot(x, z,...
     'Color','k',...
     'LineStyle','-',...
@@ -83,7 +89,7 @@ restoreAxisLimits = uipushtool('CData',repmat(0,[315,315,3]),...
     'Tag','Set XS Limits',...
     'TooltipString','Reset axis');
 
-color = {[255 222 111]/255, [150 116 0]/255, [0 0.8 0], [1 0.6 1]};
+color = {[255 222 111]/255, [150 116 0]/255, [0 0.8 0], [1 0.6 1], [0 0.8 0]};
 if length(result) > length(color)
     color = [color(1:2) {.9*color{1}} color(3:end)];
 end
