@@ -233,23 +233,20 @@ iterresult = createEmptyDUROSResult;
 % then iterate further
 while NextIteration
     Iter = Iter + 1;
-    x0InValley = false;
-    for i = 1:m
-        % TODO make faster by using vectors instead of loop...
+    
+    % check whether x0 is in any valley
+    x0InValley = ~isempty(OPT.x0except) &&...
+        x0(Iter) > OPT.x0except(:,1) & x0(Iter) < OPT.x0except(:,2);
         
-        % check for each pair of x0 exceptions
-        if x0(Iter) > OPT.x0except(i,1) && x0(Iter) < OPT.x0except(i,2)
-            % current x0 is in between pair of x0 exceptions
-            x0InValley = true;
-            % set x0 to one of the boundaries of the exception area
-            % starting from the seaward boundary
-            x0(Iter) = OPT.x0except(i,x0exceptID);
-            % by lowering the x0exceptID by 1, next time, the landward
-            % boundary will be chosen
-            x0exceptID(i) = x0exceptID(i)-1;
-            break
-        end
+    if any(x0InValley) 
+        % set x0 to one of the boundaries of the exception area
+        % starting from the seaward boundary
+        x0(Iter) = OPT.x0except(x0InValley,x0exceptID);
+        % by lowering the x0exceptID by 1, next time, the landward
+        % boundary will be chosen
+        x0exceptID(x0InValley) = x0exceptID(x0InValley)-1;
     end
+    
     xcross = findCrossings(x, z, x0(Iter)+x2, z2, 'keeporiginalgrid');
     [xmin(Iter) xmax(Iter)] = deal(min(xcross), max(xcross));
     [Volume(Iter) iterresult(Iter)] = getVolume(x, z,...
@@ -264,7 +261,7 @@ while NextIteration
     PrecisionNotReached = abs(diff([OPT.TargetVolume Volume(Iter)])) >= abs(OPT.precision);
     SolutionPossibleWithinBoundaries = diff(sign(Volume(1:2)-OPT.TargetVolume))~=0;
     MaxNrItersReached = Iter == OPT.maxiter;
-    if FirstTwoItersCompleted && ~x0InValley
+    if FirstTwoItersCompleted && ~any(x0InValley)
         % difference between last two iterations is smaller than precision
         VollDiffSmall = abs(diff(Volume(Iter-1:Iter)))<OPT.precision;
     else
