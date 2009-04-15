@@ -7,6 +7,7 @@ function datenumbers = udunits2datenum(time,isounits)
 %
 %    datenumbers = udunits2datenum(733880,'days since 0000-0-0 00:00:00 +01:00')
 %
+%See web: <a href="http://www.unidata.ucar.edu/software/udunits/">http://www.unidata.ucar.edu/software/udunits/</a>
 %See also: DATENUM, DATESTR, ISO2DATENUM
 
 %   --------------------------------------------------------------------
@@ -41,8 +42,11 @@ function datenumbers = udunits2datenum(time,isounits)
    [OPT.units,rest] = strtok(rest);
    [    dummy,rest] = strtok(rest);
    [OPT.refdatenum,...
-    OPT.zone] = iso2datenum(rest)
+    OPT.zone] = iso2datenum(rest);
 
-   datenumbers = (time + OPT.refdatenum).*convert_units(OPT.units,'day');
+%% Change units and apply reference date
+%--------------------
+
+   datenumbers = time.*convert_units(OPT.units,'day') + OPT.refdatenum;
    
 %% EOF   

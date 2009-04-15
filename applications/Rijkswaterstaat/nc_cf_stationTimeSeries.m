@@ -13,12 +13,12 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 %         When varname is not supplied, a dialog box is offered.
 %
 % A stationTimeSeries netCDF file is defined in
-%    https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
+%   <a href="https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions">https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions</a>
 % and must have global attributes:
 %  *  Conventions   : CF-1.4
 %  *  CF:featureType: stationTimeSeries
 % the following assumption must be valid:
-%  * lat, lon and time coordinates must always exist.
+%  * lat, lon and time coordinates must always exist as defined in the CF convenctions.
 %
 % The plot contains (ncfile, station_id, lon, lat in title) and (long_name, units) on as ylabel.
 %
@@ -26,12 +26,15 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 %
 % The following <keyword,value> are implemented
 % * plot   (default 1)
-
+%
 % Examples:
-% nc_cf_stationTimeSeries('http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/waterbase.nl/sea_surface_height/id1-DENHDR-196101010000-200801010000_time_direct.nc',...
+%
+% directory = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/'
+%
+% nc_cf_stationTimeSeries([directory,'/rijkswaterstaat/waterbase.nl/sea_surface_height/id1-DENHDR-196101010000-200801010000_time_direct.nc'],...
 %                         'sea_surface_height')
 %
-% nc_cf_stationTimeSeries('http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/knmi/etmgeg/etmgeg_269_time_direct.nc',...
+% nc_cf_stationTimeSeries([directory,''knmi/etmgeg/etmgeg_269_time_direct.nc'],...
 %                         'wind_speed_mean')
 %
 %See also: snctools
