@@ -271,7 +271,7 @@ end
 
 [idLand, idSea] = deal(OPT.x<min(x), OPT.x>max(x));
 [result.xLand, result.zLand, result.xActive, result.zActive, result.z2Active, result.xSea, result.zSea] = deal(OPT.x(idLand), OPT.z(idLand), x, Zlimits(:,1), Zlimits(:,2), OPT.x(idSea), OPT.z(idSea));
-[Volume, result.Volumes.Volume] = deal(sum(volume));
+[result.VTVinfo.AVolume, Volume, result.Volumes.Volume] = deal(sum(volume));
 [result.Volumes.volumes, result.Volumes.Accretion, result.Volumes.Erosion] = deal(volume, sum(volume(volume>0)), -sum(volume(volume<0)));
 result.info.time = toc;
 [Boundaries.Upper, Boundaries.Lower, Boundaries.Landward, Boundaries.Seaward] = deal(UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary);
