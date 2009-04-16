@@ -1,4 +1,4 @@
-function result = getDuneErosion_additional(xInitial, zInitial, xDUROS, zDUROS, x2, z2, WL_t, x0min, x0max, x0except, TargetVolume, maxRetreat, x0DUROS, AVolume)
+function result = getDuneErosion_additional_old(xInitial, zInitial, xDUROS, zDUROS, x2, z2, WL_t, x0min, x0max, x0except, TargetVolume, maxRetreat, x0DUROS, AVolume)
 %GETDUNEEROSION_ADDITIONAL  routine to fit additional dune erosion into profile
 %
 % This routine returns the x-location of the floating profile (x2, z2) to fit
