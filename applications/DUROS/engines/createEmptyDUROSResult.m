@@ -88,6 +88,7 @@ result.VTVinfo = struct(...
 
 [result.Volumes varargin] = applyInput(result.Volumes, varargin{:});
 [result.info varargin] = applyInput(result.info, varargin{:});
+[result.VTVinfo varargin] = applyInput(result.VTVinfo, varargin{:});
 result = applyInput(result, varargin{:});
 
 %% apply predefined input
