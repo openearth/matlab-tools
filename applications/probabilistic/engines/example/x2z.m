@@ -1,4 +1,4 @@
-function [z ErosionVolume] = x2z(x, varnames, Resistance, varargin)
+function [z ErosionVolume result] = x2z(x, varnames, Resistance, varargin)
 %X2Z  Limit state function
 %
 %   More detailed description goes here.
@@ -89,7 +89,7 @@ for i = 1:size(x,1)
         %% Derive z-value
         [x2 z2 result2] = getFinalProfile(result);
         ErosionVolume(i) = result2.Volumes.Erosion;
-        RD(i) = xRef - result(end).xActive(1);
+        RD(i) = xRef - result(end).VTVinfo.Xr;
 
         %%
         Duration(i) = -result(2).Volumes.Volume*Duration(i);
