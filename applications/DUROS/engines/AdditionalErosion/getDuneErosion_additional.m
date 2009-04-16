@@ -188,6 +188,7 @@ if ~IterationBoundariesConsistent
         resultout.Volumes.Accretion = 0;
         resultout.info.precision = 0;
         resultout.info.x0 = Xr;
+        resultout.info.resultinboundaries = true;
     elseif any(strcmp(x0minBoundary,'endofprofile'))
         % there is no part of the erosion profile above the waterlevel
         % after a DUROS calculation.
@@ -232,6 +233,7 @@ if ~resultout.info.resultinboundaries
             case 'maxRetreat'
                 writemessage(42, ['Additional retreat limit of ' num2str(maxRetreat) ' m reached. '...
                     'An Additional volume of ' num2str(resultout.Volumes.Volume, '%.2f') ' m^3/m^1 (TargetVolume=' num2str(TargetVolume, '%.2f') ' m^3/m^1) leads to an additional retreat of ' num2str(AdditionalRetreat, '%.2f') ' m.']);
+                resultout.info.resultinboundaries = true;
             case 'endofprofile'
                 writemessage(46, ['Erosional length restricted by lack of information on the landside. An additional erosion volume of ' num2str(resultout.Volumes.Volume, '%.2f') ' m^3/m^1 (TargetVolume =' num2str(TargetVolume, '%.2f') 'm^3/m^1) could be achieved with an additional retreat of ' num2str(AdditionalRetreat, '%.2f') ' m.']);
                 % erosional length restricted by profile info.
