@@ -37,34 +37,41 @@ function result = optimiseDUROS(xInitial, zInitial, WL_t, x0min, x0max, x0except
 
 %% Initiate variables
 tic;
+% apply defaults if input not specified
 getdefaults('x0except',[],0,...
     'channelslope_xpoints',[],0);
-% TODO: Waarom geen CreateEmptyDurosResult???
-result = struct('info', [], 'Volumes', [], 'xLand', [], 'zLand', [], 'xActive', [], 'zActive', [], 'z2Active', [], 'xSea', [], 'zSea', []);
 
+% load settings / Flags
 PreventLandwardTransport = DuneErosionSettings('PreventLandwardTransport');
 ChannelSlopes = DuneErosionSettings('ChannelSlopes');
 ProfileFluct = DuneErosionSettings('ProfileFluct');
 
-x0 = [x0max x0min]; % predefine both ultimate situations
+% initiate calculation coefficients, constants and counters
+Iter = 0;                                           % Iteration number
+iterid = 1;                                         % dummy value for iteration number which gives the best possible solution;
+maxiter = DuneErosionSettings('get', 'maxiter');    % specify maximum number of iterations
+precision = 1e-2;                                   % specify maximum error
+NextIteration = true;                               % Condition of while loop
 
-Iter = 0;               % Iteration number
-iterid = 1;             % dummy value for iteration number which gives the best possible solution;
-maxiter = DuneErosionSettings('get', 'maxiter');           % specify maximum number of iterations
-precision = 1e-2;       % specify maximum error
-Volume = NaN(1,maxiter);% Preallocation of variable to store calculated volumes
-CorrectionApplied = false(1, maxiter); % preallocation of variable to know if volume correction has been applied
-NextIteration = true;   % Condition of while loop
+% initiate arrays to store the results
+result = createEmptyDUROSResult;                    % create empty result structure
+[x0precision Volume] = deal(NaN(1,maxiter));        % Preallocation of variable to store calculated volumes
+CorrectionApplied = false(1, maxiter);              % preallocation of variable to know if volume correction has been applied
+
+% construct first two iterations (ultimate situations
+x0 = [x0max x0min];                                 % predefine both ultimate situations
 
 %% Start iteration loop
 % First perform two iterations with the most landward and seaward profiles possible,
 % then iterate further
-
 while NextIteration
     Iter=Iter+1;
     % Get DUROS profile based on hydraulic conditions and profile shift x0.
     result(Iter) = getDUROSprofile(xInitial, zInitial, x0(Iter), Hsig_t, Tp_t, WL_t, w, SeawardBoundaryofInterest,false);
     Volume(Iter) = result(Iter).Volumes.Volume;
+    % precision holds for a volume. Dividing this by the height of the
+    % erosion profile gives a precision for the horizontal length scale
+    x0precision(Iter) = precision / ((result(Iter).z2Active(1) - result(Iter).z2Active(end))/2);
 
     % create conditions if statement
     SecondIter = Iter==2;
@@ -89,9 +96,26 @@ while NextIteration
     MaxNrItersReached = Iter==maxiter;
     if FirstTwoItersCompleted
         VollDiffSmall = abs(diff(Volume(Iter-1:Iter)))<precision;
+        % The following code is not tested (with various cases). Errors
+        % therefore could occur. If so, just comment this statement and
+        % comment the if statment (line 114) as well. The code will slow
+        % down but definately work...
+        ChannelSlopeEffect = ...
+            any(...
+            find(...
+            abs((Volume - Volume(Iter))) < precision... Volume difference small
+            &...
+            (cat(2,abs((x0 - x0(Iter))),nan(1,maxiter-Iter)) - x0precision) < 0 ... x0 difference small
+            )...
+            ~=Iter); % excluding the iteration position itself of course....
     end
 
-    if FirstTwoItersCompleted && PrecisionNotReached && SolutionPossibleWithinBoundaries && ~MaxNrItersReached && ~VollDiffSmall
+    if FirstTwoItersCompleted &&...
+            PrecisionNotReached &&...
+            SolutionPossibleWithinBoundaries &&...
+            ~MaxNrItersReached &&...
+            ~VollDiffSmall &&...
+            ~ChannelSlopeEffect
         % new profile shift has to be calculated.
 
         x0(Iter+1) = getNextx0(Volume,ProfileFluct,x0);
@@ -222,10 +246,15 @@ SteepPointsExist = ~isempty(channelslope_xpoints);
 if ChannelSlopes && SteepPointsExist...
         && SolutionPossibleWithinBoundaries && PrecisionNotReached
     [dum idpos idneg] = getNextx0(Volume,ProfileFluct,x0);
-    xpos = max(result(idpos).xActive);
-    xneg = max(result(idneg).xActive);
-    if any(channelslope_xpoints(:,2)<xpos & channelslope_xpoints(:,2)>xneg)
-        chpid = find(channelslope_xpoints(:,2)<xpos & channelslope_xpoints(:,2)>xneg,1,'first');
+    xpos = x0(idpos);
+    xneg = x0(idneg);
+    if any(channelslope_xpoints(:,1)<xpos & channelslope_xpoints(:,1)>xneg)
+        % compare the x0 positions of the closest solutions to x0 positions of
+        % possible channel problems. If one of the channelslope_points x0
+        % positions is between the x0 of the solutions closest to
+        % ProfileFluct (positive and negative), influence of a channelslope
+        % is present.
+        chpid = find(channelslope_xpoints(:,1)<xpos & channelslope_xpoints(:,1)>xneg,1,'first');
         if ~isempty(chpid)
             % in this case the problems are caused by a channel slope.
             writemessage(-6, ['Solution influenced by non-erodible channel slope at = (',num2str(channelslope_xpoints(chpid,2),'%.2f'),', ',num2str(channelslope_xpoints(chpid,3),'%.2f'),') [m]']);
@@ -255,6 +284,8 @@ if ~SolutionPossibleWithinBoundaries && abs(precision) < abs(solutionprecision)
         result.info.time = toc;
         result.info.resultinboundaries = true;
         x0maxid = find(xInitial==x0max);
+        [result.VTVinfo.Xp result.VTVinfo.Xr] = deal(x0(iterid));
+        [result.VTVinfo.Zp result.VTVinfo.Zr] = deal(WL_t);
         result.xLand = xInitial(1:x0maxid-1);
         result.xSea = xInitial(x0maxid+1:end);
         result.xActive = xInitial(x0maxid);
@@ -268,7 +299,6 @@ if ~SolutionPossibleWithinBoundaries && abs(precision) < abs(solutionprecision)
         end
         return
     else
-        %     disp('No solution found within iteration boundaries');
         writemessage(-7, 'No solution found within iteration boundaries');
     end
 end
@@ -279,6 +309,10 @@ result.info.precision = solutionprecision;
 result.info.iter = Iter;
 result.info.time = toc;
 result.info.resultinboundaries = SolutionPossibleWithinBoundaries;
+result.VTVinfo.Xp = max([min(result.xActive),result.info.x0]);
+result.VTVinfo.Zp = result.z2Active(result.xActive == result.VTVinfo.Xp);
+result.VTVinfo.Xr = min(result.xActive);
+result.VTVinfo.Zr = result.z2Active(result.xActive == result.VTVinfo.Xr);
 
 if dbstate
     dbPlotDuneErosion('final parab')

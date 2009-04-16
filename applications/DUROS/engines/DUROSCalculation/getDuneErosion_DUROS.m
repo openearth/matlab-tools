@@ -1,10 +1,10 @@
-function [result, Volume, x00min, x0max, x0except, x0min] = getDuneErosion_DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t, DuneBreachOccured)
+function [result, AVolume, x00min, x0max, x0except, x0min] = getDuneErosion_DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t, DuneBreachOccured)
 %GETDUNEEROSION_DUROS routine to find the balanced location of the DUROS profile
 %
 % This routine returns the x-location of the DUROS profile such that
 % the sediment balance is equal to the ProfileFluct (usually 0)
 %
-% Syntax:       [result, Volume, x00min, x0max, x0except] = getDuneErosion_DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t, ProfileFluct)
+% Syntax:       [result, AVolume, x00min, x0max, x0except] = getDuneErosion_DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t, ProfileFluct)
 %
 % Input:
 %               xInitial  = column array containing x-locations of initial profile [m]
@@ -17,7 +17,7 @@ function [result, Volume, x00min, x0max, x0except, x0min] = getDuneErosion_DUROS
 %                         internally to denote whether the routine called
 %                         itself in case of a dune breach calculation
 %
-% Output:       Eventual output is stored in a variables Volume, result, x00min, x0max, x0except
+% Output:       Eventual output is stored in a variables AVolume, result, x00min, x0max, x0except
 %
 %   See also getDuneErosion_DUROS
 %
@@ -46,7 +46,7 @@ end
 
 % Todo change xSea, xActive and xLand to one array and arrays with
 % logicals!!
-[Volume,x00min, x0max, x0except]=deal([]);
+[AVolume,x00min, x0max, x0except]=deal([]);
 [result(1).xActive result(1).zActive]=deal(xInitial,zInitial);
 
 if max(zInitial) < WL_t
@@ -102,7 +102,7 @@ messgs=writemessage('get');
 CorrAboveWL = any([messgs{:,1}]==-5);
 if isempty(result(1).z2Active) || ~SolutionPossibleBetweenBoundaries || CorrAboveWL
     NoDUROSResult=true;
-    [Volume,x00min, x0max, x0except]=deal([]);
+    [AVolume,x00min, x0max, x0except]=deal([]);
 end
 
 if ~isempty(x0except) && result.info.x0 < max(x0except(:,2))
@@ -125,7 +125,7 @@ if ~isempty(x0except) && result.info.x0 < max(x0except(:,2))
             if isempty(result_new(1).z2Active)
                 NoDUROSResult=true;
                 IterationBoundaries = false;
-                [Volume,x00min, x0max, x0except]=deal([]);
+                [AVolume,x00min, x0max, x0except]=deal([]);
             else
                 iter = result(1).info.iter;
 
@@ -166,18 +166,17 @@ elseif isempty(x0except)
 end
 result(end).info.ID = ['DUROS',Plus];
 
-%% STEP 4; get final DUROS profile and find Volume A
+%% STEP 4; get final DUROS profile and find AVolume
 
 if DuneBreachOccured
     return
 end
 if ~NoDUROSResult
     writemessage(200,'Start second step: Fit A volume');
-    
-    [Volume, result(end+1)] = getVolume(xInitial, zInitial, [], WL_t, min(result(end).xActive), max(xcrossWL_t), [result(end).xActive; result(end).xSea], [result(end).z2Active; result(end).zSea],...
+    [AVolume, result(end+1)] = getVolume(xInitial, zInitial, [], WL_t, min(result(end).xActive), max(xcrossWL_t), [result(end).xActive; result(end).xSea], [result(end).z2Active; result(end).zSea],...
         'suppressMessEqualBoundaries', true); %TODO: combine several active profiles in case of breach
-
-    if Volume<0
+    result(end).VTVinfo.AVolume = AVolume;
+    if AVolume<0
         result(end).info.ID = [result(end-1).info.ID,' Erosion above SSL'];
     else
         result(end).info.ID = [result(end-1).info.ID,' No erosion'];
