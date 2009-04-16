@@ -58,6 +58,11 @@ function indices = delwaq_segmentname2index(Struct,varargin)
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
    if ~isstruct(Struct)
       Struct = delwaq('open',Struct);
@@ -96,8 +101,8 @@ function indices = delwaq_segmentname2index(Struct,varargin)
    
          for i=1:size(segmentname,1)
       
-            if strcmp(deblank2(segmentname(i,:)),...
-                      deblank2(list_of_names(istat,:)))
+            if strcmp(strtrim(segmentname(i,:)),...
+                      strtrim(list_of_names(istat,:)))
    
                indices = [indices istat];
                

@@ -60,6 +60,12 @@ function indices = vs_get_trih_station_index(trih,varargin)
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 if ~isstruct(trih)
    trih = vs_use(trih);
 end
@@ -140,8 +146,8 @@ case 'strcmp'
    
       for istat=1:nstat
 
-         if strcmp(deblank2(stationname(i,:)),...
-                   deblank2(namst(istat,:)))
+         if strcmp(strtrim(stationname(i,:)),...
+                   strtrim(namst(istat,:)))
 
             indices = [indices istat];
             

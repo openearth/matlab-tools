@@ -64,6 +64,12 @@ function indices = vs_trih_crosssection_index(trih,varargin)
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 if ~isstruct(trih)
    trih = vs_use(trih);
 end
@@ -146,8 +152,8 @@ case 'strcmp'
 
       for i=1:size(crosssectionname,1)
    
-         if strcmp(deblank2(crosssectionname(i,:)),...
-                   deblank2(namst(istat,:)))
+         if strcmp(strtrim(crosssectionname(i,:)),...
+                   strtrim(namst(istat,:)))
 
             indices = [indices istat];
             

@@ -10,8 +10,6 @@ function INFO = vs_get_grp_def(NFSstruct,GrpName,varargin)
 %
 % Returns [] for non-existing NEFIS Group.
 %
-% © G.J. de Boer, TU Delft, Environmental Fluid Mechanics, Nov 2006
-%
 % See also: VS_GET_ELM_SIZE, VS_*
 
 %   --------------------------------------------------------------------
@@ -41,6 +39,12 @@ function INFO = vs_get_grp_def(NFSstruct,GrpName,varargin)
 %   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 %   USA
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
    INFO = [];
    

@@ -48,6 +48,12 @@ function varargout = delft3d_io_meteo_curv(cmd,varargin)
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 if nargin ==1
    error(['At least 2 input arguments required: delft3d_io_meteo_curv(''read''/''write'',filename)'])
 end

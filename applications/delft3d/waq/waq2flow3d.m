@@ -81,6 +81,12 @@ function flowarray = waq2flow3D(WAQarray,pointerarray,varargin)
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
    flowarray  = nan.*zeros([size(pointerarray)]);
    
    for m=1:size(pointerarray,1)

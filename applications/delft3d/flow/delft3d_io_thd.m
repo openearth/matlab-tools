@@ -66,6 +66,11 @@ function varargout=delft3d_io_thd(cmd,varargin),
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 if nargin ==1
    error(['AT least 2 input arguments required: d3d_io_...(''read''/''write'',filename)'])

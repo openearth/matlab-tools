@@ -33,6 +33,12 @@ function varargout = vs_mask(varargin);
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 % C is the NFS struct handle as returned by C = vs_use(...)
 
    %% Input

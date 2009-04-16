@@ -11,9 +11,7 @@ function Sz = vs_get_grp_size(NFSstruct,GrpName,varargin)
 % Not case sensitive, neither for GrpName, not
 % for strings in NFSstruct.
 %
-% G.J. de Boer, TU Delft, 
-% Environmental FLuid Mechanics
-% OCt 2005
+% See also: VS_GET_ELM_SIZE, VS_*
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
@@ -42,6 +40,12 @@ function Sz = vs_get_grp_size(NFSstruct,GrpName,varargin)
 %   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 %   USA
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
    for i=1:length(NFSstruct.GrpDat)
       if strcmp(upper(NFSstruct.GrpDat(i).Name),...

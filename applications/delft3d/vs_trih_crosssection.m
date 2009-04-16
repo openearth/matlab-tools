@@ -63,6 +63,12 @@ function varargout = vs_trih_crosssection(trih,crosssection_id)
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
    iostat =  1;
 
    %% Get names from indices of vv.

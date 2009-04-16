@@ -37,6 +37,12 @@ function varargout=vs_mnk(varargin),
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 NFSstruct         = [];
 OPT.issuewarnings = 0;
 

@@ -87,6 +87,12 @@ function G = delft3d_io_dep(varargin)
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
      
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 delft3d_io_dep_version = 'beta';
 
    %% Inout

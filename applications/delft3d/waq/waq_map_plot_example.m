@@ -9,6 +9,12 @@
 
 % © TU Delft, G.J. de Boer <g.j.deboer@tudelft.nl> Dec. 2004 - Oct 2007
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 OPT.pause          = 1;
 OPT.export         = 0;
 

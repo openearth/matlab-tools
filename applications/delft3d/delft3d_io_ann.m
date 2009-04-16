@@ -61,6 +61,12 @@ function varargout = delft3d_io_ann(cmd,varargin)
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 if nargin ==1
    error(['At least 2 input arguments required: delft3d_io_ann(''read''/''write'',filename)'])
 end

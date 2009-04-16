@@ -59,14 +59,11 @@ function varargout=DELFT3D_IO_RESTART(cmd,varargin),
 %      NOTE: turbulence info cannot be passed in the ASCII *.ini file.
 %   8. Secondary flow                                           1 matrix   .
 %
-%   © G.J. de Boer, TU Delft.
-%
 % See also: delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, 
 %           delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf,
 %           delft3d_io_obs, delft3d_io_src, delft3d_io_thd, 
 %           delft3d_io_wnd, trirst
-
      
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
@@ -96,6 +93,12 @@ function varargout=DELFT3D_IO_RESTART(cmd,varargin),
 %   USA or 
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 if nargin<3
    error('Syntax: delft3d_io_restart(''read/write'' ,filename,...')
@@ -197,27 +200,27 @@ end
       j=j+1;PAR.nlayers(j)= [D.kmax];PAR.names{j} = 'u'         ;
       j=j+1;PAR.nlayers(j)= [D.kmax];PAR.names{j} = 'v'         ;
       
-      if ~(isempty(strfind (char(MDF.keywords.sub1(1)),'S'       )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'salinity'     ;end
-      if ~(isempty(strfind (char(MDF.keywords.sub1(2)),'T'       )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'temperature'  ;end
+      if ~(isempty(strfind(char(MDF.keywords.sub1(1)),'S'       )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'salinity'     ;end
+      if ~(isempty(strfind(char(MDF.keywords.sub1(2)),'T'       )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'temperature'  ;end
 
-      if  (isfield(              MDF.keywords,'namc1')             );
-      if ~(isempty(deblank2(char(MDF.keywords.namc1 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent1' ;end
+      if  (isfield(             MDF.keywords,'namc1')             );
+      if ~(isempty(strtrim(char(MDF.keywords.namc1 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent1' ;end
       end
 
-      if  (isfield(              MDF.keywords,'namc2')             );
-      if ~(isempty(deblank2(char(MDF.keywords.namc2 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent2' ;end
+      if  (isfield(             MDF.keywords,'namc2')             );
+      if ~(isempty(strtrim(char(MDF.keywords.namc2 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent2' ;end
       end
 
-      if  (isfield(              MDF.keywords,'namc3')             );
-      if ~(isempty(deblank2(char(MDF.keywords.namc3 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent3' ;end
+      if  (isfield(             MDF.keywords,'namc3')             );
+      if ~(isempty(strtrim(char(MDF.keywords.namc3 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent3' ;end
       end
 
-      if  (isfield(              MDF.keywords,'namc4')             );
-      if ~(isempty(deblank2(char(MDF.keywords.namc4 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent4' ;end
+      if  (isfield(             MDF.keywords,'namc4')             );
+      if ~(isempty(strtrim(char(MDF.keywords.namc4 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent4' ;end
       end
 
-      if  (isfield(              MDF.keywords,'namc5')             );
-      if ~(isempty(deblank2(char(MDF.keywords.namc5 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent5' ;end
+      if  (isfield(             MDF.keywords,'namc5')             );
+      if ~(isempty(strtrim(char(MDF.keywords.namc5 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent5' ;end
       end
 
       if ~(isempty(strfind (char(MDF.keywords.tkemod),'k-epsilon')));j=j+1;PAR.nlayers(j)= [D.kmax+1];PAR.names{j} = 'tke'          ;

@@ -39,6 +39,12 @@ function varargout = delwaq_disp(Struct,varargin)
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
    %% make sure S is the delwaq file handle struct
    %% and not the filename
    %% ----------------------------

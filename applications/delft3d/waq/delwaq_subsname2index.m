@@ -56,6 +56,12 @@ function indices = delwaq_subsname2index(Struct,varargin)
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
       if isstruct(Struct)
       elseif iscellstr(Struct)
           SubsName = Struct;
@@ -104,8 +110,8 @@ switch OPT.method
 
           for iarg=1:length(SubstanceName)
       
-            if strcmpi(deblank2(SubstanceName{iarg}),...
-                       deblank2(list_of_names(isub,:)))
+            if strcmpi(strtrim(SubstanceName{iarg}),...
+                       strtrim(list_of_names(isub,:)))
    
                indices = [indices isub];
                

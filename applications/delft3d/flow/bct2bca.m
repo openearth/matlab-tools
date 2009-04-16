@@ -76,8 +76,6 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
 %  It is also to possible to call with all the <keyword,value> pairs as struct fields:
 %  bct2bca(bctfile,bcafile,bndfile,struct)
 %
-% G.J. de Boer, Oct 2006 - Feb 2008
-%
 % See also: BCT2BCA, DELFT3D_NAME2T_TIDE, T_TIDE_NAME2DELFT3D, 
 %           TIME2DATENUM, BCT2BCH,
 %           BCT_IO, DELFT3D_IO_BCA, DELFT3D_IO_BND, 
@@ -132,6 +130,12 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
 %   USA
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 %% Defaults
 %% -----------------
@@ -423,8 +427,8 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
 %             mask           = 0.*[1:length(length(tidestruc.name))];
 %             for j=1:length(tidestruc.name)
 %                for jj=1:length(H.components)
-%                   if strcmpi(deblank2(char(tidestruc.name{ j})),...
-%                              deblank2(char(H.components  (jj))));
+%                   if strcmpi(strtrim(char(tidestruc.name{ j})),...
+%                              strtrim(char(H.components  (jj))));
 %                      mask(j) = 1;
 %                   end
 %                end

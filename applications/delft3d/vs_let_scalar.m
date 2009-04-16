@@ -43,6 +43,12 @@ function scalar = vs_let_scalar(varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 scalar = vs_let(varargin{:});
 dims   = size(scalar);
 

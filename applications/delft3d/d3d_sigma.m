@@ -73,6 +73,12 @@ function varargout = d3d_sigma(thick,varargin);
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 epsilon = 0.001;
 
 if nargin==2

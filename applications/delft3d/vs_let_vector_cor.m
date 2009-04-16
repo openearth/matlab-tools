@@ -65,8 +65,6 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
 %   the u      velocity array is at point (n:n+1,m    ) is has size 2x1,
 %   the v      velocity array is at point (n    ,m:m+1) is has size 1x2,
 %
-%   © G.J. de Boer, 2006, TU Delft, based on ideas in xyveloc.m by H.R.A. Jagers.
-%         
 %   See also: VS_USE, VS_GET, VS_LET, VS_LET_SCALAR, VS_MASK, VS_...
 
 %   --------------------------------------------------------------------
@@ -98,15 +96,22 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
+% © G.J. de Boer, 2006, TU Delft, based on ideas in xyveloc.m by H.R.A. Jagers.
+% 2008, May  7, made it work also for 2D arrays (tau)
+% 2008, May 15, catch error when loading outermost dummy row/col
+% 2008, Aug 06, added quiets to vs_*
+
 % local works structs are:
 %    u   = u face data
 %    v   = c face data
 %    cor = corner data
 %    cen = center data
-
-%% 2008, May  7, made it work also for 2D arrays (tau)
-%% 2008, May 15, catch error when loading outermost dummy row/col
-%% 2008, Aug 06, added quiets to vs_*
 
 %% Initialize
 %% -----------------------
@@ -117,9 +122,9 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
    
    switch vs_type(NFStruct),
    case {'Delft3D-trim'},
-      layer_model = deblank2(permute(vs_let(NFStruct,'map-const','LAYER_MODEL','quiet'),[2 3 1]));
+      layer_model = strtrim(permute(vs_let(NFStruct,'map-const','LAYER_MODEL','quiet'),[2 3 1]));
    case {'Delft3D-com'},
-      layer_model = deblank2(permute(vs_let(NFStruct,'GRID'     ,'LAYER_MODEL','quiet'),[2 3 1]));
+      layer_model = strtrim(permute(vs_let(NFStruct,'GRID'     ,'LAYER_MODEL','quiet'),[2 3 1]));
    otherwise,
      error('Invalid NEFIS file for this action.');
    end;

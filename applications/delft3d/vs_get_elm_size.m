@@ -11,8 +11,6 @@ function Sz = vs_get_elm_size(NFSstruct,ElmName,varargin)
 % Not case sensitive, neither for ElmName, not
 % for strings in NFSstruct.
 %
-% © G.J. de Boer, TU Delft, Environmental Fluid Mechanics, Nov 2006
-%
 % See also: vs_get_elm_def, vs_get_grp_size
 
 %   --------------------------------------------------------------------
@@ -42,6 +40,12 @@ function Sz = vs_get_elm_size(NFSstruct,ElmName,varargin)
 %   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 %   USA
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
    Sz = [];
    for i=1:length(NFSstruct.ElmDef)

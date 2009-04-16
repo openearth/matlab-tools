@@ -52,8 +52,6 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 %     SMderv  6 HLES
 % 
 %
-% © G.J de Boer (TU Delft)
-%
 % See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
 %           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf, 
@@ -70,7 +68,7 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 
 % Uses
 % + odd
-% + deblank2
+% + strtrim
 % - strselect not any more, is enclosed now
 % + delft3d_io_mdf
 %   + time2datenum
@@ -103,6 +101,12 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 %   USA or 
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 %% Get filename from GUI
 %% ------------------
@@ -271,11 +275,7 @@ elseif length(tmp)>0
             %% remove = sign and leading/trailing blanks
             %% ------------------------
             equalsignposition = findstr(value,'=');
-            try
-               value             = deblank2(value(equalsignposition+1:end));
-            catch
-               value             = deblank(value(equalsignposition+1:end));
-            end
+            value             = strtrim(value(equalsignposition+1:end));
          end
          
          %% Look for strings

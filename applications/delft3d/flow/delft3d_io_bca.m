@@ -74,6 +74,12 @@ function varargout = delft3d_io_bca(cmd,varargin)
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 if nargin ==1
    error(['At least 2 input arguments required: delft3d_io_bca(''read''/''write'',filename)'])
 end
@@ -174,10 +180,10 @@ if fid > 0
          %% Labels determine whether we are on side 1 or 2
          %% --------------------------------------------
          
-         if     strcmp(deblank2(labelAB),deblank2(BND.DATA(ibnd).labelA))
+         if     strcmp(strtrim(labelAB),strtrim(BND.DATA(ibnd).labelA))
             isize = 1;
             break
-         elseif strcmp(deblank2(labelAB),deblank2(BND.DATA(ibnd).labelB))
+         elseif strcmp(strtrim(labelAB),strtrim(BND.DATA(ibnd).labelB))
             isize = 2;
             break
    
@@ -250,9 +256,9 @@ if fid > 0
       for iside = 1:2
       
              if iside==1
-            fprintf(fid,'%c'  ,deblank2(BND.DATA(ibnd).labelA)); % format '%12s' results in leading spaces
+            fprintf(fid,'%c'  ,strtrim(BND.DATA(ibnd).labelA)); % format '%12s' results in leading spaces
          elseif iside==2
-            fprintf(fid,'%c'  ,deblank2(BND.DATA(ibnd).labelB)); % format '%12s' results in leading spaces
+            fprintf(fid,'%c'  ,strtrim(BND.DATA(ibnd).labelB)); % format '%12s' results in leading spaces
          end
          
          fprintf(fid,'\n');

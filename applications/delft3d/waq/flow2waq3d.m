@@ -55,6 +55,12 @@ function WAQarray = flow2waq3D(FLOWarray,couplingarray,varargin)
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
    nWAQ = length(couplingarray);
    
    %% Options

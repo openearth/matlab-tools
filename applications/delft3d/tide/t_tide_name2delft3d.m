@@ -10,10 +10,8 @@ function delft3d_names = t_tide_name2delft3d(t_tide_names)
 %
 % * vectorized
 %
-% G.J. de Boer, Oct. 2006
-%
+% See web:  T_TIDE (http://www.eos.ubc.ca/~rich/) 
 % See also: DELFT3D_NAME2T_TIDE, BCT2BCA, 
-%           T_TIDE (http://www.eos.ubc.ca/~rich/) 
 
 % 2008 Jul 22: added A0/Z0
 
@@ -45,6 +43,12 @@ function delft3d_names = t_tide_name2delft3d(t_tide_names)
 %   USA
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
    if ischar(t_tide_names)
       t_tide_names = cellstr(t_tide_names);

@@ -63,6 +63,12 @@ function varargout = delft3d_io_grd(varargin)
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 delft3d_io_grd_version = '1.0beta';
 
 if nargin ==1

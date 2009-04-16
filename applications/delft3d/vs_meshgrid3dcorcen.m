@@ -49,6 +49,12 @@ function varargout=vs_meshgrid3dcorcen(varargin),
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 NFSstruct      = [];
 TimeStep       = 1;
 

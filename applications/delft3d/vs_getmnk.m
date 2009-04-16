@@ -5,9 +5,7 @@ function varargout=vs_getmnk(varargin),
 % G                = vs_getmnk(NFSstruct) where G has fields 'mmax','nmax' and 'kmax'
 % [mmax,nmax,kmax] = vs_getmnk(NFSstruct)
 %
-% G.J. de Boer, TU Delft, 
-% Environmental FLuid Mechanics
-% OCt 2005
+%See also: VS_MESHGRID2DCORCEN
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
@@ -36,6 +34,12 @@ function varargout=vs_getmnk(varargin),
 %   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 %   USA
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 NFSstruct         = [];
 OPT.issuewarnings = 0;

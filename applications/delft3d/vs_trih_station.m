@@ -60,6 +60,12 @@ function varargout = vs_trih_station(trih,varargin)
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
    iostat =  1;
    
    %% Input

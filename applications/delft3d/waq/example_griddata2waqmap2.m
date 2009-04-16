@@ -23,6 +23,12 @@
 %%
 %%See also: DELWAQ, FLOW2WAQ3D, ADDROWCOL, CORNER2CENTER
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 %% G.J. de Boer <gerben.deboer@deltares.nl>, <g.j.deboer@tudelft.nl>
 
 %% Input

@@ -25,6 +25,12 @@ function ploStruct = open_plo(FileName)
 %       The Netherlands
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 % open file with regular delwaq routine
 ploStruct = delwaq('open', FileName);
 

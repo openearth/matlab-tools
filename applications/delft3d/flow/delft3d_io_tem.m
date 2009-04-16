@@ -47,8 +47,6 @@ function varargout=delft3d_io_tem(cmd,varargin),
 %   rather than the pre-defined names. Make sure the field is 
 %   the time in minutes since midnight at reference date.
 %
-%   © G.J. de Boer, Nov 2006, TU Delft.
-%
 % See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
 %           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf, 
@@ -85,6 +83,12 @@ function varargout=delft3d_io_tem(cmd,varargin),
 %   USA or
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 if nargin ==1
    error(['At least 2 input arguments required: delft3d_io_tem(''read''/''write'',filename)'])

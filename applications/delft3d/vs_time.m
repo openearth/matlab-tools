@@ -54,6 +54,12 @@ function varargout = vs_time(NFSstruct,varargin),
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 if nargin>1
    Tindex = varargin{1};
 else

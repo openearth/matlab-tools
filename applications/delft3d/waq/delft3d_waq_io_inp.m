@@ -39,6 +39,12 @@ function varargout = delft3d_waq_io_inp(varargin)
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 %% TO DO : handle INCLUDE statement in waq_fgetl_* by opening new file, replacing fid, and putting higher level fid on stack.
 
 mfile_version = '1.0, Oct. 2006, beta';
@@ -191,7 +197,7 @@ no_cellstr    = 1;
             %% ------------------------------------------
             
            [string,n]                      = waq_fgetl(fid,n,comment);
-            string                         = deblank2(string);
+            string                         = strtrim(string);
             
             DAT.data.balance_options       = [];
            
@@ -199,7 +205,7 @@ no_cellstr    = 1;
             
             DAT.data.balance_options       = [DAT.data.balance_options,string];
             [string,n]                     = waq_fgetl(fid,n,comment);
-             string                        = deblank2(string);
+             string                        = strtrim(string);
             
             end
             
@@ -220,11 +226,11 @@ no_cellstr    = 1;
             DAT.data.start_tddd            = str2num(string(1    :end-6));
             DAT.data.start_time            = string;
             else
-            DAT.data.start_time            = time2datenum(deblank2(string));
+            DAT.data.start_time            = time2datenum(strtrim(string));
             end
             
            [string,n]                      = waq_fgetl(fid,n,comment);
-            string                         = deblank2(string);
+            string                         = strtrim(string);
             
             slashes = strfind(string,'/');
             if isempty(slashes)
@@ -234,7 +240,7 @@ no_cellstr    = 1;
             DAT.data.stop_ddd              = str2num(string(1    :end-6));
             DAT.data.stop_time             = string;
             else
-            DAT.data.stop_time             = time2datenum(deblank2(string));
+            DAT.data.stop_time             = time2datenum(strtrim(string));
             end
             
            [DAT.data.constant_timestep,n]  = waq_fgetl_number(fid,n,comment);
@@ -251,7 +257,7 @@ no_cellstr    = 1;
            if strcmpi(strtok(string),'INCLUDE')
            
               [dummy,value]               = strtok(string);
-              DAT.data.monitoring.INCLUDE = deblank2(value);
+              DAT.data.monitoring.INCLUDE = strtrim(value);
            
               [string,n] = waq_fgetl(fid,n,comment);
 
@@ -307,7 +313,7 @@ no_cellstr    = 1;
             %% Monitoring
             %%------------------------------------------
            [string,n]                          = waq_fgetl(fid,n,comment);
-            string                             = deblank2(string);
+            string                             = strtrim(string);
             
             [DAT.data.monitoring_start,string] = strtok(string);
             [DAT.data.monitoring_stop ,string] = strtok(string);
@@ -316,14 +322,14 @@ no_cellstr    = 1;
             slashes = strfind(DAT.data.monitoring_start,'/');
             if isempty(slashes)
             else
-            DAT.data.start = time2datenum(deblank2(DAT.data.monitoring_start));
-            DAT.data.stop  = time2datenum(deblank2(DAT.data.monitoring_stop ));
+            DAT.data.start = time2datenum(strtrim(DAT.data.monitoring_start));
+            DAT.data.stop  = time2datenum(strtrim(DAT.data.monitoring_stop ));
             end
 
             %% Map
             %%------------------------------------------
            [string,n]                          = waq_fgetl(fid,n,comment);
-            string                             = deblank2(string);
+            string                             = strtrim(string);
             [DAT.data.map_start,string] = strtok(string);
             [DAT.data.map_stop ,string] = strtok(string);
             [DAT.data.map_dt   ,string] = strtok(string);
@@ -331,14 +337,14 @@ no_cellstr    = 1;
             slashes = strfind(DAT.data.map_start,'/');
             if isempty(slashes)
             else
-            DAT.data.start = time2datenum(deblank2(DAT.data.map_start));
-            DAT.data.stop  = time2datenum(deblank2(DAT.data.map_stop ));
+            DAT.data.start = time2datenum(strtrim(DAT.data.map_start));
+            DAT.data.stop  = time2datenum(strtrim(DAT.data.map_stop ));
             end
             
             %% History
             %%------------------------------------------
            [string,n]                          = waq_fgetl(fid,n,comment);
-            string                             = deblank2(string);
+            string                             = strtrim(string);
             [DAT.data.history_start,string] = strtok(string);
             [DAT.data.history_stop ,string] = strtok(string);
             [DAT.data.history_dt   ,string] = strtok(string);
@@ -346,8 +352,8 @@ no_cellstr    = 1;
             slashes = strfind(DAT.data.history_start,'/');
             if isempty(slashes)
             else
-            DAT.data.start = time2datenum(deblank2(DAT.data.history_start));
-            DAT.data.stop  = time2datenum(deblank2(DAT.data.history_stop ));
+            DAT.data.start = time2datenum(strtrim(DAT.data.history_start));
+            DAT.data.stop  = time2datenum(strtrim(DAT.data.history_stop ));
             end
             
             %% +------------------------------------------+
@@ -362,12 +368,12 @@ no_cellstr    = 1;
            [DAT.data.number_of_segments,n] = waq_fgetl_number(fid,n,comment);
 
            [string,n]                          = waq_fgetl(fid,n,comment);
-            string                             = deblank2(string);
+            string                             = strtrim(string);
             
             if strcmpi(strtok(string),'MULTIGRID')
                DAT.data.multigrid = 1;
               [string,n]                          = waq_fgetl(fid,n,comment);
-               string                             = deblank2(string);
+               string                             = strtrim(string);
             else
                DAT.data.multigrid = 0;
             end
@@ -375,7 +381,7 @@ no_cellstr    = 1;
             if strcmpi(strtok(string),'INCLUDE')
                DAT.data.grid.INCLUDE = 1;
               [string,n]                          = waq_fgetl(fid,n,comment);
-               string                             = deblank2(string);
+               string                             = strtrim(string);
            %else
            %   DAT.data.grid.INCLUDE = 0;
             end
@@ -400,12 +406,12 @@ no_cellstr    = 1;
            end
            
 %-%        [string,n]                   = waq_fgetl(fid,n,comment);
-%-%         string                      = deblank2(string);
+%-%         string                      = strtrim(string);
 %-%         
 %-%         if strcmpi(strtok(string),'INCLUDE')
 %-%         
 %-%           [dummy,value]               = strtok(string);
-%-%           DAT.data.attributes.INCLUDE = deblank2(value);
+%-%           DAT.data.attributes.INCLUDE = strtrim(value);
 %-%        
 %-%        % attributes_file looks like:
 %-%        %     1                ; Input option without Defaults 
@@ -507,26 +513,26 @@ no_cellstr    = 1;
 %            %% |                                          |
 %            %% +------------------------------------------+
 %
-%            string                          = deblank2(waq_fgetl(fid,n,comment))
+%            string                          = strtrim(waq_fgetl(fid,n,comment))
 %            
 %            iconstants=0;
 %            if strcmpi(strtok(string),'CONSTANTS')
 %            
-%            string                        = deblank2(waq_fgetl(fid,n,comment));
+%            string                        = strtrim(waq_fgetl(fid,n,comment));
 %            while ~strcmpi(strtok(string),'DATA')
 %            iconstants=iconstants+1;
 %            DAT.data.process_parameters_contants{iconstants} = string;
-%            string                                           = deblank2(waq_fgetl(fid,n,comment))
+%            string                                           = strtrim(waq_fgetl(fid,n,comment))
 %            end
 %            
 %            DAT.data.process_parameters_data                 = repmat(NaN,[1 iconstants])
 %            iconstants=0;
-%            string                          = deblank2(waq_fgetl(fid,n,comment))
+%            string                          = strtrim(waq_fgetl(fid,n,comment))
 %            while ~strcmpi(strtok(string),'PARAMETERS')
 %            iconstants=iconstants+1;
 %             str2num(string)
 %            DAT.data.process_parameters_data(iconstants)     = str2num(string);
-%            string                                           = deblank2(waq_fgetl(fid,n,comment))
+%            string                                           = strtrim(waq_fgetl(fid,n,comment))
 %            end            
 %            
 %            end

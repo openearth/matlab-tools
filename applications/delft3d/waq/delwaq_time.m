@@ -44,6 +44,12 @@ function varargout = delwaq_time(Struct,varargin)
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
    %% Set defaults for keywords
    %% ----------------------
 

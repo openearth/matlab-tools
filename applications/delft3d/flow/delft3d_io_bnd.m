@@ -42,6 +42,12 @@ function varargout=delft3d_io_bnd(cmd,varargin),
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 % 2008 Nov 28: * corrected test for 3d-profile (missing dash) [Yann Friocourt]
 %
 % 2008 Jul 11: * made it work when Labels have length < 11 [Anton de Fockert]

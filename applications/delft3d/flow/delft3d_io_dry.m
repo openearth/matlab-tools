@@ -62,6 +62,11 @@ function varargout=delft3d_io_dry(cmd,varargin),
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 if nargin ==1
    error(['AT least 2 input arguments required: d3d_io_...(''read''/''write'',filename)'])

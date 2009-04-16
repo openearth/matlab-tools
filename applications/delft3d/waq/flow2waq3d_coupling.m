@@ -83,6 +83,12 @@ function coupling = flow2waq3d_coupling(pointerarray,NoSeg,varargin)
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
   %NoSeg = max(pointerarray(:)); % removed 2008 May 13, this works only for spatial aggegration, not for full FLOW matrix.
 
    index_type = 'i';

@@ -34,6 +34,12 @@ function varargout=delft3d_io_ini(cmd,varargin),
 %           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src, 
 %           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd, 
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 if nargin<3
    error('Syntax: delft3d_io_ini(''read/write'' ,filename, mdffilename/DATA, ...')
 end
@@ -149,11 +155,11 @@ end
       if ~(isempty(strfind (char(MDF.keywords.sub1(1)),'S'       )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'salinity'     ;end
       if ~(isempty(strfind (char(MDF.keywords.sub1(2)),'T'       )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'temperature'  ;end
       if ~(isempty(strfind (char(MDF.keywords.sub2(2)),'C'       )))
-         if ~(isempty(deblank2(char(MDF.keywords.namc1 )         )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent1' ;end
-         if ~(isempty(deblank2(char(MDF.keywords.namc2 )         )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent2' ;end
-         if ~(isempty(deblank2(char(MDF.keywords.namc3 )         )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent3' ;end
-         if ~(isempty(deblank2(char(MDF.keywords.namc4 )         )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent4' ;end
-         if ~(isempty(deblank2(char(MDF.keywords.namc5 )         )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent5' ;end
+         if ~(isempty(strtrim(char(MDF.keywords.namc1 )          )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent1' ;end
+         if ~(isempty(strtrim(char(MDF.keywords.namc2 )          )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent2' ;end
+         if ~(isempty(strtrim(char(MDF.keywords.namc3 )          )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent3' ;end
+         if ~(isempty(strtrim(char(MDF.keywords.namc4 )          )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent4' ;end
+         if ~(isempty(strtrim(char(MDF.keywords.namc5 )          )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent5' ;end
       end
       if ~(isempty(strfind (char(MDF.keywords.sub1(4)),'I'       )));j=j+1;PAR.nlayers(j)= [       1];PAR.names{j} = 'secondaryflow';end
       if ~(isempty(strfind (char(MDF.keywords.sub1(4)),'I'       )));disp('Not tested for secondary flow yet .......');end

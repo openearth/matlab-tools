@@ -41,6 +41,12 @@ function varargout = DELFT3D_WAQ_IO_SRC(varargin)
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 mfile_version = '1.0, Mar. 2008, beta';
 
    %% 0 - command line file name or 
@@ -147,7 +153,7 @@ mfile_version = '1.0, Mar. 2008, beta';
 
          %% Read header
          %% ------------------------------
-         DAT.data.time_units              = deblank2(fgetl(fid));
+         DAT.data.time_units              = strtrim(fgetl(fid));
          DAT.data.time_dependent_source   = waq_fgetl_number(fid);
          DAT.data.block_function          = waq_fgetl_number(fid);
          DAT.data.n_sources               = waq_fgetl_number(fid);

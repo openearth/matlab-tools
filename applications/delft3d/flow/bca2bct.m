@@ -31,8 +31,6 @@ function varargout = bca2bct(bcafile,bctfile,bndfile,period,ncomponents,refdate,
 %
 % Note: t_tide does not generally return an A0 component, determine A0 yourselves.
 %
-% G.J. de Boer, March 8th 2006 - Feb 2008.
-%
 % See also:  BCT2BCA, DELFT3D_NAME2T_TIDE, T_TIDE_NAME2DELFT3D, 
 %            BCT_IO, DELFT3D_IO_BCA, DELFT3D_IO_BND, 
 %            T_TIDE (http://www.eos.ubc.ca/~rich/) 
@@ -74,6 +72,12 @@ function varargout = bca2bct(bcafile,bctfile,bndfile,period,ncomponents,refdate,
 %   USA
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
    if nargin <6
        error('syntax: bca2bct(bcafile,bctfile,bndfile,period,ncomponents,refdate,..);')
