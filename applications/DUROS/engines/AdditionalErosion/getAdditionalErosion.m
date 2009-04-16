@@ -236,7 +236,7 @@ while NextIteration
     
     % check whether x0 is in any valley
     x0InValley = ~isempty(OPT.x0except) &&...
-        x0(Iter) > OPT.x0except(:,1) & x0(Iter) < OPT.x0except(:,2);
+        x0(Iter) > OPT.x0except(:,1) && x0(Iter) < OPT.x0except(:,2);
         
     if any(x0InValley) 
         % set x0 to one of the boundaries of the exception area
@@ -326,11 +326,18 @@ result.zActive = result.zActive(sortid);
 result.z2Active = cat(1,result.z2Active,z(xInValleyId));
 result.z2Active = result.z2Active(sortid);
 
+result.VTVinfo.Xp = max([result.info.x0,min(result.xActive)]);
+result.VTVinfo.Zp = result.z2Active(result.xActive==result.VTVinfo.Xp);
+result.VTVinfo.Xr = min(result.xActive);
+result.VTVinfo.Zr = result.z2Active(result.xActive==result.VTVinfo.Xr);
+
 %% Switch back the profile
 if profileSwitched
     result.info.x0 = 0 - result.info.x0;
     result.xActive = 0 - result.xActive;
     result.xLand = 0 - result.xLand;
     result.xSea = 0 - result.xSea;
+    result.VTVinfo.Xp = 0 - result.VTVinfo.Xp;
+    result.VTVinfo.Xr = 0 - result.VTVinfo.Xr;
 end
 varargout = {result};
