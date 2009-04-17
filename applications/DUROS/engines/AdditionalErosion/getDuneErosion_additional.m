@@ -1,6 +1,4 @@
 function resultout = getDuneErosion_additional(xInitial,zInitial,DUROSresult,WL_t,TargetVolume,AVolume,maxRetreat,x0except)
-% Work is being done. Don't trust these routines yet.
-
 %GETDUNEEROSION_ADDITIONAL  routine to fit additional dune erosion into profile
 %
 % This routine returns the x-location of the floating profile (x2, z2) to fit
@@ -31,8 +29,8 @@ function resultout = getDuneErosion_additional(xInitial,zInitial,DUROSresult,WL_
 %
 % --------------------------------------------------------------------------
 % Copyright (c) WL|Delft Hydraulics 2004-2007 FOR INTERNAL USE ONLY
-% Version:      Version 1.0, January 2008 (Version 1.0, December 2007)
-% By:           <C.(Kees) den Heijer (email: C.denHeijer@tudelft.nl)>
+% Version:      Version 2.0, April 2008 (Version 1.0, December 2007)
+% By:           <Pieter van Geer (email: Pieter.vanGeer@deltares.nl)>
 % --------------------------------------------------------------------------
 
 % $Id$
