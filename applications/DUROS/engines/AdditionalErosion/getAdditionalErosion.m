@@ -123,7 +123,7 @@ if OPT.poslndwrd == 1
 end
 
 %% Determine crossings with initial profile.
-[xcr zcr x1_new_out z1_new_out x2_new_out z2_new_out crossdir] = findCrossings(x, z, x, repmat(OPT.zmin,size(x)));
+[xcr zcr x1_new_out z1_new_out x2_new_out z2_new_out crossdir] = findCrossings(x, z, x, repmat(OPT.zmin,size(x)),'keeporiginalgrid');
 
 if isempty(xcr)
     % No profile points above the waterlevel
