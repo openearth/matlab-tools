@@ -57,7 +57,7 @@ if TargetVolume < 0
     if zInitial(1) > WL_t
         x0endofprofile = min(xInitial) + zInitial(end)-WL_t;
     else
-        x0endofprofile = min(findCrossings(xInitial,zInitial,[min(xInitial),max(xInitial)],ones(1,2)*WL_t));
+        x0endofprofile = min(findCrossings(xInitial,zInitial,[min(xInitial),max(xInitial)],ones(1,2)*WL_t,'keeporiginalgrid'));
         if ~isempty(maxRetreat)
             if (x0endofprofile - min(xInitial)) > maxRetreat
                 x0endBound = {'dunevalley'};
@@ -215,7 +215,6 @@ resultout = getAdditionalErosion(xInitial,zInitial,...
     'precision',1e-2,...
     'maxiter',DuneErosionSettings('maxiter'));
 
-resultout.VTVinfo.AVolume = resultout.VTVinfo.AVolume - AVolume;
 % strangely enough:
 %
 % resultout.Volumes.Volume - (AVolume + TargetVolume)
@@ -225,42 +224,6 @@ resultout.VTVinfo.AVolume = resultout.VTVinfo.AVolume - AVolume;
 % resultout.Volumes.Volume - AVolume - TargetVolume
 %
 % gives a slightly different result (O e-14).
-
-%% Check the result on boundaries
-if ~resultout.info.resultinboundaries
-    % perform check and write message
-    if resultout.info.x0 == x0min
-        AdditionalRetreat = resultout.VTVinfo.Xr - DUROSresult.VTVinfo.Xr;
-        switch x0minBoundary{1}
-            case 'maxRetreat'
-                if strcmp(x0minBoundary{end},'dunevalley')
-                    writemessage(45, ['Erosional length restricted within dunevalley. An additional erosion volume of ' num2str(resultout.Volumes.Volume, '%.2f') ' m^3/m^1 (TargetVolume = ' num2str(TargetVolume) ' m^3/m^1) leads to an additional retreat of ' num2str(AdditionalRetreat, '%.2f') ' m.']);
-                else
-                    writemessage(42, ['Additional retreat limit of ' num2str(maxRetreat) ' m reached. '...
-                        'An Additional volume of ' num2str(resultout.Volumes.Volume, '%.2f') ' m^3/m^1 (TargetVolume=' num2str(TargetVolume, '%.2f') ' m^3/m^1) leads to an additional retreat of ' num2str(AdditionalRetreat, '%.2f') ' m.']);
-                end
-                resultout.info.resultinboundaries = true;
-            case 'endofprofile'
-                writemessage(46, ['Erosional length restricted by lack of information on the landside. An additional erosion volume of ' num2str(resultout.Volumes.Volume, '%.2f') ' m^3/m^1 (TargetVolume =' num2str(TargetVolume, '%.2f') 'm^3/m^1) could be achieved with an additional retreat of ' num2str(AdditionalRetreat, '%.2f') ' m.']);
-                % erosional length restricted by profile info.
-            case 'XpDUROS'
-                % positive TargetVolume. If this (Volume = 0) is the best
-                % solution, something went wrong. This should not occur.
-        end
-    else %(resultout.info.x0 == x0max)
-        switch x0maxBoundary{1}
-            case 'XpDUROS'
-                % Should not occur. This is only the case when TargetVolume
-                % = 0; We have already returned from this function if that
-                % is the case
-            case 'WLcrossing'
-                % This can happen if the target volume is positive and
-                % larger than A. In that case the result should be kept and
-                % a warning must be given.
-                writemessage(47,['TargetVolume (' num2str(TargetVolume, '%.2f') ') is positive and exceeds the A Volume (' num2str(AVolume, '%.2f') ').']);
-        end
-    end
-end
 
 %% Create correct patches
 % construct DUROS profile
@@ -363,5 +326,41 @@ resultout.Volumes = resulttemp.Volumes;
 
 % write VTV info
 resultout.VTVinfo.TVolume = TVolume;
+
+%% Check the result on boundaries and write messages if necessary
+if ~resultout.info.resultinboundaries
+    % perform check and write message
+    if resultout.info.x0 == x0min
+        AdditionalRetreat = resultout.VTVinfo.Xr - DUROSresult.VTVinfo.Xr;
+        switch x0minBoundary{1}
+            case {'maxRetreat', 'dunevalley'}
+                if strcmp(x0minBoundary{end},'dunevalley')
+                    writemessage(45, ['Erosional length restricted within dunevalley. An additional erosion volume of ' num2str(resultout.VTVinfo.TVolume, '%.2f') ' m^3/m^1 (TargetVolume = ' num2str(TargetVolume) ' m^3/m^1) leads to an additional retreat of ' num2str(AdditionalRetreat, '%.2f') ' m.']);
+                else
+                    writemessage(42, ['Additional retreat limit of ' num2str(maxRetreat) ' m reached. '...
+                        'An Additional volume of ' num2str(resultout.VTVinfo.TVolume, '%.2f') ' m^3/m^1 (TargetVolume=' num2str(TargetVolume, '%.2f') ' m^3/m^1) leads to an additional retreat of ' num2str(AdditionalRetreat, '%.2f') ' m.']);
+                end
+                resultout.info.resultinboundaries = true;
+            case 'endofprofile'
+                writemessage(46, ['Erosional length restricted by lack of information on the landside. An additional erosion volume of ' num2str(resultout.VTVinfo.TVolume, '%.2f') ' m^3/m^1 (TargetVolume =' num2str(TargetVolume, '%.2f') 'm^3/m^1) could be achieved with an additional retreat of ' num2str(AdditionalRetreat, '%.2f') ' m.']);
+                % erosional length restricted by profile info.
+            case 'XpDUROS'
+                % positive TargetVolume. If this (Volume = 0) is the best
+                % solution, something went wrong. This should not occur.
+        end
+    else %(resultout.info.x0 == x0max)
+        switch x0maxBoundary{1}
+            case 'XpDUROS'
+                % Should not occur. This is only the case when TargetVolume
+                % = 0; We have already returned from this function if that
+                % is the case
+            case 'WLcrossing'
+                % This can happen if the target volume is positive and
+                % larger than A. In that case the result should be kept and
+                % a warning must be given.
+                writemessage(47,['TargetVolume (' num2str(TargetVolume, '%.2f') ') is positive and exceeds the A Volume (' num2str(AVolume, '%.2f') ').']);
+        end
+    end
+end
 
 resultout.info.time = toc;
