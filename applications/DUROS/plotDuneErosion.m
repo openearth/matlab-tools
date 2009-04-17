@@ -16,8 +16,8 @@ function plotDuneErosion(result, nr)
 %
 % --------------------------------------------------------------------------
 % Copyright (c) Deltares 2004-2008 FOR INTERNAL USE ONLY
-% Version:      Version 1.0, January 2008 (Version 1.0, January 2007)
-% By:           <C.(Kees) den Heijer (email: Kees.denHeijer@deltares.nl)>
+% Version:      Version 1.1, april 2008 (Version 1.0, January 2007)
+% By:           <Pieter van Geer and C.(Kees) den Heijer (email: Kees.denHeijer@deltares.nl)>
 % --------------------------------------------------------------------------
 
 % $Id$ 
@@ -310,6 +310,11 @@ catch %#ok<CTCH>
     input2plot = {};
 end
 displayResultsOnFigure(parent,[input2plot; results2plot])
+
+%% store results in userdata. 
+% In this way storing one figure stores the
+% complete result. No need to seperately store the .mat file anymore
+set(fig,'UserData',result);
 
 function resetaxis(varargin)
 
