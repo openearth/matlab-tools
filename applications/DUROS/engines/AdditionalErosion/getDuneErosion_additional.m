@@ -177,7 +177,7 @@ if ~IterationBoundariesConsistent
             'Zp', DUROSresult.VTVinfo.Zp,...
             'ID', 'Additional Erosion');
         
-    if strcmp(x0minBoundary{end},'dunvalley') && strcmp(x0maxBoundary{end},'dunvalley')
+    if strcmp(x0minBoundary{end},'dunevalley') && strcmp(x0maxBoundary{end},'dunevalley')
         writemessage(45, ['Erosional length restricted within dunevalley. An additional erosion volume of 0 m^3/m^1 (TargetVolume = ' num2str(TargetVolume) ' m^3/m^1) leads to an additional retreat of 0 m.']);
         % complete erosion volume is inside a valley (DUROS result as
         % well). This can only occur if no restriction is applied. No
@@ -186,9 +186,10 @@ if ~IterationBoundariesConsistent
         resultout.Volumes.Volume = 0;
         resultout.Volumes.volumes = 0;
         resultout.Volumes.Accretion = 0;
-        resultout.info.precision = 0;
+        resultout.info.precision = -TargetVolume;
         resultout.info.x0 = Xr;
         resultout.info.resultinboundaries = true;
+        resultout.info.input.WL_t = WL_t;
     elseif any(strcmp(x0minBoundary,'endofprofile'))
         % there is no part of the erosion profile above the waterlevel
         % after a DUROS calculation.
@@ -202,6 +203,7 @@ if ~IterationBoundariesConsistent
     end
     return
 end
+
 %% iterate the Additional erosion
 resultout = getAdditionalErosion(xInitial,zInitial,...
     'TargetVolume',TargetVolume + AVolume,...
@@ -231,8 +233,12 @@ if ~resultout.info.resultinboundaries
         AdditionalRetreat = resultout.VTVinfo.Xr - DUROSresult.VTVinfo.Xr;
         switch x0minBoundary{1}
             case 'maxRetreat'
-                writemessage(42, ['Additional retreat limit of ' num2str(maxRetreat) ' m reached. '...
-                    'An Additional volume of ' num2str(resultout.Volumes.Volume, '%.2f') ' m^3/m^1 (TargetVolume=' num2str(TargetVolume, '%.2f') ' m^3/m^1) leads to an additional retreat of ' num2str(AdditionalRetreat, '%.2f') ' m.']);
+                if strcmp(x0minBoundary{end},'dunevalley')
+                    writemessage(45, ['Erosional length restricted within dunevalley. An additional erosion volume of ' num2str(resultout.Volumes.Volume, '%.2f') ' m^3/m^1 (TargetVolume = ' num2str(TargetVolume) ' m^3/m^1) leads to an additional retreat of ' num2str(AdditionalRetreat, '%.2f') ' m.']);
+                else
+                    writemessage(42, ['Additional retreat limit of ' num2str(maxRetreat) ' m reached. '...
+                        'An Additional volume of ' num2str(resultout.Volumes.Volume, '%.2f') ' m^3/m^1 (TargetVolume=' num2str(TargetVolume, '%.2f') ' m^3/m^1) leads to an additional retreat of ' num2str(AdditionalRetreat, '%.2f') ' m.']);
+                end
                 resultout.info.resultinboundaries = true;
             case 'endofprofile'
                 writemessage(46, ['Erosional length restricted by lack of information on the landside. An additional erosion volume of ' num2str(resultout.Volumes.Volume, '%.2f') ' m^3/m^1 (TargetVolume =' num2str(TargetVolume, '%.2f') 'm^3/m^1) could be achieved with an additional retreat of ' num2str(AdditionalRetreat, '%.2f') ' m.']);
@@ -242,7 +248,7 @@ if ~resultout.info.resultinboundaries
                 % solution, something went wrong. This should not occur.
         end
     else %(resultout.info.x0 == x0max)
-        switch x0maxBoundary
+        switch x0maxBoundary{1}
             case 'XpDUROS'
                 % Should not occur. This is only the case when TargetVolume
                 % = 0; We have already returned from this function if that
@@ -257,17 +263,17 @@ if ~resultout.info.resultinboundaries
 end
 
 %% Create correct patches
+% construct DUROS profile
+[xDUROS uid] = unique(cat(1,DUROSresult.xSea,DUROSresult.xLand,DUROSresult.xActive));
+zDUROS = cat(1,DUROSresult.zSea,DUROSresult.zLand,DUROSresult.z2Active);
+zDUROS = zDUROS(uid);
+xextrapoints = [resultout.VTVinfo.Xp;resultout.VTVinfo.Xr];
+zDUROSextrapoints = interp1(xDUROS,zDUROS,xextrapoints);
+[xDUROS uid] = unique(cat(1,xDUROS,xextrapoints));
+zDUROS = cat(1,zDUROS,zDUROSextrapoints);
+zDUROS = zDUROS(uid);
+
 if TargetVolume < 0
-    % construct DUROS profile
-    [xDUROS uid] = unique(cat(1,DUROSresult.xSea,DUROSresult.xLand,DUROSresult.xActive));
-    zDUROS = cat(1,DUROSresult.zSea,DUROSresult.zLand,DUROSresult.z2Active);
-    zDUROS = zDUROS(uid);
-    xextrapoints = [resultout.VTVinfo.Xp;resultout.VTVinfo.Xr];
-    zDUROSextrapoints = interp1(xDUROS,zDUROS,xextrapoints);
-    [xDUROS uid] = unique(cat(1,xDUROS,xextrapoints));
-    zDUROS = cat(1,zDUROS,zDUROSextrapoints);
-    zDUROS = zDUROS(uid);
-    
     % construct Additional erosion profile
     [xResultout uid] = unique(cat(1,...
         resultout.xLand,...
@@ -293,32 +299,69 @@ if TargetVolume < 0
     resultout.zSea = zDUROS(xDUROS > DUROSresult.VTVinfo.Xp);
     resultout.xLand = xDUROS(xDUROS < resultout.VTVinfo.Xr);
     resultout.zLand = zDUROS(xDUROS < resultout.VTVinfo.Xr);
-    [resultout.xActive uid]= unique(cat(1,resultout.VTVinfo.Xp,resultout.VTVinfo.Xr,DUROSresult.VTVinfo.Xp,DUROSresult.VTVinfo.Xr));
-    ztemp = cat(1,...
-        zDUROS(xDUROS == resultout.VTVinfo.Xp),...
-        zDUROS(xDUROS == resultout.VTVinfo.Xr),...
-        zDUROS(xDUROS == DUROSresult.VTVinfo.Xp),...
-        zDUROS(xDUROS == DUROSresult.VTVinfo.Xr));
-    resultout.zActive = ztemp(uid);
-    ztemp = cat(1,...
-        zResultout(xResultout == resultout.VTVinfo.Xp),...
-        zResultout(xResultout == resultout.VTVinfo.Xr),...
-        zResultout(xResultout == DUROSresult.VTVinfo.Xp),...
-        zResultout(xResultout == DUROSresult.VTVinfo.Xr));
-    resultout.z2Active = ztemp(uid);    
-    
-    % Calculate correct volumes etc
-    [TVolume resulttemp] = getVolume(...
-        'x',resultout.xActive,...          = column array with x points (increasing index and positive x in seaward direction)
-        'z',resultout.zActive,...            = column array with z points
-        'LowerBoundary',WL_t,...  = lower horizontal plane of volume area (not specified please enter [] as argument)
-        'x2',  resultout.xActive,...     = column array with x2 points (increasing index and positive x in seaward direction)
-        'z2',  resultout.z2Active);
-    resultout.Volumes = resulttemp.Volumes;
-    
-    % write VTV info
-    resultout.VTVinfo.TVolume = TVolume;
+    ActiveidDUROS = xDUROS <= DUROSresult.VTVinfo.Xp & xDUROS >= resultout.VTVinfo.Xr;
+    ActiveidResult = xResultout <= DUROSresult.VTVinfo.Xp & xResultout >= resultout.VTVinfo.Xr;
+    resultout.xActive = unique(cat(1,...
+        resultout.VTVinfo.Xp,...
+        resultout.VTVinfo.Xr,...
+        DUROSresult.VTVinfo.Xp,...
+        DUROSresult.VTVinfo.Xr,...
+        xDUROS(ActiveidDUROS),...
+        xResultout(ActiveidResult)));
+    resultout.zActive = interp1(xDUROS,zDUROS,resultout.xActive);
+    resultout.z2Active = interp1(xResultout,zResultout,resultout.xActive);
 else
-    TODO('Return correct result');
+    resultout.xLand = DUROSresult.xLand;
+    resultout.zLand = DUROSresult.zLand;
+    xInitialActiveSeaID = xInitial > DUROSresult.VTVinfo.Xp & xInitial < resultout.VTVinfo.Xr;
+    xInitialActiveLandID = xInitial < DUROSresult.VTVinfo.Xp & xInitial > DUROSresult.VTVinfo.Xr;
+    [resultout.xActive uid] = unique(cat(1,...
+        DUROSresult.VTVinfo.Xr,...
+        DUROSresult.VTVinfo.Xp,...
+        resultout.VTVinfo.Xr,...
+        resultout.VTVinfo.Xp,...
+        xInitial(xInitialActiveLandID),...
+        xInitial(xInitialActiveSeaID)));
+    resultout.zActive = cat(1,...
+        DUROSresult.VTVinfo.Zr,...
+        DUROSresult.VTVinfo.Zp,...
+        resultout.VTVinfo.Zp,...
+        resultout.VTVinfo.Zp,...
+        interp1(DUROSresult.xActive,DUROSresult.z2Active,xInitial(xInitialActiveLandID)),...
+        ones(sum(xInitialActiveSeaID),1)*resultout.VTVinfo.Zp);
+    resultout.zActive = resultout.zActive(uid);
+    zDUROSXp = resultout.VTVinfo.Zr;
+    if resultout.VTVinfo.Xr > DUROSresult.VTVinfo.Xp
+        zDUROSXp = interp1(xInitial,zInitial,DUROSresult.VTVinfo.Xp);
+    end
+    resultout.z2Active = cat(1,...
+        DUROSresult.VTVinfo.Zr,...
+        zDUROSXp,...
+        resultout.VTVinfo.Zr,...
+        resultout.VTVinfo.Zp,...
+        zInitial(xInitialActiveLandID),...
+        zInitial(xInitialActiveSeaID));
+    resultout.z2Active = resultout.z2Active(uid);
+    ActiveID = DUROSresult.xActive>resultout.VTVinfo.Xp;
+    [resultout.xSea uid] = unique(cat(1,...
+        DUROSresult.xSea,...
+        DUROSresult.xActive(ActiveID)));
+    resultout.zSea = cat(1,...
+        DUROSresult.zSea,...
+        DUROSresult.z2Active(ActiveID));
+    resultout.zSea = resultout.zSea(uid);
 end
+
+% Calculate correct volumes etc
+[TVolume resulttemp] = getVolume(...
+    'x',resultout.xActive,...          = column array with x points (increasing index and positive x in seaward direction)
+    'z',resultout.zActive,...            = column array with z points
+    'LowerBoundary',WL_t,...  = lower horizontal plane of volume area (not specified please enter [] as argument)
+    'x2',  resultout.xActive,...     = column array with x2 points (increasing index and positive x in seaward direction)
+    'z2',  resultout.z2Active);
+resultout.Volumes = resulttemp.Volumes;
+
+% write VTV info
+resultout.VTVinfo.TVolume = TVolume;
+
 resultout.info.time = toc;
