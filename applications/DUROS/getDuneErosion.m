@@ -1,6 +1,4 @@
 function [result, messages] = getDuneErosion(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t)
-% Work in progress. This routine cannot be used at this moment.
-
 %GETDUNEEROSION Calculates dune erosion according to the DUROS+ method
 %
 %   This is the main routine for calculations of dune erosion with the
@@ -194,30 +192,6 @@ if DuneErosionSettings('get', 'AdditionalErosion') && ~NoDUROSResult
             % any point above the water level.
             result(idnr) = noAdditionaleErosionResult(xInitial,zInitial,result,maxRetreat,TargetVolume);
             SKIPBOUNDPROF = true;
-            %% subroutine
-%             writemessage(4,'No profile information above sea level after DUROS calculation');
-%             result(idnr) = createEmptyDUROSResult;
-%             KnownRestrictedSolutionPossible = (result(1).info.x0 - min(xInitial)) > maxRetreat;
-%             if KnownRestrictedSolutionPossible
-%                 writemessage(45, 'Erosional length restricted within dunevalley. No additional Erosion volume determined.');
-%                 result(idnr).xLand = xInitial(xInitial<result(1).info.x0);
-%                 result(idnr).zLand = zInitial(xInitial<result(1).info.x0);
-%                 result(idnr).xActive= result(1).info.x0;
-%                 if any(xInitial==result(1).info.x0)
-%                     result(idnr).zActive = zInitial(xInitial==result(1).info.x0);
-%                     result(idnr).z2Active = zInitial(xInitial==result(1).info.x0);
-%                 else
-%                     result(idnr).zActive = interp1(xInitial,zInitial,result(1).info.x0);
-%                     result(idnr).z2Active = interp1(xInitial,zInitial,result(1).info.x0);
-%                 end
-%                 result(idnr).xSea = xInitial(xInitial>result(1).info.x0);
-%                 result(idnr).zSea = zInitial(xInitial>result(1).info.x0);
-%                 result(idnr).Volumes.Volume = 0; %#ok<NASGU>
-%                 result(idnr).info.x0 = result(1).info.x0;
-%                 result(idnr).info.precision = TargetVolume;
-%                 result(idnr).info.resultinboundaries = true;
-%                 result(idnr).info.ID = 'Additional Erosion';
-%             end
         else
             result(idnr) = getDuneErosion_additional(xInitial,zInitial,...
                 result(idAddProf),...
