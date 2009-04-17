@@ -234,9 +234,11 @@ iterresult = createEmptyDUROSResult;
 while NextIteration
     Iter = Iter + 1;
     
-    % check whether x0 is in any valley
-    x0InValley = ~isempty(OPT.x0except) &&...
-        x0(Iter) > OPT.x0except(:,1) && x0(Iter) < OPT.x0except(:,2);
+    x0InValley = false;
+    if ~isempty(OPT.x0except)
+        % check whether x0 is in any valley
+        x0InValley =  x0(Iter) > OPT.x0except(:,1) & x0(Iter) < OPT.x0except(:,2);
+    end
         
     if any(x0InValley) 
         % set x0 to one of the boundaries of the exception area
