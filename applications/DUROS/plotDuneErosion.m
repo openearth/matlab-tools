@@ -233,7 +233,7 @@ for i = 1 : LastFilledField
         elseif ismember({result(i).info.ID},'DUROS-plus Erosion above SSL')
             AVolume = result(i).VTVinfo.AVolume;
         elseif ismember({result(i).info.ID},'Additional Erosion')
-            if isfield(result(1).info.input, 'WL_t')
+%             if isfield(result(1).info.input, 'WL_t') % Why??
                 Xp = result(i).VTVinfo.Xp;
                 Zp = result(i).VTVinfo.Zp;
                 Xr = result(i).VTVinfo.Xr;
@@ -267,9 +267,9 @@ for i = 1 : LastFilledField
 %                     'LineStyle','off',...
 %                     'Parent', parent); %#ok<AGROW>
                 TVolume = result(i).VTVinfo.TVolume;
-            else
-                [Xplocation, Xp, Xr, TVolume] = deal(nan);
-            end
+%             else
+%                 [Xplocation, Xp, Xr, TVolume] = deal(nan);
+%             end
         end
     else
         [Er, AVolume, Xplocation, Xp, Xr, TVolume] = deal(nan);
