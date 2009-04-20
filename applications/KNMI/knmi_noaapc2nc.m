@@ -22,8 +22,8 @@
    OPT.dump           = 0;
    OPT.pause          = 0;
    OPT.debug          = 0;
-   OPT.pack           = 1;
-   OPT.ll             = 0;
+   OPT.pack           = 0;
+   OPT.ll             = 1;
    
    OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
    OPT.refdatenum     = datenum(1970,1,1); % lunix  datenumber convention
@@ -31,13 +31,12 @@
 %% File loop
 %------------------
 
-   OPT.directory.raw  = ['D:\_GERBEN\KNMI\1990_mom\5\'];
-   OPT.directory.raw  = ['E:\KNMI\mom\1990_mom\5\'];
-   OPT.directory.nc   = [pwd];
+   OPT.directory.raw  = ['F:\checkouts\OpenEarthRawData\knmi\NOAA\mom\1990_mom\5\'];
+   OPT.directory.nc   = ['F:\checkouts\OpenEarthRawData\knmi\NOAA\mom.nc\1990_mom\5\'];
    
    mkpath(OPT.directory.nc)
 
-   OPT.files          = dir([OPT.directory.raw filesep 'K030590M.SST']);
+   OPT.files          = dir([OPT.directory.raw filesep '*.SST']);
 
    for ifile=1:length(OPT.files)  
    
@@ -48,7 +47,7 @@
    %% 0 Read raw data
    %------------------
 
-      D = KNMI_noaapc_read(OPT.filename,'center',1,'landmask',nan,'cloudmask',-Inf,'count',OPT.pack); % make sure to set valid_min to prevent -Inf from corrupting color scale in ncBrowse.
+      D = knmi_noaapc_read(OPT.filename,'center',1,'landmask',nan,'cloudmask',-Inf,'count',OPT.pack); % make sure to set valid_min to prevent -Inf from corrupting color scale in ncBrowse.
       D.version = '';
 
       if OPT.debug
@@ -58,7 +57,12 @@
    %% 1a Create file
    %------------------
    
-      outputfile    = [OPT.directory.nc filesep  filename(OPT.filename),'_sst_pack',num2str(OPT.pack),'.nc'];
+      if OPT.pack
+      OPT.ext = ['_sst_pack',num2str(OPT.pack)];
+      else
+      OPT.ext = '';
+      end
+      outputfile    = [OPT.directory.nc filesep  filename(OPT.filename),OPT.ext,'.nc'];
    
       nc_create_empty (outputfile)
    
@@ -96,6 +100,8 @@
       nc_add_dimension(outputfile, 'time' , 1)
       nc_add_dimension(outputfile, 'x_cen', D.nx)
       nc_add_dimension(outputfile, 'y_cen', D.ny)
+      nc_add_dimension(outputfile, 'x_cor', D.nx+1)
+      nc_add_dimension(outputfile, 'y_cor', D.ny+1)
 
    %% 3 Create variables
    %------------------
@@ -110,7 +116,7 @@
         ifld = ifld + 1;
       nc(ifld).Name         = 'polar_stereographic';
       nc(ifld).Nctype       = 'char';
-     %nc(ifld).Dimension    = {'x_cen'}; % no dumension, dummy variable
+     %nc(ifld).Dimension    = {'x_cen'}; % no dimension, dummy variable
       nc(ifld).Attribute(1) = struct('Name', 'grid_mapping_name','Value', 'polar_stereographic');
 
       nc(ifld).Attribute(2) = struct('Name', 'straight_vertical_longitude_from_pole','Value', 0);
@@ -144,6 +150,24 @@
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'km');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate'); % standard name
       nc(ifld).Attribute(4) = struct('Name', 'comment'        ,'Value', '1 km2 pixel centers');
+
+        ifld = ifld + 1;
+      nc(ifld).Name         = 'x_cor';
+      nc(ifld).Nctype       = 'int';
+      nc(ifld).Dimension    = {'x_cor'};
+      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'x-coordinate in Cartesian system');
+      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'km');
+      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate'); % standard name
+      nc(ifld).Attribute(4) = struct('Name', 'comment'        ,'Value', '1 km2 pixel corners');
+   
+        ifld = ifld + 1;
+      nc(ifld).Name         = 'y_cor';
+      nc(ifld).Nctype       = 'int';
+      nc(ifld).Dimension    = {'y_cor'};
+      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'y-coordinate in Cartesian system');
+      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'km');
+      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate'); % standard name
+      nc(ifld).Attribute(4) = struct('Name', 'comment'        ,'Value', '1 km2 pixel corners');
    
       if OPT.ll
       %% Longitude
@@ -234,8 +258,10 @@
    %% 5 Fill variables
    %------------------
    
-      nc_varput(outputfile, 'x_cen'        , [1:D.nx]);
-      nc_varput(outputfile, 'y_cen'        , [1:D.ny]);
+      nc_varput(outputfile, 'x_cen'        , [1:D.nx]-0.5);
+      nc_varput(outputfile, 'y_cen'        , [1:D.ny]-0.5);
+      nc_varput(outputfile, 'x_cor'        , [1:(D.nx+1)]);
+      nc_varput(outputfile, 'y_cor'        , [1:(D.ny+1)]);
       if OPT.ll
       nc_varput(outputfile, 'longitude_cen', D.loncen);
       nc_varput(outputfile, 'latitude_cen' , D.latcen);
