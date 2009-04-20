@@ -1,43 +1,38 @@
-function values = nc_varget(ncfile, varname, varargin )
-% NC_VARGET  Retrieve data from a netCDF variable.
+function values = nc_datget(ncfile, varname, varargin )
+% NC_DATGET  Retrieve data from a netCDF variable.
 %
-% DATA = NC_VARGET(NCFILE,VARNAME) retrieves all the data from the 
+% DATA = NC_DATGET(NCFILE,VARNAME) retrieves all the data from the 
 % variable VARNAME in the netCDF file NCFILE.
 %
-% DATA = NC_VARGET(NCFILE,VARNAME,START,COUNT) retrieves the contiguous
+% DATA = NC_DATGET(NCFILE,VARNAME,START,COUNT) retrieves the contiguous
 % portion of the variable specified by the index vectors START and 
 % COUNT.  Remember that SNCTOOLS indexing is zero-based, not 
 % one-based.  Specifying a -1 in COUNT means to retrieve everything 
 % along that dimension from the START coordinate.
 %
-% DATA = NC_VARGET(NCFILE,VARNAME,START,COUNT,STRIDE) retrieves 
+% DATA = NC_DATGET(NCFILE,VARNAME,START,COUNT,STRIDE) retrieves 
 % a non-contiguous portion of the dataset.  The amount of
 % skipping along each dimension is given through the STRIDE vector.
 %
 % NCFILE can also be an OPeNDAP URL if the proper SNCTOOLS backend is
 % installed.  See the README for details.
 % 
-% NC_VARGET tries to be intelligent about retrieving the data.
+% NC_DATGET tries to be intelligent about retrieving the data.
 % Since most general matlab operations are done in double precision,
 % retrieved numeric data will be cast to double precision, while 
 % character data remains just character data.  
 %
 % Singleton dimensions are removed from the output data.  
 %
-% A '_FillValue' attribute is honored by flagging those datums as NaN.
-% A 'missing_value' attribute is honored by flagging those datums as 
-% NaN.  The exception to this is for NC_CHAR variables, as mixing 
-% character data and NaN doesn't really seem to work in matlab.
-%
-% If the named NetCDF variable has valid scale_factor and add_offset 
-% attributes, then the data is scaled accordingly.  
+% NC_DATGET is exactly the same as NC_VARGET, except that '_FillValue', 
+% scale_factor, add_offset are not taken into account (only for MEX Interface).
 %
 % EXAMPLE:
 % #1.  In this case, the variable in question has rank 2, and has size 
 %      500x700.  We want to retrieve starting at row 300, column 250.
 %      We want 100 contiguous rows, 200 contiguous columns.
 % 
-%      vardata = nc_varget ( file, variable_name, [300 250], [100 200] );
+%      vardata = nc_datget ( file, variable_name, [300 250], [100 200] );
 %
 %See also: snctools
 
@@ -59,12 +54,12 @@ snc_nargoutchk(0,1,nargout);
 
 
 %
-% Use the proper version of nc_varget.
+% Use the proper version of nc_datget.
 use_java = getpref ( 'SNCTOOLS', 'USE_JAVA', false );
 if use_java 
-    values = nc_varget_java(ncfile, varname, start, count, stride );
+    error('JAVA interface to snctools always applies: _FillValue, missing_value, scale_factor, add_offset')
 else
-    values = nc_varget_mex(ncfile, varname, start, count, stride );
+    values = nc_datget_mex(ncfile, varname, start, count, stride );
 end
 
 return
@@ -79,14 +74,14 @@ return
 
 
 
-function values = nc_varget_mex(ncfile, varname, start, count, stride )
+function values = nc_datget_mex(ncfile, varname, start, count, stride )
 
 
 
 [ncid,status]=mexnc('open',ncfile,'NOWRITE');
 if status ~= 0
     ncerr = mexnc('strerror', status);
-    snc_error ( 'SNCTOOLS:NC_VARGET:MEXNC:OPEN', ncerr );
+    snc_error ( 'SNCTOOLS:NC_DATGET:MEXNC:OPEN', ncerr );
 end
 
 
@@ -94,13 +89,13 @@ end
 if status ~= 0
     ncerr = mexnc('strerror', status);
     mexnc('close',ncid);
-    snc_error ( 'SNCTOOLS:NC_VARGET:MEXNC:INQ_VARID', ncerr );
+    snc_error ( 'SNCTOOLS:NC_DATGET:MEXNC:INQ_VARID', ncerr );
 end
 
 [dud,var_type,nvdims,dimids,dud,status]=mexnc('inq_var',ncid,varid);
 if status ~= 0
     mexnc('close',ncid);
-    snc_error ( 'SNCTOOLS:NC_VARGET:MEXNC:INQ_VAR', mexnc('strerror',status) );
+    snc_error ( 'SNCTOOLS:NC_DATGET:MEXNC:INQ_VAR', mexnc('strerror',status) );
 end
 
 %
@@ -140,14 +135,14 @@ case 'get_vars'
 
 otherwise
     msg = sprintf ('Unhandled function string type ''%s''\n', funcstr_family );
-    error ( 'SNCTOOLS:NC_VARGET:unhandledType', msg );
+    error ( 'SNCTOOLS:NC_DATGET:unhandledType', msg );
 
 end
 
 if ( status ~= 0 )
     mexnc('close',ncid);
     ncerr = mexnc('strerror', status);
-    eid = sprintf ( 'SNCTOOLS:nc_varget:%s', funcstr );
+    eid = sprintf ( 'SNCTOOLS:nc_datget:%s', funcstr );
     snc_error ( eid, ncerr );
 end
 
@@ -165,9 +160,9 @@ else
 end                                                                                   
 
 
-values = handle_fill_value_mex ( ncid, varid, var_type, values );
-values = handle_mex_missing_value ( ncid, varid, var_type, values );
-values = handle_scaling_mex ( ncid, varid, values );
+%%% values = handle_fill_value_mex    ( ncid, varid, var_type, values );
+%%% values = handle_mex_missing_value ( ncid, varid, var_type, values );
+%%% values = handle_scaling_mex       ( ncid, varid, values );
 
 
 %
@@ -222,20 +217,20 @@ end
 %
 % Error checking on the inputs.
 if ~ischar(ncfile)
-    snc_error ( 'SNCTOOLS:NC_VARGET:badInput', 'the filename must be character.' );
+    snc_error ( 'SNCTOOLS:NC_DATGET:badInput', 'the filename must be character.' );
 end
 if ~ischar(varname)
-    snc_error ( 'SNCTOOLS:NC_VARGET:badInput', 'the variable name must be character.' );
+    snc_error ( 'SNCTOOLS:NC_DATGET:badInput', 'the variable name must be character.' );
 end
 
 if ~isnumeric ( start )
-    snc_error ( 'SNCTOOLS:NC_VARGET:badInput', 'the ''start'' argument must be numeric.' );
+    snc_error ( 'SNCTOOLS:NC_DATGET:badInput', 'the ''start'' argument must be numeric.' );
 end
 if ~isnumeric ( count )
-    snc_error ( 'SNCTOOLS:NC_VARGET:badInput', 'the ''count'' argument must be numeric.' );
+    snc_error ( 'SNCTOOLS:NC_DATGET:badInput', 'the ''count'' argument must be numeric.' );
 end
 if ~isnumeric ( stride )
-    snc_error ( 'SNCTOOLS:NC_VARGET:badInput', 'the ''stride'' argument must be numeric.' );
+    snc_error ( 'SNCTOOLS:NC_DATGET:badInput', 'the ''stride'' argument must be numeric.' );
 end
 
 
@@ -285,7 +280,7 @@ elseif ~isempty(start) && ~isempty(count) && ~isempty(stride)
     prefix = 'get_vars';
 
 else
-    snc_error ( 'SNCTOOLS:NC_VARGET:FUNCSTR', 'Could not determine funcstr prefix.' );
+    snc_error ( 'SNCTOOLS:NC_DATGET:FUNCSTR', 'Could not determine funcstr prefix.' );
 end
 
 
@@ -299,7 +294,7 @@ switch ( var_type )
 
     otherwise
         msg = sprintf ('Unhandled datatype %d.', var_type );
-        error ( 'SNCTOOLS:NC_VARGET:badDatatype', msg );
+        error ( 'SNCTOOLS:NC_DATGET:badDatatype', msg );
 
 end
 return
@@ -340,7 +335,7 @@ if ( status == 0 )
     if ( status ~= 0 )
         mexnc('close',ncid);
         ncerr = mexnc ( 'strerror', status );
-        snc_error ( 'SNCTOOLS:NC_VARGET:MEXNC:GET_ATT', ncerr );
+        snc_error ( 'SNCTOOLS:NC_DATGET:MEXNC:GET_ATT', ncerr );
     end
 
 
@@ -390,7 +385,7 @@ if ( status == 0 )
     if ( status ~= 0 )
         mexnc('close',ncid);
         ncerr = mexnc ( 'strerror', status );
-        snc_error ( 'SNCTOOLS:NC_VARGET:MEXNC:GET_ATT', ncerr );
+        snc_error ( 'SNCTOOLS:NC_DATGET:MEXNC:GET_ATT', ncerr );
     end
 
 
@@ -436,7 +431,7 @@ if have_scale
     if ( status ~= 0 )
         mexnc('close',ncid);
         ncerr = mexnc('strerror', status);
-        snc_error ( 'SNCTOOLS:NC_VARGET:MEXNC:GET_ATT_DOUBLE', ncerr );
+        snc_error ( 'SNCTOOLS:NC_DATGET:MEXNC:GET_ATT_DOUBLE', ncerr );
     end
 end
 
@@ -445,7 +440,7 @@ if have_addoffset
     if ( status ~= 0 )
         mexnc('close',ncid);
         ncerr = mexnc('strerror', status);
-        snc_error ( 'SNCTOOLS:NC_VARGET:MEXNC:GET_ATT_DOUBLE', ncerr );
+        snc_error ( 'SNCTOOLS:NC_DATGET:MEXNC:GET_ATT_DOUBLE', ncerr );
     end
 end
 

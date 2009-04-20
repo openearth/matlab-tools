@@ -1,5 +1,5 @@
 function nc_varput( ncfile, varname, data, varargin )
-% NC_VARPU:  Writes data into a netCDF file.
+% NC_VARPUT  Writes data into a netCDF file.
 %
 % NC_VARPUT(NCFILE,VARNAME,DATA) writes the matlab variable DATA to
 % the variable VARNAME in the netCDF file NCFILE.  The main requirement
@@ -27,10 +27,8 @@ function nc_varput( ncfile, varname, data, varargin )
 %        >> subdata = mydata(1:2,1:3);
 %        >> nc_varput ( 'foo.nc', 'x', subdata, [0 0], [2 3] );
 %
-% A '_FillValue' attribute is honored by replacing all NaNs with _FillValue.
-%
-% If the named NetCDF variable has valid scale_factor and add_offset 
-% attributes, then the data is scaled accordingly.
+% NC_DATPUT is exactly the same as NC_VARPUT, except that '_FillValue', 
+% scale_factor, add_offset are not taken into account.
 %
 %See also: snctools
 
@@ -116,8 +114,8 @@ end
 
 
 
-data = handle_fill_value ( ncid, varid, data );
-data = handle_scaling    (ncid,varid,data);
+%%% data = handle_fill_value ( ncid, varid, data );
+%%% data = handle_scaling    (ncid,varid,data);
 
 write_the_data(ncid,varid,start,count,stride,write_op,data);
 
