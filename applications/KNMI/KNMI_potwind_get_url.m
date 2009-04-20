@@ -55,7 +55,7 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
 %% Set <keyword,value> pairs
 %----------------------
    
-   OPT.debug    = 1; % load local download.html from DIR.cache
+   OPT.debug    = 0; % load local download.html from DIR.cache
    OPT.download = 1;
    OPT.unzip    = 1;
    OPT.nc       = 1;

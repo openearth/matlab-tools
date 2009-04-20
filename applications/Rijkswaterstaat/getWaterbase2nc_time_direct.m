@@ -1,7 +1,8 @@
 %WATERBASE2NC  rewrite text files with timeseries from from waterbase.nl into NetCDF files
 %
-%  Timeseries data definition, see example:
-%  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788
+%  Timeseries data definition:
+%   * https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions (full definition)
+%   * http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788 (simple)
 %
 % In this example time is both a dimension and a variables.
 % The actual datenum values do not show up as a parameter in ncBrowse.

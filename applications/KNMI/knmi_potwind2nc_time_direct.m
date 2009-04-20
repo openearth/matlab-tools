@@ -1,14 +1,26 @@
-%KNMI_POTWIND2NC_TIME_DIRECT  This is a first test to get wind timeseries into NetCDF
+function knmi_potwind2nc_time_direct(varargin)
+%KNMI_POTWIND2NC_TIME_DIRECT  transforms directory of potwind ASCII files into directory of NetCDF files
 %
-%  Timeseries data, see example:
-%  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788
+%     KNMI_POTWIND2NC_TIME_DIRECT(<keyword,value>) 
+%
+%  where the following <keyword,value> pairs have been implemented:
+%
+%   * fillvalue      (default nan)
+%   * dump           whether to check nc_dump on matlab command line after writing file (default 0)
+%   * directory_raw  directory where to get the raw data from (default [])
+%   * directory_nc   directory where to put the nc data to (default [])
+%   * mask           file mask (default 'potwind*')
+%   * refdatenum     default (datenum(1970,1,1))
+%   * ext            extensio to add to the files before *.nc (default '')
+%
+%  Timeseries data definition:
+%   * https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions (full definition)
+%   * http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788 (simple)
 %
 % In this example time is both a dimension and a variables.
 % The datenum values do not show up as a parameter in ncBrowse.
 %
 %See also: KNMI_POTWIND, SNCTOOLS, KNMI_POTWIND_GET_URL, KNMI_ETMGEG2NC_TIME_DIRECT
-
-% function knmi_potwind2nc_time_direct(varargin)
 
 try
    rmpath('Y:\app\matlab\toolbox\wl_mexnc\')
@@ -19,16 +31,27 @@ end
 
    OPT.fillvalue     = nan; % NaNs do work in netcdf API
    OPT.dump          = 0;
-   OPT.directory.raw = 'F:\checkouts\OpenEarthRawData\knmi\potwind\raw\';
-   OPT.directory.nc  = 'F:\checkouts\OpenEarthRawData\knmi\potwind\nc\';
-   OPT.files         = dir([OPT.directory.raw filesep 'potwind*']);
+   OPT.directory_raw = []; %'F:\checkouts\OpenEarthRawData\knmi\potwind\raw\';
+   OPT.directory_nc  = []; %'F:\checkouts\OpenEarthRawData\knmi\potwind\nc\';
+   OPT.mask          = 'potwind*';
+   OPT.ext           = '';
    
    OPT.refdatenum    = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
    OPT.refdatenum    = datenum(1970,1,1); % lunix  datenumber convention
    
-for ifile=1:length(OPT.files)  
+%% Keyword,value
+%------------------
 
-   OPT.filename = [OPT.directory.raw, filesep, OPT.files(ifile).name]; % e.g. 'potwind_210_1981'
+   OPT = setProperty(OPT,varargin{:});
+   
+%% File loop
+%------------------
+
+   OPT.files         = dir([OPT.directory_raw,filesep,OPT.mask]);
+
+for ifile=114:length(OPT.files)  
+
+   OPT.filename = [OPT.directory_raw, filesep, OPT.files(ifile).name]; % e.g. 'potwind_210_1981'
 
    disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)])
 
@@ -40,7 +63,7 @@ for ifile=1:length(OPT.files)
 %% 1a Create file
 %------------------
 
-   outputfile    = [OPT.directory.nc filesep  filename(D.filename),'_time_direct.nc'];
+   outputfile    = [OPT.directory_nc filesep  filename(D.filename),OPT.ext,'.nc'];
    
    nc_create_empty (outputfile)
 
@@ -83,11 +106,12 @@ for ifile=1:length(OPT.files)
 %------------------
 
    clear nc
+   ifld = 0;
    
    %% Station number: allows for exactly same variables when multiple timeseries in one netCDF file
    %------------------
    
-     ifld = 1;
+      ifld = ifld + 1;
    nc(ifld).Name         = 'id';
    nc(ifld).Nctype       = 'float'; % no double needed
    nc(ifld).Dimension    = {'locations'};
@@ -229,10 +253,10 @@ for ifile=1:length(OPT.files)
    nc_varput(outputfile, 'lat'                        , D.lat);
    nc_varput(outputfile, 'id'                         , str2num(D.stationnumber));
    nc_varput(outputfile, 'time'                       , D.datenum-OPT.refdatenum);
-   nc_varput(outputfile, 'wind_speed'                 , D.UP);
-   nc_varput(outputfile, 'wind_from_direction'        , D.DD); % does not work with NaNs.
-   nc_varput(outputfile, 'wind_speed_quality'         , int8(D.QUP));
-   nc_varput(outputfile, 'wind_from_direction_quality', int8(D.QQD));
+   nc_varput(outputfile, 'wind_speed'                 , D.UP(:)');
+   nc_varput(outputfile, 'wind_from_direction'        , D.DD(:)'); % does not work with NaNs.
+   nc_varput(outputfile, 'wind_speed_quality'         , int8(D.QUP(:)'));
+   nc_varput(outputfile, 'wind_from_direction_quality', int8(D.QQD(:)'));
    
 %% 6 Check
 %------------------

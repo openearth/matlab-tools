@@ -1,14 +1,26 @@
-%KNMI_ETMGEG2NC_TIME_DIRECT  This is a first test to get meteo timeseries into NetCDF
+function knmi_etmgeg2nc_time_direct(varargin)
+%KNMI_ETMGEG2NC_TIME_DIRECT  transforms directory of etmgeg ASCII files into directory of NetCDF files
 %
-%  Timeseries data, see example:
-%  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788
+%     KNMI_ETMGEG2NC_TIME_DIRECT(<keyword,value>) 
+%
+%  where the following <keyword,value> pairs have been implemented:
+%
+%   * fillvalue      (default nan)
+%   * dump           whether to check nc_dump on matlab command line after writing file (default 0)
+%   * directory_raw  directory where to get the raw data from (default [])
+%   * directory_nc   directory where to put the nc data to (default [])
+%   * mask           file mask (default 'potwind*')
+%   * refdatenum     default (datenum(1970,1,1))
+%   * ext            extensio to add to the files before *.nc (default '')
+%
+%  Timeseries data definition:
+%   * https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions (full definition)
+%   * http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788 (simple)
 %
 % In this example time is both a dimension and a variables.
 % The datenum values do not show up as a parameter in ncBrowse.
 %
 %See also: KNMI_ETMGEG, SNCTOOLS, KNMI_ETMGEG_GET_URL, KNMI_POTWIND2NC_TIME_DIRECT
-
-% function knmi_etmgeg2nc_time_direct(varargin)
 
 try
    rmpath('Y:\app\matlab\toolbox\wl_mexnc\')
@@ -19,16 +31,27 @@ end
 
    OPT.fillvalue     = nan; % NaNs do work in netcdf API
    OPT.dump          = 0;
-   OPT.directory.raw = 'F:\checkouts\OpenEarthRawData\knmi\etmgeg\raw\';
-   OPT.directory.nc  = 'F:\checkouts\OpenEarthRawData\knmi\etmgeg\nc\';
-   OPT.files         = dir([OPT.directory.raw filesep '\etmgeg*.txt']);
+   OPT.directory_raw = []; %'F:\checkouts\OpenEarthRawData\knmi\etmgeg\raw\';
+   OPT.directory_nc  = []; %'F:\checkouts\OpenEarthRawData\knmi\etmgeg\nc\';
+   OPT.mask          = 'etmgeg*';
+   OPT.ext           = '';
    
    OPT.refdatenum    = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
    OPT.refdatenum    = datenum(1970,1,1); % lunix  datenumber convention
    
+%% Keyword,value
+%------------------
+
+   OPT = setProperty(OPT,varargin{:});
+
+%% File loop
+%------------------
+
+   OPT.files         = dir([OPT.directory_raw,filesep,OPT.mask]);
+
 for ifile=1:length(OPT.files)  
 
-   OPT.filename = [OPT.directory.raw, filesep, OPT.files(ifile).name]; % e.g. 'etmgeg_273.txt'
+   OPT.filename = [OPT.directory_raw, filesep, OPT.files(ifile).name]; % e.g. 'etmgeg_273.txt'
 
    disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)])
 
@@ -47,7 +70,7 @@ for ifile=1:length(OPT.files)
 %% 1a Create file
 %------------------
 
-   outputfile    = [OPT.directory.nc filesep  filename(D.filename),'_time_direct.nc'];
+   outputfile    = [OPT.directory_nc filesep  filename(D.filename),'_time_direct.nc'];
    
    nc_create_empty (outputfile)
 
