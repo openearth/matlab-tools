@@ -67,7 +67,7 @@ classdef tbmfile
                         keyid = nan(length(keys),2);
                         props = {'description','syntax','input','output','keywords','seealso'};
                         for ik = 1:length(keys)
-                            id = find(~cellfun(@isempty,strfind(lower(hlpblock),lower(keys{ik}))));
+                            id = find(~cellfun(@isempty,strfind(lower(hlpblock),lower(keys{ik}))),1,'first');
                             if ~isempty(id)
                                 keyid(ik,1) = id;
                             end
