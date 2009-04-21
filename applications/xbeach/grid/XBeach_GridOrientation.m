@@ -84,13 +84,8 @@ if OPT.manual
     disp('Click grid corner x=0,y=0')
     disp('Then click point x=xn,y=0')
     disp('Finally click to select extent of y')
-%    [xi yi] = getline;
-     [xi yi] = select_oblique_rectangle;
 
-
-
-
-
+    [xi yi] = select_oblique_rectangle;
 
     OPT.xori = xi(1);
     OPT.yori = yi(1);
@@ -98,17 +93,17 @@ if OPT.manual
     OPT.x_yend = [xi(3) yi(3)];
 end
 
-alfa = atan2(OPT.xend_y0(2)-OPT.yori, OPT.xend_y0(1)-OPT.xori);
-Xbathy = cos(alfa)*(xw-OPT.xori)+sin(alfa)*(yw-OPT.yori);
-Ybathy = -sin(alfa)*(xw-OPT.xori)+cos(alfa)*(yw-OPT.yori);
-xn = cos(alfa)*(OPT.xend_y0(1)-OPT.xori)+sin(alfa)*(OPT.xend_y0(2)-OPT.yori);
-yn = -sin(alfa)*(OPT.x_yend(1)-OPT.xori)+cos(alfa)*(OPT.x_yend(2)-OPT.yori);
-xx = (0:OPT.dx:xn)';
-yy = 0:OPT.dy:yn;
-X = repmat(xx, 1, length(yy));
-Y = repmat(yy, length(xx), 1);
+alfa    = atan2(OPT.xend_y0(2)-OPT.yori, OPT.xend_y0(1)-OPT.xori);
+Xbathy  = cos(alfa)*(xw-OPT.xori)+sin(alfa)*(yw-OPT.yori);
+Ybathy  = -sin(alfa)*(xw-OPT.xori)+cos(alfa)*(yw-OPT.yori);
+xn      = cos(alfa)*(OPT.xend_y0(1)-OPT.xori)+sin(alfa)*(OPT.xend_y0(2)-OPT.yori);
+yn      = -sin(alfa)*(OPT.x_yend(1)-OPT.xori)+cos(alfa)*(OPT.x_yend(2)-OPT.yori);
+xx      = (0:OPT.dx:xn)';
+yy      = 0:OPT.dy:yn;
+X       = repmat(xx, 1, length(yy));
+Y       = repmat(yy, length(xx), 1);
 try
-    Z = griddata(Xbathy, Ybathy, Zbathy, X, Y);
+    Z   = griddata(Xbathy, Ybathy, Zbathy, X, Y);
 catch
     Err = lasterror;
     if strcmp(Err.identifier, 'MATLAB:qhullmx:UndefinedError')
