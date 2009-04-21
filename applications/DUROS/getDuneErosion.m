@@ -91,6 +91,22 @@ function [result, messages] = getDuneErosion(xInitial, zInitial, D50, WL_t, Hsig
 % $Keywords: dune dunes erosion DUROS DUROS+ VTV beach
 
 %% Initiate variables
+% In this step the input is verified. If one of the input arguments is not
+% defined, a default value is used:
+% 
+% # xInitial    - The x-coordinates of the reference profile of the Dutch
+%                   coast.
+% # zInitial    - The z-coordinates of the reference profile of the Dutch
+%                   coast.
+% # D50         - The grain diameter. (default 225 [mu])
+% # WL_t        - The water level (default 5 [m])
+% # Hsig_t      - The significant wave height (default 9 [m])
+% # Tp_t        - The peak wave period (default 12 [s])
+%
+% Next to the input parameters also some settings are obtained from
+% _DuneErosionSettings_.
+%
+
 writemessage('init');
 
 NoDUROSResult = false;
@@ -106,15 +122,38 @@ Bend = DuneErosionSettings('get', 'Bend');
 SKIPBOUNDPROF = false;
 
 %% Check input
+% Next step is to check the quality of the input. _DUROScheckConditions_ is
+% used to check a couple of things:
+%
+% # Does the heigth of the profile exceeds the water level.
+% # Does the specified profile have the correct orientation (in other words
+%       is the seaward side positive and is the array specified in the
+%       correct direction).
+% # Aren't there any nan's in the profile (If so, these are removed
+% # The DUROS+ calculation method is valid for values of Tp_t between 12 and
+%       20 seconds. TP_t is corrected for that if it is out of this range.
+
 [xInitial,zInitial,D50,WL_t,Hsig_t,Tp_t] = DUROSCheckConditions(xInitial,zInitial,D50,WL_t,Hsig_t,Tp_t);
 
-%% debug plot initial profile
+% debug plot initial profile
 if dbstate
     dbPlotDuneErosion('new');
 end
 
 if DuneErosionSettings('get', 'DUROS')
-    %% STEP 1; get DUROS erosion
+    %% STEP 1: get DUROS erosion
+    % In this step the DUROS(+) profile is constructed and iterated. After
+    % that the additional erosion volume is calculated (if specified in
+    % _DuneErosionSettings_.
+    %
+    % The shape of the erosion profile is provided by the following
+    % formulation:
+    %
+    % <html>
+    % <a latex=\left
+    % (\frac{7.6}{H_{s0}} \right )y = \left [\left \left (\frac{7.6}{H_{s0}} \right )^{1.28} \left (\frac{12}{T_{p}} \right )^{0.45} \left (\frac{w}{0.0268} \right )^{0.56}x@plus;18\right ]-2.0" target="_blank"><img src="http://latex.codecogs.com/gif.latex?\left (\frac{7.6}{H_{s0}} \right )y = \left [\left \left (\frac{7.6}{H_{s0}} \right )^{1.28} \left (\frac{12}{T_{p}} \right )^{0.45} \left (\frac{w}{0.0268} \right )^{0.56}x+18\right ]-2.0" title="\left (\frac{7.6}{H_{s0}} \right )y = \left [\left \left (\frac{7.6}{H_{s0}} \right )^{1.28} \left (\frac{12}{T_{p}} \right )^{0.45} \left (\frac{w}{0.0268} \right )^{0.56}x+18\right ]-2.0" /></a>
+    % </html>
+    % 
     writemessage(100,'Start first step: Get and fit DUROS profile');
     [result, Volume, x00min, x0max, x0except, x0min] = getDuneErosion_DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t,false);
     
@@ -126,7 +165,12 @@ if DuneErosionSettings('get', 'DUROS')
     if isempty(Volume)
         NoDUROSResult = true;
     end
-    %% STEP 2; get profile shift due to coastal Bend
+    %% STEP 2: get profile shift due to coastal Bend
+    % In case of the presence of a bend in the coastline the assessment
+    % rules prescribe an extra erosion volume that has to be dealt with.
+    % This step specifies this volume and calculates the extra retreat and
+    % resulting erosion profile.
+    
     if result(1).info.resultinboundaries && ~NoDUROSResult
         TargetVolume = eval(DuneErosionSettings('AdditionalVolume'));  % Attention, TargetVolume represents an additional amount of erosion, which is a negative number (!)
         AdditionalErosionforCoastalBend = Bend > 6;
@@ -176,7 +220,10 @@ if DuneErosionSettings('get', 'DUROS')
     end
 end
 
-%% STEP 3; get additional erosion
+%% STEP 3: get additional erosion
+% Now it's time to calculate the additional erosion based on the erosion
+% above the maximum storm surge level as calculated in step 1.
+
 if DuneErosionSettings('get', 'AdditionalErosion') && ~NoDUROSResult
     if result(1).info.resultinboundaries
         writemessage(300,'Start third step: get Additional erosion');
@@ -208,7 +255,9 @@ if DuneErosionSettings('get', 'AdditionalErosion') && ~NoDUROSResult
     end
 end
 
-%% STEP 4; fit Boundary profile
+%% STEP 4: fit Boundary profile
+% The last step is to fit a boundary profile in the remaining dunes. this
+% step accounts for that. 
 if DuneErosionSettings('get', 'BoundaryProfile') && ~NoDUROSResult
     if ~SKIPBOUNDPROF && result(end).info.resultinboundaries
         writemessage(400,'Start fourth step: fit boundary profile');
@@ -222,7 +271,9 @@ if DuneErosionSettings('get', 'BoundaryProfile') && ~NoDUROSResult
     end
 end
 
-%% STEP 5; process messages
+%% STEP 5: process messages
+% Finally the messages issued during the calculation are processed and
+% stored in the result. It will be a seperate output as well.
 messages=writemessage('get');
 for i=1:length(result)
     ids=find([messages{:,1}]==i*100,1,'last');
@@ -245,6 +296,8 @@ if DuneErosionSettings('get','Verbose')
 end
 
 %% add input to result structure
+% Don't forget to specify the input in the result as well. someone could
+% try to recreate the results and may needs it...
 result(1).info.input = struct(...
     'D50', D50,...
     'WL_t', WL_t,...
