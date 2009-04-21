@@ -18,7 +18,7 @@ function XB = XBeach_selectgrid(X, Y, Z, varargin)
 %   Example
 %   XBeach_selectgrid
 %
-%   See also
+%   See also keyword_value, CreateEmptyXBeachVar
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
@@ -86,13 +86,13 @@ if ~isempty(XBid)
     XB = varargin{XBid};
     varargin(XBid) = [];
 end
-try %#ok<TRYNC>
+try
     % the functions keyword_value and CreateEmptyXBeachVar are available in OpenEarthTools
     OPT = setProperty(OPT, varargin{:});
     if ~exist('XB', 'var')
         XB = CreateEmptyXBeachVar;
     end
-catch
+catch %#ok<CTCH>
     if ~isempty(varargin)
         warning(['Properties ' sprintf('"%s" ', varargin{1:2:end}) 'have not been set']) %#ok<WNTAG>
     end
@@ -104,16 +104,17 @@ else
     [xi yi] = deal(OPT.polygon(1,:), OPT.polygon(2,:));
 end
 
-% modify deepval and dryval to make them correspond with posdwm (and so,
-% with Z)
+% modify deepval and dryval to make them correspond with posdwm (and so, with Z)
 OPT.deepval = OPT.posdwn * abs(OPT.deepval);
 OPT.dryval = -OPT.posdwn * abs(OPT.dryval);
 
-
-
 if OPT.manual
     figure;
-    scatter(OPT.bathy{1}, OPT.bathy{2}, 5, OPT.bathy{3}, 'filled');
+    if ~isempty(OPT.bathy{1})
+        scatter(OPT.bathy{1}, OPT.bathy{2}, 5, OPT.bathy{3}, 'filled');
+    else
+        pcolor(X, Y, Z); shading interp; view(2); axis equal
+    end
     colorbar;
     hold on
     xn = max(max(X));
@@ -125,7 +126,7 @@ if OPT.manual
     disp('Select polygon to include in bathy')
     disp('Left mouse button picks points.')
     disp('Right mouse button picks last point.')
-    [xi yi]=select_oblique_rectangle
+    [xi yi] = select_oblique_rectangle;
 end
 
 % Interpolate to grid
