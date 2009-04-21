@@ -138,12 +138,11 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    
       timevar = [];
       for ivar=1:length(INF.Dataset)
-         index = strcmpi(INF.Dataset(ivar).Dimension,'time');
+         index = any(strcmpi(INF.Dataset(ivar).Dimension,'time')); % use any if for case like {'locations','time}
          if index==1
             timevar = [timevar ivar];
          end
       end
-      
       
       timevarlist = cellstr(char(INF.Dataset(timevar).Name));
 

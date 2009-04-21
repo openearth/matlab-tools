@@ -11,14 +11,19 @@ function knmi_etmgeg2nc_time_direct(varargin)
 %   * directory_nc   directory where to put the nc data to (default [])
 %   * mask           file mask (default 'potwind*')
 %   * refdatenum     default (datenum(1970,1,1))
-%   * ext            extensio to add to the files before *.nc (default '')
+%   * ext            extension to add to the files before *.nc (default '')
+%   * pause          pause between files (default 0)
+%
+% Example:
+%  knmi_etmgeg2nc_time_direct ('directory_raw','P:\mcdata\OpenEarthRawData\knmi\etmgeg\raw\',...
+%                              'directory_nc', 'P:\mcdata\opendap\knmi\etmgeg\')
 %
 %  Timeseries data definition:
 %   * https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions (full definition)
 %   * http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788 (simple)
 %
 % In this example time is both a dimension and a variables.
-% The datenum values do not show up as a parameter in ncBrowse.
+% The actual datenum values do not show up as a parameter in ncBrowse.
 %
 %See also: KNMI_ETMGEG, SNCTOOLS, KNMI_ETMGEG_GET_URL, KNMI_POTWIND2NC_TIME_DIRECT
 
@@ -29,15 +34,16 @@ end
 %% Initialize
 %------------------
 
-   OPT.fillvalue     = nan; % NaNs do work in netcdf API
-   OPT.dump          = 0;
-   OPT.directory_raw = []; %'F:\checkouts\OpenEarthRawData\knmi\etmgeg\raw\';
-   OPT.directory_nc  = []; %'F:\checkouts\OpenEarthRawData\knmi\etmgeg\nc\';
-   OPT.mask          = 'etmgeg*';
-   OPT.ext           = '';
+   OPT.fillvalue      = nan; % NaNs do work in netcdf API
+   OPT.dump           = 0;
+   OPT.pause          = 0;
+   OPT.directory_raw  = []; %'F:\checkouts\OpenEarthRawData\knmi\etmgeg\raw\';
+   OPT.directory_nc   = []; %'F:\checkouts\OpenEarthRawData\knmi\etmgeg\nc\';
+   OPT.mask           = 'etmgeg*';
+   OPT.ext            = '';
    
-   OPT.refdatenum    = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
-   OPT.refdatenum    = datenum(1970,1,1); % lunix  datenumber convention
+   OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
+   OPT.refdatenum     = datenum(1970,1,1); % lunix  datenumber convention
    
 %% Keyword,value
 %------------------
@@ -70,7 +76,7 @@ for ifile=1:length(OPT.files)
 %% 1a Create file
 %------------------
 
-   outputfile    = [OPT.directory_nc filesep  filename(D.filename),'_time_direct.nc'];
+   outputfile    = [OPT.directory_nc filesep  filename(D.filename),OPT.ext,'.nc'];
    
    nc_create_empty (outputfile)
 
@@ -491,30 +497,30 @@ for ifile=1:length(OPT.files)
    nc_varput(outputfile, 'lat'                                             , D.lat);
    nc_varput(outputfile, 'id'                                              , unique(D.data.STN)); %  1
    nc_varput(outputfile, 'time'                                            , D.data.datenum - OPT.refdatenum);     %  2
-   nc_varput(outputfile, 'wind_from_direction_mean'                        , D.data.DDVEC);       %  3 
-   nc_varput(outputfile, 'wind_speed_mean'                                 , D.data.FG);          %  4
-   nc_varput(outputfile, 'wind_speed_maximum'                              , D.data.FHX);         %  5
-   nc_varput(outputfile, 'wind_speed_minimum'                              , D.data.FHN);         %  6
-   nc_varput(outputfile, 'wind_speed_maximum_gust'                         , D.data.FX);          %  7
-   nc_varput(outputfile, 'temperature'                                     , D.data.TG);          %  8
-   nc_varput(outputfile, 'temperature_mimimum'                             , D.data.TN);          %  9
-   nc_varput(outputfile, 'temperature_maximum'                             , D.data.TX);          % 10
-   nc_varput(outputfile, 'temperature_minimum_surface'                     , D.data.T10N);        % 11
-   nc_varput(outputfile, 'duration_of_sunshine'                            , D.data.SQ);          % 12
-   nc_varput(outputfile, 'percentage_maximum_possible_duration_of_sunshine', D.data.SP);          % 13
-   nc_varput(outputfile, 'global_radiation'                                , D.data.Q);           % 14
-   nc_varput(outputfile, 'duration_of_precipitation'                       , D.data.DR);          % 15
-   nc_varput(outputfile, 'precipitation_amount'                            , D.data.RH);          % 16
-   nc_varput(outputfile, 'surface_air_pressure'                            , D.data.PG);          % 17
-   nc_varput(outputfile, 'surface_air_pressure_maximum'                    , D.data.PGX);         % 18
-   nc_varput(outputfile, 'surface_air_pressure_minimum'                    , D.data.PGN);         % 19
-   nc_varput(outputfile, 'visibility_in_air_minimum'                       , D.data.VVN);         % 20
-   nc_varput(outputfile, 'visibility_in_air_maximum'                       , D.data.VVX);         % 21
-   nc_varput(outputfile, 'cloud_cover'                                     , D.data.NG);          % 22
-   nc_varput(outputfile, 'relative_humidity_mean'                          , D.data.UG);          % 23
-   nc_varput(outputfile, 'relative_humidity_minimum'                       , D.data.UX);          % 24
-   nc_varput(outputfile, 'relative_humidity_maximum'                       , D.data.UN);          % 25
-   nc_varput(outputfile, 'potential_evapotranspiration'                    , D.data.EV24);        % 26
+   nc_varput(outputfile, 'wind_from_direction_mean'                        , D.data.DDVEC(:)'); %  3 
+   nc_varput(outputfile, 'wind_speed_mean'                                 , D.data.FG   (:)'); %  4
+   nc_varput(outputfile, 'wind_speed_maximum'                              , D.data.FHX  (:)'); %  5
+   nc_varput(outputfile, 'wind_speed_minimum'                              , D.data.FHN  (:)'); %  6
+   nc_varput(outputfile, 'wind_speed_maximum_gust'                         , D.data.FX   (:)'); %  7
+   nc_varput(outputfile, 'temperature'                                     , D.data.TG   (:)'); %  8
+   nc_varput(outputfile, 'temperature_mimimum'                             , D.data.TN   (:)'); %  9
+   nc_varput(outputfile, 'temperature_maximum'                             , D.data.TX   (:)'); % 10
+   nc_varput(outputfile, 'temperature_minimum_surface'                     , D.data.T10N (:)'); % 11
+   nc_varput(outputfile, 'duration_of_sunshine'                            , D.data.SQ   (:)'); % 12
+   nc_varput(outputfile, 'percentage_maximum_possible_duration_of_sunshine', D.data.SP   (:)'); % 13
+   nc_varput(outputfile, 'global_radiation'                                , D.data.Q    (:)'); % 14
+   nc_varput(outputfile, 'duration_of_precipitation'                       , D.data.DR   (:)'); % 15
+   nc_varput(outputfile, 'precipitation_amount'                            , D.data.RH   (:)'); % 16
+   nc_varput(outputfile, 'surface_air_pressure'                            , D.data.PG   (:)'); % 17
+   nc_varput(outputfile, 'surface_air_pressure_maximum'                    , D.data.PGX  (:)'); % 18
+   nc_varput(outputfile, 'surface_air_pressure_minimum'                    , D.data.PGN  (:)'); % 19
+   nc_varput(outputfile, 'visibility_in_air_minimum'                       , D.data.VVN  (:)'); % 20
+   nc_varput(outputfile, 'visibility_in_air_maximum'                       , D.data.VVX  (:)'); % 21
+   nc_varput(outputfile, 'cloud_cover'                                     , D.data.NG   (:)'); % 22
+   nc_varput(outputfile, 'relative_humidity_mean'                          , D.data.UG   (:)'); % 23
+   nc_varput(outputfile, 'relative_humidity_minimum'                       , D.data.UX   (:)'); % 24
+   nc_varput(outputfile, 'relative_humidity_maximum'                       , D.data.UN   (:)'); % 25
+   nc_varput(outputfile, 'potential_evapotranspiration'                    , D.data.EV24 (:)'); % 26
 
 %% 6 Check
 %------------------
@@ -523,6 +529,13 @@ for ifile=1:length(OPT.files)
    nc_dump(outputfile);
    end
    
+%% Pause
+%------------------
+
+   if OPT.pause
+      pausedisp
+   end
+
 end %for ifile=1:length(OPT.files)   
    
 %% EOF

@@ -43,7 +43,8 @@ function varargout = donar_read(fnames,varargin)
 %   See web : <a href="http://www.epsg.org/guides/">www.epsg.org</a>, <a href="http://www.waterbase.nl"    >www.waterbase.nl</a>
 %   See also: LOAD, XLSREAD
 
-%   © G.J. de Boer, Feb 2006 - 2009 (TU Delft)
+% 2006 Feb    : first version [Gerben J de Boer]
+% 2009 apr 21 : fixed error that swapped [lon,lat] for EPSG codes 4230 and 4326 [Gerben J de Boer]
 
 %  SUpersedied with ntmax=Inf
 % -------------------------------------------------------
@@ -363,12 +364,12 @@ for ifile=1:length(fnames)
              D.data(istat).lat = repmat(nan,size(D.data(istat).x));
           
                                geomask.ed50   =         D.data(istat).epsg==4230;
-             D.data(istat).lon(geomask.ed50)  =         D.data(istat).x(geomask.ed50);
-             D.data(istat).lat(geomask.ed50)  =         D.data(istat).y(geomask.ed50);
+             D.data(istat).lat(geomask.ed50)  =         D.data(istat).x(geomask.ed50);
+             D.data(istat).lon(geomask.ed50)  =         D.data(istat).y(geomask.ed50);
 
                                geomask.ll     =         D.data(istat).epsg==4326;
-             D.data(istat).lon(geomask.ll )   =         D.data(istat).x(geomask.ll );
-             D.data(istat).lat(geomask.ll )   =         D.data(istat).y(geomask.ll );
+             D.data(istat).lat(geomask.ll )   =         D.data(istat).x(geomask.ll );
+             D.data(istat).lon(geomask.ll )   =         D.data(istat).y(geomask.ll );
 
           if OPT.ctransdv 
                                geomask.par    =         D.data(istat).epsg==7415;
@@ -536,12 +537,12 @@ for ifile=1:length(fnames)
          D(nloc).data.lat = repmat(nan,size(D(nloc).data.x)); % 6
       
                           geomask.ed50   =         D(nloc).data.epsg==4230;
-         D(nloc).data.lon(geomask.ed50)  =         D(nloc).data.x(geomask.ed50);
-         D(nloc).data.lat(geomask.ed50)  =         D(nloc).data.y(geomask.ed50);
+         D(nloc).data.lat(geomask.ed50)  =         D(nloc).data.x(geomask.ed50);
+         D(nloc).data.lon(geomask.ed50)  =         D(nloc).data.y(geomask.ed50);
 
                           geomask.ll     =         D(nloc).data.epsg==4326;
-         D(nloc).data.lon(geomask.ll )   =         D(nloc).data.x(geomask.ll );
-         D(nloc).data.lat(geomask.ll )   =         D(nloc).data.y(geomask.ll );
+         D(nloc).data.lat(geomask.ll )   =         D(nloc).data.x(geomask.ll );
+         D(nloc).data.lon(geomask.ll )   =         D(nloc).data.y(geomask.ll );
 
       if OPT.ctransdv
       

@@ -11,14 +11,19 @@ function knmi_potwind2nc_time_direct(varargin)
 %   * directory_nc   directory where to put the nc data to (default [])
 %   * mask           file mask (default 'potwind*')
 %   * refdatenum     default (datenum(1970,1,1))
-%   * ext            extensio to add to the files before *.nc (default '')
+%   * ext            extension to add to the files before *.nc (default '')
+%   * pause          pause between files (default 0)
+%
+% Example:
+%  knmi_potwind2nc_time_direct('directory_raw','P:\mcdata\OpenEarthRawData\knmi\potwind\raw\',...
+%                              'directory_nc', 'P:\mcdata\opendap\knmi\potwind\')
 %
 %  Timeseries data definition:
 %   * https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions (full definition)
 %   * http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788 (simple)
 %
 % In this example time is both a dimension and a variables.
-% The datenum values do not show up as a parameter in ncBrowse.
+% The actual datenum values do not show up as a parameter in ncBrowse.
 %
 %See also: KNMI_POTWIND, SNCTOOLS, KNMI_POTWIND_GET_URL, KNMI_ETMGEG2NC_TIME_DIRECT
 
@@ -29,15 +34,16 @@ end
 %% Initialize
 %------------------
 
-   OPT.fillvalue     = nan; % NaNs do work in netcdf API
-   OPT.dump          = 0;
-   OPT.directory_raw = []; %'F:\checkouts\OpenEarthRawData\knmi\potwind\raw\';
-   OPT.directory_nc  = []; %'F:\checkouts\OpenEarthRawData\knmi\potwind\nc\';
-   OPT.mask          = 'potwind*';
-   OPT.ext           = '';
+   OPT.fillvalue      = nan; % NaNs do work in netcdf API
+   OPT.dump           = 0;
+   OPT.pause          = 0;
+   OPT.directory_raw  = []; %'F:\checkouts\OpenEarthRawData\knmi\potwind\raw\';
+   OPT.directory_nc   = []; %'F:\checkouts\OpenEarthRawData\knmi\potwind\nc\';
+   OPT.mask           = 'potwind*';
+   OPT.ext            = '';
    
-   OPT.refdatenum    = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
-   OPT.refdatenum    = datenum(1970,1,1); % lunix  datenumber convention
+   OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
+   OPT.refdatenum     = datenum(1970,1,1); % lunix  datenumber convention
    
 %% Keyword,value
 %------------------
@@ -49,7 +55,7 @@ end
 
    OPT.files         = dir([OPT.directory_raw,filesep,OPT.mask]);
 
-for ifile=114:length(OPT.files)  
+for ifile=1:length(OPT.files)  
 
    OPT.filename = [OPT.directory_raw, filesep, OPT.files(ifile).name]; % e.g. 'potwind_210_1981'
 
@@ -265,6 +271,13 @@ for ifile=114:length(OPT.files)
    nc_dump(outputfile);
    end
    
+%% Pause
+%------------------
+
+   if OPT.pause
+      pausedisp
+   end
+
 end %for ifile=1:length(OPT.files)   
    
 %% EOF

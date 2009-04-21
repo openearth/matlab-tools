@@ -1,4 +1,22 @@
-%WATERBASE2NC  rewrite text files with timeseries from from waterbase.nl into NetCDF files
+function getWaterbase2nc_time_direct(varargin)
+%WATERBASE2NC  rewrite zipped txt files from waterbase.nl timeseries into NetCDF files
+%
+%     WATERBASE2NC(<keyword,value>) 
+%
+%  where the following <keyword,value> pairs have been implemented:
+%
+%   * fillvalue      (default nan)
+%   * dump           whether to check nc_dump on matlab command line after writing file (default 0)
+%   * directory_raw  directory where to get the raw data from (default [])
+%   * directory_nc   directory where to put the nc data to (default [])
+%   * mask           file mask (default 'id*.zip')
+%   * refdatenum     default (datenum(1970,1,1))
+%   * ext            extension to add to the files before *.nc (default '')
+%   * pause          pause between files (default 0)
+%
+% Example:
+%  getWaterbase2nc_time_direct('directory_raw','P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\raw\raw\',...
+%                              'directory_nc', 'P:\mcdata\opendap\rijkswaterstaat\waterbase\')
 %
 %  Timeseries data definition:
 %   * https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions (full definition)
@@ -8,8 +26,6 @@
 % The actual datenum values do not show up as a parameter in ncBrowse.
 %
 %See also: GETWATERBASEDATA, DONAR_READ, SNCTOOLS
-
-% function getWaterbase2nc_time_direct(OPT.standard_name,directory.raw,directory.nc)
 
 try
    rmpath('Y:\app\matlab\toolbox\wl_mexnc\')
@@ -53,36 +69,57 @@ end
 
    OPT.fillvalue      = nan; % NaNs do work in netcdf API
    OPT.dump           = 0;
+   OPT.mask           = 'id*.txt';
+   OPT.mask           = 'id*.zip';
+   OPT.ext            = '';
 
    OPT.load           = 1; % load slow *.txt file
 
    OPT.unzip          = 1; % process only zipped files: unzip them, and delete if afterwards
-   OPT.pause          = 1;
+   OPT.pause          = 0;
    
    OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
    OPT.refdatenum     = datenum(1970,1,1); % lunix  datenumber convention
       
+   OPT.directory_raw  = [];
+   OPT.directory_nc   = [];
+   
+   OPT.parameter      = 2;
+
+%% Keyword,value
+%------------------
+
+   OPT = setProperty(OPT,varargin{:});
+   
 %% Parameter loop
 %------------------
 
-for ivar=[5 7]; %1:length(OPT.names)
+   if  OPT.parameter==0
+       OPT.parameter = 1:length(OPT.names);
+   end
+
+for ivar=[OPT.parameter]
 
    OPT.name           = OPT.names{ivar};
    OPT.standard_name  = OPT.standard_names{ivar};
    OPT.long_name      = OPT.long_names{ivar};
    OPT.units          = OPT.unitss{ivar};
    
-   OPT.directory.raw  = ['F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\raw\',OPT.standard_name,'\'];
-   OPT.directory.nc   = ['F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\nc\' ,OPT.standard_name,'\'];
+   OPT.directory_raw1 = [OPT.directory_raw,filesep,OPT.standard_name,'\'];%'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\raw\'
+   OPT.directory_nc1  = [OPT.directory_nc ,filesep,OPT.standard_name,'\'];%'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\nc\' 
    
-   mkpath(OPT.directory.nc)
+   mkpath(OPT.directory_nc1)
+   
+   OPT
 
-   OPT.files          = dir([OPT.directory.raw filesep 'id*.txt']);
-   OPT.files          = dir([OPT.directory.raw filesep 'id*.zip']);
+   %% File loop
+   %------------------
+
+   OPT.files          = dir([OPT.directory_raw1,filesep,OPT.mask]);
 
    for ifile=1:length(OPT.files)  
    
-      OPT.filename = ([OPT.directory.raw, filesep, OPT.files(ifile).name(1:end-4)]); % id1-AMRGBVN-196101010000-200801010000.txt
+      OPT.filename = ([OPT.directory_raw1, filesep, OPT.files(ifile).name(1:end-4)]); % id1-AMRGBVN-196101010000-200801010000.txt
    
       disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)])
       
@@ -122,7 +159,7 @@ for ivar=[5 7]; %1:length(OPT.names)
    %% 1a Create file
    %------------------
    
-      outputfile    = [OPT.directory.nc filesep  filename(OPT.filename),'_time_direct.nc'];
+      outputfile    = [OPT.directory_nc1,filesep,filename(OPT.filename),OPT.ext,'.nc'];
    
       nc_create_empty (outputfile)
    

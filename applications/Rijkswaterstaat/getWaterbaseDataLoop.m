@@ -31,7 +31,7 @@
 %% Initialize
 %------------------
 
-   OPT.directory.raw = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\raw\';
+   OPT.directory.raw = 'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\raw\';
 
    OPT.period        = datenum([1961 2008],1,1);
    OPT.zip           = 1; % zip txt file and delete it
