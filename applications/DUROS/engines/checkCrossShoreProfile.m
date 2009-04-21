@@ -10,23 +10,23 @@ function [x z current_Xdir z0 Shift] = checkCrossShoreProfile(x, z, varargin)
 %   [x z Xdir z0 Shift] = checkCrossShoreProfile(x, z, varargin)
 %
 %   Input:
-%   x        = column array with x-coordinates
-%   z        = column array with z-coordinates
-%   varargin = property value pairs
-%               'poslndwrd' - 1 for positive landward
-%                             -1 for positive seaward
-%               'x_origin'  - either 'landside' or 'seaside'
-%               'Shift'     - horizontal distance to shift the profile
+%       x        = column array with x-coordinates
+%       z        = column array with z-coordinates
+%       varargin = property value pairs
+%                   'poslndwrd' -  1 for positive landward
+%                                 -1 for positive seaward
+%                   'x_origin'  - either 'landside' or 'seaside'
+%                   'Shift'     - horizontal distance to shift the profile
 %
 %   Output:
-%   x        = column array with x-coordinates
-%   z        = column array with z-coordinates
-%   Xdir     = x-direction (original): 1 for positive landward and -1 for positive seaward
-%   z0       = z-value at x=0 (new profile)
-%   Shift    = horizontal distance over which the profile has been shifted
+%       x        = column array with x-coordinates
+%       z        = column array with z-coordinates
+%       Xdir     = x-direction (original): 1 for positive landward and -1 for positive seaward
+%       z0       = z-value at x=0 (new profile)
+%       Shift    = horizontal distance over which the profile has been shifted
 %
 %   Example
-%   checkCrossShoreProfile
+%       checkCrossShoreProfile
 %
 %   See also 
 
@@ -77,8 +77,8 @@ OPT = struct(...
 OPT = setProperty(OPT, varargin{:});
 
 %% sort x ascending and derive current positive x-direction
-[x IX] = sort(x); % sort x ascending, get permutation vector
-z = z(IX); % rearrange z based on permutation vector
+[x IX]  = sort(x); % sort x ascending, get permutation vector
+z       = z(IX);   % rearrange z based on permutation vector
 [LandwardBoundary1 SeawardBoundary2] = deal(min(x), max(x));
 [SeawardBoundary1 LandwardBoundary2] = deal(mean([LandwardBoundary1 SeawardBoundary2]));
 Volume1 = getVolume(x, z,...
