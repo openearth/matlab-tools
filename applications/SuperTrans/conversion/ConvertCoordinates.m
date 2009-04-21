@@ -81,6 +81,7 @@ function [x2,y2,err]=ConvertCoordinates(x1,y1,cs1,tp1,cs2,tp2,CoordinateSystems,
 %% Extract data using index into database
 %------------------------------------------
 
+   ell1=CoordinateSystems(i1).ellipsoid;
    if ~isnumeric(ell1.inv_flattening)
        ell1.inv_flattening=ell1.semi_major_axis/(ell1.semi_major_axis-ell1.semi_minor_axis);
    end
