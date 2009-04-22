@@ -40,6 +40,13 @@ function varargout = istype(in,typename)
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 status = 1;
 
 switch lower(typename)

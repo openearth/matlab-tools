@@ -9,6 +9,13 @@ function PATHSTR = filepathstr(fullfilename,varargin)
 % See also:
 % FILEPARTS, FILENAME, FILEEXT, FILENAMEEXT, FULLFILE
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 for iname=1:size(fullfilename,1)
 
    [PATHSTR{iname},NAME{iname},EXT{iname},VERSN{iname}] = fileparts(fullfilename(iname,:));

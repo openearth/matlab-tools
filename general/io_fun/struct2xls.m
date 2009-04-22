@@ -34,29 +34,27 @@ function varargout = struct2xls(fname,S,varargin)
 %
 % STRUCT2XLS(filename,struct,<keyword,value>) where 
 % implemented key words are:
-% * units : - 0 = not,
-%           - 1 = empty line
-%           - cell array is yes
-%           - struct with a fieldnames matching the struct field names is yes
-% * coldimnum: dim ension of fieldname input arrays to be used as column in excel (1 or 2)
-%             (default 2) after option oneD has optionally reshaped so the 1st dimension is 1. 
-% * coldimchar: dim ension of fieldname input arrays to be used as column in excel (1 or 2)
-%             (default 2) after option oneD has optionally reshaped so the 1st dimension is 1. 
-% * oneD: makes sure that both numeric matrix columns and matrix rows are written as Excel 
-%         columns (default 1), only works for arrays where either 1st or 2nd dimension has lenght 1..
-% * header: cell array of comment lines above column names
-% * overwrite which can be 
-%   'o' = overwrite
-%   'c' = cancel
-%   'p' = prompt (default, after which o/a/c can be chosen)
+% * units       - 0 = not,
+%               - 1 = empty line
+%               - cell array is yes
+%               - struct with a fieldnames matching the struct field names is yes
+% * coldimnum   dim ension of fieldname input arrays to be used as column in excel (1 or 2)
+%               (default 2) after option oneD has optionally reshaped so the 1st dimension is 1. 
+% * coldimchar   dim ension of fieldname input arrays to be used as column in excel (1 or 2)
+%               (default 2) after option oneD has optionally reshaped so the 1st dimension is 1. 
+% * oneD        makes sure that both numeric matrix columns and matrix rows are written as Excel 
+%               columns (default 1), only works for arrays where either 1st or 2nd dimension has lenght 1..
+% * header      cell array of comment lines above column names (see also keyword commentchar)
+% * overwrite   which can be 
+%               'o' = overwrite
+%               'c' = cancel
+%               'p' = prompt (default, after which o/a/c can be chosen)
+% * commentchar character to append to start of comment (header) line (default '#')  
 %
 % [success]   = STRUCT2XLS(...)
 % [success,M] = STRUCT2XLS(...) where M is the cell array passed to XLSWRITE.
 %
-% G.J. de Boer aug 2006
-%
-% See also: XLSWRITE (2006b, otherwise mathsworks downloadcentral), 
-%           XLSREAD, XLS2STRUCT
+% See also: XLS2STRUCT, XLSREAD, XLSWRITE (2006b, otherwise mathsworks downloadcentral)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006-2008 Delft University of Technology
@@ -87,42 +85,53 @@ function varargout = struct2xls(fname,S,varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 %% Jan 15 2008: added logicals
 
-%% Key words
-%% -----------------
+%% Keywords
+%------------------------
 
-   OPT.coldimchar = 1;
-   OPT.coldimnum  = 2;
-   OPT.addunits   = 1; % empty line
-   OPT.units      = [];
-   OPT.header{1}  = ['* This file has been created with struct2xls.m and xlswrite.m @ ',datestr(now)];
-   OPT.oned       = 1; %reshape 1D matlab rows and columns into excel columns
+   OPT.coldimchar  = 1;
+   OPT.coldimnum   = 2;
+   OPT.addunits    = 1; % empty line
+   OPT.units       = [];
+   OPT.header{1}   = ['This file has been created with struct2xls.m and xlswrite.m @ ',datestr(now)];
+   OPT.oned        = 1; %reshape 1D matlab rows and columns into excel columns
+   OPT.commentchar = '#';
  
-   iargin         = 1;
+   %iargin          = 1;
+   %
+   %while iargin<nargin-2,
+   %  if ischar(varargin{iargin}),
+   %    switch lower(varargin{iargin})
+   %    case 'coldimchar';iargin=iargin+1;OPT.coldimchar = varargin{iargin};
+   %    case 'coldimnum' ;iargin=iargin+1;OPT.coldimnum  = varargin{iargin};
+   %    case 'oned'      ;iargin=iargin+1;OPT.oned       = varargin{iargin};
+   %    case 'units'     ;iargin=iargin+1;OPT.units      = varargin{iargin};OPT.addunits  =1;
+   %    case 'header'    ;iargin=iargin+1;OPT.header     = varargin{iargin};
+   %    case 'overwrite' ;iargin=iargin+1;OPT.overwrite  = varargin{iargin};
+   %    case 'overwrite' ;iargin=iargin+1;OPT.overwrite  = varargin{iargin};
+   %    otherwise
+   %       error(['Invalid string argument: ''',varargin{iargin},'''']);
+   %    end
+   %  end;
+   %  iargin=iargin+1;
+   %end; 
    
-   while iargin<nargin-2,
-     if ischar(varargin{iargin}),
-       switch lower(varargin{iargin})
-       case 'coldimchar';iargin=iargin+1;OPT.coldimchar = varargin{iargin};
-       case 'coldimnum' ;iargin=iargin+1;OPT.coldimnum  = varargin{iargin};
-       case 'oned'      ;iargin=iargin+1;OPT.oned       = varargin{iargin};
-       case 'units'     ;iargin=iargin+1;OPT.units      = varargin{iargin};OPT.addunits  =1;
-       case 'header'    ;iargin=iargin+1;OPT.header     = varargin{iargin};
-       case 'overwrite' ;iargin=iargin+1;OPT.overwrite  = varargin{iargin};
-       otherwise
-          error(['Invalid string argument: ''',varargin{iargin},'''']);
-       end
-     end;
-     iargin=iargin+1;
-   end; 
+   OPT = setProperty(OPT,varargin{:});
    
    if ischar(OPT.header)
      OPT.header = cellstr(OPT.header);
    end
    
 %% Check if file already exists
-%% -----------------
+%-------------------
 
    OPT.overwrite  = 'p'; % prompt
    if exist(fname,'file')==2
@@ -157,14 +166,14 @@ function varargout = struct2xls(fname,S,varargin)
 
 
 %% Transform into cell array
-%% that can contain all 1D arrays
-%% -----------------
+%  that can contain all 1D arrays
+%-------------------
 
    fldnames  = fieldnames(S);
    nfld      = length(fldnames);
 
 %% Make 1D vectors (rowwise and columnwise) 1D in right dimension for excel columns
-%% -----------------
+%-------------------
       
    if OPT.oned
       for ifld=1:nfld
@@ -181,7 +190,7 @@ function varargout = struct2xls(fname,S,varargin)
    end
 
 %% Initialize cell array
-%% -----------------
+%-------------------
 
    maxlength = 0;
    for ifld=1:nfld
@@ -195,14 +204,14 @@ function varargout = struct2xls(fname,S,varargin)
    M       = cell (maxlength + nextra,nfld);
    
 %% Add header and column names
-%% -----------------
+%-------------------
 
    for iheader=1:nheader
-      M{iheader,1} = OPT.header{iheader};
+      M{iheader,1} = [OPT.commentchar,' ',OPT.header{iheader}];
    end
          
 %% Fill cell array
-%% -----------------
+%-------------------
 
    for ifld=1:nfld
    

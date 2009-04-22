@@ -42,6 +42,13 @@ function mkpath(directory)
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 directory = path2os([directory,filesep]);
 
 j = strfind(directory,':');
@@ -56,18 +63,18 @@ if ~(exist(directory,'dir')==7)
    if length(indices)==1
    
       %% Make subdirectory lowest in directory tree
-      %% in pwd,
-      %% end of recursion
-      %% -------------------------------------
+      %  in pwd,
+      %  end of recursion
+      %---------------------------------------
    
       mkdir(directory)
    
    elseif length(indices)==2
    
       %% Make subdirectory lowest in directory tree
-      %% in other parent dir,
-      %% end of recursion
-      %% -------------------------------------
+      %  in other parent dir,
+      %  end of recursion
+      %---------------------------------------
 
       dirleft   = directory(1:indices(1));
       dirright  = directory(  indices(1):end);
@@ -76,8 +83,8 @@ if ~(exist(directory,'dir')==7)
    else
    
       %% Recursively create one level deeper
-      %% in exiting path
-      %% -------------------------------------
+      %  in exiting path
+      %---------------------------------------
 
       for i=2:length(indices)
       

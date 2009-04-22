@@ -41,10 +41,17 @@ function dos2ux(files_in,varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 %% TO DO: remove CTRL-Z characters.
 
    %% Input
-   %% -------------------------
+   %---------------------------
 
    if ischar(files_in)
       files_in  = cellstr(files_in);
@@ -66,7 +73,7 @@ function dos2ux(files_in,varargin)
    end
 
    %% READ file
-   %% -------------------------
+   %---------------------------
    for ifile=1:length(files_in)
       file_in  = files_in{ifile};
       fid      = fopen(file_in,'r');
@@ -85,7 +92,7 @@ function dos2ux(files_in,varargin)
    end
 
    %% WRITE file
-   %% -------------------------
+   %---------------------------
       
    for ifile=1:length(files_in)
       file_in  = files_in {ifile};

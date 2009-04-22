@@ -19,6 +19,13 @@ function [varargout] = minmin(x,varargin);
 %   G.J. de Boer, Delft Univeristy of Technology
 %   Feb 2004, version 1.0
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 if nargin == 2
    x(isinf(x))=nan;
 end

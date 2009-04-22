@@ -108,10 +108,8 @@ for ivar=[OPT.parameter]
    OPT.directory_raw1 = [OPT.directory_raw,filesep,OPT.standard_name,'\'];%'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\raw\'
    OPT.directory_nc1  = [OPT.directory_nc ,filesep,OPT.standard_name,'\'];%'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\nc\' 
    
-   mkpath(OPT.directory_nc1)
+   mkpath(OPT.directory_nc1);
    
-   OPT
-
    %% File loop
    %------------------
 

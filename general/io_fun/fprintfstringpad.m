@@ -43,6 +43,13 @@ function varargout = fprintfstringpad(fid, totallength, string, varargin)
 %   http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 iostat=0;
 try 
    if nargin ==4

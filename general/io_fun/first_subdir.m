@@ -42,15 +42,22 @@ function start_of_PATHSTR = first_subdir(fullfilename,varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
    %% Make sure traling directory end with a slash
-   %% ---------------------------------------------
+   %-----------------------------------------------
    
    if isdir(fullfilename) & ~strcmp(fullfilename(end),filesep)
       fullfilename = [fullfilename filesep];
    end
 
    %% Chop directory into parts
-   %% ---------------------------------------------
+   %-----------------------------------------------
 
    [PATHSTR,NAME,EXT,VERSN] = fileparts(fullfilename);
    
@@ -71,7 +78,7 @@ function start_of_PATHSTR = first_subdir(fullfilename,varargin)
    end
    
    %% Gather relevant directory parts
-   %% ---------------------------------------------
+   %-----------------------------------------------
    
    if sign(nsubdir) > 0
    start_of_PATHSTR  = PATHSTR(1:1+slash_positions(nsubdir)-1);

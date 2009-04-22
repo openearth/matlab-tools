@@ -74,7 +74,6 @@ function OUT = addrowcol(IN,varargin);
 %
 % see also : PAD
 
-
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004 Delft University of Technology
 %       Gerben J. de Boer
@@ -104,6 +103,13 @@ function OUT = addrowcol(IN,varargin);
 %   http://www.gnu.org/licenses/licenses.html,
 %   http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
 
    dm            = 1;
    dn            = 1;

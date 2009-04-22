@@ -39,8 +39,6 @@ function varargout = pad(prepad,L,varargin)
 %
 % See also: ADDROWCOL, NUM2STR (number,'%0.nd')
 
-
-%
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
 %       Gerben J. de Boer
@@ -68,6 +66,14 @@ function varargout = pad(prepad,L,varargin)
 %   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 %   USA
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 displaywarning = 0;
 if nargin==3
     if ischar(prepad) | isempty(prepad)

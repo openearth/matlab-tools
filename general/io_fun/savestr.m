@@ -37,6 +37,12 @@ function savestr(fname,str)
 %   USA
 %   -------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
 
 fid = fopen(fname,'w');
 

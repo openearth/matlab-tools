@@ -46,6 +46,13 @@ function y = range(x,varargin)
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 if nargin < 2
    y = max(x) - min(x);
 else

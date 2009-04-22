@@ -36,6 +36,14 @@ function varargout = count(x)
 %   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 %   USA
 %   -------------------------------------------------------------------- 
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 values   = unique(x);
 
 numbers  = zeros(size(values));

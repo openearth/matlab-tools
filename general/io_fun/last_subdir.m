@@ -7,8 +7,7 @@ function end_of_PATHSTR = last_subdir(fullfilename,varargin)
 % subdir = last_subdir(file,n) returns last n subdirectories
 %                             (default: n=1 )
 %
-% See also:
-% FILEPARTS, FILEPATHSTR, FILENAME, FILENAMEEXT, FIRST_SUBDIR
+% See also: FILEPARTS, FILEPATHSTR, FILENAME, FILENAMEEXT, FIRST_SUBDIR
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
@@ -38,6 +37,13 @@ function end_of_PATHSTR = last_subdir(fullfilename,varargin)
 %   USA
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
 
    %% Make sure any trailing directories end with a filesep
    if exist(fullfilename)==7

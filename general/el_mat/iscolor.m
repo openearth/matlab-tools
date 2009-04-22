@@ -11,6 +11,13 @@ function out = iscolor(in)
 
 % G.J. de Boer, March 7 2006
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 out = false;
 
 if ischar(in)

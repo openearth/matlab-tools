@@ -3,6 +3,13 @@ function IMAGE=gimread
 %
 %See also: GIMREAD, IMREAD
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 [filename, pathname ] = uigetfile(...
        {'*.jpg;*.tiff;*.gif;*.bmp;*.png;*.hdf;*.pcx;*.xwd;*.ico;*.cur;*.ras;*.pbm;*.pgm;*.ppm;',...
            'suported image types';,...

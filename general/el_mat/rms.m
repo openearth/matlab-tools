@@ -7,5 +7,12 @@ function y = rms(x)
 %
 %See also: MEAN, MAX, MIN, STD
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
     y = sqrt(mean(x.^2));
    %y = sqrt( sum(x.^2)/length(x));

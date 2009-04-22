@@ -45,6 +45,13 @@ function varargout = fgetl_no_comment_line(fid,commentchar,varargin);
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 if nargin>2
    allow_empty_lines = varargin{1};
 else

@@ -19,9 +19,16 @@ function varargout  = load_template(fname,varargin)
 % -  iomethod: ''
 % -   read_at: '28-Jul-2006 13:20:55'
 % -  iostatus: 1
-%
+
 % G.J. de Boer, 28-Jul-2006 13:20:55
    
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
    DAT.filename     = fname;
    iostat           = 1;
    
@@ -57,7 +64,7 @@ function varargout  = load_template(fname,varargin)
          try
 
             %% Implement actual reading of the ASCII file here
-            %% ------------------------------
+            %--------------------------------
           
          catch
           

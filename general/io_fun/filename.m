@@ -6,6 +6,13 @@ function NAME = filename(fullfilename)
 % See also:
 % FILEPARTS, FILEPATHSTR, FILEEXT, FILENAMEEXT, FULLFILE
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 for iname=1:size(fullfilename,1)
 
    [PATHSTR{iname},NAME{iname},EXT{iname},VERSN{iname}] = fileparts(fullfilename(iname,:));

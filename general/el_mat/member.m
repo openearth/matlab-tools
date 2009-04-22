@@ -42,6 +42,13 @@ function varargout = member(A,S)
 %   USA
 %   -------------------------------------------------------------------- 
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 [TF,LOC]   = ismember(A,S);
 
 LOC = find(LOC);

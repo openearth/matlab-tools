@@ -45,6 +45,13 @@ function varargout = filecheck(file_name,varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
    if nargin>1
       overwrite = varargin{1};
    else

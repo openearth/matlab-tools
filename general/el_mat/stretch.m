@@ -63,7 +63,7 @@ function varargout = stretch(method0,par1,par2,varargin)
 %                 for smaller f and f or 1 for bigger f.
 %                 (dn=nan does not fiddle with f, and has an inexact match for s).
 %
-%   G.J. de Boer, March 2006
+%See also: LINSPACE
 
 %   --------------------------------------------------------------------
 %   Copyright (C) March 2006 Delft University of Technology
@@ -93,8 +93,15 @@ function varargout = stretch(method0,par1,par2,varargin)
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 %% Input
-%% --------------
+%----------------
 
 f0       = 1;
 n0       = 1;
@@ -121,7 +128,7 @@ end;
 
   
 %% Method
-%% --------------
+%----------------
 
 switch lower(method0)
 
@@ -158,7 +165,7 @@ switch lower(method0)
 end
 
 %% Calculate
-%% --------------
+%----------------
 
 switch method
 
@@ -278,4 +285,4 @@ case 'sf2n'
 
 end
 
-
+%% EOF

@@ -47,6 +47,13 @@ function varargout = fgetl_key_val(fid,commentchar,varargin);
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
    rec                = fgetl_no_comment_line(fid,commentchar);
    
    index_equal_sign   = strfind(rec,'=');

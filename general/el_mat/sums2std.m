@@ -13,6 +13,15 @@ function standarddev = sums2std(nx,sumx,sumx2,varargin)
 % you want to calculate the std of images/arrays, that you
 % cannot load into memory at once, so you have to go 
 % through them one by one, keeping track of n, sum and sum2.
+%
+%See also: SUM, STD
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
 
 if nargin==4 & varargin{1}==1
    nx(nx==0)=nan;

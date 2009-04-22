@@ -1,12 +1,18 @@
 function typ = vartype(v)
 %VARTYPE  Returns character name of variable type
 %
-% © G.J. de Boer, TU delft, Nov 2006.
-%
 % See also: isfloat, isinteger, ischar, 
 %           iscell,  isstruct,  islogical
 %           isempty, isa
 
+% © G.J. de Boer, TU delft, Nov 2006.
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
 
 if     isempty  (v);         typ = 'empty';
 elseif isnumeric(v);        %typ = 'numeric';
@@ -34,3 +40,4 @@ elseif isa      (v,'function_handle');
                              typ = 'function_handle';
 end
  
+%% EOF

@@ -54,6 +54,13 @@ function string = path2os(string,input)
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
    if nargin==1
        slash = filesep;
    else
@@ -72,7 +79,7 @@ function string = path2os(string,input)
    end
 
 %% Replace all slashes 
-%% ------------------------
+%--------------------------
 
    string = strrep(string,'/',slash);
 
@@ -80,7 +87,7 @@ function string = path2os(string,input)
 
 
 %% Remove redundant fileseps
-%% ------------------------
+%--------------------------
 
    string1 = '';
 

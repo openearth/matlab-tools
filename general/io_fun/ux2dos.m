@@ -41,9 +41,15 @@ function ux2dos(files_in,varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
 
    %% Input
-   %% -------------------------
+   %---------------------------
 
    if ischar(files_in)
       files_in  = cellstr(files_in);
@@ -65,7 +71,7 @@ function ux2dos(files_in,varargin)
    end
 
    %% READ file
-   %% -------------------------
+   %---------------------------
    for ifile=1:length(files_in)
       file_in  = files_in{ifile};
       fid      = fopen(file_in,'r');
@@ -84,7 +90,7 @@ function ux2dos(files_in,varargin)
    end
 
    %% WRITE file
-   %% -------------------------
+   %---------------------------
       
    for ifile=1:length(files_in)
       file_in  = files_in {ifile};

@@ -33,14 +33,15 @@ function varargout = xls2struct(fname,varargin)
 %
 % and <keyword,value> pairs are:
 %
-% * addunits, true by default, adds units to DATA struct when 
-%             there is only 1 output argument.
-% * units   , true by default, specifies whether the units at 
-%             the second line are present.
-% * fillstr , str that represents dummy string values that should be replaced with number fillnum
-%             (Default {}, suggestion: {'NA'})
-% * fillnum , number that replaces fillstr 
-%             (Default NaN)
+% * addunits    true by default, adds units to DATA struct when 
+%               there is only 1 output argument.
+% * units       true by default, specifies whether the units at 
+%               the second line are present.
+% * fillstr     str that represents dummy string values that should be replaced with number fillnum
+%               (Default {}, suggestion: {'NA'})
+% * fillnum     number that replaces fillstr 
+%               (Default NaN)
+% * commentchar characters that define the start of a comment (header) line (default '%*#')  
 %
 % Notes:
 % 
@@ -53,10 +54,7 @@ function varargout = xls2struct(fname,varargin)
 %   are already loaded to a field called 'units', with a subield
 %   for every main field.
 %
-% G.J. de Boer, Apr.-Nov. 2006 - 2009
-%
-% See also: XLSWRITE (2006b, otherwise mathsworks downloadcentral), 
-%           XLSREAD, STRUCT2XLS
+% See also: STRUCT2XLS, XLSREAD, XLSWRITE (2006b+, otherwise mathsworks downloadcentral) 
 
 % Tested for matlab releases 2008a, 2007ab, 2006B and 6.5
 
@@ -85,6 +83,13 @@ function varargout = xls2struct(fname,varargin)
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
 
 % 2008, Apr 18: made fldname always valid with mkvbar
 % 2009, Apr 03: check whether first cell of line is number, do not call iscommentline on numbers
@@ -118,12 +123,13 @@ end
    %% Input
    %------------------------
 
-   OPT.addunits = true;   
-   OPT.units    = true;
-   OPT.sheet    = [];
-   OPT.debug    = 0;
-   OPT.fillstr  = {};
-   OPT.fillnum  = NaN;
+   OPT.addunits    = true;   
+   OPT.units       = true;
+   OPT.sheet       = [];
+   OPT.debug       = 0;
+   OPT.fillstr     = {};
+   OPT.fillnum     = NaN;
+   OPT.commentchar = '%*#';
    
    if ~odd(nargin)
       OPT.sheet = varargin{1};
@@ -132,6 +138,9 @@ end
       i     = 1;
    end
    
+   %% Keywords
+   %------------------------
+
 %    while i<=nargin-2,
 %      if ischar(varargin{i}),
 %        switch lower(varargin{i})
@@ -145,6 +154,10 @@ end
 %    end;   
 
    OPT           = setProperty(OPT,varargin{i:end});
+   
+   %% Read
+   %------------------------
+
    META.filename = fname;
    iostat        = 1;
    tmp           = dir(fname);
@@ -263,7 +276,7 @@ end
          for j=1:size(tstraw,1)
             if ~isnan(tstraw{j,1})
             if ~isnumeric(tstraw{j,1})
-            commentlines(j) = iscommentline(char(tstraw{j,1}(1)),'%*#');
+            commentlines(j) = iscommentline(char(tstraw{j,1}(1)),OPT.commentchar);
             else
             commentlines(j) = 0;
             end

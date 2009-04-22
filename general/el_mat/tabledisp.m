@@ -40,16 +40,23 @@ function tabledisp(varargin)
 %   http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 %% extract format from first argument and ...
-%% ---------------------------------------------
+%-----------------------------------------------
 fmt = varargin{1};
 
 %% ... overwrite first argument with array 1 to length of vectors to become 1st column
-%% ---------------------------------------------
+%-----------------------------------------------
 varargin{1} = 1:length(varargin{2});
 
 %% draw table
-%% ---------------------------------------------
+%-----------------------------------------------
 for ip=1:length(varargin{2})
 
    record = sprintf(fmt,cellfun(@(x) select_index(x,ip),varargin)); %['%',num2str(width),'g ']
@@ -58,7 +65,7 @@ for ip=1:length(varargin{2})
    
 end
 
-%% ---------------------------------------------
+%-----------------------------------------------
 
 function element = select_index(matrix,index)
 

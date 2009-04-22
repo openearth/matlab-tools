@@ -56,6 +56,13 @@ function xout = smooth1(xin,varargin);
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   -------------------------------------------------------------------- 
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
    if nargin==1
       if ischar(xin)
          if strcmpi(xin,'test')

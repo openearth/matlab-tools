@@ -48,6 +48,13 @@ function s = distance(x,y,varargin);
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
    dim =1;
    if nargin==3
       dim = varargin{1};

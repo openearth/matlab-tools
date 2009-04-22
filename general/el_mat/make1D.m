@@ -9,6 +9,13 @@ function Y = make1D(X)
 %
 % See also: RESHAPE, PERMUTE
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 %Y = reshape(X,[prod(size(X)),1]);
 
 Y = X(:);
