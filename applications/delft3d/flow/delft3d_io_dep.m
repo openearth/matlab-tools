@@ -95,7 +95,7 @@ function G = delft3d_io_dep(varargin)
 
 delft3d_io_dep_version = 'beta';
 
-   %% Inout
+   %% Input
    %% ----------------------
 
    if nargin ==1
@@ -203,7 +203,8 @@ delft3d_io_dep_version = 'beta';
       end
       
       %% we swap so [n] is the first dimension
-      D3Dmatrix = D3Dmatrix';
+      %% we DON"T swap so [n] is the first dimension [changed GJ de Boer 2009 Apr 22]
+      %% D3Dmatrix = D3Dmatrix';
       
       %% Aply mask
       
