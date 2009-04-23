@@ -1,5 +1,5 @@
 function varargout = swan_io_table(varargin)
-%SWAN_IO_TABLE    read SWAN ASCII output table        (BETA VERSION).
+%SWAN_IO_TABLE            read SWAN ASCII output table        (BETA VERSION).
 %
 %   TAB = swan_io_table(fname)
 %   TAB = swan_io_table(fname,fieldcolumnnames)
@@ -46,14 +46,6 @@ function varargout = swan_io_table(varargin)
 %
 % See also: SWAN_IO_SPECTRUM, SWAN_IO_INPUT, SWAN_IO_GRD, SWAN_IO_BOT
 
-% 2009 mar 12: added option to read based on solely table 
-%              struct as read by SWAN_IO_INPU. Removed 
-%              default parameter name list, only split into 
-%              fields when parameter names are specified, changed 
-%              order of input into (...,fieldcolumnnames,<mxyc>). [Gerben de Boer]
-%              
-% 2009 mar 19: added loading of fname incl. path (as added to table struct in SWAN_IO_INPUT)
-
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
 %       Gerben J. de Boer
@@ -82,6 +74,20 @@ function varargout = swan_io_table(varargin)
 %   USA or
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
+% 2009 mar 12: added option to read based on solely table 
+%              struct as read by SWAN_IO_INPU. Removed 
+%              default parameter name list, only split into 
+%              fields when parameter names are specified, changed 
+%              order of input into (...,fieldcolumnnames,<mxyc>). [Gerben de Boer]
+%              
+% 2009 mar 19: added loading of fname incl. path (as added to table struct in SWAN_IO_INPUT)
 
 %% Input
 %-------------------------

@@ -1,5 +1,5 @@
 function varargout = swan_quantitytex
-%SWAN_QUANTITYTEX   returns LaTaX names of SWAN output parameters
+%SWAN_QUANTITYTEX         returns LaTaX names of SWAN output parameters
 %
 %  DAT       = SWAN_QUANTITYTEX returns LaTeX name per parameter
 % [DAT,DAT0] = SWAN_QUANTITYTEX returns also properties per property
@@ -40,6 +40,12 @@ function varargout = swan_quantitytex
 %   USA
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 %% Pre-allocate for speed
 %% ----------------------

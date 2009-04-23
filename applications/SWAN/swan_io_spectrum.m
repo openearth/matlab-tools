@@ -1,5 +1,5 @@
 function varargout = swan_io_spectrum(varargin)
-%SWAN_IO_SPECTRUM   read SWAN 1D or 2D spectrum file    (BETA VERSION).
+%SWAN_IO_SPECTRUM         read SWAN 1D or 2D spectrum file    (BETA VERSION).
 %
 % DAT = SWAN_IO_SPECTRUM(fname)
 % DAT = SWAN_IO_SPECTRUM  % launches file load GUI
@@ -36,26 +36,6 @@ function varargout = swan_io_spectrum(varargin)
 %
 % See also: SWAN_IO_INPUT, SWAN_IO_TABLE, SWAN_IO_BOT, SWAN_IO_GRD
 
-% 2008, May, 07: made it work for SPEC2D with NODATA, 
-%                Improved debug listing with mod, 
-%                Replaced i's with iloc, idir etc. 
-%                Pre-allcoated SPEC2D for speed.
-% 2008, May, 13: read n_locations <, mxc, myc> after keyword LOCATION<S> (introduced in mud special)) and optionally plot reshaped matrix
-%                also read long quantity names
-%                use fscanf to read co-ordinates order faster
-%                pre-allocate 1D data blocks
-% 2008, Oct, 17: made 2D output [nloc x  nfreq x ndir]
-%                give 2D output array name of quantity
-
-%TO DO:
-
-%% try to harmonize output with dummy dimensions of length 1 ??
-%%            DAT.data_description = ['1st dimension = number_of_locations          ';
-%%                                    '2st dimension = number_of_frequencies        ';
-%%                                    '3rd dimension = number_of_directions         ';
-%%                                    '4th dimension = number_of_iterations         '];
-%%                                       number_of_locations mx
-%%                                       number_of_locations my
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006-2009 Deltares
@@ -85,658 +65,703 @@ function varargout = swan_io_spectrum(varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
+% 2008, May, 07: made it work for SPEC2D with NODATA, 
+%                Improved debug listing with mod, 
+%                Replaced i's with iloc, idir etc. 
+%                Pre-allcoated SPEC2D for speed.
+% 2008, May, 13: read n_locations <, mxc, myc> after keyword LOCATION<S> (introduced in mud special)) and optionally plot reshaped matrix
+%                also read long quantity names
+%                use fscanf to read co-ordinates order faster
+%                pre-allocate 1D data blocks
+% 2008, Oct, 17: made 2D output [nloc x  nfreq x ndir]
+%                give 2D output array name of quantity
+% 2009, Apr, 23: added to check for existance of file
+
+%TO DO:
+
+%% try to harmonize output with dummy dimensions of length 1 ??
+%%            DAT.data_description = ['1st dimension = number_of_locations          ';
+%%                                    '2st dimension = number_of_frequencies        ';
+%%                                    '3rd dimension = number_of_directions         ';
+%%                                    '4th dimension = number_of_iterations         '];
+%%                                       number_of_locations mx
+%%                                       number_of_locations my
+
 OPT.debug = [1 1 0]; % 1st is tree, 2nd is all lines, 3rd is pcolor of reshaped (x,y) matrix
 OPT.mod   = 1000; % for OPT.debug(2)
 
    %% No file name specified if even number of arguments
-   %% i.e. 2 or 4 input parameters
-   % -----------------------------
+   %  i.e. 2 or 4 input parameters
+   %------------------------------
    if mod(nargin,2)     == 0 
-     [filename, pathname, filterindex] = uigetfile( ...
-        {'*.sp*', 'SWAN spectrum files (*.sp*)'; ...
+     [fname, pathname, filterindex] = uigetfile( ...
+        {'*.sp*;*.s*d', 'SWAN spectrum files (*.sp*;*.s*d)'; ...
          '*.*'   ,'All Files (*.*)'}, ...
-         'SWAN 1D spectrum file file');
+         'SWAN 1D spectrum file');
       
-      if ~ischar(filename) % uigetfile cancelled
+      if ~ischar(fname) % uigetfile cancelled
          DAT.filename   = [];
          iostat         = 0;
       else
-         DAT.filename   = [pathname, filename];
-         iostat         = 1;
+         DAT.fullfilename = [pathname, fname];
+         iostat           = 1;
       end
 
    %% No file name specified if odd number of arguments
-   % -----------------------------
+   %------------------------------
    elseif mod(nargin,2) == 1 % i.e. 3 or 5 input parameters
-      DAT.filename   = varargin{1};
-      iostat         = 1;
+      DAT.fullfilename  = varargin{1};
+      iostat            = 1;
    end
    
-   %% Open file
-   %% -----------------------------
-      
-   if iostat==1 %  0 when uigetfile was cancelled
-                % -1 when uigetfile failed
+   [DAT.file.path DAT.file.name DAT.file.ext] = fileparts(DAT.fullfilename);   
 
-      [DAT.path DAT.name DAT.ext] = fileparts(DAT.filename);
-      
-      fid = fopen(DAT.filename,'r');
-      if fid==-1            
-         iostat=-1;
-      end
-      
-   end
+%% Open file
+%-------------------------------
+
+if iostat==1 %  0 when uigetfile was cancelled
+             % -1 when uigetfile failed
+
+   tmp = dir(DAT.fullfilename);
    
-   if iostat %  0 when uigetfile was cancelled
-             % -1 when uigetfile/fopen failed
-      %try
+   if length(tmp)==0
       
-         %% Read 1st line
-         %% ------------------------------------------
-         rec = fgetl_no_comment_line(fid,'$');
-         if ~strcmp(strtok(upper(rec)),'SWAN')
-             fclose(fid);
-             error('no SWAN on first line')
-         end
-
-         rec = fgetl_no_comment_line(fid,'$');
-
-         %% Read TIME (optional)
-         %% ------------------------------------------
-         if strcmp(strtok(upper(rec)),'TIME')
-
-            rec = fgetl_no_comment_line(fid,'$');
-            [DAT.time] = strread(rec,'%d');
-            if OPT.debug(1)
-               disp(['time ',num2str(DAT.time)])
-            end
-            rec = fgetl_no_comment_line(fid,'$');
-         else
-            DAT.time = 0;
-         end
-
-         %% Read ITER (optional, for test output)
-         %% ------------------------------------------
-         if strcmp(strtok(upper(rec)),'ITER')
-
-            rec = fgetl_no_comment_line(fid,'$');
-            [DAT.iter] = strread(rec,'%d');
-            if OPT.debug(1)
-               disp(['iter ',num2str(DAT.iter)])
-            end
-            rec = fgetl_no_comment_line(fid,'$');
-         else
-            DAT.iter = [];
-         end
+      if nargout==1
+         error(['Error finding file: ',DAT.fullfilename])
+      else
+         iostat = -1;
+      end   
+      
+   elseif length(tmp)>0
+   
+      DAT.file.date     = tmp.date;
+      DAT.file.bytes    = tmp.bytes;
+      
+      fid       = fopen  (DAT.fullfilename,'r');
+      
+      if fid < 0
          
-         %% Read # locations
-         %% and coordinates
-         %% ------------------------------------------
+         if nargout==1
+            error(['Error opening file: ',DAT.fullfilename])
+         else
+            iostat = -2;
+         end      
          
-         if strcmp(strtok(upper(rec)),'LOCATIONS')
-
+      elseif fid > 2
+         
+         %try
+         
+            %% Read 1st line
+            %--------------------------------------------
             rec = fgetl_no_comment_line(fid,'$');
-           %[DAT.number_of_locations]     = sscanf(rec,'%i',1);
-            [DAT.number_of_locations,rec] = strtok(rec);
-            DAT.number_of_locations      = str2num(DAT.number_of_locations);
-            if OPT.debug(1)
-              disp(['number_of_locations ',num2str(DAT.number_of_locations)])
-            end         
-
-           [DAT.mxc,rec] = strtok(rec);
-            DAT.mxc      = str2num(DAT.mxc);
-           [DAT.myc,rec] = strtok(rec);
-            DAT.myc      = str2num(DAT.myc);
-            if isempty(DAT.mxc)
-            DAT.mxc      = DAT.number_of_locations;
-            DAT.myc      = 1;
+            if ~strcmp(strtok(upper(rec)),'SWAN')
+                fclose(fid);
+                error('no SWAN on first line')
             end
-            if OPT.debug(1) & DAT.myc >1
-              disp(['number_of_locations mxc ',num2str(DAT.mxc)])
-              disp(['number_of_locations myc ',num2str(DAT.myc)])
-            end         
-            DAT.x = repmat(nan,[1 DAT.number_of_locations]);
-            DAT.y = repmat(nan,[1 DAT.number_of_locations]);
-            
-%-% OLD: slow, but comments are allowed between numbers with this approach
-%-%         for iloc=1:DAT.number_of_locations
-%-%            rec         = fgetl_no_comment_line(fid,'$');
-%-%            numbers     = sscanf(rec,'%e',2);
-%-%            DAT.x(iloc) = numbers(1);
-%-%            DAT.y(iloc) = numbers(2);
-%-%            if OPT.debug(2)
-%-%               if mod(iloc,OPT.mod)==0
-%-%               disp(['   iloc,x,y: ',num2str([iloc,DAT.x(iloc),DAT.y(iloc)])]);
-%-%               end
-%-%            end         
-%-%         end
-%-%
-%-% NEW:fast, but no comments allowed between numbers
-            raw = fscanf(fid,'%f',2*DAT.number_of_locations);
-            DAT.x = raw(1:2:end);
-            DAT.y = raw(2:2:end);
-%-% end NEW          
-            DAT.x = reshape(DAT.x,DAT.myc, DAT.mxc);
-            DAT.y = reshape(DAT.y,DAT.myc, DAT.mxc);
-            
-            DAT.x(DAT.x==-99) = nan;
-            DAT.y(DAT.y==-99) = nan;
-            
-            if OPT.debug(3)==1 & DAT.myc>1
-               TMP = figure;
-               pcolorcorcen(DAT.x,DAT.y,DAT.x,[.5 .5 .5])
-               axis equal
-               pausedisp
-               try
-                  close(TMP)
+   
+            rec = fgetl_no_comment_line(fid,'$');
+   
+            %% Read TIME (optional)
+            %--------------------------------------------
+            if strcmp(strtok(upper(rec)),'TIME')
+   
+               rec = fgetl_no_comment_line(fid,'$');
+               [DAT.time] = strread(rec,'%d');
+               if OPT.debug(1)
+                  disp(['time ',num2str(DAT.time)])
                end
+               rec = fgetl_no_comment_line(fid,'$');
+            else
+               DAT.time = 0;
+            end
+   
+            %% Read ITER (optional, for test output)
+            %--------------------------------------------
+            if strcmp(strtok(upper(rec)),'ITER')
+   
+               rec = fgetl_no_comment_line(fid,'$');
+               [DAT.iter] = strread(rec,'%d');
+               if OPT.debug(1)
+                  disp(['iter ',num2str(DAT.iter)])
+               end
+               rec = fgetl_no_comment_line(fid,'$');
+            else
+               DAT.iter = [];
             end
             
-            rec = fgetl_no_comment_line(fid,'$');
+            %% Read # locations
+            %  and coordinates
+            %--------------------------------------------
             
-         elseif strcmp(strtok(upper(rec)),'LONLAT');
-
-            rec = fgetl_no_comment_line(fid,'$')
-            [DAT.number_of_locations] = sscanf(rec,'%i',1);
-            if OPT.debug(1)
-               disp(['number_of_locations ',num2str(DAT.number_of_locations)])
-            end         
-            
-            DAT.lon = repmat(nan,[1 DAT.number_of_locations]);
-            DAT.lat = repmat(nan,[1 DAT.number_of_locations]);
-            
-            for iloc=1:DAT.number_of_locations
-               if OPT.debug(2)
-                  disp(['   location ',num2str(i)])
+            if strcmp(strtok(upper(rec)),'LOCATIONS')
+   
+               rec = fgetl_no_comment_line(fid,'$');
+              %[DAT.number_of_locations]     = sscanf(rec,'%i',1);
+               [DAT.number_of_locations,rec] = strtok(rec);
+               DAT.number_of_locations      = str2num(DAT.number_of_locations);
+               if OPT.debug(1)
+                 disp(['number_of_locations ',num2str(DAT.number_of_locations)])
                end         
-               rec           = fgetl_no_comment_line(fid,'$');
-               numbers       = sscanf(rec,'%e',2);
-               DAT.lon(iloc) = numbers(1);
-               DAT.lat(iloc) = numbers(2);
-               if OPT.debug(2)
-                  if mod(iloc,OPT.mod)==0
-                  disp(['   iloc,lon,lat: ',num2str([iloc,DAT.lon(iloc),DAT.lat(iloc)])])
-                  end
+   
+              [DAT.mxc,rec] = strtok(rec);
+               DAT.mxc      = str2num(DAT.mxc);
+              [DAT.myc,rec] = strtok(rec);
+               DAT.myc      = str2num(DAT.myc);
+               if isempty(DAT.mxc)
+               DAT.mxc      = DAT.number_of_locations;
+               DAT.myc      = 1;
+               end
+               if OPT.debug(1) & DAT.myc >1
+                 disp(['number_of_locations mxc ',num2str(DAT.mxc)])
+                 disp(['number_of_locations myc ',num2str(DAT.myc)])
                end         
-            end
-
-            rec = fgetl_no_comment_line(fid,'$');
-
-         else
-         
-            fclose(fid);
-            error('keyword LOCATIONS or LONLAT required.')
-            
-         end
-         
-         %% Read # of frequencies
-         %% ------------------------------------------
-         if strcmp(strtok(upper(rec)),'AFREQ') | ...
-            strcmp(strtok(upper(rec)),'RFREQ')
-
-            if     strcmp(strtok(upper(rec)),'AFREQ')
-               DAT.frequency_type = 'absolute';
-            elseif strcmp(strtok(upper(rec)),'RFREQ')
-               DAT.frequency_type = 'relative';
-            end
-
-            rec = fgetl_no_comment_line(fid,'$');
-            [DAT.number_of_frequencies] = sscanf(rec,'%i',1);
-            if OPT.debug(1)
-               disp(['number_of_frequencies ',num2str(DAT.number_of_frequencies)])
-            end         
-
-            DAT.frequency = repmat(nan,[1 DAT.number_of_frequencies]);
-
-            for ifreq=1:DAT.number_of_frequencies
-               rec                  = fgetl_no_comment_line(fid,'$');
-               numbers              = sscanf(rec,'%e',2);
-               DAT.frequency(ifreq) = numbers(1);
-            end
-            
-            rec = fgetl_no_comment_line(fid,'$');
-
-         else
-
-            % When no frequencies present: file contains integral parameters form TEST command
-            DAT.dimension_of_spectrum = 0;
-            DAT.number_of_frequencies = 0;
-            
-         end
-         
-         %% Read # of directions (only for 2D spectra)
-         %% ------------------------------------------
-
-         if     strcmp(strtok(upper(rec)),'NDIR') 
-            DAT.dimension_of_spectrum = 2;
-            DAT.direction_convention  = 'nautical';
-         elseif strcmp(strtok(upper(rec)),'CDIR') 
-            DAT.dimension_of_spectrum = 2;
-            DAT.direction_convention  = 'cartesian';
-         elseif ~(isfield(DAT,'dimension_of_spectrum'))
-         % see above: When no frequencies present: file contains integral parameters form TEST command
-         % or MUDFILE (only frequencies, no directions)
-            DAT.dimension_of_spectrum = 1;
-         end
-
-         if DAT.dimension_of_spectrum==2
-            rec = fgetl_no_comment_line(fid,'$');
-            [DAT.number_of_directions] = sscanf(rec,'%i',1);
-            if OPT.debug(1)
-               disp(['number_of_directions ',num2str(DAT.number_of_directions)])
-            end            
-            if DAT.number_of_directions==0
-               fclose(fid);
-               error('Number of directions = 0. Remove *DIR keyword or use > 0 directions')
-            end
-
-            DAT.directions = repmat(nan,[1 DAT.number_of_directions]);
-
-            for idir=1:DAT.number_of_directions
-               rec                  = fgetl_no_comment_line(fid,'$');
-               numbers              = sscanf(rec,'%e',2);
-               DAT.directions(idir) = numbers(1);
-            end
-            rec = fgetl_no_comment_line(fid,'$');
-         end
-
-         %% Read # of quantities: fixed at 3 for 1D spectrum ,
-         %%                    extended to 5 for MUD version.
-         %%                       fixed at 1 for 2D spectrum.
-         %%                                2 for new MUDFile.
-         %% ------------------------------------------
-         if strcmp(strtok(upper(rec)),'QUANT')
-
-            rec = fgetl_no_comment_line(fid,'$');
-            [DAT.number_of_quantities] = sscanf(rec,'%i',1);
-            if OPT.debug(1)
-               disp(['number_of_quantities ',num2str(DAT.number_of_quantities)])
-            end
-
-           %DAT.quantity_names            = not preallocated;
-           %DAT.quantity_units            = not preallocated;
-            DAT.quantity_exception_values = repmat(nan,[1 DAT.number_of_quantities]);
-
-            for iquant=1:DAT.number_of_quantities
-               rec                                   = fgetl_no_comment_line(fid,'$');
-              [DAT.quantity_names{iquant},rec]       = strtok(rec);
-               DAT.quantity_names_long{iquant}       = strtrim(rec);
-              
-
-               rec                                   = fgetl_no_comment_line(fid,'$');
-               DAT.quantity_units{iquant}            = strtok(rec);
-
-               rec                                   = fgetl_no_comment_line(fid,'$');
-               numbers                               = sscanf(rec,'%e',2);
-               DAT.quantity_exception_values(iquant) = numbers(1);
-            end
-         end
-
-         %% read integrated test quantities S1D
-         %% ------------------------------
-
-         if DAT.dimension_of_spectrum==0 &  ~isempty(DAT.iter)
-         
-            while ~feof(fid)
-
-               %% Read data block per location
-               %% ------------------------------------------         
-               for iloc=1:DAT.number_of_locations
-                  if iloc==1
-                     rec       = fgetl_no_comment_line(fid,'$');
-                     iteration = str2num(strtok(rec));
-                  end
-                  
-                      if feof(fid)
-                          break
-                      end
-                      start_of_key_word = strfind(rec,'Test point');
-                      shift = 10;
-
-                      location_index = sscanf(rec(start_of_key_word+shift:end),'%i',1);
-
-                      rawdata = fscanf(fid,'%e',  DAT.number_of_quantities);
-
-                      %% Split block into array per quantity
-                      %% where the 1st dimension is the location
-                      %% ------------------------------------------         
-                      for j=1:DAT.number_of_quantities
-                         quantity_name = char(DAT.quantity_names{j});
-                         array         = rawdata(j);
-                         array(array==DAT.quantity_exception_values(j))=nan;
-                         DAT.(quantity_name)(iloc,iteration) = array;
-                      end  
-               end
-
-               DAT.data_description = ['1st dimension = number_of_locations          ';
-                                       '2nd dimension = number_of_iterations         '];
-
-            end         
-         
-         %% read test points S1D
-         %% ------------------------------
-
-         elseif DAT.dimension_of_spectrum==1 &  ~isempty(DAT.iter)
-            
-            while ~feof(fid)
-            
-               %% Read data block per location
-               %% ------------------------------------------         
-               for iloc=1:DAT.number_of_locations
-                  if iloc==1
-                     rec       = fgetl_no_comment_line(fid,'$');
-                     iteration = str2num(strtok(rec));
-                  end
-                  
-                      rec               = fgetl_no_comment_line(fid,'$');
-                      if feof(fid)
-                          break
-                      end
-                      start_of_key_word = strfind(rec,'Test point');
-                      shift = 10;
-
-                      location_index = sscanf(rec(start_of_key_word+shift:end),'%i',1);
-
-                      rawdata = fscanf(fid,'%e',  DAT.number_of_quantities*...
-                                                  DAT.number_of_frequencies);
-
-                      rawdata  = reshape(rawdata,[DAT.number_of_quantities ...
-                                                  DAT.number_of_frequencies]);
-
-                      %% Split block into array per quantity
-                      %% where the 1st dimension is the location
-                      %% ------------------------------------------         
-                      for j=1:DAT.number_of_quantities
-                         quantity_name = char(DAT.quantity_names{j});
-                         array         = rawdata(j,:);
-                         array(array==DAT.quantity_exception_values(j))=nan;
-                         DAT.(quantity_name)(location_index,:,iteration) = array;
-                      end  
-               end
-               DAT.data_description = ['1st dimension = number_of_locations          ';
-                                       '2st dimension = number_of_frequencies        ';
-                                       '3rd dimension = number_of_iterations         '];
-            end
-
-         %% read S1D
-         %% ------------------------------
-
-         elseif DAT.dimension_of_spectrum==1
-         
-            %% pre-allocate for speed (makes HUGE difference)
-            %% ------------------------------------------      
-            for j=1:DAT.number_of_quantities
-               quantity_name       = char(DAT.quantity_names{j});
-               DAT.(quantity_name) = nan  ([DAT.number_of_locations ...
-                                            DAT.number_of_frequencies]);                
-            end
-	    
-            %% Read data block per location
-            %% ------------------------------------------         
-            for iloc=1:DAT.number_of_locations
-            
-               if OPT.debug(2)
-                  if mod(iloc,OPT.mod)==0
-                  disp(['processing station ',num2str(iloc),' of ',num2str(DAT.number_of_locations)])
+               DAT.x = repmat(nan,[1 DAT.number_of_locations]);
+               DAT.y = repmat(nan,[1 DAT.number_of_locations]);
+               
+   %-% OLD: slow, but comments are allowed between numbers with this approach
+   %-%         for iloc=1:DAT.number_of_locations
+   %-%            rec         = fgetl_no_comment_line(fid,'$');
+   %-%            numbers     = sscanf(rec,'%e',2);
+   %-%            DAT.x(iloc) = numbers(1);
+   %-%            DAT.y(iloc) = numbers(2);
+   %-%            if OPT.debug(2)
+   %-%               if mod(iloc,OPT.mod)==0
+   %-%               disp(['   iloc,x,y: ',num2str([iloc,DAT.x(iloc),DAT.y(iloc)])]);
+   %-%               end
+   %-%            end         
+   %-%         end
+   %-%
+   %-% NEW:fast, but no comments allowed between numbers
+               raw = fscanf(fid,'%f',2*DAT.number_of_locations);
+               DAT.x = raw(1:2:end);
+               DAT.y = raw(2:2:end);
+   %-% end NEW          
+               DAT.x = reshape(DAT.x,DAT.myc, DAT.mxc);
+               DAT.y = reshape(DAT.y,DAT.myc, DAT.mxc);
+               
+               DAT.x(DAT.x==-99) = nan;
+               DAT.y(DAT.y==-99) = nan;
+               
+               if OPT.debug(3)==1 & DAT.myc>1
+                  TMP = figure;
+                  pcolorcorcen(DAT.x,DAT.y,DAT.x,[.5 .5 .5])
+                  axis equal
+                  pausedisp
+                  try
+                     close(TMP)
                   end
                end
                
                rec = fgetl_no_comment_line(fid,'$');
                
-               if strcmp(strtok(upper(rec)),'LOCATION')
-                     
-                     start_of_key_word = strfind(rec,'LOCATION');
-                     shift             = 8;
-                     
-                     location_index    = sscanf(rec(start_of_key_word+shift:end),'%i',1);
-                     
-                     if ~(location_index == iloc)
-                        fclose(fid);
-                        error(['order of data in file does not match location order for line with ',rec])
-                     end
-
-                     rawdata  = fscanf(fid,'%e', DAT.number_of_quantities*...
-                                                 DAT.number_of_frequencies);
-                     if isinf(rawdata)
-                         fclose(fid);
-                         error([DAT.filename,' contains Inf data for location ',num2str(iloc)])
-                     else
-                     rawdata  = reshape(rawdata,[DAT.number_of_quantities ...
-                                                 DAT.number_of_frequencies]);
-                     end
-	    
-                     %% Split block into array per quantity
-                     %% where the 1st dimension is the location
-                     %% ------------------------------------------         
-                     for j=1:DAT.number_of_quantities
-                        quantity_name               = char(DAT.quantity_names{j});
-                        array                       = rawdata(j,:);
-                        array(array==DAT.quantity_exception_values(j))=nan;
-                        DAT.(quantity_name)(iloc,:) = array;
-                     end
-
-               elseif strcmp(strtok(upper(rec)),'NODATA')
+            elseif strcmp(strtok(upper(rec)),'LONLAT');
+   
+               rec = fgetl_no_comment_line(fid,'$')
+               [DAT.number_of_locations] = sscanf(rec,'%i',1);
+               if OPT.debug(1)
+                  disp(['number_of_locations ',num2str(DAT.number_of_locations)])
+               end         
                
-                    % disp('keyword NODATA not tested yet !!!!!!!!!!!!!!!!!!!')
-                     
-                     nans = nan.*DAT.frequency;
-                     for j=1:DAT.number_of_quantities
-                        quantity_name               = char(DAT.quantity_names{j});
-                        DAT.(quantity_name)(iloc,:) = nans;
+               DAT.lon = repmat(nan,[1 DAT.number_of_locations]);
+               DAT.lat = repmat(nan,[1 DAT.number_of_locations]);
+               
+               for iloc=1:DAT.number_of_locations
+                  if OPT.debug(2)
+                     disp(['   location ',num2str(i)])
+                  end         
+                  rec           = fgetl_no_comment_line(fid,'$');
+                  numbers       = sscanf(rec,'%e',2);
+                  DAT.lon(iloc) = numbers(1);
+                  DAT.lat(iloc) = numbers(2);
+                  if OPT.debug(2)
+                     if mod(iloc,OPT.mod)==0
+                     disp(['   iloc,lon,lat: ',num2str([iloc,DAT.lon(iloc),DAT.lat(iloc)])])
                      end
-
-               else
+                  end         
+               end
+   
+               rec = fgetl_no_comment_line(fid,'$');
+   
+            else
+            
+               fclose(fid);
+               error('keyword LOCATIONS or LONLAT required.')
+               
+            end
+            
+            %% Read # of frequencies
+            %--------------------------------------------
+            if strcmp(strtok(upper(rec)),'AFREQ') | ...
+               strcmp(strtok(upper(rec)),'RFREQ')
+   
+               if     strcmp(strtok(upper(rec)),'AFREQ')
+                  DAT.frequency_type = 'absolute';
+               elseif strcmp(strtok(upper(rec)),'RFREQ')
+                  DAT.frequency_type = 'relative';
+               end
+   
+               rec = fgetl_no_comment_line(fid,'$');
+               [DAT.number_of_frequencies] = sscanf(rec,'%i',1);
+               if OPT.debug(1)
+                  disp(['number_of_frequencies ',num2str(DAT.number_of_frequencies)])
+               end         
+   
+               DAT.frequency = repmat(nan,[1 DAT.number_of_frequencies]);
+   
+               for ifreq=1:DAT.number_of_frequencies
+                  rec                  = fgetl_no_comment_line(fid,'$');
+                  numbers              = sscanf(rec,'%e',2);
+                  DAT.frequency(ifreq) = numbers(1);
+               end
+               
+               rec = fgetl_no_comment_line(fid,'$');
+   
+            else
+   
+               % When no frequencies present: file contains integral parameters form TEST command
+               DAT.dimension_of_spectrum = 0;
+               DAT.number_of_frequencies = 0;
+               
+            end
+            
+            %% Read # of directions (only for 2D spectra)
+            %% ------------------------------------------
+   
+            if     strcmp(strtok(upper(rec)),'NDIR') 
+               DAT.dimension_of_spectrum = 2;
+               DAT.direction_convention  = 'nautical';
+            elseif strcmp(strtok(upper(rec)),'CDIR') 
+               DAT.dimension_of_spectrum = 2;
+               DAT.direction_convention  = 'cartesian';
+            elseif ~(isfield(DAT,'dimension_of_spectrum'))
+            % see above: When no frequencies present: file contains integral parameters form TEST command
+            % or MUDFILE (only frequencies, no directions)
+               DAT.dimension_of_spectrum = 1;
+            end
+   
+            if DAT.dimension_of_spectrum==2
+               rec = fgetl_no_comment_line(fid,'$');
+               [DAT.number_of_directions] = sscanf(rec,'%i',1);
+               if OPT.debug(1)
+                  disp(['number_of_directions ',num2str(DAT.number_of_directions)])
+               end            
+               if DAT.number_of_directions==0
+                  fclose(fid);
+                  error('Number of directions = 0. Remove *DIR keyword or use > 0 directions')
+               end
+   
+               DAT.directions = repmat(nan,[1 DAT.number_of_directions]);
+   
+               for idir=1:DAT.number_of_directions
+                  rec                  = fgetl_no_comment_line(fid,'$');
+                  numbers              = sscanf(rec,'%e',2);
+                  DAT.directions(idir) = numbers(1);
+               end
+               rec = fgetl_no_comment_line(fid,'$');
+            end
+   
+            %% Read # of quantities: fixed at 3 for 1D spectrum ,
+            %                     extended to 5 for MUD version.
+            %                        fixed at 1 for 2D spectrum.
+            %                                 2 for new MUDFile.
+            %--------------------------------------------
+            if strcmp(strtok(upper(rec)),'QUANT')
+   
+               rec = fgetl_no_comment_line(fid,'$');
+               [DAT.number_of_quantities] = sscanf(rec,'%i',1);
+               if OPT.debug(1)
+                  disp(['number_of_quantities ',num2str(DAT.number_of_quantities)])
+               end
+   
+              %DAT.quantity_names            = not preallocated;
+              %DAT.quantity_units            = not preallocated;
+               DAT.quantity_exception_values = repmat(nan,[1 DAT.number_of_quantities]);
+   
+               for iquant=1:DAT.number_of_quantities
+                  rec                                   = fgetl_no_comment_line(fid,'$');
+                 [DAT.quantity_names{iquant},rec]       = strtok(rec);
+                  DAT.quantity_names_long{iquant}       = strtrim(rec);
+                 
+   
+                  rec                                   = fgetl_no_comment_line(fid,'$');
+                  DAT.quantity_units{iquant}            = strtok(rec);
+   
+                  rec                                   = fgetl_no_comment_line(fid,'$');
+                  numbers                               = sscanf(rec,'%e',2);
+                  DAT.quantity_exception_values(iquant) = numbers(1);
+               end
+            end
+   
+            %% read integrated test quantities S1D
+            %--------------------------------
+   
+            if DAT.dimension_of_spectrum==0 &  ~isempty(DAT.iter)
+            
+               while ~feof(fid)
+   
+                  %% Read data block per location
+                  %--------------------------------------------         
+                  for iloc=1:DAT.number_of_locations
+                     if iloc==1
+                        rec       = fgetl_no_comment_line(fid,'$');
+                        iteration = str2num(strtok(rec));
+                     end
                      
+                         if feof(fid)
+                             break
+                         end
+                         start_of_key_word = strfind(rec,'Test point');
+                         shift = 10;
+   
+                         location_index = sscanf(rec(start_of_key_word+shift:end),'%i',1);
+   
+                         rawdata = fscanf(fid,'%e',  DAT.number_of_quantities);
+   
+                         %% Split block into array per quantity
+                         %  where the 1st dimension is the location
+                         %--------------------------------------------         
+                         for j=1:DAT.number_of_quantities
+                            quantity_name = char(DAT.quantity_names{j});
+                            array         = rawdata(j);
+                            array(array==DAT.quantity_exception_values(j))=nan;
+                            DAT.(quantity_name)(iloc,iteration) = array;
+                         end  
+                  end
+   
+                  DAT.data_description = ['1st dimension = number_of_locations          ';
+                                          '2nd dimension = number_of_iterations         '];
+   
+               end         
+            
+            %% read test points S1D
+            %--------------------------------
+   
+            elseif DAT.dimension_of_spectrum==1 &  ~isempty(DAT.iter)
+               
+               while ~feof(fid)
+               
+                  %% Read data block per location
+                  %--------------------------------------------         
+                  for iloc=1:DAT.number_of_locations
+                     if iloc==1
+                        rec       = fgetl_no_comment_line(fid,'$');
+                        iteration = str2num(strtok(rec));
+                     end
+                     
+                         rec               = fgetl_no_comment_line(fid,'$');
+                         if feof(fid)
+                             break
+                         end
+                         start_of_key_word = strfind(rec,'Test point');
+                         shift = 10;
+   
+                         location_index = sscanf(rec(start_of_key_word+shift:end),'%i',1);
+   
+                         rawdata = fscanf(fid,'%e',  DAT.number_of_quantities*...
+                                                     DAT.number_of_frequencies);
+   
+                         rawdata  = reshape(rawdata,[DAT.number_of_quantities ...
+                                                     DAT.number_of_frequencies]);
+   
+                         %% Split block into array per quantity
+                         %  where the 1st dimension is the location
+                         %--------------------------------------------         
+                         for j=1:DAT.number_of_quantities
+                            quantity_name = char(DAT.quantity_names{j});
+                            array         = rawdata(j,:);
+                            array(array==DAT.quantity_exception_values(j))=nan;
+                            DAT.(quantity_name)(location_index,:,iteration) = array;
+                         end  
+                  end
+                  DAT.data_description = ['1st dimension = number_of_locations          ';
+                                          '2st dimension = number_of_frequencies        ';
+                                          '3rd dimension = number_of_iterations         '];
+               end
+   
+            %% read S1D
+            %--------------------------------
+   
+            elseif DAT.dimension_of_spectrum==1
+            
+               %% pre-allocate for speed (makes HUGE difference)
+               %--------------------------------------------      
+               for j=1:DAT.number_of_quantities
+                  quantity_name       = char(DAT.quantity_names{j});
+                  DAT.(quantity_name) = nan  ([DAT.number_of_locations ...
+                                               DAT.number_of_frequencies]);                
+               end
+   	    
+               %% Read data block per location
+               %--------------------------------------------         
+               for iloc=1:DAT.number_of_locations
+               
+                  if OPT.debug(2)
+                     if mod(iloc,OPT.mod)==0
+                     disp(['processing station ',num2str(iloc),' of ',num2str(DAT.number_of_locations)])
+                     end
+                  end
+                  
+                  rec = fgetl_no_comment_line(fid,'$');
+                  
+                  if strcmp(strtok(upper(rec)),'LOCATION')
+                        
+                        start_of_key_word = strfind(rec,'LOCATION');
+                        shift             = 8;
+                        
+                        location_index    = sscanf(rec(start_of_key_word+shift:end),'%i',1);
+                        
+                        if ~(location_index == iloc)
+                           fclose(fid);
+                           error(['order of data in file does not match location order for line with ',rec])
+                        end
+   
+                        rawdata  = fscanf(fid,'%e', DAT.number_of_quantities*...
+                                                    DAT.number_of_frequencies);
+                        if isinf(rawdata)
+                            fclose(fid);
+                            error([DAT.filename,' contains Inf data for location ',num2str(iloc)])
+                        else
+                        rawdata  = reshape(rawdata,[DAT.number_of_quantities ...
+                                                    DAT.number_of_frequencies]);
+                        end
+   	    
+                        %% Split block into array per quantity
+                        %  where the 1st dimension is the location
+                        %--------------------------------------------         
+                        for j=1:DAT.number_of_quantities
+                           quantity_name               = char(DAT.quantity_names{j});
+                           array                       = rawdata(j,:);
+                           array(array==DAT.quantity_exception_values(j))=nan;
+                           DAT.(quantity_name)(iloc,:) = array;
+                        end
+   
+                  elseif strcmp(strtok(upper(rec)),'NODATA')
+                  
+                       % disp('keyword NODATA not tested yet !!!!!!!!!!!!!!!!!!!')
+                        
+                        nans = nan.*DAT.frequency;
+                        for j=1:DAT.number_of_quantities
+                           quantity_name               = char(DAT.quantity_names{j});
+                           DAT.(quantity_name)(iloc,:) = nans;
+                        end
+   
+                  else
+                        
+                        fclose(fid);
+                        error(['unknown data in record: ',rec])
+   
+                  end   
+                        
+               end % for i=1:DAT.number_of_locations
+               
+               if DAT.myc==1
+                  DAT.data_description = ['1st dimension = number_of_locations          ';
+                                          '2st dimension = number_of_frequencies        '];
+               elseif DAT.myc>1
+               
+               %% reshape locations into 2D matrix if present
+               
+                  DAT.data_description = ['1st dimension = mxc                          ';
+                                          '2nd dimension = myc                          ';
+                                          '3rd dimension = number_of_frequencies        '];
+                  for j=1:DAT.number_of_quantities
+                     quantity_name = char(DAT.quantity_names{j});
+                     DAT.(quantity_name) = reshape(DAT.(quantity_name),...
+                                                  [DAT.mxc DAT.myc DAT.number_of_frequencies]);
+                  end  
+               end            
+               
+            %% read test points S2D
+            %--------------------------------
+   
+            elseif DAT.dimension_of_spectrum==2 &  ~isempty(DAT.iter)
+   
+               warning('TEST S2D does not tested yet !!!')
+               
+               while ~feof(fid)
+               
+               %% Read data block per location
+               %--------------------------------------------         
+               
+               count = 0;
+               
+               for iloc=1:DAT.number_of_locations
+   
+               if OPT.debug(2)
+                  if mod(iloc,OPT.mod)==0
+                  disp(['processing station ',num2str(iloc),' of ',num2str(DAT.number_of_locations)])
+                  end
+               end
+   
+               for iquant=1:DAT.number_of_quantities
+               
+               count = count + 1;
+   
+                  if iloc==1
+                     rec       = fgetl_no_comment_line(fid,'$');
+                     iteration = str2num(strtok(rec));
+                  end
+                     
+                  rec = fgetl_no_comment_line(fid,'$');
+                  
+                  quantity_name = char(DAT.quantity_names{iquant});
+                  
+                  if strcmp(strtok(upper(rec)),'FACTOR')
+                     rec    = fgetl_no_comment_line(fid,'$');
+                     factor = sscanf(rec,'%e',2);
+                     
+                     data  = fscanf(fid,'%e',DAT.number_of_frequencies*...
+                                             DAT.number_of_directions);
+                     data  = reshape(data,  [DAT.number_of_directions  DAT.number_of_frequencies]).*factor;
+   
+                     data(data==DAT.quantity_exception_values(iquant))=nan;
+                     
+                     DAT.(quantity_name)(iloc,:,:)   = data'; % note transpose
+                     
+                  elseif strcmp(strtok(upper(rec)),'ZERO') % for whole blokc of zeros
+                        
+                     DAT.(quantity_name)(iloc,:,:)   = zeros([DAT.number_of_frequencies...
+                                                              DAT.number_of_directions ]);
+                    %warning('keyword ZERO   not fully tested yet !!!!!!!!!!!!!!!!!!!')
+                  
+                  elseif strcmp(strtok(upper(rec)),'NODATA')
+                        
+                     DAT.(quantity_name)(iloc,:,:)   = nan  ([DAT.number_of_frequencies...
+                                                              DAT.number_of_directions ]);
+                    %warning('keyword NODATA not fully tested yet !!!!!!!!!!!!!!!!!!!')
+   
+                  end
+                  
+                  %pcolorcorcen(data)
+                  %title([quantity_name,' @ loc ',num2str(iloc),' count: ',num2str(count)])
+                  %pausedisp
+            
+               end % for i=1:DAT.number_of_quantities
+               end % for i=1:DAT.number_of_locations
+               end % while
+               
+                     DAT.data_description = ['1st dimension = number_of_locations          ';
+                                             '2st dimension = number_of_frequencies        ';
+                                             '3rd dimension = number_of_directions         ';
+                                             'For plotting:                                ';
+                                             'd = swan_spectrum(filename);                 ';
+                                             'surf(d.frequencies,d.directions,d.data)% or  ';
+                                             'pcolor(d.frequencies,d.directions,d.data)    ';
+                                             'shading interp                               ';
+                                             'set(gca,''xscale'',''log'')                      ';
+                                             'xlabel(''freq [Hz]'')                          ';
+                                             'ylabel(''dir [\circ]'')                        '];
+   
+            %% read S2D
+            %--------------------------------
+   
+            elseif DAT.dimension_of_spectrum==2
+            
+            quantity_name = DAT.quantity_names{1}; % for 2D there can be only 1 quantity
+            
+                     DAT.data_description = ['1st dimension = number_of_locations          ';
+                                             '2st dimension = number_of_frequencies        ';
+                                             '3rd dimension = number_of_directions         ';
+                                             'For plotting:                                ';
+                                             'd = swan_spectrum(filename);                 ';
+                                             'surf(d.frequencies,d.directions,d.data)% or  ';
+                                             'pcolor(d.frequencies,d.directions,d.data)    ';
+                                             'shading interp                               ';
+                                             'set(gca,''xscale'',''log'')                      ';
+                                             'xlabel(''freq [Hz]'')                          ';
+                                             'ylabel(''dir [\circ]'')                        '];
+                                             
+               %% pre-allocate for speed (makes HUGE difference)
+               %--------------------------------------------      
+               DAT.(quantity_name) = nan  ([DAT.number_of_locations ...
+                                            DAT.number_of_frequencies ...
+                                            DAT.number_of_directions  ...
+                                            ]);
+                                             
+               %% Read data block per location
+               %--------------------------------------------         
+               for iloc=1:DAT.number_of_locations
+               
+                  if OPT.debug(2)
+                     if mod(iloc,OPT.mod)==0
+                     disp(['processing station ',num2str(iloc),' of ',num2str(DAT.number_of_locations)])
+                     end
+                  end
+                  
+                  %% SWAN writes in following loop
+   
+                  %  DO 290 IX = 1, MXC
+                  %    DO 280 IY = 1, MYC
+                  %      INDX = KGRPNT(IX,IY)
+                  %      IF (INDX.EQ.1) THEN
+                  %        WRITE (NREF,220) 'NODATA'                                     40.08
+                  %      ELSE
+                  %        DO IS = 1, MSC
+                  %          WRITE (NREF, FIX_SPEC) (NINT(ACLOC(ID,IS)/EFAC), ID=1,MDC)      40.13
+                  %        ENDDO
+                  %      ENDIF
+                  %    ENDDO
+                  %  ENDDO
+           
+                  rec = fgetl_no_comment_line(fid,'$');
+                  if strcmp(strtok(upper(rec)),'FACTOR')
+                     rec    = fgetl_no_comment_line(fid,'$');
+                     factor = sscanf(rec,'%e',2);
+                     
+                     data  = fscanf(fid,'%e',DAT.number_of_frequencies.*...
+                                             DAT.number_of_directions);
+                     data  = reshape(data  ,[DAT.number_of_directions DAT.number_of_frequencies]).*factor;
+              
+                     DAT.(quantity_name)(iloc,:,:)   = data'; % note transpose
+                     
+                  elseif strcmp(strtok(upper(rec)),'ZERO')
+                        
+                     DAT.(quantity_name)(iloc,:,:)   = zeros([DAT.number_of_frequencies ...
+                                                              DAT.number_of_directions]);
+                  
+                  elseif strcmp(strtok(upper(rec)),'NODATA')
+                        
+                     DAT.(quantity_name)(iloc,:,:)   = nan  ([DAT.number_of_frequencies ...
+                                                              DAT.number_of_directions]);
+   
+                  else
+                        
                      fclose(fid);
                      error(['unknown data in record: ',rec])
-
-               end   
                      
-            end % for i=1:DAT.number_of_locations
-            
-            if DAT.myc==1
-               DAT.data_description = ['1st dimension = number_of_locations          ';
-                                       '2st dimension = number_of_frequencies        '];
-            elseif DAT.myc>1
-            
-            %% reshape locations into 2D matrix if present
-            
-               DAT.data_description = ['1st dimension = mxc                          ';
-                                       '2nd dimension = myc                          ';
-                                       '3rd dimension = number_of_frequencies        '];
-               for j=1:DAT.number_of_quantities
-                  quantity_name = char(DAT.quantity_names{j});
-                  DAT.(quantity_name) = reshape(DAT.(quantity_name),...
-                                               [DAT.mxc DAT.myc DAT.number_of_frequencies]);
-               end  
-            end            
-            
-         %% read test points S2D
-         %% ------------------------------
-
-         elseif DAT.dimension_of_spectrum==2 &  ~isempty(DAT.iter)
-
-            warning('TEST S2D does not tested yet !!!')
-            
-            while ~feof(fid)
-            
-            %% Read data block per location
-            %% ------------------------------------------         
-            
-            count = 0;
-            
-            for iloc=1:DAT.number_of_locations
-
-            if OPT.debug(2)
-               if mod(iloc,OPT.mod)==0
-               disp(['processing station ',num2str(iloc),' of ',num2str(DAT.number_of_locations)])
-               end
-            end
-
-            for iquant=1:DAT.number_of_quantities
-            
-            count = count + 1;
-
-               if iloc==1
-                  rec       = fgetl_no_comment_line(fid,'$');
-                  iteration = str2num(strtok(rec));
-               end
-                  
-               rec = fgetl_no_comment_line(fid,'$');
-               
-               quantity_name = char(DAT.quantity_names{iquant});
-               
-               if strcmp(strtok(upper(rec)),'FACTOR')
-                  rec    = fgetl_no_comment_line(fid,'$');
-                  factor = sscanf(rec,'%e',2);
-                  
-                  data  = fscanf(fid,'%e',DAT.number_of_frequencies*...
-                                          DAT.number_of_directions);
-                  data  = reshape(data,  [DAT.number_of_directions  DAT.number_of_frequencies]).*factor;
-
-                  data(data==DAT.quantity_exception_values(iquant))=nan;
-                  
-                  DAT.(quantity_name)(iloc,:,:)   = data'; % note transpose
-                  
-               elseif strcmp(strtok(upper(rec)),'ZERO') % for whole blokc of zeros
-                     
-                  DAT.(quantity_name)(iloc,:,:)   = zeros([DAT.number_of_frequencies...
-                                                           DAT.number_of_directions ]);
-                 %warning('keyword ZERO   not fully tested yet !!!!!!!!!!!!!!!!!!!')
-               
-               elseif strcmp(strtok(upper(rec)),'NODATA')
-                     
-                  DAT.(quantity_name)(iloc,:,:)   = nan  ([DAT.number_of_frequencies...
-                                                           DAT.number_of_directions ]);
-                 %warning('keyword NODATA not fully tested yet !!!!!!!!!!!!!!!!!!!')
-
-               end
-               
-               %pcolorcorcen(data)
-               %title([quantity_name,' @ loc ',num2str(iloc),' count: ',num2str(count)])
-               %pausedisp
-         
-            end % for i=1:DAT.number_of_quantities
-            end % for i=1:DAT.number_of_locations
-            end % while
-            
-                  DAT.data_description = ['1st dimension = number_of_locations          ';
-                                          '2st dimension = number_of_frequencies        ';
-                                          '3rd dimension = number_of_directions         ';
-                                          'For plotting:                                ';
-                                          'd = swan_spectrum(filename);                 ';
-                                          'surf(d.frequencies,d.directions,d.data)% or  ';
-                                          'pcolor(d.frequencies,d.directions,d.data)    ';
-                                          'shading interp                               ';
-                                          'set(gca,''xscale'',''log'')                      ';
-                                          'xlabel(''freq [Hz]'')                          ';
-                                          'ylabel(''dir [\circ]'')                        '];
-
-         %% read S2D
-         %% ------------------------------
-
-         elseif DAT.dimension_of_spectrum==2
-         
-         quantity_name = DAT.quantity_names{1}; % for 2D there can be only 1 quantity
-         
-                  DAT.data_description = ['1st dimension = number_of_locations          ';
-                                          '2st dimension = number_of_frequencies        ';
-                                          '3rd dimension = number_of_directions         ';
-                                          'For plotting:                                ';
-                                          'd = swan_spectrum(filename);                 ';
-                                          'surf(d.frequencies,d.directions,d.data)% or  ';
-                                          'pcolor(d.frequencies,d.directions,d.data)    ';
-                                          'shading interp                               ';
-                                          'set(gca,''xscale'',''log'')                      ';
-                                          'xlabel(''freq [Hz]'')                          ';
-                                          'ylabel(''dir [\circ]'')                        '];
-                                          
-            %% pre-allocate for speed (makes HUGE difference)
-            %% ------------------------------------------      
-            DAT.(quantity_name) = nan  ([DAT.number_of_locations ...
-                                         DAT.number_of_frequencies ...
-                                         DAT.number_of_directions  ...
-                                         ]);
-                                          
-            %% Read data block per location
-            %% ------------------------------------------         
-            for iloc=1:DAT.number_of_locations
-            
-               if OPT.debug(2)
-                  if mod(iloc,OPT.mod)==0
-                  disp(['processing station ',num2str(iloc),' of ',num2str(DAT.number_of_locations)])
                   end
-               end
-               
-               %% SWAN writes in following loop
-
-               %  DO 290 IX = 1, MXC
-               %    DO 280 IY = 1, MYC
-               %      INDX = KGRPNT(IX,IY)
-               %      IF (INDX.EQ.1) THEN
-               %        WRITE (NREF,220) 'NODATA'                                     40.08
-               %      ELSE
-               %        DO IS = 1, MSC
-               %          WRITE (NREF, FIX_SPEC) (NINT(ACLOC(ID,IS)/EFAC), ID=1,MDC)      40.13
-               %        ENDDO
-               %      ENDIF
-               %    ENDDO
-               %  ENDDO
-        
-               rec = fgetl_no_comment_line(fid,'$');
-               if strcmp(strtok(upper(rec)),'FACTOR')
-                  rec    = fgetl_no_comment_line(fid,'$');
-                  factor = sscanf(rec,'%e',2);
-                  
-                  data  = fscanf(fid,'%e',DAT.number_of_frequencies.*...
-                                          DAT.number_of_directions);
-                  data  = reshape(data  ,[DAT.number_of_directions DAT.number_of_frequencies]).*factor;
-           
-                  DAT.(quantity_name)(iloc,:,:)   = data'; % note transpose
-                  
-               elseif strcmp(strtok(upper(rec)),'ZERO')
-                     
-                  DAT.(quantity_name)(iloc,:,:)   = zeros([DAT.number_of_frequencies ...
-                                                           DAT.number_of_directions]);
-               
-               elseif strcmp(strtok(upper(rec)),'NODATA')
-                     
-                  DAT.(quantity_name)(iloc,:,:)   = nan  ([DAT.number_of_frequencies ...
-                                                           DAT.number_of_directions]);
-
-               else
-                     
-                  fclose(fid);
-                  error(['unknown data in record: ',rec])
-                  
-               end
-         
-            end % for i=1:DAT.number_of_locations
-
-         end
-
-      %end % try
-
-      iostat = fclose(fid);
-
-   end % if iostat
+            
+               end % for i=1:DAT.number_of_locations
    
-   DAT.iomethod = 'swan_spectrum.m  by G.J. de Boer (WL | Delft Hydraulics), March 2006 - May 2008, beta';
-   DAT.read_at  = datestr(now);
-   DAT.iostatus = iostat;
+            end % if DAT.dimension_of_spectrum
    
-   if iostat==-1
-      fclose(fid);
-      error(['Error in opening file: ',DAT.filename]);
-   end
-      
-   %% Function output
-   %% -----------------------------
+         %end % try
+   
+         iostat = fclose(fid);
+   
+      end % if fid <0
+   
+   end % if length(tmp)==0
+   
+end % if iostat (GUI)
+   
+DAT.read.with     = 'read by $Id$ by G.J. de Boer (WL | Delft Hydraulics)';
+DAT.read.at       = datestr(now);
+DAT.read.iostatus = iostat;
 
-   if nargout      ==0 | nargout==1
-      varargout= {DAT};
-   elseif nargout==2
-      varargout= {DAT, iostat};
-   end
+%% Function output
+%-------------------------------
+
+if nargout      ==0 | nargout==1
+   varargout= {DAT};
+elseif nargout==2
+   varargout= {DAT, iostat};
+end
 
 %% EOF

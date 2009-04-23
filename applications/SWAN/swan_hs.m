@@ -1,5 +1,5 @@
 function Hs = swan_hs(f,E,varargin)
-%SWAN_HS   calculates significant wave height from wave spectrum as in SWAN
+%SWAN_HS                  calculates significant wave height from wave spectrum as in SWAN
 %
 % Hs = SWAN_HS(f,E,<pwtail>)
 % where f are the frequencies    [Hz] and 
@@ -44,6 +44,12 @@ function Hs = swan_hs(f,E,varargin)
 %   USA
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
    OPT.debug = 0;
    OPT.disp  = 0; % display mx and mx_tail

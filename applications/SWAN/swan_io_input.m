@@ -1,5 +1,5 @@
 function varargout = swan_io_input(varargin)
-%SWAN_IO_INPUT   read SWAN input file into struct    (BETA VERSION).
+%SWAN_IO_INPUT            read SWAN input file into struct    (BETA VERSION).
 %
 % DAT = SWAN_IO_INPUT        %launches load GUI.
 % DAT = SWAN_IO_INPUT(fname)
@@ -48,6 +48,12 @@ function varargout = swan_io_input(varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 %uses: mergestructs, iscommentline, fieldname, deblankstart, expressionsfromstring
 
 % 2008 Apr 17: add *.swn path when reading points FILE (which still is not fool-proof)
@@ -59,11 +65,9 @@ function varargout = swan_io_input(varargin)
 
    DAT = swan_defaults; % sets DAT.set
    
-%   disp('You are using swan_io_input.m by © WL | Delft Hydraulics, Beta version, G.J. de Boer, Apr.-Oct. 2006.')
-
    %% No file name specified if even number of arguments
-   %% i.e. 2 or 4 input parameters
-   % -----------------------------
+   %  i.e. 2 or 4 input parameters
+   %------------------------------
    if mod(nargin,2)     == 0 
      [fname, pathname, filterindex] = uigetfile( ...
         {'*.swn;*.inp', 'SWAN spectrum files (*.swn;*.inp)'; ...
@@ -79,7 +83,7 @@ function varargout = swan_io_input(varargin)
       end
 
    %% No file name specified if odd number of arguments
-   % -----------------------------
+   %------------------------------
    elseif mod(nargin,2) == 1 % i.e. 3 or 5 input parameters
       DAT.fullfilename  = varargin{1};
       iostat            = 1;
@@ -89,7 +93,7 @@ function varargout = swan_io_input(varargin)
    
    
    %% Open file
-   %% -----------------------------
+   %-------------------------------
       
    if iostat==1 %  0 when uigetfile was cancelled
                 % -1 when uigetfile failed
@@ -118,7 +122,7 @@ function varargout = swan_io_input(varargin)
          if nargout==1
             error(['Error opening file: ',DAT.fullfilename])
          else
-            iostat = -1;
+            iostat = -2;
          end
       
       elseif fid > 2
@@ -128,44 +132,38 @@ function varargout = swan_io_input(varargin)
          while ~feof(fid)
             
             %% this functions searches for all keywords
-            %% until end of file:
-            %% - So the order of keywords does not matter
-            %% - the last item always overwrites any previous item.
-            %% - addkeywor searhjces for keywords in the most expected order to 
-            %%   mimimize  the number of calls to addkeywors cycles (where the 
-            %%   maximum number of calls would be the number of keywords, and 
-            %%   the smallest number of calls only 1).
+            %  until end of file:
+            %  - So the order of keywords does not matter
+            %  - the last item always overwrites any previous item.
+            %  - addkeywor searhjces for keywords in the most expected order to 
+            %    mimimize  the number of calls to addkeywors cycles (where the 
+            %    maximum number of calls would be the number of keywords, and 
+            %    the smallest number of calls only 1).
             
             [DAT,rec] = addkeyword(fid,DAT,rec);
             
          end
             
-         fclose(fid);
+         iostat = fclose(fid);
          
-      end %  if fid <0
+      end % if fid <0
       
    end % if length(tmp)==0
 
-   end % if iostat
-   
-   DAT.read.at       = datestr(now);
-   DAT.read.iostatus = iostat;
-   DAT.read.with     = 'swan_inp.m  by G.J. de Boer (WL | Delft Hydraulics), April 26nd 2006, beta beta';;
-   
-   %% Function output
-   %% -----------------------------
+end % if iostat (GUI)
 
-   if nargout      ==0 | nargout==1
-      varargout= {DAT};
-      if iostat==-1
-         error(['Error in opening file: ',DAT.filename]);
-      end
-   elseif nargout==2
-      varargout= {DAT, iostat};
-      if iostat==-1
-         disp (['Error in opening file: ',DAT.filename]);
-      end
-   end
+DAT.read.with     = 'read by $Id$ by G.J. de Boer (WL | Delft Hydraulics)';
+DAT.read.at       = datestr(now);
+DAT.read.iostatus = iostat;
+
+%% Function output
+%-------------------------------
+
+if nargout      ==0 | nargout==1
+   varargout= {DAT};
+elseif nargout==2
+   varargout= {DAT, iostat};
+end
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

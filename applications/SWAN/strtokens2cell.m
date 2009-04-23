@@ -1,5 +1,5 @@
 function C = strtokens2cell(STR)
-%STRTOKENS2CELL   rewrites space delimitered keyword list to cell array
+%STRTOKENS2CELL           rewrites space delimitered keyword list to cell array
 %
 %   C = strtokens2cell(STR)
 %
@@ -39,6 +39,12 @@ function C = strtokens2cell(STR)
 %   USA
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 rest_of_STR = STR;
 no_of_tok   = 0;

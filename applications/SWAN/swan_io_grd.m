@@ -1,5 +1,5 @@
 function varargout = swan_io_grd(cmd,fname,varargin)
-%SWAN_IO_GRD    read/write SWAN ASCII grid file     (BETA VERSION)
+%SWAN_IO_GRD              read/write SWAN ASCII grid file     (BETA VERSION)
 %
 % dep = swan_io_grd('load' ,fname,mxc,myc,xexc,yexc,<IDLA>)
 % dep = swan_io_grd('read' ,fname,mxc,myc,xexc,yexc,<IDLA>)
@@ -59,6 +59,12 @@ function varargout = swan_io_grd(cmd,fname,varargin)
 %   USA
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 if     strcmp(cmd,'read') | ...
        strcmp(cmd,'load')

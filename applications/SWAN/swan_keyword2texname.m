@@ -1,5 +1,5 @@
 function OUT = swan_keyword2texname(IN)
-%SWAN_KEYWORD2TEXNAME   get SWAN LaTeX name (TEXNAM) from associated SWAN code (OVKEYW)
+%SWAN_KEYWORD2TEXNAME     get SWAN LaTeX name (TEXNAM) from associated SWAN code (OVKEYW)
 %
 % long_name = swan_keyword2texname(code) finds long name equivalents of SWAN 
 %
@@ -39,6 +39,12 @@ function OUT = swan_keyword2texname(IN)
 %   USA
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 %% input
 %------------------------

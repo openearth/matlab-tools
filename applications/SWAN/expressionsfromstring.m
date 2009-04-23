@@ -1,5 +1,5 @@
 function DAT = expressionsfromstring(string,var_names,varargin)
-%EXPRESSIONSFROMSTRING   interprets space delimited expressions like a=3
+%EXPRESSIONSFROMSTRING    interprets space delimited expressions like a=3
 %
 % DAT = expressionsfromstring(string,var_names)
 %
@@ -48,6 +48,12 @@ function DAT = expressionsfromstring(string,var_names,varargin)
 %   USA
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 %% for testing/debugging
 % clear DAT

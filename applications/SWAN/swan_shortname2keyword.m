@@ -13,11 +13,6 @@ function OUT = swan_shortname2keyword(IN)
 %          SWAN_QUANTITY, SWAN_DEFAULTS,
 %          SWAN_KEYWORD2SHORTNAME, SWAN_KEYWORD2LONGNAME, SWAN_KEYWORD2TEXNAME, 
 
-%% 2009 mar 13 renamed this function from SWAN_NAME2SHORTNAME to SWAN_SHORTNAME2KEYWORD [Gerben de Boer]
-%%             added links to new SWAN_KEYWORD2* [Gerben de Boer]
-
-%% to do: use table in swan_quantity to make conversion
-
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Deltares
 %       Gerben de Boer
@@ -45,6 +40,17 @@ function OUT = swan_shortname2keyword(IN)
 %   USA
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
+%% 2009 mar 13 renamed this function from SWAN_NAME2SHORTNAME to SWAN_SHORTNAME2KEYWORD [Gerben de Boer]
+%%             added links to new SWAN_KEYWORD2* [Gerben de Boer]
+
+%% to do: use table in swan_quantity to make conversion
 
 if ischar(IN)
    IN = cellstr(IN);

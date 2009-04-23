@@ -1,5 +1,5 @@
 function DAT = swan_defaults
-%SWAN_DEFAULTS   returns SWAN default SET settings
+%SWAN_DEFAULTS            returns SWAN default SET settings
 %
 %  DAT.set.level    = 0;
 %  DAT.set.nor      = 90;
@@ -47,6 +47,12 @@ function DAT = swan_defaults
 %   USA
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
    DAT.set.level    = 0;
    DAT.set.nor      = 90;

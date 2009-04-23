@@ -40,6 +40,12 @@ function OUT = swan_keyword2shortname(IN)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 %% input
 %------------------------
 

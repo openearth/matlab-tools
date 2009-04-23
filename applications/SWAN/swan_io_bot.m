@@ -1,5 +1,5 @@
 function varargout = swan_io_bot(cmd,fname,varargin)
-%SWAN_IO_BOT    read/write SWAN ASCII bottom file   (BETA VERSION)
+%SWAN_IO_BOT              read/write SWAN ASCII bottom file   (BETA VERSION)
 %
 % dep = swan_io_bot('read' ,fname,[mcx myc],<IDLA>)
 % dep = swan_io_bot('read' ,fname,struct ,<IDLA>)
@@ -66,6 +66,12 @@ function varargout = swan_io_bot(cmd,fname,varargin)
 %   USA
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
    nodatavalue = -.999000E+03;
    IDLA        = 4;

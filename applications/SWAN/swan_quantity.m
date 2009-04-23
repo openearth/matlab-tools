@@ -1,5 +1,5 @@
 function varargout = swan_quantity
-%SWAN_QUANTITY   returns default properties of SWAN output parameters
+%SWAN_QUANTITY            returns default properties of SWAN output parameters
 %
 %  DAT       = SWAN_QUANTITY returns properties per parameter
 % [DAT,DAT0] = SWAN_QUANTITY returns also properties per property
@@ -48,6 +48,12 @@ function varargout = swan_quantity
 %   USA
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 %% Pre-allocate for speed
 %% ----------------------
