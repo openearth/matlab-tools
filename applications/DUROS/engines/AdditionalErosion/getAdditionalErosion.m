@@ -243,7 +243,7 @@ while NextIteration
     if any(x0InValley) 
         % set x0 to one of the boundaries of the exception area
         % starting from the seaward boundary
-        x0(Iter) = OPT.x0except(x0InValley,x0exceptID);
+        x0(Iter) = OPT.x0except(x0InValley,x0exceptID(x0InValley));
         % by lowering the x0exceptID by 1, next time, the landward
         % boundary will be chosen
         x0exceptID(x0InValley) = x0exceptID(x0InValley)-1;
