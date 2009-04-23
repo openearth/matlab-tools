@@ -55,22 +55,25 @@ function varargout = swan_quantity
 % $Revision$
 % $HeadURL$
 
-%% Pre-allocate for speed
-%% ----------------------
+% 2009 apr 23: added names from test output (source terms)
 
-   OVKEYW = cell(1,59);
-   OVSNAM = cell(1,59);
-   OVLNAM = cell(1,59);
-   OVUNIT = cell(1,59);
-   OVSVTY = cell(1,59);
-   OVLLIM = cell(1,59);
-   OVULIM = cell(1,59);
-   OVLEXP = cell(1,59);
-   OVHEXP = cell(1,59);
-   OVEXCV = cell(1,59);
+%% Pre-allocate for speed
+%------------------------
+
+   nval   = 57 + 3 + 8; % native + fluid mud + test output
+   OVKEYW = cell(1,nval);
+   OVSNAM = cell(1,nval);
+   OVLNAM = cell(1,nval);
+   OVUNIT = cell(1,nval);
+   OVSVTY = cell(1,nval);
+   OVLLIM = cell(1,nval);
+   OVULIM = cell(1,nval);
+   OVLEXP = cell(1,nval);
+   OVHEXP = cell(1,nval);
+   OVEXCV = cell(1,nval);
 
 %% Manually edited 3 things from code form SWANMAIN.for below
-%% ----------------------
+%------------------------
    %% 1
    %OVUNIT{IVTYPE} = UL
    %OVUNIT{IVTYPE} = UH
@@ -818,6 +821,110 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0   ;%!-100.
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -99.;
+      
+%% Parameter in test spectral output (see SWANPRE2.for) to be obtained with:
+%  TEST 1 0 POINTS XY 0.0000 0 PAR 'x.par' S1D 'x.s1d' S2D 'x.s2d'
+%------------------------
+
+      IVTYPE = IVTYPE + 1;
+      OVKEYW{IVTYPE} = 'VaDens';
+      OVSNAM{IVTYPE} = 'VaDens';
+      OVLNAM{IVTYPE} = 'spectral variance density';
+      OVUNIT{IVTYPE} = 'm2/Hz';
+      OVSVTY{IVTYPE} = 5;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 100.;
+      OVEXCV{IVTYPE} = -99.;
+%;
+      IVTYPE = IVTYPE + 1;
+      OVKEYW{IVTYPE} = 'Swind';
+      OVSNAM{IVTYPE} = 'Swind';
+      OVLNAM{IVTYPE} = 'wind source term';
+      OVUNIT{IVTYPE} = 'm2';
+      OVSVTY{IVTYPE} = 5;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 100.;
+      OVEXCV{IVTYPE} = -99.;
+%;
+      IVTYPE = IVTYPE + 1;
+      OVKEYW{IVTYPE} = 'Swcap';
+      OVSNAM{IVTYPE} = 'Swcap';
+      OVLNAM{IVTYPE} = 'whitecapping dissipation';
+      OVUNIT{IVTYPE} = 'm2';
+      OVSVTY{IVTYPE} = 5;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 100.;
+      OVEXCV{IVTYPE} = -99.;
+%;
+      IVTYPE = IVTYPE + 1;
+      OVKEYW{IVTYPE} = 'Sfric';
+      OVSNAM{IVTYPE} = 'Sfric';
+      OVLNAM{IVTYPE} = 'bottom friction dissipation';
+      OVUNIT{IVTYPE} = 'm2';
+      OVSVTY{IVTYPE} = 5;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 100.;
+      OVEXCV{IVTYPE} = -99.;
+%;
+      IVTYPE = IVTYPE + 1;
+      OVKEYW{IVTYPE} = 'Smud';
+      OVSNAM{IVTYPE} = 'Smud';
+      OVLNAM{IVTYPE} = 'fluid mud dissipation';
+      OVUNIT{IVTYPE} = 'm2';
+      OVSVTY{IVTYPE} = 5;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 100.;
+      OVEXCV{IVTYPE} = -99.;
+%;
+      IVTYPE = IVTYPE + 1;
+      OVKEYW{IVTYPE} = 'Ssurf';
+      OVSNAM{IVTYPE} = 'Ssurf';
+      OVLNAM{IVTYPE} = 'surf breaking dissipation';
+      OVUNIT{IVTYPE} = 'm2';
+      OVSVTY{IVTYPE} = 5;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 100.;
+      OVEXCV{IVTYPE} = -99.;
+%;
+      IVTYPE = IVTYPE + 1;
+      OVKEYW{IVTYPE} = 'Snl3';
+      OVSNAM{IVTYPE} = 'Snl3';
+      OVLNAM{IVTYPE} = 'triad interactions';
+      OVUNIT{IVTYPE} = 'm2';
+      OVSVTY{IVTYPE} = 5;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 100.;
+      OVEXCV{IVTYPE} = -99.;
+%;
+      IVTYPE = IVTYPE + 1;
+      OVKEYW{IVTYPE} = 'Snl4';
+      OVSNAM{IVTYPE} = 'Snl4';
+      OVLNAM{IVTYPE} = 'quadruplet interactions';
+      OVUNIT{IVTYPE} = 'm2';
+      OVSVTY{IVTYPE} = 5;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 100.;
+      OVEXCV{IVTYPE} = -99.;
+      OVEXCV{IVTYPE} = -99.;
+            
+%% Put into struct
+%------------------------
 
       DAT0.OVKEYW = OVKEYW;
       DAT0.OVSNAM = OVSNAM;
@@ -830,9 +937,8 @@ function varargout = swan_quantity
       DAT0.OVHEXP = OVHEXP;
       DAT0.OVEXCV = OVEXCV;
       
-      
 %% Restructure per parameter rather than per property
-%% ----------------------
+%------------------------
 
       for ipar=1:length(DAT0.OVKEYW)
        

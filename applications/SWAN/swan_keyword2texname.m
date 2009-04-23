@@ -49,8 +49,10 @@ function OUT = swan_keyword2texname(IN)
 %% input
 %------------------------
 
+   OPT.char_out = 0;
    if ischar(IN)
-      IN = cellstr(IN);
+   IN = cellstr(IN);
+   OPT.char_out = 1;
    end
    
 %% get database
@@ -67,7 +69,7 @@ function OUT = swan_keyword2texname(IN)
    
    end
    
-   if length(IN)==1 & ischar(IN)
+   if OPT.char_out
       OUT = char(OUT);
    end
 
