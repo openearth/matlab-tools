@@ -156,7 +156,7 @@ classdef tbdocumentation
                 if ~isdir(fullfile(obj.targetdir,obj.help_location))
                     mkdir(fullfile(obj.targetdir,obj.help_location));
                 elseif obj.verbose
-                    disp('       help location already ecists');
+                    disp('       help location already exists');
                 end
                 if ~isdir(fullfile(obj.targetdir,obj.help_location,'html'))
                     mkdir(fullfile(obj.targetdir,obj.help_location,'html'));
@@ -291,7 +291,7 @@ classdef tbdocumentation
                 obj.helpcontentmainpage = 'html/blank.htm';
             end
             fprintf(fid,...
-                ['<tocitem target="' obj.helpcontentmainpage '">\n']);
+                ['<tocitem target="' strrep(obj.helpcontentmainpage,filesep,'/') '">\n']);
 
             % print table of content items
             for ili = 1:length(obj.contentitems)
@@ -528,7 +528,8 @@ classdef tbdocumentation
                 obj.toolbox(itb) = obj.toolbox(itb).structuredirs;
                 fcns = cat(2,{obj.toolbox(itb).functions.filename}',...
                     repmat({itb},size(obj.toolbox(itb).functions,1),1),...
-                    num2cell(permute(1:size(obj.toolbox(itb).functions,1),[2,1]))); % add relative path
+                    num2cell(permute(1:size(obj.toolbox(itb).functions,1),[2,1])),...
+                    {obj.toolbox(itb).functions.h1line}'); % add relative path
                 obj.allfunctions = cat(1,obj.allfunctions,fcns);
             end
         end
@@ -702,7 +703,11 @@ classdef tbdocumentation
             if ~isempty(mfileobj.syntax)
                 sntx = cellfun(@cat,repmat({2},size(mfileobj.syntax)),mfileobj.syntax,repmat({char(10)},size(mfileobj.syntax)),'UniformOutput',false);
             end
+            if isempty(sntx{1})
+                sntx{1} = 'none';
+            end
             tplstr = strrep(tplstr,'#SYNTAX',cat(2,sntx{:}));
+            TODO('include #INPUT and #OUTPUT and set to none if no text found');
             dscr = {''};
             if ~isempty(mfileobj.description)
                 dscr = cellfun(@cat,repmat({2},size(mfileobj.description)),mfileobj.description,repmat({char(10)},size(mfileobj.description)),'UniformOutput',false);
@@ -727,7 +732,7 @@ classdef tbdocumentation
                         fcnref = cat(2,tomain,strrep(fullfile(functioncalls{callfcnid,1:2},[callfcn,'.html']),filesep,'/'));
                         str = strrep(callstr,'#CALLEDHTML',fcnref);
                         str = strrep(str,'#CALLEDNAME',callfcn);
-                        str = strrep(str,'#CALLEDH1LINE','mfileobj.callh1line...');
+                        str = strrep(str,'#CALLEDH1LINE',functioncalls{callfcnid,6});
                         newcallstr = cat(2,newcallstr,str);
                     end
                 end
@@ -749,7 +754,7 @@ classdef tbdocumentation
                         fcnref = cat(2,tomain,strrep(fullfile(functioncalls{callfcnid,1:2},[callfcn,'.html']),filesep,'/'));
                         str = strrep(callstr,'#CALLHTML',fcnref);
                         str = strrep(str,'#CALLNAME',callfcn);
-                        str = strrep(str,'#CALLH1LINE','mfileobj.callh1line...');
+                        str = strrep(str,'#CALLH1LINE',functioncalls{callfcnid,6});
                         newcallstr = cat(2,newcallstr,str);
                     end
                 end
