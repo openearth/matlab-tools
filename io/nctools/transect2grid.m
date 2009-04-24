@@ -11,26 +11,26 @@ function [grid] = transect2grid(transectStruct)
     % we have to determine how much data we want to allocate to store all
     % transects.
     % find all id's
-    [transect_ids, unique_indices] = unique([transectStruct.id]);
-    [transect_ids, sorted_indices] = sort(transect_ids);
+    [transectIdArray, uniqueIdArray] = unique([transectStruct.id]);
+    [transectIdArray, sortedIdArray] = sort(transectIdArray);
     
-    grid.id = transect_ids;
+    grid.id = transectIdArray;
 
     % find areacodes per id corresponding names
-    unique_transectStruct = transectStruct(unique_indices);
-    sorted_unique_transectStruct = unique_transectStruct(sorted_indices);
-    grid.areacode = [sorted_unique_transectStruct.areacode];
-    grid.areaname = char({sorted_unique_transectStruct.areaname});
-    grid.coastwardDistance = [sorted_unique_transectStruct.metre];
+    uniqueTransectStruct = transectStruct(uniqueIdArray);
+    sortedUniqueTransectStruct = uniqueTransectStruct(sortedIdArray);
+    grid.areaCode = [sortedUniqueTransectStruct.areaCode];
+    grid.areaName = char({sortedUniqueTransectStruct.areaName});
+    grid.alongshoreCoordinate = [sortedUniqueTransectStruct.alongshoreCoordinate];
     
     % find all years
     grid.year = sort(unique([transectStruct.year]));
-    % find seaward distance vector
-    minSeawardDistance = min(cellfun(@min, {transectStruct.seawardDistance}));
-    maxSeawardDistance = max(cellfun(@max, {transectStruct.seawardDistance}));
-    grid.seawardDistance = minSeawardDistance:5:maxSeawardDistance;
+    % compute cross-shore grid
+    minCrossShoreCoordinate = min(cellfun(@min, {transectStruct.crossShoreCoordinate}));
+    maxCrossShoreCoordinate = max(cellfun(@max, {transectStruct.crossShoreCoordinate}));
+    grid.crossShoreCoordinate = minCrossShoreCoordinate:5:maxCrossShoreCoordinate;
 
     
     % display result
-    disp(['created a ' num2str(length(grid.seawardDistance)) ' by ' num2str(length(grid.id)) ' by ' num2str(length(grid.year)) ' grid.']);
+    disp(['created a ' num2str(length(grid.crossShoreCoordinate)) ' by ' num2str(length(grid.id)) ' by ' num2str(length(grid.year)) ' grid.']);
 end

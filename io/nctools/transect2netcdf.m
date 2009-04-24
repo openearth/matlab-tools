@@ -6,29 +6,33 @@ function transect2netcdf(filename, transectStruct)
 % TODO: define the function header here ...
 function transect = mergetransects(transects)
     % create sorting columns, most precise data at the end
-    col1 = arrayfun(@(x) (-max(x.seawardDistance)), transects); % most landward maximum seaward last
+    col1 = arrayfun(@(x) (-max(x.crossShoreCoordinate)), transects); % most landward maximum seaward last
     col2 = arrayfun(@(x) (x.dateBathy), transects); % latest dates at the end
     col3 = arrayfun(@(x) (x.dateTopo), transects); % latest dates at the end
     col4 = arrayfun(@(x) (x.n), transects); % largest at the end
     
     [a, ia] = sortrows([col1;col2;col3;col4]);
     transect=transects(1);
-    new_x = sort(unique([transects.seawardDistance]));
-    new_h = zeros(size(new_x)) * NaN;
+    newX = sort(unique([transects.crossShoreCoordinate]));
+    newH = zeros(size(newX)) * NaN;
     for k = 1 : length(transects)
-        [c, ia, ib] = intersect(new_x , transects(k).seawardDistance); % find ids transect k
-        new_h(ia) = transects(k).height(ib);
+        [c, ia, ib] = intersect(newX , transects(k).crossShoreCoordinate); % find ids transect k
+        newH(ia) = transects(k).altitude(ib);
     end
-    transect.seawardDistance = new_x; % assign new grid
-    transect.height = new_h; % assign new heights
+    transect.crossShoreCoordinate = newX; % assign new grid
+    transect.altitude = newH; % assign new altitudes
 end
 
 %% Lookup variables
 % This assumes a grid already has been saved to the file
-yearArray = nc_varget(filename, 'year');
+yearArray = nc_varget(filename, 'time');
 transectIdArray = nc_varget(filename, 'id');
-seawardDistanceArray = nc_varget(filename, 'seaward_distance');
-missing = nc_attget(filename, 'height', '_FillValue');
+crossShoreCoordinateArray = nc_varget(filename, 'cross_shore');
+try
+    missing = nc_attget(filename, 'altitude', '_FillValue');
+catch
+    missing = -9999;
+end
 %% Write data to file
 % Loop over time first, this is most efficient if it's the slowest
 % moving dimension.
@@ -37,7 +41,7 @@ for i = 1 : length(yearArray)
     %block to store to netcdf. Storing more data at once is faster. But
     %it will require more memory.
     transectsForYearStruct = transectStruct([transectStruct.year] == year);
-    datablock = repmat(missing, length(transectIdArray), length(seawardDistanceArray));
+    datablock = repmat(missing, length(transectIdArray), length(crossShoreCoordinateArray));
     for j = 1 : length(transectIdArray)
         id = transectIdArray(j);
         transect = transectsForYearStruct([transectsForYearStruct.id] == id);
@@ -46,10 +50,11 @@ for i = 1 : length(yearArray)
         elseif length(transect) > 1 % if more than one dataset per year and per ray is present, the data is merged
             transect = mergetransects(transect);
         end
-        [c, ia, ib] = intersect(seawardDistanceArray, transect.seawardDistance);
-        datablock(j, ia) = transect.height(ib);
+        [c, ia, ib] = intersect(crossShoreCoordinateArray, transect.crossShoreCoordinate);
+        datablock(j, ia) = transect.altitude(ib);
     end
-    nc_varput(filename, 'height', datablock, [i-1, 0, 0], [1, size(datablock)]); % (/i-1, 0, 0/) -> in fortran
+    nc_varput(filename, 'time', year, [i-1], [1]);
+    nc_varput(filename, 'altitude', datablock, [i-1, 0, 0], [1, size(datablock)]); % (/i-1, 0, 0/) -> in fortran
 end
 
 end

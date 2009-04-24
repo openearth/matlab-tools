@@ -12,10 +12,10 @@ function [transect] = createtransectstruct()
     % start creating a single transect structure
     % TODO: find better names for these variables.
     
-    transect.areacode = 0;
-    transect.areaname = '';
+    transect.areaCode = 0;
+    transect.areaName = '';
     transect.year = 0;
-    transect.metre = 0;
+    transect.alongshoreCoordinate = 0;
     transect.dateTopo = 0;
     transect.dateBathy = 0;
     transect.n = 0;
@@ -26,11 +26,11 @@ function [transect] = createtransectstruct()
     % id=3 interpolation data (between beach and off shore)
     % id=4 overlap off shore data
     % id=5 non-overlap off shore data
-    transect.origin = []; % vector of origin codes 
-    % Seaward distance from pole;
-    transect.seawardDistance = [];
-    % Height
-    transect.height = [];
+    transect.origin = []; % row vector of origin codes 
+    % row vector of cross-shore distance from pole;
+    transect.crossShoreCoordinate = [];
+    % row vector of altitude
+    transect.altitude = [];
     transect.id = 0;
 end
 

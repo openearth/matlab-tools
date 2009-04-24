@@ -42,7 +42,7 @@ end
 
 
 %% lookup the header variables
-global areaname areacode coastwardDistances;
+global areaname areacode alongshoreCoordinates;
 if isempty(areaname)
     % temporary read from local file until website is updated
     areaname = cellstr(nc_varget(filename, 'areaname'));
@@ -50,8 +50,8 @@ end
 if isempty(areacode)
     areacode = nc_varget(filename, 'areacode');
 end
-if isempty(coastwardDistances)
-    coastwardDistances = nc_varget(filename, 'coastward_distance');
+if isempty(alongshoreCoordinates)
+    alongshoreCoordinates = nc_varget(filename, 'alongshore');
 end
 global id
 if isempty(id)
@@ -68,9 +68,9 @@ if (nargin == 4)
     else
         areaIndex = areacode == str2num(areaId);
     end
-    % next find the coastward indices
-    coastwardIndex = transectId == coastwardDistances;
-    id_index = find(areaIndex & coastwardIndex);
+    % next find the alongshore indices
+    alongshoreIndex = transectId == alongshoreCoordinates;
+    id_index = find(areaIndex & alongshoreIndex);
     if isempty(id_index)
         error(['transect not found with id: ' num2str(transectId)]);
     end    
@@ -111,7 +111,7 @@ transect.area = areaname{id_index};
 
 transect.areacode = num2str(areacode(id_index));
 
-transect.transectID = num2str(coastwardDistances(id_index), '%05d');
+transect.transectID = num2str(alongshoreCoordinates(id_index), '%05d');
 
 transect.year = num2str(year(year_index)); %'1965'
 
@@ -121,17 +121,17 @@ transect.year = num2str(year(year_index)); %'1965'
 transect.soundingID = num2str(year(year_index)); % '1965'
 
 
-global seawardDistance
-if isempty(seawardDistance)
-    seawardDistance = nc_varget(filename, 'seaward_distance');
+global crossShoreCoordinate
+if isempty(crossShoreCoordinate)
+    crossShoreCoordinate = nc_varget(filename, 'cross_shore');
 end
-seawardDistanceZeroIndex = find(seawardDistance == 0);
+crossShoreCoordinateZeroIndex = find(crossShoreCoordinate == 0);
 
-x = nc_varget(filename,'x', [id_index, 0], [1, length(seawardDistance)]);
-transect.xRD = x(seawardDistanceZeroIndex); %in EPSG:28992
+x = nc_varget(filename,'x', [id_index, 0], [1, length(crossShoreCoordinate)]);
+transect.xRD = x(crossShoreCoordinateZeroIndex); %in EPSG:28992
 
-y = nc_varget(filename,'y', [id_index, 0], [1, length(seawardDistance)]);
-transect.yRD = y(seawardDistanceZeroIndex); %in EPSG:28992
+y = nc_varget(filename,'y', [id_index, 0], [1, length(crossShoreCoordinate)]);
+transect.yRD = y(crossShoreCoordinateZeroIndex); %in EPSG:28992
 
 global angle 
 if isempty(angle)
@@ -156,18 +156,18 @@ transect.fielddata = []; %[1x1 struct]
 
 global MHW 
 if isempty(MHW)
-    MHW = nc_varget(filename,'MHW');
+    MHW = nc_varget(filename,'mean_high_water');
 end
 transect.MHW = MHW(id_index); 
 
 global MLW
 if isempty(MLW)
-    MLW = nc_varget(filename,'MLW');
+    MLW = nc_varget(filename,'mean_low_water');
 end
 transect.MLW = MLW(id_index); 
 
-transect.xi = seawardDistance; %[1264x1 double]
-height  = nc_varget(filename, 'height', [year_index-1, id_index-1, 0], [1, 1, length(seawardDistance)]);
+transect.xi = crossShoreCoordinate; %[1264x1 double]
+height  = nc_varget(filename, 'altitude', [year_index-1, id_index-1, 0], [1, 1, length(crossShoreCoordinate)]);
 transect.zi = height; %[1264x1 double]
 
 %TODO: Check where these are calculated
