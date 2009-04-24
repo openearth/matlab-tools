@@ -12,7 +12,7 @@ function [Volume result Boundaries] = getVolume(varargin)
 %   The horizontal boundaries (UpperBoundary and LowerBoundary) do not
 %   have to be straight (the x-coordinates of these boundaries have to be ascending).
 %   Input can specified in the order of the input list below, or as PropertyName 
-%   PropertyValue pairs.
+%   PropertyValue pairs (or combined, propertyName propertyValue pairs at the end).
 %
 %   syntax:
 %   [Volume result Boundaries] =
@@ -30,15 +30,50 @@ function [Volume result Boundaries] = getVolume(varargin)
 %       propertyname propertyvalue pairs:
 %           suppressMessEqualBoundaries     boolean (true/false)
 %
-%   example:
+%   Output:
+%   Volume     = resulting volume
+%   result     = structure containing the results
+%   Boundaries = structure containing the boundary information
 %
-%   See also getInputSize
+%   Example
+%   getVolume
 %
-% -------------------------------------------------------------
-% Copyright (c) WL|Delft Hydraulics 2004-2008 FOR INTERNAL USE ONLY
-% Version:      Version 2.1, January 2008 (Version 2.0, December 2007)
-% By:           <C.(Kees) den Heijer (email: C.denHeijer@tudelft.nl)>
-% -------------------------------------------------------------
+%   See also createEmptyDUROSResult
+
+%   --------------------------------------------------------------------
+%   Copyright (C) 2009 Delft University of Technology
+%       C.(Kees) den Heijer
+%
+%       C.denHeijer@TUDelft.nl	
+%
+%       Faculty of Civil Engineering and Geosciences
+%       P.O. Box 5048
+%       2600 GA Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% Created: 24 Apr 2009
+% Created with Matlab version: 7.4.0.287 (R2007a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 tic;
 %% check and inventorise input
@@ -322,8 +357,8 @@ result.info.time = toc;
 
 %%
 function [x, z] = removeDoublePoints(x, z)
-[x sortid]=sort(x);
-z=z(sortid);
+[x sortid] = sort(x);
+z = z(sortid);
 
 threshold = 1e-10;
 if length(unique(x))~=length(x)
