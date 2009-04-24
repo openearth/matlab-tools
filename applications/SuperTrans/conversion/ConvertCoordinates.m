@@ -155,7 +155,7 @@ function [x2,y2,err]=ConvertCoordinates(x1,y1,cs1,tp1,cs2,tp2,CoordinateSystems,
                transcodes(1)=NaN;
            end
            if ~isnan(idef2)
-               transcodes(2)=transcodes1(idef2);
+               transcodes(2)=transcodes2(idef2);
            else
                transcodes(2)=NaN;
            end
