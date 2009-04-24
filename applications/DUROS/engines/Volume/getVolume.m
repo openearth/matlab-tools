@@ -68,11 +68,11 @@ function [Volume result Boundaries] = getVolume(varargin)
 % Created: 24 Apr 2009
 % Created with Matlab version: 7.4.0.287 (R2007a)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
 % $Keywords: $
 
 tic;
