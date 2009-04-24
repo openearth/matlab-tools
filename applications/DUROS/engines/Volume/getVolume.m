@@ -42,14 +42,20 @@ function [Volume result Boundaries] = getVolume(varargin)
 
 tic;
 %% check and inventorise input
-idPropName = cellfun(@ischar, varargin);
-id = nargin;
-if any(idPropName)
-    id = find(idPropName)-1;
-end
-OPTstructArgs = [repmat({[]}, 1, 16)...
-    {'suppressMessEqualBoundaries', false}];
-OPTstructArgs(1:2:16) = {...
+% input can be specified directly, provided that the order of the input
+% arguments corresponds with propertyName (specified below), or as
+% propertyName propertyValue pairs. Also a combination is possible as long
+% as it starts with direct input (in the right order), followed by
+% propertyName propertyValue pairs (regardless of order).
+
+% derive identifier of the argument just before the first propertyName or 
+% alternatively the identifier of the last input argument (if no
+% propertyName propertyValue pairs are used)
+idPropName = [cellfun(@ischar, varargin) true];
+id = find(idPropName, 1, 'first')-1;
+
+% define propertyNames and (default) propertyValues (most are empty by default)
+propertyName = {...
     'x'...
     'z'...
     'UpperBoundary'...
@@ -57,10 +63,18 @@ OPTstructArgs(1:2:16) = {...
     'LandwardBoundary'...
     'SeawardBoundary'...
     'x2'...
-    'z2'};
-OPTstructArgs(2:2:2*id) = varargin(1:id);
+    'z2'...
+    'suppressMessEqualBoundaries'};
+propertyValue = [...
+    varargin(1:id)...
+    repmat({[]}, 1, length(propertyName)-id-1) false];
+
+% create property structure, including the directly specified input
+OPTstructArgs = reshape([propertyName; propertyValue], 1, 2*length(propertyName));
 OPT = struct(OPTstructArgs{:});
 
+% update property structure with input specified as propertyName
+% propertyValue pairs
 OPT = setProperty(OPT, varargin{id+1:end});
 
 inputSize = structfun(@size, OPT,...
