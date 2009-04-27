@@ -88,7 +88,7 @@ function [result, messages] = getDuneErosion(xInitial, zInitial, D50, WL_t, Hsig
 % $Author$
 % $Revision$
 % $HeadURL$
-% $Keywords: dune dunes erosion DUROS DUROS+ VTV beach
+% $Keywords: dune dunes erosion DUROS DUROS+ VTV beach &
 
 %% Initiate variables
 % In this step the input is verified. If one of the input arguments is not
@@ -149,10 +149,7 @@ if DuneErosionSettings('get', 'DUROS')
     % The shape of the erosion profile is provided by the following
     % formulation:
     %
-    % <html>
-    % <a latex=\left
-    % (\frac{7.6}{H_{s0}} \right )y = \left [\left \left (\frac{7.6}{H_{s0}} \right )^{1.28} \left (\frac{12}{T_{p}} \right )^{0.45} \left (\frac{w}{0.0268} \right )^{0.56}x@plus;18\right ]-2.0" target="_blank"><img src="http://latex.codecogs.com/gif.latex?\left (\frac{7.6}{H_{s0}} \right )y = \left [\left \left (\frac{7.6}{H_{s0}} \right )^{1.28} \left (\frac{12}{T_{p}} \right )^{0.45} \left (\frac{w}{0.0268} \right )^{0.56}x+18\right ]-2.0" title="\left (\frac{7.6}{H_{s0}} \right )y = \left [\left \left (\frac{7.6}{H_{s0}} \right )^{1.28} \left (\frac{12}{T_{p}} \right )^{0.45} \left (\frac{w}{0.0268} \right )^{0.56}x+18\right ]-2.0" /></a>
-    % </html>
+    % $$\left( {{{7,6} \over {H_{0s} }}} \right)y = 0,4714\left[ {\left( {{{7,6} \over {H_{0s} }}} \right)^{1,28} \left( {{{12} \over {T_p }}} \right)^{0,45} \left( {{w \over {0,0268}}} \right)^{0,56} x + 18} \right]^{0,5}  - 2,0$$
     % 
     writemessage(100,'Start first step: Get and fit DUROS profile');
     [result, Volume, x00min, x0max, x0except, x0min] = getDuneErosion_DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t,false);
