@@ -1,12 +1,12 @@
 function varargout = odv_read(fname)
-%ODV_READ   read file in ODV format
+%ODVREAD   read file in ODV format (still test project)
 %
-% D = ODV_READ(fname)
+%   D = ODVREAD(fname)
 %
-% loadsx file in ASCII Ocean Data vIewer format.
+% loads ASCII file in Ocean Data Viewer (ODV) format.
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
-%See also: 
+%See also: ODVDISP
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004 Delft University of Technology
@@ -64,6 +64,23 @@ function varargout = odv_read(fname)
 %    Additional user defined metavariables (text or numeric).
 % ---------------------------------------------------------------------------------------------------------
 
+% 15.6 Making Cruise Maps
+% You can create full-page, high quality stations maps showing the currently selected sta-tions of the open data collection using View>Window Layout>Layout Templates>Full Screen Map. Station maps may also be produced if you only have access to the station metadata (e.g., station postions, dates, etc.), but the actual station data are unaccessible. Here is how to proceed:
+% * In an empty directory on your disk create an ASCII file that contains the longi-tude, latitude coordinates of the stations or way-points of your track. This file should have a descriptive name (e.g., CruiseTrack_xxx.txt, where xxx represents the name of your cruise) and it should comply with the generic ODV spreadsheet format specifications.
+% As first line of the file use the following header line (note that columns are TAB sepa-rated): Cruise Station Type yyyy-mm-ddThh:mm Longitude [degrees_east] Latitude [degrees_north] Bot. Depth [m] Dummy1 Dummy2 Immediately following the header line, add one data line for each station or cruise track node and provide the following information for the respective station or node:
+%
+% ---------------------------------------------------------------------------------------------------------
+% Cruise                    % The name of the cruise
+% Station                   % Station label or number
+% Type                      %"B"
+% yyyy-mm-ddThh:mm          % Station date and time
+% Longitude [degrees_east]  % Decimal longitude of station
+% Latitude [degrees_north]  % Decimal latitude of station
+% Bot. Depth [m]            % Bottom depth at station location or "0"
+% Dummy1                    % "0"
+% Dummy2                    % "0"
+% ---------------------------------------------------------------------------------------------------------
+
 % 17.3 Generic ODV Spreadsheet Format
 % The ODV generic spreadsheet format is the recommended format for exchange of data beween data producers and data users. The generic spreadsheet format allows auto-matic import of data into ODV collections, not requiring any user interaction. ODV also uses the generic spreadsheet format when exporting data from collections, and the ex-ported datasets may easily be re-imported into the same or a different collection, possi-bly after editing and modifying the data in the file. Exporting data from the open collec-tion into a generic spreadsheet file is done via the Export>ODV Spreadsheet option. ODV generic spreadsheet files use the ASCII encoding, and the preferred file extension is .txt. Station metadata and data are provided in separate columns, where metadata and data columns can be in arbitrary order. Every metadata and data column may have an optional quality flag column. A quality flag column may appear anywhere after the metadata or data column it belongs to. Quality flag values may be in any one of the sup-ported quality flag schemes (see Table 17-5). The total number of columns in the file is unlimited. All non-comment lines (see below) in the file must have the same number of columns. Individual columns are separated by TAB or semicolon ; . Typically, ODV spreadsheet files hold the data of many stations from many cruises. The number of lines in a file, as well as the length of individual lines is unlimited. There are three types of lines in ODV generic spreadsheet files: (1) comment lines, (2) the column labels line, and (3) data lines.
 
@@ -74,7 +91,12 @@ function varargout = odv_read(fname)
 % There has to be exactly one line containing the labels of the columns. This column labels line must always be present, it must appear before any data line and it must be the first non-comment line in the file.
 % ODV generic spreadsheet files must provide columns for all mandatory metavariables (see Table 3-3), and the following labels must be used exactly as given as column labels: Cruise, Station, Type, one of the supported date/time formats, Longitude [degrees_east], Latitude [degrees_north], Bot. Depth [m]. The recommended date/time format is ISO 8601, which combines date and time as yyyy-mm-ddThh:mm:ss.sss in a single column. The labels Lon (°E) and Lat (°N) for longitude and latitude are still supported for back-ward compatibility.
 
-fname = 'result_CTDCAST_75___41-260409.txt'
+   % TO DO: scan first for # data lines, to preallocate  D.rawdata??
+   % TO DO: interpret SDN keyword in header
+
+   disp('error: ODVREAD is still a test project!')
+   
+   OPT.delimiter = char(9);% columns are TAB sepa-rated [ODV manual section 15.6]
 
    D.filename     = fname;
    iostat         = 1;
@@ -110,7 +132,7 @@ fname = 'result_CTDCAST_75___41-260409.txt'
       
          %try
 
-            %% Implement actual reading of the ASCII file here
+            %% I) Header lines
             %--------------------------------
             
             rec   = fgetl(fid);
@@ -121,45 +143,59 @@ fname = 'result_CTDCAST_75___41-260409.txt'
             rec                    = fgetl(fid);
             end
             
+            %% II) Column label lines
+            %--------------------------------
+
             D.lines.column_labels = rec;
             
             ivar = 0;
-            [variable,rec]    = strtok(rec)
+            [variable,rec]    = strtok(rec,OPT.delimiter);
             while ~isempty(variable)
-               ivar              = ivar + 1
-               D.variables{ivar} = variable
-               [variable,rec]    = strtok(rec)
+               ivar              = ivar + 1;
+               D.variables{ivar} = variable;
+               [variable,rec]    = strtok(rec,OPT.delimiter);
             end
             
-            D.index.cruise    = find(strcmpi(D.variables,'cruise'))
-            D.index.station   = find(strcmpi(D.variables,'Station'))
-            D.index.type      = find(strcmpi(D.variables,'type'))
-            D.index.time      = find(strcmpi(D.variables,'yyyy-mm-ddThh:mm:ss.sss'))
-            D.index.latitude  = find(strcmpi(D.variables,'Latitude'))
-            D.index.longitude = find(strcmpi(D.variables,'Longitude'))
-          
-            D.index.latitude  = D.index.latitude  +1;
-            D.index.longitude = D.index.longitude +1;
+            nvar = length( D.variables);
             
-                idat = 0;
+            %% Find column index of mandarory variables
+            %--------------------------------
+
+            D.index.cruise    = find(strcmpi(D.variables,'cruise'));
+            D.index.station   = find(strcmpi(D.variables,'Station'));
+            D.index.type      = find(strcmpi(D.variables,'type'));
+            D.index.time      = find(strcmpi(D.variables,'yyyy-mm-ddThh:mm:ss.sss'));
+            D.index.latitude  = find(strcmpi(D.variables,'Latitude [degrees_north]'));
+            D.index.longitude = find(strcmpi(D.variables,'Longitude [degrees_east]'));
+            D.index.bot_depth = find(strcmpi(D.variables,'Bot. Depth [m]'));
+          
+            %% III) Data lines
+            %--------------------------------
+            
+                idat   = 0;
+                D.rawdata = cell(nvar,1);
             while 1
                 idat = idat + 1;
                 rec = fgetl(fid);
                 if ~ischar(rec), break, end
-               [D.data.cruise{idat} ,rec]  = strtok(rec);
-               [D.data.station{idat},rec] = strtok(rec);
-               [D.data.type{idat}   ,rec] = strtok(rec);
-               [D.data.type2{idat}  ,rec] = strtok(rec);
-               [D.data.time{idat}   ,rec] = strtok(rec);
-               [D.data.lat{idat}    ,rec] = strtok(rec);
-               [D.data.lon{idat}    ,rec] = strtok(rec);
+                for ivar=1:nvar
+                  [D.rawdata{ivar,idat} ,rec] = strtok(rec,OPT.delimiter);
+                end
+               %[D.data.cruise{idat} ,rec] = strtok(rec,OPT.delimiter);
+               %[D.data.station{idat},rec] = strtok(rec,OPT.delimiter);
+               %[D.data.type{idat}   ,rec] = strtok(rec,OPT.delimiter);
+               %[D.data.time{idat}   ,rec] = strtok(rec,OPT.delimiter);
+               %[D.data.lat{idat}    ,rec] = strtok(rec,OPT.delimiter);
+               %[D.data.lon{idat}    ,rec] = strtok(rec,OPT.delimiter);
             end
 
-            D.data.lat = str2num(char(D.data.lat));
-            D.data.lon = str2num(char(D.data.lon));
-
-            %% Find column of mandarory variables
-            %--------------------------------
+            D.data.cruise    =             {D.rawdata{D.index.cruise   ,:}};
+            D.data.station   =             {D.rawdata{D.index.station  ,:}};
+            D.data.type      =             {D.rawdata{D.index.type     ,:}};
+            D.data.lat       = str2num(char(D.rawdata{D.index.latitude ,:}));
+            D.data.lon       = str2num(char(D.rawdata{D.index.longitude,:}));
+            D.data.datenum   = datenum(char(D.rawdata{D.index.time     ,:}),'yyyy-mm-ddTHH:MM:SS');
+            D.data.bot_depth = str2num(char(D.rawdata{D.index.bot_depth,:}));
 
          %catch
          % 
@@ -177,7 +213,7 @@ fname = 'result_CTDCAST_75___41-260409.txt'
       
    end % if length(tmp)==0
    
-   D.iomethod = '$id$';
+   D.iomethod = '$Id$';
    D.read_at  = datestr(now);
    D.iostatus = iostat;
 
