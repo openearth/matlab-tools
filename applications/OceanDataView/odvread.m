@@ -5,7 +5,10 @@ function varargout = odv_read(fname)
 %
 % loads ASCII file in Ocean Data Viewer (ODV) format.
 %
-%See web : <a href="http://odv.awi.de">odv.awi.de</a>
+% ODV is one of the standard file formats of 
+% <a href="http://www.SeaDataNet.org">www.SeaDataNet.org</a> of which <a href="http://www.nodc.nl">www.nodc.nl</a> is a member.
+%
+%See web : <a href="http://odv.awi.de">odv.awi.de</a> (Ocean Data Viewer)
 %See also: ODVDISP
 
 %   --------------------------------------------------------------------
@@ -175,9 +178,9 @@ function varargout = odv_read(fname)
                 idat   = 0;
                 D.rawdata = cell(nvar,1);
             while 1
-                idat = idat + 1;
                 rec = fgetl(fid);
                 if ~ischar(rec), break, end
+                idat = idat + 1;
                 for ivar=1:nvar
                   [D.rawdata{ivar,idat} ,rec] = strtok(rec,OPT.delimiter);
                 end
@@ -188,14 +191,32 @@ function varargout = odv_read(fname)
                %[D.data.lat{idat}    ,rec] = strtok(rec,OPT.delimiter);
                %[D.data.lon{idat}    ,rec] = strtok(rec,OPT.delimiter);
             end
+            
+            if idat == 0
 
-            D.data.cruise    =             {D.rawdata{D.index.cruise   ,:}};
-            D.data.station   =             {D.rawdata{D.index.station  ,:}};
-            D.data.type      =             {D.rawdata{D.index.type     ,:}};
-            D.data.lat       = str2num(char(D.rawdata{D.index.latitude ,:}));
-            D.data.lon       = str2num(char(D.rawdata{D.index.longitude,:}));
-            D.data.datenum   = datenum(char(D.rawdata{D.index.time     ,:}),'yyyy-mm-ddTHH:MM:SS');
-            D.data.bot_depth = str2num(char(D.rawdata{D.index.bot_depth,:}));
+               disp(['Found empty file: ',fname])
+
+               D.rawdata        = {[]};
+               D.data.cruise    = {['']}; % {} gives error with char
+               D.data.station   = {['']}; % {} gives error with char
+               D.data.type      = {['']}; % {} gives error with char
+               D.data.lat       =  [nan];
+               D.data.lon       =  [nan];
+               D.data.datenum   =  [0];  % datestr gives error on NaN
+               D.data.bot_depth =  [nan];
+
+            else
+
+               D.data.cruise    =             {D.rawdata{D.index.cruise   ,:}};
+               D.data.station   =             {D.rawdata{D.index.station  ,:}};
+               D.data.type      =             {D.rawdata{D.index.type     ,:}};
+               D.data.lat       = str2num(char(D.rawdata{D.index.latitude ,:}));
+               D.data.lon       = str2num(char(D.rawdata{D.index.longitude,:}));
+               D.data.datenum   = datenum(char(D.rawdata{D.index.time     ,:}),'yyyy-mm-ddTHH:MM:SS');
+               D.data.bot_depth = str2num(char(D.rawdata{D.index.bot_depth,:}));
+               
+            end
+
 
          %catch
          % 
