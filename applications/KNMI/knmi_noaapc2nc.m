@@ -177,7 +177,7 @@
         ifld = ifld + 1;
       nc(ifld).Name         = 'longitude_cen';
       nc(ifld).Nctype       = 'float';
-      nc(ifld).Dimension    = {'y_cen','x_cen'};
+      nc(ifld).Dimension    = {'x_cen','y_cen'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'longitude');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_east');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'longitude'); % standard name
@@ -189,7 +189,7 @@
         ifld = ifld + 1;
       nc(ifld).Name         = 'latitude_cen';
       nc(ifld).Nctype       = 'float';
-      nc(ifld).Dimension    = {'y_cen','x_cen'};
+      nc(ifld).Dimension    = {'x_cen','y_cen'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'latitude');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_north');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'latitude'); % standard name
@@ -230,18 +230,18 @@
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_Celcius');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'sea_surface_skin_temperature'); % standard name
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
+      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
       nc(ifld).Attribute(6) = struct('Name', 'grid_mapping'   ,'Value', 'polar_stereographic');
 
-      nc(ifld).Attribute(5) = struct('Name', 'valid_min'      ,'Value', D.data_min_value);
-      nc(ifld).Attribute(6) = struct('Name', 'valid_max'      ,'Value', D.data_max_value);
+      nc(ifld).Attribute(7) = struct('Name', 'valid_min'      ,'Value', D.data_min_value);
+      nc(ifld).Attribute(8) = struct('Name', 'valid_max'      ,'Value', D.data_max_value);
       
       if OPT.pack
       nc(ifld).Nctype       = 'int'; %'byte'; %short
-      nc(ifld).Attribute(5) = struct('Name', 'valid_min'      ,'Value', D.count_min_value);
-      nc(ifld).Attribute(6) = struct('Name', 'valid_max'      ,'Value', D.count_max_value);
-      nc(ifld).Attribute(7) = struct('Name', 'scale_factor'   ,'Value', D.gain);
-      nc(ifld).Attribute(8) = struct('Name', 'add_offset'     ,'Value', D.offset);
+      nc(ifld).Attribute(9) = struct('Name', 'valid_min'      ,'Value', D.count_min_value);
+      nc(ifld).Attribute(10) = struct('Name', 'valid_max'      ,'Value', D.count_max_value);
+      nc(ifld).Attribute(11) = struct('Name', 'scale_factor'   ,'Value', D.gain);
+      nc(ifld).Attribute(12) = struct('Name', 'add_offset'     ,'Value', D.offset);
       end
 
      %nc(ifld).Attribute(6) = struct('Name', 'cell_methods'   ,'Value', 'point');x
@@ -263,8 +263,8 @@
       nc_varput(outputfile, 'x_cor'        , [1:(D.nx+1)]);
       nc_varput(outputfile, 'y_cor'        , [1:(D.ny+1)]);
       if OPT.ll
-      nc_varput(outputfile, 'longitude_cen', D.loncen);
-      nc_varput(outputfile, 'latitude_cen' , D.latcen);
+      nc_varput(outputfile, 'longitude_cen', D.loncen');
+      nc_varput(outputfile, 'latitude_cen' , D.latcen');
       end % if OPT.ll
       nc_varput(outputfile, 'time'         , D.datenum' - OPT.refdatenum);
       if OPT.pack
