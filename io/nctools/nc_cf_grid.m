@@ -1,8 +1,8 @@
-function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
-%NC_CF_STATIONTIMESERIES   load/plot one variable from stationTimeSeries netCDF file
+function [D,M] = nc_cf_grid(ncfile,varargin)
+%NC_CF_GRID   load/plot one variable from netCDF grid file
 %
-%  [D,M] = nc_cf_stationTimeSeries(ncfile)
-%  [D,M] = nc_cf_stationTimeSeries(ncfile,varname)
+%  [D,M] = nc_cf_grid(ncfile)
+%  [D,M] = nc_cf_grid(ncfile,varname)
 %
 % plots/loads timeseries of variable varname from netCDF 
 % file ncfile and returns data and meta-data
@@ -12,32 +12,27 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 %       * varname is the variable name to be extracted (must have dimension time)
 %         When varname is not supplied, a dialog box is offered.
 %
-% A stationTimeSeries netCDF file is defined in
-%   <a href="https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions">https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions</a>
+% A netCDF (curvi-linear) grid file is defined in
+%   <a href="http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/ch04.html">http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/ch04.html</a>
 % and must have global attributes:
 %  *  Conventions   : CF-1.4
-%  *  CF:featureType: stationTimeSeries
 % the following assumption must be valid:
 %  * lat, lon and time coordinates must always exist as defined in the CF convenctions.
 %
-% The plot contains (ncfile, station_id, lon, lat) in title and (long_name, units) as ylabel.
+% The plot contains (ncfile) in title and (long_name, units) on colorbar.
 %
-%  [D,M] = nc_cf_stationTimeSeries(ncfile,varname,<keyword,value>)
+%  [D,M] = nc_cf_grid(ncfile,varname,<keyword,value>)
 %
 % The following <keyword,value> are implemented
 % * plot   (default 1)
 %
 % Examples:
 %
-% directory = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/'
+%    directory = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/'
 %
-% nc_cf_stationTimeSeries([directory,'/rijkswaterstaat/waterbase.nl/sea_surface_height/id1-DENHDR-196101010000-200801010000.nc'],...
-%                         'sea_surface_height')
+%    nc_cf_grid([directory,'knmi/NOAA/mom/1990_mom/5/K020590M.nc'],'SST')
 %
-% nc_cf_stationTimeSeries([directory,''knmi/etmgeg/etmgeg_269.nc'],...
-%                         'wind_speed_mean')
-%
-%See also: SNCTOOLS, NC_CF_GRID
+%See also: SNCTOOLS, NC_CF_STATIONTIMESERIES
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -73,8 +68,9 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 % $Keywords$
 
 %TO DO: handle indirect time mapping where there is no variable time(time)
-%TO DO: handle multiple stations in one file 
 %TO DO: allow to get all time related parameters, and plot them on by one (with pause in between)
+%TO DO: document <keyword,value> pairs
+%TO DO: test also simple case where dimensions are have standard_name latitude, longitude
 
 %% Keyword,values
 %------------------
@@ -95,9 +91,9 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    
 %% Check whether is time series
 %------------------
-   index = findstrinstruct(INF.Attribute,'Name','CF:featureType');
+   index = findstrinstruct(INF.Attribute,'Name','Conventions');
    if isempty(index)
-      error(['netCDF file is not stationTimeSeries: needs Attribute Name=CF:featureType'])
+      error(['netCDF file is not a grid: needs Attribute Conventions=CF-1.4'])
    end
 
 %% Get datenum
@@ -112,48 +108,107 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 %------------------
 
    lonname        = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'longitude');
+   if isempty(lonname)
+      error('no longitude present')
+   else
    M.lon.units    = nc_attget(ncfile,lonname,'units');
    D.lon          = nc_varget(ncfile,lonname);
-
-   latname        = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'latitude');
-   M.lat.units    = nc_attget(ncfile,latname,'units');
-   D.lat          = nc_varget(ncfile,latname);
-
-   idname         = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'station_id');
-   D.station_id   = nc_varget(ncfile,idname);
-
-   if isnumeric(D.station_id)
-   D.station_name = num2str(D.station_id);
-   else
-   D.station_name =         D.station_id;
    end
 
-%% Find specified (or all parameters) that have time as dimension
+   latname        = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'latitude');
+   if isempty(latname)
+      error('no latitude present')
+   else
+   M.lat.units    = nc_attget(ncfile,latname,'units');
+   D.lat          = nc_varget(ncfile,latname);
+   end
+
+   idname         = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'station_id');
+
+%% Find specified (or all parameters) that have latitude AND longitude as either
+%  * dimension
+%  * coordinates attribute
 %  and select one.
 %------------------
 
    if isempty(OPT.varname)
    
-      timevar = [];
+      coordvar = [];
       for ivar=1:length(INF.Dataset)
-         index = any(strcmpi(INF.Dataset(ivar).Dimension,'time')); % use any if for case like {'locations','time}
-         if index==1
-            timevar = [timevar ivar];
+      
+         lat = false;
+         lon = false;
+         
+         %%   direct mapping: find dimension latitude, longitude OR
+         
+         
+         for idim=1:length(INF.Dataset(ivar).Dimension)
+
+            if any(cell2mat((strfind(INF.Dataset(ivar).Dimension(idim),'latitude'))))
+               lat = true;
+            end
+	    
+            if any(cell2mat((strfind(INF.Dataset(ivar).Dimension(idim),'longitude'))))
+               lon = true;
+            end
+         
          end
+         
+         %% indirect mapping: find index of coordinates attribute
+         if (lat && lon)
+            coordvar = [coordvar ivar];
+         else
+
+            atrindex = atrname2index(INF.Dataset(ivar),'coordinates');
+            
+            if ~isempty(atrindex)
+            
+               %% check whether coordinates attribute refers to variables that have standard_name latitude & longitude
+               coordvarnames = strtokens2cell(INF.Dataset(ivar).Attribute(atrindex).Value);
+               
+               lat = false;
+               lon = false;
+               
+               for ii=1:length(coordvarnames)
+               
+                  varindex = varname2index(INF,coordvarnames{ii});
+               
+                  %% find index of standard_name attribute
+                  atrindex = atrname2index(INF.Dataset(varindex),'standard_name');
+               
+                  if ~isempty(atrindex)
+                     if strcmpi(INF.Dataset(varindex).Attribute(atrindex).Value,'latitude')
+                     lat=true;
+                     end
+                     if strcmpi(INF.Dataset(varindex).Attribute(atrindex).Value,'longitude')
+                     lon=true;
+                     end
+                  end
+	       
+               end
+            
+               if lat && lon 
+                  coordvar = [coordvar ivar];
+               end
+            
+            end % if ~isempty(atrindex)
+            
+         end % if ~(lat && lon)
+         
       end
       
-      timevarlist = cellstr(char(INF.Dataset(timevar).Name));
+      coordvarlist = cellstr(char(INF.Dataset(coordvar).Name));
 
 
-      [ii, ok] = listdlg('ListString', timevarlist, .....
+      [ii, ok] = listdlg('ListString', coordvarlist, .....
                       'SelectionMode', 'single', ...
                        'PromptString', 'Select one variable', ....
                                'Name', 'Selection of variable',...
                            'ListSize', [500, 300]); 
                                
       
-      varindex    = timevar(ii);
-      OPT.varname = timevarlist{ii};
+      varindex    = coordvar(ii);
+      OPT.varname = coordvarlist{ii};
       
    else
    
@@ -191,16 +246,13 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    if OPT.plot
    if ~isempty(OPT.varname)
 
-      plot    (D.datenum,D.(OPT.varname))
-      datetick('x')
+      pcolorcorcen(D.lon,D.lat,D.(OPT.varname))
+      tickmap ('ll')
       grid     on
       title   ({mktex(INF.Filename),...
-               ['"',D.station_name,'"',...
-                ' (',num2str(D.lon),'\circE',...
-                ',',num2str(D.lat),'\circN',...
-                ')']})
-      ylabel  ([mktex(M.(OPT.varname).long_name),' [',...
-                mktex(M.(OPT.varname).units    ),']']);
+                datestr(D.datenum)})
+      colorbarwithvtext([mktex(M.(OPT.varname).long_name),' [',...
+                         mktex(M.(OPT.varname).units    ),']']);
    
    end
    end

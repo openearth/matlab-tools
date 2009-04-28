@@ -3,12 +3,17 @@ function C = strtokens2cell(STR)
 %
 %   C = strtokens2cell(STR)
 %
-% rewrites space delimitered keyword list to cell array
+% rewrites space delimitered keyword list into cell array
+%
 % example:
 %
-% C = strtokens2cell('a b')
-% gives C a sin
-% C{1}='a';C{2}='b'
+%    C = strtokens2cell('a b')
+%
+% gives C{1}='a';C{2}='b'
+%
+%   C = 
+%  
+%      'a'    'b'
 %
 % See also: STRTOK, EXPRESSIONSFROMSTRING
 
