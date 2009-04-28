@@ -110,11 +110,6 @@ function [result, messages] = getDuneErosion(varargin)
 writemessage('init');
 
 %% check and inventorise input
-idPropName = cellfun(@ischar, varargin);
-id = nargin;
-if any(idPropName)
-    id = find(idPropName)-1;
-end
 OPT = struct(...
     'xInitial', [-250 -24.375 5.625 55.725 230.625 1950]',...
     'zInitial', [15 15 3 0 -3 -14.4625]',...
@@ -122,26 +117,8 @@ OPT = struct(...
     'WL_t', 5,...
     'Hsig_t', 9,...
     'Tp_t', 12);
-varNames = fieldnames(OPT)';
-% create propertyName propertyValue cell array (varargin like) with empty
-% values for the first input arguments where propertyNames are omitted
-OPTstructArgs = reshape([varNames(1:id); repmat({[]}, 1, id)], 1, 2*id);
-% add the actual input arguments in the cell array
-OPTstructArgs(2:2:2*id) = varargin(1:id);
-% extend the cell array with the propertyName propertyValue pairs part of
-% the input
-OPTstructArgs = [OPTstructArgs varargin(id+1:end)];
-% include the input in the OPT-structure
-[OPT, Set, Default] = setProperty(OPT, OPTstructArgs{:});
-% find which variables are still default
-defaultsid = cell2mat(struct2cell(Default)');
-for varName = varNames(defaultsid)
-    % use getdefaults to generate the relevant messages
-    getdefaults(varName{1}, OPT.(varName{1}), 1);
-end
-% put OPT-structure contents into separate variables
-[xInitial zInitial D50 WL_t Hsig_t Tp_t] = deal(OPT.xInitial, OPT.zInitial, OPT.D50, OPT.WL_t, OPT.Hsig_t, OPT.Tp_t);
 
+[xInitial zInitial D50 WL_t Hsig_t Tp_t] = parseDUROSinput(OPT, varargin{:});
 
 NoDUROSResult = false;
 AdditionalErosionMax = DuneErosionSettings('get', 'AdditionalErosionMax');
@@ -327,3 +304,33 @@ result(1).info.input = struct(...
     'WL_t', WL_t,...
     'Hsig_t', Hsig_t,...
     'Tp_t', Tp_t);
+
+end
+%%
+function [xInitial zInitial D50 WL_t Hsig_t Tp_t] = parseDUROSinput(OPT, varargin)
+
+idPropName = cellfun(@ischar, varargin);
+id = nargin;
+if any(idPropName)
+    id = find(idPropName)-1;
+end
+varNames = fieldnames(OPT)';
+% create propertyName propertyValue cell array (varargin like) with empty
+% values for the first input arguments where propertyNames are omitted
+OPTstructArgs = reshape([varNames(1:id); repmat({[]}, 1, id)], 1, 2*id);
+% add the actual input arguments in the cell array
+OPTstructArgs(2:2:2*id) = varargin(1:id);
+% extend the cell array with the propertyName propertyValue pairs part of
+% the input
+OPTstructArgs = [OPTstructArgs varargin(id+1:end)];
+% include the input in the OPT-structure
+[OPT, Set, Default] = setProperty(OPT, OPTstructArgs{:});
+% find which variables are still default
+defaultsid = cell2mat(struct2cell(Default)');
+for varName = varNames(defaultsid)
+    % use getdefaults to generate the relevant messages
+    getdefaults(varName{1}, OPT.(varName{1}), 1);
+end
+% put OPT-structure contents into separate variables
+[xInitial zInitial D50 WL_t Hsig_t Tp_t] = deal(OPT.xInitial, OPT.zInitial, OPT.D50, OPT.WL_t, OPT.Hsig_t, OPT.Tp_t);
+end
