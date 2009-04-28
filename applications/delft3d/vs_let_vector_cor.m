@@ -1,7 +1,8 @@
 function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,ElementIndex,varargin);
-%VS_GET_VECTOR_COR    Reads U,V vector data to corners from a trim- or com-file.
+%VS_LET_VECTOR_COR    Reads U,V vector data to corners from a trim- or com-file.
 %
-%   [U,V]=vs_let(NFStruct,'GroupName',GroupIndex,{'ElementName','ElementName'},ElementIndex,<'quiet'>)
+%   [U,V]=vs_let_vector_cor(NFStruct,'GroupName',GroupIndex,{'ElementName','ElementName'},ElementIndex,<'quiet'>)
+%
 %   Reads the vector field in GLOBAL co-ordinates at the 
 %   specified timesteps from the specified NEFIS file 
 %   (GroupIndex=TimeStep) by
@@ -12,7 +13,8 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
 %   (v  ) reorienting using the local grid angle, that has first
 %         been interpolated to the cornert points as well..
 %
-%   [U,V,UKSI,UETA]=VS_LET_VECTOR(..);
+%   [U,V,UKSI,UETA]=vs_let_vector_cor(..);
+%
 %   Returns also the original velocities at the velocity points
 %   NOTE that those have different dimesions than each other 
 %   and than the zeta array.
@@ -22,7 +24,7 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
 %   m: [2 mmax-1] can be requested
 %
 %   E.g.: to get velocities at one grid point (m,n) for all layers and all times:
-%   [u,v] = vs_let_vector(trimfile,'map-series',{0},{'U1','V1'},{n,m,1:kmax});
+%   [u,v] = vs_let_vector_cor(trimfile,'map-series',{0},{'U1','V1'},{n,m,1:kmax});
 %   gives u and v as: [number_of_times x nmax x mmax x kmax]
 %   Use m=0 for m=2:mmax-1, n=0 for n=2:nmax-1, k=0 for n=1:kmax
 %
@@ -138,7 +140,7 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
    end;
    
    if strcmpi(layer_model,'Z-MODEL')
-      disp('vs_let_vector_cen might not yet work correctly for velocities below highest layer in Z-MODEL due to absence of masks (set values of -999 to 0).')
+      disp('vs_let_vector_cor might not yet work correctly for velocities below highest layer in Z-MODEL due to absence of masks (set values of -999 to 0).')
    end
    
 %% Define staggered ElementIndices

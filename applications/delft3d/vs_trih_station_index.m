@@ -1,7 +1,7 @@
-function indices = vs_get_trih_station_index(trih,varargin)
-%VS_GET_TRIH_STATION_INDEX   get index of history station (obs point)
+function indices = vs_trih_station_index(trih,varargin)
+%VS_TRIH_STATION_INDEX   get index of history station (obs point)
 %
-% index = VS_GET_TRIH_STATION_INDEX(trih,stationname)
+%   index = vs_trih_station_index(trih,stationname)
 %
 % returns the index of a station called stationname.
 %

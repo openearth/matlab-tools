@@ -1,5 +1,5 @@
 function varargout = vs_time(NFSstruct,varargin),
-%D3D_TIMEFRAME
+%VS_TIME   reads time information from NEFIS file
 %
 % T = vs_time(NEFIS_file_handle)
 % Read all time data from NEFIS into a struct.

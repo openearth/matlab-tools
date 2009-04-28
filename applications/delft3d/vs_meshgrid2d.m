@@ -1,11 +1,11 @@
 function varargout=vs_meshgrid2d(varargin),
-%D3D_MESHGRID2D   reads time-independent grid info from trim/com file
+%VS_MESHGRID2D   reads time-independent grid info from trim/com file
 %
-% vs_meshgrid2d reads all the relevant griddata
+%         G = vs_meshgrid2d(NFSstruct,timestep)
+%         G = vs_meshgrid2d(NFSstruct,timestep,G)
 %
-%         G = meshgridD3D(NFSstruct,timestep)
-%         G = meshgridD3D(NFSstruct,timestep,G)
-% Reads time-independent grid properties.
+% reads all the relevant griddata of 
+% time-independent grid properties.
 %
 % Arrays have m as first and n as second index.
 %

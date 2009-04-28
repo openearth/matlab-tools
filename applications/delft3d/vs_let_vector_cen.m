@@ -1,7 +1,8 @@
 function varargout=VS_LET_VECTOR_CEN(NFStruct,GroupName,GroupIndex,ElementNames,ElementIndex,varargin);
-%VS_GET_VECTOR_CEN Reads U,V vector data to centers from a trim- or com-file.
+%VS_LET_VECTOR_CEN Reads U,V vector data to centers from a trim- or com-file.
 %
-%   [U,V]=vs_let(NFStruct,'GroupName',GroupIndex,{'ElementName','ElementName'},ElementIndex,<'quiet'>)
+%   [U,V]=vs_let_vector_cen(NFStruct,'GroupName',GroupIndex,{'ElementName','ElementName'},ElementIndex,<'quiet'>)
+%
 %   Reads the vector field in GLOBAL co-ordinates at the 
 %   specified timesteps from the specified NEFIS file 
 %   (GroupIndex=TimeStep) by
@@ -11,7 +12,8 @@ function varargout=VS_LET_VECTOR_CEN(NFStruct,GroupName,GroupIndex,ElementNames,
 %   (iv ) applying drying masks at centers,
 %   (v  ) reorienting using the local grid angle.
 %
-%   [U,V,UKSI,UETA]=VS_LET_VECTOR(..);
+%   [U,V,UKSI,UETA]=vs_let_vector_cen(..);
+%
 %   Returns also the original velocities at the velocity points
 %   NOTE that those have different dimesions than each other 
 %   and than the zeta array.
@@ -21,7 +23,7 @@ function varargout=VS_LET_VECTOR_CEN(NFStruct,GroupName,GroupIndex,ElementNames,
 %   m: [2 mmax-1] can be requested
 %
 %   E.g.: to get velocities at one grid point (m,n) for all layers and all times:
-%   [u,v] = vs_let_vector(trimfile,'map-series',{0},{'U1','V1'},{n,m,1:kmax});
+%   [u,v] = vs_let_vector_cen(trimfile,'map-series',{0},{'U1','V1'},{n,m,1:kmax});
 %   gives u and v as: [number_of_times x nmax x mmax x kmax]
 %   Use m=0 for m=2:mmax-1, n=0 for n=2:nmax-1, k=0 for n=1:kmax
 %

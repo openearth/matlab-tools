@@ -1,7 +1,7 @@
 function scalar = vs_let_scalar(varargin)
-%VS_LET_SCALAR   Reads scalalr data defined on grid centers from a trim- or com-file.
+%VS_LET_SCALAR   Reads scalar data defined on grid centers from a trim- or com-file.
 %
-%scalar = vs_let_scalar(NEFISstruct,groupname,groupindex,elementname)
+%     scalar = vs_let_scalar(NEFISstruct,groupname,groupindex,elementname)
 %
 %  (1) removes the first and last rows and columns for COM and TRIM file, 
 %      which are dummy (only) when you load the full matrix (elementindices 0).
@@ -12,7 +12,7 @@ function scalar = vs_let_scalar(varargin)
 %  © G.J. de Boer, 2006, TU Delft.
 %
 % See also:
-% VS_USE, VS_GET, VS_LET, VS_LET_VECTOR, VS_MAKS, VS_...
+% VS_USE, VS_GET, VS_LET, VS_LET_VECTOR_cen, VS_LET_VECTOR_cor, VS_MASK, VS_...
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
