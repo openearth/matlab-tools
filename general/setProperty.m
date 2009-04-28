@@ -26,9 +26,17 @@ function [OPT, Set, Default] = setProperty(OPT, varargin)
 % +------------------------------------------->
 % | function y = dosomething(x,'debug',1)
 % | OPT.debug  = 0;
-% | OPT        = setProperty(OPT, varargin{1:end});
+% | OPT        = setProperty(OPT, varargin{:});
 % | y          = x.^2;
 % | if OPT.debug; plot(x,y);pause; end
+% | 
+% +------------------------------------------->
+% | translate OPT structure to propertyName propertyValue cell array:
+% | OPT = struct(...
+% |     'propertyName1', 1,...
+% |     'propertyName2', 2);
+% | OPT        = setProperty(OPT, varargin{:});
+% | varcell = reshape([fieldnames(OPT)'; struct2cell(OPT)'], 1, 2*length(fieldnames(OPT)));
 % | 
 % +------------------------------------------->
 %
