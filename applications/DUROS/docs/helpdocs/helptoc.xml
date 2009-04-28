@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<toc version="1.0">
+
+<tocitem target="tocpages/getDuneErosion_doc.html">
+<tocitem target="tocpages/getDuneErosion_doc.html" image="$toolbox/matlab/icons/greencircleicon.gif">Getting started
+</tocitem>
+
+<tocitem target="html/DUROS/dir_DUROS.html" image="$toolbox/matlab/icons/foldericon.gif">DUROS
+<tocitem target="html/DUROS/engines/dir_engines.html" image="$toolbox/matlab/icons/foldericon.gif">engines
+<tocitem target="html/DUROS/engines/AdditionalErosion/dir_AdditionalErosion.html" image="$toolbox/matlab/icons/foldericon.gif">AdditionalErosion
+<tocitem target="html/DUROS/engines/AdditionalErosion/getDuneErosion_additional.html" image="$toolbox/matlab/icons/pageicon.gif">getDuneErosion_additional
+</tocitem>
+<tocitem target="html/DUROS/engines/AdditionalErosion/noAdditionaleErosionResult.html" image="$toolbox/matlab/icons/pageicon.gif">noAdditionaleErosionResult
+</tocitem>
+</tocitem>
+<tocitem target="html/DUROS/engines/BoundaryProfile/dir_BoundaryProfile.html" image="$toolbox/matlab/icons/foldericon.gif">BoundaryProfile
+<tocitem target="html/DUROS/engines/BoundaryProfile/fitBoundaryProfile.html" image="$toolbox/matlab/icons/pageicon.gif">fitBoundaryProfile
+</tocitem>
+<tocitem target="html/DUROS/engines/BoundaryProfile/getBoundaryProfile.html" image="$toolbox/matlab/icons/pageicon.gif">getBoundaryProfile
+</tocitem>
+<tocitem target="html/DUROS/engines/BoundaryProfile/getDuneErosion_volumetricboundaryprofile.html" image="$toolbox/matlab/icons/pageicon.gif">getDuneErosion_volumetricboundaryprofile
+</tocitem>
+</tocitem>
+<tocitem target="html/DUROS/engines/Crossings/dir_Crossings.html" image="$toolbox/matlab/icons/foldericon.gif">Crossings
+<tocitem target="html/blank.htm" image="$toolbox/matlab/icons/.gif">dummy
+</tocitem>
+</tocitem>
+<tocitem target="html/DUROS/engines/DUROSCalculation/dir_DUROSCalculation.html" image="$toolbox/matlab/icons/foldericon.gif">DUROSCalculation
+<tocitem target="html/DUROS/engines/DUROSCalculation/getDUROSprofile.html" image="$toolbox/matlab/icons/pageicon.gif">getDUROSprofile
+</tocitem>
+<tocitem target="html/DUROS/engines/DUROSCalculation/getDuneErosion_DUROS.html" image="$toolbox/matlab/icons/pageicon.gif">getDuneErosion_DUROS
+</tocitem>
+<tocitem target="html/DUROS/engines/DUROSCalculation/getParabolicProfile.html" image="$toolbox/matlab/icons/pageicon.gif">getParabolicProfile
+</tocitem>
+<tocitem target="html/DUROS/engines/DUROSCalculation/getRcParabolicProfile.html" image="$toolbox/matlab/icons/pageicon.gif">getRcParabolicProfile
+</tocitem>
+<tocitem target="html/DUROS/engines/DUROSCalculation/optimiseDUROS.html" image="$toolbox/matlab/icons/pageicon.gif">optimiseDUROS
+</tocitem>
+</tocitem>
+<tocitem target="html/DUROS/engines/DuneErosionSettings/dir_DuneErosionSettings.html" image="$toolbox/matlab/icons/foldericon.gif">DuneErosionSettings
+<tocitem target="html/DUROS/engines/DuneErosionSettings/DuneErosionSettings.html" image="$toolbox/matlab/icons/pageicon.gif">DuneErosionSettings
+</tocitem>
+<tocitem target="html/DUROS/engines/DuneErosionSettings/getDefaultDESettings.html" image="$toolbox/matlab/icons/pageicon.gif">getDefaultDESettings
+</tocitem>
+</tocitem>
+<tocitem target="html/DUROS/engines/Volume/dir_Volume.html" image="$toolbox/matlab/icons/foldericon.gif">Volume
+<tocitem target="html/DUROS/engines/Volume/getCumVolume.html" image="$toolbox/matlab/icons/pageicon.gif">getCumVolume
+</tocitem>
+</tocitem>
+<tocitem target="html/DUROS/engines/deshoaling/dir_deshoaling.html" image="$toolbox/matlab/icons/foldericon.gif">deshoaling
+<tocitem target="html/DUROS/engines/deshoaling/deshoal.html" image="$toolbox/matlab/icons/pageicon.gif">deshoal
+</tocitem>
+<tocitem target="html/DUROS/engines/deshoaling/getDuneErosion_deshoal.html" image="$toolbox/matlab/icons/pageicon.gif">getDuneErosion_deshoal
+</tocitem>
+<tocitem target="html/DUROS/engines/deshoaling/iterateWaveLength.html" image="$toolbox/matlab/icons/pageicon.gif">iterateWaveLength
+</tocitem>
+</tocitem>
+<tocitem target="html/DUROS/engines/DUROSCheckConditions.html" image="$toolbox/matlab/icons/pageicon.gif">DUROSCheckConditions
+</tocitem>
+<tocitem target="html/DUROS/engines/getIterationBoundaries.html" image="$toolbox/matlab/icons/pageicon.gif">getIterationBoundaries
+</tocitem>
+<tocitem target="html/DUROS/engines/getSteepPoints.html" image="$toolbox/matlab/icons/pageicon.gif">getSteepPoints
+</tocitem>
+</tocitem>
+<tocitem target="html/DUROS/getDuneErosion.html" image="$toolbox/matlab/icons/pageicon.gif">getDuneErosion
+</tocitem>
+</tocitem>
+<tocitem target="html/DUROS/dir_DUROS.html" image="$toolbox/matlab/icons/foldericon.gif">DUROS
+<tocitem target="html/DUROS/engines/dir_engines.html" image="$toolbox/matlab/icons/foldericon.gif">engines
+<tocitem target="html/DUROS/engines/AdditionalErosion/dir_AdditionalErosion.html" image="$toolbox/matlab/icons/foldericon.gif">AdditionalErosion
+<tocitem target="html/DUROS/engines/AdditionalErosion/getAdditionalErosion.html" image="$toolbox/matlab/icons/pageicon.gif">getAdditionalErosion
+</tocitem>
+</tocitem>
+<tocitem target="html/DUROS/engines/Crossings/dir_Crossings.html" image="$toolbox/matlab/icons/foldericon.gif">Crossings
+<tocitem target="html/DUROS/engines/Crossings/addXvaluesExactCrossings.html" image="$toolbox/matlab/icons/pageicon.gif">addXvaluesExactCrossings
+</tocitem>
+</tocitem>
+<tocitem target="html/DUROS/engines/Volume/dir_Volume.html" image="$toolbox/matlab/icons/foldericon.gif">Volume
+<tocitem target="html/blank.htm" image="$toolbox/matlab/icons/.gif">dummy
+</tocitem>
+</tocitem>
+<tocitem target="html/DUROS/engines/createEmptyDUROSResult.html" image="$toolbox/matlab/icons/pageicon.gif">createEmptyDUROSResult
+</tocitem>
+<tocitem target="html/DUROS/engines/getFallVelocity.html" image="$toolbox/matlab/icons/pageicon.gif">getFallVelocity
+</tocitem>
+<tocitem target="html/DUROS/engines/getFinalProfile.html" image="$toolbox/matlab/icons/pageicon.gif">getFinalProfile
+</tocitem>
+</tocitem>
+</tocitem>
+
+</tocitem>
+
+</toc>
