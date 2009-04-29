@@ -73,10 +73,10 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 %TO DO: test also simple case where dimensions are have standard_name latitude, longitude
 
 %% Keyword,values
-%------------------
 
    OPT.plot    = 1;
-   OPT.varname = [];
+   OPT.oned    = 0;
+   OPT.varname = []; % one if dimensions are (latitude,longitude), 0 if variables are (latitude,longitude)
    
    if nargin > 1
    OPT.varname = varargin{1};
@@ -85,27 +85,22 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
    OPT = setProperty(OPT,varargin{2:end});
 
 %% Load file info
-%------------------
 
    INF = nc_info(ncfile);
    
 %% Check whether is time series
-%------------------
    index = findstrinstruct(INF.Attribute,'Name','Conventions');
    if isempty(index)
       error(['netCDF file is not a grid: needs Attribute Conventions=CF-1.4'])
    end
 
 %% Get datenum
-%------------------
-
    timename        = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'time');
    M.datenum.units = nc_attget(ncfile,timename,'units');
    D.datenum       = nc_varget(ncfile,timename);
    D.datenum       = udunits2datenum(D.datenum,M.datenum.units); % convert units to datenum
    
 %% Get location info
-%------------------
 
    lonname        = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'longitude');
    if isempty(lonname)
@@ -129,7 +124,6 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 %  * dimension
 %  * coordinates attribute
 %  and select one.
-%------------------
 
    if isempty(OPT.varname)
    
@@ -141,7 +135,6 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
          
          %%   direct mapping: find dimension latitude, longitude OR
          
-         
          for idim=1:length(INF.Dataset(ivar).Dimension)
 
             if any(cell2mat((strfind(INF.Dataset(ivar).Dimension(idim),'latitude'))))
@@ -151,19 +144,24 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
             if any(cell2mat((strfind(INF.Dataset(ivar).Dimension(idim),'longitude'))))
                lon = true;
             end
-         
+            
          end
          
          %% indirect mapping: find index of coordinates attribute
          if (lat && lon)
+
             coordvar = [coordvar ivar];
+            D.lon    = D.lon(:)';
+            D.lat    = D.lat(:)';
+            OPT.oned = 1;
+         
          else
 
-            atrindex = atrname2index(INF.Dataset(ivar),'coordinates');
+            atrindex = nc_atrname2index(INF.Dataset(ivar),'coordinates');
             
             if ~isempty(atrindex)
             
-               %% check whether coordinates attribute refers to variables that have standard_name latitude & longitude
+               % check whether coordinates attribute refers to variables that have standard_name latitude & longitude
                coordvarnames = strtokens2cell(INF.Dataset(ivar).Attribute(atrindex).Value);
                
                lat = false;
@@ -171,10 +169,10 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
                
                for ii=1:length(coordvarnames)
                
-                  varindex = varname2index(INF,coordvarnames{ii});
+                  varindex = nc_varname2index(INF,coordvarnames{ii});
                
-                  %% find index of standard_name attribute
-                  atrindex = atrname2index(INF.Dataset(varindex),'standard_name');
+                  % find index of standard_name attribute
+                  atrindex = nc_atrname2index(INF.Dataset(varindex),'standard_name');
                
                   if ~isempty(atrindex)
                      if strcmpi(INF.Dataset(varindex).Attribute(atrindex).Value,'latitude')
@@ -213,7 +211,6 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
    else
    
    %% get index
-   %------------------
    
       nvar = length(INF.Dataset);
       
@@ -226,12 +223,10 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
    end
    
 %% get data
-%------------------
 
       D.(OPT.varname) = nc_varget(ncfile,OPT.varname);
       
 %% get Attributes
-%------------------
 
       nAttr = length(INF.Dataset(varindex).Attribute);
       for iAttr = 1:nAttr
@@ -241,12 +236,15 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
       end
 
 %% Plot
-%------------------
    
    if OPT.plot
    if ~isempty(OPT.varname)
 
+      if OPT.oned
+      pcolorcorcen(D.lon,D.lat,D.(OPT.varname)')
+      else
       pcolorcorcen(D.lon,D.lat,D.(OPT.varname))
+      end
       tickmap ('ll')
       grid     on
       title   ({mktex(INF.Filename),...
@@ -258,7 +256,6 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
    end
    
 %% Output
-%------------------
 
    if     nargout==1
       varargout = {D};
