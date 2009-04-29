@@ -310,7 +310,7 @@ end
 function [xInitial zInitial D50 WL_t Hsig_t Tp_t] = parseDUROSinput(OPT, varargin)
 
 idPropName = cellfun(@ischar, varargin);
-id = nargin;
+id = length(varargin);
 if any(idPropName)
     id = find(idPropName)-1;
 end
