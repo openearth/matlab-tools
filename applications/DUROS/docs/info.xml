@@ -8,7 +8,7 @@
 <name>DUROS+</name>
 <type>toolbox</type>
 <icon>icons\DeltaresLogo16.PNG</icon>
-<help_location>helpdocs</help_location>
+<help_location>duroshelpdocs</help_location>
 
 <list>
 
@@ -20,7 +20,7 @@
 
 <listitem>
 <label>Help</label>
-<callback>web(fullfile(DUROSdocroot,'helpdocs','tocpages','getDuneErosion_doc.html'),'-helpbrowser');</callback>
+<callback>docsearch thisisthetempmainpage</callback>
 <icon>icons\DeltaresLogo16.png</icon>
 </listitem>
 
