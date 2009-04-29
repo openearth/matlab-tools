@@ -7,7 +7,7 @@
 <name>OpenEarth</name>
 <type>toolbox</type>
 <icon>DeltaresLogo16.PNG</icon>
-<help_location>helpdocs</help_location>
+<help_location>oethelpdocs</help_location>
 
 <list>
 <listitem>
