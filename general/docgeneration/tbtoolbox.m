@@ -80,6 +80,7 @@ classdef tbtoolbox
             obj.functions = tbmfile(mfilesuni);
 
             %% order calls and calleds
+            obj.functions(cellfun(@isempty,{obj.functions.filename}'))=[]; % removes all scripts (use only functions)
             functionnames = {obj.functions.filename}';
             callsstr = {obj.functions.functioncalls}';
             [obj.calls obj.called] = deal(cell(size(functionnames)));
@@ -96,7 +97,7 @@ classdef tbtoolbox
                 end
             end
         end
-        function obj = structuredirs(obj)
+        function obj = structuredirs(obj,mergemaindirs)
             maindirs = obj.maindirs;
             dirnames = obj.dirs;
             filepaths = {obj.functions(:).path}';
@@ -138,13 +139,29 @@ classdef tbtoolbox
             dirstruct = tbtoolbox.createdirstruct;
             for imain = 1:length(maindirs)
                 maindir = strread(maindirs{imain},'%s','delimiter',[filesep filesep]);
-                dirstruct(imain).dirname = maindir{end};
-                dirstruct(imain).fulldirname = maindir{end};
-                indirid = cellfun(@isempty,pathcell(:,1));
-                dirstruct(imain).fcnref = filenames(indirid & maindirfileid==imain);
-                dirstruct(imain).fcnh1line = fileh1lines(indirid & maindirfileid==imain);
-                pathname = maindir{end};
-                dirstruct(imain).subdirs = tbtoolbox.adddirstodirstruct([],dircell(maindirid==imain,:),pathcell(maindirfileid==imain & ~indirid,:),filenames(maindirfileid==imain & ~indirid),pathname,fileh1lines(maindirfileid==imain & ~indirid));
+                if mergemaindirs
+                    indirid = cellfun(@isempty,pathcell(:,1));
+                    if isempty(dirstruct)
+                        dirstruct(1).fulldirname = maindir(end);
+                    else
+                        dirstruct.fulldirname = strrep([dirstruct.fulldirname{:}, ' ', maindir{end}],' ','_');
+                    end
+                    dirstruct.originaldirname = cat(1,dirstruct.originaldirname,maindir(end));
+                    dirstruct.dirname = strrep(fullfile(dirstruct.dirname,maindir{end}),filesep,'/');
+                    dirstruct.fcnref = cat(1,dirstruct.fcnref,filenames(indirid & maindirfileid==imain));
+                    dirstruct.fcnh1line = cat(1,dirstruct.fcnh1line,fileh1lines(indirid & maindirfileid==imain));
+                    if imain==length(maindirs)
+                        dirstruct.subdirs = tbtoolbox.adddirstodirstruct([],dircell,pathcell(~indirid,:),filenames(~indirid),dirstruct.fulldirname,fileh1lines(~indirid),maindir{end});
+                    end
+                else
+                    dirstruct(imain).dirname = maindir{end};
+                    dirstruct(imain).fulldirname = maindir{end};
+                    indirid = cellfun(@isempty,pathcell(:,1));
+                    dirstruct(imain).fcnref = filenames(indirid & maindirfileid==imain);
+                    dirstruct(imain).fcnh1line = fileh1lines(indirid & maindirfileid==imain);
+                    pathname = maindir{end};
+                    dirstruct(imain).subdirs = tbtoolbox.adddirstodirstruct([],dircell(maindirid==imain,:),pathcell(maindirfileid==imain & ~indirid,:),filenames(maindirfileid==imain & ~indirid),pathname,fileh1lines(maindirfileid==imain & ~indirid));
+                end
             end
             obj.dirstructure = dirstruct;
         end
@@ -319,7 +336,7 @@ classdef tbtoolbox
         end
     end
     methods (Access = 'private', Static = true)
-        function dirstruct = adddirstodirstruct(dirstruct,dirs,filepaths,filenames,pathname,fileh1lines)
+        function dirstruct = adddirstodirstruct(dirstruct,dirs,filepaths,filenames,pathname,fileh1lines,originaldirname)
             if isempty(dirstruct)
                 dirstruct = tbtoolbox.createdirstruct;
             end
@@ -328,6 +345,8 @@ classdef tbtoolbox
                 dirstruct(idr).dirname = newdirs{idr};
                 dirpathname = fullfile(pathname,newdirs{idr});
                 dirstruct(idr).fulldirname = dirpathname;
+                originaldirpathname = fullfile(originaldirname,newdirs{idr});
+                dirstruct(idr).originaldirname = originaldirpathname;
                 % files ref
                 indirid = strcmp(filepaths(:,1),newdirs{idr});
                 subdirspresent = size(filepaths,2)>1;
@@ -351,7 +370,7 @@ classdef tbtoolbox
                             fils = filenames(insubdirid,:);
                             fh1lines = fileh1lines(insubdirid);
                         end
-                        dirstruct(idr).subdirs = tbtoolbox.adddirstodirstruct([],subdirs,fp,fils,dirpathname,fh1lines);
+                        dirstruct(idr).subdirs = tbtoolbox.adddirstodirstruct([],subdirs,fp,fils,dirpathname,fh1lines,originaldirpathname);
                     end
                 end
             end
@@ -362,6 +381,7 @@ classdef tbtoolbox
             end
             str = struct(...
                 'dirname',dirnames,...
+                'originaldirname',dirnames,...
                 'fulldirname',dirnames,...
                 'fcnref',{},...
                 'fcnh1line',{},...

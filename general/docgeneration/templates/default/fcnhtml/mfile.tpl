@@ -78,6 +78,6 @@
         </center>
         </div>
         
-        <hr><address>Generated on #DATE by <strong>m2htmldoc</strong></address>
+        <hr><address>Generated on #DATE by <strong>tbdocumentation (OpenEarthTools)</strong></address>
     </body>
 </html>

@@ -45,8 +45,6 @@ classdef tbmfile
                     fclose(fid);
                     
                     iscomment = cellfun(@strncmp,cellfun(@strtrim,str,'UniformOutput',false),repmat({'%'},size(str)),repmat({1},size(str)));
-                    isemptyline = cellfun(@isempty,cellfun(@strtrim,str,'UniformOutput',false));
-                    iscodeline = ~iscomment & ~isemptyline;
                     ishelpblock = false(size(iscomment));
                     ishelpblock(2:find(~iscomment(2:end),1,'first')-1) = true;
                     
@@ -63,9 +61,10 @@ classdef tbmfile
                         hlpblock = {'No help defined!!!'};
                     else
                         %% filter important lines / text
-                        keys = {'descriptiondummy';'syntax:';'input:';'output:';'keywords';'% See also'};
+                        keys = {'descriptiondummy';'syntax:';'input:';'output:';'see also '};
+                        keysup = {'descriptiondummy';'Syntax:';'Input:';'Output:';'See also '};
                         keyid = nan(length(keys),2);
-                        props = {'description','syntax','input','output','keywords','seealso'};
+                        props = {'description','syntax','input','output','seealso'};
                         for ik = 1:length(keys)
                             id = find(~cellfun(@isempty,strfind(lower(hlpblock),lower(keys{ik}))),1,'first');
                             if ~isempty(id)
@@ -87,20 +86,47 @@ classdef tbmfile
                                 continue
                             end
                             ln = hlpblock(keyid(ik,1):keyid(ik,2),1);
+                            empt = false(size(ln));
+                            for iline = 1:size(ln,1)
+                                ln{iline} = strrep(ln{iline},keys{ik},'');
+                                ln{iline} = strrep(ln{iline},keysup{ik},'');
+                                ln{iline} = strtrim(strrep(ln{iline},upper(keys{ik}),''));
+                                if isempty(ln{iline})
+                                    empt(iline) = true;
+                                end
+                            end
                             ln(strcmp(strtrim(ln),'%'))=[];
+                            ln = ln(find(~empt,1,'first'):find(~empt,1,'last'));
                             if ~isempty(ln)
                                 obj(iargs).(fld) = ln;
+                            end
+                        end
+                        % filter keywords
+                        kwid = ~cellfun(@isempty,strfind(str,'$Keywords:'));
+                        if sum(kwid)>0
+                            kw = str{kwid};
+                            endid = max(strfind(kw,'$'))-1;
+                            if endid==min(strfind(kw,'$'))-1
+                                endid = length(kw);
+                            end
+                            keywords = strtrim(kw(min(strfind(kw,':'))+1:endid));
+                            if ~isempty(keywords)
+                                obj(iargs).keywords = strread(keywords,'%s',-1,'delimiter',' ');
                             end
                         end
                     end
                     obj(iargs).helpcomments = hlpblock;
                     
                     %% store file properties
-                    obj(iargs).h1line = hlpblock{1};
                     [obj(iargs).path obj(iargs).filename obj(iargs).ext] = fileparts(fname);
+                    h1linetmp = strrep(hlpblock{1},upper(obj(iargs).filename),'');
+                    h1linetmp = strrep(h1linetmp,lower(obj(iargs).filename),'');
+                    h1linetmp = strtrim(strrep(h1linetmp,obj(iargs).filename,''));
+                    if ~isempty(h1linetmp) && strcmp(h1linetmp(1),'-')
+                        h1linetmp = strtrim(h1linetmp(2:end));
+                    end
+                    obj(iargs).h1line = h1linetmp;
                     
-                    %% get keywords
-                    TODO('determine keywords');
                     
                     %% calls
                     callinf = getcallinfo(which(fname));

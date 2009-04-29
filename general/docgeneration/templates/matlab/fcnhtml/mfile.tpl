@@ -41,7 +41,7 @@
 <font size=+1 color="#990000"><b>This function calls:</b></font>
 <pre>
 <!-- #BEGINCALL -->
-<li><a href="#CALLHTML" class="code" title="#CALLNAME">#CALLNAME</a> - 	#CALLH1LINE</li>
+<li><a href="#CALLHTML" class="code" title="#CALLNAME">#CALLNAME</a> (#CALLH1LINE)</li>
 <!-- #ENDCALL -->
 
 
@@ -49,7 +49,7 @@
 <font size=+1 color="#990000"><b>This function is called by:</b></font>
 <pre>
 <!-- #BEGINCALLED -->
-<li><a href="#CALLEDHTML" class="code" title="#CALLEDNAME">#CALLEDNAME</a>	#CALLEDH1LINE</li>
+<li><a href="#CALLEDHTML" class="code" title="#CALLEDNAME">#CALLEDNAME</a> (#CALLEDH1LINE)</li>
 <!-- #ENDCALLED -->
 
 </code>
@@ -61,5 +61,5 @@
 </center>
 
 <br>
-<hr><address>Generated on #DATE by <strong>m2htmldoc</strong></address>
+<hr><address>Generated on #DATE by <strong>tbdocumentation (OpenEarthTools)</strong></address>
 </body></html>

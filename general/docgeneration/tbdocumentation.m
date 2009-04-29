@@ -47,6 +47,7 @@ classdef tbdocumentation
         helpcontentmainpage = '';
         contentitems = tbcontentitem;
         includecontents = true;
+        mergemaindirs = true;
 
         % help index
         indexitems = tbindexitem;
@@ -380,9 +381,6 @@ classdef tbdocumentation
                 tbdocumentation.makedotgraph(href2,references,names,obj.graphoptions,tgdir,name);
             end
         end
-%         function writehelpindexxml(obj)
-%             TODO('index functionality');
-%         end
         function writesearchdb(obj)
             % This is a matlab function
             builddocsearchdb(fullfile(obj.targetdir,obj.help_location));
@@ -398,24 +396,31 @@ classdef tbdocumentation
             % list all mfiles including properties
             mfiles = {};
             for itb = 1:length(obj.toolbox)
+                maintranslate = cell(length(obj.toolbox(itb).maindirs),3);
                 mfilepaths ={obj.toolbox(itb).functions(:).path}';
                 basepaths = cell(size(mfilepaths));
+                newbasepaths = cell(size(mfilepaths));
                 for imain = 1:length(obj.toolbox(itb).maindirs)
-                    md = obj.toolbox(itb).maindirs{imain};
-                    if strcmp(md(end),filesep)
-                        md = md(1:end-1);
-                        fsid = strfind(md,filesep);
-                        if isempty(fsid)
-                            fsid = 0;
-                        end
-                        basename =md(max(fsid)+1:end);
+                    % obtain dir info
+                    maintranslate{imain,1} = obj.toolbox(itb).maindirs{imain};
+                    if strcmp(maintranslate{imain,1}(end),filesep)
+                        maintranslate{imain,1}(end) = [];
                     end
-                    id = ~cellfun(@isempty,strfind(mfilepaths,md)) | ~cellfun(@isempty,strfind(mfilepaths,[md filesep]));
-                    basepaths(id) = {basename};
-                    mfilepaths = cellfun(@strrep,mfilepaths,repmat({cat(2,md,filesep)},size(mfilepaths)),repmat({''},size(mfilepaths)),'UniformOutput',false);
-                    mfilepaths = cellfun(@strrep,mfilepaths,repmat({md},size(mfilepaths)),repmat({''},size(mfilepaths)),'UniformOutput',false);
+                    id = max(strfind(maintranslate{imain,1},filesep));
+                    maintranslate{imain,2} = maintranslate{imain,1}(id+1:end);
+                    if length(obj.toolbox(itb).dirstructure)==length(obj.toolbox(itb).maindirs)
+                        maintranslate{imain,3} = obj.toolbox(itb).dirstructure(imain).fulldirname;
+                    else
+                        maintranslate{imain,3} = obj.toolbox(itb).dirstructure(1).fulldirname;
+                    end
+
+                    id = ~cellfun(@isempty,strfind(mfilepaths,maintranslate{imain,1})) | ~cellfun(@isempty,strfind(mfilepaths,[maintranslate{imain,1} filesep]));
+                    basepaths(id) = maintranslate(imain,2);
+                    newbasepaths(id) = maintranslate(imain,3);
+                    mfilepaths = cellfun(@strrep,mfilepaths,repmat({cat(2,maintranslate{imain,1},filesep)},size(mfilepaths)),repmat({''},size(mfilepaths)),'UniformOutput',false);
+                    mfilepaths = cellfun(@strrep,mfilepaths,repmat({maintranslate{imain,1}},size(mfilepaths)),repmat({''},size(mfilepaths)),'UniformOutput',false);
                 end
-                mfileinfo = cat(2,basepaths,mfilepaths,obj.allfunctions);
+                mfileinfo = cat(2,basepaths,mfilepaths,obj.allfunctions,newbasepaths);
                 mfiles = cat(1,mfiles,mfileinfo);
             end
             dirpath = fullfile(obj.targetdir,obj.help_location,'html');
@@ -456,6 +461,7 @@ classdef tbdocumentation
                     end
                     dirstructemp = obj.toolbox(itb).dirstructure(imain);
                     dirstructemp.subdirs = [];
+                    dirstructemp.dirname = dirstructemp.fulldirname;
                     tbdocumentation.dir2html(dirstructemp,...
                         dirpath,... % target dir
                         fullfile(obj.tpldir_maindir,'maindir.tpl'),... % template dir
@@ -473,6 +479,12 @@ classdef tbdocumentation
                             obj.verbose);
                     end
                 end
+                                
+                if obj.includemastergraph
+                    % delete temp files
+                    delete(fullfile(obj.targetdir,obj.help_location,'toolboxgraphs',[graphname,'.dot']));
+                    delete(fullfile(obj.targetdir,obj.help_location,'toolboxgraphs',[graphname,'.map']));
+                end
 
                 % list all functions
 
@@ -486,7 +498,7 @@ classdef tbdocumentation
                     if obj.verbose
                         disp(['           ' obj.toolbox(itb).functions(ifcn).filename]);
                     end
-                    trgdirname = fullfile(docdir,mfiles{ifcn,1},mfiles{ifcn,2});
+                    trgdirname = fullfile(docdir,mfiles{ifcn,7},mfiles{ifcn,2});
 
                     obj.toolbox(itb).functions(ifcn).targetdir = trgdirname;
                     obj.toolbox(itb).functions(ifcn).htmltemplate = obj.tpldir_fcn;
@@ -525,7 +537,7 @@ classdef tbdocumentation
             for itb = 1:length(obj.toolbox)
                 obj.toolbox(itb) = obj.toolbox(itb).analyze;
                 obj.toolboxanalyzed(itb) = true;
-                obj.toolbox(itb) = obj.toolbox(itb).structuredirs;
+                obj.toolbox(itb) = obj.toolbox(itb).structuredirs(obj.mergemaindirs);
                 fcns = cat(2,{obj.toolbox(itb).functions.filename}',...
                     repmat({itb},size(obj.toolbox(itb).functions,1),1),...
                     num2cell(permute(1:size(obj.toolbox(itb).functions,1),[2,1])),...
@@ -577,6 +589,7 @@ classdef tbdocumentation
 
                     relgraphlocation = [repmat('../',1,numel(strfind(dirstruct.fulldirname,filesep))+2), 'toolboxgraphs','/', graphname, '.png'];
                     tplstr = strrep(tplstr,'#GRAPH',relgraphlocation);
+                    
                 end
             end
 
@@ -609,7 +622,6 @@ classdef tbdocumentation
             fclose(fihtml);
         end
         function mfile2html(mfileobj,mainpath,functioncalls,includegraph,graphoptions)
-            %             TODO('Include making graphs if specified');
             tpl = fullfile(mfileobj.htmltemplate,'mfile.tpl');
             if isempty(tpl) || ~exist(tpl,'file')
                 warning('Template could not be found, default used.'); %#ok<WNTAG>
@@ -646,7 +658,7 @@ classdef tbdocumentation
                             callid(namesid,2) = true;
                             refid = strcmp(names,functioncalls{id,3});
                             href(selfid,refid) = 1;
-                            references(refid) = {['#TOMAIN',strrep(fullfile(functioncalls{id,1:3}),filesep,'/')]};
+                            references(refid) = {['#TOMAIN',strrep(fullfile(functioncalls{id,7},functioncalls{id,2:3}),filesep,'/')]};
                         end
                     end
                     for icalled = 1:length(called)
@@ -656,7 +668,7 @@ classdef tbdocumentation
                             callid(namesid,2) = true;
                             refid = strcmp(names,functioncalls{id,3});
                             href(refid,selfid) = 1;
-                            references(refid) = {['#TOMAIN',strrep(fullfile(functioncalls{id,1:3}),filesep,'/')]};
+                            references(refid) = {['#TOMAIN',strrep(fullfile(functioncalls{id,7},functioncalls{id,2:3}),filesep,'/')]};
                         end
                     end
                     idclear = sum(callid,2)==0;
@@ -673,6 +685,9 @@ classdef tbdocumentation
 
                         graphlocation = [trgname, '.png'];
                         tplstr = strrep(tplstr,'#GRAPH',graphlocation);
+                        
+                        delete(fullfile(trgdir,[trgname '.map']));
+                        delete(fullfile(trgdir,[trgname '.dot']));
                     end
                     % Make graph and include (see dir2html)
                 else
@@ -699,26 +714,47 @@ classdef tbdocumentation
             tplstr = strrep(tplstr,'#TOTPL',totpl);
 
             % concat strings vertically
-            sntx = {''};
+            % Syntax
             if ~isempty(mfileobj.syntax)
                 sntx = cellfun(@cat,repmat({2},size(mfileobj.syntax)),mfileobj.syntax,repmat({char(10)},size(mfileobj.syntax)),'UniformOutput',false);
-            end
-            if isempty(sntx{1})
-                sntx{1} = 'none';
+            else
+                sntx = {'none specified...'};
             end
             tplstr = strrep(tplstr,'#SYNTAX',cat(2,sntx{:}));
-            TODO('include #INPUT and #OUTPUT and set to none if no text found');
-            dscr = {''};
+            
+            % description
             if ~isempty(mfileobj.description)
                 dscr = cellfun(@cat,repmat({2},size(mfileobj.description)),mfileobj.description,repmat({char(10)},size(mfileobj.description)),'UniformOutput',false);
+            else
+                dscr = {'none specified...'};
             end
             tplstr = strrep(tplstr,'#DESCRIPTION',cat(2,dscr{:}));
-            hlpbl = {''};
+
+            % Input
+            if ~isempty(mfileobj.input)
+                inp = cellfun(@cat,repmat({2},size(mfileobj.input)),mfileobj.input,repmat({char(10)},size(mfileobj.input)),'UniformOutput',false);
+            else
+                inp = {'none specified...'};
+            end
+            tplstr = strrep(tplstr,'#INPUT',cat(2,inp{:}));
+
+            % Output
+            if ~isempty(mfileobj.output)
+                outp = cellfun(@cat,repmat({2},size(mfileobj.output)),mfileobj.output,repmat({char(10)},size(mfileobj.output)),'UniformOutput',false);
+            else
+                outp = {'none specified...'};
+            end
+            tplstr = strrep(tplstr,'#OUTPUT',cat(2,outp{:}));
+
+            % Helpblock
             if ~isempty(mfileobj.helpcomments)
                 hlpbl = cellfun(@cat,repmat({2},size(mfileobj.helpcomments)),mfileobj.helpcomments,repmat({char(10)},size(mfileobj.helpcomments)),'UniformOutput',false);
+            else
+                hlpbl = {'none specified...'};
             end
             tplstr = strrep(tplstr,'#HELPBLOCK',cat(2,hlpbl{:}));
             
+            % iscalled
             idbeg = strfind(tplstr,'#BEGINCALLED');
             idend = strfind(tplstr,'#ENDCALLED');
             if ~isempty(idbeg) && ~isempty(idend) && idend-6 > idbeg+17
@@ -741,6 +777,7 @@ classdef tbdocumentation
             tplstr = strrep(tplstr,'#BEGINCALLED','#BGCALLED');
             tplstr = strrep(tplstr,'#ENDCALLED','#NDCALLED');
 
+            % calls
             idbeg = strfind(tplstr,'#BEGINCALL');
             idend = strfind(tplstr,'#ENDCALL');
             if ~isempty(idbeg) && ~isempty(idend) && idend-6 > idbeg+15
@@ -761,22 +798,40 @@ classdef tbdocumentation
                 tplstr = cat(2,tplstr(1:idbeg+14),newcallstr,tplstr(idend-5:end));
             end
             
+            % write keywords
+            if ~isempty(mfileobj.keywords)
+                keywordcell = reshape(cat(1,mfileobj.keywords',repmat({' '},1,size(mfileobj.keywords))),1,numel(mfileobj.keywords)*2);
+                tplstr = cat(2,tplstr,...
+                    char(10),char(10),...
+                    '<--$Keywords: ',...
+                    keywordcell{:},...
+                    '-->',...
+                    char(10));
+            end
+            % finish file
             fid = fopen(fullfile(trgdir,[trgname,'.html']),'w');
             fwrite(fid,tplstr,'char');
             fclose(fid);
         end
-        function objit = dirstruct2contentitems(dirstructure)
+        function objit = dirstruct2contentitems(dirstructure,subdir)
+            if nargin==1
+                subdir = false;
+            end
             objit = tbcontentitem('name','dummy');
             for i=1:length(dirstructure)
+                trg = fullfile('html',dirstructure(i).fulldirname,['dir_' dirstructure(i).dirname,'.html']);
+                if ~subdir
+                    trg = fullfile('html',dirstructure(i).fulldirname,['dir_' dirstructure(i).fulldirname,'.html']);
+                end
                 objit(i) = tbcontentitem(...
                     'name',dirstructure(i).dirname,...
-                    'target',fullfile('html',dirstructure(i).fulldirname,['dir_' dirstructure(i).dirname,'.html']),...
+                    'target',trg,...
                     'icon','foldericon');
                 % create subdirs as children
                 chid = 0;
                 objit(i).children = tbcontentitem('name','dummy');
                 if ~isempty(dirstructure(i).subdirs)
-                    objit(i).children = tbdocumentation.dirstruct2contentitems(dirstructure(i).subdirs);
+                    objit(i).children = tbdocumentation.dirstruct2contentitems(dirstructure(i).subdirs,true);
                     chid = length(objit(i).children);
                 end
                 % create children entries

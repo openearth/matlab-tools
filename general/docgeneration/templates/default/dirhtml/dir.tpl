@@ -6,7 +6,7 @@
     <meta name="keywords" content="#NAME">
     <meta name="description" content="Content">
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+    <meta name="generator" content="tbdocumentation &copy; 2001-2009 OpenEarthTools - Deltares">
     <meta name="robots" content="index, follow">
     <link type="text/css" rel="stylesheet" href="#TOTPL/m2html.css">
 </head>
