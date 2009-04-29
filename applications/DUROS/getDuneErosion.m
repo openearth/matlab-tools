@@ -325,8 +325,8 @@ OPTstructArgs(2:2:2*id) = varargin(1:id);
 OPTstructArgs = [OPTstructArgs varargin(id+1:end)];
 % include the input in the OPT-structure
 [OPT, Set, Default] = setProperty(OPT, OPTstructArgs{:});
-% find which variables are still default
-defaultsid = cell2mat(struct2cell(Default)');
+% find which variables are still default and not set.
+defaultsid = cell2mat(struct2cell(Default)') & ~cell2mat(struct2cell(Set)');
 for varName = varNames(defaultsid)
     % use getdefaults to generate the relevant messages
     getdefaults(varName{1}, OPT.(varName{1}), 1);
