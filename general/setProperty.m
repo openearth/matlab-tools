@@ -8,10 +8,19 @@ function [OPT, Set, Default] = setProperty(OPT, varargin)
 % syntax:
 % [OPT Set Default] = setProperty(OPT, varargin{:})
 %  OPT              = setProperty(OPT, 'PropertyName', PropertyValue,...)
+%  OPT              = setProperty(OPT, OPT2)
 %
 % input:
 % OPT      = structure in which fieldnames are the keywords and the values are the defaults 
 % varargin = series of PropertyName-PropertyValue pairs to set
+% OPT2     = is a structure with the same fields as OPT. 
+%
+%            Internally setProperty translates OPT2 into a set of
+%            PropertyName-PropertyValue pairs (see example below) as in:
+%            OPT2    = struct( 'propertyName1', 1,...
+%                              'propertyName2', 2);
+%            varcell = reshape([fieldnames(OPT2)'; struct2cell(OPT2)'], 1, 2*length(fieldnames(OPT2)));
+%            OPT     = setProperty(OPT, varcell{:});
 %
 % output:
 % OPT     = structure, similar to the input argument OPT, with possibly
@@ -29,18 +38,9 @@ function [OPT, Set, Default] = setProperty(OPT, varargin)
 % | OPT        = setProperty(OPT, varargin{:});
 % | y          = x.^2;
 % | if OPT.debug; plot(x,y);pause; end
-% | 
-% +------------------------------------------->
-% | translate OPT structure to propertyName propertyValue cell array:
-% | OPT = struct(...
-% |     'propertyName1', 1,...
-% |     'propertyName2', 2);
-% | OPT        = setProperty(OPT, varargin{:});
-% | varcell = reshape([fieldnames(OPT)'; struct2cell(OPT)'], 1, 2*length(fieldnames(OPT)));
-% | 
 % +------------------------------------------->
 %
-% See also: varargin, struct
+% See also: varargin, struct, mergestructs
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -80,14 +80,19 @@ function [OPT, Set, Default] = setProperty(OPT, varargin)
 % $HeadURL$
 % $Keywords:
 
-%%
+%% input
 PropertyNames = fieldnames(OPT); % read PropertyNames from structure fieldnames
 
 if length(varargin) == 1
-    % to prevent errors when this function is called as "OPT =
-    % setProperty(OPT, varargin);" instead of "OPT = setProperty(OPT,
-    % varargin{:})"
-    varargin = varargin{1};
+    % to prevent errors when this function is called as 
+    % "OPT = setProperty(OPT, varargin);" instead of 
+    % "OPT = setProperty(OPT, varargin{:})"
+    if isstruct(varargin{1})
+       OPT2     = varargin{1};
+       varargin = reshape([fieldnames(OPT2)'; struct2cell(OPT2)'], 1, 2*length(fieldnames(OPT2)));
+    else
+       varargin = varargin{1};
+    end
 end
 
 % Set is similar to OPT, initially all fields are false
@@ -95,6 +100,7 @@ Set = cell2struct(repmat({false}, size(PropertyNames)), PropertyNames);
 % Default is similar to OPT, initially all fields are true
 Default = cell2struct(repmat({true}, size(PropertyNames)), PropertyNames);
 
+%% keyword,value loop
 [i0 iend] = deal(1, length(varargin)); % specify index of first and last element of varargin to search for keyword/value pairs
 for iargin = i0:2:iend
     PropertyName = varargin{iargin};
@@ -128,3 +134,5 @@ for iargin = i0:2:iend
         error([upper(mfilename) ':UnknownPropertyName'], 'PropertyName should be char')
     end
 end
+
+%% EOF

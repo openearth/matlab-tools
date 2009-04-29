@@ -4,7 +4,8 @@ function result = mergestructs(varargin)
 % mergestructs merges 2 or any more number of structs 
 % into a new struct.
 %
-% result = mergestructs(a,b,c,..,) 
+%    result = mergestructs(a,b,c,..,) 
+%
 % creates a struct 'result' containing all field names
 % and values of structs a, b, and c.
 %
@@ -18,6 +19,8 @@ function result = mergestructs(varargin)
 %   overwrites fields with the same name with the field
 %   value of the struct appearing <last> among the
 %   input arguments.
+%
+%See also: struct, setProperty
 
 %21-8-2006
 
@@ -50,18 +53,25 @@ function result = mergestructs(varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   -------------------------------------------------------------------- 
 
-U.overwrite   = 0;
-U.firststruct = 1;
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords:
+
+%% initialize
+OPT.overwrite   = 0;
+OPT.firststruct = 1;
 if ~isstruct(varargin{1})
     if strcmp(varargin{1},'overwrite')
-        U.overwrite   = 1;
-        U.firststruct = 2;
+        OPT.overwrite   = 1;
+        OPT.firststruct = 2;
     end
 end    
 
 
-% Perform check on struct sizes
-% ----------------------------------
+%% Perform check on struct sizes
 for i=U.firststruct:nargin-1
    if ~isstruct(varargin{i})
       error(['Argument ',num2str(i),' is not a struct.']);
@@ -73,32 +83,29 @@ for i=U.firststruct:nargin-1
    end
 end
 
-% Get field names
-% ----------------------------------
-for i=U.firststruct:nargin
+%% Get field names
+for i=OPT.firststruct:nargin
    FLDNAMES(i) = {fieldnames(varargin{i})};
 end
 
-% Perform check on double fieldnames
-% ----------------------------------
+%% Perform check on double fieldnames
 
 % for all input structs
-for i=U.firststruct:nargin-1
+for i=OPT.firststruct:nargin-1
    % for all field names
    for k = 1:length(FLDNAMES{i})
       if strcmp(char(FLDNAMES{i}),char(FLDNAMES{i+1}));
-         if ~(U.overwrite)
+         if ~(OPT.overwrite)
             error(['Same field name is present in structs ',num2str(i),' and ',num2str(i+1)]);
          end
       end
    end
 end
 
-% Merge structs
-% ----------------------------------
+%% Merge structs
 
 % for all input structs
-for i=U.firststruct:nargin
+for i=OPT.firststruct:nargin
 
    % for all elements of input structs
    for j=1:prod(size(varargin{i}))
@@ -113,7 +120,6 @@ for i=U.firststruct:nargin
 end
 
 
-% Output
-% ----------------------------------
+%% Output
 
-result = reshape(result,size(varargin{U.firststruct}));
+result = reshape(result,size(varargin{OPT.firststruct}));
