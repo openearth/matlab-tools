@@ -66,18 +66,26 @@ function w = getFallVelocity(varargin)
 idPropName = cellfun(@ischar, varargin);
 id = nargin;
 if any(idPropName)
-    id = find(idPropName)-1;
+    id = find(idPropName, 1, 'first')-1;
 end
-OPTstructArgs = {...
+OPT = struct(...
     'D50', 225e-6,...
     'a', 0.476,... % coefficient for 5 degrees celcius
     'b', 2.18,...  % coefficient for 5 degrees celcius
-    'c', 3.226};   % coefficient for 5 degrees celcius
+    'c', 3.226);   % coefficient for 5 degrees celcius
 
+varNames = fieldnames(OPT)';
+% create propertyName propertyValue cell array (varargin like) with empty
+% values for the first input arguments where propertyNames are omitted
+OPTstructArgs = reshape([varNames(1:id); repmat({[]}, 1, id)], 1, 2*id);
+% add the actual input arguments in the cell array
 OPTstructArgs(2:2:2*id) = varargin(1:id);
-OPT = struct(OPTstructArgs{:});
-
-OPT = setProperty(OPT, varargin{id+1:end});
+% extend the cell array with the propertyName propertyValue pairs part of
+% the input
+OPTstructArgs = [OPTstructArgs varargin(id+1:end)];
+% include the input in the OPT-structure
+[OPT, Set, Default] = setProperty(OPT, OPTstructArgs{:});
 
 %% fall velocity formulation
+% $$^{10} \log \left( {{1 \over w}} \right) = a\left( {^{10} \log D_{50} } \right)^2  + b\left( ^{10} \log D_{50} \right)  + c$$
 w = 1. / (10.^(OPT.a * (log10(OPT.D50)).^2 + OPT.b * log10(OPT.D50) + OPT.c));
