@@ -62,7 +62,8 @@
       else
       OPT.ext = '';
       end
-      outputfile    = [OPT.directory.nc filesep  filename(OPT.filename),OPT.ext,'.nc'];
+     %outputfile    = [OPT.directory.nc,filesep, filename(OPT.filename)         ,OPT.ext,'.nc']; % 8.3 DOS KNMI name
+      outputfile    = [OPT.directory.nc,filesep,'N',datestr(D.datenum,30),'_SST',OPT.ext,'.nc']; % 30 (ISO 8601) 'yyyymmddTHHMMSS' name
    
       nc_create_empty (outputfile)
    

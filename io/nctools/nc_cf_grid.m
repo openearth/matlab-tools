@@ -28,9 +28,10 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 %
 % Examples:
 %
-%    directory = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/'
+%    directory = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/'; % either remote
+%    directory = 'P:\mcdata\opendap\\'                                     % or local
 %
-%    nc_cf_grid([directory,'knmi/NOAA/mom/1990_mom/5/K020590M.nc'],'SST')
+%    [D,M]=nc_cf_grid([directory,'knmi/NOAA/mom/1990_mom/5/N19900501T025900_SST.nc'],'SST')
 %
 %See also: SNCTOOLS, NC_CF_STATIONTIMESERIES
 
