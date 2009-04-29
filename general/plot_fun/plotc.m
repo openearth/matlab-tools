@@ -57,7 +57,6 @@ function varargout = plotc(x,y,v,marker,varargin)
    map = colormap;
 
 %% Define RGB color scaling limits
-%------------------------
    miv = min(v);
    mav = max(v);
    
@@ -69,7 +68,6 @@ function varargout = plotc(x,y,v,marker,varargin)
    end
 
 %% Plot the points
-%------------------------
    hold on
    for i=1:length(x)
        in=round((v(i)-miv)*(length(map)-1)/(mav-miv));
@@ -82,7 +80,6 @@ function varargout = plotc(x,y,v,marker,varargin)
    hold off
 
 %% Re-format the colorbar
-%------------------------
    h=colorbar;
    
    set(h,'ylim', [1 length(map)]);
@@ -90,7 +87,6 @@ function varargout = plotc(x,y,v,marker,varargin)
    set(h,'ytick',yal);
 
 %% Create the yticklabels
-%------------------------
    ytl = linspace(miv,mav,10);
    s   = char(10,4);
    for i=1:10
@@ -104,7 +100,6 @@ function varargout = plotc(x,y,v,marker,varargin)
    view (2)
 
 %% Output
-%------------------------
 
    if nargout==1
       varargout = {handles};
