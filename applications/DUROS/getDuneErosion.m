@@ -312,7 +312,7 @@ function [xInitial zInitial D50 WL_t Hsig_t Tp_t] = parseDUROSinput(OPT, varargi
 idPropName = cellfun(@ischar, varargin);
 id = length(varargin);
 if any(idPropName)
-    id = find(idPropName)-1;
+    id = find(idPropName, 1, 'first')-1;
 end
 varNames = fieldnames(OPT)';
 % create propertyName propertyValue cell array (varargin like) with empty
