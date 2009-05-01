@@ -239,7 +239,7 @@ classdef tbdocumentation
                 end
                 [path fname ext] = fileparts(obj.icon);
                 copyfile(obj.icon,fullfile(obj.targetdir,'icons',[fname,ext]));
-                fprintf(finfo,['<icon>icons\\' fname ext '</icon>\n']);
+                fprintf(finfo,['<icon>icons/' fname ext '</icon>\n']);
             else
                 warning('Icon not found.'); %#ok<WNTAG>
             end
