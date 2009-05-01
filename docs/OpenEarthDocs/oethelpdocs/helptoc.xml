@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<toc version="1.0">
+
+<tocitem target="http://public.deltares.nl/display/OET">
+<tocitem target="http://public.deltares.nl/display/OET/Join+OpenEarth" image="$toolbox/matlab/icons/greencircleicon.gif">Getting started / Joining OpenEarth
+</tocitem>
+
+<tocitem target="http://public.deltares.nl/display/OET" image="$toolbox/matlab/icons/pagesicon.gif">OpenEarthTools participants
+<tocitem target="http://www.deltares.nl" image="$toolbox/matlab/icons/webicon.gif">Deltares
+</tocitem>
+<tocitem target="http://www.hydraulicengineering.tudelft.nl" image="$toolbox/matlab/icons/webicon.gif">TU Delft - Hydraulic Engineering
+</tocitem>
+<tocitem target="http://www.fluidmechanics.tudelft.nl" image="$toolbox/matlab/icons/webicon.gif">TU Delft - Fluid Mechanics
+</tocitem>
+<tocitem target="http://www.unesco-ihe.org/" image="$toolbox/matlab/icons/webicon.gif">UNESCO - IHE
+</tocitem>
+<tocitem target="http://www.delftcluster.nl/" image="$toolbox/matlab/icons/webicon.gif">Delft Cluser - Northsea and Coast
+</tocitem>
+<tocitem target="http://www.ecoshape.nl/" image="$toolbox/matlab/icons/webicon.gif">Building with Nature
+</tocitem>
+<tocitem target="http://www.micore.eu" image="$toolbox/matlab/icons/webicon.gif">Micore
+</tocitem>
+</tocitem>
+
+<tocitem target="http://public.deltares.nl/display/OET/Data" image="$toolbox/matlab/icons/pagesicon.gif">Data
+<tocitem target="http://repos.deltares.nl/repos/OpenEarthRawData/trunk/" image="$toolbox/matlab/icons/reficon.gif">Raw data repository
+</tocitem>
+<tocitem target="http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/catalog.html" image="$toolbox/matlab/icons/reficon.gif">OpenDAP server
+</tocitem>
+<tocitem target="http://public.deltares.nl/display/OET/Data+Collection+Protocol" image="$toolbox/matlab/icons/pageicon.gif">Data Standards
+</tocitem>
+<tocitem target="http://public.deltares.nl/display/OET/OpenEarth+tutorials" image="$toolbox/matlab/icons/pageicon.gif">Tutorials
+</tocitem>
+</tocitem>
+
+<tocitem target="http://public.deltares.nl/display/OET/Models" image="$toolbox/matlab/icons/pagesicon.gif">Models
+<tocitem target="http://repos.deltares.nl/repos/OpenEarthModels/trunk/" image="$toolbox/matlab/icons/reficon.gif">Models repository
+</tocitem>
+<tocitem target="http://public.deltares.nl/display/OET/OpenEarth+tutorials" image="$toolbox/matlab/icons/pageicon.gif">Tutorials
+</tocitem>
+</tocitem>
+
+<tocitem target="http://public.deltares.nl/display/OET/Tools" image="$toolbox/matlab/icons/pagesicon.gif">Tools
+<tocitem target="http://repos.deltares.nl/repos/OpenEarthTools/trunk/" image="$toolbox/matlab/icons/reficon.gif">Tools repository
+</tocitem>
+<tocitem target="http://public.deltares.nl/display/OET/OpenEarth+tools+conventions" image="$toolbox/matlab/icons/pagesicon.gif">Tools standards
+<tocitem target="http://www.mathworks.com/matlabcentral/fileexchange/2529" image="$toolbox/matlab/icons/matlabicon.gif">Matlab style guide
+</tocitem>
+<tocitem target="http://www.python.org/dev/peps/pep-0008/" image="$toolbox/matlab/icons/webicon.gif">Python style guide
+</tocitem>
+</tocitem>
+<tocitem target="http://public.deltares.nl/display/OET/OpenEarth+tutorials" image="$toolbox/matlab/icons/pageicon.gif">Tutorials
+</tocitem>
+</tocitem>
+
+<tocitem target="http://public.deltares.nl/display/OET/OpenEarth+tutorials" image="$toolbox/matlab/icons/pagesicon.gif">Tutorials
+</tocitem>
+
+</tocitem>
+
+</toc>
