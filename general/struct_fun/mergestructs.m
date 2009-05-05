@@ -72,7 +72,7 @@ end
 
 
 %% Perform check on struct sizes
-for i=U.firststruct:nargin-1
+for i=OPT.firststruct:nargin-1
    if ~isstruct(varargin{i})
       error(['Argument ',num2str(i),' is not a struct.']);
    end
