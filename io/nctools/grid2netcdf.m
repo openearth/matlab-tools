@@ -62,6 +62,7 @@ STRINGSIZE = 100;
     s.Attribute = struct('Name', {'long_name', 'units', 'comment'}, 'Value', {'cross-shore coordinate', 'm', 'cross-shore coordinate relative to the rsp (rijks strand paal)'});
     nc_addvar(filename, s);
 
+    % TODO: change to days since epoch
     s.Name      = 'time';
     s.Nctype    = nc_int;
     s.Dimension = {'time'};
@@ -125,7 +126,7 @@ STRINGSIZE = 100;
     s.Name      = 'angle';
     s.Nctype    = nc_double;
     s.Dimension = {'alongshore'};
-    s.Attribute = struct('Name', {'long_name', 'angle', 'comment'}, 'Value', {'angle of transect', 'm', 'positive counter clockwise 0 east'});
+    s.Attribute = struct('Name', {'long_name', 'units', 'comment'}, 'Value', {'angle of transect', 'mradian', 'positive counter clockwise 0 east'});
     nc_addvar(filename, s);
     
     s.Name      = 'mean_high_water';
@@ -178,8 +179,8 @@ STRINGSIZE = 100;
     s.Name      = 'altitude';
     s.Nctype    = nc_double;
     s.Dimension = {'time', 'alongshore', 'cross_shore'};
-    s.Attribute = struct('Name', {'standard_name', 'units', 'comment', 'coordinates', 'grid_mapping'}, ...
-        'Value', {'surface_altitude', 'm', 'altitude above geoid (NAP)', 'lat lon', 'crs'});
+    s.Attribute = struct('Name', {'standard_name', 'units', 'comment', 'coordinates', 'grid_mapping', '_FillValue'}, ...
+        'Value', {'surface_altitude', 'm', 'altitude above geoid (NAP)', 'lat lon', 'crs', -9999});
     nc_addvar(filename, s);
 
 %% Print header    

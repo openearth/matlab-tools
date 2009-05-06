@@ -87,11 +87,11 @@ end
 
 global year
 if isempty(year)
-    year = nc_varget(filename, 'year');
+    time = nc_varget(filename, 'time');
 end
-year_index = find(year == soundingId);
-if isempty(year_index)
-    error(['year not found: ' year_index]);
+time_index = find(time == soundingId);
+if isempty(time_index)
+    error(['year not found: ' time_index]);
 end
 
 
@@ -113,12 +113,12 @@ transect.areacode = num2str(areacode(id_index));
 
 transect.transectID = num2str(alongshoreCoordinates(id_index), '%05d');
 
-transect.year = num2str(year(year_index)); %'1965'
+transect.year = num2str(time(time_index)); %'1965'
 
 %TODO: store and look up
 % transect.dateTopo = num2str(transect.dateTopo); % '3008'
 % transect.dateBathy = num2str(transect.dateBathy); % '1708'
-transect.soundingID = num2str(year(year_index)); % '1965'
+transect.soundingID = num2str(time(time_index)); % '1965'
 
 
 global crossShoreCoordinate
@@ -167,7 +167,7 @@ end
 transect.MLW = MLW(id_index); 
 
 transect.xi = crossShoreCoordinate; %[1264x1 double]
-height  = nc_varget(filename, 'altitude', [year_index-1, id_index-1, 0], [1, 1, length(crossShoreCoordinate)]);
+height  = nc_varget(filename, 'altitude', [time_index-1, id_index-1, 0], [1, 1, length(crossShoreCoordinate)]);
 transect.zi = height; %[1264x1 double]
 
 %TODO: Check where these are calculated

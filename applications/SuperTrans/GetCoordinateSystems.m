@@ -54,8 +54,8 @@ function varargout=GetCoordinateSystems(handles)
 % 2009 mar 31: added documentation [Gerben de Boer]
 
    curdir=fileparts(which('SuperTrans'));
-   load([curdir '\data\CoordinateSystems.mat']);
-   load([curdir '\data\Operations.mat']);
+   load([curdir filesep 'data' filesep 'CoordinateSystems.mat']);
+   load([curdir filesep 'data' filesep 'Operations.mat']);
    
    handles.CoordinateSystems=CoordinateSystems;
    handles.Operations       =Operations;
