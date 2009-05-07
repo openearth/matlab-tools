@@ -140,7 +140,10 @@ for ivar=[OPT.parameter]
                     'method','fgetl');
 
                 % make units meters for waterlevels and wave heights
-                if strcmpi(D.meta1.units,'cm')
+                % for waterlevels 'cm t.o.v. NAP' is used
+                % for wave heights 'cm' is used
+                % both strings need to be compared
+                if strcmpi(D.meta1.units,'cm') || strcmpi(D.meta1.units,'cm t.o.v. NAP')
                     D.data.(OPT.name) = D.data.(OPT.name)./100;
                 end
             end
