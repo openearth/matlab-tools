@@ -1,48 +1,54 @@
 function Xround = roundoff(X, n, varargin)
 %ROUNDOFF   routine rounds number to predefined number of decimal digits
-% 
-% This routine returns a rounded number to a specified number of decimal
-% digits
 %
-% Syntax:       Xround = ROUNDOFF(X, n, varargin)
+%   This routine returns a rounded number to a specified number of decimal
+%   digits
 %
-% Input: 
-%   X   =   number, or matrix of numbers, to be rounded
-%   n   =   number of decimal digits to be rounded to (can also be negative)
+%   Syntax:
+%   Xround = roundoff(X, n, varargin)
 %
-% Output:       Eventual output is the rounded number, or matrix of numbers 
+%   Input:
+%   X        = number, or matrix of numbers, to be rounded
+%   n        = number of decimal digits to be rounded to (can also be
+%              negative)
+%   varargin = optional mode: either 'normal' (default), 'ceil' or 'floor'
 %
-% Examples:     roundoff(5.8652,2)
+%   Output:
+%   Xround   = rounded X, same size as X
+%
+%   Example
+%               roundoff(5.8652, 2)
 %               ans =
 %                   5.8700
 %
-%               roundoff(5.8652,2,'floor')
+%               roundoff(5.8652, 2, 'floor')
 %               ans =
 %                   5.8600
 %
-%               roundoff(5.8652,0)
+%               roundoff(5.8652, 0)
 %               ans =
 %                   6
 %
-%               roundoff(5.8652,-1)
+%               roundoff(5.8652, -1)
 %               ans =
 %                   10
-% See also : ROUND
- 
+%
+%   See also round
+
 %   --------------------------------------------------------------------
-%   Copyright (C) 2008 Delft University of Technology
+%   Copyright (C) 2009 Delft University of Technology
 %       C.(Kees) den Heijer
 %
 %       C.denHeijer@TUDelft.nl	
 %
 %       Faculty of Civil Engineering and Geosciences
-%       PO Box 5048
+%       P.O. Box 5048
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -51,16 +57,18 @@ function Xround = roundoff(X, n, varargin)
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
-%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-% $Id$ 
+% Created: 07 May 2009
+% Created with Matlab version: 7.4.0.287 (R2007a)
+
+% $Id$
 % $Date$
 % $Author$
 % $Revision$
+% $HeadURL$
+% $Keywords: $
 
 %% check input
 if nargin == 1
@@ -74,9 +82,9 @@ end
 
 
 %% check varargin
-mode='normal';
+mode = 'normal';
 if ~isempty(varargin)
-    mode=varargin{1};
+    mode = varargin{1};
 end
 
 switch mode
