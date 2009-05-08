@@ -14,7 +14,7 @@ function buildhelpjar(helploc)
 
 % Move the existing files into the backup directory.
 backup = fullfile(helploc, 'backup');
-movefile(fullfile(helploc, '/*'), backup);
+movefile(fullfile(helploc, '*'), backup);
 
 % Make sure that XML files are not added to the help.jar file.
 movefile(fullfile(backup, '/*.xml'), helploc);

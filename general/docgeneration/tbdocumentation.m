@@ -1,12 +1,17 @@
 classdef tbdocumentation
-    properties
+    properties (SetAccess = protected, GetAccess = private)
+        toolboxanalyzed = false;
+        allfunctions = {}; %used to store some useful info about the toolbox
+        type = 'toolbox';
+        matlabrelease = version('-release');
+    end
+    properties (SetAccess = public, GetAccess = public)
         % general properties of documentation
-        targetdir = '';
-        help_location = 'helpdocs';
-        matlabrelease = '2008a';
         name = 'Test';
-        verbose = true;
+        targetdir = '';
+        help_location = ['helpdocs_' datestr(now,'yyyy_mm_dd_HH_MM_SS')];
         templatename = 'default';
+        verbose = true;
         graphoptions = struct(...
             'color','black',...
             'fillcolor','lightskyblue',...
@@ -27,13 +32,10 @@ classdef tbdocumentation
 
         % toolboxes
         toolbox = tbtoolbox;
-        toolboxanalyzed = false;
-        allfunctions = {}; %{naam, toolboxid, functionid, relpath}
 
         % start menu
         icon = [fileparts(mfilename('fullpath')) filesep 'templates\default\DeltaresLogo16.PNG'];
         listitems = tblistitem;
-        type = 'toolbox';
 
         % html documentation
         excludeinmaster = {};
@@ -44,14 +46,17 @@ classdef tbdocumentation
         tpldir_fcn = {};
 
         % help contents
-        helpcontentmainpage = '';
         contentitems = tbcontentitem;
+        helpcontentmainpage = '';
         includecontents = true;
-        mergemaindirs = true;
+        mergemaindirs = true; % no tested with false yet. This merges the main directories into one toc item.
 
         % help index
         indexitems = tbindexitem;
         includeindex = true;
+
+        % make help.jar file
+        makehelpjar = true; % TODO('Make help.jar');
 
         % help search
         includesearch = true;
@@ -187,7 +192,7 @@ classdef tbdocumentation
                     disp('*** Writing helptoc.xml');
                 end
                 writehelptocxml(obj);
-                
+
                 if obj.includeindex
                     disp('Help index is not implemented yet. Therefore use has to be made of keywords for example');
                     %{
@@ -199,13 +204,13 @@ classdef tbdocumentation
                    writehelpindexxml(obj);
                     %}
                 end
-                
+
                 if obj.includesearch
-                   % construct search database from documentation
-                   if obj.verbose
-                       disp('*** Writing search database');
-                   end
-                   writesearchdb(obj);
+                    % construct search database from documentation
+                    if obj.verbose
+                        disp('*** Writing search database');
+                    end
+                    writesearchdb(obj);
                 end
             end
             if obj.verbose
@@ -213,6 +218,41 @@ classdef tbdocumentation
                 disp('  ');
             end
         end
+        %% set functions
+        function obj = set.templatename(obj,tmpname)
+            m2htmldocdir = fileparts(mfilename('fullpath'));
+            tmpdir = [m2htmldocdir filesep 'templates' filesep tmpname];
+            if exist(tmpdir,'dir')
+                obj.templatename = tmpname;
+            else
+                warning('tbtoolbox:NoTpl','Template could not be found');
+                obj.templatename = 'default';
+            end
+        end
+        function obj = set.targetdir(obj,trg)
+            if ~ischar(trg)
+                error('dir should be specified as a char');
+            end
+            obj.targetdir = trg;
+            for i=1:length(obj.listitems)
+                obj.listitems(i).targetdir = trg;
+            end
+        end
+        function obj = analyzetoolboxes(obj)
+            obj.allfunctions = {};
+            for itb = 1:length(obj.toolbox)
+                obj.toolbox(itb) = obj.toolbox(itb).analyze;
+                obj.toolboxanalyzed(itb) = true;
+                obj.toolbox(itb) = obj.toolbox(itb).structuredirs(obj.mergemaindirs);
+                fcns = cat(2,{obj.toolbox(itb).functions.filename}',...
+                    repmat({itb},size(obj.toolbox(itb).functions,1),1),...
+                    num2cell(permute(1:size(obj.toolbox(itb).functions,1),[2,1])),...
+                    {obj.toolbox(itb).functions.h1line}'); % add relative path
+                obj.allfunctions = cat(1,obj.allfunctions,fcns);
+            end
+        end
+    end
+    methods (Access = 'protected')
         function writeinfoxml(obj)
             %% write main info.xml
             infoxml = [obj.targetdir filesep 'info.xml'];
@@ -437,7 +477,7 @@ classdef tbdocumentation
                 if obj.verbose
                     disp('          Create toolbox directory structure');
                 end
-                
+
                 % make mastergraph if necessary
                 graphname = '';
                 if obj.includemastergraph
@@ -479,7 +519,7 @@ classdef tbdocumentation
                             obj.verbose);
                     end
                 end
-                                
+
                 if obj.includemastergraph
                     % delete temp files
                     delete(fullfile(obj.targetdir,obj.help_location,'toolboxgraphs',[graphname,'.dot']));
@@ -512,41 +552,8 @@ classdef tbdocumentation
                 end
             end
         end
-        %% set functions
-        function obj = set.templatename(obj,tmpname)
-            m2htmldocdir = fileparts(mfilename('fullpath'));
-            tmpdir = [m2htmldocdir filesep 'templates' filesep tmpname];
-            if exist(tmpdir,'dir')
-                obj.templatename = tmpname;
-            else
-                warning('tbtoolbox:NoTpl','Template could not be found');
-                obj.templatename = 'default';
-            end
-        end
-        function obj = set.targetdir(obj,trg)
-            if ~ischar(trg)
-                error('dir should be specified as a char');
-            end
-            obj.targetdir = trg;
-            for i=1:length(obj.listitems)
-                obj.listitems(i).targetdir = trg;
-            end
-        end
-        function obj = analyzetoolboxes(obj)
-            obj.allfunctions = {};
-            for itb = 1:length(obj.toolbox)
-                obj.toolbox(itb) = obj.toolbox(itb).analyze;
-                obj.toolboxanalyzed(itb) = true;
-                obj.toolbox(itb) = obj.toolbox(itb).structuredirs(obj.mergemaindirs);
-                fcns = cat(2,{obj.toolbox(itb).functions.filename}',...
-                    repmat({itb},size(obj.toolbox(itb).functions,1),1),...
-                    num2cell(permute(1:size(obj.toolbox(itb).functions,1),[2,1])),...
-                    {obj.toolbox(itb).functions.h1line}'); % add relative path
-                obj.allfunctions = cat(1,obj.allfunctions,fcns);
-            end
-        end
     end
-    methods (Static = true)
+    methods (Access = 'protected', Static = true)
         function dir2html(dirstruct,mainpath,tpl,includedirrgraph,graphname,verbose)
             % first process subdirs
             for isub = 1:length(dirstruct.subdirs)
@@ -589,7 +596,7 @@ classdef tbdocumentation
 
                     relgraphlocation = [repmat('../',1,numel(strfind(dirstruct.fulldirname,filesep))+2), 'toolboxgraphs','/', graphname, '.png'];
                     tplstr = strrep(tplstr,'#GRAPH',relgraphlocation);
-                    
+
                 end
             end
 
@@ -647,7 +654,7 @@ classdef tbdocumentation
                     selfid = strcmp(names,mfileobj.filename);
                     references = cell(size(names));
                     references{selfid} = trgname;
-                    
+
                     href = nan(numel(names),numel(names));
                     callid = false(length(names),2);
                     callid(selfid,1:end)=true;
@@ -685,7 +692,7 @@ classdef tbdocumentation
 
                         graphlocation = [trgname, '.png'];
                         tplstr = strrep(tplstr,'#GRAPH',graphlocation);
-                        
+
                         delete(fullfile(trgdir,[trgname '.map']));
                         delete(fullfile(trgdir,[trgname '.dot']));
                     end
@@ -701,7 +708,7 @@ classdef tbdocumentation
             tplstr = strrep(tplstr,'#NAME',mfileobj.filename);
             tplstr = strrep(tplstr,'#H1LINE',mfileobj.h1line);
             tplstr = strrep(tplstr,'#DATE',datestr(now,'dd-mmm-yyyy'));
-            
+
 
             funcpath = functioncalls{strcmp(functioncalls(:,3),mfileobj.filename),2};
             if isempty(funcpath)
@@ -721,7 +728,7 @@ classdef tbdocumentation
                 sntx = {'none specified...'};
             end
             tplstr = strrep(tplstr,'#SYNTAX',cat(2,sntx{:}));
-            
+
             % description
             if ~isempty(mfileobj.description)
                 dscr = cellfun(@cat,repmat({2},size(mfileobj.description)),mfileobj.description,repmat({char(10)},size(mfileobj.description)),'UniformOutput',false);
@@ -753,7 +760,7 @@ classdef tbdocumentation
                 hlpbl = {'none specified...'};
             end
             tplstr = strrep(tplstr,'#HELPBLOCK',cat(2,hlpbl{:}));
-            
+
             % iscalled
             idbeg = strfind(tplstr,'#BEGINCALLED');
             idend = strfind(tplstr,'#ENDCALLED');
@@ -797,7 +804,7 @@ classdef tbdocumentation
                 end
                 tplstr = cat(2,tplstr(1:idbeg+14),newcallstr,tplstr(idend-5:end));
             end
-            
+
             % write keywords
             if ~isempty(mfileobj.keywords)
                 keywordcell = reshape(cat(1,mfileobj.keywords',repmat({' '},1,size(mfileobj.keywords))),1,numel(mfileobj.keywords)*2);
@@ -917,7 +924,7 @@ classdef tbdocumentation
             end
         end
         function obj = constructindex(obj)
-           TODO('Construct index'); 
+            TODO('Construct index');
         end
     end
     methods (Access = 'private', Static = true)

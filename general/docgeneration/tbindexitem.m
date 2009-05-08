@@ -1,4 +1,16 @@
 classdef tbindexitem
+    %% Description
+    % A TBIndexItem object stores the properties / attributes of an index 
+    % item for the matlab help nevigator
+    %
+    
+    %% Properties
+    % this object has the following properties:
+    %
+    % * name: The name and title that will appear in the help navigator
+    % * children: The children of the index item. 
+    % 
+
     properties
         name = '';
         children = '';
