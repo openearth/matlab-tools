@@ -94,7 +94,10 @@ getdefaults('stochast', exampleStochastVar, 0);
 
 Nstoch = length(stochast); % number of stochastic variables
 
-active = ~cellfun(@isempty, {stochast.Distr});
+% active
+active = ~cellfun(@isempty, {stochast.Distr}) &...
+    ~strcmp('deterministic', cellfun(@func2str, {stochast.Distr},...
+    'UniformOutput', false));
 
 if OPT.f1 < Inf && OPT.f2 > 0 || OPT.W ~= 1
     % in case of importance sampling, check whether specified variable is
@@ -110,6 +113,7 @@ end
 
 % get random samples of P
 P = rand(OPT.NrSamples, Nstoch);
+P(:, ~active) = 0.5;
 
 % f2 should be smaller than f2
 if OPT.f1 < OPT.f2
