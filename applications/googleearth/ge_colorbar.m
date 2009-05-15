@@ -65,10 +65,11 @@ end
 
 html = ['<TABLE border=' num2str(cBarBorderWidth) ' bgcolor=#FFFFFF>',10];
 
-X = linspace(0,1,size(cMap,1))';
-YRed = cMap(:,1);
-YGreen = cMap(:,2);
-YBlue = cMap(:,3);
+X = linspace(0,1,size(colormap(cMap),1))';
+mycolormap = colormap(cMap);
+YRed = mycolormap(:,1);
+YGreen = mycolormap(:,2);
+YBlue = mycolormap(:,3);
 
     if ~isempty(labels)
         

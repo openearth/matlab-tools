@@ -92,7 +92,7 @@ W = min(x)-halfLonRes;
 
 
 [sX,sY] = size(data);
-factor = 10;
+factor = 1;
 superData = zeros(sX*factor,sY*factor);
 [ssX,ssY] = size(superData);
 for i = 1:sX
