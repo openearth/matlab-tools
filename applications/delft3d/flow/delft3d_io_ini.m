@@ -3,7 +3,7 @@ function varargout=delft3d_io_ini(cmd,varargin),
 %
 %   DATA = delft3d_io_ini('read',filename,mdffilename);
 %
-%          delft3d_io_ini('write',filename,DATA);
+%          delft3d_io_ini('write',filename,DATA) % or delft3d_io_ini(..,DATA.data);
 %          delft3d_io_ini('write',filename,PLATFORM,DATA);
 %
 %   where platform can be
@@ -26,8 +26,6 @@ function varargout=delft3d_io_ini(cmd,varargin),
 %   or it operates similar to trirst by passing a list of matrices:
 %      delft3d_io_ini('write',filename,PLATFORM,waterlevel,u,v,...);
 %
-% © G.J. de Boer, TU Delft, 2004.
-%
 % See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
 %           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf, 
@@ -39,11 +37,6 @@ function varargout=delft3d_io_ini(cmd,varargin),
 % $Author$
 % $Revision$
 % $HeadURL$
-
-if nargin<3
-   error('Syntax: delft3d_io_ini(''read/write'' ,filename, mdffilename/DATA, ...')
-end
-
      
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004 Delft University of Technology
@@ -73,6 +66,10 @@ end
 %   USA
 %   --------------------------------------------------------------------
 
+%% checks and agr passing
+if nargin<3
+   error('Syntax: delft3d_io_ini(''read/write'' ,filename, mdffilename/DATA, ...')
+end
 if nargin < 3
    error(['At least 3 input arguments required: delft3d_io_ini(''write'',filename,INI)'])
 end
@@ -100,9 +97,7 @@ case 'write',
   end;
 end;
 
-% ------------------------------------
-% --READ------------------------------
-% ------------------------------------
+%% READ
 
 function varargout=Local_read_ini(fname,varargin),
 
@@ -115,14 +110,12 @@ if nargin==1
 end
 
 %% Get info on contents of ini file
-%% ------------------------
    
    if ischar(varargin{1})
    
       mdffilename = varargin{1};
       
       %% Size and layers
-      %% ------------------------
    
       [MDF,iostat2] = delft3d_io_mdf('read',mdffilename,'case','lower');
       
@@ -143,7 +136,6 @@ end
       D.kmax = MDF.keywords.mnkmax(3);
       
       %% Parameters
-      %% ------------------------
    
       MDF.keywords.sub1   = char(upper(MDF.keywords.sub1  ));
    
@@ -167,7 +159,6 @@ end
    elseif isstruct (varargin{1})
    
       %% Size and layers
-      %% ------------------------
    
       GRID        = varargin{1};
       D.mmax      = size(GRID.X,1)+1;
@@ -179,7 +170,6 @@ end
    elseif isnumeric(varargin{1})
    
       %% Size and layers
-      %% ------------------------
    
       SIZE        = varargin{1};
       D.kmax      = varargin{2};
@@ -189,12 +179,10 @@ end
    
    PAR.nparameters = length(PAR.nlayers > 0);
 %% Read restart file
-%% ------------------------
 
    if ~isempty(SIZE)
    
       %% Locate
-      %% ------------------------
       
       tmp = dir(fname);
       
@@ -210,7 +198,6 @@ end
          D.filebytes = tmp.bytes;
       
          %% Open
-         %% ------------------------
    
          fid = fopen(fname,'r','b'); % Try UNIX format ...
    
@@ -225,7 +212,6 @@ end
          if fid > 2
    
          %% Read
-         %% ------------------------
             
       %-%try
             
@@ -234,7 +220,6 @@ end
             D.names   = {PAR.names{mask}};
             
             %% Loop over variables
-            %% ------------------------
             
             for iname=1:length(D.names)
             
@@ -242,7 +227,6 @@ end
                D.data.(name) = zeros([D.mmax D.nmax D.nlayers(iname)]);
                
             %% Loop over layers
-            %% ------------------------
    
                for k=1:D.nlayers(iname)
                
@@ -251,7 +235,6 @@ end
                   end
               
                   %% Data
-                  %% ------------------------
    
                   for n=1:D.nmax
                      if OPT.debug
@@ -266,7 +249,6 @@ end
             end % for iname=1:length(D.names)
       
             %% Finished succesfully
-            %% --------------------------------------
       
             D.iostat    = 1;
             D.read_by   = 'delft3d_io_restart';
@@ -302,17 +284,13 @@ end
    end % SIZE   
    
 %% Output
-%% ------------------------
-
    if nargout==1
       varargout = {D};   
    else
       varargout = {D,D.iostat};   
    end
 
-% ------------------------------------
-% --WRITE-----------------------------
-% ------------------------------------
+%% WRITE
 
 function iostat=Local_write_ini(filename,varargin),
 
@@ -333,6 +311,15 @@ function iostat=Local_write_ini(filename,varargin),
    %% delft3d_io_ini('write',filename,PLATFORM,DATA);
    
       DATASTRUCT = varargin{nextarg};
+      
+   %% make sure you can write both DATA as read by
+   %% delft3d_io_ini('read',..) as well as substruct DATASTRUCT.data
+      if ~isfield(DATASTRUCT,'data')
+          DATASTRUCT0 = DATASTRUCT;
+          DATASTRUCT.data = DATASTRUCT0;
+          clear DATASTRUCT0
+      end
+      
       fldnames   = fieldnames(DATASTRUCT.data);
       ndata      = length(fldnames);
       datatype   = 'struct';
@@ -373,8 +360,7 @@ function iostat=Local_write_ini(filename,varargin),
       disp(['   delft3d_io_ini: Error: Initialisation file ',filename,' NOT successfully written'])
    end
 
-% ------------------------------------
-% ------------------------------------
+%% fprintf_one_layer
 
 function fprintf_one_layer(fid,dataset,OS,fillvalue,varargin)
 
