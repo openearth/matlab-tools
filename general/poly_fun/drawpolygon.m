@@ -64,7 +64,7 @@ function varargout=drawpolygon(varargin)
         x = [x x0];
         y = [y y0];
         if first
-           pp    = plot(x,y,varargin{:})
+           pp    = plot(x,y,varargin{:});
            first = 0;
         else
            set(pp,'xdata',x);
