@@ -30,12 +30,12 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 % Examples:
 %
 %    directory = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/'; % either remote
-%    directory = 'P:\mcdata\opendap\\'                                     % or local
+%    directory = 'P:\mcdata\opendap\'                                      % or local
 %
-% [D,M]=nc_cf_stationTimeSeries([directory,'/rijkswaterstaat/waterbase.nl/sea_surface_height/id1-DENHDR-196101010000-200801010000.nc'],...
+% [D,M]=nc_cf_stationTimeSeries([directory,'/rijkswaterstaat/waterbase/sea_surface_height/id1-DENHDR-196101010000-200801010000.nc'],...
 %                               'sea_surface_height')
 %
-% [D,M]=nc_cf_stationTimeSeries([directory,''knmi/etmgeg/etmgeg_269.nc'],...
+% [D,M]=nc_cf_stationTimeSeries([directory,'knmi/etmgeg/etmgeg_269.nc'],...
 %                               'wind_speed_mean')
 %
 %See also: SNCTOOLS, NC_CF_GRID
