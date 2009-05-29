@@ -1,5 +1,5 @@
 function tmpfilename = gettmpfilename(varargin)
-%GETTMPFILENAME   Gets temporary filename
+%GETTMPFILENAME   Gets temporary filename with specified pre- & postfix
 %
 % tmpfilename = GETTMPFILENAME
 % tmpfilename = GETTMPFILENAME(directory)
@@ -12,7 +12,7 @@ function tmpfilename = gettmpfilename(varargin)
 %    prefix    = '~';
 %    postfix = '.tmp';
 %
-% See also: FOPEN, DIR, EXIST, FILEPATHSTR
+% See also: FOPEN, DIR, EXIST, FILEPATHSTR, TEMPDIR, TEMPNAME
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005-8 Delft University of Technology

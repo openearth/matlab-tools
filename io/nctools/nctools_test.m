@@ -1,15 +1,16 @@
-function nctools_test()
+function nctools_test(varargin)
 %NCTOOLS_TEST  Test file for nctools library
 %
-%   Test script for testing the snctools and mexnc library. 
+%      nctools_test()
 %
-%   Syntax:
-%   nctools_test()
+%   Test script for testing the snctools and mexnc library.
+%   It writes and reads a netcdf file with both java and mexnc interface.
+%   It throws a message when nctools failed.
 %
-%   Example
+%   Example:
 %   nctools_test
 %
-%   See also nctools
+%   See also: nctools
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 <COMPANY>
@@ -46,28 +47,41 @@ function nctools_test()
 % $HeadURL$
 % $Keywords:
 
-%% Write test
-function writetest()
+%% Define test value
+value     = rand(100,1); % random value
 
-%% define test case
-filename  = fullfile(tempdir, 'tmp.nc');
-varstruct = struct('Name', 'temp', 'Nctype', 'double', 'Dimension', {{ 'temp' }});
-value     = rand(5,1); % random value
+%% Run test for java interface
+setpref ('SNCTOOLS', 'USE_JAVA', true ); % this requires SNCTOOLS 2.4.8 or better
+writetest('nctools_test_java_true',value)
 
-%% do test case
-              delete(filename);            % remove file
-     nc_create_empty(filename);            % create file
-    nc_add_dimension(filename,'temp', 5);  % create dimension
-           nc_addvar(filename, varstruct); % create variable 
-           nc_varput(filename,'temp', value);
-newvalue = nc_varget(filename,'temp');
-
-%% report
-msg = sprintf('Data not succesfully written and read. SNCTOOLS java was %d', getpref('SNCTOOLS', 'USE_JAVA'));
-assert(all(value == newvalue), msg);
-end
-setpref ('SNCTOOLS', 'USE_JAVA', true); % this requires SNCTOOLS 2.4.8 or better
-writetest
+%% Run test for mexnc interface
 setpref ('SNCTOOLS', 'USE_JAVA', false); % this requires SNCTOOLS 2.4.8 or better
-writetest
+writetest('nctools_test_java_false_mexnc',value)
+
+%% Run test for native matlab interface
+%  TO DO
+
+end
+
+
+%% Write test
+function writetest(ncbasename,value)
+
+   %% define test case
+   filename  = fullfile(tempdir,[ncbasename,'.nc']);
+   disp(['Test result = ',filename])
+   varstruct = struct('Name', 'temp', 'Nctype', 'double', 'Dimension', {{ 'temp' }});
+   
+   %% do test case
+   
+if exist(filename)==2;delete(filename);end                    % remove file
+             nc_create_empty(filename);                       % create file
+            nc_add_dimension(filename,'temp', length(value)); % create dimension
+                   nc_addvar(filename, varstruct);            % create variable 
+                   nc_varput(filename,'temp', value);
+        newvalue = nc_varget(filename,'temp');
+   
+   %% report
+   msg = sprintf('Data not succesfully written and read. SNCTOOLS java was %d', getpref('SNCTOOLS', 'USE_JAVA'));
+   assert(all(value == newvalue), msg);
 end
