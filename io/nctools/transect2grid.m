@@ -1,5 +1,5 @@
 function [grid] = transect2grid(transectStruct)
-%TRANSECT2GRID
+%TRANSECT2GRID .
 %
 %See also:
 

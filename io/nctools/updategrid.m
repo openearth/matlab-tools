@@ -1,5 +1,5 @@
 function [grid] = updategrid(grid, filename, tidefile)
-%UPDATEGRID
+%UPDATEGRID .
 %
 %See also:
 

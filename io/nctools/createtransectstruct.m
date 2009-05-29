@@ -1,5 +1,5 @@
 function [transect] = createtransectstruct()
-%CREATETRANSECTSTRUCT
+%CREATETRANSECTSTRUCT  .
 %
 %See also: 
 

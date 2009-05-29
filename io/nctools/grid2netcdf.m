@@ -1,5 +1,5 @@
 function grid2netcdf(filename, grid)
-%GRID2NETCDF
+%GRID2NETCDF .
 %
 % grid2netcdf(filename, grid)
 %

@@ -1,5 +1,5 @@
 function [x,y, mappingVarinfo] = netcdfraster2xy(filename)
-%NETCDFRASTER2XY
+%NETCDFRASTER2XY .
 %
 %See also:
 

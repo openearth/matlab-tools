@@ -1,4 +1,4 @@
-%EXAMPLE
+%EXAMPLE .
 %
 %See also: 
 

@@ -1,5 +1,5 @@
 function varname = lookupVarnameInNetCDF(varargin)
-%LOOKUPVARNAMEINNETCDF  Looks up variable name(s) in a NetCDF file associated with an attributename and -value pair.
+%LOOKUPVARNAMEINNETCDF  Lookup variable name(s) in NetCDF file using attributename and -value pair
 %
 %   Finds the variable name in a NetCDF file where the specified attribute
 %   name (e.g. 'standard_name') matches with the specified attribute value

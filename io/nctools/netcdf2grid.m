@@ -1,5 +1,5 @@
 function grid = netcdf2grid(filename)
-%NETCDF2GRID
+%NETCDF2GRID .
 %
 % grid = netcdf2grid(filename)
 %

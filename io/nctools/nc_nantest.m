@@ -1,4 +1,4 @@
-%NC_NANTEST  This how NaNs behaven in snctools
+%NC_NANTEST  This shows how NaNs behave in snctools
 %
 % Values indentical to _Fillvalue are returned as NaN.
 % NaNs in the data are returned as NaN, so there is no nead to specify 

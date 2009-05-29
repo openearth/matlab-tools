@@ -1,5 +1,5 @@
 function index = varname2index(fileinfo,name,varargin)
-%VARNAME2INDEX   get index of variable name from fileinfo = nc_info(...)
+%NC_VARNAME2INDEX   get index of variable name from fileinfo = nc_info(...)
 %
 %   index = varname2index(fileinfo,name)
 %

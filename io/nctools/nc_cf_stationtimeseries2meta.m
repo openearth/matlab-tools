@@ -1,5 +1,5 @@
 function nc_cf_stationtimeseries2meta(varargin)
-%NC_CF_STATIONTIMESERIES2META   extract meta inform from all NetCDF files in one directory, plot it, and export to Excel table
+%NC_CF_STATIONTIMESERIES2META   extract meta info from all NetCDF files in directory to ...
 %
 %     NC_CF_STATIONTIMESERIES2META(<keyword,value>) 
 %

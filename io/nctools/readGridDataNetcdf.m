@@ -1,5 +1,5 @@
 function d = readGridDataNetcdf(varargin)
-%READGRIDDATANETCDF  Function to read a set of RWS grids from a url. 
+%READGRIDDATANETCDF  Function to read a set of RWS grids from a url
 %
 %   More detailed description goes here.
 %

@@ -1,5 +1,5 @@
 function transect2netcdf(filename, transectStruct)
-%TRANSECT2NETCDF
+%TRANSECT2NETCDF .
 %
 %See also:
 

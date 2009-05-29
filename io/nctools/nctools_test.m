@@ -1,5 +1,5 @@
 function nctools_test()
-%NCTOOLS_TEST  Test file for nctools library.
+%NCTOOLS_TEST  Test file for nctools library
 %
 %   Test script for testing the snctools and mexnc library. 
 %
@@ -48,15 +48,21 @@ function nctools_test()
 
 %% Write test
 function writetest()
-filename = fullfile(tempdir, 'tmp.nc');
+
+%% define test case
+filename  = fullfile(tempdir, 'tmp.nc');
 varstruct = struct('Name', 'temp', 'Nctype', 'double', 'Dimension', {{ 'temp' }});
-value = rand(5,1); % random value
-delete(filename); %remove file
-nc_create_empty(filename); %create file
-nc_add_dimension(filename, 'temp', 5); %create dimension
-nc_addvar(filename, varstruct); %create variable 
-nc_varput(filename, 'temp', value);
-newvalue = nc_varget(filename, 'temp');
+value     = rand(5,1); % random value
+
+%% do test case
+              delete(filename);            % remove file
+     nc_create_empty(filename);            % create file
+    nc_add_dimension(filename,'temp', 5);  % create dimension
+           nc_addvar(filename, varstruct); % create variable 
+           nc_varput(filename,'temp', value);
+newvalue = nc_varget(filename,'temp');
+
+%% report
 msg = sprintf('Data not succesfully written and read. SNCTOOLS java was %d', getpref('SNCTOOLS', 'USE_JAVA'));
 assert(all(value == newvalue), msg);
 end

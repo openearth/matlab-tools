@@ -1,5 +1,5 @@
 function index = atrname2index(fileinfo,name,varargin)
-%ATRNAME2INDEX   get index of attribute name from fileinfo = nc_info(...)
+%NC_ATRNAME2INDEX   get index of attribute name from fileinfo = nc_info(...)
 %
 %   index = atrname2index(fileinfo,name)
 %
