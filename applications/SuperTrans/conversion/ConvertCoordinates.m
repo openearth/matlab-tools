@@ -23,6 +23,8 @@ function [x2,y2,err]=ConvertCoordinates(x1,y1,cs1,tp1,cs2,tp2,CoordinateSystems,
 %    [x,y]=ConvertCoordinates(5,52,    4326,'geo','WGS 84 / UTM zone 31N','xy',CoordinateSystems,Operations)
 %    [x,y]=ConvertCoordinates(5,52,    4326,'geo',                  32631,'xy',CoordinateSystems,Operations)
 %
+% Note: (x1,y1) can be vectors or matrices (vectorized).
+%
 %See also: SuperTrans = GetCoordinateSystems > SelectCoordinateSystem > ConvertCoordinates
 
 %load('CoordinateSystems.mat');
