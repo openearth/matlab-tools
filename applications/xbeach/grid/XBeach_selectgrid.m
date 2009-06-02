@@ -146,7 +146,7 @@ end
 
 % Extrapolate to sides
 [nX nY] = size(X);
-if any(isnan(Z))
+if any(any(isnan(Z)))
     for i = 1:nX
         for j = floor(nY/2):nY
             %         if j == nY
