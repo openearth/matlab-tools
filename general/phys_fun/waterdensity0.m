@@ -56,8 +56,8 @@ c2 = -1.6546e-6;
 
 d0 = 4.8314e-4;
 
-rhow = waterdensitystandardmean(T) + (b0 + (b1 + (b2 + (b3 + b4*T).*T).*T).*T).*S  ...
-                   + (c0 + (c1 + c2*T).*T).*S.*sqrt(S) + d0*S.^2;	       
+rhow = waterdensitystandardmean(T) + (b0 + (b1 + (b2 + (b3 + b4.*T).*T).*T).*T).*S  ...
+                   + (c0 + (c1 + c2.*T).*T).*S.*sqrt(S) + d0.*S.^2;	       
 if Transpose
   rhow = rhow';
 end
