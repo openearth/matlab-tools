@@ -1,5 +1,5 @@
 function NAME = filename(fullfilename)
-%FILENAME   Returns NAME from [PATHSTR,NAME,EXT,VERSN] = FILEPARTS(FILE).
+%FILENAME   Returns NAME from       [PATHSTR,NAME,EXT,VERSN] = FILEPARTS(FILE).
 %
 % Note that FILENAME is vectorized, whereas FILEPARTS is not.
 %

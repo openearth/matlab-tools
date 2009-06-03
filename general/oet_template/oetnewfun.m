@@ -19,7 +19,7 @@ function oetnewfun(varargin)
 % oetnewfun('filename',...
 %     'description', 'This is an example of a new function.')
 %
-% See also: newfun getlocalsettings
+% See also: newfun, getlocalsettings, load_template
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Delft University of Technology
@@ -59,11 +59,11 @@ function oetnewfun(varargin)
 OPT = getlocalsettings;
 
 OPT.description = 'One line description goes here.';
-OPT.input = {'varargin'};
-OPT.output = {'varargout'};
-OPT.feval = [];
-OPT.code = '';
-OPT.seeAlso = '';
+OPT.input       = {'varargin'};
+OPT.output      = {'varargout'};
+OPT.feval       = [];
+OPT.code        = '';
+OPT.seeAlso     = '';
 
 FuntionName = 'Untitled';
 i0 = 2;
@@ -75,7 +75,7 @@ elseif nargin > 0
         % function is available in search path
         % get input and output variables and remove leading and trailing
         % spaces
-        OPT.input = getInputVariables(FuntionName)';
+        OPT.input  = getInputVariables(FuntionName)';
         OPT.output = getOutputVariables(FuntionName)';
     end 
 end    

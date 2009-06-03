@@ -1,5 +1,5 @@
 function EXT = fileext(fullfilename)
-%FILEEXT   Returns EXT from [PATHSTR,NAME,EXT,VERSN] = FILEPARTS(FILE).
+%FILEEXT   Returns EXT from        [PATHSTR,NAME,EXT,VERSN] = FILEPARTS(FILE).
 %
 % Note that FILEEXT is vectorized, whereas FILEPARTS is not.
 %

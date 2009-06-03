@@ -1,5 +1,5 @@
 function PATHSTR = filepathstr(fullfilename,varargin)
-%FILEPATHSTR   Returns PATHSTR from [PATHSTR,NAME,EXT,VERSN] = FILEPARTS(FILE).
+%FILEPATHSTR   Returns PATHSTR from    [PATHSTR,NAME,EXT,VERSN] = FILEPARTS(FILE).
 % 
 % By default PATHSTR does NOT end with a filesep.
 % PATHSTR(fullfilename,1) adds a filesep.
