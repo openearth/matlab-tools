@@ -1,7 +1,7 @@
 function nc_cf_stationtimeseries2meta(varargin)
 %NC_CF_STATIONTIMESERIES2META   extract meta info from all NetCDF files in directory to ...
 %
-%     NC_CF_STATIONTIMESERIES2META(<keyword,value>) 
+%     nc_cf_stationtimeseries2meta(<keyword,value>) 
 %
 %  reads standard meta info from CF  convention (station_id,min(time),max(time),lon,lat,nt) 
 %  from all NetCDF files in a directory, make a plan view plot and saves table to excel file.
