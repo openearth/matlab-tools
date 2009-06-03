@@ -1,18 +1,27 @@
+function D = donar_read_test(varargin)
 %DONAR_READ_TEST   test script for DONAR_READ
 %
 %See also: DONAR_READ
 
-D = donar_read('id44-K13APFM-1998.txt')
-plot(D.data.datenum,D.data.waarde)
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
-year = 1998;
+if nargin==0
+[fname, pathname, filterindex] = uigetfile( ...
+   {'*.txt', 'text files from www.waterbase.nl (*.txt)'; ...
+    '*.*'  , 'All Files                        (*.*)'}, ...
+    'NOAAPC file');
+   F = fullfile(pathname,fname);
+else
+   F = varargin{1};
+end
 
-xticks = datenum(year,[1:1:13],1); % define time axis
-xlim([min(xticks) max(xticks)]);
-xlabel(num2str(year))
-set(gca,'xtick'     ,xticks)
-set(gca,'xticklabel',datestr(xticks,'mmm'))
+D = donar_read(F)
 
-grid on
-
-ylabel([D.data.waarnemingssoort,' [',D.data.units,']'])
+plot    (D.data.datenum,D.data.waarde)
+ylabel  ([D.data.waarnemingssoort,' [',D.data.units,']'])
+grid     on
+datetick('x')

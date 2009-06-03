@@ -4,6 +4,12 @@
 %
 %See also: GETWATERBASE2NC_TIME_DIRECT
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
    OPT.substance_code = 'id1';
    OPT.station_code   = 'DENHDR';
    OPT.timeframe      = '196101010000-200801010000'

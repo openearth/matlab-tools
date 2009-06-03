@@ -30,8 +30,15 @@ function Station = getWaterbaseData_locations(Code)
 %       The Netherlands
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 % 2009 jan 27: removed from getWaterbaseData to separate function [Gerben de Boer]
 
+%% load locations data file   
    [s status] = urlread(['http://www.waterbase.nl/getGML.cfm?wbwns=' ...
        sprintf('%d', Code)]);
    if (status == 0)
@@ -40,6 +47,8 @@ function Station = getWaterbaseData_locations(Code)
        OutputName = [];
        return;
    end
+   
+%% interpret locations data file   
    exprFullName = '<property typeName="FullName">[^<>]*</property>';
    sFullName    = regexp(s, exprFullName,'match');
    exprID       = '<property typeName="ID">[^<>]*</property>';

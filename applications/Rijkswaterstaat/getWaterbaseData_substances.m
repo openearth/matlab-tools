@@ -25,8 +25,15 @@ function Substance = getWaterbaseData_substances(fname)
 %       The Netherlands
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 % 2009 jan 27: removed from getWaterbaseData to separate function [Gerben de Boer]
 
+%% load substances data file
    if nargin==0
       fname = 'donar_substances.csv';
    end
@@ -35,6 +42,7 @@ function Substance = getWaterbaseData_substances(fname)
    s1   = fscanf(fid, '%c', [1 inf]);
    fclose(fid);
    
+%% interpret substances data file
    IndLine               = regexp(s1, '\n');
    nSub                  = length(IndLine);
    IndSubs               =  regexp(s1(        1:IndLine(1)-1), ';');

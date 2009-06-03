@@ -61,20 +61,23 @@ function DAT = hmcz_wind_read(varargin)
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 mfile_version = '1.0, Oct. 2006, beta';
 
 %% cells are difficult to store as non-matlab files (HDF etc)
-%% so we try to avoid them
+%  so we try to avoid them
 no_cellstr    = 1;
 
    %% 0 - command line file name or 
-   %%     Launch file open GUI
-   %% ------------------------------------------
+   %      Launch file open GUI
 
    %% No file name specified if even number of arguments
-   %% i.e. 2 or 4 input parameters
-   % -----------------------------
+   %  i.e. 2 or 4 input parameters
    if mod(nargin,2)     == 0 
      [shortfilename, pathname, filterindex] = uigetfile( ...
         {'*.src' ,'HMCZ wind file (*.data)'; ...
@@ -96,7 +99,6 @@ no_cellstr    = 1;
       end
 
    %% No file name specified if odd number of arguments
-   % -----------------------------
    
    elseif mod(nargin,2) == 1 % i.e. 3 or 5 input parameters
       DAT.filename   = varargin{1};
@@ -104,7 +106,6 @@ no_cellstr    = 1;
    end
    
    %% I - Check if file exists (actually redundant after file GUI)
-   %% ------------------------------------------
 
    tmp = dir(DAT.filename);
 
@@ -124,7 +125,6 @@ no_cellstr    = 1;
       fid              = fopen   (DAT.filename,'r');
       
       %% II - Check if can be opened (locked etc.)
-      %% ------------------------------------------
 
       if fid < 0
          
@@ -137,12 +137,10 @@ no_cellstr    = 1;
       elseif fid > 2
 
          %% II - Check if can be read (format etc.)
-         %% ------------------------------------------
          
          nblock = 1;
          
          %% Read 1st block header
-         %% ----------------------
 
             header{1}       = fgetl(fid);
             
@@ -175,11 +173,8 @@ no_cellstr    = 1;
             while 1
 	   
                %% Read block data
-               %% ----------------------
-
-               %% Read one line
-               %% 01-jan-2007 00:00          147          239          178          139          168            9          158            4 
-               %% ----------------------
+               %  Read one line
+               %  01-jan-2007 00:00          147          239          178          139          168            9          158            4 
 
                record = fgetl(fid);
                % disp(record)
@@ -187,7 +182,6 @@ no_cellstr    = 1;
                nrow = nrow + 1;
                
                %% Interpret one line
-               %% ----------------------
                
                [tok01,record] = strtok(record);
                [tok02,record] = strtok(record);
@@ -256,8 +250,6 @@ no_cellstr    = 1;
                end
                
                %% Read header next block, if any
-               %% ----------------------
-
                if datenumnow == datenum1
                
                   disp('Finished reading block.')
@@ -302,10 +294,8 @@ no_cellstr    = 1;
             end % EOF
             
             %% Merge multiple blocks into one block
-            %% ----------------------
             
             %% Add description
-            %% ----------------------
             
             DAT.legend.WS10     = '10-min. scalair gemiddelde windsnelheid in [m/s]';
             DAT.legend.WR10     = '10-min. gemiddelde windrichting in [sex.grd. tov Nrd.]';
@@ -338,7 +328,6 @@ no_cellstr    = 1;
    DAT.iostatus = iostat;
    
    %% Function output
-   %% -----------------------------
 
    if nargout    < 2
       varargout= {DAT};
@@ -346,7 +335,4 @@ no_cellstr    = 1;
       varargout= {DAT, iostat};
    end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
+   %% EOF

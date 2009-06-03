@@ -15,12 +15,12 @@ function getWaterbase2nc(varargin)
 %   * pause          pause between files (default 0)
 %
 % Example:
-%  getWaterbase2nc('directory_raw','P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\raw\raw\',...
+%  getWaterbase2nc('directory_raw','P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\',...
 %                  'directory_nc', 'P:\mcdata\opendap\rijkswaterstaat\waterbase\')
 %
 %  Timeseries data definition:
-%   * https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions (full definition)
-%   * http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788 (simple)
+%   * <a href="https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions">https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions</a> (full definition)
+%   * <a href="http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788">http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788</a> (simple)
 %
 % In this example time is both a dimension and a variables.
 % The actual datenum values do not show up as a parameter in ncBrowse.
@@ -34,12 +34,8 @@ function getWaterbase2nc(varargin)
 % $HeadURL$
 % $Keywords: $
 
-try
-    rmpath('Y:\app\matlab\toolbox\wl_mexnc\')
-end
-
 %% Choose parameter
-%  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
+%  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table/
 
 OPT.names = ...
    {'sea_surface_height',...
@@ -94,8 +90,8 @@ OPT.pause          = 0;
 OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
 OPT.refdatenum     = datenum(1970,1,1); % lunix  datenumber convention
 
-OPT.directory_raw  = 'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\raw\';%[]
-OPT.directory_nc   = 'P:\mcdata\opendap\rijkswaterstaat\waterbase\';%[]
+OPT.directory_raw  = [];%'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\'
+OPT.directory_nc   = [];%'P:\mcdata\opendap\rijkswaterstaat\waterbase\';
 OPT.ext            = ''; % to add to output file name before *.nc
 
 OPT.parameter      = 8; % one from OPT.names above
@@ -122,8 +118,8 @@ for ivar=[OPT.parameter]
 
     mkpath(OPT.directory_nc1);
 
-    % File loop
-
+    %% File loop of all files in a directory
+    
     OPT.files          = dir([OPT.directory_raw1,filesep,OPT.mask]);
     
     for ifile=1:length(OPT.files)
@@ -132,7 +128,7 @@ for ivar=[OPT.parameter]
 
         disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)])
 
-        % 0 Read raw data
+        %% 0 Read raw data
 
         if exist([OPT.filename,'.mat'],'file')==2
             D = load([OPT.filename,'.mat']);% speeds up considerably
@@ -167,13 +163,14 @@ for ivar=[OPT.parameter]
 
         D.version = '';
 
-        % 1a Create file
+        %% 0 Create file
 
         outputfile    = fullfile(OPT.directory_nc1,[filename(OPT.filename),OPT.ext,'.nc']);
 
         nc_create_empty (outputfile)
 
-        % Add overall meta info
+        %% 1 Add global meta-info to file
+        % Add overall meta info:
         % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
 
         nc_attput(outputfile, nc_global, 'title'           , '');
@@ -203,7 +200,7 @@ for ivar=[OPT.parameter]
         nc_attput(outputfile, nc_global, 'waarnemingssoort', D.meta1.waarnemingssoort);
         nc_attput(outputfile, nc_global, 'reference_level' , D.meta1.what);
 
-        % 2 Create dimensions
+        %% 2 Create dimensions
 
         nc_add_dimension(outputfile, 'time'       , length(D.data.datenum))
         nc_add_dimension(outputfile, 'locations'  , 1)
@@ -214,7 +211,8 @@ for ivar=[OPT.parameter]
         clear nc
         ifld = 0;
 
-        % Station number: allows for exactly same variables when multiple timeseries in one netCDF file
+        % Station number: allows for exactly same variables when multiple
+        % timeseries in one netCDF file (future extension)
 
         ifld = ifld + 1;
         nc(ifld).Name         = 'id';
@@ -224,12 +222,12 @@ for ivar=[OPT.parameter]
         nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id'); % standard name
 
         % Define dimensions in this order:
-        % time,z,y,x
+        % [time,z,y,x]
         %
         % For standard names see:
         % http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table
         %------------------
-        % Longitude
+        % Longitude:
         % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
 
         ifld = ifld + 1;
@@ -240,7 +238,7 @@ for ivar=[OPT.parameter]
         nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_east');
         nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'longitude');
 
-        % Latitude
+        % Latitude:
         % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
 
         ifld = ifld + 1;
@@ -251,12 +249,12 @@ for ivar=[OPT.parameter]
         nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_north');
         nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'latitude');
 
-        % Time
+        % Time:
         % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
         % time is a dimension, so there are two options:
-        % * the variable name needs the same as the dimension
+        % * the variable name needs the same as the dimension:
         %   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984551
-        % * there needs to be an indirect mapping through the coordinates attribute
+        % * there needs to be an indirect mapping through the coordinates attribute:
         %   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984605
 
         OPT.timezone = timezone_code2iso('MET');
@@ -271,8 +269,8 @@ for ivar=[OPT.parameter]
         nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
         %nc(ifld).Attribute(5) = struct('Name', 'bounds'         ,'Value', '');
 
-        % Parameters with standard names
-        % * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
+        % Parameters with standard names:
+        % * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table/
 
         ifld = ifld + 1;
         nc(ifld).Name         = OPT.name;
@@ -285,13 +283,16 @@ for ivar=[OPT.parameter]
         nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
         nc(ifld).Attribute(6) = struct('Name', 'cell_methods'   ,'Value', 'point');
 
-        % 4 Create variables with attibutes
+        %% 4 Create variables with attibutes
+        % When variable definitons are created before actually writing the
+        % data in the next cell, netCDF can nicely fit all data into the
+        % file without the need to relocate any info.
 
         for ifld=1:length(nc)
             nc_addvar(outputfile, nc(ifld));
         end
 
-        % 5 Fill variables
+        %% 5 Fill variables
 
         nc_varput(outputfile, 'id'     , D.data.locationcode);
         nc_varput(outputfile, 'lon'    , unique(D.data.lon));
@@ -299,20 +300,20 @@ for ivar=[OPT.parameter]
         nc_varput(outputfile, 'time'   , D.data.datenum' - OPT.refdatenum);
         nc_varput(outputfile, OPT.name , D.data.(OPT.name));
 
-        % 6 Check
+        %% 6 Check
 
         if OPT.dump
             nc_dump(outputfile);
         end
 
-        % Pause
+        %% Pause
 
         if OPT.pause
             pausedisp
         end
 
-    end %for ifile=1:length(OPT.files)
+    end %file loop % for ifile=1:length(OPT.files)
 
-end % for ivar=1:length(OPT.codes)
+end %variable loop % for ivar=1:length(OPT.codes)
 
 %% EOF

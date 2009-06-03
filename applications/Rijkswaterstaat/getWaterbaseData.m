@@ -38,6 +38,7 @@ function OutputName = getWaterbaseData(varargin);
 %
 % See web:  <a href="http://www.waterbase.nl">www.waterbase.nl</a>,
 % See also: DONAR_READ, GETWATERBASEDATA_SUBSTANCES, GETWATERBASEDATA_LOCATIONS
+%           GETWATERBASEDATALOOP
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
@@ -51,45 +52,41 @@ function OutputName = getWaterbaseData(varargin);
 %       The Netherlands
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % 2009 mar 19: allow for selection of multiple years (all years between 1st and last) [Yann Friocourt]
+
 % 2009 jan 27: moved pieces to separate functions getWaterbaseData_locations and getWaterbaseData_substances [Gerben de Boer]
 % 2009 jan 27: allow for argument input of all chocie, to allow for batch running [Gerben de Boer]
 % 2009 jan 27: use urlwrite for query of one location, as urlwrite often returns status=0 somehow [Gerben de Boer]
 % 2009 apr 01: added 'exact' to strmatch to prevent finding more statiosn with similar subnames (e.g. MOOK and MOOKHVN)
 
 %% Substance names
-%--------------------------------------
 
    OPT.strmatch = 'exact';
 
 %% Substance names
-%--------------------------------------
 
    Substance = getWaterbaseData_substances('donar_substances.csv');
 
 %% Select substance name
-%--------------------------------------
 
    if nargin>0
       indSub = varargin{1};
-
       if    isnumeric(indSub);indSub = find    (indSub==Substance.Code    );
       else ~isnumeric(indSub);indSub = strmatch(indSub, Substance.FullName);
       end
       ok        = 1;
-
    else
       [indSub, ok] = listdlg('ListString', Substance.FullName, .....
                           'SelectionMode', 'single', ...
                            'PromptString', 'Select the substance to download', ....
                                    'Name', 'Selection of substance',...
                                'ListSize', [500, 300]);
-
-      if (ok == 0)
-         OutputName = [];
-         return;
-      end
-
+      if (ok == 0);OutputName = [];return;end
    end
 
    disp(['message: getWaterbaseData: loading Substance # ',num2str(indSub                ,'%0.3d'),': ',...
@@ -97,19 +94,15 @@ function OutputName = getWaterbaseData(varargin);
                                                            Substance.FullName{indSub},'"'])
 
 %% Location names
-%--------------------------------------
 
    Station = getWaterbaseData_locations(Substance.Code(indSub));
 
 %% Select Location names
-%--------------------------------------
 
    if nargin>1
       indLoc = varargin{2};
-
       if   ~isnumeric(indLoc);indLoc = strmatch(indLoc, Station.ID,OPT.strmatch);
       end
-
       ok     = 1;
    else
       [indLoc, ok] = listdlg('ListString', Station.FullName, ...
@@ -117,11 +110,7 @@ function OutputName = getWaterbaseData(varargin);
                            'InitialValue', [1:length(Station.FullName)], ...
                            'PromptString', 'Select the locations', ....
                                    'Name', 'Selection of locations')
-
-      if (ok == 0)
-         OutputName = [];
-         return;
-      end
+      if (ok == 0);OutputName = [];return;end
    end
 
    if length(indLoc)>1
@@ -131,7 +120,6 @@ function OutputName = getWaterbaseData(varargin);
    end
 
 %% Times
-%--------------------------------------
 
    if nargin>2
       indDate   = varargin{3};
@@ -163,7 +151,6 @@ function OutputName = getWaterbaseData(varargin);
    disp(['message: getWaterbaseData: loading enddate          ',enddate]);
 
 %% Select Times
-%--------------------------------------
 
    if nargin>3
       indName  = varargin{4};
@@ -175,21 +162,16 @@ function OutputName = getWaterbaseData(varargin);
       end
    else
       [FileName, FilePath] = uiputfile('*.txt','Save data');
-      if (isequal(FileName, 0))
-          return;
-          OutputName = [];
-      end
+      if (isequal(FileName, 0));return;OutputName = [];end
    end
 
    disp(['message: getWaterbaseData: loading file             ',fullfile(FilePath,FileName)]);
    
 %% get data = f(Substance.Code, Station.ID, startdate, enddate
-%--------------------------------------
 
    OutputName = fullfile(FilePath,FileName);
 
-   %% Directly write file returned for one location
-   %--------------------------------------
+%% Directly write file returned for one location
 
    if length(indLoc)==1
 
@@ -212,8 +194,7 @@ function OutputName = getWaterbaseData(varargin);
 
    else
 
-   %% Pad multiple files returned for multiplelocations
-   %--------------------------------------
+%% Pad multiple files returned for multiplelocations
 
       h = waitbar(0,'Downloading data...');
 

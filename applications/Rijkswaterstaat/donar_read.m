@@ -19,7 +19,7 @@ function varargout = donar_read(fnames,varargin)
 %                               This option also reads the headerlines into DAT.
 %                               number 7, or 5 or 4 for older files where the 
 %                               EPSG names of the coordinates were not yet added.
-%  * 'scale','xscale','yscale': real value. x and y fields can optionally be divided by 100 
+%  * 'xscale','yscale':         real value. x and y fields can optionally be divided by 100 
 %                               so they are  in SI units (meters etc.). (default all scales 1).
 %  * 'method':                  'textread' (default) or 'fgetl'.
 %          'textread':          is used by default, which is perfect for relatively small files
@@ -41,30 +41,7 @@ function varargout = donar_read(fnames,varargin)
 %    * 7415 RD    (x  ,y  ) [cm] (East, North) 
 %
 %   See web : <a href="http://www.epsg.org/guides/">www.epsg.org</a>, <a href="http://www.waterbase.nl"    >www.waterbase.nl</a>
-%   See also: LOAD, XLSREAD
-
-% 2006 Feb    : first version [Gerben J de Boer]
-% 2009 apr 21 : fixed error that swapped [lon,lat] for EPSG codes 4230 and 4326 [Gerben J de Boer]
-
-%  SUpersedied with ntmax=Inf
-% -------------------------------------------------------
-%   * 'preallocate' = integer value (only for method = 'fgetl')
-%     The method fgetl is not vectorized, and is therefore exceptionally slow 
-%     for large data sets. But, it requires significantly less memory than 
-%     textread. If you set fgetl to Inf, DONAR_READ, first scrolls the entire 
-%     file to count the number of lines, and then reads the file again with 
-%     just a little bit over-preallocation with the # of header lines (default).
-%
-%   * ntmax, (default Inf for method='fgetl')
-%
-%     preallocate is the maximum number of timesteps per location. Setting 
-%     this equal to or larger than the number of timesteps, considerably 
-%     speeds up. Any excessive number of  allocated times is removed at the 
-%     end. When a too small number is passed, the arrays are dynamically
-%     adjusted every line. This is SLOW. Idea: to preallocate 
-%     an 11-year 10-minute time series you need: 11*366*24*6 = 579744.
-% -------------------------------------------------------
-
+%   See also: LOAD, XLSREAD, getWaterbaseData
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
@@ -95,17 +72,42 @@ function varargout = donar_read(fnames,varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   -------------------------------------------------------------------- 
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
+% 2006 Feb    : first version [Gerben J de Boer]
+% 2009 apr 21 : fixed error that swapped [lon,lat] for EPSG codes 4230 and 4326 [Gerben J de Boer]
+% 2009 may 03 : updated commetns to reflect matlab code-cells
+% 2009 may 03 : used setProperty now (for whoch I ahd to delete scale keyword)
+
+%%  Superseded keywords with ntmax=Inf
+%   * 'preallocate' = integer value (only for method = 'fgetl')
+%     The method fgetl is not vectorized, and is therefore exceptionally slow 
+%     for large data sets. But, it requires significantly less memory than 
+%     textread. If you set fgetl to Inf, DONAR_READ, first scrolls the entire 
+%     file to count the number of lines, and then reads the file again with 
+%     just a little bit over-preallocation with the # of header lines (default).
+%   * ntmax, (default Inf for method='fgetl')
+%     preallocate is the maximum number of timesteps per location. Setting 
+%     this equal to or larger than the number of timesteps, considerably 
+%     speeds up. Any excessive number of  allocated times is removed at the 
+%     end. When a too small number is passed, the arrays are dynamically
+%     adjusted every line. This is SLOW. Idea: to preallocate 
+%     an 11-year 10-minute time series you need: 11*366*24*6 = 579744.
+
 % uses: time2datenum
 %       ctransdv (optionally)
 
 %% Defaults
-%% ----------------------
 
    OPT.xscale                 = 1;
    OPT.yscale                 = 1;
-   OPT.valuescale             = 1;
+   OPT.fieldnamescale         = 1;
    
-   OPT.value                  = 'waarde';
+   OPT.fieldname              = 'waarde';
    OPT.method                 = 'textread';
    OPT.preallocate            = Inf; %11*366*24*6; % 11 years every 10 minute for method = 'fgetl'
    OPT.headerlines            = 'auto'; %changed from 4 to 5 after inclusion of EPSG names of coordinates and is 7 on 2007 june 27th
@@ -117,36 +119,10 @@ function varargout = donar_read(fnames,varargin)
    OPT.ctransdv               = exist('ctransdv')==2; % only required for parijs RD coordiantes
 
 %% Key words
-%% ----------------------
 
-   i = 1;
-   %% remaining number of arguments is always even now
-   while i<=nargin-1,
-       switch lower ( varargin{i  })
-       % all keywords lower case
-       case 'xscale';                 i=i+1;OPT.xscale                 = varargin{i};
-       case 'yscale';                 i=i+1;OPT.yscale                 = varargin{i};
-       case 'scale';                  i=i+1;OPT.xscale                 = varargin{i};
-                                            OPT.yscale                 = varargin{i};
-       case 'fieldnamescale';         i=i+1;OPT.valuescale             = varargin{i};
-       case 'fieldname';              i=i+1;OPT.value                  = varargin{i};
+   OPT = setProperty(OPT,varargin{1:end});
 
-       case 'method';                 i=i+1;OPT.method                 = varargin{i};
-       case 'preallocate';            i=i+1;OPT.preallocate            = varargin{i};
-       case 'headerlines';            i=i+1;OPT.headerlines            = varargin{i};
-       case 'start_last_header_line'; i=i+1;OPT.start_last_header_line = varargin{i};
-       case 'display';                i=i+1;OPT.display                = varargin{i};
-       case 'displayskip';            i=i+1;OPT.displayskip            = varargin{i};
-       case 'ntmax';                  i=i+1;OPT.ntmax                  = varargin{i};
-       case 'locationcode';           i=i+1;OPT.locationcode           = varargin{i};
-       case 'ctransdv';               i=i+1;OPT.ctransdv               = varargin{i};
-       otherwise
-         error(sprintf('Invalid string argument (caps?): "%s".',...
-         varargin{i}));
-       end
-       i=i+1;
-   end
-   
+%% Loop over file names
 fnames = cellstr(fnames);
 
 for ifile=1:length(fnames)
@@ -154,8 +130,7 @@ for ifile=1:length(fnames)
    fname = char(fnames{ifile});
 
    %% Original file info
-   %% ----------------------------------------
-
+ 
       D = dir(fname);
       
       if isempty(D)
@@ -163,30 +138,23 @@ for ifile=1:length(fnames)
       end
    
    %% Automatic header line detection
-   %% ----------------------------------------
    
    if ischar(OPT.headerlines)
       if strcmpi(OPT.headerlines,'auto')
-
-         fid           = fopen(fname,'r');
+     fid           = fopen(fname,'r');
 	 record        = fgetl(fid); % read one record
 	 n_headerlines = 0;
 	 finished      = 0;
-	 
 	 if length(record) >= length(OPT.start_last_header_line)
 	    if strcmpi(record(1:length(OPT.start_last_header_line)),...
 	                               OPT.start_last_header_line)
 	       finished = 1;
 	    end
 	 end
-	 
 	 while ~(finished)
-
 	    n_headerlines           = n_headerlines + 1;
 	    D.header{n_headerlines} = record;
-
 	    record = fgetl(fid); % read one record
-	    
 	    if length(record) >= length(OPT.start_last_header_line)
 	    if strcmpi(record(1:length(OPT.start_last_header_line)),...
 	                               OPT.start_last_header_line)
@@ -195,49 +163,45 @@ for ifile=1:length(fnames)
 	       D.header{n_headerlines} = record;
 	    end
 	    end
-
 	 end
-	 
          fclose(fid);
-	 
       end
 
       OPT.headerlines = n_headerlines;
 
    end
 
-   %% ----------------------------------------
-   %% locatie;waarnemingssoort;datum;tijd;bepalingsgrenscode;waarde;eenheid;hoedanigheid;anamet;ogi;vat;bemhgt;refvlk;x;y;orgaan;biotaxon (cijfercode,biotaxon omschrijving,biotaxon Nederlandse naam)
-   %% Noordwijk meetpost;Waterhoogte in cm t.o.v. normaal amsterdams peil in oppervlaktewater;1982-09-02;19:30;;-36;cm t.o.v. NAP;T.o.v. Normaal Amsterdams Peil;Rek. gem. waterhoogte over vorige 10 min. (MSW);Nationaal;Stappenbaak - type Marine 300;NVT;NVT;4174600;52162600;NVT;NVT,NVT,Niet van toepassing
-   %% ----------------------------------------
-   %%  1    locatie                                                               Noordwijk meetpost
-   %%  2    waarnemingssoort							  Waterhoogte in cm t.o.v. normaal amsterdams peil in oppervlaktewater
-   %%  3    datum								  1982-09-02
-   %%  4    tijd								  19:30
-   %%  5    bepalingsgrenscode
-   %%  6    waarde								  -36
-   %%  7    eenheid								  cm t.o.v. NAP
-   %%  8    hoedanigheid							  T.o.v. Normaal Amsterdams Peil
-   %%  9    anamet								  Rek. gem. waterhoogte over vorige 10 min. (MSW)
-   %% 10    ogi									  Nationaal
-   %% 11    vat									  Stappenbaak - type Marine 300
-   %% 12    bemhgt								  NVT
-   %% 13    refvlk								  NVT
-   %% 14/   epsg								  7415
-   %% 15/14 x									  4174600
-   %% 16/15 y									  52162600
-   %% 17/16 orgaan								  NVT
-   %% 18/17 biotaxon (cijfercode,biotaxon omschrijving,biotaxon Nederlandse naam) NVT,NVT,Niet van toepassing
+   %% file format example
+   %  locatie;waarnemingssoort;datum;tijd;bepalingsgrenscode;waarde;eenheid;hoedanigheid;anamet;ogi;vat;bemhgt;refvlk;x;y;orgaan;biotaxon (cijfercode,biotaxon omschrijving,biotaxon Nederlandse naam)
+   %  Noordwijk meetpost;Waterhoogte in cm t.o.v. normaal amsterdams peil in oppervlaktewater;1982-09-02;19:30;;-36;cm t.o.v. NAP;T.o.v. Normaal Amsterdams Peil;Rek. gem. waterhoogte over vorige 10 min. (MSW);Nationaal;Stappenbaak - type Marine 300;NVT;NVT;4174600;52162600;NVT;NVT,NVT,Niet van toepassing
+   %  ----------------------------------------
+   %  1    locatie                                                               Noordwijk meetpost
+   %  2    waarnemingssoort							  Waterhoogte in cm t.o.v. normaal amsterdams peil in oppervlaktewater
+   %  3    datum								  1982-09-02
+   %  4    tijd								  19:30
+   %  5    bepalingsgrenscode
+   %  6    waarde								  -36
+   %  7    eenheid								  cm t.o.v. NAP
+   %  8    hoedanigheid							  T.o.v. Normaal Amsterdams Peil
+   %  9    anamet								  Rek. gem. waterhoogte over vorige 10 min. (MSW)
+   % 10    ogi									  Nationaal
+   % 11    vat									  Stappenbaak - type Marine 300
+   % 12    bemhgt								  NVT
+   % 13    refvlk								  NVT
+   % 14/   epsg								  7415
+   % 15/14 x									  4174600
+   % 16/15 y									  52162600
+   % 17/16 orgaan								  NVT
+   % 18/17 biotaxon (cijfercode,biotaxon omschrijving,biotaxon Nederlandse naam) NVT,NVT,Niet van toepassing
    % new/old
-   %% ----------------------------------------
+   % ----------------------------------------
    
-   %% ----------------------------------------
+   %% read
    
    if strcmp(OPT.method,'textread')
    
       if OPT.headerlines==4
       %% Old file type, no extra headerline, AND extra column with EPSG number
-      %% ----------------------------------------
       [location          ,...
        waarnemingssoort  ,...
        datestring        ,...
@@ -259,7 +223,6 @@ for ifile=1:length(fnames)
                            'delimiter'  ,';');
        else
       %% Extra headerline, AND extra column with EPSG number
-      %% ----------------------------------------
       [location          ,...
        waarnemingssoort  ,...
        datestring        ,...
@@ -294,27 +257,26 @@ for ifile=1:length(fnames)
        %                        'delimiter'  ,';');
        
        %% Replace N.A. with NaNs
-       %% ----------------------
        
-       %%waardestring = char(waardestring);
-       %%
-       %%%whos waarde
-       %%%108311x39
-       %%
-       %%nodatavalues = {'N.A.',...                                  % OPP WATER TEMP (DONAR)
-       %%                'Geen data beschikbaar/No data available'}; % Debiet
-       %%                
-       %%for ii = 1:length(nodatavalues)
-       %%   mask   = strmatch(char(nodatavalues{ii}),waarde,'exact');
-       %%   for ii=1:length(mask)
-       %%      waarde(mask(ii),:)=pad('NaN',size(waarde,2));
-       %%   end
-       %%end
-       %%
-       %%[waarde,OK]=str2num(waardestring);
-       %%   if OK==0
-       %%      error('conversion data to numeric values, probaly due to Geen data beschikbaar/No data available text in data.')
-       %%   end
+       % waardestring = char(waardestring);
+       % 
+       % %whos waarde
+       % %108311x39
+       % 
+       % nodatavalues = {'N.A.',...                                  % OPP WATER TEMP (DONAR)
+       %                 'Geen data beschikbaar/No data available'}; % Debiet
+       %                 
+       % for ii = 1:length(nodatavalues)
+       %    mask   = strmatch(char(nodatavalues{ii}),waarde,'exact');
+       %    for ii=1:length(mask)
+       %       waarde(mask(ii),:)=pad('NaN',size(waarde,2));
+       %    end
+       % end
+       % 
+       % [waarde,OK]=str2num(waardestring);
+       %    if OK==0
+       %       error('conversion data to numeric values, probaly due to Geen data beschikbaar/No data available text in data.')
+       %    end
    
        waardestring = cellstr(waardestring);
        waarde       = str2double(waardestring); % returns NaN where waardestring is not 
@@ -322,9 +284,7 @@ for ifile=1:length(fnames)
        %error('waarde also per station')
    
        %% Make into table
-       %% ----------------------
-   
-       %% TO DO: Sort per station into seperate struct fields
+       %  TO DO: Sort per station into seperate struct fields
        
        D.locations = unique(location);
        
@@ -354,11 +314,10 @@ for ifile=1:length(fnames)
          %D.data(istat).orgaan             = 
          %D.data(istat).biotaxon           = 
          
-          D.data(istat).(OPT.value)        = waarde(mask);
+          D.data(istat).(OPT.fieldname)    = waarde(mask);
           D.data(istat).datenum            = datenumbers(mask);
 
           %% Get uniform co-ordinates (lat,lon)
-          %% ------------------------
           
              D.data(istat).lon = repmat(nan,size(D.data(istat).x));
              D.data(istat).lat = repmat(nan,size(D.data(istat).x));
@@ -394,7 +353,6 @@ for ifile=1:length(fnames)
       % warning('method fgetl does not work for multiple stations, neither for missing data data ''N.A.''')
    
       %% Fast scan file one time to count number of lines
-      %% ----------------------------------------
       
       if isinf(OPT.preallocate) %%%-%%% & 0
          fid = fopen(fname,'r');
@@ -414,20 +372,17 @@ for ifile=1:length(fnames)
          nt = OPT.preallocate;
       end
       
-      %%%-%%% nt=10;
-      
       %% Pre-allocate arrays
-      %% ----------------------------------------
+      % pre-allocate any extra vector too !!!
 
-      D.readme           = ['Except the for five fields datenum,',OPT.value,',x,y,epsg the fields contain only the first record !!!'];
-      D.data.datenum     = repmat(nan,[1 nt]); % 1
-      D.data.(OPT.value) = repmat(nan,[1 nt]); % 2
-      D.data.x           = repmat(nan,[1 nt]); % 3
-      D.data.y           = repmat(nan,[1 nt]); % 4
-      D.data.lon         = repmat(nan,[1 nt]); % 5
-      D.data.lat         = repmat(nan,[1 nt]); % 6
-      D.data.epsg        = repmat(nan,[1 nt]); % 7
-      % pre-allocate any extra vector !!!
+      D.readme               = ['Except the for five fields datenum,',OPT.fieldname,',x,y,epsg the fields contain only the first record !!!'];
+      D.data.datenum         = repmat(nan,[1 nt]); % 1
+      D.data.(OPT.fieldname) = repmat(nan,[1 nt]); % 2
+      D.data.x               = repmat(nan,[1 nt]); % 3
+      D.data.y               = repmat(nan,[1 nt]); % 4
+      D.data.lon             = repmat(nan,[1 nt]); % 5
+      D.data.lat             = repmat(nan,[1 nt]); % 6
+      D.data.epsg            = repmat(nan,[1 nt]); % 7
 
       nt              = 0; % number of time per location
       nloc            = 1;
@@ -435,7 +390,6 @@ for ifile=1:length(fnames)
       currentlocation = '';
       
       %% Read data from file
-      %% ----------------------------------------
 
       fid = fopen(fname,'r');
    
@@ -450,14 +404,14 @@ for ifile=1:length(fnames)
              break
           else
           
-             %Waarnemingssoort: Debiet in m3/s in oppervlaktewater
-             %Alle tijdsaanduidingen zijn in GMT+1 (MET)
-             %Coordinaatweergave is x,y in EPSG 7415 (RD) en als lat/long in EPSG 4230 (ED50)
-             %De afkorting NVT betekent: "Niet van toepassing"
-             %locatie        ;waarnemingssoort                  ;datum     ;tijd ;bepalingsgrenscode;waarde;eenheid;hoedanigheid;anamet                                        ;ogi      ;vat;bemhgt;refvlk;EPSG;x/lat ;y/long;orgaan;biotaxon (cijfercode,biotaxon omschrijving,biotaxon Nederlandse naam)
-             %Hagestein boven;Debiet in m3/s in oppervlaktewater;1989-01-01;00:00;                  ;567   ;m3/s   ;NVT         ;Debiet uit afvoerkromme (Q/H- of Q/HH-relatie);Nationaal;NVT;NVT   ;NVT   ;7415;137740;444640;NVT   ;NVT,NVT,Niet van toepassing
-             %Hagestein boven;Debiet in m3/s in oppervlaktewater;1989-01-02;00:00;                  ;530   ;m3/s   ;NVT         ;Debiet uit afvoerkromme (Q/H- of Q/HH-relatie);Nationaal;NVT;NVT   ;NVT   ;7415;137740;444640;NVT   ;NVT,NVT,Niet van toepassing       
-             %...
+             % Waarnemingssoort: Debiet in m3/s in oppervlaktewater
+             % Alle tijdsaanduidingen zijn in GMT+1 (MET)
+             % Coordinaatweergave is x,y in EPSG 7415 (RD) en als lat/long in EPSG 4230 (ED50)
+             % De afkorting NVT betekent: "Niet van toepassing"
+             % locatie        ;waarnemingssoort                  ;datum     ;tijd ;bepalingsgrenscode;waarde;eenheid;hoedanigheid;anamet                                        ;ogi      ;vat;bemhgt;refvlk;EPSG;x/lat ;y/long;orgaan;biotaxon (cijfercode,biotaxon omschrijving,biotaxon Nederlandse naam)
+             % Hagestein boven;Debiet in m3/s in oppervlaktewater;1989-01-01;00:00;                  ;567   ;m3/s   ;NVT         ;Debiet uit afvoerkromme (Q/H- of Q/HH-relatie);Nationaal;NVT;NVT   ;NVT   ;7415;137740;444640;NVT   ;NVT,NVT,Niet van toepassing
+             % Hagestein boven;Debiet in m3/s in oppervlaktewater;1989-01-02;00:00;                  ;530   ;m3/s   ;NVT         ;Debiet uit afvoerkromme (Q/H- of Q/HH-relatie);Nationaal;NVT;NVT   ;NVT   ;7415;137740;444640;NVT   ;NVT,NVT,Niet van toepassing       
+             % ...
              
              nt  = nt + 1;
              
@@ -508,19 +462,19 @@ for ifile=1:length(fnames)
                 HH                           = str2double(timestring( 1: 2));
                 MI                           = str2double(timestring( 4: 5));
                 
-                D(nloc).data.datenum    (nt) = datenum(yyyy,mm,dd,HH,MI,0);          % 1
-                D(nloc).data.(OPT.value)(nt) = str2double(rec(dlm( 5)+1:dlm( 6)-1)); % 2
-                D(nloc).data.epsg       (nt) = str2num   (rec(dlm(13)+1:dlm(14)-1)); % 7
-                D(nloc).data.x          (nt) = str2num   (rec(dlm(14)+1:dlm(15)-1)); % 3
-                D(nloc).data.y          (nt) = str2num   (rec(dlm(15)+1:dlm(16)-1)); % 4
+                D(nloc).data.datenum        (nt) = datenum(yyyy,mm,dd,HH,MI,0);          % 1
+                D(nloc).data.(OPT.fieldname)(nt) = str2double(rec(dlm( 5)+1:dlm( 6)-1)); % 2
+                D(nloc).data.epsg           (nt) = str2num   (rec(dlm(13)+1:dlm(14)-1)); % 7
+                D(nloc).data.x              (nt) = str2num   (rec(dlm(14)+1:dlm(15)-1)); % 3
+                D(nloc).data.y              (nt) = str2num   (rec(dlm(15)+1:dlm(16)-1)); % 4
    	        
              else
 
-                D(nloc).data.datenum    (nt) = nan;
-                D(nloc).data.(OPT.value)(nt) = nan;
-                D(nloc).data.epsg       (nt) = nan;
-                D(nloc).data.x          (nt) = nan;
-                D(nloc).data.y          (nt) = nan;
+                D(nloc).data.datenum        (nt) = nan;
+                D(nloc).data.(OPT.fieldname)(nt) = nan;
+                D(nloc).data.epsg           (nt) = nan;
+                D(nloc).data.x              (nt) = nan;
+                D(nloc).data.y              (nt) = nan;
              
              end
              
@@ -528,10 +482,8 @@ for ifile=1:length(fnames)
           end
           
       end % while
-      
              
       %% Get uniform co-ordinates (lat,lon)
-      %% ------------------------
 
          D(nloc).data.lon = repmat(nan,size(D(nloc).data.x)); % 5
          D(nloc).data.lat = repmat(nan,size(D(nloc).data.x)); % 6
@@ -556,18 +508,17 @@ for ifile=1:length(fnames)
          % try different mapping toolbox, m_map, or matlab mapping toolbox or upcoming supertrans
       end      
       
-      %% Remove too much pre-allocated data,
-      %% even when OPT.preallocate, because
-      %% the fast scanning also counted the number of header lines.
-      %% ----------------------------------
+      %% Remove too much pre-allocated data.
+      %  This need to be done even if OPT.preallocate is specified, because
+      %  the fast scanning also counted the number of header lines.
       
-      D.data.datenum     = D.data.datenum    (1:nt); % 1
-      D.data.(OPT.value) = D.data.(OPT.value)(1:nt); % 2
-      D.data.x           = D.data.x          (1:nt); % 3
-      D.data.y           = D.data.y          (1:nt); % 4
-      D.data.epsg        = D.data.epsg       (1:nt); % 5
-      D.data.lon         = D.data.lon        (1:nt); % 6
-      D.data.lat         = D.data.lat        (1:nt); % 7
+      D.data.datenum         = D.data.datenum        (1:nt); % 1
+      D.data.(OPT.fieldname) = D.data.(OPT.fieldname)(1:nt); % 2
+      D.data.x               = D.data.x              (1:nt); % 3
+      D.data.y               = D.data.y              (1:nt); % 4
+      D.data.epsg            = D.data.epsg           (1:nt); % 5
+      D.data.lon             = D.data.lon            (1:nt); % 6
+      D.data.lat             = D.data.lat            (1:nt); % 7
       
       D.locations{1} = D(nloc).meta1.location;
    
@@ -578,10 +529,9 @@ for ifile=1:length(fnames)
    end % OPT.method
 
    %% apply scales to get rid of STUPID non-SI units of Rijkswaterstaat
-   %% ------------------
    
    for idat = 1:length(D.data)
-      D.data(idat).(OPT.value) = D.data(idat).(OPT.value)./OPT.valuescale;
+      D.data(idat).(OPT.fieldname) = D.data(idat).(OPT.fieldname)./OPT.fieldnamescale;
    end
    
    if isfield(D,'x')
@@ -595,8 +545,6 @@ for ifile=1:length(fnames)
    end   
    
    %% In case of more files, copy to multiple-file structure
-   %% ------------------
-
    if length(D.locations)==1
    
       %if ~(length(D.locations)==1)
@@ -604,7 +552,6 @@ for ifile=1:length(fnames)
       %end
    
          %% Extract meta-information
-         %% -----------------
          DS.name     {ifile} = D.name ;
          DS.date     {ifile} = D.date ;
          DS.bytes    (ifile) = D.bytes;
@@ -613,7 +560,6 @@ for ifile=1:length(fnames)
          DS.locations{ifile} = D.locations{1}; %D.data.location;
          
          %% Copy location code (as obtained from file name)
-         %% -----------------
          if OPT.locationcode
          
             index            = strfind(fname,'-');
@@ -629,7 +575,6 @@ for ifile=1:length(fnames)
          end
 
          %% Copy data
-         %% -----------------
          DS.data(ifile) = D.data;
          
       disp(['donar_read: read file ',num2str(ifile),' of ',num2str(length(fnames))])
@@ -639,7 +584,6 @@ for ifile=1:length(fnames)
 end % for ifile=1:length(fnames)
 
 %% Output
-%% -----------------
 
    if length(fnames) >1
       varargout = {DS};

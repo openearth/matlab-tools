@@ -3,9 +3,14 @@
 % See also: GETWATERBASEDATA, DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>,  
 %           GETWATERBASEDATA_SUBSTANCES, GETWATERBASEDATA_LOCATIONS, GETWATERBASE2NC_TIME_DIRECT
 
-%% Choose parameter and provide CF standard_names.
+%% Choose parameter and provide CF standard_names and units.
 %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
-%------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
    OPT.codes          = 1;
    OPT.standard_names = {'sea_surface_height'};
@@ -31,9 +36,8 @@
    OPT.standard_names = {'concentration_of_chlorophyll_in_sea_water'}; % alias: chlorophyll_concentration_in_sea_water
                          
 %% Initialize
-%------------------
 
-   OPT.directory.raw = 'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\raw\';
+   OPT.directory.raw = 'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';
 
    OPT.period        = datenum([1961 2008],1,1);
    OPT.zip           = 1; % zip txt file and delete it
@@ -41,15 +45,13 @@
    OPT.opendap       = 0; % not implemented yet
    
 %% Parameter loop
-%------------------
 
 for ivar=1:length(OPT.codes)
 
    OPT.code           = OPT.codes(ivar);
    OPT.standard_name  = OPT.standard_names{ivar};
 
-   %% Match and check Substance
-   %---------------------------------
+%% Match and check Substance
    
       SUB        = getWaterbaseData_substances;
       OPT.indSub = find(SUB.Code==OPT.code);
@@ -60,8 +62,7 @@ for ivar=1:length(OPT.codes)
       disp(['FullName :',        SUB.FullName{OPT.indSub} ])
       disp(['Code     :',num2str(SUB.Code    (OPT.indSub))])
    
-   %% get and check Locations
-   %---------------------------------
+%% get and check Locations
    
       LOC = getWaterbaseData_locations(SUB.Code(OPT.indSub));
       
@@ -80,8 +81,7 @@ for ivar=1:length(OPT.codes)
          getWaterbaseData(SUB.Code(OPT.indSub),LOC.ID{indLoc},...
                           OPT.period,...
                          [OPT.directory.raw,filesep,OPT.standard_name]);
-      %% Zip
-      %----------------------
+%% Zip
    
          if OPT.zip
             zip   (OPT.filename,OPT.filename);
@@ -90,8 +90,7 @@ for ivar=1:length(OPT.codes)
          
       end % for indLoc=1:length(LOC.ID)
       
-   %% Transform to *.nc files
-   %----------------------
+%% Transform to *.nc files
    
       if OPT.nc
       for indLoc=1:length(LOC.ID)
@@ -99,8 +98,7 @@ for ivar=1:length(OPT.codes)
       end
       end
       
-   %% Copy to OPeNDAP server 
-   %----------------------
+%% Copy to OPeNDAP server 
    
       if OPT.opendap
       for indLoc=1:length(LOC.ID)
