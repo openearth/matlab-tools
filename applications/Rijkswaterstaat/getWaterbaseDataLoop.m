@@ -7,26 +7,28 @@
 %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
 %------------------
 
-   OPT.Codes          = 1;
-   OPT.standard_names = 'sea_surface_height';
+   OPT.codes          = 1;
+   OPT.standard_names = {'sea_surface_height'};
 
-   OPT.Codes          = 54;
-   OPT.standard_names = 'sea_surface_height';
+   OPT.codes          = 54;
+   OPT.standard_names = {'sea_surface_height'};
 
-   OPT.Codes          = 410;
-   OPT.standard_names = 'concentration_of_suspended_matter_in_sea_water';
+   OPT.codes          = 410;
+   OPT.standard_names = {'concentration_of_suspended_matter_in_sea_water'};
 
    OPT.codes          = [44 
                          559 
                          22 
                          23 
                          24];
-
    OPT.standard_names = {'sea_surface_temperature',...
                          'sea_surface_salinity',...
                          'sea_surface_wave_significant_height',...
                          'sea_surface_wave_from_direction',...
                          'sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment'};
+
+   OPT.codes          = 282;
+   OPT.standard_names = {'concentration_of_chlorophyll_in_sea_water'}; % alias: chlorophyll_concentration_in_sea_water
                          
 %% Initialize
 %------------------
