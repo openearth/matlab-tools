@@ -229,7 +229,7 @@ end % x0min must be equal or larger than x00min
 IterationBoundariesConsistent = x0max > x0min;
 if ~IterationBoundariesConsistent
     % to distinguish between non-consistent boundaries and a profile which
-    % is that is too mild compared to the parabolic profile it has to be
+    % is too mild compared to the parabolic profile it has to be
     % checked whether in the most seaward posibility volume can be enclosed
     % (i.e. at least one crossing below the water level present)
     
@@ -247,7 +247,11 @@ if ~IterationBoundariesConsistent
     if isempty(xcr)
         writemessage(-8, 'Initial profile is not steep enough to yield a solution under these conditions.');
     else
-        writemessage(-99, 'Iteration boundaries are non-consistent');
+        if Basis.x0max == 6
+            writemessage(25,'No result possible, not enough profile information at seaward side available');
+        else
+            writemessage(-99, 'Iteration boundaries are non-consistent');
+        end
     end
     [x00min, x0min, x0max, x0except, chpoints_new]= deal([]);
     SeawardBoundaryofInterest = xInitial(end);
