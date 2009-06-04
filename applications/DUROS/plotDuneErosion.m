@@ -1,4 +1,4 @@
-function plotDuneErosion(result, nr)
+function plotDuneErosion(result, varargin)
 %PLOTDUNEEROSION    routine to plot dune erosion results
 %
 % This routine plots the results of a dune erosion calculation in a figure
@@ -26,12 +26,30 @@ function plotDuneErosion(result, nr)
 % $Revision$
 
 %%
-getdefaults('nr', gcf, 0);
 
-if ishandle(nr)
-    fig = nr;
-else
-    fig = figure(nr);
+OPT = struct(...
+    'xdir','reverse',...
+    'xoffset',0);
+
+if nargin>1
+    if ishandle(varargin{1})
+        nr = varargin{1};
+        varargin(1) = [];
+    end
+    getdefaults('nr', gcf, 0);
+    if ishandle(nr)
+        fig = nr;
+    else
+        fig = figure(nr);
+    end
+    
+    OPT = setProperty(OPT,varargin);
+    if all(~strcmp(OPT.xdir,{'normal','reverse'}))
+        error('PlotDuneErosion:WrongProperty','Parameter xdir can only be "normal" or "reverse"');
+    end
+    if ~isnumeric(OPT.xoffset)
+        error('PlotDuneErosion:WrongProperty','Parameter xoffset must be numeric');
+    end
 end
 
 children = get(fig, 'children');
@@ -44,7 +62,7 @@ else
 end
 
 set(parent,...
-    'Xdir', 'reverse',...
+    'Xdir', OPT.xdir,...
     'Box', 'on',...
     'color', 'none',...
     'NextPlot', 'add')
@@ -64,7 +82,7 @@ for i = fliplr(1 : length(result))
 end
 
 hsc = [];
-[x, z] = deal([result(1).xLand; result(1).xActive; result(1).xSea], [result(1).zLand; result(1).zActive; result(1).zSea]);
+[x, z] = deal([result(1).xLand; result(1).xActive; result(1).xSea]+OPT.xoffset, [result(1).zLand; result(1).zActive; result(1).zSea]);
 
 if ~issorted(x)
     % relevant if poslndwrd == 1
@@ -100,7 +118,7 @@ for i = 1 : LastFilledField
         if isfield(result(i).info, 'ID')
             txt{i} = result(i).info.ID; % not applicable in case of debugging when result(i).info.ID doesn't exist
         end
-        volumepatch = [result(i).xActive' fliplr(result(i).xActive'); result(i).z2Active' fliplr(result(i).zActive')]';
+        volumepatch = [result(i).xActive'+OPT.xoffset fliplr(result(i).xActive')+OPT.xoffset; result(i).z2Active' fliplr(result(i).zActive')]';
         hp(i) = patch(volumepatch(:,1), volumepatch(:,2), ones(size(volumepatch(:,2)))*-(LastFilledField-i),color{i},...
             'EdgeColor',[1 1 1]*0.5,...
             'Parent',parent);
@@ -146,7 +164,7 @@ for i = 1 : LastFilledField
                 'Parent',parent); %#ok<AGROW>
             %}
         else
-            heroprofile = plot(result(i).xActive, result(i).z2Active,...
+            heroprofile = plot(result(i).xActive+OPT.xoffset, result(i).z2Active,...
                 'Color','r',...
                 'LineStyle','-',...
                 'Parent',parent,...
@@ -186,11 +204,11 @@ for i = 1 : LastFilledField
     end
 end
 
-xlimits = [min(result(i).xActive) max(result(1).xActive)];
+xlimits = [min(result(i).xActive+OPT.xoffset) max(result(1).xActive+OPT.xoffset)];
 %     xlimits = [min(x) max(result(1).xActive)];
 if numel(result(1).xActive)<2 
     if diff(xlimits)==0 %No erosion (active profile has no length) and no additional erosion
-        xlimits = [min(result(1).xLand) max(result(1).xSea)];
+        xlimits = [min(result(1).xLand+OPT.xoffset) max(result(1).xSea+OPT.xoffset)];
         if length(xlimits)==1
             xlimits = ones(1,2)*xlimits;
         end
@@ -231,9 +249,9 @@ for i = 1 : LastFilledField
     elseif ismember({result(i).info.ID},'DUROS-plus Erosion above SSL')
         AVolume = result(i).VTVinfo.AVolume;
     elseif ismember({result(i).info.ID},'Additional Erosion')
-        Xp = result(i).VTVinfo.Xp;
+        Xp = result(i).VTVinfo.Xp+OPT.xoffset;
         Zp = result(i).VTVinfo.Zp;
-        Xr = result(i).VTVinfo.Xr;
+        Xr = result(i).VTVinfo.Xr+OPT.xoffset;
         Zr = result(i).VTVinfo.Zr;
         if isempty(Xp) || isempty(Xr)
             continue;
@@ -310,6 +328,12 @@ catch %#ok<CTCH>
     input2plot = {};
 end
 displayResultsOnFigure(parent,[input2plot; results2plot])
+if strcmp(OPT.xdir,'normal')
+    leg = findobj(get(parent, 'Parent'),...
+        'Tag', 'legend');
+    set(leg,'Location','NorthEast');
+    legendxdir(leg,'xdir','reverse');
+end
 
 %% store results in userdata. 
 % In this way storing one figure stores the
