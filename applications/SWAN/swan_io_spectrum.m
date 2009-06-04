@@ -71,34 +71,35 @@ function varargout = swan_io_spectrum(varargin)
 % $Revision$
 % $HeadURL$
 
-% 2008, May, 07: made it work for SPEC2D with NODATA, 
-%                Improved debug listing with mod, 
-%                Replaced i's with iloc, idir etc. 
-%                Pre-allcoated SPEC2D for speed.
-% 2008, May, 13: read n_locations <, mxc, myc> after keyword LOCATION<S> (introduced in mud special)) and optionally plot reshaped matrix
-%                also read long quantity names
-%                use fscanf to read co-ordinates order faster
-%                pre-allocate 1D data blocks
-% 2008, Oct, 17: made 2D output [nloc x  nfreq x ndir]
-%                give 2D output array name of quantity
-% 2009, Apr, 23: added to check for existance of file
+% 2009 Jun 04: use new matlab code-cells syntax to divide code into 'chapters'
+% 2008 May 07: made it work for SPEC2D with NODATA, 
+%              Improved debug listing with mod, 
+%              Replaced i's with iloc, idir etc. 
+%              Pre-allcoated SPEC2D for speed.
+% 2008 May 13: read n_locations <, mxc, myc> after keyword LOCATION<S> (introduced in mud special for MUDF and for HOTF)) 
+%              and optionally plot reshaped matrix
+%              also read long quantity names
+%              use fscanf to read co-ordinates order faster
+%              pre-allocate 1D data blocks
+% 2008 Oct 17: made 2D output [nloc x  nfreq x ndir]
+%              give 2D output array name of quantity
+% 2009 Apr 23: added to check for existance of file
 
 %TO DO:
 
 %% try to harmonize output with dummy dimensions of length 1 ??
-%%            DAT.data_description = ['1st dimension = number_of_locations          ';
-%%                                    '2st dimension = number_of_frequencies        ';
-%%                                    '3rd dimension = number_of_directions         ';
-%%                                    '4th dimension = number_of_iterations         '];
-%%                                       number_of_locations mx
-%%                                       number_of_locations my
+%             DAT.data_description = ['1st dimension = number_of_locations          ';
+%                                     '2st dimension = number_of_frequencies        ';
+%                                     '3rd dimension = number_of_directions         ';
+%                                     '4th dimension = number_of_iterations         '];
+%                                        number_of_locations mx
+%                                        number_of_locations my
 
 OPT.debug = [1 1 0]; % 1st is tree, 2nd is all lines, 3rd is pcolor of reshaped (x,y) matrix
 OPT.mod   = 1000; % for OPT.debug(2)
 
    %% No file name specified if even number of arguments
    %  i.e. 2 or 4 input parameters
-   %------------------------------
    if mod(nargin,2)     == 0 
      [fname, pathname, filterindex] = uigetfile( ...
         {'*.sp*;*.s*d', 'SWAN spectrum files (*.sp*;*.s*d)'; ...
@@ -114,7 +115,6 @@ OPT.mod   = 1000; % for OPT.debug(2)
       end
 
    %% No file name specified if odd number of arguments
-   %------------------------------
    elseif mod(nargin,2) == 1 % i.e. 3 or 5 input parameters
       DAT.fullfilename  = varargin{1};
       iostat            = 1;
@@ -123,7 +123,6 @@ OPT.mod   = 1000; % for OPT.debug(2)
    [DAT.file.path DAT.file.name DAT.file.ext] = fileparts(DAT.fullfilename);   
 
 %% Open file
-%-------------------------------
 
 if iostat==1 %  0 when uigetfile was cancelled
              % -1 when uigetfile failed
@@ -157,8 +156,7 @@ if iostat==1 %  0 when uigetfile was cancelled
          
          %try
          
-            %% Read 1st line
-            %--------------------------------------------
+%% Read 1st line
             rec = fgetl_no_comment_line(fid,'$');
             if ~strcmp(strtok(upper(rec)),'SWAN')
                 fclose(fid);
@@ -167,8 +165,7 @@ if iostat==1 %  0 when uigetfile was cancelled
    
             rec = fgetl_no_comment_line(fid,'$');
    
-            %% Read TIME (optional)
-            %--------------------------------------------
+%% Read TIME (optional)
             if strcmp(strtok(upper(rec)),'TIME')
    
                rec = fgetl_no_comment_line(fid,'$');
@@ -181,8 +178,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                DAT.time = 0;
             end
    
-            %% Read ITER (optional, for test output)
-            %--------------------------------------------
+%% Read ITER (optional, for test output)
             if strcmp(strtok(upper(rec)),'ITER')
    
                rec = fgetl_no_comment_line(fid,'$');
@@ -195,9 +191,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                DAT.iter = [];
             end
             
-            %% Read # locations
-            %  and coordinates
-            %--------------------------------------------
+%% Read # locations and coordinates
             
             if strcmp(strtok(upper(rec)),'LOCATIONS')
    
@@ -295,8 +289,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                
             end
             
-            %% Read # of frequencies
-            %--------------------------------------------
+%% Read # of frequencies
             if strcmp(strtok(upper(rec)),'AFREQ') | ...
                strcmp(strtok(upper(rec)),'RFREQ')
    
@@ -330,8 +323,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                
             end
             
-            %% Read # of directions (only for 2D spectra)
-            %% ------------------------------------------
+%% Read # of directions (only for 2D spectra)
    
             if     strcmp(strtok(upper(rec)),'NDIR') 
                DAT.dimension_of_spectrum = 2;
@@ -366,11 +358,10 @@ if iostat==1 %  0 when uigetfile was cancelled
                rec = fgetl_no_comment_line(fid,'$');
             end
    
-            %% Read # of quantities: fixed at 3 for 1D spectrum ,
-            %                     extended to 5 for MUD version.
-            %                        fixed at 1 for 2D spectrum.
-            %                                 2 for new MUDFile.
-            %--------------------------------------------
+%% Read # of quantities: fixed at 3 for 1D spectrum ,
+%                     extended to 5 for MUD version.
+%                        fixed at 1 for 2D spectrum.
+%                                 2 for new MUDFile.
             if strcmp(strtok(upper(rec)),'QUANT')
    
                rec = fgetl_no_comment_line(fid,'$');
@@ -398,15 +389,13 @@ if iostat==1 %  0 when uigetfile was cancelled
                end
             end
    
-            %% read integrated test quantities S1D
-            %--------------------------------
+%% CASE: read integrated test quantities S1D
    
             if DAT.dimension_of_spectrum==0 &  ~isempty(DAT.iter)
             
                while ~feof(fid)
    
                   %% Read data block per location
-                  %--------------------------------------------         
                   for iloc=1:DAT.number_of_locations
                      if iloc==1
                         rec       = fgetl_no_comment_line(fid,'$');
@@ -425,7 +414,6 @@ if iostat==1 %  0 when uigetfile was cancelled
    
                          %% Split block into array per quantity
                          %  where the 1st dimension is the location
-                         %--------------------------------------------         
                          for j=1:DAT.number_of_quantities
                             quantity_name = char(DAT.quantity_names{j});
                             array         = rawdata(j);
@@ -439,15 +427,13 @@ if iostat==1 %  0 when uigetfile was cancelled
    
                end         
             
-            %% read test points S1D
-            %--------------------------------
+%% CASE: read test points S1D
    
             elseif DAT.dimension_of_spectrum==1 &  ~isempty(DAT.iter)
                
                while ~feof(fid)
                
                   %% Read data block per location
-                  %--------------------------------------------         
                   for iloc=1:DAT.number_of_locations
                      if iloc==1
                         rec       = fgetl_no_comment_line(fid,'$');
@@ -471,7 +457,6 @@ if iostat==1 %  0 when uigetfile was cancelled
    
                          %% Split block into array per quantity
                          %  where the 1st dimension is the location
-                         %--------------------------------------------         
                          for j=1:DAT.number_of_quantities
                             quantity_name = char(DAT.quantity_names{j});
                             array         = rawdata(j,:);
@@ -484,13 +469,11 @@ if iostat==1 %  0 when uigetfile was cancelled
                                           '3rd dimension = number_of_iterations         '];
                end
    
-            %% read S1D
-            %--------------------------------
+%% CASE: read S1D (incl. MUDFile)
    
             elseif DAT.dimension_of_spectrum==1
             
                %% pre-allocate for speed (makes HUGE difference)
-               %--------------------------------------------      
                for j=1:DAT.number_of_quantities
                   quantity_name       = char(DAT.quantity_names{j});
                   DAT.(quantity_name) = nan  ([DAT.number_of_locations ...
@@ -498,7 +481,6 @@ if iostat==1 %  0 when uigetfile was cancelled
                end
    	    
                %% Read data block per location
-               %--------------------------------------------         
                for iloc=1:DAT.number_of_locations
                
                   if OPT.debug(2)
@@ -533,7 +515,6 @@ if iostat==1 %  0 when uigetfile was cancelled
    	    
                         %% Split block into array per quantity
                         %  where the 1st dimension is the location
-                        %--------------------------------------------         
                         for j=1:DAT.number_of_quantities
                            quantity_name               = char(DAT.quantity_names{j});
                            array                       = rawdata(j,:);
@@ -577,8 +558,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                   end  
                end            
                
-            %% read test points S2D
-            %--------------------------------
+%% CASE: read test points S2D
    
             elseif DAT.dimension_of_spectrum==2 &  ~isempty(DAT.iter)
    
@@ -587,7 +567,6 @@ if iostat==1 %  0 when uigetfile was cancelled
                while ~feof(fid)
                
                %% Read data block per location
-               %--------------------------------------------         
                
                count = 0;
                
@@ -658,9 +637,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                                              'xlabel(''freq [Hz]'')                          ';
                                              'ylabel(''dir [\circ]'')                        '];
    
-            %% read S2D
-            %--------------------------------
-   
+%% CASE: read S2D (incl HOTFile)
             elseif DAT.dimension_of_spectrum==2
             
             quantity_name = DAT.quantity_names{1}; % for 2D there can be only 1 quantity
@@ -678,14 +655,12 @@ if iostat==1 %  0 when uigetfile was cancelled
                                              'ylabel(''dir [\circ]'')                        '];
                                              
                %% pre-allocate for speed (makes HUGE difference)
-               %--------------------------------------------      
                DAT.(quantity_name) = nan  ([DAT.number_of_locations ...
                                             DAT.number_of_frequencies ...
                                             DAT.number_of_directions  ...
                                             ]);
                                              
-               %% Read data block per location
-               %--------------------------------------------         
+%% Read data block per location
                for iloc=1:DAT.number_of_locations
                
                   if OPT.debug(2)
@@ -756,7 +731,6 @@ DAT.read.at       = datestr(now);
 DAT.read.iostatus = iostat;
 
 %% Function output
-%-------------------------------
 
 if nargout      ==0 | nargout==1
    varargout= {DAT};

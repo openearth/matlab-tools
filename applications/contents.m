@@ -17,7 +17,7 @@
 %   tide            - application
 %   xbeach          - model: <a href="http://XBeach.org">XBeach</a>
 %
-% See also: OpenEarthTools: general, applications, io
+% See also: OpenEarthTools: general, io
 
 % Except for the see also line this file '../applications/contents.m' is the same as:
 % '../applications/oet_applications.m'

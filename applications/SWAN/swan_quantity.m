@@ -58,7 +58,6 @@ function varargout = swan_quantity
 % 2009 apr 23: added names from test output (source terms)
 
 %% Pre-allocate for speed
-%------------------------
 
    nval   = 57 + 3 + 8; % native + fluid mud + test output
    OVKEYW = cell(1,nval);
@@ -73,7 +72,6 @@ function varargout = swan_quantity
    OVEXCV = cell(1,nval);
 
 %% Manually edited 3 things from code form SWANMAIN.for below
-%------------------------
    %% 1
    %OVUNIT{IVTYPE} = UL
    %OVUNIT{IVTYPE} = UH
@@ -824,7 +822,6 @@ function varargout = swan_quantity
       
 %% Parameter in test spectral output (see SWANPRE2.for) to be obtained with:
 %  TEST 1 0 POINTS XY 0.0000 0 PAR 'x.par' S1D 'x.s1d' S2D 'x.s2d'
-%------------------------
 
       IVTYPE = IVTYPE + 1;
       OVKEYW{IVTYPE} = 'VaDens';
@@ -924,7 +921,6 @@ function varargout = swan_quantity
       OVEXCV{IVTYPE} = -99.;
             
 %% Put into struct
-%------------------------
 
       DAT0.OVKEYW = OVKEYW;
       DAT0.OVSNAM = OVSNAM;
@@ -938,7 +934,6 @@ function varargout = swan_quantity
       DAT0.OVEXCV = OVEXCV;
       
 %% Restructure per parameter rather than per property
-%------------------------
 
       for ipar=1:length(DAT0.OVKEYW)
        

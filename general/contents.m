@@ -1,13 +1,14 @@
+%
 % Non-specific tools in <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a> 
 %
-% OpenEarthTools toolbox management toolboxes.
+% OpenEarthTools-management toolboxes.
 %   config_FUN          - OpenEarthTools configuration
 %   matlabinterface_fun - matlab interface fun
 %   oet_defaults        - OpenEarthTools defaults
 %   oet_template        - OpenEarthTools templates
 %   SVN_fun             - SubVersion configuration
 %   
-% General toolboxes.
+% OpenEarthTools general toolboxes.
 %   colormaps           - colormaps
 %   debug_fun           - debug functions
 %   el_fun              - elementary functions
@@ -24,7 +25,7 @@
 %   struct_fun          - struct related
 %   time_fun            - time related
 %
-% See also: OpenEarthTools: general, applications, io
+% See also: OpenEarthTools: applications, io
 
 % Except for the see also line this file '../general/oet_general.m' is the same as:
 % '../general/contents.m'

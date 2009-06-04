@@ -6,7 +6,7 @@
 %   snctools            - netCDF tools (external)
 %   mexnc               - MATLAB gateway to NetCDF interface (low-level)
 %
-% See also: OpenEarthTools: general, applications, io
+% See also: OpenEarthTools: general, applications
 
 % Except for the see also line this file '../io/contents.m' is the same as:
 % '../io/oet_io.m' 

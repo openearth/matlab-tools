@@ -81,16 +81,15 @@ function varargout = swan_io_table(varargin)
 % $Revision$
 % $HeadURL$
 
+% 2009 Jun 04: use new matlab code-cells syntax to divide code into 'chapters'
 % 2009 mar 12: added option to read based on solely table 
 %              struct as read by SWAN_IO_INPU. Removed 
 %              default parameter name list, only split into 
 %              fields when parameter names are specified, changed 
 %              order of input into (...,fieldcolumnnames,<mxyc>). [Gerben de Boer]
-%              
 % 2009 mar 19: added loading of fname incl. path (as added to table struct in SWAN_IO_INPUT)
 
 %% Input
-%-------------------------
 
    INP.table.mmax = [];
    INP.table.nmax = [];
@@ -98,8 +97,7 @@ function varargout = swan_io_table(varargin)
    if isstruct(varargin{1})
       INP.table = varargin{1};
       
-      %% Recursively call SWAN_IO_TABLE for multiple tables
-      %-------------------------
+%% Recursively call SWAN_IO_TABLE for multiple tables
       if length(INP.table(:)) > 1
          disp(['swan_io_table: Loading multiple tables.'])
          for itab=1:length(INP.table)      
@@ -109,8 +107,7 @@ function varargout = swan_io_table(varargin)
          TAB = reshape(TAB,size(INP.table)); % for 2D TAB arrays
          varargout = {TAB};
          return
-      %% Proceed SWAN_IO_TABLE for single table
-      %-------------------------
+%% Proceed SWAN_IO_TABLE for single table
       else
          INP.table.mmax = INP.table.mxc + 1;
          INP.table.nmax = INP.table.myc + 1;
@@ -120,8 +117,7 @@ function varargout = swan_io_table(varargin)
 
       INP.table.fullfilename = varargin{1};
 
-      %% column names
-      %-------------------------
+%% column names
       if nargin>1
    
           %-% REMOVED DELFTD_WAVE DEFAULT:
@@ -163,8 +159,7 @@ function varargout = swan_io_table(varargin)
          end
          INP.table.parameter.nfields = ones(length(INP.table.parameter.names),1);
          
-         %% for all vectors define 2 columns
-         %-------------------------
+%% for all vectors define 2 columns
          
          for ifield=1:length(INP.table.parameter.nfields)
             
@@ -189,8 +184,7 @@ function varargout = swan_io_table(varargin)
          
       end % if  nargin>2 
 
-      %% reshape size
-      %-------------------------
+%% reshape size
       if nargin>2
          if ~isempty(varargin{1})
             INP.table.mmax = varargin{1}(1);
@@ -204,12 +198,10 @@ function varargout = swan_io_table(varargin)
    end
    
 %% Load full raw matrix
-%-------------------------
 
    dat = load(INP.table.fullfilename); %load(TAB.fname);
    
 %%  split into scalar/vector columns and give names
-%-------------------------
 
    if isfield(INP.table,'parameter')
    for ifield=1:length(INP.table.parameter.nfields)
@@ -223,8 +215,7 @@ function varargout = swan_io_table(varargin)
          columns = sum(INP.table.parameter.nfields(1:ifield-1)) + idata;
          data    = dat(:,columns);
 
-         %  reshape 1D column to proper 2D matrix (if mxc,myc provided)
-         %-------------------------
+%%  reshape 1D column to proper 2D matrix (if mxc,myc provided)
          
          if ~isempty(INP.table.mmax) & ...
             ~isempty(INP.table.nmax)

@@ -54,6 +54,7 @@ function varargout = swan_io_input(varargin)
 
 %uses: mergestructs, iscommentline, fieldname, deblankstart, expressionsfromstring
 
+% 2009 Jun 04: use new matlab code-cells syntax to divide code into 'chapters'
 % 2008 Apr 17: add *.swn path when reading points FILE (which still is not fool-proof)
 % 2008 Jul 01: allow for absence of SET NAUT/CART
 % 2008 Jul 01: add number of meshes for all table types to quick & allow uniform calls of SWAN_TABLE
@@ -65,9 +66,8 @@ function varargout = swan_io_input(varargin)
 
    DAT = swan_defaults; % sets DAT.set
    
-   %% No file name specified if even number of arguments
-   %  i.e. 2 or 4 input parameters
-   %------------------------------
+%% No file name specified if even number of arguments
+%  i.e. 2 or 4 input parameters
    if mod(nargin,2)     == 0 
      [fname, pathname, filterindex] = uigetfile( ...
         {'*.swn;*.inp', 'SWAN spectrum files (*.swn;*.inp)'; ...
@@ -92,8 +92,7 @@ function varargout = swan_io_input(varargin)
    [DAT.file.path DAT.file.name DAT.file.ext] = fileparts(DAT.fullfilename);   
    
    
-   %% Open file
-   %-------------------------------
+%% Open file
       
    if iostat==1 %  0 when uigetfile was cancelled
                 % -1 when uigetfile failed
@@ -157,7 +156,6 @@ DAT.read.at       = datestr(now);
 DAT.read.iostatus = iostat;
 
 %% Function output
-%-------------------------------
 
 if nargout      ==0 | nargout==1
    varargout= {DAT};
@@ -181,8 +179,7 @@ end
                rec                = fgetlines_no_comment_line(fid);
             end
 
-            %% Read PROJECT (required)
-            %% ------------------------------------------
+%% Read PROJECT (required)
             if strcmp(strtok(upper(rec(1:4))),'PROJ')
                quotes             = strfind(rec,'''');
                if ~isempty(quotes)
@@ -228,8 +225,7 @@ end
                end
             end
             
-            %% Read SET (optional)
-            %% ------------------------------------------
+%% Read SET (optional)
 	    
             if strcmp(strtok(upper(rec)),'SET')
             
@@ -273,8 +269,7 @@ end
                
             end
             
-            %% Read MODE (optional)
-            %% ------------------------------------------
+%% Read MODE (optional)
             if strcmp(strtok(upper(rec)),'MODE')
 	    
                DAT.mode     = rec;
@@ -297,8 +292,7 @@ end
                DAT.coordinates = [];
             end   
 
-            %% Read CGRID (required)  (overwrites previous)
-            %% ------------------------------------------
+%% Read CGRID (required)  (overwrites previous)
             if strcmp(strtok(upper(rec)),'CGRID')
                if OPT.debug
                   disp('CGRID')
@@ -400,8 +394,7 @@ end
                end
             end   
             
-            %% Read COORdinates (required if curvi-linear)
-            %% ------------------------------------------
+%% Read COORdinates (required if curvi-linear)
             if isfield(DAT,'cgrid')
                if strcmp(DAT.cgrid.type,'curvilinear')
                   keyword = pad(strtok(upper(rec)),4,' ');
@@ -418,8 +411,7 @@ end
             end
             
             j = 0;
-            %% Read INPgrid (required)
-            %% ------------------------------------------
+%% Read INPgrid (required)
               [keyword1,rec1]   = strtok(rec);
                keyword1         = upper(pad(keyword1,3,' '));
             while strfind(keyword1(1:3),'INP')==1
@@ -440,8 +432,7 @@ end
                keyword1         = upper(pad(keyword1,3,' '));
             end
             
-            %% Read WIND
-            %% ------------------------------------------
+%% Read WIND
             if   strfind(strtok(upper(rec)),'WIND')==1
                if OPT.debug
                   disp('WIND')
@@ -569,8 +560,7 @@ end
                foundkeyword    = true;
             end            
             
-            %% Read INITial
-            %% ------------------------------------------
+%% Read INITial
               [keyword1,rec1]   = strtok(rec);
                keyword1         = upper(pad(keyword1,4,' '));
             if   strfind(keyword1(1:4),'INIT')==1
@@ -579,8 +569,7 @@ end
                foundkeyword    = true;
             end   
             
-            %% Read GEN1/GEN2/GEN3
-            %% ------------------------------------------
+%% Read GEN1/GEN2/GEN3
               [keyword1,rec1]   = strtok(rec);
                keyword1         = upper(pad(keyword1,4,' '));
             if   strfind(keyword1(1:4),'GEN1')==1
@@ -617,16 +606,14 @@ end
                foundkeyword     = true;
             end             
             
-            %% Read WCAP
-            %% ------------------------------------------
+%% Read WCAP
             if strfind(strtok(upper(rec)),'WCAP')==1
                DAT.wcapping    = rec;
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end              
          
-            %% Read QUADrupl
-            %% ------------------------------------------
+%% Read QUADrupl
               [keyword1,rec1]   = strtok(rec);
                keyword1         = upper(pad(keyword1,4,' '));
             if strfind(keyword1(1:4),'QUAD')==1
@@ -635,8 +622,7 @@ end
                foundkeyword    = true;
             end              
 
-            %% Read MDIA LAMbda
-            %% ------------------------------------------
+%% Read MDIA LAMbda
               [keyword1,rec1]   = strtok(rec);
                keyword1         = upper(pad(keyword1,4,' '));
             if strfind(keyword1(1:4),'MDIA')==1
@@ -645,8 +631,7 @@ end
                foundkeyword    = true;
             end 
             
-            %% Read BREaking
-            %% ------------------------------------------
+%% Read BREaking
               [keyword1,rec1]   = strtok(rec);
                keyword1         = upper(pad(keyword1,3,' '));
             if   strfind(keyword1(1:3),'BRE')==1
@@ -656,8 +641,7 @@ end
                foundkeyword    = true;
             end               
 
-            %% Read FRICtion
-            %% ------------------------------------------
+%% Read FRICtion
               [keyword1,rec1]   = strtok(rec);
                if isempty(keyword1);
                keyword1         = ' ';
@@ -670,8 +654,7 @@ end
                foundkeyword    = true;
             end     
             
-            %% Read TRIAD
-            %% ------------------------------------------
+%% Read TRIAD
               [keyword1,rec1]   = strtok(rec);
                if isempty(keyword1);
                keyword1         = ' ';
@@ -683,8 +666,7 @@ end
                foundkeyword    = true;
             end 
             
-            %% Read LIMiter
-            %% ------------------------------------------
+%% Read LIMiter
               [keyword1,rec1]   = strtok(rec);
                if isempty(keyword1);
                keyword1         = ' ';
@@ -696,8 +678,7 @@ end
                foundkeyword    = true;
             end  
             
-            %% Read OBSTacle
-            %% ------------------------------------------
+%% Read OBSTacle
               [keyword1,rec1]   = strtok(rec);
                if isempty(keyword1);
                keyword1         = ' ';
@@ -709,16 +690,14 @@ end
                foundkeyword    = true;
             end  
             
-            %% Read SETUP
-            %% ------------------------------------------
+%% Read SETUP
             if strfind(strtok(upper(rec)),'SETUP')==1
                DAT.setup       = rec;
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end  
             
-            %% Read DIFFRac
-            %% ------------------------------------------
+%% Read DIFFRac
               [keyword1,rec1]   = strtok(rec);
                if isempty(keyword1);
                keyword1         = ' ';
@@ -730,24 +709,21 @@ end
                foundkeyword    = true;
             end  
             
-            %% Read OFF
-            %% ------------------------------------------
+%% Read OFF
             if strfind(strtok(upper(rec)),'OFF')==1
                DAT.off         = rec;
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end     
 
-            %% Read PROP
-            %% ------------------------------------------
+%% Read PROP
             if strfind(strtok(upper(rec)),'PROP')==1
                DAT.prop        = rec;
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end    
             
-            %% Read MUD
-            %% ------------------------------------------
+%% Read MUD
             if strfind(strtok(upper(rec)),'MUD')==1
                if OPT.debug
                   disp('MUD')
@@ -768,8 +744,7 @@ end
             end    
 
             j=0;
-            %% Read NUMeric
-            %% ------------------------------------------
+%% Read NUMeric
               [keyword1,rec1]   = strtok(rec);
                if isempty(keyword1);
                keyword1         = ' ';
@@ -785,16 +760,14 @@ end
                keyword1         = upper(pad(keyword1,3,' '));
             end 
             
-            %% Read FRAME (overwrites previous)
-            %% ------------------------------------------
+%% Read FRAME (overwrites previous)
             if strfind(strtok(upper(rec)),'FRAME')==1
                DAT.frame       = rec;
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end  
             
-            %% Read GROUP (overwrites previous)
-            %% ------------------------------------------
+%% Read GROUP (overwrites previous)
             if strfind(strtok(upper(rec)),'GROUP')==1
                if OPT.debug
                   disp('GROUP')
@@ -830,8 +803,7 @@ end
                foundkeyword    = true;
             end  
             
-            %% Read CURVE (overwrites previous)
-            %% ------------------------------------------
+%% Read CURVE (overwrites previous)
             if strfind(strtok(upper(rec)),'CURVE')==1
                if OPT.debug
                   disp('CURVE')
@@ -855,25 +827,21 @@ end
                
             end            
 
-            %% Read RAY (overwrites previous)
-            %% ------------------------------------------
+%% Read RAY (overwrites previous)
             if strfind(strtok(upper(rec)),'RAY')==1
                DAT.ray         = rec;
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end            
 
-            %% Read ISOLINE (overwrites previous)
-            %% ------------------------------------------
+%% Read ISOLINE (overwrites previous)
             if strfind(strtok(upper(rec)),'ISOLINE')==1
                DAT.isoline     = rec;
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end
             
-            %% Read POINTS (overwrites previous)
-            %% ------------------------------------------
-
+%% Read POINTS (overwrites previous)
             if strfind(strtok(upper(rec)),'POINTS')==1
                if OPT.debug
                   disp('POINTS')
@@ -947,8 +915,7 @@ end
                rec             = fgetlines_no_comment_line(fid);
             end
             
-            %% Read NGRID (overwrites previous)
-            %% ------------------------------------------
+%% Read NGRID (overwrites previous)
             if strfind(strtok(upper(rec)),'NGRID')==1
                if OPT.debug
                   disp('NGRID')
@@ -958,8 +925,7 @@ end
                foundkeyword    = true;
             end
             
-            %% Read QUANTity
-            %% ------------------------------------------
+%% Read QUANTity
               [keyword1,rec1]   = strtok(rec);
                if isempty(keyword1);
                keyword1         = ' ';
@@ -974,8 +940,7 @@ end
                foundkeyword    = true;
             end
             
-            %% Read OUTPut OPTIons
-            %% ------------------------------------------
+%% Read OUTPut OPTIons
               [keyword1,rec1]   = strtok(rec);
                if isempty(keyword1);
                keyword1         = ' ';
@@ -992,8 +957,7 @@ end
                foundkeyword    = true;
             end 
             
-            %% Read BLOCK (overwrites previous)
-            %% ------------------------------------------
+%% Read BLOCK (overwrites previous)
             if strfind(strtok(upper(rec)),'BLOCK')==1
                if OPT.debug
                   disp('BLOCK')
@@ -1009,9 +973,7 @@ end
                foundkeyword       = true;
             end
 
-            %% Read TABLE
-            %% ------------------------------------------
-            
+%% Read TABLE
             if strfind(strtok(upper(rec)),'TABLE')==1
                if OPT.debug
                   disp('TABLE')
@@ -1175,8 +1137,7 @@ end
                foundkeyword = true;
             end               
 
-            %% Read SPECout
-            %% ------------------------------------------
+%% Read SPECout
               [keyword1,rec1]   = strtok(rec);
                if isempty(keyword1);
                keyword1         = ' ';
@@ -1227,8 +1188,7 @@ end
                
             end
             
-            %% Read NESTout
-            %% ------------------------------------------
+%% Read NESTout
               [keyword1,rec1]   = strtok(rec);
                if isempty(keyword1);
                keyword1         = ' ';
@@ -1238,8 +1198,7 @@ end
                DAT.nest = rec;
             end
 
-            %% Read TEST
-            %% ------------------------------------------
+%% Read TEST
             if strfind(strtok(upper(rec)),'TEST')==1
               %DAT.test        = rec;
                raw             = rec;
@@ -1320,8 +1279,7 @@ end
 
             end % test            
 	  
-            %% Read COMPUTE
-            %% ------------------------------------------
+%% Read COMPUTE
               [keyword1,rec1]   = strtok(rec);
                if isempty(keyword1);
                keyword1         = ' ';
@@ -1333,8 +1291,7 @@ end
                foundkeyword = true;
             end  
             
-            %% Read HOTFile
-            %% ------------------------------------------
+%% Read HOTFile
               [keyword1,rec1]   = strtok(rec);
                if isempty(keyword1);
                keyword1         = ' ';
@@ -1346,8 +1303,7 @@ end
                foundkeyword    = true;
             end 
             
-            %% Read STOP
-            %% ------------------------------------------
+%% Read STOP
             if strfind(upper(rec),'STOP')==1
                DAT.stop        = rec;
                rec             = fgetlines_no_comment_line(fid);
