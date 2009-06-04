@@ -12,8 +12,6 @@ function varargout = fgetl_no_comment_line(fid,commentchar,varargin);
 %
 % [string,n]= fgetl_no_comment_line(); returns number of read lines.
 %
-% © G.J. de Boer, March 2006.
-%
 % See also: FGETL, ISCOMMENTLINE
 
 %   --------------------------------------------------------------------
@@ -101,4 +99,6 @@ end
     elseif nargout==2
        varargout = {rec,n};
     end
+    
+%% EOF    
     

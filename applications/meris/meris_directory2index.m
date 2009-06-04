@@ -1,5 +1,5 @@
 function S = meris_directory2index(directory,varargin)
-%MERIS_DIRECTORY2INDEX
+%MERIS_DIRECTORY2INDEX  retrieves meta-information from all MERIS filename in a directory.
 %
 % S = meris_directory2index(directory,<extension>)
 %

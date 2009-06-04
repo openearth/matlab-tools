@@ -51,6 +51,13 @@ function [k] = findstr2afterstr1(str, str1, str2)
 % $Author$
 % $Revision$
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 %% 
 str1loc = min(findstr(str, str1));
 if isempty(str1loc)

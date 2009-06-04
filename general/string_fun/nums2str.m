@@ -40,6 +40,12 @@ function str = nums2str(X,varargin)
 %   USA
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
 
    separator        = '_';
 if nargin==1

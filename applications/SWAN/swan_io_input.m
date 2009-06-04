@@ -14,8 +14,6 @@ function varargout = swan_io_input(varargin)
 % Multiple fields for keywords are overwritten, excpet for 
 % curve, group, table, block, spec.
 %
-% © WL | Delft Hydraulics, Beta version, G.J. de Boer, April-2006-2008
-%
 % NOTE that the output parameter keywords are replaced with their short name equivalents.
 %
 % See also: SWAN_IO_SPECTRUM, SWAN_IO_TABLE, SWAN_IO_GRD, SWAN_IO_BOT, SWAN_DEFAULTS
@@ -62,6 +60,8 @@ function varargout = swan_io_input(varargin)
 % 2008 Jul 10: interpret BOUND SHAPE line into struct
 % 2008 Oct 20: add default value for set.pwtail and update according to GEN keywords
 % 2009 Feb 05: replaced deblank2 with strtrim, use only 2 letter of keyword FRICtion, allow both presence and absence of continuation char (&) in PROJ keyword span.
+% TO DO: in fgetlines_no_comment_line:
+% make sure comment is treated as all data on a SWAN line (_& continuation) in between $ or after last (odd) $
 
    DAT = swan_defaults; % sets DAT.set
    
@@ -1366,16 +1366,17 @@ end
 % and also skip any comment line.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-   function multilinerec = fgetlines_no_comment_line(fid);
+   function multilinerec   = fgetlines_no_comment_line(fid);
+% TO DO: make sure comment is treated as all data on a SWAN line (_& continuation) in between $ or after last (odd) $
    
-      rec                    = fgetl_no_comment_line(fid,'$',0,1); % do not allow empty lines, do remove spaces at start (no tabs yet)
+      rec                  = fgetl_no_comment_line(fid,'$',0,1); % do not allow empty lines, do remove spaces at start (no tabs yet)
       
-      continuationmarks      = sort([strfind(deblank(rec),'_') ,...
-                                     strfind(deblank(rec),'&')]);
+      continuationmarks    = sort([strfind(deblank(rec),'_') ,...
+                                   strfind(deblank(rec),'&')]);
                                  
-      continuationmarks = remove_characters_between_quotes_in_string_from_list(rec,continuationmarks);
+      continuationmarks    = remove_characters_between_quotes_in_string_from_list(rec,continuationmarks);
 
-      multilinerec      = [];
+      multilinerec         = [];
       
       while ~isempty(continuationmarks) % note that comment can follow each line after the continuationmarks
          % strcat removes blanks

@@ -1,4 +1,4 @@
-% General purpose commands in <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a> 
+% Non-specific tools in <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a> 
 %
 % OpenEarthTools toolbox management toolboxes.
 %   config_FUN          - OpenEarthTools configuration
@@ -24,6 +24,7 @@
 %   struct_fun          - struct related
 %   time_fun            - time related
 %
+% See also: OpenEarthTools: general, applications, io
 
 % Except for the see also line this file '../general/oet_general.m' is the same as:
 % '../general/contents.m'

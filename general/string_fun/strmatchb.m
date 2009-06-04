@@ -54,6 +54,13 @@ function booleans = strmatcb(varargin)
 %   http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 indices = STRMATCH(varargin{:});
 
 booleans = repmat(false,size(varargin{2},1),1);

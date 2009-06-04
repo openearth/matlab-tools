@@ -1,5 +1,5 @@
 function flags = meris_flags(varargin),
-%MERIS_FLAGS  retrieves meta-information from MERIS filename.
+%MERIS_FLAGS  select from table with MERIS flag bits and descriptions
 %
 % T = MERIS_FLAGS(<bit>)
 %

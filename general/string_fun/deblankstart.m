@@ -4,9 +4,7 @@ function s1 = deblankstart(s)
 %
 %   Based on DEBLANK of The MathWorks, Inc.
 %
-%   © G.J. de Boer, TU Delft, March 2006.
-%
-% See also: DEBLANK
+% See also: DEBLANK, STRTRIM
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
@@ -37,18 +35,27 @@ function s1 = deblankstart(s)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-if ~isempty(s) & ~isstr(s)
-    warning('Input must be a string.')
-end
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
 
-if isempty(s)
-    s1 = s([]);
-else
-  % remove leading blanks
-  [r,c] = find(s ~= ' ' & s ~= 0);
-  if isempty(c)
-    s1 = s([]);
-  else
-    s1 = s(:,min(c):end);
-  end
-end
+   if ~isempty(s) & ~isstr(s)
+       warning('Input must be a string.')
+   end
+   
+   if isempty(s)
+       s1 = s([]);
+   else
+     % remove leading blanks
+     [r,c] = find(s ~= ' ' & s ~= 0);
+     if isempty(c)
+       s1 = s([]);
+     else
+       s1 = s(:,min(c):end);
+     end
+   end
+
+%% EOF

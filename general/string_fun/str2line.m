@@ -31,8 +31,6 @@ function line1D = str2line(str2D,varargin)
 %   
 %   aap_noot_mies_
 %
-%   © G.J. de Boer, TU Delft, May 2006
-%
 %See also: LINE2STR, SPRINTF, STRCAT
 
 %   --------------------------------------------------------------------
@@ -64,6 +62,13 @@ function line1D = str2line(str2D,varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   -------------------------------------------------------------------- 
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 % TO DO add regular expression or c-format specifiers: \n \n\r
 % TO DO do irregular line wrap to cell in future
 % TO DO implement apple
@@ -75,13 +80,13 @@ if nargin>1
    OS = varargin{1};
 end
 
+%% Define EOL
 LF = char(10); % LF line feed, new line (0A in hexadecimal)
 CR = char(13); % carriage return        (0D in hexadecimal) (windows oLFy)
 % char(48)=0
 % char(65)=A
 
 %% character array, all at once
-%% ----------------------------
 if ischar(str2D)
    if strcmpi(lower(OS(1)),'w') | ...
       strcmpi(lower(OS(1)),'d')
@@ -103,7 +108,6 @@ if ischar(str2D)
 else
 
 %% cell array, line by line
-%% ----------------------------
    cell2D  = str2D;
    line1D  = '';
    

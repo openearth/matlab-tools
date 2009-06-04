@@ -50,6 +50,13 @@ function val = cellstrrepnum(varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
    OPT.strcode = {'na','NA','Na'};
    OPT.numcode = NaN;
    OPT.charout = 0;

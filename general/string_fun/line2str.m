@@ -53,6 +53,14 @@ function str2D = line2str(line1D)
 %% TO DO do irregular line wrap to cell in future
 %% TO DO implement apple
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
+%% Define EOL
 LF = char(10); % LF line feed, new line (0A in hexadecimal)
 CR = char(13); % carriage return        (0D in hexadecimal) (windows oLFy)
 % char(48)=0
@@ -61,6 +69,7 @@ CR = char(13); % carriage return        (0D in hexadecimal) (windows oLFy)
 LFs = strfind(line1D,LF);
 CRs = strfind(line1D,CR);
 
+%% check OS cases
 if      isempty(LFs) & ~isempty(CRs)
   OS = 'MAC';
 elseif ~isempty(LFs) &  isempty(CRs)
@@ -72,6 +81,7 @@ else
   OS = 'none';
 end
 
+%% do it
 if strcmp(lower(OS(1)),'u')
    
    if length(LFs)==1
@@ -193,3 +203,4 @@ else % no delimiter found
    str2D = line1D;
 end
 
+%% EOF

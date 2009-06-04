@@ -43,6 +43,13 @@ function allFont = findfont(varargin)
 %   http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
 if nargin==0
    H = gcf;
 else

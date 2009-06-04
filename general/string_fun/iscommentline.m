@@ -18,7 +18,6 @@ function comment = iscommentline(rec,varargin)
 %   * rec can be 2 2D char array, where the first dimension = line number, 
 %     or a cell array
 %
-%   © G.J. de Boer, TU Delft, March 2006.
 %
 % See also: DEBLANK
 
@@ -51,8 +50,14 @@ function comment = iscommentline(rec,varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-   %% Input
-   %% ---------------------------
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
+%% Input
 
    if nargin>1
       commentchars = varargin{1};
@@ -70,19 +75,16 @@ function comment = iscommentline(rec,varargin)
       comment = true;
    else
    
-      %% Make sure rec is always a cell array
-      %% ---------------------------
+%% Make sure rec is always a cell array
       
       rec = cellstr(rec);
       
-      %% Pre allocate at false
-      %% ---------------------------
+%% Pre allocate at false
       
       comment = repmat(false,[1 length(rec)]);
       
-      %% Scroll line numbers in cell array
-      %% and set to true when considered comment line
-      %% ---------------------------
+%% Scroll line numbers in cell array
+%  and set to true when considered comment line
       
       for linenumber=1:length(rec)
       
@@ -101,3 +103,5 @@ function comment = iscommentline(rec,varargin)
          end
       end
    end
+   
+%% EOF

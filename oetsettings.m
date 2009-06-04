@@ -16,10 +16,8 @@ function oetsettings(varargin)
 %    help oet_applications
 %    help oet_io
 %
-%See also: ADDPATHFAST, RESTOREDEFAULTPATH
-%          oet_general
-%          oet_applications
-%          oet_io
+%See also: ADDPATHFAST, RESTOREDEFAULTPATH,
+%          OpenEarthTools: general, applications,io
 
 %   --------------------------------------------------------------------
 %   Copyright (C) <2004-2008> <Deltares>
