@@ -54,6 +54,7 @@ function varargout = swan_io_input(varargin)
 
 %uses: mergestructs, iscommentline, fieldname, deblankstart, expressionsfromstring
 
+% 2009 Jun 05: add fullfilename to spec field
 % 2009 Jun 04: use new matlab code-cells syntax to divide code into 'chapters'
 % 2008 Apr 17: add *.swn path when reading points FILE (which still is not fool-proof)
 % 2008 Jul 01: allow for absence of SET NAUT/CART
@@ -170,6 +171,7 @@ end
    
       OPT.dispwarnings = false;
       OPT.debug        = false;
+      OPT.disp         = false;
 
       foundkeyword = false;
       
@@ -876,12 +878,12 @@ end
                      loaded = 0;
                   if ~isempty(dir                 ([DAT.points(N.points).fname]))
                      tmp   = load                 ([DAT.points(N.points).fname]);
-                     disp(['loaded external file: ',DAT.points(N.points).fname])
+                     if OPT.disp;disp(['loaded external file: ',DAT.points(N.points).fname]);end
                      loaded = 1;
                   end
                   if ~isempty(dir                 ([filepathstr(DAT.fullfilename),filesep,DAT.points(N.points).fname]))
                      tmp   = load                 ([filepathstr(DAT.fullfilename),filesep,DAT.points(N.points).fname]);
-                     disp(['loaded external file: ',filepathstr(DAT.fullfilename),filesep,DAT.points(N.points).fname])
+                     if OPT.disp;disp(['loaded external file: ',filepathstr(DAT.fullfilename),filesep,DAT.points(N.points).fname]);end
                      loaded = 1;
                      DAT.points(N.points).fname =  [filepathstr(DAT.fullfilename),filesep,DAT.points(N.points).fname];
                   end
@@ -999,6 +1001,8 @@ end
                 tmp = dir(DAT.table(N.tables).fname);
                 if length(tmp)==0
                 DAT.table(N.tables).fullfilename = [filepathstr(DAT.fullfilename) filesep DAT.table(N.tables).fname];
+                else
+                DAT.table(N.tables).fullfilename = DAT.table(N.tables).fname;
                 end
 
                %% remove double quotes (removes one letter with singel quotes)
@@ -1161,35 +1165,43 @@ end
                   N.specs  = 1;
                end
                
-               [keyword                                ,rec] = strtok(rec);
-               [DAT.spec(N.specs).sname                 ,rec] = strtok(rec);
+              [keyword                                ,rec] = strtok(rec);
+              [DAT.spec(N.specs).sname                 ,rec] = strtok(rec);
                quotes = strfind(DAT.spec(N.specs).sname, '''');
                DAT.spec(N.specs).sname = DAT.spec(N.specs).sname(quotes(1)+1:quotes(end)-1);
-                
-               [keyword                                ,rec] = strtok(rec);
-                if     strcmpi(keyword,'spec1d')
-                DAT.spec(N.specs).dimension_of_spectrum       = 1;
-                elseif strcmpi(keyword,'spec2d')
-                DAT.spec(N.specs).dimension_of_spectrum       = 2;
-                end
                
-               [keyword                                ,rec] = strtok(rec);
-                if     strcmpi(keyword(1:3),'abs')
-                DAT.spec(N.specs).frequency_type              = 'relative';
-               [keyword                 ,rec] = strtok(rec);
-                elseif strcmpi(keyword(1:3),'rel')
-                DAT.spec(N.specs).frequency_type              = 'absolute';
-               [keyword                 ,rec] = strtok(rec);
-                else
-                DAT.spec(N.specs).frequency_type              = 'absolute'; % default
-                end
+              [keyword                                ,rec] = strtok(rec);
+               if     strcmpi(keyword,'spec1d')
+               DAT.spec(N.specs).dimension_of_spectrum       = 1;
+               elseif strcmpi(keyword,'spec2d')
+               DAT.spec(N.specs).dimension_of_spectrum       = 2;
+               end
+              
+              [keyword                                ,rec] = strtok(rec);
+               if     strcmpi(keyword(1:3),'abs')
+               DAT.spec(N.specs).frequency_type              = 'relative';
+              [keyword                 ,rec] = strtok(rec);
+               elseif strcmpi(keyword(1:3),'rel')
+               DAT.spec(N.specs).frequency_type              = 'absolute';
+              [keyword                 ,rec] = strtok(rec);
+               else
+               DAT.spec(N.specs).frequency_type              = 'absolute'; % default
+               end
 
                quotes = strfind(keyword, '''');
                DAT.spec(N.specs).fname = keyword(quotes(1)+1:quotes(end)-1);
 
-                if ~isempty(deblank(rec))
-                DAT.spec(N.specs).REST                        = rec;
-                end
+               %% add absolute directory of table file too
+               tmp = dir(DAT.spec(N.specs).fname);
+               if length(tmp)==0
+               DAT.spec(N.specs).fullfilename = [filepathstr(DAT.fullfilename) filesep DAT.spec(N.specs).fname];
+               else
+               DAT.spec(N.specs).fullfilename = DAT.spec(N.specs).fname;
+               end
+
+               if ~isempty(deblank(rec))
+               DAT.spec(N.specs).REST                        = rec;
+               end
 
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;

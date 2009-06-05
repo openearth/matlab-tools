@@ -3,9 +3,12 @@ function varargout = swan_io_spectrum(varargin)
 %
 % DAT = SWAN_IO_SPECTRUM(fname)
 % DAT = SWAN_IO_SPECTRUM  % launches file load GUI
+% DAT = SWAN_IO_SPECTRUM(INP.spec(i))
 % 
-% Reads an ASCII SWAN spectrum file into a struct DAT 
-% whihc looks for instance like:
+% where fname is the table file name (e.g. *.s1d, *.s2d)
+% where INP.spec is returned by INP = swan_io_input('INPUT')
+%
+% Reads an ASCII SWAN spectrum file into a struct DAT which looks like:
 %
 %                     filename: 'r01n1t01.sp1'
 %                         path: ''
@@ -71,6 +74,7 @@ function varargout = swan_io_spectrum(varargin)
 % $Revision$
 % $HeadURL$
 
+% 2009 Jun 05: added option to pass data field from swan_io_input, that contains fullfilename
 % 2009 Jun 04: use new matlab code-cells syntax to divide code into 'chapters'
 % 2008 May 07: made it work for SPEC2D with NODATA, 
 %              Improved debug listing with mod, 
@@ -95,7 +99,7 @@ function varargout = swan_io_spectrum(varargin)
 %                                        number_of_locations mx
 %                                        number_of_locations my
 
-OPT.debug = [1 1 0]; % 1st is tree, 2nd is all lines, 3rd is pcolor of reshaped (x,y) matrix
+OPT.debug = [0 0 0]; % 1st is tree, 2nd is all lines, 3rd is pcolor of reshaped (x,y) matrix
 OPT.mod   = 1000; % for OPT.debug(2)
 OPT.fast  = 1; % use fscanf, this does not allow comments in between the data lines 
                % which SWAN does not add (but some external spectrum write tools do)
@@ -119,7 +123,17 @@ OPT.fast  = 1; % use fscanf, this does not allow comments in between the data li
 
    %% No file name specified if odd number of arguments
    elseif mod(nargin,2) == 1 % i.e. 3 or 5 input parameters
+      
+      if isstruct(varargin{1})
+      
+      DAT = varargin{1}; % only field fullfilename required
+      
+      elseif ischar(varargin{1})
+
       DAT.fullfilename  = varargin{1};
+      
+      end
+      
       iostat            = 1;
    end
    
@@ -137,7 +151,7 @@ if iostat==1 %  0 when uigetfile was cancelled
    if length(tmp)==0
       
       if nargout==1
-         error(['Error finding file: ',DAT.fullfilename])
+         error(['Error finding file: ',DAT.fullfilename]);
       else
          iostat = -1;
       end   
@@ -154,7 +168,7 @@ if iostat==1 %  0 when uigetfile was cancelled
       if fid < 0
          
          if nargout==1
-            error(['Error opening file: ',DAT.fullfilename])
+            error(['Error opening file: ',DAT.fullfilename]);
          else
             iostat = -2;
          end      
@@ -182,7 +196,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                rec = fgetl_no_comment_line(fid,'$');
                [DAT.time] = strread(rec,'%d');
                if OPT.debug(1)
-                  disp(['time ',num2str(DAT.time)])
+                  OPT.disp;disp(['time ',num2str(DAT.time)])
                end
                rec = fgetl_no_comment_line(fid,'$');
             else
