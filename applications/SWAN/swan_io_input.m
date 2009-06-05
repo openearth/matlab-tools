@@ -1004,6 +1004,14 @@ end
                %% remove double quotes (removes one letter with singel quotes)
                %quotes = find(DAT.table(N.tables).fname, '''')
                %DAT.table(N.tables).fname = DAT.table(N.tables).fname(quotes(1)+1:quotes(end)-1);
+               
+%-----------------------
+% fix reading lines with intermediate $ like
+%-----------------------
+%TABLE 'COMPGRID' HEADER   'Kaihutu2007_refraction0refdef.hdr'  & $ fixed decimal point
+%                                  XP YP DEP HSIGN RTP TM01 TM02 DISSIP DISBOT DISSURF DISWCAP &
+%                                  FSPR DIR WLEN $ WLENMR KI MUDL               
+%-----------------------
 
                output = strfind(rec,'OUT');
                if isempty(output)

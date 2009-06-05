@@ -97,9 +97,12 @@ function varargout = swan_io_spectrum(varargin)
 
 OPT.debug = [1 1 0]; % 1st is tree, 2nd is all lines, 3rd is pcolor of reshaped (x,y) matrix
 OPT.mod   = 1000; % for OPT.debug(2)
+OPT.fast  = 1; % use fscanf, this does not allow comments in between the data lines 
+               % which SWAN does not add (but some external spectrum write tools do)
 
-   %% No file name specified if even number of arguments
-   %  i.e. 2 or 4 input parameters
+%% No file name specified if even number of arguments
+%  i.e. 2 or 4 input parameters
+
    if mod(nargin,2)     == 0 
      [fname, pathname, filterindex] = uigetfile( ...
         {'*.sp*;*.s*d', 'SWAN spectrum files (*.sp*;*.s*d)'; ...
@@ -127,6 +130,8 @@ OPT.mod   = 1000; % for OPT.debug(2)
 if iostat==1 %  0 when uigetfile was cancelled
              % -1 when uigetfile failed
 
+%% check for file existence (1)
+
    tmp = dir(DAT.fullfilename);
    
    if length(tmp)==0
@@ -142,6 +147,8 @@ if iostat==1 %  0 when uigetfile was cancelled
       DAT.file.date     = tmp.date;
       DAT.file.bytes    = tmp.bytes;
       
+%% check for file opening (2)
+
       fid       = fopen  (DAT.fullfilename,'r');
       
       if fid < 0
@@ -154,9 +161,12 @@ if iostat==1 %  0 when uigetfile was cancelled
          
       elseif fid > 2
          
+%% check for file reading (3)
+
          %try
          
 %% Read 1st line
+
             rec = fgetl_no_comment_line(fid,'$');
             if ~strcmp(strtok(upper(rec)),'SWAN')
                 fclose(fid);
@@ -166,6 +176,7 @@ if iostat==1 %  0 when uigetfile was cancelled
             rec = fgetl_no_comment_line(fid,'$');
    
 %% Read TIME (optional)
+
             if strcmp(strtok(upper(rec)),'TIME')
    
                rec = fgetl_no_comment_line(fid,'$');
@@ -179,6 +190,7 @@ if iostat==1 %  0 when uigetfile was cancelled
             end
    
 %% Read ITER (optional, for test output)
+
             if strcmp(strtok(upper(rec)),'ITER')
    
                rec = fgetl_no_comment_line(fid,'$');
@@ -203,6 +215,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                  disp(['number_of_locations ',num2str(DAT.number_of_locations)])
                end         
    
+              %% read improvement in SWANmud version: mxc, myc
               [DAT.mxc,rec] = strtok(rec);
                DAT.mxc      = str2num(DAT.mxc);
               [DAT.myc,rec] = strtok(rec);
@@ -218,24 +231,25 @@ if iostat==1 %  0 when uigetfile was cancelled
                DAT.x = repmat(nan,[1 DAT.number_of_locations]);
                DAT.y = repmat(nan,[1 DAT.number_of_locations]);
                
-   %-% OLD: slow, but comments are allowed between numbers with this approach
-   %-%         for iloc=1:DAT.number_of_locations
-   %-%            rec         = fgetl_no_comment_line(fid,'$');
-   %-%            numbers     = sscanf(rec,'%e',2);
-   %-%            DAT.x(iloc) = numbers(1);
-   %-%            DAT.y(iloc) = numbers(2);
-   %-%            if OPT.debug(2)
-   %-%               if mod(iloc,OPT.mod)==0
-   %-%               disp(['   iloc,x,y: ',num2str([iloc,DAT.x(iloc),DAT.y(iloc)])]);
-   %-%               end
-   %-%            end         
-   %-%         end
-   %-%
-   %-% NEW:fast, but no comments allowed between numbers
-               raw = fscanf(fid,'%f',2*DAT.number_of_locations);
-               DAT.x = raw(1:2:end);
-               DAT.y = raw(2:2:end);
-   %-% end NEW          
+               if ~OPT.fast
+               %% OLD: slow, but comments are allowed between numbers with this approach
+                  for iloc=1:DAT.number_of_locations
+                     rec         = fgetl_no_comment_line(fid,'$');
+                     numbers     = sscanf(rec,'%e',2);
+                     DAT.x(iloc) = numbers(1);
+                     DAT.y(iloc) = numbers(2);
+                     if OPT.debug(2)
+                        if mod(iloc,OPT.mod)==0
+                        disp(['   iloc,x,y: ',num2str([iloc,DAT.x(iloc),DAT.y(iloc)])]);
+                        end
+                     end         
+                  end
+               elseif OPT.fast
+               %%  NEW:fast, but no comments allowed between numbers
+                  raw = fscanf(fid,'%f',2*DAT.number_of_locations);
+                  DAT.x = raw(1:2:end);
+                  DAT.y = raw(2:2:end);
+               end % OPT.fast
                DAT.x = reshape(DAT.x,DAT.myc, DAT.mxc);
                DAT.y = reshape(DAT.y,DAT.myc, DAT.mxc);
                
@@ -290,6 +304,7 @@ if iostat==1 %  0 when uigetfile was cancelled
             end
             
 %% Read # of frequencies
+
             if strcmp(strtok(upper(rec)),'AFREQ') | ...
                strcmp(strtok(upper(rec)),'RFREQ')
    
@@ -554,7 +569,8 @@ if iostat==1 %  0 when uigetfile was cancelled
                   for j=1:DAT.number_of_quantities
                      quantity_name = char(DAT.quantity_names{j});
                      DAT.(quantity_name) = reshape(DAT.(quantity_name),...
-                                                  [DAT.mxc DAT.myc DAT.number_of_frequencies]);
+                                                  [DAT.myc DAT.mxc DAT.number_of_frequencies]);
+                     % is this correctly reshaped
                   end  
                end            
                
@@ -625,42 +641,32 @@ if iostat==1 %  0 when uigetfile was cancelled
                end % for i=1:DAT.number_of_locations
                end % while
                
-                     DAT.data_description = ['1st dimension = number_of_locations          ';
-                                             '2st dimension = number_of_frequencies        ';
-                                             '3rd dimension = number_of_directions         ';
-                                             'For plotting:                                ';
-                                             'd = swan_spectrum(filename);                 ';
-                                             'surf(d.frequencies,d.directions,d.data)% or  ';
-                                             'pcolor(d.frequencies,d.directions,d.data)    ';
-                                             'shading interp                               ';
-                                             'set(gca,''xscale'',''log'')                      ';
-                                             'xlabel(''freq [Hz]'')                          ';
-                                             'ylabel(''dir [\circ]'')                        '];
+               % TO DO: insert reshape (...,mxc, ...myc)
+               DAT.data_description = ['1st dimension = number_of_locations          ';
+                                       '2st dimension = number_of_frequencies        ';
+                                       '3rd dimension = number_of_directions         ';
+                                       'For plotting:                                ';
+                                       'd = swan_spectrum(filename);                 ';
+                                       'surf(d.frequencies,d.directions,d.data)% or  ';
+                                       'pcolor(d.frequencies,d.directions,d.data)    ';
+                                       'shading interp                               ';
+                                       'set(gca,''xscale'',''log'')                      ';
+                                       'xlabel(''freq [Hz]'')                          ';
+                                       'ylabel(''dir [\circ]'')                        '];
    
 %% CASE: read S2D (incl HOTFile)
+
             elseif DAT.dimension_of_spectrum==2
             
-            quantity_name = DAT.quantity_names{1}; % for 2D there can be only 1 quantity
+               quantity_name = DAT.quantity_names{1}; % for 2D there can be only 1 quantity
             
-                     DAT.data_description = ['1st dimension = number_of_locations          ';
-                                             '2st dimension = number_of_frequencies        ';
-                                             '3rd dimension = number_of_directions         ';
-                                             'For plotting:                                ';
-                                             'd = swan_spectrum(filename);                 ';
-                                             'surf(d.frequencies,d.directions,d.data)% or  ';
-                                             'pcolor(d.frequencies,d.directions,d.data)    ';
-                                             'shading interp                               ';
-                                             'set(gca,''xscale'',''log'')                      ';
-                                             'xlabel(''freq [Hz]'')                          ';
-                                             'ylabel(''dir [\circ]'')                        '];
-                                             
                %% pre-allocate for speed (makes HUGE difference)
                DAT.(quantity_name) = nan  ([DAT.number_of_locations ...
                                             DAT.number_of_frequencies ...
                                             DAT.number_of_directions  ...
                                             ]);
-                                             
-%% Read data block per location
+               %% Read data block per location
+
                for iloc=1:DAT.number_of_locations
                
                   if OPT.debug(2)
@@ -713,12 +719,53 @@ if iostat==1 %  0 when uigetfile was cancelled
                   end
             
                end % for i=1:DAT.number_of_locations
+               
+               if DAT.myc==1
+                  DAT.data_description = ['1st dimension = number_of_locations          ';
+                                          '2st dimension = number_of_frequencies        ';
+                                          '3rd dimension = number_of_directions         ';
+                                          'For plotting:                                ';
+                                          'd = swan_spectrum(filename);                 ';
+                                          'surf(d.frequencies,d.directions,d.data)% or  ';
+                                          'pcolor(d.frequencies,d.directions,d.data)    ';
+                                          'shading interp                               ';
+                                          'set(gca,''xscale'',''log'')                      ';
+                                          'xlabel(''freq [Hz]'')                          ';
+                                          'ylabel(''dir [\circ]'')                        '];
+               elseif DAT.myc>1
+               
+               %% reshape locations into 2D matrix if present
+               
+                  DAT.data_description = ['1st dimension = mxc                          ';
+                                          '2nd dimension = myc                          ';
+                                          '3rd dimension = number_of_frequencies        ';
+                                          '4th dimension = number_of_directions         ';
+                                          'For plotting:                                ';
+                                          'd = swan_spectrum(filename);                 ';
+                                          'surf(d.frequencies,d.directions,d.data)% or  ';
+                                          'pcolor(d.frequencies,d.directions,d.data)    ';
+                                          'shading interp                               ';
+                                          'set(gca,''xscale'',''log'')                      ';
+                                          'xlabel(''freq [Hz]'')                          ';
+                                          'ylabel(''dir [\circ]'')                        '];
+
+                  DAT.(quantity_name) = reshape(DAT.(quantity_name),...
+                                               [DAT.myc DAT.mxc DAT.number_of_frequencies DAT.number_of_directions]);
+               end % if DAT.myc==1          
    
             end % if DAT.dimension_of_spectrum
    
+         %catch
+         % 
+         %   if nargout==1
+         %      error(['Error reading file: ',fname])
+         %   else
+         %      iostat = -3;
+         %   end      
+         %
          %end % try
    
-         iostat = fclose(fid);
+         fclose(fid);
    
       end % if fid <0
    
