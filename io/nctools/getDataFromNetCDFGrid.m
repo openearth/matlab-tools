@@ -110,11 +110,15 @@ T        = zeros(size(Y,1), size(X,1))*nan;
 %% find the data files that lie within the temporal search window
 t        = nc_varget(OPT.ncfile, lookupVarnameInNetCDF('ncfile', OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'time'));
 [t,idt]  = sort(t,'descend');
+
+[start_idx, end_idx, extents, matches, tokens, names, splits]  = regexp(nc_attget(OPT.ncfile,lookupVarnameInNetCDF('ncfile', OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'time'),'units'), '\d+');
+t        = t + datenum([matches{1:6}], 'yyyymmddHHMMSS');
+
 idt_in   = find(t<=OPT.starttime & t >= OPT.starttime + OPT.searchwindow);
 
 %% one by one place separate grids on overall grid
 for id_t = [idt(idt_in)-1]' %#ok<NBRAK,FNDSB>
-    Z_next    = nc_varget(OPT.ncfile, lookupVarnameInNetCDF('ncfile', OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'surface_altitude'), [id_t ystart xstart], [1 floor((ystop-ystart)/OPT.stride(2)) floor((xstop-xstart)/OPT.stride(3))], OPT.stride);
+    Z_next    = nc_varget(OPT.ncfile, lookupVarnameInNetCDF('ncfile', OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'altitude'), [id_t ystart xstart], [1 floor((ystop-ystart)/OPT.stride(2)) floor((xstop-xstart)/OPT.stride(3))], OPT.stride);
     if sum(sum(~isnan(Z_next))) ~=0
         disp(['Adding data from: ' datestr(t(idt(id_t+1)))])
         ids2add = ~isnan(Z_next) & isnan(Z);    % helpul to be in a variable as the nature of Z changes in the next two lines
