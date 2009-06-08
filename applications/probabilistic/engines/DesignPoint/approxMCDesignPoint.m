@@ -22,6 +22,23 @@ function result = approxMCDesignPoint(result, varargin)
 %                                   approximation. The square of this value
 %                                   is used as epsZ value for FORM routine
 %                                   (default: 0.05)
+%                 'method'      = determines the method for approximation
+%                                   of the Design Point. By default this is
+%                                   the Centre Of Gravity (COG) method, but
+%                                   another option is the Average Direction
+%                                   (AD) method (COG or AD, default: COG)
+%                 'threshold'   = determines the threshold of the failure
+%                                   points used for the approximation of
+%                                   the Design Point. Values larger than
+%                                   zero and smaller than one are assumed
+%                                   to be a percentage of the total number
+%                                   of failure points to be taken into
+%                                   account. Values larger than one are
+%                                   assumed to be an actual number of
+%                                   failure points to be used (default: 0)
+%                                   WARNING: THIS FEATURE IS FOR DIAGNOSTIC
+%                                   PURPOSES ONLY, SINCE THE RESULTS USING
+%                                   ALL FAILURE POINTS ARE MUCH BETTER!
 %                 'optimize'    = identifier of optimization routine to be
 %                                   used (default: FORM)
 %
@@ -75,7 +92,9 @@ function result = approxMCDesignPoint(result, varargin)
 
 OPT = struct( ...
     'precision', 0.05, ...
-    'optimize', 'FORM' ...
+    'method', 'COG', ...
+    'threshold', 0, ...
+    'optimize', '' ...
 );
 
 OPT = setProperty(OPT, varargin{:});
@@ -88,12 +107,106 @@ varNames = {result.Input.Name};
 % determine failure indexes
 idxFail = find(result.Output.idFail);
 
+% filter failure indexes below threshold out of selection
+if OPT.threshold > 0
+    % determine failure index ranking based on probability of occurance
+    [p idxRank] = sort(prod(result.Output.P(idxFail, :), 2), 'descend');
+   
+    % if threshold is larger than one, take that number of indexes from
+    % ranking, otherwise assume a percentage is provided
+    if OPT.threshold >= 1
+        idxFail = idxRank(1:round(OPT.threshold));
+    else
+        idxFail = idxRank(1:round(OPT.threshold * length(idxFail)));
+    end
+end
+
 tDP = tic;
 
     % calculate mode and centre of gravity
     a = zeros(1, length(varNames));
-    c = mean(result.Output.u(idxFail, :));
-%    c = mean(result.Output.u(idxFail, :) .* result.Output.P(idxFail, :)) ./ mean(result.Output.P(idxFail, :));
+    
+    switch OPT.method
+        case 'AD'
+            % average direction method
+            
+            c = [];
+            phi_M1 = [];
+            length_M1 = 0;
+                
+            % define first non-zero axis as reference axis
+            refAxis = find(result.Output.u(idxFail(1), :), 1, 'first');
+            
+            % walk through failure points to calculate directions
+            for j = 1:length(idxFail)
+                
+                % determine failure point in u-space
+                x = result.Output.u(idxFail(j), :);
+                
+                % determine length reference axis
+                refLength = x(refAxis) - a(refAxis);
+                
+                % calculate directions of all axes with respect to
+                % reference axis
+                for i = 1:length(x)
+                    
+                    % calculate axis length
+                    curLength = x(i) - a(i);
+                    
+                    % determine quarter where axis is located and calculate
+                    % direction accordingly
+                    if refLength == 0 || curLength == 0
+                        phi = 0;
+                    else
+                        if refLength > 0
+                            if curLength > 0
+                                phi = atan(curLength / refLength);
+                            else
+                                phi = 2 * pi + atan(curLength / refLength);
+                            end
+                        else
+                            phi = pi + atan(curLength / refLength);
+                        end
+                    end
+
+                    % incorporate current direction in the overall average
+                    % trying to prevent directions to be defined both
+                    % around 0PI and 2PI (average would be 1PI)
+                    if j == 1
+                        % first direction calculated, define it as average
+                        phi_M1(i) = phi;
+                    else
+                        % correct direction definitions
+                        if phi - phi_M1(i) > pi
+                            % current point is more than 1PI away from
+                            % average, substract 2PI
+                            dPhi = phi - phi_M1(i) - 2 * pi;
+                        elseif phi - phi_M1(i) < -1 * pi
+                            % current point is more than 1PI away from
+                            % average, add 2PI
+                            dPhi = phi - phi_M1(i) + 2 * pi;
+                        else
+                            % current point is reasonably close to average
+                            dPhi = phi - phi_M1(i);
+                        end
+
+                        % update average with current point
+                        phi_M1(i) = phi_M1(i) + dPhi / j;
+                    end
+                end
+            end
+            
+            % calculate b-vector from average direction
+            b = tan(phi_M1);
+            
+            length_M1 = length_M1 + sum((x - a).^2) / sum(b.^2);
+            
+            % calculate c-vector from b-vector
+            c = a + sqrt(length_M1) .* b;
+        otherwise
+            % centre of gravity method
+            c = mean(result.Output.u(idxFail, :));
+    end
 
     % calculate limit crossing along line between mode and centre of gravity
     designPoint = getLimitCrossing(result, a, c, 'precision', OPT.precision);

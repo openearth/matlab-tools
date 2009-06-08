@@ -83,6 +83,8 @@ OPT = setProperty(OPT, varargin{:});
 
 %% get limit crossing
 
+n = 0;
+b = c - a;
 crossing = struct('a', [], 'b', [], 'c', [], 'u', [], 'x', [], 'z', Inf);
 
 % make sure we are walking from non-failure to failure
@@ -139,13 +141,13 @@ if sign(z1) ~= sign(z2)
 
         n = n + 1;
     end
-
-    crossing.a = a;
-    crossing.b = b;
-    crossing.c = c;
-    crossing.iterations = n;
-    crossing.calculations = n;
 end
+
+crossing.a = a;
+crossing.b = b;
+crossing.c = c;
+crossing.iterations = n;
+crossing.calculations = n;
 
 %% get x and/or z value
 function x = getX(result, u)

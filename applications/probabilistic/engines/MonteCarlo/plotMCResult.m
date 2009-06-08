@@ -27,14 +27,10 @@ function [result equivFORMResult] = plotMCResult(result, varargin)
 %                                       printed in the command window and,
 %                                       if necessary, approximated (true or
 %                                       false, default: true)
-%                 'precisionDP'     = precision of Desing Point
-%                                       approximation, which is the maximum
-%                                       Z value of approximation. The
-%                                       square of this value is used as
-%                                       epsZ value for FORM routine
-%                                       (default: 0.05)
-%                 'optimizeDP'      = optimization method for Design Point
-%                                       approximation (default: FORM)
+%                 'precisionDP'     = see approxMCDesignPoint function
+%                 'methodDP'        = see approxMCDesignPoint function
+%                 'thresholdDP'     = see approxMCDesignPoint function
+%                 'optimizeDP'      = see approxMCDesignPoint function
 %                 'equivFORMResult'	= result structure from FORM routine
 %                                       from calculation with same
 %                                       stochast. Resulting Design Point is
@@ -99,8 +95,10 @@ OPT = struct(...
     'space', 'u', ...
     'plotDP', true, ...
     'printDP', true, ...
-    'precisionDP', 0.05, ...
-    'optimizeDP', 'FORM', ...
+    'precisionDP', 0, ...
+    'methodDP', '', ...
+    'thresholdDP', 0, ...
+    'optimizeDP', '', ...
     'equivFORMResult', [], ...
     'forceDP', false ...
 );
@@ -116,7 +114,7 @@ end
 
 if OPT.plotDP || OPT.printDP || OPT.forceDP
     if OPT.forceDP || (~isfield(result.Output, 'designPoint') && ~isfield(result.Output, 'designPointOptimized'))
-        result = approxMCDesignPoint(result, 'optimize', OPT.optimizeDP, 'precision', OPT.precisionDP);
+        result = approxMCDesignPoint(result, 'method', OPT.methodDP, 'threshold', OPT.thresholdDP, 'optimize', OPT.optimizeDP, 'precision', OPT.precisionDP);
     end
 
     if ~isempty(OPT.equivFORMResult) && (OPT.forceDP || ~isfield(OPT.equivFORMResult.Output, 'designPoint'))
@@ -204,9 +202,11 @@ for i = 1:size(varCombs, 1)
         end
         
         % plot first estimation of design point
-        if ~isempty(result.Output.designPoint.a) && ~isempty(result.Output.designPoint.c) && ~isempty(result.Output.designPoint.u)
+        if ~isempty(result.Output.designPoint.a) && ~isempty(result.Output.designPoint.c)
             line([result.Output.designPoint.a(idxXVar) result.Output.designPoint.c(idxXVar)], [result.Output.designPoint.a(idxYVar) result.Output.designPoint.c(idxYVar)], 'LineWidth', 1, 'Color', [1 0 0]);
-            scatter(result.Output.designPoint.u(idxXVar), result.Output.designPoint.u(idxYVar), 'SizeData', 25, 'MarkerFaceColor', [1 0 0], 'MarkerEdgeColor', [0 0 0]); hold on;
+            if ~isempty(result.Output.designPoint.u)
+                scatter(result.Output.designPoint.u(idxXVar), result.Output.designPoint.u(idxYVar), 'SizeData', 25, 'MarkerFaceColor', [1 0 0], 'MarkerEdgeColor', [0 0 0]); hold on;
+            end
         end
         
         % plot optimized design point

@@ -130,10 +130,14 @@ for i = 1:length(files)
             param = D.Output.RAW.(field);
             if ~isempty(param) && ~strcmpi(field, 'grid') && ~strcmpi(field, 'times')
                 
-                % integrate values in cross shore direction and add to result
-                % variables
+                % integrate or average weighed values in cross shore
+                % direction and add to result variables
                 x(l, k) = eval(OPT.xVar);
-                y(l, k) = sum(param(end, 1:end-1) .* diff(grid)) / mean(diff(grid));
+                if strcmpi(field, 'Scross') || strcmpi(field, 'Slong') || strcmpi(field, 'Dep')
+                    y(l, k) = sum(param(end, 1:end-1) .* diff(grid));
+                else
+                    y(l, k) = mean(param(end, 1:end-1) .* diff(grid) ./ mean(diff(grid)));
+                end
                 
                 % add variable name to results
                 titles{k} = field;
