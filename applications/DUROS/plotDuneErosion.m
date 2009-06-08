@@ -1,22 +1,33 @@
 function plotDuneErosion(result, varargin)
 %PLOTDUNEEROSION    routine to plot dune erosion results
 %
-% This routine plots the results of a dune erosion calculation in a figure
+% This routine plots the results of a dune erosion calculation in a figure.
+% The result structure is also stored in the axes containing the plotted results.
 %
-% Syntax:       plotDuneErosion(result, nr)
+% Syntax:       plotDuneErosion(result, nr, PropertyName, PropertyValue)
 %
 % Input:
 %               result    = structure with dune erosion results
-%               nr        = figure number or handle
-%
+%               nr        = figure number or handle (optional), or axes 
+%                           handle.
+%               
+%               Property-value pairs:
+%               xoffset   = a double denoting the length that is added to
+%                           all x-coordinates in the plot.
+%               zoffset   = a double denoting the height that is added to
+%                           all z-coordinates in the plot.
+%               xdir      = {reverse} | normal. Positive direction of the
+%                            x-axis. This must be reverse in case of a
+%                            positive direction to the left, or normal
+%                            plotting the matlab default axes direction.
+%               
 % Output:       Eventual output is plotted in figure(nr)
 %
-%   See also getDuneErosion_DUROS_test, getDuneErosion_TAW1984_test,
-%   getDuneErosion_VTV2006_test
+%   See also getDuneErosion_DUROS 
 %
 % --------------------------------------------------------------------------
 % Copyright (c) Deltares 2004-2008 FOR INTERNAL USE ONLY
-% Version:      Version 1.1, april 2008 (Version 1.0, January 2007)
+% Version:      Version 1.2, june 2009 (Version 1.0, January 2007)
 % By:           <Pieter van Geer and C.(Kees) den Heijer (email: Kees.denHeijer@deltares.nl)>
 % --------------------------------------------------------------------------
 
@@ -24,12 +35,14 @@ function plotDuneErosion(result, varargin)
 % $Date$
 % $Author$
 % $Revision$
+% $Keywords: plot, dune erosion$
 
 %%
 
 OPT = struct(...
     'xdir','reverse',...
-    'xoffset',0);
+    'xoffset',0,...
+    'zoffset',0);
 
 if nargin>1
     if ishandle(varargin{1})
@@ -52,15 +65,22 @@ if nargin>1
     end
 end
 
-children = get(fig, 'children');
-IsAxes = strcmp(get(children, 'type'), 'axes') & ~strcmp(get(children, 'tag'), 'legend');
-if sum(IsAxes) == 1
-    parent = children(IsAxes);
+if strcmp(get(fig,'Type'),'axes')
+    parent = fig;
+    % fig is not the handle to the figure, but we don't need it anyway...
+elseif strcmp(get(fig,'Type'),'figure')
+    % Why don't we just take gca???
+    children = get(fig, 'children');
+    IsAxes = strcmp(get(children, 'type'), 'axes') & ~strcmp(get(children, 'tag'), 'legend');
+    if sum(IsAxes) == 1
+        parent = children(IsAxes);
+    else
+        parent = axes(...
+            'Parent', fig);
+    end
 else
-    parent = axes(...
-        'Parent', fig);
+   error('plotDuneErosion:WrongHandle','The handle specified is not of type axis or figure.'); 
 end
-
 set(parent,...
     'Xdir', OPT.xdir,...
     'Box', 'on',...
@@ -82,7 +102,7 @@ for i = fliplr(1 : length(result))
 end
 
 hsc = [];
-[x, z] = deal([result(1).xLand; result(1).xActive; result(1).xSea]+OPT.xoffset, [result(1).zLand; result(1).zActive; result(1).zSea]);
+[x, z] = deal([result(1).xLand; result(1).xActive; result(1).xSea]+OPT.xoffset, [result(1).zLand; result(1).zActive; result(1).zSea]+OPT.zoffset);
 
 if ~issorted(x)
     % relevant if poslndwrd == 1
@@ -100,7 +120,13 @@ hinitprofile = plot(x, z,...
 initxlimits = [min(x) max(x)];
 initzlimits = get(parent, 'YLim');
 tmp = guihandles(nr);
-uipushtool('CData',repmat(0,[315,315,3]),...
+
+if exist('stretchaxes.bmp','file')
+     pushim = imread('stretchaxes.bmp');
+else
+     pushim = repmat(0,[315,315,3]);
+end
+uipushtool('CData',pushim,...
     'ClickedCallback',{@resetaxis, parent, initxlimits, initzlimits},...
     'Parent',tmp.FigureToolBar,...
     'Separator','on',...
@@ -113,12 +139,13 @@ if length(result) > length(color)
 end
 hp = NaN(size(result));
 txt = cell(size(result));
+TpCorrected = false;
 for i = 1 : LastFilledField
     if ~isempty(result(i).z2Active)
         if isfield(result(i).info, 'ID')
             txt{i} = result(i).info.ID; % not applicable in case of debugging when result(i).info.ID doesn't exist
         end
-        volumepatch = [result(i).xActive'+OPT.xoffset fliplr(result(i).xActive')+OPT.xoffset; result(i).z2Active' fliplr(result(i).zActive')]';
+        volumepatch = [result(i).xActive'+OPT.xoffset fliplr(result(i).xActive')+OPT.xoffset; result(i).z2Active'+OPT.zoffset fliplr(result(i).zActive')+OPT.zoffset]';
         hp(i) = patch(volumepatch(:,1), volumepatch(:,2), ones(size(volumepatch(:,2)))*-(LastFilledField-i),color{i},...
             'EdgeColor',[1 1 1]*0.5,...
             'Parent',parent);
@@ -164,7 +191,7 @@ for i = 1 : LastFilledField
                 'Parent',parent); %#ok<AGROW>
             %}
         else
-            heroprofile = plot(result(i).xActive+OPT.xoffset, result(i).z2Active,...
+            heroprofile = plot(result(i).xActive+OPT.xoffset, result(i).z2Active+OPT.zoffset,...
                 'Color','r',...
                 'LineStyle','-',...
                 'Parent',parent,...
@@ -177,6 +204,12 @@ for i = 1 : LastFilledField
         end
     end
     % TODO('Change the i's / 1's for DUROSresultid in some cases');
+    if ~isempty(result(i).info.messages) && any([result(i).info.messages{:,1}]==-2)
+        oldtptext = result(i).info.messages{[result(i).info.messages{:,1}]==-2,2};
+        spaces = strfind(oldtptext,' ');
+        oldTp = str2double(oldtptext(spaces(end-1):spaces(end)));
+        TpCorrected = true;
+    end
     if ~isempty(result(i).info.messages) && any([result(i).info.messages{:,1}]==-99)
         text(0.5, 0.45,'Iteration boundaries are non-consistent!','Units','normalized','Rotation',0,'FontSize',16,'color','r','HorizontalAlignment','center');
     end
@@ -212,7 +245,7 @@ if numel(result(1).xActive)<2
         if length(xlimits)==1
             xlimits = ones(1,2)*xlimits;
         end
-        zlimits = [min(result(1).zSea) max(result(1).zLand)];
+        zlimits = [min(result(1).zSea)+OPT.zoffset max(result(1).zLand)+OPT.zoffset];
         if length(zlimits)==1
             zlimits = ones(1,2)*zlimits;
         end
@@ -238,7 +271,7 @@ end
 
 for i = 1 : LastFilledField
     if ~isempty(result(i).info.input) && isfield(result(i).info.input,'WL_t')
-        WL_t = result(i).info.input.WL_t;
+        WL_t = result(i).info.input.WL_t+OPT.zoffset;
     end
     if ismember({result(i).info.ID},'DUROS-plus')
         if ~isempty(result(i).Volumes.Erosion)
@@ -250,9 +283,9 @@ for i = 1 : LastFilledField
         AVolume = result(i).VTVinfo.AVolume;
     elseif ismember({result(i).info.ID},'Additional Erosion')
         Xp = result(i).VTVinfo.Xp+OPT.xoffset;
-        Zp = result(i).VTVinfo.Zp;
+        Zp = result(i).VTVinfo.Zp+OPT.zoffset;
         Xr = result(i).VTVinfo.Xr+OPT.xoffset;
-        Zr = result(i).VTVinfo.Zr;
+        Zr = result(i).VTVinfo.Zr+OPT.zoffset;
         if isempty(Xp) || isempty(Xr)
             continue;
         end
@@ -329,16 +362,26 @@ catch %#ok<CTCH>
 end
 displayResultsOnFigure(parent,[input2plot; results2plot])
 if strcmp(OPT.xdir,'normal')
-    leg = findobj(get(parent, 'Parent'),...
-        'Tag', 'legend');
+    leg = legend(parent);
     set(leg,'Location','NorthEast');
     legendxdir(leg,'xdir','reverse');
 end
-
+if TpCorrected
+    TODO('search for text in legend and adjust color and text');
+    leg = legend(parent);
+    ch = findobj(leg,'Type','text');
+    str = get(ch,'String');
+    Tpid = strncmp(str,'Tp:',3);
+    if sum(Tpid==1)==1
+        set(ch(Tpid),...
+            'String',cat(2,get(ch(Tpid),'String'),[' (target: ' num2str(oldTp, '%8.2f') ' s)']),...
+            'Color','r');
+    end
+end
 %% store results in userdata. 
 % In this way storing one figure stores the
 % complete result. No need to seperately store the .mat file anymore
-set(fig,'UserData',result);
+set(parent,'UserData',result);
 
 function resetaxis(varargin)
 
