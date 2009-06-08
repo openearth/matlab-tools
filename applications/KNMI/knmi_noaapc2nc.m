@@ -16,7 +16,6 @@
 % function knmi_noaapc2nc(...)
 
 %% Initialize
-%------------------
 
    OPT.fillvalue      = nan; % NaNs do work in netcdf API
    OPT.dump           = 0;
@@ -29,7 +28,6 @@
    OPT.refdatenum     = datenum(1970,1,1); % lunix  datenumber convention
 
 %% File loop
-%------------------
 
    OPT.directory.raw  = ['F:\checkouts\OpenEarthRawData\knmi\NOAA\mom\1990_mom\5\'];
    OPT.directory.nc   = ['F:\checkouts\OpenEarthRawData\knmi\NOAA\mom.nc\1990_mom\5\'];
@@ -44,8 +42,7 @@
    
       disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)])
 
-   %% 0 Read raw data
-   %------------------
+%% 0 Read raw data
 
       D = knmi_noaapc_read(OPT.filename,'center',1,'landmask',nan,'cloudmask',-Inf,'count',OPT.pack); % make sure to set valid_min to prevent -Inf from corrupting color scale in ncBrowse.
       D.version = '';
@@ -54,8 +51,7 @@
       pcolorcorcen(D.loncor,D.latcor,D.data)
       end
 
-   %% 1a Create file
-   %------------------
+%% 1a Create file
    
       if OPT.pack
       OPT.ext = ['_sst_pack',num2str(OPT.pack)];
@@ -95,8 +91,7 @@
       nc_attput(outputfile, nc_global, 'type'            , D.type);
       nc_attput(outputfile, nc_global, 'yearday'         , D.yearday);
    
-   %% 2 Create dimensions
-   %------------------
+%% 2 Create dimensions
    
       nc_add_dimension(outputfile, 'time' , 1)
       nc_add_dimension(outputfile, 'x_cen', D.nx)
@@ -104,8 +99,7 @@
       nc_add_dimension(outputfile, 'x_cor', D.nx+1)
       nc_add_dimension(outputfile, 'y_cor', D.ny+1)
 
-   %% 3 Create variables
-   %------------------
+%% 3 Create variables
    
       clear nc
       ifld = 0;
@@ -249,15 +243,13 @@
      %nc(ifld).Attribute(6) = struct('Name', 'cell_methods'   ,'Value', 'point');y
      %nc(ifld).Attribute(6) = struct('Name', 'cell_methods'   ,'Value', 'point');time
 
-   %% 4 Create variables with attibutes
-   %------------------
+%% 4 Create variables with attibutes
    
       for ifld=1:length(nc)
          nc_addvar(outputfile, nc(ifld));   
       end
       
-   %% 5 Fill variables
-   %------------------
+%% 5 Fill variables
    
       nc_varput(outputfile, 'x_cen'        , [1:D.nx]-0.5);
       nc_varput(outputfile, 'y_cen'        , [1:D.ny]-0.5);
@@ -278,15 +270,13 @@
       nc_varput(outputfile, 'SST'          , D.data');
       end
       
-   %% 6 Check
-   %------------------
+%% 6 Check
    
       if OPT.dump
       nc_dump(outputfile);
       end
       
-   %% Pause
-   %------------------
+%% Pause
    
       if OPT.pause
          pausedisp

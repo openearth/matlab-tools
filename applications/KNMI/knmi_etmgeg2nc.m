@@ -32,7 +32,6 @@ try
 end   
 
 %% Initialize
-%------------------
 
    OPT.fillvalue      = nan; % NaNs do work in netcdf API
    OPT.dump           = 0;
@@ -46,12 +45,10 @@ end
    OPT.refdatenum     = datenum(1970,1,1); % lunix  datenumber convention
    
 %% Keyword,value
-%------------------
 
    OPT = setProperty(OPT,varargin{:});
 
 %% File loop
-%------------------
 
    OPT.files         = dir([OPT.directory_raw,filesep,OPT.mask]);
 
@@ -62,19 +59,16 @@ for ifile=1:length(OPT.files)
    disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)])
 
 %% 0 Read raw data
-%------------------
 
 
    D                                = knmi_etmgeg(OPT.filename);
    D.version                        = '';
 
 %% 1a get station meta-info
-%------------------
 
    [D.code,D.long_name,D.lon,D.lat] = KNMI_etmgeg_stations(unique(D.data.STN));
    
 %% 1a Create file
-%------------------
 
    outputfile    = [OPT.directory_nc filesep  filename(D.filename),OPT.ext,'.nc'];
    
@@ -106,14 +100,12 @@ for ifile=1:length(OPT.files)
    nc_attput(outputfile, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
 
 %% 2 Create dimensions
-%------------------
 
    nc_add_dimension(outputfile, 'time'     , length(D.data.datenum))
    nc_add_dimension(outputfile, 'locations', 1)
   %nc_add_dimension(outputfile, 'stringlength', ) % to add station long_name array
 
 %% 3 Create variables
-%------------------
    clear nc
    ifld = 0;
 
@@ -484,14 +476,12 @@ for ifile=1:length(OPT.files)
    nc(ifld).Attribute(5) = struct('Name', 'KNMI_name'      ,'Value', 'UX');
 
 %% 4 Create variables with attibutes
-%------------------
 
    for ifld=1:length(nc)
       nc_addvar(outputfile, nc(ifld));   
    end
 
 %% 5 Fill variables
-%------------------
 
    nc_varput(outputfile, 'lon'                                             , D.lon);
    nc_varput(outputfile, 'lat'                                             , D.lat);
@@ -523,14 +513,12 @@ for ifile=1:length(OPT.files)
    nc_varput(outputfile, 'potential_evapotranspiration'                    , D.data.EV24 (:)'); % 26
 
 %% 6 Check
-%------------------
 
    if OPT.dump
    nc_dump(outputfile);
    end
    
 %% Pause
-%------------------
 
    if OPT.pause
       pausedisp

@@ -74,7 +74,7 @@ function start_of_PATHSTR = first_subdir(fullfilename,varargin)
 
    if abs(nsubdir) > (length(slash_positions));
       nsubdir = sign(nsubdir).*length(slash_positions);
-      disp(['Warning: n truncated to : ',num2str(nsubdir)])
+      disp(['Warning: n truncated to : ',num2str(nsubdir)]);
    end
    
    %% Gather relevant directory parts
@@ -83,8 +83,6 @@ function start_of_PATHSTR = first_subdir(fullfilename,varargin)
    if sign(nsubdir) > 0
    start_of_PATHSTR  = PATHSTR(1:1+slash_positions(nsubdir)-1);
    else
-   length(slash_positions) 
-   nsubdir
    start_of_PATHSTR  = PATHSTR(1:slash_positions(length(slash_positions) + nsubdir));
    end
 
