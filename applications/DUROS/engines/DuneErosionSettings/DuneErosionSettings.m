@@ -182,6 +182,7 @@ for iinp = 1:length(inpprops)
                     end
                 end
                 DESettings.(DESfieldnames{itypes}).(inpprops{iinp}) = inpvars{iinp};
+                storeDESettings(DESettings);
                 writemessage(50, ['Variable "' inpprops{iinp} '" is set to "' variablevaluestring '".']);
             end
             break
