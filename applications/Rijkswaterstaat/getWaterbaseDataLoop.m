@@ -2,15 +2,45 @@
 %
 % See also: GETWATERBASEDATA, DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>,  
 %           GETWATERBASEDATA_SUBSTANCES, GETWATERBASEDATA_LOCATIONS, GETWATERBASE2NC_TIME_DIRECT
+%           DONARNAME2STANDARD_NAME
 
-%% Choose parameter and provide CF standard_names and units.
-%  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
+%   --------------------------------------------------------------------
+%   Copyright (C) 2009 Deltares
+%       Gerben J. de Boer
+%
+%       gerben.deboer@deltares.nl	
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
 
 % $Id$
 % $Date$
 % $Author$
 % $Revision$
 % $HeadURL$
+
+%% TO DO: convert to SI units here
+%% TO DO: add option to loop entire donar_substances.csv
+
+%% Choose parameter and provide CF standard_names and units.
+%  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
+%  See also: donarname2standard_name
 
    OPT.codes          = 1;
    OPT.standard_names = {'sea_surface_height'};
@@ -21,16 +51,20 @@
    OPT.codes          = 410;
    OPT.standard_names = {'concentration_of_suspended_matter_in_sea_water'};
 
-   OPT.codes          = [44 
-                         559 
-                         22 
-                         23 
-                         24];
-   OPT.standard_names = {'sea_surface_temperature',...
-                         'sea_surface_salinity',...
-                         'sea_surface_wave_significant_height',...
-                         'sea_surface_wave_from_direction',...
-                         'sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment'};
+   OPT.codes          = 22 
+   OPT.standard_names = {'sea_surface_wave_significant_height'};
+
+   OPT.codes          = 23 
+   OPT.standard_names = {'sea_surface_wave_from_direction'}; % alias: sea_surface_wave_to_direction
+
+   OPT.codes          = 24];
+   OPT.standard_names = {'sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment'};
+
+   OPT.codes          = 559 
+   OPT.standard_names = {'sea_surface_salinity'}; % alias: sea_water_salinity
+
+   OPT.codes          = 44 
+   OPT.standard_names = {'sea_surface_temperature'}; % alias: sea_water_temperature
 
    OPT.codes          = 282;
    OPT.standard_names = {'concentration_of_chlorophyll_in_sea_water'}; % alias: chlorophyll_concentration_in_sea_water
@@ -81,7 +115,8 @@ for ivar=1:length(OPT.codes)
          getWaterbaseData(SUB.Code(OPT.indSub),LOC.ID{indLoc},...
                           OPT.period,...
                          [OPT.directory.raw,filesep,OPT.standard_name]);
-%% Zip
+
+%% Zip (especially useful for large sea_surface_height series)
    
          if OPT.zip
             zip   (OPT.filename,OPT.filename);
@@ -90,7 +125,7 @@ for ivar=1:length(OPT.codes)
          
       end % for indLoc=1:length(LOC.ID)
       
-%% Transform to *.nc files
+%% Transform to *.nc files (future)
    
       if OPT.nc
       for indLoc=1:length(LOC.ID)
@@ -98,7 +133,7 @@ for ivar=1:length(OPT.codes)
       end
       end
       
-%% Copy to OPeNDAP server 
+%% Copy to OPeNDAP server (future)
    
       if OPT.opendap
       for indLoc=1:length(LOC.ID)

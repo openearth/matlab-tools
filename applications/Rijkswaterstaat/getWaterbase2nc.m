@@ -26,6 +26,7 @@ function getWaterbase2nc(varargin)
 % The actual datenum values do not show up as a parameter in ncBrowse.
 %
 %See also: GETWATERBASEDATA, DONAR_READ, SNCTOOLS
+%          NC_CF_STATIONTIMESERIES2META, NC_CF_STATIONTIMESERIES
 
 % $Id$
 % $Date$

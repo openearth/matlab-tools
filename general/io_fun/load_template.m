@@ -67,10 +67,10 @@ function varargout  = load_template(fname,varargin)
 %% keywords
    OPT = setProperty(OPT, varargin{1:end});
 
-%% start checks
+%% check for file existence (1)
+
    tmp = dir(fname);
    
-%% check existence (1)
    if length(tmp)==0
       
       if nargout==1
@@ -79,7 +79,6 @@ function varargout  = load_template(fname,varargin)
          iostat = -1;
       end      
       
-%% check opening (2)
    elseif length(tmp)>0
    
       DAT.filedate  = tmp.date;
@@ -87,6 +86,8 @@ function varargout  = load_template(fname,varargin)
    
       filenameshort = filename(fname);
       
+%% check for file opening (2)
+
       fid       = fopen  (fname,'r');
 
       if fid < 0
@@ -99,12 +100,14 @@ function varargout  = load_template(fname,varargin)
       
       elseif fid > 2
       
-%% check reading (3)
+%% check for file reading (3)
+
          try
 
          % Implement actual reading of the ASCII file here
-         % use low level (fgetl, fscanf, fread etc) or high-level functions.
+         % use low level (fgetl, fscanf, fread etc) or high-level functions here (textscan).
          % Read both data and metadata!
+         
          DAT.meta = [];
          DAT.data = [];
           
@@ -124,14 +127,16 @@ function varargout  = load_template(fname,varargin)
       
    end % if length(tmp)==0
    
-   DAT.iomethod = '';
-   DAT.read_at  = datestr(now);
-   DAT.iostatus = iostat;
+   DAT.read.with     = '$Id$'; % SVN keyword, will insert name of this function
+   DAT.read.at       = datestr(now);
+   DAT.read.iostatus = iostat;
 
-   if nargout==1
+%% Function output
+
+   if nargout    ==0 | nargout==1
       varargout  = {DAT};
    elseif nargout==2
       varargout  = {DAT,iostat};
    end
    
-   %% EOF
+%% EOF

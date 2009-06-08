@@ -21,7 +21,7 @@ function [xcr, zcr] = findCrossingsOfPolygonAndPolygon(x1,z1,x2,z2)
 %               xcr  = array of x-values crossings found
 %               zcr	 = array of corresponding z-values of crossings found (same size as xcr)
 %
-%   See also addXvaluesExactCrossings, findCrossings
+%   See also addXvaluesExactCrossings, findCrossings, POLYINTERSECT
 
 % --------------------------------------------------------------------
 % Copyright (C) 2004-2008 Delft University of Technology
