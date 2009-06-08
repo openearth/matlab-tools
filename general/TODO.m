@@ -72,9 +72,14 @@ if CalledFromFile
     lineno = num2str(mfilestr(1).line);
     
     %% Build string with link info
-    str=['TODO in ==> <a href="matlab: opentoline(''' fullmfile ''',' lineno ',0);">' mfile ' at ' lineno '</a>'];
+    str1 = 'TODO in ==> ';
+    str2 = ['<a href="matlab: opentoline(''' strrep(fullmfile,filesep,[filesep filesep]) ''',' lineno ',0);">' mfile ' at ' lineno '</a>'];
     
     %% display message
-    disp(str);
-    disp(txt);
+    fprintf(2,'%s\n',cat(2,str1,str2));
+    fprintf(2,'%s\n',txt);
+    
+%     cprintf([1 0.5 0],'%s',str1);
+%     cprintf(-[1 0.5 0],'%s\n',str2);
+%     cprintf([1 0.5 0],'%s\n',txt);
 end
