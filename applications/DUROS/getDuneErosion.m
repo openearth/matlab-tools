@@ -137,6 +137,8 @@ SKIPBOUNDPROF = false;
 % # The DUROS+ calculation method is valid for values of Tp_t between 12 and
 %       20 seconds. TP_t is corrected for that if it is out of this range.
 
+writemessage(100,'Start first step: Get and fit DUROS profile');
+% step 1 initiated early to include correction of the Tp in the messages.
 [xInitial,zInitial,D50,WL_t,Hsig_t,Tp_t] = DUROSCheckConditions(xInitial,zInitial,D50,WL_t,Hsig_t,Tp_t);
 
 % debug plot initial profile
@@ -155,7 +157,6 @@ if DuneErosionSettings('get', 'DUROS')
     %
     % $$\left( {{{7,6} \over {H_{0s} }}} \right)y = 0,4714\left[ {\left( {{{7,6} \over {H_{0s} }}} \right)^{1,28} \left( {{{12} \over {T_p }}} \right)^{0,45} \left( {{w \over {0,0268}}} \right)^{0,56} x + 18} \right]^{0,5}  - 2,0$$
     % 
-    writemessage(100,'Start first step: Get and fit DUROS profile');
     [result, Volume, x00min, x0max, x0except, x0min] = getDuneErosion_DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t,false);
     
     % update initial profile with minor modification by findCrossings
