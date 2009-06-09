@@ -63,6 +63,8 @@ if nargin>1
     if ~isnumeric(OPT.xoffset)
         error('PlotDuneErosion:WrongProperty','Parameter xoffset must be numeric');
     end
+else
+    fig = gcf;
 end
 
 if strcmp(get(fig,'Type'),'axes')
