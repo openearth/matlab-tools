@@ -121,7 +121,7 @@ hinitprofile = plot(x, z,...
 
 initxlimits = [min(x) max(x)];
 initzlimits = get(parent, 'YLim');
-tmp = guihandles(nr);
+tmp = guihandles(fig);
 
 if exist('stretchaxes.bmp','file')
      pushim = imread('stretchaxes.bmp');
