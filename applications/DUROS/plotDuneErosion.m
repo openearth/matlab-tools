@@ -369,7 +369,6 @@ if strcmp(OPT.xdir,'normal')
     legendxdir(leg,'xdir','reverse');
 end
 if TpCorrected
-    TODO('search for text in legend and adjust color and text');
     leg = legend(parent);
     ch = findobj(leg,'Type','text');
     str = get(ch,'String');

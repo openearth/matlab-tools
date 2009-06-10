@@ -194,6 +194,18 @@ if ~IterationBoundariesConsistent
         writemessage(41,'No additional erosion possible');
         writemessage(17,'No result possible, not enough profile information at landward side available');
         resultout.info.x0 = Xr;
+    elseif TargetVolume > 0 && AVolume == 0
+        % (In this case also xmin == xmax)
+        % No additional erosion whereas we have no erosion and a positive
+        % additional erosion volume
+        resultout.VTVinfo.TVolume = 0;
+        resultout.Volumes.Volume = 0;
+        resultout.Volumes.volumes = 0;
+        resultout.Volumes.Accretion = 0;
+        resultout.Volumes.Erosion = 0;
+        resultout.info.x0 = DUROSresult.info.x0;
+        resultout.info.iter = 0;
+        resultout.info.precision = TargetVolume;
     else
         % something else is wrong.
         TODO('Figure out what is the case and which message to give');
