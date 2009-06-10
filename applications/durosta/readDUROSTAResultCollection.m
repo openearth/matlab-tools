@@ -19,17 +19,24 @@ function [x y y_smooth titles] = readDUROSTAResultCollection(path, varargin)
 %   Input:
 %   name        = path to input files
 %   varargin    = 'PropertyName' PropertyValue pairs (optional)
-%                   'xVar'          = full name of variable in result
-%                                       struct to be used as variable for
-%                                       the x-axis (default:
-%                                       'D.Input.WaveAngle')
-%                   'fields'        = cell array with names from the raw
-%                                       entries from the result struct to
-%                                       be returned. An empty value means
-%                                       all entries (default: [])
-%                   'smoothFactor'  = factor to be provided to the smooth
-%                                       function to smooth the y-values
-%                                       (default: 10)
+%                   'xVar'              = full name of variable in result
+%                                           struct to be used as variable
+%                                           for the x-axis (default:
+%                                           'D.Input.WaveAngle')
+%                   'fields'            = cell array with names from the
+%                                           raw entries from the result
+%                                           struct to be returned. An empty
+%                                           value means all entries
+%                                           (default: [])
+%                   'smoothFactor'      = factor to be provided to the
+%                                           smooth function to smooth the
+%                                           y-values (default: 10)
+%                   'crossShoreAverage' = flag that determines whether the
+%                                           requested field values are
+%                                           cross-shore averaged or
+%                                           integrated or that each value
+%                                           of each cross-shore cell is
+%                                           returned (default: true)
 %
 %   Output:
 %   x           = matrix where columns provide x-values for the different
@@ -37,7 +44,8 @@ function [x y y_smooth titles] = readDUROSTAResultCollection(path, varargin)
 %   y           = matrix where columns provide y-values for the different
 %                   variables
 %   y_smooth    = matrix similar to y, but with smoothed values created
-%                   using moving averages
+%                   using moving averages (only returned for cross-shore
+%                   averaged values)
 %   titles      = cell array with names of the variables corresponding to
 %                   each column in the returned matrices
 %
@@ -88,7 +96,8 @@ function [x y y_smooth titles] = readDUROSTAResultCollection(path, varargin)
 OPT = struct( ...
     'xVar', 'D.Input.WaveAngle', ...
     'fields', [], ...
-    'smoothFactor', 10 ...
+    'smoothFactor', 10, ...
+    'crossShoreAverage', true ...
 );
 
 OPT = setProperty(OPT, varargin{:});
@@ -130,13 +139,18 @@ for i = 1:length(files)
             param = D.Output.RAW.(field);
             if ~isempty(param) && ~strcmpi(field, 'grid') && ~strcmpi(field, 'times')
                 
-                % integrate or average weighed values in cross shore
-                % direction and add to result variables
                 x(l, k) = eval(OPT.xVar);
-                if strcmpi(field, 'Scross') || strcmpi(field, 'Slong') || strcmpi(field, 'Dep')
-                    y(l, k) = sum(param(end, 1:end-1) .* diff(grid));
+                
+                if OPT.crossShoreAverage
+                    % integrate or average weighed values in cross shore
+                    % direction and add to result variables
+                    if strcmpi(field, 'Scross') || strcmpi(field, 'Slong') || strcmpi(field, 'Dep')
+                        y(l, k) = sum(param(end, 1:end-1) .* diff(grid));
+                    else
+                        y(l, k) = mean(param(end, 1:end-1) .* diff(grid) ./ mean(diff(grid)));
+                    end
                 else
-                    y(l, k) = mean(param(end, 1:end-1) .* diff(grid) ./ mean(diff(grid)));
+                    y(l, k, :) = param(end, :);
                 end
                 
                 % add variable name to results
@@ -153,6 +167,10 @@ end
 % sort data points and add smoothed version
 [x i] = sort(x, 1);
 for j = 1:size(y, 2)
-    y(:, j) = y(i(:, j), j);
-    y_smooth(:, j) = smooth(y(:, j), OPT.smoothFactor);
+    if OPT.crossShoreAverage
+        y(:, j) = y(i(:, j), j);
+        y_smooth(:, j) = smooth(y(:, j), OPT.smoothFactor);
+    else
+        y(:, j, :) = y(i(:, j), j, :);
+    end
 end

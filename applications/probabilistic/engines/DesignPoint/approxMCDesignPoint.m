@@ -40,7 +40,7 @@ function result = approxMCDesignPoint(result, varargin)
 %                                   PURPOSES ONLY, SINCE THE RESULTS USING
 %                                   ALL FAILURE POINTS ARE MUCH BETTER!
 %                 'optimize'    = identifier of optimization routine to be
-%                                   used (default: FORM)
+%                                   used (default: none)
 %
 %   Output:
 %   result      = original result structure with Design Point
