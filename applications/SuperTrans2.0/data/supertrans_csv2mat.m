@@ -1,14 +1,31 @@
-% get all csv files in csv dir, and put their contents in SuperTransData.m
-clear all
-% get all csv files in csv dir
-csvFiles = dir('csv_files/*.csv');
+function varargout = supertrans_csv2mat
+%SUPERTRANS_CSV2MAT convert bunch of EPSG *.csv files to one mat file
+%
+%   <D> = supertrans_csv2mat  
+%
+% reads all *csv required for Supertrans and saves them to mat file
+% (because reading the *.csv files is slow)
+%
+% you can load the data with 
+%
+%   D = load('SuperTransData.mat')
+%
+% See also :supertrans
 
-%add them all to superTransData.m
+%% get all csv files in csv dir, and put their contents in SuperTransData.m
+clear all
+
+%% get all csv files in csv dir
+csvFiles = dir(fullfile(filepathstr(mfilename('fullpath')),'csv_files/*.csv'));
+
+%% add them all to superTransData.m
 for iCsvFile = 1:length(csvFiles)
     fclose all;
+    
+    disp(['processing ',num2str(iCsvFile,'%0.3d'),' of ',num2str(length(csvFiles),'%0.3d'),': ',csvFiles(iCsvFile).name])
     fid=fopen(fullfile('csv_files',csvFiles(iCsvFile).name));
 
-    % get header names
+    %% get header names
     tLine0=fgetl(fid);
     rowNames=lower(strread(tLine0,'%q','delimiter',','));    
     %replace spaces in headers
@@ -17,7 +34,8 @@ for iCsvFile = 1:length(csvFiles)
     end
     fileName = csvFiles(iCsvFile).name;
     fileName = fileName(1:end-4);
-    %find headers that refer to data that should be interpreted as numbers
+    
+    %% find headers that refer to data that should be interpreted as numbers
     %in stead of strings
     for jj=1:length(rowNames) 
         if (strcmpi(rowNames{jj}(end-3:end),'code')&&~strcmpi(rowNames{jj}(1:5),'iso_a'))...
@@ -35,7 +53,7 @@ for iCsvFile = 1:length(csvFiles)
         end
     end
    
-    %read entire file
+    %% read entire file
     for ii=1:inf
         tLine = fgetl(fid);
         if ~ischar(tLine),   break,   end
@@ -64,4 +82,8 @@ for iCsvFile = 1:length(csvFiles)
     fclose(fid);
 end
    
-save('SuperTransData','STD'); 
+save(fullfile(filepathstr(mfilename('fullpath')),'SuperTransData'),'-struct','STD','-V6'); 
+
+if nargout==1
+   varargout = {STD};
+end

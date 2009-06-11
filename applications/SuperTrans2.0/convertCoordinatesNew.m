@@ -1,7 +1,7 @@
 function [x2,y2,OPT]=convertCoordinatesNew(x1,y1,STD,varargin)
 %CONVERTCOORDINATES   transformation between coordinate systems
 %
-%    [x2,y2]=convertCoordinates(x1,y1,STD,'keyword','value')
+%    [x2,y2]=convertCoordinatesNew(x1,y1,STD,'keyword','value')
 %
 % where x1,y1 are the values of the coordinates to be transformed.
 %       x2,y2 are the values of the coordinates after transformation.
