@@ -75,27 +75,29 @@ OPT.unitss = ...
     's',...
     'microg/l'}; % ug/l is not in UDunits
 
+OPT.parameter         = 0; % 0=all or select index from OPT.names above
+
 %% Initialize
 
-OPT.fillvalue      = nan; % NaNs do work in netcdf API
-OPT.dump           = 0;
+OPT.dump              = 0;
+OPT.disp              = 0;
+OPT.pause             = 0;
 
-OPT.mask           = 'id*.txt';
-OPT.mask           = 'id*.zip';
-OPT.unzip          = 1; % process only zipped files: unzip them, and delete if afterwards
+OPT.refdatenum        = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
+OPT.refdatenum        = datenum(1970,1,1); % lunix  datenumber convention
+OPT.fillvalue         = nan; % NaNs do work in netcdf API
 
-OPT.load           = 1; % load slow *.txt file
+OPT.stationTimeSeries = 0; % last items to adhere to for upcoming convenction, but not yet supported by QuickPlot
 
-OPT.pause          = 0;
+%% File loop
 
-OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
-OPT.refdatenum     = datenum(1970,1,1); % lunix  datenumber convention
-
-OPT.directory_raw  = [];%'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\'
-OPT.directory_nc   = [];%'P:\mcdata\opendap\rijkswaterstaat\waterbase\';
-OPT.ext            = ''; % to add to output file name before *.nc
-
-OPT.parameter      = 8; % one from OPT.names above
+OPT.directory_raw     = 'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\'; % [];%
+OPT.directory_nc      = 'P:\mcdata\opendap\rijkswaterstaat\waterbase\';                % [];%
+OPT.ext               = '';
+OPT.mask              = 'id*.txt';
+OPT.mask              = 'id*.zip';
+OPT.unzip             = 1; % process only zipped files: unzip them, and delete if afterwards
+OPT.load              = 1; % load slow *.txt file
 
 %% Keyword,value
 
@@ -205,9 +207,10 @@ for ivar=[OPT.parameter]
 
         %% 2 Create dimensions
 
-        nc_add_dimension(outputfile, 'time'       , length(D.data.datenum))
-        nc_add_dimension(outputfile, 'locations'  , 1); % Delft3D Quickplot cannot handle this!
-        nc_add_dimension(outputfile, 'name_strlen', length(D.data.locationcode)); % for multiple stations get max length
+        nc_add_dimension(outputfile, 'time'        , length(D.data.datenum))
+        nc_add_dimension(outputfile, 'locations'   , 1);
+        nc_add_dimension(outputfile, 'name_strlen1', length(D.data.locationcode)); % for multiple stations get max length
+        nc_add_dimension(outputfile, 'name_strlen2', length(D.data.location    )); % for multiple stations get max length
 
         %% 3 Create variables
 
@@ -218,18 +221,25 @@ for ivar=[OPT.parameter]
         % timeseries in one netCDF file (future extension)
 
         ifld = ifld + 1;
-        nc(ifld).Name         = 'id';
+        nc(ifld).Name         = 'station_id';
         nc(ifld).Nctype       = 'char';
-        nc(ifld).Dimension    = {'locations','name_strlen'};
+        nc(ifld).Dimension    = {'locations','name_strlen1'};
         nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station identification code');
         nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id'); % standard name
+
+        % Station long name
+
+        ifld = ifld + 1;
+        nc(ifld).Name         = 'station_name';
+        nc(ifld).Nctype       = 'char';
+        nc(ifld).Dimension    = {'locations','name_strlen2'};
+        nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station name');
 
         % Define dimensions in this order:
         % [time,z,y,x]
         %
         % For standard names see:
         % http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table
-        %------------------
         % Longitude:
         % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
 
@@ -265,11 +275,16 @@ for ivar=[OPT.parameter]
         ifld = ifld + 1;
         nc(ifld).Name         = 'time';
         nc(ifld).Nctype       = 'double'; % float not sufficient as datenums are big: doubble
+        if OPT.stationTimeSeries
+        nc(ifld).Dimension    = {'locations','time'}; % QuickPlot error: plots dimensions instead of datestr
+        else
         nc(ifld).Dimension    = {'time'}; % {'locations','time'} % does not work in ncBrowse, nor in Quickplot (is indirect time mapping)
+        end
         nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'time');
         nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
         nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'time');
         nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+        
         %nc(ifld).Attribute(5) = struct('Name', 'bounds'         ,'Value', '');
 
         % Parameters with standard names:
@@ -283,8 +298,10 @@ for ivar=[OPT.parameter]
         nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', OPT.units);
         nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
         nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-        nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
-        nc(ifld).Attribute(6) = struct('Name', 'cell_methods'   ,'Value', 'point');
+        nc(ifld).Attribute(5) = struct('Name', 'cell_methods'   ,'Value', 'point');
+        if OPT.stationTimeSeries
+        nc(ifld).Attribute(6) = struct('Name', 'coordinates'    ,'Value', 'lat lon');  % QuickPlot error
+        end
 
         %% 4 Create variables with attibutes
         % When variable definitons are created before actually writing the
@@ -292,16 +309,18 @@ for ivar=[OPT.parameter]
         % file without the need to relocate any info.
 
         for ifld=1:length(nc)
+            if OPT.disp;disp([num2str(ifld),' ',nc(ifld).Name]);end
             nc_addvar(outputfile, nc(ifld));
         end
 
         %% 5 Fill variables
 
-        nc_varput(outputfile, 'id'     , D.data.locationcode);
-        nc_varput(outputfile, 'lon'    , unique(D.data.lon));
-        nc_varput(outputfile, 'lat'    , unique(D.data.lat));
-        nc_varput(outputfile, 'time'   , D.data.datenum' - OPT.refdatenum);
-        nc_varput(outputfile, OPT.name , D.data.(OPT.name));
+        nc_varput(outputfile, 'station_id'  , D.data.locationcode);
+        nc_varput(outputfile, 'station_name', D.data.location);
+        nc_varput(outputfile, 'lon'         , unique(D.data.lon));
+        nc_varput(outputfile, 'lat'         , unique(D.data.lat));
+        nc_varput(outputfile, 'time'        , D.data.datenum' - OPT.refdatenum);
+        nc_varput(outputfile, OPT.name      , D.data.(OPT.name));
 
         %% 6 Check
 

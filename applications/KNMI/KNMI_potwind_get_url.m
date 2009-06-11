@@ -1,7 +1,7 @@
 function varargout = KNMI_potwind_get_url(basepath,varargin)
 %KNMI_POTWIND_GET_URL   gets all potwind data from KNMI website
 %
-%   KNMI_POTWIND_GET_URL(basepath)
+%   knmi_potwind_get_url(basepath)
 %
 % downloads all potwind data from KNMI website and stores relative to 'basepath' in:
 %

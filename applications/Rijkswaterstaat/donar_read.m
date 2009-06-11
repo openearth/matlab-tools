@@ -112,7 +112,7 @@ function varargout = donar_read(fnames,varargin)
    OPT.preallocate            = Inf; %11*366*24*6; % 11 years every 10 minute for method = 'fgetl'
    OPT.headerlines            = 'auto'; %changed from 4 to 5 after inclusion of EPSG names of coordinates and is 7 on 2007 june 27th
    OPT.start_last_header_line = 'locatie;waarnemingssoort;datum;tijd';
-   OPT.display                = 1;
+   OPT.display                = 0;
    OPT.displayskip            = 1000;
    OPT.ntmax                  = -1;
    OPT.locationcode           = 1;
@@ -247,7 +247,7 @@ for ifile=1:length(fnames)
        
        datenumbers = time2datenum(datestring,timestring);
        
-       disp(['donar_read: read raw data: ',fname])
+       if OPT.display;disp(['donar_read: read raw data: ',fname]);end
        
        % Method below (%n) cannot deal with Not Available data as in:
        % Maassluis;Temperatuur in oC in oppervlaktewater;1994-08-03;07:14;;25;graden Celsius;NVT;Onbekend;Nationaal;;-100;T.o.v. Waterspiegel;7415;77500;436100;NVT;NVT,NVT,Niet van toepassing
@@ -290,7 +290,7 @@ for ifile=1:length(fnames)
        
        for istat=1:length(D.locations)
        
-          disp(['donar_read: transforming to struct: ',num2str(istat),'/',num2str(length(D.locations))]);
+          if OPT.display;disp(['donar_read: transforming to struct: ',num2str(istat),'/',num2str(length(D.locations))]);;end
        
           mask = strmatch(D.locations{istat},location);
    
@@ -357,7 +357,7 @@ for ifile=1:length(fnames)
       if isinf(OPT.preallocate) %%%-%%% & 0
          fid = fopen(fname,'r');
          nt  = 0;
-         disp('Fast scanning file  to check number of lines')
+         if OPT.display;disp('Fast scanning file  to check number of lines');end
          while 1
             tline = fgetl(fid);
             nt    = nt+1;
@@ -367,7 +367,7 @@ for ifile=1:length(fnames)
             end
          end
          fclose(fid);      
-         disp(['Slow scanning file to read data on # ',num2str(nt),' lines is.'])
+         if OPT.display;disp(['Slow scanning file to read data on # ',num2str(nt),' lines is.']);end
       else
          nt = OPT.preallocate;
       end
@@ -577,7 +577,7 @@ for ifile=1:length(fnames)
          %% Copy data
          DS.data(ifile) = D.data;
          
-      disp(['donar_read: read file ',num2str(ifile),' of ',num2str(length(fnames))])
+      if OPT.display;disp(['donar_read: read file ',num2str(ifile),' of ',num2str(length(fnames))]);end
    
    end % D.locations==1
    
