@@ -118,12 +118,12 @@ for iargin = i0:2:iend
         % option is in structure, use eval for everything
         if ~isequalwithequalnans(eval(['OPT.' PropertyName]), varargin{iargin+1})
             % only renew property value if it really changes
-            eval(['OPT.'     PropertyName ' = varargin{iargin+1}']);
+            eval(['OPT.'     PropertyName ' = varargin{iargin+1};']);
             % indicate that this field is non-default now
-            eval(['Default.' PropertyName ' = false']);
+%             eval(['Default.' PropertyName ' = false;']);
         end
         % indicate that this field is set
-        eval(['Set.'         PropertyName ' = true']);
+%         eval(['Set.'         PropertyName ' = true;']);
     elseif any(strcmpi(PropertyNames, PropertyName))
         % set option, but give warning that PropertyName is not totally correct
         realPropertyName = PropertyNames(strcmpi(PropertyNames, PropertyName));
