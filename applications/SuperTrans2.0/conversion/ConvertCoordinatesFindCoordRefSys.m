@@ -1,0 +1,55 @@
+function CS = ConvertCoordinatesFindCoordRefSys(CS,STD)
+% code
+if ~isempty(CS.code),
+    code = STD.coordinate_reference_system.coord_ref_sys_code == CS.code;
+else
+    code = true(size(STD.coordinate_reference_system.coord_ref_sys_code));
+end
+
+% name
+if ~isempty(CS.name),
+    name = strcmpi(CS.name,STD.coordinate_reference_system.coord_ref_sys_name);
+    %also check for aproximate matches, is nothing turned up
+    if sum(name)==0
+        disp('WARNING: no exact match of corrdinate system name is found, aproximate match tried')
+        name = strfind(lower(STD.coordinate_reference_system.coord_ref_sys_name),lower(CS.name));
+        name = ~cellfun('isempty',name);
+        if sum(name)==0
+            error('no aproximate match of corrdinate system name is found')
+        end
+    end
+else
+    name = true(size(STD.coordinate_reference_system.coord_ref_sys_name));
+end
+
+%type
+if ~isempty(CS.type),
+    type = strcmpi(CS.type,STD.coordinate_reference_system.coord_ref_sys_kind);
+else
+    type = true(size(STD.coordinate_reference_system.coord_ref_sys_kind));
+end
+
+ind = find(code&name&type);
+
+% check output, and display errors
+if     length(ind)==0
+    error(['no coordinate reference system can by found with code:''' CS.code ''',name:''' CS.name ''', type:''' CS.type ''''])
+elseif length(ind)==1
+    % do nothing
+elseif length(ind)<1000
+    ERR = sprintf('%d coordinate reference systems can be found with options: \ncode:''%d'', name:''%s'', type:''%s''\n\n',length(ind), CS.code,CS.name,CS.type);
+    for ii=1:length(ind)
+        ERR = [ERR,sprintf('code:''%10d'', name:''%50s'', type:''%s''\n',...
+            STD.coordinate_reference_system.coord_ref_sys_code(ind(ii)),...
+            STD.coordinate_reference_system.coord_ref_sys_name{ind(ii)},...
+            STD.coordinate_reference_system.coord_ref_sys_kind{ind(ii)})];
+    end
+    error(ERR)
+else
+    error('%d coordinate reference systems can be found with options: \ncode:''%d'', name:''%s'', type:''%s''\n\n',length(ind), CS.code,CS.name,CS.type);
+end
+
+CS.code = STD.coordinate_reference_system.coord_ref_sys_code(ind);
+CS.name = STD.coordinate_reference_system.coord_ref_sys_name{ind};
+CS.type = STD.coordinate_reference_system.coord_ref_sys_kind{ind};
+end
