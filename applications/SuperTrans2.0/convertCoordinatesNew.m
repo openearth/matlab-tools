@@ -1,20 +1,28 @@
 function [x2,y2,OPT]=convertCoordinatesNew(x1,y1,STD,varargin)
 %CONVERTCOORDINATES   transformation between coordinate systems
 %
-%    [x2,y2]=convertCoordinatesNew(x1,y1,STD,'keyword','value')
+%    [x2,y2    ]=convertCoordinatesNew(x1,y1,STD,'keyword','value')
 %
 % where x1,y1 are the values of the coordinates to be transformed.
 %       x2,y2 are the values of the coordinates after transformation.
 %
-% Example: 4 different notations of 1 single case
+%    [x2,y2,OPT]=convertCoordinatesNew(x1,y1,STD,'keyword','value')
 %
-%    [x,y]=convertCoordinatesNew(5,52,STD,'CS1.name','WGS 84','CS1.type','geo','CS2.name','WGS 84 / UTM zone 31N','CS2.type','xy')
-%    [x,y]=convertCoordinatesNew(5,52,STD,'CS1.code',4326,'CS2.name','WGS 84 / UTM zone 31N')
-%    [x,y]=ConvertCoordinatesNew(5,52,    4326,'geo','WGS 84 / UTM zone 31N','xy')
-%    [x,y]=ConvertCoordinatesNew(5,52,    4326,'geo',                  32631,'xy')
+% where OPT contaisn all conversion parameters that were used. To
+% check this output, use 'var2evalstr(OPT)'
+%
+% Example: 2 different notations of 1 single case
+%
+%    D = load('SuperTransData')
+%
+%    [x,y,OPT]=convertCoordinatesNew(5,52,D,'CS1.name','WGS 84','CS1.type','geo','CS2.name','WGS 84 / UTM zone 31N','CS2.type','xy')
+%    [x,y,OPT]=convertCoordinatesNew(5,52,D,'CS1.code',4326                     ,'CS2.name','WGS 84 / UTM zone 31N')
+%    [x,y,OPT]=convertCoordinatesNew(5,52,D,'CS1.name','WGS 84','CS1.type','geo','CS2.code',32631)
+%    [x,y,OPT]=convertCoordinatesNew(5,52,D,'CS1.code',4326                     ,'CS2.code',32631)
 %
 % Note: (x1,y1) can be vectors or matrices (vectorized).
-% To check the output, use 'var2evalstr(OPT)'
+%
+%See also: SuperTransData
 
 %% get and set keyword value parameters
 
