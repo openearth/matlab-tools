@@ -1,13 +1,13 @@
 function odvdisp(D)
 %ODVDISP    display contents of file in ODV format  (still test project)
 %
-%   D = ODVDISP(D)
+%   odvdisp(D)
 %
 % displays content of  ASCII file in Ocean Data Viewer (ODV) format
 % that was read by ODVREAD into structure D.
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
-%See also: ODVREAD
+%See also: ODV2META, ODVREAD
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004 Deltares

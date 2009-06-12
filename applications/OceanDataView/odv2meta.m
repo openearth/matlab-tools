@@ -9,7 +9,7 @@
 %   * basename       name of *.png and *.xls ot output files (default '_inventory')
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
-%See also: ODVDISP
+%See also: ODVDISP, ODVREAD
 
 OPT.directory    = 'F:\checkouts\OpenEarthTools\matlab\applications\OceanDataView\usergd30d98-data_centre630-260409_result\';
 OPT.mask         = '*.txt';
@@ -87,3 +87,5 @@ end % ifile
              ['This file has been created with struct2xls.m > xlswrite.m @ ',datestr(now)]};
    
    struct2xls([OPT.directory,filesep,OPT.basename,'.xls'],A,'units',units,'header',header)
+
+%% EOF

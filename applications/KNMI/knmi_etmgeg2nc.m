@@ -534,7 +534,7 @@ for ifile=1:length(OPT.files)
 
    nc_varput(outputfile, 'lon'                                             , D.lon);
    nc_varput(outputfile, 'lat'                                             , D.lat);
-   nc_varput(outputfile, 'station_id'                                      , str2num(unique(D.data.STN))); %  1
+   nc_varput(outputfile, 'station_id'                                      , unique(D.data.STN)); %  1
    nc_varput(outputfile, 'station_name'                                    , D.long_name);
    nc_varput(outputfile, 'time'                                            , D.data.datenum - OPT.refdatenum);     %  2
    nc_varput(outputfile, 'wind_from_direction_mean'                        , D.data.DDVEC(:)'); %  3 

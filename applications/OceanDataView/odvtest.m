@@ -1,7 +1,7 @@
 %ODVTEST   script to test ODVRREAD and ODVDISP
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
-%See also: ODVDISP
+%See also: ODV2META, ODVDISP, ODVREAD
 
 OPT.directory = 'F:\checkouts\OpenEarthTools\matlab\applications\OceanDataView\usergd30d98-data_centre630-260409_result\';
 OPT.mask      = '*.txt';
@@ -51,4 +51,6 @@ for ifile=1:length(OPT.files)
        
        pausedisp
        
-end % ifile       
+end % ifile
+
+%% EOF

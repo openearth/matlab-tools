@@ -1,7 +1,7 @@
 function varargout = odv_read(fname)
 %ODVREAD   read file in ODV format (still test project)
 %
-%   D = ODVREAD(fname)
+%   D = odvread(fname)
 %
 % loads ASCII file in Ocean Data Viewer (ODV) format.
 %
@@ -9,7 +9,7 @@ function varargout = odv_read(fname)
 % <a href="http://www.SeaDataNet.org">www.SeaDataNet.org</a> of which <a href="http://www.nodc.nl">www.nodc.nl</a> is a member.
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a> (Ocean Data Viewer)
-%See also: ODVDISP
+%See also: ODV2META, ODVDISP
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004 Delft University of Technology
