@@ -240,14 +240,14 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 1262,World,World.,-90,90,-180,180,,,,,,OGP,OGP,05-06-01,,FALSE
 1263,Not specified,Not specified.,-90,90,-180,180,,,,,,OGP,OGP,23-06-00,,FALSE
 1264,UK - Great Britain onshore; Isle of Man,United Kingdom (UK) - Great Britain - England Scotland Wales - onshore; Isle of Man.,49.96,60.84,-7.56,1.78,,,,,,OGP,OGP,24-09-08,2005.880 2008.070,FALSE
-1265,Argentina - Comodoro Rivadavia,Argentina - Comodoro Rivadavia area.,-46.7,-45.2,-69.5,-67.1,,,,,,OGP,OGP,03-02-06,2005.89,FALSE
+1265,Argentina - Comodoro Rivadavia,Argentina - Comodoro Rivadavia area.,-46.7,-45.2,-69.5,-67.1,,,,,,OGP,OGP,03-02-06,2005.890,FALSE
 1266,Venezuela - Puerto La Cruz,Venezuela - Puerto La Cruz area.,10,10.3,-64.7,-64.5,,,,,,OGP,OGP,07-03-00,,FALSE
 1267,Venezuela - Barinas,Venezuela - Barinas area.,7.29,9.02,-71.85,-67.54,,,,,,OGP,OGP,23-06-00,,FALSE
 1268,Venezuela - Falcon state,Venezuela - Falcon state.,10.31,12.2,-71.28,-68.24,,,,,,OGP,OGP,23-06-00,,FALSE
 1269,Venezuela - Pedregal area of Falcon state,Venezuela - Pedregal area of Falcon state.,10.8,11.25,-70.4,-69.7,,,,,,OGP,OGP,23-06-00,,FALSE
 1270,Venezuela - Maracaibo south,Venezuela - south Maracaibo area.,9,10,-72.15,-71,,,,,,OGP,OGP,23-06-00,,FALSE
-1271,"Africa - Eritrea, Ethiopia and Sudan",Eritrea; Ethiopia; Sudan.,3.41,22.23,21.83,47.99,,,,,,OGP,OGP,06-03-03,2002.81,FALSE
-1272,"Asia - Middle East - Bahrain, Kuwait and Saudi Arabia",Bahrain; Kuwait; Saudi Arabia.,16.38,32.15,34.57,55.67,,,,,,OGP,OGP,30-01-06,2006.09,FALSE
+1271,"Africa - Eritrea, Ethiopia and Sudan",Eritrea; Ethiopia; Sudan.,3.41,22.23,21.83,47.99,,,,,,OGP,OGP,06-03-03,2002.810,FALSE
+1272,"Asia - Middle East - Bahrain, Kuwait and Saudi Arabia",Bahrain; Kuwait; Saudi Arabia.,16.38,32.15,34.57,55.67,,,,,,OGP,OGP,30-01-06,2006.090,FALSE
 1273,Antigua,Antigua and Barbuda - Antigua.,16.99,17.72,-61.89,-61.67,,,,,,OGP,OGP,22-04-99,,FALSE
 1274,Brazil - Aratu,Brazil - coastal and offshore areas south of 2°55'S.,-34,-2.9,-53,-34,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 1275,Netherlands - onshore,Netherlands - onshore.,50.75,53.47,3.37,7.21,,,,,,OGP,OGP,02-12-95,,FALSE
@@ -272,9 +272,9 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 1294,Portugal - mainland - onshore,Portugal - mainland - onshore.,37.01,42.15,-9.5,-6.19,,,,,,OGP,OGP,26-10-07,2007.096,FALSE
 1295,Germany - DHDN,"Germany - onshore - Baden-Wurtemberg, Bayern, Hessen, Niedersachsen, Nordrhein-Westfalen, Rheinland-Pfalz, Saarland, Schleswig-Holstein. Also former DDR states of Sachsen and Thuringen by transformation.",47.27,55.06,5.87,15.03,,,,,,OGP,OGP,05-06-01,,TRUE
 1296,Europe - ED50 by country,Europe - west - Denmark; Faroe Islands; France offshore; Israel offshore; Italy including San Marino and Vatican City State; Ireland offshore; Netherlands offshore; Germany; Greece (offshore); North Sea; Norway; Portugal - mainland - offshore; Spain; Svalbard; Turkey; United Kingdom UKCS offshore. Egypt - Western Desert.,31,75,-15.6,44.85,,,,,,OGP,OGP,21-05-09,2003.141 2004.150 2004.630 2005.460 2005.471 2005.890 2007.096 2009.033,FALSE
-1297,Europe - west,Europe - west.,36,71.05,-8.95,31.6,,,,,,OGP,OGP,01-02-06,2005.89,FALSE
+1297,Europe - west,Europe - west.,36,71.05,-8.95,31.6,,,,,,OGP,OGP,01-02-06,2005.890,FALSE
 1298,Europe - ETRS89,Europe: Albania; Andorra; Austria; Belgium; Bosnia and Herzegovina; Bulgaria; Croatia; Cyprus; Czech Republic; Denmark; Estonia; Finland; Faroe Islands; France; Germany; Greece; Hungary; Ireland; Italy; Latvia; Liechtenstein; Lithuania; Luxembourg; Malta; Montenegro; Netherlands; Norway; Poland; Portugal; Romania; San Marino; Serbia; Slovakia; Slovenia; Spain; Svalbard; Sweden; Switzerland; United Kingdom (UK) including Channel Islands and Isle of Man; Vatican City State.,34.5,71.05,-10.67,31.55,,,,,,OGP,OGP,13-08-07,2005.890 2007.072,FALSE
-1299,Europe - EVRF2000,Europe: Andorra; Austria; Belgium; Bosnia and Herzegovina; Croatia; Czech Republic; Denmark; Estonia; Finland; France - mainland; Germany; Hungary; Italy - mainland and Sicily; Latvia; Liechtenstein; Lithuania; Luxembourg; Netherlands; Norway; Poland; Portugal; Romania; San Marino; Slovakia; Slovenia; Spain - mainland; Sweden; Switzerland; United Kingdom (UK) - Great Britain mainland; Vatican City State.,36.6,71.05,-9.5,31.55,,,,,,OGP,OGP,01-02-06,2005.89,FALSE
+1299,Europe - EVRF2000,Europe: Andorra; Austria; Belgium; Bosnia and Herzegovina; Croatia; Czech Republic; Denmark; Estonia; Finland; France - mainland; Germany; Hungary; Italy - mainland and Sicily; Latvia; Liechtenstein; Lithuania; Luxembourg; Netherlands; Norway; Poland; Portugal; Romania; San Marino; Slovakia; Slovenia; Spain - mainland; Sweden; Switzerland; United Kingdom (UK) - Great Britain mainland; Vatican City State.,36.6,71.05,-9.5,31.55,,,,,,OGP,OGP,01-02-06,2005.890,FALSE
 1300,Iran - FD58,Iran - Gulf coast and Arwaz areas.,27.25,33,47,52.7,,,,,,OGP,OGP,11-11-98,,FALSE
 1301,Portugal - central Azores,"Portugal - central Azores - Graciosa, Terceira, Sao Jorge, Pico, Faial.",38.35,39.15,-28.85,-27,,,,,,OGP,OGP,05-06-01,,FALSE
 1302,Asia - Cambodia and Vietnam - onshore,Cambodia - onshore; Vietnam - onshore.,8.56,23.32,102.14,109.46,,,,,,OGP,OGP,20-10-99,,FALSE
@@ -282,7 +282,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 1304,Asia - Myanmar and Thailand,Myanmar (Burma); Thailand.,5.63,28.55,92.2,105.64,,,,,,OGP,OGP,02-06-95,,FALSE
 1305,Europe - Ireland (Republic and Ulster) - onshore,Ireland - onshore. United Kingdom (UK) - Northern Ireland (Ulster) - onshore.,51.33,55.4,-10.6,-5.33,,,,,,OGP,OGP,06-11-01,,FALSE
 1306,Europe - Czechoslovakia,Czech Republic; Slovakia.,47.74,51.05,12.09,22.56,,,,,,OGP,OGP,07-03-00,,FALSE
-1307,Asia - Bangladesh; India; Myanmar; Pakistan,Bangladesh; India; Myanmar (Burma); Pakistan.,6.75,37.06,60.87,101.17,,,,,,OGP,OGP,27-04-04,2004.29,FALSE
+1307,Asia - Bangladesh; India; Myanmar; Pakistan,Bangladesh; India; Myanmar (Burma); Pakistan.,6.75,37.06,60.87,101.17,,,,,,OGP,OGP,27-04-04,2004.290,FALSE
 1308,Asia - Bangladesh; India; Pakistan,Bangladesh; India; Pakistan.,6.75,37.06,60.87,97.38,,,,,,OGP,OGP,20-10-99,,FALSE
 1309,Asia - Malaysia (west) and Singapore,Malaysia - West Malaysia; Singapore.,1.26,6.71,99.64,104.29,,,,,,OGP,OGP,02-06-95,,FALSE
 1310,Kuwait - Kuwait City,Kuwait - Kuwait City.,29.25,29.45,47.67,48.15,,,,,,OGP,OGP,12-04-96,,FALSE
@@ -306,7 +306,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2283,Australia - Australian Capital Territory (ACT),Australia - Australian Capital Territory (ACT).,-35.92,-35.16,148.77,149.4,,,,,,OGP,OGP,15-08-01,,FALSE
 2284,Australia - Northern Territory (NT),Australia - Northern Territory (NT).,-26,-11.02,129,138,,,,,,OGP,OGP,15-08-01,,FALSE
 2285,Australia - Victoria,Australia - Victoria (Vic).,-39.15,-34,140.95,149.98,,,,,,OGP,OGP,15-08-01,,FALSE
-2286,Australia - New South Wales (NSW) and Victoria,Australia - New South Wales (NSW) and Victoria.,-39.15,-28.15,140.95,153.62,,,,,,OGP,OGP,18-11-02,2002.82,FALSE
+2286,Australia - New South Wales (NSW) and Victoria,Australia - New South Wales (NSW) and Victoria.,-39.15,-28.15,140.95,153.62,,,,,,OGP,OGP,18-11-02,2002.820,FALSE
 2287,Australia - SE Australia (ACT NSW Vic),"Australia - Australian Capital Territory (ACT), New South Wales (NSW), Victoria.",-39.15,-28.15,140.95,153.62,,,,,,OGP,OGP,15-08-01,,FALSE
 2288,American Samoa - Tutuila and Aunu'u islands,American Samoa - Tutuila and Aunu'u islands.,-14.38,-14.24,-170.85,-170.54,,,,,,OGP,OGP,15-08-01,,FALSE
 2289,"American Samoa - Ofu, Olesega and Ta'u islands","American Samoa - Ofu, Olesega and Ta'u islands.",-14.28,-14.16,-169.68,-169.41,,,,,,OGP,OGP,15-08-01,,FALSE
@@ -332,7 +332,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2309,Brazil - Tucano basin central,Brazil - Tucano basin central.,-10.6,-9.8,-39,-37.5,,,,,,OGP,OGP,07-03-00,,FALSE
 2310,Brazil - Tucano basin south,Brazil - Tucano basin south.,-11.4,-10.6,-39,-37.5,,,,,,OGP,OGP,07-03-00,,FALSE
 2311,Africa - Kenya and Tanzania,Kenya; Tanzania.,-11.74,4.62,29.34,41.91,,,,,,OGP,OGP,18-10-96,,FALSE
-2312,"Africa - Botswana, Lesotho, Malawi, Swaziland, Zambia, Zimbabwe",Botswana; Lesotho; Malawi; Swaziland; Zambia; Zimbabwe.,-30.65,-8.2,20,35.92,,,,,,OGP,OGP,30-09-05,2005.15,FALSE
+2312,"Africa - Botswana, Lesotho, Malawi, Swaziland, Zambia, Zimbabwe",Botswana; Lesotho; Malawi; Swaziland; Zambia; Zimbabwe.,-30.65,-8.2,20,35.92,,,,,,OGP,OGP,30-09-05,2005.150,FALSE
 2313,Canada - Nova Scotia,Canada - Nova Scotia.,43.46,47.03,-66.2,-59.81,,,,,,OGP,OGP,19-10-00,,FALSE
 2314,Asia - FSU - Caspian states,Azerbaijan; Kazakhstan; Russian Federation; Turkmenistan - Caspian Sea.,35.15,81.85,26,90,,,,,,OGP,OGP,07-09-99,,FALSE
 2315,Colombia - Cusiana,Colombia - Casanare province BP Cusiana/Cupiagua field areas. Also used by Total in Rivera and Gatanas blocks.,4.75,5.67,-73,-72.25,,,,,,OGP,OGP,19-10-00,,FALSE
@@ -346,7 +346,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2323,Angola - offshore blocks 1 16 and 18,"Angola - offshore blocks 1, 16 and 18.",-8.33,-6.03,11.08,12.75,,,,,,OGP,OGP,14-12-98,,FALSE
 2324,Angola - offshore blocks 2  3 17-18 and 31-33,"Angola - offshore blocks 2, 3, 17, 18, 31, 32 and 33.",-8.58,-6.03,10.47,12.84,,,,,,OGP,OGP,19-07-07,2007.066,FALSE
 2325,Argentina - Neuquen province Chos Malal area,Argentina - Neuquen province - Chos Malal area.,-37.8,-37,-70.7,-69.9,,,,,,OGP,OGP,07-03-00,,FALSE
-2326,Germany - West Germany all states,"Germany - states of former West Germany - Baden-Wurtemberg, Bayern, Hessen, Niedersachsen, Nordrhein-Westfalen, Rheinland-Pfalz, Saarland, Schleswig-Holstein.",47.27,55.04,5.87,13.83,,,,,,OGP,OGP,12-06-06,2006.41,FALSE
+2326,Germany - West Germany all states,"Germany - states of former West Germany - Baden-Wurtemberg, Bayern, Hessen, Niedersachsen, Nordrhein-Westfalen, Rheinland-Pfalz, Saarland, Schleswig-Holstein.",47.27,55.04,5.87,13.83,,,,,,OGP,OGP,12-06-06,2006.410,FALSE
 2327,Syria - Al Whaleed area,Syria - Al Whaleed area,35.5,35.7,39.9,40.15,,,,,,OGP,OGP,19-10-00,,FALSE
 2328,Syria - Shaddadeh area,"Syria - Shaddadeh area (36°N, 41°E)",35.8,36.5,40.5,41.5,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 2329,Syria - Deir area,"Syria - Deir area (35°22'N, 40°06'E)",35.25,35.5,40,40.5,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
@@ -393,15 +393,15 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2370,Europe - former Yugoslavia,Boznia and Herzegovina; Croatia; FYR Macedonia; Montenegro; Serbia; Slovenia.,41.85,46.88,13.38,23.01,,,,,,OGP,OGP,12-12-98,,FALSE
 2371,Nigeria - south,Nigeria - south.,3,6.5,5,8.5,,,,,,OGP,OGP,28-08-01,,FALSE
 2372,Italy - mainland,Italy - mainland including San Marino and Vatican City State.,37.75,47.09,6.65,18.53,,,,,,OGP,OGP,05-06-01,,FALSE
-2373,USA - Alaska including EEZ,United States (USA) - Alaska including EEZ.,50,80,170,-129.99,,,,,Area crosses 180-degree meridian.,OGP,OGP,24-09-08,2008.07,FALSE
-2374,USA - conus including EEZ,United States (USA) - lower 48 states including EEZ - Alabama; Arizona; Arkansas; California; Colorado; Connecticut; Delaware; Florida; Georgia; Idaho; Illinois; Indiana; Iowa; Kansas; Kentucky; Louisiana; Maine; Maryland; Massachusetts; Michigan; Minnesota; Mississippi; Missouri; Montana; Nebraska; Nevada; New Hampshire; New Jersey; New Mexico; New York; North Carolina; North Dakota; Ohio; Oklahoma; Oregon; Pennsylvania; Rhode Island; South Carolina; South Dakota; Tennessee; Texas; Utah; Vermont; Virginia; Washington; West Virginia; Wisconsin; Wyoming. US Gulf of Mexico (GoM) OCS.,23.94,49.39,-126.77,-62,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+2373,USA - Alaska including EEZ,United States (USA) - Alaska including EEZ.,50,80,170,-129.99,,,,,Area crosses 180-degree meridian.,OGP,OGP,24-09-08,2008.070,FALSE
+2374,USA - conus including EEZ,United States (USA) - lower 48 states including EEZ - Alabama; Arizona; Arkansas; California; Colorado; Connecticut; Delaware; Florida; Georgia; Idaho; Illinois; Indiana; Iowa; Kansas; Kentucky; Louisiana; Maine; Maryland; Massachusetts; Michigan; Minnesota; Mississippi; Missouri; Montana; Nebraska; Nevada; New Hampshire; New Jersey; New Mexico; New York; North Carolina; North Dakota; Ohio; Oklahoma; Oregon; Pennsylvania; Rhode Island; South Carolina; South Dakota; Tennessee; Texas; Utah; Vermont; Virginia; Washington; West Virginia; Wisconsin; Wyoming. US Gulf of Mexico (GoM) OCS.,23.94,49.39,-126.77,-62,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 2375,Canada - Saskatchewan,Canada - Saskatchewan.,49,60,-110,-101.37,,,,,,OGP,OGP,15-08-01,,FALSE
 2376,Canada - Alberta,Canada - Alberta.,49,60,-120,-110,,,,,,OGP,OGP,15-08-01,,FALSE
-2377,USA - Delaware and Maryland,United States (USA) - Delaware and Maryland.,37.88,39.84,-79.49,-74.95,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2378,"USA - New England - south (CT, MA, NH, RI, VT)",United States (USA) - Connecticut; Massachusetts; New Hampshire; Rhode Island; Vermont.,40.95,45.31,-73.73,-69.86,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+2377,USA - Delaware and Maryland,United States (USA) - Delaware and Maryland.,37.88,39.84,-79.49,-74.95,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2378,"USA - New England - south (CT, MA, NH, RI, VT)",United States (USA) - Connecticut; Massachusetts; New Hampshire; Rhode Island; Vermont.,40.95,45.31,-73.73,-69.86,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 2379,USA - Texas east of 100°W,United States (USA) - Texas east of 100°W.,25.83,34.59,-100,-93.51,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2380,USA - Texas west of 100°W,United States (USA) - Texas west of 100°W.,28,36.5,-106.63,-100,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
-2381,USA - Oregon and Washington,United States (USA) - Oregon and Washington.,42,49,-124.75,-116.47,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+2381,USA - Oregon and Washington,United States (USA) - Oregon and Washington.,42,49,-124.75,-116.47,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 3523,Indonesia - 135°E to 138°E,Indonesia - between 135°E and 138°E.,-8.6,-0.5,135,138,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 3524,Canada - 72°W to 66°W,"Canada between 72°W and 66°W - New Brunswick (NB), Labrador, Nova Scotia (NS), Nunavut, Quebec.",44.6,83,-72,-66,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 3525,Canada - 66°W to 60°W,"Canada between 66°W and 60°W - New Brunswick (NB), Labrador, Nova Scotia (NS), Nunavut, Prince Edward Island (PEI), Quebec.",43.2,83,-66,-60,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
@@ -409,10 +409,10 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 3527,Canada - 114°W to 108°W,"Canada between 114°W and 108°W - Alberta, Northwest Territories (NWT), Nunavut, Saskatchewan.",49,79,-114,-108,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 3528,Canada - 120°W to 114°W,"Canada between 120°W and 114°W - Alberta, British Columbia (BC), Northwest Territories (NWT), Nunavut.",49,79,-120,-114,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 3529,South Georgia including Shag and Clere Rocks,South Georgia and the South Sandwich Islands - South Georgia Island including Shag Rocks and Clerke Rocks.,-55.22,-53.5,-42.1,-34.63,,,,,Covers the administrative area of South Georgia within the British Overseas Territory of South Georgia and the South Sandwich Islands.,British Antarctic Survey,OGP,06-07-07,,FALSE
-3530,UAE - Dubai - offshore fields,"United Arab Emirates (UAE) - Dubai offshore oilfields (Falah, Fateh, Rashid).",25.25,25.75,54,54.5,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+3530,UAE - Dubai - offshore fields,"United Arab Emirates (UAE) - Dubai offshore oilfields (Falah, Fateh, Rashid).",25.25,25.75,54,54.5,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 3531,UAE - Dubai municipality,United Arab Emirates (UAE) - Dubai municipality.,25,25.4,55.1,55.4,,,,,,OGP,OGP,07-11-08,2008.070 2008.094,FALSE
-3532,Channel Islands - Jersey,Channel Islands - Jersey.,48.93,49.34,-2.3,-1.98,,JE,JEY,832,,ISO 3166 Maintenance Agency.  ftp://ftp.fu-berlin.de/pub/doc/iso,OGP,24-09-08,2008.07,FALSE
-3533,Channel Islands - Guernsey,Channel Islands - Guernsey.,49.4,49.75,-2.75,-2.13,,GG,GGY,831,,ISO 3166 Maintenance Agency.  ftp://ftp.fu-berlin.de/pub/doc/iso,OGP,24-09-08,2008.07,FALSE
+3532,Channel Islands - Jersey,Channel Islands - Jersey.,48.93,49.34,-2.3,-1.98,,JE,JEY,832,,ISO 3166 Maintenance Agency.  ftp://ftp.fu-berlin.de/pub/doc/iso,OGP,24-09-08,2008.070,FALSE
+3533,Channel Islands - Guernsey,Channel Islands - Guernsey.,49.4,49.75,-2.75,-2.13,,GG,GGY,831,,ISO 3166 Maintenance Agency.  ftp://ftp.fu-berlin.de/pub/doc/iso,OGP,24-09-08,2008.070,FALSE
 3534,Serbia,Serbia.,41.82,46.23,18.83,23.05,,RS,SRB,688,,ISO 3166 Maintenance Agency.,OGP,13-08-07,,FALSE
 3535,Montenegro,Montenegro - onshore and offshore.,41.25,43.55,17.9,20.39,,ME,MNE,499,,ISO 3166 Maintenance Agency.,OGP,05-07-08,2008.045 2008.053 2008.054,FALSE
 3536,Montenegro - onshore,Montenegro - onshore.,41.82,43.55,18.44,20.39,,,,,,OGP,OGP,13-08-07,,FALSE
@@ -430,18 +430,18 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 1320,Venezuela - Maturin,Venezuela - Maturin area.,9.1,10.13,-64.3,-63,,,,,,OGP,OGP,07-03-00,,FALSE
 1321,Europe - Austria and former Yugoslavia,Austria. Bosnia and Herzegovina. Croatia. FYR Macedonia. Montenegro. Serbia. Slovenia.,40.84,49.02,9.53,23,,,,,,OGP,OGP,05-07-08,2007.072 2008.045 2008.053 2008.054,FALSE
 1322,Trinidad and Tobago - Tobago,Trinidad and Tobago - Tobago - onshore.,11.08,11.39,-60.91,-60.37,,,,,,OGP,OGP,20-10-99,,FALSE
-1323,USA - conus,United States (USA) - Alabama; Arizona; Arkansas; California; Colorado; Connecticut; Delaware; Florida; Georgia; Idaho; Illinois; Indiana; Iowa; Kansas; Kentucky; Louisiana; Maine; Maryland; Massachusetts; Michigan; Minnesota; Mississippi; Missouri; Montana; Nebraska; Nevada; New Hampshire; New Jersey; New Mexico; New York; North Carolina; North Dakota; Ohio; Oklahoma; Oregon; Pennsylvania; Rhode Island; South Carolina; South Dakota; Tennessee; Texas; Utah; Vermont; Virginia; Washington; West Virginia; Wisconsin; Wyoming.,24.53,49.39,-124.85,-67.07,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1324,USA (all states),United States (USA) - Alabama; Alaska; Arizona; Arkansas; California; Colorado; Connecticut; Delaware; Florida; Georgia; Hawaii; Idaho; Illinois; Indiana; Iowa; Kansas; Kentucky; Louisiana; Maine; Maryland; Massachusetts; Michigan; Minnesota; Mississippi; Missouri; Montana; Nebraska; Nevada; New Hampshire; New Jersey; New Mexico; New York; North Carolina; North Dakota; Ohio; Oklahoma; Oregon; Pennsylvania; Rhode Island; South Carolina; South Dakota; Tennessee; Texas; Utah; Vermont; Virginia; Washington; West Virginia; Wisconsin; Wyoming.,15.32,74.79,168.33,-66.02,,,,,Area crosses 180-degree meridian.,OGP,OGP,24-09-08,2008.07,FALSE
+1323,USA - conus,United States (USA) - Alabama; Arizona; Arkansas; California; Colorado; Connecticut; Delaware; Florida; Georgia; Idaho; Illinois; Indiana; Iowa; Kansas; Kentucky; Louisiana; Maine; Maryland; Massachusetts; Michigan; Minnesota; Mississippi; Missouri; Montana; Nebraska; Nevada; New Hampshire; New Jersey; New Mexico; New York; North Carolina; North Dakota; Ohio; Oklahoma; Oregon; Pennsylvania; Rhode Island; South Carolina; South Dakota; Tennessee; Texas; Utah; Vermont; Virginia; Washington; West Virginia; Wisconsin; Wyoming.,24.53,49.39,-124.85,-67.07,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1324,USA (all states),United States (USA) - Alabama; Alaska; Arizona; Arkansas; California; Colorado; Connecticut; Delaware; Florida; Georgia; Hawaii; Idaho; Illinois; Indiana; Iowa; Kansas; Kentucky; Louisiana; Maine; Maryland; Massachusetts; Michigan; Minnesota; Mississippi; Missouri; Montana; Nebraska; Nevada; New Hampshire; New Jersey; New Mexico; New York; North Carolina; North Dakota; Ohio; Oklahoma; Oregon; Pennsylvania; Rhode Island; South Carolina; South Dakota; Tennessee; Texas; Utah; Vermont; Virginia; Washington; West Virginia; Wisconsin; Wyoming.,15.32,74.79,168.33,-66.02,,,,,Area crosses 180-degree meridian.,OGP,OGP,24-09-08,2008.070,FALSE
 1325,North America - all Canada and USA subunits,North America: Canada - Alberta; British Columbia (BC); Manitoba; New Brunswick (NB); Newfoundland and Labrador; Northwest Territories (NWT); Nova Scotia (NS); Nunavut; Ontario; Prince Edward Island (PEI); Quebec; Saskatchewan; Yukon. United States (USA) - Alabama; Alaska; Arizona; Arkansas; California; Colorado; Connecticut; Delaware; Florida; Georgia; Idaho; Illinois; Indiana; Iowa; Kansas; Kentucky; Louisiana; Maine; Maryland; Massachusetts; Michigan; Minnesota; Mississippi; Missouri; Montana; Nebraska; Nevada; New Hampshire; New Jersey; New Mexico; New York; North Carolina; North Dakota; Ohio; Oklahoma; Oregon; Pennsylvania; Rhode Island; South Carolina; South Dakota; Tennessee; Texas; Utah; Vermont; Virginia; Washington; West Virginia; Wisconsin; Wyoming.,23.94,80,170,-44,,,,,Area crosses 180-degree meridian.,OGP,OGP,19-02-07,2006.462 2006.463 2007.028,FALSE
 1326,France - mainland,France - mainland.,42.25,51.1,-5.2,8.23,,,,,,OGP,OGP,05-06-01,,FALSE
 1327,France - Corsica,France - Corsica.,41.33,43.05,8.5,9.6,,,,,,OGP,OGP,12-09-96,,FALSE
 1328,Indonesia - Kalimantan E - Mahakam delta,Indonesia - east Kalimantan - Mahakam delta area.,-1.35,0,116.9,118,,,,,,OGP,OGP,13-11-97,,FALSE
 1329,Mozambique - south,Mozambique - south.,-26.88,-19.75,31.3,35.6,,,,,,OGP,OGP,16-04-98,,FALSE
-1330,USA - Alaska,United States (USA) - Alaska.,51.35,71.35,172.4,-129.99,,,,,Area crosses 180-degree meridian.,OGP,OGP,24-09-08,2008.07,FALSE
-1331,USA - Alaska - St. George Island,United States (USA) - Alaska - Pribilof Islands - St George Island.,56.53,56.61,-169.78,-169.46,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1332,USA - Alaska - St. Lawrence Island,United States (USA) - Alaska - St Lawrence Island.,62.93,63.79,-171.85,-168.69,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1333,USA - Alaska - St. Paul Island,United States (USA) - Alaska - Pribilof Islands - St Paul Island.,57.1,57.25,-170.43,-170.08,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1334,USA - Hawaii,United States (USA) - Hawaii.,18.9,22.24,-160.55,-154.8,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+1330,USA - Alaska,United States (USA) - Alaska.,51.35,71.35,172.4,-129.99,,,,,Area crosses 180-degree meridian.,OGP,OGP,24-09-08,2008.070,FALSE
+1331,USA - Alaska - St. George Island,United States (USA) - Alaska - Pribilof Islands - St George Island.,56.53,56.61,-169.78,-169.46,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1332,USA - Alaska - St. Lawrence Island,United States (USA) - Alaska - St Lawrence Island.,62.93,63.79,-171.85,-168.69,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1333,USA - Alaska - St. Paul Island,United States (USA) - Alaska - Pribilof Islands - St Paul Island.,57.1,57.25,-170.43,-170.08,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1334,USA - Hawaii,United States (USA) - Hawaii.,18.9,22.24,-160.55,-154.8,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 1335,Caribbean - Puerto Rico and the Virgin Islands,Puerto Rico; Virgin Islands (British); Virgin Islands (US).,17.68,18.52,-67.27,-64.32,,,,,,OGP,OGP,24-05-99,,FALSE
 1336,Canada - CSRS98,Canada - Alberta; New Brunswick; Saskatchewan; Prince Edward Island; and Quebec.,44.61,62.56,-120,-57.1,,,,,,OGP,OGP,19-10-00,,TRUE
 1337,USA - HARN,"American Samoa - Tutuila, Aunu'u, Ofu, Olesega, Ta'u and Rose islands. Guam. Puerto Rico and the Virgin Islands (PRVI). United States (USA) - Alabama; Arizona; Arkansas; California; Colorado; Connecticut; Delaware; Florida; Georgia; Hawaii; Idaho; Illinois; Indiana; Iowa; Kansas; Kentucky; Louisiana; Maine; Maryland; Massachusetts; Michigan; Minnesota; Mississippi; Missouri; Montana; Nebraska; Nevada; New Hampshire; New Jersey; New Mexico; New York; North Carolina; North Dakota; Ohio; Oklahoma; Oregon; Pennsylvania; Rhode Island; South Carolina; South Dakota; Tennessee; Texas; Utah; Vermont; Virginia; Washington; West Virginia; Wisconsin; Wyoming.",-14.57,49.39,-170.85,-64.56,,,,,,National Geodetic Survey,OGP,24-09-08,2001.600 2004.230 2004.750 2005.230 2005.891 2008.070,FALSE
@@ -458,12 +458,12 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 1348,South America - PSAD56,"Aruba; Brazil - offshore - Amazon Cone; Bolivia; Chile; Ecuador; Guyana; Netherlands Antilles (Bonaire, Curacao); Peru; [Venezuela].",-49,12.63,-81.4,-56.86,,,,,,OGP,OGP,22-06-06,2005.144 2006.480,FALSE
 1349,North America - NAD27,North and central America: Antigua and Barbuda. Belize. Canada - Alberta; British Columbia (BC); Manitoba; New Brunswick (NB); Newfoundland and Labrador; Northwest Territories (NWT); Nova Scotia (NS); Nunavut; Ontario; Prince Edward Island (PEI); Quebec; Saskatchewan; Yukon. Costa Rica. Cuba. El Salvador. Guatemala. Honduras. Mexico. Nicaragua. United States (USA) - Alabama; Alaska; Arizona; Arkansas; California; Colorado; Connecticut; Delaware; Florida; Georgia; Idaho; Illinois; Indiana; Iowa; Kansas; Kentucky; Louisiana; Maine; Maryland; Massachusetts; Michigan; Minnesota; Mississippi; Missouri; Montana; Nebraska; Nevada; New Hampshire; New Jersey; New Mexico; New York; North Carolina; North Dakota; Ohio; Oklahoma; Oregon; Pennsylvania; Rhode Island; South Carolina; South Dakota; Tennessee; Texas; Utah; Vermont; Virginia; Washington; West Virginia; Wisconsin; Wyoming. Virgin Islands (British). Virgin Islands (US).,8,72,172,-52,,,,,Area crosses 180-degree meridian.,OGP,OGP,19-02-07,2006.463 2007.028,FALSE
 1350,North America - NAD83,North America: Canada - Alberta; British Columbia (BC); Manitoba; New Brunswick (NB); Newfoundland and Labrador; Northwest Territories (NWT); Nova Scotia (NS); Nunavut; Ontario; Prince Edward Island (PEI); Quebec; Saskatchewan; Yukon. United States (USA) - Alabama; Alaska; Arizona; Arkansas; California; Colorado; Connecticut; Delaware; Florida; Georgia; Hawaii; Idaho; Illinois; Indiana; Iowa; Kansas; Kentucky; Louisiana; Maine; Maryland; Massachusetts; Michigan; Minnesota; Mississippi; Missouri; Montana; Nebraska; Nevada; New Hampshire; New Jersey; New Mexico; New York; North Carolina; North Dakota; Ohio; Oklahoma; Oregon; Pennsylvania; Rhode Island; South Carolina; South Dakota; Tennessee; Texas; Utah; Vermont; Virginia; Washington; West Virginia; Wisconsin; Wyoming.,14.25,83.2,172,-52,,,,,Area crosses 180-degree meridian.,OGP,OGP,19-02-07,2006.462 2006.463 2006.464 2007.028,FALSE
-1351,Asia - Middle East - Nahrwan,Arabian Gulf; Iraq; Kuwait; Qatar - offshore; United Arab Emirates (UAE) - Abu Dhabi; Dubai; Sharjah; Ajman; Fujairah; Ras Al Kaimah; Umm Al Qaiwain.,22.63,37.41,38.82,56.38,,,,,,OGP,OGP,02-06-06,2006.34,FALSE
+1351,Asia - Middle East - Nahrwan,Arabian Gulf; Iraq; Kuwait; Qatar - offshore; United Arab Emirates (UAE) - Abu Dhabi; Dubai; Sharjah; Ajman; Fujairah; Ras Al Kaimah; Umm Al Qaiwain.,22.63,37.41,38.82,56.38,,,,,,OGP,OGP,02-06-06,2006.340,FALSE
 1352,Norway - onshore,Norway - onshore.,57.95,71.2,4.6,32.02,,,,,,OGP,OGP,07-03-00,,FALSE
 1353,France - onshore,France - onshore.,,,,,,,,,,OGP,OGP,07-03-00,,TRUE
 1354,Europe - British Isles - UK and Ireland,Ireland - onshore. United Kingdom (UK) - onshore - England; Scotland; Wales; Northern Ireland. Isle of Man.,49.96,60.84,-10.48,1.75,,,,,,OGP,OGP,02-06-95,,FALSE
 1355,Indonesia - Sumatra,Indonesia - Sumatra.,-6.5,6,95,108.55,,,,,,OGP,OGP,07-03-00,,FALSE
-1356,"Asia - Middle East - Israel, Jordan and Palestine Territory",Israel; Jordan; Palestine Territory.,29.19,33.38,34.22,39.3,,,,,,OGP,OGP,22-06-02,2002.34,FALSE
+1356,"Asia - Middle East - Israel, Jordan and Palestine Territory",Israel; Jordan; Palestine Territory.,29.19,33.38,34.22,39.3,,,,,,OGP,OGP,22-06-02,2002.340,FALSE
 1357,Europe - eastern and FSU,Albania; Bulgaria; Czech Republic; Germany (former DDR); Hungary; Poland; Romania; Slovakia. Armenia; Azerbaijan; Belarus; Estonia; Georgia; Kazakhstan; Kyrgyzstan; Latvia; Lithuania; Moldova; Russian Federation; Tajikistan; Turkmenistan; Ukraine; Uzbekistan.,35.1,78,9.87,-169.73,,,,,Countries forming the former Warsaw Pact and FSU. Area crosses 180-degree meridian.,OGP,OGP,24-09-08,2006.380 2008.011,TRUE
 1358,South America - SAD69,South America - Brazil east of 50°W; west of 50°W and south of 15°S.,-35.89,4.5,-60.46,-34.75,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 1359,Indonesia - Kalimantan SE,Indonesia - southeast Kalimantan.,-5.72,2.5,114,118,,,,,,OGP,OGP,02-06-95,,FALSE
@@ -479,54 +479,54 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 1369,France - Alsace,France - Alsace.,47.4,49.1,6.8,8.23,,,,,,OGP,OGP,12-09-96,,FALSE
 1370,Venezuela - Deltana,Venezuela - Deltana area.,7.9,10.2,-62.8,-60,,,,,,OGP,OGP,23-06-00,,FALSE
 1371,Venezuela - Guarico state,Venezuela - Guarico state.,7.6,10.02,-68,-64.78,,,,,,OGP,OGP,23-06-00,,FALSE
-1372,USA - Alabama,United States (USA) - Alabama.,30.2,35,-88.48,-84.89,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1373,USA - Arizona,United States (USA) - Arizona.,31.33,37,-114.75,-109.05,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1374,USA - Arkansas,United States (USA) - Arkansas.,33,36.49,-94.63,-89.65,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1375,USA - California,United States (USA) - California.,32.51,42,-124.42,-114.13,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1376,USA - Colorado,United States (USA) - Colorado.,37,41,-109.05,-102.05,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1377,USA - Connecticut,United States (USA) - Connecticut - counties of Fairfield; Hartford; Litchfield; Middlesex; New Haven; New London; Tolland; Windham.,40.95,42.05,-73.73,-71.78,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1378,USA - Delaware,United States (USA) - Delaware - counties of Kent; New Castle; Sussex.,38.44,39.84,-75.78,-74.95,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1379,USA - Florida,United States (USA) - Florida.,24.43,31,-87.64,-80.02,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1380,USA - Georgia,United States (USA) - Georgia.,30.35,35,-85.02,-80.79,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1381,USA - Idaho,United States (USA) - Idaho.,42,49,-117.24,-111.05,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1382,USA - Illinois,United States (USA) - Illinois.,36.97,42.5,-91.51,-87.5,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1383,USA - Indiana,United States (USA) - Indiana.,37.77,41.75,-88.09,-84.81,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1384,USA - Iowa,United States (USA) - Iowa.,40.37,43.51,-96.64,-90.13,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1385,USA - Kansas,United States (USA) - Kansas.,36.99,40,-102.05,-94.59,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1386,USA - Kentucky,United States (USA) - Kentucky.,36.5,39.14,-89.42,-81.98,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1387,USA - Louisiana,United States (USA) - Louisiana.,28.88,33.03,-94.05,-88.81,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1388,USA - Maine,United States (USA) - Maine.,42.98,47.46,-71.08,-66.89,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1389,USA - Maryland,United States (USA) - Maryland - counties of Allegany; Anne Arundel; Baltimore; Calvert; Caroline; Carroll; Cecil; Charles; Dorchester; Frederick; Garrett; Harford; Howard; Kent; Montgomery; Prince Georges; Queen Annes; Somerset; St Marys; Talbot; Washington; Wicomico; Worcester.,37.88,39.72,-79.49,-74.98,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1390,USA - Massachusetts,United States (USA) - Massachusetts.,41.2,42.89,-73.51,-69.86,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1391,USA - Michigan,United States (USA) - Michigan.,41.7,48.3,-90.41,-82.12,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1392,USA - Minnesota,United States (USA) - Minnesota.,43.5,49.39,-97.24,-89.47,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1393,USA - Mississippi,United States (USA) - Mississippi.,30.13,35,-91.24,-88.1,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1394,USA - Missouri,United States (USA) - Missouri.,36,40.61,-95.78,-89.1,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1395,USA - Montana,United States (USA) - Montana - counties of Beaverhead; Big Horn; Blaine; Broadwater; Carbon; Carter; Cascade; Chouteau; Custer; Daniels; Dawson; Deer Lodge; Fallon; Fergus; Flathead; Gallatin; Garfield; Glacier; Golden Valley; Granite; Hill; Jefferson; Judith Basin; Lake; Lewis and Clark; Liberty; Lincoln; Madison; McCone; Meagher; Mineral; Missoula; Musselshell; Park; Petroleum; Phillips; Pondera; Powder River; Powell; Prairie; Ravalli; Richland; Roosevelt; Rosebud; Sanders; Sheridan; Silver Bow; Stillwater; Sweet Grass; Teton; Toole; Treasure; Valley; Wheatland; Wibaux; Yellowstone.,44.36,49,-116.04,-104.02,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1396,USA - Nebraska,United States (USA) - Nebraska - counties of Adams; Antelope; Arthur; Banner; Blaine; Boone; Box Butte; Boyd; Brown; Buffalo; Burt; Butler; Cass; Cedar; Chase; Cherry; Cheyenne; Clay; Colfax; Cuming; Custer; Dakota; Dawes; Dawson; Deuel; Dixon; Dodge; Douglas; Dundy; Fillmore; Franklin; Frontier; Furnas; Gage; Garden; Garfield; Gosper; Grant; Greeley; Hall; Hamilton; Harlan; Hayes; Hitchcock; Holt; Hooker; Howard; Jefferson; Johnson; Kearney; Keith; Keya Paha; Kimball; Knox; Lancaster; Lincoln; Logan; Loup; Madison; McPherson; Merrick; Morrill; Nance; Nemaha; Nuckolls; Otoe; Pawnee; Perkins; Phelps; Pierce; Platte; Polk; Red Willow; Richardson; Rock; Saline; Sarpy; Saunders; Scotts Bluff; Seward; Sheridan; Sherman; Sioux; Stanton; Thayer; Thomas; Thurston; Valley; Washington; Wayne; Webster; Wheeler; York.,40,43,-104.06,-95.32,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1397,USA - Nevada,United States (USA) - Nevada.,35,42,-120,-114.05,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1398,USA - New Hampshire,United States (USA) - New Hampshire - counties of Belknap; Carroll; Cheshire; Coos; Grafton; Hillsborough; Merrimack; Rockingham; Strafford; Sullivan.,42.7,45.31,-72.56,-70.65,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1399,USA - New Jersey,United States (USA) - New Jersey - counties of Atlantic; Bergen; Burlington; Camden; Cape May; Cumberland; Essex; Gloucester; Hudson; Hunterdon; Mercer; Middlesex; Monmouth; Morris; Ocean; Passaic; Salem; Somerset; Sussex; Union; Warren.,38.65,41.36,-75.56,-73.88,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1400,USA - New Mexico,United States (USA) - New Mexico.,31.33,37,-109.05,-103,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1401,USA - New York,United States (USA) - New York.,40.47,45.03,-79.76,-71.75,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1402,USA - North Carolina,United States (USA) - North Carolina - counties of Alamance; Alexander; Alleghany; Anson; Ashe; Avery; Beaufort; Bertie; Bladen; Brunswick; Buncombe; Burke; Cabarrus; Caldwell; Camden; Carteret; Caswell; Catawba; Chatham; Cherokee; Chowan; Clay; Cleveland; Columbus; Craven; Cumberland; Currituck; Dare; Davidson; Davie; Duplin; Durham; Edgecombe; Forsyth; Franklin; Gaston; Gates; Graham; Granville; Greene; Guilford; Halifax; Harnett; Haywood; Henderson; Hertford; Hoke; Hyde; Iredell; Jackson; Johnston; Jones; Lee; Lenoir; Lincoln; Macon; Madison; Martin; McDowell; Mecklenburg; Mitchell; Montgomery; Moore; Nash; New Hanover; Northampton; Onslow; Orange; Pamlico; Pasquotank; Pender; Perquimans; Person; Pitt; Polk; Randolph; Richmond; Robeson; Rockingham; Rowan; Rutherford; Sampson; Scotland; Stanly; Stokes; Surry; Swain; Transylvania; Tyrrell; Union; Vance; Wake; Warren; Washington; Watauga; Wayne; Wilkes; Wilson; Yadkin; Yancey.,33.8,36.58,-84.32,-75.43,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1403,USA - North Dakota,United States (USA) - North Dakota.,45.93,49,-104.05,-96.57,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1404,USA - Ohio,United States (USA) - Ohio.,38.4,42.32,-84.81,-80.52,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1405,USA - Oklahoma,United States (USA) - Oklahoma.,33.61,37.01,-103,-94.43,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1406,USA - Oregon,United States (USA) - Oregon.,42,46.29,-124.6,-116.46,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1407,USA - Pennsylvania,United States (USA) - Pennsylvania.,39.71,42.51,-80.52,-74.69,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1408,USA - Rhode Island,United States (USA) - Rhode Island - counties of Bristol; Kent; Newport; Providence; Washington.,41.12,42.02,-71.9,-71.1,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1409,USA - South Carolina,United States (USA) - South Carolina - counties of Abbeville; Aiken; Allendale; Anderson; Bamberg; Barnwell; Beaufort; Berkeley; Calhoun; Charleston; Cherokee; Chester; Chesterfield; Clarendon; Colleton; Darlington; Dillon; Dorchester; Edgefield; Fairfield; Florence; Georgetown; Greenville; Greenwood; Hampton; Horry; Jasper; Kershaw; Lancaster; Laurens; Lee; Lexington; Marion; Marlboro; McCormick; Newberry; Oconee; Orangeburg; Pickens; Richland; Saluda; Spartanburg; Sumter; Union; Williamsburg; York.,32,35.21,-83.36,-78.5,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1410,USA - South Dakota,United States (USA) - South Dakota.,42.49,45.94,-104.07,-96.46,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1411,USA - Tennessee,United States (USA) - Tennessee - counties of Anderson; Bedford; Benton; Bledsoe; Blount; Bradley; Campbell; Cannon; Carroll; Carter; Cheatham; Chester; Claiborne; Clay; Cocke; Coffee; Crockett; Cumberland; Davidson; De Kalb; Decatur; Dickson; Dyer; Fayette; Fentress; Franklin; Gibson; Giles; Grainger; Greene; Grundy; Hamblen; Hamilton; Hancock; Hardeman; Hardin; Hawkins; Haywood; Henderson; Henry; Hickman; Houston; Humphreys; Jackson; Jefferson; Johnson; Knox; Lake; Lauderdale; Lawrence; Lewis; Lincoln; Loudon; Macon; Madison; Marion; Marshall; Maury; McMinn; McNairy; Meigs; Monroe; Montgomery; Moore; Morgan; Obion; Overton; Perry; Pickett; Polk; Putnam; Rhea; Roane; Robertson; Rutherford; Scott; Sequatchie; Sevier; Shelby; Smith; Stewart; Sullivan; Sumner; Tipton; Trousdale; Unicoi; Union; Van Buren; Warren; Washington; Wayne; Weakley; White; Williamson; Wilson.,35,36.68,-90.32,-81.66,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1412,USA - Texas,United States (USA) - Texas.,25.83,36.5,-106.63,-93.51,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1413,USA - Utah,United States (USA) - Utah.,37,42,-114.05,-109.05,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1414,USA - Vermont,United States (USA) - Vermont - counties of Addison; Bennington; Caledonia; Chittenden; Essex; Franklin; Grand Isle; Lamoille; Orange; Orleans; Rutland; Washington; Windham; Windsor.,42.7,45,-73.44,-71.5,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1415,USA - Virginia,United States (USA) - Virginia.,36.53,39.45,-83.68,-75.17,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1416,USA - Washington,United States (USA) - Washington.,45.55,49,-124.75,-116.9,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1417,USA - West Virginia,United States (USA) - West Virginia.,37.2,40.63,-82.65,-77.73,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1418,USA - Wisconsin,United States (USA) - Wisconsin.,42.49,47.29,-92.88,-86.25,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1419,USA - Wyoming,United States (USA) - Wyoming.,41,45,-111.05,-104.05,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+1372,USA - Alabama,United States (USA) - Alabama.,30.2,35,-88.48,-84.89,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1373,USA - Arizona,United States (USA) - Arizona.,31.33,37,-114.75,-109.05,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1374,USA - Arkansas,United States (USA) - Arkansas.,33,36.49,-94.63,-89.65,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1375,USA - California,United States (USA) - California.,32.51,42,-124.42,-114.13,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1376,USA - Colorado,United States (USA) - Colorado.,37,41,-109.05,-102.05,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1377,USA - Connecticut,United States (USA) - Connecticut - counties of Fairfield; Hartford; Litchfield; Middlesex; New Haven; New London; Tolland; Windham.,40.95,42.05,-73.73,-71.78,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1378,USA - Delaware,United States (USA) - Delaware - counties of Kent; New Castle; Sussex.,38.44,39.84,-75.78,-74.95,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1379,USA - Florida,United States (USA) - Florida.,24.43,31,-87.64,-80.02,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1380,USA - Georgia,United States (USA) - Georgia.,30.35,35,-85.02,-80.79,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1381,USA - Idaho,United States (USA) - Idaho.,42,49,-117.24,-111.05,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1382,USA - Illinois,United States (USA) - Illinois.,36.97,42.5,-91.51,-87.5,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1383,USA - Indiana,United States (USA) - Indiana.,37.77,41.75,-88.09,-84.81,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1384,USA - Iowa,United States (USA) - Iowa.,40.37,43.51,-96.64,-90.13,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1385,USA - Kansas,United States (USA) - Kansas.,36.99,40,-102.05,-94.59,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1386,USA - Kentucky,United States (USA) - Kentucky.,36.5,39.14,-89.42,-81.98,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1387,USA - Louisiana,United States (USA) - Louisiana.,28.88,33.03,-94.05,-88.81,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1388,USA - Maine,United States (USA) - Maine.,42.98,47.46,-71.08,-66.89,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1389,USA - Maryland,United States (USA) - Maryland - counties of Allegany; Anne Arundel; Baltimore; Calvert; Caroline; Carroll; Cecil; Charles; Dorchester; Frederick; Garrett; Harford; Howard; Kent; Montgomery; Prince Georges; Queen Annes; Somerset; St Marys; Talbot; Washington; Wicomico; Worcester.,37.88,39.72,-79.49,-74.98,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1390,USA - Massachusetts,United States (USA) - Massachusetts.,41.2,42.89,-73.51,-69.86,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1391,USA - Michigan,United States (USA) - Michigan.,41.7,48.3,-90.41,-82.12,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1392,USA - Minnesota,United States (USA) - Minnesota.,43.5,49.39,-97.24,-89.47,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1393,USA - Mississippi,United States (USA) - Mississippi.,30.13,35,-91.24,-88.1,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1394,USA - Missouri,United States (USA) - Missouri.,36,40.61,-95.78,-89.1,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1395,USA - Montana,United States (USA) - Montana - counties of Beaverhead; Big Horn; Blaine; Broadwater; Carbon; Carter; Cascade; Chouteau; Custer; Daniels; Dawson; Deer Lodge; Fallon; Fergus; Flathead; Gallatin; Garfield; Glacier; Golden Valley; Granite; Hill; Jefferson; Judith Basin; Lake; Lewis and Clark; Liberty; Lincoln; Madison; McCone; Meagher; Mineral; Missoula; Musselshell; Park; Petroleum; Phillips; Pondera; Powder River; Powell; Prairie; Ravalli; Richland; Roosevelt; Rosebud; Sanders; Sheridan; Silver Bow; Stillwater; Sweet Grass; Teton; Toole; Treasure; Valley; Wheatland; Wibaux; Yellowstone.,44.36,49,-116.04,-104.02,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1396,USA - Nebraska,United States (USA) - Nebraska - counties of Adams; Antelope; Arthur; Banner; Blaine; Boone; Box Butte; Boyd; Brown; Buffalo; Burt; Butler; Cass; Cedar; Chase; Cherry; Cheyenne; Clay; Colfax; Cuming; Custer; Dakota; Dawes; Dawson; Deuel; Dixon; Dodge; Douglas; Dundy; Fillmore; Franklin; Frontier; Furnas; Gage; Garden; Garfield; Gosper; Grant; Greeley; Hall; Hamilton; Harlan; Hayes; Hitchcock; Holt; Hooker; Howard; Jefferson; Johnson; Kearney; Keith; Keya Paha; Kimball; Knox; Lancaster; Lincoln; Logan; Loup; Madison; McPherson; Merrick; Morrill; Nance; Nemaha; Nuckolls; Otoe; Pawnee; Perkins; Phelps; Pierce; Platte; Polk; Red Willow; Richardson; Rock; Saline; Sarpy; Saunders; Scotts Bluff; Seward; Sheridan; Sherman; Sioux; Stanton; Thayer; Thomas; Thurston; Valley; Washington; Wayne; Webster; Wheeler; York.,40,43,-104.06,-95.32,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1397,USA - Nevada,United States (USA) - Nevada.,35,42,-120,-114.05,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1398,USA - New Hampshire,United States (USA) - New Hampshire - counties of Belknap; Carroll; Cheshire; Coos; Grafton; Hillsborough; Merrimack; Rockingham; Strafford; Sullivan.,42.7,45.31,-72.56,-70.65,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1399,USA - New Jersey,United States (USA) - New Jersey - counties of Atlantic; Bergen; Burlington; Camden; Cape May; Cumberland; Essex; Gloucester; Hudson; Hunterdon; Mercer; Middlesex; Monmouth; Morris; Ocean; Passaic; Salem; Somerset; Sussex; Union; Warren.,38.65,41.36,-75.56,-73.88,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1400,USA - New Mexico,United States (USA) - New Mexico.,31.33,37,-109.05,-103,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1401,USA - New York,United States (USA) - New York.,40.47,45.03,-79.76,-71.75,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1402,USA - North Carolina,United States (USA) - North Carolina - counties of Alamance; Alexander; Alleghany; Anson; Ashe; Avery; Beaufort; Bertie; Bladen; Brunswick; Buncombe; Burke; Cabarrus; Caldwell; Camden; Carteret; Caswell; Catawba; Chatham; Cherokee; Chowan; Clay; Cleveland; Columbus; Craven; Cumberland; Currituck; Dare; Davidson; Davie; Duplin; Durham; Edgecombe; Forsyth; Franklin; Gaston; Gates; Graham; Granville; Greene; Guilford; Halifax; Harnett; Haywood; Henderson; Hertford; Hoke; Hyde; Iredell; Jackson; Johnston; Jones; Lee; Lenoir; Lincoln; Macon; Madison; Martin; McDowell; Mecklenburg; Mitchell; Montgomery; Moore; Nash; New Hanover; Northampton; Onslow; Orange; Pamlico; Pasquotank; Pender; Perquimans; Person; Pitt; Polk; Randolph; Richmond; Robeson; Rockingham; Rowan; Rutherford; Sampson; Scotland; Stanly; Stokes; Surry; Swain; Transylvania; Tyrrell; Union; Vance; Wake; Warren; Washington; Watauga; Wayne; Wilkes; Wilson; Yadkin; Yancey.,33.8,36.58,-84.32,-75.43,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1403,USA - North Dakota,United States (USA) - North Dakota.,45.93,49,-104.05,-96.57,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1404,USA - Ohio,United States (USA) - Ohio.,38.4,42.32,-84.81,-80.52,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1405,USA - Oklahoma,United States (USA) - Oklahoma.,33.61,37.01,-103,-94.43,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1406,USA - Oregon,United States (USA) - Oregon.,42,46.29,-124.6,-116.46,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1407,USA - Pennsylvania,United States (USA) - Pennsylvania.,39.71,42.51,-80.52,-74.69,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1408,USA - Rhode Island,United States (USA) - Rhode Island - counties of Bristol; Kent; Newport; Providence; Washington.,41.12,42.02,-71.9,-71.1,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1409,USA - South Carolina,United States (USA) - South Carolina - counties of Abbeville; Aiken; Allendale; Anderson; Bamberg; Barnwell; Beaufort; Berkeley; Calhoun; Charleston; Cherokee; Chester; Chesterfield; Clarendon; Colleton; Darlington; Dillon; Dorchester; Edgefield; Fairfield; Florence; Georgetown; Greenville; Greenwood; Hampton; Horry; Jasper; Kershaw; Lancaster; Laurens; Lee; Lexington; Marion; Marlboro; McCormick; Newberry; Oconee; Orangeburg; Pickens; Richland; Saluda; Spartanburg; Sumter; Union; Williamsburg; York.,32,35.21,-83.36,-78.5,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1410,USA - South Dakota,United States (USA) - South Dakota.,42.49,45.94,-104.07,-96.46,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1411,USA - Tennessee,United States (USA) - Tennessee - counties of Anderson; Bedford; Benton; Bledsoe; Blount; Bradley; Campbell; Cannon; Carroll; Carter; Cheatham; Chester; Claiborne; Clay; Cocke; Coffee; Crockett; Cumberland; Davidson; De Kalb; Decatur; Dickson; Dyer; Fayette; Fentress; Franklin; Gibson; Giles; Grainger; Greene; Grundy; Hamblen; Hamilton; Hancock; Hardeman; Hardin; Hawkins; Haywood; Henderson; Henry; Hickman; Houston; Humphreys; Jackson; Jefferson; Johnson; Knox; Lake; Lauderdale; Lawrence; Lewis; Lincoln; Loudon; Macon; Madison; Marion; Marshall; Maury; McMinn; McNairy; Meigs; Monroe; Montgomery; Moore; Morgan; Obion; Overton; Perry; Pickett; Polk; Putnam; Rhea; Roane; Robertson; Rutherford; Scott; Sequatchie; Sevier; Shelby; Smith; Stewart; Sullivan; Sumner; Tipton; Trousdale; Unicoi; Union; Van Buren; Warren; Washington; Wayne; Weakley; White; Williamson; Wilson.,35,36.68,-90.32,-81.66,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1412,USA - Texas,United States (USA) - Texas.,25.83,36.5,-106.63,-93.51,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1413,USA - Utah,United States (USA) - Utah.,37,42,-114.05,-109.05,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1414,USA - Vermont,United States (USA) - Vermont - counties of Addison; Bennington; Caledonia; Chittenden; Essex; Franklin; Grand Isle; Lamoille; Orange; Orleans; Rutland; Washington; Windham; Windsor.,42.7,45,-73.44,-71.5,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1415,USA - Virginia,United States (USA) - Virginia.,36.53,39.45,-83.68,-75.17,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1416,USA - Washington,United States (USA) - Washington.,45.55,49,-124.75,-116.9,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1417,USA - West Virginia,United States (USA) - West Virginia.,37.2,40.63,-82.65,-77.73,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1418,USA - Wisconsin,United States (USA) - Wisconsin.,42.49,47.29,-92.88,-86.25,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1419,USA - Wyoming,United States (USA) - Wyoming.,41,45,-111.05,-104.05,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 1420,Canada - Quebec - east of 57°W,Canada - Quebec - east of 57°W.,46.6,53.76,-57,-54,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 1421,Canada - Quebec - 60°W to 57°W,Canada - Quebec - between 60°W and 57°W.,50.1,52,-60,-57.1,,,,,,OGP,OGP,05-07-08,2008.045 2008.054,FALSE
 1422,Canada - Quebec - 63°W to 60°W,Canada - Quebec - between 63°W and 60°W.,47.13,52,-63,-60,,,,,,OGP,OGP,05-07-08,2008.045 2008.054,FALSE
@@ -561,7 +561,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 1451,Cote d'Ivoire (Ivory Coast) - west of 6°W,Côte d'Ivoire (Ivory Coast) west of 6°W.,3.9,10.74,-8.61,-6,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 1452,Vietnam - west of 108°E,Vietnam - west of 108°E.,6,23.39,102.2,108,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 1453,Vietnam - east of 108°E,Vietnam - east of 108°E.,7,21.55,108,113.32,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
-1454,Namibia - Walvis Bay,Namibia - Walvis Bay.,-23.1,-22.8,14.4,14.6,,,,,,OGP,OGP,01-02-06,2005.89,FALSE
+1454,Namibia - Walvis Bay,Namibia - Walvis Bay.,-23.1,-22.8,14.4,14.6,,,,,,OGP,OGP,01-02-06,2005.890,FALSE
 1455,South Africa - west of 18°E,South Africa - west of 18°E.,-31.4,-28.04,16.4,18,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 1456,South Africa - 18°E to 20°E,South Africa - between 18°E and 20°E.,-34.85,-28.45,18,20,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 1457,South Africa - 20°E to 22°E,South Africa - between 20°E and 22°E.,-34.85,-24.7,20,22,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
@@ -618,7 +618,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 1508,"Canada - 120°W to 114°W, south of 60°N","Canada south of 60°N and between 120°E and 114°W - Alberta, British Columbia (BC).",49,60,-120,-114,,,,,,OGP,OGP,23-06-08,2006.462 2008.045,TRUE
 1509,Sierra Leone - west of 12°W,Sierra Leone - west of 12°W.,7.2,9.95,-13.33,-12,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 1510,Sierra Leone - east of 12°W,Sierra Leone - east of 12°W.,6.9,10,-12,-10.27,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
-1511,USA - conus and Alaska,United States (USA) - Alabama; Alaska; Arizona; Arkansas; California; Colorado; Connecticut; Delaware; Florida; Georgia; Idaho; Illinois; Indiana; Iowa; Kansas; Kentucky; Louisiana; Maine; Maryland; Massachusetts; Michigan; Minnesota; Mississippi; Missouri; Montana; Nebraska; Nevada; New Hampshire; New Jersey; New Mexico; New York; North Carolina; North Dakota; Ohio; Oklahoma; Oregon; Pennsylvania; Rhode Island; South Carolina; South Dakota; Tennessee; Texas; Utah; Vermont; Virginia; Washington; West Virginia; Wisconsin; Wyoming.,24.53,71.35,172.4,-67.07,,,,,Area crosses 180-degree meridian.,OGP,OGP,24-09-08,2008.07,FALSE
+1511,USA - conus and Alaska,United States (USA) - Alabama; Alaska; Arizona; Arkansas; California; Colorado; Connecticut; Delaware; Florida; Georgia; Idaho; Illinois; Indiana; Iowa; Kansas; Kentucky; Louisiana; Maine; Maryland; Massachusetts; Michigan; Minnesota; Mississippi; Missouri; Montana; Nebraska; Nevada; New Hampshire; New Jersey; New Mexico; New York; North Carolina; North Dakota; Ohio; Oklahoma; Oregon; Pennsylvania; Rhode Island; South Carolina; South Dakota; Tennessee; Texas; Utah; Vermont; Virginia; Washington; West Virginia; Wisconsin; Wyoming.,24.53,71.35,172.4,-67.07,,,,,Area crosses 180-degree meridian.,OGP,OGP,24-09-08,2008.070,FALSE
 1512,Germany - East Germany - west of 10.5°E,Germany - states of former East Germany - west of 10°30'E - Thuringen.,50.35,51.58,9.87,10.5,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 1513,Europe - 10.5°E to 13.5°E by country,Czech Republic - west of 13°30'E. Germany - states of former East Germany - between 10°30'E and 13°30'E - Brandenburg; Mecklenburg-Vorpommern; Sachsen; Sachsen-Anhalt; Thuringen.,48.9,54.72,10.5,13.5,,,,,,OGP,OGP,24-09-08,2008.011 2008.045,FALSE
 1514,Europe - 13.5°E to 16.5°E and S-42(83) by country,Czech Republic - between 13°30'E and 16°30'E. Germany - states of former East Germany - east of 13°30'E - Brandenburg; Mecklenburg-Vorpommern; Sachsen. Hungary - west of 16°30'E.,46.5,54.6,13.5,16.5,,,,,,OGP,OGP,24-09-08,2008.011 2008.045,FALSE
@@ -653,12 +653,12 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 1543,Austria - Styria,Austria - Styria.,46.6,47.9,13.5,16.2,,,,,,OGP,OGP,12-06-08,,FALSE
 1544,Oman - west of 54°E,Oman - west of 54°E.,16.6,19.7,51.9,54,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 1545,Oman - east of 54°E,Oman - east of 54°E.,16.8,26.4,54,59.9,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
-1546,USA - Hawaii - island of Hawaii,United States (USA) - Hawaii - island of Hawaii.,18.9,20.27,-156.06,-154.8,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1547,USA - Hawaii - Maui; Kahoolawe; Lanai; Molokai,United States (USA) - Hawaii - Maui; Kahoolawe; Lanai; Molokai.,20.49,21.22,-157.31,-155.97,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+1546,USA - Hawaii - island of Hawaii,United States (USA) - Hawaii - island of Hawaii.,18.9,20.27,-156.06,-154.8,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1547,USA - Hawaii - Maui; Kahoolawe; Lanai; Molokai,United States (USA) - Hawaii - Maui; Kahoolawe; Lanai; Molokai.,20.49,21.22,-157.31,-155.97,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 1548,USA - Hawaii - Oahu,United States (USA) - Hawaii - Oahu.,21.12,21.72,-158.39,-157.52,,,,,,OGP,OGP,24-09-08,2006.670 2008.070,FALSE
-1549,USA - Hawaii - Kauai,United States (USA) - Hawaii - Kauai.,21.87,22.24,-159.79,-159.29,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1550,USA - Hawaii - Niihau,United States (USA) - Hawaii - Niihau.,21.77,22.03,-160.25,-160.04,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1551,Grenada and southern Grenadines - onshore,Grenada and southern Grenadine Islands - onshore.,11.95,12.53,-61.8,-61.35,,,,,,OGP,OGP,01-02-06,2005.89,FALSE
+1549,USA - Hawaii - Kauai,United States (USA) - Hawaii - Kauai.,21.87,22.24,-159.79,-159.29,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1550,USA - Hawaii - Niihau,United States (USA) - Hawaii - Niihau.,21.77,22.03,-160.25,-160.04,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1551,Grenada and southern Grenadines - onshore,Grenada and southern Grenadine Islands - onshore.,11.95,12.53,-61.8,-61.35,,,,,,OGP,OGP,01-02-06,2005.890,FALSE
 1552,"Africa - Eritrea, Ethiopia and Sudan - 36°E to 42°E",Eritrea. Ethiopia - between 36°E and 42°E. Sudan - east of 36°E.,3.41,22.23,36,42,,,,,,OGP,OGP,23-06-08,2002.810 2008.045,FALSE
 1553,Ethiopia - east of 42°E,Ethiopia - east of 42°E.,4.1,12.9,42,48,,,,,,OGP,OGP,23-06-08,2002.810 2008.045,FALSE
 1554,Somalia - west of 48°E,Somalia - west of 48°E.,1.6,11.5,41.01,48,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
@@ -736,7 +736,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 1626,Germany - 10.5°E to 13.5°E,"Germany - former West Germany onshore between 10°30'E and 13°30'E - Bayern, Niedersachsen, Schleswig-Holstein.",47.27,55.06,10.5,13.5,,,,,,OGP,OGP,23-06-08,2006.410 2008.045,FALSE
 1627,Germany - 13.5°E to 16.5°E,Germany - former West Germany onshore east of 13°30'E - Bayern.,47.27,55.06,13.5,16.5,,,,,,OGP,OGP,23-06-08,2006.410 2008.045,FALSE
 1628,Germany - west of 4.5°E,Germany - onshore - west of 4°30'E.,,,,,,,,,Not valid - do not use !,OGP,OGP,23-06-08,2008.045,TRUE
-1629,UK - offshore - North Sea,United Kingdom (UK) - offshore - North Sea.,49.5,63.83,-4,3.4,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+1629,UK - offshore - North Sea,United Kingdom (UK) - offshore - North Sea.,49.5,63.83,-4,3.4,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 1630,Netherlands - offshore,Netherlands - offshore North Sea.,51.5,55.8,2.5,6.4,,,,,,OGP,OGP,11-11-98,,FALSE
 1631,Europe - 18°W to 12°W and ED50 by country,Europe - between 18°W and 12°W - Ireland offshore; United Kingdom (UKCS) offshore.,27.6,60,-18,-12,,,,,,OGP,OGP,21-05-09,2005.140 2008.045 2009.033,FALSE
 1632,Europe - 12°W to 6°W and ED50 by country,Europe - between 12°W and 6°W - Faroe Islands - onshore; Spain; Ireland offshore; United Kingdom (UKCS) offshore.,36.15,60,-12,-6,,,,,,OGP,OGP,23-06-08,2005.140 2005.471 2008.045,FALSE
@@ -827,9 +827,9 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 1717,Nigeria - offshore deep water,Nigeria - offshore beyond continental shelf.,2.25,6.2,2.7,8,,,,,,OGP,OGP,02-06-95,,FALSE
 1718,Italy - west of 12°E,Italy - west of 12°E.,8.8,47.05,6.65,12,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 1719,Italy - east of 12°E,Italy - east of 12°E including San Marino and Vatican City State.,36.6,47.09,12,18.53,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
-1720,USA - Michigan - SPCS - E,United States (USA) - Michigan - counties of Alcona; Alpena; Arenac; Bay; Cheboygan; Clinton; Crawford; Genesee; Gladwin; Gratiot; Hillsdale; Huron; Ingham; Iosco; Jackson; Lapeer; Lenawee; Livingston; Macomb; Midland; Monroe; Montmorency; Oakland; Ogemaw; Oscoda; Otsego; Presque Isle; Roscommon; Saginaw; Sanilac; Shiawassee; St Clair; Tuscola; Washtenaw; Wayne.,45.06,45.82,-84.83,-82.12,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1721,USA - Michigan - SPCS - old central,United States (USA) - Michigan - counties of Allegan; Antrim; Barry; Benzie; Berrien; Branch; Calhoun; Cass; Charlevoix; Clare; Eaton; Emmet; Grand Traverse; Ionia; Isabella; Kalamazoo; Kalkaska; Kent; Lake; Leelanau; Manistee; Mason; Mecosta; Missaukee; Montcalm; Muskegon; Newaygo; Oceana; Osceola; Ottawa; St Joseph; Van Buren; Wexford.,41.75,45.88,-87.14,-84.6,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-1722,USA - Michigan - SPCS - W,United States (USA) - Michigan - counties of Alger; Baraga; Chippewa; Delta; Dickinson; Gogebic; Houghton; Iron; Keweenaw; Luce; Mackinac; Marquette; Menominee; Ontonagon; Schoolcraft.,,,,,,,,,,OGP,OGP,24-09-08,2008.07,TRUE
+1720,USA - Michigan - SPCS - E,United States (USA) - Michigan - counties of Alcona; Alpena; Arenac; Bay; Cheboygan; Clinton; Crawford; Genesee; Gladwin; Gratiot; Hillsdale; Huron; Ingham; Iosco; Jackson; Lapeer; Lenawee; Livingston; Macomb; Midland; Monroe; Montmorency; Oakland; Ogemaw; Oscoda; Otsego; Presque Isle; Roscommon; Saginaw; Sanilac; Shiawassee; St Clair; Tuscola; Washtenaw; Wayne.,45.06,45.82,-84.83,-82.12,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1721,USA - Michigan - SPCS - old central,United States (USA) - Michigan - counties of Allegan; Antrim; Barry; Benzie; Berrien; Branch; Calhoun; Cass; Charlevoix; Clare; Eaton; Emmet; Grand Traverse; Ionia; Isabella; Kalamazoo; Kalkaska; Kent; Lake; Leelanau; Manistee; Mason; Mecosta; Missaukee; Montcalm; Muskegon; Newaygo; Oceana; Osceola; Ottawa; St Joseph; Van Buren; Wexford.,41.75,45.88,-87.14,-84.6,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+1722,USA - Michigan - SPCS - W,United States (USA) - Michigan - counties of Alger; Baraga; Chippewa; Delta; Dickinson; Gogebic; Houghton; Iron; Keweenaw; Luce; Mackinac; Marquette; Menominee; Ontonagon; Schoolcraft.,,,,,,,,,,OGP,OGP,24-09-08,2008.070,TRUE
 1723,USA - Michigan - SPCS - N,United States (USA) - Michigan north of approximately 45°45'N - counties of Alger; Baraga; Chippewa; Delta; Dickinson; Gogebic; Houghton; Iron; Keweenaw; Luce; Mackinac; Marquette; Menominee; Ontonagon; Schoolcraft.,45.24,48.3,-90.41,-83.42,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 1724,USA - Michigan - SPCS - C,United States (USA) - Michigan between approximately 45°45'N and 43°55'N - counties of Alcona; Alpena; Antrim; Arenac; Benzie; Charlevoix; Cheboygan; Clare; Crawford; Emmet; Gladwin; Grand Traverse; Iosco; Kalkaska; Lake; Leelanau; Manistee; Mason; Missaukee; Montmorency; Ogemaw; Osceola; Oscoda; Otsego; Presque Isle; Roscommon; Wexford.,43.81,45.88,-87.09,-82.24,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 1725,USA - Michigan - SPCS - S,United States (USA) - Michigan south of approximately 43°55'N - counties of Allegan; Barry; Bay; Berrien; Branch; Calhoun; Cass; Clinton; Eaton; Genesee; Gratiot; Hillsdale; Huron; Ingham; Ionia; Isabella; Jackson; Kalamazoo; Kent; Lapeer; Lenawee; Livingston; Macomb; Mecosta; Midland; Monroe; Montcalm; Muskegon; Newaygo; Oakland; Oceana; Ottawa; Saginaw; Sanilac; Shiawassee; St Clair; St Joseph; Tuscola; Van Buren; Washtenaw; Wayne.,41.75,44.17,-87.14,-82.12,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
@@ -1264,7 +1264,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2154,USA - Alabama - SPCS - E,United States (USA) - Alabama east of approximately 86°37'W - counties Barbour; Bullock; Calhoun; Chambers; Cherokee; Clay; Cleburne; Coffee; Coosa; Covington; Crenshaw; Dale; De Kalb; Elmore; Etowah; Geneva; Henry; Houston; Jackson; Lee; Macon; Madison; Marshall; Montgomery; Pike; Randolph; Russell; StClair; Talladega; Tallapoosa.,31,35,-86.79,-84.89,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2155,USA - Alabama - SPCS - W,United States (USA) - Alabama west of approximately 86°37'W - counties Autauga; Baldwin; Bibb; Blount; Butler; Chilton; Choctaw; Clarke; Colbert; Conecuh; Cullman; Dallas; Escambia; Fayette; Franklin; Greene; Hale; Jefferson; Lamar; Lauderdale; Lawrence; Limestone; Lowndes; Marengo; Marion; Mobile; Monroe; Morgan; Perry; Pickens; Shelby; Sumter; Tuscaloosa; Walker; Washington; Wilcox; Winston.,30.2,35,-88.48,-86.3,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2156,USA - Alaska - Panhandle,United States (USA) - Alaska - east of 141°W; i.e. Panhandle.,54.5,60.36,-141,-129.99,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
-2157,USA - Alaska - Aleutian Islands,United States (USA) - Alaska - Aleutian Islands.,51.2,55.05,172.4,-163.05,,,,,Area crosses 180-degree meridian.,OGP,OGP,24-09-08,2008.07,FALSE
+2157,USA - Alaska - Aleutian Islands,United States (USA) - Alaska - Aleutian Islands.,51.2,55.05,172.4,-163.05,,,,,Area crosses 180-degree meridian.,OGP,OGP,24-09-08,2008.070,FALSE
 2158,USA - Alaska - 144°W to 141°W,United States (USA) - Alaska - between 144°W and 141°W.,51.35,71.35,-144,-141,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2159,USA - Alaska - 148°W to 144°W,United States (USA) - Alaska - between 148°W and 144°W.,51.35,71.35,-148,-144,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2160,USA - Alaska - 152°W to 148°W,United States (USA) - Alaska - between 152°W and 148°W.,51.35,71.35,-152,-148,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
@@ -1288,7 +1288,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2178,USA - California - SPCS - 4,United States (USA) - California between approximately 37°N and 35°30'N - counties Fresno; Inyo; Kings; Monterey; San Benito; Tulare.,35.78,37.58,-122,-115.65,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2179,USA - California - SPCS27 - 5,United States (USA) - California between approximately 35°50'N and 34°N excluding LA - counties Kern; San Bernardino; San Luis Obispo; Santa Barbara; Ventura.,33.16,35.81,-121.36,-114.13,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2180,USA - California - SPCS - 6,United States (USA) - California south of approximately 38°30'N - counties Imperial; Orange; Riverside; San Diego.,32.51,34.08,-118.14,-114.43,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
-2181,USA - California - SPCS27 - 7,United States (USA) - California - Los Angeles county.,32.75,34.82,-118.98,-117.63,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+2181,USA - California - SPCS27 - 7,United States (USA) - California - Los Angeles county.,32.75,34.82,-118.98,-117.63,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 2182,USA - California - SPCS83 - 5,United States (USA) - California between approximately 35°50'N and 34°N - counties Kern; Los Angeles; San Bernardino; San Luis Obispo; Santa Barbara; Ventura.,32.75,35.81,-121.36,-114.13,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2183,USA - Colorado - SPCS - C,United States (USA) - Colorado between approximately 39°50'N and 38°30'N - counties Arapahoe; Chaffee; Cheyenne; Clear Creek; Delta; Denver; Douglas; Eagle; El Paso; Elbert; Fremont; Garfield; Gunnison; Jefferson; Kit Carson; Lake; Lincoln; Mesa; Park; Pitkin; Summit; Teller.,38.14,40.09,-109.05,-102.05,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2184,USA - Colorado - SPCS - N,United States (USA) - Colorado north of approximately 39°50'N - counties Adams; Boulder; Gilpin; Grand; Jackson; Larimer; Logan; Moffat; Morgan; Phillips; Rio Blanco; Routt; Sedgwick; Washington; Weld; Yuma.,39.56,41,-109.05,-102.05,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
@@ -1315,8 +1315,8 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2205,USA - Louisiana - SPCS27 - S,United States (USA) - Louisiana south of approximately 30°55'N - counties of Acadia; Allen; Ascension; Assumption; Beauregard; Calcasieu; Cameron; East Baton Rouge; East Feliciana; Evangeline; Iberia; Iberville; Jefferson; Jefferson Davis; Lafayette; LaFourche; Livingston; Orleans; Plaquemines; Pointe Coupee; St Bernard; St Charles; St Helena; St James; St John the Baptist; St Landry; St Martin; St Mary; St Tammany; Tangipahoa; Terrebonne; Vermilion; Washington; West Baton Rouge; West Feliciana. Also Gulf of Mexico outer continental shelf (GoM OCS) protraction areas West Cameron (WC); East Cameron (EC); Vermilion; South Marsh Island; Eugene Island; Ship Shoal; South Pelto; Bay Marchand; South Timbalier; Grand Isle; West Delta; South Pass; Main Pass; Breton Sound; Chandeleur.,27.83,31.02,-93.93,-87.77,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2206,USA - Maine - SPCS - E,United States (USA) - Maine east of approximately 69°30'W - counties of Aroostook; Hancock; Knox; Penobscot; Piscataquis; Waldo; Washington.,43.85,47.46,-70.02,-66.89,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2207,USA - Maine - SPCS - W,United States (USA) - Maine west of approximately 69°30'W - counties of Androscoggin; Cumberland; Franklin; Kennebec; Lincoln; Oxford; Sagadahoc; Somerset; York.,42.98,46.57,-71.08,-69.26,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
-2208,USA - Massachusetts - SPCS - islands,United States (USA) - Massachusetts offshore - counties of Dukes; Nantucket.,41.2,41.51,-70.87,-69.9,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2209,USA - Massachusetts - SPCS - mainland,United States (USA) - Massachusetts onshore - counties of Barnstable; Berkshire; Bristol; Essex; Franklin; Hampden; Hampshire; Middlesex; Norfolk; Plymouth; Suffolk; Worcester.,41.35,42.89,-73.51,-69.86,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+2208,USA - Massachusetts - SPCS - islands,United States (USA) - Massachusetts offshore - counties of Dukes; Nantucket.,41.2,41.51,-70.87,-69.9,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2209,USA - Massachusetts - SPCS - mainland,United States (USA) - Massachusetts onshore - counties of Barnstable; Berkshire; Bristol; Essex; Franklin; Hampden; Hampshire; Middlesex; Norfolk; Plymouth; Suffolk; Worcester.,41.35,42.89,-73.51,-69.86,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 2210,USA - Montana - SPCS27 - C,United States (USA) - Montana between approximately 47°50'N and 46°40'N - counties of Cascade; Dawson; Fergus; Garfield; Judith Basin; Lake; Lewis and Clark; McCone; Meagher; Mineral; Missoula; Petroleum; Powell; Prairie; Richland; Sanders; Wibaux.,46.18,48.26,-116.04,-104.02,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2211,USA - Montana - SPCS27 - N,United States (USA) - Montana north of approximately 47°50'N - counties of Blaine; Chouteau; Daniels; Flathead; Glacier; Hill; Liberty; Lincoln; Phillips; Pondera; Roosevelt; Sheridan; Teton; Toole; Valley.,47.42,49,-116.04,-104.02,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2212,USA - Montana - SPCS27 - S,United States (USA) - Montana south of approximately 46°40'N - counties of Beaverhead; Big Horn; Broadwater; Carbon; Carter; Custer; Deer Lodge; Fallon; Gallatin; Golden Valley; Granite; Jefferson; Madison; Musselshell; Park; Powder River; Ravalli; Rosebud; Silver Bow; Stillwater; Sweet Grass; Treasure; Wheatland; Yellowstone.,44.36,46.83,-114.56,-104.02,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
@@ -1328,8 +1328,8 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2218,USA - Missouri - SPCS - C,United States (USA) - Missouri between approximately 91°45'W and 93°35'W - counties of Adair; Audrain; Benton; Boone; Callaway; Camden; Carroll; Chariton; Christian; Cole; Cooper; Dallas; Douglas; Greene; Grundy; Hickory; Howard; Howell; Knox; Laclede; Linn; Livingston; Macon; Maries; Mercer; Miller; Moniteau; Monroe; Morgan; Osage; Ozark; Pettis; Phelps; Polk; Pulaski; Putnam; Randolph; Saline; Schuyler; Scotland; Shelby; Stone; Sullivan; Taney; Texas; Webster; Wright.,36.5,40.61,-93.77,-91.4,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2219,USA - Missouri - SPCS - E,United States (USA) - Missouri east of approximately 91°45'W - counties of Bollinger; Butler; Cape Girardeau; Carter; Clark; Crawford; Dent; Dunklin; Franklin; Gasconade; Iron; Jefferson; Lewis; Lincoln; Madison; Marion; Mississippi; Montgomery; New Madrid; Oregon; Pemiscot; Perry; Pike; Ralls; Reynolds; Ripley; Scott; Shannon; St Charles; St Francois; St Louis; Ste. Genevieve; Stoddard; Warren; Washington; Wayne.,36,40.61,-91.94,-89.1,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2220,USA - Missouri - SPCS - W,United States (USA) - Missouri west of approximately 93°35'W - counties of Andrew; Atchison; Barry; Barton; Bates; Buchanan; Caldwell; Cass; Cedar; Clay; Clinton; Dade; Daviess; De Kalb; Gentry; Harrison; Henry; Holt; Jackson; Jasper; Johnson; Lafayette; Lawrence; McDonald; Newton; Nodaway; Platte; Ray; St Clair; Vernon; Worth.,36.5,40.61,-95.78,-93.5,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
-2221,USA - Nebraska - SPCS27 - N,United States (USA) - Nebraska - counties of Antelope; Blaine; Box Butte; Boyd; Brown; Burt; Cedar; Cherry; Cuming; Dakota; Dawes; Dixon; Garfield; Grant; Holt; Hooker; Keya Paha; Knox; Loup; Madison; Pierce; Rock; Sheridan; Sioux; Stanton; Thomas; Thurston; Wayne; Wheeler.,41.73,43,-104.06,-96.08,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2222,USA - Nebraska - SPCS27 - S,United States (USA) - Nebraska - counties of Adams; Arthur; Banner; Boone; Buffalo; Butler; Cass; Chase; Cheyenne; Clay; Colfax; Custer; Dawson; Deuel; Dodge; Douglas; Dundy; Fillmore; Franklin; Frontier; Furnas; Gage; Garden; Gosper; Greeley; Hall; Hamilton; Harlan; Hayes; Hitchcock; Howard; Jefferson; Johnson; Kearney; Keith; Kimball; Lancaster; Lincoln; Logan; McPherson; Merrick; Morrill; Nance; Nemaha; Nuckolls; Otoe; Pawnee; Perkins; Phelps; Platte; Polk; Red Willow; Richardson; Saline; Sarpy; Saunders; Scotts Bluff; Seward; Sherman; Thayer; Valley; Washington; Webster; York.,40,42,-104.06,-95.32,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+2221,USA - Nebraska - SPCS27 - N,United States (USA) - Nebraska - counties of Antelope; Blaine; Box Butte; Boyd; Brown; Burt; Cedar; Cherry; Cuming; Dakota; Dawes; Dixon; Garfield; Grant; Holt; Hooker; Keya Paha; Knox; Loup; Madison; Pierce; Rock; Sheridan; Sioux; Stanton; Thomas; Thurston; Wayne; Wheeler.,41.73,43,-104.06,-96.08,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2222,USA - Nebraska - SPCS27 - S,United States (USA) - Nebraska - counties of Adams; Arthur; Banner; Boone; Buffalo; Butler; Cass; Chase; Cheyenne; Clay; Colfax; Custer; Dawson; Deuel; Dodge; Douglas; Dundy; Fillmore; Franklin; Frontier; Furnas; Gage; Garden; Gosper; Greeley; Hall; Hamilton; Harlan; Hayes; Hitchcock; Howard; Jefferson; Johnson; Kearney; Keith; Kimball; Lancaster; Lincoln; Logan; McPherson; Merrick; Morrill; Nance; Nemaha; Nuckolls; Otoe; Pawnee; Perkins; Phelps; Platte; Polk; Red Willow; Richardson; Saline; Sarpy; Saunders; Scotts Bluff; Seward; Sherman; Thayer; Valley; Washington; Webster; York.,40,42,-104.06,-95.32,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 2223,USA - Nevada - SPCS - C,United States (USA) - Nevada between approximately 117°15'W and 116°W - counties of Lander; Nye.,36,41,-118.19,-115,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2224,USA - Nevada - SPCS - E,United States (USA) - Nevada east of approximately 116° W - counties of Clark; Elko; Eureka; Lincoln; White Pine.,35,42,-117.01,-114.05,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2225,USA - Nevada - SPCS - W,United States (USA) - Nevada west of approximately 117°15'W - counties of Churchill; Douglas; Esmeralda; Humboldt; Lyon; Mineral; Pershing; Storey; Washoe.,36.97,42,-120,-117.01,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
@@ -1342,7 +1342,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2232,USA - New Mexico - SPCS83 - W,United States (USA) - New Mexico west of approximately 107°15'W - counties of Catron; Cibola; Grant; Hidalgo; Luna; McKinley; San Juan; Sierra.,31.33,37,-109.05,-106.88,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2233,USA - New York - SPCS - C,United States (USA) - New York between approximately 77°30'W and 75°15'W - counties of Broome; Cayuga; Chemung; Chenango; Cortland; Jefferson; Lewis; Madison; Oneida; Onondaga; Ontario; Oswego; Schuyler; Seneca; Steuben; Tioga; Tompkins; Wayne; Yates.,42,44.4,-77.75,-75.07,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2234,USA - New York - SPCS - E,United States (USA) - New York mainland east of approximately 75°15'W - counties of Albany; Clinton; Columbia; Delaware; Dutchess; Essex; Franklin; Fulton; Greene; Hamilton; Herkimer; Montgomery; Orange; Otsego; Putnam; Rensselaer; Rockland; Saratoga; Schenectady; Schoharie; St Lawrence; Sullivan; Ulster; Warren; Washington; Westchester.,40.88,45.03,-75.86,-73.25,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
-2235,USA - New York - SPCS - Long island,United States (USA) - New York - counties of Bronx; Kings; Nassau; New York; Queens; Richmond; Suffolk.,40.47,41.31,-74.27,-71.75,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+2235,USA - New York - SPCS - Long island,United States (USA) - New York - counties of Bronx; Kings; Nassau; New York; Queens; Richmond; Suffolk.,40.47,41.31,-74.27,-71.75,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 2236,USA - New York - SPCS - W,United States (USA) - New York west of approximately 77°30'W - counties of Allegany; Cattaraugus; Chautauqua; Erie; Genesee; Livingston; Monroe; Niagara; Orleans; Wyoming.,42,43.64,-79.76,-77.37,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2237,USA - North Dakota - SPCS - N,United States (USA) - North Dakota north of approximately 47°25'N - counties of Benson; Bottineau; Burke; Cavalier; Divide; Eddy; Foster; Grand Forks; Griggs; McHenry; McKenzie; McLean; Mountrial; Nelson; Pembina; Pierce; Ramsey; Renville; Rolette; Sheridan; Steele; Towner; Traill; Walsh; Ward; Wells; Williams.,47.15,49,-104.05,-96.83,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2238,USA - North Dakota - SPCS - S,United States (USA) - North Dakota south of approximately 47°25'N - counties of Adams; Barnes; Billings; Bowman; Burleigh; Cass; Dickey; Dunn; Emmons; Golden Valley; Grant; Hettinger; Kidder; La Moure; Logan; McIntosh; Mercer; Morton; Oliver; Ransom; Richland; Sargent; Sioux; Slope; Stark; Stutsman.,45.93,47.81,-104.05,-96.57,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
@@ -1354,8 +1354,8 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2244,USA - Oregon - SPCS - S,United States (USA) - Oregon south of approximately 44°15'N - counties of Coos; Crook; Curry; Deschutes; Douglas; Harney; Jackson; Josephine; Klamath; Lake; Lane; Malheur.,42,44.56,-124.6,-116.88,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2245,USA - Pennsylvania - SPCS - N,United States (USA) - Pennsylvania north of approximately 40°50'N - counties of Bradford; Cameron; Carbon; Centre; Clarion; Clearfield; Clinton; Columbia; Crawford; Elk; Erie; Forest; Jefferson; Lackawanna; Luzerne; Lycoming; McKean; Mercer; Monroe; Montour; Northumberland; Pike; Potter; Sullivan; Susquehanna; Tioga; Union; Venango; Warren; Wayne; Wyoming.,40.6,42.51,-80.52,-74.69,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2246,USA - Pennsylvania - SPCS - S,United States (USA) - Pennsylvania south of approximately 40°50'N - counties of Adams; Allegheny; Armstrong; Beaver; Bedford; Berks; Blair; Bucks; Butler; Cambria; Chester; Cumberland; Dauphin; Delaware; Fayette; Franklin; Fulton; Greene; Huntingdon; Indiana; Juniata; Lancaster; Lawrence; Lebanon; Lehigh; Mifflin; Montgomery; Northampton; Perry; Philadelphia; Schuylkill; Snyder; Somerset; Washington; Westmoreland; York.,39.71,41.18,-80.52,-74.72,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
-2247,USA - South Carolina - SPCS27 - N,United States (USA) - South Carolina - counties of Abbeville; Anderson; Calhoun; Cherokee; Chester; Chesterfield; Darlington; Dillon; Edgefield; Fairfield; Florence; Greenville; Greenwood; Horry; Kershaw; Lancaster; Laurens; Lee; Lexington; Marion; Marlboro; McCormick; Newberry; Oconee; Pickens; Richland; Saluda; Spartanburg; Sumter; Union; York.,33.53,35.21,-83.36,-78.5,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2248,USA - South Carolina - SPCS27 - S,United States (USA) - South Carolina - counties of Aiken; Allendale; Bamberg; Barnwell; Beaufort; Berkeley; Charleston; Clarendon; Colleton; Dorchester; Georgetown; Hampton; Jasper; Orangeburg; Williamsburg.,32,33.95,-82.02,-78.9,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+2247,USA - South Carolina - SPCS27 - N,United States (USA) - South Carolina - counties of Abbeville; Anderson; Calhoun; Cherokee; Chester; Chesterfield; Darlington; Dillon; Edgefield; Fairfield; Florence; Greenville; Greenwood; Horry; Kershaw; Lancaster; Laurens; Lee; Lexington; Marion; Marlboro; McCormick; Newberry; Oconee; Pickens; Richland; Saluda; Spartanburg; Sumter; Union; York.,33.53,35.21,-83.36,-78.5,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2248,USA - South Carolina - SPCS27 - S,United States (USA) - South Carolina - counties of Aiken; Allendale; Bamberg; Barnwell; Beaufort; Berkeley; Charleston; Clarendon; Colleton; Dorchester; Georgetown; Hampton; Jasper; Orangeburg; Williamsburg.,32,33.95,-82.02,-78.9,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 2249,USA - South Dakota - SPCS - N,United States (USA) - South Dakota north of approximately 44°20'N - counties of Beadle; Brookings; Brown; Butte; Campbell; Clark; Codington; Corson; Day; Deuel; Dewey; Edmunds; Faulk; Grant; Hamlin; Hand; Harding; Hyde; Kingsbury; Lawrence; Marshall; McPherson; Meade; Perkins; Potter; Roberts; Spink; Sully; Walworth; Ziebach.,44.14,45.94,-104.07,-96.46,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2250,USA - South Dakota - SPCS - S,United States (USA) - South Dakota south of approximately 44°20'N - counties of Aurora; Bennett; Bon Homme; Brule; Buffalo; Charles Mix; Clay; Custer; Davison; Douglas; Fall River; Gregory; Haakon; Hanson; Hughes; Hutchinson; Jackson; Jerauld; Jones; Lake; Lincoln; Lyman; McCook; Mellette; Miner; Minnehaha; Moody; Pennington; Sanborn; Shannon; Stanley; Todd; Tripp; Turner; Union; Yankton.,42.49,44.78,-104.07,-96.46,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2251,Caribbean - Puerto Rico and the US Virgin Islands,Puerto Rico and Virgin Islands (US).,17.68,18.52,-67.27,-64.56,,,,,,OGP,OGP,22-04-99,,FALSE
@@ -1388,16 +1388,16 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2386,Greenland - Hayes Peninsula,Greenland - Hayes Peninsula.,76,80,-70,-60,,,,,,OGP,OGP,18-10-96,,FALSE
 2387,USA - Alaska - Aleutian Islands east of 180°E,United States (USA) - Alaska - Aleutian Islands east of 180°E.,51.2,55.05,-180,-163.05,,,,,,OGP,OGP,24-09-08,2008.045 2008.054 2008.070,FALSE
 2388,USA - Alaska - Aleutian Islands west of 180°W,United States (USA) - Alaska - Aleutian Islands west of 180°W.,51.35,52.13,172.4,180,,,,,,OGP,OGP,24-09-08,2008.045 2008.054 2008.070,FALSE
-2389,USA - conus east of Mississippi River,United States (USA) - CONUS east of Mississippi River including Louisiana; Missouri; Minnesota.,24.53,48.72,-94.41,-67.07,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2390,USA - conus west of Mississippi River,United States (USA) - CONUS west of Mississippi River.,25.83,49.39,-124.85,-89.1,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+2389,USA - conus east of Mississippi River,United States (USA) - CONUS east of Mississippi River including Louisiana; Missouri; Minnesota.,24.53,48.72,-94.41,-67.07,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2390,USA - conus west of Mississippi River,United States (USA) - CONUS west of Mississippi River.,25.83,49.39,-124.85,-89.1,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 2391,Oman - Masirah Island,Oman - Masirah Island.,20,20.9,58.5,59.5,,,,,,OGP,OGP,18-10-96,,FALSE
-2392,UAE - Abu al Bu Khoosh,United Arab Emirates (UAE) - Abu Dhabi offshore - Abu al Bu Khoosh.,25.33,25.5,53,53.33,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+2392,UAE - Abu al Bu Khoosh,United Arab Emirates (UAE) - Abu Dhabi offshore - Abu al Bu Khoosh.,25.33,25.5,53,53.33,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 2393,Algeria - Hassi Messaoud,Algeria - Hassi Messaoud.,31.5,32,5.5,6.5,,,,,,OGP,OGP,23-06-00,,FALSE
-2394,UK - Great Britain and UKCS,United Kingdom (UKCS) - Great Britain (GB) - England; Scotland; Wales; UKCS including North Sea.,49.15,63.83,-6,3.4,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2395,UK - England,United Kingdom (UK) - England.,49.94,55.81,-6.37,1.78,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2396,UK - England; Wales; Isle of Man,United Kingdom (UK) - England; Wales; Isle of Man.,49.94,55.81,-6.37,1.78,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2397,UK - Scotland,United Kingdom (UK) - Scotland (including Orkney and Shetland Islands).,54.62,58.67,-7.67,-0.72,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2398,UK - Wales,United Kingdom (UK) - Wales.,51.37,53.43,-5.34,-2.64,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+2394,UK - Great Britain and UKCS,United Kingdom (UKCS) - Great Britain (GB) - England; Scotland; Wales; UKCS including North Sea.,49.15,63.83,-6,3.4,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2395,UK - England,United Kingdom (UK) - England.,49.94,55.81,-6.37,1.78,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2396,UK - England; Wales; Isle of Man,United Kingdom (UK) - England; Wales; Isle of Man.,49.94,55.81,-6.37,1.78,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2397,UK - Scotland,United Kingdom (UK) - Scotland (including Orkney and Shetland Islands).,54.62,58.67,-7.67,-0.72,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2398,UK - Wales,United Kingdom (UK) - Wales.,51.37,53.43,-5.34,-2.64,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 2399,South America - Bolivia; Chile; Colombia; Ecuador; Guyana; Peru; Venezuela,Bolivia; Chile; Colombia; Ecuador; Guyana; Peru; Venezuela.,-17.8,12.5,-82,-57,,,,,,OGP,OGP,18-10-96,,FALSE
 2400,Bolivia - Madidi,Bolivia - Madidi.,-21.8,-21.5,-64,-63.67,,,,,,OGP,OGP,19-10-00,,FALSE
 2401,Bolivia - Block 20,Bolivia - Block 20.,-21.8,-21.5,-64,-63.67,,,,,,OGP,OGP,19-10-00,,FALSE
@@ -1411,7 +1411,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2409,Asia - Japan and South Korea,Japan; South Korea; Okinawa.,24.25,45.49,123.68,145.81,,,,,,OGP,OGP,18-10-96,,FALSE
 2410,Canada - NWT; Nunavut; Saskatchewan,Canada - Northwest Territories (NWT); Nunavut; Saskatchewan.,49,83.11,-136.45,-61.08,,,,,,OGP,OGP,18-10-96,,FALSE
 2411,Asia - India and Nepal,India; Nepal.,6.75,35.51,68.14,97.38,,,,,,OGP,OGP,20-10-99,,FALSE
-2412,USA - Alaska mainland,United States (USA) - Alaska mainland.,54.35,71.35,-173.11,-129.99,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+2412,USA - Alaska mainland,United States (USA) - Alaska mainland.,54.35,71.35,-173.11,-129.99,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 2413,Bahamas (Except San Salvador Island),Bahamas (Except San Salvador Island).,20.37,30.48,-80.95,-70.67,,,,,,OGP,OGP,18-10-96,,FALSE
 2414,Bahamas (San Salvador Island),Bahamas (San Salvador Island).,23.94,24.13,-74.57,-74.42,,,,,,OGP,OGP,18-10-96,,FALSE
 2415,Canada - Manitoba and Ontario,Canada - Manitoba; Ontario.,41.68,60,-102,-74.32,,,,,,OGP,OGP,18-10-96,,FALSE
@@ -1423,7 +1423,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2421,Europe - west central (by country),Austria; Denmark; France; Germany (west); Netherlands; Switzerland.,42.5,57.5,-4.6,22.5,,,,,,OGP,OGP,18-10-96,,FALSE
 2422,Slovenia - Gorenjska - central,Slovenia - central Gorenjska (Upper Carniola) with part of the Kamnik or Savinja Alps.,46.1,46.45,14.06,14.62,,,,,,"Geodetska uprava Republike Slovenije, http://www.gu.gov.si",OGP,20-07-08,,FALSE
 2423,Europe - FSU,Armenia; Azerbaijan; Belarus; Estonia; Georgia; Kazakhstan; Kyrgyzstan; Latvia; Lithuania; Moldova; Russian Federation; Tajikistan; Turkmenistan; Ukraine; Uzbekistan.,35.15,82,19.2,-168.98,,,,,Area crosses 180-degree meridian.,OGP,OGP,17-07-08,,FALSE
-2424,USA - HARN,American Samoa; Puerto Rico and the Virgin Islands; United States (USA) - Alabama; Alaska; Arizona; Arkansas; California; Colorado; Connecticut; Delaware; Florida; Georgia; Hawaii; Idaho; Illinois; Indiana; Iowa; Kansas; Kentucky; Louisiana; Maine; Maryland; Massachusetts; Michigan; Minnesota; Mississippi; Missouri; Montana; Nebraska; Nevada; New Hampshire; New Jersey; New Mexico; New York; North Carolina; North Dakota; Ohio; Oklahoma; Oregon; Pennsylvania; Rhode Island; South Carolina; South Dakota; Tennessee; Texas; Utah; Vermont; Virginia; Washington; West Virginia; Wisconsin; Wyoming.,,,,,,,,,,OGP,OGP,24-09-08,2008.07,TRUE
+2424,USA - HARN,American Samoa; Puerto Rico and the Virgin Islands; United States (USA) - Alabama; Alaska; Arizona; Arkansas; California; Colorado; Connecticut; Delaware; Florida; Georgia; Hawaii; Idaho; Illinois; Indiana; Iowa; Kansas; Kentucky; Louisiana; Maine; Maryland; Massachusetts; Michigan; Minnesota; Mississippi; Missouri; Montana; Nebraska; Nevada; New Hampshire; New Jersey; New Mexico; New York; North Carolina; North Dakota; Ohio; Oklahoma; Oregon; Pennsylvania; Rhode Island; South Carolina; South Dakota; Tennessee; Texas; Utah; Vermont; Virginia; Washington; West Virginia; Wisconsin; Wyoming.,,,,,,,,,,OGP,OGP,24-09-08,2008.070,TRUE
 2425,Japan - 45°20'N to 46°N; 141°E to 142°E,Japan - 45°20'N to 46°N; 141°E to 142°E.,45.33,46,141,142,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 2426,Japan - 45°20'N to 46°N; 142°E to 143°E,Japan - 45°20'N to 46°N; 142°E to 143°E.,45.33,46,142,143,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 2427,Japan - 44°40'N to 45°20'N; 141°E to 142°E,Japan - 44°40'N to 45°20'N; 141°E to 142°E.,44.67,45.33,141,142,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
@@ -1529,7 +1529,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2527,USA - Texas - SPCS83 - SC,United States (USA) - Texas between approximately 30°10'N and 28°05'N - counties of Aransas; Atascosa; Austin; Bandera; Bee; Bexar; Brazoria; Brewster; Caldwell; Calhoun; Chambers; Colorado; Comal; De Witt; Dimmit; Edwards; Fayette; Fort Bend; Frio; Galveston; Goliad; Gonzales; Guadalupe; Harris; Hays; Jackson; Jefferson; Karnes; Kendall; Kerr; Kinney; La Salle; Lavaca; Live Oak; Matagorda; Maverick; McMullen; Medina; Presidio; Real; Refugio; Terrell; Uvalde; Val Verde; Victoria; Waller; Wharton; Wilson; Zavala.,27.82,30.66,-105,-93.83,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2528,USA - Texas - SPCS83 - S,United States (USA) - Texas south of approximately 28°05'N - counties of Brooks; Cameron; Duval; Hidalgo; Jim Hogg; Jim Wells; Kenedy; Kleberg; Nueces; San Patricio; Starr; Webb; Willacy; Zapata.,25.83,28.2,-100.2,-97.12,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 2529,USA - Louisiana - SPCS83 - S,United States (USA) - Louisiana south of approximately 30°55'N - counties of Acadia; Allen; Ascension; Assumption; Beauregard; Calcasieu; Cameron; East Baton Rouge; East Feliciana; Evangeline; Iberia; Iberville; Jefferson; Jefferson Davis; Lafayette; LaFourche; Livingston; Orleans; Plaquemines; Pointe Coupee; St Bernard; St Charles; St Helena; St James; St John the Baptist; St Landry; St Martin; St Mary; St Tammany; Tangipahoa; Terrebonne; Vermilion; Washington; West Baton Rouge; West Feliciana.,28.88,31.02,-93.93,-88.81,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
-2530,UK - Northern Ireland - onshore,United Kingdom (UK) - Northern Ireland (Ulster) - onshore.,54.01,55.31,-8.2,-5.42,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+2530,UK - Northern Ireland - onshore,United Kingdom (UK) - Northern Ireland (Ulster) - onshore.,54.01,55.31,-8.2,-5.42,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 2531,Denmark - Jutland and Fuen,Denmark - Jutland and Fuen.,54.73,57.75,8.09,11.2,,,,,,OGP,OGP,06-11-01,,FALSE
 2532,Denmark - Zealand and Lolland,Denmark - Zealand and Lolland.,54.56,56.13,10.88,12.62,,,,,,OGP,OGP,06-11-01,,FALSE
 2533,Denmark - Bornholm,Denmark - Bornholm.,54.99,55.31,14.68,15.15,,,,,,OGP,OGP,06-11-01,,FALSE
@@ -1546,7 +1546,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2544,Germany - Thuringen,Germany - Thuringen.,50.19,51.65,9.87,12.65,,,,,,OGP,OGP,06-11-01,,FALSE
 2545,Germany - Sachsen,Germany - Sachsen.,50.15,51.69,11.87,15.05,,,,,,OGP,OGP,06-11-01,,FALSE
 2546,Romania - offshore,Romania - offshore.,43.62,45.2,28.56,31.5,,,,,,OGP,OGP,06-11-01,,FALSE
-2547,Serbia and Montenegro - Montenegro,Serbia and Montenegro - Montenegro.,41.82,43.53,18.44,20.37,,,,,,OGP,OGP,03-02-06,2005.89,TRUE
+2547,Serbia and Montenegro - Montenegro,Serbia and Montenegro - Montenegro.,41.82,43.53,18.44,20.37,,,,,,OGP,OGP,03-02-06,2005.890,TRUE
 2548,Africa - AOF west of 10°W,"French West Africa west of 10°W - Guinea, Mauritania, Senegal.",8.3,26,-17.5,-10,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 2549,Africa - AOF 10°W to 3.5°W,"French West Africa between 10°W and 3°30'W - Burkina Faso, Côte d'Ivoire (Ivory Coast), Guinea, Mali, Mauritania.",4.25,27.3,-10,-3.5,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 2550,Africa - AOF 3.5°W to 4°E,"French West Africa between 3°30'W and 4°E - Benin, Burkina Faso, Mali, Niger, Togo.",6,24.3,-3.5,4,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
@@ -1778,30 +1778,30 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2776,Asia - FSU - CS63 zone K2,Kazakhstan between 49°16'E and 52°16'E.,40.59,55.44,49.27,52.27,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 2777,Asia - FSU - CS63 zone K3,Kazakhstan between 52°16'E and 55°16'E.,40.59,51.2,52.27,55.27,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 2778,Asia - FSU - CS63 zone K4,Kazakhstan between 55°16'E and 58°16'E.,40.59,51.2,55.27,58.27,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
-2779,Portugal - Selvagens,Portugal - Selvagens islands (Madeira province).,30.1,30.2,-15.9,-15.8,,,,,,OGP,OGP,14-08-03,2003.23,FALSE
+2779,Portugal - Selvagens,Portugal - Selvagens islands (Madeira province).,30.1,30.2,-15.9,-15.8,,,,,,OGP,OGP,14-08-03,2003.230,FALSE
 2780,Malaysia - East Malaysia - offshore,Malaysia - East Malaysia (Sabah; Sarawak) - offshore.,1.5,12,109.5,119,,,,,,OGP,OGP,13-07-02,,FALSE
 2781,Iran - Kharg Island,Iran - Kharg Island.,29,29.33,50.15,50.4,,,,,,OGP,OGP,13-07-02,,FALSE
 2782,Iran - Lavan Island and Balal field,Iran - Lavan Island and Balal field.,26.2,26.8,52.4,53.3,,,,,,OGP,OGP,13-07-02,,FALSE
 2783,Iran - South Pars blocks 2 and 3,Iran - South Pars field phases 2 and 3.,26.55,26.75,52.05,52.3,,,,,,OGP,OGP,13-07-02,,FALSE
 2784,Canada - south of 60°N,"Canada south of 60°N - Alberta, British Columbia (BC), Manitoba, New Brunswick (NB), Newfoundland and Labrador, Nova Scotia (NS), Ontario, Prince Edward Island (PEI), Quebec and Saskatchewan.",41.68,60,-139.05,-52.62,,,,,,OGP,OGP,23-06-08,2006.461 2008.045,TRUE
-2785,Libya - Murzuq and En Naga,Libya - Murzuq and En Naga fields.,24,28,13,19,,,,,,OGP,OGP,14-04-05,2004.7,FALSE
+2785,Libya - Murzuq and En Naga,Libya - Murzuq and En Naga fields.,24,28,13,19,,,,,,OGP,OGP,14-04-05,2004.700,FALSE
 2786,Libya - Mabruk,Libya - Mabruk field.,29.6,29.9,17.2,17.5,,,,,,OGP,OGP,16-07-02,,FALSE
 2787,Morocco - south of 31.5°N,Morocco south of 35 grads North (31°30'N).,27.67,31.5,-13.1,-3.5,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 2788,Western Sahara - north of 24.3°N,Western Sahara - north of 27grads North (24°18'N).,24.3,27.68,-20.36,-8.67,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 2789,Western Sahara - south of 24.3°N,Western Sahara - south of 27grads North (24°18'N).,20.78,24.3,-20.36,-8.67,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 2790,Africa - 12th parallel N,"Senegal - central, Mali - southwest, Burkina Faso - central, Niger - southwest, Nigeria - north, Chad - central. All in proximity to the parallel of latitude of 12°N.",10,14,-16.81,22.97,,,,,,OGP,OGP,05-07-08,2008.054,FALSE
 2791,Africa - Burkina Faso and SW Niger,"Burkina Faso - central; Niger - southwest, in proximity to the parallel of latitude of 12°N.",9.4,15.71,-5.52,4.63,,,,,,OGP,OGP,19-09-02,,FALSE
-2792,UK - Great Britain mainland,United Kingdom (UK) - Great Britain - England and Wales - mainland; Scotland - mainland and Inner Hebrides.,49.94,58.67,-6.24,1.78,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2793,UK - Orkney Islands,United Kingdom (UK) - Great Britain - Scotland - Orkney Islands.,58.72,59.4,-3.44,-2.36,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2794,UK - Fair Isle,United Kingdom (UK) - Great Britain - Scotland - Fair Isle.,59.51,59.55,-1.66,-1.59,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2795,UK - Shetland Islands,United Kingdom (UK) - Great Britain - Scotland - Shetland Islands.,59.84,60.85,-2.12,-0.72,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2796,UK - Foula,United Kingdom (UK) - Great Britain - Scotland - Foula.,60.1,60.16,-2.12,-2.03,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2797,UK - Sule Skerry,United Kingdom (UK) - Great Britain - Scotland - Sule Skerry.,59.06,59.08,-6.04,-6.03,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2798,UK - North Rona,United Kingdom (UK) - Great Britain - Scotland - North Rona.,59.08,59.13,-5.98,-5.95,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2799,UK - Outer Hebrides,United Kingdom (UK) - Great Britain - Scotland - Outer Hebrides.,56.77,58.52,-7.67,-6.13,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2800,UK - St. Kilda,United Kingdom (UK) - Great Britain - Scotland - St Kilda.,-8.65,-8.56,57.79,57.84,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2801,UK - Flannan Isles,United Kingdom (UK) - Great Britain - Scotland - Flannan Isles.,58.28,58.3,-7.6,-7.57,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2802,UK - Scilly Isles,United Kingdom (UK) - Great Britain - England - Isles of Scilly.,49.86,49.98,-6.37,-6.24,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+2792,UK - Great Britain mainland,United Kingdom (UK) - Great Britain - England and Wales - mainland; Scotland - mainland and Inner Hebrides.,49.94,58.67,-6.24,1.78,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2793,UK - Orkney Islands,United Kingdom (UK) - Great Britain - Scotland - Orkney Islands.,58.72,59.4,-3.44,-2.36,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2794,UK - Fair Isle,United Kingdom (UK) - Great Britain - Scotland - Fair Isle.,59.51,59.55,-1.66,-1.59,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2795,UK - Shetland Islands,United Kingdom (UK) - Great Britain - Scotland - Shetland Islands.,59.84,60.85,-2.12,-0.72,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2796,UK - Foula,United Kingdom (UK) - Great Britain - Scotland - Foula.,60.1,60.16,-2.12,-2.03,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2797,UK - Sule Skerry,United Kingdom (UK) - Great Britain - Scotland - Sule Skerry.,59.06,59.08,-6.04,-6.03,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2798,UK - North Rona,United Kingdom (UK) - Great Britain - Scotland - North Rona.,59.08,59.13,-5.98,-5.95,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2799,UK - Outer Hebrides,United Kingdom (UK) - Great Britain - Scotland - Outer Hebrides.,56.77,58.52,-7.67,-6.13,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2800,UK - St. Kilda,United Kingdom (UK) - Great Britain - Scotland - St Kilda.,-8.65,-8.56,57.79,57.84,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2801,UK - Flannan Isles,United Kingdom (UK) - Great Britain - Scotland - Flannan Isles.,58.28,58.3,-7.6,-7.57,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2802,UK - Scilly Isles,United Kingdom (UK) - Great Britain - England - Isles of Scilly.,49.86,49.98,-6.37,-6.24,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 2803,Isle of Man,Isle of Man.,54.04,54.42,-4.83,-4.31,,IM,IMN,833,,OGP,OGP,24-09-08,2007.072 2008.070,FALSE
 2804,Europe - Austria and FR Yugoslavia,Austria; Boznia and Herzegovina; Croatia; Czech Republic; FYR Macedonia; Montenegro; Serbia; Slovakia; Slovenia.,40.86,51.05,9.53,23.03,,,,,,OGP,OGP,13-08-07,2007.072,TRUE
 2805,Chile - Tierra del Fuego,Chile - Tierra del Fuego.,-55.9,-48.64,-75.64,-66.52,,,,,,OGP,OGP,19-09-02,,FALSE
@@ -1812,22 +1812,22 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2810,French Polynesia - Marquises Islands - Nuku Hiva,French Polynesia - Marquises Islands - Nuku Hiva.,-9,-8.75,-140.25,-139.95,,,,,,OGP,OGP,29-11-02,,FALSE
 2811,French Polynesia - Society Islands - Moorea and Tahiti,French Polynesia - Society Islands - Moorea and Tahiti.,-17.91,-17.45,-149.96,-149.07,,,,,,OGP,OGP,29-11-02,,FALSE
 2812,"French Polynesia - Society Islands - Bora Bora, Huahine, Raiatea, Tahaa","French Polynesia - Society Islands - Bora Bora, Huahine, Raiatea and Tahaa.",-16.95,-16.62,-151.8,-150.9,,,,,,OGP,OGP,29-11-02,,FALSE
-2813,New Caledonia - Ouvea,New Caledonia - Loyalty Islands - Ouvea.,-20.75,-20.35,166.35,166.7,,,,,,OGP,OGP,25-07-06,2006.62,FALSE
-2814,New Caledonia - Lifou,New Caledonia - Loyalty Islands - Lifou.,-21.2,-20.7,167,167.5,,,,,,OGP,OGP,25-07-06,2006.62,FALSE
+2813,New Caledonia - Ouvea,New Caledonia - Loyalty Islands - Ouvea.,-20.75,-20.35,166.35,166.7,,,,,,OGP,OGP,25-07-06,2006.620,FALSE
+2814,New Caledonia - Lifou,New Caledonia - Loyalty Islands - Lifou.,-21.2,-20.7,167,167.5,,,,,,OGP,OGP,25-07-06,2006.620,FALSE
 2815,Wallis and Futuna - Wallis,Wallis and Futuna - Wallis.,-14,-13,-177,-176,,,,,,OGP,OGP,29-11-02,,FALSE
 2816,French Southern Territories - Kerguelen,French Southern Territories - Kerguelen.,-49.75,-48.5,68.5,70.6,,,,,,OGP,OGP,29-11-02,,FALSE
 2817,Antarctica - Adelie Land - Petrels island,Antarctica - Adelie Land - Petrels island.,-66.9,-66.5,139.5,140.5,,,,,,OGP,OGP,29-11-02,,FALSE
 2818,Antarctica - Adelie Land,Antarctica - Adelie Land.,-68,-66,135,142,,,,,,OGP,OGP,29-11-02,,FALSE
-2819,New Caledonia - Mare,New Caledonia - Loyalty Islands - Mare.,-21.7,-21.3,167.75,168.15,,,,,,OGP,OGP,25-07-06,2006.62,FALSE
+2819,New Caledonia - Mare,New Caledonia - Loyalty Islands - Mare.,-21.7,-21.3,167.75,168.15,,,,,,OGP,OGP,25-07-06,2006.620,FALSE
 2820,New Caledonia - Ile des Pins,New Caledonia - Ile des Pins.,-22.75,-22.5,167.3,167.55,,,,,,OGP,OGP,29-11-02,,FALSE
 2821,New Caledonia - Belep,New Caledonia - Belep.,-19.85,-19.54,163.55,163.7,,,,,,OGP,OGP,29-11-02,,FALSE
-2822,New Caledonia - Grande Terre,New Caledonia - Grande Terre.,-22.5,-20,163.9,167.1,,,,,,OGP,OGP,14-08-03,2003.24,FALSE
-2823,New Caledonia - Grande Terre - Noumea,New Caledonia - Grande Terre - Noumea district.,-22.35,-22.1,166.3,166.5,,,,,,OGP,OGP,14-08-03,2003.24,FALSE
+2822,New Caledonia - Grande Terre,New Caledonia - Grande Terre.,-22.5,-20,163.9,167.1,,,,,,OGP,OGP,14-08-03,2003.240,FALSE
+2823,New Caledonia - Grande Terre - Noumea,New Caledonia - Grande Terre - Noumea district.,-22.35,-22.1,166.3,166.5,,,,,,OGP,OGP,14-08-03,2003.240,FALSE
 2824,Caribbean - French Antilles,French Antilles - Guadeloupe and Martinique.,14.4,16.51,-61.8,-60.82,,,,,,OGP,OGP,22-04-99,,FALSE
-2825,Africa - Ethiopia and Sudan - 30°E to 36°E,Ethiopia - west of 36°E. Sudan - between 30°E and 36°E.,3.41,22.23,30,36,,,,,,OGP,OGP,23-06-08,2002.81,FALSE
-2826,Sudan - west of 24°E,Sudan - west of 24°E.,8.68,15.77,21.84,24,,,,,,OGP,OGP,23-06-08,2002.81,FALSE
-2827,Sudan - 24°E to 30°E,Sudan - between 24°E and 30°E.,4.2,22,24,30,,,,,,OGP,OGP,23-06-08,2002.81,FALSE
-2828,Guadeloupe - St Martin and St Barthelemy,Guadeloupe - St Martin and St Barthélemy islands.,17.65,18.2,-63.18,-62.7,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+2825,Africa - Ethiopia and Sudan - 30°E to 36°E,Ethiopia - west of 36°E. Sudan - between 30°E and 36°E.,3.41,22.23,30,36,,,,,,OGP,OGP,23-06-08,2002.810,FALSE
+2826,Sudan - west of 24°E,Sudan - west of 24°E.,8.68,15.77,21.84,24,,,,,,OGP,OGP,23-06-08,2002.810,FALSE
+2827,Sudan - 24°E to 30°E,Sudan - between 24°E and 30°E.,4.2,22,24,30,,,,,,OGP,OGP,23-06-08,2002.810,FALSE
+2828,Guadeloupe - St Martin and St Barthelemy,Guadeloupe - St Martin and St Barthélemy islands.,17.65,18.2,-63.18,-62.7,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 2829,Guadeloupe - Grande-Terre and surrounding islands,"Guadeloupe - Basse-Terre, Grande-Terre, La Desirade, Marie-Galante, Les Saintes.",14.35,16.51,-61.8,-60.75,,,,,,OGP,OGP,17-09-08,2008.087,FALSE
 2830,World (by country),"World: Afghanistan, Albania, Algeria, American Samoa, Andorra, Angola, Anguilla, Antarctica, Antigua and Barbuda, Argentina, Armenia, Aruba, Australia, Austria, Azerbaijan, Bahamas, Bahrain, Bangladesh, Barbados, Belgium, Belgium, Belize, Benin, Bermuda, Bhutan, Bolivia, Bosnia and Herzegovina, Botswana, Bouvet Island, Brazil, British Indian Ocean Territory, British Virgin Islands, Brunei Darussalam, Bulgaria, Burkina Faso, Burundi, Cambodia, Cameroon, Canada, Cape Verde, Cayman Islands, Central African Republic, Chad, Chile, China, Christmas Island, Cocos (Keeling) Islands, Comoros, Congo, Cook Islands, Costa Rica, Côte d'Ivoire (Ivory Coast), Croatia, Cuba, Cyprus, Czech Republic, Denmark, Djibouti, Dominica, Dominican Republic, East Timor, Ecuador, Egypt, El Salvador, Equatorial Guinea, Eritrea, Estonia, Ethiopia, Falkland Islands (Malvinas), Faroe Islands, Fiji, Finland, France, French Guiana, French Polynesia, French Southern Territories, Gabon, Gambia, Georgia, Germany, Ghana, Gibraltar, Greece, Greenland, Grenada, Guadeloupe, Guam, Guatemala, Guinea, Guinea-Bissau, Guyana, Haiti, Heard Island and McDonald Islands, Holy See (Vatican City State), Honduras, China - Hong Kong, Hungary, Iceland, India, Indonesia, Islamic Republic of Iran, Iraq, Ireland, Israel, Italy, Jamaica, Japan, Jordan, Kazakhstan, Kenya, Kiribati, Democratic People's Republic of Korea (North Korea), Republic of Korea (South Korea), Kuwait, Kyrgyzstan, Lao People's Democratic Republic (Laos), Latvia, Lebanon, Lesotho, Liberia, Libyan Arab Jamahiriya, Liechtenstein, Lithuania, Luxembourg, China - Macao, The Former Yugoslav Republic of Macedonia, Madagascar, Malawi, Malaysia, Maldives, Mali, Malta, Marshall Islands, Martinique, Mauritania, Mauritius, Mayotte, Mexico, Federated States of Micronesia, Monaco, Mongolia, Montenegro, Montserrat, Morocco, Mozambique, Myanmar (Burma), Namibia, Nauru, Nepal, Netherlands, Netherlands Antilles, New Caledonia, New Zealand, Nicaragua, Niger, Nigeria, Niue, Norfolk Island, Northern Mariana Islands, Norway, Oman, Pakistan, Palau, Panama, Papua New Guinea (PNG), Paraguay, Peru, Philippines, Pitcairn, Poland, Portugal, Puerto Rico, Qatar, Reunion, Romania, Russian Federation, Rwanda, Saint Kitts and Nevis, Saint Lucia, Saint Vincent and the Grenadines, Samoa, San Marino, Sao Tome and Principe, Saudi Arabia, Senegal, Serbia, Seychelles, Sierra Leone, Singapore, Slovakia (Slovak Republic), Slovenia, Solomon Islands, Somalia, South Africa, South Georgia and the South Sandwich Islands, Spain, Sri Lanka, Saint Helena, Saint Pierre and Miquelon, Sudan, Suriname, Svalbard and Jan Mayen, Swaziland, Sweden, Switzerland, Syrian Arab Republic, Taiwan, Tajikistan, United Republic of Tanzania, Thailand, The Democratic Republic of the Congo (Zaire), Togo, Tokelau, Tonga, Trinidad and Tobago, Tunisia, Turkey, Turkmenistan, Turks and Caicos Islands, Tuvalu, Uganda, Ukraine, United Arab Emirates (UAE), United Kingdom (UK), United States (USA), United States Minor Outlying Islands, Uruguay, Uzbekistan, Vanuatu, Venezuela, Vietnam, US Virgin Islands, Wallis and Futuna, Western Sahara, Yemen, Zambia, Zimbabwe.",-90,90,-180,180,,,,,,OGP,OGP,05-07-08,2007.072 2008.053 2008.054,FALSE
 2831,Canada - Atlantic offshore,"Canada - offshore Newfoundland and Labrador, New Brunswick (NB) and Nova Scotia (NS).",40,62,-65,-44,,,,,,OGP,OGP,25-02-03,,FALSE
@@ -1890,9 +1890,9 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2888,Italy - Sicily Strait west of 13°E,Italy - offshore - Strait of Sicily - west of 13°E (of Greenwich).,36.5,38.5,10,13,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 2889,New Zealand - Chatham Islands,New Zealand - Chatham Islands.,-45,-43,-178,-175,,,,,,LINZ,OGP,04-04-08,2008.023,FALSE
 2890,Guadeloupe - St Martin,Guadeloupe - St Martin island.,18,18.2,-63.18,-62.7,,,,,,OGP,OGP,15-03-04,,FALSE
-2891,Guadeloupe - St Barthelemy,Guadeloupe - St Barthelemy island.,17.65,17.95,-62.95,-62.7,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+2891,Guadeloupe - St Barthelemy,Guadeloupe - St Barthelemy island.,17.65,17.95,-62.95,-62.7,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 2892,Guadeloupe - Grande-Terre and Basse-Terre,Guadeloupe - Basse-Terre and Grande-Terre.,15.9,16.51,-61.8,-61.21,,,,,,OGP,OGP,31-01-03,,FALSE
-2893,Guadeloupe - La Desirade,Guadeloupe - La Desirade.,16.34,16.35,-61.19,-61,,,,,,OGP,OGP,24-09-08,2008.08,FALSE
+2893,Guadeloupe - La Desirade,Guadeloupe - La Desirade.,16.34,16.35,-61.19,-61,,,,,,OGP,OGP,24-09-08,2008.080,FALSE
 2894,Guadeloupe - Marie-Galante,Guadeloupe - Marie-Galante.,15.79,16,-61.3,-61.2,,,,,,OGP,OGP,31-01-03,,FALSE
 2895,Guadeloupe - Les Saintes,Guadeloupe - Les Saintes.,15.79,15.8,-61.64,-61.6,,,,,,OGP,OGP,31-01-03,,FALSE
 2896,"Asia - Middle East - Israel, Palestine Territory, Turkey - offshore",Asia - Middle East - Israel and Palestine Territory - offshore Mediterranean Sea; Turkey - offshore Black Sea.,31.33,42.5,28.15,41.5,,,,,,OGP,OGP,22-06-02,,FALSE
@@ -1988,8 +1988,10 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 2986,Australia - South Australia,Australia - South Australia (SA).,-38.4,-26,129,141,,,,,,OGP,OGP,20-10-04,,FALSE
 2987,Libya - Amal,Libya - Amal field.,29.2,29.6,21,21.3,,,,,,OGP,OGP,02-11-04,,FALSE
 2988,"Channel Islands - Jersey, Les Ecrehos and Les Minquiers","Channel Islands - Jersey, Les Ecrehos and Les Minquiers.",48.93,49.34,-2.3,-1.98,,,,,,OGP,OGP,24-09-08,2007.072 2008.070,FALSE
-2989,"Channel Islands - Guernsey, Alderney, Sark","Channel Islands - Guernsey, Alderney, Sark, Herm, Brecqhou, Jethou, Lihou.",49.4,49.75,-2.75,-2.13,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-2990,Australia - Queensland - Brisbane,"Australia - Queensland (Qld) - Brisbane area:- local authorities in south-east Queensland: Gold Coast, Logan, Beaudesert, Redcliffe, Redlands, Pine Rivers, Caboolture,Caloundra, Maroochy, Noosa, Maryborough; local authorities in north-east NSW: Tweed, Byron, Lismore, Ballina and Richmond Valley.",-29,-25,152.3,153.7,,,,,,OGP,OGP,15-08-01,,FALSE
+2989,"Channel Islands - Guernsey, Alderney, Sark","Channel Islands - Guernsey, Alderney, Sark, Herm, Brecqhou, Jethou, Lihou.",49.4,49.75,-2.75,-2.13,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+2990,Australia - Queensland - Brisbane,"Australia - Queensland (Qld) - Brisbane area:- local authorities in south-east Queensland: Gold Coast, Logan, Beaudesert, Redcliffe, Redlands, Pine Rivers, Caboolture,
+Caloundra, Maroochy, Noosa, Maryborough; local authorities in north-east NSW: Tweed, Byron, Lismore, Ballina and
+Richmond Valley.",-29,-25,152.3,153.7,,,,,,OGP,OGP,15-08-01,,FALSE
 2991,"Antarctica - 60°S to 64°S, 72°W to 60°W (SP19-20)",Antarctica - 60°S to 64°S and 72°W to 60°W.,-64,-60,-72,-60,,,,,,Scientific Committee for Antarctic Research,OGP,23-06-08,2008.045,FALSE
 2992,"Antarctica - 60°S to 64°S, 60°W to 48°W (SP21-22)",Antarctica - 60°S to 64°S and 60°W to 48°W.,-64,-60,-60,-48,,,,,,Scientific Committee for Antarctic Research,OGP,23-06-08,2008.045,FALSE
 2993,"Antarctica - 60°S to 64°S, 48°W to 36°W (SP23-24)",Antarctica - 60°S to 64°S and 48°W to 36°W.,-64,-60,-48,-36,,,,,,Scientific Committee for Antarctic Research,OGP,05-07-08,2008.045 2008.054,FALSE
@@ -2117,7 +2119,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 3115,North America - 90°W to 84°W and NAD83 by country,North America - between 90°W and 84°W. Canada - Manitoba; Nunavut; Ontario. United States (USA) - Alabama; Arkansas; Florida; Georgia (GA); Indiana; Illinois; Kentucky (KY); Louisiana (LA); Michigan; Minnesota (MN); Mississippi (MS); Missouri (MO); North Carolina (NC); Ohio; Tennessee (TN); Wisconsin.,17.7,82.5,-90,-84,,,,,,OGP,OGP,23-06-08,2006.464 2007.037 2008.045,FALSE
 3116,North America - 84°W to 78°W and NAD83 by country,North America - between 84°W and 78°W. Canada - Nunavut; Ontario; Quebec. United States (USA) - Florida; Georgia (GA); Maryland (MD); Michigan; New York (NY); North Carolina (NC); Ohio; Pennsylvania (PA); South Carolina (SC); Tennessee (TN); Virginia (VA); West Virginia (WV).,24,83,-84,-78,,,,,,OGP,OGP,23-06-08,2007.037 2008.045,FALSE
 3117,North America - 78°W to 72°W and NAD83 by country,North America - between 78°W and 72°W. Canada - Nunavut; Ontario; Quebec. United States (USA) - Connecticut (CT); Delaware; Maryland (MD); Massachusetts; New Hampshire (NH); New Jersey (NJ); New York (NY); North Carolina (NC); Pennsylvania (PA); Virginia (VA); Vermont (VT).,33.83,83.2,-78,-72,,,,,,OGP,OGP,23-06-08,2007.037 2008.045,FALSE
-3118,Grenada - main island - onshore,Grenada - main island - onshore.,11.95,12.25,-61.8,-61.55,,,,,,OGP,OGP,01-02-06,2005.89,FALSE
+3118,Grenada - main island - onshore,Grenada - main island - onshore.,11.95,12.25,-61.8,-61.55,,,,,,OGP,OGP,01-02-06,2005.890,FALSE
 3119,Greenland - onshore,Greenland - onshore.,59.75,85.05,-73.5,-11,,,,,,OGP,OGP,01-07-05,,FALSE
 3120,French Polynesia - west of 150°W,French Polynesia - west of 150°W.,-24,-9,-155,-150,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 3121,French Polynesia - 150°W to 144°W,French Polynesia - between 150°W and 144°W.,-29,-13,-150,-144,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
@@ -2178,12 +2180,12 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 3176,Brazil - 54°W to 48°W and south of 15°S,Brazil - between 54°W and 48°W and south of 15°S.,-33.8,-15,-54,-48,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 3177,Brazil - 48°W to 42°W and south of 15°S,Brazil - between 48°W and 42°W and south of 15°S.,-26.3,-15,-48,-42,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 3178,Brazil - east of 36°W,Brazil - east of 36°W .,-10.05,-5.15,-36,-34.5,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
-3179,Africa - Angola (Cabinda) and DR Congo (Zaire) - coastal,Africa - Angola (Cabinda) - onshore and offshore; The Democratic Republic of the Congo (Zaire) - onshore coastal area and offshore.,-6,-4.37,10.85,13.11,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+3179,Africa - Angola (Cabinda) and DR Congo (Zaire) - coastal,Africa - Angola (Cabinda) - onshore and offshore; The Democratic Republic of the Congo (Zaire) - onshore coastal area and offshore.,-6,-4.37,10.85,13.11,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 3180,Africa - Angola (Cabinda) and DR Congo (Zaire) - offshore,Africa - Angola (Cabinda) - offshore; The Democratic Republic of the Congo (Zaire) - offshore.,-6,-5.03,10.85,12.43,,,,,,OGP,OGP,30-12-05,,FALSE
-3181,USA - Hawaii - Tern Island and Sorel Atoll,United States (USA) - Hawaii - Tern Island and Sorel Atoll.,23.61,23.88,-166.33,-166.03,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-3182,St Helena - Ascension Island,St Helena - Ascension Island.,-7.99,-7.88,-14.42,-14.29,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-3183,St Helena - St Helena Island,St Helena - St Helena Island.,-16.03,-15.88,-5.81,-5.63,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-3184,St Helena - Tristan da Cunha,"St Helena - Tristan da Cunha island group including Tristan, Inaccessible, Nightingale, Middle and Stoltenhoff Islands.",-37.43,-37.05,-12.73,-12.21,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+3181,USA - Hawaii - Tern Island and Sorel Atoll,United States (USA) - Hawaii - Tern Island and Sorel Atoll.,23.61,23.88,-166.33,-166.03,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+3182,St Helena - Ascension Island,St Helena - Ascension Island.,-7.99,-7.88,-14.42,-14.29,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+3183,St Helena - St Helena Island,St Helena - St Helena Island.,-16.03,-15.88,-5.81,-5.63,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+3184,St Helena - Tristan da Cunha,"St Helena - Tristan da Cunha island group including Tristan, Inaccessible, Nightingale, Middle and Stoltenhoff Islands.",-37.43,-37.05,-12.73,-12.21,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 3185,Cayman Islands - Grand Cayman,Cayman Islands - Grand Cayman.,19.26,19.41,-81.44,-81.08,,,,,,OGP,OGP,26-01-06,,FALSE
 3186,Cayman Islands - Little Cayman and Cayman Brac,Cayman Islands - Little Cayman and Cayman Brac.,19.65,19.76,-80.1,-79.71,,,,,,OGP,OGP,26-01-06,,FALSE
 3187,South Georgia,South Georgia and the South Sandwich Islands - South Georgia Island.,-55.22,-53.8,-38.46,-34.63,,,,,,OGP,OGP,26-01-06,,FALSE
@@ -2193,7 +2195,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 3191,"Marshall Islands - Eniwetok, Kwajalein and Wake islands","Marshall Islands - Eniwetok, Kwajalein and Wake islands.",8.64,19.34,162.03,168,,,,,,OGP,OGP,26-01-06,,FALSE
 3192,Micronesia - Caroline Islands,Federated States of Micronesia - Caroline Islands.,4,12.76,136.66,168.43,,,,,,OGP,OGP,26-01-06,,FALSE
 3193,Vanuatu - southern islands,"Vanuatu - southern islands - Efate, Erromango and Tanna.",-19.7,-17.4,168.1,169.64,,,,,,OGP,OGP,26-01-06,,FALSE
-3194,Vanuatu - northern islands,"Vanuatu - northern islands - Aese, Ambrym, Aoba, Epi, Espiritu Santo, Maewo, Malo, Malkula, Paama, Penecost, Shepherd and Tutuba.",-17.4,-14.61,166.5,168.31,,,,,,OGP,OGP,29-07-06,2006.51,FALSE
+3194,Vanuatu - northern islands,"Vanuatu - northern islands - Aese, Ambrym, Aoba, Epi, Espiritu Santo, Maewo, Malo, Malkula, Paama, Penecost, Shepherd and Tutuba.",-17.4,-14.61,166.5,168.31,,,,,,OGP,OGP,29-07-06,2006.510,FALSE
 3195,Fiji - Viti Levu,Fiji - Viti Levu island.,-18.6,-17.26,177.02,178.87,,,,,,OGP,OGP,26-01-06,,FALSE
 3196,Kiribati - Phoenix Islands,"Kiribati - Phoenix Islands: Kanton, Orona, McKean Atoll, Birnie Atoll, Phoenix Seamounts.",-4.64,-2.72,-174.2,-171.3,,,,,,OGP,OGP,26-01-06,,FALSE
 3197,Solomon Islands - Guadalcanal Island,Solomon Islands - Guadalcanal Island.,-9.96,-9.24,159.56,160.91,,,,,,OGP,OGP,26-01-06,,FALSE
@@ -2210,7 +2212,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 3208,Pitcairn - Pitcairn Island,Pitcairn - Pitcairn Island.,-25.16,-25,-130.18,-129.99,,,,,,OGP,OGP,02-02-06,,FALSE
 3209,Mauritius - mainland,Mauritius - mainland onshore.,-20.5,-19.95,57.3,57.8,,,,,,OGP,OGP,02-02-06,,FALSE
 3210,Serbia and Montenegro,Serbia and Montenegro - onshore and offshore.,41.82,46.23,18.44,23.05,,CS,SCG,891,,ISO 3166 Maintenance Agency.,OGP,01-02-06,,TRUE
-3211,Aaland Islands,Åland Islands - onshore and offshore.,59.95,60.47,19.32,20.7,,AX,ALA,248,,ISO 3166 Maintenance Agency.,OGP,24-09-08,2008.07,FALSE
+3211,Aaland Islands,Åland Islands - onshore and offshore.,59.95,60.47,19.32,20.7,,AX,ALA,248,,ISO 3166 Maintenance Agency.,OGP,24-09-08,2008.070,FALSE
 3212,Albania - onshore,Albania - onshore.,39.67,42.69,19.25,21.06,,,,,,OGP,OGP,01-02-06,,FALSE
 3213,Algeria - onshore,Algeria - onshore.,18.98,37,-8.67,11.99,,,,,,OGP,OGP,01-02-06,,FALSE
 3214,Anguilla - onshore,Anguilla - onshore.,18.16,18.31,-63.39,-62.93,,,,,,OGP,OGP,01-02-06,,FALSE
@@ -2246,7 +2248,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 3244,Equatorial Guinea - onshore,Equatorial Guinea - onshore.,0.9,2.38,9.3,11.36,,,,,,OGP,OGP,01-02-06,,FALSE
 3245,Eritrea - onshore,Eritrea - onshore.,12.33,18.05,36.4,43.15,,,,,,OGP,OGP,01-02-06,,FALSE
 3246,Estonia - onshore,Estonia - onshore.,57.57,59.66,21.84,28,,,,,,OGP,OGP,01-02-06,,FALSE
-3247,Falkland Islands - onshore,Falkland Islands (Malvinas) - onshore.,-52.45,-51,-61.43,-57.7,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+3247,Falkland Islands - onshore,Falkland Islands (Malvinas) - onshore.,-52.45,-51,-61.43,-57.7,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 3248,Faroe Islands - onshore,Faroe Islands - onshore.,61.33,62.42,-7.75,-6.18,,,,,,OGP,OGP,01-02-06,,FALSE
 3249,Gabon - onshore,Gabon - onshore.,-4.03,2.33,8.65,14.55,,,,,,OGP,OGP,01-02-06,,FALSE
 3250,Gambia - onshore,Gambia - onshore.,13.02,13.83,-16.85,-13.81,,,,,,OGP,OGP,01-02-06,,FALSE
@@ -2264,8 +2266,8 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 3262,Iceland - onshore,Iceland - onshore.,63.25,66.6,-24.6,-13.4,,,,,,OGP,OGP,01-02-06,,FALSE
 3263,"Japan - Hokkaido, Honshu, Shikoku, Kyushu - onshore","Japan - Hokkaido, Honshu, Shikoku, Kyushu - onshore.",30.15,45.92,128.5,146.09,,,,,,OGP,OGP,01-02-06,,FALSE
 3264,Kenya - onshore,Kenya - onshore.,-4.76,5.03,33.93,41.93,,,,,,OGP,OGP,01-02-06,,FALSE
-3265,"Korea, Democratic People's Republic of (North Korea) - onshore",Democratic People's Republic of Korea (North Korea) - onshore.,37.67,43.03,124.24,130.75,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-3266,"Korea, Republic of (South Korea) - onshore",Republic of Korea (South Korea) - onshore.,33.18,38.67,125.8,129.72,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+3265,"Korea, Democratic People's Republic of (North Korea) - onshore",Democratic People's Republic of Korea (North Korea) - onshore.,37.67,43.03,124.24,130.75,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+3266,"Korea, Republic of (South Korea) - onshore",Republic of Korea (South Korea) - onshore.,33.18,38.67,125.8,129.72,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 3267,Kuwait - onshore,Kuwait - onshore.,28.56,30.1,46.57,48.45,,,,,,OGP,OGP,01-02-06,,FALSE
 3268,Latvia - onshore,Latvia - onshore.,55.64,58.09,20.98,28.23,,,,,,OGP,OGP,01-02-06,,FALSE
 3269,Lebanon - onshore,Lebanon - onshore.,33.05,34.7,35.1,36.65,,,,,,OGP,OGP,01-02-06,,FALSE
@@ -2296,10 +2298,10 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 3294,Puerto Rico - onshore,Puerto Rico - onshore.,17.85,18.55,-67.3,-65.57,,,,,,OGP,OGP,01-02-06,,FALSE
 3295,Romania - onshore,Romania - onshore.,43.62,48.26,20.26,29.67,,,,,,OGP,OGP,01-02-06,,FALSE
 3296,Russia - onshore,Russian Federation - onshore.,41.17,82,19.64,-168.98,,,,,Area crosses 180-degree meridian.,OGP,OGP,17-07-08,2008.062,FALSE
-3297,St Kitts and Nevis - onshore,St Kitts and Nevis - onshore.,17.09,17.43,-62.88,-62.53,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-3298,St Lucia - onshore,St Lucia - onshore.,13.7,14.12,-61.08,-60.86,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-3299,St Pierre and Miquelon - onshore,St Pierre and Miquelon - onshore.,46.75,47.15,-56.44,-56.13,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
-3300,St Vincent and the Grenadines - onshore,St Vincent and the northern Grenadine Islands - onshore.,12.85,13.38,-61.3,-61.1,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+3297,St Kitts and Nevis - onshore,St Kitts and Nevis - onshore.,17.09,17.43,-62.88,-62.53,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+3298,St Lucia - onshore,St Lucia - onshore.,13.7,14.12,-61.08,-60.86,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+3299,St Pierre and Miquelon - onshore,St Pierre and Miquelon - onshore.,46.75,47.15,-56.44,-56.13,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
+3300,St Vincent and the Grenadines - onshore,St Vincent and the northern Grenadine Islands - onshore.,12.85,13.38,-61.3,-61.1,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 3301,Samoa - onshore,Samoa - onshore.,-14.08,-13.4,-172.8,-171.4,,,,,,OGP,OGP,01-02-06,,FALSE
 3302,Sao Tome and Principe - onshore,Sao Tome and Principe - onshore.,-0.02,1.71,6.44,7.49,,,,,,OGP,OGP,01-02-06,,FALSE
 3303,Saudi Arabia - onshore,Saudi Arabia - onshore.,16.27,32.26,34.6,55.7,,,,,,OGP,OGP,01-02-06,,FALSE
@@ -2317,7 +2319,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 3315,Taiwan - onshore,"Taiwan, Republic of China - onshore - Taiwan Island, Penghu (Pescadores) Islands.",21.8,25.4,119.4,122.05,,,,,,OGP,OGP,24-09-08,2008.017 2008.070,FALSE
 3316,Tanzania - onshore,Tanzania - onshore.,-11.75,-1,29.36,40.58,,,,,,OGP,OGP,01-02-06,,FALSE
 3317,Thailand - onshore,Thailand - onshore.,5.63,20.47,98.1,105.7,,,,,,OGP,OGP,01-02-06,,FALSE
-3318,East Timor - onshore,Timor-Leste (East Timor) - onshore.,-9.5,-8.11,124.9,127.4,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+3318,East Timor - onshore,Timor-Leste (East Timor) - onshore.,-9.5,-8.11,124.9,127.4,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 3319,Togo - onshore,Togo - onshore.,6,11.15,-0.15,1.82,,,,,,OGP,OGP,01-02-06,,FALSE
 3320,Tokelau - onshore,Tokelau - onshore.,-9.5,-8.5,-172,-171.5,,,,,,OGP,OGP,01-02-06,,FALSE
 3321,Tonga - onshore,Tonga - onshore.,-19.8,-18.4,-175.18,-173.7,,,,,,OGP,OGP,01-02-06,,FALSE
@@ -2508,7 +2510,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 3506,USA - 72°W to 66°W,"United States (USA) - between 72°W and 66°W - Connecticut, Maine (ME), Massachusetts, New Hampshire (NH), New York (Long Island) (NY), Rhode Island (RI), Vermont (VT).",49,54,-72,-66,,,,,,OGP,OGP,24-09-08,2008.045 2008.070,FALSE
 3507,China - Tarim - 77.5°E to 88°E and 37°N to 42°N,China - south and west Tarim basin.,37,42,77.5,88,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 3508,"New Zealand - offshore Pacific Ocean, Southern Ocean",New Zealand - offshore - southern Pacific Ocean and Southern Ocean.,-55.95,-22.74,157.41,-170.89,,,,,Area crosses 180-degree meridian.,OGP,OGP,04-04-08,2008.023,FALSE
-3509,UAE - Abu Dhabi - offshore,United Arab Emirates (UAE) - Abu Dhabi offshore.,24,26,52.5,54.5,,,,,,OGP,OGP,24-09-08,2008.07,FALSE
+3509,UAE - Abu Dhabi - offshore,United Arab Emirates (UAE) - Abu Dhabi offshore.,24,26,52.5,54.5,,,,,,OGP,OGP,24-09-08,2008.070,FALSE
 3510,Indonesia - 96°E to 99°E,Indonesia - between 96°E and 99°E.,-1.9,5.5,96,99,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 3511,Indonesia - 99°E to 102°E,Indonesia - between 99°E and 102°E.,-4,5,99,102,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
 3512,Indonesia - 102°E to 105°E,Indonesia - between 102°E and 105°E.,-6.75,2.15,102,105,,,,,,OGP,OGP,23-06-08,2008.045,FALSE
@@ -2533,7 +2535,7 @@ AREA_CODE,AREA_NAME,AREA_OF_USE,AREA_SOUTH_BOUND_LAT,AREA_NORTH_BOUND_LAT,AREA_W
 3555,New Zealand - Campbell Island,New Zealand - Campbell Island.,-54,-51,168,170,,,,,,LINZ,OGP,04-04-08,,FALSE
 3556,New Zealand - Antipodes and Bounty Islands,"New Zealand - Antipodes Islands, Bounty Islands.",-51,-46,177.5,-179.5,,,,,Area crosses 180-degree meridian.,LINZ,OGP,04-04-08,,FALSE
 3557,New Zealand - Raoul and Kermadec Islands,"New Zealand - Raoul Island, Kermadec Islands.",-32,-28,-179.5,-176.5,,,,,,LINZ,OGP,04-04-08,,FALSE
-3558,Antarctica - Ross Sea Region,Antarctica - Ross Sea Region.,-90,-60,145,-140,,,,,Area crosses 180-degree meridian.,LINZ,OGP,23-11-08,2008.1,FALSE
+3558,Antarctica - Ross Sea Region,Antarctica - Ross Sea Region.,-90,-60,145,-140,,,,,Area crosses 180-degree meridian.,LINZ,OGP,23-11-08,2008.100,FALSE
 3559,Australia - offshore,Australia - offshore including EEZ.,-60.04,-8.86,110.77,174.1,,,,,,OGP,OGP,11-04-08,,FALSE
 3560,Slovenia - Dolenjska - central,Slovenia - central Dolenjska (Lower Carniola).,45.8,46.02,15.01,15.45,,,,,,"Geodetska uprava Republike Slovenije, http://www.gu.gov.si",OGP,20-07-08,,FALSE
 3561,China - offshore - Bei Bu,China - offshore - Bei Bu Wan (Gulf of Tonkin).,19,21.4,108,109.6,,,,,,OGP,OGP,14-08-08,,FALSE
