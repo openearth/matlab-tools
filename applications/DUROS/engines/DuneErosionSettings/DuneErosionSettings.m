@@ -55,21 +55,18 @@ function varargout = DuneErosionSettings(varargin)
 % By: <Pieter van Geer (email: pieter.vangeer@deltares.nl)>
 %--------------------------------------------------------------------------
 
+persistent DESettings
 %{ 
 get DESettings struct
 %}
-% Still figure out how to identify if we need a new version of the
-% preferences.
-if ispref('duros','Flags')
-    DESettings = getpref('duros');
-else
-    % wrong settings. First load the newest version
+if isempty(DESettings)
     DESettings = loadDESettings('default');
 end
 
 %{
 Deal with input argument
 %}
+
 call = varargin{1};
 if ischar(call)
     switch call
@@ -108,22 +105,7 @@ if ischar(call)
     end
 end
 
-storeDESettings(DESettings);
-
 end % DuneErosionSettings
-
-%% Subfunction to store the settings in the matlab preferences
-function storeDESettings(DESettings)
-fnms = fieldnames(DESettings);
-PrefsExist = ispref('duros','Flags');
-for ifields = 1:length(fnms)
-    if ~PrefsExist
-        addpref('duros',fnms{ifields},DESettings.(fnms{ifields}))
-    else
-        setpref('duros',fnms{ifields},DESettings.(fnms{ifields}));
-    end
-end
-end
 
 %% subfunction getDESettings
 
@@ -182,7 +164,6 @@ for iinp = 1:length(inpprops)
                     end
                 end
                 DESettings.(DESfieldnames{itypes}).(inpprops{iinp}) = inpvars{iinp};
-                storeDESettings(DESettings);
                 writemessage(50, ['Variable "' inpprops{iinp} '" is set to "' variablevaluestring '".']);
             end
             break
