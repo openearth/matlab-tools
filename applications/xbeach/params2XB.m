@@ -93,11 +93,33 @@ if exist(OPT.filename, 'file')
             else
                 Inputargs{end+1} = cellstr{i}{3}; %#ok<AGROW>
             end
+        elseif ~isempty(cellstr{i}) && ~isempty(strfind(cellstr{i}{1},'='))
+            % User did not specify any space characters before and after
+            % the = sign
+            id = strfind(cellstr{i}{1},'=');
+            if length(id)>1
+                % multiple =-signs on one line
+                continue
+            end
+            Inputargs{end+1} = cellstr{i}{1}(1:id-1); %#ok<AGROW>
+            cellstr{i}{3} = cellstr{i}{1}(id+1:end);
+            if ~isnan(str2double(cellstr{i}{3}))
+                cellstr{i}{3} = str2double(cellstr{i}{3});
+            end
+            if strcmp(Inputargs{end}, 'nglobalvar')
+                Inputargs{end} = 'OutVars'; %#ok<AGROW>
+                Inputargs{end+1} = {}; %#ok<AGROW>
+                for j = 1:cellstr{i}{3}
+                    Inputargs{end}{end+1} = cellstr{i+j}{1}; %#ok<AGROW>
+                end
+            else
+                Inputargs{end+1} = cellstr{i}{3}; %#ok<AGROW>
+            end
         end
     end
     % create XB-structure using PropertyName-propertyValue pairs as
     % specified in file
-    varargout = {CreateEmptyXBeachVar(Inputargs{:}, 'empty')};
+    varargout = {CreateEmptyXBeachVar(Inputargs{:}, 'empty'),Inputargs};
 else
     warning('PARAMS2XB:FileNotFound', ['File ' OPT.filename ' not found.'])
 end
