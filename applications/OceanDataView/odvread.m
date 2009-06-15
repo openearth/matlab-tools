@@ -9,10 +9,10 @@ function varargout = odv_read(fname)
 % <a href="http://www.SeaDataNet.org">www.SeaDataNet.org</a> of which <a href="http://www.nodc.nl">www.nodc.nl</a> is a member.
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a> (Ocean Data Viewer)
-%See also: ODV2META, ODVDISP
+%See also: ODVDISP, ODVPLOT
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2004 Delft University of Technology
+%   Copyright (C) 2009 Delft University of Technology
 %       Gerben J. de Boer
 %
 %       g.j.deboer@tudelft.nl	
@@ -41,7 +41,7 @@ function varargout = odv_read(fname)
 % $Date$
 % $Author$
 % $Revision$
-% $HeadURL$
+% $HeadURL
 % $Keywords:
 
 % 3.1.1 Metavariables
@@ -97,7 +97,7 @@ function varargout = odv_read(fname)
    % TO DO: scan first for # data lines, to preallocate  D.rawdata??
    % TO DO: interpret SDN keyword in header
 
-   disp('error: ODVREAD is still a test project!')
+   %disp('error: ODVREAD is still a test project!')
    
    OPT.delimiter = char(9);% columns are TAB sepa-rated [ODV manual section 15.6]
 

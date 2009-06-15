@@ -1,16 +1,16 @@
 function odvdisp(D)
 %ODVDISP    display contents of file in ODV format  (still test project)
 %
-%   odvdisp(D)
+%   D = odvdisp(D)
 %
 % displays content of  ASCII file in Ocean Data Viewer (ODV) format
 % that was read by ODVREAD into structure D.
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
-%See also: ODV2META, ODVREAD
+%See also: ODVREAD, ODVPLOT
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2004 Deltares
+%   Copyright (C) 2009 Deltares
 %       Gerben J. de Boer
 %
 %       gerben.deboer@deltares.nl	
@@ -34,20 +34,25 @@ function odvdisp(D)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-   disp('error: ODVREAD is still a test project!')
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL
+% $Keywords:
 
-   disp('META-INFO:')
-   disp('--------------------')
+  %disp('error: ODVREAD is still a test project!')
+
+  %disp('META-INFO:')
    
-   disp([pad('filename',12,' '),':',D.filename])
-   disp([pad('filesize',12,' '),':',num2str(D.filebytes)])
+   disp(['META-INFO: ',pad('filename',12,' '),':',D.filename])
+   disp(['           ',pad('filesize',12,' '),':',num2str(D.filebytes)])
    
-   disp('VARIABLES:')
-   disp('--------------------')
+   disp('VARIABLES: ')
    
    for ivar=1:length(D.variables)
    
-      disp([pad(num2str(ivar),4,' '),' ',D.variables{ivar}])
+   disp(['           ',pad(num2str(ivar),4,' '),' ',D.variables{ivar}])
    
    end
 
