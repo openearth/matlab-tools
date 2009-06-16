@@ -1,5 +1,5 @@
 function [xRD,yRD] = xRSP2xyRD(xRSP,section,transectNr)
-%XRSP2XYRD   transform RijskStranDpalen coordinates to RD coordinates
+%XRSP2XYRD   transform RijskStrandPalen coordinates to RD coordinates
 %
 %    [xRD,yRD] = xRSP2xyRD(xRSP,section,transectNr)
 %
