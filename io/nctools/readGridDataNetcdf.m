@@ -15,7 +15,7 @@ function d = readGridDataNetcdf(varargin)
 %   Example
 %   readGridDataNetcdf
 %
-%   See also 
+%   See also readGridDataNetcdfFill
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 <COMPANY>
@@ -82,12 +82,10 @@ switch nargin
         [url, name, year, soundingID] = deal(varargin{:});
 end
 
-url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/KB116_4140.nc'
-
 d = creategridstruct();
 x = nc_varget(url, 'x');
 y = nc_varget(url, 'y');
-dates = nc_varget(url, 'time');
+dates = udunits2datenum(nc_varget(url, 'time'),'days since 1970-1-1 00:00:00 +01:00');
 datematrix = cell2mat(arrayfun(@datevec, dates, 'UniformOutput', false));
 
 if (~isnan(year))
@@ -95,20 +93,21 @@ if (~isnan(year))
 else
     date_indices = 1:length(dates);
 end
-Z = nc_varget(url, 'z', [date_indices(1)-1, 0, 0], [1, length(y), length(x)]);
-for i=2:length(date_indices)
+d.Z = nan(length(x),length(y),length(date_indices));
+for i=1:length(date_indices)
     % assume ordering by date
-    disp(['Getting' datestr(dates(date_indices(i)))])
+    disp(['Getting ' datestr(dates(date_indices(i)))])
     newZ = nc_varget(url, 'z', [date_indices(i)-1, 0, 0], [1, length(y), length(x)]);
-    Z(~isnan(newZ)) = newZ(~isnan(newZ)); % update non none values
+    newZ(newZ==-9999)=nan;
+    d.Z(:,:,i)=newZ';
+    d.t(i,:)=dates(i);
 end
-d.Z = Z;    
-d.X = repmat(x, [1, length(y)])';
-d.Y = repmat(y, [1, length(x)]);
+d.X = repmat(x, [1, length(y)]);
+d.Y = repmat(y, [1, length(x)])';
 d.contour = [min(x), min(y); min(x), max(y); max(x), max(y); max(x), min(y); min(x),min(y)];
 d.xllcorner = min(x);
 d.yllcorner = min(y);
-d.year = year;
+d.year = datematrix(date_indices,1);
 d.cellsize = x(2) - x(1);
 
 end
