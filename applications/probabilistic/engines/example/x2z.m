@@ -66,7 +66,11 @@ else
 end
 
 % reference for retreat distance
-zRef = 5;
+if length(varargin) > 2
+    zRef = varargin{3};
+else
+    zRef = 5;
+end
 xRef = max(findCrossings(xInitial, zInitial, [min(xInitial) max(xInitial)]', ones(2,1)*zRef));
 
 %% retrieve calculation values
@@ -92,9 +96,10 @@ for i = 1:size(x,1)
         RD(i) = xRef - result(end).VTVinfo.Xr;
 
         %%
-        Duration(i) = -result(2).Volumes.Volume*Duration(i);
-        Accuracy(i) = -result(2).Volumes.Volume*Accuracy(i);
-
+        if length(result) > 1
+            Duration(i) = -result(2).Volumes.Volume*Duration(i);
+            Accuracy(i) = -result(2).Volumes.Volume*Accuracy(i);
+        end
 %         for var = {'D50' 'WL_t' 'Hsig_t' 'Tp_t' 'Duration' 'Accuracy' 'RD'}
 %             fprintf('%10e ', eval([var{1} '(' num2str(i) ')']))
 %         end
