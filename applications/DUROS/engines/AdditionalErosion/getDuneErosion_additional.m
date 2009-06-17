@@ -70,10 +70,11 @@ if TargetVolume < 0
         newZr = interp1(xInitial,zInitial,newXr);
         
         % add point to profile
-        [xInitial sid] = sort(cat(1,xInitial,newXr));
-        zInitial = cat(1,zInitial,newZr);
-        zInitial = zInitial(sid);
-        
+        if ~ismember(newXr, xInitial)
+            [xInitial sid] = sort(cat(1,xInitial,newXr));
+            zInitial = cat(1,zInitial,newZr);
+            zInitial = zInitial(sid);
+        end
         % construct x0min.
         % 1. If the new Xr point lies above the water level, the corresponding
         %    x0 point lies at the water line. The slope of the dune is 1:1,
