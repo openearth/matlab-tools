@@ -1,5 +1,5 @@
-function d = readGridDataNetcdf(varargin)
-%READGRIDDATANETCDF  Function to read a set of RWS grids from a url
+function d = readGridDataNetcdfFill(varargin)
+%READGRIDDATANETCDFFILL  Function to read a set of RWS grids from a url
 %
 %   Fills NaN with data from previous years.
 %
@@ -13,9 +13,9 @@ function d = readGridDataNetcdf(varargin)
 %   varargout =
 %
 %   Example
-%   readGridDataNetcdf
+%   readGridDataNetcdfFill
 %
-%   See also 
+%   See also readGridDataNetcdf
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 <COMPANY>
