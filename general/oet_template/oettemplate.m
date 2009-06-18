@@ -17,6 +17,7 @@ function $output = $filename($input)
 %
 %   See also $seeAlso
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) $date(yyyy) $Company
 %       $author
@@ -39,6 +40,7 @@ function $output = $filename($input)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
 % Created: $date(dd mmm yyyy)
 % Created with Matlab version: $version
 
