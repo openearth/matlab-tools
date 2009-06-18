@@ -102,7 +102,11 @@ for i = 1:length(searchstr)
     eval(evalstr);
 end
 fclose(fid);
-Nrtimesteps = length(morstart:tint:tstop);
+
+TintExists = exist('tint','var');
+if TintExists
+    Nrtimesteps = length(morstart:tint:tstop);
+end
 
 %% make sure that dims.dat is created as output
 DIMSisoutput = ~isempty(findstr(strtext, 'dims'));
@@ -149,10 +153,13 @@ else
 end
 
 %% set runflag and create message
-if Nrtimesteps == nt
+if TintExists && Nrtimesteps == nt
     runflag = true;
     msg = sprintf('%s', msg, 'Run successfully completed: ', datestr(now));
-else
+elseif ~TintExists
+    runflag = true;
+    msg = sprintf('%s', msg, 'Run successfully completed: ', datestr(now));
+else    
     runflag = false;
     if ~isnan(nt)
         msg = sprintf('%sit %i of %i completed: %s', msg, nt, Nrtimesteps, datestr(now));

@@ -317,6 +317,10 @@ fprintf(fid,'%s\n','%','%% Flow input','%');
 prms=fieldnames(XB.settings.Flow);
 spaces = 11-cellfun(@length, prms);
 for iprms=1:length(prms)
+    if strcmp(prms{iprms},'tint')
+        % now done with the output settings
+        continue
+    end
     if ~isempty(XB.settings.Flow.(prms{iprms}))
         if sum(strcmp(Precision(:,1),prms{iprms}))>0
             Prcs=Precision{strcmp(Precision(:,1),prms{iprms}),2};
@@ -349,11 +353,61 @@ end
 fprintf(fid,'\n');
 
 %% Output specifications
-if XB.settings.OutputOptions.nglobalvar ~= XB.settings.Info.nVarOutDef
-    fprintf(fid,'%s\n','%','%% Output specifications','%');
+globvarsdefined = ~isempty(XB.settings.OutputOptions.globalvars);
+meanvarsdefined = ~isempty(XB.settings.OutputOptions.meanvars);
+pointsdefined = ~isempty(XB.settings.OutputOptions.points);
+oldvarsdefined = ~isempty(XB.settings.OutputOptions.OutVars);
+
+fprintf(fid,'%s\n','%','%% Output specifications','%');
+if ~globvarsdefined && ~meanvarsdefined && ~pointsdefined && oldvarsdefined
+    % for backwards compatibility
+    fprintf(fid,'tint       = %1.0f\n',XB.settings.Flow.tint);
     fprintf(fid,'%s %1.0f \n', 'nglobalvar =', XB.settings.OutputOptions.nglobalvar);
     for i=1:length(XB.settings.OutputOptions.OutVars)
         fprintf(fid,'%s\n',XB.settings.OutputOptions.OutVars{i});
+    end
+else
+    if globvarsdefined
+        fprintf(fid,'  \n');
+        if ~isempty(XB.settings.OutputOptions.tsglobal)
+            fprintf(fid,'%s %s \n', 'tsglobal   =', XB.settings.OutputOptions.tsglobal);
+        elseif ~isempty(XB.settings.OutputOptions.tintg)
+            fprintf(fid,'%s %1.0f \n', 'tintg      =', XB.settings.OutputOptions.tintg);
+        else
+            warning('XBeach:NoOutputInterval','No output time(steps) are defined for the global variables. This could cause problems.');
+        end
+        fprintf(fid,'%s %1.0f \n', 'nglobalvar =', length(XB.settings.OutputOptions.globalvars));
+        for i=1:length(XB.settings.OutputOptions.globalvars)
+            fprintf(fid,'%s\n',XB.settings.OutputOptions.globalvars{i});
+        end
+    end
+    if pointsdefined
+        fprintf(fid,'  \n');
+        if ~isempty(XB.settings.OutputOptions.tspoints)
+            fprintf(fid,'%s %s \n', 'tspoints   =', XB.settings.OutputOptions.tspoints);
+        elseif ~isempty(XB.settings.OutputOptions.tintp)
+            fprintf(fid,'%s %1.0f \n', 'tintp      =', XB.settings.OutputOptions.tintp);
+        else
+            warning('XBeach:NoOutputInterval','No output time(steps) are defined for the points. This could cause problems.');
+        end
+        fprintf(fid,'%s %1.0f \n', 'npoints    =', length(XB.settings.OutputOptions.points));
+        for i=1:length(XB.settings.OutputOptions.points)
+            fprintf(fid,'%s\n',XB.settings.OutputOptions.points{i});
+        end
+    end
+    if meanvarsdefined
+        fprintf(fid,'  \n');
+        if ~isempty(XB.settings.OutputOptions.tsmean)
+            fprintf(fid,'%s %s \n', 'tsmean     =', XB.settings.OutputOptions.tsmean);
+        elseif ~isempty(XB.settings.OutputOptions.tintm)
+            fprintf(fid,'%s %1.0f \n', 'tintm      =', XB.settings.OutputOptions.tintm);
+        else
+            warning('XBeach:NoOutputInterval','No output time(steps) are defined for the points. This could cause problems.');
+        end
+        fprintf(fid,'%s %1.0f \n', 'nmeanvar  =', length(XB.settings.OutputOptions.meanvars));
+        for i=1:length(XB.settings.OutputOptions.meanvars)
+            fprintf(fid,'%s\n',XB.settings.OutputOptions.meanvars{i});
+        end
     end
 end
 fclose(fid);
