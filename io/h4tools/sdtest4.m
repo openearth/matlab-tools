@@ -1,4 +1,5 @@
-
+%SDTEST4 tests sdload and sdsave
+%
 % test new versions of sdload() and sdsave()
 %
 % NOTE: it appears that arrays can't have the same

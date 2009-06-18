@@ -1,6 +1,6 @@
-
 function h4sdwrite(hfile, slist, fattr)
-
+%H4SDWRITE write HDF4 SD's and NetCDF files as a cell list of arrays
+%
 % NAME
 %
 %   h4sdwrite -- write a list of matlab arrays as HDF4 SDs

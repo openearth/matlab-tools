@@ -1,6 +1,6 @@
-
 function h4sgwrite(hfile, dstr, astr)
-
+%H4SGWRITE write HDF4 vgroups of SD's as an array of structures
+%
 % NAME
 %
 %   h4sgwrite -- write a matlab structure array as a vgroups of SD's

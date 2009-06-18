@@ -1,9 +1,9 @@
-
 function s1 = stransp2(s2)
-
-% function s1 = stransp2(s2)
+%STRANSP2  transpose an array of structures into a structure of arrays
 %
-% transpost an array of structures into a structure of arrays
+%    s1 = stransp2(s2)
+%
+% transpose an array of structures into a structure of arrays
 %
 % example: if s2 is an array of 6 structures, each with fields
 % 
@@ -19,6 +19,7 @@ function s1 = stransp2(s2)
 % 
 % The second dimension of the fields of s2 must all be 1.
 %
+% See also: stransp1
 
 flist = fieldnames(s2);
 

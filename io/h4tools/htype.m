@@ -1,6 +1,6 @@
-
 function htype = hdftypes(mtype)
-
+%HTYPE  find HDF type corresponding to Matlab types
+%
 % find HDF type corresponding to certain matlab types
 %
 

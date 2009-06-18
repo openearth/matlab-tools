@@ -66,8 +66,6 @@ function varargout = knmi_potwind(varargin)
 %   USA
 %   -------------------------------------------------------------------
 
-mfile_version = ' 28 oct 2008';
-
       %
       % >   N-360  >
       %    /     \
@@ -99,14 +97,11 @@ mfile_version = ' 28 oct 2008';
 %21 ''
 %22 '  DATE,TIME, DD,QDD, UP,QUP'};  % edited UP comment to 1 m/s
 
+%% 0 - command line file name or 
+%      Launch file open GUI
 
-   %% 0 - command line file name or 
-   %%     Launch file open GUI
-   %% ------------------------------------------
-
-   %% No file name specified if even number of arguments
-   %% i.e. 2 or 4 input parameters
-   % -----------------------------
+%% No file name specified if even number of arguments
+%  i.e. 2 or 4 input parameters
    if mod(nargin,2)     == 0 
      [shortfilename, pathname, filterindex] = uigetfile( ...
         {'potwind*.*' ,'KNMI wind time-series file (potwind*.*)'; ...
@@ -114,14 +109,14 @@ mfile_version = ' 28 oct 2008';
          'KNMI wind time-series file (potwind*.*)');
       
       if ~ischar(shortfilename) % uigetfile cancelled
-         w.filename     = [];
+         w.file.name    = [];
          iostat         = 0;
       else
-         w.filename     = [pathname, shortfilename];
+         w.file.name    = [pathname, shortfilename];
          iostat         = 1;
       end
       
-      if isempty(w.filename)
+      if isempty(w.file.name)
          iostat = 0;
          varargout= {[], iostat};
          return
@@ -131,59 +126,57 @@ mfile_version = ' 28 oct 2008';
    % -----------------------------
    
    elseif mod(nargin,2) == 1 % i.e. 3 or 5 input parameters
-      w.filename   = varargin{1};
+      w.file.name  = varargin{1};
       iostat       = 1;
    end
    
-   %% Keywords
-   %% -----------------
+%% Keywords
 
       H.calms     = nan;
       H.variables = Inf;
       H.pol2cart  = 0;
 
-      if nargin>2
-         if isstruct(varargin{2})
-            H = mergestructs(H,varargin{2});
-         else
-            iargin = 2;
-            %% remaining number of arguments is always even now
-            while iargin<=nargin-1,
-                switch lower ( varargin{iargin})
-                % all keywords lower case
-                case 'calms'    ;iargin=iargin+1;H.calms     = varargin{iargin};
-                case 'variables';iargin=iargin+1;H.variables = varargin{iargin};
-                case 'pol2cart' ;iargin=iargin+1;H.pol2cart  = varargin{iargin};
-                otherwise
-                  error(sprintf('Invalid string argument (caps?): "%s".',varargin{iargin}));
-                end
-                iargin=iargin+1;
-            end
-         end  
-      end
+%       if nargin>2
+%          if isstruct(varargin{2})
+%             H = mergestructs(H,varargin{2});
+%          else
+%             iargin = 2;
+%             %% remaining number of arguments is always even now
+%             while iargin<=nargin-1,
+%                 switch lower ( varargin{iargin})
+%                 % all keywords lower case
+%                 case 'calms'    ;iargin=iargin+1;H.calms     = varargin{iargin};
+%                 case 'variables';iargin=iargin+1;H.variables = varargin{iargin};
+%                 case 'pol2cart' ;iargin=iargin+1;H.pol2cart  = varargin{iargin};
+%                 otherwise
+%                   error(sprintf('Invalid string argument (caps?): "%s".',varargin{iargin}));
+%                 end
+%                 iargin=iargin+1;
+%             end
+%          end  
+%       end
+      
+      H = setProperty(H,varargin{2:end});
    
-   
-   %% I - Check if file exists (actually redundant after file GUI)
-   %% ------------------------------------------
+%% I - Check if file exists (actually redundant after file GUI)
 
-   tmp = dir(w.filename);
+   tmp = dir(w.file.name);
 
    if length(tmp)==0
       
       if nargout==1
-         error(['Error finding file: ',w.filename])
+         error(['Error finding file: ',w.file.name])
       else
          iostat = -1;
       end      
       
    elseif length(tmp)>0
 
-      w.filedate     = tmp.date;
-      w.filebytes    = tmp.bytes;
+      w.file.date     = tmp.date;
+      w.file.bytes    = tmp.bytes;
 
-      %% Read header
-      %% ----------------------------
-         fid             = fopen(w.filename);
+%% Read header
+         fid             = fopen(w.file.name);
          w.comments{1}   = fgetl(fid);
          if isempty(strfind(w.comments{1},'POTENTIAL WIND'))
             error(['incorrect file type: 1st line does not start with ''POTENTIAL WIND'' but with ''',w.comments{1},''''])
@@ -194,9 +187,7 @@ mfile_version = ' 28 oct 2008';
          end
          fclose(fid);
          
-      
-      %% Extract meta-info from header
-      %% ----------------------------
+%% Extract meta-info from header
       
          % POTENTIAL WIND STATION  242    Vlieland          
          % MOST RECENT COORDINATES  X :     123800; Y :     583850
@@ -228,8 +219,7 @@ mfile_version = ' 28 oct 2008';
          
          w.timezone      = strtrim (w.comments{16}(9:end));
       
-      %% Read legend
-      %% ----------------------------
+%% Read legend
          w.DD_longname      = 'WIND DIRECTION IN DEGREES NORTH';
          w.QQD_longname     = 'QUALITY CODE DD';
          w.UP_longname      = 'POTENTIAL WIND SPEED IN M/S'; % edited UP comment from 0.1 m/s to 1 m/s
@@ -240,9 +230,8 @@ mfile_version = ' 28 oct 2008';
             w.UY_longname   = 'POTENTIAL WIND SPEED IN M/S WIND IN Y-DIRECTION';
          end
          
-      %% Read data
-      %% ----------------------------
-         [itdate,hour,w.DD,w.QQD,w.UP,w.QUP] = textread(w.filename,'%n%n%n%n%n%n',...
+%% Read data
+         [itdate,hour,w.DD,w.QQD,w.UP,w.QUP] = textread(w.file.name,'%n%n%n%n%n%n',...
            'delimiter'  ,',',...
            'emptyvalue' ,NaN,...
            'headerlines',22);
@@ -250,8 +239,7 @@ mfile_version = ' 28 oct 2008';
          w.UP            = w.UP/10; % to [m/s]
          w.datenum       = time2datenum(itdate) + hour./24; % make matlab days
          
-         %% Add u,v
-         %% --------------------------------------
+%% Add u,v
          if H.pol2cart
            [w.UX,...
             w.UY] = pol2cart(deg2rad(degn2deguc(w.DD)),...
@@ -270,8 +258,7 @@ mfile_version = ' 28 oct 2008';
             w.UY_units = 'm/s';
          end         
 
-      %% Apply masks
-      %% ----------------------------
+%% Apply masks
       
          w.UP(w.UP<0)=nan; % -0.1 occurs in station 277 year 1971
       
@@ -302,12 +289,11 @@ mfile_version = ' 28 oct 2008';
          
    end % if length(tmp)==0
    
-   w.iomethod = ['© knmi_potwind.m  by G.J. de Boer (TU Delft), g.j.deboer@tudelft.nl,',mfile_version]; 
-   w.read_at  = datestr(now);
-   w.iostatus = iostat;
+   w.read.with     = '$Id$'; % SVN keyword, will insert name of this function
+   w.read.at       = datestr(now);
+   w.read.iostatus = iostat;
    
-   %% Function output
-   %% -----------------------------
+%% Function output
 
    if nargout    < 2
       varargout= {w};

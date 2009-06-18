@@ -1,4 +1,5 @@
-
+%SRFDEMO how to use h4vsread and h4vswrite to read and write AIRS SRFs
+%
 % A demo using h4sdwrite() to save SRF's
 %
 % NOTES:

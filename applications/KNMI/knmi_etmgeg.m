@@ -56,8 +56,6 @@ function varargout = knmi_etmgeg(varargin)
 
 % uses <sortfieldnames>   (optional)
 
-mfile_version = 0.0;
-
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
 %       G.J.de Boer
@@ -88,13 +86,11 @@ mfile_version = 0.0;
 %   http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-   %% 0 - command line file name or 
-   %%     Launch file open GUI
-   %% ------------------------------------------
+%% 0 - command line file name or 
+%      Launch file open GUI
 
-   %% No file name specified if even number of arguments
-   %% i.e. 2 or 4 input parameters
-   % -----------------------------
+%% No file name specified if even number of arguments
+%  i.e. 2 or 4 input parameters
    if mod(nargin,2)     == 0 
      [shortfilename, pathname, filterindex] = uigetfile( ...
         {'etmgeg*.*' ,'KNMI climate time series (etmgeg*.*)'; ...
@@ -115,44 +111,42 @@ mfile_version = 0.0;
          return
       end
 
-   %% No file name specified if odd number of arguments
-   % -----------------------------
+%% No file name specified if odd number of arguments
    
    elseif mod(nargin,2) == 1 % i.e. 3 or 5 input parameters
-      W.filename   = varargin{1};
+      W.file.name   = varargin{1};
       iostat       = 1;
    end
    
-   %% Keywords
-   %% -----------------
+%% Keywords
 
       OPT.debug         = 0;
       OPT.header.n      = 35; % 27; due to 9 extra parameters
       OPT.header.offset = 6;
 
-      if nargin>2
-         if isstruct(varargin{2})
-            H = mergestructs(H,varargin{2});
-         else
-            iargin = 2;
-            %% remaining number of arguments is always even now
-            while iargin<=nargin-1,
-                switch lower ( varargin{iargin})
-                % all keywords lower case
-                case 'debug'    ;iargin=iargin+1;OPT.debug     = varargin{iargin};
-                otherwise
-                  error(sprintf('Invalid string argument (caps?): "%s".',varargin{iargin}));
-                end
-                iargin=iargin+1;
-            end
-         end  
-      end
-   
-   
-   %% I - Check if file exists (actually redundant after file GUI)
-   %% ------------------------------------------
+%       if nargin>2
+%          if isstruct(varargin{2})
+%             H = mergestructs(H,varargin{2});
+%          else
+%             iargin = 2;
+%             %% remaining number of arguments is always even now
+%             while iargin<=nargin-1,
+%                 switch lower ( varargin{iargin})
+%                 % all keywords lower case
+%                 case 'debug'    ;iargin=iargin+1;OPT.debug     = varargin{iargin};
+%                 otherwise
+%                   error(sprintf('Invalid string argument (caps?): "%s".',varargin{iargin}));
+%                 end
+%                 iargin=iargin+1;
+%             end
+%          end  
+%       end
 
-   tmp = dir(W.filename);
+          OPT = setProperty(OPT,varargin{2:end});
+   
+%% I - Check if file exists (actually redundant after file GUI)
+
+   tmp = dir(W.file.name);
 
    if length(tmp)==0
       
@@ -164,18 +158,16 @@ mfile_version = 0.0;
       
    elseif length(tmp)>0
 
-      W.filedate     = tmp.date;
-      W.filebytes    = tmp.bytes;
+      W.file.date     = tmp.date;
+      W.file.bytes    = tmp.bytes;
 
-      %% Read header
-      %% ----------------------------
-         fid             = fopen(W.filename);
+%% Read header
+         fid             = fopen(W.file.name);
          for iline = 1:(OPT.header.n)
             W.comments{iline} = fgetl(fid);
          end
       
-      %% Extract meta-info from header
-      %% ----------------------------
+%% Extract meta-info from header
       
         %W.parameter_names          = {'STN','YYYYMMDD','DDVEC','FG','FHX','FX','TG','TN','TX','SQ','SP','DR','RH','PG','VVN','NG','UG'};
          W.parameter_names          = {'STN','YYYYMMDD','DDVEC','FG','FHX','FHN','FX','TG','TN','TX','T10N','SQ','SP','Q','DR','RH','PG','PGX','PGN','VVN','VVX','NG','UG','UX','UN','EV24'};
@@ -238,14 +230,12 @@ mfile_version = 0.0;
          %-%    
          %-% end
          
-      %% Read legend
-      %% ----------------------------
+%% Read legend
 
         %W.DD_longname      = 'WIND DIRECTION IN DEGREES NORTH';
 
          
-      %% Read data
-      %% ----------------------------
+%% Read data
       
 %    1        2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17
 %  ------------------------------------------------------------------------------------------------------
@@ -310,8 +300,7 @@ mfile_version = 0.0;
          W.data.UN       = W.data.UN        ; W.parameter_units{25} =  '%';
          W.data.EV24     = W.data.EV24./10  ; W.parameter_units{26} =  'mm';
          
-         %% Copy explanation to data substruct
-         %% -----------------------------
+%% Copy explanation to data substruct
          
          for icol=1:length(W.parameter_names)
          
@@ -334,12 +323,11 @@ mfile_version = 0.0;
          
    end % if length(tmp)==0
    
-   W.iomethod = ['© knmi_etmgeg.m  by G.J. de Boer (Deltares), gerben.deboer@Deltares.nl,',mfile_version]; 
-   W.read_at  = datestr(now);
-   W.iostatus = iostat;
+   W.read.with     = '$Id$'; % SVN keyword, will insert name of this function
+   W.read.at       = datestr(now);
+   W.read.iostatus = iostat;
    
-   %% Function output
-   %% -----------------------------
+%% Function output
 
    if nargout    < 2
       varargout= {W};

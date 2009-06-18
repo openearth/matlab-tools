@@ -1,3 +1,4 @@
+%SDSAVE_CHAR write HDF4 SD's and NetCDF files as a structure of arrays
 %
 % NAME
 %

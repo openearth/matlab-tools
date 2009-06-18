@@ -1,7 +1,7 @@
-
 function sructcmp(s1, s2, seps)
-
-% function sructcmp(s1, s2, seps)
+%STRUCTCMP compare structures,
+%
+%    sructcmp(s1, s2, seps)
 %
 % compare structures, allowing for different field
 % sets and values within a tolerance of seps

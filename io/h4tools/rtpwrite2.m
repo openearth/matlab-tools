@@ -1,6 +1,6 @@
-
 function rtpwrite2(hfile, head, hattr, prof, pattr)
-
+%RTPWRITE2 write HDF4 RTP data as a structure of arrays
+%
 % NAME
 %
 %   rtpwrite2 -- write a set of RTP profiles

@@ -1,6 +1,5 @@
-
 function sds_id = mat2sdsid(sd_id, sname, A, attrs, dims)
-
+%MAT2SDSID  write Matlab array as an HDF4 SDS, to an open HDF4 SD ID
 %
 % mat2sdsid -- write a matlab array as an SDS to an open HDF SD ID
 %

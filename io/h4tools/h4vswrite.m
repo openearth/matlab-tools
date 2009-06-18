@@ -1,6 +1,6 @@
-
 function h4vswrite(hfile, vlist)
-
+%H4VSWRITE write HDF4 vdatas as a structure of arrays
+%
 % NAME
 %
 %   h4vswrite -- write a structure of arrays as an HDF VS 

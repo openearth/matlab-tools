@@ -1,6 +1,6 @@
-
 function [vstru, vattr] = vsfid2mat(file_id, vname);
-
+%VSFID2MAT write Matlab structure array as an HDF4 vdata, to an open HDF4 file I
+%
 % NAME
 %
 %   vsfid2mat -- read an HDF VS into a matlab structure

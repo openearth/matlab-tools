@@ -1,8 +1,5 @@
-
 function [name, A, attrs, dims] = sdsid2mat(sd_id, sds_id);
-
-%
-% sdsid2mat -- read a matlab array from an open HDF SDS ID
+%SDSID2MAT read Matlab array as an HDF4 SDS, to an open HDF4 SD ID
 %
 % INPUTS
 %   sd_id   - SD handle

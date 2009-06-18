@@ -1,6 +1,6 @@
-
 function vlist = h4vsread(hfile)
-
+%H4VSREAD  read HDF4 vdatas as a structure of arrays
+%
 % NAME
 %
 %   h4vsread -- read an HDF VS as a structure of arrays

@@ -1,7 +1,7 @@
-
 function [plev, temp, gasid, gasmx, lat] = gproread(fname)
-
-% function [plev, temp, gasid, gasmx, lat] = gproread(fname)
+%GPROREAD  read GENLN2 format user profiles
+%
+%    [plev, temp, gasid, gasmx, lat] = gproread(fname)
 %
 % gproread reads a genln2/klayers format "user" (i.e. input) 
 % level profile

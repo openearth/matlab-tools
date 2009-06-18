@@ -1,6 +1,7 @@
 function gprowrite(fname, plev, temp, gasid, gasmx, lat)
-
-% function gprowrite(fname, plev, temp, gasid, gasmx, lat)
+%GPROWRITE write GENLN2 format user profiles
+%
+%    gprowrite(fname, plev, temp, gasid, gasmx, lat)
 %
 % gprowrite writes a genln2/klayers format "user" (i.e. input) 
 % level profile

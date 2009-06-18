@@ -1,4 +1,5 @@
-
+%RTPTEST4 basic demos of rtpread and rtpwrite
+%
 % save Scott's 48 fitting profiles in RTP format
 % 
 % 

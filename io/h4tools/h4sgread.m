@@ -1,6 +1,5 @@
-
 function [dstr, astr] = h4sgread(hfile)
-
+%H4SGREAD  read HDF4 vgroups of SD's as an array of structures
 % NAME
 %
 %   h4sgread -- read vgroups of SDS's to a matlab structure array
