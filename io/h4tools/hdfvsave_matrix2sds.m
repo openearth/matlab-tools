@@ -1,5 +1,5 @@
 function status = hdfsave_matrix2sds(file_id,FILE_NAME,vgroup_id,SDS_NAME,dat, varargin)
-%HDFSAVE_MATRIX2SDS       saves a matrix as a HDF SDS data.
+%HDFSAVE_MATRIX2SDS       save a matrix as a HDF SDS data.
 %
 %    status = hdfsave_matrix2sds(file_id,FILE_NAME,vgroup_id,SDS_NAME,dat, )
 %    status = hdfsave_matrix2sds(file_id,FILE_NAME,vgroup_id,SDS_NAME,dat, attr)

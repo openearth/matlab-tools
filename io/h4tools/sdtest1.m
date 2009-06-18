@@ -1,4 +1,4 @@
-%SDTEST1 tests h4sgread  and h4sgwrite 
+%SDTEST1   test h4sgread  and h4sgwrite 
 %
 % test of h4sgread.m and h4sgwrite.m
 %

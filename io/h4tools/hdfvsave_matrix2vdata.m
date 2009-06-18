@@ -1,5 +1,5 @@
 function status = hdfvsave_matrix2vdata(file_id,datafield,fldname,VGROUP_ID)
-%HDFVSAVE_MATRIX2VDATA    saves a matrix as a HDF Vdata.
+%HDFVSAVE_MATRIX2VDATA    save a matrix as a HDF Vdata.
 %
 %    status = hdfvsave_matrix2vdata(file_id,datafield,fldname,VGROUP_ID)
 %

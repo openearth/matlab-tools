@@ -1,5 +1,5 @@
 function rtp2gpro(rtpf, gdir, gpre)
-%RTP2GPRO   translate between RTP and GENLN2 format profiles
+%RTP2GPRO    translate between RTP and GENLN2 format profiles
 %
 % NAME
 %

@@ -1,5 +1,5 @@
 function varargout = hdfvsave_struct2vgroup(file_id,file_name,datastruct,fldname,VGROUP_ID_PARENT)
-%HDFVSAVE_STRUCT2VGROUP   saves a struct as a HDF Vgroup.
+%HDFVSAVE_STRUCT2VGROUP   save a struct as a HDF Vgroup.
 %
 %    status = hdfvsave_struct2vgroup(file_id,file_name,datastruct,fldname,VGROUP_ID_PARENT)
 %

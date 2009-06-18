@@ -1,4 +1,4 @@
-%SDTEST2 tests mat2sdsid and sdsid2mat
+%SDTEST2   test mat2sdsid and sdsid2mat
 %
 % basic test of mat2sdsid and sdsid2mat
 

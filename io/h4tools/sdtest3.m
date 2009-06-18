@@ -1,4 +1,4 @@
-%SDTEST3 tests h4sdread  and h4sdwrite
+%SDTEST3   test h4sdread  and h4sdwrite
 %
 % test new versions of h4sdwrite() and h4sdread()
 %

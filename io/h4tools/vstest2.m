@@ -1,4 +1,4 @@
-%VSTEST2 tests h4vsread  and h4vswrite
+%VSTEST2   tests h4vsread  and h4vswrite
 %
 % test of h4vswrite and h4vsread
 %

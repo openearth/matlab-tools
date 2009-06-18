@@ -1,5 +1,5 @@
 function [plev, temp, gasid, gasmx, lat] = gproread(fname)
-%GPROREAD  read GENLN2 format user profiles
+%GPROREAD  read  GENLN2 format user profiles
 %
 %    [plev, temp, gasid, gasmx, lat] = gproread(fname)
 %

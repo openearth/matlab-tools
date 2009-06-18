@@ -1,5 +1,5 @@
 function [alist, fattr] = h4sdread(hfile)
-%H4SDREAD  read HDF4 SD's and NetCDF files as a cell list of arrays
+%H4SDREAD  read  HDF4 SD's and NetCDF files as a cell list of arrays
 %
 % NAME
 %

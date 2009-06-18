@@ -1,4 +1,4 @@
-%RTPTEST4 basic demos of rtpread and rtpwrite
+%RTPTEST4    basic demos of rtpread and rtpwrite
 %
 % test 5 -- translate GENLN2 user profiles to RTP and back to GENLN2
 % 

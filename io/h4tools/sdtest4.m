@@ -1,4 +1,4 @@
-%SDTEST4 tests sdload and sdsave
+%SDTEST4   test sdload and sdsave
 %
 % test new versions of sdload() and sdsave()
 %

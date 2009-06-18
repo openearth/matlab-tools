@@ -1,5 +1,5 @@
 function rtpwrite(hfile, head, hattr, prof, pattr)
-%RTPWRITE write HDF4 RTP data as a structure of arrays
+%RTPWRITE    write HDF4 RTP data as a structure of arrays
 %
 % NAME
 %

@@ -1,4 +1,4 @@
-%VSTEST1 tests mat2vsfid and vsfid2mat
+%VSTEST1   tests mat2vsfid and vsfid2mat
 %
 % test of mat2vsfid and vsfid2mat, file attributes
 %

@@ -1,5 +1,5 @@
 function vdata_id = mat2vsfid(file_id, vname, vstru, vattr, vclass)
-%MAT2VSFID write Matlab structure array as an HDF4 vdata, to an open HDF4 file I
+%MAT2VSFID   write Matlab structure array as an HDF4 vdata, to an open HDF4 file I
 %
 % NAME
 %

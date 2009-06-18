@@ -1,5 +1,5 @@
 function [head, hattr, prof, pattr] = rtpread(hfile)
-%RTPREAD2 read HDF4 RTP data as a structure of arrays
+%RTPREAD2    read  HDF4 RTP data as a structure of arrays
 %
 % NAME
 %
