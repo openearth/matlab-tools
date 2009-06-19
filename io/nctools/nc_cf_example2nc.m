@@ -1,8 +1,8 @@
-%function nc_cf_example2nc
-%NC_CF_EXAMPLE2NC   example script to make a netCDF file according to CF convention
+function nc_cf_example2nc(varargin)
+%%NC_CF_EXAMPLE2NC   example script to make a netCDF file according to CF convention
 %
-%   Creates an example netCDF file 'nc_cf_example2nc' that allows one to look
-%   at advantages of netCDF with: nc_dump and ncBrowse
+%   Creates an example netCDF file 'nc_cf_example2nc' that allows one to
+%   assess the advantages of netCDF with: nc_dump(.m) and <a href="http://www.epic.noaa.gov/java/ncBrowse/">ncBrowse</a>
 %
 %See also: NC_CF_EXAMPLE2NCPLOT
 %          time series:  knmi_potwind2nc, knmi_etmgeg2nc, getWaterbase2nc
@@ -11,16 +11,16 @@
 %          linesegments:
 %          transects:
 
+%% Define copyright of this script
 %   --------------------------------------------------------------------
-%   Copyright (C) 2009 Delft University of Technology
+%   Copyright (C) 2009 Deltares
 %       Gerben J. de Boer
 %
-%       g.j.deboer@tudelft.nl	
+%       gerben.deboer@deltares.nl
 %
-%       Fluid Mechanics Section
-%       Faculty of Civil Engineering and Geosciences
-%       PO Box 5048
-%       2600 GA Delft
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
 %       The Netherlands
 %
 %   This library is free software: you can redistribute it and/or
@@ -37,19 +37,29 @@
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
-% $Keywords$
+%% Add SVN keyword and store this script in a repository
+%  $Id$
+%  $Date$
+%  $Author$
+%  $Revision$
+%  $HeadURL$
+%  $Keywords$
 
+%% Set default options, and overrule with user defined keyword,value pairs
    OPT.refdatenum = datenum(1970,1,1);
    OPT.fillvalue  = nan;
+   OPT.filename   = 'nc_cf_example2nc.inp';
+   
+   OPT = setProperty(OPT,varargin);
 
-%% 0 Read raw data
-% make a function that returns all data + meta-data in one struct:
-%  D             = knmi_potwind(OPT.filename,'variables',OPT.fillvalue);
+%% 0. Read raw data
+% Make a function that returns all data + meta-data in one struct, e.g.:
+%
+%  * D             = knmi_potwind(OPT.filename);
+%  * D             = knmi_etmgeg (OPT.filename);
+%  * D             = donar_read  (OPT.filename);
+%  
+% Below is just a example taht creates soem ranodm ata:
 
    D.datenum     = floor(now) + [0:2:24]./24;
    D.version     = 0;
@@ -63,22 +73,25 @@
    end
    end
    end
-  %D.temperature = (D.lat,D.lon);
    D.timezone    = '+00:00';
 
-%% 1a Create file
-   outputfile = 'nc_cf_example2nc.nc';
-   
-   nc_create_empty (outputfile)
+%% 1. Create file
+   outputfile = [filename(OPT.filename),'.nc'];
+   nc_create_empty (outputfile); % only change extension with respect to input file
 
-   %% Add overall meta info
-   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
-   %------------------
+%% 2. Add overall meta info
+
+   %%  CF convention   
+   % <http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents>
 
    nc_attput(outputfile, nc_global, 'title'         , '');
    nc_attput(outputfile, nc_global, 'institution'   , 'Deltares');
    nc_attput(outputfile, nc_global, 'source'        , '');
-   nc_attput(outputfile, nc_global, 'history'       , ['tranformation to NetCDF: $HeadURL']);
+   % Insert SVN keyword $HeadURL$ that will list the url of this mfile. This
+   % approach automatically ensures that the name of the script that made
+   % the netCDF file is included in the netCDF file itself.
+   nc_attput(outputfile, nc_global, 'history'       , ['tranformation to NetCDF: $HeadURL$']);
+   % Provide web-link to originator of dataset (can be url in OpenEarthRawData).
    nc_attput(outputfile, nc_global, 'references'    , '<http://openearth.deltares.nl>');
    nc_attput(outputfile, nc_global, 'email'         , '');
    
@@ -88,57 +101,88 @@
    nc_attput(outputfile, nc_global, 'Conventions'   , 'CF-1.4');
    nc_attput(outputfile, nc_global, 'CF:featureType', 'stationTimeSeries');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
    
-   %% OpenEarth convention
+   %%  OpenEarth convention
 
    nc_attput(outputfile, nc_global, 'terms_for_use' , 'These data can be used freely for research purposes provided that the following source is acknowledged: KNMI.');
    nc_attput(outputfile, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
 
-%% 2 Create dimensions
+%% 2. Create dimensions
 
    nc_add_dimension(outputfile, 'time'  , length(D.datenum))
    nc_add_dimension(outputfile, 'lat'   , length(D.lat))
    nc_add_dimension(outputfile, 'lon'   , length(D.lon))
 
-%% 3 Create variables
+%% 3. Create variables
 
    clear nc
    ifld = 0;
    
-   %% Define dimensions in this order:
-   %  time,z,y,x
+   %%% Define dimensions in this order: [time,z,y,x]
    %
-   %  For standard names see:
-   %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table
+   % * For standard names vocabulary by CF group see:
+   %   <http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table>
+   %   From this list the following quantities are used in this mfule:
+   %   contains: latitude, longitude
+   % * For standard units vocabulary UDUNITS by UNIDATA see:
+   %   <http://www.unidata.ucar.edu/software/udunits/>
 
-   %% Latitude
-   % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
+   %%% Latitude
+   % Prescribed as dimension associated with variable by CF convention in:
+   % <http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate>
    
       ifld = ifld + 1;
-   nc(ifld).Name         = 'lat';
+   nc(ifld).Name         = 'lat';   % This name is required when extracing the data with nc_varget(,'lat').
+   nc(ifld).Nctype       = 'float'; % no double needed
+   nc(ifld).Dimension    = {'lat'}; % Should conform with dimension lat defined above
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'latitude');      % Name free of choice, will appear in plots
+   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_north'); % Note: 1st type of degrees, chosen from UDUNITS list.
+   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'latitude');      % Prescribed by CF convention and CF standard name table.
+
+   %%% Longitude
+   % Prescribed as dimension associated with variable by CF convention in:
+   % <http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate>
+   
+      ifld = ifld + 1;
+   nc(ifld).Name         = 'lon';   % This name is required when extracing the data with nc_varget(,'lat').
+   nc(ifld).Nctype       = 'float'; % no double needed
+   nc(ifld).Dimension    = {'lon'}; % Should conform with dimension lat defined above
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'longitude');    % Name free of choice, will appear in plots
+   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_east'); % Note: 2nd type of degrees, chosen from UDUNITS list.
+   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'longitude');    % Prescribed by CF convention and CF standard name table.
+
+   %%% local x
+   % Should be associated with a coordinate system.
+  
+      ifld = ifld + 1;
+   nc(ifld).Name         = 'x';
    nc(ifld).Nctype       = 'float'; % no double needed
    nc(ifld).Dimension    = {'lat'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'latitude');
-   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_north');
-   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'latitude');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'x');                       % Name free of choice, will appear in plots
+   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'meter');                   % Chosen from UDUNITS list.
+   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate'); % Prescribed by CF standard name table.
 
-   %% Longitude
-   % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
+
+   %%% local y
+   % Should be associated with a coordinate system.
    
       ifld = ifld + 1;
-   nc(ifld).Name         = 'lon';
+   nc(ifld).Name         = 'y';
    nc(ifld).Nctype       = 'float'; % no double needed
    nc(ifld).Dimension    = {'lon'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'longitude');
-   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_east');
-   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'longitude');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'y');                       % Name free of choice, will appear in plots
+   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'meter');                   % Chosen from UDUNITS list.
+   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate'); % Prescribed by CF standard name table.
 
-   %% Time
-   % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
+   %%% Time
+   % <http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate>
+   % 
    % time is a dimension, so there are two options:
-   % * the variable name needs the same as the dimension
-   %   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984551
-   % * there needs to be an indirect mapping through the coordinates attribute
-   %   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984605
+   %
+   % * The variable name needs the same as the dimension
+   %   <http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984551>
+   %
+   % * There needs to be an indirect mapping through the coordinates attribute
+   %   <http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984605>
    
    OPT.timezone = timezone_code2iso(D.timezone);
 
@@ -152,15 +196,15 @@
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
   %nc(ifld).Attribute(5) = struct('Name', 'bounds'         ,'Value', '');
    
-   %% Parameters with standard names
-   % * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
+  %%% Parameters with standard names
+  % * <http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/>
 
       ifld = ifld + 1;
    nc(ifld).Name         = 'T';
    nc(ifld).Nctype       = 'float';
    nc(ifld).Dimension    = {'time','lat','lon'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'air temperature');
-   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm/s');
+   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degree_Celsius'); % Note: 3rd type of degrees
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'air_temperature');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
 
@@ -170,12 +214,10 @@
 % file without the need to relocate any info.
 
    for ifld=1:length(nc)
-      disp(['adding ',num2str(ifld),' ',nc(ifld).Name])
+      disp(['Adding :',num2str(ifld),' ',nc(ifld).Name])
       nc_addvar(outputfile, nc(ifld));   
    end
    
-   D
-
 %% 5 Fill variables
 
    nc_varput(outputfile, 'time' , D.datenum-OPT.refdatenum);
@@ -187,4 +229,4 @@
 
    nc_dump(outputfile);
    
-%% EOF   
+%% For more information see: <OpenEarth.Deltares.nl>

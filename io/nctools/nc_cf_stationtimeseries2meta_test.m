@@ -1,3 +1,7 @@
+%NC_CF_STATIONTIMESERIES2META_TEST  test for nc_cf_stationtimeseries2meta
+%
+% See also: nc_cf_stationtimeseries2meta
+
 % OPT.subdirs = {'concentration_of_chlorophyll_in_sea_water',...
 %                'concentration_of_suspended_matter_in_sea_water',...
 %                'sea_surface_height',...
@@ -18,3 +22,5 @@ for ii=1:length(OPT.subdirs)
 nc_cf_stationtimeseries2meta('directory_nc',['P:\mcdata\opendap\knmi\',OPT.subdirs{ii}])
 
 end
+
+%% EOF

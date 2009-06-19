@@ -1,24 +1,26 @@
-function [grid] = updategrid(grid, filename, tidefile)
-%UPDATEGRID .
+function [grid] = jarkus_updategrid(grid, filename, tidefile)
+%JARKUS_UPDATEGRID update Jarkus grid struct
 %
-%See also:
+% See web : <a href="http://www.watermarkt.nl/kustenzeebodem/">www.watermarkt.nl/kustenzeebodem/</a>
+% See also: JARKUS_TRANSECT2GRID  , JARKUS_NETCDF2GRID, JARKUS_UPDATEGRID, 
+%           JARKUS_TRANSECT2NETCDF, JARKUS_GRID2NETCDF 
 
     % TODO: insert function header here
     % First part: update grid with information from raaien.txt
     disp(['Extracting info from ' filename])
     % create a new transect structure
-    transect = createtransectstruct();
+    transect       = createtransectstruct();
     % read all data except first line
-    data = dlmread(filename, '\t', 1,0);
+    data           = dlmread(filename, '\t', 1,0);
     transect.areaCode = data(:,1);
     transect.alongshoreCoordinate = floor(data(:,2) / 10); 
-    transect.x = data(:,3)./100;
-    transect.y = data(:,4)./100;
+    transect.x     = data(:,3)./100;
+    transect.y     = data(:,4)./100;
     % from 0.1 degrees to radiants and from pos clockwise 0 north to pos
     % counterclockwise 0 east
     transect.angle = 0.5*pi - 2*pi*(data(:,5)/(100*360)); 
-    transect.id = transect.areaCode*1000000 + transect.alongshoreCoordinate;
-    transect.grad = round(data(:,5)./100);
+    transect.id    = transect.areaCode*1000000 + transect.alongshoreCoordinate;
+    transect.grad  = round(data(:,5)./100);
 
     % find points in the transect which are also in the grid
     [c, ia, ib] = intersect(transect.id, grid.id);
@@ -37,42 +39,42 @@ function [grid] = updategrid(grid, filename, tidefile)
         warning(msg);
     end    
     
-    %remove points without metadata
-    grid.id = grid.id(ib);
-    grid.areaCode = grid.areaCode(ib);
-    grid.areaName = grid.areaName(ib,:);
+    %% remove points without metadata
+    grid.id                   = grid.id(ib);
+    grid.areaCode             = grid.areaCode(ib);
+    grid.areaName             = grid.areaName(ib,:);
     grid.alongshoreCoordinate = grid.alongshoreCoordinate(ib);
     
         
     % use the angle to compute the coordinates in projected cartesian
     % coordinates. (for jarkus Amersfoort RD new)
-    relativeX = cos(transect.angle(ia)) * grid.crossShoreCoordinate;
-    relativeY = sin(transect.angle(ia)) * grid.crossShoreCoordinate;
-    X = repmat(transect.x(ia),1,size(relativeX,2)) + relativeX;
-    Y = repmat(transect.y(ia),1,size(relativeY,2)) + relativeY;
+    relativeX  = cos(transect.angle(ia)) * grid.crossShoreCoordinate;
+    relativeY  = sin(transect.angle(ia)) * grid.crossShoreCoordinate;
+    X          = repmat(transect.x(ia),1,size(relativeX,2)) + relativeX;
+    Y          = repmat(transect.y(ia),1,size(relativeY,2)) + relativeY;
     % store all coordinates
-    grid.X = X;
-    grid.Y = Y;
+    grid.X     = X;
+    grid.Y     = Y;
     % and the origins.
-    grid.x_0 = transect.x(ia);
-    grid.y_0 = transect.y(ia);
+    grid.x_0   = transect.x(ia);
+    grid.y_0   = transect.y(ia);
     % assign angle of coastline to grid
     grid.angle = transect.grad(ia); 
     
     %% Second part: update grid with information from TIDEINFO.txt
     disp(['Extracting info from ' tidefile])
-    tideinfo = load(tidefile);
+    tideinfo                      = load(tidefile);
     % create a new transect structure
-    transect = createtransectstruct();
-    transect.areaCode = tideinfo(:,1);
+    transect                      = createtransectstruct();
+    transect.areaCode             = tideinfo(:,1);
     transect.alongshoreCoordinate = tideinfo(:,2); 
-    transect.id = transect.areaCode*1000000 + transect.alongshoreCoordinate;
-    transect.meanHighWater = tideinfo(:,3);
-    transect.meanLowWater = tideinfo(:,4);
+    transect.id                   = transect.areaCode*1000000 + transect.alongshoreCoordinate;
+    transect.meanHighWater        = tideinfo(:,3);
+    transect.meanLowWater         = tideinfo(:,4);
     % find points in the transect which are also in the grid
     [u, v, w] = intersect(transect.id, grid.id);
     % assign MHW and MLW to grid
-    grid.meanHighWater = transect.meanHighWater(v); 
-    grid.meanLowWater = transect.meanLowWater(v); 
+    grid.meanHighWater            = transect.meanHighWater(v); 
+    grid.meanLowWater             = transect.meanLowWater(v); 
     
-end
+end % end function jarkus_updategrid

@@ -1,7 +1,11 @@
-function transect2netcdf(filename, transectStruct)
-%TRANSECT2NETCDF .
+function jarkus_transect2netcdf(filename, transectStruct)
+%jarkus_TRANSECT2NETCDF converts Jarkus transect struct to netCDF-CF file
 %
-%See also:
+% to be called after JARKUS_GRID2NETCDF.
+%
+% See web : <a href="http://www.watermarkt.nl/kustenzeebodem/">www.watermarkt.nl/kustenzeebodem/</a>
+% See also: JARKUS_TRANSECT2GRID  , JARKUS_NETCDF2GRID, JARKUS_UPDATEGRID, 
+%           JARKUS_TRANSECT2NETCDF, JARKUS_GRID2NETCDF 
 
 % TODO: define the function header here ...
 function transect = mergetransects(transects)
@@ -13,20 +17,20 @@ function transect = mergetransects(transects)
     
     [a, ia] = sortrows([col1;col2;col3;col4]);
     transect=transects(1);
-    newX = sort(unique([transects.crossShoreCoordinate]));
-    newH = zeros(size(newX)) * NaN;
+    newX    = sort(unique([transects.crossShoreCoordinate]));
+    newH    = zeros(size(newX)) * NaN;
     for k = 1 : length(transects)
         [c, ia, ib] = intersect(newX , transects(k).crossShoreCoordinate); % find ids transect k
-        newH(ia) = transects(k).altitude(ib);
+        newH(ia)    = transects(k).altitude(ib);
     end
     transect.crossShoreCoordinate = newX; % assign new grid
-    transect.altitude = newH; % assign new altitudes
+    transect.altitude             = newH; % assign new altitudes
 end
 
 %% Lookup variables
 % This assumes a grid already has been saved to the file
-yearArray = nc_varget(filename, 'time');
-transectIdArray = nc_varget(filename, 'id');
+yearArray                 = nc_varget(filename, 'time');
+transectIdArray           = nc_varget(filename, 'id');
 crossShoreCoordinateArray = nc_varget(filename, 'cross_shore');
 try
     missing = nc_attget(filename, 'altitude', '_FillValue');
@@ -57,4 +61,4 @@ for i = 1 : length(yearArray)
     nc_varput(filename, 'altitude', datablock, [i-1, 0, 0], [1, size(datablock)]); % (/i-1, 0, 0/) -> in fortran
 end
 
-end
+end % jarkus_transect2netcdf
