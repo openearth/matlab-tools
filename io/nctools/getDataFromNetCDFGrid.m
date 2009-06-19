@@ -89,9 +89,8 @@ if ~isempty(OPT.polygon)
     miny = min(OPT.polygon(:,2));
     maxy = max(OPT.polygon(:,2));
     
-    % find out which part of X and Y data lies within the extent of the
-    % polygon (NB: these are indexes, should be reduced with one for netCDF
-    % call as nc files start counting at 0
+    % Find out which part of X and Y data lies within the extent of the polygon 
+    % NB: these are indexes, should be reduced with one for netCDF call as nc files start counting at 0
     xstart   = find(X>minx, 1, 'first');
     xlength  = find(X<maxx, 1, 'last');
     ystart   = find(Y>miny, 1, 'first');
@@ -120,7 +119,7 @@ idt_in   = find(t<=OPT.starttime & t >= OPT.starttime + OPT.searchwindow);
 
 %% one by one place separate grids on overall grid
 for id_t = [idt(idt_in)-1]' %#ok<NBRAK,FNDSB>
-%     disp([' Number of nans remaining: ' num2str(sum(isnan(Z(inpolygon(repmat(X',size(Y,1),1), repmat(Y, 1, size(X',2)), OPT.polygon(:,1), OPT.polygon(:,2))))))])
+    % So long as not all Z values inpolygon are nan try to add data
     if sum(isnan(Z(inpolygon(repmat(X',size(Y,1),1), repmat(Y, 1, size(X',2)), OPT.polygon(:,1), OPT.polygon(:,2)))))~=0
         Z_next    = nc_varget(OPT.ncfile, lookupVarnameInNetCDF('ncfile', OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'altitude'), [id_t ystart-1 xstart-1], [1 floor((ylength-(ystart-1))/OPT.stride(2)) floor((xlength-(xstart-1))/OPT.stride(3))], OPT.stride);
         if sum(sum(~isnan(Z_next))) ~=0
