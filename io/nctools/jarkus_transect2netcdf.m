@@ -1,6 +1,8 @@
 function jarkus_transect2netcdf(filename, transectStruct)
 %jarkus_TRANSECT2NETCDF converts Jarkus transect struct to netCDF-CF file
 %
+%    jarkus_transect2netcdf(filename, transect)
+%
 % to be called after JARKUS_GRID2NETCDF.
 %
 % See web : <a href="http://www.watermarkt.nl/kustenzeebodem/">www.watermarkt.nl/kustenzeebodem/</a>

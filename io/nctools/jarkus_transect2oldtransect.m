@@ -1,4 +1,7 @@
+function transect = jarkus_transect2oldtransect
 %JARKUS_TRANSECT2OLDTRANSECT converts Jarkus transect struct
+%
+%    transect = jarkus_transect2oldtransect()
 %
 % See web : <a href="http://www.watermarkt.nl/kustenzeebodem/">www.watermarkt.nl/kustenzeebodem/</a>
 % See also: JARKUS_TRANSECT2GRID  , JARKUS_NETCDF2GRID, JARKUS_UPDATEGRID, 
@@ -80,3 +83,5 @@ transect.ze                = 0; %[1264x1 double]
 %                    zi: [1264x1 double]
 %                    xe: [1264x1 double]
 %                    ze: [1264x1 double]
+
+end % end function jarkus_transect2oldtransect

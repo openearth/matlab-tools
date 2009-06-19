@@ -1,6 +1,8 @@
 function [grid] = jarkus_updategrid(grid, filename, tidefile)
 %JARKUS_UPDATEGRID update Jarkus grid struct
 %
+%     [grid] = jarkus_updategrid(grid, filename, tidefile)
+%
 % See web : <a href="http://www.watermarkt.nl/kustenzeebodem/">www.watermarkt.nl/kustenzeebodem/</a>
 % See also: JARKUS_TRANSECT2GRID  , JARKUS_NETCDF2GRID, JARKUS_UPDATEGRID, 
 %           JARKUS_TRANSECT2NETCDF, JARKUS_GRID2NETCDF 

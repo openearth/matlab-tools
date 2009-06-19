@@ -1,7 +1,7 @@
 function grid = jarkus_netcdf2grid(filename)
 %JARKUS_NETCDF2GRID converts netCDF-CF file to Jarkus grid struct
 %
-%    grid = jarkus_netcdf2grid(filename)
+%    [grid] = jarkus_netcdf2grid(filename)
 %
 % See web : <a href="http://www.watermarkt.nl/kustenzeebodem/">www.watermarkt.nl/kustenzeebodem/</a>
 % See also: JARKUS_TRANSECT2GRID  , JARKUS_NETCDF2GRID, JARKUS_UPDATEGRID, 
