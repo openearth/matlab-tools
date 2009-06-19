@@ -76,7 +76,7 @@ if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.datatype})) % if an ove
     figure(1);clf;axis equal;box on;hold on
     
     % Step 0.3: plot landboundary
-    ldburl = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
+    ldburl = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
     x      = nc_varget(ldburl, lookupVarnameInNetCDF('ncfile', ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate'));
     y      = nc_varget(ldburl, lookupVarnameInNetCDF('ncfile', ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate'));
     plot(x, y, 'k', 'linewidth', 2);
