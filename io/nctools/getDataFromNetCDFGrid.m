@@ -89,21 +89,23 @@ if ~isempty(OPT.polygon)
     miny = min(OPT.polygon(:,2));
     maxy = max(OPT.polygon(:,2));
     
-    % find out which part of X and Y data lies within the extent of the polygon
+    % find out which part of X and Y data lies within the extent of the
+    % polygon (NB: these are indexes, should be reduced with one for netCDF
+    % call as nc files start counting at 0
     xstart   = find(X>minx, 1, 'first');
-    xstop    = find(X<maxx, 1, 'last');
+    xlength  = find(X<maxx, 1, 'last');
     ystart   = find(Y>miny, 1, 'first');
-    ystop    = find(Y<maxy, 1, 'last');
+    ylength  = find(Y<maxy, 1, 'last');
 else
-    xstart   = 0;
-    xstop    = size(X,1);
-    ystart   = 0;
-    ystop    = size(Y,1);
+    xstart   = 1;
+    xlength  = size(X,1);
+    ystart   = 1;
+    ylength  = size(Y,1);
 end
 
 %% get relevant data (possibly using stride)
-X        = nc_varget(OPT.ncfile, lookupVarnameInNetCDF('ncfile', OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate'), xstart, floor((xstop-xstart)/OPT.stride(3)), OPT.stride(3)); 
-Y        = nc_varget(OPT.ncfile, lookupVarnameInNetCDF('ncfile', OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate'), ystart, floor((ystop-ystart)/OPT.stride(2)), OPT.stride(2)); 
+X        = nc_varget(OPT.ncfile, lookupVarnameInNetCDF('ncfile', OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate'), xstart - 1, floor((xlength-(xstart-1))/OPT.stride(3)), OPT.stride(3)); 
+Y        = nc_varget(OPT.ncfile, lookupVarnameInNetCDF('ncfile', OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate'), ystart - 1, floor((ylength-(ystart-1))/OPT.stride(2)), OPT.stride(2)); 
 Z        = zeros(size(Y,1), size(X,1))*nan;
 T        = zeros(size(Y,1), size(X,1))*nan;
 
@@ -111,19 +113,22 @@ T        = zeros(size(Y,1), size(X,1))*nan;
 t        = nc_varget(OPT.ncfile, lookupVarnameInNetCDF('ncfile', OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'time'));
 [t,idt]  = sort(t,'descend');
 
-[start_idx, end_idx, extents, matches, tokens, names, splits]  = regexp(nc_attget(OPT.ncfile,lookupVarnameInNetCDF('ncfile', OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'time'),'units'), '\d+');
+[start_idx, end_idx, extents, matches, tokens, names, splits]  = regexp(nc_attget(OPT.ncfile,lookupVarnameInNetCDF('ncfile', OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'time'),'units'), '\d+'); %#ok<*NASGU>
 t        = t + datenum([matches{1:6}], 'yyyymmddHHMMSS');
 
 idt_in   = find(t<=OPT.starttime & t >= OPT.starttime + OPT.searchwindow);
 
 %% one by one place separate grids on overall grid
 for id_t = [idt(idt_in)-1]' %#ok<NBRAK,FNDSB>
-    Z_next    = nc_varget(OPT.ncfile, lookupVarnameInNetCDF('ncfile', OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'altitude'), [id_t ystart xstart], [1 floor((ystop-ystart)/OPT.stride(2)) floor((xstop-xstart)/OPT.stride(3))], OPT.stride);
-    if sum(sum(~isnan(Z_next))) ~=0
-        disp(['Adding data from: ' datestr(t(idt(id_t+1)))])
-        ids2add = ~isnan(Z_next) & isnan(Z);    % helpul to be in a variable as the nature of Z changes in the next two lines
-        Z(ids2add) = Z_next(ids2add);           % add Z values from Z_next grid to Z grid at places where there is data in Z_next and no data in Z yet
-        T(ids2add) = t(idt(id_t+1));            % add time information to T at those places where Z data was added
+%     disp([' Number of nans remaining: ' num2str(sum(isnan(Z(inpolygon(repmat(X',size(Y,1),1), repmat(Y, 1, size(X',2)), OPT.polygon(:,1), OPT.polygon(:,2))))))])
+    if sum(isnan(Z(inpolygon(repmat(X',size(Y,1),1), repmat(Y, 1, size(X',2)), OPT.polygon(:,1), OPT.polygon(:,2)))))~=0
+        Z_next    = nc_varget(OPT.ncfile, lookupVarnameInNetCDF('ncfile', OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'altitude'), [id_t ystart-1 xstart-1], [1 floor((ylength-(ystart-1))/OPT.stride(2)) floor((xlength-(xstart-1))/OPT.stride(3))], OPT.stride);
+        if sum(sum(~isnan(Z_next))) ~=0
+            disp(['Adding data from: ' datestr(t(idt(id_t+1)))])
+            ids2add = ~isnan(Z_next) & isnan(Z);    % helpul to be in a variable as the nature of Z changes in the next two lines
+            Z(ids2add) = Z_next(ids2add);           % add Z values from Z_next grid to Z grid at places where there is data in Z_next and no data in Z yet
+            T(ids2add) = t(idt(id_t+1));            % add time information to T at those places where Z data was added
+        end
     end
 end
 
