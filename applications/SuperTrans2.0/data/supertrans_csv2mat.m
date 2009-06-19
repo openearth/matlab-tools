@@ -105,17 +105,17 @@ for iCsvFile = 1:length(csvFiles)
         content=strread(tLine,'%q','delimiter',',');
          for jj=1:length(content)
             if isNum(jj)
-            STD.(fileName).(rowNames{jj})(ii)=str2double(content(jj)); 
+            EPSG.(fileName).(rowNames{jj})(ii)=str2double(content(jj)); 
             else
-            STD.(fileName).(rowNames{jj})(ii)=content(jj); 
+            EPSG.(fileName).(rowNames{jj})(ii)=content(jj); 
             end
          end
     end
     fclose(fid);
 end
    
-save(fullfile(filepathstr(mfilename('fullpath')),'SuperTransData'),'-struct','STD','-V6'); 
+save(fullfile(filepathstr(mfilename('fullpath')),'EPSG'),'-struct','EPSG','-V6'); 
 
 if nargout==1
-   varargout = {STD};
+   varargout = {EPSG};
 end
