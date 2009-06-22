@@ -1,18 +1,14 @@
-function [xRD,yRD] = xRSP2xyRD(xRSP,section,transectNr)
-%XRSP2XYRD   transform RijksStrandPalen coordinates to RD coordinates
+function KML_upload(fileName)
+% KML_UPLOAD upload *.kml/*.kmz file to server, for viewing in Google Maps
 %
-%    [xRD,yRD] = xRSP2xyRD(xRSP,section,transectNr)
-%
-%   section and transectNr can be either single values, or arrays of the
-%   same length as xRD
-%
-%See also: convertCoordinatesNew
+% See also: KML_footer, KML_header, KML_line, KML_poly, KML_style, 
+% KML_stylePoly, KML_text
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma
 %
-%       Thijs.Damsma@deltares.nl
+%       Thijs.Damsma@deltares.nl	
 %
 %       Deltares
 %       P.O. Box 177
@@ -40,28 +36,10 @@ function [xRD,yRD] = xRSP2xyRD(xRSP,section,transectNr)
 % $HeadURL$
 % $Keywords: $
 
-%% load raai data
-fid = fopen('raaien.txt', 'r');
-data = textscan(fid, '%n %n %n %n %n', 'headerlines', 1);
-fclose(fid);
+%%
 
-
-%% loop through data
-for ii = 1:length(transectNr)
-    try
-        ind(ii) = find(data{:,1}== section(ii)&data{:,2}==transectNr(ii)*10);
-    catch
-        error('could not convert section %d, transect number %d', section(ii), transectNr(ii))
-    end
-end
-
-%% convert coordinates
-alpha = data{5}(ind)/180*pi/100;
-x0 = data{3}(ind)/100;
-y0 = data{4}(ind)/100;
-xRD = x0 + xRSP.*sin(alpha);
-yRD = y0 + xRSP.*cos(alpha);
-end
-
-%% EOF
-
+f = ftp('damsma.net','openearth@damsma.net','}BcIY6lHTZuV');
+mput(f,fileName) ;
+close(f);
+url = ['http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=http://www.damsma.net/openearth/' fileName];
+disp(url)

@@ -1,18 +1,21 @@
-function [xRD,yRD] = xRSP2xyRD(xRSP,section,transectNr)
-%XRSP2XYRD   transform RijksStrandPalen coordinates to RD coordinates
+function contents = opendap_foldercontents(url)
+%OPENDAPFOLDERCONTENTS   get links to all nc. files in a folder on OpenDap
 %
-%    [xRD,yRD] = xRSP2xyRD(xRSP,section,transectNr)
+%    contents = opendap_foldercontents(url)
 %
-%   section and transectNr can be either single values, or arrays of the
-%   same length as xRD
+% url is the full path to the folder. Returns a structure with all full
+% links to nc files. Only works for 'http://dtvirt5.deltares.nl:8080/'
+% server. 
 %
-%See also: convertCoordinatesNew
+% Example:
+% url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids';
+% contents = openDapFolderContents(url);
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma
 %
-%       Thijs.Damsma@deltares.nl
+%       Thijs.Damsma@deltares.nl	
 %
 %       Deltares
 %       P.O. Box 177
@@ -40,28 +43,12 @@ function [xRD,yRD] = xRSP2xyRD(xRSP,section,transectNr)
 % $HeadURL$
 % $Keywords: $
 
-%% load raai data
-fid = fopen('raaien.txt', 'r');
-data = textscan(fid, '%n %n %n %n %n', 'headerlines', 1);
-fclose(fid);
+%% 
 
-
-%% loop through data
-for ii = 1:length(transectNr)
-    try
-        ind(ii) = find(data{:,1}== section(ii)&data{:,2}==transectNr(ii)*10);
-    catch
-        error('could not convert section %d, transect number %d', section(ii), transectNr(ii))
-    end
+varopendap = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap';
+string = urlread([url '/catalog.html']);
+startPos = strfind(string, 'varopendap');
+endPos = strfind(string, '.nc">');
+for ii = 1 :length(endPos)
+    contents{ii} = [varopendap string(startPos(ii+1)+11:endPos(ii)+2)];
 end
-
-%% convert coordinates
-alpha = data{5}(ind)/180*pi/100;
-x0 = data{3}(ind)/100;
-y0 = data{4}(ind)/100;
-xRD = x0 + xRSP.*sin(alpha);
-yRD = y0 + xRSP.*cos(alpha);
-end
-
-%% EOF
-
