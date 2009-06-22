@@ -1,10 +1,12 @@
 function [x2,y2,OPT]=convertCoordinatesNew(x1,y1,STD,varargin)
 %CONVERTCOORDINATES   transformation between coordinate systems
 %
-%    [x2,y2    ]=convertCoordinatesNew(x1,y1,STD,'keyword','value')
+%    [x2,y2    ] = convertCoordinatesNew(x1,y1,STD,'keyword','value')
 %
-% where x1,y1 are the values of the coordinates to be transformed.
-%       x2,y2 are the values of the coordinates after transformation.
+% x1,y1 are the values of the coordinates to be transformed, either
+%       in X-Y or Lat-Lon.
+% x2,y2 are the values of the coordinates after transformation, either
+%       in X-Y or Lat-Lon.
 %
 %    [x2,y2,OPT]=convertCoordinatesNew(x1,y1,STD,'keyword','value')
 %
@@ -13,7 +15,7 @@ function [x2,y2,OPT]=convertCoordinatesNew(x1,y1,STD,varargin)
 %
 % Example: 2 different notations of 1 single case
 %
-%    D = load('SuperTransData')
+%    D = load('EPSGnew')
 %
 %    [x,y,OPT]=convertCoordinatesNew(5,52,D,'CS1.name','WGS 84','CS1.type','geo','CS2.name','WGS 84 / UTM zone 31N','CS2.type','xy')
 %    [x,y,OPT]=convertCoordinatesNew(5,52,D,'CS1.code',4326                     ,'CS2.name','WGS 84 / UTM zone 31N')
@@ -159,10 +161,10 @@ switch OPT.CS1.type
     case 'projected' % convert projection to geographic radians
         x1 = convertUnits(x1,OPT.CS1.UoM.name,'metre',STD);
         y1 = convertUnits(y1,OPT.CS1.UoM.name,'metre',STD);
-        [x1,y1] = ConvertCoordinatesProjectionConvert(x1,y1,OPT.CS1,'xy2geo',STD);
+        [lat1,lon1] = ConvertCoordinatesProjectionConvert(x1,y1,OPT.CS1,'xy2geo',STD);
     case 'geographic 2D' % do nothing
-        x1 = convertUnits(x1,OPT.CS1.UoM.name,'radian',STD);
-        y1 = convertUnits(y1,OPT.CS1.UoM.name,'radian',STD);
+        lat1 = convertUnits(x1,OPT.CS1.UoM.name,'radian',STD);
+        lon1 = convertUnits(y1,OPT.CS1.UoM.name,'radian',STD);
 end
 
 %% Datum transformation
@@ -175,12 +177,12 @@ end
 % * if no direct transformation exists, convert via WGS 84
 OPT = ConvertCoordinatesFindDatumTransOpt(OPT,STD);
 if strcmp('no datum transformation needed',OPT.datum_trans1)
- x2 = x1;
- y2 = y1;
+ lat2 = lat1;
+ lon2 = lon1;
 else
-    [x2,y2] = ConvertCoordinatesDatumTransform(x1,y1,OPT.datum_trans1);
-    if isfield(OPT,'datum_trans2')
-    [x2,y2] = ConvertCoordinatesDatumTransform(x2,y2,OPT.datum_trans2);
+    [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT.datum_trans1);
+    if isfield(OPT,'datum_trans2') %only exists when tranforming via WGS 84
+    [lat2,lon2] = ConvertCoordinatesDatumTransform(lat2,lon2,OPT.datum_trans2);
     end
 end
    
@@ -188,12 +190,12 @@ end
 %% Transform geographic 2D radians to output coordinates 
 switch OPT.CS2.type
     case 'projected' % convert projection to geographic radians
-        [x2,y2] = ConvertCoordinatesProjectionConvert(x1,y1,OPT.CS2,'geo2xy',STD);
+        [y2,x2] = ConvertCoordinatesProjectionConvert(lon2,lat2,OPT.CS2,'geo2xy',STD);
         x2 = convertUnits(x2,OPT.CS2.UoM.name,'metre',STD);
         y2 = convertUnits(y2,OPT.CS2.UoM.name,'metre',STD);
     case 'geographic 2D' 
-        x2 = convertUnits(x2,'radian',OPT.CS2.UoM.name,STD);
-        y2 = convertUnits(y2,'radian',OPT.CS2.UoM.name,STD);
+        x2 = convertUnits(lat2,'radian',OPT.CS2.UoM.name,STD);
+        y2 = convertUnits(lon2,'radian',OPT.CS2.UoM.name,STD);
 end
 %% EOF
 end

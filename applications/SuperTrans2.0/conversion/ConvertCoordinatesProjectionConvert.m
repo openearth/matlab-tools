@@ -1,5 +1,7 @@
-function [x1,y1] = ConvertCoordinatesProjectionConvert(x1,y1,CS,direction,STD)
-%CONVERTCOORDINATESPROJECTIONCONVERT .
+function [y1,x1] = ConvertCoordinatesProjectionConvert(x1,y1,CS,direction,STD)
+% CONVERTCOORDINATESPROJECTIONCONVERT 
+% 
+% watch the order of lat-lon / x-y!
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
