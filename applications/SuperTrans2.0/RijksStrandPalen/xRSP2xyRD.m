@@ -74,7 +74,7 @@ if nargin == 3;
     end
 
     % assign variables
-    alpha = data{5}(ind)/180*pi/100;
+    alpha = data{5}(ind)/100;
     x0 = data{3}(ind)/100;
     y0 = data{4}(ind)/100;
 else
@@ -87,8 +87,8 @@ end
 
 %% convert coordinates
 
-xRD = x0 + xRSP.*sin(alpha);
-yRD = y0 + xRSP.*cos(alpha);
+xRD = x0 + xRSP.*sind(alpha);
+yRD = y0 + xRSP.*cosd(alpha);
 end
 
 %% EOF
