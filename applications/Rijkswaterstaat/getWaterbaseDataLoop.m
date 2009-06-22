@@ -42,38 +42,38 @@
 %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
 %  See also: donarname2standard_name
 
-   OPT.codes          = 1;
-   OPT.standard_names = {'sea_surface_height'};
-
-   OPT.codes          = 54;
-   OPT.standard_names = {'sea_surface_height'};
-
-   OPT.codes          = 410;
-   OPT.standard_names = {'concentration_of_suspended_matter_in_sea_water'};
-
-   OPT.codes          = 22 
-   OPT.standard_names = {'sea_surface_wave_significant_height'};
-
-   OPT.codes          = 23 
-   OPT.standard_names = {'sea_surface_wave_from_direction'}; % alias: sea_surface_wave_to_direction
-
-   OPT.codes          = 24];
+  %OPT.codes          = 1;
+  %OPT.standard_names = {'sea_surface_height'};
+  %
+  %OPT.codes          = 54;
+  %OPT.standard_names = {'sea_surface_height'};
+  %
+  %OPT.codes          = 410;
+  %OPT.standard_names = {'concentration_of_suspended_matter_in_sea_water'};
+  %
+  %OPT.codes          = 22 
+  %OPT.standard_names = {'sea_surface_wave_significant_height'};
+  %
+  %OPT.codes          = 23 
+  %OPT.standard_names = {'sea_surface_wave_from_direction'}; % alias: sea_surface_wave_to_direction
+  %
+   OPT.codes          = 24;
    OPT.standard_names = {'sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment'};
-
-   OPT.codes          = 559 
-   OPT.standard_names = {'sea_surface_salinity'}; % alias: sea_water_salinity
-
-   OPT.codes          = 44 
-   OPT.standard_names = {'sea_surface_temperature'}; % alias: sea_water_temperature
-
-   OPT.codes          = 282;
-   OPT.standard_names = {'concentration_of_chlorophyll_in_sea_water'}; % alias: chlorophyll_concentration_in_sea_water
+  %
+  %OPT.codes          = 559 
+  %OPT.standard_names = {'sea_surface_salinity'}; % alias: sea_water_salinity
+  %
+  %OPT.codes          = 44 
+  %OPT.standard_names = {'sea_surface_temperature'}; % alias: sea_water_temperature
+  %
+  %OPT.codes          = 282;
+  %OPT.standard_names = {'concentration_of_chlorophyll_in_sea_water'}; % alias: chlorophyll_concentration_in_sea_water
                          
 %% Initialize
 
    OPT.directory.raw = 'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';
 
-   OPT.period        = datenum([1961 2008],1,1);
+   OPT.period        = [datenum([1648],1,1) now];
    OPT.zip           = 1; % zip txt file and delete it
    OPT.nc            = 0; % not implemented yet
    OPT.opendap       = 0; % not implemented yet
@@ -101,7 +101,7 @@ for ivar=1:length(OPT.codes)
       LOC = getWaterbaseData_locations(SUB.Code(OPT.indSub));
       
       if ~exist([OPT.directory.raw,filesep,OPT.standard_name])
-         mkdir([OPT.directory.raw,filesep,OPT.standard_name])
+          mkdir([OPT.directory.raw,filesep,OPT.standard_name])
       end
    
       for indLoc=1:length(LOC.ID)

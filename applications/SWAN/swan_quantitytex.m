@@ -10,6 +10,10 @@ function varargout = swan_quantitytex
 %  OVKEYW(IVTYPE) =    keyword used in SWAN command      
 %  TEXNAM(IVTYPE) =    LaTeX name
 %
+% SWAN_QUANTITYTEX contains more parameters then 
+% SWAN_QUANTITY, notably the parameters
+% in the TEST output and the MUDF output.
+%
 %See also: SWAN_IO_SPECTRUM, SWAN_IO_INPUT, SWAN_IO_TABLE, SWAN_IO_GRD, SWAN_IO_BOT, 
 %          SWAN_SHORTNAME2KEYWORD, SWAN_DEFAULTS, SWAN_QUANTITY
 
@@ -24,9 +28,9 @@ function varargout = swan_quantitytex
 %       2600 MH Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -35,10 +39,7 @@ function varargout = swan_quantitytex
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
-%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
 % $Id$
@@ -356,6 +357,17 @@ function varargout = swan_quantitytex
       OVKEYW{IVTYPE} = 'Snl4';
       TEXNAM{IVTYPE} = 'Source quadruplet [m^2]';
       
+%% Parameter in MUDF
+%------------------------
+
+      IVTYPE = IVTYPE + 1;
+      OVKEYW{IVTYPE} = 'KIMAG'                                    ;
+      TEXNAM{IVTYPE} = 'Im(wave number) [rad/s]';
+%;
+      IVTYPE = IVTYPE + 1;
+      OVKEYW{IVTYPE} = 'KREAL'                                    ;
+      TEXNAM{IVTYPE} = 'Re(wave number) [rad/s]';
+
 %% Put into struct
 %------------------------
 

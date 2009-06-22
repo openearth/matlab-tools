@@ -1,9 +1,9 @@
 function varargout = swan_io_spectrum(varargin)
 %SWAN_IO_SPECTRUM         read SWAN 1D or 2D spectrum file    (BETA VERSION).
 %
-% DAT = SWAN_IO_SPECTRUM(fname)
-% DAT = SWAN_IO_SPECTRUM  % launches file load GUI
-% DAT = SWAN_IO_SPECTRUM(INP.spec(i))
+%    DAT = swan_io_spectrum(fname)
+%    DAT = swan_io_spectrum  % launches file load GUI
+%    DAT = swan_io_spectrum(INP.spec(i))
 % 
 % where fname is the table file name (e.g. *.s1d, *.s2d)
 % where INP.spec is returned by INP = swan_io_input('INPUT')
@@ -39,7 +39,7 @@ function varargout = swan_io_spectrum(varargin)
 %
 % See also: SWAN_IO_INPUT, SWAN_IO_TABLE, SWAN_IO_BOT, SWAN_IO_GRD
 
-
+%% Copyright
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006-2009 Deltares
 %       Gerben de Boer
@@ -51,9 +51,9 @@ function varargout = swan_io_spectrum(varargin)
 %       2600 MH Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -62,12 +62,11 @@ function varargout = swan_io_spectrum(varargin)
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
-%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------tp://www.fsf.org/
 %   --------------------------------------------------------------------
 
+%% Version
 % $Id$
 % $Date$
 % $Author$
@@ -98,6 +97,8 @@ function varargout = swan_io_spectrum(varargin)
 %                                     '4th dimension = number_of_iterations         '];
 %                                        number_of_locations mx
 %                                        number_of_locations my
+
+%% Defaults
 
 OPT.debug = [0 0 0]; % 1st is tree, 2nd is all lines, 3rd is pcolor of reshaped (x,y) matrix
 OPT.mod   = 1000; % for OPT.debug(2)

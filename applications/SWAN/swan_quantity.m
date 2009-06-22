@@ -32,9 +32,9 @@ function varargout = swan_quantity
 %       2600 MH Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -43,10 +43,7 @@ function varargout = swan_quantity
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
-%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
 % $Id$
@@ -822,6 +819,7 @@ function varargout = swan_quantity
       
 %% Parameter in test spectral output (see SWANPRE2.for) to be obtained with:
 %  TEST 1 0 POINTS XY 0.0000 0 PAR 'x.par' S1D 'x.s1d' S2D 'x.s2d'
+%------------------------
 
       IVTYPE = IVTYPE + 1;
       OVKEYW{IVTYPE} = 'VaDens';
@@ -920,6 +918,35 @@ function varargout = swan_quantity
       OVEXCV{IVTYPE} = -99.;
       OVEXCV{IVTYPE} = -99.;
             
+%% Parameter in MUDF
+%------------------------
+
+%;
+      IVTYPE = IVTYPE + 1;
+      OVKEYW{IVTYPE} = 'KIMAG';
+      OVSNAM{IVTYPE} = 'KIMAG';
+      OVLNAM{IVTYPE} = 'Wave number with mud imag part';
+      OVUNIT{IVTYPE} = 'rad/m';
+      OVSVTY{IVTYPE} = NaN;
+      OVLLIM{IVTYPE} = NaN;
+      OVULIM{IVTYPE} = NaN;
+      OVLEXP{IVTYPE} = NaN;
+      OVHEXP{IVTYPE} = NaN;
+      OVEXCV{IVTYPE} = NaN;
+%;
+      IVTYPE = IVTYPE + 1;
+      OVKEYW{IVTYPE} = 'KREAL';
+      OVSNAM{IVTYPE} = 'KREAL';
+      OVLNAM{IVTYPE} = 'Wave number with mud real part';
+      OVUNIT{IVTYPE} = 'rad/m';
+      OVSVTY{IVTYPE} = NaN;
+      OVLLIM{IVTYPE} = NaN;
+      OVULIM{IVTYPE} = NaN;
+      OVLEXP{IVTYPE} = NaN;
+      OVHEXP{IVTYPE} = NaN;
+      OVEXCV{IVTYPE} = NaN;
+
+
 %% Put into struct
 
       DAT0.OVKEYW = OVKEYW;

@@ -1,8 +1,8 @@
 function varargout = swan_io_input(varargin)
 %SWAN_IO_INPUT            read SWAN input file into struct    (BETA VERSION).
 %
-% DAT = SWAN_IO_INPUT        %launches load GUI.
-% DAT = SWAN_IO_INPUT(fname)
+%    DAT = swan_io_input(fname)
+%    DAT = swan_io_input        %launches load GUI.
 % 
 % Reads an ASCII SWAN input file into a struct DAT with one field
 % per keyword (all fieldnames lower case).
@@ -18,6 +18,7 @@ function varargout = swan_io_input(varargin)
 %
 % See also: SWAN_IO_SPECTRUM, SWAN_IO_TABLE, SWAN_IO_GRD, SWAN_IO_BOT, SWAN_DEFAULTS
 
+%% Copyright
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006-2009 Deltares
 %       Gerben de Boer
@@ -29,9 +30,9 @@ function varargout = swan_io_input(varargin)
 %       2600 MH Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -40,12 +41,10 @@ function varargout = swan_io_input(varargin)
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
-%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+%% Version
 % $Id$
 % $Date$
 % $Author$
@@ -64,6 +63,8 @@ function varargout = swan_io_input(varargin)
 % 2009 Feb 05: replaced deblank2 with strtrim, use only 2 letter of keyword FRICtion, allow both presence and absence of continuation char (&) in PROJ keyword span.
 % TO DO: in fgetlines_no_comment_line:
 % make sure comment is treated as all data on a SWAN line (_& continuation) in between $ or after last (odd) $
+
+%% Defaults
 
    DAT = swan_defaults; % sets DAT.set
    
@@ -98,6 +99,7 @@ function varargout = swan_io_input(varargin)
    if iostat==1 %  0 when uigetfile was cancelled
                 % -1 when uigetfile failed
 
+%% check for file existence (1)                
    tmp = dir(DAT.fullfilename);
    
    if length(tmp)==0
@@ -112,7 +114,8 @@ function varargout = swan_io_input(varargin)
    
       DAT.file.date     = tmp.date;
       DAT.file.bytes    = tmp.bytes;
-   
+
+%% check for file opening (2)
       sptfilenameshort = filename(DAT.fullfilename);
       
       fid       = fopen  (DAT.fullfilename,'r');
@@ -126,7 +129,9 @@ function varargout = swan_io_input(varargin)
          end
       
       elseif fid > 2
-      
+
+%% read file line by line
+
          rec = '';
          
          while ~feof(fid)
@@ -164,8 +169,8 @@ elseif nargout==2
    varargout= {DAT, iostat};
 end
    
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    function [DAT,rec] = addkeyword(fid,DAT,rec)
    

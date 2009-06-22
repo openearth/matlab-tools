@@ -41,8 +41,8 @@ function varargout = odv_read(fname)
 % $Date$
 % $Author$
 % $Revision$
-% $HeadURL
-% $Keywords:
+% $HeadURL$
+% $Keywords:$
 
 % 3.1.1 Metavariables
 % ODV requires availability of some types of metadata for its basic operation. The geo-graphic location of a station, for instance, must be known to be able to plot the station in the station map. Date and time of observation, or the names of the station and cruise (or expedition) it belongs to are needed to fully identify the station and to be able to apply station selection filters that only allow stations of given name patterns are from specific time periods. Because of this fundamental importance, ODV defines a set of mandatory metavariables providing name, location and timing information of a given station (see Table 3-3). Other suggested metavariables are optional, and still others may be added by the user, as necessary. Metavariable values can be either text or numeric, and the respective byte lengths can be set by the user. The value type (text or numeric) of the mandatory meta-variables may not be changed, while the byte length may. As an example, the data type of the longitude and latitude metavariables may be set as 8 bytes double precision to accommodate better than cm-scale precision of station location. Metavariables with values in the ranges [0 to 255] or [-32,768 to 32,767] may be represented by 1 or 2 byte integers, respectively, to conserve storage space.

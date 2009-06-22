@@ -23,9 +23,9 @@ function OUT = swan_keyword2texname(IN)
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -34,10 +34,7 @@ function OUT = swan_keyword2texname(IN)
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
-%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
 % $Id$

@@ -28,7 +28,9 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 %
 % Examples:
 %
-%    directory = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/'; % either remote
+%    directory = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/'; % either remote [OpenEarth OPeNDAP THREDDS test server]
+%    directory = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/'; %               [OpenEarth OPeNDAP THREDDS production server]
+%    directory = 'http://opendap.deltares.nl:8080/opendap/';               %               [OpenEarth OPeNDAP HYRAX production server]
 %    directory = 'P:\mcdata\opendap\\'                                     % or local
 %
 %    [D,M]=nc_cf_grid([directory,'knmi/NOAA/mom/1990_mom/5/N19900501T025900_SST.nc'],'SST')

@@ -12,9 +12,10 @@
 %   Rijkswaterstaat - data: <a href="http://www.Rijkswaterstaat.nl">Rijkswaterstaat</a>
 %   sobek           - model: <a href="http://www.SOBEK.nl">SOBEK</a>
 %   SuperTrans      - global coordinate transformations for <a href="http://www.epsg-registry.org/">OGP EPSG</a> systems.
-%   SWAN            - model: <a href="http://www.SWAN.tudelft.nl">SWAN</a>
+%   SWAN            - model: <a href="http://www.SWAN.tudelft.nl">SWAN</a>  (see also: waves)
 %   textpad         - program: <a href="http://www.textpad.com">textpad</a>
 %   tide            - application
+%   waveS           - application: waves (see also: swan)
 %   xbeach          - model: <a href="http://XBeach.org">XBeach</a>
 %
 % See also: OpenEarthTools: general, io
