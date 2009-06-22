@@ -1,15 +1,15 @@
-function contents = opendap_foldercontents(url)
-%OPENDAPFOLDERCONTENTS   get links to all nc. files in a folder on OpenDap
+function contents = opendap_folder_contents(url)
+%OPENDAP_FOLDER_CONTENTS   get links to all nc. files in a folder on OpenDap
 %
-%    contents = opendap_foldercontents(url)
+%    contents = opendap_folder_contents(url)
 %
 % url is the full path to the folder. Returns a structure with all full
 % links to nc files. Only works for 'http://dtvirt5.deltares.nl:8080/'
-% server. 
+% server (but can easily be adapted)
 %
 % Example:
 % url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids';
-% contents = openDapFolderContents(url);
+% contents = opendap_folder_contents(url);
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
