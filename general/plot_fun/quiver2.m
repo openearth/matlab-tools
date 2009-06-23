@@ -1,7 +1,7 @@
 function varargout = quiver2(varargin)
-%QUIVER2   Wrapper to workaround errors in QUIVER  matlab 2006a-2007a.
+%QUIVER2   Wrapper for QUIVER.
 %
-% quiver2(x,y,u,v) 
+% quiver2(x,y,u,v)  = quiver(x,y,u,v)
 %    Plots arrows (u,v) at position (x,y). 
 %
 % quiver2(x,y,u,v,scaling)
@@ -45,12 +45,8 @@ function varargout = quiver2(varargin)
 %    - 'quiver' (default). Due to bugs in the Matlab R14 quiver, 
 %       in matlab 13 quiver('v6',...) is used.
 %
-% © G.J. de Boer, Delft University of Technology, 2006
-%
-% See also: quiver, quiver3, feather,
-% arrow2, (from G.J. de Boer), arrow, arrow3 (from download central)
-
-%29-11-2006
+% See also: quiver, quiver3, feather, arrow2, 
+% from download central: arrow, arrow3 
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology

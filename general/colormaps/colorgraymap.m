@@ -23,8 +23,9 @@ function C = colorgraymap(catalog,varargin)
 % C = colorgraymap(catalog,n,1) plots a sample image to test a colormap
 % C = colorgraymap('all',n,1)   plots sample images for all available colormap
 %
-%See also: COLORMAPEDITOR, COLORMAP,COLORMAPGRAY
+%See also: COLORMAPEDITOR, COLORMAP, COLORMAPGRAY
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
 %       Gerben J. de Boer
@@ -37,9 +38,9 @@ function C = colorgraymap(catalog,varargin)
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -48,10 +49,19 @@ function C = colorgraymap(catalog,varargin)
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
-%   -------------------------------------------------------------------- 
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------- 
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% code   
 
 if nargin >2
    OPT.plot = 1;
@@ -64,6 +74,8 @@ if nargin >1
 else
    n = 64;
 end
+
+%% Catalogue selection
 
 if strcmp(catalog,'all') & OPT.plot==1
 
@@ -86,6 +98,7 @@ else
 
 end
 
+%% Catalogue data
 for i=1:length(catalogs)
 
    catalog = char(catalogs{i});
@@ -209,6 +222,7 @@ for i=1:length(catalogs)
    
         C  = flipud(clrmap(C0,n));
    
+%% Catalogue plot (for testing)
    if OPT.plot
    
       TMP = figure;

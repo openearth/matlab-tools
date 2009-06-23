@@ -7,6 +7,7 @@
 %   oet_defaults        - OpenEarthTools defaults
 %   oet_template        - OpenEarthTools templates
 %   SVN_fun             - SubVersion configuration
+%   docgeneration       - generation of documentation
 %   
 % OpenEarthTools general toolboxes.
 %   colormaps           - colormaps

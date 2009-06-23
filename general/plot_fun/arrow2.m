@@ -131,17 +131,17 @@ function varargout = arrow2(varargin)
 %                                   +-----+-----+                           
 %                                     W6     W6                             
 %                                                                           
-% Copyright Gerben J. de Boer, Delft University of Technology
-% version 1.0b October 2004.
+% See also: quiver, quiver3, feather, arrow2, (downloadcentral): arrow, arrow3
 
-% Called functions: - cart2pol (matlab\specfun)
+% Called functions: - cart2pol     (matlab\specfun)
 %                   - mergestructs (included below)
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004 Delft University of Technology
 %       Gerben J. de Boer
 %
-%       g.j.deboer@citg.tudelft.nl	
+%       g.j.deboer@tudelft.nl	
 %
 %       Fluid Mechanics Section
 %       Faculty of Civil Engineering and Geosciences
@@ -149,9 +149,9 @@ function varargout = arrow2(varargin)
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -160,13 +160,18 @@ function varargout = arrow2(varargin)
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+%% SVN keywords
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
 %% Default initialisation
-%% ---------------------------------
 
 warnings = 0;
       I.scale                    = 1;
@@ -199,7 +204,6 @@ warnings = 0;
       I.elevation = 1e3;
 
 %% Input
-%% ---------------------------------
    if nargin==2
       I.u     = varargin{1};
       I.v     = varargin{2};
@@ -326,7 +330,6 @@ warnings = 0;
                set (gca,'nextplot','add');
 
 %% ARROW HEAD
-%% ---------------------------------
 
    %% Calculate relative length of template patch sides 
    %% ------------------------------
@@ -376,7 +379,6 @@ warnings = 0;
    if isfield(I     ,'clipping' );set(OUT.head,'clipping' ,I.clipping      );end
 
 %% ARROW SHAFT
-%% ---------------------------------
 
    %% Calculate relative length of template patch sides 
    %% ------------------------------
@@ -443,9 +445,7 @@ warnings = 0;
       end
    end
 
-% --------------------------------------------------------
-% --------------------------------------------------------
-% --------------------------------------------------------
+%% --------------------------------------------------------
 
 function result = mergestructs(varargin)
 % MERGESTRUCTS
@@ -470,7 +470,7 @@ function result = mergestructs(varargin)
 %   Copyright (C) 2004 Delft University of Technology
 %       Gerben J. de Boer
 %
-%       g.j.deboer@citg.tudelft.nl	
+%       g.j.deboer@tudelft.nl	
 %
 %       Fluid Mechanics Section
 %       Faculty of Civil Engineering and Geosciences
@@ -478,9 +478,9 @@ function result = mergestructs(varargin)
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -489,9 +489,7 @@ function result = mergestructs(varargin)
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
 U.overwrite   = 0;

@@ -26,7 +26,7 @@ function varargout = plotc(x,y,v,marker,varargin)
 % Changing the caxis after calling plotc will not affect the
 % PLOTC marker colors.
 %
-% plotc comes from the <a href="http://www.mathworks.com/matlabcentral/fileexchange/5718">Mathworks download central</a>, for copyright: edit plotc.
+% plotc comes from the <a href="http://www.mathworks.com/matlabcentral/fileexchange/5718">Mathworks download central</a>, for copyright: edit plotc
 %
 % If 'CLimMode' is 'auto', PLOTC sets CAXIS equal to [min(V), max(V)],
 % otherwise CAXIS limits are used to define the  RGB values of PLOTC markers.

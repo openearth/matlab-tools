@@ -16,8 +16,9 @@ function colormapgray = colormapgray(varargin);
 % Example:
 % colormap(colormapgray(.1,.9,10))
 %
-%See also: colormapeditor, colormap,COLORGRAYMAP
+%See also: COLORMAPEDITOR, COLORMAP, COLORGRAYMAP
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
 %       Gerben J. de Boer
@@ -30,9 +31,9 @@ function colormapgray = colormapgray(varargin);
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -41,14 +42,21 @@ function colormapgray = colormapgray(varargin);
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   -------------------------------------------------------------------- 
 
-   %   Feb 2004, version 1.0
-   %   Feb 2006, version 2.0, added option for nargin=1
-   
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Feb 2004, version 1.0
+% Feb 2006, version 2.0, added option for nargin=1
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% code   
    if nargin>1
        
       grayvector   = linspace(varargin{:});
