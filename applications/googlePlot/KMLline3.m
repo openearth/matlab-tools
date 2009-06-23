@@ -58,7 +58,8 @@ end
 OPT.fid=fopen(OPT.fileName,'w');
 %% HEADER
 OPT_header = struct(...
-    'name',OPT.kmlName);
+    'name',OPT.kmlName,...
+    'open',0);
 output = KML_header(OPT_header);
 %% STYLE
 % write multiple styles if different line or fill styles are defined.

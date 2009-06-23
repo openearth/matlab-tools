@@ -36,6 +36,10 @@ function [output] = KML_poly(lat,lon,z,OPT)
 % $HeadURL$
 % $Keywords: $
 
+if all(isnan(z(:)))
+    output = '';
+    return
+end
 %% preprocess visibility
 if  ~OPT.visibility
     visibility = '<visibility>0</visibility>\n';

@@ -35,6 +35,11 @@ function [OPT, Set, Default] = KMLsurf(lat,lon,z,varargin)
 % $HeadURL$
 % $Keywords: $
 
+%% error check
+if all(isnan(z(:)))
+    disp('warning: No surface could be constructed, because there was no valid height data provided...') %#ok<WNTAG>
+    return
+end
 %% assign c if it is given
 if ~ischar(varargin{1});
     c = varargin{1};
@@ -59,7 +64,7 @@ OPT.lineWidth = 1;
 OPT.lineColor = [0 0 0];
 OPT.lineAlpha = 1;
 OPT.colormap = 'jet';
-OPT.colorSteps = 8;
+OPT.colorSteps = 16;
 OPT.fillAlpha = 0.6;
 OPT.fileName = '';
 OPT.polyOutline = 0;
@@ -90,7 +95,8 @@ c = round(((c-OPT.cLim(1))/(OPT.cLim(2)-OPT.cLim(1))*(OPT.colorSteps-1))+1);
 OPT.fid=fopen(OPT.fileName,'w');
 %% HEADER
 OPT_header = struct(...
-    'name',OPT.kmlName);
+    'name',OPT.kmlName,...
+    'open',0);
 output = KML_header(OPT_header);
 %% STYLE
 OPT_stylePoly = struct(...
