@@ -4,8 +4,9 @@ contents = opendap_folder_contents(url);
 EPSG = load('EPSGnew');
 
 % z scaling paramters:
-a = 40;
-b = 5;
+a = 40; %lift up meters
+b = 5;  %exagertaion
+c = 30; %colormap limits
 
 for ii = 1:length(contents);
     [path, fname] = fileparts(contents{ii});
@@ -30,7 +31,7 @@ for ii = 1:length(contents);
     time = datestr(time+datenum(1970,1,1),10);
 
     %loop through all the years
-    for jj = size(time,1)
+    for jj = size(time,1):-40:1
 
         % dispaly progress
         disp([num2str(ii) '/' num2str(length(contents)) ' ' fname ' ' time(jj,:)]);
@@ -49,12 +50,16 @@ for ii = 1:length(contents);
         if exist([outputDir2 '/' time(jj,:) '_3D.kmz'],'file')
             disp([outputDir2 '/' time(jj,:) '_3D.kmz already exists'] )
         else
-            KMLsurf(lat,lon,z,'fileName',[outputDir2 '/' time(jj,:) '_3D.kmz'],'kmlName',[fname ' ' time(jj,:) ' 2D'],'lineWidth',0);
+            KMLsurf(lat,lon,z,'fileName',[outputDir2 '/' time(jj,:) '_3D.kmz'],...
+                'kmlName',[fname ' ' time(jj,:) ' 2D'],'lineWidth',0,...
+                'colormap','colormapbathymetry','colorSteps',64,'cLim',[(a-c)*b (a+c)*b]);
         end
         if exist([outputDir2 '/' time(jj,:) '_2D.kmz'],'file')
             disp([outputDir2 '/' time(jj,:) '_3D.kmz already exists'] )
         else
-            KMLpcolor(lat,lon,z,'fileName',[outputDir2 '/' time(jj,:) '_2D.kmz'],'kmlName',[fname ' ' time(jj,:) ' 2D'],'lineWidth',.5,'lineAlpha',.6);
+            KMLpcolor(lat,lon,z,'fileName',[outputDir2 '/' time(jj,:) '_2D.kmz'],...
+                'kmlName',[fname ' ' time(jj,:) ' 2D'],'lineWidth',0.3,'lineAlpha',.6,'fillAlpha',.8,...
+                'colormap','colormapbathymetry','colorSteps',64,'cLim',[(a-c)*b (a+c)*b]);
         end
     end
 end

@@ -1,7 +1,7 @@
 
 %% example 1
 clear all
-url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids';
+url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/catalog.html';
 contents = opendap_folder_contents(url);
 EPSG = load('EPSGnew');
 for ii = 1:length(contents);
