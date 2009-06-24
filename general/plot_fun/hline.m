@@ -37,14 +37,51 @@ function hhh=hline(y,in1,in2,varargin)
 %
 % draws three lines with the appropriate labels and colors.
 % 
+% HLINE comes from the <a href="http://www.mathworks.com/matlabcentral/fileexchange/1039">Mathworks download central</a>, for copyright: edit hline.
+% 
 % Note that when axis limits are set to '-Inf' or 'Inf', function will not work.
 % Note that sometimes the hline does show up in the legend when 'off' is passed, 
 % but stops doing so after rebooting matlab ...
 %
 % See also: VLINE
 
+%% Copyright notice
 % By Brandon Kuczenski for Kensington Labs (brandon_kuczenski@kensingtonlabs.com) 8 November 2001
+
+% Copyright (c) 2001, Brandon Kuczenski
+% All rights reserved.
+% 
+% Redistribution and use in source and binary forms, with or without 
+% modification, are permitted provided that the following conditions are 
+% met:
+% 
+%     * Redistributions of source code must retain the above copyright 
+%       notice, this list of conditions and the following disclaimer.
+%     * Redistributions in binary form must reproduce the above copyright 
+%       notice, this list of conditions and the following disclaimer in 
+%       the documentation and/or other materials provided with the distribution
+%       
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+% POSSIBILITY OF SUCH DAMAGE.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
 % changed G.J. de Boer(g.j.deboer@tudelft.nl) 11th March 2006
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 if length(y)>1  % vector input
     for I=1:length(y)

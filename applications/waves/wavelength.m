@@ -1,5 +1,5 @@
 function [L,e,c] = wavelength(T,d,alpha,U,delta,tol)
-%WAVELENGTH Solves the dispersion relation for ocean surface waves
+%WAVELENGTH Solves the dispersion relation for ocean surface waves numerically
 %
 % USAGE:
 %   [L,e,c] = wavelength(T,d,U,delta,alpha,tol)

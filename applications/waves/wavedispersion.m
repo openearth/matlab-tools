@@ -1,5 +1,5 @@
 function varargout = wavedispersion(varargin)
-%WAVEDISPERSION   Wave length according to linear surface wave dispersion relation approximation.
+%WAVEDISPERSION   Approximates the dispersion relation for ocean surface waves
 %
 % L = wavedispersion(T,d); % T = period      [s]
 %                          % d = depth       [m]
@@ -110,22 +110,22 @@ elseif ischar(varargin{1})
 
       i=i+1;
    
-      T     = 0.5:0.5:40;
-      L     = wavelength    (T,h);
-      Lpade = wavedispersion(T,h,OPT.method);
+      T        = 0.5:0.5:40;
+      L        = wavelength    (T,h);
+      L_approx = wavedispersion(T,h,OPT.method);
       
       subplot(3,1,1)
       plot(T,L,'k-' ,'linewidth',i);
-      legendtext1 = strvcat(legendtext1,['h= ',num2str(h),' L']);
+      legendtext1 = strvcat(legendtext1,['h= ',num2str(h),', L']);
 
       hold on;
-      plot(T,Lpade,'k--','linewidth',i);
-      legendtext1 = strvcat(legendtext1,['h= ',num2str(h),' L_{',OPT.method,'}']);
+      plot(T,L_approx,'k--','linewidth',i);
+      legendtext1 = strvcat(legendtext1,['h= ',num2str(h),', L_{',OPT.method,'}']);
 
       subplot(3,1,2)
-      plot(T,L./Lpade,'k--','linewidth',i);
+      plot(T,L./L_approx,'k--','linewidth',i);
       hold on
-      legendtext2 = strvcat(legendtext2,['h= ',num2str(h),' L/ L_{',OPT.method,'}']);
+      legendtext2 = strvcat(legendtext2,['h= ',num2str(h),', L/ L_{',OPT.method,'}']);
 
       subplot(3,1,3)
       plot(2*pi./T,2.*pi./L,'k--','linewidth',i);
@@ -140,18 +140,21 @@ elseif ischar(varargin{1})
    ylabel ('L [m]')
   %set    (gca,'xscale','log')
    set    (gca,'yscale','log')
-   title  ('Accuracy wavelength\_pade')
+   title  (['Accuracy of wavelength by method: ',OPT.method])
+   grid on
    
    subplot(3,1,2)
    legend (legendtext2)
    grid on
    xlabel ('T [s]')
-   ylabel ('L/ L_{pade} [m]')
+   ylabel (['L/ L_{',OPT.method,'} [m]'])
   %set    (gca,'xscale','log')
+   grid on
   
    subplot(3,1,3)
    xlabel ('k [rad/m]');
    ylabel ('\omega [rad/s]');
+   grid on
 
    end
    
