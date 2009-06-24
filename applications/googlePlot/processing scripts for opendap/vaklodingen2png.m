@@ -1,12 +1,8 @@
 outputDir = 'F:\KML\vaklodingen';
-url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen';
+% url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen';
+url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen';
 contents = opendap_folder_contents(url);
 EPSG = load('EPSGnew');
-
-% % z scaling parameters:
-% a = 40; %lift up meters
-% b = 5;  %exagertaion
-% c = 30; %colormap limits
 
 OPT.colormap = 'colormapbathymetry';
 OPT.cLim = [-30 30];
