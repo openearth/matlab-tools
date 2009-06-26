@@ -4,7 +4,7 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 %      nc_cf_stationtimeseries2meta(<keyword,value>) 
 %  M = nc_cf_stationtimeseries2meta(<keyword,value>) 
 %
-%  reads standard meta info from CF convention (station_id,min(time),max(time),lon,lat,nt) 
+%  reads standard meta info from CF convention (station_id,min(time),max(time),lon,lat,nt,<station_name>) 
 %  from all NetCDF files in a directory, make a plan view plot and saves table to excel file.
 %  Optionally returns result to struct M.
 %  The following <keyword,value> pairs have been implemented:
@@ -15,6 +15,7 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 %
 %See also: snctools
 
+% Copyright notice:
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
 %       G.J.de Boer
@@ -45,12 +46,15 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 %   http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% Version:
 % $Id$
 % $Date$
 % $Author$
 % $Revision$
 % $HeadURL$
 % $Keywords$
+
+% 2009 06 23: added extraction of station_name, in addition to station_id [GJdB]
 
 %TO DO: put results in MySQL server (a la MATROOS approach)
 %TO DO: put results in catalog.xml zetten (according to opendap specifications)
@@ -110,63 +114,74 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 
 %% Get ordinates ~(dimensions)
 
-      OPT.lat        = lookupVarnameInNetCDF('ncfile', OPT.filename, 'attributename', 'standard_name', 'attributevalue','latitude'  );
-      OPT.lon        = lookupVarnameInNetCDF('ncfile', OPT.filename, 'attributename', 'standard_name', 'attributevalue','longitude' );
-      OPT.time       = lookupVarnameInNetCDF('ncfile', OPT.filename, 'attributename', 'standard_name', 'attributevalue','time'      );
-      OPT.station_id = lookupVarnameInNetCDF('ncfile', OPT.filename, 'attributename', 'standard_name', 'attributevalue','station_id');
+      OPT.lat          = lookupVarnameInNetCDF('ncfile', OPT.filename, 'attributename', 'standard_name', 'attributevalue','latitude'  );
+      OPT.lon          = lookupVarnameInNetCDF('ncfile', OPT.filename, 'attributename', 'standard_name', 'attributevalue','longitude' );
+      OPT.time         = lookupVarnameInNetCDF('ncfile', OPT.filename, 'attributename', 'standard_name', 'attributevalue','time'      );
+      OPT.station_id   = lookupVarnameInNetCDF('ncfile', OPT.filename, 'attributename', 'standard_name', 'attributevalue','station_id');
       
-      files(ifile).lat        = nc_varget(OPT.filename,OPT.lat);
-      files(ifile).lon        = nc_varget(OPT.filename,OPT.lon);
-      time                    = nc_varget(OPT.filename,OPT.time);
-      isounits                = nc_attget(OPT.filename,OPT.time,'units');
-      files(ifile).nt         = length(time);
-      files(ifile).datenummin = min(time);
-      files(ifile).datenummax = max(time);
-      files(ifile).station_id = nc_varget(OPT.filename,OPT.station_id);
+      files(ifile).lat          = nc_varget(OPT.filename,OPT.lat);
+      files(ifile).lon          = nc_varget(OPT.filename,OPT.lon);
+      time                      = nc_varget(OPT.filename,OPT.time);
+      isounits                  = nc_attget(OPT.filename,OPT.time,'units');
+      files(ifile).nt           = length(time);
+      files(ifile).datenummin   = min(time);
+      files(ifile).datenummax   = max(time);
+      files(ifile).station_id   = nc_varget(OPT.filename,OPT.station_id);
+      try
+      files(ifile).station_name = nc_varget(OPT.filename,'station_name');
+      end
       
    end
 
 %% Reorganize meta-data
 
-   A.filename    = {OPT.files.name};
-   A.lat         = [files.lat];
-   A.lon         = [files.lon];
-   A.nt          = [files.nt];
-   A.datenummin  = [files.datenummin];
-   A.datenummax  = [files.datenummax];
-   A.datestrmin  = datestr(udunits2datenum(A.datenummin,isounits),OPT.datestr);
-   A.datestrmax  = datestr(udunits2datenum(A.datenummax,isounits),OPT.datestr);
+   A.filename          = {OPT.files.name};
+   A.lat               = [files.lat];
+   A.lon               = [files.lon];
+   A.nt                = [files.nt];
+   A.datenummin        = [files.datenummin];
+   A.datenummax        = [files.datenummax];
+   A.datestrmin        = datestr(udunits2datenum(A.datenummin,isounits),OPT.datestr);
+   A.datestrmax        = datestr(udunits2datenum(A.datenummax,isounits),OPT.datestr);
    
-   A.station_id  = {files.station_id}
-   if isnumeric(A.station_id{1})
-   A.station_id = num2str(cell2mat(A.station_id)');
-   else
-   A.station_id = char   (A.station_id); % cell2  char
-   end
+   A.station_id        = {files.station_id};
+   A.station_name      = {files.station_name};
 
-   units.filename    = 'string';
-   units.lat         = nc_attget(OPT.filename,OPT.lat ,'units');
-   units.lon         = nc_attget(OPT.filename,OPT.lon ,'units');
-   units.nt          = '# of observations';
-   units.datenummin  = nc_attget(OPT.filename,OPT.time,'units');
-   units.datenummax  = nc_attget(OPT.filename,OPT.time,'units');
-   units.datestrmin  = OPT.datestr;
-   units.datestrmax  = OPT.datestr;
-   units.station_id  = 'string';
+   if isnumeric(A.station_id{1})
+   A.station_id        = num2str(cell2mat(A.station_id)');
+   else
+   A.station_id        = char   (A.station_id); % cell2  char
+   end
+   A.station_name      = char   (A.station_name); % cell2  char
+
+   units.filename      = 'string';
+   units.lat           = nc_attget(OPT.filename,OPT.lat ,'units');
+   units.lon           = nc_attget(OPT.filename,OPT.lon ,'units');
+   units.nt            = '# of observations';
+   units.datenummin    = nc_attget(OPT.filename,OPT.time,'units');
+   units.datenummax    = nc_attget(OPT.filename,OPT.time,'units');
+   units.datestrmin    = OPT.datestr;
+   units.datestrmax    = OPT.datestr;
+   units.station_id    = 'string';
+   units.station_name  = 'string';
 
 %% Plot locations
 
    TMP = figure;
    plot   (A.lon,A.lat,'ko','linewidth',2)
    hold    on
-   plotc  (A.lon,A.lat,A.nt,'o','linewidth',2)
+   OPT.ctick = 10.^[0:5];
+   colormap(jet((length(OPT.ctick)-1)*2));
+   caxis  (log10(OPT.ctick([1 end])))
+   plotc  (A.lon,A.lat,log10(A.nt),'o','linewidth',2)
    axislat(52)
    tickmap('ll')
-   caxis  ([min(A.nt) max(A.nt)])
-   colorbarwithtitle('n [#]')
+  %caxis  (log10([min(A.nt) max(A.nt)]))
+   [ax,h]=colorbarwithtitle('n [#]',log10(OPT.ctick));
+   set(ax,'YTickLabel',num2str(OPT.ctick'))
    grid    on
    hold    on
-   title  ({OPT.directory_nc,['# stations: ',num2str(length(OPT.files))]})
+   title  ({mktex(OPT.basename),['# stations: ',num2str(length(OPT.files))]})
    
    %% Add vector coastline
 
@@ -201,6 +216,8 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    
    end
 
+   close(TMP)
+   
 %% EOF   
 
 

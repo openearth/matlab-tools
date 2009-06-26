@@ -1,5 +1,7 @@
+%VAKLODINGEN_OVERVIEW   make mkl with links to all nc. files in a folder on OPeNDAP server
+
 clear all
-url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen';
+url      = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen';
 contents = opendap_folder_contents(url);
 EPSG = load('EPSGnew');
 for ii = 1:length(contents);
@@ -7,28 +9,28 @@ for ii = 1:length(contents);
     [path, fname] = fileparts(contents{ii});
     x   = nc_varget(contents{ii},   'x');
     y   = nc_varget(contents{ii},   'y');
-    x2 = [x(1) x(end) x(end) x(1) x(1)];
-    y2 = [y(1) y(1) y(end) y(end) y(1)];
+    x2  = [x(1) x(end) x(end) x(1) x(1)];
+    y2  = [y(1) y(1) y(end) y(end) y(1)];
     [lat(:,ii),lon(:,ii)] = convertCoordinatesNew(x2,y2,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
     markerNames{ii} = fname;
-    markerLat(ii) = mean(lat(:,ii));
-    markerLon(ii) = mean(lon(:,ii));
+    markerLat(ii)   = mean(lat(:,ii));
+    markerLon(ii)   = mean(lon(:,ii));
     markerX(ii,:)   = [min(x(:)) max(x(:))];
     markerY(ii,:)   = [min(y(:)) max(y(:))];
 end
 
 %% set options
-OPT.fileName = 'Vaklodingen.kml';
-OPT.kmlName = 'Vaklodingen';
-OPT.lineWidth = 1;
-OPT.lineColor = [0 0 0];
-OPT.lineAlpha = 1;
-OPT.openInGE = false;
+OPT.fileName    = 'Vaklodingen.kml';
+OPT.kmlName     = 'Vaklodingen';
+OPT.lineWidth   = 1;
+OPT.lineColor   = [0 0 0];
+OPT.lineAlpha   = 1;
+OPT.openInGE    = false;
 OPT.reversePoly = false;
 OPT.description = '';
-OPT.text = '';
-OPT.latText = mean(lat,1);
-OPT.lonText = mean(lon,1);
+OPT.text        = '';
+OPT.latText     = mean(lat,1);
+OPT.lonText     = mean(lon,1);
 
 %% start KML
 OPT.fid=fopen(OPT.fileName,'w');
@@ -189,10 +191,10 @@ fprintf(OPT.fid,output);
 %% close KML
 fclose(OPT.fid);
 %% compress to kmz?
-if strcmpi(OPT.fileName(end),'z')
-    movefile(OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
-    zip(OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
+if strcmpi   (OPT.fileName(end),'z')
+    movefile (OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
+    zip      (OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
     movefile([OPT.fileName '.zip'],OPT.fileName)
-    delete([OPT.fileName(1:end-3) 'kml'])
+    delete  ([OPT.fileName(1:end-3) 'kml'])
 end
 

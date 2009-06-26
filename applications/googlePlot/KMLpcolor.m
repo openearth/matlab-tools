@@ -5,6 +5,8 @@ function [OPT, Set, Default] = KMLpcolor(lat,lon,c,varargin)
 % of the surrounding gridpoints. 
 %
 % see the keyword/vaule pair defaults for additional options
+%
+% See also: KMLline, KMLline3, KMLpatch, KMLsurf
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

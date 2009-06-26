@@ -1,4 +1,4 @@
-%GETWATERBASEDATALOOP   script to download waterbase data for one parameter for all stations for a selected time period 
+%GETWATERBASEDATALOOP   download waterbase: 1 parameter, all stations, selected time period 
 %
 % See also: GETWATERBASEDATA, DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>,  
 %           GETWATERBASEDATA_SUBSTANCES, GETWATERBASEDATA_LOCATIONS, GETWATERBASE2NC_TIME_DIRECT
@@ -57,8 +57,8 @@
   %OPT.codes          = 23 
   %OPT.standard_names = {'sea_surface_wave_from_direction'}; % alias: sea_surface_wave_to_direction
   %
-   OPT.codes          = 24;
-   OPT.standard_names = {'sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment'};
+  %OPT.codes          = 24;
+  %OPT.standard_names = {'sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment'};
   %
   %OPT.codes          = 559 
   %OPT.standard_names = {'sea_surface_salinity'}; % alias: sea_water_salinity
@@ -73,7 +73,8 @@
 
    OPT.directory.raw = 'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';
 
-   OPT.period        = [datenum([1648],1,1) now];
+   OPT.period        = [datenum(1648,10,24) floor(now)]; % 24 okt 1648: Oprichting Staat der Nederlanden, Vrede van Munster
+   OPT.period        = [datenum(1798, 5,24) floor(now)]; % 24 mei 1798: Oprichting voorloper Rijkswaterstaat in Bataafse Republiek
    OPT.zip           = 1; % zip txt file and delete it
    OPT.nc            = 0; % not implemented yet
    OPT.opendap       = 0; % not implemented yet

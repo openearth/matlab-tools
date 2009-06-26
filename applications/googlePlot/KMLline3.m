@@ -2,6 +2,8 @@ function [OPT, Set, Default] = KMLline3(lat,lon,z,varargin)
 % KMLLINE3 Just like line3
 % 
 % see the keyword/vaule pair defaults for additional options
+%
+% See also: KMLline, KMLpatch, KMLpcolor, KMLsurf
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

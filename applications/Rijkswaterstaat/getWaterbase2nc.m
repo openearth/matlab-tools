@@ -1,7 +1,7 @@
 function getWaterbase2nc(varargin)
-%WATERBASE2NC  rewrite zipped txt files from waterbase.nl timeseries into NetCDF files
+%getWATERBASE2NC  rewrite zipped txt files from waterbase.nl timeseries to NetCDF files
 %
-%     WATERBASE2NC(<keyword,value>)
+%     getwaterbase2nc(<keyword,value>)
 %
 %  where the following <keyword,value> pairs have been implemented:
 %
@@ -34,6 +34,8 @@ function getWaterbase2nc(varargin)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
+
+% TO DO: Add x,y in addition to lat,lon
 
 %% Choose parameter
 %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table/
@@ -77,7 +79,7 @@ OPT.unitss = ...
     's',...
     'microg/l'}; % ug/l is not in UDunits
 
-OPT.parameter         = 0; % 0=all or select index from OPT.names above
+OPT.parameter         = [5 6 7]; % 0=all or select index from OPT.names above
 
 %% Initialize
 
@@ -191,6 +193,8 @@ for ivar=[OPT.parameter]
         nc_attput(outputfile, nc_global, 'email'         , '<servicedesk-data@rws.nl>');
 
         nc_attput(outputfile, nc_global, 'comment'         , '');
+        
+        
         nc_attput(outputfile, nc_global, 'version'         , D.version);
 
         nc_attput(outputfile, nc_global, 'Conventions'     , 'CF-1.4');
@@ -300,7 +304,7 @@ for ivar=[OPT.parameter]
         nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', OPT.units);
         nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
         nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-        nc(ifld).Attribute(5) = struct('Name', 'cell_methods'   ,'Value', 'point');
+        nc(ifld).Attribute(5) = struct('Name', 'cell_methods'   ,'Value', 'time: point area: point');
         if OPT.stationTimeSeries
         nc(ifld).Attribute(6) = struct('Name', 'coordinates'    ,'Value', 'lat lon');  % QuickPlot error
         end

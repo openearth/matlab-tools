@@ -1,8 +1,10 @@
 function [OPT, Set, Default] = KMLpatch(lat,lon,varargin)
-% KMLLINE3 Just like patch
+%KMLPATCH Just like patch
 % 
 % only works for a singe patch (filled polygon)
 % see the keyword/vaule pair defaults for additional options
+%
+% See also: KMLline, KMLline3, KMLpcolor, KMLsurf
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

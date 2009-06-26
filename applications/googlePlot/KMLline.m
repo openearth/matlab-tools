@@ -2,6 +2,8 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 % KMLLINE Just like line (and that's just like plot)
 % 
 % see the keyword/vaule pair defaults for additional options
+%
+% See also: KMLline3, KMLpatch, KMLpcolor, KMLsurf
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
