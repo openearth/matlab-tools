@@ -116,7 +116,7 @@ plot(OPT.polygon(:,1),OPT.polygon(:,2),'g','linewidth',2,'tag','selectionpoly');
 
 %% Step 4: plot the end result (Z and Ztime)
 % reduce the number of point to plot
-OPT.datathinning = OPT.datathinning * 1;
+OPT.datathinning = OPT.datathinning * 2;
 
 % plot X, Y, Z and X, Y, Ztime
 plotDataInPolygon(X, Y, Z, Ztime, OPT)
