@@ -50,14 +50,17 @@ function urls = getFixedMapOutlines(type)
 % $Revision$
 
 %% get info from OpenDAP (may take a while)
-info = getOpenDAPinfo('url', 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/catalog.xml');
+% info = getOpenDAPinfo('url', 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/catalog.xml');
+% info = getOpenDAPinfo('url', 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml');
 
 %% extract ncfile names from OPeNDAP info
 if strcmp(type,'vaklodingen')
-    ncfiles = info.vaklodingen;
+%     ncfiles = info.vaklodingen;
+    info = getOpenDAPinfo('url', 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml');
     path    = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/';
 elseif strcmp(type,'jarkus')
-    ncfiles = info.jarkus.temp_grids;
+%     ncfiles = info.jarkus.temp_grids;
+    info = getOpenDAPinfo('url', 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml');
     path    = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids/';
 else
     return
@@ -65,9 +68,11 @@ end
 
 %% construct full url for each ncfile
 % initialise variable
-urls{length(ncfiles),1} = '.';
+urls{length(info),1} = '.';
 
 % one by one fill the urls variable
-for i = 1:length(ncfiles)
-    urls{i,1} = [path ncfiles{i}];
+for i = 1:length(info)
+    urls{i,1} = [path info{i}];
 end
+urls = cellfun(@strrep, urls, repmat({'_dot_'}, size(urls)), repmat({'.'}, size(urls)), 'UniformOutput', 0);
+urls = cellfun(@strrep, urls, repmat({'/temp_'}, size(urls)), repmat({'/'}, size(urls)), 'UniformOutput', 0);
