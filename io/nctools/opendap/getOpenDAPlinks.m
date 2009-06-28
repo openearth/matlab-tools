@@ -62,14 +62,18 @@ function OpenDAPlinks = getOpenDAPlinks(varargin)
 
 %%
 OPT = struct(...
-    'url', 'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/catalog.xml', ... % default is OpenDAP test server url
+    'url', 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/catalog.xml', ... % default is OpenDAP test server url
     'pattern', ' xlink:title="' ... % default is pattern at levels below the actual data files (e.g. institute level)
     );
 
 OPT = setProperty(OPT, varargin{:});
 
 %% get OpenDAP links
+try
 txt = urlread(OPT.url);
+catch
+    xx=0
+end
 pattern = OPT.pattern;
 locs = strfind(txt, pattern);
 if ~isempty(locs)
