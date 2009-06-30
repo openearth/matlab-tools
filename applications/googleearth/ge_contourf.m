@@ -24,15 +24,18 @@ timeSpanStart = ' ';
    tessellate = 1;
  altitudeMode = 'clampToGround';
   msgToScreen = false; 
-
+     region   = ' ';
          cMap = 'jet';
       nearInf = abs(max(z(:))*10);
-%      cLimHigh = max(max(z(2:end-1,2:end-1)));
-%       cLimLow = min(min(z(2:end-1,2:end-1)));
+%       cLimHigh = max(max(z(2:end-1,2:end-1)));
+%        cLimLow = min(min(z(2:end-1,2:end-1)));
      altitude = 1.0;      
     polyAlpha = 'FF';
     autoClose = true;
       tinyRes = 1e-4;
+     lineValues = linspace(min(z(:)),max(z(:)),10);
+     cLimHigh = max(z(:));
+    cLimLow = min(z(:));
 
 parsepairs %script that parses Parameter/value pairs.
 
@@ -99,14 +102,40 @@ xv = [xv(1)-dx,xv,xv(end)+dx];
 dy = ((yv(end)-yv(1))/(numel(yv)-1))*tinyRes;
 yv = [yv(1)-dy;yv;yv(end)+dy];
 
-contourArray = contourc(xv,yv,z,lineValues);
+%contourArray = contourc(xv,yv,z,lineValues);
+if isempty(lineValues)
+
+    if numLevels <= 1
+        contourArray = contourc(xv,yv,z);
+    else
+        contourArray = contourc(xv,yv,z,numLevels);
+    end
+else
+    
+    numLevels = length(lineValues);
+    contourArray = contourc(xv,yv,z,lineValues);
+    
+end
 
 %save contourcresult.mat contourArray
 
-X = linspace(0,1,size(cMap,1))';
-YRed = cMap(:,1);
-YGreen = cMap(:,2);
-YBlue = cMap(:,3);
+if ischar(cMap)
+
+    RIx = round(rand*10000);
+    figure(RIx)    
+    eval(['C1 = colormap(' cMap '(256));']);
+    close(RIx)
+    clear RIx
+
+else
+    C1 = cMap;
+end
+
+X = linspace(0,1,size(C1,1))';
+YRed = C1(:,1);
+YGreen = C1(:,2);
+YBlue = C1(:,3);
+
 
 
 polyClosedThreshold = 1e-5; % Declare polygons closed when their start...
@@ -114,16 +143,20 @@ polyClosedThreshold = 1e-5; % Declare polygons closed when their start...
                             % less than this value.
 
 contourCell = parsecontarray(contourArray,nearInf);
+lineValuesMinMax = min(z(:));
 
+for k=1:size(contourCell,1)
+    lineValuesMinMax = [lineValuesMinMax;contourCell{k,1}];
+end
+lineValuesMinMax = unique([lineValuesMinMax(:);max(z(:))]);
 
+colorLevelInc = 0;
 nRecords = size(contourCell,1);
 isInnerArray=repmat(NaN,[nRecords,1]);
-
+% aa=[]
 kmlStr = '';
 for m = 1:nRecords % my
     
-%     if contourCell{m,1}~=nearInf-1
-
         isInnerArray(:) = NaN;
 
         for o = [1:m-1,m+1:nRecords]
@@ -133,37 +166,19 @@ for m = 1:nRecords % my
 
         end
 
-%         if strcmp(devenv,'matlab')
-%         
-%             clf
-%             plot(contourCell{m,3},contourCell{m,4},'-m')
-%             hold on
-%             for o=[1:m-1,m+1:nRecords]
-%                 if ~isInnerArray(o,1)
-%                     plot(contourCell{o,3},contourCell{o,4},'-b')
-%                 end
-%             end
-%             for o=[1:m-1,m+1:nRecords]
-%                 if isInnerArray(o,1)
-%                     plot(contourCell{o,3},contourCell{o,4},'-r')
-%                 end
-%             end
-%             plot(contourCell{m,3},contourCell{m,4},'-m')
-%             axis image
-%             set(gca,'xlim',sort(xv([1,end])),'ylim',sort(yv([1,end])))
-%             title(['mLevel = ',num2str(contourCell{m,1})])
-%             drawnow
-%         end
-
-
         if isclosed(contourCell(m,:),polyClosedThreshold)
 
-            colorLevel = find(contourCell{m,1}==lineValues);
             if hasouter(contourCell,m)
-                colorLevel=colorLevel+1;
+                colorLevelInc = 1;
+            else
+                colorLevelInc = 0;                
             end            
-
-            f = (lineValues(colorLevel)-cLimLow)/(cLimHigh-cLimLow);
+            
+            colorLevel = find(contourCell{m,1}==lineValuesMinMax) + colorLevelInc;
+            
+%             aa=[aa;contourCell{m,1},colorLevel];
+            
+            f = (lineValuesMinMax(colorLevel)-cLimLow)/(cLimHigh-cLimLow);
 
             if f<0
                 f=0;
@@ -175,17 +190,18 @@ for m = 1:nRecords % my
             YIRed = interp1(X,YRed,f);
             YIGreen = interp1(X,YGreen,f);
             YIBlue = interp1(X,YBlue,f);
-            polyColor = [polyAlpha,conv2colorstr(YIBlue,YIGreen,YIRed)];
-            polyColorCell{colorLevel,1} = polyColor; 
+            polyColor = [polyAlpha,conv2colorstr(YIRed,YIGreen,YIBlue)];
+            polyColorCell{colorLevel-1,1} = polyColor; 
             innerBoundsStr = buildinnerstr(contourCell,isInnerArray,altitude);
 
             kmlStr=[kmlStr,ge_poly(contourCell{m,3},contourCell{m,4},...
-                'altitude',1,...
+                'altitude',altitude,...
                 'innerBoundsStr',innerBoundsStr,...
                 'lineColor',lineColor,...
                 'lineWidth',lineWidth,...
                 'polyColor',polyColor,...
                 'autoClose',autoClose,...
+                'region', region, ...
                 'timeSpanStart',timeSpanStart,...
                 'timeSpanStop',timeSpanStop,...
                 'altitudeMode',altitudeMode,...
@@ -215,6 +231,8 @@ elseif nargout==2
     varargout{2} = polyColorCell;
 else
 end
+
+% aa
 
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

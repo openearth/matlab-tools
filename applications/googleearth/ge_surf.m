@@ -17,7 +17,6 @@ elseif isempty(z)
 end
 
            id = 'imagesc';
-%       idTag = 'id';
    visibility = 1;
     lineColor = '00000000';
 %     timeStamp = ' ';
@@ -33,6 +32,7 @@ timeSpanStart = ' ';
     polyAlpha = 'ff';
          cMap = 'jet';
    tessellate = 1;
+       region = ' ';
 %      cLimHigh: see further down
 %       cLimLow: see further down
 vertExagg = 1e4;
@@ -97,6 +97,12 @@ if ~exist('cLimLow','var')
     cLimLow = min(z(:));
 end
 
+if region == ' '
+	region_chars = '';
+else
+	region_chars = [ region, 10 ];
+end
+
 
 halfLonRes = 0.5*xResolution;     
 halfLatRes = 0.5*yResolution;
@@ -150,6 +156,7 @@ for r=2:length(y(:,1))-1
                                            'name',['row=',num2str(r),';col=',num2str(c)],...
                                       'polyColor',[newPolyAlpha,hexColorStr],...
                                     'description','',...
+                                    'region', region,...
                                    'lineColor',lineColor,...
                                    'lineWidth',lineWidth,...
                                'timeSpanStart',timeSpanStart,...

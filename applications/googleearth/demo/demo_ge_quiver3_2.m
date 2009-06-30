@@ -6,7 +6,7 @@ Y = 0;    %longitude [degrees]
 Z = 1e5;  %elevation [m]
 
 %Define the URL of the Collada model:
-arrowStr = 'data/redcone.dae';
+arrowStr = 'redcone.dae';
 
 %Initialize kml strings as null character arrays:
 kmlStr1 = '';
@@ -70,3 +70,6 @@ f03 = ge_folder('vary tilt',kmlStr2);
 
 %Write the 3 foldered kmlStr's to a file:
 ge_output('demo_ge_quiver3_2.kml',[f01,f02,f03]);
+
+copyfile(fullfile(googleearthroot,'data','redcone.dae'),pwd)
+

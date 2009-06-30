@@ -1,18 +1,15 @@
 function demo_ge_contour()
 
+figure
 [X,Y] = meshgrid(1:20,1:20);
 numLevels = 10;
 Z = peaks(20);
 
-if strcmp(devenv,'matlab')
-    [C,h] = contour(X,Y,Z,numLevels);
-    colormap jet
-elseif strcmp(devenv,'octave')
-    contour(X,Y,Z,numLevels);
-end
+[C,h] = contour(X,Y,Z,numLevels);
+colormap jet
 
 kmlStr = ge_contour(X,Y,Z,...
-                   'cMap','jet',...
+                   'cMap',rand(100,3),...
               'numLevels',numLevels,...
               'lineWidth',1);
                     

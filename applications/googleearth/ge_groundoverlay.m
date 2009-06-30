@@ -23,12 +23,13 @@ timeSpanStart = ' ';
       extrude = 0;
  altitudeMode = 'clampToGround';
   tmpFileStr = mfilename('fullpath');
-  imageURL = [tmpFileStr(1:max(findstr(tmpFileStr,filesep))),'data',filesep,'image_file_unavailable.bmp'];
+  imgURL = [tmpFileStr(1:max(findstr(tmpFileStr,filesep))),'data',filesep,'image_file_unavailable.bmp'];
   clear tmpFileStr
   viewBoundScale = 1.0;
   snippet = ' ';
   msgToScreen = false;
     polyAlpha = 'ff';
+    region = ' ';
     
 parsepairs %script that parses Parameter/Value pairs.
 
@@ -42,6 +43,11 @@ end
 
 finalColor = [polyAlpha, color(3:end)];
 
+if region == ' '
+	region_chars = '';
+else
+	region_chars = [ region, 10 ];
+end
 
 id_chars = [ idTag '="', id '"' ];
 name_chars = [ '<name>',10, name ,10,'</name>',10 ];
@@ -55,7 +61,7 @@ if snippet == ' '
 else
     snippet_chars = [ '<Snippet>' snippet '</Snippet>',10 ];    
 end
-imageURL_chars =  ['<href>',10, imageURL,10, '</href>',10];
+imgURL_chars =  ['<href>',10, imgURL,10, '</href>',10];
 viewBoundScale_chars = ['<viewBoundScale>',10, num2str(viewBoundScale),10, '</viewBoundScale>',10];
 extrude_chars = [ '<extrude>' int2str(extrude) '</extrude>',10 ];
 
@@ -105,13 +111,14 @@ header=['<GroundOverlay ',id_chars,'>',10,...
         timeSpan_chars,...
         snippet_chars,...
         description_chars,...
+        region_chars, ...
         finalColor_chars,...
         visibility_chars,...
         extrude_chars,...
         altitude_chars,...
         altitudeMode_chars,...
         '<Icon>',10,...
-            imageURL_chars,...
+            imgURL_chars,...
             viewBoundScale_chars,...
         '</Icon>',10,...
         lat_chars_start,10];

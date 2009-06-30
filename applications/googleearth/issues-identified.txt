@@ -1,28 +1,3 @@
-issues resolved:
-
-in 'ge_axes.html' the link to the demo does not work, because you can't use the ../ notation.
-
-ge_contour.html image too small, white border
-
-ge_contourf.html image too small, white border
-
-ge_cylinder.html image too small
-
-ge_groundoverlay.html viewBoundScale property 
-
-ge_contourf werkt niet goed in Octave. (iets met autoClose poly's) lijkt een bug te zijn in Octave 2.9.13 function contourc
-
-ge_root
-
-ge_windbarb copying of files, relative paths werkt niet goed.
-
-ge_quiver3.html arrow direction correct? compare images.--corect
-
-does the new ge_imagesc also do NaNs --yes
-
-
-
-
 octave related:
 
 ge_imagesc gebruikt ind2rgb() en dat werkt in octave niet goed.

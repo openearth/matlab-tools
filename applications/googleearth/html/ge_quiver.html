@@ -43,6 +43,7 @@
                     <tr><td class="code" nowrap>&#0039;msgToScreen&#0039;</td><td>Defines whether verbose feedback is provided by the function when it is accessed and when it finishes. Default is false (which is equivalent to logical(0), but quicker). </td></tr>
                     <tr><td class="code" nowrap>'lineColor'</td><td>Line color specification, including transparency. Color value format must be passed as a character array according to the format string 'TTBBGGRR', with 'TT' representing transparency; 'BB', 'GG', and 'RR' representing blue, green, and red color intensity, respectively. Intensity values are denoted as two-digit hexadecimal numbers ranging from 00 to FF. For example, '0000FF00' is fullly transparent green and 'FF0000FF' is fully opaque red.</td></tr>
                     <tr><td class="code" nowrap>'lineWidth'</td><td>Width of the line that is used for drawing the arrows.</td></tr>
+                    <tr><td class="code" nowrap>'magnitudeScale'</td><td>Scales the length of the arrows. If D is the length of an arrow expressed as a fraction of the length of the longest arrow in the whole data set, then by default 'magnitudeScale' is set to 95% of D times the smallest distance between points in the data set. If the data comprises only 1 point, the 'magnitudeScale' parameter is set to 1.</td></tr>
                     <tr><td class="code" nowrap>'name'</td><td>This character array will be used within the Google Earth Viewer &#0039;Places&#0039; pane to identify objects.</td></tr>
 <!--                    <tr><td class="code" nowrap>'timeStamp'</td><td>See <a href="timestamp.html">timeStamp, timeSpanStart and timeSpanStop</a>.</td></tr>-->
                     <tr><td class="code" nowrap>'snippet'</td><td>A short description of the feature. In Google Earth, this description is displayed in the Places panel under the name of the feature. If a Snippet is not supplied, the first two lines of the description are used</td></tr>
@@ -79,7 +80,7 @@ Z = X.*exp(-X.^2 - Y.^2);
 [U,V] = gradient(Z,res,res);
 
 kmlStr = ge_quiver(X,Y,U,V,<span class="keyword">...</span>
-               <span class="string">'lineColor'</span>,<span class="string">'ff00ffff'</span>,<span class="keyword">...</span>
+               <span class="string">'lineColor'</span>,<span class="string">'ffffff00'</span>,<span class="keyword">...</span>
                <span class="string">'lineWidth'</span>,1.2,<span class="keyword">...</span>
                 <span class="string">'altitude'</span>,50000,<span class="keyword">...</span>
              <span class="string">'msgToScreen'</span>,true);
@@ -99,3 +100,5 @@ ge_output(<span class="string">'example_ge_quiver.kml'</span>,kmlStr);
 <a name="_bottom"></a></div>
 </body>
 </html>
+
+

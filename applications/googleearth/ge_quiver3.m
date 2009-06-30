@@ -12,12 +12,13 @@ AuthorizedOptions = authoptions( mfilename );
     altitudeMode = 'absolute';
       arrowScale = 1;
     modelLinkStr = '[No model link specified]';
-             name = 'ge_quiver3';
+            name = 'ge_quiver3';
        timeStamp = ' ';
    timeSpanStart = ' ';
     timeSpanStop = ' ';
     snippet      = ' ';
     description = '';
+         region = ' ';
 fixedArrowLength = 0; 
      msgToScreen = false;
 
@@ -25,6 +26,12 @@ parsepairs %script that parses Parameter/Value pairs.
 
 if msgToScreen
     disp(['Running: ',mfilename,'...'])
+end
+
+if region == ' '
+	region_chars = '';
+else
+	region_chars = [ region, 10 ];
 end
 
 if ~(isequal(altitudeMode,'clampToGround')||...
@@ -70,6 +77,7 @@ tag_str = ['<Placemark>' 10,...
                 description_chars,...
                 timeStamp_chars,...
                 timeSpan_chars,...
+                region_chars,...
                 '<name>',name,'</name>' 10,...
                 '<MultiGeometry>' 10];
 

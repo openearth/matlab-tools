@@ -15,9 +15,9 @@ AuthorizedOptions = authoptions( mfilename );
        %name = 'ge_grid';
  description = '';
  visibility = 1;
-  lineColor = '00000000';
-  polyColor = 'ffffffff';
-  lineWidth = 0.0;
+  lineColor = 'FF00FF00';
+  polyColor = '00ffffff';
+  lineWidth = 1.0;
     timeStamp = ' ';
 timeSpanStart = ' ';
  timeSpanStop = ' ';
@@ -28,6 +28,7 @@ timeSpanStart = ' ';
     latRes = abs( y_max - y_min );
     lonRes = abs( x_min - x_max );
     tessellate = 1;
+      region = ' ';
 
 
 parsepairs %script that parses Parameter/Value pairs.
@@ -53,6 +54,7 @@ for row = (x_min):lonRes:(x_max-lonRes)
                                             'timeStamp',timeStamp,...
                                             'snippet', snippet,...
                                             'description', description,...
+                                            'region', region, ...
                                         'timeSpanStart',timeSpanStart,...
                                          'timeSpanStop',timeSpanStop,...
                                              'altitude',altitude,...

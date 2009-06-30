@@ -27,12 +27,15 @@ timeSpanStart = ' ';
       extrude = 0;
  altitudeMode = 'clampToGround';
   msgToScreen = 0;
-    polyAlpha = 'ff';
          cMap = 'jet';
 dataFormatStr = '%g';  
-   imageURL   = 'ge_imagesc.png';
-    name      = 'ge_imagesc';
+     imgURL = 'ge_imagesc.png';
+         name = 'ge_imagesc';
    tessellate = 1;
+       region = ' ';
+  alphaMatrix = double(~isnan(data));
+  crispFactor = 5;  
+       
 %      cLimHigh: see further down
 %       cLimLow: see further down
 
@@ -83,6 +86,7 @@ if ~exist('cLimLow','var')
 end
 
 
+
 halfLonRes = 0.5*xResolution;     
 halfLatRes = 0.5*yResolution;
 N = max(y)+halfLatRes;
@@ -90,40 +94,48 @@ E = max(x)+halfLonRes;
 S = min(y)-halfLatRes;
 W = min(x)-halfLonRes;
 
+[nRows,nCols] = size(data);
 
-[sX,sY] = size(data);
-factor = 1;
-superData = zeros(sX*factor,sY*factor);
-[ssX,ssY] = size(superData);
-for i = 1:sX
-    if i > 1
-        i2 = (i-1)*factor;
-    else
-        i2 = i;
+
+if crispFactor == 1
+    dataXL = data;
+    alphaMatrixXL = alphaMatrix;
+else
+
+    dataXL = repmat(NaN,[nRows,nCols]*crispFactor);
+    alphaMatrixXL = repmat(NaN,[nRows,nCols]*crispFactor);
+
+    for r=1:nRows
+        for c=1:nCols
+
+            sr = (r-1)*crispFactor+1;
+            er = r*crispFactor;
+
+            sc = (c-1)*crispFactor+1;
+            ec = c*crispFactor;
+
+            dataXL(sr:er,sc:ec) = data(r,c);
+
+            if isnan(data(r,c))
+                alphaMatrixXL(sr:er,sc:ec) =  0;
+            else
+                alphaMatrixXL(sr:er,sc:ec) =  alphaMatrix(r,c);
+            end
+        end
     end
     
-    for j = 1:sY
-        if j > 1
-            j2 = (j-1)*factor;
-        else
-            j2 = j;
-        end
-        superData(i2:i2+factor,j2:j2+factor) = data(i,j);
-    end
 end
+       
+data3 = mat2gray(dataXL,[cLimLow cLimHigh]);
+X = gray2ind(data3, 256);
+eval(['data3 = ind2rgb(X, ' cMap '(256));']);
 
-data = mat2gray(flipud(superData),[cLimLow cLimHigh]);
-X = gray2ind(data, 256);
-eval(['data = ind2rgb(X, ' cMap '(256));']);
-
-
-imwrite(data,imageURL,'png');
+imwrite(data3,imgURL,'png','alpha',alphaMatrixXL);
 
 
 kmlStr = ge_groundoverlay(N,E,S,W,...
                            'name',name,...
-                       'imageURL',imageURL,...
-                      'polyAlpha',polyAlpha,...
+                         'imgURL',imgURL,...
                         'snippet', snippet,...
                       'timeStamp',timeStamp,...
                   'timeSpanStart',timeSpanStart,...
@@ -131,6 +143,7 @@ kmlStr = ge_groundoverlay(N,E,S,W,...
                      'visibility',visibility,...
                        'altitude',altitude,...
                         'extrude',extrude,...
+                        'region',region,...
                    'altitudeMode',altitudeMode);
 
 

@@ -29,6 +29,7 @@ timeSpanStart = ' ';
     color = 'ffffffff';
  visibility = 1;
   snippet = ' ';
+  region = ' ';
 
     
 parsepairs %script that parses Parameter/Value pairs.
@@ -39,6 +40,12 @@ if( isempty( filename ) )
 end
 
 finalColor = [color];
+
+if region == ' '
+	region_chars = '';
+else
+	region_chars = [ region, 10 ];
+end
 
 
 id_chars = [ idTag '="', id '"' ];
@@ -88,6 +95,7 @@ chunk = [ ...
     description_chars,...
     finalColor_chars,...
     visibility_chars,...
+    region_chars, ...
     '<open>1</open>',... 
     drawOrder_chars,...
     iconURL_chars,...

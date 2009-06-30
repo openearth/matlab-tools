@@ -5,9 +5,9 @@ close all
 [X,Y] = meshgrid(1:20,1:20);
 
 Z = peaks(20);
-cMapStr = 'summer';
+cMap = 'jet';
 
-lineValues = [-8:3:4];
+lineValues = [-10:0.5:40];
 figure
 subplot(1,2,1)
 imagesc(X(1,:),Y(:,1),Z,[min(lineValues),max(lineValues)])
@@ -18,15 +18,18 @@ subplot(1,2,2)
 [C,h] = contourf(X,Y,Z,lineValues);
 colorbar
 axis image
-colormap(cMapStr)
+colormap(cMap)
 
-figure
+
 kmlStr = ge_contourf(X,Y,Z,...
-                    'cMap','jet',...
+                    'cMap',cMap,...
                'lineValues',lineValues,...
-               'polyAlpha','ff',...
-                    'cMap',cMapStr,...
-                 'lineColor','ff000000');
+               'polyAlpha','FF',...
+               'lineColor','00FFFFFF',...
+               'altitude',1e4,...
+               'altitudeMode','clampToGround',...
+               'cLimHigh',5,...
+               'cLimLow',-2);
 %              
 % kmlStr = [kmlStr,ge_colorbar(0,10,0,...
 %                     'cBarBorderWidth',1,...
@@ -38,8 +41,8 @@ kmlStr = ge_contourf(X,Y,Z,...
 %                                'cMap',cMapStr)];
 
                 
-if any(strcmp(devenv,{'octave','matlab'}))
-    ge_output(['demo_ge_contourf_',devenv,'.kml'],kmlStr);
-else
+%if any(strcmp(devenv,{'octave','matlab'}))
+%    ge_output(['demo_ge_contourf_',devenv,'.kml'],kmlStr);
+%else
     ge_output('demo_ge_contourf_other.kml',kmlStr);
-end
+%end

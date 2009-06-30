@@ -16,6 +16,8 @@ function demo_ge_overlay()
     %first draw a background
     x = 0;
     y = 0;
+    
+    figure
     plot(x,y)
     stampFileName = [filename int2str(1) '.png'];
     write_image(stampFileName, false);

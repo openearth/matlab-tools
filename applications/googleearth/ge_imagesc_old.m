@@ -1,4 +1,4 @@
-function [kmlStr] = ge_imagesc(x,y,data,varargin)
+function [kmlStr] = ge_imagesc_old(x,y,data,varargin)
 % Reference page in help browser: 
 % 
 % <a href="matlab:web(fullfile(ge_root,'html','ge_imagesc_old.html'),'-helpbrowser')">link</a> to html documentation
@@ -7,7 +7,7 @@ function [kmlStr] = ge_imagesc(x,y,data,varargin)
 
 
 
-AuthorizedOptions = authoptions( 'ge_imagesc' );
+AuthorizedOptions = authoptions( 'ge_imagesc_old' );
 
 
 if isempty(x)||isempty(y)
@@ -33,6 +33,7 @@ timeSpanStart = ' ';
          cMap = 'jet';
 dataFormatStr = '%g';  
    tessellate = 1;
+     region = ' ';
 %      cLimHigh: see further down
 %       cLimLow: see further down
 
@@ -129,6 +130,7 @@ for r=1:length(y)
                                 'name',['row=',num2str(r),';col=',num2str(c)],...
                            'polyColor',[newPolyAlpha,hexColorStr],...
                            'snippet', snippet,...
+                           'region', region, ...
                          'description',['<TABLE border=1><TR><TD align=',34,'right',34,'>row</TD>',...
                                                          '<TD align=',34,'left',34,'>',int2str(r),'</TD></TR>',...
                                                      '<TR><TD align=',34,'right',34,'>column</TD>',...

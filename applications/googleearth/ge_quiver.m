@@ -17,41 +17,53 @@ timeSpanStart = ' ';
  timeSpanStop = ' ';
  visibility = 1;
  extrude = 0;
-  lineColor = 'ffffffff';
-  lineWidth = 0.0;
+  lineColor = 'FFFFFFFF';
+  lineWidth = 1.0;
     snippet = ' ';
    altitude = 1.0;
- altitudeMode = 'relativeToGround';
+ altitudeMode = 'clampToGround';
 msgToScreen = false;
+      region = ' ';
 
 if( isempty( X ) || isempty( Y ) || isempty( DX ) || isempty( DY ) )
     error('empty coordinates passed to ge_quiver(...).');
 end
 
-if (max(size(X)) >= 2) && (max(size(Y)) >= 2)
-
-    step_size_x = abs( X(1,1) - X(1,2) );
-    step_size_y = abs( Y(1,1) - Y(2,1) );
-    magnitudeMax = max( [ max(max(X)) max(max(Y)) ] );
-    magnitudeScale = min( [step_size_x step_size_y] );
-
-elseif max(size( X )) >= 2
-
-    step_size_x = abs( X(1,1) - X(1,2) );
-    magnitudeMax = max( [ max(max(X)) max(Y) ] );
-    magnitudeScale = step_size_x;
-
-elseif max(size( Y )) >= 2
-
-    step_size_y = abs( Y(1,1) - Y(2,1) );
-    magnitudeMax = max( [ max(max(Y)) max(X) ] );
-    magnitudeScale = step_size_y;     
-
+TMP = sqrt(DX.^2+DY.^2);
+magnitudeMax = max(TMP(:));
+clear TMP
+if numel(X)==1
+    magnitudeScale = 1;
 else
-    magnitudeMax = max(max(X));
-    magnitudeScale = 1.0;
+    magnitudeScale = det_smallest_interval(X,Y)*0.95;
 end
-    
+
+% 
+% if (max(size(X)) >= 2) && (max(size(Y)) >= 2)
+% 
+%     step_size_x = abs( X(1,1) - X(1,2) );
+%     step_size_y = abs( Y(1,1) - Y(2,1) );
+%     magnitudeMax = max( [ max(max(X)) max(max(Y)) ] );
+%     magnitudeScale = min( [step_size_x step_size_y] );
+% 
+% elseif max(size( X )) >= 2
+% 
+%     step_size_x = abs( X(1,1) - X(1,2) );
+%     magnitudeMax = max( [ max(max(X)) max(Y) ] );
+%     magnitudeScale = step_size_x;
+% 
+% elseif max(size( Y )) >= 2
+% 
+%     step_size_y = abs( Y(1,1) - Y(2,1) );
+%     magnitudeMax = max( [ max(max(Y)) max(X) ] );
+%     magnitudeScale = step_size_y;     
+% 
+% else
+%     magnitudeMax = max(max(X));
+%     magnitudeScale = 1.0;
+% end
+%     
+
 parsepairs %script that parses Parameter/Value pairs.
 
 if msgToScreen
@@ -63,14 +75,20 @@ if ~(isequal(altitudeMode,'clampToGround')||...
    isequal(altitudeMode,'absolute'))
 
     error(['Variable ',39,'altitudeMode',39, ' should be one of ' ,39,'clampToGround',39,', ',10,39,'relativeToGround',39,', or ',39,'absolute',39,'.' ])
-end   
+end
+
+if region == ' '
+	region_chars = '';
+else
+	region_chars = [ region, 10 ];
+end
 
 
 % id_chars = [ idTag '="' id '"' ];
 name_chars = [ '<name>',10, name,10, '</name>',10 ];
 description_chars = [ '<description>',10,'<![CDATA[' description ']]>',10,'</description>',10 ];
 visibility_chars = [ '<visibility>',10, int2str(visibility),10, '</visibility>',10 ];
-lineColor_chars = [ '<color>',10, lineColor ,10,'</color>',10 ];
+lineColor_chars = [ '<color>',10, lineColor([1,2,7,8,5,6,3,4]) ,10,'</color>',10 ];
 lineWidth_chars= [ '<width>',10, num2str(lineWidth, '%.2f'),10, '</width>',10 ];
 altitudeMode_chars = [ '<altitudeMode>',10, altitudeMode,10, '</altitudeMode>',10 ];
 extrude_chars = [ '<extrude>' int2str(extrude) '</extrude>',10 ];
@@ -141,6 +159,7 @@ for row = 1:row_count
                         timeSpan_chars,...
                         snippet_chars,...
                         description_chars,...
+                        region_chars,...
                         '<Style ',idTag,'="qs_',int2str(row),'_',int2str(col),'">',...
                             '<LineStyle ',idTag,'="qls_',int2str(row),'_',int2str(col),'">',...
                                 lineColor_chars,...
@@ -207,7 +226,8 @@ end
 
 output = char(output);
 [sx, sy] = size(output);
-foutput = char(zeros(1,sx*sy));
+%foutput = char(zeros(1,sx*sy));
+foutput = repmat(' ',[1,sx*sy]);
 
 offset = 1;
 for i = 1:sx
@@ -226,3 +246,19 @@ output = foutput;
 if msgToScreen
     disp(['Running: ',mfilename,'...Done'])
 end
+
+
+
+function dOut = det_smallest_interval(X,Y)
+
+dLowest=Inf;
+for k=1:numel(X)
+    for m=k+1:numel(X)
+        dSquared = (X(k)-X(m))^2+(Y(k)-Y(m))^2;
+        if dSquared<dLowest
+            dLowest=dSquared;
+        end
+    end
+end
+
+dOut = sqrt(dLowest);

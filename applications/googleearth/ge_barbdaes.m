@@ -22,6 +22,12 @@ if msgToScreen
     disp('Generating wind barb Collada models...')
 end
 
+if ~isequal(daeDir(end),filesep)
+    warning(['Parameter ',char(39),'daeDir',char(39),...
+        ' should end in a folder separator character.'])
+end
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% start of integrity checks
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

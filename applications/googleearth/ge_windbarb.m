@@ -6,22 +6,13 @@ function kmlStr = ge_windbarb(X,Y,Z,U,V,varargin)
 
 AuthorizedOptions = authoptions( mfilename );
 
-
-%             id = 'windbarb';
-%          idTag = 'id';
-%           name = 'ge_windbarb';
-%    description = '';
-      timeStamp = ' ';
+     timeStamp = ' ';
  timeSpanStart = ' ';
   timeSpanStop = ' ';
-%     visibility = 1;
    msgToScreen = false;
-%        Snippet = '';
-%       altitude = 1.0;
-%         extrude = 0
-%     tessellate = 0;
   altitudeMode = 'relativeToGround';
-  
+        region = ' ';
+        
   p=mfilename('fullpath');
 [toolboxroot,fname,ext,vsn] = fileparts(p);
     clear fname ext vsn
@@ -86,6 +77,7 @@ for k=1:numel(X)
                                   'modelLinkStr',daeModelStr,...
                                   'altitudeMode',altitudeMode,...
                                     'arrowScale',arrowScale,...
+                                     'region', region,...
                                  'name',['barb=&#0039;',daeModelStr,'&#0039;',],...
                               'fixedArrowLength',1,...
                                  'timeSpanStart',timeSpanStart,...

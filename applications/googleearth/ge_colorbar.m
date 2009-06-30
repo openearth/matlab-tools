@@ -16,8 +16,8 @@ end
        altitudeMode = 'clampToGround';
     cBarBorderWidth = 1;
       cBarFormatStr = '%g';
-%            cLimHigh = max(data(:));
-%             cLimLow = min(data(:));
+           cLimHigh = max(data(:));
+            cLimLow = min(data(:));
                cMap = 'jet';
             extrude = 1;      
                  id = 'colorbar';
@@ -28,6 +28,7 @@ end
       timeSpanStart = ' ';
        timeSpanStop = ' ';
           timeStamp = ' ';
+          region = ' ';
           labels = {};
          visibility = 1;
 
@@ -65,11 +66,33 @@ end
 
 html = ['<TABLE border=' num2str(cBarBorderWidth) ' bgcolor=#FFFFFF>',10];
 
-X = linspace(0,1,size(colormap(cMap),1))';
-mycolormap = colormap(cMap);
-YRed = mycolormap(:,1);
-YGreen = mycolormap(:,2);
-YBlue = mycolormap(:,3);
+% RIx = round(rand*10000);
+% figure(RIx)
+% cMap = colormap(cMap);
+% X = linspace(0,1,size(cMap,1))';
+% YRed = cMap(:,1);
+% YGreen = cMap(:,2);
+% YBlue = cMap(:,3);
+% close(RIx)
+% clear RIx
+
+if ischar(cMap)
+
+    RIx = round(rand*10000);
+    figure(RIx)    
+    eval(['C1 = colormap(' cMap '(256));']);
+    close(RIx)
+    clear RIx
+
+else
+    C1 = cMap;
+end
+
+X = linspace(0,1,size(C1,1))';
+YRed = C1(:,1);
+YGreen = C1(:,2);
+YBlue = C1(:,3);
+
 
     if ~isempty(labels)
         
@@ -148,6 +171,12 @@ else
         
 end
 
+if region == ' '
+	region_chars = '';
+else
+	region_chars = [ region, 10 ];
+end
+
 
     
 header=['<Placemark ',id_chars,'>',10,...
@@ -156,6 +185,7 @@ header=['<Placemark ',id_chars,'>',10,...
     timeSpan_chars,...
     visibility_chars,10,...
     description_chars,...
+    region_chars, ...
     '	<Style>',...
 		'<IconStyle>',...
 			'<scale>1</scale>',...

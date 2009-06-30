@@ -27,8 +27,9 @@ timeSpanStart = ' ';
   forceAsLine = true;
      numLevels = 1;
    lineValues = [];
-    polyAlpha = 'FF';
+    lineAlpha = 'FF';
        cMap   = 'jet';
+       region = ' ';
     
 parsepairs %script that parses Parameter/value pairs.
 
@@ -86,15 +87,21 @@ i = 1;
 X = C(1,:);
 Y = C(2,:);
 
-
-RIx = round(rand*10000);
 C1=[];
-figure(RIx)
-eval(['C1 = colormap(' cMap '(100));']);
-close(RIx)
-clear RIx
 
-X1 = linspace(0,1,100)';
+if ischar(cMap)
+
+    RIx = round(rand*10000);
+    figure(RIx)    
+    eval(['C1 = colormap(' cMap '(256));']);
+    close(RIx)
+    clear RIx
+
+else
+    C1 = cMap;
+end
+
+X1 = linspace(0,1,size(C1,1))';
 YRed = C1(:,1);
 YGreen = C1(:,2);
 YBlue = C1(:,3);
@@ -130,31 +137,37 @@ for i = 1:length(C)
         catch
             idxp = length(C);
         end
+        
+        if exist('lineColor','var')
+            hexColorStr = lineColor;
+        else
 
-        f = (C(1,i)-cLimLow)/(cLimHigh-cLimLow);
+            f = (C(1,i)-cLimLow)/(cLimHigh-cLimLow);
 
-        if f<0
-            f=0;
+            if f<0
+                f=0;
+            end
+            if f>1
+                f=1;
+            end
+
+            YIRed = interp1(X1,YRed,f);
+            YIGreen = interp1(X1,YGreen,f);
+            YIBlue = interp1(X1,YBlue,f);
+
+            hexColorStr = [lineAlpha,conv2colorstr(YIRed,YIGreen,YIBlue)];
         end
-        if f>1
-            f=1;
-        end
-
-        YIRed = interp1(X1,YRed,f);
-        YIGreen = interp1(X1,YGreen,f);
-        YIBlue = interp1(X1,YBlue,f);
-        hexColorStr = conv2colorstr(YIBlue,YIGreen,YIRed);
-        newPolyAlpha = polyAlpha;
 
         output = [output ge_plot(X(i:idxp),Y(i:idxp),...
                 'name',name, ...
                 'snippet', snippet,...
                 'description',description, ...
+                'region', region, ...
                 'timeStamp',timeStamp, ...
                 'timeSpanStart',timeSpanStart, ...
                 'timeSpanStop',timeSpanStop, ...
                 'visibility',visibility, ...
-                'lineColor',[newPolyAlpha,hexColorStr],... %lineColor',lineColor, ...
+                'lineColor',hexColorStr,...
                 'lineWidth',lineWidth,...
                 'altitude',altitude,...
                 'altitudeMode',altitudeMode,...

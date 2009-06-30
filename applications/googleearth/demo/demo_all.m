@@ -1,9 +1,9 @@
 %% Demonstrate All functions
 % runs all demonstrations
 
-clear
-close all
-clc
+% clear
+% close all
+% clc
 
 dir_struct = dir;
 Success = [];

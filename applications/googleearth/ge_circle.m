@@ -23,6 +23,7 @@ msgToScreen = 0;
    altitude = 1.0;
    divisions = 8;
  altitudeMode = 'clampToGround';
+   region = ' ';
 
 parsepairs %script that parses Parameter/value pairs.
 
@@ -43,13 +44,19 @@ if ~(isequal(altitudeMode,'clampToGround')||...
     
 end 
 
+if region == ' '
+	region_chars = '';
+else
+	region_chars = [ region, 10 ];
+end
+
 id_chars = [ idTag '="' id '"' ];
 poly_id_chars = [ idTag '="poly_' id '"' ];
 name_chars = [ '<name>',10,name,10,'</name>',10 ];
 description_chars = [ '<description>',10,'<![CDATA[' description ']]>',10,'</description>',10 ];
 visibility_chars = [ '<visibility>',10,int2str(visibility) '</visibility>',10 ];
-lineColor_chars = [ '<color>',10,lineColor,10,'</color>',10 ];
-polyColor_chars = [ '<color>',10,polyColor,10,'</color>',10 ];
+lineColor_chars = [ '<color>',10,lineColor([1,2,7,8,5,6,3,4]),10,'</color>',10 ];
+polyColor_chars = [ '<color>',10,polyColor([1,2,7,8,5,6,3,4]),10,'</color>',10 ];
 lineWidth_chars= [ '<width>',10,num2str(lineWidth, '%.2f'),10,'</width>',10 ];
 altitudeMode_chars = [ '<altitudeMode>',10,altitudeMode,10,'</altitudeMode>',10 ];
 if snippet == ' '
@@ -89,6 +96,7 @@ header=['<Placemark ',id_chars,'>',10,...
     visibility_chars,10,...
     snippet_chars,...
     description_chars,10,...
+    region_chars, ...
     '<Style>',10,...
         '<LineStyle>',10,...
             lineColor_chars,10,...

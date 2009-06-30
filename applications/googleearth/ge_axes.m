@@ -12,6 +12,7 @@ AuthorizedOptions = authoptions( mfilename );
       lineWidth = 1;
       lineColor = '40FFFFFF';
       msgToScreen = false;
+      region = ' ';
 %    xyLineColor
 %    yzLineColor
 %    xzLineColor
@@ -267,6 +268,7 @@ if exist('hTick','var')&&~isempty(findstr('h',axesType))
                    'altitudeMode',altitudeMode,...
                       'lineColor',hLineColor,...
                       'lineWidth',lineWidth,...
+                      'region', region, ...
                            'name','grid line'));
 end
 
