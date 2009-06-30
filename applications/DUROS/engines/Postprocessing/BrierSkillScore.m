@@ -64,7 +64,7 @@ function BSS = BrierSkillScore(xc, zc, xm, zm, x0, z0, varargin)
 
 %%
 OPT = struct(...
-    'equidistant', []);
+    'equidistant', false);
 
 if ~isempty(varargin) && ischar(varargin{1})
     OPT = setProperty(OPT, varargin{:});
@@ -82,7 +82,7 @@ xm(isnan(zm)) = [];
 zm(isnan(zm)) = [];
 
 %% determine new grid covered by all profiles
-if ~isempty(OPT.equidistant)
+if OPT.equidistant
     newxlow = max([min(x0) min(xc) min(xm)]);
     newxhigh = min([max(x0) max(xc) max(xm)]);
     xextends = newxhigh - newxlow;
@@ -99,13 +99,13 @@ zc_new = interp1(xc, zc, x_new);
 zm_new = interp1(xm, zm, x_new);
 
 %% calculate BSS
-if isempty(OPT.equidistant)
+if OPT.equidistant
+    % weight is equaly devided over all points.
+    weight = ones(size(x_new));
+else
     % weight is defined as half of diff left and half of diff right of each
     % point; first and last point are considered to have only one side.
     weight = diff([x_new(1) diff(x_new)/2 + x_new(1:end-1) x_new(end)]);
-else
-    % weight is equaly devided over all points.
-    weight = ones(size(x_new));
 end
 total = sum(weight);
     
