@@ -7,7 +7,7 @@
 <name>Google Earth</name>
 <type>toolbox</type>
 <icon>html/images/google_earth_ico16x16.gif</icon>
-<help_location>D:\code.google.com\googleearth\html</help_location>
+<help_location>html</help_location>
 
 <list>
 
