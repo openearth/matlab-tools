@@ -31,17 +31,17 @@
 % $Keywords: $
 
 clear all
-outputDir = 'c:\OpenEarthTools\matlab\applications\googlePlot\processing scripts for opendap\';
+outputDir = 'F:\KML\vaklodingen\';
 url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen';
 contents = opendap_folder_contents(url);
 EPSG = load('EPSGnew');
 
 % z scaling paramters:
 a = 40; %lift up meters
-b = 5;  %exagertaion
+b = 5;  %exageration
 c = 30; %colormap limits
 
-for ii = 1:1:length(contents);
+for ii = 95:1:length(contents);
 
     [path, fname] = fileparts(contents{ii});
     x    = nc_varget(contents{ii},   'x');
@@ -64,7 +64,7 @@ for ii = 1:1:length(contents);
     time = datestr(time+datenum(1970,1,1),10);
 
     %loop through all the years
-    for jj = size(time,1):-100:1
+    for jj = size(time,1)%:-1:1
 
         % dispaly progress
         disp([num2str(ii) '/' num2str(length(contents)) ' ' fname ' ' time(jj,:)]);
@@ -77,20 +77,18 @@ for ii = 1:1:length(contents);
         z(z>500) = nan;
 
         disp(['elements: ' num2str(sum(~isnan(z(:))))]);
-        tolerance = 0.15;
+        tolerance = 1;
         maxSize = 100000;
-      
-        % create a simplified mesh
-        [tri,x,y,z] = delaunay_simplified(x,y,z,tolerance,maxSize);
-       
+        [tri,x2,y2,z2] = delaunay_simplified(x,y,z,tolerance,maxSize);
+            
         % convert coordinates
-        [lat,lon] = convertCoordinatesNew(x,y,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+        [lat,lon] = convertCoordinatesNew(x2,y2,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
 
         %scale z
-        z= (z+a)*b;
+        z2= (z2+a)*b;
 
         % make *.kmz
-        KMLtrisurf(tri,lat,lon,z,'fileName',[outputDir2 '/' time(jj,:) '_3D.kmz'],...
+        KMLtrisurf(tri,lat,lon,z2,'fileName',[outputDir2 time(jj,:) '_3D.kmz'],...
             'kmlName',[fname ' ' time(jj,:) ' 2D'],'lineWidth',0,...
             'colormap','colormapbathymetry','colorSteps',64,...
             'fillAlpha',0.85,'cLim',[(a-c)*b (a+c)*b]);

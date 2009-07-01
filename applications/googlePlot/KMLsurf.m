@@ -43,13 +43,16 @@ if all(isnan(z(:)))
     return
 end
 %% assign c if it is given
-if ~ischar(varargin{1});
-    c = varargin{1};
-    varargin = varargin(2:length(varargin));
+if ~isempty(varargin)
+    if ~ischar(varargin{1});
+        c = varargin{1};
+        varargin = varargin(2:length(varargin));
+    else
+        c = z;
+    end
 else
     c = z;
 end
-
 %% calaculate center color values
 if all(size(c)==size(lat))
     c = (c(1:end-1,1:end-1)+...

@@ -46,13 +46,16 @@ if all(isnan(z(:)))
     return
 end
 %% assign c if it is given
-if ~ischar(varargin{1});
-    c = varargin{1};
-    varargin = varargin(2:length(varargin));
+if ~isempty(varargin)
+    if ~ischar(varargin{1});
+        c = varargin{1};
+        varargin = varargin(2:length(varargin));
+    else
+        c =  mean(z(tri),2);
+    end
 else
     c =  mean(z(tri),2);
 end
-
 %% process varargin
 OPT.fileName = [];
 OPT.kmlName = 'untitled';

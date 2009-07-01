@@ -1,19 +1,90 @@
 function [tri,x1,y1,z1] = delaunay_simplified(x,y,z,tolerance,maxSize)
+% DELAUNAY_SIMPLIFIED makes a simplified delaunay triangulated mesh
+% 
+% For creating meshes that resemble a more complex mesh to a certain
+% degree (specified by tolernace;, the maximum error there may exist
+% between the final grid and the original datapoints.
+%
+% All nan edges withing the grid are used in triangulation, but no 
+% triangles are created where nan's are available.   
+%
+% The script is does not find an optimum solution, but works well enough in
+% reducing triangles.
+%
+% Eaxample (play with different values for tolerance:
+%
+%     url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB119_3534.nc';
+%     x = nc_varget(url,'x');
+%     y = nc_varget(url,'y');
+%     z = nc_varget(url,'z',[0,0,0],[1,-1,-1]);
+%     [x,y] = meshgrid(x,y);
+% 
+%     disp(['elements: ' num2str(sum(~isnan(z(:))))]);
+%     tolerance = .5;  maxSize = 100000;
+%     [tri,x2,y2,z2] = delaunay_simplified(x,y,z,tolerance,maxSize);
+%     [lat,lon] = convertCoordinatesNew(x2,y2,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+%     z2= (z2+15)*2;
+%     KMLtrisurf(tri,lat,lon,z2)
+%
+% See also: delaunay, trisurf, KMLtrisurf 
 
+%   --------------------------------------------------------------------
+%   Copyright (C) 2009 Deltares for Building with Nature
+%       Thijs Damsma
+%
+%       Thijs.Damsma@deltares.nl	
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 %% find convex hull of not nan z values
-xi = x(~isnan(z));
-yi = y(~isnan(z));
-ind = convhull(xi,yi);
-ind = inpolygon(x,y,xi(ind),yi(ind));
-xi = x(ind);
-yi = y(ind);
-zi = z(ind);
+
+A = ~isnan(z);
+%left
+Aleft = [A(:,2:end) false(size(A,1),1)];
+%right
+Aright = [false(size(A,1),1) A(:,1:end-1)];
+% up
+Aup = [ A(2:end,:);false(1,size(A,2))];
+% down
+Adown = [false(1,size(A,2));A(1:end-1,:)];
+
+A = A|Aleft|Aright|Aup|Adown;
+
+
+
+xi = x(A);
+yi = y(A);
+zi = z(A);
+
+ind = find(isnan(zi));
 zi(isnan(zi)) = ceil(max(z(:))+2*tolerance+15);
 
 %% assign start values
-ind = convhull(xi,yi);
-ind = [ind; round(length(xi)*rand(100,1))];
+ind = [ind; convhull(xi,yi)];
 ind = unique(ind);
 x1 = xi(ind);
 y1 = yi(ind);
@@ -23,11 +94,10 @@ z1 = zi(ind);
 error = inf;
 iteration = 0;
 tri2 = 0;
-
-
-while max(error)>tolerance && size(tri2,1)<maxSize
+while error>tolerance && size(tri2,1)<maxSize
     iteration = iteration+1;
     % Triangularize the data
+
     tri2 = delaunayn([x1 y1]);
 
     % Find the nearest triangle (t)
@@ -52,27 +122,25 @@ while max(error)>tolerance && size(tri2,1)<maxSize
 
     % find triangles that need to be refined.
 
-    error = abs(zi-z2);
-    t_unique = unique(t(error>tolerance));
+    error = zi-z2;
+%     t_unique = unique(t(error>tolerance));
 
-    newCoords = nan(max(t),3);
-
-    for tt = 1:length(t_unique)
-        [val,ind] = max(error.*(t==t_unique(tt)));
-        newCoords(tt,:) = [xi(ind),yi(ind),zi(ind)];
-    end
-    % check for duplicate values of x1,y1
-    newCoords(isnan(newCoords(:,1)),:) = [];
-    newCoords = unique(newCoords,'rows');
-    %add newCoords
-    x1 = [x1; newCoords(:,1)];
-    y1 = [y1; newCoords(:,2)];
-    z1 = [z1; newCoords(:,3)];
     
-    [val,ind] = max(error);
+    temp = 0.1/ceil(max(abs(error)));
+    M = t+error*temp;
+    [M,ind] = sort(M);
+    addInd = ind([true;diff(M)>.3]|[diff(M)>.3;true]) ;
+    addInd = addInd(abs(error(addInd))>tolerance);
+    addInd = unique(addInd);
+    %add newCoords
+    x1 = [x1; xi(addInd)];
+    y1 = [y1; yi(addInd)];
+    z1 = [z1; zi(addInd)];
+    
+    [error,ind] = max(abs(error));
   
     disp(sprintf('iteration: % 3d  Number of triangles:% 6d  error = % 6.2f at index % 4d',...
-        iteration,size(tri2,1),val,ind));
+        iteration,size(tri2,1),error,ind));
 end
 
 
@@ -81,7 +149,9 @@ tri = delaunay(x1,y1);
 %% find triangles with nan values inside
 ind = ismember(tri,find(z1==ceil(max(z(:))+2*tolerance+15)));
 ind = any(ind,2);
+
 %% delete triangles with nan values
 tri(ind,:) = [];
-
+disp(sprintf('Completed,  % 6d triangles created',...
+        size(tri,1)));
 
