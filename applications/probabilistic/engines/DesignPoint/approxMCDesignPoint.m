@@ -25,8 +25,9 @@ function result = approxMCDesignPoint(result, varargin)
 %                 'method'      = determines the method for approximation
 %                                   of the Design Point. By default this is
 %                                   the Centre Of Gravity (COG) method, but
-%                                   another option is the Average Direction
-%                                   (AD) method (COG or AD, default: COG)
+%                                   other options are the Average Direction
+%                                   (AD) method and the Minimal Distance
+%                                   (MD) method (COG/AD/MD, default: COG)
 %                 'threshold'   = determines the threshold of the failure
 %                                   points used for the approximation of
 %                                   the Design Point. Values larger than
@@ -199,10 +200,40 @@ tDP = tic;
             % calculate b-vector from average direction
             b = tan(phi_M1);
             
-            length_M1 = length_M1 + sum((x - a).^2) / sum(b.^2);
+            length_M1 = sqrt(sum(b.^2)) * refLength;
             
             % calculate c-vector from b-vector
-            c = a + sqrt(length_M1) .* b;
+            c = a + length_M1 .* b;
+        case 'MD'
+            % minimal disctance method
+            
+            c = [];
+                
+            % define first non-zero axis as reference axis
+            refAxis = find(result.Output.u(idxFail(1), :), 1, 'first');
+            
+            % walk through failure points to calculate directions
+            minX = [];
+            minDistance = Inf;
+            for j = 1:length(idxFail)
+                
+                % determine failure point in u-space
+                x = result.Output.u(idxFail(j), :);
+                
+                % determine length reference axis
+                refLength = x(refAxis) - a(refAxis);
+                
+                % calculate distances of point from mode
+                distance = sqrt(sum((x - a).^2));
+                
+                if distance < minDistance
+                    minDistance = distance;
+                    minX = x;
+                end
+            end
+            
+            % define c-vector
+            c = minX;
         otherwise
             % centre of gravity method
             c = mean(result.Output.u(idxFail, :));

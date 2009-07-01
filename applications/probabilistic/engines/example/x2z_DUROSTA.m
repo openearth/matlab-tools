@@ -85,8 +85,8 @@ else
     [xInitial zInitial] = modifySimpleProfile('x', xInitial, 'z', zInitial, 'flip', {'z'}, 'shift', [250 0]);
 end
 
-if length(varargin) >= 4
-    DELETE_TEMP_FILES = varargin{4};
+if length(varargin) >= 4 && varargin{4} == false
+    DELETE_TEMP_FILES = false;
 else
     DELETE_TEMP_FILES = true;
 end

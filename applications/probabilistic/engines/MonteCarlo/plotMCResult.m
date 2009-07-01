@@ -138,7 +138,7 @@ end
 
 % create full screen window
 fullscreen = get(0, 'ScreenSize');
-figure('Position', [0 -70 fullscreen(3) fullscreen(4)]);
+figure('OuterPosition', [0 0 fullscreen(3) fullscreen(4)]);
 
 % retrieve stochast names and indexes from result
 varIdxs = [1:length(result.Input)];
