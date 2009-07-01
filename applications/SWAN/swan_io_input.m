@@ -93,13 +93,13 @@ function varargout = swan_io_input(varargin)
    
    [DAT.file.path DAT.file.name DAT.file.ext] = fileparts(DAT.fullfilename);   
    
-   
 %% Open file
       
    if iostat==1 %  0 when uigetfile was cancelled
                 % -1 when uigetfile failed
 
 %% check for file existence (1)                
+
    tmp = dir(DAT.fullfilename);
    
    if length(tmp)==0
@@ -116,6 +116,7 @@ function varargout = swan_io_input(varargin)
       DAT.file.bytes    = tmp.bytes;
 
 %% check for file opening (2)
+
       sptfilenameshort = filename(DAT.fullfilename);
       
       fid       = fopen  (DAT.fullfilename,'r');

@@ -31,9 +31,7 @@ function varargout = quiverlegend(x,y,u,v,uvfac,qcolor,qtext,varargin)
 %  quiverlegend(xlim(1),ylim(2),1,0,'k',' m/s','tip','bottom');
 %  draws an arrow on the top axis margin with text just outside above it
 %
-% © G.J. de Boer, TU Delt, 2005-2007
-%
-% see also: QUIVER, QUIVER2, ARROW
+% See also: quiver, quiver2, quiver3, feather, arrow2, (downloadcentral): arrow, arrow3
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005-2007 Delft University of Technology

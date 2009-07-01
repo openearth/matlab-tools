@@ -131,7 +131,7 @@ function varargout = arrow2(varargin)
 %                                   +-----+-----+                           
 %                                     W6     W6                             
 %                                                                           
-% See also: quiver, quiver3, feather, arrow2, (downloadcentral): arrow, arrow3
+% See also: quiver, quiverlegend, quiver3, feather, arrow2, (downloadcentral): arrow, arrow3
 
 % Called functions: - cart2pol     (matlab\specfun)
 %                   - mergestructs (included below)

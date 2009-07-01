@@ -1,13 +1,17 @@
 function textpad(varargin)
 %TEXTPAD   launches textpad and optionally opens specified (m)file at specified line
 %
-%   TEXTPAD(<mfile>)
-%   TEXTPAD(<mfile>,<line>)
-%   TEXTPAD(<mfile>,<line>,<col>)
+%    textpad(<file>)
+%    textpad(<file>,<line>)
+%    textpad(<file>,<line>,<col>)
 %
-%   puts the cursor in specified line en column number.
+% puts the cursor in specified line en column number.
 %
-%See also: EDIT, http://www.textpad.com/
+% For mfiles the file extension is not required, for other files it is.
+%
+% Example: textpad('textpad')
+%
+%See also: EDIT, <a href="http://www.textpad.com">www.textpad.com</a>
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares

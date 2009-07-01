@@ -1,7 +1,7 @@
-function knmi_potwind2nc_time_direct(varargin)
-%KNMI_POTWIND2NC_TIME_DIRECT  transforms directory of potwind ASCII files into directory of NetCDF files
+function knmi_potwind2nc(varargin)
+%KNMI_POTWIND2NC  transforms directory of potwind ASCII files into directory of NetCDF files
 %
-%     KNMI_POTWIND2NC_TIME_DIRECT(<keyword,value>) 
+%     knmi_potwind2nc(<keyword,value>) 
 %
 %  where the following <keyword,value> pairs have been implemented:
 %
@@ -15,8 +15,8 @@ function knmi_potwind2nc_time_direct(varargin)
 %   * pause          pause between files (default 0)
 %
 % Example:
-%  knmi_potwind2nc_time_direct('directory_raw','P:\mcdata\OpenEarthRawData\knmi\potwind\raw\',...
-%                              'directory_nc', 'P:\mcdata\opendap\knmi\potwind\')
+%  knmi_potwind2nc('directory_raw','P:\mcdata\OpenEarthRawData\knmi\potwind\raw\',...
+%                  'directory_nc', 'P:\mcdata\opendap\knmi\potwind\')
 %
 %  Timeseries data definition:
 %   * https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions (full definition)

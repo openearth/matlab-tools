@@ -12,21 +12,32 @@
 % $HeadURL
 % $Keywords:
 
-OPT.directory = 'F:\checkouts\OpenEarthTools\matlab\applications\OceanDataView\usergd30d98-data_centre630-260409_result\';
+OPT.directory = 'D:\checkouts\OpenEarthRawData\NIOZ\usergd30d98-data_centre630-260409_result\';
 OPT.prefix    = 'result_CTDCAST';
 OPT.mask      = '*.txt';
 OPT.files     = dir([OPT.directory,filesep,OPT.prefix,'*',OPT.mask])
 
-for ifile=1:length(OPT.files)
+L   = load('m_coasts');
+lon = L.ncst(:,1);
+lat = L.ncst(:,2);
+
+for ifile=1:length(OPT.files); %239 not all colummns, 264 empty
 
     OPT.filename = OPT.files(ifile).name;
+    
+    set(gcf,'name',[num2str(ifile),': ',OPT.filename])
 
     D = odvread([OPT.directory,filesep,OPT.filename]);
     
-    odvdisp(D)
+   %odvdisp(D)
 
-    odvplot(D)
+    if ~(isempty(D.lat) | isnan(D.lat))
+    odvplot(D,lon,lat)
+    else
+    clf
+    end
     
-    pausedisp
+    disp(['plotting # ',num2str(ifile,'%0.3d'),', press key to continue'])
+    pause
        
 end % ifile       

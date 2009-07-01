@@ -45,8 +45,8 @@ function odvdisp(D)
 
   %disp('META-INFO:')
    
-   disp(['META-INFO: ',pad('filename',12,' '),':',D.filename])
-   disp(['           ',pad('filesize',12,' '),':',num2str(D.filebytes)])
+   disp(['META-INFO: ',pad('filename',12,' '),':',D.file.name])
+   disp(['           ',pad('filesize',12,' '),':',num2str(D.file.bytes)])
    
    disp('VARIABLES: ')
    

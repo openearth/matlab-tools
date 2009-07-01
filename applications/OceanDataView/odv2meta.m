@@ -1,40 +1,9 @@
-%ODV2META   extract meta inform from all ODV files in one directory, plot it, and export to Excel table
+%ODV2META   script to test ODVRREAD, ODVDISP, ODVPLOT
 %
-%  reads standard meta info from all ODV files 
-%  a directory, make a plan view plot and saves table to excel file.
-%  The following <keyword,value> pairs have been implemented:
-%
-%   * directory_nc   directory where to put the nc data to (default [])
-%   * mask           file mask (default '*.nc')
-%   * basename       name of *.png and *.xls ot output files (default '_inventory')
+% plots all CTDCAST files in a directory one by one.
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
 %See also: ODVREAD, ODVDISP, ODVPLOT
-
-%   --------------------------------------------------------------------
-%   Copyright (C) 2009 Deltares
-%       Gerben J. de Boer
-%
-%       gerben.deboer@deltares.nl	
-%
-%       Deltares
-%       P.O. Box 177
-%       2600 MH Delft
-%       The Netherlands
-%
-%   This library is free software: you can redistribute it and/or
-%   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation, either
-%   version 2.1 of the License, or (at your option) any later version.
-%
-%   This library is distributed in the hope that it will be useful,
-%   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-%   Lesser General Public License for more details.
-%
-%   You should have received a copy of the GNU Lesser General Public
-%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
-%   --------------------------------------------------------------------
 
 % $Id$
 % $Date$
@@ -43,79 +12,93 @@
 % $HeadURL
 % $Keywords:
 
-OPT.directory    = 'F:\checkouts\OpenEarthTools\matlab\applications\OceanDataView\usergd30d98-data_centre630-260409_result\';
-OPT.mask         = '*.txt';
-OPT.basename     = '_inventory';
-OPT.datestr      = 'yyyy-mm-dd HH:MM:SS';
+OPT.directory = 'D:\checkouts\OpenEarthRawData\NIOZ\usergd30d98-data_centre630-260409_result\';
+OPT.prefix    = 'result_CTDCAST';
+OPT.mask      = '*.txt';
+OPT.pause     = 0;
 
-%% File loop to get meta-data
-%------------------
+%% File loop
 
-OPT.files     = dir([OPT.directory,filesep,OPT.mask])
+   OPT.files     = dir([OPT.directory,filesep,OPT.prefix,'*',OPT.mask])
+   
+   clear A
+   
+   A.lon         = repmat(nan,[1 length(OPT.files)]);
+   A.lat         = repmat(nan,[1 length(OPT.files)]);
+   A.datenum_min = repmat(nan,[1 length(OPT.files)]);
+   A.datenum_max = repmat(nan,[1 length(OPT.files)]);
+   A.n           = repmat(nan,[1 length(OPT.files)]);
 
 for ifile=1:length(OPT.files)
+   
+   OPT.filename = OPT.files(ifile).name;
+	
+   disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)])
 
-   disp([num2str(ifile),'/',num2str(length(OPT.files))])
+%% 0 Read raw data
 
-    OPT.filename = OPT.files(ifile).name;
-
-    D = odvread([OPT.directory,filesep,OPT.filename]);
-    
-    files(ifile).cruise     = D.data.cruise{1};
-    files(ifile).station_id = D.data.station{1};
-    files(ifile).datenum    = D.data.datenum(1);
-    files(ifile).lon        = D.data.lon(1);
-    files(ifile).lat        = D.data.lat(1);
-    files(ifile).nt         = sum(~isnan(D.data.datenum));
-           
+   D         = odvread([OPT.directory,filesep,OPT.filename]);
+   
+   A.filename{ifile}    = OPT.filename;
+   A.lon(ifile)         = D.lon;
+   A.lat(ifile)         = D.lat;
+   A.datenum_min(ifile) = min(D.data.datenum);
+   A.datenum_max(ifile) = max(D.data.datenum);
+   A.n(ifile)           = length(D.data.datenum);
+   A.bot_depth(ifile)   = D.bot_depth;
+   
+   if OPT.pause
+   pausedisp
+   end
+       
 end % ifile       
 
-%% Reorganize meta-data
-%------------------
+%% Plot distribution in space
 
-   A.filename    = {OPT.files.name};
-   A.lat         = [files.lat];
-   A.lon         = [files.lon];
-   A.nt          = [files.nt];
-   A.datenum     = [files.datenum];
-   A.datestr     = datestr(A.datenum);
+   figure(1)
+   load m_coasts
+   plot      (A.lon,A.lat,'.')
+   OPT.cticks = 10.^[0:1:2];
+   caxis     (log10([OPT.cticks([1 end])]))
+   plotc     (A.lon,A.lat,log10(A.n))
+   [ax,h]=colorbarwithtitle('n [#]',log10(OPT.cticks));
+   set(ax,'yticklabel',num2str(OPT.cticks'))
+   hold on
+   plot      (ncst(:,1),ncst(:,2),'k')
+   axislat   (52)
+   axis([min(A.lon) max(A.lon) min(A.lat) max(A.lat)])%axis      ([-5 10 48 60])
+   grid       on
+   tickmap   ('ll')
+   box        on
+   print2screensize([OPT.directory,filesep,'inventory_space.png'])
+
+%% Plot distribution in time
+
+   figure(2)
    
-   A.station_id  = {files.station_id};
-   if isnumeric(A.station_id{1})
-   A.station_id = num2str(cell2mat(A.station_id)');
-   else
-   A.station_id = char   (A.station_id); % cell2  char
-   end
+   t = A.datenum_min;t(t==0)=nan;% remove 0's from datenum
+   H.edges = floor(min(t)):1:ceil(max(t));
+   [H.n,H.bin]=histc(A.datenum_min,H.edges)
+   bar(H.edges,H.n,'histc')
+   datetick('x')
+   grid on
+   ylabel('n[#]')
+   print2screensize([OPT.directory,filesep,'inventory_time.png'])
+
+%% Save
 
    units.filename    = 'string';
-   units.lat         ='degrees_north';
    units.lon         = 'degrees_east';
-   units.nt          = '# of observations';
-   units.datenum     = 'days since 0000-00-00 00:00:00';
-   units.datestr     = OPT.datestr;
-   units.station_id  = 'string';
-
-% Plot locations
-%--------------------
-   TMP = figure;
-   plot   (A.lon,A.lat,'ko','linewidth',2)
-   hold    on
-   plotc  (A.lon,A.lat,A.nt,'o','linewidth',2)
-   axislat(52)
-   tickmap('ll')
-   caxis  ([min(A.nt) max(A.nt)])
-   colorbarwithtitle('n [#]')
-   grid    on
-   hold    on
-   title  ({mktex(OPT.directory),['# stations: ',num2str(length(OPT.files))]})
+   units.lat         = 'degrees_north';
+   units.nt          = '#';
+   units.datenum_min = 'days since 0000 00:00';
+   units.datenum_max = 'days since 0000 00:00';
+   units.bot_depth   = 'm';
    
-   print2screensize([OPT.directory,filesep,OPT.basename,'.png'])
+   A.filename = char(A.filename);
 
-% Save all meta-data
-%--------------------
-   A.filename   = char(A.filename);
-   
    header = {'Generated by $Id$',...
              ['This file has been created with struct2xls.m > xlswrite.m @ ',datestr(now)]};
-   
-   struct2xls([OPT.directory,filesep,OPT.basename,'.xls'],A,'units',units,'header',header)
+
+   struct2xls([OPT.directory,filesep,'inventory.xls'],A,'units',units,'header',header)
+

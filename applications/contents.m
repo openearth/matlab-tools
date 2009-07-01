@@ -8,7 +8,7 @@
 %   googlePlot      - viewer: Google Earth Toolbox, with options for curvi-linear grids
 %   KNMI            - data:  <a href="http://www.knmi.nl">KNMI</a>
 %   meris           - data:  MERIS
-%   OceanDataView   - data: data formmat from <a href="http://www.SeaDataNet.org">www.SeaDataNet.org</a>, <a href="http://www.nodc.nl">www.nodc.nl</a>.
+%   OceanDataView   - data: data format from <a href="http://www.SeaDataNet.org">www.SeaDataNet.org</a>, <a href="http://www.nodc.nl">www.nodc.nl</a>.
 %   probabilistic   - application
 %   Rijkswaterstaat - data: <a href="http://www.Rijkswaterstaat.nl">Rijkswaterstaat</a>
 %   sobek           - model: <a href="http://www.SOBEK.nl">SOBEK</a>

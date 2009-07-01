@@ -76,6 +76,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 %TO DO: handle indirect time mapping where there is no variable time(time)
 %TO DO: handle multiple stations in one file 
 %TO DO: allow to get all time related parameters, and plot them on by one (with pause in between)
+%TO DO: take into account differences between netCDF downloaded from HYRAX and THREDDS OPeNDAP implementation
 
 %% Keyword,values
 

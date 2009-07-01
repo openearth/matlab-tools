@@ -1,7 +1,7 @@
-function knmi_etmgeg2nc_time_direct(varargin)
-%KNMI_ETMGEG2NC_TIME_DIRECT  transforms directory of etmgeg ASCII files into directory of NetCDF files
+function knmi_etmgeg2nc(varargin)
+%KNMI_ETMGEG2NC  transforms directory of etmgeg ASCII files into directory of NetCDF files
 %
-%     KNMI_ETMGEG2NC_TIME_DIRECT(<keyword,value>) 
+%     knmi_etmgeg2nc(<keyword,value>) 
 %
 %  where the following <keyword,value> pairs have been implemented:
 %
@@ -15,8 +15,8 @@ function knmi_etmgeg2nc_time_direct(varargin)
 %   * pause          pause between files (default 0)
 %
 % Example:
-%  knmi_etmgeg2nc_time_direct ('directory_raw','P:\mcdata\OpenEarthRawData\knmi\etmgeg\raw\',...
-%                              'directory_nc', 'P:\mcdata\opendap\knmi\etmgeg\')
+%  knmi_etmgeg2nc ('directory_raw','P:\mcdata\OpenEarthRawData\knmi\etmgeg\raw\',...
+%                  'directory_nc', 'P:\mcdata\opendap\knmi\etmgeg\')
 %
 %  Timeseries data definition:
 %   * https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions (full definition)
@@ -61,7 +61,6 @@ for ifile=1:length(OPT.files)
    disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)])
 
 %% 0 Read raw data
-
 
    D                                = knmi_etmgeg(OPT.filename);
    D.version                        = '';
@@ -524,6 +523,9 @@ for ifile=1:length(OPT.files)
    end
 
 %% 4 Create variables with attibutes
+% When variable definitons are created before actually writing the
+% data in the next cell, netCDF can nicely fit all data into the
+% file without the need to relocate any info.
 
    for ifld=1:length(nc)
       if OPT.disp;disp(['adding ',num2str(ifld),' ',nc(ifld).Name]);end

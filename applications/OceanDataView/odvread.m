@@ -1,4 +1,4 @@
-function varargout = odv_read(fname)
+function varargout = odv_read(fullfilename)
 %ODVREAD   read file in ODV format (still test project)
 %
 %   D = odvread(fname)
@@ -43,6 +43,8 @@ function varargout = odv_read(fname)
 % $Revision$
 % $HeadURL$
 % $Keywords:$
+
+% TO DO: file #Processing 328/764: result_CTDCAST_75___36-260409# is slow, find out why
 
 % 3.1.1 Metavariables
 % ODV requires availability of some types of metadata for its basic operation. The geo-graphic location of a station, for instance, must be known to be able to plot the station in the station map. Date and time of observation, or the names of the station and cruise (or expedition) it belongs to are needed to fully identify the station and to be able to apply station selection filters that only allow stations of given name patterns are from specific time periods. Because of this fundamental importance, ODV defines a set of mandatory metavariables providing name, location and timing information of a given station (see Table 3-3). Other suggested metavariables are optional, and still others may be added by the user, as necessary. Metavariable values can be either text or numeric, and the respective byte lengths can be set by the user. The value type (text or numeric) of the mandatory meta-variables may not be changed, while the byte length may. As an example, the data type of the longitude and latitude metavariables may be set as 8 bytes double precision to accommodate better than cm-scale precision of station location. Metavariables with values in the ranges [0 to 255] or [-32,768 to 32,767] may be represented by 1 or 2 byte integers, respectively, to conserve storage space.
@@ -99,43 +101,52 @@ function varargout = odv_read(fname)
 
    %disp('error: ODVREAD is still a test project!')
    
-   OPT.delimiter = char(9);% columns are TAB sepa-rated [ODV manual section 15.6]
+   OPT.delimiter     = char(9);% columns are TAB sepa-rated [ODV manual section 15.6]
+   OPT.variablesonly = 1; % remove units from variables
 
-   D.filename     = fname;
-   iostat         = 1;
+  [D.file.path D.file.name D.file.ext] = fileparts(fullfilename);
+   D.file.fullfilename = fullfilename;
+
+   iostat        = 1;
    
-   tmp = dir(fname);
+%% check for file existence (1)                
+
+   tmp = dir(fullfilename);
    
    if length(tmp)==0
       
       if nargout==1
-         error(['Error finding file: ',fname])
+         error(['Error finding file: ',fullfilename])
       else
          iostat = -1;
       end      
       
    elseif length(tmp)>0
    
-      D.filedate  = tmp.date;
-      D.filebytes = tmp.bytes;
+      D.file.date  = tmp.date;
+      D.file.bytes = tmp.bytes;
    
-      filenameshort = filename(fname);
+%% check for file opening (2)
+
+      filenameshort = filename(D.file.name);
       
-      fid       = fopen  (fname,'r');
+      fid       = fopen  (fullfilename,'r');
 
       if fid < 0
          
          if nargout==1
-            error(['Error opening file: ',fname])
+            error(['Error opening file: ',fullfilename])
          else
             iostat = -2;
          end
       
       elseif fid > 2
       
+%% read file line by line
+
          %try
 
-            %% I) Header lines
+            %% I) Header lines (//)
             %--------------------------------
             
             rec   = fgetl(fid);
@@ -146,7 +157,7 @@ function varargout = odv_read(fname)
             rec                    = fgetl(fid);
             end
             
-            %% II) Column label lines
+            %% II) Column labels (variables)
             %--------------------------------
 
             D.lines.column_labels = rec;
@@ -161,17 +172,48 @@ function varargout = odv_read(fname)
             
             nvar = length( D.variables);
             
+            %% II) Units
+            %--------------------------------
+            
+            for ivar=1:length(D.variables)
+               brack1            = strfind(D.variables{ivar},'[');
+               brack2            = strfind(D.variables{ivar},']');
+               %-% disp([D.variables{ivar},' ',num2str([ivar brack1 brack2])])
+               D.units{ivar}     = D.variables{ivar}([brack1+1:brack2-1]);
+               % remove units AFTER extracting units
+               if OPT.variablesonly
+               if ~isempty(brack1)
+               D.variables{ivar} = strtrim(D.variables{ivar}([1:brack1-1]));
+               end
+               end
+               %-% disp([D.variables{ivar},' ',num2str([ivar brack1 brack2])])
+            end
+
             %% Find column index of mandarory variables
             %--------------------------------
 
-            D.index.cruise    = find(strcmpi(D.variables,'cruise'));
-            D.index.station   = find(strcmpi(D.variables,'Station'));
-            D.index.type      = find(strcmpi(D.variables,'type'));
-            D.index.time      = find(strcmpi(D.variables,'yyyy-mm-ddThh:mm:ss.sss'));
-            D.index.latitude  = find(strcmpi(D.variables,'Latitude [degrees_north]'));
-            D.index.longitude = find(strcmpi(D.variables,'Longitude [degrees_east]'));
-            D.index.bot_depth = find(strcmpi(D.variables,'Bot. Depth [m]'));
-          
+            D.index.cruise                 = find(strcmpi(D.variables,'cruise'));
+            D.index.station                = find(strcmpi(D.variables,'Station'));
+            D.index.type                   = find(strcmpi(D.variables,'type'));
+            D.index.time                   = find(strcmpi(D.variables,'yyyy-mm-ddThh:mm:ss.sss'));
+            if OPT.variablesonly
+            D.index.latitude               = find(strcmpi(D.variables,'Latitude'));
+            D.index.longitude              = find(strcmpi(D.variables,'Longitude'));
+            D.index.bot_depth              = find(strcmpi(D.variables,'Bot. Depth'));
+            D.index.sea_water_pressure     = find(strcmpi(D.variables,'PRESSURE'));
+            D.index.sea_water_temperature  = find(strcmpi(D.variables,'T90'));
+            D.index.sea_water_salinity     = find(strcmpi(D.variables,'Salinity'));
+            D.index.sea_water_fluorescence = find(strcmpi(D.variables,'fluorescence'));
+            else
+            D.index.latitude               = find(strcmpi(D.variables,'Latitude [degrees_north]'));
+            D.index.longitude              = find(strcmpi(D.variables,'Longitude [degrees_east]'));
+            D.index.bot_depth              = find(strcmpi(D.variables,'Bot. Depth [m]'));
+            D.index.sea_water_pressure     = find(strcmpi(D.variables,'PRESSURE [dbar]'));
+            D.index.sea_water_temperature  = find(strcmpi(D.variables,'T90 [degC]'));
+            D.index.sea_water_salinity     = find(strcmpi(D.variables,'Salinity [PSU]'));
+            D.index.sea_water_fluorescence = find(strcmpi(D.variables,'fluorescence [ugr/l]'));
+            end
+            
             %% III) Data lines
             %--------------------------------
             
@@ -194,34 +236,44 @@ function varargout = odv_read(fname)
             
             if idat == 0
 
-               disp(['Found empty file: ',fname])
+               disp(['Found empty file: ',D.file.name])
 
-               D.rawdata        = {[]};
-               D.data.cruise    = {['']}; % {} gives error with char
-               D.data.station   = {['']}; % {} gives error with char
-               D.data.type      = {['']}; % {} gives error with char
-               D.data.lat       =  [nan];
-               D.data.lon       =  [nan];
-               D.data.datenum   =  [0];  % datestr gives error on NaN
-               D.data.bot_depth =  [nan];
+               D.rawdata                     = {[]};
+               D.data.cruise                 = {['']}; % {} gives error with char
+               D.data.station                = {['']}; % {} gives error with char
+               D.data.type                   = {['']}; % {} gives error with char
+               D.data.lat                    =  nan;
+               D.data.lon                    =  nan;
+               D.data.datenum                =  nan;  % datestr gives error on NaN,Inf, 0 not handy
+               D.data.bot_depth              =  nan;
+               D.data.sea_water_pressure     =  nan;
+               D.data.sea_water_temperature  =  nan;
+               D.data.sea_water_salinity     =  nan;
+               D.data.sea_water_fluorescence =  nan;
 
             else
 
-               D.data.cruise    =             {D.rawdata{D.index.cruise   ,:}};
-               D.data.station   =             {D.rawdata{D.index.station  ,:}};
-               D.data.type      =             {D.rawdata{D.index.type     ,:}};
-               D.data.lat       = str2num(char(D.rawdata{D.index.latitude ,:}));
-               D.data.lon       = str2num(char(D.rawdata{D.index.longitude,:}));
-               D.data.datenum   = datenum(char(D.rawdata{D.index.time     ,:}),'yyyy-mm-ddTHH:MM:SS');
-               D.data.bot_depth = str2num(char(D.rawdata{D.index.bot_depth,:}));
+               D.data.cruise                 =             {D.rawdata{D.index.cruise      ,:}};
+               D.data.station                =             {D.rawdata{D.index.station     ,:}};
+               D.data.type                   =             {D.rawdata{D.index.type        ,:}};
+               D.data.lat                    = str2num(char(D.rawdata{D.index.latitude    ,:}));
+               D.data.lon                    = str2num(char(D.rawdata{D.index.longitude   ,:}));
+               D.data.datenum                = datenum(char(D.rawdata{D.index.time        ,:}),'yyyy-mm-ddTHH:MM:SS');
+               D.data.bot_depth              = str2num(char(D.rawdata{D.index.bot_depth   ,:}));
+              %Very slow !!!
+              %D.data.(odvname2standard_name('T90'))      = str2num(char(D.rawdata{D.index.sea_water_temperature        ,:}));
+              %D.data.(odvname2standard_name('Salinity')) = str2num(char(D.rawdata{D.index.sea_water_salinity   ,:}));
+               D.data.sea_water_pressure     = str2num(char(D.rawdata{D.index.sea_water_pressure    ,:}));
+               D.data.sea_water_temperature  = str2num(char(D.rawdata{D.index.sea_water_temperature ,:}));
+               D.data.sea_water_salinity     = str2num(char(D.rawdata{D.index.sea_water_salinity    ,:}));
+               D.data.sea_water_fluorescence = str2num(char(D.rawdata{D.index.sea_water_fluorescence,:}));
                
             end
-
 
          %catch
          % 
          %   if nargout==1
-         %      error(['Error reading file: ',fname])
+         %      error(['Error reading file: ',D.file.name])
          %   else
          %      iostat = -3;
          %   end      
@@ -234,9 +286,19 @@ function varargout = odv_read(fname)
       
    end % if length(tmp)==0
    
-   D.iomethod = '$Id$';
-   D.read_at  = datestr(now);
-   D.iostatus = iostat;
+%% Get extraction info
+
+   D.lat         =      unique(D.data.lat);
+   D.lon         =      unique(D.data.lon);
+   D.bot_depth   =      unique(D.data.bot_depth);
+   D.cruise      = char(unique(D.data.cruise));
+   D.station     = char(unique(D.data.station));
+   
+%% Output
+
+   D.read.with   = '$Id$';
+   D.read.at     = datestr(now);
+   D.read.status = iostat;
 
    if nargout==1
       varargout  = {D};

@@ -1,24 +1,17 @@
-function num = timezone_code2iso(varargin)
-%TIMEZONE_CODE2ISO   convert between civilian timezone code (e.g. GMT) to ISO +HH:MM notation
+function standard_name = donarname2standard_name(varargin)
+%DONARNAME2STANDARD_NAME   convert between ODV substance name and CF standard_name
 %
-%   num = timezone_code2iso(codes)
+%   standard_names = donarname2standard_name(DONARcodes)
 %
-% returns +HH:MM character, returns '' for unknown code.
-%
-% TIMEZONE_CODE2ISO uses the data in 'timezone.xls', that are based on:
-% <a href="http://wwp.greenwichmeantime.com/info/timezone.htm">http://wwp.greenwichmeantime.com/info/timezone.htm</a>
-% <a href="http://en.wikipedia.org/wiki/ISO_8601"       >http://en.wikipedia.org/wiki/ISO_8601</a>
-% <a href="http://www.cl.cam.ac.uk/~mgk25/iso-time.html">http://www.cl.cam.ac.uk/~mgk25/iso-time.htm</a>
-%
-% Note : vectorized for codes, e.g.: timezone_code2iso({'GMT','CET'})
+% Note : vectorized for codes, e.g.: donarname2standard_name({'22','23'})
+% Note : codes can be numeric, e.g.: donarname2standard_name([ 22   23])
 %
 % Examples:
 %
-%   num = timezone_code2iso('GMT') % gives +00:00 % (Geeenwich Mean Time)
-%   num = timezone_code2iso('CET') % gives +01:00 % (U.S./Canadian Eastern Standard Time)
-%   num = timezone_code2iso('EST') % gives +01:00 % (Central European Time (CET))
+%   odvname2standard_name('22') % gives 'sea_surface_wave_significant_height'
 %
-%See also: datenum
+%See web: IDsW, CF standard_name table, www.waterbase.nl/metis
+%See also: OceanDataView, ODVNAME2STANDARD_NAME
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
@@ -45,23 +38,26 @@ function num = timezone_code2iso(varargin)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-   OPT.xlsfile = [filepathstr(mfilename('fullpath')),filesep,'timezone.xls'];
+   OPT.xlsfile = [filepathstr(mfilename('fullpath')),filesep,'donarname2standard_name.xls'];
    DAT         = xls2struct(OPT.xlsfile);
    codes       = varargin{1};
-   if ischar(codes)
-      codes = cellstr(codes);
+   if ischar(codes) | iscell(codes)
+      codes = str2num(char(codes));
    end
    
    for icode=1:length(codes)
-      code       = codes(icode);
-      i          = strmatch(upper(code),upper(DAT.civilian_code));
-      num{icode} = num2str(DAT.offset(i),'%+0.2d:00');
+      code                 = codes(icode);
+      index                = find(code==DAT.donar_code);
+      if ~isempty(index)
+      standard_name{icode} = DAT.standard_name{index};
+      else
+      standard_name{icode} = '';
+      end
    end
-   
    
    %% Return character instead of cell if input is a single character or number
    if length(codes)==1 & (ischar(varargin{1}) | isnumeric(varargin{1}))
-      num = char(num);
-   end   
+      standard_name = char(standard_name);
+   end
    
 %% EOF   
