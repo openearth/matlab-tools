@@ -3,7 +3,9 @@ function varargout = getKustvak(varargin)
 %
 %   This routine returns the name of the coastal area 'Kustvak' along the Dutch 
 %   coast when an area code is input, and the code of the area if the name is 
-%   input
+%   input. An overview of all areas, including codes, is listed in the
+%   command window if no input arguments are given and no output arguments
+%   are asked.
 %
 %   Syntax:
 %   varargout = getKustvak(varargin)
@@ -79,6 +81,14 @@ Areas = {
     'Walcheren',...                     %16
     'Zeeuws-Vlaanderen' ...             %17
     };
+
+%% show overview of areas including codes
+if nargin == 0 && nargout == 0
+    fprintf(1, 'code  name\n')
+    for i = 1:length(Areas)
+        fprintf(1, '%2i    %s\n', i, Areas{i})
+    end
+end
 
 %%
 for i = 1:nargin
