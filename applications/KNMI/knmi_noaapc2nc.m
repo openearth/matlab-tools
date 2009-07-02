@@ -203,7 +203,7 @@
    
         ifld = ifld + 1;
       nc(ifld).Name         = 'time';
-      nc(ifld).Nctype       = 'double'; % float not sufficient as datenums are big: doubble
+      nc(ifld).Nctype       = 'double'; % float not sufficient as datenums are big: double
       nc(ifld).Dimension    = {'time'}; % {'locations','time'} % does not work in ncBrowse, nor in Quickplot (is indirect time mapping)
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'time');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);

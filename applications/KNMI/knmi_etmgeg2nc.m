@@ -167,7 +167,7 @@ for ifile=1:length(OPT.files)
 
       ifld = ifld + 1;
    nc(ifld).Name         = 'time';
-   nc(ifld).Nctype       = 'double'; % float not sufficient as datenums are big: doubble
+   nc(ifld).Nctype       = 'double'; % float not sufficient as datenums are big: double
    if OPT.stationTimeSeries
    nc(ifld).Dimension    = {'locations','time'}; % QuickPlot error: plots dimensions instead of datestr
    else

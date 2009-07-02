@@ -15,6 +15,7 @@ function mask = meris_mask(l2_flags,bits),
 %
 %See also: BITAND, MERIS_NAME2META, MERIS_FLAGS 
  
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Oct. Deltares
 %       G.J.de Boer
@@ -26,9 +27,9 @@ function mask = meris_mask(l2_flags,bits),
 %       2600 MH Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -37,13 +38,16 @@ function mask = meris_mask(l2_flags,bits),
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
-%   USA or 
-%   http://www.gnu.org/licenses/licenses.html,
-%   http://www.gnu.org/, http://www.fsf.org/
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 %% TO DO: allow also cellstr for bits, and get associated bit numbers from MERIS_FLAGS
 

@@ -211,7 +211,8 @@ function nc_cf_example2nc(varargin)
 %% 4 Create variables with attibutes
 % When variable definitons are created before actually writing the
 % data in the next cell, netCDF can nicely fit all data into the
-% file without the need to relocate any info.
+% file without the need to relocate any info. So there is no 
+% need to use NC_PADHEADER.
 
    for ifld=1:length(nc)
       disp(['Adding :',num2str(ifld),' ',nc(ifld).Name])
