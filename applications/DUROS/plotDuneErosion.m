@@ -8,9 +8,9 @@ function plotDuneErosion(result, varargin)
 %
 % Input:
 %               result    = structure with dune erosion results
-%               nr        = figure number or handle (optional), or axes 
+%               nr        = figure number or handle (optional), or axes
 %                           handle.
-%               
+%
 %               Property-value pairs:
 %               xoffset   = a double denoting the length that is added to
 %                           all x-coordinates in the plot.
@@ -20,10 +20,10 @@ function plotDuneErosion(result, varargin)
 %                            x-axis. This must be reverse in case of a
 %                            positive direction to the left, or normal
 %                            plotting the matlab default axes direction.
-%               
+%
 % Output:       Eventual output is plotted in figure(nr)
 %
-%   See also getDuneErosion_DUROS 
+%   See also getDuneErosion_DUROS
 %
 % --------------------------------------------------------------------------
 % Copyright (c) Deltares 2004-2008 FOR INTERNAL USE ONLY
@@ -31,7 +31,7 @@ function plotDuneErosion(result, varargin)
 % By:           <Pieter van Geer and C.(Kees) den Heijer (email: Kees.denHeijer@deltares.nl)>
 % --------------------------------------------------------------------------
 
-% $Id$ 
+% $Id$
 % $Date$
 % $Author$
 % $Revision$
@@ -55,7 +55,7 @@ if nargin>1
     else
         fig = figure(nr);
     end
-    
+
     OPT = setProperty(OPT,varargin);
     if all(~strcmp(OPT.xdir,{'normal','reverse'}))
         error('PlotDuneErosion:WrongProperty','Parameter xdir can only be "normal" or "reverse"');
@@ -81,7 +81,7 @@ elseif strcmp(get(fig,'Type'),'figure')
             'Parent', fig);
     end
 else
-   error('plotDuneErosion:WrongHandle','The handle specified is not of type axis or figure.'); 
+    error('plotDuneErosion:WrongHandle','The handle specified is not of type axis or figure.');
 end
 set(parent,...
     'Xdir', OPT.xdir,...
@@ -124,9 +124,9 @@ initzlimits = get(parent, 'YLim');
 tmp = guihandles(fig);
 
 if exist('stretchaxes.bmp','file')
-     pushim = imread('stretchaxes.bmp');
+    pushim = imread('stretchaxes.bmp');
 else
-     pushim = repmat(0,[315,315,3]);
+    pushim = repmat(0,[315,315,3]);
 end
 uipushtool('CData',pushim,...
     'ClickedCallback',{@resetaxis, parent, initxlimits, initzlimits},...
@@ -241,7 +241,7 @@ end
 
 xlimits = [min(result(i).xActive+OPT.xoffset) max(result(1).xActive+OPT.xoffset)];
 %     xlimits = [min(x) max(result(1).xActive)];
-if numel(result(1).xActive)<2 
+if numel(result(1).xActive)<2
     if diff(xlimits)==0 %No erosion (active profile has no length) and no additional erosion
         xlimits = [min(result(1).xLand+OPT.xoffset) max(result(1).xSea+OPT.xoffset)];
         if length(xlimits)==1
@@ -254,7 +254,7 @@ if numel(result(1).xActive)<2
     else % No erosion, but additional erosion/ boundary profile was calculated
         xlimits = [min(xlimits)-150 max(xlimits)+150];
         zlimits = [min(z(x>xlimits(1) & x<xlimits(2))) max(z(x>xlimits(1) & x<xlimits(2)))];
-        zlimits = [zlimits(1)-.05*diff(zlimits) zlimits(2)+.05*diff(zlimits)];    
+        zlimits = [zlimits(1)-.05*diff(zlimits) zlimits(2)+.05*diff(zlimits)];
     end
     text(xlimits(2)-0.8*diff(xlimits),zlimits(2)-0.8*diff(zlimits),'No erosion');
 else
@@ -275,44 +275,46 @@ for i = 1 : LastFilledField
     if ~isempty(result(i).info.input) && isfield(result(i).info.input,'WL_t')
         WL_t = result(i).info.input.WL_t+OPT.zoffset;
     end
-    if ismember({result(i).info.ID},'DUROS-plus')
-        if ~isempty(result(i).Volumes.Erosion)
-            Er = -result(i).Volumes.Erosion;
-        else
-            Er = nan;
-        end
-    elseif ismember({result(i).info.ID},'DUROS-plus Erosion above SSL')
-        AVolume = result(i).VTVinfo.AVolume;
-    elseif ismember({result(i).info.ID},'Additional Erosion')
-        Xp = result(i).VTVinfo.Xp+OPT.xoffset;
-        Zp = result(i).VTVinfo.Zp+OPT.zoffset;
-        Xr = result(i).VTVinfo.Xr+OPT.xoffset;
-        Zr = result(i).VTVinfo.Zr+OPT.zoffset;
-        if isempty(Xp) || isempty(Xr)
-            continue;
-        end
-        
-        hsc(end+1) = plot(Xp,Zp,...
-            'Marker','o',...
-            'MarkerEdgeColor','k',...
-            'MarkerFaceColor', 'b',...
-            'MarkerSize', 5,...
-            'HandleVisibility', 'on',...
-            'LineStyle','none',...
-            'DisplayName',['P: ',num2str(Xp,'%8.2f'),' m wrt RSP'],...
-            'Parent', parent); %#ok<AGROW>
-        hsc(end+1) = plot(Xr,Zr,...
-            'Marker','o',...
-            'MarkerEdgeColor','k',...
-            'MarkerFaceColor', 'r',...
-            'MarkerSize', 5,...
-            'HandleVisibility', 'on',...
-            'LineStyle','none',...
-            'DisplayName',['R: ',num2str(Xr,'%8.2f'),' m wrt RSP'],...
-            'Parent', parent); %#ok<AGROW>
-        TVolume = result(i).VTVinfo.TVolume;
-        if isempty(TVolume)
-            TVolume = nan;
+    if ~isempty(cat(1,result(i).info.ID))
+        if ismember({result(i).info.ID},'DUROS-plus')
+            if ~isempty(result(i).Volumes.Erosion)
+                Er = -result(i).Volumes.Erosion;
+            else
+                Er = nan;
+            end
+        elseif ismember({result(i).info.ID},'DUROS-plus Erosion above SSL')
+            AVolume = result(i).VTVinfo.AVolume;
+        elseif ismember({result(i).info.ID},'Additional Erosion')
+            Xp = result(i).VTVinfo.Xp+OPT.xoffset;
+            Zp = result(i).VTVinfo.Zp+OPT.zoffset;
+            Xr = result(i).VTVinfo.Xr+OPT.xoffset;
+            Zr = result(i).VTVinfo.Zr+OPT.zoffset;
+            if isempty(Xp) || isempty(Xr)
+                continue;
+            end
+
+            hsc(end+1) = plot(Xp,Zp,...
+                'Marker','o',...
+                'MarkerEdgeColor','k',...
+                'MarkerFaceColor', 'b',...
+                'MarkerSize', 5,...
+                'HandleVisibility', 'on',...
+                'LineStyle','none',...
+                'DisplayName',['P: ',num2str(Xp,'%8.2f'),' m wrt RSP'],...
+                'Parent', parent); %#ok<AGROW>
+            hsc(end+1) = plot(Xr,Zr,...
+                'Marker','o',...
+                'MarkerEdgeColor','k',...
+                'MarkerFaceColor', 'r',...
+                'MarkerSize', 5,...
+                'HandleVisibility', 'on',...
+                'LineStyle','none',...
+                'DisplayName',['R: ',num2str(Xr,'%8.2f'),' m wrt RSP'],...
+                'Parent', parent); %#ok<AGROW>
+            TVolume = result(i).VTVinfo.TVolume;
+            if isempty(TVolume)
+                TVolume = nan;
+            end
         end
     end
 end
@@ -356,9 +358,9 @@ try
             'HandleVisibility','on');
     end
     input2plot = {...
-    'Hs: ', num2str(result(1).info.input.Hsig_t, '%8.2f'), ' m'; ...
-    'Tp: ', num2str(result(1).info.input.Tp_t, '%8.2f'), ' s'; ...
-    'D50: ', num2str(result(1).info.input.D50*1e6, '%8.2f'), ' \mum'};
+        'Hs: ', num2str(result(1).info.input.Hsig_t, '%8.2f'), ' m'; ...
+        'Tp: ', num2str(result(1).info.input.Tp_t, '%8.2f'), ' s'; ...
+        'D50: ', num2str(result(1).info.input.D50*1e6, '%8.2f'), ' \mum'};
 catch %#ok<CTCH>
     input2plot = {};
 end
@@ -379,7 +381,7 @@ if TpCorrected
             'Color','r');
     end
 end
-%% store results in userdata. 
+%% store results in userdata.
 % In this way storing one figure stores the
 % complete result. No need to seperately store the .mat file anymore
 set(parent,'UserData',result);
