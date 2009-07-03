@@ -119,8 +119,14 @@ x0max_maxprofile = x0max_new(end); % Basisid = 6;
 x0max_new(end) = [];
 
 id = x0max_new<=x0max_wl;
-[x0max_corn Basisid] = deal(x0max_new(id), Basisid(id));
+x0max_corn = x0max_new(id);
 x0max = min([x0max_wl max([x0max_corn x0max_maxprofile])]);
+% if parabolic profile is under the initial profile use x0max_maxprofile as
+% a definite boundary!!!
+parabToeUnderMaxSeaInitProfile = min(zparab) < zInitial(xInitial == max(xInitial));
+if parabToeUnderMaxSeaInitProfile
+    x0max = min([x0max_wl max(x0max_corn) x0max_maxprofile]);
+end
 if x0max == x0max_wl
     Basis.x0max(end+1) = 4;
 elseif x0max == x0max_maxprofile
