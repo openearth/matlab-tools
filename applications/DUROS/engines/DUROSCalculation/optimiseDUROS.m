@@ -324,7 +324,7 @@ end
 function [nextx0 idpos idneg] = getNextx0(Volume,ProfileFluct,x0)
 
 % find identifier of Volume closest but larger than ProfileFluct
-idpos = find(Volume==min(Volume(Volume>ProfileFluct)));
+idpos = find(x0==min(x0(Volume>ProfileFluct)));
 if length(idpos)>1
     % prevent a vector of idpos
     [dummy IX] = sort(x0(idpos));
@@ -332,7 +332,7 @@ if length(idpos)>1
 end
 
 % find identifier of Volume closest but smaller than ProfileFluct
-idneg = find(Volume==max(Volume(Volume<ProfileFluct)));
+idneg = find(x0==max(x0(Volume<ProfileFluct)));
 if length(idneg)>1
     % prevent a vector of idpos
     [dummy IX] = sort(x0(idneg));
