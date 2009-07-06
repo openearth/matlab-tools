@@ -1,6 +1,5 @@
-outputDir = 'P:\mcdata\opendap\rijkswaterstaat\vaklodingen\KMLpreview';
-% url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen';
-url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen';
+outputDir = 'P:\mcdata\opendap\rijkswaterstaat\jarkus\grids\KMLpreview';
+url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/grids';
 contents = opendap_folder_contents(url);
 EPSG = load('EPSGnew');
 
@@ -98,7 +97,7 @@ for ii = 1:length(contents);
                 '</LatLonBox>\n'...
                 '</GroundOverlay>\n'],...
                 time(jj,:),time(jj,:),...
-                ['http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen/KMLpreview/' fname '/' fileName],....
+                ['http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/grids/KMLpreview/' fname '/' fileName],....
                 coords.S,coords.W,coords.N,coords.E,coords.R)];
         end
     end

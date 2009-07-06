@@ -7,7 +7,7 @@ function varargout = smooth2(data,varargin)
 %    W = SMOOTH2(V, METHOD, SIZE, ARG)
 %
 % smoothes a 2D map field V, using SMOOTH3. As SMOOTH2
-% is a wrapper to smooth 3, it uses the same basic 
+% is a wrapper to smooth 3, it uses the same basic
 % (optional) argument list (METHOD, SIZE, ARG) as to SMOOTH3,
 % However, the filter size can be passed as a 1,2 or 3D array
 % and is 3 by default.
@@ -18,7 +18,7 @@ function varargout = smooth2(data,varargin)
 %   Copyright (C) 2005 Delft University of Technology
 %       Gerben J. de Boer
 %
-%       g.j.deboer@tudelft.nl	
+%       g.j.deboer@tudelft.nl
 %
 %       Fluid Mechanics Section
 %       Faculty of Civil Engineering and Geosciences
@@ -41,7 +41,7 @@ function varargout = smooth2(data,varargin)
 %   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 %   USA
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
-%   --------------------------------------------------------------------  
+%   --------------------------------------------------------------------
 
 % $Id$
 % $Date$
@@ -50,31 +50,31 @@ function varargout = smooth2(data,varargin)
 % $HeadURL$
 % $Keywords$
 
-   OPT.filter = 'box';
-   OPT.SIZE   = [3 3 3];
-   OPT.ARG    = 'gaussian';
-   
-   if nargin>1
-      OPT.filter = varargin{1};
-   end
-   
-   if nargin>2
-      OPT.SIZE = varargin{2};
-          if prod(OPT.size(OPT.SIZE))==1
-         OPT.SIZE = [varargin{2} varargin{2} 1];
-      elseif prod(size(OPT.SIZE))==2
-         OPT.SIZE = [varargin{2} 1];
-      end
-   end
-   
-   if nargin>3
-      OPT.ARG = varargin{2};
-   end
-   
-   data3         = repmat(data,[1 1 2]);
-   
-   data_smoothed = smooth3(data3,OPT.filter,OPT.SIZE,OPT.ARG);
-      
-   varargout     = {squeeze(data_smoothed(:,:,1))};
+OPT.filter = 'box';
+OPT.SIZE   = [3 3 3];
+OPT.ARG    = 'gaussian';
+
+if nargin>1
+    OPT.filter = varargin{1};
+end
+
+if nargin>2
+    OPT.SIZE = varargin{2};
+    if numel(OPT.SIZE)==1
+        OPT.SIZE = [OPT.SIZE OPT.SIZE 1];
+    elseif numel(OPT.SIZE)==2
+        OPT.SIZE = [OPT.SIZE 1];
+    end
+end
+
+if nargin>3
+    OPT.ARG = varargin{2};
+end
+
+data3         = repmat(data,[1 1 2]);
+
+data_smoothed = smooth3(data3,OPT.filter,OPT.SIZE,OPT.ARG);
+
+varargout     = {squeeze(data_smoothed(:,:,1))};
 
 %% EOF
