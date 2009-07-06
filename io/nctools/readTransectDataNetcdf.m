@@ -35,9 +35,6 @@ if ischar(soundingId)
     soundingId = str2double(soundingId);
 end
 
-
-
-
 % we need to lookup the index of transect and the year 
 
 
@@ -127,11 +124,18 @@ if isempty(crossShoreCoordinate)
 end
 crossShoreCoordinateZeroIndex = find(crossShoreCoordinate == 0);
 
-x = nc_varget(filename,'x', [id_index, 0], [1, length(crossShoreCoordinate)]);
-transect.xRD = x(crossShoreCoordinateZeroIndex); %in EPSG:28992
+x = nc_varget(filename,'x', [id_index-1, 0], [1,length(crossShoreCoordinate)]);
 
-y = nc_varget(filename,'y', [id_index, 0], [1, length(crossShoreCoordinate)]);
-transect.yRD = y(crossShoreCoordinateZeroIndex); %in EPSG:28992
+
+transect.xRD_orig = x(crossShoreCoordinateZeroIndex); %in EPSG:28992
+transect.xRD=x;
+
+y = nc_varget(filename,'y', [id_index-1, 0], [1,length(crossShoreCoordinate)]);
+
+%%
+transect.yRD_orig = y(crossShoreCoordinateZeroIndex); %in EPSG:28992
+transect.yRD=y;
+%%
 
 global angle 
 if isempty(angle)
@@ -140,7 +144,7 @@ end
 
 transect.GRAD = angle(id_index); %in degrees
 
-transect.contour = [max(x), min(y); min(x) , max(y)]; %[2x2 double]
+transect.contour = [x(1), y(1); x(end) , y(end)]; %[2x2 double]
 
 transect.contourunit = 'm';
 
@@ -173,7 +177,6 @@ transect.zi = height; %[1264x1 double]
 %TODO: Check where these are calculated
 transect.xe = transect.xi; %[1264x1 double]
 transect.ze = transect.zi; %[1264x1 double]
-
 
 
 end
