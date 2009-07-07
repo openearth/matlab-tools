@@ -3,20 +3,31 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 %
 %    kmlline(lat,lon,'fileName',fname,<keyword,value>)
 %
-% creates a kml file fname with lien sat the Earth surface positioned at (lat,lon)
-% where the following see <keyword,value> pairs have been implemented:
+% creates a kml file fname with lines at the Earth surface connecting the
+% coordinates defined in (lat,lon). As in plot, an array of coordinates can
+% be drawn at onece. Each column in (lat,lon) defines a new line. A single
+% line can be split by nan's in (lat,lon).
 %
-%   fileName    = [];
-%   kmlName     = 'untitled';
-%   lineWidth   = 1;
-%   lineColor   = [0 0 0];
-%   lineAlpha   = 1;
-%   openInGE    = false;
-%   reversePoly = false;
-%   description = '';
-%   text        = ''; % cellstr with same size as size(lat,2)
-%   latText     = mean(lat,1);
-%   lonText     = mean(lon,1);
+% The following see <keyword,value> pairs have been implemented:
+%   fileName    = [];          % name of output file. if not defined a gui
+%                                pops up
+%   kmlName     = 'untitled';  % name of kml 
+%
+%  The following line properties can each be defined as either a single
+%  entry or an array with the same lenght as the number of columns in 
+%   (lat,lon).
+%   lineWidth   = 1;           % line width, can be a fraction
+%   lineColor   = [0 0 0];     % color of the lines in RGB (0..1) 
+%   lineAlpha   = 1;           % transparency of the line
+%
+%   openInGE    = false;       % opens output directly in google earth
+%   description = '';          % 
+%
+%  If text is defined, each set of lines (column in (lat,lon)), is
+%  accompanied by a title. 
+%   text        = '';          % cellstr with same size as size(lat,2)
+%   latText     = mean(lat,1); % coordinates of text
+%   lonText     = mean(lon,1); %
 %
 % See also: KMLline3, KMLpatch, KMLpcolor, KMLquiver, MLsurf, KMLtrisurf
 
@@ -60,7 +71,6 @@ OPT.lineWidth   = 1;
 OPT.lineColor   = [0 0 0];
 OPT.lineAlpha   = 1;
 OPT.openInGE    = false;
-OPT.reversePoly = false;
 OPT.text        = '';
 OPT.latText     = mean(lat,1);
 OPT.lonText     = mean(lon,1);
