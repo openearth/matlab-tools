@@ -1,12 +1,49 @@
-outputDir = 'F:\KML\jarkus_grids\';
-url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids';
-contents = opendap_folder_contents(url);
-EPSG = load('EPSGnew');
+%JARKUS_GRIDS2KML   make kml file of each jarkus grid
+%
+%See also: vaklodingen2kml, jarkusgrids2png, jarkus_grids_overview
 
-% z scaling paramters:
-a = 40; %lift up meters
-b = 5;  %exagertaion
-c = 30; %colormap limits
+%   --------------------------------------------------------------------
+%   Copyright (C) 2009 Deltares for Building with Nature
+%       Thijs Damsma
+%
+%       Thijs.Damsma@deltares.nl	
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+clear all
+outputDir = 'F:\KML\jarkus_grids\';
+url       = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids';
+contents  = opendap_folder_contents(url);
+EPSG      = load('EPSGnew');
+
+% z scaling parameters:
+a = 40; % lift up meters
+b = 5;  % exageration
+c = 30; % colormap limits
 
 for ii = 1:length(contents);
     [path, fname] = fileparts(contents{ii});

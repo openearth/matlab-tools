@@ -1,16 +1,18 @@
-%VAKLODINGEN_OVERVIEW   make mkl with links to all nc. files in a folder on OPeNDAP server
+%JARKUS_GRIDS_OVERVIEW   make kml file with links to all jarkus files in a folder on OPeNDAP server
+%
+%See also: vaklodingen_overview, jarkus_grids2kml, jarkusgrids2png
 
 clear all
-url      = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen';
+url      = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids';
 contents = opendap_folder_contents(url);
-EPSG = load('EPSGnew');
+EPSG     = load('EPSGnew');
 for ii = 1:length(contents);
     disp(sprintf('reading coordinates: % 2d / %d\n',ii,length(contents)))
     [path, fname] = fileparts(contents{ii});
-    x   = nc_varget(contents{ii},   'x');
-    y   = nc_varget(contents{ii},   'y');
-    x2  = [x(1) x(end) x(end) x(1) x(1)];
-    y2  = [y(1) y(1) y(end) y(end) y(1)];
+    x               = nc_varget(contents{ii},   'x');
+    y               = nc_varget(contents{ii},   'y');
+    x2              = [x(1) x(end) x(end) x(1) x(1)];
+    y2              = [y(1) y(1) y(end) y(end) y(1)];
     [lat(:,ii),lon(:,ii)] = convertCoordinatesNew(x2,y2,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
     markerNames{ii} = fname;
     markerLat(ii)   = mean(lat(:,ii));
@@ -20,8 +22,8 @@ for ii = 1:length(contents);
 end
 
 %% set options
-OPT.fileName    = 'Vaklodingen.kml';
-OPT.kmlName     = 'Vaklodingen';
+OPT.fileName    = 'Jarkus Grids.kml';
+OPT.kmlName     = 'Jarkus Grids';
 OPT.lineWidth   = 1;
 OPT.lineColor   = [0 0 0];
 OPT.lineAlpha   = 1;
@@ -62,29 +64,21 @@ if length(OPT.lineColor(:,1))+length(OPT.lineWidth)+length(OPT.lineAlpha)>3
         output = [output KML_style(OPT_style)];
     end
 end
-%% marker BalloonStyle
+%% marker BallonStyle
 
 output = [output ...
-    '<Style id="normalState">\n'...
-    '<IconStyle><scale>0.7</scale><Icon><href>\n'...
-    'http://maps.google.com/mapfiles/kml/shapes/placemark_square.png\n'...
-    '</href></Icon></IconStyle>\n'...
-    '<LabelStyle><scale>0</scale></LabelStyle>\n'...
-    '</Style>\n'...
-    '<Style id="highlightState">\n'...
-    '<IconStyle><Icon><href>\n'...
-    'http://maps.google.com/mapfiles/kml/shapes/placemark_square.png\n'...
-    '</href></Icon></IconStyle>\n'...
-    '<BalloonStyle>\n'...
-    '<text><![CDATA[<h3>$[name]</h3>\n'...
-    '$[description]<hr /><br />Provided by:\n'...
-    '<img src="https://public.deltares.nl/download/attachments/16876019/OET?version=1" align="right" width="100"/>]]></text>\n'...
-    '</BalloonStyle></Style>\n'...
-    '<StyleMap id="MarkerBalloonStyle">\n'...
-    '<Pair><key>normal</key><styleUrl>#normalState</styleUrl></Pair> \n'...
-    '<Pair><key>highlight</key><styleUrl>#highlightState</styleUrl></Pair> \n'...
-    '</StyleMap>\n'];
-
+    '<Style id="MarkerBalloonStyle">\n'...
+    '<IconStyle><scale>1.2</scale><Icon>\n'...
+	'<href>http://maps.google.com/mapfiles/kml/shapes/placemark_square.png</href>\n'...
+	'</Icon></IconStyle>\n'...
+	'<BalloonStyle>\n'...
+	'<text><![CDATA[<h3>$[name]</h3>\n'...
+ 	'$[description]\n'...
+ 	'<hr />\n'...
+ 	'<br />Provided by:\n'...
+ 	'<img src="https://public.deltares.nl/download/attachments/16876019/OET?version=1" align="right" width="100"/>]]></text>'...
+	'</BalloonStyle>\n'...
+	'</Style>\n'];
 
 %% print output
 output = [output, '<Folder>'];
@@ -123,50 +117,46 @@ output = '</Folder>';
 output = [output, '<Folder>'];
 output = [output, '<Name>Outlines</Name>'];
 
-%% generate markers
+%% generate markers  
 
 %tableContents
 
-baseString = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen/';
+baseString = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/grids/';
 for ii=1:length(lat(1,:))
-    disp(sprintf('generating markers: % 2d / %d\n',ii,length(lat(1,:))))
     tableContents = [];
-    tempString = [baseString 'KMLpreview/' markerNames{ii} '/'];
+    tempString = [baseString markerNames{ii} '_preview/'];
     [html,status] = urlread([tempString 'contents.html']);
     if status
-        %        for checkYear = 2010:-1:1950
-        %           if isempty(strfind(html,[num2str(checkYear) '_2D.kmz']))
-        %                str2D  = [];
-        %            else
-        %                str2D = [tempString num2str(checkYear) '_2D.kmz'];
-        %            end
-        %            if isempty(strfind(html,[num2str(checkYear) '_3D.kmz']))
-        %                str3D  = [];
-        %            else
-        %                str3D = [tempString num2str(checkYear) '_3D.kmz'];
-        %            end
-        %            if ~(isempty(str2D)&&isempty(str3D))
-        %                tableContents = [tableContents sprintf([...
-        %                    '<tr><td>%d</td>'...year
-        %                    '<td><a href="%s">2D</a></td>'....2D
-        %                    '<td><a href="%s">3D</a></td></tr>\n'],....3D
-        %                    checkYear,str2D,str3D)];
-        %            end
-        %        end
-        tableContents = ['<a href="http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen/KMLpreview/'...
-            markerNames{ii} '/png.kml">Time animation</a>'];
+        for checkYear = 2010:-1:1950
+            if isempty(strfind(html,[num2str(checkYear) '_2D.kmz']))
+                str2D  = [];
+            else
+                str2D = [tempString num2str(checkYear) '_2D.kmz'];
+            end
+            if isempty(strfind(html,[num2str(checkYear) '_3D.kmz']))
+                str3D  = [];
+            else
+                str3D = [tempString num2str(checkYear) '_3D.kmz'];
+            end
+            if ~(isempty(str2D)&&isempty(str3D))
+                tableContents = [tableContents sprintf([...
+                    '<tr><td>%d</td>'...year
+                    '<td><a href="%s">2D</a></td>'....2D
+                    '<td><a href="%s">3D</a></td></tr>\n'],....3D
+                    checkYear,str2D,str3D)];
+            end
+        end
     end
 
     % generate table with data links
     if isempty(tableContents)
         table = 'No pre-rendered data available';
     else
-        table = [...
-            '<h3>Available pre-rendered datafiles</h3>\n' ...
-            ... '<table border="0" padding="0" width="200">'...
-            tableContents ...
-            ... '</table>'...
-            ];
+        table = [...        
+        '<h3>Available pre-rendered datafiles</h3>\n'...
+        '<table border="0" padding="0" width="200">'...
+        tableContents...
+        '</table>'];
     end
 
     % generate description
@@ -191,9 +181,9 @@ fprintf(OPT.fid,output);
 %% close KML
 fclose(OPT.fid);
 %% compress to kmz?
-if strcmpi   (OPT.fileName(end),'z')
-    movefile (OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
-    zip      (OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
+if strcmpi  ( OPT.fileName(end),'z')
+    movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
+    zip     ( OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
     movefile([OPT.fileName '.zip'],OPT.fileName)
     delete  ([OPT.fileName(1:end-3) 'kml'])
 end

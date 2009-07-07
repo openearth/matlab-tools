@@ -3,7 +3,7 @@ function [OPT, Set, Default] = KMLsurf(lat,lon,z,varargin)
 %
 % see the keyword/vaule pair defaults for additional options
 %
-% See also: KMLline, KMLline3, KMLpatch, KMLpcolor
+% See also: KMLline, KMLline3, KMLpatch, KMLpcolor, KMLquiver, KMLtrisurf
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

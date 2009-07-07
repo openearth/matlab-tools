@@ -1,9 +1,24 @@
 function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 % KMLLINE Just like line (and that's just like plot)
-% 
-% see the keyword/vaule pair defaults for additional options
 %
-% See also: KMLline3, KMLpatch, KMLpcolor, KMLsurf
+%    kmlline(lat,lon,'fileName',fname,<keyword,value>)
+%
+% creates a kml file fname with lien sat the Earth surface positioned at (lat,lon)
+% where the following see <keyword,value> pairs have been implemented:
+%
+%   fileName    = [];
+%   kmlName     = 'untitled';
+%   lineWidth   = 1;
+%   lineColor   = [0 0 0];
+%   lineAlpha   = 1;
+%   openInGE    = false;
+%   reversePoly = false;
+%   description = '';
+%   text        = ''; % cellstr with same size as size(lat,2)
+%   latText     = mean(lat,1);
+%   lonText     = mean(lon,1);
+%
+% See also: KMLline3, KMLpatch, KMLpcolor, KMLquiver, MLsurf, KMLtrisurf
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -37,35 +52,41 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 % $HeadURL$
 % $Keywords: $
 
-
 %% process varargin
-OPT.fileName = [];
-OPT.kmlName = 'untitled';
-OPT.lineWidth = 1;
-OPT.lineColor = [0 0 0];
-OPT.lineAlpha = 1;
-OPT.openInGE = false;
+
+OPT.fileName    = [];
+OPT.kmlName     = 'untitled';
+OPT.lineWidth   = 1;
+OPT.lineColor   = [0 0 0];
+OPT.lineAlpha   = 1;
+OPT.openInGE    = false;
 OPT.reversePoly = false;
-OPT.description = '';
-OPT.text = '';
-OPT.latText = mean(lat,1);
-OPT.lonText = mean(lon,1);
+OPT.text        = '';
+OPT.latText     = mean(lat,1);
+OPT.lonText     = mean(lon,1);
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
+
 %% get filename
+
 if isempty(OPT.fileName)
     [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','untitled.kml');
     OPT.fileName = fullfile(filePath,fileName);
 end
 
 %% start KML
+
 OPT.fid=fopen(OPT.fileName,'w');
+
 %% HEADER
+
 OPT_header = struct(...
     'name',OPT.kmlName,...
     'open',0);
 output = KML_header(OPT_header);
+
 %% STYLE
+
 OPT_style = struct(...
     'name',['style' num2str(1)],...
     'lineColor',OPT.lineColor(1,:) ,...
@@ -90,7 +111,9 @@ if length(OPT.lineColor(:,1))+length(OPT.lineWidth)+length(OPT.lineAlpha)>3
 end
 
 %% print output
+
 fprintf(OPT.fid,output);
+
 %% LINE
 OPT_line = struct(...
     'name','',...
@@ -99,7 +122,9 @@ OPT_line = struct(...
     'timeOut',[],...
     'visibility',1,...
     'extrude',0);
-% preallocate output
+    
+%% preallocate output
+
 output = repmat(char(1),1,1e5);
 kk = 1;
 for ii=1:length(lat(1,:))
@@ -123,19 +148,24 @@ for ii=1:length(lat(1,:))
 end
 
 fprintf(OPT.fid,output(1:kk-1)); % print output
+
 %% FOOTER
 output = KML_footer;
 fprintf(OPT.fid,output);
+
 %% close KML
 fclose(OPT.fid);
+
 %% compress to kmz?
-if strcmpi(OPT.fileName(end),'z')
-    movefile(OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
-    zip(OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
+if strcmpi  ( OPT.fileName(end),'z')
+    movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
+    zip     ( OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
     movefile([OPT.fileName '.zip'],OPT.fileName)
-    delete([OPT.fileName(1:end-3) 'kml'])
+    delete  ([OPT.fileName(1:end-3) 'kml'])
 end
 %% openInGoogle?
 if OPT.openInGE
     system(OPT.fileName);
 end
+
+%% EOF

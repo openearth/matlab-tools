@@ -1,3 +1,7 @@
+%VAKLODINGEN2KML   make kml file of each vaklodingen grid
+%
+%See also: jarkus_grids2kml, vaklodingen2png, vaklodingen_overview
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma
@@ -32,16 +36,16 @@
 
 clear all
 outputDir = 'F:\KML\vaklodingen\';
-url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen';
-contents = opendap_folder_contents(url);
-EPSG = load('EPSGnew');
+url       = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen';
+contents  = opendap_folder_contents(url);
+EPSG      = load('EPSGnew');
 
-% z scaling paramters:
-a = 40; %lift up meters
-b = 5;  %exageration
-c = 30; %colormap limits
+% z scaling parameters:
+a = 40; % lift up meters
+b = 5;  % exageration
+c = 30; % colormap limits
 
-for ii = 95:1:length(contents);
+for ii = 1:1:length(contents);
 
     [path, fname] = fileparts(contents{ii});
     x    = nc_varget(contents{ii},   'x');

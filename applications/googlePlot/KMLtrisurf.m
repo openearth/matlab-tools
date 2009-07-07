@@ -1,12 +1,12 @@
 function [OPT, Set, Default] = KMLtrisurf(tri,lat,lon,z,varargin)
-% KMLSURF Just like trisurf
+% KMLTRISURF   Just like trisurf
 %
 % see the keyword/vaule pair defaults for additional options
 %
 % use in combination with delaunay_simplified to make simple grids
 % that google can easily display 
 %
-% See also: delaunay_simplified, KMLline, KMLline3, KMLpatch, KMLpcolor
+% See also: delaunay_simplified, KMLline, KMLline3, KMLpatch, KMLpcolor, KMLquiver, KMLsurf
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

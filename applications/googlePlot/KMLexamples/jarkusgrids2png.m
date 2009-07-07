@@ -1,11 +1,14 @@
-outputDir = 'P:\mcdata\opendap\rijkswaterstaat\vaklodingen\KMLpreview';
-% url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen';
-url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen';
-contents = opendap_folder_contents(url);
-EPSG = load('EPSGnew');
+%JARKUSGRIDS2PNG   make kml file wiht Jarkus as georeferenced pngs
+%
+%See also: vaklodingen2png, jarkus_grids2kml, jarkus_grids_overview
 
-OPT.colormap = 'colormap2Dbathymetry';
-OPT.cLim = [-20 20];
+outputDir      = 'P:\mcdata\opendap\rijkswaterstaat\jarkus\grids\KMLpreview';
+url            = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/grids';
+contents       = opendap_folder_contents(url);
+EPSG           = load('EPSGnew');
+
+OPT.colormap   = 'colormap2Dbathymetry';
+OPT.cLim       = [-20 20];
 OPT.colorSteps = [25,1000];
 OPT.hillFactor = 10;
 
@@ -98,7 +101,7 @@ for ii = 1:length(contents);
                 '</LatLonBox>\n'...
                 '</GroundOverlay>\n'],...
                 time(jj,:),time(jj,:),...
-                ['http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen/KMLpreview/' fname '/' fileName],....
+                ['http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/grids/KMLpreview/' fname '/' fileName],....
                 coords.S,coords.W,coords.N,coords.E,coords.R)];
         end
     end
