@@ -49,7 +49,7 @@ if ~isempty(CS.name),
         name = strfind(lower(STD.coordinate_reference_system.coord_ref_sys_name),lower(CS.name));
         name = ~cellfun('isempty',name);
         if sum(name)==0
-            error('no aproximate match of corrdinate system name is found')
+            error('no aproximate match of coordinate system name is found')
         end
     end
 else

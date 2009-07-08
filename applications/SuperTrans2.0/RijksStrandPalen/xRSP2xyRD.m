@@ -67,7 +67,7 @@ if nargin == 3;
     % loop through data
     for ii = 1:length(transectNr)
         try
-            ind(ii) = find(data{:,1}== section(ii)&data{:,2}==transectNr(ii)*10);
+            ind(ii) = find(data{:,1}== section(ii)&data{:,2}==round(transectNr(ii)));
         catch
             error('could not convert section %d, transect number %d', section(ii), transectNr(ii))
         end
