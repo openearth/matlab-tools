@@ -8,11 +8,13 @@ function varargout = meris_directory(directory,varargin)
 %
 %   MER_FR__2PNUPA20060630_102426_000000982049_00051_22650_5089Belgica2000SubT.mat
 %   MER_FR__2PNUPA20060630_102426_000000982049_00051_22650_5089Restwes99Oroma02SubT.mat
-%
+%   MER_RR__2CQACR20050403_091134_000026242036_00079_16165_0000_hydropt74.mat
+%   12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+%            11111111112222222222333333333344444444445555555555666666666677777777778888888888 
 % would give 1 NAME and 2 SIOPS:
 %
 %   IMAGE_names = {'MER_FR__2PNUPA20060630_102426_000000982049_00051_22650_5089'};
-%   SIOP_names  = {'Belgica2000SubT','Restwes99Oroma02SubT'};
+%   SIOP_names  = {'Belgica2000SubT','Restwes99Oroma02SubT, _hydropt74'};
 %
 % The default for the optional <extension> is '.mat'.
 %
@@ -57,8 +59,8 @@ function varargout = meris_directory(directory,varargin)
       ext = varargin{1};
    end
    
-   S.filenames = dir([directory,filesep,'*',ext]);
-   S.n         = length(S.filenames);
+   S.filenames = dir([directory,filesep,'*',ext])
+   S.n         = length(S.filenames)
    
    %% Check for double occurences of images after removal of extensions (SIOPS)
    %------------------------------------
