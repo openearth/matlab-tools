@@ -1,4 +1,4 @@
-function getDataInPolygon(varargin)
+function [X, Y, Z, Ztime] = getDataInPolygon(varargin)
 %GETDATAINPOLYGON  Script to load fixed maps from OPeNDAP, identify which maps are located inside a polygon and retrieve the data 
 %
 %   Syntax:
