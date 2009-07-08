@@ -104,7 +104,8 @@ for i = 1:size(x,1)
 %             fprintf('%10e ', eval([var{1} '(' num2str(i) ')']))
 %         end
 %         fprintf('\n');
-    catch
+    catch me
+        me
         ErosionVolume(i) = NaN;
         RD(i) = NaN;
         fname = tempname
