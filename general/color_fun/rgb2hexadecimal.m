@@ -80,9 +80,9 @@ end
 %% loop rgb colors
 clr = cell(1,length(rgb));
 for i=1:length(rgb)
-    if rgb(i) < 1 && rgb(i) >0
+    if rgb(i) <= 1
         % normalized specification (Matlab)
-        clr{i} = hexdigit{round(rgb(i) * length(hexdigit))};
+        clr{i} = hexdigit{max([1,round(rgb(i) * length(hexdigit))])};
     else
         % range to 1-256 (often used in many other languages
         clr{i} = hexdigit{round(rgb(i))};
