@@ -65,13 +65,15 @@ if nargin == 3;
     fclose(fid);
 
     % loop through data
-    for ii = 1:length(transectNr)
+   ind = nan(size(transectNr));
+    for ii = 1:numel(transectNr)
         try
-            ind(ii) = find(data{:,1}== section(ii)&data{:,2}==round(transectNr(ii)));
+            ind(ii) = find(data{:,1}== section(ii)&data{:,2}==transectNr(ii));
         catch
             error('could not convert section %d, transect number %d', section(ii), transectNr(ii))
         end
     end
+   
 
     % assign variables
     alpha = data{5}(ind)/100;
