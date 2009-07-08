@@ -242,7 +242,7 @@ if strcmp(handles.CSType{ii},'xy')
         if ~strcmp(units{k},'deg')
             set(handles.EditConversionParameters(ii,k),'String',num2str(val,'%0.9g'));
         else
-            dms=rad2dms(pi*val/180);
+            dms=degrees2dms(rad2deg(pi*val/180));
             degstr=[num2str(dms(1)) ' ' num2str(dms(2)) ''' ' num2str(dms(3)) '"'];
             set(handles.EditConversionParameters(ii,k),'String',degstr);
         end            
