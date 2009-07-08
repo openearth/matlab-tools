@@ -49,11 +49,11 @@ function [ThetaCrZanke, ThetaCrBrownlie, ThetaCrVanRijn, Ddim] = criticalbedshea
 % Created: 03 Apr 2009
 % Created with Matlab version: 7.6.0.324 (R2008a)
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 %%
