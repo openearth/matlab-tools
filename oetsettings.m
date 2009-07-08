@@ -16,6 +16,9 @@ function oetsettings(varargin)
 %    help oet_applications
 %    help oet_io
 %
+% In order to suppress this information, run the function with input argument quiet:
+%	"oetsettings('quiet');" or "oetsettings quiet"
+%	
 %See also: ADDPATHFAST, RESTOREDEFAULTPATH,
 %          OpenEarthTools: general, applications, io
 
@@ -53,6 +56,7 @@ function oetsettings(varargin)
 
 %% TODO remove quickstart option or include in help block
 %% TODO rename quickstart (too general name) to DB_mcstart for example ??
+% Why do we need this text in this file..? quickstart is in McTools / UCIT isn't it??
 
    disp('Adding <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a>, please wait ...')
    disp(' ')
@@ -81,8 +85,10 @@ function oetsettings(varargin)
    
 %% Report
 %% ---------------------
-   help oetsettings
-   fprintf('\n*** OpenEarthTools settings enabled! ***\n');
+   if ~any(strcmp(varargin,'quiet'))
+       help oetsettings
+       fprintf('\n*** OpenEarthTools settings enabled! ***\n');
+   end
    
 %% NETCDF (if not present yet)
 %  (NB RESTOREDEFAULTPATH does not restore java paths)
@@ -93,7 +99,7 @@ function oetsettings(varargin)
     
     if isempty(cell2mat(indices))
        javaaddpath (java2add)
-    else
+    elseif ~any(strcmp(varargin,'quiet'))
        disp(['Java path not added, already there: ',java2add])
     end
     setpref ('SNCTOOLS', 'USE_JAVA', true); % this requires SNCTOOLS 2.4.8 or better
