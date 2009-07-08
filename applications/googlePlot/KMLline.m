@@ -7,11 +7,19 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 % coordinates defined in (lat,lon). As in plot, an array of coordinates can
 % be drawn at onece. Each column in (lat,lon) defines a new line. A single
 % line can be split by nan's in (lat,lon).
+% 
+% coordinates (lat,lon) are in decimal degrees. 
+%   LON is converted to a vlaue in the range -180..180)
+%   LAT must be in the range -90..90
+%
+% be aware that GE draws the shortest possible connection between two 
+% points, when crossing the nul meridian
 %
 % The following see <keyword,value> pairs have been implemented:
-%   fileName    = [];          % name of output file. if not defined a gui
-%                                pops up
-%   kmlName     = 'untitled';  % name of kml 
+%   fileName    = [];          % name of output file. Can be either a *.kml 
+%                              % or *.kmz (zipped *.kml) file. if not  
+%                              % defined a gui pops up
+%   kmlName     = 'untitled';  % name of kml that shows in GE
 %
 %  The following line properties can each be defined as either a single
 %  entry or an array with the same lenght as the number of columns in 
@@ -29,7 +37,31 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 %   latText     = mean(lat,1); % coordinates of text
 %   lonText     = mean(lon,1); %
 %
-% See also: KMLline3, KMLpatch, KMLpcolor, KMLquiver, MLsurf, KMLtrisurf
+% Example 1: draw a spiral around the earth
+%   lat = linspace(-90,90,1000)'; lon = linspace(0,5*360,1000)';
+%   KMLline(lat,lon)
+%
+% Example 2: draw the mean low water line of the netherlands as a function 
+%            of time
+%   % read data from server
+%   url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/strandlijnen/strandlijnen.nc';
+%   time = nc_varget(url, 'time')+datenum(1970,1,1);
+%   trID = nc_varget(url, 'trID');
+%   lat  = nc_varget(url, 'MLWLat');
+%   lon  = nc_varget(url, 'MLWLon');
+%   % insert a NaN to split lines for a given year at a gap in trID number
+%   splits = find(diff(trID)>1e5)+1; length(trID);
+%   for ii = length(splits):-1:1
+%       lat(splits(ii)+1:end+1,:) = lat(splits(ii):end,:);
+%       lon(splits(ii)+1:end+1,:) = lon(splits(ii):end,:);
+%       lat(splits(ii),:) = nan;
+%       lon(splits(ii),:) = nan;
+%   end
+%   % draw the lines
+%   KMLline(lat,lon,'timeIn',time,'timeOut',time+364,...
+%       'lineWidth',4,'lineColor',jet(length(time)),'lineAlpha',.7);
+%
+% See also: KMLline3, KMLpatch, KMLpcolor, KMLquiver, KMLsurf, KMLtrisurf
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -74,8 +106,17 @@ OPT.openInGE    = false;
 OPT.text        = '';
 OPT.latText     = mean(lat,1);
 OPT.lonText     = mean(lon,1);
+OPT.timeIn      = [];
+OPT.timeOut     = [];
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
+
+%% input check
+if any((abs(lat)/90)>1)
+    error('latitude out of range, must be within -90..90')
+end
+lon = mod(lon+180, 360)-180;
+
 
 %% get filename
 
@@ -95,7 +136,7 @@ OPT_header = struct(...
     'open',0);
 output = KML_header(OPT_header);
 
-%% STYLE
+%% define line styles
 
 OPT_style = struct(...
     'name',['style' num2str(1)],...
@@ -104,6 +145,7 @@ OPT_style = struct(...
     'lineWidth',OPT.lineWidth(1));
 output = [output KML_style(OPT_style)];
 
+% if multiple styles are define, generate them
 if length(OPT.lineColor(:,1))+length(OPT.lineWidth)+length(OPT.lineAlpha)>3
     for ii = 2:length(lat(1,:))
         OPT_style.name = ['style' num2str(ii)];
@@ -120,44 +162,72 @@ if length(OPT.lineColor(:,1))+length(OPT.lineWidth)+length(OPT.lineAlpha)>3
     end
 end
 
-%% print output
-
+% print styles
 fprintf(OPT.fid,output);
 
-%% LINE
+%% generate contents
+
+% preallocate output
+output = repmat(char(1),1,1e5);
+kk = 1;
+
+% line properties
 OPT_line = struct(...
     'name','',...
     'styleName',['style' num2str(1)],...
-    'timeIn',[],...
-    'timeOut',[],...
     'visibility',1,...
     'extrude',0);
-    
-%% preallocate output
 
-output = repmat(char(1),1,1e5);
-kk = 1;
+if isempty(OPT.timeIn)
+   OPT_line.timeIn = [];
+else
+   OPT_line.timeIn = datestr(OPT.timeIn(1),29); 
+end
+
+if isempty(OPT.timeOut)
+   OPT_line.timeOut = [];
+else
+   OPT_line.timeOut = datestr(OPT.timeOut(1),29); 
+end
+
+% loop through number of lines
 for ii=1:length(lat(1,:))
+    
+    % update linestyles if multiple are defined
     if length(OPT.lineColor(:,1))+length(OPT.lineWidth)+length(OPT.lineAlpha)>3
         OPT_line.styleName = ['style' num2str(ii)];
     end
-    if ~isempty(OPT.text)
-        newOutput = [KML_line(lat(:,ii),lon(:,ii),'clampToGround',OPT_line),...
-                     KML_text(OPT.latText(ii),OPT.lonText(ii),OPT.text{ii})];
-    else
-        newOutput =  KML_line(lat(:,ii),lon(:,ii),'clampToGround',OPT_line);
+    
+    % update timeIn and timeOut if multiple times are defined
+    if length(OPT.timeIn)>1
+    	OPT_line.timeIn = datestr(OPT.timeIn(ii),29);
     end
+    if length(OPT.timeOut)>1
+        OPT_line.timeOut = datestr(OPT.timeOut(ii),29);
+    end
+    
+    % write the line
+    newOutput =  KML_line(lat(:,ii),lon(:,ii),'clampToGround',OPT_line);
+    
+    % add a text if it is defined
+    if ~isempty(OPT.text)
+        newOutput = [newOutput,KML_text(OPT.latText(ii),OPT.lonText(ii),OPT.text{ii})];
+    end    
+    
+    % add newOutput to output
     output(kk:kk+length(newOutput)-1) = newOutput;
     kk = kk+length(newOutput);
+    
+    % write output to file if output is full, and reset
     if kk>1e5
-        %then print and reset
         fprintf(OPT.fid,output(1:kk-1));
         kk = 1;
         output = repmat(char(1),1,1e5);
     end
 end
 
-fprintf(OPT.fid,output(1:kk-1)); % print output
+% print output
+fprintf(OPT.fid,output(1:kk-1)); 
 
 %% FOOTER
 output = KML_footer;
