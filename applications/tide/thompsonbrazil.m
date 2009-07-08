@@ -11,19 +11,24 @@ function varargout = thompsonbrazil(varargin)
 %
 % [f,index] = thompsonbrazil(...) also returns the indexes k of the filter
 %
+% The filter can be applied on hourly timeseries as:
+%
+%   f             = thompsonbrazil('twosided');
+%   dat           = filter(f,1,hourly_raw);
+%   hourly_smooth = dat(length(f):end)
+%
 % Returns a filter based on theory in:
 % 
 %    Rory O.R.Y. Thompson, 1983. "Low-pass filters to suppress 
 %    inertial and tidal frequencies", Journal of Physical Oceanography,
 %    Volume 13, June, 1077-1083.
 %
-% Filter thompsonbrazil has been received from Raphel Nogueira as:
+% Filter thompsonbrazil has been received from Raphel Nogueira of UFRJ as:
+% 06-03-2006  11:12 1,031,680 Meteorological Tide.xls
 %
-% 06-03-2006  11:12         1,031,680 Meteorological Tide.xls
-%
-% © G.J. de Boer, 2007, Delft University of Technology.
-%
-% See also: THOMPSON, THOMPSON1983
+% See also: FILTER, T_TIDE, GODIN
+
+% This function is part of the OpenEarthTools initiative.
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2007 Delft University of Technology

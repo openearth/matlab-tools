@@ -4,6 +4,8 @@ function varargout = godin_filter(time,data)
 % godin(time,data)
 %
 % where time is in days
+%
+%See also: THOMPSON1983, T_TIDE
 
 % equidistant time function
 

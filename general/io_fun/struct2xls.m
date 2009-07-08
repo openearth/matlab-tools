@@ -54,7 +54,7 @@ function varargout = struct2xls(fname,S,varargin)
 % [success]   = STRUCT2XLS(...)
 % [success,M] = STRUCT2XLS(...) where M is the cell array passed to XLSWRITE.
 %
-% See also: XLS2STRUCT, XLSREAD, XLSWRITE (2006b, otherwise mathsworks downloadcentral)
+% See also: XLS2STRUCT, XLSDATE2DATENUM, XLSREAD, XLSWRITE (2006b, otherwise mathsworks downloadcentral)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006-2008 Delft University of Technology

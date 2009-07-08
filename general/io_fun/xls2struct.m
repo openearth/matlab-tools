@@ -54,7 +54,7 @@ function varargout = xls2struct(fname,varargin)
 %   are already loaded to a field called 'units', with a subield
 %   for every main field.
 %
-% See also: STRUCT2XLS, XLSREAD, XLSWRITE (2006b+, otherwise mathsworks downloadcentral) 
+% See also: STRUCT2XLS, XLSDATE2DATENUM, XLSREAD, XLSWRITE (2006b+, otherwise mathsworks downloadcentral) 
 
 % Tested for matlab releases 2008a, 2007ab, 2006B and 6.5
 

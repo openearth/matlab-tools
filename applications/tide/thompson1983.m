@@ -11,18 +11,24 @@ function varargout = thompson1983(varargin)
 %
 % [f,index] = thompson1983(...) also returns the indexes k of the filter
 %
+% The filter can be applied on hourly timeseries as:
+%
+%   f             = thompsonbrazil('twosided');
+%   dat           = filter(f,1,hourly_raw);
+%   hourly_smooth = dat(length(f):end)
+%
 % Returns the filter 120i913 listed in Table 3 of:
 % 
 %    Rory O.R.Y. Thompson, 1983. "Low-pass filters to suppress 
 %    inertial and tidal frequencies", Journal of Physical Oceanography,
 %    Volume 13, June, 1077-1083.
 %
-% 120i923 was designed and to filter the specific constituents
+% 120i923 was designed to filter the specific constituents
 % O1, K1, Q1, P1, M2, S2, N2 and the inertial frequency 16.7 deg-hr.
 %
-% © G.J. de Boer, 2007, Delft University of Technology.
-%
-% See also: THOMPSON, THOMPSONBRAZIL
+% See also: FILTER, T_TIDE, GODIN
+
+% This function is part of the OpenEarthTools initiative.
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2007 Delft University of Technology

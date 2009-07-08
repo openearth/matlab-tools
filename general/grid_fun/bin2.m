@@ -34,16 +34,12 @@ function [varargout] = bin2(fx,fy,fz,varargin)
 %                   row in coarse grid (default 1)
 %   * tictoc        show duration (default 0)
 %
-%   © G.J. de Boer, Delft University of Technology, 
-%   Sep 2004 - 2007, g.j.deboer@tudelft.nl
-%
 %   Note that you cannot add ±Inf as the outermost coarse bin edges 
 %   (to encompass all fines).
 %
-%   !!!!!!!!!!!!! RESEARCH VERSION !!!!!!!!!!!!!
-%
 %   See also: HIST3, for use as in hist3([fx(:) fy(:)])
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004 Delft University of Technology
 %       Gerben J. de Boer
@@ -56,9 +52,9 @@ function [varargout] = bin2(fx,fy,fz,varargin)
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -67,22 +63,28 @@ function [varargout] = bin2(fx,fy,fz,varargin)
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA or 
-%   http://www.gnu.org/licenses/licenses.html,
-%   http://www.gnu.org/, http://www.fsf.org/
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-% Meinte Blaas suggested option for fweight, November 2005, WL | Delft Hydraulics
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 08 Jul 2009
+% Created with Matlab version: 7.6.0.324 (R2008a)
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+% Meinte Blaas suggested option for fweight, November 2005, WL | Delft Hydraulics
 % 2008 Jan 30: stop when no fines inside coarse grid
 % 2008 Jan 30: changed isnan(fi) to isnan(fi(:)) to prevent issues in dimensions
 % 2008 Jun 10: allow for 1D vertices
 % 2008 Jul 13: return struct with empty fields rather than empty single arguments.
 
 %% Options defaults
-%% ---------------------
+%-----------------------
 
    OPTIONS.sortfirst     = 0; % no need
    OPTIONS.tictoc        = 0;
@@ -103,7 +105,7 @@ function [varargout] = bin2(fx,fy,fz,varargin)
    end
 
 %% Input
-%% ---------------------
+%-----------------------
 
    % f = fine grid
    % c = course grid
@@ -125,7 +127,7 @@ function [varargout] = bin2(fx,fy,fz,varargin)
    end
    
 %% Make curvi-linear grid of 1D vertices
-%% ---------------------
+%-----------------------
 
    if min([size(cx,1) size(cx,2)])==1
    
@@ -135,7 +137,7 @@ function [varargout] = bin2(fx,fy,fz,varargin)
 
    
    %% Options user options
-   %% ---------------------
+   %-----------------------
 
    while iargin<=nargin-3,
      if      ischar(varargin{iargin}),
@@ -157,7 +159,7 @@ function [varargout] = bin2(fx,fy,fz,varargin)
    end;   
 
 %% Pre processing
-%% ---------------------
+%-----------------------
 
   %if OPTIONS.sortfirst
   %   fines = [fx(:) fy(:) fz(:)];
@@ -221,7 +223,7 @@ function [varargout] = bin2(fx,fy,fz,varargin)
 % For each data point from f find out in which gridcell from
 % c is resides. Store the position number of that grid cell
 % in array fi. Stop if fi empty.
-% ---------------------------------------------------------------
+%----------------------------------------------------------------
 
 fi = repmat(nan,size(fx)); % preallocation of array is much faster
 
@@ -245,13 +247,13 @@ if length(fi)==0
    return
 end
 
-% Create an array which contains for each point from
-% the fine aray the indices of the course grid point
-% in which it resides, more precisly the 1D index of
-% the 1D array f(:) (which is exactly to f(:,:))
-% Each fine point resides in exactly only one,
-% and not more or not less than one, coarse grid cell.
-% ---------------------------------------------------------------
+%% Create an array which contains for each point from
+%  the fine aray the indices of the course grid point
+%  in which it resides, more precisly the 1D index of
+%  the 1D array f(:) (which is exactly to f(:,:))
+%  Each fine point resides in exactly only one,
+%  and not more or not less than one, coarse grid cell.
+%----------------------------------------------------------------
 
 sz1 = size(cx,1);
 sz2 = size(cx,2);
@@ -276,6 +278,7 @@ sz2 = size(cx,2);
 % with the mask 'in' the relevant points in fine are aded to the 
 % coarse statistics.
 
+%% Loop
 %for j=1:prod(size(cx))-rowlength
 %for j=1:prod(size(cx(1:end-1,1:end-1)))
 for i=1:sz1-1
@@ -352,11 +355,11 @@ ij = (j-1).*sz1 + i;
          if ~isnan(prod(Xstencil.*Ystencil));
          
             %% Construct a subset to search for points in stencil:
-            %% part of samples where previous search was positive
-            
-            %% I. Pre select all points (a and b) that are within the orhtogonal
-            %% rectangle enlcloses by the minimum and maximum X and Y coordinates
-            %% --------------------------------
+            %  part of samples where previous search was positive
+            %            
+            %  I. Pre select all points (a and b) that are within the orhtogonal
+            %  rectangle enlcloses by the minimum and maximum X and Y coordinates
+            %----------------------------------
             
                % +-----------+ 
                % |aaa /b\aaaa|                                                         
@@ -388,17 +391,17 @@ ij = (j-1).*sz1 + i;
                % covers at least a part of the fine grid ????
 
             %% II. Now select form the points in the orhtogonal
-            %% rectangle only those (namely b, not a) that are within the 
-            %% curvilienar quadrangle. Using inpolygon for all fine points
-            %% is way to slow.
-            %% --------------------------------
+            %  rectangle only those (namely b, not a) that are within the 
+            %  curvilinear quadrangle. Using inpolygon for all fine points
+            %  is way to slow.
+            %----------------------------------
 
                [ininpre] = inpolygon(fx(indpre),...
                                      fy(indpre),Xstencil,...
                                                 Ystencil);
                %% To prevent elements on edges to be counted twice
-               %% we have to remove then
-               %% ------------------------------------------------
+               %  we have to remove then
+               %--------------------------------------------------
                %-%if OPTIONS.exact==1
                %-%   if ~isempty(Xstencilexclude)
                %-%   [exclude] = inpolygon(fx(indpre),...
@@ -413,7 +416,7 @@ ij = (j-1).*sz1 + i;
                fi(in) = ij;
             
             %% Add points found to statistics
-            %% --------------------------------
+            %----------------------------------
             
                if sum(   in(:)) >0
                % perhaps better is to get rid of all
@@ -441,8 +444,6 @@ ij = (j-1).*sz1 + i;
                   c.max (ij) = nanmax([c.max(ij);nmax]);
                   end
                end
-            
-        else    
         end
       
       %else
@@ -463,8 +464,8 @@ end
    c.min(isinf(c.min)) = nan;
    c.max(isinf(c.max)) = nan;
    
-% Calculate statistics of fine data in coarse grid cells
-% ---------------------------------------------------------------
+%% Calculate statistics of fine data in coarse grid cells
+%----------------------------------------------------------------
 
    c.avg(c.n >0) = c.sum(c.n >0)./c.n(c.n >0); % Do not divide by zero if no points are found
    c.avg(c.n==0) = nan; % Do not divide by zero if no points are found
@@ -473,7 +474,7 @@ end
    c.std(c.n>0 ) = sums2std(c.n(c.n>0),c.sum(c.n>0),c.sum2(c.n>0));
    c.std(c.n==0) = nan;
 
-% Create array with size of c in 1st and 2nd dimension,
+%% Create array with size of c in 1st and 2nd dimension,
 % and with >>>variable length<< in 3rd dimension. Store each
 % data point from f in the right position of c.dat. Calculate c.n
 % again to be able to store each data point from f in the correct,
@@ -500,11 +501,11 @@ if OPTIONS.datapercell
 
 end
 
-% Crop arrays to correct size (I.e. the coarse grid cell centers.)
-% ---------------------------------------------------------------
+%% Crop arrays to correct size (I.e. the coarse grid cell centers.)
 % cx contains the grid centers
 % while the data should be atributed to 
 % the cell centers
+%----------------------------------------------------------------
 
 if ~OPTIONS.samesize
 
@@ -518,8 +519,8 @@ if ~OPTIONS.samesize
 
 end   
 
-% Output
-% ---------------------------------------------------------------
+%% Output
+%----------------------------------------------------------------
    if nargout==1 | nargout==0
       varargout={c};
    elseif nargout==2
@@ -529,7 +530,7 @@ if OPTIONS.tictoc
    toc
 end   
 
-
+%%
 %  __                                               
 %  |  --__                                                          
 %  |      --__                                                      
