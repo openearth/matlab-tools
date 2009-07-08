@@ -58,8 +58,20 @@ function oetsettings(varargin)
 %% TODO rename quickstart (too general name) to DB_mcstart for example ??
 % Why do we need this text in this file..? quickstart is in McTools / UCIT isn't it??
 
-   disp('Adding <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a>, please wait ...')
-   disp(' ')
+%% Retrieve verbose state from input
+%% ---------------------
+   quiet = false;
+   if any(strcmp(varargin,'quiet'))
+       quiet = true;
+       varargin(strcmp(varargin,'quiet'))=[];
+   end
+   
+%% Acknowledge user we started adding the toolbox
+%% ---------------------
+   if ~quiet
+       disp('Adding <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a>, please wait ...')
+       disp(' ')
+   end
       
 %% Collect warning and directory state
 %% ---------------------
@@ -85,7 +97,7 @@ function oetsettings(varargin)
    
 %% Report
 %% ---------------------
-   if ~any(strcmp(varargin,'quiet'))
+   if ~quiet
        help oetsettings
        fprintf('\n*** OpenEarthTools settings enabled! ***\n');
    end
@@ -99,7 +111,7 @@ function oetsettings(varargin)
     
     if isempty(cell2mat(indices))
        javaaddpath (java2add)
-    elseif ~any(strcmp(varargin,'quiet'))
+    elseif ~quiet
        disp(['Java path not added, already there: ',java2add])
     end
     setpref ('SNCTOOLS', 'USE_JAVA', true); % this requires SNCTOOLS 2.4.8 or better
