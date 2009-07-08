@@ -108,6 +108,31 @@ if XB.settings.Grid.vardx
             'delimiter', '\t',...
             'Precision', '%5.3f');
     end
+    
+    % write water level timeseries if necessary
+    XB.settings.Info.initialzs0 = XB.settings.Flow.zs0;
+    if isempty(XB.settings.Flow.zs0)
+        XB.settings.Flow.zs0=0;
+    else
+        zs0=XB.settings.Flow.zs0;
+        XB.settings.Flow.zs0=[];
+        if length(zs0)>1
+            % time series
+            %             zs0(:,1)=zs0(:,1)*OPT.timefactor/XB.settings.SedInput.morfac;
+            %         TODO('adjust this line that it only accepts [s] and not hours as interval times');
+            % New version of xbeach times do not have to be multiplied ith the
+            % morfac
+            zs0(:,1)=zs0(:,1)*OPT.timefactor;
+            if isempty(XB.settings.Flow.zs0file)
+                XB.settings.Flow.zs0file = OPT.zs0file;
+            end                
+            dlmwrite(fullfile(OPT.calcdir, XB.settings.Flow.zs0file), zs0,...
+                'delimiter', '\t',...
+                'Precision', '%5.3f');
+            XB.settings.Flow.tidelen = size(zs0,1);
+            XB.settings.Flow.tideloc = size(zs0,2)-1;
+        end
+    end
 else
     xgrid = (0:1:XB.settings.Grid.nx)*XB.settings.Grid.dx+XB.settings.Grid.xori;
     ygrid = (0:1:XB.settings.Grid.ny)*XB.settings.Grid.dy+XB.settings.Grid.yori;
