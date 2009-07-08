@@ -109,19 +109,21 @@ if TintExists
 end
 
 %% make sure that dims.dat is created as output
-DIMSisoutput = ~isempty(findstr(strtext, 'dims'));
-if ~DIMSisoutput
-    strbgn = findstr(strtext, 'nglobalvar');
-    strend = min(findstr2afterstr1(strtext, 'nglobalvar', char(10)))-1;
-    evalstr = [strtext(strbgn:strend) ';'];
-    eval(evalstr);
-    nglobalvar = nglobalvar + 1; %#ok<NODEF>
-    nglobalvarstr = sprintf('%s %g\n', evalstr(1:findstr(evalstr, '=') + 1), nglobalvar);
-    strtext = sprintf('%s', strtext(1:strbgn-1), nglobalvarstr, 'dims', strtext(strend+1:end));
-    fid = fopen(OPT.inpfile, 'w');
-    fprintf(fid, '%s', strtext);
-    fclose(fid);
-end
+% dims.dat is always created. Even if not specified as output...
+
+% DIMSisoutput = ~isempty(findstr(strtext, 'dims'));
+% if ~DIMSisoutput
+%     strbgn = findstr(strtext, 'nglobalvar');
+%     strend = min(findstr2afterstr1(strtext, 'nglobalvar', char(10)))-1;
+%     evalstr = [strtext(strbgn:strend) ';'];
+%     eval(evalstr);
+%     nglobalvar = nglobalvar + 1; %#ok<NODEF>
+%     nglobalvarstr = sprintf('%s %g\n', evalstr(1:findstr(evalstr, '=') + 1), nglobalvar);
+%     strtext = sprintf('%s', strtext(1:strbgn-1), nglobalvarstr, 'dims', strtext(strend+1:end));
+%     fid = fopen(OPT.inpfile, 'w');
+%     fprintf(fid, '%s', strtext);
+%     fclose(fid);
+% end
 
 tic
 if OPT.np == 1
