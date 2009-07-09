@@ -1,7 +1,7 @@
 function mask = meris_mask(l2_flags,bits),
 %MERIS_MASK  makes one mask from multiple MERIS flags.
 %
-% mask = MERIS_MASK(l2_flags,bits)
+% mask = meris_mask(l2_flags,bits)
 %
 % where flags   is a double array, 
 %       bits    are the bit numbers to be REMOVED from the image and
@@ -9,11 +9,12 @@ function mask = meris_mask(l2_flags,bits),
 %               and NaN where pixels should be removed,
 %               so you can multiply it with your data.
 %
-% Example to remove land and clouds:
+% Example to remove land and clouds. Note that land is 
+% only true where there are no clouds!
 %
 % SAT.mask     = meris_mask(SAT.l2_flags,[22 23]);
 %
-%See also: BITAND, MERIS_NAME2META, MERIS_FLAGS 
+%See also: BITAND, MERIS_NAME2META, MERIS_FLAGS, DEC2BIN, BIN2DEC
  
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -49,7 +50,7 @@ function mask = meris_mask(l2_flags,bits),
 % $HeadURL$
 % $Keywords: $
 
-%% TO DO: allow also cellstr for bits, and get associated bit numbers from MERIS_FLAGS
+% TO DO: allow also cellstr for bits, and get associated bit numbers from MERIS_FLAGS
 
 OPT.debug = 1;
 
