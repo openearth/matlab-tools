@@ -1,5 +1,5 @@
 function x2 = convertUnits(x1,sourceUoM,targetUoM,STD)
-%CONVERTTOSI Summary of this function goes here
+% CONVERTUNITS converts between different unit of measures
 %   Detailed explanation goes here
 
 if strcmpi(sourceUoM,targetUoM)
@@ -8,7 +8,7 @@ else
     ind1 = find(strcmpi(STD.unit_of_measure.unit_of_meas_name,sourceUoM));
     ind2 = find(strcmpi(STD.unit_of_measure.unit_of_meas_name,targetUoM));
 
-    % are both same type:
+    % check if both are both same type:
     if ~strcmp(STD.unit_of_measure.unit_of_meas_type(ind1),STD.unit_of_measure.unit_of_meas_type(ind2))
         error('different types')
     end
@@ -21,7 +21,7 @@ else
         fact_b = STD.unit_of_measure.factor_b(ind1);
         fact_c = STD.unit_of_measure.factor_c(ind1);
         if ~isnan(fact_b+fact_c)
-            % check if the parameter closely resemble pi. If so, replace them by pi
+            % check if the parameter closely resembles pi. If so, replace by pi
             if abs(abs(fact_b)-pi)<0.001, fact_b=pi()*sign(fact_b); end
             if abs(abs(fact_c)-pi)<0.001, fact_c=pi()*sign(fact_c); end
             xSI = x1*fact_b/fact_c;
@@ -46,7 +46,7 @@ else
                     mins = 100*(abs(x1)-degs);
                     xSI = sign(x1).*(degs+mins/60)/180*pi;
                 otherwise
-                    error(['unable to convert to ''' source_name ''' to an SI unit'])
+                    error(['unable to convert to ''' sourceUoM ''' to an SI unit'])
             end
         end
     end
@@ -62,7 +62,7 @@ else
         % check if conversion parameters are defined
         if ~isnan(fact_b+fact_c)
 
-            % check if the parameter closely resemble pi. If so, replace them by pi
+            % check if the parameter closely resembles pi. If so, replace by pi
             if abs(abs(fact_b)-pi)<0.001, fact_b=pi()*sign(fact_b); end
             if abs(abs(fact_c)-pi)<0.001, fact_c=pi()*sign(fact_c); end
 
@@ -75,13 +75,14 @@ else
                     % (any precision). Must include leading zero in minutes and
                     % seconds and exclude decimal point for seconds. Convert to
                     % degree using formula.
-                    xSI     = xSI*180/pi;
+                    xSI     = (xSI+100*eps)*180/pi; % eps is added to deal 
+                                                    % with numerical precision
                     degs    = floor(abs(xSI));
                     mins    = floor((abs(xSI)-degs)*60);
                     secs    = ((abs(xSI)-degs)*60 - mins)*60;
                     x2      = sign(xSI).*(degs+mins/100+secs/10000);
                 otherwise
-                    error(['unable to convert ''' source_name ''' to ''' target_name ''''])
+                    error(['unable to convert ''' sourceUoM ''' to ''' targetUoM ''''])
             end
         end
     end

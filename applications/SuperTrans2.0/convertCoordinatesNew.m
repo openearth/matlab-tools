@@ -1,30 +1,61 @@
-function [x2,y2,OPT]=convertCoordinatesNew(x1,y1,STD,varargin)
-%CONVERTCOORDINATES   transformation between coordinate systems
+function [x2,y2,OPT]=convertCoordinatesNew(x1,y1,varargin)
+%CONVERTCOORDINATES transformation between coordinate systems
 %
-%    [x2,y2    ] = convertCoordinatesNew(x1,y1,STD,'keyword','value')
+% [x2,y2] = convertCoordinatesNew(x1,y1,'keyword','value')
 %
-% x1,y1 are the values of the coordinates to be transformed, either
-%       in X-Y or Lat-Lon.
-% x2,y2 are the values of the coordinates after transformation, either
-%       in X-Y or Lat-Lon.
-%
-%    [x2,y2,OPT]=convertCoordinatesNew(x1,y1,STD,'keyword','value')
-%
-% where OPT contaisn all conversion parameters that were used. To
+% where OPT contains all conversion parameters that were used. To
 % check this output, use 'var2evalstr(OPT)'
 %
-% Example: 2 different notations of 1 single case
+% x1,y1 are the values of the coordinates to be transformed, either
+%       in X-Y or Lon-Lat.
+% x2,y2 are the values of the coordinates after transformation, either
+%       in X-Y or Lon-Lat.
+% 
+% Optionally the data structure with EPSG codes van be pre loaded, this 
+% greatly speeds up the routine if many calls are made. The call is either 
+%
+% [x2,y2,OPT] = convertCoordinatesNew(x1,y1,'keyword','value')
+% 
+% Or:
+% D = load('EPSGnew');
+% [x2,y2,OPT] = convertCoordinatesNew(x1,y1,D,'keyword','value')
+%
+% The most important keyword value pairs are the indetifiers for the
+% coordinate systems 'Coordinate System 1' (CS1) and 'Coordinate System 2'
+% (CS2). Any combination of name, type and code that indetifies a unique
+% coordinate system will do.
+%
+% CS1.name                   = []; % coordinate system name
+% CS1.code                   = []; % coordinate system reference code 
+% CS1.type                   = []; % projection type
+% 
+%   projection types supported:
+%   projected, geographic 2D
+% 
+%   projection not (yet) supported:
+%   engineering, geographic 3D, vertical, geocentric,  compound
+% 
+%   allowed synonyms for 'projected':
+%   'xy','proj','cartesian','cart'
+%   allowed sysnonyms for 'geographic 2D':
+%   'geo','geographic2d','latlon','lat lon','geographic'
+%
+% Example: 4 different notations of 1 single case
+%
+%    [x,y,OPT]=convertCoordinatesNew(52,5,'CS1.name','WGS 84','CS1.type','geo','CS2.name','WGS 84 / UTM zone 31N','CS2.type','xy')
+%    [x,y,OPT]=convertCoordinatesNew(52,5,'CS1.code',4326                     ,'CS2.name','WGS 84 / UTM zone 31N')
 %
 %    D = load('EPSGnew')
+%    [x,y,OPT]=convertCoordinatesNew(52,5,D,'CS1.name','WGS 84','CS1.type','geo','CS2.code',32631)
+%    [x,y,OPT]=convertCoordinatesNew(52,5,D,'CS1.code',4326                     ,'CS2.code',32631)
 %
-%    [x,y,OPT]=convertCoordinatesNew(5,52,D,'CS1.name','WGS 84','CS1.type','geo','CS2.name','WGS 84 / UTM zone 31N','CS2.type','xy')
-%    [x,y,OPT]=convertCoordinatesNew(5,52,D,'CS1.code',4326                     ,'CS2.name','WGS 84 / UTM zone 31N')
-%    [x,y,OPT]=convertCoordinatesNew(5,52,D,'CS1.name','WGS 84','CS1.type','geo','CS2.code',32631)
-%    [x,y,OPT]=convertCoordinatesNew(5,52,D,'CS1.code',4326                     ,'CS2.code',32631)
+% Example: decimal degree to sexagesimal DMS conversion
+%
+% [lon,lat,OPT]=convertCoordinatesNew(52,5.5,'CS1.code',4326,'CS2.code',4326,'CS2.UoM.name','sexagesimal DMS')
 %
 % Note: (x1,y1) can be vectors or matrices (vectorized).
 %
-%See also: SuperTransData
+% See also: SuperTransData
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -57,6 +88,14 @@ function [x2,y2,OPT]=convertCoordinatesNew(x1,y1,STD,varargin)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
+%% check if EPSG codes are given
+
+if odd(length(varargin))
+    STD = varargin{1};
+    varargin(1)=[];
+else
+    STD = load('EPSGnew');
+end
 
 %% get and set keyword value parameters
 
@@ -73,21 +112,21 @@ OPT.CS1.type                   = []; % projection type
                                      % 'xy','proj','cartesian','cart'
                                      % allowed sysnonyms for 'geographic 2D'
                                      % 'geo','geographic2d','latlon','lat lon','geographic'
-                                     %
+                                     
 OPT.CS1.geoRefSys.name         = []; % associated geographic reference system name
 OPT.CS1.geoRefSys.code         = []; % associated geographic reference system code
 OPT.CS1.coordSys.name          = []; %
 OPT.CS1.coordSys.code          = []; %
-                                     %
+                                     
 OPT.CS1.ellips.name            = []; % ellipsoide name
 OPT.CS1.ellips.code            = []; % ellipsoide code
 OPT.CS1.ellips.inv_flattening  = []; % inverse flattening
 OPT.CS1.ellips.semi_major_axis = []; % semi major axis
 OPT.CS1.ellips.semi_minor_axis = []; % semi minor axis
-                                     %
+                                     
 OPT.CS1.UoM.name               = []; % unit of measure name of coordinates
 OPT.CS1.UoM.code               = []; % unit of measure code of coordinates
-                                     %
+                                     
 OPT.CS1.conv.name              = []; % projection to datum conversion name
 OPT.CS1.conv.code              = []; % projection to datum conversion code
 OPT.CS1.conv.param.val         = []; % conversion paramter values
@@ -113,7 +152,6 @@ OPT.CS2.conv.code              = [];
 OPT.CS2.conv.param.val         = []; 
 OPT.CS2.conv.param.code        = []; 
 OPT.CS2.conv.param.name        = []; 
-
 
 [OPT, Set, Default]     = setPropertyInDeeperStruct(OPT, varargin{:});
 %% error check the input, and find the indices of coordinate systems in data structure 
@@ -152,9 +190,6 @@ switch OPT.CS2.type
     case 'geographic 2D' % do nothing
     otherwise, error(['CRS type ''' OPT.CS2.type ''' not supported (yet)',sprintf('\n\n'),var2evalstr(OPT)])
 end
-%% Get units of measure of in- and output
-% extract coordinate system UoM name from the used coordinate system, 
-% unless there is a userdefined unit of mease code or name
 
 %% Transform input coordinates to geographic 2D radians
 switch OPT.CS1.type
@@ -163,8 +198,8 @@ switch OPT.CS1.type
         y1 = convertUnits(y1,OPT.CS1.UoM.name,'metre',STD);
         [lat1,lon1] = ConvertCoordinatesProjectionConvert(x1,y1,OPT.CS1,'xy2geo',STD);
     case 'geographic 2D' % do nothing
-        lat1 = convertUnits(x1,OPT.CS1.UoM.name,'radian',STD);
-        lon1 = convertUnits(y1,OPT.CS1.UoM.name,'radian',STD);
+        lon1 = convertUnits(x1,OPT.CS1.UoM.name,'radian',STD);
+        lat1 = convertUnits(y1,OPT.CS1.UoM.name,'radian',STD);
 end
 
 %% Datum transformation
@@ -184,8 +219,7 @@ else
     if isfield(OPT,'datum_trans2') %only exists when tranforming via WGS 84
     [lat2,lon2] = ConvertCoordinatesDatumTransform(lat2,lon2,OPT.datum_trans2);
     end
-end
-   
+end   
 
 %% Transform geographic 2D radians to output coordinates 
 switch OPT.CS2.type
@@ -194,8 +228,8 @@ switch OPT.CS2.type
         x2 = convertUnits(x2,OPT.CS2.UoM.name,'metre',STD);
         y2 = convertUnits(y2,OPT.CS2.UoM.name,'metre',STD);
     case 'geographic 2D' 
-        x2 = convertUnits(lat2,'radian',OPT.CS2.UoM.name,STD);
-        y2 = convertUnits(lon2,'radian',OPT.CS2.UoM.name,STD);
+        x2 = convertUnits(lon2,'radian',OPT.CS2.UoM.name,STD);
+        y2 = convertUnits(lat2,'radian',OPT.CS2.UoM.name,STD);
 end
 %% EOF
 end
