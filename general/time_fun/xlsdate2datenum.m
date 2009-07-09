@@ -11,8 +11,9 @@ function matlabDates = xlsdate2datenum(excelDates)
 %    datenum(excelDates,'dd-mm-yyyy HH:MM:SS')
 %    datenum(excelDates,'dd-mm-yyyy         ') % for midnights 00:00
 %
-% See also: XLSREAD, DATENUM, DATESTR, TIME2DATENUM
+% See also: DATENUM, DATESTR, ISO2DATENUM, TIME2DATENUM, UDUNITS2DATENUM, XLSREAD
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
 %       Gerben J. de Boer

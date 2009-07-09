@@ -27,11 +27,9 @@ function dtnm = time2datenum(datestring,varargin)
 %
 % Note for convenience that the function is vectorized.
 %
-% G.J. de Boer, Feb 2006
-%
-% See also:
-% DATENUM, DATESTR, TDELFT3D, XLSDATE2DATENUM
+% See also: DATENUM, DATESTR, ISO2DATENUM, XLSDATE2DATENUM, UDUNITS2DATENUM
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005/6 Delft University of Technology
 %
@@ -43,9 +41,9 @@ function dtnm = time2datenum(datestring,varargin)
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -54,10 +52,16 @@ function dtnm = time2datenum(datestring,varargin)
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 if iscell(datestring)
    datestring = char(datestring);

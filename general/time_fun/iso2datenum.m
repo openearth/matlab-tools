@@ -13,6 +13,7 @@ function varargout = iso2datenum(isounits)
 %
 %See also: DATENUM, DATESTR, TIMEZONE_CODE2ISO, UDUNITS2DATENUM
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
 %       Gerben de Boer
@@ -37,6 +38,14 @@ function varargout = iso2datenum(isounits)
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 % TO DO: implement week option
 % TO DO: implement ordinal date
@@ -87,7 +96,6 @@ function varargout = iso2datenum(isounits)
    end
    
    datenumber = datenum(OPT.yyyy,OPT.mm,OPT.dd,OPT.HH,OPT.MM,OPT.SS);
-   
    
    if     nargout<2
         varargout = {datenumber}; 
