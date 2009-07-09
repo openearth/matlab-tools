@@ -35,6 +35,7 @@ else
 end
 
 if ~isempty(G0)
+    % TODO('This forlmulation lacks Tp_t and d. It should be adapted I guess??');
     G = TargetVolume / 300 * (Hsig_t/7.6)^.72 * (w/.0268)^.56 * G0;
     writemessage(51, ['Additional retreat of ' num2str(G, '%.1f') ' due to coastal bend']); 
 else
