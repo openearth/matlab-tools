@@ -111,7 +111,7 @@ elseif TargetVolume > 0
     x0minBoundary = {'XpDUROS'};
 else
     %% target volume is zero
-    % We do not have tov make a calculation. The result of this calculation
+    % We do not have to make a calculation. The result of this calculation
     % can easily be ontained from the result of the DUROS calculation.
     xDUROS = DUROSresult.xActive;
     zDUROS = DUROSresult.z2Active;
@@ -158,7 +158,8 @@ end
 
 %% Check iteration boundaries. If non consistent: find out why and return
 IterationBoundariesConsistent = x0max > x0min;
-if ~IterationBoundariesConsistent
+NoPointsAboveWaterline = all(zInitial(xInitial>x0min & xInitial<x0max) < WL_t);
+if ~IterationBoundariesConsistent || NoPointsAboveWaterline
     xDUROS = DUROSresult.xActive;
     zDUROS = DUROSresult.z2Active;
     Xr = DUROSresult.VTVinfo.Xr;
@@ -207,6 +208,17 @@ if ~IterationBoundariesConsistent
         resultout.info.x0 = DUROSresult.info.x0;
         resultout.info.iter = 0;
         resultout.info.precision = TargetVolume;
+    elseif NoPointsAboveWaterline && any(strcmp(x0minBoundary,'maxRetreat'))
+        % No points above the water line within the retreat distance. Result is 0
+        writemessage(45, ['Erosional length restricted within dunevalley. An additional erosion volume of 0 m^3/m^1 (TargetVolume = ' num2str(TargetVolume) ' m^3/m^1) leads to an additional retreat of 0 m.']);
+        resultout.VTVinfo.TVolume = 0;
+        resultout.Volumes.Volume = 0;
+        resultout.Volumes.volumes = 0;
+        resultout.Volumes.Accretion = 0;
+        resultout.info.precision = -TargetVolume;
+        resultout.info.x0 = Xr;
+        resultout.info.resultinboundaries = true;
+        resultout.info.input.WL_t = WL_t;
     else
         % something else is wrong.
         TODO('Figure out what is the case and which message to give');
