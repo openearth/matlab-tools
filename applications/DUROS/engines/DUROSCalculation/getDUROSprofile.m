@@ -49,7 +49,7 @@ result=createEmptyDUROSResult;
 Ngrid = 20;
 
 % endpoint of the parabolic profile
-xmax = getParabolicProfile(Hsig_t, Tp_t, w, x0, []);
+xmax = ParabolicProfileMain(WL_t, Hsig_t, Tp_t, w, x0, []);
 
 % recommended grid size, used as maximum during the check
 XgridSize = (xmax-x0)/(Ngrid-1);
@@ -93,8 +93,8 @@ end
 x2 = sort(unique(x2));
 
 % formulation for parabolic profile
-[xmax, y] = getParabolicProfile(Hsig_t, Tp_t, w, x0, x2);
-z2 = WL_t-y;
+[xmax, z2] = ParabolicProfileMain(WL_t, Hsig_t, Tp_t, w, x0, x2);
+
 zparabmin = min(z2);
 
 if ~isempty(zInitial)

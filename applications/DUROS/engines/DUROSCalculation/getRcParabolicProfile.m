@@ -12,7 +12,7 @@ function rcparab = getRcParabolicProfile(WL_t, Hsig_t, Tp_t, w, z)
 %               Hsig_t    = wave height [m]
 %               Tp_t      = peak wave period [s]
 %               w         = fall velocity of the sediment in water
-%		z	  = vector (n x 1) with z coordinates
+%               z         = vector (n x 1) with z coordinates
 %
 % Output:       
 %		rcparab   = vector the same size as z with
@@ -41,7 +41,15 @@ end
 
 %% Calculate x coordinates
 % for all z values of z+dz and z-dz
-dxparab = (((-(ztemp-WL_t).*(7.6/Hsig_t)+0.4714*sqrt(18))/0.4714).^2-18) / (((7.6/Hsig_t).^1.28)*((12/Tp_t).^0.45)*((w/0.0268).^0.56));
+[c_hs c_tp c_1 cp_hs cp_tp cp_w c_w] = DuneErosionSettings('get','c_hs','c_tp','c_1','cp_hs','cp_tp','cp_w','c_w');
+% c_hs = 7.6;
+% c_tp = 12;
+% c_1 = 0.4714;
+% cp_hs = 1.28;
+% cp_tp = 0.45;
+% cp_w = 0.56;
+% c_w = 0.0268;
+dxparab = (((-(ztemp-WL_t).*(c_hs/Hsig_t)+c_1*sqrt(18))/c_1).^2-18) / (((c_hs/Hsig_t).^cp_hs)*((c_tp/Tp_t).^cp_tp)*((w/c_w).^cp_w));
 
 %% Calculate value of derivative
 rcparab = (2*dz)./diff(dxparab,1,2);

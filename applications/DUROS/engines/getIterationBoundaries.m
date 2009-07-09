@@ -94,7 +94,9 @@ end
 % find all 'outer' corner points under SSL
 rcInt = diff(z)./diff(x);
 CornerIds = find([false; [diff(rcInt)<0; false]] & z>zparab(end)); % all 'outer' corners
-rcparab = getRcParabolicProfile(WL_t, Hsig_t, Tp_t, w, z(CornerIds)); % derivative of the profile at the determined corners
+rcparab = rcParabolicProfileMain(WL_t, Hsig_t, Tp_t, w, z(CornerIds)); % derivative of the profile at the determined corners
+% rcparab2 = getRcParabolicProfile(WL_t, Hsig_t, Tp_t, w, z(CornerIds)); % derivative of the profile at the determined corners
+% TODO('Come up with new formulation');
 CornerIds = CornerIds(rcInt(CornerIds-1)> rcparab & rcInt(CornerIds)< rcparab); % Only select local maxima that "touch" (not cross) the parabolic profile.
 
 % list all points that could act as most seaward point in solution.
@@ -109,7 +111,9 @@ x0max_new = ones(1, size(points, 1)) * x0max_wl; % pre-allocation
 for i = 1:length(x0max_new)
     ztemp = points(i,2);
     if ztemp>zparab(end)
-        dx = (((-(ztemp-WL_t).*(7.6/Hsig_t)+0.4714*sqrt(18))/0.4714).^2-18) / (((7.6/Hsig_t).^1.28)*((12/Tp_t).^0.45)*((w/0.0268).^0.56));
+        dx = invParabolicProfileMain(WL_t,Hsig_t,Tp_t,w,ztemp);
+%         dx = (((-(ztemp-WL_t).*(7.6/Hsig_t)+0.4714*sqrt(18))/0.4714).^2-18) / (((7.6/Hsig_t).^1.28)*((12/Tp_t).^0.45)*((w/0.0268).^0.56));
+%         TODO('Seperate formulation and make dependant (invParabolicProfileMain)');
     else
         dx = xparab(end) + 12.5*(zparab(end)-points(i,2));
     end
@@ -242,7 +246,10 @@ if ~IterationBoundariesConsistent
     % this check must particularly focuss on the cornerpoints
     xp3 = unique([0; dxprb; max(xparab)]); %min(xparab):min(abs(dxprb))/2:max(xparab);
     % get corresponding y of parabolic profile
+    [dum zp3] = ParabolicProfileMain(Hsig_t, Tp_t, w, 0, xp3);
     [dum zp3] = getParabolicProfile(Hsig_t, Tp_t, w, 0, xp3);
+    TODO('Test new formulation');
+    
     % check for crossings between initial and parabolic profile
     [xcr zcr] = findCrossings(xInitial,zInitial,xp3+x0max,WL_t-zp3, 'keeporiginalgrid');
     % ignore the crossing at the water level
@@ -283,7 +290,9 @@ if ChannelSlopes
         for i = 1:size(channelpoints,1)
             ztemp = channelpoints(i,2);
             if ztemp>zparab(end)
+                dx = invParabolicProfileMain(WL_t,ztemp,Hsig_t,Tp_t,w);
                 dx = (((-(ztemp-WL_t).*(7.6/Hsig_t)+0.4714*sqrt(18))/0.4714).^2-18) / (((7.6/Hsig_t).^1.28)*((12/Tp_t).^0.45)*((w/0.0268).^0.56));
+                TODO('Adjust to new formulation');
             else
                 dx = xparab(end) + x0max + 12.5*(zparab(end)-channelpoints(i,2))-channelpoints(i,1);
             end

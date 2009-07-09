@@ -316,6 +316,9 @@ else
         interp1(DUROSresult.xActive,DUROSresult.z2Active,xInitial(xInitialActiveLandID)),...
         ones(sum(xInitialActiveSeaID),1)*resultout.VTVinfo.Zp);
     resultout.zActive = resultout.zActive(uid);
+    zInitialinterp = interp1(xInitial,zInitial,resultout.xActive);
+    idaboveinitial = resultout.zActive>zInitialinterp;
+    resultout.zActive(idaboveinitial) = zInitial(ismember(xInitial,resultout.xActive(idaboveinitial)));
     zDUROSXp = resultout.VTVinfo.Zr;
     if resultout.VTVinfo.Xr > DUROSresult.VTVinfo.Xp
         zDUROSXp = interp1(xInitial,zInitial,DUROSresult.VTVinfo.Xp);
