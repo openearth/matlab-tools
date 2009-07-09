@@ -29,6 +29,8 @@
 </tocitem>
 </tocitem>
 <tocitem target="html/DUROS_DUROS/engines/DUROSCalculation/dir_DUROSCalculation.html" image="$toolbox/matlab/icons/foldericon.gif">DUROSCalculation
+<tocitem target="html/DUROS_DUROS/engines/DUROSCalculation/ParabolicProfileMain.html" image="$toolbox/matlab/icons/pageicon.gif">ParabolicProfileMain
+</tocitem>
 <tocitem target="html/DUROS_DUROS/engines/DUROSCalculation/getDUROSprofile.html" image="$toolbox/matlab/icons/pageicon.gif">getDUROSprofile
 </tocitem>
 <tocitem target="html/DUROS_DUROS/engines/DUROSCalculation/getDuneErosion_DUROS.html" image="$toolbox/matlab/icons/pageicon.gif">getDuneErosion_DUROS
@@ -37,7 +39,13 @@
 </tocitem>
 <tocitem target="html/DUROS_DUROS/engines/DUROSCalculation/getRcParabolicProfile.html" image="$toolbox/matlab/icons/pageicon.gif">getRcParabolicProfile
 </tocitem>
+<tocitem target="html/DUROS_DUROS/engines/DUROSCalculation/invParabolicProfile.html" image="$toolbox/matlab/icons/pageicon.gif">invParabolicProfile
+</tocitem>
+<tocitem target="html/DUROS_DUROS/engines/DUROSCalculation/invParabolicProfileMain.html" image="$toolbox/matlab/icons/pageicon.gif">invParabolicProfileMain
+</tocitem>
 <tocitem target="html/DUROS_DUROS/engines/DUROSCalculation/optimiseDUROS.html" image="$toolbox/matlab/icons/pageicon.gif">optimiseDUROS
+</tocitem>
+<tocitem target="html/DUROS_DUROS/engines/DUROSCalculation/rcParabolicProfileMain.html" image="$toolbox/matlab/icons/pageicon.gif">rcParabolicProfileMain
 </tocitem>
 </tocitem>
 <tocitem target="html/DUROS_DUROS/engines/DuneErosionSettings/dir_DuneErosionSettings.html" image="$toolbox/matlab/icons/foldericon.gif">DuneErosionSettings
@@ -48,14 +56,6 @@
 </tocitem>
 <tocitem target="html/DUROS_DUROS/engines/Volume/dir_Volume.html" image="$toolbox/matlab/icons/foldericon.gif">Volume
 <tocitem target="html/DUROS_DUROS/engines/Volume/getCumVolume.html" image="$toolbox/matlab/icons/pageicon.gif">getCumVolume
-</tocitem>
-</tocitem>
-<tocitem target="html/DUROS_DUROS/engines/deshoaling/dir_deshoaling.html" image="$toolbox/matlab/icons/foldericon.gif">deshoaling
-<tocitem target="html/DUROS_DUROS/engines/deshoaling/deshoal.html" image="$toolbox/matlab/icons/pageicon.gif">deshoal
-</tocitem>
-<tocitem target="html/DUROS_DUROS/engines/deshoaling/getDuneErosion_deshoal.html" image="$toolbox/matlab/icons/pageicon.gif">getDuneErosion_deshoal
-</tocitem>
-<tocitem target="html/DUROS_DUROS/engines/deshoaling/iterateWaveLength.html" image="$toolbox/matlab/icons/pageicon.gif">iterateWaveLength
 </tocitem>
 </tocitem>
 <tocitem target="html/DUROS_DUROS/engines/DUROSCheckConditions.html" image="$toolbox/matlab/icons/pageicon.gif">DUROSCheckConditions
