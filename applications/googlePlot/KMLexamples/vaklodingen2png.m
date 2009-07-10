@@ -20,7 +20,7 @@ for ii = 1:length(contents);
     time = nc_varget(contents{ii},'time');
     
     % coordinates:
-    [coords.NS,coords.WE] = convertCoordinatesNew([min(x)-10,min(x)-10;max(x)+10,max(x)+10],[min(y)-10,max(y)+10;min(y)-10,max(y)+10],...
+    [coords.WE,coords.NS] = convertCoordinatesNew([min(x)-10,min(x)-10;max(x)+10,max(x)+10],[min(y)-10,max(y)+10;min(y)-10,max(y)+10],...
         EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
 
     coords.S = mean(min(coords.NS,[],2));
@@ -36,7 +36,7 @@ for ii = 1:length(contents);
     time = datestr(time+datenum(1970,1,1),'yyyy-mm-dd');
 
     %create output directory
-    outputDir2 = [outputDir '\' fname];
+    outputDir2 = [outputDir filesep fname];
 
     %Check dir, make if needed
     if ~isdir(outputDir2)
