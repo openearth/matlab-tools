@@ -42,32 +42,34 @@
 %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
 %  See also: donarname2standard_name
 
-  %OPT.codes          = 1;
-  %OPT.standard_names = {'sea_surface_height'};
-  %
-  %OPT.codes          = 54;
-  %OPT.standard_names = {'sea_surface_height'};
-  %
-  %OPT.codes          = 410;
-  %OPT.standard_names = {'concentration_of_suspended_matter_in_sea_water'};
-  %
-  %OPT.codes          = 22 
-  %OPT.standard_names = {'sea_surface_wave_significant_height'};
-  %
-  %OPT.codes          = 23 
-  %OPT.standard_names = {'sea_surface_wave_from_direction'}; % alias: sea_surface_wave_to_direction
-  %
-  %OPT.codes          = 24;
-  %OPT.standard_names = {'sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment'};
-  %
-  %OPT.codes          = 559 
-  %OPT.standard_names = {'sea_surface_salinity'}; % alias: sea_water_salinity
-  %
-  %OPT.codes          = 44 
-  %OPT.standard_names = {'sea_surface_temperature'}; % alias: sea_water_temperature
-  %
-  %OPT.codes          = 282;
-  %OPT.standard_names = {'concentration_of_chlorophyll_in_sea_water'}; % alias: chlorophyll_concentration_in_sea_water
+clear all
+
+   OPT.codes(1)          = 1;
+   OPT.standard_names{1} = 'sea_surface_height';
+  
+   OPT.codes(2)          = 54;
+   OPT.standard_names{2} = 'sea_surface_height';
+   
+   OPT.codes(3)          = 410;
+   OPT.standard_names{3} = 'concentration_of_suspended_matter_in_sea_water';
+   
+   OPT.codes(4)          = 22 
+   OPT.standard_names{4} = 'sea_surface_wave_significant_height';
+   
+   OPT.codes(5)          = 23 
+   OPT.standard_names{5} = 'sea_surface_wave_from_direction'; % alias: sea_surface_wave_to_direction
+   
+   OPT.codes(6)          = 24;
+   OPT.standard_names{6} = 'sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment';
+   
+   OPT.codes(7)          = 559 
+   OPT.standard_names{7} = 'sea_surface_salinity'; % alias: sea_water_salinity
+   
+   OPT.codes(8)          = 44 
+   OPT.standard_names{8} = 'sea_surface_temperature'; % alias: sea_water_temperature
+   
+   OPT.codes(9)          = 282;
+   OPT.standard_names{9} = 'concentration_of_chlorophyll_in_sea_water'; % alias: chlorophyll_concentration_in_sea_water
                          
 %% Initialize
 
@@ -81,7 +83,7 @@
    
 %% Parameter loop
 
-for ivar=1:length(OPT.codes)
+for ivar=[1 2 3 7 8 9]; %1:length(OPT.codes)
 
    OPT.code           = OPT.codes(ivar);
    OPT.standard_name  = OPT.standard_names{ivar};

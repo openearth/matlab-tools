@@ -59,6 +59,11 @@ function varargout = plotc(x,y,v,marker,varargin)
    if nargin <4
        marker='.';
    end
+
+%% make 1D and remove NaNs
+   x = x(~isnan(v(:)));
+   y = y(~isnan(v(:)));
+   v = v(~isnan(v(:)));
    
    map = colormap;
 

@@ -1,8 +1,8 @@
 function w = getFallVelocity(varargin)
 %GETFALLVELOCITY  routine to compute fall velocity of sediment in water
 %
-%   This routine returns the fall velocity of sediment with grain size D50
-%   in water
+%   This routine returns the fall velocity of sediment with 
+%   grain size D50 in water
 %
 %   Syntax:
 %   w = getFallVelocity(varargin)
@@ -75,14 +75,18 @@ OPT = struct(...
     'c', 3.226);   % coefficient for 5 degrees celcius
 
 varNames = fieldnames(OPT)';
+
 % create propertyName propertyValue cell array (varargin like) with empty
 % values for the first input arguments where propertyNames are omitted
 OPTstructArgs = reshape([varNames(1:id); repmat({[]}, 1, id)], 1, 2*id);
+
 % add the actual input arguments in the cell array
 OPTstructArgs(2:2:2*id) = varargin(1:id);
+
 % extend the cell array with the propertyName propertyValue pairs part of
 % the input
 OPTstructArgs = [OPTstructArgs varargin(id+1:end)];
+
 % include the input in the OPT-structure
 [OPT, Set, Default] = setProperty(OPT, OPTstructArgs{:});
 

@@ -57,7 +57,7 @@
    OPT.zip            = 0;
    
    OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
-   OPT.refdatenum     = datenum(1970,1,1); % lunix  datenumber convention
+   OPT.refdatenum     = datenum(1970,1,1); % linux  datenumber convention
 
 %% File loop
 
@@ -159,7 +159,7 @@
         ifld = ifld + 1;
       nc(ifld).Name         = 'meta';
       nc(ifld).Nctype       = 'char';
-     %nc(ifld).Dimension    = {'x_cen'}; % no dimension, dummy variable
+      nc(ifld).Dimension    = {}; % no dimension, dummy variable
       nc(ifld).Attribute(1) = struct('Name', 'T'          ,'Value', num2str(D.metaData.T));  % HMM, ATRRIBUTES CANNOT BE ARRAYS
       nc(ifld).Attribute(2) = struct('Name', 'Ci'         ,'Value', num2str(D.metaData.Ci)); % HMM, ATRRIBUTES CANNOT BE ARRAYS
       nc(ifld).Attribute(3) = struct('Name', 'b'          ,'Value', num2str(D.metaData.b));  % HMM, ATRRIBUTES CANNOT BE ARRAYS
@@ -365,9 +365,10 @@
 
 %% 4 Create variables with attibutes
 % When variable definitons are created before actually writing the
-% data in the next cell, netCDF can nicely fit all data into the
+% data in the next block, netCDF can nicely fit all data into the
 % file without the need to relocate any info. So there is no 
-% need to use NC_PADHEADER.
+% need to use NC_PADHEADER. nc_addvar takes most of the time, 
+% subsequent nc_varput calls are fast.
    
       for ifld=1:length(nc)
          nc_addvar(outputfile, nc(ifld));   

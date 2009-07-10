@@ -1,5 +1,5 @@
 function [x z] = modifySimpleProfile(varargin)
-% modifySimpleProfile: Flips, shifts and/or adds trenches and/or bars to dune profile
+%MODIFYSIMPLEPROFILE Flips, shifts and/or adds trenches and/or bars to dune profile
 %
 %   Flips and/or shifts a dune profile. It is also possible to add
 %   trapezoid shaped bars or trenches to the dune profile. The dune profile

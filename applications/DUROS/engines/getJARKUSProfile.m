@@ -1,5 +1,5 @@
 function [x z] = getJARKUSProfile(year, area, transect, varargin)
-% getJARKUSProfile: Retrieves JARKUS profile from JARKUS repository based on year, area name and transect number
+%GETJARKUSPROFILE  get JARKUS profile from JARKUS repository from year, area name & transect number
 %
 %   Retrieves JARKUS profile from JARKUS repository based on a four digit
 %   representation of the year of measurement, a full name of the area of

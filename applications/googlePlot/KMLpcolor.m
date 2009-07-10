@@ -40,6 +40,8 @@ function [OPT, Set, Default] = KMLpcolor(lat,lon,c,varargin)
 % $HeadURL$
 % $Keywords: $
 
+% TO DO: patches without outlines, outline as separate polygons, to prevent course resolution lines at low angles
+
 
 %% error check
 if all(isnan(c(:)))

@@ -1,13 +1,16 @@
 function datenumbers = udunits2datenum(varargin)
-%UDUNITS2DATENUM   converts date in ISO 8601 units to datenum
+%UDUNITS2DATENUM   converts date(s) in ISO 8601 units to Matlab datenumber(s)
 %
 %    datenumbers = udunits2datenum(time,isounits)
 %    datenumbers = udunits2datenum(timestring)
 %
-% Example:
+% Examples (N.B. vectorized):
 %
-%    datenumbers = udunits2datenum( 733880,'days since 0000-0-0 00:00:00 +01:00')
-%    datenumbers = udunits2datenum('733880  days since 0000-0-0 00:00:00 +01:00')
+%    datenumbers = udunits2datenum( [602218 648857], 'days since 0000-0-0 00:00:00 +01:00')
+%    datenumbers = udunits2datenum( [602218 648857],{'days since 0000-0-0 00:00:00 +01:00',...
+%                                                    'days since 0000-0-0 00:00:00 +01:00'})
+%    datenumbers = udunits2datenum({'602218           days since 0000-0-0 00:00:00 +01:00',...
+%                                   '648857           days since 0000-0-0 00:00:00 +01:00'})
 %
 %See web: <a href="http://www.unidata.ucar.edu/software/udunits/">http://www.unidata.ucar.edu/software/udunits/</a>
 %See also: DATENUM, DATESTR, ISO2DATENUM, TIME2DATENUM, XLSDATE2DATENUM
@@ -52,26 +55,43 @@ function datenumbers = udunits2datenum(varargin)
 %--------------------
 
    if     nargin==1
-     [time,...
-      isounits] = strtok(varargin{1});
-      time = str2num(time);
+   
+      if     iscell(varargin{1})
+         celltime = varargin{1};
+      elseif ischar(varargin{1})
+         celltime = cellstr(varargin{1});
+      end
+      for irow=1:length(celltime)
+     [time{irow},...
+      isounits{irow}] = strtok(celltime{irow});
+      end
+      time = str2num(char(time));
    elseif nargin==2
       time      = varargin{1};
-      isounits  = varargin{2};
+      isounits  = cellstr(varargin{2});
+      if length(time) >1 & length(isounits)==1
+         isounits = repmat(isounits,size(time));
+      end
    end   
 
-%% Get reference date
-%--------------------
+   for irow=1:length(time)
+   rest = isounits{irow};
 
-    rest = isounits;
-   [OPT.units,rest] = strtok(rest);
-   [    dummy,rest] = strtok(rest);
-   [OPT.refdatenum,...
-    OPT.zone] = iso2datenum(rest);
+  [units,rest] = strtok(rest);
+  [dummy,rest] = strtok(rest);
 
-%% Change units and apply reference date
-%--------------------
+   %% Get reference date
+   %--------------------
 
-   datenumbers = time.*convert_units(OPT.units,'day') + OPT.refdatenum;
+  [refdatenum,...
+   zone] = iso2datenum(rest);
+
+   %% Change units and apply reference date
+   %--------------------
+
+   datenumbers(irow) = time(irow).*convert_units(units,'day') + refdatenum;
+
+   end
+
    
 %% EOF   
