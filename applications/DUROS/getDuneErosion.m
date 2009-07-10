@@ -321,8 +321,18 @@ varNames = fieldnames(OPT)';
 OPTstructArgs = reshape([varNames(1:id); repmat({[]}, 1, id)], 1, 2*id);
 % add the actual input arguments in the cell array
 OPTstructArgs(2:2:2*id) = varargin(1:id);
+% split input and settings
+idnr = find(idPropName);
+idstr = idnr(~ismember(varargin(idPropName),varNames));
+settings = {};
+for isettings = 1:length(idstr)
+    settings = cat(2,settings,varargin{idstr(isettings):idstr(isettings)+1});
+end
+varargin(cat(2,idstr,idstr+1))=[];
+% apply settings
+DuneErosionSettings('set',settings{:});
 % extend the cell array with the propertyName propertyValue pairs part of
-% the input
+% the input that are not settings
 OPTstructArgs = [OPTstructArgs varargin(id+1:end)];
 % include the input in the OPT-structure
 [OPT, Set, Default] = setProperty(OPT, OPTstructArgs{:});
