@@ -6,7 +6,7 @@ function varargout = arrow2(varargin)
 %   and contain corresponding position and velocity components (X and Y
 %   can also be vectors to specify a uniform grid).  ARROW2 does not
 %   automatically scale the arrows to fit within the grid. If U and or V
-%   are scalers, they are replicated to a matrix of the size of X.
+%   are scalars, they are replicated to a matrix of the size of X.
 %                                                                           
 %   handles = ARROW2(...) returns the handles of both the head and shaft 
 %   patches out of which the arrows are constructed. The arrays handles.head and 
@@ -89,7 +89,7 @@ function varargout = arrow2(varargin)
 %
 %      where AspectRatioNormalisation is used to determine for which axes   
 %      the arrow length matches exactly the velocity. min uses normalises
-%      with teh smallest aspectratio of x an y, 1=x etc.
+%      with the smallest aspect ratio of x an y, 1=x etc.
 %                                                                           
 %      where the W's and L's are defined as follows:
 %      (Note the (W3,L3) (W4,L4), (W5,L5) and (W6,L6) pairs.)
@@ -100,7 +100,7 @@ function varargout = arrow2(varargin)
 %                           .--+---------+---------+- .                    
 %                           .  .         |         .  .                    
 %                           .  .    -+---+---+-    .  .                    
-%                           .  .     . W3  W3.     .  .                    
+%                           .  .     . W3 W3 .     .  .                    
 %                           .  .     .       .     .  .                    
 %                           .  .     .   H   .     .  .                    
 %            + ..........................o   .     .  .                    
@@ -255,10 +255,10 @@ warnings = 0;
       end
    end
    
-   if prod(size(I.u))==1
+   if numel(I.u)==1
        I.u = repmat(I.u,size(I.x));
    end
-   if prod(size(I.v))==1
+   if numel(I.v)==1
        I.v = repmat(I.v,size(I.x));
    end
        
@@ -310,18 +310,18 @@ warnings = 0;
 
    elseif ischar(I.AspectRatioNormalisation)
    
-      if     strcmp(lower(I.AspectRatioNormalisation),'min')
+      if     strcmpi(I.AspectRatioNormalisation,'min')
              I.ArrowAspectRatio = I.ArrowAspectRatio./(min (I.ArrowAspectRatio(1:2)));
-      elseif strcmp(lower(I.AspectRatioNormalisation),'mean')
+      elseif strcmpi(I.AspectRatioNormalisation,'mean')
              I.ArrowAspectRatio = I.ArrowAspectRatio./(mean(I.ArrowAspectRatio(1:2)));
-      elseif strcmp(lower(I.AspectRatioNormalisation),'max')
+      elseif strcmpi(I.AspectRatioNormalisation,'max')
              I.ArrowAspectRatio = I.ArrowAspectRatio./(max (I.ArrowAspectRatio(1:2)));
       end
    end
       
    set (gca,'DataAspectRatioMode',I.DataAspectRatioMode);
    if warnings
-   if strcmp(lower(I.DataAspectRatioMode),'manual')
+   if strcmpi(I.DataAspectRatioMode,'manual')
    disp(['warning from arrow2: DataAspectRatioMode locked to: ',num2str(I.DataAspectRatio)])
    end
    end
@@ -543,7 +543,7 @@ end
 for i=U.firststruct:nargin
 
    % for all elements of input structs
-   for j=1:prod(size(varargin{i}))
+   for j=1:numel(varargin{i})
 
       % for all field names
       for k = 1:length(FLDNAMES{i})
