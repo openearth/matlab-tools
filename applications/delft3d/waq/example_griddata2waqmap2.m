@@ -1,4 +1,4 @@
-%%EXAMPLE_GRIDDATA2WAQMAP1  Example to grid/write spatio-temporal data to WAQ *.map file 
+%%EXAMPLE_GRIDDATA2WAQMAP2  Example to grid/write spatio-temporal data to WAQ *.map file 
 %%
 %% (c) WL | Delft Hydraulics, Z3451, G.J. de Boer, 2007 Jul 01st
 %% Script to bin IVM bi-monhtly SeaWiFS TSM data to WAQ map files.
