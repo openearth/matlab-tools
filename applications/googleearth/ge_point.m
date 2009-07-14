@@ -50,7 +50,7 @@ if numel(X)==1
         timeEntryChars = [timeEntryChars,'<TR><TD>tStop</TD><TD>',timeSpanStop,'</TD></TR>'];
     end
     
-    if isempty(pointDataCell)
+    if isempty(pointDataCell) && ~exist('description','var')
         
         description = ['<TABLE border=',34,int2str(tableBorderWidth),34,'><TR><TD><B>Variable</B></TD><TD><B>Value</B></TD></TR>',...
                              '<TR><TD>longitude [decimal degrees]</TD><TD>',num2str(X,dataFormatStr),'</TD></TR>',...
