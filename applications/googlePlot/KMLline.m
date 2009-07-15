@@ -16,26 +16,26 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 % points, when crossing the nul meridian
 %
 % The following see <keyword,value> pairs have been implemented:
-%   fileName    = [];          % name of output file. Can be either a *.kml 
+%  'fileName'   = [];          % name of output file. Can be either a *.kml 
 %                              % or *.kmz (zipped *.kml) file. if not  
 %                              % defined a gui pops up
-%   kmlName     = 'untitled';  % name of kml that shows in GE
+%  'kmlName'    = 'untitled';  % name of kml that shows in GE
 %
 %  The following line properties can each be defined as either a single
 %  entry or an array with the same lenght as the number of columns in 
 %   (lat,lon).
-%   lineWidth   = 1;           % line width, can be a fraction
-%   lineColor   = [0 0 0];     % color of the lines in RGB (0..1) 
-%   lineAlpha   = 1;           % transparency of the line
+%  'lineWidth'  = 1;           % line width, can be a fraction
+%  'lineColor'  = [0 0 0];     % color of the lines in RGB (0..1) 
+%  'lineAlpha'  = 1;           % transparency of the line
 %
-%   openInGE    = false;       % opens output directly in google earth
-%   description = '';          % 
+%  'openInGE'   = false;       % opens output directly in google earth
+%  'description'= '';          % 
 %
 %  If text is defined, each set of lines (column in (lat,lon)), is
 %  accompanied by a title. 
 %   text        = '';          % cellstr with same size as size(lat,2)
-%   latText     = mean(lat,1); % coordinates of text
-%   lonText     = mean(lon,1); %
+%  'latText'    = mean(lat,1); % coordinates of text
+%  'lonText'    = mean(lon,1); %
 %
 % Example 1: draw a spiral around the earth
 %   lat = linspace(-90,90,1000)'; lon = linspace(0,5*360,1000)';

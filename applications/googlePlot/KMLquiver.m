@@ -1,20 +1,72 @@
 function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 % KMLQUIVER Just like quiver
+%
+% Keywords:
 % 
-% Arrows lengths are plotted in meters (for easy measuring of speeds in GE)
-% If speeds are low compared to grid size, pre-scale u and v yourself
+% 'arrowScale': Arrows lengths are plotted in meters (for easy measuring of
+%               speeds in GE with Ruler). If speeds are low compared to 
+%               grid size, use a high value for 'arrowScale'.
+% 'arrowStyle': can be either
+%               'blackTip', 'block', 'line'. 
+%               If you make a
+%               nicer arrow yourself, it can easily be added to the
+%               presets. 
+%
 % see the keyword/value pair defaults for additional options
 %
 % Example:
 %
-%     [Lat Lon] = meshgrid(54:.011:54.1,4:.011:4.1);
-%     u = 1000:1099;
-%     v = 1000*rand(1,100);
-% 
-%     KMLquiver(Lat,Lon,u,v,'fileName','c:\test1.kml','arrowClose',false);
-% 
-%     KMLquiver(Lat,Lon,u,v,...
-%         'fileName','c:\test2.kml','fillColor',[1 0 0],'fillAlpha',.6,'arrowFill',true);
+%     [Lat Lon] = meshgrid(-80:10:80,-170:10:180);
+%     u = (rand(size(Lat))-.5);
+%     v = (rand(size(Lat))-.5);
+%     cmap = colormap_cpt('temperature');
+%     fillColors = cmap(ceil((u.^2+v.^2)*2*size(cmap,1)),:);
+%     KMLquiver(Lat,Lon,u,v,'arrowScale',5e5,'lineWidth',2,...
+%         'fillColor',fillColors,'fillAlpha',1);
+%
+% Adjust 'W1'..'W4' and 'L1'..'L4' for user defined arrow shapes
+% All lengths are a fraction of the base length.
+%
+%                                   W2       W2                            
+%                 positive  +------------+------------+- negative          
+%                           .       W3   |   W3       .                    
+%                           .--+---------+---------+- .                    
+%                           .  .         |         .  .                    
+%                           .  .    -+---+---+-    .  .                    
+%                           .  .     . W1 W1 .     .  .                    
+%                           .  .     .       .     .  .                    
+%                           .  .     .   A   .     .  .                    
+%            + ..........................o   .     .  .                    
+%            |              .  .     .  /6\  .     .  .                    
+%            |              .  .     . /   \ .     .  .                    
+%            |              .  .     ./     \.     .  .                    
+%          b |              .  .     / head  \     .  .                    
+%          a |              .  .    /.       .\    .  .                
+%          s |              .  .   / .       . \   .  .         
+%          e |              .  .  /  .       .  \  .  .                    
+%            |     L1       .  . /  A9       A3  \ .  .                    
+%          l |     +............/... o...... o    \.  .                    
+%          e |     |        .  /    /|S2   S6|\    \  .                    
+%          n |     |        . /.   / |       | \   .\ .                    
+%          g |     | L2     ./ .  /  |       |  \  . \.                    
+%          t |     |  +.....o  . /   |       |   \ .  o                    
+%          h |     |  |    A7\ ./   |         |   \. /A5                   
+%            |     |  |  +... \o    |         |    o/                      
+%            |     |  |  |     A8   |         |   A4                       
+%            |     |  |  |L3        |         |                            
+%            |     |  |  |         |     A1    |                           
+%            +-----+--+--+.........|.... o.....|............. point S4 is the origin       
+%            |                     |    / \    |                           
+%         L4 |                     |  /     \  |                           
+%            + ................... o/.........\o                           
+%                                  A10         A2                           
+%                                                                           
+%                                  +-----+-----+                           
+%                                    W4     W4
+%                                     
+%
+% Note: Notice the difference in how polygons and line are rendered by GE.
+%   Especially take care when plotting large figures near pole's
 %
 % See also: KMLline, KMLline3, KMLpatch, KMLpcolor, KMLsurf, KMLtrisurf
 
@@ -49,98 +101,185 @@ function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
-
-
-
-OPT.arrowHeadAngle = 20;
-OPT.arrowScale     = 1/4;
-OPT.arrowClose     = true;
-OPT.arrowFill      = false;
-OPT.fileName       = [];
-OPT.kmlName        = 'untitled';
-OPT.lineWidth      = 1;
-OPT.lineColor      = [0 0 0];
-OPT.lineAlpha      = 1;
-OPT.fillColor      = [1 0 0];
-OPT.fillAlpha      = 0.3;
-OPT.openInGE       = false;
-OPT.reversePoly    = false;
-OPT.description    = '';
+%% default settings
+OPT = struct(...
+'arrowStyle','default',...
+'arrowScale',1,...
+'fileName'  ,[],...
+'kmlName'   ,'quiver',...
+'openInGE'  ,false,...
+'arrowFill',[],'lineWidth',[],'lineColor',[],...
+'lineAlpha',[],'fillColor',[],'fillAlpha',[],...
+'W1'       ,[],'W2'       ,[],'W3'       ,[],'W4'       ,[],...
+'L1'       ,[],'L2'       ,[],'L3'       ,[],'L4'       ,[]);
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
-%% calculate coordinates of arrows and arrow heads
+%% pre defined arrow types
+% additional user settings override presets
+
+OPT2 = struct(...
+    'arrowStyle',[],'arrowScale',[],'fileName'  ,[],...
+    'kmlName'   ,[],'openInGE'  ,[],...
+    'arrowFill',true,...
+    'lineWidth',1.5,...
+    'lineColor',[0 0 0],...
+    'lineAlpha',1,...
+    'fillColor',[1 0 0],...
+    'fillAlpha',0.75,...
+    'W1'       ,0.12,'W2'       ,0.30,'W3'       ,0.30,'W4'       ,0.15,...
+    'L1'       ,0.80,'L2'       ,0.70,'L3'       ,0.70,'L4'       ,0.20);
+
+switch lower(OPT.arrowStyle)
+    case 'default'
+        % don't adjust anything
+    case 'blacktip'
+        OPT2.lineWidth      = 3;
+        OPT2.fillColor      = [0 0 0];
+        OPT2.fillAlpha      = 1;
+        OPT2.W1             = 0.00;
+        OPT2.W4             = 0.00;
+    case 'block'
+        OPT2.W1             = 0.14;
+        OPT2.W4             = 0.14;
+        OPT2.L1             = 0.70;
+        OPT2.L4             = 0.00;
+    case 'line'
+        OPT2.W1             = 0.00;
+        OPT2.W4             = 0.00;
+        OPT2.L1             = 1.00;
+        OPT2.L4             = 0.00;
+        OPT2.arrowFill      = false;
+        OPT2.lineWidth      = 2;
+    otherwise 
+        error('unsupported Arrow %s', OPT.arrow)
+end
+
+%delete empty OPT fieldnames before merge
+fields = fieldnames(OPT);
+for ii = 1:length(fields)
+    if isempty(OPT.(fields{ii}))
+        OPT = rmfield(OPT, fields{ii});
+    end
+end
+
+% set properties again
+[OPT, Set, Default] = setProperty(OPT2, OPT);
+
+%% Calculate coordinates, scaling and orientation of arrows
+
 lat         = lat(:)';
 lon         = lon(:)';
-u           = u(:)';
-v           = v(:)';
+u           =   u(:)';
+v           =   v(:)';
 
-%arrow tip
-tipLat      = lat+v/(40000000)*360;
-tipLon      = lon+u/(40000000)*360./cosd(lat);
+[angle,scale] = cart2pol(u,v);
+scale = scale/40000000*360*OPT.arrowScale;
 
-% arrow sides
-lineLength  = sqrt(v.^2+u.^2);
-alpha       = atand(u./v);
-beta        = [alpha+180+OPT.arrowHeadAngle;zeros(size(lat));alpha+180-OPT.arrowHeadAngle];
-dx          = [lineLength;zeros(size(lat));lineLength]*OPT.arrowScale.*cosd(beta);
-dy          = [lineLength;zeros(size(lon));lineLength]*OPT.arrowScale.*sind(beta);
+% Calculate polar cooradinates of template arrow
+[A.ang( 1),A.abs( 1)] = cart2pol(      0,       0);
+[A.ang( 2),A.abs( 2)] = cart2pol(-OPT.L4,  OPT.W4);
+[A.ang( 3),A.abs( 3)] = cart2pol( OPT.L1,  OPT.W1);
+[A.ang( 4),A.abs( 4)] = cart2pol( OPT.L3,  OPT.W3);
+[A.ang( 5),A.abs( 5)] = cart2pol( OPT.L2,  OPT.W2); 
+[A.ang( 6),A.abs( 6)] = cart2pol(      1,       0); % symmetry point
+[A.ang( 7),A.abs( 7)] = cart2pol( OPT.L2, -OPT.W2);
+[A.ang( 8),A.abs( 8)] = cart2pol( OPT.L3, -OPT.W3);
+[A.ang( 9),A.abs( 9)] = cart2pol( OPT.L1, -OPT.W1);
+[A.ang(10),A.abs(10)] = cart2pol(-OPT.L4, -OPT.W4);
 
-% arrow line
-arrowLat    = [tipLat;tipLat;tipLat]+dx/(40000000)*360;
-arrowLon    = [tipLon;tipLon;tipLon]+dy/(40000000)*360./[cosd(lat); cosd(lat); cosd(lat)];
+% Filter out points which are on the same location;
+dubblePoints = [false diff(A.ang) == 0 & diff(A.abs) == 0];
+A.ang(dubblePoints) = [];
+A.abs(dubblePoints) = [];
 
-% merge arrow and line to arrays
-if  OPT.arrowClose
-    lat = [lat;tipLat;nan(size(lat));arrowLat; arrowLat(1,:)];
-    lon = [lon;tipLon;nan(size(lon));arrowLon; arrowLon(1,:)];
-else
-    lat = [lat;tipLat;nan(size(lat));arrowLat];
-    lon = [lon;tipLon;nan(size(lon));arrowLon];
+% Duplicate startpoint to close poly;
+A.ang(end+1) = A.ang(1);
+A.abs(end+1) = A.abs(1);
+
+% Calculate polar cooradinates of individual arrwos
+for i=1:length(A.abs)
+    A.ABS(i,:) = scale*A.abs(i);
+    A.ANG(i,:) = angle+A.ang(i);
 end
 
-if OPT.arrowFill
-    latFill = [arrowLat; arrowLat(1,:)];
-    lonFill = [arrowLon; arrowLon(1,:)];
-end
+arrowLat =   repmat(lat,length(A.abs),1)+A.ABS.*cos(A.ANG);
+arrowLon =   repmat(lon,length(A.abs),1)+A.ABS.*sin(A.ANG)...
+           ./repmat(cosd(lat),length(A.abs),1);
 
 %% get filename
 if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','untitled.kml');
+    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz',...
+        'Zipped KML file'},'Save as','quiver.kml');
     OPT.fileName = fullfile(filePath,fileName);
 end
 
 %% start KML
 OPT.fid=fopen(OPT.fileName,'w');
+
 %% HEADER
 OPT_header = struct(...
     'name',OPT.kmlName,...
     'open',0);
 output = KML_header(OPT_header);
-%% STYLE
+
+%% LINESTYLE
 OPT_style = struct(...
-    'name',['arrowline' num2str(1)],...
-    'fillColor',OPT.fillColor,...
-    'lineColor',OPT.lineColor ,...
-    'lineAlpha',OPT.lineAlpha,...
-    'lineWidth',OPT.lineWidth);
+    'name'      ,['arrowline' num2str(1)],...
+    'lineColor' ,OPT.lineColor(1,:),...
+    'lineAlpha' ,OPT.lineAlpha(1),...
+    'lineWidth' ,OPT.lineWidth(1));
     output = [output KML_style(OPT_style)];
+
+% if multiple styles are define, generate them
+if length(OPT.lineColor(:,1))+length(OPT.lineWidth)+length(OPT.lineAlpha)>3
+    for ii = 2:length(lat(1,:))
+        OPT_style.name = ['arrowline' num2str(ii)];
+        if length(OPT.lineColor(:,1))>1
+            OPT_style.lineColor = OPT.lineColor(ii,:);
+        end
+        if length(OPT.lineWidth(:,1))>1
+            OPT_style.lineWidth = OPT.lineWidth(ii);
+        end
+        if length(OPT.lineAlpha(:,1))>1
+            OPT_style.lineAlpha = OPT.lineAlpha(ii);
+        end
+        output = [output KML_style(OPT_style)];
+    end
+end    
+    
+%% POLYSTYLE
 
 if OPT.arrowFill
     OPT_stylePoly = struct(...
-        'name',['arrowfill' num2str(1)],...
-        'fillColor',OPT.fillColor,...
-        'lineColor',OPT.lineColor ,...
-        'lineAlpha',0,...
-        'lineWidth',0,...
-        'fillAlpha',OPT.fillAlpha,...
-        'polyFill',1,...
+        'name'       ,['arrowfill' num2str(1)],...
+        'fillColor'  ,OPT.fillColor(1,:),...
+        'fillAlpha'  ,OPT.fillAlpha(1,:),...
+        'lineColor'  ,[0 0 0],...
+        'lineAlpha'  ,0,...
+        'lineWidth'  ,0,...
+        'polyFill'   ,1,...
         'polyOutline',0); 
         output = [output KML_stylePoly(OPT_stylePoly)];
 end
 
+% if multiple styles are define, generate them
+if length(OPT.fillColor(:,1))+length(OPT.fillAlpha)>2
+    for ii = 2:length(lat(1,:))
+        OPT_stylePoly.name = ['arrowfill' num2str(ii)];
+        if length(OPT.fillColor(:,1))>1
+            OPT_stylePoly.fillColor = OPT.fillColor(ii,:);
+        end
+        if length(OPT.fillAlpha(:,1))>1
+            OPT_stylePoly.fillAlpha = OPT.fillAlpha(ii);
+        end
+        output = [output KML_stylePoly(OPT_stylePoly)];
+    end
+end
+
 %% print output
 fprintf(OPT.fid,output);
-%% LINE
+
+%% ARROWS
 OPT_line = struct(...
     'name','',...
     'styleName',['arrowline' num2str(1)],...
@@ -159,18 +298,24 @@ if OPT.arrowFill
         'extrude',0);
 end
 
-
 % preallocate output
 output = repmat(char(1),1,1e5);
 kk = 1;
 for ii=1:length(lat(1,:))
-%     if length(OPT.lineColor(:,1))+length(OPT.lineWidth)+length(OPT.lineAlpha)>3
-%         OPT_line.styleName = ['style' num2str(ii)];
-%     end
-    newOutput = KML_line(lat(:,ii),lon(:,ii),'clampToGround',OPT_line);
+    
+    % assign different styles if needed
+    if length(OPT.lineColor(:,1))+length(OPT.lineWidth)+length(OPT.lineAlpha)>3
+        OPT_line.styleName = ['arrowline' num2str(ii)];
+    end
+    newOutput = KML_line(arrowLat(:,ii),arrowLon(:,ii),'clampToGround',OPT_line);
+    
     if OPT.arrowFill
+        % assign different styles if needed
+        if length(OPT.fillColor(:,1))+length(OPT.fillAlpha)>2
+            OPT_poly.styleName = ['arrowfill' num2str(ii)];
+        end
         newOutput = [newOutput...
-            KML_poly(latFill(:,ii),lonFill(:,ii),'clampToGround',OPT_poly)];
+            KML_poly(arrowLat(:,ii),arrowLon(:,ii),'clampToGround',OPT_poly)];
     end
     output(kk:kk+length(newOutput)-1) = newOutput;
     kk = kk+length(newOutput);

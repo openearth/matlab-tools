@@ -37,9 +37,9 @@ function [output] = KML_stylePoly(OPT)
 % $Keywords: $
 
 %% 
-temp = dec2hex(round([OPT.lineAlpha, OPT.lineColor].*255));
+temp = dec2hex(round([OPT.lineAlpha, OPT.lineColor].*255),2);
 lineColor = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
-temp = dec2hex(round([OPT.fillAlpha, OPT.fillColor].*255));
+temp = dec2hex(round([OPT.fillAlpha, OPT.fillColor].*255),2);
 fillColor = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
 
 output = sprintf([...
