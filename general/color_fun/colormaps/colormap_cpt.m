@@ -20,6 +20,9 @@ function cmap = colormap_cpt(cpt,varargin)
 %
 %See also: colormaps
 
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% Please join to recieve regular updates of this function, and to contribute your own tools.
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma

@@ -40,6 +40,9 @@ function $output = $filename($input)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% Please join to recieve regular updates of this function, and to contribute your own tools.
+
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
 % Created: $date(dd mmm yyyy)
 % Created with Matlab version: $version
