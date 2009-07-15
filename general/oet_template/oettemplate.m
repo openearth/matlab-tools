@@ -41,7 +41,10 @@ function $output = $filename($input)
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% Please join to recieve regular updates of this function, and to contribute your own tools.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
 % Created: $date(dd mmm yyyy)

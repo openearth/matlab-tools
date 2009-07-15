@@ -7,6 +7,11 @@ function cmap = colormap_cpt(cpt,varargin)
 %          <a href="http://soliton.vm.bytemark.co.uk/pub/cpt-city/">http://soliton.vm.bytemark.co.uk/pub/cpt-city/</a>
 % nSteps = number of colorsteps (optional)
 %
+% Note:
+%  make sure to have downloaded the cpt-city package from:
+%  <a href="http://soliton.vm.bytemark.co.uk/pub/cpt-city/pkg/cpt-city-cpt-1.42.zip">http://soliton.vm.bytemark.co.uk/pub/cpt-city/pkg/cpt-city-cpt-1.42.zip</a>
+%  Unpack and add folder to the matlab search path
+%
 % Example:
 %
 % cmap = colormap_cpt('temperature');
@@ -18,10 +23,13 @@ function cmap = colormap_cpt(cpt,varargin)
 % subplot(3,1,3)
 %   plot(cmap); axis([1 size(cmap,1) -.01 1.01])
 %
-%See also: colormaps
+% See also: colormaps
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% Please join to recieve regular updates of this function, and to contribute your own tools.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -55,8 +63,7 @@ function cmap = colormap_cpt(cpt,varargin)
 % $HeadURL$
 % $Keywords: $
 
-
-%% adjust filename for lazy people
+%% adjust of *.cpt filename so you can copy paste it from the website
 cpt = strrep(cpt,' ','_');
 if ~strcmpi(cpt(end-3:end),'.cpt')
     cpt = [cpt '.cpt'];
