@@ -1,4 +1,4 @@
-function [tri,x1,y1,z1] = delaunay_simplified(x,y,z,tolerance,maxSize)
+function [tri,x1,y1,z1] = delaunay_simplified(x,y,z,tolerance,maxSize,maxIterations)
 % DELAUNAY_SIMPLIFIED makes a simplified delaunay triangulated mesh
 % 
 % For creating meshes that resemble a more complex mesh to a certain
@@ -94,7 +94,7 @@ z1 = zi(ind);
 error = inf;
 iteration = 0;
 tri2 = 0;
-while error>tolerance && size(tri2,1)<maxSize
+while error>tolerance && size(tri2,1)<maxSize && iteration<maxIterations
     iteration = iteration+1;
     % Triangularize the data
 

@@ -1,18 +1,18 @@
-%VAKLODINGEN_OVERVIEW   make kml file with links to all vaklodingen files in a folder on OPeNDAP server
+%JARKUS_GRIDS_OVERVIEW   make kml file with links to all jarkus files in a folder on OPeNDAP server
 %
-%See also: jarkus_grids_overview, vaklodingen2kml, vaklodingen2png
+%See also: vaklodingen_overview, jarkus_grids2kml, jarkusgrids2png
 
 clear all
-url      = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen';
+url      = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen';
 contents = opendap_folder_contents(url);
-EPSG = load('EPSGnew');
+EPSG     = load('EPSGnew');
 for ii = 1:length(contents);
-    disp(sprintf('reading coordinates: % 2d / %d\n',ii,length(contents)))
+    disp(sprintf('reading coordinates: % 2d / %d',ii,length(contents)));
     [path, fname] = fileparts(contents{ii});
-    x   = nc_varget(contents{ii},   'x');
-    y   = nc_varget(contents{ii},   'y');
-    x2  = [x(1) x(end) x(end) x(1) x(1)];
-    y2  = [y(1) y(1) y(end) y(end) y(1)];
+    x               = nc_varget(contents{ii},   'x');
+    y               = nc_varget(contents{ii},   'y');
+    x2              = [x(1) x(end) x(end) x(1) x(1)];
+    y2              = [y(1) y(1) y(end) y(end) y(1)];
     [lon(:,ii),lat(:,ii)] = convertCoordinatesNew(x2,y2,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
     markerNames{ii} = fname;
     markerLat(ii)   = mean(lat(:,ii));
@@ -64,7 +64,7 @@ if length(OPT.lineColor(:,1))+length(OPT.lineWidth)+length(OPT.lineAlpha)>3
         output = [output KML_style(OPT_style)];
     end
 end
-%% marker BalloonStyle
+%% marker BallonStyle
 
 output = [output ...
     '<Style id="normalState">\n'...
@@ -86,7 +86,6 @@ output = [output ...
     '<Pair><key>normal</key><styleUrl>#normalState</styleUrl></Pair> \n'...
     '<Pair><key>highlight</key><styleUrl>#highlightState</styleUrl></Pair> \n'...
     '</StyleMap>\n'];
-
 
 %% print output
 output = [output, '<Folder>'];
@@ -131,44 +130,43 @@ output = [output, '<Name>Outlines</Name>'];
 
 baseString = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen/';
 for ii=1:length(lat(1,:))
-    disp(sprintf('generating markers: % 2d / %d\n',ii,length(lat(1,:))))
+    disp(sprintf('writing coordinates: % 2d / %d',ii,length(contents)));
     tableContents = [];
     tempString = [baseString 'KMLpreview/' markerNames{ii} '/'];
     [html,status] = urlread([tempString 'contents.html']);
     if status
-        %        for checkYear = 2010:-1:1950
-        %           if isempty(strfind(html,[num2str(checkYear) '_2D.kmz']))
-        %                str2D  = [];
-        %            else
-        %                str2D = [tempString num2str(checkYear) '_2D.kmz'];
-        %            end
-        %            if isempty(strfind(html,[num2str(checkYear) '_3D.kmz']))
-        %                str3D  = [];
-        %            else
-        %                str3D = [tempString num2str(checkYear) '_3D.kmz'];
-        %            end
-        %            if ~(isempty(str2D)&&isempty(str3D))
-        %                tableContents = [tableContents sprintf([...
-        %                    '<tr><td>%d</td>'...year
-        %                    '<td><a href="%s">2D</a></td>'....2D
-        %                    '<td><a href="%s">3D</a></td></tr>\n'],....3D
-        %                    checkYear,str2D,str3D)];
-        %            end
-        %        end
-        tableContents = ['<a href="http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen/KMLpreview/'...
-            markerNames{ii} '/png.kml">Time animation</a>'];
+        checkTime = datestr(nc_varget(contents{ii},'time')+datenum(1970,1,1),'YYYY-mm-dd');
+        for ll = 1:length(checkTime(:,1))
+            if isempty(strfind(html,[checkTime(ll,:) '_2D.kmz']))
+                str2D  = '-';
+            else
+                str2D = [' <a href="' tempString checkTime(ll,:) '_2D.kmz">2D</a>'];
+            end
+            if isempty(strfind(html,[checkTime(ll,:) '_3D.kmz']))
+                str3D  = '-';
+            else
+                str3D = [' <a href="' tempString checkTime(ll,:) '_3D.kmz">3D</a>'];
+            end
+%             if ~(strcmp(str2D,'-')&&strcmp(str3D,'-'))
+                tableContents = [tableContents sprintf([...
+                    '<tr><td>%s</td>'...year
+                    '<td>%s</td>'....2D
+                    '<td>%s</td></tr>\n'],....3D
+                    checkTime(ll,:),str2D,str3D)];
+%             end
+        end
     end
 
     % generate table with data links
     if isempty(tableContents)
-        table = 'No pre-rendered data available';
+        table = ['<h3>Available pre-rendered datafiles</h3>\n'...
+            'No pre-rendered data available'];
     else
         table = [...
-            '<h3>Available pre-rendered datafiles</h3>\n' ...
-            ... '<table border="0" padding="0" width="200">'...
-            tableContents ...
-            ... '</table>'...
-            ];
+            '<h3>Available pre-rendered datafiles</h3>\n'...
+            '<table border="0" padding="0" width="200">'...
+            tableContents...
+            '</table>'];
     end
 
     % generate description
@@ -180,12 +178,15 @@ for ii=1:length(lat(1,:))
         'x: % 7.0f -% 7.0f<br>\n'...[xmin xmax]
         'y: % 7.0f -% 7.0f<br>\n'...[ymin ymax]
         '<hr />\n'...
+        '<a href="%s">Time animation</a>'...%link to timeseries
         '%s'...table with links
         ']]></description>\n'...
         '<styleUrl>#MarkerBalloonStyle</styleUrl>\n'...
         '<Point><coordinates>%3.8f,%3.8f,0</coordinates></Point>\n'...lat lon
         '</Placemark>\n'],...
-        markerNames{ii},markerX(ii,:),markerY(ii,:),table,markerLon(ii),markerLat(ii))];
+        markerNames{ii},markerX(ii,:),markerY(ii,:),...
+        [tempString 'png.kml'],...
+        table,markerLon(ii),markerLat(ii))];
 end
 %% FOOTER
 output = [output '</Folder>' KML_footer];

@@ -35,14 +35,14 @@
 % $Keywords: $
 
 clear all
-outputDir = 'P:\mcdata\opendap\rijkswaterstaat\vaklodingen\KMLpreview';
+outputDir = 'D:\vaklodingen\KMLpreview';
 url       = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen';
 contents  = opendap_folder_contents(url);
 EPSG      = load('EPSGnew');
 
 % z scaling parameters:
 a = 40; % lift up meters
-b = 4;  % exageration
+b = 5;  % exageration
 c = 20; % colormap limits
 
 for ii = 1:1:length(contents);
@@ -65,39 +65,61 @@ for ii = 1:1:length(contents);
 
     % convert time to years
     time = datestr(time+datenum(1970,1,1),'yyyy-mm-dd');
+    % convert coordinates
+    [lon,lat] = convertCoordinatesNew(x,y,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
 
     %loop through all the years
-    for jj = [1,size(time,1)]%:-1:1
+    for jj = [1:3:size(time,1)]
+        try
+            % display progress
+            disp([num2str(ii) '/' num2str(length(contents)) ' ' fname ' ' time(jj,:)]);
 
-        % dispaly progress
-        disp([num2str(ii) '/' num2str(length(contents)) ' ' fname ' ' time(jj,:)]);
+            z=[];
 
-        if ~exist([outputDir2 time(jj,:) '_3D.kmz'],'file')
-            % load z data
-            z = nc_varget(contents{ii},'z',[jj-1,0,0],[1,-1,-1]);
 
-            % make sure there are no crazy high Z values
-            % should not be necessary!!
-            z(z>500) = nan;
+            if ~exist([outputDir2 time(jj,:) '_3D.kmz'],'file')
+                % load z data
+                z = nc_varget(contents{ii},'z',[jj-1,0,0],[1,-1,-1]);
+                z(z>500) = nan;
+                disp(['elements: ' num2str(sum(~isnan(z(:))))]);
+                tolerance =  0.5;
+                maxSize = 100000;
+                maxIterations = 50;
+                [tri,x2,y2,z2] = delaunay_simplified(x,y,z,tolerance,maxSize,maxIterations);
 
-            disp(['elements: ' num2str(sum(~isnan(z(:))))]);
-            tolerance =  0.5;
-            maxSize = 100000;
-            [tri,x2,y2,z2] = delaunay_simplified(x,y,z,tolerance,maxSize);
+                % convert tri coordinates
+                [lon2,lat2] = convertCoordinatesNew(x2,y2,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
 
-            % convert coordinates
-            [lon,lat] = convertCoordinatesNew(x2,y2,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+                %scale z
+                z2= (z2+a)*b;
 
-            %scale z
-            z2= (z2+a)*b;
+                % make *.kmz
+                KMLtrisurf(tri,lat2,lon2,z2,'fileName',[outputDir2 time(jj,:) '_3D.kmz'],...
+                    'kmlName',[fname ' ' time(jj,:) ' 2D'],'lineWidth',0,...
+                    'colormap','colormapbathymetry','colorSteps',64,...
+                    'fillAlpha',0.85,'cLim',[(a-c)*b (a+c)*b]);
+            else
+                disp ([outputDir2 time(jj,:) '_3D.kmz already exists'])
+            end
 
-            % make *.kmz
-            KMLtrisurf(tri,lat,lon,z2,'fileName',[outputDir2 time(jj,:) '_3D.kmz'],...
-                'kmlName',[fname ' ' time(jj,:) ' 2D'],'lineWidth',0,...
-                'colormap','colormapbathymetry','colorSteps',64,...
-                'fillAlpha',0.85,'cLim',[(a-c)*b (a+c)*b]);
-        else
-            disp ([outputDir2 time(jj,:) '_3D.kmz already exists'])
+%             % pcolor
+%             if ~exist([outputDir2 time(jj,:) '_2D.kmz'],'file')
+%                 if isempty(z)
+%                     % load z data
+%                     z = nc_varget(contents{ii},'z',[jj-1,0,0],[1,-1,-1]);
+%                     z(z>500) = nan;
+%                     disp(['elements: ' num2str(sum(~isnan(z(:))))]);
+%                 end
+%                 z= (z+a)*b;
+%                 KMLpcolor(lat,lon,z,'fileName',[outputDir2 time(jj,:) '_2D.kmz'],...
+%                     'kmlName',[fname ' ' time(jj,:) ' 2D'],'lineWidth',0.3,'lineAlpha',.6,'fillAlpha',.8,...
+%                     'colormap','colormapbathymetry','colorSteps',64,...
+%                     'cLim',[(a-c)*b (a+c)*b]);
+%             else
+%                 disp ([outputDir2 time(jj,:) '_2D.kmz already exists'])
+%             end
+        catch
+            warning([num2str(ii) '/' num2str(length(contents)) ' ' fname ' ' time(jj,:) ' FAILED']); %#ok<WNTAG>
         end
     end
 end
