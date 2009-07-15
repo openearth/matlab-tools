@@ -1,7 +1,7 @@
 function CMRmap=CMRmap
 %CMRMAP  9 Level Color Scale Colormap with Mapping to Grayscale for Publications.
 %
-% CMRMAP comes from the <a href="">Mathworks download central</a>, for copyright: edit cmrmap
+% CMRMAP comes from the <a href="http://www.mathworks.com/matlabcentral/fileexchange/2662">Mathworks download central</a>, for copyright: edit cmrmap
 %
 %See also: COLORMAPEDITOR, COLORMAP, COLORMAPGRAY, COLORGRAYMAP
 

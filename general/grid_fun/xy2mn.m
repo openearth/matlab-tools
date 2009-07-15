@@ -1,19 +1,21 @@
 function varargout = xy2mn(x,y,xv,yv)
 %XY2MN  get indices of random (x,y) points in curvilinear grid
 %
-% [m,n] = xy2mn(xy2mn(x,y,xv,yv) returns indices (m,n)
-% of the curvilinear (x,y) grid of points closest
-% to the random points (xv,yv) where m is the 1st, and 
-% n is teh 2nd dimension of x and y.
+%   [m,n] = xy2mn(xy2mn(x,y,xv,yv) 
+%
+% returns indices (m,n) of the curvilinear (x,y) 
+% grid of points closest to the random points 
+% (xv,yv) where m is the 1st, and  n is the 
+% 2nd dimension of x and y. If multiple points are 
+% euqally near, one (m,n) combi is arbitrarily chosen.
 %
 % Alternatives:
 %  struct      = xy2mn(...) with fields m, n, mn and eps (match accuracy)
 % [m,n,mn]     = xy2mn(...)
 % [m,n,mn,eps] = xy2mn(...)
-% where mn = the linear index.
+% where mn = the linear index, and eps the distance.
 %
-% See also:
-% SUB2IND, IN2SUB, FIND, MIN, MAX
+% See also: SUB2IND, IN2SUB, FIND, MIN, MAX
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
@@ -27,9 +29,9 @@ function varargout = xy2mn(x,y,xv,yv)
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -38,9 +40,7 @@ function varargout = xy2mn(x,y,xv,yv)
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
 mn   = zeros(size(xv));
@@ -78,8 +78,8 @@ mmax = size(x,1);
 
    for i=1:length(xv(:))
 
-      %% get matrix of distances between random point and all matrix nodes
-      %% -----------------------------
+      %% Get matrix of distances between random point and all matrix nodes
+      %-------------------------------
       dist = sqrt((x - xv(i)).^2 + ...
                   (y - yv(i)).^2);
                   
@@ -89,7 +89,7 @@ mmax = size(x,1);
                   %hold on
                   
       %% The (m,n) we are looking for is where this distance is minimal 
-      %% -----------------------------
+      %-------------------------------
 
       [accuracies,mns] = min(dist(:));
       
@@ -101,8 +101,8 @@ mmax = size(x,1);
       mn(i)       = mns(1);
 
       %% NOT zero based,
-      %% can also use sub2ind here.
-      %% -----------------------------
+      %  can also use sub2ind here.
+      %-------------------------------
       m(i)        = mod(mn(i)-1,mmax)+1;
       n(i)        = div(mn(i)-1,mmax)+1;
    end
@@ -110,7 +110,7 @@ mmax = size(x,1);
 %end
 
 %% Output
-%% -----------------------------
+%-------------------------------
 
 if nargout==1
    S.m   = m;
@@ -126,7 +126,8 @@ elseif nargout==4
    varargout = {m,n,mn,accuracy};
 end
 
-
+%% function intdiv
+%-------------------------------
 function intdiv = div(x,y)
 %   DIV(x,y) floor(x./y) if y < 0.
 %            ceil (x./y) if y > 0.

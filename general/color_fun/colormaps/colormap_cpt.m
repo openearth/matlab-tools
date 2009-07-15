@@ -1,20 +1,24 @@
 function cmap = colormap_cpt(cpt,varargin)
-% COLORMAP_CPT builds a matlab colormap from a cpt file 
+% COLORMAP_CPT   builds a matlab colormap from a cpt file 
 %
-% cpt       = the name of a colormap from the cpt-city website, see:
-%             http://soliton.vm.bytemark.co.uk/pub/cpt-city/
-% Optional  = number of colorsteps
+%    colormap_cpt(name,<nSteps>)
+%
+% name   = the name of a colormap from the cpt-city website, see:
+%          <a href="http://soliton.vm.bytemark.co.uk/pub/cpt-city/">http://soliton.vm.bytemark.co.uk/pub/cpt-city/</a>
+% nSteps = number of colorsteps (optional)
 %
 % Example:
 %
 % cmap = colormap_cpt('temperature');
 % subplot(3,1,[1 2])
-% colormap(cmap)
-% [x,y,z] = cylinder(100:-1:10);surf(x,y,z);
-% camlight(300,20); view([-60 32]); shading flat;
-% material shiny; lighting gouraud; colorbar
+%   colormap(cmap)
+%   [x,y,z] = cylinder(100:-1:10);surf(x,y,z);
+%   camlight(300,20); view([-60 32]); shading flat;
+%   material shiny; lighting gouraud; colorbar
 % subplot(3,1,3)
-% plot(cmap); axis([1 size(cmap,1) -.01 1.01])
+%   plot(cmap); axis([1 size(cmap,1) -.01 1.01])
+%
+%See also: colormaps
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

@@ -9,6 +9,7 @@
 %   googlePlot      - viewer: Google Earth Toolbox, with options for curvi-linear grids
 %   KNMI            - data:  <a href="http://www.knmi.nl">KNMI</a>
 %   m_map           - viewer: mapping toolbox <a href="http://www.eos.ubc.ca/~rich/map.html">m_map</a> from Rich Pawlowicz.
+%   mm              - multimedia tools
 %   meris           - data:  MERIS
 %   OceanDataView   - data: data format from <a href="http://www.SeaDataNet.org">www.SeaDataNet.org</a>, <a href="http://www.nodc.nl">www.nodc.nl</a>.
 %   probabilistic   - application

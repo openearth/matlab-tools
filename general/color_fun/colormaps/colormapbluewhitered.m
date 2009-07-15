@@ -1,5 +1,5 @@
 function col = colormapbluewhitered(m)
-%BLUEWHITERED  colors from blue to red via white.
+%COLORMAPBLUEWHITERED  colors from blue to red via white.
 %
 % The middle color(s) is/are always white (1 1 1). BlueWhiteRed, by itself, is the same length as the current figure's colormap. If no figure exists, MATLAB creates one.
 %

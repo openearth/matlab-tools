@@ -35,50 +35,50 @@
 %
 % Toolbox contents
 %
-%    Contents.m    - This file
-%    m_demo.m      - demonstrates a few different maps.
+%    Contents      - This file
+%    m_demo        - demonstrates a few different maps.
 %
 %  User-callable functions
 %
-%    m_proj.m      - initializes projections
-%    m_coord.m     - converts between geomagnetic and geographic coords.
+%    m_proj        - initializes projections
+%    m_coord       - converts between geomagnetic and geographic coords.
 %
-%    m_grid.m      - draws grids 
+%    m_grid        - draws grids 
 %    m_scale       - forces map to a given scale.
 %    m_ruler       - draw a scale ruler
 %
-%    m_ungrid.m    - erases map elements (if you want to change parameters)
+%    m_ungrid      - erases map elements (if you want to change parameters)
 %
-%    m_coast.m     - draws a coastline
-%    m_elev.m      - draws elevation data from 1 degree database
+%    m_coast       - draws a coastline
+%    m_elev        - draws elevation data from 1 degree database
 %
-%    m_tbase.m     - draws elevation data from 5-minute TerrainBase database
-%    m_gshhs.m     - draws coastline from GSHHS with specified resolution
-%    m_gshhs_c.m   - draws coastline from GSHHS crude database
-%    m_gshhs_l.m   - draws coastline from GSHHS low-resolution database
-%    m_gshhs_i.m   - draws coastline from GSHHS intermediate-resolution database
-%    m_gshhs_h.m   - draws coastline from GSHHS high-resolution database
-%    m_gshhs_f.m   - draws coastline from GSHHS full database
-%    m_plotbndry.m - draws a political boundary from the DCW 
-%    m_usercoast.m - draws a coastline using a user-specified subset database.
+%    m_tbase       - draws elevation data from 5-minute TerrainBase database
+%    m_gshhs       - draws coastline from GSHHS with specified resolution
+%    m_gshhs_c     - draws coastline from GSHHS crude database
+%    m_gshhs_l     - draws coastline from GSHHS low-resolution database
+%    m_gshhs_i     - draws coastline from GSHHS intermediate-resolution database
+%    m_gshhs_h     - draws coastline from GSHHS high-resolution database
+%    m_gshhs_f     - draws coastline from GSHHS full database
+%    m_plotbndry   - draws a political boundary from the DCW 
+%    m_usercoast   - draws a coastline using a user-specified subset database.
 %
-%    m_plot.m      - draws line data in map coords
-%    m_line.m      - draws line data in map coords
-%    m_text.m      - adds text data in map coords
-%    m_legend.m    - Draw a legend box
+%    m_plot        - draws line data in map coords
+%    m_line        - draws line data in map coords
+%    m_text        - adds text data in map coords
+%    m_legend      - Draw a legend box
 %    m_quiver      - draws arrows for vector data
 %    m_contour     - draws contour lines for gridded data
 %    m_contourf    - draws filled contours
 %    m_patch       - draws patch data
 %    m_track       - draws annotated tracklines
-%    m_hatch.m     - hatched or speckled patches.
+%    m_hatch       - hatched or speckled patches.
 %    m_range_ring  - draws range rings (spherical coords)
 %
-%    m_ll2xy.m     - converts from long/lat to map coordinates
-%    m_xy2ll.m     - converts from map coordinates to long/lat
+%    m_ll2xy       - converts from long/lat to map coordinates
+%    m_xy2ll       - converts from map coordinates to long/lat
 %
-%    m_geo2mag.m     - converts from long/lat to geomagnetic coordinates
-%    m_mag2geo.m     - converts from geomagnetic coordinates to long/lat
+%    m_geo2mag       - converts from long/lat to geomagnetic coordinates
+%    m_mag2geo       - converts from geomagnetic coordinates to long/lat
 %
 %    m_lldist      - spherical distance/geodesics between points (long/lat coordinates)
 %    m_xydist      - spherical distance between points (map projection coordinates)
@@ -87,29 +87,29 @@
 %    m_idist       - ellipsoidal geodesic inverse calculation 
 %    m_geodesic    - points along ellipsoidal geodesics
 %
-%    m_tba2b.m     - used in installing high-resolution elevation database.
+%    m_tba2b       - used in installing high-resolution elevation database.
 %
-%    m_vec.m       - fancy arrows
+%    m_vec         - fancy arrows
 %
 %  Internal functions (not meant to be user-callable)
 %
-%    private/mp_azim.m   - azimuthal projections
-%    private/mp_cyl.m    - cylindrical projections (equatorial)
-%    private/mp_conic.m  - conic projections
-%    private/mp_tmerc.m  - transverse cylindrical projections
-%    private/mp_utm.m    - elliptical universal transverse cylindrical projections
-%    private/mp_omerc.m  - oblique cylindrical projection
+%    private/mp_azim     - azimuthal projections
+%    private/mp_cyl      - cylindrical projections (equatorial)
+%    private/mp_conic    - conic projections
+%    private/mp_tmerc    - transverse cylindrical projections
+%    private/mp_utm      - elliptical universal transverse cylindrical projections
+%    private/mp_omerc    - oblique cylindrical projection
 %
-%    private/mu_util.m   - various utility routines
-%    private/mu_coast.m  - routines to handle coastlines.
+%    private/mu_util     - various utility routines
+%    private/mu_coast    - routines to handle coastlines.
 %
-%    private/mc_coords.m - coordinate systems based on different poles.
+%    private/mc_coords   - coordinate systems based on different poles.
 %
-%    private/clabel.m    - patched version of clabel 
+%    private/clabel      - patched version of clabel 
 %                         (matlab v5.1 version does not contain
 %                         capabilities for different text properties).    
 %
-%    private/m_coasts.mat - coastline data
+%    private/m_coasts  at - coastline data
 %
 %  HTML documentation
 %

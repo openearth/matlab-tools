@@ -1,5 +1,5 @@
 function col = colormapbathymetry(m)
-%COLORMAPBATHYMETRY shamelessly copied and adapted form mc_tools
+%COLORMAPBATHYMETRY   colormap with varying height and shading to represent a bathymetry
 %  
 %
 %

@@ -3,19 +3,20 @@
 %
 % OpenEarthTools-management toolboxes.
 %   config_FUN          - OpenEarthTools configuration
+%   docgeneration       - generation of documentation
 %   matlabinterface_fun - matlab interface fun
 %   oet_defaults        - OpenEarthTools defaults
 %   oet_template        - OpenEarthTools templates
 %   SVN_fun             - SubVersion configuration
-%   docgeneration       - generation of documentation
 %   
 % OpenEarthTools general toolboxes.
+%   color_fun           - colormap related tools
 %   colormaps           - colormaps
 %   debug_fun           - debug functions
 %   el_fun              - elementary functions
 %   el_mat              - elementary matrix functions
 %   grid_fun            - grid related
-%   GUI_fun             - GUI related
+%   gui_fun             - GUI related
 %   io_fun              - input/output rerlatred
 %   nan_fun             - nansum, nanmin, nanmax, nanstd, nanmean, ...
 %   phys_fun            - physics related

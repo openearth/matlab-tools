@@ -1,5 +1,5 @@
 function C = colorgraymap(catalog,varargin)
-%COLORGRAYMAP   colormap that appears as linear grayscale on black/white printer
+%COLORGRAYMAP   set of colormaps that appears as linear grayscale on black/white printer
 %
 %    C = colorgraymap(catalog)
 %    C = colorgraymap(catalog,n)
@@ -23,7 +23,7 @@ function C = colorgraymap(catalog,varargin)
 % C = colorgraymap(catalog,n,1) plots a sample image to test a colormap
 % C = colorgraymap('all',n,1)   plots sample images for all available colormap
 %
-%See also: COLORMAPEDITOR, COLORMAP, COLORMAPGRAY
+%See also: COLORMAPEDITOR, COLORMAP, COLORMAPGRAY, CMRMAP
 
 %% Copyright notice
 %   --------------------------------------------------------------------
