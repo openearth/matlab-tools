@@ -7,9 +7,10 @@ function [varargout]=colorbarwithtitle(colorbartxt,varargin)
 %
 %   [<ax>, h] =colorbarwithtitle(colorbartxt) 
 %
-%   returns the handle h of the colorbar and optionally 
-%   the handle ax of the axes. NOTE that with 2 output arguments ax is
-%   returned first to follow the syntax of ax = colorbar.
+%   returns the handle h of the colorbar and optionally the
+%   handle ax of the axes. NOTE that with 2 output arguments ax 
+%   is returned first to follow the syntax of ax = colorbar.
+%   [ax, h,txt] = colorbarwithx(...) returns also the handle of the text object. 
 %
 %      colorbarwithtitle(colorbartxt,      arguments)
 %      colorbarwithtitle(colorbartxt,[]   ,arguments)
@@ -26,8 +27,9 @@ function [varargout]=colorbarwithtitle(colorbartxt,varargin)
 %      [ax, h]=colorbarwithtitle('wind direction',[0:90:360]) 
 %      set(ax,'YTickLabel',{'E','N','W','S'})
 %
-%   See also: COLORBAR, SET(gca), GET(gca), colorbarwithtitle
-%             COLORBARWITHhTEXT, COLORBARWITHvTEXT
+%   See also: COLORBAR, SET(gca), GET(gca), 
+%             COLORBARWITHhTEXT, COLORBARWITHvTEXT,
+%             COLORBARWITHxLABEL, COLORBARWITHyLABEL
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004 Delft University of Technology
@@ -57,6 +59,20 @@ function [varargout]=colorbarwithtitle(colorbartxt,varargin)
 %   USA
 %   -------------------------------------------------------------------
 
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
     OPT.position = 'title';
 
     nextarg = 1;
@@ -80,17 +96,14 @@ end
 Handles.axes          = colorbar(varargin{nextarg:end});
 
 Handles.colorbar       = get(Handles.axes,'children');
-if     strcmp(OPT.position,'title')
-   Handles.colorbartitle  = get(Handles.axes,'title');
-elseif strcmp(OPT.position,'xlabel')
-   Handles.colorbarxlabel = get(Handles.axes,'xlabel');
-elseif strcmp(OPT.position,'ylabel')
-   Handles.colorbarylabel = get(Handles.axes,'ylabel');
-elseif strcmp(OPT.position,'text')
-   text(0.5,0.5,colorbartxt,'units','normalized',...
-                         'rotation',0,...
-              'horizontalalignment','center',...
-                           'Parent',Handles.axes)
+if     strcmp(OPT.position,'title' );Handles.txt = get(Handles.axes,'title');
+elseif strcmp(OPT.position,'xlabel');Handles.txt = get(Handles.axes,'xlabel');
+elseif strcmp(OPT.position,'ylabel');Handles.txt = get(Handles.axes,'ylabel');
+elseif strcmp(OPT.position,'text'  );Handles.txt = ...
+    text(0.5,0.5,colorbartxt,'units','normalized',...
+                          'rotation',0,...
+               'horizontalalignment','center',...
+                            'Parent',Handles.axes)
 end
 
 %for i=1:length(Handles.colorbar)
@@ -106,18 +119,11 @@ if ~isempty(ctick)
    end
 end
 
-if     strcmp(OPT.position,'title')
-set(Handles.colorbartitle ,'string',colorbartxt);
-elseif strcmp(OPT.position,'xlabel')
-set(Handles.colorbarxlabel,'string',colorbartxt);
-elseif strcmp(OPT.position,'ylabel')
-set(Handles.colorbarylabel,'string',colorbartxt);
-end
+set(Handles.txt,'string',colorbartxt);
 
-if nargout==1
-   varargout={Handles.colorbar};
-elseif nargout==2
-   varargout={Handles.axes, Handles.colorbar};
-elseif nargout>2
-   error('requires only 0, 1 or 2 output parameters.');
+if     nargout==1;varargout={Handles.colorbar};
+elseif nargout==2;varargout={Handles.axes,   Handles.colorbar};
+elseif nargout==3;varargout={Handles.axes,   Handles.colorbar,Handles.txt};
+elseif nargout>3
+   error('requires only 0,1,2 or 3 output parameters.');
 end
