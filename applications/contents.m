@@ -14,6 +14,7 @@
 %   OceanDataView   - data: data format from <a href="http://www.SeaDataNet.org">www.SeaDataNet.org</a>, <a href="http://www.nodc.nl">www.nodc.nl</a>.
 %   probabilistic   - application
 %   Rijkswaterstaat - data: <a href="http://www.Rijkswaterstaat.nl">Rijkswaterstaat</a>
+%   *  jarkus       - tools for Rijkswaterstaats jarkus coastal bathymetry dataset
 %   sobek           - model: <a href="http://www.SOBEK.nl">SOBEK</a>
 %   SuperTrans      - global coordinate transformations for <a href="http://www.epsg-registry.org/">OGP EPSG</a> systems.
 %   SWAN            - model: <a href="http://www.SWAN.tudelft.nl">SWAN</a>  (see also: waves)

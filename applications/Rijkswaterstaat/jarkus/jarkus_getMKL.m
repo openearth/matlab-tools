@@ -1,5 +1,5 @@
 function [xMKL] = jarkus_getMKL(x,z,UpperBoundary,LowerBoundary)
-% GETMKL returns the cross shore coordinate of the volume based coastal indicator MKL 
+%JARKUS_GETMKL returns the cross shore coordinate of the volume based coastal indicator MKL 
 %
 %   input:
 %       x                   = column array with x points (increasing index and positive x in seaward direction)
@@ -9,6 +9,8 @@ function [xMKL] = jarkus_getMKL(x,z,UpperBoundary,LowerBoundary)
 %
 %  output: 
 %    xMKL                   = cross shore coordinate of MKL
+%
+%See also:
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

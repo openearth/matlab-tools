@@ -2,13 +2,13 @@ function autosetSVNkeywords
 %AUTOSETSVNKEYWORDS  Enables svn:keywords for m-files
 %
 %   Routine check whether in the config file of Subversion the svn:keywords
-%   are automatically set. If not, the config file is overwrite to enable
+%   are automatically set. If not, the config file is overwritten to enable
 %   this functionality
 %
 %   Syntax:
 %   autosetSVNkeywords
 %
-%   Example
+%   Example:
 %   autosetSVNkeywords
 %
 %   See also
@@ -50,8 +50,7 @@ function autosetSVNkeywords
 % $Revision$
 % $HeadURL$
 
-%%
-% create filename of config file
+%% create filename of config file
 if ispc
     subversiondir = fullfile(getenv('APPDATA'), 'Subversion');
 else
@@ -59,7 +58,7 @@ else
 end
 filename = fullfile(subversiondir, 'config');
 
-% read config file
+%% read config file
 fid = fopen(filename);
 if fid == -1
     return
@@ -68,17 +67,19 @@ else
     fclose(fid);
 end
 
-% create cell array of strings containing the config info
+%% create cell array of strings containing the config info
 strcell = strread(str, '%s',...
     'delimiter', char(10));
 
 anyChange = false;
-% check whether auto props are enabled
+
+%% check whether auto props are enabled
 if any(strcmp(strcell, '# enable-auto-props = yes'))
     strcell{strcmp(strcell, '# enable-auto-props = yes')} = 'enable-auto-props = yes';
     anyChange = true;
 end
-% check whether keywords are set for m-files
+
+%% check whether keywords are set for m-files
 if ~any(strcmp(strcell, '*.m = svn:keywords=Id Date Author Revision HeadURL'))
     strcell{end+1} = '*.m = svn:keywords=Id Date Author Revision HeadURL';
     anyChange = true;

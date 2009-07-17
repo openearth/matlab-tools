@@ -2,22 +2,22 @@ function oetsettings(varargin)
 %OETSETTINGS   enable the OpenEarthTools matlab tools by adding all relevant matlab paths.
 %
 % OpenEarthTools is a collection of open source tools 
-% intended to be licensed under the GNU (Lesser) Public License
-% (<a href="http://www.gnu.org/licenses/licenses.html">http://www.gnu.org/licenses/licenses.html</a>).
+% intended to be licensed under the (<a href="http://www.gnu.org/licenses/licenses.html">GNU (Lesser) Public License</a>).
+%
+% In order to suppress this information, run the function with input argument quiet:
+%	"oetsettings('quiet');" or "oetsettings quiet"
 %
 % For more information on OpenEarthTools refer to the following sources:
 %
 % * wiki:        <a href="http://OpenEarth.deltares.nl"                               >OpenEarth.Deltares.nl</a>
 % * repository:  <a href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab">https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab</a>
-% * help blocks: Scroll through the OpenEarthTools directories and read interesting help blocks.
-% * walk down OpenEarthTools tree with:
+% * help blocks: Scroll through the OpenEarthTools directories by clicking 
+%                the see also links, or typing:
 %
-%    help oet_general
-%    help oet_applications
-%    help oet_io
-%
-% In order to suppress this information, run the function with input argument quiet:
-%	"oetsettings('quiet');" or "oetsettings quiet"
+%    help oetsettings
+%    help general
+%    help applications
+%    help io
 %	
 %See also: ADDPATHFAST, RESTOREDEFAULTPATH,
 %          OpenEarthTools: general, applications, io
@@ -59,59 +59,67 @@ function oetsettings(varargin)
 % Why do we need this text in this file..? quickstart is in McTools / UCIT isn't it??
 
 %% Retrieve verbose state from input
-%% ---------------------
-   quiet = false;
-   if any(strcmp(varargin,'quiet'))
-       quiet = true;
-       varargin(strcmp(varargin,'quiet'))=[];
+%-----------------------
+   OPT.quiet = false;
+   nextarg   = 1;
+   
+   if mod(nargin,2)==1 % odd # arguments
+       if strcmp(varargin{1},'quiet')
+       OPT.quiet = true;
+       else
+          error(['unknown argument:',varargin{1}])
+       end
+       nextarg   = 2;
    end
    
+   OPT = setProperty(OPT,varargin{nextarg:end});
+   
 %% Acknowledge user we started adding the toolbox
-%% ---------------------
-   if ~quiet
+%-----------------------
+   if ~(OPT.quiet)
        disp('Adding <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a>, please wait ...')
        disp(' ')
    end
       
 %% Collect warning and directory state
-%% ---------------------
+%-----------------------
    state.warning = warning;
    state.pwd     = cd;
 
 %% Add paths
-%% ---------------------
-   basepath = fileparts(which(mfilename));
+%-----------------------
+   basepath = fileparts(mfilename('fullpath'));
    warning off
-   path(path, fullfile(basepath, 'oet_general'));
    addpathfast(basepath); % excludes *.svn directories!
 
 %% Restore warning and directory state
-%% ---------------------
+%-----------------------
    warning(state.warning)
         cd(state.pwd)
 
    clear state
 
 %% set svn:keywords automatically to any new m-file
+%-----------------------
    autosetSVNkeywords
    
 %% Report
-%% ---------------------
-   if ~quiet
+%-----------------------
+   if ~(OPT.quiet)
        help oetsettings
        fprintf('\n*** OpenEarthTools settings enabled! ***\n');
    end
    
 %% NETCDF (if not present yet)
 %  (NB RESTOREDEFAULTPATH does not restore java paths)
-%% ---------------------
+%-----------------------
     java2add         = path2os(fullfile(openearthtoolsroot, 'matlab/io/nctools', 'toolsUI-2.2.22.jar'));
     dynjavaclasspath = path2os(javaclasspath);
-    indices  = strfind(dynjavaclasspath,java2add);
+    indices       = strfind(dynjavaclasspath,java2add);
     
     if isempty(cell2mat(indices))
        javaaddpath (java2add)
-    elseif ~quiet
+    elseif ~(OPT.quiet)
        disp(['Java path not added, already there: ',java2add])
     end
     setpref ('SNCTOOLS', 'USE_JAVA', true); % this requires SNCTOOLS 2.4.8 or better
