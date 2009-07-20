@@ -61,8 +61,7 @@ function varargout = swan_io_input(varargin)
 % 2008 Jul 10: interpret BOUND SHAPE line into struct
 % 2008 Oct 20: add default value for set.pwtail and update according to GEN keywords
 % 2009 Feb 05: replaced deblank2 with strtrim, use only 2 letter of keyword FRICtion, allow both presence and absence of continuation char (&) in PROJ keyword span.
-% TO DO: in fgetlines_no_comment_line:
-% make sure comment is treated as all data on a SWAN line (_& continuation) in between $ or after last (odd) $
+% 2009 jul 20: in fgetlines_no_comment_line: make sure comment is treated as all data on a SWAN line (_& continuation) in between $ or after last (odd) $
 
 %% Defaults
 
@@ -1352,6 +1351,21 @@ end
 % TO DO: make sure comment is treated as all data on a SWAN line (_& continuation) in between $ or after last (odd) $
    
       rec                  = fgetl_no_comment_line(fid,'$',0,1); % do not allow empty lines, do remove spaces at start (no tabs yet)
+
+      %% remove inline + end-of-line comments
+      ind = strfind(rec,'$');
+      if ~isempty(ind) & ~isempty(rec)
+         recraw = rec;
+         rec    = [];
+         if odd(length(ind))
+            ind = [0 ind];
+         else
+            ind = [0 ind length(rec)+1];
+         end
+         for ii=1:2:length(ind)
+            rec = [rec recraw(ind(ii)+1:ind(ii+1)-1)];
+         end
+      end
       
       continuationmarks    = sort([strfind(deblank(rec),'_') ,...
                                    strfind(deblank(rec),'&')]);
@@ -1363,7 +1377,23 @@ end
       while ~isempty(continuationmarks) % note that comment can follow each line after the continuationmarks
          % strcat removes blanks
          multilinerec      = [multilinerec,rec(1:continuationmarks-1)];
+
          rec               = fgetl_no_comment_line(fid,'$',0,1); % do not allow empty lines, do remove spaces at start (no tabs yet)
+         %% remove inline + end-of-line comments
+         ind = strfind(rec,'$');
+         if ~isempty(ind) & ~isempty(rec)
+            recraw = rec;
+            rec    = [];
+            if odd(length(ind))
+               ind = [0 ind];
+            else
+               ind = [0 ind length(rec)+1];
+            end
+            for ii=1:2:length(ind)
+               rec = [rec recraw(ind(ii)+1:ind(ii+1)-1)];
+            end
+         end       
+         
          continuationmarks = sort([strfind(deblank(rec),'_') ,...
                                    strfind(deblank(rec),'&')]);
       
