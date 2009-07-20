@@ -42,7 +42,30 @@ if ~isempty(CS.type)
         case {'engineering', 'geographic 3D', 'vertical', 'geocentric',  'compound'}
             error(['input ''CType = ' CS.type ''' is not (yet) supported']); 
         otherwise
-            error(['coordinate type ''' CS.type ''' is not known']);
+            error(['coordinate type ''' CS.type ''' is not supported']);
     end
 end
+
+if ~isempty(CS.code)
+    ind1              = find(STD.coordinate_reference_system.coord_ref_sys_code == CS.code);
+
+    switch STD.coordinate_reference_system.coord_ref_sys_kind{ind1}
+
+        case {'geographic 2D','projected'}
+            % ok
+
+        case {'compound'}
+            CS.code = STD.coordinate_reference_system.cmpd_horizcrs_code(ind1); %#ok<FNDSB>
+            disp(sprintf([...
+                'coordinate system: ''%s'' is of type compound (3D coordinates system);\n'...
+                'Only the 2D component is used in conversion;\n'...
+                'conversion is performed for coordinate system %d'],...
+                STD.coordinate_reference_system.coord_ref_sys_name{ind1},CS.code));
+        otherwise
+             error(['coordinate type '''...
+                 STD.coordinate_reference_system.coord_ref_sys_kind{ind1}...
+                 ''' is not supported']);
+    end
 end
+    
+
