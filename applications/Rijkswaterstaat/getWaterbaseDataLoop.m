@@ -45,7 +45,7 @@
 clear all
 
    OPT.codes(1)          = 1;
-   OPT.standard_names{1} = 'sea_surface_height';
+   OPT.standard_names{1} = 'sea_surface_height'; % takes 24 hours
   
    OPT.codes(2)          = 54;
    OPT.standard_names{2} = 'sea_surface_height';
@@ -75,15 +75,17 @@ clear all
 
    OPT.directory.raw = 'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';
 
-   OPT.period        = [datenum(1648,10,24) floor(now)]; % 24 okt 1648: Oprichting Staat der Nederlanden, Vrede van Munster
    OPT.period        = [datenum(1798, 5,24) floor(now)]; % 24 mei 1798: Oprichting voorloper Rijkswaterstaat in Bataafse Republiek
+   OPT.period        = [datenum(1648,10,24) floor(now)]; % 24 okt 1648: Oprichting Staat der Nederlanden, Vrede van Munster
+   %Note: first water level in waterbase 1737 @ Katwijk
+   
    OPT.zip           = 1; % zip txt file and delete it
    OPT.nc            = 0; % not implemented yet
    OPT.opendap       = 0; % not implemented yet
    
 %% Parameter loop
 
-for ivar=[1 2 3 7 8 9]; %1:length(OPT.codes)
+for ivar=1:length(OPT.codes)
 
    OPT.code           = OPT.codes(ivar);
    OPT.standard_name  = OPT.standard_names{ivar};

@@ -70,7 +70,8 @@ function OutputName = getWaterbaseData(varargin);
 
 %% Substance names
 
-   Substance = getWaterbaseData_substances('donar_substances.csv');
+   Substance = getWaterbaseData_substances;
+  %Substance = getWaterbaseData_substances_csv('donar_substances.csv');
 
 %% Select substance name
 
@@ -91,7 +92,7 @@ function OutputName = getWaterbaseData(varargin);
 
    disp(['message: getWaterbaseData: loading Substance # ',num2str(indSub                ,'%0.3d'),': ',...
                                                            num2str(Substance.Code(indSub),'%0.3d'),' "',...
-                                                           Substance.FullName{indSub},'"'])
+                                                                   Substance.FullName{indSub},'"'])
 
 %% Location names
 

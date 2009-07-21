@@ -36,13 +36,15 @@ function getWaterbase2nc(varargin)
 % $Keywords: $
 
 % TO DO: Add x,y in addition to lat,lon
+% TO DO: save mat and nc files with (i) actual start and end dates or (ii) with no dates at all, but not as currently with the time search window in the filename
+% TO DO: add search/retrieve/discovery info to global attributes
 
 %% Choose parameter
 %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table/
 %  keep name shorter than namelengthmax (=63)
 
 OPT.names = ...
-   {'sea_surface_height',...
+   {'sea_surface_height',... % takes 36 hours
     'concentration_of_suspended_matter_in_sea_water',...
     'sea_surface_temperature',...
     'sea_surface_salinity',...
@@ -79,7 +81,7 @@ OPT.unitss = ...
     's',...
     'microg/l'}; % ug/l is not in UDunits
 
-OPT.parameter         = [5 6 7]; % 0=all or select index from OPT.names above
+OPT.parameter         = 0; %[5 6 7]; % 0=all or select index from OPT.names above
 
 %% Initialize
 
