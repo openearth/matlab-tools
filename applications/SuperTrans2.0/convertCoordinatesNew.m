@@ -99,59 +99,63 @@ end
 
 %% get and set keyword value parameters
 
-OPT.CS1.name                   = []; % coordinate system name
-OPT.CS1.code                   = []; % coordinate system reference code 
-OPT.CS1.type                   = []; % projection type
-                                     % projection types supported:
-                                     % projected, geographic 2D
-                                     %
-                                     % projection not (yet) supported:
-                                     % engineering, geographic 3D, vertical, geocentric,  compound
-                                     %
-                                     % allowed synonyms for 'projected'
-                                     % 'xy','proj','cartesian','cart'
-                                     % allowed sysnonyms for 'geographic 2D'
-                                     % 'geo','geographic2d','latlon','lat lon','geographic'
-                                     
-OPT.CS1.geoRefSys.name         = []; % associated geographic reference system name
-OPT.CS1.geoRefSys.code         = []; % associated geographic reference system code
-OPT.CS1.coordSys.name          = []; %
-OPT.CS1.coordSys.code          = []; %
-                                     
-OPT.CS1.ellips.name            = []; % ellipsoide name
-OPT.CS1.ellips.code            = []; % ellipsoide code
-OPT.CS1.ellips.inv_flattening  = []; % inverse flattening
-OPT.CS1.ellips.semi_major_axis = []; % semi major axis
-OPT.CS1.ellips.semi_minor_axis = []; % semi minor axis
-                                     
-OPT.CS1.UoM.name               = []; % unit of measure name of coordinates
-OPT.CS1.UoM.code               = []; % unit of measure code of coordinates
-                                     
-OPT.CS1.conv.name              = []; % projection to datum conversion name
-OPT.CS1.conv.code              = []; % projection to datum conversion code
-OPT.CS1.conv.param.val         = []; % conversion paramter values
-OPT.CS1.conv.param.code        = []; % conversion paramter codes
-OPT.CS1.conv.param.name        = []; % conversion paramter names
+OPT.CS1.name                    = []; % coordinate system name
+OPT.CS1.code                    = []; % coordinate system reference code 
+OPT.CS1.type                    = []; % projection type
+                                      % projection types supported:
+                                      % projected, geographic 2D
+                                      %
+                                      % projection not (yet) supported:
+                                      % engineering, geographic 3D, vertical, geocentric,  compound
+                                      %
+                                      % allowed synonyms for 'projected'
+                                      % 'xy','proj','cartesian','cart'
+                                      % allowed sysnonyms for 'geographic 2D'
+                                      % 'geo','geographic2d','latlon','lat lon','geographic'
+                                      
+OPT.CS1.geoRefSys.name          = []; % associated geographic reference system name
+OPT.CS1.geoRefSys.code          = []; % associated geographic reference system code
+OPT.CS1.coordSys.name           = []; %
+OPT.CS1.coordSys.code           = []; %
+                                      
+OPT.CS1.ellips.name             = []; % ellipsoide name
+OPT.CS1.ellips.code             = []; % ellipsoide code
+OPT.CS1.ellips.inv_flattening   = []; % inverse flattening
+OPT.CS1.ellips.semi_major_axis  = []; % semi major axis
+OPT.CS1.ellips.semi_minor_axis  = []; % semi minor axis
+                                      
+OPT.CS1.UoM.name                = []; % unit of measure name of coordinates
+OPT.CS1.UoM.code                = []; % unit of measure code of coordinates
+                                      
+OPT.CS1.conv.name               = []; % projection to datum conversion name
+OPT.CS1.conv.code               = []; % projection to datum conversion code
+OPT.CS1.conv.param.val          = []; % conversion paramter values
+OPT.CS1.conv.param.code         = []; % conversion paramter codes
+OPT.CS1.conv.param.name         = []; % conversion paramter names 
 
-OPT.CS2.name                   = []; 
-OPT.CS2.code                   = []; 
-OPT.CS2.type                   = []; 
-OPT.CS2.geoRefSys.name         = []; 
-OPT.CS2.geoRefSys.code         = []; 
-OPT.CS2.coordSys.name          = []; 
-OPT.CS2.coordSys.code          = []; 
-OPT.CS2.ellips.name            = []; 
-OPT.CS2.ellips.code            = []; 
-OPT.CS2.ellips.inv_flattening  = []; 
-OPT.CS2.ellips.semi_major_axis = []; 
-OPT.CS2.ellips.semi_minor_axis = []; 
-OPT.CS2.UoM.name               = []; 
-OPT.CS2.UoM.code               = []; 
-OPT.CS2.conv.name              = []; 
-OPT.CS2.conv.code              = []; 
-OPT.CS2.conv.param.val         = []; 
-OPT.CS2.conv.param.code        = []; 
-OPT.CS2.conv.param.name        = []; 
+OPT.CS2.name                    = []; 
+OPT.CS2.code                    = []; 
+OPT.CS2.type                    = []; 
+OPT.CS2.geoRefSys.name          = []; 
+OPT.CS2.geoRefSys.code          = []; 
+OPT.CS2.coordSys.name           = []; 
+OPT.CS2.coordSys.code           = []; 
+OPT.CS2.ellips.name             = []; 
+OPT.CS2.ellips.code             = []; 
+OPT.CS2.ellips.inv_flattening   = []; 
+OPT.CS2.ellips.semi_major_axis  = []; 
+OPT.CS2.ellips.semi_minor_axis  = []; 
+OPT.CS2.UoM.name                = []; 
+OPT.CS2.UoM.code                = []; 
+OPT.CS2.conv.name               = []; 
+OPT.CS2.conv.code               = []; 
+OPT.CS2.conv.param.val          = []; 
+OPT.CS2.conv.param.code         = []; 
+OPT.CS2.conv.param.name         = []; 
+
+OPT.datum_trans.code            = [];
+OPT.datum_trans_to_WGS84.code   = [];
+OPT.datum_trans_from_WGS84.code = [];
 
 [OPT, Set, Default]     = setPropertyInDeeperStruct(OPT, varargin{:});
 %% error check the input, and find the indices of coordinate systems in data structure 
@@ -202,7 +206,7 @@ switch OPT.CS1.type
         lat1 = convertUnits(y1,OPT.CS1.UoM.name,'radian',STD);
 end
 
-%% Datum transformation
+%% find datum transformation options
 % check if geogcrs_code1 and geogcrs_code2 are different
 %
 % check if there is a direct transormation between geogcrs_code1 and
@@ -211,13 +215,17 @@ end
 % * if multiple options found, use the newest unless user has defined something else
 % * if no direct transformation exists, convert via WGS 84
 OPT = ConvertCoordinatesFindDatumTransOpt(OPT,STD);
-if strcmp('no datum transformation needed',OPT.datum_trans1)
+
+%% do datum transformation
+if strcmp('no datum transformation needed',OPT.datum_trans)
  lat2 = lat1;
  lon2 = lon1;
 else
-    [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT.datum_trans1);
-    if isfield(OPT,'datum_trans2') %only exists when tranforming via WGS 84
-    [lat2,lon2] = ConvertCoordinatesDatumTransform(lat2,lon2,OPT.datum_trans2);
+    if ~isfield(OPT,'datum_trans_from_WGS84') %only exists when tranforming via WGS 84
+        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT.datum_trans);
+    else
+        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT.datum_trans_to_WGS84);
+        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat2,lon2,OPT.datum_trans_from_WGS84);
     end
 end   
 

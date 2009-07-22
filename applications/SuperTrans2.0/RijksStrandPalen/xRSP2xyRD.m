@@ -2,10 +2,10 @@ function [xRD,yRD] = xRSP2xyRD(varargin)
 %XRSP2XYRD   transform RijksStrandPalen coordinates to RD coordinates
 %    
 % depending on inputs arguments, function will be:
-%    nargin = 3: [xRD,yRD] = xRSP2xyRD(xRSP,section,transectNr);
+%    nargin = 3: [xRD,yRD] = xRSP2xyRD(xRSP,areacode,alongshore);
 %    nargin = 4: [xRD,yRD] = xRSP2xyRD(x0,y0,alpha,xRSP); 
 %
-%   [xRD,yRD] = xRSP2xyRD(xRSP,section,transectNr)
+%   [xRD,yRD] = xRSP2xyRD(xRSP,areacode,alongshore)
 %   section and transectNr can be either single values, or arrays of the
 %   same length as xRSP
 %
@@ -56,8 +56,8 @@ if nargin == 3;
     
     %assign varargin
     xRSP        = varargin{1}; 
-    section     = varargin{2};
-    transectNr  = varargin{3};
+    areacode    = varargin{2};
+    alongshore  = varargin{3};
     
     % load raai data
     fid = fopen('raaien.txt', 'r');
@@ -65,12 +65,12 @@ if nargin == 3;
     fclose(fid);
 
     % loop through data
-   ind = nan(size(transectNr));
-    for ii = 1:numel(transectNr)
+   ind = nan(size(alongshore));
+    for ii = 1:numel(alongshore)
         try
-            ind(ii) = find(data{:,1}== section(ii)&data{:,2}==transectNr(ii));
+            ind(ii) = find(data{:,1}== areacode(ii)&data{:,2}==alongshore(ii));
         catch
-            error('could not convert section %d, transect number %d', section(ii), transectNr(ii))
+            error('could not convert section %d, transect number %d', areacode(ii), alongshore(ii))
         end
     end
    
