@@ -22,8 +22,8 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 %  'kmlName'    = 'untitled';  % name of kml that shows in GE
 %
 %  The following line properties can each be defined as either a single
-%  entry or an array with the same lenght as the number of columns in 
-%   (lat,lon).
+%  entry or an array with the same lenght as the number of (unique) styles 
+%  'style'      = ones(size(lat,2)); % must be of length of input lines
 %  'lineWidth'  = 1;           % line width, can be a fraction
 %  'lineColor'  = [0 0 0];     % color of the lines in RGB (0..1) 
 %  'lineAlpha'  = 1;           % transparency of the line
@@ -99,6 +99,7 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 
 OPT.fileName    = [];
 OPT.kmlName     = 'untitled';
+OPT.style       = ones(size(lat,2),1);
 OPT.lineWidth   = 1;
 OPT.lineColor   = [0 0 0];
 OPT.lineAlpha   = 1;
@@ -116,7 +117,6 @@ if any((abs(lat)/90)>1)
     error('latitude out of range, must be within -90..90')
 end
 lon = mod(lon+180, 360)-180;
-
 
 %% get filename
 
@@ -138,28 +138,23 @@ output = KML_header(OPT_header);
 
 %% define line styles
 
-OPT_style = struct(...
-    'name',['style' num2str(1)],...
-    'lineColor',OPT.lineColor(1,:) ,...
-    'lineAlpha',OPT.lineAlpha(1),...
-    'lineWidth',OPT.lineWidth(1));
-output = [output KML_style(OPT_style)];
+if size(OPT.lineColor,1) ~= max(OPT.style(:))
+    OPT.lineColor = repmat(OPT.lineColor(1,:),max(OPT.style(:)),1);
+end
+if length(OPT.lineAlpha) ~= max(OPT.style(:))
+    OPT.lineAlpha = repmat(OPT.lineAlpha(1),max(OPT.style(:)),1);
+end
+if length(OPT.lineWidth) ~= max(OPT.style(:))
+    OPT.lineWidth = repmat(OPT.lineWidth(1),max(OPT.style(:)),1);
+end
 
-% if multiple styles are define, generate them
-if length(OPT.lineColor(:,1))+length(OPT.lineWidth)+length(OPT.lineAlpha)>3
-    for ii = 2:length(lat(1,:))
-        OPT_style.name = ['style' num2str(ii)];
-        if length(OPT.lineColor(:,1))>1
-            OPT_style.lineColor = OPT.lineColor(ii,:);
-        end
-        if length(OPT.lineWidth(:,1))>1
-            OPT_style.lineWidth = OPT.lineWidth(ii,:);
-        end
-        if length(OPT.lineAlpha(:,1))>1
-            OPT_style.lineAlpha = OPT.lineAlpha(ii,:);
-        end
-        output = [output KML_style(OPT_style)];
-    end
+for ii = unique(OPT.style(:))'
+OPT_style = struct(...
+    'name',['style' num2str(ii)],...
+    'lineColor',OPT.lineColor(ii,:) ,...
+    'lineAlpha',OPT.lineAlpha(ii),...
+    'lineWidth',OPT.lineWidth(ii));
+output = [output KML_style(OPT_style)];
 end
 
 % print styles
@@ -174,7 +169,7 @@ kk = 1;
 % line properties
 OPT_line = struct(...
     'name','',...
-    'styleName',['style' num2str(1)],...
+    'styleName',['style' num2str(OPT.style(1))],...
     'visibility',1,...
     'extrude',0);
 
@@ -192,37 +187,39 @@ end
 
 % loop through number of lines
 for ii=1:length(lat(1,:))
-    
-    % update linestyles if multiple are defined
-    if length(OPT.lineColor(:,1))+length(OPT.lineWidth)+length(OPT.lineAlpha)>3
-        OPT_line.styleName = ['style' num2str(ii)];
-    end
-    
-    % update timeIn and timeOut if multiple times are defined
-    if length(OPT.timeIn)>1
-    	OPT_line.timeIn = datestr(OPT.timeIn(ii),29);
-    end
-    if length(OPT.timeOut)>1
-        OPT_line.timeOut = datestr(OPT.timeOut(ii),29);
-    end
-    
-    % write the line
-    newOutput =  KML_line(lat(:,ii),lon(:,ii),'clampToGround',OPT_line);
-    
-    % add a text if it is defined
-    if ~isempty(OPT.text)
-        newOutput = [newOutput,KML_text(OPT.latText(ii),OPT.lonText(ii),OPT.text{ii})];
-    end    
-    
-    % add newOutput to output
-    output(kk:kk+length(newOutput)-1) = newOutput;
-    kk = kk+length(newOutput);
-    
-    % write output to file if output is full, and reset
-    if kk>1e5
-        fprintf(OPT.fid,output(1:kk-1));
-        kk = 1;
-        output = repmat(char(1),1,1e5);
+    % check if there is data to write
+    if ~all(isnan(lat(:,ii)+lon(:,ii)))
+        % update linestyles if multiple are defined
+        if length(OPT.style)>1
+            OPT_line.styleName = ['style' num2str(OPT.style(ii))];
+        end
+
+        % update timeIn and timeOut if multiple times are defined
+        if length(OPT.timeIn)>1
+            OPT_line.timeIn = datestr(OPT.timeIn(ii),29);
+        end
+        if length(OPT.timeOut)>1
+            OPT_line.timeOut = datestr(OPT.timeOut(ii),29);
+        end
+
+        % write the line
+        newOutput =  KML_line(lat(:,ii),lon(:,ii),'clampToGround',OPT_line);
+
+        % add a text if it is defined
+        if ~isempty(OPT.text)
+            newOutput = [newOutput,KML_text(OPT.latText(ii),OPT.lonText(ii),OPT.text{ii})];
+        end    
+
+        % add newOutput to output
+        output(kk:kk+length(newOutput)-1) = newOutput;
+        kk = kk+length(newOutput);
+
+        % write output to file if output is full, and reset
+        if kk>1e5
+            fprintf(OPT.fid,output(1:kk-1));
+            kk = 1;
+            output = repmat(char(1),1,1e5);
+        end
     end
 end
 

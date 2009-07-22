@@ -93,7 +93,7 @@ end
 
 output = [];
 for ii = 1:length(coords)
-if ~isempty(coords(ii))
+if ~isempty(coords{ii})
 %% get coordinaets
     coordinates  = sprintf(...
         '%3.8f,%3.8f,%3.3f ',...coords);
