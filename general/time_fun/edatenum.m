@@ -12,7 +12,7 @@ function elapsedtime = edatenum(varargin)
 % Note the argument order convenction: first 1 than 0.
 %
 % Timeunit can be (default 's'):
-% y<ear>,mo<nth>,d<ay>,h<our>,m<inute>,s<econd>
+% y<ear>,mo<nth>,d<ay>,h<our>,mi<nute>,s<econd>
 %
 % See also: ETIME, DATENUM
 
