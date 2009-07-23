@@ -28,7 +28,7 @@ function [grid] = jarkus_transect2grid(transectStruct)
     grid.alongshoreCoordinate  = [sortedUniqueTransectStruct.alongshoreCoordinate];
     
     % find all years
-    grid.year                  = sort(unique([transectStruct.year]));
+    grid.time                  = sort(unique([transectStruct.time]));
     % compute cross-shore grid
     minCrossShoreCoordinate    = min(cellfun(@min, {transectStruct.crossShoreCoordinate}));
     maxCrossShoreCoordinate    = max(cellfun(@max, {transectStruct.crossShoreCoordinate}));
@@ -36,6 +36,6 @@ function [grid] = jarkus_transect2grid(transectStruct)
 
     
     % display result
-    disp(['created a ' num2str(length(grid.crossShoreCoordinate)) ' by ' num2str(length(grid.id)) ' by ' num2str(length(grid.year)) ' grid.']);
+    disp(['created a ' num2str(length(grid.crossShoreCoordinate)) ' by ' num2str(length(grid.id)) ' by ' num2str(length(grid.time)) ' grid.']);
 
 end % end function jarkus_transect2grid

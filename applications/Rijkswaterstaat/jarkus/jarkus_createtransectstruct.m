@@ -18,10 +18,10 @@ function [transect] = jarkus_createtransectstruct()
     
     transect.areaCode             = 0;
     transect.areaName             = '';
-    transect.year                 = 0;
-    transect.alongshoreCoordinate = 0;
-    transect.dateTopo             = 0;
-    transect.dateBathy            = 0;
+    transect.time                 = 0; % days since 1970
+    transect.alongshoreCoordinate = 0; % dam
+    transect.timeTopo             = 0; % days since 1970
+    transect.timeBathy            = 0; % days since 1970
     transect.n                    = 0;
     % this is jarkus specific.... should be moved to another entity 
     % Origin of the data (and combine 1,3 and 5):
@@ -32,9 +32,9 @@ function [transect] = jarkus_createtransectstruct()
     % id=5 non-overlap off shore data
     transect.origin               = []; % row vector of origin codes 
     % row vector of cross-shore distance from pole;
-    transect.crossShoreCoordinate = [];
+    transect.crossShoreCoordinate = []; % m
     % row vector of altitude
-    transect.altitude             = [];
+    transect.altitude             = []; % m positive up
     transect.id                   = 0;
 
 end % end function createtransectstruct

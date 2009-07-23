@@ -11,7 +11,7 @@ function [grid] = jarkus_updategrid(grid, filename, tidefile)
     % First part: update grid with information from raaien.txt
     disp(['Extracting info from ' filename])
     % create a new transect structure
-    transect       = createtransectstruct();
+    transect       = jarkus_createtransectstruct();
     % read all data except first line
     data           = dlmread(filename, '\t', 1,0);
     transect.areaCode = data(:,1);
@@ -27,18 +27,18 @@ function [grid] = jarkus_updategrid(grid, filename, tidefile)
     % find points in the transect which are also in the grid
     [c, ia, ib] = intersect(transect.id, grid.id);
     if (length(c) ~= length(grid.id))
-        warning('found grids which are not present in meta information or vice versa'); 
+        warning('JARKUS:inconsistency', 'found grids which are not present in meta information or vice versa'); 
         % assert.m is not compatible
     end
     nnodata = length(setdiff(transect.id, grid.id));
     if (nnodata)
         msg = sprintf('found %d transects in metadata without data', nnodata);
-        warning(msg);
+        warning('JARKUS:inconsistency', msg);
     end
     nnodata = length(setdiff(grid.id, transect.id));
     if (nnodata)
         msg = sprintf('found %d transects in data without metadata', nnodata);
-        warning(msg);
+        warning('JARKUS:inconsistency', msg);
     end    
     
     %% remove points without metadata
@@ -67,16 +67,18 @@ function [grid] = jarkus_updategrid(grid, filename, tidefile)
     disp(['Extracting info from ' tidefile])
     tideinfo                      = load(tidefile);
     % create a new transect structure
-    transect                      = createtransectstruct();
+    transect                      = jarkus_createtransectstruct();
     transect.areaCode             = tideinfo(:,1);
     transect.alongshoreCoordinate = tideinfo(:,2); 
     transect.id                   = transect.areaCode*1000000 + transect.alongshoreCoordinate;
     transect.meanHighWater        = tideinfo(:,3);
     transect.meanLowWater         = tideinfo(:,4);
     % find points in the transect which are also in the grid
-    [u, v, w] = intersect(transect.id, grid.id);
+    [c, ia, ib] = intersect(grid.id, transect.id);
     % assign MHW and MLW to grid
-    grid.meanHighWater            = transect.meanHighWater(v); 
-    grid.meanLowWater             = transect.meanLowWater(v); 
+    grid.meanHighWater = zeros(size(grid.id)) * nan;
+    grid.meanLowWater = zeros(size(grid.id)) * nan;
+    grid.meanHighWater(ia)            = transect.meanHighWater(ib); 
+    grid.meanLowWater(ia)             = transect.meanLowWater(ib); 
     
 end % end function jarkus_updategrid

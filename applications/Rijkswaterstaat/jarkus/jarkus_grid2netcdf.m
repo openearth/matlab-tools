@@ -13,7 +13,7 @@ STRINGSIZE = 100;
 %     putting attributes
 
     nc_create_empty(filename)
-    nc_padheader ( filename, 200000 );   
+    nc_padheader ( filename, 400000 );   
     
 %% Put global attributes    
     nc_attput( filename, nc_global, 'title'      , 'Jarkus Data');
@@ -71,10 +71,40 @@ STRINGSIZE = 100;
 
     % TODO: change to days since epoch
     s.Name      = 'time';
-    s.Nctype    = nc_int;
+    s.Nctype    = nc_double;
     s.Dimension = {'time'};
-    s.Attribute = struct('Name' ,{'standard_name'          ,'units','comment'         ,'axis'},...
-                         'Value',{'time'                   ,'year' ,'measurement year','T'});
+    s.Attribute = struct('Name' ,{'standard_name'          ,'axis' ,'units'                             ,'comment'         },...
+                         'Value',{'time'                   ,'T'    ,'days since 1970-01-01 00:00 +1:00' ,'measurement year see bathy and time_topo for more details'});
+    nc_addvar(filename, s);
+
+    % smaller variables first
+    [CoordinateSystems, Operations , CoordSysCart ,CoordSysGeo] = GetCoordinateSystems();
+    epsg        = 28992;
+    crs         = CoordinateSystems([CoordinateSystems.coord_ref_sys_code] == epsg);
+    transform   = Operations([Operations.coord_op_code ] == crs.projection_conv_code);
+    s.Name      = 'crs';
+    s.Nctype    = nc_int;
+    s.Dimension = {};
+    s.Attribute = struct('Name', ...
+       {'grid_mapping_name', ...
+        'semi_major_axis', ...
+        'semi_minor_axis', ...
+        'inverse_flattening', ...
+        'latitude_of_projection_origin', ...
+        'longitude_of_projection_origin', ...
+        'false_easting', ...
+        'false_northing', ...
+        'scale_factor_at_projection_origin'}, ...
+        'Value', ...
+        {transform.coordinate_operation_method,...
+        crs.ellipsoid.semi_major_axis, ...
+        crs.ellipsoid.semi_minor_axis, ...
+        crs.ellipsoid.inv_flattening, ...
+        transform.parameters(strcmp({transform.parameters.name},'Latitude_of_natural_origin'    )).value, ...
+        transform.parameters(strcmp({transform.parameters.name},'Longitude_of_natural_origin'   )).value, ...
+        transform.parameters(strcmp({transform.parameters.name},'False_easting'                 )).value, ...
+        transform.parameters(strcmp({transform.parameters.name},'False_northing'                )).value, ...
+        transform.parameters(strcmp({transform.parameters.name},'Scale_factor_at_natural_origin')).value});
     nc_addvar(filename, s);
     
     s.Name      = 'x';
@@ -105,34 +135,7 @@ STRINGSIZE = 100;
                          'Value',{'longitude'    ,'degree_east','Y'});
     nc_addvar(filename, s);
     
-    [CoordinateSystems, Operations , CoordSysCart ,CoordSysGeo] = GetCoordinateSystems();
-    epsg        = 28992;
-    crs         = CoordinateSystems([CoordinateSystems.coord_ref_sys_code] == epsg);
-    transform   = Operations([Operations.coord_op_code ] == crs.projection_conv_code);
-    s.Name      = 'crs';
-    s.Nctype    = nc_int;
-    s.Dimension = {};
-    s.Attribute = struct('Name', ...
-       {'grid_mapping_name', ...
-        'semi_major_axis', ...
-        'semi_minor_axis', ...
-        'inverse_flattening', ...
-        'latitude_of_projection_origin', ...
-        'longitude_of_projection_origin', ...
-        'false_easting', ...
-        'false_northing', ...
-        'scale_factor_at_projection_origin'}, ...
-        'Value', ...
-        {transform.coordinate_operation_method,...
-        crs.ellipsoid.semi_major_axis, ...
-        crs.ellipsoid.semi_minor_axis, ...
-        crs.ellipsoid.inv_flattening, ...
-        transform.parameters(strcmp({transform.parameters.name},'Latitude_of_natural_origin'    )).value, ...
-        transform.parameters(strcmp({transform.parameters.name},'Longitude_of_natural_origin'   )).value, ...
-        transform.parameters(strcmp({transform.parameters.name},'False_easting'                 )).value, ...
-        transform.parameters(strcmp({transform.parameters.name},'False_northing'                )).value, ...
-        transform.parameters(strcmp({transform.parameters.name},'Scale_factor_at_natural_origin')).value});
-    nc_addvar(filename, s);
+
         
     s.Name      = 'angle';
     s.Nctype    = nc_double;
@@ -155,8 +158,75 @@ STRINGSIZE = 100;
                          'Value',{'mean low water', 'm'    , 'mean low water relative to nap'});
     nc_addvar(filename, s);
     
+%% Some extra variables for convenience
+    s.Name      = 'max_cross_shore_measurement';
+    s.Nctype    = nc_int;
+    s.Dimension = {'time', 'alongshore'};
+    s.Attribute = struct('Name' ,{'long_name'                            , 'comment'},...
+                         'Value',{'Maximum cross shore measurement index', 'Index of the cross shore measurement (0 based)'});
+    nc_addvar(filename, s);
+
+    s.Name      = 'min_cross_shore_measurement';
+    s.Nctype    = nc_int;
+    s.Dimension = {'time', 'alongshore'};
+    s.Attribute = struct('Name' ,{'long_name'                            , 'comment'},...
+                         'Value',{'Minimum cross shore measurement index', 'Index of the cross shore measurement (0 based)'});
+    nc_addvar(filename, s);
+    
+    s.Name      = 'rsp_x';
+    s.Nctype    = nc_double;
+    s.Dimension = {'alongshore'};
+    s.Attribute = struct('Name' ,{'long_name'              , 'units'            , 'axis', 'comment'},...
+                         'Value',{'location for beach pole', 'm'                , 'X'   ,'Location of the beach pole (Rijks strand paal)'});
+    nc_addvar(filename, s);
+    
+    s.Name      = 'rsp_y';
+    s.Nctype    = nc_double;
+    s.Dimension = {'alongshore'};
+    s.Attribute = struct('Name' ,{'long_name'              , 'units'            , 'axis', 'comment'},...
+                         'Value',{'location for beach pole', 'm'                , 'Y'   , 'Location of the beach pole (Rijks strand paal)'});
+    nc_addvar(filename, s);
+    
+    s.Name      = 'rsp_lat';
+    s.Nctype    = nc_double;
+    s.Dimension = {'alongshore'};
+    s.Attribute = struct('Name' ,{'long_name'              , 'units'            , 'comment'},...
+                         'Value',{'location for beach pole', 'degrees_north'    , 'Location of the beach pole (Rijks strand paal)'});
+    nc_addvar(filename, s);
+    
+    s.Name      = 'rsp_lon';
+    s.Nctype    = nc_double;
+    s.Dimension = {'alongshore'};
+    s.Attribute = struct('Name' ,{'long_name'              , 'units'            , 'comment'},...
+                         'Value',{'location for beach pole', 'degrees_east'     , 'Location of the beach pole (Rijks strand paal)'});
+    nc_addvar(filename, s);
+
+    
+%% information about measurements    
+    
+    
+    s.Name      = 'time_topo';
+    s.Nctype    = nc_double;
+    s.Dimension = {'time','alongshore'};
+    s.Attribute = struct('Name' ,{'long_name'                     , 'units'                                , 'comment'},...
+                         'Value',{'measurement date of topography', 'days since 1970-01-01 00:00 +1:00'    , 'Measurement date of the topography'});
+    nc_addvar(filename, s);
+    s.Name      = 'time_bathy';
+    s.Nctype    = nc_double;
+    s.Dimension = {'time','alongshore'};
+    s.Attribute = struct('Name' ,{'long_name'                     , 'units'                                , 'comment'},...
+                         'Value',{'measurement date of bathymetry', 'days since 1970-01-01 00:00 +1:00'    , 'Measurement date of the bathymetry'});
+    nc_addvar(filename, s);
+
+    s.Name      = 'origin';
+    s.Nctype    = nc_short;
+    s.Dimension = {'time', 'alongshore', 'cross_shore'};
+    s.Attribute = struct('Name' ,{'long_name'         , 'comment'},...
+                         'Value',{'measurement method', 'Measurement method {1:"..", 3:"...", 5:"...."} used short for space considerations'});
+    nc_addvar(filename, s);    
+    
 %% Store index variables
-    nc_varput(filename, 'time'    , grid.year, [0], [length(grid.year)]);
+    nc_varput(filename, 'time'    , grid.time, [0], [length(grid.time)]);
     nc_varput(filename, 'id'      , grid.id);
     nc_varput(filename, 'areacode', grid.areaCode);
 %    TODO: Hack to store whole array
@@ -170,12 +240,19 @@ STRINGSIZE = 100;
     nc_varput(filename, 'x'          , grid.X);
     nc_varput(filename, 'y'          , grid.Y);
     
+    nc_varput(filename, 'rsp_x'      , grid.x_0);
+    nc_varput(filename, 'rsp_y'      , grid.y_0);
     % converte coordinates
     [CoordinateSystems, Operations] = GetCoordinateSystems();
     [lon, lat] = ConvertCoordinates(grid.X,grid.Y, 28992, 'xy', 4326, 'geo', CoordinateSystems, Operations);
     nc_varput(filename, 'lat', lat);
     nc_varput(filename, 'lon', lon);
-    nc_varput(filename, 'crs', 28992)
+
+    [rsplon, rsplat] = ConvertCoordinates(grid.x_0,grid.y_0, 28992, 'xy', 4326, 'geo', CoordinateSystems, Operations);
+    nc_varput(filename, 'rsp_lat', rsplat)
+    nc_varput(filename, 'rsp_lon', rsplon)
+    
+    
     
     if strmatch('angle', fieldnames(grid))
         nc_varput(filename, 'angle'          , grid.angle);
