@@ -22,19 +22,19 @@ function [Volume] = getVolumeFast(x, z, UpperBoundary, LowerBoundary, LandwardBo
 % -------------------------------------------------------------
 %% check input
 if ~isequal(length(x), length(z))
-error('GETVOLUMEFAST:input','~length(x)=length(z)')
+    error('GETVOLUMEFAST:input','~length(x)=length(z)')
 end
 if UpperBoundary <= LowerBoundary
-error('GETVOLUMEFAST:boundaries','UpperBoundary <= LowerBoundary')
+    error('GETVOLUMEFAST:boundaries','UpperBoundary <= LowerBoundary')
 end
 if LandwardBoundary >= SeawardBoundary
-error('GETVOLUMEFAST:boundaries','LandwardBoundary >= SeawardBoundary')
+    error('GETVOLUMEFAST:boundaries','LandwardBoundary >= SeawardBoundary')
 end
 if LandwardBoundary < min(x(isfinite(z)))
-error('GETVOLUMEFAST:boundaries','LandwardBoundary < min(x)')
+    error('GETVOLUMEFAST:boundaries','LandwardBoundary < min(x)')
 end
 if SeawardBoundary > max(x(isfinite(z)))
-error('GETVOLUMEFAST:boundaries','LandwardBoundary > max(x)')
+    error('GETVOLUMEFAST:boundaries','LandwardBoundary > max(x)')
 end
 %% Z value of SeawardBoundary
 temp=find(x>=SeawardBoundary,1,'first');

@@ -53,7 +53,7 @@ if isempty(LandwardBoundary)
     return
 end
 
-if isempty(LandwardBoundary)
+if isempty(SeawardBoundary)
     warning('transect does not cross LowerBoundary')
     xMKL = NaN;
     return
