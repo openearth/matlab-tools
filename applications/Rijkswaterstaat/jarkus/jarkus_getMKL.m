@@ -59,6 +59,9 @@ if isempty(LandwardBoundary)
     return
 end
 
-volume           = getVolume(x,z,UpperBoundary,LowerBoundary,LandwardBoundary,SeawardBoundary);
+% jarkus_getVolume is really slow, use jarkus_getVolumeFast instead
+% volume           = jarkus_getVolume(x,z,UpperBoundary,LowerBoundary,LandwardBoundary,SeawardBoundary);
+
+volume           = jarkus_getVolumeFast(x,z,UpperBoundary,LowerBoundary,LandwardBoundary,SeawardBoundary);
 
 xMKL             = LandwardBoundary+volume/(UpperBoundary - LowerBoundary);
