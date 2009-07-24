@@ -59,9 +59,14 @@ if isempty(SeawardBoundary)
     return
 end
 
+if LandwardBoundary >= SeawardBoundary
+    warning('can''t calculate MKL position: LandwardBoundary >= SeawardBoundary')
+    xMKL = NaN;
+    return
+end
+
 % jarkus_getVolume is really slow, use jarkus_getVolumeFast instead
 % volume           = jarkus_getVolume(x,z,UpperBoundary,LowerBoundary,LandwardBoundary,SeawardBoundary);
 
 volume           = jarkus_getVolumeFast(x,z,UpperBoundary,LowerBoundary,LandwardBoundary,SeawardBoundary);
-
 xMKL             = LandwardBoundary+volume/(UpperBoundary - LowerBoundary);
