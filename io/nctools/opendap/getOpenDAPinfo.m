@@ -167,13 +167,17 @@ while ~isempty(i)
         datacell = {datacell{1:i-1}  add2cell{:} datacell{i+1:end}}';
     end
     
-    %             i = 1;
     clear add2cell
     tst = cellfun(@strfind, datacell, repmat({'.nc'}, size(datacell)), 'UniformOutput', 0);
     tst = cellfun(@isempty, tst, 'UniformOutput', 0);
     tst = vertcat(tst{:});
     i = find(tst, 1, 'first');
-    disp(['Expanding entry ' num2str(i) ' of ' num2str(length(datacell))])
+    if ~isempty(i)
+        disp(['Expanding entry ' num2str(i) ' of ' num2str(length(datacell))])
+    else
+        disp([' '])
+        disp(['Information from OpenDAP url complete. A total of ' num2str(length(datacell)) ' datafiles was found.'])
+    end
 end
 
 [structpath, filename, ext] = cellfun(@fileparts, datacell, 'UniformOutput', 0);
