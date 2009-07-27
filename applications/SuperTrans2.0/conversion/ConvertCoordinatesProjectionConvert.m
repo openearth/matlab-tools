@@ -1,4 +1,4 @@
-function [y1,x1] = ConvertCoordinatesProjectionConvert(x1,y1,CS,direction,STD)
+function [y1,x1] = ConvertCoordinatesProjectionConvert(x1,y1,CS,proj_conv,direction,STD)
 % CONVERTCOORDINATESPROJECTIONCONVERT 
 % 
 % watch the order of lat-lon / x-y!
@@ -40,9 +40,9 @@ switch direction
     case 'geo2xy', iopt = 1;
 end
     
-param  = CS.conv.param;
-method = CS.conv.method;
-ell = CS.ellips;
+param  = proj_conv.param;
+method = proj_conv.method;
+ell    = CS.ellips;
 
 a    = ell.semi_major_axis;
 invf = ell.inv_flattening;

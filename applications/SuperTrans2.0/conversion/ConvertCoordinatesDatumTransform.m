@@ -1,4 +1,4 @@
-function [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,datum_trans)
+function [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,datum_trans)
 %CONVERTCOORDINATESDATUMTRANSFORM .
 
 %   --------------------------------------------------------------------
@@ -33,14 +33,16 @@ function [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,datum_trans)
 % $HeadURL$
 % $Keywords: $
 
-switch datum_trans.direction
+switch OPT.(datum_trans).direction
     case 'normal',  inv =  1;
     case 'reverse', inv = -1;
 end
-param       = datum_trans.params;
-method_name = datum_trans.method_name;
+param       = OPT.(datum_trans).params;
+method_name = OPT.(datum_trans).method_name;
+ell1        = OPT.(OPT.(datum_trans).ellips1).ellips;
+ell2        = OPT.(OPT.(datum_trans).ellips2).ellips;
 
-switch datum_trans.method_name
+switch method_name
     case {'Geocentric translations','Position Vector 7-param',...
             'Coordinate Frame rotation','Molodensky-Badekas 10-parameter transformation'}
         % convert geographic 2D coordinates to geographic 3D, by assuming
@@ -48,8 +50,8 @@ switch datum_trans.method_name
         h    = zeros(size(lat1));
         
         % convert geographic 3D coordinates to geocentric coordinates
-        a    = datum_trans.ellips1.semi_major_axis;
-        invf = datum_trans.ellips1.inv_flattening;
+        a    = ell1.semi_major_axis;
+        invf = ell1.inv_flattening;
         f    = 1/invf;
         e2   = 2*f-f^2;
         [x,y,z]=ell2xyz(lat1,lon1,h,a,e2);
@@ -82,11 +84,14 @@ switch datum_trans.method_name
                 ii = strmatch('Ordinate 3 of evaluation point',param.name); zp =     param.value(ii);
                 [x,y,z]=MolodenskyBadekas(x,y,z,dx,dy,dz,rx,ry,rz,xp,yp,zp,ds);
         end
-        a     = datum_trans.ellips2.semi_major_axis;
-        invf  = datum_trans.ellips2.inv_flattening;
+
+        % convert geocentric coordinates to geographic 3D coordinates 
+        a     = ell2.semi_major_axis;
+        invf  = ell2.inv_flattening;
         f     = 1/invf;
         e2    = 2*f-f^2;
         [lat2,lon2,h]=xyz2ell(x,y,z,a,e2);
+        % and just forget about h...
     otherwise
         error(['Warning: Datum transformation method ''' method_name ''' not yet supported!']);
 end

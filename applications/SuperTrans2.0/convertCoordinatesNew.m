@@ -127,11 +127,22 @@ OPT.CS1.ellips.semi_minor_axis  = []; % semi minor axis
 OPT.CS1.UoM.name                = []; % unit of measure name of coordinates
 OPT.CS1.UoM.code                = []; % unit of measure code of coordinates
                                       
-OPT.CS1.conv.name               = []; % projection to datum conversion name
-OPT.CS1.conv.code               = []; % projection to datum conversion code
-OPT.CS1.conv.param.val          = []; % conversion paramter values
-OPT.CS1.conv.param.code         = []; % conversion paramter codes
-OPT.CS1.conv.param.name         = []; % conversion paramter names 
+OPT.proj_conv1.name             = []; % projection to datum conversion name
+OPT.proj_conv1.code             = []; % projection to datum conversion code
+OPT.proj_conv1.param.val        = []; % conversion paramter values
+OPT.proj_conv1.param.code       = []; % conversion paramter codes
+OPT.proj_conv1.param.name       = []; % conversion paramter names 
+
+OPT.datum_trans.code            = []; %
+OPT.datum_trans_to_WGS84.code   = []; %
+OPT.WGS84                       = []; % properties of WGS84 ellipsoide for intermediate conversion
+OPT.datum_trans_from_WGS84.code = []; %
+
+OPT.proj_conv2.name             = []; % projection to datum conversion name
+OPT.proj_conv2.code             = []; % projection to datum conversion code
+OPT.proj_conv2.param.val        = []; % conversion paramter values
+OPT.proj_conv2.param.code       = []; % conversion paramter codes
+OPT.proj_conv2.param.name       = []; % conversion paramter names 
 
 OPT.CS2.name                    = []; 
 OPT.CS2.code                    = []; 
@@ -147,15 +158,6 @@ OPT.CS2.ellips.semi_major_axis  = [];
 OPT.CS2.ellips.semi_minor_axis  = []; 
 OPT.CS2.UoM.name                = []; 
 OPT.CS2.UoM.code                = []; 
-OPT.CS2.conv.name               = []; 
-OPT.CS2.conv.code               = []; 
-OPT.CS2.conv.param.val          = []; 
-OPT.CS2.conv.param.code         = []; 
-OPT.CS2.conv.param.name         = []; 
-
-OPT.datum_trans.code            = [];
-OPT.datum_trans_to_WGS84.code   = [];
-OPT.datum_trans_from_WGS84.code = [];
 
 [OPT, Set, Default]     = setPropertyInDeeperStruct(OPT, varargin{:});
 %% error check the input, and find the indices of coordinate systems in data structure 
@@ -184,15 +186,18 @@ OPT.CS2 = ConvertCoordinatesFindEllips(OPT.CS2,STD);
 %% find conversion parameters
 switch OPT.CS1.type
     case 'projected' % Coordinate conversion to radians
-        OPT.CS1 = ConvertCoordinatesFindConversionParams(OPT.CS1,STD);
+        OPT.proj_conv1 = ConvertCoordinatesFindConversionParams(OPT.CS1,STD);
     case 'geographic 2D' % do nothing
+        OPT.proj_conv1 = 'No projection conversion neccessary';
     otherwise, error(['CRS type ''' OPT.CS1.type ''' not supported (yet)',sprintf('\n\n'),var2evalstr(OPT)])
 end
+
 switch OPT.CS2.type
     case 'projected' % Coordinate conversion to radians
-        OPT.CS2 = ConvertCoordinatesFindConversionParams(OPT.CS2,STD);
+        OPT.proj_conv2 = ConvertCoordinatesFindConversionParams(OPT.CS2,STD);
     case 'geographic 2D' % do nothing
-    otherwise, error(['CRS type ''' OPT.CS2.type ''' not supported (yet)',sprintf('\n\n'),var2evalstr(OPT)])
+        OPT.proj_conv2 = 'No projection conversion neccessary';
+    otherwise, error(['CRS type ''' OPT.CS1.type ''' not supported (yet)',sprintf('\n\n'),var2evalstr(OPT)])
 end
 
 %% Transform input coordinates to geographic 2D radians
@@ -200,8 +205,8 @@ switch OPT.CS1.type
     case 'projected' % convert projection to geographic radians
         x1 = convertUnits(x1,OPT.CS1.UoM.name,'metre',STD);
         y1 = convertUnits(y1,OPT.CS1.UoM.name,'metre',STD);
-        [lat1,lon1] = ConvertCoordinatesProjectionConvert(x1,y1,OPT.CS1,'xy2geo',STD);
-    case 'geographic 2D' % do nothing
+        [lat1,lon1] = ConvertCoordinatesProjectionConvert(x1,y1,OPT.CS1,OPT.proj_conv1,'xy2geo',STD);
+    case 'geographic 2D' % do nothing, except for a unit conversion
         lon1 = convertUnits(x1,OPT.CS1.UoM.name,'radian',STD);
         lat1 = convertUnits(y1,OPT.CS1.UoM.name,'radian',STD);
 end
@@ -222,17 +227,17 @@ if strcmp('no datum transformation needed',OPT.datum_trans)
  lon2 = lon1;
 else
     if ~isfield(OPT,'datum_trans_from_WGS84') %only exists when tranforming via WGS 84
-        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT.datum_trans);
+        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,'datum_trans');
     else
-        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT.datum_trans_to_WGS84);
-        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat2,lon2,OPT.datum_trans_from_WGS84);
+        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,'datum_trans_to_WGS84');
+        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat2,lon2,OPT,'datum_trans_from_WGS84');
     end
 end   
 
 %% Transform geographic 2D radians to output coordinates 
 switch OPT.CS2.type
     case 'projected' % convert projection to geographic radians
-        [y2,x2] = ConvertCoordinatesProjectionConvert(lon2,lat2,OPT.CS2,'geo2xy',STD);
+        [y2,x2] = ConvertCoordinatesProjectionConvert(lon2,lat2,OPT.CS2,OPT.proj_conv2,'geo2xy',STD);
         x2 = convertUnits(x2,OPT.CS2.UoM.name,'metre',STD);
         y2 = convertUnits(y2,OPT.CS2.UoM.name,'metre',STD);
     case 'geographic 2D' 
