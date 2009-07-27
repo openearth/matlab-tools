@@ -92,7 +92,7 @@ else
         end
         OPT.datum_trans_from_WGS84.params      = ConvertCoordinatesFindDatumTransParams(STD.coordinate_operation.coord_op_code(ind),STD);
         OPT.datum_trans_from_WGS84.method_code = STD.coordinate_operation.coord_op_method_code(ind);
-        OPT.datum_trans_from_WGS84.method_name = STD.coordinate_operation_method.coord_op_method_name{STD.coordinate_operation_method.coord_op_method_code == OPT.datum_trans_to_WGS84.method_code};
+        OPT.datum_trans_from_WGS84.method_name = STD.coordinate_operation_method.coord_op_method_name{STD.coordinate_operation_method.coord_op_method_code == OPT.datum_trans_from_WGS84.method_code};
         OPT.datum_trans_from_WGS84.ellips1     = 'WGS84';
         OPT.datum_trans_from_WGS84.ellips2     = 'CS2';
     end
