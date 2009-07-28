@@ -191,6 +191,11 @@ if DuneErosionSettings('get', 'DUROS')
             xInitialpreBend = [result(1).xLand; result(1).xActive; result(1).xSea];
             zInitialpreBend = [result(1).zLand; result(1).zActive; result(1).zSea];
             result(end+1) = getDUROSprofile(xInitialpreBend, zInitialpreBend, x0bend, Hsig_t, Tp_t, WL_t, w);
+            % add VTVinfo to result structure
+            result(end).VTVinfo.Xp = x0bend;
+            result(end).VTVinfo.Zp = WL_t;
+            result(end).VTVinfo.Xr = result(end).xActive(1);
+            result(end).VTVinfo.Zr = result(end).zActive(1);
             if x0bendwithinboundaries
                 result(end).info.ID = ['Shifted for coastal bend (Bend = ' num2str(Bend) '^{\circ}; G = ' num2str(G, '%.2f')  ' m^3/m^1)'];
             else
