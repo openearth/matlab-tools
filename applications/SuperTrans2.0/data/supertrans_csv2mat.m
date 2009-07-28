@@ -3,14 +3,14 @@ function varargout = supertrans_csv2mat
 %
 %   <D> = supertrans_csv2mat  
 %
-% reads all *csv required for Supertrans and saves them to mat file
-% (because reading the *.csv files is slow)
+% reads all *csv required for Supertrans and saves them to a mat file
+% called EPSG<new>.mat (because reading the *.csv files is slow)
 %
 % you can load the data with 
 %
-%   D = load('SuperTransData.mat')
+%   D = load('EPSG<new>.mat')
 %
-% See also :supertrans
+% See also :supertrans, convertCoordinates<New>
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

@@ -1360,7 +1360,7 @@ end
          if odd(length(ind))
             ind = [0 ind];
          else
-            ind = [0 ind length(rec)+1];
+            ind = [0 ind (length(recraw)+1)];
          end
          for ii=1:2:length(ind)
             rec = [rec recraw(ind(ii)+1:ind(ii+1)-1)];
@@ -1387,10 +1387,10 @@ end
             if odd(length(ind))
                ind = [0 ind];
             else
-               ind = [0 ind length(rec)+1];
+               ind = [0 ind (length(recraw)+1)];
             end
             for ii=1:2:length(ind)
-               rec = [rec recraw(ind(ii)+1:ind(ii+1)-1)];
+                rec = [rec recraw(ind(ii)+1:ind(ii+1)-1)];
             end
          end       
          

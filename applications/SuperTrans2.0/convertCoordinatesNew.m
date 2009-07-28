@@ -1,61 +1,58 @@
 function [x2,y2,OPT]=convertCoordinatesNew(x1,y1,varargin)
 %CONVERTCOORDINATES transformation between coordinate systems
 %
-% [x2,y2] = convertCoordinatesNew(x1,y1,'keyword','value')
+% [x2,y2,<OPT>] = convertCoordinatesNew(x1,y1,'keyword','value')
 %
-% where OPT contains all conversion parameters that were used. To
-% check this output, use 'var2evalstr(OPT)'
-%
-% x1,y1 are the values of the coordinates to be transformed, either
-%       in X-Y or Lon-Lat.
-% x2,y2 are the values of the coordinates after transformation, either
-%       in X-Y or Lon-Lat.
+% x1,y1: values of the coordinates to be transformed   , either X-Y or Lon-Lat.
+% x2,y2: values of the coordinates after transformation, either X-Y or Lon-Lat.
+% OPT  : contains all conversion parameters that were used.
+%        To check this output, use 'var2evalstr(OPT)'.
 % 
-% Optionally the data structure with EPSG codes van be pre loaded, this 
+% Optionally the data structure with EPSG codes van be pre-loaded, this 
 % greatly speeds up the routine if many calls are made. The call is either 
 %
-% [x2,y2,OPT] = convertCoordinatesNew(x1,y1,'keyword','value')
-% 
-% Or:
-% D = load('EPSGnew');
-% [x2,y2,OPT] = convertCoordinatesNew(x1,y1,D,'keyword','value')
+%    EPSG        = load('EPSGnew');
+%    [x2,y2,OPT] = convertCoordinatesNew(x1,y1,EPSG,'keyword','value')
+%                  % or
+%    [x2,y2,OPT] = convertCoordinatesNew(x1,y1,     'keyword','value')
 %
-% The most important keyword value pairs are the indetifiers for the
-% coordinate systems 'Coordinate System 1' (CS1) and 'Coordinate System 2'
-% (CS2). Any combination of name, type and code that indetifies a unique
-% coordinate system will do.
+% The most important keyword value pairs are the identifiers for the
+% coordinate systems:
+%    (from) 'Coordinate System 1' (CS1)
+%    (to)   'Coordinate System 2' (CS2).
 %
-% CS1.name                   = []; % coordinate system name
-% CS1.code                   = []; % coordinate system reference code 
-% CS1.type                   = []; % projection type
-% 
-%   projection types supported:
-%   projected, geographic 2D
-% 
-%   projection not (yet) supported:
-%   engineering, geographic 3D, vertical, geocentric,  compound
-% 
-%   allowed synonyms for 'projected':
-%   'xy','proj','cartesian','cart'
-%   allowed sysnonyms for 'geographic 2D':
-%   'geo','geographic2d','latlon','lat lon','geographic'
+% Any combination of name, type and code that indetifies a unique
+% coordinate system will do, e.g.:
 %
-% Example: 4 different notations of 1 single case
+%    CS1.name                   = []; % coordinate system name
+%    CS1.code                   = []; % coordinate system reference code 
+%    CS1.type                   = []; % projection type
+% 
+% projection types supported    : projected  , geographic 2D
+% projection not (yet) supported: engineering, geographic 3D, vertical, geocentric,  compound
+% 
+% allowed synonyms for 'projected'    : 'xy' ,'proj'  ,'cartesian','cart'
+% allowed synonyms for 'geographic 2D': 'geo','latlon','lat lon'  ,'geographic','geographic2d'
 %
-%    [x,y,OPT]=convertCoordinatesNew(52,5,'CS1.name','WGS 84','CS1.type','geo','CS2.name','WGS 84 / UTM zone 31N','CS2.type','xy')
-%    [x,y,OPT]=convertCoordinatesNew(52,5,'CS1.code',4326                     ,'CS2.name','WGS 84 / UTM zone 31N')
+% Example: 4 different notations of 1 single transformation case:
+%
+%    [x,y,OPT]=convertCoordinatesNew(52,5,  'CS1.name','WGS 84','CS1.type','geo','CS2.name','WGS 84 / UTM zone 31N','CS2.type','xy')
+%    [x,y,OPT]=convertCoordinatesNew(52,5,  'CS1.code',4326                     ,'CS2.name','WGS 84 / UTM zone 31N')
 %
 %    D = load('EPSGnew')
+%
 %    [x,y,OPT]=convertCoordinatesNew(52,5,D,'CS1.name','WGS 84','CS1.type','geo','CS2.code',32631)
 %    [x,y,OPT]=convertCoordinatesNew(52,5,D,'CS1.code',4326                     ,'CS2.code',32631)
 %
-% Example: decimal degree to sexagesimal DMS conversion
+% Example: decimal degree to sexagesimal DMS conversion:
 %
-% [lon,lat,OPT]=convertCoordinatesNew(52,5.5,'CS1.code',4326,'CS2.code',4326,'CS2.UoM.name','sexagesimal DMS')
+%   [lon,lat,OPT]=convertCoordinatesNew(52,5.5,'CS1.code',4326,'CS2.code',4326,'CS2.UoM.name','sexagesimal DMS')
 %
 % Note: (x1,y1) can be vectors or matrices (vectorized).
 %
-% See also: SuperTransData
+% To find specifications of coordinate systems (name <=> code): <a href="http://www.epsg-registry.org">http://www.epsg-registry.org</a>.
+%
+% See also: SuperTransData, EPSG
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -160,29 +157,37 @@ OPT.CS2.UoM.name                = [];
 OPT.CS2.UoM.code                = []; 
 
 [OPT, Set, Default]     = setPropertyInDeeperStruct(OPT, varargin{:});
+
 %% error check the input, and find the indices of coordinate systems in data structure 
 % replace synonyms with default names. e.g. replace 'geo' with 'geographic 2D'
 % reference system
 OPT.CS1 = ConvertCoordinatesCheckInput(OPT.CS1,STD);
 OPT.CS2 = ConvertCoordinatesCheckInput(OPT.CS2,STD);
+
 %% find coordinate reference system
 OPT.CS1 = ConvertCoordinatesFindCoordRefSys(OPT.CS1,STD);
 OPT.CS2 = ConvertCoordinatesFindCoordRefSys(OPT.CS2,STD);
+
 %% find coordinate system
 OPT.CS1 = ConvertCoordinatesFindCoordSys(OPT.CS1,STD);
 OPT.CS2 = ConvertCoordinatesFindCoordSys(OPT.CS2,STD);
+
 %% find coordinate system unit of measure
 OPT.CS1 = ConvertCoordinatesFindUoM(OPT.CS1,STD);
 OPT.CS2 = ConvertCoordinatesFindUoM(OPT.CS2,STD);
+
 %% find geographic reference system
 OPT.CS1 = ConvertCoordinatesFindGeoRefSys(OPT.CS1,STD);
 OPT.CS2 = ConvertCoordinatesFindGeoRefSys(OPT.CS2,STD);
+
 %% find datum
 OPT.CS1 = ConvertCoordinatesFindDatum(OPT.CS1,STD);
 OPT.CS2 = ConvertCoordinatesFindDatum(OPT.CS2,STD);
+
 %% find ellips
 OPT.CS1 = ConvertCoordinatesFindEllips(OPT.CS1,STD);
 OPT.CS2 = ConvertCoordinatesFindEllips(OPT.CS2,STD);
+
 %% find conversion parameters
 switch OPT.CS1.type
     case 'projected' % Coordinate conversion to radians

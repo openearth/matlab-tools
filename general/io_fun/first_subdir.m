@@ -10,6 +10,7 @@ function start_of_PATHSTR = first_subdir(fullfilename,varargin)
 % Example
 % subdir = first_subdir(file,0)   gives full path
 % subdir = first_subdir(file,1)   gives drive (e.g. d:\)
+% subdir = first_subdir(file,-1)  removes last subdirectory from path
 %
 % See also: FILEPARTS, filepathstr, filename, filenameext, last_subdir
 
