@@ -1,5 +1,32 @@
-function [output] = KML_line(lat,lon,z,OPT)
-% KML_LINE write a kml line
+function [output] = KML_line(lat,lon,z,varargin)
+%KML_LINE  low-level routine for creating KML string of line
+%
+%   kmlstring = KML_line(lat,lon,z,<keyword,value>)
+%
+% where the following <keyword,value> pairs have been implemented:
+%
+%   * styleName   name of previously define style with KML_style
+%                 (required, default 'black' being default of KML_style)
+%   * visibility  0 or 1, default 1
+%   * extrude     0 or 1, default 1
+%   * timeIn      timestring of appearance of line, default []
+%   * timeOut     timestring of appearance of line, default [];
+%   * name        name of line object in kml temporary places list, default 'ans.kml'
+%
+% Example: a red line
+%
+%     fid         = fopen('a_red_line.kml','w');
+%     S.name      = 'red';
+%     S.lineColor = [1 0 0];  % color of the lines in RGB 
+%     S.lineAlpha = [1] ;     % transparency of the line, (0..1) with 0 transparent
+%     S.lineWidth = 1;        % line width, can be a fraction
+%     
+%     kml         = KML_header('name','curl');
+%     kml         = [kml KML_style(S)];
+%     kml         = [kml KML_line(-90:90,-180:2:180,0:1:180,'styleName',S.name)];
+%     kml         = [kml KML_footer];
+%     fprintf(fid,kml);
+%     fclose (fid);
 %
 % See also: KML_footer, KML_header, KML_poly, KML_style, KML_stylePoly,
 % KML_text, KML_upload
@@ -35,6 +62,21 @@ function [output] = KML_line(lat,lon,z,OPT)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
+
+%% Properties
+
+OPT.styleName  = [];
+OPT.visibility = 1;
+OPT.extrude    = 0;
+OPT.timeIn     = [];
+OPT.timeOut    = [];
+OPT.name       = '';
+
+OPT = setProperty(OPT,varargin{:});
+
+if isempty(OPT.styleName)
+   warning('property ''stylename'' required')
+end
 
 %% preprocess visibility
 if  ~OPT.visibility
@@ -78,11 +120,11 @@ else
         '<altitudeMode>absolute</altitudeMode>\n'],...
         extrude);
 end
-%% put all coordinates in one vector and split vector at nan's
 
-coordinates=[lon(:)'; lat(:)'; z(:)'];
-nanindex=find(any(isnan(coordinates),1));
-nanindex(end+1)=length(coordinates(1,:))+1;
+%% put all coordinates in one vector and split vector at nan's
+coordinates     = [lon(:)'; lat(:)'; z(:)'];
+nanindex        = find(any(isnan(coordinates),1));
+nanindex(end+1) = length(coordinates(1,:))+1;
 
 coords{1}=coordinates(:,1:nanindex(1)-1);
 if length(nanindex)>1
@@ -116,3 +158,5 @@ if ~isempty(coords{ii})
         visibility,timeSpan,OPT.name,OPT.styleName,extrude,altitudeMode,coordinates)];
 end
 end
+
+%% EOF

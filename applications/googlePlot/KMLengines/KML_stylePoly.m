@@ -1,5 +1,7 @@
-function [output] = KML_stylePoly(OPT)
-% KML_STYLEPOLY define polygon style
+function [output] = KML_stylePoly(varargin)
+%KML_STYLEPOLY low-level routine for creating KML string of polygon style
+%
+% <documentation not yet finished>
 %
 % See also: KML_footer, KML_header, KML_line, KML_poly, KML_style, 
 % KML_text, KML_upload
@@ -36,10 +38,19 @@ function [output] = KML_stylePoly(OPT)
 % $HeadURL$
 % $Keywords: $
 
-%% 
-temp = dec2hex(round([OPT.lineAlpha, OPT.lineColor].*255),2);
+%% Properties
+
+OPT.lineColor  = [0 0 0];
+OPT.lineAlpha  = 1;
+OPT.name       = 'black';
+OPT.lineWidth  = 1;
+
+OPT = setProperty(OPT,varargin{:});
+
+%% type STYLE
+temp      = dec2hex(round([OPT.lineAlpha, OPT.lineColor].*255),2);
 lineColor = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
-temp = dec2hex(round([OPT.fillAlpha, OPT.fillColor].*255),2);
+temp      = dec2hex(round([OPT.fillAlpha, OPT.fillColor].*255),2);
 fillColor = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
 
 output = sprintf([...

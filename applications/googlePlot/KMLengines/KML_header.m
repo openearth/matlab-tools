@@ -1,5 +1,12 @@
-function [output] = KML_header(OPT)
-% KML_HEADER write a kml header
+function [output] = KML_header(varargin)
+%KML_HEADER  low-level routine for creating KML string of header
+%
+%   kml = KML_header(<keyword,value>)
+%
+% where the following <keyword,value> pairs have been implemented:
+%
+%   * name        name of kml file (default 'ans.kml')
+%   * open        whether to open kml file in GoogleEarth in call of KMLline(default 0)
 %
 % See also: KML_footer, KML_line, KML_poly, KML_style, KML_stylePoly,
 % KML_text, KML_upload
@@ -35,6 +42,13 @@ function [output] = KML_header(OPT)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
+
+%% Properties
+
+OPT.open       = [];
+OPT.name       = 'ans.kml';
+
+OPT = setProperty(OPT,varargin{:});
 
 %% type HEADER
 output = sprintf([...

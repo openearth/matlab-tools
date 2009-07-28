@@ -1,6 +1,8 @@
-function [output] = KML_text(lat,lon,text)
-% KML_TEXT adds text to a kml file
-% 
+function [output] = KML_text(lat,lon,text,varargin)
+%KML_TEXT   low-level routine for creating KML string of text
+%
+%   kmlstring = KML_text(lat,lon,text)
+%
 % See also: KML_footer, KML_header, KML_line, KML_poly, KML_style, 
 % KML_stylePoly, KML_upload
 
@@ -44,3 +46,5 @@ output = sprintf([...
 	'<Point>	<coordinates>%3.8f,%3.8f,0</coordinates></Point>'...
 	'</Placemark>'],...
     text,lon,lat);
+
+%% EOF

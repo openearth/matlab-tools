@@ -1,5 +1,14 @@
-function [output] = KML_style(OPT)
-% KML_STYLE define line style
+function [output] = KML_style(varargin)
+%KML_STYLE low-level routine for creating KML string of line style
+%
+%   kmlstring = KML_style(<keyword,value>)
+%
+% where the following <keyword,value> pairs have been implemented:
+%
+%   * name        name of style (default '')
+%   * lineColor   color of the lines in RGB (0..1) values, default ()
+%   * lineAlpha   transparency of the line, (0..1) with 0 transparent
+%   * lineWidth   line width, can be a fraction
 %
 % See also: KML_footer, KML_header, KML_line, KML_poly, KML_stylePoly,
 % KML_text, KML_upload
@@ -36,16 +45,31 @@ function [output] = KML_style(OPT)
 % $HeadURL$
 % $Keywords: $
 
-%% 
-temp = dec2hex(round([OPT.lineAlpha, OPT.lineColor].*255),2);
+%% Properties
+
+OPT.name       = 'black';
+OPT.lineColor  = [0 0 0];
+OPT.lineAlpha  = 1;
+OPT.lineWidth  = 1;
+
+OPT = setProperty(OPT,varargin{:});
+
+if isempty(OPT.name)
+   warning('property ''name'' required')
+end
+
+%% type STYLE
+temp      = dec2hex(round([OPT.lineAlpha, OPT.lineColor].*255),2);
 lineColor = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
 
 output = sprintf([...
-    '<Style id="%s">\n'...
+    '<Style id="%s">\n'...OPT.name
     '<LineStyle>\n'...
-    '<color>%s</color>\n'...
-    '<width>%d</width>\n'...
+    '<color>%s</color>\n'...lineColor
+    '<width>%d</width>\n'...OPT.lineWidth
     '</LineStyle>\n'...
     '<open>1</open>\n',...
     '</Style>\n'],...
     OPT.name,lineColor,OPT.lineWidth);
+
+%% EOF

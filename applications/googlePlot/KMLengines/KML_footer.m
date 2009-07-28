@@ -1,5 +1,7 @@
-function [output] = KML_footer()
-% KML_FOOTER write a kml footer
+function [output] = KML_footer(varargin)
+%KML_FOOTER  low-level routine for creating KML string of footer
+%
+%   kml = KML_footer
 %
 % See also: KML_header, KML_line, KML_poly, KML_style, KML_stylePoly,
 % KML_text, KML_upload

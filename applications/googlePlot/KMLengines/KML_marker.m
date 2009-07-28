@@ -1,5 +1,7 @@
-function [output] = KML_marker(lat,lon,OPT)
-% KML_MARKER adds a marker to a kml file
+function [output] = KML_marker(lat,lon,varargin)
+%KML_MARKER     low-level routine for creating KML string of marker
+%
+% <documentation not yet finished>
 % 
 % See also: KML_footer, KML_header, KML_line, KML_poly, KML_style, 
 % KML_stylePoly, KML_upload
@@ -45,3 +47,5 @@ output = sprintf([...
 	'<Point><coordinates>%3.8f,%3.8f,0</coordinates></Point>'...
 	'</Placemark>'],...
     OPT.text,OPT.description,OPT.icon,lon,lat);
+
+%% EOF

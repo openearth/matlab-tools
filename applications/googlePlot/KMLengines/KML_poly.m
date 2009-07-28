@@ -1,5 +1,7 @@
-function [output] = KML_poly(lat,lon,z,OPT)
-% KML_POLY write a kml polygon
+function [output] = KML_poly(lat,lon,z,varargin)
+%KML_POLY  low-level routine for creating KML string of polygon
+%
+% <documentation not yet finished>
 %
 % See also: KML_footer, KML_header, KML_line, KML_style, KML_stylePoly,
 % KML_text, KML_upload
@@ -36,6 +38,23 @@ function [output] = KML_poly(lat,lon,z,OPT)
 % $HeadURL$
 % $Keywords: $
 
+%% Properties
+
+OPT.styleName  = [];
+OPT.visibility = 1;
+OPT.extrude    = 0;
+OPT.timeIn     = [];
+OPT.timeOut    = [];
+OPT.name       = '';
+
+OPT = setProperty(OPT,varargin{:});
+
+if isempty(OPT.styleName)
+   warning('property ''stylename'' required')
+end
+
+%%
+
 if all(isnan(z(:)))
     output = '';
     return
@@ -54,12 +73,20 @@ else
 end
 %% preproces timespan
 if  ~isempty(OPT.timeIn)
-    timeSpan = sprintf([...
-        '<TimeSpan>\n'...
-        '<begin>%s</begin>\n'...OPT.timeIn
-        '<end>%s</end>\n'...OPT.timeOut
-        '</TimeSpan>\n'],...
-        OPT.timeIn,OPT.timeOut);
+    if ~isempty(OPT.timeOut)
+        timeSpan = sprintf([...
+            '<TimeSpan>\n'...
+            '<begin>%s</begin>\n'...OPT.timeIn
+            '<end>%s</end>\n'...OPT.timeOut
+            '</TimeSpan>\n'],...
+            OPT.timeIn,OPT.timeOut);
+    else
+        timeSpan = sprintf([...
+            '<TimeStamp>\n'...
+            '<when>%s</when>\n'...OPT.timeIn
+            '</TimeStamp>\n'],...
+            OPT.timeIn);
+    end
 else
     timeSpan ='';
 end
@@ -98,3 +125,5 @@ output = sprintf([...
     '</Polygon>\n'...
     '</Placemark>\n'],...
     visibility,timeSpan,OPT.name,OPT.styleName,altitudeMode,coordinates);
+
+%% EOF
