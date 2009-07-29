@@ -1,4 +1,4 @@
 [lat,lon] = meshgrid([51:54],[3:7]);
 
-kmlline(lat ,lon ,'fileName','KMLline_testh.kml','lineColor',[0 1 1],'kmlName','horizontal','text',{'a','b','c','d'});
-kmlline(lat',lon','fileName','KMLline_testv.kml','lineColor',[1 0 0],'kmlName','vertical'  ,'text',{'a','b','c','d','e'});
+kmlline(lat ,lon ,'fileName','KMLline_testh.kml','lineColor',jet(2),'kmlName','horizontal','text',{'1','2','3','4'});
+kmlline(lat',lon','fileName','KMLline_testv.kml','lineWidth',[1 3 3],'kmlName','vertical'  ,'text',{'a','b','c','d','e'});

@@ -124,6 +124,9 @@ lon = mod(lon+180, 360)-180;
 % linestyles.
 if numel(OPT.lineWidth) + numel(OPT.lineColor)+OPT.lineAlpha == 5
     % one linestyle, do nothing
+    
+    ind = 1;
+    OPT.styleNR = ones(size(lat,2),1);
 else
     % multiple styles
     
@@ -138,7 +141,9 @@ else
     OPT.lineAlpha = OPT.lineAlpha(:);
     OPT.lineAlpha = [repmat(OPT.lineAlpha,floor(size(lat,2)/length(OPT.lineAlpha)),1);...
                     OPT.lineAlpha(1:rem(size(lat,2),length(OPT.lineAlpha)))];
-
+     
+    % find unique linestyles
+    [ignore,ind,OPT.styleNR] = unique([OPT.lineWidth,OPT.lineColor,OPT.lineAlpha],'rows');
 end
 
 
@@ -162,7 +167,7 @@ OPT_header = struct(...
 output = KML_header(OPT_header);
 
 %% define line styles
-[ignore,ind,OPT.styleNR] = unique([OPT.lineWidth,OPT.lineColor,OPT.lineAlpha],'rows');
+
 for ii = 1:length(ind);
     OPT_style = struct(...
         'name',['style' num2str(ii)],...
