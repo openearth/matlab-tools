@@ -4,10 +4,14 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 %   DATA         = delft3d_io_mdf('read' ,<filename>,<keyword,value>);
 %  [DATA,iostat] = delft3d_io_mdf('read' ,<filename>,<keyword,value>);
 %
-%  iostat = delft3d_io_mdf('write',filename,DATA.keywords);
+%         iostat = delft3d_io_mdf('write',filename,DATA.keywords);
 % 
 % where iostat= 1 when writing was succesful, 
 % and iostat=-1/-2/-3 when error finding/opening/reading file.
+%
+%  [DATA,iostat] = delft3d_io_mdf('new')
+%
+% loads a template ewith all known keywords (incl. mutually exclusive ones)
 %
 % Note that the keywords in the mdf file are not case sensitive,
 % whereas the field names in matlab are case sensitive. When reading file
@@ -21,7 +25,7 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 % case='auto', in which case multiple instances of the same keyword with 
 % different cases can end up in the MDF file.
 %
-% Comment lines are written but cannot not be written to mdf file.
+% Comment lines are read but cannot not be written to mdf file.
 %
 % Storage flags for map data (trim only)
 % 
@@ -63,6 +67,7 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 % Oct 27 2006: added iostat catchers
 % Jul 11 2007: added reading of comments and employed strcmpi everwhere
 % Aug 27 2007: added keywords whose numerical values need to written column wise (Thick,Rettis,Rettib,s0,c01,c02,c03,c04,c01)
+% jul 29 2009: fixed error: now keep comment text & added cmd to read template ('new')
 
 % TO DO: when writing use preferred order of mdf file (ident 1st, then a comment etc.
 
@@ -126,7 +131,7 @@ if (nargin ==1) & strcmpi(cmd,'read')
          iostat         = 1;
       end
       nextarg = 1;
-  elseif (nargin ==1) & ~strcmpi(cmd,'read')
+  elseif (nargin ==1) & strcmpi(cmd,'write')
       error('for write 2 input parameters required: delft3d_io_mdf(''write'',filename,DATA)')
   elseif nargin>1      
       fname   = varargin{1};
@@ -177,6 +182,27 @@ case 'write'
      error(['Error opening file: ',varargin{1}])
   end;
   
+case 'new'
+
+  basepath = fileparts(mfilename('fullpath'));
+  fname    = [basepath,filesep,'template_extensions.mdf'];
+  
+  if     nargout ==1
+  
+     [DAT       ] = Local_read(fname);
+     varargout  = {DAT};
+  
+  elseif nargout  == 2
+  
+     [DAT,iostat] = Local_read(fname);
+     varargout  = {DAT,iostat};
+  
+  elseif nargout >2
+  
+     error('too much output parameters: 1 or 2')
+  
+  end
+
 end;
 
 % ------------------------------------
@@ -281,11 +307,13 @@ elseif length(tmp)>0
          %% Look for strings
          %% ------------------------
 
+         if ~strcmpi(keyword,'commnt')
          [string,strstat] = strselect(value,'#');
          if strstat ==1
             value = string;
          else
             value =str2num(value);
+         end
          end
          
          %% Assign value
