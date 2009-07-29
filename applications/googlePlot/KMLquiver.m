@@ -1,6 +1,8 @@
 function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 % KMLQUIVER Just like quiver
 %
+%    [<OPT, Set, Default>] = KMLquiver(lat,lon,u,v,<keyword,value>)
+%
 % Keywords:
 % 
 % 'arrowScale': Arrows lengths are plotted in meters (for easy measuring of
@@ -12,7 +14,9 @@ function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 %               nicer arrow yourself, it can easily be added to the
 %               presets. 
 %
-% see the keyword/value pair defaults for additional options
+% For the additional <keyword,value> pairs call
+%
+%    OPT = KMLquiver()
 %
 % Example:
 %
@@ -152,6 +156,10 @@ switch lower(OPT.arrowStyle)
         OPT2.lineWidth      = 2;
     otherwise 
         error('unsupported Arrow %s', OPT.arrow)
+end
+
+if nargin==0
+    return
 end
 
 %delete empty OPT fieldnames before merge

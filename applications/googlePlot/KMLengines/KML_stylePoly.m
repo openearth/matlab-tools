@@ -40,10 +40,18 @@ function [output] = KML_stylePoly(varargin)
 
 %% Properties
 
-OPT.lineColor  = [0 0 0];
-OPT.lineAlpha  = 1;
-OPT.name       = 'black';
-OPT.lineWidth  = 1;
+OPT.lineColor   = [0 0 0];
+OPT.lineAlpha   = 1;
+OPT.name        = 'black';
+OPT.lineWidth   = 1;
+OPT.fillColor   = [1 0 0];
+OPT.fillAlpha   = 1;
+OPT.polyFill    = 1;
+OPT.polyOutline = 1;
+
+if nargin==0
+    return
+end
 
 OPT = setProperty(OPT,varargin{:});
 
@@ -54,16 +62,16 @@ temp      = dec2hex(round([OPT.fillAlpha, OPT.fillColor].*255),2);
 fillColor = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
 
 output = sprintf([...
-    '<Style id="%s">\n'...OPT.name
+    '<Style id="%s">\n'...       % OPT.name
     '<LineStyle>\n'...
-    '<color>%s</color>\n'...lineColor
-    '<width>%d</width>\n'...OPT.lineWidth
+    '<color>%s</color>\n'...     % lineColor
+    '<width>%d</width>\n'...     % OPT.lineWidth
     '</LineStyle>\n'...
     '<open>1</open>\n',...
     '<PolyStyle>\n'...
-    '<color>%s</color>\n'...fillColor
-    '<outline>%d</outline>\n'...OPT.polyOutline
-    '<fill>%d</fill>\n'...OPT.polyFill
+    '<color>%s</color>\n'...     % fillColor
+    '<outline>%d</outline>\n'... % OPT.polyOutline
+    '<fill>%d</fill>\n'...       % OPT.polyFill
     '</PolyStyle>\n'...
     '</Style>\n'],...
     OPT.name,lineColor,OPT.lineWidth,fillColor,OPT.polyOutline,OPT.polyFill);

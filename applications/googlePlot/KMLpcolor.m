@@ -1,8 +1,14 @@
 function [OPT, Set, Default] = KMLpcolor(lat,lon,c,varargin)
 % KMLPCOLOR Just like pcolor
+%
+%    [<OPT, Set, Default>] = KMLpcolor(lat,lon,c,<keyword,value>)
 % 
 % If c and lat have the same dimensions, c is calculated as the mean value 
 % of the surrounding gridpoints. 
+%
+% For the additional <keyword,value> pairs call
+%
+%    OPT = KMLpcolor()
 %
 % see the keyword/vaule pair defaults for additional options
 %
@@ -61,21 +67,25 @@ end
 %% process varargin
 z = 'clampToGround';
 
-OPT.fileName = [];
-OPT.kmlName = 'untitled';
-OPT.lineWidth = 1;
-OPT.lineColor = [0 0 0];
-OPT.lineAlpha = 1;
-OPT.colormap = 'jet';
-OPT.colorSteps = 16;
-OPT.fillAlpha = 0.6;
-OPT.fileName = '';
+OPT.fileName    = [];
+OPT.kmlName     = 'pcolor';
+OPT.lineWidth   = 1;
+OPT.lineColor   = [0 0 0];
+OPT.lineAlpha   = 1;
+OPT.colormap    = 'jet';
+OPT.colorSteps  = 16;
+OPT.fillAlpha   = 0.6;
+OPT.fileName    = '';
 OPT.polyOutline = 1;
-OPT.polyFill = 1;
-OPT.openInGE = false;
+OPT.polyFill    = 1;
+OPT.openInGE    = false;
 OPT.reversePoly = false;
-OPT.extrude = 0;
+OPT.extrude     = 0;
 OPT.cLim = [min(c(:)) max(c(:))];
+
+if nargin==0
+    return
+end
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
 %% get filename
