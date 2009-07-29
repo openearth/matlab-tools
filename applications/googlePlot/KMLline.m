@@ -122,7 +122,7 @@ lon = mod(lon+180, 360)-180;
 % if so, then repeat each style for size(lat,2) (that's the number of lines
 % to draw), put them all in one matrix, and the ndefine the unique
 % linestyles.
-if numel(OPT.lineColor)+numel(OPT.lineStyle)+OPT.lineAlpha == 5
+if numel(OPT.lineWidth) + numel(OPT.lineColor)+OPT.lineAlpha == 5
     % one linestyle, do nothing
 else
     % multiple styles
@@ -184,7 +184,7 @@ kk = 1;
 % line properties
 OPT_line = struct(...
     'name','',...
-    'styleName',['style' num2str(OPT.style(1))],...
+    'styleName',['style' num2str(OPT.styleNR(1))],...
     'visibility',1,...
     'extrude',0);
 
