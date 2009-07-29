@@ -16,7 +16,7 @@ function data = pontosmatread(matfilename)
 %   data = pontosmatread(matfilename)
 %
 %   Input:
-%   matfilename  = filename of the Pontos mat files
+%   matfilename  = filename of the PonTos mat files (PonTos output)
 %
 %   Output:
 %   data = struct containing PonTos output blocks
@@ -27,6 +27,53 @@ function data = pontosmatread(matfilename)
 %   data = pontosmatread(matfilename);
 %
 %   See also tekal.m from the Delft3D matlab toolbox
+%
+% Alphabetic  summary of output blocks
+% CLnn    MCL-layer positions
+% CPnn    Coastal Profile location
+% CSyy    Coastal Sectoral relative change per layer
+% CXyy    longshore relative change per layer
+% DXyy    total yearly longshore disharge and flow velocity distribution
+% FX      Layer levels and sedimentsize
+% GL      Groyne locations
+% HCND    Hydraulic conditions (waves, waterlevels and currents)
+% NLSyy   Distribution of Layer Auto-Nourished Volumes per section
+% NLXyy   Longshore distribution of Layer Auto-Nourished Volumes
+% NTSyy   Distribution of total Nourished Volumes per section
+% NTXyy   Longshore distribution of total Nourished Volumes
+% PLnn    Location of local Profile no. nn
+% QPnn    Compound Q-Phi curve for wave climate table no. nn
+% QTyy    total yearly Tide-induced longshore transport rate
+% QWyy    total yearly Wave-induced longshore transport rate
+% QXyy    total yearly longshore transport rate
+% QYyy    total yearly cross-shore transport rate
+% SBnn    Boundary position coastal Section no. nn
+% SB-I    Inner boundary positions
+% SB-O    Outer boundary positions
+% SGnn    Structure - Groyne no. nn
+% SGA     Structure - All groynes
+% SVyy    Summary of Section Volumes changes at output yy
+% TCnn    Time evolution of Cross-shore transport in local Profile no. nn
+% TCS     Overview of Tidal Climate Stations
+% TGV     Time evolution of Global Volumes
+% THC     Time evolution of Hydraulic Conditions
+% TNLS    Auto-layer nourished volumes per section
+% TNV     Time evolution of Nourishment Volumes
+% TPnn    Time evolution of Coastal Profile no. nn
+% TQnn    Time evolution of Longshore transport at section boundary no. nn
+% TSnn    Time evolution of coastal Section no. nn
+% TSA     Time evolution of All coastal Sections
+% TTS     Time evolution of Time Stepping data
+% WCS     Overview of Wave Climate Stations
+% WXyy    Relative layer distances at output yy
+% XCyy    Layer contour position using cell Centres
+% XYyy    Layer contour position using cell boundaries
+% YCLy    Position of MCL at output yy
+% YZnnyy  cross-shore profile no. nn at output yy
+%
+% With nn for specific number
+%      yy at a specific time interval
+
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -81,21 +128,21 @@ while ischar(tline)
         tmpline = tline;
         tmpline(findstr(tline,'active layers'):end) = [];
         tmpline(1) = [];
-        nroflayers = str2double(tmpline);
+        data.nroflayers = str2double(tmpline);
     end
-
+    
     if findstr(tline,'specific sections active');                           % find number of active sections
         tmpline = tline;
         tmpline(findstr(tline,'specific sections active'):end) = [];
         tmpline(1) = [];
-        nrofsections = str2double(tmpline);
+        data.nrofsections = str2double(tmpline);
     end
     
     if findstr(tline,'groyne(s) active');                                   % find number of active groynes
         tmpline = tline;
         tmpline(findstr(tline,'groyne(s) active'):end) = [];
         tmpline(1) = [];
-        nrofgroynes = str2double(tmpline);
+        data.nrofgroynes = str2double(tmpline);
     end
     
     if findstr(tline,'output intervals');                                   % find number of active layers
@@ -116,64 +163,15 @@ while ischar(tline)
 end
 fclose(fid);
 
-outputtimes = tstart:(tstop-tstart)/(outputintervals-1):tstop;
-
-SGi = NaN(nrofgroynes,1);                                                   % Structure - Groyne
-SBi = NaN(nrofsections,1);                                                  % Section boundarues
-NLSi = NaN(outputintervals-1,1);                                            % Distribution of Layer Auto-Nourished Volumes per section
-NLXi = NaN(outputintervals-1,1);                                            % Longshore distribution of Layer Auto-Nourished Volumes
-QTi = NaN(outputintervals,1);                                               % Total yearly Tide-induced longshore transport rate
+data.years = tstart:(tstop-tstart)/(outputintervals-1):tstop;
 
 FileInfo = tekal('open',matfilename);
-
 for i = 1:length(FileInfo.Field)
-    for j = 1:outputintervals
-        if strcmp(FileInfo.Field(i).Name,['NLS',sprintf('%02.0f',j)])
-            NLSi(j) = i;
-        end
-        if strcmp(FileInfo.Field(i).Name,['NLX',sprintf('%02.0f',j)])
-            NLXi(j) = i;
-        end
-        if strcmp(FileInfo.Field(i).Name,['QT',sprintf('%02.0f',j)])
-            QTi(j) = i;
-        end
-    end
-    for j = 1:nrofgroynes
-        if strcmp(FileInfo.Field(i).Name,['SG',sprintf('%02.0f',j)])
-            SGi(j) = i;
-        end
-    end
-    if strcmp(FileInfo.Field(i).Name,'SGA')
-        SGAi = i;
-    end
-    for j = 1:nrofsections+1
-        if strcmp(FileInfo.Field(i).Name,['SB',sprintf('%02.0f',j)])
-            SBi(j) = i;
-        end
+    if isempty(strfind(FileInfo.Field(i).Name,'CMT')) && isempty(strfind(FileInfo.Field(i).Name,'SB-O')) && isempty(strfind(FileInfo.Field(i).Name,'SB-I'));
+        data.(FileInfo.Field(i).Name) = tekal('read',FileInfo,i);
     end
 end
 
-for j = 1:nrofgroynes
-    data.SG(j).values = tekal('read',FileInfo,SGi(j));                      % Structure - Groyne; Outline of structure dimensions
-end
-
-data.SGA.values = tekal('read',FileInfo,SGAi);                              % Structure - All groynes; Outline of structure dimensions
-
-for j = 1:nrofsections+1
-    data.SB(j).values = tekal('read',FileInfo,SBi(j));                      % Section boundaries
-end
-
-for j = 1:outputintervals-1
-    data.NLS(j).years = outputtimes(j+1);                                   % Distribution of Layer Auto-Nourished Volumes per section
-    data.NLS(j).values = tekal('read',FileInfo,NLSi(j));
-    data.NLX(j).years = outputtimes(j+1);                                   % Longshore distribution of Layer Auto-Nourished Volumes
-    data.NLX(j).values = tekal('read',FileInfo,NLXi(j));
-end
-
-for j = 1:outputintervals
-    data.QT(j).years = outputtimes(j);                                      % Total yearly Tide-induced longshore transport rate
-    data.QT(j).values = tekal('read',FileInfo,QTi(j));
-end
 
 
 
