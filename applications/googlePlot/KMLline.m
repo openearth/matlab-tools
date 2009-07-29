@@ -99,7 +99,6 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 
 OPT.fileName    = [];
 OPT.kmlName     = 'untitled';
-OPT.style       = ones(size(lat,2),1);
 OPT.lineWidth   = 1;
 OPT.lineColor   = [0 0 0];
 OPT.lineAlpha   = 1;
@@ -117,6 +116,32 @@ if any((abs(lat)/90)>1)
     error('latitude out of range, must be within -90..90')
 end
 lon = mod(lon+180, 360)-180;
+
+% first check is multiple styles are defined. If not, then it's easy: there
+% is only one style. 
+% if so, then repeat each style for size(lat,2) (that's the number of lines
+% to draw), put them all in one matrix, and the ndefine the unique
+% linestyles.
+if numel(OPT.lineColor)+numel(OPT.lineStyle)+OPT.lineAlpha == 5
+    % one linestyle, do nothing
+else
+    % multiple styles
+    
+    % expand input options to # of lines 
+    OPT.lineWidth = OPT.lineWidth(:);
+    OPT.lineWidth = [repmat(OPT.lineWidth,floor(size(lat,2)/length(OPT.lineWidth)),1);...
+    OPT.lineWidth(1:rem(size(lat,2),length(OPT.lineWidth)))];
+
+    OPT.lineColor = [repmat(OPT.lineColor,floor(size(lat,2)/size(OPT.lineColor,1)),1);...
+                     OPT.lineColor(1:rem(size(lat,2),size(OPT.lineColor,1)),:)];
+    
+    OPT.lineAlpha = OPT.lineAlpha(:);
+    OPT.lineAlpha = [repmat(OPT.lineAlpha,floor(size(lat,2)/length(OPT.lineAlpha)),1);...
+                    OPT.lineAlpha(1:rem(size(lat,2),length(OPT.lineAlpha)))];
+
+end
+
+
 
 %% get filename
 
@@ -137,24 +162,14 @@ OPT_header = struct(...
 output = KML_header(OPT_header);
 
 %% define line styles
-
-if size(OPT.lineColor,1) ~= max(OPT.style(:))
-    OPT.lineColor = repmat(OPT.lineColor(1,:),max(OPT.style(:)),1);
-end
-if length(OPT.lineAlpha) ~= max(OPT.style(:))
-    OPT.lineAlpha = repmat(OPT.lineAlpha(1),max(OPT.style(:)),1);
-end
-if length(OPT.lineWidth) ~= max(OPT.style(:))
-    OPT.lineWidth = repmat(OPT.lineWidth(1),max(OPT.style(:)),1);
-end
-
-for ii = unique(OPT.style(:))'
-OPT_style = struct(...
-    'name',['style' num2str(ii)],...
-    'lineColor',OPT.lineColor(ii,:) ,...
-    'lineAlpha',OPT.lineAlpha(ii),...
-    'lineWidth',OPT.lineWidth(ii));
-output = [output KML_style(OPT_style)];
+[ignore,ind,OPT.styleNR] = unique([OPT.lineWidth,OPT.lineColor,OPT.lineAlpha],'rows');
+for ii = 1:length(ind);
+    OPT_style = struct(...
+        'name',['style' num2str(ii)],...
+        'lineColor',OPT.lineColor(ind(ii),:) ,...
+        'lineAlpha',OPT.lineAlpha(ind(ii)),...
+        'lineWidth',OPT.lineWidth(ind(ii)));
+    output = [output KML_style(OPT_style)];     %#ok<AGROW>
 end
 
 % print styles
@@ -189,10 +204,8 @@ end
 for ii=1:length(lat(1,:))
     % check if there is data to write
     if ~all(isnan(lat(:,ii)+lon(:,ii)))
-        % update linestyles if multiple are defined
-        if length(OPT.style)>1
-            OPT_line.styleName = ['style' num2str(OPT.style(ii))];
-        end
+        % update linestyle
+        OPT_line.styleName = ['style' num2str(OPT.styleNR(ii))];
 
         % update timeIn and timeOut if multiple times are defined
         if length(OPT.timeIn)>1
