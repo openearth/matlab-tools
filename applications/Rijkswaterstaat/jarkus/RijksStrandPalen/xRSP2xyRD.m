@@ -2,20 +2,30 @@ function [xRD,yRD] = xRSP2xyRD(varargin)
 %XRSP2XYRD   transform RijksStrandPalen coordinates to RD coordinates
 %    
 % depending on inputs arguments, function will be:
-%    nargin = 3: [xRD,yRD] = xRSP2xyRD(xRSP,areacode,alongshore);
+%    nargin = 3: [xRD,yRD] = xRSP2xyRD(cross_shore,areacode,alongshore);
 %    nargin = 4: [xRD,yRD] = xRSP2xyRD(x0,y0,alpha,xRSP); 
 %
-%   [xRD,yRD] = xRSP2xyRD(xRSP,areacode,alongshore)
-%   section and transectNr can be either single values, or arrays of the
-%   same length as xRSP
+%   [xRD,yRD] = xRSP2xyRD(cross_shore,areacode,alongshore)
+%   
+%    cross_shore: cross shore coordinate (distance from RSP line 
+%    	          (rijksstrandpalen lijn), positive in seaward direction) 
+%    areacode:    area code of transect Dutch: 'Kustvak'. 
+%    alongshore:  Alongshore distance of transect in decametres, consistent
+%                 common practice (transect number). The beach pole of 
+%                 Egmond is beachpole 38, beacuse it is 38km from Den 
+%                 Helder. It's alongshore number is 3800. Must be either a 
+%                 single value or an array of size cross_shore. 
 %
 %   [xRD,yRD] = xRSP2xyRD(x0,y0,alpha,xRSP)
-%   x0/y0: zero point coordinates of transect; can be either single values,
-%          or arrays of the same length as xRSP.
-%   alpha: orientation of the transect (direction of positive xRSP). Can be
-%          either single values, or array of the same length as xRSP. 
-%          (!) Beware of certain old transects where alpha is based on a 
-%          (!) 400 degree system in stead of 'normal' 360 degrees
+%       
+%        x0/y0:   zero point coordinates of transect; can be either single
+%                 values, or arrays of the same length as xRSP.
+%        alpha:   orientation of the transect (direction of positive xRSP).
+%                 Can be either single values, or array of the same length
+%                 as xRSP. 
+%
+%  !  Beware of certain old transects where alpha is based on a 
+%  !  400 degree system in stead of 'normal' 360 degrees
 %
 % See also: convertCoordinatesNew
 
@@ -55,7 +65,7 @@ function [xRD,yRD] = xRSP2xyRD(varargin)
 if nargin == 3;
     
     %assign varargin
-    xRSP        = varargin{1}; 
+    cross_shore = varargin{1}; 
     areacode    = varargin{2};
     alongshore  = varargin{3};
     
@@ -68,7 +78,7 @@ if nargin == 3;
    ind = nan(size(alongshore));
     for ii = 1:numel(alongshore)
         try
-            ind(ii) = find(data{:,1}== areacode(ii)&data{:,2}==alongshore(ii));
+            ind(ii) = find(data{:,1}== areacode(ii)&data{:,2}==10*alongshore(ii));
         catch
             error('could not convert section %d, transect number %d', areacode(ii), alongshore(ii))
         end
@@ -81,16 +91,16 @@ if nargin == 3;
     y0 = data{4}(ind)/100;
 else
     %assign varargin
-    x0      = varargin{1}; 
-    y0      = varargin{2};
-    alpha   = varargin{3};
-    xRSP    = varargin{4};
+    x0          = varargin{1}; 
+    y0          = varargin{2};
+    alpha       = varargin{3};
+    cross_shore = varargin{4};
 end
 
 %% convert coordinates
 
-xRD = x0 + xRSP.*sind(alpha);
-yRD = y0 + xRSP.*cosd(alpha);
+xRD = x0 + cross_shore.*sind(alpha);
+yRD = y0 + cross_shore.*cosd(alpha);
 end
 
 %% EOF
