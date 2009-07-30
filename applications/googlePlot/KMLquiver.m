@@ -204,7 +204,7 @@ A.abs(dubblePoints) = [];
 A.ang(end+1) = A.ang(1);
 A.abs(end+1) = A.abs(1);
 
-% Calculate polar cooradinates of individual arrwos
+% Calculate polar coordinates of individual arrwos
 for i=1:length(A.abs)
     A.ABS(i,:) = scale*A.abs(i);
     A.ANG(i,:) = angle+A.ang(i);
@@ -214,6 +214,9 @@ arrowLat =   repmat(lat,length(A.abs),1)+A.ABS.*cos(A.ANG);
 arrowLon =   repmat(lon,length(A.abs),1)+A.ABS.*sin(A.ANG)...
            ./repmat(cosd(lat),length(A.abs),1);
 
+arrowLon = mod(arrowLon+180, 360)-180;
+       
+       
 %% get filename
 if isempty(OPT.fileName)
     [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz',...
