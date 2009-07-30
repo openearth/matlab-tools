@@ -145,25 +145,32 @@ while ischar(tline)
         data.nrofgroynes = str2double(tmpline);
     end
     
-    if findstr(tline,'output intervals');                                   % find number of active layers
-        tmpline = tline;
-        tmpline(findstr(tline,'output intervals'):end) = [];
-        tmpline(1) = [];
-        outputintervals = str2double(tmpline);
+    if findstr(tline,'-Time')
         tline = fgetl(fid);
-        tmpline = tline;
-        tmpline(1:12) = [];
-        tmpline(findstr(tmpline,'-'):end) = [];
-        tstart = str2double(tmpline);
-        tmpline = tline;
-        tmpline(1:findstr(tmpline,'-')) = [];
-        tmpline(findstr(tmpline,'yr'):end) = [];
-        tstop = str2double(tmpline);
+        if findstr(tline,'output intervals');                                   % find outputintervals
+            tmpline = tline;
+            tmpline(findstr(tline,'output intervals'):end) = [];
+            tmpline(1) = [];
+            outputintervals = str2double(tmpline);
+            tline = fgetl(fid);
+            tmpline = tline;
+            tmpline(1:12) = [];
+            tmpline(findstr(tmpline,'-'):end) = [];
+            tbegin = str2double(tmpline);
+            tmpline = tline;
+            tmpline(1:findstr(tmpline,'-')) = [];
+            tmpline(findstr(tmpline,'yr'):end) = [];
+            tend = str2double(tmpline);
+            data.years = tbegin:(tend-tbegin)/(outputintervals-1):tend;
+        else
+           tbegin = 0;
+           tend = 0;
+           outputintervals = 0;
+           data.years = 0;
+        end
     end
 end
 fclose(fid);
-
-data.years = tstart:(tstop-tstart)/(outputintervals-1):tstop;
 
 FileInfo = tekal('open',matfilename);
 for i = 1:length(FileInfo.Field)
