@@ -76,6 +76,7 @@ fid = fopen(cpt);
 S = fgetl(fid);
 while strcmp(S(1),'#')
     S = fgetl(fid);
+    if isempty(S), S = '#'; end
 end
 
 %% read color data
