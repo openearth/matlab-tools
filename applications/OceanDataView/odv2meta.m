@@ -12,7 +12,7 @@
 % $HeadURL
 % $Keywords:
 
-OPT.directory = 'D:\checkouts\OpenEarthRawData\NIOZ\usergd30d98-data_centre630-260409_result\';
+OPT.directory = [fileparts(mfilename('fullpath')),filesep,'usergd30d98-data_centre630-260409_result\'];
 OPT.prefix    = 'result_CTDCAST';
 OPT.mask      = '*.txt';
 OPT.pause     = 0;
@@ -23,11 +23,12 @@ OPT.pause     = 0;
    
    clear A
    
+   A.filename    = [];
    A.lon         = repmat(nan,[1 length(OPT.files)]);
    A.lat         = repmat(nan,[1 length(OPT.files)]);
+   A.nt          = repmat(nan,[1 length(OPT.files)]);
    A.datenum_min = repmat(nan,[1 length(OPT.files)]);
    A.datenum_max = repmat(nan,[1 length(OPT.files)]);
-   A.n           = repmat(nan,[1 length(OPT.files)]);
 
 for ifile=1:length(OPT.files)
    
@@ -39,13 +40,13 @@ for ifile=1:length(OPT.files)
 
    D         = odvread([OPT.directory,filesep,OPT.filename]);
    
-   A.filename{ifile}    = OPT.filename;
-   A.lon(ifile)         = D.lon;
-   A.lat(ifile)         = D.lat;
-   A.datenum_min(ifile) = min(D.data.datenum);
-   A.datenum_max(ifile) = max(D.data.datenum);
-   A.n(ifile)           = length(D.data.datenum);
-   A.bot_depth(ifile)   = D.bot_depth;
+   A.filename   {ifile} =      OPT.filename;
+   A.lon        (ifile) =        D.lon;
+   A.lat        (ifile) =        D.lat;
+   A.nt         (ifile) = length(D.data.datenum);
+   A.datenum_min(ifile) =    min(D.data.datenum);
+   A.datenum_max(ifile) =    max(D.data.datenum);
+   A.bot_depth  (ifile) =        D.bot_depth;
    
    if OPT.pause
    pausedisp
@@ -53,18 +54,27 @@ for ifile=1:length(OPT.files)
        
 end % ifile       
 
+% Coastline of world
+% and of North sea
+
+   L(1).lon = nc_varget('http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_c.nc','lon');
+   L(1).lat = nc_varget('http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_c.nc','lat');
+
+   L(2).lon = nc_varget('http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc','lon');
+   L(2).lat = nc_varget('http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc','lat');
+
 %% Plot distribution in space
 
    figure(1)
-   load m_coasts
    plot      (A.lon,A.lat,'.')
    OPT.cticks = 10.^[0:1:2];
    caxis     (log10([OPT.cticks([1 end])]))
-   plotc     (A.lon,A.lat,log10(A.n))
+   plotc     (A.lon,A.lat,log10(A.nt))
    [ax,h]=colorbarwithtitle('n [#]',log10(OPT.cticks));
    set(ax,'yticklabel',num2str(OPT.cticks'))
    hold on
-   plot      (ncst(:,1),ncst(:,2),'k')
+   plot      (L(1).lon,L(1).lat,'color',[.5 .5 .5])
+   plot      (L(2).lon,L(2).lat,'k')
    axislat   (52)
    axis([min(A.lon) max(A.lon) min(A.lat) max(A.lat)])%axis      ([-5 10 48 60])
    grid       on
