@@ -1,0 +1,256 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>tutorial_general2_keyword_value_pairs</title>
+      <meta name="generator" content="MATLAB 7.5">
+      <meta name="date" content="2009-08-04">
+      <meta name="m-file" content="tutorial_general2_keyword_value_pairs"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h2>Contents</h2>
+         <div>
+            <ul>
+               <li><a href="#1">Keyword Value pairs</a></li>
+               <li><a href="#2">Example</a></li>
+            </ul>
+         </div>
+         <h2>Keyword Value pairs<a name="1"></a></h2>
+         <p>This is a tutorial on how to use keyword value pairs.</p><pre class="codeinput"><span class="comment">% You can use keyword-value pairs when running a function. All additional</span>
+<span class="comment">% arguments that are passed to a functions are read ar vargargin (variable</span>
+<span class="comment">% arguments in).</span>
+</pre><h2>Example<a name="2"></a></h2>
+         <p>as an example, we can define out own varargin (this is what normally would be read by the function we are calling)</p><pre class="codeinput">varargin = {<span class="string">'title_text'</span>,<span class="string">'Title text included as keyword-value pair'</span>}
+</pre><pre class="codeoutput">
+varargin = 
+
+    'title_text'    [1x41 char]
+
+</pre><p>Within the function, first the default properties for all possible input arguments are set</p><pre class="codeinput">OPT = struct(<span class="keyword">...</span>
+    <span class="string">'xInitial'</span>, (-20:10:70)', <span class="keyword">...</span>
+    <span class="string">'zInitial'</span>, [7.62 7.49 8.26 7.91 7.72 6.03 5.41 5.26 4.82 4.66],<span class="keyword">...</span>
+    <span class="string">'title_text'</span>, <span class="string">'Default plot title'</span>, <span class="keyword">...</span>
+    <span class="string">'xlabel_text'</span>, <span class="string">'Crossshore distance (m wrt. RSP = 0)'</span>, <span class="keyword">...</span>
+    <span class="string">'ylabel_text'</span>, <span class="string">'Surface elevation (m wrt. NAP = 0)'</span>);
+</pre><p>then setproperies is used to overwrite default settings</p><pre class="codeinput">OPT = setProperty(OPT, varargin{:});
+</pre><p>This is clear when we make the plot</p><pre class="codeinput">figure;clf
+plot(OPT.xInitial, OPT.zInitial);
+xlabel(OPT.xlabel_text)
+ylabel(OPT.ylabel_text)
+title(OPT.title_text)
+</pre><img vspace="5" hspace="5" src="tutorial_general2_keyword_value_pairs_01.png"> <p>if we define a wrong input argument, we get an error message:</p><pre class="codeinput">varargin = {<span class="string">'line_spec'</span>,<span class="string">'.r'</span>}
+
+<span class="keyword">try</span>
+    OPT = setProperty(OPT, varargin{:});
+<span class="keyword">catch</span>
+    lasterr
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">
+varargin = 
+
+    'line_spec'    '.r'
+
+
+ans =
+
+Error using ==&gt; setProperty at 131
+PropertyName "line_spec" is not valid
+
+</pre><pre class="codeinput"><span class="comment">%this will only work if we include it in the function first</span>
+varargin = {<span class="string">'title_text'</span>,<span class="string">'Title text included as keyword-value pair'</span>}
+
+OPT = struct(<span class="keyword">...</span>
+    <span class="string">'xInitial'</span>, (-20:10:70)', <span class="keyword">...</span>
+    <span class="string">'zInitial'</span>, [7.62 7.49 8.26 7.91 7.72 6.03 5.41 5.26 4.82 4.66],<span class="keyword">...</span>
+    <span class="string">'title_text'</span>, <span class="string">'Default plot title'</span>, <span class="keyword">...</span>
+    <span class="string">'xlabel_text'</span>, <span class="string">'Crossshore distance (m wrt. RSP = 0)'</span>, <span class="keyword">...</span>
+    <span class="string">'ylabel_text'</span>, <span class="string">'Surface elevation (m wrt. NAP = 0)'</span>,<span class="keyword">...</span>
+    <span class="string">'line_spec'</span>, <span class="string">''</span>); <span class="comment">%default value is empty</span>
+OPT = setProperty(OPT, varargin{:});
+
+figure;clf
+plot(OPT.xInitial, OPT.zInitial,OPT.line_spec);
+xlabel(OPT.xlabel_text)
+ylabel(OPT.ylabel_text)
+title(OPT.title_text)
+</pre><pre class="codeoutput">
+varargin = 
+
+    'title_text'    [1x41 char]
+
+</pre><img vspace="5" hspace="5" src="tutorial_general2_keyword_value_pairs_02.png"> <p>and now with extra arguments defined:</p><pre class="codeinput">varargin = {<span class="string">'title_text'</span>,<span class="string">'Title text included as keyword-value pair'</span>,<span class="string">'line_spec'</span>,<span class="string">'.r'</span>}
+
+OPT = struct(<span class="keyword">...</span>
+    <span class="string">'xInitial'</span>, (-20:10:70)', <span class="keyword">...</span>
+    <span class="string">'zInitial'</span>, [7.62 7.49 8.26 7.91 7.72 6.03 5.41 5.26 4.82 4.66],<span class="keyword">...</span>
+    <span class="string">'title_text'</span>, <span class="string">'Default plot title'</span>, <span class="keyword">...</span>
+    <span class="string">'xlabel_text'</span>, <span class="string">'Crossshore distance (m wrt. RSP = 0)'</span>, <span class="keyword">...</span>
+    <span class="string">'ylabel_text'</span>, <span class="string">'Surface elevation (m wrt. NAP = 0)'</span>,<span class="keyword">...</span>
+    <span class="string">'line_spec'</span>, <span class="string">''</span>); <span class="comment">%default value is empty</span>
+OPT = setProperty(OPT, varargin{:});
+
+figure;clf
+plot(OPT.xInitial, OPT.zInitial,OPT.line_spec);
+xlabel(OPT.xlabel_text)
+ylabel(OPT.ylabel_text)
+title(OPT.title_text)
+</pre><pre class="codeoutput">
+varargin = 
+
+    'title_text'    [1x41 char]    'line_spec'    '.r'
+
+</pre><img vspace="5" hspace="5" src="tutorial_general2_keyword_value_pairs_03.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.5<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% Keyword Value pairs
+% This is a tutorial on how to use keyword value pairs.
+
+% You can use keyword-value pairs when running a function. All additional
+% arguments that are passed to a functions are read ar vargargin (variable
+% arguments in). 
+
+%% Example
+% as an example, we can define out own varargin (this is what normally
+% would be read by the function we are calling)
+
+varargin = {'title_text','Title text included as keyword-value pair'}
+
+%% 
+% Within the function, first the default properties for all possible input
+% arguments are set
+
+OPT = struct(...
+    'xInitial', (-20:10:70)', ...
+    'zInitial', [7.62 7.49 8.26 7.91 7.72 6.03 5.41 5.26 4.82 4.66],... 
+    'title_text', 'Default plot title', ...
+    'xlabel_text', 'Crossshore distance (m wrt. RSP = 0)', ...
+    'ylabel_text', 'Surface elevation (m wrt. NAP = 0)');
+
+%%
+% then setproperies is used to overwrite default settings 
+
+OPT = setProperty(OPT, varargin{:});
+
+%%
+% This is clear when we make the plot
+figure;clf
+plot(OPT.xInitial, OPT.zInitial); 
+xlabel(OPT.xlabel_text)
+ylabel(OPT.ylabel_text)
+title(OPT.title_text)
+
+%%
+% if we define a wrong input argument, we get an error message:
+varargin = {'line_spec','.r'}
+
+try
+    OPT = setProperty(OPT, varargin{:});
+catch
+    lasterr
+end
+%% 
+%this will only work if we include it in the function first
+varargin = {'title_text','Title text included as keyword-value pair'}
+
+OPT = struct(...
+    'xInitial', (-20:10:70)', ...
+    'zInitial', [7.62 7.49 8.26 7.91 7.72 6.03 5.41 5.26 4.82 4.66],... 
+    'title_text', 'Default plot title', ...
+    'xlabel_text', 'Crossshore distance (m wrt. RSP = 0)', ...
+    'ylabel_text', 'Surface elevation (m wrt. NAP = 0)',...
+    'line_spec', ''); %default value is empty
+OPT = setProperty(OPT, varargin{:});
+
+figure;clf
+plot(OPT.xInitial, OPT.zInitial,OPT.line_spec); 
+xlabel(OPT.xlabel_text)
+ylabel(OPT.ylabel_text)
+title(OPT.title_text)
+
+%% 
+% and now with extra arguments defined:
+varargin = {'title_text','Title text included as keyword-value pair','line_spec','.r'}
+
+OPT = struct(...
+    'xInitial', (-20:10:70)', ...
+    'zInitial', [7.62 7.49 8.26 7.91 7.72 6.03 5.41 5.26 4.82 4.66],... 
+    'title_text', 'Default plot title', ...
+    'xlabel_text', 'Crossshore distance (m wrt. RSP = 0)', ...
+    'ylabel_text', 'Surface elevation (m wrt. NAP = 0)',...
+    'line_spec', ''); %default value is empty
+OPT = setProperty(OPT, varargin{:});
+
+figure;clf
+plot(OPT.xInitial, OPT.zInitial,OPT.line_spec); 
+xlabel(OPT.xlabel_text)
+ylabel(OPT.ylabel_text)
+title(OPT.title_text)
+##### SOURCE END #####
+-->
+   </body>
+</html>

@@ -1,0 +1,146 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>Initializing oetsettings</title>
+      <meta name="generator" content="MATLAB 7.5">
+      <meta name="date" content="2009-08-04">
+      <meta name="m-file" content="tutorial_general1_initiate_toolbox"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h1>Initializing oetsettings</h1>
+         <introduction>
+            <p>if you use MATLAB and OpenEarth, you shoudl always start off with running oetsettings. Oetsettings is essential to unleash
+               the power of OpenEarth to MATLAB. It adds all relevant toolbox paths to the matlab search path.
+            </p>
+         </introduction>
+         <p>Figure out what folder oetsettings.m is located in, and the run it:</p><pre class="codeinput">run <span class="string">D:\repositories\OpenEarth\matlab\oetsettings</span>
+</pre><pre class="codeoutput">Adding &lt;a href="http://OpenEarth.deltares.nl"&gt;OpenEarthTools&lt;/a&gt;, please wait ...
+ 
+ OETSETTINGS   enable the OpenEarthTools matlab tools by adding all relevant matlab paths.
+ 
+  OpenEarthTools is a collection of open source tools 
+  intended to be licensed under the (&lt;a href="http://www.gnu.org/licenses/licenses.html"&gt;GNU (Lesser) Public License&lt;/a&gt;).
+ 
+  In order to suppress this information, run the function with input argument quiet:
+ 	"oetsettings('quiet');" or "oetsettings quiet"
+ 
+  For more information on OpenEarthTools refer to the following sources:
+ 
+  * wiki:        &lt;a href="http://OpenEarth.deltares.nl"                               &gt;OpenEarth.Deltares.nl&lt;/a&gt;
+  * repository:  &lt;a href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab"&gt;https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab&lt;/a&gt;
+  * help blocks: Scroll through the OpenEarthTools directories by clicking 
+...</pre><p>As you don't want to remember this code, but you will run it every time you start MATLAB from know on, you should make a ahortcut
+            for it on the shortcut bar. Just rightclick ==&gt; new shortcut. Enter the command to run oetsettings. If you save this, you
+            can run oetsetings by pressing that shortcut button. You might even want to add some other commands, so matlab is effectiveley
+            reset every time you press this button.
+         </p>
+         <p><tt>restoredefaultpath</tt></p>
+         <p><tt>run('D:\repositories\OpenEarth\matlab\oetsettings.m')</tt></p>
+         <p><tt>cd D:\repositories\OpenEarth\matlab\</tt></p>
+         <p><tt>clc; clear; close;</tt></p>
+         <p><img vspace="5" hspace="5" src="_prerendered_create_shortcut.PNG"> </p>
+         <p class="footer"><br>
+            Published with MATLAB&reg; 7.5<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% Initializing oetsettings
+% if you use MATLAB and OpenEarth, you shoudl always start off with running
+% oetsettings. Oetsettings is essential to unleash the power of OpenEarth 
+% to MATLAB. It adds all relevant toolbox paths to the matlab search
+% path. 
+
+%%
+% Figure out what folder oetsettings.m is located in, and the run it:
+
+run D:\repositories\OpenEarth\matlab\oetsettings
+
+%%
+% As you don't want to remember this code, but you will run it every time
+% you start MATLAB from know on, you should make a ahortcut for it on the
+% shortcut bar. Just rightclick ==> new shortcut. Enter the command to run 
+% oetsettings. If you save this, you can run oetsetings by pressing
+% that shortcut button. You might even want to add some other commands, so
+% matlab is effectiveley reset every time you press this button.
+
+%%
+% |restoredefaultpath|
+%%
+% |run('D:\repositories\OpenEarth\matlab\oetsettings.m')|
+%%
+% |cd D:\repositories\OpenEarth\matlab\|
+%%
+% |clc; clear; close;|
+
+%%
+% 
+% <<_prerendered_create_shortcut.PNG>>
+% 
+##### SOURCE END #####
+-->
+   </body>
+</html>
