@@ -35,124 +35,160 @@ function Factor=convert_units(InUnits,OutUnits);
 
    %% Definitions  
    %---------------------
-   RAD        = 180./pi;
-   cyc        = 1;
-   cycle      = 1;
-   cycles     = 1;
+   RAD             = 180./pi;
+   cyc             = 1;
+   cycle           = 1;
+   cycles          = 1;
    
    %% Definitions  
    %---------------------
-   ppm        = 1e-6;
+   ppm             = 1e-6;
 
    %% Length units 
    %---------------------
-   mm         = 1e-3;                         % mms
-   mms        = mm;                           % mms
-   millimeter = mm;                           % mms
-   millimeters= mm;                           % mms
+   mm              = 1e-3;                    % mms
+   mms             = mm;                      % mms
+   millimeter      = mm;                      % mms
+   millimeters     = mm;                      % mms
 
-   cm         = 1e-2;                         % cms
-   cms        = cm;                           % cms
-   centimeter = cm;                           % cms
-   centimeters= cm;                           % cms
+   cm              = 1e-2;                    % cms
+   cms             = cm;                      % cms
+   centimeter      = cm;                      % cms
+   centimeters     = cm;                      % cms
 
-   inch       = 0.0254;                       % inch
+   inch            = 0.0254;                  % inch
    	     
-   feet       = 0.30480;                      % foot
-   foot       = feet;                         % foot
-   feets      = feet;                         % foot
+   feet            = 0.30480;                 % foot
+   foot            = feet;                    % foot
+   feets           = feet;                    % foot
    	     
-   yard       = 0.9144;                       % yard
-   yards      = yard;                         % yard
+   yard            = 0.9144;                  % yard
+   yards           = yard;                    % yard
 	     
-   m          = 1;                            % meters
-   meter      = m;                            % meters
-   meters     = m;                            % meters
+   m               = 1;                       % meters
+   meter           = m;                       % meters
+   meters          = m;                       % meters
 	     
-   km         = 1000;                         % km
-   kilometer  = km;                           % kilometers
-   kilometers = km;                           % kilometers
+   km              = 1000;                    % km
+   kilometer       = km;                      % kilometers
+   kilometers      = km;                      % kilometers
 	     
-   mile       = 1609;                         % miles
-   miles      = mile;                         % miles
+   mile            = 1609;                    % miles
+   miles           = mile;                    % miles
    
    %% Time units 
    %---------------------
-   s          = 1;                            % seconds
-   sec        = s;                            % seconds
-   second     = s;                            % seconds
-   seconds    = s;                            % seconds
    
-   min        = 60;                           % minutes
-   minute     = min;                          % minutes
-   minutes    = min;                          % minutes
+   s               = 1;                       % seconds
+   sec             = s;                       % seconds
+   secs            = s;                       % seconds
+   second          = s;                       % seconds
+   seconds         = s;                       % seconds
    
-   hr         = 3600;                         % hours
-   hrs        = hr;                           % hours
-   hour       = hr;                           % hours
-   hours      = hr;                           % hours
+   ms              = 0.001*s;                 % milliseconds
+   millisecs       = ms;                      % milliseconds
+   millisec        = ms;                      % milliseconds
+   millisecond     = ms;                      % milliseconds
+   milliseconds    = ms;                      % milliseconds
    
-   sday       = 86164.09053;                  % sidereal days
-   sdays      = sday;                         % sidereal days
+   min             = 60*s;                    % minutes
+   mins            = min;                     % minutes
+   minute          = min;                     % minutes
+   minutes         = min;                     % minutes
+   
+   h               = 3600*s;                  % hours
+   hr              = h;                       % hours
+   hrs             = h;                       % hours
+   hour            = h;                       % hours
+   hours           = h;                       % hours
+   
+   sday            = 86164.09053*s;           % sidereal days
+   sdays           = sday;                    % sidereal days
 
-   day        = 86400;                        % days
-   days       = day;                          % days
-   d          = day;                          % days
+   d               = 86400*s;                 % days
+   day             = d;                       % days
+   days            = d;                       % days
    
-   week       = 7.*day;                       % weeks
-   weeks      = week;                         % weeks
+   week            = 7.*day;                  % weeks
+   weeks           = week;                    % weeks
+   
+   %% years: http://en.wikipedia.org/wiki/Gregorian_year
+   
+   yr              = 365.24218967.*day;       % tropical year http://en.wikipedia.org/wiki/Gregorian_year#Sidereal.2C_tropical.2C_and_anomalistic_years
+   yrs             = yr;                      % tropical year
+   year            = yr;                      % tropical year
+   years           = yr;                      % tropical year
+   
+   common_year     = day*365;                 % common year
+   common_years    = common_year;             % common year
+    
+   leap_year       = day*366;                 % leap year
+   leap_years      = leap_year;               % leap year
 
-   year       = 365.25.*day;                  % tropical year
-   years      = year;                         % tropical year
+   Gregorian_year  = day*365.2425;            % Gregorian year
+   Gregorian_years = Gregorian_year;          % Gregorian year
+    
+   Julian_year     = day*365.25;              % Julian year
+   Julian_years    = Julian_year;             % Julian year
    
-   cen       = year*100;                     % tropical century
+   sidereal_year   = day*365.2564;            % sidereal year
+   sidereal_years  = Julian_year;             % sidereal year
+  
+   cen             = year*100;                % tropical century
+   
+   month           = year/12;                 % months
+   months          = month;                   % months
    
    %% Pressure units 
    %---------------------
-   Pa         = 1;                            % pascal
-   hPa        = 100;                          % hectopascal
-   bar        = 1e5;                          % bar
-   mbar       = 100;                          % millibar
+   Pa              = 1;                       % pascal
+   hPa             = 100;                     % hectopascal
+   bar             = 1e5;                     % bar
+   mbar            = 100;                     % millibar
 
    %% Force units 
    %---------------------
-   dyn        = 1e-5;                         % dyne
-   dyne       = 1e-5;                         % dyne
-   dynes      = 1e-5;                         % dyne
+   dyn             = 1e-5;                    % dyne
+   dyne            = 1e-5;                    % dyne
+   dynes           = 1e-5;                    % dyne
    	      
-   N          = 1;                            % Newton
+   N               = 1;                       % Newton
+   newton          = N;                       % Newton
+   Newton          = N;                       % Newton
    
    %% Mass units 
    %---------------------
-   gr         = 1e-3;                         % grams
-   gram       = gr;                           % grams
-   grams      = gr;                           % grams
+   gr               = 1e-3;                   % grams
+   grs              = gr;                     % grams
+   gram             = gr;                     % grams
+   grams            = gr;                     % grams
    
-   kg         = 1;                            % kilograms
-   kilogram   = kg;                           % kilograms
-   kilograms  = kg;                           % kilograms
+   kg               = 1;                      % kilograms
+   kgs              = kg;                     % kilograms
+   kilogram         = kg;                     % kilograms
+   kilograms        = kg;                     % kilograms
 
-   libra      = 0.32736409;                   % libra
-   pound      = 0.45359237;                   % pound
+   libra            = 0.32736409;             % libra
+   pound            = 0.45359237;             % pound
    
    %% Angle units 
    %---------------------
-   rad        = 1;                            % radian
-   deg        = 1./RAD;                       % degree
-   amin       = deg./60;                      % arcmin
-   asec       = amin./60;                     % arcsec
+   rad             = 1;                       % radian
+   deg             = 1./RAD;                  % degree
+   amin            = deg./60;                 % arcmin
+   asec            = amin./60;                % arcsec
    
    %% Solid Angle units 
    %---------------------
-   ster       = 1;                            % steradian
-   sdeg       = 1./(RAD.^2);                  % square degree
-   smin       = 1./((60.*RAD).^2);            % square arcmin
-   ssec       = 1./((3600.*RAD).^2);          % square arcsec
+   ster            = 1;                       % steradian
+   sdeg            = 1./(RAD.^2);             % square degree
+   smin            = 1./((60.*RAD).^2);       % square arcmin
+   ssec            = 1./((3600.*RAD).^2);     % square arcsec
 
 % Find conversion factor 
 %---------------------
-   F1         = eval(InUnits);
-   F2         = eval(OutUnits);
-   Factor     = F1./F2;
+   F1              = eval(InUnits);
+   F2              = eval(OutUnits);
+   Factor          = F1./F2;
 
 %% EOF

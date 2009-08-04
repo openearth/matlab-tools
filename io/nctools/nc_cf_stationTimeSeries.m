@@ -32,7 +32,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 %    directory = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/'; % either remote
 %    directory = 'P:\mcdata\opendap\'                                      % or local
 %
-% [D,M]=nc_cf_stationTimeSeries([directory,'/rijkswaterstaat/waterbase/sea_surface_height/id1-DENHDR-196101010000-200801010000.nc'],...
+% [D,M]=nc_cf_stationTimeSeries([directory,'/rijkswaterstaat/waterbase/sea_surface_height/id1-DENHDR-179805240000-200907100000.nc'],...
 %                               'sea_surface_height')
 %
 % [D,M]=nc_cf_stationTimeSeries([directory,'knmi/etmgeg/etmgeg_269.nc'],...
@@ -78,6 +78,10 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 %TO DO: allow to get all time related parameters, and plot them on by one (with pause in between)
 %TO DO: take into account differences between netCDF downloaded from HYRAX and THREDDS OPeNDAP implementation
 
+%DOne: make 'TIME' case insensitive
+%DOne: time does not need standard_name time, the dimension name time is
+%       sufficient, matching a variable name
+
 %% Keyword,values
 
    OPT.plot    = 1;
@@ -96,33 +100,43 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 %% Check whether is time series
    index = findstrinstruct(INF.Attribute,'Name','CF:featureType');
    if isempty(index)
-      error(['netCDF file is not stationTimeSeries: needs Attribute Name=CF:featureType'])
+      warning(['netCDF file might not be a proper stationTimeSeries, it lacks Attribute CF:featureType=stationTimeSeries'])
    end
 
 %% Get datenum
-
-   timename        = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'time');
-   M.datenum.units = nc_attget(ncfile,timename,'units');
-   D.datenum       = nc_varget(ncfile,timename);
-   D.datenum       = udunits2datenum(D.datenum,M.datenum.units); % convert units to datenum
+   [D,M]           = nc_cf_time(ncfile);
    
 %% Get location info
 
    lonname        = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'longitude');
+   if ~isempty(lonname)
    M.lon.units    = nc_attget(ncfile,lonname,'units');
    D.lon          = nc_varget(ncfile,lonname);
+   else
+   D.lon          = [];
+   warning('no longitude specified')
+   end
 
    latname        = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'latitude');
+   if ~isempty(latname)
    M.lat.units    = nc_attget(ncfile,latname,'units');
    D.lat          = nc_varget(ncfile,latname);
+   else
+   D.lat          = [];
+   warning('no latitude specified')
+   end
 
    idname         = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'station_id');
+   if ~isempty(idname)
    D.station_id   = nc_varget(ncfile,idname);
-
    if isnumeric(D.station_id)
    D.station_name = num2str(D.station_id);
    else
    D.station_name =         D.station_id;
+   end
+   else
+   D.station_name = '';
+   warning('no unique station id specified')
    end
 
 %% Find specified (or all parameters) that have time as dimension
@@ -188,7 +202,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
       title   ({mktex(INF.Filename),...
                ['"',D.station_name,'"',...
                 ' (',num2str(D.lon),'\circE',...
-                ',',num2str(D.lat),'\circN',...
+                 ',',num2str(D.lat),'\circN',...
                 ')']})
       ylabel  ([mktex(M.(OPT.varname).long_name),' [',...
                 mktex(M.(OPT.varname).units    ),']']);
