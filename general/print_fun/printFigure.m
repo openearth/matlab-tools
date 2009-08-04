@@ -115,12 +115,12 @@ if exist(location, 'file')
             id=id+1;
             location = [directory filesep figurefilename '_' num2str(id) extension]; % add '_#' to the file name
         end
-        disp(['Figure has been saved to ''',location,'''']);
+        disp(['Figure has been saved to <a href="' location '">' location '</a>']);
     else
         disp('File has been overwritten by new figure')
     end
 else
-    disp(['Figure has been saved to ''',location,'''']);
+    disp(['Figure has been saved to <a href="' location '">' location '</a>']);
 end
 
 %% move figure file from tempdir to final location
