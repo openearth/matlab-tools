@@ -12,14 +12,16 @@
 % $HeadURL
 % $Keywords:
 
-OPT.directory = 'D:\checkouts\OpenEarthRawData\NIOZ\usergd30d98-data_centre630-260409_result\';
+OPT.directory = [fileparts(mfilename('fullpath')),filesep,'usergd30d98-data_centre630-260409_result\'];
 OPT.prefix    = 'result_CTDCAST';
 OPT.mask      = '*.txt';
-OPT.files     = dir([OPT.directory,filesep,OPT.prefix,'*',OPT.mask])
+OPT.files     = dir([OPT.directory,filesep,OPT.prefix,'*',OPT.mask]);
 
-L   = load('m_coasts');
-lon = L.ncst(:,1);
-lat = L.ncst(:,2);
+% Coastline of world
+% and of North sea
+
+   L.lon = nc_varget('http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc','lon');
+   L.lat = nc_varget('http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc','lat');
 
 for ifile=1:length(OPT.files); %239 not all colummns, 264 empty
 
@@ -32,7 +34,7 @@ for ifile=1:length(OPT.files); %239 not all colummns, 264 empty
    %odvdisp(D)
 
     if ~(isempty(D.lat) | isnan(D.lat))
-    odvplot(D,lon,lat)
+    odvplot(D,L.lon,L.lat)
     else
     clf
     end

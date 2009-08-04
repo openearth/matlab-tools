@@ -2,7 +2,7 @@ function odvplot(D,varargin)
 %ODVPLOT   plot file in ODV format read by ODVREAD (still test project)
 %
 %   D = odvread(fname)
-%       odvread(D)
+%       odvplot(D,<coastline.lon,coastline.lat>)
 %
 % Example plotm function that shows vertical profiles of temperature, salinity, fluorescence.
 %
@@ -104,7 +104,7 @@ function odvplot(D,varargin)
        if nargin>1
        lon = varargin{1};
        lat = varargin{2};
-       plot(lon,lat)
+       plot(lon,lat,'k')
        end
        axislat   (52)
        axis      ([-2.5750 10.4010 50 62]) ; % [-2.5750 10.4010 50.2330 58.5000] range of local dataset
@@ -113,7 +113,7 @@ function odvplot(D,varargin)
        box        on
        hold       off
        
-    AX(5) = axes('position',get(AX(1),'position'))
+    AX(5) = axes('position',get(AX(1),'position'));
 
     axes(AX(5)); cla %subplot(1,4,4)
     noaxis(AX(5))

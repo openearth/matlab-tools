@@ -1,6 +1,6 @@
 %ODV2META   script to test ODVRREAD, ODVDISP, ODVPLOT
 %
-% plots all CTDCAST files in a directory one by one.
+% get meta-info from all CTDCAST files in a user-defined directory one by one.
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
 %See also: ODVREAD, ODVDISP, ODVPLOT
@@ -19,7 +19,7 @@ OPT.pause     = 0;
 
 %% File loop
 
-   OPT.files     = dir([OPT.directory,filesep,OPT.prefix,'*',OPT.mask])
+   OPT.files     = dir([OPT.directory,filesep,OPT.prefix,'*',OPT.mask]);
    
    clear A
    
@@ -47,6 +47,7 @@ for ifile=1:length(OPT.files)
    A.datenum_min(ifile) =    min(D.data.datenum);
    A.datenum_max(ifile) =    max(D.data.datenum);
    A.bot_depth  (ifile) =        D.bot_depth;
+   
    
    if OPT.pause
    pausedisp
