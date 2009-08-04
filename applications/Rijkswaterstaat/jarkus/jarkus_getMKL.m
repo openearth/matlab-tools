@@ -10,7 +10,7 @@ function [xMKL] = jarkus_getMKL(x,z,UpperBoundary,LowerBoundary)
 %  output: 
 %    xMKL                   = cross shore coordinate of MKL
 %
-%See also:
+% See also: jarkus_getVolume, jarkus_getVolumeFast
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
