@@ -114,10 +114,10 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 
 %% Get ordinates ~(dimensions)
 
-      OPT.lat          = lookupVarnameInNetCDF('ncfile', OPT.filename, 'attributename', 'standard_name', 'attributevalue','latitude'  );
-      OPT.lon          = lookupVarnameInNetCDF('ncfile', OPT.filename, 'attributename', 'standard_name', 'attributevalue','longitude' );
-      OPT.time         = lookupVarnameInNetCDF('ncfile', OPT.filename, 'attributename', 'standard_name', 'attributevalue','time'      );
-      OPT.station_id   = lookupVarnameInNetCDF('ncfile', OPT.filename, 'attributename', 'standard_name', 'attributevalue','station_id');
+      OPT.lat          = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','latitude'  );
+      OPT.lon          = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','longitude' );
+      OPT.time         = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','time'      );
+      OPT.station_id   = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','station_id');
       
       files(ifile).lat          = nc_varget(OPT.filename,OPT.lat);
       files(ifile).lon          = nc_varget(OPT.filename,OPT.lon);
@@ -185,8 +185,8 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    
    %% Add vector coastline
 
-   tmp.lat        = lookupVarnameInNetCDF('ncfile', OPT.vc, 'attributename', 'standard_name', 'attributevalue','latitude'  );
-   tmp.lon        = lookupVarnameInNetCDF('ncfile', OPT.vc, 'attributename', 'standard_name', 'attributevalue','longitude' );
+   tmp.lat        = nc_varfind(OPT.vc, 'attributename', 'standard_name', 'attributevalue','latitude'  );
+   tmp.lon        = nc_varfind(OPT.vc, 'attributename', 'standard_name', 'attributevalue','longitude' );
    tmp.lat        = nc_varget(OPT.vc,tmp.lat);
    tmp.lon        = nc_varget(OPT.vc,tmp.lon);
    

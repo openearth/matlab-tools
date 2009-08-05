@@ -108,7 +108,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    
 %% Get location info
 
-   lonname        = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'longitude');
+   lonname        = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'longitude');
    if ~isempty(lonname)
    M.lon.units    = nc_attget(ncfile,lonname,'units');
    D.lon          = nc_varget(ncfile,lonname);
@@ -117,7 +117,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    warning('no longitude specified')
    end
 
-   latname        = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'latitude');
+   latname        = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'latitude');
    if ~isempty(latname)
    M.lat.units    = nc_attget(ncfile,latname,'units');
    D.lat          = nc_varget(ncfile,latname);
@@ -126,7 +126,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    warning('no latitude specified')
    end
 
-   idname         = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'station_id');
+   idname         = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'station_id');
    if ~isempty(idname)
    D.station_id   = nc_varget(ncfile,idname);
    if isnumeric(D.station_id)

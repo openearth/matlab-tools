@@ -1,33 +1,33 @@
-function varname = lookupVarnameInNetCDF(varargin)
-%LOOKUPVARNAMEINNETCDF  Lookup variable name(s) in NetCDF file using attributename and -value pair
+function varname = nc_varfind(ncfile,varargin)
+%NC_VARFIND  Lookup variable name(s) in NetCDF file using attributename and -value pair
 %
-%   Finds the variable name in a NetCDF file where the specified attribute
+%   Finds the variable name in a netCDF file where the specified attribute
 %   name (e.g. 'standard_name') matches with the specified attribute value
 %   (e.g. 'time'). The function returns a string with the variable name if
 %   an attributename and -value match was detected or an empty variable if
 %   no match was found.
 %
-%   Syntax:
-%   varargout = getVarnameFromNetCDFfile(varargin)
+%      varname = nc_varfind(ncfile,<keyword,value>)
 %
-%   Input:
-%   For the following keywords, values are accepted (values indicated are the current default settings):
-%       'ncfile', []               = filename of nc file to use
-%       'attributename', []        = attributename to search for in NetCDF file
-%       'attributevalue', []       = attributevalue to search for in NetCDF file
+%   where 
+%       ncfile                     = name of lcoal or opendap netCDF file
+%       varname                    = string variable containing the variable name
+%                                    where an attribute name and value match is detected 
+%                                    cell array if more then 1 variable match description
 %
-%   Output:
-%       varname                    = string variable containing the variable name where an attribute name and value match is detected 
+%   The following <keyword,value> pairs have been implemented accepted (values indicated are the current default settings):
+%       'attributename' , []       = attributename to search for in netCDF file (e.g. 'standard_name')
+%       'attributevalue', []       = attributevalue to search for in netCDF file
 %
-%   Example
-%{
-    ncfile  = 'Delflandsekust.nc'; nc_dump(ncfile)
-    ncfile  = 'KB128_1312.nc';     nc_dump(ncfile)
-    varname = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'standard_name', 'attributevalue', 'time')
-    varname = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'long_name', 'attributevalue', 'x-coordinate')
-    varname = lookupVarnameInNetCDF('ncfile', ncfile, 'attributename', 'long_name', 'attributevalue', 'y-coordinate')
-%}
-%   See also getDataFromNetCDFGrid
+% Examples:
+%
+%    directory = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/'; % either remote
+%    directory = 'P:\mcdata\opendap\'                                      % or local
+%
+%       varname = nc_varfind([directory,'Delflandsekust.nc'], 'attributename', 'standard_name', 'attributevalue', 'time')
+%       varname = nc_varfind([directory,'KB128_1312.nc'    ], 'attributename', 'long_name'    , 'attributevalue', 'x-coordinate')
+%
+% See also: nc_cf_time
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -57,6 +57,7 @@ function varname = lookupVarnameInNetCDF(varargin)
 
 % Created: 02 Apr 2009
 % Created with Matlab version: 7.7.0.471 (R2008b)
+% renamed from lookupVarnameInNetCDF
 
 % $Id$
 % $Date$
@@ -67,29 +68,27 @@ function varname = lookupVarnameInNetCDF(varargin)
 
 %% settings
 % defaults
-OPT = struct(...
-    'ncfile', [], ...                                   % filename of nc file to use
-    'attributename', [], ...                            % this is a datenum of the starting time to search
-    'attributevalue', [] ...                            % this indicates the search window (nr of days, '-': backward in time, '+': forward in time)
-    );
+
+OPT.attributename  = [];  % this is a datenum of the starting time to search
+OPT.attributevalue = [];  % this indicates the search window (nr of days, '-': backward in time, '+': forward in time)
 
 % overrule default settings by property pairs, given in varargin
-OPT = setProperty(OPT, varargin{:});
+OPT = setProperty(OPT, varargin{1:end});
 
 % initialise output
 varname = [];
 
 %% get info from ncfile
-infostruct = nc_info(OPT.ncfile);
+infostruct = nc_info(ncfile);
 tempstruct = infostruct.Dataset;
 
-%% fine
+%% find
 Names = {tempstruct(:).Name};
 for i = 1:length(Names)
     Attributes = tempstruct(i).Attribute;
     if any(strcmp({Attributes.Name} , OPT.attributename) & strcmp({Attributes.Value} , OPT.attributevalue))
         if isempty(varname)
-            varname = Names{i};
+            varname{1} = Names{i};
         else
             disp('NB: more than one variable fits the description')
             varname = {varname Names(i)}; %#ok<AGROW>
@@ -97,4 +96,6 @@ for i = 1:length(Names)
     end
 end
 
-
+if length(varname)==1
+   varname = char(varname);
+end

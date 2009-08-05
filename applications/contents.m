@@ -17,6 +17,7 @@
 %   Rijkswaterstaat - data: <a href="http://www.Rijkswaterstaat.nl">Rijkswaterstaat</a>
 %   *  jarkus       - tools for Rijkswaterstaat <a href="http://www.watermarkt.nl/kustenzeebodem/">JarKus</a> coastal bathymetry dataset
 %   *  vaklodingen  - tools for Rijkswaterstaat <a href="http://www.watermarkt.nl/kustenzeebodem/">vaklodingen</a> coastal bathymetry dataset
+%   *  bathymetry   - tools for extracting JarKus and vaklodingen bahtymetries from OPeNDAP server
 %   sobek           - model: <a href="http://www.SOBEK.nl">SOBEK</a>
 %   SuperTrans      - global coordinate transformations for <a href="http://www.epsg-registry.org/">OGP EPSG</a> systems.
 %   SWAN            - model: <a href="http://www.SWAN.tudelft.nl">SWAN</a>  (see also: waves)
