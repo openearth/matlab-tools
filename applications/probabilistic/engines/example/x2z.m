@@ -88,7 +88,7 @@ for i = 1:size(x,1)
         
         % set coastal curvature, if provided
         if ~isempty(R(i))
-            DuneErosionSettings('set', 'Bend', R(i));
+            DuneErosionSettings('set', 'Bend', 180 / (pi * R(i)) * 1000);
         else
             DuneErosionSettings('set', 'Bend', 0);
         end
