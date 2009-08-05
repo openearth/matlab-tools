@@ -1,4 +1,9 @@
 function [X, Y, Z, Ztime] = data2grid(mapurls, minx, maxx, miny, maxy, OPT)
+%RWS_DATA2GRID get data in fixed otrhogonal grid from bundle of netCDF files
+%
+%   [X, Y, Z, Ztime] = rws_data2grid(mapurls, minx, maxx, miny, maxy, <keyword,value>)
+%
+%%See also: 
 
 % generate x and y vectors spanning the fixed map extents
 x         = minx: OPT.cellsize*OPT.datathinning:maxx;
@@ -29,7 +34,7 @@ for i = 1:length(mapurls)
     disp(['Processing : ' name ext])
     
     % get data and plot
-    [x, y, z, zt] = getDataFromNetCDFGrid('ncfile', mapurls{i,1}, 'starttime', OPT.starttime, 'searchwindow', OPT.searchwindow, 'polygon', OPT.polygon, 'stride', [1 1 1]);
+    [x, y, z, zt] = rws_getDataFromNetCDFGrid('ncfile', mapurls{i,1}, 'starttime', OPT.starttime, 'searchwindow', OPT.searchwindow, 'polygon', OPT.polygon, 'stride', [1 1 1]);
 
     % convert vectors to grids
     x = repmat(x',size(z,1),1);

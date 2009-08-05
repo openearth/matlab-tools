@@ -1,5 +1,5 @@
 function [X, Y, Z, T] = getDataFromNetCDFGrid(varargin)
-%GETDATAFROMNETCDFGRID  This routine gets data from a NetCDF grid file.
+%rws_GETDATAFROMNETCDFGRID  This routine gets data from a NetCDF grid file.
 %
 %   This routine gets data from a NetCDF grid file
 %
@@ -28,7 +28,7 @@ function [X, Y, Z, T] = getDataFromNetCDFGrid(varargin)
 %   
 %   [X, Y, Z, T] = getDataFromNetCDFGrid('ncfile', ncfile, 'starttime', now, 'polygon', poly)
 % 
-%   See also: nc_dump, getDataFromNetCDFGrid_test, lookupVarnameInNetCDF
+%   See also: nc_dump, rws_getDataFromNetCDFGrid_test, lookupVarnameInNetCDF
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology

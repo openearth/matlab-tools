@@ -1,5 +1,5 @@
 function [X, Y, Z, Ztime] = getDataInPolygon(varargin)
-%GETDATAINPOLYGON  Script to load fixed maps from OPeNDAP, identify which maps are located inside a polygon and retrieve the data 
+%rws_GETDATAINPOLYGON  Script to load fixed maps from OPeNDAP, identify which maps are located inside a polygon and retrieve the data 
 %
 %   Syntax:
 %   getDataInPolygon(varargin)
@@ -18,7 +18,9 @@ function [X, Y, Z, Ztime] = getDataInPolygon(varargin)
 %
 %   Example:
 %
-% See also: getDataInPolygon_test, getFixedMapOutlines, createFixedMapsOnAxes, identifyWhichMapsAreInPolygon, getDataFromNetCDFGrid
+% Works for Rijskwaterstaat JarKus and Vaklodingen.(default)
+%
+% See also: rws_getFixedMapOutlines, rws_createFixedMapsOnAxes, rws_identifyWhichMapsAreInPolygon, rws_getDataFromNetCDFGrid
 
 % --------------------------------------------------------------------
 % Copyright (C) 2004-2009 Delft University of Technology
@@ -56,33 +58,34 @@ function [X, Y, Z, Ztime] = getDataInPolygon(varargin)
 
 %% TODO: the script does not work yet for all thinning factors. Some counter problems remain.
 
-OPT = struct(...
-    'datatype', 'vaklodingen', ...
-    'starttime', datenum([1997 01 01]), ...
-    'searchwindow', -2*365, ...
-    'polygon', [], ...
-    'cellsize', 20, ...
-    'datathinning', 1);
+OPT.datatype     = 'vaklodingen';
+OPT.starttime    = datenum([1997 01 01]);
+OPT.searchwindow = -2*365;
+OPT.polygon      = [];
+OPT.cellsize     = 20;
+OPT.datathinning = 1;
+OPT.ldburl       = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
 
 OPT = setProperty(OPT, varargin{:});
 
 %% Step 0: create a figure with tagged patches
 axes = findobj('type','axes');
 if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.datatype})) % if an overview figure is already present don't run this function again
+
     % Step 0.1: get fixed map urls from OPeNDAP server
-    urls = getFixedMapOutlines(OPT.datatype); %#ok<*UNRCH,*USENS>
+    urls = rws_getFixedMapOutlines(OPT.datatype); %#ok<*UNRCH,*USENS>
     
     % Step 0.2: create a figure with tagged patches
     figure(10);clf;axis equal;box on;hold on
     
     % Step 0.3: plot landboundary
-    ldburl = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
-    x      = nc_varget(ldburl, lookupVarnameInNetCDF('ncfile', ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate'));
-    y      = nc_varget(ldburl, lookupVarnameInNetCDF('ncfile', ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate'));
+    x      = nc_varget(OPT.ldburl, lookupVarnameInNetCDF('ncfile', OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate'));
+    y      = nc_varget(OPT.ldburl, lookupVarnameInNetCDF('ncfile', OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate'));
     plot(x, y, 'k', 'linewidth', 2);
     
     % Step 0.4: plot fixed map patches on axes and return the axes handle
-    ah = createFixedMapsOnAxes(gca, urls, 'tag', OPT.datatype); %#ok<*NODEF,*NASGU>
+    ah = rws_createFixedMapsOnAxes(gca, urls, 'tag', OPT.datatype); %#ok<*NODEF,*NASGU>
+    
 end
 
 %% Step 1: go to the axes with tagged patches and select fixed maps using a polygon
@@ -109,14 +112,14 @@ delete(findobj(ah,'tag','selectionpoly')); try axes(ah); end; hold on
 plot(OPT.polygon(:,1),OPT.polygon(:,2),'g','linewidth',2,'tag','selectionpoly'); drawnow
 
 %% Step 2: identify which maps are in polygon
-[mapurls, minx, maxx, miny, maxy] = identifyWhichMapsAreInPolygon(ah, OPT.polygon);
+[mapurls, minx, maxx, miny, maxy] = rws_identifyWhichMapsAreInPolygon(ah, OPT.polygon);
 
 %% Step 3: retrieve data and place it on one overall grid
-[X, Y, Z, Ztime] = data2grid(mapurls, minx, maxx, miny, maxy, OPT);
+[X, Y, Z, Ztime] = rws_data2grid(mapurls, minx, maxx, miny, maxy, OPT);
 
 %% Step 4: plot the end result (Z and Ztime)
 % reduce the number of point to plot
 OPT.datathinning = OPT.datathinning * 2;
 
 % plot X, Y, Z and X, Y, Ztime
-plotDataInPolygon(X, Y, Z, Ztime, OPT)
+rws_plotDataInPolygon(X, Y, Z, Ztime, OPT)

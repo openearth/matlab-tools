@@ -1,4 +1,7 @@
-function plotDataInPolygon(X, Y, Z, Ztime, OPT)
+function rws_plotDataInPolygon(X, Y, Z, Ztime, OPT)
+%RWS_PLOTDATAINPOLYGON
+%
+%See also: 
 
 %% Step 1: plot resulting X, Y and Z grid
 %-----------------
@@ -6,8 +9,8 @@ figure(2);clf;
 
 % plot
 pcolorcorcen(X(1:OPT.datathinning:end,1:OPT.datathinning:end),...
-    Y(1:OPT.datathinning:end,1:OPT.datathinning:end),...
-    Z(1:OPT.datathinning:end,1:OPT.datathinning:end));
+             Y(1:OPT.datathinning:end,1:OPT.datathinning:end),...
+             Z(1:OPT.datathinning:end,1:OPT.datathinning:end));
 hold on; ph = plot(OPT.polygon(:,1), OPT.polygon(:,2),'g'); set(ph,'linewidth',2)
 
 % layout
@@ -40,13 +43,13 @@ end
 
 % plot
 pcolorcorcen(X(1:OPT.datathinning:end,1:OPT.datathinning:end),...
-    Y(1:OPT.datathinning:end,1:OPT.datathinning:end),...
-    V(1:OPT.datathinning:end,1:OPT.datathinning:end));
+             Y(1:OPT.datathinning:end,1:OPT.datathinning:end),...
+             V(1:OPT.datathinning:end,1:OPT.datathinning:end));
 hold on; ph = plot(OPT.polygon(:,1), OPT.polygon(:,2),'g'); set(ph,'linewidth', 2)
 
 % layout
 caxis   ([1-.5 nv+.5])
-colormap(clrmap(jet,nv)); % clrmap: thank you Bert Jagers
+colormap(jet(nv));
 [ax,c1] =  colorbarwithtitle('',1:nv+1); %#ok<NASGU>
 set(ax,'yticklabel',datestr(v,1))
 

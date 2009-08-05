@@ -1,8 +1,8 @@
 function urls = getFixedMapOutlines(type)
-% GETFIXEDMAPOUTLINES   Routine to retrieve information from OPeNDAP server
+%rws_GETFIXEDMAPOUTLINES   Routine to retrieve information from OPeNDAP server
 %
 %   Syntax:
-%   urls = getFixedMapOutlines(type)
+%   urls = opendap_getFixedMapOutlines(type)
 %
 %   Input:
 %   	datatype = type indicator for fixed map dataset to use ('jarkus', 'vaklodingen')
@@ -12,7 +12,7 @@ function urls = getFixedMapOutlines(type)
 %
 %   Example:
 %
-% See also: getDataInPolygon, getFixedMapOutlines, createFixedMapsOnAxes, identifyWhichMapsAreInPolygon, getDataFromNetCDFGrid
+% See also: rws_getDataInPolygon, rws_createFixedMapsOnAxes, rws_identifyWhichMapsAreInPolygon, getDataFromNetCDFGrid
 
 
 % --------------------------------------------------------------------
@@ -57,11 +57,11 @@ function urls = getFixedMapOutlines(type)
 if strcmp(type,'vaklodingen')
 %     ncfiles = info.vaklodingen;
     info = getOpenDAPinfo('url', 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml');
-    path    = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/';
+    path =                       'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/';
 elseif strcmp(type,'jarkus')
 %     ncfiles = info.jarkus.temp_grids;
     info = getOpenDAPinfo('url', 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml');
-    path    = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids/';
+    path =                       'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids/';
 else
     return
 end
@@ -74,5 +74,5 @@ urls{length(info),1} = '.';
 for i = 1:length(info)
     urls{i,1} = [path info{i}];
 end
-urls = cellfun(@strrep, urls, repmat({'_dot_'}, size(urls)), repmat({'.'}, size(urls)), 'UniformOutput', 0);
+urls = cellfun(@strrep, urls, repmat({'_dot_'} , size(urls)), repmat({'.'}, size(urls)), 'UniformOutput', 0);
 urls = cellfun(@strrep, urls, repmat({'/temp_'}, size(urls)), repmat({'/'}, size(urls)), 'UniformOutput', 0);

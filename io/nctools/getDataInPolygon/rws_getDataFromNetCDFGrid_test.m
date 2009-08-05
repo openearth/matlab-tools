@@ -1,3 +1,7 @@
+%RWS_GETDATAFROMNETCDFGRID_TEST   test for rws_getDataFromNetCDFGrid
+%
+%See also: rws_getDataFromNetCDFGrid
+
 %% Test 1: work on Delflandsekust grid
 
 % plot landboundary

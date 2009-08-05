@@ -1,7 +1,7 @@
 function [mapurls, minx, maxx, miny, maxy] = identifyWhichMapsAreInPolygon(ah, polygon)
-%IDENTIFYWHICHMAPSAREINPOLYGON  Script to identify which fixed maps are located inside a polygon partly or as a whole
+%rws_IDENTIFYWHICHMAPSAREINPOLYGON  Script to identify which fixed maps are located inside a polygon partly or as a whole
 %
-% See also: getDataInPolygon, getFixedMapOutlines, createFixedMapsOnAxes, identifyWhichMapsAreInPolygon, getDataFromNetCDFGrid
+% See also: rws_getDataInPolygon, rws_getFixedMapOutlines, rws_createFixedMapsOnAxes, getDataFromNetCDFGrid
 
 % --------------------------------------------------------------------
 % Copyright (C) 2004-2009 Delft University of Technology
@@ -47,7 +47,9 @@ maps = [get(objs, 'XData') get(objs, 'YData')];
 include = 0;
 for i = 1:length(maps)
     % include if a fixed map and polygon have an intersection
-    [xcr, zcr] = findCrossingsOfPolygonAndPolygon(maps{i,1},maps{i,2},polygon(:,1),polygon(:,2)); %#ok<*NASGU>
+    [xcr, zcr] = polyintersect                   (maps{i,1},maps{i,2},polygon(:,1),polygon(:,2)) %#ok<*NASGU>
+    [xcr, zcr] = findCrossingsOfPolygonAndPolygon(maps{i,1},maps{i,2},polygon(:,1),polygon(:,2)) %#ok<*NASGU>
+    disp('------------------------------------')
     if ~isempty(xcr)
         include = 1;
     end

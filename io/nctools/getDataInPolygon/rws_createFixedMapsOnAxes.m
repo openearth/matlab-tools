@@ -1,7 +1,7 @@
 function ah = createFixedMapsOnAxes(ah, urls, varargin)
-%CREATEFIXEDMAPSONAXES   plot fixed maps retrieved from OPeNDAP server to any arbitrary axes
+%rws_CREATEFIXEDMAPSONAXES   plot fixed maps retrieved from OPeNDAP server to any arbitrary axes
 %
-% See also: getDataInPolygon, getFixedMapOutlines, createFixedMapsOnAxes, identifyWhichMapsAreInPolygon, getDataFromNetCDFGrid
+% See also: rws_getDataInPolygon, rws_getFixedMapOutlines, rws_identifyWhichMapsAreInPolygon, getDataFromNetCDFGrid
 
 
 % --------------------------------------------------------------------
@@ -54,6 +54,8 @@ for i = 1:length(urls)
             [y_range(1) y_range(1) y_range(2) y_range(2) y_range(1)], 'k');
         set(ph, 'edgecolor', 'r', 'facecolor', 'none');
         drawnow
+        tickmap('xy');
+
     end
     
     set(ph,'tag',urls{i});
