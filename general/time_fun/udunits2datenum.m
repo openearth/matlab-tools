@@ -55,42 +55,44 @@ function datenumbers = udunits2datenum(varargin)
 %--------------------
 
    if     nargin==1
-   
       if     iscell(varargin{1})
          celltime = varargin{1};
       elseif ischar(varargin{1})
          celltime = cellstr(varargin{1});
       end
+
       for irow=1:length(celltime)
      [time{irow},...
       isounits{irow}] = strtok(celltime{irow});
       end
       time = str2num(char(time));
+      
    elseif nargin==2
       time      = varargin{1};
       isounits  = cellstr(varargin{2});
-      if length(time) >1 & length(isounits)==1
-         isounits = repmat(isounits,size(time));
-      end
    end   
+   
+%% Interpret unit and reference date string
+%--------------------
 
-   for irow=1:length(time)
-   rest = isounits{irow};
+      refdatenum = repmat(nan,[length(isounits) 1]);
+   for irow=1:length(isounits)
+      rest              = isounits{irow};
+     [units{irow},rest] = strtok(rest);
+     [dummy      ,rest] = strtok(rest);
+     [refdatenum(irow),...
+      zone]             = iso2datenum(rest);
+   end
 
-  [units,rest] = strtok(rest);
-  [dummy,rest] = strtok(rest);
-
-   %% Get reference date
-   %--------------------
-
-  [refdatenum,...
-   zone] = iso2datenum(rest);
-
-   %% Change units and apply reference date
-   %--------------------
-
-   datenumbers(irow) = time(irow).*convert_units(units,'day') + refdatenum;
-
+   if length(time) >1 & length(isounits)==1
+      datenumbers = time.*convert_units(units{1},'day') + refdatenum;
+   else
+      %% create matrix of factors to have a factorized multiplication below
+      unitfactor = repmat(nan,size(time));
+      for irow=1:length(time)
+         unitfactor(irow) = convert_units(units{irow},'day');
+      end
+      datenumbers = time.*unitfactor + refdatenum;
    end
 
    

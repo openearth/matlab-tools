@@ -47,9 +47,10 @@ maps = [get(objs, 'XData') get(objs, 'YData')];
 include = 0;
 for i = 1:length(maps)
     % include if a fixed map and polygon have an intersection
-    [xcr, zcr] = polyintersect                   (maps{i,1},maps{i,2},polygon(:,1),polygon(:,2)) %#ok<*NASGU>
-    [xcr, zcr] = findCrossingsOfPolygonAndPolygon(maps{i,1},maps{i,2},polygon(:,1),polygon(:,2)) %#ok<*NASGU>
-    disp('------------------------------------')
+
+   %[xcr, zcr] = polyintersect                   (maps{i,1},maps{i,2},polygon(:,1),polygon(:,2)); %#ok<*NASGU>
+    [xcr, zcr] = findCrossingsOfPolygonAndPolygon(maps{i,1},maps{i,2},polygon(:,1),polygon(:,2)); %#ok<*NASGU>
+
     if ~isempty(xcr)
         include = 1;
     end

@@ -55,9 +55,8 @@ for i = 1:length(urls)
         set(ph, 'edgecolor', 'r', 'facecolor', 'none');
         drawnow
         tickmap('xy');
-
     end
-    
     set(ph,'tag',urls{i});
 end
+tickmap ('xy','texttype','text')
 box on

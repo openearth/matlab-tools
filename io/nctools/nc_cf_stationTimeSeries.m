@@ -104,7 +104,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    end
 
 %% Get datenum
-   [D,M]           = nc_cf_time(ncfile);
+   D.datenum      = nc_cf_time(ncfile);
    
 %% Get location info
 

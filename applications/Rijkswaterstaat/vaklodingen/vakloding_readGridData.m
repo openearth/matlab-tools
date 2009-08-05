@@ -1,5 +1,5 @@
-function [d] = readGridData(datatype, name, year, soundingID)
-%READGRIDDATA   transforms processed data to proper meta data format
+function [d] = vakloding_readGridData(datatype, name, year, soundingID)
+%VAKLODING_READGRIDDATA   read RWS grid bathymetyry from a MySQL database
 %
 % input:
 %   datatype
@@ -7,7 +7,10 @@ function [d] = readGridData(datatype, name, year, soundingID)
 %   year
 %   soundingID
 %
-%   See also readTransectData, readLineData, readPointData
+%   See also: vakloding_readGridDataNetcdf, jarkus_readTransectDataNetcdf,...
+
+% OLD UCIT functions, should have prefix ucit_*
+%             readTransectData, readLineData, readPointData
 
 % -------------------------------------------------------------
 % Copyright (c) WL|Delft Hydraulics 2004-2008 FOR INTERNAL USE ONLY
@@ -47,9 +50,9 @@ switch nargin
             temp=DBGetTableEntry('grid','datatypeinfo',datatype,'name',name,'year',year,'soundingID',soundingID);
         end
 end
-d = creategridstruct();
 
-d=rearrangeData(temp);
+d = vakloding_creategridstruct();
+d = vakloding_rearrangeData(temp);
 
 % d.fielddata.interpx -> vector
 % d.fielddata.interpy -> vector
@@ -57,14 +60,13 @@ d=rearrangeData(temp);
 % d.Y
 % d.Z
 
-function d = rearrangeData(temp)
-d=temp;
+function d = vakloding_rearrangeData(d)
 
 if size(d.fielddata.interpx,1)==1 & size(d.fielddata.interpx,2)~=1 %#ok<AND2>
-    d.fielddata.interpx = repmat(d.fielddata.interpx,size(d.fielddata.interpz,1),1);
+        d.fielddata.interpx = repmat(d.fielddata.interpx,size(d.fielddata.interpz,1),1);
 end
 if size(d.fielddata.interpy,2)==1 & size(d.fielddata.interpy,1)~=1 %#ok<AND2>
-    d.fielddata.interpy = repmat(d.fielddata.interpy,1,size(d.fielddata.interpz,2));
+        d.fielddata.interpy = repmat(d.fielddata.interpy,1,size(d.fielddata.interpz,2));
 end
 
 try d.X=[d.fielddata.interpx]; end

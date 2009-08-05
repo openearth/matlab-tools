@@ -1,13 +1,16 @@
-function [D,M] = nc_cf_time(varargin)
+function varargout = nc_cf_time(varargin)
 %NC_CF_TIME   readfs all time variables from a netCDF file inot Matlab datenumber
 %
-%   [D,M]           = nc_cf_time(ncfile);
+%   datenumbers = nc_cf_time(ncfile);
 %
-% extract time vectors from netCDF file ncfile, where time is defined 
-% according to the CF convention as in:
+% extract time vectors from netCDF file ncfile as Matlab datenumbers, 
+% where time is defined according to the CF convention as in:
 %
 % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
 % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/ch04s04.html
+%
+% When there is only one time variable, an array is returned,
+% otherwise a warning is thrown.
 %
 %See also: NC_CF_NC_CF_STATIONTIMESERIES, NC_CF_GRID, UDUNITS2DATENUM
 
@@ -45,5 +48,13 @@ function [D,M] = nc_cf_time(varargin)
       D(ivar).datenum       = nc_varget(fileinfo.Filename,name{ivar});
       D(ivar).datenum       = udunits2datenum(D.datenum,M.datenum.units);
    end
+   
+if nargout<2
+   if length(index)==1
+      varargout = {D(1).datenum};
+   else
+      warning('multiple time vecots present, please specify furter.')
+   end
+end
 
 %% EOF

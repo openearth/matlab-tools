@@ -1,24 +1,23 @@
 function [X, Y, Z, Ztime] = getDataInPolygon(varargin)
 %rws_GETDATAINPOLYGON  Script to load fixed maps from OPeNDAP, identify which maps are located inside a polygon and retrieve the data 
 %
-%   Syntax:
-%   getDataInPolygon(varargin)
+%   rws_GETDATAINPOLYGON(<keyword,value>)
 %
 %   Input:
-%   For the following keywords, values are accepted (values indicated are the current default settings):
-%   	'datatype', 'jarkus'                = type indicator for fixed map dataset to use ('jarkus', 'vaklodingen')
-%   	'starttime', datenum([1997 01 01])  = indicates starttime (datenum) from which to look back or forward (depending on searchwindow setting)
-%   	'searchwindow', -2*365              = indicates search window in number of days ([-] backward in time, [+] forward in time)
-%   	'polygon', []                       = polygon to use gathering the data (should preferably be closed) [-]
-%   	'cellsize', 20                      = cellsize of fixed grid (same cellsize assumed in both directions) [-]
-%   	'datathinning', 1                   = factor used to stride through the data [-]
+%   where the following <keyword,value> pairs have been implemented (values indicated are the current default settings):
+%   	'datatype'    , 'vaklodingen'         = type indicator for fixed map dataset to use ('jarkus', 'vaklodingen')
+%   	'starttime'   , datenum([1997 01 01]) = indicates starttime (datenum) from which to look back or forward (depending on searchwindow setting)
+%   	'searchwindow', -2*365                = indicates search window in number of days ([-] backward in time, [+] forward in time)
+%   	'polygon'     , []                    = polygon to use gathering the data (should preferably be closed) [-]
+%   	'cellsize'    , 20                    = cellsize of fixed grid (same cellsize assumed in both directions) [-]
+%   	'datathinning', 1                     = factor used to stride through the data [-]
 %
 %   Output:
 %       function has no output
 %
 %   Example:
 %
-% Works for Rijskwaterstaat JarKus and Vaklodingen.(default)
+% Works for Rijkswaterstaat JarKus and Vaklodingen.(default)
 %
 % See also: rws_getFixedMapOutlines, rws_createFixedMapsOnAxes, rws_identifyWhichMapsAreInPolygon, rws_getDataFromNetCDFGrid
 
@@ -79,9 +78,9 @@ if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.datatype})) % if an ove
     figure(10);clf;axis equal;box on;hold on
     
     % Step 0.3: plot landboundary
-    x      = nc_varget(OPT.ldburl, lookupVarnameInNetCDF('ncfile', OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate'));
-    y      = nc_varget(OPT.ldburl, lookupVarnameInNetCDF('ncfile', OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate'));
-    plot(x, y, 'k', 'linewidth', 2);
+    OPT.x = nc_varget(OPT.ldburl, lookupVarnameInNetCDF('ncfile', OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate'));
+    OPT.y = nc_varget(OPT.ldburl, lookupVarnameInNetCDF('ncfile', OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate'));
+    plot(OPT.x, OPT.y, 'k', 'linewidth', 2);
     
     % Step 0.4: plot fixed map patches on axes and return the axes handle
     ah = rws_createFixedMapsOnAxes(gca, urls, 'tag', OPT.datatype); %#ok<*NODEF,*NASGU>
@@ -100,6 +99,7 @@ if isempty(OPT.polygon)
     try axes(ah); end
     
     % draw a polygon using Gerben's drawpolygon routine making sure its tagged properly
+    disp('Please click a polygon from which to select data ...')
     [x,y] = drawpolygon('g','linewidth',2,'tag','selectionpoly');
     
     % combine x and y in the variable polygon and close it
@@ -122,4 +122,4 @@ plot(OPT.polygon(:,1),OPT.polygon(:,2),'g','linewidth',2,'tag','selectionpoly');
 OPT.datathinning = OPT.datathinning * 2;
 
 % plot X, Y, Z and X, Y, Ztime
-rws_plotDataInPolygon(X, Y, Z, Ztime, OPT)
+rws_plotDataInPolygon(X, Y, Z, Ztime,'polygon',OPT.polygon,'datathinning',OPT.datathinning,'ldburl',OPT.ldburl)
