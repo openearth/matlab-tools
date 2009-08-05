@@ -6,7 +6,7 @@ function [Volume] = jarkus_getVolumeFast(x, z, UpperBoundary, LowerBoundary, Lan
 % but runs ~50 times faster. Boundaries can only have one variable, and are
 % thus restricted to horizontal or vertical planes.
 %
-%   [Volume] = getVolumeFast(x, z, UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary,varargin)
+%   [Volume] = jarkus_getVolumeFast(x, z, UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary,varargin)
 %
 %   input:
 %       x                   = column array with x points (increasing index and positive x in seaward direction)
@@ -15,7 +15,7 @@ function [Volume] = jarkus_getVolumeFast(x, z, UpperBoundary, LowerBoundary, Lan
 %       LowerBoundary       = lower horizontal plane of volume area 
 %       LandwardBoundary    = landward vertical plane of volume area 
 %       SeawardBoundary     = seaward vertical plane of volume area 
-%       vararging           = can be set to 'plot'
+%       varargin            = can be set to 'plot'
 
 %
 
@@ -157,14 +157,16 @@ Volume=sum(Poly(:,5));
 %% plot (visualize proces)
 if length(varargin)>0
     if varargin{1} == 'plot'
-        x2 = [SeawardBoundary LandwardBoundary LandwardBoundary SeawardBoundary SeawardBoundary]';
-        z2 = [UpperBoundary UpperBoundary LowerBoundary LowerBoundary UpperBoundary]';
 
-        plot(x,z,x2,z2)
+        plot(x,z)
+        axis([min(x)-50 max(x)+50 min(z)-1 max(z)+1])
         hold on
-        plot(x_SB,z_SB,'ko',x_LaB,z_LaB,'ro',x_UB,z_UB,'go',x_LoB,z_LoB,'co');
+        patch([SeawardBoundary; LandwardBoundary; LandwardBoundary; SeawardBoundary],...
+            [UpperBoundary; UpperBoundary; LowerBoundary; LowerBoundary],[0 .5 0]);
+        alpha(.1)
+        plot(x_SB,z_SB,'ko',x_LaB,z_LaB,'ro',x_UB,z_UB,'go',x_LoB,z_LoB,'co','LineWidth',2);
         plot(Poly(:,1),Poly(:,2),'r.')
-        patch([Poly(:,1); LandwardBoundary],[Poly(:,2); LowerBoundary],1)
+        patch([Poly(:,1); SeawardBoundary; LandwardBoundary],[Poly(:,2); LowerBoundary; LowerBoundary],1)
         hold off
         grid on
         title(sprintf('The volume is %2.2f m^3/m',Volume))
