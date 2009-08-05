@@ -1,5 +1,5 @@
-function [Volume result Boundaries] = getVolume(varargin)
-%GETVOLUME   generic routine to determine volumes on transects
+function [Volume result Boundaries] = jarkus_getVolume(varargin)
+% JARKUS_GETVOLUME   generic routine to determine volumes on transects
 %
 %   Routine determines volumes on transects. In case of no second profile (x2, z2),
 %   the volume above the lowerboundary, below the profile (x, z) and eventually the upperboundary,

@@ -1,12 +1,12 @@
-function [Volume] = getVolumeFast(x, z, UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary)
-%GETVOLUMEFAST   generic routine to determine volumes on transects
+function [Volume] = jarkus_getVolumeFast(x, z, UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary,varargin)
+% JARKUS_GETVOLUMEFAST   generic routine to determine volumes on transects
 %
-% Alternative to getVolume routine. Routine determines volumes on transects. 
-% The routine has stricter input requirements than getVolume, but runs ~50
-% times faster. Boundaries can only have one variable, and are thus restricted
-% to horizontal or vertical planes.
+% Alternative to the jaruks_getVolume routine. Routine determines volumes 
+% on transects. The routine has stricter input requirements than getVolume,
+% but runs ~50 times faster. Boundaries can only have one variable, and are
+% thus restricted to horizontal or vertical planes.
 %
-%   [Volume] = getVolumeFast(x, z, UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary)
+%   [Volume] = getVolumeFast(x, z, UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary,varargin)
 %
 %   input:
 %       x                   = column array with x points (increasing index and positive x in seaward direction)
@@ -15,11 +15,53 @@ function [Volume] = getVolumeFast(x, z, UpperBoundary, LowerBoundary, LandwardBo
 %       LowerBoundary       = lower horizontal plane of volume area 
 %       LandwardBoundary    = landward vertical plane of volume area 
 %       SeawardBoundary     = seaward vertical plane of volume area 
+%       vararging           = can be set to 'plot'
+
 %
-% -------------------------------------------------------------
-% Version:      Version 1.0, July 2008 (Version 1.0, July 2008)
-% By:           <Thijs Damsma (email: t.damsma@student.tudelft.nl)>  
-% -------------------------------------------------------------
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2009 <Deltares>
+%       Thijs Damsma
+%
+%       <Thijs.Damsma@Deltares.nl>	
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 04 Aug 2009
+% Created with Matlab version: 7.5.0.342 (R2007b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
 %% check input
 if ~isequal(length(x), length(z))
     error('GETVOLUMEFAST:input','~length(x)=length(z)')
@@ -113,13 +155,18 @@ Poly(:,5)=(Poly(:,2)-LowerBoundary).*(Poly(:,3)+Poly(:,4))/2;
 % total volume
 Volume=sum(Poly(:,5));
 %% plot (visualize proces)
-% x2 = [SeawardBoundary LandwardBoundary LandwardBoundary SeawardBoundary SeawardBoundary]';
-% z2 = [UpperBoundary UpperBoundary LowerBoundary LowerBoundary UpperBoundary]';
-% 
-% plot(x,z,x2,z2)
-% hold on
-% plot(x_SB,z_SB,'ko',x_LaB,z_LaB,'ro',x_UB,z_UB,'go',x_LoB,z_LoB,'co');
-% plot(Poly(:,1),Poly(:,2),'r.')
-% 
-% hold off
-% grid on
+if length(varargin)>0
+    if varargin{1} == 'plot'
+        x2 = [SeawardBoundary LandwardBoundary LandwardBoundary SeawardBoundary SeawardBoundary]';
+        z2 = [UpperBoundary UpperBoundary LowerBoundary LowerBoundary UpperBoundary]';
+
+        plot(x,z,x2,z2)
+        hold on
+        plot(x_SB,z_SB,'ko',x_LaB,z_LaB,'ro',x_UB,z_UB,'go',x_LoB,z_LoB,'co');
+        plot(Poly(:,1),Poly(:,2),'r.')
+        patch([Poly(:,1); LandwardBoundary],[Poly(:,2); LowerBoundary],1)
+        hold off
+        grid on
+        title(sprintf('The volume is %2.2f m^3/m',Volume))
+    end
+end
