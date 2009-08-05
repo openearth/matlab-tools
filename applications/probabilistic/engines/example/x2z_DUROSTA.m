@@ -154,28 +154,50 @@ for i = 1:size(x,1)
     fname = DUROSTA_Inp_File(D, [pwd filesep fname '.inp']);
 
     try
-        % calculate dune erosion and read result file
-        DUROSTA_Run(fname, [exeDir filesep 'uni-de.exe'], 'quiet', 1);
-        result = DUROSTA_Process_Results(D, fname);
+        % calculate dune erosion and read result file, if exists
+        
+        if exist(fname, 'file')
+            DUROSTA_Run(fname, [exeDir filesep 'uni-de.exe'], 'quiet', 1);
+            
+            [pathstr, fname, ext] = fileparts(fname);
+            if exist([pathstr filesep fname '.tek'], 'file')
+                result = DUROSTA_Process_Results(D, fname);
 
-        % retrieve resulting erosion volume from result struct
-        ErosionVolume(i) = result.Output.Volumes.Data(2);
-        
-        % retrieve resulting volume from result struct
-        xFinal = result.Output.FinalProfileX;
-        zFinal = result.Output.FinalProfileZ;
-        
-        % calculate new crossing with surge level and calculate retreat
-        % distance
-        x = max(findCrossings(xFinal, zFinal, [min(xFinal) max(xFinal)]', ones(2,1) * zRef));
-        retreat(i) = x - xRef;
+                % retrieve resulting erosion volume from result struct
+                ErosionVolume(i) = result.Output.Volumes.Data(2);
+
+                % retrieve resulting volume from result struct
+                xFinal = result.Output.FinalProfileX;
+                zFinal = result.Output.FinalProfileZ;
+
+                % calculate new crossing with surge level and calculate retreat
+                % distance
+                x = max(findCrossings(xFinal, zFinal, [min(xFinal) max(xFinal)]', ones(2,1) * zRef));
+                retreat(i) = x - xRef;
+            else
+                % throw error
+                [pathstr, fname, ext] = fileparts(fname);
+                disp(['ERROR: TEK file not found [' num2str(i) '; ' fname ']']);
+
+                ErosionVolume(i) = NaN;
+                retreat(i) = NaN;
+            end
+        else
+            % throw error
+            [pathstr, fname, ext] = fileparts(fname);
+            disp(['ERROR: INP file not found [' num2str(i) '; ' fname ']']);
+
+            ErosionVolume(i) = NaN;
+            retreat(i) = NaN;
+        end
     catch
         % throw error
         err = lasterror;
-        disp(['ERROR: ' err.message ' [' num2str(i) ']']);
+        [pathstr, fname, ext] = fileparts(fname);
+        disp(['ERROR: ' err.message ' [' num2str(i) '; ' fname ']']);
         
-        ErosionVolume(i) = 0;
-        retreat(i) = 0;
+        ErosionVolume(i) = NaN;
+        retreat(i) = NaN;
     end
     
     % delete temporary files after saving DAF info

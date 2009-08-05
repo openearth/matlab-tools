@@ -86,6 +86,13 @@ for i = 1:size(x,1)
             'BoundaryProfile', false,...       % Grensprofiel berekenen is niet nodig, gebruiken we niet
             'FallVelocity', {@getFallVelocity 'a' 0.476 'b' 2.18 'c' 3.226 'D50'});
         
+        % set coastal curvature, if provided
+        if ~isempty(R(i))
+            DuneErosionSettings('set', 'Bend', R(i));
+        else
+            DuneErosionSettings('set', 'Bend', 0);
+        end
+        
         %% carry out DUROS+ computation
         result = getDuneErosion(xInitial, zInitial, D50(i), WL_t(i), Hsig_t(i), Tp_t(i));
         Tp_t(i) = result(1).info.input.Tp_t;
