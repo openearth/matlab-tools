@@ -1,0 +1,193 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>get some arbitrary profile data</title>
+      <meta name="generator" content="MATLAB 7.5">
+      <meta name="date" content="2009-08-05">
+      <meta name="m-file" content="tutorial_jarkus2_calculate_volume"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h1>get some arbitrary profile data</h1>
+         <introduction>
+            <p>In this tutorial we will calculate the volume of a certain cross-section</p>
+         </introduction>
+         <h2>Contents</h2>
+         <div>
+            <ul>
+               <li><a href="#1">Read in data</a></li>
+               <li><a href="#2">Available options</a></li>
+               <li><a href="#4">jarkus_getVolumeFast</a></li>
+               <li><a href="#6">jarkus_getVolume</a></li>
+               <li><a href="#7">Volume difference between two transects</a></li>
+            </ul>
+         </div>
+         <h2>Read in data<a name="1"></a></h2>
+         <p>See the previous JarKus tutorial for a detailed explanation</p><pre class="codeinput">url         = jarkus_url;
+id          = nc_varget(url,<span class="string">'id'</span>);
+transect_nr = find(id==8005700)-1;
+year        = nc_varget(url,<span class="string">'time'</span>);
+year_nr     = find(year == 1979)-1;
+xRSP        = nc_varget(url,<span class="string">'cross_shore'</span>);
+z           = nc_varget(url,<span class="string">'altitude'</span>,[year_nr,transect_nr,1],[1,1,-1]);
+x    = xRSP(~isnan(z));
+z    =    z(~isnan(z));
+</pre><h2>Available options<a name="2"></a></h2>
+         <p>First we want an overview of available jarkus funtions</p><pre class="codeinput">help <span class="string">jarkus</span>
+</pre><pre class="codeoutput">Contents of jarkus:
+
+jarkus_createtransectstruct    - create jarkus transect struct
+jarkus_findCrossings           - routine to find crossings of 2 profiles
+jarkus_getMKL                  - returns the cross shore coordinate of the volume based coastal indicator MKL 
+jarkus_getVolume               - generic routine to determine volumes on transects
+jarkus_getVolumeFast           - generic routine to determine volumes on transects
+jarkus_grid2netcdf             - converts Jarkus grid struct to netCDF-CF file
+jarkus_netcdf2grid             - converts netCDF-CF file to Jarkus grid struct
+jarkus_transect2grid           - converts Jarkus transect struct to Jarkus grid struct
+jarkus_transect2netcdf         - converts Jarkus transect struct to netCDF-CF file
+jarkus_transect2oldtransect    - converts Jarkus transect struct
+jarkus_updategrid              - update Jarkus grid struct
+jarkus_url                     - returns the link to the jarkus netCDF. 
+
+</pre><p>Apparantly, there are two (competing) functions in the toolbox that can calculate volumes: jarkus_getVolume and jarkus_getVolumeFast
+            to find out differences, click on the help links
+         </p>
+         <h2>jarkus_getVolumeFast<a name="4"></a></h2>
+         <p>Firs an example using jarkus_getVolumeFast</p>
+         <p>We need to define a box within which the volume can be computed, as volume if not defined for a line.</p><pre class="codeinput">UpperBoundary       =  1000;
+LowerBoundary       =     3;
+LandwardBoundary    =     0;
+SeawardBoundary     = max(x);
+</pre><p>and the we call the function. We use the additional 'plot' argument to get a plot of the result.</p><pre class="codeinput">[Volume] = jarkus_getVolumeFast(x, z, UpperBoundary, LowerBoundary,<span class="keyword">...</span>
+    LandwardBoundary, SeawardBoundary,<span class="string">'plot'</span>)
+</pre><pre class="codeoutput">
+Volume =
+
+  933.1031
+
+</pre><img vspace="5" hspace="5" src="tutorial_jarkus2_calculate_volume_01.png"> <h2>jarkus_getVolume<a name="6"></a></h2>
+         <p>to be added...</p>
+         <h2>Volume difference between two transects<a name="7"></a></h2>
+         <p>to be added...</p>
+         <p class="footer"><br>
+            Published with MATLAB&reg; 7.5<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% get some arbitrary profile data 
+% In this tutorial we will calculate the volume of a certain cross-section
+
+%% Read in data
+% See the previous JarKus tutorial for a detailed explanation
+
+url         = jarkus_url;
+id          = nc_varget(url,'id');
+transect_nr = find(id==8005700)-1;
+year        = nc_varget(url,'time');
+year_nr     = find(year == 1979)-1;
+xRSP        = nc_varget(url,'cross_shore');
+z           = nc_varget(url,'altitude',[year_nr,transect_nr,1],[1,1,-1]);
+x    = xRSP(~isnan(z));
+z    =    z(~isnan(z));
+
+%% Available options
+% First we want an overview of available jarkus funtions
+
+help jarkus
+
+%% 
+% Apparantly, there are two (competing) functions in the toolbox that can
+% calculate volumes: jarkus_getVolume and jarkus_getVolumeFast 
+% to find out differences, click on the help links
+
+%% jarkus_getVolumeFast
+% Firs an example using jarkus_getVolumeFast
+%
+% We need to define a box within which the volume can be computed, as
+% volume if not defined for a line.
+
+UpperBoundary       =  1000;
+LowerBoundary       =     3;
+LandwardBoundary    =     0;
+SeawardBoundary     = max(x);
+
+%%
+% and the we call the function. We use the additional 'plot' argument to
+% get a plot of the result. 
+
+[Volume] = jarkus_getVolumeFast(x, z, UpperBoundary, LowerBoundary,...
+    LandwardBoundary, SeawardBoundary,'plot')
+
+%% jarkus_getVolume
+% to be added...
+
+%% Volume difference between two transects
+% to be added...
+
+##### SOURCE END #####
+-->
+   </body>
+</html>

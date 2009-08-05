@@ -16,29 +16,31 @@
 url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
 
 %%
-% alternatively, you can use the function jarkus_url. This hast the
+% Alternatively, you can use the function jarkus_url. This has the
 % advantage that it returns the link to the netCDF file on the Deltares
 % network if it is available. This is faster than accessing data
 % over the internet.
 
 url = jarkus_url
 
-%% look at metadata
-% we can get data from this file using nc_varget. But first, let's see what
+%% View metadata
+% We can get data from this file using the funtion nc_varget. But first, let's see what
 % is in the file using nc_dump. nc_dump shows all the metadata in the file.
 % In the case of the JarKus file this is a lot.
 
 nc_dump(url)
 
 %% 
-% from the metadata we can see that there is a field 'id'. To look at this
-% data, euse nc_varget.
+% From the metadata we can see that there is a field 'id'. To get this
+% data, use nc_varget.
 
 id = nc_varget(url,'id')
 
 %% figure out which part of the data we need
 % The transect we are looking for is #3800, in area 7 (Noord-Holland). This
-% transect has id 7003800. 
+% transect has id 7003800. We know this from our previous nc_dump
+%%
+% |id:comment = "sum of area code (x1000000) and alongshore coordinate"|
 
 transect_nr = find(id==7003800)
 
@@ -67,7 +69,7 @@ year        = nc_varget(url,'time');
 year_nr     = find(year == 1966)-1;
 year        = nc_varget(url,'time',year_nr,1)
 
-%% extract the data
+%% Extract the data
 % The cross shore coordinate relative to RSP (RijksStrandPalen) is stored 
 % in the cross_shore field and the z data in the altitude field.
 % Extracting the xRSP data is simple:
@@ -94,7 +96,7 @@ z           = nc_varget(url,'altitude',[year_nr,transect_nr,1],[1,1,-1]);
 x    = xRSP(~isnan(z));
 z    =    z(~isnan(z));
 
-%% plot the data
+%% Plot the data
 % always plot data to check if it's ok:
 
 plot(x,z,'.b')

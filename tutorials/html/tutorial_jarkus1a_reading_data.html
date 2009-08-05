@@ -11,7 +11,7 @@ To make changes, update the M-file and republish this document.
       -->
       <title>Extracting JarKus data from NetCDF</title>
       <meta name="generator" content="MATLAB 7.5">
-      <meta name="date" content="2009-08-04">
+      <meta name="date" content="2009-08-05">
       <meta name="m-file" content="tutorial_jarkus1a_reading_data"><style>
 
 body {
@@ -79,10 +79,10 @@ p.footer {
          <div>
             <ul>
                <li><a href="#1">Locate the data file on the internet</a></li>
-               <li><a href="#5">look at metadata</a></li>
+               <li><a href="#5">View metadata</a></li>
                <li><a href="#7">figure out which part of the data we need</a></li>
-               <li><a href="#11">extract the data</a></li>
-               <li><a href="#16">plot the data</a></li>
+               <li><a href="#12">Extract the data</a></li>
+               <li><a href="#17">Plot the data</a></li>
             </ul>
          </div>
          <h2>Locate the data file on the internet<a name="1"></a></h2>
@@ -91,7 +91,7 @@ p.footer {
          <p>Find the Jarkus NetCDF file by clicking on: hyrax ==&gt; Rijkswaterstaat ==&gt; Jarkus ==&gt; transects. Click on the link to the file
             and extract the direct link to the JarKus NetCDF data file.
          </p><pre class="codeinput">url = <span class="string">'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/profiles/transect.nc'</span>;
-</pre><p>alternatively, you can use the function jarkus_url. This hast the advantage that it returns the link to the netCDF file on
+</pre><p>Alternatively, you can use the function jarkus_url. This has the advantage that it returns the link to the netCDF file on
             the Deltares network if it is available. This is faster than accessing data over the internet.
          </p><pre class="codeinput">url = jarkus_url
 </pre><pre class="codeoutput">
@@ -99,9 +99,9 @@ url =
 
 P:\mcdata\opendap\rijkswaterstaat\jarkus\profiles\transect.nc
 
-</pre><h2>look at metadata<a name="5"></a></h2>
-         <p>we can get data from this file using nc_varget. But first, let's see what is in the file using nc_dump. nc_dump shows all
-            the metadata in the file. In the case of the JarKus file this is a lot.
+</pre><h2>View metadata<a name="5"></a></h2>
+         <p>We can get data from this file using the funtion nc_varget. But first, let's see what is in the file using nc_dump. nc_dump
+            shows all the metadata in the file. In the case of the JarKus file this is a lot.
          </p><pre class="codeinput">nc_dump(url)
 </pre><pre class="codeoutput">netcdf P:\mcdata\opendap\rijkswaterstaat\jarkus\profiles\transect.nc { 
 
@@ -118,7 +118,7 @@ variables:
 		id:comment = "sum of area code (x1000000) and alongshore coordinate" 
 	long areacode(alongshore), shape = [2178]
 		areacode:long_name = "area code" 
-...</pre><p>from the metadata we can see that there is a field 'id'. To look at this data, euse nc_varget.</p><pre class="codeinput">id = nc_varget(url,<span class="string">'id'</span>)
+...</pre><p>From the metadata we can see that there is a field 'id'. To get this data, use nc_varget.</p><pre class="codeinput">id = nc_varget(url,<span class="string">'id'</span>)
 </pre><pre class="codeoutput">
 id =
 
@@ -135,7 +135,10 @@ id =
      2000180
      2000200
 ...</pre><h2>figure out which part of the data we need<a name="7"></a></h2>
-         <p>The transect we are looking for is #3800, in area 7 (Noord-Holland). This transect has id 7003800.</p><pre class="codeinput">transect_nr = find(id==7003800)
+         <p>The transect we are looking for is #3800, in area 7 (Noord-Holland). This transect has id 7003800. We know this from our previous
+            nc_dump
+         </p>
+         <p><tt>id:comment = "sum of area code (x1000000) and alongshore coordinate"</tt></p><pre class="codeinput">transect_nr = find(id==7003800)
 </pre><pre class="codeoutput">
 transect_nr =
 
@@ -168,7 +171,7 @@ year =
 
         1966
 
-</pre><h2>extract the data<a name="11"></a></h2>
+</pre><h2>Extract the data<a name="12"></a></h2>
          <p>The cross shore coordinate relative to RSP (RijksStrandPalen) is stored in the cross_shore field and the z data in the altitude
             field. Extracting the xRSP data is simple:
          </p><pre class="codeinput">xRSP        = nc_varget(url,<span class="string">'cross_shore'</span>);
@@ -182,7 +185,7 @@ year =
             datapoints:
          </p><pre class="codeinput">x    = xRSP(~isnan(z));
 z    =    z(~isnan(z));
-</pre><h2>plot the data<a name="16"></a></h2>
+</pre><h2>Plot the data<a name="17"></a></h2>
          <p>always plot data to check if it's ok:</p><pre class="codeinput">plot(x,z,<span class="string">'.b'</span>)
 </pre><img vspace="5" hspace="5" src="tutorial_jarkus1a_reading_data_01.png"> <p class="footer"><br>
             Published with MATLAB&reg; 7.5<br></p>
@@ -207,29 +210,31 @@ z    =    z(~isnan(z));
 url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
 
 %%
-% alternatively, you can use the function jarkus_url. This hast the
+% Alternatively, you can use the function jarkus_url. This has the
 % advantage that it returns the link to the netCDF file on the Deltares
 % network if it is available. This is faster than accessing data
 % over the internet.
 
 url = jarkus_url
 
-%% look at metadata
-% we can get data from this file using nc_varget. But first, let's see what
+%% View metadata
+% We can get data from this file using the funtion nc_varget. But first, let's see what
 % is in the file using nc_dump. nc_dump shows all the metadata in the file.
 % In the case of the JarKus file this is a lot.
 
 nc_dump(url)
 
 %% 
-% from the metadata we can see that there is a field 'id'. To look at this
-% data, euse nc_varget.
+% From the metadata we can see that there is a field 'id'. To get this
+% data, use nc_varget.
 
 id = nc_varget(url,'id')
 
 %% figure out which part of the data we need
 % The transect we are looking for is #3800, in area 7 (Noord-Holland). This
-% transect has id 7003800. 
+% transect has id 7003800. We know this from our previous nc_dump
+%%
+% |id:comment = "sum of area code (x1000000) and alongshore coordinate"|
 
 transect_nr = find(id==7003800)
 
@@ -258,7 +263,7 @@ year        = nc_varget(url,'time');
 year_nr     = find(year == 1966)-1;
 year        = nc_varget(url,'time',year_nr,1)
 
-%% extract the data
+%% Extract the data
 % The cross shore coordinate relative to RSP (RijksStrandPalen) is stored 
 % in the cross_shore field and the z data in the altitude field.
 % Extracting the xRSP data is simple:
@@ -285,7 +290,7 @@ z           = nc_varget(url,'altitude',[year_nr,transect_nr,1],[1,1,-1]);
 x    = xRSP(~isnan(z));
 z    =    z(~isnan(z));
 
-%% plot the data
+%% Plot the data
 % always plot data to check if it's ok:
 
 plot(x,z,'.b')
