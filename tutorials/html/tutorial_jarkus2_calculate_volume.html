@@ -9,9 +9,9 @@
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
       -->
-      <title>get some arbitrary profile data</title>
+      <title>JarKus volume calculations</title>
       <meta name="generator" content="MATLAB 7.5">
-      <meta name="date" content="2009-08-05">
+      <meta name="date" content="2009-08-07">
       <meta name="m-file" content="tutorial_jarkus2_calculate_volume"><style>
 
 body {
@@ -71,21 +71,21 @@ p.footer {
   </style></head>
    <body>
       <div class="content">
-         <h1>get some arbitrary profile data</h1>
+         <h1>JarKus volume calculations</h1>
          <introduction>
-            <p>In this tutorial we will calculate the volume of a certain cross-section</p>
+            <p>This tutorial demonstrates how to calculate the volume of a certain JarKus profile.</p>
          </introduction>
          <h2>Contents</h2>
          <div>
             <ul>
-               <li><a href="#1">Read in data</a></li>
+               <li><a href="#1">Read some data</a></li>
                <li><a href="#2">Available options</a></li>
                <li><a href="#4">jarkus_getVolumeFast</a></li>
                <li><a href="#6">jarkus_getVolume</a></li>
                <li><a href="#7">Volume difference between two transects</a></li>
             </ul>
          </div>
-         <h2>Read in data<a name="1"></a></h2>
+         <h2>Read some data<a name="1"></a></h2>
          <p>See the previous JarKus tutorial for a detailed explanation</p><pre class="codeinput">url         = jarkus_url;
 id          = nc_varget(url,<span class="string">'id'</span>);
 transect_nr = find(id==8005700)-1;
@@ -96,7 +96,7 @@ z           = nc_varget(url,<span class="string">'altitude'</span>,[year_nr,tran
 x    = xRSP(~isnan(z));
 z    =    z(~isnan(z));
 </pre><h2>Available options<a name="2"></a></h2>
-         <p>First we want an overview of available jarkus funtions</p><pre class="codeinput">help <span class="string">jarkus</span>
+         <p>First we want an overview of available jarkus functions</p><pre class="codeinput">help <span class="string">jarkus</span>
 </pre><pre class="codeoutput">Contents of jarkus:
 
 jarkus_createtransectstruct    - create jarkus transect struct
@@ -106,13 +106,13 @@ jarkus_getVolume               - generic routine to determine volumes on transec
 jarkus_getVolumeFast           - generic routine to determine volumes on transects
 jarkus_grid2netcdf             - converts Jarkus grid struct to netCDF-CF file
 jarkus_netcdf2grid             - converts netCDF-CF file to Jarkus grid struct
+jarkus_readTransectDataNetcdf  - transforms processed data to proper meta data format
 jarkus_transect2grid           - converts Jarkus transect struct to Jarkus grid struct
 jarkus_transect2netcdf         - converts Jarkus transect struct to netCDF-CF file
 jarkus_transect2oldtransect    - converts Jarkus transect struct
 jarkus_updategrid              - update Jarkus grid struct
 jarkus_url                     - returns the link to the jarkus netCDF. 
-
-</pre><p>Apparantly, there are two (competing) functions in the toolbox that can calculate volumes: jarkus_getVolume and jarkus_getVolumeFast
+</pre><p>Apparently, there are two (competing) functions in the toolbox that can calculate volumes: jarkus_getVolume and jarkus_getVolumeFast
             to find out differences, click on the help links
          </p>
          <h2>jarkus_getVolumeFast<a name="4"></a></h2>
@@ -137,10 +137,11 @@ Volume =
       </div>
       <!--
 ##### SOURCE BEGIN #####
-%% get some arbitrary profile data 
-% In this tutorial we will calculate the volume of a certain cross-section
+%% JarKus volume calculations
+% This tutorial demonstrates how to calculate the volume of a certain
+% JarKus profile. 
 
-%% Read in data
+%% Read some data
 % See the previous JarKus tutorial for a detailed explanation
 
 url         = jarkus_url;
@@ -154,12 +155,12 @@ x    = xRSP(~isnan(z));
 z    =    z(~isnan(z));
 
 %% Available options
-% First we want an overview of available jarkus funtions
+% First we want an overview of available jarkus functions
 
 help jarkus
 
 %% 
-% Apparantly, there are two (competing) functions in the toolbox that can
+% Apparently, there are two (competing) functions in the toolbox that can
 % calculate volumes: jarkus_getVolume and jarkus_getVolumeFast 
 % to find out differences, click on the help links
 

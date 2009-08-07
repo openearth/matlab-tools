@@ -9,9 +9,9 @@
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
       -->
-      <title>Extracting JarKus data from NetCDF</title>
+      <title>Extracting JarKus data from netCDF</title>
       <meta name="generator" content="MATLAB 7.5">
-      <meta name="date" content="2009-08-05">
+      <meta name="date" content="2009-08-07">
       <meta name="m-file" content="tutorial_jarkus1a_reading_data"><style>
 
 body {
@@ -71,9 +71,9 @@ p.footer {
   </style></head>
    <body>
       <div class="content">
-         <h1>Extracting JarKus data from NetCDF</h1>
+         <h1>Extracting JarKus data from netCDF</h1>
          <introduction>
-            <p>For this example, we will extract data from a Jarkus profile in Egmond aan Zeeform the from opendap server, for the year 1999.</p>
+            <p>For this example, we will extract data from a Jarkus profile in Egmond aan Zee from the OPeNDAP server, for the year 1999.</p>
          </introduction>
          <h2>Contents</h2>
          <div>
@@ -86,11 +86,11 @@ p.footer {
             </ul>
          </div>
          <h2>Locate the data file on the internet<a name="1"></a></h2>
-         <p>To locate the NETcdf data file, browse to:</p>
-         <p><a href="http:\\opendap.deltares.nl:8080">http:\\opendap.deltares.nl:8080</a></p>
-         <p>Find the Jarkus NetCDF file by clicking on: hyrax ==&gt; Rijkswaterstaat ==&gt; Jarkus ==&gt; transects. Click on the link to the file
-            and extract the direct link to the JarKus NetCDF data file.
-         </p><pre class="codeinput">url = <span class="string">'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/profiles/transect.nc'</span>;
+         <p>To locate the netCDF data file, browse to the OPeNDAP website:</p>
+         <p><a href="http:\\OPeNDAP.deltares.nl:8080">http:\\OPeNDAP.deltares.nl:8080</a></p>
+         <p>Find the Jarkus netCDF file by clicking on the following links: HYRAX ==&gt; Rijkswaterstaat ==&gt; JarKus ==&gt; transects. Click
+            on the link to the file and extract the direct link to the JarKus netCDF data file.
+         </p><pre class="codeinput">url = <span class="string">'http://OPeNDAP .deltares.nl:8080/OPeNDAP/rijkswaterstaat/jarkus/profiles/transect.nc'</span>;
 </pre><p>Alternatively, you can use the function jarkus_url. This has the advantage that it returns the link to the netCDF file on
             the Deltares network if it is available. This is faster than accessing data over the internet.
          </p><pre class="codeinput">url = jarkus_url
@@ -100,7 +100,7 @@ url =
 P:\mcdata\opendap\rijkswaterstaat\jarkus\profiles\transect.nc
 
 </pre><h2>View metadata<a name="5"></a></h2>
-         <p>We can get data from this file using the funtion nc_varget. But first, let's see what is in the file using nc_dump. nc_dump
+         <p>We can get data from this file using the function nc_varget. But first, let's see what is in the file using nc_dump. nc_dump
             shows all the metadata in the file. In the case of the JarKus file this is a lot.
          </p><pre class="codeinput">nc_dump(url)
 </pre><pre class="codeoutput">netcdf P:\mcdata\opendap\rijkswaterstaat\jarkus\profiles\transect.nc { 
@@ -145,7 +145,7 @@ transect_nr =
         1074
 
 </pre><p>To get only data from this transect, we can give nc_varget some extra arguments. The first optional argument is the start
-            index from where you want to extract data. The second argument indicates the number or entrie you want along this dimension.
+            index from where you want to extract data. The second argument indicates the number or entries you want along this dimension.
             In our case this is 1.
          </p><pre class="codeinput">id          = nc_varget(url,<span class="string">'id'</span>,transect_nr,1)
 </pre><pre class="codeoutput">
@@ -182,7 +182,7 @@ year =
             to ask for all data in that dimension:
          </p><pre class="codeinput">z           = nc_varget(url,<span class="string">'altitude'</span>,[year_nr,transect_nr,1],[1,1,-1]);
 </pre><p>Not for every possible cross shore location, there is altitude information. For our case we might as well leave out those
-            datapoints:
+            data points:
          </p><pre class="codeinput">x    = xRSP(~isnan(z));
 z    =    z(~isnan(z));
 </pre><h2>Plot the data<a name="17"></a></h2>
@@ -192,22 +192,22 @@ z    =    z(~isnan(z));
       </div>
       <!--
 ##### SOURCE BEGIN #####
-%% Extracting JarKus data from NetCDF
+%% Extracting JarKus data from netCDF
 % For this example, we will extract data from a Jarkus profile in Egmond 
-% aan Zeeform the from opendap server, for the year 1999.
+% aan Zee from the OPeNDAP server, for the year 1999.
 
 %% Locate the data file on the internet
-% To locate the NETcdf data file, browse to:
+% To locate the netCDF data file, browse to the OPeNDAP website:
 %%
-% <http:\\opendap.deltares.nl:8080> 
+% <http:\\OPeNDAP.deltares.nl:8080> 
 
 %% 
-% Find the Jarkus NetCDF file by clicking on:
-% hyrax ==> Rijkswaterstaat ==> Jarkus ==> transects.
+% Find the Jarkus netCDF file by clicking on the following links:
+% HYRAX ==> Rijkswaterstaat ==> JarKus ==> transects.
 % Click on the link to the file and extract the direct link to the JarKus
-% NetCDF data file. 
+% netCDF data file. 
 
-url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
+url = 'http://OPeNDAP .deltares.nl:8080/OPeNDAP/rijkswaterstaat/jarkus/profiles/transect.nc';
 
 %%
 % Alternatively, you can use the function jarkus_url. This has the
@@ -218,7 +218,7 @@ url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/profiles/t
 url = jarkus_url
 
 %% View metadata
-% We can get data from this file using the funtion nc_varget. But first, let's see what
+% We can get data from this file using the function nc_varget. But first, let's see what
 % is in the file using nc_dump. nc_dump shows all the metadata in the file.
 % In the case of the JarKus file this is a lot.
 
@@ -242,7 +242,7 @@ transect_nr = find(id==7003800)
 % To get only data from this transect, we can give nc_varget some extra
 % arguments. The first optional argument is the start index from where you 
 % want to extract data.
-% The second argument indicates the number or entrie you want along this 
+% The second argument indicates the number or entries you want along this 
 % dimension. In our case this is 1.
 
 id          = nc_varget(url,'id',transect_nr,1)
@@ -285,7 +285,7 @@ z           = nc_varget(url,'altitude',[year_nr,transect_nr,1],[1,1,-1]);
 
 %%
 % Not for every possible cross shore location, there is altitude
-% information. For our case we might as well leave out those datapoints:
+% information. For our case we might as well leave out those data points:
 
 x    = xRSP(~isnan(z));
 z    =    z(~isnan(z));
@@ -294,6 +294,7 @@ z    =    z(~isnan(z));
 % always plot data to check if it's ok:
 
 plot(x,z,'.b')
+
 ##### SOURCE END #####
 -->
    </body>

@@ -1,4 +1,4 @@
-function [xMKL] = jarkus_getMKL(x,z,UpperBoundary,LowerBoundary)
+function [xMKL] = jarkus_getMKL(x,z,UpperBoundary,LowerBoundary,varargin)
 %JARKUS_GETMKL returns the cross shore coordinate of the volume based coastal indicator MKL 
 %
 %   input:
@@ -6,6 +6,7 @@ function [xMKL] = jarkus_getMKL(x,z,UpperBoundary,LowerBoundary)
 %       z                   = column array with z points
 %       UpperBoundary       = upper horizontal plane of MKL area 
 %       LowerBoundary       = lower horizontal plane of MKL area 
+%       varargin            = optional: 'plot' (generates a plot)
 %
 %  output: 
 %    xMKL                   = cross shore coordinate of MKL
@@ -44,8 +45,8 @@ function [xMKL] = jarkus_getMKL(x,z,UpperBoundary,LowerBoundary)
 % $HeadURL$
 % $Keywords: $
 
-LandwardBoundary = max(findCrossings(x,z,[x(1) x(end)],[UpperBoundary UpperBoundary])); %most seaward crossing
-SeawardBoundary  = max(findCrossings(x,z,[x(1) x(end)],[LowerBoundary LowerBoundary])); %most seaward crossing
+LandwardBoundary = max(jarkus_findCrossings(x,z,[x(1) x(end)],[UpperBoundary UpperBoundary])); %most seaward crossing
+SeawardBoundary  = max(jarkus_findCrossings(x,z,[x(1) x(end)],[LowerBoundary LowerBoundary])); %most seaward crossing
 
 if isempty(LandwardBoundary)
     warning('transect does not cross UpperBoundary')
@@ -68,5 +69,13 @@ end
 % jarkus_getVolume is really slow, use jarkus_getVolumeFast instead
 % volume           = jarkus_getVolume(x,z,UpperBoundary,LowerBoundary,LandwardBoundary,SeawardBoundary);
 
-volume           = jarkus_getVolumeFast(x,z,UpperBoundary,LowerBoundary,LandwardBoundary,SeawardBoundary);
+volume           = jarkus_getVolumeFast(x,z,UpperBoundary,LowerBoundary,LandwardBoundary,SeawardBoundary,varargin);
 xMKL             = LandwardBoundary+volume/(UpperBoundary - LowerBoundary);
+
+%% plot (visualize proces)
+if length(varargin)>0
+    if strcmpi(varargin{1},'plot')
+       vline(xMKL,'r-')
+       title(sprintf('The MKL position is %.1fm',xMKL))
+    end
+end

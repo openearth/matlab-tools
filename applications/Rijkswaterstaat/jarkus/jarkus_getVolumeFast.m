@@ -156,19 +156,27 @@ Poly(:,5)=(Poly(:,2)-LowerBoundary).*(Poly(:,3)+Poly(:,4))/2;
 Volume=sum(Poly(:,5));
 %% plot (visualize proces)
 if length(varargin)>0
-    if varargin{1} == 'plot'
+    if strcmpi(varargin{1},'plot')
 
         plot(x,z)
-        axis([min(x)-50 max(x)+50 min(z)-1 max(z)+1])
         hold on
+        patch([x(1); x; x(end)],[min(z)-1; z; min(z)-1],[0 0 0],'LineStyle','none','FaceAlpha',0.1)
+        axis([min(x)-50 max(x)+50 min(z)-1 max(z)+1])
+        vline(SeawardBoundary, 'r--')
+        vline(LandwardBoundary,'r--')
+        hline(LowerBoundary,   'r--')
+        hline(UpperBoundary,   'r--')
+        
         patch([SeawardBoundary; LandwardBoundary; LandwardBoundary; SeawardBoundary],...
-            [UpperBoundary; UpperBoundary; LowerBoundary; LowerBoundary],[0 .5 0]);
-        alpha(.1)
+            [UpperBoundary; UpperBoundary; LowerBoundary; LowerBoundary],[0 .5 0],'FaceAlpha',0.1);
         plot(x_SB,z_SB,'ko',x_LaB,z_LaB,'ro',x_UB,z_UB,'go',x_LoB,z_LoB,'co','LineWidth',2);
         plot(Poly(:,1),Poly(:,2),'r.')
-        patch([Poly(:,1); SeawardBoundary; LandwardBoundary],[Poly(:,2); LowerBoundary; LowerBoundary],1)
+        patch([Poly(:,1); SeawardBoundary; LandwardBoundary],[Poly(:,2); LowerBoundary; LowerBoundary],[0.2 0.7 0.2])
         hold off
         grid on
+        xlabel('Cross-shore distance from RSP line (m)')
+        ylabel('Elevation relative to NAP (m)')
         title(sprintf('The volume is %2.2f m^3/m',Volume))
+
     end
 end

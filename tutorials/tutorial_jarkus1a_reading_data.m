@@ -1,19 +1,19 @@
-%% Extracting JarKus data from NetCDF
+%% Extracting JarKus data from netCDF
 % For this example, we will extract data from a Jarkus profile in Egmond 
-% aan Zeeform the from opendap server, for the year 1999.
+% aan Zee from the OPeNDAP server, for the year 1999.
 
 %% Locate the data file on the internet
-% To locate the NETcdf data file, browse to:
+% To locate the netCDF data file, browse to the OPeNDAP website:
 %%
-% <http:\\opendap.deltares.nl:8080> 
+% <http:\\OPeNDAP.deltares.nl:8080> 
 
 %% 
-% Find the Jarkus NetCDF file by clicking on:
-% hyrax ==> Rijkswaterstaat ==> Jarkus ==> transects.
+% Find the Jarkus netCDF file by clicking on the following links:
+% HYRAX ==> Rijkswaterstaat ==> JarKus ==> transects.
 % Click on the link to the file and extract the direct link to the JarKus
-% NetCDF data file. 
+% netCDF data file. 
 
-url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
+url = 'http://OPeNDAP .deltares.nl:8080/OPeNDAP/rijkswaterstaat/jarkus/profiles/transect.nc';
 
 %%
 % Alternatively, you can use the function jarkus_url. This has the
@@ -24,7 +24,7 @@ url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/profiles/t
 url = jarkus_url
 
 %% View metadata
-% We can get data from this file using the funtion nc_varget. But first, let's see what
+% We can get data from this file using the function nc_varget. But first, let's see what
 % is in the file using nc_dump. nc_dump shows all the metadata in the file.
 % In the case of the JarKus file this is a lot.
 
@@ -48,7 +48,7 @@ transect_nr = find(id==7003800)
 % To get only data from this transect, we can give nc_varget some extra
 % arguments. The first optional argument is the start index from where you 
 % want to extract data.
-% The second argument indicates the number or entrie you want along this 
+% The second argument indicates the number or entries you want along this 
 % dimension. In our case this is 1.
 
 id          = nc_varget(url,'id',transect_nr,1)
@@ -91,7 +91,7 @@ z           = nc_varget(url,'altitude',[year_nr,transect_nr,1],[1,1,-1]);
 
 %%
 % Not for every possible cross shore location, there is altitude
-% information. For our case we might as well leave out those datapoints:
+% information. For our case we might as well leave out those data points:
 
 x    = xRSP(~isnan(z));
 z    =    z(~isnan(z));

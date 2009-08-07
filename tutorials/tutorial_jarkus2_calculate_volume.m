@@ -1,7 +1,8 @@
-%% get some arbitrary profile data 
-% In this tutorial we will calculate the volume of a certain cross-section
+%% JarKus volume calculations
+% This tutorial demonstrates how to calculate the volume of a certain
+% JarKus profile. 
 
-%% Read in data
+%% Read some data
 % See the previous JarKus tutorial for a detailed explanation
 
 url         = jarkus_url;
@@ -15,12 +16,12 @@ x    = xRSP(~isnan(z));
 z    =    z(~isnan(z));
 
 %% Available options
-% First we want an overview of available jarkus funtions
+% First we want an overview of available jarkus functions
 
 help jarkus
 
 %% 
-% Apparantly, there are two (competing) functions in the toolbox that can
+% Apparently, there are two (competing) functions in the toolbox that can
 % calculate volumes: jarkus_getVolume and jarkus_getVolumeFast 
 % to find out differences, click on the help links
 

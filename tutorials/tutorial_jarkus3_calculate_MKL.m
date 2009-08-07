@@ -1,14 +1,37 @@
+%% JarKus MKL calculations
+% This tutorial demonstrates how to calculate the MKL for a JarKus profile
 
-% now we want to calculate the MKL position. To do so we need information
-% on the MHW and MLW lines. 
+%% Read in data
+% See the JarKus tutorial on reading data for a detailed explanation of
+% this
+
+url         = jarkus_url;
+id          = nc_varget(url,'id');
+transect_nr = find(id==6001200)-1;
+year        = nc_varget(url,'time');
+year_nr     = find(year == 1969)-1;
+xRSP        = nc_varget(url,'cross_shore');
+z           = nc_varget(url,'altitude',[year_nr,transect_nr,1],[1,1,-1]);
+x    = xRSP(~isnan(z));
+z    =    z(~isnan(z));
+
+%%
+% As we want to calculate the MKL position, we need information on the mean
+% high and low water levels. 
 
 MHW = nc_varget(url,'mean_high_water',transect_nr,1)
 MLW = nc_varget(url, 'mean_low_water',transect_nr,1)
 
+%% Calculating the MKL
 % To find out what JarKus funtions are available, just enter 'jarkus' in 
 % the command prompt or text editor and press tab. Matlab gives suggestions
 % to complete the line. To figure out how the funtion works use help.
 
-help jarkus_getMKL
+help jarkus
 
-MKL.x = jarkus_getMKL(x,z,MHW,MLW-MHW)
+%% 
+% jarkus_getMKL will do the job
+
+UpperBoundary = MHW;
+LowerBoundary = MLW-(MHW-MLW);
+xMKL = jarkus_getMKL(x,z,UpperBoundary,LowerBoundary,'plot')
