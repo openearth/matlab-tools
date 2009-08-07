@@ -11,8 +11,8 @@
 %% #Case1 Description (IncludeCode = false & EvaluateCode = true & CaseName = Always true)
 % This is just a dummy test. it always returns true and there is no testing involved.
 %% #Case1 RunTest
-testresult = true;
 z = peaks(40);
+testresult = true;
 %% #Case1 TestResults (IncludeCode = true & EvaluateCode = true)
 % The result of this test is always positive of course, whereas it does not really test anything. To
 % get a nice idea of the possibilities of the possibilities of the mtest object, we now include a

@@ -40,7 +40,7 @@ testcell = {...
 testresult = true;
 try
     testcell{1,2} = 'X';
-    t1 = mtest('dummy_test.m');
+    t1 = mtest(which('mtest_test.m'));
     if strcmp(class(t1),'mtest') && ~isempty(t1) && length(t1.testcases)==2
         % Leave testresult true
         testcell{1,2} = 'OK';
@@ -53,7 +53,7 @@ end
 % Warning test
 try
     testcell{2,2} = 'X';
-    t2 = mtest('dummy_test.m','WrongProp','value');
+    t2 = mtest(which('mtest_test.m'),'WrongProp','value');
     str = lastwarn;
     if ~isempty(strfind(str,'WrongProp'))
         % Leave testresult true
@@ -67,7 +67,7 @@ end
 % syntax 1
 try
     testcell{3,2} = 'X';
-    t3 = mtest('dummy_test.m');
+    t3 = mtest(which('mtest_test.m'));
     if strcmp(class(t3),'mtest') && ~isempty(t3) && length(t3.testcases)==2
         % Leave testresult true
         testcell{3,2} = 'OK';
@@ -80,7 +80,7 @@ end
 % syntax 2
 try
     testcell{4,2} = 'X';
-    t4 = mtest('filename','dummy_test.m');
+    t4 = mtest('filename',which('mtest_test.m'));
     if strcmp(class(t4),'mtest') && ~isempty(t4) && length(t4.testcases)==2
         % Leave testresult true
         testcell{4,2} = 'OK';
@@ -93,7 +93,7 @@ end
 % property value pairs test
 try
     testcell{5,2} = 'X';
-    t5 = mtest('filename','dummy_test.m',...
+    t5 = mtest('filename',which('mtest_test.m'),...
         'descriptionoutputfile','testname1');
     if strcmp(t5.descriptionoutputfile,'testname1')
         % Leave testresult true
