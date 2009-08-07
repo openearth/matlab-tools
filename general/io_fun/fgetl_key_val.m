@@ -1,5 +1,5 @@
-function varargout = fgetl_key_val(fid,commentchar,varargin);
-%FGETL_KEY_VAL  read <keyword,value> pair  from file from next line that is no comment file
+function varargout = fgetl_key_val(fid_or_rec,varargin);
+%FGETL_KEY_VAL  read <keyword,value> pair from file/string that is no comment file
 %
 % [keyword,value] = fgetl_key_val(fid,commentchar);
 % [keyword,value] = fgetl_key_val(fid,commentchar,allow_empty_lines);
@@ -15,6 +15,7 @@ function varargout = fgetl_key_val(fid,commentchar,varargin);
 %
 % Example:
 % [keyword,value] = fgetl_key_val(fid) % to read following line in file: "Parameter=H10"
+% [keyword,value] = fgetl_key_val('Parameter=H10')
 %
 % See also: FGETL, ISCOMMENTLINE, FGETL_NO_COMMENT_LINE
 
@@ -54,11 +55,23 @@ function varargout = fgetl_key_val(fid,commentchar,varargin);
 % $HeadURL$
 % $Keywords$
 
-   rec                = fgetl_no_comment_line(fid,commentchar);
+   commentchar = '';
+   if nargin > 1
+      commentchar = varargin{1};
+      nextarg = 2;
+   else
+      nextarg = 1;
+   end
+
+   if isnumeric(fid_or_rec)
+   rec                = fgetl_no_comment_line(fid_or_rec,commentchar);
+   else
+   rec                = fid_or_rec;
+   end
    
    index_equal_sign   = strfind(rec,'=');
 
-   index_comment_sign = strfind(rec,commentchar);
+   index_comment_sign = strfind(rec,commentchar,varargin{nextarg:end});
    if isempty(index_comment_sign)
       index_comment_sign = length(rec)+1;
    end

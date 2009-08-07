@@ -1,16 +1,13 @@
-function varargout = delft3d_io_meteo_curv(cmd,varargin)
-%DELFT3D_IO_METEO_CURV    Read/write meteo files defined on curvi-linear grid (IN PROGRESS)
+function varargout = delft3d_io_meteo(cmd,varargin)
+%DELFT3D_IO_METEO    Read/write meteo files defined on curvi-linear grid (IN PROGRESS)
 %
-% D = DELFT3D_IO_METEO_CURV('read',fname) reads Delftd3D flow meteo file into struct D.
+% D = DELFT3D_IO_METEO('read',fname) reads Delftd3D flow meteo file into struct D.
 %
-% D = DELFT3D_IO_METEO_CURV('read',fname,<keyword,value>)  
+% D = DELFT3D_IO_METEO('read',fname,<keyword,value>)  
 %
 % Where the following keyword,value have been implemented
-% * timestep : the time step to load from the file
-%              - 0       is first timestep
-%              - integer is specific timestep number
-%              - Inf     is all timesteps
-%              - []      is next timestep (not yet implemented)
+% * latlon   : call grid variables (lat,lon) instead of (x,y)
+%              in case of spherical grid (default 0)
 %
 % See also: DELFT3D_IO_BND, DELFT3D_IO_BCA, DELFT3D_IO_BCH,  
 %           DELFT3D_IO_CRS, DELFT3D_IO_DEP, DELFT3D_IO_DRY,, DELFT3D_IO_EVA 
@@ -18,6 +15,14 @@ function varargout = delft3d_io_meteo_curv(cmd,varargin)
 %           DELFT3D_IO_SRC, DELFT3D_IO_THD, DELFT3D_IO_RESTART
 %           DELFT3D_IO_WND, DELFT3D_IO_TEM, DELFT3D_IO_MDF, 
 %           KNMIHYDRA, HMCZ_WIND_READ
+% DELFT3D_IO_METEO_WRITE
+
+% TO DO
+% * timestep : the time step to load from the file
+%              - 0          is first timestep
+%              - integer(s) is specific timestep number(s)
+%              - Inf        is all timesteps
+%              - []         is next timestep (not yet implemented)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Delft University of Technology
@@ -55,13 +60,11 @@ function varargout = delft3d_io_meteo_curv(cmd,varargin)
 % $HeadURL$
 
 if nargin ==1
-   error(['At least 2 input arguments required: delft3d_io_meteo_curv(''read''/''write'',filename)'])
+   error(['At least 2 input arguments required: ',mfilename,'(''read''/''write'',filename)'])
 end
 
-warning('In progress ...')
-
 %% Switch read/write
-%% ------------------
+%--------------------
 
 switch lower(cmd)
 
@@ -104,141 +107,105 @@ case 'write'
 end;
 
 
-% ------------------------------------
+%%------------------------------------
 % --READ------------------------------
 % ------------------------------------
 
 function varargout=Local_read(fname,varargin),
 
+   warning([mfilename,' in progress: currently reads only 1st block !!!'])
+
    D.filename       = fname;
-   iostat           = -1;
+   D.read.iostat    = -1;
 
    %% Keywords
-   %% -----------------
+   %-------------------
    
-   H.timestep         = 0;
-   H.numeric_keywords = {'NODATA_value',...
-                               'n_cols',...
-                               'n_rows',...
-                           'x_llcorner',...
-                           'y_llcorner',...
-                                   'dx',...
-                                   'dy',...
-                           'n_quantity'};
+   OPT.timestep         = 0;
+   OPT.latlon           = 0;
+   OPT.numeric_keywords = {'NODATA_value',...
+                                 'n_cols',...
+                                 'n_rows',...
+                             'x_llcorner',...
+                             'y_llcorner',...
+                                     'dx',...
+                                     'dy',...
+                             'n_quantity'};
    
-   if nargin>2
-      if isstruct(varargin{2})
-         H = mergestructs(H,varargin{2});
-      else
-         iargin = 1;
-         %% remaining number of arguments is always even now
-         while iargin<=nargin-1,
-             switch lower ( varargin{iargin})
-             % all keywords lower case
-             case 'timestep'         ;iargin=iargin+1;H.timestep         = varargin{iargin};
-             case 'numeric_keywords' ;iargin=iargin+1;H.numeric_keywords = varargin{iargin};
-             otherwise
-               error(sprintf('Invalid string argument (caps?): "%s".',varargin{iargin}));
-             end
-             iargin=iargin+1;
-         end
-      end  
-   end
+   OPT = setProperty(OPT,varargin{:});
    
    %% Locate
-   %% ------------------------
+   %--------------------------
    
    tmp = dir(fname);
    
    if length(tmp)==0
       
-      D.iostat = -1;
-      disp (['??? Error using ==> delft3d_io_meteo_curv'])
+      D.read.iostat = -1;
+      disp (['??? Error using ==> ',mfilename,''])
       disp (['Error finding meteo file: ',fname])
       
-   elseif length(tmp)>0
+   elseif length(tmp)>1
+      
+      D.read.iostat = -1;
+      disp (['??? Error using ==> ',mfilename,''])
+      disp (['Please specify only 1 file rather than directory: ',fname])
+
+   else
    
       D.filedate  = tmp.date;
       D.filebytes = tmp.bytes;
    
       %% Read
-      %% ------------------------
+      %--------------------------
          
-      %try
-      
          fid           = fopen(fname,'r');
-        %rec           = fgetl_no_comment_line(fid,'#');
-        %[keyword,rec] = strtok(rec);
-        %[issign ,rec] = strtok(rec);
-        %[value  ,rec] = strtok(rec);
          [keyword,value,rec] = fgetl_key_val(fid,'#');
 
          %% Read header
-         %% ----------------------------
+         %------------------------------
 
          while ~strcmpi(keyword,'TIME')
             
             D.data.keywords.(keyword)   = value;
-
-           %rec           = fgetl_no_comment_line(fid,'#');
-           %[keyword,rec] = strtok(rec);
-           %[issign ,rec] = strtok(rec);
-           %[value  ,rec] = strtok(rec);
             [keyword,value,rec] = fgetl_key_val(fid,'#');
          
          end
          
          %% Process header
-         %% ----------------------------
+         %------------------------------
 
          keywords = fieldnames(D.data.keywords);
-         for inum=1:length(H.numeric_keywords)
+         for inum=1:length(OPT.numeric_keywords)
          for ikey=1:length(keywords)
-            if strcmpi(H.numeric_keywords(inum),keywords(ikey))
+            if strcmpi(OPT.numeric_keywords(inum),keywords(ikey))
                D.data.keywords.(keywords{ikey}) = str2num(D.data.keywords.(keywords{ikey}));
             end
          end
          end
+
+         %% Meteo types
+         %------------------------------
          
-         %% Make or read grid (corners AND centers)
-         %% ----------------------------
+         if ~isempty(OPT.timestep)
+         if strcmpi(D.data.keywords.filetype,'meteo_on_equidistant_grid')
 
-         if     isfield(D.data.keywords,'curvi_grid_file')
-         
-            %% Read external grid (corners AND centers)
-            %% ----------------------------
+            if OPT.latlon & strcmpi(D.data.keywords.grid_unit,'degrees')
             
-            %[D.data.cor.x,D.data.cor.y,dummy]=wlgrid('read',D.data.keywords.curvi_grid_file)
-            
-            %D.data.cen.x = corner2center(D.data.cor.x);
-            %D.data.cen.y = corner2center(D.data.cor.y);
-            
-             D.data.keywords.n_rows = 130; % size(D.data.cor,1 or 2) | size(D.data.cor,1 or 2)
-             D.data.keywords.n_cols = 291; % size(D.data.cor,2 or 1) | size(D.data.cor,2 or 1)
-            
-            warning ('How to know difference degrees and meters, that is not written in grd file ... ?')
-
-         elseif isfield(D.data.keywords,'n_cols')
-
-            %% Make grid (corners AND centers)
-            %% ----------------------------
-            
-            if ~isempty(H.timestep)
-	    
-               if strcmpi(D.data.keywords.grid_unit,'degrees')
                D.data.cen.lonSticks   = D.data.keywords.x_llcorner + [0.5:1:(D.data.keywords.n_cols-0.5)].*D.data.keywords.dx;
                D.data.cen.latSticks   = D.data.keywords.y_llcorner + [0.5:1:(D.data.keywords.n_rows-0.5)].*D.data.keywords.dy;
                
                D.data.cor.lonSticks   = D.data.keywords.x_llcorner + [0  :1:(D.data.keywords.n_cols    )].*D.data.keywords.dx;
                D.data.cor.latSticks   = D.data.keywords.y_llcorner + [0  :1:(D.data.keywords.n_rows    )].*D.data.keywords.dy;
-	    
+	      
               [D.data.cen.lon,...
                D.data.cen.lat]        = meshgrid(D.data.cen.lonSticks,D.data.cen.latSticks);
-	    
+	      
               [D.data.cor.lon,...
                D.data.cor.lat]        = meshgrid(D.data.cor.lonSticks,D.data.cor.latSticks);
-	    
-               else
+	      
+            else
+          
                D.data.cen.xSticks     = D.data.keywords.x_llcorner + [0.5:1:(D.data.keywords.n_cols-0.5)].*D.data.keywords.dx;
                D.data.cen.ySticks     = D.data.keywords.y_llcorner + [0.5:1:(D.data.keywords.n_rows-0.5)].*D.data.keywords.dy;
                
@@ -251,23 +218,56 @@ function varargout=Local_read(fname,varargin),
               [D.data.cor.x  ,...
                D.data.cor.y  ]        = meshgrid(D.data.cor.xSticks ,D.data.cor.ySticks   );
 	    
-               end
+            end
                
+         elseif strcmpi(D.data.keywords.filetype,'meteo_on_curvilinear_grid')
+         
+            if exist('wlgrid')==0
+               error('function wlgrid missing.')
             end
             
+            G = wlgrid('read',D.data.keywords.grid_file);
+               
+            if OPT.latlon & strcmpi(G.CoordinateSystem,'Spherical')
+               D.data.cen.lon = G.X;
+               D.data.cen.lat = G.Y;
+            else
+               D.data.cen.x   = G.X;
+               D.data.cen.y   = G.Y;
+            end
+            
+            if     strcmpi(D.data.keywords.data_row,'grid_row')
+               D.data.keywords.n_cols = size(G.X,1);
+               D.data.keywords.n_rows = size(G.Y,2);
+            elseif strcmpi(D.data.keywords.data_row,'grid_column')
+               D.data.keywords.n_cols = size(G.X,2);
+               D.data.keywords.n_rows = size(G.Y,1);
+            else
+            error(['Unknown meteo data_row: ''',D.data.keywords.data_row,''''])
+            end
+            
+         elseif strcmpi(D.data.keywords.filetype,'meteo_on_spiderweb_grid')
+         
+            error('Not implemented yet, give it a try yourselves?')
+            
+         else
+
+            error(['Unknown meteo filetype: ''',D.data.keywords.filetype,''''])
+
          end
-            
+         end
+         
          %% Read data
-         %% * JUST THE FIRST ONE FOR NOW
-         %% + all 
-         %% + one specified time/inded
-         %% + scroll file to find number of times first?
-         %% + or simply read next field ?
-         %% ----------------------------
-         %% better method is to rewind one lione and than make a subfucction that reads one block incl. time
-         %% ----------------------------
+         %  * JUST THE FIRST ONE FOR NOW
+         %  + all 
+         %  + one specified time/inded
+         %  + scroll file to find number of times first?
+         %  + or simply read next field ?
+         %  ----------------------------
+         %  better method is to rewind one line and than make a subfunction that reads one block incl. time
+         %------------------------------
             
-         if ~strcmpi(keyword,'time') & ~isempty(H.timestep)
+         if ~strcmpi(keyword,'time') & ~isempty(OPT.timestep)
             disp('No data in file')
          else
          
@@ -275,11 +275,7 @@ function varargout=Local_read(fname,varargin),
          
             while 1
          
-               if isempty(H.timestep) | timestep > 1
-                 %rec           = fgetl_no_comment_line(fid,'#');
-                 %[keyword,rec] = strtok(rec);
-                 %[issign ,rec] = strtok(rec);
-                 %[value  ,rec] = strtok(rec);
+               if isempty(OPT.timestep) | timestep > 1
                   [keyword,value,rec] = fgetl_key_val(fid,'#');
                   if isempty(keyword)
                      break
@@ -296,56 +292,58 @@ function varargout=Local_read(fname,varargin),
                % NaNs
                rawblock(rawblock==D.data.keywords.NODATA_value) = NaN;
                
-               if isinf(H.timestep)
+               if isinf(OPT.timestep)
                   D.data.time{timestep}                                = [value,' ',rec]; % note that spaces in between are lost, so put one bakc for proper workings of strtok
-                 [D.data.datenum(timestep) ,...
-                  D.data.timezone{timestep}]                           = cfstring2datenum(D.data.time{timestep});
+                %[D.data.datenum(timestep) ,...
+                % D.data.timezone{timestep}]                           = cfstring2datenum(D.data.time{timestep});
+                  D.data.datenum(timestep)                             = udunits2datenum(D.data.time{timestep});
                   D.data.cen.(D.data.keywords.quantity1)(:,:,timestep) = rawblock;
-               elseif H.timestep==0 | H.timestep==timestep
+               elseif OPT.timestep==0 | OPT.timestep==timestep
                   D.data.time                                          = [value,' ',rec];
-                 [D.data.datenum ,...
-                  D.data.timezone]                                     = cfstring2datenum(D.data.time);
+                %[D.data.datenum ,...
+                % D.data.timezone]                                     = cfstring2datenum(D.data.time);
+                  D.data.datenum(timestep)                             = udunits2datenum(D.data.time);
                   D.data.cen.(D.data.keywords.quantity1)(:,:)          = rawblock;
                   break
                end
                timestep = timestep + 1;
             end
             
-            D.data.time = char(D.data.time);
+            D.data.time    = char(D.data.time);
             D.data.datestr = datestr(D.data.datenum,0);
 
          end
          
          %% Finished succesfully
-         %% --------------------------------------
+         %----------------------------------------
    
          fclose(fid);
 
-         D.iostat    = 1;
-         D.read_by   = 'delft3d_io_meteo_curv.m';
-         D.read_at   = datestr(now);
+         D.read.with     = '$Id$'; % SVN keyword, will insert name of this function
+         D.read.at       = datestr(now);
+         D.read.iostat   = 1;
          
       %catch
       %
       %   D.iostat = -3;
-      %   disp (['??? Error using ==> delft3d_io_meteo_curv'])
+      %   disp (['??? Error using ==> ',mfilename,''])
       %   disp (['Error reading meteo file: ',fname])
       %
       %end % catch
    
    end %elseif length(tmp)>0
-
+   
 if nargout==1
    varargout = {D};   
 else
-   varargout = {D,D.iostat};   
+   varargout = {D,D.read.iostat};   
 end
 
 end % function varargout=Local_read(fname,varargin),
 
-% ------------------------------------
+%%------------------------------------
 % --WRITE-----------------------------
-% ------------------------------------
+%-------------------------------------
 
 function iostat=Local_write(fname,DAT,varargin),
 
@@ -353,7 +351,7 @@ function iostat=Local_write(fname,DAT,varargin),
 
 
    %% Keywords
-   %% -----------------
+   %-------------------
 
       H.userfieldnames = false;
 
@@ -376,7 +374,7 @@ function iostat=Local_write(fname,DAT,varargin),
       end
 
    %% Locate
-   %% ------------------------
+   %--------------------------
    
    tmp       = dir(fname);
    writefile = [];
@@ -403,11 +401,11 @@ function iostat=Local_write(fname,DAT,varargin),
    if writefile
 
      %% Open
-     %% ------------------------
+     %--------------------------
 
-         %try
+      %try
          
-            iostat = 1;
+            delft3d_io_meteo_curv_write()
 
       %end % fid
       

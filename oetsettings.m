@@ -20,7 +20,7 @@ function oetsettings(varargin)
 %    help io
 %	
 %See also: ADDPATHFAST, RESTOREDEFAULTPATH,
-%          OpenEarthTools: general, applications, io
+%          OpenEarthTools: general, applications, io, tutorials
 
 %   --------------------------------------------------------------------
 %   Copyright (C) <2004-2008> <Deltares>
