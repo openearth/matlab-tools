@@ -1,0 +1,54 @@
+/* Default border style inputs */
+.input_def {
+  border: 1px solid black;
+}
+
+.input_err {
+  border: 1px solid red;
+}
+
+/* FRAMES STYLE  */
+#tri_header {
+   border:1px solid white;
+}
+
+/* treeview body tag */
+.treeview_menu
+{
+background: #008FC5;
+lefmargin:10px;
+topmargin:10px;
+}
+
+.not_hidden_input
+{
+color           : white;
+background-color: #E1E1E1;
+font-family     : salse,arial,sans-serif;
+font-size       : 11px;
+border-style    : none;
+}
+
+body{
+color           : white;
+font-family     : salse,arial,sans-serif;
+font-size       : 12px;
+}
+
+td{
+color           : white;
+font-family     : salse,arial,sans-serif;
+font-size       : 12px;
+}
+
+a{
+color           : white;
+font-family     : salse,arial,sans-serif;
+font-size       : 12px;
+}
+
+label{
+color           : white;
+font-family     : salse,arial,sans-serif;
+font-size       : 12px;
+}
