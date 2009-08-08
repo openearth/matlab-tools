@@ -40,8 +40,8 @@ testcell = {...
 testresult = true;
 try
     testcell{1,2} = 'X';
-    t1 = mtest(which('mtest_test.m'));
-    if strcmp(class(t1),'mtest') && ~isempty(t1) && length(t1.testcases)==2
+    t1 = mtest(which('mte_dummy_test.m'));
+    if strcmp(class(t1),'mtest') && ~isempty(t1) && length(t1.testcases)==3
         % Leave testresult true
         testcell{1,2} = 'OK';
     end
@@ -53,7 +53,7 @@ end
 % Warning test
 try
     testcell{2,2} = 'X';
-    t2 = mtest(which('mtest_test.m'),'WrongProp','value');
+    t2 = mtest(which('mte_dummy_test.m'),'WrongProp','value');
     str = lastwarn;
     if ~isempty(strfind(str,'WrongProp'))
         % Leave testresult true
@@ -67,8 +67,8 @@ end
 % syntax 1
 try
     testcell{3,2} = 'X';
-    t3 = mtest(which('mtest_test.m'));
-    if strcmp(class(t3),'mtest') && ~isempty(t3) && length(t3.testcases)==2
+    t3 = mtest(which('mte_dummy_test.m'));
+    if strcmp(class(t3),'mtest') && ~isempty(t3) && length(t3.testcases)==3
         % Leave testresult true
         testcell{3,2} = 'OK';
     end
@@ -80,8 +80,8 @@ end
 % syntax 2
 try
     testcell{4,2} = 'X';
-    t4 = mtest('filename',which('mtest_test.m'));
-    if strcmp(class(t4),'mtest') && ~isempty(t4) && length(t4.testcases)==2
+    t4 = mtest('filename',which('mte_dummy_test.m'));
+    if strcmp(class(t4),'mtest') && ~isempty(t4) && length(t4.testcases)==3
         % Leave testresult true
         testcell{4,2} = 'OK';
     end
@@ -93,7 +93,7 @@ end
 % property value pairs test
 try
     testcell{5,2} = 'X';
-    t5 = mtest('filename',which('mtest_test.m'),...
+    t5 = mtest('filename',which('mte_dummy_test.m'),...
         'descriptionoutputfile','testname1');
     if strcmp(t5.descriptionoutputfile,'testname1')
         % Leave testresult true
@@ -139,7 +139,7 @@ close(h);
 %% #Case2 RunTest
 try
     resdir = cd;
-    t = mtest('dummy_test.m');
+    t = mtest(which('mte_dummy_test.m'));
     t.publishDescription(...
         'resdir',resdir,...
         'filename','testfile',...
@@ -177,9 +177,9 @@ close(h);
 % This testcase tests the runTest method of the mtest object
 %% #Case3 RunTest
 try
-    t = mtest('dummy_test.m');
+    t = mtest(which('mte_dummy_test.m'));
     t.runTest;
-    testresult= ~t.testresult;
+    testresult = ~t.testresult;
 catch err
     testresult = false;
 end
@@ -205,7 +205,7 @@ close(h);
 try
     testresult = false;
     resdir = cd;
-    t = mtest('dummy_test.m');
+    t = mtest(which('mte_dummy_test.m'));
     t.publishResults(...
         'resdir',resdir,...
         'filename','testfile',...
@@ -245,7 +245,7 @@ close(h);
 try
     testresult = false;
     resdir = cd;
-    t = mtest('dummy_test.m');
+    t = mtest(which('mte_dummy_test.m'));
     t.runAndPublish(...
         'resdir',resdir,...
         'outputfile','testfile',...
@@ -280,7 +280,7 @@ close(h);
 %% #Case6 RunTest
 try
     testresult = false;
-    t = mtest('dummy_test.m');
+    t = mtest(which('mte_dummy_test.m'));
     t.testcases(1).testworkspace = true;
     t.cleanUp;
     if isempty(t.testcases(1).testworkspace)
@@ -309,7 +309,7 @@ close(h);
 % refreshTestResult method test
 %% #Case7 RunTest
 try
-    t = mtest('dummy_test.m');
+    t = mtest(which('mte_dummy_test.m'));
     t.runTest;
     testresult = t.testcases(1).testresult & ~t.testcases(2).testresult;
 catch err

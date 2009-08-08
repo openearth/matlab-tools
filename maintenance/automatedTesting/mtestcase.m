@@ -829,9 +829,10 @@ classdef mtestcase < handle
             %% publish file
             mtest_tempcd = cd;
             cd(mtest_tempdir)
-            publish(mtest_tempfilename,mtest_publishoptions);
+            publishincaller(mtest_tempfilename,mtest_publishoptions);
+%             publish(mtest_tempfilename,mtest_publishoptions);
             cd(mtest_tempcd);
-            
+           
             %% Remove tempdata in the UserData of the matlab root
             set(0,'UserData',mtest_tempvars);
             
@@ -844,5 +845,6 @@ classdef mtestcase < handle
                 movefile(fullfile(mtest_publishoptions.outputDir,[fname '.html']),mtest_outputname);
             end
         end
+        
     end
 end
