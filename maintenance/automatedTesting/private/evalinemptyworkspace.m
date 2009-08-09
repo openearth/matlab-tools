@@ -1,4 +1,4 @@
-function evalinempty(handle,spaceName)
+function evalinemptyworkspace(handle,spaceName)
 
 str = getappdata(handle,spaceName);
 

@@ -761,88 +761,87 @@ classdef mtestcase < handle
             end
             fclose(fid);
         end
-        function publishCodeString(mtest_outputname,mtest_tempdir,mtest_workspace,mtest_string2publish,mtest_publishoptions)
-            %PUBLISHCODESTRING  publishes a string (mtest_string2publish) to a html page
+        function publishCodeString(outputname,tempdir,workspace,string2publish,publishoptions)
+            %PUBLISHCODESTRING  publishes a string to a html page
             %
-            %   his function publishes a string to a html page. it uses the UserData of the matlab 
+            %   This function publishes a string to a html page. it uses the UserData of the matlab 
             %   root to store any variables that are used as input.
             %
             %   Syntax:
             %   publishCodeString(...
-            %       mtest_outputname,...
-            %       mtest_tempdir,...
-            %       mtest_workspace,...
-            %       mtest_string2publish,...
-            %       mtest_publishoptions)
+            %       outputname,...
+            %       tempdir,...
+            %       workspace,...
+            %       string2publish,...
+            %       publishoptions)
             %
             %   Input:
-            %   mtest_outputname    -   Name of the html output file. If this is 
-            %   mtest_tempdir       -   Name of the temp dir where the file can be created. If this
-            %                           variable is left empty the file is published in the output
-            %                           directory (filepath of mtest_outputname).
-            %   mtest_workspace     -   Variables that should be in the workspace to be able to
-            %                           publish the code string. This variable should be an Nx2 cell
-            %                           array. The first column should contain a string with the
-            %                           name of the variable. The second column stores the content
-            %                           of that variable.
-            %   mtest_string2publish-   String that has to be published
-            %   mtest_publishoptions-   A struct with publish options as described in the help
-            %                           documentation of the matlab function "publish".
+            %   outputname    -   Name of the html output file. If this is 
+            %   tempdir       -   Name of the temp dir where the file can be created. If this
+            %                     variable is left empty the file is published in the output
+            %                     directory (filepath of mtest_outputname).
+            %   workspace     -   Variables that should be in the workspace to be able to
+            %                     publish the code string. This variable should be an Nx2 cell
+            %                     array. The first column should contain a string with the
+            %                     name of the variable. The second column stores the content
+            %                     of that variable.
+            %   string2publish-   String that has to be published
+            %   publishoptions-   A struct with publish options as described in the help
+            %                     documentation of the matlab function "publish".
             %
             %   See also mtest publish mtest.mtest mtest.runTest
              
             %% create temp file with code that needs to be executed
-            mtest_PublishInOutputDir = false;
-            if isempty(mtest_tempdir)
-                mtest_tempdir = fileparts(mtest_outputname);
-                mtest_PublishInOutputDir = true;
+            PublishInOutputDir = false;
+            if isempty(tempdir)
+                tempdir = fileparts(outputname);
+                PublishInOutputDir = true;
             end
-            mtest_tempfilename = mtestcase.makeTempFile(mtest_tempdir,mtest_string2publish);
+            tempfilename = mtestcase.makeTempFile(tempdir,string2publish);
                         
-            if mtest_PublishInOutputDir
+            if PublishInOutputDir
                 % move the tempfile to the correct name (to have sensible names for the figures) and
                 % the correct directory
-                [ mtest_newdir mtest_newname ] = fileparts(mtest_outputname);
-                movefile(mtest_tempfilename,fullfile(mtest_newdir,[mtest_newname '.m']));
+                [ newdir newname ] = fileparts(outputname);
+                movefile(tempfilename,fullfile(newdir,[newname '.m']));
                 % renew filename
-                mtest_tempfilename = fullfile(mtest_newdir,[mtest_newname '.m']);
+                tempfilename = fullfile(newdir,[newname '.m']);
             end
             % split output dir and filename
-            [mtest_tempdir mtest_tempfileshortname] = fileparts(mtest_tempfilename);
+            [tempdir tempfileshortname] = fileparts(tempfilename);
             
             %% fill workspace
             % store mtest_workspace in UserData of the matlab root. The publish function is preceded
             % by code to retrieve the variables from the root UserData.
-            mtest_tempvars = get(0,'UserData');
-            set(0,'UserData',mtest_workspace);
+            setappdata(0,'mtest_workspace',workspace);
             
             % First restore the variables, then execute the tempfile.
-            mtest_publishoptions.codeToEvaluate  = [...
-                'mtest_workspace = get(0,''UserData'');', char(10),...
-                'if ~isempty(mtest_workspace)', char(10),...
-                '    for mtest_counter_i = 1:size(mtest_workspace,1)', char(10),...
-                '        eval([mtest_workspace{mtest_counter_i} '' = mtest_workspace{mtest_counter_i,2};'']);', char(10),...
+            publishoptions.codeToEvaluate  = [...
+                'mtest_tempvar16543fgwcxvdaq_workspace = getappdata(0,''mtest_workspace'');', char(10),...
+                'if ~isempty(mtest_tempvar16543fgwcxvdaq_workspace)', char(10),...
+                '    for imtest_tempvar16543fgwcxvdaq_counter = 1:size(mtest_tempvar16543fgwcxvdaq_workspace,1)', char(10),...
+                '        eval([mtest_tempvar16543fgwcxvdaq_workspace{imtest_tempvar16543fgwcxvdaq_counter} '' = mtest_tempvar16543fgwcxvdaq_workspace{imtest_tempvar16543fgwcxvdaq_counter,2};'']);', char(10),...
                 '    end', char(10),...
-                'end', char(10)...
+                'end', char(10),...
+                'clear mtest_tempvar16543fgwcxvdaq_workspace imtest_tempvar16543fgwcxvdaq_counter', char(10),...
                 mtest_tempfileshortname, ';', char(10)];
 
             %% publish file
-            mtest_tempcd = cd;
-            cd(mtest_tempdir)
-            publishincaller(mtest_tempfilename,mtest_publishoptions);
-%             publish(mtest_tempfilename,mtest_publishoptions);
-            cd(mtest_tempcd);
+            tempcd = cd;
+            cd(tempdir)
+            publishincaller(tempfilename,publishoptions);
+            cd(tempcd);
            
             %% Remove tempdata in the UserData of the matlab root
-            set(0,'UserData',mtest_tempvars);
+            rmappdata(0,'mtest_workspace');
             
             %% delete the temp file
-            delete(mtest_tempfilename);
+            delete(tempfilename);
             
             %% move output file
-            [dr fname] = fileparts(mtest_tempfilename);
-            if ~strcmp(fullfile(mtest_publishoptions.outputDir,[fname '.html']),mtest_outputname)
-                movefile(fullfile(mtest_publishoptions.outputDir,[fname '.html']),mtest_outputname);
+            [dr fname] = fileparts(tempfilename);
+            if ~strcmp(fullfile(publishoptions.outputDir,[fname '.html']),outputname)
+                movefile(fullfile(publishoptions.outputDir,[fname '.html']),outputname);
             end
         end
         

@@ -1,4 +1,4 @@
-function outputAbsoluteFilename = publishincaller(file,options)
+function outputAbsoluteFilename = publishinemptyworkspace(file,options)
 %PUBLISH   Create a document from an M-file.
 %   PUBLISH(FILE) evaluates the M-file one cell at a time in the
 %   base workspace.  It saves the code, comments, and results to an HTML-file
