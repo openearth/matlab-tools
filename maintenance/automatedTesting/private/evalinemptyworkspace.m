@@ -1,5 +1,3 @@
-function evalinemptyworkspace(handle,spaceName)
+function evalinemptyworkspace(mtest_tempstring12fhj123)
 
-str = getappdata(handle,spaceName);
-
-eval(str);
+eval(mtest_tempstring12fhj123);

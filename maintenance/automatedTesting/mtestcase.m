@@ -824,12 +824,12 @@ classdef mtestcase < handle
                 '    end', char(10),...
                 'end', char(10),...
                 'clear mtest_tempvar16543fgwcxvdaq_workspace imtest_tempvar16543fgwcxvdaq_counter', char(10),...
-                mtest_tempfileshortname, ';', char(10)];
+                tempfileshortname, ';', char(10)];
 
             %% publish file
             tempcd = cd;
             cd(tempdir)
-            publishincaller(tempfilename,publishoptions);
+            publishinemptyworkspace(tempfilename,publishoptions);
             cd(tempcd);
            
             %% Remove tempdata in the UserData of the matlab root
@@ -844,6 +844,5 @@ classdef mtestcase < handle
                 movefile(fullfile(publishoptions.outputDir,[fname '.html']),outputname);
             end
         end
-        
     end
 end
