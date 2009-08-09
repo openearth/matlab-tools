@@ -39,4 +39,4 @@ function CreateTestExplorer()
 <!-- #POSITIVE=img/small_green_check_transp.gif -->
 <!-- #NEUTRAL=img/small_neutral_transp.gif -->
 <!-- #NEGATIVE=img/small_red_cross_transp.gif -->
-<!-- #ENDICONS -->
+<!-- ##ENDICONS -->
