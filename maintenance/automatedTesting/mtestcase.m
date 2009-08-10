@@ -815,8 +815,8 @@ classdef mtestcase < handle
             % by code to retrieve the variables from the root UserData.
             setappdata(0,'mtest_workspace',workspace);
             
-            % First restore the variables, then execute the tempfile.
-            publishoptions.codeToEvaluate  = [...
+            % Build a string that restores the variables and executes the tempfile.
+            string2evaluate = [...
                 'mtest_tempvar16543fgwcxvdaq_workspace = getappdata(0,''mtest_workspace'');', char(10),...
                 'if ~isempty(mtest_tempvar16543fgwcxvdaq_workspace)', char(10),...
                 '    for imtest_tempvar16543fgwcxvdaq_counter = 1:size(mtest_tempvar16543fgwcxvdaq_workspace,1)', char(10),...
@@ -825,11 +825,19 @@ classdef mtestcase < handle
                 'end', char(10),...
                 'clear mtest_tempvar16543fgwcxvdaq_workspace imtest_tempvar16543fgwcxvdaq_counter', char(10),...
                 tempfileshortname, ';', char(10)];
+            
+            % Store the string in the appdata as well (does not take too much time)
+            setappdata(0,'mtest_string2evaluate',string2evaluate);
+            
+            % Now specify the code to evaluate. The string constructed above should be evaluated in
+            % an empty workspace. Therefore in the base workspace we only call evalinemptyworkspace,
+            % with the string we just constructed as input.
+            publishoptions.codeToEvaluate = 'evalinemptyworkspace(getappdata(0,''mtest_string2evaluate''));' ;
 
             %% publish file
             tempcd = cd;
             cd(tempdir)
-            publishinemptyworkspace(tempfilename,publishoptions);
+            publish(tempfilename,publishoptions);
             cd(tempcd);
            
             %% Remove tempdata in the UserData of the matlab root
