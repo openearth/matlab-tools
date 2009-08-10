@@ -1,19 +1,17 @@
 function varname = nc_varfind(ncfile,varargin)
 %NC_VARFIND  Lookup variable name(s) in NetCDF file using attributename and -value pair
 %
+%      varname = nc_varfind(ncfile,<keyword,value>)
+%
 %   Finds the variable name in a netCDF file where the specified attribute
 %   name (e.g. 'standard_name') matches with the specified attribute value
 %   (e.g. 'time'). The function returns a string with the variable name if
-%   an attributename and -value match was detected or an empty variable if
-%   no match was found.
+%   an attributename and -value match was detected, an empty variable if
+%   no match was found, and a cell array when more then 1 variable match description.
 %
-%      varname = nc_varfind(ncfile,<keyword,value>)
-%
-%   where 
-%       ncfile                     = name of lcoal or opendap netCDF file
-%       varname                    = string variable containing the variable name
-%                                    where an attribute name and value match is detected 
-%                                    cell array if more then 1 variable match description
+%   ncfile  = name of local file, OPeNDAP address, or result of ncfile = nc_info()
+%   varname = string variable containing 
+%             the variable name where an attribute name and value match should be detected.
 %
 %   The following <keyword,value> pairs have been implemented accepted (values indicated are the current default settings):
 %       'attributename' , []       = attributename to search for in netCDF file (e.g. 'standard_name')
@@ -79,8 +77,21 @@ OPT = setProperty(OPT, varargin{1:end});
 varname = [];
 
 %% get info from ncfile
-infostruct = nc_info(ncfile);
-tempstruct = infostruct.Dataset;
+if isstruct(ncfile)
+   fileinfo = ncfile;
+else
+   fileinfo = nc_info(ncfile);
+end
+
+%% deal with name change in scntools
+if     isfield(fileinfo,'Dataset'); % new
+  tempstruct = fileinfo.Dataset;
+elseif isfield(fileinfo,'DataSet'); % old
+  tempstruct = fileinfo.DataSet;
+  disp(['warning: please use newer version of snctools (e.g. ',which('matlab\io\snctools\nc_info'),') instead of (',which('nc_info'),')'])
+else
+   error('neither field ''Dataset'' nor ''DataSet'' returned by nc_info')
+end
 
 %% find
 Names = {tempstruct(:).Name};

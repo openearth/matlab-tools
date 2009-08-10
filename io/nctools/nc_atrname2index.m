@@ -1,10 +1,11 @@
-function index = atrname2index(fileinfo,name,varargin)
-%NC_ATRNAME2INDEX   get index of attribute name from fileinfo = nc_info(...)
+function index = atrname2index(ncfile,name,varargin)
+%NC_ATRNAME2INDEX   get index of attribute name from ncfile
 %
-%   index = atrname2index(fileinfo,name)
+%   index = atrname2index(ncfile,name)
 %
 % returns empty if no matching variable is found. Works for 
-% global attribites and for variable attribites.
+% global attribites and for variable attribites, where
+% ncfile  = name of local file, OPeNDAP address, or result of ncfile = nc_info()
 %
 % Example:
 %
@@ -14,7 +15,7 @@ function index = atrname2index(fileinfo,name,varargin)
 %   index = atrname2index(F.Dataset(1),'standard_name')
 %   F.Dataset(1).Attribute(index)
 %
-%See also: NC_INFO, varname2index
+%See also: NC_INFO, VARNAME2INDEX, NC_VARFIND
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004 Deltares
@@ -42,9 +43,29 @@ function index = atrname2index(fileinfo,name,varargin)
 %   --------------------------------------------------------------------
 
    OPT.debug = 0;
-   
    OPT       = setProperty(OPT,varargin{:});
    
+%% Load file info
+
+   %% get info from ncfile
+   if isstruct(ncfile)
+      fileinfo = ncfile;
+   else
+      fileinfo = nc_info(ncfile);
+   end
+   
+   %% deal with name change in scntools: DataSet > Dataset
+   if     isfield(fileinfo,'Dataset'); % new
+     fileinfo.DataSet = fileinfo.Dataset;
+   elseif isfield(fileinfo,'DataSet'); % old
+     fileinfo.Dataset = fileinfo.DataSet;
+     disp(['warning: please use newer version of snctools (e.g. ',which('matlab\io\snctools\nc_info'),') instead of (',which('nc_info'),')'])
+   else
+      error('neither field ''Dataset'' nor ''DataSet'' returned by nc_info')
+   end
+
+%% Do atrname2index
+
    index     = [];
 
    %% find index of coordinates attribute

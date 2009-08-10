@@ -5,12 +5,12 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 %  [D,M] = nc_cf_stationTimeSeries(ncfile,varname)
 %
 % plots/loads timeseries of variable varname from netCDF 
-% file ncfile and returns data and meta-data
-% where * ncfile is the netCDF file name (or OPeNDAP adress)
-%       * D contains the data struct
-%       * M contains the metadata struct (attributes)
-%       * varname is the variable name to be extracted (must have dimension time)
-%         When varname is not supplied, a dialog box is offered.
+% file ncfile and returns data and meta-data where
+% ncfile  = name of local file, OPeNDAP address, or result of ncfile = nc_info()
+% D       = contains the data struct
+% M       = the metadata struct (attributes)
+% varname = the variable name to be extracted (must have dimension time)
+%           When varname is not supplied, a dialog box is offered.
 %
 % A stationTimeSeries netCDF file is defined in
 %   <a href="https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions">https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions</a>
@@ -95,10 +95,25 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 
 %% Load file info
 
-   INF = nc_info(ncfile);
+   %% get info from ncfile
+   if isstruct(ncfile)
+      fileinfo = ncfile;
+   else
+      fileinfo = nc_info(ncfile);
+   end
+   
+   %% deal with name change in scntools: DataSet > Dataset
+   if     isfield(fileinfo,'Dataset'); % new
+     fileinfo.DataSet = fileinfo.Dataset;
+   elseif isfield(fileinfo,'DataSet'); % old
+     fileinfo.Dataset = fileinfo.DataSet;
+     disp(['warning: please use newer version of snctools (e.g. ',which('matlab\io\snctools\nc_info'),') instead of (',which('nc_info'),')'])
+   else
+      error('neither field ''Dataset'' nor ''DataSet'' returned by nc_info')
+   end
    
 %% Check whether is time series
-   index = findstrinstruct(INF.Attribute,'Name','CF:featureType');
+   index = findstrinstruct(fileinfo.Attribute,'Name','CF:featureType');
    if isempty(index)
       warning(['netCDF file might not be a proper stationTimeSeries, it lacks Attribute CF:featureType=stationTimeSeries'])
    end
@@ -145,14 +160,14 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    if isempty(OPT.varname)
    
       timevar = [];
-      for ivar=1:length(INF.Dataset)
-         index = any(strcmpi(INF.Dataset(ivar).Dimension,'time')); % use any if for case like {'locations','time'}
+      for ivar=1:length(fileinfo.Dataset)
+         index = any(strcmpi(fileinfo.Dataset(ivar).Dimension,'time')); % use any if for case like {'locations','time'}
          if index==1
             timevar = [timevar ivar];
          end
       end
       
-      timevarlist = cellstr(char(INF.Dataset(timevar).Name));
+      timevarlist = cellstr(char(fileinfo.Dataset(timevar).Name));
 
 
       [ii, ok] = listdlg('ListString', timevarlist, .....
@@ -168,10 +183,10 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    else
    
       % get index
-      nvar = length(INF.Dataset);
+      nvar = length(fileinfo.Dataset);
       
       for ivar=1:nvar
-         if strcmp(INF.Dataset(ivar).Name,OPT.varname)
+         if strcmp(fileinfo.Dataset(ivar).Name,OPT.varname)
          varindex = ivar;
          break
          end
@@ -184,10 +199,10 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
       
 %% get Attributes
 
-      nAttr = length(INF.Dataset(varindex).Attribute);
+      nAttr = length(fileinfo.Dataset(varindex).Attribute);
       for iAttr = 1:nAttr
-      Name  = mkvar(INF.Dataset(varindex).Attribute(iAttr).Name);
-      Value =       INF.Dataset(varindex).Attribute(iAttr).Value;
+      Name  = mkvar(fileinfo.Dataset(varindex).Attribute(iAttr).Name);
+      Value =       fileinfo.Dataset(varindex).Attribute(iAttr).Value;
       M.(OPT.varname).(Name) = Value; % get all  % TO DO
       end
 
@@ -199,7 +214,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
       plot    (D.datenum,D.(OPT.varname))
       datetick('x')
       grid     on
-      title   ({mktex(INF.Filename),...
+      title   ({mktex(fileinfo.Filename),...
                ['"',D.station_name,'"',...
                 ' (',num2str(D.lon),'\circE',...
                  ',',num2str(D.lat),'\circN',...

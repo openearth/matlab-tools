@@ -5,12 +5,12 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 %  [D,M] = nc_cf_grid(ncfile,varname)
 %
 % plots/loads timeseries of variable varname from netCDF 
-% file ncfile and returns data and meta-data
-% where * ncfile is the netCDF file name (or OPeNDAP adress)
-%       * D contains the data struct
-%       * M contains the metadata struct (attributes)
-%       * varname is the variable name to be extracted (must have dimension time)
-%         When varname is not supplied, a dialog box is offered.
+% file ncfile and returns data and meta-data where 
+% ncfile  = name of local file, OPeNDAP address, or result of ncfile = nc_info()
+% D       = contains the data struct
+% M       = the metadata struct (attributes)
+% varname = the variable name to be extracted (must have dimension time)
+%           When varname is not supplied, a dialog box is offered.
 %
 % A netCDF (curvi-linear) grid file is defined in
 %   <a href="http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/ch04.html">http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/ch04.html</a>
@@ -92,10 +92,25 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 
 %% Load file info
 
-   INF = nc_info(ncfile);
+   %% get info from ncfile
+   if isstruct(ncfile)
+      fileinfo = ncfile;
+   else
+      fileinfo = nc_info(ncfile);
+   end
+   
+   %% deal with name change in scntools: DataSet > Dataset
+   if     isfield(fileinfo,'Dataset'); % new
+     fileinfo.DataSet = fileinfo.Dataset;
+   elseif isfield(fileinfo,'DataSet'); % old
+     fileinfo.Dataset = fileinfo.DataSet;
+     disp(['warning: please use newer version of snctools (e.g. ',which('matlab\io\snctools\nc_info'),') instead of (',which('nc_info'),')'])
+   else
+      error('neither field ''Dataset'' nor ''DataSet'' returned by nc_info')
+   end
    
 %% Check whether is time series
-   index = findstrinstruct(INF.Attribute,'Name','Conventions');
+   index = findstrinstruct(fileinfo.Attribute,'Name','Conventions');
    if isempty(index)
       error(['netCDF file is not a grid: needs Attribute Conventions=CF-1.4'])
    end
@@ -134,20 +149,20 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
    if isempty(OPT.varname)
    
       coordvar = [];
-      for ivar=1:length(INF.Dataset)
+      for ivar=1:length(fileinfo.Dataset)
       
          lat = false;
          lon = false;
          
          %%   direct mapping: find dimension latitude, longitude OR
          
-         for idim=1:length(INF.Dataset(ivar).Dimension)
+         for idim=1:length(fileinfo.Dataset(ivar).Dimension)
 
-            if any(cell2mat((strfind(INF.Dataset(ivar).Dimension(idim),'latitude'))))
+            if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),'latitude'))))
                lat = true;
             end
 	    
-            if any(cell2mat((strfind(INF.Dataset(ivar).Dimension(idim),'longitude'))))
+            if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),'longitude'))))
                lon = true;
             end
             
@@ -163,28 +178,28 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
          
          else
 
-            atrindex = nc_atrname2index(INF.Dataset(ivar),'coordinates');
+            atrindex = nc_atrname2index(fileinfo.Dataset(ivar),'coordinates');
             
             if ~isempty(atrindex)
             
                % check whether coordinates attribute refers to variables that have standard_name latitude & longitude
-               coordvarnames = strtokens2cell(INF.Dataset(ivar).Attribute(atrindex).Value);
+               coordvarnames = strtokens2cell(fileinfo.Dataset(ivar).Attribute(atrindex).Value);
                
                lat = false;
                lon = false;
                
                for ii=1:length(coordvarnames)
                
-                  varindex = nc_varname2index(INF,coordvarnames{ii});
+                  varindex = nc_varname2index(fileinfo,coordvarnames{ii});
                
                   % find index of standard_name attribute
-                  atrindex = nc_atrname2index(INF.Dataset(varindex),'standard_name');
+                  atrindex = nc_atrname2index(fileinfo.Dataset(varindex),'standard_name');
                
                   if ~isempty(atrindex)
-                     if strcmpi(INF.Dataset(varindex).Attribute(atrindex).Value,'latitude')
+                     if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'latitude')
                      lat=true;
                      end
-                     if strcmpi(INF.Dataset(varindex).Attribute(atrindex).Value,'longitude')
+                     if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'longitude')
                      lon=true;
                      end
                   end
@@ -201,7 +216,7 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
          
       end
       
-      coordvarlist = cellstr(char(INF.Dataset(coordvar).Name));
+      coordvarlist = cellstr(char(fileinfo.Dataset(coordvar).Name));
 
 
       [ii, ok] = listdlg('ListString', coordvarlist, .....
@@ -218,10 +233,10 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
    
    %% get index
    
-      nvar = length(INF.Dataset);
+      nvar = length(fileinfo.Dataset);
       
       for ivar=1:nvar
-         if strcmp(INF.Dataset(ivar).Name,OPT.varname)
+         if strcmp(fileinfo.Dataset(ivar).Name,OPT.varname)
          varindex = ivar;
          break
          end
@@ -234,10 +249,10 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
       
 %% get Attributes
 
-      nAttr = length(INF.Dataset(varindex).Attribute);
+      nAttr = length(fileinfo.Dataset(varindex).Attribute);
       for iAttr = 1:nAttr
-      Name  = mkvar(INF.Dataset(varindex).Attribute(iAttr).Name);
-      Value =       INF.Dataset(varindex).Attribute(iAttr).Value;
+      Name  = mkvar(fileinfo.Dataset(varindex).Attribute(iAttr).Name);
+      Value =       fileinfo.Dataset(varindex).Attribute(iAttr).Value;
       M.(OPT.varname).(Name) = Value; % get all  % TO DO
       end
 
@@ -253,7 +268,7 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
       end
       tickmap ('ll')
       grid     on
-      title   ({mktex(INF.Filename),...
+      title   ({mktex(fileinfo.Filename),...
                 datestr(D.datenum)})
       colorbarwithvtext([mktex(M.(OPT.varname).long_name),' [',...
                          mktex(M.(OPT.varname).units    ),']']);

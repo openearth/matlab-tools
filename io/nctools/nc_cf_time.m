@@ -1,10 +1,11 @@
-function varargout = nc_cf_time(varargin)
+function varargout = nc_cf_time(ncfile,varargin)
 %NC_CF_TIME   readfs all time variables from a netCDF file inot Matlab datenumber
 %
 %   datenumbers = nc_cf_time(ncfile);
 %
-% extract time vectors from netCDF file ncfile as Matlab datenumbers, 
-% where time is defined according to the CF convention as in:
+% extract time vectors from netCDF file ncfile as Matlab datenumbers.
+% ncfile  = name of local file, OPeNDAP address, or result of ncfile = nc_info()
+% time    = defined according to the CF convention as in:
 %
 % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
 % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/ch04s04.html
@@ -14,10 +15,21 @@ function varargout = nc_cf_time(varargin)
 %
 %See also: NC_CF_NC_CF_STATIONTIMESERIES, NC_CF_GRID, UDUNITS2DATENUM
 
-   if ischar(varargin{1})
-      fileinfo = nc_info(varargin{1});
+   %% get info from ncfile
+   if isstruct(ncfile)
+      fileinfo = ncfile;
    else
-      fileinfo = varargin{1};
+      fileinfo = nc_info(ncfile);
+   end
+   
+   %% deal with name change in scntools: DataSet > Dataset
+   if     isfield(fileinfo,'Dataset'); % new
+     fileinfo.DataSet = fileinfo.Dataset;
+   elseif isfield(fileinfo,'DataSet'); % old
+     fileinfo.Dataset = fileinfo.DataSet;
+     disp(['warning: please use newer version of snctools (e.g. ',which('matlab\io\snctools\nc_info'),') instead of (',which('nc_info'),')'])
+   else
+      error('neither field ''Dataset'' nor ''DataSet'' returned by nc_info')
    end
    
    %% cycle Dimensions
@@ -50,10 +62,14 @@ function varargout = nc_cf_time(varargin)
    end
    
 if nargout<2
-   if length(index)==1
+   if     length(index)==0
+      warning('no time vectors present.')
+      varargout = {[]};
+   elseif length(index)==1
       varargout = {D(1).datenum};
    else
-      warning('multiple time vecots present, please specify furter.')
+      warning('multiple time vectors present, please specify furter.')
+      varargout = {D};
    end
 end
 
