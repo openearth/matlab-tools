@@ -24,6 +24,7 @@ d = CreateTreeItem( rootCell, "img/folder_closed.gif", "img/folder_open.gif", "T
     	<!-- ##ENDTESTCASE -->
 <!-- ##ENDNEUTRALTESTS -->
 
+Toggle("Test with no result");
 
 }
 

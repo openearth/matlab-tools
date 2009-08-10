@@ -14,7 +14,7 @@ function CreateTestExplorer()
 
         // Build a project.
 
-d = CreateTreeItem( rootCell, "img/folder_closed.gif", "img/folder_open.gif", "Test Results ", "resultoverview_large.html", "test_viewer" );
+d = CreateTreeItem( rootCell, "img/folder_closed.gif", "img/folder_open.gif", "Test Results", "resultoverview_large.html", "test_viewer" );
 <!-- ##BEGINTESTS -->
 	d#TESTNUMBER = CreateTreeItem( d, "#ICON", "#ICON", "#TESTNAME", "#TESTHTML", "test_viewer" );
 	<!-- ##BEGINTESTCASE -->
@@ -25,6 +25,7 @@ d = CreateTreeItem( rootCell, "img/folder_closed.gif", "img/folder_open.gif", "T
     	<!-- ##ENDTESTCASE -->
 <!-- ##ENDTESTS -->
 
+Toggle("Test Results");
 
 }
 

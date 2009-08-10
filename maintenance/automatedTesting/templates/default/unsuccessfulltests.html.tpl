@@ -24,6 +24,7 @@ d = CreateTreeItem( rootCell, "img/folder_closed.gif", "img/folder_open.gif", "U
     	<!-- ##ENDTESTCASE -->
 <!-- ##ENDUNSUCCESSFULLTESTS -->
 
+Toggle("Unsuccessfull tests");
 
 }
 
