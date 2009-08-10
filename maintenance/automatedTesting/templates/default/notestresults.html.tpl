@@ -14,16 +14,15 @@ function CreateTestExplorer()
 
         // Build a project.
 
-d = CreateTreeItem( rootCell, "img/folder_closed.gif", "img/folder_open.gif", "Test Results ", "resultoverview_large.html", "test_viewer" );
-<!-- ##BEGINTESTS -->
+d = CreateTreeItem( rootCell, "img/folder_closed.gif", "img/folder_open.gif", "Test with no result", "resultoverview_large.html", "test_viewer" );
+<!-- ##BEGINNEUTRALTESTS -->
 	d#TESTNUMBER = CreateTreeItem( d, "#ICON", "#ICON", "#TESTNAME", "#TESTHTML", "test_viewer" );
 	<!-- ##BEGINTESTCASE -->
-	
 		d#TESTNUMBER#TESTCASENUMBER=   CreateTreeItem( d#TESTNUMBER, "#ICON", "#ICON", "#TESTCASENAME", null, null );
 			d#TESTNUMBER#TESTCASENUMBER1 = CreateTreeItem( d#TESTNUMBER#TESTCASENUMBER, null, null, "Description", "#DESCRIPTIONHTML", "test_viewer" );
     			d#TESTNUMBER#TESTCASENUMBER2 = CreateTreeItem( d#TESTNUMBER#TESTCASENUMBER, null, null, "Result", "#RESULTHTML", "test_viewer" );
     	<!-- ##ENDTESTCASE -->
-<!-- ##ENDTESTS -->
+<!-- ##ENDNEUTRALTESTS -->
 
 
 }
