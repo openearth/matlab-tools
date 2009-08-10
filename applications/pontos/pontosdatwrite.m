@@ -1,6 +1,6 @@
-function data = pontosdatread(datfilename)
-%PONTOSDATREAD reads the input data from a PonTos dat file and puts them
-% in a struct (ALPHA RELEASE, UNDER CONSTRUCTION)
+function pontosdatwrite(data,datfilename)
+%PONTOSDATREAD writes the data struct to a PonTos dat file
+% (ALPHA RELEASE, UNDER CONSTRUCTION)
 %
 %   PonTos is an integrated conceptual model for Shore Line Management,
 %   developed to assess the long-term and large-scale development
@@ -12,20 +12,21 @@ function data = pontosdatread(datfilename)
 %   file Case.DAT. This is a TEGAGX formatted ASCII file.
 %
 %   Syntax:
-%   data = pontosdatread(datfilename)
+%   pontosdatread(data,datfilename)
 %
 %   Input:
+%   data = struct containing input data (e.g. read with pontosdatread)
 %   datfilename  = filename of the PonTos dat file (PonTos input)
 %
 %   Output:
-%   data = struct containing PonTos input blocks
+%   PonTos input file
 %
 %   Example
 %   datfilename =
 %   'l:\A2112\Morfologie\PonTos\Voorbeeld invoer\Run_t_Sch_PBV1n_50.dat';
-%   data = pontosdatread(datfilename);
+%   pontosdatwrite(data,datfilename);
 %
-%   See also pontosdatwrite
+%   See also pontosdatread
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -71,51 +72,31 @@ function data = pontosdatread(datfilename)
 
 %%
 
-variable = 0;
-data = struct;
-fid = fopen(datfilename,'rt');
-while 1,
-    line=fgetl(fid);
-    if ~ischar(line), break; end;
-    line=deblank(line);
-    if isempty(line),
-    elseif line(1)=='*',
-        
-    else
-        variable=variable+1;
-        name = deblank(line);
-        line=fgetl(fid);
-        if ~ischar(line),
-            dim=[];
-        else
-            dim=sscanf(line,'%i',[1 inf]);
-        end;
-        
-        if length(dim)>1,
-            dim=dim([2 1]);
-        else
-            dim=[dim 1];
+myfieldnames = fieldnames(data);
+fid = fopen(datfilename,'wt');
+for i = 1:length(myfieldnames)
+    if strcmp(char(myfieldnames(i,:)),'CMT')
+        fprintf(fid,'%s\n','CMT');
+        cmt = data.CMT;
+        fprintf(fid,'%g',length(data.CMT));
+        for j = 1:length(data.CMT);
+            fprintf(fid,'%s',cmt{j});
         end
-        
-        offset=ftell(fid);
-        
-        if strcmp(name,'CMT'),
-            cmt = '';
-            for i = 1:dim(1)
-                cmt{i} = sprintf('\n%s',fgetl(fid));
-            end
-            data.(name) = cmt;
+            fprintf(fid,'%s\n','');
+    else
+        fprintf(fid,'%s\n',char(myfieldnames(i,:)));
+        mysize = size(getfield(data,char(myfieldnames(i,:))));
+        fprintf(fid,'%g %g\n',mysize);
+        myformat = '%15.4f';
+        for j = 1:mysize(2)-1
+            myformat = [myformat, ' %15.4f'];
+        end
+        myformat = [myformat,'\n'];
+        if mysize(1)~=0
+            fprintf(fid,myformat,[getfield(data,char(myfieldnames(i,:)))]')
         else
-            line=fgetl(fid);
-            fseek(fid,offset,-1);
-            [Data,Nr]=fscanf(fid,['%f%*[ ,' char(9) char(13) char(10) ']'],dim);
-            Data(Data(:)==-9999)=NaN;
-            if length(dim)>1,
-                data.(name)=Data';
-            end;
-            
-        end;
-        line=fgetl(fid);
+            fprintf(fid,'%s\n','* ');
+        end
     end
-end;
+end
 fclose(fid);
