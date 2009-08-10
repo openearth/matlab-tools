@@ -9,7 +9,7 @@ cd(fullfile(openearthtoolsroot,'matlab','tutorials'))
 % 4 = completed, tested, and on the openearth wiki
 %
 %         1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
-status = [1 0 3 3 3 2 0 3 1  2  1  1  0  2  0];
+status = [1 0 3 3 3 2 0 3 1  2  3  1  0  2  0];
 options.maxOutputLines = 15;
 options.format         = 'html'; %'doc','html' (default), 'latex', 'ppt', 'xml'
 
@@ -33,6 +33,7 @@ for ii = 1:length(tutorial_scripts)
 end
 
 % delete figure made a one of the publish scripts
+cd(fullfile(openearthtoolsroot,'matlab','tutorials'))
 figures_to_delete = dir(fullfile(openearthtoolsroot,'matlab','tutorials','*.png'));
 for ii = 1:length(figures_to_delete)
     delete(figures_to_delete(ii).name)
