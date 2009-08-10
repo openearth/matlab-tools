@@ -275,23 +275,43 @@ classdef mtestengine < handle
             end
 
             %% copy template files and dirs
-            templdir = fullfile(fileparts(mfilename('fullpath')),'templates');
-            if ~isdir(templdir)
+            templatedir = fullfile(fileparts(mfilename('fullpath')),'templates');
+            if ~isdir(templatedir)
                 error('MtestEngine:MissingTemplates','There are no templates.');
             end
-            if ~isdir(fullfile(templdir,'default'))
+            if ~isdir(fullfile(templatedir,'default'))
                 error('MtestEngine:MissingTemplates','The default template was not found.');
             end
-            dirs = dir(templdir);
+            dirs = dir(templatedir);
             templatenames = {dirs([false false dirs(3:end).isdir]).name}';
             if ~strcmp(templatenames,obj.template)
                 warning('MtestEngine:TemplateNotFound',['Template with the name: "' obj.template '" was not found. Default is used instead']);
                 obj.template = 'default';
             end
-            templdir = fullfile(templdir,obj.template);
+            templdir = fullfile(templatedir,obj.template);
 
             % check the existance of testresult.tmp
-            tplfiles = dir(fullfile(templdir,'*.tpl'));
+            tplfiles = [];
+            if obj.recursive
+                drs = strread(genpath(templdir),'%s',-1,'delimiter',';');
+                drs(~cellfun(@isempty,strfind(drs,'.svn')))=[];
+                for idirs = 1:length(drs)
+                    tplflsstruct = dir(fullfile(drs{idirs},'*.tpl'));
+                    if ~isempty(tplflsstruct)
+                        dr = fullfile(obj.targetdir,strrep(drs{idirs},templdir,''));
+                        newtplfiles = cell(length(tplflsstruct),2);
+                        newtplfiles(:,1) = {dr};
+                        newtplfiles(:,2) = {tplflsstruct.name}';
+                        tplfiles = cat(1,tplfiles,newtplfiles);
+                    end
+                end
+            else
+                tplflsstruct = dir(fullfile(templdir,'*.tpl'));
+                tplfiles = cell(length(tplflsstruct),2);
+                tplfiles(:,2) = {tplflsstruct.name}';
+                tplfiles(:,1) = {obj.targetdir};
+            end
+            
             if isempty(tplfiles)
                 error('MtestEngine:WrongTemplate','There is no template file (*.tpl) in the template directory');
             end
@@ -347,7 +367,7 @@ classdef mtestengine < handle
             %% loop all tpl files and fill keywords
 
             for itpl = 1:length(tplfiles)
-                tplfilename = fullfile(obj.targetdir,tplfiles(itpl).name);
+                tplfilename = fullfile(tplfiles{itpl,1},tplfiles{itpl,2});
 
                 obj.fillTemplate(tplfilename);
 
@@ -380,11 +400,11 @@ classdef mtestengine < handle
             %                               ##ENDTESTCASE keywords are treated in the same manner as
             %                               the loop definition of the tests, but now with
             %                               the correct information of the testcases within a test.
-            %       <!-- #BEGINSUCCESSFULLTESTS -->/<!-- #ENDSUCCESSFULLTESTS -->
+            %       <!-- ##BEGINSUCCESSFULLTESTS -->/<!-- ##ENDSUCCESSFULLTESTS -->
             %                               TODO
-            %       <!-- #BEGINUNSUCCESSFULLTESTS -->/<!-- #ENDUNSUCCESSFULLTESTS -->
+            %       <!-- ##BEGINUNSUCCESSFULLTESTS -->/<!-- ##ENDUNSUCCESSFULLTESTS -->
             %                               TODO
-            %       <!-- #BEGINNEUTRALTESTS -->/<!-- #ENDNEUTRALTTESTS -->
+            %       <!-- ##BEGINNEUTRALTESTS -->/<!-- ##ENDNEUTRALTTESTS -->
             %                               TODO
             %
             %       Including test results and results of testcases, part of a template file can
@@ -400,12 +420,19 @@ classdef mtestengine < handle
             %       <!-- ##ENDTESTS -->
             %
             %       General keywords:
-            %       #POSITIVEICON           -   TODO
-            %       #NEGATVIEICON           -   TODO
-            %       #NEUTRALICON            -   TODO
-            %       #NRSUCCESSFULLTESTS     -   TODO
-            %       #NRUNSUCCESSFULLTESTS   -   TODO
-            %       #NRNEUTRALTESTS         -   TODO
+            %       #POSITIVEICON           -   Is replaced by a reference to the positive icon.
+            %       #NEGATVIEICON           -   Is replaced by a reference to the negative icon.
+            %       #NEUTRALICON            -   Is replaced by a reference to the neutral icon.
+            %       #NRTESTSTOTAL           -   Is replaced by the total number of tests in the
+            %                                   mtestengine object.
+            %       #NRTESTCASESTOTAL       -   Is replaced by the total number of testcases in the
+            %                                   tests that are part of the mtestengine object.
+            %       #NRSUCCESSFULLTESTS     -   Is replaced by the number of successfull tests
+            %                                   (testresult = true).
+            %       #NRUNSUCCESSFULLTESTS   -   Is replaced by the number of unsuccessfull tests
+            %                                   (testresult = false).
+            %       #NRNEUTRALTESTS         -   Is replaced by the number of tests that had no test
+            %                                   results (testresult = NaN).
             %
             %       test keywords:
             %       #TESTNUMBER         -   Is replaced by the location (number) of the test within
@@ -497,32 +524,6 @@ classdef mtestengine < handle
                 % copy and reference default icon?
             end
 
-            %% get tests string (string that must be copied for each test
-            testStringToBeFilled = false;
-            testCaseStringToBeFilled = false;
-            if ~isempty(strfind(str,'##BEGINTESTS'))
-                testStringToBeFilled = true;
-                idteststrbegin = min(ends(ends>strfind(str,'##BEGINTESTS')))+4;
-                idteststrend = strfind(str,'##ENDTESTS')-6;
-                teststr = str(idteststrbegin:idteststrend);
-                if ~isempty(strfind(str,'##BEGINTESTCASE'))
-                    testCaseStringToBeFilled = true;
-                    idtestcasestrbegin = strfind(str,'##BEGINTESTCASE');
-                    idtestcasestrend = strfind(str,'##ENDTESTCASE')-6;
-                    testcasestr = str(min(ends(ends>idtestcasestrbegin))+4:idtestcasestrend);
-                end
-            end
-
-            %% replace the testcase string within the teststring with the keyword '#@#TESTCASESTRING'
-
-            if testStringToBeFilled
-                str = strrep(str,teststr,'#@#TESTSTRING');
-            end
-
-            if testCaseStringToBeFilled
-                teststr = strrep(teststr,testcasestr,'#@#TESTCASESTRING');
-            end
-
             %% replace general keywords
             % #POSITIVEICON
             % #NEGATVIEICON
@@ -530,6 +531,8 @@ classdef mtestengine < handle
             % #NRSUCCESSFULLTESTS
             % #NRUNSUCCESSFULLTESTS
             % #NRNEUTRALTESTS
+            % #NRTESTSTOTAL
+            % #NRTESTCASESTOTAL
 
             str = strrep(str,'#POSITIVEICON',positiveIm);
             str = strrep(str,'#NEGATIVEICON',negativeIm);
@@ -538,82 +541,174 @@ classdef mtestengine < handle
             str = strrep(str,'#NRSUCCESSFULLTESTS',num2str(sum(tr(~isnan(tr)))));
             str = strrep(str,'#NRUNSUCCESSFULLTESTS',num2str(sum(tr(~isnan(tr))==0)));
             str = strrep(str,'#NRNEUTRALTESTS',num2str(sum(isnan(tr))));
-
-            if testStringToBeFilled
-                %% Loop tests
-                finalstr = '';
-                for itest = 1:length(obj.tests)
-                    %% create teststring and replace keywords
-                    % #TESTNUMER
-                    % #ICON
-                    % #TESTNAME
-                    % #TESTHTML
-
-                    tempstr = teststr;
-                    tempstr = strrep(tempstr,'#TESTNUMBER',num2str(itest));
-                    if isnan(obj.tests(itest).testresult)
-                        tempstr = strrep(tempstr,'#ICON',neutralIm);
-                    elseif obj.tests(itest).testresult
-                        tempstr = strrep(tempstr,'#ICON',positiveIm);
-                    else
-                        tempstr = strrep(tempstr,'#ICON',negativeIm);
-                    end
-                    if ~isempty(obj.tests(itest).testname)
-                        tempstr = strrep(tempstr,'#TESTNAME',obj.tests(itest).testname);
-                    else
-                        tempstr = strrep(tempstr,'#TESTNAME',obj.tests(itest).filename);
-                    end
-                    tempstr = strrep(tempstr,'#TESTHTML',strrep(fullfile('html',obj.tests(itest).descriptionoutputfile),filesep,'/'));
-
-                    if testCaseStringToBeFilled
-                        %% loop testcases
-                        finalcasesstr = '';
-                        for icase = 1:length(obj.tests(itest).testcases)
-                            %% create testcasestring and replace keywords
-                            % #TESTNUMBER
-                            % #TESTCASENUMBER
-                            % #ICON
-                            % #TESTCASENAME
-                            % #DESCRIPTIONHTML
-                            % #RESULTHTML
-                            tempstr2 = testcasestr;
-                            tempstr2 = strrep(tempstr2,'#TESTNUMBER',num2str(itest));
-                            tempstr2 = strrep(tempstr2,'#TESTCASENUMBER',num2str(obj.tests(itest).testcases(icase).casenumber));
-                            if isnan(obj.tests(itest).testcases(icase).testresult)
-                                tempstr2 = strrep(tempstr2,'#ICON',neutralIm);
-                            elseif obj.tests(itest).testcases(icase).testresult
-                                tempstr2 = strrep(tempstr2,'#ICON',positiveIm);
-                            else
-                                tempstr2 = strrep(tempstr2,'#ICON',negativeIm);
-                            end
-                            tcname = ['Case ' num2str(icase)];
-                            if ~isempty(obj.tests(itest).testcases(icase).casename)
-                                tcname = ['Case ' num2str(icase) ' (' obj.tests(itest).testcases(icase).casename ')'];
-                            end
-                            tempstr2 = strrep(tempstr2,'#TESTCASENAME',tcname);
-                            tempstr2 = strrep(tempstr2,'#DESCRIPTIONHTML',strrep(fullfile('html',obj.tests(itest).testcases(icase).descriptionoutputfile),filesep,'/'));
-                            tempstr2 = strrep(tempstr2,'#RESULTHTML',strrep(fullfile('html',obj.tests(itest).testcases(icase).publishoutputfile),filesep,'/'));
-
-                            %% concatenate testcase strings
-                            finalcasesstr = cat(2,finalcasesstr,tempstr2);
-                        end
-
-                        %% replace testcase string keyword
-                        tempstr = strrep(tempstr,'#@#TESTCASESTRING',finalcasesstr);
-                    end
-                    %% concatenate teststrings
-                    finalstr = cat(2,finalstr,tempstr);
-                end
-
-                %% replace the test loop with the teststring.
-                str = strrep(str,'#@#TESTSTRING',finalstr);
-            end
-
+            str = strrep(str,'#NRTESTSTOTAL',num2str(length(obj.tests)));
+            str = strrep(str,'#NRTESTCASESTOTAL',num2str(length([obj.tests(:).testcases])));
+            
+            %% Loop all tests
+            str = obj.loopAndFillTests(str,...
+                '##BEGINTESTS',...
+                '##ENDTESTS',...
+                true(size(obj.tests)),...
+                positiveIm,...
+                negativeIm,...
+                neutralIm);
+            
+            %% Loop successfulltests
+            str = obj.loopAndFillTests(str,...
+                '##BEGINSUCCESSFULLTESTS',...
+                '##ENDSUCCESSFULLTESTS',...
+                [obj.tests(:).testresult],...
+                positiveIm,...
+                negativeIm,...
+                neutralIm);
+            
+            %% Loop unsuccessfulltests
+            str = obj.loopAndFillTests(str,...
+                '##BEGINUNSUCCESSFULLTESTS',...
+                '##ENDUNSUCCESSFULLTESTS',...
+                ~[obj.tests(:).testresult],...
+                positiveIm,...
+                negativeIm,...
+                neutralIm);
+            
+            %% Loop neutral test
+            str = obj.loopAndFillTests(str,...
+                '##BEGINNEUTRALTESTS',...
+                '##ENDNEUTRALTESTS',...
+                isnan([obj.tests(:).testresult]),...
+                positiveIm,...
+                negativeIm,...
+                neutralIm);
+            
             %% Write output file (replace .tpl with .html)
             [pt fname] = fileparts(tplfilename);
-            fid = fopen(fullfile(pt,[fname '.html']),'w');
+            [emptydummy fname ext] = fileparts(fname);
+            if ~isempty(ext)
+                fullfname = fullfile(pt,[fname ext]);
+            else
+                fullfname = fullfile(pt,[fname '.html']);
+            end
+            fid = fopen(fullfname,'w');
             fprintf(fid,'%s',str);
             fclose(fid);
+            
+            %% Remove tpl file from target dir
+            delete(tplfilename);
+        end
+        function str = loopAndFillTests(obj,str,beginstring,endstring,testid,positiveIm,negativeIm,neutralIm)
+            %% Find string that must be looped (replace with '#@#TESTSTRTING')
+            ends = strfind(str,'-->');
+            
+            testStringToBeFilled = false;
+            testCaseStringToBeFilled = false;
+            if ~isempty(strfind(str,beginstring))
+                testStringToBeFilled = true;
+                idteststrbegin = min(ends(ends>strfind(str,beginstring)))+4;
+                idteststrend = strfind(str,endstring)-6;
+                teststr = str(idteststrbegin:idteststrend);
+                str = strrep(str,teststr,'#@#TESTSTRING');
+                if ~isempty(strfind(teststr,'##BEGINTESTCASE'))
+                    testCaseStringToBeFilled = true;
+                    ends2 = strfind(teststr,'-->');
+                    idtestcasestrbegin = min(ends2(ends2>strfind(teststr,'##BEGINTESTCASE')))+4;
+                    idtestcasestrend = strfind(teststr,'##ENDTESTCASE')-6;
+                    testcasestr = teststr(idtestcasestrbegin:idtestcasestrend);
+                    teststr = strrep(teststr,testcasestr,'#@#TESTCASESTRING');
+                end
+            end
+
+            if ~testStringToBeFilled
+                return
+            end
+            
+            %% Loop tests
+            finalstr = '';
+            testid = find(testid);
+            for itest = 1:length(testid)
+                %% create teststring and replace keywords
+                % #TESTNUMER
+                % #ICON
+                % #TESTNAME
+                % #TESTHTML
+                id = testid(itest);
+                
+                tempstr = teststr;
+                % #TESTNUMER
+                tempstr = strrep(tempstr,'#TESTNUMBER',num2str(id));
+                
+                % #ICON
+                if isnan(obj.tests(id).testresult)
+                    tempstr = strrep(tempstr,'#ICON',neutralIm);
+                elseif obj.tests(id).testresult
+                    tempstr = strrep(tempstr,'#ICON',positiveIm);
+                else
+                    tempstr = strrep(tempstr,'#ICON',negativeIm);
+                end
+                
+                % #TESTNAME
+                if ~isempty(obj.tests(id).testname)
+                    tempstr = strrep(tempstr,'#TESTNAME',obj.tests(id).testname);
+                else
+                    tempstr = strrep(tempstr,'#TESTNAME',obj.tests(id).filename);
+                end
+                
+                % #TESTHTML
+                tempstr = strrep(tempstr,'#TESTHTML',strrep(fullfile('html',obj.tests(id).descriptionoutputfile),filesep,'/'));
+
+                if testCaseStringToBeFilled
+                    %% loop testcases
+                    finalcasesstr = '';
+                    for icase = 1:length(obj.tests(id).testcases)
+                        %% create testcasestring and replace keywords
+                        % #TESTNUMBER
+                        % #TESTCASENUMBER
+                        % #ICON
+                        % #TESTCASENAME
+                        % #DESCRIPTIONHTML
+                        % #RESULTHTML
+                        tempstr2 = testcasestr;
+                        
+                        % #TESTNUMBER
+                        tempstr2 = strrep(tempstr2,'#TESTNUMBER',num2str(id));
+                        
+                        % #TESTCASENUMBER
+                        tempstr2 = strrep(tempstr2,'#TESTCASENUMBER',num2str(obj.tests(id).testcases(icase).casenumber));
+                        
+                        % #ICON
+                        if isnan(obj.tests(id).testcases(icase).testresult)
+                            tempstr2 = strrep(tempstr2,'#ICON',neutralIm);
+                        elseif obj.tests(id).testcases(icase).testresult
+                            tempstr2 = strrep(tempstr2,'#ICON',positiveIm);
+                        else
+                            tempstr2 = strrep(tempstr2,'#ICON',negativeIm);
+                        end
+                        
+                        % #TESTCASENAME
+                        tcname = ['Case ' num2str(icase)];
+                        if ~isempty(obj.tests(id).testcases(icase).casename)
+                            tcname = ['Case ' num2str(icase) ' (' obj.tests(id).testcases(icase).casename ')'];
+                        end
+                        tempstr2 = strrep(tempstr2,'#TESTCASENAME',tcname);
+                        
+                        % #DESCRIPTIONHTML
+                        tempstr2 = strrep(tempstr2,'#DESCRIPTIONHTML',strrep(fullfile('html',obj.tests(id).testcases(icase).descriptionoutputfile),filesep,'/'));
+                        
+                        % #RESULTHTML
+                        tempstr2 = strrep(tempstr2,'#RESULTHTML',strrep(fullfile('html',obj.tests(id).testcases(icase).publishoutputfile),filesep,'/'));
+                        
+                        %% concatenate testcase strings
+                        finalcasesstr = cat(2,finalcasesstr,tempstr2);
+                    end
+                    
+                    %% replace testcase string keyword
+                    tempstr = strrep(tempstr,'#@#TESTCASESTRING',finalcasesstr);
+                end
+                %% concatenate teststrings
+                finalstr = cat(2,finalstr,tempstr);
+            end
+            
+            %% replace the test loop with the teststring.
+            str = strrep(str,'#@#TESTSTRING',finalstr);
         end
     end
 end
