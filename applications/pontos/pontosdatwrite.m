@@ -93,7 +93,7 @@ for i = 1:length(myfieldnames)
         end
         myformat = [myformat,'\n'];
         if mysize(1)~=0
-            fprintf(fid,myformat,[getfield(data,char(myfieldnames(i,:)))]')
+            fprintf(fid,myformat,[getfield(data,char(myfieldnames(i,:)))]');
         else
             fprintf(fid,'%s\n','* ');
         end
