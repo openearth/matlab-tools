@@ -79,7 +79,7 @@ for i = 1:size(x,2)
 end
 
 for i = 1:size(x,1)
-%     try
+    try
         %% set calculation values for additional volume
         DuneErosionSettings('set',...
             'AdditionalVolume', [num2str(Duration(i)) '*Volume + ' num2str(Accuracy(i)) '*Volume'],... string voor het bepalen van het toeslagvolume gedurende de berekening (afslagvolume is negatief)
@@ -111,13 +111,13 @@ for i = 1:size(x,1)
 %             fprintf('%10e ', eval([var{1} '(' num2str(i) ')']))
 %         end
 %         fprintf('\n');
-%     catch me
-%         me
-%         ErosionVolume(i) = NaN;
-%         RD(i) = NaN;
-%         fname = tempname
-%         save(fname, 'D50', 'WL_t', 'Hsig_t', 'Tp_t', 'Duration', 'Accuracy', 'i')
-%     end
+    catch me
+        me
+        ErosionVolume(i) = NaN;
+        RD(i) = NaN;
+        fname = tempname
+        save(fname, 'D50', 'WL_t', 'Hsig_t', 'Tp_t', 'Duration', 'Accuracy', 'i')
+    end
 
     z(i,:) = Resistance - RD(i);
 end
