@@ -180,6 +180,13 @@ lon         = lon(:)';
 u           =   u(:)';
 v           =   v(:)';
 
+% remove nan values
+nans = isnan(lat+lon+u+v);
+lat(nans) = [];
+lon(nans) = [];
+  u(nans) = [];
+  v(nans) = [];
+
 [angle,scale] = cart2pol(u,v);
 scale = scale/40000000*360*OPT.arrowScale;
 
