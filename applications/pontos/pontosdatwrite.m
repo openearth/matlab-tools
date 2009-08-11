@@ -72,6 +72,8 @@ function pontosdatwrite(data,datfilename)
 
 %%
 
+[datpathstr,datfilenamenopath,datfileext,datfileversn] = fileparts(datfilename);
+
 myfieldnames = fieldnames(data);
 fid = fopen(datfilename,'wt');
 for i = 1:length(myfieldnames)
@@ -86,6 +88,21 @@ for i = 1:length(myfieldnames)
     else
         fprintf(fid,'%s\n',char(myfieldnames(i,:)));
         mysize = size(getfield(data,char(myfieldnames(i,:))));
+        if strcmp(char(myfieldnames(i,:)),'Y0C') && mysize(1)>25
+            disp(['Warning: Y0C is too long in ',datfilenamenopath,'; maximum is 25 points']);
+        end
+        if strcmp(char(myfieldnames(i,:)),'Y1C') && mysize(1)>200
+            disp(['Warning: Y1C is too long in ',datfilenamenopath,'; maximum is 200 points']);
+        end
+        if strcmp(char(myfieldnames(i,:)),'Y2C') && mysize(1)>25
+            disp(['Warning: Y2C is too long in ',datfilenamenopath,'; maximum is 25 points']);
+        end
+        if strcmp(char(myfieldnames(i,:)),'Y3C') && mysize(1)>10
+            disp(['Warning: Y3C is too long in ',datfilenamenopath,'; maximum is 10 points']);
+        end
+        if strcmp(char(myfieldnames(i,:)),'Y4C') && mysize(1)>5
+            disp(['Warning: Y4C is too long in ',datfilenamenopath,'; maximum is 5 points']);
+        end
         fprintf(fid,'%g %g\n',mysize);
         myformat = '%15.4f';
         for j = 1:mysize(2)-1
