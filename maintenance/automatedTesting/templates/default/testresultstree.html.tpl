@@ -22,10 +22,11 @@ d = CreateTreeItem( rootCell, "img/folder_closed.gif", "img/folder_open.gif", "T
 		d#TESTNUMBER#TESTCASENUMBER=   CreateTreeItem( d#TESTNUMBER, "#ICON", "#ICON", "#TESTCASENAME", null, null );
 			d#TESTNUMBER#TESTCASENUMBER1 = CreateTreeItem( d#TESTNUMBER#TESTCASENUMBER, null, null, "Description", "#DESCRIPTIONHTML", "test_viewer" );
     			d#TESTNUMBER#TESTCASENUMBER2 = CreateTreeItem( d#TESTNUMBER#TESTCASENUMBER, null, null, "Result", "#RESULTHTML", "test_viewer" );
+    			Toggle(d#TESTNUMBER#TESTCASENUMBER1.cleanid);
+    			Toggle(d#TESTNUMBER#TESTCASENUMBER2.cleanid);
     	<!-- ##ENDTESTCASE -->
 <!-- ##ENDTESTS -->
-
-Toggle("Test Results");
+Toggle(d.cleanid);
 
 }
 

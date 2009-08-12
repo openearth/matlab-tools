@@ -218,6 +218,7 @@ function CreateDiv( parent, id )
                 parent.appendChild( div );
                 
         div.setAttribute( "id", "D"+id );
+        div.setAttribute( "cleanid", id );
         div.style.display  = "none";
         div.style.marginLeft = "2em";
         
