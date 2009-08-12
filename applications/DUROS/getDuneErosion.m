@@ -202,7 +202,8 @@ if DuneErosionSettings('get', 'DUROS')
 		        else
 		            %TODO: recalculate G (because it is limited by x0min)
 		            result(end).info.ID = ['Shifted for coastal bend (Bend = ' num2str(Bend) '^{\circ})'];
-		        end
+                end
+                idAddProf = 3;
 		    else
 		    	writemessage(55, ['Coastal bend outside scope of regulations (Bend > 24)']);
 		    	idAddProf = 1;
@@ -224,8 +225,6 @@ if DuneErosionSettings('get', 'DUROS')
             result(end).zActive = interp1([result(1).xLand; result(1).xActive; result(1).xSea],...
                 [result(1).zLand; result(1).z2Active; result(1).zSea],...
                 result(end).xActive);
-            
-            idAddProf = 3;
         else
             idAddProf = 1;
         end
