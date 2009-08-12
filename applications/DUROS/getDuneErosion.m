@@ -204,7 +204,7 @@ if DuneErosionSettings('get', 'DUROS')
 		            result(end).info.ID = ['Shifted for coastal bend (Bend = ' num2str(Bend) '^{\circ})'];
 		        end
 		    else
-		    	writemessage(55, ['Coastal bend outside scope of regulations (Bend > 24)');
+		    	writemessage(55, ['Coastal bend outside scope of regulations (Bend > 24)']);
 		    	idAddProf = 1;
 		    end
             
