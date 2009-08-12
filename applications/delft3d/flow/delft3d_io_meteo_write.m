@@ -121,7 +121,7 @@ elseif strcmpi(OPT.filetype,'meteo_on_curvilinear_grid')
    if OPT.newgrid
       fprintf  (fid,'### START OF HEADER');
       fprinteol(fid,OPT.OS)
-      fprintf  (fid,'# Created with $ID$ $Headurl$ on %s',datestr(now));
+      fprintf  (fid,'# Created with $Id$ $Headurl:$ on %s',datestr(now));
       fprinteol(fid,OPT.OS)
    
       OPT.header = cellstr(OPT.header);

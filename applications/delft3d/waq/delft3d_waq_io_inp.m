@@ -45,7 +45,8 @@ function varargout = delft3d_waq_io_inp(varargin)
 % $Revision$
 % $HeadURL$
 
-%% TO DO : handle INCLUDE statement in waq_fgetl_* by opening new file, replacing fid, and putting higher level fid on stack.
+% DOne : handle INCLUDE statement in waq_fgetl_* by opening new file, replacing fid, and putting higher level fid on stack.
+% TO DO: count number of lines n while doing fscanf
 
 mfile_version = '1.0, Oct. 2006, beta';
 
@@ -102,7 +103,7 @@ no_cellstr    = 1;
       DAT.filedate     = tmp.date;
       DAT.filebytes    = tmp.bytes;
    
-      fid              = fopen   (DAT.filename,'r');
+      fid              = delft3d_waq_io_inp_fopen(DAT.filename,'r');
       
       %% II - Check if can be opened (locked etc.)
       %% ------------------------------------------
@@ -159,7 +160,7 @@ no_cellstr    = 1;
             DAT.data.number_of_inactive_substances = numbers(2);
             DAT.data.number_substances             = DAT.data.number_of_active_substances + ...
                                                      DAT.data.number_of_inactive_substances;
-	
+
             DAT.data.substances.name           = [];
             for isub=1:DAT.data.number_substances
                [rec,n]                         = waq_fgetl(fid,n,comment);
@@ -252,6 +253,7 @@ no_cellstr    = 1;
            [DAT.data.monitoring_points_areas_usage,n]     = waq_fgetl_number(fid,n,comment);
            [DAT.data.number_of_monitoring_points_areas,n] = waq_fgetl_number(fid,n,comment);
            
+           % line count goes awry here
            [string,n] = waq_fgetl(fid,n,comment);
            
            if strcmpi(strtok(string),'INCLUDE')
@@ -263,7 +265,7 @@ no_cellstr    = 1;
 
            else
            
-              DAT.data.monitoring.name = [];
+              DAT.data.monitoring.name = {};
 
               for im = 1:DAT.data.number_of_monitoring_points_areas
 
@@ -271,22 +273,28 @@ no_cellstr    = 1;
               name            = string(quotes(1)+1:1:quotes(end)-1);
               string          = string(quotes(end)+1:end);
                
-              DAT.data.monitoring.name       = strvcat(DAT.data.monitoring.name,...
-                                                       name);
+              DAT.data.monitoring.name{im} = name;
 
+              % case where number_of_segments is on next line instead of directly after name
              [number_of_segments,string]                 = strtok(string);
-              DAT.data.monitoring.number_of_segments(im) = str2num(number_of_segments);
+              if isempty(number_of_segments);
+                [number_of_segments,n] = waq_fgetl_number(fid,n,comment);
+              else
+                 number_of_segments = str2num(number_of_segments);
+              end
+              DAT.data.monitoring.number_of_segments(im) = number_of_segments;
               
-              DAT.data.monitoring.indices{im} = sscanf(string,'%d',DAT.data.monitoring.number_of_segments(im));
+              DAT.data.monitoring.indices{im} = str2num(sscanf(string,'%d',DAT.data.monitoring.number_of_segments(im)));
               
               while length(DAT.data.monitoring.indices{im}) < DAT.data.monitoring.number_of_segments(im)
 
                  number_of_segments_left = DAT.data.monitoring.number_of_segments(im) - ...
                                     length(DAT.data.monitoring.indices{im});
 
+                 % TO DO: count number of lines while doing fscanf
                  indices = fscanf(fid(end),'%d',number_of_segments_left);
                  
-                 DAT.data.monitoring.indices{im} = [DAT.data.monitoring.indices{im} num2str(indices)];
+                 DAT.data.monitoring.indices{im} = [DAT.data.monitoring.indices{im} indices];
                  
               end
               
@@ -539,7 +547,7 @@ no_cellstr    = 1;
             
           DAT.number_of_lines_read       = n;
 
-	  disp('waq_io_inp IN PROGRESS, read WAQ *.inp file up to #4 BC.')
+         disp('waq_io_inp IN PROGRESS, read WAQ *.inp file up to #4 BC.')
 
 %         catch
 %         
@@ -557,9 +565,9 @@ no_cellstr    = 1;
 
    end % if length(tmp)==0
    
-   DAT.iomethod = ['© delft3d_waq_io_inp.m  by G.J. de Boer (TU Delft), g.j.deboer@tudelft.nl,',mfile_version]; 
-   DAT.read_at  = datestr(now);
-   DAT.iostatus = iostat;
+   DAT.read.with     = '$Id: delft3d_waq_io_inp.$'; % SVN keyword, will insert name of this function
+   DAT.read.at       = datestr(now);
+   DAT.read.iostatus = iostat;
    
    %% Function output
    %% -----------------------------
@@ -579,6 +587,8 @@ function varargout = waq_fgetl(varargin)
    
    fid     = varargin{1};
    nbefore = varargin{2};
+   n       = repmat(0,[1 length(fid)]);
+  dn       = repmat(0,[1 length(fid)]);
 
    if nargin>2
       commentcharacter = [varargin{3},'#'];
@@ -592,18 +602,21 @@ function varargout = waq_fgetl(varargin)
       basedir = filepathstr(DAT.filename);
    end
 
-      [rec,n]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
-      
-      if strcmpi(strtok(rec),'INCLUDE')
+  [rec,dn] = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
+   n = n + dn;dn=0;
+   
+   if strcmpi(strtok(rec),'INCLUDE')
          indices = strfind(rec,'''');
          fname   = rec(indices(1)+1:indices(2)-1);
-         fid(length(fid)+1) = fopen([basedir,filesep,fname],'r');
-      [rec,n]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
-         disp(['INCLUDE statement on line ',num2str(nbefore+n)])
+         fid(length(fid)+1) = delft3d_waq_io_inp_fopen([basedir,filesep,fname],'r');
+      [rec,dn(length(fid))] = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
+       n = n + dn;dn = 0;
+         disp(['INCLUDE statement on line ',num2str(nbefore+n(1))])
       elseif isempty(rec)
          fid = fid(1:end-1);
       [rec,n]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
-      end
+
+   end
       
       %% remove part at end of line after comment character
       start_of_comment   = Inf;
@@ -625,7 +638,7 @@ function varargout = waq_fgetl(varargin)
    if nargout==1
       varargout = {rec};
    else
-      varargout = {rec,n};
+      varargout = {rec,n(length(fid))};
    end
    
 end % waq_fgetl
@@ -639,6 +652,7 @@ function varargout = waq_fgetl_string(varargin)
 
    fid     = varargin{1};
    nbefore = varargin{2};
+   n       = repmat(0,[1 length(fid)]);
 
    if nargin>2
       commentcharacter = [varargin{3},'#'];
@@ -652,18 +666,19 @@ function varargout = waq_fgetl_string(varargin)
       basedir = filepathstr(DAT.filename);
    end
 
-     [rec,n]           = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
-      
-      if strcmpi(strtok(rec),'INCLUDE')
+  [rec,dn] = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
+   n = n + dn;dn=0;
+   
+   if strcmpi(strtok(rec),'INCLUDE')
          indices = strfind(rec,'''');
          fname   = rec(indices(1)+1:indices(2)-1);
-         fid(length(fid)+1) = fopen([basedir,filesep,fname],'r');
-      [rec,n]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
-         disp(['INCLUDE statement on line ',num2str(nbefore+n)])
+         fid(length(fid)+1) = delft3d_waq_io_inp_fopen([basedir,filesep,fname],'r');
+      [rec,dn]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
+         disp(['INCLUDE statement on line ',num2str(nbefore+n(1))])
       elseif isempty(rec)
          fid = fid(1:end-1);
-      [rec,n]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
-      end
+      [rec,dn]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
+   end
          
       commas             = strfind(rec,'''');
       string             = rec(commas(1) +1:commas(2)-1);
@@ -689,6 +704,7 @@ function varargout = waq_fgetl_number(varargin)
  
    fid     = varargin{1};
    nbefore = varargin{2};
+   n       = repmat(0,[1 length(fid)]);
 
    if nargin>2
       commentcharacter = [varargin{3},'#'];
@@ -702,17 +718,18 @@ function varargout = waq_fgetl_number(varargin)
       basedir = filepathstr(DAT.filename);
    end
    
-   [rec,n]             = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
+  [rec,dn] = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
+   n = n + dn;dn=0;
    
    if strcmpi(strtok(rec),'INCLUDE')
          indices = strfind(rec,'''');
          fname   = rec(indices(1)+1:indices(2)-1);
-         fid(length(fid)+1) = fopen([basedir,filesep,fname],'r');
-      [rec,n]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
-         disp(['INCLUDE statement on line ',num2str(nbefore+n)])
+         fid(length(fid)+1) = delft3d_waq_io_inp_fopen([basedir,filesep,fname],'r');
+      [rec,dn]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
+         disp(['INCLUDE statement on line ',num2str(nbefore+n(1))])
       elseif isempty(rec)
          fid = fid(1:end-1);
-      [rec,n]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
+      [rec,dn]          = fgetl_no_comment_line(fid(end),commentcharacter,0); % 0 = allow no empty lines
    end
    
    start_of_comment   = Inf;
@@ -756,6 +773,18 @@ function varargout = strtoknoquotes(varargin)
       varargout = {tok};
    elseif nargout==2
       varargout = {tok,restofstr};
+   end
+   
+end % strtoknoquotes(varargin)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function fid = delft3d_waq_io_inp_fopen(varargin)
+
+   fid = fopen(varargin{:});
+   if fid < 0
+      error(['Error opening file: ',varargin{1}])
    end
    
 end % strtoknoquotes(varargin)
