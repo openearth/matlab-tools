@@ -1,4 +1,7 @@
-%% #Test: mtest functionalities
+%% mtest_test tests the functionalities of the mtest object
+% 
+% mtest functionality test
+%
 % This tests checks the functionality of the mtest object. It involves 7 testcases:
 %
 % # Test of the constructor method
