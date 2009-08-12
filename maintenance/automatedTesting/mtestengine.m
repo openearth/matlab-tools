@@ -234,7 +234,7 @@ classdef mtestengine < handle
             %% return to the previous searchpath settings
             path(pt);
         end
-        function obj = runAndPublish(obj,varargin)
+        function varargout = runAndPublish(obj,varargin)
             %runAndPublish  runs the mtestengine and publishes all results.
             %
             %   This function runs the mtestengine and publishes all results. First the function
@@ -259,6 +259,9 @@ classdef mtestengine < handle
             %
             %               %   See also mtestengine mtestengine.mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
 
+            %% initiate output
+            varargout = {};
+            
             %% cataloguq tests if not done already
             if ~obj.testscatalogued
                 obj.catalogueTests;
@@ -268,9 +271,29 @@ classdef mtestengine < handle
             if ~isdir(obj.targetdir)
                 mkdir(obj.targetdir);
             else
-                fls = dir(obj.targetdir);
-                if ~isempty(fls) % first delete .. and . dirs...
-                    %??? Dir not empty. Just clean the place or ask user for confirmation?
+                % list all files not being svn related or dirs.
+                fls = mtestengine.listfiles(obj.targetdir,'*',true);
+                fls(~cellfun(@isempty,strfind(fls(:,1),'.svn')) | strcmp(fls(:,2),'.') | strcmp(fls(:,2),'..'),:)=[];
+                if ~isempty(fls)
+                    button = questdlg({['The target directory is set to: ' obj.targetdir];'There are already files in this directory. What do you want to do with them?'},'Target dir not empty','Remove all files and dirs','Only remove files and keep svn information','Leave all my files there','Leave all my files there');
+                    switch button
+                        case 'Leave all my files there'
+                            % Do nothing
+                        case 'Only remove files and keep svn information'
+                            % delete all files that are not svn.
+                            % Do not delete dirs. (could have svn content..).
+                            for ifls = 1:size(fls,1)
+                                if exist(fullfile(fls{ifls,1},fls{ifls,2}),'file') && ~isdir(fullfile(fls{ifls,1},fls{ifls,2}))
+                                    delete(fullfile(fls{ifls,1},fls{ifls,2}));
+                                end
+                            end
+                        case 'Remove all files and dirs'
+                            rmdir(obj.targetdir,'s');
+                            mkdir(obj.targetdir);
+                        otherwise
+                            % also do nothing
+                    end
+                    
                 end
             end
 
@@ -290,27 +313,12 @@ classdef mtestengine < handle
             end
             templdir = fullfile(templatedir,obj.template);
 
-            % check the existance of testresult.tmp
-            tplfiles = [];
-            if obj.recursive
-                drs = strread(genpath(templdir),'%s',-1,'delimiter',';');
-                drs(~cellfun(@isempty,strfind(drs,'.svn')))=[];
-                for idirs = 1:length(drs)
-                    tplflsstruct = dir(fullfile(drs{idirs},'*.tpl'));
-                    if ~isempty(tplflsstruct)
-                        dr = fullfile(obj.targetdir,strrep(drs{idirs},templdir,''));
-                        newtplfiles = cell(length(tplflsstruct),2);
-                        newtplfiles(:,1) = {dr};
-                        newtplfiles(:,2) = {tplflsstruct.name}';
-                        tplfiles = cat(1,tplfiles,newtplfiles);
-                    end
-                end
-            else
-                tplflsstruct = dir(fullfile(templdir,'*.tpl'));
-                tplfiles = cell(length(tplflsstruct),2);
-                tplfiles(:,2) = {tplflsstruct.name}';
-                tplfiles(:,1) = {obj.targetdir};
-            end
+            % check the existance of template files (*.tpl)
+            tplfiles = mtestengine.listfiles(templdir,'tpl',obj.recursive);
+            tplfiles(:,1) = cellfun(@fullfile,...
+                repmat({obj.targetdir},size(tplfiles,1),1),...
+                strrep(tplfiles(:,1),templdir,''),...
+                'UniformOutput',false);
             
             if isempty(tplfiles)
                 error('MtestEngine:WrongTemplate','There is no template file (*.tpl) in the template directory');
@@ -353,12 +361,19 @@ classdef mtestengine < handle
             end
 
             for itests = 1:length(obj.tests)
-                obj.tests(itests).runAndPublish(...
-                    'resdir',fullfile(obj.targetdir,'html'),...
-                    'stylesheet',publishstylesheet);
-                obj.tests(itests).publishTestDescription(...
-                    'resdir',fullfile(obj.targetdir,'html'),...
-                    'stylesheet',publishstylesheet);
+                if isempty(publishstylesheet)
+                    obj.tests(itests).runAndPublish(...
+                        'resdir',fullfile(obj.targetdir,'html'));
+                    obj.tests(itests).publishTestDescription(...
+                        'resdir',fullfile(obj.targetdir,'html'));
+                else
+                    obj.tests(itests).runAndPublish(...
+                        'resdir',fullfile(obj.targetdir,'html'),...
+                        'stylesheet',publishstylesheet);
+                    obj.tests(itests).publishTestDescription(...
+                        'resdir',fullfile(obj.targetdir,'html'),...
+                        'stylesheet',publishstylesheet);
+                end
             end
 
             %% return the previous searchpath
@@ -366,18 +381,35 @@ classdef mtestengine < handle
 
             %% loop all tpl files and fill keywords
 
-            for itpl = 1:length(tplfiles)
+            for itpl = 1:size(tplfiles,1)
                 tplfilename = fullfile(tplfiles{itpl,1},tplfiles{itpl,2});
 
                 obj.fillTemplate(tplfilename);
 
             end
 
-            %% try opening index.html
+            %% run any code that is in the targetdir
+            mfiles = mtestengine.listfiles(templdir,'m',obj.recursive);
+            mfiles(:,1) = cellfun(@fullfile,...
+                repmat({obj.targetdir},size(mfiles,1),1),...
+                strrep(mfiles(:,1),templdir,''),...
+                'UniformOutput',false);
+            if ~isempty(mfiles)
+                for ifiles = 1:size(mfiles,1)
+                    run(fullfile(mfiles{ifiles,1},mfiles{ifiles,2}));
+                end
+            end
+            
+            %% try opening index.html or home.html
             if exist(fullfile(obj.targetdir,'index.html'),'file')
                 winopen(fullfile(obj.targetdir,'index.html'));
             elseif exist(fullfile(obj.targetdir,'home.html'),'file')
                 winopen(fullfile(obj.targetdir,'home.html'));
+            end
+            
+            %% Set output
+            if nargout == 1
+                varargout = {obj};
             end
         end
     end
@@ -709,6 +741,30 @@ classdef mtestengine < handle
             
             %% replace the test loop with the teststring.
             str = strrep(str,'#@#TESTSTRING',finalstr);
+        end
+    end
+    methods (Hidden=true, Static=true)
+        function filescell = listfiles(basedir,extension,recursive)
+            filescell = [];
+            if recursive
+                drs = strread(genpath(basedir),'%s',-1,'delimiter',';');
+                drs(~cellfun(@isempty,strfind(drs,'.svn')))=[];
+                for idirs = 1:length(drs)
+                    tempstruct = dir(fullfile(drs{idirs},['*.' extension]));
+                    if ~isempty(tempstruct)
+                        dr = fullfile(basedir,strrep(drs{idirs},basedir,''));
+                        newfiles = cell(length(tempstruct),2);
+                        newfiles(:,1) = {dr};
+                        newfiles(:,2) = {tempstruct.name}';
+                        filescell = cat(1,filescell,newfiles);
+                    end
+                end
+            else
+                tplflsstruct = dir(fullfile(basedir,'*.tpl'));
+                filescell = cell(length(tplflsstruct),2);
+                filescell(:,2) = {tplflsstruct.name}';
+                filescell(:,1) = {obj.targetdir};
+            end
         end
     end
 end
