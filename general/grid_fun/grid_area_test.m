@@ -1,6 +1,6 @@
-%GETAREACURVILINEARGRID_TEST   test for getAreaCurvilineargrid
+%GRID_AREA_TEST   test for GRID_AREA
 %
-%See also: GETAREACURVILINEARGRID
+%See also: GRID_AREA_TEST
 
    [Xcorner,Ycorner]=meshgrid(1:3,1:4);
 
@@ -22,7 +22,7 @@
    xlims = get(gca,'xlim');
    ylims = get(gca,'ylim');
 
-   Area = getAreaCurvilineargrid(Xcorner,Ycorner);
+   Area = grid_area(Xcorner,Ycorner);
 
   [Xcenter,...
    Ycenter] = corner2center(Xcorner,Ycorner) ;
@@ -46,7 +46,7 @@
    xlims = get(gca,'xlim');
    ylims = get(gca,'ylim');
 
-   Area = getAreaCurvilineargrid(Xcorner,Ycorner,'convex',1);
+   Area = grid_area(Xcorner,Ycorner,'convex',1);
 
   [Xcenter,...
    Ycenter] = corner2center(Xcorner,Ycorner) ;

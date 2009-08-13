@@ -1,18 +1,18 @@
 function xcor = center2corner(xcen,varargin)
-%CENTER2CORNER   calculates corners enclosing a 2D matrix of center points.
+%CENTER2CORNER  interpolate/extrapolate data from grid centers corners to grid corners
 %
-%   matrixcor = center2corner(matrixcen)
+%   matrixcornervalues = center2corner(matrixcentervalues)
 %
-%   Inter and extrapolates a 2D array linearly to obtain corner value
-%   from center values. The corner array is one bigger on both dimensions.
-%   Works for non-equidistant grid spacing.
-%   When a 1D array is passed, an error is generated.
+% inter/extrapolates a 2D array linearly to obtain corner values
+% from center values. The corner array is one bigger on both 
+% dimensions. Works for non-equidistant grid spacing too.
+% When a 1D array is passed, an error is generated.
 %
-%   Do note that only for equidistant grid spacing the following holds:
-%   cor = center2corner(corner2center1(cor))
+% Do note that only for equidistant grid spacing the following holds:
+% cor = center2corner(corner2center1(cor))
 %
-%   + center points
-%   o corner points
+% + center points
+% o corner points
 %
 %      o------o-------o-----------o------o------o
 %      |  +   |   +   |    +      |  +   |  +   |  
@@ -30,12 +30,10 @@ function xcor = center2corner(xcen,varargin)
 %                                    --  |         |
 %                                      \-o---------o
 %
-%   matrixcor = center2corner(matrixcen,'linear' ) % default
-%   matrixcor = center2corner(matrixcen,'nearest') % optional
+% matrixcor = center2corner(matrixcen,'linear' ) % default
+% matrixcor = center2corner(matrixcen,'nearest') % optional
 %
-%   © G.J. de Boer, Delft University of Technology, 2006-8
-%
-%   See also: CENTER2CORNER1, CORNER2CENTER, CORNER2CENTER1
+%See also:  CORNER2CENTER, CORNER2CENTERNAN, CENTER2CORNER1, CORNER2CENTER1
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005-8 Delft University of Technology
@@ -49,9 +47,9 @@ function xcor = center2corner(xcen,varargin)
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -60,11 +58,22 @@ function xcor = center2corner(xcen,varargin)
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
-%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/ 
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 allow1D            = false;
 dimensions_of_xcen = fliplr(sort(size(xcen))); % 1st element is biggest

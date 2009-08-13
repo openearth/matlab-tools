@@ -20,8 +20,6 @@ function xcor = center2corner1(xcen,varargin)
 %   corner points:     o-o-----o--------o------------o---oo  
 %   center points:     +----+------+----------+--------+--+  
 %
-%   © G.J. de Boer, Delft University of Technology, 2006
-%
 %   See also: CENTER2CORNER, CORNER2CENTER, CORNER2CENTER1
 
 %   --------------------------------------------------------------------
@@ -36,9 +34,9 @@ function xcor = center2corner1(xcen,varargin)
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -47,11 +45,22 @@ function xcor = center2corner1(xcen,varargin)
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
-%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/ 
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 dimensions_of_xcen = fliplr(sort(size(xcen))); % 1st element is biggest
 

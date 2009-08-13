@@ -18,7 +18,7 @@ function varargout=vs_meshgrid3dcorcen(varargin),
 %    with value 0 indicating to not calulcate them, and 1 to calculate them
 % * 'intface',same as for keyword 'centres' 
 %
-% See also: VS_USE, VS_LET, VS_DISP, VS_MESHGRID3DCORCEN
+% See also: VS_USE, VS_LET, VS_DISP, VS_MESHGRID2DCORCEN, VS_LET_SCALAR
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Technische Universiteit Delft, 

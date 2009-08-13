@@ -1,22 +1,21 @@
-function xcen = corner2center1(xcor);
-%CORNER2CENTER1  calculates centers in between vector of corner points.
+function varargout = corner2centernannan(varargin)
+%CORNER2CENTER  interpolate data from grid corners to grid centers
 %
-%   xcen = corner2center1(xcor) 
+%   matrixcentervalues = center2corner(matrixcornervalues)
 %
-%   Interpolates a 1D vector linearly to obtain center values
-%   from corner values. The cdnter array is one element smaller.
-%   Works for non-equidistant grid spacing.
+% Interpolates a 2D array linearly to obtain center values
+% from corner values. The corner array is one bigger on both 
+% dimensions. Works for non-equidistant grid spacing too.
+% When a 1D array is passed, an error is generated.
 %
-%   Do note that only for equidistant grid spacing the following holds:
-%   xcor = center2corner1(corner2center1(xcor))
+% grid center values are calculated using NANMEAN, so CORNER2CENTERNAN 
+% gives for instance the nearest corner coordinate when only 1 data point 
+% lies directy adjacent, in contrast to CORNER2CENTERNAN.
 %
-%   corner points:   o---o-----o--------o------------o---o-o 
-%   center points:     +----+------+----------+--------+--+  
-%
-%   See also: CORNER2CENTER, CENTER2CORNER, CENTER2CORNER1
+% See also: CORNER2CENTERNAN, CENTER2CORNER, CENTER2CORNER1, CORNER2CENTER1
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2006 Delft University of Technology
+%   Copyright (C) 2005 Delft University of Technology
 %       Gerben J. de Boer
 %
 %       g.j.deboer@tudelft.nl	
@@ -55,30 +54,35 @@ function xcen = corner2center1(xcor);
 % $HeadURL$
 % $Keywords: $
 
-dimensions_of_xcen = fliplr(sort(size(xcor))); % 1st element is biggest
-
-%% 1D
-%% ------------------------
-if dimensions_of_xcen(2)==1
+for iarg=1:nargin
+   cor = varargin{iarg};
+   sz  = size(cor);
+   if length(sz) > 2
+      error('only 1D or 2D arrays')
+   elseif min(size(cor))==1
    
-   %% Initialize with nan
-   %% ------------------------
+      M = repmat(0,[2 max(sz)-1]);
+      
+      M(1,:,:) = cor(1:end-1);
+      M(2,:,:) = cor(2:end  );
+      
+      cen = nanmean(M);
+      
+   else
+   
+      M = repmat(0,[4 sz(1)-1 sz(2)-1]);
+      
+      M(1,:,:) = cor(1:end-1,1:end-1);
+      M(2,:,:) = cor(1:end-1,2:end  );
+      M(3,:,:) = cor(2:end  ,1:end-1);
+      M(4,:,:) = cor(2:end  ,2:end  );
+      
+      cen = squeeze(nanmean(M));
+   
+   end
+   
+   varargout{iarg} = cen;
 
-     %xcen = nan(1:length(xcor)-1);% not in R6
-      xcen = nan.*zeros(length(xcor)-1);
+end   
 
-   %% Give value to those corner points that have 
-   %% 4 active center points around
-   %% and do not change them with 'internal extrapolations
-   %% ------------------------
-
-      xcen = (xcor(1:end-1) + xcor(2:end))./2;
-     
-%% 2D or more
-%% ------------------------
-
-else
-
-   error('only 1D arrays allowed, use center2corner instead') 
-
-end
+%% EOF

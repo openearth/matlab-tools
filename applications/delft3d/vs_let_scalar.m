@@ -9,10 +9,7 @@ function scalar = vs_let_scalar(varargin)
 %  (2) and permutes result for one timestep data so scalar is [nmax x mmax x kmax x ...]
 %      and also swaps it for WAVM file to get nmax x mmax.
 %
-%  © G.J. de Boer, 2006, TU Delft.
-%
-% See also:
-% VS_USE, VS_GET, VS_LET, VS_LET_VECTOR_cen, VS_LET_VECTOR_cor, VS_MASK, VS_...
+% See also: VS_USE, VS_GET, VS_LET, VS_LET_VECTOR_cen, VS_LET_VECTOR_cor, VS_MASK, VS_...
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology

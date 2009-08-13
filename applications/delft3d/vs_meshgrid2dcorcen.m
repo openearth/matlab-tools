@@ -81,7 +81,7 @@ function varargout=vs_meshgrid2dcorcen(varargin),
 % G.u.guu should be G.u.gu as 2nd letter is direction and first letter is location.
 % G.v.gvv should be G.v.gv as 2nd letter is direction and first letter is location.
 %
-% See also: VS_USE, VS_LET, VS_DISP, VS_MESHGRID2DCORCEN 
+% See also: VS_USE, VS_LET, VS_DISP, VS_MESHGRID3DCORCEN, VS_LET_SCALAR
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004-2007 Technische Universiteit Delft, 
@@ -525,7 +525,7 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
       %% -----------------------------------
       case {'Delft3D-trim','Delft3D-hwgxy'}
       
-         G.cen.area = getAreaCurvilineargrid(G.cor.x,G.cor.y);
+         G.cen.area = grid_area(G.cor.x,G.cor.y);
          G.cen.area_comment = 'This area is calculated exactly as the area of the two constituting triangles, whereas Delft3D-FLOW uses an approximation.';
       
       otherwise,

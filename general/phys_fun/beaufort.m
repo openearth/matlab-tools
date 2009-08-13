@@ -1,7 +1,7 @@
 function value_out = beaufort(value_in,unit)
 %BEAUFORT   transform SI wind speeds and beaufort scale
 %
-%   wind_beaufort = BEAUFORT(wind_mps)
+%   wind_beaufort = beaufort(wind_mps)
 %
 % See also: http://en.wikipedia.org/wiki/Beaufort_scale
 
