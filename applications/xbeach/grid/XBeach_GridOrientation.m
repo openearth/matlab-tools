@@ -93,15 +93,15 @@ if OPT.manual
     OPT.x_yend = [xi(3) yi(3)];
 end
 
-alfa    = atan2(OPT.xend_y0(2)-OPT.yori, OPT.xend_y0(1)-OPT.xori);
-Xbathy  = cos(alfa)*(xw-OPT.xori)+sin(alfa)*(yw-OPT.yori);
-Ybathy  = -sin(alfa)*(xw-OPT.xori)+cos(alfa)*(yw-OPT.yori);
-xn      = cos(alfa)*(OPT.xend_y0(1)-OPT.xori)+sin(alfa)*(OPT.xend_y0(2)-OPT.yori);
-yn      = -sin(alfa)*(OPT.x_yend(1)-OPT.xori)+cos(alfa)*(OPT.x_yend(2)-OPT.yori);
-xx      = (0:OPT.dx:xn)';
-yy      = 0:OPT.dy:yn;
-X       = repmat(xx, 1, length(yy));
-Y       = repmat(yy, length(xx), 1);
+alfa = atan2(OPT.xend_y0(2)-OPT.yori, OPT.xend_y0(1)-OPT.xori);
+Xbathy = cos(alfa)*(xw-OPT.xori)+sin(alfa)*(yw-OPT.yori);
+Ybathy = -sin(alfa)*(xw-OPT.xori)+cos(alfa)*(yw-OPT.yori);
+xn = cos(alfa)*(OPT.xend_y0(1)-OPT.xori)+sin(alfa)*(OPT.xend_y0(2)-OPT.yori);
+yn = -sin(alfa)*(OPT.x_yend(1)-OPT.xori)+cos(alfa)*(OPT.x_yend(2)-OPT.yori);
+xx = (0:OPT.dx:xn)';
+yy = 0:OPT.dy:yn;
+X = repmat(xx, 1, length(yy));
+Y = repmat(yy, length(xx), 1);
 try
     Z   = griddata(Xbathy, Ybathy, Zbathy, X, Y);
 catch
