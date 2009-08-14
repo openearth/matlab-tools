@@ -1,8 +1,8 @@
-%% $FILENAME  $description
+function testresult = $filename()
+% $FILENAME  $h1line
 %
-% TestName: $testname   
 %  
-% $longdescription
+% $description
 %
 %
 %   See also $seeAlso
@@ -34,13 +34,33 @@
 % $HeadURL$
 % $Keywords: $
 
-%#begintestcases
-%% #Case$CaseNumber Description (CaseName = $CaseName)
+%$begintestcasessimple
+%% $Description (CaseName = $CaseName)
 $casedescription
-%% #Case$CaseNumber RunTest
+
+%% $RunCode
 $runcode
-%% #Case$CaseNumber TestResults
+
+%% $PublishResults
 $resultscode
 
+%$endtestcasessimple
+%% $TestDescription (TestName = $testname)
+% $publishdescription
 
-%#endtestcases
+%% $RunCode
+$testcode
+end
+
+%$begintestcases
+function testresult = $FunctionCaseName()
+%% $Description (CaseName = $CaseName)
+$casedescription
+
+%% $RunCode
+$runcode
+
+%% $PublishResults
+$resultscode
+end
+%$endtestcases

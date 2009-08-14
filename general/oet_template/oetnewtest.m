@@ -11,12 +11,12 @@ function oetnewtest(varargin)
 %       oetnewfun(..., 'PropertyName', PropertyValue,...)
 %
 %   Input:
-%       'filename'    -   name of the test file (this should end with 
+%       'filename'    -   name of the test file (this should end with
 %                         "_test.m" otherwise it is treated as a function
 %                         name.
 %       'functionname'-   Name of the function for which this file should
 %                         provide a test.
-%   PropertyNames: 
+%   PropertyNames:
 %       'description' = One line description
 %
 %       TODO: Update property list. There are more....
@@ -32,7 +32,7 @@ function oetnewtest(varargin)
 %   Copyright (C) 2009 Deltares
 %       Pieter van Geer
 %
-%       pieter.vangeer@deltares.nl	
+%       pieter.vangeer@deltares.nl
 %
 %       Rotterdamseweg 185
 %       2629 HD Delft
@@ -54,9 +54,9 @@ function oetnewtest(varargin)
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -73,10 +73,12 @@ function oetnewtest(varargin)
 %% defaults
 OPT = getlocalsettings;
 
-OPT.description = 'One line description goes here';
-OPT.longdescription = 'More detailed description of the test goes here.';
+OPT.h1line      = 'One line description goes here';
+OPT.description = 'More detailed description of the test goes here.';
+OPT.publishdescription = 'Publishable code that describes the test.';
 OPT.testname    = 'Name of the test goes here';
 OPT.seeAlso     = '';
+OPT.testcode    = '';
 
 OPT.testcases   = '';
 OPT.casedescription = '% A description of the testcase goes here.';
@@ -107,34 +109,44 @@ end
 
 %% Check existance of the file
 if ~isempty(which(cat(2,FunctionName,'.m')))
-    t = mtest(FunctionName);
-    TODO('include oneline description and SeeAlso in mtest object');
-    % maybe eve author, version etc information
-    tvars = {'testname','testdescription'};
-    optvars = {'testname','longdescription'};
-    for ivar = 1:length(tvars)
-        if ~isempty(t.(tvars{ivar}))
-            OPT.(optvars{ivar}) = t.(tvars{ivar});
-        end
-    end
-    OPT.longdescription(~strncmp(OPT.longdescription,'%',1))=[];
-    if strcmp(OPT.longdescription{1}(1),'%')
-        OPT.longdescription{1} = strtrim(OPT.longdescription{1}(2:end));
-    end
-    
-    optvars = {'testcases','casedescription','runcode','publishcode'};
-    tvars = {'casename','description','runcode','publishcode'};
-    OPT.casedescription = repmat({OPT.casedescription},1,length(t.testcases));
-    OPT.runcode = repmat({OPT.runcode},1,length(t.testcases));
-    OPT.publishcode = repmat({OPT.publishcode},1,length(t.testcases));
-    for itc = 1:length(t.testcases)
+    try
+        %% Create mtest object
+        t = mtest(FunctionName);
+        
+        %% Copy test variables to OPT
+        tvars = {'testname','testdescription','shortdescription'};%'longdescription','seealso', 'testcode' ==> Add
+        optvars = {'testname','publishdescription','h1line'};%'description','seealso',testcode'
         for ivar = 1:length(tvars)
-            if ~isempty(t.testcases(itc).(tvars{ivar}))
-                OPT.(optvars{ivar}){itc} = t.testcases(itc).(tvars{ivar});
+            if ~isempty(t.(tvars{ivar}))
+                OPT.(optvars{ivar}) = t.(tvars{ivar});
             end
         end
+        OPT.publishdescription(~strncmp(OPT.publishdescription,'%',1))=[];
+        if strcmp(OPT.publishdescription{1}(1),'%')
+            OPT.publishdescription{1} = strtrim(OPT.publishdescription{1}(2:end));
+        end
+        
+        %% Copy testcase vars to OPT
+        optvars = {'testcases','casedescription','runcode','publishcode'};
+        tvars = {'casename','description','runcode','publishcode'};
+        OPT.casedescription = repmat({OPT.casedescription},1,length(t.testcases));
+        OPT.runcode = repmat({OPT.runcode},1,length(t.testcases));
+        OPT.publishcode = repmat({OPT.publishcode},1,length(t.testcases));
+        for itc = 1:length(t.testcases)
+            for ivar = 1:length(tvars)
+                if ~isempty(t.testcases(itc).(tvars{ivar}))
+                    OPT.(optvars{ivar}){itc} = t.testcases(itc).(tvars{ivar});
+                end
+            end
+        end
+        
+        %% No code left
+        OPT.code = [];
+    catch me %#ok<NASGU>
+        fid = fopen(cat(2,FunctionName,'.m'));
+        OPT.code = cat(2,char(10),char(10),'%% Original code of ', FunctionName, '.m', char(10), fread(fid,'*char')');
+        fclose(fid);
     end
-   OPT.code = []; 
 end
 
 %% read contents of template file
@@ -144,12 +156,12 @@ fclose(fid);
 
 %% replace keywords in template string
 str = strrep(str, '$testname', OPT.testname);
-longdescription = OPT.longdescription;
-if iscell(longdescription)
-    longdescription = sprintf('%s\n',longdescription{:});
-    longdescription(end)=[];
+publishdescription = OPT.publishdescription;
+if iscell(publishdescription)
+    publishdescription = sprintf('%s\n',publishdescription{:});
+    publishdescription(end)=[];
 end
-str = strrep(str, '$longdescription', longdescription);
+str = strrep(str, '$publishdescription', publishdescription);
 str = strrep(str, '$seeAlso', OPT.seeAlso);
 [fpath fname] = fileparts(fullfile(cd, FunctionName));
 str = strrep(str, '$filename', fname);
@@ -164,6 +176,7 @@ address = sprintf('%%       %s\n', OPT.ADDRESS{:});
 address = address(1:end-1);
 str = strrep(str, '%       $address', address);
 str = strrep(str, '$version', version);
+str = strrep(str, '$h1line', OPT.h1line);
 
 %% Check testcase names
 if isempty(OPT.testcases)
@@ -184,18 +197,56 @@ if ischar(OPT.publishcode)
     OPT.publishcode = repmat({OPT.publishcode},1,length(OPT.testcases));
 end
 
-%% Identify begin and end of the testcases
-tcbegin = strfind(str,'%#begintestcases');
-tcend = strfind(str,'%#endtestcases');
+%% Identify begin and end of the testcasestrings
+tcbegin = strfind(str,'%$begintestcases');
+tcend = strfind(str,'%$endtestcases');
 
-%% Isolate string that must be filled for each testcase
-Testcasestr = str(tcbegin+17:tcend-1);
+if length(OPT.testcases) == 1 || ~isempty(OPT.testcode)
+    %% build testcase string
+    tcstring = buildtestcasestring(str(tcbegin(1)+22:tcend(1)-1),OPT);
+    
+    %% replace in str
+    str = cat(2,str(1:strfind(str,'%$begintestcasessimple')-1),tcstring);
+    
+else
+    %% build testcase string
+    tcstring = buildtestcasestring(str(tcbegin(2)+17:tcend(2)-1),OPT);
+    
+    %% Remove simple string
+    str(tcbegin(1)-1:tcend(1)+21)=[];
+    
+    %% replace in str
+    str = cat(2,str(1:strfind(str,'%$begintestcases')-1),tcstring);
+    
+    %% build test code
+    if isempty(OPT.testcode)
+        OPT.testcode = [];
+        for itc = 1:length(OPT.testcases)
+            OPT.testcode = cat(2,OPT.testcode,'testresult(', num2str(itc), ') = ', strrep(OPT.testcases{itc},' ','_'), ';', char(10));
+        end
+        OPT.testcode = cat(2,OPT.testcode,char(10),'testresult = all(testresult);');
+    end
+    str = strrep(str,'$testcode',OPT.testcode);
+end
 
+%% Append any other code
+% If the file was not according to the correct format and mtest couldn't read it, the complete
+% string is pasted behind the normal content.
+if ~isempty(OPT.code)
+    str = cat(2, str, OPT.code);
+end
+
+%% open new file in editor
+com.mathworks.mlservices.MLEditorServices.newDocument(str)
+
+end
+function tcstr = buildtestcasestring(strtpl,OPT)
 %% Build testcase string
 tcstr = [];
 for icase = 1:length(OPT.testcases)
-    tempstr = Testcasestr;
+    tempstr = strtpl;
     tempstr = strrep(tempstr,'$CaseNumber',num2str(icase));
+    tempstr = strrep(tempstr,'$FunctionCaseName',strrep(OPT.testcases{icase},' ','_'));
     tempstr = strrep(tempstr,'$CaseName',OPT.testcases{icase});
     if iscell(OPT.casedescription{icase})
         OPT.casedescription{icase} = sprintf('%s\n',OPT.casedescription{icase}{:});
@@ -211,15 +262,4 @@ for icase = 1:length(OPT.testcases)
     tempstr = strrep(tempstr,'$resultscode',OPT.publishcode{icase});
     tcstr = cat(2,tcstr,tempstr);
 end
-
-%% Replace template string for testcases with tcstr
-str = cat(2,str(1:tcbegin-1),tcstr);
-
-%% Append any other code
-% This is not necessary anymore i guess??
-if ~isempty(OPT.code)
-    str = cat(2, str, OPT.code);
 end
-
-%% open new file in editor
-com.mathworks.mlservices.MLEditorServices.newDocument(str)
