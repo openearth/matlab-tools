@@ -34,10 +34,10 @@ end
 data.val(data.val==data.NODATA_value)=nan;
 %% Create grid
 for i=1:data.ncols
-    for j=1:data.nrows
-        data.x(i)=data.xllcorner+(i-.5)*data.cellsize;
-        data.y(j)=data.yllcorner+((data.nrows-1)-(j-.5))*data.cellsize;
-    end
+    data.x(i)=data.xllcorner+(i-.5)*data.cellsize;
+end
+for j=1:data.nrows
+    data.y(j)=data.yllcorner+((data.nrows-1)-(j-.5))*data.cellsize;
 end
 %% Plot data
 figure
@@ -46,4 +46,4 @@ shading flat;axis equal;colorbar;
 %% Write to .mat file
 root=strtok(fname,'.');
 matname=[root '.mat'];
-save(matname,'data') 
+save(matname,'data')
