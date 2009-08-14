@@ -1,9 +1,45 @@
-%% #Test: mtestcase functionalities
+%% MTESTCASE_TEST  tests the functionalities of the mtestcase object
+%
+% TestName: mtestcase functionality test   
+%  
 % This test looks at the functionalities of an mtestcase object. Since this test was written first
 % all tests are compacted in one testcase. This is of course not the most easy way te test, whereas
 % in the overview of the test results we can only see one result of a testcase. The test setup of
 % mtest_test is therefore recommended. However, we need this test to check the functionalities of
 % the mtestcase object. More information about this test is given in the testcase descripton.
+%
+%
+%   See also mtestcase mtest mtestengine
+
+%% Credentials
+%   --------------------------------------------------------------------
+%   2009 Deltares
+%       Pieter van Geer
+%
+%       pieter.vangeer@deltares.nl	
+%
+%       Rotterdamseweg 185
+%       2629 HD Delft
+%       P.O. 177
+%       2600 MH Delft
+%
+%   --------------------------------------------------------------------
+% This test is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 14 Aug 2009
+% Created with Matlab version: 7.8.0.347 (R2009a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 
 %% #Case1 Description (IncludeCode = true & EvaluateCode = true & CaseName = all functionalities)

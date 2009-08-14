@@ -1,6 +1,6 @@
-%% mtest_test tests the functionalities of the mtest object
+%% MTEST_TEST  tests the functionalities of the mtest object
 % 
-% mtest functionality test
+% TestName: mtest functionality test
 %
 % This tests checks the functionality of the mtest object. It involves 7 testcases:
 %
@@ -12,7 +12,34 @@
 % # Check of the cleanUp method
 % # Check of the refreshTestResult method
 %
-% See testcase descriptions for more information
+% See also testcase descriptions for more information
+
+%% Credentials
+%   --------------------------------------------------------------------
+%   2009 Deltares
+%       Pieter van Geer
+%
+%       Pieter.vanGeer@deltares.nl	
+%
+%       $address
+%
+%   --------------------------------------------------------------------
+% This test is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: $date(dd mmm yyyy)
+% Created with Matlab version: $version
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 %% #Case1 Description (CaseName = Constructor method)
 % In this testcase the constructor method of the mtest object is tested. For tests on the mtest 
