@@ -70,7 +70,11 @@ classdef mtest < handle
     properties
         testname = [];                      % Name of the test
         filename = [];                      % Original name of the testfile
-        filepath  = [];                     % Path of the "_test.m" file
+        filepath = [];                      % Path of the "_test.m" file
+        author   = [];                      % Last author of the test (obtained from svn keywords)
+        shortdescription = [];              % A one line description of the test (h1 line)
+        time     = 0;                      % Time that was needed to perform the test
+        date     = NaN;                      % Date and time the test was performed
         
         testdescription = {};               % Description of the test (first part of the testdescription file before the start of the first testcase)
         includecode = false;                % indicates whether the code must be included when publishing the test description
@@ -164,6 +168,9 @@ classdef mtest < handle
             % first try full file name
             if exist(fullfile(pt,[fn ext]),'file')
                 fid = fopen(fullfile(pt,[fn ext]));
+                if isempty(pt)
+                    pt = fileparts(which([fn ext]));
+                end
             else
                 % if fullname does not exist, try which
                 fls = which(fn,'-all');
@@ -177,7 +184,9 @@ classdef mtest < handle
                     % found
                     error('MTest:NoFile','Input file could not be found.');
                 end
+                [pt fn] = fileparts(fls{1});
             end
+            
             %% #2 Read the contents of the file
             str = fread(fid,'*char')';
             str = strread(str,'%s','delimiter',char(10));
@@ -213,14 +222,31 @@ classdef mtest < handle
             % list all celldividers that separate important parts
             celldividers = sort(cat(1,descrid,runcodeid,publishcodeid,length(obj.fullstring)+1));
             
-            % isolate testname and test description if specified
+            % Read test specifications (description, last author h1 line etc)
             if min(celldividers)>1
-                testdescr = str(1:min(celldividers)-1);
-                nameid = strfind(testdescr{1},'#Test:');
-                if ~isempty(nameid)
-                    obj.testname = strtrim(testdescr{1}(nameid+7:end));
-                    testdescr(1)=[];
+                obj.shortdescription = strtrim(strrep(lower(str{1}(find(~ismember(1:length(str{1}),strfind(str{1},'%')),1,'first'):end)),lower(fn),''));
+                id = find(~cellfun(@isempty,strfind(str,'TestName:')),1,'first');
+                obj.testname = strtrim(strrep(str{id},'% TestName:',''));
+                testdescr = str(2:min(celldividers)-1);
+                testdescr(id-1)=[];
+                id = find(~strcmp(strtrim(testdescr),'%'),1,'first');
+                testdescr = testdescr(id:end);
+                
+                tmpstr = testdescr{~cellfun(@isempty,strfind(testdescr,'$Author:'))};
+                obj.author = strtrim(tmpstr(min(strfind(tmpstr,':'))+1:min([length(tmpstr)+1 max(strfind(tmpstr,'$'))])-1));
+                
+                id =  min([...
+                    find(~cellfun(@isempty,strfind(testdescr,'%% %% Copyright')),1,'first'),...
+                    find(~cellfun(@isempty,strfind(testdescr,'%% Version')),1,'first'),...
+                    find(~cellfun(@isempty,strfind(testdescr,'%% Credentials')),1,'first')]);
+                if ~isempty(id)
+                    testdescr(id:end)=[];
                 end
+                testdescr = testdescr(1:find(~cellfun(@isempty,testdescr),1,'last'));
+                if ~isempty(strfind(testdescr{end},'See also '))
+                    testdescr(end)=[];
+                end
+                
                 obj.testdescription = testdescr;
             else
                 obj.testname = obj.filename;
@@ -805,6 +831,15 @@ classdef mtest < handle
             else
                 obj.testresult = false;
             end
+            
+            %% count total time
+            totaltime = [obj.testcases(:).time];
+            if ~isempty(totaltime)
+                obj.time = sum(totaltime);
+            end
+            
+            %% assign date to testresult
+            obj.date = now;
             
         end
         function publishTestDescription(obj,varargin)

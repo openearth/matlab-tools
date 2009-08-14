@@ -70,6 +70,7 @@ classdef mtestcase < handle
     properties
         casenumber = [];                    % Number of the testcase
         casename = [];                      % Name of the testcase
+        time = [];                          % time needed for the testcase
     end
     properties (SetAccess = protected)
         description = {};                   % Code that was included in the testfile description cell
@@ -418,7 +419,10 @@ classdef mtestcase < handle
             %% Run the test
             try
                 %% run the mfile
+                tic
                 run(mtestworkspace.filename);
+                mtestworkspace.obj.time = toc;
+                
                 drawnow update
                 
                 %% delete the temp file (we don't need it anymore)

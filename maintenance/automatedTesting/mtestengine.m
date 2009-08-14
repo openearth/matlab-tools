@@ -108,7 +108,7 @@ classdef mtestengine < handle
             %% Use the setProperty function to set all properties.
             setProperty(obj,varargin);
         end
-        function obj = catalogueTests(obj,varargin)
+        function varargout = catalogueTests(obj,varargin)
             %CATALOGUETESTS  Lists all tests in the maindir of the mtestobject and converts them to mtest objects.
             %
             %   This function lists all files in the maindir (and subdirs if recursive = true) of an
@@ -133,6 +133,9 @@ classdef mtestengine < handle
             %
             %   See also mtestengine mtestengine.mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
 
+            %% initiate output
+            varargout = {};
+            
             %% list all the tests in the toolbox
             % get directories
             if obj.recursive
@@ -186,8 +189,12 @@ classdef mtestengine < handle
             %% store hidden prop
             obj.testscatalogued = true;
 
+            %% assign output
+            if nargout==1
+                varargout{1} = obj;
+            end
         end
-        function obj = run(obj,varargin)
+        function varargout = run(obj,varargin)
             %RUN  Runs all mtest objects
             %
             %   This function executes the run function of all mtest objects in the mtestengine.
@@ -216,6 +223,9 @@ classdef mtestengine < handle
             %
             %   See also mtestengine mtestengine.mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
 
+            %% assign output
+            varargout = {};
+            
             %% catalogue tests if not done already
             if ~obj.testscatalogued
                 obj.catalogueTests;
@@ -233,6 +243,11 @@ classdef mtestengine < handle
 
             %% return to the previous searchpath settings
             path(pt);
+            
+            %% assign output
+            if nargout==1
+                varargout{1} = obj;
+            end
         end
         function varargout = runAndPublish(obj,varargin)
             %runAndPublish  runs the mtestengine and publishes all results.
@@ -328,6 +343,7 @@ classdef mtestengine < handle
             if isdir(fullfile(tempdir,'mtestengine_template'))
                 rmdir(fullfile(tempdir,'mtestengine_template'),'s');
             end
+            
             copyfile(fullfile(templdir,'*.*'),fullfile(tempdir,'mtestengine_template'),'f');
 
             % remove all svn dirs from the template
@@ -360,7 +376,13 @@ classdef mtestengine < handle
                 mkdir(fullfile(obj.targetdir,'html'));
             end
 
+            if obj.verbose
+                disp('## start running tests ##');
+            end
             for itests = 1:length(obj.tests)
+                if obj.verbose
+                    disp([' ' num2str(itests) '. ' obj.tests(itests).testname]);
+                end
                 if isempty(publishstylesheet)
                     obj.tests(itests).runAndPublish(...
                         'resdir',fullfile(obj.targetdir,'html'));
@@ -467,6 +489,8 @@ classdef mtestengine < handle
             %                                   results (testresult = NaN).
             %
             %       test keywords:
+            %       #TESTDATE           -   TODO
+            %       #TESTAUTHOR         -   TODO
             %       #TESTNUMBER         -   Is replaced by the location (number) of the test within
             %                               the mtestengine object. This keyword can be used to
             %                               reference a certain object or location in the file.
@@ -662,6 +686,10 @@ classdef mtestengine < handle
                 % #ICON
                 % #TESTNAME
                 % #TESTHTML
+                % #TESTDATE           -   TODO
+                % #TESTAUTHOR         -   TODO
+                % #TESTTIME           -   TODO
+            
                 id = testid(itest);
                 
                 tempstr = teststr;
@@ -687,6 +715,26 @@ classdef mtestengine < handle
                 % #TESTHTML
                 tempstr = strrep(tempstr,'#TESTHTML',strrep(fullfile('html',obj.tests(id).descriptionoutputfile),filesep,'/'));
 
+                % #TESTDATE
+                if isempty(obj.tests(id).date)
+                    obj.tests(id).date = NaN;
+                end
+                if isnan(obj.tests(id).date)
+                    tempstr = strrep(tempstr,'#TESTDATE','Never');
+                else
+                    tempstr = strrep(tempstr,'#TESTDATE',datestr(obj.tests(id).date,'yyyy-mm-dd (HH:MM:ss)'));
+                end
+                
+                % #TESTAUTHOR
+                if isempty(obj.tests(id).author)
+                    tempstr = strrep(tempstr,'#TESTAUTHOR','Unknown');
+                else
+                    tempstr = strrep(tempstr,'#TESTAUTHOR',obj.tests(id).author);
+                end
+                
+                % #TESTTIME
+                tempstr = strrep(tempstr,'#TESTTIME',num2str(obj.tests(id).time,'%0.1f (s)'));
+                
                 if testCaseStringToBeFilled
                     %% loop testcases
                     finalcasesstr = '';
