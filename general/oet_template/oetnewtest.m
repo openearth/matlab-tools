@@ -73,9 +73,9 @@ function oetnewtest(varargin)
 %% defaults
 OPT = getlocalsettings;
 
-OPT.description = 'One line description goes here.';
+OPT.description = 'One line description goes here';
 OPT.longdescription = 'More detailed description of the test goes here.';
-OPT.testname    = 'Name of the test goes here.';
+OPT.testname    = 'Name of the test goes here';
 OPT.seeAlso     = '';
 
 OPT.testcases   = '';
