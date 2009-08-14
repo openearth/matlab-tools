@@ -16,14 +16,18 @@ function oetnewtest(varargin)
 %                         name.
 %       'functionname'-   Name of the function for which this file should
 %                         provide a test.
-%   PropertyNames:
-%       'description' = One line description
 %
-%       TODO: Update property list. There are more....
+%   PropertyNames:
+%       'h1line'      -   One line description
+%       'description' -   Detailed description of the test
+%       'testname'    -   An alternate name for the test
+%       'testcases'   -   Cell array of strings with names of the testcases
+%                         you want to create.
 %
 %   Example:
 %       oetnewtest('oetnewtest_test',...
-%               'description', 'Tests the functionality of oetnewtest.')
+%               'testcases', {'Case 1','Case 2','Case 3'});
+%       oetnewtest
 %
 %   See also: oetnewfun, getlocalsettings, load_template
 
@@ -150,7 +154,7 @@ if ~isempty(which(cat(2,FunctionName,'.m')))
 end
 
 %% read contents of template file
-fid = fopen(which('oetnewtesttemplate.m'));
+fid = fopen(which('oettesttemplate.m'));
 str = fread(fid, '*char')';
 fclose(fid);
 
