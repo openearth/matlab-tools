@@ -1,6 +1,6 @@
 %% CORNER2CENTER_TEST  Test for corner2center
 %
-% TestName: CORNER2CENTER_TEST
+% TestName: corner2center_test
 %  
 % This tests has only one testcase in which the result of corner2center is evaluated.
 %
@@ -19,11 +19,11 @@
 % $Keywords: $
 
 
-%% #Case1 Description (CaseName = Unit test & IncludeCode = true & EvaluateCode = true)
+%% #Case1 Description (CaseName = Unit test & IncludeCode = false & EvaluateCode = true)
 % First we create two 3x3 matrix:
  
-x1 = [1 2 3;4 5 6;7 8 9]
-x2 = [1 2 3;4 5 6;7 8 9]
+x1 = [1 2 3;4 5 6;7 8 9];
+x2 = [1 2 3;4 5 6;7 8 9];
  
 %%
 % Then we convert the coordinates of the corners with the help of corner2center. The inverse of this
