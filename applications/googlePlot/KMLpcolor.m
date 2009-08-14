@@ -12,7 +12,7 @@ function [OPT, Set, Default] = KMLpcolor(lat,lon,c,varargin)
 %
 % see the keyword/vaule pair defaults for additional options
 %
-% See also: KMLline, KMLline3, KMLpatch, KMLquiver, KMLsurf, KMLtrisurf
+% See also: googlePlot
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -47,7 +47,8 @@ function [OPT, Set, Default] = KMLpcolor(lat,lon,c,varargin)
 % $Keywords: $
 
 % TO DO: patches without outlines, outline as separate polygons, to prevent course resolution lines at low angles
-
+% KMLline(lat,lon)
+% KMLline(lat',lon')
 
 %% error check
 if all(isnan(c(:)))
@@ -81,7 +82,9 @@ OPT.polyFill    = 1;
 OPT.openInGE    = false;
 OPT.reversePoly = false;
 OPT.extrude     = 0;
-OPT.cLim = [min(c(:)) max(c(:))];
+OPT.timeIn      = []; % can only be one value!
+OPT.timeOut     = [];
+OPT.cLim        = [min(c(:)) max(c(:))];
 
 if nargin==0
     return
@@ -104,6 +107,20 @@ c(c>OPT.cLim(2)) = OPT.cLim(2);
 %convert color values into colorRGB index values
 c = round(((c-OPT.cLim(1))/(OPT.cLim(2)-OPT.cLim(1))*(OPT.colorSteps-1))+1);
 
+%convert time values
+if ~isempty(OPT.timeIn)
+   OPT.timeIn = datestr(OPT.timeIn,29); 
+end
+if ~isempty(OPT.timeOut)
+   OPT.timeOut = datestr(OPT.timeOut,29); 
+end
+
+% correct coordinates
+if any((abs(lat)/90)>1)
+    error('latitude out of range, must be within -90..90')
+end
+lon = mod(lon+180, 360)-180;
+
 %% start KML
 OPT.fid=fopen(OPT.fileName,'w');
 %% HEADER
@@ -115,12 +132,9 @@ output = KML_header(OPT_header);
 OPT_stylePoly = struct(...
     'name',['style' num2str(1)],...
     'fillColor',colorRGB(1,:),...
-    'lineColor',OPT.lineColor ,...
-    'lineAlpha',OPT.lineAlpha,...
-    'lineWidth',OPT.lineWidth,...
     'fillAlpha',OPT.fillAlpha,...
     'polyFill',OPT.polyFill,...
-    'polyOutline',OPT.polyOutline); 
+    'polyOutline',0); 
 for ii = 1:OPT.colorSteps
     OPT_stylePoly.name = ['style' num2str(ii)];
     OPT_stylePoly.fillColor = colorRGB(ii,:);
@@ -132,12 +146,12 @@ fprintf(OPT.fid,output);
 OPT_poly = struct(...
 'name','',...
 'styleName',['style' num2str(1)],...
-'timeIn',[],...
-'timeOut',[],...
+'timeIn',OPT.timeIn,...
+'timeOut',OPT.timeOut,...
 'visibility',1,...
 'extrude',OPT.extrude);
 % preallocate output
-output = repmat(char(1),1,1e5);
+output = repmat(char(1),1,1e6);
 kk = 1;
 % put nan values in lat and lon on a size -1 array
 lat_nan = isnan(lat(1:end-1,1:end-1)+...
@@ -166,11 +180,11 @@ for ii=1:length(lat(:,1))-1
             newOutput = KML_poly(LAT,LON,z,OPT_poly);
             output(kk:kk+length(newOutput)-1) = newOutput;
             kk = kk+length(newOutput);
-            if kk>1e5
+            if kk>1e6
                 %then print and reset
                 fprintf(OPT.fid,output(1:kk-1));
                 kk = 1;
-                output = repmat(char(1),1,1e5);
+                output = repmat(char(1),1,1e6);
             end
         end
     end

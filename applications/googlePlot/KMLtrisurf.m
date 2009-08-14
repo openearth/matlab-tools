@@ -6,7 +6,7 @@ function [OPT, Set, Default] = KMLtrisurf(tri,lat,lon,z,varargin)
 % use in combination with delaunay_simplified to make simple grids
 % that google can easily display 
 %
-% See also: delaunay_simplified, KMLline, KMLline3, KMLpatch, KMLpcolor, KMLquiver, KMLsurf
+% See also: googlePlot, delaunay_simplified
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

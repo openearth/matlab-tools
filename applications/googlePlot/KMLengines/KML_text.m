@@ -38,13 +38,41 @@ function [output] = KML_text(lat,lon,text,varargin)
 % $HeadURL$
 % $Keywords: $
 
+%%
+OPT.timeIn     = [];
+OPT.timeOut    = [];
+
+OPT = setProperty(OPT,varargin{:});
+
+%% preproces timespan
+if  ~isempty(OPT.timeIn)
+    if ~isempty(OPT.timeOut)
+        timeSpan = sprintf([...
+            '<TimeSpan>\n'...
+            '<begin>%s</begin>\n'...OPT.timeIn
+            '<end>%s</end>\n'...OPT.timeOut
+            '</TimeSpan>\n'],...
+            OPT.timeIn,OPT.timeOut);
+    else
+        timeSpan = sprintf([...
+            '<TimeStamp>\n'...
+            '<when>%s</when>\n'...OPT.timeIn
+            '</TimeStamp>\n'],...
+            OPT.timeIn);
+    end
+else
+    timeSpan ='';
+end
+
+
 %% type HEADER
 output = sprintf([...
 	'<Placemark>'...
+    '%s',...% timeSpan
 	'<name>%s</name>'...
 	'<Style><IconStyle><Icon></Icon></IconStyle></Style>'...
 	'<Point>	<coordinates>%3.8f,%3.8f,0</coordinates></Point>'...
 	'</Placemark>'],...
-    text,lon,lat);
+    timeSpan,text,lon,lat);
 
 %% EOF

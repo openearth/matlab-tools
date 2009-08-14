@@ -75,7 +75,7 @@ OPT.name       = '';
 OPT = setProperty(OPT,varargin{:});
 
 if isempty(OPT.styleName)
-   warning('property ''stylename'' required')
+   warning('property ''stylename'' required') %#ok<WNTAG>
 end
 
 %% preprocess visibility

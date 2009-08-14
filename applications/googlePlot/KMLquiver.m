@@ -72,7 +72,7 @@ function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 % Note: Notice the difference in how polygons and line are rendered by GE.
 %   Especially take care when plotting large figures near pole's
 %
-% See also: KMLline, KMLline3, KMLpatch, KMLpcolor, KMLsurf, KMLtrisurf
+% See also: googlePlot
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

@@ -1,7 +1,7 @@
 function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 % KMLLINE Just like line (and that's just like plot)
 %
-%    kmlline(lat,lon,'fileName',fname,<keyword,value>)
+%    kmlline(lat,lon,<keyword,value>)
 %
 % creates a kml file fname with lines at the Earth surface connecting the
 % coordinates defined in (lat,lon). As in plot, an array of coordinates can
@@ -9,7 +9,7 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 % line can be split by nan's in (lat,lon).
 % 
 % coordinates (lat,lon) are in decimal degrees. 
-%   LON is converted to a vlaue in the range -180..180)
+%   LON is converted to a value in the range -180..180)
 %   LAT must be in the range -90..90
 %
 % be aware that GE draws the shortest possible connection between two 
@@ -61,7 +61,7 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 %   KMLline(lat,lon,'timeIn',time,'timeOut',time+364,...
 %       'lineWidth',4,'lineColor',jet(length(time)),'lineAlpha',.7);
 %
-% See also: KMLline3, KMLpatch, KMLpcolor, KMLquiver, KMLsurf, KMLtrisurf
+% See also: googlePlot
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -96,9 +96,22 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 % $Keywords: $
 
 %% process varargin
+% see if height is defined
 
+if ~isempty(varargin)
+    if ~ischar(varargin{1});
+        z = varargin{1};
+        varargin = varargin(2:length(varargin));
+        OPT.is3D        = true;        
+    else
+        OPT.is3D        = false;
+    end
+else
+    OPT.is3D        = false;
+end
+    
 OPT.fileName    = [];
-OPT.kmlName     = 'untitled';
+OPT.kmlName     = [];
 OPT.lineWidth   = 1;
 OPT.lineColor   = [0 0 0];
 OPT.lineAlpha   = 1;
@@ -108,7 +121,7 @@ OPT.latText     = mean(lat,1);
 OPT.lonText     = mean(lon,1);
 OPT.timeIn      = [];
 OPT.timeOut     = [];
-
+OPT.extrude     = 0;
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
 %% input check
@@ -148,13 +161,16 @@ end
 
 
 
-%% get filename
-
+%% filename
+% gui for filename, if not set yet
 if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','untitled.kml');
+    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','line.kml');
     OPT.fileName = fullfile(filePath,fileName);
 end
-
+% set kmlName if it is not set yet
+if isempty(OPT.kmlName)
+    [ignore OPT.kmlName] = fileparts(OPT.fileName);
+end
 %% start KML
 
 OPT.fid=fopen(OPT.fileName,'w');
@@ -168,6 +184,7 @@ output = KML_header(OPT_header);
 
 %% define line styles
 
+
 for ii = 1:length(ind);
     OPT_style = struct(...
         'name',['style' num2str(ii)],...
@@ -175,6 +192,20 @@ for ii = 1:length(ind);
         'lineAlpha',OPT.lineAlpha(ind(ii)),...
         'lineWidth',OPT.lineWidth(ind(ii)));
     output = [output KML_style(OPT_style)];     %#ok<AGROW>
+end
+if OPT.is3D
+    for ii = 1:length(ind);
+        OPT_stylePoly = struct(...
+            'name',['style' num2str(ii)],...
+            'lineColor',OPT.lineColor(ind(ii),:) ,...
+            'lineAlpha',OPT.lineAlpha(ind(ii)),...
+            'lineWidth',OPT.lineWidth(ind(ii)),...
+            'fillColor'   ,OPT.fillColor(1,:),...
+            'fillAlpha'   ,OPT.fillAlpha(1),...
+            'polyFill'    ,1,...
+            'polyOutline' ,1)
+        output = [output KML_style(OPT_style)];     %#ok<AGROW>
+    end
 end
 
 % print styles
@@ -221,8 +252,11 @@ for ii=1:length(lat(1,:))
         end
 
         % write the line
-        newOutput =  KML_line(lat(:,ii),lon(:,ii),'clampToGround',OPT_line);
-
+        if OPT.is3D
+            newOutput = KML_line(lat(:,ii),lon(:,ii),z(:,ii),OPT_line);        
+        else
+            newOutput =  KML_line(lat(:,ii),lon(:,ii),'clampToGround',OPT_line);
+        end
         % add a text if it is defined
         if ~isempty(OPT.text)
             newOutput = [newOutput,KML_text(OPT.latText(ii),OPT.lonText(ii),OPT.text{ii})];

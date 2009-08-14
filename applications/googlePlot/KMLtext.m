@@ -10,7 +10,7 @@ function [OPT, Set, Default] = KMLtext(lat,lon,text,varargin)
 %                              % defined a gui pops up
 %  'kmlName'    = 'untitled';  % name of kml that shows in GE
 %
-% See also: KMLline3, KMLpatch, KMLpcolor, KMLquiver, KMLsurf, KMLtrisurf
+% See also: googlePlot
 %
 % Example: 
 % 
@@ -62,8 +62,8 @@ OPT.openInGE    = false;
 % OPT.text        = '';
 % OPT.latText     = mean(lat,1);
 % OPT.lonText     = mean(lon,1);
-% OPT.timeIn      = [];
-% OPT.timeOut     = [];
+OPT.timeIn      = [];
+OPT.timeOut     = [];
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
@@ -72,10 +72,11 @@ lat = lat(:);
 lon = lon(:);
 text = text(:);
 
-% if any((abs(lat)/90)>1)
-%     error('latitude out of range, must be within -90..90')
-% end
-% lon = mod(lon+180, 360)-180;
+if any((abs(lat)/90)>1)
+    error('latitude out of range, must be within -90..90')
+end
+lon = mod(lon+180, 360)-180;
+
 % 
 % % first check is multiple styles are defined. If not, then it's easy: there
 % % is only one style. 
@@ -153,21 +154,21 @@ kk = 1;
 %     'visibility',1,...
 %     'extrude',0);
 % 
-% if isempty(OPT.timeIn)
-%    OPT_line.timeIn = [];
-% else
-%    OPT_line.timeIn = datestr(OPT.timeIn(1),29); 
-% end
-% 
-% if isempty(OPT.timeOut)
-%    OPT_line.timeOut = [];
-% else
-%    OPT_line.timeOut = datestr(OPT.timeOut(1),29); 
-% end
+if isempty(OPT.timeIn)
+   OPT_text.timeIn = [];
+else
+   OPT_text.timeIn = datestr(OPT.timeIn(1),29); 
+end
+
+if isempty(OPT.timeOut)
+   OPT_text.timeOut = [];
+else
+   OPT_text.timeOut = datestr(OPT.timeOut(1),29); 
+end
 
 % loop through number of lines
 for ii=1:length(lat)
-    newOutput = KML_text(lat(ii),lon(ii),text{ii});
+    newOutput = KML_text(lat(ii),lon(ii),text{ii},OPT_text);
     % add newOutput to output
     output(kk:kk+length(newOutput)-1) = newOutput;
     kk = kk+length(newOutput);
