@@ -47,6 +47,8 @@ for ifile=1:length(OPT.files)
    A.datenum_min(ifile) =    min(D.data.datenum);
    A.datenum_max(ifile) =    max(D.data.datenum);
    A.bot_depth  (ifile) =        D.bot_depth;
+   A.station    (ifile) =        D.;
+   A.cruise     (ifile) =        D.;
    
    
    if OPT.pause
@@ -88,12 +90,13 @@ end % ifile
    figure(2)
    
    t = A.datenum_min;t(t==0)=nan;% remove 0's from datenum
-   H.edges = floor(min(t)):1:ceil(max(t));
+   H.edges = floor(min(t)):dt:ceil(max(t));
    [H.n,H.bin]=histc(A.datenum_min,H.edges)
-   bar(H.edges,H.n,'histc')
-   datetick('x')
-   grid on
-   ylabel('n[#]')
+   bar       (H.edges,H.n,'histc')
+   datetick  ('x')
+   grid       on
+   ylabel    ('n[#]')
+   title     (['# observsations per ',dt,' days'])
    print2screensize([OPT.directory,filesep,'inventory_time.png'])
 
 %% Save

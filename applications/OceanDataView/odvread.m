@@ -3,10 +3,33 @@ function varargout = odv_read(fullfilename)
 %
 %   D = odvread(fname)
 %
-% loads ASCII file in Ocean Data Viewer (ODV) format.
+% loads ASCII file in Ocean Data Viewer (ODV) format into struct D.
 %
 % ODV is one of the standard file formats of 
 % <a href="http://www.SeaDataNet.org">www.SeaDataNet.org</a> of which <a href="http://www.nodc.nl">www.nodc.nl</a> is a member.
+%
+% ODV files contain the following information:
+%
+% +---------------------------------------------+----------------------------------------
+% | ## Metavariables ########################## | ## Values ############################
+% +---------------------------------------------+----------------------------------------
+% | Cruise                                      | Cruise, expedition, or instrument name
+% | Station                                     | Unique station identifier
+% | Type                                        | B for bottle or 
+% |                                             | C for CTD, 
+% |                                             | XBT or stations with >250 samples
+% | yyyy-mm-ddThh:mm:ss.sss                     | Date and time of station (instrument at depth)
+% | Longitude [degrees_east]                    | Longitude of station (instrument at depth)
+% | Latitude [degrees_north]                    | Latitude of station (instrument at depth)
+% | Bot. Depth [m]                              | Bottom depth of station
+% | Unlimited number of other metavariables     | Text or numeric; user defined text length 
+% |                                             | or 1 to 8 byte integer or floating point numbers
+% +---------------------------------------------+----------------------------------------
+% | ## Collection Variables ################### | ## Comment ############################
+% +---------------------------------------------+----------------------------------------
+% | Depth or pressure in water column, ice core | 
+% | core, sediment core, or soil; elevation or  | To be used as primary variable
+% +---------------------------------------------+----------------------------------------
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a> (Ocean Data Viewer)
 %See also: ODVDISP, ODVPLOT
@@ -213,6 +236,8 @@ function varargout = odv_read(fullfilename)
             D.index.sea_water_salinity     = find(strcmpi(D.variables,'Salinity [PSU]'));
             D.index.sea_water_fluorescence = find(strcmpi(D.variables,'fluorescence [ugr/l]'));
             end
+            D.index.LOCAL_CDI_ID           = find(strcmpi(D.variables,'LOCAL_CDI_ID'));
+            D.index.EDMO_code              = find(strcmpi(D.variables,'EDMO_code'));
             
             %% III) Data lines
             %--------------------------------
@@ -242,24 +267,26 @@ function varargout = odv_read(fullfilename)
                D.data.cruise                 = {['']}; % {} gives error with char
                D.data.station                = {['']}; % {} gives error with char
                D.data.type                   = {['']}; % {} gives error with char
-               D.data.lat                    =  nan;
-               D.data.lon                    =  nan;
-               D.data.datenum                =  nan;  % datestr gives error on NaN,Inf, 0 not handy
+               D.data.datenum                =  nan;   % datestr gives error on NaN,Inf, while 0 not handy
+               D.data.latitude               =  nan;
+               D.data.longitude              =  nan;
                D.data.bot_depth              =  nan;
                D.data.sea_water_pressure     =  nan;
                D.data.sea_water_temperature  =  nan;
                D.data.sea_water_salinity     =  nan;
                D.data.sea_water_fluorescence =  nan;
+               D.data.LOCAL_CDI_ID           = {['']}; % {} gives error with char
+               D.data.EDMO_code              = {['']}; % {} gives error with char
 
             else
 
-               D.data.cruise                 =             {D.rawdata{D.index.cruise      ,:}};
-               D.data.station                =             {D.rawdata{D.index.station     ,:}};
-               D.data.type                   =             {D.rawdata{D.index.type        ,:}};
-               D.data.lat                    = str2num(char(D.rawdata{D.index.latitude    ,:}));
-               D.data.lon                    = str2num(char(D.rawdata{D.index.longitude   ,:}));
-               D.data.datenum                = datenum(char(D.rawdata{D.index.time        ,:}),'yyyy-mm-ddTHH:MM:SS');
-               D.data.bot_depth              = str2num(char(D.rawdata{D.index.bot_depth   ,:}));
+               D.data.cruise                 =             {D.rawdata{D.index.cruise       ,:}};
+               D.data.station                =             {D.rawdata{D.index.station      ,:}};
+               D.data.type                   =             {D.rawdata{D.index.type         ,:}};
+               D.data.datenum                = datenum(char(D.rawdata{D.index.time         ,:}),'yyyy-mm-ddTHH:MM:SS');
+               D.data.latitude               = str2num(char(D.rawdata{D.index.latitude     ,:}));
+               D.data.longitude              = str2num(char(D.rawdata{D.index.longitude    ,:}));
+               D.data.bot_depth              = str2num(char(D.rawdata{D.index.bot_depth    ,:}));
               %Very slow !!!
               %D.data.(odvname2standard_name('T90'))      = str2num(char(D.rawdata{D.index.sea_water_temperature        ,:}));
               %D.data.(odvname2standard_name('Salinity')) = str2num(char(D.rawdata{D.index.sea_water_salinity   ,:}));
@@ -267,6 +294,8 @@ function varargout = odv_read(fullfilename)
                D.data.sea_water_temperature  = str2num(char(D.rawdata{D.index.sea_water_temperature ,:}));
                D.data.sea_water_salinity     = str2num(char(D.rawdata{D.index.sea_water_salinity    ,:}));
                D.data.sea_water_fluorescence = str2num(char(D.rawdata{D.index.sea_water_fluorescence,:}));
+               D.data.LOCAL_CDI_ID           =              {D.rawdata{D.index.LOCAL_CDI_ID ,:}};
+               D.data.EDMO_code              =              {D.rawdata{D.index.EDMO_code    ,:}};
                
             end
 
@@ -286,13 +315,22 @@ function varargout = odv_read(fullfilename)
       
    end % if length(tmp)==0
    
-%% Get extraction info
-
-   D.lat         =      unique(D.data.lat);
-   D.lon         =      unique(D.data.lon);
-   D.bot_depth   =      unique(D.data.bot_depth);
-   D.cruise      = char(unique(D.data.cruise));
-   D.station     = char(unique(D.data.station));
+%% Get extraction info: 1 value per cast (and check for uniqueness: i.e. are there time-consuming, sidewards-drifting casts?)
+   [D.cruise      ,ind]   = unique(D.data.cruise      );if length(ind) > 1;error('no unique value: cruise      ');end
+   [D.station     ,ind]   = unique(D.data.station     );if length(ind) > 1;error('no unique value: station     ');end
+   [D.type        ,ind]   = unique(D.data.type        );if length(ind) > 1;error('no unique value: type        ');end
+   [D.datenum     ,ind]   = unique(D.data.datenum     );if length(ind) > 1;error('no unique value: datenum     ');end
+   [D.latitude    ,ind]   = unique(D.data.latitude    );if length(ind) > 1;error('no unique value: latitude    ');end
+   [D.longitude   ,ind]   = unique(D.data.longitude   );if length(ind) > 1;error('no unique value: longitude   ');end
+   [D.bot_depth   ,ind]   = unique(D.data.bot_depth   );if length(ind) > 1;error('no unique value: bot_depth   ');end
+   [D.LOCAL_CDI_ID,ind]   = unique(D.data.LOCAL_CDI_ID);if length(ind) > 1;error('no unique value: LOCAL_CDI_ID');end
+   [D.EDMO_code   ,ind]   = unique(D.data.EDMO_code   );if length(ind) > 1;error('no unique value: EDMO_code   ');end
+    D.file.name             = char(D.file.name   );		      
+    D.cruise                = char(D.cruise      );		      
+    D.station               = char(D.station     );		      
+    D.type                  = char(D.type        );		      
+    D.LOCAL_CDI_ID          = char(D.LOCAL_CDI_ID);		      
+    D.EDMO_code             = char(D.EDMO_code   );		      
    
 %% Output
 

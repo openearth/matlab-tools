@@ -106,8 +106,9 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
       for iatt = 1:length(OPT.attname)
       
       attname = OPT.attname{iatt};
+      fldname = mkvar(attname);
       try
-      OPT.title      = nc_attget(OPT.filename, nc_global,attname);
+      OPT.(fldname) = nc_attget(OPT.filename, nc_global,attname);
       end
       
       end

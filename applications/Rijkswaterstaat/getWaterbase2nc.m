@@ -38,6 +38,7 @@ function getWaterbase2nc(varargin)
 % TO DO: Add x,y in addition to lat,lon
 % TO DO: save mat and nc files with (i) actual start and end dates or (ii) with no dates at all, but not as currently with the time search window in the filename
 % TO DO: add search/retrieve/discovery info to global attributes
+% TO DO: add link to site-specific waterbase url as in getWaterbaseData
 
 %% Choose parameter
 %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table/
