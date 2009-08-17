@@ -39,7 +39,7 @@ function [x2,y2,OPT]=convertCoordinatesNew(x1,y1,varargin)
 %    [x,y,OPT]=convertCoordinatesNew(52,5,  'CS1.name','WGS 84','CS1.type','geo','CS2.name','WGS 84 / UTM zone 31N','CS2.type','xy')
 %    [x,y,OPT]=convertCoordinatesNew(52,5,  'CS1.code',4326                     ,'CS2.name','WGS 84 / UTM zone 31N')
 %
-%    D = load('EPSGnew')
+%    D = load('EPSG')
 %
 %    [x,y,OPT]=convertCoordinatesNew(52,5,D,'CS1.name','WGS 84','CS1.type','geo','CS2.code',32631)
 %    [x,y,OPT]=convertCoordinatesNew(52,5,D,'CS1.code',4326                     ,'CS2.code',32631)
@@ -91,7 +91,7 @@ if odd(length(varargin))
     STD = varargin{1};
     varargin(1)=[];
 else
-    STD = load('EPSGnew');
+    STD = load('EPSG');
 end
 
 %% get and set keyword value parameters
@@ -193,7 +193,8 @@ switch OPT.CS1.type
     case 'projected' % Coordinate conversion to radians
         OPT.proj_conv1 = ConvertCoordinatesFindConversionParams(OPT.CS1,STD);
     case 'geographic 2D' % do nothing
-        OPT.proj_conv1 = 'No projection conversion neccessary';
+        %OPT.proj_conv1 = 'No projection conversion neccessary';
+        OPT = rmfield(OPT,'proj_conv1');
     otherwise, error(['CRS type ''' OPT.CS1.type ''' not supported (yet)',sprintf('\n\n'),var2evalstr(OPT)])
 end
 
@@ -201,7 +202,8 @@ switch OPT.CS2.type
     case 'projected' % Coordinate conversion to radians
         OPT.proj_conv2 = ConvertCoordinatesFindConversionParams(OPT.CS2,STD);
     case 'geographic 2D' % do nothing
-        OPT.proj_conv2 = 'No projection conversion neccessary';
+        %OPT.proj_conv2 = 'No projection conversion neccessary';
+        OPT = rmfield(OPT,'proj_conv2');
     otherwise, error(['CRS type ''' OPT.CS1.type ''' not supported (yet)',sprintf('\n\n'),var2evalstr(OPT)])
 end
 
@@ -227,7 +229,7 @@ end
 OPT = ConvertCoordinatesFindDatumTransOpt(OPT,STD);
 
 %% do datum transformation
-if strcmp('no datum transformation needed',OPT.datum_trans)
+if ~isfield(OPT,'datum_trans')
  lat2 = lat1;
  lon2 = lon1;
 else

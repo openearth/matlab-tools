@@ -1,4 +1,4 @@
-function [x2,y2,err]=ConvertCoordinates(x1,y1,cs1,tp1,cs2,tp2,CoordinateSystems,ConvTrans,varargin)
+function [x2,y2,err]=ConvertCoordinatesOld(x1,y1,cs1,tp1,cs2,tp2,CoordinateSystems,ConvTrans,varargin)
 %CONVERTCOORDINATES   transformation between coordinate systems
 %
 %    [x2,y2,err]=ConvertCoordinates(x1,y1,cs1,tp1,cs2,tp2,CoordinateSystems,ConvTrans)

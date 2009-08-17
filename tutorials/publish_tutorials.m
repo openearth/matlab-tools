@@ -9,10 +9,10 @@ cd(fullfile(openearthtoolsroot,'matlab','tutorials'))
 % 4 = completed, tested, and on the openearth wiki
 %
 %         1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
-status = [1 0 3 3 3 2 0 3 1  2  3  1  0  2  0];
+status = [2 0 3 3 3 2 0 3 1  2  3  1  0  2  0];
 options.maxOutputLines = 15;
 options.format         = 'html'; %'doc','html' (default), 'latex', 'ppt', 'xml'
-
+options.catchError = true;
 for ii = 1:length(tutorial_scripts)
     switch status(ii)
         case 0; disp(sprintf('%3d <a href="matlab: edit %s">%-43s</a> - not done at all'                             ,ii,tutorial_scripts(ii).name(1:end-2),tutorial_scripts(ii).name))

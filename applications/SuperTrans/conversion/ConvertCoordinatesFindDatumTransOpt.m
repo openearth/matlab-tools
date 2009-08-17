@@ -35,18 +35,19 @@ function [ OPT ] = ConvertCoordinatesFindDatumTransOpt(OPT,STD)
 
 %% find the transformation options
 if OPT.CS1.geoRefSys.code == OPT.CS2.geoRefSys.code
-    OPT.datum_trans = 'no datum transformation needed';
+    OPT = rmfield(OPT,'datum_trans');
 else
-    [ OPT,ind,direction,ind_alt,dir_alt] = findTransOptions(OPT,STD,OPT.CS1.geoRefSys.code,OPT.CS2.geoRefSys.code,'datum_trans');
+    [ OPT,ind,direction,ind_alt,dir_alt,dep_alt] = findTransOptions(OPT,STD,OPT.CS1.geoRefSys.code,OPT.CS2.geoRefSys.code,'datum_trans');
     if ~isempty(ind)
         % set parameters, name and code for datum transformation
         OPT.datum_trans.code          = STD.coordinate_operation.coord_op_code(ind);
         OPT.datum_trans.name          = STD.coordinate_operation.coord_op_name(ind);
         OPT.datum_trans.direction     = direction;
         if length(ind_alt)>1 % also include alternative tranformations
-            OPT.datum_trans.alt_code      = STD.coordinate_operation.coord_op_code(ind_alt);
-            OPT.datum_trans.alt_name      = STD.coordinate_operation.coord_op_name(ind_alt);
-            OPT.datum_trans.alt_direction = dir_alt;
+            OPT.datum_trans.alt_code       = STD.coordinate_operation.coord_op_code(ind_alt);
+            OPT.datum_trans.alt_name       = STD.coordinate_operation.coord_op_name(ind_alt);
+            OPT.datum_trans.alt_direction  = dir_alt;
+            OPT.datum_trans.alt_deprecated = dep_alt;
         end
         OPT.datum_trans.params        = ConvertCoordinatesFindDatumTransParams(STD.coordinate_operation.coord_op_code(ind),STD);
         OPT.datum_trans.method_code   = STD.coordinate_operation.coord_op_method_code(ind);
@@ -68,9 +69,10 @@ else
         OPT.datum_trans_to_WGS84.name          = STD.coordinate_operation.coord_op_name(ind);
         OPT.datum_trans_to_WGS84.direction     = direction;
         if length(ind_alt)>1 % also include alternative tranformations
-            OPT.datum_trans_to_WGS84.alt_code      = STD.coordinate_operation.coord_op_code(ind_alt);
-            OPT.datum_trans_to_WGS84.alt_name      = STD.coordinate_operation.coord_op_name(ind_alt);
-            OPT.datum_trans_to_WGS84.alt_direction = dir_alt;
+            OPT.datum_trans_to_WGS84.alt_code       = STD.coordinate_operation.coord_op_code(ind_alt);
+            OPT.datum_trans_to_WGS84.alt_name       = STD.coordinate_operation.coord_op_name(ind_alt);
+            OPT.datum_trans_to_WGS84.alt_direction  = dir_alt;
+            OPT.datum_trans_to_WGS84.alt_deprecated = dep_alt;
         end
         OPT.datum_trans_to_WGS84.params      = ConvertCoordinatesFindDatumTransParams(STD.coordinate_operation.coord_op_code(ind),STD);
         OPT.datum_trans_to_WGS84.method_code = STD.coordinate_operation.coord_op_method_code(ind);
@@ -86,9 +88,10 @@ else
         OPT.datum_trans_from_WGS84.name          = STD.coordinate_operation.coord_op_name(ind);
         OPT.datum_trans_from_WGS84.direction     = direction;
         if length(ind_alt)>1 % also include alternative tranformations
-            OPT.datum_trans_from_WGS84.alt_code      = STD.coordinate_operation.coord_op_code(ind_alt);
-            OPT.datum_trans_from_WGS84.alt_name      = STD.coordinate_operation.coord_op_name(ind_alt);
-            OPT.datum_trans_from_WGS84.alt_direction = dir_alt;
+            OPT.datum_trans_from_WGS84.alt_code       = STD.coordinate_operation.coord_op_code(ind_alt);
+            OPT.datum_trans_from_WGS84.alt_name       = STD.coordinate_operation.coord_op_name(ind_alt);
+            OPT.datum_trans_from_WGS84.alt_direction  = dir_alt;
+            OPT.datum_trans_from_WGS84.alt_deprecated = dep_alt;
         end
         OPT.datum_trans_from_WGS84.params      = ConvertCoordinatesFindDatumTransParams(STD.coordinate_operation.coord_op_code(ind),STD);
         OPT.datum_trans_from_WGS84.method_code = STD.coordinate_operation.coord_op_method_code(ind);
@@ -107,7 +110,7 @@ end
 
 end
 
-function [ OPT,ind,direction,ind_alt,dir_alt] = findTransOptions(OPT,STD,geogcrs_code1,geogcrs_code2,datum_trans)
+function [ OPT,ind,direction,ind_alt,dir_alt,dep_alt] = findTransOptions(OPT,STD,geogcrs_code1,geogcrs_code2,datum_trans)
 % find available transformation options
 ind   = find(STD.coordinate_operation.source_crs_code == geogcrs_code1 &...
     STD.coordinate_operation.target_crs_code == geogcrs_code2);
@@ -121,7 +124,6 @@ ind_r = find(STD.coordinate_operation.source_crs_code == geogcrs_code2 &...
 % of possibilities.
 reverse_method_codes = STD.coordinate_operation.coord_op_method_code(ind_r);
 for ii = 1:length(reverse_method_codes)
-    tmp = find(STD.coordinate_operation_method.coord_op_method_code == reverse_method_codes(ii));
     if strcmpi('TRUE',STD.coordinate_operation_method.reverse_op(ii))
         ind(end+1) = ind_r(ii);
         direction(end+1) = {'reverse'};
@@ -130,6 +132,10 @@ end
 
 ind_alt = ind;
 dir_alt = direction;
+
+% check if found methods are deprecated
+dep_alt = STD.coordinate_operation.deprecated(ind_alt);
+
 if ~isempty(OPT.(datum_trans).code)
     % user has defined input
     ii = find(STD.coordinate_operation.coord_op_code(ind_alt) == OPT.(datum_trans).code);
@@ -140,19 +146,33 @@ if ~isempty(OPT.(datum_trans).code)
     else
               ind = ind_alt(ii);
         direction = dir_alt{ii}; 
+        % if method is deprected, give a warning
+        if strcmpi(dep_alt{ii},'TRUE')
+            disp('Warning: The user defined datum transformation method is deprecated')
+        end
     end
 
-% if no method has been defined by user, use the method found.
-% If more options are found, use the method with the highest code 
-% (it is assumed this value is the newest/best method)
+% If no method has been defined by user, use the method found.
+% If more options are found, use the method with the highest code that is
+% not deprecated (it is assumed this value is the newest/best method)
 else
     if length(ind_alt)>1
-        [tmp,ii] = max(STD.coordinate_operation.coord_op_code(ind_alt));
+        ii = 1:length(ind_alt);
+        ii = ii(strcmpi(dep_alt,'FALSE'));
+        [tmp,jj] = max(STD.coordinate_operation.coord_op_code(ind_alt(ii)));
+        ii = ii(jj);
+        if isempty(ii) % then ignore deprection
+            [tmp,ii] = max(STD.coordinate_operation.coord_op_code(ind_alt));
+            disp('Warning: The datum transformation method is deprecated; no non deprected methods are available')
+        end
         ind = ind_alt(ii);
         direction = dir_alt{ii};
     elseif length(ind_alt)==1
         ind = ind_alt;
         direction = direction{1};
+        if strcmpi(dep_alt{1},'TRUE')
+            disp('Warning: The datum transformation method is deprecated; no non deprected methods are available')
+        end
     end
 end
 end
