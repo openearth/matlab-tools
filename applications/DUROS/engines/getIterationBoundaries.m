@@ -217,7 +217,7 @@ end
 
 % derive the horizontal distance between origin of parabolic profile and
 % each of the points (z-level of the cornerpoints) using the inverse of the parabolic formula
-dxprb = (((-(z(CornerIds)-WL_t).*(7.6/Hsig_t)+0.4714*sqrt(18))/0.4714).^2-18) / (((7.6/Hsig_t).^1.28)*((12/Tp_t).^0.45)*((w/0.0268).^0.56));
+dxprb = invParabolicProfileMain(WL_t, Hsig_t, Tp_t, w, z(CornerIds));
 % derive the exact x-locations of those points
 dx2 = x(CornerIds)-dxprb;
 % x0min is at least the most landward profile point, and usually the
