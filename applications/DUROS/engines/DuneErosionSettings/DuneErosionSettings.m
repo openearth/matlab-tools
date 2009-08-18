@@ -162,6 +162,8 @@ for iinp = 1:length(inpprops)
                     else
                         variablevaluestring = 'false';
                     end
+                elseif isa(inpvars{iinp},'function_handle')
+                    variablevaluestring = ['@',char(inpvars{iinp})];
                 end
                 DESettings.(DESfieldnames{itypes}).(inpprops{iinp}) = inpvars{iinp};
                 writemessage(50, ['Variable "' inpprops{iinp} '" is set to "' variablevaluestring '".']);
