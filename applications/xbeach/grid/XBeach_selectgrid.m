@@ -61,6 +61,7 @@ function XB = XBeach_selectgrid(X, Y, Z, varargin)
 OPT = struct(...
     'manual', true,...
     'struct',false,...
+    'plot', true,...
     'WL_t', 0,...
     'xori', 0,...
     'yori', 0,...
@@ -132,10 +133,12 @@ end
 in = inpolygon(X, Y, xi, yi);
 Z(~in) = NaN;
 
-figure;
-surf(X, Y, Z);
-shading interp;
-colorbar
+if OPT.plot
+    figure;
+    surf(X, Y, Z);
+    shading interp;
+    colorbar
+end
 
 % Extrapolate to sides
 [nX nY] = size(X);
@@ -169,10 +172,13 @@ for j = 1:nY
         end
     end
 end
-figure;
-surf(X,Y,Z);
-shading interp;
-colorbar
+
+if OPT.plot
+    figure;
+    surf(X,Y,Z);
+    shading interp;
+    colorbar
+end
 %
 % Include structures
 if OPT.struct
