@@ -76,7 +76,7 @@ if LandwardBoundary < min(x(isfinite(z)))
     error('GETVOLUMEFAST:boundaries','LandwardBoundary < min(x)')
 end
 if SeawardBoundary > max(x(isfinite(z)))
-    error('GETVOLUMEFAST:boundaries','LandwardBoundary > max(x)')
+    error('GETVOLUMEFAST:boundaries','SeawardBoundary > max(x)')
 end
 %% Z value of SeawardBoundary
 temp=find(x>=SeawardBoundary,1,'first');
