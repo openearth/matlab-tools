@@ -4,7 +4,9 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 %      nc_cf_stationtimeseries2meta(<keyword,value>) 
 %  M = nc_cf_stationtimeseries2meta(<keyword,value>) 
 %
-%  reads standard meta info from CF convention (station_id,min(time),max(time),lon,lat,nt,<station_name>) 
+%  reads standard meta info from CF convention (station_id,min(time),max(time),
+%  longitude,latitude,number_of_observations,<station_name>
+%  min(), mean(), max() and std() of standard_name
 %  from all NetCDF files in a directory, make a plan view plot and saves table to excel file.
 %  Optionally returns result to struct M.
 %  The following <keyword,value> pairs have been implemented:
@@ -12,6 +14,8 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 %   * directory_nc   directory where to put the nc data to (default [])
 %   * mask           file mask (default '*.nc')
 %   * basename       name of *.png and *.xls of output files (default 'catalog')
+%   * vc             opendap adress of vector coastline for overview plot
+%   * standard_name  standard_name of parameter for whicht to calculate min, mean and max
 %
 %See also: snctools
 
@@ -55,16 +59,19 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 % $Keywords$
 
 % 2009 06 23: added extraction of station_name, in addition to station_id [GJdB]
+% 2009 08 14: added extraction of min, mean, max and std [GJdB]
 
 %TO DO: put results in MySQL server (a la MATROOS approach)
 %TO DO: put results in catalog.xml zetten (according to opendap specifications)
 %TO DO: put results in catalog.nc 
+%TO DO: rename nt to number_of_observations
 
-   OPT.directory_nc = [];
-   OPT.mask         = '*.nc';
-   OPT.basename     = 0; %'catalog';
-   OPT.datestr      = 'yyyy-mm-dd HH:MM:SS';
-   OPT.vc           = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc'; % vector coastline, WVC in future ?
+   OPT.directory_nc  = [];
+   OPT.mask          = '*.nc';
+   OPT.basename      = 0; %'catalog';
+   OPT.datestr       = 'yyyy-mm-dd HH:MM:SS';
+   OPT.vc            = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc'; % vector coastline, WVC in future ?
+   OPT.standard_name = [];
    
 %% Keyword,value
 
@@ -115,69 +122,90 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 
 %% Get ordinates ~(dimensions)
 
-      OPT.lat          = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','latitude'  );
-      OPT.lon          = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','longitude' );
-      OPT.time         = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','time'      );
-      OPT.station_id   = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','station_id');
+      OPT.lat          = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','latitude'       );
+      OPT.lon          = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','longitude'      );
+      OPT.time         = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','time'           );
+      OPT.station_id   = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','station_id'     );
       
-      files(ifile).lat          = nc_varget(OPT.filename,OPT.lat);
-      files(ifile).lon          = nc_varget(OPT.filename,OPT.lon);
-      time                      = nc_varget(OPT.filename,OPT.time);
-      isounits                  = nc_attget(OPT.filename,OPT.time,'units');
-      files(ifile).nt           = length(time);
-      files(ifile).datenummin   = min(time);
-      files(ifile).datenummax   = max(time);
-      files(ifile).station_id   = nc_varget(OPT.filename,OPT.station_id);
+      files(ifile).latitude               = nc_varget(OPT.filename,OPT.lat);
+      files(ifile).longitude              = nc_varget(OPT.filename,OPT.lon);
+      time                                = nc_varget(OPT.filename,OPT.time);
+      isounits                            = nc_attget(OPT.filename,OPT.time,'units');
+      files(ifile).number_of_observations = length(time);
+      files(ifile).datenummin             = min(time);
+      files(ifile).datenummax             = max(time);
+      files(ifile).station_id             = nc_varget(OPT.filename,OPT.station_id);
       try
-      files(ifile).station_name = nc_varget(OPT.filename,'station_name');
+      files(ifile).station_name           = nc_varget(OPT.filename,'station_name');
+      end
+
+      if ~isempty(OPT.standard_name)
+      OPT.parameter    = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue',OPT.standard_name);
+      parameter        = nc_varget(OPT.filename,OPT.parameter);
+      files(ifile).([OPT.parameter,'_min' ]) = nanmin (parameter);
+      files(ifile).([OPT.parameter,'_mean']) = nanmean(parameter);
+      files(ifile).([OPT.parameter,'_max' ]) = nanmax (parameter);
+      files(ifile).([OPT.parameter,'_std' ]) = nanstd (parameter);
       end
       
    end
 
 %% Reorganize meta-data
 
-   A.filename          = {OPT.files.name};
-   A.lat               = [files.lat];
-   A.lon               = [files.lon];
-   A.nt                = [files.nt];
-   A.datenummin        = [files.datenummin];
-   A.datenummax        = [files.datenummax];
-   A.datestrmin        = datestr(udunits2datenum(A.datenummin,isounits),OPT.datestr);
-   A.datestrmax        = datestr(udunits2datenum(A.datenummax,isounits),OPT.datestr);
+   A.filename                  = {OPT.files.name};
+   A.latitude                  = [files.latitude];
+   A.longitude                 = [files.longitude];
+   A.number_of_observations    = [files.number_of_observations];
+   A.datenummin                = [files.datenummin];
+   A.datenummax                = [files.datenummax];
+   A.datestrmin                = datestr(udunits2datenum(A.datenummin,isounits),OPT.datestr);
+   A.datestrmax                = datestr(udunits2datenum(A.datenummax,isounits),OPT.datestr);
    
-   A.station_id        = {files.station_id};
-   A.station_name      = {files.station_name};
+   A.station_id                = {files.station_id};
+   A.station_name              = {files.station_name};
+   
+   if ~isempty(OPT.standard_name)
+   A.([OPT.parameter,'_min' ]) = [files.([OPT.parameter,'_min' ])];
+   A.([OPT.parameter,'_mean']) = [files.([OPT.parameter,'_mean'])];
+   A.([OPT.parameter,'_max' ]) = [files.([OPT.parameter,'_max' ])];
+   A.([OPT.parameter,'_std' ]) = [files.([OPT.parameter,'_std' ])];
+   end
 
    if isnumeric(A.station_id{1})
-   A.station_id        = num2str(cell2mat(A.station_id)');
+   A.station_id                             = num2str(cell2mat(A.station_id)');
    else
-   A.station_id        = char   (A.station_id); % cell2  char
+   A.station_id                             = char   (A.station_id); % cell2  char
    end
-   A.station_name      = char   (A.station_name); % cell2  char
+   A.station_name                           = char   (A.station_name); % cell2  char
 
-   units.filename      = 'string';
-   units.lat           = nc_attget(OPT.filename,OPT.lat ,'units');
-   units.lon           = nc_attget(OPT.filename,OPT.lon ,'units');
-   units.nt            = '# of observations';
-   units.datenummin    = nc_attget(OPT.filename,OPT.time,'units');
-   units.datenummax    = nc_attget(OPT.filename,OPT.time,'units');
-   units.datestrmin    = OPT.datestr;
-   units.datestrmax    = OPT.datestr;
-   units.station_id    = 'string';
-   units.station_name  = 'string';
+   units.filename                           = 'string';
+   units.latitude                           = nc_attget(OPT.filename,OPT.lat ,'units');
+   units.longitude                          = nc_attget(OPT.filename,OPT.lon ,'units');
+   units.number_of_observations             = 'number of observations';
+   units.datenummin                         = nc_attget(OPT.filename,OPT.time,'units');
+   units.datenummax                         = nc_attget(OPT.filename,OPT.time,'units');
+   units.datestrmin                         = OPT.datestr;
+   units.datestrmax                         = OPT.datestr;
+   units.station_id                         = 'string';
+   units.station_name                       = 'string';
+   
+   units.([OPT.parameter,'_min' ])          = nc_attget(OPT.filename,OPT.parameter,'units');
+   units.([OPT.parameter,'_mean'])          = units.([OPT.parameter,'_min' ]);
+   units.([OPT.parameter,'_max' ])          = units.([OPT.parameter,'_min' ]);
+   units.([OPT.parameter,'_std' ])          = units.([OPT.parameter,'_min' ]);
 
 %% Plot locations
 
    TMP = figure;
-   plot   (A.lon,A.lat,'ko','linewidth',2)
+   plot   (A.longitude,A.latitude,'ko','linewidth',2)
    hold    on
    OPT.ctick = 10.^[0:5];
    colormap(jet((length(OPT.ctick)-1)*2));
    caxis  (log10(OPT.ctick([1 end])))
-   plotc  (A.lon,A.lat,log10(A.nt),'o','linewidth',2)
+   plotc  (A.longitude,A.latitude,log10(A.number_of_observations),'o','linewidth',2)
    axislat(52)
    tickmap('ll')
-  %caxis  (log10([min(A.nt) max(A.nt)]))
+  %caxis  (log10([min(A.number_of_observations) max(A.number_of_observations)]))
    [ax,h]=colorbarwithtitle('n [#]',log10(OPT.ctick));
    set(ax,'YTickLabel',num2str(OPT.ctick'))
    grid    on
@@ -186,11 +214,16 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    
    %% Add vector coastline
 
+   OPT.USE_JAVA = getpref ('SNCTOOLS', 'USE_JAVA');
+   setpref ('SNCTOOLS', 'USE_JAVA', 1)
+
    tmp.lat        = nc_varfind(OPT.vc, 'attributename', 'standard_name', 'attributevalue','latitude'  );
    tmp.lon        = nc_varfind(OPT.vc, 'attributename', 'standard_name', 'attributevalue','longitude' );
-   tmp.lat        = nc_varget(OPT.vc,tmp.lat);
-   tmp.lon        = nc_varget(OPT.vc,tmp.lon);
+   tmp.lat        = nc_varget (OPT.vc,tmp.lat);
+   tmp.lon        = nc_varget (OPT.vc,tmp.lon);
    
+   setpref ('SNCTOOLS', 'USE_JAVA', OPT.USE_JAVA);
+
    axis(axis)
    plot(tmp.lon,tmp.lat,'k');
    
@@ -211,10 +244,10 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    
 %% Outout
 
-   if nargout==1
-   
-      varargout = {A};
-   
+   if     nargout==1
+        varargout = {A};
+   elseif nargout==2
+        varargout = {A,units};
    end
 
    close(TMP)

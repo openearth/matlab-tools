@@ -18,13 +18,15 @@ for ii=1:length(subdirs)
 
 disp(['Processing ',num2str(ii),' / ',num2str(length(subdirs)),': ',subdirs{ii}])
 
-OPT.fileName    = [subdirs{ii},'.kml'];
-OPT.kmlName     =  subdirs{ii};
-OPT.THREDDSbase = ['http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/waterbase/',subdirs{ii},'/'];
-OPT.HYRAXbase   = ['http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/waterbase/',subdirs{ii},'/'];
-OPT.ftpbase     = ['http://opendap.deltares.nl:8080/thredds/fileServer/opendap/rijkswaterstaat/waterbase/',subdirs{ii},'/'];
-OPT.description = {['parameter: ',subdirs{ii}],...
-                   'source: <a href="http://www.waterbase.nl">Rijkswaterstaat</a>'};
+OPT.fileName      = [subdirs{ii},'.kml'];
+OPT.kmlName       =  subdirs{ii};
+OPT.THREDDSbase   = ['http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/waterbase/',subdirs{ii},'/'];
+OPT.HYRAXbase     = ['http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/waterbase/',subdirs{ii},'/'];
+OPT.ftpbase       = ['http://opendap.deltares.nl:8080/thredds/fileServer/opendap/rijkswaterstaat/waterbase/',subdirs{ii},'/'];
+OPT.description   = {['parameter: ',subdirs{ii}],...
+                      'source: <a href="http://www.waterbase.nl">Rijkswaterstaat</a>'};
+
+OPT.standard_name = subdirs{ii};
 
 nc_cf_stationtimeseries2kmloverview([subdirs{ii},'.xls'],OPT)
 
