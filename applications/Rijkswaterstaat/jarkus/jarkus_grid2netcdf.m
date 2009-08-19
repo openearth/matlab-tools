@@ -141,7 +141,7 @@ STRINGSIZE = 100;
     s.Nctype    = nc_double;
     s.Dimension = {'alongshore'};
     s.Attribute = struct('Name' ,{'long_name'        , 'units'  , 'comment'},...
-                         'Value',{'angle of transect', 'mradian', 'positive counter clockwise 0 east'});
+                         'Value',{'angle of transect', 'degrees', 'positive clockwise 0 north'});
     nc_addvar(filename, s);
     
     s.Name      = 'mean_high_water';
