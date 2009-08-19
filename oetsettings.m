@@ -113,9 +113,9 @@ function oetsettings(varargin)
 %% NETCDF (if not present yet)
 %  (NB RESTOREDEFAULTPATH does not restore java paths)
 %-----------------------
-    java2add         = path2os(fullfile(openearthtoolsroot, 'matlab/io/nctools', 'toolsUI-2.2.22.jar'));
+    java2add         = path2os(fullfile(openearthtoolsroot, '/io/nctools', 'toolsUI-2.2.22.jar'));
     dynjavaclasspath = path2os(javaclasspath);
-    indices       = strfind(dynjavaclasspath,java2add);
+    indices          = strfind(dynjavaclasspath,java2add);
     
     if isempty(cell2mat(indices))
        javaaddpath (java2add)

@@ -1,8 +1,8 @@
 function S = openearthtoolsroot
-% OPENEARTHTOOLSROOT root directory of OpenEarthTools installation
+% OPENEARTHTOOLSROOT root directory of OpenEarthTools Matlab installation
 %
 % S = openearthtoolsroot returns a string that is the name of the directory
-% where the OpenEarthTools software is installed.
+% where the OpenEarthTools Matlab software is installed.
 %
 % see also: matlabroot
 
@@ -39,9 +39,6 @@ function S = openearthtoolsroot
 % $Author$
 % $Revision$
 
-%%
-S = which(mfilename); % fulle filename of current file
+S = [fileparts(which('oetsettings')) filesep]; % fulle filename of current file
 
-ind = findstr(S, [filesep 'matlab' filesep]);
-
-S = S(1:ind-1); % this is the openearthtoolsroot
+%% EOF
