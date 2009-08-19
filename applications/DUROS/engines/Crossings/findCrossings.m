@@ -127,8 +127,7 @@ z1_new(xrecalculate | id_x2add) = meanz(xrecalculate | id_x2add);  % designate t
 z2_new(xrecalculate | id_x2add) = z1_new(xrecalculate | id_x2add); % designate the mean z as crossings values in x-recalculate
 
 %% prepare output
-id = zeros(1,length(z1_new));
-id(find(z1_new==z2_new)) = 1;                               % identifier of crossings
+id =  z1_new==z2_new;                                       % identifier of crossings
 xcr = x_new(id);                                            % x-values of crossings
 zcr = z1_new(id);                                           % z-values of crossings
 
