@@ -11,7 +11,7 @@ transect_nr = find(id==8005700)-1;
 year        = nc_varget(url,'time');
 year_nr     = find(year == 1979)-1;
 xRSP        = nc_varget(url,'cross_shore');
-z           = nc_varget(url,'altitude',[year_nr,transect_nr,1],[1,1,-1]);
+z           = nc_varget(url,'altitude',[year_nr,transect_nr,0],[1,1,-1]);
 x    = xRSP(~isnan(z));
 z    =    z(~isnan(z));
 

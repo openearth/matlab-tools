@@ -1,0 +1,157 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>tutorial_jarkus5_plot_in_googleEarth</title>
+      <meta name="generator" content="MATLAB 7.5">
+      <meta name="date" content="2009-08-19">
+      <meta name="m-file" content="tutorial_jarkus5_plot_in_googleEarth"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h2>Contents</h2>
+         <div>
+            <ul>
+               <li><a href="#1">plot data in Google Earth</a></li>
+               <li><a href="#2">Plot a Jarkus transect in google earth</a></li>
+            </ul>
+         </div>
+         <h2>plot data in Google Earth<a name="1"></a></h2>
+         <p>plotting tols are in the googlePlot toolbox. To see it's contents, use help:</p><pre class="codeinput">help <span class="string">googlePlot</span>
+</pre><pre class="codeoutput">Contents of googlePlot:
+
+KMLcontour                     - Just like contour
+KMLcurvedArrows                - makes nice curved arrows that 'go with the flow'
+KMLfig2png                     - makes a tiled png figure for google earth 
+KMLline                        - Just like line (and that's just like plot)
+KMLline3                       - Just like line3
+KMLpatch                       - Just like patch
+KMLpcolor                      - Just like pcolor
+KMLquiver                      - Just like quiver
+KMLsurf                        - Just like surf
+KMLtext                        - Just like text 
+KMLtrisurf                     - Just like trisurf
+
+</pre><h2>Plot a Jarkus transect in google earth<a name="2"></a></h2><pre class="codeinput">url         = jarkus_url;
+no_of_trans = 20;
+id          = nc_varget(url,<span class="string">'id'</span>);
+transect_nr = find(id==6001200)-1;
+year        = nc_varget(url,<span class="string">'time'</span>);
+year_nr     = find(year == 1979)-1;
+lat         = nc_varget(url,<span class="string">'lat'</span>,[transect_nr,0],[no_of_trans,-1]);
+lon         = nc_varget(url,<span class="string">'lon'</span>,[transect_nr,0],[no_of_trans,-1]);
+z           = nc_varget(url,<span class="string">'altitude'</span>,[year_nr,transect_nr,0],[1,no_of_trans,-1]);
+xRSP        = nc_varget(url,<span class="string">'cross_shore'</span>);
+codes       = nc_varget(url,<span class="string">'alongshore'</span>,transect_nr,no_of_trans);
+labels      = cellstr(num2str(codes));
+
+<span class="comment">% interp z to all x values</span>
+<span class="keyword">for</span> ii = 1:size(z,1)
+    not_nan = ~isnan(z(ii,:));
+    <span class="keyword">if</span> sum(not_nan)~=0
+        z(ii,:) = interp1q(xRSP(not_nan),z(ii,not_nan)',xRSP)';
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeinput">KMLline(lat',lon',(z'+20).*5,<span class="string">'text'</span>,labels,<span class="string">'latText'</span>,lat(:,500),<span class="string">'lonText'</span>,(lon(:,500)));
+</pre><p class="footer"><br>
+            Published with MATLAB&reg; 7.5<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% plot data in Google Earth
+% plotting tols are in the googlePlot toolbox. To see it's contents, use
+% help:
+
+help googlePlot
+
+%% Plot a Jarkus transect in google earth
+
+url         = jarkus_url;
+no_of_trans = 20; 
+id          = nc_varget(url,'id');
+transect_nr = find(id==6001200)-1;
+year        = nc_varget(url,'time');
+year_nr     = find(year == 1979)-1;
+lat         = nc_varget(url,'lat',[transect_nr,0],[no_of_trans,-1]);
+lon         = nc_varget(url,'lon',[transect_nr,0],[no_of_trans,-1]);
+z           = nc_varget(url,'altitude',[year_nr,transect_nr,0],[1,no_of_trans,-1]);
+xRSP        = nc_varget(url,'cross_shore');
+codes       = nc_varget(url,'alongshore',transect_nr,no_of_trans);
+labels      = cellstr(num2str(codes));
+
+% interp z to all x values
+for ii = 1:size(z,1)
+    not_nan = ~isnan(z(ii,:));
+    if sum(not_nan)~=0
+        z(ii,:) = interp1q(xRSP(not_nan),z(ii,not_nan)',xRSP)';
+    end
+end
+
+%%
+KMLline(lat',lon',(z'+20).*5,'text',labels,'latText',lat(:,500),'lonText',(lon(:,500)));
+##### SOURCE END #####
+-->
+   </body>
+</html>

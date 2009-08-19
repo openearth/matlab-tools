@@ -87,7 +87,11 @@ xRSP        = nc_varget(url,'cross_shore');
 % cross shore locations. Use -1 in the second argument to ask for all data
 % in that dimension:
 
-z           = nc_varget(url,'altitude',[year_nr,transect_nr,1],[1,1,-1]);
+z           = nc_varget(url,'altitude',[year_nr,transect_nr,0],[1,1,-1]);
+
+%%
+% Note that the first z poi9tn we want data form is 0 becasue of the zero
+% besed indexing!
 
 %%
 % Not for every possible cross shore location, there is altitude

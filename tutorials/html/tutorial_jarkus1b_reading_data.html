@@ -1,0 +1,158 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>read jarkus example</title>
+      <meta name="generator" content="MATLAB 7.5">
+      <meta name="date" content="2009-08-19">
+      <meta name="m-file" content="tutorial_jarkus1b_reading_data"><style>
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content">
+         <h1>read jarkus example</h1>
+         <introduction>
+            <p>another example reading JarKus data</p>
+         </introduction>
+         <h2>Contents</h2>
+         <div>
+            <ul>
+               <li><a href="#1">url of netCDF file with jarkus data</a></li>
+               <li><a href="#2">transect info</a></li>
+               <li><a href="#3">retrieve info about dimensions and variable names</a></li>
+               <li><a href="#4">derive the identifier of the 'altitude'</a></li>
+               <li><a href="#5">locate the relevant positions along the dimensions</a></li>
+               <li><a href="#6">retrieve the transect data</a></li>
+               <li><a href="#7">filter for empty values (NaN or -9999)</a></li>
+               <li><a href="#8">plot the transect</a></li>
+            </ul>
+         </div>
+         <h2>url of netCDF file with jarkus data<a name="1"></a></h2><pre class="codeinput">url = jarkus_url
+</pre><pre class="codeoutput">
+url =
+
+P:\mcdata\opendap\rijkswaterstaat\jarkus\profiles\transect.nc
+
+</pre><h2>transect info<a name="2"></a></h2><pre class="codeinput">year = 2006; <span class="comment">% year of sounding</span>
+kustvak = <span class="string">'Noord-Holland'</span>; <span class="comment">% area name</span>
+transect = 3000; <span class="comment">% alongshore coordinate</span>
+</pre><h2>retrieve info about dimensions and variable names<a name="3"></a></h2><pre class="codeinput">info = nc_info(url);
+</pre><h2>derive the identifier of the 'altitude'<a name="4"></a></h2><pre class="codeinput">altitude_id = strcmp({info.Dataset.Name}, <span class="string">'altitude'</span>);
+</pre><h2>locate the relevant positions along the dimensions<a name="5"></a></h2><pre class="codeinput">time_id = nc_varget(url, <span class="string">'time'</span>) == year;
+alongshore_id = nc_varget(url, <span class="string">'areacode'</span>) == getKustvak(kustvak) &amp;<span class="keyword">...</span>
+    nc_varget(url, <span class="string">'alongshore'</span>) == transect;
+cross_shore_id = true(size(nc_varget(url, <span class="string">'cross_shore'</span>)));
+</pre><h2>retrieve the transect data<a name="6"></a></h2><pre class="codeinput">x = nc_varget(url, <span class="string">'cross_shore'</span>);
+start_altitude = [find(time_id, 1, <span class="string">'first'</span>) find(alongshore_id, 1, <span class="string">'first'</span>) find(cross_shore_id, 1, <span class="string">'first'</span>)] - 1;
+count_altitude = [sum(time_id) sum(alongshore_id) sum(cross_shore_id)];
+z = nc_varget(url, <span class="string">'altitude'</span>, start_altitude, count_altitude);
+</pre><h2>filter for empty values (NaN or -9999)<a name="7"></a></h2><pre class="codeinput">x = x(z ~= -9999);
+z = z(z ~= -9999)/100;
+</pre><h2>plot the transect<a name="8"></a></h2><pre class="codeinput">figure
+plot(x, z)
+</pre><img vspace="5" hspace="5" src="tutorial_jarkus1b_reading_data_01.png"> <p class="footer"><br>
+            Published with MATLAB&reg; 7.5<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% read jarkus example
+% another example reading JarKus data
+
+%% url of netCDF file with jarkus data
+url = jarkus_url
+
+%% transect info
+year = 2006; % year of sounding
+kustvak = 'Noord-Holland'; % area name
+transect = 3000; % alongshore coordinate
+
+%% retrieve info about dimensions and variable names
+info = nc_info(url);
+
+%% derive the identifier of the 'altitude'
+altitude_id = strcmp({info.Dataset.Name}, 'altitude');
+
+%% locate the relevant positions along the dimensions
+time_id = nc_varget(url, 'time') == year;
+alongshore_id = nc_varget(url, 'areacode') == getKustvak(kustvak) &...
+    nc_varget(url, 'alongshore') == transect;
+cross_shore_id = true(size(nc_varget(url, 'cross_shore')));
+
+%% retrieve the transect data
+x = nc_varget(url, 'cross_shore');
+start_altitude = [find(time_id, 1, 'first') find(alongshore_id, 1, 'first') find(cross_shore_id, 1, 'first')] - 1;
+count_altitude = [sum(time_id) sum(alongshore_id) sum(cross_shore_id)];
+z = nc_varget(url, 'altitude', start_altitude, count_altitude);
+
+%% filter for empty values (NaN or -9999)
+x = x(z ~= -9999);
+z = z(z ~= -9999)/100;
+
+%% plot the transect
+figure
+plot(x, z)
+##### SOURCE END #####
+-->
+   </body>
+</html>

@@ -115,13 +115,17 @@ OPT.kmlName     = [];
 OPT.lineWidth   = 1;
 OPT.lineColor   = [0 0 0];
 OPT.lineAlpha   = 1;
+OPT.fill        = true;
+OPT.fillColor   = [0 .5 0];
+OPT.fillAlpha   = .4;
 OPT.openInGE    = false;
 OPT.text        = '';
 OPT.latText     = mean(lat,1);
 OPT.lonText     = mean(lon,1);
 OPT.timeIn      = [];
 OPT.timeOut     = [];
-OPT.extrude     = 0;
+OPT.visible     = true;
+OPT.extrude     = true;
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
 %% input check
@@ -130,20 +134,17 @@ if any((abs(lat)/90)>1)
 end
 lon = mod(lon+180, 360)-180;
 
-% first check is multiple styles are defined. If not, then it's easy: there
-% is only one style. 
+% first check is multiple line/fill styles are defined. If not, then it's 
+% easy: there is only one style. 
 % if so, then repeat each style for size(lat,2) (that's the number of lines
 % to draw), put them all in one matrix, and the ndefine the unique
 % linestyles.
-if numel(OPT.lineWidth) + numel(OPT.lineColor)+OPT.lineAlpha == 5
-    % one linestyle, do nothing
-    
-    ind = 1;
-    OPT.styleNR = ones(size(lat,2),1);
+if numel(OPT.lineWidth) + numel(OPT.lineColor)+numel(OPT.lineAlpha) == 5
+    % one linestyle; do nothing
+    line_ind    = 1;
+    OPT.line_nr = ones(size(lat,2),1);
 else
-    % multiple styles
-    
-    % expand input options to # of lines 
+    % multiple styles; expand input options to # of lines 
     OPT.lineWidth = OPT.lineWidth(:);
     OPT.lineWidth = [repmat(OPT.lineWidth,floor(size(lat,2)/length(OPT.lineWidth)),1);...
     OPT.lineWidth(1:rem(size(lat,2),length(OPT.lineWidth)))];
@@ -156,10 +157,27 @@ else
                     OPT.lineAlpha(1:rem(size(lat,2),length(OPT.lineAlpha)))];
      
     % find unique linestyles
-    [ignore,ind,OPT.styleNR] = unique([OPT.lineWidth,OPT.lineColor,OPT.lineAlpha],'rows');
+    [ignore,line_ind,OPT.line_nr] = unique([OPT.lineWidth,OPT.lineColor,OPT.lineAlpha],'rows');
 end
 
+if OPT.is3D&&OPT.fill
+    if numel(OPT.fillColor)+numel(OPT.fillAlpha) == 4
+        % one fillstyle, do nothing
+        fill_ind    = 1;
+        OPT.fill_nr = ones(size(lat,2),1);
+    else
+        % multiple styles; expand input options to # of lines
+        OPT.fillColor = [repmat(OPT.fillColor,floor(size(lat,2)/size(OPT.fillColor,1)),1);...
+            OPT.fillColor(1:rem(size(lat,2),size(OPT.fillColor,1)),:)];
 
+        OPT.fillAlpha = OPT.lineAlpha(:);
+        OPT.fillAlpha = [repmat(OPT.fillAlpha,floor(size(lat,2)/length(OPT.fillAlpha)),1);...
+            OPT.fillAlpha(1:rem(size(lat,2),length(OPT.fillAlpha)))];
+
+        % find unique fillstyles
+        [ignore,fill_ind,OPT.fill_nr] = unique([OPT.fillColor,OPT.fillAlpha],'rows');
+    end
+end
 
 %% filename
 % gui for filename, if not set yet
@@ -182,29 +200,27 @@ OPT_header = struct(...
     'open',0);
 output = KML_header(OPT_header);
 
-%% define line styles
-
-
-for ii = 1:length(ind);
+%% define line and fill  styles
+%line styles
+for ii = 1:length(line_ind);
     OPT_style = struct(...
-        'name',['style' num2str(ii)],...
-        'lineColor',OPT.lineColor(ind(ii),:) ,...
-        'lineAlpha',OPT.lineAlpha(ind(ii)),...
-        'lineWidth',OPT.lineWidth(ind(ii)));
+        'name',['line_style' num2str(ii)],...
+        'lineColor',OPT.lineColor(line_ind(ii),:) ,...
+        'lineAlpha',OPT.lineAlpha(line_ind(ii)),...
+        'lineWidth',OPT.lineWidth(line_ind(ii)));
     output = [output KML_style(OPT_style)];     %#ok<AGROW>
 end
-if OPT.is3D
-    for ii = 1:length(ind);
+% fill styles
+if OPT.is3D&&OPT.fill
+    for ii = 1:length(fill_ind);
         OPT_stylePoly = struct(...
-            'name',['style' num2str(ii)],...
-            'lineColor',OPT.lineColor(ind(ii),:) ,...
-            'lineAlpha',OPT.lineAlpha(ind(ii)),...
-            'lineWidth',OPT.lineWidth(ind(ii)),...
-            'fillColor'   ,OPT.fillColor(1,:),...
-            'fillAlpha'   ,OPT.fillAlpha(1),...
+            'name',['fill_style' num2str(ii)],...
+            'lineWidth'   ,0,...
+            'fillColor'   ,OPT.fillColor(line_ind(ii),:),...
+            'fillAlpha'   ,OPT.fillAlpha(line_ind(ii)),...
             'polyFill'    ,1,...
-            'polyOutline' ,1)
-        output = [output KML_style(OPT_style)];     %#ok<AGROW>
+            'polyOutline' ,1);
+        output = [output KML_stylePoly(OPT_stylePoly)];     %#ok<AGROW>
     end
 end
 
@@ -220,43 +236,47 @@ kk = 1;
 % line properties
 OPT_line = struct(...
     'name','',...
-    'styleName',['style' num2str(OPT.styleNR(1))],...
-    'visibility',1,...
-    'extrude',0);
+    'styleName',['line_style' num2str(OPT.line_nr(1))],...
+    'visibility',OPT.visible);
+if isempty(OPT.timeIn) , OPT_line.timeIn = [];else  OPT_line.timeIn = datestr( OPT.timeIn(1),29); end
+if isempty(OPT.timeOut),OPT_line.timeOut = [];else OPT_line.timeOut = datestr(OPT.timeOut(1),29); end
 
-if isempty(OPT.timeIn)
-   OPT_line.timeIn = [];
-else
-   OPT_line.timeIn = datestr(OPT.timeIn(1),29); 
-end
-
-if isempty(OPT.timeOut)
-   OPT_line.timeOut = [];
-else
-   OPT_line.timeOut = datestr(OPT.timeOut(1),29); 
-end
+% fill properties
+OPT_fill = struct(...
+    'name','',...
+    'styleName',['fill_style' num2str(OPT.fill_nr(1))],...
+    'visibility',OPT.visible,...
+    'extrude',1);
+if isempty(OPT.timeIn) , OPT_fill.timeIn = [];else  OPT_fill.timeIn = datestr( OPT.timeIn(1),29); end
+if isempty(OPT.timeOut),OPT_fill.timeOut = [];else OPT_fill.timeOut = datestr(OPT.timeOut(1),29); end
 
 % loop through number of lines
 for ii=1:length(lat(1,:))
     % check if there is data to write
     if ~all(isnan(lat(:,ii)+lon(:,ii)))
         % update linestyle
-        OPT_line.styleName = ['style' num2str(OPT.styleNR(ii))];
-
+        OPT_line.styleName = ['line_style' num2str(OPT.line_nr(ii))];
         % update timeIn and timeOut if multiple times are defined
-        if length(OPT.timeIn)>1
-            OPT_line.timeIn = datestr(OPT.timeIn(ii),29);
+        if  length(OPT.timeIn)>1, OPT_line.timeIn =  datestr(OPT.timeIn(ii),29);end
+        if length(OPT.timeOut)>1,OPT_line.timeOut = datestr(OPT.timeOut(ii),29);end
+        if OPT.is3D&&OPT.fill
+            OPT_fill.styleName = ['fill_style' num2str(OPT.fill_nr(ii))];
+            if  length(OPT.timeIn)>1, OPT_fill.timeIn =  datestr(OPT.timeIn(ii),29);end
+            if length(OPT.timeOut)>1,OPT_fill.timeOut = datestr(OPT.timeOut(ii),29);end
         end
-        if length(OPT.timeOut)>1
-            OPT_line.timeOut = datestr(OPT.timeOut(ii),29);
-        end
-
+        
         % write the line
         if OPT.is3D
             newOutput = KML_line(lat(:,ii),lon(:,ii),z(:,ii),OPT_line);        
         else
             newOutput =  KML_line(lat(:,ii),lon(:,ii),'clampToGround',OPT_line);
         end
+
+        % add a fill if needed
+        if OPT.is3D&&OPT.fill
+            newOutput =  [newOutput,KML_line(lat(:,ii),lon(:,ii),z(:,ii),OPT_fill)];
+        end
+        
         % add a text if it is defined
         if ~isempty(OPT.text)
             newOutput = [newOutput,KML_text(OPT.latText(ii),OPT.lonText(ii),OPT.text{ii})];

@@ -11,7 +11,7 @@ To make changes, update the M-file and republish this document.
       -->
       <title>Coordinate conversion</title>
       <meta name="generator" content="MATLAB 7.5">
-      <meta name="date" content="2009-08-17">
+      <meta name="date" content="2009-08-19">
       <meta name="m-file" content="tutorial_functions_convertCoordinates"><style>
 
 body {
@@ -176,7 +176,7 @@ tic
     [lon,lat] = convertCoordinates(x,y,<span class="string">'CS1.code'</span>,28992,<span class="string">'CS2.code'</span>,4326);
 <span class="keyword">end</span>
 toc
-</pre><pre class="codeoutput">Elapsed time is 5.530184 seconds.
+</pre><pre class="codeoutput">Elapsed time is 5.644862 seconds.
 </pre><pre class="codeinput"><span class="comment">% with preloading EPSG</span>
 tic
 EPSG = load(<span class="string">'EPSG'</span>);
@@ -184,7 +184,7 @@ EPSG = load(<span class="string">'EPSG'</span>);
     [lon,lat] = convertCoordinates(x,y,EPSG,<span class="string">'CS1.code'</span>,28992,<span class="string">'CS2.code'</span>,4326);
 <span class="keyword">end</span>
 toc
-</pre><pre class="codeoutput">Elapsed time is 0.607874 seconds.
+</pre><pre class="codeoutput">Elapsed time is 0.615228 seconds.
 </pre><h2>Evaluating the output<a name="8"></a></h2>
          <p>To evaluate the output, call the funtion with OPT:</p><pre class="codeinput">[lon,lat,OPT] = convertCoordinates(x,y,EPSG,<span class="string">'CS1.code'</span>,28992,<span class="string">'CS2.code'</span>,4326);
 disp(OPT);

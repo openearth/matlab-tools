@@ -5,9 +5,11 @@
 % path. 
 
 %%
-% Figure out what folder oetsettings.m is located in, and the run it:
+% Figure out what folder oetsettings.m is located in, and the run it. 
+% (example for when OpenEarthTools checkout is in 
+% D:\repositories\OpenEarthTools)
 
-run D:\repositories\OpenEarth\matlab\oetsettings
+run D:\repositories\OpenEarthTools\oetsettings
 
 %%
 % As you don't want to remember this code, but you will run it every time

@@ -11,7 +11,7 @@ To make changes, update the M-file and republish this document.
       -->
       <title>JarKus volume calculations</title>
       <meta name="generator" content="MATLAB 7.5">
-      <meta name="date" content="2009-08-17">
+      <meta name="date" content="2009-08-19">
       <meta name="m-file" content="tutorial_jarkus2_calculate_volume"><style>
 
 body {
@@ -92,7 +92,7 @@ transect_nr = find(id==8005700)-1;
 year        = nc_varget(url,<span class="string">'time'</span>);
 year_nr     = find(year == 1979)-1;
 xRSP        = nc_varget(url,<span class="string">'cross_shore'</span>);
-z           = nc_varget(url,<span class="string">'altitude'</span>,[year_nr,transect_nr,1],[1,1,-1]);
+z           = nc_varget(url,<span class="string">'altitude'</span>,[year_nr,transect_nr,0],[1,1,-1]);
 x    = xRSP(~isnan(z));
 z    =    z(~isnan(z));
 </pre><h2>Available options<a name="2"></a></h2>
@@ -126,7 +126,7 @@ SeawardBoundary     = max(x);
 </pre><pre class="codeoutput">
 Volume =
 
-  933.1031
+  987.5781
 
 </pre><img vspace="5" hspace="5" src="tutorial_jarkus2_calculate_volume_01.png"> <h2>jarkus_getVolume<a name="6"></a></h2>
          <p>to be added...</p>
@@ -150,7 +150,7 @@ transect_nr = find(id==8005700)-1;
 year        = nc_varget(url,'time');
 year_nr     = find(year == 1979)-1;
 xRSP        = nc_varget(url,'cross_shore');
-z           = nc_varget(url,'altitude',[year_nr,transect_nr,1],[1,1,-1]);
+z           = nc_varget(url,'altitude',[year_nr,transect_nr,0],[1,1,-1]);
 x    = xRSP(~isnan(z));
 z    =    z(~isnan(z));
 

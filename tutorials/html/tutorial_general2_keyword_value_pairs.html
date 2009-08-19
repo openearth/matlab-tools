@@ -11,7 +11,7 @@ To make changes, update the M-file and republish this document.
       -->
       <title>tutorial_general2_keyword_value_pairs</title>
       <meta name="generator" content="MATLAB 7.5">
-      <meta name="date" content="2009-08-17">
+      <meta name="date" content="2009-08-19">
       <meta name="m-file" content="tutorial_general2_keyword_value_pairs"><style>
 
 body {
@@ -113,16 +113,12 @@ varargin =
 
     'line_spec'    '.r'
 
- 
-lasterr =
- 
 
-	MException object with properties:
+ans =
 
-    identifier: ''
-       message: [1x383 char]
-         stack: [2x1 struct]
-         cause: {}
+Error using ==&gt; setProperty at 131
+PropertyName "line_spec" is not valid
+
 </pre><pre class="codeinput"><span class="comment">%this will only work if we include it in the function first</span>
 varargin = {<span class="string">'title_text'</span>,<span class="string">'Title text included as keyword-value pair'</span>}
 

@@ -11,7 +11,7 @@ To make changes, update the M-file and republish this document.
       -->
       <title>JarKus MKL calculations</title>
       <meta name="generator" content="MATLAB 7.5">
-      <meta name="date" content="2009-08-17">
+      <meta name="date" content="2009-08-19">
       <meta name="m-file" content="tutorial_jarkus3_calculate_MKL"><style>
 
 body {
@@ -89,9 +89,9 @@ transect_nr = find(id==6001200)-1;
 year        = nc_varget(url,<span class="string">'time'</span>);
 year_nr     = find(year == 1969)-1;
 xRSP        = nc_varget(url,<span class="string">'cross_shore'</span>);
-z           = nc_varget(url,<span class="string">'altitude'</span>,[year_nr,transect_nr,1],[1,1,-1]);
-x    = xRSP(~isnan(z));
-z    =    z(~isnan(z));
+z           = nc_varget(url,<span class="string">'altitude'</span>,[year_nr,transect_nr,0],[1,1,-1]);
+x           = xRSP(~isnan(z));
+z           =    z(~isnan(z));
 </pre><p>As we want to calculate the MKL position, we need information on the mean high and low water levels.</p><pre class="codeinput">MHW = nc_varget(url,<span class="string">'mean_high_water'</span>,transect_nr,1)
 MLW = nc_varget(url, <span class="string">'mean_low_water'</span>,transect_nr,1)
 </pre><pre class="codeoutput">
@@ -129,7 +129,7 @@ xMKL = jarkus_getMKL(x,z,UpperBoundary,LowerBoundary,<span class="string">'plot'
 </pre><pre class="codeoutput">
 xMKL =
 
-  189.5355
+  194.5355
 
 </pre><img vspace="5" hspace="5" src="tutorial_jarkus3_calculate_MKL_01.png"> <p class="footer"><br>
             Published with MATLAB&reg; 7.5<br></p>
@@ -149,9 +149,9 @@ transect_nr = find(id==6001200)-1;
 year        = nc_varget(url,'time');
 year_nr     = find(year == 1969)-1;
 xRSP        = nc_varget(url,'cross_shore');
-z           = nc_varget(url,'altitude',[year_nr,transect_nr,1],[1,1,-1]);
-x    = xRSP(~isnan(z));
-z    =    z(~isnan(z));
+z           = nc_varget(url,'altitude',[year_nr,transect_nr,0],[1,1,-1]);
+x           = xRSP(~isnan(z));
+z           =    z(~isnan(z));
 
 %%
 % As we want to calculate the MKL position, we need information on the mean
