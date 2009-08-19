@@ -96,6 +96,7 @@ facecolor = nan;
 edgealpha = 1;
 facealpha = 1;
 alphadata = 1;
+alphadatamapping = 'scaled';
 
 %% Handles input and directly plot cases where
 %% x and y are NOT specified
@@ -126,6 +127,9 @@ for i=1:length(optvals),
                 nargin02 = nargin02-2;                
             case 'edgecolor',
                 edgecolor = optvals{i+1};
+                nargin02 = nargin02-2;                
+            case 'alphadatamapping',
+                alphadatamapping = optvals{i+1};
                 nargin02 = nargin02-2;                
         end
         
@@ -309,6 +313,7 @@ set(P,'edgecolor',edgecolor);
 set(P,'facecolor',facecolor);
 set(P,'edgealpha',edgealpha);
 set(P,'facealpha',facealpha);
+set(P,'alphadatamapping',alphadatamapping);
 
 if nargout==1
     varargout = {P};
