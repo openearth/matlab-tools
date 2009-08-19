@@ -247,8 +247,6 @@ if ~IterationBoundariesConsistent
     xp3 = unique([0; dxprb; max(xparab)]); %min(xparab):min(abs(dxprb))/2:max(xparab);
     % get corresponding y of parabolic profile
     [dum zp3] = ParabolicProfileMain(WL_t,Hsig_t, Tp_t, w, 0, xp3);
-%     [dum zp3] = getParabolicProfile(Hsig_t, Tp_t, w, 0, xp3);
-%     TODO('Test new formulation');
     
     % check for crossings between initial and parabolic profile
     [xcr zcr] = findCrossings(xInitial,zInitial,xp3+x0max,WL_t-zp3, 'keeporiginalgrid');
