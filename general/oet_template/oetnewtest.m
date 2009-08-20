@@ -79,7 +79,7 @@ OPT = getlocalsettings;
 
 OPT.h1line      = 'One line description goes here';
 OPT.description = 'More detailed description of the test goes here.';
-OPT.publishdescription = 'Publishable code that describes the test.';
+OPT.publishdescription = '% Publishable code that describes the test.';
 OPT.testname    = 'Name of the test goes here';
 OPT.seeAlso     = '';
 OPT.testcode    = '';
@@ -173,7 +173,10 @@ if iscell(OPT.description)
     OPT.description(end)=[];
 end
 str = strrep(str, '$publishdescription', publishdescription);
-str = strrep(str, '$seeAlso', sprintf('%s ',OPT.seeAlso{:}));
+if iscell(OPT.seeAlso)
+    OPT.seeAlso = sprintf('%s ',OPT.seeAlso{:});
+end
+str = strrep(str, '$seeAlso', OPT.seeAlso);
 [fpath fname] = fileparts(fullfile(cd, FunctionName));
 str = strrep(str, '$filename', fname);
 str = strrep(str, '$FILENAME', upper(fname));
