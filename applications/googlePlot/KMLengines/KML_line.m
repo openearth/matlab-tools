@@ -67,10 +67,11 @@ function [output] = KML_line(lat,lon,z,varargin)
 
 OPT.styleName  = [];
 OPT.visibility = 1;
-OPT.extrude    = 0;
+OPT.extrude    = [];
 OPT.timeIn     = [];
 OPT.timeOut    = [];
-OPT.name       = '';
+OPT.tessellate  = [];
+OPT.name       = 'line';
 
 OPT = setProperty(OPT,varargin{:});
 
@@ -90,6 +91,13 @@ if  OPT.extrude
 else
     extrude = '';
 end
+%% preprocess tessellate
+if  OPT.tessellate
+    tessellate = '<tessellate>1</tessellate>\n';
+else
+    tessellate = '';
+end
+
 %% preproces timespan
 if  ~isempty(OPT.timeIn)
     if ~isempty(OPT.timeOut)
@@ -115,10 +123,7 @@ if strcmpi(z,'clampToGround')
         '<altitudeMode>clampToGround</altitudeMode>\n']); %#ok<NBRAK>
     z = zeros(size(lon));
 else
-    altitudeMode = sprintf([...
-        '%s'...extrude
-        '<altitudeMode>absolute</altitudeMode>\n'],...
-        extrude);
+    altitudeMode =  '<altitudeMode>absolute</altitudeMode>\n';
 end
 
 %% put all coordinates in one vector and split vector at nan's
@@ -149,14 +154,13 @@ if ~isempty(coords{ii})
         '<styleUrl>#%s</styleUrl>\n'...,OPT.styleName);
         '<LineString>\n'...
         '%s'...extrude
+        '%s'...tessellate
         '%s'...altitudeMode
         '<coordinates>\n'...
         '%s'...coordinates
         '</coordinates>\n',...
         '</LineString>\n'...
         '</Placemark>\n'],...
-        visibility,timeSpan,OPT.name,OPT.styleName,extrude,altitudeMode,coordinates)];
+        visibility,timeSpan,OPT.name,OPT.styleName,extrude,tessellate,altitudeMode,coordinates)];
 end
 end
-
-%% EOF

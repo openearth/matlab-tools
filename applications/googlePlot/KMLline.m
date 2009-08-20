@@ -126,6 +126,7 @@ OPT.timeIn      = [];
 OPT.timeOut     = [];
 OPT.visible     = true;
 OPT.extrude     = true;
+OPT.tessellate  = ~OPT.is3D;
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
 %% input check
@@ -134,10 +135,19 @@ if any((abs(lat)/90)>1)
 end
 lon = mod(lon+180, 360)-180;
 
+if size(lat,1)==1
+    lat = lat(:);
+    lon = lon(:);
+    if OPT.is3D
+        z = z(:);
+    end
+end
+
+%% fix styles
 % first check is multiple line/fill styles are defined. If not, then it's 
 % easy: there is only one style. 
 % if so, then repeat each style for size(lat,2) (that's the number of lines
-% to draw), put them all in one matrix, and the ndefine the unique
+% to draw), put them all in one matrix, and then define the unique
 % linestyles.
 if numel(OPT.lineWidth) + numel(OPT.lineColor)+numel(OPT.lineAlpha) == 5
     % one linestyle; do nothing
@@ -160,6 +170,7 @@ else
     [ignore,line_ind,OPT.line_nr] = unique([OPT.lineWidth,OPT.lineColor,OPT.lineAlpha],'rows');
 end
 
+% do the same for the fill style
 if OPT.is3D&&OPT.fill
     if numel(OPT.fillColor)+numel(OPT.fillAlpha) == 4
         % one fillstyle, do nothing
@@ -189,12 +200,11 @@ end
 if isempty(OPT.kmlName)
     [ignore OPT.kmlName] = fileparts(OPT.fileName);
 end
-%% start KML
 
+%% start KML
 OPT.fid=fopen(OPT.fileName,'w');
 
 %% HEADER
-
 OPT_header = struct(...
     'name',OPT.kmlName,...
     'open',0);
@@ -228,7 +238,6 @@ end
 fprintf(OPT.fid,output);
 
 %% generate contents
-
 % preallocate output
 output = repmat(char(1),1,1e5);
 kk = 1;
@@ -237,19 +246,21 @@ kk = 1;
 OPT_line = struct(...
     'name','',...
     'styleName',['line_style' num2str(OPT.line_nr(1))],...
+    'tessellate',OPT.tessellate,...
     'visibility',OPT.visible);
 if isempty(OPT.timeIn) , OPT_line.timeIn = [];else  OPT_line.timeIn = datestr( OPT.timeIn(1),29); end
 if isempty(OPT.timeOut),OPT_line.timeOut = [];else OPT_line.timeOut = datestr(OPT.timeOut(1),29); end
 
-% fill properties
-OPT_fill = struct(...
-    'name','',...
-    'styleName',['fill_style' num2str(OPT.fill_nr(1))],...
-    'visibility',OPT.visible,...
-    'extrude',1);
-if isempty(OPT.timeIn) , OPT_fill.timeIn = [];else  OPT_fill.timeIn = datestr( OPT.timeIn(1),29); end
-if isempty(OPT.timeOut),OPT_fill.timeOut = [];else OPT_fill.timeOut = datestr(OPT.timeOut(1),29); end
-
+if OPT.is3D&&OPT.fill
+    % fill properties
+    OPT_fill = struct(...
+        'name','',...
+        'styleName',['fill_style' num2str(OPT.fill_nr(1))],...
+        'visibility',OPT.visible,...
+        'extrude',1);
+    if isempty(OPT.timeIn) , OPT_fill.timeIn = [];else  OPT_fill.timeIn = datestr( OPT.timeIn(1),29); end
+    if isempty(OPT.timeOut),OPT_fill.timeOut = [];else OPT_fill.timeOut = datestr(OPT.timeOut(1),29); end
+end
 % loop through number of lines
 for ii=1:length(lat(1,:))
     % check if there is data to write
@@ -312,6 +323,7 @@ if strcmpi  ( OPT.fileName(end),'z')
     movefile([OPT.fileName '.zip'],OPT.fileName)
     delete  ([OPT.fileName(1:end-3) 'kml'])
 end
+
 %% openInGoogle?
 if OPT.openInGE
     system(OPT.fileName);
