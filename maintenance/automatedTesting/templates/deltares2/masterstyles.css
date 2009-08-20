@@ -57,7 +57,9 @@ h1 {
 	float			: left;
 	max-height		: 700px;
 	width			: 300px;
-	overflow		: auto;
+	overflow-x	: hidden;
+	overflow-y	: auto;
+	z-index		: 100;
 }
 
 #result_viewer {
@@ -83,6 +85,15 @@ h1 {
 	heigth		: 100%;
 }
 
+#switchoverview {
+	margin		: 0;
+	position	: relative;
+	width		: 298px;
+	height		: 30px;
+	padding		: 0;
+	text-align	: center;
+}
+
 #tabs_result {
 	max-height	: 700px;
 	overflow	: auto;
@@ -103,11 +114,13 @@ h1 {
 
 #overviewoverlay {
 	position	: absolute;
-	top			: 140px;
+	top		: 0px;
+	left		: 0px;
 	margin		: 0 auto;
 	padding		: 0;
-	width		: 1020px;
-	heigth		: 700px;
+	width		: 100%;
+	heigth		: 100%;
+	z-index		: 200;
 }
 
 #shadow {
@@ -116,6 +129,7 @@ h1 {
 	top: 180px;
 	width: 900px;
 	height: 500px;
+	z-index		: 200;
 }
 
 #overviewcontainer {
@@ -126,19 +140,5 @@ h1 {
 	height: 460px;
 	padding: 20px;
 	overflow: auto;
-}
-
-#draggable {
-	position	: absolute;
-	bottom		: -110px;
-	width		: 290px;
-	height		: 90px;
-	margin		: 0 auto;
-	padding		: 5px;
-}
-
-#mainlist {
-	list-style-type: none;
-  	margin-left: 0px;
-  	padding-left: 0px
+	z-index		: 200;
 }

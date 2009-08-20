@@ -67,6 +67,10 @@ body {
 	border-right-width: 1px;
 	}
 
+#hidelink {
+	text-align: center;
+	color: #61604C;
+}
 
 #overviewmain {
 	margin	: 0 auto;
@@ -77,12 +81,15 @@ body {
 
 <body>
 <div id="overviewmain">
+	<div id="hidelink">
+		<a href="#" id="hidetext">Hide overview</a>
+	</div>
 	<div class="headercell deltaresresult" width="40px">Result</div><div class="headercell deltaresname" width="40px">Name</div><div class="headercell deltaresdate" width="40px">Date</div><div class="headercell deltaresauthor deltareslastcell" width="40px">Last author</div>
 
 
 	<!-- ##BEGINTESTS -->
 	<div class="cell deltaresresult  deltaresicon"><img src="#ICON" height="12px"></div>
-	<div class="cell deltaresname"><a href="#" class="deltaresreference" deltaresref="#TESTHTML" detaresname="#TESTNAME">#TESTNAME</a></div>
+	<div class="cell deltaresname"><a href="#" class="deltaresreference" deltares:mtestdescriptionref ="#DESCRIPTIONHTML" deltares:mtestresultsref = "#RESULTHTML" detaresname="#TESTNAME">#TESTNAME</a></div>
 	<div class="cell deltaresdate">#TESTDATE</div>
 	<div class="cell deltaresauthor deltareslastcell"><a href="http://wiki.deltares.nl/display/~#TESTAUTHOR/Home" target="_new">#TESTAUTHOR</a></div>
 	<!-- ##ENDTESTS -->

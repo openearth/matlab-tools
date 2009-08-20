@@ -9,15 +9,11 @@
 <script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
 <script type="text/javascript" src="script/indexfunctions.js"></script>
 <script type="text/javascript">
-
-	function showhideoverview () {
-
-	}
-
 	$(document).ready(function ()
 	{
 		//draggable main window
-		$("#draggable").draggable();
+		$(".deltaresdraggable").draggable();
+		$(".deltaresdraggable").bind('dragstop', function(){$("#switchoverview").css('width',300)});
 
 		// Accordion
 		$("#accordion").accordion({ header: "h3" });
@@ -27,26 +23,26 @@
 
 		assigntree()
 
-		//Set position of draggable main window
-		var position = $("#content").position();
-		$("#draggable").css("top",15);
-		$("#draggable").css("left",position.left);
-
 		//Set position of overlay and hide
-		$("#overviewoverlay").css("left",$("#content").position().left);
 		$("#overviewoverlay").hide();
 
 		//Set overview container and shadow
-		$("#overviewcontainer").css("left",$("#content").position().left+60);
 		$("#overviewcontainer").hide();
-		$("#shadow").css("left",$("#content").position().left+60);
 		$("#shadow").hide();
 
 		$("#switchoverview").click(function () {
-		    $("p").toggle();
+		    showoverview();
 		  });
 
+		//$("#tree_panel").resizable({ handles: 'e, w' });
+		$("#result_tab").resizable({ handles: 'e, w' });
 
+
+		//Load contents
+		$("#overviewcontainer").load("overviewtable.html");
+
+		//assign links
+		$(document).ajaxStop(assignoverview);
 	});
 </script>
 </head>
@@ -61,11 +57,14 @@
 
 
 	<div id="content">
-		<div id="tree_panel">
+		<div id="tree_panel" class="deltaresdraggable" index = "1">
+			<div id="switchoverview" class="ui-widget-content ui-corner-all">
+				<a href="#" deltaresaction = showoverview(200) >Show overview</a>
+			</div>
 			<div id="accordion" deltares:mtesttype="testtree">
 			<!--##BEGINTESTS-->
-				<div>
-					<h3><a href="#" class="MtestDescription" deltares:mtestdescriptionref = "#TESTHTML"><img class="icon_image" src="#ICON" height="12"> #TESTNAME</a></h3>
+				<div id="#TESTNUMBER">
+					<h3><a href="#" class="Mtest" deltares:mtestdescriptionref = "#DESCRIPTIONHTML" deltares:mtestresultsref = "#RESULTHTML"><img class="icon_image" src="#ICON" height="12"> #TESTNAME</a></h3>
 					<div>
 						<!--##BEGINTESTCASE-->
 						<div>
@@ -80,20 +79,16 @@
 			<!--##ENDTESTS-->
 			</div>
 		</div>
-		<div id="result_viewer">
+		<div id="result_viewer" class = "deltaresdraggable">
 			<div id="result_tab">
-				<div id="tabs">
+				<div id="tabs" index = "2">
 					<ul>
 						<li><a href="#tabs_description">Description</a></li>
 						<li><a href="#tabs_result">Result</a></li>
 					</ul>
-					<div id="tabs_description">This is the place for a description of the testcase</div>
-					<div id="tabs_result">This is the place for the results.</div>
+					<div id="tabs_description">Click one of the items on the left to show a test description or testcase result.</div>
+					<div id="tabs_result">Click one of the items on the left to show a test description or testcase result.</div>
 				</div>
-			</div>
-			<div id="result_description" class="ui-widget-content ui-corner-all">
-				<h1>Test results</h1>
-				Click one of the items on the left to show a test description or testcase result.
 			</div>
 		</div>
 		<div id="overlaycontainer">
@@ -104,14 +99,10 @@
 			<div id="overviewcontainer" class="ui-widget ui-widget-content ui-corner-all">
 		</div>
 	</div>
+<!--
+<div class="ui-widget-content ui-corner-all deltaresdraggable">
 
-<div id="draggable" class="ui-widget-content ui-corner-all">
-	<button id="switchoverview">
-		<p deltaresaction = showoverview(200) >Show overview</p>
-		<p deltaresaction = hideoverview(200) style="display: none">Hide overview</p>
-	</button>
 
-	<!--
 	<lu id="mainlist" class="ui-helper-clearfix ui-widget-header ui-corner-all">
 		<li class="ui-state-default ui-corner-all">Test overview</li>
 		<li class="ui-state-default ui-corner-all">All tests</li>
@@ -119,9 +110,9 @@
 		<li class="ui-state-default ui-corner-all">Unsuccessfull tests</li>
 		<li class="ui-state-default ui-corner-all">Tests without a testresult</li>
 	</lu>
-	-->
-</div>
 
+</div>
+-->
 
 
 
