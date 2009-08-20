@@ -1,13 +1,7 @@
-%% MTESTCASE_TEST  tests the functionalities of the mtestcase object
+function testresult = mtestcase_test()
+% MTESTCASE_TEST  tests the functionalities of the mtestcase object
 %
-% TestName: mtestcase functionality test   
-%  
-% This test looks at the functionalities of an mtestcase object. Since this test was written first
-% all tests are compacted in one testcase. This is of course not the most easy way te test, whereas
-% in the overview of the test results we can only see one result of a testcase. The test setup of
-% mtest_test is therefore recommended. However, we need this test to check the functionalities of
-% the mtestcase object. More information about this test is given in the testcase descripton.
-%
+% This test involes checks of the methods assigned to the mtestcase object.
 %
 %   See also mtestcase mtest mtestengine
 
@@ -16,7 +10,7 @@
 %   2009 Deltares
 %       Pieter van Geer
 %
-%       pieter.vangeer@deltares.nl	
+%       pieter.vangeer@deltares.nl
 %
 %       Rotterdamseweg 185
 %       2629 HD Delft
@@ -25,9 +19,9 @@
 %
 %   --------------------------------------------------------------------
 % This test is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -41,13 +35,36 @@
 % $HeadURL$
 % $Keywords: $
 
-
-%% #Case1 Description (IncludeCode = true & EvaluateCode = true & CaseName = all functionalities)
+%% $Description (Name = mtest functionality test)
 % This testcase tests the functionality of the mtestcase object. This is done according to the
 % mtestcase methods. Since an mtestcase can only contain one testcase, we try to test the basic
 % functionality of the object in one testcase to avoid multiple creation of the object in tests.
 % (No real reason, but ok... the code is there already..).
-%% mtestcase (constructor)
+
+%% $RunCode
+try
+    % first create general variable. For this to work both mtest and mtestcase constructors have to
+    % work. If they do not work all tests fail anyway.
+    
+    t = mtest('mte_dummy_test');
+    mtc = t.testcases(1);
+catch me
+    mtc = [];
+end
+
+tr(1) = Constructor_Method;
+tr(2) = publishDescription_Method(mtc);
+tr(3) = run_Method(mtc);
+tr(4) = publishResults_Method(mtc);
+tr(5) = runAndPublish_Method(mtc);
+tr(6) = cleanUp_Method(mtc);
+
+testresult = all(tr);
+
+end
+
+function constructortest = Constructor_Method()
+%% $Description (Name = all functionalities & IncludeCode = true & EvaluateCode = true)
 % This method creates an object. The testcase object created in this testcase comes from
 % _dummy_test.m_. This is a dummy test created to test the automated test objects. Since
 % mtestcase objects are there to support the mtest objects, creation of an mtestcase
@@ -70,32 +87,9 @@ publishcode = {...
 % * publishcode
 %
 % The rest of the properties is not specified and therefore taken default.
-%% publishDescription
-% With the created object it is possible to print the description. This should be equal
-% to the line mentioned above. The result dir (property resdir) is set to the current
-% directory. While running the test we include code to verify if the file is actually
-% there. After verification the file is deleted.
 
-resdir = cd;
-outfilename = 'dummytest.html';
-%% runTest
-% Third step of this testcase is run the dummy test. This should not take long whereas
-% the runcode is very short.
-%% publishResults
-% As with publishDescription this testcase also includes a test of the publishResults
-% functionality. This is done the same way. First we run the function, then we check if
-% the html output file exists and than delete the file.
-%% runAndPublish
-% This function does the same as the last three functions performed successively. After
-% running this function we check the existance of both the description html and the
-% results html and delete both files.
-%% cleanUp
-% The cleanUp command seems to change nothing to the object itself, but reduces the
-% amount of memory that is needed to store the object. After cleaning up we check
-% the hidden workspace property to see if the function performed correctly.
-%% #Case1 RunTest
+%% $RunCode
 % Perform the first part of the test (creating an object).
-testresult = true;
 try
     constructortest = true;
     mtc = mtestcase(1,...
@@ -103,107 +97,13 @@ try
         'runcode',runcode,...
         'publishcode',publishcode);
     if ~strcmp(class(mtc),'mtestcase') || isempty(mtc)
-        testresult = false;
         constructortest = false;
     end
-catch err
-    testresult = false;
+catch err %#ok<*NASGU>
+    constructortest = false;
 end
 
-% Now check the publishDescription function
-try
-    publishdescrtest = false;
-    mtc.publishDescription(...
-        'resdir',resdir,...
-        'filename',outfilename);
-    if exist(fullfile(cd,outfilename),'file')
-        delete(fullfile(cd,outfilename));
-        testresult = testresult;
-        publishdescrtest = true;
-    end
-catch err
-    testresult = false;
-end
-
-
-% Now run the test
-try
-    mtc.runTest;
-    testresult = mtc.testresult && testresult;
-    runtest = mtc.testresult;
-catch err
-    testresult = false;
-    runtest = false;
-end
-
-% Now publish the dummy result
-try
-    publishrestest = false;
-    mtc.publishResults(...
-        'resdir',resdir,...
-        'filename',outfilename);
-    if exist(fullfile(cd,outfilename),'file')
-        delete(fullfile(cd,outfilename));
-        testresult =  testresult;
-        publishrestest = true;
-    end
-catch err
-    testresult = false;
-    publishrestest = false;
-end
-
-% Now runAndPublish the object
-try
-    runandpublishtest = false;
-    mtc.runAndPublish(...
-        'resdir',resdir,...
-        'outputfile',outfilename);
-    [pt fname] = fileparts(outfilename);
-    fls = dir(fullfile(resdir,[fname '*']));
-    if length(fls)==2 && testresult
-        testresult = true;
-        runandpublishtest = true;
-    end
-    for ifls = 1:length(fls)
-        delete(fullfile(resdir,[fls(ifls).name]))
-    end
-catch err
-    runandpublishtest = false;
-    testresult = false;
-end
-
-% Now cleanUp the hidden workspace
-try
-    cleanuptest = false;
-    mtc.cleanUp;
-    if isempty(mtc.testworkspace) 
-        testresult = testresult;
-        cleanuptest = true;
-    end
-catch err
-    testresult = false;
-    cleanuptest = false;
-    return
-end
-%% #Case1 TestResults (IncludeCode = false & EvaluateCode = true)
-% Since we performed all tests on the object in one testcase, the testresult variable only gives an
-% overview of the complete test result. We also created a boolean for each individual test to
-% indicate whether the tests were ok. The result are summed up below:
-%% Overall result
-% The overall test result was:
-clr = 'r';
-txt = 'negative';
-if testresult
-    clr = 'g';
-    txt = 'positive';
-end
-h = figure('Units','centimeter','Position',[10 10 0.5 0.5],'Color',clr,'MenuBar','none','Toolbar','none');
-ha = axes('Parent',h,'Units','normalized','Position',[0 0 1 1],'Color',clr);
-axis(ha,'off');
-text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',clr);
-snapnow;
-close(h);
-%% Constructor test
+%% $PublishResults(IncludeCode = false & EvaluateCode = true)
 % The object was constructed:
 clr = 'r';
 txt = 'negative';
@@ -217,7 +117,35 @@ axis(ha,'off');
 text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',clr);
 snapnow;
 close(h);
-%% publishDescription
+end
+
+function publishdescrtest = publishDescription_Method(mtc)
+%% $Description (Name = publishDescription method & IncludeCode = true & EvaluateCode = true)
+% With the created object it is possible to print the description. This should be equal
+% to the line mentioned above. The result dir (property resdir) is set to the current
+% directory. While running the test we include code to verify if the file is actually
+% there. After verification the file is deleted.
+
+resdir = tempname;
+outfilename = 'dummytest.html';
+%% $RunCode
+% Now check the publishDescription function
+try
+    mkdir(resdir);
+    publishdescrtest = false;
+    mtc.publishDescription(...
+        'resdir',resdir,...
+        'filename',outfilename);
+    if exist(fullfile(resdir,outfilename),'file')
+        rmdir(resdir,'s');
+        publishdescrtest = true;
+    end
+catch me 
+    try
+        rmdir(resdir,'s');
+    end
+end
+%% $PublishResults(IncludeCode = false & EvaluateCode = true)
 % The description was published:
 clr = 'r';
 txt = 'unseccessful';
@@ -231,7 +159,21 @@ axis(ha,'off');
 text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',clr);
 snapnow;
 close(h);
-%% runTest
+end
+
+function runtest = run_Method(mtc)
+%% $Description (Name = runTest method & IncludeCode = true & EvaluateCode = true)
+% Third step of this testcase is run the dummy test. This should not take long whereas
+% the runcode is very short.
+%% $RunCode
+% Now run the test
+try
+    mtc.run;
+    runtest = mtc.testresult;
+catch me
+    runtest = false;
+end
+%% $PublishResults(IncludeCode = false & EvaluateCode = true)
 % The test was run:
 clr = 'r';
 txt = 'unseccessful';
@@ -245,7 +187,28 @@ axis(ha,'off');
 text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',clr);
 snapnow;
 close(h);
-%% publishResults
+end
+
+function publishrestest = publishResults_Method(mtc)
+%% $Description (Name = publishResults method & IncludeCode = true & EvaluateCode = true)
+% As with publishDescription this testcase also includes a test of the publishResults
+% functionality. This is done the same way. First we run the function, then we check if
+% the html output file exists and than delete the file.
+%% $RunCode
+% Now publish the dummy result
+try
+    resdir = tempname;
+    publishrestest = false;
+    mkdir(resdir);
+    mtc.publishResults('resdir',resdir);
+    if exist(fullfile(resdir,mtc.publishoutputfile),'file')
+        publishrestest = true;
+    end
+    rmdir(resdir,'s');
+catch err
+    publishrestest = false;
+end
+%% $PublishResults(IncludeCode = false & EvaluateCode = true)
 % The results were published:
 clr = 'r';
 txt = 'unseccessful';
@@ -259,7 +222,27 @@ axis(ha,'off');
 text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',clr);
 snapnow;
 close(h);
-%% runAndPublish
+end
+
+function runandpublishtest = runAndPublish_Method(mtc)
+%% $Description (Name = runAndPublish method & IncludeCode = true & EvaluateCode = true)
+% This function does the same as the last three functions performed successively. After
+% running this function we check the existance of both the description html and the
+% results html and delete both files.
+%% $RunCode
+% Now runAndPublish the object
+try %#ok<*TRYNC>
+    resdir = tempname;
+    mkdir(resdir);
+    runandpublishtest = false;
+    mtc.runAndPublish('resdir',resdir);
+    fls = dir(fullfile(resdir,'*.html'));
+    if length(fls)==2
+        runandpublishtest = true;
+    end
+    rmdir(resdir,'s');
+end
+%% $PublishResults(IncludeCode = false & EvaluateCode = true)
 % runAndPublished was performed:
 clr = 'r';
 txt = 'unseccessful';
@@ -273,7 +256,24 @@ axis(ha,'off');
 text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',clr);
 snapnow;
 close(h);
-%% cleanUp
+end
+
+function cleanuptest = cleanUp_Method(mtc)
+%% $Description (Name = cleanUp method & IncludeCode = true & EvaluateCode = true)
+% The cleanUp command seems to change nothing to the object itself, but reduces the
+% amount of memory that is needed to store the object. After cleaning up we check
+% the hidden workspace property to see if the function performed correctly.
+%% $RunCode
+% Now cleanUp the hidden workspace
+try
+    cleanuptest = false;
+    mtc.cleanUp;
+    cleanuptest = isempty(mtc.runworkspace);
+catch err
+    cleanuptest = false;
+    return
+end
+%% $PublishResults(IncludeCode = false & EvaluateCode = true)
 % after performing the cleanUp function, the object was:
 % runAndPublished was performed:
 clr = 'r';
@@ -288,3 +288,4 @@ axis(ha,'off');
 text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',clr);
 snapnow;
 close(h);
+end

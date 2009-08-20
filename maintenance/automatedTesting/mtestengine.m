@@ -238,7 +238,7 @@ classdef mtestengine < handle
             %% Run each individual test and store results.
             for itest = 1:length(obj.tests)
                 %% publish description of test
-                obj.tests(itest).runTest;
+                obj.tests(itest).run;
             end
 
             %% return to the previous searchpath settings
@@ -260,9 +260,14 @@ classdef mtestengine < handle
             %   runAndPublish(obj);
             %   obj.runAndPublish;
             %   outobj = obj.runAndPublish
+            %   runAndPublish(obj,...,'property','value');
             %
             %   Input:
             %   obj     -   an mtestengine object.
+            %
+            %   property value pairs:
+            %   maxwidth    - Maximum widht of the published figures (default = 600 px)
+            %   maxheight   - Maximum height of the published figures (default = 600 px)
             %
             %   Output:
             %   outobj  -   The same mtestengine object, but with mtest objects for all tests in the
@@ -276,12 +281,21 @@ classdef mtestengine < handle
 
             %% initiate output
             varargout = {};
-            
             %% cataloguq tests if not done already
             if ~obj.testscatalogued
                 obj.catalogueTests;
             end
-
+            %% subtract props
+            maxwidth = [];
+            id = find(strcmp(varargin,'maxwidth'));
+            if ~isempty(id)
+                maxwidth = varargin{id+1};
+            end
+            maxheight = [];
+            id = find(strcmp(varargin,'maxheight'));
+            if ~isempty(id)
+                maxheight = varargin{id+1};
+            end
             %% clear and prepare target dir
             if ~isdir(obj.targetdir)
                 mkdir(obj.targetdir);
@@ -308,10 +322,8 @@ classdef mtestengine < handle
                         otherwise
                             % also do nothing
                     end
-                    
                 end
             end
-
             %% copy template files and dirs
             templatedir = fullfile(fileparts(mfilename('fullpath')),'templates');
             if ~isdir(templatedir)
@@ -339,15 +351,12 @@ classdef mtestengine < handle
                 error('MtestEngine:WrongTemplate','There is no template file (*.tpl) in the template directory');
             end
 
-            % copy template files to tempdir
-            if isdir(fullfile(tempdir,'mtestengine_template'))
-                rmdir(fullfile(tempdir,'mtestengine_template'),'s');
-            end
-            
-            copyfile(fullfile(templdir,'*.*'),fullfile(tempdir,'mtestengine_template'),'f');
+            temptemplatedir = tempname;
+            mkdir(temptemplatedir);
+            copyfile(fullfile(templdir,'*.*'),temptemplatedir,'f');
 
             % remove all svn dirs from the template
-            DirsInTemplateDir = strread(genpath(fullfile(tempdir,'mtestengine_template')),'%s',-1,'delimiter',';');
+            DirsInTemplateDir = strread(genpath(temptemplatedir),'%s',-1,'delimiter',';');
             SvnDirsInTemplateDir = DirsInTemplateDir(~cellfun(@isempty,strfind(DirsInTemplateDir,'.svn')));
 
             % remove all svn dirs from the template
@@ -358,20 +367,19 @@ classdef mtestengine < handle
             end
 
             % copy template to target dir
-            copyfile(fullfile(tempdir,'mtestengine_template','*.*'),obj.targetdir,'f');
-
+            copyfile(fullfile(temptemplatedir,'*.*'),obj.targetdir,'f');
+            rmdir(temptemplatedir,'s');
+            
             publishstylesheet = dir(fullfile(templdir,'*.xsl'));
             if ~isempty(publishstylesheet)
                 publishstylesheet = fullfile(templdir,publishstylesheet.name);
             else
                 publishstylesheet = '';
             end
-
             %% Make shure the current dir is added to the search path
             pt = path;
             addpath(cd);
-
-            %% Run and Publish individual tests testscases
+            %% Run and Publish individual tests tests
             if ~isdir(fullfile(obj.targetdir,'html'))
                 mkdir(fullfile(obj.targetdir,'html'));
             end
@@ -380,36 +388,39 @@ classdef mtestengine < handle
                 disp('## start running tests ##');
             end
             for itests = 1:length(obj.tests)
+                %% Display progress
                 if obj.verbose
                     disp([' ' num2str(itests) '. ' obj.tests(itests).testname]);
                 end
+                %% set options
+                if ~isempty(maxwidth)
+                    obj.tests(itests).maxwidth = maxwidth;
+                end
+                if ~isempty(maxheight)
+                    obj.tests(itests).maxheight = maxheight;
+                end
+                if ~isempty(publishstylesheet)
+                    obj.tests(itests).stylesheet = publishstylesheet;
+                end
+                %% Run and publish
                 if isempty(publishstylesheet)
                     obj.tests(itests).runAndPublish(...
-                        'resdir',fullfile(obj.targetdir,'html'));
-                    obj.tests(itests).publishTestDescription(...
                         'resdir',fullfile(obj.targetdir,'html'));
                 else
                     obj.tests(itests).runAndPublish(...
                         'resdir',fullfile(obj.targetdir,'html'),...
                         'stylesheet',publishstylesheet);
-                    obj.tests(itests).publishTestDescription(...
-                        'resdir',fullfile(obj.targetdir,'html'),...
-                        'stylesheet',publishstylesheet);
                 end
             end
-
             %% return the previous searchpath
             path(pt);
-
             %% loop all tpl files and fill keywords
-
             for itpl = 1:size(tplfiles,1)
                 tplfilename = fullfile(tplfiles{itpl,1},tplfiles{itpl,2});
 
                 obj.fillTemplate(tplfilename);
 
             end
-
             %% run any code that is in the targetdir
             mfiles = mtestengine.listfiles(templdir,'m',obj.recursive);
             mfiles(:,1) = cellfun(@fullfile,...
@@ -421,14 +432,12 @@ classdef mtestengine < handle
                     run(fullfile(mfiles{ifiles,1},mfiles{ifiles,2}));
                 end
             end
-            
             %% try opening index.html or home.html
             if exist(fullfile(obj.targetdir,'index.html'),'file')
                 winopen(fullfile(obj.targetdir,'index.html'));
             elseif exist(fullfile(obj.targetdir,'home.html'),'file')
                 winopen(fullfile(obj.targetdir,'home.html'));
             end
-            
             %% Set output
             if nargout == 1
                 varargout = {obj};
@@ -494,8 +503,12 @@ classdef mtestengine < handle
             %       #TESTNUMBER         -   Is replaced by the location (number) of the test within
             %                               the mtestengine object. This keyword can be used to
             %                               reference a certain object or location in the file.
-            %       #TESTHTML           -   This keyword is replaced by the location of the html
+            %       #DESCRIPTIONHTML    -   This keyword is replaced by the location of the html
             %                               file of the test description that was created with the
+            %                               publish function. The location is relative to the
+            %                               targetdir.
+            %       #RESULTHTML         -   This keyword is replaced by the location of the html
+            %                               file of the published results that was created with the
             %                               publish function. The location is relative to the
             %                               targetdir.
             %       #TESTNAME           -   This keyword is replaced by the name of the test.
@@ -682,18 +695,19 @@ classdef mtestengine < handle
             testid = find(testid);
             for itest = 1:length(testid)
                 %% create teststring and replace keywords
-                % #TESTNUMER
+                % #TESTNUMBER
                 % #ICON
                 % #TESTNAME
-                % #TESTHTML
-                % #TESTDATE           -   TODO
-                % #TESTAUTHOR         -   TODO
-                % #TESTTIME           -   TODO
+                % #DESCRIPTIONHTML
+                % #RESULTHTML
+                % #TESTDATE           
+                % #TESTAUTHOR       
+                % #TESTTIME         
             
                 id = testid(itest);
                 
                 tempstr = teststr;
-                % #TESTNUMER
+                % #TESTNUMBER
                 tempstr = strrep(tempstr,'#TESTNUMBER',num2str(id));
                 
                 % #ICON
@@ -712,9 +726,16 @@ classdef mtestengine < handle
                     tempstr = strrep(tempstr,'#TESTNAME',obj.tests(id).filename);
                 end
                 
-                % #TESTHTML
-                tempstr = strrep(tempstr,'#TESTHTML',strrep(fullfile('html',obj.tests(id).descriptionoutputfile),filesep,'/'));
+                % #TESTHTML (backwards compatibility)
+                % #DESCRIPTIONHTML
+                [dum fn ext] = fileparts(obj.tests(id).descriptionoutputfile);
+                tempstr = strrep(tempstr,'#TESTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                tempstr = strrep(tempstr,'#DESCRIPTIONHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
 
+                % #RESULTHTML
+                [dum fn ext] = fileparts(obj.tests(id).publishoutputfile);
+                tempstr = strrep(tempstr,'#RESULTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                
                 % #TESTDATE
                 if isempty(obj.tests(id).date)
                     obj.tests(id).date = NaN;
@@ -771,10 +792,12 @@ classdef mtestengine < handle
                         tempstr2 = strrep(tempstr2,'#TESTCASENAME',tcname);
                         
                         % #DESCRIPTIONHTML
-                        tempstr2 = strrep(tempstr2,'#DESCRIPTIONHTML',strrep(fullfile('html',obj.tests(id).testcases(icase).descriptionoutputfile),filesep,'/'));
+                        [dum fn ext] = fileparts(obj.tests(id).testcases(icase).descriptionoutputfile);
+                        tempstr2 = strrep(tempstr2,'#DESCRIPTIONHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
                         
                         % #RESULTHTML
-                        tempstr2 = strrep(tempstr2,'#RESULTHTML',strrep(fullfile('html',obj.tests(id).testcases(icase).publishoutputfile),filesep,'/'));
+                        [dum fn ext] = fileparts(obj.tests(id).testcases(icase).publishoutputfile);
+                        tempstr2 = strrep(tempstr2,'#RESULTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
                         
                         %% concatenate testcase strings
                         finalcasesstr = cat(2,finalcasesstr,tempstr2);

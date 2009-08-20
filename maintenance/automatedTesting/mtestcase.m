@@ -73,6 +73,9 @@ classdef mtestcase < handle
         time = [];                          % time needed for the testcase
     end
     properties (SetAccess = protected)
+        functionheader = '';                % Header of the testcase function (first line)
+        functionname = '';                  % Name of the testcase function
+        functionoutputname = '';            % Name of 1x1 output boolean
         description = {};                   % Code that was included in the testfile description cell
     end
     properties
@@ -81,27 +84,47 @@ classdef mtestcase < handle
         descriptionevaluatecode = true;     % Attribute EvaluateCode for publishing the description cell
     end
     properties (SetAccess = protected)
-        runcode = [];                       % Code that was included in the testfile RunTest cell
-        publishcode = [];                   % Code that was included in the testfile TestResults cell
+        runcode = {};                       % Code that was included in the testfile RunTest cell
+        publishcode = {};                   % Code that was included in the testfile TestResults cell
     end
     properties
         publishoutputfile = {};             % Name of the published output file of the TestResults cell
         publishincludecode = false;         % Attribute IncludeCode for publishing the TestResults cell
         publishevaluatecode = true;         % Attribute EvaluateCode for publishing the TestResults cell
+        
+        resdir = '';                        % Location where files are published
     end
     properties %(SetAccess = protected)
         testresult = false;                 % Boolean indicating whether the test was run successfully
     end
     properties (Hidden = true)
-        tempdir = tempdir;                  % Temporary directory for publishing output files.
-        testworkspace = [];                 % Variable that can be used as workspace to pass variables
+        initialized = false;
         testperformed = false;              % Variable to indicate whether the test was executed.
-        descriptionrun = false;             % Variable to inficate whether the description code has been executed
+
+        tempdir = tempdir;                  % Temporary directory for publishing output files.
+        tmpobjname = [];
+        initworkspace = [];                 % Variable that can be used as workspace to pass input variables
+        runworkspace = [];                  % Variable that can be used as workspace to pass variables after running (for publishing)
+        
+        eventlisteners = [];
+
+        maxwidth  = 600;                    % Maximum width of the published figures (in pixels). By default the maximum width is set to 600 pixels.
+        maxheight = 600;                    % Maximum height of the published figures (in pixels). By default the maximum height is set to 600 pixels.
+        stylesheet = '';                    % Style sheet that is used for publishing (see publish documentation for more information).
+        testname = '';
+        outputfile = '';
+        
+        % old props that should not be used
+        inputneeded = false;                % Boolean determining if there is any code in the baseworkspace that must be included.
     end
     
     %% events
     events
+        NeedToInitialize
+        CaseInitialized
+        CaseRun
         TestPerformed
+        PublishCase
     end
     
     %% Methods
@@ -219,7 +242,7 @@ classdef mtestcase < handle
             
             %% Set other properties that are defined in the input
             if ~isempty(varargin)
-                propstoset = {'descriptionoutputfile','descriptionincludecode','descriptionevaluatecode','publishoutputfile','publishincludecode','publishevaluatecode'};
+                propstoset = {'functionoutputname','functionname','initializationcode','functionheader','baseworkspacecode','inputneeded','descriptionoutputfile','descriptionincludecode','descriptionevaluatecode','publishoutputfile','publishincludecode','publishevaluatecode'};
                 propsid = 1:2:length(varargin);
                 memid = ismember(varargin(propsid),propstoset);
                 for im = 1:length(memid)
@@ -231,6 +254,9 @@ classdef mtestcase < handle
                     end
                 end
             end
+            obj.eventlisteners{1} = event.listener(obj,'CaseInitialized',@obj.storeInitVars);
+            obj.eventlisteners{2} = event.listener(obj,'CaseRun',@obj.storeRunVars);
+            obj.eventlisteners{3} = event.listener(obj,'PublishCase',@obj.fullPublish);
         end
         function publishDescription(obj,varargin)
             %publishDescripton  Creates an html file from the description code with publish
@@ -275,11 +301,23 @@ classdef mtestcase < handle
             %
             %   See also mtestcase mtestcase.mtestcase mtestcase.publishResults mtestcase.runTest mtestengine mtest
             
+            %% Check whether the testcase has been initialized
+            if ~obj.initialized
+                notify(obj,'NeedToInitialize'); % mtest object listens and prepares the tests
+            end
+            
+            if ~obj.initialized
+                warning('TestCase is run solo');
+                obj.run;
+            end
+            
             %% subtract result dir from input
-            resdir = cd;
+            if isempty(obj.resdir)
+                obj.resdir = cd;
+            end
             id = find(strcmp(varargin,'resdir'));
             if ~isempty(id)
-                resdir = varargin{id+1};
+                obj.resdir = varargin{id+1};
                 varargin(id:id+1) = [];
             end
             
@@ -289,7 +327,7 @@ classdef mtestcase < handle
                 [pt nm] = fileparts(varargin{id+1});
                 obj.descriptionoutputfile = [nm '.html'];
                 if ~isempty(pt)
-                    resdir = pt;
+                    obj.resdir = pt;
                 end
                 varargin(id:id+1) = [];
             end
@@ -308,48 +346,52 @@ classdef mtestcase < handle
             end
             
             % Maxwidth
-            maxwidth = 600;
             if any(strcmpi(varargin,'maxwidth'))
                 id = find(strcmpi(varargin,'maxwidth'));
-                maxwidth = varargin{id+1};
+                obj.maxwidth = varargin{id+1};
             end
             
             % maxheight
-            maxheight = 600;
             if any(strcmpi(varargin,'maxheight'))
                 id = find(strcmpi(varargin,'maxheight'));
-                maxheight = varargin{id+1};
+                obj.maxheight = varargin{id+1};
             end
             
             % stylesheet
-            stylesheet = '';
             if any(strcmpi(varargin,'stylesheet'))
                 id = find(strcmpi(varargin,'stylesheet'));
-                stylesheet = varargin{id+1};
+                obj.stylesheet = varargin{id+1};
             end
             
             %% createoutputname
             if isempty(obj.descriptionoutputfile)
                 obj.descriptionoutputfile = ['UnnamedTest' '_description_case_' num2str(obj.casenumber) '.html'];
             end
-            outputname = fullfile(resdir,obj.descriptionoutputfile);
+            [pt fn] = fileparts(obj.descriptionoutputfile);
+            if isempty(pt)
+                pt = obj.resdir;
+            end
+            outputname = fullfile(pt,[fn '.html']);
             
             %% retrieve testname from input
             [dum outname]= fileparts(outputname); 
+            
             if any(strcmpi(varargin,'testname'))
                 id = find(strcmpi(varargin,'testname'));
-                testname = varargin{id+1};
+                obj.testname = varargin{id+1};
             else
-                testname = outname;
+                if isempty(obj.testname)
+                    obj.testname = outname;
+                end
             end
             
             %% set publish options
             opt = struct(...
                 'format','html',...
-                'stylesheet',stylesheet,...
-                'outputDir',resdir,...
-                'maxHeight',maxheight,...
-                'maxWidth',maxwidth,...
+                'stylesheet',obj.stylesheet,...
+                'outputDir',fileparts(outputname),...
+                'maxHeight',obj.maxheight,...
+                'maxWidth',obj.maxwidth,...
                 'showCode',obj.descriptionincludecode,...
                 'useNewFigure',false,... % Maybe add this to the input of properties?
                 'evalCode',obj.descriptionevaluatecode);
@@ -361,11 +403,11 @@ classdef mtestcase < handle
             if ~isempty(obj.casename)
                 descrstr = cat(1,{['%% Test description of testcase: "' obj.casename '"']},obj.description);
             else
-                descrstr = cat(1,{['%% Test description of "' testname '" (Case' num2str(obj.casenumber) ')']},obj.description);
+                descrstr = cat(1,{['%% Test description of "' obj.testname '" (Case' num2str(obj.casenumber) ')']},obj.description);
             end
             mtestcase.publishCodeString(outputname,...
                 [],...
-                obj.testworkspace,...
+                obj.initworkspace,...
                 descrstr,...
                 opt);
             
@@ -377,8 +419,8 @@ classdef mtestcase < handle
             end
             
         end
-        function runTest(obj,varargin)
-            %runTest  Runs the code included in the RunTest cell of the testcase
+        function run(obj,varargin)
+            %run  Runs the code included in the RunTest cell of the testcase
             %
             %   This function runs the code specified in the RunTest cell of the test definition
             %   file. Previous to running the test code, any results of the code specifying the
@@ -397,24 +439,56 @@ classdef mtestcase < handle
             %                     being closed (unless stated in the test code somewhere).
             %
             %   See also mtestcase mtestcase.mtestcase mtestcase.publishResults mtestcase.publishDescription mtest mtestengine
-
+            
+            %% Check whether the testcase has been initialized
+            if ~obj.initialized
+                notify(obj,'NeedToInitialize'); % mtest object listenes and prepares the tests
+            end
+            
             %% store necessary objects in a mtestworspace variable
             mtestworkspace.obj = obj;
-            mtestworkspace.str = cat(1,...
-                obj.description(~strncmp(obj.description,'%',1)),... % Always run the description before running the test
-                obj.runcode);
+
+            storevarsstring = sprintf('%s\n',...
+                'mtest_12thf9e230eu.vars = whos;',...
+                'for mtest_12thf9e230eui = 1:length(mtest_12thf9e230eu.vars)',...
+                'mtest_12thf9e230eu.varargout{mtest_12thf9e230eui,1} = mtest_12thf9e230eu.vars(mtest_12thf9e230eui).name;',...
+                'mtest_12thf9e230eu.varargout{mtest_12thf9e230eui,2} = eval(mtest_12thf9e230eu.vars(mtest_12thf9e230eui).name);',...
+                'end',...
+                'mtest_12thf9e230eu.varargout(strcmp(mtest_12thf9e230eu.varargout(:,1),''mtest_tempstring12fhj123''),:)=[];',...
+                'setappdata(0,''mtesttempworkspace'',mtest_12thf9e230eu.varargout);');
+            
+            mtestworkspace.str = sprintf('%s\n',...
+                obj.description{~strncmp(obj.description,'%',1)},... % Always run the description before running the test
+                obj.runcode{:},...
+                char(10),...
+                storevarsstring);
             
             %% check tempdir
             obj.verifyTempDir;
             
             %% create temp file with code that needs to be executed
-            mtestworkspace.filename = mtestcase.makeTempFile(obj.tempdir,mtestworkspace.str);
+            mtestworkspace.filename = mtestcase.makeTempFile(...
+                obj.tempdir,...
+                mtestworkspace.str,...
+                obj.functionname);
 
             %% Check open figures
             mtestworkspace.openfigures = findobj('Type','figure');
             
             %% clear all variables except the mtestworkspace
-            clear('obj','fid','i','ans');
+            clear('obj','ans','varargin','restorevarsstring','storevarsstring');
+            
+            %% create base workspace if needed
+            if ~isempty(mtestworkspace.obj.initworkspace)
+                if iscell(mtestworkspace.obj.initworkspace)
+                    % workspace evaluated ==> paste in workspace
+                    for mtestworkspace2435i = 1:size(mtestworkspace.obj.initworkspace,1)
+                        eval([mtestworkspace.obj.initworkspace{mtestworkspace2435i,1} ' = mtestworkspace.obj.initworkspace{mtestworkspace2435i,2};']);
+                    end
+                end
+            end
+            
+            clear mtestworkspace2435i
             
             %% Run the test
             try
@@ -428,26 +502,16 @@ classdef mtestcase < handle
                 %% delete the temp file (we don't need it anymore)
                 delete(mtestworkspace.filename);
                 
-                %% check the existance of the testresult variable
-                if ~exist('testresult','var')
-                    % arror is caught by the catch statement and tuned into
-                    % a warning. The testresult is set to false.
-                    warning('MTest:NoTestResult','This piece of code did not produce a test result');
-                    testresult = nan; %#ok<PROP>
+                %% create testresult
+                mtestworkspace.testresult = nan;
+                if ~isempty(mtestworkspace.obj.functionoutputname)
+                    mtestworkspace.testresult = eval(mtestworkspace.obj.functionoutputname);
                 end
                 
                 %% Store variables that were created during the test 
                 % needed for the publish function...
-                mtestworkspace.nms = whos;
-                mtestworkspace.obj.testworkspace = cell(length(mtestworkspace.nms),2);
-                for mtest_counter_i = 1:length(mtestworkspace.nms)
-                    mtestworkspace.obj.testworkspace(mtest_counter_i,:) = {...
-                        mtestworkspace.nms(mtest_counter_i).name,...
-                        eval(mtestworkspace.nms(mtest_counter_i).name)};
-                end   
-                % remove the mtestwokspace variable from the testworkspace
-                id = strcmp(mtestworkspace.obj.testworkspace(:,1),'mtestworkspace');
-                mtestworkspace.obj.testworkspace(id,:)=[];
+                mtestworkspace.obj.runworkspace = getappdata(0,'mtesttempworkspace');
+                rmappdata(0,'mtesttempworkspace');
                 
             catch err
                 %% Handle error
@@ -460,7 +524,7 @@ classdef mtestcase < handle
                     % Something els went wrong (probably the test code).
                     warning('MTest:TestCodeFailed','There appears to be an error in the test code');
                 end
-                testresult = false; %#ok<PROP>
+                mtestworkspace.testresult = false;
                 
             end
             
@@ -475,15 +539,114 @@ classdef mtestcase < handle
             % store the test result in the obj. We do not need to specify
             % the object as output whereas it is a subclass of the handle
             % class. all copies will be adjusted immediately.
-            mtestworkspace.obj.testresult = testresult; %#ok<PROP>
+            mtestworkspace.obj.testresult = mtestworkspace.testresult;
             
             %% Set flag
             mtestworkspace.obj.testperformed = true;
-            mtestworkspace.obj.descriptionrun = true;
             
             %% notify
             notify(mtestworkspace.obj,'TestPerformed');
             
+        end
+        function runAndPublish(obj,varargin)
+            %runAndPublish  Runs the testcase and publishes the description and result.
+            %
+            %   This function runs the testcase object and publishes the case description and
+            %   results.
+            %
+            %   Syntax:
+            %   runAndPublish(obj,'property','value');
+            %   obj.publisResults(...'property','value');
+            %
+            %   Input:
+            %   obj  = An instance of an mtestcase object.
+            %
+            %   property value pairs:
+            %           'resdir'     -  Specifies the output directory
+            %           'outputfile' -  Main part of the name of the output file. The description is
+            %                           output file appends _description to this name. The results
+            %                           output file appends _results to it.
+            %           'testame'    -  Name of the main test.
+            %           'maxwidth'  -   Maximum width of the published figures (in pixels). By 
+            %                           default the maximum width is set to 600 pixels. 
+            %           'maxheight' -   Maximum height of the published figures (in pixels). By 
+            %                           default the maximum height is set to 600 pixels.
+            %           'stylesheet'-   Style sheet that is used for publishing (see publish
+            %                           documentation for more information).
+            %
+            %   See also mtestcase mtestcase.mtestcase mtestcase.publishDescription mtest.publishResults mtestcase.runTest mtestengine mtest
+
+            %% Retrieve input
+            if isempty(obj.resdir)
+                obj.resdir = cd;
+            end
+            if any(strcmpi(varargin,'resdir'))
+                obj.resdir = varargin{find(strcmpi(varargin,'resdir'))+1};
+            end
+            
+            obj.outputfile = '';
+            if any(strcmpi(varargin,'outputfile'))
+                [pth nm] = fileparts(varargin{find(strcmpi(varargin,'outputfile'))+1});
+                obj.outputfile = fullfile(pth,nm);
+            end
+            
+            if isempty(obj.testname)
+                obj.testname = 'Unnamed_test';
+            end
+            if any(strcmpi(varargin,'testname'))
+                obj.testname = varargin{find(strcmpi(varargin,'testname'))+1};
+            end
+            
+            if isempty(obj.outputfile)
+                obj.outputfile = [obj.testname '_case_' num2str(obj.casenumber)];
+            end
+            if isempty(obj.descriptionoutputfile)
+                obj.descriptionoutputfile = [obj.outputfile '_description.html'];
+            end
+            if isempty(obj.publishoutputfile)
+                obj.publishoutputfile = [obj.outputfile '_results.html'];
+            end
+            
+            % Maxwidth
+            if any(strcmpi(varargin,'maxwidth'))
+                id = find(strcmpi(varargin,'maxwidth'));
+                obj.maxwidth = varargin{id+1};
+            end
+            
+            % maxheight
+            if any(strcmpi(varargin,'maxheight'))
+                id = find(strcmpi(varargin,'maxheight'));
+                obj.maxheight = varargin{id+1};
+            end
+            
+            % stylesheet
+            if any(strcmpi(varargin,'stylesheet'))
+                id = find(strcmpi(varargin,'stylesheet'));
+                obj.stylesheet = varargin{id+1};
+            end
+            
+            %% publih description
+            obj.publishDescription(...
+                'resdir',obj.resdir,...
+                'stylesheet',obj.stylesheet,...
+                'maxheight',obj.maxheight,...
+                'maxwidth',obj.maxwidth,...
+                'testname',obj.testname,...
+                'filename',obj.descriptionoutputfile);
+            % [outputfile '_description_case_' num2str(obj.casenumber) '.html']
+            
+            %% run test
+            obj.run;
+
+            %% and publish result
+            obj.publishResults(...
+                'resdir',obj.resdir,...
+                'stylesheet',obj.stylesheet,...
+                'maxheight',obj.maxheight,...
+                'maxwidth',obj.maxwidth,...
+                'testname',obj.testname,...
+                'filename',obj.publishoutputfile);
+            %             [outputfile '_results_case_' num2str(obj.casenumber) '.html']
         end
         function publishResults(obj,varargin)
             %publishResults  Creates an html file from the code included in the TestResult cell with publish
@@ -529,14 +692,16 @@ classdef mtestcase < handle
  
             %% Check whether the test has been executed. If not... execute
             if ~obj.testperformed
-                obj.runTest;
+                obj.run;
             end
             
             %% subtract result dir from input
-            resdir = cd;
+            if isempty(obj.resdir)
+                obj.resdir = cd;
+            end
             id = find(strcmp(varargin,'resdir'));
             if ~isempty(id)
-                resdir = varargin{id+1};
+                obj.resdir = varargin{id+1};
                 varargin(id:id+1) = [];
             end
             
@@ -561,48 +726,51 @@ classdef mtestcase < handle
             end
             
             % Maxwidth
-            maxwidth = 600;
             if any(strcmpi(varargin,'maxwidth'))
                 id = find(strcmpi(varargin,'maxwidth'));
-                maxwidth = varargin{id+1};
+                obj.maxwidth = varargin{id+1};
             end
             
             % maxheight
-            maxheight = 600;
             if any(strcmpi(varargin,'maxheight'))
                 id = find(strcmpi(varargin,'maxheight'));
-                maxheight = varargin{id+1};
+                obj.maxheight = varargin{id+1};
             end
             
             % stylesheet
-            stylesheet = '';
             if any(strcmpi(varargin,'stylesheet'))
                 id = find(strcmpi(varargin,'stylesheet'));
-                stylesheet = varargin{id+1};
+                obj.stylesheet = varargin{id+1};
             end
             
             %% createoutputname
             if isempty(obj.publishoutputfile)
                 obj.publishoutputfile = ['UnnamedTest' '_results_case_' num2str(obj.casenumber) '.html'];
             end
-            outputname = fullfile(resdir,obj.publishoutputfile);
+            [pt fn] = fileparts(obj.publishoutputfile);
+            if isempty(pt)
+                pt = obj.resdir;
+            end
+            outputname = fullfile(pt,[fn '.html']);
        
             %% retrieve testname from input
             [dum outname]= fileparts(outputname); 
             if any(strcmpi(varargin,'testname'))
                 id = find(strcmpi(varargin,'testname'));
-                testname = varargin{id+1};
+                obj.testname = varargin{id+1};
             else
-                testname = outname;
+                if isempty(obj.testname)
+                    obj.testname = outname;
+                end
             end
 
             %% set publish options
             opt = struct(...
                 'format','html',...
-                'stylesheet',stylesheet,...
-                'outputDir',resdir,...
-                'maxHeight',maxheight,...
-                'maxWidth',maxwidth,...
+                'stylesheet',obj.stylesheet,...
+                'outputDir',fileparts(outputname),...
+                'maxHeight',obj.maxheight,...
+                'maxWidth',obj.maxwidth,...
                 'showCode',obj.publishincludecode,...
                 'useNewFigure',false,... % Maybe add this to the input of properties?
                 'evalCode',obj.publishevaluatecode);
@@ -614,11 +782,11 @@ classdef mtestcase < handle
             if ~isempty(obj.casename)
                 publstr = cat(1,{['%% Test results of testcase: "' obj.casename '"']},obj.publishcode);
             else
-                publstr = cat(1,{['%% Test results of "' testname '" (Case' num2str(obj.casenumber) ')']},obj.publishcode);
+                publstr = cat(1,{['%% Test results of "' obj.testname '" (Case' num2str(obj.casenumber) ')']},obj.publishcode);
             end
             mtestcase.publishCodeString(outputname,...
                 [],...
-                obj.testworkspace,...
+                obj.runworkspace,...
                 publstr,...
                 opt);
             
@@ -629,97 +797,25 @@ classdef mtestcase < handle
                 close(newopenfigures(id));
             end
         end
-        function runAndPublish(obj,varargin)
-            %runAndPublish  Runs the testcase and publishes the description and result.
-            %
-            %   This function runs the testcase object and publishes the case description and
-            %   results.
-            %
-            %   Syntax:
-            %   runAndPublish(obj,'property','value');
-            %   obj.publisResults(...'property','value');
-            %
-            %   Input:
-            %   obj  = An instance of an mtestcase object.
-            %
-            %   property value pairs:
-            %           'resdir'     -  Specifies the output directory
-            %           'outputfile' -  Main part of the name of the output file. The description is
-            %                           output file appends _description to this name. The results
-            %                           output file appends _results to it.
-            %           'testame'    -  Name of the main test.
-            %           'maxwidth'  -   Maximum width of the published figures (in pixels). By 
-            %                           default the maximum width is set to 600 pixels. 
-            %           'maxheight' -   Maximum height of the published figures (in pixels). By 
-            %                           default the maximum height is set to 600 pixels.
-            %           'stylesheet'-   Style sheet that is used for publishing (see publish
-            %                           documentation for more information).
-            %
-            %   See also mtestcase mtestcase.mtestcase mtestcase.publishDescription mtest.publishResults mtestcase.runTest mtestengine mtest
-
-            %% Retrieve input
-            resdir = cd;
-            if any(strcmpi(varargin,'resdir'))
-                resdir = varargin{find(strcmpi(varargin,'resdir'))+1};
+        function fullPublish(obj,varargin)
+            % This function assumes the testcase has been run fully
+            MoreThanTwoInputArgs = nargin>2;
+            if MoreThanTwoInputArgs
+                SecondVararginMtesteventData = strcmp(class(varargin{2}),'mtesteventdata');
+                RemoveTemoObj = varargin{2}.removetempobj;
+                if SecondVararginMtesteventData && RemoveTemoObj
+                    obj.tmpobjname = [];
+                end
             end
             
-            outputfile = '';
-            if any(strcmpi(varargin,'outputfile'))
-                [pth nm] = fileparts(varargin{find(strcmpi(varargin,'outputfile'))+1});
-                outputfile = fullfile(pth,nm);
-            end
+            %% publish the description
+            obj.publishDescription;
+           
+            %% publish the result
+            obj.publishResults;
             
-            testname = 'Unnamed_test';
-            if any(strcmpi(varargin,'testname'))
-                testname = varargin{find(strcmpi(varargin,'testname'))+1};
-            end
-            
-            if isempty(outputfile)
-                outputfile = testname;
-            end
-                        
-            % Maxwidth
-            maxwidth = 600;
-            if any(strcmpi(varargin,'maxwidth'))
-                id = find(strcmpi(varargin,'maxwidth'));
-                maxwidth = varargin{id+1};
-            end
-            
-            % maxheight
-            maxheight = 600;
-            if any(strcmpi(varargin,'maxheight'))
-                id = find(strcmpi(varargin,'maxheight'));
-                maxheight = varargin{id+1};
-            end
-            
-            % stylesheet
-            stylesheet = '';
-            if any(strcmpi(varargin,'stylesheet'))
-                id = find(strcmpi(varargin,'stylesheet'));
-                stylesheet = varargin{id+1};
-            end
-            
-            %% publih description
-            obj.publishDescription(...
-                'resdir',resdir,...
-                'stylesheet',stylesheet,...
-                'maxheight',maxheight,...
-                'maxwidth',maxwidth,...
-                'testname',testname,...
-                'filename',[outputfile '_description_case_' num2str(obj.casenumber) '.html']);
-
-            %% run test
-            obj.runTest;
-
-            %% and publish result
-            obj.publishResults(...
-                'resdir',resdir,...
-                'stylesheet',stylesheet,...
-                'maxheight',maxheight,...
-                'maxwidth',maxwidth,...
-                'testname',testname,...
-                'filename',[outputfile '_results_case_' num2str(obj.casenumber) '.html']);
-
+            %% Clean object
+            obj.cleanUp;
         end
         function cleanUp(obj)
             %cleanUp  Cleans up the mtestcase object
@@ -741,9 +837,31 @@ classdef mtestcase < handle
             %   obj  = An instance of an mtestcase object.
             %
             %   See also mtestcase mtestcase.mtestcase mtestcase.publishDescription mtest.publishResults mtestcase.runTest mtestengine mtest
-
-            obj.testworkspace = [];
+            
+            %% Clear relevant properties
+            obj.initworkspace = [];
+            obj.initialized = false;
+            obj.runworkspace = [];
             obj.testperformed = false;
+            obj.tmpobjname = [];
+        end
+    end
+    methods % set and get methods
+        function set.tmpobjname(obj,varargin)
+            if isempty(varargin{1})
+                % rmappdata
+                if ~isempty(obj.tmpobjname)
+                    rmappdata(0,obj.tmpobjname);
+                end
+                obj.tmpobjname = varargin{1};
+            else
+                % setappdata
+                if ~isempty(obj.tmpobjname)
+                    rmappdata(0,obj.tmpobjname);
+                end
+                setappdata(0,varargin{1},obj);
+                obj.tmpobjname = varargin{1};
+            end
         end
     end
     %% Hidden methods
@@ -753,16 +871,142 @@ classdef mtestcase < handle
                 obj.tempdir = uigetdir(cd,'Select temp dir');
             end
         end
+        function makeFakeFunction(obj,rundir)
+            % prepares the fake function. This is a function that returns true in all circumstances.
+            fname = fullfile(rundir,[obj.functionname '.m']);
+            
+            obj.tmpobjname = ['mtest_obj_testcase_' obj.functionname];
+            
+            %% prepare content
+            str = sprintf('%s\n',...
+                obj.functionheader,...
+                [obj.functionoutputname ' = true;']);
+            
+            %% write function
+            fid = fopen(fname,'w');
+            fprintf(fid,'%s\n',str);
+            fclose(fid);
+        end
+        function makeInitFunction(obj,rundir)
+            % prepares the init function. This is a function that stores the input variables with
+            % the help of setappdata.
+            fname = fullfile(rundir,[obj.functionname '.m']);
+            
+            obj.tmpobjname = ['mtest_obj_init_' obj.functionname];
+            
+            %% prepare content
+            str = sprintf('%s\n',...
+                obj.functionheader,...
+                ['notify(getappdata(0,''' obj.tmpobjname '''),''CaseInitialized'',mtesteventdata(whos,''remove'',true));'],...
+                [obj.functionoutputname ' = true;']);
+            
+            %% write function
+            fid = fopen(fname,'w');
+            fprintf(fid,'%s\n',str);
+            fclose(fid);
+        end
+        function makeRunFunction(obj,rundir)
+            % prepares the init function. This is a function that stores the input variables with
+            % the help of setappdata.
+            fname = fullfile(rundir,[obj.functionname '.m']);
+            
+            obj.tmpobjname = ['mtest_obj_testcase_' obj.functionname];
+            
+            %% prepare content
+            str = sprintf('%s\n',...
+                obj.functionheader,...
+                'mtest_245y7e_tic = tic;',...
+                ['notify(getappdata(0,''' obj.tmpobjname '''),''CaseInitialized'',mtesteventdata(whos,''remove'',false));'],...
+                obj.description{~strncmp(obj.description,'%',1)},...
+                obj.runcode{:},...
+                ['notify(getappdata(0,''' obj.tmpobjname '''),''CaseRun'',mtesteventdata(whos,''time'',toc(mtest_245y7e_tic)));']);
+            
+            %% write function
+            fid = fopen(fname,'w');
+            fprintf(fid,'%s\n',str);
+            fclose(fid);
+        end
+        function makeRunAndPublishFunction(obj,rundir)
+            % prepares the runAndPublish function. This is a function that stores the input variables 
+            % and with result after running the help of setappdata. It uses notifications to
+            % initialize the publish function.
+            fname = fullfile(rundir,[obj.functionname '.m']);
+            
+            obj.tmpobjname = ['mtest_obj_testcase_' obj.functionname];
+            
+            %% prepare content
+            str = sprintf('%s\n',...
+                obj.functionheader,...
+                'mtest_245y7e_tic = tic;',...
+                ['notify(getappdata(0,''' obj.tmpobjname '''),''CaseInitialized'',mtesteventdata(whos,''remove'',false));'],...
+                obj.description{~strncmp(obj.description,'%',1)},...
+                obj.runcode{:},...
+                ['notify(getappdata(0,''' obj.tmpobjname '''),''CaseRun'',mtesteventdata(whos,''time'',toc(mtest_245y7e_tic),''remove'',false));'],...
+                ['notify(getappdata(0,''' obj.tmpobjname '''),''PublishCase'',mtesteventdata(whos,''time'',toc(mtest_245y7e_tic),''remove'',true));']);
+            
+            %% write function
+            fid = fopen(fname,'w');
+            fprintf(fid,'%s\n',str);
+            fclose(fid);
+        end
+        function storeInitVars(obj,varargin)
+            % get workspace
+            data = varargin{2};
+            ws = data.workspace;
+            
+            % remove temp appdata
+            if varargin{2}.removetempobj
+                obj.tmpobjname = [];
+            end
+            
+            % store init workspace
+            obj.initworkspace = ws;
+            obj.initialized = true;
+        end
+        function storeRunVars(obj,varargin)
+            %% get workspace
+            data = varargin{2};
+            ws = data.workspace;
+            
+            %% remove temp appdata
+            if varargin{2}.removetempobj
+                obj.tmpobjname = [];
+            end
+                
+            %% store run workspace
+            obj.runworkspace = ws;
+            obj.testperformed = true;
+            
+            %% store run time
+            if ~isempty(varargin{2}.time)
+                obj.time = varargin{2}.time;
+            end
+            
+            %% store testresult
+            obj.testresult = nan;
+            if ~isempty(obj.functionoutputname)
+                obj.testresult = ws{strcmp(ws(:,1),obj.functionoutputname),2};
+            end
+            
+            %% notify
+            notify(obj,'TestPerformed');
+            mtestworkspace.obj.testperformed = true;
+        end
     end
     %% Hidden static methods
     methods (Static = true, Hidden = true)
-        function fname = makeTempFile(tempdir,str)
-            [dum fn] = fileparts(tempname);
+        function fname = makeTempFile(tempdir,str,fn)
+            if ~ischar(str)
+                str = sprintf('%s\n',str{:});
+            end
+            
+            if nargin==2
+                fn = tempname;
+            end
+            [dum fn] = fileparts(fn);
             fname = fullfile(tempdir,[fn '.m']);
             fid = fopen(fname,'w');
-            for i=1:size(str,1)
-                fprintf(fid,'%s\n',str{i});
-            end
+            fprintf(fid,'%s\n',str);
             fclose(fid);
         end
         function publishCodeString(outputname,tempdir,workspace,string2publish,publishoptions)
@@ -801,12 +1045,14 @@ classdef mtestcase < handle
                 tempdir = fileparts(outputname);
                 PublishInOutputDir = true;
             end
-            tempfilename = mtestcase.makeTempFile(tempdir,string2publish);
-                        
-            if PublishInOutputDir
+            tempfilename = mtestcase.makeTempFile(tempdir,string2publish,outputname);
+            [ newdir newname ] = fileparts(outputname);
+            FileNamesIdentical = strcmp(tempfilename,fullfile(newdir,[newname '.m']));
+            
+            if PublishInOutputDir && ~FileNamesIdentical
                 % move the tempfile to the correct name (to have sensible names for the figures) and
                 % the correct directory
-                [ newdir newname ] = fileparts(outputname);
+                
                 movefile(tempfilename,fullfile(newdir,[newname '.m']));
                 % renew filename
                 tempfilename = fullfile(newdir,[newname '.m']);

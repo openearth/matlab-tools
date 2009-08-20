@@ -1,3 +1,10 @@
+%% Creating testdefinitions
+
+%% running an individual test
+
+%% Running tests automatically with mtestengin
+
+
 function testresult = sin_test
 %% #Case1 Description (IncludeCode = false & EvaluateCode = true)
 % This test file demonstrates the possibilities of the automatic test

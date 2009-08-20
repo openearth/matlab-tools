@@ -1,8 +1,7 @@
-%% MTESTENGINE_TEST  Tests the functionalities of the mtestengine object
+function testresult = mtestengine_test()
+% MTESTENGINE_TEST  tests the functionalities of the mtestengine object
 %
-% TestName: mtestengine functionality test
-%  
-% This test tests the mtestengine object. Tests must still be further specified.
+% This file tests the methods assigned to the mtest engine object.
 %
 %
 %   See also mtestengine mtest mtestcase
@@ -12,7 +11,7 @@
 %   2009 Deltares
 %       Pieter van Geer
 %
-%       pieter.vangeer@deltares.nl	
+%       pieter.vangeer@deltares.nl
 %
 %       Rotterdamseweg 185
 %       2629 HD Delft
@@ -21,9 +20,9 @@
 %
 %   --------------------------------------------------------------------
 % This test is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -38,10 +37,11 @@
 % $Keywords: $
 
 
-%% #Case1 Description (CaseName = Constructor method)
+%% $Description (CaseName = Constructor method)
 % This testcase tests the constructor method. It simply uses setProperty to set the properties of
 % the object before leaving the constructor. The test should therefore be no large problem.
-%% #Case1 RunTest
+
+%% $RunCode
 try
     mte = mtestengine(...
         'targetdir',fileparts(which('mtestengine.m')),...
@@ -51,7 +51,8 @@ try
 catch err
     testresult = false;
 end
-%% #Case1 TestResults (IncludeCode = true)
+
+%% $PublishResults (IncludeCode = true)
 % The test result speaks for itself I think. If there was an error. The error is displayed by the
 % following code:
 
@@ -63,3 +64,5 @@ if exist('err','var')
     disp(['In: ' err.stack(1).file ]);
     disp(['    at: line ' num2str(err.stack(1).line)]);
 end
+
+

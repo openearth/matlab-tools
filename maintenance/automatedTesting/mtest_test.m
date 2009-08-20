@@ -1,7 +1,41 @@
-%% MTEST_TEST  tests the functionalities of the mtest object
-% 
-% TestName: mtest functionality test
+function testresult = mtest_test()
+% MTEST_TEST  tests the functionalities of the mtest object
 %
+% The test involves a basic test of the methods assigned to the mtest object in the classdefinition.
+%
+%   See also mtest mtestengine mtestcase
+
+%% Credentials
+%   --------------------------------------------------------------------
+%   2009 Deltares
+%       Pieter van Geer
+%
+%       pieter.vangeer@deltares.nl
+%
+%       Rotterdamseweg 185
+%       2629 HD Delft
+%       P.O. 177
+%       2600 MH Delft
+%
+%   --------------------------------------------------------------------
+% This test is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 14 Aug 2009
+% Created with Matlab version: 7.8.0.347 (R2009a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% $Description (Name = mtest functionality test)
 % This tests checks the functionality of the mtest object. It involves 7 testcases:
 %
 % # Test of the constructor method
@@ -12,37 +46,26 @@
 % # Check of the cleanUp method
 % # Check of the refreshTestResult method
 %
-% See also testcase descriptions for more information
 
-%% Credentials
-%   --------------------------------------------------------------------
-%   2009 Deltares
-%       Pieter van Geer
-%
-%       Pieter.vanGeer@deltares.nl	
-%
-%       $address
-%
-%   --------------------------------------------------------------------
-% This test is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
-% programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
-% your own tools.
+%% $RunCode
+testresult(1) = Constructor_method;
+testresult(2) = publishDescription_method;
+testresult(3) = runTest_method;
+testresult(4) = publishResult_method;
+testresult(5) = runAndPublish_method;
+testresult(6) = cleanUp_method;
 
-%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: $date(dd mmm yyyy)
-% Created with Matlab version: $version
+testresult = all(testresult);
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
-% $Keywords: $
+%% $PublishResult
+% TODO
 
-%% #Case1 Description (CaseName = Constructor method)
-% In this testcase the constructor method of the mtest object is tested. For tests on the mtest 
+end
+
+%% TestCases
+function testresult = Constructor_method()
+%% $Description (Name = Constructor method)
+% In this testcase the constructor method of the mtest object is tested. For tests on the mtest
 % object methods the test fil dummy_test.m is used. This tests nothing and always returns a positive
 % testresult. This testcase includes several checks:
 %% general "do not crash" check
@@ -57,7 +80,8 @@
 %% giving extra input arguments
 % Next to the file name of the test definition we can also specify the output filename for the
 % description html and the results html. Thjis should of course work...
-%% #Case1 RunTest
+
+%% $RunCode
 testcell = {...
     'general "do not crash" test' , false ; ...
     'warning test',false;...
@@ -75,7 +99,7 @@ try
         % Leave testresult true
         testcell{1,2} = 'OK';
     end
-catch err
+catch me %#ok<NASGU>
     testresult = false;
     testcell{1,2} = 'X';
 end
@@ -83,13 +107,13 @@ end
 % Warning test
 try
     testcell{2,2} = 'X';
-    t2 = mtest(which('mte_dummy_test.m'),'WrongProp','value');
+    mtest(which('mte_dummy_test.m'),'WrongProp','value');
     str = lastwarn;
     if ~isempty(strfind(str,'WrongProp'))
         % Leave testresult true
         testcell{2,2} = 'OK';
     end
-catch err
+catch me %#ok<NASGU>
     testresult = false;
     testcell{2,2} = 'X';
 end
@@ -102,7 +126,7 @@ try
         % Leave testresult true
         testcell{3,2} = 'OK';
     end
-catch err
+catch me %#ok<NASGU>
     testresult = false;
     testcell{3,2} = 'X';
 end
@@ -115,7 +139,7 @@ try
         % Leave testresult true
         testcell{4,2} = 'OK';
     end
-catch err
+catch me %#ok<NASGU>
     testresult = false;
     testcell{4,2} = 'X';
 end
@@ -129,11 +153,12 @@ try
         % Leave testresult true
         testcell{5,2} = 'OK';
     end
-catch err
+catch me %#ok<NASGU>
     testresult = false;
     testcell{5,2} = 'X';
 end
-%% #Case1 TestResults (IncludeCode = false & EvaluateCode = true)
+
+%% $PublishResult
 % The overall test result was:
 clr = 'r';
 txt = 'negative';
@@ -163,31 +188,33 @@ uitable(h,...
 snapnow;
 close(h);
 
+end
 
-%% #Case2 Description (IncludeCode = false & EvaluateCode = true & CaseName = publishDescription method)
+function testresult = publishDescription_method()
+%% $Description (Name = publishDescription method)
 % This testcase tests the publishDescription method of the mtest object.
-%% #Case2 RunTest
+
+%% $RunCode
 try
-    resdir = cd;
+    resdir = tempname;
+    mkdir(resdir);
     t = mtest(which('mte_dummy_test.m'));
     t.publishDescription(...
         'resdir',resdir,...
         'filename','testfile',...
-        'casenumber',1:2,...
         'maxwidth',800);
-    if exist(fullfile(resdir,t.testcases(1).descriptionoutputfile),'file')
+    if exist(t.descriptionoutputfile,'file')
         testresult = true;
-        delete(fullfile(resdir,t.testcases(1).descriptionoutputfile));
-    end
-    if exist(fullfile(resdir,t.testcases(2).descriptionoutputfile),'file')
-        delete(fullfile(resdir,t.testcases(2).descriptionoutputfile));
     else
         testresult = false;
     end
-catch
+    rmdir(resdir,'s');
+catch me %#ok<NASGU>
     testresult = false;
+    rmdir(resdir,'s');
 end
-%% #Case2 TestResults (IncludeCode = false & EvaluateCode = true)
+
+%% $PublishResult
 % The result of this test was:
 clr = 'r';
 txt = 'negative';
@@ -202,18 +229,22 @@ text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',
 snapnow;
 close(h);
 
+end
 
-%% #Case3 Description (IncludeCode = false & EvaluateCode = true & CaseName = runTest method)
+function testresult = runTest_method()
+%% $Description (Name = runTest method)
 % This testcase tests the runTest method of the mtest object
-%% #Case3 RunTest
+
+%% $RunCode
 try
     t = mtest(which('mte_dummy_test.m'));
-    t.runTest;
+    t.run;
     testresult = ~t.testresult;
-catch err
+catch me %#ok<NASGU>
     testresult = false;
 end
-%% #Case3 TestResults (IncludeCode = false & EvaluateCode = true)
+
+%% $PublishResult
 % The test was run:
 clr = 'r';
 txt = 'unsuccessful';
@@ -228,32 +259,35 @@ text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',
 snapnow;
 close(h);
 
+end
 
-%% #Case4 Description (IncludeCode = false & EvaluateCode = true & CaseName = publishResult method)
+function testresult = publishResult_method()
+%% $Description (Name = publishResult method)
 % This testcase runs the publishResult method of an mtest object
-%% #Case4 RunTest
+
+%% $RunCode
 try
-    testresult = false;
-    resdir = cd;
+    resdir = tempname;
+    mkdir(resdir);
     t = mtest(which('mte_dummy_test.m'));
-    t.publishResults(...
+    t.publishResult(...
         'resdir',resdir,...
-        'filename','testfile',...
-        'casenumber',1:2);
-    if exist(fullfile(resdir,t.testcases(1).publishoutputfile),'file')
+        'filename','testfile');
+    if exist(t.publishoutputfile,'file')
         testresult = true;
-        delete(fullfile(resdir,t.testcases(1).publishoutputfile));
-    end
-    if exist(fullfile(resdir,t.testcases(2).publishoutputfile),'file')
-        % Leave result unchanged. 
-        delete(fullfile(resdir,t.testcases(2).publishoutputfile));
+        delete(t.publishoutputfile);
     else
         testresult = false;
     end
-catch err
+    rmdir(resdir);
+catch me %#ok<NASGU>
     testresult = false;
+    try %#ok<TRYNC>
+        rmdir(resdir,'s');
+    end
 end
-%% #Case4 TestResults (IncludeCode = false & EvaluateCode = true)
+
+%% $PublishResult
 % The result of this test was:
 clr = 'r';
 txt = 'negative';
@@ -268,28 +302,37 @@ text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',
 snapnow;
 close(h);
 
+end
 
-%% #Case5 Description (IncludeCode = false & EvaluateCode = true & CaseName = runAndPublish method)
+function testresult = runAndPublish_method()
+%% $Description (Name = runAndPublish method)
 % This testcase tests the runAndPublish method of an mtest object
-%% #Case5 RunTest
+
+%% $RunCode
 try
     testresult = false;
-    resdir = cd;
+    resdir = tempname;
+    mkdir(resdir);
     t = mtest(which('mte_dummy_test.m'));
     t.runAndPublish(...
         'resdir',resdir,...
-        'outputfile','testfile',...
-        'casenumber',1);
-    if exist(fullfile(resdir,t.testcases(1).descriptionoutputfile),'file') && ...
-            exist(fullfile(resdir,t.testcases(1).publishoutputfile),'file')
+        'outputfile','testfile');
+    if exist(t.testcases(1).descriptionoutputfile,'file') && ...
+            exist(t.testcases(1).publishoutputfile,'file') && ...
+            exist(t.descriptionoutputfile,'file') && ...
+            exist(t.publishoutputfile,'file')
+        
         testresult = true;
-        delete(fullfile(resdir,t.testcases(1).publishoutputfile));
-        delete(fullfile(resdir,t.testcases(1).descriptionoutputfile));
+        rmdir(resdir,'s');
     end
-catch err
+catch me %#ok<NASGU>
     testresult = false;
+    try %#ok<TRYNC>
+        rmdir(resdir,'s');
+    end
 end
-%% #Case5 TestResults (IncludeCode = false & EvaluateCode = true)
+
+%% $PublishResult
 % The result of this test was:
 clr = 'r';
 txt = 'negative';
@@ -304,22 +347,26 @@ text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',
 snapnow;
 close(h);
 
+end
 
-%% #Case6 Description (IncludeCode = false & EvaluateCode = true & CaseName = cleanUp method)
+function testresult = cleanUp_method()
+%% $Description (Name = cleanUp method)
 % cleanUp method test
-%% #Case6 RunTest
+
+%% $RunCode
 try
     testresult = false;
     t = mtest(which('mte_dummy_test.m'));
-    t.testcases(1).testworkspace = true;
+    t.testcases(1).initworkspace = true;
     t.cleanUp;
-    if isempty(t.testcases(1).testworkspace)
+    if isempty(t.testcases(1).initworkspace)
         testresult = true;
     end
-catch err
+catch me %#ok<NASGU>
     testresult = false;
 end
-%% #Case6 TestResults (IncludeCode = false & EvaluateCode = true)
+
+%% $PublishResult
 % The result of this test was:
 clr = 'r';
 txt = 'negative';
@@ -334,28 +381,4 @@ text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',
 snapnow;
 close(h);
 
-
-%% #Case7 Description (IncludeCode = false & EvaluateCode = true & CaseName = refreahTestResult)
-% refreshTestResult method test
-%% #Case7 RunTest
-try
-    t = mtest(which('mte_dummy_test.m'));
-    t.runTest;
-    testresult = t.testcases(1).testresult & ~t.testcases(2).testresult;
-catch err
-    testresult = false;
 end
-%% #Case7 TestResults (IncludeCode = false & EvaluateCode = true)
-% The result of this test was:
-clr = 'r';
-txt = 'negative';
-if testresult
-    clr = 'g';
-    txt = 'positive';
-end
-h = figure('Units','centimeter','Position',[10 10 0.5 0.5],'Color',clr,'MenuBar','none','Toolbar','none');
-ha = axes('Parent',h,'Units','normalized','Position',[0 0 1 1],'Color',clr);
-axis(ha,'off');
-text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',clr);
-snapnow;
-close(h);
