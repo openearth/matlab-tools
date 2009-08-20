@@ -189,7 +189,6 @@ if OPT.is3D&&OPT.fill
         [ignore,fill_ind,OPT.fill_nr] = unique([OPT.fillColor,OPT.fillAlpha],'rows');
     end
 end
-
 %% filename
 % gui for filename, if not set yet
 if isempty(OPT.fileName)

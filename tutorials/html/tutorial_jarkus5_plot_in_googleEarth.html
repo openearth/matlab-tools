@@ -9,9 +9,9 @@
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
       -->
-      <title>tutorial_jarkus5_plot_in_googleEarth</title>
+      <title>Plot a Jarkus transect in Google Earth</title>
       <meta name="generator" content="MATLAB 7.5">
-      <meta name="date" content="2009-08-19">
+      <meta name="date" content="2009-08-20">
       <meta name="m-file" content="tutorial_jarkus5_plot_in_googleEarth"><style>
 
 body {
@@ -71,86 +71,230 @@ p.footer {
   </style></head>
    <body>
       <div class="content">
+         <h1>Plot a Jarkus transect in Google Earth</h1>
+         <introduction>
+            <p>the objective is to plot a jarkus transect in OpenEarth.</p>
+         </introduction>
          <h2>Contents</h2>
          <div>
             <ul>
-               <li><a href="#1">plot data in Google Earth</a></li>
-               <li><a href="#2">Plot a Jarkus transect in google earth</a></li>
+               <li><a href="#8">Animation in time</a></li>
+               <li><a href="#13">Multiple animated transects</a></li>
             </ul>
          </div>
-         <h2>plot data in Google Earth<a name="1"></a></h2>
-         <p>plotting tols are in the googlePlot toolbox. To see it's contents, use help:</p><pre class="codeinput">help <span class="string">googlePlot</span>
-</pre><pre class="codeoutput">Contents of googlePlot:
-
-KMLcontour                     - Just like contour
-KMLcurvedArrows                - makes nice curved arrows that 'go with the flow'
-KMLfig2png                     - makes a tiled png figure for google earth 
-KMLline                        - Just like line (and that's just like plot)
-KMLline3                       - Just like line3
-KMLpatch                       - Just like patch
-KMLpcolor                      - Just like pcolor
-KMLquiver                      - Just like quiver
-KMLsurf                        - Just like surf
-KMLtext                        - Just like text 
-KMLtrisurf                     - Just like trisurf
-
-</pre><h2>Plot a Jarkus transect in google earth<a name="2"></a></h2><pre class="codeinput">url         = jarkus_url;
-no_of_trans = 20;
+         <p>extract lat, lon, z, data from the netCDF database. See the read JarKus tutorial if this is new to you.</p><pre class="codeinput">url         = jarkus_url;
 id          = nc_varget(url,<span class="string">'id'</span>);
-transect_nr = find(id==6001200)-1;
+transect_nr = find(id==8007000)-1;
 year        = nc_varget(url,<span class="string">'time'</span>);
-year_nr     = find(year == 1979)-1;
-lat         = nc_varget(url,<span class="string">'lat'</span>,[transect_nr,0],[no_of_trans,-1]);
-lon         = nc_varget(url,<span class="string">'lon'</span>,[transect_nr,0],[no_of_trans,-1]);
-z           = nc_varget(url,<span class="string">'altitude'</span>,[year_nr,transect_nr,0],[1,no_of_trans,-1]);
-xRSP        = nc_varget(url,<span class="string">'cross_shore'</span>);
-codes       = nc_varget(url,<span class="string">'alongshore'</span>,transect_nr,no_of_trans);
-labels      = cellstr(num2str(codes));
-
-<span class="comment">% interp z to all x values</span>
-<span class="keyword">for</span> ii = 1:size(z,1)
-    not_nan = ~isnan(z(ii,:));
-    <span class="keyword">if</span> sum(not_nan)~=0
-        z(ii,:) = interp1q(xRSP(not_nan),z(ii,not_nan)',xRSP)';
+year_nr     = find(year == 1993)-1;
+lat         = nc_varget(url,<span class="string">'lat'</span>,[transect_nr,0],[1,-1]);
+lon         = nc_varget(url,<span class="string">'lon'</span>,[transect_nr,0],[1,-1]);
+z           = nc_varget(url,<span class="string">'altitude'</span>,[year_nr,transect_nr,0],[1,1,-1]);
+</pre><p>we will check the data with matlab line:</p><pre class="codeinput">line(lat,lon,z)
+view([-67 32])
+grid <span class="string">on</span>
+</pre><img vspace="5" hspace="5" src="tutorial_jarkus5_plot_in_googleEarth_01.png"> <p>Because of the NaN values in data, not al datapoints are connected.</p><pre class="codeinput">line(lat,lon,z,<span class="string">'lineStyle'</span>,<span class="string">'none'</span>,<span class="string">'marker'</span>,<span class="string">'.'</span>,<span class="string">'color'</span>,[1 0 0])
+</pre><img vspace="5" hspace="5" src="tutorial_jarkus5_plot_in_googleEarth_02.png"> <p>We can overcome this problem by linear interpolation of z to xRSP.</p><pre class="codeinput">xRSP        = nc_varget(url,<span class="string">'cross_shore'</span>);
+not_nan     = ~isnan(z);
+zi          = interp1(xRSP(not_nan),z(not_nan),xRSP);
+</pre><p>we will check the data again with matlab line:</p><pre class="codeinput">clf; line(lat,lon,zi)
+view([-67 32])
+grid <span class="string">on</span>
+</pre><img vspace="5" hspace="5" src="tutorial_jarkus5_plot_in_googleEarth_03.png"> <p>This works as expected, so now we will plot the data. We will exagerate the z data, by adding 20 and multiplying by 5;</p><pre class="codeinput">KMLline(lat,lon,(zi+20)*5);
+</pre><p><img vspace="5" hspace="5" src="_prerendered_jarkus5_1.PNG"> </p>
+         <h2>Animation in time<a name="8"></a></h2>
+         <p>Get altitude for multiple years</p><pre class="codeinput">z               = nc_varget(url,<span class="string">'altitude'</span>,[1,transect_nr,0],[-1,1,-1]);
+</pre><p>interpolate z</p><pre class="codeinput">zi = nan(size(z));
+<span class="keyword">for</span> yy = 1:size(z,1)
+    not_nan     = ~isnan(z(yy,:));
+    zi(yy,:)    = interp1(xRSP(not_nan),z(yy,not_nan),xRSP);
+<span class="keyword">end</span>
+</pre><p>We must provide lat and lon data for every entry of z;</p><pre class="codeinput">lat = repmat(lat,size(z,1),1);
+lon = repmat(lon,size(z,1),1);
+</pre><p>An we must get the times.</p><pre class="codeinput">timeIn  = datenum(year,1,1);
+timeOut = datenum(year+1,1,1);
+KMLline(lat',lon',(zi'+20).*5,<span class="string">'timeIn'</span>,timeIn,<span class="string">'timeOut'</span>,timeOut);
+</pre><h2>Multiple animated transects<a name="13"></a></h2>
+         <p>Finally we can also plot multiple jarkus transects at once. We will start from the beginning, with querying the data</p><pre class="codeinput">clear <span class="string">all</span>;
+no_of_transects = 10;
+no_of_years     = 15;
+url             = jarkus_url;
+id              = nc_varget(url,<span class="string">'id'</span>);
+start_transect  = find(id==8007000)-1;
+year            = nc_varget(url,<span class="string">'time'</span>);
+start_year      = find(year == 1990)-1;
+lat             = nc_varget(url,<span class="string">'lat'</span>,[start_transect,0],[no_of_transects,-1]);
+lon             = nc_varget(url,<span class="string">'lon'</span>,[start_transect,0],[no_of_transects,-1]);
+z               = nc_varget(url,<span class="string">'altitude'</span>,<span class="keyword">...</span>
+                   [start_year,start_transect,0],<span class="keyword">...</span>
+                   [no_of_years,no_of_transects,-1]);
+year            = nc_varget(url,<span class="string">'time'</span>,start_year,no_of_years);
+xRSP            = nc_varget(url,<span class="string">'cross_shore'</span>);
+</pre><p>Interpolation z, notice the use of squeeze.</p><pre class="codeinput">zi = nan(size(z));
+<span class="keyword">for</span> yy = 1:no_of_years
+    <span class="keyword">for</span> nn = 1:no_of_transects
+        not_nan     = squeeze(~isnan(z(yy,nn,:)));
+        zi(yy,nn,:) = interp1(xRSP(not_nan),squeeze(z(yy,nn,not_nan)),xRSP);
     <span class="keyword">end</span>
 <span class="keyword">end</span>
-</pre><pre class="codeinput">KMLline(lat',lon',(z'+20).*5,<span class="string">'text'</span>,labels,<span class="string">'latText'</span>,lat(:,500),<span class="string">'lonText'</span>,(lon(:,500)));
-</pre><p class="footer"><br>
+</pre><p>KMLline can not handle 3D inputs, so wil will have to put all the data in a 2D matrix. This requires some careful reshaping,
+            to make sure the right lat/lon, z and time information are matched.
+         </p>
+         <div>
+            <ul>
+               <li>First step is expanding lat and lon to the same size as z</li>
+            </ul>
+         </div><pre class="codeinput">lat2 = nan(size(z));
+lon2 = nan(size(z));
+<span class="keyword">for</span> yy = 1:no_of_years
+    lat2(yy,:,:) =  lat;
+    lon2(yy,:,:) =  lon;
+<span class="keyword">end</span>
+</pre><div>
+            <ul>
+               <li>Then we reshape the data to a 2D matrix</li>
+            </ul>
+         </div><pre class="codeinput">lat2    = reshape(lat2,no_of_years*no_of_transects,[]);
+lon2    = reshape(lon2,no_of_years*no_of_transects,[]);
+zi      = reshape(zi  ,no_of_years*no_of_transects,[]);
+</pre><div>
+            <ul>
+               <li>Time data also has to be reshaped</li>
+            </ul>
+         </div><pre class="codeinput">year    = repmat(year,no_of_transects,1)';
+timeIn  = datenum(year,1,1);
+timeOut = datenum(year+1,1,1);
+</pre><div>
+            <ul>
+               <li>And finally we can call KMLline</li>
+            </ul>
+         </div><pre class="codeinput">KMLline(lat2',lon2',(zi'+20).*5,<span class="string">'timeIn'</span>,timeIn,<span class="string">'timeOut'</span>,timeOut);
+</pre><p><img vspace="5" hspace="5" src="_prerendered_jarkus5_2.PNG"> </p>
+         <p class="footer"><br>
             Published with MATLAB&reg; 7.5<br></p>
       </div>
       <!--
 ##### SOURCE BEGIN #####
-%% plot data in Google Earth
-% plotting tols are in the googlePlot toolbox. To see it's contents, use
-% help:
-
-help googlePlot
-
-%% Plot a Jarkus transect in google earth
-
+%% Plot a Jarkus transect in Google Earth
+% the objective is to plot a jarkus transect in OpenEarth. 
+%% 
+% extract lat, lon, z, data from the netCDF database. See the read JarKus
+% tutorial if this is new to you.
 url         = jarkus_url;
-no_of_trans = 20; 
 id          = nc_varget(url,'id');
-transect_nr = find(id==6001200)-1;
+transect_nr = find(id==8007000)-1;
 year        = nc_varget(url,'time');
-year_nr     = find(year == 1979)-1;
-lat         = nc_varget(url,'lat',[transect_nr,0],[no_of_trans,-1]);
-lon         = nc_varget(url,'lon',[transect_nr,0],[no_of_trans,-1]);
-z           = nc_varget(url,'altitude',[year_nr,transect_nr,0],[1,no_of_trans,-1]);
+year_nr     = find(year == 1993)-1;
+lat         = nc_varget(url,'lat',[transect_nr,0],[1,-1]);
+lon         = nc_varget(url,'lon',[transect_nr,0],[1,-1]);
+z           = nc_varget(url,'altitude',[year_nr,transect_nr,0],[1,1,-1]);
+%%
+% we will check the data with matlab line:
+line(lat,lon,z)
+view([-67 32])
+grid on
+%% 
+% Because of the NaN values in data, not al datapoints are connected. 
+line(lat,lon,z,'lineStyle','none','marker','.','color',[1 0 0])
+%%
+% We can overcome this problem by linear interpolation of z to xRSP.
 xRSP        = nc_varget(url,'cross_shore');
-codes       = nc_varget(url,'alongshore',transect_nr,no_of_trans);
-labels      = cellstr(num2str(codes));
+not_nan     = ~isnan(z);
+zi          = interp1(xRSP(not_nan),z(not_nan),xRSP);
+%%
+% we will check the data again with matlab line:
+clf; line(lat,lon,zi)
+view([-67 32])
+grid on
 
-% interp z to all x values
-for ii = 1:size(z,1)
-    not_nan = ~isnan(z(ii,:));
-    if sum(not_nan)~=0
-        z(ii,:) = interp1q(xRSP(not_nan),z(ii,not_nan)',xRSP)';
+%% 
+% This works as expected, so now we will plot the data. We will exagerate
+% the z data, by adding 20 and multiplying by 5;
+KMLline(lat,lon,(zi+20)*5);
+%%
+% 
+% <<_prerendered_jarkus5_1.PNG>>
+% 
+%% Animation in time
+%%
+% Get altitude for multiple years
+z               = nc_varget(url,'altitude',[1,transect_nr,0],[-1,1,-1]);
+%%
+% interpolate z
+zi = nan(size(z));
+for yy = 1:size(z,1)
+    not_nan     = ~isnan(z(yy,:));
+    zi(yy,:)    = interp1(xRSP(not_nan),z(yy,not_nan),xRSP);
+end
+%%
+% We must provide lat and lon data for every entry of z;
+lat = repmat(lat,size(z,1),1);
+lon = repmat(lon,size(z,1),1);
+%%
+% An we must get the times. 
+timeIn  = datenum(year,1,1);
+timeOut = datenum(year+1,1,1);
+KMLline(lat',lon',(zi'+20).*5,'timeIn',timeIn,'timeOut',timeOut);
+
+%% Multiple animated transects
+% Finally we can also plot multiple jarkus transects at once. We will start
+% from the beginning, with querying the data
+clear all;
+no_of_transects = 10;
+no_of_years     = 15;
+url             = jarkus_url;
+id              = nc_varget(url,'id');
+start_transect  = find(id==8007000)-1;
+year            = nc_varget(url,'time');
+start_year      = find(year == 1990)-1;
+lat             = nc_varget(url,'lat',[start_transect,0],[no_of_transects,-1]);
+lon             = nc_varget(url,'lon',[start_transect,0],[no_of_transects,-1]);
+z               = nc_varget(url,'altitude',...
+                   [start_year,start_transect,0],...
+                   [no_of_years,no_of_transects,-1]);
+year            = nc_varget(url,'time',start_year,no_of_years);
+xRSP            = nc_varget(url,'cross_shore');
+%%
+% Interpolation z, notice the use of squeeze.
+zi = nan(size(z));
+for yy = 1:no_of_years
+    for nn = 1:no_of_transects
+        not_nan     = squeeze(~isnan(z(yy,nn,:)));
+        zi(yy,nn,:) = interp1(xRSP(not_nan),squeeze(z(yy,nn,not_nan)),xRSP);
     end
+end
+%% 
+% KMLline can not handle 3D inputs, so wil will have to put all the data in
+% a 2D matrix. This requires some careful reshaping, to make sure the right
+% lat/lon, z and time information are matched.
+
+%% 
+% * First step is expanding lat and lon to the same size as z
+lat2 = nan(size(z));
+lon2 = nan(size(z));
+for yy = 1:no_of_years
+    lat2(yy,:,:) =  lat;
+    lon2(yy,:,:) =  lon;
 end
 
 %%
-KMLline(lat',lon',(z'+20).*5,'text',labels,'latText',lat(:,500),'lonText',(lon(:,500)));
+% * Then we reshape the data to a 2D matrix
+lat2    = reshape(lat2,no_of_years*no_of_transects,[]);
+lon2    = reshape(lon2,no_of_years*no_of_transects,[]);
+zi      = reshape(zi  ,no_of_years*no_of_transects,[]);
+%% 
+% * Time data also has to be reshaped
+year    = repmat(year,no_of_transects,1)';
+timeIn  = datenum(year,1,1);
+timeOut = datenum(year+1,1,1);
+%%
+% * And finally we can call KMLline
+KMLline(lat2',lon2',(zi'+20).*5,'timeIn',timeIn,'timeOut',timeOut);
+%%
+% 
+% <<_prerendered_jarkus5_2.PNG>>
+% 
+
 ##### SOURCE END #####
 -->
    </body>

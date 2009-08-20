@@ -1,89 +1,119 @@
-%% plot data in Google Earth
-% plotting tols are in the googlePlot toolbox. To see it's contents, use
-% help:
-
-help googlePlot
-
-%% 
-% 
-lat = [70 40 40 70 70];
-lon = [4,4,16,16, 4];
-z = [1 1 1 1 1]*1e5;
-KMLline(lat,lon,z)
-%% Plot a Jarkus transect in google earth
+%% Plot a Jarkus transect in Google Earth
 % the objective is to plot a jarkus transect in OpenEarth. 
-
 %% 
 % extract lat, lon, z, data from the netCDF database. See the read JarKus
 % tutorial if this is new to you.
-
 url         = jarkus_url;
 id          = nc_varget(url,'id');
-transect_nr = find(id==6001200)-1;
+transect_nr = find(id==8007000)-1;
 year        = nc_varget(url,'time');
-year_nr     = find(year == 1979)-1;
+year_nr     = find(year == 1993)-1;
 lat         = nc_varget(url,'lat',[transect_nr,0],[1,-1]);
 lon         = nc_varget(url,'lon',[transect_nr,0],[1,-1]);
 z           = nc_varget(url,'altitude',[year_nr,transect_nr,0],[1,1,-1]);
-
-
-
-lat = 54:.1:55;
-lon = 4:.1:5;
-z = 10000*(1+rand(1,11));
-KMLline(lat,lon,z)
-z([3 6]) = nan
-
-xRSP = 1:11
-
 %%
 % we will check the data with matlab line:
 line(lat,lon,z)
-view([-160 40])
+view([-67 32])
 grid on
 %% 
-% because of the NaN values in data, not al datapoints are connected. We
-% can overcome this problem by linear interpolation of z to xRSP.
-
+% Because of the NaN values in data, not al datapoints are connected. 
+line(lat,lon,z,'lineStyle','none','marker','.','color',[1 0 0])
+%%
+% We can overcome this problem by linear interpolation of z to xRSP.
 xRSP        = nc_varget(url,'cross_shore');
 not_nan     = ~isnan(z);
 zi          = interp1(xRSP(not_nan),z(not_nan),xRSP);
-
 %%
 % we will check the data again with matlab line:
-line(lat,lon,zi)
-view([-160 40])
+clf; line(lat,lon,zi)
+view([-67 32])
 grid on
 
+%% 
+% This works as expected, so now we will plot the data. We will exagerate
+% the z data, by adding 20 and multiplying by 5;
+KMLline(lat,lon,(zi+20)*5);
+%%
+% 
+% <<_prerendered_jarkus5_1.PNG>>
+% 
+%% Animation in time
+%%
+% Get altitude for multiple years
+z               = nc_varget(url,'altitude',[1,transect_nr,0],[-1,1,-1]);
+%%
+% interpolate z
+zi = nan(size(z));
+for yy = 1:size(z,1)
+    not_nan     = ~isnan(z(yy,:));
+    zi(yy,:)    = interp1(xRSP(not_nan),z(yy,not_nan),xRSP);
+end
+%%
+% We must provide lat and lon data for every entry of z;
+lat = repmat(lat,size(z,1),1);
+lon = repmat(lon,size(z,1),1);
+%%
+% An we must get the times. 
+timeIn  = datenum(year,1,1);
+timeOut = datenum(year+1,1,1);
+KMLline(lat',lon',(zi'+20).*5,'timeIn',timeIn,'timeOut',timeOut);
+
+%% Multiple animated transects
+% Finally we can also plot multiple jarkus transects at once. We will start
+% from the beginning, with querying the data
+clear all;
+no_of_transects = 10;
+no_of_years     = 15;
+url             = jarkus_url;
+id              = nc_varget(url,'id');
+start_transect  = find(id==8007000)-1;
+year            = nc_varget(url,'time');
+start_year      = find(year == 1990)-1;
+lat             = nc_varget(url,'lat',[start_transect,0],[no_of_transects,-1]);
+lon             = nc_varget(url,'lon',[start_transect,0],[no_of_transects,-1]);
+z               = nc_varget(url,'altitude',...
+                   [start_year,start_transect,0],...
+                   [no_of_years,no_of_transects,-1]);
+year            = nc_varget(url,'time',start_year,no_of_years);
+xRSP            = nc_varget(url,'cross_shore');
+%%
+% Interpolation z, notice the use of squeeze.
+zi = nan(size(z));
+for yy = 1:no_of_years
+    for nn = 1:no_of_transects
+        not_nan     = squeeze(~isnan(z(yy,nn,:)));
+        zi(yy,nn,:) = interp1(xRSP(not_nan),squeeze(z(yy,nn,not_nan)),xRSP);
+    end
+end
+%% 
+% KMLline can not handle 3D inputs, so wil will have to put all the data in
+% a 2D matrix. This requires some careful reshaping, to make sure the right
+% lat/lon, z and time information are matched.
 
 %% 
-% This works as expected, so now we will plot the data
-KMLline(lat,lon',(z'+20).*5,'text',labels,'latText',lat(:,500),'lonText',(lon(:,500)));
-
-
-
-
-
-url         = jarkus_url;
-no_of_trans = 20; 
-id          = nc_varget(url,'id');
-transect_nr = find(id==6001200)-1;
-year        = nc_varget(url,'time');
-year_nr     = find(year == 1979)-1;
-lat         = nc_varget(url,'lat',[transect_nr,0],[no_of_trans,-1]);
-lon         = nc_varget(url,'lon',[transect_nr,0],[no_of_trans,-1]);
-z           = nc_varget(url,'altitude',[year_nr,transect_nr,0],[1,no_of_trans,-1]);
-xRSP        = nc_varget(url,'cross_shore');
-codes       = nc_varget(url,'alongshore',transect_nr,no_of_trans);
-labels      = cellstr(num2str(codes));
-
-% interp z to all x values
-for ii = 1:size(z,1)
-    not_nan = ~isnan(z(ii,:));
-    if sum(not_nan)~=0
-        z(ii,:) = interp1q(xRSP(not_nan),z(ii,not_nan)',xRSP)';
-    end
+% * First step is expanding lat and lon to the same size as z
+lat2 = nan(size(z));
+lon2 = nan(size(z));
+for yy = 1:no_of_years
+    lat2(yy,:,:) =  lat;
+    lon2(yy,:,:) =  lon;
 end
 
 %%
-KMLline(lat',lon',(z'+20).*5,'text',labels,'latText',lat(:,500),'lonText',(lon(:,500)));
+% * Then we reshape the data to a 2D matrix
+lat2    = reshape(lat2,no_of_years*no_of_transects,[]);
+lon2    = reshape(lon2,no_of_years*no_of_transects,[]);
+zi      = reshape(zi  ,no_of_years*no_of_transects,[]);
+%% 
+% * Time data also has to be reshaped
+year    = repmat(year,no_of_transects,1)';
+timeIn  = datenum(year,1,1);
+timeOut = datenum(year+1,1,1);
+%%
+% * And finally we can call KMLline
+KMLline(lat2',lon2',(zi'+20).*5,'timeIn',timeIn,'timeOut',timeOut);
+%%
+% 
+% <<_prerendered_jarkus5_2.PNG>>
+% 
