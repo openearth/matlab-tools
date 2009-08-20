@@ -1,6 +1,5 @@
 function testresult = $filename()
 % $FILENAME  $h1line
-%
 %  
 % $description
 %
@@ -34,33 +33,23 @@ function testresult = $filename()
 % $HeadURL$
 % $Keywords: $
 
-%$begintestcasessimple
-%% $Description (CaseName = $CaseName)
-$casedescription
-
-%% $RunCode
-$runcode
-
-%% $PublishResults
-$resultscode
-
-%$endtestcasessimple
-%% $TestDescription (TestName = $testname)
-% $publishdescription
+%% $Description (Name = $testname)
+$publishdescription
 
 %% $RunCode
 $testcode
+
+%% $PublishResult
+$publishresult
 end
 
 %$begintestcases
 function testresult = $FunctionCaseName()
-%% $Description (CaseName = $CaseName)
+%% $Description (Name = $CaseName)
 $casedescription
-
 %% $RunCode
 $runcode
-
-%% $PublishResults
+%% $PublishResult
 $resultscode
 end
 %$endtestcases

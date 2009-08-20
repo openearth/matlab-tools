@@ -83,8 +83,9 @@ OPT.publishdescription = 'Publishable code that describes the test.';
 OPT.testname    = 'Name of the test goes here';
 OPT.seeAlso     = '';
 OPT.testcode    = '';
+OPT.testpublishresult = ''; % To be used
 
-OPT.testcases   = '';
+OPT.testcases   = {'New testcase (change this name)'};
 OPT.casedescription = '% A description of the testcase goes here.';
 OPT.runcode     = ['% Write test script here' char(10) 'testresult = false;'];
 OPT.publishcode  = '% Put code here to publish the results.';
@@ -118,8 +119,8 @@ if ~isempty(which(cat(2,FunctionName,'.m')))
         t = mtest(FunctionName);
         
         %% Copy test variables to OPT
-        tvars = {'testname','testdescription','shortdescription'};%'longdescription','seealso', 'testcode' ==> Add
-        optvars = {'testname','publishdescription','h1line'};%'description','seealso',testcode'
+        tvars = {'testname','descriptioncode','h1line','description','seealso','runcode','publishcode'};
+        optvars = {'testname','publishdescription','h1line','description','seeAlso','testcode','testpublishresult'};
         for ivar = 1:length(tvars)
             if ~isempty(t.(tvars{ivar}))
                 OPT.(optvars{ivar}) = t.(tvars{ivar});
@@ -143,7 +144,9 @@ if ~isempty(which(cat(2,FunctionName,'.m')))
                 end
             end
         end
-        
+        if isempty(t.testcases)
+            OPT.testcases = [];
+        end
         %% No code left
         OPT.code = [];
     catch me %#ok<NASGU>
@@ -165,8 +168,12 @@ if iscell(publishdescription)
     publishdescription = sprintf('%s\n',publishdescription{:});
     publishdescription(end)=[];
 end
+if iscell(OPT.description)
+    OPT.description = sprintf('%s\n',OPT.description{:});
+    OPT.description(end)=[];
+end
 str = strrep(str, '$publishdescription', publishdescription);
-str = strrep(str, '$seeAlso', OPT.seeAlso);
+str = strrep(str, '$seeAlso', sprintf('%s ',OPT.seeAlso{:}));
 [fpath fname] = fileparts(fullfile(cd, FunctionName));
 str = strrep(str, '$filename', fname);
 str = strrep(str, '$FILENAME', upper(fname));
@@ -181,12 +188,14 @@ address = address(1:end-1);
 str = strrep(str, '%       $address', address);
 str = strrep(str, '$version', version);
 str = strrep(str, '$h1line', OPT.h1line);
+if iscell(OPT.testpublishresult)
+    OPT.testpublishresult = sprintf('%s\n',OPT.testpublishresult{:});
+    OPT.testpublishresult(end)=[];
+end 
+str = strrep(str,'$publishresult',OPT.testpublishresult);
 
 %% Check testcase names
-if isempty(OPT.testcases)
-    OPT.testcases = {'New testcase (change this name)'};
-end
-if ischar(OPT.testcases)
+if ~isempty(OPT.testcases) && ischar(OPT.testcases)
     OPT.testcases = {OPT.testcases};
 end
 
@@ -205,19 +214,9 @@ end
 tcbegin = strfind(str,'%$begintestcases');
 tcend = strfind(str,'%$endtestcases');
 
-if length(OPT.testcases) == 1 || ~isempty(OPT.testcode)
+if ~isempty(OPT.testcases)
     %% build testcase string
-    tcstring = buildtestcasestring(str(tcbegin(1)+22:tcend(1)-1),OPT);
-    
-    %% replace in str
-    str = cat(2,str(1:strfind(str,'%$begintestcasessimple')-1),tcstring);
-    
-else
-    %% build testcase string
-    tcstring = buildtestcasestring(str(tcbegin(2)+17:tcend(2)-1),OPT);
-    
-    %% Remove simple string
-    str(tcbegin(1)-1:tcend(1)+21)=[];
+    tcstring = buildtestcasestring(str(tcbegin+17:tcend-1),OPT);
     
     %% replace in str
     str = cat(2,str(1:strfind(str,'%$begintestcases')-1),tcstring);
@@ -230,8 +229,14 @@ else
         end
         OPT.testcode = cat(2,OPT.testcode,char(10),'testresult = all(testresult);');
     end
-    str = strrep(str,'$testcode',OPT.testcode);
+else
+    str = str(1:strfind(str,'%$begintestcases')-1);
 end
+if iscell(OPT.testcode)
+    OPT.testcode = sprintf('%s\n',OPT.testcode{:});
+    OPT.testcode(end)=[];
+end
+str = strrep(str,'$testcode',OPT.testcode);
 
 %% Append any other code
 % If the file was not according to the correct format and mtest couldn't read it, the complete
