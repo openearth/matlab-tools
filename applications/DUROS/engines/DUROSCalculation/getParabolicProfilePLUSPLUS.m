@@ -4,22 +4,22 @@ function [xmax, z, Tp_t] = getParabolicProfile(WL_t, Hsig_t, Tp_t, w, x0, x)
 % This routine returns the most seaward x-coordinate of the parabolic DUROS
 % (-plus) profile. If variable x with x-coordinates exists, than also the
 % y-coordinates of the parabolic profile will be given
-%
+% 
 % Syntax:       [xmax, y, Tp_t] = getParabolicProfile(WL_t, Hsig_t, Tp_t, w, x0, x)
-%
+% 
 % Input: 
 %               WL_t      = Maximum storm surge level [m]
 %               Hsig_t    = wave height [m]
 %               Tp_t      = peak wave period [s]
-%               d_t       = water depth [m]
+%               d_t       = water depth [m] (derived from DUROS settings!)
 %               w         = fall velocity of the sediment in water
 %               x0        = x-location of the origin of the parabolic
 %                               profile
 %               x         = array with x-coordinates to create the
 %                               parabolic profile on
-%
+% 
 % Output:       Eventual output is stored in a variables xmax and z
-%
+% 
 %   See also ParabolicProfileMain getFallVelocity
 % 
 % --------------------------------------------------------------------------
@@ -33,17 +33,6 @@ Plus                                    = DuneErosionSettings('get','Plus');
 [cp_hs cp_tp cp_w cp_d cp_c1 cp_c2]     = DuneErosionSettings('get','cp_hs','cp_tp','cp_w','cp_d','cp_c1','cp_c2');
 [d_t]                                   = DuneErosionSettings('get','d');
 [xmax,y,waveheightcmpt,waveperiodcmpt,fallvelocitycmpt,depthcmpt] = deal([]);
-
-if isnan(c_2)
-    c_2 = 18;   % this line can potentially be removed
-end
-if isnan(c_d)
-    c_d = 25;   % this line can potentially be removed
-end
-if isnan(cp_d)
-    cp_d = 1;   % this line can potentially be removed
-end
-
 
 
 %% -------------------------------------------------------------------------------------------- 
@@ -74,10 +63,10 @@ elseif strcmp(Plus,'-plus')
 %% --------------------------------------------------------------------------------------------
 %-------------------------DUROS plusplus (for testing purposes only)---------------------------
 %----------------------------------------------------------------------------------------------
-elseif (strcmp(Plus,'-plusplus') & exist('x','var') %&& ~isempty(x)
+elseif strcmp(Plus,'-plusplus') & exist('x','var') %&& ~isempty(x)
     %Option to include depth contribution into the 'constants' C1, C2 and 'two'
-    c_1 = A*(Hsig_t/d_t)^cp_c1;
-    c_2 = B*(Hsig_t/d_t)^cp_c2;
+    c_1 = c_1*(Hsig_t/d_t)^cp_c1;
+    c_2 = c_2*(Hsig_t/d_t)^cp_c2;
     two = c_1*sqrt(c_2);
     xmax = x0 + 250  *  (Hsig_t/c_hs) * (Tp_t/c_tp)^cp_tp  * (c_w/w)^cp_w * (c_d/d_t)^0.5;
 else

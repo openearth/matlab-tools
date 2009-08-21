@@ -36,6 +36,7 @@ dz     = 0.05;
 ztemp  = [z-dz, z+dz];
 [dxparab, rcparab,waveheightcmpt,waveperiodcmpt,fallvelocitycmpt,depthcmpt] = deal([]);
 
+
 %% -------------------------------------------------------------------------------------------- 
 %-------------------------------------------DUROS---------------------------------------------- 
 %---------------------------------------------------------------------------------------------- 
@@ -62,10 +63,10 @@ elseif strcmp(Plus,'-plus')
 %% -------------------------------------------------------------------------------------------
 %  -----------------------DUROS plusplus (for testing purposes only)--------------------------
 %  -------------------------------------------------------------------------------------------
-elseif (strcmp(Plus,'-plusplus')
+elseif strcmp(Plus,'-plusplus')
     %including depth contribution into the 'constants' C1, C2 and 'two'
-    c_1 = A*(Hsig_t/d_t)^cfA;
-    c_2 = B*(Hsig_t/d_t)^cfB;
+    c_1 = c_1*(Hsig_t/d_t)^cp_c1;
+    c_2 = c_2*(Hsig_t/d_t)^cp_c2;
     two = c_1*sqrt(c_2);
 else
     error('Warning: variable "Plus" should be either '''' or ''-plus'' or ''-plusplus''')

@@ -65,6 +65,7 @@ Plus                                    = DuneErosionSettings('get','Plus');
 [d_t]                                   = DuneErosionSettings('get','d');
 [dx,waveheightcmpt,waveperiodcmpt,fallvelocitycmpt,depthcmpt] = deal([]);
 
+
 %% -------------------------------------------------------------------------------------------- 
 %-------------------------------------------DUROS---------------------------------------------- 
 %---------------------------------------------------------------------------------------------- 
@@ -91,10 +92,10 @@ elseif strcmp(Plus,'-plus')
 %% -------------------------------------------------------------------------------------------
 %  -----------------------DUROS plusplus (for testing purposes only)--------------------------
 %  -------------------------------------------------------------------------------------------
-elseif (strcmp(Plus,'-plusplus')
+elseif strcmp(Plus,'-plusplus')
     %Option to include depth contribution into the 'constants' C1, C2 and 'two'
-    c_1 = A*(Hsig_t/d_t)^cp_c1;
-    c_2 = B*(Hsig_t/d_t)^cp_c2;
+    c_1 = c_1*(Hsig_t/d_t)^cp_c1;
+    c_2 = c_2*(Hsig_t/d_t)^cp_c2;
     two = c_1*sqrt(c_2); % term in formulation which is 2 by approximation for DUROS and D+; by using this expression, the profile will exactly cross (x0,0)
 else
     error('Warning: variable "Plus" should be either '''' or ''-plus'' or ''-plusplus''')
