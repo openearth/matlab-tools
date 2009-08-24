@@ -1,4 +1,4 @@
-function [OPT, Set, Default] = KMLtext(lat,lon,text,varargin)
+function [OPT, Set, Default] = KMLtext(lat,lon,z,text,varargin)
 % KMLTEXT Just like text 
 %
 %    KMLtext(lat,lon,'fileName',fname,<keyword,value>)
@@ -51,63 +51,38 @@ function [OPT, Set, Default] = KMLtext(lat,lon,text,varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% process varargin
-
-OPT.fileName    = [];
-OPT.kmlName     = 'untitled';
-% OPT.lineWidth   = 1;
-% OPT.lineColor   = [0 0 0];
-% OPT.lineAlpha   = 1;
-OPT.openInGE    = false;
-% OPT.text        = '';
-% OPT.latText     = mean(lat,1);
-% OPT.lonText     = mean(lon,1);
-OPT.timeIn      = [];
-OPT.timeOut     = [];
-
-[OPT, Set, Default] = setProperty(OPT, varargin);
-
 %% input check
+if    ~isempty(varargin)&& odd(nargin)
+    isstruct(varargin)
+    OPT.is3D = false;
+    varargin = [{text} varargin];
+    text = z;
+    OPT.is3D = false;
+elseif isempty(varargin)&& odd(nargin)
+    OPT.is3D = false;
+    text = z;
+    OPT.is3D = false;
+else
+    OPT.is3D = true;
+end
+
 lat = lat(:);
 lon = lon(:);
 text = text(:);
-
 if any((abs(lat)/90)>1)
     error('latitude out of range, must be within -90..90')
 end
 lon = mod(lon+180, 360)-180;
 
-% 
-% % first check is multiple styles are defined. If not, then it's easy: there
-% % is only one style. 
-% % if so, then repeat each style for size(lat,2) (that's the number of lines
-% % to draw), put them all in one matrix, and the ndefine the unique
-% % linestyles.
-% if numel(OPT.lineWidth) + numel(OPT.lineColor)+OPT.lineAlpha == 5
-%     % one linestyle, do nothing
-%     
-%     ind = 1;
-%     OPT.styleNR = ones(size(lat,2),1);
-% else
-%     % multiple styles
-%     
-%     % expand input options to # of lines 
-%     OPT.lineWidth = OPT.lineWidth(:);
-%     OPT.lineWidth = [repmat(OPT.lineWidth,floor(size(lat,2)/length(OPT.lineWidth)),1);...
-%     OPT.lineWidth(1:rem(size(lat,2),length(OPT.lineWidth)))];
-% 
-%     OPT.lineColor = [repmat(OPT.lineColor,floor(size(lat,2)/size(OPT.lineColor,1)),1);...
-%                      OPT.lineColor(1:rem(size(lat,2),size(OPT.lineColor,1)),:)];
-%     
-%     OPT.lineAlpha = OPT.lineAlpha(:);
-%     OPT.lineAlpha = [repmat(OPT.lineAlpha,floor(size(lat,2)/length(OPT.lineAlpha)),1);...
-%                     OPT.lineAlpha(1:rem(size(lat,2),length(OPT.lineAlpha)))];
-%      
-%     % find unique linestyles
-%     [ignore,ind,OPT.styleNR] = unique([OPT.lineWidth,OPT.lineColor,OPT.lineAlpha],'rows');
-% end
+%% process varargin
 
+OPT.fileName    = [];
+OPT.kmlName     = 'untitled';
+OPT.openInGE    = false;
+OPT.timeIn      = [];
+OPT.timeOut     = [];
 
+[OPT, Set, Default] = setProperty(OPT, varargin);
 
 %% get filename
 
@@ -168,7 +143,11 @@ end
 
 % loop through number of lines
 for ii=1:length(lat)
-    newOutput = KML_text(lat(ii),lon(ii),text{ii},OPT_text);
+    if OPT.is3D
+        newOutput = KML_text(lat(ii),lon(ii),z(ii),text{ii},OPT_text);
+    else
+        newOutput = KML_text(lat(ii),lon(ii),text{ii},OPT_text);
+    end
     % add newOutput to output
     output(kk:kk+length(newOutput)-1) = newOutput;
     kk = kk+length(newOutput);
@@ -180,7 +159,6 @@ for ii=1:length(lat)
         output = repmat(char(1),1,1e5);
     end
 end
-
 
 % print output
 fprintf(OPT.fid,output(1:kk-1)); 

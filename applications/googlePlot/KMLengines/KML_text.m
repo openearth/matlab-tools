@@ -1,7 +1,7 @@
-function [output] = KML_text(lat,lon,text,varargin)
+function [output] = KML_text(lat,lon,z,text,varargin)
 %KML_TEXT   low-level routine for creating KML string of text
 %
-%   kmlstring = KML_text(lat,lon,text)
+%   kmlstring = KML_text(lat,lon,z,text)
 %
 % See also: KML_footer, KML_header, KML_line, KML_poly, KML_style, 
 % KML_stylePoly, KML_upload
@@ -37,7 +37,29 @@ function [output] = KML_text(lat,lon,text,varargin)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
+%% Check if 3d
 
+
+if    ~isempty(varargin)
+    if ( isstruct(varargin{1})&&~odd(nargin))||...
+       (~isstruct(varargin{1})&&odd(nargin))
+        OPT.is3D = false;
+        varargin = [{text} varargin];
+        text = z;
+        OPT.is3D = false;
+        z = zeros(size(lat));
+    else
+        OPT.is3D = true;
+    end
+elseif isempty(varargin)&&odd(nargin)
+    OPT.is3D = false;
+    text = z;
+    OPT.is3D = false;
+    z = zeros(size(lat));
+else
+    OPT.is3D = true;
+end
+ 
 %%
 OPT.timeIn     = [];
 OPT.timeOut    = [];
@@ -64,15 +86,23 @@ else
     timeSpan ='';
 end
 
+%% preprocess altitude mode
+if OPT.is3D
+    altitudeMode = '<altitudeMode>absolute</altitudeMode>';
+else
+    altitudeMode = '';  
+end
 
 %% type HEADER
 output = sprintf([...
-	'<Placemark>'...
+	'<Placemark>\n'...
     '%s',...% timeSpan
-	'<name>%s</name>'...
-	'<Style><IconStyle><Icon></Icon></IconStyle></Style>'...
-	'<Point>	<coordinates>%3.8f,%3.8f,0</coordinates></Point>'...
-	'</Placemark>'],...
-    timeSpan,text,lon,lat);
+    '<name>%s</name>\n'...text
+	'<Style><IconStyle><Icon></Icon></IconStyle></Style>\n'...
+	'<Point>'...
+    '%s'...altitude mode
+    '<coordinates>%3.8f,%3.8f,%3.4f</coordinates></Point>\n'...
+	'</Placemark>\n'],...
+    timeSpan,text,altitudeMode,lon,lat,z);
 
 %% EOF

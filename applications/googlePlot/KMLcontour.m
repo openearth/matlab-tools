@@ -49,6 +49,10 @@ OPT.openInGE    = false;
 OPT.colorMap    = 'jet';
 OPT.timeIn      = [];
 OPT.timeOut     = [];
+OPT.is3D        = false;
+OPT.scaleA      = 40;
+OPT.scaleB      = 5;
+OPT.cLim        = [];
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
 %% input check
@@ -87,23 +91,44 @@ while jj<size(coords,2)
     lon(1:coords(2,jj),ii) = coords(2,[jj+1:jj+coords(2,jj)]); 
     jj = jj+coords(2,jj)+1;
 end
+%% make z
+z = repmat((height+OPT.scaleA)*OPT.scaleB,size(lat,1),1);
 
-level = round(10*height);
-colors = jet(range(level)+1);
-lineColors = colors(level-min(level)+1,:);
-
-KMLline(lat,lon,'fileName',OPT.fileName,'lineColor',lineColors,'lineWidth',OPT.lineWidth,...
-    'timeIn',OPT.timeIn,'timeOut',OPT.timeOut);
-
+%% make labels
 latText    = lat(1:10:end,:);
 lonText    = lon(1:10:end,:);
+zText      =   z(1:10:end,:);
 textLevels = repmat(height,size(latText,1),1);
 textLevels = textLevels(~isnan(latText));
+zText      =   zText(~isnan(latText));  
 latText    = latText(~isnan(latText));
 lonText    = lonText(~isnan(lonText));
 textLabels = arrayfun(@(x) sprintf('%2.1f',x),textLevels,'uni',false);
+if OPT.is3D
+    KMLtext(latText,lonText,zText,textLabels,'fileName',[OPT.fileName(1:end-4) 'labels.kml'],...
+      'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut);
+else
+    KMLtext(latText,lonText,textLabels,'fileName',[OPT.fileName(1:end-4) 'labels.kml'],...
+      'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut);    
+end
 
-KMLtext(latText,lonText,textLabels,'fileName',[OPT.fileName(1:end-4) 'labels.kml'],...
-    'timeIn',OPT.timeIn,'timeOut',OPT.timeOut);
+%% draw the lines
+if isempty(OPT.cLim)
+    OPT.cLim = ([min(height) max(height)]);
+end
+
+height(height<OPT.cLim(1)) = OPT.cLim(1);
+height(height>OPT.cLim(2)) = OPT.cLim(2);
+level      = round(10*height);
+colors     = eval([OPT.colorMap '(max(level) - min(level)+1)']);
+lineColors = colors(level-min(level)+1,:);
+
+if OPT.is3D
+    KMLline(lat,lon,z,'fileName',OPT.fileName,'lineColor',lineColors,'lineWidth',OPT.lineWidth,...
+        'timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'fillColor',lineColors);
+else
+    KMLline(lat,lon,'fileName',OPT.fileName,'lineColor',lineColors,'lineWidth',OPT.lineWidth,...
+        'timeIn',OPT.timeIn,'timeOut',OPT.timeOut);
+end
 
 
