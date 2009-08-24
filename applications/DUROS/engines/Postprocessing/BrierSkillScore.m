@@ -94,6 +94,13 @@ else
 end
 
 %% interpolate profiles onto new grid
+[x0,id1]=unique(x0);
+[xc,id2]=unique(xc);
+[xm,id3]=unique(xm);
+z0=z0(id1);
+zc=zc(id2);
+zm=zm(id3);
+
 z0_new = interp1(x0, z0, x_new);
 zc_new = interp1(xc, zc, x_new);
 zm_new = interp1(xm, zm, x_new);
