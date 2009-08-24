@@ -60,7 +60,7 @@ lon = mod(lon+180, 360)-180;
 %% filename
 % gui for filename, if not set yet
 if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','line.kml');
+    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','contour.kml');
     OPT.fileName = fullfile(filePath,fileName);
 end
 
