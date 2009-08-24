@@ -158,7 +158,7 @@ end
 
 %% Check iteration boundaries. If non consistent: find out why and return
 IterationBoundariesConsistent = x0max > x0min;
-NoPointsAboveWaterline = all(zInitial(xInitial>x0min & xInitial<x0max) < WL_t);
+NoPointsAboveWaterline = all(zInitial(xInitial>=x0min & xInitial<=x0max) < WL_t);
 if ~IterationBoundariesConsistent || NoPointsAboveWaterline
     xDUROS = DUROSresult.xActive;
     zDUROS = DUROSresult.z2Active;
