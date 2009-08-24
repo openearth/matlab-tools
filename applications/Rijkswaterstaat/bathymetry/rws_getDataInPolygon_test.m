@@ -37,36 +37,10 @@ end
 
 %% Test 1: work on VAKLODINGEN grids
 if 1
-rws_getDataInPolygon(...
+[X, Y, Z, Ztime] = rws_getDataInPolygon(...
     'datatype', 'vaklodingen', ...
     'starttime', datenum([2009 01 01]), ...
-    'searchwindow', -5*365, ...
+    'searchwindow', -20*365, ...
     'datathinning', 1);
 end
 
-% http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB109_4746.nc
-% http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB112_5150.nc
-% http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB119_4342.nc
-% http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB136_0504.nc
-% 
-% url='ttp://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB138_1514'
-% nc_dump(url)
-% nc_varget(url,'time')
-% 
-% ans =
-% 
-%        -9999
-%        -9999
-%        -9999
-%        -9999
-%        -9999
-%        -9999
-%        -9999
-%        -9999
-%        -9999
-%        -9999
-       
-% http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB134_1110.nc
-% http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB135_1110.nc
-% http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB135_1312.nc
-% http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB134_1312.nc

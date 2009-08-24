@@ -20,7 +20,7 @@ poly = [68321.2 445431
 
 % get data within that polygon from NetCDF file
 url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/vanoordboskalis/delflandsekust/delflandsekust.nc';
-[X, Y, Z, T] = getDataFromNetCDFGrid('ncfile', url, 'starttime', datenum([2009 03 10]), 'searchwindow', -10, 'polygon', poly);
+[X, Y, Z, T] = rws_getDataFromNetCDFGrid('ncfile', url, 'starttime', datenum([2009 03 10]), 'searchwindow', -10, 'polygon', poly);
 
 % add the data to the previous plot
 surf(X,Y,Z); shading interp;view(2);
