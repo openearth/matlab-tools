@@ -68,8 +68,8 @@ elseif strcmp(Plus,'-plusplus') & exist('x','var') %&& ~isempty(x)
     c_1 = c_1*(Hsig_t/d_t)^cp_c1;
     c_2 = c_2*(Hsig_t/d_t)^cp_c2;
     two = c_1*sqrt(c_2);
-    %xmax = x0 + 250  *  (Hsig_t/c_hs) * (c_w/w)^cp_w * (c_d/d_t)^0.5;
-    xmax = x0 + 250  *  (Hsig_t/c_hs) * (Tp_t/c_tp)^cp_tp  * (c_w/w)^cp_w * (c_d/d_t)^0.5;
+    xmax = x0 + 250  *  (Hsig_t/c_hs) * (c_w/w)^cp_w * (c_d/d_t)^0.5;
+    %xmax = x0 + 250  *  (Hsig_t/c_hs) * (Tp_t/c_tp)^cp_tp  * (c_w/w)^cp_w * (c_d/d_t)^0.5;
 else
     error('Warning: variable "Plus" should be either '''' or ''-plus'' or ''-plusplus''')
 end
