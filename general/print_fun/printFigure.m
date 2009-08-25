@@ -1,4 +1,4 @@
-function printFigure(fh, location, permission, ddriver, resolution)
+function printFigure(varargin)
 %PRINTFIGURE  routine to save a figure to a .png-file
 %
 %   Routine saves the figure with figurehandle 'fh' to a predefined
@@ -14,6 +14,9 @@ function printFigure(fh, location, permission, ddriver, resolution)
 %
 %   Syntax:
 %   printFigure(fh, location, permission, ddriver, resolution)
+%   printFigure(fh,...
+%       'resolution', '-r300')
+%   printFigure('fh', fh)
 %
 %   Input:
 %   fh         = figure handle
@@ -68,23 +71,47 @@ function printFigure(fh, location, permission, ddriver, resolution)
 % $HeadURL$
 % $Keywords:
 
-%% check input
-getdefaults('ddriver', '-dpng', 0, 'resolution', '-r300', 0);
-if nargin == 0
-    fh = gcf;
-end
-if nargin < 3
-    permission = '';
-end
+%% check and inventorise input
+% input can be specified directly, provided that the order of the input
+% arguments corresponds with propertyName (specified below), or as
+% propertyName propertyValue pairs. Also a combination is possible as long
+% as it starts with direct input (in the right order), followed by
+% propertyName propertyValue pairs (regardless of order).
+
+% derive identifier of the argument just before the first propertyName or 
+% alternatively the identifier of the last input argument (if no
+% propertyName propertyValue pairs are used)
+idPropName = [cellfun(@ischar, varargin) true];
+id = find(idPropName, 1, 'first')-1;
+
+% define propertyNames and (default) propertyValues (most are empty by default)
+propertyNameValue = {...
+    'fh', gcf;...
+    'location', [];...
+    'permission', '';...
+    'ddriver', '-dpng';...
+    'resolution', '-r300'};
+
+propertyNameValue(1:id,2) = varargin(1:id);
+
+% create property structure, including the directly specified input
+OPTstructArgs = reshape(propertyNameValue, 1, 2*length(propertyName));
+OPT = struct(OPTstructArgs{:});
+
+% update property structure with input specified as propertyName
+% propertyValue pairs
+OPT = setProperty(OPT, varargin{id+1:end});
 
 %% create figure file name if not defined
-if ~exist('location','var') || isempty(location)
+if isempty(OPT.location)
     ST = dbstack;
     if length(ST)>1
         location = [evalin('caller','pwd') filesep,ST(2).name '_Figure']; % creates a figure file with the name of the caller function with '_Figure' at the end in the path of the caller function 
     else
         location = fullfile(cd, 'printFigure'); % creates a figure file called 'printFigure' in the current working directory
     end
+else
+    location = OPT.location;
 end
 
 %% remove possible extension from location (right extension will be added during printing
@@ -101,7 +128,7 @@ end
 [directory figurefilename] = fileparts(location);
 
 %% print figure to tempfile in tempdir
-print(fh, ddriver, resolution, [tempdir figurefilename])
+print(OPT.fh, OPT.ddriver, OPT.resolution, [tempdir figurefilename])
 [dummy1 dummy2 extension] = fileparts(getFileName(tempdir, '*', [], 1));
 location = [location extension];
 
@@ -109,7 +136,7 @@ location = [location extension];
 if exist(location, 'file')
     disp([location, ' already exists'])
     [directory figurefilename extension] = fileparts(location);
-    if ~strcmp(permission, 'overwrite')
+    if ~strcmp(OPT.permission, 'overwrite')
         id = 0;
         while exist(location, 'file') % as long as file name is not unique, higher # (in '_#')
             id=id+1;
