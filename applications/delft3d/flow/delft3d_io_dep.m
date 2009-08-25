@@ -56,7 +56,6 @@ function G = delft3d_io_dep(varargin)
 %   - For depcor one dummy row /column  is  added.
 %   - For depcen two dummy rows/columns are added.
 %  When  both are present, depcen is taken.
-%
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005-7 Delft University of Technology
@@ -92,6 +91,8 @@ function G = delft3d_io_dep(varargin)
 % $Author$
 % $Revision$
 % $HeadURL$
+
+% 2009 aug 17 accopunted for apperant swap by wldep
 
 delft3d_io_dep_version = 'beta';
 
@@ -164,8 +165,8 @@ delft3d_io_dep_version = 'beta';
                G.dpsopt = 'dp';     
             end
          end
-      else
-         error('keyword ''location'' missing, compulsory for both read (what is defined dep file) + write (choose one to write).')
+      elseif ~isfield(G,'dpsopt')
+         error('keyword ''location'' or ''dpsopt'' missing, compulsory for both read (what is defined dep file) + write (choose one to write).')
       end
 
       if isfield(G,'dpsopt')
@@ -191,13 +192,13 @@ delft3d_io_dep_version = 'beta';
       %% Note SIZE is here [mmax nmax] % m first
       
       if ~OPT.dummy
-         D3Dmatrix                = wldep ('read',fname,SIZE);
+         D3Dmatrix                = wldep ('read',fname,[SIZE(2),SIZE(1)])';
       else
       if     strcmpi(G.location,'cor')
-         matrix                   = wldep ('read',fname,[SIZE(1)-1,SIZE(2)-1]);
+         matrix                   = wldep ('read',fname,[SIZE(2)-1,SIZE(1)-1])';
          D3Dmatrix                = addrowcol(matrix,[1   ],[1   ],OPT.missingvalue);
       elseif strcmpi(G.location,'cen')
-         matrix                   = wldep ('read',fname,[SIZE(1)-2,SIZE(2)-2]);
+         matrix                   = wldep ('read',fname,[SIZE(2)-2,SIZE(1)-2])';
          D3Dmatrix                = addrowcol(matrix,[-1 1],[-1 1],OPT.missingvalue);
       end
       end

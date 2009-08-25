@@ -44,7 +44,6 @@
    wlgrid('write','filename',[OPT.cd,'delft3d_io_meteo.grd'],'X',P.cor.x,'Y',P.cor.y,'CoordinateSystem','Cartesian','Format','NewRGF');
 
    MDF = delft3d_io_mdf('read',[OPT.cd,'delft3d_io_meteo.mdf']);
-   
    MDF.keywords.mnkmax  = [size(P.cor.x,1)+1 size(P.cor.x,2)+1 1];
    MDF.keywords.depuni  = 1e3;
    MDF.keywords.tstart  = (OPT.tstart - OPT.refdate).*24*60;
@@ -58,8 +57,7 @@
    MDF.keywords.flmap   = [(OPT.tstart - OPT.refdate) OPT.dt (OPT.tstop  - OPT.refdate)].*24*60;
    MDF.keywords.flhis   = [(OPT.tstart - OPT.refdate)      0 (OPT.tstop  - OPT.refdate)].*24*60;
 
-   
-   MDF = delft3d_io_mdf('write',[OPT.cd,'delft3d_io_meteo_test.mdf'],MDF.keywords);
+   delft3d_io_mdf('write',[OPT.cd,'delft3d_io_meteo_test.mdf'],MDF.keywords);
 
 %% plot
 

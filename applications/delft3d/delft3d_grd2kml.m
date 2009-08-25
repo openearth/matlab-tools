@@ -1,0 +1,85 @@
+function OPT = delft3d_grd2kml(grdfile,varargin)
+%DELFT3D_GRD2KML   saves Delft3D grid fle as kml file
+%
+%   delft3d_grd2kml(grdfile,<keyword,value>)
+%
+% Note: that the grid file need to be of Spherical type
+%       or you must specify epsg code.
+% Note: for surf you must change reversePoly if the grid cells are too 
+%       dark during the day, and light during the night.
+%
+% Example:
+%
+%    delft3d_grd2kml('g04.grd','epsg',28992,'dep','g04.dep','dpsopt','mean','ddep',150,'clim',[-50 0])
+%
+%See also: googlePlot, delft3d
+
+  %grdfile         = 'lake_and_sea_5_ll.grd';
+   OPT.epsg        = [];  % 28992; % 7415; % 28992; ['Amersfoort / RD New']
+   OPT.dep         = [];  %'dep_at_cor_triangulated_filled_corners.dep';
+   OPT.ddep        = 30;  % offset
+   OPT.fdep        = 200; % factor
+   OPT.clim        = [];  %
+   OPT.debug       = 1;
+   OPT.reversePoly = true;
+
+
+   OPT.mdf    = [];  % or dpsopt
+   OPT.dpsopt = [];  % or mdf
+   
+   OPT = setProperty(OPT,varargin{:});
+   
+   if nargin==0
+      return
+   end
+   
+   G = delft3d_io_grd('read',grdfile);
+   
+   if     ~strcmpi(G.CoordinateSystem,'sperical') & isempty(OPT.epsg)
+      error('no latitide and longitudes given')
+   elseif ~strcmpi(G.CoordinateSystem,'sperical')  
+      [G.cor.lon,G.cor.lat,CS]=convertCoordinates(G.cor.x,G.cor.y,'CS1.code',OPT.epsg,'CS2.code',4326);
+   end
+
+   if ~isempty(OPT.mdf)
+      MDF        = delft3d_io_mdf('read',OPT.mdf);
+      OPT.dpsopt = MDF.keywords.dpsopt;
+   end
+   
+   %% check for spherical !!
+   
+   if ~isempty(OPT.dep)
+      G = delft3d_io_dep('read',OPT.dep,G,'dpsopt',OPT.dpsopt);
+   else
+      G.cen.dep = 0.*G.cen.x;
+      G.cor.dep = 0.*G.cor.x;
+   end
+   
+   % OPT.ddep = max(abs(max(G.cen.dep(:))),0);
+
+   if OPT.debug
+      TMP = figure;
+      pcolorcorcen(G.cor.lon,G.cor.lat,-G.cor.dep);
+      colorbar
+      pausedisp
+      try;close(TMP);end
+   end
+   
+   KMLpcolor(G.cor.lat,G.cor.lon,-G.cen.dep,...
+                   'fileName',[filename(grdfile),'_2D.kml'],...
+                'reversePoly',OPT.reversePoly,...
+                       'clim',OPT.clim,...
+                    'kmlName','depth [m]');
+   
+   KMLsurf  (G.cor.lat,G.cor.lon,(-G.cor.dep+OPT.ddep)*OPT.fdep,... % at corners for z !!
+                             -G.cen.dep,...
+                       'clim',OPT.clim,...
+                    'fileName',[filename(grdfile),'_3D.kml'],...
+                     'kmlName','depth [m]',...
+                 'polyOutline',1,...
+                   'lineAlpha',.6,...
+                   'fillAlpha',.8,...
+                 'reversePoly',OPT.reversePoly,...
+                   'lineColor',[.5 .5 .5]);
+
+%%EOF

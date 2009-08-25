@@ -142,6 +142,12 @@ for ivar=[OPT.parameter]
 
         if exist([OPT.filename,'.mat'],'file')==2
             D = load([OPT.filename,'.mat']);% speeds up considerably
+
+                %quick fix of previous errors in units
+                %if strcmpi(D.meta1.units,'cm t.o.v. Mean Sea Level') % id54
+                %   D.data.(OPT.name) = D.data.(OPT.name)./100;
+                %end
+
         else
             if OPT.unzip
                 OPT.zipname  = [OPT.filename,'.zip'];
@@ -160,8 +166,10 @@ for ivar=[OPT.parameter]
                 % for waterlevels 'cm t.o.v. NAP' is used
                 % for wave heights 'cm' is used
                 % both strings need to be compared
-                if strcmpi(D.meta1.units,'cm') || strcmpi(D.meta1.units,'cm t.o.v. NAP')
-                    D.data.(OPT.name) = D.data.(OPT.name)./100;
+                if strcmpi(D.meta1.units(1:2),'cm')
+                   % strcmpi(D.meta1.units,'cm t.o.v. NAP') || ...     % id1
+                   % strcmpi(D.meta1.units,'cm t.o.v. Mean Sea Level') % id54
+                   D.data.(OPT.name) = D.data.(OPT.name)./100;
                 end
             end
 

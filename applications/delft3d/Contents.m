@@ -3,6 +3,7 @@
 % Files
 %   d3d_sigma                  - calculates the relative vertical sigma positions in %
 %   d3d_z                      - calculates the absolute z-layer positions in m
+%   delft3d_grd2kml            - save grid (and depth) file as kml for Google Earth
 %   delft3d_grid_image         - ASCII image of Delft3D grid matrix
 %   delft3d_io_ann             - Read annotation files in a nan-separated list struct (*.ann)  (BETA VERSION)
 %   vs_area                    - reads INCORRECT cell areas from com-file.

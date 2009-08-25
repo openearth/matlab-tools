@@ -29,8 +29,8 @@
 
 %% File loop
 
-   OPT.directory.raw  = ['F:\checkouts\OpenEarthRawData\knmi\NOAA\mom\1990_mom\5\'];
-   OPT.directory.nc   = ['F:\checkouts\OpenEarthRawData\knmi\NOAA\mom.nc\1990_mom\5\'];
+   OPT.directory.raw  = ['F:\checkouts\OpenEarthRawData\knmi\noaapc\mom\1990_mom\5\'];
+   OPT.directory.nc   = ['F:\checkouts\OpenEarthRawData\knmi\noaapc\mom.nc\1990_mom\5\'];
    
    mkpath(OPT.directory.nc)
 
@@ -81,7 +81,7 @@
       nc_attput(outputfile, nc_global, 'version'         , D.version);
    						   
       nc_attput(outputfile, nc_global, 'Conventions'     , 'CF-1.4');
-      nc_attput(outputfile, nc_global, 'CF:featureType'  , '');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
+     %nc_attput(outputfile, nc_global, 'CF:featureType'  , ' ');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
    
       nc_attput(outputfile, nc_global, 'terms_for_use'   , 'These data can be used freely for research purposes provided that the following source is acknowledged: KNMI.');
       nc_attput(outputfile, nc_global, 'disclaimer'      , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
@@ -91,6 +91,17 @@
       nc_attput(outputfile, nc_global, 'type'            , D.type);
       nc_attput(outputfile, nc_global, 'yearday'         , D.yearday);
    
+     %% Discovery information:
+     %  http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html
+     
+      nc_attput(outputfile, nc_global, 'geospatial_lat_min'         , min(D.latcor(:)));
+      nc_attput(outputfile, nc_global, 'geospatial_lat_max'         , max(D.latcor(:)));
+      nc_attput(outputfile, nc_global, 'geospatial_lon_min'         , min(D.loncor(:)));
+      nc_attput(outputfile, nc_global, 'geospatial_lon_max'         , max(D.loncor(:)));
+      
+      nc_attput(outputfile, nc_global, 'geospatial_lat_units'       , 'degrees_north');
+      nc_attput(outputfile, nc_global, 'geospatial_lon_units'       , 'degrees_east' );
+ 
 %% 2 Create dimensions
    
       nc_add_dimension(outputfile, 'time' , 1)
@@ -251,10 +262,10 @@
       
 %% 5 Fill variables
    
-      nc_varput(outputfile, 'x_cen'        , [1:D.nx]-0.5);
-      nc_varput(outputfile, 'y_cen'        , [1:D.ny]-0.5);
-      nc_varput(outputfile, 'x_cor'        , [1:(D.nx+1)]);
-      nc_varput(outputfile, 'y_cor'        , [1:(D.ny+1)]);
+      nc_varput(outputfile, 'x_cen'        , [1:D.nx]'-0.5);
+      nc_varput(outputfile, 'y_cen'        , [1:D.ny]'-0.5);
+      nc_varput(outputfile, 'x_cor'        , [1:(D.nx+1)]');
+      nc_varput(outputfile, 'y_cor'        , [1:(D.ny+1)]');
       if OPT.ll
       nc_varput(outputfile, 'longitude_cen', D.loncen');
       nc_varput(outputfile, 'latitude_cen' , D.latcen');

@@ -6,16 +6,16 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 %
 %  reads standard meta info from CF convention (station_id,min(time),max(time),
 %  longitude,latitude,number_of_observations,<station_name>
-%  min(), mean(), max() and std() of standard_name
+%  min(), mean(), max() and std() of standard_names
 %  from all NetCDF files in a directory, make a plan view plot and saves table to excel file.
 %  Optionally returns result to struct M.
 %  The following <keyword,value> pairs have been implemented:
 %
-%   * directory_nc   directory where to put the nc data to (default [])
-%   * mask           file mask (default '*.nc')
-%   * basename       name of *.png and *.xls of output files (default 'catalog')
-%   * vc             opendap adress of vector coastline for overview plot
-%   * standard_name  standard_name of parameter for whicht to calculate min, mean and max
+%   * directory_nc    directory where to put the nc data to (default [])
+%   * mask            file mask (default '*.nc')
+%   * basename        name of *.png and *.xls of output files (default 'catalog')
+%   * vc              opendap adress of vector coastline for overview plot
+%   * standard_names  standard_name of parameters for which to calculate min, mean, max and std
 %
 %See also: snctools
 
@@ -66,12 +66,12 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 %TO DO: put results in catalog.nc 
 %TO DO: rename nt to number_of_observations
 
-   OPT.directory_nc  = [];
-   OPT.mask          = '*.nc';
-   OPT.basename      = 0; %'catalog';
-   OPT.datestr       = 'yyyy-mm-dd HH:MM:SS';
-   OPT.vc            = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc'; % vector coastline, WVC in future ?
-   OPT.standard_name = [];
+   OPT.directory_nc   = [];
+   OPT.mask           = '*.nc';
+   OPT.basename       = 0; %'catalog';
+   OPT.datestr        = 'yyyy-mm-dd HH:MM:SS';
+   OPT.vc             = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc'; % vector coastline, WVC in future ?
+   OPT.standard_names = [];
    
 %% Keyword,value
 
@@ -139,7 +139,8 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
       files(ifile).station_name           = nc_varget(OPT.filename,'station_name');
       end
 
-      if ~isempty(OPT.standard_name)
+      for iname=1:length(OPT.standard_names)
+      OPT.standard_name = OPT.standard_names{iname};    
       OPT.parameter    = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue',OPT.standard_name);
       parameter        = nc_varget(OPT.filename,OPT.parameter);
       files(ifile).([OPT.parameter,'_min' ]) = nanmin (parameter);
@@ -164,7 +165,9 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    A.station_id                = {files.station_id};
    A.station_name              = {files.station_name};
    
-   if ~isempty(OPT.standard_name)
+   for iname=1:length(OPT.standard_names)
+   OPT.standard_name = OPT.standard_names{iname};    
+   OPT.parameter    = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue',OPT.standard_name);
    A.([OPT.parameter,'_min' ]) = [files.([OPT.parameter,'_min' ])];
    A.([OPT.parameter,'_mean']) = [files.([OPT.parameter,'_mean'])];
    A.([OPT.parameter,'_max' ]) = [files.([OPT.parameter,'_max' ])];
@@ -189,10 +192,13 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    units.station_id                         = 'string';
    units.station_name                       = 'string';
    
+   for iname=1:length(OPT.standard_names)
+   OPT.standard_name = OPT.standard_names{iname};
    units.([OPT.parameter,'_min' ])          = nc_attget(OPT.filename,OPT.parameter,'units');
    units.([OPT.parameter,'_mean'])          = units.([OPT.parameter,'_min' ]);
    units.([OPT.parameter,'_max' ])          = units.([OPT.parameter,'_min' ]);
    units.([OPT.parameter,'_std' ])          = units.([OPT.parameter,'_min' ]);
+   end
 
 %% Plot locations
 

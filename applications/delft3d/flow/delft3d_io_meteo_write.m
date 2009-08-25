@@ -13,7 +13,8 @@ function fid = delft3d_io_meteo_write(filehandle,time,data,varargin)
 %                       'meteo_on_curvilinear_grid' (default)
 %    header           = default, {[]};
 %    nodata_value     = default, nan;
-%    grid_file        = default, ['temp.grd'];
+%    grid_file        = default, ['temp.grd']; % if no (relative) path specified, will be written in same path as amx file
+%                                              % but with LOCAL reference to grd file inside amx file
 %    quantity         = 'air_pressure'     ,'x_wind','y_wind','relative_humidity','air_temperature','cloudiness'
 %    unit             = 'millibar','pascal','m s-1'          ,'%'                ,'Celsius'        ,'%'
 %    refdatenum       = default, datenum(1970,1,1);
@@ -121,7 +122,7 @@ elseif strcmpi(OPT.filetype,'meteo_on_curvilinear_grid')
    if OPT.newgrid
       fprintf  (fid,'### START OF HEADER');
       fprinteol(fid,OPT.OS)
-      fprintf  (fid,'# Created with $Id$ $Headurl:$ on %s',datestr(now));
+      fprintf  (fid,'# Created with $Id$ $Headurl: $ on %s',datestr(now));
       fprinteol(fid,OPT.OS)
    
       OPT.header = cellstr(OPT.header);
@@ -142,6 +143,11 @@ elseif strcmpi(OPT.filetype,'meteo_on_curvilinear_grid')
       
       if exist('wlgrid')==0
          error('function wlgrid missing.')
+      end
+      
+      %% if no (relative) path is specified, it will be written in same path as amx file (but with LOCAL reference to grd file inside amx file)
+      if isempty(fileparts(OPT.grid_file))
+         OPT.grid_file = [fileparts(filehandle),filesep,OPT.grid_file];
       end
       wlgrid('write','filename',OPT.grid_file,'X',x,'Y',y,'CoordinateSystem',OPT.CoordinateSystem,'Format','NewRGF')
       

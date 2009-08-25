@@ -12,9 +12,12 @@ function [OPT, Set, Default] =knmi_noaapc2kml(noaapcfile,varargin)
 %
 %See also: KMLfig2png, knmi_noaapc_read
 
+% TO DO : read netCDF data instead of binary noaapc files
+% TO DO : remove hard directory and noaapcfiles-list
+
+   directory   = 'F:\checkouts\OpenEarthRawData\knmi\noaapc\mom\1990_mom\5\';
+
    OPT.clim    = [9 16];
-   
-   directory   = 'D:\KNMI\mom\1990_mom\5\';
    
    noaapcfiles = {'K010590N.SST',...
                   'K020590A.SST',...
@@ -61,7 +64,7 @@ for ifile=1:length(noaapcfiles)
 end
    
 %% vectgorized inage is bad idea:
-%  TOOOOOOOOOOOOOOO BIG (180 MB for whole North Sea)
+%  TOOOOOOOOOOOOOOO BIG (180 MB for one whole North Sea image)
    
    %KMLpcolor(D.loncor,D.latcor,D.data,...
    %          'fileName',[filename(noaapcfile),'.kml'],...
