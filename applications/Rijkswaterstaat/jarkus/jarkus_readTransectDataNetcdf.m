@@ -1,21 +1,68 @@
-function [transect] = readTransectDataNetcdf(filename, varargin)
-%JARKUS_READTRANSECTDATANETCDF   transforms processed data to proper meta data format
+function transect = jarkus_readTransectDataNetcdf(filename, varargin)
+%JARKUS_READTRANSECTDATANETCDF  create transect structure out of jarkus netcdf file
 %
-% input:
-%   filename
-%   AreaID
-%   transectId
-%   SoundingID
+%   More detailed description goes here.
 %
-%   See also readGridData, readLineData, readPointData
+%   Syntax:
+%   transect = jarkus_readTransectDataNetcdf(filename, varargin)
+%
+%   Input:
+%   filename = netcdf file
+%   varargin =
+%
+%   Output:
+%   transect =
+%
+%   Example
+%   transect = jarkus_readTransectDataNetcdf('http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc', 7003775, 2006)
+%   transect = jarkus_readTransectDataNetcdf('http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc', 'Noord-Holland', 3775, 2006)
+%
+%   See also 
 
-% -------------------------------------------------------------
-% Copyright (c) WL|Delft Hydraulics 2004-2007 FOR INTERNAL USE ONLY
-% Version:      Version 1.2, January 2007 (Version 1.0, February 2004)
-% By:           <M. van Koningsveld (email: mark.vankoningsveld@wldelft.nl>
-% -------------------------------------------------------------
-% d = readTransectDataNetcdf('output.nc', 3000380, 2004);
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2009 Deltares
+%       C.(Kees) den Heijer
+%
+%       Kees.denHeijer@Deltares.nl	
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
 
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 25 Aug 2009
+% Created with Matlab version: 7.6.0.324 (R2008a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 if (nargin == 4)
     areaId = varargin{1};
     transectId = varargin{2};
@@ -86,7 +133,8 @@ global year
 if isempty(year)
     time = nc_varget(filename, 'time');
 end
-time_index = find(time == soundingId);
+
+time_index = find(round(time/365+1970) == soundingId);
 if isempty(time_index)
     error(['year not found: ' time_index]);
 end
@@ -180,11 +228,3 @@ transect.ze = transect.zi; %[1264x1 double]
 
 
 end
-
-
-
-
-
-
-
-
