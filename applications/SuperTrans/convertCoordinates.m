@@ -1,20 +1,30 @@
-function [x2,y2,OPT]=convertCoordinatesNew(x1,y1,varargin)
+function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
 %CONVERTCOORDINATES transformation between coordinate systems
 %
 % [x2,y2,<OPT>] = convertCoordinatesNew(x1,y1,'keyword','value')
 %
-% x1,y1: values of the coordinates to be transformed   , either X-Y or Lon-Lat.
-% x2,y2: values of the coordinates after transformation, either X-Y or Lon-Lat.
-% OPT  : contains all conversion parameters that were used.
-%        To check this output, use 'var2evalstr(OPT)'.
+% Note 1: Beware of the Lon-Lat order of in- and output arguments!
+% Note 2: (x1,y1) can be vectors or matrices (vectorized).
+% Note 3: Does not work for MatLab 7.0 and older (gives invalid MEX file
+%         warnings)
+% Note 4: Rijksdriehoek(RD) to WGS 84 conversions are NOT exact. Accuracy 
+%         is better than 0.5m, but multiple conversions can mess things up.
+%         For accurate conversions, see  <a href="http://www.rdnap.nl/">www.rdnap.nl/</a>
+%
+% x1,y1 : values of the coordinates to be transformed   , either X-Y or Lon-Lat.
+% x2,y2 : values of the coordinates after transformation, either X-Y or Lon-Lat.
+% OPT   : contains all conversion parameters that were used.
+%         To check this output, use 'var2evalstr(OPT)'.
 % 
 % Optionally the data structure with EPSG codes van be pre-loaded, this 
 % greatly speeds up the routine if many calls are made. The call is either 
 %
-%    EPSG        = load('EPSGnew');
-%    [x2,y2,OPT] = convertCoordinatesNew(x1,y1,EPSG,'keyword','value')
-%                  % or
-%    [x2,y2,OPT] = convertCoordinatesNew(x1,y1,     'keyword','value')
+%    EPSG        = load('EPSG');
+%    [x2,y2,OPT] = convertCoordinates(x1,y1,EPSG,'keyword','value')
+%                  
+%    or:
+%
+%    [x2,y2,OPT] = convertCoordinates(x1,y1,     'keyword','value')
 %
 % The most important keyword value pairs are the identifiers for the
 % coordinate systems:
@@ -24,38 +34,44 @@ function [x2,y2,OPT]=convertCoordinatesNew(x1,y1,varargin)
 % Any combination of name, type and code that indetifies a unique
 % coordinate system will do, e.g.:
 %
-%    CS1.name                   = []; % coordinate system name
-%    CS1.code                   = []; % coordinate system reference code 
-%    CS1.type                   = []; % projection type
+%    CS1.name = coordinate system name
+%    CS1.code = coordinate system reference code 
+%    CS1.type = projection type
 % 
-% projection types supported    : projected  , geographic 2D
-% projection not (yet) supported: engineering, geographic 3D, vertical, geocentric,  compound
+% Projection types supported    : projected and geographic 2D
+% Projection not (yet) supported: engineering, geographic 3D, vertical, geocentric,  compound
 % 
-% allowed synonyms for 'projected'    : 'xy' ,'proj'  ,'cartesian','cart'
-% allowed synonyms for 'geographic 2D': 'geo','latlon','lat lon'  ,'geographic','geographic2d'
+% Allowed synonyms for 'projected'    : 'xy','proj','cartesian','cart'
+% Allowed synonyms for 'geographic 2D': 'geo','latlon','lat lon','geographic','geographic2d'
 %
-% Example: 4 different notations of 1 single transformation case:
+% Example 1: 4 different notations of 1 single transformation case:
 %
-%    [x,y,OPT]=convertCoordinatesNew(52,5,  'CS1.name','WGS 84','CS1.type','geo','CS2.name','WGS 84 / UTM zone 31N','CS2.type','xy')
-%    [x,y,OPT]=convertCoordinatesNew(52,5,  'CS1.code',4326                     ,'CS2.name','WGS 84 / UTM zone 31N')
+%    [x,y,OPT]=convertCoordinates(52,5,'CS1.name','WGS 84','CS1.type','geo','CS2.name','WGS 84 / UTM zone 31N','CS2.type','xy')
+%    [x,y,OPT]=convertCoordinates(52,5,'CS1.code',4326                     ,'CS2.name','WGS 84 / UTM zone 31N')
 %
-%    D = load('EPSG')
+%    ESPG = load('EPSG')
 %
-%    [x,y,OPT]=convertCoordinatesNew(52,5,D,'CS1.name','WGS 84','CS1.type','geo','CS2.code',32631)
-%    [x,y,OPT]=convertCoordinatesNew(52,5,D,'CS1.code',4326                     ,'CS2.code',32631)
+%    [x,y,OPT]=convertCoordinates(52,5,EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',32631)
+%    [x,y,OPT]=convertCoordinates(52,5,EPSG,'CS1.code',4326                     ,'CS2.code',32631)
 %
-% Example: decimal degree to sexagesimal DMS conversion:
+% Example 2: Rijksdriehoek to WGS 84:
 %
-%   [lon,lat,OPT]=convertCoordinatesNew(52,5.5,'CS1.code',4326,'CS2.code',4326,'CS2.UoM.name','sexagesimal DMS')
+%   [lon,lat,OPT]=convertCoordinates(xRD,yRD,'CS1.code',28992,'CS2.code',4326)
 %
-% Note: (x1,y1) can be vectors or matrices (vectorized).
+% Example 3: decimal degree to sexagesimal DMS conversion:
 %
-% To find specifications of coordinate systems (name <=> code): <a href="http://www.epsg-registry.org">http://www.epsg-registry.org</a>.
+%   [lon,lat,OPT]=convertCoordinates(52,5.5,'CS1.code',4326,'CS2.code',4326,'CS2.UoM.name','sexagesimal DMS')
+%
+% To find specifications of coordinate systems (name <=> code):
+% <a href="http://www.epsg-registry.org">www.epsg-registry.org</a>.
 %
 % See also: SuperTransData, EPSG
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
+%   Based on SuperTrans by Maarten van Ormondt. 
+%   Rewritten by
+%
 %       Thijs Damsma
 %
 %       Thijs.Damsma@deltares.nl	
