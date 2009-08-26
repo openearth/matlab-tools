@@ -2,7 +2,6 @@ classdef mtest < handle
     % MTEST - Object to handle tests written in mtest format
     %
     % TODO: edit help. Adjust to new format and maybe put this in the documentation
-    
     % This objects stores the information written in an mtest format test definition file. The test
     % files consist of three parts divided by a cell break (%%). The three cells represent:
     %
@@ -66,38 +65,40 @@ classdef mtest < handle
     % $Author$
     % $Revision$
     % $HeadURL$
-    % $Keywords: $
+    % $Keywords: testing test unittest$
     
     %% Properties
     properties
         testname = [];                      % Name of the test
         filename = [];                      % Original name of the testfile
         filepath = [];                      % Path of the "_test.m" file
-        author   = [];                      % Last author of the test (obtained from svn keywords)
+        
         header   = [];                      % Function call of the testfunction
         h1line   = [];                      % A one line description of the test (h1 line)
         description = {};                   % Detailed description of the test that appears in the help block
+        author   = [];                      % Last author of the test (obtained from svn keywords)
         seealso  = {};                      % see also references
         
         descriptioncode = {};               % Description of the test (first part of the testdescription file before the start of the first testcase)
-        includecode = false;                % indicates whether the code must be included when publishing the test description
-        evaluatecode = true;
+        descriptionincludecode = false;                % indicates whether the code must be included when publishing the test description
+        descriptionevaluatecode = true;
         descriptionoutputfile = {};         % Name of the published output file of the description
         
         runcode  = {};
+        
         publishcode = {};                   % TODO , not included yet..
+        publishincludecode = false;
+        publishevaluatecode = true;
         publishoutputfile = {};
         
-        resdir = '';                        % Directory where published files are stored
+        testcases = mtestcase;              % mtestcases objects that contain testcase information for each individual testcase
         currentcase = [];                   % Number of the testcase that is last adressed
         
-        testcases = mtestcase;              % mtestcases objects that contain testcase information for each individual testcase
-        
+        testresult = false;                 % Boolean indicating whether the test was run successfully
         time     = 0;                      % Time that was needed to perform the test
         date     = NaN;                      % Date and time the test was performed
-    end
-    properties (SetAccess = protected)
-        testresult = false;                 % Boolean indicating whether the test was run successfully
+        
+        resdir = '';                        % Directory where published files are stored
     end
     properties (Hidden = true)
         fullstring = [];                    % Full string of the contents of the test file
@@ -106,15 +107,16 @@ classdef mtest < handle
         runworkspace = [];                  % variable that can be used to store the run workspace (to allow the possibility of publishResults for a test lateron)
         tmpobjname = [];
         testperformed = false;
- 
+        
         maxwidth  = 600;                    % Maximum width of the published figures (in pixels). By default the maximum width is set to 600 pixels.
         maxheight = 600;                    % Maximum height of the published figures (in pixels). By default the maximum height is set to 600 pixels.
         stylesheet = '';                    % Style sheet that is used for publishing (see publish documentation for more information).
     end
     
+    %% Events
     events
         TestPerformed
-        PublishTest
+        RunWorkspaceSaved
     end
     
     %% Methods
@@ -252,8 +254,11 @@ classdef mtest < handle
                 for icase = 1:length(fcnid)-2
                     testcasesstruct(icase).fullstring = str(fcnid(icase+1):max(endid(endid<fcnid(icase+2))));
                 end
-            else
+            elseif length(fcnid)==1
                 %% subtract testinfo
+                teststr = str(fcnid:end);
+                testcasesstruct = [];
+            else
                 teststr = str;
                 testcasesstruct = [];
             end
@@ -268,87 +273,171 @@ classdef mtest < handle
             % runcode
             
             if ~isempty(teststr)
+                comments = strncmp(teststr,'%',1);
+
                 % header
-                obj.header = teststr{1};
-                
-                % h1line
-                h1linetemp = teststr{2};
-                obj.h1line = strtrim(strrep(lower(h1linetemp(find(~ismember(1:length(h1linetemp),strfind(h1linetemp,'%')),1,'first'):end)),lower(fn),''));
-                
-                % last author
-                tmpstr = teststr{~cellfun(@isempty,strfind(teststr,'$Author:'))};
-                obj.author = strtrim(tmpstr(min(strfind(tmpstr,':'))+1:min([length(tmpstr)+1 max(strfind(tmpstr,'$'))])-1));
-                
-                cells = find(strncmp(teststr,'%%',2));
-                
-                % see also
-                helpblock = teststr(3:min(cells)-1);
-                % remove blanks
-                helpblock = helpblock(1:find(~cellfun(@isempty,strtrim(helpblock)),1,'last'));
-                % remove single % signs
-                helpblock = helpblock(1:find(cellfun(@length,helpblock)>1 & strncmp(helpblock,'%',1),1,'last'));
-                
-                LastLengthMoreThanOne = length(helpblock{end})>1;
-                SeeAlsoReferencesPresent = strncmpi(strtrim(helpblock{end}(2:end)),'see also ',9);
-                if LastLengthMoreThanOne && SeeAlsoReferencesPresent
-                    obj.seealso = strread(strtrim(helpblock{end}(13:end)),'%s','delimiter',' ');
-                    helpblock(end)=[];
+                id = strfind(teststr{1},'function');
+                if ~comments(1) && ~isempty(id)
+                    obj.header = teststr{1};
+                    teststr(1)=[];
+                    comments(1)=[];
                 end
                 
-                % desciption
-                % remove single % signs
-                helpblock = helpblock(1:find(cellfun(@length,helpblock)>1 & strncmp(helpblock,'%',1),1,'last'));
-                helpblock = helpblock(find(cellfun(@length,helpblock)>1 & strncmp(helpblock,'%',1),1,'first'):end);
-                obj.description = helpblock;
+                % h1line
+                if comments(1)
+                    h1linetemp = teststr{1};
+                    obj.h1line = strtrim(strrep(lower(h1linetemp(find(~ismember(1:length(h1linetemp),strfind(h1linetemp,'%')),1,'first'):end)),lower(fn),''));
+                    teststr(1)=[];
+                    comments(1)=[];
+                end
+                
+                % remaining helpblock
+                idcommend = min([find((~comments),1,'first') find(strncmp(teststr,'%% ',3),1,'first')]);
+                if ~isempty(idcommend) && idcommend > 1
+                    helpblock = teststr(1:idcommend-1);
+                    teststr(1:idcommend-1)=[];
+                    comments(1:idcommend-1)=[];
+                    
+                    % see also
+                    % remove blanks
+                    helpblock = helpblock(1:find(~cellfun(@isempty,strtrim(helpblock)),1,'last'));
+                    % remove single % signs
+                    helpblock = helpblock(1:find(cellfun(@length,helpblock)>1 & strncmp(helpblock,'%',1),1,'last'));
+                    
+                    LastLengthMoreThanOne = length(helpblock{end})>1;
+                    SeeAlsoReferencesPresent = strncmpi(strtrim(helpblock{end}(2:end)),'see also ',9);
+                    if LastLengthMoreThanOne && SeeAlsoReferencesPresent
+                        idbegin = min(strfind(lower(helpblock{end}),'see also'));
+                        obj.seealso = strread(strtrim(helpblock{end}(idbegin+8:end)),'%s','delimiter',' ');
+                        helpblock(end)=[];
+                    end
+                    
+                    % desciption
+                    % remove single % signs
+                    helpblock = helpblock(1:find(cellfun(@length,helpblock)>1 & strncmp(helpblock,'%',1),1,'last'));
+                    helpblock = helpblock(find(cellfun(@length,helpblock)>1 & strncmp(helpblock,'%',1),1,'first'):end);
+                    obj.description = helpblock;
+                end
+                
+                % Credentials 
+                credid = find(strncmp(teststr,'%% Credentials',14) | strncmp(teststr,'%% Copyright',12));
+                if ~isempty(credid)
+                    credend = find(~comments);
+                    credend = min(credend(credend>credid));
+                    credentialstr = teststr(credid:credend);
+                    teststr(credid:credend)=[];
+                    comments(credid:credend)=[];
+                end
+                
+                % Version info
+                versionid = find(strncmp(teststr,'%% Version',10));
+                if ~isempty(versionid)
+                    authorid = find(strncmp(teststr,'% $Author:',10), 1);
+                    versionend = find(~comments)-1;
+                    if ~isempty(authorid)
+                        % last author
+                        tmpstr = teststr{~cellfun(@isempty,strfind(teststr,'$Author:'))};
+                        obj.author = strtrim(tmpstr(min(strfind(tmpstr,':'))+1:min([length(tmpstr)+1 max(strfind(tmpstr,'$'))])-1));
+                        versionend = min(versionend(versionend>authorid));
+                    else
+                        versionend = min(versionend(versionend>versionid));
+                    end
+                    versionstr = teststr(1:versionend);
+                    teststr(1:versionend)=[];
+                    comments(1:versionend)=[];
+                end
                 
                 iddescr = find(~cellfun(@isempty,strfind(teststr,'$Description')));
+                if isempty(iddescr)
+                    iddescr = nan;
+                end
                 idrun = find(~cellfun(@isempty,strfind(teststr,'$RunCode')));
+                if isempty(idrun)
+                    idrun = nan;
+                end
                 idpublish = find(~cellfun(@isempty,strfind(teststr,'$PublishResult')));
-                if ~isempty(iddescr) 
-                    tempid = min([idrun,idpublish]);
-                    if isempty(tempid)
-                        tempid = length(teststr)+1;
-                    end
-                    % publishdescription
-                    obj.descriptioncode = teststr(iddescr+1:tempid-1);
-                    
-                    % test attributes (Name, IncludeCode, EvaluateCode)
-                    testdeclaration = strtrim(teststr{iddescr});
-                    attrid = [min(strfind(testdeclaration,'('))+1, length(testdeclaration)-1];
-                    if length(attrid)==2 && ~strcmp(testdeclaration(end),')')
-                        disp('Attributes could be wrong..');
-                        attrid = [strfind(testdeclaration,'(')+1, length(testdeclaration)];
-                    end
-                    attributes = strread(testdeclaration(attrid(1):attrid(2)),'%s','delimiter','&');
-                    attr = {'name','includecode','evaluatecode'};
-                    for iattr = 1:length(attributes)
-                        attrinfo = strtrim(strread(attributes{iattr},'%s','delimiter','='));
-                        if ismember(lower(attrinfo{1}),attr)
-                            if strcmpi(attrinfo{1},'name')
-                                obj.testname = attrinfo{2};
-                            else
-                                obj.(lower(attrinfo{1})) = eval(strrep(attrinfo{2},'''',''));
+                if isempty(idpublish)
+                    idpublish = nan;
+                end
+                clls = [iddescr, idrun, idpublish length(teststr)+1];
+                                
+                if sum(~isnan(clls))<2
+                    obj.runcode = teststr;
+                else
+                    idused = false(size(teststr));
+                    if ~isnan(iddescr)
+                        tempid = min(clls(clls>iddescr));
+                        % publishdescription
+                        obj.descriptioncode = teststr(iddescr+1:tempid-1);
+                        idused(iddescr:tempid-1) = true;
+                        
+                        % test attributes (Name, IncludeCode, EvaluateCode)
+                        testdeclaration = strtrim(teststr{iddescr});
+                        attrid = [min(strfind(testdeclaration,'('))+1, length(testdeclaration)-1];
+                        if length(attrid)==2 && ~strcmp(testdeclaration(end),')')
+                            disp('Attributes could be wrong..');
+                            attrid = [strfind(testdeclaration,'(')+1, length(testdeclaration)];
+                        end
+                        if length(attrid)==2
+                            attributes = strread(testdeclaration(attrid(1):attrid(2)),'%s','delimiter','&');
+                            attr = {'name','includecode','evaluatecode'};
+                            objname = {'name','descriptionincludecode','descriptionevaluatecode'};
+                            for iattr = 1:length(attributes)
+                                attrinfo = strtrim(strread(attributes{iattr},'%s','delimiter','='));
+                                if ismember(lower(attrinfo{1}),attr)
+                                    if strcmpi(attrinfo{1},'name')
+                                        obj.testname = attrinfo{2};
+                                    else
+                                        obj.(objname{strcmpi(attrinfo{1},attr)}) = eval(strrep(attrinfo{2},'''',''));
+                                    end
+                                end
                             end
                         end
                     end
-                end
-                
-                if isempty(idrun)
-                    warning('No runcode defined...');
-                    % build runcode for all testcases. Todo if testcases are ready.
-                else
-                    tempid = idpublish;
-                    if isempty(tempid)
-                        tempid = length(teststr)+1;
+                    
+                    if ~isnan(idpublish)
+                        tempid = min(clls(clls>idpublish));
+                        % publishdescription
+                        obj.publishcode = teststr(idpublish+1:tempid-1);
+                        idused(idpublish:tempid-1) = true;
+                        
+                        % attributes (IncludeCode, EvaluateCode)
+                        publishheader = strtrim(teststr{idpublish});
+                        attrid = [min(strfind(publishheader,'('))+1, length(publishheader)-1];
+                        if length(attrid)==2 && ~strcmp(publishheader(end),')')
+                            disp('Attributes could be wrong..');
+                            attrid = [strfind(publishheader,'(')+1, length(publishheader)];
+                        end
+                        if length(attrid)==2
+                            attributes = strread(publishheader(attrid(1):attrid(2)),'%s','delimiter','&');
+                            attr = {'name','includecode','evaluatecode'};
+                            objname = {'name','publishincludecode','publishevaluatecode'};
+                            for iattr = 1:length(attributes)
+                                attrinfo = strtrim(strread(attributes{iattr},'%s','delimiter','='));
+                                if ismember(lower(attrinfo{1}),attr)
+                                    if strcmpi(attrinfo{1},'name')
+                                        obj.testname = attrinfo{2};
+                                    else
+                                        obj.(objname{strcmpi(attrinfo{1},attr)}) = eval(strrep(attrinfo{2},'''',''));
+                                    end
+                                end
+                            end
+                        end
                     end
-                    % runcode
-                    obj.runcode = teststr(idrun+1:tempid-1);
-                end
-                
-                if ~isempty(idpublish)
-                    obj.publishcode = teststr(idpublish+1:end);
+                    
+                    if isnan(idrun) && isempty(teststr)
+                        warning('No runcode defined...');
+                        % build runcode for all testcases. Todo if testcases are ready.
+                    elseif isnan(idrun)
+                        obj.runcode = teststr(~idused);
+                    else
+                        tempid =  min(clls(clls>idrun));
+                        % runcode
+                        obj.runcode = teststr(idrun+1:tempid-1);
+                    end
                 end
             else
+                % No runcode as well
                 obj.testname = obj.filename;
                 obj.descriptioncode = {'% This test still has no general description. This can be placed on the first lines of the test description file (*_test.m).'};
             end
@@ -513,7 +602,7 @@ classdef mtest < handle
             obj.eventlisteners = cat(1,...
                 event.listener(obj.testcases,'NeedToInitialize',@obj.prepareTest),...
                 event.listener(obj,'TestPerformed',@obj.storeRunWorkspace),...
-                event.listener(obj,'PublishTest',@obj.fullPublish));
+                event.listener(obj,'RunWorkspaceSaved',@obj.fullPublish));
         end
         function publishDescription(obj,varargin)
             %publishDescription  Creates an html file from the test description with publish
@@ -756,7 +845,7 @@ classdef mtest < handle
             %                           documentation for more information).
             %
             %   See also mtestcase mtestcase.mtestcase mtestcase.publishDescription mtest.publishResults mtestcase.runTest mtestengine mtest
-    
+            
             %% subtract result dir
             if isempty(obj.resdir)
                 obj.resdir = cd;
@@ -770,7 +859,7 @@ classdef mtest < handle
             %% Make shure the directory of the test is in the searchpath
             pt = path;
             addpath(obj.filepath);
-
+            
             %% construct temp rundir
             rundir = tempname;
             mkdir(rundir);
@@ -820,7 +909,7 @@ classdef mtest < handle
                 obj.testcases(icase).descriptionoutputfile = fullfile(obj.resdir,[caseoutputfile '_case_' num2str(icase) '_description.html']);
                 obj.testcases(icase).publishoutputfile = fullfile(obj.resdir,[caseoutputfile '_case_' num2str(icase) '_results.html']);
             end
-
+            
             %% go to rundir
             cdtemp = cd;
             cd(rundir);
@@ -834,14 +923,14 @@ classdef mtest < handle
                     obj.descriptioncode{~strncmp(obj.descriptioncode,'%',1)},...
                     obj.runcode{:},...
                     ['notify(getappdata(0,''' obj.tmpobjname '''),''TestPerformed'',mtesteventdata(whos,''remove'',false,''time'',toc(mtest_245y7e_tic)));'],...
-                    ['notify(getappdata(0,''' obj.tmpobjname '''),''PublishTest'',mtesteventdata(whos,''remove'',true));']);
+                    ['notify(getappdata(0,''' obj.tmpobjname '''),''RunWorkspaceSaved'',mtesteventdata(whos,''remove'',true));']);
             else
                 str = sprintf('%s\n',...
                     strrep(obj.header,obj.filename,'mtest_testfunction'),...
                     obj.descriptioncode{~strncmp(obj.descriptioncode,'%',1)},...
                     obj.runcode{:},...
                     ['notify(getappdata(0,''' obj.tmpobjname '''),''TestPerformed'',mtesteventdata(whos,''remove'',false));'],...
-                    ['notify(getappdata(0,''' obj.tmpobjname '''),''PublishTest'',mtesteventdata(whos,''remove'',true));']);
+                    ['notify(getappdata(0,''' obj.tmpobjname '''),''RunWorkspaceSaved'',mtesteventdata(whos,''remove'',true));']);
             end
             fid = fopen(fullfile(rundir,'mtest_testfunction.m'),'w');
             fprintf(fid,'%s\n',str);
@@ -849,7 +938,7 @@ classdef mtest < handle
             
             if ~exist(fullfile(rundir,'mtest_testfunction.m'),'file')
                 % Since Windows is slower in writing the file than the matlab fclose function..?
-                % This is a workaround to let windos finish the file...
+                % This is a workaround to let windows finish the file...
             end
             obj.testresult = feval(@mtest_testfunction);
             
@@ -867,7 +956,7 @@ classdef mtest < handle
                 end
             end
             obj.date = now;
-
+            
             %% Return the initial searchpath
             path(pt);
             
@@ -1021,252 +1110,6 @@ classdef mtest < handle
                 close(newopenfigures(id));
             end
         end
-        %{
-        function publishCaseDescriptions(obj,varargin)
-            %publishDescripton  Creates html files of the description codes of the specified testcases with publish
-            %
-            %   This function publishes the code included in the Description cell of the test file
-            %   with the help of the publish function for the specified testcases
-            %
-            %   Syntax:
-            %   publishDescripton(obj,'property','value')
-            %   publishDescripton(...,'keepfigures')
-            %   obj.publisDescription('property','value')
-            %
-            %   Input:
-            %   obj             - An instance of an mtest object.
-            %   'keepfigures'   - The publishResults function automatically closes any figures that
-            %                     were created during publishing and were not already there.
-            %                     The optional argument 'keepfigures' prevents these figures from
-            %                     being closed (unless stated in the test code somewhere).
-            %
-            %   property value pairs:
-            %           'casenumber'-   An 1xN doouble specifying the test case numbers for which the
-            %                           descriptions must be published. By default this routine
-            %                           prints the description of all testcases.
-            %           'resdir'    -   Specifies the output directory (default is the current
-            %                           directory)
-            %           'filename'  -   Main part that is used for naming the output files.
-            %           'includeCode'-  Boolean overriding the mtestcase - property
-            %                           "descriptionincludecode". This property determines whether the
-            %                           code parts of the description are included in the published
-            %                           html file (see publish documentation for more info).
-            %           'evaluateCode'- Boolean overriding the mtestcase - property
-            %                           "descriptionevaluatecode". This property determines whether
-            %                           the code parts of the description are executed before
-            %                           publishing the code to html (see publish documentation for
-            %                           more information).
-            %           'maxwidth'  -   Maximum width of the published figures (in pixels)
-            %                           overriding the value of the mtestcase object.
-            %           'maxheight' -   Maximum height of the published figures (in pixels)
-            %                           overriding the value of the mtestcase object.
-            %           'stylesheet'-   Style sheet that is used for publishing (see publish
-            %                           documentation for more information).
-            %
-            %   See also mtest mtest.mtest mtest.publishResults mtest.runTest mtestengine
-            
-            %% subtract result dir from input
-            resdir = cd;
-            id = find(strcmp(varargin,'resdir'));
-            if ~isempty(id)
-                resdir = varargin{id+1};
-            end
-            
-            %% subtract casenumbers from input
-            casenumbers = 1:length(obj.testcases);
-            id = find(strcmp(varargin,'casenumber'));
-            if ~isempty(id)
-                casenumbers = varargin{id+1};
-            end
-            
-            %% Get filename from input
-            % store the filename temporarily in the variable filenm. _case_nr is added lateron for
-            % each case that is published.
-            id = find(strcmp(varargin,'filename'));
-            if ~isempty(id)
-                [pt filenm] = fileparts(varargin{id+1});
-                if ~isempty(pt)
-                    resdir = pt;
-                end
-            else
-                filenm = [obj.filename '_description'];
-            end
-            % Store the final result dir
-            inargs = {'resdir',resdir};
-            
-            %% Process other input arguments
-            % includeCode
-            if any(strcmpi(varargin,'includecode'))
-                id = find(strcmpi(varargin,'includecode'));
-                inargs = cat(2,inargs,{'includeCode',varargin{id+1}});
-            end
-            
-            % evaluateCode
-            if any(strcmpi(varargin,'evaluatecode'))
-                id = find(strcmpi(varargin,'evaluatecode'));
-                inargs = cat(2,inargs,{'evaluateCode',varargin{id+1}});
-            end
-            
-            % Maxwidth
-            if any(strcmpi(varargin,'maxwidth'))
-                id = find(strcmpi(varargin,'maxwidth'));
-                inargs = cat(2,inargs,{'maxwidth',varargin{id+1}});
-            end
-            
-            % maxheight
-            if any(strcmpi(varargin,'maxheight'))
-                id = find(strcmpi(varargin,'maxheight'));
-                inargs = cat(2,inargs,{'maxheight',varargin{id+1}});
-            end
-            
-            % stylesheet
-            if any(strcmpi(varargin,'stylesheet'))
-                id = find(strcmpi(varargin,'stylesheet'));
-                inargs = cat(2,inargs,{'stylesheet',varargin{id+1}});
-            end
-            
-            % keepfigures
-            if any(strcmpi(varargin,'keepfigures'))
-                inargs = cat(2,inargs,'keepfigures');
-            end
-            
-            %% loop case numbers
-            for icase = 1:length(casenumbers)
-                obj.currentcase = casenumbers(icase);
-                
-                inargsfinal = inargs;
-                filen = [filenm '_case_' num2str(obj.testcases(obj.currentcase).casenumber) '.html'];
-                if ~isempty(obj.testname)
-                    inargsfinal = cat(2,inargsfinal,{'testname',obj.testname});
-                end
-                inargsfinal = cat(2,{'filename',filen},inargsfinal);
-                
-                obj.testcases(obj.currentcase).publishDescription(inargsfinal{:});
-            end
-            
-        end
-        function publishCaseResults(obj,varargin)
-            %publishResults  Creates a html files of the TestResults of the specified testcases
-            %
-            %   This function publishes the code included in the TestResult cells of the test file
-            %   with the help of the publish function. All variables created by running the test are
-            %   stored in a hidden property of the mtestcase objects and can therefore be used while
-            %   publishing the results. By default this routines publishes the results of all
-            %   testcases.
-            %
-            %   Syntax:
-            %   publishResults(obj,'property','value')
-            %   obj.publisResults(...)
-            %
-            %   Input:
-            %   obj  = An instance of an mtest object.
-            %
-            %   property value pairs:
-            %           'casenumber'-   An 1xN doouble specifying the test case numbers for which the
-            %                           testresults must be published. By default this routine
-            %                           prints the test results of all testcases.
-            %           'resdir'    -   Specifies the output directory (default is the current
-            %                           directory)
-            %           'filename'  -   Main part that is used for naming the output files.
-            %           'includeCode'-  Boolean overriding the mtestcase - property
-            %                           "publishincludecode". This property determines whether the
-            %                           code parts of the test results cell are included in the
-            %                           published html file (see publish documentation for more info).
-            %           'evaluateCode'- Boolean overriding the mtestcase - property
-            %                           "publishevaluatecode". This property determines whether
-            %                           the code parts of the test results cell are executed before
-            %                           publishing the code to html (see publish documentation for
-            %                           more information).
-            %           'maxwidth'  -   Maximum width of the published figures (in pixels)
-            %                           overriding the value of the mtestcase object.
-            %           'maxheight' -   Maximum height of the published figures (in pixels)
-            %                           overriding the value of the mtestcase object.
-            %           'stylesheet'-   Style sheet that is used for publishing (see publish
-            %                           documentation for more information).
-            %
-            %   See also mtest mtest.mtest mtest.publishDescription mtest.runTest mtestengine
-            
-            %% subtract result dir from input
-            resdir = cd;
-            id = find(strcmp(varargin,'resdir'));
-            if ~isempty(id)
-                resdir = varargin{id+1};
-            end
-            inargs = {'resdir',resdir};
-            
-            %% subtract casenumbers from input
-            casenumbers = 1:length(obj.testcases);
-            id = find(strcmp(varargin,'casenumber'));
-            if ~isempty(id)
-                casenumbers = varargin{id+1};
-            end
-            
-            %% Get filename from input
-            id = find(strcmp(varargin,'filename'));
-            if ~isempty(id)
-                filenm = varargin{id+1};
-            else
-                filenm = [obj.filename '_results'];
-            end
-            
-            %% Process other input arguments
-            % includeCode
-            if any(strcmpi(varargin,'includecode'))
-                id = find(strcmpi(varargin,'includecode'));
-                inargs = cat(2,inargs,{'includeCode',varargin{id+1}});
-            end
-            
-            % evaluateCode
-            if any(strcmpi(varargin,'evaluatecode'))
-                id = find(strcmpi(varargin,'evaluatecode'));
-                inargs = cat(2,inargs,{'evaluateCode',varargin{id+1}});
-            end
-            
-            % Maxwidth
-            if any(strcmpi(varargin,'maxwidth'))
-                id = find(strcmpi(varargin,'maxwidth'));
-                inargs = cat(2,inargs,{'maxwidth',varargin{id+1}});
-            end
-            
-            % maxheight
-            if any(strcmpi(varargin,'maxheight'))
-                id = find(strcmpi(varargin,'maxheight'));
-                inargs = cat(2,inargs,{'maxheight',varargin{id+1}});
-            end
-            
-            % stylesheet
-            if any(strcmpi(varargin,'stylesheet'))
-                id = find(strcmpi(varargin,'stylesheet'));
-                inargs = cat(2,inargs,{'stylesheet',varargin{id+1}});
-            end
-            
-            % keepfigures
-            if any(strcmpi(varargin,'keepfigures'))
-                inargs = cat(2,inargs,'keepfigures');
-            end
-            
-            %% loop case numbers
-            for icase = 1:length(casenumbers)
-                obj.currentcase = casenumbers(icase);
-                
-                %% Check whether the test has been executed. If not... execute
-                if ~obj.testcases(obj.currentcase).testperformed
-                    obj.testcases(obj.currentcase).runTest;
-                end
-                
-                %% create publish output file
-                inargsfinal = inargs;
-                filen = [filenm '_case_' num2str(obj.testcases(obj.currentcase).casenumber) '.html'];
-                if ~isempty(obj.testname)
-                    inargsfinal = cat(2,inargsfinal,{'testname',obj.testname});
-                end
-                inargsfinal = cat(2,{'filename',filen},inargsfinal);
-                
-                obj.testcases(obj.currentcase).publishResults(inargsfinal{:});
-            end
-            
-        end
-        %}
         function cleanUp(obj)
             %cleanUp  Cleans up the mtestcase objects of the mtest object
             %
@@ -1301,47 +1144,6 @@ classdef mtest < handle
             obj.testperformed = false;
             
         end
-        %{
-        function refreshTestResult(obj,varargin)
-            %refreshTestResult  refreshes the testresult property
-            %
-            %   This function checks the testresults of all testcases. If all testresults are
-            %   positive the mtest property testresult is set to true.
-            %
-            %   Syntax:
-            %   refreshTestResult(obj);
-            %   obj.refreshTestResult;
-            %
-            %   Input:
-            %   obj  = An instance of an mtest object.
-            %
-            %   See also mtest mtest.mtest mtestcase mtestengine
-            
-            %% Check testcases
-            if isempty(obj.runcode)
-                % Take result of all tests. If runcode is not empty (always if programmed correctly)
-                % the run command of the mtest object will do this automatically.
-                results = [obj.testcases(:).testresult];
-                if all(isnan(results))
-                    obj.testresult = nan;
-                elseif all(results(~isnan(results)))
-                    % Don't count NaN values. We don't know the testresult...
-                    obj.testresult = true;
-                else
-                    obj.testresult = false;
-                end
-            end
-            
-            %% count total time
-            totaltime = [obj.testcases(:).time];
-            if ~isempty(totaltime)
-                obj.time = sum(totaltime);
-            end
-            
-            %% assign date to testresult
-            obj.date = now;
-        end
-        %}
     end
     methods % set and get methods
         function set.tmpobjname(obj,varargin)

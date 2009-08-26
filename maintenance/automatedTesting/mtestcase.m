@@ -70,32 +70,27 @@ classdef mtestcase < handle
     properties
         casenumber = [];                    % Number of the testcase
         casename = [];                      % Name of the testcase
-        time = [];                          % time needed for the testcase
-    end
-    properties (SetAccess = protected)
+
         functionheader = '';                % Header of the testcase function (first line)
         functionname = '';                  % Name of the testcase function
         functionoutputname = '';            % Name of 1x1 output boolean
+
         description = {};                   % Code that was included in the testfile description cell
-    end
-    properties
         descriptionoutputfile = {};         % Name of the published output file of the description
         descriptionincludecode = false;     % Attribute IncludeCode for publishing the description cell
         descriptionevaluatecode = true;     % Attribute EvaluateCode for publishing the description cell
-    end
-    properties (SetAccess = protected)
+
         runcode = {};                       % Code that was included in the testfile RunTest cell
+
         publishcode = {};                   % Code that was included in the testfile TestResults cell
-    end
-    properties
         publishoutputfile = {};             % Name of the published output file of the TestResults cell
         publishincludecode = false;         % Attribute IncludeCode for publishing the TestResults cell
         publishevaluatecode = true;         % Attribute EvaluateCode for publishing the TestResults cell
         
-        resdir = '';                        % Location where files are published
-    end
-    properties %(SetAccess = protected)
         testresult = false;                 % Boolean indicating whether the test was run successfully
+        time = [];                          % time needed for the testcase
+
+        resdir = '';                        % Location where files are published
     end
     properties (Hidden = true)
         initialized = false;
