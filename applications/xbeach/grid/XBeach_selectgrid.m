@@ -79,7 +79,8 @@ OPT = struct(...
     'finepart', 0.3,...
     'posdwn', 1,...
     'polygon', [],...
-    'bathy', {{[] [] []}});
+    'bathy', {{[] [] []}},...
+    'calcdir', cd);
 
 % check whether XB-structure is given as input
 XBid = find(cellfun(@isstruct, varargin));
@@ -292,7 +293,7 @@ XB.settings.Grid = struct(...
 
 
 
-fi=fopen('bathy.dep','wt');
+fi=fopen(fullfile(OPT.calcdir, 'bathy.dep'),'wt');
 for j=1:nynew
     fprintf(fi,'%7.3f ',Znew(:,j));
     fprintf(fi,'\n');
@@ -300,7 +301,7 @@ end
 fclose(fi);
 
 if OPT.struct
-    fi=fopen('hardlayer.dep','wt');
+    fi=fopen(fullfile(OPT.calcdir, 'hardlayer.dep'),'wt');
     for j=1:nynew
         fprintf(fi,'%7.3f ',Z_hard(:,j));
         fprintf(fi,'\n');
@@ -308,21 +309,21 @@ if OPT.struct
     fclose(fi);
 end
 
-fi=fopen('x.dep','wt');
+fi=fopen(fullfile(OPT.calcdir, 'x.dep'),'wt');
 for j=1:nynew
     fprintf(fi,'%7.3f ',Xnew(:,j));
     fprintf(fi,'\n');
 end
 fclose(fi);
 
-fi=fopen('y.dep','wt');
+fi=fopen(fullfile(OPT.calcdir, 'y.dep'),'wt');
 for j=1:nynew
     fprintf(fi,'%7.3f ',Ynew(:,j));
     fprintf(fi,'\n');
 end
 fclose(fi);
 %
-fi=fopen('griddata.txt','wt');
+fi=fopen(fullfile(OPT.calcdir, 'griddata.txt'),'wt');
 fprintf(fi,'nx      = %3i \n',nxnew-1);
 fprintf(fi,'ny      = %3i \n',nynew-1);
 fprintf(fi,'dx      = %6.1f \n',OPT.dx);
