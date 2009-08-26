@@ -59,16 +59,16 @@ OPT.ha              =    gca;
 OPT.hf              =    gcf;
 OPT.timeIn          =     [];
 OPT.timeOut         =     [];
-OPT.drawOrder       =      0; 
+OPT.drawOrder       =     10; 
 OPT.bgcolor         = [100 155 100];
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
 %% set maxLod and minLod defaults
 
-if isempty(OPT.minLod),                 OPT.minLod =   OPT.dim; end
-if isempty(OPT.maxLod)&&OPT.alpha  < 1, OPT.maxLod = 2*OPT.dim; end
-if isempty(OPT.maxLod)&&OPT.alpha == 1, OPT.maxLod = 3*OPT.dim; end
+if isempty(OPT.minLod),                 OPT.minLod =   OPT.dim/1.5; end
+if isempty(OPT.maxLod)&&OPT.alpha  < 1, OPT.maxLod = 2*OPT.dim/1.5; end
+if isempty(OPT.maxLod)&&OPT.alpha == 1, OPT.maxLod = 4*OPT.dim/1.5; end
 
 %% filename
 % gui for filename, if not set yet

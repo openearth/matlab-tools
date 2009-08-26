@@ -2,129 +2,54 @@
 %
 %See also: jarkusgrids2png, vaklodingen2kml, vaklodingen_overview
 
-outputDir      = 'P:\mcdata\opendap\rijkswaterstaat\vaklodingen\KMLpreview';
-%url           = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen';
-url            = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen';
-contents       = opendap_folder_contents(url);
-EPSG           = load('EPSGnew');
+outputDir      = 'D:\repositories\kml\vaklodingen1';
+url            = vaklodingen_url;
+EPSG           = load('EPSG');
 
-OPT.colormap   = 'colormap2Dbathymetry';
-OPT.cLim       = [-20 20];
-OPT.colorSteps = [25,1000];
-OPT.hillFactor = 10;
+for ii = 1:length(url);
+    [path, fname] = fileparts(url{ii});
+    x    = nc_varget(url{ii},   'x');
+    y    = nc_varget(url{ii},   'y');
+    time = nc_varget(url{ii},'time');
 
-for ii = 1:length(contents);
-    [path, fname] = fileparts(contents{ii});
-    x    = nc_varget(contents{ii},   'x');
-    y    = nc_varget(contents{ii},   'y');
-    time = nc_varget(contents{ii},'time');
-    
+    % expand x and y 15 m in each direction to create some overlap
+    x = [x(1) + (x(1)-x(2))*.75; x; x(end) + (x(end)-x(end-1))*.75];
+    y = [y(1) + (y(1)-y(2))*.75; y; y(end) + (y(end)-y(end-1))*.75];
     % coordinates:
-    [coords.WE,coords.NS] = convertCoordinatesNew([min(x)-10,min(x)-10;max(x)+10,max(x)+10],[min(y)-10,max(y)+10;min(y)-10,max(y)+10],...
+    [X,Y] = meshgrid(x,y);
+    [lon,lat] = convertCoordinates(X,Y,...
         EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
 
-    coords.S = mean(min(coords.NS,[],2));
-    coords.W = mean(min(coords.WE,[],1));
-    coords.N = mean(max(coords.NS,[],2));
-    coords.E = mean(max(coords.WE,[],1));
-    dLon = mean(coords.WE(:,1)-coords.WE(:,2));
-    dLat = mean(coords.NS(:,2)-coords.NS(:,1));
-    coords.R =  atand(cosd(mean(mean(coords.NS)))*dLon/dLat);
-    %angle = atan(cos(lat));
-
     % convert time to years
-    time = datestr(time+datenum(1970,1,1),'yyyy-mm-dd');
+    time = time+datenum(1970,1,1);
+    date = datestr(time,'yyyy-mm-dd');
+    date(end+1,:) = datestr(now,'yyyy-mm-dd');
 
-    %create output directory
-    outputDir2 = [outputDir filesep fname];
+    for jj = size(time,1):-1:1%size(time,1)+1 - min(size(time,1),3)   ;
+         if ~exist([outputDir filesep fname '_' date(jj,:) '.kml'],'file')
 
-    %Check dir, make if needed
-    if ~isdir(outputDir2)
-        mkdir(outputDir2);
-    end
+            % display progress
+            disp([num2str(ii) '/' num2str(length(url)) ' ' fname ' ' date(jj,:)]);
+            % load z data
+            z = nc_varget(url{ii},'z',[jj-1,0,0],[1,-1,-1]);
 
-    output = [];
-    %loop through all the years
-    for jj = 1:1:size(time,1)
-
-        % display progress
-        disp([num2str(ii) '/' num2str(length(contents)) ' ' fname ' ' time(jj,:)]);
-
-        % load z data
-        z = nc_varget(contents{ii},'z',[jj-1,0,0],[1,-1,-1]);
-        z(z>500) = nan;
-
-        if ~all(isnan(z(:)))
-
-            % build colormap
-            c = z;
-            c(isnan(c)) = -.1;
-            eval(sprintf('colorRGB = %s([%d,%d]);',OPT.colormap,OPT.colorSteps(1),OPT.colorSteps(2)));
-
-            %clip c to min and max
-            c(c<OPT.cLim(1)) = OPT.cLim(1);
-            c(c>OPT.cLim(2)) = OPT.cLim(2);
-
-            %convert color and hillshade values into colorRGB index values
-            c = round(((c-OPT.cLim(1))/(OPT.cLim(2)-OPT.cLim(1))*(OPT.colorSteps(2)-1))+1);
-
-            h = hillshade(-z,x,y,'zfactor',OPT.hillFactor)/255;
-            h(isnan(h))=0.5;
-            h = round(h*(OPT.colorSteps(1)-1)+1);
-
-            fileName = [num2str(time(jj,:)) '.png'];
-            % make image A
-
-
-
-            ind = sub2ind(size(colorRGB),h(:),c(:));
-
-            A = colorRGB([ind ind+(OPT.colorSteps(1)*OPT.colorSteps(2))...
-                ind+2*(OPT.colorSteps(1)*OPT.colorSteps(2))]);
-
-            A = reshape(A,[size(z),3]);
-
-            imwrite(A,[outputDir2 '\' fileName],'png','Alpha',+~isnan(z));
-
-            output = [output sprintf([...
-                '<GroundOverlay>\n'...
-                '<TimeStamp>\n'...
-                '<when>%s</when>\n'...timeIn
-                '</TimeStamp>\n'...
-                '<name>%s</name>\n'...name
-                '<Icon><href>%s</href></Icon>\n'...
-                '<LatLonBox>\n'...
-                '<south>%3.8f</south>\n'...S
-                '<west>%3.8f</west>\n'...W
-                '<north>%3.8f</north>\n'...N
-                '<east>%3.8f</east>\n'...E
-                '<rotation>%3.3f</rotation>\n'...
-                '</LatLonBox>\n'...
-                '</GroundOverlay>\n'],...
-                time(jj,:),time(jj,:),...
-                ['http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen/KMLpreview/' fname '/' fileName],....
-                coords.S,coords.W,coords.N,coords.E,coords.R)];
-        end
-    end
-    if length(output)>100
-        OPT.fid=fopen([outputDir2 '\png.kml'],'w');
-        OPT_header = struct(...
-            'name',fname,...
-            'open',0);
-        output = [KML_header(OPT_header) output];
-        % FOOTER
-        output = [output KML_footer];
-        fprintf(OPT.fid,output);
-        % close KML
-        fclose(OPT.fid);
+            % expand z
+            z = z([1 1:end end],:);
+            z = z(:,[1 1:end end]);
+            z(z>500) = nan;
+            h = surf(lon,lat,z);
+            lightangle(-180,60)
+            shading interp;material([.7 .3 0.2]);lighting phong
+            axis off;axis tight;view(0,90);
+            colormap(colormapbathymetry(50));
+            clim([-25 25]);
+            KMLfig2png(h,'levels',[-6 3],'timeIn',date(jj,:),'timeOut',date(jj+1,:),...
+                'fileName',[outputDir filesep fname '_' date(jj,:) '.kml'],...
+                'drawOrder',str2double(datestr(time(jj),'yyyy'))*10);
+         else
+             disp([num2str(ii) '/' num2str(length(url)) ' ' fname ' ' date(jj,:) ' already created']);
+         end
     end
 end
-
-
-
-
-
-
-
 
 
