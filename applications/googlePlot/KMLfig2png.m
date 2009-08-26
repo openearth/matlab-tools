@@ -43,24 +43,32 @@ function [OPT, Set, Default] = KMLfig2png(h,varargin)
 
 %% process varargin
 
-OPT.fileName  =  [];
-OPT.kmlName   =  [];
-OPT.alpha     =  .7;
-OPT.levels    =   4;
-OPT.dim       = 256;
-OPT.dimExt    =  16;
-OPT.bgcolor   = [100 155 100];
-OPT.minLod    = 128;
-OPT.minLod0   =  -1;
-OPT.maxLod    = 256;
-OPT.maxLod0   =  -1;
-OPT.ha        = gca;
-OPT.hf        = gcf;
-OPT.timeIn    =  [];
-OPT.timeOut   =  [];
-OPT.drawOrder =   0; 
+OPT.fileName        =     [];
+OPT.kmlName         =     [];
+OPT.alpha           =      1;
+OPT.dim             =    256;
+OPT.dimExt          =     16;
+OPT.minLod          =     [];
+OPT.minLod0         =     -1;
+OPT.maxLod          =     [];
+OPT.maxLod0         =     -1;
+OPT.latSubDivisions =      2;
+OPT.lonSubDivisions =      2;
+OPT.levels          = [-2 2];
+OPT.ha              =    gca;
+OPT.hf              =    gcf;
+OPT.timeIn          =     [];
+OPT.timeOut         =     [];
+OPT.drawOrder       =      0; 
+OPT.bgcolor         = [100 155 100];
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
+
+%% set maxLod and minLod defaults
+
+if isempty(OPT.minLod),                 OPT.minLod =   OPT.dim; end
+if isempty(OPT.maxLod)&&OPT.alpha  < 1, OPT.maxLod = 2*OPT.dim; end
+if isempty(OPT.maxLod)&&OPT.alpha == 1, OPT.maxLod = 3*OPT.dim; end
 
 %% filename
 % gui for filename, if not set yet
@@ -84,15 +92,12 @@ mkdir(OPT.Path,OPT.Name)
 axis off;axis tight;view(0,90);
 bgcolor = OPT.bgcolor;
 set(OPT.ha,'Position',[0 0 1 1])
-set(OPT.hf,'PaperUnits', 'inches','PaperPosition',[0 0 OPT.dim+2*OPT.dimExt OPT.dim+2*OPT.dimExt],'color',bgcolor/255,'InvertHardcopy','off');
 
 % get bounding coordinates
 c.NS =get(OPT.ha,'YLim');
 c.WE =get(OPT.ha,'XLim');
 c.N = max(c.NS); c.S = min(c.NS);
 c.W = min(c.WE); c.E = max(c.WE);
-c.dNS = OPT.dimExt/OPT.dim*(c.N - c.S);
-c.dWE = OPT.dimExt/OPT.dim*(c.E - c.W);
 
 % get data from figure
 G.lon = get(h,'XData');
@@ -101,14 +106,13 @@ G.z   = get(h,'ZData');
 
 %% do the magic
 kml_id = 0;
-level = 1;
-if OPT.levels == 1,OPT.maxLod = OPT.maxLod0;else OPT.maxLod = OPT.maxLod; end
+level = OPT.levels(1);
+if OPT.levels(1) == OPT.levels(2),OPT.maxLod = OPT.maxLod0;else OPT.maxLod = OPT.maxLod; end
 
 [succes, kml_id] = KML_region_png(level,G,c,kml_id,OPT);
 
 if succes
     %% make the 'mother' kml content
-
     output = sprintf([...
         '<NetworkLink>'...
         '<name>%s</name>'... name
