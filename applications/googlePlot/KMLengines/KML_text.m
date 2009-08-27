@@ -1,4 +1,4 @@
-function [output] = KML_text(lat,lon,z,text,varargin)
+function [output] = KML_text(lat,lon,text,varargin)
 %KML_TEXT   low-level routine for creating KML string of text
 %
 %   kmlstring = KML_text(lat,lon,z,text)
@@ -38,26 +38,18 @@ function [output] = KML_text(lat,lon,z,text,varargin)
 % $HeadURL$
 % $Keywords: $
 %% Check if 3d
-
-
-if    ~isempty(varargin)
-    if ( isstruct(varargin{1})&&~odd(nargin))||...
-       (~isstruct(varargin{1})&&odd(nargin))
-        OPT.is3D = false;
-        varargin = [{text} varargin];
-        text = z;
-        OPT.is3D = false;
-        z = zeros(size(lat));
-    else
+if ~isempty(varargin)
+    if isnumeric(varargin{1})
+        z = varargin{1};
+        varargin(1) = [];
         OPT.is3D = true;
+    else
+        z = zeros(size(lat));
+        OPT.is3D = false;
     end
-elseif isempty(varargin)&&odd(nargin)
-    OPT.is3D = false;
-    text = z;
-    OPT.is3D = false;
-    z = zeros(size(lat));
 else
-    OPT.is3D = true;
+    z = zeros(size(lat));
+    OPT.is3D = false;
 end
  
 %%

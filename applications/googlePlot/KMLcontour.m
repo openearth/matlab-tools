@@ -49,13 +49,15 @@ OPT.openInGE    = false;
 OPT.colorMap    = 'jet';
 OPT.timeIn      = [];
 OPT.timeOut     = [];
-OPT.is3D        = false;
+OPT.is3D        = true;
 OPT.scaleA      = 40;
 OPT.scaleB      = 5;
 OPT.cLim        = [];
+OPT.writeLabels = true;
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
 %% input check
+% correct lat and lon
 if any((abs(lat)/90)>1)
     error('latitude out of range, must be within -90..90')
 end
@@ -95,23 +97,24 @@ end
 z = repmat((height+OPT.scaleA)*OPT.scaleB,size(lat,1),1);
 
 %% make labels
-latText    = lat(1:10:end,:);
-lonText    = lon(1:10:end,:);
-zText      =   z(1:10:end,:);
-textLevels = repmat(height,size(latText,1),1);
-textLevels = textLevels(~isnan(latText));
-zText      =   zText(~isnan(latText));  
-latText    = latText(~isnan(latText));
-lonText    = lonText(~isnan(lonText));
-textLabels = arrayfun(@(x) sprintf('%2.1f',x),textLevels,'uni',false);
-if OPT.is3D
-    KMLtext(latText,lonText,zText,textLabels,'fileName',[OPT.fileName(1:end-4) 'labels.kml'],...
-      'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut);
-else
-    KMLtext(latText,lonText,textLabels,'fileName',[OPT.fileName(1:end-4) 'labels.kml'],...
-      'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut);    
+if OPT.writeLabels
+    latText    = lat(1:10:end,:);
+    lonText    = lon(1:10:end,:);
+    zText      =   z(1:10:end,:);
+    textLevels = repmat(height,size(latText,1),1);
+    textLevels = textLevels(~isnan(latText));
+    zText      =   zText(~isnan(latText));
+    latText    = latText(~isnan(latText));
+    lonText    = lonText(~isnan(lonText));
+    textLabels = arrayfun(@(x) sprintf('%2.1f',x),textLevels,'uni',false);
+    if OPT.is3D
+        KMLtext(latText,lonText,textLabels,zText,'fileName',[OPT.fileName(1:end-4) 'labels.kml'],...
+            'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut);
+    else
+        KMLtext(latText,lonText,textLabels,'fileName',[OPT.fileName(1:end-4) 'labels.kml'],...
+            'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut);
+    end
 end
-
 %% draw the lines
 if isempty(OPT.cLim)
     OPT.cLim = ([min(height) max(height)]);

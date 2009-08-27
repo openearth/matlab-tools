@@ -1,10 +1,11 @@
-function [OPT, Set, Default] = KMLtext(lat,lon,z,text,varargin)
+function [OPT, Set, Default] = KMLtext(lat,lon,text,varargin)
 % KMLTEXT Just like text 
 %
 %    KMLtext(lat,lon,'fileName',fname,<keyword,value>)
 %
 %
 % The following see <keyword,value> pairs have been implemented:
+% The first arguemnt can be a z value
 %  'fileName'   = [];          % name of output file. Can be either a *.kml 
 %                              % or *.kmz (zipped *.kml) file. if not  
 %                              % defined a gui pops up
@@ -52,23 +53,35 @@ function [OPT, Set, Default] = KMLtext(lat,lon,z,text,varargin)
 % $Keywords: $
 
 %% input check
-if    ~isempty(varargin)&& odd(nargin)
-    isstruct(varargin)
-    OPT.is3D = false;
-    varargin = [{text} varargin];
-    text = z;
-    OPT.is3D = false;
-elseif isempty(varargin)&& odd(nargin)
-    OPT.is3D = false;
-    text = z;
-    OPT.is3D = false;
+
+if ~isempty(varargin)
+    if isnumeric(varargin{1})
+        z = varargin{1};
+        varargin(1) = [];
+        OPT.is3D = true;
+    else
+        z = zeros(size(lat));
+        OPT.is3D = false;
+    end
 else
-    OPT.is3D = true;
+    z = zeros(size(lat));
+    OPT.is3D = false;
 end
 
 lat = lat(:);
 lon = lon(:);
-text = text(:);
+
+% make sure the labels are in a cell array.
+if isnumeric(text)
+    text = text(:);
+    text = arrayfun(@(x) sprintf('%2.1f',x),text,'uni',false);
+elseif ischar(text)
+    text = cellstr(text);
+else
+    text = text(:);
+end
+
+% correct lat and lon
 if any((abs(lat)/90)>1)
     error('latitude out of range, must be within -90..90')
 end
@@ -81,13 +94,16 @@ OPT.kmlName     = 'untitled';
 OPT.openInGE    = false;
 OPT.timeIn      = [];
 OPT.timeOut     = [];
+OPT.textColor   = [];% TO DO
+OPT.textSize    = [];% TO DO
+OPT.textAlpha   = [];% TO DO
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
 %% get filename
 
 if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','untitled.kml');
+    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','text.kml');
     OPT.fileName = fullfile(filePath,fileName);
 end
 
@@ -144,7 +160,7 @@ end
 % loop through number of lines
 for ii=1:length(lat)
     if OPT.is3D
-        newOutput = KML_text(lat(ii),lon(ii),z(ii),text{ii},OPT_text);
+        newOutput = KML_text(lat(ii),lon(ii),text{ii},z(ii),OPT_text);
     else
         newOutput = KML_text(lat(ii),lon(ii),text{ii},OPT_text);
     end
