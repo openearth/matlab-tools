@@ -2,7 +2,7 @@
 %
 %See also: jarkusgrids2png, vaklodingen2kml, vaklodingen_overview
 
-outputDir      = 'D:\repositories\kml\jarkus1';
+outputDir      = 'F:\Jarkus';
 url            = jarkus_url_grid;
 EPSG           = load('EPSG');
 
@@ -25,7 +25,7 @@ for ii = 1:length(url);
     date = datestr(time,'yyyy-mm-dd');
     date(end+1,:) = datestr(now,'yyyy-mm-dd');
 
-    for jj = size(time,1):-1:size(time,1)%+1 - min(size(time,1),3)   ;
+    for jj = size(time,1):-1:1%size(time,1)+1 - min(size(time,1),3)   ;
          if ~exist([outputDir filesep fname '_' date(jj,:) '.kml'],'file')
 
             % display progress
@@ -41,9 +41,9 @@ for ii = 1:length(url);
             lightangle(-180,60)
             shading interp;material([.7 .3 0.2]);lighting phong
             axis off;axis tight;view(0,90);
-            colormap(colormapbathymetry(50));
-            clim([-25 25]);
-            KMLfig2png(h,'levels',[-5 3],'timeIn',date(jj,:),'timeOut',date(jj+1,:),...
+            colormap(colormap_cpt('bathymetry_vaklodingen',500))
+            clim([-50 50]);
+            KMLfig2png(h,'levels',[-3 3],'timeIn',date(jj,:),'timeOut',date(jj+1,:),...
                 'fileName',[outputDir filesep fname '_' date(jj,:) '.kml'],...
                 'drawOrder',str2double(datestr(time(jj),'yyyy'))*10);
          else
