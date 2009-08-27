@@ -95,7 +95,7 @@ propertyNameValue = {...
 propertyNameValue(1:id,2) = varargin(1:id);
 
 % create property structure, including the directly specified input
-OPTstructArgs = reshape(propertyNameValue, 1, 2*length(propertyName));
+OPTstructArgs = reshape(propertyNameValue', 1, 2*size(propertyNameValue,1));
 OPT = struct(OPTstructArgs{:});
 
 % update property structure with input specified as propertyName
