@@ -193,7 +193,8 @@ if ~isempty(zInitial)
     volume = getCumVolume(result.xActive,result.zActive,result.z2Active);
     [Volume, result.Volumes.Volume] = deal(sum(volume));
     [result.Volumes.volumes, result.Volumes.Accretion, result.Volumes.Erosion] = deal(volume, sum(volume(volume>0)), -sum(volume(volume<0)));
-    
+
+    result.info.ToeProfile = ~(xmax > result.xActive(end));
 
 else % to create a floating profile, only xActive and z2Active are useful, other result structure fields are not filled
     [result.xActive, result.z2Active] = deal(x2, z2);
