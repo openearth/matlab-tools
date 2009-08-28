@@ -123,11 +123,11 @@ initxlimits = [min(x) max(x)];
 initzlimits = get(parent, 'YLim');
 tmp = guihandles(fig);
 
-if exist('stretchaxes.bmp','file')
+%if exist('stretchaxes.bmp','file')
     pushim = imread('stretchaxes.bmp');
-else
-    pushim = repmat(0,[315,315,3]);
-end
+%else
+%    pushim = repmat(0,[315,315,3]);
+%end
 uipushtool('CData',pushim,...
     'ClickedCallback',{@resetaxis, parent, initxlimits, initzlimits},...
     'Parent',tmp.FigureToolBar,...
