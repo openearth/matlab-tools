@@ -108,13 +108,13 @@ XB.settings.Waves = struct(...
     'Trep', [],... % alternative keyword for representative period, overrules value for Tm01
     'Tlong', [],... % long wave / wave group period, instat = 1 only
     'dir0', 270,... % mean wave direction (Nautical convention), for instat == 0,1,2,3 only
-    'hmin', .05,...
+    'hmin', .05,... % threshold water depth for concentration and return flow
     'gamma', [],... % breaker parameter in Baldock or Roelvink formulation
     'alpha', 1,... % wave dissipation coefficient
     'delta', .0,...
     'n', [],... % power in roelvink dissipation model
-    'rho', 1000,...
-    'g', 9.81,...
+    'rho', 1000,... % density of water
+    'g', 9.81,... % acceleration of gravity
     'thetamin', -180.0,... % lower directional limit, angle w.r.t computational x-axis
     'thetamax', 180.0,... % upper directional limit, angle w.r.t computational x-axis
     'dtheta', 360.0,... % directional resolution

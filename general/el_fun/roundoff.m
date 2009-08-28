@@ -72,7 +72,7 @@ function Xround = roundoff(X, n, varargin)
 
 %% check input
 if nargin == 1
-    getdefaults('n', 0, 1);
+    getdefaults('n', 0, true);
 elseif nargin == 0
     error('ROUNDOFF:NotEnoughInputs','At least input argument "X" must be specified')
 end
