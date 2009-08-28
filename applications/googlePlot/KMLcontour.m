@@ -37,31 +37,51 @@ function [OPT, Set, Default] = KMLcontour(lat,lon,z,varargin)
 % $HeadURL$
 % $Keywords: $
 
+%% check if labels are defined
+if ~isempty(varargin)
+    if isnumeric(varargin{1})
+        c = varargin{1};
+        varargin(1) = [];
+        OPT.writeLabels = true;
+    else
+        OPT.writeLabels = false;
+    end
+else
+    OPT.writeLabels = false;
+end
+
 
 %% process varargin
 % see if height is defined
-OPT.levels      = 10;
-OPT.fileName    = [];
-OPT.kmlName     = [];
-OPT.lineWidth   = 1;
-OPT.lineAlpha   = 1;
-OPT.openInGE    = false;
-OPT.colorMap    = 'jet';
-OPT.timeIn      = [];
-OPT.timeOut     = [];
-OPT.is3D        = true;
-OPT.scaleA      = 40;
-OPT.scaleB      = 5;
-OPT.cLim        = [];
-OPT.writeLabels = true;
+OPT.levels        = 10;
+OPT.fileName      = [];
+OPT.kmlName       = [];
+OPT.lineWidth     = 1;
+OPT.lineAlpha     = 1;
+OPT.openInGE      = false;
+OPT.colorMap      = @(m) jet(m);
+OPT.colorSteps    = 32;   
+OPT.timeIn        = [];
+OPT.timeOut       = [];
+OPT.is3D          = true;
+OPT.cLim          = [];
+OPT.writeLabels   = true;
+OPT.labelInterval = 5;
+OPT.zScaleFun     = @(z) (z+0)*100;
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
 %% input check
+
 % correct lat and lon
 if any((abs(lat)/90)>1)
     error('latitude out of range, must be within -90..90')
 end
 lon = mod(lon+180, 360)-180;
+
+% color limits
+if isempty(OPT.cLim)
+    OPT.cLim = ([min(z(~isnan(z))) max(z(~isnan(z)))]);
+end
 
 %% filename
 % gui for filename, if not set yet
@@ -94,40 +114,35 @@ while jj<size(coords,2)
     jj = jj+coords(2,jj)+1;
 end
 %% make z
-z = repmat((height+OPT.scaleA)*OPT.scaleB,size(lat,1),1);
+z = repmat(height,size(lat,1),1);
 
 %% make labels
 if OPT.writeLabels
-    latText    = lat(1:10:end,:);
-    lonText    = lon(1:10:end,:);
-    zText      =   z(1:10:end,:);
-    textLevels = repmat(height,size(latText,1),1);
-    textLevels = textLevels(~isnan(latText));
+    latText    = lat(1:OPT.labelInterval:end,:);
+    lonText    = lon(1:OPT.labelInterval:end,:);
+    zText      =   z(1:OPT.labelInterval:end,:);
     zText      =   zText(~isnan(latText));
+    labels     =   zText;
     latText    = latText(~isnan(latText));
     lonText    = lonText(~isnan(lonText));
-    textLabels = arrayfun(@(x) sprintf('%2.1f',x),textLevels,'uni',false);
     if OPT.is3D
-        KMLtext(latText,lonText,textLabels,zText,'fileName',[OPT.fileName(1:end-4) 'labels.kml'],...
+        KMLtext(latText,lonText,labels,OPT.zScaleFun(zText),'fileName',[OPT.fileName(1:end-4) 'labels.kml'],...
             'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut);
     else
-        KMLtext(latText,lonText,textLabels,'fileName',[OPT.fileName(1:end-4) 'labels.kml'],...
+        KMLtext(latText,lonText,labels,'fileName',[OPT.fileName(1:end-4) 'labels.kml'],...
             'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut);
     end
 end
 %% draw the lines
-if isempty(OPT.cLim)
-    OPT.cLim = ([min(height) max(height)]);
-end
-
 height(height<OPT.cLim(1)) = OPT.cLim(1);
 height(height>OPT.cLim(2)) = OPT.cLim(2);
-level      = round(10*height);
-colors     = eval([OPT.colorMap '(max(level) - min(level)+1)']);
-lineColors = colors(level-min(level)+1,:);
+
+level      = round((height-OPT.cLim(1))/(OPT.cLim(2)-OPT.cLim(1))*(OPT.colorSteps-1))+1;
+colors     = OPT.colorMap(OPT.colorSteps);
+lineColors = colors(level,:);
 
 if OPT.is3D
-    KMLline(lat,lon,z,'fileName',OPT.fileName,'lineColor',lineColors,'lineWidth',OPT.lineWidth,...
+    KMLline(lat,lon,OPT.zScaleFun(z),'fileName',OPT.fileName,'lineColor',lineColors,'lineWidth',OPT.lineWidth,...
         'timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'fillColor',lineColors);
 else
     KMLline(lat,lon,'fileName',OPT.fileName,'lineColor',lineColors,'lineWidth',OPT.lineWidth,...
