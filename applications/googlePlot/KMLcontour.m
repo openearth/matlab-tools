@@ -66,8 +66,10 @@ OPT.timeOut       = [];
 OPT.is3D          = true;
 OPT.cLim          = [];
 OPT.writeLabels   = true;
+OPT.labelDecimals = 1;
 OPT.labelInterval = 5;
 OPT.zScaleFun     = @(z) (z+0)*100;
+
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
 %% input check
@@ -127,10 +129,10 @@ if OPT.writeLabels
     lonText    = lonText(~isnan(lonText));
     if OPT.is3D
         KMLtext(latText,lonText,labels,OPT.zScaleFun(zText),'fileName',[OPT.fileName(1:end-4) 'labels.kml'],...
-            'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut);
+            'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'labelDecimals',OPT.labelDecimals);
     else
         KMLtext(latText,lonText,labels,'fileName',[OPT.fileName(1:end-4) 'labels.kml'],...
-            'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut);
+            'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'labelDecimals',OPT.labelDecimals);
     end
 end
 %% draw the lines

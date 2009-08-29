@@ -1,7 +1,7 @@
-function [output] = KML_text(lat,lon,text,varargin)
+function [output] = KML_text(lat,lon,label,varargin)
 %KML_TEXT   low-level routine for creating KML string of text
 %
-%   kmlstring = KML_text(lat,lon,z,text)
+%   kmlstring = KML_text(lat,lon,label,z)
 %
 % See also: KML_footer, KML_header, KML_line, KML_poly, KML_style, 
 % KML_stylePoly, KML_upload
@@ -89,12 +89,12 @@ end
 output = sprintf([...
 	'<Placemark>\n'...
     '%s',...% timeSpan
-    '<name>%s</name>\n'...text
+    '<name>%s</name>\n'...label
 	'<Style><IconStyle><Icon></Icon></IconStyle></Style>\n'...
 	'<Point>'...
     '%s'...altitude mode
     '<coordinates>%3.8f,%3.8f,%3.4f</coordinates></Point>\n'...
 	'</Placemark>\n'],...
-    timeSpan,text,altitudeMode,lon,lat,z);
+    timeSpan,label,altitudeMode,lon,lat,z);
 
 %% EOF

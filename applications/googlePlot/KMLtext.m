@@ -1,4 +1,4 @@
-function [OPT, Set, Default] = KMLtext(lat,lon,text,varargin)
+function [OPT, Set, Default] = KMLtext(lat,lon,label,varargin)
 % KMLTEXT Just like text 
 %
 %    KMLtext(lat,lon,'fileName',fname,<keyword,value>)
@@ -16,7 +16,7 @@ function [OPT, Set, Default] = KMLtext(lat,lon,text,varargin)
 % Example: 
 % 
 % [lat,lon] = meshgrid(54:.1:55, 4:.1:5);
-% text = sprintf('%d,%d',lat(:),lon(:));
+% label = sprintf('%d,%d',lat(:),lon(:));
 % labels=arrayfun(@(x,y) sprintf('%2.1f %2.1f',x,y),lat,lon,'uni',false);
 % KMLtext(lat,lon,labels)
 
@@ -71,16 +71,6 @@ end
 lat = lat(:);
 lon = lon(:);
 
-% make sure the labels are in a cell array.
-if isnumeric(text)
-    text = text(:);
-    text = arrayfun(@(x) sprintf('%2.1f',x),text,'uni',false);
-elseif ischar(text)
-    text = cellstr(text);
-else
-    text = text(:);
-end
-
 % correct lat and lon
 if any((abs(lat)/90)>1)
     error('latitude out of range, must be within -90..90')
@@ -89,16 +79,27 @@ lon = mod(lon+180, 360)-180;
 
 %% process varargin
 
-OPT.fileName    = [];
-OPT.kmlName     = 'untitled';
-OPT.openInGE    = false;
-OPT.timeIn      = [];
-OPT.timeOut     = [];
-OPT.textColor   = [];% TO DO
-OPT.textSize    = [];% TO DO
-OPT.textAlpha   = [];% TO DO
+OPT.fileName      = [];
+OPT.kmlName       = 'untitled';
+OPT.openInGE      = false;
+OPT.timeIn        = [];
+OPT.timeOut       = [];
+OPT.textColor     = [];% TO DO
+OPT.textSize      = [];% TO DO
+OPT.textAlpha     = [];% TO DO
+OPT.labelDecimals = 1;
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
+%% make sure the labels are in a cell array.
+if isnumeric(label)
+    label = label(:);
+    labelFormat = sprintf('%%.%df',OPT.labelDecimals);
+    label = arrayfun(@(x) sprintf(labelFormat,x),label,'uni',false);
+elseif ischar(label)
+    label = cellstr(label);
+else
+    label = label(:);
+end
 
 %% get filename
 
@@ -160,9 +161,9 @@ end
 % loop through number of lines
 for ii=1:length(lat)
     if OPT.is3D
-        newOutput = KML_text(lat(ii),lon(ii),text{ii},z(ii),OPT_text);
+        newOutput = KML_text(lat(ii),lon(ii),label{ii},z(ii),OPT_text);
     else
-        newOutput = KML_text(lat(ii),lon(ii),text{ii},OPT_text);
+        newOutput = KML_text(lat(ii),lon(ii),label{ii},OPT_text);
     end
     % add newOutput to output
     output(kk:kk+length(newOutput)-1) = newOutput;
