@@ -31,12 +31,6 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 %  'openInGE'   = false;       % opens output directly in google earth
 %  'description'= '';          % 
 %
-%  If text is defined, each set of lines (column in (lat,lon)), is
-%  accompanied by a title. 
-%   text        = '';          % cellstr with same size as size(lat,2)
-%  'latText'    = mean(lat,1); % coordinates of text
-%  'lonText'    = mean(lon,1); %
-%
 % Example 1: draw a spiral around the earth
 %   lat = linspace(-90,90,1000)'; lon = linspace(0,5*360,1000)';
 %   KMLline(lat,lon)
@@ -110,23 +104,22 @@ else
     OPT.is3D        = false;
 end
     
-OPT.fileName    = [];
-OPT.kmlName     = [];
-OPT.lineWidth   = 1;
-OPT.lineColor   = [0 0 0];
-OPT.lineAlpha   = 1;
-OPT.fill        = true;
-OPT.fillColor   = [0 .5 0];
-OPT.fillAlpha   = .4;
-OPT.openInGE    = false;
-OPT.text        = '';
-OPT.latText     = mean(lat,1);
-OPT.lonText     = mean(lon,1);
-OPT.timeIn      = [];
-OPT.timeOut     = [];
-OPT.visible     = true;
-OPT.extrude     = true;
-OPT.tessellate  = ~OPT.is3D;
+OPT.fileName      = [];
+OPT.kmlName       = [];
+OPT.lineWidth     = 1;
+OPT.lineColor     = [0 0 0];
+OPT.lineAlpha     = 1;
+OPT.fill          = true;
+OPT.fillColor     = [0 .5 0];
+OPT.fillAlpha     = .4;
+OPT.openInGE      = false;
+OPT.timeIn        = [];
+OPT.timeOut       = [];
+OPT.visible       = true;
+OPT.extrude       = true;
+OPT.tessellate    = ~OPT.is3D;
+OPT.zScaleFun     = @(z) (z+0)*1;
+
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
 %% input check
@@ -277,21 +270,16 @@ for ii=1:length(lat(1,:))
         
         % write the line
         if OPT.is3D
-            newOutput = KML_line(lat(:,ii),lon(:,ii),z(:,ii),OPT_line);        
+            newOutput = KML_line(lat(:,ii),lon(:,ii),OPT.zScaleFun(z(:,ii)),OPT_line);        
         else
             newOutput =  KML_line(lat(:,ii),lon(:,ii),'clampToGround',OPT_line);
         end
 
         % add a fill if needed
         if OPT.is3D&&OPT.fill
-            newOutput =  [newOutput,KML_line(lat(:,ii),lon(:,ii),z(:,ii),OPT_fill)];
+            newOutput =  [newOutput,KML_line(lat(:,ii),lon(:,ii),OPT.zScaleFun(z(:,ii)),OPT_fill)];
         end
         
-        % add a text if it is defined
-        if ~isempty(OPT.text)
-            newOutput = [newOutput,KML_text(OPT.latText(ii),OPT.lonText(ii),OPT.text{ii})];
-        end    
-
         % add newOutput to output
         output(kk:kk+length(newOutput)-1) = newOutput;
         kk = kk+length(newOutput);

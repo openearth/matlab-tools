@@ -69,11 +69,11 @@ end
 z = 'clampToGround';
 
 OPT.fileName    = [];
-OPT.kmlName     = 'pcolor';
+OPT.kmlName     = [];
 OPT.lineWidth   = 1;
 OPT.lineColor   = [0 0 0];
 OPT.lineAlpha   = 1;
-OPT.colormap    = 'jet';
+OPT.colorMap    = @(m) jet(m);
 OPT.colorSteps  = 16;
 OPT.fillAlpha   = 0.6;
 OPT.fileName    = '';
@@ -96,7 +96,10 @@ if isempty(OPT.fileName)
     [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','untitled.kml');
     OPT.fileName = fullfile(filePath,fileName);
 end
-
+% set kmlName if it is not set yet
+if isempty(OPT.kmlName)
+    [ignore OPT.kmlName] = fileparts(OPT.fileName);
+end
 %% pre-process data
 eval(sprintf('colorRGB = %s(%d);',OPT.colormap,OPT.colorSteps));
 

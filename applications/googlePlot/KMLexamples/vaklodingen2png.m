@@ -2,11 +2,11 @@
 %
 %See also: jarkusgrids2png, vaklodingen2kml, vaklodingen_overview
 
-outputDir      = 'F:\Vaklodingen';
+outputDir      = 'P:\mcdata\KML\vaklodingen';
 url            = vaklodingen_url;
 EPSG           = load('EPSG');
 
-for ii = 1:length(url);
+for ii = length(url):-1:1;
     [path, fname] = fileparts(url{ii});
     x    = nc_varget(url{ii},   'x');
     y    = nc_varget(url{ii},   'y');
@@ -52,5 +52,3 @@ for ii = 1:length(url);
         end
     end
 end
-
-

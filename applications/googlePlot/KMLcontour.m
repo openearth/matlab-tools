@@ -37,6 +37,29 @@ function [OPT, Set, Default] = KMLcontour(lat,lon,z,varargin)
 % $HeadURL$
 % $Keywords: $
 
+%% process varargin
+% see if height is defined
+OPT.levels        = 10;
+OPT.fileName      = [];
+OPT.kmlName       = [];
+OPT.lineWidth     = 1;
+OPT.lineAlpha     = 1;
+OPT.openInGE      = false;
+OPT.colorMap      = @(m) jet(m);
+OPT.colorSteps    = 32;   
+OPT.timeIn        = [];
+OPT.timeOut       = [];
+OPT.is3D          = false;
+OPT.cLim          = [];
+OPT.writeLabels   = true;
+OPT.labelDecimals = 1;
+OPT.labelInterval = 5;
+OPT.zScaleFun     = @(z) (z+0)*0;
+
+if nargin==0
+  return
+end
+
 %% check if labels are defined
 if ~isempty(varargin)
     if isnumeric(varargin{1})
@@ -50,27 +73,9 @@ else
     OPT.writeLabels = false;
 end
 
+%% set properties
 
-%% process varargin
-% see if height is defined
-OPT.levels        = 10;
-OPT.fileName      = [];
-OPT.kmlName       = [];
-OPT.lineWidth     = 1;
-OPT.lineAlpha     = 1;
-OPT.openInGE      = false;
-OPT.colorMap      = @(m) jet(m);
-OPT.colorSteps    = 32;   
-OPT.timeIn        = [];
-OPT.timeOut       = [];
-OPT.is3D          = true;
-OPT.cLim          = [];
-OPT.writeLabels   = true;
-OPT.labelDecimals = 1;
-OPT.labelInterval = 5;
-OPT.zScaleFun     = @(z) (z+0)*100;
-
-[OPT, Set, Default] = setProperty(OPT, varargin);
+[OPT, Set, Default] = setProperty(OPT, varargin{:});
 
 %% input check
 
@@ -91,7 +96,10 @@ if isempty(OPT.fileName)
     [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','contour.kml');
     OPT.fileName = fullfile(filePath,fileName);
 end
-
+% set kmlName if it is not set yet
+if isempty(OPT.kmlName)
+    [ignore OPT.kmlName] = fileparts(OPT.fileName);
+end
 %% find contours
 coords = contours(lat,lon,z,OPT.levels);
 

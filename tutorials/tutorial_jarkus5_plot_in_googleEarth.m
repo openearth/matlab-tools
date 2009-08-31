@@ -112,7 +112,7 @@ timeIn  = datenum(year,1,1);
 timeOut = datenum(year+1,1,1);
 %%
 % * And finally we can call KMLline
-KMLline(lat2',lon2',(zi'+20).*5,'timeIn',timeIn,'timeOut',timeOut);
+KMLline(lat2',lon2',zi','timeIn',timeIn,'timeOut',timeOut,'zScaleFun',@(z) (z+20)*5);
 %%
 % 
 % <<_prerendered_jarkus5_2.PNG>>

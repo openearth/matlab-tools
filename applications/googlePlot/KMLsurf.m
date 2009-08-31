@@ -37,11 +37,27 @@ function [OPT, Set, Default] = KMLsurf(lat,lon,z,varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% error check
-if all(isnan(z(:)))
-    disp('warning: No surface could be constructed, because there was no valid height data provided...') %#ok<WNTAG>
-    return
+%% process varargin
+OPT.fileName     = [];
+OPT.kmlName      = [];
+OPT.lineWidth    = 1;
+OPT.lineColor    = [0 0 0];
+OPT.lineAlpha    = 1;
+OPT.colorMap     = @(m) jet(m);
+OPT.colorSteps   = 16;
+OPT.fillAlpha    = 0.6;
+OPT.polyOutline  = false;
+OPT.polyFill     = true;
+OPT.openInGE     = false;
+OPT.reversePoly  = false;
+OPT.extrude      = false;
+OPT.cLim         = [];
+OPT.zScaleFun    = @(z) (z+20).*5;
+
+if nargin==0
+  return
 end
+
 %% assign c if it is given
 if ~isempty(varargin)
     if ~ischar(varargin{1});
@@ -53,6 +69,16 @@ if ~isempty(varargin)
 else
     c = z;
 end
+
+%% set properties
+[OPT, Set, Default] = setProperty(OPT, varargin{:});
+
+%% error check
+if all(isnan(z(:)))
+    disp('warning: No surface could be constructed, because there was no valid height data provided...') %#ok<WNTAG>
+    return
+end
+
 %% calaculate center color values
 if all(size(c)==size(lat))
     c = (c(1:end-1,1:end-1)+...
@@ -62,33 +88,25 @@ if all(size(c)==size(lat))
 elseif ~all(size(c)+[1 1]==size(lat))
     error('wrong color dimension, must be equal or one less as lat/lon')
 end
-%% process varargin
-OPT.fileName = [];
-OPT.kmlName = 'untitled';
-OPT.lineWidth = 1;
-OPT.lineColor = [0 0 0];
-OPT.lineAlpha = 1;
-OPT.colormap = 'jet';
-OPT.colorSteps = 16;
-OPT.fillAlpha = 0.6;
-OPT.fileName = '';
-OPT.polyOutline = 0;
-OPT.polyFill = 1;
-OPT.openInGE = false;
-OPT.reversePoly = false;
-OPT.extrude = 0;
-OPT.cLim = [min(c(:)) max(c(:))];
 
-[OPT, Set, Default] = setProperty(OPT, varargin);
 %% get filename
 if isempty(OPT.fileName)
     [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','untitled.kml');
     OPT.fileName = fullfile(filePath,fileName);
 end
+% set kmlName if it is not set yet
+if isempty(OPT.kmlName)
+    [ignore OPT.kmlName] = fileparts(OPT.fileName);
+end
+
+%% set cLim
+if isempty(OPT.cLim)
+    OPT.cLim         = [min(c(:)) max(c(:))];
+end
 
 %% pre-process data
-eval(sprintf('colorRGB = %s(%d);',OPT.colormap,OPT.colorSteps));
 
+colors = OPT.colorMap(OPT.colorSteps);
 %clip c to min and max 
 c(c<OPT.cLim(1)) = OPT.cLim(1);
 c(c>OPT.cLim(2)) = OPT.cLim(2);
@@ -106,7 +124,7 @@ output = KML_header(OPT_header);
 %% STYLE
 OPT_stylePoly = struct(...
     'name',['style' num2str(1)],...
-    'fillColor',colorRGB(1,:),...
+    'fillColor',colors(1,:),...
     'lineColor',OPT.lineColor ,...
     'lineAlpha',OPT.lineAlpha,...
     'lineWidth',OPT.lineWidth,...
@@ -115,7 +133,7 @@ OPT_stylePoly = struct(...
     'polyOutline',OPT.polyOutline); 
 for ii = 1:OPT.colorSteps
     OPT_stylePoly.name = ['style' num2str(ii)];
-    OPT_stylePoly.fillColor = colorRGB(ii,:);
+    OPT_stylePoly.fillColor = colors(ii,:);
     output = [output KML_stylePoly(OPT_stylePoly)];
 end
 %% print and clear output
@@ -157,7 +175,7 @@ for ii=1:length(lat(:,1))-1
                 LON = LON(end:-1:1);
                   Z =   Z(end:-1:1);
             end
-            newOutput = KML_poly(LAT,LON,Z,OPT_poly);
+            newOutput = KML_poly(LAT,LON,OPT.zScaleFun(Z),OPT_poly);
             output(kk:kk+length(newOutput)-1) = newOutput;
             kk = kk+length(newOutput);
             if kk>1e5
