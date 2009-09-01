@@ -387,13 +387,12 @@ fprintf(fid,'%s\n','%','%% Output specifications','%');
 if ~globvarsdefined && ~meanvarsdefined && ~pointsdefined && oldvarsdefined
     % for backwards compatibility
     fprintf(fid,'tint       = %1.0f\n',XB.settings.Flow.tint);
-    fprintf(fid,'%s %1.0f \n', 'nglobalvar =', XB.settings.OutputOptions.nglobalvar);
+    fprintf(fid,'%s %1.0f\n', 'nglobalvar =', XB.settings.OutputOptions.nglobalvar);
     for i=1:length(XB.settings.OutputOptions.OutVars)
         fprintf(fid,'%s\n',XB.settings.OutputOptions.OutVars{i});
     end
 else
     if globvarsdefined
-        fprintf(fid,'  \n');
         if ~isempty(XB.settings.OutputOptions.tsglobal)
             fprintf(fid,'%s %s \n', 'tsglobal   =', XB.settings.OutputOptions.tsglobal);
         elseif ~isempty(XB.settings.OutputOptions.tintg)
