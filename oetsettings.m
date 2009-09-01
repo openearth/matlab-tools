@@ -12,7 +12,7 @@ function oetsettings(varargin)
 % * wiki:        <a href="http://OpenEarth.deltares.nl"                               >OpenEarth.Deltares.nl</a>
 % * repository:  <a href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab">https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab</a>
 % * help blocks: Scroll through the OpenEarthTools directories by clicking 
-%                the see also links, or typing:
+%                to see also links, or typing:
 %
 %    help oetsettings
 %    help general
