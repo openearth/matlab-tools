@@ -1,4 +1,4 @@
-function [CurFile varargout] = EditorCurrentFile
+function [CurFile varargout] = editorCurrentFile
 %EDITORCURRENTFILE  provides path to the current file in the matlab editor
 %
 %   This function uses undocumented matlab stuff to get the path of the
