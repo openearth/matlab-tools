@@ -2,11 +2,12 @@
 %
 %See also: jarkusgrids2png, vaklodingen2kml, vaklodingen_overview
 
-outputDir      = 'P:\mcdata\KML\vaklodingen';
-url            = vaklodingen_url;
-EPSG           = load('EPSG');
+outputDir               = 'F:\vaklodingen123';
+url                     = vaklodingen_url;
+EPSG                    = load('EPSG');
+time_at_starting_script = 2009-09-01;%datestr(now,'yyyy-mm-dd');
 
-for ii = length(url):-1:1;
+for ii = 1:length(url);
     [path, fname] = fileparts(url{ii});
     x    = nc_varget(url{ii},   'x');
     y    = nc_varget(url{ii},   'y');
@@ -21,9 +22,9 @@ for ii = length(url):-1:1;
         EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
 
     % convert time to years
-    time = time+datenum(1970,1,1);
-    date = datestr(time,'yyyy-mm-dd');
-    date(end+1,:) = datestr(now,'yyyy-mm-dd');
+    time          = time+datenum(1970,1,1);
+    date          = datestr(time,'yyyy-mm-dd');
+    date(end+1,:) = time_at_starting_script;
 
     for jj = size(time,1):-1:1%size(time,1)+1 - min(size(time,1),3)   ;
         if ~exist([outputDir filesep fname '_' date(jj,:) '.kml'],'file')

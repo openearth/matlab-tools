@@ -1,17 +1,17 @@
-function testresult = KMLcontour_test()
-% KMLCONTOUR_TEST  One line description goes here
-%  
+function testresult = KMLpcolor_test()
+% KMLPCOLOR_TEST  One line description goes here
+%
 % More detailed description of the test goes here.
 %
 %
-%   See also 
+%   See also
 
 %% Credentials
 %   --------------------------------------------------------------------
 %   2009 <Deltares>
 %       Thijs Damsma
 %
-%       <Thijs.Damsma@Deltares.nl>	
+%       <Thijs.Damsma@Deltares.nl>
 %
 %       Deltares
 %       P.O. Box 177
@@ -20,9 +20,9 @@ function testresult = KMLcontour_test()
 %
 %   --------------------------------------------------------------------
 % This test is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -42,13 +42,11 @@ function testresult = KMLcontour_test()
 %% $RunCode
 try
     [lat,lon] = meshgrid(54:.1:57,2:.1:5);
-    z = peaks(31);
-    z = abs(z);
-
-    KMLcontour(lat   ,lon,   z,'fileName',KML_testdir('contour1.kml'),'zScaleFun',@(z) (z+1)*2000,'writeLabels',true);
-    KMLcontour(lat+5 ,lon,   z,'fileName',KML_testdir('contour2.kml'),'writeLabels',false,'colorMap',@(m) gray(m));
-    KMLcontour(lat+10,lon,   z,'fileName',KML_testdir('contour3.kml'),'is3D',false,'writeLabels',false,'cLim',[-10 10],'lineWidth',3,'colorMap',@(m) colormap_cpt('temperature',m));
-    KMLcontour(lat+10,lon*10,z,'fileName',KML_testdir('contour4.kml'),'zScaleFun',@(z) (z.^2)*10000,'writeLabels',true,'cLim',[200 300],'labelDecimals',4);
+    c = peaks(31);
+    KMLpcolor(lat   ,lon-15, c,'fileName',KML_testdir('KMLpcolor_1.kml'));
+    KMLpcolor(lat+5 ,lon-15, c,'fileName',KML_testdir('KMLpcolor_2.kml'),'colorMap',@(m) gray(m));
+    KMLpcolor(lat+10,lon-15, c,'fileName',KML_testdir('KMLpcolor_3.kml'),'fillAlpha',1,'lineWidth',3,'colorMap',@(m) colormap_cpt('temperature',m),'polyOutline',true);
+    KMLpcolor(lat+5 ,lon*-10,c,'fileName',KML_testdir('KMLpcolor_4.kml'),'polyOutline',true,'polyFill',false,'lineColor','fillColor');
     testresult = true;
 catch
     testresult = false;

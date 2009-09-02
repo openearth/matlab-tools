@@ -1,23 +1,26 @@
 function KMLsurf_tiled(lat,lon,z)
 
+% KMLSURF_TILED  BETA!!!!
+
 
 %[lat,lon] = meshgrid(54:1/255:55,4:1/127:5);
 %z = abs(peaks(256))*500;
 %z(z<100) = nan;
 
 
-z = z(1:128,:);
-OPT.fileName = 'test.kml';
-OPT.kmlName = 'test';
-OPT.lineWidth = 1;
-OPT.lineColor = [0 0 0];
-OPT.lineAlpha = 1;
-OPT.colormap = 'jet';
-OPT.colorSteps = 16;
-OPT.cLim       = [0 2500];
-OPT.fillAlpha = 1;
-OPT.polyOutline = 0;
-OPT.polyFill = 1;
+
+OPT.fileName      = 'test.kml';
+OPT.kmlName       = 'test';
+OPT.lineWidth     = 1;
+OPT.lineColor     = [0 0 0];
+OPT.lineAlpha     = 1;
+OPT.colormap      = 'jet';
+OPT.colorSteps    = 16;
+OPT.cLim          = [-20 20];
+OPT.fillAlpha     = 1;
+OPT.polyOutline   = 0;
+OPT.polyFill      = 1;
+OPT.zScaleFun     = @(z) (z+20)*5;
 %% start KML
 OPT.fid=fopen(OPT.fileName,'w');
 %% HEADER
@@ -45,11 +48,11 @@ end
 
 %% print and clear output
 fprintf(OPT.fid,output);
-output = repmat(char(1),1,1e5);
+output = repmat(char(1),1,1e6);
 kk = 1;
 
 
-for xx = 2.^(8:-1:1)
+for xx = 2.^(10:-1:0)
     mm = [1:xx:size(lat,1)-1 size(lat,1)];
     nn = [1:xx:size(lat,2)-1 size(lat,2)];
     for ii=1:length(mm)-1
@@ -61,46 +64,57 @@ for xx = 2.^(8:-1:1)
             if ~all(isnan(z2))
                 [a b] = size(z2);
                 cv   = [1,a,b*a,(b-1)*a+1,1]';
-                if isnan(any(z2(cv)))
-                    cv   = flipud(convhull(lat3,lon3));
-                    coords=[lon3(cv) lat3(cv) z3(cv)]';
+                if any(isnan(z2(cv)))
                     lat3 = lat2(~isnan(z2));
                     lon3 = lon2(~isnan(z2));
                     z3   =   z2(~isnan(z2));
+                    try
+                    cv   = flipud(convhull(lat3,lon3));
+                    catch
+                        break
+                    end
                 else
-                    coords=[lon2(cv) lat2(cv) z2(cv)]';
                     lat3 = lat2;
                     lon3 = lon2;
                     z3   =   z2;
                 end
+                coords=[lon3(cv) lat3(cv) OPT.zScaleFun(z3(cv))]';
                 
-                level = round(min(max(sum(z3(cv))/numel(cv),OPT.cLim(1)),OPT.cLim(2))/(OPT.cLim(2)-OPT.cLim(1))*(OPT.colorSteps-1))+1;
+                level = round((sum(z3(cv))/numel(cv))-OPT.cLim(1)/(OPT.cLim(2)-OPT.cLim(1))*(OPT.colorSteps-1))+1;
+                level = min(max(level,1),OPT.colorSteps);
                 
                 coordinates  = sprintf(...
                     '%3.8f,%3.8f,%3.3f ',...coords);
                     coords);
                 
+                if xx == 1
+                    maxLod = -1;
+                else
+                    maxLod = 50;
+                end
+
                 %mean(z3(cv))
                 newOutput = sprintf([...
                     '<Placemark><name>Region LineString</name>\n'...
                     '<styleUrl>#%s</styleUrl>\n'...
                     '<Polygon><altitudeMode>absolute</altitudeMode><outerBoundaryIs><LinearRing><coordinates>%s</coordinates></LinearRing></outerBoundaryIs></Polygon>\n'...coordinates
                     '<Region>\n'...
-                    '<LatLonAltBox><north>%3.8f</north><south>%3.8f</south><east>%3.8f</east><west>%3.8f</west><minAltitude>0</minAltitude><maxAltitude>1000</maxAltitude></LatLonAltBox>\n'...N,S,E,W
-                    '<Lod><minLodPixels>32</minLodPixels><maxLodPixels>72</maxLodPixels></Lod>\n'...
+                    '<LatLonAltBox><north>%3.8f</north><south>%3.8f</south><east>%3.8f</east><west>%3.8f</west><minAltitude>-1000</minAltitude><maxAltitude>1000</maxAltitude></LatLonAltBox>\n'...N,S,E,W
+                    '<Lod><minLodPixels>22</minLodPixels><maxLodPixels>%d</maxLodPixels></Lod>\n'...
                     '</Region>\n'...
                     '</Placemark>\n'],...
                     sprintf('style%d',level),...
                     coordinates,...
-                    max(lat3(cv)),min(lat3(cv)),max(lon3(cv)),min(lon3(cv)));
+                    max(lat3(cv)),min(lat3(cv)),max(lon3(cv)),min(lon3(cv)),...
+                    maxLod);
                 %<minFadeExtent>32</minFadeExtent><maxFadeExtent>64</maxFadeExtent>
                 output(kk:kk+length(newOutput)-1) = newOutput;
                 kk = kk+length(newOutput);
-                if kk>1e5
+                if kk>1e6
                     %then print and reset
                     fprintf(OPT.fid,output(1:kk-1));
                     kk = 1;
-                    output = repmat(char(1),1,1e5);
+                    output = repmat(char(1),1,1e6);
                 end
             end
         end

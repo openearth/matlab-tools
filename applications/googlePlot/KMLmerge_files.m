@@ -1,11 +1,18 @@
-function KMLmerge_files
+function KMLmerge_files(varargin)
 %
-% Mergers all KML files in a certain directory
+% Merges all KML files in a certain directory
 %
 
 %%
+if isempty(varargin)
 path = uigetdir;
-delete(fullfile(path,'merge.kml'));
+else
+path = varargin{1}
+end
+
+if exist(fullfile(path,'merge.kml'),'file')
+	delete(fullfile(path,'merge.kml'));
+end
 files = dir(fullfile(path,'*.kml'));
 
 fid0=fopen(fullfile(path,'merge.kml'),'w');
