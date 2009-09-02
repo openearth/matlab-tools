@@ -3,20 +3,24 @@ function oetnewtest(varargin)
 %
 %   Routine to create a new test including Credits and svn keywords.
 %   Company, address, email and author are obtained using from the
-%   application data with getlocalsettings.
+%   application data with getlocalsettings. If there is already a
+%   testdefinition with the same name, the function asks whether to
+%   open the existing file, copy the most important code pieces into
+%   a new template, or start from scratch with the same name.
 %
 %   Syntax:
 %       oetnewtest('filename');
+%       oetnewtest('currentfile');
 %       oetnewtest('functionname');
 %       oetnewfun(..., 'PropertyName', PropertyValue,...)
 %
 %   Input:
 %       'filename'    -   name of the test file (this should end with
 %                         "_test.m" otherwise it is treated as a function
-%                         name. If the filename is not specified, the name
-%                         of the last selected file in the editor window 
-%                         will be used. Specifying "new" gives an Untitled
-%                         test.
+%                         name. If the filename is not specified, an Untitled
+%                         test will be generated.
+%       'currentfile' -   Looks up the last selected file in the matlab editor
+%                         and creates a test for that function.
 %       'functionname'-   Name of the function for which this file should
 %                         provide a test.
 %
@@ -95,19 +99,15 @@ OPT.publishcode = '% Publishable code that describes the testcase.';
 
 OPT.code        = '';
 
-[dum FunctionName] = fileparts(editorCurrentFile);
-
-if isempty(FunctionName)
-    FunctionName = 'Untitled_test';
-end
+FunctionName = 'Untitled_test';
 
 %% treat input
 i0 = 2;
 if nargin > 1 && any(strcmp(fieldnames(OPT), varargin{1}))
     i0 = 1;
 elseif nargin > 0
-    if strcmp(varargin{1},'new')
-        FunctionName = 'Untitled_test';
+    if strcmp(varargin{1},'currentfile')
+        [dum FunctionName] = fileparts(editorCurrentFile);
     else
         FunctionName = varargin{1};
     end
