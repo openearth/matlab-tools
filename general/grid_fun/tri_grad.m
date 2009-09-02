@@ -1,7 +1,8 @@
 function varargout = tri_grad(x,y,z,varargin)
 %TRI_GRAD   Gradient vector triangulated mesh.
 %
-% tri_grad(x,y,z)
+%    f= tri_grad(x,y,z)
+%
 % returns the exact solution for the 
 % gradient vector of the linear plane 
 % spanned by the three points (x,y,z)
@@ -10,7 +11,9 @@ function varargout = tri_grad(x,y,z,varargin)
 % f is based on the first three elements
 % of the matrices x,y and z.
 %
-% f = tri_grad(x,y,z,p) can be used
+%    f = tri_grad(x,y,z,p) 
+%
+% can be used
 % to specificy which elements of x,y,z 
 % when these have more than three elements
 % as returned by tri(...).
@@ -30,6 +33,7 @@ function varargout = tri_grad(x,y,z,varargin)
 
 % G.J. de Boer, thanx to D.A. Ham, Aug. 2005
 
+%%
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005-2008 Delft University of Technology
 %       Gerben J. de Boer
@@ -61,7 +65,7 @@ function varargout = tri_grad(x,y,z,varargin)
 %   -------------------------------------------------------------------- 
 
    %% Set order in which triangles are to be used
-   %% ------------------------------
+   %--------------------------------
    if nargin==4
       p = varargin{1};
    else
@@ -72,7 +76,7 @@ function varargout = tri_grad(x,y,z,varargin)
    
    %                                       
    %    3    _                             
-   %     \      . -    _                   
+   %     \        -    _                   
    %      \                 -     _        
    %       \                           2   
    %        \                       _      

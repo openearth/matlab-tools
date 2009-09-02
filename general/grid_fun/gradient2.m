@@ -1,7 +1,9 @@
 function varargout = gradient2(varargin)
 %GRADIENT2   first order spatial gradient in global co-ordinates in curvi-linear grid
 %
-%   GRADIENT2(x,y,z) calculates gradient dz/dx and dz/dy (in global co-ordinates)
+%      gradient2(x,y,z) 
+%
+%   calculates gradient dz/dx and dz/dy (in global co-ordinates)
 %   for data on curvilinear grid (x,y).
 %
 %    out    = GRADIENT2(...) returns a struct with fields fx and fy
@@ -64,16 +66,14 @@ function varargout = gradient2(varargin)
 % o: input corner data point               will get no gradient data but NaN.
 % x: center point
 %
-%   © G.J. de Boer, TU Delft, 2005-2007
-%
-%   See also:
-%   GRADIENT, QUAT, TRIQUAT, TRI2QUAT, TRI_GRAD, PCOLORCORCEN
+%   See also: GRADIENT, QUAT, TRIQUAT, TRI2QUAT, TRI_GRAD, PCOLORCORCEN
 
 % GRADIENT2 calls:
 % - triquat
 % - tri_grad
 % - samesize
 
+%%
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005-2007 Delft University of Technology
 %       Gerben J. de Boer
@@ -105,7 +105,7 @@ function varargout = gradient2(varargin)
 
 
 %% In
-%% ----------------------------
+%------------------------------
 
    x   = squeeze(varargin{1});
    y   = squeeze(varargin{2});
@@ -132,16 +132,16 @@ function varargout = gradient2(varargin)
    sz2cen = sz2cor - 1;
    
 %% Keywords
-%% ----------------------------
+%------------------------------
 
    OPT.discretisation = 'upwind';
    OPT.average        = 'mean';
 
    %% Cycle keywords in input argument list
-   %% to overwrite default values.
-   %% Align code lines as much as possible
-   %% to allow for block editing in textpad.
-   %% ----------------------
+   %  to overwrite default values.
+   %  Align code lines as much as possible
+   %  to allow for block editing in textpad.
+   %------------------------
    
    if nargin>3
    iargin = 4;
@@ -161,8 +161,8 @@ function varargout = gradient2(varargin)
    if strcmp(OPT.discretisation,'upwind')
 
       %% Triangulate curvi-linear grid
-      %% and calculate gradients in all separate triangles.
-      %% -----------------------------------
+      %  and calculate gradients in all separate triangles.
+      %-------------------------------------
       
          map     = triquat(x,y);
          
@@ -176,7 +176,7 @@ function varargout = gradient2(varargin)
          % map      = tri2quat(tri,quat);
       
       %% Calculate gradient per triangle
-      %% -----------------------------------
+      %-------------------------------------
 
          [tri.fx,tri.fy] = tri_grad(x,y,z,map.tri);
          
@@ -184,8 +184,8 @@ function varargout = gradient2(varargin)
          fy =  zeros([sz1cen,sz2cen]);
          
       %% Map value at centres of trangles to centers
-      %% of quadrangles using mapper provided by triquat.
-      %% -----------------------------------
+      %  of quadrangles using mapper provided by triquat.
+      %-------------------------------------
       
       % 1ST traingle per quadrangle : tri_per_quat(:,1)
       % 2ND traingle per quadrangle : tri_per_quat(:,2)
@@ -219,7 +219,7 @@ function varargout = gradient2(varargin)
          fyB =  nan.*zeros(szcor);   
          
    %% Calculations
-   %% ------------------
+   %--------------------
 
 %     |       |       |       |         
 %     +   x   +   x   +   x   +   x     
@@ -236,7 +236,7 @@ function varargout = gradient2(varargin)
 %            A3
 
   %% Looped approach
-  %% ----------------
+  %------------------
 
    n_triangles = 1; % one triangle per time in a looped manner
    
@@ -265,7 +265,7 @@ function varargout = gradient2(varargin)
    end
    
   %% Vectorized attempt
-  %% ----------------
+  %------------------
   
   %   %% all inpout excpet outer rows and columns
   %   n_triangles = (szcor(1)-2)*(szcor(2)-2)
@@ -294,7 +294,7 @@ function varargout = gradient2(varargin)
   %                    
 
   %% Average
-  %% ----------------
+  %------------------
 
       if     strcmp(OPT.average,'min')
          fx  = min(fxA, fxB);  
@@ -317,7 +317,7 @@ function varargout = gradient2(varargin)
 
 
 %% Out
-%% ----------------------------
+%------------------------------
 
 if nargout<2
    out.fx    = fx;

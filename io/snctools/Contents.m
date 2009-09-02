@@ -1,5 +1,9 @@
 %% SNC NetCDF toolbox (<a href="http://mexcdf.sourceforge.net/">http://mexcdf.sourceforge.net/</a>).
 %
+% SNCTools uses the the C (mexnc), java interface (toolsUI-2.2.22.jar) or Matlab (2008b+) 
+% low-level netCDF interface. You can switch with the following preference:
+% setpref ('SNCTOOLS', 'USE_JAVA', true/false);
+%
 % NC_ADDHIST         - Either appends or constructs a history attribute.
 % NC_ADD_DIMENSION   - adds a dimension to an existing netcdf file
 % NC_ADDHIST         - Either appends or constructs a history attribute.
@@ -23,7 +27,7 @@
 % NC_ISUNLIMITEDVAR  - yes if the given variable has a record dimension
 % NC_ISVAR           - yes if the given variable is in the netcdf file
 % NC_PADHEADER       - pads the metadata header of a netcdf file
-% NC_VARGET          - Retrieve data from a NetCDF variable.
+% NC_VARGET          - Retrieve data from a NetCDF variable (zero-based indices!).
 % NC_VARPUT          - Write data into a NetCDF file.
 % NC_VARRENAME       - Renames a NetCDF variable.
 % NC_VARSIZE         - return the size of the requested netncfile variable

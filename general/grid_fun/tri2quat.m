@@ -1,14 +1,12 @@
 function varargout = tri2quat(tri,varargin)
 %TRI2QUAT   triangulate curvi-linear mesh
 %
-% TRI2QUAT(tri,quat)
-% TRI2QUAT(tri,x,y)
+%    tri2quat(tri,quat)
+%    tri2quat(tri,x,y)
 %
 % Returns a struct with fields:
-%
 % - tri_per_quat
 % - quat_per_tri
-%
 % where 
 %
 % every triangle belongs to exactly 1 quadrangle (no more, no less)
@@ -19,6 +17,7 @@ function varargout = tri2quat(tri,varargin)
 %
 % see also: TRIQUAT, QUAT, DELAUNAY, GRADIENT2
 
+%%
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
 %       Gerben J. de Boer
@@ -48,7 +47,6 @@ function varargout = tri2quat(tri,varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-
    if nargin==3
    
       x      = varargin{1};
@@ -75,8 +73,8 @@ function varargout = tri2quat(tri,varargin)
    tri_per_quat = repmat(0,[nquat 2]);
 
    %% every triangle belongs to exactly 1 quadrangle (no more, no less)
-   %% every quadrangle has exactly 2 traingles (no more, no less)
-   %% -----------------------------------------------------------------
+   %  every quadrangle has exactly 2 traingles (no more, no less)
+   %-------------------------------------------------------------------
    
    for itri = 1:ntri
    

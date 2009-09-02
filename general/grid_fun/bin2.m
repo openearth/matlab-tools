@@ -4,8 +4,8 @@ function [varargout] = bin2(fx,fy,fz,varargin)
 %   Grids random fine resolution (x,y,z) data to coarse resolution 
 %   curvilinear grid.
 %
-%   cstat = bin2(fx,fy,fz,       ,cx,cy)
-%   cstat = bin2(fx,fy,fz,fweight,cx,cy)
+%      cstat = bin2(fx,fy,fz,       ,cx,cy)
+%      cstat = bin2(fx,fy,fz,fweight,cx,cy)
 %
 %   where fx,fy and fz are the fine data set (unstructured sample points)
 %   where cx,cy describe the CORNER points of a coarse (curvilinear)

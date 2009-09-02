@@ -22,6 +22,7 @@ function oetsettings(varargin)
 %See also: ADDPATHFAST, RESTOREDEFAULTPATH,
 %          OpenEarthTools: general, applications, io, tutorials
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) <2004-2008> <Deltares>
 %
@@ -32,9 +33,9 @@ function oetsettings(varargin)
 %       2600 MH Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -43,20 +44,22 @@ function oetsettings(varargin)
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
-%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-% $Id$ 
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id$
 % $Date$
 % $Author$
 % $Revision$
-
-%% TODO remove quickstart option or include in help block
-%% TODO rename quickstart (too general name) to DB_mcstart for example ??
-% Why do we need this text in this file..? quickstart is in McTools / UCIT isn't it??
+% $HeadURL$
+% $Keywords: $
 
 %% Retrieve verbose state from input
 %-----------------------

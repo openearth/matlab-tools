@@ -39,6 +39,10 @@ function found = polyfindname(namecells,searchterm)
 %   USA
 %   --------------------------------------------------------------------
 
+   if ischar(namecells)
+      namecells = cellstr(namecells);
+   end
+
    found = [];
    
    for i=1:length(namecells)

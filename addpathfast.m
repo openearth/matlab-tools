@@ -5,12 +5,12 @@ function addpathfast(basepath,varargin)
 %
 % where basepath is the root of which all subdirectories will be 
 % added to your path. In contrast to addpath(genpath(basepath)) 
-% all <a href="subversion.tigris.org">Subversion</a> directories are excluded (.svn ).
+% all <a href="subversion.tigris.org">Subversion</a> directories are excluded (.svn).
 %
 % Is much faster than addpath(genpath(basepath)), because genpath 
 % uses too much java.
 %
-% Thew following <keyword,value> pairs have been implemented;
+% The following <keyword,value> pairs have been implemented;
 % * patterns:  cell array with regular expression patterns to be excluded
 %              default {[filesep,'.svn']}. (i.e. <a href="subversion.tigris.org">Subversion</a> directories)
 %
@@ -25,7 +25,7 @@ function addpathfast(basepath,varargin)
    OPT = setProperty(OPT,varargin{:});
 
 %% Find all subdirs in basepath
-%  -------------------------------------------
+%---------------------------------------------
 
    if ispc
        [a b] = system(['dir /b /ad /s ' '"' basepath '"']); % "'s added to enable spaces in directory and filenames
@@ -35,7 +35,7 @@ function addpathfast(basepath,varargin)
    b = [basepath char(10) b];
 
 %% Exclude the .svn directories from the path
-%  -------------------------------------------
+%---------------------------------------------
 
    s = strread(b, '%s', 'delimiter', char(10));  % read path as cell
    
@@ -52,7 +52,8 @@ function addpathfast(basepath,varargin)
    s = reshape(s,[1 length(s)]);
 
 %% create string with remaining paths
-%  -------------------------------------------
+%---------------------------------------------
+
    s = [s; repmat({pathsep}, size(s))] ;
    newpath = [s{:}];
    % add newpath to path

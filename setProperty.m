@@ -1,5 +1,5 @@
 function [OPT, Set, Default] = setProperty(OPT, varargin)
-% SETPROPERTY generic routine to set values in PropertyName-PropertyValue pairs
+% SETPROPERTY  generic routine to set values in PropertyName-PropertyValue pairs
 %
 % Routine to set properties based on PropertyName-PropertyValue 
 % pairs (aka <keyword,value> pairs). Can be used in any function 
@@ -33,15 +33,16 @@ function [OPT, Set, Default] = setProperty(OPT, varargin)
 % Example:
 %
 % +------------------------------------------->
-% | function y = dosomething(x,'debug',1)
-% | OPT.debug  = 0;
-% | OPT        = setProperty(OPT, varargin{:});
-% | y          = x.^2;
-% | if OPT.debug; plot(x,y);pause; end
+% function y = dosomething(x,'debug',1)
+% OPT.debug  = 0;
+% OPT        = setProperty(OPT, varargin{:});
+% y          = x.^2;
+% if OPT.debug; plot(x,y);pause; end
 % +------------------------------------------->
 %
-% See also: varargin, struct, mergestructs
+% See also: VARARGIN, STRUCT, MERGESTRUCTS
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
 %       C.(Kees) den Heijer
@@ -70,6 +71,13 @@ function [OPT, Set, Default] = setProperty(OPT, varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
 % Created: 26 Feb 2009
 % Created with Matlab version: 7.4.0.287 (R2007a)
 

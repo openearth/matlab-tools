@@ -1,5 +1,5 @@
 function values = nc_varget(ncfile, varname, varargin )
-% NC_VARGET  Retrieve data from a netCDF variable.
+% NC_VARGET  Retrieve data from a netCDF variable (zero-based indices!).
 %
 % DATA = NC_VARGET(NCFILE,VARNAME) retrieves all the data from the 
 % variable VARNAME in the netCDF file NCFILE.

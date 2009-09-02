@@ -1,8 +1,12 @@
 function htype = hdftypes(mtype)
 %HTYPE       find HDF type corresponding to Matlab types
 %
-% find HDF type corresponding to certain matlab types
+%    htype = hdftypes(mtype)
+%    htype = hdftypes(class(variable))
 %
+% finds HDF type corresponding to certain matlab types
+%
+%See also: NC_TYPE, CLASS, SNCTOOLS
 
 mtype = lower(mtype);
 switch mtype

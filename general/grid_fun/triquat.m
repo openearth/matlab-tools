@@ -1,7 +1,9 @@
 function varargout = TRIQUAT(x,y)
 %TRIQUAT   triangulate curvi-linear mesh
 %
-% triquat(x,y) triangulates and quadrangulates a mesh 
+%    triquat(x,y) 
+%
+% triangulates and quadrangulates a mesh 
 % into triangles and quadrangles. It also gives the mappers
 % array of the traingles to the quadrangles and v.v.
 % This is faster than using DELAUNAY and QUAT and 
@@ -12,9 +14,9 @@ function varargout = TRIQUAT(x,y)
 % 
 % It does the same as the following 3 actions:
 %
-%    DELAUNAY(x,y)
-%    QUAT(x,y)
-%    TRI2QUAT(tri,quat)
+%    delaunay(x,y)
+%    quat(x,y)
+%    tri2quat(tri,quat)
 %
 % Do note that ALL TRIANGLES ARE ORIENTED IN THE SAME WAY,
 % whereas DELAUNAY has a random distribution of orientations
@@ -63,6 +65,7 @@ function varargout = TRIQUAT(x,y)
 % 
 % see also: QUAT, TRI2QUAT, DELAUNAY, GRADIENT2
 
+%%
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
 %       Gerben J. de Boer
@@ -110,7 +113,8 @@ mncor  = -1;
 mncen  = 0;
 
 %% first walk alomng 1st dimension, 
-%% while keeping the 2nd dimension constant
+%  while keeping the 2nd dimension constant
+%---------------------------
 
 for ncen=1:szcen2
 
@@ -120,9 +124,9 @@ for ncen=1:szcen2
       mncor = mncor + 1 + (mcen==1); % at the transition from end of row to begining of row skip 1 corner cell.
       
       %% Define a polygon for quadrangle
-      %% Note: do not by incident define a Z or N shape
-      %% always define a C or V or U shape.
-      %% -------------------------
+      %  Note: do not by incident define a Z or N shape
+      %  always define a C or V or U shape.
+      %---------------------------
       
       quat(mncen,:) = [mncor              ,...
                        mncor + 1          ,...
@@ -130,18 +134,18 @@ for ncen=1:szcen2
                        mncor + szcor1    ];
 
       %% Define mapping indices triangles <> quadrangle
-      %% -------------------------
+      %---------------------------
 
       itri                      = [2*mncen-1 2*mncen];
       tri_per_quat(mncen,:) = itri;  % 2 traingles per quadrangle
       quat_per_tri(itri)    = mncen; % 1 quadrangle for both traingles
 
       %% Define 2 non-overlapping polygons for 2 triangles
-      %% - For perfect orthogonal grid the trainagle definition should 
-      %%   be more or less random
-      %% - For curvilinear grids the trainagle definition should 
-      %%   be such that the diagonal is short as possible
-      %% -------------------------
+      %  - For perfect orthogonal grid the trainagle definition should 
+      %    be more or less random
+      %  - For curvilinear grids the trainagle definition should 
+      %    be such that the diagonal is short as possible
+      %---------------------------
 
       tri(itri(1),:)      = [mncor             , ...
                              mncor + 1         , ...

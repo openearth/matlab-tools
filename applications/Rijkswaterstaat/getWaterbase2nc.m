@@ -196,12 +196,12 @@ for ivar=[OPT.parameter]
         nc_attput(outputfile, nc_global, 'title'           , '');
         nc_attput(outputfile, nc_global, 'institution'     , 'Rijkswaterstaat');
         nc_attput(outputfile, nc_global, 'source'          , 'surface observation');
-        nc_attput(outputfile, nc_global, 'history'       , ['Original filename: ',filename(OPT.filename),...
+        nc_attput(outputfile, nc_global, 'history'         , ['Original filename: ',filename(OPT.filename),...
             ', version:' ,D.version,...
             ', filedate:',D.date,...
-            ', tranformation to NetCDF: $HeadURL$ $Revision$ $Date$ $Author$']);
+            ', tranformation to netCDF: $HeadURL$ $Revision$ $Date$ $Author$']);
         nc_attput(outputfile, nc_global, 'references'      , '<http://www.waterbase.nl>,<http://openearth.deltares.nl>');
-        nc_attput(outputfile, nc_global, 'email'         , '<servicedesk-data@rws.nl>');
+        nc_attput(outputfile, nc_global, 'email'           , '<servicedesk-data@rws.nl>');
 
         nc_attput(outputfile, nc_global, 'comment'         , '');
         

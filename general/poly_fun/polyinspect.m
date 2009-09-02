@@ -1,14 +1,15 @@
-function varargout = polyplot(X,Y,varargin)
-%POLYPLOT   Plots NaN-separated polygon segments one by one.
+function varargout = polyinspect(X,Y,varargin)
+%POLYINSPECT   Plots NaN-separated polygon segments one by one.
 %
-% polyplot(X,Y,<names>)
-% polyplot(X,Y,<names>,<'keyword',value>) 
+%    polyinspect(X,Y,<names>)
+%    polyinspect(X,Y,<names>,<'keyword',value>) 
+%
 % where implemented <'keyword',value> pairs are:
 %
-%    names = polyplot(X,Y,'getnames',1) SOMEHOW MAKES MATLAB 2006 crash.
-%            polyplot(X,Y,'color'   ,'r') color of active segment
+%    names = polyinspect(X,Y,'getnames',1  ) SOMEHOW MAKES MATLAB 2006 crash.
+%            polyinspect(X,Y,'color'   ,'r') color of active segment
 %
-% Plots all segmenmts in gray, and then plots the segments one by one,
+% First plots all segments in gray, and then plots the segments one by one,
 % one at a time on top of the all gray segments. Handy when naming them.
 %
 % See also: CONTOURC, POLYSPLIT, POLYJOIN, POLYSELECT, POLYFINDNAME
@@ -48,17 +49,17 @@ function varargout = polyplot(X,Y,varargin)
    OPT.getnames = 0;
 
    if odd(nargin)
-      iargin = 2;
+      nextarg = 2;
       if iscell(varargin{1})
          D.namecells = varargin{1};
       elseif ischar(varargin{1})
          D.namecells = cellstr(varargin{1});
       end
    else
-      iargin = 1;
+      nextarg = 1;
    end
-   
-   OPT = SetProperty(OPT,varargin{:})
+
+   OPT = SetProperty(OPT,varargin{nextarg:end});
    
 %% Split
 %-----------------------
@@ -95,17 +96,17 @@ function varargout = polyplot(X,Y,varargin)
          end
       end
       if OPT.getnames
-         title(['Showing polygon segment No..',num2str(iline)])
+         title(['Showing polygon segment ',num2str(iline),'/',num2str(nline)])
          D.namecells{iline} = input('Give segmnent name: ','s');
       else
          if isfield(D,'namecells')
-         title({['Showing polygon segment No..',num2str(iline),':'],...
-                 D.namecells{iline}})
+         title({['Showing polygon segment ',num2str(iline),'/',num2str(nline),':'],...
+                 ['"',D.namecells{iline},'"']})
          else
-         title(['Showing polygon segment No..',num2str(iline)])
+         title(['Showing polygon segment ',num2str(iline),'/',num2str(nline)])
          end
       end
-
+   
       disp(['Plotted ',num2str(iline),' of ',num2str(nline),', ress key to continue'])
       pause
    

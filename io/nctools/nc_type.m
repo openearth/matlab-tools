@@ -1,18 +1,12 @@
-function index = varname2index(ncfile,name,varargin)
-%NC_VARNAME2INDEX   get index of variable name from ncfile
+function nctype = nc_type(mtype)
+%NC_TYPE   find netCDF type corresponding to Matlab types
 %
-%   index = varname2index(ncfile,name)
+%    nctype = nc_type(mtype)
+%    nctype = nc_type(class(variable))
 %
-% returns empty if no matching variable is found, where
-% ncfile  = name of local file, OPeNDAP address, or result of ncfile = nc_info()
+% finds netCDF type corresponding to certain matlab types
 %
-% Example:
-%
-%   index = varname2index(F,'latitude')
-%
-%   F.Dataset(index)
-%
-%See also: NC_INFO, ATRNAME2INDEX, NC_VARFIND
+%See also: HTYPE, CLASS, SNCTOOLS
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -55,45 +49,30 @@ function index = varname2index(ncfile,name,varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
-   OPT.debug = 0;
-   OPT       = setProperty(OPT,varargin{:});
-   
-%% Load file info
+% >> help mexnc
+%          netCDF           MATLAB equivalent
+%          -----------      -----------------
+%          DOUBLE           double
+%          FLOAT            single
+%          INT              int32
+%          SHORT            int16
+%          SCHAR            int8
+%          UCHAR            uint8
+%          TEXT             char
 
-   %% get info from ncfile
-   if isstruct(ncfile)
-      fileinfo = ncfile;
-   else
-      fileinfo = nc_info(ncfile);
-   end
-   
-   %% deal with name change in scntools: DataSet > Dataset
-   if     isfield(fileinfo,'Dataset'); % new
-     fileinfo.DataSet = fileinfo.Dataset;
-   elseif isfield(fileinfo,'DataSet'); % old
-     fileinfo.Dataset = fileinfo.DataSet;
-     disp(['warning: please use newer version of snctools (e.g. ',which('matlab\io\snctools\nc_info'),') instead of (',which('nc_info'),')'])
-   else
-      error('neither field ''Dataset'' nor ''DataSet'' returned by nc_info')
-   end
-
-%% Do varname2index
-
-   index     = [];
-
-   %% find index of coordinates attribute
-   nvar = length(fileinfo.Dataset);
-   for ivar=1:nvar
-   if OPT.debug
-      disp([num2str(ivar,'%0.3d'),': ',fileinfo.Dataset(ivar).Name])
-   end
-   if strcmpi(fileinfo.Dataset(ivar).Name,name)
-      index = ivar;
-      if ~OPT.debug
-         break
-      end
-   end
-   end  
-         
-%% EOF         
+mtype = lower(mtype);
+switch mtype
+  case 'double',  nctype = 'double';
+  case 'single',  nctype = 'float';
+  case 'int32',   nctype = 'int';
+  case 'int16',   nctype = 'short';
+  case 'int8',    nctype = 'schar';
+ %case 'uint8',   nctype = 'uchar';
+  case 'char',    nctype = 'char';
+  case 'uint64',  error('unsigned Matlab types (uint64) have no netCDF equivalent.')
+  case 'uint32',  error('unsigned Matlab types (uint32) have no netCDF equivalent.')
+  case 'uint16',  error('unsigned Matlab types (uint16) have no netCDF equivalent.')
+  case 'uint8',   error('unsigned Matlab types (uint8)  have no netCDF equivalent.')
+  otherwise
+    error(sprintf('nctype(): can''t match type %s\n', mtype));
+end

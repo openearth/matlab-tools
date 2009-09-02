@@ -79,14 +79,14 @@ allow1D            = false;
 dimensions_of_xcen = fliplr(sort(size(xcen))); % 1st element is biggest
 
 %% Method
-%% ------------------------
+%  ------------------------
    method = 'linear';
    if nargin==2
    method = varargin{1};
    end
 
 %% 1D
-%% ------------------------
+%  ------------------------
 if dimensions_of_xcen(2)==1
    
    if ~allow1D
@@ -96,7 +96,7 @@ if dimensions_of_xcen(2)==1
    end
      
 %% 2D
-%% ------------------------
+%  ------------------------
 
 elseif length(dimensions_of_xcen)==2
  
@@ -105,26 +105,26 @@ elseif length(dimensions_of_xcen)==2
       xcor = nan.*zeros([size(xcen,1)+1,size(xcen,2)+1]);
 
   %% Give value to those corner points that have 
-  %% 4 active center points around
-  %% and do not change them with 'internal extrapolations
-  %% ------------------------
+  %  4 active center points around
+  %  and do not change them with internal extrapolations
+  %  ------------------------
 
       xcor(2:end-1,2:end-1) = corner2center(xcen);
    
   %% Orthogonal mirroring (only of still empty values)
-  %% ------------------------
+  %  ------------------------
   
      xcor = mirror_in_1st_dimension(xcen ,xcor ,method) ;
      xcor = mirror_in_1st_dimension(xcen',xcor',method)';
 
   %% Diagonal mirroring  (only of still empty values)
-  %% ------------------------
+  %  ------------------------
   
      xcor =        mirror_in_diagonal(       xcen ,       xcor  ,method);
      xcor = fliplr(mirror_in_diagonal(fliplr(xcen),fliplr(xcor) ,method));
 
 %% 3D or more
-%% ------------------------
+%  ------------------------
 
 else
 
@@ -145,86 +145,86 @@ function xcor = mirror_in_1st_dimension(xcen,xcor,method)
      
 %%% HOW DOES IT WORK:
 
-%%%  + center points,  input, first dimension, m index
-%%%  x corner points, output, first dimension, m index
-%%%
-%%%  x      x      x      x      x      x      x      x
-%%%     1,1    2,1    3,1    4,1    5,1    6,1    7,1
-%%%      +------+------+------+------+------+------+
-%%%      |ZOOMED|      |      |      |      |      |
-%%%  x   |  IN  |  x   |  x   |  x   |  x   |  x   |  x
-%%%      |BELOW |      |      |      |      |      |
-%%%      +------+------+------+------+------+------+
-%%%      |      |      |      |      |      |      |
-%%%  x   |  x   |  x   |  x   |  x   |  x   |  x   |  x
-%%%      |      |      |      |      |      |      |
-%%%      +------+------+------+------+------+------+
-%%%     1,3    2,3    3,3    4,3    5,3    6,3    7,3
-%%%  x   |  x   |  x   |  x   |  x   |  x   |  x   |  x
-%%%      |      |      |      |      |      |      |
-%%%      +------+------+------+------+------+------+
-%%%     1,4    2,4    3,4    4,4    5,4    6,4    7,4
-%%%  x      x      x      x      x      x      x      x
-%%%  
-%%%
+%  + center points,  input, first dimension, m index
+%  x corner points, output, first dimension, m index
+%
+%  x      x      x      x      x      x      x      x
+%     1,1    2,1    3,1    4,1    5,1    6,1    7,1
+%      +------+------+------+------+------+------+
+%      |ZOOMED|      |      |      |      |      |
+%  x   |  IN  |  x   |  x   |  x   |  x   |  x   |  x
+%      |BELOW |      |      |      |      |      |
+%      +------+------+------+------+------+------+
+%      |      |      |      |      |      |      |
+%  x   |  x   |  x   |  x   |  x   |  x   |  x   |  x
+%      |      |      |      |      |      |      |
+%      +------+------+------+------+------+------+
+%     1,3    2,3    3,3    4,3    5,3    6,3    7,3
+%  x   |  x   |  x   |  x   |  x   |  x   |  x   |  x
+%      |      |      |      |      |      |      |
+%      +------+------+------+------+------+------+
+%     1,4    2,4    3,4    4,4    5,4    6,4    7,4
+%  x      x      x      x      x      x      x      x
+%  
+%
 
-%%%
-%%% xcor(1,1)            xcor(2,1)            xcor(3,1)
-%%%
-%%%            xcen(1,1)         xcen(2,1)
-%%%                 +------------------+-
-%%%                 |                  | 
-%%%                 |                  | 
-%%%          backward                  | 
-%%%         mirroring                  | 
-%%% xcor(1,2) <-----xs-------xm========xs====> xcor(2,3)
-%%%                 |                  forward
-%%%                 |                  mirroring
-%%%                 |                  | 
-%%%                 |                  | 
-%%%                 +------------------+-
-%%%           xcen(1,2)           xcen(2,2)
-%%%
-%%%
-%%% xcor(1,3)            xcor(1,3)            xcor(3,3)
-%%%
-%%%
+%
+% xcor(1,1)            xcor(2,1)            xcor(3,1)
+%
+%            xcen(1,1)         xcen(2,1)
+%                 +------------------+-
+%                 |                  | 
+%                 |                  | 
+%          backward                  | 
+%         mirroring                  | 
+% xcor(1,2) <-----xs-------xm========xs====> xcor(2,3)
+%                 |                  forward
+%                 |                  mirroring
+%                 |                  | 
+%                 |                  | 
+%                 +------------------+-
+%           xcen(1,2)           xcen(2,2)
+%
+%
+% xcor(1,3)            xcor(1,3)            xcor(3,3)
+%
+%
 
-%%% The scheme above is is also valid for all m and n when one substitues m=1 n=1:
-%%%   
-%%%
-%%%        x(1,1) + x(1,2)   x(m,n) + x(m,n+1) 
-%%% x_s = ---------------- = ----------------
-%%%              2		  2
-%%%
-%%%        x(1,1) + x(1,2) + x(2,1) + x(2,2)     x(m,n) + x(m,n+1) + x(m+1,n) + x(m+1,n+1)
-%%% x_m = ----------------------------------- = ----------------------------------- 
-%%%             4				            4		
-%%%
-%%% For mirroring backwards:
-%%%                                                  3*x(1,1) + 3*x(1,2) -  x(2,1) -  x(2,2) 
-%%% xcor(1,2)  = xcor(m  ,n+1) = x_s + (x_s - x_m) = --------------------------------------
-%%%			                                        4				  
-%%%
-%%% For mirroring forwards:
-%%%                                                  -  x(1,1) -  x(1,2) +3*x(2,1) +3*x(2,2) 
-%%% xcor(1,3)  = xcor(m+2,n+1) = x_s + (x_s - x_m) = --------------------------------------
-%%%			                                        4				  
-%%%
+% The scheme above is is also valid for all m and n when one substitues m=1 n=1:
+%   
+%
+%        x(1,1) + x(1,2)   x(m,n) + x(m,n+1) 
+% x_s = ---------------- = ----------------
+%              2		  2
+%
+%        x(1,1) + x(1,2) + x(2,1) + x(2,2)     x(m,n) + x(m,n+1) + x(m+1,n) + x(m+1,n+1)
+% x_m = ----------------------------------- = ----------------------------------- 
+%             4				            4		
+%
+% For mirroring backwards:
+%                                                  3*x(1,1) + 3*x(1,2) -  x(2,1) -  x(2,2) 
+% xcor(1,2)  = xcor(m  ,n+1) = x_s + (x_s - x_m) = --------------------------------------
+%			                                        4				  
+%
+% For mirroring forwards:
+%                                                  -  x(1,1) -  x(1,2) +3*x(2,1) +3*x(2,2) 
+% xcor(1,3)  = xcor(m+2,n+1) = x_s + (x_s - x_m) = --------------------------------------
+%			                                        4				  
+%
 
-%%% Of course this is only done for grid points that have not yet been calculated.
-%%% so only for points that are nan.
+% Of course this is only done for grid points that have not yet been calculated.
+% so only for points that are nan.
 
   if strcmpi(method,'linear')
 
   %% Linear perpendicular to boundary, AND linear along boundary
-  %% --------------------
+  %  --------------------
 
      for m=1:size(xcen,1)-1
         for n=1:size(xcen,2)-1
 
            %% mirror back when not yet filled in
-           %% -------------------------------------
+           %  -------------------------------------
 
            if isnan(xcor(m  ,n+1))
            xcor(m  ,n+1) = (+ 3*xcen(m  ,n  ) ...
@@ -234,7 +234,7 @@ function xcor = mirror_in_1st_dimension(xcen,xcor,method)
            end
            
            %% mirror forward when not yet filled in
-           %% -------------------------------------
+           %  -------------------------------------
            
            if isnan(xcor(m+2,n+1))
            xcor(m+2,n+1) = (-   xcen(m  ,n  ) ...
@@ -249,13 +249,13 @@ function xcor = mirror_in_1st_dimension(xcen,xcor,method)
   elseif strcmpi(method,'nearest')
   
   %% Nearest perpendicular to boundary, linear along boundary
-  %% --------------------
+  %  --------------------
   
      for m=1:size(xcen,1)-1
         for n=1:size(xcen,2)-1
 
            %% mirror back when not yet filled in
-           %% -------------------------------------
+           %  -------------------------------------
 
            if isnan(xcor(m  ,n+1))
            xcor(m  ,n+1) = (+ 1*xcen(m  ,n  ) ...
@@ -263,7 +263,7 @@ function xcor = mirror_in_1st_dimension(xcen,xcor,method)
            end
            
            %% mirror forward when not yet filled in
-           %% -------------------------------------
+           %  -------------------------------------
            
            if isnan(xcor(m+2,n+1))
            xcor(m+2,n+1) = (+ 1*xcen(m+1,n  ) ...
@@ -290,38 +290,38 @@ function xcor = mirror_in_diagonal(xcen,xcor,method)
 
 %%% HOW DOES IT WORK:
 
-%%%  + center points,  input, first dimension, m index
-%%%  o center points INACTIVE (NaN-valued)
-%%%  x corner points, output, first dimension, m index
-%%%
-%%%  x      x      x      x      x      x      x      x
-%%%     1,1    2,1    3,1    4,1    5,1    6,1    7,1
-%%%      +------+------+------+------+------+......o
-%%%      |      |      |      |      |      |      . 
-%%%  x   |  x   |  x   |  x   |  x   |  x   |   x  .  x        
-%%%      |      |      |      |      |      |      .
-%%%      +------+------+------+------+------+ .. ..o# 
-%%%      |      |      |      |      |      | \    .      with diagonal extrapolation:
-%%%  x   |  x   |  x   |  x   |  x   |  x   |   x. .  x@  prevent this construction by adding zero
-%%%      |      |      |      |      |      |     \. /    times the center values at # and $
-%%%      +------+------+------+------+------+$-----+      so the corner values at @ will also become 
-%%%      |      |      |      |      |      |     /. \    nan, since # is nan.
-%%%  x   |  x   |  x   |  x   |  x   |  x   |   x  .  x@
-%%%      |      |      |      |      |      | /    .   
-%%%      +------+------+------+------+------+......o#    
-%%%  x      x      x      x      x      x      x      x
+%  + center points,  input, first dimension, m index
+%  o center points INACTIVE (NaN-valued)
+%  x corner points, output, first dimension, m index
+%
+%  x      x      x      x      x      x      x      x
+%     1,1    2,1    3,1    4,1    5,1    6,1    7,1
+%      +------+------+------+------+------+......o
+%      |      |      |      |      |      |      . 
+%  x   |  x   |  x   |  x   |  x   |  x   |   x  .  x        
+%      |      |      |      |      |      |      .
+%      +------+------+------+------+------+ .. ..o# 
+%      |      |      |      |      |      | \    .      with diagonal extrapolation:
+%  x   |  x   |  x   |  x   |  x   |  x   |   x. .  x@  prevent this construction by adding zero
+%      |      |      |      |      |      |     \. /    times the center values at # and $
+%      +------+------+------+------+------+$-----+      so the corner values at @ will also become 
+%      |      |      |      |      |      |     /. \    nan, since # is nan.
+%  x   |  x   |  x   |  x   |  x   |  x   |   x  .  x@
+%      |      |      |      |      |      | /    .   
+%      +------+------+------+------+------+......o#    
+%  x      x      x      x      x      x      x      x
 
 
   if strcmpi(method,'linear')
 
   %% Linear
-  %% --------------------
+  %  --------------------
 
      for m=1:size(xcen,1)-1
         for n=1:size(xcen,2)-1
 
            %% mirror back when not yet filled in
-           %% -------------------------------------
+           %  -------------------------------------
 
            if isnan(xcor(m  ,n  ))
            xcor(m  ,n  ) =  + 3*xcen(m  ,n  )/2 ...
@@ -331,7 +331,7 @@ function xcor = mirror_in_diagonal(xcen,xcor,method)
            end
            
            %% mirror forward when not yet filled in
-           %% -------------------------------------
+           %  -------------------------------------
            
            if isnan(xcor(m+2,n+2))
            xcor(m+2,n+2) =  -   xcen(m  ,n  )/2 ...
@@ -346,20 +346,20 @@ function xcor = mirror_in_diagonal(xcen,xcor,method)
   elseif strcmpi(method,'nearest')
   
   %% Nearest
-  %% --------------------
+  %  --------------------
   
      for m=1:size(xcen,1)-1
         for n=1:size(xcen,2)-1
 
            %% mirror back when not yet filled in
-           %% -------------------------------------
+           %  -------------------------------------
 
            if isnan(xcor(m  ,n  ))
            xcor(m  ,n  ) =  +   xcen(m  ,n  )   ; % is nan when one or more elements are nan
            end
            
            %% mirror forward when not yet filled in
-           %% -------------------------------------
+           %  -------------------------------------
            
            if isnan(xcor(m+2,n+2))
            xcor(m+2,n+2) =  +   xcen(m+1,n+1)   ; % is nan when one or more elements are nan
@@ -381,67 +381,66 @@ function xcor = mirror_in_1st_dimension1D(xcen,xcor,method)
 % xcor = mirror_in_1st_dimension1D(xcen,xcor)
 %
      
-%%% HOW DOES IT WORK:
+% HOW DOES IT WORK:
 
-%%%  + center points,  input, first dimension, m index
-%%%  x corner points, output, first dimension, m index
-%%%
-%%%     1,1    2,1    3,1    4,1    5,1    6,1    7,1
-%%%  x   +--x---+--x---+--x---+--x---+--x---+--x---+  x
-%%%  
+%  + center points,  input, first dimension, m index
+%  x corner points, output, first dimension, m index
+%
+%     1,1    2,1    3,1    4,1    5,1    6,1    7,1
+%  x   +--x---+--x---+--x---+--x---+--x---+--x---+  x
+%  
 
 
-%%%
-%%%
-%%%            xcen(1,1)         xcen(2,1)
-%%% xcor(1,1)       +----xcor(2,1)-----+-     xcor(3,1)
-%%%          backward                    
-%%%         mirroring                    
-%%%           <-----xs-------xm========xs====>                  
-%%%                                    forward
-%%%                                    mirroring
+%
+%
+%            xcen(1,1)         xcen(2,1)
+% xcor(1,1)       +----xcor(2,1)-----+-     xcor(3,1)
+%          backward                    
+%         mirroring                    
+%           <-----xs-------xm========xs====>                  
+%                                    forward
+%                                    mirroring
 
-%%% The scheme above is is also valid for all m and n when one substitues m=1 n=1:
-%%%   
-%%%
-%%%       
-%%% x_s = xcen
-%%%       
-%%%
-%%%        x(1,1) + x(1,2)     x(m,n)+ x(m+1,n)
-%%% x_m = ----------------- = ------------------
-%%%             2	            2		
-%%%
-%%% For mirroring backwards:
-%%%                                                  3*x(1,1) -  x(2,1)
-%%% xcor(1,2)  = xcor(m  ,n+1) = x_s + (x_s - x_m) = -------------------
-%%%			                                        2
-%%%
-%%% For mirroring forwards:
-%%%                                                  - x(1,1) + 3*x(2,1)
-%%% xcor(1,3)  = xcor(m+2,n+1) = x_s + (x_s - x_m) = --------------------
-%%%			                                        2
-%%%
+% The scheme above is is also valid for all m and n when one substitues m=1 n=1:
+%   
+%
+%       
+% x_s = xcen
+%       
+%
+%        x(1,1) + x(1,2)     x(m,n)+ x(m+1,n)
+% x_m = ----------------- = ------------------
+%             2	            2		
+%
+% For mirroring backwards:
+%                                                  3*x(1,1) -  x(2,1)
+% xcor(1,2)  = xcor(m  ,n+1) = x_s + (x_s - x_m) = -------------------
+%			                                        2
+%
+% For mirroring forwards:
+%                                                  - x(1,1) + 3*x(2,1)
+% xcor(1,3)  = xcor(m+2,n+1) = x_s + (x_s - x_m) = --------------------
+%			                                        2
 
-%%% Of course this is only done for grid points that have not yet been calculated.
-%%% so only for points that are nan.
+% Of course this is only done for grid points that have not yet been calculated.
+% so only for points that are nan.
 
   if strcmpi(method,'linear')
 
   %% Linear
-  %% --------------------
+  %  --------------------
 
      for m=1:length(xcen)-1
 
         %% mirror back when not yet filled in
-        %% -------------------------------------
+        %  -------------------------------------
 
         if isnan(xcor(m ))
            xcor(m  ) = (+ 3*xcen(m  ) -   xcen(m+1))/2; % is nan when one or more elements are nan
         end
         
         %% mirror forward when not yet filled in
-        %% -------------------------------------
+        %  -------------------------------------
         
         if isnan(xcor(m+2))
            xcor(m+2) = (-   xcen(m  )+ 3*xcen(m+1))/2; % is nan when one or more elements are nan
@@ -452,19 +451,19 @@ function xcor = mirror_in_1st_dimension1D(xcen,xcor,method)
   elseif strcmpi(method,'nearest')
   
   %% Nearest
-  %% --------------------
+  %  --------------------
   
      for m=1:length(xcen)-1
 
         %% mirror back when not yet filled in
-        %% -------------------------------------
+        %  -------------------------------------
 
         if isnan(xcor(m ))
            xcor(m  ) = (+ 1*xcen(m  )              )  ; % is nan when one or more elements are nan
         end
         
         %% mirror forward when not yet filled in
-        %% -------------------------------------
+        %  -------------------------------------
         
         if isnan(xcor(m+2))
            xcor(m+2) = (             + 1*xcen(m+1))  ; % is nan when one or more elements are nan
