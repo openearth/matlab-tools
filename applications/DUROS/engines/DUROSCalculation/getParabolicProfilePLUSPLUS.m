@@ -32,6 +32,7 @@ Plus                                    = DuneErosionSettings('get','Plus');
 [c_hs c_tp c_w c_d c_1 c_2]             = DuneErosionSettings('get','c_hs','c_tp','c_w','c_d','c_1','c_2');
 [cp_hs cp_tp cp_w cp_d cp_c1 cp_c2]     = DuneErosionSettings('get','cp_hs','cp_tp','cp_w','cp_d','cp_c1','cp_c2');
 [d_t]                                   = DuneErosionSettings('get','d');
+[xref]                                  = DuneErosionSettings('get','xref');
 [xmax,y,waveheightcmpt,waveperiodcmpt,fallvelocitycmpt,depthcmpt] = deal([]);
 
 
@@ -46,7 +47,7 @@ if strcmp(Plus,'')
     d_t = 25;
     c_d = 25;
     cp_d = 0;    %depthcmpt = 1
-    xmax = x0 + 250*(Hsig_t/c_hs)^cp_hs*(c_w/w)^cp_w;
+    %xmax = x0 + 250*(Hsig_t/c_hs)^cp_hs*(c_w/w)^cp_w;
 
 
 %% -------------------------------------------------------------------------------------------- 
@@ -57,7 +58,7 @@ elseif strcmp(Plus,'-plus')
     d_t = 25;
     c_d = 25;
     cp_d = 0;    %depthcmpt = 1
-    xmax = x0 + 250*(Hsig_t/c_hs)^cp_hs*(c_w/w)^cp_w;
+    %xmax = x0 + 250*(Hsig_t/c_hs)^cp_hs*(c_w/w)^cp_w;
 
 
 %% --------------------------------------------------------------------------------------------
@@ -68,7 +69,7 @@ elseif strcmp(Plus,'-plusplus') & exist('x','var') %&& ~isempty(x)
     c_1 = c_1*(Hsig_t/d_t)^cp_c1;
     c_2 = c_2*(Hsig_t/d_t)^cp_c2;
     two = c_1*sqrt(c_2);
-    xmax = x0 + 250  *  (Hsig_t/c_hs)^cp_hs * (c_w/w)^cp_w * (c_d/d_t)^0.5;
+    %xmax = x0 + 250  *  (Hsig_t/c_hs)^cp_hs * (c_w/w)^cp_w * (c_d/d_t)^0.5;
     %xmax = x0 + 250  *  (Hsig_t/c_hs)^cp_hs * (Tp_t/c_tp)^cp_tp  * (c_w/w)^cp_w * (c_d/d_t)^0.5;
 else
     error('Warning: variable "Plus" should be either '''' or ''-plus'' or ''-plusplus''')
@@ -78,8 +79,9 @@ waveheightcmpt   = (c_hs/Hsig_t)^cp_hs;
 waveperiodcmpt   = (c_tp/Tp_t)^cp_tp;
 fallvelocitycmpt = (w/c_w)^cp_w;
 depthcmpt        = (d_t/c_d)^cp_d;    %Option to include depth contribution in the DUROS formulation (depthcmpt=1 for DUROS and D+)
-y = (c_1*sqrt(waveheightcmpt*waveperiodcmpt*fallvelocitycmpt*depthcmpt*(x-x0)+c_2)-two) / (c_hs/Hsig_t);
 
+y      = (c_1*sqrt(waveheightcmpt*waveperiodcmpt*fallvelocitycmpt*depthcmpt*(x-x0)+c_2)-two) / (c_hs/Hsig_t);
+xmax   = x0 + xref  *  waveheightcmpt^-1*waveperiodcmpt^-1*fallvelocitycmpt^-1*depthcmpt^-1;
 
 % round to 8 decimal digits to prevent rounding problems later on
 y = roundoff(y, 8);
