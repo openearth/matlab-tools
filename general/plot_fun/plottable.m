@@ -1,7 +1,7 @@
 function h = plottable(table,varargin)
 %PLOTTABLE plots a table in the current figure
 %
-%   Plots a table with or without an optional header in the 
+%   Plots a table with or without an optional header in the
 %   current figure and returns a handle to it. The numbers are right
 %   aligned. Optional header text is centered.
 %
@@ -14,7 +14,9 @@ function h = plottable(table,varargin)
 %   Optional arguments:
 %   fontsize = fontsize used for the table (default is 10)
 %   firstrowheader = logical (true or false) denoting whether the first row
-%   is used as a header (default) or not
+%                    is used as a header (default) or not
+%   firstcolumnheader = logical (true or false) denoting whether first row
+%                    is used as a header or not (default is not)
 %
 %   Output:
 %   h = handle to the table, e.g. to reposition it in the current figure
@@ -27,7 +29,6 @@ function h = plottable(table,varargin)
 %        table{i+1,j} = sprintf('%5.2f',series(i,j));
 %     end
 %   end
-%   table{1,1} = 'column 1';
 %   table{1,2} = 'column 2';
 %   table{1,3} = 'column 3';
 %   table{1,4} = 'column 4';
@@ -35,19 +36,25 @@ function h = plottable(table,varargin)
 %   table{1,6} = 'column 6';
 %   table{1,7} = 'column 7';
 %   table{1,8} = 'column 8';
-%   axes('position',[.1  .14  .8  .08]);
-%   h = plottable(table,'fontsize',5);
-%   tablepos = get(h,'position');
-%   set(h,'position',tablepos + [0 0 0 -0.2]);
 % 
-%   See also 
+%   table{2,1} = 'row 2';
+%   table{3,1} = 'row 3';
+%   table{4,1} = 'row 4';
+%   table{5,1} = 'row 5';
+%   table{6,1} = 'row 6';
+%   table{7,1} = 'row 7';  
+%   
+%   axes('position',[.1  .14  .8  .5]);
+%   h = plottable_v02(table,'fontsize',7,'firstrowheader',true,'firstcolumnheader',true);
+%
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Alkyon Hydraulic Consultancy & Research
 %       grasmeijerb
 %
-%       bart.grasmeijer@alkyon.nl	
+%       bart.grasmeijer@alkyon.nl
 %
 %       P.O. Box 248
 %       8300 AE Emmeloord
@@ -68,9 +75,9 @@ function h = plottable(table,varargin)
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -88,6 +95,7 @@ function h = plottable(table,varargin)
 
 fontsize = 10;                                                              % default values for optional arguments
 firstrowheader = true;
+firstcolumnheader = false;
 
 optvals = varargin;                                                         % read the optional arguments and their values
 if 2*round(length(optvals)/2)~=length(optvals),
@@ -105,13 +113,14 @@ for i=1:size(optvals,2),
             fontsize = optvals{2,i};
             OptionUsed(i)=1;
         case 'firstrowheader',
-            fontsize = optvals{2,i};
+            firstrowheader = optvals{2,i};
             OptionUsed(i)=1;
-            
+        case 'firstcolumnheader',
+            firstcolumnheader = optvals{2,i};
+            OptionUsed(i)=1;
     end
 end;
 optvals(:,OptionUsed)=[];                                                   % delete used options
-optvals = optvals(:);
 
 ncols = length(table(1,:));
 nrows = length(table(:,1));
@@ -122,7 +131,12 @@ y = 0:2:2*nrows;
 h = newplot;
 [XI,YI] = meshgrid(x,y);
 ZI = ones(size(XI));
-ZI(1,:) = 0.8;
+if firstrowheader
+    ZI(1,:) = 0.8;                                                          % first row background grey
+end
+if firstcolumnheader
+    ZI(:,1) = 0.8;                                                          % first column background grey
+end
 pcolor(XI,YI,ZI);
 set(gca,'YDir','reverse');
 colormap(bone(10));
@@ -133,7 +147,14 @@ for i = 1:nrows
     for j = 1:ncols
         if i == 1 && firstrowheader
             text(xpos,ypos,table(i,j),'horizontalalignment','center','fontsize',fontsize);
-        else
+        end
+        if j == 1 && firstcolumnheader
+            text(xpos,ypos,table(i,j),'horizontalalignment','center','fontsize',fontsize);
+        end
+        if i==1 && j==1 && firstrowheader && firstcolumnheader
+            text(xpos,ypos,table(i,j),'horizontalalignment','center','fontsize',fontsize);
+        end
+        if i~=1 && j~=1
             text(xpos+0.25,ypos,table(i,j),'horizontalalignment','right','fontsize',fontsize);
         end
         xpos = xpos+2;
@@ -141,4 +162,4 @@ for i = 1:nrows
     ypos = ypos+2;
 end
 set(gca,'xticklabel',[],'yticklabel',[]);
-        
+
