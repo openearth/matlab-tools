@@ -62,6 +62,10 @@ OPT.timeOut         =     [];
 OPT.drawOrder       =     10; 
 OPT.bgcolor         = [100 155 100];
 
+if nargin==0
+  return
+end
+
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
 %% set maxLod and minLod defaults
@@ -112,13 +116,13 @@ if  ~isempty(OPT.timeIn)
             '<begin>%s</begin>\n'...OPT.timeIn
             '<end>%s</end>\n'...OPT.timeOut
             '</TimeSpan>\n'],...
-            OPT.timeIn,OPT.timeOut);
+            datestr(OPT.timeIn,29),datestr(OPT.timeOut,29));
     else
         OPT.timeSpan = sprintf([...
             '<TimeStamp>\n'...
             '<when>%s</when>\n'...OPT.timeIn
             '</TimeStamp>\n'],...
-            OPT.timeIn);
+            datestr(OPT.timeIn,29));
     end
 else
     OPT.timeSpan ='';

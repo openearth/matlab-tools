@@ -92,18 +92,6 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 %% process varargin
 % see if height is defined
 
-if ~isempty(varargin)
-    if ~ischar(varargin{1});
-        z = varargin{1};
-        varargin = varargin(2:length(varargin));
-        OPT.is3D        = true;        
-    else
-        OPT.is3D        = false;
-    end
-else
-    OPT.is3D        = false;
-end
-    
 OPT.fileName      = [];
 OPT.kmlName       = [];
 OPT.lineWidth     = 1;
@@ -115,10 +103,23 @@ OPT.fillAlpha     = .4;
 OPT.openInGE      = false;
 OPT.timeIn        = [];
 OPT.timeOut       = [];
+OPT.is3D          = false;
 OPT.visible       = true;
 OPT.extrude       = true;
 OPT.tessellate    = ~OPT.is3D;
 OPT.zScaleFun     = @(z) (z+0)*1;
+
+if nargin==0
+  return
+end
+
+if ~isempty(varargin)
+    if ~ischar(varargin{1});
+        z = varargin{1};
+        varargin = varargin(2:length(varargin));
+        OPT.is3D        = true;        
+    end
+end
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
@@ -260,11 +261,11 @@ for ii=1:length(lat(1,:))
         % update linestyle
         OPT_line.styleName = ['line_style' num2str(OPT.line_nr(ii))];
         % update timeIn and timeOut if multiple times are defined
-        if  length(OPT.timeIn)>1, OPT_line.timeIn =  datestr(OPT.timeIn(ii),29);end
+        if length(OPT.timeIn )>1, OPT_line.timeIn = datestr(OPT.timeIn (ii),29);end
         if length(OPT.timeOut)>1,OPT_line.timeOut = datestr(OPT.timeOut(ii),29);end
         if OPT.is3D&&OPT.fill
             OPT_fill.styleName = ['fill_style' num2str(OPT.fill_nr(ii))];
-            if  length(OPT.timeIn)>1, OPT_fill.timeIn =  datestr(OPT.timeIn(ii),29);end
+            if length(OPT.timeIn )>1, OPT_fill.timeIn = datestr(OPT.timeIn (ii),29);end
             if length(OPT.timeOut)>1,OPT_fill.timeOut = datestr(OPT.timeOut(ii),29);end
         end
         

@@ -5,7 +5,7 @@
 outputDir               = 'F:\vaklodingen123';
 url                     = vaklodingen_url;
 EPSG                    = load('EPSG');
-time_at_starting_script = 2009-09-01;%datestr(now,'yyyy-mm-dd');
+time_at_starting_script = datenum('2009-09-01');%datestr(now,'yyyy-mm-dd');
 
 for ii = 1:length(url);
     [path, fname] = fileparts(url{ii});
@@ -23,14 +23,14 @@ for ii = 1:length(url);
 
     % convert time to years
     time          = time+datenum(1970,1,1);
-    date          = datestr(time,'yyyy-mm-dd');
+    date          = time;
     date(end+1,:) = time_at_starting_script;
 
     for jj = size(time,1):-1:1%size(time,1)+1 - min(size(time,1),3)   ;
-        if ~exist([outputDir filesep fname '_' date(jj,:) '.kml'],'file')
+        if ~exist([outputDir filesep fname '_' date(jj) '.kml'],'file')
 
             % display progress
-            disp([num2str(ii) '/' num2str(length(url)) ' ' fname ' ' date(jj,:)]);
+            disp([num2str(ii) '/' num2str(length(url)) ' ' fname ' ' datestr(date(jj),29)]);
             % load z data
             z = nc_varget(url{ii},'z',[jj-1,0,0],[1,-1,-1]);
             if ~all(all(isnan(z)))
@@ -44,12 +44,12 @@ for ii = 1:length(url);
                 axis off;axis tight;view(0,90);
                 colormap(colormap_cpt('bathymetry_vaklodingen',500))
                 clim([-50 25]);
-                KMLfig2png(h,'levels',[-3 3],'timeIn',date(jj,:),'timeOut',date(jj+1,:),...
-                    'fileName',[outputDir filesep fname '_' date(jj,:) '.kml'],...
+                KMLfig2png(h,'levels',[-3 3],'timeIn',date(jj),'timeOut',date(jj+1),...
+                    'fileName',[outputDir filesep fname '_' datestr(date(jj),29) '.kml'],...
                     'drawOrder',str2double(datestr(time(jj),'yyyy'))*10);
             end
         else
-            disp([num2str(ii) '/' num2str(length(url)) ' ' fname ' ' date(jj,:) ' already created']);
+            disp([num2str(ii) '/' num2str(length(url)) ' ' fname ' ' date(jj) ' already created']);
         end
     end
 end

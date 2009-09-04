@@ -49,4 +49,4 @@ end
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
-KMLcontour(lat,lon,z,OPT)
+KMLcontour(lat,lon,z,OPT);

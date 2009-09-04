@@ -48,7 +48,9 @@ try
     KMLsurf(lat   ,lon-5,z,'fileName',KML_testdir('KMLsurf_1.kml'),'zScaleFun',@(z) (z+1).*2000,'extrude',true,'polyOutline',true,'polyFill',false);
     KMLsurf(lat+5 ,lon-5,z,'fileName',KML_testdir('KMLsurf_2.kml'),'colorMap',@(m) gray(m),'zScaleFun',@(z) (z.^2)*1000);
     KMLsurf(lat+10,lon-5,z,'fileName',KML_testdir('KMLsurf_3.kml'),'zScaleFun',@(z) -log(z/100)*1000,'fillAlpha',1,'lineWidth',3,'colorMap',@(m) colormap_cpt('temperature',m),'extrude',true,'polyOutline',true);
-    KMLsurf(lat+5,lon*10,z,'fileName',KML_testdir('KMLsurf_4.kml'),'zScaleFun',@(z) (z.^2)*1000,'cLim',[200 300]);
+    for ii =4:9;
+         KMLsurf(lat+5,lon*10,z*(1+sin(ii)),'fileName',KML_testdir(['KMLsurf_' num2str(ii) '.kml']),'zScaleFun',@(z) (z.^2)*1000,'cLim',[-3+sin(ii) 15+10*sin(ii)],'timeIn',ii,'timeOut',ii+1);
+    end
     testresult = true;
 catch
     testresult = false;
