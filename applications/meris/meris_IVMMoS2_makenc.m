@@ -177,7 +177,7 @@
         ifld = ifld + 1;
       nc(ifld).Name         = 'meta';
       nc(ifld).Nctype       = 'char';
-     %nc(ifld).Dimension    = {'x_cen'}; % no dimension, dummy variable
+     %nc(ifld).Dimension    = {''}; % no dimension, dummy variable
       nc(ifld).Attribute(1) = struct('Name', 'T'          ,'Value', num2str([0 1 1 1]));  % HMM, ATRRIBUTES CANNOT BE ARRAYS
       nc(ifld).Attribute(2) = struct('Name', 'Ci'         ,'Value', num2str([1 5 5 0.3000])); % HMM, ATRRIBUTES CANNOT BE ARRAYS
       nc(ifld).Attribute(3) = struct('Name', 'b'          ,'Value', num2str([1 2 3 4 5 6 7 9]));  % HMM, ATRRIBUTES CANNOT BE ARRAYS
@@ -270,7 +270,7 @@
 %      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'g m-3'); % ASSUMED, NOT IN MAT FILES
 %      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'concentration_of_chlorophyll_in_sea_water'); % standard name
 %      nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-%      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen time');
+%      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
 %      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units undocumented, asssumed');
   
 %        ifld = ifld + 1;
@@ -281,7 +281,7 @@
 %      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'g m-3'); % ASSUMED, NOT IN MAT FILES
 %      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_eror_of_concentration_of_chlorophyll_in_sea_water'); % quasi standard name
 %      nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-%      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen time');
+%      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
 %      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units undocumented, asssumed');
 %       nc(ifld).Attribute(7) = struct('Name', 'cell_methods'   ,'Value', 'area: standard_deviation'); % STD in space, time, or none? NOT IN MAT FILES
       
@@ -293,7 +293,7 @@
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'kg m-3'); % ASSUMED, NOT IN MAT FILES
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'concentration_of_suspended_matter_in_sea_water'); % standard name
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen time');
+      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
       nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units undocumented, asssumed');
 
         ifld = ifld + 1;
@@ -304,7 +304,7 @@
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'kg m-3'); % ASSUMED, NOT IN MAT FILES
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_eror_of_concentration_of_suspended_matter_in_sea_water'); % quasi standard name
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen time');
+      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
       nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units undocumented, asssumed');
 %       nc(ifld).Attribute(7) = struct('Name', 'cell_methods'   ,'Value', 'area: standard_deviation'); % STD in space, time, or none? NOT IN MAT FILES
  
@@ -316,7 +316,7 @@
 %      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'kg m-3'); % ASSUMED, NOT IN MAT FILES
 %      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'concentration_of_dissolved_organic_matter_in_sea_water'); % quasi standard name
 %      nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-%      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen time');
+%      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
 %      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units undocumented, asssumed');
 
 %        ifld = ifld + 1;
@@ -327,7 +327,7 @@
 %      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'kg m-3'); % ASSUMED, NOT IN MAT FILES
 %      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_error_of_concentration_of_suspended_matter_in_sea_water'); % quasi standard name
 %      nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-%      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen time');
+%      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
 %      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units undocumented, asssumed');
 %      nc(ifld).Attribute(7) = struct('Name', 'cell_methods'   ,'Value', 'area: standard_deviation'); % STD in space, time, or none? NOT IN MAT FILES
   
@@ -405,16 +405,15 @@
       % single
       nc_varput(outputfile, 'bands'        ,  D.bands.wavelength);
       nc_varput(outputfile, 'time'         ,  D.datenum(1) - OPT.refdatenum);
-%      nc_varput(outputfile, 'Chla'         , (D.c (:,:,2)));
-%      nc_varput(outputfile, 'Chla_std_err' , (D.dc(:,:,2)));
-      nc_varput(outputfile, 'TSM'          , D.cTSM);
-      nc_varput(outputfile, 'TSM_std_err'  , D.dcTSM);
-%      nc_varput(outputfile, 'CDOM'         , (D.c (:,:,4)));
-%      nc_varput(outputfile, 'CDOM_std_err' , (D.dc(:,:,4)));
+%     nc_varput(outputfile, 'Chla'         , (D.c (:,:,2)));
+%     nc_varput(outputfile, 'Chla_std_err' , (D.dc(:,:,2)));
+      nc_varput(outputfile, 'TSM'          ,  D.cTSM);
+      nc_varput(outputfile, 'TSM_std_err'  ,  D.dcTSM);
+%     nc_varput(outputfile, 'CDOM'         , (D.c (:,:,4)));
+%     nc_varput(outputfile, 'CDOM_std_err' , (D.dc(:,:,4)));
       nc_varput(outputfile, 'Kd'           , (D.Kd));
       nc_varput(outputfile, 'chisq'        , (D.chisq));
       nc_varput(outputfile, 'P'            , (D.P));
-
       
 %% 6 Check
    
