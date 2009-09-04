@@ -12,6 +12,7 @@ cd(fullfile(openearthtoolsroot,'tutorials'))
 status = [2 1 3 3 3 2 0 3 1  2  3  0  1  2  0];
 options.maxOutputLines = 15;
 options.format         = 'html'; %'doc','html' (default), 'latex', 'ppt', 'xml'
+options.stylesheet     = fullfile(openearthtoolsroot,'tutorials','publishtemplate','mxdom2tutorialhtml.xsl');
 options.catchError = true;
 for ii = 1:length(tutorial_scripts)
     switch status(ii)
