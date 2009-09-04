@@ -53,9 +53,9 @@ To make changes, update the M-file and republish this document.
       <xsl:attribute name="content"><xsl:value-of select="m-file"/></xsl:attribute>
     </meta>
 
-    <link type="text/css" href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/maintenance/automatedTesting/templates/deltares2/script/css/custom-theme/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
-    <script type="text/javascript" src="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/maintenance/automatedTesting/templates/deltares2/script/js/jquery-1.3.2.min.js"></script>
-    <script type="text/javascript" src="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/maintenance/automatedTesting/templates/deltares2/script/js/jquery-ui-1.7.2.custom.min.js"></script>
+    <link type="text/css" href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/css/custom-theme/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/js/jquery-1.3.2.min.js"></script>
+    <script type="text/javascript" src="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/js/jquery-ui-1.7.2.custom.min.js"></script>
     <script type="text/javascript" src="script/testscripts.js"></script>
     <script type="text/javascript">
   	$(document).ready(function ()
@@ -137,22 +137,6 @@ To make changes, update the M-file and republish this document.
 <!-- Stylesheet template -->
 <xsl:template name="stylesheet">
 <style>
-
-body {
-  background: white;
-  color: black;
-  font-family: Arial;
-  margin: 0;
-  padding: 1ex;
-}
-
-/* Make the text shrink to fit narrow windows, but not stretch too far in 
-wide windows. */ 
-p,h1,h2,div.content div {
-  max-width: 600px;
-  /* Hack for IE6 */
-  width: auto !important; width: 600px;
-}
 
 pre.codeinput {
   background: #EEEEEE;

@@ -11,31 +11,19 @@ To make changes, update the M-file and republish this document.
       -->
       <title>tutorial_functions_googleEarth</title>
       <meta name="generator" content="MATLAB 7.5">
-      <meta name="date" content="2009-08-20">
-      <meta name="m-file" content="tutorial_functions_googleEarth"><style>
+      <meta name="date" content="2009-09-04">
+      <meta name="m-file" content="tutorial_functions_googleEarth">
+      <link type="text/css" href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/css/custom-theme/jquery-ui-1.7.2.custom.css" rel="stylesheet"><script type="text/javascript" src="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/testscripts.js"></script><script type="text/javascript">
+  	$(document).ready(function ()
+  	{
+  	// Accordion
+  	$(".accordion").accordion({ header: "h2" });
+  	
+  	// Copy content
+	copycontent();
 
-body {
-  background-color: white;
-  margin:10px;
-}
-
-h1 {
-  color: #990000; 
-  font-size: x-large;
-}
-
-h2 {
-  color: #990000;
-  font-size: medium;
-}
-
-/* Make the text shrink to fit narrow windows, but not stretch too far in 
-wide windows. */ 
-p,h1,h2,div.content div {
-  max-width: 600px;
-  /* Hack for IE6 */
-  width: auto !important; width: 600px;
-}
+  	});
+    </script><style>
 
 pre.codeinput {
   background: #EEEEEE;
@@ -47,7 +35,7 @@ pre.codeinput {
 
 span.keyword {color: #0000FF}
 span.comment {color: #228B22}
-span.string {color: #A020F0}
+span.string {color: #9F1EF4}
 span.untermstring {color: #B20000}
 span.syscmd {color: #B28C00}
 
@@ -68,61 +56,106 @@ p.footer {
   color: gray;
 }
 
+#contents {
+  border-style:solid;
+  border-width:1px;
+}
+
   </style></head>
-   <body>
+   <body LINK="#48339F" VLINK="#48339F" ALINK="#48339F">
       <div class="content">
-         <h2>Contents</h2>
-         <div>
-            <ul>
-               <li><a href="#1">plot data in Google Earth</a></li>
-               <li><a href="#2">KMLline</a></li>
-            </ul>
-         </div>
-         <h2>plot data in Google Earth<a name="1"></a></h2>
-         <p>plotting tols are in the googlePlot toolbox. To see it's contents, use help:</p><pre class="codeinput">help <span class="string">googlePlot</span>
+         <div class="accordion">
+            <div>
+               <h2><a>plot data in Google Earth</a></h2>
+               <div>
+                  <p>plotting tols are in the googlePlot toolbox. To see it's contents, use help:</p><pre class="codeinput">help <span class="string">googlePlot</span>
 </pre><pre class="codeoutput">Contents of googlePlot:
 
 KMLcontour                     - Just like contour
+KMLcontour3                    - Just like contour3
+KMLcontour3_test               - One line description goes here
+KMLcontour_test                - One line description goes here
 KMLcurvedArrows                - makes nice curved arrows that 'go with the flow'
-KMLfig2png                     - makes a tiled png figure for google earth 
+KMLfig2png                     - makes a tiled png figure for google earth
 KMLline                        - Just like line (and that's just like plot)
-KMLline3                       - Just like line3
+KMLline_test                   - One line description goes here
+KMLmerge_files                 - Merges all KML files in a certain directory
 KMLpatch                       - Just like patch
 KMLpcolor                      - Just like pcolor
+KMLpcolor_test                 - One line description goes here
 KMLquiver                      - Just like quiver
-KMLsurf                        - Just like surf
-KMLtext                        - Just like text 
-KMLtrisurf                     - Just like trisurf
-
-</pre><h2>KMLline<a name="2"></a></h2>
-         <p>the most extensive, well documented fucntion in the tootlbox is KML line For the most it works just like matlab line, except
-            that all extra options are available via keyword value pairs.
-         </p>
-         <p>Just a simple case, some lat an lon data. To see approximately what we will get, use the matlab function line.</p><pre class="codeinput">lat = [70 40 40 70];
+...</pre></div>
+            </div>
+            <div>
+               <h2><a>KMLline</a></h2>
+               <div>
+                  <p>the most extensive, well documented fucntion in the tootlbox is KML line For the most it works just like matlab line, except
+                     that all extra options are available via keyword value pairs.
+                  </p>
+               </div>
+            </div>
+            <div>
+               <div>
+                  <p>Just a simple case, some lat an lon data. To see approximately what we will get, use the matlab function line.</p><pre class="codeinput">lat = [70 40 40 70];
 lon = [4,5,16,16];
 line(lat,lon);
 axis([30 80 3 17])
-</pre><img vspace="5" hspace="5" src="tutorial_functions_googleEarth_01.png"> <p>KMLline works just like line, except that one has to save the output file, and open that in Google Earth to view the result.</p><pre class="codeinput">KMLline(lat,lon);
-</pre><p>matlab can also draw 3 dimensional lines</p><pre class="codeinput">clf;
+</pre><img vspace="5" hspace="5" src="tutorial_functions_googleEarth_01.png"> </div>
+            </div>
+            <div>
+               <div>
+                  <p>KMLline works just like line, except that one has to save the output file, and open that in Google Earth to view the result.</p><pre class="codeinput">KMLline(lat,lon);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>matlab can also draw 3 dimensional lines</p><pre class="codeinput">clf;
 lon = 0:.1:360;
 lat = linspace(0,90,size(lon,2));
 z  = (1+sind(lon*50))*1e5;
 line(lat,lon,z)
 view([-3 88])
-</pre><img vspace="5" hspace="5" src="tutorial_functions_googleEarth_02.png"> <p>and so can KMLline</p><pre class="codeinput">KMLline(lat,lon,z);
-</pre><p>Matlab can draw multiple lines at once</p><pre class="codeinput">[lat,lon] = meshgrid(90:-10:-90,0:.5:360);
+</pre><img vspace="5" hspace="5" src="tutorial_functions_googleEarth_02.png"> </div>
+            </div>
+            <div>
+               <div>
+                  <p>and so can KMLline</p><pre class="codeinput">KMLline(lat,lon,z);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>Matlab can draw multiple lines at once</p><pre class="codeinput">[lat,lon] = meshgrid(90:-10:-90,0:.5:360);
 z  = (1+sind(lon*50))*1e5;
 clf;
 line(lat,lon,z)
 view([66 89])
-</pre><img vspace="5" hspace="5" src="tutorial_functions_googleEarth_03.png"> <p>and so can KMLline</p><pre class="codeinput">KMLline(lat,lon,z);
-</pre><p>We can also add the transposed lines</p><pre class="codeinput">line(lat',lon',z')
+</pre><img vspace="5" hspace="5" src="tutorial_functions_googleEarth_03.png"> </div>
+            </div>
+            <div>
+               <div>
+                  <p>and so can KMLline</p><pre class="codeinput">KMLline(lat,lon,z);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>We can also add the transposed lines</p><pre class="codeinput">line(lat',lon',z')
 axis([-10 30 10 30 0 1e5])
 axis <span class="string">off</span>
-</pre><img vspace="5" hspace="5" src="tutorial_functions_googleEarth_04.png"> <p>And so can KMLline. Save ase with a different name as the previous KML file and open both in Google Earth. Also, we set the
-            'fill' property to false
-         </p><pre class="codeinput">KMLline(lat',lon',z',<span class="string">'fill'</span>,false);
-</pre><p><img vspace="5" hspace="5" src="_prerendered_googlePlot.PNG"> </p>
+</pre><img vspace="5" hspace="5" src="tutorial_functions_googleEarth_04.png"> </div>
+            </div>
+            <div>
+               <div>
+                  <p>And so can KMLline. Save ase with a different name as the previous KML file and open both in Google Earth. Also, we set the
+                     'fill' property to false
+                  </p><pre class="codeinput">KMLline(lat',lon',z',<span class="string">'fill'</span>,false);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p><img vspace="5" hspace="5" src="_prerendered_googlePlot.PNG"> </p>
+               </div>
+            </div>
+         </div>
          <p class="footer"><br>
             Published with MATLAB&reg; 7.5<br></p>
       </div>
