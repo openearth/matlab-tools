@@ -95,6 +95,7 @@ classdef mtest < handle
         currentcase = [];                   % Number of the testcase that is last adressed
         
         testresult = false;                 % Boolean indicating whether the test was run successfully
+        profilerresult = [];
         time     = 0;                      % Time that was needed to perform the test
         date     = NaN;                      % Date and time the test was performed
         
@@ -795,7 +796,44 @@ classdef mtest < handle
                 % Since Windows is slower in writing the file than the matlab fclose function..?
                 % This is a workaround to let windos finish the file...
             end
+            
+            %% profile on
+            profile on
+            
             obj.testresult = feval(@mtest_testfunction);
+            
+            obj.profilerresult = profile('info');
+            
+            %{
+            idremove = ...
+                strncmp({obj.profilerresult.FunctionTable.FileName}',matlabroot,length(matlabroot)) |...
+                ismember({obj.profilerresult.FunctionTable.FunctionName}',{obj.testcases.functionname,'mtest_testfunction'});
+            oldnames = {obj.profilerresult.FunctionTable.FunctionName}';
+            obj.profilerresult.FunctionTable(idremove)=[];
+            newnames = {obj.profilerresult.FunctionTable.FunctionName}';
+            num2remove = find(idremove);
+            [dum_alltrue newposition] = ismember(oldnames,newnames);
+            for icalls = 1:length(obj.profilerresult.FunctionTable)
+                for ich = length(obj.profilerresult.FunctionTable(icalls).Children): -1 : 1
+                    if ismember(obj.profilerresult.FunctionTable(icalls).Children(ich).Index,num2remove)
+                        obj.profilerresult.FunctionTable(icalls).Children(ich)=[];
+                    else
+                        obj.profilerresult.FunctionTable(icalls).Children(ich).Index = newposition(obj.profilerresult.FunctionTable(icalls).Children(ich).Index);
+                    end
+                end
+                for ipar = length(obj.profilerresult.FunctionTable(icalls).Parents): -1 : 1
+                    if ismember(obj.profilerresult.FunctionTable(icalls).Parents(ipar).Index,num2remove)
+                        obj.profilerresult.FunctionTable(icalls).Parents(ipar)=[];
+                    else
+                        obj.profilerresult.FunctionTable(icalls).Parents(ipar).Index = newposition(obj.profilerresult.FunctionTable(icalls).Parents(ipar).Index);
+                    end
+                end
+            end
+            %}
+            
+            
+            profile off
+            profile clear
             
             %% cd back
             cd(cdtemp);

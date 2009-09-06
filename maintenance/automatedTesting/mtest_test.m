@@ -170,7 +170,7 @@ h = figure('Units','centimeter','Position',[10 10 0.5 0.5],'Color',clr,'MenuBar'
 ha = axes('Parent',h,'Units','normalized','Position',[0 0 1 1],'Color',clr);
 axis(ha,'off');
 text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',clr);
-snapnow;
+%%
 close(h);
 %%
 % positive means that all subtests were performed with good results. Negative means that one of the
