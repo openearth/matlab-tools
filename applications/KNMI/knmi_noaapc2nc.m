@@ -92,8 +92,11 @@
       nc_attput(outputfile, nc_global, 'yearday'         , D.yearday);
    
      %% Discovery information:
-     %  http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html
+     %  http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html (draft)
+     %  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec11.html (v1.0.1)
      
+%TO DO :Metadata_Conventions = "Unidata Dataset Discovery v1.0";      
+
       nc_attput(outputfile, nc_global, 'geospatial_lat_min'         , min(D.latcor(:)));
       nc_attput(outputfile, nc_global, 'geospatial_lat_max'         , max(D.latcor(:)));
       nc_attput(outputfile, nc_global, 'geospatial_lon_min'         , min(D.loncor(:)));
@@ -101,6 +104,11 @@
       
       nc_attput(outputfile, nc_global, 'geospatial_lat_units'       , 'degrees_north');
       nc_attput(outputfile, nc_global, 'geospatial_lon_units'       , 'degrees_east' );
+
+%TO DO time_coverage_start  	
+%TO DO time_coverage_end
+%TO DO standard_name_vocabulary
+%TO DO cdm_data_type Attribute "Grid", "Image", "Station", "Trajectory", "Radial". Its use is recommended.       
  
 %% 2 Create dimensions
    

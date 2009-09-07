@@ -1,4 +1,10 @@
 function [succes, kml_id] = KML_region_png(level,G,c,kml_id,OPT)
+%KML_REGION_PNG   (low level)
+%
+%  [succes, kml_id] = KML_region_png(level,G,c,kml_id,OPT)
+%
+%See also: KMLengines
+
 kml_id = kml_id+1;
 
 %% make png
@@ -15,6 +21,7 @@ set(OPT.ha,'YLim',[c.S - c.dNS c.N + c.dNS]);
 set(OPT.ha,'XLim',[c.W - c.dWE c.E + c.dWE]);
 
 PNGfileName = fullfile(OPT.Path,OPT.Name,sprintf('%05d.png',kml_id));
+mkpath(fileparts(PNGfileName));
 print(OPT.hf,'-dpng','-r1',PNGfileName);
 
 im = imread(PNGfileName);
@@ -108,8 +115,7 @@ if level<OPT.levels(2)
     end
 end
 
-
-% add png to kml
+%% add png to kml
 output = [output sprintf([...
     '<GroundOverlay>\n'...
     '<name>%05d</name>\n'...kml_id
@@ -128,9 +134,11 @@ OPT_header = struct(...
     'name',['png' num2str(kml_id)],...
     'open',0);
 output = [KML_header(OPT_header) output];
+
 % FOOTER
 output = [output KML_footer];
 fprintf(OPT.fid,'%s',output);
+
 % close KML
 fclose(OPT.fid);
 

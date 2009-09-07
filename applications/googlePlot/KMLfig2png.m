@@ -1,11 +1,16 @@
 function [OPT, Set, Default] = KMLfig2png(h,varargin)
 % KMLFIG2PNG makes a tiled png figure for google earth
 %
+%   h = surf(lon,lat,z)
+%   KMLfig2png(h,<keyword,value>) 
+%
 % make a surf or pcolor in lon/lat/z, and then pass it to KMLfig2png
 %
-% Example:
-%   h = surf(lon,lat,z)
-%   KMLfig2png(h,varargin)
+% For the <keyword,value> pairs and their defaults call
+%
+%    OPT = KMLfig2png()
+%
+% where Lod = Level of Detail
 %
 % See also: googlePlot
 
@@ -90,7 +95,9 @@ if isempty(OPT.kmlName)
 end
 
 % make a folder for the sub files
+if ~isempty(OPT.Path)
 mkdir(OPT.Path,OPT.Name)
+end
 
 %% prepare figure
 axis off;axis tight;view(0,90);
@@ -109,6 +116,7 @@ G.lat = get(h,'YData');
 G.z   = get(h,'ZData');
 
 %% preproces timespan
+%  http://code.google.com/apis/kml/documentation/kmlreference.html#timespan
 if  ~isempty(OPT.timeIn)
     if ~isempty(OPT.timeOut)
         OPT.timeSpan = sprintf([...
@@ -116,13 +124,13 @@ if  ~isempty(OPT.timeIn)
             '<begin>%s</begin>\n'...OPT.timeIn
             '<end>%s</end>\n'...OPT.timeOut
             '</TimeSpan>\n'],...
-            datestr(OPT.timeIn,29),datestr(OPT.timeOut,29));
+            datestr(OPT.timeIn,'yyyy-mm-ddTHH:MM:SS'),datestr(OPT.timeOut,'yyyy-mm-ddTHH:MM:SS'));
     else
         OPT.timeSpan = sprintf([...
             '<TimeStamp>\n'...
             '<when>%s</when>\n'...OPT.timeIn
             '</TimeStamp>\n'],...
-            datestr(OPT.timeIn,29));
+            datestr(OPT.timeIn,'yyyy-mm-ddTHH:MM:SS'));
     end
 else
     OPT.timeSpan ='';
@@ -151,7 +159,7 @@ if succes
         OPT.timeSpan,...
         -1,-1,...
         c.N,c.S,c.W,c.E,...
-        [OPT.kmlName '/00001.kml']);
+        [OPT.Path OPT.Name '/00001.kml']);
 
     %% and write the KML
     OPT.fid=fopen(OPT.fileName,'w');

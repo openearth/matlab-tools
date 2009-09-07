@@ -6,11 +6,9 @@ function [OPT, Set, Default] = KMLpcolor(lat,lon,c,varargin)
 % If c and lat have the same dimensions, c is calculated as the mean value 
 % of the surrounding gridpoints. 
 %
-% For the additional <keyword,value> pairs call
+% For the <keyword,value> pairs and their defaults call
 %
 %    OPT = KMLpcolor()
-%
-% see the keyword/vaule pair defaults for additional options
 %
 % See also: googlePlot
 
@@ -59,4 +57,4 @@ end
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
-KMLsurf(lat,lon,c,c,OPT);
+KMLsurf(lat,lon,0.*lat,c,OPT); % do not pass c as z, because c can be at centers, while z needs to be at corners

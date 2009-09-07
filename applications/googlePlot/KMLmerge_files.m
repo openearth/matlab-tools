@@ -2,6 +2,7 @@ function KMLmerge_files(varargin)
 %
 % Merges all KML files in a certain directory
 %
+%See also: googlePLot
 
 %%
 if isempty(varargin)

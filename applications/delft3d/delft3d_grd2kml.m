@@ -17,11 +17,12 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
   %grdfile         = 'lake_and_sea_5_ll.grd';
    OPT.epsg        = [];  % 28992; % 7415; % 28992; ['Amersfoort / RD New']
    OPT.dep         = [];  %'dep_at_cor_triangulated_filled_corners.dep';
-   OPT.ddep        = 30;  % offset
-   OPT.fdep        = 200; % factor
-   OPT.clim        = [];  %
+   OPT.ddep        = 200;  % offset
+   OPT.fdep        = 10; % factor
+   OPT.clim        = [-200 0];  %
    OPT.debug       = 1;
    OPT.reversePoly = true;
+   OPT.colorSteps  = 62;
 
 
    OPT.mdf    = [];  % or dpsopt
@@ -35,9 +36,12 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
    
    G = delft3d_io_grd('read',grdfile);
    
-   if     ~strcmpi(G.CoordinateSystem,'sperical') & isempty(OPT.epsg)
+   if     ~strcmpi(G.CoordinateSystem,'spherical') & isempty(OPT.epsg)
       error('no latitide and longitudes given')
-   elseif ~strcmpi(G.CoordinateSystem,'sperical')  
+   elseif    strcmpi(G.CoordinateSystem,'spherical')  
+       G.cor.lon = G.cor.x;
+       G.cor.lat = G.cor.y;
+   elseif ~strcmpi(G.CoordinateSystem,'spherical')  
       [G.cor.lon,G.cor.lat,CS]=convertCoordinates(G.cor.x,G.cor.y,'CS1.code',OPT.epsg,'CS2.code',4326);
    end
 
@@ -60,7 +64,8 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
    if OPT.debug
       TMP = figure;
       pcolorcorcen(G.cor.lon,G.cor.lat,-G.cor.dep);
-      colorbar
+      caxis([OPT.clim])
+      colorbarwithtitle('depth [m]')
       pausedisp
       try;close(TMP);end
    end
@@ -69,11 +74,13 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
                    'fileName',[filename(grdfile),'_2D.kml'],...
                 'reversePoly',OPT.reversePoly,...
                        'clim',OPT.clim,...
+                  'colorSteps',OPT.colorSteps,...
                     'kmlName','depth [m]');
    
    KMLsurf  (G.cor.lat,G.cor.lon,(-G.cor.dep+OPT.ddep)*OPT.fdep,... % at corners for z !!
                              -G.cen.dep,...
                        'clim',OPT.clim,...
+                  'colorSteps',OPT.colorSteps,...
                     'fileName',[filename(grdfile),'_3D.kml'],...
                      'kmlName','depth [m]',...
                  'polyOutline',1,...

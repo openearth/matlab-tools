@@ -1,7 +1,17 @@
 function [OPT, Set, Default] = KMLsurf(lat,lon,z,varargin)
 % KMLSURF Just like surf
 %
-% see the keyword/vaule pair defaults for additional options
+%   [OPT, Set, Default] = KMLsurf(lat,lon,z,<keyword,value>)
+%   [OPT, Set, Default] = KMLsurf(lat,lon,z,c,<keyword,value>)
+%
+% where z needs to be specified at the corners (same size as lon,lat
+% wheras c can be specified  either at the corners or at the centers.
+% If c and lat have the same dimensions (c at corners), c is calculated 
+% ath the centers as the mean value of the surrounding gridpoints. 
+%
+% For the <keyword,value> pairs and their defaults call
+%
+%    OPT = KMLsurf()
 %
 % See also: googlePlot
 
