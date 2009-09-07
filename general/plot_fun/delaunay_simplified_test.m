@@ -1,17 +1,17 @@
-function testresult = KMLtrisurf_test()
-% KMLTRISURF_TEST  One line description goes here
-%
+function testresult = delaunay_simplified_test()
+% DELAUNAY_SIMPLIFIED_TEST  One line description goes here
+%  
 % More detailed description of the test goes here.
 %
 %
-%   See also
+%   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 <Deltares>
 %       Thijs Damsma
 %
-%       <Thijs.Damsma@Deltares.nl>
+%       <Thijs.Damsma@Deltares.nl>	
 %
 %       Deltares
 %       P.O. Box 177
@@ -33,9 +33,9 @@ function testresult = KMLtrisurf_test()
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and
+% OpenEarthTools is an online collaboration to share and manage data and 
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute
+% Sign up to recieve regular updates of this function, and to contribute 
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -55,36 +55,24 @@ function testresult = KMLtrisurf_test()
 %% $RunCode
 % Write test code here
 try
+    % some input
     [lat,lon] = meshgrid(54:.1:57,2:.1:5);
-    z = peaks(31); z = abs(z);  z(z<1) = nan;
-    tolerance = .5;
-  
+    z = peaks(31);
+    z = abs(z);
+    z(z<1) = nan;
+   
+    % call function
+     tolerance = .5;
     tri1 = delaunay_simplified(lat,lon,z,tolerance);
-    KMLtrisurf(tri1,lat-3,lon-3,z,'fileName',KML_testdir('KMLtrisurf_1.kml'),'zScaleFun',@(z) (z+1).*2000,'reversePoly',true);
+    [tri2,x1,y1,z1] = delaunay_simplified(lat,lon,z,tolerance);
 
-    tri2 = delaunay(lat,lon);
-    KMLtrisurf(tri2,lat-3,lon-6,z,'fileName',KML_testdir('KMLtrisurf_2.kml'),'zScaleFun',@(z) (z+1).*2000,'reversePoly',true);
 
-    % data from netCDF
-    url = vaklodingen_url; url = url{127};
-    x = nc_varget(url,'x');
-    y = nc_varget(url,'y');
-    z = nc_varget(url,'z',[0,0,0],[1,-1,-1]);
-    [x,y] = meshgrid(x,y);
-
-    disp(['elements: ' num2str(sum(~isnan(z(:))))]);
-    tolerance = 2;
-    tri = delaunay_simplified(x,y,z,tolerance,'maxSize',10000);
-    [lon,lat] = convertCoordinates(x,y,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
-    % plot in Google Earth
-    KMLtrisurf(tri,lat,lon,z,'fileName',KML_testdir('KMLtrisurf_3.kml'),'zScaleFun',@(z) abs(z).*10);
-
-    [lat,lon] = meshgrid(54:.1:57,2:.1:5);
-    z = peaks(31); z = abs(z); tolerance = 0.3;
-    tri = delaunay_simplified(lat,lon,z,tolerance);
-    for ii =4:9;
-        KMLtrisurf(tri,lat+12,lon,z,'fileName',KML_testdir(['KMLtrisurf_' num2str(ii) '.kml']),'zScaleFun',@(z) (z+5)*(3+cos(ii))*500,'reversePoly',true,'timeIn',ii,'timeOut',ii+1);
-    end
+    h1 = subplot(2,1,1);
+    trisurf(tri1,lat,lon,z);
+  
+    h2 = subplot(2,1,2);
+    trisurf(tri2,x1,y1,z1);
+    
     testresult = true;
 catch
     testresult = false;

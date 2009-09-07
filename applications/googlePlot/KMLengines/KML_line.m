@@ -17,10 +17,10 @@ function [output] = KML_line(lat,lon,z,varargin)
 %
 %     fid         = fopen('a_red_line.kml','w');
 %     S.name      = 'red';
-%     S.lineColor = [1 0 0];  % color of the lines in RGB 
+%     S.lineColor = [1 0 0];  % color of the lines in RGB
 %     S.lineAlpha = [1] ;     % transparency of the line, (0..1) with 0 transparent
 %     S.lineWidth = 1;        % line width, can be a fraction
-%     
+%
 %     kml         = KML_header('name','curl');
 %     kml         = [kml KML_style(S)];
 %     kml         = [kml KML_line(-90:90,-180:2:180,0:1:180,'styleName',S.name)];
@@ -35,7 +35,7 @@ function [output] = KML_line(lat,lon,z,varargin)
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma
 %
-%       Thijs.Damsma@deltares.nl	
+%       Thijs.Damsma@deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -76,7 +76,7 @@ OPT.name       = 'line';
 OPT = setProperty(OPT,varargin{:});
 
 if isempty(OPT.styleName)
-   warning('property ''stylename'' required') %#ok<WNTAG>
+    warning('property ''stylename'' required') %#ok<WNTAG>
 end
 
 %% preprocess visibility
@@ -127,25 +127,18 @@ else
 end
 
 %% put all coordinates in one vector and split vector at nan's
-coordinates     = [lon(:)'; lat(:)'; z(:)'];
-nanindex        = find(any(isnan(coordinates),1));
-nanindex(end+1) = length(coordinates(1,:))+1;
-
-coords{1}=coordinates(:,1:nanindex(1)-1);
-if length(nanindex)>1
-    for ii=2:length(nanindex);
-        coords{ii}=coordinates(:,nanindex(ii-1)+1:nanindex(ii)-1); %#ok<AGROW>
-    end
-end
+coordinates  = [lon(:)'; lat(:)'; z(:)'];
+notnanindex  = find(~any(isnan(coordinates),1));
+coords_index = [notnanindex([true ~(notnanindex(2:end)-notnanindex(1:end-1)==1)])'...
+    notnanindex([~(notnanindex(2:end)-notnanindex(1:end-1)==1) true])'];
 
 output = [];
-for ii = 1:length(coords)
-if ~isempty(coords{ii})
-%% get coordinaets
-    coordinates  = sprintf(...
+for ii = 1:size(coords_index,1)
+    % coordinateString
+    coordinateString  = sprintf(...
         '%3.8f,%3.8f,%3.3f ',...coords);
-        coords{ii});
-%% generate output
+        coordinates(:,coords_index(ii,1):coords_index(ii,2)));
+    % generate output
     output = [output sprintf([...
         '<Placemark>\n'...
         '%s'...visibility
@@ -161,6 +154,5 @@ if ~isempty(coords{ii})
         '</coordinates>\n',...
         '</LineString>\n'...
         '</Placemark>\n'],...
-        visibility,timeSpan,OPT.name,OPT.styleName,extrude,tessellate,altitudeMode,coordinates)];
-end
+        visibility,timeSpan,OPT.name,OPT.styleName,extrude,tessellate,altitudeMode,coordinateString)];
 end

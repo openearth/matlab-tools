@@ -40,6 +40,30 @@ function [OPT, Set, Default] = KMLtrisurf(tri,lat,lon,z,varargin)
 % $HeadURL$
 % $Keywords: $
 
+%% process varargin
+OPT.fileName       = [];
+OPT.kmlName        = [];
+OPT.lineWidth      = 1;
+OPT.lineColor      = [0 0 0];
+OPT.lineAlpha      = 1;
+OPT.colormap       = 'jet';
+OPT.colorSteps     = 16;
+OPT.fillAlpha      = 0.6;
+OPT.fileName       = '';
+OPT.polyOutline    = 0;
+OPT.polyFill       = 1;
+OPT.openInGE       = false;
+OPT.reversePoly    = false;
+OPT.extrude        = 0;
+OPT.cLim           = [];
+OPT.zScaleFun      = @(z) (z+20).*5;
+OPT.timeIn        = [];
+OPT.timeOut       = [];
+
+if nargin==0
+  return
+end
+
 %% error check
 if all(isnan(z(:)))
     disp('warning: No surface could be constructed, because there was no valid height data provided...') %#ok<WNTAG>
@@ -47,7 +71,7 @@ if all(isnan(z(:)))
 end
 %% assign c if it is given
 if ~isempty(varargin)
-    if ~ischar(varargin{1});
+    if ~ischar(varargin{1})&&~isstruct(varargin{1});
         c = varargin{1};
         varargin = varargin(2:length(varargin));
     else
@@ -56,28 +80,26 @@ if ~isempty(varargin)
 else
     c =  mean(z(tri),2);
 end
-%% process varargin
-OPT.fileName = [];
-OPT.kmlName = 'untitled';
-OPT.lineWidth = 1;
-OPT.lineColor = [0 0 0];
-OPT.lineAlpha = 1;
-OPT.colormap = 'jet';
-OPT.colorSteps = 16;
-OPT.fillAlpha = 0.6;
-OPT.fileName = '';
-OPT.polyOutline = 0;
-OPT.polyFill = 1;
-OPT.openInGE = false;
-OPT.reversePoly = false;
-OPT.extrude = 0;
-OPT.cLim = [min(c(:)) max(c(:))];
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
-%% get filename
+
+%% set properties
+[OPT, Set, Default] = setProperty(OPT, varargin{:});
+
+%% filename
+% gui for filename, if not set yet
 if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','untitled.kml');
+    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','trisurf.kml');
     OPT.fileName = fullfile(filePath,fileName);
+end
+% set kmlName if it is not set yet
+if isempty(OPT.kmlName)
+    [ignore OPT.kmlName] = fileparts(OPT.fileName);
+end
+
+%% set cLim
+if isempty(OPT.cLim)
+    OPT.cLim         = [min(c(:)) max(c(:))];
 end
 
 %% pre-process data
@@ -115,11 +137,12 @@ end
 %% print and clear output
 fprintf(OPT.fid,output); 
 %% POLYGON
+%% POLYGON
 OPT_poly = struct(...
 'name','',...
 'styleName',['style' num2str(1)],...
-'timeIn',[],...
-'timeOut',[],...
+'timeIn' ,datestr(OPT.timeIn ,29),...
+'timeOut',datestr(OPT.timeOut,29),...
 'visibility',1,...
 'extrude',OPT.extrude);
 % preallocate output
@@ -128,6 +151,10 @@ kk = 1;
 
 disp(['creating surf with ' num2str(size(tri,1)) ' elements...'])
 
+if OPT.reversePoly
+   tri =  tri(:,[3 2 1]);
+end
+
 for ii=1:size(tri,1)
     OPT_poly.styleName = sprintf('style%d',c(ii));
     %             if OPT.reversePoly
@@ -135,7 +162,7 @@ for ii=1:size(tri,1)
     %                 LON = LON(end:-1:1);
     %                   Z =   Z(end:-1:1);
     %             end
-    newOutput = KML_poly(lat(tri(ii,[1:3 1])),lon(tri(ii,[1:3 1])),z(tri(ii,[1:3 1])),OPT_poly);
+    newOutput = KML_poly(lat(tri(ii,[1:3 1])),lon(tri(ii,[1:3 1])),OPT.zScaleFun(z(tri(ii,[1:3 1]))),OPT_poly);
     output(kk:kk+length(newOutput)-1) = newOutput;
     kk = kk+length(newOutput);
     if kk>1e5

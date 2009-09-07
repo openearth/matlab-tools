@@ -1,8 +1,8 @@
-function [tri,x1,y1,z1] = delaunay_simplified(x,y,z,tolerance,maxSize,maxIterations)
+function [tri,x1,y1,z1] = delaunay_simplified(x,y,z,tolerance,varargin)
 % DELAUNAY_SIMPLIFIED makes a simplified delaunay triangulated mesh
 % 
 % For creating meshes that resemble a more complex mesh to a certain
-% degree (specified by tolernace;, the maximum error there may exist
+% degree (specified by tolerance;, the maximum error that may exist
 % between the final grid and the original datapoints.
 %
 % All nan edges withing the grid are used in triangulation, but no 
@@ -11,21 +11,38 @@ function [tri,x1,y1,z1] = delaunay_simplified(x,y,z,tolerance,maxSize,maxIterati
 % The script is does not find an optimum solution, but works well enough in
 % reducing triangles.
 %
-% Eaxample (play with different values for tolerance:
+% Example1
 %
-%     url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB119_3534.nc';
+%   % some input
+%     [lat,lon] = meshgrid(54:.1:57,2:.1:5);
+%     z = peaks(31); z = abs(z);  z(z<1) = nan;
+%    
+%   % call function
+%     h1 = subplot(2,1,1);
+%       tolerance = .5;
+%       tri1 = delaunay_simplified(lat,lon,z,tolerance);
+%       trisurf(tri1,lat,lon,z);
+%     h2 = subplot(2,1,2);
+%       tri2 = delaunay(lat,lon);
+%       trisurf(tri2,lat,lon,z);
+%
+% Example2 (play with different values for tolerance:
+%   % data from netCDF
+%     url = vaklodingen_url; url = url{127};
 %     x = nc_varget(url,'x');
 %     y = nc_varget(url,'y');
 %     z = nc_varget(url,'z',[0,0,0],[1,-1,-1]);
 %     [x,y] = meshgrid(x,y);
-% 
-%     disp(['elements: ' num2str(sum(~isnan(z(:))))]);
-%     tolerance = .5;  maxSize = 100000;
-%     [tri,x2,y2,z2] = delaunay_simplified(x,y,z,tolerance,maxSize);
-%     [lat,lon] = convertCoordinatesNew(x2,y2,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
-%     z2= (z2+15)*2;
-%     KMLtrisurf(tri,lat,lon,z2)
 %
+
+%     disp(['elements: ' num2str(sum(~isnan(z(:))))]);
+%     tolerance = .5; 
+%     tri = delaunay_simplified(x,y,z,tolerance,'maxSize',10000);
+%     [lon,lat] = convertCoordinates(x,y,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+%     z= (z+15)*2;
+%   % plot in Google Earth
+%     KMLtrisurf(tri,lat,lon,z)
+%   
 % See also: delaunay, trisurf, KMLtrisurf 
 
 %   --------------------------------------------------------------------
@@ -60,6 +77,15 @@ function [tri,x1,y1,z1] = delaunay_simplified(x,y,z,tolerance,maxSize,maxIterati
 % $HeadURL$
 % $Keywords: $
 
+%%
+
+%% process varargin
+
+OPT.maxSize       = 1000;
+OPT.maxIterations = 100;
+
+[OPT, Set, Default] = setProperty(OPT, varargin);
+
 %% find convex hull of not nan z values
 
 A = ~isnan(z);
@@ -73,85 +99,87 @@ Aup = [ A(2:end,:);false(1,size(A,2))];
 Adown = [false(1,size(A,2));A(1:end-1,:)];
 
 A = A|Aleft|Aright|Aup|Adown;
-
-
-
-xi = x(A);
-yi = y(A);
-zi = z(A);
-
-ind = find(isnan(zi));
-zi(isnan(zi)) = ceil(max(z(:))+2*tolerance+15);
+nans = isnan(z);
+ind = find(isnan(z)&A);
+z(nans) = ceil(max(z(:))+2*tolerance+15);
 
 %% assign start values
-ind = [ind; convhull(xi,yi)];
+
+ind = [ind; convhull(x,y)];
+
 ind = unique(ind);
-x1 = xi(ind);
-y1 = yi(ind);
-z1 = zi(ind);
 
 %% iteration
-error = inf;
+fault = inf;
 iteration = 0;
 tri2 = 0;
-while error>tolerance && size(tri2,1)<maxSize && iteration<maxIterations
+while fault>tolerance && size(tri2,1)<OPT.maxSize && iteration<OPT.maxIterations
     iteration = iteration+1;
-    % Triangularize the data
-
-    tri2 = delaunayn([x1 y1]);
-
+    % Triangulate the data
+    try
+        tri2 = delaunayn([x(ind) y(ind)]);
+    catch
+        tri2 = delaunayn([x(ind) y(ind)],{'QJ','Pp'});
+    end
+   
     % Find the nearest triangle (t)
-    t = tsearch(x1,y1,tri2,xi,yi);
-
-    % Only keep the relevant triangles.
-    out = find(isnan(t));
-    if ~isempty(out), t(out) = ones(size(out)); end
-    tri = tri2(t,:);
-
+    t = tsearch(x(ind),y(ind),tri2,x,y);
+        % Only keep the relevant triangles.
+     out = find(isnan(t));
+     if ~isempty(out), t(out) = ones(size(out)); end
+    tri = tri2(t(:),:);
+    tri = ind(tri);
     % Compute Barycentric coordinates (w).  P. 78 in Watson.
-    del = (x1(tri(:,2))-x1(tri(:,1))) .* (y1(tri(:,3))-y1(tri(:,1))) - ...
-        (x1(tri(:,3))-x1(tri(:,1))) .* (y1(tri(:,2))-y1(tri(:,1)));
-    w(:,3) = ((x1(tri(:,1))-xi).*(y1(tri(:,2))-yi) - (x1(tri(:,2))-xi).*(y1(tri(:,1))-yi)) ./ del;
-    w(:,2) = ((x1(tri(:,3))-xi).*(y1(tri(:,1))-yi) - (x1(tri(:,1))-xi).*(y1(tri(:,3))-yi)) ./ del;
-    w(:,1) = ((x1(tri(:,2))-xi).*(y1(tri(:,3))-yi) - (x1(tri(:,3))-xi).*(y1(tri(:,2))-yi)) ./ del;
+    del = (x(tri(:,2))-x(tri(:,1))) .* (y(tri(:,3))-y(tri(:,1))) - ...
+        (x(tri(:,3))-x(tri(:,1))) .* (y(tri(:,2))-y(tri(:,1)));
+    w(:,3) = ((x(tri(:,1))-x(:)).*(y(tri(:,2))-y(:)) - (x(tri(:,2))-x(:)).*(y(tri(:,1))-y(:))) ./ del;
+    w(:,2) = ((x(tri(:,3))-x(:)).*(y(tri(:,1))-y(:)) - (x(tri(:,1))-x(:)).*(y(tri(:,3))-y(:))) ./ del;
+    w(:,1) = ((x(tri(:,2))-x(:)).*(y(tri(:,3))-y(:)) - (x(tri(:,3))-x(:)).*(y(tri(:,2))-y(:))) ./ del;
     w(out,:) = zeros(length(out),3);
-
-    z3 = z1(:).'; % Treat z as a row so that code below involving
+    z3 = z(ind).'; % Treat z as a row so that code below involving
     % z(tri) works even when tri is 1-by-3.
-    z2 = sum(z3(tri) .* w,2);
-
+    z2 = sum(z3(tri2(t,:)) .* w,2);
+    
     % find triangles that need to be refined.
 
-    error = zi-z2;
+    fault = z(:)-z2;
 %     t_unique = unique(t(error>tolerance));
 
     
-    temp = 0.1/ceil(max(abs(error)));
-    M = t+error*temp;
-    [M,ind] = sort(M);
-    addInd = ind([true;diff(M)>.3]|[diff(M)>.3;true]) ;
-    addInd = addInd(abs(error(addInd))>tolerance);
-    addInd = unique(addInd);
+    temp = 0.1/ceil(max(abs(fault)));
+    M = t(:)+fault*temp;
+    [M,ind2] = sort(M);
+    addInd = ind2([true;diff(M)>.3]|[diff(M)>.3;true]) ;
+    addInd = addInd(abs(fault(addInd))>tolerance);
     %add newCoords
-    x1 = [x1; xi(addInd)];
-    y1 = [y1; yi(addInd)];
-    z1 = [z1; zi(addInd)];
-    
-    [error,ind] = max(abs(error));
+    ind = unique([ind; addInd]);
+
+    [fault,ind2] = max(abs(fault(~nans)));
   
     disp(sprintf('iteration: % 3d  Number of triangles:% 6d  error = % 6.2f at index % 4d',...
-        iteration,size(tri2,1),error,ind));
+        iteration,size(tri2,1),fault,ind2));
 end
 
-
-tri = delaunay(x1,y1);
-
+tri = delaunay(x(ind),y(ind));
 %% find triangles with nan values inside
-ind = ismember(tri,find(z1==ceil(max(z(:))+2*tolerance+15)));
-ind = any(ind,2);
+ind2 = ismember(tri,find(z(ind)==max(z(:))));
+ind2 = any(ind2,2);
 
 %% delete triangles with nan values
-tri(ind,:) = [];
+tri(ind2,:) = [];
+
+if nargout == 1
+    tri = ind(tri);
+elseif nargout==4
+    x1      = x(ind);
+    y1      = y(ind);
+    z(nans) = nan;
+    z1      = z(ind);
+    
+else
+    error('nargout must be 1 or 4');
+end
+
 disp(sprintf('Completed,  % 6d triangles created',...
         size(tri,1)));
 
