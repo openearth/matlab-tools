@@ -190,33 +190,57 @@ for i = 1:size(varCombs, 1)
     nameYVar = varNames{idxYVar};
 
     % plot scatter points
-    scatter(fail(:, idxXVar), fail(:, idxYVar), 'SizeData', 9, 'MarkerFaceColor', [0 0 0], 'MarkerEdgeColor', [0 0 0]); hold on;
-    scatter(noFail(:, idxXVar), noFail(:, idxYVar), 'SizeData', 9, 'MarkerFaceColor', [1 1 1], 'MarkerEdgeColor', [0 0 0]); hold on;
+    scatter(fail(:, idxXVar), fail(:, idxYVar),...
+        'SizeData', 9,...
+        'MarkerFaceColor', [0 0 0],...
+        'MarkerEdgeColor', [0 0 0],...
+        'DisplayName', 'Failure');
+    hold on;
+    scatter(noFail(:, idxXVar), noFail(:, idxYVar),...
+        'SizeData', 9,...
+        'MarkerFaceColor', [1 1 1],...
+        'MarkerEdgeColor', [0 0 0],...
+        'DisplayName', 'Non-failure');
     
     % plot design point
     if OPT.plotDP && strcmp(OPT.space, 'u')
         
         % plot design point according to FORM method
         if ~isempty(OPT.equivFORMResult)
-            scatter(OPT.equivFORMResult.Output.designPoint.u(idxXVar), OPT.equivFORMResult.Output.designPoint.u(idxYVar), 'SizeData', 25, 'MarkerFaceColor', [0 1 0], 'MarkerEdgeColor', [0 0 0]); hold on;
+            scatter(OPT.equivFORMResult.Output.designPoint.u(idxXVar), OPT.equivFORMResult.Output.designPoint.u(idxYVar),...
+                'SizeData', 25,...
+                'MarkerFaceColor', [0 1 0],...
+                'MarkerEdgeColor', [0 0 0]);
+            hold on;
         end
         
         % plot first estimation of design point
         if ~isempty(result.Output.designPoint.a) && ~isempty(result.Output.designPoint.c)
-            line([result.Output.designPoint.a(idxXVar) result.Output.designPoint.c(idxXVar)], [result.Output.designPoint.a(idxYVar) result.Output.designPoint.c(idxYVar)], 'LineWidth', 1, 'Color', [1 0 0]);
+            line([result.Output.designPoint.a(idxXVar) result.Output.designPoint.c(idxXVar)], [result.Output.designPoint.a(idxYVar) result.Output.designPoint.c(idxYVar)],...
+                'LineWidth', 1,...
+                'Color', [1 0 0]);
             if ~isempty(result.Output.designPoint.u)
-                scatter(result.Output.designPoint.u(idxXVar), result.Output.designPoint.u(idxYVar), 'SizeData', 25, 'MarkerFaceColor', [1 0 0], 'MarkerEdgeColor', [0 0 0]); hold on;
+                scatter(result.Output.designPoint.u(idxXVar), result.Output.designPoint.u(idxYVar),...
+                    'SizeData', 25,...
+                    'MarkerFaceColor', [1 0 0],...
+                    'MarkerEdgeColor', [0 0 0]);
+                hold on;
             end
         end
         
         % plot optimized design point
         if isfield(result.Output, 'designPointOptimized') && ~isempty(result.Output.designPointOptimized.u)
-            scatter(result.Output.designPointOptimized.u(idxXVar), result.Output.designPointOptimized.u(idxYVar), 'SizeData', 25, 'MarkerFaceColor', [1 .5 0], 'MarkerEdgeColor', [0 0 0]); hold on;
+            scatter(result.Output.designPointOptimized.u(idxXVar), result.Output.designPointOptimized.u(idxYVar),...
+                'SizeData', 25,...
+                'MarkerFaceColor', [1 .5 0],...
+                'MarkerEdgeColor', [0 0 0]);
+            hold on;
         end
     end
     
     % style scatter plot
     xlabel(nameXVar); ylabel(nameYVar);
+    legend('toggle')
 end
 
 %% return variable
