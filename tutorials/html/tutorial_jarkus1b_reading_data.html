@@ -10,18 +10,19 @@ This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
       -->
       <title>read jarkus example</title>
-      <meta name="generator" content="MATLAB 7.5">
-      <meta name="date" content="2009-09-04">
+      <meta name="generator" content="MATLAB 7.8">
+      <meta name="date" content="2009-09-07">
       <meta name="m-file" content="tutorial_jarkus1b_reading_data">
-      <link type="text/css" href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/css/custom-theme/jquery-ui-1.7.2.custom.css" rel="stylesheet"><script type="text/javascript" src="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/testscripts.js"></script><script type="text/javascript">
+      <link type="text/css" href="http://fisheye2.atlassian.com/browse/~raw,r=929/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/css/custom-theme/jquery-ui-1.7.2.custom.css" rel="stylesheet"><script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=929/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=929/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/js/testscripts.js"></script><script type="text/javascript">
   	$(document).ready(function ()
   	{
-  	// Accordion
-  	$(".accordion").accordion({ header: "h2" });
-  	
   	// Copy content
 	copycontent();
 
+  	// Accordion
+  	$(".accordion").accordion({ header: "h2" });
+	$(".accordion").accordion('option', 'autoHeight', false);
+	$(".accordion").accordion('option', 'collapsible', true);
   	});
     </script><style>
 
@@ -64,11 +65,11 @@ p.footer {
   </style></head>
    <body LINK="#48339F" VLINK="#48339F" ALINK="#48339F">
       <div class="content">
-         <div class="introduction ui-widget-content ui-corner-all">
+         <div class="introduction ui-widget ui-widget-content ui-corner-all">
             <h1>read jarkus example</h1>
-            <introduction>
+            <div>
                <p>another example reading JarKus data</p>
-            </introduction>
+            </div>
          </div>
          <div class="accordion">
             <div>
@@ -128,7 +129,7 @@ plot(x, z)
             </div>
          </div>
          <p class="footer"><br>
-            Published with MATLAB&reg; 7.5<br></p>
+            Published with MATLAB&reg; 7.8<br></p>
       </div>
       <!--
 ##### SOURCE BEGIN #####
