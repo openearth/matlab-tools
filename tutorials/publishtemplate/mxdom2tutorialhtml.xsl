@@ -53,10 +53,10 @@ To make changes, update the M-file and republish this document.
       <xsl:attribute name="content"><xsl:value-of select="m-file"/></xsl:attribute>
     </meta>
 
-    <link type="text/css" href="http://fisheye2.atlassian.com/browse/~raw,r=929/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/css/custom-theme/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
-    <script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=929/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/js/jquery-1.3.2.min.js"></script>
-    <script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=929/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/js/jquery-ui-1.7.2.custom.min.js"></script>
-    <script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=929/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/js/matlab2accordion.js"></script>
+    <link type="text/css" href="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/css/custom-theme/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+    <script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/js/jquery-1.3.2.min.js"></script>
+    <script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/js/jquery-ui-1.7.2.custom.min.js"></script>
+    <script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/tutorials/publishtemplate/script/js/matlab2accordion.js"></script>
     <script type="text/javascript">
   	$(document).ready(function ()
   	{
@@ -67,6 +67,8 @@ To make changes, update the M-file and republish this document.
   	$(".accordion").accordion({ header: "h2" });
 	$(".accordion").accordion('option', 'autoHeight', false);
 	$(".accordion").accordion('option', 'collapsible', true);
+	$(".accordion").accordion('activate',false);
+	$(".accordion").accordion('option', 'clearStyle', true);
   	});
     </script>
     
