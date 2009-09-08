@@ -1,5 +1,5 @@
 %% Initializing oetsettings
-% if you use MATLAB and OpenEarth, you shoudl always start off with running
+% if you use MATLAB and OpenEarth, you should always start off with running
 % oetsettings. Oetsettings is essential to unleash the power of OpenEarth 
 % to MATLAB. It adds all relevant toolbox paths to the matlab search
 % path. 
