@@ -1,13 +1,13 @@
 function copycontent() 
 	{
 		var lengthch = $(".accordion").children().length -1;
-		lasthead = 0;
+		lasthead = null;
 		for (i = 0; i <= lengthch; i++)
 		{
 			chldr = $($(".accordion").children()[i]).children("h2");
 			if (chldr.length==0)
 			{
-			if (lasthead == 0)
+			if (lasthead == null)
 			{
 			// do nothing
 			}
