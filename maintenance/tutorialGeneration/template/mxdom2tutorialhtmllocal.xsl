@@ -53,10 +53,10 @@ To make changes, update the M-file and republish this document.
       <xsl:attribute name="content"><xsl:value-of select="m-file"/></xsl:attribute>
     </meta>
 
-    <link type="text/css" href="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/tutorialGeneration/template/script/css/custom-theme/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
-    <script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/tutorialGeneration/template/script/js/jquery-1.3.2.min.js"></script>
-    <script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/tutorialGeneration/template/script/js/jquery-ui-1.7.2.custom.min.js"></script>
-    <script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/tutorialGeneration/template/script/js/matlab2accordion.js"></script>
+    <link type="text/css" href="script/css/custom-theme/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+    <script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+    <script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+    <script type="text/javascript" src="script/js/matlab2accordion.js"></script>
     <script type="text/javascript">
   	$(document).ready(function ()
   	{
