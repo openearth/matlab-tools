@@ -145,13 +145,23 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    if ~isempty(idname)
    D.station_id   = nc_varget(ncfile,idname);
    if isnumeric(D.station_id)
-   D.station_name = num2str(D.station_id);
+   D.station_id   = num2str(D.station_id);
    else
-   D.station_name =         D.station_id;
+   D.station_id   =         D.station_id;
    end
    else
    D.station_name = '';
    warning('no unique station id specified')
+   end
+
+   idname         = nc_varfind(ncfile, 'attributename', 'long_name', 'attributevalue', 'station name');
+   if ~isempty(idname)
+    D.station_name = nc_varget(ncfile,idname);
+   else
+   idname         = nc_varfind(ncfile, 'attributename', 'long_name', 'attributevalue', 'station_name');
+   if ~isempty(idname)
+   D.station_name = nc_varget(ncfile,idname);
+   end
    end
 
 %% Find specified (or all parameters) that have time as dimension
@@ -211,7 +221,8 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    if OPT.plot
    if ~isempty(OPT.varname)
 
-      plot    (D.datenum,D.(OPT.varname))
+      plot    (D.datenum,D.(OPT.varname),'displayname',[mktex(M.(OPT.varname).long_name),' [',...
+                                                        mktex(M.(OPT.varname).units    ),']'])
       datetick('x')
       grid     on
       title   ({mktex(fileinfo.Filename),...

@@ -96,6 +96,8 @@ function varargout = struct2xls(outputfile,D,varargin)
       varargin{1} = [];
       attnames    = fieldnames(M);
       natt        = length(attnames);
+   else
+      natt        = 0;
    end
 
 %% Parse struct to netCDF
