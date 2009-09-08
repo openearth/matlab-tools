@@ -1,4 +1,3 @@
-function how_to_create_new_functions
 %% Creating new functions
 % To keep the OpenEarth toolbox well organised, it is of crucial importance
 % that all functions receive a proper help block (in Matlab this is the
