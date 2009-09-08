@@ -30,5 +30,5 @@ run D:\repositories\OpenEarthTools\oetsettings
 
 %%
 % 
-% <<_prerendered_create_shortcut.PNG>>
+% <<prerendered_images/create_shortcut.PNG>>
 % 
