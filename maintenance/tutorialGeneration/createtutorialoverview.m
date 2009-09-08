@@ -22,11 +22,12 @@ publishopts = struct(...
     'stylesheet',fullfile(openearthtoolsroot,'maintenance','tutorialGeneration','template','mxdom2tutorialhtmllocal.xsl'),...
     'catchError',true,...
     'outputDir',tutorialdir,...
-    'useNewFigure',false,...
+    'useNewFigure',true,...
     'codeToEvaluate',[]);
 
 cdtemp = cd;
 htmlref = cell(size(alldirs));
+openfigs = findobj('Type','figure');
 for idr = 1:length(alldirs)
     htmlref{idr} = cell(size(tutorials{idr}));
     for itutorials = 1:length(tutorials{idr})
@@ -44,7 +45,11 @@ for idr = 1:length(alldirs)
             end
             publishopts.codeToEvaluate = ['evalinemptyworkspace(''' tutorialname ''');'];
             %% save reference
+            
             htmlref{idr}{itutorials} = publish(tutorialname,publishopts);
+            newfigs = findobj('type','figure');
+            close(newfigs(~ismember(newfigs,openfigs)));
+            
         else
             %% copy html to tutorialdir
             copyfile(htmlfilesthere{find(~id,1,'first')},fullfile(tutorialdir,[tutorialname,'.html']));
@@ -190,7 +195,7 @@ for idr = 1:length(idapplications)
     dirnames = strread(alldirsstripped{dirid},'%s',-1,'delimiter',[filesep filesep]);
 
     str = cat(2,str,...
-        '				<li><span class="folder">', dirnames{end}, '</span>',char(10),...
+        '				<li><span class="folder">', dirnames{2}, '</span>',char(10),...
         '					<ul>',char(10));
     for ifiles = 1:length(tutorials{dirid})
         [dum name] = fileparts(htmlref{dirid}{ifiles});

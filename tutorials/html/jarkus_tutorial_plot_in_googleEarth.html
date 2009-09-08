@@ -117,7 +117,7 @@ grid <span class="string">on</span>
             <div>
                <h2><a>Make line plot</a></h2>
                <div>
-                  <p>This works as expected, so now we will plot the data. We will exagerate the z data, by adding 20 and multiplying by 5;</p><pre class="codeinput">KMLline(lat,lon,(zi+20)*5);
+                  <p>This works as expected, so now we will plot the data. We will exagerate the z data, by adding 20 and multiplying by 5;</p><pre class="codeinput">KMLline(lat,lon,(zi+20)*5,<span class="string">'fileName'</span>,fullfile(tempdir,<span class="string">'line.kml'</span>));
 </pre></div>
             </div>
             <div>
@@ -153,7 +153,7 @@ lon = repmat(lon,size(z,1),1);
                <div>
                   <p>An we must get the times.</p><pre class="codeinput">timeIn  = datenum(year,1,1);
 timeOut = datenum(year+1,1,1);
-KMLline(lat',lon',(zi'+20).*5,<span class="string">'timeIn'</span>,timeIn,<span class="string">'timeOut'</span>,timeOut);
+KMLline(lat',lon',(zi'+20).*5,<span class="string">'timeIn'</span>,timeIn,<span class="string">'timeOut'</span>,timeOut,<span class="string">'fileName'</span>,fullfile(tempdir,<span class="string">'line.kml'</span>));
 </pre></div>
             </div>
             <div>
@@ -228,13 +228,14 @@ timeOut = datenum(year+1,1,1);
                <div>
                   <ul>
                      <li>And finally we can call KMLline</li>
-                  </ul><pre class="codeinput">KMLline(lat2',lon2',zi',<span class="string">'timeIn'</span>,timeIn,<span class="string">'timeOut'</span>,timeOut,<span class="string">'zScaleFun'</span>,@(z) (z+20)*5);
+                  </ul><pre class="codeinput">KMLline(lat2',lon2',zi',<span class="string">'timeIn'</span>,timeIn,<span class="string">'timeOut'</span>,timeOut,<span class="keyword">...</span>
+        <span class="string">'zScaleFun'</span>,@(z) (z+20)*5,<span class="string">'fileName'</span>,fullfile(tempdir,<span class="string">'line.kml'</span>));
 </pre></div>
             </div>
             <div>
                <div>
-                  <p><img vspace="5" hspace="5" src="prerendered_images/jarkus5_2.PNG"> </p>
-               </div>
+                  <p><img vspace="5" hspace="5" src="prerendered_images/jarkus5_2.PNG"> </p><pre class="codeinput">delete(fullfile(tempdir,<span class="string">'line.kml'</span>));
+</pre></div>
             </div>
          </div>
          <p class="footer"><br>
@@ -278,7 +279,7 @@ grid on
 %% Make line plot
 % This works as expected, so now we will plot the data. We will exagerate
 % the z data, by adding 20 and multiplying by 5;
-KMLline(lat,lon,(zi+20)*5);
+KMLline(lat,lon,(zi+20)*5,'fileName',fullfile(tempdir,'line.kml'));
 %%
 % 
 % <<prerendered_images/jarkus5_1.PNG>>
@@ -302,7 +303,7 @@ lon = repmat(lon,size(z,1),1);
 % An we must get the times. 
 timeIn  = datenum(year,1,1);
 timeOut = datenum(year+1,1,1);
-KMLline(lat',lon',(zi'+20).*5,'timeIn',timeIn,'timeOut',timeOut);
+KMLline(lat',lon',(zi'+20).*5,'timeIn',timeIn,'timeOut',timeOut,'fileName',fullfile(tempdir,'line.kml'));
 
 %% Multiple animated transects
 % Finally we can also plot multiple jarkus transects at once. We will start
@@ -357,11 +358,16 @@ timeIn  = datenum(year,1,1);
 timeOut = datenum(year+1,1,1);
 %%
 % * And finally we can call KMLline
-KMLline(lat2',lon2',zi','timeIn',timeIn,'timeOut',timeOut,'zScaleFun',@(z) (z+20)*5);
+KMLline(lat2',lon2',zi','timeIn',timeIn,'timeOut',timeOut,...
+        'zScaleFun',@(z) (z+20)*5,'fileName',fullfile(tempdir,'line.kml'));
+     
 %%
 % 
 % <<prerendered_images/jarkus5_2.PNG>>
 % 
+
+
+delete(fullfile(tempdir,'line.kml'));  
 
 ##### SOURCE END #####
 -->

@@ -18,7 +18,7 @@ axis([30 80 3 17])
 %%
 % KMLline works just like line, except that one has to save the output
 % file, and open that in Google Earth to view the result.
-KMLline(lat,lon);
+KMLline(lat,lon,'fileName',fullfile(tempdir,'line.kml'));
 %% 
 % matlab can also draw 3 dimensional lines
 clf;
@@ -29,7 +29,7 @@ line(lat,lon,z)
 view([-3 88])
 %%
 % and so can KMLline
-KMLline(lat,lon,z);
+KMLline(lat,lon,z,'fileName',fullfile(tempdir,'line.kml'));
 %% 
 % Matlab can draw multiple lines at once
 [lat,lon] = meshgrid(90:-10:-90,0:.5:360);
@@ -39,7 +39,7 @@ line(lat,lon,z)
 view([66 89])
 %%
 % and so can KMLline
-KMLline(lat,lon,z);
+KMLline(lat,lon,z,'fileName',fullfile(tempdir,'line.kml'));
 %%
 % We can also add the transposed lines 
 line(lat',lon',z')
@@ -49,9 +49,10 @@ axis off
 % And so can KMLline. Save ase with a different name as the previous KML
 % file and open both in Google Earth.
 % Also, we set the 'fill' property to false
-KMLline(lat',lon',z','fill',false);
+KMLline(lat',lon',z','fill',false,'fileName',fullfile(tempdir,'line.kml'));
 %%
 % 
 % <<prerendered_images/googlePlot.PNG>>
 % 
 
+delete(fullfile(tempdir,'line.kml'));  

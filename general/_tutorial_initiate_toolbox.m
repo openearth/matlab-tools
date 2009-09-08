@@ -5,11 +5,10 @@
 % path. 
 
 %%
-% Figure out what folder oetsettings.m is located in, and the run it. 
-% (example for when OpenEarthTools checkout is in 
-% D:\repositories\OpenEarthTools)
-
-run D:\repositories\OpenEarthTools\oetsettings
+% Figure out what folder oetsettings.m is located in, and the run it.
+% Oetsettings is located in the Matlab directory of your OpenEarth checkout
+% 
+% |run ENTER_FILEPATH_HERE/oetsettings|
 
 %%
 % As you don't want to remember this code, but you will run it every time
@@ -21,11 +20,11 @@ run D:\repositories\OpenEarthTools\oetsettings
 
 %%
 % |restoredefaultpath|
-%%
-% |run('D:\repositories\OpenEarth\matlab\oetsettings.m')|
-%%
-% |cd D:\repositories\OpenEarth\matlab\|
-%%
+%
+% |run('ENTER_FILEPATH_HERE\oetsettings.m')|
+%
+% |cd ENTER_FILEPATH_HERE|
+%
 % |clc; clear; close;|
 
 %%

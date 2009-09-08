@@ -34,7 +34,7 @@ grid on
 %% Make line plot
 % This works as expected, so now we will plot the data. We will exagerate
 % the z data, by adding 20 and multiplying by 5;
-KMLline(lat,lon,(zi+20)*5);
+KMLline(lat,lon,(zi+20)*5,'fileName',fullfile(tempdir,'line.kml'));
 %%
 % 
 % <<prerendered_images/jarkus5_1.PNG>>
@@ -58,7 +58,7 @@ lon = repmat(lon,size(z,1),1);
 % An we must get the times. 
 timeIn  = datenum(year,1,1);
 timeOut = datenum(year+1,1,1);
-KMLline(lat',lon',(zi'+20).*5,'timeIn',timeIn,'timeOut',timeOut);
+KMLline(lat',lon',(zi'+20).*5,'timeIn',timeIn,'timeOut',timeOut,'fileName',fullfile(tempdir,'line.kml'));
 
 %% Multiple animated transects
 % Finally we can also plot multiple jarkus transects at once. We will start
@@ -113,8 +113,13 @@ timeIn  = datenum(year,1,1);
 timeOut = datenum(year+1,1,1);
 %%
 % * And finally we can call KMLline
-KMLline(lat2',lon2',zi','timeIn',timeIn,'timeOut',timeOut,'zScaleFun',@(z) (z+20)*5);
+KMLline(lat2',lon2',zi','timeIn',timeIn,'timeOut',timeOut,...
+        'zScaleFun',@(z) (z+20)*5,'fileName',fullfile(tempdir,'line.kml'));
+     
 %%
 % 
 % <<prerendered_images/jarkus5_2.PNG>>
 % 
+
+
+delete(fullfile(tempdir,'line.kml'));  

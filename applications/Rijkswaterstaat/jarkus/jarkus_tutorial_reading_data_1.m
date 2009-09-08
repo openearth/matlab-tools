@@ -5,7 +5,7 @@
 %% Locate the data file on the internet
 % To locate the netCDF data file, browse to the OPeNDAP website:
 %%
-% <http:\\OPeNDAP.deltares.nl:8080> 
+% <http://OPeNDAP.deltares.nl:8080> 
 
 %% 
 % Find the Jarkus netCDF file by clicking on the following links:

@@ -107,7 +107,7 @@ axis([30 80 3 17])
             </div>
             <div>
                <div>
-                  <p>KMLline works just like line, except that one has to save the output file, and open that in Google Earth to view the result.</p><pre class="codeinput">KMLline(lat,lon);
+                  <p>KMLline works just like line, except that one has to save the output file, and open that in Google Earth to view the result.</p><pre class="codeinput">KMLline(lat,lon,<span class="string">'fileName'</span>,fullfile(tempdir,<span class="string">'line.kml'</span>));
 </pre></div>
             </div>
             <div>
@@ -122,7 +122,7 @@ view([-3 88])
             </div>
             <div>
                <div>
-                  <p>and so can KMLline</p><pre class="codeinput">KMLline(lat,lon,z);
+                  <p>and so can KMLline</p><pre class="codeinput">KMLline(lat,lon,z,<span class="string">'fileName'</span>,fullfile(tempdir,<span class="string">'line.kml'</span>));
 </pre></div>
             </div>
             <div>
@@ -136,7 +136,7 @@ view([66 89])
             </div>
             <div>
                <div>
-                  <p>and so can KMLline</p><pre class="codeinput">KMLline(lat,lon,z);
+                  <p>and so can KMLline</p><pre class="codeinput">KMLline(lat,lon,z,<span class="string">'fileName'</span>,fullfile(tempdir,<span class="string">'line.kml'</span>));
 </pre></div>
             </div>
             <div>
@@ -150,13 +150,13 @@ axis <span class="string">off</span>
                <div>
                   <p>And so can KMLline. Save ase with a different name as the previous KML file and open both in Google Earth. Also, we set the
                      'fill' property to false
-                  </p><pre class="codeinput">KMLline(lat',lon',z',<span class="string">'fill'</span>,false);
+                  </p><pre class="codeinput">KMLline(lat',lon',z',<span class="string">'fill'</span>,false,<span class="string">'fileName'</span>,fullfile(tempdir,<span class="string">'line.kml'</span>));
 </pre></div>
             </div>
             <div>
                <div>
-                  <p><img vspace="5" hspace="5" src="prerendered_images/googlePlot.PNG"> </p>
-               </div>
+                  <p><img vspace="5" hspace="5" src="prerendered_images/googlePlot.PNG"> </p><pre class="codeinput">delete(fullfile(tempdir,<span class="string">'line.kml'</span>));
+</pre></div>
             </div>
          </div>
          <p class="footer"><br>
@@ -184,7 +184,7 @@ axis([30 80 3 17])
 %%
 % KMLline works just like line, except that one has to save the output
 % file, and open that in Google Earth to view the result.
-KMLline(lat,lon);
+KMLline(lat,lon,'fileName',fullfile(tempdir,'line.kml'));
 %% 
 % matlab can also draw 3 dimensional lines
 clf;
@@ -195,7 +195,7 @@ line(lat,lon,z)
 view([-3 88])
 %%
 % and so can KMLline
-KMLline(lat,lon,z);
+KMLline(lat,lon,z,'fileName',fullfile(tempdir,'line.kml'));
 %% 
 % Matlab can draw multiple lines at once
 [lat,lon] = meshgrid(90:-10:-90,0:.5:360);
@@ -205,7 +205,7 @@ line(lat,lon,z)
 view([66 89])
 %%
 % and so can KMLline
-KMLline(lat,lon,z);
+KMLline(lat,lon,z,'fileName',fullfile(tempdir,'line.kml'));
 %%
 % We can also add the transposed lines 
 line(lat',lon',z')
@@ -215,13 +215,13 @@ axis off
 % And so can KMLline. Save ase with a different name as the previous KML
 % file and open both in Google Earth.
 % Also, we set the 'fill' property to false
-KMLline(lat',lon',z','fill',false);
+KMLline(lat',lon',z','fill',false,'fileName',fullfile(tempdir,'line.kml'));
 %%
 % 
 % <<prerendered_images/googlePlot.PNG>>
 % 
 
-
+delete(fullfile(tempdir,'line.kml'));  
 ##### SOURCE END #####
 -->
    </body>
