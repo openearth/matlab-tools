@@ -1,0 +1,212 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>JarKus volume calculations</title>
+      <meta name="generator" content="MATLAB 7.8">
+      <meta name="date" content="2009-09-08">
+      <meta name="m-file" content="jarkus_tutorial_calculate_volume">
+      <link type="text/css" href="script/css/custom-theme/jquery-ui-1.7.2.custom.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2accordion.js"></script><script type="text/javascript">
+  	$(document).ready(function ()
+  	{
+  	// Copy content
+	copycontent();
+
+  	// Accordion
+  	$(".accordion").accordion({ header: "h2" });
+	$(".accordion").accordion('option', 'autoHeight', false);
+	$(".accordion").accordion('option', 'collapsible', true);
+	$(".accordion").accordion('activate',false);
+	$(".accordion").accordion('option', 'clearStyle', true);
+  	});
+    </script><style>
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #9F1EF4}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+#contents {
+  border-style:solid;
+  border-width:1px;
+}
+
+  </style></head>
+   <body LINK="#48339F" VLINK="#48339F" ALINK="#48339F">
+      <div class="content">
+         <div class="introduction ui-widget ui-widget-content ui-corner-all">
+            <h1>JarKus volume calculations</h1>
+            <div>
+               <p>This tutorial demonstrates how to calculate the volume of a certain JarKus profile.</p>
+            </div>
+         </div>
+         <div class="accordion">
+            <div>
+               <h2><a>Read some data</a></h2>
+               <div>
+                  <p>See the previous JarKus tutorial for a detailed explanation</p><pre class="codeinput">url         = jarkus_url;
+id          = nc_varget(url,<span class="string">'id'</span>);
+transect_nr = find(id==8005700)-1;
+year        = nc_varget(url,<span class="string">'time'</span>);
+year_nr     = find(year == 1979)-1;
+xRSP        = nc_varget(url,<span class="string">'cross_shore'</span>);
+z           = nc_varget(url,<span class="string">'altitude'</span>,[year_nr,transect_nr,0],[1,1,-1]);
+x    = xRSP(~isnan(z));
+z    =    z(~isnan(z));
+</pre></div>
+            </div>
+            <div>
+               <h2><a>Available options</a></h2>
+               <div>
+                  <p>First we want an overview of available jarkus functions</p><pre class="codeinput">help <span class="string">jarkus</span>
+</pre><pre class="codeoutput">Contents of jarkus:
+
+jarkus_createtransectstruct    - create jarkus transect struct
+jarkus_findCrossings           - routine to find crossings of 2 profiles
+jarkus_getMKL                  - returns the cross shore coordinate of the volume based coastal indicator MKL 
+jarkus_getVolume               - generic routine to determine volumes on transects
+jarkus_getVolumeFast           - generic routine to determine volumes on transects
+jarkus_grid2netcdf             - converts Jarkus grid struct to netCDF-CF file
+jarkus_netcdf2grid             - converts netCDF-CF file to Jarkus grid struct
+jarkus_readTransectDataNetcdf  - create transect structure out of jarkus netcdf file
+jarkus_transect2grid           - converts Jarkus transect struct to Jarkus grid struct
+jarkus_transect2netcdf         - converts Jarkus transect struct to netCDF-CF file
+jarkus_transect2oldtransect    - converts Jarkus transect struct
+jarkus_tutorial_calculate_MKL  - JarKus MKL calculations
+jarkus_tutorial_calculate_volume - JarKus volume calculations
+...</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>Apparently, there are two (competing) functions in the toolbox that can calculate volumes: jarkus_getVolume and jarkus_getVolumeFast
+                     to find out differences, click on the help links
+                  </p>
+               </div>
+            </div>
+            <div>
+               <h2><a>jarkus_getVolumeFast</a></h2>
+               <div>
+                  <p>Firs an example using jarkus_getVolumeFast</p>
+                  <p>We need to define a box within which the volume can be computed, as volume if not defined for a line.</p><pre class="codeinput">UpperBoundary       =  1000;
+LowerBoundary       =     3;
+LandwardBoundary    =     0;
+SeawardBoundary     = max(x);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>and the we call the function. We use the additional 'plot' argument to get a plot of the result.</p><pre class="codeinput">[Volume] = jarkus_getVolumeFast(x, z, UpperBoundary, LowerBoundary,<span class="keyword">...</span>
+    LandwardBoundary, SeawardBoundary,<span class="string">'plot'</span>)
+</pre><pre class="codeoutput">
+Volume =
+
+  987.5781
+
+</pre><img vspace="5" hspace="5" src="jarkus_tutorial_calculate_volume_01.png"> </div>
+            </div>
+            <div>
+               <h2><a>jarkus_getVolume</a></h2>
+               <div>
+                  <p>to be added...</p>
+               </div>
+            </div>
+            <div>
+               <h2><a>Volume difference between two transects</a></h2>
+               <div>
+                  <p>to be added...</p>
+               </div>
+            </div>
+         </div>
+         <p class="footer"><br>
+            Published with MATLAB&reg; 7.8<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% JarKus volume calculations
+% This tutorial demonstrates how to calculate the volume of a certain
+% JarKus profile. 
+
+%% Read some data
+% See the previous JarKus tutorial for a detailed explanation
+
+url         = jarkus_url;
+id          = nc_varget(url,'id');
+transect_nr = find(id==8005700)-1;
+year        = nc_varget(url,'time');
+year_nr     = find(year == 1979)-1;
+xRSP        = nc_varget(url,'cross_shore');
+z           = nc_varget(url,'altitude',[year_nr,transect_nr,0],[1,1,-1]);
+x    = xRSP(~isnan(z));
+z    =    z(~isnan(z));
+
+%% Available options
+% First we want an overview of available jarkus functions
+
+help jarkus
+
+%% 
+% Apparently, there are two (competing) functions in the toolbox that can
+% calculate volumes: jarkus_getVolume and jarkus_getVolumeFast 
+% to find out differences, click on the help links
+
+%% jarkus_getVolumeFast
+% Firs an example using jarkus_getVolumeFast
+%
+% We need to define a box within which the volume can be computed, as
+% volume if not defined for a line.
+
+UpperBoundary       =  1000;
+LowerBoundary       =     3;
+LandwardBoundary    =     0;
+SeawardBoundary     = max(x);
+
+%%
+% and the we call the function. We use the additional 'plot' argument to
+% get a plot of the result. 
+
+[Volume] = jarkus_getVolumeFast(x, z, UpperBoundary, LowerBoundary,...
+    LandwardBoundary, SeawardBoundary,'plot')
+
+%% jarkus_getVolume
+% to be added...
+
+%% Volume difference between two transects
+% to be added...
+
+##### SOURCE END #####
+-->
+   </body>
+</html>
