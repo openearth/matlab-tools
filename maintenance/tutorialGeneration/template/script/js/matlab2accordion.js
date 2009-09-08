@@ -9,7 +9,9 @@ function copycontent()
 			{
 			if (lasthead == null)
 			{
-			// do nothing
+				$($(".accordion").children()[i]).addClass('ui-widget-content');
+				$($(".accordion").children()[i]).addClass('ui-corner-all');
+				lasthead = i;
 			}
 			else
 			{
