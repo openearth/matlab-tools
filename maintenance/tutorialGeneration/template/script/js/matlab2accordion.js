@@ -7,10 +7,17 @@ function copycontent()
 			chldr = $($(".accordion").children()[i]).children("h2");
 			if (chldr.length==0)
 			{
+			if (lasthead == 0)
+			{
+			// do nothing
+			}
+			else
+			{
 				var html = $($(".accordion").children()[i]).html();
 				$($(".accordion").children()[lasthead]).children("div").append(html);
 				$($(".accordion").children()[i]).hide();
 			}
+						}
 			else
 			{
 				lasthead = i;
