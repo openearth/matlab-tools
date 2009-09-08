@@ -1,6 +1,7 @@
 %% Plot a Jarkus transect in Google Earth
-% the objective is to plot a jarkus transect in OpenEarth. 
-%% 
+% This tutorial shows how to plot a jarkus transect in OpenEarth. 
+
+%% Extract data from netCDF database
 % extract lat, lon, z, data from the netCDF database. See the read JarKus
 % tutorial if this is new to you.
 url         = jarkus_url;
@@ -11,13 +12,14 @@ year_nr     = find(year == 1993)-1;
 lat         = nc_varget(url,'lat',[transect_nr,0],[1,-1]);
 lon         = nc_varget(url,'lon',[transect_nr,0],[1,-1]);
 z           = nc_varget(url,'altitude',[year_nr,transect_nr,0],[1,1,-1]);
-%%
+
+%% Check the data
 % we will check the data with matlab line:
 line(lat,lon,z)
 view([-67 32])
 grid on
 %% 
-% Because of the NaN values in data, not al datapoints are connected. 
+% Since there are NaN values in the data, not al datapoints are connected. 
 line(lat,lon,z,'lineStyle','none','marker','.','color',[1 0 0])
 %%
 % We can overcome this problem by linear interpolation of z to xRSP.
@@ -29,14 +31,13 @@ zi          = interp1(xRSP(not_nan),z(not_nan),xRSP);
 clf; line(lat,lon,zi)
 view([-67 32])
 grid on
-
-%% 
+%% Make line plot
 % This works as expected, so now we will plot the data. We will exagerate
 % the z data, by adding 20 and multiplying by 5;
 KMLline(lat,lon,(zi+20)*5);
 %%
 % 
-% <<_prerendered_jarkus5_1.PNG>>
+% <<prerendered_images/jarkus5_1.PNG>>
 % 
 %% Animation in time
 %%
@@ -115,5 +116,5 @@ timeOut = datenum(year+1,1,1);
 KMLline(lat2',lon2',zi','timeIn',timeIn,'timeOut',timeOut,'zScaleFun',@(z) (z+20)*5);
 %%
 % 
-% <<_prerendered_jarkus5_2.PNG>>
+% <<prerendered_images/jarkus5_2.PNG>>
 % 
