@@ -52,6 +52,6 @@ axis off
 KMLline(lat',lon',z','fill',false);
 %%
 % 
-% <<_prerendered_googlePlot.PNG>>
+% <<prerendered_images/googlePlot.PNG>>
 % 
 
