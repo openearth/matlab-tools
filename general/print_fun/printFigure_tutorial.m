@@ -1,4 +1,4 @@
-%% Convenient saving of Matlab figures
+%% Convenient saving of figures
 % A common issue you run into when working with Matlab and the tools
 % provided by OpenEarth is the printing of figures that result from your
 % scripting efforts. Especially when running the same script a number of

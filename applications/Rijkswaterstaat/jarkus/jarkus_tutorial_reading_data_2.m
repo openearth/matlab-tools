@@ -1,4 +1,4 @@
-%% read jarkus example
+%% Extracting JarKus data from netCDF (2)
 % another example reading JarKus data
 
 %% url of netCDF file with jarkus data

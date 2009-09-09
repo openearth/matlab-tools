@@ -1,7 +1,7 @@
 %% JarKus MKL calculations
 % This tutorial demonstrates how to calculate the MKL for a JarKus profile
 
-%% Read in data
+%% Read data
 % See the JarKus tutorial on reading data for a detailed explanation of
 % this
 

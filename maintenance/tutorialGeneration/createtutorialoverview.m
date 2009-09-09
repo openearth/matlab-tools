@@ -25,8 +25,9 @@ publishopts = struct(...
     'useNewFigure',true,...
     'codeToEvaluate',[]);
 
-cdtemp = cd;
-htmlref = cell(size(alldirs));
+cdtemp   = cd;
+htmlref  = cell(size(alldirs));
+title    = cell(size(alldirs));
 openfigs = findobj('Type','figure');
 for idr = 1:length(alldirs)
     htmlref{idr} = cell(size(tutorials{idr}));
@@ -44,8 +45,13 @@ for idr = 1:length(alldirs)
                 cd(tempdir);
             end
             publishopts.codeToEvaluate = ['evalinemptyworkspace(''' tutorialname ''');'];
-            %% save reference
+            %% read first line
+            fid = fopen(which(tutorialname));
+            first_line = fgetl(fid);
+            fclose(fid)
+            title{idr}{itutorials} = first_line(3:end);
             
+            %% save reference
             htmlref{idr}{itutorials} = publish(tutorialname,publishopts);
             newfigs = findobj('type','figure');
             close(newfigs(~ismember(newfigs,openfigs)));
@@ -165,7 +171,7 @@ for idr = 1:length(idgeneral)
         for ifiles = 1:length(tutorials{dirid})
             [dum name] = fileparts(htmlref{dirid}{ifiles});
             str = cat(2,str,...
-                '<li><a><span class="file" ref="html/',name,'.html">',name,'</span></a></li>',char(10));
+                '<li><a><span class="file" ref="html/',name,'.html">',title{dirid}{ifiles},'</span></a></li>',char(10));
         end
     else
         str = cat(2,str,...
@@ -200,7 +206,7 @@ for idr = 1:length(idapplications)
     for ifiles = 1:length(tutorials{dirid})
         [dum name] = fileparts(htmlref{dirid}{ifiles});
         str = cat(2,str,...
-            '<li><a><span class="file" ref="html/',name,'.html">',name,'</span></a></li>',char(10));
+            '<li><a><span class="file" ref="html/',name,'.html">',title{dirid}{ifiles},'</span></a></li>',char(10));
     end
     str = cat(2,str,...
         '					</ul>',char(10),...

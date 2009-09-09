@@ -1,3 +1,3 @@
-%% how to read files from netCDF
+%% Reading a netCDF file
 url = jarkus_url;
 nc_dump(url)

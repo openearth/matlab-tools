@@ -1,4 +1,4 @@
-%% Extracting JarKus data from netCDF
+%% Extracting JarKus data from netCDF (1)
 % For this example, we will extract data from a Jarkus profile in Egmond 
 % aan Zee from the OPeNDAP server, for the year 1999.
 
