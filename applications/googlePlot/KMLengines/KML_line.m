@@ -129,9 +129,12 @@ end
 %% put all coordinates in one vector and split vector at nan's
 coordinates  = [lon(:)'; lat(:)'; z(:)'];
 notnanindex  = find(~any(isnan(coordinates),1));
-coords_index = [notnanindex([true ~(notnanindex(2:end)-notnanindex(1:end-1)==1)])'...
-    notnanindex([~(notnanindex(2:end)-notnanindex(1:end-1)==1) true])'];
-
+if isempty(notnanindex)
+    coords_index = [1 size(coordinates,2)];
+else
+    coords_index = [notnanindex([true ~(notnanindex(2:end)-notnanindex(1:end-1)==1)])'...
+        notnanindex([~(notnanindex(2:end)-notnanindex(1:end-1)==1) true])'];
+end
 output = [];
 for ii = 1:size(coords_index,1)
     % coordinateString
