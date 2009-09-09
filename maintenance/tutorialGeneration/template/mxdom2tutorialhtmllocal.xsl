@@ -53,7 +53,7 @@ To make changes, update the M-file and republish this document.
       <xsl:attribute name="content"><xsl:value-of select="m-file"/></xsl:attribute>
     </meta>
 
-    <link type="text/css" href="script/css/custom-theme/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+    <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
     <script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
     <script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
     <script type="text/javascript" src="script/js/matlab2accordion.js"></script>
@@ -273,7 +273,13 @@ p.footer {
 
 <xsl:template match="img">
   <img vspace="5" hspace="5">
-    <xsl:attribute name="src"><xsl:value-of select="@src"/></xsl:attribute><xsl:text> </xsl:text>
+    <xsl:attribute name="src">
+    	<xsl:value-of select="@src"/>
+    </xsl:attribute>
+    <xsl:attribute name="relsrc">
+    	<xsl:value-of select="@src"/>
+    </xsl:attribute>
+    <xsl:text> </xsl:text>
   </img>
 </xsl:template>
 
