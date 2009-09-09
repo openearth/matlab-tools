@@ -184,6 +184,7 @@ while NextIter
         criteriumZ = abs(z(Calc(end))/A_abs) < OPT.epsZ;
         criteriumBeta = OPT.epsBeta == Inf ||...
             Iter>1 && abs(diff(beta(Iter-1:Iter)));
+        
         if criteriumZ && criteriumBeta
             % convergence criteria have been met
             Converged = true;
@@ -192,11 +193,11 @@ while NextIter
             maxIterReached = true;
         end
         if Converged || maxIterReached
-            break
-%             % carry out one more calculation using a relaxation value of 1
-%             % ?? is this useful? (this is what Prob2B does)
-%             tempu = prescribeU(-alpha.*beta(end), u, active, du, 1);
-%             u = [u; tempu(end,:)]; %#ok<AGROW>
+            % carry out one more calculation using a relaxation value of 1
+            % to make u = -alpha*beta, otherwise the final u solution is
+            % not consistent with alpha and beta
+            tempu = prescribeU(-alpha.*beta(Iter), u, du, 1, rel_ids);
+            u = [u; tempu(end,:)]; %#ok<AGROW>
         else
             % derive a new series of u-values for the next iteration
             [u id_low id_upp] = prescribeU(-alpha.*beta(Iter), u, du, OPT.Relaxation, rel_ids);
@@ -225,7 +226,9 @@ result = struct(...
 designpoint = cell(1, 2*size(x,2));
 designpoint(1:2:length(designpoint)) = {stochast.Name};
 designpoint(2:2:length(designpoint)) = mat2cell(x(end,:), 1, ones(1,size(x,2)));
-result.Output.designpoint = struct(designpoint{:});
+result.Output.designpoint = struct(designpoint{:},...
+    'finalP', result.Output.P(end,:),...
+    'finalU', result.Output.u(end,:));
 
 %% subfunction to predefine a series of u-values
 function [u id_low id_upp] = prescribeU(currentU, u, du, Relaxation, rel_ids)
