@@ -1,0 +1,151 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>Coordinate conversion from RSP to RD</title>
+      <meta name="generator" content="MATLAB 7.8">
+      <meta name="date" content="2009-09-09">
+      <meta name="m-file" content="jarkus_tutorial_coordinates_RSP_2_RD">
+      <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2accordion.js"></script><script type="text/javascript">
+  	$(document).ready(function ()
+  	{
+  	// Copy content
+	copycontent();
+
+  	// Accordion
+  	$(".accordion").accordion({ header: "h2" });
+	$(".accordion").accordion('option', 'autoHeight', false);
+	$(".accordion").accordion('option', 'collapsible', true);
+	$(".accordion").accordion('activate',false);
+	$(".accordion").accordion('option', 'clearStyle', true);
+  	});
+    </script><style>
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #9F1EF4}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+#contents {
+  border-style:solid;
+  border-width:1px;
+}
+
+  </style></head>
+   <body LINK="#48339F" VLINK="#48339F" ALINK="#48339F">
+      <div class="content">
+         <div class="introduction ui-widget ui-widget-content ui-corner-all">
+            <h1>Coordinate conversion from RSP to RD</h1>
+            <div></div>
+         </div>
+         <div class="accordion">
+            <div>
+               <h2><a>Introduction</a></h2>
+               <div>
+                  <p>Sometimes one has data in the RSP grid, and this needs to be converted to RD coordinates. You can use the function xRSP2xyRD
+                     for this. Almost everything is already in the help.
+                  </p><pre class="codeinput">help <span class="string">xRSP2xyRD</span>
+</pre><pre class="codeoutput"> XRSP2XYRD   transform RijksStrandPalen coordinates to RD coordinates
+     
+  depending on inputs arguments, function will be:
+     nargin = 3: [xRD,yRD] = xRSP2xyRD(cross_shore,areacode,alongshore);
+     nargin = 4: [xRD,yRD] = xRSP2xyRD(x0,y0,alpha,xRSP); 
+ 
+    [xRD,yRD] = xRSP2xyRD(cross_shore,areacode,alongshore)
+    
+     cross_shore: cross shore coordinate (distance from RSP line 
+     	          (rijksstrandpalen lijn), positive in seaward direction) 
+     areacode:    area code of transect Dutch: 'Kustvak'. 
+     alongshore:  Alongshore distance of transect in decametres, consistent
+                  common practice (transect number). The beach pole of 
+                  Egmond is beachpole 38, beacuse it is 38km from Den 
+                  Helder. It's alongshore number is 3800. Must be either a 
+...</pre></div>
+            </div>
+            <div>
+               <h2><a>example</a></h2>
+               <div>
+                  <p>Example of the function:</p><pre class="codeinput">x          = -100:50:200;  <span class="comment">% some coordinates</span>
+areacode   = 7;            <span class="comment">% Noord-Holland</span>
+alongshore = 3800;         <span class="comment">% near Egmond</span>
+
+[xRD,yRD] = xRSP2xyRD(x,areacode,alongshore)
+</pre><pre class="codeoutput">
+xRD =
+
+  1.0e+005 *
+
+    1.0311    1.0306    1.0301    1.0296    1.0291    1.0286    1.0281
+
+
+yRD =
+
+  1.0e+005 *
+
+    5.1477    5.1477    5.1478    5.1479    5.1480    5.1480    5.1481
+
+</pre></div>
+            </div>
+         </div>
+         <p class="footer"><br>
+            Published with MATLAB&reg; 7.8<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% Coordinate conversion from RSP to RD
+
+%% Introduction
+% Sometimes one has data in the RSP grid, and this needs to be converted to
+% RD coordinates. You can use the function xRSP2xyRD for this. Almost
+% everything is already in the help. 
+
+help xRSP2xyRD
+
+%% example
+% Example of the function:
+
+x          = -100:50:200;  % some coordinates
+areacode   = 7;            % Noord-Holland
+alongshore = 3800;         % near Egmond
+
+[xRD,yRD] = xRSP2xyRD(x,areacode,alongshore)
+
+
+
+##### SOURCE END #####
+-->
+   </body>
+</html>

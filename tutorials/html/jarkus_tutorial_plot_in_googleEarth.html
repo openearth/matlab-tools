@@ -9,7 +9,7 @@
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
       -->
-      <title>Plot a Jarkus transect in Google Earth</title>
+      <title>Jarkus &amp; Google Earth</title>
       <meta name="generator" content="MATLAB 7.8">
       <meta name="date" content="2009-09-09">
       <meta name="m-file" content="jarkus_tutorial_plot_in_googleEarth">
@@ -68,7 +68,7 @@ p.footer {
    <body LINK="#48339F" VLINK="#48339F" ALINK="#48339F">
       <div class="content">
          <div class="introduction ui-widget ui-widget-content ui-corner-all">
-            <h1>Plot a Jarkus transect in Google Earth</h1>
+            <h1>Jarkus &amp; Google Earth</h1>
             <div>
                <p>This tutorial shows how to plot a jarkus transect in OpenEarth.</p>
             </div>
@@ -117,7 +117,10 @@ grid <span class="string">on</span>
             <div>
                <h2><a>Make line plot</a></h2>
                <div>
-                  <p>This works as expected, so now we will plot the data. We will exagerate the z data, by adding 20 and multiplying by 5;</p><pre class="codeinput">KMLline(lat,lon,(zi+20)*5,<span class="string">'fileName'</span>,fullfile(tempdir,<span class="string">'line.kml'</span>));
+                  <p>This works as expected, so now we will plot the data. We will exagerate the z data, by adding 20 and multiplying by 5, using
+                     the zScaleFun;
+                  </p><pre class="codeinput">fname = [tempdir,<span class="string">'Jarkus.kml'</span>];
+KMLline(lat,lon,zi,<span class="string">'fileName'</span>,fname,<span class="string">'zScaleFun'</span>,@(z)(z+20)*5);
 </pre></div>
             </div>
             <div>
@@ -127,9 +130,6 @@ grid <span class="string">on</span>
             </div>
             <div>
                <h2><a>Animation in time</a></h2>
-               <div></div>
-            </div>
-            <div>
                <div>
                   <p>Get altitude for multiple years</p><pre class="codeinput">z               = nc_varget(url,<span class="string">'altitude'</span>,[1,transect_nr,0],[-1,1,-1]);
 </pre></div>
@@ -153,7 +153,8 @@ lon = repmat(lon,size(z,1),1);
                <div>
                   <p>An we must get the times.</p><pre class="codeinput">timeIn  = datenum(year,1,1);
 timeOut = datenum(year+1,1,1);
-KMLline(lat',lon',(zi'+20).*5,<span class="string">'timeIn'</span>,timeIn,<span class="string">'timeOut'</span>,timeOut,<span class="string">'fileName'</span>,fullfile(tempdir,<span class="string">'line.kml'</span>));
+KMLline(lat',lon',zi',<span class="string">'timeIn'</span>,timeIn,<span class="string">'timeOut'</span>,timeOut,<span class="keyword">...</span>
+    <span class="string">'fileName'</span>,fname,<span class="string">'zScaleFun'</span>,@(z)(z+20)*5);
 </pre></div>
             </div>
             <div>
@@ -178,7 +179,7 @@ xRSP            = nc_varget(url,<span class="string">'cross_shore'</span>);
             </div>
             <div>
                <div>
-                  <p>Interpolation z, notice the use of squeeze.</p><pre class="codeinput">zi = nan(size(z));
+                  <p>Interpolation of z, notice the use of squeeze.</p><pre class="codeinput">zi = nan(size(z));
 <span class="keyword">for</span> yy = 1:no_of_years
     <span class="keyword">for</span> nn = 1:no_of_transects
         not_nan     = squeeze(~isnan(z(yy,nn,:)));
@@ -229,12 +230,24 @@ timeOut = datenum(year+1,1,1);
                   <ul>
                      <li>And finally we can call KMLline</li>
                   </ul><pre class="codeinput">KMLline(lat2',lon2',zi',<span class="string">'timeIn'</span>,timeIn,<span class="string">'timeOut'</span>,timeOut,<span class="keyword">...</span>
-        <span class="string">'zScaleFun'</span>,@(z) (z+20)*5,<span class="string">'fileName'</span>,fullfile(tempdir,<span class="string">'line.kml'</span>));
+        <span class="string">'zScaleFun'</span>,@(z) (z+20)*5,<span class="string">'fileName'</span>,fname);
+</pre><pre class="codeoutput">Undefined function or variable 'fname'.
+
+Error in ==&gt; jarkus_tutorial_plot_in_googleEarth at 138
+KMLline(lat2',lon2',zi','timeIn',timeIn,'timeOut',timeOut,...
+
+Error in ==&gt; evalinemptyworkspace at 3
+eval(mtest_tempstring12fhj123);
 </pre></div>
             </div>
             <div>
                <div>
-                  <p><img vspace="5" hspace="5" src="prerendered_images/jarkus5_2.PNG" relsrc="prerendered_images/jarkus5_2.PNG"> </p><pre class="codeinput">delete(fullfile(tempdir,<span class="string">'line.kml'</span>));
+                  <p><img vspace="5" hspace="5" src="prerendered_images/jarkus5_2.PNG" relsrc="prerendered_images/jarkus5_2.PNG"> </p>
+               </div>
+            </div>
+            <div>
+               <div>
+                  <p>Delete the KML file</p><pre class="codeinput">delete(fullfile(fname));
 </pre></div>
             </div>
          </div>
@@ -243,7 +256,7 @@ timeOut = datenum(year+1,1,1);
       </div>
       <!--
 ##### SOURCE BEGIN #####
-%% Plot a Jarkus transect in Google Earth
+%% Jarkus & Google Earth
 % This tutorial shows how to plot a jarkus transect in OpenEarth. 
 
 %% Extract data from netCDF database
@@ -263,51 +276,64 @@ z           = nc_varget(url,'altitude',[year_nr,transect_nr,0],[1,1,-1]);
 line(lat,lon,z)
 view([-67 32])
 grid on
+
 %% 
 % Since there are NaN values in the data, not al datapoints are connected. 
 line(lat,lon,z,'lineStyle','none','marker','.','color',[1 0 0])
+
 %%
 % We can overcome this problem by linear interpolation of z to xRSP.
+
 xRSP        = nc_varget(url,'cross_shore');
 not_nan     = ~isnan(z);
 zi          = interp1(xRSP(not_nan),z(not_nan),xRSP);
+
 %%
 % we will check the data again with matlab line:
 clf; line(lat,lon,zi)
 view([-67 32])
 grid on
+
 %% Make line plot
 % This works as expected, so now we will plot the data. We will exagerate
-% the z data, by adding 20 and multiplying by 5;
-KMLline(lat,lon,(zi+20)*5,'fileName',fullfile(tempdir,'line.kml'));
+% the z data, by adding 20 and multiplying by 5, using the zScaleFun;
+fname = [tempdir,'Jarkus.kml'];
+KMLline(lat,lon,zi,'fileName',fname,'zScaleFun',@(z)(z+20)*5);
+
 %%
 % 
 % <<prerendered_images/jarkus5_1.PNG>>
 % 
 %% Animation in time
-%%
 % Get altitude for multiple years
 z               = nc_varget(url,'altitude',[1,transect_nr,0],[-1,1,-1]);
+
 %%
 % interpolate z
+
 zi = nan(size(z));
 for yy = 1:size(z,1)
     not_nan     = ~isnan(z(yy,:));
     zi(yy,:)    = interp1(xRSP(not_nan),z(yy,not_nan),xRSP);
 end
+
 %%
 % We must provide lat and lon data for every entry of z;
 lat = repmat(lat,size(z,1),1);
 lon = repmat(lon,size(z,1),1);
+
 %%
 % An we must get the times. 
+
 timeIn  = datenum(year,1,1);
 timeOut = datenum(year+1,1,1);
-KMLline(lat',lon',(zi'+20).*5,'timeIn',timeIn,'timeOut',timeOut,'fileName',fullfile(tempdir,'line.kml'));
+KMLline(lat',lon',zi','timeIn',timeIn,'timeOut',timeOut,...
+    'fileName',fname,'zScaleFun',@(z)(z+20)*5);
 
 %% Multiple animated transects
 % Finally we can also plot multiple jarkus transects at once. We will start
 % from the beginning, with querying the data
+
 clear
 no_of_transects = 10;
 no_of_years     = 15;
@@ -323,8 +349,10 @@ z               = nc_varget(url,'altitude',...
                    [no_of_years,no_of_transects,-1]);
 year            = nc_varget(url,'time',start_year,no_of_years);
 xRSP            = nc_varget(url,'cross_shore');
+
 %%
-% Interpolation z, notice the use of squeeze.
+% Interpolation of z, notice the use of squeeze.
+
 zi = nan(size(z));
 for yy = 1:no_of_years
     for nn = 1:no_of_transects
@@ -332,6 +360,7 @@ for yy = 1:no_of_years
         zi(yy,nn,:) = interp1(xRSP(not_nan),squeeze(z(yy,nn,not_nan)),xRSP);
     end
 end
+
 %% 
 % KMLline can not handle 3D inputs, so wil will have to put all the data in
 % a 2D matrix. This requires some careful reshaping, to make sure the right
@@ -339,6 +368,7 @@ end
 
 %% 
 % * First step is expanding lat and lon to the same size as z
+
 lat2 = nan(size(z));
 lon2 = nan(size(z));
 for yy = 1:no_of_years
@@ -348,26 +378,32 @@ end
 
 %%
 % * Then we reshape the data to a 2D matrix
+
 lat2    = reshape(lat2,no_of_years*no_of_transects,[]);
 lon2    = reshape(lon2,no_of_years*no_of_transects,[]);
 zi      = reshape(zi  ,no_of_years*no_of_transects,[]);
+
 %% 
 % * Time data also has to be reshaped
+
 year    = repmat(year,no_of_transects,1)';
 timeIn  = datenum(year,1,1);
 timeOut = datenum(year+1,1,1);
+
 %%
 % * And finally we can call KMLline
+
 KMLline(lat2',lon2',zi','timeIn',timeIn,'timeOut',timeOut,...
-        'zScaleFun',@(z) (z+20)*5,'fileName',fullfile(tempdir,'line.kml'));
+        'zScaleFun',@(z) (z+20)*5,'fileName',fname);
      
 %%
 % 
 % <<prerendered_images/jarkus5_2.PNG>>
 % 
 
-
-delete(fullfile(tempdir,'line.kml'));  
+%%
+% Delete the KML file
+delete(fullfile(fname));  
 
 ##### SOURCE END #####
 -->

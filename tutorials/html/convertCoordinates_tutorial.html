@@ -148,7 +148,7 @@ lat =
     err = lasterror;
     disp(err.message)
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">WARNING: no exact match of corrdinate system name is found, aproximate match tried
+</pre><pre class="codeoutput">WARNING: no exact match of coordinate system name is found, aproximate match tried
 Error using ==&gt; ConvertCoordinatesFindCoordRefSys at 81
 5 coordinate reference systems can be found with options: 
 code:'', name:'amersfoo', type:''
@@ -187,7 +187,7 @@ tic
     [lon,lat] = convertCoordinates(x,y,<span class="string">'CS1.code'</span>,28992,<span class="string">'CS2.code'</span>,4326);
 <span class="keyword">end</span>
 toc
-</pre><pre class="codeoutput">Elapsed time is 5.669838 seconds.
+</pre><pre class="codeoutput">Elapsed time is 5.747937 seconds.
 </pre></div>
             </div>
             <div>
@@ -198,7 +198,7 @@ EPSG = load(<span class="string">'EPSG'</span>);
     [lon,lat] = convertCoordinates(x,y,EPSG,<span class="string">'CS1.code'</span>,28992,<span class="string">'CS2.code'</span>,4326);
 <span class="keyword">end</span>
 toc
-</pre><pre class="codeoutput">Elapsed time is 0.601799 seconds.
+</pre><pre class="codeoutput">Elapsed time is 0.650477 seconds.
 </pre></div>
             </div>
             <div>
