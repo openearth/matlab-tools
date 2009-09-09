@@ -138,8 +138,10 @@ if ~isdir(outputdir)
 end
 
 % loop tutorials
-cdtemp = cd;
-htmlref = cell(size(alldirs));
+cdtemp   = cd;
+htmlref  = cell(size(alldirs));
+title    = cell(size(alldirs));
+
 openfigs = findobj('Type','figure');
 for idr = 1:length(alldirs)
     htmlref{idr} = cell(size(tutorials{idr}));
@@ -153,6 +155,12 @@ for idr = 1:length(alldirs)
         id = strncmp(htmlfilesthere,outputhtmldir,length(outputhtmldir));
         if summaryonly
             htmlref{idr}{itutorials} = htmlfilesthere{find(id,1,'first')};
+            
+            %% read first line
+            fid = fopen(which(tutorialname));
+            first_line = fgetl(fid);
+            fclose(fid)
+            title{idr}{itutorials} = first_line(3:end);
         else
             if all(id)
                 %% publish file, it is not published yet
@@ -162,7 +170,13 @@ for idr = 1:length(alldirs)
                     copyfile(which(tutorials{idr}{itutorials}),fullfile(tempdir,[tutorialname,'.m']));
                     cd(tempdir);
                 end
-                publishopts.codeToEvaluate = ['evalinemptyworkspace(''' tutorialname ''');'];
+                publishopts.codeToEvaluate = ['evalinemptyworkspace(''' tutorialname ';'');'];
+                %% read first line
+                fid = fopen(which(tutorialname));
+                first_line = fgetl(fid);
+                fclose(fid)
+                title{idr}{itutorials} = first_line(3:end);
+            
                 %% save reference
                 
                 htmlref{idr}{itutorials} = publish(tutorialname,publishopts);
@@ -244,7 +258,7 @@ for idr = 1:length(idgeneral)
         for ifiles = 1:length(tutorials{dirid})
             [dum name] = fileparts(htmlref{dirid}{ifiles});
             filesstr = cat(2,filesstr,...
-                strrep(strrep(filestr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',name));
+                strrep(strrep(filestr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',title{dirid}{ifiles}));
         end
         genstr = cat(2,genstr,filesstr);
     else
@@ -253,7 +267,7 @@ for idr = 1:length(idgeneral)
         for ifiles = 1:length(tutorials{dirid})
              [dum name] = fileparts(htmlref{dirid}{ifiles});
             newfilestr = cat(2,newfilestr,...
-                strrep(strrep(fileinfolderstr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',name));
+                strrep(strrep(fileinfolderstr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',title{dirid}{ifiles}));
         end
         newfstr = strrep(newfstr,fileinfolderstr,newfilestr);
         genstr = cat(2,genstr,newfstr);
@@ -283,7 +297,7 @@ for idr = 1:length(idapplications)
     for ifiles = 1:length(tutorials{dirid})
         [dum name] = fileparts(htmlref{dirid}{ifiles});
         newfilestr = cat(2,newfilestr,...
-            strrep(strrep(fileinfolderstr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',name));
+            strrep(strrep(fileinfolderstr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',title{dirid}{ifiles}));
     end
     newfstr = strrep(newfstr,fileinfolderstr,newfilestr);
     newappstr = cat(2,newappstr,newfstr);
