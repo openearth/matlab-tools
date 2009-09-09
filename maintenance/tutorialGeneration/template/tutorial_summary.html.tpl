@@ -50,18 +50,18 @@
 
 	<style>
 	#maintree {
-		width:	15%;
-		heigth: 100%;
+		width:	  19%;
+		heigth:   100%;
         overflow: hidden;
-		float:	left;
+		float:	  left;
 		}
 
 	#contentspanel {
-		width:	70%;
-		height: 100%;
-		float:	left;
-        margin-left: 2px;
-		}
+		width:	  80%;
+		height:   100%;
+		float:	  right;
+		overflow: auto;
+        }
 
 
 	.hidden {
@@ -69,8 +69,8 @@
 		}
 	</style>
 
-	</head>
-	<body>
+</head>
+<body>
 
 	<div id="maintree" class="ui-widget ui-widget-content ui-corner-all">
 	<ul id="browser" class="filetree treeview maintree">
@@ -113,4 +113,5 @@
 	<div id="contentspanel" class="ui-widget">
 	</div>
 
-</body></html>
+</body>
+</html>

@@ -160,8 +160,7 @@ KMLline(lat',lon',zi',<span class="string">'timeIn'</span>,timeIn,<span class="s
             <div>
                <h2><a>Multiple animated transects</a></h2>
                <div>
-                  <p>Finally we can also plot multiple jarkus transects at once. We will start from the beginning, with querying the data</p><pre class="codeinput">clear
-no_of_transects = 10;
+                  <p>Finally we can also plot multiple jarkus transects at once. We will start from the beginning, with querying the data</p><pre class="codeinput">no_of_transects = 10;
 no_of_years     = 15;
 url             = jarkus_url;
 id              = nc_varget(url,<span class="string">'id'</span>);
@@ -231,13 +230,6 @@ timeOut = datenum(year+1,1,1);
                      <li>And finally we can call KMLline</li>
                   </ul><pre class="codeinput">KMLline(lat2',lon2',zi',<span class="string">'timeIn'</span>,timeIn,<span class="string">'timeOut'</span>,timeOut,<span class="keyword">...</span>
         <span class="string">'zScaleFun'</span>,@(z) (z+20)*5,<span class="string">'fileName'</span>,fname);
-</pre><pre class="codeoutput">Undefined function or variable 'fname'.
-
-Error in ==&gt; jarkus_tutorial_plot_in_googleEarth at 138
-KMLline(lat2',lon2',zi','timeIn',timeIn,'timeOut',timeOut,...
-
-Error in ==&gt; evalinemptyworkspace at 3
-eval(mtest_tempstring12fhj123);
 </pre></div>
             </div>
             <div>
@@ -334,7 +326,6 @@ KMLline(lat',lon',zi','timeIn',timeIn,'timeOut',timeOut,...
 % Finally we can also plot multiple jarkus transects at once. We will start
 % from the beginning, with querying the data
 
-clear
 no_of_transects = 10;
 no_of_years     = 15;
 url             = jarkus_url;

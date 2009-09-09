@@ -76,7 +76,6 @@ KMLline(lat',lon',zi','timeIn',timeIn,'timeOut',timeOut,...
 % Finally we can also plot multiple jarkus transects at once. We will start
 % from the beginning, with querying the data
 
-clear
 no_of_transects = 10;
 no_of_years     = 15;
 url             = jarkus_url;

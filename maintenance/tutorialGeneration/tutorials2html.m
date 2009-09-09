@@ -100,6 +100,12 @@ show = false;
 if any(strcmpi(varargin,'show'))
     show = true;
 end
+
+quiet = false;
+if any(strcmpi(varargin,'quiet'))
+    quiet = true;
+end
+
 %% Gather all tutorial m-files
 % all directories
 alldirs = sort(strread(genpath(maindir),'%s',-1,'delimiter',';'));
@@ -174,12 +180,17 @@ for idr = 1:length(alldirs)
                 %% read first line
                 fid = fopen(which(tutorialname));
                 first_line = fgetl(fid);
-                fclose(fid)
-                title{idr}{itutorials} = first_line(3:end);
+                fclose(fid);
+                title{idr}{itutorials} = first_line(4:end);
             
                 %% save reference
                 
                 htmlref{idr}{itutorials} = publish(tutorialname,publishopts);
+                
+                %% show progress
+                if ~quiet
+                    disp([ 'finished publishing <a href="' htmlref{idr}{itutorials} '">' title{idr}{itutorials} '</a>']);
+                end
                 newfigs = findobj('type','figure');
                 close(newfigs(~ismember(newfigs,openfigs)));
             else
@@ -312,6 +323,12 @@ fprintf(fid,'%s',str);
 fclose(fid);
 
 %% show result
+
+if ~quiet
+    disp(char(10));
+    disp([ 'finished publishing. Click <a href="' fullfile(outputdir,'tutorial_summary.html') '">here</a> for result']);
+end
+
 if show
     winopen(fullfile(outputdir,'tutorial_summary.html'));
 end

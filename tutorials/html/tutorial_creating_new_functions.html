@@ -9,7 +9,7 @@
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
       -->
-      <title>tutorial_creating_new_functions</title>
+      <title>Creating new functions</title>
       <meta name="generator" content="MATLAB 7.8">
       <meta name="date" content="2009-09-09">
       <meta name="m-file" content="tutorial_creating_new_functions">
@@ -67,23 +67,32 @@ p.footer {
   </style></head>
    <body LINK="#48339F" VLINK="#48339F" ALINK="#48339F">
       <div class="content">
+         <div class="introduction ui-widget ui-widget-content ui-corner-all">
+            <h1>Creating new functions</h1>
+            <div>
+               <p>To keep the OpenEarth toolbox well organised, it is of crucial importance that all functions receive a proper help block (in
+                  Matlab this is the first uninterrupted comment block after the function declaration and/or before the first line of code.
+               </p>
+               <p>To lower the threshold to add such a helpblock the oetnewfun routine was developed. It creates a new function using the input
+                  arguments supplied by the user or using default arguments.
+               </p>
+            </div>
+         </div>
          <div class="accordion">
             <div>
-               <h2><a>Creating new functions</a></h2>
                <div>
-                  <p>To keep the OpenEarth toolbox well organised, it is of crucial importance that all functions receive a proper help block (in
-                     Matlab this is the first uninterrupted comment block after the function declaration and/or before the first line of code.
-                  </p>
-                  <p>To lower the threshold to add such a helpblock the oetnewfun routine was developed. It creates a new function using the input
-                     arguments supplied by the user or using default arguments.
-                  </p><pre class="codeinput">oetnewfun(<span class="string">'testfun'</span>)
-</pre></div>
+                  <p><tt>oetnewfun('testfun')</tt></p>
+               </div>
             </div>
             <div>
                <h2><a>Working with the resulting function</a></h2>
                <div>
-                  <p>The resulting function now comes with a helpblock, a standard LGPL copyright block and a list of svn-keywords.</p><pre class="codeinput"><span class="keyword">function</span> varargout = testfun(varargin)
-<span class="comment">%TESTFUN  One line description goes here.</span>
+                  <p>The resulting function now comes with a helpblock, a standard LGPL copyright block and a list of svn-keywords.</p>
+               </div>
+            </div>
+            <div>
+               <div>
+                  <p><tt>function varargout = testfun(varargin)</tt></p><pre class="codeinput"><span class="comment">%TESTFUN  One line description goes here.</span>
 <span class="comment">%</span>
 <span class="comment">%   More detailed description goes here.</span>
 <span class="comment">%</span>
@@ -130,7 +139,7 @@ p.footer {
 <span class="comment">% Created: 17 May 2009</span>
 <span class="comment">% Created with Matlab version: 7.7.0.471 (R2008b)</span>
 
-<span class="comment">% $Id: _tutorial_creating_new_functions.m 946 2009-09-07 12:57:42Z damsma $</span>
+<span class="comment">% $Id: _tutorial_creating_new_functions.m 975 2009-09-08 14:54:13Z damsma $</span>
 
 <span class="comment">% $Author: damsma $</span>
 
@@ -157,13 +166,18 @@ p.footer {
 % developed. It creates a new function using the input arguments supplied
 % by the user or using default arguments.
 
-oetnewfun('testfun')
+%%
+% |oetnewfun('testfun')|
 
 %% Working with the resulting function
 % The resulting function now comes with a helpblock, a standard LGPL
 % copyright block and a list of svn-keywords.
 
-function varargout = testfun(varargin)
+%%
+%
+% |function varargout = testfun(varargin)|
+%
+
 %TESTFUN  One line description goes here.
 %
 %   More detailed description goes here.
@@ -211,10 +225,10 @@ function varargout = testfun(varargin)
 % Created: 17 May 2009
 % Created with Matlab version: 7.7.0.471 (R2008b)
 
-% $Id: _tutorial_creating_new_functions.m 946 2009-09-07 12:57:42Z damsma $
-% $Date: 2009-09-07 14:57:42 +0200 (ma, 07 sep 2009) $
+% $Id: _tutorial_creating_new_functions.m 975 2009-09-08 14:54:13Z damsma $
+% $Date: 2009-09-08 16:54:13 +0200 (Tue, 08 Sep 2009) $
 % $Author: damsma $
-% $Revision: 946 $
+% $Revision: 975 $
 % $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/general/_tutorial_creating_new_functions.m $
 % $Keywords: $
 

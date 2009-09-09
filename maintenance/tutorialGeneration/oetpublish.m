@@ -116,7 +116,17 @@ publishopts = struct(...
     'useNewFigure',true,...
     'codeToEvaluate',[]);
 
+copyfile(tmpdir,fullfile(outputdir,'script'),'f');
+
 publishedfile = publish(filename,publishopts);
+
+%% hack prerendered images to file
+html_file = textread(publishedfile,'%s','delimiter','\n');
+html_file = strrep(html_file,'src="prerendered_images',...
+    ['src="file:///' fullfile(openearthtoolsroot,'tutorials','html','prerendered_images',[])]);
+fid = fopen(publishedfile,'w');
+fprintf(fid,'%s\n',html_file{:})
+fclose(fid)
 
 if show
     winopen(publishedfile);
