@@ -1,0 +1,446 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>Coordinate conversion</title>
+      <meta name="generator" content="MATLAB 7.8">
+      <meta name="date" content="2009-09-09">
+      <meta name="m-file" content="convertCoordinates_tutorial">
+      <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2accordion.js"></script><script type="text/javascript">
+  	$(document).ready(function ()
+  	{
+  	// Copy content
+	copycontent();
+
+  	// Accordion
+  	$(".accordion").accordion({ header: "h2" });
+	$(".accordion").accordion('option', 'autoHeight', false);
+	$(".accordion").accordion('option', 'collapsible', true);
+	$(".accordion").accordion('activate',false);
+	$(".accordion").accordion('option', 'clearStyle', true);
+  	});
+    </script><style>
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #9F1EF4}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+#contents {
+  border-style:solid;
+  border-width:1px;
+}
+
+  </style></head>
+   <body LINK="#48339F" VLINK="#48339F" ALINK="#48339F">
+      <div class="content">
+         <div class="introduction ui-widget ui-widget-content ui-corner-all">
+            <h1>Coordinate conversion</h1>
+            <div>
+               <p>this tutorial deals with coordinate conversion, using the OpenEarthTools function convertCoordinates</p>
+            </div>
+         </div>
+         <div class="accordion">
+            <div>
+               <h2><a>Example of application</a></h2>
+               <div>
+                  <p>We need to tell convertCoordinates what the input coordinate system is, and what the output coordinate system is (CS1 and
+                     CS2). We can do so by entering the name, type and /or EPSG reference code using keyword value pairs. An example below:
+                  </p><pre class="codeinput">x = 165e3;
+y = 420e3;
+[lon,lat] = convertCoordinates(x,y,<span class="string">'CS1.name'</span>,<span class="string">'Amersfoort / RD New'</span>,<span class="keyword">...</span>
+    <span class="string">'CS2.code'</span>,4326)
+</pre><pre class="codeoutput">
+lon =
+
+    5.5321
+
+
+lat =
+
+   51.7686
+
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>CS1.name refers to the name of Coordinate System 1. Coordinate System 2 is identified by a code: 4326. Alternatively, also
+                     the name (WGS 84) of the second coordinate system can be entered:
+                  </p><pre class="codeinput"><span class="keyword">try</span>
+[lon,lat] = convertCoordinates(x,y,<span class="string">'CS1.name'</span>,<span class="string">'Amersfoort / RD New'</span>,<span class="keyword">...</span>
+    <span class="string">'CS2.name'</span>,<span class="string">'WGS 84'</span>);
+<span class="keyword">catch</span>
+    err = lasterror;
+    disp(err.message)
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Error using ==&gt; ConvertCoordinatesFindCoordRefSys at 81
+3 coordinate reference systems can be found with options: 
+code:'', name:'WGS 84', type:''
+
+code:     '4326', name:                                          'WGS 84', type: 'geographic 2D'
+code:     '4978', name:                                          'WGS 84', type:    'geocentric'
+code:     '4979', name:                                          'WGS 84', type: 'geographic 3D'
+
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>Because the name 'WGS 84' does not refer to a unique coordinate system, an error message is returned. From the message we
+                     can see that there are three systems known by that name. we want to convert coordinates to geographic 2D. If we also specify
+                     the type, this leads to a unique coordinate system.
+                  </p><pre class="codeinput">[lon,lat] = convertCoordinates(x,y,<span class="string">'CS1.name'</span>,<span class="string">'Amersfoort / RD New'</span>,<span class="keyword">...</span>
+    <span class="string">'CS2.name'</span>,<span class="string">'WGS 84'</span>,<span class="string">'CS2.type'</span>,<span class="string">'Geographic 2D'</span>)
+</pre><pre class="codeoutput">
+lon =
+
+    5.5321
+
+
+lat =
+
+   51.7686
+
+</pre></div>
+            </div>
+            <div>
+               <h2><a>Finding the name or code of a coordinate system</a></h2>
+               <div>
+                  <p>If convertCoordinates cannot find an exact match for the coordinate system name, it returns an error message with approximate
+                     matches. This is useful if you do not know the exact code or name of a coordinate system. Make sure to enter a name that does
+                     not match any entry, as for instance 'amersfoo'.
+                  </p><pre class="codeinput"><span class="keyword">try</span>
+[lon,lat] = convertCoordinates(x,y,<span class="string">'CS1.name'</span>,<span class="string">'amersfoo'</span>,<span class="keyword">...</span>
+    <span class="string">'CS2.code'</span>,4326)
+<span class="keyword">catch</span>
+    err = lasterror;
+    disp(err.message)
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">WARNING: no exact match of corrdinate system name is found, aproximate match tried
+Error using ==&gt; ConvertCoordinatesFindCoordRefSys at 81
+5 coordinate reference systems can be found with options: 
+code:'', name:'amersfoo', type:''
+
+code:     '4289', name:                                      'Amersfoort', type: 'geographic 2D'
+code:     '7415', name:                'Amersfoort / RD New + NAP height', type:      'compound'
+code:    '28991', name:                             'Amersfoort / RD Old', type:     'projected'
+code:    '28992', name:                             'Amersfoort / RD New', type:     'projected'
+code: '62896405', name:                                'Amersfoort (deg)', type: 'geographic 2D'
+
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>Apparently there are five coordinate systems who's name contains 'amersfoo'. Amersfoort / RD New has the code 28992.</p><pre class="codeinput">[lon,lat] = convertCoordinates(x,y,<span class="string">'CS1.code'</span>,28992,<span class="string">'CS2.code'</span>,4326)
+</pre><pre class="codeoutput">
+lon =
+
+    5.5321
+
+
+lat =
+
+   51.7686
+
+</pre></div>
+            </div>
+            <div>
+               <h2><a>Speeding up the routine in batch mode</a></h2>
+               <div>
+                  <p>The slowest part of the routine is reading the EPSG database. If the routine is called several times in a batch mode, it is
+                     faste to load the data only once, and the pass it to the function. Compare the following options.
+                  </p><pre class="codeinput"><span class="comment">% without preloading EPSG</span>
+tic
+<span class="keyword">for</span> ii = 1:10
+    [lon,lat] = convertCoordinates(x,y,<span class="string">'CS1.code'</span>,28992,<span class="string">'CS2.code'</span>,4326);
+<span class="keyword">end</span>
+toc
+</pre><pre class="codeoutput">Elapsed time is 5.669838 seconds.
+</pre></div>
+            </div>
+            <div>
+               <div><pre class="codeinput"><span class="comment">% with preloading EPSG</span>
+tic
+EPSG = load(<span class="string">'EPSG'</span>);
+<span class="keyword">for</span> ii = 1:10
+    [lon,lat] = convertCoordinates(x,y,EPSG,<span class="string">'CS1.code'</span>,28992,<span class="string">'CS2.code'</span>,4326);
+<span class="keyword">end</span>
+toc
+</pre><pre class="codeoutput">Elapsed time is 0.601799 seconds.
+</pre></div>
+            </div>
+            <div>
+               <h2><a>Evaluating the output</a></h2>
+               <div>
+                  <p>To evaluate the output, call the funtion with OPT:</p><pre class="codeinput">[lon,lat,OPT] = convertCoordinates(x,y,EPSG,<span class="string">'CS1.code'</span>,28992,<span class="string">'CS2.code'</span>,4326);
+disp(OPT);
+</pre><pre class="codeoutput">            CS1: [1x1 struct]
+     proj_conv1: [1x1 struct]
+    datum_trans: [1x1 struct]
+            CS2: [1x1 struct]
+
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>From the OPT structure, all relevant parameters and conversion options can be retrieved. This can be done with the Array editor,
+                     or (easier), by using the OET function var2evalstr.
+                  </p><pre class="codeinput">var2evalstr(OPT)
+</pre><pre class="codeoutput">
+ans =
+
+OPT.CS1.name = 'Amersfoort / RD New';
+OPT.CS1.code = 28992;
+OPT.CS1.type = 'projected';
+OPT.CS1.geoRefSys.name = 'Amersfoort';
+OPT.CS1.geoRefSys.code = 4289;
+OPT.CS1.coordSys.name = 'Cartesian 2D CS. Axes: easting; northing (X;Y). Orientations: east; north. UoM: m.';
+OPT.CS1.coordSys.code = 4499;
+OPT.CS1.ellips.code = 7004;
+OPT.CS1.ellips.name = 'Bessel 1841';
+OPT.CS1.ellips.inv_flattening = 299.1528;
+OPT.CS1.ellips.semi_major_axis = 6377397.155;
+OPT.CS1.ellips.semi_minor_axis = 6356078.9628;
+...</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>The contents of the OPT structure depends on the conversions and transformations performed. Consider this example (of a very
+                     unlikely coordinate conversion)
+                  </p><pre class="codeinput">[x,y,OPT] = convertCoordinates(1,1,EPSG,<span class="keyword">...</span>
+    <span class="string">'CS1.name'</span>,<span class="string">'IRENET95 / Irish Transverse Mercator'</span>,<span class="keyword">...</span>
+    <span class="string">'CS2.name'</span>,<span class="string">'NAD27 / Alberta 3TM ref merid 111 W'</span>);
+disp(OPT)
+</pre><pre class="codeoutput">                       CS1: [1x1 struct]
+                proj_conv1: [1x1 struct]
+               datum_trans: 'no direct transformation available'
+      datum_trans_to_WGS84: [1x1 struct]
+                     WGS84: [1x1 struct]
+    datum_trans_from_WGS84: [1x1 struct]
+                proj_conv2: [1x1 struct]
+                       CS2: [1x1 struct]
+
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <ul>
+                     <li>CS1 identifies the input coordinate system</li>
+                     <li>Proj_conv1 contains the transformation parameters from Cartesian coordinate system 1 to a geodetic (lat/lon) system</li>
+                     <li>Apparently no direct transformation is available from the GRS 1980 ellipsoid of coordinate system 1 ('OPT.CS1.ellips.name')
+                        to that of CS2 (Clarke 1866). Therefore the coordinates are first transformed from the GRS 1980 to the WGS 84 ellipsoid, and
+                        only then to Clarke 1866
+                     </li>
+                     <li>Finally the coordinates are converted to the NAD27 coordinate reference system</li>
+                  </ul>
+               </div>
+            </div>
+            <div>
+               <h2><a>Multiple conversion options</a></h2>
+               <div>
+                  <p>For some coordinate conversions, more than one routine is available. And example is the RD to WGS 84 conversion. We can evaluate
+                     the available methods from the OPT structure.
+                  </p><pre class="codeinput">[lon1,lat1,OPT] = convertCoordinates(1e5,5e5,EPSG,<span class="string">'CS1.code'</span>,28992,<span class="string">'CS2.code'</span>,4326);
+var2evalstr(OPT.datum_trans)
+</pre><pre class="codeoutput">
+ans =
+
+variable1.code = 15934;
+variable1.name = {'Amersfoort to WGS 84 (3)'};
+variable1.direction = 'normal';
+variable1.alt_code = [1112 1672 8572 15934];
+variable1.alt_name = {'Amersfoort to WGS 84 (1)' 'Amersfoort to WGS 84 (2)' 'Amersfoort to WGS 84 (2)' 'Amersfoort to WGS 84 (3)'};
+variable1.alt_direction = {'normal' 'normal' 'normal' 'normal'};
+variable1.alt_deprecated = {'FALSE' 'FALSE' 'TRUE' 'FALSE'};
+variable1.params.value = [565.237 50.0087 465.658 1.9725 -1.7004 9.0677 4.0812];
+variable1.params.codes = 8605:8611;
+variable1.params.ind = 5:11;
+variable1.params.name = {'X-axis translation' 'Y-axis translation' 'Z-axis translation' 'X-axis rotation' 'Y-axis rotation' 'Z-axis rotation' 'Scale difference'};
+variable1.params.UoM.codes = [9001 9001 9001 9109 9109 9109 9202];
+...</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>By default convertCoordinates chooses the newest non-deprecated method. (It is assumed that the method with the highest code
+                     is the newest). This can be overridden by defining a datum_trans.code:
+                  </p><pre class="codeinput">[lon2,lat2,OPT] = convertCoordinates(1e5,5e5,EPSG,<span class="string">'CS1.code'</span>,28992,<span class="string">'CS2.code'</span>,4326,<span class="keyword">...</span>
+    <span class="string">'datum_trans.code'</span>,1672);
+lat1-lat2
+</pre><pre class="codeoutput">
+ans =
+
+  8.4067e-008
+
+</pre></div>
+            </div>
+         </div>
+         <p class="footer"><br>
+            Published with MATLAB&reg; 7.8<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% Coordinate conversion
+% this tutorial deals with coordinate conversion, using the OpenEarthTools
+% function convertCoordinates
+
+%% Example of application
+% We need to tell convertCoordinates what the input coordinate system is,
+% and what the output coordinate system is (CS1 and CS2). We can do so by
+% entering the name, type and /or EPSG reference code using keyword value
+% pairs. An example below:
+
+x = 165e3;
+y = 420e3;
+[lon,lat] = convertCoordinates(x,y,'CS1.name','Amersfoort / RD New',...
+    'CS2.code',4326)
+
+%%
+% CS1.name refers to the name of Coordinate System 1. Coordinate System 2
+% is identified by a code: 4326. Alternatively, also the name (WGS 84) of
+% the second coordinate system can be entered:
+try
+[lon,lat] = convertCoordinates(x,y,'CS1.name','Amersfoort / RD New',...
+    'CS2.name','WGS 84');
+catch
+    err = lasterror;
+    disp(err.message)
+end
+%%
+% Because the name 'WGS 84' does not refer to a unique coordinate system,
+% an error message is returned. From the message we can see that there are
+% three systems known by that name. we want to convert coordinates to
+% geographic 2D. If we also specify the type, this leads to a unique
+% coordinate system. 
+
+[lon,lat] = convertCoordinates(x,y,'CS1.name','Amersfoort / RD New',...
+    'CS2.name','WGS 84','CS2.type','Geographic 2D')
+
+%% Finding the name or code of a coordinate system
+% If convertCoordinates cannot find an exact match for the coordinate system
+% name, it returns an error message with approximate matches. This is
+% useful if you do not know the exact code or name of a coordinate system.
+% Make sure to enter a name that does not match any entry, as for instance
+% 'amersfoo'.
+
+try
+[lon,lat] = convertCoordinates(x,y,'CS1.name','amersfoo',...
+    'CS2.code',4326)
+catch
+    err = lasterror;
+    disp(err.message)
+end
+%%
+% Apparently there are five coordinate systems who's name contains
+% 'amersfoo'. Amersfoort / RD New has the code 28992. 
+
+[lon,lat] = convertCoordinates(x,y,'CS1.code',28992,'CS2.code',4326)
+
+%% Speeding up the routine in batch mode
+% The slowest part of the routine is reading the EPSG database. If the
+% routine is called several times in a batch mode, it is faste to load the
+% data only once, and the pass it to the function. Compare the following
+% options.
+
+% without preloading EPSG
+tic 
+for ii = 1:10
+    [lon,lat] = convertCoordinates(x,y,'CS1.code',28992,'CS2.code',4326);
+end
+toc
+
+%%
+
+% with preloading EPSG
+tic 
+EPSG = load('EPSG');
+for ii = 1:10
+    [lon,lat] = convertCoordinates(x,y,EPSG,'CS1.code',28992,'CS2.code',4326);
+end
+toc
+
+%% Evaluating the output
+% To evaluate the output, call the funtion with OPT:
+
+[lon,lat,OPT] = convertCoordinates(x,y,EPSG,'CS1.code',28992,'CS2.code',4326);
+disp(OPT);
+
+%%
+% From the OPT structure, all relevant parameters and conversion options can
+% be retrieved. This can be done with the Array editor, or (easier), by
+% using the OET function var2evalstr.
+
+var2evalstr(OPT)
+
+%%
+% The contents of the OPT structure depends on the conversions 
+% and transformations performed. Consider this example (of a very unlikely
+% coordinate conversion)
+
+[x,y,OPT] = convertCoordinates(1,1,EPSG,...
+    'CS1.name','IRENET95 / Irish Transverse Mercator',...
+    'CS2.name','NAD27 / Alberta 3TM ref merid 111 W');
+disp(OPT)
+
+%%
+% * CS1 identifies the input coordinate system
+% * Proj_conv1 contains the transformation parameters from Cartesian
+% coordinate system 1 to a geodetic (lat/lon) system
+% * Apparently no direct transformation is available from the GRS 1980
+% ellipsoid of coordinate system 1 ('OPT.CS1.ellips.name') to that of CS2
+% (Clarke 1866). Therefore the coordinates are first transformed from the
+% GRS 1980 to the WGS 84 ellipsoid, and only then to Clarke 1866
+% * Finally the coordinates are converted to the NAD27 coordinate reference
+% system
+
+%% Multiple conversion options
+% For some coordinate conversions, more than one routine is available. And
+% example is the RD to WGS 84 conversion. We can evaluate the available
+% methods from the OPT structure.
+[lon1,lat1,OPT] = convertCoordinates(1e5,5e5,EPSG,'CS1.code',28992,'CS2.code',4326);
+var2evalstr(OPT.datum_trans)
+
+%%
+% By default convertCoordinates chooses the newest non-deprecated method.
+% (It is assumed that the method with the highest code is the newest).
+% This can be overridden by defining a datum_trans.code:
+
+[lon2,lat2,OPT] = convertCoordinates(1e5,5e5,EPSG,'CS1.code',28992,'CS2.code',4326,...
+    'datum_trans.code',1672);
+lat1-lat2
+
+##### SOURCE END #####
+-->
+   </body>
+</html>
