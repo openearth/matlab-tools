@@ -9,17 +9,13 @@
 % by the user or using default arguments.
 
 %%
-% |oetnewfun('testfun')|
+oetnewfun('testfun')
 
 %% Working with the resulting function
 % The resulting function now comes with a helpblock, a standard LGPL
 % copyright block and a list of svn-keywords.
 
-%%
-%
-% |function varargout = testfun(varargin)|
-%
-
+function varargout = testfun(varargin)
 %TESTFUN  One line description goes here.
 %
 %   More detailed description goes here.

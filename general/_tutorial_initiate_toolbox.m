@@ -8,7 +8,8 @@
 % Figure out what folder oetsettings.m is located in, and the run it.
 % Oetsettings is located in the Matlab directory of your OpenEarth checkout
 % 
-% |run ENTER_FILEPATH_HERE/oetsettings|
+
+run('<enter filepath here>/oetsettings');
 
 %%
 % As you don't want to remember this code, but you will run it every time
@@ -19,13 +20,13 @@
 % matlab is effectiveley reset every time you press this button.
 
 %%
-% |restoredefaultpath|
-%
-% |run('ENTER_FILEPATH_HERE\oetsettings.m')|
-%
-% |cd ENTER_FILEPATH_HERE|
-%
-% |clc; clear; close;|
+restoredefaultpath
+
+run('<enter filepath here>\oetsettings.m')
+
+cd <enter filepath here>
+
+clc; clear; close;
 
 %%
 % 

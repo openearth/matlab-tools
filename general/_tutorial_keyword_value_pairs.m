@@ -6,7 +6,7 @@
 % arguments in). 
 
 %% Example
-% as an example, we can define out own varargin (this is what normally
+% as an example, we can define our own varargin (this is what normally
 % would be read by the function we are calling)
 
 varargin = {'title_text','Title text included as keyword-value pair'}
