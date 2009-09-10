@@ -129,6 +129,15 @@ id = ~cellfun(@isempty,tutorials);
 alldirs(~id)=[];
 tutorials(~id)=[];
 
+[alldirsstripped sid] = sort(strrep(alldirs,openearthtoolsroot,''));
+dirnamesseparated = cellfun(@strread,...
+    alldirsstripped,...
+    repmat({'%s'},size(alldirs)),...
+    repmat({-1},size(alldirs)),...
+    repmat({'delimiter'},size(alldirs)),...
+    repmat({[filesep filesep]},size(alldirs)),...
+    'UniformOutput',false);
+
 %% publish tutorials (if not already published)
 % target dirs
 outputhtmldir = fullfile(outputdir,'html');
@@ -288,7 +297,6 @@ applicationstr = str(min(returnid(returnid > strfind(str,'##BEGINAPP'))):...
     max(returnid(returnid < strfind(str,'##ENDAPP'))));
 
 %% identify general tutorials and application tutorials (m-files)
-[alldirsstripped sid] = sort(strrep(alldirs,openearthtoolsroot,''));
 htmlref = htmlref(sid);
 tutorials = tutorials(sid);
 
@@ -314,19 +322,23 @@ for idr = 1:length(idgeneral)
     dirnames = strread(alldirsstripped{dirid},'%s',-1,'delimiter',[filesep filesep]);
     if length(dirnames) == 1
         filesstr = [];
+        [tempnames sid] = sort(title{dirid});
+        temphtml = htmlref{dirid}(sid); 
         for ifiles = 1:length(tutorials{dirid})
-            [dum name] = fileparts(htmlref{dirid}{ifiles});
+            [dum name] = fileparts(temphtml{ifiles});
             filesstr = cat(2,filesstr,...
-                strrep(strrep(filestr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',title{dirid}{ifiles}));
+                strrep(strrep(filestr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',tempnames{ifiles}));
         end
         genstr = cat(2,genstr,filesstr);
     else
         newfstr = strrep(folderstr,'#FOLDERNAME',dirnames{end});
         newfilestr = [];
+        [tempnames sid] = sort(title{dirid});
+        temphtml = htmlref{dirid}(sid); 
         for ifiles = 1:length(tutorials{dirid})
-             [dum name] = fileparts(htmlref{dirid}{ifiles});
+            [dum name] = fileparts(temphtml{ifiles});
             newfilestr = cat(2,newfilestr,...
-                strrep(strrep(fileinfolderstr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',title{dirid}{ifiles}));
+                strrep(strrep(fileinfolderstr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',tempnames{ifiles}));
         end
         newfstr = strrep(newfstr,fileinfolderstr,newfilestr);
         genstr = cat(2,genstr,newfstr);
@@ -345,18 +357,31 @@ rtns2 = strfind(folderstr,char(10));
 fileinfolderstr = folderstr(min(rtns2(rtns2 > min(strfind(folderstr,'##BEGINFILE')))):...
     max(rtns2(rtns2 < min(strfind(folderstr,'##ENDFILE')))));
 
-newappstr = [];
-for idr = 1:length(idapplications)
-    % fill application node
-    dirid = idapplications(idr);
-    dirnames = strread(alldirsstripped{dirid},'%s',-1,'delimiter',[filesep filesep]);
+nodenames = cell(size(dirnamesseparated));
+for idr = 1:length(nodenames)
+    if ismember(idr,idapplications)
+        nodenames{idr} = dirnamesseparated{idr}{2};
+    end
+end
+appnodes = nodenames(idapplications);
+[dum dirorder] = sort(lower(appnodes));
+appnodes = appnodes(dirorder);
+apphtmlref = htmlref(idapplications);
+apphtmlref = apphtmlref(dirorder);
+apptitle = title(idapplications);
+apptitle = apptitle(dirorder);
 
-    newfstr = strrep(folderstr,'#FOLDERNAME',dirnames{2});
+newappstr = [];
+for idr = 1:length(appnodes)
+    % fill application node
+    newfstr = strrep(folderstr,'#FOLDERNAME',appnodes{idr});
     newfilestr = [];
+    [temptitles sid] = sort(apptitle{idr});
+    temphtmlref = apphtmlref{idr}(sid);
     for ifiles = 1:length(tutorials{dirid})
-        [dum name] = fileparts(htmlref{dirid}{ifiles});
+        [dum name] = fileparts(temphtmlref{ifiles});
         newfilestr = cat(2,newfilestr,...
-            strrep(strrep(fileinfolderstr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',title{dirid}{ifiles}));
+            strrep(strrep(fileinfolderstr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',temptitles{ifiles}));
     end
     newfstr = strrep(newfstr,fileinfolderstr,newfilestr);
     newappstr = cat(2,newappstr,newfstr);

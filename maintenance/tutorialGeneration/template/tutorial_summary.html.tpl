@@ -19,6 +19,9 @@
 
 		// bind links in treeview
 		bindlinks();
+
+		//click first item
+		$($(".file")[0]).trigger('click');
 	})
 
 	function bindlinks()
@@ -35,6 +38,7 @@
 			{
 			$("document").ajaxStop(linkimages());
 			});
+
 		}
 
 	function linkimages()
