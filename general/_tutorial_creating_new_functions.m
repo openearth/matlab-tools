@@ -1,4 +1,4 @@
-%% Creating new functions
+%% 2. Creating new functions
 % To keep the OpenEarth toolbox well organised, it is of crucial importance
 % that all functions receive a proper help block (in Matlab this is the
 % first uninterrupted comment block after the function declaration and/or

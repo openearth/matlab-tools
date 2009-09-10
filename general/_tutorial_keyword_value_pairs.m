@@ -1,4 +1,4 @@
-%% Keyword Value pairs
+%% 3. Keyword Value pairs
 % This is a tutorial on how to use keyword value pairs.
 %
 % You can use keyword-value pairs when running a function. All additional
