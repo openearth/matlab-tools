@@ -29,6 +29,7 @@ To make changes, update the M-file and republish this document.
     </script><style>
 
 pre.codeinput {
+  overflow-x: auto;
   background: #EEEEEE;
   padding: 10px;
 }
@@ -43,6 +44,7 @@ span.untermstring {color: #B20000}
 span.syscmd {color: #B28C00}
 
 pre.codeoutput {
+  overflow-x: auto;
   color: #666666;
   padding: 10px;
 }
@@ -187,7 +189,7 @@ tic
     [lon,lat] = convertCoordinates(x,y,<span class="string">'CS1.code'</span>,28992,<span class="string">'CS2.code'</span>,4326);
 <span class="keyword">end</span>
 toc
-</pre><pre class="codeoutput">Elapsed time is 5.955782 seconds.
+</pre><pre class="codeoutput">Elapsed time is 5.994741 seconds.
 </pre></div>
             </div>
             <div>
@@ -198,7 +200,7 @@ EPSG = load(<span class="string">'EPSG'</span>);
     [lon,lat] = convertCoordinates(x,y,EPSG,<span class="string">'CS1.code'</span>,28992,<span class="string">'CS2.code'</span>,4326);
 <span class="keyword">end</span>
 toc
-</pre><pre class="codeoutput">Elapsed time is 0.622130 seconds.
+</pre><pre class="codeoutput">Elapsed time is 0.625457 seconds.
 </pre></div>
             </div>
             <div>
