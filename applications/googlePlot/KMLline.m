@@ -108,6 +108,7 @@ OPT.visible       = true;
 OPT.extrude       = true;
 OPT.tessellate    = ~OPT.is3D;
 OPT.zScaleFun     = @(z) (z+0)*1;
+OPT.dateStrStyle  = 29; 
 
 if nargin==0
   return
@@ -241,8 +242,8 @@ OPT_line = struct(...
     'styleName',['line_style' num2str(OPT.line_nr(1))],...
     'tessellate',OPT.tessellate,...
     'visibility',OPT.visible);
-if isempty(OPT.timeIn) , OPT_line.timeIn = [];else  OPT_line.timeIn = datestr( OPT.timeIn(1),29); end
-if isempty(OPT.timeOut),OPT_line.timeOut = [];else OPT_line.timeOut = datestr(OPT.timeOut(1),29); end
+if isempty(OPT.timeIn) , OPT_line.timeIn = [];else  OPT_line.timeIn = datestr( OPT.timeIn(1),OPT.dateStrStyle); end
+if isempty(OPT.timeOut),OPT_line.timeOut = [];else OPT_line.timeOut = datestr(OPT.timeOut(1),OPT.dateStrStyle); end
 
 if OPT.is3D&&OPT.fill
     % fill properties
@@ -251,8 +252,8 @@ if OPT.is3D&&OPT.fill
         'styleName',['fill_style' num2str(OPT.fill_nr(1))],...
         'visibility',OPT.visible,...
         'extrude',1);
-    if isempty(OPT.timeIn) , OPT_fill.timeIn = [];else  OPT_fill.timeIn = datestr( OPT.timeIn(1),29); end
-    if isempty(OPT.timeOut),OPT_fill.timeOut = [];else OPT_fill.timeOut = datestr(OPT.timeOut(1),29); end
+    if isempty(OPT.timeIn) , OPT_fill.timeIn = [];else  OPT_fill.timeIn = datestr( OPT.timeIn(1),OPT.dateStrStyle); end
+    if isempty(OPT.timeOut),OPT_fill.timeOut = [];else OPT_fill.timeOut = datestr(OPT.timeOut(1),OPT.dateStrStyle); end
 end
 % loop through number of lines
 for ii=1:length(lat(1,:))
@@ -261,12 +262,12 @@ for ii=1:length(lat(1,:))
         % update linestyle
         OPT_line.styleName = ['line_style' num2str(OPT.line_nr(ii))];
         % update timeIn and timeOut if multiple times are defined
-        if length(OPT.timeIn )>1, OPT_line.timeIn = datestr(OPT.timeIn (ii),29);end
-        if length(OPT.timeOut)>1,OPT_line.timeOut = datestr(OPT.timeOut(ii),29);end
+        if length(OPT.timeIn )>1, OPT_line.timeIn = datestr(OPT.timeIn (ii),OPT.dateStrStyle);end
+        if length(OPT.timeOut)>1,OPT_line.timeOut = datestr(OPT.timeOut(ii),OPT.dateStrStyle);end
         if OPT.is3D&&OPT.fill
             OPT_fill.styleName = ['fill_style' num2str(OPT.fill_nr(ii))];
-            if length(OPT.timeIn )>1, OPT_fill.timeIn = datestr(OPT.timeIn (ii),29);end
-            if length(OPT.timeOut)>1,OPT_fill.timeOut = datestr(OPT.timeOut(ii),29);end
+            if length(OPT.timeIn )>1, OPT_fill.timeIn = datestr(OPT.timeIn (ii),OPT.dateStrStyle);end
+            if length(OPT.timeOut)>1,OPT_fill.timeOut = datestr(OPT.timeOut(ii),OPT.dateStrStyle);end
         end
         
         % write the line

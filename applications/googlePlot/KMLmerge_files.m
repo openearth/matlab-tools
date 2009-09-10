@@ -4,40 +4,81 @@ function KMLmerge_files(varargin)
 %
 %See also: googlePLot
 
-%%
-if isempty(varargin)
-path = uigetdir;
-else
-path = varargin{1}
+OPT.fileName          = [];
+OPT.kmlName           = [];
+OPT.sourceFiles       = [];
+OPT.deleteSourceFiles = false;
+
+%% set properties
+[OPT, Set, Default] = setProperty(OPT, varargin{:});
+
+%% source files
+if isempty(OPT.sourceFiles)
+    [sourceName,sourcePath] = uigetfile('*.kml','Select KML files to merge','MultiSelect','on');
+    if ischar(sourceName)
+        OPT.sourceFiles{1} = fullfile(sourcePath,sourceName);
+    else
+        for ii = 1:length(sourceName)
+            OPT.sourceFiles{ii,1} = fullfile(sourcePath,sourceName{ii});
+        end
+    end
 end
 
-if exist(fullfile(path,'merge.kml'),'file')
-	delete(fullfile(path,'merge.kml'));
+%% filename
+% gui for filename, if not set yet
+if isempty(OPT.fileName)
+    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','movingArrows.kmz');
+    OPT.fileName = fullfile(filePath,fileName);
 end
-files = dir(fullfile(path,'*.kml'));
+% set kmlName if it is not set yet
+if isempty(OPT.kmlName)
+    [ignore OPT.kmlName] = fileparts(OPT.fileName);
+end
 
-fid0=fopen(fullfile(path,'merge.kml'),'w');
+%% Write the new file
+fid0=fopen(OPT.fileName,'w');
 OPT_header = struct(...
-    'name',path);
+    'name',OPT.kmlName);
 fprintf(fid0,'%s',KML_header(OPT_header));
 
-for ii = 1:length(files)
-    contents = [];
-    fid = fopen(fullfile(path,files(ii).name));
-    while 1
-        tline = fgetl(fid);
-        if ~ischar(tline), break, end
-        contents = [contents tline];
-    end
-    fclose(fid);
-    
+for ii = 1:length(OPT.sourceFiles)
+    contents = textread(OPT.sourceFiles{ii},'%s','delimiter','\n');
     cutoff = strfind(contents,'Document');
-    contents = ['<Folder>' contents(cutoff(1)+9:cutoff(2)-3) '</Folder>'];
+ 
+    flag = true;
+    for jj = 1:length(contents)
+        other_flag = true;
+        if ~isempty(cutoff{jj})
+            contents{jj} = strrep(contents{jj},'<Document>','');
+            contents{jj} = strrep(contents{jj},'</Document>','');
+            flag = ~flag;
+            other_flag = false;
+        end
+        if flag&&other_flag
+            contents{jj} = [];
+        end  
+    end
     
-    fprintf(fid0,'%s',contents);
+    fprintf(fid0,'%s','<Folder>');
+    fprintf(fid0,'   %s\n',contents{:});
+    fprintf(fid0,'%s','</Folder>');
 end
 
 % FOOTER
 fprintf(fid0,'%s',KML_footer);
 % close KML
 fclose(fid0);
+
+%% delete old files?
+if OPT.deleteSourceFiles
+    delete(OPT.sourceFiles{:})
+end
+
+%% compress to kmz?
+if strcmpi(OPT.fileName(end),'z')
+    movefile(OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
+    zip(OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
+    movefile([OPT.fileName '.zip'],OPT.fileName)
+    delete([OPT.fileName(1:end-3) 'kml'])
+end
+

@@ -1,9 +1,15 @@
-function [OPT, Set, Default] = KMLcurvedArrows(varargin)
+function [OPT, Set, Default] = KMLcurvedArrows(x,y,u0,v0,varargin)
 % KMLCURVEDARROWS makes nice curved arrows that 'go with the flow'
 %
 % see the keyword/vaule pair defaults for additional options
 %
 % See also: googlePlot
+%
+% x
+% y
+% u0 must be a cell array, each cell with demsions of x and y
+% v0
+%
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -36,3 +42,173 @@ function [OPT, Set, Default] = KMLcurvedArrows(varargin)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
+
+OPT.coordConvFun = @(x,y,EPSG) convertCoordinates(x,y,EPSG,'CS1.code',28992,'CS2.code',4326);
+OPT.colorSteps   = 9;
+OPT.colorMap     = @(m) colormap_cpt('YlOrRd 09',(m));
+OPT.fileName     = [];
+OPT.kmlName      = [];
+OPT.time         = [1 1000]; %datenum containing begin and end times of animation
+OPT.dateStrStyle = 'yyyy-mm-ddTHH:MM:SS';
+
+%% arrow properties
+OPT.hdthck	     = 1.7;              % head thickness
+OPT.arthck	     = OPT.hdthck/4;     % arrow thickness
+OPT.relwdt	     = ones(numel(x),1); % relative width, leave at one
+OPT.dt 		     = 90;               % time (determines length of arrows)
+OPT.nt 		     = numel(x);         % number of gridpoints
+OPT.lifespan  	 = 50;               % number of timesteps an arrow is alive
+OPT.n_arrows 	 = 300;              % number of arrows
+OPT.flow_steps 	 = 4;                % (max is 21)
+OPT.colorScale 	 = .015;
+OPT.lineScale  	 = .02;
+OPT.interp_steps = 1;                % interpolate in time between consecutive arrows
+
+if nargin==0
+  return
+end
+
+%% set properties
+[OPT, Set, Default] = setProperty(OPT, varargin{:});
+
+%% filename
+% gui for filename, if not set yet
+if isempty(OPT.fileName)
+    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','movingArrows.kmz');
+    OPT.fileName = fullfile(filePath,fileName);
+end
+% set kmlName if it is not set yet
+if isempty(OPT.kmlName)
+    [ignore OPT.kmlName] = fileparts(OPT.fileName);
+end
+
+tempPath = tempname; 
+
+mkdir(tempPath)
+% set colormap
+cmap = OPT.colorMap(OPT.colorSteps);
+
+% load EPSG for convert coordinates
+EPSG = load('EPSG');
+
+%% make arrows
+% get first data
+u2 = u0{1};
+v2 = v0{1};
+u1 = u2;v1 = v2;
+
+%% make initial seed of arrows
+x_nonan 	= x(~isnan(x));
+y_nonan 	= y(~isnan(y));
+seedPoints 	= linspace(1,numel(x_nonan)-numel(x_nonan)/OPT.n_arrows,OPT.n_arrows);
+seedPoints 	= round(seedPoints'+(numel(x_nonan)/OPT.n_arrows).*rand(OPT.n_arrows,1));
+x0 		    = x_nonan(seedPoints);
+y0 		    = y_nonan(seedPoints);
+t  		    = round((OPT.lifespan-1)*rand(size(x0)))+1;
+
+%% interpolate time
+time        = linspace(OPT.time(1),OPT.time(2),OPT.interp_steps*(length(u0)-1)+1);
+if numel(time)>1
+    time(end+1) = time(end)+time(end)-time(end-1);
+else
+    time(end+1) = time(end);
+end
+
+
+
+for ii = 1:OPT.interp_steps*(length(u0)-1)+1;
+    if rem((ii-1),OPT.interp_steps)==0 %only update when needed
+        u1 = u2;v1 = v2;
+    end
+    if rem((ii-2),OPT.interp_steps)==0 %only update when needed
+         % read trim file of next timestep
+        u2 = u0{(ii-2)/OPT.interp_steps+2}; 
+        v2 = v0{(ii-2)/OPT.interp_steps+2};
+    end
+    
+    a = rem((ii-1),OPT.interp_steps)/OPT.interp_steps;
+    b = 1-a;
+    u = a*u2+b*u1;
+    v = a*v2+b*v1;
+
+    % make arrows
+    [xp,yp,xax,yax]=KML_curvedArrows(x0,y0,x,y,u,v,OPT.dt,OPT.nt,OPT.hdthck,OPT.arthck,OPT.relwdt);
+    
+    % pre-proces xp and yp
+    xp(xp<1000.0 & xp>999.998)=NaN;  yp(yp<1000.0 & yp>999.998)=NaN;
+    xp = reshape(xp,35,[]);          yp = reshape(yp,35,[]);
+    xp(end,:) = [];                  yp(end,:) = [];
+
+    % convert coordinates
+    [lon,lat] = OPT.coordConvFun(xp,yp,EPSG); 
+    
+    arrowSizes = sqrt(polyarea(xp,yp));
+    lineColors = round(arrowSizes*OPT.colorScale)+1;
+    lineColors = min(OPT.colorSteps,lineColors);
+    lineColors = cmap(lineColors,:);
+    lineWidths = min(round(arrowSizes*OPT.lineScale)+2,10)/5;
+    
+    lineAlphas = ones(size(x0));
+    lineAlphas(t==9|t==OPT.lifespan-8) = 0.9;
+    lineAlphas(t==8|t==OPT.lifespan-7) = 0.8;
+    lineAlphas(t==7|t==OPT.lifespan-6) = 0.7;
+    lineAlphas(t==6|t==OPT.lifespan-5) = 0.6;
+    lineAlphas(t==5|t==OPT.lifespan-4) = 0.5;
+    lineAlphas(t==4|t==OPT.lifespan-3) = 0.4;
+    lineAlphas(t==3|t==OPT.lifespan-2) = 0.3;
+    lineAlphas(t==2|t==OPT.lifespan-1) = 0.2;
+    lineAlphas(t==1|t==OPT.lifespan) = 0.1;
+    
+    KMLline(lat(:,arrowSizes ~= 0),lon(:,arrowSizes ~= 0),'timeIn',time(ii),'timeOut',time(ii+1),...
+        'fileName',fullfile(tempPath,sprintf('arrows%03d.kml',ii)),'kmlName',sprintf('arrows%03d',ii),...
+        'lineWidth',lineWidths(arrowSizes ~= 0),'lineColor',lineColors(arrowSizes ~= 0,:),...
+        'dateStrStyle',OPT.dateStrStyle,'lineAlpha',lineAlphas(arrowSizes ~= 0));
+    disp(sprintf('arrows%03d done',ii));
+    
+    pause(0.01) % allows for better 'ctrl+c'-ing
+    
+    %% update y0 and x0
+    x0 = xax(OPT.flow_steps:21:end);
+    y0 = yax(OPT.flow_steps:21:end);
+    
+    %% replace dead arrows
+    t = t-1;
+    t(arrowSizes' == 0) = t(arrowSizes' == 0)-20;
+    %t(arrowSizes' >  prctile(arrowSizes,99)) =  t(arrowSizes' >  prctile(arrowSizes,99))-4;
+    % kill arrows
+    x0(t<1) = [];
+    y0(t<1) = [];
+     t(t<1) = [];
+     
+    %% add new ones if needed
+    if length(x0)<OPT.n_arrows
+        new_arrows = OPT.n_arrows-length(x0);
+        
+        % pick new arrows. Use a bias so that arrows with small velocities
+        % are more likelie to be chosen.
+        x_nonan = x(~isnan(x));
+        y_nonan = y(~isnan(y));
+        s_nonan = sqrt(u(~isnan(u)).^2+v(~isnan(v)).^2);
+        
+        s_nonan = -s_nonan/2 +... 
+        ...% this ^^^^^^^ is where the bias is;
+        rand(size(s_nonan))*max(s_nonan) +...
+        rand(size(s_nonan))*max(s_nonan) +...
+        rand(size(s_nonan))*max(s_nonan) +...
+        rand(size(s_nonan))*max(s_nonan) +...
+        rand(size(s_nonan))*max(s_nonan);
+    
+        [ignore,ind] = sort(s_nonan);
+        seedPoints   = ind(end-new_arrows+1:end);
+        x0 = [x0;x_nonan(seedPoints)];
+        y0 = [y0;y_nonan(seedPoints)];
+        t  = [t;50*ones(new_arrows,1)];
+    end 
+end
+filesCreated = dir([tempPath filesep '*.kml']);
+for ii = 1:length(filesCreated)
+    sourceFiles{ii} = fullfile(tempPath,filesCreated(ii).name); %#ok<AGROW>
+end
+KMLmerge_files('fileName',OPT.fileName,'kmlName',...
+    OPT.kmlName,'sourceFiles',sourceFiles,'deleteSourceFiles',true)
+rmdir(tempPath,'s')

@@ -101,6 +101,12 @@ function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
+
+%% version check
+if datenum(version('-date'))<datenum(2007,1,1)
+    warning('the matlab version your using might be to old for this function') %#ok<WNTAG>
+end
+
 %% check if EPSG codes are given
 
 if odd(length(varargin))
