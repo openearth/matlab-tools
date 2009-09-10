@@ -134,7 +134,7 @@ location = [location extension];
 
 %% make sure that existing figure file is not overwritten
 if exist(location, 'file')
-    disp([location, ' already exists'])
+    disp([location, ' already exists']);
     [directory figurefilename extension] = fileparts(location);
     if ~strcmp(OPT.permission, 'overwrite')
         id = 0;
@@ -144,7 +144,7 @@ if exist(location, 'file')
         end
         disp(['Figure has been saved to <a href="' location '">' location '</a>']);
     else
-        disp('File has been overwritten by new figure')
+        disp('File has been overwritten by new figure');
     end
 else
     disp(['Figure has been saved to <a href="' location '">' location '</a>']);
