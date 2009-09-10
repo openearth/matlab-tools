@@ -1,6 +1,7 @@
 function KMLsurf_tiled(lat,lon,z)
-
 % KMLSURF_TILED  BETA!!!!
+%
+%See also: googlePlot, surf
 
 
 %[lat,lon] = meshgrid(54:1/255:55,4:1/127:5);

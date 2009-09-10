@@ -4,7 +4,7 @@ function [OPT, Set, Default] = KMLpatch(lat,lon,varargin)
 % only works for a singe patch (filled polygon)
 % see the keyword/vaule pair defaults for additional options
 %
-% See also: googlePlot
+% See also: googlePlot, patch
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

@@ -11,7 +11,7 @@ function [OPT, Set, Default] = KMLtext(lat,lon,label,varargin)
 %                              % defined a gui pops up
 %  'kmlName'    = 'untitled';  % name of kml that shows in GE
 %
-% See also: googlePlot
+% See also: googlePlot, text
 %
 % Example: 
 % 

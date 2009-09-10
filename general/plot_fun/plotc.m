@@ -1,13 +1,13 @@
-function varargout = plotc(x,y,v,marker,varargin)
+function varargout = plotc(x,y,c,marker,varargin)
 %PLOTC   fast scatter/bubble plot (without auto color rescaling afterwards)
 %
-%    handle = plotc(X,Y,V,'MARKER') 
+%    handle = plotc(X,Y,C,'MARKER') 
 %
-% plots the values of v colour coded at the 
-% positions specified by x and y, and v (z-axis) in a 3-D axis
+% plots the values of c colour coded at the 
+% positions specified by x and y, and c (z-axis) in a 3-D axis
 % system. A colorbar is added on the right side of the figure.
 %
-% The colorbar ticks stretch from the minimum value of v to its
+% The colorbar ticks stretch from the minimum value of c to its
 % maximum in 9 steps (10 values).
 %
 % The last argument is optional to define the marker being used. The
@@ -61,15 +61,15 @@ function varargout = plotc(x,y,v,marker,varargin)
    end
 
 %% make 1D and remove NaNs
-   x = x(~isnan(v(:)));
-   y = y(~isnan(v(:)));
-   v = v(~isnan(v(:)));
+   x = x(~isnan(c(:)));
+   y = y(~isnan(c(:)));
+   c = c(~isnan(c(:)));
    
    map = colormap;
 
 %% Define RGB color scaling limits
-   miv = min(v);
-   mav = max(v);
+   miv = min(c);
+   mav = max(c);
    
    if strcmpi(get(gca,'CLimMode'),'auto')
       caxis([miv mav])
@@ -81,12 +81,12 @@ function varargout = plotc(x,y,v,marker,varargin)
 %% Plot the points
    hold on
    for i=1:length(x)
-       in=round((v(i)-miv)*(length(map)-1)/(mav-miv));
+       in=round((c(i)-miv)*(length(map)-1)/(mav-miv));
        %--- Catch the out-of-range numbers
        if in<=0;in=1;end % changed to allow for values outside caxis range
        if in > length(map);in=length(map);end
        %--- Deal with in-range number
-       handles(i) = plot3(x(i),y(i),v(i),marker,'color',map(in,:),'markerfacecolor',map(in,:));
+       handles(i) = plot3(x(i),y(i),c(i),marker,'color',map(in,:),'markerfacecolor',map(in,:));
    end
    hold off
 

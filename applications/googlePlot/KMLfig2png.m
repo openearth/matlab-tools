@@ -1,5 +1,5 @@
 function [OPT, Set, Default] = KMLfig2png(h,varargin)
-% KMLFIG2PNG makes a tiled png figure for google earth
+% KMLFIG2PNG   makes a tiled png figure for google earth
 %
 %   h = surf(lon,lat,z)
 %   KMLfig2png(h,<keyword,value>) 
@@ -12,7 +12,7 @@ function [OPT, Set, Default] = KMLfig2png(h,varargin)
 %
 % where Lod = Level of Detail
 %
-% See also: googlePlot
+% See also: googlePlot, pcolor
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

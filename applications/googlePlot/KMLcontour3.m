@@ -3,7 +3,7 @@ function [OPT, Set, Default] = KMLcontour3(lat,lon,z,varargin)
 %
 % see the keyword/vaule pair defaults for additional options
 %
-% See also: googlePlot
+% See also: googlePlot, contour3
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

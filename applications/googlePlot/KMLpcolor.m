@@ -10,7 +10,7 @@ function [OPT, Set, Default] = KMLpcolor(lat,lon,c,varargin)
 %
 %    OPT = KMLpcolor()
 %
-% See also: googlePlot
+% See also: googlePlot, pcolor
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

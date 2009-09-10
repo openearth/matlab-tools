@@ -5,7 +5,8 @@ function [output] = KML_header(varargin)
 %
 % where the following <keyword,value> pairs have been implemented:
 %
-%   * name        name of kml file (default 'ans.kml')
+%   * name        name that appears in Google Earth Places list (default 'ans.kml')
+%   * description that appears in Google Earth Places list
 %   * open        whether to open kml file in GoogleEarth in call of KMLline(default 0)
 %
 % See also: KML_footer, KML_line, KML_poly, KML_style, KML_stylePoly,
@@ -45,8 +46,9 @@ function [output] = KML_header(varargin)
 
 %% Properties
 
-OPT.open       = [];
-OPT.name       = 'ans.kml';
+OPT.open        = [];
+OPT.name        = 'ans.kml';
+OPT.description = '';
 
 OPT = setProperty(OPT,varargin{:});
 
@@ -54,8 +56,10 @@ OPT = setProperty(OPT,varargin{:});
 output = sprintf([...
     '<?xml version="1.0" encoding="UTF-8"?>\n'...
     '<kml xmlns="http://earth.google.com/kml/2.2">\n'...
+    '<!-- Created with Matlab (R) googlePlot toolbox from OpenEarthTools http://www.OpenEarth.eu-->\n',...
     '<Document>\n'...
     '<name>%s</name>\n'...
+    '<description>%s</description>\n'...
     '<visibility>1</visibility>\n'...
     '<open>%d</open>\n'],...
-    OPT.name, OPT.open);
+    OPT.name,OPT.description, OPT.open);

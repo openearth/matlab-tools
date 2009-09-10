@@ -55,7 +55,7 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 %   KMLline(lat,lon,'timeIn',time,'timeOut',time+364,...
 %       'lineWidth',4,'lineColor',jet(length(time)),'lineAlpha',.7);
 %
-% See also: googlePlot
+% See also: googlePlot, plot, line
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

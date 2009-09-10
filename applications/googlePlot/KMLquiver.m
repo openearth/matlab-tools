@@ -72,7 +72,7 @@ function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 % Note: Notice the difference in how polygons and line are rendered by GE.
 %   Especially take care when plotting large figures near pole's
 %
-% See also: googlePlot
+% See also: googlePlot, quiver, arrow2
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -105,6 +105,7 @@ function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
+
 %% default settings
 OPT = struct(...
 'arrowStyle','default',...
