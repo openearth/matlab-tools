@@ -19,6 +19,9 @@
 
 		// bind links in treeview
 		bindlinks();
+
+		//click first item
+		$($(".file")[0]).trigger('click');
 	})
 
 	function bindlinks()
@@ -35,6 +38,7 @@
 			{
 			$("document").ajaxStop(linkimages());
 			});
+
 		}
 
 	function linkimages()
@@ -77,13 +81,13 @@
 		<li><span class="folder">General</span>
 			<ul>
 			<!-- ##BEGINGENERAL -->
+				<li><a><span class="file" ref="html/tutorial_netCDF_create.html">Creating a NetCDF file</span></a></li>
+
 				<li><a><span class="file" ref="html/tutorial_creating_new_functions.html">Creating new functions</span></a></li>
 
 				<li><a><span class="file" ref="html/tutorial_initiate_toolbox.html">Initializing the toolbox</span></a></li>
 
 				<li><a><span class="file" ref="html/tutorial_keyword_value_pairs.html">Keyword Value pairs</span></a></li>
-
-				<li><a><span class="file" ref="html/tutorial_netCDF_create.html">Creating a NetCDF file</span></a></li>
 
 				<li><a><span class="file" ref="html/tutorial_netCDF_read_functions.html">Reading a netCDF file</span></a></li>
 
@@ -108,20 +112,18 @@
 					</ul>
 				</li>
 
+				<li><span class="folder">googlePlot</span>
+					<ul>
+						<!-- ##BEGINFILEITEM -->
+						<li><a><span class="file" ref="html/KMLcontour3_tutorial.html">KMLcontour3</span></a></li>
+						<!-- ##ENDFILEITEM -->
+					</ul>
+				</li>
+
 				<li><span class="folder">Rijkswaterstaat</span>
 					<ul>
 						<!-- ##BEGINFILEITEM -->
-						<li><a><span class="file" ref="html/jarkus_tutorial_calculate_MKL.html">JarKus MKL calculations</span></a></li>
-
-						<li><a><span class="file" ref="html/jarkus_tutorial_calculate_volume.html">JarKus volume calculations</span></a></li>
-
 						<li><a><span class="file" ref="html/jarkus_tutorial_coordinates_RSP_2_RD.html">Coordinate conversion from RSP to RD</span></a></li>
-
-						<li><a><span class="file" ref="html/jarkus_tutorial_plot_in_googleEarth.html">Jarkus & Google Earth</span></a></li>
-
-						<li><a><span class="file" ref="html/jarkus_tutorial_reading_data_1.html">Extracting JarKus data from netCDF (1)</span></a></li>
-
-						<li><a><span class="file" ref="html/jarkus_tutorial_reading_data_2.html">Extracting JarKus data from netCDF (2)</span></a></li>
 						<!-- ##ENDFILEITEM -->
 					</ul>
 				</li>
@@ -130,16 +132,6 @@
 					<ul>
 						<!-- ##BEGINFILEITEM -->
 						<li><a><span class="file" ref="html/convertCoordinates_tutorial.html">Coordinate conversion</span></a></li>
-						<!-- ##ENDFILEITEM -->
-					</ul>
-				</li>
-
-				<li><span class="folder">googlePlot</span>
-					<ul>
-						<!-- ##BEGINFILEITEM -->
-						<li><a><span class="file" ref="html/KMLcontour3_tutorial.html">KMLcontour3</span></a></li>
-
-						<li><a><span class="file" ref="html/KMLline_tutorial.html">KMLline</span></a></li>
 						<!-- ##ENDFILEITEM -->
 					</ul>
 				</li>
