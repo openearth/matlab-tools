@@ -31,7 +31,7 @@ KMLcurvedArrows(x,y,u0(1:2),v0(1:2),'time',time,...
 
 %%
 % 
-% <<prerendered_images\KML_movingArrows1.jpg>>
+% <<prerendered_images/KML_movingArrows1.jpg>>
 % 
 
 %%
