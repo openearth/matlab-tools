@@ -115,8 +115,6 @@ publishopts = struct(...
     'outputDir',outputdir,...
     'useNewFigure',true);
 
-copyfile(tmpdir,fullfile(outputdir,'script'),'f');
-
 publishedfile = publish(filename,publishopts);
 
 %% hack prerendered images to file
