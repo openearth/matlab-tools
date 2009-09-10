@@ -61,6 +61,12 @@ function tutorials2html(varargin)
 % $HeadURL$
 % $Keywords: $
 
+%% Lock workspace of this function
+% Needed in case of clear all statements in tutorials...
+% This prevents this workspace to be cleared whenever a clear all statement
+% is given.
+mlock;
+
 %% process input
 % maindir
 maindir = openearthtoolsroot;
@@ -127,16 +133,6 @@ tutorials(~id)=[];
 % target dirs
 outputhtmldir = fullfile(outputdir,'html');
 
-% publishopts
-publishopts = struct(...
-    'maxOutputLines',15,...
-    'format','html',...
-    'stylesheet',publishtemplate,...
-    'catchError',true,...
-    'outputDir',outputhtmldir,...
-    'useNewFigure',true,...
-    'codeToEvaluate',[]);
-
 % create outputdir
 if ~isdir(outputdir)
     mkdir(outputdir);
@@ -147,6 +143,39 @@ end
 cdtemp   = cd;
 htmlref  = cell(size(alldirs));
 title    = cell(size(alldirs));
+
+%% publish options
+vs = version;
+if str2num(vs(1:3)) >= 7.4 %#ok<ST2NM>
+    % This option is not available in previous versions. We use it to prevent matlab
+    % from running the mfile in the base workspace. Versions prior to 7.4 will leave
+    % all variables created by a tutorial in the base workspace.
+    % publishopts
+    publishopts = struct(...
+        'maxOutputLines',15,...
+        'format','html',...
+        'stylesheet',publishtemplate,...
+        'outputDir',outputhtmldir,...
+        'catchError',true,...
+        'useNewFigure',true);
+else
+    publishopts = struct(...
+        'format','html',...
+        'stylesheet',publishtemplate,...
+        'outputDir',outputhtmldir,...
+        'stopOnError',true,...
+        'useNewFigure',true);
+    if ~quiet
+        disp('You are using a matlab version prior to 7.4. This version does not allow');
+        disp('codeToEvaluate as an option for the publish function.');
+        disp('  ');
+        disp('As a consequence we could not prevent the publish function to leave all');
+        disp('variables created during publishing in the base workspace. Be aware of this');
+        disp('shortcoming of matlab.');
+        disp(' ');
+        disp('Furthermore error information will not be included in the published html file.');
+    end
+end
 
 openfigs = findobj('Type','figure');
 for idr = 1:length(alldirs)
@@ -170,26 +199,44 @@ for idr = 1:length(alldirs)
         else
             if all(id)
                 %% publish file, it is not published yet
+                
+                %% Create tempdir
+                tmpdir = tempname;
+                mkdir(tmpdir);
+                
+                %% rename the file if the filename starts with _
                 if strcmp(tutorialname(1),'_')
-                    %% rename the file, because a filename starting with _ won't work
                     tutorialname = tutorialname(2:end);
-                    copyfile(which(tutorials{idr}{itutorials}),fullfile(tempdir,[tutorialname,'.m']));
-                    cd(tempdir);
                 end
-                publishopts.codeToEvaluate = ['evalinemptyworkspace(''' tutorialname ';'');'];
-                %% read first line
+                copyfile(which(tutorials{idr}{itutorials}),fullfile(tmpdir,[tutorialname,'.m']));
+                
+                %% read first line to acquire name
+                cd(tmpdir);
                 fid = fopen(which(tutorialname));
                 first_line = fgetl(fid);
                 fclose(fid);
                 title{idr}{itutorials} = first_line(4:end);
-            
-                %% save reference
                 
+                %% publish options
+                vs = version;
+                if str2num(vs(1:3)) >= 7.4 %#ok<ST2NM>
+                    % This option is not available in previous versions. We use it to prevent matlab
+                    % from running the mfile in the base workspace. Versions prior to 7.4 will leave
+                    % all variables created by a tutorial in the base workspace.
+                    % publishopts
+                    publishopts.codeToEvaluate = ['evalinemptyworkspace(''' tutorialname ';'');'];
+                end
+
+                %% save reference and publish
                 htmlref{idr}{itutorials} = publish(tutorialname,publishopts);
+                
+                %% remove tempdir
+                cd(cdtemp);
+                rmdir(tmpdir,'s');
                 
                 %% show progress
                 if ~quiet
-                    disp([ 'finished publishing <a href="' htmlref{idr}{itutorials} '">' title{idr}{itutorials} '</a>']);
+                    disp([ 'finished publishing <a href="matlab:winopen(''' htmlref{idr}{itutorials} ''');">' title{idr}{itutorials} '</a>']);
                 end
                 newfigs = findobj('type','figure');
                 close(newfigs(~ismember(newfigs,openfigs)));
@@ -224,6 +271,7 @@ for idr = 1:length(id)
     end
 end
 copyfile(tmpdir,fullfile(outputhtmldir,'script'),'f');
+rmdir(tmpdir,'s');
 
 %% load template
 fid = fopen(summarytemplate,'r');
@@ -326,9 +374,12 @@ fclose(fid);
 
 if ~quiet
     disp(char(10));
-    disp([ 'finished publishing. Click <a href="' fullfile(outputdir,'tutorial_summary.html') '">here</a> for result']);
+    disp([ 'finished publishing. Click <a href="matlab:winopen(''' fullfile(outputdir,'tutorial_summary.html') ''');">here</a> for result']);
 end
 
 if show
     winopen(fullfile(outputdir,'tutorial_summary.html'));
 end
+
+%% unlock this file
+munlock
