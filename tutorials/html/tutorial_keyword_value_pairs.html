@@ -72,19 +72,14 @@ p.footer {
                <h2><a>Keyword Value pairs</a></h2>
                <div>
                   <p>This is a tutorial on how to use keyword value pairs.</p><pre class="codeinput"><span class="comment">% You can use keyword-value pairs when running a function. All additional</span>
-<span class="comment">% arguments that are passed to a functions are read ar vargargin (variable</span>
+<span class="comment">% arguments that are passed to a function are read as vargargin (variable</span>
 <span class="comment">% arguments in).</span>
 </pre></div>
             </div>
             <div>
-               <h2><a>Example</a></h2>
+               <h2><a>Using keyword value pairs</a></h2>
                <div>
-                  <p>as an example, we can define out own varargin (this is what normally would be read by the function we are calling)</p><pre class="codeinput">varargin = {<span class="string">'title_text'</span>,<span class="string">'Title text included as keyword-value pair'</span>}
-</pre><pre class="codeoutput">
-varargin = 
-
-    'title_text'    [1x41 char]
-
+                  <p>as an example, we can define our own varargin (this is what normally would be read by the function we are calling)</p><pre class="codeinput">varargin = {<span class="string">'title_text'</span>,<span class="string">'Title text included as keyword-value pair'</span>};
 </pre></div>
             </div>
             <div>
@@ -112,8 +107,9 @@ title(OPT.title_text)
 </pre><img vspace="5" hspace="5" src="tutorial_keyword_value_pairs_01.png" relsrc="tutorial_keyword_value_pairs_01.png"> </div>
             </div>
             <div>
+               <h2><a>Wrong keywords</a></h2>
                <div>
-                  <p>if we define a wrong input argument, we get an error message:</p><pre class="codeinput">varargin = {<span class="string">'line_spec'</span>,<span class="string">'.r'</span>}
+                  <p>if we define a wrong input argument, we get an error message:</p><pre class="codeinput">varargin = {<span class="string">'line_spec'</span>,<span class="string">'.r'</span>};
 
 <span class="keyword">try</span>
     OPT = setProperty(OPT, varargin{:});
@@ -121,11 +117,6 @@ title(OPT.title_text)
     lasterr
 <span class="keyword">end</span>
 </pre><pre class="codeoutput">
-varargin = 
-
-    'line_spec'    '.r'
-
-
 ans =
 
 Error using ==&gt; setProperty at 139
@@ -135,7 +126,7 @@ PropertyName "line_spec" is not valid
             </div>
             <div>
                <div><pre class="codeinput"><span class="comment">%this will only work if we include it in the function first</span>
-varargin = {<span class="string">'title_text'</span>,<span class="string">'Title text included as keyword-value pair'</span>}
+varargin = {<span class="string">'title_text'</span>,<span class="string">'Title text included as keyword-value pair'</span>};
 
 OPT = struct(<span class="keyword">...</span>
     <span class="string">'xInitial'</span>, (-20:10:70)', <span class="keyword">...</span>
@@ -151,16 +142,12 @@ plot(OPT.xInitial, OPT.zInitial,OPT.line_spec);
 xlabel(OPT.xlabel_text)
 ylabel(OPT.ylabel_text)
 title(OPT.title_text)
-</pre><pre class="codeoutput">
-varargin = 
-
-    'title_text'    [1x41 char]
-
 </pre><img vspace="5" hspace="5" src="tutorial_keyword_value_pairs_02.png" relsrc="tutorial_keyword_value_pairs_02.png"> </div>
             </div>
             <div>
+               <h2><a>Multiple keywords</a></h2>
                <div>
-                  <p>and now with extra arguments defined:</p><pre class="codeinput">varargin = {<span class="string">'title_text'</span>,<span class="string">'Title text included as keyword-value pair'</span>,<span class="string">'line_spec'</span>,<span class="string">'.r'</span>}
+                  <p>and now with extra arguments defined:</p><pre class="codeinput">varargin = {<span class="string">'title_text'</span>,<span class="string">'Title text included as keyword-value pair'</span>,<span class="string">'line_spec'</span>,<span class="string">'.r'</span>};
 
 OPT = struct(<span class="keyword">...</span>
     <span class="string">'xInitial'</span>, (-20:10:70)', <span class="keyword">...</span>
@@ -176,11 +163,6 @@ plot(OPT.xInitial, OPT.zInitial,OPT.line_spec);
 xlabel(OPT.xlabel_text)
 ylabel(OPT.ylabel_text)
 title(OPT.title_text)
-</pre><pre class="codeoutput">
-varargin = 
-
-    'title_text'    [1x41 char]    'line_spec'    '.r'
-
 </pre><img vspace="5" hspace="5" src="tutorial_keyword_value_pairs_03.png" relsrc="tutorial_keyword_value_pairs_03.png"> </div>
             </div>
          </div>
@@ -193,14 +175,14 @@ varargin =
 % This is a tutorial on how to use keyword value pairs.
 
 % You can use keyword-value pairs when running a function. All additional
-% arguments that are passed to a functions are read ar vargargin (variable
+% arguments that are passed to a function are read as vargargin (variable
 % arguments in). 
 
-%% Example
-% as an example, we can define out own varargin (this is what normally
+%% Using keyword value pairs
+% as an example, we can define our own varargin (this is what normally
 % would be read by the function we are calling)
 
-varargin = {'title_text','Title text included as keyword-value pair'}
+varargin = {'title_text','Title text included as keyword-value pair'};
 
 %% 
 % Within the function, first the default properties for all possible input
@@ -226,18 +208,19 @@ xlabel(OPT.xlabel_text)
 ylabel(OPT.ylabel_text)
 title(OPT.title_text)
 
-%%
+%% Wrong keywords
 % if we define a wrong input argument, we get an error message:
-varargin = {'line_spec','.r'}
+varargin = {'line_spec','.r'};
 
 try
     OPT = setProperty(OPT, varargin{:});
 catch
     lasterr
 end
+
 %% 
 %this will only work if we include it in the function first
-varargin = {'title_text','Title text included as keyword-value pair'}
+varargin = {'title_text','Title text included as keyword-value pair'};
 
 OPT = struct(...
     'xInitial', (-20:10:70)', ...
@@ -254,9 +237,9 @@ xlabel(OPT.xlabel_text)
 ylabel(OPT.ylabel_text)
 title(OPT.title_text)
 
-%% 
+%% Multiple keywords
 % and now with extra arguments defined:
-varargin = {'title_text','Title text included as keyword-value pair','line_spec','.r'}
+varargin = {'title_text','Title text included as keyword-value pair','line_spec','.r'};
 
 OPT = struct(...
     'xInitial', (-20:10:70)', ...

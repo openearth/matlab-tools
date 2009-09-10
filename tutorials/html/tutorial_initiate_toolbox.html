@@ -77,29 +77,28 @@ p.footer {
          </div>
          <div class="accordion">
             <div>
+               <h2><a>Oetsettings</a></h2>
                <div>
                   <p>Figure out what folder oetsettings.m is located in, and the run it. Oetsettings is located in the Matlab directory of your
                      OpenEarth checkout
-                  </p>
-                  <p><tt>run ENTER_FILEPATH_HERE/oetsettings</tt></p>
-               </div>
+                  </p><pre class="codeinput">run(<span class="string">'&lt;enter filepath here&gt;/oetsettings'</span>);
+</pre></div>
             </div>
             <div>
+               <h2><a>Create a shortcut</a></h2>
                <div>
                   <p>As you don't want to remember this code, but you will run it every time you start MATLAB from know on, you should make a ahortcut
                      for it on the shortcut bar. Just rightclick ==&gt; new shortcut. Enter the command to run oetsettings. If you save this, you
                      can run oetsetings by pressing that shortcut button. You might even want to add some other commands, so matlab is effectiveley
                      reset every time you press this button.
-                  </p>
-               </div>
-            </div>
-            <div>
-               <div>
-                  <p><tt>restoredefaultpath</tt></p>
-                  <p><tt>run('ENTER_FILEPATH_HERE\oetsettings.m')</tt></p>
-                  <p><tt>cd ENTER_FILEPATH_HERE</tt></p>
-                  <p><tt>clc; clear; close;</tt></p>
-               </div>
+                  </p><pre class="codeinput">restoredefaultpath
+
+run(<span class="string">'&lt;enter filepath here&gt;\oetsettings.m'</span>)
+
+cd <span class="string">&lt;enter</span> <span class="string">filepath</span> <span class="string">here&gt;</span>
+
+clc; clear; close;
+</pre></div>
             </div>
             <div>
                <div>
@@ -118,13 +117,14 @@ p.footer {
 % to MATLAB. It adds all relevant toolbox paths to the matlab search
 % path. 
 
-%%
+%% Oetsettings
 % Figure out what folder oetsettings.m is located in, and the run it.
 % Oetsettings is located in the Matlab directory of your OpenEarth checkout
 % 
-% |run ENTER_FILEPATH_HERE/oetsettings|
 
-%%
+run('<enter filepath here>/oetsettings');
+
+%% Create a shortcut
 % As you don't want to remember this code, but you will run it every time
 % you start MATLAB from know on, you should make a ahortcut for it on the
 % shortcut bar. Just rightclick ==> new shortcut. Enter the command to run 
@@ -132,14 +132,13 @@ p.footer {
 % that shortcut button. You might even want to add some other commands, so
 % matlab is effectiveley reset every time you press this button.
 
-%%
-% |restoredefaultpath|
-%
-% |run('ENTER_FILEPATH_HERE\oetsettings.m')|
-%
-% |cd ENTER_FILEPATH_HERE|
-%
-% |clc; clear; close;|
+restoredefaultpath
+
+run('<enter filepath here>\oetsettings.m')
+
+cd <enter filepath here>
+
+clc; clear; close;
 
 %%
 % 
