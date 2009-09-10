@@ -8,12 +8,26 @@
 % developed. It creates a new function using the input arguments supplied
 % by the user or using default arguments.
 
-%%
+%% Invoking a new function template
+% The following command opens a new function in the matlab editor with the
+% name "testfun.m".
+
 oetnewfun('testfun')
 
-%% Working with the resulting function
+%% Function template layout
 % The resulting function now comes with a helpblock, a standard LGPL
-% copyright block and a list of svn-keywords.
+% copyright block and a list of svn-keywords. See for an example the code 
+% below. The only thing you have to do is enter the correct information
+% for:
+%
+% # *h1line* (one line description below the function declaration)
+% # *description* (description of the functionality)
+% # *syntax* (How should / can we approach your function)
+% # *input* (explanation of the input arguments)
+% # *Output* (explanation of the output arguments)
+% # *Example* (Give an example of how we can use the function)
+% # *See also* (Just enter names of related function seperated by a space, like with the matlab documentation)
+%
 
 function varargout = testfun(varargin)
 %TESTFUN  One line description goes here.
