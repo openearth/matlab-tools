@@ -144,39 +144,6 @@ cdtemp   = cd;
 htmlref  = cell(size(alldirs));
 title    = cell(size(alldirs));
 
-%% publish options
-vs = version;
-if str2num(vs(1:3)) >= 7.4 %#ok<ST2NM>
-    % This option is not available in previous versions. We use it to prevent matlab
-    % from running the mfile in the base workspace. Versions prior to 7.4 will leave
-    % all variables created by a tutorial in the base workspace.
-    % publishopts
-    publishopts = struct(...
-        'maxOutputLines',15,...
-        'format','html',...
-        'stylesheet',publishtemplate,...
-        'outputDir',outputhtmldir,...
-        'catchError',true,...
-        'useNewFigure',true);
-else
-    publishopts = struct(...
-        'format','html',...
-        'stylesheet',publishtemplate,...
-        'outputDir',outputhtmldir,...
-        'stopOnError',true,...
-        'useNewFigure',true);
-    if ~quiet
-        disp('You are using a matlab version prior to 7.4. This version does not allow');
-        disp('codeToEvaluate as an option for the publish function.');
-        disp('  ');
-        disp('As a consequence we could not prevent the publish function to leave all');
-        disp('variables created during publishing in the base workspace. Be aware of this');
-        disp('shortcoming of matlab.');
-        disp(' ');
-        disp('Furthermore error information will not be included in the published html file.');
-    end
-end
-
 openfigs = findobj('Type','figure');
 for idr = 1:length(alldirs)
     htmlref{idr} = cell(size(tutorials{idr}));
@@ -199,6 +166,9 @@ for idr = 1:length(alldirs)
         else
             if all(id)
                 %% publish file, it is not published yet
+                
+                %% get options
+                publishopts = publishconfigurations(tutorialname,publishtemplate,outputhtmldir);
                 
                 %% Create tempdir
                 tmpdir = tempname;
@@ -224,6 +194,9 @@ for idr = 1:length(alldirs)
                     % from running the mfile in the base workspace. Versions prior to 7.4 will leave
                     % all variables created by a tutorial in the base workspace.
                     % publishopts
+                    if isfield(publishopts,'codeToEvaluate') && ~isempty(publishopts.codeToEvaluate)
+                        publishopts.codeToEvaluate = ['evalinemptyworkspace(''' publishopts.codeToEvaluate ';'');'];
+                    end
                     publishopts.codeToEvaluate = ['evalinemptyworkspace(''' tutorialname ';'');'];
                 end
 
