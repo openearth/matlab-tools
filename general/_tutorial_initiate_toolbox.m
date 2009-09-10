@@ -7,15 +7,21 @@
 %% Run oetsettings manually
 % The most straightforward way of initiating OpenEarthTools in Marlab is to manually run the 
 % function that adds all relevant paths to the matlab search path (_*oetsettings.m*_). Once you have
-% obtained a cheackout of OpenEarthTools (see 
-% <html>
-% <a href="http://public.deltares.nl/display/OET/OpenEarth+developer+in+five+easy+steps"> "OpenEarth
-% developer in five steps"</a>
-% </html>
-% ) oetsettings.m can be located in the matlab directory of the trunk. Running the function in
+% obtained a cheackout of OpenEarthTools oetsettings.m can be located in the matlab directory of
+% the trunk. Running the function in
 % matlab will do the trick:
 
 run('<enter filepath here>/oetsettings');
+
+%%
+% Information on making a checkout of the OpenEarthTools can be found on:
+%
+% <html>
+% <a href="http://public.deltares.nl/display/OET/OpenEarth+developer+in+five+easy+steps"> OpenEarth
+% developer in five steps</a>
+% </html>
+%
+
 
 %% Run oetsettings via a shortcut
 % As you neither want to remember this code or the location of the mfile, but you will run it every 
