@@ -142,6 +142,7 @@ To make changes, update the M-file and republish this document.
 <style>
 
 pre.codeinput {
+  overflow-x: auto;
   background: #EEEEEE;
   padding: 10px;
 }
@@ -156,6 +157,7 @@ span.untermstring {color: #B20000}
 span.syscmd {color: #B28C00}
 
 pre.codeoutput {
+  overflow-x: auto;
   color: #666666;
   padding: 10px;
 }
