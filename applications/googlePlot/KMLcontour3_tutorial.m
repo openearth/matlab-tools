@@ -6,7 +6,7 @@
 [lat,lon] = meshgrid(54:.1:57,2:.1:5);
 z = peaks(31);
 z = abs(z);
-fname = fullfile(tempdir,'contour3.kml');
+fname = 'contour3.kml';
 
 % we can make a contour plot of this data in Matlab:
 
@@ -30,8 +30,3 @@ KMLcontour3(lat,lon,z,'fileName',fname,'zScaleFun',@(z) (z+.2)*1000);
 % 
 % <<prerendered_images/KML_contour3_2.jpg>>
 % 
-
-%%
-% Finally, delete the temporary files created
-delete(fname);  
-delete([fname(1:end-4) 'labels.kml']); 

@@ -39,7 +39,7 @@ grid on
 %% Make line plot
 % This works as expected, so now we will plot the data. We will exagerate
 % the z data, by adding 20 and multiplying by 5, using the zScaleFun;
-fname = [tempdir,'Jarkus.kml'];
+fname = 'Jarkus.kml';
 KMLline(lat,lon,zi,'fileName',fname,'zScaleFun',@(z)(z+20)*5);
 
 %%
@@ -141,7 +141,3 @@ KMLline(lat2',lon2',zi','timeIn',timeIn,'timeOut',timeOut,...
 % 
 % <<prerendered_images/jarkus5_2.PNG>>
 % 
-
-%%
-% Delete the KML file
-delete(fullfile(fname));  

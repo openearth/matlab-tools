@@ -82,7 +82,7 @@ p.footer {
                   <p>First generate some data.</p><pre class="codeinput">[lat,lon] = meshgrid(54:.1:57,2:.1:5);
 z = peaks(31);
 z = abs(z);
-fname = fullfile(tempdir,<span class="string">'contour3.kml'</span>);
+fname = <span class="string">'contour3.kml'</span>;
 
 <span class="comment">% we can make a contour plot of this data in Matlab:</span>
 
@@ -109,12 +109,6 @@ KMLcontour3(lat,lon,z,<span class="string">'fileName'</span>,fname,<span class="
                   <p><img vspace="5" hspace="5" src="prerendered_images/KML_contour3_2.jpg" relsrc="prerendered_images/KML_contour3_2.jpg"> </p>
                </div>
             </div>
-            <div>
-               <div>
-                  <p>Finally, delete the temporary files created</p><pre class="codeinput">delete(fname);
-delete([fname(1:end-4) <span class="string">'labels.kml'</span>]);
-</pre></div>
-            </div>
          </div>
          <p class="footer"><br>
             Published with MATLAB&reg; 7.8<br></p>
@@ -129,7 +123,7 @@ delete([fname(1:end-4) <span class="string">'labels.kml'</span>]);
 [lat,lon] = meshgrid(54:.1:57,2:.1:5);
 z = peaks(31);
 z = abs(z);
-fname = fullfile(tempdir,'contour3.kml');
+fname = 'contour3.kml';
 
 % we can make a contour plot of this data in Matlab:
 
@@ -153,11 +147,6 @@ KMLcontour3(lat,lon,z,'fileName',fname,'zScaleFun',@(z) (z+.2)*1000);
 % 
 % <<prerendered_images/KML_contour3_2.jpg>>
 % 
-
-%%
-% Finally, delete the temporary files created
-delete(fname);  
-delete([fname(1:end-4) 'labels.kml']); 
 ##### SOURCE END #####
 -->
    </body>

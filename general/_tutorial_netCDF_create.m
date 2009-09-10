@@ -1,4 +1,4 @@
-%% Creating a NetCDF file
+%% Creating a netCDF file
 % This is a script with a tutorial on how to make a NetCDF file. The script assumes that oetsettings has been run!
 
 %% Change the present working directory 

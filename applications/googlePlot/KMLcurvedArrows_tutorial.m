@@ -23,7 +23,7 @@ whos
 % end time of our animation. Only the first two time steps are rendered for 
 % this example. Feel free to adjust the inputs!
 
-fname = [tempdir,'movingArrows.kml'];
+fname = 'movingArrows.kml';
 time  = [datenum('11-Feb-2008 09:30:00') datenum('11-Feb-2008 10:00:00')];
 
 KMLcurvedArrows(x,y,u0(1:2),v0(1:2),'time',time,...
@@ -33,7 +33,3 @@ KMLcurvedArrows(x,y,u0(1:2),v0(1:2),'time',time,...
 % 
 % <<prerendered_images/KML_movingArrows1.jpg>>
 % 
-
-%%
-% Delete the KML file
-delete(fname)

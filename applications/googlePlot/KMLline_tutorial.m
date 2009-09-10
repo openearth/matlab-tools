@@ -20,7 +20,7 @@ axis([30 80 3 17])
 % file, and open that in Google Earth to view the result. Alternatively,
 % you can assign the location to save the file as a keyword/value pair.
 
-fname = fullfile(tempdir,'line.kml');
+fname = 'line.kml';
 KMLline(lat,lon,'fileName',fname);
 
 %%
@@ -116,8 +116,5 @@ OPT = KMLline(lat,lon,z,'fileName',...
 var2evalstr(OPT)
 
 %%
-% Notice how there are only five distinct fill styles, but 51 unique line styles.
-
-%%
-% Finally, delete the temporary files created
-delete(fname);  
+% Notice how there are only five distinct fill styles, but 51 unique line
+% styles.

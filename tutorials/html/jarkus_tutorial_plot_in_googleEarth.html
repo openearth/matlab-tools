@@ -121,7 +121,7 @@ grid <span class="string">on</span>
                <div>
                   <p>This works as expected, so now we will plot the data. We will exagerate the z data, by adding 20 and multiplying by 5, using
                      the zScaleFun;
-                  </p><pre class="codeinput">fname = [tempdir,<span class="string">'Jarkus.kml'</span>];
+                  </p><pre class="codeinput">fname = <span class="string">'Jarkus.kml'</span>;
 KMLline(lat,lon,zi,<span class="string">'fileName'</span>,fname,<span class="string">'zScaleFun'</span>,@(z)(z+20)*5);
 </pre></div>
             </div>
@@ -239,11 +239,6 @@ timeOut = datenum(year+1,1,1);
                   <p><img vspace="5" hspace="5" src="prerendered_images/jarkus5_2.PNG" relsrc="prerendered_images/jarkus5_2.PNG"> </p>
                </div>
             </div>
-            <div>
-               <div>
-                  <p>Delete the KML file</p><pre class="codeinput">delete(fullfile(fname));
-</pre></div>
-            </div>
          </div>
          <p class="footer"><br>
             Published with MATLAB&reg; 7.8<br></p>
@@ -291,7 +286,7 @@ grid on
 %% Make line plot
 % This works as expected, so now we will plot the data. We will exagerate
 % the z data, by adding 20 and multiplying by 5, using the zScaleFun;
-fname = [tempdir,'Jarkus.kml'];
+fname = 'Jarkus.kml';
 KMLline(lat,lon,zi,'fileName',fname,'zScaleFun',@(z)(z+20)*5);
 
 %%
@@ -393,11 +388,6 @@ KMLline(lat2',lon2',zi','timeIn',timeIn,'timeOut',timeOut,...
 % 
 % <<prerendered_images/jarkus5_2.PNG>>
 % 
-
-%%
-% Delete the KML file
-delete(fullfile(fname));  
-
 ##### SOURCE END #####
 -->
    </body>

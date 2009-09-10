@@ -29,6 +29,7 @@ To make changes, update the M-file and republish this document.
     </script><style>
 
 pre.codeinput {
+  overflow-x: auto;
   background: #EEEEEE;
   padding: 10px;
 }
@@ -43,6 +44,7 @@ span.untermstring {color: #B20000}
 span.syscmd {color: #B28C00}
 
 pre.codeoutput {
+  overflow-x: auto;
   color: #666666;
   padding: 10px;
 }
@@ -108,7 +110,7 @@ whos
                <div>
                   <p>Use KMLcurvedArrows to generate the arrows. 'time' contains the begin and end time of our animation. Only the first two time
                      steps are rendered for this example. Feel free to adjust the inputs!
-                  </p><pre class="codeinput">fname = [tempdir,<span class="string">'movingArrows.kml'</span>];
+                  </p><pre class="codeinput">fname = <span class="string">'movingArrows.kml'</span>;
 time  = [datenum(<span class="string">'11-Feb-2008 09:30:00'</span>) datenum(<span class="string">'11-Feb-2008 10:00:00'</span>)];
 
 KMLcurvedArrows(x,y,u0(1:2),v0(1:2),<span class="string">'time'</span>,time,<span class="keyword">...</span>
@@ -120,13 +122,8 @@ arrows003 done
             </div>
             <div>
                <div>
-                  <p><img vspace="5" hspace="5" src="prerendered_images\KML_movingArrows1.jpg" relsrc="prerendered_images\KML_movingArrows1.jpg"> </p>
+                  <p><img vspace="5" hspace="5" src="prerendered_images/KML_movingArrows1.jpg" relsrc="prerendered_images/KML_movingArrows1.jpg"> </p>
                </div>
-            </div>
-            <div>
-               <div>
-                  <p>Delete the KML file</p><pre class="codeinput">delete(fname)
-</pre></div>
             </div>
          </div>
          <p class="footer"><br>
@@ -159,7 +156,7 @@ whos
 % end time of our animation. Only the first two time steps are rendered for 
 % this example. Feel free to adjust the inputs!
 
-fname = [tempdir,'movingArrows.kml'];
+fname = 'movingArrows.kml';
 time  = [datenum('11-Feb-2008 09:30:00') datenum('11-Feb-2008 10:00:00')];
 
 KMLcurvedArrows(x,y,u0(1:2),v0(1:2),'time',time,...
@@ -167,12 +164,8 @@ KMLcurvedArrows(x,y,u0(1:2),v0(1:2),'time',time,...
 
 %%
 % 
-% <<prerendered_images\KML_movingArrows1.jpg>>
+% <<prerendered_images/KML_movingArrows1.jpg>>
 % 
-
-%%
-% Delete the KML file
-delete(fname)
 ##### SOURCE END #####
 -->
    </body>

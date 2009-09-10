@@ -97,7 +97,7 @@ axis([30 80 3 17])
                <div>
                   <p>KMLline works just like line, except that one has to save the output file, and open that in Google Earth to view the result.
                      Alternatively, you can assign the location to save the file as a keyword/value pair.
-                  </p><pre class="codeinput">fname = fullfile(tempdir,<span class="string">'line.kml'</span>);
+                  </p><pre class="codeinput">fname = <span class="string">'line.kml'</span>;
 KMLline(lat,lon,<span class="string">'fileName'</span>,fname);
 </pre></div>
             </div>
@@ -179,18 +179,18 @@ axis <span class="string">off</span>
 </pre><pre class="codeoutput">
 ans = 
 
-      fileName: []
-       kmlName: []
-     lineWidth: 1
-     lineColor: [0 0 0]
-     lineAlpha: 1
-          fill: 1
-     fillColor: [0 0.5000 0]
-     fillAlpha: 0.4000
-      openInGE: 0
-        timeIn: []
-       timeOut: []
-          is3D: 0
+        fileName: []
+         kmlName: []
+       lineWidth: 1
+       lineColor: [0 0 0]
+       lineAlpha: 1
+            fill: 1
+       fillColor: [0 0.5000 0]
+       fillAlpha: 0.4000
+        openInGE: 0
+          timeIn: []
+         timeOut: []
+            is3D: 0
 ...</pre></div>
             </div>
             <div>
@@ -216,7 +216,7 @@ OPT = KMLline(lat,lon,z,<span class="string">'fileName'</span>,<span class="keyw
 </pre><pre class="codeoutput">
 ans =
 
-OPT.fileName = 'e:\Temp\line.kml';
+OPT.fileName = 'line.kml';
 OPT.kmlName = 'line';
 OPT.lineWidth = [0 1 2 4 2 1 0 1 2 4 2 1 0 1 2 4 2 1 0 1 2 4 2 1 0 1 2 4 2 1 0 1 2 4 2 1 0 1 2 4 2 1 0 1 2 4 2 1 0 1 2]';
 OPT.lineColor = [0 0 1
@@ -234,11 +234,6 @@ OPT.lineColor = [0 0 1
                <div>
                   <p>Notice how there are only five distinct fill styles, but 51 unique line styles.</p>
                </div>
-            </div>
-            <div>
-               <div>
-                  <p>Finally, delete the temporary files created</p><pre class="codeinput">delete(fname);
-</pre></div>
             </div>
          </div>
          <p class="footer"><br>
@@ -268,7 +263,7 @@ axis([30 80 3 17])
 % file, and open that in Google Earth to view the result. Alternatively,
 % you can assign the location to save the file as a keyword/value pair.
 
-fname = fullfile(tempdir,'line.kml');
+fname = 'line.kml';
 KMLline(lat,lon,'fileName',fname);
 
 %%
@@ -364,11 +359,8 @@ OPT = KMLline(lat,lon,z,'fileName',...
 var2evalstr(OPT)
 
 %%
-% Notice how there are only five distinct fill styles, but 51 unique line styles.
-
-%%
-% Finally, delete the temporary files created
-delete(fname);  
+% Notice how there are only five distinct fill styles, but 51 unique line
+% styles.
 ##### SOURCE END #####
 -->
    </body>
