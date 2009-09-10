@@ -80,19 +80,34 @@ p.footer {
          </div>
          <div class="accordion">
             <div>
+               <h2><a>Invoking a new function template</a></h2>
                <div>
-                  <p><tt>oetnewfun('testfun')</tt></p>
-               </div>
+                  <p>The following command opens a new function in the matlab editor with the name "testfun.m".</p><pre class="codeinput">oetnewfun(<span class="string">'testfun'</span>)
+</pre></div>
             </div>
             <div>
-               <h2><a>Working with the resulting function</a></h2>
+               <h2><a>Function template layout</a></h2>
                <div>
-                  <p>The resulting function now comes with a helpblock, a standard LGPL copyright block and a list of svn-keywords.</p>
-               </div>
-            </div>
-            <div>
-               <div>
-                  <p><tt>function varargout = testfun(varargin)</tt></p><pre class="codeinput"><span class="comment">%TESTFUN  One line description goes here.</span>
+                  <p>The resulting function now comes with a helpblock, a standard LGPL copyright block and a list of svn-keywords. See for an
+                     example the code below. The only thing you have to do is enter the correct information for:
+                  </p>
+                  <ol>
+                     <li><b>h1line</b> (one line description below the function declaration)
+                     </li>
+                     <li><b>description</b> (description of the functionality)
+                     </li>
+                     <li><b>syntax</b> (How should / can we approach your function)
+                     </li>
+                     <li><b>input</b> (explanation of the input arguments)
+                     </li>
+                     <li><b>Output</b> (explanation of the output arguments)
+                     </li>
+                     <li><b>Example</b> (Give an example of how we can use the function)
+                     </li>
+                     <li><b>See also</b> (Just enter names of related function seperated by a space, like with the matlab documentation)
+                     </li>
+                  </ol><pre class="codeinput"><span class="keyword">function</span> varargout = testfun(varargin)
+<span class="comment">%TESTFUN  One line description goes here.</span>
 <span class="comment">%</span>
 <span class="comment">%   More detailed description goes here.</span>
 <span class="comment">%</span>
@@ -139,9 +154,9 @@ p.footer {
 <span class="comment">% Created: 17 May 2009</span>
 <span class="comment">% Created with Matlab version: 7.7.0.471 (R2008b)</span>
 
-<span class="comment">% $Id: _tutorial_creating_new_functions.m 975 2009-09-08 14:54:13Z damsma $</span>
+<span class="comment">% $Id: _tutorial_creating_new_functions.m 1005 2009-09-10 13:05:38Z geer $</span>
 
-<span class="comment">% $Author: damsma $</span>
+<span class="comment">% $Author: geer $</span>
 
 <span class="comment">% $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/general/_tutorial_creating_new_functions.m $</span>
 <span class="comment">% $Keywords: $</span>
@@ -166,18 +181,28 @@ p.footer {
 % developed. It creates a new function using the input arguments supplied
 % by the user or using default arguments.
 
-%%
-% |oetnewfun('testfun')|
+%% Invoking a new function template
+% The following command opens a new function in the matlab editor with the
+% name "testfun.m".
 
-%% Working with the resulting function
+oetnewfun('testfun')
+
+%% Function template layout
 % The resulting function now comes with a helpblock, a standard LGPL
-% copyright block and a list of svn-keywords.
-
-%%
+% copyright block and a list of svn-keywords. See for an example the code 
+% below. The only thing you have to do is enter the correct information
+% for:
 %
-% |function varargout = testfun(varargin)|
+% # *h1line* (one line description below the function declaration)
+% # *description* (description of the functionality)
+% # *syntax* (How should / can we approach your function)
+% # *input* (explanation of the input arguments)
+% # *Output* (explanation of the output arguments)
+% # *Example* (Give an example of how we can use the function)
+% # *See also* (Just enter names of related function seperated by a space, like with the matlab documentation)
 %
 
+function varargout = testfun(varargin)
 %TESTFUN  One line description goes here.
 %
 %   More detailed description goes here.
@@ -225,10 +250,10 @@ p.footer {
 % Created: 17 May 2009
 % Created with Matlab version: 7.7.0.471 (R2008b)
 
-% $Id: _tutorial_creating_new_functions.m 975 2009-09-08 14:54:13Z damsma $
-% $Date: 2009-09-08 16:54:13 +0200 (di, 08 sep 2009) $
-% $Author: damsma $
-% $Revision: 975 $
+% $Id: _tutorial_creating_new_functions.m 1005 2009-09-10 13:05:38Z geer $
+% $Date: 2009-09-10 15:05:38 +0200 (do, 10 sep 2009) $
+% $Author: geer $
+% $Revision: 1005 $
 % $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/general/_tutorial_creating_new_functions.m $
 % $Keywords: $
 
