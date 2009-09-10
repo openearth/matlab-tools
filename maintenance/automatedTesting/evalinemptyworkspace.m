@@ -1,3 +1,9 @@
-function varargout = evalinemptyworkspace(mtest_tempstring12fhj123)
+function evalinemptyworkspace(str)
+setappdata(0,'emptyworkspaceevaluation',str);
+eval_fun();
+rmappdata(0,'emptyworkspaceevaluation');
+end
 
-eval(mtest_tempstring12fhj123);
+function eval_fun()
+eval(getappdata(0,'emptyworkspaceevaluation'));
+end
