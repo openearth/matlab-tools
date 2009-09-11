@@ -2,9 +2,9 @@ function copycontent()
   {
     var lengthch = $(".accordion").children().length -1;
     lasthead = null;
+    $(".accordion").children().children('h1').css('text-align','center');
     for (i = 0; i <= lengthch; i++)
     {
-      $(".accordion").children().children('h1').css('text-align','center');
       chldr = $($(".accordion").children()[i]).children("h2");
       if (chldr.length==0)
         {
@@ -25,6 +25,8 @@ function copycontent()
       else
 	{
 	  lasthead = i;
+	  $($(".accorion").children()[i]).addClass('ui-widget-content');
+	  $($(".accorion").children()[i]).click();
 	}
     }
     //Format header
