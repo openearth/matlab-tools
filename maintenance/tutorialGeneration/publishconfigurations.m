@@ -1,4 +1,4 @@
-function config = publishconfigurations(mfilename,publishtemplate,outputhtmldir)
+function config = publishconfigurations(mfilename,publishtemplate,outputhtmldir,quiet)
 %PUBLISHCONFIGURATIONS  Returns manually set publish configurations for tutorials.
 %
 %   This file can be manually filled with preference publish configurations for each tutorial.
@@ -61,7 +61,7 @@ function config = publishconfigurations(mfilename,publishtemplate,outputhtmldir)
 % $Keywords: $
 
 %% Get defaults
-config = defaultopts(publishtemplate,outputhtmldir);
+config = defaultopts(publishtemplate,outputhtmldir,quiet);
 
 %% switch filename
 oldpublish = datenum(version('-date')) < datenum(2008,01,01);
@@ -78,7 +78,7 @@ end
 end
 
 %% Functin that returns defaults
-function config = defaultopts(publishtemplate,outputhtmldir)
+function config = defaultopts(publishtemplate,outputhtmldir,quiet)
 %% Switch matlab version
 vs = datenum(version('-date'));
 if vs >= datenum(2008,01,01)

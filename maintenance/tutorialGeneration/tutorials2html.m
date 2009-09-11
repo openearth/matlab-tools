@@ -168,7 +168,7 @@ for idr = 1:length(alldirs)
                 %% publish file, it is not published yet
                 
                 %% get options
-                publishopts = publishconfigurations(tutorialname,publishtemplate,outputhtmldir);
+                publishopts = publishconfigurations(tutorialname,publishtemplate,outputhtmldir,quiet);
                 
                 %% Create tempdir
                 tmpdir = tempname;
