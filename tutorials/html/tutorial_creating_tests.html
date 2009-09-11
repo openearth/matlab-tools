@@ -9,10 +9,10 @@
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
       -->
-      <title>5. How to make a tutorial</title>
+      <title>3. Creating tests</title>
       <meta name="generator" content="MATLAB 7.8">
       <meta name="date" content="2009-09-11">
-      <meta name="m-file" content="tutorial_how_to_write_tutorials">
+      <meta name="m-file" content="tutorial_creating_tests">
       <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2accordion.js"></script><script type="text/javascript">
   	$(document).ready(function ()
   	{
@@ -71,12 +71,30 @@ p.footer {
       <div class="content">
          <div class="accordion">
             <div>
-               <h1><a>5. How to make a tutorial</a></h1>
+               <h1><a>3. Creating tests</a></h1>
                <div>
-                  <p>This script is going to explain how to write a tutorial that is included in the overview at the wiki. We cannot do all things
-                     the same time, so the tutorial is coming soon..
-                  </p>
-               </div>
+                  <p>At this moment engines are being prepared to automatically run tests. In an ideal world one writes a tests before writing
+                     the actual function. Tests also serve to judge whether changes you made to a low level function influence the outcome of an
+                     application. Tutorials for writing and running tests are being prepared. For now it is enough to know that (like creating
+                     a new function) there is also a function to create a test template: oetnewtest. The help of this function shows you how it
+                     can be used.
+                  </p><pre class="codeinput">help <span class="string">oetnewtest</span>
+</pre><pre class="codeoutput"> OETNEWTEST    Create a new test file given the file or function name
+ 
+    Routine to create a new test including Credits and svn keywords.
+    Company, address, email and author are obtained using from the
+    application data with getlocalsettings. If there is already a
+    testdefinition with the same name, the function asks whether to
+    open the existing file, copy the most important code pieces into
+    a new template, or start from scratch with the same name.
+ 
+    Syntax:
+        oetnewtest('filename');
+        oetnewtest('currentfile');
+        oetnewtest('functionname');
+        oetnewfun(..., 'PropertyName', PropertyValue,...)
+ 
+...</pre></div>
             </div>
          </div>
          <p class="footer"><br>
@@ -84,11 +102,15 @@ p.footer {
       </div>
       <!--
 ##### SOURCE BEGIN #####
-%% 5. How to make a tutorial
-% This script is going to explain how to write a tutorial that is included in the overview at the
-% wiki.
-% We cannot do all things the same time, so the tutorial is coming soon..
+%% 3. Creating tests
+% At this moment engines are being prepared to automatically run tests. In an ideal world one writes
+% a tests before writing the actual function. Tests also serve to judge whether changes you made to
+% a low level function influence the outcome of an application. Tutorials for writing and running
+% tests are being prepared. For now it is enough to know that (like creating a new function) there
+% is also a function to create a test template: oetnewtest. The help of this function shows you how
+% it can be used.
 
+help oetnewtest
 ##### SOURCE END #####
 -->
    </body>
