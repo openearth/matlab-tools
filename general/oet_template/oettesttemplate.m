@@ -54,7 +54,6 @@ $testcode
 
 %% $PublishResult
 $publishresult
-end
 
 %$begintestcases
 function testresult = $FunctionCaseName()

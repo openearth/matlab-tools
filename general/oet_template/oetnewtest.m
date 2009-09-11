@@ -87,7 +87,7 @@ OPT = getlocalsettings;
 OPT.h1line      = 'One line description goes here';
 OPT.description = 'More detailed description of the test goes here.';
 OPT.basedescriptioncode = '% Publishable code that describes the test.';
-OPT.baseruncode = ['% Write test code here' char(10) 'testresult = false;'];
+OPT.baseruncode = [];
 OPT.basepublishcode = '% Publishable code that describes the test.';
 OPT.testname    = 'Name of the test goes here';
 OPT.seeAlso     = '';
@@ -222,7 +222,6 @@ if iscell(OPT.basepublishcode)
     OPT.basepublishcode = sprintf('%s\n',OPT.basepublishcode{:});
     OPT.basepublishcode(end)=[];
 end 
-str = strrep(str,'$publishresult',OPT.basepublishcode);
 
 %% Check testcase names
 if ~isempty(OPT.testcases) && ischar(OPT.testcases)
@@ -245,6 +244,9 @@ tcbegin = strfind(str,'%$begintestcases');
 tcend = strfind(str,'%$endtestcases');
 
 if ~isempty(OPT.testcases)
+    %% append end
+    OPT.basepublishcode = sprintf('%s\n',OPT.basepublishcode,'end');
+    
     %% build testcase string
     tcstring = buildtestcasestring(str(tcbegin+17:tcend-1),OPT);
     
@@ -252,21 +254,26 @@ if ~isempty(OPT.testcases)
     str = cat(2,str(1:strfind(str,'%$begintestcases')-1),tcstring);
     
     %% build test code
-    if isempty(OPT.runcode)
-        OPT.runcode = [];
+    if isempty(OPT.baseruncode)
+        OPT.baseruncode = [];
         for itc = 1:length(OPT.runcode)
-            OPT.runcode = cat(2,OPT.runcode,'testresult(', num2str(itc), ') = ', strrep(OPT.testcases{itc},' ','_'), ';', char(10));
+            OPT.baseruncode = cat(2,OPT.baseruncode,'testresult(', num2str(itc), ') = ', strrep(OPT.testcases{itc},' ','_'), ';', char(10));
         end
-        OPT.runcode = cat(2,OPT.runcode,char(10),'testresult = all(testresult);');
+        OPT.baseruncode = cat(2,OPT.baseruncode,char(10),'testresult = all(testresult);');
     end
 else
     str = str(1:strfind(str,'%$begintestcases')-1);
+end
+if isempty(OPT.baseruncode)
+    OPT.baseruncode = ['% Write test code here' char(10) 'testresult = false;'];
 end
 if iscell(OPT.baseruncode)
     OPT.baseruncode = sprintf('%s\n',OPT.baseruncode{:});
     OPT.baseruncode(end)=[];
 end
 str = strrep(str,'$testcode',OPT.baseruncode);
+str = strrep(str,'$publishresult',OPT.basepublishcode);
+
 
 %% Append any other code
 % If the file was not according to the correct format and mtest couldn't read it, the complete
