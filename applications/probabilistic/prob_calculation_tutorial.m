@@ -49,9 +49,9 @@ oetnewfun('prob_example1_x2z',...
     'output', 'z',...
     'input', {'x' 'varnames' 'Resistance' 'varargin'})
 
-%% define the Z-function
-% Define the Z-function in the newly created function. The first loop to
-% retrieve the calculation values to have all variables clearly
+%% define the limit state function (Z-function)
+% Define the Z-function in the newly created function. The first loop is to
+% retrieve the calculation values in order to have all variables clearly
 % recognisable by name. Subsequently, Z must be calculated. This part can
 % be customised, as long as the output "z" is a column vector with the same
 % number of rows as input "x". In this example, z is easily calculated in

@@ -188,8 +188,8 @@ for idr = 1:length(alldirs)
                 title{idr}{itutorials} = first_line(4:end);
                 
                 %% publish options
-                vs = version;
-                if str2num(vs(1:3)) >= 7.4 %#ok<ST2NM>
+                vs = datenum(version('-date'));
+                if vs >= datenum(2008,01,01)
                     % This option is not available in previous versions. We use it to prevent matlab
                     % from running the mfile in the base workspace. Versions prior to 7.4 will leave
                     % all variables created by a tutorial in the base workspace.
