@@ -120,10 +120,10 @@ else
     % maxHeight         [] (default), positive integer specifying number of pixels
     % maxWidth          [] (default), positive integer specifying number of pixels
     % showCode          true (default), false
+    % evalCode          true (default), false
+    % stopOnError       true (default), false
+    % createThumbnail   true (default), false
     
-    evalCodetrue (default), false
-    stopOnErrortrue (default), false
-    createThumbnailtrue (default), false
     config = struct(...
         'format','html',...
         'stylesheet',publishtemplate,...
