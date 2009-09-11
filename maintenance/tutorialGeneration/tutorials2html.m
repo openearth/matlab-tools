@@ -191,7 +191,7 @@ for idr = 1:length(alldirs)
                 vs = datenum(version('-date'));
                 if vs >= datenum(2008,01,01)
                     % This option is not available in previous versions. We use it to prevent matlab
-                    % from running the mfile in the base workspace. Versions prior to 7.4 will leave
+                    % from running the mfile in the base workspace. Versions prior to 7.6 will leave
                     % all variables created by a tutorial in the base workspace.
                     % publishopts
                     if isfield(publishopts,'codeToEvaluate') && ~isempty(publishopts.codeToEvaluate)
