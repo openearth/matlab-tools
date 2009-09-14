@@ -85,6 +85,13 @@ if ~any(strcmp(strcell, '*.m = svn:keywords=Id Date Author Revision HeadURL'))
     anyChange = true;
 end
 
+%% check whether keywords are set for html-files
+if ~any(strcmp(strcell, '*.html = svn:mime-type=text/html'))
+    strcell{end+1} = '*.html = svn:mime-type=text/html';
+    anyChange = true;
+end
+
+%%
 if anyChange
     % overwrite the existing config file
     fid = fopen(filename, 'w');
