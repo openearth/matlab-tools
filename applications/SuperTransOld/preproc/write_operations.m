@@ -1,4 +1,6 @@
-load EPSG.mat
+function Operations=write_operations(EPSG)
+
+%load EPSG.mat
 
 coordinate_operation           = EPSG.coordinate_operation;
 copv                           = EPSG.coordinate_operation_parameter_value;
@@ -12,7 +14,6 @@ Operations=[];
 
 nc=0;
 for i=1:nconv
-    i
     co=coordinate_operation(i);
     flds=fieldnames(co);
     switch(lower(co.coord_op_type))
