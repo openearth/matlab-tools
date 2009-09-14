@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<!-- Created with Matlab (R) googlePlot toolbox from OpenEarthTools http://www.OpenEarth.eu-->
+<Document>
+<name>mud content</name>
+<description>mud content derived from sediment size distribution curves in <a href="http://www.waddenzee.nl/Sedimentatlas.729.0.html"> Sediment Atlas WaddenZee </a>.</description>
+<visibility>1</visibility>
+<open>0</open>
+<!--############################-->
+<StyleMap id="Speed_marker_001map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_001n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_001h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_001n">
+ <IconStyle>
+ <color>99990000</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_001h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>99990000</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_002map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_002n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_002h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_002n">
+ <IconStyle>
+ <color>99CC0000</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_002h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>99CC0000</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_003map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_003n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_003h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_003n">
+ <IconStyle>
+ <color>99FF0000</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_003h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>99FF0000</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_004map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_004n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_004h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_004n">
+ <IconStyle>
+ <color>99FF3300</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_004h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>99FF3300</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_005map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_005n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_005h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_005n">
+ <IconStyle>
+ <color>99FF6600</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_005h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>99FF6600</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_006map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_006n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_006h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_006n">
+ <IconStyle>
+ <color>99FF9900</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_006h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>99FF9900</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_007map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_007n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_007h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_007n">
+ <IconStyle>
+ <color>99FFCC00</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_007h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>99FFCC00</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_008map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_008n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_008h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_008n">
+ <IconStyle>
+ <color>99FFFF00</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_008h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>99FFFF00</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_009map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_009n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_009h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_009n">
+ <IconStyle>
+ <color>99CCFF33</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_009h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>99CCFF33</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_010map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_010n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_010h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_010n">
+ <IconStyle>
+ <color>9999FF66</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_010h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>9999FF66</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_011map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_011n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_011h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_011n">
+ <IconStyle>
+ <color>9966FF99</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_011h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>9966FF99</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_012map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_012n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_012h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_012n">
+ <IconStyle>
+ <color>9933FFCC</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_012h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>9933FFCC</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_013map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_013n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_013h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_013n">
+ <IconStyle>
+ <color>9900FFFF</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_013h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>9900FFFF</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_014map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_014n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_014h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_014n">
+ <IconStyle>
+ <color>9900CCFF</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_014h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>9900CCFF</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_015map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_015n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_015h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_015n">
+ <IconStyle>
+ <color>990099FF</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_015h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>990099FF</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_016map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_016n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_016h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_016n">
+ <IconStyle>
+ <color>990066FF</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_016h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>990066FF</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_017map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_017n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_017h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_017n">
+ <IconStyle>
+ <color>990033FF</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_017h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>990033FF</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_018map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_018n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_018h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_018n">
+ <IconStyle>
+ <color>990000FF</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_018h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>990000FF</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_019map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_019n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_019h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_019n">
+ <IconStyle>
+ <color>990000CC</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_019h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>990000CC</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<StyleMap id="Speed_marker_020map">
+ <Pair><key>normal</key><styleUrl>#Speed_marker_020n</styleUrl></Pair>
+ <Pair><key>highlight</key><styleUrl>#Speed_marker_020h</styleUrl></Pair>
+</StyleMap>
+<Style id="Speed_marker_020n">
+ <IconStyle>
+ <color>99000099</color>
+ <scale>0.25</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<Style id="Speed_marker_020h">
+ <BalloonStyle><text>
+ $[description]
+ </text></BalloonStyle>
+ <IconStyle>
+ <color>99000099</color>
+ <scale>1</scale>
+ <Icon><href>http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png</href></Icon>
+ </IconStyle>
+ <LabelStyle><color>ff0055ff</color></LabelStyle>
+ </Style>
+<!--############################-->
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = -1.00%</description>
+ <styleUrl>#Speed_marker_001map</styleUrl>
+ <Point><coordinates> 4.75000000, 53.10000000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = -0.75%</description>
+ <styleUrl>#Speed_marker_001map</styleUrl>
+ <Point><coordinates> 4.91250000, 53.13250000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = -0.50%</description>
+ <styleUrl>#Speed_marker_001map</styleUrl>
+ <Point><coordinates> 5.07500000, 53.16500000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = -0.25%</description>
+ <styleUrl>#Speed_marker_001map</styleUrl>
+ <Point><coordinates> 5.23750000, 53.19750000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = 0.00%</description>
+ <styleUrl>#Speed_marker_001map</styleUrl>
+ <Point><coordinates> 5.40000000, 53.23000000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = 0.25%</description>
+ <styleUrl>#Speed_marker_003map</styleUrl>
+ <Point><coordinates> 5.56250000, 53.26250000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = 0.50%</description>
+ <styleUrl>#Speed_marker_004map</styleUrl>
+ <Point><coordinates> 5.72500000, 53.29500000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = 0.75%</description>
+ <styleUrl>#Speed_marker_006map</styleUrl>
+ <Point><coordinates> 5.88750000, 53.32750000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = 1.00%</description>
+ <styleUrl>#Speed_marker_007map</styleUrl>
+ <Point><coordinates> 6.05000000, 53.36000000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = 1.25%</description>
+ <styleUrl>#Speed_marker_009map</styleUrl>
+ <Point><coordinates> 6.21250000, 53.39250000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = 1.50%</description>
+ <styleUrl>#Speed_marker_011map</styleUrl>
+ <Point><coordinates> 6.37500000, 53.42500000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = 1.75%</description>
+ <styleUrl>#Speed_marker_012map</styleUrl>
+ <Point><coordinates> 6.53750000, 53.45750000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = 2.00%</description>
+ <styleUrl>#Speed_marker_014map</styleUrl>
+ <Point><coordinates> 6.70000000, 53.49000000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = 2.25%</description>
+ <styleUrl>#Speed_marker_015map</styleUrl>
+ <Point><coordinates> 6.86250000, 53.52250000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = 2.50%</description>
+ <styleUrl>#Speed_marker_017map</styleUrl>
+ <Point><coordinates> 7.02500000, 53.55500000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = 2.75%</description>
+ <styleUrl>#Speed_marker_018map</styleUrl>
+ <Point><coordinates> 7.18750000, 53.58750000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = 3.00%</description>
+ <styleUrl>#Speed_marker_020map</styleUrl>
+ <Point><coordinates> 7.35000000, 53.62000000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = 3.25%</description>
+ <styleUrl>#Speed_marker_020map</styleUrl>
+ <Point><coordinates> 7.51250000, 53.65250000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = 3.50%</description>
+ <styleUrl>#Speed_marker_020map</styleUrl>
+ <Point><coordinates> 7.67500000, 53.68500000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = 3.75%</description>
+ <styleUrl>#Speed_marker_020map</styleUrl>
+ <Point><coordinates> 7.83750000, 53.71750000, 0</coordinates></Point>
+ </Placemark>
+<Placemark>
+ <visibility>1</visibility>
+ <description>mud = 4.00%</description>
+ <styleUrl>#Speed_marker_020map</styleUrl>
+ <Point><coordinates> 8.00000000, 53.75000000, 0</coordinates></Point>
+ </Placemark>
+</Document>
+</kml>

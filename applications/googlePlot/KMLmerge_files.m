@@ -27,7 +27,7 @@ end
 %% filename
 % gui for filename, if not set yet
 if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','movingArrows.kmz');
+    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','merged_files.kmz');
     OPT.fileName = fullfile(filePath,fileName);
 end
 % set kmlName if it is not set yet
@@ -42,7 +42,7 @@ OPT_header = struct(...
 fprintf(fid0,'%s',KML_header(OPT_header));
 
 for ii = 1:length(OPT.sourceFiles)
-    contents = textread(OPT.sourceFiles{ii},'%s','delimiter','\n');
+    contents = textread(OPT.sourceFiles{ii},'%s','delimiter','\n','bufsize',1e6);
     cutoff = strfind(contents,'Document');
  
     flag = true;

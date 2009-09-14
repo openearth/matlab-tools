@@ -1,7 +1,7 @@
-function testresult = KMLscatter_test()
-% KMLSCATTER_TEST  test for kmlscatter
+function testresult = KMLmerge_files_test()
+% KMLMERGE_FILES_TEST  One line description goes here
 %  
-% %See also: googlePlot, KMLscatter, scatter, plotc
+% More detailed description of the test goes here.
 %
 %
 %   See also 
@@ -53,22 +53,18 @@ function testresult = KMLscatter_test()
 % Publishable code that describes the test.
 
 %% $RunCode
+% Write test code here
 try
-    KMLscatter(linspace(53.10,53.75,21),linspace(4.75,8,21),linspace(-1,4,21),...
-        'fileName',KML_testdir('KMLscatter_1.kml'),...
-        'long_name','mud',...
-        'units','%',...
-        'description','mud content derived from sediment size distribution curves in <a href="http://www.waddenzee.nl/Sedimentatlas.729.0.html"> Sediment Atlas WaddenZee </a>.',...
-        'kmlName','mud content',...
-        'cLim',[0 3])
-        
-    [lat,lon] = meshgrid(56:.02:57,6:.02:7);
-    z = peaks(51);
-    KMLscatter(lat,lon,z,'fileName',KML_testdir('KMLscatter_2.kml'))
+    files = dir(KML_testdir('*.kml'));
+    for ii = 1:length(files)
+        sourceFiles{ii} = KML_testdir(files(ii).name);
+    end
+    KMLmerge_files('fileName',KML_testdir('merged_testfiles.kmz'),'sourceFiles',sourceFiles)
     testresult = true;
 catch
     testresult = false;
-end
+end    
 
 %% $PublishResult
 % Publishable code that describes the test.
+

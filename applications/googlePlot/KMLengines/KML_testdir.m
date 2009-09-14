@@ -45,6 +45,9 @@ function testpath = KML_testdir(fileName)
 % $Keywords: $
 
 %%
+if nargin ==0
+    fileName = [];
+end
 testpath = fullfile(openearthtoolsroot,'applications','googlePlot','KMLtest',fileName);
 
     
