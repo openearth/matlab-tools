@@ -113,6 +113,7 @@ XB.settings.Waves = struct(...
     'alpha', 1,... % wave dissipation coefficient
     'delta', .0,...
     'n', [],... % power in roelvink dissipation model
+    'm', [],... % power in cos^m directional distribution
     'rho', 1000,... % density of water
     'g', 9.81,... % acceleration of gravity
     'thetamin', -180.0,... % lower directional limit, angle w.r.t computational x-axis
@@ -245,6 +246,12 @@ Precision = {...
     'nglobalvar', '%f'};
 
 %% warning if one of the input was not stored
+% remove the string 'empty' from varargin if available
+emptyid = strcmpi(varargin, 'empty');
+varargin = varargin(~emptyid);
+appliedid = appliedid(~emptyid);
+
+% give warning if necessary
 if any(~appliedid)
     pos = 1:2:length(appliedid);
     pos = pos(~appliedid(1:2:end));
@@ -263,8 +270,17 @@ if any(strcmp(varargin, 'empty'))
     OPT = setProperty(OPT, inputvar);
 end
 id = false(size(varargin));
-for i = 1:2:length(varargin)
-    [id(i) id(i+1)] = deal(any(strcmpi(varargin{i}, fieldnames(OPT))));
+i = 1;
+while i < length(varargin)
+    if any(strcmpi(varargin{i}, fieldnames(OPT)))
+        [id(i) id(i+1)] = deal(any(strcmpi(varargin{i}, fieldnames(OPT))));
+        i = i+2;
+    elseif strcmpi(varargin{i}, 'empty')
+        id(i) = false;
+        i = i+1;
+    else
+        i = i+2;
+    end
 end
 
 varargout = {setProperty(OPT, varargin{id}), id};
