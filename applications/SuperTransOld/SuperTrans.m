@@ -28,21 +28,26 @@ function SuperTrans(varargin)
 %   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-curdir=fileparts(which('SuperTrans'));
-addpath(genpath([curdir '\conversion']));
-addpath(genpath([curdir '\conversion_dlls']));
-addpath(genpath([curdir '\data']));
-addpath(genpath([curdir '\general']));
+% curdir=fileparts(which('SuperTrans'));
+% addpath(genpath([curdir '\conversion']));
+% addpath(genpath([curdir '\conversion_dlls']));
+% addpath(genpath([curdir '\data']));
+% addpath(genpath([curdir '\general']));
 
-if nargin>0
-    handles.CoordinateSystems=varargin{1};
-    handles.Operations       =varargin{2};
-else
-    load('CoordinateSystems.mat');
-    handles.CoordinateSystems=CoordinateSystems;
-    load('Operations.mat');
-    handles.Operations       =Operations;
-end
+curdir=pwd;
+
+handles.EPSG = load('EPSG.mat');
+handles.OPT=[];
+
+% if nargin>0
+%     handles.CoordinateSystems=varargin{1};
+%     handles.Operations       =varargin{2};
+% else
+%     load('CoordinateSystems.mat');
+%     handles.CoordinateSystems=CoordinateSystems;
+%     load('Operations.mat');
+%     handles.Operations       =Operations;
+% end
 
 handles.MainWindow      = MakeNewWindow('SuperTrans',[760 550]);
 handles.BackgroundColor = get(gcf,'Color');
@@ -53,18 +58,33 @@ handles.FilePath        = curdir;
 nproj=0;
 ngeo=0;
 
-for i=1:length(handles.CoordinateSystems)
-    switch lower(handles.CoordinateSystems(i).coord_ref_sys_kind),
+% for i=1:length(handles.CoordinateSystems)
+%     switch lower(handles.CoordinateSystems(i).coord_ref_sys_kind),
+%         case{'projected'}
+%             nproj=nproj+1;
+%             handles.CSProj(nproj)=handles.CoordinateSystems(i);
+%             handles.StrProj{nproj}=handles.CSProj(nproj).coord_ref_sys_name;
+%         case{'geographic 2d'}
+%             ngeo=ngeo+1;
+%             handles.CSGeo(ngeo)=handles.CoordinateSystems(i);
+%             handles.StrGeo{ngeo}=handles.CSGeo(ngeo).coord_ref_sys_name;
+%     end
+% end
+
+
+for i=1:length(handles.EPSG.coordinate_reference_system.coord_ref_sys_kind)
+    switch lower(handles.EPSG.coordinate_reference_system.coord_ref_sys_kind{i}),
         case{'projected'}
             nproj=nproj+1;
-            handles.CSProj(nproj)=handles.CoordinateSystems(i);
-            handles.StrProj{nproj}=handles.CSProj(nproj).coord_ref_sys_name;
+            handles.CSProj(nproj)=i;
+            handles.StrProj{nproj}=handles.EPSG.coordinate_reference_system.coord_ref_sys_name{i};
         case{'geographic 2d'}
             ngeo=ngeo+1;
-            handles.CSGeo(ngeo)=handles.CoordinateSystems(i);
-            handles.StrGeo{ngeo}=handles.CSGeo(ngeo).coord_ref_sys_name;
+            handles.CSGeo(ngeo)=i;
+            handles.StrGeo{ngeo}=handles.EPSG.coordinate_reference_system.coord_ref_sys_name{i};
     end
 end
+
 
 % menu
 
@@ -159,18 +179,26 @@ handles.PushFile(2)   = uicontrol(gcf,'Style','pushbutton','String','File ...','
 handles.PushTrans(1)  = uicontrol(gcf,'Style','pushbutton','String','A','Position',[350 170 20 20],'Tag','UIControl');
 handles.PushTrans(2)  = uicontrol(gcf,'Style','pushbutton','String','B','Position',[370 170 20 20],'Tag','UIControl');
 
+
+handles.CSName{1}     = 'Amersfoort / RD New';
+handles.CSName{2}     = 'WGS 84';
+
 handles.CSType{1}     = 'xy';
 handles.CSType{2}     = 'geo';
-handles.XYNr{1}       = 2457;
-handles.XYNr{2}       = 2457;
-handles.GeoNr{1}      = 239;
-handles.GeoNr{2}      = 239;
+
+handles.XYNr{1}       = strmatch(handles.CSName{1},handles.StrProj,'exact');
+handles.XYNr{2}       = handles.XYNr{1};
+handles.GeoNr{1}      = strmatch(handles.CSName{2},handles.StrGeo,'exact');
+handles.GeoNr{2}      = handles.GeoNr{1};
 
 set(handles.SelectCS(1),'Value',handles.XYNr{1});
 set(handles.SelectCS(2),'Value',handles.GeoNr{2});
 
 handles.CS(1)=handles.CSProj(handles.XYNr{1});
 handles.CS(2)=handles.CSGeo(handles.GeoNr{2});
+
+handles.OPT = FindCSOptions(handles.OPT,handles.EPSG,'CS1.name',handles.CSName{1},'CS1.type',handles.CSType{1},'CS2.name',handles.CSName{2},'CS2.type',handles.CSType{2});
+handles.OPT = ConvertCoordinatesFindDatumTransOpt(handles.OPT,handles.EPSG);
 
 set(handles.SelectCS(1),     'CallBack',{@SelectCS_CallBack,1});
 set(handles.SelectCS(2),     'CallBack',{@SelectCS_CallBack,2});
@@ -193,57 +221,59 @@ guidata(gcf,handles);
 %%
 function handles=RefreshInput(handles,ii)
 
-datumcode=handles.CS(ii).datum_code;
-datumname=handles.CS(ii).datum_name;
-set(handles.TextDatum(ii),'String',['Datum : ' datumname]);
-ell=handles.CS(ii).ellipsoid.ellipsoid_name;
-set(handles.TextEllipsoid(ii),'String',['Ellipsoid : ' ell]);
+OPT=handles.OPT;
 
-if strcmp(handles.CSType{ii},'xy')
+if ii==1
+    CS=OPT.CS1;
+    proj_conv=OPT.proj_conv1;
+else
+    CS=OPT.CS2;
+    proj_conv=OPT.proj_conv2;
+end
+
+set(handles.TextDatum(ii),'String',['Datum : ' CS.datum.name]);
+set(handles.TextEllipsoid(ii),'String',['Ellipsoid : ' CS.ellips.name]);
+
+if strcmpi(CS.type,'projected')
+
     % Projection
-    projection_conv_code=handles.CS(ii).projection_conv_code;
-    j=findinstruct(handles.Operations,'coord_op_code',projection_conv_code);
-    operation=handles.Operations(j);
-    meth=operation.coordinate_operation_method;
-    set(handles.TextCoordinateOperation(ii),'String',['Operation : ' meth]);
+    set(handles.TextCoordinateOperation(ii),'String',['Operation : ' proj_conv.method.name]);
     set(handles.TextCoordinateOperation(ii),'Visible','on');
-    pars0=operation.parameters;
 
-    n=length(pars0);
+    n=length(proj_conv.param.codes);
     
-    pars=pars0;
-
-    switch operation.coord_op_method_code,
+    switch proj_conv.method.code
         case{9802,9803}
-            pars(1)=pars0(findstrinstruct(pars0,'name','Longitude_of_false_origin'));
-            pars(2)=pars0(findstrinstruct(pars0,'name','Easting_at_false_origin'));
-            pars(3)=pars0(findstrinstruct(pars0,'name','Latitude_of_false_origin'));
-            pars(4)=pars0(findstrinstruct(pars0,'name','Northing_at_false_origin'));
-            pars(5)=pars0(findstrinstruct(pars0,'name','Latitude_of_1st_standard_parallel'));
-            pars(6)=pars0(findstrinstruct(pars0,'name','Latitude_of_2nd_standard_parallel'));
+            pars{1}='Longitude of false origin';
+            pars{2}='Easting at false origin';
+            pars{3}='Latitude of false origin';
+            pars{4}='Northing at false origin';
+            pars{5}='Latitude of 1st standard parallel';
+            pars{6}='Latitude of 2nd standard parallel';
         case{9807,9808,9809}
-            pars(1)=pars0(findstrinstruct(pars0,'name','Longitude_of_natural_origin'));
-            pars(2)=pars0(findstrinstruct(pars0,'name','Latitude_of_natural_origin'));
-            pars(3)=pars0(findstrinstruct(pars0,'name','False_easting'));
-            pars(4)=pars0(findstrinstruct(pars0,'name','False_northing'));
-            pars(5)=pars0(findstrinstruct(pars0,'name','Scale_factor_at_natural_origin'));
+            pars{1}='Longitude of natural origin';
+            pars{2}='Latitude of natural origin';
+            pars{3}='False easting';
+            pars{4}='False northing';
+            pars{5}='Scale factor at natural origin';
     end
 
     for k=1:n
-        flds{k}=pars(k).name;
-        units{k}=pars(k).unit_of_meas_name;
+        jj=strmatch(lower(pars{k}),lower(proj_conv.param.name),'exact');
+        flds{k}=proj_conv.param.name{jj};
+        units{k}=proj_conv.param.UoM.name{jj};
         units{k}=ConvertUnitString(units{k});
+        val(k)=proj_conv.param.value(k);
     end
 
     for k=1:n
-        str=strrep(flds{k},'_',' ');
-        set(handles.TextConversionParameters(ii,k),'String',str);
-        val=pars(k).value;
+        set(handles.TextConversionParameters(ii,k),'String',flds{k});
         if ~strcmp(units{k},'deg')
-            set(handles.EditConversionParameters(ii,k),'String',num2str(val,'%0.9g'));
+            set(handles.EditConversionParameters(ii,k),'String',num2str(val(k),'%0.9g'));
         else
-            dms=degrees2dms(rad2deg(pi*val/180));
-            degstr=[num2str(dms(1)) ' ' num2str(dms(2)) ''' ' num2str(dms(3)) '"'];
+            dms=d2dms(rad2deg(pi*val(k)/180));
+            dms=d2dms(rad2deg(pi*val(k)/180));
+            degstr=[num2str(dms.dg) ' ' num2str(dms.mn) ''' ' num2str(dms.sc) '"'];
             set(handles.EditConversionParameters(ii,k),'String',degstr);
         end            
         set(handles.TextConversionUnits(ii,k),'String',units{k});
@@ -267,56 +297,44 @@ end
 %%
 function handles=RefreshDatumTransformation(handles)
 
-if handles.CS(1).source_geogcrs_code~=handles.CS(2).source_geogcrs_code
-    
-    [transcodes1,transnames1,ireverse1,idef1,transcodes2,transnames2,ireverse2,idef2,crscode_interm]= ...
-        FindTransformationOptions(handles.CS(1).source_geogcrs_code,handles.CS(2).source_geogcrs_code, ...
-        handles.CoordinateSystems,handles.Operations);
+if ~strcmpi('no datum transformation needed',handles.OPT.datum_trans)
 
-    if ~isnan(transcodes1(1))
+%    if ~isnan(transcodes1(1))
 
-        handles.DoubleTransformation=0;
-        idoub=0;
-        if ~isnan(crscode_interm)
-            idoub=1;
-            handles.DoubleTransformation=1;
-        end
+         if ~isfield(handles.OPT,'datum_trans_from_WGS84') %only exists when tranforming via WGS 84
+             handles.DoubleTransformation=0;
+             idoub=0;
+         else
+             handles.DoubleTransformation=1;
+             idoub=1;
+         end
 
-        handles.ActiveTransformationMethod=1;
-        handles.TransCodes1=transcodes1;
-        handles.TransCodes2=transcodes2;
-        handles.TransNames1=transnames1;
-        handles.TransNames2=transnames2;
-        handles.Trans1=idef1;
-        handles.Trans2=idef2;
-        
-        handles.Trans1Code=transcodes1(idef1);
-        handles.Trans1Name=transnames1(idef1);
-        
-        set(handles.PushTrans,'Visible','on');
-        set(handles.PushTrans(1),'Enable','on');
-        
-        if idoub
-            handles.Trans2Code=transcodes2(idef2);
-            handles.Trans2Name=transnames2{idef2};
-            set(handles.PushTrans(2),'Enable','on');
-        else
-            handles.Trans2Code=[];
-            handles.Trans2Name=[];
-            set(handles.PushTrans(2),'Enable','off');
-        end        
-        RefreshDatumTransformationOptions(handles);
-        RefreshDatumTransformationParameters(handles);
-        set(handles.PushConvert,'Enable','on');
-    else
-        set(handles.TextTransformationMethod,'String','Warning! Datum Transformation Method not available','Visible','on');
-        set(handles.TextTransformationParameters,'Visible','off');
-        set(handles.EditTransformationParameters,'Visible','off');
-        set(handles.TextTransformationUnits,'Visible','off');
-        set(handles.SelectDatumTransformationMethod,'Visible','off');
-        set(handles.PushConvert,'Enable','off');
-        set(handles.PushTrans,'Visible','off');
-    end
+         handles.ActiveTransformationMethod=1;
+
+         handles.Trans1=1;
+         handles.Trans2=1;
+         
+         set(handles.PushTrans,'Visible','on');
+         set(handles.PushTrans(1),'Enable','on');
+         
+         if idoub
+             set(handles.PushTrans(2),'Enable','on');
+         else
+             set(handles.PushTrans(2),'Enable','off');
+         end
+
+         RefreshDatumTransformationOptions(handles);
+         RefreshDatumTransformationParameters(handles);
+         set(handles.PushConvert,'Enable','on');
+%     else
+%         set(handles.TextTransformationMethod,'String','Warning! Datum Transformation Method not available','Visible','on');
+%         set(handles.TextTransformationParameters,'Visible','off');
+%         set(handles.EditTransformationParameters,'Visible','off');
+%         set(handles.TextTransformationUnits,'Visible','off');
+%         set(handles.SelectDatumTransformationMethod,'Visible','off');
+%         set(handles.PushConvert,'Enable','off');
+%         set(handles.PushTrans,'Visible','off');
+%     end
 else
     set(handles.TextTransformationMethod,'String','Datum Transformation Method : none','Visible','on');
     set(handles.TextTransformationParameters,'Visible','off');
@@ -329,17 +347,27 @@ end
 
 %%
 function SelectCS_CallBack(hObject,eventdata,ii)
+
 handles=guidata(gcf);
 i=get(hObject,'Value');
+
 if strcmp(handles.CSType{ii},'xy')
-    handles.CS(ii)=handles.CSProj(i);
+%    handles.CS(ii)=handles.CSProj(i);
     handles.XYNr{ii}=i;
+    handles.CSName{ii}=handles.StrProj{i};
+    handles.CSType{ii}='xy';
 else
-    handles.CS(ii)=handles.CSGeo(i);
+    handles.CSName{ii}=handles.StrGeo{i};
     handles.GeoNr{ii}=i;
+    handles.CSType{ii}='geo';
 end
+
+handles.OPT = FindCSOptions(handles.OPT,handles.EPSG,'CS1.name',handles.CSName{1},'CS1.type',handles.CSType{1},'CS2.name',handles.CSName{2},'CS2.type',handles.CSType{2});
+handles.OPT = ConvertCoordinatesFindDatumTransOpt(handles.OPT,handles.EPSG);
+
 handles=RefreshInput(handles,ii);
 handles=RefreshDatumTransformation(handles);
+
 guidata(gcf,handles);
 
 %%
@@ -408,24 +436,31 @@ k=get(handles.SelectCS(i2),'Value');
 cs2=strs{k};
 tp2=handles.CSType{i2};
 
-if ~isempty(x1) & ~isempty(y1)
-    if handles.DoubleTransformation
-        [x2,y2]=ConvertCoordinates(x1,y1,cs1,tp1,cs2,tp2,handles.CoordinateSystems,handles.Operations,tr1,tr2);
-    else
-        [x2,y2]=ConvertCoordinates(x1,y1,cs1,tp1,cs2,tp2,handles.CoordinateSystems,handles.Operations,tr1);
-    end
+if ~isempty(x1) && ~isempty(y1)
+    [x2,y2]=ConvertCoordinates(x1,y1,'CS1.name',cs1,'CS1.type',tp1,'CS2.name',cs2,'CS2.type',tp2);
     set(handles.EditX(i2),'String',num2str(x2,'%0.9g'));
     set(handles.EditY(i2),'String',num2str(y2,'%0.9g'));
 end
 
+% if ~isempty(x1) && ~isempty(y1)
+%     if handles.DoubleTransformation
+%         [x2,y2]=ConvertCoordinates(x1,y1,cs1,tp1,cs2,tp2,handles.CoordinateSystems,handles.Operations,tr1,tr2);
+%     else
+%         [x2,y2]=ConvertCoordinates(x1,y1,cs1,tp1,cs2,tp2,handles.CoordinateSystems,handles.Operations,tr1);
+%     end
+%     set(handles.EditX(i2),'String',num2str(x2,'%0.9g'));
+%     set(handles.EditY(i2),'String',num2str(y2,'%0.9g'));
+% end
+
 %%
 function RefreshDatumTransformationOptions(handles)
+
 if handles.ActiveTransformationMethod==1
-    set(handles.SelectDatumTransformationMethod,'String',handles.TransNames1);
+    set(handles.SelectDatumTransformationMethod,'String',handles.OPT.datum_trans.alt_name);
     set(handles.SelectDatumTransformationMethod,'Value',handles.Trans1);
     set(handles.SelectDatumTransformationMethod,'Visible','on');
 else
-    set(handles.SelectDatumTransformationMethod,'String',handles.TransNames2);
+    set(handles.SelectDatumTransformationMethod,'String',handles.OPT.datum_trans.alt_name);
     set(handles.SelectDatumTransformationMethod,'Value',handles.Trans2);
     set(handles.SelectDatumTransformationMethod,'Visible','on');
 end
@@ -434,49 +469,52 @@ end
 function RefreshDatumTransformationParameters(handles)
 
 if handles.ActiveTransformationMethod==1
-    icode=handles.Trans1Code;
+    if ~isfield(handles.OPT,'datum_trans_from_WGS84')
+        dtstr='datum_trans';       
+    else
+        dtstr='datum_trans_from_WGS84';       
+    end
 else
-    icode=handles.Trans2Code;
+    dtstr='datum_trans_to_WGS84';       
 end
 
-ii=findinstruct(handles.Operations,'coord_op_code',icode);
+datum_trans=handles.OPT.(dtstr);
 
-method=handles.Operations(ii).coordinate_operation_method;
-set(handles.TextTransformationMethod,'String',['Datum Transformation Method : ' method],'Visible','on');
+params=datum_trans.params;
 
-pars0=handles.Operations(ii).parameters;
-pars=pars0;
+set(handles.TextTransformationMethod,'String',['Datum Transformation Method : ' datum_trans.method_name],'Visible','on');
 
-switch handles.Operations(ii).coord_op_method_code,
+switch datum_trans.method_code
     case{9603}
-        pars(1)=pars0(findstrinstruct(pars0,'name','X_axis_translation'));
-        pars(2)=pars0(findstrinstruct(pars0,'name','Y_axis_translation'));
-        pars(3)=pars0(findstrinstruct(pars0,'name','Z_axis_translation'));
+        pars{1}='X-axis translation';
+        pars{2}='Y-axis translation';
+        pars{3}='Z-axis translation';
     case{9606,9607}
-        pars(1)=pars0(findstrinstruct(pars0,'name','X_axis_translation'));
-        pars(2)=pars0(findstrinstruct(pars0,'name','Y_axis_translation'));
-        pars(3)=pars0(findstrinstruct(pars0,'name','Z_axis_translation'));
-        pars(4)=pars0(findstrinstruct(pars0,'name','X_axis_rotation'));
-        pars(5)=pars0(findstrinstruct(pars0,'name','Y_axis_rotation'));
-        pars(6)=pars0(findstrinstruct(pars0,'name','Z_axis_rotation'));
-        pars(7)=pars0(findstrinstruct(pars0,'name','Scale_difference'));
+        pars{1}='X-axis translation';
+        pars{2}='Y-axis translation';
+        pars{3}='Z-axis translation';
+        pars{4}='X-axis rotation';
+        pars{5}='Y-axis rotation';
+        pars{6}='Z-axis rotation';
+        pars{7}='Scale difference';
 end
 
 n=length(pars);
+
 for k=1:n
-    flds{k}=pars(k).name;
-    units{k}=pars(k).unit_of_meas_name;
+    jj=strmatch(lower(pars{k}),lower(params.name),'exact');   
+    flds{k}=params.name{jj};
+    units{k}=params.UoM.sourceN{jj};
     units{k}=ConvertUnitString(units{k});
+    val(k)=params.value(k);
 end
 
 for k=1:n
-    str=strrep(flds{k},'_',' ');
-    set(handles.TextTransformationParameters(k),'String',str);
-    val=pars(k).value;
+    set(handles.TextTransformationParameters(k),'String',flds{k});
     if ~strcmp(units{k},'deg')
-        set(handles.EditTransformationParameters(k),'String',num2str(val,'%0.9g'));
+        set(handles.EditTransformationParameters(k),'String',num2str(val(k),'%0.9g'));
     else
-        dms=rad2dms(pi*val/180);
+        dms=rad2dms(pi*val(k)/180);
         degstr=[num2str(dms(1)) ' ' num2str(dms(2)) ''' ' num2str(dms(3)) '"'];
         set(handles.EditTransformationParameters(k),'String',degstr);
     end
@@ -494,16 +532,24 @@ end
 %%
 function SelectDatumTransformationMethod_CallBack(hObject,eventdata)
 handles=guidata(gcf);
+
 ii=get(hObject,'Value');
+    
 if handles.ActiveTransformationMethod==1
-     handles.Trans1=ii;
-     handles.Trans1Name=handles.TransNames1(ii);
-     handles.Trans1Code=handles.TransCodes1(ii);
+    if ~isfield(handles.OPT,'datum_trans_from_WGS84')
+        datum_trans='datum_trans';       
+    else
+        datum_trans='datum_trans_from_WGS84';       
+    end
+    handles.Trans1=ii;
 else
-     handles.Trans2=ii;
-     handles.Trans2Name=handles.TransNames2(ii);
-     handles.Trans2Code=handles.TransCodes1(ii);
+    datum_trans='datum_trans_to_WGS84';       
+    handles.Trans2=ii;
 end
+
+handles.OPT.(datum_trans).name=handles.OPT.(datum_trans).alt_name{ii};
+handles.OPT.(datum_trans).code=handles.OPT.(datum_trans).alt_code(ii);
+handles.OPT.(datum_trans).params = ConvertCoordinatesFindDatumTransParams(handles.OPT.(datum_trans).code,handles.EPSG);
 RefreshDatumTransformationParameters(handles)
 guidata(gcf,handles);
 
@@ -617,12 +663,16 @@ if pathname~=0
     y1=y;
 
     if ~isempty(x1) && ~isempty(y1)
-        if handles.DoubleTransformation
-            [x2,y2]=ConvertCoordinates(x1,y1,cs1,tp1,cs2,tp2,handles.CoordinateSystems,handles.Operations,tr1,tr2);
-        else
-            [x2,y2]=ConvertCoordinates(x1,y1,cs1,tp1,cs2,tp2,handles.CoordinateSystems,handles.Operations,tr1);
-        end
+        [x2,y2]=ConvertCoordinates(x1,y1,'CS1.name',cs1,'CS1.type',tp1,'CS2.name',cs2,'CS2.type',tp2);
     end
+
+%     if ~isempty(x1) && ~isempty(y1)
+%         if handles.DoubleTransformation
+%             [x2,y2]=ConvertCoordinates(x1,y1,'CS1.name',cs1,'CS1.type',tp1,'CS2.name',cs2,'CS2.type',tp2);
+%         else
+%             [x2,y2]=ConvertCoordinates(x1,y1,cs1,tp1,cs2,tp2,handles.CoordinateSystems,handles.Operations,tr1);
+%         end
+%     end
 
     switch filterindex,
         case 1
