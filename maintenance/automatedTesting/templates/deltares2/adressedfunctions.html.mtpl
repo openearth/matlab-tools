@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+
+<body>
+<div id="content">
+  <table border="1">
+    <tr>
+      <th></th>
+      <th>Function Name</th>
+      <th>Coverage</th>
+    </tr>
+    <!-- ##BEGINTESTS -->
+    <tr>
+      <td>#ICON</td>
+      <td><a ref="#FUNCTIONHTML">#FUNCTIONNAME</a></td>
+      <td>#COVERAGE</td>
+    </tr>
+    <!-- ##ENDTESTS -->
+  </table>
+</div>
+
+</body>
+</html>
+
+<!-- ##ICONS -->
+<!-- #POSITIVE=img/small_green_check_transp.gif -->
+<!-- #NEUTRAL=img/small_neutral_transp.gif -->
+<!-- #NEGATIVE=img/small_red_cross_transp.gif -->
+<!-- ##ENDICONS -->
