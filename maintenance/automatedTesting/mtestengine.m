@@ -57,14 +57,19 @@ classdef mtestengine < handle
         verbose = false;                % Determines display messages to be posted while running (Not implemented yet).
 
         testid = '_test';               % ID of the test files. all files that include this string in the filename are selected as tests
-        exclusion = {'.svn'};           % A cell array of strings determining the test definitions that must be skipped
+        exclusion = {'.svn','_tutorial'};% A cell array of strings determining the test definitions that must be skipped
 
         template = 'default';           % Overview template of the testengine results (that maybe links to the descriptiontemplate and resulttemplate).
 
         tests = mtest;                  % Stores all tests found in the maindir (and subdirs if recursive = true)
+        
+        wrongtestdefs = {};             % Files identified as testdefinitions, but unreadable.
+        
+        functionsrun = {};              % Table that contains information about functions that were called during the tests (Cell N x 3, with columns functionname, html reference and coverage percentage).
     end
     properties (Hidden=true)
         testscatalogued = false;
+        profInfo = [];
     end
 
     %% Methods
@@ -181,11 +186,19 @@ classdef mtestengine < handle
             files(id,:)=[];
 
             %% add read testdefinitions and store in engine
+            wrongfiles = false(size(files,1),1);
+            fnames = cell(size(files,1),1);
             for ifiles = 1:size(files,1)
-                fname = fullfile(files{ifiles,1},[files{ifiles,2} files{ifiles,3}]);
-                obj.tests(ifiles) = mtest('filename',fname);
+                fnames{ifiles} = fullfile(files{ifiles,1},[files{ifiles,2} files{ifiles,3}]);
+                try
+                    obj.tests(ifiles) = mtest('filename',fnames{ifiles});
+                catch me
+                    wrongfiles(ifiles) = true;
+                end
             end
-
+            obj.tests = obj.tests(~wrongfiles(1:length(obj.tests)));
+            obj.wrongtestdefs = fnames(wrongfiles);
+            
             %% store hidden prop
             obj.testscatalogued = true;
 
@@ -236,10 +249,17 @@ classdef mtestengine < handle
             addpath(cd);
 
             %% Run each individual test and store results.
+            wrongtests = false(length(obj.tests),1);
             for itest = 1:length(obj.tests)
                 %% publish description of test
-                obj.tests(itest).run;
+                try
+                    obj.tests(itest).run;
+                catch me
+                    wrongtests(itest)=true;
+                    obj.wrongtestdefs{end+1} = fullfile(obj.tests(itest).filepath,[obj.tests(itest).filename '.m']);
+                end
             end
+            obj.tests(wrongtests) = [];
 
             %% return to the previous searchpath settings
             path(pt);
@@ -387,6 +407,21 @@ classdef mtestengine < handle
             if obj.verbose
                 disp('## start running tests ##');
             end
+            %% Initiate profiler
+            profstate = profile('status');
+            BeginProfile = ~strcmp(profstate.ProfilerStatus,'on');
+            if ~BeginProfile
+                if obj.verbose
+                    warning('mtestEngine:ProfilerRunning','Profiler is already running. the obtained coverage information maybe incorrect');
+                end
+                profile resume
+            else
+                profile clear
+                profile on
+            end
+            
+            wrongtests = false(length(obj.tests),1);
+            
             for itests = 1:length(obj.tests)
                 %% Display progress
                 if obj.verbose
@@ -403,15 +438,130 @@ classdef mtestengine < handle
                     obj.tests(itests).stylesheet = publishstylesheet;
                 end
                 %% Run and publish
-                if isempty(publishstylesheet)
-                    obj.tests(itests).runAndPublish(...
-                        'resdir',fullfile(obj.targetdir,'html'));
-                else
-                    obj.tests(itests).runAndPublish(...
-                        'resdir',fullfile(obj.targetdir,'html'),...
-                        'stylesheet',publishstylesheet);
+                try
+                    if isempty(publishstylesheet)
+                        obj.tests(itests).runAndPublish(...
+                            'resdir',fullfile(obj.targetdir,'html'));
+                    else
+                        obj.tests(itests).runAndPublish(...
+                            'resdir',fullfile(obj.targetdir,'html'),...
+                            'stylesheet',publishstylesheet);
+                    end
+                catch me
+                    wrongtests(itests)=true;
+                    obj.wrongtestdefs{end+1} = fullfile(obj.tests(itests).filepath,[obj.tests(itests).filename '.m']);
                 end
             end
+            obj.tests(wrongtests) = [];
+            
+            %% Get profiler information
+            obj.profInfo = profile('info');
+            
+            if BeginProfile
+                profile clear
+            end
+            oldprefs(1) = getpref('profiler','parentDisplayMode',1);
+            oldprefs(2) = getpref('profiler','busylineDisplayMode',1);
+            oldprefs(3) = getpref('profiler','childrenDisplayMode',1);
+            oldprefs(4) = getpref('profiler','mlintDisplayMode',1);
+            oldprefs(5) = getpref('profiler','coverageDisplayMode',1);
+            oldprefs(6) = getpref('profiler','listingDisplayMode',1);
+            
+            setpref('profiler','parentDisplayMode',0);
+            setpref('profiler','busylineDisplayMode',0);
+            setpref('profiler','childrenDisplayMode',0);
+            setpref('profiler','mlintDisplayMode',0);
+            setpref('profiler','coverageDisplayMode',1);
+            setpref('profiler','listingDisplayMode',1);
+            
+            if ~isdir(fullfile(obj.targetdir,'fcncoverage'))
+                mkdir(fullfile(obj.targetdir,'fcncoverage'));
+            end
+            fnames = {obj.profInfo.FunctionTable.FileName}';
+            oetfnames = fnames(strncmp(fnames,openearthtoolsroot,length(openearthtoolsroot)));
+            
+            obj.functionsrun = {};
+            for ifunc = 1:length(obj.profInfo.FunctionTable)
+                if ismember(obj.profInfo.FunctionTable(ifunc).FileName,oetfnames) &&...
+                        ismember(obj.profInfo.FunctionTable(ifunc).Type,{'M-subfunction','M-function'})
+                    %% Create coverage html
+                    functioninfo = cell(1,3);
+                    [ dum functioninfo{1}] = fileparts(obj.profInfo.FunctionTable(ifunc).FunctionName);
+                    
+                    fcnhtml = profview(obj.profInfo.FunctionTable(ifunc).FunctionName,obj.profInfo);
+                    
+                    %% replace header
+%                     TODO('replace stylesheet link');
+
+                    %% filter parts
+                    % forms
+                    formbegins = strfind(fcnhtml,'<form');
+                    formends = strfind(fcnhtml,'</form>')+6;
+                    for iii=length(formbegins):-1:1
+                        fcnhtml(formbegins(iii):formends(iii))=[];
+                    end
+                    
+                    % general part
+                    begid = strfind(fcnhtml,'<body>')+6;
+                    endid = min(strfind(fcnhtml,'<div class="grayline"/>'))-1;
+                    fcnhtml(begid:endid)=[];
+                    
+                    % replace hrefs with text:
+                    begid = strfind(fcnhtml,'<a');
+                    endid = strfind(fcnhtml,'</a>')+3;
+                    for iii=length(begid):-1:1
+                        href = fcnhtml(begid(iii):endid(iii));
+                        tempstr = href(min(strfind(href,'>'))+1:max(strfind(href,'<'))-1);
+                        fcnhtml = cat(2,fcnhtml(1:begid(iii)-1),tempstr,fcnhtml(endid(iii)+1:end));
+                    end
+                    
+                    % remove some text
+                    fcnhtml = strrep(fcnhtml,'[ Show coverage for parent directory ]<br/>','');
+                    
+                    % remove redundant div
+                    id = min(strfind(fcnhtml,'<div class="grayline"/>'));
+                    fcnhtml(id:id+length('<div class="grayline"/>')-1)=[];
+
+                    %% retrieve stats
+                    id = strfind(fcnhtml,'Coverage (did run/can run)</td><td class="td-linebottomrt">');
+                    percid = strfind(fcnhtml,'%');
+                    percid = min(percid(percid>id));
+                    functioninfo{3} = str2double(fcnhtml(id+length('Coverage (did run/can run)</td><td class="td-linebottomrt">'):percid-1));
+                    
+                    %% write html file
+                    [dm name] = fileparts(obj.profInfo.FunctionTable(ifunc).FunctionName);
+                    functioninfo{2} = strrep(fullfile(obj.targetdir,'fcncoverage',[name '.html']),'>','_');
+                    fid = fopen(functioninfo{2},'w');
+                    fprintf(fid,'%s',fcnhtml);
+                    fclose(fid);
+                    
+                    %% save info to mtestengine object
+                    obj.functionsrun(size(obj.functionsrun,1)+1,1:3) = functioninfo;
+                end
+            end
+            
+            %% reset profile prefs
+            setpref('profiler','parentDisplayMode',oldprefs(1));
+            setpref('profiler','busylineDisplayMode',oldprefs(2));
+            setpref('profiler','childrenDisplayMode',oldprefs(3));
+            setpref('profiler','mlintDisplayMode',oldprefs(4));
+            setpref('profiler','coverageDisplayMode',oldprefs(5));
+            setpref('profiler','listingDisplayMode',oldprefs(6))
+            
+            %% remove temp dirs
+            for itest = 1:length(obj.tests)
+                if isdir(obj.tests(itest).rundir)
+                    rmdir(obj.tests(itest).rundir,'s');
+                end
+                obj.tests(itest).tmpobjname = [];
+                for itc = 1:length(obj.tests(itest).testcases)
+                    if isdir(obj.tests(itest).testcases(itc).resdir)
+                        rmdir(obj.tests(itest).testcases(itc).resdir,'s');
+                    end
+                    obj.tests(itest).testcases(itc).tmpobjname = [];
+                end
+            end
+            
             %% return the previous searchpath
             path(pt);
             %% loop all tpl files and fill keywords
@@ -606,7 +756,7 @@ classdef mtestengine < handle
             str = strrep(str,'#POSITIVEICON',positiveIm);
             str = strrep(str,'#NEGATIVEICON',negativeIm);
             str = strrep(str,'#NEUTRALICON',neutralIm);
-            tr = [obj.tests(:).testresult];
+            tr = cat(1,obj.tests(:).testresult);
             str = strrep(str,'#NRSUCCESSFULLTESTS',num2str(sum(tr(~isnan(tr)))));
             str = strrep(str,'#NRUNSUCCESSFULLTESTS',num2str(sum(tr(~isnan(tr))==0)));
             str = strrep(str,'#NRNEUTRALTESTS',num2str(sum(isnan(tr))));
@@ -626,7 +776,7 @@ classdef mtestengine < handle
             str = obj.loopAndFillTests(str,...
                 '##BEGINSUCCESSFULLTESTS',...
                 '##ENDSUCCESSFULLTESTS',...
-                [obj.tests(:).testresult],...
+                ~(isnan([obj.tests.testresult]) | [obj.tests(:).testresult]==false),...
                 positiveIm,...
                 negativeIm,...
                 neutralIm);
@@ -635,7 +785,7 @@ classdef mtestengine < handle
             str = obj.loopAndFillTests(str,...
                 '##BEGINUNSUCCESSFULLTESTS',...
                 '##ENDUNSUCCESSFULLTESTS',...
-                ~[obj.tests(:).testresult],...
+                ~(isnan([obj.tests.testresult]) | [obj.tests(:).testresult]==true),...
                 positiveIm,...
                 negativeIm,...
                 neutralIm);

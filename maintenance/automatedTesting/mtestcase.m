@@ -115,11 +115,11 @@ classdef mtestcase < handle
     
     %% events
     events
-        NeedToInitialize
+        NeedToInitialize % not a good name
         CaseInitialized
         CaseRun
         TestPerformed
-        PublishCase
+        PublishCase % not a good name
     end
     
     %% Methods

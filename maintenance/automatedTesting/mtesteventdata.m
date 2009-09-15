@@ -3,6 +3,7 @@ classdef mtesteventdata < event.EventData
     properties
         workspace = {};
         removetempobj = true;
+        profilerresult = [];
         time = [];
     end
     
@@ -25,6 +26,11 @@ classdef mtesteventdata < event.EventData
             end
 
             obj.workspace = ws;
+            
+            id = find(strcmp(varargin,'profileddata'));
+            if ~isempty(id)
+                obj.profilerresult = varargin{id+1};
+            end
         end
     end
     

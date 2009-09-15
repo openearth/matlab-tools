@@ -95,7 +95,7 @@ classdef mtest < handle
         currentcase = [];                   % Number of the testcase that is last adressed
         
         testresult = false;                 % Boolean indicating whether the test was run successfully
-        profilerresult = [];
+
         time     = 0;                      % Time that was needed to perform the test
         date     = NaN;                      % Date and time the test was performed
         
@@ -106,6 +106,7 @@ classdef mtest < handle
         tempdir = tempdir;                  % Temporary directory for publishing output files.
         eventlisteners = [];                % Listeren to event runTest of testcases
         runworkspace = [];                  % variable that can be used to store the run workspace (to allow the possibility of publishResults for a test lateron)
+        rundir = [];
         tmpobjname = [];
         testperformed = false;
         
@@ -248,8 +249,7 @@ classdef mtest < handle
             %% -- Divide info string
             if length(fcnid)>1
                 %% subtract testinfo
-                teststr = str(1:max(endid(endid<min(fcnid(fcnid>1))))-1);
-                
+                teststr = str(1:max(endid(endid<min(fcnid(fcnid>1))))-1);                
                 %% seperate full strings of testcases
                 fcnid = cat(1,fcnid,length(str)+1);
                 for icase = 1:length(fcnid)-2
@@ -717,9 +717,9 @@ classdef mtest < handle
                 'outputDir',obj.resdir,...
                 'maxHeight',obj.maxheight,...
                 'maxWidth',obj.maxwidth,...
-                'showCode',obj.includecode,...
+                'showCode',obj.descriptionincludecode,...
                 'useNewFigure',false,... % Maybe add this to the input of properties?
-                'evalCode',obj.evaluatecode);
+                'evalCode',obj.descriptionevaluatecode);
             %% Check open figures
             openfigures = findobj('Type','figure');
             %% check for empty description
@@ -768,17 +768,17 @@ classdef mtest < handle
             addpath(obj.filepath);
             
             %% construct temp rundir
-            rundir = tempname;
-            mkdir(rundir);
+            obj.rundir = tempname;
+            mkdir(obj.rundir);
             
             %% Prepare testcase functions
             for icase = 1:length(obj.testcases)
-                obj.testcases(icase).makeRunFunction(rundir);
+                obj.testcases(icase).makeRunFunction(obj.rundir);
             end
             
             %% go to rundir
             cdtemp = cd;
-            cd(rundir);
+            cd(obj.rundir);
             
             %% run general part of the code
             obj.tmpobjname = ['mtest_test_function_' obj.filename];
@@ -788,66 +788,34 @@ classdef mtest < handle
                 obj.runcode{:},...
                 ['notify(getappdata(0,''' obj.tmpobjname '''),''TestPerformed'',mtesteventdata(whos,''remove'',true));']);
             
-            fid = fopen(fullfile(rundir,'mtest_testfunction.m'),'w');
+            fid = fopen(fullfile(obj.rundir,'mtest_testfunction.m'),'w');
             fprintf(fid,'%s\n',str);
             fclose(fid);
             
-            if ~exist(fullfile(rundir,'mtest_testfunction.m'),'file')
+            if ~exist(fullfile(obj.rundir,'mtest_testfunction.m'),'file')
                 % Since Windows is slower in writing the file than the matlab fclose function..?
                 % This is a workaround to let windos finish the file...
             end
             
-            %% profile on
-            profile on
-            
+            tic
             obj.testresult = feval(@mtest_testfunction);
-            
-            obj.profilerresult = profile('info');
-            
-            %{
-            idremove = ...
-                strncmp({obj.profilerresult.FunctionTable.FileName}',matlabroot,length(matlabroot)) |...
-                ismember({obj.profilerresult.FunctionTable.FunctionName}',{obj.testcases.functionname,'mtest_testfunction'});
-            oldnames = {obj.profilerresult.FunctionTable.FunctionName}';
-            obj.profilerresult.FunctionTable(idremove)=[];
-            newnames = {obj.profilerresult.FunctionTable.FunctionName}';
-            num2remove = find(idremove);
-            [dum_alltrue newposition] = ismember(oldnames,newnames);
-            for icalls = 1:length(obj.profilerresult.FunctionTable)
-                for ich = length(obj.profilerresult.FunctionTable(icalls).Children): -1 : 1
-                    if ismember(obj.profilerresult.FunctionTable(icalls).Children(ich).Index,num2remove)
-                        obj.profilerresult.FunctionTable(icalls).Children(ich)=[];
-                    else
-                        obj.profilerresult.FunctionTable(icalls).Children(ich).Index = newposition(obj.profilerresult.FunctionTable(icalls).Children(ich).Index);
-                    end
-                end
-                for ipar = length(obj.profilerresult.FunctionTable(icalls).Parents): -1 : 1
-                    if ismember(obj.profilerresult.FunctionTable(icalls).Parents(ipar).Index,num2remove)
-                        obj.profilerresult.FunctionTable(icalls).Parents(ipar)=[];
-                    else
-                        obj.profilerresult.FunctionTable(icalls).Parents(ipar).Index = newposition(obj.profilerresult.FunctionTable(icalls).Parents(ipar).Index);
-                    end
-                end
-            end
-            %}
-            
-            
-            profile off
-            profile clear
+            obj.time = toc;
             
             %% cd back
             cd(cdtemp);
             
             %% remove tempdir
-            rmdir(rundir,'s');
+            rmdir(obj.rundir,'s');
             
             %% Return the initial searchpath
             path(pt);
             
             %% set additional parameters
-            totaltime = [obj.testcases(:).time];
-            if ~isempty(totaltime)
-                obj.time = sum(totaltime);
+            if ~isempty(obj.testcases)
+                totaltime = [obj.testcases(:).time];
+                if ~isempty(totaltime)
+                    obj.time = sum(totaltime);
+                end
             end
             obj.date = now;
             
@@ -899,8 +867,8 @@ classdef mtest < handle
             addpath(obj.filepath);
             
             %% construct temp rundir
-            rundir = tempname;
-            mkdir(rundir);
+            obj.rundir = tempname;
+            mkdir(obj.rundir);
             
             %% subtract outputfilename
             id = find(strcmp(varargin,'outputfile'));
@@ -928,7 +896,7 @@ classdef mtest < handle
                 obj.currentcase = icase;
                 
                 % make runAndPublish files
-                obj.testcases(icase).makeRunAndPublishFunction(rundir);
+                obj.testcases(icase).makeRunAndPublishFunction(obj.rundir);
                 
                 % set publish options
                 for iargs = 1:2:length(varargin)
@@ -950,7 +918,7 @@ classdef mtest < handle
             
             %% go to rundir
             cdtemp = cd;
-            cd(rundir);
+            cd(obj.rundir);
             
             %% run general part of the code
             obj.tmpobjname = ['mtest_test_function_' obj.filename];
@@ -970,11 +938,11 @@ classdef mtest < handle
                     ['notify(getappdata(0,''' obj.tmpobjname '''),''TestPerformed'',mtesteventdata(whos,''remove'',false));'],...
                     ['notify(getappdata(0,''' obj.tmpobjname '''),''RunWorkspaceSaved'',mtesteventdata(whos,''remove'',true));']);
             end
-            fid = fopen(fullfile(rundir,'mtest_testfunction.m'),'w');
+            fid = fopen(fullfile(obj.rundir,'mtest_testfunction.m'),'w');
             fprintf(fid,'%s\n',str);
             fclose(fid);
             
-            if ~exist(fullfile(rundir,'mtest_testfunction.m'),'file')
+            if ~exist(fullfile(obj.rundir,'mtest_testfunction.m'),'file')
                 % Since Windows is slower in writing the file than the matlab fclose function..?
                 % This is a workaround to let windows finish the file...
             end
@@ -984,7 +952,10 @@ classdef mtest < handle
             cd(cdtemp);
             
             %% remove tempdir
-            rmdir(rundir,'s');
+            stk = dbstack;
+            if all(~strcmp({stk.name}','mtestengine.runAndPublish'))
+                rmdir(obj.rundir,'s');
+            end
             
             %% set additional parameters
             if ~isempty(obj.testcases)
@@ -1121,9 +1092,9 @@ classdef mtest < handle
                 'outputDir',obj.resdir,...
                 'maxHeight',obj.maxheight,...
                 'maxWidth',obj.maxwidth,...
-                'showCode',obj.includecode,...
+                'showCode',obj.publishincludecode,...
                 'useNewFigure',false,...
-                'evalCode',obj.evaluatecode);
+                'evalCode',obj.publishevaluatecode);
             
             %% Check open figures
             openfigures = findobj('Type','figure');
@@ -1138,7 +1109,7 @@ classdef mtest < handle
             mtestcase.publishCodeString(obj.publishoutputfile,...
                 [],...
                 obj.runworkspace,...
-                cat(1,{['%% Test description of "' obj.testname '"']},obj.publishcode),...
+                cat(1,{['%% Test Results of "' obj.testname '"']},obj.publishcode),...
                 opt);
             
             %% Close all remaining open figures from the test
@@ -1226,17 +1197,17 @@ classdef mtest < handle
         end
         function prepareTest(obj,varargin)
             %% construct temp rundir
-            rundir = tempname;
-            mkdir(rundir);
+            obj.rundir = tempname;
+            mkdir(obj.rundir);
             
             %% Prepare testcase functions
             for icase = 1:length(obj.testcases)
-                obj.testcases(icase).makeInitFunction(rundir);
+                obj.testcases(icase).makeInitFunction(obj.rundir);
             end
             
             %% go to rundir
             cdtemp = cd;
-            cd(rundir);
+            cd(obj.rundir);
             
             %% run general part of the code
             try
@@ -1249,7 +1220,7 @@ classdef mtest < handle
             cd(cdtemp);
             
             %% remove tempdir
-            rmdir(rundir,'s');
+            rmdir(obj.rundir,'s');
         end
         function fullPublish(obj,varargin)
             % This function assumes the test has been run fully
