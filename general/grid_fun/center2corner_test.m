@@ -1,3 +1,4 @@
+function testresult = center2corner_test()
 %CENTER2CORNER_TEST   visual test for center2corner
 %
 %See also: center2corner, corner2center_test
@@ -71,3 +72,5 @@ hold on
 grid_plot(g.xcor,g.ycor,'ob-')
 title('center2cornernan: g center -- b corner')
 axis([-1 6 -1 6])
+
+testresult = nan;

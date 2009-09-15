@@ -92,4 +92,4 @@ OPTstructArgs = [OPTstructArgs varargin(id+1:end)];
 
 %% fall velocity formulation
 % $$^{10} \log \left( {{1 \over w}} \right) = a\left( {^{10} \log D_{50} } \right)^2  + b\left( ^{10} \log D_{50} \right)  + c$$
-w = 1. / (10.^(OPT.a * (log10(OPT.D50)).^2 + OPT.b * log10(OPT.D50) + OPT.c));
+w = 1 ./ (10.^(OPT.a * (log10(OPT.D50)).^2 + OPT.b * log10(OPT.D50) + OPT.c));

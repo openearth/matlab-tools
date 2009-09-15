@@ -1,4 +1,6 @@
+function testresult = pcolorcorcen_test()
 %PCOLORCORCEN_TEST   Test script for PCOLOR.
+
 a = rand(3,2)
 
 edgecolor = nan;
@@ -36,3 +38,5 @@ colorbar('horiz')
 title('zbuffer shading interp')
 
 set(gcf,'renderer','zbuffer')
+
+testresult = nan;

@@ -58,15 +58,15 @@ clear cen cor
    %% any degree
 
    for ii=1:length(OPT.THs)
-   
-   OPT.TH = OPT.THs(ii);
-
-   j = j+1;
-   cor(j).x       = cos(OPT.TH)*cor(1).x - sin(OPT.TH)*cor(1).y;
-   cor(j).y       = sin(OPT.TH)*cor(1).x + cos(OPT.TH)*cor(1).y;
-
-   cen(j).x       = cos(OPT.TH)*cen(1).x - sin(OPT.TH)*cen(1).y;
-   cen(j).y       = sin(OPT.TH)*cen(1).x + cos(OPT.TH)*cen(1).y;
+       
+       OPT.TH = OPT.THs(ii);
+       
+       j = j+1;
+       cor(j).x       = cos(OPT.TH)*cor(1).x - sin(OPT.TH)*cor(1).y;
+       cor(j).y       = sin(OPT.TH)*cor(1).x + cos(OPT.TH)*cor(1).y;
+       
+       cen(j).x       = cos(OPT.TH)*cen(1).x - sin(OPT.TH)*cen(1).y;
+       cen(j).y       = sin(OPT.TH)*cen(1).x + cos(OPT.TH)*cen(1).y;
    end
    
    %% loop cases
@@ -124,7 +124,7 @@ clear cen cor
    end   
 
 %%    
-function grid_angle_test_plot(cor,cen);
+function grid_angle_test_plot(cor,cen)
 
    cen.rad      = grid_angle(cor.x,cor.y);
    cor.rad      = grid_angle(cor.x,cor.y,'location','cor');
@@ -138,5 +138,5 @@ function grid_angle_test_plot(cor,cen);
    text(cen.x(:),cen.y(:),num2str(cen.deg(:) ),'color','w')
    text(cor.x(:),cor.y(:),num2str(cor.deg(:) ),'color','k')
    axis equal
-
+end
 %% EOF
