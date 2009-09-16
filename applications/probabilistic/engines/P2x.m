@@ -63,7 +63,7 @@ for i = 1:length(stochast)
         if any(cellfun(@iscell, Params))
             id = find(cellfun(@iscell, Params));
             for j = id
-                if isa(Params{id}{1}, 'function_handle')
+                if isa(Params{j}{1}, 'function_handle')
                     % evaluate function
                     Params{j} = evaluate(Params{j}, stochast, X);
                 end
