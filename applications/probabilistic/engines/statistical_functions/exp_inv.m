@@ -62,4 +62,4 @@ function x = exp_inv(P, lambda, epsilon)
 
 %%
 P(P < 0 | 1 < P) = NaN;
-x = (epsilon-1/lambda).*log(1-P);                
+x = -1/lambda.*log(1-P) + epsilon;                
