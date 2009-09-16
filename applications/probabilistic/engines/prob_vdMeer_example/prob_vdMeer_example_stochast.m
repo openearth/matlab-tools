@@ -91,7 +91,7 @@ stochast = struct(...
     {1030 5}...     % [kg/m3] RhoW density water
     {0.25 0.0125}...% [-] TanAlfa  slope of structure
     {0.05 0.01}...  % [-] Steep    wave steepness
-    {0.1  0.05}...  % [-] P        notional permeability
+    {{@logn_moments2lambda 0.1  0.05} {@logn_moments2zeta 0.1  0.05}}...  % [-] P        notional permeability
     {2  }...        % [-] S        damage number
     {7000}...       % [-] N        number of waves
     {1 3.83}...     % [m] H        significant wave height
