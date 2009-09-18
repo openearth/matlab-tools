@@ -7,12 +7,8 @@
 % TO DO STEEF: check definition of standard error
 % TO DO STEEF:check display of originator info & use rights (cf Creative Commons & GNU licensing)
 % TO DO add flags description next to names
-% TO DO add bands description next to 
 % TO DO arrays as attributes
 % TO DO check CF feature type
-% TO DO MARIEKE: add composite error product for data assimilation when ready (P, chi^2, L2flags,standard errors)
-% To DO STEEF & MARIEKE: CHECK if sensible to add phi0, phiv, theta0,thetav, windu, windv, wspeed, bands.nr, bands.width
-
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 August IVM-VU
@@ -97,7 +93,7 @@
 %% 0 Read raw data
 
       D = meris_IVMMoS2_load(OPT.filename);
-      D.version = 'V0.3-1 DeReus';
+      D.version = 'V0.3-2 DeReus-Blaas';
       
       if OPT.debug
       pcolorcorcen(D.lon,D.lat,D.l2_flags)
@@ -162,7 +158,7 @@
       nc_add_dimension(outputfile, 'dim1'         , size(D.l2_flags,1)); 
       nc_add_dimension(outputfile, 'dim2'         , size(D.l2_flags,2)); 
       nc_add_dimension(outputfile, 'time'         , 1);  
-      nc_add_dimension(outputfile, 'bands'        , size(D.Kd,3));  
+      nc_add_dimension(outputfile, 'band'         , size(D.Kd,3));  
       nc_add_dimension(outputfile, 'L2_flags_bits', length(D.flags.bit));
       nc_add_dimension(outputfile, 'strlen1'      , size(char(D.flags.name),2));
 
@@ -255,9 +251,9 @@
       %  time,z,y,x
 
         ifld = ifld + 1;
-      nc(ifld).Name         = 'bands'; % same as dimension
+      nc(ifld).Name         = 'spectral_bands'; 
       nc(ifld).Nctype       = 'double';
-      nc(ifld).Dimension    = {'bands'};
+      nc(ifld).Dimension    = {'band'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'wavelength');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'nm');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'radiation_wavelength'); % standard name
@@ -277,9 +273,9 @@
 %      nc(ifld).Name         = 'Chla_std_err';
 %      nc(ifld).Nctype       = 'float';
 %      nc(ifld).Dimension    = {'dim1','dim2'};
-%      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'chlorophyll-a standard eror');
+%      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'chlorophyll-a standard error');
 %      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'g m-3'); % ASSUMED, NOT IN MAT FILES
-%      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_eror_of_concentration_of_chlorophyll_in_sea_water'); % quasi standard name
+%      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_error_of_concentration_of_chlorophyll_in_sea_water'); % quasi standard name
 %      nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
 %      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
 %      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units undocumented, asssumed');
@@ -290,22 +286,22 @@
       nc(ifld).Nctype       = 'float';
       nc(ifld).Dimension    = {'dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'suspended particulate matter');
-      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'kg m-3'); % ASSUMED, NOT IN MAT FILES
+      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'kg m-3'); 
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'concentration_of_suspended_matter_in_sea_water'); % standard name
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
       nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
-      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units undocumented, asssumed');
+      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units empirically confirmed');
 
         ifld = ifld + 1;
       nc(ifld).Name         = 'TSM_std_err';
       nc(ifld).Nctype       = 'float';
       nc(ifld).Dimension    = {'dim1','dim2'};
-      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'suspended particulate matter standard eror');% check: ASSUMED, NOT IN MAT FILES: standard error? 
-      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'kg m-3'); % ASSUMED, NOT IN MAT FILES
-      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_eror_of_concentration_of_suspended_matter_in_sea_water'); % quasi standard name
+      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'suspended particulate matter standard error');% check: ASSUMED, NOT IN MAT FILES: standard error? 
+      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'kg m-3'); 
+      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_error_of_concentration_of_suspended_matter_in_sea_water'); % quasi standard name
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
       nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
-      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units undocumented, asssumed');
+      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units empirically confirmed');
 %       nc(ifld).Attribute(7) = struct('Name', 'cell_methods'   ,'Value', 'area: standard_deviation'); % STD in space, time, or none? NOT IN MAT FILES
  
 %              ifld = ifld + 1;
@@ -323,7 +319,7 @@
 %      nc(ifld).Name         = 'CDOM_std_err';
 %      nc(ifld).Nctype       = 'float';
 %      nc(ifld).Dimension    = {'dim1','dim2'};
-%      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'colored dissolved organic matter standard eror');% check: ASSUMED, NOT IN MAT FILES: standard error? 
+%      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'colored dissolved organic matter standard error');% check: ASSUMED, NOT IN MAT FILES: standard error? 
 %      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'kg m-3'); % ASSUMED, NOT IN MAT FILES
 %      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_error_of_concentration_of_suspended_matter_in_sea_water'); % quasi standard name
 %      nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
@@ -334,9 +330,9 @@
         ifld = ifld + 1;
       nc(ifld).Name         = 'Kd';
       nc(ifld).Nctype       = 'float';
-      nc(ifld).Dimension    = {'dim1','dim2','bands'};
+      nc(ifld).Dimension    = {'dim1','dim2','band'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'spectral extinction coefficient');
-      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm-1'); % CHECK: NOT IN MAT FILES
+      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm-1'); % units empirically confirmed
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'volume_attenuation_coefficient_of_downwelling_radiative_flux_in_sea_water_per_radiation_wavelength'); % standard name
       nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
       
@@ -403,7 +399,7 @@
       nc_varput(outputfile, 'L2_flags_bits', D.flags.bit);
 
       % single
-      nc_varput(outputfile, 'bands'        ,  D.bands.wavelength);
+      nc_varput(outputfile, 'spectral_bands'        ,  D.bands.wavelength);
       nc_varput(outputfile, 'time'         ,  D.datenum(1) - OPT.refdatenum);
 %     nc_varput(outputfile, 'Chla'         , (D.c (:,:,2)));
 %     nc_varput(outputfile, 'Chla_std_err' , (D.dc(:,:,2)));
