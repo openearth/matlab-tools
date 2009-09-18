@@ -47,83 +47,57 @@ function [d] = UCIT_getLidarMetaData
 datatypes = UCIT_getDatatypes;
 url = datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
 
-crossshore = nc_varget(url, 'cross_shore');
-alongshore = nc_varget(url, 'alongshore');
-areacodes  = nc_varget(url, 'areacode');
-areanames  = nc_varget(url, 'areaname');
-years  = nc_varget(url, 'time');
-ids = nc_varget(url, 'id');
+d = get(findobj('tag','UCIT_mainWin'),'UserData');
 
-areanames = cellstr(areanames);
-transectID = cellstr(num2str(ids));
-soundingID = cellstr(num2str(years)); % repmat({'01012001'},size(areanames));
+if ~isfield(d,'shorepos')
 
-if strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'), 'Jarkus Data')
-
-    contours(:,1) = nc_varget(url, 'x',[0 0],[length(alongshore) 1]);
-    contours(:,2) = nc_varget(url, 'x',[0 length(crossshore)-1],[length(alongshore) 1]);
-    contours(:,3) = nc_varget(url, 'y',[0 0],[length(alongshore) 1]);
-    contours(:,4) = nc_varget(url, 'y',[0 length(crossshore)-1],[length(alongshore) 1]);
-
-elseif strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'), 'Lidar Data US')
-
+    % load all metadata from netcdf
+    crossshore = nc_varget(url, 'cross_shore');
+    alongshore = nc_varget(url, 'alongshore');
+    areacodes  = nc_varget(url, 'areacode');
+    areanames  = nc_varget(url, 'areaname');
+    years  = nc_varget(url, 'time');
+    ids = nc_varget(url, 'id');
     contours = nc_varget(url, 'contour');
+    
+    areanames = cellstr(areanames);
+    transectID = cellstr(num2str(ids));
+    soundingID = cellstr(num2str(years));
+
+    mean_high_water = nc_varget(url, 'mean_high_water');
+    shorepos = nc_varget(url, 'shorepos');
+    shore_north = nc_varget(url, 'shore_north');
+    shore_east = nc_varget(url, 'shore_east');
+    significant_wave_height = nc_varget(url, 'significant_wave_height');
+    deep_water_wave_length = nc_varget(url, 'deep_water_wave_length');
+    beach_slope = nc_varget(url, 'beach_slope');
+    bias = nc_varget(url, 'bias');
+
+    areanames = cellstr(areanames);
+    transectID = cellstr(num2str(ids));
+    soundingID = cellstr(num2str(years)); 
+
+    % make d-structure
+    d.datatypeinfo = repmat({UCIT_DC_getInfoFromPopup('TransectsDatatype')},length(alongshore),1);
+    d.contour =  [contours(:,1) contours(:,2) contours(:,3) contours(:,4)];
+    d.area = areanames;
+    d.areacode = areacodes;
+    d.soundingID = soundingID;
+    d.transectID = transectID;
+    d.year = years;
+
+    d.mean_high_water = mean_high_water;
+    d.shorepos = shorepos;
+    d.shore_north = shore_north;
+    d.shore_east = shore_east;
+    d.significant_wave_height = significant_wave_height;
+    d.deep_water_wave_length = deep_water_wave_length;
+    d.beach_slope = beach_slope;
+    d.bias = bias;
+
+    set(findobj('tag','UCIT_mainWin'),'UserData',d);
+else
+    disp('Lidar metadata loaded from UCIT console');
 end
-
-datatypes = UCIT_getDatatypes;
-url = datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
-
-crossshore = nc_varget(url, 'cross_shore');
-alongshore = nc_varget(url, 'alongshore');
-areacodes  = nc_varget(url, 'areacode');
-areanames  = nc_varget(url, 'areaname');
-years  = nc_varget(url, 'time');
-ids = nc_varget(url, 'id');
-
-% lidar metadata
-mean_high_water = nc_varget(url, 'mean_high_water');
-shorepos = nc_varget(url, 'shorepos');
-shore_north = nc_varget(url, 'shore_north');
-shore_east = nc_varget(url, 'shore_east');
-significant_wave_height = nc_varget(url, 'significant_wave_height');
-deep_water_wave_length = nc_varget(url, 'deep_water_wave_length');
-beach_slope = nc_varget(url, 'beach_slope');
-bias = nc_varget(url, 'bias');
-
-areanames = cellstr(areanames);
-transectID = cellstr(num2str(ids));
-soundingID = cellstr(num2str(years)); % repmat({'01012001'},size(areanames));
-
-if strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'), 'Jarkus Data')
-
-    contours(:,1) = nc_varget(url, 'x',[0 0],[length(alongshore) 1]);
-    contours(:,2) = nc_varget(url, 'x',[0 length(crossshore)-1],[length(alongshore) 1]);
-    contours(:,3) = nc_varget(url, 'y',[0 0],[length(alongshore) 1]);
-    contours(:,4) = nc_varget(url, 'y',[0 length(crossshore)-1],[length(alongshore) 1]);
-
-elseif strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'), 'Lidar Data US')
-
-    contours = nc_varget(url, 'contour');
-end
-
-d.datatypeinfo = repmat({UCIT_DC_getInfoFromPopup('TransectsDatatype')},length(alongshore),1);
-d.contour =  [contours(:,1) contours(:,2) contours(:,3) contours(:,4)];
-d.area = areanames;
-d.areacode = areacodes;
-d.soundingID = soundingID;
-d.transectID = transectID;
-d.year = years;
-
-d.mean_high_water = mean_high_water;
-d.shorepos = shorepos;
-d.shore_north = shore_north;
-d.shore_east = shore_east;
-d.significant_wave_height = significant_wave_height;
-d.deep_water_wave_length = deep_water_wave_length;
-d.beach_slope = beach_slope;
-d.bias = bias;
-
-
-set(findobj('tag','UCIT_mainWin'),'UserData',d);
 
 

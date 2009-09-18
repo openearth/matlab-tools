@@ -37,12 +37,13 @@ function UCIT_plotDotsInPolygon
 %   --------------------------------------------------------------------
 
 %% select transects to plot
-fh = figure(findobj('tag','mapWindow'));
+fh = figure(findobj('tag','mapWindow'));set(fh,'visible','off');
 [xv,yv] = UCIT_WS_drawPolygon;
 polygon=[xv yv];
 
 %% get metadata (either from the console or the database)
-d = UCIT_getMetaData;
+
+d = UCIT_getLidarMetaData;
 
 %% filter transects using inpolygon
 test = d.contour;
@@ -82,7 +83,7 @@ ah=axes;hold on;box on;
 
 % use prepare UCIT_prepareFigure to give it the UCIT look and feel
 figure(findobj('tag','Dotfig')) % make the figure current is apparently needed to actually make the repositioning statement work
-[fh]=UCIT_prepareFigure(2, fh, 'UR', ah);
+[fh]=UCIT_prepareFigureN(2, fh, 'UR', ah);set(fh,'visible','off')
 
 figure(findobj('tag','Dotfig')) % make the figure current is apparently needed to actually make the repositioning statement work
 set(findobj('tag','Dotfig'),'position',UCIT_getPlotPosition('UR'));
@@ -116,32 +117,10 @@ if 1 % 1: use a 'for'-loop to get and plot the data (then you can use the waitba
     UCIT_cdots_amy(x,y,z,zmin_a,zmax_a,cmapMHWjump20)
 end
 
-if 0
+if 1
     %% get info to plot shoreposition
-    % get lat info
-    shoreLat = {d.shoreEast}';
-    id1 = cellfun(@ismember, shoreLat,repmat({-999.9900}, size(shoreLat)),'UniformOutput',false);
-    shoreLat(vertcat(id1{:})) = {nan};
 
-    % get lon info and replace nans
-    shoreLon = {d.shoreNorth}';
-    id2 = cellfun(@ismember, shoreLon,repmat({-999.9900}, size(shoreLon)),'UniformOutput',false);
-    shoreLon(vertcat(id2{:})) = {nan};
-
-    % get zs info to make sure the plotted info lies above the land boundary
-    S       = repmat({35},size(shoreLat));
-
-    %% plot shoreline positions
-    markerst1  = repmat({'marker'},size(shoreLat));
-    markerst2  = repmat({'o'},size(shoreLat));
-    markerfc1  = repmat({'markerfacecolor'},size(shoreLat));
-    markerfc2  = repmat({'w'},size(shoreLat));
-    markerec1  = repmat({'markeredgecolor'},size(shoreLat));
-    markerec2  = repmat({'k'},size(shoreLat));
-
-    try %#ok<TRYNC>
-        cellfun(@scatter, shoreLat, shoreLon, S, markerst1, markerst2, markerfc1, markerfc2, markerec1, markerec2, 'UniformOutput',false);
-    end
+    scatter(d.shore_east, d.shore_north, repmat(35,size(d.shore_east)),'marker','o','markerfacecolor','w','markeredgecolor','k')
 
 end
 

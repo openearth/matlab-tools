@@ -109,7 +109,7 @@ end
 
 %% lookup the year
 
-global year
+ global year
 if isempty(year)
     time = nc_varget(filename, 'time');
 end
@@ -123,8 +123,8 @@ end
 transect.seq = 0;
 global title
 if isempty(title)
-    title = nc_attget(filename, nc_global, 'title');
-end
+     title = nc_attget(filename, nc_global, 'title');
+ end
 transect.datatypeinfo = title;
 
 transect.datatype = 1;
@@ -191,9 +191,6 @@ if isempty(MLW)
     MLW = nc_varget(filename,'mean_low_water');
 end
 transect.MLW = MLW(id_index); 
-% if isempty(crossShoreCoordinate)
-%     crossShoreCoordinate = nc_varget(filename, 'cross_shore');
-% end
 
 transect.lon = nc_varget(filename, 'lon',[time_index-1, id_index-1, 0], [1, 1, length(crossShoreCoordinate)]);
 transect.lat = nc_varget(filename, 'lat',[time_index-1, id_index-1, 0], [1, 1, length(crossShoreCoordinate)]);
@@ -207,6 +204,9 @@ transect.zi = nc_varget(filename, 'altitude', [time_index-1, id_index-1, 0], [1,
 transect.xe = transect.xi; %[1264x1 double]
 transect.ze = transect.zi; %[1264x1 double]
 
+transect.regression = nc_varget(filename, 'regression',[time_index-1, id_index-1, 0], [1, 1, length(crossShoreCoordinate)]);
+transect.shorePos = nc_varget(filename, 'shorepos', [id_index-1], [1]);
+transect.MHW = nc_varget(filename, 'mean_high_water', [id_index-1], [1]);
 
 
 end
