@@ -8,7 +8,6 @@
 % TO DO add flags description next to names
 % TO DO arrays as attributes
 % TO DO check CF feature type
-% TO DO check display of originator info & use rights (cf Creative Commons & GNU licensing)
 % To DO CHECK if sensible to add phi0, phiv, theta0,thetav, windu, windv, wspeed, spectral band width 
 
 %% Copyright notice
@@ -76,7 +75,7 @@
 %% 0 Read raw data
 
       D = meris_WaterInsight_load(OPT.filename);
-      D.version = 'V0.3 Twigt-DeBoer-Blaas-test';
+      D.version = 'V1.0 Twigt-DeBoer-Blaas';
       
       if OPT.debug
       pcolorcorcen(D.biglon,D.biglat,D.l2_flags)
