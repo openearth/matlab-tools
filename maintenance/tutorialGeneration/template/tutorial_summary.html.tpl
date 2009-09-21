@@ -77,41 +77,42 @@
 <body>
 
 	<div id="maintree" class="ui-widget ui-widget-content ui-corner-all">
-	<ul id="browser" class="filetree treeview maintree">
-		<li><span class="folder">General</span>
-			<ul>
-			<!-- ##BEGINGENERAL -->
-				<!-- ##BEGINFILEITEM -->
-				<li><a><span class="file" ref="#HTMLREF">#FILENAME</span></a></li>
-				<!-- ##ENDFILEITEM -->
-				<!-- ##BEGINFOLDERITEM -->
-				<li><span class="folder">#FOLDERNAME</span>
-					<ul>
-						<!-- ##BEGINFILEITEM -->
-						<li><a><span class="file" ref="#HTMLREF">#FILENAME</span></a></li>
-						<!-- ##ENDFILEITEM -->
-					</ul>
-				</li>
-				<!-- ##ENDFOLDERITEM -->
-			<!-- ##ENDGENERAL -->
-			</ul>
-		</li>
-		<li><span class="folder">Applications</span>
-			<ul>
-			<!-- ##BEGINAPPLICATIONS -->
-				<!-- ##BEGINFOLDERITEM -->
-				<li><span class="folder">#FOLDERNAME</span>
-					<ul>
-						<!-- ##BEGINFILEITEM -->
-						<li><a><span class="file" ref="#HTMLREF">#FILENAME</span></a></li>
-						<!-- ##ENDFILEITEM -->
-					</ul>
-				</li>
-				<!-- ##ENDFOLDERITEM -->
-			<!-- ##ENDAPPLICATIONS -->
-			</ul>
-		</li>
-		<div class="hidden">Extra line</div>
+		<ul id="browser" class="filetree treeview maintree">
+			<li><span class="folder">General</span>
+				<ul>
+				<!-- ##BEGINGENERAL -->
+					<!-- ##BEGINFILEITEM -->
+					<li><a><span class="file" ref="#HTMLREF">#FILENAME</span></a></li>
+					<!-- ##ENDFILEITEM -->
+					<!-- ##BEGINFOLDERITEM -->
+					<li><span class="folder">#FOLDERNAME</span>
+						<ul>
+							<!-- ##BEGINFILEITEM -->
+							<li><a><span class="file" ref="#HTMLREF">#FILENAME</span></a></li>
+							<!-- ##ENDFILEITEM -->
+						</ul>
+					</li>
+					<!-- ##ENDFOLDERITEM -->
+				<!-- ##ENDGENERAL -->
+				</ul>
+			</li>
+			<li><span class="folder">Applications</span>
+				<ul>
+				<!-- ##BEGINAPPLICATIONS -->
+					<!-- ##BEGINFOLDERITEM -->
+					<li><span class="folder">#FOLDERNAME</span>
+						<ul>
+							<!-- ##BEGINFILEITEM -->
+							<li><a><span class="file" ref="#HTMLREF">#FILENAME</span></a></li>
+							<!-- ##ENDFILEITEM -->
+						</ul>
+					</li>
+					<!-- ##ENDFOLDERITEM -->
+				<!-- ##ENDAPPLICATIONS -->
+				</ul>
+			</li>
+			<div class="hidden">Extra line</div>
+		</ul>
 	</div>
 
 	<div id="contentspanel" class="ui-widget">
