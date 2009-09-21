@@ -81,6 +81,7 @@ classdef mtestcase < handle
         descriptionevaluatecode = true;     % Attribute EvaluateCode for publishing the description cell
 
         runcode = {};                       % Code that was included in the testfile RunTest cell
+        coverageoutputfile = {};            % Name of the published coverage output file
 
         publishcode = {};                   % Code that was included in the testfile TestResults cell
         publishoutputfile = {};             % Name of the published output file of the TestResults cell
@@ -89,6 +90,8 @@ classdef mtestcase < handle
         
         testresult = false;                 % Boolean indicating whether the test was run successfully
         time = [];                          % time needed for the testcase
+        profinfo = [];                      % Profile info structure
+        functioncalls = [];
 
         resdir = '';                        % Location where files are published
     end
@@ -302,7 +305,7 @@ classdef mtestcase < handle
             end
             
             if ~obj.initialized
-                warning('TestCase is run solo');
+                warning('MtestCase:RunSolo','TestCase is run solo');
                 obj.run;
             end
             
@@ -600,6 +603,9 @@ classdef mtestcase < handle
             end
             if isempty(obj.publishoutputfile)
                 obj.publishoutputfile = [obj.outputfile '_results.html'];
+            end
+            if isempty(obj.coverageoutputfile)
+                obj.coverageoutputfile = [obj.outputfile '_coverage.html'];
             end
             
             % Maxwidth
@@ -913,7 +919,9 @@ classdef mtestcase < handle
                 'mtest_245y7e_tic = tic;',...
                 ['notify(getappdata(0,''' obj.tmpobjname '''),''CaseInitialized'',mtesteventdata(whos,''remove'',false));'],...
                 obj.description{~strncmp(obj.description,'%',1)},...
+                'profile on',...
                 obj.runcode{:},...
+                'profile off',...
                 ['notify(getappdata(0,''' obj.tmpobjname '''),''CaseRun'',mtesteventdata(whos,''time'',toc(mtest_245y7e_tic)));']);
             
             %% write function
@@ -935,7 +943,9 @@ classdef mtestcase < handle
                 'mtest_245y7e_tic = tic;',...
                 ['notify(getappdata(0,''' obj.tmpobjname '''),''CaseInitialized'',mtesteventdata(whos,''remove'',false));'],...
                 obj.description{~strncmp(obj.description,'%',1)},...
+                'profile on',...
                 obj.runcode{:},...
+                'profile off',...
                 ['notify(getappdata(0,''' obj.tmpobjname '''),''CaseRun'',mtesteventdata(whos,''time'',toc(mtest_245y7e_tic),''remove'',false));'],...
                 ['notify(getappdata(0,''' obj.tmpobjname '''),''PublishCase'',mtesteventdata(whos,''time'',toc(mtest_245y7e_tic),''remove'',true));']);
             
@@ -981,6 +991,15 @@ classdef mtestcase < handle
             obj.testresult = nan;
             if ~isempty(obj.functionoutputname)
                 obj.testresult = ws{strcmp(ws(:,1),obj.functionoutputname),2};
+            end
+            
+            %% get profiler data
+            obj.profinfo = profile('info');
+            profile clear
+            
+            obj.functioncalls = mtestfunction;
+            for i = 1:size(obj.profinfo.FunctionTable,1)
+                obj.functioncalls(i) = mtestfunction(obj.profinfo,i);
             end
             
             %% notify

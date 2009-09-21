@@ -85,6 +85,7 @@ classdef mtest < handle
         descriptionoutputfile = {};         % Name of the published output file of the description
         
         runcode  = {};
+        coverageoutputfile = {};
         
         publishcode = {};                   % TODO , not included yet..
         publishincludecode = false;
@@ -96,8 +97,10 @@ classdef mtest < handle
         
         testresult = false;                 % Boolean indicating whether the test was run successfully
 
-        time     = 0;                      % Time that was needed to perform the test
-        date     = NaN;                      % Date and time the test was performed
+        time     = 0;                       % Time that was needed to perform the test
+        date     = NaN;                     % Date and time the test was performed
+        profinfo = [];                      % Profile info structure
+        functioncalls = [];
         
         resdir = '';                        % Directory where published files are stored
     end
@@ -822,6 +825,154 @@ classdef mtest < handle
             %% Set flag
             obj.testperformed = true;
         end
+        function publishCoverage(obj,varargin)
+            %publishResult  Creates an html file with coverage information of this test
+            %
+            %   This function only creates an overview of the coverages. The coverage files for
+            %   individual functions are linked to, but not generated.
+            %
+            %   Syntax:
+            %   publishCoverage(obj,'property','value')
+            %   obj.publisCoverage('property','value')
+            %
+            %   Input:
+            %   obj             - An instance of an mtest object.
+            %
+            %   property value pairs:
+            %           'resdir'     -  Specifies the output directory (default is the current
+            %                           directory)
+            %           'filename'   -  Name of the output file. If the filename includes a path,
+            %                           this pathname overrides the specified resdir.
+            %           'testname'   -  Name of the test.
+            %           'exclude'    -  Cell with strings indicating the functions that should be
+            %                           excluded from the overview.
+            %           'include'    -  Cell with strings indicating the functions that should be
+            %                           included in the overview.
+            %           'coveragedir'-  dirname (relative) of the referenced coverage files
+            %           
+            %
+            %   See also mtestcase mtest.run mtest.runAndPublish mtestengine
+            
+            %% Run test if we do not have results
+            if ~obj.testperformed
+                obj.run;
+            end
+            
+            %% subtract result dir from input
+            if isempty(obj.resdir)
+                obj.resdir = cd;
+            end
+            id = find(strcmp(varargin,'resdir'));
+            if ~isempty(id)
+                obj.resdir = varargin{id+1};
+                varargin(id:id+1) = [];
+            end
+            
+            %% Get exclusions
+            exclude = {};
+            id = find(strcmp(varargin,'exclude'));
+            if ~isempty(id)
+                exclude = varargin{id+1};
+            end
+            
+            coveragedir = {};
+            id = find(strcmp(varargin,'coveragedir'));
+            if ~isempty(id)
+                coveragedir = varargin{id+1};
+            end
+            
+            %% Get inclusions
+            include = {};
+            id = find(strcmp(varargin,'include'));
+            if ~isempty(id)
+                include = varargin{id+1};
+            end
+            
+            %% Get filename from input
+            id = find(strcmp(varargin,'filename'));
+            if ~isempty(id)
+                [pt nm] = fileparts(varargin{id+1});
+                obj.descriptionoutputfile = [nm '.html'];
+                if ~isempty(pt)
+                    obj.resdir = pt;
+                end
+                varargin(id:id+1) = [];
+            end
+            
+            %% createoutputname
+            if isempty(obj.coverageoutputfile)
+                obj.coverageoutputfile = [obj.filename '_main_coverage.html'];
+            end
+            [pt fn] = fileparts(obj.coverageoutputfile);
+            if isempty(pt)
+                pt = obj.resdir;
+            end
+            obj.coverageoutputfile = fullfile(pt,[fn '.html']);
+            
+            %% retrieve testname from input
+            if any(strcmpi(varargin,'testname'))
+                id = find(strcmpi(varargin,'testname'));
+                obj.testname = varargin{id+1};
+            end
+            
+            %% calculate coverage
+            fcns = {obj.functioncalls.functionname}';
+            
+            if isempty(fcns{1})
+                fcns = [];
+            else
+                fcnspath = cellfun(@fileparts,{obj.functioncalls.filename}','UniformOutput',false);
+                cov = [obj.functioncalls.coverage]';
+                id = false(size(fcns));
+                for i = 1:length(include)
+                    id(~cellfun(@isempty,strfind(fcns,include{i})))=true;
+                    id(~cellfun(@isempty,strfind(fcnspath,include{i})))=true;
+                end
+                for i = 1:length(exclude)
+                    id(~cellfun(@isempty,strfind(fcns,exclude{i})))=false;
+                    id(~cellfun(@isempty,strfind(fcnspath,exclude{i})))=false;
+                end
+                fcns(~id)=[];
+                
+                cov(~id)=[];
+            end
+            
+            %% Create header
+            s{1} = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
+            s{2} = '<html xmlns="http://www.w3.org/1999/xhtml">';
+            
+            s{3} = '<head>';
+            s{end+1} = '<title>Coverage information</title>';
+            s{end+1} = '</head>';
+            s{end+1} = '<body>';
+ 
+            if isempty(fcns)
+                s{end+1} = 'This test did not address any function within the maindir';
+            else
+                %% Create table
+                s{end+1} = '<table>';
+                s{end+1} = '    <tr>';
+                s{end+1} = '        <th>Function Name</th>';
+                s{end+1} = '        <th>Coverage during this test</th>';
+                s{end+1} = '    </tr>';
+                for ifcn = 1:length(fcns)
+                    htmlfile = strrep(fullfile(coveragedir,mtestfunction.constructfilename([fcns{ifcn} '_coverage.html'])),filesep,'/');
+                    s{end+1} = '    <tr>';
+                    s{end+1} = ['        <td><a class="RelFunctionRef" href="#" deltares:functioncoverageref="' htmlfile '">' code2html(fcns{ifcn}) '</a></td>']; %#ok<*AGROW>
+                    s{end+1} = ['        <td>' num2str(cov(ifcn),'%0.1f') '</td>'];
+                    s{end+1} = '    </tr>';
+                end
+                s{end+1} = '</table>';
+            end
+            %% end file
+            s{end+1} = '</body>';
+            s{end+1} = '</html>';
+            
+            %% save file
+            fid = fopen(obj.coverageoutputfile,'w');
+            fprintf(fid,'%s\n',s{:});
+            fclose(fid);
+        end
         function runAndPublish(obj,varargin)
             %runAndPublish  Runs the test and publishes the descriptions and results of all testcases.
             %
@@ -926,8 +1077,11 @@ classdef mtest < handle
                 str = sprintf('%s\n',...
                     strrep(obj.header,obj.filename,'mtest_testfunction'),...
                     'mtest_245y7e_tic = tic;',...
+                    'profile clear',...
                     obj.descriptioncode{~strncmp(obj.descriptioncode,'%',1)},...
+                    'profile on',...
                     obj.runcode{:},...
+                    'profile off',...
                     ['notify(getappdata(0,''' obj.tmpobjname '''),''TestPerformed'',mtesteventdata(whos,''remove'',false,''time'',toc(mtest_245y7e_tic)));'],...
                     ['notify(getappdata(0,''' obj.tmpobjname '''),''RunWorkspaceSaved'',mtesteventdata(whos,''remove'',true));']);
             else
@@ -952,10 +1106,7 @@ classdef mtest < handle
             cd(cdtemp);
             
             %% remove tempdir
-            stk = dbstack;
-            if all(~strcmp({stk.name}','mtestengine.runAndPublish'))
-                rmdir(obj.rundir,'s');
-            end
+            rmdir(obj.rundir,'s');
             
             %% set additional parameters
             if ~isempty(obj.testcases)
@@ -1190,6 +1341,18 @@ classdef mtest < handle
             %% time
             if ~isempty(varargin{2}.time)
                 obj.time = varargin{2}.time;
+            end
+            
+            %% Save profiler info
+            if isempty(obj.testcases)
+                obj.profinfo = profile('info');
+            else
+                obj.profinfo = mergeprofileinfo(obj.testcases.profinfo);
+            end
+            
+            obj.functioncalls = mtestfunction;
+            for i = 1:size(obj.profinfo.FunctionTable,1)
+                obj.functioncalls(i) = mtestfunction(obj.profinfo,i);
             end
             
             %% Set flag

@@ -10,7 +10,7 @@ classdef mtestengine < handle
     % not specified and created).
     %
     % See also mtestengine.mtestengine mtestengine.catalogueTests mtestengine.run mtestengine.runAndPublish mtest mtestcase
-
+    
     %% Copyright notice
     %     Copyright (c) 2008  DELTARES.
     %
@@ -36,31 +36,32 @@ classdef mtestengine < handle
     %   You should have received a copy of the GNU Lesser General Public
     %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
     %   --------------------------------------------------------------------
-
+    
     %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
     % Created: $date(dd mmm yyyy)
     % Created with Matlab version: $version
-
+    
     % $Id$
     % $Date$
     % $Author$
     % $Revision$
     % $HeadURL$
     % $Keywords: $
-
+    
     %% Properties
     properties
         targetdir = cd;                 % Directory that is used to place the final html files
-
+        
         maindir = cd;                   % Main directory of the tests
         recursive = true;               % Recursive determines whether the engine searches for tests in the maindir only or in subdirs as well
         verbose = false;                % Determines display messages to be posted while running (Not implemented yet).
-
+        includecoverage = true;         % Includes a dir with html files expressing the coverage of the tests for each function
+        
         testid = '_test';               % ID of the test files. all files that include this string in the filename are selected as tests
         exclusion = {'.svn','_tutorial'};% A cell array of strings determining the test definitions that must be skipped
-
+        
         template = 'default';           % Overview template of the testengine results (that maybe links to the descriptiontemplate and resulttemplate).
-
+        
         tests = mtest;                  % Stores all tests found in the maindir (and subdirs if recursive = true)
         
         wrongtestdefs = {};             % Files identified as testdefinitions, but unreadable.
@@ -71,7 +72,7 @@ classdef mtestengine < handle
         testscatalogued = false;
         profInfo = [];
     end
-
+    
     %% Methods
     methods
         function obj = mtestengine(varargin)
@@ -109,7 +110,7 @@ classdef mtestengine < handle
             %   obj     -   mtestengine object.
             %
             %   See also mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
-
+            
             %% Use the setProperty function to set all properties.
             setProperty(obj,varargin);
         end
@@ -137,7 +138,7 @@ classdef mtestengine < handle
             %               function.
             %
             %   See also mtestengine mtestengine.mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
-
+            
             %% initiate output
             varargout = {};
             
@@ -148,7 +149,7 @@ classdef mtestengine < handle
             else
                 dirs = obj.maindir;
             end
-
+            
             % remove all exclusion dirs
             for iexc = 1: length(obj.exclusion)
                 % find dirs containing exc in their name
@@ -156,7 +157,7 @@ classdef mtestengine < handle
                 % remove dirs containing exc in their name
                 dirs(id) = [];
             end
-
+            
             % list the files in the dirs
             files = {};
             for i = 1:length(dirs)
@@ -169,7 +170,7 @@ classdef mtestengine < handle
             if isempty(files)
                 return
             end
-
+            
             % isolate all test definitions
             id = ~cellfun(@isempty,strfind(files(:,2),obj.testid)) &...
                 strcmp(files(:,3),'.m');
@@ -177,14 +178,14 @@ classdef mtestengine < handle
             if isempty(files)
                 return
             end
-
+            
             % remove the exclusions
             id = false(size(files,1),1);
             for iexcl = 1:length(obj.exclusion)
                 id = id | ~cellfun(@isempty,strfind(files(:,2),obj.exclusion{iexcl}));
             end
             files(id,:)=[];
-
+            
             %% add read testdefinitions and store in engine
             wrongfiles = false(size(files,1),1);
             fnames = cell(size(files,1),1);
@@ -201,7 +202,7 @@ classdef mtestengine < handle
             
             %% store hidden prop
             obj.testscatalogued = true;
-
+            
             %% assign output
             if nargout==1
                 varargout{1} = obj;
@@ -235,7 +236,7 @@ classdef mtestengine < handle
             %               function.
             %
             %   See also mtestengine mtestengine.mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
-
+            
             %% assign output
             varargout = {};
             
@@ -243,11 +244,11 @@ classdef mtestengine < handle
             if ~obj.testscatalogued
                 obj.catalogueTests;
             end
-
+            
             %% Make shure the current dir is in the searchpath
             pt = path;
             addpath(cd);
-
+            
             %% Run each individual test and store results.
             wrongtests = false(length(obj.tests),1);
             for itest = 1:length(obj.tests)
@@ -260,7 +261,7 @@ classdef mtestengine < handle
                 end
             end
             obj.tests(wrongtests) = [];
-
+            
             %% return to the previous searchpath settings
             path(pt);
             
@@ -298,7 +299,7 @@ classdef mtestengine < handle
             %               function.
             %
             %               %   See also mtestengine mtestengine.mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
-
+            
             %% initiate output
             varargout = {};
             %% cataloguq tests if not done already
@@ -359,7 +360,7 @@ classdef mtestengine < handle
                 obj.template = 'default';
             end
             templdir = fullfile(templatedir,obj.template);
-
+            
             % check the existance of template files (*.tpl)
             tplfiles = mtestengine.listfiles(templdir,'tpl',obj.recursive);
             tplfiles(:,1) = cellfun(@fullfile,...
@@ -370,22 +371,22 @@ classdef mtestengine < handle
             if isempty(tplfiles)
                 error('MtestEngine:WrongTemplate','There is no template file (*.tpl) in the template directory');
             end
-
+            
             temptemplatedir = tempname;
             mkdir(temptemplatedir);
             copyfile(fullfile(templdir,'*.*'),temptemplatedir,'f');
-
+            
             % remove all svn dirs from the template
             DirsInTemplateDir = strread(genpath(temptemplatedir),'%s',-1,'delimiter',';');
             SvnDirsInTemplateDir = DirsInTemplateDir(~cellfun(@isempty,strfind(DirsInTemplateDir,'.svn')));
-
+            
             % remove all svn dirs from the template
             for i=1:length(SvnDirsInTemplateDir)
                 if isdir(SvnDirsInTemplateDir{i})
                     rmdir(SvnDirsInTemplateDir{i},'s');
                 end
             end
-
+            
             % copy template to target dir
             copyfile(fullfile(temptemplatedir,'*.*'),obj.targetdir,'f');
             rmdir(temptemplatedir,'s');
@@ -403,22 +404,20 @@ classdef mtestengine < handle
             if ~isdir(fullfile(obj.targetdir,'html'))
                 mkdir(fullfile(obj.targetdir,'html'));
             end
-
+            
             if obj.verbose
                 disp('## start running tests ##');
             end
-            %% Initiate profiler
+            %% Check profiler
             profstate = profile('status');
             BeginProfile = ~strcmp(profstate.ProfilerStatus,'on');
             if ~BeginProfile
                 if obj.verbose
                     warning('mtestEngine:ProfilerRunning','Profiler is already running. the obtained coverage information maybe incorrect');
                 end
-                profile resume
-            else
-                profile clear
-                profile on
             end
+            profile off
+            profile clear
             
             wrongtests = false(length(obj.tests),1);
             
@@ -447,137 +446,85 @@ classdef mtestengine < handle
                             'resdir',fullfile(obj.targetdir,'html'),...
                             'stylesheet',publishstylesheet);
                     end
-                catch me
+                catch me %#ok<NASGU>
                     wrongtests(itests)=true;
                     obj.wrongtestdefs{end+1} = fullfile(obj.tests(itests).filepath,[obj.tests(itests).filename '.m']);
                 end
             end
-            obj.tests(wrongtests) = [];
-            
+            obj.tests(wrongtests) = [];            
             %% Get profiler information
-            obj.profInfo = profile('info');
+            obj.profInfo = mergeprofileinfo(obj.tests.profinfo);
             
-            if BeginProfile
-                profile clear
-            end
-            oldprefs(1) = getpref('profiler','parentDisplayMode',1);
-            oldprefs(2) = getpref('profiler','busylineDisplayMode',1);
-            oldprefs(3) = getpref('profiler','childrenDisplayMode',1);
-            oldprefs(4) = getpref('profiler','mlintDisplayMode',1);
-            oldprefs(5) = getpref('profiler','coverageDisplayMode',1);
-            oldprefs(6) = getpref('profiler','listingDisplayMode',1);
-            
-            setpref('profiler','parentDisplayMode',0);
-            setpref('profiler','busylineDisplayMode',0);
-            setpref('profiler','childrenDisplayMode',0);
-            setpref('profiler','mlintDisplayMode',0);
-            setpref('profiler','coverageDisplayMode',1);
-            setpref('profiler','listingDisplayMode',1);
-            
-            if ~isdir(fullfile(obj.targetdir,'fcncoverage'))
-                mkdir(fullfile(obj.targetdir,'fcncoverage'));
-            end
-            fnames = {obj.profInfo.FunctionTable.FileName}';
-            oetfnames = fnames(strncmp(fnames,openearthtoolsroot,length(openearthtoolsroot)));
-            
-            obj.functionsrun = {};
-            for ifunc = 1:length(obj.profInfo.FunctionTable)
-                if ismember(obj.profInfo.FunctionTable(ifunc).FileName,oetfnames) &&...
-                        ismember(obj.profInfo.FunctionTable(ifunc).Type,{'M-subfunction','M-function'})
-                    %% Create coverage html
-                    functioninfo = cell(1,3);
-                    [ dum functioninfo{1}] = fileparts(obj.profInfo.FunctionTable(ifunc).FunctionName);
-                    
-                    fcnhtml = profview(obj.profInfo.FunctionTable(ifunc).FunctionName,obj.profInfo);
-                    
-                    %% replace header
-%                     TODO('replace stylesheet link');
-
-                    %% filter parts
-                    % forms
-                    formbegins = strfind(fcnhtml,'<form');
-                    formends = strfind(fcnhtml,'</form>')+6;
-                    for iii=length(formbegins):-1:1
-                        fcnhtml(formbegins(iii):formends(iii))=[];
+            %% print coverage html pages
+            if obj.includecoverage
+                %% create coverage dir
+                if ~isdir(fullfile(obj.targetdir,'html','fcncoverage'))
+                    mkdir(fullfile(obj.targetdir,'html','fcncoverage'));
+                end
+                %% copy template te coverage dir
+                covtempldir = fullfile(fileparts(mfilename('fullpath')),'coverage_template');
+                
+                temptemplatedir = tempname;
+                mkdir(temptemplatedir);
+                copyfile(fullfile(covtempldir,'*.*'),temptemplatedir,'f');
+                
+                % remove all svn dirs from the template
+                DirsInTemplateDir = strread(genpath(temptemplatedir),'%s',-1,'delimiter',';');
+                SvnDirsInTemplateDir = DirsInTemplateDir(~cellfun(@isempty,strfind(DirsInTemplateDir,'.svn')));
+                
+                % remove all svn dirs from the template
+                for i=1:length(SvnDirsInTemplateDir)
+                    if isdir(SvnDirsInTemplateDir{i})
+                        rmdir(SvnDirsInTemplateDir{i},'s');
                     end
-                    
-                    % general part
-                    begid = strfind(fcnhtml,'<body>')+6;
-                    endid = min(strfind(fcnhtml,'<div class="grayline"/>'))-1;
-                    fcnhtml(begid:endid)=[];
-                    
-                    % replace hrefs with text:
-                    begid = strfind(fcnhtml,'<a');
-                    endid = strfind(fcnhtml,'</a>')+3;
-                    for iii=length(begid):-1:1
-                        href = fcnhtml(begid(iii):endid(iii));
-                        tempstr = href(min(strfind(href,'>'))+1:max(strfind(href,'<'))-1);
-                        fcnhtml = cat(2,fcnhtml(1:begid(iii)-1),tempstr,fcnhtml(endid(iii)+1:end));
+                end
+                
+                % copy template to target dir
+                copyfile(fullfile(temptemplatedir,'*.*'),fullfile(obj.targetdir,'html','fcncoverage'),'f');
+                rmdir(temptemplatedir,'s');
+                %% publish coverage files
+                fnames = {obj.profInfo.FunctionTable.FileName}';
+                oetfnames = fnames(strncmp(fnames,obj.maindir,length(obj.maindir)));
+                
+                obj.functionsrun = mtestfunction;
+                for ifunc = 1:length(obj.profInfo.FunctionTable)
+                    if ismember(obj.profInfo.FunctionTable(ifunc).FileName,oetfnames) &&...
+                            ismember(obj.profInfo.FunctionTable(ifunc).Type,{'M-subfunction','M-function'})
+                        %% Create mtestfunction object
+                        obj.functionsrun(ifunc) = mtestfunction(obj.profInfo,ifunc);                       
+                        %% construct name of outputfile
+                        obj.functionsrun(ifunc).htmlfilename = fullfile(obj.targetdir,'html','fcncoverage',mtestfunction.constructfilename([obj.functionsrun(ifunc).functionname '_coverage.html']));
+                        %% publish coverage files.
+                        obj.functionsrun(ifunc).publishCoverage;
                     end
-                    
-                    % remove some text
-                    fcnhtml = strrep(fcnhtml,'[ Show coverage for parent directory ]<br/>','');
-                    
-                    % remove redundant div
-                    id = min(strfind(fcnhtml,'<div class="grayline"/>'));
-                    fcnhtml(id:id+length('<div class="grayline"/>')-1)=[];
-
-                    %% retrieve stats
-                    id = strfind(fcnhtml,'Coverage (did run/can run)</td><td class="td-linebottomrt">');
-                    percid = strfind(fcnhtml,'%');
-                    percid = min(percid(percid>id));
-                    functioninfo{3} = str2double(fcnhtml(id+length('Coverage (did run/can run)</td><td class="td-linebottomrt">'):percid-1));
-                    
-                    %% write html file
-                    [dm name] = fileparts(obj.profInfo.FunctionTable(ifunc).FunctionName);
-                    functioninfo{2} = strrep(fullfile(obj.targetdir,'fcncoverage',[name '.html']),'>','_');
-                    fid = fopen(functioninfo{2},'w');
-                    fprintf(fid,'%s',fcnhtml);
-                    fclose(fid);
-                    
-                    %% save info to mtestengine object
-                    obj.functionsrun(size(obj.functionsrun,1)+1,1:3) = functioninfo;
+                end
+                
+                %% Loop tests and publish overview
+                for itest = 1:length(obj.tests)
+                    if ~isempty(obj.maindir) && strcmp(obj.maindir(end),filesep)
+                        obj.maindir(end)=[];
+                    end
+                    obj.tests(itest).publishCoverage('include',{obj.maindir},...
+                        'resdir',fullfile(obj.targetdir,'html'),...
+                        'coveragedir',fullfile('html','fcncoverage'));
                 end
             end
-            
-            %% reset profile prefs
-            setpref('profiler','parentDisplayMode',oldprefs(1));
-            setpref('profiler','busylineDisplayMode',oldprefs(2));
-            setpref('profiler','childrenDisplayMode',oldprefs(3));
-            setpref('profiler','mlintDisplayMode',oldprefs(4));
-            setpref('profiler','coverageDisplayMode',oldprefs(5));
-            setpref('profiler','listingDisplayMode',oldprefs(6))
-            
-            %% remove temp dirs
-            for itest = 1:length(obj.tests)
-                if isdir(obj.tests(itest).rundir)
-                    rmdir(obj.tests(itest).rundir,'s');
-                end
-                obj.tests(itest).tmpobjname = [];
-                for itc = 1:length(obj.tests(itest).testcases)
-                    if isdir(obj.tests(itest).testcases(itc).resdir)
-                        rmdir(obj.tests(itest).testcases(itc).resdir,'s');
-                    end
-                    obj.tests(itest).testcases(itc).tmpobjname = [];
-                end
-            end
-            
             %% return the previous searchpath
             path(pt);
             %% loop all tpl files and fill keywords
             for itpl = 1:size(tplfiles,1)
                 tplfilename = fullfile(tplfiles{itpl,1},tplfiles{itpl,2});
-
+                
                 obj.fillTemplate(tplfilename);
-
+                
             end
             %% run any code that is in the targetdir
             mfiles = mtestengine.listfiles(templdir,'m',obj.recursive);
-            mfiles(:,1) = cellfun(@fullfile,...
-                repmat({obj.targetdir},size(mfiles,1),1),...
-                strrep(mfiles(:,1),templdir,''),...
-                'UniformOutput',false);
             if ~isempty(mfiles)
+                mfiles(:,1) = cellfun(@fullfile,...
+                    repmat({obj.targetdir},size(mfiles,1),1),...
+                    strrep(mfiles(:,1),templdir,''),...
+                    'UniformOutput',false);
                 for ifiles = 1:size(mfiles,1)
                     run(fullfile(mfiles{ifiles,1},mfiles{ifiles,2}));
                 end
@@ -614,11 +561,13 @@ classdef mtestengine < handle
             %                               the loop definition of the tests, but now with
             %                               the correct information of the testcases within a test.
             %       <!-- ##BEGINSUCCESSFULLTESTS -->/<!-- ##ENDSUCCESSFULLTESTS -->
-            %                               TODO
+            %                               TODO - write help
             %       <!-- ##BEGINUNSUCCESSFULLTESTS -->/<!-- ##ENDUNSUCCESSFULLTESTS -->
-            %                               TODO
+            %                               TODO - write help
             %       <!-- ##BEGINNEUTRALTESTS -->/<!-- ##ENDNEUTRALTTESTS -->
-            %                               TODO
+            %                               TODO - write help
+            %       <!-- ##BEGINFUNCTIONCALLS -->/<!-- ##ENDFUNCTIONCALLS -->
+            %                               TODO - write help
             %
             %       Including test results and results of testcases, part of a template file can
             %       look like this:
@@ -673,6 +622,12 @@ classdef mtestengine < handle
             %                               published html file of the test results. The
             %                               location is relative to the target dir.
             %
+            %       function call keywords:
+            %       #FUNCTIONFULLNAME   -   Is replaced by the name of the function
+            %       #FUNCTIONHTML       -   Is replaced by the html reference to the published
+            %                               coverage report.
+            %       #FUNCTIONCOVERAGE   -   Is replaced by the percentage of lines that was run
+            %
             %       specifying variable icons:
             %       #ICON               -   This keyword is replaced with the reference to an icon
             %                               specifying whether the current test or testcase was
@@ -699,32 +654,32 @@ classdef mtestengine < handle
             %   outobj  -   The same mtestengine object that entered the function.
             %
             %   See also mtestengine mtestengine.mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
-
+            
             %% Check if the file was there
             if ~exist(tplfilename,'file')
                 return
             end
-
+            
             %% Acquire template string
             fid = fopen(tplfilename);
             str = fread(fid,'*char')';
             fclose(fid);
-
+            
             ends = strfind(str,'-->');
-
+            
             %% Get icons (positive and negative result)
             idbeg = strfind(str,'#ICONS');
             idend = strfind(str,'#ENDICONS');
             idPos = strfind(str,'#POSITIVE');
             idPos(idPos>idend | idPos<idbeg) = [];
-
+            
             positiveIm = '';
             if ~isempty(idPos)
                 positiveIm = strtrim(str(idPos+10:min(ends(ends>idPos))-1));
             else
                 % copy and reference default icon?
             end
-
+            
             idNeg = strfind(str,'#NEGATIVE');
             idNeg(idNeg>idend | idNeg<idbeg) = [];
             negativeIm = '';
@@ -733,7 +688,7 @@ classdef mtestengine < handle
             else
                 % copy and reference default icon?
             end
-
+            
             idNeutral = strfind(str,'#NEUTRAL');
             idNeutral(idNeutral>idend | idNeutral<idbeg) = [];
             neutralIm = '';
@@ -742,7 +697,7 @@ classdef mtestengine < handle
             else
                 % copy and reference default icon?
             end
-
+            
             %% replace general keywords
             % #POSITIVEICON
             % #NEGATVIEICON
@@ -752,7 +707,7 @@ classdef mtestengine < handle
             % #NRNEUTRALTESTS
             % #NRTESTSTOTAL
             % #NRTESTCASESTOTAL
-
+            
             str = strrep(str,'#POSITIVEICON',positiveIm);
             str = strrep(str,'#NEGATIVEICON',negativeIm);
             str = strrep(str,'#NEUTRALICON',neutralIm);
@@ -799,6 +754,9 @@ classdef mtestengine < handle
                 negativeIm,...
                 neutralIm);
             
+            %% Loop called functions
+            str = obj.loopAndFillFunctions(str);
+            
             %% Write output file (replace .tpl with .html)
             [pt fname] = fileparts(tplfilename);
             [emptydummy fname ext] = fileparts(fname);
@@ -814,32 +772,207 @@ classdef mtestengine < handle
             %% Remove tpl file from target dir
             delete(tplfilename);
         end
+        function str = loopAndFillFunctions(obj,str)
+            ends = strfind(str,'-->');
+            if ~isempty(strfind(str,'##BEGINFUNCTIONCALLS'))
+                begstrids = strfind(str,'##BEGINFUNCTIONCALLS');
+                idteststrends = strfind(str,'##ENDFUNCTIONCALLS')-6;
+                for istr = length(begstrids):-1:1
+                    idteststrbegin = min(ends(ends>begstrids(istr)))+4;
+                    idteststrend = idteststrends(istr)-6;
+                    funcstr = str(idteststrbegin:idteststrend);
+                    str = strrep(str,funcstr,'#@#FUNCTIONSTRING');
+                    %% Loop tests
+                    finalstr = '';
+                    for icall = 1:length(obj.functionsrun)
+                        %% create functionstring and replace keywords
+                        % #FUNCTIONFULLNAME
+                        % #FUNCTIONHTML
+                        % #FUNCTIONCOVERAGE
+                        
+                        if isempty(strfind(obj.functionsrun(icall).filename,obj.maindir))
+                            continue
+                        end
+                        tempstr = funcstr;
+
+                        % #FUNCTIONFULLNAME
+                        tempstr = strrep(tempstr,'#FUNCTIONFULLNAME',code2html(obj.functionsrun(icall).functionname));
+                        
+                        % #FUNCTIONHTML
+                        htmlref = strrep(obj.functionsrun(icall).htmlfilename,fullfile(obj.targetdir),'');
+                        if strcmp(htmlref(1),filesep)
+                            htmlref = htmlref(2:end);
+                        end
+                        tempstr = strrep(tempstr,'#FUNCTIONHTML',htmlref);
+                        
+                        % #FUNCTIONCOVERAGE
+                        tempstr = strrep(tempstr,'#FUNCTIONCOVERAGE',num2str(obj.functionsrun(icall).coverage,'%0.1f'));
+                        
+                        %% concatenate teststrings
+                        finalstr = cat(2,finalstr,tempstr);
+                    end
+                    
+                    %% replace the test loop with the teststring.
+                    str = strrep(str,'#@#FUNCTIONSTRING',finalstr);
+
+                end
+            end
+        end
         function str = loopAndFillTests(obj,str,beginstring,endstring,testid,positiveIm,negativeIm,neutralIm)
             %% Find string that must be looped (replace with '#@#TESTSTRTING')
             ends = strfind(str,'-->');
             
-            testStringToBeFilled = false;
             testCaseStringToBeFilled = false;
             if ~isempty(strfind(str,beginstring))
-                testStringToBeFilled = true;
-                idteststrbegin = min(ends(ends>strfind(str,beginstring)))+4;
-                idteststrend = strfind(str,endstring)-6;
-                teststr = str(idteststrbegin:idteststrend);
-                str = strrep(str,teststr,'#@#TESTSTRING');
-                if ~isempty(strfind(teststr,'##BEGINTESTCASE'))
-                    testCaseStringToBeFilled = true;
-                    ends2 = strfind(teststr,'-->');
-                    idtestcasestrbegin = min(ends2(ends2>strfind(teststr,'##BEGINTESTCASE')))+4;
-                    idtestcasestrend = strfind(teststr,'##ENDTESTCASE')-6;
-                    testcasestr = teststr(idtestcasestrbegin:idtestcasestrend);
-                    teststr = strrep(teststr,testcasestr,'#@#TESTCASESTRING');
+                begstrids = strfind(str,beginstring);
+                idteststrends = strfind(str,endstring)-6;
+                for istr = length(begstrids):-1:1
+                    idteststrbegin = min(ends(ends>begstrids(istr)))+4;
+                    idteststrend = idteststrends(istr)-6;
+                    teststr = str(idteststrbegin:idteststrend);
+                    str = strrep(str,teststr,'#@#TESTSTRING');
+                    if ~isempty(strfind(teststr,'##BEGINTESTCASE'))
+                        testCaseStringToBeFilled = true;
+                        ends2 = strfind(teststr,'-->');
+                        idtestcasestrbegin = min(ends2(ends2>strfind(teststr,'##BEGINTESTCASE')))+4;
+                        idtestcasestrend = strfind(teststr,'##ENDTESTCASE')-6;
+                        testcasestr = teststr(idtestcasestrbegin:idtestcasestrend);
+                        teststr = strrep(teststr,testcasestr,'#@#TESTCASESTRING');
+                    end
+                    
+                    %% Loop tests
+                    finalstr = '';
+                    testid = find(testid);
+                    for itest = 1:length(testid)
+                        %% create teststring and replace keywords
+                        % #TESTNUMBER
+                        % #ICON
+                        % #TESTNAME
+                        % #DESCRIPTIONHTML
+                        % #COVERAGEHTML
+                        % #RESULTHTML
+                        % #TESTDATE
+                        % #TESTAUTHOR
+                        % #TESTTIME
+                        
+                        id = testid(itest);
+                        
+                        tempstr = teststr;
+                        % #TESTNUMBER
+                        tempstr = strrep(tempstr,'#TESTNUMBER',num2str(id));
+                        
+                        % #ICON
+                        if isnan(obj.tests(id).testresult)
+                            tempstr = strrep(tempstr,'#ICON',neutralIm);
+                        elseif obj.tests(id).testresult
+                            tempstr = strrep(tempstr,'#ICON',positiveIm);
+                        else
+                            tempstr = strrep(tempstr,'#ICON',negativeIm);
+                        end
+                        
+                        % #TESTNAME
+                        if ~isempty(obj.tests(id).testname)
+                            tempstr = strrep(tempstr,'#TESTNAME',obj.tests(id).testname);
+                        else
+                            tempstr = strrep(tempstr,'#TESTNAME',obj.tests(id).filename);
+                        end
+                        
+                        % #TESTHTML (backwards compatibility)
+                        % #DESCRIPTIONHTML
+                        [dum fn ext] = fileparts(obj.tests(id).descriptionoutputfile);
+                        tempstr = strrep(tempstr,'#TESTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                        tempstr = strrep(tempstr,'#DESCRIPTIONHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                        
+                        % #COVERAGEHTML
+                        [dum fn ext] = fileparts(obj.tests(id).coverageoutputfile);
+                        tempstr = strrep(tempstr,'#COVERAGEHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                        
+                        % #RESULTHTML
+                        [dum fn ext] = fileparts(obj.tests(id).publishoutputfile);
+                        tempstr = strrep(tempstr,'#RESULTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                        
+                        % #TESTDATE
+                        if isempty(obj.tests(id).date)
+                            obj.tests(id).date = NaN;
+                        end
+                        if isnan(obj.tests(id).date)
+                            tempstr = strrep(tempstr,'#TESTDATE','Never');
+                        else
+                            tempstr = strrep(tempstr,'#TESTDATE',datestr(obj.tests(id).date,'yyyy-mm-dd (HH:MM:ss)'));
+                        end
+                        
+                        % #TESTAUTHOR
+                        if isempty(obj.tests(id).author)
+                            tempstr = strrep(tempstr,'#TESTAUTHOR','Unknown');
+                        else
+                            tempstr = strrep(tempstr,'#TESTAUTHOR',obj.tests(id).author);
+                        end
+                        
+                        % #TESTTIME
+                        tempstr = strrep(tempstr,'#TESTTIME',num2str(obj.tests(id).time,'%0.1f (s)'));
+                        
+                        if testCaseStringToBeFilled
+                            %% loop testcases
+                            finalcasesstr = '';
+                            for icase = 1:length(obj.tests(id).testcases)
+                                %% create testcasestring and replace keywords
+                                % #TESTNUMBER
+                                % #TESTCASENUMBER
+                                % #ICON
+                                % #TESTCASENAME
+                                % #DESCRIPTIONHTML
+                                % #RESULTHTML
+                                tempstr2 = testcasestr;
+                                
+                                % #TESTNUMBER
+                                tempstr2 = strrep(tempstr2,'#TESTNUMBER',num2str(id));
+                                
+                                % #TESTCASENUMBER
+                                tempstr2 = strrep(tempstr2,'#TESTCASENUMBER',num2str(obj.tests(id).testcases(icase).casenumber));
+                                
+                                % #ICON
+                                if isnan(obj.tests(id).testcases(icase).testresult)
+                                    tempstr2 = strrep(tempstr2,'#ICON',neutralIm);
+                                elseif obj.tests(id).testcases(icase).testresult
+                                    tempstr2 = strrep(tempstr2,'#ICON',positiveIm);
+                                else
+                                    tempstr2 = strrep(tempstr2,'#ICON',negativeIm);
+                                end
+                                
+                                % #TESTCASENAME
+                                tcname = ['Case ' num2str(icase)];
+                                if ~isempty(obj.tests(id).testcases(icase).casename)
+                                    tcname = ['Case ' num2str(icase) ' (' obj.tests(id).testcases(icase).casename ')'];
+                                end
+                                tempstr2 = strrep(tempstr2,'#TESTCASENAME',tcname);
+                                
+                                % #DESCRIPTIONHTML
+                                [dum fn ext] = fileparts(obj.tests(id).testcases(icase).descriptionoutputfile);
+                                tempstr2 = strrep(tempstr2,'#DESCRIPTIONHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                                
+                                % #RESULTHTML
+                                [dum fn ext] = fileparts(obj.tests(id).testcases(icase).publishoutputfile);
+                                tempstr2 = strrep(tempstr2,'#RESULTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                                
+                                %% concatenate testcase strings
+                                finalcasesstr = cat(2,finalcasesstr,tempstr2);
+                            end
+                            
+                            %% replace testcase string keyword
+                            tempstr = strrep(tempstr,'#@#TESTCASESTRING',finalcasesstr);
+                        end
+                        %% concatenate teststrings
+                        finalstr = cat(2,finalstr,tempstr);
+                    end
+                    
+                    %% replace the test loop with the teststring.
+                    str = strrep(str,'#@#TESTSTRING',finalstr);
                 end
-            end
-
-            if ~testStringToBeFilled
+            else
                 return
             end
             
+            return
             %% Loop tests
             finalstr = '';
             testid = find(testid);
@@ -850,10 +983,10 @@ classdef mtestengine < handle
                 % #TESTNAME
                 % #DESCRIPTIONHTML
                 % #RESULTHTML
-                % #TESTDATE           
-                % #TESTAUTHOR       
-                % #TESTTIME         
-            
+                % #TESTDATE
+                % #TESTAUTHOR
+                % #TESTTIME
+                
                 id = testid(itest);
                 
                 tempstr = teststr;
@@ -881,7 +1014,7 @@ classdef mtestengine < handle
                 [dum fn ext] = fileparts(obj.tests(id).descriptionoutputfile);
                 tempstr = strrep(tempstr,'#TESTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
                 tempstr = strrep(tempstr,'#DESCRIPTIONHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
-
+                
                 % #RESULTHTML
                 [dum fn ext] = fileparts(obj.tests(id).publishoutputfile);
                 tempstr = strrep(tempstr,'#RESULTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
