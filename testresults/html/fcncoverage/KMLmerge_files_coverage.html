@@ -43,7 +43,7 @@
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  10</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.deleteSourceFiles = false; </span>
                <span style="color: #A0A0A0">  11</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  12</span> <span style="color: #228B22; background: #FFFFFF;">%% set properties</span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  13</a></span> <span style="color: #000000; background: #E0E0FF;">[OPT, Set, Default] = setProperty(OPT, varargin{:}); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  13</a></span> <span style="color: #000000; background: #E0E0FF;">[OPT, Set, Default] = setProperty(OPT, varargin{:}); </span>
                <span style="color: #A0A0A0">  14</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  15</span> <span style="color: #228B22; background: #FFFFFF;">%% source files</span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  16</a></span> <span style="color: #000000; background: #E0E0FF;">if isempty(OPT.sourceFiles) </span>
@@ -75,25 +75,25 @@
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  42</a></span> <span style="color: #000000; background: #E0E0FF;">fprintf(fid0,'%s',KML_header(OPT_header)); </span>
                <span style="color: #A0A0A0">  43</span> <span style="color: #228B22; background: #FFFFFF;"></span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  44</a></span> <span style="color: #000000; background: #E0E0FF;">for ii = 1:length(OPT.sourceFiles) </span>
-<span style="color: #FF0000">  1.74 </span><span style="color: #0000FF">     38 </span><span style="color: #000000; font-weight: bold"><a>  45</a></span> <span style="color: #000000; background: #E0E0FF;">    contents = textread(OPT.sourceFiles{ii},'%s','delimiter','\n','bufsize',1e6); </span>
-<span style="color: #FF0000">  0.56 </span><span style="color: #0000FF">     38 </span><span style="color: #000000; font-weight: bold"><a>  46</a></span> <span style="color: #000000; background: #E0E0FF;">    cutoff = strfind(contents,'Document'); </span>
+<span style="color: #FF0000">  1.77 </span><span style="color: #0000FF">     38 </span><span style="color: #000000; font-weight: bold"><a>  45</a></span> <span style="color: #000000; background: #E0E0FF;">    contents = textread(OPT.sourceFiles{ii},'%s','delimiter','\n','bufsize',1e6); </span>
+<span style="color: #FF0000">  0.59 </span><span style="color: #0000FF">     38 </span><span style="color: #000000; font-weight: bold"><a>  46</a></span> <span style="color: #000000; background: #E0E0FF;">    cutoff = strfind(contents,'Document'); </span>
                <span style="color: #A0A0A0">  47</span> <span style="color: #228B22; background: #FFFFFF;"> </span>
        <span style="color: #0000FF">     38 </span><span style="color: #000000; font-weight: bold"><a>  48</a></span> <span style="color: #000000; background: #E0E0FF;">    flag = true; </span>
        <span style="color: #0000FF">     38 </span><span style="color: #000000; font-weight: bold"><a>  49</a></span> <span style="color: #000000; background: #E0E0FF;">    for jj = 1:length(contents) </span>
 <span style="color: #FF0000">  0.14 </span><span style="color: #0000FF"> 307911 </span><span style="color: #000000; font-weight: bold"><a>  50</a></span> <span style="color: #000000; background: #E0E0FF;">        other_flag = true; </span>
-<span style="color: #FF0000">  0.75 </span><span style="color: #0000FF"> 307911 </span><span style="color: #000000; font-weight: bold"><a>  51</a></span> <span style="color: #000000; background: #E0E0FF;">        if ~isempty(cutoff{jj}) </span>
+<span style="color: #FF0000">  0.64 </span><span style="color: #0000FF"> 307911 </span><span style="color: #000000; font-weight: bold"><a>  51</a></span> <span style="color: #000000; background: #E0E0FF;">        if ~isempty(cutoff{jj}) </span>
        <span style="color: #0000FF">     76 </span><span style="color: #000000; font-weight: bold"><a>  52</a></span> <span style="color: #000000; background: #E0E0FF;">            contents{jj} = strrep(contents{jj},'&lt;Document&gt;',''); </span>
        <span style="color: #0000FF">     76 </span><span style="color: #000000; font-weight: bold"><a>  53</a></span> <span style="color: #000000; background: #E0E0FF;">            contents{jj} = strrep(contents{jj},'&lt;/Document&gt;',''); </span>
        <span style="color: #0000FF">     76 </span><span style="color: #000000; font-weight: bold"><a>  54</a></span> <span style="color: #000000; background: #E0E0FF;">            flag = ~flag; </span>
        <span style="color: #0000FF">     76 </span><span style="color: #000000; font-weight: bold"><a>  55</a></span> <span style="color: #000000; background: #E0E0FF;">            other_flag = false; </span>
        <span style="color: #0000FF">     76 </span><span style="color: #000000; font-weight: bold"><a>  56</a></span> <span style="color: #000000; background: #E0E0FF;">        end </span>
-<span style="color: #FF0000">  0.16 </span><span style="color: #0000FF"> 307911 </span><span style="color: #000000; font-weight: bold"><a>  57</a></span> <span style="color: #000000; background: #E0E0FF;">        if flag&amp;&amp;other_flag </span>
-       <span style="color: #0000FF">    152 </span><span style="color: #000000; font-weight: bold"><a>  58</a></span> <span style="color: #000000; background: #E0E0FF;">            contents{jj} = []; </span>
+<span style="color: #FF0000">  0.12 </span><span style="color: #0000FF"> 307911 </span><span style="color: #000000; font-weight: bold"><a>  57</a></span> <span style="color: #000000; background: #E0E0FF;">        if flag&amp;&amp;other_flag </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    152 </span><span style="color: #000000; font-weight: bold"><a>  58</a></span> <span style="color: #000000; background: #E0E0FF;">            contents{jj} = []; </span>
        <span style="color: #0000FF">    152 </span><span style="color: #000000; font-weight: bold"><a>  59</a></span> <span style="color: #000000; background: #E0E0FF;">        end   </span>
-<span style="color: #FF0000">  0.39 </span><span style="color: #0000FF"> 307911 </span><span style="color: #000000; font-weight: bold"><a>  60</a></span> <span style="color: #000000; background: #E0E0FF;">    end </span>
+<span style="color: #FF0000">  0.33 </span><span style="color: #0000FF"> 307911 </span><span style="color: #000000; font-weight: bold"><a>  60</a></span> <span style="color: #000000; background: #E0E0FF;">    end </span>
                <span style="color: #A0A0A0">  61</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
-<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">     38 </span><span style="color: #000000; font-weight: bold"><a>  62</a></span> <span style="color: #000000; background: #E0E0FF;">    fprintf(fid0,'%s','&lt;Folder&gt;'); </span>
-<span style="color: #FF0000">  0.36 </span><span style="color: #0000FF">     38 </span><span style="color: #000000; font-weight: bold"><a>  63</a></span> <span style="color: #000000; background: #E0E0FF;">    fprintf(fid0,'   %s\n',contents{:}); </span>
+       <span style="color: #0000FF">     38 </span><span style="color: #000000; font-weight: bold"><a>  62</a></span> <span style="color: #000000; background: #E0E0FF;">    fprintf(fid0,'%s','&lt;Folder&gt;'); </span>
+<span style="color: #FF0000">  0.33 </span><span style="color: #0000FF">     38 </span><span style="color: #000000; font-weight: bold"><a>  63</a></span> <span style="color: #000000; background: #E0E0FF;">    fprintf(fid0,'   %s\n',contents{:}); </span>
        <span style="color: #0000FF">     38 </span><span style="color: #000000; font-weight: bold"><a>  64</a></span> <span style="color: #000000; background: #E0E0FF;">    fprintf(fid0,'%s','&lt;/Folder&gt;'); </span>
        <span style="color: #0000FF">     38 </span><span style="color: #000000; font-weight: bold"><a>  65</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
                <span style="color: #A0A0A0">  66</span> <span style="color: #228B22; background: #FFFFFF;"></span>
@@ -109,9 +109,9 @@
                <span style="color: #A0A0A0">  76</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  77</span> <span style="color: #228B22; background: #FFFFFF;">%% compress to kmz?</span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  78</a></span> <span style="color: #000000; background: #E0E0FF;">if strcmpi(OPT.fileName(end),'z') </span>
-<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  79</a></span> <span style="color: #000000; background: #E0E0FF;">    movefile(OPT.fileName,[OPT.fileName(1:end-3) 'kml']) </span>
-<span style="color: #FF0000">  0.55 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  80</a></span> <span style="color: #000000; background: #E0E0FF;">    zip(OPT.fileName,[OPT.fileName(1:end-3) 'kml']); </span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  81</a></span> <span style="color: #000000; background: #E0E0FF;">    movefile([OPT.fileName '.zip'],OPT.fileName) </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  79</a></span> <span style="color: #000000; background: #E0E0FF;">    movefile(OPT.fileName,[OPT.fileName(1:end-3) 'kml']) </span>
+<span style="color: #FF0000">  0.48 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  80</a></span> <span style="color: #000000; background: #E0E0FF;">    zip(OPT.fileName,[OPT.fileName(1:end-3) 'kml']); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  81</a></span> <span style="color: #000000; background: #E0E0FF;">    movefile([OPT.fileName '.zip'],OPT.fileName) </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  82</a></span> <span style="color: #000000; background: #E0E0FF;">    delete([OPT.fileName(1:end-3) 'kml']) </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  83</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
 </pre>

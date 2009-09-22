@@ -86,15 +86,15 @@
                <span style="color: #A0A0A0">  53</span> <span style="color: #A0A0A0; background: #FFFFFF;">    return</span>
                <span style="color: #A0A0A0">  54</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
                <span style="color: #A0A0A0">  55</span> <span style="color: #228B22; background: #FFFFFF;"></span>
-<span style="color: #FF0000">  0.11 </span><span style="color: #0000FF">    382 </span><span style="color: #000000; font-weight: bold"><a>  56</a></span> <span style="color: #000000; background: #E0E0FF;">OPT = setProperty(OPT,varargin{:}); </span>
+<span style="color: #FF0000">  0.16 </span><span style="color: #0000FF">    382 </span><span style="color: #000000; font-weight: bold"><a>  56</a></span> <span style="color: #000000; background: #E0E0FF;">OPT = setProperty(OPT,varargin{:}); </span>
                <span style="color: #A0A0A0">  57</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  58</span> <span style="color: #228B22; background: #FFFFFF;">%% type STYLE</span>
-<span style="color: #FF0000">  0.08 </span><span style="color: #0000FF">    382 </span><span style="color: #000000; font-weight: bold"><a>  59</a></span> <span style="color: #000000; background: #E0E0FF;">temp      = dec2hex(round([OPT.lineAlpha, OPT.lineColor].*255),2); </span>
-<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    382 </span><span style="color: #000000; font-weight: bold"><a>  60</a></span> <span style="color: #000000; background: #E0E0FF;">lineColor = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)]; </span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">    382 </span><span style="color: #000000; font-weight: bold"><a>  59</a></span> <span style="color: #000000; background: #E0E0FF;">temp      = dec2hex(round([OPT.lineAlpha, OPT.lineColor].*255),2); </span>
+       <span style="color: #0000FF">    382 </span><span style="color: #000000; font-weight: bold"><a>  60</a></span> <span style="color: #000000; background: #E0E0FF;">lineColor = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)]; </span>
        <span style="color: #0000FF">    382 </span><span style="color: #000000; font-weight: bold"><a>  61</a></span> <span style="color: #000000; background: #E0E0FF;">temp      = dec2hex(round([OPT.fillAlpha, OPT.fillColor].*255),2); </span>
-<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    382 </span><span style="color: #000000; font-weight: bold"><a>  62</a></span> <span style="color: #000000; background: #E0E0FF;">fillColor = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)]; </span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">    382 </span><span style="color: #000000; font-weight: bold"><a>  62</a></span> <span style="color: #000000; background: #E0E0FF;">fillColor = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)]; </span>
                <span style="color: #A0A0A0">  63</span> <span style="color: #228B22; background: #FFFFFF;"></span>
-<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">    382 </span><span style="color: #000000; font-weight: bold"><a>  64</a></span> <span style="color: #000000; background: #E0E0FF;">output = sprintf([... </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    382 </span><span style="color: #000000; font-weight: bold"><a>  64</a></span> <span style="color: #000000; background: #E0E0FF;">output = sprintf([... </span>
                <span style="color: #A0A0A0">  65</span> <span style="color: #000000; background: #E0E0FF;">    '&lt;Style id="%s"&gt;\n'...       % OPT.name</span>
                <span style="color: #A0A0A0">  66</span> <span style="color: #000000; background: #E0E0FF;">    '&lt;LineStyle&gt;\n'...</span>
                <span style="color: #A0A0A0">  67</span> <span style="color: #000000; background: #E0E0FF;">    '&lt;color&gt;%s&lt;/color&gt;\n'...     % lineColor</span>

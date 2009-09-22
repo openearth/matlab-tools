@@ -151,7 +151,7 @@
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 118</a></span> <span style="color: #000000; background: #E0E0FF;">   end </span>
                <span style="color: #A0A0A0"> 119</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 120</a></span> <span style="color: #000000; background: #E0E0FF;">   if isempty(OPT.names) </span>
-       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 121</a></span> <span style="color: #000000; background: #E0E0FF;">      OPT.names = num2str([1:length(OPT.omega)]'); </span>
+<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 121</a></span> <span style="color: #000000; background: #E0E0FF;">      OPT.names = num2str([1:length(OPT.omega)]'); </span>
                <span style="color: #A0A0A0"> 122</span> <span style="color: #A0A0A0; background: #FFFFFF;">   elseif iscell(OPT.names)</span>
                <span style="color: #A0A0A0"> 123</span> <span style="color: #A0A0A0; background: #FFFFFF;">       OPT.names1 = [];</span>
                <span style="color: #A0A0A0"> 124</span> <span style="color: #A0A0A0; background: #FFFFFF;">       for i=1:length(OPT.names)</span>
@@ -163,7 +163,7 @@
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 130</a></span> <span style="color: #000000; background: #E0E0FF;">   meanname = 'mean'; </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 131</a></span> <span style="color: #000000; background: #E0E0FF;">   if size(OPT.names,1) &lt; length(meanname) </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 132</a></span> <span style="color: #000000; background: #E0E0FF;">      namewidth = length(meanname);% for mean component </span>
-<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 133</a></span> <span style="color: #000000; background: #E0E0FF;">      OPT.names = pad(OPT.names,length(meanname),' '); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 133</a></span> <span style="color: #000000; background: #E0E0FF;">      OPT.names = pad(OPT.names,length(meanname),' '); </span>
                <span style="color: #A0A0A0"> 134</span> <span style="color: #228B22; background: #FFFFFF;">   else    </span>
                <span style="color: #A0A0A0"> 135</span> <span style="color: #A0A0A0; background: #FFFFFF;">      namewidth = length(OPT.names(1,:));% for mean component</span>
                <span style="color: #A0A0A0"> 136</span> <span style="color: #A0A0A0; background: #FFFFFF;">   end   </span>
@@ -430,7 +430,7 @@
                <span style="color: #A0A0A0"> 397</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 398</a></span> <span style="color: #000000; background: #E0E0FF;">      if (t(end)-t(1)) &gt;= T_rayleigh </span>
                <span style="color: #A0A0A0"> 399</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
-       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 400</a></span> <span style="color: #000000; background: #E0E0FF;">         if OPT.screenoutput; </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 400</a></span> <span style="color: #000000; background: #E0E0FF;">         if OPT.screenoutput; </span>
                <span style="color: #A0A0A0"> 401</span> <span style="color: #A0A0A0; background: #FFFFFF;">         disp('Rayleigh criterion: OK');</span>
                <span style="color: #A0A0A0"> 402</span> <span style="color: #A0A0A0; background: #FFFFFF;">         end</span>
                <span style="color: #A0A0A0"> 403</span> <span style="color: #228B22; background: #FFFFFF;"></span>

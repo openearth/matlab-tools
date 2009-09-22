@@ -59,10 +59,10 @@
                <span style="color: #A0A0A0">  26</span> <span style="color: #228B22; background: #FFFFFF;">%   along with this library.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
                <span style="color: #A0A0A0">  27</span> <span style="color: #228B22; background: #FFFFFF;">%   --------------------------------------------------------------------</span>
                <span style="color: #A0A0A0">  28</span> <span style="color: #228B22; background: #FFFFFF;"></span>
-               <span style="color: #A0A0A0">  29</span> <span style="color: #228B22; background: #FFFFFF;">% $Id: ConvertCoordinatesDatumTransform.m 736 2009-07-27 16:22:42Z damsma $</span>
-               <span style="color: #A0A0A0">  30</span> <span style="color: #228B22; background: #FFFFFF;">% $Date: 2009-07-27 18:22:42 +0200 (ma, 27 jul 2009) $</span>
-               <span style="color: #A0A0A0">  31</span> <span style="color: #228B22; background: #FFFFFF;">% $Author: damsma $</span>
-               <span style="color: #A0A0A0">  32</span> <span style="color: #228B22; background: #FFFFFF;">% $Revision: 736 $</span>
+               <span style="color: #A0A0A0">  29</span> <span style="color: #228B22; background: #FFFFFF;">% $Id: ConvertCoordinatesDatumTransform.m 1061 2009-09-22 10:40:35Z m.vankoningsveld@tudelft.nl $</span>
+               <span style="color: #A0A0A0">  30</span> <span style="color: #228B22; background: #FFFFFF;">% $Date: 2009-09-22 12:40:35 +0200 (di, 22 sep 2009) $</span>
+               <span style="color: #A0A0A0">  31</span> <span style="color: #228B22; background: #FFFFFF;">% $Author: m.vankoningsveld@tudelft.nl $</span>
+               <span style="color: #A0A0A0">  32</span> <span style="color: #228B22; background: #FFFFFF;">% $Revision: 1061 $</span>
                <span style="color: #A0A0A0">  33</span> <span style="color: #228B22; background: #FFFFFF;">% $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/applications/SuperTrans/conversion/ConvertCoordinatesDatumTransform.m $</span>
                <span style="color: #A0A0A0">  34</span> <span style="color: #228B22; background: #FFFFFF;">% $Keywords: $</span>
                <span style="color: #A0A0A0">  35</span> <span style="color: #228B22; background: #FFFFFF;"></span>
@@ -76,7 +76,7 @@
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  43</a></span> <span style="color: #000000; background: #E0E0FF;">ell2        = OPT.(OPT.(datum_trans).ellips2).ellips; </span>
                <span style="color: #A0A0A0">  44</span> <span style="color: #228B22; background: #FFFFFF;"></span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  45</a></span> <span style="color: #000000; background: #E0E0FF;">switch method_name </span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  46</a></span> <span style="color: #000000; background: #E0E0FF;">    case {'Geocentric translations','Position Vector 7-param',... </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  46</a></span> <span style="color: #000000; background: #E0E0FF;">    case {'Geocentric translations','Position Vector 7-param. transformation',... </span>
                <span style="color: #A0A0A0">  47</span> <span style="color: #000000; background: #E0E0FF;">            'Coordinate Frame rotation','Molodensky-Badekas 10-parameter transformation'}</span>
                <span style="color: #A0A0A0">  48</span> <span style="color: #228B22; background: #FFFFFF;">        % convert geographic 2D coordinates to geographic 3D, by assuming</span>
                <span style="color: #A0A0A0">  49</span> <span style="color: #228B22; background: #FFFFFF;">        % height is 0</span>
@@ -87,7 +87,7 @@
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  54</a></span> <span style="color: #000000; background: #E0E0FF;">        invf = ell1.inv_flattening; </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  55</a></span> <span style="color: #000000; background: #E0E0FF;">        f    = 1/invf; </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  56</a></span> <span style="color: #000000; background: #E0E0FF;">        e2   = 2*f-f^2; </span>
-<span style="color: #FF0000">  0.05 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  57</a></span> <span style="color: #000000; background: #E0E0FF;">        [x,y,z]=ell2xyz(lat1,lon1,h,a,e2); </span>
+<span style="color: #FF0000">  0.06 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  57</a></span> <span style="color: #000000; background: #E0E0FF;">        [x,y,z]=ell2xyz(lat1,lon1,h,a,e2); </span>
                <span style="color: #A0A0A0">  58</span> <span style="color: #228B22; background: #FFFFFF;">        </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  59</a></span> <span style="color: #000000; background: #E0E0FF;">        ii = strmatch('X-axis translation'            ,param.name); dx = inv*param.value(ii); </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  60</a></span> <span style="color: #000000; background: #E0E0FF;">        ii = strmatch('Y-axis translation'            ,param.name); dy = inv*param.value(ii); </span>
@@ -96,7 +96,7 @@
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  63</a></span> <span style="color: #000000; background: #E0E0FF;">            case 'Geocentric translations' </span>
                <span style="color: #A0A0A0">  64</span> <span style="color: #A0A0A0; background: #FFFFFF;">                [x,y,z]=Helmert3(x,y,z,dx,dy,dz);</span>
                <span style="color: #A0A0A0">  65</span> <span style="color: #228B22; background: #FFFFFF;"></span>
-       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  66</a></span> <span style="color: #000000; background: #E0E0FF;">            case {'Position Vector 7-param','Coordinate Frame rotation'} </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  66</a></span> <span style="color: #000000; background: #E0E0FF;">            case {'Position Vector 7-param. transformation','Coordinate Frame rotation'} </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  67</a></span> <span style="color: #000000; background: #E0E0FF;">                ii = strmatch('X-axis rotation'               ,param.name); rx = inv*param.value(ii)/1000000; </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  68</a></span> <span style="color: #000000; background: #E0E0FF;">                ii = strmatch('Y-axis rotation'               ,param.name); ry = inv*param.value(ii)/1000000; </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  69</a></span> <span style="color: #000000; background: #E0E0FF;">                ii = strmatch('Z-axis rotation'               ,param.name); rz = inv*param.value(ii)/1000000; </span>
@@ -106,7 +106,7 @@
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  73</a></span> <span style="color: #000000; background: #E0E0FF;">                    ry=ry*-1; </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  74</a></span> <span style="color: #000000; background: #E0E0FF;">                    rz=rz*-1; </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  75</a></span> <span style="color: #000000; background: #E0E0FF;">                end </span>
-<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  76</a></span> <span style="color: #000000; background: #E0E0FF;">                [x,y,z]=Helmert7(x,y,z,dx,dy,dz,rx,ry,rz,ds); </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  76</a></span> <span style="color: #000000; background: #E0E0FF;">                [x,y,z]=Helmert7(x,y,z,dx,dy,dz,rx,ry,rz,ds); </span>
                <span style="color: #A0A0A0">  77</span> <span style="color: #A0A0A0; background: #FFFFFF;">            case {'Molodensky-Badekas 10-parameter transformation'} </span>
                <span style="color: #A0A0A0">  78</span> <span style="color: #A0A0A0; background: #FFFFFF;">                ii = strmatch('X-axis rotation'               ,param.name); rx = inv*param.value(ii)/1000000;</span>
                <span style="color: #A0A0A0">  79</span> <span style="color: #A0A0A0; background: #FFFFFF;">                ii = strmatch('Y-axis rotation'               ,param.name); ry = inv*param.value(ii)/1000000;</span>
@@ -123,7 +123,7 @@
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  90</a></span> <span style="color: #000000; background: #E0E0FF;">        invf  = ell2.inv_flattening; </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  91</a></span> <span style="color: #000000; background: #E0E0FF;">        f     = 1/invf; </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  92</a></span> <span style="color: #000000; background: #E0E0FF;">        e2    = 2*f-f^2; </span>
-<span style="color: #FF0000">  0.34 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  93</a></span> <span style="color: #000000; background: #E0E0FF;">        [lat2,lon2,h]=xyz2ell(x,y,z,a,e2); </span>
+<span style="color: #FF0000">  0.36 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  93</a></span> <span style="color: #000000; background: #E0E0FF;">        [lat2,lon2,h]=xyz2ell(x,y,z,a,e2); </span>
                <span style="color: #A0A0A0">  94</span> <span style="color: #228B22; background: #FFFFFF;">        % and just forget about h...</span>
                <span style="color: #A0A0A0">  95</span> <span style="color: #A0A0A0; background: #FFFFFF;">    otherwise</span>
                <span style="color: #A0A0A0">  96</span> <span style="color: #A0A0A0; background: #FFFFFF;">        error(['Warning: Datum transformation method ''' method_name ''' not yet supported!']);</span>

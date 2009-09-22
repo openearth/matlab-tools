@@ -81,7 +81,7 @@
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  48</a></span> <span style="color: #000000; background: #E0E0FF;">proj_conv.param.codes       =      STD.coordinate_operation_parameter_value.parameter_code(ind2); </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  49</a></span> <span style="color: #000000; background: #E0E0FF;">for ii=1:length(proj_conv.param.codes) </span>
        <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a>  50</a></span> <span style="color: #000000; background: #E0E0FF;">    ind3(ii) = find(STD.coordinate_operation_parameter.parameter_code == proj_conv.param.codes(ii)); </span>
-<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a>  51</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a>  51</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  52</a></span> <span style="color: #000000; background: #E0E0FF;">proj_conv.param.name        =      STD.coordinate_operation_parameter.parameter_name(ind3); </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  53</a></span> <span style="color: #000000; background: #E0E0FF;">proj_conv.param.value       =      STD.coordinate_operation_parameter_value.parameter_value(ind2); </span>
                <span style="color: #A0A0A0">  54</span> <span style="color: #228B22; background: #FFFFFF;"></span>
@@ -89,7 +89,7 @@
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  56</a></span> <span style="color: #000000; background: #E0E0FF;">proj_conv.param.UoM.codes   =      STD.coordinate_operation_parameter_value.uom_code(ind2); </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  57</a></span> <span style="color: #000000; background: #E0E0FF;">for ii=1:length(proj_conv.param.UoM.codes) </span>
        <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a>  58</a></span> <span style="color: #000000; background: #E0E0FF;">    ind4(ii) = find(STD.unit_of_measure.uom_code == proj_conv.param.UoM.codes(ii)); </span>
-       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a>  59</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a>  59</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  60</a></span> <span style="color: #000000; background: #E0E0FF;">proj_conv.param.UoM.name = STD.unit_of_measure.unit_of_meas_name(ind4); </span>
 </pre>
 <p><p>Other subfunctions in this file are not included in this listing.

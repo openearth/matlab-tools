@@ -104,7 +104,7 @@
        <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  71</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.attributevalue = [];  % this indicates the search window (nr of days, '-': backward in time, '+': forward in time) </span>
                <span style="color: #A0A0A0">  72</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  73</span> <span style="color: #228B22; background: #FFFFFF;">% overrule default settings by property pairs, given in varargin</span>
-       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  74</a></span> <span style="color: #000000; background: #E0E0FF;">OPT = setProperty(OPT, varargin{1:end}); </span>
+<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  74</a></span> <span style="color: #000000; background: #E0E0FF;">OPT = setProperty(OPT, varargin{1:end}); </span>
                <span style="color: #A0A0A0">  75</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  76</span> <span style="color: #228B22; background: #FFFFFF;">% initialise output</span>
        <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  77</a></span> <span style="color: #000000; background: #E0E0FF;">varname = []; </span>
@@ -113,7 +113,7 @@
        <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  80</a></span> <span style="color: #000000; background: #E0E0FF;">if isstruct(ncfile) </span>
                <span style="color: #A0A0A0">  81</span> <span style="color: #A0A0A0; background: #FFFFFF;">   fileinfo = ncfile;</span>
        <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  82</a></span> <span style="color: #228B22; background: #FFFFFF;">else </span>
-<span style="color: #FF0000">  0.53 </span><span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  83</a></span> <span style="color: #000000; background: #E0E0FF;">   fileinfo = nc_info(ncfile); </span>
+<span style="color: #FF0000">  0.64 </span><span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  83</a></span> <span style="color: #000000; background: #E0E0FF;">   fileinfo = nc_info(ncfile); </span>
        <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  84</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
                <span style="color: #A0A0A0">  85</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  86</span> <span style="color: #228B22; background: #FFFFFF;">%% deal with name change in scntools</span>

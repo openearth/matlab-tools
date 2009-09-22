@@ -108,7 +108,7 @@
                <span style="color: #A0A0A0">  75</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  76</span> <span style="color: #228B22; background: #FFFFFF;">%% set properties</span>
                <span style="color: #A0A0A0">  77</span> <span style="color: #228B22; background: #FFFFFF;"></span>
-<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a>  78</a></span> <span style="color: #000000; background: #E0E0FF;">[OPT, Set, Default] = setProperty(OPT, varargin{:}); </span>
+       <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a>  78</a></span> <span style="color: #000000; background: #E0E0FF;">[OPT, Set, Default] = setProperty(OPT, varargin{:}); </span>
                <span style="color: #A0A0A0">  79</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  80</span> <span style="color: #228B22; background: #FFFFFF;">%% input check</span>
                <span style="color: #A0A0A0">  81</span> <span style="color: #228B22; background: #FFFFFF;"></span>
@@ -121,7 +121,7 @@
                <span style="color: #A0A0A0">  88</span> <span style="color: #228B22; background: #FFFFFF;">% color limits</span>
        <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a>  89</a></span> <span style="color: #000000; background: #E0E0FF;">if isempty(OPT.cLim) </span>
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  90</a></span> <span style="color: #000000; background: #E0E0FF;">    OPT.cLim = ([min(z(~isnan(z))) max(z(~isnan(z)))]); </span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  91</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  91</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
                <span style="color: #A0A0A0">  92</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  93</span> <span style="color: #228B22; background: #FFFFFF;">%% filename</span>
                <span style="color: #A0A0A0">  94</span> <span style="color: #228B22; background: #FFFFFF;">% gui for filename, if not set yet</span>
@@ -131,7 +131,7 @@
                <span style="color: #A0A0A0">  98</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
                <span style="color: #A0A0A0">  99</span> <span style="color: #228B22; background: #FFFFFF;">% set kmlName if it is not set yet</span>
        <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 100</a></span> <span style="color: #000000; background: #E0E0FF;">if isempty(OPT.kmlName) </span>
-       <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 101</a></span> <span style="color: #000000; background: #E0E0FF;">    [ignore OPT.kmlName] = fileparts(OPT.fileName); </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 101</a></span> <span style="color: #000000; background: #E0E0FF;">    [ignore OPT.kmlName] = fileparts(OPT.fileName); </span>
        <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 102</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
                <span style="color: #A0A0A0"> 103</span> <span style="color: #228B22; background: #FFFFFF;">%% find contours</span>
 <span style="color: #FF0000">  0.05 </span><span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 104</a></span> <span style="color: #000000; background: #E0E0FF;">coords = contours(lat,lon,z,OPT.levels); </span>
@@ -157,7 +157,7 @@
        <span style="color: #0000FF">    224 </span><span style="color: #000000; font-weight: bold"><a> 124</a></span> <span style="color: #000000; background: #E0E0FF;">    jj = jj+coords(2,jj)+1; </span>
        <span style="color: #0000FF">    224 </span><span style="color: #000000; font-weight: bold"><a> 125</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
                <span style="color: #A0A0A0"> 126</span> <span style="color: #228B22; background: #FFFFFF;">%% make z</span>
-       <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 127</a></span> <span style="color: #000000; background: #E0E0FF;">z = repmat(height,size(lat,1),1); </span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 127</a></span> <span style="color: #000000; background: #E0E0FF;">z = repmat(height,size(lat,1),1); </span>
                <span style="color: #A0A0A0"> 128</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 129</span> <span style="color: #228B22; background: #FFFFFF;">%% make labels</span>
        <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 130</a></span> <span style="color: #000000; background: #E0E0FF;">if OPT.writeLabels </span>
@@ -169,10 +169,10 @@
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 136</a></span> <span style="color: #000000; background: #E0E0FF;">    latText    = latText(~isnan(latText)); </span>
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 137</a></span> <span style="color: #000000; background: #E0E0FF;">    lonText    = lonText(~isnan(lonText)); </span>
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 138</a></span> <span style="color: #000000; background: #E0E0FF;">    if OPT.is3D </span>
-<span style="color: #FF0000">  0.12 </span><span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 139</a></span> <span style="color: #000000; background: #E0E0FF;">        KMLtext(latText,lonText,labels,OPT.zScaleFun(zText),'fileName',[OPT.fileName(1:end-4) 'labels.kml'],... </span>
+<span style="color: #FF0000">  0.13 </span><span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 139</a></span> <span style="color: #000000; background: #E0E0FF;">        KMLtext(latText,lonText,labels,OPT.zScaleFun(zText),'fileName',[OPT.fileName(1:end-4) 'labels.kml'],... </span>
                <span style="color: #A0A0A0"> 140</span> <span style="color: #000000; background: #E0E0FF;">            'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'labelDecimals',OPT.labelDecimals);</span>
        <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 141</a></span> <span style="color: #228B22; background: #FFFFFF;">    else </span>
-<span style="color: #FF0000">  0.12 </span><span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 142</a></span> <span style="color: #000000; background: #E0E0FF;">        KMLtext(latText,lonText,labels,'fileName',[OPT.fileName(1:end-4) 'labels.kml'],... </span>
+<span style="color: #FF0000">  0.11 </span><span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 142</a></span> <span style="color: #000000; background: #E0E0FF;">        KMLtext(latText,lonText,labels,'fileName',[OPT.fileName(1:end-4) 'labels.kml'],... </span>
                <span style="color: #A0A0A0"> 143</span> <span style="color: #000000; background: #E0E0FF;">            'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'labelDecimals',OPT.labelDecimals);</span>
        <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 144</a></span> <span style="color: #000000; background: #E0E0FF;">    end </span>
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 145</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
@@ -185,10 +185,10 @@
        <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 152</a></span> <span style="color: #000000; background: #E0E0FF;">lineColors = colors(level,:); </span>
                <span style="color: #A0A0A0"> 153</span> <span style="color: #228B22; background: #FFFFFF;"></span>
        <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 154</a></span> <span style="color: #000000; background: #E0E0FF;">if OPT.is3D </span>
-<span style="color: #FF0000">  0.26 </span><span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 155</a></span> <span style="color: #000000; background: #E0E0FF;">    KMLline(lat,lon,OPT.zScaleFun(z),'fileName',OPT.fileName,'lineColor',lineColors,'lineWidth',OPT.lineWidth,... </span>
+<span style="color: #FF0000">  0.27 </span><span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 155</a></span> <span style="color: #000000; background: #E0E0FF;">    KMLline(lat,lon,OPT.zScaleFun(z),'fileName',OPT.fileName,'lineColor',lineColors,'lineWidth',OPT.lineWidth,... </span>
                <span style="color: #A0A0A0"> 156</span> <span style="color: #000000; background: #E0E0FF;">        'timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'fillColor',lineColors);</span>
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 157</a></span> <span style="color: #228B22; background: #FFFFFF;">else </span>
-<span style="color: #FF0000">  0.14 </span><span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 158</a></span> <span style="color: #000000; background: #E0E0FF;">    KMLline(lat,lon,'fileName',OPT.fileName,'lineColor',lineColors,'lineWidth',OPT.lineWidth,... </span>
+<span style="color: #FF0000">  0.16 </span><span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 158</a></span> <span style="color: #000000; background: #E0E0FF;">    KMLline(lat,lon,'fileName',OPT.fileName,'lineColor',lineColors,'lineWidth',OPT.lineWidth,... </span>
                <span style="color: #A0A0A0"> 159</span> <span style="color: #000000; background: #E0E0FF;">        'timeIn',OPT.timeIn,'timeOut',OPT.timeOut);</span>
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 160</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
 </pre>

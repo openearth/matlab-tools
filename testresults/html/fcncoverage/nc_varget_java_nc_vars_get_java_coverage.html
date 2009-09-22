@@ -46,13 +46,13 @@
                <span style="color: #A0A0A0"> 248</span> <span style="color: #228B22; background: #FFFFFF;">% Get rid of the first comma.</span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 249</a></span> <span style="color: #000000; background: #E0E0FF;">section_selector(1) = []; </span>
                <span style="color: #A0A0A0"> 250</span> <span style="color: #228B22; background: #FFFFFF;"></span>
-<span style="color: #FF0000">  2.64 </span><span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 251</a></span> <span style="color: #000000; background: #E0E0FF;">values = jvarid.read(section_selector); </span>
+<span style="color: #FF0000">  2.58 </span><span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 251</a></span> <span style="color: #000000; background: #E0E0FF;">values = jvarid.read(section_selector); </span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 252</a></span> <span style="color: #000000; background: #E0E0FF;">switch ( theDataTypeString ) </span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 253</a></span> <span style="color: #000000; background: #E0E0FF;">    case 'char' </span>
                <span style="color: #A0A0A0"> 254</span> <span style="color: #A0A0A0; background: #FFFFFF;">        values = copyToNDJavaArray(values);</span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 255</a></span> <span style="color: #000000; background: #E0E0FF;">    case { 'double', 'float', 'int', 'short', 'byte' } </span>
-<span style="color: #FF0000">  0.13 </span><span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 256</a></span> <span style="color: #000000; background: #E0E0FF;">        values = copyToNDJavaArray(values); </span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 257</a></span> <span style="color: #000000; background: #E0E0FF;">        values = double ( values ); </span>
+<span style="color: #FF0000">  0.28 </span><span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 256</a></span> <span style="color: #000000; background: #E0E0FF;">        values = copyToNDJavaArray(values); </span>
+<span style="color: #FF0000">  0.05 </span><span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 257</a></span> <span style="color: #000000; background: #E0E0FF;">        values = double ( values ); </span>
                <span style="color: #A0A0A0"> 258</span> <span style="color: #A0A0A0; background: #FFFFFF;">    otherwise</span>
                <span style="color: #A0A0A0"> 259</span> <span style="color: #A0A0A0; background: #FFFFFF;">        msg = sprintf ( 'unhandled datatype ''%s''', theDataTypeString );</span>
                <span style="color: #A0A0A0"> 260</span> <span style="color: #A0A0A0; background: #FFFFFF;">        error ( msg );</span>

@@ -140,7 +140,7 @@
        <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 107</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.visible       = true; </span>
        <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 108</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.extrude       = true; </span>
        <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 109</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.tessellate    = ~OPT.is3D; </span>
-       <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 110</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.zScaleFun     = @(z) (z+0)*1; </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 110</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.zScaleFun     = @(z) (z+0)*1; </span>
        <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 111</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.dateStrStyle  = 29;  </span>
                <span style="color: #A0A0A0"> 112</span> <span style="color: #228B22; background: #FFFFFF;"></span>
        <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 113</a></span> <span style="color: #000000; background: #E0E0FF;">if nargin==0 </span>
@@ -187,7 +187,7 @@
        <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 154</a></span> <span style="color: #000000; background: #E0E0FF;">    OPT.lineWidth = [repmat(OPT.lineWidth,floor(size(lat,2)/length(OPT.lineWidth)),1);... </span>
                <span style="color: #A0A0A0"> 155</span> <span style="color: #000000; background: #E0E0FF;">    OPT.lineWidth(1:rem(size(lat,2),length(OPT.lineWidth)))];</span>
                <span style="color: #A0A0A0"> 156</span> <span style="color: #228B22; background: #FFFFFF;"></span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 157</a></span> <span style="color: #000000; background: #E0E0FF;">    OPT.lineColor = [repmat(OPT.lineColor,floor(size(lat,2)/size(OPT.lineColor,1)),1);... </span>
+       <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 157</a></span> <span style="color: #000000; background: #E0E0FF;">    OPT.lineColor = [repmat(OPT.lineColor,floor(size(lat,2)/size(OPT.lineColor,1)),1);... </span>
                <span style="color: #A0A0A0"> 158</span> <span style="color: #000000; background: #E0E0FF;">                     OPT.lineColor(1:rem(size(lat,2),size(OPT.lineColor,1)),:)];</span>
                <span style="color: #A0A0A0"> 159</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
        <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 160</a></span> <span style="color: #000000; background: #E0E0FF;">    OPT.lineAlpha = OPT.lineAlpha(:); </span>
@@ -245,7 +245,7 @@
                <span style="color: #A0A0A0"> 212</span> <span style="color: #000000; background: #E0E0FF;">        'lineColor',OPT.lineColor(line_ind(ii),:) ,...</span>
                <span style="color: #A0A0A0"> 213</span> <span style="color: #000000; background: #E0E0FF;">        'lineAlpha',OPT.lineAlpha(line_ind(ii)),...</span>
                <span style="color: #A0A0A0"> 214</span> <span style="color: #000000; background: #E0E0FF;">        'lineWidth',OPT.lineWidth(line_ind(ii)));</span>
-<span style="color: #FF0000">  0.08 </span><span style="color: #0000FF">     60 </span><span style="color: #000000; font-weight: bold"><a> 215</a></span> <span style="color: #000000; background: #E0E0FF;">    output = [output KML_style(OPT_style)];     %#ok&lt;AGROW&gt; </span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">     60 </span><span style="color: #000000; font-weight: bold"><a> 215</a></span> <span style="color: #000000; background: #E0E0FF;">    output = [output KML_style(OPT_style)];     %#ok&lt;AGROW&gt; </span>
        <span style="color: #0000FF">     60 </span><span style="color: #000000; font-weight: bold"><a> 216</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
                <span style="color: #A0A0A0"> 217</span> <span style="color: #228B22; background: #FFFFFF;">% fill styles</span>
        <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 218</a></span> <span style="color: #000000; background: #E0E0FF;">if OPT.is3D&amp;&amp;OPT.fill </span>
@@ -257,7 +257,7 @@
                <span style="color: #A0A0A0"> 224</span> <span style="color: #000000; background: #E0E0FF;">            'fillAlpha'   ,OPT.fillAlpha(fill_ind(ii)),...</span>
                <span style="color: #A0A0A0"> 225</span> <span style="color: #000000; background: #E0E0FF;">            'polyFill'    ,1,...</span>
                <span style="color: #A0A0A0"> 226</span> <span style="color: #000000; background: #E0E0FF;">            'polyOutline' ,1);</span>
-       <span style="color: #0000FF">     30 </span><span style="color: #000000; font-weight: bold"><a> 227</a></span> <span style="color: #000000; background: #E0E0FF;">        output = [output KML_stylePoly(OPT_stylePoly)];     %#ok&lt;AGROW&gt; </span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">     30 </span><span style="color: #000000; font-weight: bold"><a> 227</a></span> <span style="color: #000000; background: #E0E0FF;">        output = [output KML_stylePoly(OPT_stylePoly)];     %#ok&lt;AGROW&gt; </span>
        <span style="color: #0000FF">     30 </span><span style="color: #000000; font-weight: bold"><a> 228</a></span> <span style="color: #000000; background: #E0E0FF;">    end </span>
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 229</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
                <span style="color: #A0A0A0"> 230</span> <span style="color: #228B22; background: #FFFFFF;"></span>
@@ -297,22 +297,22 @@
                <span style="color: #A0A0A0"> 264</span> <span style="color: #228B22; background: #FFFFFF;">        % update timeIn and timeOut if multiple times are defined</span>
        <span style="color: #0000FF">    224 </span><span style="color: #000000; font-weight: bold"><a> 265</a></span> <span style="color: #000000; background: #E0E0FF;">        if length(OPT.timeIn )&gt;1, OPT_line.timeIn = datestr(OPT.timeIn (ii),OPT.dateStrStyle);end </span>
        <span style="color: #0000FF">    224 </span><span style="color: #000000; font-weight: bold"><a> 266</a></span> <span style="color: #000000; background: #E0E0FF;">        if length(OPT.timeOut)&gt;1,OPT_line.timeOut = datestr(OPT.timeOut(ii),OPT.dateStrStyle);end </span>
-<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    224 </span><span style="color: #000000; font-weight: bold"><a> 267</a></span> <span style="color: #000000; background: #E0E0FF;">        if OPT.is3D&amp;&amp;OPT.fill </span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">    112 </span><span style="color: #000000; font-weight: bold"><a> 268</a></span> <span style="color: #000000; background: #E0E0FF;">            OPT_fill.styleName = ['fill_style' num2str(OPT.fill_nr(ii))]; </span>
+       <span style="color: #0000FF">    224 </span><span style="color: #000000; font-weight: bold"><a> 267</a></span> <span style="color: #000000; background: #E0E0FF;">        if OPT.is3D&amp;&amp;OPT.fill </span>
+       <span style="color: #0000FF">    112 </span><span style="color: #000000; font-weight: bold"><a> 268</a></span> <span style="color: #000000; background: #E0E0FF;">            OPT_fill.styleName = ['fill_style' num2str(OPT.fill_nr(ii))]; </span>
        <span style="color: #0000FF">    112 </span><span style="color: #000000; font-weight: bold"><a> 269</a></span> <span style="color: #000000; background: #E0E0FF;">            if length(OPT.timeIn )&gt;1, OPT_fill.timeIn = datestr(OPT.timeIn (ii),OPT.dateStrStyle);end </span>
-<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    112 </span><span style="color: #000000; font-weight: bold"><a> 270</a></span> <span style="color: #000000; background: #E0E0FF;">            if length(OPT.timeOut)&gt;1,OPT_fill.timeOut = datestr(OPT.timeOut(ii),OPT.dateStrStyle);end </span>
+       <span style="color: #0000FF">    112 </span><span style="color: #000000; font-weight: bold"><a> 270</a></span> <span style="color: #000000; background: #E0E0FF;">            if length(OPT.timeOut)&gt;1,OPT_fill.timeOut = datestr(OPT.timeOut(ii),OPT.dateStrStyle);end </span>
        <span style="color: #0000FF">    112 </span><span style="color: #000000; font-weight: bold"><a> 271</a></span> <span style="color: #000000; background: #E0E0FF;">        end </span>
                <span style="color: #A0A0A0"> 272</span> <span style="color: #228B22; background: #FFFFFF;">        </span>
                <span style="color: #A0A0A0"> 273</span> <span style="color: #228B22; background: #FFFFFF;">        % write the line</span>
        <span style="color: #0000FF">    224 </span><span style="color: #000000; font-weight: bold"><a> 274</a></span> <span style="color: #000000; background: #E0E0FF;">        if OPT.is3D </span>
-<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">    112 </span><span style="color: #000000; font-weight: bold"><a> 275</a></span> <span style="color: #000000; background: #E0E0FF;">            newOutput = KML_line(lat(:,ii),lon(:,ii),OPT.zScaleFun(z(:,ii)),OPT_line);         </span>
+<span style="color: #FF0000">  0.14 </span><span style="color: #0000FF">    112 </span><span style="color: #000000; font-weight: bold"><a> 275</a></span> <span style="color: #000000; background: #E0E0FF;">            newOutput = KML_line(lat(:,ii),lon(:,ii),OPT.zScaleFun(z(:,ii)),OPT_line);         </span>
        <span style="color: #0000FF">    112 </span><span style="color: #000000; font-weight: bold"><a> 276</a></span> <span style="color: #228B22; background: #FFFFFF;">        else </span>
 <span style="color: #FF0000">  0.11 </span><span style="color: #0000FF">    112 </span><span style="color: #000000; font-weight: bold"><a> 277</a></span> <span style="color: #000000; background: #E0E0FF;">            newOutput =  KML_line(lat(:,ii),lon(:,ii),'clampToGround',OPT_line); </span>
        <span style="color: #0000FF">    112 </span><span style="color: #000000; font-weight: bold"><a> 278</a></span> <span style="color: #000000; background: #E0E0FF;">        end </span>
                <span style="color: #A0A0A0"> 279</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 280</span> <span style="color: #228B22; background: #FFFFFF;">        % add a fill if needed</span>
        <span style="color: #0000FF">    224 </span><span style="color: #000000; font-weight: bold"><a> 281</a></span> <span style="color: #000000; background: #E0E0FF;">        if OPT.is3D&amp;&amp;OPT.fill </span>
-<span style="color: #FF0000">  0.08 </span><span style="color: #0000FF">    112 </span><span style="color: #000000; font-weight: bold"><a> 282</a></span> <span style="color: #000000; background: #E0E0FF;">            newOutput =  [newOutput,KML_line(lat(:,ii),lon(:,ii),OPT.zScaleFun(z(:,ii)),OPT_fill)]; </span>
+<span style="color: #FF0000">  0.05 </span><span style="color: #0000FF">    112 </span><span style="color: #000000; font-weight: bold"><a> 282</a></span> <span style="color: #000000; background: #E0E0FF;">            newOutput =  [newOutput,KML_line(lat(:,ii),lon(:,ii),OPT.zScaleFun(z(:,ii)),OPT_fill)]; </span>
        <span style="color: #0000FF">    112 </span><span style="color: #000000; font-weight: bold"><a> 283</a></span> <span style="color: #000000; background: #E0E0FF;">        end </span>
                <span style="color: #A0A0A0"> 284</span> <span style="color: #228B22; background: #FFFFFF;">        </span>
                <span style="color: #A0A0A0"> 285</span> <span style="color: #228B22; background: #FFFFFF;">        % add newOutput to output</span>
@@ -329,7 +329,7 @@
        <span style="color: #0000FF">    224 </span><span style="color: #000000; font-weight: bold"><a> 296</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
                <span style="color: #A0A0A0"> 297</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 298</span> <span style="color: #228B22; background: #FFFFFF;">% print output</span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 299</a></span> <span style="color: #000000; background: #E0E0FF;">fprintf(OPT.fid,output(1:kk-1));  </span>
+       <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 299</a></span> <span style="color: #000000; background: #E0E0FF;">fprintf(OPT.fid,output(1:kk-1));  </span>
                <span style="color: #A0A0A0"> 300</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 301</span> <span style="color: #228B22; background: #FFFFFF;">%% FOOTER</span>
        <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 302</a></span> <span style="color: #000000; background: #E0E0FF;">output = KML_footer; </span>

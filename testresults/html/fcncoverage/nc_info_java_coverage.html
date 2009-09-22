@@ -58,7 +58,7 @@
        <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  25</a></span> <span style="color: #000000; background: #E0E0FF;">            DODSNetcdfFile.setPreload(false); </span>
                <span style="color: #A0A0A0">  26</span> <span style="color: #A0A0A0; background: #FFFFFF;">        catch</span>
        <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  27</a></span> <span style="color: #000000; background: #E0E0FF;">        end </span>
-<span style="color: #FF0000">  0.30 </span><span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  28</a></span> <span style="color: #000000; background: #E0E0FF;">        jncid = DODSNetcdfFile(ncfile); </span>
+<span style="color: #FF0000">  0.41 </span><span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  28</a></span> <span style="color: #000000; background: #E0E0FF;">        jncid = DODSNetcdfFile(ncfile); </span>
                <span style="color: #A0A0A0">  29</span> <span style="color: #A0A0A0; background: #FFFFFF;">	catch</span>
                <span style="color: #A0A0A0">  30</span> <span style="color: #A0A0A0; background: #FFFFFF;">		try</span>
                <span style="color: #A0A0A0">  31</span> <span style="color: #A0A0A0; background: #FFFFFF;">    		jncid = NetcdfFile.open ( ncfile );</span>
@@ -73,11 +73,11 @@
                <span style="color: #A0A0A0">  40</span> <span style="color: #228B22; background: #FFFFFF;"></span>
        <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  41</a></span> <span style="color: #000000; background: #E0E0FF;">root_group = jncid.getRootGroup(); </span>
        <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  42</a></span> <span style="color: #000000; background: #E0E0FF;">fileinfo.Dimension = get_dimensions_j ( root_group ); </span>
-<span style="color: #FF0000">  0.16 </span><span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  43</a></span> <span style="color: #000000; background: #E0E0FF;">fileinfo.Dataset = get_variables_j ( root_group ); </span>
+<span style="color: #FF0000">  0.20 </span><span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  43</a></span> <span style="color: #000000; background: #E0E0FF;">fileinfo.Dataset = get_variables_j ( root_group ); </span>
                <span style="color: #A0A0A0">  44</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  45</span> <span style="color: #228B22; background: #FFFFFF;">% Get the global attributes and variable attributes</span>
        <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  46</a></span> <span style="color: #000000; background: #E0E0FF;">j_att_list = root_group.getAttributes(); </span>
-<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  47</a></span> <span style="color: #000000; background: #E0E0FF;">fileinfo.Attribute = snc_java_bundle_atts ( j_att_list ); </span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  47</a></span> <span style="color: #000000; background: #E0E0FF;">fileinfo.Attribute = snc_java_bundle_atts ( j_att_list ); </span>
                <span style="color: #A0A0A0">  48</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  49</span> <span style="color: #228B22; background: #FFFFFF;"></span>
        <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  50</a></span> <span style="color: #000000; background: #E0E0FF;">close ( jncid ); </span>

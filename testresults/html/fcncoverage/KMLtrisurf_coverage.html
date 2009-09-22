@@ -82,7 +82,7 @@
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a>  49</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.colormap       = 'jet'; </span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a>  50</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.colorSteps     = 16; </span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a>  51</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.fillAlpha      = 0.6; </span>
-<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a>  52</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.fileName       = ''; </span>
+       <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a>  52</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.fileName       = ''; </span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a>  53</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.polyOutline    = 0; </span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a>  54</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.polyFill       = 1; </span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a>  55</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.openInGE       = false; </span>
@@ -98,7 +98,7 @@
                <span style="color: #A0A0A0">  65</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
                <span style="color: #A0A0A0">  66</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  67</span> <span style="color: #228B22; background: #FFFFFF;">%% error check</span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a>  68</a></span> <span style="color: #000000; background: #E0E0FF;">if all(isnan(z(:))) </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a>  68</a></span> <span style="color: #000000; background: #E0E0FF;">if all(isnan(z(:))) </span>
                <span style="color: #A0A0A0">  69</span> <span style="color: #A0A0A0; background: #FFFFFF;">    disp('warning: No surface could be constructed, because there was no valid height data provided...') %#ok&lt;WNTAG&gt;</span>
                <span style="color: #A0A0A0">  70</span> <span style="color: #A0A0A0; background: #FFFFFF;">    return</span>
                <span style="color: #A0A0A0">  71</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
@@ -117,7 +117,7 @@
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a>  84</a></span> <span style="color: #000000; background: #E0E0FF;">[OPT, Set, Default] = setProperty(OPT, varargin); </span>
                <span style="color: #A0A0A0">  85</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  86</span> <span style="color: #228B22; background: #FFFFFF;">%% set properties</span>
-<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a>  87</a></span> <span style="color: #000000; background: #E0E0FF;">[OPT, Set, Default] = setProperty(OPT, varargin{:}); </span>
+       <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a>  87</a></span> <span style="color: #000000; background: #E0E0FF;">[OPT, Set, Default] = setProperty(OPT, varargin{:}); </span>
                <span style="color: #A0A0A0">  88</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  89</span> <span style="color: #228B22; background: #FFFFFF;">%% filename</span>
                <span style="color: #A0A0A0">  90</span> <span style="color: #228B22; background: #FFFFFF;">% gui for filename, if not set yet</span>
@@ -127,7 +127,7 @@
                <span style="color: #A0A0A0">  94</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
                <span style="color: #A0A0A0">  95</span> <span style="color: #228B22; background: #FFFFFF;">% set kmlName if it is not set yet</span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a>  96</a></span> <span style="color: #000000; background: #E0E0FF;">if isempty(OPT.kmlName) </span>
-       <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a>  97</a></span> <span style="color: #000000; background: #E0E0FF;">    [ignore OPT.kmlName] = fileparts(OPT.fileName); </span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a>  97</a></span> <span style="color: #000000; background: #E0E0FF;">    [ignore OPT.kmlName] = fileparts(OPT.fileName); </span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a>  98</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
                <span style="color: #A0A0A0">  99</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 100</span> <span style="color: #228B22; background: #FFFFFF;">%% set cLim</span>
@@ -151,7 +151,7 @@
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 118</a></span> <span style="color: #000000; background: #E0E0FF;">OPT_header = struct(... </span>
                <span style="color: #A0A0A0"> 119</span> <span style="color: #000000; background: #E0E0FF;">    'name',OPT.kmlName,...</span>
                <span style="color: #A0A0A0"> 120</span> <span style="color: #000000; background: #E0E0FF;">    'open',0);</span>
-       <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 121</a></span> <span style="color: #000000; background: #E0E0FF;">output = KML_header(OPT_header); </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 121</a></span> <span style="color: #000000; background: #E0E0FF;">output = KML_header(OPT_header); </span>
                <span style="color: #A0A0A0"> 122</span> <span style="color: #228B22; background: #FFFFFF;">%% STYLE</span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 123</a></span> <span style="color: #000000; background: #E0E0FF;">OPT_stylePoly = struct(... </span>
                <span style="color: #A0A0A0"> 124</span> <span style="color: #000000; background: #E0E0FF;">    'name',['style' num2str(1)],...</span>
@@ -163,9 +163,9 @@
                <span style="color: #A0A0A0"> 130</span> <span style="color: #000000; background: #E0E0FF;">    'polyFill',OPT.polyFill,...</span>
                <span style="color: #A0A0A0"> 131</span> <span style="color: #000000; background: #E0E0FF;">    'polyOutline',OPT.polyOutline); </span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 132</a></span> <span style="color: #000000; background: #E0E0FF;">for ii = 1:OPT.colorSteps </span>
-       <span style="color: #0000FF">    144 </span><span style="color: #000000; font-weight: bold"><a> 133</a></span> <span style="color: #000000; background: #E0E0FF;">    OPT_stylePoly.name = ['style' num2str(ii)]; </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    144 </span><span style="color: #000000; font-weight: bold"><a> 133</a></span> <span style="color: #000000; background: #E0E0FF;">    OPT_stylePoly.name = ['style' num2str(ii)]; </span>
        <span style="color: #0000FF">    144 </span><span style="color: #000000; font-weight: bold"><a> 134</a></span> <span style="color: #000000; background: #E0E0FF;">    OPT_stylePoly.fillColor = colorRGB(ii,:); </span>
-<span style="color: #FF0000">  0.11 </span><span style="color: #0000FF">    144 </span><span style="color: #000000; font-weight: bold"><a> 135</a></span> <span style="color: #000000; background: #E0E0FF;">    output = [output KML_stylePoly(OPT_stylePoly)]; </span>
+<span style="color: #FF0000">  0.08 </span><span style="color: #0000FF">    144 </span><span style="color: #000000; font-weight: bold"><a> 135</a></span> <span style="color: #000000; background: #E0E0FF;">    output = [output KML_stylePoly(OPT_stylePoly)]; </span>
        <span style="color: #0000FF">    144 </span><span style="color: #000000; font-weight: bold"><a> 136</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
                <span style="color: #A0A0A0"> 137</span> <span style="color: #228B22; background: #FFFFFF;">%% print and clear output</span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 138</a></span> <span style="color: #000000; background: #E0E0FF;">fprintf(OPT.fid,output);  </span>
@@ -179,7 +179,7 @@
                <span style="color: #A0A0A0"> 146</span> <span style="color: #000000; background: #E0E0FF;">'visibility',1,...</span>
                <span style="color: #A0A0A0"> 147</span> <span style="color: #000000; background: #E0E0FF;">'extrude',OPT.extrude);</span>
                <span style="color: #A0A0A0"> 148</span> <span style="color: #228B22; background: #FFFFFF;">% preallocate output</span>
-<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 149</a></span> <span style="color: #000000; background: #E0E0FF;">output = repmat(char(1),1,1e5); </span>
+       <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 149</a></span> <span style="color: #000000; background: #E0E0FF;">output = repmat(char(1),1,1e5); </span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 150</a></span> <span style="color: #000000; background: #E0E0FF;">kk = 1; </span>
                <span style="color: #A0A0A0"> 151</span> <span style="color: #228B22; background: #FFFFFF;"></span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 152</a></span> <span style="color: #000000; background: #E0E0FF;">disp(['creating surf with ' num2str(size(tri,1)) ' elements...']) </span>
@@ -189,23 +189,23 @@
        <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a> 156</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
                <span style="color: #A0A0A0"> 157</span> <span style="color: #228B22; background: #FFFFFF;"></span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 158</a></span> <span style="color: #000000; background: #E0E0FF;">for ii=1:size(tri,1) </span>
-<span style="color: #FF0000">  0.11 </span><span style="color: #0000FF">   7882 </span><span style="color: #000000; font-weight: bold"><a> 159</a></span> <span style="color: #000000; background: #E0E0FF;">    OPT_poly.styleName = sprintf('style%d',c(ii)); </span>
+<span style="color: #FF0000">  0.27 </span><span style="color: #0000FF">   7882 </span><span style="color: #000000; font-weight: bold"><a> 159</a></span> <span style="color: #000000; background: #E0E0FF;">    OPT_poly.styleName = sprintf('style%d',c(ii)); </span>
                <span style="color: #A0A0A0"> 160</span> <span style="color: #228B22; background: #FFFFFF;">    %             if OPT.reversePoly</span>
                <span style="color: #A0A0A0"> 161</span> <span style="color: #228B22; background: #FFFFFF;">    %                 LAT = LAT(end:-1:1);</span>
                <span style="color: #A0A0A0"> 162</span> <span style="color: #228B22; background: #FFFFFF;">    %                 LON = LON(end:-1:1);</span>
                <span style="color: #A0A0A0"> 163</span> <span style="color: #228B22; background: #FFFFFF;">    %                   Z =   Z(end:-1:1);</span>
                <span style="color: #A0A0A0"> 164</span> <span style="color: #228B22; background: #FFFFFF;">    %             end</span>
-<span style="color: #FF0000">  3.90 </span><span style="color: #0000FF">   7882 </span><span style="color: #000000; font-weight: bold"><a> 165</a></span> <span style="color: #000000; background: #E0E0FF;">    newOutput = KML_poly(lat(tri(ii,[1:3 1])),lon(tri(ii,[1:3 1])),OPT.zScaleFun(z(tri(ii,[1:3 1]))),OPT_poly); </span>
-       <span style="color: #0000FF">   7882 </span><span style="color: #000000; font-weight: bold"><a> 166</a></span> <span style="color: #000000; background: #E0E0FF;">    output(kk:kk+length(newOutput)-1) = newOutput; </span>
-       <span style="color: #0000FF">   7882 </span><span style="color: #000000; font-weight: bold"><a> 167</a></span> <span style="color: #000000; background: #E0E0FF;">    kk = kk+length(newOutput); </span>
-<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">   7882 </span><span style="color: #000000; font-weight: bold"><a> 168</a></span> <span style="color: #000000; background: #E0E0FF;">    if kk&gt;1e5 </span>
+<span style="color: #FF0000">  3.48 </span><span style="color: #0000FF">   7882 </span><span style="color: #000000; font-weight: bold"><a> 165</a></span> <span style="color: #000000; background: #E0E0FF;">    newOutput = KML_poly(lat(tri(ii,[1:3 1])),lon(tri(ii,[1:3 1])),OPT.zScaleFun(z(tri(ii,[1:3 1]))),OPT_poly); </span>
+<span style="color: #FF0000">  0.05 </span><span style="color: #0000FF">   7882 </span><span style="color: #000000; font-weight: bold"><a> 166</a></span> <span style="color: #000000; background: #E0E0FF;">    output(kk:kk+length(newOutput)-1) = newOutput; </span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">   7882 </span><span style="color: #000000; font-weight: bold"><a> 167</a></span> <span style="color: #000000; background: #E0E0FF;">    kk = kk+length(newOutput); </span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">   7882 </span><span style="color: #000000; font-weight: bold"><a> 168</a></span> <span style="color: #000000; background: #E0E0FF;">    if kk&gt;1e5 </span>
                <span style="color: #A0A0A0"> 169</span> <span style="color: #228B22; background: #FFFFFF;">        %then print and reset</span>
-<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">     19 </span><span style="color: #000000; font-weight: bold"><a> 170</a></span> <span style="color: #000000; background: #E0E0FF;">        fprintf(OPT.fid,output(1:kk-1)); </span>
+<span style="color: #FF0000">  0.09 </span><span style="color: #0000FF">     19 </span><span style="color: #000000; font-weight: bold"><a> 170</a></span> <span style="color: #000000; background: #E0E0FF;">        fprintf(OPT.fid,output(1:kk-1)); </span>
        <span style="color: #0000FF">     19 </span><span style="color: #000000; font-weight: bold"><a> 171</a></span> <span style="color: #000000; background: #E0E0FF;">        kk = 1; </span>
-<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">     19 </span><span style="color: #000000; font-weight: bold"><a> 172</a></span> <span style="color: #000000; background: #E0E0FF;">        output = repmat(char(1),1,1e5); </span>
+       <span style="color: #0000FF">     19 </span><span style="color: #000000; font-weight: bold"><a> 172</a></span> <span style="color: #000000; background: #E0E0FF;">        output = repmat(char(1),1,1e5); </span>
        <span style="color: #0000FF">     19 </span><span style="color: #000000; font-weight: bold"><a> 173</a></span> <span style="color: #000000; background: #E0E0FF;">    end </span>
-<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">   7882 </span><span style="color: #000000; font-weight: bold"><a> 174</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
-       <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 175</a></span> <span style="color: #000000; background: #E0E0FF;">fprintf(OPT.fid,output(1:kk-1)); % print output </span>
+       <span style="color: #0000FF">   7882 </span><span style="color: #000000; font-weight: bold"><a> 174</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
+<span style="color: #FF0000">  0.05 </span><span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 175</a></span> <span style="color: #000000; background: #E0E0FF;">fprintf(OPT.fid,output(1:kk-1)); % print output </span>
                <span style="color: #A0A0A0"> 176</span> <span style="color: #228B22; background: #FFFFFF;">%% FOOTER</span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 177</a></span> <span style="color: #000000; background: #E0E0FF;">output = KML_footer; </span>
        <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 178</a></span> <span style="color: #000000; background: #E0E0FF;"> fprintf(OPT.fid,output); </span>

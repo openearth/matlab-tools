@@ -98,11 +98,11 @@
                <span style="color: #A0A0A0">  65</span> <span style="color: #228B22; background: #FFFFFF;">   %% all n line are plotted as one nan-seperated line</span>
                <span style="color: #A0A0A0">  66</span> <span style="color: #228B22; background: #FFFFFF;">   %% so there 2 separate handles.</span>
                <span style="color: #A0A0A0">  67</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
-       <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a>  68</a></span> <span style="color: #000000; background: #E0E0FF;">   xx = addrowcol(x,1,1,nan); xhor = xx;xver = xx'; xx = [xhor(:) xver(:)]; </span>
-       <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a>  69</a></span> <span style="color: #000000; background: #E0E0FF;">   yy = addrowcol(y,1,1,nan); yhor = yy;yver = yy'; yy = [yhor(:) yver(:)]; </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a>  68</a></span> <span style="color: #000000; background: #E0E0FF;">   xx = addrowcol(x,1,1,nan); xhor = xx;xver = xx'; xx = [xhor(:) xver(:)]; </span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a>  69</a></span> <span style="color: #000000; background: #E0E0FF;">   yy = addrowcol(y,1,1,nan); yhor = yy;yver = yy'; yy = [yhor(:) yver(:)]; </span>
                <span style="color: #A0A0A0">  70</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
        <span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a>  71</a></span> <span style="color: #000000; background: #E0E0FF;">   if iscell(linespec) </span>
-<span style="color: #FF0000">  0.05 </span><span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a>  72</a></span> <span style="color: #000000; background: #E0E0FF;">   p = plot(xx,yy,linespec{:}); </span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">      8 </span><span style="color: #000000; font-weight: bold"><a>  72</a></span> <span style="color: #000000; background: #E0E0FF;">   p = plot(xx,yy,linespec{:}); </span>
                <span style="color: #A0A0A0">  73</span> <span style="color: #228B22; background: #FFFFFF;">   else</span>
                <span style="color: #A0A0A0">  74</span> <span style="color: #A0A0A0; background: #FFFFFF;">   p = plot(xx,yy,linespec);</span>
                <span style="color: #A0A0A0">  75</span> <span style="color: #A0A0A0; background: #FFFFFF;">   end</span>

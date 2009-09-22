@@ -127,7 +127,7 @@
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  94</a></span> <span style="color: #000000; background: #E0E0FF;">if isnumeric(label) </span>
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  95</a></span> <span style="color: #000000; background: #E0E0FF;">    label = label(:); </span>
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  96</a></span> <span style="color: #000000; background: #E0E0FF;">    labelFormat = sprintf('%%.%df',OPT.labelDecimals); </span>
-<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  97</a></span> <span style="color: #000000; background: #E0E0FF;">    label = arrayfun(@(x) sprintf(labelFormat,x),label,'uni',false); </span>
+<span style="color: #FF0000">  0.05 </span><span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  97</a></span> <span style="color: #000000; background: #E0E0FF;">    label = arrayfun(@(x) sprintf(labelFormat,x),label,'uni',false); </span>
                <span style="color: #A0A0A0">  98</span> <span style="color: #A0A0A0; background: #FFFFFF;">elseif ischar(label)</span>
                <span style="color: #A0A0A0">  99</span> <span style="color: #A0A0A0; background: #FFFFFF;">    label = cellstr(label);</span>
                <span style="color: #A0A0A0"> 100</span> <span style="color: #228B22; background: #FFFFFF;">else</span>
@@ -169,7 +169,7 @@
                <span style="color: #A0A0A0"> 136</span> <span style="color: #228B22; background: #FFFFFF;">%% generate contents</span>
                <span style="color: #A0A0A0"> 137</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 138</span> <span style="color: #228B22; background: #FFFFFF;">% preallocate output</span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 139</a></span> <span style="color: #000000; background: #E0E0FF;">output = repmat(char(1),1,1e5); </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 139</a></span> <span style="color: #000000; background: #E0E0FF;">output = repmat(char(1),1,1e5); </span>
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 140</a></span> <span style="color: #000000; background: #E0E0FF;">kk = 1; </span>
                <span style="color: #A0A0A0"> 141</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 142</span> <span style="color: #228B22; background: #FFFFFF;">% % line properties</span>
@@ -193,11 +193,11 @@
                <span style="color: #A0A0A0"> 160</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 161</span> <span style="color: #228B22; background: #FFFFFF;">% loop through number of lines</span>
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 162</a></span> <span style="color: #000000; background: #E0E0FF;">for ii=1:length(lat) </span>
-       <span style="color: #0000FF">    656 </span><span style="color: #000000; font-weight: bold"><a> 163</a></span> <span style="color: #000000; background: #E0E0FF;">    if OPT.is3D </span>
-<span style="color: #FF0000">  0.11 </span><span style="color: #0000FF">    328 </span><span style="color: #000000; font-weight: bold"><a> 164</a></span> <span style="color: #000000; background: #E0E0FF;">        newOutput = KML_text(lat(ii),lon(ii),label{ii},z(ii),OPT_text); </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    656 </span><span style="color: #000000; font-weight: bold"><a> 163</a></span> <span style="color: #000000; background: #E0E0FF;">    if OPT.is3D </span>
+<span style="color: #FF0000">  0.10 </span><span style="color: #0000FF">    328 </span><span style="color: #000000; font-weight: bold"><a> 164</a></span> <span style="color: #000000; background: #E0E0FF;">        newOutput = KML_text(lat(ii),lon(ii),label{ii},z(ii),OPT_text); </span>
        <span style="color: #0000FF">    328 </span><span style="color: #000000; font-weight: bold"><a> 165</a></span> <span style="color: #228B22; background: #FFFFFF;">    else </span>
-<span style="color: #FF0000">  0.09 </span><span style="color: #0000FF">    328 </span><span style="color: #000000; font-weight: bold"><a> 166</a></span> <span style="color: #000000; background: #E0E0FF;">        newOutput = KML_text(lat(ii),lon(ii),label{ii},OPT_text); </span>
-       <span style="color: #0000FF">    328 </span><span style="color: #000000; font-weight: bold"><a> 167</a></span> <span style="color: #000000; background: #E0E0FF;">    end </span>
+<span style="color: #FF0000">  0.06 </span><span style="color: #0000FF">    328 </span><span style="color: #000000; font-weight: bold"><a> 166</a></span> <span style="color: #000000; background: #E0E0FF;">        newOutput = KML_text(lat(ii),lon(ii),label{ii},OPT_text); </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    328 </span><span style="color: #000000; font-weight: bold"><a> 167</a></span> <span style="color: #000000; background: #E0E0FF;">    end </span>
                <span style="color: #A0A0A0"> 168</span> <span style="color: #228B22; background: #FFFFFF;">    % add newOutput to output</span>
        <span style="color: #0000FF">    656 </span><span style="color: #000000; font-weight: bold"><a> 169</a></span> <span style="color: #000000; background: #E0E0FF;">    output(kk:kk+length(newOutput)-1) = newOutput; </span>
        <span style="color: #0000FF">    656 </span><span style="color: #000000; font-weight: bold"><a> 170</a></span> <span style="color: #000000; background: #E0E0FF;">    kk = kk+length(newOutput); </span>

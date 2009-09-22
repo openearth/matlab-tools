@@ -136,7 +136,7 @@
                <span style="color: #A0A0A0"> 103</span> <span style="color: #228B22; background: #FFFFFF;">% $Keywords: $</span>
                <span style="color: #A0A0A0"> 104</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 105</span> <span style="color: #228B22; background: #FFFFFF;">%% version check</span>
-<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 106</a></span> <span style="color: #000000; background: #E0E0FF;">if datenum(version('-date'))&lt;datenum(2007,1,1) </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 106</a></span> <span style="color: #000000; background: #E0E0FF;">if datenum(version('-date'))&lt;datenum(2007,1,1) </span>
                <span style="color: #A0A0A0"> 107</span> <span style="color: #A0A0A0; background: #FFFFFF;">    warning('the matlab version your using might be to old for this function') %#ok&lt;WNTAG&gt;</span>
                <span style="color: #A0A0A0"> 108</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
                <span style="color: #A0A0A0"> 109</span> <span style="color: #228B22; background: #FFFFFF;"></span>
@@ -220,7 +220,7 @@
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 187</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.CS2 = ConvertCoordinatesCheckInput(OPT.CS2,STD); </span>
                <span style="color: #A0A0A0"> 188</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 189</span> <span style="color: #228B22; background: #FFFFFF;">%% find coordinate reference system</span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 190</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.CS1 = ConvertCoordinatesFindCoordRefSys(OPT.CS1,STD); </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 190</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.CS1 = ConvertCoordinatesFindCoordRefSys(OPT.CS1,STD); </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 191</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.CS2 = ConvertCoordinatesFindCoordRefSys(OPT.CS2,STD); </span>
                <span style="color: #A0A0A0"> 192</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 193</span> <span style="color: #228B22; background: #FFFFFF;">%% find coordinate system</span>
@@ -267,7 +267,7 @@
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 234</a></span> <span style="color: #000000; background: #E0E0FF;">    case 'projected' % convert projection to geographic radians </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 235</a></span> <span style="color: #000000; background: #E0E0FF;">        x1 = convertUnits(x1,OPT.CS1.UoM.name,'metre',STD); </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 236</a></span> <span style="color: #000000; background: #E0E0FF;">        y1 = convertUnits(y1,OPT.CS1.UoM.name,'metre',STD); </span>
-<span style="color: #FF0000">  0.37 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 237</a></span> <span style="color: #000000; background: #E0E0FF;">        [lat1,lon1] = ConvertCoordinatesProjectionConvert(x1,y1,OPT.CS1,OPT.proj_conv1,'xy2geo',STD); </span>
+<span style="color: #FF0000">  0.38 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 237</a></span> <span style="color: #000000; background: #E0E0FF;">        [lat1,lon1] = ConvertCoordinatesProjectionConvert(x1,y1,OPT.CS1,OPT.proj_conv1,'xy2geo',STD); </span>
                <span style="color: #A0A0A0"> 238</span> <span style="color: #A0A0A0; background: #FFFFFF;">    case 'geographic 2D' % do nothing, except for a unit conversion</span>
                <span style="color: #A0A0A0"> 239</span> <span style="color: #A0A0A0; background: #FFFFFF;">        lon1 = convertUnits(x1,OPT.CS1.UoM.name,'radian',STD);</span>
                <span style="color: #A0A0A0"> 240</span> <span style="color: #A0A0A0; background: #FFFFFF;">        lat1 = convertUnits(y1,OPT.CS1.UoM.name,'radian',STD);</span>

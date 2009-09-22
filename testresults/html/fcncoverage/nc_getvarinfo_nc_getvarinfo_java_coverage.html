@@ -40,15 +40,15 @@
                <span style="color: #A0A0A0"> 220</span> <span style="color: #228B22; background: #FFFFFF;">                           </span>
                <span style="color: #A0A0A0"> 221</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 222</span> <span style="color: #228B22; background: #FFFFFF;"></span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a> 223</a></span> <span style="color: #000000; background: #E0E0FF;">if exist(ncfile,'file') </span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 224</a></span> <span style="color: #000000; background: #E0E0FF;">	jncid = NetcdfFile.open(ncfile); </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a> 223</a></span> <span style="color: #000000; background: #E0E0FF;">if exist(ncfile,'file') </span>
+<span style="color: #FF0000">  0.13 </span><span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 224</a></span> <span style="color: #000000; background: #E0E0FF;">	jncid = NetcdfFile.open(ncfile); </span>
        <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a> 225</a></span> <span style="color: #228B22; background: #FFFFFF;">else </span>
                <span style="color: #A0A0A0"> 226</span> <span style="color: #228B22; background: #FFFFFF;">	% try not to use preloading ... </span>
        <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a> 227</a></span> <span style="color: #000000; background: #E0E0FF;">	try </span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a> 228</a></span> <span style="color: #000000; background: #E0E0FF;">		DODSNetcdfFile.setPreload(false); </span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a> 228</a></span> <span style="color: #000000; background: #E0E0FF;">		DODSNetcdfFile.setPreload(false); </span>
                <span style="color: #A0A0A0"> 229</span> <span style="color: #A0A0A0; background: #FFFFFF;">	catch</span>
        <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a> 230</a></span> <span style="color: #000000; background: #E0E0FF;">	end </span>
-<span style="color: #FF0000">  0.25 </span><span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a> 231</a></span> <span style="color: #000000; background: #E0E0FF;">	jncid = DODSNetcdfFile(ncfile); </span>
+<span style="color: #FF0000">  0.37 </span><span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a> 231</a></span> <span style="color: #000000; background: #E0E0FF;">	jncid = DODSNetcdfFile(ncfile); </span>
        <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a> 232</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
                <span style="color: #A0A0A0"> 233</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 234</span> <span style="color: #228B22; background: #FFFFFF;"></span>
@@ -64,7 +64,7 @@
                <span style="color: #A0A0A0"> 244</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
                <span style="color: #A0A0A0"> 245</span> <span style="color: #228B22; background: #FFFFFF;">% All the details are hidden here because we need the exact same</span>
                <span style="color: #A0A0A0"> 246</span> <span style="color: #228B22; background: #FFFFFF;">% functionality in nc_info.</span>
-<span style="color: #FF0000">  0.08 </span><span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a> 247</a></span> <span style="color: #000000; background: #E0E0FF;">Dataset = snc_java_varid_info ( jvarid ); </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a> 247</a></span> <span style="color: #000000; background: #E0E0FF;">Dataset = snc_java_varid_info ( jvarid ); </span>
                <span style="color: #A0A0A0"> 248</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 249</span> <span style="color: #228B22; background: #FFFFFF;"></span>
        <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a> 250</a></span> <span style="color: #000000; background: #E0E0FF;">close ( jncid ); </span>

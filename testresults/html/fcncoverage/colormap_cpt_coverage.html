@@ -106,7 +106,7 @@
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  73</a></span> <span style="color: #000000; background: #E0E0FF;">fid = fopen(cpt); </span>
                <span style="color: #A0A0A0">  74</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  75</span> <span style="color: #228B22; background: #FFFFFF;">%% skip the first bit</span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  76</a></span> <span style="color: #000000; background: #E0E0FF;">S = fgetl(fid); </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  76</a></span> <span style="color: #000000; background: #E0E0FF;">S = fgetl(fid); </span>
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  77</a></span> <span style="color: #000000; background: #E0E0FF;">while strcmp(S(1),'#') </span>
        <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  78</a></span> <span style="color: #000000; background: #E0E0FF;">    S = fgetl(fid); </span>
        <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  79</a></span> <span style="color: #000000; background: #E0E0FF;">    if isempty(S), S = '#'; end </span>
@@ -116,7 +116,7 @@
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  83</a></span> <span style="color: #000000; background: #E0E0FF;">cdata = sscanf(S,'%f'); </span>
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  84</a></span> <span style="color: #000000; background: #E0E0FF;">S = fgetl(fid); </span>
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  85</a></span> <span style="color: #000000; background: #E0E0FF;">while ~isletter(S(1)) &amp;&amp; S(1)~=-1; </span>
-       <span style="color: #0000FF">     88 </span><span style="color: #000000; font-weight: bold"><a>  86</a></span> <span style="color: #000000; background: #E0E0FF;">    cdata = [cdata sscanf(S,'%f')]; </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">     88 </span><span style="color: #000000; font-weight: bold"><a>  86</a></span> <span style="color: #000000; background: #E0E0FF;">    cdata = [cdata sscanf(S,'%f')]; </span>
        <span style="color: #0000FF">     88 </span><span style="color: #000000; font-weight: bold"><a>  87</a></span> <span style="color: #000000; background: #E0E0FF;">    S = fgetl(fid); </span>
        <span style="color: #0000FF">     88 </span><span style="color: #000000; font-weight: bold"><a>  88</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
                <span style="color: #A0A0A0">  89</span> <span style="color: #228B22; background: #FFFFFF;"></span>
@@ -141,7 +141,7 @@
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 108</a></span> <span style="color: #000000; background: #E0E0FF;">cdata = reshape(cdata,size(cdata).*[.5 2]); </span>
                <span style="color: #A0A0A0"> 109</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 110</span> <span style="color: #228B22; background: #FFFFFF;">%% interp RGB values</span>
-<span style="color: #FF0000">  0.06 </span><span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 111</a></span> <span style="color: #000000; background: #E0E0FF;">R = interp1(cdata(1,:),cdata(2,:),xi); </span>
+<span style="color: #FF0000">  0.09 </span><span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 111</a></span> <span style="color: #000000; background: #E0E0FF;">R = interp1(cdata(1,:),cdata(2,:),xi); </span>
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 112</a></span> <span style="color: #000000; background: #E0E0FF;">G = interp1(cdata(1,:),cdata(3,:),xi); </span>
        <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 113</a></span> <span style="color: #000000; background: #E0E0FF;">B = interp1(cdata(1,:),cdata(4,:),xi); </span>
                <span style="color: #A0A0A0"> 114</span> <span style="color: #228B22; background: #FFFFFF;"></span>

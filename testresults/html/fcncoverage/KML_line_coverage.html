@@ -100,13 +100,13 @@
                <span style="color: #A0A0A0">  67</span> <span style="color: #228B22; background: #FFFFFF;"></span>
        <span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a>  68</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.styleName  = []; </span>
        <span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a>  69</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.visibility = 1; </span>
-       <span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a>  70</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.extrude    = []; </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a>  70</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.extrude    = []; </span>
        <span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a>  71</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.timeIn     = []; </span>
        <span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a>  72</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.timeOut    = []; </span>
        <span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a>  73</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.tessellate  = []; </span>
-       <span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a>  74</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.name       = 'line'; </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a>  74</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.name       = 'line'; </span>
                <span style="color: #A0A0A0">  75</span> <span style="color: #228B22; background: #FFFFFF;"></span>
-<span style="color: #FF0000">  0.09 </span><span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a>  76</a></span> <span style="color: #000000; background: #E0E0FF;">OPT = setProperty(OPT,varargin{:}); </span>
+<span style="color: #FF0000">  0.14 </span><span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a>  76</a></span> <span style="color: #000000; background: #E0E0FF;">OPT = setProperty(OPT,varargin{:}); </span>
                <span style="color: #A0A0A0">  77</span> <span style="color: #228B22; background: #FFFFFF;"></span>
        <span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a>  78</a></span> <span style="color: #000000; background: #E0E0FF;">if isempty(OPT.styleName) </span>
                <span style="color: #A0A0A0">  79</span> <span style="color: #A0A0A0; background: #FFFFFF;">    warning('property ''stylename'' required') %#ok&lt;WNTAG&gt;</span>
@@ -155,13 +155,13 @@
        <span style="color: #0000FF">    112 </span><span style="color: #000000; font-weight: bold"><a> 122</a></span> <span style="color: #000000; background: #E0E0FF;">    altitudeMode = sprintf([... </span>
                <span style="color: #A0A0A0"> 123</span> <span style="color: #000000; background: #E0E0FF;">        '&lt;altitudeMode&gt;clampToGround&lt;/altitudeMode&gt;\n']); %#ok&lt;NBRAK&gt;</span>
        <span style="color: #0000FF">    112 </span><span style="color: #000000; font-weight: bold"><a> 124</a></span> <span style="color: #000000; background: #E0E0FF;">    z = zeros(size(lon)); </span>
-       <span style="color: #0000FF">    225 </span><span style="color: #000000; font-weight: bold"><a> 125</a></span> <span style="color: #228B22; background: #FFFFFF;">else </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    225 </span><span style="color: #000000; font-weight: bold"><a> 125</a></span> <span style="color: #228B22; background: #FFFFFF;">else </span>
        <span style="color: #0000FF">    225 </span><span style="color: #000000; font-weight: bold"><a> 126</a></span> <span style="color: #000000; background: #E0E0FF;">    altitudeMode =  '&lt;altitudeMode&gt;absolute&lt;/altitudeMode&gt;\n'; </span>
        <span style="color: #0000FF">    225 </span><span style="color: #000000; font-weight: bold"><a> 127</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
                <span style="color: #A0A0A0"> 128</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 129</span> <span style="color: #228B22; background: #FFFFFF;">%% put all coordinates in one vector and split vector at nan's</span>
        <span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a> 130</a></span> <span style="color: #000000; background: #E0E0FF;">coordinates  = [lon(:)'; lat(:)'; z(:)']; </span>
-       <span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a> 131</a></span> <span style="color: #000000; background: #E0E0FF;">notnanindex  = find(~any(isnan(coordinates),1)); </span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a> 131</a></span> <span style="color: #000000; background: #E0E0FF;">notnanindex  = find(~any(isnan(coordinates),1)); </span>
        <span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a> 132</a></span> <span style="color: #000000; background: #E0E0FF;">if isempty(notnanindex) </span>
                <span style="color: #A0A0A0"> 133</span> <span style="color: #A0A0A0; background: #FFFFFF;">    coords_index = [1 size(coordinates,2)];</span>
        <span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a> 134</a></span> <span style="color: #228B22; background: #FFFFFF;">else </span>
@@ -169,13 +169,13 @@
                <span style="color: #A0A0A0"> 136</span> <span style="color: #000000; background: #E0E0FF;">        notnanindex([~(notnanindex(2:end)-notnanindex(1:end-1)==1) true])'];</span>
        <span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a> 137</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
        <span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a> 138</a></span> <span style="color: #000000; background: #E0E0FF;">output = []; </span>
-       <span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a> 139</a></span> <span style="color: #000000; background: #E0E0FF;">for ii = 1:size(coords_index,1) </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a> 139</a></span> <span style="color: #000000; background: #E0E0FF;">for ii = 1:size(coords_index,1) </span>
                <span style="color: #A0A0A0"> 140</span> <span style="color: #228B22; background: #FFFFFF;">    % coordinateString</span>
-<span style="color: #FF0000">  0.09 </span><span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a> 141</a></span> <span style="color: #000000; background: #E0E0FF;">    coordinateString  = sprintf(... </span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a> 141</a></span> <span style="color: #000000; background: #E0E0FF;">    coordinateString  = sprintf(... </span>
                <span style="color: #A0A0A0"> 142</span> <span style="color: #000000; background: #E0E0FF;">        '%3.8f,%3.8f,%3.3f ',...coords);</span>
                <span style="color: #A0A0A0"> 143</span> <span style="color: #000000; background: #E0E0FF;">        coordinates(:,coords_index(ii,1):coords_index(ii,2)));</span>
                <span style="color: #A0A0A0"> 144</span> <span style="color: #228B22; background: #FFFFFF;">    % generate output</span>
-<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a> 145</a></span> <span style="color: #000000; background: #E0E0FF;">    output = [output sprintf([... </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    337 </span><span style="color: #000000; font-weight: bold"><a> 145</a></span> <span style="color: #000000; background: #E0E0FF;">    output = [output sprintf([... </span>
                <span style="color: #A0A0A0"> 146</span> <span style="color: #000000; background: #E0E0FF;">        '&lt;Placemark&gt;\n'...</span>
                <span style="color: #A0A0A0"> 147</span> <span style="color: #000000; background: #E0E0FF;">        '%s'...visibility</span>
                <span style="color: #A0A0A0"> 148</span> <span style="color: #000000; background: #E0E0FF;">        '%s'...timeSpan</span>

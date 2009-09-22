@@ -49,7 +49,7 @@
                <span style="color: #A0A0A0">  16</span> <span style="color: #A0A0A0; background: #FFFFFF;">	jncid = NetcdfFile.open(ncfile);</span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  17</a></span> <span style="color: #228B22; background: #FFFFFF;">else </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  18</a></span> <span style="color: #000000; background: #E0E0FF;">	try  </span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  19</a></span> <span style="color: #000000; background: #E0E0FF;">		jncid = NetcdfFile.open ( ncfile ) </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  19</a></span> <span style="color: #000000; background: #E0E0FF;">		jncid = NetcdfFile.open ( ncfile ) </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  20</a></span> <span style="color: #000000; background: #E0E0FF;">	catch </span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  21</a></span> <span style="color: #000000; background: #E0E0FF;">		try </span>
                <span style="color: #A0A0A0">  22</span> <span style="color: #228B22; background: #FFFFFF;">			% try not to use preloading ... </span>
@@ -57,7 +57,7 @@
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  24</a></span> <span style="color: #000000; background: #E0E0FF;">				DODSNetcdfFile.setPreload(false); </span>
                <span style="color: #A0A0A0">  25</span> <span style="color: #A0A0A0; background: #FFFFFF;">			catch</span>
        <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  26</a></span> <span style="color: #000000; background: #E0E0FF;">			end </span>
-<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  27</a></span> <span style="color: #000000; background: #E0E0FF;">			jncid = DODSNetcdfFile(ncfile); </span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  27</a></span> <span style="color: #000000; background: #E0E0FF;">			jncid = DODSNetcdfFile(ncfile); </span>
                <span style="color: #A0A0A0">  28</span> <span style="color: #A0A0A0; background: #FFFFFF;">		catch</span>
                <span style="color: #A0A0A0">  29</span> <span style="color: #A0A0A0; background: #FFFFFF;">			msg = sprintf ( 'Could not open ''%s'' as either a local file, a regular URL, or as a DODS URL.', ncfile );</span>
                <span style="color: #A0A0A0">  30</span> <span style="color: #A0A0A0; background: #FFFFFF;">			error ( 'SNCTOOLS:nc_varget_java:fileOpenFailure', msg );</span>

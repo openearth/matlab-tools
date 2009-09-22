@@ -136,11 +136,11 @@
        <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 103</a></span> <span style="color: #000000; background: #E0E0FF;">lon    = lon(~isnan(c(:))); </span>
        <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 104</a></span> <span style="color: #000000; background: #E0E0FF;">lat    = lat(~isnan(c(:))); </span>
        <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 105</a></span> <span style="color: #000000; background: #E0E0FF;">c      =   c(~isnan(c(:))); </span>
-       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 106</a></span> <span style="color: #000000; background: #E0E0FF;">colors = OPT.colorMap(OPT.colorSteps); </span>
+<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 106</a></span> <span style="color: #000000; background: #E0E0FF;">colors = OPT.colorMap(OPT.colorSteps); </span>
                <span style="color: #A0A0A0"> 107</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 108</span> <span style="color: #228B22; background: #FFFFFF;">%% start KML</span>
                <span style="color: #A0A0A0"> 109</span> <span style="color: #228B22; background: #FFFFFF;"></span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 110</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.fid=fopen(OPT.fileName,'w'); </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 110</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.fid=fopen(OPT.fileName,'w'); </span>
                <span style="color: #A0A0A0"> 111</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 112</span> <span style="color: #228B22; background: #FFFFFF;">%% HEADER</span>
                <span style="color: #A0A0A0"> 113</span> <span style="color: #228B22; background: #FFFFFF;"></span>
@@ -157,10 +157,10 @@
        <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 124</a></span> <span style="color: #000000; background: #E0E0FF;">for ii = 1:OPT.colorSteps </span>
                <span style="color: #A0A0A0"> 125</span> <span style="color: #228B22; background: #FFFFFF;"></span>
        <span style="color: #0000FF">     40 </span><span style="color: #000000; font-weight: bold"><a> 126</a></span> <span style="color: #000000; background: #E0E0FF;">    OPT_stylePoly.name      = ['style' num2str(ii)]; </span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">     40 </span><span style="color: #000000; font-weight: bold"><a> 127</a></span> <span style="color: #000000; background: #E0E0FF;">    temp        = dec2hex(round([OPT.markerAlpha, colors(ii,:)].*255),2); </span>
+       <span style="color: #0000FF">     40 </span><span style="color: #000000; font-weight: bold"><a> 127</a></span> <span style="color: #000000; background: #E0E0FF;">    temp        = dec2hex(round([OPT.markerAlpha, colors(ii,:)].*255),2); </span>
        <span style="color: #0000FF">     40 </span><span style="color: #000000; font-weight: bold"><a> 128</a></span> <span style="color: #000000; background: #E0E0FF;">    markerColor = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)]; </span>
                <span style="color: #A0A0A0"> 129</span> <span style="color: #228B22; background: #FFFFFF;"></span>
-<span style="color: #FF0000">  0.05 </span><span style="color: #0000FF">     40 </span><span style="color: #000000; font-weight: bold"><a> 130</a></span> <span style="color: #000000; background: #E0E0FF;">    output = [output ... </span>
+<span style="color: #FF0000">  0.06 </span><span style="color: #0000FF">     40 </span><span style="color: #000000; font-weight: bold"><a> 130</a></span> <span style="color: #000000; background: #E0E0FF;">    output = [output ... </span>
                <span style="color: #A0A0A0"> 131</span> <span style="color: #000000; background: #E0E0FF;">        '&lt;StyleMap id="Speed_marker_',num2str(ii,'%0.3d'),'map"&gt;\n'...</span>
                <span style="color: #A0A0A0"> 132</span> <span style="color: #000000; background: #E0E0FF;">        ' &lt;Pair&gt;&lt;key&gt;normal&lt;/key&gt;&lt;styleUrl&gt;#Speed_marker_',num2str(ii,'%0.3d'),'n&lt;/styleUrl&gt;&lt;/Pair&gt;\n'...</span>
                <span style="color: #A0A0A0"> 133</span> <span style="color: #000000; background: #E0E0FF;">        ' &lt;Pair&gt;&lt;key&gt;highlight&lt;/key&gt;&lt;styleUrl&gt;#Speed_marker_',num2str(ii,'%0.3d'),'h&lt;/styleUrl&gt;&lt;/Pair&gt;\n'...</span>
@@ -203,9 +203,9 @@
        <span style="color: #0000FF">   2622 </span><span style="color: #000000; font-weight: bold"><a> 170</a></span> <span style="color: #000000; background: #E0E0FF;">    cindex = min(cindex,OPT.colorSteps); </span>
        <span style="color: #0000FF">   2622 </span><span style="color: #000000; font-weight: bold"><a> 171</a></span> <span style="color: #000000; background: #E0E0FF;">    cindex = max(cindex,1); % style numbering is 1-based </span>
                <span style="color: #A0A0A0"> 172</span> <span style="color: #228B22; background: #FFFFFF;"></span>
-<span style="color: #FF0000">  0.40 </span><span style="color: #0000FF">   2622 </span><span style="color: #000000; font-weight: bold"><a> 173</a></span> <span style="color: #000000; background: #E0E0FF;">    OPT_poly.styleName = ['Speed_marker_',num2str(cindex,'%0.3d'),'map']; </span>
+<span style="color: #FF0000">  0.38 </span><span style="color: #0000FF">   2622 </span><span style="color: #000000; font-weight: bold"><a> 173</a></span> <span style="color: #000000; background: #E0E0FF;">    OPT_poly.styleName = ['Speed_marker_',num2str(cindex,'%0.3d'),'map']; </span>
                <span style="color: #A0A0A0"> 174</span> <span style="color: #228B22; background: #FFFFFF;"></span>
-<span style="color: #FF0000">  0.09 </span><span style="color: #0000FF">   2622 </span><span style="color: #000000; font-weight: bold"><a> 175</a></span> <span style="color: #000000; background: #E0E0FF;">    newOutput= sprintf([... </span>
+<span style="color: #FF0000">  0.15 </span><span style="color: #0000FF">   2622 </span><span style="color: #000000; font-weight: bold"><a> 175</a></span> <span style="color: #000000; background: #E0E0FF;">    newOutput= sprintf([... </span>
                <span style="color: #A0A0A0"> 176</span> <span style="color: #000000; background: #E0E0FF;">        '&lt;Placemark&gt;\n'...</span>
                <span style="color: #A0A0A0"> 177</span> <span style="color: #000000; background: #E0E0FF;">        ' &lt;visibility&gt;1&lt;/visibility&gt;\n'...</span>
                <span style="color: #A0A0A0"> 178</span> <span style="color: #000000; background: #E0E0FF;">        ' &lt;description&gt;%s = %.2f%s&lt;/description&gt;\n'...long name, value, units</span>
@@ -218,10 +218,10 @@
                <span style="color: #A0A0A0"> 185</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 186</span> <span style="color: #228B22; background: #FFFFFF;">    % add newOutput to output</span>
 <span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">   2622 </span><span style="color: #000000; font-weight: bold"><a> 187</a></span> <span style="color: #000000; background: #E0E0FF;">    output(kk:kk+length(newOutput)-1) = newOutput; </span>
-<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">   2622 </span><span style="color: #000000; font-weight: bold"><a> 188</a></span> <span style="color: #000000; background: #E0E0FF;">    kk = kk+length(newOutput); </span>
+       <span style="color: #0000FF">   2622 </span><span style="color: #000000; font-weight: bold"><a> 188</a></span> <span style="color: #000000; background: #E0E0FF;">    kk = kk+length(newOutput); </span>
                <span style="color: #A0A0A0"> 189</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0"> 190</span> <span style="color: #228B22; background: #FFFFFF;">    % write output to file if output is full, and reset</span>
-<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">   2622 </span><span style="color: #000000; font-weight: bold"><a> 191</a></span> <span style="color: #000000; background: #E0E0FF;">    if kk&gt;1e5 </span>
+       <span style="color: #0000FF">   2622 </span><span style="color: #000000; font-weight: bold"><a> 191</a></span> <span style="color: #000000; background: #E0E0FF;">    if kk&gt;1e5 </span>
        <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 192</a></span> <span style="color: #000000; background: #E0E0FF;">        fprintf(OPT.fid,'%s',output(1:kk-1)); </span>
        <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 193</a></span> <span style="color: #000000; background: #E0E0FF;">        kk = 1; </span>
        <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 194</a></span> <span style="color: #000000; background: #E0E0FF;">        output = repmat(char(1),1,1e5); </span>

@@ -67,7 +67,7 @@
                <span style="color: #A0A0A0">  34</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  35</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
                <span style="color: #A0A0A0">  36</span> <span style="color: #228B22; background: #FFFFFF;">% Get the datatype, store as an integer</span>
-<span style="color: #FF0000">  0.05 </span><span style="color: #0000FF">     80 </span><span style="color: #000000; font-weight: bold"><a>  37</a></span> <span style="color: #000000; background: #E0E0FF;">datatype = char(jvarid.getDataType().toString()); </span>
+       <span style="color: #0000FF">     80 </span><span style="color: #000000; font-weight: bold"><a>  37</a></span> <span style="color: #000000; background: #E0E0FF;">datatype = char(jvarid.getDataType().toString()); </span>
        <span style="color: #0000FF">     80 </span><span style="color: #000000; font-weight: bold"><a>  38</a></span> <span style="color: #000000; background: #E0E0FF;">switch ( datatype ) </span>
        <span style="color: #0000FF">     80 </span><span style="color: #000000; font-weight: bold"><a>  39</a></span> <span style="color: #000000; background: #E0E0FF;">case 'double' </span>
        <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a>  40</a></span> <span style="color: #000000; background: #E0E0FF;">	DataSet.Nctype = nc_double; </span>
@@ -95,14 +95,14 @@
                <span style="color: #A0A0A0">  62</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  63</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
                <span style="color: #A0A0A0">  64</span> <span style="color: #228B22; background: #FFFFFF;">% determine if it is unlimited or not</span>
-       <span style="color: #0000FF">     80 </span><span style="color: #000000; font-weight: bold"><a>  65</a></span> <span style="color: #000000; background: #E0E0FF;">DataSet.Unlimited = double ( jvarid.isUnlimited() ); </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">     80 </span><span style="color: #000000; font-weight: bold"><a>  65</a></span> <span style="color: #000000; background: #E0E0FF;">DataSet.Unlimited = double ( jvarid.isUnlimited() ); </span>
                <span style="color: #A0A0A0">  66</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  67</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  68</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
                <span style="color: #A0A0A0">  69</span> <span style="color: #228B22; background: #FFFFFF;">% Retrieve the dimensions</span>
        <span style="color: #0000FF">     80 </span><span style="color: #000000; font-weight: bold"><a>  70</a></span> <span style="color: #000000; background: #E0E0FF;">Dimension = {}; </span>
        <span style="color: #0000FF">     80 </span><span style="color: #000000; font-weight: bold"><a>  71</a></span> <span style="color: #000000; background: #E0E0FF;">dims = jvarid.getDimensions(); </span>
-       <span style="color: #0000FF">     80 </span><span style="color: #000000; font-weight: bold"><a>  72</a></span> <span style="color: #000000; background: #E0E0FF;">nvdims = dims.size(); </span>
+<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">     80 </span><span style="color: #000000; font-weight: bold"><a>  72</a></span> <span style="color: #000000; background: #E0E0FF;">nvdims = dims.size(); </span>
        <span style="color: #0000FF">     80 </span><span style="color: #000000; font-weight: bold"><a>  73</a></span> <span style="color: #000000; background: #E0E0FF;">for j = 1:nvdims </span>
        <span style="color: #0000FF">    109 </span><span style="color: #000000; font-weight: bold"><a>  74</a></span> <span style="color: #000000; background: #E0E0FF;">	theDim = jvarid.getDimension(j-1); </span>
        <span style="color: #0000FF">    109 </span><span style="color: #000000; font-weight: bold"><a>  75</a></span> <span style="color: #000000; background: #E0E0FF;">	Dimension{j} = char ( theDim.getName() ); </span>
@@ -125,7 +125,7 @@
                <span style="color: #A0A0A0">  92</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
        <span style="color: #0000FF">     80 </span><span style="color: #000000; font-weight: bold"><a>  93</a></span> <span style="color: #000000; background: #E0E0FF;">Attribute = []; </span>
        <span style="color: #0000FF">     80 </span><span style="color: #000000; font-weight: bold"><a>  94</a></span> <span style="color: #000000; background: #E0E0FF;">j_att_list = jvarid.getAttributes(); </span>
-<span style="color: #FF0000">  0.14 </span><span style="color: #0000FF">     80 </span><span style="color: #000000; font-weight: bold"><a>  95</a></span> <span style="color: #000000; background: #E0E0FF;">DataSet.Attribute = snc_java_bundle_atts ( j_att_list ); </span>
+<span style="color: #FF0000">  0.15 </span><span style="color: #0000FF">     80 </span><span style="color: #000000; font-weight: bold"><a>  95</a></span> <span style="color: #000000; background: #E0E0FF;">DataSet.Attribute = snc_java_bundle_atts ( j_att_list ); </span>
                <span style="color: #A0A0A0">  96</span> <span style="color: #228B22; background: #FFFFFF;"></span>
                <span style="color: #A0A0A0">  97</span> <span style="color: #228B22; background: #FFFFFF;"></span>
        <span style="color: #0000FF">     80 </span><span style="color: #000000; font-weight: bold"><a>  98</a></span> <span style="color: #000000; background: #E0E0FF;">return </span>
