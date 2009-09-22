@@ -46,7 +46,7 @@ function testresult = KMLcontour3_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
+%% $Description (Name = KMLcontour3)
 % Publishable code that describes the test.
 
 %% $RunCode

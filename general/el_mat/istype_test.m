@@ -49,7 +49,7 @@ function testresult = istype_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
+%% $Description (Name = istype)
 % Publishable code that describes the test.
 
 %% $RunCode

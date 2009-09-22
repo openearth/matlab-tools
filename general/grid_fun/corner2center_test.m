@@ -1,3 +1,4 @@
+function testresult = corner2center_test()
 %% CORNER2CENTER_TEST  Test for corner2center
 %
 % TestName: corner2center_test
@@ -19,7 +20,7 @@
 % $Keywords: $
 
 
-%% #Case1 Description (CaseName = Unit test & IncludeCode = false & EvaluateCode = true)
+%% #Description (Name = Corner2Center Unit test & IncludeCode = false & EvaluateCode = true)
 % First we create two 3x3 matrix:
  
 x1 = [1 2 3;4 5 6;7 8 9];
@@ -33,8 +34,9 @@ x2 = [1 2 3;4 5 6;7 8 9];
 % * Both function contain the same mistake
 %
 
-%% #Case1 RunTest
+%% #RunCode
 testresult = false;
+try
 %CORNER2CENTER_TEST   regular grid test for center2corner & corner2center
 %
 %See also: CORNER2CENTER, CENTER2CORNER_TEST
@@ -47,10 +49,4 @@ y2 = center2corner(corner2center(x2));
 %y3 = center2corner(corner2center(x2));
 
 testresult = all(y1(:)==x1(:)) & all(y2(:)==x2(:));
-
-%% #Case1 TestResults (EvaluateCode = true)
-% The test result speaks for itself. It was:
-
-testresult
-
-
+end

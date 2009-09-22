@@ -49,7 +49,7 @@ function testresult = rws_getDataFromNetCDFGrid_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
+%% $Description (Name = getDataFromNetCDFGrid)
 % Publishable code that describes the test.
 
 % plot landboundary

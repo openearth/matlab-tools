@@ -49,7 +49,7 @@ function testresult = roundoff_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
+%% $Description (Name = roundoff unit test)
 % Publishable code that describes the test.
 
 %% $RunCode
@@ -86,7 +86,7 @@ testresult = all(res==Xround);
 end
 
 function testresult = roundofffloortest()
-%% $Description (Name = normal)
+%% $Description (Name = floor)
 %round pi (mode = floor)
 
 %% $RunCode

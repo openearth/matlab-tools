@@ -49,7 +49,7 @@ function testresult = bca2bct_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
+%% $Description (Name = bca2bct)
 % Publishable code that describes the test.
 
 %% $RunCode

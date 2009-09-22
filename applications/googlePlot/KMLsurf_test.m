@@ -46,7 +46,7 @@ function testresult = KMLsurf_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
+%% $Description (Name = KMLsurf)
 % Publishable code that describes the test.
 
 %% $RunCode

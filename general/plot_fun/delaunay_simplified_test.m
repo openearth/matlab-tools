@@ -49,7 +49,7 @@ function testresult = delaunay_simplified_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
+%% $Description (Name = delaunay_simplified)
 % Publishable code that describes the test.
 
 %% $RunCode
