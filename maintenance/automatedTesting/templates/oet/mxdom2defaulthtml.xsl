@@ -277,7 +277,13 @@ p.footer {
 
 <xsl:template match="img">
   <img vspace="5" hspace="5">
-    <xsl:attribute name="src"><xsl:value-of select="@src"/></xsl:attribute><xsl:text> </xsl:text>
+    <xsl:attribute name="src">
+    	<xsl:value-of select="@src"/>
+    </xsl:attribute>
+    <xsl:attribute name="relsrc">
+    	<xsl:value-of select="@src"/>
+    </xsl:attribute>
+    <xsl:text> </xsl:text>
   </img>
 </xsl:template>
 

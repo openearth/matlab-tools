@@ -2,7 +2,7 @@
 		{
 		$(htmldiv.children('div')[0]).children('img').each(function() 
 			{
-			$(this).attr('src',"html/"+$(this).attr('src'))
+			$(this).attr('src',"html/"+$(this).attr('relsrc'))
 			})
 		}
 	function loadtestcase(event)
