@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Function details for KMLtext</title>
+<link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="script/css/FunctionCoverage.css" rel="stylesheet" />
+<script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="script/js/matlab2accordion.js"></script>
+</head>
+<body>
+<h2 class="ui-widget-header ui-state-active ui-corner-all">KMLtext</h2>
+<div class="ui-widget-content ui-corner-all">
+<strong>Coverage results</strong><br/>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Total lines in function</td>
+<td class="td-linebottomrt">200</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Non-code lines (comments, blank lines)</td>
+<td class="td-linebottomrt">115</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines (lines that can run)</td>
+<td class="td-linebottomrt">85</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did run</td>
+<td class="td-linebottomrt">54</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did not run</td>
+<td class="td-linebottomrt">31</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Coverage (did run/can run)</td>
+<td class="td-linebottomrt">63.53 %</td></tr>
+</table>
+</div><br/>
+<div class="ui-widget-content ui-corner-all">
+<strong>Function listing</strong><br/>
+<pre>
+<span style="color: #FF0000; font-weight: bold; text-decoration: none">  time</span> <span style="color: #0000FF; font-weight: bold; text-decoration: none">  calls</span> <span style="font-weight: bold; text-decoration: none">line</span><br/>
+               <span style="color: #A0A0A0">   1</span> <span style="color: #A0A0A0; background: #FFFFFF;">function [OPT, Set, Default] = KMLtext(lat,lon,label,varargin)</span>
+               <span style="color: #A0A0A0">   2</span> <span style="color: #228B22; background: #FFFFFF;">% KMLTEXT Just like text </span>
+               <span style="color: #A0A0A0">   3</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   4</span> <span style="color: #228B22; background: #FFFFFF;">%    KMLtext(lat,lon,'fileName',fname,&lt;keyword,value&gt;)</span>
+               <span style="color: #A0A0A0">   5</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   6</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   7</span> <span style="color: #228B22; background: #FFFFFF;">% The following see &lt;keyword,value&gt; pairs have been implemented:</span>
+               <span style="color: #A0A0A0">   8</span> <span style="color: #228B22; background: #FFFFFF;">% The first arguemnt can be a z value</span>
+               <span style="color: #A0A0A0">   9</span> <span style="color: #228B22; background: #FFFFFF;">%  'fileName'   = [];          % name of output file. Can be either a *.kml </span>
+               <span style="color: #A0A0A0">  10</span> <span style="color: #228B22; background: #FFFFFF;">%                              % or *.kmz (zipped *.kml) file. if not  </span>
+               <span style="color: #A0A0A0">  11</span> <span style="color: #228B22; background: #FFFFFF;">%                              % defined a gui pops up</span>
+               <span style="color: #A0A0A0">  12</span> <span style="color: #228B22; background: #FFFFFF;">%  'kmlName'    = 'untitled';  % name of kml that shows in GE</span>
+               <span style="color: #A0A0A0">  13</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  14</span> <span style="color: #228B22; background: #FFFFFF;">% See also: googlePlot, text</span>
+               <span style="color: #A0A0A0">  15</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  16</span> <span style="color: #228B22; background: #FFFFFF;">% Example: </span>
+               <span style="color: #A0A0A0">  17</span> <span style="color: #228B22; background: #FFFFFF;">% </span>
+               <span style="color: #A0A0A0">  18</span> <span style="color: #228B22; background: #FFFFFF;">% [lat,lon] = meshgrid(54:.1:55, 4:.1:5);</span>
+               <span style="color: #A0A0A0">  19</span> <span style="color: #228B22; background: #FFFFFF;">% label = sprintf('%d,%d',lat(:),lon(:));</span>
+               <span style="color: #A0A0A0">  20</span> <span style="color: #228B22; background: #FFFFFF;">% labels=arrayfun(@(x,y) sprintf('%2.1f %2.1f',x,y),lat,lon,'uni',false);</span>
+               <span style="color: #A0A0A0">  21</span> <span style="color: #228B22; background: #FFFFFF;">% KMLtext(lat,lon,labels)</span>
+               <span style="color: #A0A0A0">  22</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  23</span> <span style="color: #228B22; background: #FFFFFF;">%   --------------------------------------------------------------------</span>
+               <span style="color: #A0A0A0">  24</span> <span style="color: #228B22; background: #FFFFFF;">%   Copyright (C) 2009 Deltares for Building with Nature</span>
+               <span style="color: #A0A0A0">  25</span> <span style="color: #228B22; background: #FFFFFF;">%       Thijs Damsma</span>
+               <span style="color: #A0A0A0">  26</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  27</span> <span style="color: #228B22; background: #FFFFFF;">%       Thijs.Damsma@deltares.nl	</span>
+               <span style="color: #A0A0A0">  28</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  29</span> <span style="color: #228B22; background: #FFFFFF;">%       Deltares</span>
+               <span style="color: #A0A0A0">  30</span> <span style="color: #228B22; background: #FFFFFF;">%       P.O. Box 177</span>
+               <span style="color: #A0A0A0">  31</span> <span style="color: #228B22; background: #FFFFFF;">%       2600 MH Delft</span>
+               <span style="color: #A0A0A0">  32</span> <span style="color: #228B22; background: #FFFFFF;">%       The Netherlands</span>
+               <span style="color: #A0A0A0">  33</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  34</span> <span style="color: #228B22; background: #FFFFFF;">%   This library is free software: you can redistribute it and/or modify</span>
+               <span style="color: #A0A0A0">  35</span> <span style="color: #228B22; background: #FFFFFF;">%   it under the terms of the GNU General Public License as published by</span>
+               <span style="color: #A0A0A0">  36</span> <span style="color: #228B22; background: #FFFFFF;">%   the Free Software Foundation, either version 3 of the License, or</span>
+               <span style="color: #A0A0A0">  37</span> <span style="color: #228B22; background: #FFFFFF;">%   (at your option) any later version.</span>
+               <span style="color: #A0A0A0">  38</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  39</span> <span style="color: #228B22; background: #FFFFFF;">%   This library is distributed in the hope that it will be useful,</span>
+               <span style="color: #A0A0A0">  40</span> <span style="color: #228B22; background: #FFFFFF;">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+               <span style="color: #A0A0A0">  41</span> <span style="color: #228B22; background: #FFFFFF;">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+               <span style="color: #A0A0A0">  42</span> <span style="color: #228B22; background: #FFFFFF;">%   GNU General Public License for more details.</span>
+               <span style="color: #A0A0A0">  43</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  44</span> <span style="color: #228B22; background: #FFFFFF;">%   You should have received a copy of the GNU General Public License</span>
+               <span style="color: #A0A0A0">  45</span> <span style="color: #228B22; background: #FFFFFF;">%   along with this library.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+               <span style="color: #A0A0A0">  46</span> <span style="color: #228B22; background: #FFFFFF;">%   --------------------------------------------------------------------</span>
+               <span style="color: #A0A0A0">  47</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  48</span> <span style="color: #228B22; background: #FFFFFF;">% $Id: KMLtext.m 1019 2009-09-10 14:41:02Z boer_g $</span>
+               <span style="color: #A0A0A0">  49</span> <span style="color: #228B22; background: #FFFFFF;">% $Date: 2009-09-10 16:41:02 +0200 (do, 10 sep 2009) $</span>
+               <span style="color: #A0A0A0">  50</span> <span style="color: #228B22; background: #FFFFFF;">% $Author: boer_g $</span>
+               <span style="color: #A0A0A0">  51</span> <span style="color: #228B22; background: #FFFFFF;">% $Revision: 1019 $</span>
+               <span style="color: #A0A0A0">  52</span> <span style="color: #228B22; background: #FFFFFF;">% $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/applications/googlePlot/KMLtext.m $</span>
+               <span style="color: #A0A0A0">  53</span> <span style="color: #228B22; background: #FFFFFF;">% $Keywords: $</span>
+               <span style="color: #A0A0A0">  54</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  55</span> <span style="color: #228B22; background: #FFFFFF;">%% input check</span>
+               <span style="color: #A0A0A0">  56</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  57</a></span> <span style="color: #000000; background: #E0E0FF;">if ~isempty(varargin) </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  58</a></span> <span style="color: #000000; background: #E0E0FF;">    if isnumeric(varargin{1}) </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a>  59</a></span> <span style="color: #000000; background: #E0E0FF;">        z = varargin{1}; </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a>  60</a></span> <span style="color: #000000; background: #E0E0FF;">        varargin(1) = []; </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a>  61</a></span> <span style="color: #000000; background: #E0E0FF;">        OPT.is3D = true; </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a>  62</a></span> <span style="color: #228B22; background: #FFFFFF;">    else </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a>  63</a></span> <span style="color: #000000; background: #E0E0FF;">        z = zeros(size(lat)); </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a>  64</a></span> <span style="color: #000000; background: #E0E0FF;">        OPT.is3D = false; </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a>  65</a></span> <span style="color: #000000; background: #E0E0FF;">    end </span>
+               <span style="color: #A0A0A0">  66</span> <span style="color: #228B22; background: #FFFFFF;">else</span>
+               <span style="color: #A0A0A0">  67</span> <span style="color: #A0A0A0; background: #FFFFFF;">    z = zeros(size(lat));</span>
+               <span style="color: #A0A0A0">  68</span> <span style="color: #A0A0A0; background: #FFFFFF;">    OPT.is3D = false;</span>
+               <span style="color: #A0A0A0">  69</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+               <span style="color: #A0A0A0">  70</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  71</a></span> <span style="color: #000000; background: #E0E0FF;">lat = lat(:); </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  72</a></span> <span style="color: #000000; background: #E0E0FF;">lon = lon(:); </span>
+               <span style="color: #A0A0A0">  73</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  74</span> <span style="color: #228B22; background: #FFFFFF;">% correct lat and lon</span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  75</a></span> <span style="color: #000000; background: #E0E0FF;">if any((abs(lat)/90)&gt;1) </span>
+               <span style="color: #A0A0A0">  76</span> <span style="color: #A0A0A0; background: #FFFFFF;">    error('latitude out of range, must be within -90..90')</span>
+               <span style="color: #A0A0A0">  77</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  78</a></span> <span style="color: #000000; background: #E0E0FF;">lon = mod(lon+180, 360)-180; </span>
+               <span style="color: #A0A0A0">  79</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  80</span> <span style="color: #228B22; background: #FFFFFF;">%% process varargin</span>
+               <span style="color: #A0A0A0">  81</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  82</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.fileName      = []; </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  83</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.kmlName       = 'untitled'; </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  84</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.openInGE      = false; </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  85</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.timeIn        = []; </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  86</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.timeOut       = []; </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  87</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.textColor     = [];% TO DO </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  88</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.textSize      = [];% TO DO </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  89</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.textAlpha     = [];% TO DO </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  90</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.labelDecimals = 1; </span>
+               <span style="color: #A0A0A0">  91</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  92</a></span> <span style="color: #000000; background: #E0E0FF;">[OPT, Set, Default] = setProperty(OPT, varargin); </span>
+               <span style="color: #A0A0A0">  93</span> <span style="color: #228B22; background: #FFFFFF;">%% make sure the labels are in a cell array.</span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  94</a></span> <span style="color: #000000; background: #E0E0FF;">if isnumeric(label) </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  95</a></span> <span style="color: #000000; background: #E0E0FF;">    label = label(:); </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  96</a></span> <span style="color: #000000; background: #E0E0FF;">    labelFormat = sprintf('%%.%df',OPT.labelDecimals); </span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a>  97</a></span> <span style="color: #000000; background: #E0E0FF;">    label = arrayfun(@(x) sprintf(labelFormat,x),label,'uni',false); </span>
+               <span style="color: #A0A0A0">  98</span> <span style="color: #A0A0A0; background: #FFFFFF;">elseif ischar(label)</span>
+               <span style="color: #A0A0A0">  99</span> <span style="color: #A0A0A0; background: #FFFFFF;">    label = cellstr(label);</span>
+               <span style="color: #A0A0A0"> 100</span> <span style="color: #228B22; background: #FFFFFF;">else</span>
+               <span style="color: #A0A0A0"> 101</span> <span style="color: #A0A0A0; background: #FFFFFF;">    label = label(:);</span>
+               <span style="color: #A0A0A0"> 102</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+               <span style="color: #A0A0A0"> 103</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 104</span> <span style="color: #228B22; background: #FFFFFF;">%% get filename</span>
+               <span style="color: #A0A0A0"> 105</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 106</a></span> <span style="color: #000000; background: #E0E0FF;">if isempty(OPT.fileName) </span>
+               <span style="color: #A0A0A0"> 107</span> <span style="color: #A0A0A0; background: #FFFFFF;">    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','text.kml');</span>
+               <span style="color: #A0A0A0"> 108</span> <span style="color: #A0A0A0; background: #FFFFFF;">    OPT.fileName = fullfile(filePath,fileName);</span>
+               <span style="color: #A0A0A0"> 109</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+               <span style="color: #A0A0A0"> 110</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 111</span> <span style="color: #228B22; background: #FFFFFF;">%% start KML</span>
+               <span style="color: #A0A0A0"> 112</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 113</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.fid=fopen(OPT.fileName,'w'); </span>
+               <span style="color: #A0A0A0"> 114</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 115</span> <span style="color: #228B22; background: #FFFFFF;">%% HEADER</span>
+               <span style="color: #A0A0A0"> 116</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 117</a></span> <span style="color: #000000; background: #E0E0FF;">OPT_header = struct(... </span>
+               <span style="color: #A0A0A0"> 118</span> <span style="color: #000000; background: #E0E0FF;">    'name',OPT.kmlName,...</span>
+               <span style="color: #A0A0A0"> 119</span> <span style="color: #000000; background: #E0E0FF;">    'open',0);</span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 120</a></span> <span style="color: #000000; background: #E0E0FF;">output = KML_header(OPT_header); </span>
+               <span style="color: #A0A0A0"> 121</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 122</span> <span style="color: #228B22; background: #FFFFFF;">%% define line styles</span>
+               <span style="color: #A0A0A0"> 123</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 124</span> <span style="color: #228B22; background: #FFFFFF;">% for ii = 1:length(ind);</span>
+               <span style="color: #A0A0A0"> 125</span> <span style="color: #228B22; background: #FFFFFF;">%     OPT_style = struct(...</span>
+               <span style="color: #A0A0A0"> 126</span> <span style="color: #228B22; background: #FFFFFF;">%         'name',['style' num2str(ii)],...</span>
+               <span style="color: #A0A0A0"> 127</span> <span style="color: #228B22; background: #FFFFFF;">%         'lineColor',OPT.lineColor(ind(ii),:) ,...</span>
+               <span style="color: #A0A0A0"> 128</span> <span style="color: #228B22; background: #FFFFFF;">%         'lineAlpha',OPT.lineAlpha(ind(ii)),...</span>
+               <span style="color: #A0A0A0"> 129</span> <span style="color: #228B22; background: #FFFFFF;">%         'lineWidth',OPT.lineWidth(ind(ii)));</span>
+               <span style="color: #A0A0A0"> 130</span> <span style="color: #228B22; background: #FFFFFF;">%     output = [output KML_style(OPT_style)];     %#ok&lt;AGROW&gt;</span>
+               <span style="color: #A0A0A0"> 131</span> <span style="color: #228B22; background: #FFFFFF;">% end</span>
+               <span style="color: #A0A0A0"> 132</span> <span style="color: #228B22; background: #FFFFFF;">% </span>
+               <span style="color: #A0A0A0"> 133</span> <span style="color: #228B22; background: #FFFFFF;">% % print styles</span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 134</a></span> <span style="color: #000000; background: #E0E0FF;">fprintf(OPT.fid,output); </span>
+               <span style="color: #A0A0A0"> 135</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 136</span> <span style="color: #228B22; background: #FFFFFF;">%% generate contents</span>
+               <span style="color: #A0A0A0"> 137</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 138</span> <span style="color: #228B22; background: #FFFFFF;">% preallocate output</span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 139</a></span> <span style="color: #000000; background: #E0E0FF;">output = repmat(char(1),1,1e5); </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 140</a></span> <span style="color: #000000; background: #E0E0FF;">kk = 1; </span>
+               <span style="color: #A0A0A0"> 141</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 142</span> <span style="color: #228B22; background: #FFFFFF;">% % line properties</span>
+               <span style="color: #A0A0A0"> 143</span> <span style="color: #228B22; background: #FFFFFF;">% OPT_line = struct(...</span>
+               <span style="color: #A0A0A0"> 144</span> <span style="color: #228B22; background: #FFFFFF;">%     'name','',...</span>
+               <span style="color: #A0A0A0"> 145</span> <span style="color: #228B22; background: #FFFFFF;">%     'styleName',['style' num2str(OPT.styleNR(1))],...</span>
+               <span style="color: #A0A0A0"> 146</span> <span style="color: #228B22; background: #FFFFFF;">%     'visibility',1,...</span>
+               <span style="color: #A0A0A0"> 147</span> <span style="color: #228B22; background: #FFFFFF;">%     'extrude',0);</span>
+               <span style="color: #A0A0A0"> 148</span> <span style="color: #228B22; background: #FFFFFF;">% </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 149</a></span> <span style="color: #000000; background: #E0E0FF;">if isempty(OPT.timeIn) </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 150</a></span> <span style="color: #000000; background: #E0E0FF;">   OPT_text.timeIn = []; </span>
+               <span style="color: #A0A0A0"> 151</span> <span style="color: #228B22; background: #FFFFFF;">else</span>
+               <span style="color: #A0A0A0"> 152</span> <span style="color: #A0A0A0; background: #FFFFFF;">   OPT_text.timeIn = datestr(OPT.timeIn(1),29); </span>
+               <span style="color: #A0A0A0"> 153</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+               <span style="color: #A0A0A0"> 154</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 155</a></span> <span style="color: #000000; background: #E0E0FF;">if isempty(OPT.timeOut) </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 156</a></span> <span style="color: #000000; background: #E0E0FF;">   OPT_text.timeOut = []; </span>
+               <span style="color: #A0A0A0"> 157</span> <span style="color: #228B22; background: #FFFFFF;">else</span>
+               <span style="color: #A0A0A0"> 158</span> <span style="color: #A0A0A0; background: #FFFFFF;">   OPT_text.timeOut = datestr(OPT.timeOut(1),29); </span>
+               <span style="color: #A0A0A0"> 159</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+               <span style="color: #A0A0A0"> 160</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 161</span> <span style="color: #228B22; background: #FFFFFF;">% loop through number of lines</span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 162</a></span> <span style="color: #000000; background: #E0E0FF;">for ii=1:length(lat) </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    656 </span><span style="color: #000000; font-weight: bold"><a> 163</a></span> <span style="color: #000000; background: #E0E0FF;">    if OPT.is3D </span>
+<span style="color: #FF0000">  0.08 </span><span style="color: #0000FF">    328 </span><span style="color: #000000; font-weight: bold"><a> 164</a></span> <span style="color: #000000; background: #E0E0FF;">        newOutput = KML_text(lat(ii),lon(ii),label{ii},z(ii),OPT_text); </span>
+       <span style="color: #0000FF">    328 </span><span style="color: #000000; font-weight: bold"><a> 165</a></span> <span style="color: #228B22; background: #FFFFFF;">    else </span>
+<span style="color: #FF0000">  0.09 </span><span style="color: #0000FF">    328 </span><span style="color: #000000; font-weight: bold"><a> 166</a></span> <span style="color: #000000; background: #E0E0FF;">        newOutput = KML_text(lat(ii),lon(ii),label{ii},OPT_text); </span>
+       <span style="color: #0000FF">    328 </span><span style="color: #000000; font-weight: bold"><a> 167</a></span> <span style="color: #000000; background: #E0E0FF;">    end </span>
+               <span style="color: #A0A0A0"> 168</span> <span style="color: #228B22; background: #FFFFFF;">    % add newOutput to output</span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    656 </span><span style="color: #000000; font-weight: bold"><a> 169</a></span> <span style="color: #000000; background: #E0E0FF;">    output(kk:kk+length(newOutput)-1) = newOutput; </span>
+       <span style="color: #0000FF">    656 </span><span style="color: #000000; font-weight: bold"><a> 170</a></span> <span style="color: #000000; background: #E0E0FF;">    kk = kk+length(newOutput); </span>
+               <span style="color: #A0A0A0"> 171</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 172</span> <span style="color: #228B22; background: #FFFFFF;">    % write output to file if output is full, and reset</span>
+       <span style="color: #0000FF">    656 </span><span style="color: #000000; font-weight: bold"><a> 173</a></span> <span style="color: #000000; background: #E0E0FF;">    if kk&gt;1e5 </span>
+               <span style="color: #A0A0A0"> 174</span> <span style="color: #A0A0A0; background: #FFFFFF;">        fprintf(OPT.fid,output(1:kk-1));</span>
+               <span style="color: #A0A0A0"> 175</span> <span style="color: #A0A0A0; background: #FFFFFF;">        kk = 1;</span>
+               <span style="color: #A0A0A0"> 176</span> <span style="color: #A0A0A0; background: #FFFFFF;">        output = repmat(char(1),1,1e5);</span>
+               <span style="color: #A0A0A0"> 177</span> <span style="color: #A0A0A0; background: #FFFFFF;">    end</span>
+       <span style="color: #0000FF">    656 </span><span style="color: #000000; font-weight: bold"><a> 178</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
+               <span style="color: #A0A0A0"> 179</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 180</span> <span style="color: #228B22; background: #FFFFFF;">% print output</span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 181</a></span> <span style="color: #000000; background: #E0E0FF;">fprintf(OPT.fid,output(1:kk-1));  </span>
+               <span style="color: #A0A0A0"> 182</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 183</span> <span style="color: #228B22; background: #FFFFFF;">%% FOOTER</span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 184</a></span> <span style="color: #000000; background: #E0E0FF;">output = KML_footer; </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 185</a></span> <span style="color: #000000; background: #E0E0FF;">fprintf(OPT.fid,output); </span>
+               <span style="color: #A0A0A0"> 186</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 187</span> <span style="color: #228B22; background: #FFFFFF;">%% close KML</span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 188</a></span> <span style="color: #000000; background: #E0E0FF;">fclose(OPT.fid); </span>
+               <span style="color: #A0A0A0"> 189</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 190</span> <span style="color: #228B22; background: #FFFFFF;">%% compress to kmz?</span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 191</a></span> <span style="color: #000000; background: #E0E0FF;">if strcmpi  ( OPT.fileName(end),'z') </span>
+               <span style="color: #A0A0A0"> 192</span> <span style="color: #A0A0A0; background: #FFFFFF;">    movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])</span>
+               <span style="color: #A0A0A0"> 193</span> <span style="color: #A0A0A0; background: #FFFFFF;">    zip     ( OPT.fileName,[OPT.fileName(1:end-3) 'kml']);</span>
+               <span style="color: #A0A0A0"> 194</span> <span style="color: #A0A0A0; background: #FFFFFF;">    movefile([OPT.fileName '.zip'],OPT.fileName)</span>
+               <span style="color: #A0A0A0"> 195</span> <span style="color: #A0A0A0; background: #FFFFFF;">    delete  ([OPT.fileName(1:end-3) 'kml'])</span>
+               <span style="color: #A0A0A0"> 196</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+               <span style="color: #A0A0A0"> 197</span> <span style="color: #228B22; background: #FFFFFF;">%% openInGoogle?</span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 198</a></span> <span style="color: #000000; background: #E0E0FF;">if OPT.openInGE </span>
+               <span style="color: #A0A0A0"> 199</span> <span style="color: #A0A0A0; background: #FFFFFF;">    system(OPT.fileName);</span>
+               <span style="color: #A0A0A0"> 200</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+</pre>
+<p><p>Other subfunctions in this file are not included in this listing.
+</div>
+</body>
+</html>

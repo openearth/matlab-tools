@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Function details for snctools\private\snc_java_bundle_atts</title>
+<link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="script/css/FunctionCoverage.css" rel="stylesheet" />
+<script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="script/js/matlab2accordion.js"></script>
+</head>
+<body>
+<h2 class="ui-widget-header ui-state-active ui-corner-all">snctools\private\snc_java_bundle_atts</h2>
+<div class="ui-widget-content ui-corner-all">
+<strong>Coverage results</strong><br/>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Total lines in function</td>
+<td class="td-linebottomrt">99</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Non-code lines (comments, blank lines)</td>
+<td class="td-linebottomrt">52</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines (lines that can run)</td>
+<td class="td-linebottomrt">47</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did run</td>
+<td class="td-linebottomrt">23</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did not run</td>
+<td class="td-linebottomrt">24</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Coverage (did run/can run)</td>
+<td class="td-linebottomrt">48.94 %</td></tr>
+</table>
+</div><br/>
+<div class="ui-widget-content ui-corner-all">
+<strong>Function listing</strong><br/>
+<pre>
+<span style="color: #FF0000; font-weight: bold; text-decoration: none">  time</span> <span style="color: #0000FF; font-weight: bold; text-decoration: none">  calls</span> <span style="font-weight: bold; text-decoration: none">line</span><br/>
+               <span style="color: #A0A0A0">   1</span> <span style="color: #A0A0A0; background: #FFFFFF;">function Attribute = snc_java_bundle_atts ( j_att_list )</span>
+               <span style="color: #A0A0A0">   2</span> <span style="color: #228B22; background: #FFFFFF;">% SNC_JAVA_BUNDLE_ATTS:  returns metadata about netcdf attributes</span>
+               <span style="color: #A0A0A0">   3</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   4</span> <span style="color: #228B22; background: #FFFFFF;">% USAGE:  Attribute = snc_java_bundle_atts ( j_att_list );</span>
+               <span style="color: #A0A0A0">   5</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   6</span> <span style="color: #228B22; background: #FFFFFF;">% PARAMETERS:</span>
+               <span style="color: #A0A0A0">   7</span> <span style="color: #228B22; background: #FFFFFF;">% Input:</span>
+               <span style="color: #A0A0A0">   8</span> <span style="color: #228B22; background: #FFFFFF;">%     j_att_list:</span>
+               <span style="color: #A0A0A0">   9</span> <span style="color: #228B22; background: #FFFFFF;">%         Of type "java.util.ArrayList".  Each list member is of type</span>
+               <span style="color: #A0A0A0">  10</span> <span style="color: #228B22; background: #FFFFFF;">%         "ucar.nc2.Attribute"</span>
+               <span style="color: #A0A0A0">  11</span> <span style="color: #228B22; background: #FFFFFF;">% Output:</span>
+               <span style="color: #A0A0A0">  12</span> <span style="color: #228B22; background: #FFFFFF;">%     Attribute:</span>
+               <span style="color: #A0A0A0">  13</span> <span style="color: #228B22; background: #FFFFFF;">%         Structure array of attribute metadata.  The fields are </span>
+               <span style="color: #A0A0A0">  14</span> <span style="color: #228B22; background: #FFFFFF;">%         </span>
+               <span style="color: #A0A0A0">  15</span> <span style="color: #228B22; background: #FFFFFF;">%         Name</span>
+               <span style="color: #A0A0A0">  16</span> <span style="color: #228B22; background: #FFFFFF;">%         Nctype</span>
+               <span style="color: #A0A0A0">  17</span> <span style="color: #228B22; background: #FFFFFF;">%         Value</span>
+               <span style="color: #A0A0A0">  18</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  19</span> <span style="color: #228B22; background: #FFFFFF;">% This function is private to SNCTOOLS.</span>
+               <span style="color: #A0A0A0">  20</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  21</span> <span style="color: #228B22; background: #FFFFFF;">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+               <span style="color: #A0A0A0">  22</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  23</span> <span style="color: #228B22; background: #FFFFFF;">% $Id: snc_java_bundle_atts.m 188 2009-02-06 14:31:52Z heijer $</span>
+               <span style="color: #A0A0A0">  24</span> <span style="color: #228B22; background: #FFFFFF;">% $LastChangedDate: 2009-02-06 15:31:52 +0100 (vr, 06 feb 2009) $</span>
+               <span style="color: #A0A0A0">  25</span> <span style="color: #228B22; background: #FFFFFF;">% $LastChangedRevision: 188 $</span>
+               <span style="color: #A0A0A0">  26</span> <span style="color: #228B22; background: #FFFFFF;">% $LastChangedBy: heijer $</span>
+               <span style="color: #A0A0A0">  27</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  28</span> <span style="color: #228B22; background: #FFFFFF;">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+               <span style="color: #A0A0A0">  29</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     93 </span><span style="color: #000000; font-weight: bold"><a>  30</a></span> <span style="color: #000000; background: #E0E0FF;">j_att_iterator = j_att_list.listIterator(); </span>
+       <span style="color: #0000FF">     93 </span><span style="color: #000000; font-weight: bold"><a>  31</a></span> <span style="color: #000000; background: #E0E0FF;">j = 0; </span>
+               <span style="color: #A0A0A0">  32</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     93 </span><span style="color: #000000; font-weight: bold"><a>  33</a></span> <span style="color: #000000; background: #E0E0FF;">Attribute = []; </span>
+               <span style="color: #A0A0A0">  34</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     93 </span><span style="color: #000000; font-weight: bold"><a>  35</a></span> <span style="color: #000000; background: #E0E0FF;">while 1 </span>
+               <span style="color: #A0A0A0">  36</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  37</span> <span style="color: #228B22; background: #FFFFFF;">	%</span>
+               <span style="color: #A0A0A0">  38</span> <span style="color: #228B22; background: #FFFFFF;">	% This throws an exception when we've reached the end of the list.</span>
+       <span style="color: #0000FF">    469 </span><span style="color: #000000; font-weight: bold"><a>  39</a></span> <span style="color: #000000; background: #E0E0FF;">	try </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    469 </span><span style="color: #000000; font-weight: bold"><a>  40</a></span> <span style="color: #000000; background: #E0E0FF;">		jatt = j_att_iterator.next(); </span>
+       <span style="color: #0000FF">     93 </span><span style="color: #000000; font-weight: bold"><a>  41</a></span> <span style="color: #000000; background: #E0E0FF;">	catch </span>
+       <span style="color: #0000FF">     93 </span><span style="color: #000000; font-weight: bold"><a>  42</a></span> <span style="color: #000000; background: #E0E0FF;">		break; </span>
+               <span style="color: #A0A0A0">  43</span> <span style="color: #A0A0A0; background: #FFFFFF;">	end</span>
+               <span style="color: #A0A0A0">  44</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">    376 </span><span style="color: #000000; font-weight: bold"><a>  45</a></span> <span style="color: #000000; background: #E0E0FF;">	j = j + 1; </span>
+               <span style="color: #A0A0A0">  46</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    376 </span><span style="color: #000000; font-weight: bold"><a>  47</a></span> <span style="color: #000000; background: #E0E0FF;">	Attribute(j).Name = char(jatt.getName()); </span>
+               <span style="color: #A0A0A0">  48</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">    376 </span><span style="color: #000000; font-weight: bold"><a>  49</a></span> <span style="color: #000000; background: #E0E0FF;">	datatype = char(jatt.getDataType().toString()); </span>
+       <span style="color: #0000FF">    376 </span><span style="color: #000000; font-weight: bold"><a>  50</a></span> <span style="color: #000000; background: #E0E0FF;">	switch ( datatype ) </span>
+       <span style="color: #0000FF">    376 </span><span style="color: #000000; font-weight: bold"><a>  51</a></span> <span style="color: #000000; background: #E0E0FF;">	case 'double' </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  52</a></span> <span style="color: #000000; background: #E0E0FF;">		Attribute(j).Nctype = 6; </span>
+               <span style="color: #A0A0A0">  53</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  54</a></span> <span style="color: #000000; background: #E0E0FF;">		j_array = jatt.getValues(); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  55</a></span> <span style="color: #000000; background: #E0E0FF;">		values = j_array.copyTo1DJavaArray(); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  56</a></span> <span style="color: #000000; background: #E0E0FF;">		Attribute(j).Value = double(values); </span>
+               <span style="color: #A0A0A0">  57</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">    375 </span><span style="color: #000000; font-weight: bold"><a>  58</a></span> <span style="color: #000000; background: #E0E0FF;">	case 'float' </span>
+               <span style="color: #A0A0A0">  59</span> <span style="color: #A0A0A0; background: #FFFFFF;">		Attribute(j).Nctype = 5;</span>
+               <span style="color: #A0A0A0">  60</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  61</span> <span style="color: #A0A0A0; background: #FFFFFF;">		j_array = jatt.getValues();</span>
+               <span style="color: #A0A0A0">  62</span> <span style="color: #A0A0A0; background: #FFFFFF;">		values = j_array.copyTo1DJavaArray();</span>
+               <span style="color: #A0A0A0">  63</span> <span style="color: #A0A0A0; background: #FFFFFF;">		Attribute(j).Value = double(values);</span>
+               <span style="color: #A0A0A0">  64</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">    375 </span><span style="color: #000000; font-weight: bold"><a>  65</a></span> <span style="color: #000000; background: #E0E0FF;">	case { 'String', 'char' } </span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">    375 </span><span style="color: #000000; font-weight: bold"><a>  66</a></span> <span style="color: #000000; background: #E0E0FF;">		Attribute(j).Nctype = 2; </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">    375 </span><span style="color: #000000; font-weight: bold"><a>  67</a></span> <span style="color: #000000; background: #E0E0FF;">		Attribute(j).Value = char ( jatt.getStringValue() ); </span>
+               <span style="color: #A0A0A0">  68</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  69</span> <span style="color: #A0A0A0; background: #FFFFFF;">	case 'byte'</span>
+               <span style="color: #A0A0A0">  70</span> <span style="color: #A0A0A0; background: #FFFFFF;">		Attribute(j).Nctype = 1;</span>
+               <span style="color: #A0A0A0">  71</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  72</span> <span style="color: #A0A0A0; background: #FFFFFF;">		j_array = jatt.getValues();</span>
+               <span style="color: #A0A0A0">  73</span> <span style="color: #A0A0A0; background: #FFFFFF;">		values = j_array.copyTo1DJavaArray();</span>
+               <span style="color: #A0A0A0">  74</span> <span style="color: #A0A0A0; background: #FFFFFF;">		Attribute(j).Value = double(values);</span>
+               <span style="color: #A0A0A0">  75</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  76</span> <span style="color: #A0A0A0; background: #FFFFFF;">	case 'short'</span>
+               <span style="color: #A0A0A0">  77</span> <span style="color: #A0A0A0; background: #FFFFFF;">		Attribute(j).Nctype = 3;</span>
+               <span style="color: #A0A0A0">  78</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  79</span> <span style="color: #A0A0A0; background: #FFFFFF;">		j_array = jatt.getValues();</span>
+               <span style="color: #A0A0A0">  80</span> <span style="color: #A0A0A0; background: #FFFFFF;">		values = j_array.copyTo1DJavaArray();</span>
+               <span style="color: #A0A0A0">  81</span> <span style="color: #A0A0A0; background: #FFFFFF;">		Attribute(j).Value = double(values);</span>
+               <span style="color: #A0A0A0">  82</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  83</span> <span style="color: #A0A0A0; background: #FFFFFF;">	case 'int'</span>
+               <span style="color: #A0A0A0">  84</span> <span style="color: #A0A0A0; background: #FFFFFF;">		Attribute(j).Nctype = 4;</span>
+               <span style="color: #A0A0A0">  85</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  86</span> <span style="color: #A0A0A0; background: #FFFFFF;">		j_array = jatt.getValues();</span>
+               <span style="color: #A0A0A0">  87</span> <span style="color: #A0A0A0; background: #FFFFFF;">		values = j_array.copyTo1DJavaArray();</span>
+               <span style="color: #A0A0A0">  88</span> <span style="color: #A0A0A0; background: #FFFFFF;">		Attribute(j).Value = double(values);</span>
+               <span style="color: #A0A0A0">  89</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  90</span> <span style="color: #A0A0A0; background: #FFFFFF;">	otherwise </span>
+               <span style="color: #A0A0A0">  91</span> <span style="color: #A0A0A0; background: #FFFFFF;">		msg = sprintf ( '%s:  unhandled attribute datatype ''%s''\n', mfilename, datatype );</span>
+               <span style="color: #A0A0A0">  92</span> <span style="color: #A0A0A0; background: #FFFFFF;">		error ( msg );</span>
+               <span style="color: #A0A0A0">  93</span> <span style="color: #A0A0A0; background: #FFFFFF;">	end</span>
+               <span style="color: #A0A0A0">  94</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  95</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  96</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">    376 </span><span style="color: #000000; font-weight: bold"><a>  97</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
+               <span style="color: #A0A0A0">  98</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     93 </span><span style="color: #000000; font-weight: bold"><a>  99</a></span> <span style="color: #000000; background: #E0E0FF;">return </span>
+</pre>
+<p><p>Other subfunctions in this file are not included in this listing.
+</div>
+</body>
+</html>

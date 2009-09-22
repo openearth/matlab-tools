@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Function details for snctools\private\nc_info_java>get_variables_j</title>
+<link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="script/css/FunctionCoverage.css" rel="stylesheet" />
+<script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="script/js/matlab2accordion.js"></script>
+</head>
+<body>
+<h2 class="ui-widget-header ui-state-active ui-corner-all">snctools\private\nc_info_java>get_variables_j</h2>
+<div class="ui-widget-content ui-corner-all">
+<strong>Coverage results</strong><br/>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Total lines in function</td>
+<td class="td-linebottomrt">46</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Non-code lines (comments, blank lines)</td>
+<td class="td-linebottomrt">23</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines (lines that can run)</td>
+<td class="td-linebottomrt">23</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did run</td>
+<td class="td-linebottomrt">20</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did not run</td>
+<td class="td-linebottomrt">3</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Coverage (did run/can run)</td>
+<td class="td-linebottomrt">86.96 %</td></tr>
+</table>
+</div><br/>
+<div class="ui-widget-content ui-corner-all">
+<strong>Function listing</strong><br/>
+<pre>
+<span style="color: #FF0000; font-weight: bold; text-decoration: none">  time</span> <span style="color: #0000FF; font-weight: bold; text-decoration: none">  calls</span> <span style="font-weight: bold; text-decoration: none">line</span><br/>
+               <span style="color: #A0A0A0"> 122</span> <span style="color: #A0A0A0; background: #FFFFFF;">function Dataset = get_variables_j ( root_group )</span>
+               <span style="color: #A0A0A0"> 123</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 124</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 125</span> <span style="color: #228B22; background: #FFFFFF;">% Get information on the variables themselves.</span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a> 126</a></span> <span style="color: #000000; background: #E0E0FF;">var_count = 0; </span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a> 127</a></span> <span style="color: #000000; background: #E0E0FF;">j_var_list = root_group.getVariables(); </span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a> 128</a></span> <span style="color: #000000; background: #E0E0FF;">j_var_iterator = j_var_list.listIterator(); </span>
+               <span style="color: #A0A0A0"> 129</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a> 130</a></span> <span style="color: #000000; background: #E0E0FF;">Dataset.Name = ''; </span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a> 131</a></span> <span style="color: #000000; background: #E0E0FF;">Dataset.Nctype = 0; </span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a> 132</a></span> <span style="color: #000000; background: #E0E0FF;">Dataset.Unlimited = 0; </span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a> 133</a></span> <span style="color: #000000; background: #E0E0FF;">Dataset.Dimension = {}; </span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a> 134</a></span> <span style="color: #000000; background: #E0E0FF;">Dataset.Size = 0; </span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a> 135</a></span> <span style="color: #000000; background: #E0E0FF;">Dataset.Attribute = struct([]); </span>
+               <span style="color: #A0A0A0"> 136</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a> 137</a></span> <span style="color: #000000; background: #E0E0FF;">Dataset = repmat ( Dataset, j_var_list.size(), 1 ); </span>
+               <span style="color: #A0A0A0"> 138</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a> 139</a></span> <span style="color: #000000; background: #E0E0FF;">while 1 </span>
+               <span style="color: #A0A0A0"> 140</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     78 </span><span style="color: #000000; font-weight: bold"><a> 141</a></span> <span style="color: #000000; background: #E0E0FF;">    try </span>
+               <span style="color: #A0A0A0"> 142</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 143</span> <span style="color: #228B22; background: #FFFFFF;">        %</span>
+               <span style="color: #A0A0A0"> 144</span> <span style="color: #228B22; background: #FFFFFF;">        % This throws an exception when we've reached the end of the list.</span>
+       <span style="color: #0000FF">     78 </span><span style="color: #000000; font-weight: bold"><a> 145</a></span> <span style="color: #000000; background: #E0E0FF;">        jvarid = j_var_iterator.next(); </span>
+               <span style="color: #A0A0A0"> 146</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a> 147</a></span> <span style="color: #000000; background: #E0E0FF;">    catch </span>
+               <span style="color: #A0A0A0"> 148</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 149</span> <span style="color: #228B22; background: #FFFFFF;">        %</span>
+               <span style="color: #A0A0A0"> 150</span> <span style="color: #228B22; background: #FFFFFF;">        % No more variables left to process.</span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a> 151</a></span> <span style="color: #000000; background: #E0E0FF;">        break; </span>
+               <span style="color: #A0A0A0"> 152</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 153</span> <span style="color: #A0A0A0; background: #FFFFFF;">    end</span>
+               <span style="color: #A0A0A0"> 154</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     65 </span><span style="color: #000000; font-weight: bold"><a> 155</a></span> <span style="color: #000000; background: #E0E0FF;">    var_count = var_count + 1; </span>
+               <span style="color: #A0A0A0"> 156</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 157</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 158</span> <span style="color: #228B22; background: #FFFFFF;">    %mDataset = nc_getvarinfo ( root_group, jvarid );</span>
+<span style="color: #FF0000">  0.12 </span><span style="color: #0000FF">     65 </span><span style="color: #000000; font-weight: bold"><a> 159</a></span> <span style="color: #000000; background: #E0E0FF;">	mDataset = snc_java_varid_info ( jvarid ); </span>
+               <span style="color: #A0A0A0"> 160</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     65 </span><span style="color: #000000; font-weight: bold"><a> 161</a></span> <span style="color: #000000; background: #E0E0FF;">    Dataset(var_count,1) = mDataset; </span>
+               <span style="color: #A0A0A0"> 162</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     65 </span><span style="color: #000000; font-weight: bold"><a> 163</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
+               <span style="color: #A0A0A0"> 164</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a> 165</a></span> <span style="color: #000000; background: #E0E0FF;">if var_count == 0 </span>
+               <span style="color: #A0A0A0"> 166</span> <span style="color: #A0A0A0; background: #FFFFFF;">    Dataset = [];</span>
+               <span style="color: #A0A0A0"> 167</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+</pre>
+<p><p>Other subfunctions in this file are not included in this listing.
+</div>
+</body>
+</html>

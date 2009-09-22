@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Function details for GetAreaTriangle</title>
+<link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="script/css/FunctionCoverage.css" rel="stylesheet" />
+<script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="script/js/matlab2accordion.js"></script>
+</head>
+<body>
+<h2 class="ui-widget-header ui-state-active ui-corner-all">GetAreaTriangle</h2>
+<div class="ui-widget-content ui-corner-all">
+<strong>Coverage results</strong><br/>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Total lines in function</td>
+<td class="td-linebottomrt">98</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Non-code lines (comments, blank lines)</td>
+<td class="td-linebottomrt">83</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines (lines that can run)</td>
+<td class="td-linebottomrt">15</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did run</td>
+<td class="td-linebottomrt">4</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did not run</td>
+<td class="td-linebottomrt">11</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Coverage (did run/can run)</td>
+<td class="td-linebottomrt">26.67 %</td></tr>
+</table>
+</div><br/>
+<div class="ui-widget-content ui-corner-all">
+<strong>Function listing</strong><br/>
+<pre>
+<span style="color: #FF0000; font-weight: bold; text-decoration: none">  time</span> <span style="color: #0000FF; font-weight: bold; text-decoration: none">  calls</span> <span style="font-weight: bold; text-decoration: none">line</span><br/>
+               <span style="color: #A0A0A0">   1</span> <span style="color: #A0A0A0; background: #FFFFFF;">function Area=GetAreaTriangle(x0,y0,x1,y1,x2,y2,varargin)</span>
+               <span style="color: #A0A0A0">   2</span> <span style="color: #228B22; background: #FFFFFF;">%GETAREATRIANGLE   calculates areas of array of triangles</span>
+               <span style="color: #A0A0A0">   3</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   4</span> <span style="color: #228B22; background: #FFFFFF;">%  area = GetAreaTriangle(x0,y0,x1,y1,x2,y2) returns area of following triangles:</span>
+               <span style="color: #A0A0A0">   5</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   6</span> <span style="color: #228B22; background: #FFFFFF;">%            (x2,y2)</span>
+               <span style="color: #A0A0A0">   7</span> <span style="color: #228B22; background: #FFFFFF;">%           .       .            </span>
+               <span style="color: #A0A0A0">   8</span> <span style="color: #228B22; background: #FFFFFF;">%          .          .           </span>
+               <span style="color: #A0A0A0">   9</span> <span style="color: #228B22; background: #FFFFFF;">%         .            (x1,y1)</span>
+               <span style="color: #A0A0A0">  10</span> <span style="color: #228B22; background: #FFFFFF;">%        .            .                </span>
+               <span style="color: #A0A0A0">  11</span> <span style="color: #228B22; background: #FFFFFF;">%       .         .                  </span>
+               <span style="color: #A0A0A0">  12</span> <span style="color: #228B22; background: #FFFFFF;">%    (x0,y0)  .</span>
+               <span style="color: #A0A0A0">  13</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  14</span> <span style="color: #228B22; background: #FFFFFF;">%  GetAreaTriangle is vectorized !</span>
+               <span style="color: #A0A0A0">  15</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  16</span> <span style="color: #228B22; background: #FFFFFF;">%  See also: GETAREACURVILINEARGRID, TRIAREA</span>
+               <span style="color: #A0A0A0">  17</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  18</span> <span style="color: #228B22; background: #FFFFFF;">% Version 1.0, June 2004</span>
+               <span style="color: #A0A0A0">  19</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  20</span> <span style="color: #228B22; background: #FFFFFF;">%   --------------------------------------------------------------------</span>
+               <span style="color: #A0A0A0">  21</span> <span style="color: #228B22; background: #FFFFFF;">%   Copyright (C) 2004 Delft University of Technology</span>
+               <span style="color: #A0A0A0">  22</span> <span style="color: #228B22; background: #FFFFFF;">%       Gerben J. de Boer</span>
+               <span style="color: #A0A0A0">  23</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  24</span> <span style="color: #228B22; background: #FFFFFF;">%       g.j.deboer@tudelft.nl (gerben.deboer@wldelft.nl)</span>
+               <span style="color: #A0A0A0">  25</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  26</span> <span style="color: #228B22; background: #FFFFFF;">%       Fluid Mechanics Section</span>
+               <span style="color: #A0A0A0">  27</span> <span style="color: #228B22; background: #FFFFFF;">%       Faculty of Civil Engineering and Geosciences</span>
+               <span style="color: #A0A0A0">  28</span> <span style="color: #228B22; background: #FFFFFF;">%       PO Box 5048</span>
+               <span style="color: #A0A0A0">  29</span> <span style="color: #228B22; background: #FFFFFF;">%       2600 GA Delft</span>
+               <span style="color: #A0A0A0">  30</span> <span style="color: #228B22; background: #FFFFFF;">%       The Netherlands</span>
+               <span style="color: #A0A0A0">  31</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  32</span> <span style="color: #228B22; background: #FFFFFF;">%   This library is free software; you can redistribute it and/or</span>
+               <span style="color: #A0A0A0">  33</span> <span style="color: #228B22; background: #FFFFFF;">%   modify it under the terms of the GNU Lesser General Public</span>
+               <span style="color: #A0A0A0">  34</span> <span style="color: #228B22; background: #FFFFFF;">%   License as published by the Free Software Foundation; either</span>
+               <span style="color: #A0A0A0">  35</span> <span style="color: #228B22; background: #FFFFFF;">%   version 2.1 of the License, or (at your option) any later version.</span>
+               <span style="color: #A0A0A0">  36</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  37</span> <span style="color: #228B22; background: #FFFFFF;">%   This library is distributed in the hope that it will be useful,</span>
+               <span style="color: #A0A0A0">  38</span> <span style="color: #228B22; background: #FFFFFF;">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+               <span style="color: #A0A0A0">  39</span> <span style="color: #228B22; background: #FFFFFF;">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span>
+               <span style="color: #A0A0A0">  40</span> <span style="color: #228B22; background: #FFFFFF;">%   Lesser General Public License for more details.</span>
+               <span style="color: #A0A0A0">  41</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  42</span> <span style="color: #228B22; background: #FFFFFF;">%   You should have received a copy of the GNU Lesser General Public</span>
+               <span style="color: #A0A0A0">  43</span> <span style="color: #228B22; background: #FFFFFF;">%   License along with this library; if not, write to the Free Software</span>
+               <span style="color: #A0A0A0">  44</span> <span style="color: #228B22; background: #FFFFFF;">%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307</span>
+               <span style="color: #A0A0A0">  45</span> <span style="color: #228B22; background: #FFFFFF;">%   USA</span>
+               <span style="color: #A0A0A0">  46</span> <span style="color: #228B22; background: #FFFFFF;">%   --------------------------------------------------------------------</span>
+               <span style="color: #A0A0A0">  47</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     10 </span><span style="color: #000000; font-weight: bold"><a>  48</a></span> <span style="color: #000000; background: #E0E0FF;">   method = 1; % DEFAULT </span>
+               <span style="color: #A0A0A0">  49</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">     10 </span><span style="color: #000000; font-weight: bold"><a>  50</a></span> <span style="color: #000000; background: #E0E0FF;">   if nargin==7 </span>
+               <span style="color: #A0A0A0">  51</span> <span style="color: #A0A0A0; background: #FFFFFF;">      method = varargin{1};</span>
+               <span style="color: #A0A0A0">  52</span> <span style="color: #A0A0A0; background: #FFFFFF;">   end</span>
+               <span style="color: #A0A0A0">  53</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">     10 </span><span style="color: #000000; font-weight: bold"><a>  54</a></span> <span style="color: #000000; background: #E0E0FF;">   if method == 1 % simple </span>
+               <span style="color: #A0A0A0">  55</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     10 </span><span style="color: #000000; font-weight: bold"><a>  56</a></span> <span style="color: #000000; background: #E0E0FF;">      Area = 0.5*abs((x0-x1).*(y2-y1)-(y0-y1).*(x2-x1)); </span>
+               <span style="color: #A0A0A0">  57</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
+               <span style="color: #A0A0A0">  58</span> <span style="color: #228B22; background: #FFFFFF;">      % Method copied from triarea.m  function of Bert jagers</span>
+               <span style="color: #A0A0A0">  59</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
+               <span style="color: #A0A0A0">  60</span> <span style="color: #A0A0A0; background: #FFFFFF;">   elseif method==2 </span>
+               <span style="color: #A0A0A0">  61</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  62</span> <span style="color: #228B22; background: #FFFFFF;">      % This method is always accurate according to its author.</span>
+               <span style="color: #A0A0A0">  63</span> <span style="color: #228B22; background: #FFFFFF;">      % However, it DOES NOT WORK in case of the following needle shaped triangle.</span>
+               <span style="color: #A0A0A0">  64</span> <span style="color: #228B22; background: #FFFFFF;">      % (x0,y0) = [0   ,0   ];</span>
+               <span style="color: #A0A0A0">  65</span> <span style="color: #228B22; background: #FFFFFF;">      % (x1,y1) = [1e4 ,0   ];</span>
+               <span style="color: #A0A0A0">  66</span> <span style="color: #228B22; background: #FFFFFF;">      % (x2,y2) = [-1e4,1e-4];</span>
+               <span style="color: #A0A0A0">  67</span> <span style="color: #228B22; background: #FFFFFF;">      % The caseu is that thye method requires the face lengths (u,v,w),</span>
+               <span style="color: #A0A0A0">  68</span> <span style="color: #228B22; background: #FFFFFF;">      % which I have to calculate first with my own (apparently inaccurate) method.</span>
+               <span style="color: #A0A0A0">  69</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  70</span> <span style="color: #A0A0A0; background: #FFFFFF;">      u = sqrt((x1 - x0).^2 +  (y1 - y0).^2); % lentgh of side u of tethehedron</span>
+               <span style="color: #A0A0A0">  71</span> <span style="color: #A0A0A0; background: #FFFFFF;">      v = sqrt((x2 - x1).^2 +  (y2 - y1).^2); % lentgh of side v of tethehedron</span>
+               <span style="color: #A0A0A0">  72</span> <span style="color: #A0A0A0; background: #FFFFFF;">      w = sqrt((x0 - x2).^2 +  (y0 - y2).^2); % lentgh of side w of tethehedron</span>
+               <span style="color: #A0A0A0">  73</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
+               <span style="color: #A0A0A0">  74</span> <span style="color: #A0A0A0; background: #FFFFFF;">      U_m_V_p_W = (max(u, w) - v) + min(u, w); % (u-v+w)</span>
+               <span style="color: #A0A0A0">  75</span> <span style="color: #A0A0A0; background: #FFFFFF;">      V_m_W_p_U = (max(v, u) - w) + min(v, u); % (v-w+u)</span>
+               <span style="color: #A0A0A0">  76</span> <span style="color: #A0A0A0; background: #FFFFFF;">      W_m_U_p_V = (max(w, v) - u) + min(w, v); % (w-u+v)</span>
+               <span style="color: #A0A0A0">  77</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
+               <span style="color: #A0A0A0">  78</span> <span style="color: #A0A0A0; background: #FFFFFF;">      Area      = sqrt((u+v+w) * V_m_W_p_U * W_m_U_p_V * U_m_V_p_W)/4;</span>
+               <span style="color: #A0A0A0">  79</span> <span style="color: #228B22; background: #FFFFFF;">                % sqrt(((u+v+w) · (v–w+u)   · (w–u+v)   · (u–v+w))</span>
+               <span style="color: #A0A0A0">  80</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+               <span style="color: #A0A0A0">  81</span> <span style="color: #228B22; background: #FFFFFF;">      %   SOURCE METHOD 2</span>
+               <span style="color: #A0A0A0">  82</span> <span style="color: #228B22; background: #FFFFFF;">      %   -----------------------------------------------</span>
+               <span style="color: #A0A0A0">  83</span> <span style="color: #228B22; background: #FFFFFF;">      %   What has the Volume of a Tetrahedron to do with</span>
+               <span style="color: #A0A0A0">  84</span> <span style="color: #228B22; background: #FFFFFF;">      %   Computer Programming Languages?</span>
+               <span style="color: #A0A0A0">  85</span> <span style="color: #228B22; background: #FFFFFF;">      %</span>
+               <span style="color: #A0A0A0">  86</span> <span style="color: #228B22; background: #FFFFFF;">      %   Prof. W. Kahan</span>
+               <span style="color: #A0A0A0">  87</span> <span style="color: #228B22; background: #FFFFFF;">      %   Mathematics Dept., and</span>
+               <span style="color: #A0A0A0">  88</span> <span style="color: #228B22; background: #FFFFFF;">      %   Elect. Eng. &amp; Computer Science Dept.</span>
+               <span style="color: #A0A0A0">  89</span> <span style="color: #228B22; background: #FFFFFF;">      %   University of California at Berkeley</span>
+               <span style="color: #A0A0A0">  90</span> <span style="color: #228B22; background: #FFFFFF;">      %   Prepared for</span>
+               <span style="color: #A0A0A0">  91</span> <span style="color: #228B22; background: #FFFFFF;">      %   Prof. B.N. Parlett’s Seminar on Computational Linear Algebra</span>
+               <span style="color: #A0A0A0">  92</span> <span style="color: #228B22; background: #FFFFFF;">      %   Wed. 21 March 2001</span>
+               <span style="color: #A0A0A0">  93</span> <span style="color: #228B22; background: #FFFFFF;">      %   and Stanford’s Scientific Computing Seminar</span>
+               <span style="color: #A0A0A0">  94</span> <span style="color: #228B22; background: #FFFFFF;">      %   Tues. 17 April 2001</span>
+               <span style="color: #A0A0A0">  95</span> <span style="color: #228B22; background: #FFFFFF;">      %   </span>
+               <span style="color: #A0A0A0">  96</span> <span style="color: #228B22; background: #FFFFFF;">      %   http://www.cs.berkeley.edu/~wkahan/VtetLang.pdf</span>
+               <span style="color: #A0A0A0">  97</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  98</span> <span style="color: #A0A0A0; background: #FFFFFF;">   end</span>
+</pre>
+<p><p>Other subfunctions in this file are not included in this listing.
+</div>
+</body>
+</html>

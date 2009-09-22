@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Function details for center2corner>mirror_in_diagonal</title>
+<link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="script/css/FunctionCoverage.css" rel="stylesheet" />
+<script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="script/js/matlab2accordion.js"></script>
+</head>
+<body>
+<h2 class="ui-widget-header ui-state-active ui-corner-all">center2corner>mirror_in_diagonal</h2>
+<div class="ui-widget-content ui-corner-all">
+<strong>Coverage results</strong><br/>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Total lines in function</td>
+<td class="td-linebottomrt">92</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Non-code lines (comments, blank lines)</td>
+<td class="td-linebottomrt">67</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines (lines that can run)</td>
+<td class="td-linebottomrt">25</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did run</td>
+<td class="td-linebottomrt">11</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did not run</td>
+<td class="td-linebottomrt">14</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Coverage (did run/can run)</td>
+<td class="td-linebottomrt">44.00 %</td></tr>
+</table>
+</div><br/>
+<div class="ui-widget-content ui-corner-all">
+<strong>Function listing</strong><br/>
+<pre>
+<span style="color: #FF0000; font-weight: bold; text-decoration: none">  time</span> <span style="color: #0000FF; font-weight: bold; text-decoration: none">  calls</span> <span style="font-weight: bold; text-decoration: none">line</span><br/>
+               <span style="color: #A0A0A0"> 282</span> <span style="color: #A0A0A0; background: #FFFFFF;">function xcor = mirror_in_diagonal(xcen,xcor,method)</span>
+               <span style="color: #A0A0A0"> 283</span> <span style="color: #228B22; background: #FFFFFF;">     </span>
+               <span style="color: #A0A0A0"> 284</span> <span style="color: #228B22; background: #FFFFFF;">%MIRROR_IN_DIAGONAL</span>
+               <span style="color: #A0A0A0"> 285</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 286</span> <span style="color: #228B22; background: #FFFFFF;">% xcor = mirror_in_diagonal(xcen,xcor)</span>
+               <span style="color: #A0A0A0"> 287</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 288</span> <span style="color: #228B22; background: #FFFFFF;">% for mirroring in other diagonal just fliplr or flipud</span>
+               <span style="color: #A0A0A0"> 289</span> <span style="color: #228B22; background: #FFFFFF;">% the in and output arguments.</span>
+               <span style="color: #A0A0A0"> 290</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 291</span> <span style="color: #228B22; background: #FFFFFF;">%%% HOW DOES IT WORK:</span>
+               <span style="color: #A0A0A0"> 292</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 293</span> <span style="color: #228B22; background: #FFFFFF;">%  + center points,  input, first dimension, m index</span>
+               <span style="color: #A0A0A0"> 294</span> <span style="color: #228B22; background: #FFFFFF;">%  o center points INACTIVE (NaN-valued)</span>
+               <span style="color: #A0A0A0"> 295</span> <span style="color: #228B22; background: #FFFFFF;">%  x corner points, output, first dimension, m index</span>
+               <span style="color: #A0A0A0"> 296</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 297</span> <span style="color: #228B22; background: #FFFFFF;">%  x      x      x      x      x      x      x      x</span>
+               <span style="color: #A0A0A0"> 298</span> <span style="color: #228B22; background: #FFFFFF;">%     1,1    2,1    3,1    4,1    5,1    6,1    7,1</span>
+               <span style="color: #A0A0A0"> 299</span> <span style="color: #228B22; background: #FFFFFF;">%      +------+------+------+------+------+......o</span>
+               <span style="color: #A0A0A0"> 300</span> <span style="color: #228B22; background: #FFFFFF;">%      |      |      |      |      |      |      . </span>
+               <span style="color: #A0A0A0"> 301</span> <span style="color: #228B22; background: #FFFFFF;">%  x   |  x   |  x   |  x   |  x   |  x   |   x  .  x        </span>
+               <span style="color: #A0A0A0"> 302</span> <span style="color: #228B22; background: #FFFFFF;">%      |      |      |      |      |      |      .</span>
+               <span style="color: #A0A0A0"> 303</span> <span style="color: #228B22; background: #FFFFFF;">%      +------+------+------+------+------+ .. ..o# </span>
+               <span style="color: #A0A0A0"> 304</span> <span style="color: #228B22; background: #FFFFFF;">%      |      |      |      |      |      | \    .      with diagonal extrapolation:</span>
+               <span style="color: #A0A0A0"> 305</span> <span style="color: #228B22; background: #FFFFFF;">%  x   |  x   |  x   |  x   |  x   |  x   |   x. .  x@  prevent this construction by adding zero</span>
+               <span style="color: #A0A0A0"> 306</span> <span style="color: #228B22; background: #FFFFFF;">%      |      |      |      |      |      |     \. /    times the center values at # and $</span>
+               <span style="color: #A0A0A0"> 307</span> <span style="color: #228B22; background: #FFFFFF;">%      +------+------+------+------+------+$-----+      so the corner values at @ will also become </span>
+               <span style="color: #A0A0A0"> 308</span> <span style="color: #228B22; background: #FFFFFF;">%      |      |      |      |      |      |     /. \    nan, since # is nan.</span>
+               <span style="color: #A0A0A0"> 309</span> <span style="color: #228B22; background: #FFFFFF;">%  x   |  x   |  x   |  x   |  x   |  x   |   x  .  x@</span>
+               <span style="color: #A0A0A0"> 310</span> <span style="color: #228B22; background: #FFFFFF;">%      |      |      |      |      |      | /    .   </span>
+               <span style="color: #A0A0A0"> 311</span> <span style="color: #228B22; background: #FFFFFF;">%      +------+------+------+------+------+......o#    </span>
+               <span style="color: #A0A0A0"> 312</span> <span style="color: #228B22; background: #FFFFFF;">%  x      x      x      x      x      x      x      x</span>
+               <span style="color: #A0A0A0"> 313</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 314</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a> 315</a></span> <span style="color: #000000; background: #E0E0FF;">  if strcmpi(method,'linear') </span>
+               <span style="color: #A0A0A0"> 316</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 317</span> <span style="color: #228B22; background: #FFFFFF;">  %% Linear</span>
+               <span style="color: #A0A0A0"> 318</span> <span style="color: #228B22; background: #FFFFFF;">  %  --------------------</span>
+               <span style="color: #A0A0A0"> 319</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a> 320</a></span> <span style="color: #000000; background: #E0E0FF;">     for m=1:size(xcen,1)-1 </span>
+       <span style="color: #0000FF">     42 </span><span style="color: #000000; font-weight: bold"><a> 321</a></span> <span style="color: #000000; background: #E0E0FF;">        for n=1:size(xcen,2)-1 </span>
+               <span style="color: #A0A0A0"> 322</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 323</span> <span style="color: #228B22; background: #FFFFFF;">           %% mirror back when not yet filled in</span>
+               <span style="color: #A0A0A0"> 324</span> <span style="color: #228B22; background: #FFFFFF;">           %  -------------------------------------</span>
+               <span style="color: #A0A0A0"> 325</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">    190 </span><span style="color: #000000; font-weight: bold"><a> 326</a></span> <span style="color: #000000; background: #E0E0FF;">           if isnan(xcor(m  ,n  )) </span>
+       <span style="color: #0000FF">     25 </span><span style="color: #000000; font-weight: bold"><a> 327</a></span> <span style="color: #000000; background: #E0E0FF;">           xcor(m  ,n  ) =  + 3*xcen(m  ,n  )/2 ... </span>
+               <span style="color: #A0A0A0"> 328</span> <span style="color: #000000; background: #E0E0FF;">                            -   xcen(m+1,n+1)/2 ...</span>
+               <span style="color: #A0A0A0"> 329</span> <span style="color: #000000; background: #E0E0FF;">                            + 0*xcen(m+1,n  )   ...</span>
+               <span style="color: #A0A0A0"> 330</span> <span style="color: #000000; background: #E0E0FF;">                            + 0*xcen(m  ,n+1)   ; % is nan when one or more elements are nan</span>
+       <span style="color: #0000FF">     25 </span><span style="color: #000000; font-weight: bold"><a> 331</a></span> <span style="color: #000000; background: #E0E0FF;">           end </span>
+               <span style="color: #A0A0A0"> 332</span> <span style="color: #228B22; background: #FFFFFF;">           </span>
+               <span style="color: #A0A0A0"> 333</span> <span style="color: #228B22; background: #FFFFFF;">           %% mirror forward when not yet filled in</span>
+               <span style="color: #A0A0A0"> 334</span> <span style="color: #228B22; background: #FFFFFF;">           %  -------------------------------------</span>
+               <span style="color: #A0A0A0"> 335</span> <span style="color: #228B22; background: #FFFFFF;">           </span>
+       <span style="color: #0000FF">    190 </span><span style="color: #000000; font-weight: bold"><a> 336</a></span> <span style="color: #000000; background: #E0E0FF;">           if isnan(xcor(m+2,n+2)) </span>
+       <span style="color: #0000FF">     19 </span><span style="color: #000000; font-weight: bold"><a> 337</a></span> <span style="color: #000000; background: #E0E0FF;">           xcor(m+2,n+2) =  -   xcen(m  ,n  )/2 ... </span>
+               <span style="color: #A0A0A0"> 338</span> <span style="color: #000000; background: #E0E0FF;">                            + 3*xcen(m+1,n+1)/2 ...</span>
+               <span style="color: #A0A0A0"> 339</span> <span style="color: #000000; background: #E0E0FF;">                            + 0*xcen(m+1,n  )   ...</span>
+               <span style="color: #A0A0A0"> 340</span> <span style="color: #000000; background: #E0E0FF;">                            + 0*xcen(m  ,n+1)   ; % is nan when one or more elements are nan</span>
+       <span style="color: #0000FF">     19 </span><span style="color: #000000; font-weight: bold"><a> 341</a></span> <span style="color: #000000; background: #E0E0FF;">           end </span>
+               <span style="color: #A0A0A0"> 342</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">    190 </span><span style="color: #000000; font-weight: bold"><a> 343</a></span> <span style="color: #000000; background: #E0E0FF;">        end </span>
+       <span style="color: #0000FF">     42 </span><span style="color: #000000; font-weight: bold"><a> 344</a></span> <span style="color: #000000; background: #E0E0FF;">     end </span>
+               <span style="color: #A0A0A0"> 345</span> <span style="color: #228B22; background: #FFFFFF;">     </span>
+               <span style="color: #A0A0A0"> 346</span> <span style="color: #A0A0A0; background: #FFFFFF;">  elseif strcmpi(method,'nearest')</span>
+               <span style="color: #A0A0A0"> 347</span> <span style="color: #228B22; background: #FFFFFF;">  </span>
+               <span style="color: #A0A0A0"> 348</span> <span style="color: #228B22; background: #FFFFFF;">  %% Nearest</span>
+               <span style="color: #A0A0A0"> 349</span> <span style="color: #228B22; background: #FFFFFF;">  %  --------------------</span>
+               <span style="color: #A0A0A0"> 350</span> <span style="color: #228B22; background: #FFFFFF;">  </span>
+               <span style="color: #A0A0A0"> 351</span> <span style="color: #A0A0A0; background: #FFFFFF;">     for m=1:size(xcen,1)-1</span>
+               <span style="color: #A0A0A0"> 352</span> <span style="color: #A0A0A0; background: #FFFFFF;">        for n=1:size(xcen,2)-1</span>
+               <span style="color: #A0A0A0"> 353</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 354</span> <span style="color: #228B22; background: #FFFFFF;">           %% mirror back when not yet filled in</span>
+               <span style="color: #A0A0A0"> 355</span> <span style="color: #228B22; background: #FFFFFF;">           %  -------------------------------------</span>
+               <span style="color: #A0A0A0"> 356</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 357</span> <span style="color: #A0A0A0; background: #FFFFFF;">           if isnan(xcor(m  ,n  ))</span>
+               <span style="color: #A0A0A0"> 358</span> <span style="color: #A0A0A0; background: #FFFFFF;">           xcor(m  ,n  ) =  +   xcen(m  ,n  )   ; % is nan when one or more elements are nan</span>
+               <span style="color: #A0A0A0"> 359</span> <span style="color: #A0A0A0; background: #FFFFFF;">           end</span>
+               <span style="color: #A0A0A0"> 360</span> <span style="color: #228B22; background: #FFFFFF;">           </span>
+               <span style="color: #A0A0A0"> 361</span> <span style="color: #228B22; background: #FFFFFF;">           %% mirror forward when not yet filled in</span>
+               <span style="color: #A0A0A0"> 362</span> <span style="color: #228B22; background: #FFFFFF;">           %  -------------------------------------</span>
+               <span style="color: #A0A0A0"> 363</span> <span style="color: #228B22; background: #FFFFFF;">           </span>
+               <span style="color: #A0A0A0"> 364</span> <span style="color: #A0A0A0; background: #FFFFFF;">           if isnan(xcor(m+2,n+2))</span>
+               <span style="color: #A0A0A0"> 365</span> <span style="color: #A0A0A0; background: #FFFFFF;">           xcor(m+2,n+2) =  +   xcen(m+1,n+1)   ; % is nan when one or more elements are nan</span>
+               <span style="color: #A0A0A0"> 366</span> <span style="color: #A0A0A0; background: #FFFFFF;">           end</span>
+               <span style="color: #A0A0A0"> 367</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 368</span> <span style="color: #A0A0A0; background: #FFFFFF;">        end</span>
+               <span style="color: #A0A0A0"> 369</span> <span style="color: #A0A0A0; background: #FFFFFF;">     end  </span>
+               <span style="color: #A0A0A0"> 370</span> <span style="color: #228B22; background: #FFFFFF;">  </span>
+               <span style="color: #A0A0A0"> 371</span> <span style="color: #228B22; background: #FFFFFF;">  else</span>
+               <span style="color: #A0A0A0"> 372</span> <span style="color: #A0A0A0; background: #FFFFFF;">     error(['Unknown method ',method,', only linear or nearest accepted.'])</span>
+               <span style="color: #A0A0A0"> 373</span> <span style="color: #A0A0A0; background: #FFFFFF;">  end</span>
+</pre>
+<p><p>Other subfunctions in this file are not included in this listing.
+</div>
+</body>
+</html>

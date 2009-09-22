@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Function details for KMLmerge_files</title>
+<link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="script/css/FunctionCoverage.css" rel="stylesheet" />
+<script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="script/js/matlab2accordion.js"></script>
+</head>
+<body>
+<h2 class="ui-widget-header ui-state-active ui-corner-all">KMLmerge_files</h2>
+<div class="ui-widget-content ui-corner-all">
+<strong>Coverage results</strong><br/>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Total lines in function</td>
+<td class="td-linebottomrt">83</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Non-code lines (comments, blank lines)</td>
+<td class="td-linebottomrt">27</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines (lines that can run)</td>
+<td class="td-linebottomrt">56</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did run</td>
+<td class="td-linebottomrt">42</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did not run</td>
+<td class="td-linebottomrt">14</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Coverage (did run/can run)</td>
+<td class="td-linebottomrt">75.00 %</td></tr>
+</table>
+</div><br/>
+<div class="ui-widget-content ui-corner-all">
+<strong>Function listing</strong><br/>
+<pre>
+<span style="color: #FF0000; font-weight: bold; text-decoration: none">  time</span> <span style="color: #0000FF; font-weight: bold; text-decoration: none">  calls</span> <span style="font-weight: bold; text-decoration: none">line</span><br/>
+               <span style="color: #A0A0A0">   1</span> <span style="color: #A0A0A0; background: #FFFFFF;">function KMLmerge_files(varargin)</span>
+               <span style="color: #A0A0A0">   2</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   3</span> <span style="color: #228B22; background: #FFFFFF;">% Merges all KML files in a certain directory</span>
+               <span style="color: #A0A0A0">   4</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   5</span> <span style="color: #228B22; background: #FFFFFF;">%See also: googlePLot</span>
+               <span style="color: #A0A0A0">   6</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>   7</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.fileName          = []; </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>   8</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.kmlName           = []; </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>   9</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.sourceFiles       = []; </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  10</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.deleteSourceFiles = false; </span>
+               <span style="color: #A0A0A0">  11</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  12</span> <span style="color: #228B22; background: #FFFFFF;">%% set properties</span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  13</a></span> <span style="color: #000000; background: #E0E0FF;">[OPT, Set, Default] = setProperty(OPT, varargin{:}); </span>
+               <span style="color: #A0A0A0">  14</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  15</span> <span style="color: #228B22; background: #FFFFFF;">%% source files</span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  16</a></span> <span style="color: #000000; background: #E0E0FF;">if isempty(OPT.sourceFiles) </span>
+               <span style="color: #A0A0A0">  17</span> <span style="color: #A0A0A0; background: #FFFFFF;">    [sourceName,sourcePath] = uigetfile('*.kml','Select KML files to merge','MultiSelect','on');</span>
+               <span style="color: #A0A0A0">  18</span> <span style="color: #A0A0A0; background: #FFFFFF;">    if ischar(sourceName)</span>
+               <span style="color: #A0A0A0">  19</span> <span style="color: #A0A0A0; background: #FFFFFF;">        OPT.sourceFiles{1} = fullfile(sourcePath,sourceName);</span>
+               <span style="color: #A0A0A0">  20</span> <span style="color: #228B22; background: #FFFFFF;">    else</span>
+               <span style="color: #A0A0A0">  21</span> <span style="color: #A0A0A0; background: #FFFFFF;">        for ii = 1:length(sourceName)</span>
+               <span style="color: #A0A0A0">  22</span> <span style="color: #A0A0A0; background: #FFFFFF;">            OPT.sourceFiles{ii,1} = fullfile(sourcePath,sourceName{ii});</span>
+               <span style="color: #A0A0A0">  23</span> <span style="color: #A0A0A0; background: #FFFFFF;">        end</span>
+               <span style="color: #A0A0A0">  24</span> <span style="color: #A0A0A0; background: #FFFFFF;">    end</span>
+               <span style="color: #A0A0A0">  25</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+               <span style="color: #A0A0A0">  26</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  27</span> <span style="color: #228B22; background: #FFFFFF;">%% filename</span>
+               <span style="color: #A0A0A0">  28</span> <span style="color: #228B22; background: #FFFFFF;">% gui for filename, if not set yet</span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  29</a></span> <span style="color: #000000; background: #E0E0FF;">if isempty(OPT.fileName) </span>
+               <span style="color: #A0A0A0">  30</span> <span style="color: #A0A0A0; background: #FFFFFF;">    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','merged_files.kmz');</span>
+               <span style="color: #A0A0A0">  31</span> <span style="color: #A0A0A0; background: #FFFFFF;">    OPT.fileName = fullfile(filePath,fileName);</span>
+               <span style="color: #A0A0A0">  32</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+               <span style="color: #A0A0A0">  33</span> <span style="color: #228B22; background: #FFFFFF;">% set kmlName if it is not set yet</span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  34</a></span> <span style="color: #000000; background: #E0E0FF;">if isempty(OPT.kmlName) </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  35</a></span> <span style="color: #000000; background: #E0E0FF;">    [ignore OPT.kmlName] = fileparts(OPT.fileName); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  36</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
+               <span style="color: #A0A0A0">  37</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  38</span> <span style="color: #228B22; background: #FFFFFF;">%% Write the new file</span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  39</a></span> <span style="color: #000000; background: #E0E0FF;">fid0=fopen(OPT.fileName,'w'); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  40</a></span> <span style="color: #000000; background: #E0E0FF;">OPT_header = struct(... </span>
+               <span style="color: #A0A0A0">  41</span> <span style="color: #000000; background: #E0E0FF;">    'name',OPT.kmlName);</span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  42</a></span> <span style="color: #000000; background: #E0E0FF;">fprintf(fid0,'%s',KML_header(OPT_header)); </span>
+               <span style="color: #A0A0A0">  43</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  44</a></span> <span style="color: #000000; background: #E0E0FF;">for ii = 1:length(OPT.sourceFiles) </span>
+<span style="color: #FF0000">  2.48 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a>  45</a></span> <span style="color: #000000; background: #E0E0FF;">    contents = textread(OPT.sourceFiles{ii},'%s','delimiter','\n','bufsize',1e6); </span>
+<span style="color: #FF0000">  0.61 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a>  46</a></span> <span style="color: #000000; background: #E0E0FF;">    cutoff = strfind(contents,'Document'); </span>
+               <span style="color: #A0A0A0">  47</span> <span style="color: #228B22; background: #FFFFFF;"> </span>
+       <span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a>  48</a></span> <span style="color: #000000; background: #E0E0FF;">    flag = true; </span>
+       <span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a>  49</a></span> <span style="color: #000000; background: #E0E0FF;">    for jj = 1:length(contents) </span>
+<span style="color: #FF0000">  0.08 </span><span style="color: #0000FF"> 303813 </span><span style="color: #000000; font-weight: bold"><a>  50</a></span> <span style="color: #000000; background: #E0E0FF;">        other_flag = true; </span>
+<span style="color: #FF0000">  0.61 </span><span style="color: #0000FF"> 303813 </span><span style="color: #000000; font-weight: bold"><a>  51</a></span> <span style="color: #000000; background: #E0E0FF;">        if ~isempty(cutoff{jj}) </span>
+       <span style="color: #0000FF">     72 </span><span style="color: #000000; font-weight: bold"><a>  52</a></span> <span style="color: #000000; background: #E0E0FF;">            contents{jj} = strrep(contents{jj},'&lt;Document&gt;',''); </span>
+       <span style="color: #0000FF">     72 </span><span style="color: #000000; font-weight: bold"><a>  53</a></span> <span style="color: #000000; background: #E0E0FF;">            contents{jj} = strrep(contents{jj},'&lt;/Document&gt;',''); </span>
+       <span style="color: #0000FF">     72 </span><span style="color: #000000; font-weight: bold"><a>  54</a></span> <span style="color: #000000; background: #E0E0FF;">            flag = ~flag; </span>
+       <span style="color: #0000FF">     72 </span><span style="color: #000000; font-weight: bold"><a>  55</a></span> <span style="color: #000000; background: #E0E0FF;">            other_flag = false; </span>
+       <span style="color: #0000FF">     72 </span><span style="color: #000000; font-weight: bold"><a>  56</a></span> <span style="color: #000000; background: #E0E0FF;">        end </span>
+<span style="color: #FF0000">  0.30 </span><span style="color: #0000FF"> 303813 </span><span style="color: #000000; font-weight: bold"><a>  57</a></span> <span style="color: #000000; background: #E0E0FF;">        if flag&amp;&amp;other_flag </span>
+       <span style="color: #0000FF">    144 </span><span style="color: #000000; font-weight: bold"><a>  58</a></span> <span style="color: #000000; background: #E0E0FF;">            contents{jj} = []; </span>
+       <span style="color: #0000FF">    144 </span><span style="color: #000000; font-weight: bold"><a>  59</a></span> <span style="color: #000000; background: #E0E0FF;">        end   </span>
+<span style="color: #FF0000">  0.39 </span><span style="color: #0000FF"> 303813 </span><span style="color: #000000; font-weight: bold"><a>  60</a></span> <span style="color: #000000; background: #E0E0FF;">    end </span>
+               <span style="color: #A0A0A0">  61</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
+       <span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a>  62</a></span> <span style="color: #000000; background: #E0E0FF;">    fprintf(fid0,'%s','&lt;Folder&gt;'); </span>
+<span style="color: #FF0000">  0.31 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a>  63</a></span> <span style="color: #000000; background: #E0E0FF;">    fprintf(fid0,'   %s\n',contents{:}); </span>
+       <span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a>  64</a></span> <span style="color: #000000; background: #E0E0FF;">    fprintf(fid0,'%s','&lt;/Folder&gt;'); </span>
+       <span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a>  65</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
+               <span style="color: #A0A0A0">  66</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  67</span> <span style="color: #228B22; background: #FFFFFF;">% FOOTER</span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  68</a></span> <span style="color: #000000; background: #E0E0FF;">fprintf(fid0,'%s',KML_footer); </span>
+               <span style="color: #A0A0A0">  69</span> <span style="color: #228B22; background: #FFFFFF;">% close KML</span>
+<span style="color: #FF0000">  0.05 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  70</a></span> <span style="color: #000000; background: #E0E0FF;">fclose(fid0); </span>
+               <span style="color: #A0A0A0">  71</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  72</span> <span style="color: #228B22; background: #FFFFFF;">%% delete old files?</span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  73</a></span> <span style="color: #000000; background: #E0E0FF;">if OPT.deleteSourceFiles </span>
+               <span style="color: #A0A0A0">  74</span> <span style="color: #A0A0A0; background: #FFFFFF;">    delete(OPT.sourceFiles{:})</span>
+               <span style="color: #A0A0A0">  75</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+               <span style="color: #A0A0A0">  76</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  77</span> <span style="color: #228B22; background: #FFFFFF;">%% compress to kmz?</span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  78</a></span> <span style="color: #000000; background: #E0E0FF;">if strcmpi(OPT.fileName(end),'z') </span>
+<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  79</a></span> <span style="color: #000000; background: #E0E0FF;">    movefile(OPT.fileName,[OPT.fileName(1:end-3) 'kml']) </span>
+<span style="color: #FF0000">  0.44 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  80</a></span> <span style="color: #000000; background: #E0E0FF;">    zip(OPT.fileName,[OPT.fileName(1:end-3) 'kml']); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  81</a></span> <span style="color: #000000; background: #E0E0FF;">    movefile([OPT.fileName '.zip'],OPT.fileName) </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  82</a></span> <span style="color: #000000; background: #E0E0FF;">    delete([OPT.fileName(1:end-3) 'kml']) </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  83</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
+</pre>
+<p><p>Other subfunctions in this file are not included in this listing.
+</div>
+</body>
+</html>

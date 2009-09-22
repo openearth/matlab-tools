@@ -1,0 +1,366 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Function details for gradient2</title>
+<link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="script/css/FunctionCoverage.css" rel="stylesheet" />
+<script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="script/js/matlab2accordion.js"></script>
+</head>
+<body>
+<h2 class="ui-widget-header ui-state-active ui-corner-all">gradient2</h2>
+<div class="ui-widget-content ui-corner-all">
+<strong>Coverage results</strong><br/>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Total lines in function</td>
+<td class="td-linebottomrt">328</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Non-code lines (comments, blank lines)</td>
+<td class="td-linebottomrt">234</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines (lines that can run)</td>
+<td class="td-linebottomrt">94</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did run</td>
+<td class="td-linebottomrt">64</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did not run</td>
+<td class="td-linebottomrt">30</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Coverage (did run/can run)</td>
+<td class="td-linebottomrt">68.09 %</td></tr>
+</table>
+</div><br/>
+<div class="ui-widget-content ui-corner-all">
+<strong>Function listing</strong><br/>
+<pre>
+<span style="color: #FF0000; font-weight: bold; text-decoration: none">  time</span> <span style="color: #0000FF; font-weight: bold; text-decoration: none">  calls</span> <span style="font-weight: bold; text-decoration: none">line</span><br/>
+               <span style="color: #A0A0A0">   1</span> <span style="color: #A0A0A0; background: #FFFFFF;">function varargout = gradient2(varargin)</span>
+               <span style="color: #A0A0A0">   2</span> <span style="color: #228B22; background: #FFFFFF;">%GRADIENT2   first order spatial gradient in global co-ordinates in curvi-linear grid</span>
+               <span style="color: #A0A0A0">   3</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   4</span> <span style="color: #228B22; background: #FFFFFF;">%      gradient2(x,y,z) </span>
+               <span style="color: #A0A0A0">   5</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   6</span> <span style="color: #228B22; background: #FFFFFF;">%   calculates gradient dz/dx and dz/dy (in global co-ordinates)</span>
+               <span style="color: #A0A0A0">   7</span> <span style="color: #228B22; background: #FFFFFF;">%   for data on curvilinear grid (x,y).</span>
+               <span style="color: #A0A0A0">   8</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   9</span> <span style="color: #228B22; background: #FFFFFF;">%    out    = GRADIENT2(...) returns a struct with fields fx and fy</span>
+               <span style="color: #A0A0A0">  10</span> <span style="color: #228B22; background: #FFFFFF;">%   [fx,fy] = GRADIENT2(...) returns 2 matrices fx and fy</span>
+               <span style="color: #A0A0A0">  11</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  12</span> <span style="color: #228B22; background: #FFFFFF;">%   Note that fx and fy are given at the centers of the grid (x,y)</span>
+               <span style="color: #A0A0A0">  13</span> <span style="color: #228B22; background: #FFFFFF;">%   The size of fx and fy is therefore 1 element smaller in both</span>
+               <span style="color: #A0A0A0">  14</span> <span style="color: #228B22; background: #FFFFFF;">%   matrix directions. This is unlike GRADIENT that uses a central</span>
+               <span style="color: #A0A0A0">  15</span> <span style="color: #228B22; background: #FFFFFF;">%   scheme so the gradients are defined at the data points, with the</span>
+               <span style="color: #A0A0A0">  16</span> <span style="color: #228B22; background: #FFFFFF;">%   border containing a lower order gradient definition. With GRADIENT2</span>
+               <span style="color: #A0A0A0">  17</span> <span style="color: #228B22; background: #FFFFFF;">%   there are no  border defintions, so total area of data </span>
+               <span style="color: #A0A0A0">  18</span> <span style="color: #228B22; background: #FFFFFF;">%   covered is reduced with 0.5 grid ceel at every boundary (also </span>
+               <span style="color: #A0A0A0">  19</span> <span style="color: #228B22; background: #FFFFFF;">%   internal ones where you have NaN's).</span>
+               <span style="color: #A0A0A0">  20</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  21</span> <span style="color: #228B22; background: #FFFFFF;">%   out    = GRADIENT2(x,y,z,&lt;'keyword',value&gt;) where the following options </span>
+               <span style="color: #A0A0A0">  22</span> <span style="color: #228B22; background: #FFFFFF;">%   are implemented:</span>
+               <span style="color: #A0A0A0">  23</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  24</span> <span style="color: #228B22; background: #FFFFFF;">%  * 'average': GRADIENT2(x,y,z,'average',value) with value 'min', 'max' or 'mean.</span>
+               <span style="color: #A0A0A0">  25</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  26</span> <span style="color: #228B22; background: #FFFFFF;">%      The inout grid is triangulated. For each triangle the </span>
+               <span style="color: #A0A0A0">  27</span> <span style="color: #228B22; background: #FFFFFF;">%      gradient is determined by fitting a plane through the 3 corner</span>
+               <span style="color: #A0A0A0">  28</span> <span style="color: #228B22; background: #FFFFFF;">%      points, by solving the exact equations of a plane. Every quadrangle</span>
+               <span style="color: #A0A0A0">  29</span> <span style="color: #228B22; background: #FFFFFF;">%      contains 2 triangles. By default the gradient values in these 2 triangles</span>
+               <span style="color: #A0A0A0">  30</span> <span style="color: #228B22; background: #FFFFFF;">%      are averaged to get the gradient of the quadrangles. An extra (optional) </span>
+               <span style="color: #A0A0A0">  31</span> <span style="color: #228B22; background: #FFFFFF;">%      argument can be provided to choose between 'min', 'max, and 'mean'. This </span>
+               <span style="color: #A0A0A0">  32</span> <span style="color: #228B22; background: #FFFFFF;">%      can be used for example to check the accuracy for example. Note that the </span>
+               <span style="color: #A0A0A0">  33</span> <span style="color: #228B22; background: #FFFFFF;">%      direction of the gradient might be a bit off when triangulation is </span>
+               <span style="color: #A0A0A0">  34</span> <span style="color: #228B22; background: #FFFFFF;">%      performed oddly. Example:</span>
+               <span style="color: #A0A0A0">  35</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  36</span> <span style="color: #228B22; background: #FFFFFF;">%  * 'discretisation': GRADIENT2(x,y,z,'discretisation',value) with value 'upwind', or 'central'.</span>
+               <span style="color: #A0A0A0">  37</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  38</span> <span style="color: #228B22; background: #FFFFFF;">%      By default an upwind gradient method is used, where the results is </span>
+               <span style="color: #A0A0A0">  39</span> <span style="color: #228B22; background: #FFFFFF;">%      staggered with respect to the input co-ordinates (x,y).</span>
+               <span style="color: #A0A0A0">  40</span> <span style="color: #228B22; background: #FFFFFF;">%      An alternative central differentiation method is also available.</span>
+               <span style="color: #A0A0A0">  41</span> <span style="color: #228B22; background: #FFFFFF;">%      In this method the gradients are defined at the same location as </span>
+               <span style="color: #A0A0A0">  42</span> <span style="color: #228B22; background: #FFFFFF;">%      the input co-ordinates (x,y). The 'upwind' method is vectorized, </span>
+               <span style="color: #A0A0A0">  43</span> <span style="color: #228B22; background: #FFFFFF;">%      the 'central' method not yet. For the borders no lower order discretisation</span>
+               <span style="color: #A0A0A0">  44</span> <span style="color: #228B22; background: #FFFFFF;">%      is used, but simply NaN are returned.</span>
+               <span style="color: #A0A0A0">  45</span> <span style="color: #228B22; background: #FFFFFF;">%                                                                            </span>
+               <span style="color: #A0A0A0">  46</span> <span style="color: #228B22; background: #FFFFFF;">%      |       |       |       |           |       |       |       |         </span>
+               <span style="color: #A0A0A0">  47</span> <span style="color: #228B22; background: #FFFFFF;">%      +   x   +   x   +   x   +   x       +   x   +   x   +   x   +   x     </span>
+               <span style="color: #A0A0A0">  48</span> <span style="color: #228B22; background: #FFFFFF;">%      |       |       |       |           |       |       |       |         </span>
+               <span style="color: #A0A0A0">  49</span> <span style="color: #228B22; background: #FFFFFF;">%      o---+---o---+---o---+---o---+-      o---+--2o3--+---o---+---o---+-    </span>
+               <span style="color: #A0A0A0">  50</span> <span style="color: #228B22; background: #FFFFFF;">%      |       |       |       |           |       |       |       |         </span>
+               <span style="color: #A0A0A0">  51</span> <span style="color: #228B22; background: #FFFFFF;">%      +   x   +   x   +   x   +   x       +   x   +   x   +   x   +   x     </span>
+               <span style="color: #A0A0A0">  52</span> <span style="color: #228B22; background: #FFFFFF;">%      |       |       |       |           |       |       |       |         </span>
+               <span style="color: #A0A0A0">  53</span> <span style="color: #228B22; background: #FFFFFF;">%     1o2--+--2o2--+---o---+---o---+-     1o2--+--2o2--+--3o2--+---o---+-    </span>
+               <span style="color: #A0A0A0">  54</span> <span style="color: #228B22; background: #FFFFFF;">%      |       |       |       |           |       |       |       |         </span>
+               <span style="color: #A0A0A0">  55</span> <span style="color: #228B22; background: #FFFFFF;">%      +  axa  +   x   +   x   +   x       +   x   +   x   +   x   +   x     </span>
+               <span style="color: #A0A0A0">  56</span> <span style="color: #228B22; background: #FFFFFF;">%      |       |       |       |           |       |       |       |         </span>
+               <span style="color: #A0A0A0">  57</span> <span style="color: #228B22; background: #FFFFFF;">%     1o1--+--2o1--+---o---+---o---+-      o---+--2o1--+---o---+---o---+-    </span>
+               <span style="color: #A0A0A0">  58</span> <span style="color: #228B22; background: #FFFFFF;">%                                                                            </span>
+               <span style="color: #A0A0A0">  59</span> <span style="color: #228B22; background: #FFFFFF;">%      discretisation: 'upwind'            discretisation: 'central'         </span>
+               <span style="color: #A0A0A0">  60</span> <span style="color: #228B22; background: #FFFFFF;">%                                                                            </span>
+               <span style="color: #A0A0A0">  61</span> <span style="color: #228B22; background: #FFFFFF;">%      the corner values at                the corner values at</span>
+               <span style="color: #A0A0A0">  62</span> <span style="color: #228B22; background: #FFFFFF;">%      (1,1), (1,2), (2,1), (2,2)          (2,1), (1,2),(2,3), (3,2)</span>
+               <span style="color: #A0A0A0">  63</span> <span style="color: #228B22; background: #FFFFFF;">%      are used to get a gradient at       are used to get a gradient at</span>
+               <span style="color: #A0A0A0">  64</span> <span style="color: #228B22; background: #FFFFFF;">%      CERNTER points (a,a)                CORNER points (2,2), corner points</span>
+               <span style="color: #A0A0A0">  65</span> <span style="color: #228B22; background: #FFFFFF;">%                                          at the boundary like (1,1), (2,1),(1,2)</span>
+               <span style="color: #A0A0A0">  66</span> <span style="color: #228B22; background: #FFFFFF;">% o: input corner data point               will get no gradient data but NaN.</span>
+               <span style="color: #A0A0A0">  67</span> <span style="color: #228B22; background: #FFFFFF;">% x: center point</span>
+               <span style="color: #A0A0A0">  68</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  69</span> <span style="color: #228B22; background: #FFFFFF;">%   See also: GRADIENT, QUAT, TRIQUAT, TRI2QUAT, TRI_GRAD, PCOLORCORCEN</span>
+               <span style="color: #A0A0A0">  70</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  71</span> <span style="color: #228B22; background: #FFFFFF;">% GRADIENT2 calls:</span>
+               <span style="color: #A0A0A0">  72</span> <span style="color: #228B22; background: #FFFFFF;">% - triquat</span>
+               <span style="color: #A0A0A0">  73</span> <span style="color: #228B22; background: #FFFFFF;">% - tri_grad</span>
+               <span style="color: #A0A0A0">  74</span> <span style="color: #228B22; background: #FFFFFF;">% - samesize</span>
+               <span style="color: #A0A0A0">  75</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  76</span> <span style="color: #228B22; background: #FFFFFF;">%%</span>
+               <span style="color: #A0A0A0">  77</span> <span style="color: #228B22; background: #FFFFFF;">%   --------------------------------------------------------------------</span>
+               <span style="color: #A0A0A0">  78</span> <span style="color: #228B22; background: #FFFFFF;">%   Copyright (C) 2005-2007 Delft University of Technology</span>
+               <span style="color: #A0A0A0">  79</span> <span style="color: #228B22; background: #FFFFFF;">%       Gerben J. de Boer</span>
+               <span style="color: #A0A0A0">  80</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  81</span> <span style="color: #228B22; background: #FFFFFF;">%       g.j.deboer@tudelft.nl	</span>
+               <span style="color: #A0A0A0">  82</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  83</span> <span style="color: #228B22; background: #FFFFFF;">%       Fluid Mechanics Section</span>
+               <span style="color: #A0A0A0">  84</span> <span style="color: #228B22; background: #FFFFFF;">%       Faculty of Civil Engineering and Geosciences</span>
+               <span style="color: #A0A0A0">  85</span> <span style="color: #228B22; background: #FFFFFF;">%       PO Box 5048</span>
+               <span style="color: #A0A0A0">  86</span> <span style="color: #228B22; background: #FFFFFF;">%       2600 GA Delft</span>
+               <span style="color: #A0A0A0">  87</span> <span style="color: #228B22; background: #FFFFFF;">%       The Netherlands</span>
+               <span style="color: #A0A0A0">  88</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  89</span> <span style="color: #228B22; background: #FFFFFF;">%   This library is free software; you can redistribute it and/or</span>
+               <span style="color: #A0A0A0">  90</span> <span style="color: #228B22; background: #FFFFFF;">%   modify it under the terms of the GNU Lesser General Public</span>
+               <span style="color: #A0A0A0">  91</span> <span style="color: #228B22; background: #FFFFFF;">%   License as published by the Free Software Foundation; either</span>
+               <span style="color: #A0A0A0">  92</span> <span style="color: #228B22; background: #FFFFFF;">%   version 2.1 of the License, or (at your option) any later version.</span>
+               <span style="color: #A0A0A0">  93</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  94</span> <span style="color: #228B22; background: #FFFFFF;">%   This library is distributed in the hope that it will be useful,</span>
+               <span style="color: #A0A0A0">  95</span> <span style="color: #228B22; background: #FFFFFF;">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+               <span style="color: #A0A0A0">  96</span> <span style="color: #228B22; background: #FFFFFF;">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span>
+               <span style="color: #A0A0A0">  97</span> <span style="color: #228B22; background: #FFFFFF;">%   Lesser General Public License for more details.</span>
+               <span style="color: #A0A0A0">  98</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  99</span> <span style="color: #228B22; background: #FFFFFF;">%   You should have received a copy of the GNU Lesser General Public</span>
+               <span style="color: #A0A0A0"> 100</span> <span style="color: #228B22; background: #FFFFFF;">%   License along with this library; if not, write to the Free Software</span>
+               <span style="color: #A0A0A0"> 101</span> <span style="color: #228B22; background: #FFFFFF;">%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307</span>
+               <span style="color: #A0A0A0"> 102</span> <span style="color: #228B22; background: #FFFFFF;">%   USA</span>
+               <span style="color: #A0A0A0"> 103</span> <span style="color: #228B22; background: #FFFFFF;">%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/</span>
+               <span style="color: #A0A0A0"> 104</span> <span style="color: #228B22; background: #FFFFFF;">%   -------------------------------------------------------------------- </span>
+               <span style="color: #A0A0A0"> 105</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 106</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 107</span> <span style="color: #228B22; background: #FFFFFF;">%% In</span>
+               <span style="color: #A0A0A0"> 108</span> <span style="color: #228B22; background: #FFFFFF;">%------------------------------</span>
+               <span style="color: #A0A0A0"> 109</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 110</a></span> <span style="color: #000000; background: #E0E0FF;">   x   = squeeze(varargin{1}); </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 111</a></span> <span style="color: #000000; background: #E0E0FF;">   y   = squeeze(varargin{2}); </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 112</a></span> <span style="color: #000000; background: #E0E0FF;">   z   = squeeze(varargin{3}); </span>
+               <span style="color: #A0A0A0"> 113</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 114</a></span> <span style="color: #000000; background: #E0E0FF;">   sx = size(x); </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 115</a></span> <span style="color: #000000; background: #E0E0FF;">   sy = size(y); </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 116</a></span> <span style="color: #000000; background: #E0E0FF;">   sz = size(z); </span>
+               <span style="color: #A0A0A0"> 117</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 118</a></span> <span style="color: #000000; background: #E0E0FF;">   if ~ all(size(sx)==size(sy)) </span>
+               <span style="color: #A0A0A0"> 119</span> <span style="color: #A0A0A0; background: #FFFFFF;">      error('x and y do not have same size')</span>
+               <span style="color: #A0A0A0"> 120</span> <span style="color: #A0A0A0; background: #FFFFFF;">   end</span>
+               <span style="color: #A0A0A0"> 121</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 122</a></span> <span style="color: #000000; background: #E0E0FF;">   if ~ all(size(sx)==size(sx)) </span>
+               <span style="color: #A0A0A0"> 123</span> <span style="color: #A0A0A0; background: #FFFFFF;">      error('x and z do not have same size')</span>
+               <span style="color: #A0A0A0"> 124</span> <span style="color: #A0A0A0; background: #FFFFFF;">   end</span>
+               <span style="color: #A0A0A0"> 125</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 126</a></span> <span style="color: #000000; background: #E0E0FF;">   szcor  = size(x); </span>
+               <span style="color: #A0A0A0"> 127</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 128</a></span> <span style="color: #000000; background: #E0E0FF;">   sz1cor = size(x,1); </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 129</a></span> <span style="color: #000000; background: #E0E0FF;">   sz2cor = size(x,2); </span>
+               <span style="color: #A0A0A0"> 130</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 131</a></span> <span style="color: #000000; background: #E0E0FF;">   sz1cen = sz1cor - 1; </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 132</a></span> <span style="color: #000000; background: #E0E0FF;">   sz2cen = sz2cor - 1; </span>
+               <span style="color: #A0A0A0"> 133</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+               <span style="color: #A0A0A0"> 134</span> <span style="color: #228B22; background: #FFFFFF;">%% Keywords</span>
+               <span style="color: #A0A0A0"> 135</span> <span style="color: #228B22; background: #FFFFFF;">%------------------------------</span>
+               <span style="color: #A0A0A0"> 136</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 137</a></span> <span style="color: #000000; background: #E0E0FF;">   OPT.discretisation = 'upwind'; </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 138</a></span> <span style="color: #000000; background: #E0E0FF;">   OPT.average        = 'mean'; </span>
+               <span style="color: #A0A0A0"> 139</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 140</span> <span style="color: #228B22; background: #FFFFFF;">   %% Cycle keywords in input argument list</span>
+               <span style="color: #A0A0A0"> 141</span> <span style="color: #228B22; background: #FFFFFF;">   %  to overwrite default values.</span>
+               <span style="color: #A0A0A0"> 142</span> <span style="color: #228B22; background: #FFFFFF;">   %  Align code lines as much as possible</span>
+               <span style="color: #A0A0A0"> 143</span> <span style="color: #228B22; background: #FFFFFF;">   %  to allow for block editing in textpad.</span>
+               <span style="color: #A0A0A0"> 144</span> <span style="color: #228B22; background: #FFFFFF;">   %------------------------</span>
+               <span style="color: #A0A0A0"> 145</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 146</a></span> <span style="color: #000000; background: #E0E0FF;">   if nargin&gt;3 </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 147</a></span> <span style="color: #000000; background: #E0E0FF;">   iargin = 4; </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 148</a></span> <span style="color: #000000; background: #E0E0FF;">   while iargin&lt;=nargin, </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 149</a></span> <span style="color: #000000; background: #E0E0FF;">     if ischar(varargin{iargin}), </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 150</a></span> <span style="color: #000000; background: #E0E0FF;">       switch lower(varargin{iargin}) </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 151</a></span> <span style="color: #000000; background: #E0E0FF;">       case 'discretisation';iargin=iargin+1;OPT.discretisation  = varargin{iargin}; </span>
+               <span style="color: #A0A0A0"> 152</span> <span style="color: #A0A0A0; background: #FFFFFF;">       case 'average'       ;iargin=iargin+1;OPT.average         = varargin{iargin};</span>
+               <span style="color: #A0A0A0"> 153</span> <span style="color: #A0A0A0; background: #FFFFFF;">       otherwise</span>
+               <span style="color: #A0A0A0"> 154</span> <span style="color: #A0A0A0; background: #FFFFFF;">          error(['Invalid string argument: %s.',varargin{iargin}]);</span>
+               <span style="color: #A0A0A0"> 155</span> <span style="color: #A0A0A0; background: #FFFFFF;">       end</span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 156</a></span> <span style="color: #000000; background: #E0E0FF;">     end; </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 157</a></span> <span style="color: #000000; background: #E0E0FF;">     iargin=iargin+1; </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 158</a></span> <span style="color: #000000; background: #E0E0FF;">   end;  </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 159</a></span> <span style="color: #000000; background: #E0E0FF;">   end;  </span>
+               <span style="color: #A0A0A0"> 160</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 161</a></span> <span style="color: #000000; background: #E0E0FF;">   if strcmp(OPT.discretisation,'upwind') </span>
+               <span style="color: #A0A0A0"> 162</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 163</span> <span style="color: #228B22; background: #FFFFFF;">      %% Triangulate curvi-linear grid</span>
+               <span style="color: #A0A0A0"> 164</span> <span style="color: #228B22; background: #FFFFFF;">      %  and calculate gradients in all separate triangles.</span>
+               <span style="color: #A0A0A0"> 165</span> <span style="color: #228B22; background: #FFFFFF;">      %-------------------------------------</span>
+               <span style="color: #A0A0A0"> 166</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 167</a></span> <span style="color: #000000; background: #E0E0FF;">         map     = triquat(x,y); </span>
+               <span style="color: #A0A0A0"> 168</span> <span style="color: #228B22; background: #FFFFFF;">         </span>
+               <span style="color: #A0A0A0"> 169</span> <span style="color: #228B22; background: #FFFFFF;">         %% replaces below 3 calls becuase it's faster, </span>
+               <span style="color: #A0A0A0"> 170</span> <span style="color: #228B22; background: #FFFFFF;">         %% becuase we know the structure of the data,</span>
+               <span style="color: #A0A0A0"> 171</span> <span style="color: #228B22; background: #FFFFFF;">         %% while delaunay considers the co-ordinates </span>
+               <span style="color: #A0A0A0"> 172</span> <span style="color: #228B22; background: #FFFFFF;">         %% randomly distributed.</span>
+               <span style="color: #A0A0A0"> 173</span> <span style="color: #228B22; background: #FFFFFF;">         </span>
+               <span style="color: #A0A0A0"> 174</span> <span style="color: #228B22; background: #FFFFFF;">         % map.quat = quat(x,y);</span>
+               <span style="color: #A0A0A0"> 175</span> <span style="color: #228B22; background: #FFFFFF;">         % tri      = delaunay(x,y);</span>
+               <span style="color: #A0A0A0"> 176</span> <span style="color: #228B22; background: #FFFFFF;">         % map      = tri2quat(tri,quat);</span>
+               <span style="color: #A0A0A0"> 177</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
+               <span style="color: #A0A0A0"> 178</span> <span style="color: #228B22; background: #FFFFFF;">      %% Calculate gradient per triangle</span>
+               <span style="color: #A0A0A0"> 179</span> <span style="color: #228B22; background: #FFFFFF;">      %-------------------------------------</span>
+               <span style="color: #A0A0A0"> 180</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 181</a></span> <span style="color: #000000; background: #E0E0FF;">         [tri.fx,tri.fy] = tri_grad(x,y,z,map.tri); </span>
+               <span style="color: #A0A0A0"> 182</span> <span style="color: #228B22; background: #FFFFFF;">         </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 183</a></span> <span style="color: #000000; background: #E0E0FF;">         fx =  zeros([sz1cen,sz2cen]); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 184</a></span> <span style="color: #000000; background: #E0E0FF;">         fy =  zeros([sz1cen,sz2cen]); </span>
+               <span style="color: #A0A0A0"> 185</span> <span style="color: #228B22; background: #FFFFFF;">         </span>
+               <span style="color: #A0A0A0"> 186</span> <span style="color: #228B22; background: #FFFFFF;">      %% Map value at centres of trangles to centers</span>
+               <span style="color: #A0A0A0"> 187</span> <span style="color: #228B22; background: #FFFFFF;">      %  of quadrangles using mapper provided by triquat.</span>
+               <span style="color: #A0A0A0"> 188</span> <span style="color: #228B22; background: #FFFFFF;">      %-------------------------------------</span>
+               <span style="color: #A0A0A0"> 189</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
+               <span style="color: #A0A0A0"> 190</span> <span style="color: #228B22; background: #FFFFFF;">      % 1ST traingle per quadrangle : tri_per_quat(:,1)</span>
+               <span style="color: #A0A0A0"> 191</span> <span style="color: #228B22; background: #FFFFFF;">      % 2ND traingle per quadrangle : tri_per_quat(:,2)</span>
+               <span style="color: #A0A0A0"> 192</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 193</a></span> <span style="color: #000000; background: #E0E0FF;">             if strcmp(OPT.average,'min') </span>
+               <span style="color: #A0A0A0"> 194</span> <span style="color: #A0A0A0; background: #FFFFFF;">            fx(:) = min( tri.fx(map.tri_per_quat(:,1)),...</span>
+               <span style="color: #A0A0A0"> 195</span> <span style="color: #A0A0A0; background: #FFFFFF;">                         tri.fx(map.tri_per_quat(:,2)));</span>
+               <span style="color: #A0A0A0"> 196</span> <span style="color: #A0A0A0; background: #FFFFFF;">            fy(:) = min( tri.fy(map.tri_per_quat(:,1)),...</span>
+               <span style="color: #A0A0A0"> 197</span> <span style="color: #A0A0A0; background: #FFFFFF;">                         tri.fy(map.tri_per_quat(:,2)));</span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 198</a></span> <span style="color: #000000; background: #E0E0FF;">         elseif strcmp(OPT.average,'mean') </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 199</a></span> <span style="color: #000000; background: #E0E0FF;">            fx(:) =     (tri.fx(map.tri_per_quat(:,1))+... </span>
+               <span style="color: #A0A0A0"> 200</span> <span style="color: #000000; background: #E0E0FF;">                         tri.fx(map.tri_per_quat(:,2)))./2;</span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 201</a></span> <span style="color: #000000; background: #E0E0FF;">            fy(:) =     (tri.fy(map.tri_per_quat(:,1))+... </span>
+               <span style="color: #A0A0A0"> 202</span> <span style="color: #000000; background: #E0E0FF;">                         tri.fy(map.tri_per_quat(:,2)))./2;</span>
+               <span style="color: #A0A0A0"> 203</span> <span style="color: #A0A0A0; background: #FFFFFF;">         elseif strcmp(OPT.average,'max')</span>
+               <span style="color: #A0A0A0"> 204</span> <span style="color: #A0A0A0; background: #FFFFFF;">            fx(:) = max( tri.fx(map.tri_per_quat(:,1)),...</span>
+               <span style="color: #A0A0A0"> 205</span> <span style="color: #A0A0A0; background: #FFFFFF;">                         tri.fx(map.tri_per_quat(:,2)));</span>
+               <span style="color: #A0A0A0"> 206</span> <span style="color: #A0A0A0; background: #FFFFFF;">            fy(:) = max( tri.fy(map.tri_per_quat(:,1)),...</span>
+               <span style="color: #A0A0A0"> 207</span> <span style="color: #A0A0A0; background: #FFFFFF;">                         tri.fy(map.tri_per_quat(:,2)));</span>
+               <span style="color: #A0A0A0"> 208</span> <span style="color: #228B22; background: #FFFFFF;">         else</span>
+               <span style="color: #A0A0A0"> 209</span> <span style="color: #A0A0A0; background: #FFFFFF;">            error(['gradient2: averaging method unknown: either ''min'', ''max'' or ''mean'', not: ''',OPT.average,''''])</span>
+               <span style="color: #A0A0A0"> 210</span> <span style="color: #A0A0A0; background: #FFFFFF;">         end</span>
+               <span style="color: #A0A0A0"> 211</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 212</a></span> <span style="color: #000000; background: #E0E0FF;">   elseif strcmp(OPT.discretisation,'central') </span>
+               <span style="color: #A0A0A0"> 213</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 214</a></span> <span style="color: #000000; background: #E0E0FF;">         fx  =  nan.*zeros(szcor); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 215</a></span> <span style="color: #000000; background: #E0E0FF;">         fy  =  nan.*zeros(szcor);    </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 216</a></span> <span style="color: #000000; background: #E0E0FF;">         fxA =  nan.*zeros(szcor); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 217</a></span> <span style="color: #000000; background: #E0E0FF;">         fyA =  nan.*zeros(szcor);    </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 218</a></span> <span style="color: #000000; background: #E0E0FF;">         fxB =  nan.*zeros(szcor); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 219</a></span> <span style="color: #000000; background: #E0E0FF;">         fyB =  nan.*zeros(szcor);    </span>
+               <span style="color: #A0A0A0"> 220</span> <span style="color: #228B22; background: #FFFFFF;">         </span>
+               <span style="color: #A0A0A0"> 221</span> <span style="color: #228B22; background: #FFFFFF;">   %% Calculations</span>
+               <span style="color: #A0A0A0"> 222</span> <span style="color: #228B22; background: #FFFFFF;">   %--------------------</span>
+               <span style="color: #A0A0A0"> 223</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 224</span> <span style="color: #228B22; background: #FFFFFF;">%     |       |       |       |         </span>
+               <span style="color: #A0A0A0"> 225</span> <span style="color: #228B22; background: #FFFFFF;">%     +   x   +   x   +   x   +   x     </span>
+               <span style="color: #A0A0A0"> 226</span> <span style="color: #228B22; background: #FFFFFF;">%     |      B|3      |       |         </span>
+               <span style="color: #A0A0A0"> 227</span> <span style="color: #228B22; background: #FFFFFF;">%     o---+---o---+---o---+---o---+-    </span>
+               <span style="color: #A0A0A0"> 228</span> <span style="color: #228B22; background: #FFFFFF;">%     |     /:|:\     |       |         </span>
+               <span style="color: #A0A0A0"> 229</span> <span style="color: #228B22; background: #FFFFFF;">%     +   /:::+:::\   +   x   +   x     </span>
+               <span style="color: #A0A0A0"> 230</span> <span style="color: #228B22; background: #FFFFFF;">%     | /:::B:|:B:::\ |       |         </span>
+               <span style="color: #A0A0A0"> 231</span> <span style="color: #228B22; background: #FFFFFF;">% AB1 o---+---o---+---oAB2+---o---+-    </span>
+               <span style="color: #A0A0A0"> 232</span> <span style="color: #228B22; background: #FFFFFF;">%     | \%%%A%|%A%%%/ |       |         </span>
+               <span style="color: #A0A0A0"> 233</span> <span style="color: #228B22; background: #FFFFFF;">%     +   \%%%+%%%/   +   x   +   x     </span>
+               <span style="color: #A0A0A0"> 234</span> <span style="color: #228B22; background: #FFFFFF;">%     |     \%|%/     |       |         </span>
+               <span style="color: #A0A0A0"> 235</span> <span style="color: #228B22; background: #FFFFFF;">%     o---+---o---+---o---+---o---+-    </span>
+               <span style="color: #A0A0A0"> 236</span> <span style="color: #228B22; background: #FFFFFF;">%            A3</span>
+               <span style="color: #A0A0A0"> 237</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 238</span> <span style="color: #228B22; background: #FFFFFF;">  %% Looped approach</span>
+               <span style="color: #A0A0A0"> 239</span> <span style="color: #228B22; background: #FFFFFF;">  %------------------</span>
+               <span style="color: #A0A0A0"> 240</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 241</a></span> <span style="color: #000000; background: #E0E0FF;">   n_triangles = 1; % one triangle per time in a looped manner </span>
+               <span style="color: #A0A0A0"> 242</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+               <span style="color: #A0A0A0"> 243</span> <span style="color: #228B22; background: #FFFFFF;">   %% tri indices into corner (x,y) matrices</span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 244</a></span> <span style="color: #000000; background: #E0E0FF;">   triA     = zeros(n_triangles,3); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 245</a></span> <span style="color: #000000; background: #E0E0FF;">   triB     = zeros(n_triangles,3); </span>
+               <span style="color: #A0A0A0"> 246</span> <span style="color: #228B22; background: #FFFFFF;">  </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 247</a></span> <span style="color: #000000; background: #E0E0FF;">   for ind1=2:szcor(1)-1 </span>
+       <span style="color: #0000FF">     47 </span><span style="color: #000000; font-weight: bold"><a> 248</a></span> <span style="color: #000000; background: #E0E0FF;">   for ind2=2:szcor(2)-1 </span>
+               <span style="color: #A0A0A0"> 249</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+<span style="color: #FF0000">  0.13 </span><span style="color: #0000FF">   2209 </span><span style="color: #000000; font-weight: bold"><a> 250</a></span> <span style="color: #000000; background: #E0E0FF;">      triA(:,1) = sub2ind(szcor,ind1-1,ind2  ); % 1st corner point AB1 </span>
+<span style="color: #FF0000">  0.14 </span><span style="color: #0000FF">   2209 </span><span style="color: #000000; font-weight: bold"><a> 251</a></span> <span style="color: #000000; background: #E0E0FF;">      triA(:,2) = sub2ind(szcor,ind1+1,ind2  ); % 2nd corner point AB2 </span>
+<span style="color: #FF0000">  0.08 </span><span style="color: #0000FF">   2209 </span><span style="color: #000000; font-weight: bold"><a> 252</a></span> <span style="color: #000000; background: #E0E0FF;">      triA(:,3) = sub2ind(szcor,ind1  ,ind2-1); % 3rd corner point A 3 </span>
+               <span style="color: #A0A0A0"> 253</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
+<span style="color: #FF0000">  0.08 </span><span style="color: #0000FF">   2209 </span><span style="color: #000000; font-weight: bold"><a> 254</a></span> <span style="color: #000000; background: #E0E0FF;">      triB(:,1) = sub2ind(szcor,ind1-1,ind2  ); % 1st corner point AB1 </span>
+<span style="color: #FF0000">  0.11 </span><span style="color: #0000FF">   2209 </span><span style="color: #000000; font-weight: bold"><a> 255</a></span> <span style="color: #000000; background: #E0E0FF;">      triB(:,2) = sub2ind(szcor,ind1+1,ind2  ); % 2nd corner point AB2 </span>
+<span style="color: #FF0000">  0.08 </span><span style="color: #0000FF">   2209 </span><span style="color: #000000; font-weight: bold"><a> 256</a></span> <span style="color: #000000; background: #E0E0FF;">      triB(:,3) = sub2ind(szcor,ind1  ,ind2+1); % 3rd corner point  B3 </span>
+               <span style="color: #A0A0A0"> 257</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
+<span style="color: #FF0000">  0.14 </span><span style="color: #0000FF">   2209 </span><span style="color: #000000; font-weight: bold"><a> 258</a></span> <span style="color: #000000; background: #E0E0FF;">      [fxA(ind1,ind2),... </span>
+               <span style="color: #A0A0A0"> 259</span> <span style="color: #000000; background: #E0E0FF;">       fyA(ind1,ind2)] = tri_grad(x,y,z,triA);</span>
+               <span style="color: #A0A0A0"> 260</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
+<span style="color: #FF0000">  0.19 </span><span style="color: #0000FF">   2209 </span><span style="color: #000000; font-weight: bold"><a> 261</a></span> <span style="color: #000000; background: #E0E0FF;">      [fxB(ind1,ind2),... </span>
+               <span style="color: #A0A0A0"> 262</span> <span style="color: #000000; background: #E0E0FF;">       fyB(ind1,ind2)] = tri_grad(x,y,z,triB);</span>
+               <span style="color: #A0A0A0"> 263</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">   2209 </span><span style="color: #000000; font-weight: bold"><a> 264</a></span> <span style="color: #000000; background: #E0E0FF;">   end </span>
+       <span style="color: #0000FF">     47 </span><span style="color: #000000; font-weight: bold"><a> 265</a></span> <span style="color: #000000; background: #E0E0FF;">   end </span>
+               <span style="color: #A0A0A0"> 266</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+               <span style="color: #A0A0A0"> 267</span> <span style="color: #228B22; background: #FFFFFF;">  %% Vectorized attempt</span>
+               <span style="color: #A0A0A0"> 268</span> <span style="color: #228B22; background: #FFFFFF;">  %------------------</span>
+               <span style="color: #A0A0A0"> 269</span> <span style="color: #228B22; background: #FFFFFF;">  </span>
+               <span style="color: #A0A0A0"> 270</span> <span style="color: #228B22; background: #FFFFFF;">  %   %% all inpout excpet outer rows and columns</span>
+               <span style="color: #A0A0A0"> 271</span> <span style="color: #228B22; background: #FFFFFF;">  %   n_triangles = (szcor(1)-2)*(szcor(2)-2)</span>
+               <span style="color: #A0A0A0"> 272</span> <span style="color: #228B22; background: #FFFFFF;">  %   </span>
+               <span style="color: #A0A0A0"> 273</span> <span style="color: #228B22; background: #FFFFFF;">  %   %% tri indices into corner (x,y) matrices</span>
+               <span style="color: #A0A0A0"> 274</span> <span style="color: #228B22; background: #FFFFFF;">  %   triA     = zeros(n_triangles,3)</span>
+               <span style="color: #A0A0A0"> 275</span> <span style="color: #228B22; background: #FFFFFF;">  %   triB     = zeros(n_triangles,3)</span>
+               <span style="color: #A0A0A0"> 276</span> <span style="color: #228B22; background: #FFFFFF;">  %   </span>
+               <span style="color: #A0A0A0"> 277</span> <span style="color: #228B22; background: #FFFFFF;">  %   [sub1,sub2]=meshgrid(1:szcor(1)-2,2:szcor(2)-1);</span>
+               <span style="color: #A0A0A0"> 278</span> <span style="color: #228B22; background: #FFFFFF;">  %   [sub1,sub2]=meshgrid(3:szcor(1)  ,2:szcor(2)-1);</span>
+               <span style="color: #A0A0A0"> 279</span> <span style="color: #228B22; background: #FFFFFF;">  %   [sub1,sub2]=meshgrid(2:szcor(1)-1,1:szcor(2)-2);</span>
+               <span style="color: #A0A0A0"> 280</span> <span style="color: #228B22; background: #FFFFFF;">  %   </span>
+               <span style="color: #A0A0A0"> 281</span> <span style="color: #228B22; background: #FFFFFF;">  %   triA(:,1) = sub2ind(szcor,1:szcor(1)-2,2:szcor(2)-1); % 1st corner point AB1</span>
+               <span style="color: #A0A0A0"> 282</span> <span style="color: #228B22; background: #FFFFFF;">  %   triA(:,2) = sub2ind(szcor,3:szcor(1)  ,2:szcor(2)-1); % 2nd corner point AB2</span>
+               <span style="color: #A0A0A0"> 283</span> <span style="color: #228B22; background: #FFFFFF;">  %   triA(:,3) = sub2ind(szcor,2:szcor(1)-1,1:szcor(2)-2); % 3rd corner point A 3</span>
+               <span style="color: #A0A0A0"> 284</span> <span style="color: #228B22; background: #FFFFFF;">  %   </span>
+               <span style="color: #A0A0A0"> 285</span> <span style="color: #228B22; background: #FFFFFF;">  %   triB(:,1) = sub2ind(szcor,1:szcor(1)-2,2:szcor(2)-1); % 1st corner point AB1</span>
+               <span style="color: #A0A0A0"> 286</span> <span style="color: #228B22; background: #FFFFFF;">  %   triB(:,2) = sub2ind(szcor,3:szcor(1)  ,2:szcor(2)-1); % 2nd corner point AB2</span>
+               <span style="color: #A0A0A0"> 287</span> <span style="color: #228B22; background: #FFFFFF;">  %   triB(:,3) = sub2ind(szcor,2:szcor(1)-1,3:szcor(2)  ); % 3rd corner point  B3</span>
+               <span style="color: #A0A0A0"> 288</span> <span style="color: #228B22; background: #FFFFFF;">  %   </span>
+               <span style="color: #A0A0A0"> 289</span> <span style="color: #228B22; background: #FFFFFF;">  %   [fxA(2:end-1,2:end-1),...</span>
+               <span style="color: #A0A0A0"> 290</span> <span style="color: #228B22; background: #FFFFFF;">  %    fyA(2:end-1,2:end-1)] = tri_grad(x,y,z,triA);</span>
+               <span style="color: #A0A0A0"> 291</span> <span style="color: #228B22; background: #FFFFFF;">  %    </span>
+               <span style="color: #A0A0A0"> 292</span> <span style="color: #228B22; background: #FFFFFF;">  %   [fxB(2:end-1,2:end-1),...</span>
+               <span style="color: #A0A0A0"> 293</span> <span style="color: #228B22; background: #FFFFFF;">  %    fyB(2:end-1,2:end-1)] = tri_grad(x,y,z,triB);</span>
+               <span style="color: #A0A0A0"> 294</span> <span style="color: #228B22; background: #FFFFFF;">  %                    </span>
+               <span style="color: #A0A0A0"> 295</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 296</span> <span style="color: #228B22; background: #FFFFFF;">  %% Average</span>
+               <span style="color: #A0A0A0"> 297</span> <span style="color: #228B22; background: #FFFFFF;">  %------------------</span>
+               <span style="color: #A0A0A0"> 298</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 299</a></span> <span style="color: #000000; background: #E0E0FF;">      if     strcmp(OPT.average,'min') </span>
+               <span style="color: #A0A0A0"> 300</span> <span style="color: #A0A0A0; background: #FFFFFF;">         fx  = min(fxA, fxB);  </span>
+               <span style="color: #A0A0A0"> 301</span> <span style="color: #A0A0A0; background: #FFFFFF;">         fy  = min(fyA, fyB);  </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 302</a></span> <span style="color: #000000; background: #E0E0FF;">      elseif strcmp(OPT.average,'mean') </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 303</a></span> <span style="color: #000000; background: #E0E0FF;">         fx  = (fxA + fxB)./2;   </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 304</a></span> <span style="color: #000000; background: #E0E0FF;">         fy  = (fyA + fyB)./2;   </span>
+               <span style="color: #A0A0A0"> 305</span> <span style="color: #A0A0A0; background: #FFFFFF;">      elseif strcmp(OPT.average,'max')</span>
+               <span style="color: #A0A0A0"> 306</span> <span style="color: #A0A0A0; background: #FFFFFF;">         fx  = max(fxA, fxB);  </span>
+               <span style="color: #A0A0A0"> 307</span> <span style="color: #A0A0A0; background: #FFFFFF;">         fy  = max(fyA, fyB);  </span>
+               <span style="color: #A0A0A0"> 308</span> <span style="color: #228B22; background: #FFFFFF;">      else</span>
+               <span style="color: #A0A0A0"> 309</span> <span style="color: #A0A0A0; background: #FFFFFF;">         error(['gradient2: averaging method unknown: either ''min'', ''max'' or ''mean'', not: ''',OPT.average,''''])</span>
+               <span style="color: #A0A0A0"> 310</span> <span style="color: #A0A0A0; background: #FFFFFF;">      end</span>
+               <span style="color: #A0A0A0"> 311</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+               <span style="color: #A0A0A0"> 312</span> <span style="color: #228B22; background: #FFFFFF;">   else</span>
+               <span style="color: #A0A0A0"> 313</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+               <span style="color: #A0A0A0"> 314</span> <span style="color: #A0A0A0; background: #FFFFFF;">      error(['gradient2: discretisation method unknown: either ''upwind'' or ''central'', not: ''',OPT.discretisation,''''])</span>
+               <span style="color: #A0A0A0"> 315</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 316</span> <span style="color: #A0A0A0; background: #FFFFFF;">   end</span>
+               <span style="color: #A0A0A0"> 317</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 318</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 319</span> <span style="color: #228B22; background: #FFFFFF;">%% Out</span>
+               <span style="color: #A0A0A0"> 320</span> <span style="color: #228B22; background: #FFFFFF;">%------------------------------</span>
+               <span style="color: #A0A0A0"> 321</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 322</a></span> <span style="color: #000000; background: #E0E0FF;">if nargout&lt;2 </span>
+               <span style="color: #A0A0A0"> 323</span> <span style="color: #A0A0A0; background: #FFFFFF;">   out.fx    = fx;</span>
+               <span style="color: #A0A0A0"> 324</span> <span style="color: #A0A0A0; background: #FFFFFF;">   out.fy    = fy;</span>
+               <span style="color: #A0A0A0"> 325</span> <span style="color: #A0A0A0; background: #FFFFFF;">   varargout = {out};</span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 326</a></span> <span style="color: #000000; background: #E0E0FF;">elseif nargout==2 </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 327</a></span> <span style="color: #000000; background: #E0E0FF;">   varargout = {fx,fy}; </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 328</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
+</pre>
+<p><p>Other subfunctions in this file are not included in this listing.
+</div>
+</body>
+</html>

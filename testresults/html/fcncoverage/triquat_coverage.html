@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Function details for triquat</title>
+<link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="script/css/FunctionCoverage.css" rel="stylesheet" />
+<script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="script/js/matlab2accordion.js"></script>
+</head>
+<body>
+<h2 class="ui-widget-header ui-state-active ui-corner-all">triquat</h2>
+<div class="ui-widget-content ui-corner-all">
+<strong>Coverage results</strong><br/>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Total lines in function</td>
+<td class="td-linebottomrt">198</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Non-code lines (comments, blank lines)</td>
+<td class="td-linebottomrt">165</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines (lines that can run)</td>
+<td class="td-linebottomrt">33</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did run</td>
+<td class="td-linebottomrt">30</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did not run</td>
+<td class="td-linebottomrt">3</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Coverage (did run/can run)</td>
+<td class="td-linebottomrt">90.91 %</td></tr>
+</table>
+</div><br/>
+<div class="ui-widget-content ui-corner-all">
+<strong>Function listing</strong><br/>
+<pre>
+<span style="color: #FF0000; font-weight: bold; text-decoration: none">  time</span> <span style="color: #0000FF; font-weight: bold; text-decoration: none">  calls</span> <span style="font-weight: bold; text-decoration: none">line</span><br/>
+               <span style="color: #A0A0A0">   1</span> <span style="color: #A0A0A0; background: #FFFFFF;">function varargout = TRIQUAT(x,y)</span>
+               <span style="color: #A0A0A0">   2</span> <span style="color: #228B22; background: #FFFFFF;">%TRIQUAT   triangulate curvi-linear mesh</span>
+               <span style="color: #A0A0A0">   3</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   4</span> <span style="color: #228B22; background: #FFFFFF;">%    triquat(x,y) </span>
+               <span style="color: #A0A0A0">   5</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   6</span> <span style="color: #228B22; background: #FFFFFF;">% triangulates and quadrangulates a mesh </span>
+               <span style="color: #A0A0A0">   7</span> <span style="color: #228B22; background: #FFFFFF;">% into triangles and quadrangles. It also gives the mappers</span>
+               <span style="color: #A0A0A0">   8</span> <span style="color: #228B22; background: #FFFFFF;">% array of the traingles to the quadrangles and v.v.</span>
+               <span style="color: #A0A0A0">   9</span> <span style="color: #228B22; background: #FFFFFF;">% This is faster than using DELAUNAY and QUAT and </span>
+               <span style="color: #A0A0A0">  10</span> <span style="color: #228B22; background: #FFFFFF;">% finding out the mapping afterwards. In TRIQUAT</span>
+               <span style="color: #A0A0A0">  11</span> <span style="color: #228B22; background: #FFFFFF;">% the triangulation and quadrangulation are performed</span>
+               <span style="color: #A0A0A0">  12</span> <span style="color: #228B22; background: #FFFFFF;">% in a structured way so the mapping is made without </span>
+               <span style="color: #A0A0A0">  13</span> <span style="color: #228B22; background: #FFFFFF;">% extra comparisons.</span>
+               <span style="color: #A0A0A0">  14</span> <span style="color: #228B22; background: #FFFFFF;">% </span>
+               <span style="color: #A0A0A0">  15</span> <span style="color: #228B22; background: #FFFFFF;">% It does the same as the following 3 actions:</span>
+               <span style="color: #A0A0A0">  16</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  17</span> <span style="color: #228B22; background: #FFFFFF;">%    delaunay(x,y)</span>
+               <span style="color: #A0A0A0">  18</span> <span style="color: #228B22; background: #FFFFFF;">%    quat(x,y)</span>
+               <span style="color: #A0A0A0">  19</span> <span style="color: #228B22; background: #FFFFFF;">%    tri2quat(tri,quat)</span>
+               <span style="color: #A0A0A0">  20</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  21</span> <span style="color: #228B22; background: #FFFFFF;">% Do note that ALL TRIANGLES ARE ORIENTED IN THE SAME WAY,</span>
+               <span style="color: #A0A0A0">  22</span> <span style="color: #228B22; background: #FFFFFF;">% whereas DELAUNAY has a random distribution of orientations</span>
+               <span style="color: #A0A0A0">  23</span> <span style="color: #228B22; background: #FFFFFF;">% for a perfect orthogonal grid.</span>
+               <span style="color: #A0A0A0">  24</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  25</span> <span style="color: #228B22; background: #FFFFFF;">% Behaviour is similar to DELAUNAY(x,y) that</span>
+               <span style="color: #A0A0A0">  26</span> <span style="color: #228B22; background: #FFFFFF;">% can be used to triangulate a mesh into triangles.</span>
+               <span style="color: #A0A0A0">  27</span> <span style="color: #228B22; background: #FFFFFF;">% </span>
+               <span style="color: #A0A0A0">  28</span> <span style="color: #228B22; background: #FFFFFF;">% It returns an array of indices into the (x,y) matrices</span>
+               <span style="color: #A0A0A0">  29</span> <span style="color: #228B22; background: #FFFFFF;">% where the first dimension walks the quadrangles and </span>
+               <span style="color: #A0A0A0">  30</span> <span style="color: #228B22; background: #FFFFFF;">% the second dimension are the 4 1D indices into the </span>
+               <span style="color: #A0A0A0">  31</span> <span style="color: #228B22; background: #FFFFFF;">% (x,y) matrices. Like the results of DELAUNAY where</span>
+               <span style="color: #A0A0A0">  32</span> <span style="color: #228B22; background: #FFFFFF;">% the first dimension walks the triangles and the second </span>
+               <span style="color: #A0A0A0">  33</span> <span style="color: #228B22; background: #FFFFFF;">% dimension contains the 3 1D indices into the (x,y) matrices.</span>
+               <span style="color: #A0A0A0">  34</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  35</span> <span style="color: #228B22; background: #FFFFFF;">% The output is a struct with fields</span>
+               <span style="color: #A0A0A0">  36</span> <span style="color: #228B22; background: #FFFFFF;">% - tri</span>
+               <span style="color: #A0A0A0">  37</span> <span style="color: #228B22; background: #FFFFFF;">% - quat</span>
+               <span style="color: #A0A0A0">  38</span> <span style="color: #228B22; background: #FFFFFF;">% - tri_per_quad</span>
+               <span style="color: #A0A0A0">  39</span> <span style="color: #228B22; background: #FFFFFF;">% - quad_per_tri</span>
+               <span style="color: #A0A0A0">  40</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  41</span> <span style="color: #228B22; background: #FFFFFF;">% Example:</span>
+               <span style="color: #A0A0A0">  42</span> <span style="color: #228B22; background: #FFFFFF;">%                                                          </span>
+               <span style="color: #A0A0A0">  43</span> <span style="color: #228B22; background: #FFFFFF;">%     Array of corner points measures 3 x 2.               </span>
+               <span style="color: #A0A0A0">  44</span> <span style="color: #228B22; background: #FFFFFF;">%     Array of center points measures 2 x 1.               </span>
+               <span style="color: #A0A0A0">  45</span> <span style="color: #228B22; background: #FFFFFF;">%                                                          </span>
+               <span style="color: #A0A0A0">  46</span> <span style="color: #228B22; background: #FFFFFF;">%     o-------o-------o.....&gt; 1st matlab dimension         </span>
+               <span style="color: #A0A0A0">  47</span> <span style="color: #228B22; background: #FFFFFF;">%     |1      |2      |3                                   </span>
+               <span style="color: #A0A0A0">  48</span> <span style="color: #228B22; background: #FFFFFF;">%     |   A   |   B   |                                    </span>
+               <span style="color: #A0A0A0">  49</span> <span style="color: #228B22; background: #FFFFFF;">%     |       |       |                                    </span>
+               <span style="color: #A0A0A0">  50</span> <span style="color: #228B22; background: #FFFFFF;">%     o-------o-------o                                    </span>
+               <span style="color: #A0A0A0">  51</span> <span style="color: #228B22; background: #FFFFFF;">%     .4       5       6 indices when treating 2D array as 1D array</span>
+               <span style="color: #A0A0A0">  52</span> <span style="color: #228B22; background: #FFFFFF;">%     .                  walking 1st dimension first.</span>
+               <span style="color: #A0A0A0">  53</span> <span style="color: #228B22; background: #FFFFFF;">%     .                                                    </span>
+               <span style="color: #A0A0A0">  54</span> <span style="color: #228B22; background: #FFFFFF;">%     v                                                    </span>
+               <span style="color: #A0A0A0">  55</span> <span style="color: #228B22; background: #FFFFFF;">%                                                          </span>
+               <span style="color: #A0A0A0">  56</span> <span style="color: #228B22; background: #FFFFFF;">%     2nd matlab dimension                                 </span>
+               <span style="color: #A0A0A0">  57</span> <span style="color: #228B22; background: #FFFFFF;">%                                                          </span>
+               <span style="color: #A0A0A0">  58</span> <span style="color: #228B22; background: #FFFFFF;">%     Quadrangle A is spanned by corner indices [1 2 4 5]  </span>
+               <span style="color: #A0A0A0">  59</span> <span style="color: #228B22; background: #FFFFFF;">%     Quadrangle B is spanned by corner indices [2 3 5 6]  </span>
+               <span style="color: #A0A0A0">  60</span> <span style="color: #228B22; background: #FFFFFF;">%                                                          </span>
+               <span style="color: #A0A0A0">  61</span> <span style="color: #228B22; background: #FFFFFF;">%     Note that the number of quadrangles is equal         </span>
+               <span style="color: #A0A0A0">  62</span> <span style="color: #228B22; background: #FFFFFF;">%     to the number of cell centers.                       </span>
+               <span style="color: #A0A0A0">  63</span> <span style="color: #228B22; background: #FFFFFF;">%                </span>
+               <span style="color: #A0A0A0">  64</span> <span style="color: #228B22; background: #FFFFFF;">% Example: D = triquat([1 2 3;4 5 6;7 8 9],[1 4 7;2 5 8;3 6 9])</span>
+               <span style="color: #A0A0A0">  65</span> <span style="color: #228B22; background: #FFFFFF;">% </span>
+               <span style="color: #A0A0A0">  66</span> <span style="color: #228B22; background: #FFFFFF;">% see also: QUAT, TRI2QUAT, DELAUNAY, GRADIENT2</span>
+               <span style="color: #A0A0A0">  67</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  68</span> <span style="color: #228B22; background: #FFFFFF;">%%</span>
+               <span style="color: #A0A0A0">  69</span> <span style="color: #228B22; background: #FFFFFF;">%   --------------------------------------------------------------------</span>
+               <span style="color: #A0A0A0">  70</span> <span style="color: #228B22; background: #FFFFFF;">%   Copyright (C) 2005 Delft University of Technology</span>
+               <span style="color: #A0A0A0">  71</span> <span style="color: #228B22; background: #FFFFFF;">%       Gerben J. de Boer</span>
+               <span style="color: #A0A0A0">  72</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  73</span> <span style="color: #228B22; background: #FFFFFF;">%       g.j.deboer@tudelft.nl	</span>
+               <span style="color: #A0A0A0">  74</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  75</span> <span style="color: #228B22; background: #FFFFFF;">%       Fluid Mechanics Section</span>
+               <span style="color: #A0A0A0">  76</span> <span style="color: #228B22; background: #FFFFFF;">%       Faculty of Civil Engineering and Geosciences</span>
+               <span style="color: #A0A0A0">  77</span> <span style="color: #228B22; background: #FFFFFF;">%       PO Box 5048</span>
+               <span style="color: #A0A0A0">  78</span> <span style="color: #228B22; background: #FFFFFF;">%       2600 GA Delft</span>
+               <span style="color: #A0A0A0">  79</span> <span style="color: #228B22; background: #FFFFFF;">%       The Netherlands</span>
+               <span style="color: #A0A0A0">  80</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  81</span> <span style="color: #228B22; background: #FFFFFF;">%   This library is free software; you can redistribute it and/or</span>
+               <span style="color: #A0A0A0">  82</span> <span style="color: #228B22; background: #FFFFFF;">%   modify it under the terms of the GNU Lesser General Public</span>
+               <span style="color: #A0A0A0">  83</span> <span style="color: #228B22; background: #FFFFFF;">%   License as published by the Free Software Foundation; either</span>
+               <span style="color: #A0A0A0">  84</span> <span style="color: #228B22; background: #FFFFFF;">%   version 2.1 of the License, or (at your option) any later version.</span>
+               <span style="color: #A0A0A0">  85</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  86</span> <span style="color: #228B22; background: #FFFFFF;">%   This library is distributed in the hope that it will be useful,</span>
+               <span style="color: #A0A0A0">  87</span> <span style="color: #228B22; background: #FFFFFF;">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+               <span style="color: #A0A0A0">  88</span> <span style="color: #228B22; background: #FFFFFF;">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span>
+               <span style="color: #A0A0A0">  89</span> <span style="color: #228B22; background: #FFFFFF;">%   Lesser General Public License for more details.</span>
+               <span style="color: #A0A0A0">  90</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  91</span> <span style="color: #228B22; background: #FFFFFF;">%   You should have received a copy of the GNU Lesser General Public</span>
+               <span style="color: #A0A0A0">  92</span> <span style="color: #228B22; background: #FFFFFF;">%   License along with this library; if not, write to the Free Software</span>
+               <span style="color: #A0A0A0">  93</span> <span style="color: #228B22; background: #FFFFFF;">%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307</span>
+               <span style="color: #A0A0A0">  94</span> <span style="color: #228B22; background: #FFFFFF;">%   USA</span>
+               <span style="color: #A0A0A0">  95</span> <span style="color: #228B22; background: #FFFFFF;">%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/</span>
+               <span style="color: #A0A0A0">  96</span> <span style="color: #228B22; background: #FFFFFF;">%   -------------------------------------------------------------------- </span>
+               <span style="color: #A0A0A0">  97</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a>  98</a></span> <span style="color: #000000; background: #E0E0FF;">szcor1 = size(x,1); </span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a>  99</a></span> <span style="color: #000000; background: #E0E0FF;">szcor2 = size(x,2); </span>
+               <span style="color: #A0A0A0"> 100</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 101</a></span> <span style="color: #000000; background: #E0E0FF;">szcen1 = szcor1-1; </span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 102</a></span> <span style="color: #000000; background: #E0E0FF;">szcen2 = szcor2-1; </span>
+               <span style="color: #A0A0A0"> 103</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 104</a></span> <span style="color: #000000; background: #E0E0FF;">nquat = szcen1*szcen2; </span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 105</a></span> <span style="color: #000000; background: #E0E0FF;">ntri  = nquat*2; </span>
+               <span style="color: #A0A0A0"> 106</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 107</a></span> <span style="color: #000000; background: #E0E0FF;">quat         = repmat(0,[nquat   4]); % 4 corners    per quadrangle </span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 108</a></span> <span style="color: #000000; background: #E0E0FF;">tri          = repmat(0,[ntri    3]); % 3 corners    per triangle </span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 109</a></span> <span style="color: #000000; background: #E0E0FF;">tri_per_quat = repmat(0,[nquat   2]); % 2 triangles  per quadrangle </span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 110</a></span> <span style="color: #000000; background: #E0E0FF;">quat_per_tri = repmat(0,[ntri    1]); % 1 quadrangle per triangle </span>
+               <span style="color: #A0A0A0"> 111</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 112</a></span> <span style="color: #000000; background: #E0E0FF;">mncor  = -1; </span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 113</a></span> <span style="color: #000000; background: #E0E0FF;">mncen  = 0; </span>
+               <span style="color: #A0A0A0"> 114</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 115</span> <span style="color: #228B22; background: #FFFFFF;">%% first walk alomng 1st dimension, </span>
+               <span style="color: #A0A0A0"> 116</span> <span style="color: #228B22; background: #FFFFFF;">%  while keeping the 2nd dimension constant</span>
+               <span style="color: #A0A0A0"> 117</span> <span style="color: #228B22; background: #FFFFFF;">%---------------------------</span>
+               <span style="color: #A0A0A0"> 118</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 119</a></span> <span style="color: #000000; background: #E0E0FF;">for ncen=1:szcen2 </span>
+               <span style="color: #A0A0A0"> 120</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">    144 </span><span style="color: #000000; font-weight: bold"><a> 121</a></span> <span style="color: #000000; background: #E0E0FF;">   for mcen=1:szcen1 </span>
+               <span style="color: #A0A0A0"> 122</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">   6912 </span><span style="color: #000000; font-weight: bold"><a> 123</a></span> <span style="color: #000000; background: #E0E0FF;">      mncen = mncen + 1; </span>
+       <span style="color: #0000FF">   6912 </span><span style="color: #000000; font-weight: bold"><a> 124</a></span> <span style="color: #000000; background: #E0E0FF;">      mncor = mncor + 1 + (mcen==1); % at the transition from end of row to begining of row skip 1 corner cell. </span>
+               <span style="color: #A0A0A0"> 125</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
+               <span style="color: #A0A0A0"> 126</span> <span style="color: #228B22; background: #FFFFFF;">      %% Define a polygon for quadrangle</span>
+               <span style="color: #A0A0A0"> 127</span> <span style="color: #228B22; background: #FFFFFF;">      %  Note: do not by incident define a Z or N shape</span>
+               <span style="color: #A0A0A0"> 128</span> <span style="color: #228B22; background: #FFFFFF;">      %  always define a C or V or U shape.</span>
+               <span style="color: #A0A0A0"> 129</span> <span style="color: #228B22; background: #FFFFFF;">      %---------------------------</span>
+               <span style="color: #A0A0A0"> 130</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
+       <span style="color: #0000FF">   6912 </span><span style="color: #000000; font-weight: bold"><a> 131</a></span> <span style="color: #000000; background: #E0E0FF;">      quat(mncen,:) = [mncor              ,... </span>
+               <span style="color: #A0A0A0"> 132</span> <span style="color: #000000; background: #E0E0FF;">                       mncor + 1          ,...</span>
+               <span style="color: #A0A0A0"> 133</span> <span style="color: #000000; background: #E0E0FF;">                       mncor + szcor1 + 1 ,...</span>
+               <span style="color: #A0A0A0"> 134</span> <span style="color: #000000; background: #E0E0FF;">                       mncor + szcor1    ];</span>
+               <span style="color: #A0A0A0"> 135</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 136</span> <span style="color: #228B22; background: #FFFFFF;">      %% Define mapping indices triangles &lt;&gt; quadrangle</span>
+               <span style="color: #A0A0A0"> 137</span> <span style="color: #228B22; background: #FFFFFF;">      %---------------------------</span>
+               <span style="color: #A0A0A0"> 138</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">   6912 </span><span style="color: #000000; font-weight: bold"><a> 139</a></span> <span style="color: #000000; background: #E0E0FF;">      itri                      = [2*mncen-1 2*mncen]; </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">   6912 </span><span style="color: #000000; font-weight: bold"><a> 140</a></span> <span style="color: #000000; background: #E0E0FF;">      tri_per_quat(mncen,:) = itri;  % 2 traingles per quadrangle </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">   6912 </span><span style="color: #000000; font-weight: bold"><a> 141</a></span> <span style="color: #000000; background: #E0E0FF;">      quat_per_tri(itri)    = mncen; % 1 quadrangle for both traingles </span>
+               <span style="color: #A0A0A0"> 142</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 143</span> <span style="color: #228B22; background: #FFFFFF;">      %% Define 2 non-overlapping polygons for 2 triangles</span>
+               <span style="color: #A0A0A0"> 144</span> <span style="color: #228B22; background: #FFFFFF;">      %  - For perfect orthogonal grid the trainagle definition should </span>
+               <span style="color: #A0A0A0"> 145</span> <span style="color: #228B22; background: #FFFFFF;">      %    be more or less random</span>
+               <span style="color: #A0A0A0"> 146</span> <span style="color: #228B22; background: #FFFFFF;">      %  - For curvilinear grids the trainagle definition should </span>
+               <span style="color: #A0A0A0"> 147</span> <span style="color: #228B22; background: #FFFFFF;">      %    be such that the diagonal is short as possible</span>
+               <span style="color: #A0A0A0"> 148</span> <span style="color: #228B22; background: #FFFFFF;">      %---------------------------</span>
+               <span style="color: #A0A0A0"> 149</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">   6912 </span><span style="color: #000000; font-weight: bold"><a> 150</a></span> <span style="color: #000000; background: #E0E0FF;">      tri(itri(1),:)      = [mncor             , ... </span>
+               <span style="color: #A0A0A0"> 151</span> <span style="color: #000000; background: #E0E0FF;">                             mncor + 1         , ...</span>
+               <span style="color: #A0A0A0"> 152</span> <span style="color: #000000; background: #E0E0FF;">                             mncor + szcor1    ];</span>
+       <span style="color: #0000FF">   6912 </span><span style="color: #000000; font-weight: bold"><a> 153</a></span> <span style="color: #000000; background: #E0E0FF;">      tri(itri(2),:)      = [mncor + 1         , ... </span>
+               <span style="color: #A0A0A0"> 154</span> <span style="color: #000000; background: #E0E0FF;">                             mncor + szcor1 + 1, ...</span>
+               <span style="color: #A0A0A0"> 155</span> <span style="color: #000000; background: #E0E0FF;">                             mncor + szcor1    ];</span>
+       <span style="color: #0000FF">   6912 </span><span style="color: #000000; font-weight: bold"><a> 156</a></span> <span style="color: #000000; background: #E0E0FF;">   end </span>
+               <span style="color: #A0A0A0"> 157</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">    144 </span><span style="color: #000000; font-weight: bold"><a> 158</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
+               <span style="color: #A0A0A0"> 159</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 160</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 161</a></span> <span style="color: #000000; background: #E0E0FF;">if nargout &lt; 2 </span>
+               <span style="color: #A0A0A0"> 162</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 163</a></span> <span style="color: #000000; background: #E0E0FF;">   OUT.tri          = tri; </span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 164</a></span> <span style="color: #000000; background: #E0E0FF;">   OUT.quat         = quat; </span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 165</a></span> <span style="color: #000000; background: #E0E0FF;">   OUT.tri_per_quat = tri_per_quat; </span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 166</a></span> <span style="color: #000000; background: #E0E0FF;">   OUT.quat_per_tri = quat_per_tri; </span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 167</a></span> <span style="color: #000000; background: #E0E0FF;">   varargout = {OUT}; </span>
+               <span style="color: #A0A0A0"> 168</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 169</span> <span style="color: #A0A0A0; background: #FFFFFF;">elseif nargout ==4</span>
+               <span style="color: #A0A0A0"> 170</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 171</span> <span style="color: #A0A0A0; background: #FFFFFF;">   varargout = {tri         ,...</span>
+               <span style="color: #A0A0A0"> 172</span> <span style="color: #A0A0A0; background: #FFFFFF;">                quat        ,...</span>
+               <span style="color: #A0A0A0"> 173</span> <span style="color: #A0A0A0; background: #FFFFFF;">                tri_per_quat,...</span>
+               <span style="color: #A0A0A0"> 174</span> <span style="color: #A0A0A0; background: #FFFFFF;">                quat_per_tri};</span>
+               <span style="color: #A0A0A0"> 175</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 176</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+               <span style="color: #A0A0A0"> 177</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 178</span> <span style="color: #228B22; background: #FFFFFF;">%% function polygon_around_square(mncor, szcor1,geometry)</span>
+               <span style="color: #A0A0A0"> 179</span> <span style="color: #228B22; background: #FFFFFF;">%% </span>
+               <span style="color: #A0A0A0"> 180</span> <span style="color: #228B22; background: #FFFFFF;">%% </span>
+               <span style="color: #A0A0A0"> 181</span> <span style="color: #228B22; background: #FFFFFF;">%% if strcmp(geometry,'open')</span>
+               <span style="color: #A0A0A0"> 182</span> <span style="color: #228B22; background: #FFFFFF;">%% </span>
+               <span style="color: #A0A0A0"> 183</span> <span style="color: #228B22; background: #FFFFFF;">%% pol = [mncor             , ...</span>
+               <span style="color: #A0A0A0"> 184</span> <span style="color: #228B22; background: #FFFFFF;">%%        mncor + 1         , ...</span>
+               <span style="color: #A0A0A0"> 185</span> <span style="color: #228B22; background: #FFFFFF;">%%        mncor + szcor1 + 1, ...</span>
+               <span style="color: #A0A0A0"> 186</span> <span style="color: #228B22; background: #FFFFFF;">%%        mncor + szcor1    ];</span>
+               <span style="color: #A0A0A0"> 187</span> <span style="color: #228B22; background: #FFFFFF;">%% </span>
+               <span style="color: #A0A0A0"> 188</span> <span style="color: #228B22; background: #FFFFFF;">%% elseif strcmp(geometry,'open')</span>
+               <span style="color: #A0A0A0"> 189</span> <span style="color: #228B22; background: #FFFFFF;">%% </span>
+               <span style="color: #A0A0A0"> 190</span> <span style="color: #228B22; background: #FFFFFF;">%% pol = [mncor             , ...</span>
+               <span style="color: #A0A0A0"> 191</span> <span style="color: #228B22; background: #FFFFFF;">%%        mncor + 1         , ...</span>
+               <span style="color: #A0A0A0"> 192</span> <span style="color: #228B22; background: #FFFFFF;">%%        mncor + szcor1 + 1, ...</span>
+               <span style="color: #A0A0A0"> 193</span> <span style="color: #228B22; background: #FFFFFF;">%%        mncor + szcor1    , ...</span>
+               <span style="color: #A0A0A0"> 194</span> <span style="color: #228B22; background: #FFFFFF;">%%        mncor             ];</span>
+               <span style="color: #A0A0A0"> 195</span> <span style="color: #228B22; background: #FFFFFF;">%% </span>
+               <span style="color: #A0A0A0"> 196</span> <span style="color: #228B22; background: #FFFFFF;">%% end       </span>
+               <span style="color: #A0A0A0"> 197</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 198</span> <span style="color: #228B22; background: #FFFFFF;">%% EOF</span>
+</pre>
+</div>
+</body>
+</html>

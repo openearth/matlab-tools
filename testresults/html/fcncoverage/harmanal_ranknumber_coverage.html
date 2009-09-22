@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Function details for harmanal>ranknumber</title>
+<link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="script/css/FunctionCoverage.css" rel="stylesheet" />
+<script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="script/js/matlab2accordion.js"></script>
+</head>
+<body>
+<h2 class="ui-widget-header ui-state-active ui-corner-all">harmanal>ranknumber</h2>
+<div class="ui-widget-content ui-corner-all">
+<strong>Coverage results</strong><br/>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Total lines in function</td>
+<td class="td-linebottomrt">41</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Non-code lines (comments, blank lines)</td>
+<td class="td-linebottomrt">36</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines (lines that can run)</td>
+<td class="td-linebottomrt">5</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did run</td>
+<td class="td-linebottomrt">5</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did not run</td>
+<td class="td-linebottomrt">0</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Coverage (did run/can run)</td>
+<td class="td-linebottomrt">100.00 %</td></tr>
+</table>
+</div><br/>
+<div class="ui-widget-content ui-corner-all">
+<strong>Function listing</strong><br/>
+<pre>
+<span style="color: #FF0000; font-weight: bold; text-decoration: none">  time</span> <span style="color: #0000FF; font-weight: bold; text-decoration: none">  calls</span> <span style="font-weight: bold; text-decoration: none">line</span><br/>
+               <span style="color: #A0A0A0"> 464</span> <span style="color: #A0A0A0; background: #FFFFFF;">function r = ranknumber(X)</span>
+               <span style="color: #A0A0A0"> 465</span> <span style="color: #228B22; background: #FFFFFF;">%RANKNUMBER</span>
+               <span style="color: #A0A0A0"> 466</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 467</span> <span style="color: #228B22; background: #FFFFFF;">% rankno = ranknumber(X) returns an array with the same</span>
+               <span style="color: #A0A0A0"> 468</span> <span style="color: #228B22; background: #FFFFFF;">% size as X, with each element containing the rank number</span>
+               <span style="color: #A0A0A0"> 469</span> <span style="color: #228B22; background: #FFFFFF;">% of the value of X at that position.</span>
+               <span style="color: #A0A0A0"> 470</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 471</span> <span style="color: #228B22; background: #FFFFFF;">%   --------------------------------------------------------------------</span>
+               <span style="color: #A0A0A0"> 472</span> <span style="color: #228B22; background: #FFFFFF;">%   Copyright (C) 2004 Delft University of Technology</span>
+               <span style="color: #A0A0A0"> 473</span> <span style="color: #228B22; background: #FFFFFF;">%       Gerben J. de Boer</span>
+               <span style="color: #A0A0A0"> 474</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 475</span> <span style="color: #228B22; background: #FFFFFF;">%       g.j.deboer@citg.tudelft.nl	</span>
+               <span style="color: #A0A0A0"> 476</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 477</span> <span style="color: #228B22; background: #FFFFFF;">%       Fluid Mechanics Section</span>
+               <span style="color: #A0A0A0"> 478</span> <span style="color: #228B22; background: #FFFFFF;">%       Faculty of Civil Engineering and Geosciences</span>
+               <span style="color: #A0A0A0"> 479</span> <span style="color: #228B22; background: #FFFFFF;">%       PO Box 5048</span>
+               <span style="color: #A0A0A0"> 480</span> <span style="color: #228B22; background: #FFFFFF;">%       2600 GA Delft</span>
+               <span style="color: #A0A0A0"> 481</span> <span style="color: #228B22; background: #FFFFFF;">%       The Netherlands</span>
+               <span style="color: #A0A0A0"> 482</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 483</span> <span style="color: #228B22; background: #FFFFFF;">%   This library is free software; you can redistribute it and/or</span>
+               <span style="color: #A0A0A0"> 484</span> <span style="color: #228B22; background: #FFFFFF;">%   modify it under the terms of the GNU Lesser General Public</span>
+               <span style="color: #A0A0A0"> 485</span> <span style="color: #228B22; background: #FFFFFF;">%   License as published by the Free Software Foundation; either</span>
+               <span style="color: #A0A0A0"> 486</span> <span style="color: #228B22; background: #FFFFFF;">%   version 2.1 of the License, or (at your option) any later version.</span>
+               <span style="color: #A0A0A0"> 487</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 488</span> <span style="color: #228B22; background: #FFFFFF;">%   This library is distributed in the hope that it will be useful,</span>
+               <span style="color: #A0A0A0"> 489</span> <span style="color: #228B22; background: #FFFFFF;">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+               <span style="color: #A0A0A0"> 490</span> <span style="color: #228B22; background: #FFFFFF;">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span>
+               <span style="color: #A0A0A0"> 491</span> <span style="color: #228B22; background: #FFFFFF;">%   Lesser General Public License for more details.</span>
+               <span style="color: #A0A0A0"> 492</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 493</span> <span style="color: #228B22; background: #FFFFFF;">%   You should have received a copy of the GNU Lesser General Public</span>
+               <span style="color: #A0A0A0"> 494</span> <span style="color: #228B22; background: #FFFFFF;">%   License along with this library; if not, write to the Free Software</span>
+               <span style="color: #A0A0A0"> 495</span> <span style="color: #228B22; background: #FFFFFF;">%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307</span>
+               <span style="color: #A0A0A0"> 496</span> <span style="color: #228B22; background: #FFFFFF;">%   USA</span>
+               <span style="color: #A0A0A0"> 497</span> <span style="color: #228B22; background: #FFFFFF;">%   --------------------------------------------------------------------   </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 498</a></span> <span style="color: #000000; background: #E0E0FF;">   [sortedX,I]= sort(X); </span>
+               <span style="color: #A0A0A0"> 499</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 500</a></span> <span style="color: #000000; background: #E0E0FF;">   for j = 1:length(X) </span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 501</a></span> <span style="color: #000000; background: #E0E0FF;">      r(I(j)) = j; </span>
+       <span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a> 502</a></span> <span style="color: #000000; background: #E0E0FF;">   end </span>
+               <span style="color: #A0A0A0"> 503</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 504</a></span> <span style="color: #000000; background: #E0E0FF;">   r = length(X) - r + 1; </span>
+</pre>
+<p><p>Other subfunctions in this file are not included in this listing.
+</div>
+</body>
+</html>
