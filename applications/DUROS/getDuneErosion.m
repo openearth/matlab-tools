@@ -181,33 +181,33 @@ if DuneErosionSettings('get', 'DUROS')
             w = feval(FallvelocityArgs{:});
             G = getG(TargetVolume + Volume, Hsig_t, w, Bend);
             if ~isempty(G)
-		        g = G/diff(result(1).zActive([end 1])); % G = g * z ==> g = G/z; see Basisrapport Zandige Kust pp 469
-		        x0bend = result(1).info.x0 + g;
-		        writemessage(51, ['Additional retreat of ' num2str(-g, '%.2f') ' m as a contribution for a coastal bend']);
-		        x0bendwithinboundaries = x0bend > x0min && x0bend < x0max;
-		        if ~x0bendwithinboundaries
-		            x0bend = x0min;
-		            writemessage(53, ['Additional retreat as a contribution for a coastal bend limited to ' num2str(-(x0bend-result(1).info.x0), '%.2f') ' m']);
-		        end
-		        xInitialpreBend = [result(1).xLand; result(1).xActive; result(1).xSea];
-		        zInitialpreBend = [result(1).zLand; result(1).zActive; result(1).zSea];
-		        result(end+1) = getDUROSprofile(xInitialpreBend, zInitialpreBend, x0bend, Hsig_t, Tp_t, WL_t, w);
-		        % add VTVinfo to result structure
-		        result(end).VTVinfo.Xp = x0bend;
-		        result(end).VTVinfo.Zp = WL_t;
-		        result(end).VTVinfo.Xr = result(end).xActive(1);
-		        result(end).VTVinfo.Zr = result(end).zActive(1);
-		        if x0bendwithinboundaries
-		            result(end).info.ID = ['Shifted for coastal bend (Bend = ' num2str(Bend) '^{\circ}; G = ' num2str(G, '%.2f')  ' m^3/m^1)'];
-		        else
-		            %TODO: recalculate G (because it is limited by x0min)
-		            result(end).info.ID = ['Shifted for coastal bend (Bend = ' num2str(Bend) '^{\circ})'];
+                g = G/diff(result(1).zActive([end 1])); % G = g * z ==> g = G/z; see Basisrapport Zandige Kust pp 469
+                x0bend = result(1).info.x0 + g;
+                writemessage(51, ['Additional retreat of ' num2str(-g, '%.2f') ' m as a contribution for a coastal bend']);
+                x0bendwithinboundaries = x0bend > x0min && x0bend < x0max;
+                if ~x0bendwithinboundaries
+                    x0bend = x0min;
+                    writemessage(53, ['Additional retreat as a contribution for a coastal bend limited to ' num2str(-(x0bend-result(1).info.x0), '%.2f') ' m']);
+                end
+                xInitialpreBend = [result(1).xLand; result(1).xActive; result(1).xSea];
+                zInitialpreBend = [result(1).zLand; result(1).zActive; result(1).zSea];
+                result(end+1) = getDUROSprofile(xInitialpreBend, zInitialpreBend, x0bend, Hsig_t, Tp_t, WL_t, w);
+                % add VTVinfo to result structure
+                result(end).VTVinfo.Xp = x0bend;
+                result(end).VTVinfo.Zp = WL_t;
+                result(end).VTVinfo.Xr = result(end).xActive(1);
+                result(end).VTVinfo.Zr = result(end).zActive(1);
+                if x0bendwithinboundaries
+                    result(end).info.ID = ['Shifted for coastal bend (Bend = ' num2str(Bend) '^{\circ}; G = ' num2str(G, '%.2f')  ' m^3/m^1)'];
+                else
+                    %TODO: recalculate G (because it is limited by x0min)
+                    result(end).info.ID = ['Shifted for coastal bend (Bend = ' num2str(Bend) '^{\circ})'];
                 end
                 idAddProf = 3;
-		    else
-		    	writemessage(55, ['Coastal bend outside scope of regulations (Bend > 24)']);
-		    	idAddProf = 1;
-		    end
+            else
+                writemessage(55, 'Coastal bend outside scope of regulations (Bend > 24)');
+                idAddProf = 1;
+            end
             
             % the shifted DUROS profile has been constructed with respect
             % to the initial profile. To create the correct patch, the
