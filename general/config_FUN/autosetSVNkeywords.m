@@ -91,6 +91,12 @@ if ~any(strcmp(strcell, '*.html = svn:mime-type=text/html'))
     anyChange = true;
 end
 
+%% check whether keywords are set for css-files
+if ~any(strcmp(strcell, '*.css = svn:mime-type=text/css'))
+    strcell{end+1} = '*.css = svn:mime-type=text/css';
+    anyChange = true;
+end
+
 %%
 if anyChange
     % overwrite the existing config file
