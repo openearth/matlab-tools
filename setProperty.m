@@ -135,8 +135,19 @@ for iargin = i0:2:iend
         Set.(realPropertyName{1}) = true;
         warning([upper(mfilename) ':PropertyName'], ['Could not find an exact (case-sensitive) match for ''' PropertyName '''. ''' realPropertyName{1} ''' has been used instead.'])
     elseif ischar(PropertyName)
-        % PropertyName unknown
-        error([upper(mfilename) ':UnknownPropertyName'], ['PropertyName "' PropertyName '" is not valid'])
+        % PropertyName unknown, maybe hidden (when working with classes.....):
+        try
+            if ~isequalwithequalnans(OPT.(PropertyName), varargin{iargin+1})
+                % only renew property value if it really changes
+                OPT.(PropertyName) = varargin{iargin+1};
+                % indicate that this field is non-default now
+                Default.(PropertyName) = false;
+            end
+            % indicate that this field is set
+            Set.(PropertyName) = true;
+        catch me
+            error([upper(mfilename) ':UnknownPropertyName'], ['PropertyName "' PropertyName '" is not valid'])
+        end
     else
         % no char found where PropertyName expected
         error([upper(mfilename) ':UnknownPropertyName'], 'PropertyName should be char')
