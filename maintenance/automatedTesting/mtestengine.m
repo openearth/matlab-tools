@@ -830,7 +830,7 @@ classdef mtestengine < handle
                         if strcmp(htmlref(1),filesep)
                             htmlref = htmlref(2:end);
                         end
-                        tempstr = strrep(tempstr,'#FUNCTIONHTML',htmlref);
+                        tempstr = strrep(tempstr,'#FUNCTIONHTML',strrep(htmlref,filesep,'/'));
                         
                         % #FUNCTIONCOVERAGE
                         tempstr = strrep(tempstr,'#FUNCTIONCOVERAGE',num2str(obj.functionsrun(icall).coverage,'%0.1f'));
