@@ -84,13 +84,13 @@ for iprofinf = 2:length(varargin)
             infoout.FunctionTable(funcid).TotalRecursiveTime = infoout.FunctionTable(funcid).TotalRecursiveTime + info2.FunctionTable(ifunc).TotalRecursiveTime;
             for ilns = 1:size(info2.FunctionTable(ifunc).ExecutedLines,1)
                 lninf = info2.FunctionTable(ifunc).ExecutedLines(ilns,:);
-                id = infoout.FunctionTable(ifunc).ExecutedLines(:,1)==lninf(1);
+                id = infoout.FunctionTable(funcid).ExecutedLines(:,1)==lninf(1);
                 if any(id)
-                    infoout.FunctionTable(ifunc).ExecutedLines(id,2) = infoout.FunctionTable(ifunc).ExecutedLines(id,2) + lninf(2);
-                    infoout.FunctionTable(ifunc).ExecutedLines(id,3) = infoout.FunctionTable(ifunc).ExecutedLines(id,3) + lninf(3);
+                    infoout.FunctionTable(funcid).ExecutedLines(id,2) = infoout.FunctionTable(funcid).ExecutedLines(id,2) + lninf(2);
+                    infoout.FunctionTable(funcid).ExecutedLines(id,3) = infoout.FunctionTable(funcid).ExecutedLines(id,3) + lninf(3);
                 else
-                    infoout.FunctionTable(ifunc).ExecutedLines(end+1,:) = lninf;
-                    infoout.FunctionTable(ifunc).ExecutedLines = sortrows(infoout.FunctionTable(ifunc).ExecutedLines,1);
+                    infoout.FunctionTable(funcid).ExecutedLines(end+1,:) = lninf;
+                    infoout.FunctionTable(funcid).ExecutedLines = sortrows(infoout.FunctionTable(funcid).ExecutedLines,1);
                 end
             end
         end
@@ -121,7 +121,17 @@ for iprofinf = 2:length(varargin)
             end
             
             %% add parent info to child
-            prntsinfo2 = info2.FunctionTable(ch(ich).Index).Parents;
+            prntsinfo2 = struct(...
+                'Index',[],...
+                'NumCalls',[]);
+            for ipar = 1:length(info2.FunctionTable(ch(ich).Index).Parents)
+                prntsinfo2(ipar).NumCalls = info2.FunctionTable(ch(ich).Index).Parents(ipar).NumCalls;
+                if islogical(info2.FunctionTable(ch(ich).Index).Parents(ipar).Index)
+                    prntsinfo2(ipar).Index = find(info2.FunctionTable(ch(ich).Index).Parents(ipar).Index);
+                else
+                    prntsinfo2(ipar).Index = info2.FunctionTable(ch(ich).Index).Parents(ipar).Index;
+                end
+            end
             numcalls = prntsinfo2([prntsinfo2.Index]==ifunc).NumCalls;
             if ~isempty(infoout.FunctionTable(id).Parents) && any([infoout.FunctionTable(id).Parents.Index]==find(funcid))
                 prntid = find([infoout.FunctionTable(id).Parents.Index]==find(funcid));
