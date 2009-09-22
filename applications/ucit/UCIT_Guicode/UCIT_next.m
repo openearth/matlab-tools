@@ -78,7 +78,7 @@ if ~isempty(findobj('tag','plotWindow_US'))
 end
 
 if ~isempty(findobj('tag','plotWindowMKL'))
-    calculateMKL
+    UCIT_calculateMKL
 end
 
 if ~isempty(findobj('tag','plotWindowTKL'))
