@@ -1,7 +1,18 @@
+	function correctimages(htmldiv)
+		{
+		$(htmldiv.children('div')[0]).children('img').each(function() 
+			{
+			$(this).attr('src',"html/"+$(this).attr('src'))
+			})
+		}
 	function loadtestcase(event)
 		{
-			$("#tabs_description").load(event.data.descriptionhtml);
-			$("#tabs_result").load(event.data.resulthtml);
+			$("#tabs_description").load(event.data.descriptionhtml,[],function() {
+				$(document).ajaxStop(correctimages($(this)));
+				});
+			$("#tabs_result").load(event.data.resulthtml,[],function() {
+				$(document).ajaxStop(correctimages($(this)));
+				});
 			$("#tabs_function_coverage").load(event.data.coveragehtml,[],function() {
 							$(document).ajaxStop(linkcoveragenames());
 				});
@@ -13,8 +24,12 @@
 	function loadtest(event)
 		{
 			// assign new html pages to tabs
-			$("#tabs_description").load(event.data.descriptionhtml);
-			$("#tabs_result").load(event.data.resulthtml);
+			$("#tabs_description").load(event.data.descriptionhtml,[],function() {
+				$(document).ajaxStop(correctimages($(this)));
+				});
+			$("#tabs_result").load(event.data.resulthtml,[],function() {
+				$(document).ajaxStop(correctimages($(this)));
+				});
 			$("#tabs_function_coverage").load(event.data.coveragehtml,[],function() {
 				$(document).ajaxStop(linkcoveragenames());
 				});
