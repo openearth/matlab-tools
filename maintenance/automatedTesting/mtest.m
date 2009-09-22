@@ -328,7 +328,7 @@ classdef mtest < handle
                 if ~isempty(credid)
                     credend = find(~comments);
                     credend = min(credend(credend>credid));
-                    credentialstr = teststr(credid:credend);
+%                     credentialstr = teststr(credid:credend);
                     teststr(credid:credend)=[];
                     comments(credid:credend)=[];
                 end
@@ -346,9 +346,9 @@ classdef mtest < handle
                     else
                         versionend = min(versionend(versionend>versionid));
                     end
-                    versionstr = teststr(1:versionend);
+%                     versionstr = teststr(1:versionend);
                     teststr(1:versionend)=[];
-                    comments(1:versionend)=[];
+%                     comments(1:versionend)=[];
                 end
                 
                 iddescr = find(~cellfun(@isempty,strfind(teststr,'$Description')));
@@ -430,7 +430,7 @@ classdef mtest < handle
                     end
                     
                     if isnan(idrun) && isempty(teststr)
-                        warning('No runcode defined...');
+                        warning('Mtest:NoRunCode','No runcode defined...');
                         % build runcode for all testcases. Todo if testcases are ready.
                     elseif isnan(idrun)
                         obj.runcode = teststr(~idused);
@@ -451,7 +451,14 @@ classdef mtest < handle
                 
                 testcasesstruct(icase).fullfunctioncall = testcasesstruct(icase).fullstring{1};
                 testcasesstruct(icase).functioncall = strtrim(testcasesstruct(icase).fullstring{1}(strfind(testcasesstruct(icase).fullstring{1},'=')+1:end));
-                testcasesstruct(icase).functionoutputname = strtrim(strrep(testcasesstruct(icase).fullfunctioncall(1:strfind(testcasesstruct(icase).fullstring{1},'=')-1),'function',''));
+                % name of the testcase subfunction
+                tmp = strfind(testcasesstruct(icase).functioncall,'(');
+                if isempty(tmp)
+                    tmp = length(testcasesstruct(icase).functioncall)+1;
+                end
+                % find the name of the testcase function in the base workspace code
+                testcasesstruct(icase).functionname = testcasesstruct(icase).functioncall(1:tmp-1);
+                testcasesstruct(icase).functionoutputname = mtest.argsinname(testcasesstruct(icase).fullfunctioncall,testcasesstruct(icase).functionname);
                 
                 % First find the celldividers between the description parts, the runtTest parts and the Publish part
                 descrid = find(~cellfun(@isempty,strfind(str,'$Description')));
@@ -550,14 +557,6 @@ classdef mtest < handle
             % subtract run code for individual testcases
             if ~isempty(rncode)
                 for icase = length(testcasesstruct):-1:1
-                    % name of the testcase subfunction
-                    tmp = strfind(testcasesstruct(icase).functioncall,'(');
-                    if isempty(tmp)
-                        tmp = length(testcasesstruct(icase).functioncall)+1;
-                    end
-                    
-                    % find the name of the testcase function in the base workspace code
-                    testcasesstruct(icase).functionname = testcasesstruct(icase).functioncall(1:tmp-1);
                     call = strfind(rncode,testcasesstruct(icase).functionname);
                     if isempty(call)
                         % No call to the testcase. This one is disabled. We do not have to remember it.
@@ -892,7 +891,7 @@ classdef mtest < handle
             id = find(strcmp(varargin,'filename'));
             if ~isempty(id)
                 [pt nm] = fileparts(varargin{id+1});
-                obj.descriptionoutputfile = [nm '.html'];
+                obj.coverageoutputfile = [nm '.html'];
                 if ~isempty(pt)
                     obj.resdir = pt;
                 end
@@ -922,11 +921,16 @@ classdef mtest < handle
                 fcns = [];
             else
                 fcnspath = cellfun(@fileparts,{obj.functioncalls.filename}','UniformOutput',false);
-                cov = [obj.functioncalls.coverage]';
-                id = false(size(fcns));
-                for i = 1:length(include)
-                    id(~cellfun(@isempty,strfind(fcns,include{i})))=true;
-                    id(~cellfun(@isempty,strfind(fcnspath,include{i})))=true;
+                id = cellfun(@isempty,{obj.functioncalls.coverage});
+                cov = nan(size(obj.functioncalls,2),1);
+                cov(~id) = deal([obj.functioncalls(~id).coverage]);
+                id = true(size(fcns));
+                if ~isempty(include)
+                    id = false(size(fcns));
+                    for i = 1:length(include)
+                        id(~cellfun(@isempty,strfind(fcns,include{i})))=true;
+                        id(~cellfun(@isempty,strfind(fcnspath,include{i})))=true;
+                    end
                 end
                 for i = 1:length(exclude)
                     id(~cellfun(@isempty,strfind(fcns,exclude{i})))=false;
@@ -953,13 +957,14 @@ classdef mtest < handle
                 s{end+1} = '<table>';
                 s{end+1} = '    <tr>';
                 s{end+1} = '        <th>Function Name</th>';
-                s{end+1} = '        <th>Coverage during this test</th>';
+                s{end+1} = '        <th>Coverage during test (%)</th>';
                 s{end+1} = '    </tr>';
                 for ifcn = 1:length(fcns)
-                    htmlfile = strrep(fullfile(coveragedir,mtestfunction.constructfilename([fcns{ifcn} '_coverage.html'])),filesep,'/');
+                    [dummy fn] = fileparts(fcns{ifcn});
+                    htmlfile = strrep(fullfile(coveragedir,mtestfunction.constructfilename([fn '_coverage.html'])),filesep,'/');
                     s{end+1} = '    <tr>';
                     s{end+1} = ['        <td><a class="RelFunctionRef" href="#" deltares:functioncoverageref="' htmlfile '">' code2html(fcns{ifcn}) '</a></td>']; %#ok<*AGROW>
-                    s{end+1} = ['        <td>' num2str(cov(ifcn),'%0.1f') '</td>'];
+                    s{end+1} = ['        <td>' num2str(cov(ifcn),'%0.0f') '</td>'];
                     s{end+1} = '    </tr>';
                 end
                 s{end+1} = '</table>';
@@ -1304,6 +1309,9 @@ classdef mtest < handle
             obj.testperformed = false;
             
         end
+        function edit(obj)
+            edit(obj.filename);
+        end
     end
     methods % set and get methods
         function set.tmpobjname(obj,varargin)
@@ -1401,6 +1409,24 @@ classdef mtest < handle
             
             %% publish result (to come)
             obj.publishResult;
+        end
+    end
+    methods (Static=true)
+        function outargs = argsinname(str,fn)
+            %% fund function name in call
+            str = strtrim(str(strfind(str,'function')+length('function'):end));
+            fnid = strfind(str,fn);
+            
+            %% output arguments
+            outargs = [];
+            if ~isempty(strfind(str(1:fnid),'='))
+                % There is output defined
+                outargstemp = strtrim(strread(strrep(strrep(strtrim(str(1:min(strfind(str(1:fnid),'='))-1)),'[',''),']',''),'%s',-1,'delimiter',','));
+                
+                for iargs = 1:length(outargstemp)
+                    outargs = cat(1,outargs,strtrim(strread(outargstemp{iargs},'%s',-1,'delimiter',' ')));
+                end
+            end
         end
     end
 end

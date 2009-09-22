@@ -69,6 +69,7 @@ classdef mtestengine < handle
         functionsrun = {};              % Table that contains information about functions that were called during the tests (Cell N x 3, with columns functionname, html reference and coverage percentage).
     end
     properties (Hidden=true)
+        copymode = [];
         testscatalogued = false;
         profInfo = [];
     end
@@ -300,6 +301,9 @@ classdef mtestengine < handle
             %
             %               %   See also mtestengine mtestengine.mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
             
+            %% get current dir
+            startdir = cd;
+            
             %% initiate output
             varargout = {};
             %% cataloguq tests if not done already
@@ -325,11 +329,15 @@ classdef mtestengine < handle
                 fls = mtestengine.listfiles(obj.targetdir,'*',true);
                 fls(~cellfun(@isempty,strfind(fls(:,1),'.svn')) | strcmp(fls(:,2),'.') | strcmp(fls(:,2),'..'),:)=[];
                 if ~isempty(fls)
-                    button = questdlg({['The target directory is set to: ' obj.targetdir];'There are already files in this directory. What do you want to do with them?'},'Target dir not empty','Remove all files and dirs','Only remove files and keep svn information','Leave all my files there','Leave all my files there');
+                    if ~isempty(obj.copymode)
+                        button = obj.copymode;
+                    else
+                        button = questdlg({['The target directory is set to: ' obj.targetdir];'There are already files in this directory. What do you want to do with them?'},'Target dir not empty','Remove all files and dirs','Only remove files and keep svn information','Leave all my files there','Leave all my files there');
+                    end
                     switch button
-                        case 'Leave all my files there'
+                        case {'Leave all my files there','keep'}
                             % Do nothing
-                        case 'Only remove files and keep svn information'
+                        case {'Only remove files and keep svn information','svnkeep'}
                             % delete all files that are not svn.
                             % Do not delete dirs. (could have svn content..).
                             for ifls = 1:size(fls,1)
@@ -337,7 +345,7 @@ classdef mtestengine < handle
                                     delete(fullfile(fls{ifls,1},fls{ifls,2}));
                                 end
                             end
-                        case 'Remove all files and dirs'
+                        case {'Remove all files and dirs','remove'}
                             rmdir(obj.targetdir,'s');
                             mkdir(obj.targetdir);
                         otherwise
@@ -421,6 +429,7 @@ classdef mtestengine < handle
             
             wrongtests = false(length(obj.tests),1);
             
+            existingfigs = findobj('Type','figure');
             for itests = 1:length(obj.tests)
                 %% Display progress
                 if obj.verbose
@@ -447,14 +456,21 @@ classdef mtestengine < handle
                             'stylesheet',publishstylesheet);
                     end
                 catch me %#ok<NASGU>
+                    cd(startdir);
+                    if isdir(obj.tests(itests).rundir)
+                        fclose all
+                        rmdir(obj.tests(itests).rundir,'s');
+                    end
                     wrongtests(itests)=true;
                     obj.wrongtestdefs{end+1} = fullfile(obj.tests(itests).filepath,[obj.tests(itests).filename '.m']);
                 end
             end
+            newfigs = findobj('Type','figure');
+            close(newfigs(~ismember(newfigs,existingfigs)));
+            
             obj.tests(wrongtests) = [];            
             %% Get profiler information
-            obj.profInfo = mergeprofileinfo(obj.tests.profinfo);
-            
+            obj.profInfo = mergeprofileinfo(obj.tests.profinfo);            
             %% print coverage html pages
             if obj.includecoverage
                 %% create coverage dir
@@ -493,7 +509,8 @@ classdef mtestengine < handle
                         %% Create mtestfunction object
                         obj.functionsrun(ifunc) = mtestfunction(obj.profInfo,ifunc);                       
                         %% construct name of outputfile
-                        obj.functionsrun(ifunc).htmlfilename = fullfile(obj.targetdir,'html','fcncoverage',mtestfunction.constructfilename([obj.functionsrun(ifunc).functionname '_coverage.html']));
+                        [dummy fn] = fileparts(obj.functionsrun(ifunc).functionname);
+                        obj.functionsrun(ifunc).htmlfilename = fullfile(obj.targetdir,'html','fcncoverage',mtestfunction.constructfilename([fn '_coverage.html']));
                         %% publish coverage files.
                         obj.functionsrun(ifunc).publishCoverage;
                     end
@@ -507,6 +524,14 @@ classdef mtestengine < handle
                     obj.tests(itest).publishCoverage('include',{obj.maindir},...
                         'resdir',fullfile(obj.targetdir,'html'),...
                         'coveragedir',fullfile('html','fcncoverage'));
+                    for icase = 1:length(obj.tests(itest).testcases)
+                        obj.tests(itest).testcases(icase).coverageoutputfile = ...
+                            fullfile(obj.targetdir,'html',[obj.tests(itest).filename,'_coverage_case_' num2str(icase) '.html']);
+                        obj.tests(itest).testcases(icase).publishCoverage(...
+                            'include',{obj.maindir},...
+                            'resdir',fullfile(obj.targetdir,'html'),...
+                            'coveragedir',fullfile('html','fcncoverage'));
+                    end
                 end
             end
             %% return the previous searchpath
@@ -539,6 +564,8 @@ classdef mtestengine < handle
             if nargout == 1
                 varargout = {obj};
             end
+            %% Return to initial dir
+            cd(startdir);
         end
     end
     methods (Hidden=true)
@@ -950,6 +977,10 @@ classdef mtestengine < handle
                                 [dum fn ext] = fileparts(obj.tests(id).testcases(icase).descriptionoutputfile);
                                 tempstr2 = strrep(tempstr2,'#DESCRIPTIONHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
                                 
+                                % #COVERAGEHTML
+                                [dum fn ext] = fileparts(obj.tests(id).testcases(icase).coverageoutputfile);
+                                tempstr2 = strrep(tempstr2,'#COVERAGEHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+
                                 % #RESULTHTML
                                 [dum fn ext] = fileparts(obj.tests(id).testcases(icase).publishoutputfile);
                                 tempstr2 = strrep(tempstr2,'#RESULTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));

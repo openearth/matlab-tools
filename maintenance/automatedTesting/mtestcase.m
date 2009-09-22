@@ -649,6 +649,163 @@ classdef mtestcase < handle
                 'filename',obj.publishoutputfile);
             %             [outputfile '_results_case_' num2str(obj.casenumber) '.html']
         end
+        function publishCoverage(obj,varargin)
+            %publishResult  Creates an html file with coverage information of this test
+            %
+            %   This function only creates an overview of the coverages. The coverage files for
+            %   individual functions are linked to, but not generated.
+            %
+            %   Syntax:
+            %   publishCoverage(obj,'property','value')
+            %   obj.publisCoverage('property','value')
+            %
+            %   Input:
+            %   obj             - An instance of an mtestcase object.
+            %
+            %   property value pairs:
+            %           'resdir'     -  Specifies the output directory (default is the current
+            %                           directory)
+            %           'filename'   -  Name of the output file. If the filename includes a path,
+            %                           this pathname overrides the specified resdir.
+            %           'testname'   -  Name of the test.
+            %           'exclude'    -  Cell with strings indicating the functions that should be
+            %                           excluded from the overview.
+            %           'include'    -  Cell with strings indicating the functions that should be
+            %                           included in the overview.
+            %           'coveragedir'-  dirname (relative) of the referenced coverage files
+            %           
+            %
+            %   See also mtestcase mtest.run mtest.runAndPublish mtestengine
+            
+            %% Run test if we do not have results
+%             if ~obj.testperformed
+%                 obj.run;
+%             end
+            % This is a workaround. After a full publish cleanup is run... This removes most of the
+            % information. we should either publish the coverage in that early stage (leaving no
+            % possibilities to include the overall results) or eliminate this check entirely
+            
+            %% subtract result dir from input
+            if isempty(obj.resdir)
+                obj.resdir = cd;
+            end
+            id = find(strcmp(varargin,'resdir'));
+            if ~isempty(id)
+                obj.resdir = varargin{id+1};
+                varargin(id:id+1) = [];
+            end
+            
+            %% Get exclusions
+            exclude = {};
+            id = find(strcmp(varargin,'exclude'));
+            if ~isempty(id)
+                exclude = varargin{id+1};
+            end
+            
+            coveragedir = {};
+            id = find(strcmp(varargin,'coveragedir'));
+            if ~isempty(id)
+                coveragedir = varargin{id+1};
+            end
+            
+            %% Get inclusions
+            include = {};
+            id = find(strcmp(varargin,'include'));
+            if ~isempty(id)
+                include = varargin{id+1};
+            end
+            
+            %% Get filename from input
+            id = find(strcmp(varargin,'filename'));
+            if ~isempty(id)
+                [pt nm] = fileparts(varargin{id+1});
+                obj.coverageoutputfile = [nm '.html'];
+                if ~isempty(pt)
+                    obj.resdir = pt;
+                end
+                varargin(id:id+1) = [];
+            end
+            
+            %% createoutputname
+            if isempty(obj.coverageoutputfile)
+                obj.coverageoutputfile = [obj.filename '_coverage_case' num2str(obj.casenumber) '.html'];
+            end
+            [pt fn] = fileparts(obj.coverageoutputfile);
+            if isempty(pt)
+                pt = obj.resdir;
+            end
+            obj.coverageoutputfile = fullfile(pt,[fn '.html']);
+            
+            %% retrieve testname from input
+            if any(strcmpi(varargin,'testname'))
+                id = find(strcmpi(varargin,'testname'));
+                obj.testname = varargin{id+1};
+            end
+            
+            %% calculate coverage
+            fcns = {obj.functioncalls.functionname}';
+            
+            if isempty(fcns{1})
+                fcns = [];
+            else
+                fcnspath = cellfun(@fileparts,{obj.functioncalls.filename}','UniformOutput',false);
+                id = cellfun(@isempty,{obj.functioncalls.coverage});
+                cov = nan(size(obj.functioncalls,2),1);
+                cov(~id) = deal([obj.functioncalls(~id).coverage]);
+                id = true(size(fcns));
+                if ~isempty(include)
+                    id = false(size(fcns));
+                    for i = 1:length(include)
+                        id(~cellfun(@isempty,strfind(fcns,include{i})))=true;
+                        id(~cellfun(@isempty,strfind(fcnspath,include{i})))=true;
+                    end
+                end
+                for i = 1:length(exclude)
+                    id(~cellfun(@isempty,strfind(fcns,exclude{i})))=false;
+                    id(~cellfun(@isempty,strfind(fcnspath,exclude{i})))=false;
+                end
+                fcns(~id)=[];
+                
+                cov(~id)=[];
+            end
+            
+            %% Create header
+            s{1} = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
+            s{2} = '<html xmlns="http://www.w3.org/1999/xhtml">';
+            
+            s{3} = '<head>';
+            s{end+1} = '<title>Coverage information</title>';
+            s{end+1} = '</head>';
+            s{end+1} = '<body>';
+ 
+            if isempty(fcns)
+                s{end+1} = 'This testcase did not address any function within the maindir';
+            else
+                %% Create table
+                s{end+1} = '<table>';
+                s{end+1} = '    <tr>';
+                s{end+1} = '        <th>Function Name</th>';
+                s{end+1} = '        <th>Coverage during testcase (%)</th>';
+                s{end+1} = '    </tr>';
+                for ifcn = 1:length(fcns)
+                    [dummy fn] = fileparts(fcns{ifcn});
+                    htmlfile = strrep(fullfile(coveragedir,mtestfunction.constructfilename([fn '_coverage.html'])),filesep,'/');
+                    s{end+1} = '    <tr>';
+                    s{end+1} = ['        <td><a class="RelFunctionRef" href="#" deltares:functioncoverageref="' htmlfile '">' code2html(fcns{ifcn}) '</a></td>']; %#ok<*AGROW>
+                    s{end+1} = ['        <td>' num2str(cov(ifcn),'%0.0f') '</td>'];
+                    s{end+1} = '    </tr>';
+                end
+                s{end+1} = '</table>';
+            end
+            %% end file
+            s{end+1} = '</body>';
+            s{end+1} = '</html>';
+            
+            %% save file
+            fid = fopen(obj.coverageoutputfile,'w');
+            fprintf(fid,'%s\n',s{:});
+            fclose(fid);
+        end
         function publishResults(obj,varargin)
             %publishResults  Creates an html file from the code included in the TestResult cell with publish
             %
@@ -990,7 +1147,13 @@ classdef mtestcase < handle
             %% store testresult
             obj.testresult = nan;
             if ~isempty(obj.functionoutputname)
-                obj.testresult = ws{strcmp(ws(:,1),obj.functionoutputname),2};
+                if iscell(obj.functionoutputname)
+                    if ~isempty(obj.functionoutputname{1})
+                        obj.testresult = ws{strcmp(ws(:,1),obj.functionoutputname{1}),2};
+                    end
+                else
+                    obj.testresult = ws{strcmp(ws(:,1),obj.functionoutputname),2};
+                end
             end
             
             %% get profiler data
