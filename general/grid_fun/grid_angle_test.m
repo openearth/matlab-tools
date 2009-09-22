@@ -1,4 +1,4 @@
-function grid_angle_test(varargin)
+function testresult = grid_angle_test(varargin)
 %GRID_ANGLE_TEST  test for GRID_ANGLE
 %
 % Checks correct rotation matrix:
@@ -45,15 +45,33 @@ function grid_angle_test(varargin)
    OPT.TH  = 30;
    OPT.THs = deg2rad(OPT.TH+[0 90 180 270 360]);
 
-%% ROTATION TESTS   
+%% $Description (Name = grid_angle)
+% This test has two testcases.
+%
+% * The first testcase is a rotation test
+% * The second testcase is a deformation test.
+%
 
+%% $RunCode
+tr(1) = rotationtest();
+tr(2) = deformationtest();
+testresult = all(tr);
+
+end
+
+function testresult = rotationtest()
+%% $Description (Name = rotation)
+   OPT.TH  = 30;
+   OPT.THs = deg2rad(OPT.TH+[0 90 180 270 360]);
+
+%% $RunCode
 clear cen cor
 
    %% 0 degree
 
    j = 1;
-  [cor(j).x,cor(j).y] = ndgrid([1:4]   ,[1:4]   );
-  [cen(j).x,cen(j).y] = ndgrid([1:3]+.5,[1:3]+.5);
+  [cor(j).x,cor(j).y] = ndgrid(1:4   ,1:4   );
+  [cen(j).x,cen(j).y] = ndgrid((1:3)+.5,(1:3)+.5);
   
    %% any degree
 
@@ -68,20 +86,36 @@ clear cen cor
        cen(j).x       = cos(OPT.TH)*cen(1).x - sin(OPT.TH)*cen(1).y;
        cen(j).y       = sin(OPT.TH)*cen(1).x + cos(OPT.TH)*cen(1).y;
    end
+   testresult = nan;
    
-   %% loop cases
+   %% $PublishResult
+   corr = cor;
+   cenn = cen;
+   for j=1:length(corr)
+       
+       cor = corr(j);
+       cen = cenn(j);
+       figure('name',['ROTATION #',num2str(j,'%0.3d')])
+       cen.rad      = grid_angle(cor.x,cor.y);
+       cor.rad      = grid_angle(cor.x,cor.y,'location','cor');
+       cen.deg      = rad2deg(cen.rad);
+       cor.deg      = rad2deg(cor.rad);
+       
+       pcolorcorcen(cor.x,cor.y,mod(cen.deg,360),[.5 .5 .5])
+       hold on
+       caxis([0 360])
+       colorbarwithtitle('\theta [\circ]',[0:90:360])
+       text(cen.x(:),cen.y(:),num2str(cen.deg(:) ),'color','w')
+       text(cor.x(:),cor.y(:),num2str(cor.deg(:) ),'color','k')
+       axis equal
 
-   for j=1:length(cor)
-   
-      figure('name',['ROTATION #',num2str(j,'%0.3d')])
-      grid_angle_test_plot(cor(j),cen(j));
-      
    end   
+end
 
-%% DEFORMATION TESTS   
+function testresult = deformationtest()
+%% $Description (Name = deformation)
 
-clear cen cor
-
+%% $RunCode
    %% deformed block (south -45)
    
    j = 1;
@@ -114,29 +148,30 @@ clear cen cor
    cen(j).x = corner2center(cor(j).x);
    cen(j).y = corner2center(cor(j).y);
 
+   testresult = nan;
+%% $PublishResult
    %% loop cases
-
-   for j=1:length(cor)
+   corr = cor;
+   cenn = cen;
+   for j=1:length(corr)
    
+      cor = corr(j);
+      cen = cenn(j);
+
       figure('name',['DEFORMATION #',num2str(j,'%0.3d')])
-      grid_angle_test_plot(cor(j),cen(j));
+      cen.rad      = grid_angle(cor.x,cor.y);
+      cor.rad      = grid_angle(cor.x,cor.y,'location','cor');
+      cen.deg      = rad2deg(cen.rad);
+      cor.deg      = rad2deg(cor.rad);
+      
+      pcolorcorcen(cor.x,cor.y,mod(cen.deg,360),[.5 .5 .5])
+      hold on
+      caxis([0 360])
+      colorbarwithtitle('\theta [\circ]',[0:90:360])
+      text(cen.x(:),cen.y(:),num2str(cen.deg(:) ),'color','w')
+      text(cor.x(:),cor.y(:),num2str(cor.deg(:) ),'color','k')
+      axis equal
       
    end   
 
-%%    
-function grid_angle_test_plot(cor,cen)
-
-   cen.rad      = grid_angle(cor.x,cor.y);
-   cor.rad      = grid_angle(cor.x,cor.y,'location','cor');
-   cen.deg      = rad2deg(cen.rad);
-   cor.deg      = rad2deg(cor.rad);
-   
-   pcolorcorcen(cor.x,cor.y,mod(cen.deg,360),[.5 .5 .5])
-   hold on
-   caxis([0 360])
-   colorbarwithtitle('\theta [\circ]',[0:90:360])
-   text(cen.x(:),cen.y(:),num2str(cen.deg(:) ),'color','w')
-   text(cor.x(:),cor.y(:),num2str(cor.deg(:) ),'color','k')
-   axis equal
 end
-%% EOF

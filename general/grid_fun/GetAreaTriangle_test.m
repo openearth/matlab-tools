@@ -1,4 +1,4 @@
-function testresult = getAreaTriangle_test()
+function testresult = GetAreaTriangle_test()
 % GETAREATRIANGLE_TEST  test for getareacurvilineargrid
 %  
 % %See also: GETAREATRIANGLE
@@ -50,21 +50,20 @@ function testresult = getAreaTriangle_test()
 % $Keywords: $
 
 %% $Description (Name = getAreaTriangle)
-% Publishable code that describes the test.
-
-%% $RunCode
+% Calculate area of following.
 
 X = [ 0  2; 1 3];
 Y = [-1 -2; 0 1];
 
-plot(X,Y,'-o')
+plot(X,Y,'-o');
 hold on
-plot(X',Y',':+')
-axis([-1 5 -3 3])
+plot(X',Y',':+');
+axis([-1 5 -3 3]);
 grid on
-set(gca,'xtick',[-10:1:10])
-set(gca,'ytick',[-10:1:10])
+set(gca,'xtick',-10:1:10);
+set(gca,'ytick',-10:1:10);
 
+%% $RunCode
 AreaA(:,:) = GetAreaTriangle(X(1:end-1,1:end-1),Y(1:end-1,1:end-1),...
 X(2:end  ,1:end-1),Y(2:end  ,1:end-1),...
 X(2:end  ,2:end  ),Y(2:end  ,2:end  ));
@@ -73,16 +72,16 @@ AreaB(:,:) = GetAreaTriangle(X(1:end-1,1:end-1),Y(1:end-1,1:end-1),...
 X(1:end-1,2:end  ),Y(1:end-1,2:end  ),...
 X(2:end  ,2:end  ),Y(2:end  ,2:end  ));
 
-Area(:,:)  = AreaA + AreaB
+Area(:,:)  = AreaA + AreaB;
 
 disp('o---------o')
 disp('| B     . |')
 disp('|    .    |')
 disp('| .     A |')
 disp('o---------o')
-disp([num2str(AreaA)])
-disp([num2str(AreaB)])
-disp([num2str(Area )])
+disp(num2str(AreaA))
+disp(num2str(AreaB))
+disp(num2str(Area ))
 
 disp('---------------------------------------------')
 
@@ -102,9 +101,11 @@ disp('| .    B  |')
 disp('|    .    |')
 disp('| A     . |')
 disp('o---------o')
-disp([num2str(AreaA)])
-disp([num2str(AreaB)])
-disp([num2str(Area )])
+disp(num2str(AreaA))
+disp(num2str(AreaB))
+disp(num2str(Area ))
+
+testresult = nan;
 
 %% $PublishResult
 % Publishable code that describes the test.
