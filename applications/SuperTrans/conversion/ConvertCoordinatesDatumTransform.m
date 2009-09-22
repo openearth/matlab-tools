@@ -43,7 +43,7 @@ ell1        = OPT.(OPT.(datum_trans).ellips1).ellips;
 ell2        = OPT.(OPT.(datum_trans).ellips2).ellips;
 
 switch method_name
-    case {'Geocentric translations','Position Vector 7-param',...
+    case {'Geocentric translations','Position Vector 7-param. transformation',...
             'Coordinate Frame rotation','Molodensky-Badekas 10-parameter transformation'}
         % convert geographic 2D coordinates to geographic 3D, by assuming
         % height is 0
@@ -63,7 +63,7 @@ switch method_name
             case 'Geocentric translations'
                 [x,y,z]=Helmert3(x,y,z,dx,dy,dz);
 
-            case {'Position Vector 7-param','Coordinate Frame rotation'}
+            case {'Position Vector 7-param. transformation','Coordinate Frame rotation'}
                 ii = strmatch('X-axis rotation'               ,param.name); rx = inv*param.value(ii)/1000000;
                 ii = strmatch('Y-axis rotation'               ,param.name); ry = inv*param.value(ii)/1000000;
                 ii = strmatch('Z-axis rotation'               ,param.name); rz = inv*param.value(ii)/1000000;
