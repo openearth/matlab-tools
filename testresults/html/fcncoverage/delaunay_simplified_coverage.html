@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Function details for delaunay_simplified</title>
+<link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="script/css/FunctionCoverage.css" rel="stylesheet" />
+<script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="script/js/matlab2accordion.js"></script>
+</head>
+<body>
+<h2 class="ui-widget-header ui-state-active ui-corner-all">delaunay_simplified</h2>
+<div class="ui-widget-content ui-corner-all">
+<strong>Coverage results</strong><br/>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Total lines in function</td>
+<td class="td-linebottomrt">184</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Non-code lines (comments, blank lines)</td>
+<td class="td-linebottomrt">122</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines (lines that can run)</td>
+<td class="td-linebottomrt">62</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did run</td>
+<td class="td-linebottomrt">59</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did not run</td>
+<td class="td-linebottomrt">3</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Coverage (did run/can run)</td>
+<td class="td-linebottomrt">95.16 %</td></tr>
+</table>
+</div><br/>
+<div class="ui-widget-content ui-corner-all">
+<strong>Function listing</strong><br/>
+<pre>
+<span style="color: #FF0000; font-weight: bold; text-decoration: none">  time</span> <span style="color: #0000FF; font-weight: bold; text-decoration: none">  calls</span> <span style="font-weight: bold; text-decoration: none">line</span><br/>
+               <span style="color: #A0A0A0">   1</span> <span style="color: #A0A0A0; background: #FFFFFF;">function [tri,x1,y1,z1] = delaunay_simplified(x,y,z,tolerance,varargin)</span>
+               <span style="color: #A0A0A0">   2</span> <span style="color: #228B22; background: #FFFFFF;">% DELAUNAY_SIMPLIFIED makes a simplified delaunay triangulated mesh</span>
+               <span style="color: #A0A0A0">   3</span> <span style="color: #228B22; background: #FFFFFF;">% </span>
+               <span style="color: #A0A0A0">   4</span> <span style="color: #228B22; background: #FFFFFF;">% For creating meshes that resemble a more complex mesh to a certain</span>
+               <span style="color: #A0A0A0">   5</span> <span style="color: #228B22; background: #FFFFFF;">% degree (specified by tolerance;, the maximum error that may exist</span>
+               <span style="color: #A0A0A0">   6</span> <span style="color: #228B22; background: #FFFFFF;">% between the final grid and the original datapoints.</span>
+               <span style="color: #A0A0A0">   7</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   8</span> <span style="color: #228B22; background: #FFFFFF;">% All nan edges withing the grid are used in triangulation, but no </span>
+               <span style="color: #A0A0A0">   9</span> <span style="color: #228B22; background: #FFFFFF;">% triangles are created where nan's are available.   </span>
+               <span style="color: #A0A0A0">  10</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  11</span> <span style="color: #228B22; background: #FFFFFF;">% The script is does not find an optimum solution, but works well enough in</span>
+               <span style="color: #A0A0A0">  12</span> <span style="color: #228B22; background: #FFFFFF;">% reducing triangles.</span>
+               <span style="color: #A0A0A0">  13</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  14</span> <span style="color: #228B22; background: #FFFFFF;">% Example1</span>
+               <span style="color: #A0A0A0">  15</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  16</span> <span style="color: #228B22; background: #FFFFFF;">%   % some input</span>
+               <span style="color: #A0A0A0">  17</span> <span style="color: #228B22; background: #FFFFFF;">%     [lat,lon] = meshgrid(54:.1:57,2:.1:5);</span>
+               <span style="color: #A0A0A0">  18</span> <span style="color: #228B22; background: #FFFFFF;">%     z = peaks(31); z = abs(z);  z(z&lt;1) = nan;</span>
+               <span style="color: #A0A0A0">  19</span> <span style="color: #228B22; background: #FFFFFF;">%    </span>
+               <span style="color: #A0A0A0">  20</span> <span style="color: #228B22; background: #FFFFFF;">%   % call function</span>
+               <span style="color: #A0A0A0">  21</span> <span style="color: #228B22; background: #FFFFFF;">%     h1 = subplot(2,1,1);</span>
+               <span style="color: #A0A0A0">  22</span> <span style="color: #228B22; background: #FFFFFF;">%       tolerance = .5;</span>
+               <span style="color: #A0A0A0">  23</span> <span style="color: #228B22; background: #FFFFFF;">%       tri1 = delaunay_simplified(lat,lon,z,tolerance);</span>
+               <span style="color: #A0A0A0">  24</span> <span style="color: #228B22; background: #FFFFFF;">%       trisurf(tri1,lat,lon,z);</span>
+               <span style="color: #A0A0A0">  25</span> <span style="color: #228B22; background: #FFFFFF;">%     h2 = subplot(2,1,2);</span>
+               <span style="color: #A0A0A0">  26</span> <span style="color: #228B22; background: #FFFFFF;">%       tri2 = delaunay(lat,lon);</span>
+               <span style="color: #A0A0A0">  27</span> <span style="color: #228B22; background: #FFFFFF;">%       trisurf(tri2,lat,lon,z);</span>
+               <span style="color: #A0A0A0">  28</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  29</span> <span style="color: #228B22; background: #FFFFFF;">% Example2 (play with different values for tolerance:</span>
+               <span style="color: #A0A0A0">  30</span> <span style="color: #228B22; background: #FFFFFF;">%   % data from netCDF</span>
+               <span style="color: #A0A0A0">  31</span> <span style="color: #228B22; background: #FFFFFF;">%     url = vaklodingen_url; url = url{127};</span>
+               <span style="color: #A0A0A0">  32</span> <span style="color: #228B22; background: #FFFFFF;">%     x = nc_varget(url,'x');</span>
+               <span style="color: #A0A0A0">  33</span> <span style="color: #228B22; background: #FFFFFF;">%     y = nc_varget(url,'y');</span>
+               <span style="color: #A0A0A0">  34</span> <span style="color: #228B22; background: #FFFFFF;">%     z = nc_varget(url,'z',[0,0,0],[1,-1,-1]);</span>
+               <span style="color: #A0A0A0">  35</span> <span style="color: #228B22; background: #FFFFFF;">%     [x,y] = meshgrid(x,y);</span>
+               <span style="color: #A0A0A0">  36</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  37</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  38</span> <span style="color: #228B22; background: #FFFFFF;">%     disp(['elements: ' num2str(sum(~isnan(z(:))))]);</span>
+               <span style="color: #A0A0A0">  39</span> <span style="color: #228B22; background: #FFFFFF;">%     tolerance = .5; </span>
+               <span style="color: #A0A0A0">  40</span> <span style="color: #228B22; background: #FFFFFF;">%     tri = delaunay_simplified(x,y,z,tolerance,'maxSize',10000);</span>
+               <span style="color: #A0A0A0">  41</span> <span style="color: #228B22; background: #FFFFFF;">%     [lon,lat] = convertCoordinates(x,y,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');</span>
+               <span style="color: #A0A0A0">  42</span> <span style="color: #228B22; background: #FFFFFF;">%     z= (z+15)*2;</span>
+               <span style="color: #A0A0A0">  43</span> <span style="color: #228B22; background: #FFFFFF;">%   % plot in Google Earth</span>
+               <span style="color: #A0A0A0">  44</span> <span style="color: #228B22; background: #FFFFFF;">%     KMLtrisurf(tri,lat,lon,z)</span>
+               <span style="color: #A0A0A0">  45</span> <span style="color: #228B22; background: #FFFFFF;">%   </span>
+               <span style="color: #A0A0A0">  46</span> <span style="color: #228B22; background: #FFFFFF;">% See also: delaunay, trisurf, KMLtrisurf </span>
+               <span style="color: #A0A0A0">  47</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  48</span> <span style="color: #228B22; background: #FFFFFF;">%   --------------------------------------------------------------------</span>
+               <span style="color: #A0A0A0">  49</span> <span style="color: #228B22; background: #FFFFFF;">%   Copyright (C) 2009 Deltares for Building with Nature</span>
+               <span style="color: #A0A0A0">  50</span> <span style="color: #228B22; background: #FFFFFF;">%       Thijs Damsma</span>
+               <span style="color: #A0A0A0">  51</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  52</span> <span style="color: #228B22; background: #FFFFFF;">%       Thijs.Damsma@deltares.nl	</span>
+               <span style="color: #A0A0A0">  53</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  54</span> <span style="color: #228B22; background: #FFFFFF;">%       Deltares</span>
+               <span style="color: #A0A0A0">  55</span> <span style="color: #228B22; background: #FFFFFF;">%       P.O. Box 177</span>
+               <span style="color: #A0A0A0">  56</span> <span style="color: #228B22; background: #FFFFFF;">%       2600 MH Delft</span>
+               <span style="color: #A0A0A0">  57</span> <span style="color: #228B22; background: #FFFFFF;">%       The Netherlands</span>
+               <span style="color: #A0A0A0">  58</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  59</span> <span style="color: #228B22; background: #FFFFFF;">%   This library is free software: you can redistribute it and/or modify</span>
+               <span style="color: #A0A0A0">  60</span> <span style="color: #228B22; background: #FFFFFF;">%   it under the terms of the GNU General Public License as published by</span>
+               <span style="color: #A0A0A0">  61</span> <span style="color: #228B22; background: #FFFFFF;">%   the Free Software Foundation, either version 3 of the License, or</span>
+               <span style="color: #A0A0A0">  62</span> <span style="color: #228B22; background: #FFFFFF;">%   (at your option) any later version.</span>
+               <span style="color: #A0A0A0">  63</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  64</span> <span style="color: #228B22; background: #FFFFFF;">%   This library is distributed in the hope that it will be useful,</span>
+               <span style="color: #A0A0A0">  65</span> <span style="color: #228B22; background: #FFFFFF;">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+               <span style="color: #A0A0A0">  66</span> <span style="color: #228B22; background: #FFFFFF;">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+               <span style="color: #A0A0A0">  67</span> <span style="color: #228B22; background: #FFFFFF;">%   GNU General Public License for more details.</span>
+               <span style="color: #A0A0A0">  68</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  69</span> <span style="color: #228B22; background: #FFFFFF;">%   You should have received a copy of the GNU General Public License</span>
+               <span style="color: #A0A0A0">  70</span> <span style="color: #228B22; background: #FFFFFF;">%   along with this library.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+               <span style="color: #A0A0A0">  71</span> <span style="color: #228B22; background: #FFFFFF;">%   --------------------------------------------------------------------</span>
+               <span style="color: #A0A0A0">  72</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  73</span> <span style="color: #228B22; background: #FFFFFF;">% $Id: delaunay_simplified.m 953 2009-09-07 16:57:27Z damsma $</span>
+               <span style="color: #A0A0A0">  74</span> <span style="color: #228B22; background: #FFFFFF;">% $Date: 2009-09-07 18:57:27 +0200 (ma, 07 sep 2009) $</span>
+               <span style="color: #A0A0A0">  75</span> <span style="color: #228B22; background: #FFFFFF;">% $Author: damsma $</span>
+               <span style="color: #A0A0A0">  76</span> <span style="color: #228B22; background: #FFFFFF;">% $Revision: 953 $</span>
+               <span style="color: #A0A0A0">  77</span> <span style="color: #228B22; background: #FFFFFF;">% $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/general/plot_fun/delaunay_simplified.m $</span>
+               <span style="color: #A0A0A0">  78</span> <span style="color: #228B22; background: #FFFFFF;">% $Keywords: $</span>
+               <span style="color: #A0A0A0">  79</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  80</span> <span style="color: #228B22; background: #FFFFFF;">%%</span>
+               <span style="color: #A0A0A0">  81</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  82</span> <span style="color: #228B22; background: #FFFFFF;">%% process varargin</span>
+               <span style="color: #A0A0A0">  83</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a>  84</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.maxSize       = 1000; </span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a>  85</a></span> <span style="color: #000000; background: #E0E0FF;">OPT.maxIterations = 100; </span>
+               <span style="color: #A0A0A0">  86</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a>  87</a></span> <span style="color: #000000; background: #E0E0FF;">[OPT, Set, Default] = setProperty(OPT, varargin); </span>
+               <span style="color: #A0A0A0">  88</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  89</span> <span style="color: #228B22; background: #FFFFFF;">%% find convex hull of not nan z values</span>
+               <span style="color: #A0A0A0">  90</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a>  91</a></span> <span style="color: #000000; background: #E0E0FF;">A = ~isnan(z); </span>
+               <span style="color: #A0A0A0">  92</span> <span style="color: #228B22; background: #FFFFFF;">%left</span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a>  93</a></span> <span style="color: #000000; background: #E0E0FF;">Aleft = [A(:,2:end) false(size(A,1),1)]; </span>
+               <span style="color: #A0A0A0">  94</span> <span style="color: #228B22; background: #FFFFFF;">%right</span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a>  95</a></span> <span style="color: #000000; background: #E0E0FF;">Aright = [false(size(A,1),1) A(:,1:end-1)]; </span>
+               <span style="color: #A0A0A0">  96</span> <span style="color: #228B22; background: #FFFFFF;">% up</span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a>  97</a></span> <span style="color: #000000; background: #E0E0FF;">Aup = [ A(2:end,:);false(1,size(A,2))]; </span>
+               <span style="color: #A0A0A0">  98</span> <span style="color: #228B22; background: #FFFFFF;">% down</span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a>  99</a></span> <span style="color: #000000; background: #E0E0FF;">Adown = [false(1,size(A,2));A(1:end-1,:)]; </span>
+               <span style="color: #A0A0A0"> 100</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 101</a></span> <span style="color: #000000; background: #E0E0FF;">A = A|Aleft|Aright|Aup|Adown; </span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 102</a></span> <span style="color: #000000; background: #E0E0FF;">nans = isnan(z); </span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 103</a></span> <span style="color: #000000; background: #E0E0FF;">ind = find(isnan(z)&amp;A); </span>
+<span style="color: #FF0000">  0.01 </span><span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 104</a></span> <span style="color: #000000; background: #E0E0FF;">z(nans) = ceil(max(z(:))+2*tolerance+15); </span>
+               <span style="color: #A0A0A0"> 105</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 106</span> <span style="color: #228B22; background: #FFFFFF;">%% assign start values</span>
+               <span style="color: #A0A0A0"> 107</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+<span style="color: #FF0000">  0.28 </span><span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 108</a></span> <span style="color: #000000; background: #E0E0FF;">ind = [ind; convhull(x,y)]; </span>
+               <span style="color: #A0A0A0"> 109</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 110</a></span> <span style="color: #000000; background: #E0E0FF;">ind = unique(ind); </span>
+               <span style="color: #A0A0A0"> 111</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 112</span> <span style="color: #228B22; background: #FFFFFF;">%% iteration</span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 113</a></span> <span style="color: #000000; background: #E0E0FF;">fault = inf; </span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 114</a></span> <span style="color: #000000; background: #E0E0FF;">iteration = 0; </span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 115</a></span> <span style="color: #000000; background: #E0E0FF;">tri2 = 0; </span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 116</a></span> <span style="color: #000000; background: #E0E0FF;">while fault&gt;tolerance &amp;&amp; size(tri2,1)&lt;OPT.maxSize &amp;&amp; iteration&lt;OPT.maxIterations </span>
+       <span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 117</a></span> <span style="color: #000000; background: #E0E0FF;">    iteration = iteration+1; </span>
+               <span style="color: #A0A0A0"> 118</span> <span style="color: #228B22; background: #FFFFFF;">    % Triangulate the data</span>
+       <span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 119</a></span> <span style="color: #000000; background: #E0E0FF;">    try </span>
+<span style="color: #FF0000">  0.92 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 120</a></span> <span style="color: #000000; background: #E0E0FF;">        tri2 = delaunayn([x(ind) y(ind)]); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 121</a></span> <span style="color: #000000; background: #E0E0FF;">    catch </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 122</a></span> <span style="color: #000000; background: #E0E0FF;">        tri2 = delaunayn([x(ind) y(ind)],{'QJ','Pp'}); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 123</a></span> <span style="color: #000000; background: #E0E0FF;">    end </span>
+               <span style="color: #A0A0A0"> 124</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+               <span style="color: #A0A0A0"> 125</span> <span style="color: #228B22; background: #FFFFFF;">    % Find the nearest triangle (t)</span>
+<span style="color: #FF0000">  1.28 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 126</a></span> <span style="color: #000000; background: #E0E0FF;">    t = tsearch(x(ind),y(ind),tri2,x,y); </span>
+               <span style="color: #A0A0A0"> 127</span> <span style="color: #228B22; background: #FFFFFF;">        % Only keep the relevant triangles.</span>
+       <span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 128</a></span> <span style="color: #000000; background: #E0E0FF;">     out = find(isnan(t)); </span>
+       <span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 129</a></span> <span style="color: #000000; background: #E0E0FF;">     if ~isempty(out), t(out) = ones(size(out)); end </span>
+<span style="color: #FF0000">  0.09 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 130</a></span> <span style="color: #000000; background: #E0E0FF;">    tri = tri2(t(:),:); </span>
+<span style="color: #FF0000">  0.27 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 131</a></span> <span style="color: #000000; background: #E0E0FF;">    tri = ind(tri); </span>
+               <span style="color: #A0A0A0"> 132</span> <span style="color: #228B22; background: #FFFFFF;">    % Compute Barycentric coordinates (w).  P. 78 in Watson.</span>
+<span style="color: #FF0000">  1.00 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 133</a></span> <span style="color: #000000; background: #E0E0FF;">    del = (x(tri(:,2))-x(tri(:,1))) .* (y(tri(:,3))-y(tri(:,1))) - ... </span>
+               <span style="color: #A0A0A0"> 134</span> <span style="color: #000000; background: #E0E0FF;">        (x(tri(:,3))-x(tri(:,1))) .* (y(tri(:,2))-y(tri(:,1)));</span>
+<span style="color: #FF0000">  0.62 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 135</a></span> <span style="color: #000000; background: #E0E0FF;">    w(:,3) = ((x(tri(:,1))-x(:)).*(y(tri(:,2))-y(:)) - (x(tri(:,2))-x(:)).*(y(tri(:,1))-y(:))) ./ del; </span>
+<span style="color: #FF0000">  0.56 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 136</a></span> <span style="color: #000000; background: #E0E0FF;">    w(:,2) = ((x(tri(:,3))-x(:)).*(y(tri(:,1))-y(:)) - (x(tri(:,1))-x(:)).*(y(tri(:,3))-y(:))) ./ del; </span>
+<span style="color: #FF0000">  0.64 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 137</a></span> <span style="color: #000000; background: #E0E0FF;">    w(:,1) = ((x(tri(:,2))-x(:)).*(y(tri(:,3))-y(:)) - (x(tri(:,3))-x(:)).*(y(tri(:,2))-y(:))) ./ del; </span>
+       <span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 138</a></span> <span style="color: #000000; background: #E0E0FF;">    w(out,:) = zeros(length(out),3); </span>
+       <span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 139</a></span> <span style="color: #000000; background: #E0E0FF;">    z3 = z(ind).'; % Treat z as a row so that code below involving </span>
+               <span style="color: #A0A0A0"> 140</span> <span style="color: #228B22; background: #FFFFFF;">    % z(tri) works even when tri is 1-by-3.</span>
+<span style="color: #FF0000">  0.51 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 141</a></span> <span style="color: #000000; background: #E0E0FF;">    z2 = sum(z3(tri2(t,:)) .* w,2); </span>
+               <span style="color: #A0A0A0"> 142</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
+               <span style="color: #A0A0A0"> 143</span> <span style="color: #228B22; background: #FFFFFF;">    % find triangles that need to be refined.</span>
+               <span style="color: #A0A0A0"> 144</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 145</a></span> <span style="color: #000000; background: #E0E0FF;">    fault = z(:)-z2; </span>
+               <span style="color: #A0A0A0"> 146</span> <span style="color: #228B22; background: #FFFFFF;">%     t_unique = unique(t(error&gt;tolerance));</span>
+               <span style="color: #A0A0A0"> 147</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 148</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
+<span style="color: #FF0000">  0.05 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 149</a></span> <span style="color: #000000; background: #E0E0FF;">    temp = 0.1/ceil(max(abs(fault))); </span>
+<span style="color: #FF0000">  0.08 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 150</a></span> <span style="color: #000000; background: #E0E0FF;">    M = t(:)+fault*temp; </span>
+<span style="color: #FF0000">  0.39 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 151</a></span> <span style="color: #000000; background: #E0E0FF;">    [M,ind2] = sort(M); </span>
+<span style="color: #FF0000">  0.13 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 152</a></span> <span style="color: #000000; background: #E0E0FF;">    addInd = ind2([true;diff(M)&gt;.3]|[diff(M)&gt;.3;true]) ; </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 153</a></span> <span style="color: #000000; background: #E0E0FF;">    addInd = addInd(abs(fault(addInd))&gt;tolerance); </span>
+               <span style="color: #A0A0A0"> 154</span> <span style="color: #228B22; background: #FFFFFF;">    %add newCoords</span>
+       <span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 155</a></span> <span style="color: #000000; background: #E0E0FF;">    ind = unique([ind; addInd]); </span>
+               <span style="color: #A0A0A0"> 156</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+<span style="color: #FF0000">  0.05 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 157</a></span> <span style="color: #000000; background: #E0E0FF;">    [fault,ind2] = max(abs(fault(~nans))); </span>
+               <span style="color: #A0A0A0"> 158</span> <span style="color: #228B22; background: #FFFFFF;">  </span>
+<span style="color: #FF0000">  0.06 </span><span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 159</a></span> <span style="color: #000000; background: #E0E0FF;">    disp(sprintf('iteration: % 3d  Number of triangles:% 6d  error = % 6.2f at index % 4d',... </span>
+               <span style="color: #A0A0A0"> 160</span> <span style="color: #000000; background: #E0E0FF;">        iteration,size(tri2,1),fault,ind2));</span>
+       <span style="color: #0000FF">     36 </span><span style="color: #000000; font-weight: bold"><a> 161</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
+               <span style="color: #A0A0A0"> 162</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+<span style="color: #FF0000">  0.14 </span><span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 163</a></span> <span style="color: #000000; background: #E0E0FF;">tri = delaunay(x(ind),y(ind)); </span>
+               <span style="color: #A0A0A0"> 164</span> <span style="color: #228B22; background: #FFFFFF;">%% find triangles with nan values inside</span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 165</a></span> <span style="color: #000000; background: #E0E0FF;">ind2 = ismember(tri,find(z(ind)==max(z(:)))); </span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 166</a></span> <span style="color: #000000; background: #E0E0FF;">ind2 = any(ind2,2); </span>
+               <span style="color: #A0A0A0"> 167</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 168</span> <span style="color: #228B22; background: #FFFFFF;">%% delete triangles with nan values</span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 169</a></span> <span style="color: #000000; background: #E0E0FF;">tri(ind2,:) = []; </span>
+               <span style="color: #A0A0A0"> 170</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 171</a></span> <span style="color: #000000; background: #E0E0FF;">if nargout == 1 </span>
+       <span style="color: #0000FF">      4 </span><span style="color: #000000; font-weight: bold"><a> 172</a></span> <span style="color: #000000; background: #E0E0FF;">    tri = ind(tri); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 173</a></span> <span style="color: #000000; background: #E0E0FF;">elseif nargout==4 </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 174</a></span> <span style="color: #000000; background: #E0E0FF;">    x1      = x(ind); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 175</a></span> <span style="color: #000000; background: #E0E0FF;">    y1      = y(ind); </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 176</a></span> <span style="color: #000000; background: #E0E0FF;">    z(nans) = nan; </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 177</a></span> <span style="color: #000000; background: #E0E0FF;">    z1      = z(ind); </span>
+               <span style="color: #A0A0A0"> 178</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
+               <span style="color: #A0A0A0"> 179</span> <span style="color: #228B22; background: #FFFFFF;">else</span>
+               <span style="color: #A0A0A0"> 180</span> <span style="color: #A0A0A0; background: #FFFFFF;">    error('nargout must be 1 or 4');</span>
+               <span style="color: #A0A0A0"> 181</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+               <span style="color: #A0A0A0"> 182</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 183</a></span> <span style="color: #000000; background: #E0E0FF;">disp(sprintf('Completed,  % 6d triangles created',... </span>
+       <span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 184</a></span> <span style="color: #000000; background: #E0E0FF;">        size(tri,1))); </span>
+</pre>
+<p><p>Other subfunctions in this file are not included in this listing.
+</div>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Function details for pcolorcorcen>addrowcol</title>
+<link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="script/css/FunctionCoverage.css" rel="stylesheet" />
+<script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="script/js/matlab2accordion.js"></script>
+</head>
+<body>
+<h2 class="ui-widget-header ui-state-active ui-corner-all">pcolorcorcen>addrowcol</h2>
+<div class="ui-widget-content ui-corner-all">
+<strong>Coverage results</strong><br/>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Total lines in function</td>
+<td class="td-linebottomrt">84</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Non-code lines (comments, blank lines)</td>
+<td class="td-linebottomrt">68</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines (lines that can run)</td>
+<td class="td-linebottomrt">16</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did run</td>
+<td class="td-linebottomrt">13</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did not run</td>
+<td class="td-linebottomrt">3</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Coverage (did run/can run)</td>
+<td class="td-linebottomrt">81.25 %</td></tr>
+</table>
+</div><br/>
+<div class="ui-widget-content ui-corner-all">
+<strong>Function listing</strong><br/>
+<pre>
+<span style="color: #FF0000; font-weight: bold; text-decoration: none">  time</span> <span style="color: #0000FF; font-weight: bold; text-decoration: none">  calls</span> <span style="font-weight: bold; text-decoration: none">line</span><br/>
+               <span style="color: #A0A0A0"> 315</span> <span style="color: #A0A0A0; background: #FFFFFF;">function OUT = addrowcol(IN,varargin);</span>
+               <span style="color: #A0A0A0"> 316</span> <span style="color: #228B22; background: #FFFFFF;">%ADDROWCOL</span>
+               <span style="color: #A0A0A0"> 317</span> <span style="color: #228B22; background: #FFFFFF;">%  addrowcol adds a row and column to an array</span>
+               <span style="color: #A0A0A0"> 318</span> <span style="color: #228B22; background: #FFFFFF;">% (by default filled with nans).</span>
+               <span style="color: #A0A0A0"> 319</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 320</span> <span style="color: #228B22; background: #FFFFFF;">%  WORKS FOR THE MOMENT ONLY FOR 2dimensional ARRAYS!</span>
+               <span style="color: #A0A0A0"> 321</span> <span style="color: #228B22; background: #FFFFFF;">%  --------------------------------------------------</span>
+               <span style="color: #A0A0A0"> 322</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 323</span> <span style="color: #228B22; background: #FFFFFF;">%  out = addrowcol(in,marker) adds a row and column</span>
+               <span style="color: #A0A0A0"> 324</span> <span style="color: #228B22; background: #FFFFFF;">%  filled with the value of marker.</span>
+               <span style="color: #A0A0A0"> 325</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 326</span> <span style="color: #228B22; background: #FFFFFF;">%  out = addrowcol(in,dm,dn) adds dm rows and </span>
+               <span style="color: #A0A0A0"> 327</span> <span style="color: #228B22; background: #FFFFFF;">%  dm columns with nans.</span>
+               <span style="color: #A0A0A0"> 328</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 329</span> <span style="color: #228B22; background: #FFFFFF;">%  out = addrowcol(in,dm,dn,marker) adds dm rows and </span>
+               <span style="color: #A0A0A0"> 330</span> <span style="color: #228B22; background: #FFFFFF;">%  dm columns with the value of marker.</span>
+               <span style="color: #A0A0A0"> 331</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 332</span> <span style="color: #228B22; background: #FFFFFF;">%  If either dm and/or dn is negative, existing </span>
+               <span style="color: #A0A0A0"> 333</span> <span style="color: #228B22; background: #FFFFFF;">%  rows/columns are shifted by |dn| or |dm|</span>
+               <span style="color: #A0A0A0"> 334</span> <span style="color: #228B22; background: #FFFFFF;">%  and the first |dn| or |dm| columns are given the </span>
+               <span style="color: #A0A0A0"> 335</span> <span style="color: #228B22; background: #FFFFFF;">%  value nan (default) or marker.</span>
+               <span style="color: #A0A0A0"> 336</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 337</span> <span style="color: #228B22; background: #FFFFFF;">%  Example:</span>
+               <span style="color: #A0A0A0"> 338</span> <span style="color: #228B22; background: #FFFFFF;">%     addrowcol(ones(2), 1, 1,Inf) yields</span>
+               <span style="color: #A0A0A0"> 339</span> <span style="color: #228B22; background: #FFFFFF;">%     </span>
+               <span style="color: #A0A0A0"> 340</span> <span style="color: #228B22; background: #FFFFFF;">%          1     1   Inf</span>
+               <span style="color: #A0A0A0"> 341</span> <span style="color: #228B22; background: #FFFFFF;">%          1     1   Inf</span>
+               <span style="color: #A0A0A0"> 342</span> <span style="color: #228B22; background: #FFFFFF;">%        Inf   Inf   Inf</span>
+               <span style="color: #A0A0A0"> 343</span> <span style="color: #228B22; background: #FFFFFF;">%     </span>
+               <span style="color: #A0A0A0"> 344</span> <span style="color: #228B22; background: #FFFFFF;">%     addrowcol(ones(2),-1,-1,Inf)  yields</span>
+               <span style="color: #A0A0A0"> 345</span> <span style="color: #228B22; background: #FFFFFF;">%     </span>
+               <span style="color: #A0A0A0"> 346</span> <span style="color: #228B22; background: #FFFFFF;">%        Inf   Inf   Inf</span>
+               <span style="color: #A0A0A0"> 347</span> <span style="color: #228B22; background: #FFFFFF;">%        Inf     1     1</span>
+               <span style="color: #A0A0A0"> 348</span> <span style="color: #228B22; background: #FFFFFF;">%        Inf     1     1</span>
+               <span style="color: #A0A0A0"> 349</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 350</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 351</span> <span style="color: #228B22; background: #FFFFFF;">%   --------------------------------------------------------------------</span>
+               <span style="color: #A0A0A0"> 352</span> <span style="color: #228B22; background: #FFFFFF;">%   Copyright (C) 2004 Delft University of Technology</span>
+               <span style="color: #A0A0A0"> 353</span> <span style="color: #228B22; background: #FFFFFF;">%       Gerben J. de Boer</span>
+               <span style="color: #A0A0A0"> 354</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 355</span> <span style="color: #228B22; background: #FFFFFF;">%       g.j.deboer@tudelft.nl	</span>
+               <span style="color: #A0A0A0"> 356</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 357</span> <span style="color: #228B22; background: #FFFFFF;">%       Fluid Mechanics Section</span>
+               <span style="color: #A0A0A0"> 358</span> <span style="color: #228B22; background: #FFFFFF;">%       Faculty of Civil Engineering and Geosciences</span>
+               <span style="color: #A0A0A0"> 359</span> <span style="color: #228B22; background: #FFFFFF;">%       PO Box 5048</span>
+               <span style="color: #A0A0A0"> 360</span> <span style="color: #228B22; background: #FFFFFF;">%       2600 GA Delft</span>
+               <span style="color: #A0A0A0"> 361</span> <span style="color: #228B22; background: #FFFFFF;">%       The Netherlands</span>
+               <span style="color: #A0A0A0"> 362</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 363</span> <span style="color: #228B22; background: #FFFFFF;">%   This library is free software; you can redistribute it and/or</span>
+               <span style="color: #A0A0A0"> 364</span> <span style="color: #228B22; background: #FFFFFF;">%   modify it under the terms of the GNU Lesser General Public</span>
+               <span style="color: #A0A0A0"> 365</span> <span style="color: #228B22; background: #FFFFFF;">%   License as published by the Free Software Foundation; either</span>
+               <span style="color: #A0A0A0"> 366</span> <span style="color: #228B22; background: #FFFFFF;">%   version 2.1 of the License, or (at your option) any later version.</span>
+               <span style="color: #A0A0A0"> 367</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 368</span> <span style="color: #228B22; background: #FFFFFF;">%   This library is distributed in the hope that it will be useful,</span>
+               <span style="color: #A0A0A0"> 369</span> <span style="color: #228B22; background: #FFFFFF;">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+               <span style="color: #A0A0A0"> 370</span> <span style="color: #228B22; background: #FFFFFF;">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span>
+               <span style="color: #A0A0A0"> 371</span> <span style="color: #228B22; background: #FFFFFF;">%   Lesser General Public License for more details.</span>
+               <span style="color: #A0A0A0"> 372</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 373</span> <span style="color: #228B22; background: #FFFFFF;">%   You should have received a copy of the GNU Lesser General Public</span>
+               <span style="color: #A0A0A0"> 374</span> <span style="color: #228B22; background: #FFFFFF;">%   License along with this library; if not, write to the Free Software</span>
+               <span style="color: #A0A0A0"> 375</span> <span style="color: #228B22; background: #FFFFFF;">%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307</span>
+               <span style="color: #A0A0A0"> 376</span> <span style="color: #228B22; background: #FFFFFF;">%   USA</span>
+               <span style="color: #A0A0A0"> 377</span> <span style="color: #228B22; background: #FFFFFF;">%   --------------------------------------------------------------------</span>
+               <span style="color: #A0A0A0"> 378</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 379</a></span> <span style="color: #000000; background: #E0E0FF;">   dm            = 1; </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 380</a></span> <span style="color: #000000; background: #E0E0FF;">   dn            = 1; </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 381</a></span> <span style="color: #000000; background: #E0E0FF;">   illegalmarker = NaN; </span>
+               <span style="color: #A0A0A0"> 382</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 383</a></span> <span style="color: #000000; background: #E0E0FF;">   if nargin==2 </span>
+               <span style="color: #A0A0A0"> 384</span> <span style="color: #A0A0A0; background: #FFFFFF;">      illegalmarker = varargin{1};</span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 385</a></span> <span style="color: #000000; background: #E0E0FF;">   elseif nargin==3 </span>
+               <span style="color: #A0A0A0"> 386</span> <span style="color: #A0A0A0; background: #FFFFFF;">      dm            = varargin{1};</span>
+               <span style="color: #A0A0A0"> 387</span> <span style="color: #A0A0A0; background: #FFFFFF;">      dn            = varargin{2};</span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 388</a></span> <span style="color: #000000; background: #E0E0FF;">   elseif nargin==4 </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 389</a></span> <span style="color: #000000; background: #E0E0FF;">      dm            = varargin{1}; </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 390</a></span> <span style="color: #000000; background: #E0E0FF;">      dn            = varargin{2}; </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 391</a></span> <span style="color: #000000; background: #E0E0FF;">      illegalmarker = varargin{3}; </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 392</a></span> <span style="color: #000000; background: #E0E0FF;">   end </span>
+               <span style="color: #A0A0A0"> 393</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 394</a></span> <span style="color: #000000; background: #E0E0FF;">   OUT = repmat(illegalmarker,size(IN,1)+abs(dm) ,... </span>
+               <span style="color: #A0A0A0"> 395</span> <span style="color: #000000; background: #E0E0FF;">                              size(IN,2)+abs(dn));</span>
+               <span style="color: #A0A0A0"> 396</span> <span style="color: #228B22; background: #FFFFFF;">   </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 397</a></span> <span style="color: #000000; background: #E0E0FF;">   OUT(1-min(dm,0):end-max(dm,0),... </span>
+       <span style="color: #0000FF">      2 </span><span style="color: #000000; font-weight: bold"><a> 398</a></span> <span style="color: #000000; background: #E0E0FF;">       1-min(dn,0):end-max(dn,0))=IN; </span>
+</pre>
+<p><p>Other subfunctions in this file are not included in this listing.
+</div>
+</body>
+</html>

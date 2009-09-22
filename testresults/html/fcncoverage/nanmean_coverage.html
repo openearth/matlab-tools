@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Function details for nanmean</title>
+<link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="script/css/FunctionCoverage.css" rel="stylesheet" />
+<script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="script/js/matlab2accordion.js"></script>
+</head>
+<body>
+<h2 class="ui-widget-header ui-state-active ui-corner-all">nanmean</h2>
+<div class="ui-widget-content ui-corner-all">
+<strong>Coverage results</strong><br/>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Total lines in function</td>
+<td class="td-linebottomrt">50</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Non-code lines (comments, blank lines)</td>
+<td class="td-linebottomrt">33</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines (lines that can run)</td>
+<td class="td-linebottomrt">17</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did run</td>
+<td class="td-linebottomrt">12</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did not run</td>
+<td class="td-linebottomrt">5</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Coverage (did run/can run)</td>
+<td class="td-linebottomrt">70.59 %</td></tr>
+</table>
+</div><br/>
+<div class="ui-widget-content ui-corner-all">
+<strong>Function listing</strong><br/>
+<pre>
+<span style="color: #FF0000; font-weight: bold; text-decoration: none">  time</span> <span style="color: #0000FF; font-weight: bold; text-decoration: none">  calls</span> <span style="font-weight: bold; text-decoration: none">line</span><br/>
+               <span style="color: #A0A0A0">   1</span> <span style="color: #A0A0A0; background: #FFFFFF;">function y = nanmean(x,dim)</span>
+               <span style="color: #A0A0A0">   2</span> <span style="color: #228B22; background: #FFFFFF;">% FORMAT: Y = NANMEAN(X,DIM)</span>
+               <span style="color: #A0A0A0">   3</span> <span style="color: #228B22; background: #FFFFFF;">% </span>
+               <span style="color: #A0A0A0">   4</span> <span style="color: #228B22; background: #FFFFFF;">%    Average or mean value ignoring NaNs</span>
+               <span style="color: #A0A0A0">   5</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   6</span> <span style="color: #228B22; background: #FFFFFF;">%    This function enhances the functionality of NANMEAN as distributed in</span>
+               <span style="color: #A0A0A0">   7</span> <span style="color: #228B22; background: #FFFFFF;">%    the MATLAB Statistics Toolbox and is meant as a replacement (hence the</span>
+               <span style="color: #A0A0A0">   8</span> <span style="color: #228B22; background: #FFFFFF;">%    identical name).  </span>
+               <span style="color: #A0A0A0">   9</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  10</span> <span style="color: #228B22; background: #FFFFFF;">%    NANMEAN(X,DIM) calculates the mean along any dimension of the N-D</span>
+               <span style="color: #A0A0A0">  11</span> <span style="color: #228B22; background: #FFFFFF;">%    array X ignoring NaNs.  If DIM is omitted NANMEAN averages along the</span>
+               <span style="color: #A0A0A0">  12</span> <span style="color: #228B22; background: #FFFFFF;">%    first non-singleton dimension of X.</span>
+               <span style="color: #A0A0A0">  13</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  14</span> <span style="color: #228B22; background: #FFFFFF;">%    Similar replacements exist for NANSTD, NANMEDIAN, NANMIN, NANMAX, and</span>
+               <span style="color: #A0A0A0">  15</span> <span style="color: #228B22; background: #FFFFFF;">%    NANSUM which are all part of the NaN-suite.</span>
+               <span style="color: #A0A0A0">  16</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  17</span> <span style="color: #228B22; background: #FFFFFF;">%    See also MEAN</span>
+               <span style="color: #A0A0A0">  18</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  19</span> <span style="color: #228B22; background: #FFFFFF;">% -------------------------------------------------------------------------</span>
+               <span style="color: #A0A0A0">  20</span> <span style="color: #228B22; background: #FFFFFF;">%    author:      Jan Gläscher</span>
+               <span style="color: #A0A0A0">  21</span> <span style="color: #228B22; background: #FFFFFF;">%    affiliation: Neuroimage Nord, University of Hamburg, Germany</span>
+               <span style="color: #A0A0A0">  22</span> <span style="color: #228B22; background: #FFFFFF;">%    email:       glaescher@uke.uni-hamburg.de</span>
+               <span style="color: #A0A0A0">  23</span> <span style="color: #228B22; background: #FFFFFF;">%    </span>
+               <span style="color: #A0A0A0">  24</span> <span style="color: #228B22; background: #FFFFFF;">%    $Revision: 342 $ $Date: 2009-04-07 16:25:01 +0200 (di, 07 apr 2009) $</span>
+               <span style="color: #A0A0A0">  25</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  26</a></span> <span style="color: #000000; background: #E0E0FF;">if isempty(x) </span>
+               <span style="color: #A0A0A0">  27</span> <span style="color: #A0A0A0; background: #FFFFFF;">	y = NaN;</span>
+               <span style="color: #A0A0A0">  28</span> <span style="color: #A0A0A0; background: #FFFFFF;">	return</span>
+               <span style="color: #A0A0A0">  29</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+               <span style="color: #A0A0A0">  30</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  31</a></span> <span style="color: #000000; background: #E0E0FF;">if nargin &lt; 2 </span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  32</a></span> <span style="color: #000000; background: #E0E0FF;">	dim = min(find(size(x)~=1)); </span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  33</a></span> <span style="color: #000000; background: #E0E0FF;">	if isempty(dim) </span>
+               <span style="color: #A0A0A0">  34</span> <span style="color: #A0A0A0; background: #FFFFFF;">		dim = 1;</span>
+               <span style="color: #A0A0A0">  35</span> <span style="color: #A0A0A0; background: #FFFFFF;">	end</span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  36</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
+               <span style="color: #A0A0A0">  37</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  38</span> <span style="color: #228B22; background: #FFFFFF;">% Replace NaNs with zeros.</span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  39</a></span> <span style="color: #000000; background: #E0E0FF;">nans = isnan(x); </span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  40</a></span> <span style="color: #000000; background: #E0E0FF;">x(isnan(x)) = 0;  </span>
+               <span style="color: #A0A0A0">  41</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  42</span> <span style="color: #228B22; background: #FFFFFF;">% denominator</span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  43</a></span> <span style="color: #000000; background: #E0E0FF;">count = size(x,dim) - sum(nans,dim); </span>
+               <span style="color: #A0A0A0">  44</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  45</span> <span style="color: #228B22; background: #FFFFFF;">% Protect against a  all NaNs in one dimension</span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  46</a></span> <span style="color: #000000; background: #E0E0FF;">i = find(count==0); </span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  47</a></span> <span style="color: #000000; background: #E0E0FF;">count(i) = ones(size(i)); </span>
+               <span style="color: #A0A0A0">  48</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  49</a></span> <span style="color: #000000; background: #E0E0FF;">y = sum(x,dim)./count; </span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  50</a></span> <span style="color: #000000; background: #E0E0FF;">y(i) = i + NaN; </span>
+</pre>
+<p><p>Other subfunctions in this file are not included in this listing.
+</div>
+</body>
+</html>

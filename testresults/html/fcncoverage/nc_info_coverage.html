@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Function details for nc_info</title>
+<link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="script/css/FunctionCoverage.css" rel="stylesheet" />
+<script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="script/js/matlab2accordion.js"></script>
+</head>
+<body>
+<h2 class="ui-widget-header ui-state-active ui-corner-all">nc_info</h2>
+<div class="ui-widget-content ui-corner-all">
+<strong>Coverage results</strong><br/>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Total lines in function</td>
+<td class="td-linebottomrt">101</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Non-code lines (comments, blank lines)</td>
+<td class="td-linebottomrt">92</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines (lines that can run)</td>
+<td class="td-linebottomrt">9</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did run</td>
+<td class="td-linebottomrt">6</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did not run</td>
+<td class="td-linebottomrt">3</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Coverage (did run/can run)</td>
+<td class="td-linebottomrt">66.67 %</td></tr>
+</table>
+</div><br/>
+<div class="ui-widget-content ui-corner-all">
+<strong>Function listing</strong><br/>
+<pre>
+<span style="color: #FF0000; font-weight: bold; text-decoration: none">  time</span> <span style="color: #0000FF; font-weight: bold; text-decoration: none">  calls</span> <span style="font-weight: bold; text-decoration: none">line</span><br/>
+               <span style="color: #A0A0A0">   1</span> <span style="color: #A0A0A0; background: #FFFFFF;">function fileinfo = nc_info ( ncfile )</span>
+               <span style="color: #A0A0A0">   2</span> <span style="color: #228B22; background: #FFFFFF;">% NC_INFO:  information about a NetCDF 2 or 3 file</span>
+               <span style="color: #A0A0A0">   3</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   4</span> <span style="color: #228B22; background: #FFFFFF;">% USAGE:  fileinfo = nc_info ( ncfile );</span>
+               <span style="color: #A0A0A0">   5</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   6</span> <span style="color: #228B22; background: #FFFFFF;">% PARAMETERS:</span>
+               <span style="color: #A0A0A0">   7</span> <span style="color: #228B22; background: #FFFFFF;">% Input:</span>
+               <span style="color: #A0A0A0">   8</span> <span style="color: #228B22; background: #FFFFFF;">%    ncfile:  </span>
+               <span style="color: #A0A0A0">   9</span> <span style="color: #228B22; background: #FFFFFF;">%        a string that specifies the name of the NetCDF file</span>
+               <span style="color: #A0A0A0">  10</span> <span style="color: #228B22; background: #FFFFFF;">% Output:</span>
+               <span style="color: #A0A0A0">  11</span> <span style="color: #228B22; background: #FFFFFF;">%    fileinfo:</span>
+               <span style="color: #A0A0A0">  12</span> <span style="color: #228B22; background: #FFFFFF;">%        A structure whose fields contain information about the contants</span>
+               <span style="color: #A0A0A0">  13</span> <span style="color: #228B22; background: #FFFFFF;">%        of the NetCDF file.  The set of fields return in "fileinfo" are:</span>
+               <span style="color: #A0A0A0">  14</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  15</span> <span style="color: #228B22; background: #FFFFFF;">%        Filename:  </span>
+               <span style="color: #A0A0A0">  16</span> <span style="color: #228B22; background: #FFFFFF;">%            a string containing the name of the file.</span>
+               <span style="color: #A0A0A0">  17</span> <span style="color: #228B22; background: #FFFFFF;">%        Dimension:  </span>
+               <span style="color: #A0A0A0">  18</span> <span style="color: #228B22; background: #FFFFFF;">%            an array of structures describing the NetCDF dimensions.</span>
+               <span style="color: #A0A0A0">  19</span> <span style="color: #228B22; background: #FFFFFF;">%        Dataset:  </span>
+               <span style="color: #A0A0A0">  20</span> <span style="color: #228B22; background: #FFFFFF;">%            an array of structures describing the NetCDF datasets.</span>
+               <span style="color: #A0A0A0">  21</span> <span style="color: #228B22; background: #FFFFFF;">%        Attributes:  </span>
+               <span style="color: #A0A0A0">  22</span> <span style="color: #228B22; background: #FFFFFF;">%            An array of structures These correspond to the global attributes.</span>
+               <span style="color: #A0A0A0">  23</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  24</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  25</span> <span style="color: #228B22; background: #FFFFFF;">%        Each "Dimension" element contains the following fields:</span>
+               <span style="color: #A0A0A0">  26</span> <span style="color: #228B22; background: #FFFFFF;">%       </span>
+               <span style="color: #A0A0A0">  27</span> <span style="color: #228B22; background: #FFFFFF;">%        Name:</span>
+               <span style="color: #A0A0A0">  28</span> <span style="color: #228B22; background: #FFFFFF;">%            a string containing the name of the dimension.</span>
+               <span style="color: #A0A0A0">  29</span> <span style="color: #228B22; background: #FFFFFF;">%        Length:</span>
+               <span style="color: #A0A0A0">  30</span> <span style="color: #228B22; background: #FFFFFF;">%            a scalar value, the size of this dimension</span>
+               <span style="color: #A0A0A0">  31</span> <span style="color: #228B22; background: #FFFFFF;">%        Unlimited:</span>
+               <span style="color: #A0A0A0">  32</span> <span style="color: #228B22; background: #FFFFFF;">%            Set to 1 if the dimension is the record dimension, set to</span>
+               <span style="color: #A0A0A0">  33</span> <span style="color: #228B22; background: #FFFFFF;">%            0 otherwise.</span>
+               <span style="color: #A0A0A0">  34</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  35</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  36</span> <span style="color: #228B22; background: #FFFFFF;">%        Each "Dataset" element contains the following structures.</span>
+               <span style="color: #A0A0A0">  37</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  38</span> <span style="color: #228B22; background: #FFFFFF;">%        Name:  </span>
+               <span style="color: #A0A0A0">  39</span> <span style="color: #228B22; background: #FFFFFF;">%            a string containing the name of the variable.</span>
+               <span style="color: #A0A0A0">  40</span> <span style="color: #228B22; background: #FFFFFF;">%        Nctype:  </span>
+               <span style="color: #A0A0A0">  41</span> <span style="color: #228B22; background: #FFFFFF;">%            a string specifying the NetCDF datatype of this variable.</span>
+               <span style="color: #A0A0A0">  42</span> <span style="color: #228B22; background: #FFFFFF;">%        Dimensions:  </span>
+               <span style="color: #A0A0A0">  43</span> <span style="color: #228B22; background: #FFFFFF;">%            a cell array with the names of the dimensions upon which</span>
+               <span style="color: #A0A0A0">  44</span> <span style="color: #228B22; background: #FFFFFF;">%            this variable depends.</span>
+               <span style="color: #A0A0A0">  45</span> <span style="color: #228B22; background: #FFFFFF;">%        Unlimited:  </span>
+               <span style="color: #A0A0A0">  46</span> <span style="color: #228B22; background: #FFFFFF;">%            Flag, either 1 if the variable has an unlimited dimension</span>
+               <span style="color: #A0A0A0">  47</span> <span style="color: #228B22; background: #FFFFFF;">%            or 0 if not.</span>
+               <span style="color: #A0A0A0">  48</span> <span style="color: #228B22; background: #FFFFFF;">%        Rank:  </span>
+               <span style="color: #A0A0A0">  49</span> <span style="color: #228B22; background: #FFFFFF;">%            Array that describes the size of each dimension upon which </span>
+               <span style="color: #A0A0A0">  50</span> <span style="color: #228B22; background: #FFFFFF;">%            this dataset depends.</span>
+               <span style="color: #A0A0A0">  51</span> <span style="color: #228B22; background: #FFFFFF;">%        DataAttributes:  </span>
+               <span style="color: #A0A0A0">  52</span> <span style="color: #228B22; background: #FFFFFF;">%            Same as "Attributes" above, but here they are the variable </span>
+               <span style="color: #A0A0A0">  53</span> <span style="color: #228B22; background: #FFFFFF;">%            attributes.</span>
+               <span style="color: #A0A0A0">  54</span> <span style="color: #228B22; background: #FFFFFF;">%                         </span>
+               <span style="color: #A0A0A0">  55</span> <span style="color: #228B22; background: #FFFFFF;">%        Each "Attribute" or "DataAttribute" element contains the following </span>
+               <span style="color: #A0A0A0">  56</span> <span style="color: #228B22; background: #FFFFFF;">%        fields.</span>
+               <span style="color: #A0A0A0">  57</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  58</span> <span style="color: #228B22; background: #FFFFFF;">%        Name:  </span>
+               <span style="color: #A0A0A0">  59</span> <span style="color: #228B22; background: #FFFFFF;">%            a string containing the name of the attribute.</span>
+               <span style="color: #A0A0A0">  60</span> <span style="color: #228B22; background: #FFFFFF;">%        Nctype:  </span>
+               <span style="color: #A0A0A0">  61</span> <span style="color: #228B22; background: #FFFFFF;">%            a string specifying the NetCDF datatype of this attribute.</span>
+               <span style="color: #A0A0A0">  62</span> <span style="color: #228B22; background: #FFFFFF;">%        Attnum:  </span>
+               <span style="color: #A0A0A0">  63</span> <span style="color: #228B22; background: #FFFFFF;">%            a scalar specifying the attribute id</span>
+               <span style="color: #A0A0A0">  64</span> <span style="color: #228B22; background: #FFFFFF;">%        Value: </span>
+               <span style="color: #A0A0A0">  65</span> <span style="color: #228B22; background: #FFFFFF;">%            either a string or a double precision value corresponding to</span>
+               <span style="color: #A0A0A0">  66</span> <span style="color: #228B22; background: #FFFFFF;">%            the value of the attribute</span>
+               <span style="color: #A0A0A0">  67</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  68</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  69</span> <span style="color: #228B22; background: #FFFFFF;">% The "Dataset" elements are not populated with the actual data values.</span>
+               <span style="color: #A0A0A0">  70</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  71</span> <span style="color: #228B22; background: #FFFFFF;">% This routine purposefully mimics that of Mathwork's hdfinfo.</span>
+               <span style="color: #A0A0A0">  72</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  73</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  74</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  75</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  76</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  77</span> <span style="color: #228B22; background: #FFFFFF;">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+               <span style="color: #A0A0A0">  78</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  79</span> <span style="color: #228B22; background: #FFFFFF;">% $Id: nc_info.m 188 2009-02-06 14:31:52Z heijer $</span>
+               <span style="color: #A0A0A0">  80</span> <span style="color: #228B22; background: #FFFFFF;">% $LastChangedDate: 2009-02-06 15:31:52 +0100 (vr, 06 feb 2009) $</span>
+               <span style="color: #A0A0A0">  81</span> <span style="color: #228B22; background: #FFFFFF;">% $LastChangedRevision: 188 $</span>
+               <span style="color: #A0A0A0">  82</span> <span style="color: #228B22; background: #FFFFFF;">% $LastChangedBy: heijer $</span>
+               <span style="color: #A0A0A0">  83</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  84</span> <span style="color: #228B22; background: #FFFFFF;">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+               <span style="color: #A0A0A0">  85</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  86</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  87</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  88</a></span> <span style="color: #000000; background: #E0E0FF;">snc_nargchk(1,1,nargin); </span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  89</a></span> <span style="color: #000000; background: #E0E0FF;">snc_nargoutchk(1,1,nargout); </span>
+               <span style="color: #A0A0A0">  90</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  91</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  92</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  93</span> <span style="color: #228B22; background: #FFFFFF;">% Do we use java instead of mexnc?</span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  94</a></span> <span style="color: #000000; background: #E0E0FF;">use_java = getpref ( 'SNCTOOLS', 'USE_JAVA', 0 ); </span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  95</a></span> <span style="color: #000000; background: #E0E0FF;">if use_java  </span>
+<span style="color: #FF0000">  0.50 </span><span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  96</a></span> <span style="color: #000000; background: #E0E0FF;">	fileinfo = nc_info_java(ncfile); </span>
+               <span style="color: #A0A0A0">  97</span> <span style="color: #228B22; background: #FFFFFF;">else</span>
+               <span style="color: #A0A0A0">  98</span> <span style="color: #A0A0A0; background: #FFFFFF;">	fileinfo = nc_info_mex(ncfile);</span>
+               <span style="color: #A0A0A0">  99</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+               <span style="color: #A0A0A0"> 100</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a> 101</a></span> <span style="color: #000000; background: #E0E0FF;">return </span>
+</pre>
+<p><p>Other subfunctions in this file are not included in this listing.
+</div>
+</body>
+</html>

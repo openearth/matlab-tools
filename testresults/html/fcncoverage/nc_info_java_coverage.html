@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Function details for snctools\private\nc_info_java</title>
+<link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="script/css/FunctionCoverage.css" rel="stylesheet" />
+<script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="script/js/matlab2accordion.js"></script>
+</head>
+<body>
+<h2 class="ui-widget-header ui-state-active ui-corner-all">snctools\private\nc_info_java</h2>
+<div class="ui-widget-content ui-corner-all">
+<strong>Coverage results</strong><br/>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Total lines in function</td>
+<td class="td-linebottomrt">52</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Non-code lines (comments, blank lines)</td>
+<td class="td-linebottomrt">26</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines (lines that can run)</td>
+<td class="td-linebottomrt">26</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did run</td>
+<td class="td-linebottomrt">17</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did not run</td>
+<td class="td-linebottomrt">9</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Coverage (did run/can run)</td>
+<td class="td-linebottomrt">65.38 %</td></tr>
+</table>
+</div><br/>
+<div class="ui-widget-content ui-corner-all">
+<strong>Function listing</strong><br/>
+<pre>
+<span style="color: #FF0000; font-weight: bold; text-decoration: none">  time</span> <span style="color: #0000FF; font-weight: bold; text-decoration: none">  calls</span> <span style="font-weight: bold; text-decoration: none">line</span><br/>
+               <span style="color: #A0A0A0">   1</span> <span style="color: #A0A0A0; background: #FFFFFF;">function fileinfo = nc_info_java ( ncfile )</span>
+               <span style="color: #A0A0A0">   2</span> <span style="color: #228B22; background: #FFFFFF;">% NC_INFO_JAVA:  java backend for nc_info m-file</span>
+               <span style="color: #A0A0A0">   3</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   4</span> <span style="color: #228B22; background: #FFFFFF;">% This function returns the same metadata structure using the java </span>
+               <span style="color: #A0A0A0">   5</span> <span style="color: #228B22; background: #FFFFFF;">% API.  </span>
+               <span style="color: #A0A0A0">   6</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">   7</span> <span style="color: #A0A0A0; background: #FFFFFF;">import ucar.nc2.dods.*     % import opendap reader classes</span>
+               <span style="color: #A0A0A0">   8</span> <span style="color: #A0A0A0; background: #FFFFFF;">import ucar.nc2.*          % have to import this (NetcdfFile) as well for local reads</span>
+               <span style="color: #A0A0A0">   9</span> <span style="color: #228B22; background: #FFFFFF;">                           % Now that's just brilliant.  </span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  10</a></span> <span style="color: #000000; background: #E0E0FF;">snc_turnoff_log4j; </span>
+               <span style="color: #A0A0A0">  11</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  12</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  13</a></span> <span style="color: #000000; background: #E0E0FF;">fileinfo.Filename = ncfile; </span>
+               <span style="color: #A0A0A0">  14</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  15</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  16</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  17</span> <span style="color: #228B22; background: #FFFFFF;">% Try it as a local file.  If not a local file, try as</span>
+               <span style="color: #A0A0A0">  18</span> <span style="color: #228B22; background: #FFFFFF;">% via HTTP, then as dods</span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  19</a></span> <span style="color: #000000; background: #E0E0FF;">if exist(ncfile,'file') </span>
+               <span style="color: #A0A0A0">  20</span> <span style="color: #A0A0A0; background: #FFFFFF;">	jncid = NetcdfFile.open(ncfile);</span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  21</a></span> <span style="color: #228B22; background: #FFFFFF;">else </span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  22</a></span> <span style="color: #000000; background: #E0E0FF;">	try  </span>
+               <span style="color: #A0A0A0">  23</span> <span style="color: #228B22; background: #FFFFFF;">        % try not to use preloading ... </span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  24</a></span> <span style="color: #000000; background: #E0E0FF;">        try </span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  25</a></span> <span style="color: #000000; background: #E0E0FF;">            DODSNetcdfFile.setPreload(false); </span>
+               <span style="color: #A0A0A0">  26</span> <span style="color: #A0A0A0; background: #FFFFFF;">        catch</span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  27</a></span> <span style="color: #000000; background: #E0E0FF;">        end </span>
+<span style="color: #FF0000">  0.30 </span><span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  28</a></span> <span style="color: #000000; background: #E0E0FF;">        jncid = DODSNetcdfFile(ncfile); </span>
+               <span style="color: #A0A0A0">  29</span> <span style="color: #A0A0A0; background: #FFFFFF;">	catch</span>
+               <span style="color: #A0A0A0">  30</span> <span style="color: #A0A0A0; background: #FFFFFF;">		try</span>
+               <span style="color: #A0A0A0">  31</span> <span style="color: #A0A0A0; background: #FFFFFF;">    		jncid = NetcdfFile.open ( ncfile );</span>
+               <span style="color: #A0A0A0">  32</span> <span style="color: #A0A0A0; background: #FFFFFF;">		catch</span>
+               <span style="color: #A0A0A0">  33</span> <span style="color: #A0A0A0; background: #FFFFFF;">			msg = sprintf ( 'Could not open ''%s'' as either a local file, a regular URL, or as a DODS URL.', ncfile );</span>
+               <span style="color: #A0A0A0">  34</span> <span style="color: #A0A0A0; background: #FFFFFF;">			error ( 'SNCTOOLS:nc_varget_java:fileOpenFailure', msg );</span>
+               <span style="color: #A0A0A0">  35</span> <span style="color: #A0A0A0; background: #FFFFFF;">		end</span>
+               <span style="color: #A0A0A0">  36</span> <span style="color: #A0A0A0; background: #FFFFFF;">	end</span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  37</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
+               <span style="color: #A0A0A0">  38</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  39</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  40</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  41</a></span> <span style="color: #000000; background: #E0E0FF;">root_group = jncid.getRootGroup(); </span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  42</a></span> <span style="color: #000000; background: #E0E0FF;">fileinfo.Dimension = get_dimensions_j ( root_group ); </span>
+<span style="color: #FF0000">  0.16 </span><span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  43</a></span> <span style="color: #000000; background: #E0E0FF;">fileinfo.Dataset = get_variables_j ( root_group ); </span>
+               <span style="color: #A0A0A0">  44</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  45</span> <span style="color: #228B22; background: #FFFFFF;">% Get the global attributes and variable attributes</span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  46</a></span> <span style="color: #000000; background: #E0E0FF;">j_att_list = root_group.getAttributes(); </span>
+<span style="color: #FF0000">  0.03 </span><span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  47</a></span> <span style="color: #000000; background: #E0E0FF;">fileinfo.Attribute = snc_java_bundle_atts ( j_att_list ); </span>
+               <span style="color: #A0A0A0">  48</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  49</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  50</a></span> <span style="color: #000000; background: #E0E0FF;">close ( jncid ); </span>
+               <span style="color: #A0A0A0">  51</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     13 </span><span style="color: #000000; font-weight: bold"><a>  52</a></span> <span style="color: #000000; background: #E0E0FF;">return </span>
+</pre>
+<p><p>Other subfunctions in this file are not included in this listing.
+</div>
+</body>
+</html>

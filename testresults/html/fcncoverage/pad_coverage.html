@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Function details for pad</title>
+<link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="script/css/FunctionCoverage.css" rel="stylesheet" />
+<script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="script/js/matlab2accordion.js"></script>
+</head>
+<body>
+<h2 class="ui-widget-header ui-state-active ui-corner-all">pad</h2>
+<div class="ui-widget-content ui-corner-all">
+<strong>Coverage results</strong><br/>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Total lines in function</td>
+<td class="td-linebottomrt">145</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Non-code lines (comments, blank lines)</td>
+<td class="td-linebottomrt">101</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines (lines that can run)</td>
+<td class="td-linebottomrt">44</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did run</td>
+<td class="td-linebottomrt">20</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did not run</td>
+<td class="td-linebottomrt">24</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Coverage (did run/can run)</td>
+<td class="td-linebottomrt">45.45 %</td></tr>
+</table>
+</div><br/>
+<div class="ui-widget-content ui-corner-all">
+<strong>Function listing</strong><br/>
+<pre>
+<span style="color: #FF0000; font-weight: bold; text-decoration: none">  time</span> <span style="color: #0000FF; font-weight: bold; text-decoration: none">  calls</span> <span style="font-weight: bold; text-decoration: none">line</span><br/>
+               <span style="color: #A0A0A0">   1</span> <span style="color: #A0A0A0; background: #FFFFFF;">function varargout = pad(prepad,L,varargin)</span>
+               <span style="color: #A0A0A0">   2</span> <span style="color: #228B22; background: #FFFFFF;">%PAD   Pads 2D char/numeric array on either side to required length.</span>
+               <span style="color: #A0A0A0">   3</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   4</span> <span style="color: #228B22; background: #FFFFFF;">% pad(array,L)</span>
+               <span style="color: #A0A0A0">   5</span> <span style="color: #228B22; background: #FFFFFF;">% pad(array,L,symbol)</span>
+               <span style="color: #A0A0A0">   6</span> <span style="color: #228B22; background: #FFFFFF;">% pad(array,symbol,L) % also, but for ASCII padding only !</span>
+               <span style="color: #A0A0A0">   7</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   8</span> <span style="color: #228B22; background: #FFFFFF;">% Pads an array with symbol 'symbol'</span>
+               <span style="color: #A0A0A0">   9</span> <span style="color: #228B22; background: #FFFFFF;">% until it has width abs(L). More precise, </span>
+               <span style="color: #A0A0A0">  10</span> <span style="color: #228B22; background: #FFFFFF;">% it adds symbols until the second </span>
+               <span style="color: #A0A0A0">  11</span> <span style="color: #228B22; background: #FFFFFF;">% dimension has size L. pad does not perform checks.</span>
+               <span style="color: #A0A0A0">  12</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  13</span> <span style="color: #228B22; background: #FFFFFF;">% When the second dimension is already equal or</span>
+               <span style="color: #A0A0A0">  14</span> <span style="color: #228B22; background: #FFFFFF;">% larger than L, nothing is done and the full array </span>
+               <span style="color: #A0A0A0">  15</span> <span style="color: #228B22; background: #FFFFFF;">% is returned. An optional 2bn output argument can </span>
+               <span style="color: #A0A0A0">  16</span> <span style="color: #228B22; background: #FFFFFF;">% be supplied. It gets the value 1 when the array is padded,</span>
+               <span style="color: #A0A0A0">  17</span> <span style="color: #228B22; background: #FFFFFF;">% and 0 when the array is not padded and left intect:</span>
+               <span style="color: #A0A0A0">  18</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  19</span> <span style="color: #228B22; background: #FFFFFF;">% [paddedarray, padstatus] = pad(array,L,symbol)</span>
+               <span style="color: #A0A0A0">  20</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  21</span> <span style="color: #228B22; background: #FFFFFF;">% - Left  pads when L is negative.</span>
+               <span style="color: #A0A0A0">  22</span> <span style="color: #228B22; background: #FFFFFF;">% - Rigth pads when L is positive.</span>
+               <span style="color: #A0A0A0">  23</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  24</span> <span style="color: #228B22; background: #FFFFFF;">% By default symbol is:</span>
+               <span style="color: #A0A0A0">  25</span> <span style="color: #228B22; background: #FFFFFF;">% - space for character arrays </span>
+               <span style="color: #A0A0A0">  26</span> <span style="color: #228B22; background: #FFFFFF;">% - 0 for numeric arrays.</span>
+               <span style="color: #A0A0A0">  27</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  28</span> <span style="color: #228B22; background: #FFFFFF;">% Example:</span>
+               <span style="color: #A0A0A0">  29</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  30</span> <span style="color: #228B22; background: #FFFFFF;">% pad(['aaa';'bbb'],-4,'_') =</span>
+               <span style="color: #A0A0A0">  31</span> <span style="color: #228B22; background: #FFFFFF;">% _aaa</span>
+               <span style="color: #A0A0A0">  32</span> <span style="color: #228B22; background: #FFFFFF;">% _bbb</span>
+               <span style="color: #A0A0A0">  33</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  34</span> <span style="color: #228B22; background: #FFFFFF;">% pad(['aaa';'bbb'],-4,'_') =</span>
+               <span style="color: #A0A0A0">  35</span> <span style="color: #228B22; background: #FFFFFF;">% aaa_</span>
+               <span style="color: #A0A0A0">  36</span> <span style="color: #228B22; background: #FFFFFF;">% bbb_</span>
+               <span style="color: #A0A0A0">  37</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  38</span> <span style="color: #228B22; background: #FFFFFF;">% Note: always returns amtpy matrix for empty array</span>
+               <span style="color: #A0A0A0">  39</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  40</span> <span style="color: #228B22; background: #FFFFFF;">% See also: ADDROWCOL, NUM2STR (number,'%0.nd')</span>
+               <span style="color: #A0A0A0">  41</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  42</span> <span style="color: #228B22; background: #FFFFFF;">%   --------------------------------------------------------------------</span>
+               <span style="color: #A0A0A0">  43</span> <span style="color: #228B22; background: #FFFFFF;">%   Copyright (C) 2005 Delft University of Technology</span>
+               <span style="color: #A0A0A0">  44</span> <span style="color: #228B22; background: #FFFFFF;">%       Gerben J. de Boer</span>
+               <span style="color: #A0A0A0">  45</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  46</span> <span style="color: #228B22; background: #FFFFFF;">%       g.j.deboer@tudelft.nl	</span>
+               <span style="color: #A0A0A0">  47</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  48</span> <span style="color: #228B22; background: #FFFFFF;">%       Fluid Mechanics Section</span>
+               <span style="color: #A0A0A0">  49</span> <span style="color: #228B22; background: #FFFFFF;">%       Faculty of Civil Engineering and Geosciences</span>
+               <span style="color: #A0A0A0">  50</span> <span style="color: #228B22; background: #FFFFFF;">%       PO Box 5048</span>
+               <span style="color: #A0A0A0">  51</span> <span style="color: #228B22; background: #FFFFFF;">%       2600 GA Delft</span>
+               <span style="color: #A0A0A0">  52</span> <span style="color: #228B22; background: #FFFFFF;">%       The Netherlands</span>
+               <span style="color: #A0A0A0">  53</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  54</span> <span style="color: #228B22; background: #FFFFFF;">%   This library is free software; you can redistribute it and/or</span>
+               <span style="color: #A0A0A0">  55</span> <span style="color: #228B22; background: #FFFFFF;">%   modify it under the terms of the GNU Lesser General Public</span>
+               <span style="color: #A0A0A0">  56</span> <span style="color: #228B22; background: #FFFFFF;">%   License as published by the Free Software Foundation; either</span>
+               <span style="color: #A0A0A0">  57</span> <span style="color: #228B22; background: #FFFFFF;">%   version 2.1 of the License, or (at your option) any later version.</span>
+               <span style="color: #A0A0A0">  58</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  59</span> <span style="color: #228B22; background: #FFFFFF;">%   This library is distributed in the hope that it will be useful,</span>
+               <span style="color: #A0A0A0">  60</span> <span style="color: #228B22; background: #FFFFFF;">%   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+               <span style="color: #A0A0A0">  61</span> <span style="color: #228B22; background: #FFFFFF;">%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span>
+               <span style="color: #A0A0A0">  62</span> <span style="color: #228B22; background: #FFFFFF;">%   Lesser General Public License for more details.</span>
+               <span style="color: #A0A0A0">  63</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  64</span> <span style="color: #228B22; background: #FFFFFF;">%   You should have received a copy of the GNU Lesser General Public</span>
+               <span style="color: #A0A0A0">  65</span> <span style="color: #228B22; background: #FFFFFF;">%   License along with this library; if not, write to the Free Software</span>
+               <span style="color: #A0A0A0">  66</span> <span style="color: #228B22; background: #FFFFFF;">%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307</span>
+               <span style="color: #A0A0A0">  67</span> <span style="color: #228B22; background: #FFFFFF;">%   USA</span>
+               <span style="color: #A0A0A0">  68</span> <span style="color: #228B22; background: #FFFFFF;">%   --------------------------------------------------------------------</span>
+               <span style="color: #A0A0A0">  69</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  70</span> <span style="color: #228B22; background: #FFFFFF;">% $Id: pad.m 390 2009-04-22 09:07:39Z boer_g $</span>
+               <span style="color: #A0A0A0">  71</span> <span style="color: #228B22; background: #FFFFFF;">% $Date: 2009-04-22 11:07:39 +0200 (wo, 22 apr 2009) $</span>
+               <span style="color: #A0A0A0">  72</span> <span style="color: #228B22; background: #FFFFFF;">% $Author: boer_g $</span>
+               <span style="color: #A0A0A0">  73</span> <span style="color: #228B22; background: #FFFFFF;">% $Revision: 390 $</span>
+               <span style="color: #A0A0A0">  74</span> <span style="color: #228B22; background: #FFFFFF;">% $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/general/el_mat/pad.m $</span>
+               <span style="color: #A0A0A0">  75</span> <span style="color: #228B22; background: #FFFFFF;">% $Keywords$</span>
+               <span style="color: #A0A0A0">  76</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  77</a></span> <span style="color: #000000; background: #E0E0FF;">displaywarning = 0; </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  78</a></span> <span style="color: #000000; background: #E0E0FF;">if nargin==3 </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  79</a></span> <span style="color: #000000; background: #E0E0FF;">    if ischar(prepad) | isempty(prepad) </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  80</a></span> <span style="color: #000000; background: #E0E0FF;">      if     ischar(L) </span>
+               <span style="color: #A0A0A0">  81</span> <span style="color: #A0A0A0; background: #FFFFFF;">         symbol = L;</span>
+               <span style="color: #A0A0A0">  82</span> <span style="color: #A0A0A0; background: #FFFFFF;">         L      = varargin{1};</span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  83</a></span> <span style="color: #000000; background: #E0E0FF;">      elseif isnumeric(L) </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  84</a></span> <span style="color: #000000; background: #E0E0FF;">         symbol = varargin{1}; </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  85</a></span> <span style="color: #000000; background: #E0E0FF;">      end </span>
+               <span style="color: #A0A0A0">  86</span> <span style="color: #A0A0A0; background: #FFFFFF;">   elseif isnumeric(prepad)</span>
+               <span style="color: #A0A0A0">  87</span> <span style="color: #A0A0A0; background: #FFFFFF;">   symbol = varargin{1};</span>
+               <span style="color: #A0A0A0">  88</span> <span style="color: #A0A0A0; background: #FFFFFF;">   end</span>
+               <span style="color: #A0A0A0">  89</span> <span style="color: #228B22; background: #FFFFFF;">else</span>
+               <span style="color: #A0A0A0">  90</span> <span style="color: #A0A0A0; background: #FFFFFF;">   if ischar(prepad)</span>
+               <span style="color: #A0A0A0">  91</span> <span style="color: #A0A0A0; background: #FFFFFF;">   symbol = ' ';</span>
+               <span style="color: #A0A0A0">  92</span> <span style="color: #A0A0A0; background: #FFFFFF;">   elseif isnumeric(prepad)</span>
+               <span style="color: #A0A0A0">  93</span> <span style="color: #A0A0A0; background: #FFFFFF;">   symbol = 0;</span>
+               <span style="color: #A0A0A0">  94</span> <span style="color: #A0A0A0; background: #FFFFFF;">   end</span>
+               <span style="color: #A0A0A0">  95</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+               <span style="color: #A0A0A0">  96</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  97</a></span> <span style="color: #000000; background: #E0E0FF;">absL = abs(L); </span>
+               <span style="color: #A0A0A0">  98</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a>  99</a></span> <span style="color: #000000; background: #E0E0FF;">if (size(prepad,2) &lt; absL) </span>
+               <span style="color: #A0A0A0"> 100</span> <span style="color: #228B22; background: #FFFFFF;">        </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 101</a></span> <span style="color: #000000; background: #E0E0FF;">   if length(symbol)==0 </span>
+               <span style="color: #A0A0A0"> 102</span> <span style="color: #228B22; background: #FFFFFF;">	</span>
+               <span style="color: #A0A0A0"> 103</span> <span style="color: #A0A0A0; background: #FFFFFF;">      error('syntax: pad(array,L,symbol) where symbol should not be empty');</span>
+               <span style="color: #A0A0A0"> 104</span> <span style="color: #228B22; background: #FFFFFF;">	</span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 105</a></span> <span style="color: #228B22; background: #FFFFFF;">   else   </span>
+               <span style="color: #A0A0A0"> 106</span> <span style="color: #228B22; background: #FFFFFF;">	</span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 107</a></span> <span style="color: #000000; background: #E0E0FF;">      padded = repmat(symbol,[size(prepad,1) absL]); </span>
+               <span style="color: #A0A0A0"> 108</span> <span style="color: #228B22; background: #FFFFFF;">	</span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 109</a></span> <span style="color: #000000; background: #E0E0FF;">      if sign(L) &lt; 0 </span>
+               <span style="color: #A0A0A0"> 110</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
+               <span style="color: #A0A0A0"> 111</span> <span style="color: #A0A0A0; background: #FFFFFF;">      padded(:,absL-size(prepad,2)+1:end) = prepad(:,:);</span>
+               <span style="color: #A0A0A0"> 112</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 113</a></span> <span style="color: #000000; background: #E0E0FF;">      elseif sign(L) &gt; 0 </span>
+               <span style="color: #A0A0A0"> 114</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 115</a></span> <span style="color: #000000; background: #E0E0FF;">      padded(:,1:size(prepad,2)) = prepad(:,:); </span>
+               <span style="color: #A0A0A0"> 116</span> <span style="color: #228B22; background: #FFFFFF;">      </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 117</a></span> <span style="color: #000000; background: #E0E0FF;">      end </span>
+               <span style="color: #A0A0A0"> 118</span> <span style="color: #228B22; background: #FFFFFF;">	</span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 119</a></span> <span style="color: #000000; background: #E0E0FF;">   end </span>
+               <span style="color: #A0A0A0"> 120</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 121</a></span> <span style="color: #000000; background: #E0E0FF;">    iostat = 1; </span>
+               <span style="color: #A0A0A0"> 122</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 123</span> <span style="color: #228B22; background: #FFFFFF;">else</span>
+               <span style="color: #A0A0A0"> 124</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
+               <span style="color: #A0A0A0"> 125</span> <span style="color: #A0A0A0; background: #FFFFFF;">    if displaywarning</span>
+               <span style="color: #A0A0A0"> 126</span> <span style="color: #A0A0A0; background: #FFFFFF;">    disp(['Array not padded, as its length ',num2str(length(prepad)),' &gt;= ',num2str(absL)])</span>
+               <span style="color: #A0A0A0"> 127</span> <span style="color: #A0A0A0; background: #FFFFFF;">    end</span>
+               <span style="color: #A0A0A0"> 128</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
+               <span style="color: #A0A0A0"> 129</span> <span style="color: #A0A0A0; background: #FFFFFF;">    padded = prepad;</span>
+               <span style="color: #A0A0A0"> 130</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
+               <span style="color: #A0A0A0"> 131</span> <span style="color: #A0A0A0; background: #FFFFFF;">    iostat = 0;</span>
+               <span style="color: #A0A0A0"> 132</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
+               <span style="color: #A0A0A0"> 133</span> <span style="color: #A0A0A0; background: #FFFFFF;">end    </span>
+               <span style="color: #A0A0A0"> 134</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 135</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 136</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 137</a></span> <span style="color: #000000; background: #E0E0FF;">   if nargout &lt; 2 </span>
+               <span style="color: #A0A0A0"> 138</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 139</a></span> <span style="color: #000000; background: #E0E0FF;">   varargout = {padded}; </span>
+               <span style="color: #A0A0A0"> 140</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 141</span> <span style="color: #A0A0A0; background: #FFFFFF;">elseif nargout == 2</span>
+               <span style="color: #A0A0A0"> 142</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 143</span> <span style="color: #A0A0A0; background: #FFFFFF;">   varargout = {padded,iostat};</span>
+               <span style="color: #A0A0A0"> 144</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 145</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+</pre>
+</div>
+</body>
+</html>

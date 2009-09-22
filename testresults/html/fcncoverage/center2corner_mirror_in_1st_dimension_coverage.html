@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Function details for center2corner>mirror_in_1st_dimension</title>
+<link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="script/css/FunctionCoverage.css" rel="stylesheet" />
+<script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="script/js/matlab2accordion.js"></script>
+</head>
+<body>
+<h2 class="ui-widget-header ui-state-active ui-corner-all">center2corner>mirror_in_1st_dimension</h2>
+<div class="ui-widget-content ui-corner-all">
+<strong>Coverage results</strong><br/>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Total lines in function</td>
+<td class="td-linebottomrt">142</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Non-code lines (comments, blank lines)</td>
+<td class="td-linebottomrt">117</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines (lines that can run)</td>
+<td class="td-linebottomrt">25</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did run</td>
+<td class="td-linebottomrt">11</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did not run</td>
+<td class="td-linebottomrt">14</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Coverage (did run/can run)</td>
+<td class="td-linebottomrt">44.00 %</td></tr>
+</table>
+</div><br/>
+<div class="ui-widget-content ui-corner-all">
+<strong>Function listing</strong><br/>
+<pre>
+<span style="color: #FF0000; font-weight: bold; text-decoration: none">  time</span> <span style="color: #0000FF; font-weight: bold; text-decoration: none">  calls</span> <span style="font-weight: bold; text-decoration: none">line</span><br/>
+               <span style="color: #A0A0A0"> 137</span> <span style="color: #A0A0A0; background: #FFFFFF;">function xcor = mirror_in_1st_dimension(xcen,xcor,method)</span>
+               <span style="color: #A0A0A0"> 138</span> <span style="color: #228B22; background: #FFFFFF;">     </span>
+               <span style="color: #A0A0A0"> 139</span> <span style="color: #228B22; background: #FFFFFF;">%MIRROR_IN_1ST_DIMENSION</span>
+               <span style="color: #A0A0A0"> 140</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 141</span> <span style="color: #228B22; background: #FFFFFF;">% xcor = mirror_in_1st_dimension(xcen,xcor)</span>
+               <span style="color: #A0A0A0"> 142</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 143</span> <span style="color: #228B22; background: #FFFFFF;">% for mirroring in other dimension just transpose</span>
+               <span style="color: #A0A0A0"> 144</span> <span style="color: #228B22; background: #FFFFFF;">% the in and output arguments.</span>
+               <span style="color: #A0A0A0"> 145</span> <span style="color: #228B22; background: #FFFFFF;">     </span>
+               <span style="color: #A0A0A0"> 146</span> <span style="color: #228B22; background: #FFFFFF;">%%% HOW DOES IT WORK:</span>
+               <span style="color: #A0A0A0"> 147</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 148</span> <span style="color: #228B22; background: #FFFFFF;">%  + center points,  input, first dimension, m index</span>
+               <span style="color: #A0A0A0"> 149</span> <span style="color: #228B22; background: #FFFFFF;">%  x corner points, output, first dimension, m index</span>
+               <span style="color: #A0A0A0"> 150</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 151</span> <span style="color: #228B22; background: #FFFFFF;">%  x      x      x      x      x      x      x      x</span>
+               <span style="color: #A0A0A0"> 152</span> <span style="color: #228B22; background: #FFFFFF;">%     1,1    2,1    3,1    4,1    5,1    6,1    7,1</span>
+               <span style="color: #A0A0A0"> 153</span> <span style="color: #228B22; background: #FFFFFF;">%      +------+------+------+------+------+------+</span>
+               <span style="color: #A0A0A0"> 154</span> <span style="color: #228B22; background: #FFFFFF;">%      |ZOOMED|      |      |      |      |      |</span>
+               <span style="color: #A0A0A0"> 155</span> <span style="color: #228B22; background: #FFFFFF;">%  x   |  IN  |  x   |  x   |  x   |  x   |  x   |  x</span>
+               <span style="color: #A0A0A0"> 156</span> <span style="color: #228B22; background: #FFFFFF;">%      |BELOW |      |      |      |      |      |</span>
+               <span style="color: #A0A0A0"> 157</span> <span style="color: #228B22; background: #FFFFFF;">%      +------+------+------+------+------+------+</span>
+               <span style="color: #A0A0A0"> 158</span> <span style="color: #228B22; background: #FFFFFF;">%      |      |      |      |      |      |      |</span>
+               <span style="color: #A0A0A0"> 159</span> <span style="color: #228B22; background: #FFFFFF;">%  x   |  x   |  x   |  x   |  x   |  x   |  x   |  x</span>
+               <span style="color: #A0A0A0"> 160</span> <span style="color: #228B22; background: #FFFFFF;">%      |      |      |      |      |      |      |</span>
+               <span style="color: #A0A0A0"> 161</span> <span style="color: #228B22; background: #FFFFFF;">%      +------+------+------+------+------+------+</span>
+               <span style="color: #A0A0A0"> 162</span> <span style="color: #228B22; background: #FFFFFF;">%     1,3    2,3    3,3    4,3    5,3    6,3    7,3</span>
+               <span style="color: #A0A0A0"> 163</span> <span style="color: #228B22; background: #FFFFFF;">%  x   |  x   |  x   |  x   |  x   |  x   |  x   |  x</span>
+               <span style="color: #A0A0A0"> 164</span> <span style="color: #228B22; background: #FFFFFF;">%      |      |      |      |      |      |      |</span>
+               <span style="color: #A0A0A0"> 165</span> <span style="color: #228B22; background: #FFFFFF;">%      +------+------+------+------+------+------+</span>
+               <span style="color: #A0A0A0"> 166</span> <span style="color: #228B22; background: #FFFFFF;">%     1,4    2,4    3,4    4,4    5,4    6,4    7,4</span>
+               <span style="color: #A0A0A0"> 167</span> <span style="color: #228B22; background: #FFFFFF;">%  x      x      x      x      x      x      x      x</span>
+               <span style="color: #A0A0A0"> 168</span> <span style="color: #228B22; background: #FFFFFF;">%  </span>
+               <span style="color: #A0A0A0"> 169</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 170</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 171</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 172</span> <span style="color: #228B22; background: #FFFFFF;">% xcor(1,1)            xcor(2,1)            xcor(3,1)</span>
+               <span style="color: #A0A0A0"> 173</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 174</span> <span style="color: #228B22; background: #FFFFFF;">%            xcen(1,1)         xcen(2,1)</span>
+               <span style="color: #A0A0A0"> 175</span> <span style="color: #228B22; background: #FFFFFF;">%                 +------------------+-</span>
+               <span style="color: #A0A0A0"> 176</span> <span style="color: #228B22; background: #FFFFFF;">%                 |                  | </span>
+               <span style="color: #A0A0A0"> 177</span> <span style="color: #228B22; background: #FFFFFF;">%                 |                  | </span>
+               <span style="color: #A0A0A0"> 178</span> <span style="color: #228B22; background: #FFFFFF;">%          backward                  | </span>
+               <span style="color: #A0A0A0"> 179</span> <span style="color: #228B22; background: #FFFFFF;">%         mirroring                  | </span>
+               <span style="color: #A0A0A0"> 180</span> <span style="color: #228B22; background: #FFFFFF;">% xcor(1,2) &lt;-----xs-------xm========xs====&gt; xcor(2,3)</span>
+               <span style="color: #A0A0A0"> 181</span> <span style="color: #228B22; background: #FFFFFF;">%                 |                  forward</span>
+               <span style="color: #A0A0A0"> 182</span> <span style="color: #228B22; background: #FFFFFF;">%                 |                  mirroring</span>
+               <span style="color: #A0A0A0"> 183</span> <span style="color: #228B22; background: #FFFFFF;">%                 |                  | </span>
+               <span style="color: #A0A0A0"> 184</span> <span style="color: #228B22; background: #FFFFFF;">%                 |                  | </span>
+               <span style="color: #A0A0A0"> 185</span> <span style="color: #228B22; background: #FFFFFF;">%                 +------------------+-</span>
+               <span style="color: #A0A0A0"> 186</span> <span style="color: #228B22; background: #FFFFFF;">%           xcen(1,2)           xcen(2,2)</span>
+               <span style="color: #A0A0A0"> 187</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 188</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 189</span> <span style="color: #228B22; background: #FFFFFF;">% xcor(1,3)            xcor(1,3)            xcor(3,3)</span>
+               <span style="color: #A0A0A0"> 190</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 191</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 192</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 193</span> <span style="color: #228B22; background: #FFFFFF;">% The scheme above is is also valid for all m and n when one substitues m=1 n=1:</span>
+               <span style="color: #A0A0A0"> 194</span> <span style="color: #228B22; background: #FFFFFF;">%   </span>
+               <span style="color: #A0A0A0"> 195</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 196</span> <span style="color: #228B22; background: #FFFFFF;">%        x(1,1) + x(1,2)   x(m,n) + x(m,n+1) </span>
+               <span style="color: #A0A0A0"> 197</span> <span style="color: #228B22; background: #FFFFFF;">% x_s = ---------------- = ----------------</span>
+               <span style="color: #A0A0A0"> 198</span> <span style="color: #228B22; background: #FFFFFF;">%              2		  2</span>
+               <span style="color: #A0A0A0"> 199</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 200</span> <span style="color: #228B22; background: #FFFFFF;">%        x(1,1) + x(1,2) + x(2,1) + x(2,2)     x(m,n) + x(m,n+1) + x(m+1,n) + x(m+1,n+1)</span>
+               <span style="color: #A0A0A0"> 201</span> <span style="color: #228B22; background: #FFFFFF;">% x_m = ----------------------------------- = ----------------------------------- </span>
+               <span style="color: #A0A0A0"> 202</span> <span style="color: #228B22; background: #FFFFFF;">%             4				            4		</span>
+               <span style="color: #A0A0A0"> 203</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 204</span> <span style="color: #228B22; background: #FFFFFF;">% For mirroring backwards:</span>
+               <span style="color: #A0A0A0"> 205</span> <span style="color: #228B22; background: #FFFFFF;">%                                                  3*x(1,1) + 3*x(1,2) -  x(2,1) -  x(2,2) </span>
+               <span style="color: #A0A0A0"> 206</span> <span style="color: #228B22; background: #FFFFFF;">% xcor(1,2)  = xcor(m  ,n+1) = x_s + (x_s - x_m) = --------------------------------------</span>
+               <span style="color: #A0A0A0"> 207</span> <span style="color: #228B22; background: #FFFFFF;">%			                                        4				  </span>
+               <span style="color: #A0A0A0"> 208</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 209</span> <span style="color: #228B22; background: #FFFFFF;">% For mirroring forwards:</span>
+               <span style="color: #A0A0A0"> 210</span> <span style="color: #228B22; background: #FFFFFF;">%                                                  -  x(1,1) -  x(1,2) +3*x(2,1) +3*x(2,2) </span>
+               <span style="color: #A0A0A0"> 211</span> <span style="color: #228B22; background: #FFFFFF;">% xcor(1,3)  = xcor(m+2,n+1) = x_s + (x_s - x_m) = --------------------------------------</span>
+               <span style="color: #A0A0A0"> 212</span> <span style="color: #228B22; background: #FFFFFF;">%			                                        4				  </span>
+               <span style="color: #A0A0A0"> 213</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 214</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 215</span> <span style="color: #228B22; background: #FFFFFF;">% Of course this is only done for grid points that have not yet been calculated.</span>
+               <span style="color: #A0A0A0"> 216</span> <span style="color: #228B22; background: #FFFFFF;">% so only for points that are nan.</span>
+               <span style="color: #A0A0A0"> 217</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a> 218</a></span> <span style="color: #000000; background: #E0E0FF;">  if strcmpi(method,'linear') </span>
+               <span style="color: #A0A0A0"> 219</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 220</span> <span style="color: #228B22; background: #FFFFFF;">  %% Linear perpendicular to boundary, AND linear along boundary</span>
+               <span style="color: #A0A0A0"> 221</span> <span style="color: #228B22; background: #FFFFFF;">  %  --------------------</span>
+               <span style="color: #A0A0A0"> 222</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a> 223</a></span> <span style="color: #000000; background: #E0E0FF;">     for m=1:size(xcen,1)-1 </span>
+       <span style="color: #0000FF">     44 </span><span style="color: #000000; font-weight: bold"><a> 224</a></span> <span style="color: #000000; background: #E0E0FF;">        for n=1:size(xcen,2)-1 </span>
+               <span style="color: #A0A0A0"> 225</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 226</span> <span style="color: #228B22; background: #FFFFFF;">           %% mirror back when not yet filled in</span>
+               <span style="color: #A0A0A0"> 227</span> <span style="color: #228B22; background: #FFFFFF;">           %  -------------------------------------</span>
+               <span style="color: #A0A0A0"> 228</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">    190 </span><span style="color: #000000; font-weight: bold"><a> 229</a></span> <span style="color: #000000; background: #E0E0FF;">           if isnan(xcor(m  ,n+1)) </span>
+       <span style="color: #0000FF">     46 </span><span style="color: #000000; font-weight: bold"><a> 230</a></span> <span style="color: #000000; background: #E0E0FF;">           xcor(m  ,n+1) = (+ 3*xcen(m  ,n  ) ... </span>
+               <span style="color: #A0A0A0"> 231</span> <span style="color: #000000; background: #E0E0FF;">                            + 3*xcen(m  ,n+1) ...</span>
+               <span style="color: #A0A0A0"> 232</span> <span style="color: #000000; background: #E0E0FF;">                            -   xcen(m+1,n  ) ...</span>
+               <span style="color: #A0A0A0"> 233</span> <span style="color: #000000; background: #E0E0FF;">                            -   xcen(m+1,n+1))/4; % is nan when one or more elements are nan</span>
+       <span style="color: #0000FF">     46 </span><span style="color: #000000; font-weight: bold"><a> 234</a></span> <span style="color: #000000; background: #E0E0FF;">           end </span>
+               <span style="color: #A0A0A0"> 235</span> <span style="color: #228B22; background: #FFFFFF;">           </span>
+               <span style="color: #A0A0A0"> 236</span> <span style="color: #228B22; background: #FFFFFF;">           %% mirror forward when not yet filled in</span>
+               <span style="color: #A0A0A0"> 237</span> <span style="color: #228B22; background: #FFFFFF;">           %  -------------------------------------</span>
+               <span style="color: #A0A0A0"> 238</span> <span style="color: #228B22; background: #FFFFFF;">           </span>
+       <span style="color: #0000FF">    190 </span><span style="color: #000000; font-weight: bold"><a> 239</a></span> <span style="color: #000000; background: #E0E0FF;">           if isnan(xcor(m+2,n+1)) </span>
+       <span style="color: #0000FF">     48 </span><span style="color: #000000; font-weight: bold"><a> 240</a></span> <span style="color: #000000; background: #E0E0FF;">           xcor(m+2,n+1) = (-   xcen(m  ,n  ) ... </span>
+               <span style="color: #A0A0A0"> 241</span> <span style="color: #000000; background: #E0E0FF;">                            -   xcen(m  ,n+1) ...</span>
+               <span style="color: #A0A0A0"> 242</span> <span style="color: #000000; background: #E0E0FF;">                            + 3*xcen(m+1,n  ) ...</span>
+               <span style="color: #A0A0A0"> 243</span> <span style="color: #000000; background: #E0E0FF;">                            + 3*xcen(m+1,n+1))/4; % is nan when one or more elements are nan</span>
+       <span style="color: #0000FF">     48 </span><span style="color: #000000; font-weight: bold"><a> 244</a></span> <span style="color: #000000; background: #E0E0FF;">           end </span>
+               <span style="color: #A0A0A0"> 245</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">    190 </span><span style="color: #000000; font-weight: bold"><a> 246</a></span> <span style="color: #000000; background: #E0E0FF;">        end </span>
+       <span style="color: #0000FF">     44 </span><span style="color: #000000; font-weight: bold"><a> 247</a></span> <span style="color: #000000; background: #E0E0FF;">     end </span>
+               <span style="color: #A0A0A0"> 248</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 249</span> <span style="color: #A0A0A0; background: #FFFFFF;">  elseif strcmpi(method,'nearest')</span>
+               <span style="color: #A0A0A0"> 250</span> <span style="color: #228B22; background: #FFFFFF;">  </span>
+               <span style="color: #A0A0A0"> 251</span> <span style="color: #228B22; background: #FFFFFF;">  %% Nearest perpendicular to boundary, linear along boundary</span>
+               <span style="color: #A0A0A0"> 252</span> <span style="color: #228B22; background: #FFFFFF;">  %  --------------------</span>
+               <span style="color: #A0A0A0"> 253</span> <span style="color: #228B22; background: #FFFFFF;">  </span>
+               <span style="color: #A0A0A0"> 254</span> <span style="color: #A0A0A0; background: #FFFFFF;">     for m=1:size(xcen,1)-1</span>
+               <span style="color: #A0A0A0"> 255</span> <span style="color: #A0A0A0; background: #FFFFFF;">        for n=1:size(xcen,2)-1</span>
+               <span style="color: #A0A0A0"> 256</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 257</span> <span style="color: #228B22; background: #FFFFFF;">           %% mirror back when not yet filled in</span>
+               <span style="color: #A0A0A0"> 258</span> <span style="color: #228B22; background: #FFFFFF;">           %  -------------------------------------</span>
+               <span style="color: #A0A0A0"> 259</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 260</span> <span style="color: #A0A0A0; background: #FFFFFF;">           if isnan(xcor(m  ,n+1))</span>
+               <span style="color: #A0A0A0"> 261</span> <span style="color: #A0A0A0; background: #FFFFFF;">           xcor(m  ,n+1) = (+ 1*xcen(m  ,n  ) ...</span>
+               <span style="color: #A0A0A0"> 262</span> <span style="color: #A0A0A0; background: #FFFFFF;">                            + 1*xcen(m  ,n+1))/2; % is nan when one or more elements are nan</span>
+               <span style="color: #A0A0A0"> 263</span> <span style="color: #A0A0A0; background: #FFFFFF;">           end</span>
+               <span style="color: #A0A0A0"> 264</span> <span style="color: #228B22; background: #FFFFFF;">           </span>
+               <span style="color: #A0A0A0"> 265</span> <span style="color: #228B22; background: #FFFFFF;">           %% mirror forward when not yet filled in</span>
+               <span style="color: #A0A0A0"> 266</span> <span style="color: #228B22; background: #FFFFFF;">           %  -------------------------------------</span>
+               <span style="color: #A0A0A0"> 267</span> <span style="color: #228B22; background: #FFFFFF;">           </span>
+               <span style="color: #A0A0A0"> 268</span> <span style="color: #A0A0A0; background: #FFFFFF;">           if isnan(xcor(m+2,n+1))</span>
+               <span style="color: #A0A0A0"> 269</span> <span style="color: #A0A0A0; background: #FFFFFF;">           xcor(m+2,n+1) = (+ 1*xcen(m+1,n  ) ...</span>
+               <span style="color: #A0A0A0"> 270</span> <span style="color: #A0A0A0; background: #FFFFFF;">                            + 1*xcen(m+1,n+1))/2; % is nan when one or more elements are nan</span>
+               <span style="color: #A0A0A0"> 271</span> <span style="color: #A0A0A0; background: #FFFFFF;">           end</span>
+               <span style="color: #A0A0A0"> 272</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 273</span> <span style="color: #A0A0A0; background: #FFFFFF;">        end</span>
+               <span style="color: #A0A0A0"> 274</span> <span style="color: #A0A0A0; background: #FFFFFF;">     end  </span>
+               <span style="color: #A0A0A0"> 275</span> <span style="color: #228B22; background: #FFFFFF;">  </span>
+               <span style="color: #A0A0A0"> 276</span> <span style="color: #228B22; background: #FFFFFF;">  else</span>
+               <span style="color: #A0A0A0"> 277</span> <span style="color: #A0A0A0; background: #FFFFFF;">     error(['Unknown method ',method,', only linear or nearest accepted.'])</span>
+               <span style="color: #A0A0A0"> 278</span> <span style="color: #A0A0A0; background: #FFFFFF;">  end</span>
+</pre>
+<p><p>Other subfunctions in this file are not included in this listing.
+</div>
+</body>
+</html>

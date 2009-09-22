@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Function details for snctools\private\nc_varget_java</title>
+<link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<link type="text/css" href="script/css/FunctionCoverage.css" rel="stylesheet" />
+<script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="script/js/matlab2accordion.js"></script>
+</head>
+<body>
+<h2 class="ui-widget-header ui-state-active ui-corner-all">snctools\private\nc_varget_java</h2>
+<div class="ui-widget-content ui-corner-all">
+<strong>Coverage results</strong><br/>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Total lines in function</td>
+<td class="td-linebottomrt">151</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Non-code lines (comments, blank lines)</td>
+<td class="td-linebottomrt">88</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines (lines that can run)</td>
+<td class="td-linebottomrt">63</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did run</td>
+<td class="td-linebottomrt">41</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Code lines that did not run</td>
+<td class="td-linebottomrt">22</td></tr>
+<tr><td class="td-linebottomrt" bgcolor="#F0F0F0">Coverage (did run/can run)</td>
+<td class="td-linebottomrt">65.08 %</td></tr>
+</table>
+</div><br/>
+<div class="ui-widget-content ui-corner-all">
+<strong>Function listing</strong><br/>
+<pre>
+<span style="color: #FF0000; font-weight: bold; text-decoration: none">  time</span> <span style="color: #0000FF; font-weight: bold; text-decoration: none">  calls</span> <span style="font-weight: bold; text-decoration: none">line</span><br/>
+               <span style="color: #A0A0A0">   1</span> <span style="color: #A0A0A0; background: #FFFFFF;">function [values, the_var_size] = nc_varget_java ( ncfile, varname, start, count, stride )</span>
+               <span style="color: #A0A0A0">   2</span> <span style="color: #228B22; background: #FFFFFF;">% NC_VARGET_JAVA:  Java backend for nc_varget.</span>
+               <span style="color: #A0A0A0">   3</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">   4</span> <span style="color: #228B22; background: #FFFFFF;">% See the help section for nc_varget.</span>
+               <span style="color: #A0A0A0">   5</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">   6</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>   7</a></span> <span style="color: #000000; background: #E0E0FF;">snc_turnoff_log4j; </span>
+               <span style="color: #A0A0A0">   8</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">   9</span> <span style="color: #A0A0A0; background: #FFFFFF;">import ucar.nc2.dods.*     % import opendap reader classes</span>
+               <span style="color: #A0A0A0">  10</span> <span style="color: #A0A0A0; background: #FFFFFF;">import ucar.nc2.*          </span>
+               <span style="color: #A0A0A0">  11</span> <span style="color: #228B22; background: #FFFFFF;">                           </span>
+               <span style="color: #A0A0A0">  12</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  13</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  14</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  15</span> <span style="color: #228B22; background: #FFFFFF;">% Try it as a local file.  If not a local file, try as</span>
+               <span style="color: #A0A0A0">  16</span> <span style="color: #228B22; background: #FFFFFF;">% via HTTP, then as dods</span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>  17</a></span> <span style="color: #000000; background: #E0E0FF;">if exist(ncfile,'file') </span>
+<span style="color: #FF0000">  0.08 </span><span style="color: #0000FF">      3 </span><span style="color: #000000; font-weight: bold"><a>  18</a></span> <span style="color: #000000; background: #E0E0FF;">	jncid = NetcdfFile.open(ncfile); </span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  19</a></span> <span style="color: #228B22; background: #FFFFFF;">else </span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  20</a></span> <span style="color: #000000; background: #E0E0FF;">	try  </span>
+               <span style="color: #A0A0A0">  21</span> <span style="color: #228B22; background: #FFFFFF;">        % try not to use preloading ... </span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  22</a></span> <span style="color: #000000; background: #E0E0FF;">        try </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  23</a></span> <span style="color: #000000; background: #E0E0FF;">            DODSNetcdfFile.setPreload(false); </span>
+               <span style="color: #A0A0A0">  24</span> <span style="color: #A0A0A0; background: #FFFFFF;">        catch</span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  25</a></span> <span style="color: #000000; background: #E0E0FF;">        end		 </span>
+<span style="color: #FF0000">  0.25 </span><span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  26</a></span> <span style="color: #000000; background: #E0E0FF;">        jncid = DODSNetcdfFile(ncfile); </span>
+               <span style="color: #A0A0A0">  27</span> <span style="color: #A0A0A0; background: #FFFFFF;">	catch</span>
+               <span style="color: #A0A0A0">  28</span> <span style="color: #A0A0A0; background: #FFFFFF;">		try</span>
+               <span style="color: #A0A0A0">  29</span> <span style="color: #A0A0A0; background: #FFFFFF;">    		jncid = NetcdfFile.open ( ncfile )</span>
+               <span style="color: #A0A0A0">  30</span> <span style="color: #A0A0A0; background: #FFFFFF;">		catch</span>
+               <span style="color: #A0A0A0">  31</span> <span style="color: #A0A0A0; background: #FFFFFF;">			msg = sprintf ( 'Could not open ''%s'' as either a local file, a regular URL, or as a DODS URL.', ncfile );</span>
+               <span style="color: #A0A0A0">  32</span> <span style="color: #A0A0A0; background: #FFFFFF;">			error ( 'SNCTOOLS:nc_varget_java:fileOpenFailure', msg );</span>
+               <span style="color: #A0A0A0">  33</span> <span style="color: #A0A0A0; background: #FFFFFF;">		end</span>
+               <span style="color: #A0A0A0">  34</span> <span style="color: #A0A0A0; background: #FFFFFF;">	end</span>
+       <span style="color: #0000FF">     12 </span><span style="color: #000000; font-weight: bold"><a>  35</a></span> <span style="color: #000000; background: #E0E0FF;">end </span>
+               <span style="color: #A0A0A0">  36</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  37</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  38</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  39</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  40</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  41</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  42</span> <span style="color: #228B22; background: #FFFFFF;">% Get the variable object</span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>  43</a></span> <span style="color: #000000; background: #E0E0FF;">jvarid = jncid.findVariable(varname); </span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>  44</a></span> <span style="color: #000000; background: #E0E0FF;">if isempty ( jvarid ) </span>
+               <span style="color: #A0A0A0">  45</span> <span style="color: #A0A0A0; background: #FFFFFF;">	msg = sprintf ('findVariable failed on variable ''%s'', file ''%s''.', varname, ncfile );</span>
+               <span style="color: #A0A0A0">  46</span> <span style="color: #A0A0A0; background: #FFFFFF;">    snc_error ( 'SNCTOOLS:NC_VARGET:JAVA:noSuchVariable', msg );</span>
+               <span style="color: #A0A0A0">  47</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+               <span style="color: #A0A0A0">  48</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  49</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  50</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>  51</a></span> <span style="color: #000000; background: #E0E0FF;">theDataType = jvarid.getDataType(); </span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>  52</a></span> <span style="color: #000000; background: #E0E0FF;">theDataTypeString = char ( theDataType.toString() ) ; </span>
+<span style="color: #FF0000">  0.02 </span><span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>  53</a></span> <span style="color: #000000; background: #E0E0FF;">theDimensions = jvarid.getDimensions(); </span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>  54</a></span> <span style="color: #000000; background: #E0E0FF;">num_var_dims = theDimensions.size(); </span>
+               <span style="color: #A0A0A0">  55</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  56</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  57</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  58</span> <span style="color: #228B22; background: #FFFFFF;">% Check that the start, count, stride parameters have appropriate lengths.</span>
+               <span style="color: #A0A0A0">  59</span> <span style="color: #228B22; background: #FFFFFF;">% Otherwise we risk confusing the mex-file.</span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>  60</a></span> <span style="color: #000000; background: #E0E0FF;">validate_index_vectors ( start, count, stride, num_var_dims ); </span>
+               <span style="color: #A0A0A0">  61</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  62</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  63</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+<span style="color: #FF0000">  0.39 </span><span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>  64</a></span> <span style="color: #000000; background: #E0E0FF;">varinfo = nc_getvarinfo ( ncfile, varname ); </span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>  65</a></span> <span style="color: #000000; background: #E0E0FF;">the_var_size = varinfo.Size; </span>
+               <span style="color: #A0A0A0">  66</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  67</span> <span style="color: #228B22; background: #FFFFFF;">% If no data has been written to an unlimited variable, then there's </span>
+               <span style="color: #A0A0A0">  68</span> <span style="color: #228B22; background: #FFFFFF;">% nothing to do.  Just return.</span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>  69</a></span> <span style="color: #000000; background: #E0E0FF;">if prod(the_var_size) == 0 </span>
+               <span style="color: #A0A0A0">  70</span> <span style="color: #A0A0A0; background: #FFFFFF;">	values = [];</span>
+               <span style="color: #A0A0A0">  71</span> <span style="color: #A0A0A0; background: #FFFFFF;">	return</span>
+               <span style="color: #A0A0A0">  72</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+               <span style="color: #A0A0A0">  73</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  74</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>  75</a></span> <span style="color: #000000; background: #E0E0FF;">[read_method, start, count] = determine_read_method_java(start,count,stride,varinfo); </span>
+               <span style="color: #A0A0A0">  76</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  77</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  78</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  79</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  80</span> <span style="color: #228B22; background: #FFFFFF;">% If the user had set non-positive numbers in "count", then</span>
+               <span style="color: #A0A0A0">  81</span> <span style="color: #228B22; background: #FFFFFF;">% we replace them with what we need to get the</span>
+               <span style="color: #A0A0A0">  82</span> <span style="color: #228B22; background: #FFFFFF;">% rest of the variable.</span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>  83</a></span> <span style="color: #000000; background: #E0E0FF;">negs = find(count&lt;0); </span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>  84</a></span> <span style="color: #000000; background: #E0E0FF;">count(negs) = the_var_size(negs) - start(negs); </span>
+               <span style="color: #A0A0A0">  85</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  86</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  87</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  88</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  89</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  90</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0">  91</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0">  92</span> <span style="color: #228B22; background: #FFFFFF;">% Finally!  Read the freakin' data.</span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>  93</a></span> <span style="color: #000000; background: #E0E0FF;">try </span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>  94</a></span> <span style="color: #000000; background: #E0E0FF;">    switch ( read_method ) </span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a>  95</a></span> <span style="color: #000000; background: #E0E0FF;">        case 'GET_VAR1' </span>
+               <span style="color: #A0A0A0">  96</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
+               <span style="color: #A0A0A0">  97</span> <span style="color: #228B22; background: #FFFFFF;">            % Read a scalar</span>
+               <span style="color: #A0A0A0">  98</span> <span style="color: #A0A0A0; background: #FFFFFF;">            values = nc_var1_get_java ( jvarid, theDataTypeString );</span>
+               <span style="color: #A0A0A0">  99</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a> 100</a></span> <span style="color: #000000; background: #E0E0FF;">        case 'GET_VAR' </span>
+               <span style="color: #A0A0A0"> 101</span> <span style="color: #228B22; background: #FFFFFF;">        </span>
+               <span style="color: #A0A0A0"> 102</span> <span style="color: #228B22; background: #FFFFFF;">            % Read everything.</span>
+<span style="color: #FF0000">  0.05 </span><span style="color: #0000FF">      5 </span><span style="color: #000000; font-weight: bold"><a> 103</a></span> <span style="color: #000000; background: #E0E0FF;">            values = nc_var_get_java ( jvarid, theDataTypeString ); </span>
+               <span style="color: #A0A0A0"> 104</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
+       <span style="color: #0000FF">     10 </span><span style="color: #000000; font-weight: bold"><a> 105</a></span> <span style="color: #000000; background: #E0E0FF;">        case 'GET_VARA' </span>
+               <span style="color: #A0A0A0"> 106</span> <span style="color: #228B22; background: #FFFFFF;">        </span>
+               <span style="color: #A0A0A0"> 107</span> <span style="color: #228B22; background: #FFFFFF;">            % Read a contiguous subset</span>
+<span style="color: #FF0000">  0.45 </span><span style="color: #0000FF">      1 </span><span style="color: #000000; font-weight: bold"><a> 108</a></span> <span style="color: #000000; background: #E0E0FF;">            values = nc_vara_get_java ( jvarid, theDataTypeString, start, count ); </span>
+               <span style="color: #A0A0A0"> 109</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
+       <span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 110</a></span> <span style="color: #000000; background: #E0E0FF;">        case 'GET_VARS' </span>
+               <span style="color: #A0A0A0"> 111</span> <span style="color: #228B22; background: #FFFFFF;">        </span>
+               <span style="color: #A0A0A0"> 112</span> <span style="color: #228B22; background: #FFFFFF;">            % Read a contiguous subset</span>
+<span style="color: #FF0000">  2.79 </span><span style="color: #0000FF">      9 </span><span style="color: #000000; font-weight: bold"><a> 113</a></span> <span style="color: #000000; background: #E0E0FF;">            values = nc_vars_get_java ( jvarid, theDataTypeString, start, count, stride ); </span>
+               <span style="color: #A0A0A0"> 114</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
+               <span style="color: #A0A0A0"> 115</span> <span style="color: #A0A0A0; background: #FFFFFF;">        otherwise</span>
+               <span style="color: #A0A0A0"> 116</span> <span style="color: #228B22; background: #FFFFFF;">        </span>
+               <span style="color: #A0A0A0"> 117</span> <span style="color: #A0A0A0; background: #FFFFFF;">            snc_error ( 'SNCTOOLS_NC_VARGET:JAVA:badReadCase', 'Unhandled case, don''t know which read method to use.' );  </span>
+               <span style="color: #A0A0A0"> 118</span> <span style="color: #228B22; background: #FFFFFF;">        </span>
+               <span style="color: #A0A0A0"> 119</span> <span style="color: #A0A0A0; background: #FFFFFF;">    end</span>
+               <span style="color: #A0A0A0"> 120</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
+               <span style="color: #A0A0A0"> 121</span> <span style="color: #A0A0A0; background: #FFFFFF;">catch</span>
+               <span style="color: #A0A0A0"> 122</span> <span style="color: #A0A0A0; background: #FFFFFF;">    close ( jncid );</span>
+               <span style="color: #A0A0A0"> 123</span> <span style="color: #A0A0A0; background: #FFFFFF;">    rethrow ( lasterror );</span>
+               <span style="color: #A0A0A0"> 124</span> <span style="color: #A0A0A0; background: #FFFFFF;">end</span>
+               <span style="color: #A0A0A0"> 125</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
+               <span style="color: #A0A0A0"> 126</span> <span style="color: #228B22; background: #FFFFFF;">    </span>
+               <span style="color: #A0A0A0"> 127</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 128</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 129</span> <span style="color: #228B22; background: #FFFFFF;">% If it's a 1D vector, make it a column vector.</span>
+               <span style="color: #A0A0A0"> 130</span> <span style="color: #228B22; background: #FFFFFF;">% Apparently, there's no need to otherwise permute the data.</span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a> 131</a></span> <span style="color: #000000; background: #E0E0FF;">if length(the_var_size) == 1 </span>
+       <span style="color: #0000FF">      7 </span><span style="color: #000000; font-weight: bold"><a> 132</a></span> <span style="color: #000000; background: #E0E0FF;">    values = values(:); </span>
+       <span style="color: #0000FF">      7 </span><span style="color: #000000; font-weight: bold"><a> 133</a></span> <span style="color: #000000; background: #E0E0FF;">end                                                                                    </span>
+               <span style="color: #A0A0A0"> 134</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 135</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 136</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a> 137</a></span> <span style="color: #000000; background: #E0E0FF;">values = handle_fill_value_java ( jvarid, theDataType, values ); </span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a> 138</a></span> <span style="color: #000000; background: #E0E0FF;">values = handle_missing_value_java ( jvarid, theDataType, values ); </span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a> 139</a></span> <span style="color: #000000; background: #E0E0FF;">values = handle_scaling_java ( jvarid, values ); </span>
+               <span style="color: #A0A0A0"> 140</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 141</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 142</span> <span style="color: #228B22; background: #FFFFFF;">%</span>
+               <span style="color: #A0A0A0"> 143</span> <span style="color: #228B22; background: #FFFFFF;">% remove any singleton dimensions.</span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a> 144</a></span> <span style="color: #000000; background: #E0E0FF;">values = squeeze ( values ); </span>
+               <span style="color: #A0A0A0"> 145</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 146</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 147</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a> 148</a></span> <span style="color: #000000; background: #E0E0FF;">close ( jncid ); </span>
+               <span style="color: #A0A0A0"> 149</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+               <span style="color: #A0A0A0"> 150</span> <span style="color: #228B22; background: #FFFFFF;"></span>
+       <span style="color: #0000FF">     15 </span><span style="color: #000000; font-weight: bold"><a> 151</a></span> <span style="color: #000000; background: #E0E0FF;">return </span>
+</pre>
+<p><p>Other subfunctions in this file are not included in this listing.
+</div>
+</body>
+</html>
