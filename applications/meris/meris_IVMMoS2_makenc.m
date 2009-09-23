@@ -3,9 +3,9 @@
 %
 %See also: MERIS_MASK, MERIS_FLAGS, MERIS_NAME2META,MERIS_IVMMoS2_LOAD
 
-% TO DO STEEF: check units, 
-% TO DO STEEF: check definition of standard error
-% TO DO STEEF:check display of originator info & use rights (cf Creative Commons & GNU licensing)
+% TO DO: check units, 
+% TO DO: check definition of standard error
+% TO DO:check display of originator info & use rights (cf Creative Commons & GNU licensing)
 % TO DO add flags description next to names
 % TO DO arrays as attributes
 % TO DO check CF feature type
@@ -263,7 +263,7 @@
 %      nc(ifld).Nctype       = 'float';
 %      nc(ifld).Dimension    = {'dim1','dim2'};
 %      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'chlorophyll-a');
-%      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'g m-3'); % ASSUMED, NOT IN MAT FILES
+%      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'mg m-3'); % ASSUMED, NOT IN MAT FILES
 %      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'concentration_of_chlorophyll_in_sea_water'); % standard name
 %      nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
 %      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
@@ -274,7 +274,7 @@
 %      nc(ifld).Nctype       = 'float';
 %      nc(ifld).Dimension    = {'dim1','dim2'};
 %      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'chlorophyll-a standard error');
-%      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'g m-3'); % ASSUMED, NOT IN MAT FILES
+%      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'mg m-3'); % ASSUMED, NOT IN MAT FILES
 %      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_error_of_concentration_of_chlorophyll_in_sea_water'); % quasi standard name
 %      nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
 %      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
@@ -286,7 +286,7 @@
       nc(ifld).Nctype       = 'float';
       nc(ifld).Dimension    = {'dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'suspended particulate matter');
-      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'kg m-3'); 
+      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'g m-3'); 
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'concentration_of_suspended_matter_in_sea_water'); % standard name
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
       nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
@@ -297,7 +297,7 @@
       nc(ifld).Nctype       = 'float';
       nc(ifld).Dimension    = {'dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'suspended particulate matter standard error');% check: ASSUMED, NOT IN MAT FILES: standard error? 
-      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'kg m-3'); 
+      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'g m-3'); 
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_error_of_concentration_of_suspended_matter_in_sea_water'); % quasi standard name
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
       nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
@@ -309,7 +309,7 @@
 %      nc(ifld).Nctype       = 'float';
 %      nc(ifld).Dimension    = {'dim1','dim2'};
 %      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'colored dissolved organic matter');
-%      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'kg m-3'); % ASSUMED, NOT IN MAT FILES
+%      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'g m-3'); % ASSUMED, NOT IN MAT FILES
 %      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'concentration_of_dissolved_organic_matter_in_sea_water'); % quasi standard name
 %      nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
 %      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
@@ -320,7 +320,7 @@
 %      nc(ifld).Nctype       = 'float';
 %      nc(ifld).Dimension    = {'dim1','dim2'};
 %      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'colored dissolved organic matter standard error');% check: ASSUMED, NOT IN MAT FILES: standard error? 
-%      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'kg m-3'); % ASSUMED, NOT IN MAT FILES
+%      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'g m-3'); % ASSUMED, NOT IN MAT FILES
 %      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_error_of_concentration_of_suspended_matter_in_sea_water'); % quasi standard name
 %      nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
 %      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
