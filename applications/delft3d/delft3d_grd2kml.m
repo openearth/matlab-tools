@@ -23,7 +23,7 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
    OPT.debug       = 1;
    OPT.reversePoly = true;
    OPT.colorSteps  = 62;
-
+   OPT.lineColor   = [.5 .5 .5];
 
    OPT.mdf    = [];  % or dpsopt
    OPT.dpsopt = [];  % or mdf
@@ -55,8 +55,8 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
    if ~isempty(OPT.dep)
       G = delft3d_io_dep('read',OPT.dep,G,'dpsopt',OPT.dpsopt);
    else
-      G.cen.dep = 0.*G.cen.x;
-      G.cor.dep = 0.*G.cor.x;
+      G.cen.dep = nan.*G.cen.x;
+      G.cor.dep = nan.*G.cor.x;
    end
    
    % OPT.ddep = max(abs(max(G.cen.dep(:))),0);
@@ -75,7 +75,8 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
                 'reversePoly',OPT.reversePoly,...
                        'clim',OPT.clim,...
                   'colorSteps',OPT.colorSteps,...
-                    'kmlName','depth [m]');
+                    'kmlName','depth [m]',...
+                   'lineColor',OPT.lineColor);
    
    KMLsurf  (G.cor.lat,G.cor.lon,(-G.cor.dep+OPT.ddep)*OPT.fdep,... % at corners for z !!
                              -G.cen.dep,...
@@ -87,6 +88,6 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
                    'lineAlpha',.6,...
                    'fillAlpha',.8,...
                  'reversePoly',OPT.reversePoly,...
-                   'lineColor',[.5 .5 .5]);
+                   'lineColor',OPT.lineColor);
 
 %%EOF
