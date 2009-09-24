@@ -71,6 +71,13 @@ switch mfilename
             '_tutorial_creating_new_functions'}
         config.evalCode = false;
         config.showCode = true;
+    case {'testdefinitions_tutorial',...
+            'runningatest_tutorial'}
+        if ~oldpublish
+            config.maxOutputLines = 1000;
+        end
+    case {'TODO_tutorial'}
+        config.evalCode = false;
     otherwise
         % Use default
 end

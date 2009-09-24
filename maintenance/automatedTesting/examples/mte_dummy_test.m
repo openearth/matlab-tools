@@ -61,6 +61,7 @@ testresult = all([tr{:}]);
 
 end
 
+%% Testcase 1
 function testresult = always_true()
 %% $Description (IncludeCode = false & EvaluateCode = true & Name = Always true)
 % This is just a dummy test. it always returns true and there is no testing involved.
@@ -72,6 +73,7 @@ testresult = true;
 % The result of this test is always positive of course, whereas it does not really test anything.
 end
 
+%% Testcase 2
 function testresult = always_false()
 %% $Description (IncludeCode = true & Name = Always false)
 % As with the first dummy testcase this testcase also does not perform any test. It just returns
@@ -83,6 +85,7 @@ testresult = false;
 
 end
 
+%% Testcase 3
 function testresult = no_result()
 %% $Description (Name = No result)
 % As with the first two dummy testcase this testcase also does not perform any test. Test without
