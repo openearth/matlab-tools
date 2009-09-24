@@ -74,6 +74,11 @@ if get(findobj(guiH,'tag','UCIT_holdFigure'),'value')==0 && ~isempty(findobj('ta
                     ph1=plot(d(1).xe(~isnan(d(1).ze)),d(1).ze(~isnan(d(1).ze)),'b');
                 end
                 hold on
+                
+                % make grey patch
+                x = d.xe(~isnan(d.ze));z = d.ze(~isnan(d.ze));
+                patch([x(1); x; x(end)],[min(z)-1; z; min(z)-1],[0 0 0],'LineStyle','none','FaceAlpha',0.1)
+
 
                 %plot measured jarkus profiel only if hold crossec. figure is not checked
                 try
@@ -122,6 +127,11 @@ else
                 ph1=plot(d(1).xe(~isnan(d(1).ze)),d(1).ze(~isnan(d(1).ze)),'b');
             end
             hold on
+            
+            % make grey patch
+            x = d.xe(~isnan(d.ze));z = d.ze(~isnan(d.ze));
+            patch([x(1); x; x(end)],[min(z)-1; z; min(z)-1],[0 0 0],'LineStyle','none','FaceAlpha',0.1)
+
 
             %plot measured jarkus profiel only if hold crossec. figure is not checked
             try
@@ -136,7 +146,7 @@ else
             xlabel('Cross shore distance [m]');
             ylabel('Elevation [m to datum]');
             title('Transect');
-            axis([min(d(1).xi(~isnan(d(1).ze))) max(d(1).xi(~isnan(d(1).ze))) -35 35]);
+            axis([min(d(1).xi(~isnan(d(1).ze))) max(d(1).xi(~isnan(d(1).ze))) min(z)-1 35]);
             set(gca,'XDir','reverse');
             box on
             minmax = axis;
