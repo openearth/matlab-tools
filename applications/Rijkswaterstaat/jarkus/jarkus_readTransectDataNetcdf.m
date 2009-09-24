@@ -158,7 +158,7 @@ transect.areacode = num2str(areacode(id_index));
 
 transect.transectID = num2str(alongshoreCoordinates(id_index), '%05d');
 
-transect.year = num2str(time(time_index)); %'1965'
+transect.year = round(time(time_index)/365+1970); %'1965'
 
 %TODO: store and look up
 % transect.dateTopo = num2str(transect.dateTopo); % '3008'
