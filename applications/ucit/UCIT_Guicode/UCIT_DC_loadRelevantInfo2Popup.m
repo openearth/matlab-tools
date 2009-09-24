@@ -130,7 +130,7 @@ elseif type==1&&PopupNR==4
     soundingIDs = {datestr(years+datenum(1970,1,1))};
         
     % manufacture the string for in the popup menu
-    string{max(size(soundingIDs))+1}=[]; string{1}='Select sounding ID ...';
+    string{max(size(soundingIDs))+1}=[]; string{1}='Select date ...';
     for i = 1:max(size(soundingIDs))
         string{i+1}=soundingIDs{i};
     end
@@ -220,7 +220,7 @@ elseif type==2&&PopupNR==4
         'year',UCIT_DC_getInfoFromPopup('GridsInterval')});
     soundingIDs=sort(soundingIDs);
     % manufacture the string for in the popup menu
-    string{max(size(soundingIDs))+1}=[]; string{1}='Select sounding ID ...';
+    string{max(size(soundingIDs))+1}=[]; string{1}='Select date ...';
     for i = 1:max(size(soundingIDs))
         string{i+1}=soundingIDs{i};
     end
@@ -357,7 +357,7 @@ elseif type==4&&PopupNR==3
     soundingIDs=sort(soundingIDs);
     
     % manufacture the string for in the popup menu
-    string{max(size(soundingIDs))+1}=[]; string{1}='All';% string{1}='Select Sounding ID ...';
+    string{max(size(soundingIDs))+1}=[]; string{1}='All';% string{1}='Select date ...';
     for i = 1:max(size(soundingIDs))
         string{i+1}=soundingIDs{i};
     end

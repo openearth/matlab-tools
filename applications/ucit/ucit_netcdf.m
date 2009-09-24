@@ -40,11 +40,10 @@ function varargout = ucit_netcdf(varargin)
 
 %% Open the UCIT console
 % ------------------------
-
-   fig = makeUCITConsole;set(fig,'visible','off')
+   fig = UCIT_makeUCITConsole; set(fig,'visible','off')
  
    %% Use system color scheme for figure:
-   set(fig,'name','UCIT - Universal Coastal Intelligence Toolkit')
+   set(fig,'name','UCIT 2.0 - Universal Coastal Intelligence Toolkit (based on NetCDF)')
    set(fig,'Units','normalized')
    set(fig,'Position', UCIT_getPlotPosition('LR'))
    
@@ -88,8 +87,8 @@ function varargout = ucit_netcdf(varargin)
        UCIT_DC_loadRelevantInfo2Popup(4,1)
    end
    
-   set(fig,'visible','on')
+   set(fig,'visible','on');
    
-   try
-       frame.hide
-   end
+   % change icon   
+   figure(fig);icon(101, get(fig,'name'), which('Deltares_logo_32x32.ico'));
+   

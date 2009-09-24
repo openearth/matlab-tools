@@ -98,7 +98,8 @@ if getDataFromDatabase
         
     elseif strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'), 'Lidar Data US')
         
-        contours = nc_varget(url, 'contour');
+        contours = nc_varget(url, 'contour'); % if you want all lidar data use UCIT_getLidarMetaData
+        
     end
 
 
@@ -111,23 +112,6 @@ if getDataFromDatabase
     d.transectID = transectID;
     d.year = years;
     
-    %     d = jarkus_createtransectstruct();
-    %     d = repmat(d, 1, length(alongshore));
-
-    %     for i = 1:length(areanames)
-    %         d(i).datatypeinfo = UCIT_DC_getInfoFromPopup('TransectsDatatype');
-    %         d(i).contour =  [contours(i,1) contours(i,3);contours(i,2) contours(i,4)];
-    %         d(i).area = areanames{i};
-    %         d(i).soundingID = soundingID{i};
-    %         d(i).transectID = transectID{i};
-    %     end
-    
-%     areanames = nc_varget(url, 'areaname');
-%     ids = nc_varget(url, 'id');
-%     id_match = cellfun(@(x) (strcmp(x, UCIT_DC_getInfoFromPopup('TransectsArea'))==1), {cellstr(areanames)}, 'UniformOutput',false);
-%     transectIDs = {ids(id_match{1})- unique(round(ids(id_match{1})/1000000))*1000000}; % convert back from uniqu id
-% 
-
     set(findobj('tag','UCIT_mainWin'),'UserData',d);
 else
     disp('data gathered from gui-data UCIT console')

@@ -77,6 +77,10 @@ if ~isempty(findobj('tag','plotWindow_US'))
     UCIT_plotLidarTransect
 end
 
+if ~isempty(findobj('tag','plotWindow_multiple'))
+    UCIT_plotMultipleTransects
+end
+
 if ~isempty(findobj('tag','plotWindowMKL'))
     UCIT_calculateMKL
 end
