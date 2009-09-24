@@ -1,5 +1,5 @@
 function UCIT_showTransectOnOverview()
-%UCIT_SHOWTRANSECTSONOVERVIEW shows transect of listbox in user window
+%UCIT_SHOWTRANSECTSONOVERVIEW shows transect of listbox in user window on overview figure
 %
 %   
 %
@@ -49,9 +49,11 @@ if check == 0
     return
 end
 
+[d] = UCIT_getMetaData;
+
 mapW=findobj('tag','mapWindow');
 if isempty(mapW)
-    errordlg('First make a JARKUS Overview (plotTransectOverview)','No map found');
+    errordlg('First make an overview plot (plotTransectOverview)','No map found');
     return
 end
 
@@ -60,14 +62,9 @@ figure(mapW);
 set(mapW,'CurrentObject',mapW);
 
 %Find all rays
-rayH=findobj(gca,'type','line','LineStyle','-');
-dpTs=strvcat(get(rayH,'tag'));
-for ii=1:size(dpTs,1);
-    if strfind(dpTs(ii,:),'_')
-        res(ii)=1;
-    end
-end
-rayH=rayH(find(res==1));
+rayH = findobj(gca,'type','line','LineStyle','-');
+arrowindicator = findobj('tag','arrowindicator');
+delete(arrowindicator);
 
 if isempty(rayH)
     errordlg('No rays found!','');
@@ -84,13 +81,15 @@ id_match = cellfun(@(x) (strcmp(x, UCIT_DC_getInfoFromPopup('TransectsArea'))==1
 transectIDs = str2double(d.transectID)- unique(round(str2double(d.transectID(id_match{1}))/1000000))*1000000; % convert back from uniqu id
 id = find (transectIDs  == str2num(TransectID) & strcmp(Area,d.area));
 TransectID = char(d.transectID(id));
-curRay = findobj(rayH,'tag',[DataType '_' Area '_' TransectID '_01012001']);
+curRay = findobj(rayH,'tag',[DataType '_' Area '_' TransectID '_' datestr(d.year(1) + datenum(1970,1,1))]);
 
 if isempty(curRay)
     fh = findobj('tag','mapWindow');figure(fh);
     id = find(str2double(d.transectID) == str2double(TransectID) & strcmp(Area,d.area));
-    curRay = line([d.contour((id),1) d.contour(id,2)],[d.contour(id,3) d.contour(id,4)],'color','g','tag',[DataType '_' Area '_' TransectID '_' SoundingID,'linewidth',1.5]);
+    curRay = line([d.contour((id),1) d.contour(id,2)],[d.contour(id,3) d.contour(id,4)],'color','g','tag',[DataType '_' Area '_' TransectID '_' datestr(d.year(1) + datenum(1970,1,1))],'linewidth',2);
 end
-set(rayH,'color',[1 0 0],'linewidth',0.15);
-set(curRay,'color',[0 1 0],'linewidth',2);
+set(rayH,'color',[1 0 0],'linewidth',0.5);
+set(curRay,'color',[0 1 0],'linewidth',3);
 refresh;
+
+th2 = text(d.contour(id,1),d.contour(id,3),100,['\leftarrow'], 'horizontalalignment','left','fontsize',20,'fontweight','bold','color','b','tag','arrowindicator');

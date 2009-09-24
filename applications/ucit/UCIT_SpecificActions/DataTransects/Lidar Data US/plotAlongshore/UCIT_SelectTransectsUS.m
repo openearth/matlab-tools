@@ -63,51 +63,12 @@ else
 end
 
 fh=findobj('tag','mapWindow');
-figure(fh);
-% if length(d)>5000
-%     dx=50000;
-% elseif length(d)>2500&length(d)<5000
-%     dx=25000;
-% elseif length(d)>1000&length(d)<2500
-%     dx=10000;
-% elseif length(d)>250&length(d)<1000
-%     dx=3000;
-% elseif length(d)>50&length(d)<250
-%     dx=1500;
-% else
-%     dx=500;
-% end
-% 
-% coord=d.contour(id,:);
-% maxx=max(coord(:,1));
-% minx=min(coord(:,1));
-% maxy=max(coord(:,2));
-% miny=min(coord(:,2));
-
-% axis([(minx-dx) (maxx+dx) (miny-1000) (maxy+1000)] );
-% ah = gca;
-
-% getUSGSMetadata
-
-% for i=1:length(d);
-%     d(i).shorePos(find(d(i).shorePos ==-999.99))=nan;
-%     d(i).shoreLat(find(d(i).shoreLat ==-999.99))=nan;
-%     d(i).shoreLon(find(d(i).shoreLon ==-999.99))=nan;
-%     d(i).shoreNorth(find(d(i).shoreNorth ==-999.99))=nan;
-%     d(i).shoreEast(find(d(i).shoreEast ==-999.99))=nan;
-%     d(i).tanb(find(d(i).tanb ==-999.99))=nan;
-%     d(i).Tp(find(d(i).Tp ==-999.99))=nan;
-%     d(i).L0(find(d(i).L0 ==-999.99))=nan;
-%     d(i).Hs(find(d(i).Hs ==-999.99))=nan;
-%     d(i).bias(find(d(i).bias ==-999.99))=nan;
-%     d(i).Z_mhw(find(d(i).Z_mhw ==-999.99))=nan;
-% 
-% end
 
 
 % Find all transects and colour them blue
 figure(fh);
 rayH=findobj(gca,'type','line','LineStyle','-');
+set(rayH, 'color','r')
 dpTs=get(rayH,'tag');
 
 for i = 1:length(dpTs)-1
@@ -118,10 +79,6 @@ end
 
 [C,IA,IB] = intersect(str2double(d.transectID(id)),id_text');
 
-selection=get(rayH(IB),'tag');
-
-for jj=1:length(selection)
-    tt=findobj('tag',selection{jj});
-    set(tt,'color','b');
+try
+        set(rayH(IB),'color','b');
 end
-

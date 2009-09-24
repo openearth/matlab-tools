@@ -38,15 +38,8 @@ function UCIT_displayTransectOutlines
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-%% check popups to see if this option is valid
-[check]=UCIT_checkPopups(1, 4);
-if check == 0
-    return
-end
-
 %% get metadata (either from the console or the database)
 tic
-disp('getting metadata...');
 [d] = UCIT_getMetaData;
 toc
 

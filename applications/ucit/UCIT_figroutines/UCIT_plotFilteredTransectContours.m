@@ -133,7 +133,7 @@ end
 
 stepsize = 1;
 
-title ({'Transects wrt regional coordinate system',['Thinning factor: ' num2str(stepsize)]});
+title ({'Transects wrt regional coordinate system'}); % ['Thinning factor: ' num2str(stepsize)]
 drawnow
 [ph, ph2] = displayFilteredTransects(d, id, stepsize);
 

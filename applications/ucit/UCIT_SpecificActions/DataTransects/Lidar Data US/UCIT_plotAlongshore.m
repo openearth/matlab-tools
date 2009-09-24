@@ -39,8 +39,15 @@ function UCIT_plotAlongshore
 %   --------------------------------------------------------------------
 
 
+%% check whether overview figure is present
 [check]=UCIT_checkPopups(1, 4);
 if check == 0
+    return
+end
+
+mapW=findobj('tag','mapWindow');
+if isempty(mapW)
+    errordlg('First make an overview figure (plotTransectOverview)','No map found');
     return
 end
 
@@ -59,7 +66,7 @@ if ~isempty(mapWhandle) && strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),
 end
 
 transects = d.transectID;
-USGSParameters={'Significant wave height','Peak wave period','Wave length (L0)','Shoreline position','Beach slope','Bias','Mean High Water Level'};
+USGSParameters={'Significant wave height','Peak wave period','Wave length (L0)','Shoreline position','Shoreline change','Beach slope','Bias','Mean High Water Level'};
 
 
 % Top panel
@@ -111,3 +118,9 @@ UIControls.Handle(9) = uicontrol('Parent',hpBottom,'Style','check','units','norm
     'Position',[0.6 .60 .3 .15], 'FontSize',8,'Enable','on','Tag','refline','BackgroundColor',[1 1 1],'callback','UCIT_toggleCheckBoxes');
 
 set(fig100,'visible','on')
+
+% Workaround wierd bug 
+for k = 1:24
+    a =  findobj('tag',['text' num2str(k)]);
+    set(a,'fontsize',8)
+end

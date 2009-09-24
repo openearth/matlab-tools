@@ -1,5 +1,5 @@
-function plotMultipleYears(d,years)
-%plotMultipleYears   routine plots multiple years of structure d
+function plotMultipleTransects(d,years)
+%plotMultipleTransects   routine plots transect data of multiple years
 %
 % input:
 %   d = basic McDatabase datastructure for transects
@@ -9,7 +9,7 @@ function plotMultipleYears(d,years)
 %   plot of crosssections for selected years
 %
 % syntax:
-%           plotMultipleYears(d,[2001:2005]);
+%           plotMultipleTransects(d,[2001:2005]);
 %
 %   See also getPlot
 %   --------------------------------------------------------------------
@@ -39,9 +39,19 @@ function plotMultipleYears(d,years)
 
 datatypes = UCIT_getDatatypes;
 url = datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
-[d] = UCIT_getMetaData;
+[d] = UCIT_getLidarMetaData;
 
-if nargin<2
+fh = findobj('tag','plotWindow_multiple');
+
+if isempty(fh)
+    fh = figure('tag','plotWindow_multiple'); set(fh,'visible','off');
+else
+    figure(fh); 
+    years = datenum(get(findobj('tag','plotWindow_multiple'),'userdata')) - datenum(1970,1,1);
+    clf;
+end
+
+if nargin < 2
     [check]=UCIT_checkPopups(1, 4);
     if check == 0
         return
@@ -51,18 +61,16 @@ if nargin<2
         error('Select datatype, area and transect first');
     end
 
-    %     d       =   readTransectData(UCIT_DC_getInfoFromPopup('TransectsDatatype'),UCIT_DC_getInfoFromPopup('TransectsArea'),UCIT_DC_getInfoFromPopup('TransectsTransectID'));
-    
-    years   =   SelectYears(d);
+    if ~exist('years')
+        years   =   SelectYears(d);
+    end
 
 end
 
 colors={'b',[0.2 0.6 0],'k',[0.5 1 1],'m','r', [0.6 0.4 0],[0.2 0.4 0 ], [0.5 0.5 0.5], [1 0.5 0.5]};
 
-% Create empty base figure
 
-fh=figure('tag','plotWindow');
-RaaiInformatie=['UCIT - Transect view -  Area: ' UCIT_DC_getInfoFromPopup('TransectsArea') '  Transect: ' UCIT_DC_getInfoFromPopup('TransectsTransectID') ];
+RaaiInformatie=['UCIT - Transect view -  Area: ' UCIT_DC_getInfoFromPopup('TransectsArea') '  Transect: ' UCIT_DC_getInfoFromPopup('TransectsTransectID')];
 set(fh,'Name', RaaiInformatie,'NumberTitle','Off','Units','normalized');
 ah=axes;
 [fh,ah] = UCIT_prepareFigureN(0, fh, 'UL', ah);clf
@@ -79,29 +87,33 @@ end
 counter = 1;
 
 for i=1:length(years)
-
-    
     try
-        transect = jarkus_readTransectDataNetcdf(url, UCIT_DC_getInfoFromPopup('TransectsArea'),UCIT_DC_getInfoFromPopup('TransectsTransectID'),years(i));
+        transect = readLidarDataNetcdf(url, UCIT_DC_getInfoFromPopup('TransectsArea'), UCIT_DC_getInfoFromPopup('TransectsTransectID'),years(i));
     end
-
-    if exist('transect')
+    if exist('transect') & ~all(transect.xi == transect.xi(1))
         if ~isempty(transect)
             plotLine(transect);hold on;
-            a=findobj('tag',['ph' num2str(transect.year)]);
-            b=findobj('tag',['ph' num2str(transect.year)]);
-            set(a,'color',colors{counter});
-            set(b,'color',colors{counter}); clear a b;
-            legendtext{counter}=num2str(round(str2double(transect.year)/365+1970));
+            a = findobj('tag',['ph' num2str(transect.year)]);
+            set(a,'color',colors{counter},'marker','diamond','linestyle','none','Markersize',4,'MarkerFaceColor',colors{counter});
+            legendtext{counter} = datestr(str2double(transect.year) + datenum(1970,1,1));
             counter = counter + 1;
-            clear transect
+            d = transect;clear transect
         end
     else
-        warning(['Year ', num2str(years(i)), ' was not found in the database']);
+        warning(['Year ', datestr(years(i) + datenum(1970,1,1)), ' was not found in the database']);
     end
 end
 legend(legendtext);
 grid;
+
+%% add USGS meta information
+try
+    line([min(d.xe(d.xe~=-9999)) max(d.xe(d.xe~=-9999))],[d.MHW d.MHW],'color','k');
+    plot(d.shorePos, d.MHW,'mo','markersize',10);
+end
+
+set(fh,'userdata',legendtext);
+set(fh,'visible','on');
 
 
 function plotLine(d)
@@ -130,30 +142,30 @@ end
 
 % Figure properties
 
-xlabel('Cross shore distance [m]');
-ylabel('Elevation [m to datum]');
+xlabel('Distance to profile origin [m]');
+ylabel('Height [m]');
 try
-axis([min(d(1).xi(~isnan(d(1).ze))) max(d(1).xi(~isnan(d(1).ze))) -35 35]);
+    set(gca, 'xlim',[min(d(1).xi(~isnan(d(1).ze))) max(d(1).xi(~isnan(d(1).ze)))]);
+    set(gca, 'ylim',[-1 20]);
 end
-set(gca,'XDir','reverse');
+
+% set(gca,'XDir','reverse');
 box on
 minmax = axis;
 handles.XMaxRange = [minmax(1) minmax(2)];
 handles.YMaxRange = [minmax(3) minmax(4)];
 
 
+
 function years  =   SelectYears(d)
 
 % Get available years from metadata
-AvailableYears   =   num2str(round(d.year/365+1970));
+AvailableYears   =   datestr(d.year+datenum(1970,1,1));
 
- 
-% tmp=DBGetTableEntryRaw('transect','datatypeinfo',UCIT_DC_getInfoFromPopup('TransectsDatatype'),'area',UCIT_DC_getInfoFromPopup('TransectsArea'),'transectID',UCIT_DC_getInfoFromPopup('TransectsTransectID'));
-
-v = listdlg('PromptString','Select years:',...
+v = listdlg('PromptString','Select dates:',...
     'SelectionMode','multiple',...
     'ListString',AvailableYears);
 
-AvailableYears   = round(d.year/365+1970);
+AvailableYears   = d.year;
 
 years   =   AvailableYears(v);

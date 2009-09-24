@@ -15,7 +15,7 @@ function UCIT_plotDotsInPolygon
 %   Copyright (C) 2009 Deltares
 %       Ben de Sonneville
 %
-%       Ben.deSonneville@Deltares.nl	
+%       Ben.deSonneville@Deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -36,13 +36,24 @@ function UCIT_plotDotsInPolygon
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+%% check whether overview figure is present
+[check]=UCIT_checkPopups(1, 4);
+if check == 0
+    return
+end
+
+mapW=findobj('tag','mapWindow');
+if isempty(mapW)
+    errordlg('First make an overview figure (plotTransectOverview)','No map found');
+    return
+end
+
 %% select transects to plot
 fh = figure(findobj('tag','mapWindow'));set(fh,'visible','off');
 [xv,yv] = UCIT_WS_drawPolygon;
 polygon=[xv yv];
 
 %% get metadata (either from the console or the database)
-
 d = UCIT_getLidarMetaData;
 
 %% filter transects using inpolygon
@@ -55,6 +66,7 @@ id = (id1|id2);
 %% Find all transects and colour them blue
 figure(fh);
 rayH=findobj(gca,'type','line','LineStyle','-');
+set(rayH,'color','r');
 dpTs=get(rayH,'tag');
 
 for i = 1:length(dpTs)-1
@@ -64,87 +76,80 @@ for i = 1:length(dpTs)-1
 end
 
 [C,IA,IB] = intersect(str2double(d.transectID(id)),id_text');
+set(rayH(IB),'color','b');
 
-selection=get(rayH(IB),'tag');
+datatypes = UCIT_getDatatypes;
+url = datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
 
-for jj=1:length(selection)
-    tt=findobj('tag',selection{jj});
-    set(tt,'color','b');
-end
+% get data
+crossShoreCoordinate = nc_varget(url, 'cross_shore');
+time = nc_varget(url, 'time');
+ids = find(id>0);
+time_id = find(time == datenum(UCIT_DC_getInfoFromPopup('TransectsSoundingID'))-datenum(1970,1,1));
 
-%% prepare figure
-% create figure and axis
-close(findobj('tag','Dotfig'));
-fh=figure('tag','Dotfig');clf;
-set(fh,'visible','off')
-RaaiInformatie='UCIT - C Dots Amy';
-set(fh,'Name',RaaiInformatie,'NumberTitle','Off','Units','normalized');
-ah=axes;hold on;box on;
+x = nc_varget(url, 'x',         [time_id-1,ids(1)-1,0], [1,ids(end)-ids(1),length(crossShoreCoordinate)]);
+y = nc_varget(url, 'y',         [time_id-1,ids(1)-1,0], [1,ids(end)-ids(1),length(crossShoreCoordinate)]);
+z = nc_varget(url, 'altitude',  [time_id-1,ids(1)-1,0], [1,ids(end)-ids(1),length(crossShoreCoordinate)]);
 
-% use prepare UCIT_prepareFigure to give it the UCIT look and feel
-figure(findobj('tag','Dotfig')) % make the figure current is apparently needed to actually make the repositioning statement work
-[fh]=UCIT_prepareFigureN(2, fh, 'UR', ah);set(fh,'visible','off')
 
-figure(findobj('tag','Dotfig')) % make the figure current is apparently needed to actually make the repositioning statement work
-set(findobj('tag','Dotfig'),'position',UCIT_getPlotPosition('UR'));
+% prepare info for coloring
+MHW    = 1;% d(i).Z_mhw;
+dz     = .5/8;
+zmin_a = MHW - (19 * dz);
+zmax_a = MHW + (44 * dz);
 
-% plot landboundary
-UCIT_plotLandboundary(d.datatypeinfo{1},1);
+if all(z == z(1))
+    warndlg('There is no transect data for the selected date  - please select another date (soundingID)!')
+else
+    %% prepare figure
+    % create figure and axis
+    close(findobj('tag','Dotfig'));
+    fh=figure('tag','Dotfig');clf;
+    set(fh,'visible','off')
+    RaaiInformatie = [ 'UCIT - Top view - Area : ' UCIT_DC_getInfoFromPopup('TransectsArea') ' Transects ' d.transectID{find(id==1,1,'first')} '-' d.transectID{find(id==1,1,'last')} ' Time: ' UCIT_DC_getInfoFromPopup('TransectsSoundingID')];
+    set(fh,'Name',RaaiInformatie,'NumberTitle','Off','Units','normalized');
+    ah=axes;hold on;box on;
 
-% prepare colormap info for cdots_amy function
-load colormapMHWjump20
+    % use prepare UCIT_prepareFigure to give it the UCIT look and feel
+    figure(findobj('tag','Dotfig')) % make the figure current is apparently needed to actually make the repositioning statement work
+    [fh]=UCIT_prepareFigureN(2, fh, 'UR', ah);set(fh,'visible','off')
 
-if 1 % 1: use a 'for'-loop to get and plot the data (then you can use the waitbar) ...
+    figure(findobj('tag','Dotfig')) % make the figure current is apparently needed to actually make the repositioning statement work
+    set(findobj('tag','Dotfig'),'position',UCIT_getPlotPosition('UR'));
 
-    datatypes = UCIT_getDatatypes;
-    url = datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
+    % plot landboundary
+    UCIT_plotLandboundary(d.datatypeinfo{1},1);
 
-    % get data
-    crossShoreCoordinate = nc_varget(url, 'cross_shore');
-    ids = find(id>0);
-
-    x = nc_varget(url, 'x',         [0,ids(1),0], [1,ids(end)-ids(1),length(crossShoreCoordinate)]);
-    y = nc_varget(url, 'y',         [0,ids(1),0], [1,ids(end)-ids(1),length(crossShoreCoordinate)]);
-    z = nc_varget(url, 'altitude',  [0,ids(1),0], [1,ids(end)-ids(1),length(crossShoreCoordinate)]);
-
-    % prepare info for coloring
-    MHW    = 1;% d(i).Z_mhw;
-    dz     = .5/8;
-    zmin_a = MHW - (19 * dz);
-    zmax_a = MHW + (44 * dz);
-
+    % prepare colormap info for cdots_amy function
+    load colormapMHWjump20
+    
     % plot data (NB: coloring depends on the Mean High Water info)
     UCIT_cdots_amy(x,y,z,zmin_a,zmax_a,cmapMHWjump20)
-end
 
-if 1
     %% get info to plot shoreposition
-
     scatter(d.shore_east, d.shore_north, repmat(35,size(d.shore_east)),'marker','o','markerfacecolor','w','markeredgecolor','k')
 
+    %% Set figure properties
+
+    view(2);
+    xlabel('Easting (m, UTM)','fontsize',9);
+    ylabel('Northing (m, UTM)','fontsize',9);
+    % axis equal
+    dx=100;
+    maxx=max(max(x(x~=-9999)));
+    minx=min(min(x(x~=-9999)));
+    maxy=max(max(y(y~=-9999)));
+    miny=min(min(y(y~=-9999)));
+    axis([(minx) - dx (maxx)+ dx (miny)- dx (maxy)+ dx] );
+
+    %% set colorbar
+    cb = colorbar('ytick',4:8:60,'yticklabel',...
+        {'HMW-0.5';'MHW';'MHW+0.5';'MHW+1.0';'MHW+1.5';'MHW+2.0';'>=MHW+2.5'});
+    set(cb,'yticklabel',{'HMW-0.5';'MHW';'MHW+0.5';'MHW+1.0';'MHW+1.5';'MHW+2.0';'>=MHW+2.5'})
+    title(cb,'Height (m)');
+    colormap(cmapMHWjump20);
+    %% make figure visible only after all is plotted
+    set(fh,'visible','on')
+    figure(findobj('tag','Dotfig')) % make the figure current is apparently needed to actually make the repositioning statement work
+    set(findobj('tag','Dotfig'),'position',UCIT_getPlotPosition('UR'));
 end
-
-%% Set figure properties
-
-view(2);
-xlabel('Easting (m, UTM)','fontsize',9);
-ylabel('Northing (m, UTM)','fontsize',9);
-% axis equal
-dx=100;
-maxx=max(max(x(x~=-9999)));
-minx=min(min(x(x~=-9999)));
-maxy=max(max(y(y~=-9999)));
-miny=min(min(y(y~=-9999)));
-axis([(minx) - dx (maxx)+ dx (miny)- dx (maxy)+ dx] );
-
-%% set colorbar
-colormap(cmapMHWjump20);
-cb = colorbar('ytick',4:8:60,'yticklabel',...
-    {'HMW-0.5';'MHW';'MHW+0.5';'MHW+1.0';'MHW+1.5';'MHW+2.0';'>=MHW+2.5'});
-set(cb,'yticklabel',{'HMW-0.5';'MHW';'MHW+0.5';'MHW+1.0';'MHW+1.5';'MHW+2.0';'>=MHW+2.5'})
-title(cb,'Height (m)');
-
-%% make figure visible only after all is plotted
-set(fh,'visible','on')
-figure(findobj('tag','Dotfig')) % make the figure current is apparently needed to actually make the repositioning statement work
-set(findobj('tag','Dotfig'),'position',UCIT_getPlotPosition('UR'));

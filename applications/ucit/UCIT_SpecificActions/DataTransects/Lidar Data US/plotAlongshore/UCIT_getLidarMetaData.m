@@ -72,6 +72,9 @@ if ~isfield(d,'shorepos')
     deep_water_wave_length = nc_varget(url, 'deep_water_wave_length');
     beach_slope = nc_varget(url, 'beach_slope');
     bias = nc_varget(url, 'bias');
+    
+
+
 
     areanames = cellstr(areanames);
     transectID = cellstr(num2str(ids));
@@ -94,6 +97,11 @@ if ~isfield(d,'shorepos')
     d.deep_water_wave_length = deep_water_wave_length;
     d.beach_slope = beach_slope;
     d.bias = bias;
+    
+    d.shore_north_1930 = nc_varget(url, 'shore_north_1930');
+    d.shore_east_1930 = nc_varget(url, 'shore_east_1930');
+    d.shore_north_1880 = nc_varget(url, 'shore_north_1880');
+    d.shore_east_1880 = nc_varget(url, 'shore_east_1880');
 
     set(findobj('tag','UCIT_mainWin'),'UserData',d);
 else

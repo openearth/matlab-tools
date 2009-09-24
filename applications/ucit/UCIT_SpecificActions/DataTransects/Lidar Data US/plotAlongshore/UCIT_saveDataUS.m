@@ -8,7 +8,7 @@ function UCIT_saveDataUS(d)
 %   Copyright (C) 2009 Deltares
 %       Ben de Sonneville
 %
-%       Ben.deSonneville@Deltares.nl	
+%       Ben.deSonneville@Deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -29,56 +29,46 @@ function UCIT_saveDataUS(d)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------clear selecteditems;clc;
 
-hf=findobj('tag','mapWindow');
-if isempty(hf)
-    errordlg('Make Transect overview figure first')
+%% check whether overview figure is present
+[check]=UCIT_checkPopups(1, 4);
+if check == 0
     return
 end
 
-par=findobj('tag','par');
-if ~isempty(par)
-    close(par)
-end
-
-
-if ~isempty(get(findobj('Tag','beginTransect'),'value'))
-
-    %     d = DBGetTableEntryRaw('transect','datatypeinfo','Lidar Data US','year','2002');
-
-    fh = findobj('tag','mapWindow');
-    d=get(fh,'UserData');
-
-    beginTransect = d(get(findobj('Tag','beginTransect'),'value')).transectID;
-    endTransect = d(get(findobj('Tag','endTransect'),'value')).transectID;
-    
-    if str2num(beginTransect)==str2num(endTransect)
-        warning('Begintransect is equal to endtransect')
-    end
-
-    if str2num(beginTransect)>str2num(endTransect)
-        x=findobj('Tag','beginTransect');
-        t=get(findobj('Tag','beginTransect'),'value');
-        set(x,'value',get(findobj('Tag','endTransect'),'value'));
-        y=findobj('Tag','endTransect');
-        set(y,'value',t);
-        beginTransect = d(get(findobj('Tag','beginTransect'),'value')).transectID;
-        endTransect = d(get(findobj('Tag','endTransect'),'value')).transectID;
-    end
-
-    d = SelectTransectsUS('Lidar Data US','2002',beginTransect,endTransect);
-
-else
-    d = SelectTransectsUS;
-end
-
-[FileName,PathName] = uiputfile('d:\*.mat','Save transects to mat-file', 'Saved_transects.mat');
-if FileName==0 & PathName==0
+mapW=findobj('tag','mapWindow');
+if isempty(mapW)
+    errordlg('First make an overview figure (plotTransectOverview)','No map found');
     return
-else
-
-save([PathName,FileName],'d')
-
 end
+
+results = get(findobj('tag','par'), 'userdata');
+
+if ~isempty(results)
+    [FileName,PathName] = uiputfile('d:\*.txt','Save data to txt-file', 'Saved_data.txt');
+    if FileName==0 & PathName==0
+        return
+    else
+        
+        counter = 1;
+        finaltable = repmat(0,length(results(1).x),10);
+        
+        for i = 1 :2: length(results)*2
+            finaltable(:,i) = results(counter).x;
+            finaltable(:,i+1) = results(counter).y;
+            counter = counter +1;           
+        end
+        
+        fid = fopen([PathName,FileName],'w');
+        fprintf(fid,'%6.2f  %6.2f  %6.2f  %6.2f  %6.2f  %6.2f  %6.2f  %6.2f  %6.2f  %6.2f \n',[finaltable]');
+        fclose(fid);
+        %         save([PathName,FileName],'results')
+    end
+
+else
+    errordlg('First run preview');
+end
+
+
 
 
 
