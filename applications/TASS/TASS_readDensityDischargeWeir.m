@@ -1,9 +1,9 @@
 function [data, data_info, data_units] = TASS_readDensityDischargeWeir(varargin)
 % TASS_READDENSITYDISCHARGEWEIR  Routine to read the Density, Discharge or Weir output file
 %
-%   Routine reads a passive plume output file (*.out) produced by TASS model.
-%   The routine takes a filename as an input file. Output produced is an
-%   array with data and a variable with column 
+%   Routine reads the Density, Discharge or Weir output file. The routine
+%   takes a filename as an input file. Output produced is an array with
+%   data and a variable with column info and units.
 %
 %   Syntax:
 %       [data, data_info, data_units] = TASS_readDensityDischargeWeir(varargin)
