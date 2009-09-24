@@ -1,12 +1,13 @@
-function [data, data_info, data_units] = TASS_readDensityDischargeWeir(varargin)
-% TASS_READDENSITYDISCHARGEWEIR  Routine to read the Density, Discharge or Weir output file
+function [fractions, data, data_info, data_units] = TASS_readDynamic_in(varargin)
+% TASS_READDYNAMIC_IN  Routine to read the dynamic plume input file
 %
-%   Routine reads the Density, Discharge or Weir output file. The routine
-%   takes a filename as an input file. Output produced is an array with
-%   data and a variable with column info and units.
+%   Routine reads a dynamic plume input file (*.in) produced by TASS model.
+%   The routine takes a filename as an input file. Output produced is an
+%   array with data and a variable with column info and
+%   units.
 %
 %   Syntax:
-%       [data, data_info, data_units] = TASS_readDensityDischargeWeir(varargin)
+%       [data, data_info, data_units] = TASS_readDynamic_in(varargin)
 %
 %   Input:
 %   For the following keywords, values are accepted (values indicated are the current default settings):
@@ -17,7 +18,7 @@ function [data, data_info, data_units] = TASS_readDensityDischargeWeir(varargin)
 %       data_info                       = cell array with column information
 %       data_units                      = cell array with column units
 %
-% See also
+% See also TASS_readPassive_out
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -61,7 +62,7 @@ function [data, data_info, data_units] = TASS_readDensityDischargeWeir(varargin)
 
 %% defaults
 OPT = struct( ...
-    'filename', 'd:\Documents and Settings\mrv\VanOord\Projecten\96.8015 TASS P15 Slibpluimmeting\Software\ExampleData\oranje5_weir.txt' ...
+    'filename', 'd:\Documents and Settings\mrv\VanOord\Projecten\96.8015 TASS P15 Slibpluimmeting\Software\ExampleData\oranje5.in' ...
     );
 
 %% overrule default settings by property pairs, given in varargin
@@ -72,17 +73,33 @@ if isempty(OPT.filename)
     return
 end
 
+disp(['Processing: ' OPT.filename])
+
+%% read some basic info from the output file
+% skip the first 22 lines
+fid = fopen(OPT.filename);
+for i = 1:2
+    fgetl(fid);
+end
+
 % read in the data
-data = load(OPT.filename);
+nr_fractions = str2double(fgetl(fid));
+for i = 1:nr_fractions
+    fractions(i) = str2double(fgetl(fid)); %#ok<AGROW>
+end
+
+data = fscanf(fid,'%f %f %f %f %f %f %f %f',[8 inf]);
+
+% flip the matrix to get nice column structure
+data = data';
 
 % provide info and units
-if ~isempty(strfind(lower(OPT.filename),'density'))
-    data_info  = {'Run Time', 'Bulk density of mixture entering the hopper'};
-    data_units = {'min', 'kg/m^3'};
-elseif ~isempty(strfind(lower(OPT.filename),'weir'))
-    data_info  = {'Run Time', 'Height of weir above nominal bottom of hopper'};
-    data_units = {'min', 'm'};
-elseif ~isempty(strfind(lower(OPT.filename),'discharge'))
-    data_info  = {'Run Time', 'Discharge'};
-    data_units = {'min', 'm^3/min'};
+data_info  = {'Time', 'Loss for fraction', 'Loss for fraction', 'Loss for fraction', 'Loss for fraction', 'Loss for fraction', 'Loss for fraction'};
+data_units = {'mins', 'kg/s', 'kg/s', 'kg/s', 'kg/s', 'kg/s', 'kg/s'};
+
+if dbstop
+    figure(1); clf; hold on
+    for i = 2:8 
+        plot(data(:,1),data(:,i));
+    end
 end
