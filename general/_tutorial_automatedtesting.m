@@ -9,7 +9,7 @@
 % <table border="0" cellpadding="5" width="100%">
 %   <tr valign="top">
 %       <td width="400">
-%           <a class="relref" href="#" relhref="testsInGeneral_tutorial.html">Tests in general and in OpenEarthTools</a>
+%           <a class="relref" href="testsInGeneral_tutorial.html" relhref="testsInGeneral_tutorial.html">Tests in general and in OpenEarthTools</a>
 %       </td>
 %       <td width="600">
 %           General information about various types of tests and how we should use them in OpenEarthTools.
@@ -17,7 +17,7 @@
 %   </tr>
 %   <tr valign="top">
 %       <td width="400">
-%           <a class="relref" href="#" relhref="testdefinitions_tutorial.html">Creating a test</a>
+%           <a class="relref" href="testdefinitions_tutorial.html" relhref="testdefinitions_tutorial.html">Creating a test</a>
 %       </td>
 %       <td width="600">
 %           Describes how to write your own testdefinition and what possibilities the test toolbox has regarding to documenting your testcases.
@@ -25,7 +25,7 @@
 %   </tr>
 %   <tr valign="top">
 %       <td width="400">
-%           <a class="relref" href="#" relhref="runningatest_tutorial.html">Running an individual test</a>
+%           <a class="relref" href="runningatest_tutorial.html" relhref="runningatest_tutorial.html">Running an individual test</a>
 %       </td>
 %       <td width="600">
 %           There are vaious ways to run a test created according to the definition used in OpenEarthTools. This document describes how to run an individual test.
@@ -33,7 +33,7 @@
 %   </tr>
 %   <tr valign="top">
 %       <td width="400">
-%           <a class="relref" href="#" relhref="runtestswithmtestengine_tutorial.html">Automated testing</a>
+%           <a class="relref" href="runtestswithmtestengine_tutorial.html" relhref="runtestswithmtestengine_tutorial.html">Automated testing</a>
 %       </td>
 %       <td width="600">
 %           Describes the basics of testing with the mtest toolbox.
