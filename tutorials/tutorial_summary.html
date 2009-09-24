@@ -51,6 +51,7 @@
 		var relrefs = $(".relref");
 		relrefs.each(function(i)
 			{
+			$(this).attr('href','#');
 			$(this).bind('click', {index:i, html:"html/" + $(this).attr('relhref')}, loadcontent);
 			});
 		}
