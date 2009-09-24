@@ -1,0 +1,508 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>3. Running individual tests</title>
+      <meta name="generator" content="MATLAB 7.8">
+      <meta name="date" content="2009-09-24">
+      <meta name="m-file" content="runningatest_tutorial">
+      <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2accordion.js"></script><script type="text/javascript">
+  	$(document).ready(function ()
+  	{
+  	// Copy content
+	copycontent();
+
+  	// Accordion
+  	$(".accordion").accordion({ header: "h2" });
+	$(".accordion").accordion('option', 'autoHeight', false);
+	$(".accordion").accordion('option', 'collapsible', true);
+	$(".accordion").accordion('activate',false);
+	$(".accordion").accordion('option', 'clearStyle', true);
+  	});
+    </script><style>
+
+pre.codeinput {
+  overflow-x: auto;
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #9F1EF4}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  overflow-x: auto;
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+#contents {
+  border-style:solid;
+  border-width:1px;
+}
+
+  </style></head>
+   <body LINK="#48339F" VLINK="#48339F" ALINK="#48339F">
+      <div class="content">
+         <div class="introduction ui-widget ui-widget-content ui-corner-all">
+            <h1>3. Running individual tests</h1>
+            <div>
+               <p>Once we have generated a testdefinition we would like to run a test and publish its results. In general there are three ways
+                  to either run a test, publish the documentation or do both. This tutorial describes these three ways.
+               </p>
+               <p><html> <a class="relref" href="tutorial_automatedtesting.html" relhref="tutorial_automatedtesting.html">Read more about automated
+                  testing</a> </html>
+               </p>
+            </div>
+         </div>
+         <div class="accordion">
+            <div>
+               <h2><a>Command line execution</a></h2>
+               <div>
+                  <p>Testdefinitions are designed in such a way that simply running the function from the command line will evaulate the test and
+                     testcases. The first output argument of a testdefinition is always a boolean indicating whtether the test was successfull.
+                  </p>
+                  <p>Example:</p><pre class="codeinput">testresult = mte_simple_test
+</pre><pre class="codeoutput">1
+
+testresult =
+
+     1
+
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p><b>Advantage</b> One command leads to an immediate testresult. This method is therefore suitable for obtaining a quick look at the current
+                     state of the functions that are tested by this testdefinition.
+                  </p>
+                  <p><b>Disadvantage</b> It is not possible to print either documentation or vizualisation of the result with one command.
+                  </p>
+               </div>
+            </div>
+            <div>
+               <h2><a>Run a test with the mtest toolbox</a></h2>
+               <div>
+                  <p>A testdefinition can also be run with the use of the mtest toolbox. To do this first an instance of an mtest object must be
+                     created.
+                  </p><pre class="codeinput">t = mtest(<span class="string">'mte_simple_test'</span>);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>This object contains all information from the testdefinition in the property fields (fields like a struct). Several functions
+                     can be applied to this object.
+                  </p>
+                  <p>For example run the test:</p><pre class="codeinput">run(t);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>The testresult is now stored in the field: "testresult":</p><pre class="codeinput">t.testresult
+</pre><pre class="codeoutput">
+ans =
+
+     1
+
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>With the same object it is also possible to publish the description:</p><pre class="codeinput">help <span class="string">mtest.publishDescription</span>
+</pre><pre class="codeoutput"> publishDescription  Creates an html file from the test description with publish
+ 
+    This function publishes the code included in the first part of a test description
+    file.
+ 
+    Syntax:
+    publishDescripton(obj,'property','value')
+    publishDescripton(...,'keepfigures');
+    obj.publisDescription('property','value')
+ 
+    Input:
+    obj             - An instance of an mtest object.
+    'keepfigures'   - The publishTestDescription function automatically closes any figures
+                      that was created during publishing and were not already there.
+                      The optional argument 'keepfigures' prevents these figures from
+                      being closed (unless stated in the test code somewhere).
+ 
+    property value pairs:
+            'resdir'     -  Specifies the output directory (default is the current
+                            directory)
+            'filename'   -  Name of the output file. If the filename includes a path,
+                            this pathname overrides the specified resdir.
+            'testname'   -  Name of the test.
+            'includeCode'-  Boolean overriding the mtestcase-property
+                            descriptionincludecode. This property determines whether the
+                            code parts of the description are included in the published
+                            html file (see publish documentation for more info).
+            'evaluateCode'- Boolean overriding the mtestcase-property
+                            descriptionevaluatecode. This property determines whether
+                            the code parts of the description are executed before
+                            publishing the code to html (see publish documentation for
+                            more info).
+            'maxwidth'  -   Maximum width of the published figures (in pixels). By
+                            default the maximum width is set to 600 pixels.
+            'maxheight' -   Maximum height of the published figures (in pixels). By
+                            default the maximum height is set to 600 pixels.
+            'stylesheet'-   Style sheet that is used for publishing (see publish
+                            documentation for more information).
+ 
+    See also mtestcase mtest.run mtest.runAndPublish mtestengine
+
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>publish the results:</p><pre class="codeinput">help <span class="string">mtest.publishResult</span>
+</pre><pre class="codeoutput"> publishResult  Creates an html file from the test result with publish
+ 
+    This function publishes the code included in the "%% $PublishResult" cell of the
+    testdefinition function
+ 
+    Syntax:
+    publishResult(obj,'property','value')
+    publishResult(...,'keepfigures');
+    obj.publisResult('property','value')
+ 
+    Input:
+    obj             - An instance of an mtest object.
+    'keepfigures'   - The publishTestDescription function automatically closes any figures
+                      that was created during publishing and were not already there.
+                      The optional argument 'keepfigures' prevents these figures from
+                      being closed (unless stated in the test code somewhere).
+ 
+    property value pairs:
+            'resdir'     -  Specifies the output directory (default is the current
+                            directory)
+            'filename'   -  Name of the output file. If the filename includes a path,
+                            this pathname overrides the specified resdir.
+            'testname'   -  Name of the test.
+            'includeCode'-  Boolean overriding the mtest-property
+                            publishincludecode. This property determines whether the
+                            code parts of the publish section are included in the published
+                            html file (see publish documentation for more info).
+            'evaluateCode'- Boolean overriding the mtest-property
+                            publishevaluatecode. This property determines whether
+                            the code parts of the publish section are executed before
+                            publishing the code to html (see publish documentation for
+                            more info).
+            'maxwidth'  -   Maximum width of the published figures (in pixels). By
+                            default the maximum width is set to 600 pixels.
+            'maxheight' -   Maximum height of the published figures (in pixels). By
+                            default the maximum height is set to 600 pixels.
+            'stylesheet'-   Style sheet that is used for publishing (see publish
+                            documentation for more information).
+ 
+    See also mtestcase mtest.run mtest.runAndPublish mtestengine
+
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>Or run and publish the complete test:</p><pre class="codeinput">help <span class="string">mtest.runAndPublish</span>
+</pre><pre class="codeoutput"> runAndPublish  Runs the test and publishes the descriptions and results of all testcases.
+ 
+    This function runs the mtest object and publishes all case descriptions and results.
+    The variables of the description and runcode of the test are stored in the hidden
+    workspace, so that the publishResult function can directly be called after running
+    the test.
+ 
+    Syntax:
+    runAndPublish(obj,'property','value');
+    obj.publisResults(...'property','value');
+ 
+    Input:
+    obj  = An instance of an mtest object.
+ 
+    property value pairs:
+            'resdir'     -  Specifies the output directory (current dir is default).
+            'outputfile' -  Main part of the name of the output file. The description is
+                            output file appends _description to this name. The results
+                            output file appends _results to it.
+            'testname'   -  Name of the main test.
+            'maxwidth'  -   Maximum width of the published figures (in pixels). By
+                            default the maximum width is set to 600 pixels.
+            'maxheight' -   Maximum height of the published figures (in pixels). By
+                            default the maximum height is set to 600 pixels.
+            'stylesheet'-   Style sheet that is used for publishing (see publish
+                            documentation for more information).
+ 
+    See also mtestcase mtestcase.mtestcase mtestcase.publishDescription mtest.publishResults mtestcase.runTest mtestengine mtest
+
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p><b>Advantage</b> With this method additional to running the test, the documentation can also be generated. It requires a relatively small
+                     effort.
+                  </p>
+                  <p><b>Disadvantage</b> The testdefinition must be converted to an object before it can be run or published. Compared to command line usage this
+                     increases the amount of actions that must be undertaken. Next to that, the mtest toolbox is programmed with the use of object
+                     oriented programming as introduced with Matlab version 7.4 (2008a). This method cannot be used with matlab versions prior
+                     to 2008a.
+                  </p>
+               </div>
+            </div>
+            <div>
+               <h2><a>Run a test with the mtestengine</a></h2>
+               <div>
+                  <p>The third way to run a test is with the use of the mtestengine that is also used to scan the toolbox for testdefinitions and
+                     automatically run them. This is done in the same way as with the mtest object:
+                  </p>
+                  <p>Create an mtestengine object</p><pre class="codeinput">mte = mtestengine(<span class="string">'template'</span>,<span class="string">'oet'</span>);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>More information about calling mtestengine:</p><pre class="codeinput">help <span class="string">mtestengine.mtestengine</span>
+</pre><pre class="codeoutput"> MTESTENGINE  creates an mtestengine object.
+ 
+    With the mtestengine object a toolbox can be examined for testdefinition files. The
+    catalogueTests method (or function) converts all testdefinition files to mtest
+    objects. The mtestengine object can than be used to run all tests and publish the
+    results in html according to a nice format. This format can be manually set with the
+    template property.
+ 
+    Syntax:
+    obj = mtestengine('property','value')
+ 
+    Input:
+    All input must be given in property value pairs. The properties and there
+    requirements are listed below.
+        targetdir   -   (dir string) The target directory where all published results
+                        (html) will be located (default is the current directory).
+        maindir     -   (dir string) The main directory of the toolbox (default is the
+                        current directory).
+        recursive   -   (boolean) Determines whether just the maindir (false) is
+                        examined for testdefinition files or also all recursive
+                        (true, default) dirs.
+        verbose     -   (boolean) Determines whether the user gets feedback while
+                        running the tests (default = false). NOT IMPLEMENTED YET.
+        testid      -   (string) A string that identifies all testdefinition files.
+                        While catalogueing all files that contain this string in their
+                        filenames are identified as test definitions (default = '_test').
+        exclusion   -   (cell of strings) Files or folders with one of these strings in
+                        their names are not considered (default = {'.svn'}).
+        template    -   (string) name of the template (dir).
+ 
+    Output:
+    obj     -   mtestengine object.
+ 
+    See also mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
+
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>For automatic running test the engine can look for all tests in a particular maindir:</p><pre class="codeinput">help <span class="string">mtestengine.catalogueTests</span>
+</pre><pre class="codeoutput"> CATALOGUETESTS  Lists all tests in the maindir of the mtestobject and converts them to mtest objects.
+ 
+    This function lists all files in the maindir (and subdirs if recursive = true) of an
+    mtestobject. Test or directory names that contain one of the exclusion strings are
+    not taken into account. For each test an mtest object is created and stored in the
+    mtestengine object.
+ 
+    Syntax:
+    outobj = obj.catalogueTests;
+    outobj = catalogueTests(obj);
+ 
+    Input:
+    obj     -   an mtestengine object.
+ 
+    Output:
+    outobj  -   The same mtestengine object, but with mtest objects for all tests in the
+                maindir. It is not necessary to have an output, since the mtestengine is
+                of type handle. This automatically adjusts all copies of the object that
+                are in the matlab memory. The one that is in the base workspace is
+                therefore automatically updated and does not need to be output of the
+                function.
+ 
+    See also mtestengine mtestengine.mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
+
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>We only want to execute one test, so we add this to the tests in the mtestengine object:</p><pre class="codeinput">mte.tests(1) = mtest(<span class="string">'mte_simple_test'</span>);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>To prevent the engine from indexing all testdefinitions we have to set the following field:</p><pre class="codeinput">mte.testscatalogued = true;
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>Now we can use the runAndPublish command to run the test and publish the result.</p><pre class="codeinput">help <span class="string">mtestengine.runAndPublish</span>
+</pre><pre class="codeoutput"> runAndPublish  runs the mtestengine and publishes all results.
+ 
+    This function runs the mtestengine and publishes all results. First the function
+    executest the runAndPublish function of each specified test. Second, the function
+    publishes all results in html according to the specified template.
+ 
+    Syntax:
+    runAndPublish(obj);
+    obj.runAndPublish;
+    outobj = obj.runAndPublish
+    runAndPublish(obj,...,'property','value');
+ 
+    Input:
+    obj     -   an mtestengine object.
+ 
+    property value pairs:
+    maxwidth    - Maximum widht of the published figures (default = 600 px)
+    maxheight   - Maximum height of the published figures (default = 600 px)
+ 
+    Output:
+    outobj  -   The same mtestengine object, but with mtest objects for all tests in the
+                maindir. It is not necessary to have an output, since the mtestengine is
+                of type handle. This automatically adjusts all copies of the object that
+                are in the matlab memory. The one that is in the base workspace is
+                therefore automatically updated and does not need to be output of the
+                function.
+ 
+                %   See also mtestengine mtestengine.mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
+
+</pre></div>
+            </div>
+         </div>
+         <p class="footer"><br>
+            Published with MATLAB&reg; 7.8<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% 3. Running individual tests
+% Once we have generated a testdefinition we would like to run a test and publish its results. In
+% general there are three ways to either run a test, publish the documentation or do both. This
+% tutorial describes these three ways.
+%
+% <html>
+% <a class="relref" href="tutorial_automatedtesting.html" relhref="tutorial_automatedtesting.html">Read more about automated testing</a>
+% </html>
+
+%% Command line execution
+% Testdefinitions are designed in such a way that simply running the function from the command line
+% will evaulate the test and testcases. The first output argument of a testdefinition is always a
+% boolean indicating whtether the test was successfull.
+%
+% Example:
+
+testresult = mte_simple_test
+
+%%
+% *Advantage*
+% One command leads to an immediate testresult. This method is therefore suitable for obtaining a
+% quick look at the current state of the functions that are tested by this testdefinition.
+%
+% *Disadvantage*
+% It is not possible to print either documentation or vizualisation of the result with one command.
+
+%% Run a test with the mtest toolbox
+% A testdefinition can also be run with the use of the mtest toolbox. To do this first an instance
+% of an mtest object must be created.
+
+t = mtest('mte_simple_test');
+
+%%
+% This object contains all information from the testdefinition in the property fields (fields like a
+% struct). Several functions can be applied to this object.
+%
+% For example run the test:
+
+run(t);
+
+%%
+% The testresult is now stored in the field: "testresult":
+
+t.testresult
+
+%%
+% With the same object it is also possible to publish the description:
+
+help mtest.publishDescription
+
+%%
+% publish the results:
+
+help mtest.publishResult
+
+%%
+% Or run and publish the complete test:
+
+help mtest.runAndPublish
+
+%%
+% *Advantage*
+% With this method additional to running the test, the documentation can also be generated. It
+% requires a relatively small effort.
+%
+% *Disadvantage*
+% The testdefinition must be converted to an object before it can be run or published. Compared to
+% command line usage this increases the amount of actions that must be undertaken. Next to that, the
+% mtest toolbox is programmed with the use of object oriented programming as introduced with Matlab 
+% version 7.4 (2008a). This method cannot be used with matlab versions prior to 2008a.
+
+%% Run a test with the mtestengine
+% The third way to run a test is with the use of the mtestengine that is also used to scan the
+% toolbox for testdefinitions and automatically run them. This is done in the same way as with the
+% mtest object:
+%
+% Create an mtestengine object
+
+mte = mtestengine('template','oet');
+
+%%
+% More information about calling mtestengine:
+
+help mtestengine.mtestengine
+
+%%
+% For automatic running test the engine can look for all tests in a particular maindir:
+
+help mtestengine.catalogueTests
+
+%%
+% We only want to execute one test, so we add this to the tests in the mtestengine object:
+
+mte.tests(1) = mtest('mte_simple_test');
+
+%%
+% To prevent the engine from indexing all testdefinitions we have to set the following field:
+
+mte.testscatalogued = true;
+
+%%
+% Now we can use the runAndPublish command to run the test and publish the result.
+
+help mtestengine.runAndPublish
+
+##### SOURCE END #####
+-->
+   </body>
+</html>

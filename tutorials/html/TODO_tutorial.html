@@ -9,10 +9,10 @@
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
       -->
-      <title>5. How to make a tutorial</title>
+      <title>TODO function</title>
       <meta name="generator" content="MATLAB 7.8">
       <meta name="date" content="2009-09-24">
-      <meta name="m-file" content="tutorial_how_to_write_tutorials">
+      <meta name="m-file" content="TODO_tutorial">
       <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2accordion.js"></script><script type="text/javascript">
   	$(document).ready(function ()
   	{
@@ -71,12 +71,20 @@ p.footer {
       <div class="content">
          <div class="accordion">
             <div>
-               <h1><a>5. How to make a tutorial</a></h1>
+               <h1><a>TODO function</a></h1>
                <div>
-                  <p>This script is going to explain how to write a tutorial that is included in the overview at the wiki. We cannot do all things
-                     the same time, so the tutorial is coming soon..
+                  <p>Include the TODO function in your code to indicate what must be done:</p><pre class="codeinput">TODO(<span class="string">'edit this file..'</span>);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>While executing the function a message will be posted in the command window including a link to the file and row that contains
+                     the TODO statement.
                   </p>
-               </div>
+                  <p>In addition to the command line useage, matlab also supports a TODO/FIXME report (see matlab help documentation) that lists
+                     all TODO statements in the functions under condsideration.
+                  </p><pre class="codeinput">TODO(<span class="string">'Finish this file'</span>);
+</pre></div>
             </div>
          </div>
          <p class="footer"><br>
@@ -84,10 +92,19 @@ p.footer {
       </div>
       <!--
 ##### SOURCE BEGIN #####
-%% 5. How to make a tutorial
-% This script is going to explain how to write a tutorial that is included in the overview at the
-% wiki.
-% We cannot do all things the same time, so the tutorial is coming soon..
+%% TODO function
+% Include the TODO function in your code to indicate what must be done:
+
+TODO('edit this file..');
+
+%%
+% While executing the function a message will be posted in the command window including a link to
+% the file and row that contains the TODO statement.
+%
+% In addition to the command line useage, matlab also supports a TODO/FIXME report (see matlab help
+% documentation) that lists all TODO statements in the functions under condsideration.
+
+TODO('Finish this file');
 
 ##### SOURCE END #####
 -->
