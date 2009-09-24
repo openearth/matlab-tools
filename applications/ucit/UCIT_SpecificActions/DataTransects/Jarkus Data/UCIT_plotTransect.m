@@ -12,7 +12,7 @@ function UCIT_plotTransect(d)
 %   Copyright (C) 2009 Deltares
 %       Ben de Sonneville
 %
-%       Ben.deSonneville@Deltares.nl	
+%       Ben.deSonneville@Deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -41,15 +41,22 @@ if nargin==0
     if check == 0
         return
     end
-    
+
     clearvars -global;
-    
+
     year = UCIT_DC_getInfoFromPopup('TransectsSoundingID');
     d = jarkus_readTransectDataNetcdf(url, UCIT_DC_getInfoFromPopup('TransectsArea'),UCIT_DC_getInfoFromPopup('TransectsTransectID'),year(end-3:end));
-    
-    UCIT_getPlot(d);
+    if ~all(isnan(d.ze))
+        UCIT_getPlot(d);
+    else
+        errordlg(['Transect: ', d.transectID,'  Year: ',num2str(d.year) ' does not contain data']);
+    end
 else
-    UCIT_getPlot(d)
+    if ~all(isnan(d.ze))
+        UCIT_getPlot(d);
+    else
+        errordlg(['Transect: ', d.transectID,'  Year: ',num2str(d.year) ' does not contain data']);
+    end
 end
 
 if ~isempty(findobj('tag','mapWindow'))

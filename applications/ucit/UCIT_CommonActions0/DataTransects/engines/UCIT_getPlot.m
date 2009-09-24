@@ -84,9 +84,9 @@ if get(findobj(guiH,'tag','UCIT_holdFigure'),'value')==0 && ~isempty(findobj('ta
                 try
                     if get(findobj(guiH,'tag','UCIT_holdFigure'),'value')==0
                         try
-                            ph2=plot(d.xi(~isnan(d.ze)),d.zi(~isnan(d.ze)),'k','linewidth',1.5);
+                            ph2=plot(d.xi(~isnan(d.ze)),d.zi(~isnan(d.ze)),'k','linewidth',0.5);
                         catch
-                            ph2=plot(d(1).xi(~isnan(d(1).ze)),d(1).zi(~isnan(d(1).ze)),'k','linewidth',1.5);
+                            ph2=plot(d(1).xi(~isnan(d(1).ze)),d(1).zi(~isnan(d(1).ze)),'k','linewidth',0.5);
                         end
                     end
                 end
@@ -108,7 +108,7 @@ else
     try
         fh=figure('tag','plotWindow');clf;
 
-        RaaiInformatie=['UCIT - Transect view -  Area: ' d.area '  Transect: ' num2str(d.transectID) '  Time: ' num2str(round(str2num(d.year)/365+1970))];
+        RaaiInformatie=['UCIT - Transect view -  Area: ' d.area '  Transect: ' (d.transectID) '  Time: ' num2str(d.year)];
         set(fh,'Name', RaaiInformatie,'NumberTitle','Off','Units','normalized');
 
         ah=axes;
@@ -137,9 +137,9 @@ else
             try
                 if get(findobj(guiH,'tag','UCIT_holdFigure'),'value')==0
                     try
-                        ph2=plot(d.xi(~isnan(d.ze)),d.zi(~isnan(d.ze)),'k','linewidth',1.5);
+                        ph2=plot(d.xi(~isnan(d.ze)),d.zi(~isnan(d.ze)),'k','linewidth',0.5);
                     catch
-                        ph2=plot(d(1).xi(~isnan(d(1).ze)),d(1).zi(~isnan(d(1).ze)),'k','linewidth',1.5);
+                        ph2=plot(d(1).xi(~isnan(d(1).ze)),d(1).zi(~isnan(d(1).ze)),'k','linewidth',0.5);
                     end
                 end
             end
@@ -163,7 +163,7 @@ else
     catch
         fh=figure('tag','plotWindow');clf;
 
-        RaaiInformatie=['UCIT - Transect view -  Area: ' d.area '  Transect: ' num2str(d.transectID) '  Time: ' num2str(round(str2num(d.year)/365+1970))];
+        RaaiInformatie=['UCIT - Transect view -  Area: ' d.area '  Transect: ' num2str(d.transectID) '  Time: ' num2str(d.year)];
         set(fh,'Name', RaaiInformatie,'NumberTitle','Off','Units','normalized');
         ah=axes;
         set(fh,'UserData',d);
@@ -172,6 +172,6 @@ else
     end
 end
 
-RaaiInformatie=['UCIT - Transect view -  Area: ' d.area '  Transect: ' num2str(d.transectID) '  Time: ' num2str(round(str2num(d.year)/365+1970))];
+RaaiInformatie=['UCIT - Transect view -  Area: ' d.area '  Transect: ' num2str(d.transectID) '  Time: ' num2str(d.year)];
 set(fh,'Name', RaaiInformatie,'NumberTitle','Off','Units','normalized');
 handles = guidata(fh);

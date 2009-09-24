@@ -92,7 +92,7 @@ for i=1:length(years)
             b=findobj('tag',['ph' num2str(transect.year)]);
             set(a,'color',colors{counter});
             set(b,'color',colors{counter}); clear a b;
-            legendtext{counter}=num2str(round(str2double(transect.year)/365+1970));
+            legendtext{counter} = num2str(transect.year);
             counter = counter + 1;
             clear transect
         end
