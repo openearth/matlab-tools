@@ -48,6 +48,11 @@
 			{
 			$(this).attr('src',"html/" + $(this).attr('relsrc'))
 			});
+		var relrefs = $(".relref");
+		relrefs.each(function(i)
+			{
+			$(this).bind('click', {index:i, html:"html/" + $(this).attr('relhref')}, loadcontent);
+			});
 		}
 
 	</script>

@@ -287,34 +287,55 @@ rtns2 = strfind(folderstr,char(10));
 fileinfolderstr = folderstr(min(rtns2(rtns2 > min(strfind(folderstr,'##BEGINFILE')))):...
     max(rtns2(rtns2 < min(strfind(folderstr,'##ENDFILE')))));
 
-% loop strings and concatenate
+gennodes = dirnamesseparated(idgeneral);
+genm = tutorials(idgeneral);
+gentitle = title(idgeneral);
+genhtml = htmlref(idgeneral);
+
+[lengths sid] = sort(cellfun(@length,gennodes));
+idfiles = find(lengths==1);
+idfolders = find(lengths>1);
+
+gennodes = gennodes(sid);
+genm = genm(sid);
+gentitle = gentitle(sid);
+genhtml = genhtml(sid);
+
+% loop files
 genstr = [];
-for idr = 1:length(idgeneral)
-    dirid = idgeneral(idr);
-    dirnames = strread(alldirsstripped{dirid},'%s',-1,'delimiter',[filesep filesep]);
-    if length(dirnames) == 1
-        filesstr = [];
-        [tempnames sid] = sort(title{dirid});
-        temphtml = htmlref{dirid}(sid); 
-        for ifiles = 1:length(tutorials{dirid})
-            [dum name] = fileparts(temphtml{ifiles});
-            filesstr = cat(2,filesstr,...
-                strrep(strrep(filestr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',tempnames{ifiles}));
-        end
-        genstr = cat(2,genstr,filesstr);
-    else
-        newfstr = strrep(folderstr,'#FOLDERNAME',dirnames{end});
-        newfilestr = [];
-        [tempnames sid] = sort(title{dirid});
-        temphtml = htmlref{dirid}(sid); 
-        for ifiles = 1:length(tutorials{dirid})
-            [dum name] = fileparts(temphtml{ifiles});
-            newfilestr = cat(2,newfilestr,...
-                strrep(strrep(fileinfolderstr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',tempnames{ifiles}));
-        end
-        newfstr = strrep(newfstr,fileinfolderstr,newfilestr);
-        genstr = cat(2,genstr,newfstr);
+for ifl = 1:length(idfiles)
+    filesstr = [];
+    [tempnames sid] = sort(gentitle{idfiles(ifl)});
+    temphtml = genhtml{idfiles(ifl)}(sid);
+    for ifiles = 1:length(genm{idfiles(ifl)})
+        [dum name] = fileparts(temphtml{ifiles});
+        filesstr = cat(2,filesstr,...
+            strrep(strrep(filestr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',tempnames{ifiles}));
     end
+    genstr = cat(2,genstr,filesstr);
+end
+
+cll = cell(size(idfolders));
+for i=1:length(idfolders)
+    cll(i) = gennodes{idfolders(i)}(end);
+end
+[nms foldersid] = sort(cll);
+
+% loop dirs
+for idr = 1:length(idfolders)
+    dirid = idfolders(foldersid(idr));
+    dirnames = gennodes{dirid};
+    newfstr = strrep(folderstr,'#FOLDERNAME',dirnames{end});
+    newfilestr = [];
+    [tempnames sid] = sort(gentitle{dirid});
+    temphtml = genhtml{dirid}(sid);
+    for ifiles = 1:length(genm{dirid})
+        [dum name] = fileparts(temphtml{ifiles});
+        newfilestr = cat(2,newfilestr,...
+            strrep(strrep(fileinfolderstr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',tempnames{ifiles}));
+    end
+    newfstr = strrep(newfstr,fileinfolderstr,newfilestr);
+    genstr = cat(2,genstr,newfstr);
 end
 
 % replace general template string in template
