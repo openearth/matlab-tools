@@ -41,3 +41,25 @@
 %   </tr>
 % </table> 
 % </html>
+%
+% <html>
+% <style>
+% #notediv {
+%   background-color:   #D8E4F1;
+%   border:             solid; 
+%   border-width:       1px;  
+%   padding:            10px;
+%   }
+% </style>
+% <div id="notediv">
+%   <strong>
+%       <p>Tests are meant to check the basic functionalities of functions in the most simple form, so:</p> 
+%       <ul>
+%           <li>Test are not meant to show off, keep the tests as simple as possible!!!</li>
+%           <li>Do not write a test that needs user input</li>
+%           <li>Do not write a test that needs an internet connection to run</li>
+%       </ul>
+%       <p>(Tests that do need user input will be added to the ignore list for automatic testing of the toolbox)</p>
+%   </strong>
+% </div>
+% </html>

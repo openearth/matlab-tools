@@ -17,7 +17,7 @@
 testresult = mte_simple_test
 
 %%
-%*Advantage*
+% *Advantage*
 %
 % One command leads to an immediate testresult. This method is therefore suitable for obtaining a
 % quick look at the current state of the functions that are tested by this testdefinition.
