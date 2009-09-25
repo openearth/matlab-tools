@@ -62,10 +62,12 @@ rayH=findobj(gca,'type','line','LineStyle','-');
 set(rayH,'color','r');
 dpTs=get(rayH,'tag');
 
-for i = 1:length(dpTs)-1
-    tagtext = dpTs{i};
-    underscores = strfind(tagtext,'_');
-    id_text(i) = str2double(tagtext([underscores(2)+1:underscores(3)-1]));
+for i = 1:length(dpTs)
+    if ~strcmp(dpTs{i},'')
+        tagtext = dpTs{i};
+        underscores = strfind(tagtext,'_');
+        id_text(i) = str2double(tagtext([underscores(2)+1:underscores(3)-1]));
+    end
 end
 
 [C,IA,IB] = intersect(str2double(d.transectID(id)),id_text');

@@ -72,9 +72,11 @@ set(rayH, 'color','r')
 dpTs=get(rayH,'tag');
 
 for i = 1:length(dpTs)-1
+    if ~strcmp(dpTs{i},'')
     tagtext = dpTs{i};
     underscores = strfind(tagtext,'_');
     id_text(i) = str2double(tagtext([underscores(2)+1:underscores(3)-1]));
+    end
 end
 
 [C,IA,IB] = intersect(str2double(d.transectID(id)),id_text');

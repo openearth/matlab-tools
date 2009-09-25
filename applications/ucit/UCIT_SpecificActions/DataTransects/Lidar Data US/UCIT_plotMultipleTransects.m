@@ -90,9 +90,10 @@ for i=1:length(years)
     try
         transect = readLidarDataNetcdf(url, UCIT_DC_getInfoFromPopup('TransectsArea'), UCIT_DC_getInfoFromPopup('TransectsTransectID'),years(i));
     end
-    if exist('transect') & ~all(transect.xi == transect.xi(1))
+    if exist('transect') & ~all(isnan(transect.zi))
         if ~isempty(transect)
             plotLine(transect);hold on;
+            
             a = findobj('tag',['ph' num2str(transect.year)]);
             set(a,'color',colors{counter},'marker','diamond','linestyle','none','Markersize',4,'MarkerFaceColor',colors{counter});
             legendtext{counter} = datestr(str2double(transect.year) + datenum(1970,1,1));
@@ -105,7 +106,7 @@ for i=1:length(years)
 end
 legend(legendtext);
 grid;
-
+set(fh,'visible','on');
 %% add USGS meta information
 try
     line([min(d.xe(d.xe~=-9999)) max(d.xe(d.xe~=-9999))],[d.MHW d.MHW],'color','k');

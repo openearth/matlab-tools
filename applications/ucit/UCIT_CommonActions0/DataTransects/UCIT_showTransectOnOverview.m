@@ -76,11 +76,14 @@ end
 [TransectID,info3]=UCIT_DC_getInfoFromPopup('TransectsTransectID');
 [SoundingID,info4]=UCIT_DC_getInfoFromPopup('TransectsSoundingID');
 
-d = get(findobj('tag','UCIT_mainWin'),'UserData');
-id_match = cellfun(@(x) (strcmp(x, UCIT_DC_getInfoFromPopup('TransectsArea'))==1), {cellstr(d.area)}, 'UniformOutput',false);
-transectIDs = str2double(d.transectID)- unique(round(str2double(d.transectID(id_match{1}))/1000000))*1000000; % convert back from uniqu id
-id = find (transectIDs  == str2num(TransectID) & strcmp(Area,d.area));
-TransectID = char(d.transectID(id));
+% d = get(findobj('tag','UCIT_mainWin'),'UserData');
+% id_match = cellfun(@(x) (strcmp(x, UCIT_DC_getInfoFromPopup('TransectsArea'))==1), {cellstr(d.area)}, 'UniformOutput',false);
+% transectIDs = str2double(d.transectID)- unique(round(str2double(d.transectID(id_match{1}))/1000000))*1000000; % convert back from uniqu id
+% id = find (transectIDs  == str2num(TransectID) & strcmp(Area,d.area));
+% TransectID = char(d.transectID(id));
+
+id = find (str2double(d.transectID)  == str2num(TransectID) & strcmp(Area,d.area));
+
 curRay = findobj(rayH,'tag',[DataType '_' Area '_' TransectID '_' datestr(d.year(1) + datenum(1970,1,1))]);
 
 if isempty(curRay)
@@ -88,7 +91,7 @@ if isempty(curRay)
     id = find(str2double(d.transectID) == str2double(TransectID) & strcmp(Area,d.area));
     curRay = line([d.contour((id),1) d.contour(id,2)],[d.contour(id,3) d.contour(id,4)],'color','g','tag',[DataType '_' Area '_' TransectID '_' datestr(d.year(1) + datenum(1970,1,1))],'linewidth',2);
 end
-set(rayH,'color',[1 0 0],'linewidth',0.5);
+set(rayH,'color',[1 0 0],'linewidth',1.5);
 set(curRay,'color',[0 1 0],'linewidth',3);
 refresh;
 
