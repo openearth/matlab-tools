@@ -17,11 +17,13 @@
 testresult = mte_simple_test
 
 %%
-% *Advantage*
+%*Advantage*
+%
 % One command leads to an immediate testresult. This method is therefore suitable for obtaining a
 % quick look at the current state of the functions that are tested by this testdefinition.
 %
 % *Disadvantage*
+%
 % It is not possible to print either documentation or vizualisation of the result with one command.
 
 %% Run a test with the mtest toolbox
@@ -60,10 +62,12 @@ help mtest.runAndPublish
 
 %%
 % *Advantage*
+%
 % With this method additional to running the test, the documentation can also be generated. It
 % requires a relatively small effort.
 %
 % *Disadvantage*
+%
 % The testdefinition must be converted to an object before it can be run or published. Compared to
 % command line usage this increases the amount of actions that must be undertaken. Next to that, the
 % mtest toolbox is programmed with the use of object oriented programming as introduced with Matlab 

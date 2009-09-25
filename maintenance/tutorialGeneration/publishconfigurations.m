@@ -72,7 +72,8 @@ switch mfilename
         config.evalCode = false;
         config.showCode = true;
     case {'testdefinitions_tutorial',...
-            'runningatest_tutorial'}
+            'runningatest_tutorial',...
+            'runtestswithmtestengine_tutorial'}
         if ~oldpublish
             config.maxOutputLines = 1000;
         end
