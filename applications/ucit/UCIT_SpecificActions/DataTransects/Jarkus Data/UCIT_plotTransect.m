@@ -42,7 +42,8 @@ if nargin==0
         return
     end
 
-    clearvars -global;
+%     clearvars -global;
+    clear global
 
     year = UCIT_DC_getInfoFromPopup('TransectsSoundingID');
     d = jarkus_readTransectDataNetcdf(url, UCIT_DC_getInfoFromPopup('TransectsArea'),UCIT_DC_getInfoFromPopup('TransectsTransectID'),year(end-3:end));

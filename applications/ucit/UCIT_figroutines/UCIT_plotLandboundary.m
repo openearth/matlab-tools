@@ -68,7 +68,7 @@ if tryldb
 
         elseif strcmp(datatypeinfo,'Lidar Data US');
             ldb=landboundary('read',which(['OR_coast_UTM5.ldb']));
-            filledLDB(ldb,'k',[1 1 0.6],100,-100); hold on;
+            fillpolygon(ldb,'k',[1 1 0.6],100,-100); hold on;
             ldb2=landboundary('read',which(['ref20OR.ldb'])); % this is their reference line
             plot(ldb2(:,1),ldb2(:,2),'color','r','linewidth',2);
             axis equal;axis(1E6*[0.3382    0.4796    4.6537    5.1275])
@@ -96,7 +96,7 @@ if tryldb
                 'Zuno'})
             ldb=landboundary('read',which(['Netherlands.ldb']));
             if landcolor == 1
-                filledLDB(ldb,'k',[1 1 0.6],100,-100);
+                fillpolygon(ldb,'k',[1 1 0.6],100,-100);
             else
                 [X,Y]=landboundary('read',which(['Netherlands.ldb']));
                 shph=plot(X,Y,'k','linewidth',1);
