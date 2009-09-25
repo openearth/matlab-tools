@@ -181,7 +181,11 @@ else
         title([]);
         font=12-length(selecteditems);
         set(gca, 'fontsize',font);
-        xlim([x(1) x(end)])
+        if x(1) < x(end)
+            xlim([x(1) x(end)])
+        else
+            xlim([x(end) x(1)])
+        end
 
         % make labels
         if lat==1

@@ -68,7 +68,7 @@ fh=findobj('tag','mapWindow');
 % Find all transects and colour them blue
 figure(fh);
 rayH=findobj(gca,'type','line','LineStyle','-');
-set(rayH, 'color','r')
+set(rayH, 'color','r');
 dpTs=get(rayH,'tag');
 
 for i = 1:length(dpTs)-1
