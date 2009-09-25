@@ -103,7 +103,7 @@ for iDir = OPT.dir_index
         idColumn.DateMax = ...
             find(strcmpi(overview.text(overview.offset-1,:), 'datenummax'));
         for iSta = overview.offset+1:size(overview.raw, 1)
-            DATA.namst{iStation} = overview.raw{iSta,idColumn.Station};
+            DATA.namst{iStation} = strtrim(overview.raw{iSta,idColumn.Station});
             DATA.lat(iStation) = overview.raw{iSta,idColumn.Latitude};
             DATA.lon(iStation) = overview.raw{iSta,idColumn.Longitude};
             DATA.datemin(iStation) = OPT.refdatenum + ...
