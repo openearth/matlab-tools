@@ -41,11 +41,11 @@ function [datatypes] = UCIT_getDatatypes
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
-datatypes.transect.names = {'Jarkus Data'};
+% datatypes.transect.names = {'Jarkus Data'};
 
-% datatypes.transect.names = {'Jarkus Data' ,...
-%                             'Lidar Data US'};
-%                         
+datatypes.transect.names = {'Jarkus Data' ,...
+                            'Lidar Data US'};
+                        
 
 datatypes.transect.urls = {'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';...
-                           'D:\OpenEarthRawData\lidar\oregon_3.nc'};
+                           'd:\OpenEarthRawData\lidar\oregon_6.nc'};

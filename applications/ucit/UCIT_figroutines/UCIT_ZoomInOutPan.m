@@ -49,14 +49,18 @@ handles=guidata(gcf);
 h1=findall(gcf,'ToolTipString','Zoom In');
 h2=findall(gcf,'ToolTipString','Zoom Out');
 h3=findall(gcf,'ToolTipString','Pan');
+h4=findall(gcf,'ToolTipString','Zoom reset');
 
-if zoommode==1 || zoommode==2
+if zoommode==1 || zoommode==2 || zoommode==3
+    set(h4,'State','off');
+end
+if zoommode==1 || zoommode==2 || zoommode==6
     set(h3,'State','off');
 end
-if zoommode==1 || zoommode==3
+if zoommode==1 || zoommode==3 || zoommode==6
     set(h2,'State','off');
 end
-if zoommode==2 || zoommode==3
+if zoommode==2 || zoommode==3 || zoommode==6
     set(h1,'State','off');
 end
 
@@ -121,6 +125,11 @@ switch(zoommode),
         else
             feval(callback2);
         end
+    case 6
+        fh = findobj('tag','mapWindow');
+        ah = get(fh,'userdata');
+        axis(ah);
+        set(h4,'State','off');
 end
 
 %%

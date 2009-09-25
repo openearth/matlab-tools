@@ -71,6 +71,7 @@ if ~isfield(handles,'axisOld'); %if the transect contours are plotted for the fi
     tic
     disp('plotting landboundary...');
     UCIT_plotLandboundary(d.datatypeinfo{1},1);
+    set(fh,'userdata',axis);    
     toc
     hold on;
     box on
