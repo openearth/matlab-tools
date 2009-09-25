@@ -47,7 +47,7 @@ end
 
 fh=figure('tag','mapWindow');clf;
 ah=axes;
-[fh] = UCIT_prepareFigure(0, fh, 'LL', ah, @UCIT_plotTransectContours, {get(findobj('tag','UCIT_mainWin'),'Userdata'), axis(ah)}, @UCIT_plotTransectContours, {get(findobj('tag','UCIT_mainWin'),'Userdata'), axis(ah)});
+[fh] = UCIT_prepareFigureN(0, fh, 'LL', ah, @UCIT_plotTransectContours, {get(findobj('tag','UCIT_mainWin'),'Userdata'), axis(ah)}, @UCIT_plotTransectContours, {get(findobj('tag','UCIT_mainWin'),'Userdata'), axis(ah)});
 set(fh,'name','UCIT - Transect overview');
 xlabel('x-distance [m]')
 ylabel('y-distance [m]', 'Rotation', 270, 'VerticalAlignment', 'top')

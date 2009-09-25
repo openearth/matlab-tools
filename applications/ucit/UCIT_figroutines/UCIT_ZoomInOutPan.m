@@ -129,6 +129,13 @@ switch(zoommode),
         fh = findobj('tag','mapWindow');
         ah = get(fh,'userdata');
         axis(ah);
+        if strcmp(varargin1{1}.datatypeinfo{1},'Lidar Data US')
+            handles.axisOld = ah;
+        else
+            handles.axisOld = [0 0 0 0];
+        end
+        guidata(gcf,handles);
+        feval(callback1, varargin2{1},ah);
         set(h4,'State','off');
 end
 
