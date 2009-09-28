@@ -10,6 +10,7 @@ function varargout = vs_time(NFSstruct,varargin),
 % - trih file (FLOW)
 % - hwgxyfile (WAVE)
 % - trk file  (PART)
+% - ada/hda file  (WAQ)
 %
 % T = vs_time(NEFIS_file_handle,timeindices)
 % reads only the timesteps with index in timeindices:
@@ -30,7 +31,7 @@ function varargout = vs_time(NFSstruct,varargin),
 %   Copyright (C) 2005 Delft University of Technology
 %       Gerben J. de Boer
 %
-%       g.j.deboer@tudelft.nl	
+%       g.j.deboer@tudelft.nl
 %
 %       Fluid Mechanics Section
 %       Faculty of Civil Engineering and Geosciences
@@ -59,18 +60,19 @@ function varargout = vs_time(NFSstruct,varargin),
 % $Author$
 % $Revision$
 % $HeadURL$
+% 2009 sep 28: added implementation of WAQ ada/hda files [Yann Friocourt]
 
 if nargin>1
    Tindex = varargin{1};
 else
    Tindex = 0;
-end    
+end
 
 if nargin>2
    simple = varargin{2};
 else
    simple = 0;
-end    
+end
 
 if strcmp(NFSstruct.SubType,'Delft3D-trim')
 %% -------------------------------------------
@@ -101,10 +103,10 @@ if strcmp(NFSstruct.SubType,'Delft3D-trim')
       T.t             = vs_let  (NFSstruct,'map-info-series',{Tindex},'ITMAPC','quiet');
       % Time numbers of simulation results in NFSstruct [s]
       T.t             = T.t.*T.dt_simulation;
-      
+
       %% determine dt_storage, if possible
       %% ---------------------------------
-      
+
       if length(Tindex)==1
          if T.nt_storage >1
             tmp.t              = vs_let  (NFSstruct,'map-info-series',{1:2},'ITMAPC','quiet');
@@ -140,11 +142,11 @@ elseif strcmp(NFSstruct.SubType,'Delft3D-com')
 
       %% determine dt_storage, if possible
       %% ---------------------------------
-      
+
       if (Tindex==0)
       Tindex          = 1:T.nt_storage;
-      end      
-      
+      end
+
       if length(Tindex)==1
          if T.nt_storage >1
             % Time numbers of simulation results in NFSstruct [tunit]
@@ -176,17 +178,17 @@ elseif strcmp(NFSstruct.SubType,'Delft3D-hwgxy')
 
       % Number of simulation results in NFSstruct [#]
       T.nt_storage    = vs_get_grp_size(NFSstruct,'map-series');
-      
+
       T.it            = (1:T.nt_storage)';
       if ~Tindex==0
       T.it            = T.it(Tindex);
       else
       Tindex          = 1:T.nt_storage;
-      end      
-      
+      end
+
       %% determine dt_storage, if possible
       %% ---------------------------------
-      
+
       if length(Tindex)==1
          if T.nt_storage >1
 
@@ -194,20 +196,20 @@ elseif strcmp(NFSstruct.SubType,'Delft3D-hwgxy')
             tmp.t             = vs_let  (NFSstruct, 'map-series', {1:2},'TIME','quiet');
             % Time numbers of simulation results in NFSstruct [s]
             tmp.t             = tmp.t.*T.tunit;
-            
+
             T.dt_storage       = diff(tmp.t(1:2));
-            
+
          else
             disp('Only one timestep, cannot determine ''dt_storage'' ...')
          end
       else
          T.dt_storage       = diff(T.t(1:2));
-      end      
-      
- 
+      end
+
+
  elseif strcmp(NFSstruct.SubType,'Delft3D-trih')
  %% -------------------------------------------
-     
+
       T.itdate        = vs_let(NFSstruct,'his-const '     ,'ITDATE',{0});
       T.dt_simulation = vs_let(NFSstruct,'his-const '     ,'DT'    ,{0});
       T.tunit         = vs_let(NFSstruct,'his-const '     ,'TUNIT' ,{0});
@@ -217,32 +219,32 @@ elseif strcmp(NFSstruct.SubType,'Delft3D-hwgxy')
 
       T.s0            = T.itdate(2);
       T.itdate0       = num2str(T.itdate(1));
-      
+
       %% determine dt_storage, if possible
       %% ---------------------------------
-      
+
       if (Tindex==0)
       Tindex          = 1:T.nt_storage;
-      end      
+      end
 
       if length(Tindex)==1
          if T.nt_storage >1
 
             tmp.t              = vs_let(NFSstruct,'his-info-series',{1:2},'ITHISC',{0});
             tmp.t              = tmp.t.* T.dt_simulation.* T.tunit;
-            
+
             T.dt_storage       = diff(tmp.t(1:2));
-            
+
          else
             disp('Only one timestep, cannot determine ''dt_storage'' ...')
          end
       else
          T.dt_storage       = diff(T.t(1:2));
-      end        
-      
+      end
+
  elseif strcmp(NFSstruct.SubType,'Delft3D-track')
  %% -------------------------------------------
-     
+
       T.itdate        = vs_let(NFSstruct,'trk-const'     ,'ITDATE',{0});
       T.itdate0       = num2str(T.itdate(1));
       T.dt_simulation = vs_let(NFSstruct,'trk-const'     ,'DT'    ,{0});
@@ -253,44 +255,64 @@ elseif strcmp(NFSstruct.SubType,'Delft3D-hwgxy')
 
       T.s0            = T.itdate(2);
       T.itdate0       = num2str(T.itdate(1));
-      
+
       %% determine dt_storage, if possible
       %% ---------------------------------
-      
+
       if (Tindex==0)
       Tindex          = 1:T.nt_storage;
-      end      
+      end
 
       if length(Tindex)==1
          if T.nt_storage >1
 
             tmp.tunit         = vs_let(NFSstruct,'trk-const'     ,'TUNIT' ,{0});
             tmp.t             = vs_let(NFSstruct,'trk-info-series',{1:2},'ITTRKC',{0});
-            
+
             T.dt_storage       = diff(tmp.t(1:2));
-            
+
          else
             disp('Only one timestep, cannot determine ''dt_storage'' ...')
          end
       else
          T.dt_storage       = diff(T.t(1:2));
-      end        
+      end
+
+ elseif (strcmp(NFSstruct.SubType,'Delft3D-waq-map') || ...
+     strcmp(NFSstruct.SubType,'Delft3D-waq-history'))
+ %% -------------------------------------------
+
+      tmp.title       = vs_let(NFSstruct,'DELWAQ_PARAMS'     ,'TITLE',{0});
+      tmp.itdate0     = squeeze(tmp.title(1,:,:));
+      T. datenum0     = datenum(tmp.itdate0(4,5:23), 'yyyy.mm.dd HH:MM:SS');
+      [T.y0, T.m0, T.d0, T.h0, T.mi0, T.s0] = ...
+                        datevec(T.datenum0);
+      T.itdate0       = datestr(T.datenum0, 'yyyymmdd');
+      T.t0(1,1)       = str2double(T.itdate0);
+      T.t0(2,1)       = str2double(datestr(T.datenum0, 'HHMMSS'));
+      T.nt_storage    = vs_get_grp_size(NFSstruct,'DELWAQ_RESULTS');
+      T.t             = vs_let(NFSstruct,'DELWAQ_RESULTS',{Tindex},'TIME',{0});
+      switch strtrim((tmp.itdate0(4,31:end-1)))
+         case ('1s')
+             T.tunit  = 1;
+      end
+      T.t             = T.t.*T.tunit;
 
  end
  %% -------------------------------------------
-  
+
       T.y0            = str2num(T.itdate0(1:4));
       T.m0            = str2num(T.itdate0(5:6));
       T.d0            = str2num(T.itdate0(7:8));
       T.h0            = 0;
-      T.mi0           = 0;      
-   
+      T.mi0           = 0;
+
 %   try
 %   T.dt_storage       = diff(T.t(1:2));
 %   catch
 %       disp('Only one timestep, cannot determine ''dt_storage'' ...')
 %   end
-   
+
    % Number of simulation results in NFSstruct [#]
    % If run crashes it contains not all timesteps:
    T.nt_loaded     = min(length(T.t),T.nt_storage);
