@@ -119,3 +119,7 @@ total = sum(weight);
 mse_p = sum(((zm_new - zc_new).^2).*weight)/total;
 mse_0 = sum(((zm_new - z0_new).^2).*weight)/total;
 BSS = 1. - (mse_p/mse_0);
+BSS(BSS<-1)=-1;
+if any(BSS<-1)
+    disp('Replaced Brier Skill Score <-1 with a skill score of -1');
+end
