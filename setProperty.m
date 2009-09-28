@@ -145,7 +145,7 @@ for iargin = i0:2:iend
             end
             % indicate that this field is set
             Set.(PropertyName) = true;
-        catch me
+        catch
             error([upper(mfilename) ':UnknownPropertyName'], ['PropertyName "' PropertyName '" is not valid'])
         end
     else
