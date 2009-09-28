@@ -65,6 +65,7 @@ function varargout = vs_trih_station(trih,varargin)
 % $Author$
 % $Revision$
 % $HeadURL$
+% 2009 sep 28: added implementation of WAQ hda files [Yann Friocourt]
 
    iostat =  1;
    
@@ -80,6 +81,16 @@ function varargout = vs_trih_station(trih,varargin)
    %% Get names from indices or vv.
    %% ------------------------------
 
+if strcmp(trih.SubType,'Delft3D-trih')
+    OPT.GrpName = 'his-const';
+    OPT.ElmName = 'NAMST';
+    ST.Description     = 'Delft3d-FLOW monitoring point (*.obs) time serie.';
+elseif strcmp(trih.SubType,'Delft3D-waq-history')
+    OPT.GrpName = 'DELWAQ_PARAMS';
+    OPT.ElmName = 'LOCATION_NAMES';
+    ST.Description     = 'Delft3d-WAQ monitoring point (*.obs) time serie.';
+end
+    
    if iscell(station_id)
       station_id = char(station_id);
    end
@@ -91,13 +102,13 @@ function varargout = vs_trih_station(trih,varargin)
       
    elseif isempty(station_id) % BEFORE isnumeric because [] is also numeric!!!
    
-      ST.index = 1:vs_get_elm_size(trih,'NAMST'); % get all stations
-      ST.name  = permute(vs_let(trih,'his-const','NAMST',{ST.index}),[2 3 1]);
+      ST.index = 1:vs_get_elm_size(trih,OPT.ElmName); % get all stations
+      ST.name  = permute(vs_let(trih,OPT.GrpName,OPT.ElmName,{ST.index}),[2 3 1]);
       
    elseif isnumeric(station_id)
    
       ST.index = station_id;
-      ST.name  = permute(vs_let(trih,'his-const','NAMST',{ST.index}),[2 3 1]);
+      ST.name  = permute(vs_let(trih,OPT.GrpName,OPT.ElmName,{ST.index}),[2 3 1]);
       
    end
    
@@ -112,19 +123,18 @@ function varargout = vs_trih_station(trih,varargin)
 
    if iostat==1
    
-      if ~(size(ST.index,1)==0)
+      if (~(size(ST.index,1)==0) && strcmp(trih.SubType,'Delft3D-trih'))
+         ST.m         = squeeze(vs_let(trih,OPT.GrpName,'MNSTAT',{1,ST.index}));
+         ST.n         = squeeze(vs_let(trih,OPT.GrpName,'MNSTAT',{2,ST.index}));
       
-         ST.m         = squeeze(vs_let(trih,'his-const','MNSTAT',{1,ST.index}));
-         ST.n         = squeeze(vs_let(trih,'his-const','MNSTAT',{2,ST.index}));
-      
-         ST.x         = squeeze(vs_let(trih,'his-const','XYSTAT',{1,ST.index}));
-         ST.y         = squeeze(vs_let(trih,'his-const','XYSTAT',{2,ST.index}));
+         ST.x         = squeeze(vs_let(trih,OPT.GrpName,'XYSTAT',{1,ST.index}));
+         ST.y         = squeeze(vs_let(trih,OPT.GrpName,'XYSTAT',{2,ST.index}));
          
-        %ST.grdang    = squeeze(vs_let(trih,'his-const','GRDANG',{1,ST.index}));
-         ST.angle     = squeeze(vs_let(trih,'his-const','ALFAS' ,{  ST.index}));
+        %ST.grdang    = squeeze(vs_let(trih,OPT.GrpName,'GRDANG',{1,ST.index}));
+         ST.angle     = squeeze(vs_let(trih,OPT.GrpName,'ALFAS' ,{  ST.index}));
          ST.angle_explanation = 'orientation (deg) ksi-axis (u velocity) w.r.t. pos. x-axis at water level point';
          
-         ST.kmax      = squeeze(vs_let(trih,'his-const','KMAX'));
+         ST.kmax      = squeeze(vs_let(trih,OPT.GrpName,'KMAX'));
 
       else
       
@@ -139,11 +149,11 @@ function varargout = vs_trih_station(trih,varargin)
       end   
       
       ST.FileName        = trih.FileName;
-      ST.Description     = 'Delft3d-FLOW monitoring point (*.obs) time serie.';
       ST.extracted_at    = datestr(now,31);
       ST.extracted_with  = 'vs_trih_station.m  of G.J. de Boer (gerben.deboer@wldelft.nl)';
       
    end
+
    
    %% Output
    %% ------------------------------
