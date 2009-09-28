@@ -351,7 +351,7 @@ catch %#ok<CTCH>
 end
 
 results2plot = {};
-if ismember(OPT.legenditems, 'Er')
+if any(ismember(OPT.legenditems, 'Er'))
     results2plot = {
         'Er: ',num2str(Er,'%8.2f'),' m^3/m^1'};
 end
