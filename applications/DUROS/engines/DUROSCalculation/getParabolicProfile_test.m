@@ -49,7 +49,7 @@ function testresult = getParabolicProfile_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
+%% $Description (Name = parabolic profile generation)
 % Publishable code that describes the test.
 
 %% $RunCode

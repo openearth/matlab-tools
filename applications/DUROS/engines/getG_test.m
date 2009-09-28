@@ -1,4 +1,4 @@
-function t = getG_test(t)
+% function t = getG_test(t)
 % GETG_TEST test defintion routine
 %
 % see also getG
@@ -31,25 +31,6 @@ function t = getG_test(t)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-%%
-if nargout ~= 1
-	% run test
-	evalin('caller', ['[result t] = mc_test(''' mfilename ''');']);
-	return
-end
-
-if nargin == 1
-	% optional custom evaluation of test
-    % evaluation 1: McT_ExactMatch
-    % round t similar to the one written in the test definition file
-    evalstr = var2evalstr(t);
-    eval(evalstr);
-    % run McT_ExactMatch
-    t = feval(@McT_ExactMatch, t);
-	return
-end
-
-%% create t-structure
 t.functionname = @getG;
 t.logfile = '';
 t.resultdir = '';

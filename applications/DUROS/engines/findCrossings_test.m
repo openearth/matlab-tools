@@ -1,4 +1,4 @@
-function t = findCrossings_test(t)
+% function t = findCrossings_test(t)
 % FINDCROSSINGS_TEST test defintion routine
 %
 % see also findCrossings
@@ -31,18 +31,6 @@ function t = findCrossings_test(t)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-%%
-if nargout ~= 1
-	% run test
-	evalin('caller', ['[result t] = mc_test(''' mfilename ''');']);
-	return
-end
-
-if nargin == 1
-	% optional custom evaluation of test
-	TODO('Write custom evaluation');
-	return
-end
 
 %% create t-structure
 t(1).functionname = @findCrossings;
