@@ -17,21 +17,21 @@ function varargout = vs_get_constituent_index(NFSstruct,varargin)
 % vs_get_constituent_index(NFSstruct)
 %    Displays the above tree on the command line.
 %
-% INDEX = vs_get_constituent_index(NFSstruct,'parameter') returns only 
+% INDEX = vs_get_constituent_index(NFSstruct,'parameter') returns only
 %    the subffield for parameter
 %
-% STRUCT                            = vs_get_constituent_index(NFSstruct,'parameter'); 
+% STRUCT                            = vs_get_constituent_index(NFSstruct,'parameter');
 %
-% [index,dim                      ] = vs_get_constituent_index(NFSstruct,'parameter'); 
-% [index,dim,elementname          ] = vs_get_constituent_index(NFSstruct,'parameter'); 
-% [index,dim,groupname,elementname] = vs_get_constituent_index(NFSstruct,'parameter'); 
+% [index,dim                      ] = vs_get_constituent_index(NFSstruct,'parameter');
+% [index,dim,elementname          ] = vs_get_constituent_index(NFSstruct,'parameter');
+% [index,dim,groupname,elementname] = vs_get_constituent_index(NFSstruct,'parameter');
 %
-% [index                          ] = vs_get_constituent_index(NFSstruct,'parameter','index'); 
-% [dim                            ] = vs_get_constituent_index(NFSstruct,'parameter','dim'); 
-% [groupname                      ] = vs_get_constituent_index(NFSstruct,'parameter','groupname'); 
-% [elementname                    ] = vs_get_constituent_index(NFSstruct,'parameter','elementname'); 
+% [index                          ] = vs_get_constituent_index(NFSstruct,'parameter','index');
+% [dim                            ] = vs_get_constituent_index(NFSstruct,'parameter','dim');
+% [groupname                      ] = vs_get_constituent_index(NFSstruct,'parameter','groupname');
+% [elementname                    ] = vs_get_constituent_index(NFSstruct,'parameter','elementname');
 %
-% Implemented are trihfile and trimfile
+% Implemented are trihfile and trimfile, also ada/hda WAQ files
 %
 %See also: VS_USE
 
@@ -39,7 +39,7 @@ function varargout = vs_get_constituent_index(NFSstruct,varargin)
 %   Copyright (C) 2006-2007 Delft University of Technology
 %       Gerben J. de Boer
 %
-%       g.j.deboer@tudelft.nl	
+%       g.j.deboer@tudelft.nl
 %
 %       Fluid Mechanics Section
 %       Faculty of Civil Engineering and Geosciences
@@ -60,7 +60,7 @@ function varargout = vs_get_constituent_index(NFSstruct,varargin)
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library; if not, write to the Free Software
 %   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA or 
+%   USA or
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
@@ -69,13 +69,17 @@ function varargout = vs_get_constituent_index(NFSstruct,varargin)
 % $Author$
 % $Revision$
 % $HeadURL$
+% 2009 sep 28: added implementation of WAQ ada/hda files [Yann Friocourt]
 
+if (~(strcmp(NFSstruct.SubType,'Delft3D-waq-map') || ...
+           strcmp(NFSstruct.SubType,'Delft3D-waq-history')))
    [m,n,k] = vs_mnk(NFSstruct);
-   
-%   Salinity            
-%   Sediment Mud        
-%   Turbulent energy    
-%   Energy dissipation  
+end
+
+%   Salinity
+%   Sediment Mud
+%   Turbulent energy
+%   Energy dissipation
 
    returntype = [];
 if nargin>1
@@ -116,18 +120,18 @@ IND = [];
 
      %no_constituents         = vs_get_elm_size(NFSstruct,constituent_elementname,4)
      %no_turbulent_quantities = vs_get_elm_size(NFSstruct,turbulence_elementname ,4)
-     
+
       no_constituents         = vs_let(NFSstruct,'map-const','LSTCI','quiet');
       no_turbulent_quantities = vs_let(NFSstruct,'map-const','LTUR' ,'quiet');
 
    elseif strcmp(NFSstruct.SubType,'Delft3D-trih')
-   
+
       %Groupname:his-const        Dimensions:(1)
       %  No attributes
       %    LSTCI           INTEGER *  4                  [   -   ]        ( 1 )
       %        Number of constituents
       %    LTUR            INTEGER *  4                  [   -   ]        ( 1 )
-      %        Number of turbulence quantities   
+      %        Number of turbulence quantities
       %    NAMCON          CHARACTE* 20                  [   -   ]        ( 1 )
       %        Name of constituents / turbulent quantities
       %    LSED            INTEGER *  4                  [   -   ]        ( 1 )
@@ -145,7 +149,7 @@ IND = [];
       %        Turbulent quantity per layer in station (zeta point)
 
       names                   = vs_let         (NFSstruct,'his-const','NAMCON','quiet');
-      
+
       groupname               = 'his-series';
       names                   = shiftdim(names,1); % remove first dummy dimension
       dim                     = 3; % for k=1 and k >1
@@ -154,48 +158,72 @@ IND = [];
 
      %no_constituents         = vs_get_elm_size(NFSstruct,constituent_elementname,4)
      %no_turbulent_quantities = vs_get_elm_size(NFSstruct,turbulence_elementname ,4)
-     
+
       no_constituents         = vs_let(NFSstruct,'his-const','LSTCI','quiet');
       no_turbulent_quantities = vs_let(NFSstruct,'his-const','LTUR' ,'quiet');
 
    elseif strcmp(NFSstruct.SubType,'Delft3D-com') & ~isempty(parameter)
 
       if strcmp(lower(parameter),'salinity')
-         IND.(parameter).index                   = 1; 
-         IND.(parameter).dim                     = 3; 
+         IND.(parameter).index                   = 1;
+         IND.(parameter).dim                     = 3;
          IND.(parameter).groupname               = 'DWQTIM';
          IND.(parameter).elementname             = 'RSAL';
       elseif strcmp(lower(parameter),'temperature')
-         IND.(parameter).index                   = 1; 
-         IND.(parameter).dim                     = 3; 
+         IND.(parameter).index                   = 1;
+         IND.(parameter).dim                     = 3;
          IND.(parameter).groupname               = 'DWQTIM';
          IND.(parameter).elementname             = 'RTEM';
       else
          error(['Parameter not implemented yet/not found in file: ',parameter])
       end
-      
+
    elseif strcmp(NFSstruct.SubType,'Delft3D-com') & isempty(parameter)
 
       parameter = 'salinity';
-         IND.(parameter).index                   = 1; 
-         IND.(parameter).dim                     = 3; 
+         IND.(parameter).index                   = 1;
+         IND.(parameter).dim                     = 3;
          IND.(parameter).groupname               = 'DWQTIM';
          IND.(parameter).elementname             = 'RSAL';
 
       parameter = 'temperature';
-         IND.(parameter).index                   = 1; 
-         IND.(parameter).dim                     = 3; 
+         IND.(parameter).index                   = 1;
+         IND.(parameter).dim                     = 3;
          IND.(parameter).groupname               = 'DWQTIM';
          IND.(parameter).elementname             = 'RTEM';
-         
-      parameter = [];      
+
+      parameter = [];
+
+   elseif (strcmp(NFSstruct.SubType,'Delft3D-waq-map') || ...
+           strcmp(NFSstruct.SubType,'Delft3D-waq-history'))
+
+      names                   = vs_let(NFSstruct,'DELWAQ_PARAMS','SUBST_NAMES','quiet');
+      names                   = shiftdim(names,1); % remove first dummy dimension
+      names                   = cellstr(names); 
+      groupname               = 'DELWAQ_RESULTS';
+      dim                     = 2; % for k=1 and k >1
+
+     %no_constituents         = vs_get_elm_size(NFSstruct,constituent_elementname,4)
+     %no_turbulent_quantities = vs_get_elm_size(NFSstruct,turbulence_elementname ,4)
+
+      no_constituents         = vs_let(NFSstruct,'DELWAQ_PARAMS','SIZES',{1},'quiet');
+
+      for i = 1:no_constituents
+          parameter = names{i};
+          IND.(parameter).index                   = 1;
+          IND.(parameter).dim                     = 2;
+          IND.(parameter).groupname               = 'DELWAQ_RESULTS';
+          IND.(parameter).elementname             = ['SUBST_' sprintf('%03d', i)];
+      end
+
+      parameter = [];
 
    else
-  
+
       error('Invalid NEFIS file for this action.');
 
    end
-   
+
    if strcmp(NFSstruct.SubType,'Delft3D-trim') | ...
       strcmp(NFSstruct.SubType,'Delft3D-trih')
       names                     = squeeze(names);
@@ -207,7 +235,7 @@ IND = [];
          IND.(name).groupname   = groupname;
          IND.(name).elementname = constituent_elementname;
       end
-      
+
       if k >1
       turbulent_quantities     = names(no_constituents+1:end,:);
       for in =1:size(turbulent_quantities,1)
@@ -219,7 +247,7 @@ IND = [];
       end
       end
    end
-   
+
    fldnames = fieldnames(IND);
 
    if    nargout==0
@@ -273,4 +301,4 @@ IND = [];
       else
          error('invalid argument combination')
       end
-   end      
+   end
