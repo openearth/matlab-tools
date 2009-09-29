@@ -100,6 +100,11 @@ if getDataFromDatabase
         
         contours = nc_varget(url, 'contour'); % if you want all lidar data use UCIT_getLidarMetaData
         
+        % temporary bugfix (should actually correct this in nc file)
+        temp = contours(:,3);
+        contours(:,3) = contours(:,4);
+        contours(:,4) = temp;
+        
     end
 
 
