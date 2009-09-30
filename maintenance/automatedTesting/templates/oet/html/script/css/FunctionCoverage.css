@@ -1,3 +1,15 @@
+strong {
+  margin: 4px;
+}
+
+table {
+  margin: 4px;
+}
+
+div {
+  overflow: auto;
+}
+
 PRE {
   font-size: 100%;
 }
