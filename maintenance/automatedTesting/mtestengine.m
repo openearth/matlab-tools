@@ -194,7 +194,7 @@ classdef mtestengine < handle
                 fnames{ifiles} = fullfile(files{ifiles,1},[files{ifiles,2} files{ifiles,3}]);
                 try
                     obj.tests(ifiles) = mtest('filename',fnames{ifiles});
-                catch me
+                catch me %#ok<*NASGU>
                     wrongfiles(ifiles) = true;
                 end
             end
@@ -458,7 +458,7 @@ classdef mtestengine < handle
                 catch me %#ok<NASGU>
                     cd(startdir);
                     if isdir(obj.tests(itests).rundir)
-                        fclose all
+                        fclose('all');
                         rmdir(obj.tests(itests).rundir,'s');
                     end
                     wrongtests(itests)=true;
@@ -470,7 +470,9 @@ classdef mtestengine < handle
             
             obj.tests(wrongtests) = [];            
             %% Get profiler information
-            obj.profInfo = mergeprofileinfo(obj.tests.profinfo);            
+            if min(size(obj.tests))>0
+                obj.profInfo = mergeprofileinfo(obj.tests.profinfo);
+            end
             %% print coverage html pages
             if obj.includecoverage
                 %% create coverage dir
@@ -500,11 +502,11 @@ classdef mtestengine < handle
                 rmdir(temptemplatedir,'s');
                 %% publish coverage files
                 fnames = {obj.profInfo.FunctionTable.FileName}';
-                oetfnames = fnames(strncmp(fnames,obj.maindir,length(obj.maindir)));
+                mainfnames = fnames(strncmpi(fnames,obj.maindir,length(obj.maindir)));
                 
                 obj.functionsrun = mtestfunction;
                 for ifunc = 1:length(obj.profInfo.FunctionTable)
-                    if ismember(obj.profInfo.FunctionTable(ifunc).FileName,oetfnames) &&...
+                    if ismember(obj.profInfo.FunctionTable(ifunc).FileName,mainfnames) &&...
                             ismember(obj.profInfo.FunctionTable(ifunc).Type,{'M-subfunction','M-function'})
                         %% Create mtestfunction object
                         obj.functionsrun(ifunc) = mtestfunction(obj.profInfo,ifunc);                       
@@ -786,7 +788,7 @@ classdef mtestengine < handle
             
             %% Write output file (replace .tpl with .html)
             [pt fname] = fileparts(tplfilename);
-            [emptydummy fname ext] = fileparts(fname);
+            [emptydummy fname ext] = fileparts(fname); %#ok<*ASGLU>
             if ~isempty(ext)
                 fullfname = fullfile(pt,[fname ext]);
             else
@@ -817,7 +819,7 @@ classdef mtestengine < handle
                         % #FUNCTIONHTML
                         % #FUNCTIONCOVERAGE
                         
-                        if isempty(strfind(obj.functionsrun(icall).filename,obj.maindir))
+                        if isempty(strfind(lower(obj.functionsrun(icall).filename),lower(obj.maindir)))
                             continue
                         end
                         tempstr = funcstr;
@@ -1003,7 +1005,6 @@ classdef mtestengine < handle
                 return
             end
             
-            return
             %% Loop tests
             finalstr = '';
             testid = find(testid);

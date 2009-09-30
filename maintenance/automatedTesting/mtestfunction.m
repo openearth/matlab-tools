@@ -209,7 +209,7 @@ classdef mtestfunction<handle
             s{end+1} = '</head>';
             s{end+1} = '<body>';
             
-            % Summary info
+            %% Summary info
             s{end+1} = ['<h2 class="ui-widget-header ui-state-active ui-corner-all">' obj.functionname '</h2>'];
             
             if obj.pfileflag && ~obj.mfileflag
@@ -281,7 +281,7 @@ classdef mtestfunction<handle
             end
             
             
-            s{end+1} = '<div class="ui-widget-content ui-corner-all">';
+            s{end+1} = '<div class="ui-widget-content ui-corner-all" style="overflow:auto;">';
             s{end+1} = sprintf('<strong>Function listing</strong><br/>');
             
             if ~obj.mfileflag || obj.filteredfileflag
