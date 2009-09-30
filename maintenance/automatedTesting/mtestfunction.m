@@ -210,7 +210,7 @@ classdef mtestfunction<handle
             s{end+1} = '<body>';
             
             %% Summary info
-            s{end+1} = ['<h2 class="ui-widget-header ui-state-active ui-corner-all">' obj.functionname '</h2>'];
+            s{end+1} = ['<div class="ui-widget-header ui-state-active ui-corner-all"><h4>' obj.functionname '</h4></div><br/>'];
             
             if obj.pfileflag && ~obj.mfileflag
                 s{end+1} =['<p><span class="warning">', sprintf('This is a P-file for which there is no corresponding M-file'), '</span></p>'];

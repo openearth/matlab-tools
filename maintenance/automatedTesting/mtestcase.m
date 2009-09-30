@@ -756,8 +756,8 @@ classdef mtestcase < handle
                 if ~isempty(include)
                     id = false(size(fcns));
                     for i = 1:length(include)
-                        id(~cellfun(@isempty,strfind(fcns,include{i})))=true;
-                        id(~cellfun(@isempty,strfind(fcnspath,include{i})))=true;
+                        id(~cellfun(@isempty,strfind(lower(fcns),lower(include{i}))))=true;
+                        id(~cellfun(@isempty,strfind(lower(fcnspath),lower(include{i}))))=true;
                     end
                 end
                 for i = 1:length(exclude)
@@ -1264,6 +1264,9 @@ classdef mtestcase < handle
             %% publish file
             tempcd = cd;
             cd(tempdir)
+            if datenum(version('-date')) >= datenum(2009,08,12)
+                intwarning('off');
+            end
             publish(tempfilename,publishoptions);
             cd(tempcd);
            
@@ -1274,7 +1277,7 @@ classdef mtestcase < handle
             delete(tempfilename);
             
             %% move output file
-            [dr fname] = fileparts(tempfilename);
+            [dr fname] = fileparts(tempfilename); %#ok<*ASGLU>
             if ~strcmp(fullfile(publishoptions.outputDir,[fname '.html']),outputname)
                 movefile(fullfile(publishoptions.outputDir,[fname '.html']),outputname);
             end

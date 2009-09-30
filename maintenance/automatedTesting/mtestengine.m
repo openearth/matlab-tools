@@ -333,6 +333,9 @@ classdef mtestengine < handle
                         button = obj.copymode;
                     else
                         button = questdlg({['The target directory is set to: ' obj.targetdir];'There are already files in this directory. What do you want to do with them?'},'Target dir not empty','Remove all files and dirs','Only remove files and keep svn information','Leave all my files there','Leave all my files there');
+                        if isempty(button)
+                            return
+                        end
                     end
                     switch button
                         case {'Leave all my files there','keep'}
