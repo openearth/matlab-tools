@@ -1,7 +1,7 @@
 function testresult = addXvaluesExactCrossings_test()
-% ADDXVALUESEXACTCROSSINGS_TEST  test defintion routine
+% ADDXVALUESEXACTCROSSINGS_TEST  test defintion for addXvaluesExactCrossings
 %  
-% More detailed description of the test goes here.
+% This function describes tests to check the basic working of addXValuesExactCrossings.
 %
 %
 %   See also addXvaluesExactCrossings 
@@ -49,8 +49,9 @@ function testresult = addXvaluesExactCrossings_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
-% Publishable code that describes the test.
+%% $Description (Name = addXvaluesExactCrossings test)
+% addXvaluesExactCrossings calculates the exact x-values of crossings between two lines. The basic
+% functionality is tested with four cases. See case descriptions for more information.
 
 %% $RunCode
 tr(1) = crosscase1;
@@ -65,79 +66,164 @@ testresult = all(tr);
 end
 
 function testresult = crosscase1()
-%% $Description (Name = simple cross)
+%% $Description (Name = simple crossing & EvaluateCode = true & IncludeCode = true)
+% First of all the routine should return the correct crossing between two lines. In this testcase we
+% take two simple lines (one horizontal and one linearly increasing):
 
-%% $RunCode
 x_new = [0 2]';
 z1_new = [1 1]';
 z2_new = [0 2]';
 
+figure('Color','w','Units','pixels','Position',[200 200 300 150]);
+hold on
+axis image
+title('testcase 1: simple crossing');
+plot(x_new,z1_new,'Color',[0.4 0.4 0.8]);
+plot(x_new,z2_new,'Color',[0.8 0.4 0.4]);
+xlim([0 4]);
+ylim([0 2]);
+%%
+% Of course the expected result of the testcase would be x = 1;
+
+%% $RunCode
+
 [x2add] = addXvaluesExactCrossings(x_new,z1_new,z2_new);
 
-testresult = x2add == 1;
+testresult = roundoff(x2add,8) == 1;
 
-%% $PublishResult
-figure('Color','w');
+%% $PublishResult (IncludeCode = false & EvaluateCode = true)
+% The following figure shows the result of the testcase:
+
+figure('Color','w','Units','pixels','Position',[200 200 300 150]);
 hold on
-plot(x_new,z1_new,'b');
-plot(x_new,z2_new,'r');
+axis image
+title('testcase 1: simple crossing - result');
+xlim([0 4]);
+ylim([0 2]);
+plot(x_new,z1_new,'Color',[0.4 0.4 0.8]);
+plot(x_new,z2_new,'Color',[0.8 0.4 0.4]);
 for i=1:length(x2add)
     plot(ones(1,2)*x2add(i),ylim,'LineStyle',':','Color','k');
+    text(min(xlim)+0.9*diff(xlim),min(ylim)+0.9*diff(ylim),['crossing : x=' num2str(x2add(i))],'HorizontalAlignment','right');
 end
-
+if isempty(x2add)
+    text(min(xlim)+0.9*diff(xlim),min(ylim)+0.9*diff(ylim),'crossing : No Crossings','HorizontalAlignment','right');
+end
 end
 
 function testresult = crosscase2()
-%% $Description (Name = No crossing)
-
-%% $RunCode
+%% $Description (Name = No crossing, same grid)
+% This testcase consists of a call to addXvaluesExactCrossings with two parallel horizontal lines.
 
 x_new = [0 2]';
 z1_new = [1 1]';
 z2_new = [2 2]';
 
+figure('Color','w','Units','pixels','Position',[200 200 300 150]);
+hold on
+axis image
+title('testcase 2: no crossing (horizontal)');
+plot(x_new,z1_new,'Color',[0.4 0.4 0.8]);
+plot(x_new,z2_new,'Color',[0.8 0.4 0.4]);
+xlim([0 4]);
+ylim([0 2]);
+
+%% $RunCode
+
+
 [x2add] = addXvaluesExactCrossings(x_new,z1_new,z2_new);
 
 testresult = isempty(x2add);
 
 %% $PublishResult
+% The following figure shows the result of the testcase:
 
+figure('Color','w','Units','pixels','Position',[200 200 300 150]);
+hold on
+axis image
+title('testcase 2: no crossing - result');
+xlim([0 4]);
+ylim([0 2]);
+plot(x_new,z1_new,'Color',[0.4 0.4 0.8]);
+plot(x_new,z2_new,'Color',[0.8 0.4 0.4]);
+for i=1:length(x2add)
+    plot(ones(1,2)*x2add(i),ylim,'LineStyle',':','Color','k');
+    text(min(xlim)+0.9*diff(xlim),min(ylim)+0.9*diff(ylim),['crossing : x=' num2str(x2add(i))],'HorizontalAlignment','right');
+end
+if isempty(x2add)
+    text(min(xlim)+0.9*diff(xlim),min(ylim)+0.9*diff(ylim),'crossing : No Crossings','HorizontalAlignment','right');
+end
 end
 
 function testresult = crosscase3()
-%% $Description (Name = Dealing with nans)
-
-%% $RunCode
+%% $Description (Name = NaN values)
+% Of course the function should not crash when the input contains NaN values:
 x_new = (0:2:4)';
 z1_new = [1 1 NaN]';
 z2_new = [NaN 0 2]';
 
+figure('Color','w','Units','pixels','Position',[200 200 300 150]);
+hold on
+axis image
+title('testcase 3: NaN values');
+plot(x_new,z1_new,'Color',[0.4 0.4 0.8]);
+plot(x_new,z2_new,'Color',[0.8 0.4 0.4]);
+xlim([0 4]);
+ylim([0 2]);
+
+%% $RunCode
+
 [x2add] = addXvaluesExactCrossings(x_new,z1_new,z2_new);
 
 testresult = isempty(x2add);
 
 %% $PublishResult
-
+figure('Color','w','Units','pixels','Position',[200 200 300 150]);
+hold on
+axis image
+title('testcase 3: NaN values - result');
+xlim([0 4]);
+ylim([0 2]);
+plot(x_new,z1_new,'Color',[0.4 0.4 0.8]);
+plot(x_new,z2_new,'Color',[0.8 0.4 0.4]);
+for i=1:length(x2add)
+    plot(ones(1,2)*x2add(i),ylim,'LineStyle',':','Color','k');
+    text(min(xlim)+0.9*diff(xlim),min(ylim)+0.9*diff(ylim),['crossing : x=' num2str(x2add(i))],'HorizontalAlignment','right');
+end
+if isempty(x2add)
+    text(min(xlim)+0.9*diff(xlim),min(ylim)+0.9*diff(ylim),'crossing : No Crossings','HorizontalAlignment','right');
+end
 end
 
 function testresult = crosscase4()
 %% $Description (Name = multiple crossings)
-
-%% $RunCode
+% Test the function with multiple crossings:
 x_new = (0:0.01:2*pi())';
 z1_new = cos(x_new);
 z2_new = zeros(size(x_new));
+
+figure('Color','w','Units','pixels','Position',[200 200 300 150]);
+hold on
+title('testcase 4: Multiple crossings');
+plot(x_new,z1_new,'Color',[0.4 0.4 0.8]);
+plot(x_new,z2_new,'Color',[0.8 0.4 0.4]);
+axis image
+
+%% $RunCode
 
 [x2add] = addXvaluesExactCrossings(x_new,z1_new,z2_new);
 
 testresult = length(x2add)==2;
 
 %% $PublishResult
-figure('Color','w');
+figure('Color','w','Units','pixels','Position',[200 200 300 150]);
 hold on
-plot(x_new,z1_new,'b');
-plot(x_new,z2_new,'r');
+title('testcase 4: Multiple crossings - result');
+plot(x_new,z1_new,'Color',[0.4 0.4 0.8]);
+plot(x_new,z2_new,'Color',[0.8 0.4 0.4]);
+axis image
 for i=1:length(x2add)
     plot(ones(1,2)*x2add(i),ylim,'LineStyle',':','Color','k');
+    text(x2add(i),min(ylim)+0.1*diff(ylim),['x = ' num2str(x2add(i),'%0.2f')]);
 end
 end

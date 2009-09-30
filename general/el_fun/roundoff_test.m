@@ -1,7 +1,7 @@
 function testresult = roundoff_test()
-% ROUNDOFF_TEST  test defintion routine
+% ROUNDOFF_TEST  Unit test definition for roundoff
 %  
-% More detailed description of the test goes here.
+% This function defines a unittest for the roundoff function.
 %
 %
 %   See also roundoff 
@@ -50,7 +50,13 @@ function testresult = roundoff_test()
 % $Keywords: $
 
 %% $Description (Name = roundoff unit test)
-% Publishable code that describes the test.
+% The roundoff unittest tests three ways to use roundoff:
+%
+% * normal
+% * ceil
+% * floor
+%
+% Each testcase contains several calls to roundoff trying to roundoff pi().
 
 %% $RunCode
 
@@ -59,15 +65,13 @@ tr(2) = roundofffloortest;
 tr(3) = roundoffceiltest;
 
 testresult = all(tr);
-
-%% $PublishResult
-% Publishable code that describes the test.
-
 end
 
 function testresult = roundoffnormaltest()
-%% $Description (Name = normal)
-%round pi (mode = normal)
+%% $Description (Name = normal & IncludeCode = true & EvaluateCode = false)
+% round pi (mode = normal). We round pi at -1 to 5 digits. The result should look like this:
+
+Xround = [0 3 3.1 3.14 3.142 3.1416 3.14159];
 
 %% $RunCode
 X = pi();
@@ -77,17 +81,16 @@ res = nan(size(n));
 for i=1:length(res)
     res(i) = roundoff(X,n(i));
 end
-Xround = [0 3 3.1 3.14 3.142 3.1416 3.14159];
 
 testresult = all(res==Xround);
-
-%% $PublishResult
-
 end
 
 function testresult = roundofffloortest()
 %% $Description (Name = floor)
-%round pi (mode = floor)
+% round pi (mode = floor). We round pi at -1 to 5 digits in floor mode. The result should look like
+% this:
+
+Xround = [0 3 3.1 3.14 3.141 3.1415 3.14159];
 
 %% $RunCode
 X = pi();
@@ -97,17 +100,16 @@ res = nan(size(n));
 for i=1:length(res)
     res(i) = roundoff(X,n(i),'floor');
 end
-Xround = [0 3 3.1 3.14 3.141 3.1415 3.14159];
 
 testresult = all(res==Xround);
-
-%% $PublishResult
-
 end
 
 function testresult = roundoffceiltest()
 %% $Description (Name = ceil)
-%round pi (mode = ceil)
+% round pi (mode = ceil). We round pi at -1 to 5 digits in ceil mode. The result should look like
+% this:
+
+Xround = [10 4 3.2 3.15 3.142 3.1416 3.14160];
 
 %% $RunCode
 X = pi();
@@ -117,10 +119,6 @@ res = nan(size(n));
 for i=1:length(res)
     res(i) = roundoff(X,n(i),'ceil');
 end
-Xround = [10 4 3.2 3.15 3.142 3.1416 3.14160];
 
 testresult = all(res==Xround);
-
-%% $PublishResult
-
 end
