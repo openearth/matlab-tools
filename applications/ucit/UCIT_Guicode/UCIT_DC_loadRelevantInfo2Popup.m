@@ -85,8 +85,14 @@ elseif type==1&&PopupNR==2
     end
 
     % get info from database  
-    areanames = nc_varget(datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup(objTag),datatypes.transect.names))}, 'areaname');
-    areas = unique(cellstr(areanames));
+    
+    if strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),'Jarkus Data')
+        % get from single netCDF file
+        areanames = nc_varget(datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup(objTag),datatypes.transect.names))}, 'areaname');
+        areas = unique(cellstr(areanames));
+    else
+        areas = {'Oregon','Washington'};
+    end
     
     % manufacture the string for in the popup menu
     string{max(size(areas))+1}=[]; string{1}='Select area ...';

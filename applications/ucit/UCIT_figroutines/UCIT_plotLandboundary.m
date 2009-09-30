@@ -13,11 +13,11 @@ function UCIT_plotLandboundary(datatypeinfo,landcolor,seacolor)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
-%   Mark van Koningsveld       
+%   Mark van Koningsveld
 %   Ben de Sonneville
 %
 %       M.vankoningsveld@tudelft.nl
-%       Ben.deSonneville@Deltares.nl	
+%       Ben.deSonneville@Deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -67,11 +67,22 @@ if tryldb
             shph=plot(X,Y,'k','linewidth',1);
 
         elseif strcmp(datatypeinfo,'Lidar Data US');
-            ldb=landboundary('read',which(['OR_coast_UTM5.ldb']));
-            fillpolygon(ldb,'k',[1 1 0.6],100,-100); hold on;
-            ldb2=landboundary('read',which(['ref20OR.ldb'])); % this is their reference line
-            plot(ldb2(:,1),ldb2(:,2),'color','r','linewidth',2);
-            axis equal;axis(1E6*[0.3382    0.4796    4.6537    5.1275])
+            area = UCIT_DC_getInfoFromPopup('TransectsArea');
+            switch area
+                case {'or'}
+                    ldb1=landboundary('read',which(['OR_coast_UTM5.ldb']));
+                    ldb2=landboundary('read',which(['ref20OR.ldb'])); % this is their reference line
+                    axis_settings = [0.3382    0.4796    4.6537    5.1275];
+                case {'wa'}
+                    ldb1=landboundary('read',which(['WA_coast1_UTM.ldb']));
+                    axis_settings = [ 0.348559907834101   0.485080645161290   5.098611111111111   5.399488304093568];
+            end
+            fillpolygon(ldb1,'k',[1 1 0.6],100,-100); hold on;
+            if exist('ldb2')
+                plot(ldb2(:,1),ldb2(:,2),'color','r','linewidth',2);
+            end
+            axis equal;
+            axis(1E6*[axis_settings])
 
         elseif ismember(datatypeinfo,{...
                 'AHN Hollandse kust', ...
@@ -102,9 +113,9 @@ if tryldb
                 shph=plot(X,Y,'k','linewidth',1);
             end
             view(2);
-%             xlabel('Easting (m, RD)','fontsize',9);
-%             ylabel('Northing (m, RD)','fontsize',9);
-%             kmAxis(gca,[50 50]);
+            %             xlabel('Easting (m, RD)','fontsize',9);
+            %             ylabel('Northing (m, RD)','fontsize',9);
+            %             kmAxis(gca,[50 50]);
         else
             [X,Y]=landboundary('read',which([datatypeinfo '.ldb']));
             shph=plot(X,Y,'k','linewidth',1);
