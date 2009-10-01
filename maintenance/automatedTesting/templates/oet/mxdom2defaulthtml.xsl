@@ -118,30 +118,6 @@ To make changes, update the M-file and republish this document.
 <xsl:template name="stylesheet">
   <style>
 
-body {
-  background: white;
-  color: black;
-  font-family: arial;
-  margin: 0;
-  padding: 1ex;
-  font-size: 12px;
-}
-
-h1 {
-	font-family: arial;
-	background: transparent;
-	color: #008FC5;
-	font-size: 24px;
-	text-align: center;
-}
-
-h2 {
-	font-family: arial;
-	background: transparent;
-	color: #008FC5;
-	font-size: 12px;
-	font-weight: bold;
-}
 
 /* Make the text shrink to fit narrow windows, but not stretch too far in 
 wide windows. */ 

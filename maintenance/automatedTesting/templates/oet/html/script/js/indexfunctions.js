@@ -1,6 +1,6 @@
 	function correctimages(htmldiv)
 		{
-		$(htmldiv.children('div')[0]).children('img').each(function() 
+		htmldiv.find('img').each(function() 
 			{
 			$(this).attr('src',"html/"+$(this).attr('relsrc'))
 			})

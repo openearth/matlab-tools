@@ -39,7 +39,7 @@ h1 {
 
 #content {
 	float		:left;
-	height		: 700px;
+	height		: 100%;
 	width		: 100%;
 }
 
