@@ -82,13 +82,15 @@ end
 % id = find (transectIDs  == str2num(TransectID) & strcmp(Area,d.area));
 % TransectID = char(d.transectID(id));
 
-id = find (str2double(d.transectID)  == str2num(TransectID) & strcmp(Area,d.area));
-
+if strcmp(DataType,'Jarkus Data')
+    id = find (str2double(d.transectID)  == str2num(TransectID) & strcmp(Area,d.area));
+else
+    id = find (str2double(d.transectID)  == str2num(TransectID));
+end
 curRay = findobj(rayH,'tag',[DataType '_' Area '_' TransectID '_' datestr(d.year(1) + datenum(1970,1,1))]);
 
 if isempty(curRay)
     fh = findobj('tag','mapWindow');figure(fh);
-    id = find(str2double(d.transectID) == str2double(TransectID) & strcmp(Area,d.area));
     curRay = line([d.contour((id),1) d.contour(id,2)],[d.contour(id,3) d.contour(id,4)],'color','g','tag',[DataType '_' Area '_' TransectID '_' datestr(d.year(1) + datenum(1970,1,1))],'linewidth',2);
 end
 set(rayH,'color',[1 0 0],'linewidth',1.0);

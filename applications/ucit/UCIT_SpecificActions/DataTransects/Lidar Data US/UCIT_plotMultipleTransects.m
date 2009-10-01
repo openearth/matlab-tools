@@ -88,6 +88,7 @@ counter = 1;
 
 for i=1:length(years)
     try
+        url = url{strcmp(datatypes.transect.areas{2},UCIT_DC_getInfoFromPopup('TransectsArea'))};
         transect = readLidarDataNetcdf(url, UCIT_DC_getInfoFromPopup('TransectsArea'), UCIT_DC_getInfoFromPopup('TransectsTransectID'),years(i));
     end
     if exist('transect') & ~all(isnan(transect.zi))

@@ -83,6 +83,7 @@ set(rayH(IB),'color','b');
 
 datatypes = UCIT_getDatatypes;
 url = datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
+url = url{strcmp(datatypes.transect.areas{2},UCIT_DC_getInfoFromPopup('TransectsArea'))};
 
 % get data
 crossShoreCoordinate = nc_varget(url, 'cross_shore');
@@ -115,7 +116,7 @@ else
 
     % use prepare UCIT_prepareFigure to give it the UCIT look and feel
     figure(findobj('tag','Dotfig')) % make the figure current is apparently needed to actually make the repositioning statement work
-    [fh]=UCIT_prepareFigureN(2, fh, 'UR', ah);set(fh,'visible','off')
+    [fh]=UCIT_prepareFigureN(0, fh, 'UR', ah);set(fh,'visible','off')
 
     figure(findobj('tag','Dotfig')) % make the figure current is apparently needed to actually make the repositioning statement work
     set(findobj('tag','Dotfig'),'position',UCIT_getPlotPosition('UR'));

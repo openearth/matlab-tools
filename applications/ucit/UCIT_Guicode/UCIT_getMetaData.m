@@ -61,11 +61,10 @@ end
 if ~isempty(d) % Check to see if some data is available in d ...
     % ... if the datatype info as well as the soundingID data matches with the
     % values in the gui the data will not have to be collected again
-    if ~strcmp(d.datatypeinfo(1), UCIT_DC_getInfoFromPopup('TransectsDatatype')) && ...
-            ( ~strcmp(d.soundingID(1), UCIT_DC_getInfoFromPopup('TransectsSoundingID')) || ...
-            ~strcmp(d.year(1), UCIT_DC_getInfoFromPopup('TransectsSoundingID')) )
+    if ~strcmp(d.datatypeinfo(1), UCIT_DC_getInfoFromPopup('TransectsDatatype')) || ...
+            ( ~strcmp(d.area(1), UCIT_DC_getInfoFromPopup('TransectsArea')))
         % ... if there is not a match the data will have to be collected again
-        disp('data need to be collected from database again ... please wait!')
+        disp('data needs to be collected from database again ... please wait!')
         getDataFromDatabase = true;
     end
 else % ... if there is no data in d the data will have to be collected again
@@ -77,7 +76,8 @@ if getDataFromDatabase
 
     datatypes = UCIT_getDatatypes;
     url = datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
-
+    url = url{strcmp(datatypes.transect.areas{2},UCIT_DC_getInfoFromPopup('TransectsArea'))};
+    
     crossshore = nc_varget(url, 'cross_shore');
     alongshore = nc_varget(url, 'alongshore');
     areacodes  = nc_varget(url, 'areacode');
@@ -87,7 +87,7 @@ if getDataFromDatabase
 
     areanames = cellstr(areanames);
     transectID = cellstr(num2str(ids));
-    soundingID = cellstr(num2str(years)); % repmat({'01012001'},size(areanames));
+    soundingID = cellstr(num2str(years)); 
 
     if strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'), 'Jarkus Data')
         
@@ -96,22 +96,19 @@ if getDataFromDatabase
         contours(:,3) = nc_varget(url, 'y',[0 0],[length(alongshore) 1]);
         contours(:,4) = nc_varget(url, 'y',[0 length(crossshore)-1],[length(alongshore) 1]);
         
+
     elseif strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'), 'Lidar Data US')
         
         contours = nc_varget(url, 'contour'); % if you want all lidar data use UCIT_getLidarMetaData
-        
-        % temporary bugfix (should actually correct this in nc file)
-        temp = contours(:,3);
-        contours(:,3) = contours(:,4);
-        contours(:,4) = temp;
-        
+        d.area = repmat({UCIT_DC_getInfoFromPopup('TransectsArea')},length(areanames),1);
+                
     end
 
 
 
     d.datatypeinfo = repmat({UCIT_DC_getInfoFromPopup('TransectsDatatype')},length(alongshore),1);
     d.contour =  [contours(:,1) contours(:,2) contours(:,3) contours(:,4)];
-    d.area = areanames;
+    
     d.areacode = areacodes;
     d.soundingID = soundingID;
     d.transectID = transectID;

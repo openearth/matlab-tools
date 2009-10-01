@@ -78,12 +78,13 @@ USGSParameters      = {'Significant wave height','Peak wave period','Wave length
 USGSParametersshort = {'H_s','T_p','L_0','Shoreline','Shoreline change since 1930','\beta','Bias','Z_m_h_w'};
 selecteditems       = get(findobj('Tag','Input'),'Value');
 
-lat=get(findobj('tag','lattitude'),'value');
-refline=get(findobj('tag','refline'),'value');
+lat = get(findobj('tag','lattitude'),'value');
+refline = get(findobj('tag','refline'),'value');
+flipaxis = get(findobj('tag','flipaxis'),'value');
 
 % find right transectnumbers from gui
-a = find (str2double(d.transectID) == get(findobj('Tag','beginTransect'),'value'));
-b = find (str2double(d.transectID) == get(findobj('Tag','endTransect'),'value'));
+a = get(findobj('Tag','beginTransect'),'value');
+b = get(findobj('Tag','endTransect'),'value');
 
 if lat==1 && refline==1
     errordlg('Select either lattitude or distance along reference line')
@@ -93,7 +94,7 @@ else
     sp4 = figure; ah4 = axes;
     set(sp4, 'visible','off', 'Units','normalized')
     set(sp4, 'tag','par','name','UCIT - Parameter selection');
-    [sp4, ah] =  UCIT_prepareFigureN(2, sp4, 'UL', ah4);
+    [sp4, ah] =  UCIT_prepareFigureN(0, sp4, 'UL', ah4);
     set(findobj('tag','par'), 'Position',UCIT_getPlotPosition('UL'));
 
     counter=0;
@@ -181,10 +182,10 @@ else
         title([]);
         font=12-length(selecteditems);
         set(gca, 'fontsize',font);
-        if x(1) < x(end)
-            xlim([x(1) x(end)])
-        else
-            xlim([x(end) x(1)])
+        if ~isnan(x(1)) && ~isnan(x(end)) && x(1) < x(end)
+            xlim([x(1) x(end)]);
+        elseif ~isnan(x(1)) && ~isnan(x(end)) &&  x(1) > x(end)
+            xlim([x(end) x(1)]);
         end
 
         % make labels
@@ -204,6 +205,10 @@ else
         results(counter).y = y;
         clear x y
     end
+    if flipaxis
+        set(gca,'xdir','reverse');
+    end
+    
     set(findobj('tag','par'), 'visible', 'on');    
     figure(findobj('tag','par'))
     set(findobj('tag','par'), 'Position', UCIT_getPlotPosition('UL'));

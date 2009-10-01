@@ -91,7 +91,7 @@ elseif type==1&&PopupNR==2
         areanames = nc_varget(datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup(objTag),datatypes.transect.names))}, 'areaname');
         areas = unique(cellstr(areanames));
     else
-        areas = {'Oregon','Washington'};
+        areas = datatypes.transect.areas{2};
     end
     
     % manufacture the string for in the popup menu
@@ -112,12 +112,22 @@ elseif type==1&&PopupNR==3
     objTag='TransectsDatatype';
     
     % get info from database   
-    areanames = nc_varget(datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup(objTag),datatypes.transect.names))}, 'areaname');
-    ids = nc_varget(datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup(objTag),datatypes.transect.names))}, 'id');
-    id_match = cellfun(@(x) (strcmp(x, UCIT_DC_getInfoFromPopup('TransectsArea'))==1), {cellstr(areanames)}, 'UniformOutput',false);
-    transectIDs = {ids(id_match{1})- unique(round(ids(id_match{1})/1000000))*1000000}; % convert back from uniqu id
-
-        
+    
+    if strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),'Jarkus Data')
+        areanames = nc_varget(datatypes.transect.urls{strcmp(UCIT_DC_getInfoFromPopup(objTag),datatypes.transect.names)}, 'areaname');
+        ids = nc_varget(datatypes.transect.urls{strcmp(UCIT_DC_getInfoFromPopup(objTag),datatypes.transect.names)}, 'id');
+        id_match = cellfun(@(x) (strcmp(x, UCIT_DC_getInfoFromPopup('TransectsArea'))==1), {cellstr(areanames)}, 'UniformOutput',false);
+        transectIDs = {ids(id_match{1})- unique(round(ids(id_match{1})/1000000))*1000000}; % convert back from uniqu id
+    else
+        areanames = datatypes.transect.areas{2};
+        urls = datatypes.transect.urls{strcmp(UCIT_DC_getInfoFromPopup(objTag),datatypes.transect.names)};
+        try
+            transectIDs = {nc_varget(urls{strcmp(datatypes.transect.areas{2},UCIT_DC_getInfoFromPopup('TransectsArea'))}, 'id')};
+        catch
+            errordlg('Please check links to NetCDF files in ucit_getDatatypes');
+        end
+    end
+           
     % manufacture the string for in the popup menu
     string{max(size(transectIDs))+1}=[]; string{1}='Select transect ID ...';
     for i = 1:max(size(transectIDs))
@@ -132,8 +142,14 @@ elseif type==1&&PopupNR==4
     % *** set TransectsSoundingID
     % get info from database
     objTag='TransectsDatatype';
-    years = nc_varget(datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup(objTag),datatypes.transect.names))}, 'time');    
-    soundingIDs = {datestr(years+datenum(1970,1,1))};
+    if strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),'Jarkus Data')
+        years = nc_varget(datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup(objTag),datatypes.transect.names))}, 'time');
+    else
+        urls = datatypes.transect.urls{strcmp(UCIT_DC_getInfoFromPopup(objTag),datatypes.transect.names)};
+        years = nc_varget(urls{strcmp(datatypes.transect.areas{2},UCIT_DC_getInfoFromPopup('TransectsArea'))}, 'time');
+    end
+     
+     soundingIDs = {datestr(years+datenum(1970,1,1))};
         
     % manufacture the string for in the popup menu
     string{max(size(soundingIDs))+1}=[]; string{1}='Select date ...';

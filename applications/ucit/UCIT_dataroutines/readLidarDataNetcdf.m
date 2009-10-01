@@ -94,7 +94,7 @@ if (nargin == 4)
     end
     % next find the alongshore indices
     alongshoreIndex = transectId == id;
-    id_index = find(areaIndex & alongshoreIndex);
+    id_index = find(alongshoreIndex); % areaIndex & 
     if isempty(id_index)
         error(['transect not found with id: ' num2str(transectId)]);
     end    

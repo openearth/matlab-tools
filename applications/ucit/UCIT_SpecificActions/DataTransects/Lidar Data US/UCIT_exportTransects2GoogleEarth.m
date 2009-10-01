@@ -93,14 +93,14 @@ counter = 1;
 for j = 1 : 3: length(transectcontours)-1
     KMLline([lat(j) lat(j+1)],[lon(j) lon(j+1)],'fileName',[filename '_' num2str(j) '_1.kml'],'fillColor',jet(5),'fillAlpha',[1 0 1 0 1],'lineColor',[1 1 1],'lineWidth',[1],'lineAlpha',[0.5]);
     KMLline([lat(j) lat(j)]',[lon(j) lon(j)]',[0 35]','fileName',[filename '_' num2str(j) '_2.kml'],'lineColor',[1 1 1]) ;
-    KMLtext(lat(j),lon(j),['Lidar transect ' num2str(str2double(transectids{counter}))],40,'fileName',[filename '_' num2str(j)  '_3.kml']);
-    KMLmerge_files('fileName',[filename '-' num2str(counter) '.kml'],'sourceFiles',{[filename '_' num2str(j) '_1.kml'] [filename '_' num2str(j) '_2.kml'] [filename '_' num2str(j) '_3.kml']});
+    KMLtext(lat(j),lon(j),[num2str(str2double(transectids{counter}))],40,'fileName',[filename '_' num2str(j)  '_3.kml']);
+    KMLmerge_files('fileName',[transectids{counter} '.kml'],'sourceFiles',{[filename '_' num2str(j) '_1.kml'] [filename '_' num2str(j) '_2.kml'] [filename '_' num2str(j) '_3.kml']});
     delete([filename '_*.kml']);
-    sourceFiles{counter}=[filename '-' num2str(counter) '.kml'];
+    sourceFiles{counter}=[transectids{counter} '.kml'];
     counter = counter + 1;
 end
 KMLmerge_files('fileName',[filename '.kml'],'sourceFiles',sourceFiles);
-delete([filename '-*.kml']);
+delete(['*.kml']);
 
 %% Run kml file in Google Earth
 eval(['!', filename '.kml']);

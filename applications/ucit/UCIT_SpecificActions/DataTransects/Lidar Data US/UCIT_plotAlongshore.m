@@ -101,13 +101,13 @@ UIControls.Handle(7)         = uicontrol('Parent',hpBottom,'Style','listbox','un
     'String',USGSParameters,'max',2,'Tag','Input');
 
 % Pushbutton 1 lower panel
-UIControls.Handle(8)     = uicontrol('Parent',hpBottom,'Style','pushbutton','units','normalized','String','Preview',...
-    'Position',[0.6 .4 .3 .15], 'FontSize',8,'FontWeight','bold','Enable','on','Tag','text6','Callback','UCIT_clbPlotUSGS');
+UIControls.Handle(8)     = uicontrol('Parent',hpBottom,'Style','pushbutton','units','normalized','String','Plot',...
+    'Position',[0.6 .17 .15 .2], 'FontSize',8,'FontWeight','bold','Enable','on','Tag','text6','Callback','UCIT_clbPlotUSGS');
 
 % Pushbutton 2 lower panel
 
 UIControls.Handle(8)     = uicontrol('Parent',hpBottom,'Style','pushbutton','units','normalized','String','Export',...
-    'Position',[0.6 .2 .3 .15], 'FontSize',8,'FontWeight','bold','Enable','on','Tag','text7','Callback','UCIT_saveDataUS');
+    'Position',[0.8 .17 .15 .2], 'FontSize',8,'FontWeight','bold','Enable','on','Tag','text7','Callback','UCIT_saveDataUS');
 
 % Check box 1 lower panel
 UIControls.Handle(9) = uicontrol('Parent',hpBottom,'Style','check','units','normalized','String',' Relative to lattitude',...
@@ -116,6 +116,10 @@ UIControls.Handle(9) = uicontrol('Parent',hpBottom,'Style','check','units','norm
 % Check box 2 lower panel
 UIControls.Handle(9) = uicontrol('Parent',hpBottom,'Style','check','units','normalized','String',' Relative to reference line',...
     'Position',[0.6 .60 .3 .15], 'FontSize',8,'Enable','on','Tag','refline','BackgroundColor',[1 1 1],'callback','UCIT_toggleCheckBoxes');
+
+% Check box 3 lower panel
+UIControls.Handle(9) = uicontrol('Parent',hpBottom,'Style','check','units','normalized','String',' Flip horizontal axis',...
+    'Position',[0.6 .45 .3 .15], 'FontSize',8,'Enable','on','Tag','flipaxis','BackgroundColor',[1 1 1],'callback','UCIT_toggleCheckBoxes');
 
 set(fig100,'visible','on')
 

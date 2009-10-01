@@ -69,13 +69,13 @@ if tryldb
         elseif strcmp(datatypeinfo,'Lidar Data US');
             area = UCIT_DC_getInfoFromPopup('TransectsArea');
             switch area
-                case {'or'}
+                case {'Oregon'}
                     ldb1=landboundary('read',which(['OR_coast_UTM5.ldb']));
                     ldb2=landboundary('read',which(['ref20OR.ldb'])); % this is their reference line
                     axis_settings = [0.3382    0.4796    4.6537    5.1275];
-                case {'wa'}
+                case {'Washington'}
                     ldb1=landboundary('read',which(['WA_coast1_UTM.ldb']));
-                    axis_settings = [ 0.348559907834101   0.485080645161290   5.098611111111111   5.399488304093568];
+                    axis_settings = [0.367164048997129   0.446396990873151   5.125163267511952   5.370968814517868];
             end
             fillpolygon(ldb1,'k',[1 1 0.6],100,-100); hold on;
             if exist('ldb2')

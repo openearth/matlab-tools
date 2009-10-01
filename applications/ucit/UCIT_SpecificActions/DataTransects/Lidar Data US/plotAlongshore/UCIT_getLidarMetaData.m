@@ -46,6 +46,7 @@ function [d] = UCIT_getLidarMetaData
 
 datatypes = UCIT_getDatatypes;
 url = datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
+url = url{strcmp(datatypes.transect.areas{2},UCIT_DC_getInfoFromPopup('TransectsArea'))};
 
 d = get(findobj('tag','UCIT_mainWin'),'UserData');
 
@@ -82,7 +83,7 @@ if ~isfield(d,'shorepos')
 
     % make d-structure
     d.datatypeinfo = repmat({UCIT_DC_getInfoFromPopup('TransectsDatatype')},length(alongshore),1);
-    d.contour =  [contours(:,1) contours(:,2) contours(:,4) contours(:,3)];
+    d.contour =  [contours(:,1) contours(:,2) contours(:,3) contours(:,4)];
     d.area = areanames;
     d.areacode = areacodes;
     d.soundingID = soundingID;

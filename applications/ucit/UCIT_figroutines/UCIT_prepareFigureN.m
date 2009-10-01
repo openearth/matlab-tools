@@ -49,7 +49,7 @@ switch type
         
         % standard matlab icons are used
     
-    case 1
+    case 1 % this is adapted for ucit_plotOverview
         delete(findall(fh,'Type','uitoolbar'));
         tbh = uitoolbar;
         h = uitoggletool(tbh,'Separator','off','HandleVisibility','on','ToolTipString','Zoom In');
@@ -87,6 +87,7 @@ switch type
         set(h,'ClickedCallback',str);
         set(h,'Tag','UIToggleToolZoomOut');
         set(h,'cdata',c.ico.zoomout16);
+        
         
 end
 
