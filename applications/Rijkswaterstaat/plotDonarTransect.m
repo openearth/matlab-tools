@@ -15,6 +15,7 @@ function OPT = plotDonarTransect(NFSstruct, varargin)
 %   * save           0/1
 %   * substance      'sea_surface_salinity'/'concentration_of_suspended_matter_in_sea_water'
 %   * cco            location of cco file for WAQ map files
+%   * log            use log10(concentration) for plots
 %
 % Example:
 % plotDonarTransect(NFSstruct, 'substance', 'sea_surface_salinity', ...
@@ -32,6 +33,7 @@ function OPT = plotDonarTransect(NFSstruct, varargin)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
+% 2009 oct 1: allow for use of log10(concentrations) instead of concentrations [Yann Friocourt]
 
 %
 
@@ -71,6 +73,7 @@ OPT.substance = 'concentration_of_suspended_matter_in_sea_water';
 OPT.save = 1;
 OPT.prefix = '';
 OPT.cco = '';
+OPT.log = 0;
 
 OPT = setProperty(OPT, varargin{:});
 
@@ -165,6 +168,9 @@ elseif (strcmpi(MODEL.NFtype, 'Delft3D-waq-map'))
 else
     error('Routine only implemented for FLOW or WAQ map (NEFIS) files.');
 end
+if OPT.log
+    MODEL.data = log10(MODEL.data);
+end
 MODEL.name = NFSstruct.FileName;
 [MODEL.Y, M, D, H, MN, S] = datevec(MODEL.datenum);
 for iSeas = 1:4
@@ -184,6 +190,9 @@ for iTransect = OPT.iTransect0:OPT.iTransect1
             nc_varget([OPT.ncDir OPT.ncFile], 'time');
         OBS.data{iStation} = nc_varget([OPT.ncDir OPT.ncFile], ...
             OPT.substance);
+        if OPT.log
+            OBS.data{iStation} = log10(OBS.data{iStation});
+        end
         OBS.lon(iStation) = nc_varget([OPT.ncDir OPT.ncFile], 'lon');
         OBS.lat(iStation) = nc_varget([OPT.ncDir OPT.ncFile], 'lat');
         [OBS.xParis(iStation), OBS.yParis(iStation)] = ...
