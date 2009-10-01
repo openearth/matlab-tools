@@ -1,10 +1,10 @@
 function testresult = getFallVelocity_test()
-% GETFALLVELOCITY_TEST  One line description goes here
+% GETFALLVELOCITY_TEST  Unit test for getFallVelocity
 %  
-% More detailed description of the test goes here.
+% This test definition function describes a unit test for getFallVelocity.
 %
 %
-%   See also 
+%   See also getFallVelocity
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -49,67 +49,56 @@ function testresult = getFallVelocity_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = getFallVelocity_test)
-% Publishable code that describes the test.
+%% $Description (Name = getFallVelocity unit test)
+% The function getFallVelocity calculates the fall velocity of sediment in water according to (v. Rijn
+% et. al., 1993):
+%
+% $$^{10} \log \left( {{1 \over w}} \right) = a\left( {^{10} \log D_{50} } \right)^2  + b\left(^{10} \log D_{50} \right)  + c$$
+%
+% The default values for a, b and c correspond with the formulation for sediment in fresh water with
+% a temperature of 5 degrees:
+%
+% * a = 0.476
+% * b = 2.18
+% * c = 3.226
+%
+% This test checks the fallvelocity for various grain size diameters and with various coeeficients.
+% The unit test is successfull if the function returns a fall velocity of 0.0211 m/s (rounded at the 
+% fourth digit) with an input grain size diameter D50 = 200e-6 and coefficients a = 0.476, b = 2.18,
+% c = 3.226.
 
 %% $RunCode
-tr(1) = fallvelocitydefault;
-tr(2) = fallvelocitycoefficients;
-testresult = all(tr);
 
-%% $PublishResult
-% Publishable code that describes the test.
-end
+D50range = (50e-6:10e-6:450e-6)';
 
-function testresult = fallvelocitydefault()
-%% $Description (Name = default settings check)
+% calculate unit test:
+w = getFallVelocity('D50',200e-6,'a',0.476,'b',2.18,'c',3.226);
+testresult = roundoff(w,4)==0.0211;
 
-%% $RunCode
-D50 = (150:25:300)*1e-6;
+% First calculate with default settings
+wdef = getFallVelocity(D50range);
+w1 = getFallVelocity('D50',D50range,'a',0.476,'b',2.18,'c',3.19);
 
-expectedw = [...
-    0.0141227,...
-    0.0176015,...
-    0.0211321,...
-    0.0246782,...
-    0.0282143,...
-    0.0317219,...
-    0.035188];
+%% $PublishResult (EvalueateCode = true & IncludeCode = false)
+% The testresult consists of two parts:
+%
+% # Outcome of the unit test with default values
+% # Results of getFallVelocity with various values for the D50, a, b and c
+%
 
-try
-    w = getFallVelocity('D50',D50);
-    testresult = all(roundoff(w,7)==expectedw);
-catch me
-    testresult = false;
-end
+%% Rersult unit test
+% The result of the unit test was:
 
-%% $PublishResult
-% Nothing to publish
-end
+disp(num2str(w,'%0.4f'));
 
-function testresult = fallvelocitycoefficients()
-%% $Description (Name = manually set coeffs)
+%% Regression test
+% The following figure shows the outcome of getFallVelocity with various input parameters:
 
-%% $RunCode
-D50 = 0.000225;
-a = 0.5236;
-b = 2.398;
-c = 3.5486;
-
-expectedw = 0.017043;
-
-try
-    w = getFallVelocity(...
-        'a',a,...
-        'b',b,...
-        'c',c,...
-        'D50',D50);
-    testresult = roundoff(w,7)==expectedw;
-catch me
-    testresult = false;
-end
-
-%% $PublishResult
-% TODO
-
-end
+figure('Color','w');
+hold on
+grid on
+plot(D50range*1e6,wdef,'Color','k','DisplayName','c = 3.226, 5 degrees fresh water');
+plot(D50range*1e6,w1,'Color','b','DisplayName','c = 3.19, 10 degrees fresh water');
+legend('show','Location','NorthWest')
+xlabel('D_5_0 [um]');
+ylabel('w (fall velocity) [um/s]');

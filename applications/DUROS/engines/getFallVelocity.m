@@ -11,9 +11,9 @@ function w = getFallVelocity(varargin)
 %   Input:
 %   varargin = 'PropertyName' - PropertyValue pairs:
 %       D50 - Grain size D50 [m]
-%       a   - coefficient in fall velocity formulation
-%       b   - coefficient in fall velocity formulation
-%       c   - coefficient in fall velocity formulation
+%       a   - coefficient in fall velocity formulation (default = 0.476, corrosponding with fresh water 5 degrees)
+%       b   - coefficient in fall velocity formulation (default = 2.18, corrosponding with fresh water 5 degrees)
+%       c   - coefficient in fall velocity formulation (default = 3.226, corrosponding with fresh water 5 degrees)
 %
 %   Output:
 %   w   = fall velocity [m/s]
@@ -88,7 +88,7 @@ OPTstructArgs(2:2:2*id) = varargin(1:id);
 OPTstructArgs = [OPTstructArgs varargin(id+1:end)];
 
 % include the input in the OPT-structure
-[OPT, Set, Default] = setProperty(OPT, OPTstructArgs{:});
+OPT = setProperty(OPT, OPTstructArgs{:});
 
 %% fall velocity formulation
 % $$^{10} \log \left( {{1 \over w}} \right) = a\left( {^{10} \log D_{50} } \right)^2  + b\left( ^{10} \log D_{50} \right)  + c$$
