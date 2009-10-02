@@ -48,7 +48,7 @@ datatypes.transect.names = {'Jarkus Data' ,...
                         
 
 datatypes.transect.urls = {'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';...
-                           {'d:\oregon_7.nc', 'd:\washington_1.nc'}}; % 'http://blackburn.whoi.edu:8081/thredds/dodsC/usgs/afarris/washington_1.nc
+                           {'d:\oregon_7.nc', 'http://blackburn.whoi.edu:8081/thredds/dodsC/usgs/afarris/washington_1.nc'}};
                        
 datatypes.transect.areas = {'',{'Oregon','Washington'}};
 

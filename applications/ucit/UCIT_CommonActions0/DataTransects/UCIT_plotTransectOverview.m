@@ -44,8 +44,8 @@ tic
 toc
 
 %% now plot the transectcontours gathered in d
-
-UCIT_plotFilteredTransectContours(d);
-
+if ~isempty(d)
+    UCIT_plotFilteredTransectContours(d);
+end
 
 

@@ -49,9 +49,9 @@ fh=figure('tag','mapWindow');clf;
 ah=axes;
 [fh] = UCIT_prepareFigureN(0, fh, 'LL', ah, @UCIT_plotTransectContours, {get(findobj('tag','UCIT_mainWin'),'Userdata'), axis(ah)}, @UCIT_plotTransectContours, {get(findobj('tag','UCIT_mainWin'),'Userdata'), axis(ah)});
 set(fh,'name','UCIT - Transect overview');
-xlabel('x-distance [m]')
-ylabel('y-distance [m]', 'Rotation', 270, 'VerticalAlignment', 'top')
- 
+% xlabel('x-distance [m]')
+% ylabel('y-distance [m]', 'Rotation', 270, 'VerticalAlignment', 'top')
+set(gca, 'fontsize',8);
 handles = guidata(fh);
 
 axis equal;
@@ -84,7 +84,7 @@ if nargin == 4
     
 end
 
-title ({'Transects wrt regional coordinate system'});
+title ({''});
 drawnow
 [ph, ph2] = displayFilteredTransects(d);
 

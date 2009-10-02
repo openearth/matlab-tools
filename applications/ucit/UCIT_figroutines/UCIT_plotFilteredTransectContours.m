@@ -58,8 +58,9 @@ else % make figure new
     ah=axes;
     [fh] = UCIT_prepareFigureN(1, fh, 'LL', ah, @UCIT_plotFilteredTransectContours, {get(findobj('tag','UCIT_mainWin'),'Userdata'), axis(ah)}, @UCIT_plotTransectContours, {get(findobj('tag','UCIT_mainWin'),'Userdata'), axis(ah)});
     set(fh,'name','UCIT - Transect overview');
-    xlabel('x-distance [m]')
-    ylabel('y-distance [m]', 'Rotation', 270, 'VerticalAlignment', 'top')
+    set(gca, 'fontsize',8);
+%     xlabel('x-distance [m]')
+%     ylabel('y-distance [m]', 'Rotation', 270, 'VerticalAlignment', 'top')
 
 end
 
@@ -134,7 +135,7 @@ end
 
 stepsize = 1;
 
-title ({'Transects wrt regional coordinate system'}); % ['Thinning factor: ' num2str(stepsize)]
+title ({''}); % ['Thinning factor: ' num2str(stepsize)]
 drawnow
 [ph, ph2] = displayFilteredTransects(d, id, stepsize);
 
