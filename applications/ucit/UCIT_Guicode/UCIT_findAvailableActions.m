@@ -60,22 +60,22 @@ switch  type
         datatype =  {'Jarkus Data' , 'Lidar Data US'};
         DataRootCommon0 = [fileparts(which('ucit_commonactions0.dir'))  filesep 'DataTransects' filesep];
         DataRootCommon1 = [fileparts(which('ucit_commonactions1.dir'))  filesep 'DataTransects' filesep];
-        DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataTransects' filesep UCIT_DC_getInfoFromPopup('TransectsDatatype') filesep];
+        DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataTransects' filesep UCIT_getInfoFromPopup('TransectsDatatype') filesep];
     case 2
         objTag='GrActions';
-        datatype = DBgetUniqueFields('grid','datatype',{'datatypeinfo',UCIT_DC_getInfoFromPopup('GridsDatatype')});
+        datatype = DBgetUniqueFields('grid','datatype',{'datatypeinfo',UCIT_getInfoFromPopup('GridsDatatype')});
         DataRootCommon0 = [fileparts(which('ucit_commonactions0.dir'))  filesep 'DataGrids' filesep];
         DataRootCommon1 = [fileparts(which('ucit_commonactions1.dir'))  filesep 'DataGrids' filesep];
         DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataGrids' filesep 'DataType' num2str(datatype{1}) filesep 'code' filesep 'actions' filesep];
     case 3
         objTag='LnActions';
-        datatype = DBgetUniqueFields('line','datatype',{'datatypeinfo',UCIT_DC_getInfoFromPopup('LinesDatatype')});
+        datatype = DBgetUniqueFields('line','datatype',{'datatypeinfo',UCIT_getInfoFromPopup('LinesDatatype')});
         DataRootCommon0 = [fileparts(which('ucit_commonactions0.dir'))  filesep 'DataLines' filesep];
         DataRootCommon1 = [fileparts(which('ucit_commonactions1.dir'))  filesep 'DataLines' filesep];
         DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataLines' filesep 'DataType' num2str(datatype{1}) filesep 'code' filesep 'actions' filesep];
     case 4
         objTag='PtActions';
-        datatype = DBgetUniqueFields('point','datatype',{'datatypeinfo',UCIT_DC_getInfoFromPopup('PointsDatatype')});
+        datatype = DBgetUniqueFields('point','datatype',{'datatypeinfo',UCIT_getInfoFromPopup('PointsDatatype')});
         DataRootCommon0 = [fileparts(which('ucit_commonactions0.dir'))  filesep 'DataPoints' filesep];
         DataRootCommon1 = [fileparts(which('ucit_commonactions1.dir'))  filesep 'DataPoints' filesep];
         DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataPoints' filesep 'DataType' num2str(datatype{1}) filesep 'code' filesep 'actions' filesep];

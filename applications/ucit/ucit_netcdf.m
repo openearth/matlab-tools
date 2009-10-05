@@ -58,33 +58,33 @@ function varargout = ucit_netcdf(varargin)
    
    %% Initialise datafields 
    %% reset all 4 popup values for both types (1: transects, 2: grids)
-   UCIT_DC_resetValuesOnPopup(1,1,1,1,1,1)
-   UCIT_DC_resetValuesOnPopup(2,1,1,1,1,1)
-   UCIT_DC_resetValuesOnPopup(3,1,1,1,1,1)
-   UCIT_DC_resetValuesOnPopup(4,1,1,1,1,1)
+   UCIT_resetValuesOnPopup(1,1,1,1,1,1)
+   UCIT_resetValuesOnPopup(2,1,1,1,1,1)
+   UCIT_resetValuesOnPopup(3,1,1,1,1,1)
+   UCIT_resetValuesOnPopup(4,1,1,1,1,1)
    
    %% set for proper type (1: transects, 2: grids, 3: lines, 4: points) first popup menu: DataType
    disp('finding available transect data ...')
    
-       UCIT_DC_loadRelevantInfo2Popup(1,1)
+       UCIT_loadRelevantInfo2Popup(1,1)
    
    
    %% set for proper type (1: transects, 2: grids, 3: lines, 4: points) first popup menu: DataType
    disp('finding available grid data ...')
    try
-       UCIT_DC_loadRelevantInfo2Popup(2,1)
+       UCIT_loadRelevantInfo2Popup(2,1)
    end
    
    %% set for proper type (1: transects, 2: grids, 3: lines, 4: points) first popup menu: DataType
    disp('finding available line data ...')
    try
-       UCIT_DC_loadRelevantInfo2Popup(3,1)
+       UCIT_loadRelevantInfo2Popup(3,1)
    end
    
    %% set for proper type (1: transects, 2: grids, 3: lines, 4: points) first popup menu: DataType
    disp('finding available point data ...')
    try
-       UCIT_DC_loadRelevantInfo2Popup(4,1)
+       UCIT_loadRelevantInfo2Popup(4,1)
    end
    
    set(fig,'visible','on');

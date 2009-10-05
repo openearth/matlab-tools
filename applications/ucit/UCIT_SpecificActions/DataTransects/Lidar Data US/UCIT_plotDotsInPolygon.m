@@ -82,14 +82,14 @@ end
 set(rayH(IB),'color','b');
 
 datatypes = UCIT_getDatatypes;
-url = datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
-url = url{strcmp(datatypes.transect.areas{2},UCIT_DC_getInfoFromPopup('TransectsArea'))};
+url = datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
+url = url{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
 
 % get data
 crossShoreCoordinate = nc_varget(url, 'cross_shore');
 time = nc_varget(url, 'time');
 ids = find(id>0);
-time_id = find(time == datenum(UCIT_DC_getInfoFromPopup('TransectsSoundingID'))-datenum(1970,1,1));
+time_id = find(time == datenum(UCIT_getInfoFromPopup('TransectsSoundingID'))-datenum(1970,1,1));
 
 x = nc_varget(url, 'x',         [time_id-1,ids(1)-1,0], [1,ids(end)-ids(1),length(crossShoreCoordinate)]);
 y = nc_varget(url, 'y',         [time_id-1,ids(1)-1,0], [1,ids(end)-ids(1),length(crossShoreCoordinate)]);
@@ -110,7 +110,7 @@ else
     close(findobj('tag','Dotfig'));
     fh=figure('tag','Dotfig');clf;
     set(fh,'visible','off')
-    RaaiInformatie = [ 'UCIT - Top view - Area : ' UCIT_DC_getInfoFromPopup('TransectsArea') ' Transects ' d.transectID{find(id==1,1,'first')} '-' d.transectID{find(id==1,1,'last')} ' Time: ' UCIT_DC_getInfoFromPopup('TransectsSoundingID')];
+    RaaiInformatie = [ 'UCIT - Top view - Area : ' UCIT_getInfoFromPopup('TransectsArea') ' Transects ' d.transectID{find(id==1,1,'first')} '-' d.transectID{find(id==1,1,'last')} ' Time: ' UCIT_getInfoFromPopup('TransectsSoundingID')];
     set(fh,'Name',RaaiInformatie,'NumberTitle','Off','Units','normalized');
     ah=axes;hold on;box on;
 

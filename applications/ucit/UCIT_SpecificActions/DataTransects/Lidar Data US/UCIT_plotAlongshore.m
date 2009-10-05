@@ -61,7 +61,7 @@ set(fig100,'tag','USGSGUI');
 figure(fig100);
 
 mapWhandle = findobj('tag','UCIT_mainWin');
-if ~isempty(mapWhandle) && strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),'Lidar Data US')
+if ~isempty(mapWhandle) && strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Lidar Data US')
     [d] = UCIT_getLidarMetaData;
 end
 

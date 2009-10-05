@@ -48,7 +48,7 @@ function UCIT_next(direction,objTag)
 % $Author$
 % $Revision$
 
-[popupValue,info]=UCIT_DC_getInfoFromPopup(objTag);
+[popupValue,info]=UCIT_getInfoFromPopup(objTag);
 
 % find the soundingID of focus
 id=find(strcmp(info.string,popupValue));

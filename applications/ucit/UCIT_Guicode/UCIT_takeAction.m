@@ -60,14 +60,14 @@ switch  type
         objTag='PtActions';
 end
 
-[popupValue, info]=UCIT_DC_getInfoFromPopup(objTag);
+[popupValue, info]=UCIT_getInfoFromPopup(objTag);
 
 if info.value==1
     return
 end
 
-if strcmp(UCIT_DC_getInfoFromPopup(objTag),'BuildDelft3dModel')
-    eval([UCIT_DC_getInfoFromPopup(objTag) '(' num2str(type) ');']);
+if strcmp(UCIT_getInfoFromPopup(objTag),'BuildDelft3dModel')
+    eval([UCIT_getInfoFromPopup(objTag) '(' num2str(type) ');']);
 else
-    eval([UCIT_DC_getInfoFromPopup(objTag) ';']);
+    eval([UCIT_getInfoFromPopup(objTag) ';']);
 end

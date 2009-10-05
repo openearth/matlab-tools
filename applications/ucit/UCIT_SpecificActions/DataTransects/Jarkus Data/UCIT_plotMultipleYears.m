@@ -38,7 +38,7 @@ function plotMultipleYears(d,years)
 %   --------------------------------------------------------------------
 
 datatypes = UCIT_getDatatypes;
-url = datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
+url = datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
 [d] = UCIT_getMetaData;
 
 if nargin<2
@@ -47,7 +47,7 @@ if nargin<2
         return
     end
 
-    if strcmp(UCIT_DC_getInfoFromPopup('TransectsTransectID'),'Transect ID (load first)')
+    if strcmp(UCIT_getInfoFromPopup('TransectsTransectID'),'Transect ID (load first)')
         error('Select datatype, area and transect first');
     end
 
@@ -62,7 +62,7 @@ colors={'b',[0.2 0.6 0],'k',[0.5 1 1],'m','r', [0.6 0.4 0],[0.2 0.4 0 ], [0.5 0.
 % Create empty base figure
 
 fh=figure('tag','plotWindow');
-RaaiInformatie=['UCIT - Transect view -  Area: ' UCIT_DC_getInfoFromPopup('TransectsArea') '  Transect: ' UCIT_DC_getInfoFromPopup('TransectsTransectID') ];
+RaaiInformatie=['UCIT - Transect view -  Area: ' UCIT_getInfoFromPopup('TransectsArea') '  Transect: ' UCIT_getInfoFromPopup('TransectsTransectID') ];
 set(fh,'Name', RaaiInformatie,'NumberTitle','Off','Units','normalized');
 ah=axes;
 [fh,ah] = UCIT_prepareFigureN(0, fh, 'UL', ah);clf
@@ -82,7 +82,7 @@ for i=1:length(years)
 
     
     try
-        transect = jarkus_readTransectDataNetcdf(url, UCIT_DC_getInfoFromPopup('TransectsArea'),UCIT_DC_getInfoFromPopup('TransectsTransectID'),years(i));
+        transect = jarkus_readTransectDataNetcdf(url, UCIT_getInfoFromPopup('TransectsArea'),UCIT_getInfoFromPopup('TransectsTransectID'),years(i));
     end
 
     if exist('transect')

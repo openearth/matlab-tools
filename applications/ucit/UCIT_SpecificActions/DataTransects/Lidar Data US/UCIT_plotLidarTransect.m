@@ -44,10 +44,10 @@ if nargin==0
     d=get(guiH,'userdata');
 
     datatypes = UCIT_getDatatypes;
-    url = datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
-    url = url{strcmp(datatypes.transect.areas{2},UCIT_DC_getInfoFromPopup('TransectsArea'))};
-    d = readLidarDataNetcdf(url, UCIT_DC_getInfoFromPopup('TransectsArea'),...
-        UCIT_DC_getInfoFromPopup('TransectsTransectID'),datenum(UCIT_DC_getInfoFromPopup('TransectsSoundingID'))-datenum(1970,1,1));
+    url = datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
+    url = url{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
+    d = readLidarDataNetcdf(url, UCIT_getInfoFromPopup('TransectsArea'),...
+        UCIT_getInfoFromPopup('TransectsTransectID'),datenum(UCIT_getInfoFromPopup('TransectsSoundingID'))-datenum(1970,1,1));
 
     if all(d.xi == d.xi(1))
         warndlg('There is no transect data for the selected date  - please select another date (soundingID)!')

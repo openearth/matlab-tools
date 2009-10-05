@@ -42,9 +42,9 @@ end
 
 %% get (meta)data
 datatypes = UCIT_getDatatypes;
-url = datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
-year = UCIT_DC_getInfoFromPopup('TransectsSoundingID');
-d = jarkus_readTransectDataNetcdf(url, UCIT_DC_getInfoFromPopup('TransectsArea'),UCIT_DC_getInfoFromPopup('TransectsTransectID'),year(end-3:end));
+url = datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
+year = UCIT_getInfoFromPopup('TransectsSoundingID');
+d = jarkus_readTransectDataNetcdf(url, UCIT_getInfoFromPopup('TransectsArea'),UCIT_getInfoFromPopup('TransectsTransectID'),year(end-3:end));
 
 
 if ~all(isnan(d.ze))

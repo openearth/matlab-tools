@@ -48,7 +48,7 @@ if ismember(datatypeinfo,{...
     [X,Y]=landboundary('read',which(['Netherlands_inclBelGer_RD.ldb']));
 
 elseif strcmp(datatypeinfo,'Lidar Data US');
-    area = UCIT_DC_getInfoFromPopup('TransectsArea');
+    area = UCIT_getInfoFromPopup('TransectsArea');
     switch area
         case {'Oregon'}
             [X,Y] = landboundary('read',which(['OR_coast_UTM5.ldb']));
@@ -60,7 +60,7 @@ elseif strcmp(datatypeinfo,'Lidar Data US');
     end
 end
 fillpolygon([X,Y],'k',[1 1 0.6],100,-100); hold on;
-shph = plot(X,Y,'k','linewidth',1);
+% shph = plot(X,Y,'k','linewidth',1);
 
 if exist('ldb2')
     plot(ldb2(:,1),ldb2(:,2),'color','r','linewidth',2);

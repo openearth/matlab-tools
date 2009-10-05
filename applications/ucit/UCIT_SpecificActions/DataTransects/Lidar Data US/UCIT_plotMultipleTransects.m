@@ -38,7 +38,7 @@ function plotMultipleTransects(d,years)
 %   --------------------------------------------------------------------
 
 datatypes = UCIT_getDatatypes;
-url = datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
+url = datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
 [d] = UCIT_getLidarMetaData;
 
 fh = findobj('tag','plotWindow_multiple');
@@ -57,7 +57,7 @@ if nargin < 2
         return
     end
 
-    if strcmp(UCIT_DC_getInfoFromPopup('TransectsTransectID'),'Transect ID (load first)')
+    if strcmp(UCIT_getInfoFromPopup('TransectsTransectID'),'Transect ID (load first)')
         error('Select datatype, area and transect first');
     end
 
@@ -70,7 +70,7 @@ end
 colors={'b',[0.2 0.6 0],'k',[0.5 1 1],'m','r', [0.6 0.4 0],[0.2 0.4 0 ], [0.5 0.5 0.5], [1 0.5 0.5]};
 
 
-RaaiInformatie=['UCIT - Transect view -  Area: ' UCIT_DC_getInfoFromPopup('TransectsArea') '  Transect: ' UCIT_DC_getInfoFromPopup('TransectsTransectID')];
+RaaiInformatie=['UCIT - Transect view -  Area: ' UCIT_getInfoFromPopup('TransectsArea') '  Transect: ' UCIT_getInfoFromPopup('TransectsTransectID')];
 set(fh,'Name', RaaiInformatie,'NumberTitle','Off','Units','normalized');
 ah=axes;
 [fh,ah] = UCIT_prepareFigureN(0, fh, 'UL', ah);clf
@@ -88,8 +88,8 @@ counter = 1;
 
 for i=1:length(years)
     try
-        url = url{strcmp(datatypes.transect.areas{2},UCIT_DC_getInfoFromPopup('TransectsArea'))};
-        transect = readLidarDataNetcdf(url, UCIT_DC_getInfoFromPopup('TransectsArea'), UCIT_DC_getInfoFromPopup('TransectsTransectID'),years(i));
+        url = url{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
+        transect = readLidarDataNetcdf(url, UCIT_getInfoFromPopup('TransectsArea'), UCIT_getInfoFromPopup('TransectsTransectID'),years(i));
     end
     if exist('transect') & ~all(isnan(transect.zi))
         if ~isempty(transect)

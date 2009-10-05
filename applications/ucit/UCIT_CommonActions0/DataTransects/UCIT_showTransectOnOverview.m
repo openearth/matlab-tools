@@ -71,14 +71,14 @@ if isempty(rayH)
     return
 end
 
-[DataType,info1]=UCIT_DC_getInfoFromPopup('TransectsDatatype');
-[Area,info2]=UCIT_DC_getInfoFromPopup('TransectsArea');
-[TransectID,info3]=UCIT_DC_getInfoFromPopup('TransectsTransectID');
-[SoundingID,info4]=UCIT_DC_getInfoFromPopup('TransectsSoundingID');
+[DataType,info1]=UCIT_getInfoFromPopup('TransectsDatatype');
+[Area,info2]=UCIT_getInfoFromPopup('TransectsArea');
+[TransectID,info3]=UCIT_getInfoFromPopup('TransectsTransectID');
+[SoundingID,info4]=UCIT_getInfoFromPopup('TransectsSoundingID');
 
 
 if strcmp(DataType,'Jarkus Data')
-    id_match = cellfun(@(x) (strcmp(x, UCIT_DC_getInfoFromPopup('TransectsArea'))==1), {cellstr(d.area)}, 'UniformOutput',false);
+    id_match = cellfun(@(x) (strcmp(x, UCIT_getInfoFromPopup('TransectsArea'))==1), {cellstr(d.area)}, 'UniformOutput',false);
     transectIDs = str2double(d.transectID)- unique(round(str2double(d.transectID(id_match{1}))/1000000))*1000000; % convert back from uniqu id
     id = find (transectIDs  == str2num(TransectID) & strcmp(Area,d.area));
     TransectID = char(d.transectID(id));

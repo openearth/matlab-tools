@@ -48,7 +48,7 @@ function [d] = UCIT_getMetaData
 % $Author$
 % $Revision$
 
-if ~(strcmp(UCIT_DC_getInfoFromPopup('TransectsArea'),'Select area ...') && strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),'Lidar Data US'))
+if ~(strcmp(UCIT_getInfoFromPopup('TransectsArea'),'Select area ...') && strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Lidar Data US'))
     
     %% get metadata
     getDataFromDatabase = false;
@@ -64,8 +64,8 @@ if ~(strcmp(UCIT_DC_getInfoFromPopup('TransectsArea'),'Select area ...') && strc
         
         % ... if the datatype info as well as the soundingID data matches with the
         % values in the gui the data will not have to be collected again
-        if strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'), 'Jarkus Data') && ~strcmp(d.datatypeinfo(1), UCIT_DC_getInfoFromPopup('TransectsDatatype')) || ...
-                strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'), 'Lidar Data US') && (~strcmp(d.datatypeinfo(1), UCIT_DC_getInfoFromPopup('TransectsDatatype')) || ~strcmp(d.area(1), UCIT_DC_getInfoFromPopup('TransectsArea'))) 
+        if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Jarkus Data') && ~strcmp(d.datatypeinfo(1), UCIT_getInfoFromPopup('TransectsDatatype')) || ...
+                strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Lidar Data US') && (~strcmp(d.datatypeinfo(1), UCIT_getInfoFromPopup('TransectsDatatype')) || ~strcmp(d.area(1), UCIT_getInfoFromPopup('TransectsArea'))) 
             
             % ... if there is not a match the data will have to be collected again
             disp('data needs to be collected from database again ... please wait!')
@@ -79,10 +79,10 @@ if ~(strcmp(UCIT_DC_getInfoFromPopup('TransectsArea'),'Select area ...') && strc
     if getDataFromDatabase
         
         datatypes = UCIT_getDatatypes;
-        url = datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
+        url = datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
         
-        if strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),'Lidar Data US')
-            url = url{strcmp(datatypes.transect.areas{2},UCIT_DC_getInfoFromPopup('TransectsArea'))};
+        if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Lidar Data US')
+            url = url{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
         end
         crossshore = nc_varget(url, 'cross_shore');
         alongshore = nc_varget(url, 'alongshore');
@@ -95,7 +95,7 @@ if ~(strcmp(UCIT_DC_getInfoFromPopup('TransectsArea'),'Select area ...') && strc
         transectID = cellstr(num2str(ids));
         soundingID = cellstr(num2str(years));
         
-        if strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'), 'Jarkus Data')
+        if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Jarkus Data')
             
             contours(:,1) = nc_varget(url, 'x',[0 0],[length(alongshore) 1]);
             contours(:,2) = nc_varget(url, 'x',[0 length(crossshore)-1],[length(alongshore) 1]);
@@ -103,16 +103,16 @@ if ~(strcmp(UCIT_DC_getInfoFromPopup('TransectsArea'),'Select area ...') && strc
             contours(:,4) = nc_varget(url, 'y',[0 length(crossshore)-1],[length(alongshore) 1]);
             d.area = areanames;
             
-        elseif strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'), 'Lidar Data US')
+        elseif strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Lidar Data US')
             
             contours = nc_varget(url, 'contour'); % if you want all lidar data use UCIT_getLidarMetaData
-            d.area = repmat({UCIT_DC_getInfoFromPopup('TransectsArea')},length(areanames),1);
+            d.area = repmat({UCIT_getInfoFromPopup('TransectsArea')},length(areanames),1);
             
         end
         
         
         
-        d.datatypeinfo = repmat({UCIT_DC_getInfoFromPopup('TransectsDatatype')},length(alongshore),1);
+        d.datatypeinfo = repmat({UCIT_getInfoFromPopup('TransectsDatatype')},length(alongshore),1);
         d.contour =  [contours(:,1) contours(:,2) contours(:,3) contours(:,4)];
         d.areacode = areacodes;
         d.soundingID = soundingID;

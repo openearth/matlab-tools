@@ -52,10 +52,10 @@ function [check] = UCIT_checkPopups(type, prescription)
 
 [objTag1, objTag2, objTag3, objTag4] = UCIT_getObjTags(type);
 
-[popupValue1,info1]=UCIT_DC_getInfoFromPopup(objTag1);
-[popupValue2,info2]=UCIT_DC_getInfoFromPopup(objTag2);
-[popupValue3,info3]=UCIT_DC_getInfoFromPopup(objTag3);
-[popupValue4,info4]=UCIT_DC_getInfoFromPopup(objTag4);
+[popupValue1,info1]=UCIT_getInfoFromPopup(objTag1);
+[popupValue2,info2]=UCIT_getInfoFromPopup(objTag2);
+[popupValue3,info3]=UCIT_getInfoFromPopup(objTag3);
+[popupValue4,info4]=UCIT_getInfoFromPopup(objTag4);
 
 switch prescription 
     case 1 % first popup.value must be not be 1

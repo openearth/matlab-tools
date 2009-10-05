@@ -54,24 +54,24 @@ function UCIT_setValues2Popup(type,ValuePopup1,ValuePopup2,ValuePopup3,ValuePopu
  
 switch type
     case 1
-        [popupValue1,info1]=UCIT_DC_getInfoFromPopup('TransectsDatatype');
+        [popupValue1,info1]=UCIT_getInfoFromPopup('TransectsDatatype');
         
-        [popupValue2,info2]=UCIT_DC_getInfoFromPopup('TransectsArea');
+        [popupValue2,info2]=UCIT_getInfoFromPopup('TransectsArea');
         id=find(strcmp(ValuePopup2,info2.string));
         UCIT_DC_setValuesOnPopup('TransectsArea', info2.string, id, 'on', [1 1 1]);
-        UCIT_DC_loadRelevantInfo2Popup(1,3);
+        UCIT_loadRelevantInfo2Popup(1,3);
 
-        [popupValue3,info3]=UCIT_DC_getInfoFromPopup('TransectsTransectID');
+        [popupValue3,info3]=UCIT_getInfoFromPopup('TransectsTransectID');
         
-        if strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),'Jarkus Data');
+        if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Jarkus Data');
             ValuePopup3 = num2str(str2double(ValuePopup3) - round(str2double(ValuePopup3)/1000000)*1000000);
         end
         
         id= find(str2double(info3.string) == str2double(ValuePopup3)); % previously: find(strcmp(ValuePopup3,info3.string));
         UCIT_DC_setValuesOnPopup('TransectsTransectID', info3.string, id, 'on', [1 1 1]);
-        UCIT_DC_loadRelevantInfo2Popup(1,4);
+        UCIT_loadRelevantInfo2Popup(1,4);
 
-        [popupValue4,info4]=UCIT_DC_getInfoFromPopup('TransectsSoundingID');
+        [popupValue4,info4]=UCIT_getInfoFromPopup('TransectsSoundingID');
         id=find(strcmp(ValuePopup4,info4.string));
         UCIT_DC_setValuesOnPopup('TransectsSoundingID', info4.string, id, 'on', [1 1 1]);
 

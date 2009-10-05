@@ -34,7 +34,7 @@ function UCIT_plotTransect(d)
 %   --------------------------------------------------------------------
 tic
 datatypes = UCIT_getDatatypes;
-url = datatypes.transect.urls{find(strcmp(UCIT_DC_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
+url = datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
 
 if nargin==0
     [check]=UCIT_checkPopups(1, 4);
@@ -45,8 +45,8 @@ if nargin==0
 %     clearvars -global;
     clear global
 
-    year = UCIT_DC_getInfoFromPopup('TransectsSoundingID');
-    d = jarkus_readTransectDataNetcdf(url, UCIT_DC_getInfoFromPopup('TransectsArea'),UCIT_DC_getInfoFromPopup('TransectsTransectID'),year(end-3:end));
+    year = UCIT_getInfoFromPopup('TransectsSoundingID');
+    d = jarkus_readTransectDataNetcdf(url, UCIT_getInfoFromPopup('TransectsArea'),UCIT_getInfoFromPopup('TransectsTransectID'),year(end-3:end));
     if ~all(isnan(d.ze))
         UCIT_getPlot(d);
     else
