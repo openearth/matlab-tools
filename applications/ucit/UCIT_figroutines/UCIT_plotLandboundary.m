@@ -131,3 +131,5 @@ if tryldb
     end
     tryldb=0;
 end
+
+set(gca,'color','b')
