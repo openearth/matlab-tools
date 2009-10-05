@@ -1,4 +1,4 @@
-function UCIT_plotLandboundary(datatypeinfo,landcolor,seacolor)
+function UCIT_plotLandboundary(datatypeinfo,dummy)
 %PLOTLANDBOUNDARY   plots a landboundary for a given <datatypeinfo>
 %
 %   This routine finds a landboundary given <datatypeinfo>
@@ -8,7 +8,7 @@ function UCIT_plotLandboundary(datatypeinfo,landcolor,seacolor)
 %
 %   input:
 %       datatypeinfo = datatype info from McDatabase
-%       landcolor    = 0: none 1: yellow
+%
 %
 
 %   --------------------------------------------------------------------
@@ -38,98 +38,33 @@ function UCIT_plotLandboundary(datatypeinfo,landcolor,seacolor)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-tryldb=1;
+if ismember(datatypeinfo,{...
+        'Jarkus Data',...
+        'Kaartblad Jarkus', ...
+        'Kaartblad Monitoring', ...
+        'Kaartblad Vaklodingen'})
+    ldb = landboundary('read',which(['Netherlands_inclBelGer_RD.ldb']));
+    axis_settings = 1E5*[-0.282042339266554   2.324770614179054   3.720482792355521   6.461840930495095];
+    [X,Y]=landboundary('read',which(['Netherlands_inclBelGer_RD.ldb']));
 
-if nargin == 1
-    landcolor=1;
-end
-
-if nargin==2
-    if ~strcmp(datatypeinfo(1:3),'NCP')
-        landcolor=1;
-    else
-        landcolor=0;
+elseif strcmp(datatypeinfo,'Lidar Data US');
+    area = UCIT_DC_getInfoFromPopup('TransectsArea');
+    switch area
+        case {'Oregon'}
+            [X,Y] = landboundary('read',which(['OR_coast_UTM5.ldb']));
+            ldb2=landboundary('read',which(['ref20OR.ldb'])); % this is their reference line
+            axis_settings = 1E6*[0.3382    0.4796    4.6537    5.1275];
+        case {'Washington'}
+            [X,Y] = landboundary('read',which(['WA_coast1_UTM.ldb']));
+            axis_settings = 1E6*[0.367164048997129   0.446396990873151   5.125163267511952   5.370968814517868];
     end
 end
+fillpolygon([X,Y],'k',[1 1 0.6],100,-100); hold on;
+shph = plot(X,Y,'k','linewidth',1);
 
-
-try
-    FI=shape('open',which([datatypeinfo '.shp']));
-    data=shape('read',FI,0,'lines');
-    shph=plot(data(:,1),data(:,2),'k','linewidth',1);
-    tryldb=0;
+if exist('ldb2')
+    plot(ldb2(:,1),ldb2(:,2),'color','r','linewidth',2);
 end
-
-if tryldb
-    try
-        if strcmp(datatypeinfo(1:3),'NCP')
-            [X,Y]=landboundary('read',which(['NCP.ldb']));
-            shph=plot(X,Y,'k','linewidth',1);
-
-        elseif strcmp(datatypeinfo,'Lidar Data US');
-            area = UCIT_DC_getInfoFromPopup('TransectsArea');
-            switch area
-                case {'Oregon'}
-                    ldb1=landboundary('read',which(['OR_coast_UTM5.ldb']));
-                    ldb2=landboundary('read',which(['ref20OR.ldb'])); % this is their reference line
-                    axis_settings = [0.3382    0.4796    4.6537    5.1275];
-                case {'Washington'}
-                    ldb1=landboundary('read',which(['WA_coast1_UTM.ldb']));
-                    axis_settings = [0.367164048997129   0.446396990873151   5.125163267511952   5.370968814517868];
-            end
-            fillpolygon(ldb1,'k',[1 1 0.6],100,-100); hold on;
-            if exist('ldb2')
-                plot(ldb2(:,1),ldb2(:,2),'color','r','linewidth',2);
-            end
-            axis equal;
-            axis(1E6*[axis_settings])
-
-        elseif ismember(datatypeinfo,{...
-                'AHN Hollandse kust', ...
-                'Beach Wizard data', ...
-                'Delray Beach data', ...
-                'DGPS data 10x10', ...
-                'Discharge', ...
-                'Dutch beach lines', ...
-                'Dutch offshore data', ...
-                'Jarkus Data', ...
-                'Kaartblad Bagger Egmond', ...
-                'Kaartblad Jarkus', ...
-                'Kaartblad Monitoring', ...
-                'Kaartblad Vaklodingen', ...
-                'Kaartblad WESP', ...
-                'KNMI', ...
-                'Netherlands', ...
-                'Schematische profielen', ...
-                'HelderseZeewering', ...
-                'Suppletie lodingen', ...
-                'Waterbase', ...
-                'Zuno'})
-            ldb=landboundary('read',which(['Netherlands.ldb']));
-            if landcolor == 1
-                fillpolygon(ldb,'k',[1 1 0.6],100,-100);
-            else
-                [X,Y]=landboundary('read',which(['Netherlands.ldb']));
-                shph=plot(X,Y,'k','linewidth',1);
-            end
-            view(2);
-            %             xlabel('Easting (m, RD)','fontsize',9);
-            %             ylabel('Northing (m, RD)','fontsize',9);
-            %             kmAxis(gca,[50 50]);
-        else
-            [X,Y]=landboundary('read',which([datatypeinfo '.ldb']));
-            shph=plot(X,Y,'k','linewidth',1);
-        end
-        tryldb=0;
-    end
-end
-
-if tryldb
-    try
-        load([datatypeinfo '.mat']);
-        plot3(data(:,1),data(:,2),data(:,3),'ko','markersize',1,'markerfacecolor','k');view(2);axis equal
-    end
-    tryldb=0;
-end
-
-set(gca,'color','b')
+axis equal;
+axis([axis_settings])
+set(gca,'color',[0.4 0.6 1])
