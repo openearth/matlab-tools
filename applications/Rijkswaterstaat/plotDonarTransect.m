@@ -16,6 +16,7 @@ function OPT = plotDonarTransect(NFSstruct, varargin)
 %   * substance      'sea_surface_salinity'/'concentration_of_suspended_matter_in_sea_water'
 %   * cco            location of cco file for WAQ map files
 %   * log            use log10(concentration) for plots
+%   * format         'png'/'pdf'
 %
 % Example:
 % plotDonarTransect(NFSstruct, 'substance', 'sea_surface_salinity', ...
@@ -34,6 +35,7 @@ function OPT = plotDonarTransect(NFSstruct, varargin)
 % $HeadURL$
 % $Keywords: $
 % 2009 oct 1: allow for use of log10(concentrations) instead of concentrations [Yann Friocourt]
+% 2009 oct 7: allow for choice of figure format [Yann Friocourt]
 
 %
 
@@ -72,6 +74,7 @@ OPT.transect = 'all';
 OPT.substance = 'concentration_of_suspended_matter_in_sea_water';
 OPT.save = 1;
 OPT.prefix = '';
+OPT.format = 'png';
 OPT.cco = '';
 OPT.log = 0;
 
@@ -243,7 +246,8 @@ for iTransect = OPT.iTransect0:OPT.iTransect1
     if (OPT.save)
         orient landscape;
         print([OPT.prefix '_transect_' ...
-            OPT.listTransectName{iTransect} '.pdf'], '-dpdf');
+            OPT.listTransectName{iTransect} '.' OPT.format], ...
+            ['-d' OPT.format);
     end
 end %variable loop % for iTransect = OPT.iTransect0:OPT.iTransect1
 
