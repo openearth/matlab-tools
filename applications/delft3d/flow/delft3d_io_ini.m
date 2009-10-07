@@ -138,6 +138,7 @@ end
       %% Parameters
    
       MDF.keywords.sub1   = char(upper(MDF.keywords.sub1  ));
+      MDF.keywords = orderfields(MDF.keywords);
    
       j=0;
       j=j+1;PAR.nlayers(j)= [     1];PAR.names{j} = 'waterlevel';
@@ -147,11 +148,11 @@ end
       if ~(isempty(strfind (char(MDF.keywords.sub1(1)),'S'       )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'salinity'     ;end
       if ~(isempty(strfind (char(MDF.keywords.sub1(2)),'T'       )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'temperature'  ;end
       if ~(isempty(strfind (char(MDF.keywords.sub2(2)),'C'       )))
-         if ~(isempty(strtrim(char(MDF.keywords.namc1 )          )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent1' ;end
-         if ~(isempty(strtrim(char(MDF.keywords.namc2 )          )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent2' ;end
-         if ~(isempty(strtrim(char(MDF.keywords.namc3 )          )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent3' ;end
-         if ~(isempty(strtrim(char(MDF.keywords.namc4 )          )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent4' ;end
-         if ~(isempty(strtrim(char(MDF.keywords.namc5 )          )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent5' ;end
+          if sum(strcmp(fieldnames(MDF.keywords),'namc1'))>0         ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent1' ;end
+          if sum(strcmp(fieldnames(MDF.keywords),'namc2'))>0         ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent2' ;end
+          if sum(strcmp(fieldnames(MDF.keywords),'namc3'))>0         ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent3' ;end
+          if sum(strcmp(fieldnames(MDF.keywords),'namc4'))>0         ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent4' ;end
+          if sum(strcmp(fieldnames(MDF.keywords),'namc5'))>0         ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent5' ;end
       end
       if ~(isempty(strfind (char(MDF.keywords.sub1(4)),'I'       )));j=j+1;PAR.nlayers(j)= [       1];PAR.names{j} = 'secondaryflow';end
       if ~(isempty(strfind (char(MDF.keywords.sub1(4)),'I'       )));disp('Not tested for secondary flow yet .......');end
