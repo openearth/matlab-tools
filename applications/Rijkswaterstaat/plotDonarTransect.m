@@ -247,7 +247,7 @@ for iTransect = OPT.iTransect0:OPT.iTransect1
         orient landscape;
         print([OPT.prefix '_transect_' ...
             OPT.listTransectName{iTransect} '.' OPT.format], ...
-            ['-d' OPT.format);
+            ['-d' OPT.format]);
     end
 end %variable loop % for iTransect = OPT.iTransect0:OPT.iTransect1
 
