@@ -43,7 +43,7 @@ function UCIT_quit
 % $Author$
 % $Revision$
 
-answ=questdlg('Really quit?','Quit?','Yes','No','No');
+answ=questdlg('Really quit UCIT?','Quit?','Yes','No','No');
 
 if strcmp(answ,'Yes')
     guiH=findobj('type','Figure');

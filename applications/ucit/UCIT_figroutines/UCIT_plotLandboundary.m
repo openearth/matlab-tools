@@ -52,7 +52,7 @@ elseif strcmp(datatypeinfo,'Lidar Data US');
     switch area
         case {'Oregon'}
             [X,Y] = landboundary('read',which(['OR_coast_UTM5.ldb']));
-            ldb2=landboundary('read',which(['ref20OR.ldb'])); % this is their reference line
+            ldb2=landboundary('read',which(['ref20OR2.ldb'])); % this is their reference line
             axis_settings = 1E6*[0.3382    0.4796    4.6537    5.1275];
         case {'Washington'}
             [X,Y] = landboundary('read',which(['WA_coast1_UTM.ldb']));
@@ -63,7 +63,7 @@ fillpolygon([X,Y],'k',[1 1 0.6],100,-100); hold on;
 % shph = plot(X,Y,'k','linewidth',1);
 
 if exist('ldb2')
-    plot(ldb2(:,1),ldb2(:,2),'color','r','linewidth',2);
+    plot(ldb2(:,1),ldb2(:,2),'color','k','linewidth',2);
 end
 axis equal;
 axis([axis_settings])
