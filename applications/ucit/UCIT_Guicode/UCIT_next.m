@@ -98,6 +98,6 @@ if ~isempty(findobj('tag','mapWindow'))
 end
 
 if ~isempty(findobj('tag','analyseTransectWindow'))
-    UCIT_analyseVolume
+    UCIT_analyseTransectVolume
 end
 

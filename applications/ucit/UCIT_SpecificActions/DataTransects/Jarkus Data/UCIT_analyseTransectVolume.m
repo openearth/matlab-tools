@@ -89,12 +89,12 @@ tbh = findall(fh,'Type','uitoolbar');
 
 objTag = 'TransectsSoundingID';
 adj = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','Year before');
-set(adj,'ClickedCallback','UCIT_next(-1,''TransectsTransectID'')');
+set(adj,'ClickedCallback','UCIT_next(-1,''TransectsSoundingID'')');
 set(adj,'Tag','SeawardBoundary');
 set(adj,'cdata',makeIcon([which('left-32x322.bmp')],20,1));
 
 adj = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','Next year');
-set(adj,'ClickedCallback','UCIT_next(1,''TransectsTransectID'')');
+set(adj,'ClickedCallback','UCIT_next(1,''TransectsSoundingID'')');
 set(adj,'Tag','LandwardBoundary');
 set(adj,'cdata',makeIcon([which('right-32x322.bmp')],20,1));
 
