@@ -48,7 +48,7 @@ fh = figure(findobj('tag','mapWindow'));set(fh,'visible','off');
 polygon=[xv yv];
 
 %% get metadata (either from the console or the database)
-d = UCIT_getLidarMetaData;
+d = UCIT_getMetaData;
 
 %% filter transects using inpolygon
 test = d.contour;
@@ -85,7 +85,12 @@ transectcontours(1:3:3*length(contours),2) = contours(1:length(contours),3);
 transectcontours(2:3:3*length(contours),2) = contours(1:length(contours),4);
 
 %% Convert UTM to World Coordinates
-[lon,lat] = convertCoordinates(transectcontours(:,1),transectcontours(:,2),'CS1.code',32610,'CS2.code',4326);
+
+if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Jarkus Data')
+    [lon,lat] = convertCoordinates(transectcontours(:,1),transectcontours(:,2),'CS1.name','Amersfoort / RD New','CS2.code',4326);
+else
+    [lon,lat] = convertCoordinates(transectcontours(:,1),transectcontours(:,2),'CS1.code',32610,'CS2.code',4326);
+end
 
 %% Make kml file
 filename = [getenv('TEMP'),'transects'];

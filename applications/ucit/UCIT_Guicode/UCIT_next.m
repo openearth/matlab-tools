@@ -97,3 +97,7 @@ if ~isempty(findobj('tag','mapWindow'))
     UCIT_showTransectOnOverview
 end
 
+if ~isempty(findobj('tag','analyseTransectWindow'))
+    UCIT_analyseVolume
+end
+
