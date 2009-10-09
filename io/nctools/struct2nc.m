@@ -1,20 +1,18 @@
-function varargout = struct2xls(outputfile,D,varargin)
-%STRUCT2NC   save struct with 1D vectors to netCDF file (beta)
+function varargout = struct2nc(outputfile,D,varargin)
+%STRUCT2NC   save struct with 1D arrays to netCDF file (beta)
 %
-%   STRUCT2NC(ncfile        ,<keyword,value>)
-%   STRUCT2NC(ncfile,dat    ,<keyword,value>)
-%   STRUCT2NC(ncfile,dat,atr,<keyword,value>) 
+%   nc2struct(ncfile,dat    ,<keyword,value>)
+%   nc2struct(ncfile,dat,atr,<keyword,value>) 
 %
 %   ncfile - netCDF file name
-%   dat    - structure of 1D arrays of numeric data
+%   dat    - structure of 1D arrays of numeric/character data
 %   atr    - optional structure of file and variable attributes
+%                 atr.att_name.var_name
+%            NOT: atr.var_name.att_name
 %
 % Note that this function has limited applicability only
 % because it does the naming of dimensions based on size only
 % and not on the actual meaning of the dimension.
-%
-% Implemented <keyword,value> pairs are:
-% * dimension_name = common dimension name of 1D variables (default 'catalog_length')
 %
 % STRUCT2NC can be used to generate an experimental development: 
 % creating a catalog.nc for a THREDDS OPeNDAP server as an alternative
@@ -37,10 +35,11 @@ function varargout = struct2xls(outputfile,D,varargin)
 %  [D,M.units] = xls2struct('file_created_with_struct2xls.xls');
 %  struct2nc('file.nc',D,M);
 %
-%See also: STRUCT2XLS, XLS2STRUCT, SDSAVE_CHAR, SDLOAD_CHAR, NC_GETALL
+%See also: STRUCT2XLS, XLS2STRUCT, SDSAVE_CHAR, SDLOAD_CHAR, NC2STRUCT, NC_GETALL
 
-% TO DO: , NC2STRUCT
+% TO DO: allow for meta/attribute info struct: atr.var_name.att_name
 % TO DO: pass global attributes as <keyword,value> or as part of M.
+% TO DO: fix issue that space is considered as end-of-line
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -84,10 +83,9 @@ function varargout = struct2xls(outputfile,D,varargin)
 
 %% Initialize
 
-   OPT.dump              = 0;
+   OPT.dump              = 1;
    OPT.disp              = 0;
    OPT.pause             = 0;
-   OPT.dimension_name    = 'catalog_length';
 
 %% Units
 
@@ -110,8 +108,8 @@ function varargout = struct2xls(outputfile,D,varargin)
    nc_create_empty (outputfile);
 
    %% 1 Add global meta-info to file
-   % Add overall meta info:
-   % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
+   %  Add overall meta info:
+   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
    
       for iatt=1:natt
       attname = attnames{iatt};
@@ -120,23 +118,9 @@ function varargout = struct2xls(outputfile,D,varargin)
       end
       end
       
-   % nc_attput(outputfile, nc_global, 'title'           , '');
-   % nc_attput(outputfile, nc_global, 'institution'     , '');
-   % nc_attput(outputfile, nc_global, 'source'          , '');
-   % nc_attput(outputfile, nc_global, 'history'         , ['Created by: $HeadURL$']);
-   % nc_attput(outputfile, nc_global, 'references'      , '');
-   % nc_attput(outputfile, nc_global, 'email'           , '');
-   % nc_attput(outputfile, nc_global, 'comment'         , 'Test to see whether catalog.nc is handier than catalog.xml');
-   % nc_attput(outputfile, nc_global, 'version'         , '');
-   % nc_attput(outputfile, nc_global, 'Conventions'     , '');
-   % nc_attput(outputfile, nc_global, 'terms_for_use'   , 'These data can be used freely for research purposes provided that the following source is acknowledged: Rijkswaterstaat.');
-   % nc_attput(outputfile, nc_global, 'disclaimer'      , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
-
    %% 2 Create dimensions
    
-   nc_add_dimension(outputfile, OPT.dimension_name, length(D.(fldnames{1})))
-
-   charlen = [];
+   dimension_lengths = [];
 
    for ifld=1:nfld
    
@@ -146,64 +130,72 @@ function varargout = struct2xls(outputfile,D,varargin)
          D.(fldname) = char(D.(fldname));
       end
       
-      if ischar(D.(fldname))
-         charlen = [charlen size(D.(fldname),2)];
-      end
+      dimension_lengths = [dimension_lengths size(D.(fldname))];
+      
    end
-
-   charlen = sort(unique(charlen));
-   for ilen=1:length(charlen)
-   nc_add_dimension(outputfile, ['char_length_',num2str(charlen(ilen))], charlen(ilen));
+   
+   dimension_lengths = sort(unique(dimension_lengths));
+   dimension_lengths = setdiff(dimension_lengths,0);
+   for ilen=1:length(dimension_lengths)
+   nc_add_dimension(outputfile, ['dimension_length_',num2str(dimension_lengths(ilen))], dimension_lengths(ilen));
    end
 
    %% 3 Create variables
 
    clear nc
    ifld = 0;
-
+   
    for ifld=1:nfld
    
       fldname = fldnames{ifld};
       
-      nc(ifld).Name         = fldname;
-      nc(ifld).Nctype       = nc_type(class(D.(fldname)));
-      if ischar(D.(fldname))
-      char_dim = ['char_length_',num2str(size(D.(fldname),2))];
-      nc(ifld).Dimension    = {'catalog_length',char_dim};
-      else
-      nc(ifld).Dimension    = {'catalog_length'};
-      end
+      nc(ifld).Name               = fldname;
+      nc(ifld).Nctype             = nc_type(class(D.(fldname)));
+         
+         dimensions = {};
+         for idim=1:length(size(D.(fldname)))
+            dimension_length = ['dimension_length_',num2str(size(D.(fldname),idim))];
+            dimensions{idim} = dimension_length;
+         end
+         
+         nc(ifld).Dimension          = dimensions;
       
       par_att = 0;
       for iatt=1:natt
-      attname = attnames{iatt};
+      attname                     = attnames{iatt};
       if isstruct(M.(attname)) % others are file attributes
-      par_att = par_att + 1;
+      if isfield(M.(attname),fldname)
+      par_att                     = par_att + 1;
       nc(ifld).Attribute(par_att) = struct('Name',attname,'Value', M.(attname).(fldname));
+      end
       end
       end
 
    end
 
    %% 4 Create variables with attibutes
-   % When variable definitons are created before actually writing the
-   % data in the next cell, netCDF can nicely fit all data into the
-   % file without the need to relocate any info.
+   %  When variable definitons are created before actually writing the
+   %  data in the next cell, netCDF can nicely fit all data into the
+   %  file without the need to relocate any info.
    
-   % var2evalstr(nc)
+   var2evalstr(nc)
 
    for ifld=1:length(nc)
-       if OPT.disp;disp([num2str(ifld),' ',nc(ifld).Name]);end
-       nc_addvar(outputfile, nc(ifld));
+      fldname = fldnames{ifld};
+      if OPT.disp;disp([num2str(ifld),' ',nc(ifld).Name]);end
+      nc_addvar(outputfile, nc(ifld));
    end
 
    %% 5 Fill variables
 
+   
    for ifld=1:nfld
    
       fldname = fldnames{ifld};
 
-      nc_varput(outputfile, fldname  , D.(fldname));
+      if ~length(D.(fldname))==0
+      nc_varput(outputfile, fldname , D.(fldname));
+      end
 
    end
 

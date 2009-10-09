@@ -35,6 +35,7 @@ function varargout = xls2struct(fname,varargin)
 %
 % * addunits    true by default, adds units to DATA struct when 
 %               there is only 1 output argument.
+% * error       throw error when instead of returning empty matrices.
 % * units       true by default, specifies whether the units at 
 %               the second line are present.
 % * fillstr     str that represents dummy string values that should be replaced with number fillnum
@@ -124,6 +125,7 @@ end
    %------------------------
 
    OPT.addunits    = true;   
+   OPT.error       = true;   
    OPT.units       = true;
    OPT.sheet       = [];
    OPT.debug       = 0;
@@ -164,7 +166,7 @@ end
    
    if length(tmp)==0
       
-      if nargout<2
+      if OPT.error
          error(['Error finding file: ',fname])
       else
          iostat = -1;

@@ -54,7 +54,7 @@ function num = timezone_code2iso(varargin)
 % $HeadURL$
 % $Keywords: $
 
-   OPT.xlsfile = [filepathstr(mfilename('fullpath')),filesep,'timezone.xls'];
+   OPT.xlsfile = [filepathstr(mfilename('fullpath')),filesep,'timezone.csv']; % do not use xls for those who have no windows system
    DAT         = xls2struct(OPT.xlsfile);
    codes       = varargin{1};
    if ischar(codes)

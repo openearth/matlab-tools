@@ -117,12 +117,14 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
    end
    
 %% Check whether is time series
+
    index = findstrinstruct(fileinfo.Attribute,'Name','Conventions');
    if isempty(index)
       error(['netCDF file is not a grid: needs Attribute Conventions=CF-1.4'])
    end
 
 %% Get datenum
+
    timename        = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'time');
    M.datenum.units = nc_attget(ncfile,timename,'units');
    D.datenum       = nc_varget(ncfile,timename);
