@@ -208,6 +208,7 @@ transect.regression = nc_varget(filename, 'regression',[time_index-1, id_index-1
 transect.shorePos = nc_varget(filename, 'shorepos', [id_index-1], [1]);
 transect.MHW = nc_varget(filename, 'mean_high_water', [id_index-1], [1]);
 
+transect.slope = nc_varget(filename,'beach_slope', [id_index-1], [1]);
 
 end
 

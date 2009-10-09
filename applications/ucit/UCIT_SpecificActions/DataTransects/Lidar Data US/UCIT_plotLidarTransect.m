@@ -149,11 +149,33 @@ end
 
 %% add USGS meta information
 try
-    plot(d.shorePos, d.MHW,'mo','markersize',10);
+    plot(d.shorePos, d.MHW,'k*','markersize',10);
     line([min(d.xe(d.xe~=-9999)) max(d.xe(d.xe~=-9999))],[d.MHW d.MHW],'color','k');
     plot(d.xe(~isnan(d.regression)),d.ze(~isnan(d.regression)),'or');
+
+    % the following will only work when the correct beach slope is used,
+    % updateLidarGrid.m was changed and the netcdf files need to be re-made
+%     % the next block of code was added by afarris@usgs.gov 2009oct09
+%     % I want to add the regression line to the plot.  I use the eqn. 
+%     % m= (y1-y2)/(x1-x2)
+%     % where (x1,y1) is the shoreline point and x2 is the x pos. of the most
+%     % seaward data point, we solve the eqn for y at this x.
+%     % Similarly we solve for the height of the regression at the most landward
+%     % data point.
+%     m = d.slope;
+%     x1 = d.shorePos;
+%     y1 = d.MHW;
+%     junk = d.xe(~isnan(d.regression));
+%     % junk is same size as d.xe, pts NOT in regression are = -9999
+%     f=find(junk~=-9999);
+%     x2 = max(junk(f));
+%     x3 = min(junk(f));
+%     y2 = y1 - m*(x1-x2);
+%     y3 = y1 - m*(x1-x3);
+%     plot([x2 x3],[y2 y3],'g')
 end
-box on
+
+clearbox on
 handles = guidata(fh);
 
 fh=findobj('tag','plotWindow_US');
