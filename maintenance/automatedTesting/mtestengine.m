@@ -310,6 +310,12 @@ classdef mtestengine < handle
             if ~obj.testscatalogued
                 obj.catalogueTests;
             end
+            
+            %% Check if we even have tests
+            if isempty(obj.tests)
+                warning('MtestEngine:NoTest','There were no tests in the maindir or one of the subdirs');
+                return
+            end
             %% subtract props
             maxwidth = [];
             id = find(strcmp(varargin,'maxwidth'));
