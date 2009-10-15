@@ -175,7 +175,8 @@ try
 %     plot([x2 x3],[y2 y3],'g')
 end
 
-clearbox on
+
+box on % Amy - we don't have a script called clearbox. Please add it to OET if you want to use it in OET
 handles = guidata(fh);
 
 fh=findobj('tag','plotWindow_US');
