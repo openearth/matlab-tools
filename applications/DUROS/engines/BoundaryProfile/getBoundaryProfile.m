@@ -24,7 +24,6 @@ function result = getBoundaryProfile(WL_t, Tp_t, Hsig_t, x0)
 
 %%
 result = createEmptyDUROSResult;
-%result = struct('info', [], 'Volumes', [], 'xLand', [], 'zLand', [], 'xActive', [], 'zActive', [], 'z2Active', [], 'xSea', [], 'zSea', []);
 
 ProfileHeight = max([2.5 .12*Tp_t*sqrt(Hsig_t)]); % profile should be at least 2.5 m high
 
