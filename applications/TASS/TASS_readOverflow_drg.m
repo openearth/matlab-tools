@@ -1,13 +1,12 @@
-function [data, data_info, data_units] = TASS_readDynamic_res(varargin)
-% TASS_READDYNAMIC_RES  Routine to read the dynamic plume output file
+function [data, data_info, data_units] = TASS_readOverflow_drg(varargin)
+% TASS_READOVERFLOW_DRG  Routine to read the overflow output file
 %
-%   Routine reads a dynamic plume output file (*.res) produced by TASS model.
+%   Routine reads a overflow output file (*.drg) produced by TASS model.
 %   The routine takes a filename as an input file. Output produced is an
-%   array with data and a variable with column info and
-%   units.
+%   array with data and a variable with column 
 %
 %   Syntax:
-%       [data, data_info, data_units] = TASS_readDynamic_res(varargin)
+%       [data, data_info, data_units] = TASS_readOverflow_drg(varargin)
 %
 %   Input:
 %   For the following keywords, values are accepted (values indicated are the current default settings):
@@ -18,9 +17,7 @@ function [data, data_info, data_units] = TASS_readDynamic_res(varargin)
 %       data_info                       = cell array with column information
 %       data_units                      = cell array with column units
 %
-% See also TASS_plotDensityDischargeWeir, TASS_plotPassive_out,
-% TASS_processResults, TASS_readDensityDischargeWeir, TASS_readDynamic_in,
-% TASS_readDynamic_res, TASS_readOverflow_drg, TASS_readPassive_out
+% See also
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -61,10 +58,11 @@ function [data, data_info, data_units] = TASS_readDynamic_res(varargin)
 % $HeadURL$
 % $Keywords: 
 
+%TODO: adapt to more detailed fractions
 
 %% defaults
 OPT = struct( ...
-    'filename', 'd:\Documents and Settings\mrv\VanOord\Projecten\96.8015 TASS P15 Slibpluimmeting\Software\ExampleData\dynamic_test.res' ...
+    'filename', 'd:\Documents and Settings\mrv\VanOord\Projecten\96.8015 TASS P15 Slibpluimmeting\Software\ExampleData\oranje5.drg' ...
     );
 
 %% overrule default settings by property pairs, given in varargin
@@ -76,21 +74,38 @@ if isempty(OPT.filename)
 end
 
 disp(['Processing: ' OPT.filename])
-tic
 
 %% read some basic info from the output file
 % skip the first 22 lines
 fid = fopen(OPT.filename);
-for i = 1:5
+for i = 1:90
     fgetl(fid);
 end
-
-% read in the data
-data = fscanf(fid,'%f %f %f %f %f %f %f %f %f',[9 inf]);
-
-% flip the matrix to get nice column structure
-data = data';
+test = 1;data = [];
+while test
+    line = fgetl(fid);
+    if ~isempty(line)
+        if ~isempty(strfind(line,'====='))
+            test = 0;
+        elseif ~isempty(strfind(line,'----------'))
+            test = 1;
+            datalength = length(strfind(line,'----------'));
+        elseif ~isempty(strfind(line,'Run Time'))|~isempty(strfind(line,'Actual'))|~isempty(strfind(line,'(Min)'))
+            test = 1;
+        else
+            try
+                data2add = str2num(line);
+                if size(data2add,2) ~= datalength
+                    data2add(end,datalength) = 0;
+                end
+                data = [data; data2add];
+            catch
+                % not appropriate lines are skipped
+            end
+        end
+    end
+end
 
 % provide info and units
-data_info  = {'Time', 'Total', 'Overflow susp.', 'Overflow bed', 'Surface', 'Detrain.', 'Bed plume width', 'Bed plume depth', 'Bed plume delay'};
-data_units = {'mins', 'kg/s', 'kg/s', 'kg/s', 'kg/s', 'kg/s', 'm', 'm', 's'};
+data_info  =   {'Run Time Actual', 'Run Time Increment', 'Total Wt. Hopper', 'Vessel Draft Aft', 'Vessel Draft Fore',   'Underkeel Clearance',  'Av. Hopper Load Rate',   'Hop. Load Wt. Saved',    'Overflow Wt. Lost',   'Cum. Hop. Wt. Susp.',   'Cum. Hop. Wt.Settled',   'Cum. Hop. Wt. Saved',   'Cum. Oflow Wt. Lost',   'Level of Set. Bed',   'Water Level in Hopper',   'Hop. water Depth',  'Depth water Above Weir',  'Overflow Long. Vel.',  'Part. Loss', 'Diam. =   62.00 Conc.',   'Part. Loss', 'Diam. =   90.00 Conc.', 'Part. Loss', 'Diam. =  125.00 Conc.', 'Part. Loss', 'Diam. =  180.00 Conc.', 'Part. Loss', 'Diam. =  250.00 Conc.', 'Part. Loss', 'Diam. =  355.00 Conc.'};
+data_units = {'Min', 'Min', 'Tonnes', 'm', 'm', 'm', 'T/Min', 'T/Min', 'T/Min', 'Tonnes', 'Tonnes', 'Tonnes', 'Tonnes', 'm', 'm', 'm', 'm', 'm/s', 'kg/s', 'kg/m3', 'kg/s', 'kg/m3', 'kg/s', 'kg/m3', 'kg/s', 'kg/m3', 'kg/s', 'kg/m3', 'kg/s', 'kg/m3'};

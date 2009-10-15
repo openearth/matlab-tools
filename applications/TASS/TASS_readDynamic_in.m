@@ -18,7 +18,9 @@ function [fractions, data, data_info, data_units] = TASS_readDynamic_in(varargin
 %       data_info                       = cell array with column information
 %       data_units                      = cell array with column units
 %
-% See also TASS_readPassive_out
+% See also TASS_plotDensityDischargeWeir, TASS_plotPassive_out,
+% TASS_processResults, TASS_readDensityDischargeWeir, TASS_readDynamic_in,
+% TASS_readDynamic_res, TASS_readOverflow_drg, TASS_readPassive_out
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology

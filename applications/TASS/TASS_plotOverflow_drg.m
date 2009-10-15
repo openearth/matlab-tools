@@ -1,13 +1,12 @@
-function [data, data_info, data_units] = TASS_readDynamic_res(varargin)
-% TASS_READDYNAMIC_RES  Routine to read the dynamic plume output file
+function TASS_plotOverflow_drg(varargin)
+% TASS_PLOTOVERFLOW_DRG  Routine to read the overflow output file
 %
-%   Routine reads a dynamic plume output file (*.res) produced by TASS model.
+%   Routine reads a overflow output file (*.drg) produced by TASS model.
 %   The routine takes a filename as an input file. Output produced is an
-%   array with data and a variable with column info and
-%   units.
+%   array with data and a variable with column 
 %
 %   Syntax:
-%       [data, data_info, data_units] = TASS_readDynamic_res(varargin)
+%       [data, data_info, data_units] = TASS_plotOverflow_drg(varargin)
 %
 %   Input:
 %   For the following keywords, values are accepted (values indicated are the current default settings):
@@ -18,9 +17,7 @@ function [data, data_info, data_units] = TASS_readDynamic_res(varargin)
 %       data_info                       = cell array with column information
 %       data_units                      = cell array with column units
 %
-% See also TASS_plotDensityDischargeWeir, TASS_plotPassive_out,
-% TASS_processResults, TASS_readDensityDischargeWeir, TASS_readDynamic_in,
-% TASS_readDynamic_res, TASS_readOverflow_drg, TASS_readPassive_out
+% See also
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -61,36 +58,35 @@ function [data, data_info, data_units] = TASS_readDynamic_res(varargin)
 % $HeadURL$
 % $Keywords: 
 
+%TODO: adapt to more detailed fractions
 
 %% defaults
 OPT = struct( ...
-    'filename', 'd:\Documents and Settings\mrv\VanOord\Projecten\96.8015 TASS P15 Slibpluimmeting\Software\ExampleData\dynamic_test.res' ...
+    'fh', [], ...
+    'ah', [], ...
+    'column', [], ...
+    'data', [], ...
+    'data_info', [], ...
+    'data_units', [] ...
     );
 
 %% overrule default settings by property pairs, given in varargin
 OPT = setProperty(OPT, varargin{:});
 
-if isempty(OPT.filename)
-    disp('Error: Input file needed')
-    return
+if isempty(OPT.fh)
+    OPT.fh = figure(1); clf; hold on
+    OPT.ah = gca;
 end
+figure(OPT.fh)
+axes(OPT.ah)
 
-disp(['Processing: ' OPT.filename])
-tic
+ph(1) = plot(OPT.data(:,1),OPT.data(:,OPT.column),'displayname','b','displayname',[OPT.data_info{OPT.column} ' [' OPT.data_units{OPT.column} ']' ]);
 
-%% read some basic info from the output file
-% skip the first 22 lines
-fid = fopen(OPT.filename);
-for i = 1:5
-    fgetl(fid);
-end
+title(OPT.data_info{OPT.column})
+xlabel([OPT.data_units{1}])
+ylabel([OPT.data_units{OPT.column}])
 
-% read in the data
-data = fscanf(fid,'%f %f %f %f %f %f %f %f %f',[9 inf]);
+lh = legend(ph);
+set(lh,'location','NorthWest','fontsize',8);
 
-% flip the matrix to get nice column structure
-data = data';
-
-% provide info and units
-data_info  = {'Time', 'Total', 'Overflow susp.', 'Overflow bed', 'Surface', 'Detrain.', 'Bed plume width', 'Bed plume depth', 'Bed plume delay'};
-data_units = {'mins', 'kg/s', 'kg/s', 'kg/s', 'kg/s', 'kg/s', 'm', 'm', 's'};
+box on

@@ -12,7 +12,9 @@ function TASS_plotPassive_out(varargin)
 %
 %   Output:
 %
-% See also TASS_readPassive_out
+% See also TASS_plotDensityDischargeWeir, TASS_plotPassive_out,
+% TASS_processResults, TASS_readDensityDischargeWeir, TASS_readDynamic_in,
+% TASS_readDynamic_res, TASS_readOverflow_drg, TASS_readPassive_out
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -194,6 +196,6 @@ xlabel('Time [Min]')
 ylabel('Concentration [mg/l]')
 
 lh = legend(ph);
-set(lh,'location','NorthWest');
+set(lh,'location','NorthWest','fontsize',8);
 
 box on
