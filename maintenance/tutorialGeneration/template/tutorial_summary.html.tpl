@@ -7,11 +7,13 @@
 
 	<link rel="stylesheet" href="html/script/css/jquery.treeview.css" />
     <link rel="stylesheet" href="html/script/css/jquery-ui-1.7.2.custom.css" />
+    <link rel="stylesheet" href="html/script/css/jquery.collapsible.css" />
 
 	<script src="html/script/js/jquery-1.3.2.min.js" type="text/javascript"></script>
-	<script src="html/script/js/matlab2accordion.js" type="text/javascript"></script>
+	<script src="html/script/js/matlab2collapsible.js" type="text/javascript"></script>
 	<script src="html/script/js/jquery-ui-1.7.2.custom.min.js" type="text/javascript"></script>
 	<script src="html/script/js/jquery.treeview.js" type="text/javascript"></script>
+	<script src="html/script/js/jquery.collapsible.js" type="text/javascript"></script>
 
 	<script type="text/javascript">
 	$(document).ready(function(){
