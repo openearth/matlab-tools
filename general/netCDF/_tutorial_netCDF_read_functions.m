@@ -52,10 +52,21 @@ nc_dump(url)
 % From the metadata we can see that there is a field 'id'. To get this
 % data, use nc_varget.
 
-id = nc_varget(url,'id')
+id = nc_varget(url,'id');
+
+%%
+% Now id contains the id's:
+
+id(1:10)
 
 %% Zero based indexing
+%
+% TODO
 
 %% Stride
+%
+% TODO
 
 %% netCDF viewers
+%
+% TODO

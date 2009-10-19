@@ -33,4 +33,5 @@ z = z(z ~= -9999)/100;
 
 %% plot the transect
 figure
-plot(x, z)
+plot(x, z);
+xlim([-400 1800]);

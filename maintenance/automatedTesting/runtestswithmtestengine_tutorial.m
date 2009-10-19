@@ -215,7 +215,7 @@ run(mte);
 %%
 % Each mtest object under the field *_"tests"_* contains a field that stores the testresult:
 
-mte.tests(1).testresult
+mte.tests(2).testresult
 
 %% Run all tests and publish documentation and results
 % The runAndPublish function runs all tests and publishes the description and vizualization of

@@ -34,7 +34,8 @@ nc_dump(url)
 % From the metadata we can see that there is a field 'id'. To get this
 % data, use nc_varget.
 
-id = nc_varget(url,'id')
+id = nc_varget(url,'id');
+id(1:10)
 
 %% figure out which part of the data we need
 % The transect we are looking for is #3800, in area 7 (Noord-Holland). This
