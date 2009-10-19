@@ -10,21 +10,18 @@ This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
       -->
       <title>3. Running individual tests</title>
-      <meta name="generator" content="MATLAB 7.6">
-      <meta name="date" content="2009-09-25">
+      <meta name="generator" content="MATLAB 7.8">
+      <meta name="date" content="2009-10-19">
       <meta name="m-file" content="runningatest_tutorial">
-      <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2accordion.js"></script><script type="text/javascript">
+      <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
+      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript">
   	$(document).ready(function ()
   	{
   	// Copy content
 	copycontent();
 
   	// Accordion
-  	$(".accordion").accordion({ header: "h2" });
-	$(".accordion").accordion('option', 'autoHeight', false);
-	$(".accordion").accordion('option', 'collapsible', true);
-	$(".accordion").accordion('activate',false);
-	$(".accordion").accordion('option', 'clearStyle', true);
+  	collapsible($(".collapsible"));
   	});
     </script><style>
 
@@ -35,7 +32,7 @@ pre.codeinput {
 }
 @media print {
   pre.codeinput {word-wrap:break-word; width:100%;}
-} 
+}
 
 span.keyword {color: #0000FF}
 span.comment {color: #228B22}
@@ -79,10 +76,18 @@ p.footer {
                   testing</a> </html>
                </p>
             </div>
-         </div>
-         <div class="accordion">
+            <h2>Contents</h2>
             <div>
-               <h2><a>Command line execution</a></h2>
+               <ul>
+                  <li><a href="#1">Command line execution</a></li>
+                  <li><a href="#3">Run a test with the mtest toolbox</a></li>
+                  <li><a href="#10">Run a test with the mtestengine</a></li>
+               </ul>
+            </div>
+         </div>
+         <div class="collapsible">
+            <div>
+               <h2><a name="1">Command line execution</a></h2>
                <div>
                   <p>Testdefinitions are designed in such a way that simply running the function from the command line will evaulate the test and
                      testcases. The first output argument of a testdefinition is always a boolean indicating whtether the test was successfull.
@@ -107,7 +112,7 @@ testresult =
                </div>
             </div>
             <div>
-               <h2><a>Run a test with the mtest toolbox</a></h2>
+               <h2><a name="3">Run a test with the mtest toolbox</a></h2>
                <div>
                   <p>A testdefinition can also be run with the use of the mtest toolbox. To do this first an instance of an mtest object must be
                      created.
@@ -270,7 +275,7 @@ ans =
                </div>
             </div>
             <div>
-               <h2><a>Run a test with the mtestengine</a></h2>
+               <h2><a name="10">Run a test with the mtestengine</a></h2>
                <div>
                   <p>The third way to run a test is with the use of the mtestengine that is also used to scan the toolbox for testdefinitions and
                      automatically run them. This is done in the same way as with the mtest object:
@@ -393,7 +398,7 @@ ans =
             </div>
          </div>
          <p class="footer"><br>
-            Published with MATLAB&reg; 7.6<br></p>
+            Published with MATLAB&reg; 7.8<br></p>
       </div>
       <!--
 ##### SOURCE BEGIN #####

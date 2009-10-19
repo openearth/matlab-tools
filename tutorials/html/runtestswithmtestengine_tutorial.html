@@ -10,21 +10,18 @@ This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
       -->
       <title>4. Automated tesing with the mtest toolbox</title>
-      <meta name="generator" content="MATLAB 7.6">
-      <meta name="date" content="2009-09-25">
+      <meta name="generator" content="MATLAB 7.8">
+      <meta name="date" content="2009-10-19">
       <meta name="m-file" content="runtestswithmtestengine_tutorial">
-      <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2accordion.js"></script><script type="text/javascript">
+      <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
+      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript">
   	$(document).ready(function ()
   	{
   	// Copy content
 	copycontent();
 
   	// Accordion
-  	$(".accordion").accordion({ header: "h2" });
-	$(".accordion").accordion('option', 'autoHeight', false);
-	$(".accordion").accordion('option', 'collapsible', true);
-	$(".accordion").accordion('activate',false);
-	$(".accordion").accordion('option', 'clearStyle', true);
+  	collapsible($(".collapsible"));
   	});
     </script><style>
 
@@ -35,7 +32,7 @@ pre.codeinput {
 }
 @media print {
   pre.codeinput {word-wrap:break-word; width:100%;}
-} 
+}
 
 span.keyword {color: #0000FF}
 span.comment {color: #228B22}
@@ -83,10 +80,21 @@ p.footer {
                   testing</a> </html>
                </p>
             </div>
-         </div>
-         <div class="accordion">
+            <h2>Contents</h2>
             <div>
-               <h2><a>Building an mtestengine</a></h2>
+               <ul>
+                  <li><a href="#1">Building an mtestengine</a></li>
+                  <li><a href="#5">Properties (fieldnames) of the mtestengine</a></li>
+                  <li><a href="#6">Specifying tests to run</a></li>
+                  <li><a href="#13">Run all tests</a></li>
+                  <li><a href="#15">Run all tests and publish documentation and results</a></li>
+                  <li><a href="#16">Publication templates</a></li>
+               </ul>
+            </div>
+         </div>
+         <div class="collapsible">
+            <div>
+               <h2><a name="1">Building an mtestengine</a></h2>
                <div>
                   <p>Creating an mtestengine is as simple as the following code suggests:</p><pre class="codeinput">mte = mtestengine;
 </pre></div>
@@ -97,11 +105,11 @@ p.footer {
 </pre><pre class="codeoutput">
 mte = 
 
-mtestengine handle
+  mtestengine handle
 
-properties:
-          targetdir: 'f:\OpenEarthTools\matlab\maintenance\automatedTesting'
-            maindir: 'f:\OpenEarthTools\matlab\maintenance\automatedTesting'
+  Properties:
+          targetdir: 'e:\Temp\tpe188ca52_fe9e_4f0b_a080_8ae36e012aa3'
+            maindir: 'e:\Temp\tpe188ca52_fe9e_4f0b_a080_8ae36e012aa3'
           recursive: 1
             verbose: 0
     includecoverage: 1
@@ -135,7 +143,7 @@ mte.template = <span class="string">'oet'</span>;
 </pre></div>
             </div>
             <div>
-               <h2><a>Properties (fieldnames) of the mtestengine</a></h2>
+               <h2><a name="5">Properties (fieldnames) of the mtestengine</a></h2>
                <div>
                   <p>The mtestengine has a couple of properties that can be used to define the behaviour of the mtestengine when running and publishing.
                      The following table lists the properties of an mtestengine object.
@@ -179,16 +187,16 @@ mte.template = <span class="string">'oet'</span>;
                </div>
             </div>
             <div>
-               <h2><a>Specifying tests to run</a></h2>
+               <h2><a name="6">Specifying tests to run</a></h2>
                <div>
                   <p>After creation of an mtestengine we can see that it does not contain any testdefinitions yet. The <b><i>tests</i></b> contains an empty test.
                   </p><pre class="codeinput">mte.tests
 </pre><pre class="codeoutput">
 ans = 
 
-mtest handle
+  mtest handle
 
-properties:
+  Properties:
                    testname: []
                    filename: []
                    filepath: []
@@ -272,11 +280,11 @@ ans =
 </pre><pre class="codeoutput">
 mte = 
 
-mtestengine handle
+  mtestengine handle
 
-properties:
+  Properties:
           targetdir: 'e:\Temp\htmltest'
-            maindir: 'f:\OpenEarthTools\matlab\maintenance\automatedTesting\examples'
+            maindir: 'F:\OpenEarthTools\matlab\maintenance\automatedTesting\examples'
           recursive: 1
             verbose: 1
     includecoverage: 1
@@ -291,7 +299,7 @@ properties:
 </pre></div>
             </div>
             <div>
-               <h2><a>Run all tests</a></h2>
+               <h2><a name="13">Run all tests</a></h2>
                <div>
                   <p>To run all tests specified in the <b><i>tests</i></b> field of the mtestengine object there is a very simple function:
                   </p><pre class="codeinput">run(mte);
@@ -300,16 +308,16 @@ properties:
             <div>
                <div>
                   <p>Each mtest object under the field <b><i>"tests"</i></b> contains a field that stores the testresult:
-                  </p><pre class="codeinput">mte.tests(1).testresult
+                  </p><pre class="codeinput">mte.tests(2).testresult
 </pre><pre class="codeoutput">
 ans =
 
-     0
+     1
 
 </pre></div>
             </div>
             <div>
-               <h2><a>Run all tests and publish documentation and results</a></h2>
+               <h2><a name="15">Run all tests and publish documentation and results</a></h2>
                <div>
                   <p>The runAndPublish function runs all tests and publishes the description and vizualization of results as specified in the testdefinition
                      files. It also publishes the coverage of the tests (which percentages (and lines) of which functions did we actually test).
@@ -347,7 +355,7 @@ ans =
 </pre></div>
             </div>
             <div>
-               <h2><a>Publication templates</a></h2>
+               <h2><a name="16">Publication templates</a></h2>
                <div>
                   <p>Publication of the mtestengine results is done acoording to a predefined format. This format is determined by the choice for
                      a template. It is of course also possible to write your own template. At this moment there is not yet a tutorial on how to
@@ -357,7 +365,7 @@ ans =
             </div>
          </div>
          <p class="footer"><br>
-            Published with MATLAB&reg; 7.6<br></p>
+            Published with MATLAB&reg; 7.8<br></p>
       </div>
       <!--
 ##### SOURCE BEGIN #####
@@ -578,7 +586,7 @@ run(mte);
 %%
 % Each mtest object under the field *_"tests"_* contains a field that stores the testresult:
 
-mte.tests(1).testresult
+mte.tests(2).testresult
 
 %% Run all tests and publish documentation and results
 % The runAndPublish function runs all tests and publishes the description and vizualization of

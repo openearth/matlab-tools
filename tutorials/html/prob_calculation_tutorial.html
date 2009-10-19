@@ -11,20 +11,17 @@ To make changes, update the M-file and republish this document.
       -->
       <title>setting up a probabilistic calculation</title>
       <meta name="generator" content="MATLAB 7.8">
-      <meta name="date" content="2009-09-24">
+      <meta name="date" content="2009-10-19">
       <meta name="m-file" content="prob_calculation_tutorial">
-      <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2accordion.js"></script><script type="text/javascript">
+      <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
+      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript">
   	$(document).ready(function ()
   	{
   	// Copy content
 	copycontent();
 
   	// Accordion
-  	$(".accordion").accordion({ header: "h2" });
-	$(".accordion").accordion('option', 'autoHeight', false);
-	$(".accordion").accordion('option', 'collapsible', true);
-	$(".accordion").accordion('activate',false);
-	$(".accordion").accordion('option', 'clearStyle', true);
+  	collapsible($(".collapsible"));
   	});
     </script><style>
 
@@ -35,7 +32,7 @@ pre.codeinput {
 }
 @media print {
   pre.codeinput {word-wrap:break-word; width:100%;}
-} 
+}
 
 span.keyword {color: #0000FF}
 span.comment {color: #228B22}
@@ -74,16 +71,30 @@ p.footer {
             <div>
                <p>This is a script with a tutorial on setting up a probabilistic calculation. The script assumes that oetsettings has been run!</p>
             </div>
-         </div>
-         <div class="accordion">
+            <h2>Contents</h2>
             <div>
-               <h2><a>create a new function to define the stochastic variables</a></h2>
+               <ul>
+                  <li><a href="#1">create a new function to define the stochastic variables</a></li>
+                  <li><a href="#2">define the "stochast"-variable</a></li>
+                  <li><a href="#4">create a new function to define the Z-function</a></li>
+                  <li><a href="#5">define the limit state function (Z-function)</a></li>
+                  <li><a href="#6">run the calculation with FORM</a></li>
+                  <li><a href="#7">get a summary of the calculations results</a></li>
+                  <li><a href="#8">plot the calculation development</a></li>
+                  <li><a href="#9">run the calculation with Monte Carlo</a></li>
+                  <li><a href="#10">plot the calculation results</a></li>
+               </ul>
+            </div>
+         </div>
+         <div class="collapsible">
+            <div>
+               <h2><a name="1">create a new function to define the stochastic variables</a></h2>
                <div><pre class="codeinput">oetnewfun(<span class="string">'prob_example1_stochast'</span>,<span class="keyword">...</span>
     <span class="string">'output'</span>, <span class="string">'stochast'</span>)
 </pre></div>
             </div>
             <div>
-               <h2><a>define the "stochast"-variable</a></h2>
+               <h2><a name="2">define the "stochast"-variable</a></h2>
                <div>
                   <p>Define the stochastic variables within the newly created function. Create a structure with the fields 'Name', 'Distr' and
                      'Params'. Each stochastic variable must have a name, a distribution and parameters. The distribution functions should have
@@ -120,7 +131,7 @@ OPT = setProperty(OPT, varargin{:});
 </pre></div>
             </div>
             <div>
-               <h2><a>create a new function to define the Z-function</a></h2>
+               <h2><a name="4">create a new function to define the Z-function</a></h2>
                <div>
                   <p>The input and output variables as specified here must be used.</p><pre class="codeinput">oetnewfun(<span class="string">'prob_example1_x2z'</span>,<span class="keyword">...</span>
     <span class="string">'output'</span>, <span class="string">'z'</span>,<span class="keyword">...</span>
@@ -128,7 +139,7 @@ OPT = setProperty(OPT, varargin{:});
 </pre></div>
             </div>
             <div>
-               <h2><a>define the limit state function (Z-function)</a></h2>
+               <h2><a name="5">define the limit state function (Z-function)</a></h2>
                <div>
                   <p>Define the Z-function in the newly created function. The first loop is to retrieve the calculation values in order to have
                      all variables clearly recognisable by name. Subsequently, Z must be calculated. This part can be customised, as long as the
@@ -145,7 +156,7 @@ z = samples.R - samples.S;
 </pre></div>
             </div>
             <div>
-               <h2><a>run the calculation with FORM</a></h2>
+               <h2><a name="6">run the calculation with FORM</a></h2>
                <div>
                   <p>After saving both the stochast-function and the x2z-function, the model is ready to run. When calling the FORM routine, it
                      is essential that both the stochast and the x2z-funtion are parsed.
@@ -154,17 +165,17 @@ z = samples.R - samples.S;
 </pre></div>
             </div>
             <div>
-               <h2><a>get a summary of the calculations results</a></h2>
+               <h2><a name="7">get a summary of the calculations results</a></h2>
                <div><pre class="codeinput">displayFORMresult(FORMres)
 </pre></div>
             </div>
             <div>
-               <h2><a>plot the calculation development</a></h2>
+               <h2><a name="8">plot the calculation development</a></h2>
                <div><pre class="codeinput">plotFORMresult(FORMres)
 </pre></div>
             </div>
             <div>
-               <h2><a>run the calculation with Monte Carlo</a></h2>
+               <h2><a name="9">run the calculation with Monte Carlo</a></h2>
                <div>
                   <p>A similar calculation can be easily carried out with the Monte Carlo method as well.</p><pre class="codeinput">MCres = MC(prob_example1_stochast,<span class="keyword">...</span>
     <span class="string">'x2zFunction'</span>, @prob_example1_x2z,<span class="keyword">...</span>
@@ -172,7 +183,7 @@ z = samples.R - samples.S;
 </pre></div>
             </div>
             <div>
-               <h2><a>plot the calculation results</a></h2>
+               <h2><a name="10">plot the calculation results</a></h2>
                <div><pre class="codeinput">plotMCResult(MCres,<span class="keyword">...</span><span class="comment">)</span>
     <span class="string">'space'</span>, <span class="string">'x'</span>);
 </pre></div>
