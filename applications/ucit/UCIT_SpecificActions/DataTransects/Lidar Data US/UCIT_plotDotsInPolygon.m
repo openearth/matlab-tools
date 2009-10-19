@@ -94,10 +94,24 @@ time_id = find(time == datenum(UCIT_getInfoFromPopup('TransectsSoundingID'))-dat
 x = nc_varget(url, 'x',         [time_id-1,ids(1)-1,0], [1,ids(end)-ids(1),length(crossShoreCoordinate)]);
 y = nc_varget(url, 'y',         [time_id-1,ids(1)-1,0], [1,ids(end)-ids(1),length(crossShoreCoordinate)]);
 z = nc_varget(url, 'altitude',  [time_id-1,ids(1)-1,0], [1,ids(end)-ids(1),length(crossShoreCoordinate)]);
-
+shoreX = nc_varget(url, 'shore_east',[ids(1)-1],[ids(end)-ids(1)]);
+shoreY = nc_varget(url,'shore_north',[ids(1)-1],[ids(end)-ids(1)]);
 
 % prepare info for coloring
-MHW    = 1;% d(i).Z_mhw;
+% this section of code was added by afarris@usgs.gov on 2009oct13
+allMHW = d.mean_high_water(ids);
+% There is a MHW value for each transect.  Usually all transects will have
+% the same MHW value.  Occasionally this will not be true.  Ideally this
+% code would handle these cases intellegently. 
+m1=allMHW(1);
+m2=allMHW(end);
+if m1 ~= m2
+    % FIXME handle mutlitple MHW zones better
+end    
+%  Here just I use the first value
+MHW = allMHW(1);
+
+
 dz     = .5/8;
 zmin_a = MHW - (19 * dz);
 zmax_a = MHW + (44 * dz);
@@ -122,7 +136,9 @@ else
     set(findobj('tag','Dotfig'),'position',UCIT_getPlotPosition('UR'));
 
     % plot landboundary
-    UCIT_plotLandboundary(d.datatypeinfo{1},1);
+    % afarris@usgs.gov left this out (on 2009oct16) becasue it seemed to
+    % mess up the labelling of the colorbar 
+    %UCIT_plotLandboundary(d.datatypeinfo{1},1);
 
     % prepare colormap info for cdots_amy function
     load colormapMHWjump20
@@ -130,15 +146,16 @@ else
     % plot data (NB: coloring depends on the Mean High Water info)
     UCIT_cdots_amy(x,y,z,zmin_a,zmax_a,cmapMHWjump20)
 
-    %% get info to plot shoreposition
-    scatter(d.shore_east, d.shore_north, repmat(35,size(d.shore_east)),'marker','o','markerfacecolor','w','markeredgecolor','k')
+    %% plot shoreline position
+    plot(shoreX,shoreY,'o','linewidth',2,'markerEdgeColor',...
+        'k','markerFaceColor','w','markerSize',6);
 
     %% Set figure properties
 
     view(2);
     xlabel('Easting (m, UTM)','fontsize',9);
     ylabel('Northing (m, UTM)','fontsize',9);
-    % axis equal
+    axis equal
     dx=100;
     maxx=max(max(x(x~=-9999)));
     minx=min(min(x(x~=-9999)));
@@ -146,12 +163,25 @@ else
     miny=min(min(y(y~=-9999)));
     axis([(minx) - dx (maxx)+ dx (miny)- dx (maxy)+ dx] );
 
-    %% set colorbar
-    cb = colorbar('ytick',4:8:60,'yticklabel',...
-        {'HMW-0.5';'MHW';'MHW+0.5';'MHW+1.0';'MHW+1.5';'MHW+2.0';'>=MHW+2.5'});
-    set(cb,'yticklabel',{'HMW-0.5';'MHW';'MHW+0.5';'MHW+1.0';'MHW+1.5';'MHW+2.0';'>=MHW+2.5'})
-    title(cb,'Height (m)');
+    %% make colorbar
+    % updated by afarris@usgs.gov on 2009oct16 to fix labels on colobar
+    zinc=(zmax_a - zmin_a)/64;
+    % the ticks will be at
+    yt = [10 20 30 40 50 60];
+    % calculate the labels for these ticks
+    b=1;
+    for a= yt
+        tmp = zmin_a + a*zinc; 
+        ytl_string(b) = {num2str(tmp,'%3.1f')};
+        b=b+1;
+    end
+    % the second label will always be at MHW, I want users to know this
+    ytl_string{2}= 'MHW';
+    % now make colorbar
+    cb = colorbar('ytick',yt,'yticklabel',ytl_string);
+    title(cb,'Height (m)')
     colormap(cmapMHWjump20);
+
     %% make figure visible only after all is plotted
     set(fh,'visible','on')
     figure(findobj('tag','Dotfig')) % make the figure current is apparently needed to actually make the repositioning statement work

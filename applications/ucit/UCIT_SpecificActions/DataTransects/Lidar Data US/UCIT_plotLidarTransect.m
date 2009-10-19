@@ -149,7 +149,7 @@ end
 
 %% add USGS meta information
 try
-    plot(d.shorePos, d.MHW,'k*','markersize',10);
+    plot(d.shorePos, d.MHW,'g*','markersize',10);
     line([min(d.xe(d.xe~=-9999)) max(d.xe(d.xe~=-9999))],[d.MHW d.MHW],'color','k');
     plot(d.xe(~isnan(d.regression)),d.ze(~isnan(d.regression)),'or');
 
@@ -175,8 +175,8 @@ try
 %     plot([x2 x3],[y2 y3],'g')
 end
 
+box on
 
-box on % Amy - we don't have a script called clearbox. Please add it to OET if you want to use it in OET
 handles = guidata(fh);
 
 fh=findobj('tag','plotWindow_US');
