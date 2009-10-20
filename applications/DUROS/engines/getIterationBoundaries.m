@@ -255,7 +255,7 @@ if ~IterationBoundariesConsistent
     % --> zcr is rounded to 8 digits. This could cause problems when the
     %     WL_t is specified with more than 8 digits. To prevent problems,
     %     WL_t has been rounded to 8 decimal digits in DUROSCheckConditions
-    if isempty(xcr)
+    if isempty(xcr) || all(dx2>x0max_wl)
         writemessage(-8, 'Initial profile is not steep enough to yield a solution under these conditions.');
     else
         if Basis.x0max == 6
