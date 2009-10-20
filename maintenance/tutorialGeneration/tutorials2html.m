@@ -129,6 +129,15 @@ id = ~cellfun(@isempty,tutorials);
 alldirs(~id)=[];
 tutorials(~id)=[];
 
+%% Get revision number
+cdtemp   = cd;
+cd(openearthtoolsroot);
+[dum txt] = system('svn info');
+dps = strfind(txt,':');
+ends = strfind(txt,char(10));
+revtxt = strfind(txt,'Revision');
+revisionnr = str2double(txt(min(dps(dps>revtxt))+1:min(ends(ends>revtxt))));
+
 %% publish tutorials (if not already published)
 % target dirs
 outputhtmldir = fullfile(outputdir,'html');
@@ -140,7 +149,6 @@ if ~isdir(outputdir)
 end
 
 % loop tutorials
-cdtemp   = cd;
 htmlref  = cell(size(alldirs));
 title    = cell(size(alldirs));
 
@@ -178,7 +186,8 @@ for idr = 1:length(alldirs)
                 if strcmp(tutorialname(1),'_')
                     tutorialname = tutorialname(2:end);
                 end
-                copyfile(which(tutorials{idr}{itutorials}),fullfile(tmpdir,[tutorialname,'.m']));
+                mothermfile = which(tutorials{idr}{itutorials});
+                copyfile(mothermfile,fullfile(tmpdir,[tutorialname,'.m']));
                 
                 %% read first line to acquire name
                 cd(tmpdir);
@@ -206,6 +215,17 @@ for idr = 1:length(alldirs)
                 %% remove tempdir
                 cd(cdtemp);
                 rmdir(tmpdir,'s');
+                
+                %% manually add reference to file that wat used to create the tutorial
+                [dum fnamemother] = fileparts(mothermfile);
+                strfrep(htmlref{idr}{itutorials},...
+                    'Published with MATLAB',...
+                    ['this tutorial is based on: ',...
+                    '<a target="new" href="http://crucible.delftgeosystems.nl/browse/~raw,r=' num2str(revisionnr) '/OpenEarthTools/trunk/matlab/' strrep(strrep(mothermfile,openearthtoolsroot,''),filesep,'/') '">',...
+                    fnamemother, '.m (revision: ' num2str(revisionnr) ')',...
+                    '</a><br>',...
+                    char(10),...
+                    'Published with MATLAB']);
                 
                 %% show progress
                 if ~quiet
@@ -303,6 +323,7 @@ genhtml = genhtml(sid);
 
 % loop files
 genstr = [];
+generaltutorials = {};
 for ifl = 1:length(idfiles)
     filesstr = [];
     [tempnames sid] = sort(gentitle{idfiles(ifl)});
@@ -311,6 +332,7 @@ for ifl = 1:length(idfiles)
         [dum name] = fileparts(temphtml{ifiles});
         filesstr = cat(2,filesstr,...
             strrep(strrep(filestr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',tempnames{ifiles}));
+        generaltutorials = cat(1,generaltutorials,{tempnames{ifiles},[name,'.html']});
     end
     genstr = cat(2,genstr,filesstr);
 end
@@ -322,6 +344,7 @@ end
 [nms foldersid] = sort(cll);
 
 % loop dirs
+generalfolders = {};
 for idr = 1:length(idfolders)
     dirid = idfolders(foldersid(idr));
     dirnames = gennodes{dirid};
@@ -333,6 +356,7 @@ for idr = 1:length(idfolders)
         [dum name] = fileparts(temphtml{ifiles});
         newfilestr = cat(2,newfilestr,...
             strrep(strrep(fileinfolderstr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',tempnames{ifiles}));
+        generalfolders = cat(1,generalfolders,{dirnames{end},tempnames{ifiles}, [name, '.html']});
     end
     newfstr = strrep(newfstr,fileinfolderstr,newfilestr);
     genstr = cat(2,genstr,newfstr);
@@ -365,6 +389,7 @@ apptitle = title(idapplications);
 apptitle = apptitle(dirorder);
 
 newappstr = [];
+applicationfolders = {};
 for idr = 1:length(appnodes)
     % fill application node
     newfstr = strrep(folderstr,'#FOLDERNAME',appnodes{idr});
@@ -375,6 +400,7 @@ for idr = 1:length(appnodes)
         [dum name] = fileparts(temphtmlref{ifiles});
         newfilestr = cat(2,newfilestr,...
             strrep(strrep(fileinfolderstr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',temptitles{ifiles}));
+        applicationfolders = cat(1,applicationfolders,{appnodes{idr},temptitles{ifiles},[name,'.html']});
     end
     newfstr = strrep(newfstr,fileinfolderstr,newfilestr);
     newappstr = cat(2,newappstr,newfstr);
@@ -383,10 +409,11 @@ end
 % replace application template string with the one we made above
 str = strrep(str,applicationstr,newappstr);
 
-%% write output file
+%% write output files
 fid = fopen(fullfile(outputdir,'tutorial_summary.html'),'w');
 fprintf(fid,'%s',str);
 fclose(fid);
+save(fullfile(outputdir,'tutorials_listed.mat'),'applicationfolders','generaltutorials','generalfolders');
 
 %% show result
 

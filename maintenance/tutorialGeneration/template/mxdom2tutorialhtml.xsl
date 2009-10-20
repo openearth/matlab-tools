@@ -14,7 +14,7 @@ $Revision: 1.1.6.17 $  $Date: 2007/10/01 15:34:09 $
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
   <xsl:output method="html"
-    indent="yes" 
+    indent="yes"
     doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"/>
   <xsl:strip-space elements="mwsh:code"/>
 
@@ -54,31 +54,30 @@ To make changes, update the M-file and republish this document.
     </meta>
 
     <link type="text/css" href="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/tutorialGeneration/template/script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+    <link type="text/css" href="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/tutorialGeneration/template/script/css/jquery.collapsible.css" rel="stylesheet" />
     <script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/tutorialGeneration/template/script/js/jquery-1.3.2.min.js"></script>
     <script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/tutorialGeneration/template/script/js/jquery-ui-1.7.2.custom.min.js"></script>
     <script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/tutorialGeneration/template/script/js/matlab2accordion.js"></script>
+    <script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/tutorialGeneration/template/script/js/jquery.collapsible.js"></script>
     <script type="text/javascript">
+
   	$(document).ready(function ()
   	{
   	// Copy content
 	copycontent();
 
   	// Accordion
-  	$(".accordion").accordion({ header: "h2" });
-	$(".accordion").accordion('option', 'autoHeight', false);
-	$(".accordion").accordion('option', 'collapsible', true);
-	$(".accordion").accordion('activate',false);
-	$(".accordion").accordion('option', 'clearStyle', true);
+  	collapsible($(".collapsible"));
   	});
     </script>
-    
+
     <!-- inclue the css style sheet as specified in the template lateron in this file -->
     <xsl:call-template name="stylesheet"/>
   </head>
 
 <!-- Begin of html body -->
 <body LINK="#48339F" VLINK="#48339F" ALINK="#48339F">
-    
+
   <!-- Call the header template -->
   <xsl:call-template name="header"/>
 
@@ -87,18 +86,39 @@ To make changes, update the M-file and republish this document.
     <!-- Determine if the there should be an introduction section. -->
     <xsl:variable name="hasIntro" select="count(cell[@style = 'overview'])"/>
 
-    <!-- If there is an introduction, display it. -->
-    <xsl:if test = "$hasIntro">
-      <div class="introduction ui-widget ui-widget-content ui-corner-all">
-        <h1><xsl:apply-templates select="cell[1]/steptitle"/></h1>
-        <div><xsl:apply-templates select="cell[1]/text"/></div>
-      </div>
-    </xsl:if>
-    
     <xsl:variable name="body-cells" select="cell[not(@style = 'overview')]"/>
 
+    <!-- If there is an introduction, display it. -->
+    <xsl:choose>
+      <xsl:when test = "$hasIntro">
+        <div class="introduction ui-widget ui-widget-content ui-corner-all">
+          <h1>
+            <xsl:apply-templates select="cell[1]/steptitle"/>
+          </h1>
+          <div>
+            <xsl:apply-templates select="cell[1]/text"/>
+          </div>
+
+          <!-- Include contents if there are titles for any subsections. -->
+	      <xsl:if test="count(cell/steptitle[not(@style = 'document')])">
+	        <xsl:call-template name="contents">
+	          <xsl:with-param name="body-cells" select="$body-cells"/>
+	        </xsl:call-template>
+	      </xsl:if>
+        </div>
+      </xsl:when>
+      <xsl:otherwise>
+        <!-- Include contents if there are titles for any subsections. -->
+	    <xsl:if test="count(cell/steptitle[not(@style = 'document')])">
+	      <xsl:call-template name="contents">
+	        <xsl:with-param name="body-cells" select="$body-cells"/>
+	     </xsl:call-template>
+	    </xsl:if>
+      </xsl:otherwise>
+    </xsl:choose>
+
     <!-- Loop over each cell -->
-    <div class="accordion">
+    <div class="collapsible">
       <xsl:for-each select="$body-cells">
     	<div>
            <!-- Title of cell -->
@@ -108,11 +128,16 @@ To make changes, update the M-file and republish this document.
                  <xsl:when test="steptitle[@style = 'document']">h1</xsl:when>
                  <xsl:otherwise>h2</xsl:otherwise>
                </xsl:choose>
-             </xsl:variable>
-             <xsl:element name="{$headinglevel}">
-               <a>
-                 <xsl:apply-templates select="steptitle"/>
-               </a>
+           	 </xsl:variable>
+               <xsl:element name="{$headinglevel}">
+           		 <a>
+           		   <xsl:if test="not(steptitle[@style = 'document'])">
+	       		     <xsl:attribute name="name">
+	       		       <xsl:value-of select="position()"/>
+	       		     </xsl:attribute>
+	       		   </xsl:if>
+	       		   <xsl:apply-templates select="steptitle"/>
+	       		 </a>
              </xsl:element>
            </xsl:if>
            <div>
@@ -124,13 +149,13 @@ To make changes, update the M-file and republish this document.
         </div>
       </xsl:for-each>
     </div>
-    
+
     <!-- apply footer to html body -->
     <xsl:call-template name="footer"/>
 
   </div>
 
-  <!-- Copy and paste the original code of the file at the end of the html -->    
+  <!-- Copy and paste the original code of the file at the end of the html -->
   <xsl:apply-templates select="originalCode"/>
 
 </body>
@@ -148,7 +173,7 @@ pre.codeinput {
 }
 @media print {
   pre.codeinput {word-wrap:break-word; width:100%;}
-} 
+}
 
 span.keyword {color: #0000FF}
 span.comment {color: #228B22}
@@ -200,7 +225,7 @@ p.footer {
   <h2>Contents</h2>
   <div><ul>
     <xsl:for-each select="$body-cells">
-      <xsl:if test="./steptitle">        
+      <xsl:if test="./steptitle">
         <li><a><xsl:attribute name="href">#<xsl:value-of select="position()"/></xsl:attribute><xsl:apply-templates select="steptitle"/></a></li>
       </xsl:if>
     </xsl:for-each>
@@ -345,10 +370,10 @@ p.footer {
       <xsl:value-of select=
         "concat(substring-before($outputString,$target),$replacement)"/>
       <xsl:call-template name="globalReplace">
-        <xsl:with-param name="outputString" 
+        <xsl:with-param name="outputString"
           select="substring-after($outputString,$target)"/>
         <xsl:with-param name="target" select="$target"/>
-        <xsl:with-param name="replacement" 
+        <xsl:with-param name="replacement"
           select="$replacement"/>
       </xsl:call-template>
     </xsl:when>
@@ -357,5 +382,3 @@ p.footer {
     </xsl:otherwise>
   </xsl:choose>
 </xsl:template>
-
-</xsl:stylesheet>
