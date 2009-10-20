@@ -29,8 +29,8 @@
 
 %% File loop
 
-   OPT.directory.raw  = ['F:\checkouts\OpenEarthRawData\knmi\noaapc\mom\1990_mom\5\'];
-   OPT.directory.nc   = ['F:\checkouts\OpenEarthRawData\knmi\noaapc\mom.nc\1990_mom\5\'];
+   OPT.directory.raw  = ['P:\mcdata\OpenEarthRawData\knmi\noaapc\mom\1990_mom\5\'];
+   OPT.directory.nc   = ['P:\mcdata\opendap\knmi\NOAA\mom\1990_mom\5\'];
    
    mkpath(OPT.directory.nc)
 
@@ -81,7 +81,7 @@
       nc_attput(outputfile, nc_global, 'version'         , D.version);
    						   
       nc_attput(outputfile, nc_global, 'Conventions'     , 'CF-1.4');
-     %nc_attput(outputfile, nc_global, 'CF:featureType'  , ' ');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
+      nc_attput(outputfile, nc_global, 'CF:featureType'  , 'Grid');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
    
       nc_attput(outputfile, nc_global, 'terms_for_use'   , 'These data can be used freely for research purposes provided that the following source is acknowledged: KNMI.');
       nc_attput(outputfile, nc_global, 'disclaimer'      , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
@@ -91,25 +91,19 @@
       nc_attput(outputfile, nc_global, 'type'            , D.type);
       nc_attput(outputfile, nc_global, 'yearday'         , D.yearday);
    
-     %% Discovery information:
-     %  http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html (draft)
-     %  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec11.html (v1.0.1)
-     
-%TO DO :Metadata_Conventions = "Unidata Dataset Discovery v1.0";      
+%% Add discovery information (test):
 
+      %  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html
+   
       nc_attput(outputfile, nc_global, 'geospatial_lat_min'         , min(D.latcor(:)));
       nc_attput(outputfile, nc_global, 'geospatial_lat_max'         , max(D.latcor(:)));
       nc_attput(outputfile, nc_global, 'geospatial_lon_min'         , min(D.loncor(:)));
       nc_attput(outputfile, nc_global, 'geospatial_lon_max'         , max(D.loncor(:)));
-      
+      nc_attput(outputfile, nc_global, 'time_coverage_start'        , datestr(D.datenum(  1),'yyyy-mm-ddPHH:MM:SS'));
+      nc_attput(outputfile, nc_global, 'time_coverage_end'          , datestr(D.datenum(end),'yyyy-mm-ddPHH:MM:SS'));
       nc_attput(outputfile, nc_global, 'geospatial_lat_units'       , 'degrees_north');
       nc_attput(outputfile, nc_global, 'geospatial_lon_units'       , 'degrees_east' );
 
-%TO DO time_coverage_start  	
-%TO DO time_coverage_end
-%TO DO standard_name_vocabulary
-%TO DO cdm_data_type Attribute "Grid", "Image", "Station", "Trajectory", "Radial". Its use is recommended.       
- 
 %% 2 Create dimensions
    
       nc_add_dimension(outputfile, 'time' , 1)
@@ -195,6 +189,7 @@
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'longitude');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_east');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'longitude'); % standard name
+      nc(ifld).Attribute(4) = struct('Name', 'actual_range'   ,'Value', [min(D.loncen(:)) max(D.loncen(:))]); % 
    
       %% Latitude
       % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
@@ -207,6 +202,7 @@
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'latitude');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_north');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'latitude'); % standard name
+      nc(ifld).Attribute(4) = struct('Name', 'actual_range'   ,'Value', [min(D.latcen(:)) max(D.latcen(:))]); % 
       end % if OPT.ll
 
       %% Time

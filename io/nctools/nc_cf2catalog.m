@@ -1,7 +1,7 @@
 function ATT = struct2catalog(varargin)
 %STRUCT2CATALOG   test for creating catalog.nc of CF complaint netCDF files (BETA)
 %
-% Extracts  (i) THREDDS meta-data keywords 
+% Extracts  (i) netCDF CF meta-data keywords 
 %               'title'
 %               'institution'
 %               'source'
@@ -14,30 +14,30 @@ function ATT = struct2catalog(varargin)
 %               'CF:featureType'
 %               'terms_for_use'
 %               'disclaimer'
-%               'geospatial_lat_min'
-%               'geospatial_lat_max'
-%               'geospatial_lon_min'
-%               'geospatial_lon_max'
-%               'geospatial_lat_units'
-%               'geospatial_lon_units'
-%               'time_coverage_start'
-%               'time_coverage_end'
-%          (ii) filenames ans all availbale standard_names
-%              'filename'
+%
+%          (ii) THREDDS meta-data keywords 
+%              'urlPath'
 %              'standard_names'
+%              'timecoverage_start'
+%              'timecoverage_end'
+%              'timecoverage_duration'
+%              'geospatialCoverage_northsouth'
+%              'geospatialCoverage_eastwest'
+%              'dataTypes'
+%
 % from all specified netCDF files and stores them into a 
 % struct for storage in netCDF file (now still mat file)
 %
-% currently nc_cf2catalog adhares to:
-%
-% http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html
-%
-% but should probably switch to the multui-level keywords which are useful for xml
-% but less useful for catalog.nc
-%
-% http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html
+%  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html
+%  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html#geospatialCoverageType
+%  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html#timeCoverageType
+%  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html#dataType
+% (http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html)
 %
 %See also: STRUCT2NC, NC2STRUCT
+
+% TO DO: make catalog per directory-level that incorporates all lowel levels
+% TO DO: standard_name_vocabulary
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -67,11 +67,10 @@ function ATT = struct2catalog(varargin)
 
 disp('WARNING: BETA FUNCTION')
 
-%% Java issue
-% Note: generates error after about 450 files:
-%     java.lang.OutOfMemoryError: Java heap space
-%
-% Note that that opendap acces does not work then (landboundary)
+%% Java issue, us emexnc insteadd
+%  Note: generates error after about 450 files:
+%      java.lang.OutOfMemoryError: Java heap space
+%  Note that that opendap acces does not work with mexnc.
 
 OPT.USE_JAVA = getpref ('SNCTOOLS', 'USE_JAVA');
 setpref ('SNCTOOLS', 'USE_JAVA', 0)
@@ -79,7 +78,7 @@ setpref ('SNCTOOLS', 'USE_JAVA', 0)
 %% which directories to scan
 
 OPT.base           = 'P:\mcdata\opendap\';
-OPT.catalog_length = 1750 + 205; % rijkswaterstaat + KNMI
+OPT.catalog_length = 1750 + 205; % rijkswaterstaat + KNMI (pre-allocate for speed-up)
 OPT.char_length    = 1;
 
 OPT.directories    = {'rijkswaterstaat\waterbase\concentration_of_chlorophyll_in_sea_water',...
@@ -110,16 +109,13 @@ OPT.attname        = {'title',...
                       'CF:featureType',...
                       'terms_for_use',...
                       'disclaimer',...
-                      'geospatial_lat_min',...
-                      'geospatial_lat_max',...
-                      'geospatial_lon_min',...
-                      'geospatial_lon_max',...
-                      'geospatial_lat_units',...
-                      'geospatial_lon_units',...
-                      'time_coverage_start',...
-                      'time_coverage_end',...
-                      'filename',...     % separate
-                      'standard_names'};  % separate
+                      'urlPath',... % 
+                      'standard_names',...
+                      'timecoverage_start',...
+                      'timecoverage_end',...
+                      'geospatialCoverage_northsouth',...
+                      'geospatialCoverage_eastwest'};
+                     % 'dataTypes'};
 
 OPT.atttype        = [ 0   % 'title',...
                        0   % 'institution',...
@@ -133,16 +129,13 @@ OPT.atttype        = [ 0   % 'title',...
                        0   % 'CF:featureType',...
                        0   % 'terms_for_use',...
                        0   % 'disclaimer',...
-                       1   % 'geospatial_lat_min',...
-                       1   % 'geospatial_lat_max',...
-                       1   % 'geospatial_lon_min',...
-                       1   % 'geospatial_lon_max',...
-                       1   % 'geospatial_lat_units',...
-                       1   % 'geospatial_lon_units',...
-                       0   % 'time_coverage_start',...
-                       0   % 'time_coverage_end',...
-                       0   % 'filename',...      % separate
-                       0 ];% 'standard_names'};  % separate
+                       0   % 'urlPath',...
+                       0   % 'standard_names',...
+                       1   % 'timecoverage_start',...
+                       1   % 'timecoverage_end',...
+                       1   % 'geospatialCoverage_northsouth',...
+                       1 ];% 'geospatialCoverage_eastwest',...
+                     % 0 ];% 'dataTypes'};
                       
 %% pre-allocate
 
@@ -157,10 +150,7 @@ OPT.atttype        = [ 0   % 'title',...
      end
    
    end
-
-%TO DO standard_name_vocabulary
-%TO DO cdm_data_type Attribute "Grid", "Image", "Station", "Trajectory", "Radial". Its use is recommended.       
-
+   
 %% Directory loop
 
 entry = 0;
@@ -177,18 +167,22 @@ for idir=1:length(OPT.directories)
 
    OPT.files        = dir([OPT.directory,filesep,OPT.mask]);
 
-   for ifile=1:length(OPT.files)
+   for ifile=1:length(OPT.files) %%%%%%%%%%%%%%%%%%%%%%%
    
    entry = entry + 1;
    
-      OPT.filename = [OPT.directory, filesep, OPT.files(ifile).name];
+      OPT.filename = [OPT.files(ifile).name];
    
       disp(['  Processing ',num2str(ifile,'%0.4d'),'/',num2str(length(OPT.files),'%0.4d'),': ',filename(OPT.filename)]);
 
 %% Get global attributes (PRE-ALLOCATE)
 
-      ATT.filename(entry,1:length(OPT.filename)) = OPT.filename;
-
+      ATT.urlPath                      (entry,1:length(OPT.filename)) = OPT.filename;
+      ATT.geospatialCoverage_northsouth(entry,1:2)                    = nan;
+      ATT.geospatialCoverage_eastwest  (entry,1:2)                    = nan;
+      ATT.timecoverage_start           (entry)                        = nan;
+      ATT.timecoverage_end             (entry)                        = nan;
+      
    %% get relevant attributes
 
       for iatt = 1:length(OPT.attname)
@@ -196,44 +190,150 @@ for idir=1:length(OPT.directories)
          attname = OPT.attname{iatt};
          fldname = mkvar(attname);
          try
-         att = nc_attget(OPT.filename, nc_global,attname);
-         if isnumeric(att)
-         ATT.(fldname)(entry)               = att;
-         else
-         ATT.(fldname)(entry,1:length(att)) = att;
-         end
+         att = nc_attget([OPT.directory, filesep, OPT.filename], nc_global,attname);
+            if isnumeric(ATT.(fldname))
+            ATT.(fldname)(entry)               = att;
+            else
+            ATT.(fldname)(entry,1:length(att)) = att;
+            end
+         catch
+            if isnumeric(ATT.(fldname))
+            ATT.(fldname)(entry)               = nan;
+            else
+            ATT.(fldname)(entry,:)             = ' ';
+            end
          end
          
       end
       
    %% get all standard_names (and prevent doubles)
+   %  get actual_range attribute instead if present for lat, lon, time
+
    
-         fileinfo       = nc_info(OPT.filename);
+         fileinfo       = nc_info([OPT.directory, filesep, OPT.filename]);
          standard_names = [];
          
          % cycle all datasets
          ndat = length(fileinfo.Dataset);
-	 for idat=1:ndat
+         for idat=1:ndat
 
          % cycle all attributes
          natt = length(fileinfo.Dataset(idat).Attribute);
-	 for iatt=1:natt
-	    Name = fileinfo.Dataset(idat).Attribute(iatt).Name;
+         for iatt=1:natt
 
-            % get standard_names only ...
-	    if strcmpi('standard_name',Name)
-	    Value = fileinfo.Dataset(idat).Attribute(iatt).Value;
+            Name  = fileinfo.Dataset(idat).Attribute(iatt).Name;
+
+            %% get standard_names only ...
+            if strcmpi(Name,'standard_name')
+
+            Value = fileinfo.Dataset(idat).Attribute(iatt).Value;
 
             % ... once
-	    if ~any(strfind(standard_names,[' ',Value]))  % remove redudant standard_names (can occur with statistics)
-	    standard_names = [standard_names ' ' Value];  % needs to be char
-	    end
-	    end
-	 end
-	 end
-	 
-	 ATT.standard_names(entry,1:length(standard_names)) = standard_names;
+            if ~any(strfind(standard_names,[' ',Value]))  % remove redudant standard_names (can occur with statistics)
+            standard_names = [standard_names ' ' Value];  % needs to be char
+            end
+            
+         %   %% get spatial
+         %
+         %   if strcmpi(Value,'latitude')
+         %   
+         %      latitude  = nc_varget([OPT.directory, filesep, OPT.filename], fileinfo.Dataset(idat).Name);
+         %      
+         %      ATT.geospatialCoverage_northsouth(entry,1) = min(ATT.geospatialCoverage_northsouth(entry,1),min(latitude(:)));
+         %      ATT.geospatialCoverage_northsouth(entry,2) = max(ATT.geospatialCoverage_northsouth(entry,2),max(latitude(:)));
+         %      
+         %   end
+         %   
+         %   if strcmpi(Value,'longitude')
+         %   
+         %      longitude = nc_varget([OPT.directory, filesep, OPT.filename], fileinfo.Dataset(idat).Name);
+         %      
+         %      ATT.geospatialCoverage_eastwest(entry,1)   = min(ATT.geospatialCoverage_eastwest  (entry,1),min(longitude(:)));
+         %      ATT.geospatialCoverage_eastwest(entry,2)   = max(ATT.geospatialCoverage_eastwest  (entry,2),max(longitude(:)));
+         %      
+         %   end
+         
+            %% get temporal
+            
+            if strcmpi(Value,'time')
+         
+               time      = nc_varget([OPT.directory, filesep, OPT.filename], fileinfo.Dataset(idat).Name);
+               
+               ATT.timecoverage_start(entry)   = min(ATT.timecoverage_start(entry),min(time(:)));
+               ATT.timecoverage_end  (entry)   = max(ATT.timecoverage_end  (entry),max(time(:)));
+               
+            end
+
+            end % standard_names
+            
+         end % iatt
+         end % idat
+         
+         ATT.standard_names(entry,1:length(standard_names)) = standard_names;
+
+         %% get latitude (actual_range or min() max() full array)
+
+         [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'latitude' );
+         names = cellstr(names);
+         
+         % cycle all latitudes
+         for idat=indices
+         
+         latitude = [];
+
+         % cycle all attributes
+         natt = length(fileinfo.Dataset(idat).Attribute);
+         for iatt=1:natt
+
+            Name  = fileinfo.Dataset(idat).Attribute(iatt).Name;
+
+            %% get standard_names only ...
+            if strcmpi(Name,'actual_range')
+            
+            latitude = fileinfo.Dataset(idat).Attribute(iatt).Value;
+
+            end % actual_range
+            
+         end % iatt
+         if isempty(latitude)
+         latitude  = nc_varget([OPT.directory, filesep, OPT.filename], fileinfo.Dataset(idat).Name);
+         end
+         ATT.geospatialCoverage_northsouth(entry,1) = min(ATT.geospatialCoverage_northsouth(entry,1),min(latitude(:)));
+         ATT.geospatialCoverage_northsouth(entry,2) = max(ATT.geospatialCoverage_northsouth(entry,2),max(latitude(:)));
+         end % idat
    
+         %% get longitude (actual_range or min() max() full array)
+
+         [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'longitude' );
+         names = cellstr(names);
+         
+         % cycle all longitude
+         for idat=indices
+
+         longitude = [];
+
+         % cycle all attributes
+         natt = length(fileinfo.Dataset(idat).Attribute);
+         for iatt=1:natt
+
+            Name  = fileinfo.Dataset(idat).Attribute(iatt).Name;
+
+            %% get standard_names only ...
+            if strcmpi(Name,'actual_range')
+            
+            longitude = fileinfo.Dataset(idat).Attribute(iatt).Value;
+
+            end % actual_range
+            
+         end % iatt
+         if isempty(longitude)
+         longitude  = nc_varget([OPT.directory, filesep, OPT.filename], fileinfo.Dataset(idat).Name);
+         end
+         ATT.geospatialCoverage_eastwest(entry,1) = min(ATT.geospatialCoverage_eastwest(entry,1),min(longitude(:)));
+         ATT.geospatialCoverage_eastwest(entry,2) = max(ATT.geospatialCoverage_eastwest(entry,2),max(longitude(:)));
+         end % idat
+
+
       if OPT.pause
          pausedisp
       end
@@ -253,16 +353,15 @@ end % directory
    
 %% store database (mat file, netCDF file, xls file, ..... and perhaps some day as xml file)
 
-%% struct2nc character does not completely write because any space is considered as end-of-line
    struct2nc ([                 'catalog.nc' ],ATT);
    save      (                  'catalog.mat' ,'-struct','ATT');
-   struct2xls(                  'catalog.xls' ,ATT);
+%%%struct2xls(                  'catalog.xls' ,ATT); % cannot handle 2D geospatial arrays
  
 % load database as check
 
-   ATT1 = nc2struct ([          'catalog.nc' ]); % WRONG, beucase nc chars in nc are wrong.
+   ATT1 = nc2struct ([          'catalog.nc' ]); % WRONG, because nc chars in nc are wrong.
    ATT2 = load      ([          'catalog.mat']);
-   ATT3 = xls2struct(           'catalog.xls' );
+%%%ATT3 = xls2struct(           'catalog.xls' ); % cannot handle 2D geospatial arrays
 
 %% Java issue
                

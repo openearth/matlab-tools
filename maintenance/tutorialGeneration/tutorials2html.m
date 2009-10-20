@@ -1,10 +1,14 @@
 function tutorials2html(varargin)
 %TUTORIALS2HTML  publishes all tutorials to html (including overview page).
 %
-%   This function finds all tutorials inside a toolbox and publishes the files to html. 
-%   It also creates an overview page. It fills a template (tutorial_summary.html.tpl by default) and
-%   publishes the results in an outputdir that can be specified. Default is the outputdir of the
-%   tutorials in you local copy of OpenEarth.
+%   This function finds all tutorials inside a toolbox and publishes 
+%   the files to html.  It also creates an overview page. It fills a 
+%   template (tutorial_summary.html.tpl by default) and publishes the 
+%   results in an outputdir that can be specified. Default is the 
+%   outputdir of the tutorials in you local copy of OpenEarth.
+%
+%   An *.m file is considered a tutorial when the file name adhared to 
+%   the following pattern: '*_tutorial*.m'.
 %
 %   Syntax:
 %   tutorials2html(varargin)
@@ -16,7 +20,7 @@ function tutorials2html(varargin)
 %   Example
 %   tutorials2html;
 %
-%   See also publish
+%   See also: PUBLISH
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -119,15 +123,15 @@ alldirs(~cellfun(@isempty,strfind(alldirs,'.svn')))=[];
 
 % loop dirs and find "_tutorial"
 tutorials = cell(size(alldirs,1),1);
-for idr = 1:length(alldirs)
-    fls = dir(fullfile(alldirs{idr},'*_tutorial*.m'));
+for idr   = 1:length(alldirs)
+    fls   = dir(fullfile(alldirs{idr},'*_tutorial*.m'));
     tutorials{idr} = {fls.name}';
 end
 
 % remove dirs from list that did not have a tutorial
-id = ~cellfun(@isempty,tutorials);
-alldirs(~id)=[];
-tutorials(~id)=[];
+id             = ~cellfun(@isempty,tutorials);
+alldirs(~id)   = [];
+tutorials(~id) = [];
 
 %% Get revision number
 cdtemp   = cd;
@@ -158,7 +162,7 @@ for idr = 1:length(alldirs)
     for itutorials = 1:length(tutorials{idr})
         %% look for html files with the same name
         [dum tutorialname] = fileparts(tutorials{idr}{itutorials});
-        htmlfilesthere = which([tutorialname '.html'],'-all');
+        htmlfilesthere     = which([tutorialname '.html'],'-all');
         if strcmp(tutorialname(1),'_')
             htmlfilesthere = which([tutorialname(2:end) '.html'],'-all');
         end
@@ -289,7 +293,7 @@ dirnamesseparated = cellfun(@strread,...
     repmat({'delimiter'},size(alldirs)),...
     repmat({[filesep filesep]},size(alldirs)),...
     'UniformOutput',false);
-htmlref = htmlref(sid);
+htmlref   = htmlref(sid);
 tutorials = tutorials(sid);
 
 id = strncmp(alldirsstripped,'applications',length('applications'));
@@ -298,7 +302,7 @@ idapplications = find(id);
 
 %% Fill template with general items
 % strings for each file / folder
-rtns = strfind(generalstr,char(10));
+rtns    = strfind(generalstr,char(10));
 filestr = generalstr(min(rtns(rtns > min(strfind(generalstr,'##BEGINFILE')))):...
     max(rtns(rtns < min(strfind(generalstr,'##ENDFILE')))));
 folderstr = generalstr(min(rtns(rtns > min(strfind(generalstr,'##BEGINFOLDER')))):...
@@ -307,19 +311,19 @@ rtns2 = strfind(folderstr,char(10));
 fileinfolderstr = folderstr(min(rtns2(rtns2 > min(strfind(folderstr,'##BEGINFILE')))):...
     max(rtns2(rtns2 < min(strfind(folderstr,'##ENDFILE')))));
 
-gennodes = dirnamesseparated(idgeneral);
-genm = tutorials(idgeneral);
-gentitle = title(idgeneral);
-genhtml = htmlref(idgeneral);
+gennodes  = dirnamesseparated(idgeneral);
+genm      = tutorials(idgeneral);
+gentitle  = title(idgeneral);
+genhtml   = htmlref(idgeneral);
 
 [lengths sid] = sort(cellfun(@length,gennodes));
-idfiles = find(lengths==1);
+idfiles   = find(lengths==1);
 idfolders = find(lengths>1);
 
-gennodes = gennodes(sid);
-genm = genm(sid);
-gentitle = gentitle(sid);
-genhtml = genhtml(sid);
+gennodes  = gennodes(sid);
+genm      = genm(sid);
+gentitle  = gentitle(sid);
+genhtml   = genhtml(sid);
 
 % loop files
 genstr = [];
@@ -327,10 +331,10 @@ generaltutorials = {};
 for ifl = 1:length(idfiles)
     filesstr = [];
     [tempnames sid] = sort(gentitle{idfiles(ifl)});
-    temphtml = genhtml{idfiles(ifl)}(sid);
-    for ifiles = 1:length(genm{idfiles(ifl)})
-        [dum name] = fileparts(temphtml{ifiles});
-        filesstr = cat(2,filesstr,...
+    temphtml        = genhtml{idfiles(ifl)}(sid);
+    for ifiles      = 1:length(genm{idfiles(ifl)})
+        [dum name]  = fileparts(temphtml{ifiles});
+        filesstr    = cat(2,filesstr,...
             strrep(strrep(filestr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',tempnames{ifiles}));
         generaltutorials = cat(1,generaltutorials,{tempnames{ifiles},[name,'.html']});
     end
@@ -346,12 +350,12 @@ end
 % loop dirs
 generalfolders = {};
 for idr = 1:length(idfolders)
-    dirid = idfolders(foldersid(idr));
-    dirnames = gennodes{dirid};
-    newfstr = strrep(folderstr,'#FOLDERNAME',dirnames{end});
+    dirid      = idfolders(foldersid(idr));
+    dirnames   = gennodes{dirid};
+    newfstr    = strrep(folderstr,'#FOLDERNAME',dirnames{end});
     newfilestr = [];
     [tempnames sid] = sort(gentitle{dirid});
-    temphtml = genhtml{dirid}(sid);
+    temphtml   = genhtml{dirid}(sid);
     for ifiles = 1:length(genm{dirid})
         [dum name] = fileparts(temphtml{ifiles});
         newfilestr = cat(2,newfilestr,...
@@ -359,7 +363,7 @@ for idr = 1:length(idfolders)
         generalfolders = cat(1,generalfolders,{dirnames{end},tempnames{ifiles}, [name, '.html']});
     end
     newfstr = strrep(newfstr,fileinfolderstr,newfilestr);
-    genstr = cat(2,genstr,newfstr);
+    genstr  = cat(2,genstr,newfstr);
 end
 
 % replace general template string in template
@@ -380,13 +384,13 @@ for idr = 1:length(nodenames)
         nodenames{idr} = dirnamesseparated{idr}{2};
     end
 end
-appnodes = nodenames(idapplications);
+appnodes   = nodenames(idapplications);
 [dum dirorder] = sort(lower(appnodes));
-appnodes = appnodes(dirorder);
+appnodes   = appnodes(dirorder);
 apphtmlref = htmlref(idapplications);
 apphtmlref = apphtmlref(dirorder);
-apptitle = title(idapplications);
-apptitle = apptitle(dirorder);
+apptitle   = title(idapplications);
+apptitle   = apptitle(dirorder);
 
 newappstr = [];
 applicationfolders = {};
@@ -402,7 +406,7 @@ for idr = 1:length(appnodes)
             strrep(strrep(fileinfolderstr,'#HTMLREF',['html/',name,'.html']),'#FILENAME',temptitles{ifiles}));
         applicationfolders = cat(1,applicationfolders,{appnodes{idr},temptitles{ifiles},[name,'.html']});
     end
-    newfstr = strrep(newfstr,fileinfolderstr,newfilestr);
+    newfstr   = strrep(newfstr,fileinfolderstr,newfilestr);
     newappstr = cat(2,newappstr,newfstr);
 end
 

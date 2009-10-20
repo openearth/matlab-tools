@@ -4,7 +4,7 @@ function varargout = delft3d_waq_io_inp(varargin)
 % DAT = delft3d_waq_io_inp        % launches file load GUI
 % DAT = delft3d_waq_io_inp(fname)
 %
-% Reads up to halfway Block #7
+% Reads up to halfway Block #5
 % 
 % Beta version, G.J. de Boer, 2005-2007
 %

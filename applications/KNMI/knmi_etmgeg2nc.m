@@ -71,7 +71,7 @@ for ifile=1:length(OPT.files)
    
 %% 1a Create file
 
-   outputfile    = [OPT.directory_nc filesep  filename(D.filename),OPT.ext,'.nc'];
+   outputfile    = [OPT.directory_nc filesep  filename(D.file.name),OPT.ext,'.nc'];
    
    nc_create_empty (outputfile)
 
@@ -82,9 +82,9 @@ for ifile=1:length(OPT.files)
    nc_attput(outputfile, nc_global, 'title'        , '');
    nc_attput(outputfile, nc_global, 'institution'  , 'KNMI');
    nc_attput(outputfile, nc_global, 'source'       , 'surface observation');
-   nc_attput(outputfile, nc_global, 'history'      , ['Original filename: ',filename(D.filename),...
+   nc_attput(outputfile, nc_global, 'history'      , ['Original filename: ',filename(D.file.name),...
                                                       ', version:',D.version,...
-                                                      ', filedate:',D.filedate,...
+                                                      ', filedate:',D.file.date,...
                                                       ', tranformation to NetCDF: $HeadURL$ $Revision$ $Date$ $Author$']);
    nc_attput(outputfile, nc_global, 'references'   , '<http://www.knmi.nl/klimatologie/daggegevens/download.html>,<http://openearth.deltares.nl>');
    nc_attput(outputfile, nc_global, 'email'         , 'http://www.knmi.nl/contact/emailformulier.htm?klimaatdesk');
@@ -99,6 +99,19 @@ for ifile=1:length(OPT.files)
 
    nc_attput(outputfile, nc_global, 'terms_for_use' , 'These data can be used freely for research purposes provided that the following source is acknowledged: KNMI.');
    nc_attput(outputfile, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
+
+%% Add discovery information (test):
+
+   %  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html
+   
+   nc_attput(outputfile, nc_global, 'geospatial_lat_min'         , min(D.latcor(:)));
+   nc_attput(outputfile, nc_global, 'geospatial_lat_max'         , max(D.latcor(:)));
+   nc_attput(outputfile, nc_global, 'geospatial_lon_min'         , min(D.loncor(:)));
+   nc_attput(outputfile, nc_global, 'geospatial_lon_max'         , max(D.loncor(:)));
+   nc_attput(outputfile, nc_global, 'time_coverage_start'        , datestr(D.datenum(  1),'yyyy-mm-ddPHH:MM:SS'));
+   nc_attput(outputfile, nc_global, 'time_coverage_end'          , datestr(D.datenum(end),'yyyy-mm-ddPHH:MM:SS'));
+   nc_attput(outputfile, nc_global, 'geospatial_lat_units'       , 'degrees_north');
+   nc_attput(outputfile, nc_global, 'geospatial_lon_units'       , 'degrees_east' );
 
 %% 2 Create dimensions
 

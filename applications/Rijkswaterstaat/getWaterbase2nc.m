@@ -221,6 +221,19 @@ for ivar=[OPT.parameter]
 
         nc_attput(outputfile, nc_global, 'waarnemingssoort', D.meta1.waarnemingssoort);
         nc_attput(outputfile, nc_global, 'reference_level' , D.meta1.what);
+        
+%% Add discovery information (test):
+
+        %  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html
+
+        nc_attput(outputfile, nc_global, 'geospatial_lat_min'         , min(D.data.lat));
+        nc_attput(outputfile, nc_global, 'geospatial_lat_max'         , max(D.data.lat));
+        nc_attput(outputfile, nc_global, 'geospatial_lon_min'         , min(D.data.lon));
+        nc_attput(outputfile, nc_global, 'geospatial_lon_max'         , max(D.data.lon));
+        nc_attput(outputfile, nc_global, 'time_coverage_start'        , datestr(D.data.datenum(  1),'yyyy-mm-ddPHH:MM:SS'));
+        nc_attput(outputfile, nc_global, 'time_coverage_end'          , datestr(D.data.datenum(end),'yyyy-mm-ddPHH:MM:SS'));
+        nc_attput(outputfile, nc_global, 'geospatial_lat_units'       , 'degrees_north');
+        nc_attput(outputfile, nc_global, 'geospatial_lon_units'       , 'degrees_east' );
 
         %% 2 Create dimensions
 

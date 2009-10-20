@@ -1,11 +1,8 @@
 %STRUCT2NC_TEST   test for struct2nc & nc2struct
 %
-% Issue: a space in a characater is interpeted as end-of-line by snctools.
-%
 %See also: STRUCT2NC, NC2STRUCT
 
 % TO DO: swap fieldnames and attributenames in meta-struct
-% TO DO: fix issue that space is considered as end-of-line
 
 n = 20;
 
@@ -16,9 +13,9 @@ n = 20;
    D1.some_numbersT         = [1997 1998 1999]';
 
    D1.cell                  = {'abcdef','abcdefghijkl'};
-   D1.char                  = char(D1.cell); % additional space are lost when reading with nc2struct
+   D1.char                  = char(D1.cell);
 
-   D1.cellwithspace         = {'a b c d e f','a b c d e f g h i j k l'}; % data after 1st space are lost when writing with struct2nc
+   D1.cellwithspace         = {'a b c d e f','a b c d e f g h i j k l'}; % test for any spce delimitation
    D1.charwithspace         = char(D1.cell);
 
    M1.terms_for_use         = 'These data can be used freely for research purposes provided that the following source is acknowledged: OET.';

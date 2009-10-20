@@ -2,7 +2,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 %NC_CF_STATIONTIMESERIES   load/plot one variable from stationTimeSeries netCDF file
 %
 %  [D,M] = nc_cf_stationTimeSeries(ncfile)
-%  [D,M] = nc_cf_stationTimeSeries(ncfile,varname)
+%  [D,M] = nc_cf_stationTimeSeries(ncfile,<varname>)
 %
 % plots/loads timeseries of variable varname from netCDF 
 % file ncfile and returns data and meta-data where
@@ -22,7 +22,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 %
 % The plot contains (ncfile, station_id, lon, lat) in title and (long_name, units) as ylabel.
 %
-%  [D,M] = nc_cf_stationTimeSeries(ncfile,varname,<keyword,value>)
+%  [D,M] = nc_cf_stationTimeSeries(ncfile,<varname>,<keyword,value>)
 %
 % The following <keyword,value> are implemented
 % * plot   (default 1)
@@ -87,11 +87,13 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    OPT.plot    = 1;
    OPT.varname = [];
    
-   if nargin > 1
+   if ~odd(nargin)
    OPT.varname = varargin{1};
+   OPT = setProperty(OPT,varargin{2:end});
+   else
+   OPT = setProperty(OPT,varargin{1:end});
    end
    
-   OPT = setProperty(OPT,varargin{2:end});
 
 %% Load file info
 
@@ -143,25 +145,27 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 
    idname         = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'station_id');
    if ~isempty(idname)
-   D.station_id   = nc_varget(ncfile,idname);
-   if isnumeric(D.station_id)
-   D.station_id   = num2str(D.station_id);
+    D.station_id   = nc_varget(ncfile,idname);
+    if isnumeric(D.station_id)
+    D.station_id   = num2str(D.station_id);
+    else
+    D.station_id   =         D.station_id;
+    end
    else
-   D.station_id   =         D.station_id;
+    D.station_id = '';
+    warning('no unique station id specified')
    end
-   else
-   D.station_name = '';
-   warning('no unique station id specified')
-   end
+   
+   D.station_name = D.station_id(:)'; % default
 
    idname         = nc_varfind(ncfile, 'attributename', 'long_name', 'attributevalue', 'station name');
    if ~isempty(idname)
     D.station_name = nc_varget(ncfile,idname);
    else
-   idname         = nc_varfind(ncfile, 'attributename', 'long_name', 'attributevalue', 'station_name');
-   if ~isempty(idname)
-   D.station_name = nc_varget(ncfile,idname);
-   end
+    idname         = nc_varfind(ncfile, 'attributename', 'long_name', 'attributevalue', 'station_name');
+    if ~isempty(idname)
+    D.station_name = nc_varget(ncfile,idname);
+    end
    end
 
 %% Find specified (or all parameters) that have time as dimension
@@ -226,10 +230,9 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
       datetick('x')
       grid     on
       title   ({mktex(fileinfo.Filename),...
-               ['"',D.station_name,'"',...
-                ' (',num2str(D.lon),'\circE',...
-                 ',',num2str(D.lat),'\circN',...
-                ')']})
+               ['"',D.station_name(:)','"',...
+                ' (',num2str(D.lon(1)),'\circE',...
+                 ',',num2str(D.lat(1)),'\circN)']})
       ylabel  ([mktex(M.(OPT.varname).long_name),' [',...
                 mktex(M.(OPT.varname).units    ),']']);
    

@@ -1,7 +1,7 @@
-function varname = nc_varfind(ncfile,varargin)
+function varargout = nc_varfind(ncfile,varargin)
 %NC_VARFIND  Lookup variable name(s) in NetCDF file using attributename and -value pair
 %
-%      varname = nc_varfind(ncfile,<keyword,value>)
+%      varname = nc_varfind(ncfile  ,<keyword,value>)
 %
 %   Finds the variable name in a netCDF file where the specified attribute
 %   name (e.g. 'standard_name') matches with the specified attribute value
@@ -17,15 +17,20 @@ function varname = nc_varfind(ncfile,varargin)
 %       'attributename' , []       = attributename to search for in netCDF file (e.g. 'standard_name')
 %       'attributevalue', []       = attributevalue to search for in netCDF file
 %
+%      [varname,index] = nc_varfind(fileinfo,...) 
+%
+%    also returns the incides into the fileinfo = nc_info(ncfile)
+%                                   
+%
 % Examples:
 %
 %    directory = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/'; % either remote
 %    directory = 'P:\mcdata\opendap\'                                      % or local
 %
-%       varname = nc_varfind([directory,'Delflandsekust.nc'], 'attributename', 'standard_name', 'attributevalue', 'time')
-%       varname = nc_varfind([directory,'KB128_1312.nc'    ], 'attributename', 'long_name'    , 'attributevalue', 'x-coordinate')
+%       varname = nc_varfind([directory,'knmi\NOAA\mom\1990_mom\5\N19900508T132200_SST.nc'],...
+%                 'attributename', 'standard_name', 'attributevalue', 'time')
 %
-% See also: nc_cf_time
+% See also: nc_cf_time, nc_cf_grid
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -99,14 +104,23 @@ for i = 1:length(Names)
     Attributes = tempstruct(i).Attribute;
     if any(strcmp({Attributes.Name} , OPT.attributename) & strcmp({Attributes.Value} , OPT.attributevalue))
         if isempty(varname)
-            varname{1} = Names{i};
+            varname {1} = Names{i};
+            varindex    = i;
         else
             disp('NB: more than one variable fits the description')
-            varname = {varname Names(i)}; %#ok<AGROW>
+            varname  = {varname  Names(i)};
+            varindex = [varindex i];
         end
     end
 end
 
 if length(varname)==1
    varname = char(varname);
+end
+
+
+if nargout==1
+   varargout= {varname};
+elseif nargout==2
+   varargout= {varname,varindex};
 end
