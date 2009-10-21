@@ -6,23 +6,6 @@
 <tocitem target="http://public.deltares.nl/display/OET/Join+OpenEarth" image="$toolbox/matlab/icons/greencircleicon.gif">Getting started / Joining OpenEarth
 </tocitem>
 
-<tocitem target="http://public.deltares.nl/display/OET" image="$toolbox/matlab/icons/pagesicon.gif">OpenEarthTools participants
-<tocitem target="http://www.deltares.nl" image="$toolbox/matlab/icons/webicon.gif">Deltares
-</tocitem>
-<tocitem target="http://www.hydraulicengineering.tudelft.nl" image="$toolbox/matlab/icons/webicon.gif">TU Delft - Hydraulic Engineering
-</tocitem>
-<tocitem target="http://www.fluidmechanics.tudelft.nl" image="$toolbox/matlab/icons/webicon.gif">TU Delft - Fluid Mechanics
-</tocitem>
-<tocitem target="http://www.unesco-ihe.org/" image="$toolbox/matlab/icons/webicon.gif">UNESCO - IHE
-</tocitem>
-<tocitem target="http://www.delftcluster.nl/" image="$toolbox/matlab/icons/webicon.gif">Delft Cluser - Northsea and Coast
-</tocitem>
-<tocitem target="http://www.ecoshape.nl/" image="$toolbox/matlab/icons/webicon.gif">Building with Nature
-</tocitem>
-<tocitem target="http://www.micore.eu" image="$toolbox/matlab/icons/webicon.gif">Micore
-</tocitem>
-</tocitem>
-
 <tocitem target="http://public.deltares.nl/display/OET/Data" image="$toolbox/matlab/icons/pagesicon.gif">Data
 <tocitem target="http://repos.deltares.nl/repos/OpenEarthRawData/trunk/" image="$toolbox/matlab/icons/reficon.gif">Raw data repository
 </tocitem>
@@ -30,14 +13,12 @@
 </tocitem>
 <tocitem target="http://public.deltares.nl/display/OET/Data+Collection+Protocol" image="$toolbox/matlab/icons/pageicon.gif">Data Standards
 </tocitem>
-<tocitem target="http://public.deltares.nl/display/OET/OpenEarth+tutorials" image="$toolbox/matlab/icons/pageicon.gif">Tutorials
+<tocitem target="http://public.deltares.nl/display/OET/Data+tutorials" image="$toolbox/matlab/icons/pageicon.gif">Tutorials
 </tocitem>
 </tocitem>
 
 <tocitem target="http://public.deltares.nl/display/OET/Models" image="$toolbox/matlab/icons/pagesicon.gif">Models
 <tocitem target="http://repos.deltares.nl/repos/OpenEarthModels/trunk/" image="$toolbox/matlab/icons/reficon.gif">Models repository
-</tocitem>
-<tocitem target="http://public.deltares.nl/display/OET/OpenEarth+tutorials" image="$toolbox/matlab/icons/pageicon.gif">Tutorials
 </tocitem>
 </tocitem>
 
@@ -50,7 +31,79 @@
 <tocitem target="http://www.python.org/dev/peps/pep-0008/" image="$toolbox/matlab/icons/webicon.gif">Python style guide
 </tocitem>
 </tocitem>
-<tocitem target="http://public.deltares.nl/display/OET/OpenEarth+tutorials" image="$toolbox/matlab/icons/pageicon.gif">Tutorials
+<tocitem target="http://public.deltares.nl/display/OET/OpenEarth+tutorials" image="$toolbox/matlab/icons/pagesicon.gif">Toolbox tutorials
+<tocitem target="html/dir_generaltutorials.html" image="$toolbox/matlab/icons/pagesicon.gif">general tutorials
+<tocitem target="html/tutorial_initiate_toolbox.html" image="$toolbox/matlab/icons/pageicon.gif">1. Initializing the OpenEarthTools toolbox in matlab
+</tocitem>
+<tocitem target="html/tutorial_creating_new_functions.html" image="$toolbox/matlab/icons/pageicon.gif">2. Creating new functions
+</tocitem>
+<tocitem target="html/tutorial_automatedtesting.html" image="$toolbox/matlab/icons/pageicon.gif">3. Automated testing
+</tocitem>
+<tocitem target="html/tutorial_keyword_value_pairs.html" image="$toolbox/matlab/icons/pageicon.gif">4. Keyword Value pairs
+</tocitem>
+<tocitem target="html/tutorial_how_to_write_tutorials.html" image="$toolbox/matlab/icons/pageicon.gif">5. How to make a tutorial
+</tocitem>
+<tocitem target="html/dir_automatedTesting.html" image="$toolbox/matlab/icons/pagesicon.gif">automatedTesting
+<tocitem target="html/testsInGeneral_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">1. General information on testing
+</tocitem>
+<tocitem target="html/testdefinitions_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">2. Creating a test
+</tocitem>
+<tocitem target="html/runningatest_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">3. Running individual tests
+</tocitem>
+<tocitem target="html/runtestswithmtestengine_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">4. Automated tesing with the mtest toolbox
+</tocitem>
+</tocitem>
+<tocitem target="html/dir_netCDF.html" image="$toolbox/matlab/icons/pagesicon.gif">netCDF
+<tocitem target="html/tutorial_netCDF_create.html" image="$toolbox/matlab/icons/pageicon.gif">Creating a netCDF file
+</tocitem>
+<tocitem target="html/tutorial_netCDF_read_functions.html" image="$toolbox/matlab/icons/pageicon.gif">Reading a netCDF file
+</tocitem>
+</tocitem>
+<tocitem target="html/dir_print_fun.html" image="$toolbox/matlab/icons/pagesicon.gif">print fun
+<tocitem target="html/printFigure_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">Convenient saving of figures
+</tocitem>
+</tocitem>
+<tocitem target="html/dir_tips_and_tricks.html" image="$toolbox/matlab/icons/pagesicon.gif">tipsand#38tricks
+<tocitem target="html/TODO_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">TODO function
+</tocitem>
+</tocitem>
+</tocitem>
+<tocitem target="html/dir_applicationtutorials.html" image="$toolbox/matlab/icons/pagesicon.gif">application tutorials
+<tocitem target="html/dir_DUROS.html" image="$toolbox/matlab/icons/pagesicon.gif">DUROS
+<tocitem target="html/findCrossings_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">Find crossings between arbitrary line segments
+</tocitem>
+</tocitem>
+<tocitem target="html/dir_Rijkswaterstaat.html" image="$toolbox/matlab/icons/pagesicon.gif">Rijkswaterstaat
+<tocitem target="html/jarkus_tutorial_coordinates_RSP_2_RD.html" image="$toolbox/matlab/icons/pageicon.gif">Coordinate conversion from RSP to RD
+</tocitem>
+<tocitem target="html/jarkus_tutorial_reading_data_1.html" image="$toolbox/matlab/icons/pageicon.gif">Extracting JarKus data from netCDF (1)
+</tocitem>
+<tocitem target="html/jarkus_tutorial_reading_data_2.html" image="$toolbox/matlab/icons/pageicon.gif">Extracting JarKus data from netCDF (2)
+</tocitem>
+<tocitem target="html/jarkus_tutorial_calculate_MKL.html" image="$toolbox/matlab/icons/pageicon.gif">JarKus MKL calculations
+</tocitem>
+<tocitem target="html/jarkus_tutorial_calculate_volume.html" image="$toolbox/matlab/icons/pageicon.gif">JarKus volume calculations
+</tocitem>
+<tocitem target="html/jarkus_tutorial_plot_in_googleEarth.html" image="$toolbox/matlab/icons/pageicon.gif">Jarkus and Google Earth
+</tocitem>
+</tocitem>
+<tocitem target="html/dir_SuperTrans.html" image="$toolbox/matlab/icons/pagesicon.gif">SuperTrans
+<tocitem target="html/convertCoordinates_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">Coordinate conversion
+</tocitem>
+</tocitem>
+<tocitem target="html/dir_googlePlot.html" image="$toolbox/matlab/icons/pagesicon.gif">googlePlot
+<tocitem target="html/KMLcurvedArrows_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">Animated arrows
+</tocitem>
+<tocitem target="html/KMLcontour3_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">KMLcontour3
+</tocitem>
+<tocitem target="html/KMLline_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">KMLline
+</tocitem>
+</tocitem>
+<tocitem target="html/dir_probabilistic.html" image="$toolbox/matlab/icons/pagesicon.gif">probabilistic
+<tocitem target="html/prob_calculation_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">setting up a probabilistic calculation
+</tocitem>
+</tocitem>
+</tocitem>
 </tocitem>
 </tocitem>
 
