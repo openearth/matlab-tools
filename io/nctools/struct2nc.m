@@ -83,7 +83,7 @@ function varargout = struct2nc(outputfile,D,varargin)
 
 %% Initialize
 
-   OPT.dump              = 1;
+   OPT.dump              = 0;
    OPT.disp              = 0;
    OPT.pause             = 0;
 
@@ -178,23 +178,45 @@ function varargout = struct2nc(outputfile,D,varargin)
    %  data in the next cell, netCDF can nicely fit all data into the
    %  file without the need to relocate any info.
    
-   var2evalstr(nc)
+   % var2evalstr(nc)
 
    for ifld=1:length(nc)
       fldname = fldnames{ifld};
       if OPT.disp;disp([num2str(ifld),' ',nc(ifld).Name]);end
       nc_addvar(outputfile, nc(ifld));
    end
-
+   
    %% 5 Fill variables
 
-   
    for ifld=1:nfld
    
       fldname = fldnames{ifld};
 
       if ~length(D.(fldname))==0
-      nc_varput(outputfile, fldname , D.(fldname));
+      
+        % The MEXNC and JAVA netCDF interfaces cannot deal with the 
+        % character 0 (the Matlab native interface can).
+        % You can solve this by writing to the file per line 
+        % (slow for much lines), or replacing all 0s with a space character.
+        % 0 characters can end up in a string when you expand it by 
+        % indexing a non-existing cell. Example: 
+        % >>  a = repmat(' ',[2 2])
+	% >>  a(20) = 'b'
+        % >>  a==0
+        %
+        % The default fill value is 0, not ' '. Use strvcat() etc instead.
+        
+        if ischar(D.(fldname))
+        
+           nullmask = D.(fldname)==0;
+           D.(fldname)(nullmask) = ' ';
+           %col = size(D.(fldname),2);
+           %for row=1:size(D.(fldname),1)
+           %nc_varput(outputfile, fldname , D.(fldname)(row,:),[row 1]-1,[1 col],[1 1]); % zero-based !!
+           %end
+        end
+        nc_varput(outputfile, fldname , D.(fldname));
+         
       end
 
    end
