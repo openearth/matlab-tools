@@ -1,5 +1,5 @@
 classdef tbdocumentation
-    properties (SetAccess = protected, GetAccess = private)
+    properties (Hidden = true)
         toolboxanalyzed = false;
         allfunctions = {}; %used to store some useful info about the toolbox
         type = 'toolbox';
@@ -118,7 +118,7 @@ classdef tbdocumentation
             end
         end
         %% functions to make documentation
-        function makedocumentation(obj)
+        function obj = makedocumentation(obj)
             % check target dir (and create if necessary)
             if obj.verbose
                 disp(' ');
@@ -126,25 +126,24 @@ classdef tbdocumentation
                 disp(' ');
                 disp('*** Creating target directory');
             end
-            targetdir = obj.targetdir;
-            if isempty(targetdir) ||  ~ischar(targetdir)
+            if isempty(obj.targetdir) ||  ~ischar(obj.targetdir)
                 if obj.verbose
                     disp('    Target dir is empty or not identified as a dir.');
                 end
                 return % error
             end
-            if  ~isdir(targetdir)
-                mkdir(targetdir);
+            if  ~isdir(obj.targetdir)
+                mkdir(obj.targetdir);
             elseif obj.verbose
-                disp(['    Directory ("' targetdir '") already exists']);
+                disp(['    Directory ("' obj.targetdir '") already exists']);
             end
             if obj.verbose
                 disp('*** Creating target icons directory');
             end
-            if ~isdir([targetdir filesep 'icons'])
-                mkdir([targetdir filesep 'icons']);
+            if ~isdir([obj.targetdir filesep 'icons'])
+                mkdir([obj.targetdir filesep 'icons']);
             elseif obj.verbose
-                disp(['    Directory ("' targetdir filesep 'icons' '") already exists']);
+                disp(['    Directory ("' obj.targetdir filesep 'icons' '") already exists']);
             end
 
             % prepare directory structure
@@ -252,8 +251,8 @@ classdef tbdocumentation
             end
         end
     end
-    methods (Access = 'protected')
-        function writeinfoxml(obj)
+    methods (Hidden = true)
+        function obj = writeinfoxml(obj)
             %% write main info.xml
             infoxml = [obj.targetdir filesep 'info.xml'];
             finfo = fopen(infoxml,'w');
@@ -317,7 +316,7 @@ classdef tbdocumentation
                 disp('    # Finished info.xml');
             end
         end
-        function writehelptocxml(obj)
+        function obj = writehelptocxml(obj)
             % open file
             fid = fopen(fullfile(obj.targetdir,obj.help_location,'helptoc.xml'),'w');
 
@@ -372,7 +371,7 @@ classdef tbdocumentation
                 disp('    # Finished helptoc.xml');
             end
         end
-        function createtoolboxgraph(obj,nr,name)
+        function obj = createtoolboxgraph(obj,nr,name)
             % check help location
             if isempty(obj.help_location)
                 error('TbToolbox:NoHelpLocation','No help location is specified. This function can not be executed.');
@@ -421,7 +420,7 @@ classdef tbdocumentation
                 tbdocumentation.makedotgraph(href2,references,names,obj.graphoptions,tgdir,name);
             end
         end
-        function writesearchdb(obj)
+        function obj = writesearchdb(obj)
             % This is a matlab function
             builddocsearchdb(fullfile(obj.targetdir,obj.help_location));
         end

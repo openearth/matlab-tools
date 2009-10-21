@@ -432,3 +432,6 @@ end
 
 %% unlock this file
 munlock
+
+%% regenerate the help toc page (to succeed the help navigator must be closed)
+generateOpenEarthToolsdocs;

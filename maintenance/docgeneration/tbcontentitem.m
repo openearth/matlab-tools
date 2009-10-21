@@ -87,7 +87,7 @@ classdef tbcontentitem
                 obj.target = 'html/blank.htm';
             end
         end
-        function str = toString(obj)
+        function [str obj] = toString(obj)
             % TOSTRING converts the objject to an xml string
             %
             % This mehtod converts the object to an xml string that can be 
@@ -109,7 +109,7 @@ classdef tbcontentitem
             end
             
             % conclude with the closure of the main tocitem
-            str{end+1,:} = '</tocitem>'; %#ok<AGROW>;
+            str{end+1,:} = '</tocitem>';
         end
         
         %% set methods
@@ -122,7 +122,7 @@ classdef tbcontentitem
             end
             
             %% if the input is not empty verify the name of the icon
-            iconms = obj.iconnames;
+            iconms = obj.iconnames; %#ok<MCSUP>
             if ~ischar(ico)
                 error('Toolbox:NoIcon','Icon should be specified as a char');
             end
@@ -134,6 +134,19 @@ classdef tbcontentitem
                 % on our network drive...
                 warning('Toolbox:IconNotFound','Icon was not found.');
             end
+        end
+        function obj = set.name(obj,nm)
+            %% check input
+            if isempty(nm)
+                obj.name = '';
+                return
+            end
+            
+            %% if the name includes an & sign replace it by "and"
+            if ~isempty(strfind(nm,'&'))
+                nm = strrep(nm,'&','and');
+            end
+            obj.name = nm;
         end
     end
     methods (Static = true)
