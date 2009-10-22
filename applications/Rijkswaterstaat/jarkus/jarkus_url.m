@@ -50,9 +50,7 @@ function url = jarkus_url
 % $HeadURL$
 % $Keywords: $
 
-if exist(fullfile('P:','mcdata','opendap','rijkswaterstaat','jarkus','profiles','transect.nc'),'file')
-	url = fullfile('P:','mcdata','opendap','rijkswaterstaat','jarkus','profiles','transect.nc');
-else
+
 	url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
 end
 
