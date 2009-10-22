@@ -79,7 +79,8 @@ OPT.attributevalue = [];  % this indicates the search window (nr of days, '-': b
 OPT = setProperty(OPT, varargin{1:end});
 
 % initialise output
-varname = [];
+varname  = '';
+varindex = [];
 
 %% get info from ncfile
 if isstruct(ncfile)
@@ -102,6 +103,7 @@ end
 Names = {tempstruct(:).Name};
 for i = 1:length(Names)
     Attributes = tempstruct(i).Attribute;
+    if ~isempty(Attributes)
     if any(strcmp({Attributes.Name} , OPT.attributename) & strcmp({Attributes.Value} , OPT.attributevalue))
         if isempty(varname)
             varname {1} = Names{i};
@@ -111,6 +113,7 @@ for i = 1:length(Names)
             varname  = {varname  Names(i)};
             varindex = [varindex i];
         end
+    end
     end
 end
 

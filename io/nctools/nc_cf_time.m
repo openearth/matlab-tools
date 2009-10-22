@@ -2,16 +2,23 @@ function varargout = nc_cf_time(ncfile,varargin)
 %NC_CF_TIME   readfs all time variables from a netCDF file inot Matlab datenumber
 %
 %   datenumbers = nc_cf_time(ncfile);
+%   datenumbers = nc_cf_time(ncfile,<varname>);
 %
-% extract time vectors from netCDF file ncfile as Matlab datenumbers.
+% extract all time vectors from netCDF file ncfile as Matlab datenumbers.
 % ncfile  = name of local file, OPeNDAP address, or result of ncfile = nc_info()
 % time    = defined according to the CF convention as in:
+% varname = optional name of specific time vector
 %
 % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
 % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/ch04s04.html
 %
 % When there is only one time variable, an array is returned,
 % otherwise a warning is thrown.
+%
+% Example:
+%
+%  base      = 'http://opendap.deltares.nl:8080/thredds/dodsC';
+%  D.datenum = nc_cf_time([base,'/opendap/knmi/potwind/potwind_343_2001.nc'],'time')
 %
 %See also: NC_CF_NC_CF_STATIONTIMESERIES, NC_CF_GRID, UDUNITS2DATENUM
 
@@ -80,25 +87,33 @@ function varargout = nc_cf_time(ncfile,varargin)
    %    end
    % end
    
-   %% cycle Datasets
-   %  all time datasets must have an associated time Dimension
-   index = [];
-   name  = {};
-   nt    = 0;
-   for idim=1:length(fileinfo.Dataset)
-      if     strcmpi(fileinfo.Dataset(idim).Name     ,'time') & ...
-         any(strcmpi(fileinfo.Dataset(idim).Dimension,'time'));
-      nt        = nt+1;
-      index(nt) =                   idim;
-      name {nt} =  fileinfo.Dataset(idim).Name;
+   if nargin==1
+      %% cycle Datasets
+      %  all time datasets must have an associated time Dimension
+      index = [];
+      name  = {};
+      nt    = 0;
+      for idim=1:length(fileinfo.Dataset)
+         if     strcmpi(fileinfo.Dataset(idim).Name     ,'time') & ...
+            any(strcmpi(fileinfo.Dataset(idim).Dimension,'time'));
+         nt        = nt+1;
+         index(nt) =                   idim;
+         name {nt} =  fileinfo.Dataset(idim).Name;
+         end
       end
-   end
-   
-   %% get data
-   for ivar=1:length(index)
-      M(ivar).datenum.units = nc_attget(fileinfo.Filename,name{ivar},'units');
-      D(ivar).datenum       = nc_varget(fileinfo.Filename,name{ivar});
-      D(ivar).datenum       = udunits2datenum(D.datenum,M.datenum.units);
+      
+      %% get data
+      for ivar=1:length(index)
+         M(ivar).datenum.units = nc_attget(fileinfo.Filename,name{ivar},'units');
+         D(ivar).datenum       = nc_varget(fileinfo.Filename,name{ivar});
+         D(ivar).datenum       = udunits2datenum(D.datenum,M.datenum.units);
+      end
+   else
+         varname = varargin{1};
+         M.datenum.units = nc_attget(fileinfo.Filename,varname,'units');
+         D.datenum       = nc_varget(fileinfo.Filename,varname);
+         D.datenum       = udunits2datenum(D.datenum,M.datenum.units);
+         index           = 1;
    end
    
 if nargout<2
