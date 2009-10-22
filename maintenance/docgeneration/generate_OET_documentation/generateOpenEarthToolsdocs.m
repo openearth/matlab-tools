@@ -468,4 +468,3 @@ toolboxdoc = toolboxdoc.makedocumentation;
 
 buildhelpjar(fullfile(toolboxdoc.targetdir,toolboxdoc.help_location));
 rmdir(fullfile(toolboxdoc.targetdir,toolboxdoc.help_location,'backup'),'s');
-% builddocsearchdb(fullfile(toolboxdoc.targetdir,toolboxdoc.help_location));
