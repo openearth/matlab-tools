@@ -95,6 +95,12 @@ function oetsettings(varargin)
    warning off
    addpathfast(basepath); % excludes *.svn directories!
 
+%% Create tutorial search database
+%------------------------
+    if exist('builddocsearchdb','file')
+        builddocsearchdb(fullfile(openearthtoolsroot,'docs','OpenEarthDocs','oethelpdocs'));
+    end
+    
 %% Restore warning and directory state
 %-----------------------
    warning(state.warning)
