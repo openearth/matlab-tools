@@ -17,9 +17,9 @@ z           =    z(~isnan(z));
 
 %%
 % As we want to calculate the MKL position, we need information on the mean
-% high and low water levels. 
+% low water level. The upper boundary is the dune foot position defined as the 3m
+% NAP line
 
-MHW = nc_varget(url,'mean_high_water',transect_nr,1)
 MLW = nc_varget(url, 'mean_low_water',transect_nr,1)
 
 %% Calculating the MKL
@@ -32,6 +32,6 @@ help jarkus
 %% 
 % jarkus_getMKL will do the job
 
-UpperBoundary = MHW;
-LowerBoundary = MLW-(MHW-MLW);
+UpperBoundary = 3;
+LowerBoundary = MLW-(3-MLW);
 xMKL = jarkus_getMKL(x,z,UpperBoundary,LowerBoundary,'plot')
