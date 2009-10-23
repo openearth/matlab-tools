@@ -55,8 +55,8 @@ function testresult = KMLline_test()
 %% $RunCode
 [lat,lon] = meshgrid([51:54],[3:7]);
 
-kmlline(lat ,lon ,'fileName','KMLline_testh.kml','lineColor',jet(2),'kmlName','horizontal');%,'text',{'1','2','3','4'});
-kmlline(lat',lon','fileName','KMLline_testv.kml','lineWidth',[1 3 3],'kmlName','vertical');%  ,'text',{'a','b','c','d','e'});
+kmlline(lat ,lon ,'fileName',KML_testdir('KMLline_testh.kml'),'lineColor',jet(2),'kmlName','horizontal');%,'text',{'1','2','3','4'});
+kmlline(lat',lon','fileName',KML_testdir('KMLline_testv.kml'),'lineWidth',[1 3 3],'kmlName','vertical');%  ,'text',{'a','b','c','d','e'});
 
 testresult = nan;
 
