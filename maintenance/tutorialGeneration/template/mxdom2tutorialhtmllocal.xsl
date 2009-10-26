@@ -59,11 +59,15 @@ To make changes, update the M-file and republish this document.
     <script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
     <script type="text/javascript" src="script/js/matlab2collapsible.js"></script>
     <script type="text/javascript" src="script/js/jquery.collapsible.js"></script>
+    <script type="text/javascript" src="script/js/matlabhelp.js"></script>
     <script type="text/javascript">
   	$(document).ready(function ()
   	{
   	// Copy content
 	copycontent();
+
+	// validate href of links to matlab tutorials
+	matlabpreparehelprefs();
 
   	// Accordion
   	collapsible($(".collapsible"));

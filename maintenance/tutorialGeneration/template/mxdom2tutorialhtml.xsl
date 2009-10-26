@@ -59,12 +59,16 @@ To make changes, update the M-file and republish this document.
     <script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/tutorialGeneration/template/script/js/jquery-ui-1.7.2.custom.min.js"></script>
     <script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/tutorialGeneration/template/script/js/matlab2accordion.js"></script>
     <script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/tutorialGeneration/template/script/js/jquery.collapsible.js"></script>
+    <script type="text/javascript" src="http://fisheye2.atlassian.com/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/tutorialGeneration/template/script/js/matlabhelp.js"></script>
     <script type="text/javascript">
 
   	$(document).ready(function ()
   	{
   	// Copy content
 	copycontent();
+
+	// validate href of links to matlab tutorials
+	matlabpreparehelprefs();
 
   	// Accordion
   	collapsible($(".collapsible"));

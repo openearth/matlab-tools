@@ -14,7 +14,7 @@
 	<script src="html/script/js/jquery-ui-1.7.2.custom.min.js" type="text/javascript"></script>
 	<script src="html/script/js/jquery.treeview.js" type="text/javascript"></script>
 	<script src="html/script/js/jquery.collapsible.js" type="text/javascript"></script>
-
+    <script type="text/javascript" src="html/script/js/matlabhelp.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function(){
 		$(".maintree").treeview({});
