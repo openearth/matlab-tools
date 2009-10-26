@@ -11,14 +11,17 @@ To make changes, update the M-file and republish this document.
       -->
       <title>Reading a netCDF file</title>
       <meta name="generator" content="MATLAB 7.8">
-      <meta name="date" content="2009-10-20">
+      <meta name="date" content="2009-10-26">
       <meta name="m-file" content="tutorial_netCDF_read_functions">
       <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
-      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript">
+      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script type="text/javascript">
   	$(document).ready(function ()
   	{
   	// Copy content
 	copycontent();
+
+	// validate href of links to matlab tutorials
+	matlabpreparehelprefs();
 
   	// Accordion
   	collapsible($(".collapsible"));
@@ -219,38 +222,37 @@ p.footer {
                   <p>We can get data from this file using the function nc_varget. But first, let's see what is in the file using nc_dump. nc_dump
                      shows all the metadata in the file. In the case of the JarKus file this is a lot.
                   </p><pre class="codeinput">nc_dump(url)
-</pre><pre class="codeoutput">netcdf P:\mcdata\opendap\rijkswaterstaat\jarkus\profiles\transect.nc { 
+</pre><pre class="codeoutput">netcdf http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/profiles/transect.nc { 
 
 dimensions:
-	time = UNLIMITED ; (44 currently)
 	alongshore = 2178 ;
 	cross_shore = 1925 ;
-	stringsize = 100 ;
+	time = UNLIMITED ; (44 currently)
 
 
 variables:
+	long crs([]), shape = [1]
+		crs:grid_mapping_name = "Oblique Stereographic" 
+		crs:semi_major_axis = 6.3774e+006 
+		crs:semi_minor_axis = "" 
+		crs:inverse_flattening = 299.153 
+		crs:latitude_of_projection_origin = 52.1562 
+		crs:longitude_of_projection_origin = 5.38764 
+		crs:false_easting = 155000 
+		crs:false_northing = 463000 
+		crs:scale_factor_at_projection_origin = 0.999908 
+	char areaname(alongshore), shape = [2178]
+		areaname:long_name = "area name" 
+		areaname:comment = "names for the 15 coastal areas as defined by rijkswaterstaat" 
+		areaname:string_length = 100 d
+	double alongshore(alongshore), shape = [2178]
 	long id(alongshore), shape = [2178]
 		id:long_name = "identifier" 
 		id:comment = "sum of area code (x1000000) and alongshore coordinate" 
 	long areacode(alongshore), shape = [2178]
 		areacode:long_name = "area code" 
 		areacode:comment = "codes for the 15 coastal areas as defined by rijkswaterstaat" 
-	char areaname(alongshore,stringsize), shape = [2178 100]
-		areaname:long_name = "area name" 
-		areaname:comment = "names for the 15 coastal areas as defined by rijkswaterstaat" 
-	double alongshore(alongshore), shape = [2178]
-		alongshore:long_name = "alongshore coordinate" 
-		alongshore:units = "m" 
-		alongshore:comment = "alongshore coordinate within the 15 coastal areas as defined by rijkswaterstaat" 
 	double cross_shore(cross_shore), shape = [1925]
-		cross_shore:long_name = "cross-shore coordinate" 
-		cross_shore:units = "m" 
-		cross_shore:comment = "cross-shore coordinate relative to the rsp (rijks strand paal)" 
-	long time(time), shape = [44]
-		time:standard_name = "time" 
-		time:units = "year" 
-		time:comment = "measurement year" 
-		time:axis = "T" 
 	double x(alongshore,cross_shore), shape = [2178 1925]
 		x:standard_name = "projection_x_coordinate" 
 		x:units = "m" 
@@ -267,16 +269,6 @@ variables:
 		lon:standard_name = "longitude" 
 		lon:units = "degree_east" 
 		lon:axis = "Y" 
-	long crs([]), shape = [1]
-		crs:grid_mapping_name = "Oblique Stereographic" 
-		crs:semi_major_axis = 6.3774e+006 
-		crs:semi_minor_axis = "" 
-		crs:inverse_flattening = 299.153 
-		crs:latitude_of_projection_origin = 52.1562 
-		crs:longitude_of_projection_origin = 5.38764 
-		crs:false_easting = 155000 
-		crs:false_northing = 463000 
-		crs:scale_factor_at_projection_origin = 0.999908 
 	double angle(alongshore), shape = [2178]
 		angle:long_name = "angle of transect" 
 		angle:units = "mradian" 
@@ -289,6 +281,7 @@ variables:
 		mean_low_water:long_name = "mean low water" 
 		mean_low_water:units = "m" 
 		mean_low_water:comment = "mean low water relative to nap" 
+	long time(time), shape = [44]
 	double altitude(time,alongshore,cross_shore), shape = [44 2178 1925]
 		altitude:standard_name = "surface_altitude" 
 		altitude:units = "m" 
@@ -299,6 +292,16 @@ variables:
 
 
 //global attributes:
+		:alongshore.long_name = "alongshore coordinate" 
+		:alongshore.units = "m" 
+		:alongshore.comment = "alongshore coordinate within the 15 coastal areas as defined by rijkswaterstaat" 
+		:cross_shore.long_name = "cross-shore coordinate" 
+		:cross_shore.units = "m" 
+		:cross_shore.comment = "cross-shore coordinate relative to the rsp (rijks strand paal)" 
+		:time.standard_name = "time" 
+		:time.units = "year" 
+		:time.comment = "measurement year" 
+		:time.axis = "T" 
 		:title = "Jarkus Data" 
 		:institution = "Rijkswaterstaat" 
 		:source = "on shore and off shore measurements" 
@@ -353,7 +356,7 @@ ans =
             </div>
          </div>
          <p class="footer"><br>
-            this tutorial is based on: <a target="new" href="http://crucible.delftgeosystems.nl/browse/~raw,r=1792/OpenEarthTools/trunk/matlab/general/netCDF/_tutorial_netCDF_read_functions.m">_tutorial_netCDF_read_functions.m (revision: 1792)</a><br>
+            this tutorial is based on: <a class="matlabhref" href="matlab:edit('_tutorial_netCDF_read_functions');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=1843/OpenEarthTools/trunk/matlab/general/netCDF/_tutorial_netCDF_read_functions.m">_tutorial_netCDF_read_functions.m (revision: 1843)</a><br>
 Published with MATLAB&reg; 7.8<br></p>
       </div>
       <!--
