@@ -69,17 +69,35 @@ else
     fig = figure;
 end
 
+% dimensions: number of calculations and number of iterations. Each
+% iteration consists of Nstoch+1 calculations of the z-variable, i.e.
+% a computations for the current state vector x and Nstoch perturbations,
+% (1 for each random variable)
+Nx = size(result.Output.x,1);
+xnums = 1:Nx;
+if mod(Nx-1, Nstoch+1) ~=0
+    error('length of resultvector x no multiple of number of random variables');
+end
+IterIndex = [(Nstoch+1:Nstoch+1:Nx-1) Nx];
+
+% make Nstoch subplots
 for i = 1:Nstoch
     
     subplot(NrFigureRows, NrFigureColumns, i,...
         'Nextplot', 'add',...
-        'XLim', [0 size(result.Output.x,1)])
+        'XLim', [0 Nx])
     title(result.Input(i).Name)
     xlabel('Calculations')
     ylabel(result.Input(i).Name)
+        
+    xi = result.Output.x(:,i);
+
+    plot(xnums(IterIndex), xi(IterIndex),...
+        'DisplayName', result.Input(i).Name, 'LineWidth', 2);
+    hold on;    
+    plot(xnums, xi, 'b:');   
+    legend('FORM iterations', 'all computations', 'location', 'best');
     
-    plot(1:size(result.Output.x,1), result.Output.x(:,i),...
-        'DisplayName', result.Input(i).Name)
 end
 
 %%
