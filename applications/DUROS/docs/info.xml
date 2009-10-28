@@ -1,0 +1,29 @@
+<productinfo
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.mathworks.com/namespace/info/v1/info.xsd">
+
+<?xml-stylesheet type="text/xsl" href="http://www.mathworks.com/namespace/info/v1/info.xsl"?>
+
+<matlabrelease>2009a</matlabrelease>
+<name>DUROS+</name>
+<type>toolbox</type>
+<icon>icons/DeltaresLogo16.PNG</icon>
+<help_location>duroshelpdocs</help_location>
+
+<list>
+
+<listitem>
+<label>Deltares website</label>
+<callback>web http://www.deltares.nl -browser</callback>
+<icon>$toolbox/matlab/icons/webicon.gif</icon>
+</listitem>
+
+<listitem>
+<label>Help</label>
+<callback>docsearch thisisthetempmainpage</callback>
+<icon>$toolbox/matlab/icons/book_mat.gif</icon>
+</listitem>
+
+</list>
+
+</productinfo>
