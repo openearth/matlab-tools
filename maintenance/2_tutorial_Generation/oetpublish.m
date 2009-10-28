@@ -16,11 +16,13 @@ function oetpublish(varargin)
 %
 %   'hide'  -   By default the result is opened in your browser. Including hide suppresses this
 %               command.
+%   'all'   -   Reproduces all tutorials and creates the html and help tutorials. (directly runs
+%               tutorials2html).
 %
 %   Example
 %   oetpublish
 %
-%   See also publish editorCurrentFile
+%   See also publish editorCurrentFile tutorials2html
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -66,6 +68,11 @@ function oetpublish(varargin)
 % $Keywords: $
 
 %% Get inpt arguments
+if any(strcmpi(varargin,'all'))
+    tutorials2html;
+    return
+end
+
 outputdir = fullfile(tempdir,'oetpublish');
 id = find(strcmpi(varargin,'outputdir'));
 if ~isempty(id)
@@ -115,8 +122,28 @@ html_file = textread(publishedfile,'%s','delimiter','\n');
 html_file = strrep(html_file,'src="prerendered_images',...
     ['src="file:///' fullfile(openearthtoolsroot,'tutorials','html','prerendered_images',[])]);
 fid = fopen(publishedfile,'w');
-fprintf(fid,'%s\n',html_file{:})
-fclose(fid)
+fprintf(fid,'%s\n',html_file{:});
+fclose(fid);
+
+%% Get revision number
+cdtemp   = cd;
+cd(openearthtoolsroot);
+[dum txt] = system('svn info');
+dps = strfind(txt,':');
+ends = strfind(txt,char(10));
+revtxt = strfind(txt,'Revision');
+revisionnr = str2double(txt(min(dps(dps>revtxt))+1:min(ends(ends>revtxt))));
+cd(cdtemp);
+
+%% add reference
+strfrep(publishedfile,...
+    'Published with MATLAB',...
+    ['this tutorial is based on: ',...
+    '<a class="matlabhref" href="matlab:edit(''',filename ,''');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=' num2str(revisionnr) '/OpenEarthTools/trunk/matlab/' strrep([strrep(fullfile(dr,filename),openearthtoolsroot,''),'.m'],filesep,'/') '">',...
+    filename, '.m (revision: ' num2str(revisionnr) ')',...
+    '</a><br>',...
+    char(10),...
+    'Published with MATLAB']);
 
 if show
     winopen(publishedfile);
