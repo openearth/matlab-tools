@@ -10,8 +10,8 @@ This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
       -->
       <title>Coordinate conversion</title>
-      <meta name="generator" content="MATLAB 7.8">
-      <meta name="date" content="2009-10-26">
+      <meta name="generator" content="MATLAB 7.9">
+      <meta name="date" content="2009-10-28">
       <meta name="m-file" content="convertCoordinates_tutorial">
       <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
       <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script type="text/javascript">
@@ -199,7 +199,7 @@ tic
     [lon,lat] = convertCoordinates(x,y,<span class="string">'CS1.code'</span>,28992,<span class="string">'CS2.code'</span>,4326);
 <span class="keyword">end</span>
 toc
-</pre><pre class="codeoutput">Elapsed time is 3.574694 seconds.
+</pre><pre class="codeoutput">Elapsed time is 3.623242 seconds.
 </pre></div>
             </div>
             <div>
@@ -210,7 +210,7 @@ EPSG = load(<span class="string">'EPSG'</span>);
     [lon,lat] = convertCoordinates(x,y,EPSG,<span class="string">'CS1.code'</span>,28992,<span class="string">'CS2.code'</span>,4326);
 <span class="keyword">end</span>
 toc
-</pre><pre class="codeoutput">Elapsed time is 0.391152 seconds.
+</pre><pre class="codeoutput">Elapsed time is 0.394945 seconds.
 </pre></div>
             </div>
             <div>
@@ -245,7 +245,62 @@ OPT.CS1.ellips.name = 'Bessel 1841';
 OPT.CS1.ellips.inv_flattening = 299.1528;
 OPT.CS1.ellips.semi_major_axis = 6377397.155;
 OPT.CS1.ellips.semi_minor_axis = 6356078.9628;
-...</pre></div>
+OPT.CS1.UoM.name = 'metre';
+OPT.CS1.UoM.code = 9001;
+OPT.CS1.datum.code = 6289;
+OPT.CS1.datum.name = 'Amersfoort';
+OPT.proj_conv1.code = 19914;
+OPT.proj_conv1.name = {'RD New'};
+OPT.proj_conv1.method.code = 9809;
+OPT.proj_conv1.method.name = 'Oblique Stereographic';
+OPT.proj_conv1.param.codes = [8801 8802 8805 8806 8807];
+OPT.proj_conv1.param.name = {'Latitude of natural origin' 'Longitude of natural origin' 'Scale factor at natural origin' 'False easting' 'False northing'};
+OPT.proj_conv1.param.value = [52.0922 5.23155 0.999908 155000 463000];
+OPT.proj_conv1.param.UoM.codes = [9110 9110 9201 9001 9001];
+OPT.proj_conv1.param.UoM.name = {'sexagesimal DMS' 'sexagesimal DMS' 'unity' 'metre' 'metre'};
+OPT.datum_trans.code = 15934;
+OPT.datum_trans.name = {'Amersfoort to WGS 84 (3)'};
+OPT.datum_trans.direction = 'normal';
+OPT.datum_trans.alt_code = [1112 1672 8572 15934];
+OPT.datum_trans.alt_name = {'Amersfoort to WGS 84 (1)' 'Amersfoort to WGS 84 (2)' 'Amersfoort to WGS 84 (2)' 'Amersfoort to WGS 84 (3)'};
+OPT.datum_trans.alt_direction = {'normal' 'normal' 'normal' 'normal'};
+OPT.datum_trans.alt_deprecated = {'FALSE' 'FALSE' 'TRUE' 'FALSE'};
+OPT.datum_trans.params.value = [565.237 50.0087 465.658 1.9725 -1.7004 9.0677 4.0812];
+OPT.datum_trans.params.codes = 8605:8611;
+OPT.datum_trans.params.ind = 5:11;
+OPT.datum_trans.params.name = {'X-axis translation' 'Y-axis translation' 'Z-axis translation' 'X-axis rotation' 'Y-axis rotation' 'Z-axis rotation' 'Scale difference'};
+OPT.datum_trans.params.UoM.codes = [9001 9001 9001 9109 9109 9109 9202];
+OPT.datum_trans.params.UoM.ind = [1 1 1 51 51 51 66];
+OPT.datum_trans.params.UoM.sourceN = {'metre' 'metre' 'metre' 'microradian' 'microradian' 'microradian' 'parts per million'};
+OPT.datum_trans.params.UoM.sourceT = {'length' 'length' 'length' 'angle' 'angle' 'angle' 'scale'};
+OPT.datum_trans.params.UoM.fact_b = ones(1,7);
+OPT.datum_trans.params.UoM.fact_c = [1 1 1 1e+006 1e+006 1e+006 1e+006];
+OPT.datum_trans.params.UoM.targetC = [9001 9001 9001 9101 9101 9101 9201];
+OPT.datum_trans.params.UoM.targetI = [1 1 1 43 43 43 65];
+OPT.datum_trans.params.UoM.targetN = {'metre' 'metre' 'metre' 'radian' 'radian' 'radian' 'unity'};
+OPT.datum_trans.method_code = 9607;
+OPT.datum_trans.method_name = 'Coordinate Frame rotation';
+OPT.datum_trans.ellips1 = 'CS1';
+OPT.datum_trans.ellips2 = 'CS2';
+OPT.CS2.name = 'WGS 84';
+OPT.CS2.code = 4326;
+OPT.CS2.type = 'geographic 2D';
+OPT.CS2.geoRefSys.name = 'WGS 84';
+OPT.CS2.geoRefSys.code = 4326;
+OPT.CS2.coordSys.name = 'Ellipsoidal 2D CS. Axes: latitude; longitude. Orientations: north; east. UoM: degree';
+OPT.CS2.coordSys.code = 6422;
+OPT.CS2.ellips.code = 7030;
+OPT.CS2.ellips.name = 'WGS 84';
+OPT.CS2.ellips.inv_flattening = 298.2572;
+OPT.CS2.ellips.semi_major_axis = 6378137;
+OPT.CS2.ellips.semi_minor_axis = 6356752.3142;
+OPT.CS2.UoM.name = 'degree (supplier to define representation)';
+OPT.CS2.UoM.code = 9122;
+OPT.CS2.datum.code = 6326;
+OPT.CS2.datum.name = 'World Geodetic System 1984';
+
+
+</pre></div>
             </div>
             <div>
                <div>
@@ -301,7 +356,21 @@ variable1.params.codes = 8605:8611;
 variable1.params.ind = 5:11;
 variable1.params.name = {'X-axis translation' 'Y-axis translation' 'Z-axis translation' 'X-axis rotation' 'Y-axis rotation' 'Z-axis rotation' 'Scale difference'};
 variable1.params.UoM.codes = [9001 9001 9001 9109 9109 9109 9202];
-...</pre></div>
+variable1.params.UoM.ind = [1 1 1 51 51 51 66];
+variable1.params.UoM.sourceN = {'metre' 'metre' 'metre' 'microradian' 'microradian' 'microradian' 'parts per million'};
+variable1.params.UoM.sourceT = {'length' 'length' 'length' 'angle' 'angle' 'angle' 'scale'};
+variable1.params.UoM.fact_b = ones(1,7);
+variable1.params.UoM.fact_c = [1 1 1 1e+006 1e+006 1e+006 1e+006];
+variable1.params.UoM.targetC = [9001 9001 9001 9101 9101 9101 9201];
+variable1.params.UoM.targetI = [1 1 1 43 43 43 65];
+variable1.params.UoM.targetN = {'metre' 'metre' 'metre' 'radian' 'radian' 'radian' 'unity'};
+variable1.method_code = 9607;
+variable1.method_name = 'Coordinate Frame rotation';
+variable1.ellips1 = 'CS1';
+variable1.ellips2 = 'CS2';
+
+
+</pre></div>
             </div>
             <div>
                <div>
@@ -319,8 +388,8 @@ ans =
             </div>
          </div>
          <p class="footer"><br>
-            this tutorial is based on: <a class="matlabhref" href="matlab:edit('convertCoordinates_tutorial');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=1843/OpenEarthTools/trunk/matlab/applications/SuperTrans/convertCoordinates_tutorial.m">convertCoordinates_tutorial.m (revision: 1843)</a><br>
-Published with MATLAB&reg; 7.8<br></p>
+            this tutorial is based on: <a class="matlabhref" href="matlab:edit('convertCoordinates_tutorial');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=1858/OpenEarthTools/trunk/matlab/applications/SuperTrans/convertCoordinates_tutorial.m">convertCoordinates_tutorial.m (revision: 1858)</a><br>
+Published with MATLAB&reg; 7.9<br></p>
       </div>
       <!--
 ##### SOURCE BEGIN #####

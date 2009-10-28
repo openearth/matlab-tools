@@ -39,11 +39,9 @@
 </tocitem>
 <tocitem target="html/tutorial_automatedtesting.html" image="$toolbox/matlab/icons/pageicon.gif">3. Automated testing
 </tocitem>
-<tocitem target="html/tutorial_keyword_value_pairs.html" image="$toolbox/matlab/icons/pageicon.gif">4. Keyword Value pairs
+<tocitem target="html/tutorial_how_to_write_tutorials.html" image="$toolbox/matlab/icons/pageicon.gif">4. How to make a tutorial
 </tocitem>
-<tocitem target="html/tutorial_how_to_write_tutorials.html" image="$toolbox/matlab/icons/pageicon.gif">5. How to make a tutorial
-</tocitem>
-<tocitem target="html/dir_automatedTesting.html" image="$toolbox/matlab/icons/pagesicon.gif">automatedTesting
+<tocitem target="html/dir_1_automated_Testing.html" image="$toolbox/matlab/icons/pagesicon.gif">1 automated Testing
 <tocitem target="html/testsInGeneral_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">1. General information on testing
 </tocitem>
 <tocitem target="html/testdefinitions_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">2. Creating a test
@@ -51,6 +49,16 @@
 <tocitem target="html/runningatest_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">3. Running individual tests
 </tocitem>
 <tocitem target="html/runtestswithmtestengine_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">4. Automated tesing with the mtest toolbox
+</tocitem>
+</tocitem>
+<tocitem target="html/dir_2_tutorial_Generation.html" image="$toolbox/matlab/icons/pagesicon.gif">2 tutorial Generation
+<tocitem target="html/tutorials_cell_formatting_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">1. Basics of writing a tutorial
+</tocitem>
+<tocitem target="html/tutorials_publish_configurations_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">2. Configure publish settings
+</tocitem>
+<tocitem target="html/tutorials_publish_oet_style_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">3. Publish a tutorial in OET-style
+</tocitem>
+<tocitem target="html/tutorials_include_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">4. Include a tutorial in the OpenEarth tutorial overview
 </tocitem>
 </tocitem>
 <tocitem target="html/dir_netCDF.html" image="$toolbox/matlab/icons/pagesicon.gif">netCDF
@@ -64,6 +72,8 @@
 </tocitem>
 </tocitem>
 <tocitem target="html/dir_tips_and_tricks.html" image="$toolbox/matlab/icons/pagesicon.gif">tips and tricks
+<tocitem target="html/tutorial_keyword_value_pairs.html" image="$toolbox/matlab/icons/pageicon.gif">5. Keyword Value pairs
+</tocitem>
 <tocitem target="html/TODO_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">TODO function
 </tocitem>
 </tocitem>

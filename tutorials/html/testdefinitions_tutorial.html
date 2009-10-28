@@ -10,8 +10,8 @@ This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
       -->
       <title>2. Creating a test</title>
-      <meta name="generator" content="MATLAB 7.8">
-      <meta name="date" content="2009-10-26">
+      <meta name="generator" content="MATLAB 7.9">
+      <meta name="date" content="2009-10-28">
       <meta name="m-file" content="testdefinitions_tutorial">
       <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
       <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script type="text/javascript">
@@ -75,8 +75,10 @@ p.footer {
                <p>Test definitions can contain several parts, but can also be minimal. This tutorial will first show all you know to generate
                   a test according to the OpenEarhtTools conventions and will then explain the conventions in detail.
                </p>
-               <p><html> <a class="relref" href="tutorial_automatedtesting.html" relhref="tutorial_automatedtesting.html">Read more about automated
-                  testing</a> </html>
+               <p>
+                  <a class="relref" href="tutorial_automatedtesting.html" relhref="tutorial_automatedtesting.html">Read more about automated
+                  testing</a>
+                  
                </p>
             </div>
             <h2>Contents</h2>
@@ -174,8 +176,12 @@ p.footer {
                      <li>Basic parts of the test definition</li>
                   </ol>
                   <p><b>Function help block</b></p>
-                  <p><html> Firstly a testdefinition is a function. Following the basic function documentation described in the <a href="http://public.deltares.nl/display/OET/OpenEarth+guidelines+-+Matlab">Matlab
-                     style guide</a> we should include a help block in the function with a layout similar to the one provided by _oetnewfun_. </html>
+                  <p>
+                     Firstly a testdefinition is a function. Following the basic function documentation described in the
+                     <a href="http://public.deltares.nl/display/OET/OpenEarth+guidelines+-+Matlab">Matlab style guide</a>
+                     we should include a help block in the function with a layout similar to the one provided by
+                     _oetnewfun_.
+                     
                   </p>
                   <p><img vspace="5" hspace="5" src="prerendered_images/test_helpblock.png" relsrc="prerendered_images/test_helpblock.png"> </p>
                   <p><b>Basic parts of the test definition</b></p>
@@ -226,16 +232,45 @@ p.footer {
                      The attributes determine publish options of the specific block, test or testcase. The following table gives an overview of
                      the possible attributes that can be defined for the $Description and $PublishResult code blocks.
                   </p>
-                  <p><html> <table cellspacing="0" class="body" cellpadding="4" summary="" width="100%" border="2">   <colgroup>       <col width="16%">
-                     <col width="21%">       <col width="63%">   </colgroup>   <thead>       <tr valign="top">           <th bgcolor="#B2B2B2">Attribute
-                     Name</th>           <th bgcolor="#B2B2B2"><p>Class</p></th>           <th bgcolor="#B2B2B2"><p>Description</p></th>      
-                     </tr>   </thead>   <tbody>       <tr valign="top">           <td bgcolor="#F2F2F2"><tt>Name</tt></td>           <td bgcolor="#F2F2F2"><p><tt>char</tt>
-                     Default=<tt>''</tt></p></td>           <td bgcolor="#F2F2F2">               Custom name of the test or testcase.         
-                     </td>       </tr>       <tr valign="top">           <td bgcolor="#F2F2F2"><tt>IncludeCode</tt></td>           <td bgcolor="#F2F2F2"><p><tt>logical</tt>
-                     Default=<tt>false</tt></p></td>           <td bgcolor="#F2F2F2">               Determines the publish option showCode for
-                     this publishable section.           </td>       </tr>       <tr valign="top">           <td bgcolor="#F2F2F2"><tt>EvaluateCode</tt></td>
-                     <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>true</tt></p></td>           <td bgcolor="#F2F2F2">               Determines
-                     the publish option evalCode for this publishable section.           </td>       </tr>   </tbody> </table> </html>
+                  <p>
+                     <table cellspacing="0" class="body" cellpadding="4" summary="" width="100%" border="2">
+                     <colgroup>
+                     <col width="16%">
+                     <col width="21%">
+                     <col width="63%">
+                     </colgroup>
+                     <thead>
+                     <tr valign="top">
+                     <th bgcolor="#B2B2B2">Attribute Name</th>
+                     <th bgcolor="#B2B2B2"><p>Class</p></th>
+                     <th bgcolor="#B2B2B2"><p>Description</p></th>
+                     </tr>
+                     </thead>
+                     <tbody>
+                     <tr valign="top">
+                     <td bgcolor="#F2F2F2"><tt>Name</tt></td>
+                     <td bgcolor="#F2F2F2"><p><tt>char</tt> Default=<tt>''</tt></p></td>
+                     <td bgcolor="#F2F2F2">
+                     Custom name of the test or testcase.
+                     </td>
+                     </tr>
+                     <tr valign="top">
+                     <td bgcolor="#F2F2F2"><tt>IncludeCode</tt></td>
+                     <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>false</tt></p></td>
+                     <td bgcolor="#F2F2F2">
+                     Determines the publish option showCode for this publishable section.
+                     </td>
+                     </tr>
+                     <tr valign="top">
+                     <td bgcolor="#F2F2F2"><tt>EvaluateCode</tt></td>
+                     <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>true</tt></p></td>
+                     <td bgcolor="#F2F2F2">
+                     Determines the publish option evalCode for this publishable section.
+                     </td>
+                     </tr>
+                     </tbody>
+                     </table>
+                     
                   </p>
                   <p>Attributes can be added between brackets after the dedicated keyword that defines the function of the cell in particular:</p>
                   <p>%% $Description (Name = Tutorial Name)</p>
@@ -243,10 +278,16 @@ p.footer {
                   </p>
                   <p>%% $Description (Name = Tutorial Name &amp; IncludeCode = true)</p>
                   <p><b>Formatting of cells for publishing</b></p>
-                  <p><html> The <a href="http://www.mathworks.com/access/helpdesk/help/techdoc/index.html?/access/helpdesk/help/techdoc/matlab_env/f6-30186.html&http://www.mathworks.com/cgi-bin/texis/webinator/search_spt?db=MSS&prox=page&rorder=750&rprox=750&rdfreq=500&rwfreq=500&rlead=250&sufs=0&order=r&is_summary_on=1&pr=SPT&cq=1&collection=1&ResultCount=10&query=Formatting+M-Files+Comments+for+publishing&x=8&y=8"
-                     target="new"> matlab help documentation </a> contains a lot of information on formatting comments or code for publishing with
-                     the publish function. It is for example possible to include equations, force a snapshot or include a prerendered image. The
-                     matlab editor also contains a menu item with all of these functionalities: </html>
+                  <p>
+                     The
+                     <a href="http://www.mathworks.com/access/helpdesk/help/techdoc/index.html?/access/helpdesk/help/techdoc/matlab_env/f6-30186.html&http://www.mathworks.com/cgi-bin/texis/webinator/search_spt?db=MSS&prox=page&rorder=750&rprox=750&rdfreq=500&rwfreq=500&rlead=250&sufs=0&order=r&is_summary_on=1&pr=SPT&cq=1&collection=1&ResultCount=10&query=Formatting+M-Files+Comments+for+publishing&x=8&y=8"
+                     target="new">
+                     matlab help documentation
+                     </a>
+                     contains a lot of information on formatting comments or code for publishing with the publish
+                     function. It is for example possible to include equations, force a snapshot or include a
+                     prerendered image. The matlab editor also contains a menu item with all of these functionalities:
+                     
                   </p>
                   <p><img vspace="5" hspace="5" src="prerendered_images/test_cell_menu.png" relsrc="prerendered_images/test_cell_menu.png"> </p>
                </div>
@@ -276,16 +317,21 @@ p.footer {
                <h2><a name="6">Examples</a></h2>
                <div>
                   <p>The following files contain examples of how te use the testdefinition to obtain the desired result:</p>
-                  <p><html>   <ul>       <li><a href="http://crucible.delftgeosystems.nl/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/automatedTesting/examples/mte_simple_test.m"
-                     target="new">Basic test</a></li>       <li><a href="http://crucible.delftgeosystems.nl/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/automatedTesting/examples/mte_dummy_test.m"
-                     target="new">Use of testcases</a></li>   </ul> </html>
+                  <p>
+                     <ul>
+                     <li><a href="http://crucible.delftgeosystems.nl/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/automatedTesting/examples/mte_simple_test.m"
+                     target="new">Basic test</a></li>
+                     <li><a href="http://crucible.delftgeosystems.nl/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/automatedTesting/examples/mte_dummy_test.m"
+                     target="new">Use of testcases</a></li>
+                     </ul>
+                     
                   </p>
                </div>
             </div>
          </div>
          <p class="footer"><br>
-            this tutorial is based on: <a class="matlabhref" href="matlab:edit('testdefinitions_tutorial');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=1843/OpenEarthTools/trunk/matlab/maintenance/automatedTesting/testdefinitions_tutorial.m">testdefinitions_tutorial.m (revision: 1843)</a><br>
-Published with MATLAB&reg; 7.8<br></p>
+            this tutorial is based on: <a class="matlabhref" href="matlab:edit('testdefinitions_tutorial');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=1858/OpenEarthTools/trunk/matlab/maintenance/1_automated_Testing/testdefinitions_tutorial.m">testdefinitions_tutorial.m (revision: 1858)</a><br>
+Published with MATLAB&reg; 7.9<br></p>
       </div>
       <!--
 ##### SOURCE BEGIN #####
