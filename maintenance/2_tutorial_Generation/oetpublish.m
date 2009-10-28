@@ -69,6 +69,15 @@ function oetpublish(varargin)
 
 %% Get inpt arguments
 if any(strcmpi(varargin,'all'))
+    %% delete old documentation
+    try
+        dr = fullfile(openearthtoolsroot,'docs','OpenEarthDocs','oethelpdocs');
+        delete(fullfile(dr,'*.jar'));
+        delete(fullfile(dr,'*.xml'));
+        delete(fullfile(dr,'*.html'));
+    catch me
+        error('OET:UnlockFiles',['Unlock documentation files (' dr ') first.']);
+    end
     tutorials2html;
     return
 end
