@@ -1,8 +1,15 @@
-function [xv,yv] = UCIT_WS_drawPolygon
-%UCIT_WS_DRAWPOLYGON  gets coordinates of used defined polygon
+function UCIT_displayTransectOutlines
+%PLOTTRANSECTOVERVIEW   this routine displays all transect outlines
 %
+% This routine displays all transect outlines.
+%              
+% input:       
+%    function has no input
 %
-%   See also 
+% output:       
+%    function has no output
+%
+% see also ucit, plotDotsInPolygon 
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
@@ -29,32 +36,16 @@ function [xv,yv] = UCIT_WS_drawPolygon
 %
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
-%   --------------------------------------------------------------------% Draw polygon (from Argus IBM)
-% pick some boundaries
+%   --------------------------------------------------------------------
 
-uo = []; vo = []; button = [];
+%% get metadata (either from the console or the database)
+tic
+[d] = UCIT_getMetaData(1);
+toc
 
-[uo,vo,lfrt] = ginput(1);
-button = lfrt;
-hold on; hp = plot(uo,vo,'+g');
-
-while lfrt == 1
-    [u,v,lfrt] = ginput(1);
-    uo=[uo;u]; vo=[vo;v]; button=[button;lfrt];      
-    delete(hp);
-    hp = plot(uo,vo,'color','g','linewidth',2);
+%% now plot the transectcontours gathered in d
+if ~isempty(d)
+    UCIT_plotFilteredTransectContours(d);
 end
 
-% Bail out at ESCAPE = ascii character 27
-if lfrt == 27
-    delete(hp);
-    return
-end
 
-% connect
-if(exist('hp'))
-    xv = [uo(:);uo(1)];
-    yv = [vo(:);vo(1)];
-end
-
-delete(hp); %Delete poly

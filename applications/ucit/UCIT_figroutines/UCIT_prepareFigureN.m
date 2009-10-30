@@ -49,7 +49,7 @@ switch type
         
         % standard matlab icons are used
     
-    case 1 % this is adapted for ucit_plotOverview
+    case 1 % this is adapted for ucit transect overview
         delete(findall(fh,'Type','uitoolbar'));
         tbh = uitoolbar;
         h = uitoggletool(tbh,'Separator','off','HandleVisibility','on','ToolTipString','Zoom In');

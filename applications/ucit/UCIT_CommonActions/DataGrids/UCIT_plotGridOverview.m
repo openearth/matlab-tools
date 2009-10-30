@@ -1,5 +1,5 @@
-function UCIT_displayTransectOutlines
-%PLOTTRANSECTOVERVIEW   this routine displays all transect outlines
+function UCIT_plotGridOverview(datatype)
+%PLOTGRIDOVERVIEW   this routine displays all grid outlines
 %
 % This routine displays all transect outlines.
 %              
@@ -9,7 +9,7 @@ function UCIT_displayTransectOutlines
 % output:       
 %    function has no output
 %
-% see also ucit, plotDotsInPolygon 
+% see also ucit_netcdf
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
@@ -40,12 +40,39 @@ function UCIT_displayTransectOutlines
 
 %% get metadata (either from the console or the database)
 tic
-[d] = UCIT_getMetaData;
+[d] = UCIT_getMetaData(2);
 toc
 
-%% now plot the transectcontours gathered in d
-if ~isempty(d)
-    UCIT_plotFilteredTransectContours(d);
+if ~isempty(findobj('tag','gridOverview'))
+    close(findobj('tag','gridOverview'))
 end
 
+%% set up figure
+fh=figure('tag','mapWindow');clf;
+ah=axes;
+[fh,ah] = UCIT_prepareFigureN(2, fh, 'LL', ah);
+set(fh,'name','UCIT - Grid overview');
+set(gca, 'fontsize',8);
 
+hold on
+
+if nargin == 0
+    if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'),datatype = 'jarkus';,end
+    if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen'),datatype = 'vaklodingen';,end
+end
+
+disp('plotting landboundary...');
+UCIT_plotLandboundary(d.datatypeinfo);
+
+%% plot kaartbladen
+for i = 1:length(d.contour)
+    ph(i)=patch([d.contour(i,1),d.contour(i,2),d.contour(i,2),d.contour(i,1),d.contour(i,1)],...
+        [d.contour(i,3),d.contour(i,3),d.contour(i,4),d.contour(i,4),d.contour(i,3)], 'k');
+    set(ph(i),'edgecolor','k','facecolor','none');
+    set(ph(i),'tag',[d.names{i}]);
+    set(gca,'tag',[datatype]);
+end
+
+set(gcf,'tag','gridOverview');
+
+box on

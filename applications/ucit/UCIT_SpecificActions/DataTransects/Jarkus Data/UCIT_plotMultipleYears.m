@@ -39,7 +39,7 @@ function plotMultipleYears(d,years)
 
 datatypes = UCIT_getDatatypes;
 url = datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
-[d] = UCIT_getMetaData;
+[d] = UCIT_getMetaData(1);
 
 if nargin<2
     [check]=UCIT_checkPopups(1, 4);
@@ -54,6 +54,7 @@ if nargin<2
     %     d       =   readTransectData(UCIT_DC_getInfoFromPopup('TransectsDatatype'),UCIT_DC_getInfoFromPopup('TransectsArea'),UCIT_DC_getInfoFromPopup('TransectsTransectID'));
     
     years   =   SelectYears(d);
+    
 
 end
 
@@ -145,8 +146,8 @@ handles.YMaxRange = [minmax(3) minmax(4)];
 function years  =   SelectYears(d)
 
 % Get available years from metadata
-AvailableYears   =   num2str(round(d.year/365+1970));
-
+AvailableYears   =   round(d.year/365+1970);
+AvailableYears   = num2str(sort(AvailableYears,'descend'));
  
 % tmp=DBGetTableEntryRaw('transect','datatypeinfo',UCIT_DC_getInfoFromPopup('TransectsDatatype'),'area',UCIT_DC_getInfoFromPopup('TransectsArea'),'transectID',UCIT_DC_getInfoFromPopup('TransectsTransectID'));
 
@@ -154,6 +155,6 @@ v = listdlg('PromptString','Select years:',...
     'SelectionMode','multiple',...
     'ListString',AvailableYears);
 
-AvailableYears   = round(d.year/365+1970);
+AvailableYears   = str2num(AvailableYears);
 
 years   =   AvailableYears(v);

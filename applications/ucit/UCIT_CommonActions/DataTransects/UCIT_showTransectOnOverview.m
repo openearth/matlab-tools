@@ -49,7 +49,7 @@ if check == 0
     return
 end
 
-[d] = UCIT_getMetaData;
+[d] = UCIT_getMetaData(1);
 
 mapW=findobj('tag','mapWindow');
 if isempty(mapW)

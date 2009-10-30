@@ -41,16 +41,28 @@ function [datatypes] = UCIT_getDatatypes
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
-% datatypes.transect.names = {'Jarkus Data'};
 
+%% Transect data
 datatypes.transect.names = {'Jarkus Data' ,...
                             'Lidar Data US'};
                         
-
 datatypes.transect.urls = {'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';...
-                           {'http://blackburn.whoi.edu:8081/thredds/dodsC/usgs/afarris/washington_1.nc'}};
+                           {'http://blackburn.whoi.edu:8081/thredds/dodsC/usgs/afarris/oregon_7.nc', 'http://blackburn.whoi.edu:8081/thredds/dodsC/usgs/afarris/washington_1.nc'}};
                        
-datatypes.transect.areas = {'',{'Washington'}};
+datatypes.transect.areas = {'',{'Oregon','Washington'}};
 
-datatypes.transect.areas_short = {'',{'or','wa'}};
+% datatypes.transect.areas_short = {'',{'or','wa'}};
+
+%% Grid data
+datatypes.grid.names = {'Jarkus','Vaklodingen'};
+                        
+datatypes.grid.urls = {'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids/',...
+                       'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/'};
+                       
+
+
+
+
+
+
 

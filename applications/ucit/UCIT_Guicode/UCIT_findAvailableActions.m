@@ -63,10 +63,10 @@ switch  type
         DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataTransects' filesep UCIT_getInfoFromPopup('TransectsDatatype') filesep];
     case 2
         objTag='GrActions';
-        datatype = DBgetUniqueFields('grid','datatype',{'datatypeinfo',UCIT_getInfoFromPopup('GridsDatatype')});
+        datatype = {'Jarkus' 'Vaklodingen'};
         DataRootCommon0 = [fileparts(which('ucit_commonactions0.dir'))  filesep 'DataGrids' filesep];
         DataRootCommon1 = [fileparts(which('ucit_commonactions1.dir'))  filesep 'DataGrids' filesep];
-        DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataGrids' filesep 'DataType' num2str(datatype{1}) filesep 'code' filesep 'actions' filesep];
+        DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataGrids' filesep UCIT_getInfoFromPopup('GridsDatatype') filesep];
     case 3
         objTag='LnActions';
         datatype = DBgetUniqueFields('line','datatype',{'datatypeinfo',UCIT_getInfoFromPopup('LinesDatatype')});

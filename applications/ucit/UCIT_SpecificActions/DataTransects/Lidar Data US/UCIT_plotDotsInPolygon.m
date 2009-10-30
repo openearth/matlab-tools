@@ -138,7 +138,7 @@ else
     % plot landboundary
     % afarris@usgs.gov left this out (on 2009oct16) becasue it seemed to
     % mess up the labelling of the colorbar 
-    %UCIT_plotLandboundary(d.datatypeinfo{1},1);
+    UCIT_plotLandboundary(d.datatypeinfo{1},0);
 
     % prepare colormap info for cdots_amy function
     load colormapMHWjump20

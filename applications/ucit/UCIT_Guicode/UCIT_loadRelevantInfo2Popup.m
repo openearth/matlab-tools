@@ -148,7 +148,7 @@ elseif type==1&&PopupNR==4
         urls = datatypes.transect.urls{strcmp(UCIT_getInfoFromPopup(objTag),datatypes.transect.names)};
         years = nc_varget(urls{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))}, 'time');
     end
-     
+     years = sort(years,'descend');
      soundingIDs = {datestr(years+datenum(1970,1,1))};
         
     % manufacture the string for in the popup menu
@@ -164,13 +164,12 @@ elseif type==2&&PopupNR==1
     %% GRIDS
     % *** set GridsDataType
     % get info from database
-    datatypes = DBgetUniqueFields('grid','datatypeinfo');
-    datatypes = sort(datatypes);
-    
+    datatypes = datatypes.grid.names;
+        
     % manufacture the string for in the popup menu
-    string{length(datatypes)+1}=[]; string{1}='Select datatype ...';
-    for i=1:length(datatypes)
-        string{i+1}=datatypes{i};
+    string{length(datatypes)}=[]; string{1}='Select datatype ...';
+    for i = 1:length(datatypes)
+        string{i+1} = datatypes{i};
     end
     
     % fill the proper popup menu and reset others if required
@@ -178,24 +177,19 @@ elseif type==2&&PopupNR==1
     UCIT_resetValuesOnPopup(2,0,1,1,1,1)
 
 elseif type==2&&PopupNR==2
-    % *** set GridsName
-    objTag='GridsDatatype';[popupValue, info]=UCIT_getInfoFromPopup(objTag);
-    if info.value==1
-        UCIT_loadRelevantInfo2Popup(2,1);
-        return
-    end
+    % *** set GridsYear
+    objTag='GridsDatatype';
+%     [popupValue, info]=UCIT_getInfoFromPopup(objTag);
+%     if info.value==1
+%         UCIT_loadRelevantInfo2Popup(2,1);
+%         return
+%     end
 
     % get info from database
-    names = DBgetUniqueFields('grid','name',{...
-        'datatypeinfo',UCIT_getInfoFromPopup('GridsDatatype')});
-    names=sort(names);
-
-    % manufacture the string for in the popup menu
-    string{max(size(names))+1}=[]; string{1}='Select name ...';
-    for i = 1:max(size(names))
-        string{i+1}=names{i};
-    end
-    
+    years = datenum(1965,1,1):datenum(now);
+    years = sort(years,'descend');
+    string = cellstr(datestr(years,29));
+   
     % fill the proper popup menu and reset others if required
     if length(string)==2
         set(findobj('tag','GridsName'), 'string', string, 'value', 2, 'enable', 'on', 'backgroundcolor', 'w');
@@ -205,53 +199,45 @@ elseif type==2&&PopupNR==2
         UCIT_resetValuesOnPopup(2,0,0,1,1,0)
     end
 
-    % fill the proper popup menu and reset others if required
-%     set(findobj('tag','GridsName'), 'string', string, 'value', 1, 'enable', 'on', 'backgroundcolor', 'w');
-
     UCIT_findAvailableActions(2)
-
+    UCIT_loadRelevantInfo2Popup(2,3);  
+    
 elseif type==2&&PopupNR==3
     % *** set GridsInterval
     % get info from database
-    intervals = DBgetUniqueFields('grid','year',{...
-        'datatypeinfo',UCIT_getInfoFromPopup('GridsDatatype'),...
-        'name',UCIT_getInfoFromPopup('GridsName')});
-    intervals=sort(intervals);
-
-    % manufacture the string for in the popup menu
-    string{max(size(intervals))+1}=[]; string{1}='Select interval ...';
-    for i = 1:max(size(intervals))
-        string{i+1}=intervals{i};
-    end
+    objTag='GridsName';
     
+    intervals = [1:10*12];
+
+    for i = 1:max(size(intervals))
+        string{i}=intervals(i);
+    end
+
     % fill the proper popup menu and reset others if required
     if length(string)==2
         set(findobj('tag','GridsInterval'), 'string', string, 'value', 2, 'enable', 'on', 'backgroundcolor', 'w');
         UCIT_loadRelevantInfo2Popup(2,4);
     else
-        set(findobj('tag','GridsInterval'), 'string', string, 'value', 1, 'enable', 'on', 'backgroundcolor', 'w');
+        set(findobj('tag','GridsInterval'), 'string', string, 'value', 12, 'enable', 'on', 'backgroundcolor', 'w');
         UCIT_resetValuesOnPopup(2,0,0,0,1,0)
     end
+    
+    UCIT_loadRelevantInfo2Popup(2,4);  
 
 elseif type==2&&PopupNR==4
     % *** set GridsSoundingID
-    % get info from database
-    soundingIDs = DBgetUniqueFields('grid','soundingID',{...
-        'datatypeinfo',UCIT_getInfoFromPopup('GridsDatatype'),...
-        'name',UCIT_getInfoFromPopup('GridsName'),...
-        'year',UCIT_getInfoFromPopup('GridsInterval')});
-    soundingIDs=sort(soundingIDs);
-    % manufacture the string for in the popup menu
-    string{max(size(soundingIDs))+1}=[]; string{1}='Select date ...';
-    for i = 1:max(size(soundingIDs))
-        string{i+1}=soundingIDs{i};
-    end
     
+    thinnings = [1:10];
+    % manufacture the string for in the popup menu
+    for i = 1:max(size(thinnings))
+        string{i} = thinnings(i);
+    end
+     
     % fill the proper popup menu and reset others if required
     if length(string)==2
-        set(findobj('tag','GridsSoundingID'), 'string', string, 'value', 2, 'enable', 'on', 'backgroundcolor', 'w');
-    else
         set(findobj('tag','GridsSoundingID'), 'string', string, 'value', 1, 'enable', 'on', 'backgroundcolor', 'w');
+    else
+        set(findobj('tag','GridsSoundingID'), 'string', string, 'value', 2, 'enable', 'on', 'backgroundcolor', 'w');
     end
     
 elseif type==3&&PopupNR==1

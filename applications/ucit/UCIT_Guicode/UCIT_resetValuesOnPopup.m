@@ -68,7 +68,7 @@ if type==1
         set(findobj('tag','TransectsTransectID'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
     end
     if popup4==1
-        string{1}='Sounding ID (load first)';
+        string{1}='Date (load first)';
         set(findobj('tag','TransectsSoundingID'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
     end
     if popup5==1
@@ -81,15 +81,15 @@ elseif type==2
         set(findobj('tag','GridsDatatype'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
     end
     if popup2==1
-        string{1}='Name (load first)';
+        string{1}='Date (load first)';
         set(findobj('tag','GridsName'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
     end
     if popup3==1
-        string{1}='Interval (load first)';
+        string{1}='Search window (load first)';
         set(findobj('tag','GridsInterval'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
     end
     if popup4==1
-        string{1}='Sounding ID (load first)';
+        string{1}='Thinning factor (load first)';
         set(findobj('tag','GridsSoundingID'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
     end
     if popup5==1
@@ -110,7 +110,7 @@ elseif type==3
         set(findobj('tag','LinesSoundingID'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
     end
     if popup4==1
-        string{1}='Sounding ID (load first)';
+        string{1}='Date (load first)';
         set(findobj('tag','LinesLineID'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
     end
     if popup5==1
@@ -127,7 +127,7 @@ elseif type==4
         set(findobj('tag','PointsStation'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
     end
     if popup3==1
-        string{1}='Sounding ID (load first)';
+        string{1}='Date (load first)';
         set(findobj('tag','PointsSoundingID'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
     end
     if popup4==1

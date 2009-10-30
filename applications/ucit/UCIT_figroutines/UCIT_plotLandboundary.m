@@ -1,4 +1,4 @@
-function UCIT_plotLandboundary(datatypeinfo,dummy)
+function UCIT_plotLandboundary(datatypeinfo,fill)
 %PLOTLANDBOUNDARY   plots a landboundary for a given <datatypeinfo>
 %
 %   This routine finds a landboundary given <datatypeinfo>
@@ -40,9 +40,8 @@ function UCIT_plotLandboundary(datatypeinfo,dummy)
 
 if ismember(datatypeinfo,{...
         'Jarkus Data',...
-        'Kaartblad Jarkus', ...
-        'Kaartblad Monitoring', ...
-        'Kaartblad Vaklodingen'})
+        'Jarkus', ...
+        'Vaklodingen'})
     ldb = landboundary('read',which(['Netherlands_inclBelGer_RD.ldb']));
     axis_settings = 1E5*[-0.282042339266554   2.324770614179054   3.720482792355521   6.461840930495095];
     [X,Y]=landboundary('read',which(['Netherlands_inclBelGer_RD.ldb']));
@@ -59,12 +58,21 @@ elseif strcmp(datatypeinfo,'Lidar Data US');
             axis_settings = 1E6*[0.367164048997129   0.446396990873151   5.125163267511952   5.370968814517868];
     end
 end
-fillpolygon([X,Y],'k',[1 1 0.6],100,-100); hold on;
-% shph = plot(X,Y,'k','linewidth',1);
+if nargin < 2 ||  fill  == 1
+    fillpolygon([X,Y],'k',[1 1 0.6],100,-100); hold on;
+else
+    shph = plot(X,Y,'k','linewidth',1);hold on;
+end
+%;
 
 if exist('ldb2')
     plot(ldb2(:,1),ldb2(:,2),'color','k','linewidth',2);
 end
 axis equal;
 axis([axis_settings])
-set(gca,'color',[0.4 0.6 1])
+
+if nargin < 2 ||  fill  == 1
+    set(gca,'color',[0.4 0.6 1])
+end
+ylabel('Northing [m]')
+xlabel('Easting [m]')

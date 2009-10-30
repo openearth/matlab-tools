@@ -38,7 +38,7 @@ end
 mapWhandle = findobj('tag','mapWindow');
 
 if ~isempty(mapWhandle) & strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Lidar Data US')
-    [d] = UCIT_getMetaData;
+    [d] = UCIT_getMetaData(1);
 elseif isempty(mapWhandle)
     disp('Make overview figure first')
     return

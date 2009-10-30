@@ -48,7 +48,7 @@ fh = figure(findobj('tag','mapWindow'));set(fh,'visible','off');
 polygon=[xv yv];
 
 %% get metadata (either from the console or the database)
-d = UCIT_getMetaData;
+d = UCIT_getMetaData(1);
 
 %% filter transects using inpolygon
 test = d.contour;
