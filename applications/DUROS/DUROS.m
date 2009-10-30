@@ -1,5 +1,5 @@
-function [result, messages] = getDuneErosion(varargin)
-%GETDUNEEROSION Calculates dune erosion according to the DUROS+ method
+function [result, messages] = DUROS(varargin)
+%DUROS Calculates dune erosion according to the DUROS+ method
 %
 %   This is the main routine for calculations of dune erosion with the
 %   DUROS+ method. Based on hydraulic input parameters a parabolic erosion
@@ -14,7 +14,7 @@ function [result, messages] = getDuneErosion(varargin)
 %   boundary profile in the remaining erosion profile.
 %
 %   Syntax:
-%   [result, messages] = getDuneErosion(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t)
+%   [result, messages] = DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t)
 %
 %   Input:
 %   xInitial /zInitial -    doubles (n*1) with x-points and the 
@@ -333,6 +333,10 @@ OPTstructArgs(2:2:2*id) = varargin(1:id);
 % split input and settings
 idnr = find(idPropName);
 idstr = idnr(~ismember(varargin(idPropName),varNames));
+if any(diff(idstr)==1)
+   % one of the properties is a setting in string format
+   idstr([false diff(idstr)==1]) = [];
+end
 settings = {};
 for isettings = 1:length(idstr)
     settings = cat(2,settings,varargin{idstr(isettings):idstr(isettings)+1});
