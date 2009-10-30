@@ -12,6 +12,11 @@ function [OPT, Set, Default] = KMLfig2png(h,varargin)
 %
 % where Lod = Level of Detail
 %
+% Note that the set generated this way works only locally.
+% To make it also work on a server 
+% use KMLMerge_files to merge all kml files into one big kml
+% and insert absolute url's before every kml filename
+%
 % See also: googlePlot, pcolor
 
 %   --------------------------------------------------------------------
@@ -49,7 +54,8 @@ function [OPT, Set, Default] = KMLfig2png(h,varargin)
 %% process varargin
 
 OPT.fileName        =     [];
-OPT.kmlName         =     [];
+OPT.kmlName         =     []; % name in Google Earth Place list
+OPT.url             =     ''; % webserver storaga needs absolute paths, local files can have relative paths (TO DO).
 OPT.alpha           =      1;
 OPT.dim             =    256;
 OPT.dimExt          =     16;
@@ -66,6 +72,7 @@ OPT.timeIn          =     [];
 OPT.timeOut         =     [];
 OPT.drawOrder       =     10; 
 OPT.bgcolor         = [100 155 100];
+OPT.description     =     '';
 
 if nargin==0
   return
@@ -165,7 +172,9 @@ if succes
     OPT.fid=fopen(OPT.fileName,'w');
     OPT_header = struct(...
         'name',OPT.kmlName,...
-        'open',0);
+               'open',0,...
+        'description',OPT.description);
+
     output = [KML_header(OPT_header) output];
     % FOOTER
     output = [output KML_footer];

@@ -1,49 +1,102 @@
-%%ArcGisRead - read data from Arc Gis Ascii file and convert to mat file
-function [data]=ArcGisRead(fname,varargin)
-fi=fopen(fname);
+function [D] = ArcGisRead(fname,varargin)
+%ARCGISREAD  read gridded data set in Arc ASCII Grid Format, and save as *.mat, *.nc file
+%
+%   D = arcgisread(filename,<keyword,value>)
+%
+% reads contents of <a href="http://en.wikipedia.org/wiki/ESRI_grid">ESRI arcGIS file</a> into struct D that
+% directly can be plotted with pcolor(D.x,D.y.D.val)
+%
+% The following keywords are recommended:
+%
+%  OPT.varname       - name of data block (default 'val')
+%  OPT.long_name     - netCDF-CF convention
+%  OPT.standard_name - netCDF-CF convention
+%  OPT.units         - netCDF-CF convention
+%
+%See web: <a href="http://en.wikipedia.org/wiki/ESRI_grid">http://en.wikipedia.org/wiki/ESRI_grid</a>
+%See also: ARCGIS2NC, ARCGRIDREAD (in $ mapping toolbox)
+
+%% User defined keywords
+
+   OPT.plot          = 0;  % plot
+   OPT.clim          = [-5 45]; % in OPT.units
+   OPT.export        = 1;  % export plot
+   OPT.mat           = 1;  % save as mat
+   OPT.nc            = 0;  % save as netCDF
+   OPT.type          = 'single';% 'double','int'
+   
+   OPT.varname       = 'val'; % name of data block 
+   OPT.long_name     = ''; % netCDF-CF convention
+   OPT.standard_name = ''; % netCDF-CF convention
+   OPT.units         = ''; % netCDF-CF convention
+   
+   if nargin==0;D = OPT;return;end; % make function act as object
+   
+   OPT      = setProperty(OPT,varargin{:});
+
+   D.varname         = OPT.varname;      
+   D.long_name       = OPT.long_name;    
+   D.standard_name   = OPT.standard_name;
+   D.units           = OPT.units;        
+
+%% Open file (TO DO: perform checks on file)
+
+   D.filename = fname;
+   fid        = fopen(fname);
+   basename   = fullfile(fileparts(fname),filename(fname));
+
 %% Read header
-s=fgetl(fi)
-[tmp rest]=strtok(s);
-data.ncols=str2num(rest)
-s=fgetl(fi)
-[tmp rest]=strtok(s);
-data.nrows=str2num(rest)
-s=fgetl(fi)
-[tmp rest]=strtok(s);
-data.xllcorner=str2num(rest)
-s=fgetl(fi)
-[tmp rest]=strtok(s);
-data.yllcorner=str2num(rest)
-s=fgetl(fi)
-[tmp rest]=strtok(s);
-data.cellsize=str2num(rest)
-s=fgetl(fi)
-[tmp rest]=strtok(s);
-data.NODATA_value=str2num(rest)
+
+   s=fgetl(fid);[tmp rest]=strtok(s);D.ncols        = str2num(rest);
+   s=fgetl(fid);[tmp rest]=strtok(s);D.nrows        = str2num(rest);
+   s=fgetl(fid);[tmp rest]=strtok(s);D.xllcorner    = str2num(rest);
+   s=fgetl(fid);[tmp rest]=strtok(s);D.yllcorner    = str2num(rest);
+   s=fgetl(fid);[tmp rest]=strtok(s);D.cellsize     = str2num(rest);
+   s=fgetl(fid);[tmp rest]=strtok(s);D.nodata_value = str2num(rest);
+
 %% Read data
-i=0;
-s=1
-while ~(s==-1)
-    s=fgetl(fi);
-    if ~(s==-1)
-        i=i+1;
-        data.val(i,:)=str2num(s);
-        % [tmp rest]=strtok(s,'/');
-    end
-end
-data.val(data.val==data.NODATA_value)=nan;
-%% Create grid
-for i=1:data.ncols
-    data.x(i)=data.xllcorner+(i-.5)*data.cellsize;
-end
-for j=1:data.nrows
-    data.y(j)=data.yllcorner+((data.nrows-1)-(j-.5))*data.cellsize;
-end
-%% Plot data
-figure
-pcolor(data.x,data.y,data.val);
-shading flat;axis equal;colorbar;
-%% Write to .mat file
-root=strtok(fname,'.');
-matname=[root '.mat'];
-save(matname,'data')
+
+   D.(D.varname) = repmat(nan(OPT.type),[D.ncols,D.nrows]);
+   D.(D.varname) = fscanf(     fid,'%f',[D.ncols,D.nrows])';
+   D.(D.varname)(D.(D.varname)==D.nodata_value)=nan;
+
+%% Create rectangular grid
+
+   for irow=1:D.ncols
+      D.x(irow)=D.xllcorner+D.cellsize*(  irow-0.5             );
+   end
+   for jcol=1:D.nrows
+      D.y(jcol)=D.yllcorner+D.cellsize*(-(jcol-0.5)+(D.nrows-1));
+   end
+
+%% Write to *.mat file
+
+   if OPT.mat
+      save([basename,'.mat'],'-struct','D')
+   end
+
+%% Write to netCDF (*.nc) file
+
+   if OPT.nc
+
+      arcgrid2nc([basename,'.nc'],D,'long_name',OPT.long_name,'units',OPT.units);
+   
+   end
+
+%% Plot data (do this last, as it cna be really sloooow)
+
+   if OPT.plot
+      TMP = figure;
+      pcolor(D.x,D.y,D.(D.varname));
+      shading interp;
+      axis    equal;
+      caxis  (OPT.clim)
+      tickmap('xy')
+      colorbarwithtitle([OPT.long_name,' [',OPT.units,']']);
+      if OPT.export
+         print2screensize([basename,'.png'])
+      end
+      try;close(TMP);end
+   end
+
+%% EOF
