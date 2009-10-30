@@ -1,5 +1,5 @@
 function [X, Y, Z, Ztime] = getDataInPolygon(varargin)
-%rws_GETDATAINPOLYGON  Script to load fixed maps from OPeNDAP, identify which maps are located inside a polygon and retrieve the data 
+%rws_GETDATAINPOLYGON  Script to load fixed maps from OPeNDAP, identify which maps are located inside a polygon and retrieve the data
 %
 %       [X, Y, Z, Ztime] = rws_getdatainpolygon(<keyword,value>);
 %
@@ -11,6 +11,7 @@ function [X, Y, Z, Ztime] = getDataInPolygon(varargin)
 %   	'polygon'     , []                    = polygon to use gathering the data (should preferably be closed) [-]
 %   	'cellsize'    , 20                    = cellsize of fixed grid (same cellsize assumed in both directions) [-]
 %   	'datathinning', 1                     = factor used to stride through the data [-]
+%       'plotresult'  , 1                     = indicates whether the output should be plotted
 %
 %   Output:
 %       function has no output
@@ -26,9 +27,9 @@ function [X, Y, Z, Ztime] = getDataInPolygon(varargin)
 % Version:      Version 1.0, February 2004
 %     Mark van Koningsveld
 %
-%     m.vankoningsveld@tudelft.nl	
+%     m.vankoningsveld@tudelft.nl
 %
-%     Hydraulic Engineering Section 
+%     Hydraulic Engineering Section
 %     Faculty of Civil Engineering and Geosciences
 %     Stevinweg 1
 %     2628CN Delft
@@ -64,6 +65,7 @@ OPT.polygon      = [];
 OPT.cellsize     = 20;
 OPT.datathinning = 1;
 OPT.ldburl       = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
+OPT.plotresult   = 1;
 
 OPT = setProperty(OPT, varargin{:});
 
@@ -73,35 +75,35 @@ if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.datatype})) % if an ove
 
     % Step 0.1: get fixed map urls from OPeNDAP server
     urls = rws_getFixedMapOutlines(OPT.datatype); %#ok<*UNRCH,*USENS>
-    
+
     % Step 0.2: create a figure with tagged patches
     figure(10);clf;axis equal;box on;hold on
-    
+
     % Step 0.3: plot landboundary
     OPT.x = nc_varget(OPT.ldburl, nc_varfind(OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate'));
     OPT.y = nc_varget(OPT.ldburl, nc_varfind(OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate'));
     plot(OPT.x, OPT.y, 'k', 'linewidth', 2);
-    
+
     % Step 0.4: plot fixed map patches on axes and return the axes handle
     ah = rws_createFixedMapsOnAxes(gca, urls, 'tag', OPT.datatype); %#ok<*NODEF,*NASGU>
-    
+
 end
 
 %% Step 1: go to the axes with tagged patches and select fixed maps using a polygon
 ah = findobj('type','axes','tag',OPT.datatype);
 try delete(findobj(ah,'tag','selectionpoly'));  end %#ok<*TRYNC> delete any remaining poly
-try close(2);                                   end % close the bathy plot figure
-try close(3);                                   end % close the times plot figure
+% try close(2);                                   end % close the bathy plot figure
+% try close(3);                                   end % close the times plot figure
 
 % if no polygon is available yet draw one
 if isempty(OPT.polygon)
     % make sure the proper axes is current
     try axes(ah); end
-    
+
     % draw a polygon using Gerben's drawpolygon routine making sure its tagged properly
     disp('Please click a polygon from which to select data ...')
     [x,y] = drawpolygon('g','linewidth',2,'tag','selectionpoly');
-    
+
     % combine x and y in the variable polygon and close it
     OPT.polygon = [x' y'];
     OPT.polygon = [OPT.polygon; OPT.polygon(1,:)];
@@ -118,8 +120,10 @@ plot(OPT.polygon(:,1),OPT.polygon(:,2),'g','linewidth',2,'tag','selectionpoly');
 [X, Y, Z, Ztime] = rws_data2grid(mapurls, minx, maxx, miny, maxy, OPT);
 
 %% Step 4: plot the end result (Z and Ztime)
-% reduce the number of point to plot
-OPT.datathinning = OPT.datathinning * 2;
+if OPT.plotresult
+    % reduce the number of point to plot
+    OPT.datathinning = OPT.datathinning * 2;
 
-% plot X, Y, Z and X, Y, Ztime
-rws_plotDataInPolygon(X, Y, Z, Ztime,'polygon',OPT.polygon,'datathinning',OPT.datathinning,'ldburl',OPT.ldburl)
+    % plot X, Y, Z and X, Y, Ztime
+    rws_plotDataInPolygon(X, Y, Z, Ztime,'polygon',OPT.polygon,'datathinning',OPT.datathinning,'ldburl',OPT.ldburl)
+end
