@@ -88,8 +88,13 @@ b = c - a;
 crossing = struct('a', [], 'b', [], 'c', [], 'u', [], 'x', [], 'z', Inf);
 
 % make sure we are walking from non-failure to failure
+incC = 0.1 .* c;
 z1 = getZ(result, getX(result, a));
 z2 = getZ(result, getX(result, c));
+while sign(z1) == sign(z2)
+    c = c + incC;
+    z2 = getZ(result, getX(result, c));
+end
 
 % check whether we are dealing with a point from the failure and a point
 % from the non-failure area
@@ -141,6 +146,8 @@ if sign(z1) ~= sign(z2)
 
         n = n + 1;
     end
+else
+    disp('WARNING: cross line entirely in non-failure area');
 end
 
 crossing.a = a;

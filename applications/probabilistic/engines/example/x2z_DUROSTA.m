@@ -101,8 +101,12 @@ retreat = [];
 
 % set variable values
 VAR = struct();
+tmpNames = {''};
 for i = 1:size(x,2)
     VAR.(char(varnames{i})) = x(:,i);
+    for j = 1:size(x,1)
+        tmpNames{j} = [tmpNames{j} char(varnames{i}) '=' num2str(x(j,i)) '_'];
+    end
 end
 
 % check fieldnames
@@ -150,17 +154,17 @@ for i = 1:size(x,1)
     D.Input.Grid = [gridX ; gridDX];
     
     % write temporary input file
-    [pathstr, fname, ext] = fileparts(tempname);
+    fname = [char(tmpNames(i)) 'ID' num2str(round(rand*1000))];
+%     [pathstr, fname, ext] = fileparts(tempname);
     fname = DUROSTA_Inp_File(D, [pwd filesep fname '.inp']);
-
     try
         % calculate dune erosion and read result file, if exists
         
         if exist(fname, 'file')
             DUROSTA_Run(fname, [exeDir filesep 'uni-de.exe'], 'quiet', 1);
             
-            [pathstr, fname, ext] = fileparts(fname);
-            if exist([pathstr filesep fname '.tek'], 'file')
+            [pathstr, fpart, ext] = fileparts(fname);
+            if exist([pathstr filesep fpart '.tek'], 'file')
                 result = DUROSTA_Process_Results(D, fname);
 
                 % retrieve resulting erosion volume from result struct
@@ -176,16 +180,16 @@ for i = 1:size(x,1)
                 retreat(i) = x - xRef;
             else
                 % throw error
-                [pathstr, fname, ext] = fileparts(fname);
-                disp(['ERROR: TEK file not found [' num2str(i) '; ' fname ']']);
+                [pathstr, fpart, ext] = fileparts(fname);
+                disp(['ERROR: TEK file not found [' num2str(i) '; ' fpart ']']);
 
                 ErosionVolume(i) = NaN;
                 retreat(i) = NaN;
             end
         else
             % throw error
-            [pathstr, fname, ext] = fileparts(fname);
-            disp(['ERROR: INP file not found [' num2str(i) '; ' fname ']']);
+            [pathstr, fpart, ext] = fileparts(fname);
+            disp(['ERROR: INP file not found [' num2str(i) '; ' fpart ']']);
 
             ErosionVolume(i) = NaN;
             retreat(i) = NaN;
@@ -193,20 +197,20 @@ for i = 1:size(x,1)
     catch
         % throw error
         err = lasterror;
-        [pathstr, fname, ext] = fileparts(fname);
-        disp(['ERROR: ' err.message ' [' num2str(i) '; ' fname ']']);
+        [pathstr, fpart, ext] = fileparts(fname);
+        disp(['ERROR: ' err.message ' [' num2str(i) '; ' fpart ']']);
         
         ErosionVolume(i) = NaN;
         retreat(i) = NaN;
     end
     
     % delete temporary files after saving DAF info
-    [pathstr, fname, ext] = fileparts(fname);
+    [pathstr, fpart, ext] = fileparts(fname);
     
     if DELETE_TEMP_FILES
-        delete([pathstr filesep fname '.*']);
+        delete([pathstr filesep fpart '.*']);
     else
-        result.Output.file = [pathstr filesep fname '.daf'];
+        result.Output.file = [pathstr filesep fpart '.daf'];
     end
     
     % store resistance variable

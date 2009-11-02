@@ -125,10 +125,12 @@ end
 %% print design point
 
 if OPT.printDP
-    printDesignPoint(result);
+    printDesignPoint(result, 'types', {'designPoint'});
     
     if ~isempty(OPT.equivFORMResult)
         printDesignPoint(OPT.equivFORMResult);
+    elseif isfield(result.Output, 'equivFORMResult')
+        printDesignPoint(result.Output.equivFORMResult);
     end
 end
 

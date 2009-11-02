@@ -1,4 +1,4 @@
-function printDesignPoint(result, varargin)
+function result = printDesignPoint(result, varargin)
 % printDesingPoint: Prints Design Point descriptions found in result variable from MC or FORM routine in neat tables
 %
 %   Prints tables to the command window with Design Point descriptions
@@ -13,7 +13,7 @@ function printDesignPoint(result, varargin)
 %   not.
 %
 %   Syntax:
-%   printDesignPoint(result, varargin)
+%   [result] = printDesignPoint(result, varargin)
 %
 %   Input:
 %   result      = result structure from MC or FORM routine
@@ -25,7 +25,7 @@ function printDesignPoint(result, varargin)
 %                               'designPointOptimized'})
 %
 %   Output:
-%   [none]
+%   result      = original result structure
 %
 %   Example
 %   printDesignPoint(result)
@@ -72,12 +72,20 @@ function printDesignPoint(result, varargin)
 %% settings
 
 OPT = struct( ...
-    'types', {'designPoint', 'designPointOptimized'} ...
+    'types', {'designPoint', 'equivFORMResult'}, ...
+    'precisionDP', 0, ...
+    'methodDP', '', ...
+    'thresholdDP', 0, ...
+    'optimizeDP', '' ...
 );
 
 OPT = setProperty(OPT, varargin{:});
 
 %% print tables
+
+if ~isfield(result.Output, 'designPoint') && ~isfield(result.Output, 'designPointOptimized')
+    result = approxMCDesignPoint(result, 'method', OPT.methodDP, 'threshold', OPT.thresholdDP, 'optimize', OPT.optimizeDP, 'precision', OPT.precisionDP);
+end
 
 for type = {OPT.types}
     type = char(type);
@@ -107,7 +115,10 @@ for type = {OPT.types}
             fprintf('\n');
         end
         
-        fprintf('Probability of failure:  %10.8f\n\n', result.Output.(type).P);
+        beta = sqrt(sum(result.Output.(type).u'.^2));
+        
+        fprintf('Probability of failure:  %10.8f\n', result.Output.(type).P);
+        fprintf('Beta-value:              %10.8f\n\n', beta);
 
         % print headers
         fprintf('                         ');
@@ -127,6 +138,13 @@ for type = {OPT.types}
         fprintf('Design Point in X:       ');
         for x = result.Output.(type).x
             fprintf('%10.4f', x);
+        end
+        fprintf('\n');
+        
+        % print alpha-values
+        fprintf('Alpha-squared values:    ');
+        for a = (result.Output.(type).u ./ beta) .^2
+            fprintf('%10.4f', a);
         end
         fprintf('\n\n');
 
