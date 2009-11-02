@@ -97,8 +97,13 @@ function oetsettings(varargin)
 
 %% Create tutorial search database
 %------------------------
-    if exist('builddocsearchdb','file')
-        builddocsearchdb(fullfile(openearthtoolsroot,'docs','OpenEarthDocs','oethelpdocs'));
+ 
+    try
+       if exist('builddocsearchdb','file')
+          builddocsearchdb(fullfile(openearthtoolsroot,'docs','OpenEarthDocs','oethelpdocs'));
+       end
+    catch
+       warning('OET:NoSearchDB','Could not build search database because ',openearthtoolsroot,' is read-only.')
     end
     
 %% Restore warning and directory state

@@ -1,6 +1,7 @@
 % Application-specific tools in <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a>
 %
 % OpenEarthTools application-specific toolboxes.
+%   arcgis          - tools to read Arc ASCII Grid Format
 %   bzip            - bzip compression/decompression <a href="http://www.bzip.org">www.bzip.org</a>
 %   delft3d         - model: <a href="http://www.delft3d.nl">Delft3d</a>
 %   DUROS           - model: duros
