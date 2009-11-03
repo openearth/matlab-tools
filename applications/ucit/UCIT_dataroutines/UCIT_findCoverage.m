@@ -128,16 +128,16 @@ if ~isempty(fns)
                 bestyear1=results(w2,1);
 
                 % convert date to 1231 format
-                try
-                    bestyear(i,:)=([bestyear1].*10000+1231); yearstemp=[yearstemp.*10000+1231];
-                    yearsofgoodcov(i,1)={unique(yearstemp)}; % dit moet cell array zijn, anders omdat bij elke i een andere grootte: Subscripted assignment dimension mismatch
+                bestyear(i,:)=([bestyear1].*10000+1231); yearstemp=[yearstemp.*10000+1231];
+                yearsofgoodcov(i,1)={unique(yearstemp)}; % dit moet cell array zijn, anders omdat bij elke i een andere grootte: Subscripted assignment dimension mismatch
 
-                    % create batchvar
-                    lines1(i,:)={[num2str(fns(i,1).name(1:end-4)),' - minimal data coverage ', num2str(OPT.min_coverage),'%: ',num2str(yearsofgoodcov{i,1}(1,:)),'; Best coverage year = ',num2str(bestyear(i,1))]};
-                    batchvar(i,:)={1, OPT.thinning, fns(i,1).name(1:end-4) , 'g', 1, [yearsofgoodcov{i,1}(1,:)], [find(yearsofgoodcov{i,1}(1,:)==bestyear(i,1))]};
-                end
+                % create batchvar
+                lines1(i,:)={[num2str(fns(i,1).name(1:end-4)),' - minimal data coverage ', num2str(OPT.min_coverage),'%: ',num2str(yearsofgoodcov{i,1}(1,:)),'; Best coverage year = ',num2str(bestyear(i,1))]};
+                batchvar(i,:)={1, OPT.thinning, fns(i,1).name(1:end-4) , 'g', 1, [yearsofgoodcov{i,1}(1,:)], [find(yearsofgoodcov{i,1}(1,:)==bestyear(i,1))]};
+
             else
-                disp([fns(i,1).name(1:end-4), ' - none'])
+                disp([fns(i,1).name(1:end-4), ' - No years founding matching coverage criteria']);
+                batchvar = [];
             end
             clear results;
         end
