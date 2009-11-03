@@ -61,3 +61,7 @@ legend(['Method 1: based on data points covered by target year and reference yea
 % set axis
 xlabel('Time [years]','fontsize',8);ylabel('Volume [m^3]','fontsize',8);
 set(gca,'fontsize',8);
+
+% save figure
+print(fh,'-dpng',['results' filesep 'timewindow = ' num2str(OPT.timewindow) filesep 'ref=' num2str(OPT.min_coverage) filesep strrep(results.polyname,'_',' ')]);
+
