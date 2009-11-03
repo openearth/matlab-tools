@@ -48,9 +48,9 @@ function UCIT_getSandBalance(OPT)
 warning off;
 %% define postprocessing
 postProcessing              = 1; % 0 = off; 1 = on ;
-whattodo(1)                = 1; % volume plots
+whattodo(1)                 = 1; % volume plots
 
-%% Initial settings
+%% initial settings
 OPT.type  = 1;
 curdir = pwd;
 counter = 0;
@@ -61,10 +61,8 @@ if nargin == 0
     OPT.thinning        = 1;
     OPT.monthsmargin    = 12;
     OPT.inputyears      = [2000:2003];
-    OPT.min_coverage         = 75;
+    OPT.min_coverage    = 70;
 end
-
-
 
 
 for n = 1:size(OPT.min_coverage,2)
@@ -90,7 +88,7 @@ for n = 1:size(OPT.min_coverage,2)
                 end
 
                 %% load coverage
-                [dummy, OPT.coverages] = textread(['coverage' filesep 'timewindow = ' num2str(OPT.timewindow) filesep num2str(fns(i,1).name(1:end-4)) '_coverage.dat'],'%f%f','headerlines',1);
+                [OPT.inputyears, OPT.coverages] = textread(['coverage' filesep 'timewindow = ' num2str(OPT.timewindow) filesep num2str(fns(i,1).name(1:end-4)) '_coverage.dat'],'%f%f','headerlines',1);
                 OPT.inputyears = OPT.inputyears(OPT.coverages*100 > OPT.min_coverage);
                 OPT.coverages = OPT.coverages(OPT.coverages*100 > OPT.min_coverage);
 
@@ -110,7 +108,7 @@ for n = 1:size(OPT.min_coverage,2)
                     %% compute volume
                     for k = 1 : 2 % use 2 methods
                         OPT.type = k;
-                        for j = 1:size(OPT.inputyears,2)
+                        for j = 1:size(OPT.inputyears,1)
                             results = UCIT_computeGridVolume(OPT.reference_year, OPT.inputyears(j), fns(i,1).name(1:end-4), OPT);
                             VolumeOverview(j,1) = results.year;
                             VolumeOverview(j,2) = results.volume;
@@ -133,7 +131,8 @@ for n = 1:size(OPT.min_coverage,2)
                     end
                     disp(['Data written to: ' pwd '\results']);
                 else
-                    errordlg('Selected minimal coverage value too high!')
+                    errordlg(['Selected minimal coverage for ' fns(i,1).name(1:end-4) ' too high!']);
+                    disp('No data written; coverage criteria too high!')
                 end
 
             end
