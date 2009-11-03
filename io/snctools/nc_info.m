@@ -85,8 +85,8 @@ function fileinfo = nc_info ( ncfile )
 
 
 
-snc_nargchk(1,1,nargin);
-snc_nargoutchk(1,1,nargout);
+snc_nargchk   (1,1,nargin);
+snc_nargoutchk(0,1,nargout);
 
 
 %

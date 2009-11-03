@@ -1,21 +1,26 @@
 function contents = opendap_folder_contents(url)
-%OPENDAP_FOLDER_CONTENTS   get links to all nc. files in a folder on OpenDap
+%OPENDAP_FOLDER_CONTENTS   get links to all *.nc files in a folder on OpenDap
 %
-%    contents = opendap_folder_contents(url)
+%    C = opendap_folder_contents(url)
 %
-% url is the full path to the folder. Returns a structure with all full
-% links to nc files. Works for http://dtvirt5.deltares.nl:8080/ and
-% http://opendap.deltares.nl url's
+% url is the full path to a folder as copied from your web-browser. 
+% Returns a structure C with all full links to *.nc files, which
+% can be passed to SNCTOOLS
+% Works urls on http://dtvirt5.deltares.nl:8080/ and
+% http://opendap.deltares.nl 
 %
 % Example 1:
 %
 % url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen';
-% contents = opendap_folder_contents(url);
+% url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen/contents.html';
+% C   = opendap_folder_contents(url);
 %
 % Example 2:
 %
 % url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids';
-% contents = opendap_folder_contents(url);
+% C   = opendap_folder_contents(url);
+%
+% See also: SNCTOOLS
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -49,26 +54,57 @@ function contents = opendap_folder_contents(url)
 % $HeadURL$
 % $Keywords: $
 
-%% 
+%% Define for each server
 
-%% check which serever:
+switch url(1:39)
 
-switch url(1:26)
-    case 'http://dtvirt5.deltares.nl'
-        varopendap = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap';
-        string = urlread([url '/catalog.html']);
-        startPos = strfind(string, 'varopendap');
-        endPos = strfind(string, '.nc">');
-        for ii = 1 :length(endPos)
-            contents{ii} = [varopendap string(startPos(ii+1)+11:endPos(ii)+2)];
+    %% HYRAX
+    case 'http://opendap.deltares.nl:8080/opendap'
+
+        if ~strcmpi(url(end-13:end),'/contents.html')
+        url = [url,'/contents.html']
         end
-    case 'http://opendap.deltares.nl'
-        varopendap =  'http://opendap.deltares.nl:8080/opendap';
-        string = urlread([url '/contents.html']);
-        startPos = strfind(string, '.nc.html">');
-        endPos = strfind(string, '.nc</a>');
-         for ii = 1 :length(endPos)
-           contents{ii} = [url '/' string(startPos(ii*2-1)+10:endPos(ii)+2)];
-         end
+
+        string     = urlread([url]);
+        startPos   = strfind(string, '.nc.html">');
+        endPos     = strfind(string, '.nc</a>');
+        for ii = 1 :length(endPos)
+           contents{ii} = [url '/'   string(startPos(ii*2-1)+10:endPos(ii)+02)];
+        end
+
+        contents = strrep(contents,'contents.html/','');
+
+    %% THREDDS
+    case 'http://opendap.deltares.nl:8080/thredds'
+    
+        if ~strcmpi(url(end-12:end),'/catalog.html')
+        url = [url,'/catalog.html']
+        end
+
+        string     = urlread([url]);
+        startPos   = strfind(string, '.nc"><tt>');
+        endPos     = strfind(string, '.nc</tt></a></td>');
+        for ii = 1 :length(endPos)-2
+           contents{ii} = [url '/'   string(startPos(ii)+09:endPos(ii)+2)];
+        end
+        contents = strrep(contents,'catalog.html/','');
+        contents = strrep(contents,'/catalog/','/dodsC/');
+        
+    %% THREDDS
+    case 'http://dtvirt5.deltares.nl:8080/thredds'
+    
+        if ~strcmpi(url(end-12:end),'/catalog.html')
+        url = [url,'/catalog.html']
+        end
+        
+        string     = urlread([url]);
+        startPos   = strfind(string, '.nc"><tt>');
+        endPos     = strfind(string, '.nc</tt></a></td>');
+        for ii = 1 :length(endPos)-2
+           contents{ii} = [url '/'   string(startPos(ii)+09:endPos(ii)+2)];
+        end
+        contents = strrep(contents,'catalog.html/','');
+        contents = strrep(contents,'/catalog/','/dodsC/');
+
 end
 

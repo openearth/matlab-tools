@@ -8,7 +8,7 @@ function tmpfilename = gettmpfilename(varargin)
 %
 % where by default
 %
-%    directory = '.';
+%    directory = getenv('TEMP');
 %    prefix    = '~';
 %    postfix = '.tmp';
 %
@@ -50,7 +50,7 @@ function tmpfilename = gettmpfilename(varargin)
 % $HeadURL$
 % $Keywords$
 
-   directory = '.';
+   directory = getenv('TEMP');
    prefix    = '~';
    extension = '.tmp';
    
