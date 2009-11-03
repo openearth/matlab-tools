@@ -1,5 +1,5 @@
 function BSS = BrierSkillScore(xc, zc, xm, zm, x0, z0, varargin)
-%BRIERSKILLSCORE  One line description goes here.
+%BRIERSKILLSCORE  Brier Skill Score of cross-shore profile
 %
 %   Derive Brier Skill Score (Sutherland et al, 2004). 
 %
@@ -64,7 +64,8 @@ function BSS = BrierSkillScore(xc, zc, xm, zm, x0, z0, varargin)
 
 %%
 OPT = struct(...
-    'equidistant', false);
+    'equidistant', false,...
+    'minthreshold', []);
 
 if ~isempty(varargin) && ischar(varargin{1})
     OPT = setProperty(OPT, varargin{:});
@@ -94,12 +95,12 @@ else
 end
 
 %% interpolate profiles onto new grid
-[x0,id1]=unique(x0);
-[xc,id2]=unique(xc);
-[xm,id3]=unique(xm);
-z0=z0(id1);
-zc=zc(id2);
-zm=zm(id3);
+[x0,id1] = unique(x0);
+[xc,id2] = unique(xc);
+[xm,id3] = unique(xm);
+z0 = z0(id1);
+zc = zc(id2);
+zm = zm(id3);
 
 z0_new = interp1(x0, z0, x_new);
 zc_new = interp1(xc, zc, x_new);
@@ -119,7 +120,11 @@ total = sum(weight);
 mse_p = sum(((zm_new - zc_new).^2).*weight)/total;
 mse_0 = sum(((zm_new - z0_new).^2).*weight)/total;
 BSS = 1. - (mse_p/mse_0);
-BSS(BSS<-1)=-1;
-if any(BSS<-1)
-    disp('Replaced Brier Skill Score <-1 with a skill score of -1');
+
+%% apply lower threshold
+below_threshold = BSS < OPT.minthreshold;
+if any(below_threshold)
+    disp(['Replaced Brier Skill Score <' num2str(OPT.minthreshold) ' with a skill score of ' num2str(OPT.minthreshold)]);
+    BSS(below_threshold) = OPT.minthreshold;
 end
+
