@@ -121,6 +121,6 @@ else
 end
 total = sum(weight);
     
-Obs = sum(abs(zm_new - z0_new).*weight)/total;
-Exp = sum(abs(zc_new - z0_new).*weight)/total;
-Chi2 = (Obs - Exp)^2 / Exp;
+Obs = abs(zm_new - z0_new); % absolute values of difference between model final profile and initial profile
+Exp = abs(zc_new - z0_new); % absolute values of difference between computed final profile and initial profile
+Chi2 = sum(((Obs - Exp).^2 ./ Exp) .* weight) / total; % weighted chi square value
