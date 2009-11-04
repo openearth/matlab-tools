@@ -3,12 +3,12 @@ function [succes, kml_id] = KML_region_png(level,G,c,kml_id,OPT)
 %
 %  [succes, kml_id] = KML_region_png(level,G,c,kml_id,OPT)
 %
-%See also: KMLengines
+%See also: KMLENGINES, KMLFIG2PNG_ALPHA
 
 kml_id = kml_id+1;
 
 %% make png
-bgcolor = OPT.bgcolor;
+bgcolor = OPT.bgcolor; % background color to be made transparent
 if level>=0
     dim = OPT.dim;
 else
@@ -24,8 +24,8 @@ PNGfileName = fullfile(OPT.Path,OPT.Name,sprintf('%05d.png',kml_id));
 mkpath(fileparts(PNGfileName));
 print(OPT.hf,'-dpng','-r1',PNGfileName);
 
-im = imread(PNGfileName);
-im = im(OPT.dimExt+1:OPT.dimExt+dim,OPT.dimExt+1:OPT.dimExt+dim,:);
+im   = imread(PNGfileName);
+im   = im(OPT.dimExt+1:OPT.dimExt+dim,OPT.dimExt+1:OPT.dimExt+dim,:);
 mask = bsxfun(@eq,im,reshape(bgcolor,1,1,3));
 
 %% check if there is non transparent info in the png.
@@ -35,7 +35,7 @@ if all(all(mask,3))
     succes = false;
     return
 end
-imwrite(im,PNGfileName,'Alpha',OPT.alpha*ones(size(mask(:,:,1))).*(1-double(all(mask,3))))
+imwrite(im,PNGfileName,'Alpha',OPT.alpha*ones(size(mask(:,:,1))).*(1-double(all(mask,3))),'Author','$HeadURL$'); % NOT 'Transparency' as non-existent pixels have alpha = 0
 
 if level==OPT.levels(1)
     minLod = OPT.minLod0;

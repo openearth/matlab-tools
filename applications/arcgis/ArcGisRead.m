@@ -18,7 +18,7 @@ function [D] = ArcGisRead(fname,varargin)
 
 %% User defined keywords
 
-   OPT.plot          = 0;  % plot
+   OPT.plot          = 0;  % plot (defualt off, to prevent grinding of PC with big matrices)
    OPT.clim          = [-5 45]; % in OPT.units
    OPT.export        = 1;  % export plot
    OPT.mat           = 1;  % save as mat

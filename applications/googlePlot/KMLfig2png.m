@@ -13,11 +13,11 @@ function [OPT, Set, Default] = KMLfig2png(h,varargin)
 % where Lod = Level of Detail
 %
 % Note that the set generated this way works only locally.
-% To make it also work on a server 
-% use KMLMerge_files to merge all kml files into one big kml
+% To make it also work on a server use
+% KMLMERGE_FILES to merge all kml files into one big kml
 % and insert absolute url's before every kml filename
 %
-% See also: googlePlot, pcolor
+% See also: GOOGLEPLOT, PCOLOR, KMLFIG2PNG_ALPHA
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -55,7 +55,7 @@ function [OPT, Set, Default] = KMLfig2png(h,varargin)
 
 OPT.fileName        =     [];
 OPT.kmlName         =     []; % name in Google Earth Place list
-OPT.url             =     ''; % webserver storaga needs absolute paths, local files can have relative paths (TO DO).
+OPT.url             =     ''; % webserver storaga needs absolute paths, local files can have relative paths. Only needed in mother KML.
 OPT.alpha           =      1;
 OPT.dim             =    256;
 OPT.dimExt          =     16;
@@ -71,7 +71,7 @@ OPT.hf              =    gcf;
 OPT.timeIn          =     [];
 OPT.timeOut         =     [];
 OPT.drawOrder       =     10; 
-OPT.bgcolor         = [100 155 100];
+OPT.bgcolor         = [100 155 100];  % background color to be made transparent
 OPT.description     =     '';
 
 if nargin==0
@@ -124,6 +124,7 @@ G.z   = get(h,'ZData');
 
 %% preproces timespan
 %  http://code.google.com/apis/kml/documentation/kmlreference.html#timespan
+
 if  ~isempty(OPT.timeIn)
     if ~isempty(OPT.timeOut)
         OPT.timeSpan = sprintf([...
@@ -144,47 +145,61 @@ else
 end
 
 %% do the magic
+
 kml_id = 0;
 level = OPT.levels(1);
 if OPT.levels(1) == OPT.levels(2),OPT.maxLod = OPT.maxLod0;else OPT.maxLod = OPT.maxLod; end
 
 [succes, kml_id] = KML_region_png(level,G,c,kml_id,OPT);
 
+%% make the 'mother' kml content
+
 if succes
-    %% make the 'mother' kml content
-    output = sprintf([...
-        '<NetworkLink>'...
-        '<name>%s</name>'... name
-        '%s'...time
-        '<Region>\n'...
-        '<Lod><minLodPixels>%d</minLodPixels><maxLodPixels>%d</maxLodPixels></Lod>\n'...minLod,maxLod
-        '<LatLonAltBox><north>%3.8f</north><south>%3.8f</south><west>%3.8f</west><east>%3.8f</east></LatLonAltBox>\n' ...N,S,W,E
-        '</Region>\n'...
-        '<Link><href>%s</href><viewRefreshMode>onRegion</viewRefreshMode></Link>'... link
-        '</NetworkLink>'],...
-        OPT.kmlName,...
-        OPT.timeSpan,...
-        -1,-1,...
-        c.N,c.S,c.W,c.E,...
-        [OPT.Path OPT.Name '/00001.kml']);
 
-    %% and write the KML
-    OPT.fid=fopen(OPT.fileName,'w');
-    OPT_header = struct(...
-        'name',OPT.kmlName,...
-               'open',0,...
-        'description',OPT.description);
+   if ~isempty()
+      if ~strcmpi(OPT.url(end),'/');
+      OPT.url = [OPT.url '\'];
+      end
+   end
 
-    output = [KML_header(OPT_header) output];
-    % FOOTER
-    output = [output KML_footer];
-    fprintf(OPT.fid,'%s',output);
-    % close KML
-    fclose(OPT.fid);
-    disp(['KMLfig2png completed succesfully - ' num2str(kml_id) ' parts created'])
+   output = sprintf([...
+       '<NetworkLink>'...
+       '<name>%s</name>'...                                                                                             % name
+       '%s'...                                                                                                          % time
+       '<Region>\n'...
+       '<Lod><minLodPixels>%d</minLodPixels><maxLodPixels>%d</maxLodPixels></Lod>\n'...                                 % minLod,maxLod
+       '<LatLonAltBox><north>%3.8f</north><south>%3.8f</south><west>%3.8f</west><east>%3.8f</east></LatLonAltBox>\n' ...% N,S,W,E
+       '</Region>\n'...
+       '<Link><href>%s</href><viewRefreshMode>onRegion</viewRefreshMode></Link>'...                                     % link
+       '</NetworkLink>'],...
+       OPT.kmlName,...
+       OPT.timeSpan,...
+       -1,-1,...
+       c.N,c.S,c.W,c.E,...
+       [OPT.url OPT.Path OPT.Name '/00001.kml']);
+
+   %% and write the KML
+
+   OPT.fid=fopen(OPT.fileName,'w');
+   OPT_header = struct(...
+       'name',OPT.kmlName,...
+              'open',0,...
+       'description',OPT.description);
+
+   output = [KML_header(OPT_header) output];
+
+   % FOOTER
+   
+   output = [output KML_footer];
+   fprintf(OPT.fid,'%s',output);
+
+   % close KML
+   
+   fclose(OPT.fid);
+   disp(['KMLfig2png completed succesfully - ' num2str(kml_id) ' parts created'])
 else
-    rmdir(fullfile(OPT.Path,OPT.Name,[]))
-    disp(['KMLfig2png failed                - ' num2str(kml_id) ' parts created'])
+   rmdir(fullfile(OPT.Path,OPT.Name,[]))
+   disp(['KMLfig2png failed                - ' num2str(kml_id) ' parts created'])
 end
 
 

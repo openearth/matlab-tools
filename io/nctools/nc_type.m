@@ -62,13 +62,18 @@ function nctype = nc_type(mtype)
 
 mtype = lower(mtype);
 switch mtype
+
   case 'double',  nctype = 'double';
   case 'single',  nctype = 'float';
+  case 'float',   nctype = 'float';
+      
   case 'int32',   nctype = 'int';
   case 'int16',   nctype = 'short';
   case 'int8',    nctype = 'schar';
  %case 'uint8',   nctype = 'uchar';
+ 
   case 'char',    nctype = 'char';
+  
   case 'uint64',  error('unsigned Matlab types (uint64) have no netCDF equivalent.')
   case 'uint32',  error('unsigned Matlab types (uint32) have no netCDF equivalent.')
   case 'uint16',  error('unsigned Matlab types (uint16) have no netCDF equivalent.')
