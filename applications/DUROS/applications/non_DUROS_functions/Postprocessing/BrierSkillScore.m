@@ -64,7 +64,7 @@ function BSS = BrierSkillScore(xc, zc, xm, zm, x0, z0, varargin)
 
 %%
 OPT = struct(...
-    'equidistant', false,...
+    'equidistant', false,... % either false or # gridcells
     'minthreshold', []);
 
 if ~isempty(varargin) && ischar(varargin{1})
@@ -127,4 +127,3 @@ if any(below_threshold)
     disp(['Replaced Brier Skill Score <' num2str(OPT.minthreshold) ' with a skill score of ' num2str(OPT.minthreshold)]);
     BSS(below_threshold) = OPT.minthreshold;
 end
-
