@@ -157,6 +157,14 @@ if ~isempty(x0except)
 end
 
 %% Check iteration boundaries. If non consistent: find out why and return
+
+% add iteration boundaries to profile
+xInitial2 = unique(cat(1,xInitial,x0min,x0max));
+if length(xInitial2) ~= length(xInitial)
+    zInitial = interp1(xInitial,zInitial,xInitial2);
+    xInitial = xInitial2;
+end
+
 IterationBoundariesConsistent = x0max > x0min;
 NoPointsAboveWaterline = all(zInitial(xInitial>=x0min & xInitial<=x0max) < WL_t);
 if ~IterationBoundariesConsistent || NoPointsAboveWaterline

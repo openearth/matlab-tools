@@ -192,21 +192,28 @@ if DuneErosionSettings('get', 'DUROS')
                 xInitialpreBend = [result(1).xLand; result(1).xActive; result(1).xSea];
                 zInitialpreBend = [result(1).zLand; result(1).zActive; result(1).zSea];
                 result(end+1) = getDUROSprofile(xInitialpreBend, zInitialpreBend, x0bend, Hsig_t, Tp_t, WL_t, w);
+                x1vol = result(end).xActive;
+                z1vol = result(end).z2Active;
+                x2vol = cat(1,result(1).xLand,result(1).xActive,result(1).xSea);
+                z2vol = cat(1,result(1).zLand,result(1).z2Active,result(1).zSea);
+                
                 % add VTVinfo to result structure
                 result(end).VTVinfo.Xp = x0bend;
                 result(end).VTVinfo.Zp = WL_t;
                 result(end).VTVinfo.Xr = result(end).xActive(1);
                 result(end).VTVinfo.Zr = result(end).zActive(1);
-                if x0bendwithinboundaries
-                    result(end).info.ID = ['Shifted for coastal bend (Bend = ' num2str(Bend) '^{\circ}; G = ' num2str(G, '%.2f')  ' m^3/m^1)'];
-                else
+                result(end).VTVinfo.G = G;
+                result(end).Volumes.Volume = result(2).VTVinfo.AVolume + getVolume('x',x2vol,'z',z2vol,'x2',x1vol,'z2',z1vol,'LowerBoundary',WL_t);
+                result(end).info.ID = 'Coastal Bend';
+                if ~x0bendwithinboundaries
                     %TODO: recalculate G (because it is limited by x0min)
-                    result(end).info.ID = ['Shifted for coastal bend (Bend = ' num2str(Bend) '^{\circ})'];
                 end
                 idAddProf = 3;
+                idAddVol = 3;
             else
                 writemessage(55, 'Coastal bend outside scope of regulations (Bend > 24)');
                 idAddProf = 1;
+                idAddVol = 2;
             end
             
             % the shifted DUROS profile has been constructed with respect
@@ -227,6 +234,7 @@ if DuneErosionSettings('get', 'DUROS')
                 result(end).xActive);
         else
             idAddProf = 1;
+            idAddVol = 2;
         end
     end
 end
@@ -255,7 +263,7 @@ if DuneErosionSettings('get', 'AdditionalErosion') && ~NoDUROSResult
                 result(idAddProf),...
                 WL_t,...
                 TargetVolume,...
-                result(2).Volumes.Volume,...
+                result(idAddVol).Volumes.Volume,... 
                 maxRetreat,...
                 x0except);
         end
@@ -309,11 +317,15 @@ end
 %% add input to result structure
 % Don't forget to specify the input in the result as well. someone could
 % try to recreate the results and may needs it...
+if ~exist('Bend','var')
+    Bend = 0;
+end
 result(1).info.input = struct(...
     'D50', D50,...
     'WL_t', WL_t,...
     'Hsig_t', Hsig_t,...
-    'Tp_t', Tp_t);
+    'Tp_t', Tp_t,...
+    'Bend',Bend);
 
 end
 %%
