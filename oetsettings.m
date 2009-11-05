@@ -92,18 +92,20 @@ function oetsettings(varargin)
 %% Add paths
 %-----------------------
    basepath = fileparts(mfilename('fullpath'));
-   warning off
+   warning off %#ok<WNOFF>
    addpathfast(basepath); % excludes *.svn directories!
 
 %% Create tutorial search database
 %------------------------
  
     try
-       if exist('builddocsearchdb','file')
-          builddocsearchdb(fullfile(openearthtoolsroot,'docs','OpenEarthDocs','oethelpdocs'));
-       end
-    catch
-       warning('OET:NoSearchDB','Could not build search database because ',openearthtoolsroot,' is read-only.')
+        DocumentationExists = exist(fullfile(openearthtoolsroot,'docs','OpenEarthDocs','oethelpdocs','helptoc.xml'),'file');
+        if DocumentationExists && exist('builddocsearchdb','file')
+            builddocsearchdb(fullfile(openearthtoolsroot,'docs','OpenEarthDocs','oethelpdocs'));
+        end
+    catch me %#ok<NASGU>
+        warning('OET:NoSearchDB',['Could not build search database because ',openearthtoolsroot,' is read-only.', char(10),...
+            'the OpenEarthTools help documentation is still avilable in the matlab help navigator.']);
     end
     
 %% Restore warning and directory state
@@ -117,6 +119,21 @@ function oetsettings(varargin)
 %-----------------------
    autosetSVNkeywords
    
+%% NETCDF (if not present yet)
+%  (NB RESTOREDEFAULTPATH does not restore java paths)
+%-----------------------
+   java2add         = path2os(fullfile(openearthtoolsroot, '/io/nctools', 'toolsUI-2.2.22.jar'));
+   dynjavaclasspath = path2os(javaclasspath);
+   indices          = strfind(dynjavaclasspath,java2add);
+    
+   if isempty(cell2mat(indices))
+      javaaddpath (java2add)
+   elseif ~(OPT.quiet)
+      disp(['Java path not added, already there: ',java2add]);
+      disp(' ');
+   end
+   setpref ('SNCTOOLS', 'USE_JAVA', true); % this requires SNCTOOLS 2.4.8 or better
+    
 %% Report
 %-----------------------
    if ~(OPT.quiet)
@@ -124,20 +141,6 @@ function oetsettings(varargin)
        fprintf('\n*** OpenEarthTools settings enabled! ***\n');
    end
    
-%% NETCDF (if not present yet)
-%  (NB RESTOREDEFAULTPATH does not restore java paths)
-%-----------------------
-    java2add         = path2os(fullfile(openearthtoolsroot, '/io/nctools', 'toolsUI-2.2.22.jar'));
-    dynjavaclasspath = path2os(javaclasspath);
-    indices          = strfind(dynjavaclasspath,java2add);
-    
-    if isempty(cell2mat(indices))
-       javaaddpath (java2add)
-    elseif ~(OPT.quiet)
-       disp(['Java path not added, already there: ',java2add])
-    end
-    setpref ('SNCTOOLS', 'USE_JAVA', true); % this requires SNCTOOLS 2.4.8 or better
-    
 %% EOF
 
 
