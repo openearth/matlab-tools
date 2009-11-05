@@ -13,9 +13,13 @@ function BSS = BrierSkillScore(xc, zc, xm, zm, x0, z0, varargin)
 %   zm  = measured z values
 %   x0  = initial x grid
 %   z0  = initial z values
-%   varargin  = leave empty for a weighted score based on the combined
-%   xgrid, otherwise either the number of grid cells <nx> or a PropertyName
-%   PropertyValue pair 'equidistant', <nx>. 
+%   varargin  = PropertyName-PropertyValue pairs
+%       'equidistant' : - false for a weighted score based on the combined
+%                           xgrid
+%                       - <nx> for the number of equidistant gridcells
+%       'lower_threshold' : - [] empty for no threshold
+%                           - <lower_threshold> any value to ceil all lower
+%                             values to
 %
 %   Output:
 %   BSS =
@@ -65,7 +69,7 @@ function BSS = BrierSkillScore(xc, zc, xm, zm, x0, z0, varargin)
 %%
 OPT = struct(...
     'equidistant', false,... % either false or # gridcells
-    'minthreshold', []);
+    'lower_threshold', []);
 
 if ~isempty(varargin) && ischar(varargin{1})
     OPT = setProperty(OPT, varargin{:});
@@ -122,8 +126,8 @@ mse_0 = sum(((zm_new - z0_new).^2).*weight)/total;
 BSS = 1. - (mse_p/mse_0);
 
 %% apply lower threshold
-below_threshold = BSS < OPT.minthreshold;
+below_threshold = BSS < OPT.lower_hreshold;
 if any(below_threshold)
-    disp(['Replaced Brier Skill Score <' num2str(OPT.minthreshold) ' with a skill score of ' num2str(OPT.minthreshold)]);
-    BSS(below_threshold) = OPT.minthreshold;
+    disp(['Replaced Brier Skill Score <' num2str(OPT.lower_hreshold) ' with a skill score of ' num2str(OPT.lower_hreshold)]);
+    BSS(below_threshold) = OPT.lower_threshold;
 end
