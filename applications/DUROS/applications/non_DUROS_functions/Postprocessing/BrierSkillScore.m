@@ -126,8 +126,8 @@ mse_0 = sum(((zm_new - z0_new).^2).*weight)/total;
 BSS = 1. - (mse_p/mse_0);
 
 %% apply lower threshold
-below_threshold = BSS < OPT.lower_hreshold;
+below_threshold = BSS < OPT.lower_threshold;
 if any(below_threshold)
-    disp(['Replaced Brier Skill Score <' num2str(OPT.lower_hreshold) ' with a skill score of ' num2str(OPT.lower_hreshold)]);
+    disp(['Replaced Brier Skill Score <' num2str(OPT.lower_threshold) ' with a skill score of ' num2str(OPT.lower_threshold)]);
     BSS(below_threshold) = OPT.lower_threshold;
 end
