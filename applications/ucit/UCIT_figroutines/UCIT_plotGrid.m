@@ -75,7 +75,12 @@ set(gcf,'renderer','zbuffer')
 switch  scheme
     case 1 % regular bathymetry plot
         thinning = 1;
-        sh = pcolor(X(1:thinning:end,1:thinning:end),Y(1:thinning:end,1:thinning:end),Z(1:thinning:end,1:thinning:end)); axis equal; shading interp; view(2)
+%         sh = pcolor(X(1:thinning:end,1:thinning:end),Y(1:thinning:end,1:thinning:end),Z(1:thinning:end,1:thinning:end)); axis equal; shading interp; view(2)
+        sh = surf(X(1:thinning:end,1:thinning:end),Y(1:thinning:end,1:thinning:end),Z(1:thinning:end,1:thinning:end));
+        axis equal; shading interp; view(2);colorbar;axis equal;colormap(colormap_cpt('bathymetry_vaklodingen',200));clim([-50 25]);
+        lightangle(-180,60);material([.7 .3 0.2]);lighting phong
+       
+
         if nargin ==6
             if length(v)==1
                 v=[v(1) - 1 v];
@@ -85,7 +90,7 @@ switch  scheme
         else
             colorbar
         end
-        axis equal
+        
     case 2 % regular difference plot
         v = [-20 -10 -5:5 10 20];
         thinning=ceil(max(size(X))/600);
@@ -145,21 +150,39 @@ switch  scheme
         end
         axis equal
     case 7
-        thinning=1;%ceil(max(size(X))/600);
-        sh = pcolor(X(1:thinning:end,1:thinning:end),Y(1:thinning:end,1:thinning:end),Z(1:thinning:end,1:thinning:end)); axis equal; shading interp; view(2)
+        
+        %% find unique date values
+        %-----------------
         v = unique(Z(find(~isnan(Z)))); %#ok<*FNDSB>
         if length(v)==1
             v=[v(1) - 1 v];
         end
         nv = length(v);
 
-        caxis   ([1-.5 nv+.5])
-        colormap(jet(nv));
-        [ax,c1] =  colorbarwithtitle('',1:nv+1); %#ok<NASGU>
-        set(ax,'yticklabel',datestr(v,1))
+        if nv == 0
+            warning('no data found: only selection polygon plotted')
+        end
 
-        axis equal
+        % make matrix so you can plot index of unique values
+        V=Z;
+        for iv=1:nv
+            mask = (Z==v(iv));
+            V(mask)=iv;
+        end
+
+        % plot
+        pcolorcorcen(X,Y,V);
+        hold on;
+
+        % layout
+        if nv > 0
+            caxis   ([1-.5 nv+.5])
+            colormap(jet(nv));
+            [ax,c1] =  colorbarwithtitle('',1:nv+1); %#ok<NASGU>
+            set(ax,'yticklabel',datestr(v,1))
+        end
 end
+
 axis tight
 box on
 set(gcf,'r','z')
