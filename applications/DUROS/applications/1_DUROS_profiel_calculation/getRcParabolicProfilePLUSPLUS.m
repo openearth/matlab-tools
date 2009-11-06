@@ -59,14 +59,13 @@ elseif strcmp(Plus,'-plus')
     c_d = 25;
     cp_d = 0;    %depthcmpt = 1
 
-
 %% -------------------------------------------------------------------------------------------
 %  -----------------------DUROS plusplus (for testing purposes only)--------------------------
 %  -------------------------------------------------------------------------------------------
 elseif strcmp(Plus,'-plusplus')
     %including depth contribution into the 'constants' C1, C2 and 'two'
-    c_1 = c_1*(Hsig_t/d_t)^cp_c1;
-    c_2 = c_2*(Hsig_t/d_t)^cp_c2;
+    %c_1 = c_1*(Hsig_t/d_t)^cp_c1;
+    %c_2 = c_2*(Hsig_t/d_t)^cp_c2;
     two = c_1*sqrt(c_2);
 else
     error('Warning: variable "Plus" should be either '''' or ''-plus'' or ''-plusplus''')
