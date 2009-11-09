@@ -156,7 +156,7 @@ if OPT.levels(1) == OPT.levels(2),OPT.maxLod = OPT.maxLod0;else OPT.maxLod = OPT
 
 if succes
 
-   if ~isempty()
+   if ~isempty(OPT.url)
       if ~strcmpi(OPT.url(end),'/');
       OPT.url = [OPT.url '\'];
       end
