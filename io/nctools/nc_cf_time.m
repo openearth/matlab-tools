@@ -1,5 +1,5 @@
 function varargout = nc_cf_time(ncfile,varargin)
-%NC_CF_TIME   readfs all time variables from a netCDF file inot Matlab datenumber
+%NC_CF_TIME   readfs all time variables from a netCDF file into Matlab datenumber
 %
 %   datenumbers = nc_cf_time(ncfile);
 %   datenumbers = nc_cf_time(ncfile,<varname>);
