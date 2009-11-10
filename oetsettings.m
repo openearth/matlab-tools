@@ -103,7 +103,7 @@ function oetsettings(varargin)
         if DocumentationExists && exist('builddocsearchdb','file')
             builddocsearchdb(fullfile(openearthtoolsroot,'docs','OpenEarthDocs','oethelpdocs'));
         end
-    catch me %#ok<NASGU>
+    catch %#ok<CTCH>
         warning('OET:NoSearchDB',['Could not build search database because ',openearthtoolsroot,' is read-only.', char(10),...
             'the OpenEarthTools help documentation is still avilable in the matlab help navigator.']);
     end
