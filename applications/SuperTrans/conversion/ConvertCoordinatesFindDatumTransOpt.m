@@ -5,7 +5,7 @@ function [ OPT ] = ConvertCoordinatesFindDatumTransOpt(OPT,STD)
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma
 %
-%       Thijs.Damsma@deltares.nl	
+%       Thijs.Damsma@deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -35,7 +35,8 @@ function [ OPT ] = ConvertCoordinatesFindDatumTransOpt(OPT,STD)
 
 %% find the transformation options
 if OPT.CS1.geoRefSys.code == OPT.CS2.geoRefSys.code
-    OPT = rmfield(OPT,'datum_trans');
+    OPT.datum_trans = 'no transformation required';
+%     OPT = rmfield(OPT,'datum_trans');
 else
     [ OPT,ind,direction,ind_alt,dir_alt,dep_alt] = findTransOptions(OPT,STD,OPT.CS1.geoRefSys.code,OPT.CS2.geoRefSys.code,'datum_trans');
     if ~isempty(ind)
@@ -43,12 +44,12 @@ else
         OPT.datum_trans.code          = STD.coordinate_operation.coord_op_code(ind);
         OPT.datum_trans.name          = STD.coordinate_operation.coord_op_name(ind);
         OPT.datum_trans.direction     = direction;
-        if length(ind_alt)>1 % also include alternative tranformations
+%        if length(ind_alt)>1 % also include alternative tranformations
             OPT.datum_trans.alt_code       = STD.coordinate_operation.coord_op_code(ind_alt);
             OPT.datum_trans.alt_name       = STD.coordinate_operation.coord_op_name(ind_alt);
             OPT.datum_trans.alt_direction  = dir_alt;
             OPT.datum_trans.alt_deprecated = dep_alt;
-        end
+%        end
         OPT.datum_trans.params        = ConvertCoordinatesFindDatumTransParams(STD.coordinate_operation.coord_op_code(ind),STD);
         OPT.datum_trans.method_code   = STD.coordinate_operation.coord_op_method_code(ind);
         OPT.datum_trans.method_name   = STD.coordinate_operation_method.coord_op_method_name{STD.coordinate_operation_method.coord_op_method_code == OPT.datum_trans.method_code};
@@ -58,67 +59,100 @@ else
         % no direct transformation available, try via WGS 84
         OPT.datum_trans = 'no direct transformation available';
         % get ellips for WGS 84
-         WGS84.datum.code = 6326;
-         OPT.WGS84 = ConvertCoordinatesFindEllips(WGS84,STD);
-         
+        WGS84.datum.code = 6326;
+        OPT.WGS84 = ConvertCoordinatesFindEllips(WGS84,STD);
+
         % geogcrs_code1 to WGS 84
         [ OPT,ind,direction,ind_alt,dir_alt] = findTransOptions(OPT,STD,OPT.CS1.geoRefSys.code,4326,'datum_trans_to_WGS84');
-        if isempty(ind), error('no transformation available...'), end
-        % get parameters, name and code for datum transformation TO wgs 84
-        OPT.datum_trans_to_WGS84.code          = STD.coordinate_operation.coord_op_code(ind);
-        OPT.datum_trans_to_WGS84.name          = STD.coordinate_operation.coord_op_name(ind);
-        OPT.datum_trans_to_WGS84.direction     = direction;
-        if length(ind_alt)>1 % also include alternative tranformations
+        if isempty(ind)
+%            OPT.datum_trans_to_WGS84='no direct transformation available';
+            OPT.datum_trans = 'no transformation available';
+            %            error('no transformation available...');
+        else
+            % get parameters, name and code for datum transformation TO wgs 84
+            OPT.datum_trans_to_WGS84.code          = STD.coordinate_operation.coord_op_code(ind);
+            OPT.datum_trans_to_WGS84.name          = STD.coordinate_operation.coord_op_name(ind);
+            OPT.datum_trans_to_WGS84.direction     = direction;
+            %        if length(ind_alt)>1 % also include alternative tranformations
             OPT.datum_trans_to_WGS84.alt_code       = STD.coordinate_operation.coord_op_code(ind_alt);
             OPT.datum_trans_to_WGS84.alt_name       = STD.coordinate_operation.coord_op_name(ind_alt);
             OPT.datum_trans_to_WGS84.alt_direction  = dir_alt;
             OPT.datum_trans_to_WGS84.alt_deprecated = dep_alt;
+            %        end
+            OPT.datum_trans_to_WGS84.params      = ConvertCoordinatesFindDatumTransParams(STD.coordinate_operation.coord_op_code(ind),STD);
+            OPT.datum_trans_to_WGS84.method_code = STD.coordinate_operation.coord_op_method_code(ind);
+            OPT.datum_trans_to_WGS84.method_name = STD.coordinate_operation_method.coord_op_method_name{STD.coordinate_operation_method.coord_op_method_code == OPT.datum_trans_to_WGS84.method_code};
+            OPT.datum_trans_to_WGS84.ellips1     = 'CS1';
+            OPT.datum_trans_to_WGS84.ellips2     = 'WGS84';
         end
-        OPT.datum_trans_to_WGS84.params      = ConvertCoordinatesFindDatumTransParams(STD.coordinate_operation.coord_op_code(ind),STD);
-        OPT.datum_trans_to_WGS84.method_code = STD.coordinate_operation.coord_op_method_code(ind);
-        OPT.datum_trans_to_WGS84.method_name = STD.coordinate_operation_method.coord_op_method_name{STD.coordinate_operation_method.coord_op_method_code == OPT.datum_trans_to_WGS84.method_code};
-        OPT.datum_trans_to_WGS84.ellips1     = 'CS1';
-        OPT.datum_trans_to_WGS84.ellips2     = 'WGS84';
-
         % WGS 84 to geogcrs_code2
         [ OPT,ind,direction,ind_alt,dir_alt] = findTransOptions(OPT,STD,4326,OPT.CS2.geoRefSys.code,'datum_trans_from_WGS84');
-        if isempty(ind), error('no transformation available...'), end
-        % get parameters, name and code for datum transformation TO wgs 84
-        OPT.datum_trans_from_WGS84.code          = STD.coordinate_operation.coord_op_code(ind);
-        OPT.datum_trans_from_WGS84.name          = STD.coordinate_operation.coord_op_name(ind);
-        OPT.datum_trans_from_WGS84.direction     = direction;
-        if length(ind_alt)>1 % also include alternative tranformations
+        if isempty(ind)
+%            OPT.datum_trans_from_WGS84='no direct transformation available';
+            OPT.datum_trans = 'no transformation available';
+            %             error('no transformation available...');
+        else
+            % get parameters, name and code for datum transformation TO wgs 84
+            OPT.datum_trans_from_WGS84.code          = STD.coordinate_operation.coord_op_code(ind);
+            OPT.datum_trans_from_WGS84.name          = STD.coordinate_operation.coord_op_name(ind);
+            OPT.datum_trans_from_WGS84.direction     = direction;
+            %        if length(ind_alt)>1 % also include alternative tranformations
             OPT.datum_trans_from_WGS84.alt_code       = STD.coordinate_operation.coord_op_code(ind_alt);
             OPT.datum_trans_from_WGS84.alt_name       = STD.coordinate_operation.coord_op_name(ind_alt);
             OPT.datum_trans_from_WGS84.alt_direction  = dir_alt;
             OPT.datum_trans_from_WGS84.alt_deprecated = dep_alt;
+            %        end
+            OPT.datum_trans_from_WGS84.params      = ConvertCoordinatesFindDatumTransParams(STD.coordinate_operation.coord_op_code(ind),STD);
+            OPT.datum_trans_from_WGS84.method_code = STD.coordinate_operation.coord_op_method_code(ind);
+            OPT.datum_trans_from_WGS84.method_name = STD.coordinate_operation_method.coord_op_method_name{STD.coordinate_operation_method.coord_op_method_code == OPT.datum_trans_from_WGS84.method_code};
+            OPT.datum_trans_from_WGS84.ellips1     = 'WGS84';
+            OPT.datum_trans_from_WGS84.ellips2     = 'CS2';
         end
-        OPT.datum_trans_from_WGS84.params      = ConvertCoordinatesFindDatumTransParams(STD.coordinate_operation.coord_op_code(ind),STD);
-        OPT.datum_trans_from_WGS84.method_code = STD.coordinate_operation.coord_op_method_code(ind);
-        OPT.datum_trans_from_WGS84.method_name = STD.coordinate_operation_method.coord_op_method_name{STD.coordinate_operation_method.coord_op_method_code == OPT.datum_trans_from_WGS84.method_code};
-        OPT.datum_trans_from_WGS84.ellips1     = 'WGS84';
-        OPT.datum_trans_from_WGS84.ellips2     = 'CS2';
     end
 end
 
-%% finally remove field OPT.datum_trans.code if it is empty
-if isempty(OPT.datum_trans_to_WGS84.code)
-    OPT = rmfield(OPT,'datum_trans_to_WGS84');
-    OPT = rmfield(OPT,'WGS84');
-    OPT = rmfield(OPT,'datum_trans_from_WGS84');  
+% finally remove field OPT.datum_trans.code if it is empty
+if isfield(OPT.datum_trans_to_WGS84,'code')
+    if isempty(OPT.datum_trans_to_WGS84.code)
+        OPT = rmfield(OPT,'datum_trans_to_WGS84');
+        OPT = rmfield(OPT,'WGS84');
+        OPT = rmfield(OPT,'datum_trans_from_WGS84');
+    end
 end
 
-end
-
+%%
 function [ OPT,ind,direction,ind_alt,dir_alt,dep_alt] = findTransOptions(OPT,STD,geogcrs_code1,geogcrs_code2,datum_trans)
+
 % find available transformation options
-ind   = find(STD.coordinate_operation.source_crs_code == geogcrs_code1 &...
+
+ind0   = find(STD.coordinate_operation.source_crs_code == geogcrs_code1 &...
     STD.coordinate_operation.target_crs_code == geogcrs_code2);
+
+% Check if coordinate operation type is transformation
+ind=[];
+k=0;
+for i=1:length(ind0)
+    if strcmpi(STD.coordinate_operation.coord_op_type{ind0(i)},'transformation')
+        k=k+1;
+        ind(k)=ind0(i);
+    end
+end
+
 direction(1:length(ind)) = {'normal'};
 
 % also look for reverse operations
-ind_r = find(STD.coordinate_operation.source_crs_code == geogcrs_code2 &...
+ind_r0 = find(STD.coordinate_operation.source_crs_code == geogcrs_code2 &...
     STD.coordinate_operation.target_crs_code == geogcrs_code1);
+
+% Check if coordinate operation type is transformation
+k=0;
+ind_r=[];
+for i=1:length(ind_r0)
+    if strcmpi(STD.coordinate_operation.coord_op_type{ind_r0(i)},'transformation')
+        k=k+1;
+        ind_r(k)=ind_r0(i);
+    end
+end
 
 % check if found methods are reversible, only then add them to list 'ind'
 % of possibilities.
@@ -141,20 +175,20 @@ if ~isempty(OPT.(datum_trans).code)
     ii = find(STD.coordinate_operation.coord_op_code(ind_alt) == OPT.(datum_trans).code);
     if isempty(ii)
         error([sprintf(['user defined transformation code ''%d'' is not supported.\n'...
-                       'choose from available options:\n'],OPT.(datum_trans).code),...
-               sprintf('                     ''%d''\n',STD.coordinate_operation.coord_op_code(ind_alt))]);
+            'choose from available options:\n'],OPT.(datum_trans).code),...
+            sprintf('                     ''%d''\n',STD.coordinate_operation.coord_op_code(ind_alt))]);
     else
-              ind = ind_alt(ii);
-        direction = dir_alt{ii}; 
+        ind = ind_alt(ii);
+        direction = dir_alt{ii};
         % if method is deprected, give a warning
         if strcmpi(dep_alt{ii},'TRUE')
             disp('Warning: The user defined datum transformation method is deprecated')
         end
     end
 
-% If no method has been defined by user, use the method found.
-% If more options are found, use the method with the highest code that is
-% not deprecated (it is assumed this value is the newest/best method)
+    % If no method has been defined by user, use the method found.
+    % If more options are found, use the method with the highest code that is
+    % not deprecated (it is assumed this value is the newest/best method)
 else
     if length(ind_alt)>1
         ii = 1:length(ind_alt);
@@ -163,7 +197,7 @@ else
         ii = ii(jj);
         if isempty(ii) % then ignore deprection
             [tmp,ii] = max(STD.coordinate_operation.coord_op_code(ind_alt));
-            disp('Warning: The datum transformation method is deprecated; no non deprected methods are available')
+            disp('Warning: The datum transformation method is deprecated; no non-deprecated methods are available')
         end
         ind = ind_alt(ii);
         direction = dir_alt{ii};
@@ -171,8 +205,7 @@ else
         ind = ind_alt;
         direction = direction{1};
         if strcmpi(dep_alt{1},'TRUE')
-            disp('Warning: The datum transformation method is deprecated; no non deprected methods are available')
+            disp('Warning: The datum transformation method is deprecated; no non-deprecated methods are available')
         end
     end
-end
 end

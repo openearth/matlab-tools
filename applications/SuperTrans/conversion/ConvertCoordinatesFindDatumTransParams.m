@@ -44,18 +44,17 @@ param.name        =      STD.coordinate_operation_parameter.parameter_name(param
 
 %% Conversion parameters; Unit of Measure
 param.UoM.codes   =      STD.coordinate_operation_parameter_value.uom_code(ind);
-for ii=1:length(param.UoM.codes)
-    param.UoM.ind(ii)  = find(STD.unit_of_measure.uom_code == param.UoM.codes(ii));
+try
+    for ii=1:length(param.UoM.codes)
+        param.UoM.ind(ii)  = find(STD.unit_of_measure.uom_code == param.UoM.codes(ii));
+    end
+    param.UoM.sourceN =      STD.unit_of_measure.unit_of_meas_name(param.UoM.ind);
+    param.UoM.sourceT =      STD.unit_of_measure.unit_of_meas_type(param.UoM.ind);
+    param.UoM.fact_b  =      STD.unit_of_measure.factor_b(param.UoM.ind);
+    param.UoM.fact_c  =      STD.unit_of_measure.factor_c(param.UoM.ind);
+    param.UoM.targetC =      STD.unit_of_measure.target_uom_code(param.UoM.ind);
+    for ii=1:length(param.UoM.targetC)
+        param.UoM.targetI(ii) = find(STD.unit_of_measure.uom_code == param.UoM.targetC(ii));
+    end
+    param.UoM.targetN =      STD.unit_of_measure.unit_of_meas_name(param.UoM.targetI);
 end
-param.UoM.sourceN =      STD.unit_of_measure.unit_of_meas_name(param.UoM.ind);
-param.UoM.sourceT =      STD.unit_of_measure.unit_of_meas_type(param.UoM.ind);
-param.UoM.fact_b  =      STD.unit_of_measure.factor_b(param.UoM.ind);
-param.UoM.fact_c  =      STD.unit_of_measure.factor_c(param.UoM.ind);
-param.UoM.targetC =      STD.unit_of_measure.target_uom_code(param.UoM.ind);
-for ii=1:length(param.UoM.targetC)
-    param.UoM.targetI(ii) =...
-        find(STD.unit_of_measure.uom_code == param.UoM.targetC(ii));
-end
-param.UoM.targetN =      STD.unit_of_measure.unit_of_meas_name(param.UoM.targetI);
-
-

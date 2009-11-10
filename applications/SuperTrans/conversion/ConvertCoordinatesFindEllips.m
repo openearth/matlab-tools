@@ -53,6 +53,5 @@ if isnan(ell.semi_minor_axis)
 end
 
 CS.ellips = ell;
-end
 
 

@@ -66,7 +66,7 @@ end
 ind = find(code&name&type);
 
 % check output, and display errors
-if     length(ind)==0
+if     isempty(ind)
     error(['no coordinate reference system can by found with code:''' CS.code ''',name:''' CS.name ''', type:''' CS.type ''''])
 elseif length(ind)==1
     % do nothing
@@ -86,4 +86,3 @@ end
 CS.code = STD.coordinate_reference_system.coord_ref_sys_code(ind);
 CS.name = STD.coordinate_reference_system.coord_ref_sys_name{ind};
 CS.type = STD.coordinate_reference_system.coord_ref_sys_kind{ind};
-end
