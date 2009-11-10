@@ -67,8 +67,11 @@ if ~isempty(findobj('tag','gridPlot'))
     close(findobj('tag','gridPlot'))
 end
 
-%% plot results
+%% workaround
+Ztime(Z>1e10) = nan;
+Z(Z>1e10) = nan;
 
+%% plot results
 if ~all(all(isnan(Z)))
 
     UCIT_plotGrid(X,Y,Z,1,UCIT_getInfoFromPopup('GridsDatatype'));
