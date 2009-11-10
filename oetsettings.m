@@ -105,7 +105,7 @@ function oetsettings(varargin)
         end
     catch %#ok<CTCH>
         warning('OET:NoSearchDB',['Could not build search database because ',openearthtoolsroot,' is read-only.', char(10),...
-            'the OpenEarthTools help documentation is still avilable in the matlab help navigator.']);
+            'the OpenEarthTools help documentation is still available in the matlab help navigator.']);
     end
     
 %% Restore warning and directory state
