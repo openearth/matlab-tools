@@ -43,7 +43,10 @@ if ismember(datatypeinfo,{...
         'Jarkus', ...
         'Vaklodingen'})
     ldb = landboundary('read',which(['Netherlands_inclBelGer_RD.ldb']));
-    axis_settings = 1E5*[-0.282042339266554   2.324770614179054   3.720482792355521   6.461840930495095];
+    % axis_settings = 1E5*[-0.282042339266554   2.324770614179054   3.720482792355521   6.461840930495095];
+    axis_settings = 1E5*[-0.239487510616072   2.901701352260693   3.483909234909159   6.787223974579561];
+    
+    
     [X,Y]=landboundary('read',which(['Netherlands_inclBelGer_RD.ldb']));
 
 elseif strcmp(datatypeinfo,'Lidar Data US');
