@@ -62,13 +62,17 @@ if ~isempty(findobj('tag','gridPlot'))
     close(findobj('tag','gridPlot'))
 end
 
+%% workaround
+Ztime(Z>1e10) = nan;
+Z(Z>1e10) = nan;
+
 %% Make kml file
 filename = gettmpfilename(getenv('TEMP'),'grid','.kml');% plot results
 
 %% Thin out if needed
 matrix_size = round(size(X,1)*size(X,2));
  if matrix_size > 20000
-    thinning = min(1,round(matrix_size / 600000));
+    thinning = max(1,round(matrix_size / 600000));
  else 
     thinning = 1;
  end
@@ -77,7 +81,7 @@ matrix_size = round(size(X,1)*size(X,2));
 
 if ~all(isnan(Z(:)))
     [lat,lon] = convertCoordinates(X(1:thinning:end,1:thinning:end),Y(1:thinning:end,1:thinning:end),'CS1.name','Amersfoort / RD New','CS2.code',4326);
-    KMLsurf(lon,lat,-Z(1:thinning:end,1:thinning:end),'fileName',[filename '.kml'],'zScaleFun',@(z)(z+20)*4,'colorMap',@(m)colormap_cpt('bathymetry_vaklodingen',m),'colorSteps',200,'cLim',[-50 25]);
+    KMLsurf(lon,lat,Z(1:thinning:end,1:thinning:end),'fileName',[filename '.kml'],'zScaleFun',@(z)(z+50)*4,'colorMap',@(m)colormap_cpt('bathymetry_vaklodingen',m),'colorSteps',200,'cLim',[-50 25]);
 else
     warndlg('No data found for these search criteria');
 end
