@@ -57,22 +57,28 @@ OPT.fileName        =     [];
 OPT.kmlName         =     []; % name in Google Earth Place list
 OPT.url             =     ''; % webserver storaga needs absolute paths, local files can have relative paths. Only needed in mother KML.
 OPT.alpha           =      1;
-OPT.dim             =    256;
-OPT.dimExt          =     16;
-OPT.minLod          =     [];
-OPT.minLod0         =     -1;
+OPT.dim             =    256; % tile size
+OPT.dimExt          =     16; % render tiles expanded by n pixels, to remove edge effects
+OPT.minLod          =     []; % minimum level of detail to keep a tile in view. Is calculated when left blank.
+OPT.minLod0         =     -1; % minimum level of detail to keep most detailed tile in view. Default is -1 (don't hide when zoomed in a lot)
 OPT.maxLod          =     [];
 OPT.maxLod0         =     -1;
-OPT.latSubDivisions =      2;
+OPT.latSubDivisions =      2; % must be integer. Number of divisions for further zoomlevels
 OPT.lonSubDivisions =      2;
-OPT.levels          = [-2 2];
-OPT.ha              =    gca;
-OPT.hf              =    gcf;
-OPT.timeIn          =     [];
+OPT.levels          = [-2 2]; % steps to zoom out and zoom in. For levels [-aa bb],
+                              % the number of tiles created is aa+(4/3*4^bb)-1/3.
+OPT.ha              =    gca; % handle to axes
+OPT.hf              =    gcf; % handle to figure
+OPT.h               =      h; % handle to input figure
+OPT.timeIn          =     []; % time properties
 OPT.timeOut         =     [];
 OPT.drawOrder       =     10; 
 OPT.bgcolor         = [100 155 100];  % background color to be made transparent
-OPT.description     =     '';
+OPT.description     =     ''; 
+OPT.light.az        =   -180; % default light azimuth
+OPT.light.dist      =     60; % default light distance
+OPT.scaleHeight     =   true; % rescale height for zoomlevels. 
+OPT.scaleableLight  =  false; % adds a light that can be scaled (do not add additional loghts)
 
 if nargin==0
   return
@@ -103,7 +109,7 @@ end
 
 % make a folder for the sub files
 if ~isempty(OPT.Path)
-mkdir(OPT.Path,OPT.Name)
+    mkdir(OPT.Path,OPT.Name)
 end
 
 %% prepare figure
@@ -116,6 +122,14 @@ c.NS =get(OPT.ha,'YLim');
 c.WE =get(OPT.ha,'XLim');
 c.N = max(c.NS); c.S = min(c.NS);
 c.W = min(c.WE); c.E = max(c.WE);
+
+% store original size data for height deformations
+OPT.c0 = c;
+
+% set light 
+if OPT.scaleableLight
+    OPT.light.h = lightangle(OPT.light.az,OPT.light.dist);
+end
 
 % get data from figure
 G.lon = get(h,'XData');

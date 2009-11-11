@@ -20,6 +20,20 @@ c.dWE = OPT.dimExt/dim*(c.E - c.W);
 set(OPT.ha,'YLim',[c.S - c.dNS c.N + c.dNS]);
 set(OPT.ha,'XLim',[c.W - c.dWE c.E + c.dWE]);
 
+% scale height to preserve lighting effects for different zoom levels
+if OPT.scaleHeight
+    zdata = get(OPT.h ,'ZDATA');
+    clim  = get(OPT.ha,'CLim');
+    scale = (OPT.c0.N - OPT.c0.S)/(c.N - c.S + 2*c.dNS);
+    set(OPT.h ,'ZDATA',zdata.*scale);
+    set(OPT.ha,'CLim' ,clim .*scale);
+end
+% also set appropriate lightangle
+if OPT.scaleableLight
+    lightangle(OPT.light.h,OPT.light.az,OPT.light.dist);
+end
+
+% write png
 PNGfileName = fullfile(OPT.Path,OPT.Name,sprintf('%05d.png',kml_id));
 mkpath(fileparts(PNGfileName));
 print(OPT.hf,'-dpng','-r1',PNGfileName);
@@ -27,6 +41,12 @@ print(OPT.hf,'-dpng','-r1',PNGfileName);
 im   = imread(PNGfileName);
 im   = im(OPT.dimExt+1:OPT.dimExt+dim,OPT.dimExt+1:OPT.dimExt+dim,:);
 mask = bsxfun(@eq,im,reshape(bgcolor,1,1,3));
+
+% rescale height
+if OPT.scaleHeight
+    set(OPT.h ,'ZDATA',zdata);
+    set(OPT.ha,'CLim' ,clim );
+end
 
 %% check if there is non transparent info in the png.
 if all(all(mask,3))
