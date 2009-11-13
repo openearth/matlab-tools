@@ -265,7 +265,7 @@ mi=length(fi); % # inferred
 % Find the good data points (here I assume that in a complex time 
 % series, if u is bad, so is v).
 
-gd=find(finite(xin(1:nobsu)));
+gd=find(isfinite(xin(1:nobsu)));
 ngood=length(gd);
 fprintf('   Points used: %d of %d\n',ngood,nobs)
 
@@ -352,7 +352,7 @@ fprintf(['   ',nodcor,'\n']);
 %---------------Inference Corrections----------------------------------
 % Once again, the "right" way to do this would be to change the basis
 % functions.
-ii=find(finite(jref));
+ii=find(isfinite(jref));
 if ii,
   fprintf('   Do inference corrections\n');
   snarg=nobsu*pi*(fi(ii)   -fu(jref(ii)) )*dt;
@@ -414,7 +414,7 @@ if strmatch(errcalc(2:end),'boot'),
   % 
 
   nreal=300;             % Create noise matrices 
-  [NP,NM]=noise_realizations(xr(finite(xr)),fu,dt,nreal,errcalc);
+  [NP,NM]=noise_realizations(xr(isfinite(xr)),fu,dt,nreal,errcalc);
       
   % All replicates are then transformed (nonlinearly) into ellipse 
   % parameters.  The computed error bars are then based on the std
@@ -439,7 +439,7 @@ elseif strmatch(errcalc,'linear'),
   % series but can fail for vector time series if the noise is not 
   % isotropic.
   
-  [ercx,eicx]=noise_stats(xr(finite(xr)),fu,dt);
+  [ercx,eicx]=noise_stats(xr(isfinite(xr)),fu,dt);
   % Note - here we assume that the error in the cos and sin terms is 
   % equal, and equal to total power in the encompassing frequency bin. 
   % It seems like there should be a factor of 2 here somewhere but it 
@@ -512,7 +512,7 @@ end;
 
 % Sort results by frequency (needed if anything has been inferred since 
 % these are stuck at the end of the list by code above).
-if any(finite(jref)),
+if any(isfinite(jref)),
  [fu,I]=sort(fu);
  nameu=nameu(I,:);
  tidecon=tidecon(I,:);
@@ -896,7 +896,7 @@ Pxcave=zeros(nfband,1);
 % to account for positive and negative frequencies.
 %
 for k=nfband:-1:1,
-   jband=find(fx>=fband(k,1) & fx<=fband(k,2) & finite(Pxr));
+   jband=find(fx>=fband(k,1) & fx<=fband(k,2) & isfinite(Pxr));
    if any(jband),
      Pxrave(k)=mean(Pxr(jband))*2/nx;
      Pxiave(k)=mean(Pxi(jband))*2/nx;

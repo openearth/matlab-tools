@@ -49,14 +49,14 @@ if nargin==3, % If we have a latitude, get nodal corrections.
   % hence (somewhat arbitrarily) forced to be no closer than 5 deg to 
   % the equator.
   
-  if finite(lat) & (abs(lat)<5); lat=sign(lat).*5; end
+  if isfinite(lat) & (abs(lat)<5); lat=sign(lat).*5; end
 
   slat=sin(pi.*lat./180);
   % Satellite amplitude ratio adjustment for latitude. 
 
   rr=sat.amprat;           % no amplitude correction
 
-  if finite(lat),
+  if isfinite(lat),
     j=find(sat.ilatfac==1); % latitude correction for diurnal constituents
     rr(j)=rr(j).*0.36309.*(1.0-5.0.*slat.*slat)./slat;
 
@@ -88,7 +88,7 @@ if nargin==3, % If we have a latitude, get nodal corrections.
 
   % Compute amplitude and phase corrections for shallow water constituents. 
 
-  for k=find(finite(const.ishallow))',
+  for k=find(isfinite(const.ishallow))',
     ik=const.ishallow(k)+[0:const.nshallow(k)-1];
     f(k)=prod(f(shallow.iname(ik)).^abs(shallow.coef(ik)));
     u(k)=sum( u(shallow.iname(ik)).*shallow.coef(ik) );
@@ -102,7 +102,7 @@ if nargin==3, % If we have a latitude, get nodal corrections.
 else % Astronomical arguments only.
 
   % Compute for shallow water constituents.
-  for k=find(finite(const.ishallow))',
+  for k=find(isfinite(const.ishallow))',
     ik=const.ishallow(k)+[0:const.nshallow(k)-1];
     v(k)=sum( v(shallow.iname(ik)).*shallow.coef(ik) );
   end;
