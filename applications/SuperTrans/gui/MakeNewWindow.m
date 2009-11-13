@@ -1,4 +1,4 @@
-function fig=MakeNewWindow_st(Name,sz,varargin)
+function fig=MakeNewWindow(Name,sz,varargin)
 
 modal=0;
 ico=[];

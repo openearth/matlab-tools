@@ -3,19 +3,20 @@ function handles=superTransFileConvert(handles,ii)
 if ii==1
     i1=1;
     i2=2;
-    tr1=handles.Trans1Name;
-    tr2=handles.Trans2Name;
+%     tr1=handles.Trans1Name;
+%     tr2=handles.Trans2Name;
 else
     i1=2;
     i2=1;
-    if handles.DoubleTransformation
-        tr1=handles.Trans2Name;
-        tr2=handles.Trans1Name;
-    else
-        tr1=handles.Trans1Name;
-        tr2=handles.Trans2Name;
-    end
+%     if handles.DoubleTransformation
+%         tr1=handles.Trans2Name;
+%         tr2=handles.Trans1Name;
+%     else
+%         tr1=handles.Trans1Name;
+%         tr2=handles.Trans2Name;
+%     end
 end
+
 strs=get(handles.SelectCS(i1),'String');
 k=get(handles.SelectCS(i1),'Value');
 cs1=strs{k};
@@ -73,7 +74,7 @@ if pathname~=0
     switch filterindex,
         case 1
             % Polyline
-            [x,y]=landboundary('read',[pathname filename]);
+            [x,y]=landboundary_da('read',[pathname filename]);
         case 2
             % Samples file
             vals=load([pathname filename]);
@@ -83,7 +84,7 @@ if pathname~=0
         case 3
             % D3D Grid
             %        [x,y]=ReadD3DGrid(pathname,filename);
-            [x,y,enc]=wlgrid('read',[pathname filename]);
+            [x,y,enc]=wlgrid_da('read',[pathname filename]);
         case 4
             % TEKAL Map
             [x,y,varargout]=ReadTekalMap(pathname,filename);
@@ -115,7 +116,7 @@ if pathname~=0
             % Polyline
             [filename pathname]=uiputfile('*.ldb');
             if pathname~=0
-                landboundary('write',[pathname filename],x2,y2);
+                landboundary_da('write',[pathname filename],x2,y2);
             end
         case 2
             % Samples file
@@ -129,7 +130,13 @@ if pathname~=0
             %        [x,y]=WriteD3DGrid(pathname,filename);
             [filename pathname]=uiputfile('*.grd');
             %        wlgrid('write',[pathname filename],x2,y2,enc);
-            wlgrid_mvo('write',[pathname filename],x2,y2,enc,tp2);
+            switch lower(tp2)
+                case{'geo','geographic','spherical','latlon'}
+                    tp='Spherical';
+                otherwise
+                    tp='Cartesian';
+            end
+            wlgrid_da('write',[pathname filename],x2,y2,enc,tp);
         case 4
             % TEKAL Map
             [x,y,varargout]=WriteTekalMap(pathname,filename);
