@@ -10,7 +10,10 @@ function [OPT, Set, Default] = KMLfig2png(h,varargin)
 %
 %    OPT = KMLfig2png()
 %
-% where Lod = Level of Detail
+% where Lod = Level of Detail.
+%
+% For plots with    light effects set:  'scaleHeight',true ,...
+% For plots without light effects set:  'scaleHeight',false,...
 %
 % Note that the set generated this way works only locally.
 % To make it also work on a server use
@@ -78,7 +81,7 @@ OPT.description     =     '';
 OPT.light.az        =   -180; % default light azimuth
 OPT.light.dist      =     60; % default light distance
 OPT.scaleHeight     =   true; % rescale height for zoomlevels. 
-OPT.scaleableLight  =  false; % adds a light that can be scaled (do not add additional loghts)
+OPT.scaleableLight  =  false; % adds a light that can be scaled (do not add additional lights)
 
 if nargin==0
   return

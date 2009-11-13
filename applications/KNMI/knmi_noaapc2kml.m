@@ -17,31 +17,31 @@ function [OPT, Set, Default] =knmi_noaapc2kml(noaapcfile,varargin)
 
 tic
 
-
-   directory   = 'F:\checkouts\OpenEarthRawData\knmi\noaapc\mom\1990_mom\5\';
-   OPT.clim    = [9 14]; % same as icons in http://dx.doi.org/10.1016/j.csr.2007.06.011
-   OPT.disp    = 1; % toc per image
-   noaapcfiles = {'K010590N.SST',... % Do make sure they are in chronological order, 4 images/day
-                  'K020590N.SST',... % N =  ~2AM night
-                  'K020590M.SST',... % O =  ~6AM morning
-                  'K020590A.SST',... % M = ~12AM (after)noon
-                  'K030590N.SST',... % A =  ~6PM evening
-                  'K030590O.SST',...
-                  'K030590M.SST',...
-                  'K030590A.SST',...
-                  'K040590N.SST',...
-                  'K040590O.SST',...
-                  'K040590M.SST',...
-                  'K040590A.SST',...
-                  'K050590N.SST',...
-                  'K050590O.SST',...
-                  'K050590M.SST',...
-                  'K060590N.SST',...
-                  'K060590O.SST',...
-                  'K060590M.SST',...
-                  'K070590N.SST',...
-                  'K080590M.SST',...
-                  'K080590A.SST'};
+   OPT.directoryin  = 'F:\checkouts\OpenEarthRawData\knmi\noaapc\mom\1990_mom\5\';
+   OPT.directoryout = '.kml';
+   OPT.clim         = [10 14]; % same as icons in http://dx.doi.org/10.1016/j.csr.2007.06.011
+   OPT.disp         = 1; % toc per image
+   noaapcfiles      = {'K010590N.SST',...% 1 % Do make sure they are in chronological order, 4 images/day
+                       'K020590N.SST',...% 2 % N =  ~2AM night
+                       'K020590M.SST',...% 3 % O =  ~6AM morning
+                       'K020590A.SST',...% 4 % M = ~12AM (after)noon
+                       'K030590N.SST',...% 5 % A =  ~6PM evening
+                       'K030590O.SST',...% 6
+                       'K030590M.SST',...% 7
+                       'K030590A.SST',...% 8
+                       'K040590N.SST',...% 9
+                       'K040590O.SST',...%10
+                       'K040590M.SST',...%11
+                       'K040590A.SST',...%12
+                       'K050590N.SST',...%13
+                       'K050590O.SST',...%14
+                       'K050590M.SST',...%15
+                       'K060590N.SST',...%16
+                       'K060590O.SST',...%17
+                       'K060590M.SST',...%18
+                       'K070590N.SST',...%19
+                       'K080590M.SST',...%20
+                       'K080590A.SST'};  %21
    
 %   [OPT, Set, Default] =setProperty(OPT,varargin{:});
 %   
@@ -49,13 +49,13 @@ tic
 %      return
 %   end
 
-   % read 1st image
+   %% read 1st image
    noaapcfile = noaapcfiles{1};
-   D = knmi_noaapc_read([directory,filesep,noaapcfile],'landmask',nan);
+   D = knmi_noaapc_read([OPT.directoryin,filesep,noaapcfile],'landmask',nan);
    
    nfile = length(noaapcfiles);
 
-for ifile=1:nfile
+for ifile= 1:nfile
 
    disp(['Processing ',num2str(ifile),'/',num2str(nfile),' @ ',datestr(D.datenum)])
    
@@ -63,7 +63,7 @@ for ifile=1:nfile
    NEXT.datenum = D.datenum + 1/24;
    else
    noaapcfile   = noaapcfiles{ifile+1};
-   NEXT         = knmi_noaapc_read([directory,filesep,noaapcfile],'landmask',nan);
+   NEXT         = knmi_noaapc_read([OPT.directoryin,filesep,noaapcfile],'landmask',nan);
    end
    
    if NEXT.datenum < D.datenum
@@ -75,8 +75,9 @@ for ifile=1:nfile
    colorbarwithtitle([D.producttex,' [',D.unitstex,']']);
    KMLfig2png(h,'fileName',[filename(D.filename),'.kml'],...
                  'kmlName',[D.product,' [',D.units,'] ',datestr(D.datenum,'yyyy-mmm-dd HH-MM-SS')],...
-                  'levels',[-1 2],... % sufficient for 1 km resolution
+                  'levels',[-1 3],... % sufficient for 1 km resolution
                   'timeIn',D.datenum,...
+             'scaleHeight',false,...
                  'timeOut',NEXT.datenum); % stop with next image
                   
    D    = NEXT;
@@ -87,7 +88,8 @@ for ifile=1:nfile
 
 end
    
-%% vectgorized inage is bad idea:
+%% vectgorized image is bad idea:
+
 %  TOOOOOOOOOOOOOOO BIG (180 MB for one whole North Sea image)
    
    %KMLpcolor(D.loncor,D.latcor,D.data,...
