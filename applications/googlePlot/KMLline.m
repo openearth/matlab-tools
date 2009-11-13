@@ -103,12 +103,12 @@ OPT.fillAlpha     = .4;
 OPT.openInGE      = false;
 OPT.timeIn        = [];
 OPT.timeOut       = [];
+OPT.dateStrStyle  = 29; % set to yyyy-mm-ddTHH:MM:SS for detailed times
 OPT.is3D          = false;
 OPT.visible       = true;
 OPT.extrude       = true;
 OPT.tessellate    = ~OPT.is3D;
 OPT.zScaleFun     = @(z) (z+0)*1;
-OPT.dateStrStyle  = 29; 
 
 if nargin==0
   return
