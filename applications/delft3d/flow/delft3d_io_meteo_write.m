@@ -147,7 +147,7 @@ elseif strcmpi(OPT.filetype,'meteo_on_curvilinear_grid')
       
       %% if no (relative) path is specified, it will be written in same path as amx file (but with LOCAL reference to grd file inside amx file)
       if isempty(fileparts(OPT.grid_file))
-         OPT.grid_file = fullfile([fileparts(filehandle),OPT.grid_file]);
+         OPT.grid_file = fullfile(fileparts(filehandle),OPT.grid_file);
       end
       wlgrid('write','filename',OPT.grid_file,'X',x,'Y',y,'CoordinateSystem',OPT.CoordinateSystem,'Format','NewRGF')
       
