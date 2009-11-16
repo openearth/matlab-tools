@@ -98,7 +98,7 @@ for n = 1:size(OPT.min_coverage,2)
                     OPT.reference_year = OPT.inputyears(find(OPT.coverages == max(OPT.coverages),1,'first'));
 
                     %% find ids that are present in all years (for method 2 JdR)
-                    for j = 1:size(OPT.inputyears,2)
+                    for j = 1:length(OPT.inputyears)
                         load(['datafiles' filesep 'timewindow = ' num2str(OPT.timewindow) filesep fns(i,1).name(1:end-4) '_' num2str(OPT.inputyears(j),'%04i') '_1231.mat']);
                         id_of_year  = ~isnan(d.Z);
                         if j == 1,OPT.id = id_of_year;,else,
