@@ -1,16 +1,16 @@
 function out = seawifsdatenum(in)
 %seawifsdatenum   map between SeaWiFS yyyydoyHHMMSS and datenum
 %
-%   out = seawifsdatenum(char   ) makes datenum from SeaWiFS date string
-%   out = seawifsdatenum(numeric) makes SeaWiFS date string from datenum
+%   out = seawifs_datenum(char   ) makes datenum from SeaWiFS date string
+%   out = seawifs_datenum(numeric) makes SeaWiFS date string from datenum
 %
-% Note: in      == seawifsdatenum(seawifsdatenum(in))
-% Note: datenum == seawifsdatenum(seawifsdatenum(datenum)) % when datenum rounded to minutes
+% Note: in      == seawifs_datenum(seawifs_datenum(in))
+% Note: datenum == seawifs_datenum(seawifs_datenum(datenum)) % when datenum rounded to minutes
 %
 % 
 % Example:
 %
-%    seawifsdatenum(seawifsdatenum('1998128121603'))
+%    seawifs_datenum(seawifs_datenum('1998128121603'))
 %
 %see also: DATENUM, SEAWIFS_L2_READ
 

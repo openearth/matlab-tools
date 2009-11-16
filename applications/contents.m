@@ -10,9 +10,9 @@
 %   googlePlot      - viewer: Google Earth Toolbox, with options for curvi-linear grids
 %   KNMI            - data:  <a href="http://www.knmi.nl">KNMI</a>
 %   m_map           - viewer: mapping toolbox <a href="http://www.eos.ubc.ca/~rich/map.html">m_map</a> from Rich Pawlowicz.
-%   meris           - data:  MERIS
 %   mm              - multimedia tools
 %   OceanDataView   - data: data format from <a href="http://www.SeaDataNet.org">www.SeaDataNet.org</a>, <a href="http://www.nodc.nl">www.nodc.nl</a>.
+%   oceancolor      - data:  tools for ocean color satellite images of <a href="http://modis.gsfc.nasa.gov/">MODIS</a>, <a href="http://oceancolor.gsfc.nasa.gov/SeaWiFS/">SeaWiFS</a>, <a href="http://envisat.esa.int/instruments/meris/">MERIS</a>
 %   pontos          - model: <a href="http://www.alkyon.nl/Tools/Pontos.htm">PonTos</a>
 %   probabilistic   - application
 %   Rijkswaterstaat - data: <a href="http://www.Rijkswaterstaat.nl">Rijkswaterstaat</a>

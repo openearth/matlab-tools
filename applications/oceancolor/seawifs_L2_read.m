@@ -3,13 +3,13 @@ function D = seawifs_l2_read(fname,varname,varargin);
 %
 %   D = seawifs_l2_read(filename,varname)
 %
-% load one image from a SeaWiFS L2 HDf file incl. full lat and lon arrays.
+% load one image from a <a href="http://oceancolor.gsfc.nasa.gov/SeaWiFS/">SeaWiFS</a> L2 HDF file incl. full lat and lon arrays.
 %
 % Example:
 % 
 %   D = seawifs_L2_read('S1998128121603.L2_HDUN_ZUNO.hdf','nLw_555')
 %
-%See also: HDFINFO
+%See also: HDFINFO, SEAWIFS_DATENUM
 
   %fname   = 'S1998128121603.L2_HDUN_ZUNO.hdf'
   %varname = 'nLw_555'
