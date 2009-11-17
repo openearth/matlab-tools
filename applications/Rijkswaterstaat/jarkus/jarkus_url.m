@@ -51,6 +51,6 @@ function url = jarkus_url
 % $Keywords: $
 
 
-	url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
+	url = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
 end
 
