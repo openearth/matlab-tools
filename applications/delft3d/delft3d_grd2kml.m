@@ -3,16 +3,34 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
 %
 %   delft3d_grd2kml(grdfile,<keyword,value>)
 %
+%   Input:
+%   grdfile  = filename of the grd file
+%   varargin:
+%       epsg = epsg code of the grid
+%       dep = filename of the dep file
+%       dpsopt = dpsopt in mdf file or provided by user, e.g. 'max' or 'mean'
+%       ddep = depth offset
+%       linecolor = color of the grid lines
+%
+%   Output:
+%   filemask = filemask of the grd files to be processed
+%
 % Note: that the grid file need to be of Spherical type
 %       or you must specify epsg code.
 % Note: for surf you must change reversePoly if the grid cells are too 
 %       dark during the day, and light during the night.
 %
-% Example:
+% Example 1:
+%   delft3d_grd2kml('i:\R1501_Grootschalige_modellen\roosters\A2275_western_mediterranean_r02.grd');
 %
-%    delft3d_grd2kml('g04.grd','epsg',28992,'dep','g04.dep','dpsopt','mean','ddep',150,'clim',[-50 0])
+% Example 2:
+%   delft3d_grd2kml('g04.grd','epsg',28992,'dep','g04.dep','dpsopt','mean','ddep',150,'clim',[-50 0])
 %
 %See also: googlePlot, delft3d
+%
+% updated by Bart Grasmeijer, Alkyon Hydraulic Consultancy & Research
+% 19 November 2009
+
 
   %grdfile         = 'lake_and_sea_5_ll.grd';
    OPT.epsg        = [];  % 28992; % 7415; % 28992; ['Amersfoort / RD New']
@@ -20,7 +38,7 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
    OPT.ddep        = 200;  % offset
    OPT.fdep        = 10; % factor
    OPT.clim        = [-200 0];  %
-   OPT.debug       = 1;
+   OPT.debug       = 0;
    OPT.reversePoly = true;
    OPT.colorSteps  = 62;
    OPT.lineColor   = [.5 .5 .5];
@@ -55,19 +73,22 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
    if ~isempty(OPT.dep)
       G = delft3d_io_dep('read',OPT.dep,G,'dpsopt',OPT.dpsopt);
    else
-      G.cen.dep = nan.*G.cen.x;
-      G.cor.dep = nan.*G.cor.x;
+      G.cen.dep = 0.*G.cen.x;
+      G.cor.dep = 0.*G.cor.x;
+      OPT.fillAlpha = 0;
    end
    
    % OPT.ddep = max(abs(max(G.cen.dep(:))),0);
 
    if OPT.debug
-      TMP = figure;
-      pcolorcorcen(G.cor.lon,G.cor.lat,-G.cor.dep);
-      caxis([OPT.clim])
-      colorbarwithtitle('depth [m]')
-      pausedisp
-      try;close(TMP);end
+       TMP = figure;
+       pcolorcorcen(G.cor.lon,G.cor.lat,-G.cor.dep);
+       caxis([OPT.clim]);
+       colorbarwithtitle('depth [m]');
+       pausedisp
+       try
+           close(TMP);
+       end
    end
    
    KMLpcolor(G.cor.lat,G.cor.lon,-G.cen.dep,...
@@ -76,7 +97,10 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
                        'clim',OPT.clim,...
                   'colorSteps',OPT.colorSteps,...
                     'kmlName','depth [m]',...
-                   'lineColor',OPT.lineColor);
+                   'lineColor',OPT.lineColor,...
+                   'fillAlpha',OPT.fillAlpha,...
+                   'polyOutline',true,...
+                   'polyFill',false);
    
    KMLsurf  (G.cor.lat,G.cor.lon,(-G.cor.dep+OPT.ddep)*OPT.fdep,... % at corners for z !!
                              -G.cen.dep,...
