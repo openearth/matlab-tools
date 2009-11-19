@@ -40,7 +40,7 @@ function $output = $filename($input)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-% This tool is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
 % OpenEarthTools is an online collaboration to share and manage data and 
 % programming tools in an open source, version controlled environment.
 % Sign up to recieve regular updates of this function, and to contribute 
