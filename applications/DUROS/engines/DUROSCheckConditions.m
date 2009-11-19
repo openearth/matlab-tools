@@ -15,8 +15,9 @@ end
 %%
 n_d = DuneErosionSettings('get', 'n_d');
 Plus = DuneErosionSettings('get', 'Plus');
+TP12slimiter = DuneErosionSettings('get', 'TP12slimiter');
 
-if strcmp(Plus,'-plus')
+if (strcmp(Plus,'-plus') || strcmp(Plus,'-plusplus')) && TP12slimiter
     if Tp_t < 12*sqrt(n_d)^-1
         Tpold=Tp_t;
         Tp_t = 12*sqrt(n_d)^-1;
