@@ -72,63 +72,63 @@ function varargout = legendxdir(varargin)
 % $Keywords: legend$
 
 %% Set defaults
-xdir = 'reverse';
+xDirection = 'reverse';
 
 %% process input
 if nargin == 1 && ishandle(varargin{1}) && strcmp(get(varargin{1},'Tag'),'legend')
     % legend handle is given
-    leg = varargin{1};
+    hLegend = varargin{1};
 else
     % subtract extra input arguments from varargin
     id = find(strcmpi(varargin,'xdir'));
     if ~isempty(id)
-        xdir = varargin{id+1};
-        if all(~strcmp(xdir,{'normal','reverse'}))
+        xDirection = varargin{id+1};
+        if all(~strcmp(xDirection,{'normal','reverse'}))
             error('PlotDuneErosion:WrongProperty','Parameter xdir can only be "normal" or "reverse"');
         end
         varargin(id:id+1) = [];
     end
     % use the remaining input arguments to create a legend with legend
-    [leg argsout{1} argsout{2} argsout{3}] = legend(varargin{:});
+    [hLegend argumentsOut{1} argumentsOut{2} argumentsOut{3}] = legend(varargin{:});
 end
 
 %% construct output
-varargout = {leg};
+varargout = {hLegend};
 if exist('argsout','var')
-    varargout = cat(2,{leg},argsout);
+    varargout = cat(2,{hLegend},argumentsOut);
 end
 
 %% determine axes direction
-olddir = get(leg,'XDir');
-samedir = strcmp(olddir,xdir);
-if samedir
+isOldDirection = get(hLegend,'XDir');
+isSameDirection = strcmp(isOldDirection,xDirection);
+if isSameDirection
     % No need to change anything
     return
 end
 
 %% set horizontal alignent variable
-switch xdir
+switch xDirection
     case 'normal'
-        horalign = 'left';
+        horizontalAlignment = 'left';
     case 'reverse'
-        horalign = 'right';
+        horizontalAlignment = 'right';
 end
 
 %% Set the direction of the legend axes
-set(leg,'XDir',xdir);
+set(hLegend,'XDir',xDirection);
 
 %% Gather strings handles
-strings = findobj(leg,'Type','text');
+stringLegendItems = findobj(hLegend,'Type','text');
 
 %% First adjust HorizontalAlignment of the strings
-set(strings,'HorizontalAlignment',horalign)
+set(stringLegendItems,'HorizontalAlignment',horizontalAlignment)
 
 %% Also adjust the position of the strings
-for istr = 1:length(strings)
-    pos = get(strings(istr),'Position');
-    newpos = pos;
-    newpos(1) = 1-pos(1);
-    set(strings(istr),'Position',newpos);
+for istr = 1:length(stringLegendItems)
+    position = get(stringLegendItems(istr),'Position');
+    newPosition = position;
+    newPosition(1) = 1-position(1);
+    set(stringLegendItems(istr),'Position',newPosition);
 end
 
 %% done...

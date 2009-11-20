@@ -1,10 +1,10 @@
-function plotDuneErosion(result, varargin)
+function plotDuneErosion(Result, varargin)
 %PLOTDUNEEROSION    routine to plot dune erosion results
 %
 % This routine plots the results of a dune erosion calculation in a figure.
 % The result structure is also stored in the axes containing the plotted results.
 %
-% Syntax:       plotDuneErosion(result, nr, PropertyName, PropertyValue)
+% Syntax:       plotduneerosion(result, nr, PropertyName, PropertyValue)
 %
 % Input:
 %               result    = structure with dune erosion results
@@ -61,7 +61,7 @@ if nargin>1
         fig = figure(nr);
     end
 
-    OPT = setProperty(OPT,varargin);
+    OPT = setproperty(OPT,varargin);
     
     OPT.xlabel = strrep(OPT.xlabel, 'RSP', OPT.hordatum);
     OPT.ylabel = strrep(OPT.ylabel, 'NAP', OPT.vertdatum);
@@ -81,9 +81,9 @@ if strcmp(get(fig,'Type'),'axes')
 elseif strcmp(get(fig,'Type'),'figure')
     % Why don't we just take gca???
     children = get(fig, 'children');
-    IsAxes = strcmp(get(children, 'type'), 'axes') & ~strcmp(get(children, 'tag'), 'legend');
-    if sum(IsAxes) == 1
-        parent = children(IsAxes);
+    isAxes = strcmp(get(children, 'type'), 'axes') & ~strcmp(get(children, 'tag'), 'legend');
+    if sum(isAxes) == 1
+        parent = children(isAxes);
     else
         parent = axes(...
             'Parent', fig);
@@ -102,64 +102,64 @@ ylabel(OPT.ylabel),...
 %     'Rotation', 270,...
 %     'VerticalAlignment', 'top')
 
-LastFilledField = [];
-for i = fliplr(1 : length(result))
-    FieldIsempty = isempty(result(i).xActive);
-    if ~FieldIsempty
-        LastFilledField = i;
+lastFilledField = [];
+for i = fliplr(1 : length(Result))
+    fieldIsempty = isempty(Result(i).xActive);
+    if ~fieldIsempty
+        lastFilledField = i;
         break
     end
 end
 
 hsc = [];
-[x, z] = deal([result(1).xLand; result(1).xActive; result(1).xSea]+OPT.xoffset, [result(1).zLand; result(1).zActive; result(1).zSea]+OPT.zoffset);
+[xInitial, zInitial] = deal([Result(1).xLand; Result(1).xActive; Result(1).xSea]+OPT.xoffset, [Result(1).zLand; Result(1).zActive; Result(1).zSea]+OPT.zoffset);
 
-if ~issorted(x)
+if ~issorted(xInitial)
     % relevant if poslndwrd == 1
-    [x IX] = sort(x);
-    z = z(IX);
+    [xInitial IX] = sort(xInitial);
+    zInitial = zInitial(IX);
 end
 
-hinitprofile = plot(x, z,...
+hInitialProfile = plot(xInitial, zIniaitl,...
     'Color','k',...
     'LineStyle','-',...
     'Parent',parent,...
     'LineWidth',1,...
     'DisplayName','Initial profile');
 
-initxlimits = [min(x) max(x)];
-initzlimits = get(parent, 'YLim');
-tmp = guihandles(fig);
+initXLimits = [min(x) max(x)];
+initZLimits = get(parent, 'YLim');
+Tmp = guihandles(fig);
 
 %if exist('stretchaxes.bmp','file')
-    pushim = imread('stretchaxes.bmp');
+    pushIm = imread('stretchaxes.bmp');
 %else
 %    pushim = repmat(0,[315,315,3]);
 %end
-uipushtool('CData',pushim,...
-    'ClickedCallback',{@resetaxis, parent, initxlimits, initzlimits},...
-    'Parent',tmp.FigureToolBar,...
+uipushtool('CData',pushIm,...
+    'ClickedCallback',{@resetaxis, parent, initXLimits, initZLimits},...
+    'Parent',Tmp.FigureToolBar,...
     'Separator','on',...
     'Tag','Set XS Limits',...
     'TooltipString','Reset axis');
 
 color = {[255 222 111]/255, [150 116 0]/255, [0 0.8 0], [1 0.6 1], [0 0.8 0]};
-if length(result) > length(color)
+if length(Result) > length(color)
     color = [color(1:2) {.9*color{1}} color(3:end)];
 end
-hp = NaN(size(result));
-txt = cell(size(result));
-TpCorrected = false;
-for i = 1 : LastFilledField
-    if ~isempty(result(i).z2Active)
-        if isfield(result(i).info, 'ID')
-            txt{i} = result(i).info.ID; % not applicable in case of debugging when result(i).info.ID doesn't exist
+hp = NaN(size(Result));
+txt = cell(size(Result));
+tpCorrected = false;
+for i = 1 : lastFilledField
+    if ~isempty(Result(i).z2Active)
+        if isfield(Result(i).info, 'ID')
+            txt{i} = Result(i).info.ID; % not applicable in case of debugging when result(i).info.ID doesn't exist
         end
-        volumepatch = [result(i).xActive'+OPT.xoffset fliplr(result(i).xActive')+OPT.xoffset; result(i).z2Active'+OPT.zoffset fliplr(result(i).zActive')+OPT.zoffset]';
-        hp(i) = patch(volumepatch(:,1), volumepatch(:,2), ones(size(volumepatch(:,2)))*-(LastFilledField-i),color{i},...
+        volumePatch = [Result(i).xActive'+OPT.xoffset fliplr(Result(i).xActive')+OPT.xoffset; Result(i).z2Active'+OPT.zoffset fliplr(result(i).zActive')+OPT.zoffset]';
+        hp(i) = patch(volumePatch(:,1), volumePatch(:,2), ones(size(volumePatch(:,2)))*-(lastFilledField-i),color{i},...
             'EdgeColor',[1 1 1]*0.5,...
             'Parent',parent);
-        if max(diff(volumepatch)) == 0
+        if max(diff(volumePatch)) == 0
             if i == 1
                 % displaying the empty patch of the DUROS profile in the legend
                 % makes no sense
@@ -201,211 +201,202 @@ for i = 1 : LastFilledField
                 'Parent',parent); %#ok<AGROW>
             %}
         else
-            heroprofile = plot(result(i).xActive+OPT.xoffset, result(i).z2Active+OPT.zoffset,...
+            hErosionProfile = plot(Result(i).xActive+OPT.xoffset, Result(i).z2Active+OPT.zoffset,...
                 'Color','r',...
                 'LineStyle','-',...
                 'Parent',parent,...
                 'LineWidth',2,...
                 'DisplayName','Erosion profile');
-            if isscalar(result(i).xActive)
-                set(heroprofile,...
+            if isscalar(Result(i).xActive)
+                set(hErosionProfile,...
                     'HandleVisibility','off');
             end
         end
     end
     % TODO('Change the i's / 1's for DUROSresultid in some cases');
-    if ~isempty(result(i).info.messages) && any([result(i).info.messages{:,1}]==-2)
-        oldtptext = result(i).info.messages{[result(i).info.messages{:,1}]==-2,2};
-        spaces = strfind(oldtptext,' ');
-        oldTp = str2double(oldtptext(spaces(end-1):spaces(end)));
-        TpCorrected = true;
+    if ~isempty(Result(i).info.messages) && any([Result(i).info.messages{:,1}]==-2)
+        oldTpText = Result(i).info.messages{[Result(i).info.messages{:,1}]==-2,2};
+        spaces = strfind(oldTpText,' ');
+        oldTp = str2double(oldTpText(spaces(end-1):spaces(end)));
+        tpCorrected = true;
     end
-    if ~isempty(result(i).info.messages) && any([result(i).info.messages{:,1}]==-99)
+    if ~isempty(Result(i).info.messages) && any([Result(i).info.messages{:,1}]==-99)
         text(0.5, 0.45,'Iteration boundaries are non-consistent!','Units','normalized','Rotation',0,'FontSize',16,'color','r','HorizontalAlignment','center');
     end
-    if ~isempty(result(1).info.messages) && any([result(1).info.messages{:,1}]==-8)
+    if ~isempty(Result(1).info.messages) && any([Result(1).info.messages{:,1}]==-8)
         text(0.5, 0.45,{'The initial profile is not steep enough','to yield a solution under these conditions'},'Units','normalized','Rotation',0,'FontSize',16,'color','r','HorizontalAlignment','center');
     end
-    if ~isempty(result(i).info.messages) && any([result(i).info.messages{:,1}]==-7)
+    if ~isempty(Result(i).info.messages) && any([Result(i).info.messages{:,1}]==-7)
         text(0.5, 0.45,'No solution found within boundaries!','Units','normalized','Rotation',35,'FontSize',20,'color','r','HorizontalAlignment','center');
     end
-    if ~isempty(result(1).info.messages) && any([result(1).info.messages{:,1}]==-6)
+    if ~isempty(Result(1).info.messages) && any([Result(1).info.messages{:,1}]==-6)
         text(0.5, 0.1,'Solution is influenced by a channel slope!','Units','normalized','Rotation',0,'FontSize',16,'color','r','HorizontalAlignment','center');
     end
-    if ~isempty(result(1).info.messages) && any([result(1).info.messages{:,1}]==-5)
+    if ~isempty(Result(1).info.messages) && any([Result(1).info.messages{:,1}]==-5)
         text(0.5, 0.45,'Corrected for landward transport above the water line.','Units','normalized','Rotation',35,'FontSize',16,'color','r','HorizontalAlignment','center');
     end
-    if ~isempty(result(i).info.messages) && any([result(i).info.messages{:,1}]==45)
+    if ~isempty(Result(i).info.messages) && any([Result(i).info.messages{:,1}]==45)
         text(0.5, 0.1,'Additional erosion restricted within dune valley.','Units','normalized','Rotation',0,'FontSize',16,'color','r','HorizontalAlignment','center');
     end
-    if ~isempty(result(i).info.messages) && any([result(i).info.messages{:,1}]==42)
+    if ~isempty(Result(i).info.messages) && any([Result(i).info.messages{:,1}]==42)
         text(0.5, 0.1,'Additional retreat limit reached.','Units','normalized','Rotation',0,'FontSize',16,'color','r','HorizontalAlignment','center');
     end
-    if ~isempty(result(i).info.messages) && any([result(i).info.messages{:,1}]==47)
-        id = [result(i).info.messages{:,1}]==47;
-        text(0.5, 0.1,result(i).info.messages{id,2},'Units','normalized','Rotation',0,'FontSize',12,'color','r','HorizontalAlignment','center');
+    if ~isempty(Result(i).info.messages) && any([Result(i).info.messages{:,1}]==47)
+        id = [Result(i).info.messages{:,1}]==47;
+        text(0.5, 0.1,Result(i).info.messages{id,2},'Units','normalized','Rotation',0,'FontSize',12,'color','r','HorizontalAlignment','center');
     end
 end
 
-xlimits = [min(result(i).xActive+OPT.xoffset) max(result(1).xActive+OPT.xoffset)];
+xLimits = [min(Result(i).xActive+OPT.xoffset) max(Result(1).xActive+OPT.xoffset)];
 %     xlimits = [min(x) max(result(1).xActive)];
-if numel(result(1).xActive)<2
-    if diff(xlimits)==0 %No erosion (active profile has no length) and no additional erosion
-        xlimits = [min(result(1).xLand+OPT.xoffset) max(result(1).xSea+OPT.xoffset)];
-        if length(xlimits)==1
-            xlimits = ones(1,2)*xlimits;
+if numel(Result(1).xActive)<2
+    if diff(xLimits)==0 %No erosion (active profile has no length) and no additional erosion
+        xLimits = [min(Result(1).xLand+OPT.xoffset) max(Result(1).xSea+OPT.xoffset)];
+        if length(xLimits)==1
+            xLimits = ones(1,2)*xLimits;
         end
-        zlimits = [min(result(1).zSea)+OPT.zoffset max(result(1).zLand)+OPT.zoffset];
-        if length(zlimits)==1
-            zlimits = ones(1,2)*zlimits;
+        zLimits = [min(Result(1).zSea)+OPT.zoffset max(Result(1).zLand)+OPT.zoffset];
+        if length(zLimits)==1
+            zLimits = ones(1,2)*zLimits;
         end
     else % No erosion, but additional erosion/ boundary profile was calculated
-        xlimits = [min(xlimits)-150 max(xlimits)+150];
-        zlimits = [min(z(x>xlimits(1) & x<xlimits(2))) max(z(x>xlimits(1) & x<xlimits(2)))];
-        zlimits = [zlimits(1)-.05*diff(zlimits) zlimits(2)+.05*diff(zlimits)];
+        xLimits = [min(xLimits)-150 max(xLimits)+150];
+        zLimits = [min(zInitial(xInitial>xLimits(1) & xInitial<xLimits(2))) max(zInitial(xInitial>xLimits(1) & xInitial<xLimits(2)))];
+        zLimits = [zLimits(1)-.05*diff(zLimits) zLimits(2)+.05*diff(zLimits)];
     end
-    text(xlimits(2)-0.8*diff(xlimits),zlimits(2)-0.8*diff(zlimits),'No erosion');
+    text(xLimits(2)-0.8*diff(xLimits),zLimits(2)-0.8*diff(zLimits),'No erosion');
 else
-    xlimits = [xlimits(1)-.05*diff(xlimits) xlimits(2)+.05*diff(xlimits)];
-    zlimits = [min(z(x>xlimits(1) & x<xlimits(2))) max(z(x>xlimits(1) & x<xlimits(2)))];
-    zlimits = [zlimits(1)-.05*diff(zlimits) zlimits(2)+.05*diff(zlimits)];
+    xLimits = [xLimits(1)-.05*diff(xLimits) xLimits(2)+.05*diff(xLimits)];
+    zLimits = [min(zInitial(xInitial>xLimits(1) & xInitial<xLimits(2))) max(zInitial(xInitial>xLimits(1) & xInitial<xLimits(2)))];
+    zLimits = [zLimits(1)-.05*diff(zLimits) zLimits(2)+.05*diff(zLimits)];
 end
 try %#ok<TRYNC>
-    axis([xlimits zlimits]);
-    uistack(hinitprofile,'top');
-    uistack(heroprofile,'top');
+    axis([xLimits zLimits]);
+    uistack(hInitialProfile,'top');
+    uistack(hErosionProfile,'top');
     uistack(hsc,'top');
 end
 
-[WL_t,Er, AVolume, Xplocation, TVolume] = deal(nan);
+[waterLevel,erosionVolume, aVolume, xpLocation, tVolume] = deal(nan);
 
-for i = 1 : LastFilledField
-    if ~isempty(result(i).info.input) && isfield(result(i).info.input,'WL_t')
-        WL_t = result(i).info.input.WL_t+OPT.zoffset;
+for i = 1 : lastFilledField
+    if ~isempty(Result(i).info.input) && isfield(Result(i).info.input,'WL_t')
+        waterLevel = Result(i).info.input.WL_t+OPT.zoffset;
     end
-    if ~isempty(cat(1,result(i).info.ID))
-        if ismember({result(i).info.ID},'DUROS-plus') || ismember({result(i).info.ID},'DUROS')
-            if ~isempty(result(i).Volumes.Erosion)
-                Er = -result(i).Volumes.Erosion;
+    if ~isempty(cat(1,Result(i).info.ID))
+        if ismember({Result(i).info.ID},'DUROS-plus') || ismember({Result(i).info.ID},'DUROS')
+            if ~isempty(Result(i).Volumes.Erosion)
+                erosionVolume = -Result(i).Volumes.Erosion;
             else
-                Er = nan;
+                erosionVolume = nan;
             end
-        elseif ismember({result(i).info.ID},'DUROS-plus Erosion above SSL') || ismember({result(i).info.ID},'DUROS Erosion above SSL')
-            AVolume = result(i).VTVinfo.AVolume;
-        elseif ismember({result(i).info.ID},'Additional Erosion')
-            Xp = result(i).VTVinfo.Xp+OPT.xoffset;
-            Zp = result(i).VTVinfo.Zp+OPT.zoffset;
-            Xr = result(i).VTVinfo.Xr+OPT.xoffset;
-            Zr = result(i).VTVinfo.Zr+OPT.zoffset;
-            if isempty(Xp) || isempty(Xr)
+        elseif ismember({Result(i).info.ID},'DUROS-plus Erosion above SSL') || ismember({Result(i).info.ID},'DUROS Erosion above SSL')
+            aVolume = Result(i).VTVinfo.AVolume;
+        elseif ismember({Result(i).info.ID},'Additional Erosion')
+            xpPoint = Result(i).VTVinfo.Xp+OPT.xoffset;
+            zpPoint = Result(i).VTVinfo.Zp+OPT.zoffset;
+            xrPoint = Result(i).VTVinfo.Xr+OPT.xoffset;
+            zrPoint = Result(i).VTVinfo.Zr+OPT.zoffset;
+            if isempty(xpPoint) || isempty(xrPoint)
                 continue;
             end
 
-            hsc(end+1) = plot(Xp,Zp,...
+            hsc(end+1) = plot(xpPoint,zpPoint,...
                 'Marker','o',...
                 'MarkerEdgeColor','k',...
                 'MarkerFaceColor', 'b',...
                 'MarkerSize', 5,...
                 'HandleVisibility', 'on',...
                 'LineStyle','none',...
-                'DisplayName',['P: ',num2str(Xp,'%8.2f'),' m w.r.t. ' OPT.hordatum],...
+                'DisplayName',['P: ',num2str(xpPoint,'%8.2f'),' m w.r.t. ' OPT.hordatum],...
                 'Parent', parent); %#ok<AGROW>
-            hsc(end+1) = plot(Xr,Zr,...
+            hsc(end+1) = plot(xrPoint,zrPoint,...
                 'Marker','o',...
                 'MarkerEdgeColor','k',...
                 'MarkerFaceColor', 'r',...
                 'MarkerSize', 5,...
                 'HandleVisibility', 'on',...
                 'LineStyle','none',...
-                'DisplayName',['R: ',num2str(Xr,'%8.2f'),' m w.r.t. ' OPT.hordatum],...
+                'DisplayName',['R: ',num2str(xrPoint,'%8.2f'),' m w.r.t. ' OPT.hordatum],...
                 'Parent', parent); %#ok<AGROW>
-            TVolume = result(i).VTVinfo.TVolume;
-            if isempty(TVolume)
-                TVolume = nan;
+            tVolume = Result(i).VTVinfo.TVolume;
+            if isempty(tVolume)
+                tVolume = nan;
             end
         end
     end
 end
 
-hptemp = hp(~isnan(hp));
+hpTemp = hp(~isnan(hp));
 try
     if length(hp)==1
-        AVolumeid = ~isempty(strfind(get(hptemp, 'DisplayName'), 'Erosion above SSL'));
-        TVolumeid = ~isempty(strfind(get(hptemp, 'DisplayName'), 'Additional Erosion'));
+        aVolumeId = ~isempty(strfind(get(hpTemp, 'DisplayName'), 'Erosion above SSL'));
+        tVolumeId = ~isempty(strfind(get(hpTemp, 'DisplayName'), 'Additional Erosion'));
     else
-        AVolumeid = ~cellfun(@isempty, strfind(get(hptemp, 'DisplayName'), 'Erosion above SSL'));
-        TVolumeid = ~cellfun(@isempty, strfind(get(hptemp, 'DisplayName'), 'Additional Erosion'));
+        aVolumeId = ~cellfun(@isempty, strfind(get(hpTemp, 'DisplayName'), 'Erosion above SSL'));
+        tVolumeId = ~cellfun(@isempty, strfind(get(hpTemp, 'DisplayName'), 'Additional Erosion'));
     end
-    set(hptemp(AVolumeid), 'DisplayName', [get(hptemp(AVolumeid), 'DisplayName') ' (' num2str(AVolume,'%8.2f'),' m^3/m^1)'])
-    set(hptemp(TVolumeid), 'DisplayName', [get(hptemp(TVolumeid), 'DisplayName') ' (' num2str(TVolume,'%8.2f'),' m^3/m^1)'])
+    set(hptemp(aVolumeId), 'DisplayName', [get(hptemp(aVolumeId), 'DisplayName') ' (' num2str(aVolume,'%8.2f'),' m^3/m^1)'])
+    set(hptemp(tVolumeId), 'DisplayName', [get(hptemp(tVolumeId), 'DisplayName') ' (' num2str(tVolume,'%8.2f'),' m^3/m^1)'])
 catch %#ok<CTCH>
     if length(hp)==1
-        AVolumeid = ~isempty(strfind(get(hptemp, 'Tag'), 'Erosion above SSL'));
-        TVolumeid = ~isempty(strfind(get(hptemp, 'Tag'), 'Additional Erosion'));
+        aVolumeId = ~isempty(strfind(get(hpTemp, 'Tag'), 'Erosion above SSL'));
+        tVolumeId = ~isempty(strfind(get(hpTemp, 'Tag'), 'Additional Erosion'));
     else
-        AVolumeid = ~cellfun(@isempty, strfind(get(hptemp, 'Tag'), 'Erosion above SSL'));
-        TVolumeid = ~cellfun(@isempty, strfind(get(hptemp, 'Tag'), 'Additional Erosion'));
+        aVolumeId = ~cellfun(@isempty, strfind(get(hpTemp, 'Tag'), 'Erosion above SSL'));
+        tVolumeId = ~cellfun(@isempty, strfind(get(hpTemp, 'Tag'), 'Additional Erosion'));
     end
-    set(hptemp(AVolumeid), 'Tag', [get(hptemp(AVolumeid), 'Tag') ' (' num2str(AVolume,'%8.2f'),' m^3/m^1)'])
-    set(hptemp(TVolumeid), 'Tag', [get(hptemp(TVolumeid), 'Tag') ' (' num2str(TVolume,'%8.2f'),' m^3/m^1)'])
+    set(hptemp(aVolumeId), 'Tag', [get(hpTemp(aVolumeId), 'Tag') ' (' num2str(aVolume,'%8.2f'),' m^3/m^1)'])
+    set(hptemp(tVolumeId), 'Tag', [get(hpTemp(tVolumeId), 'Tag') ' (' num2str(tVolume,'%8.2f'),' m^3/m^1)'])
 end
 
-results2plot = {};
+results2Plot = {};
 if any(ismember(OPT.legenditems, 'Er'))
-    results2plot = {
-        'Er: ',num2str(Er,'%8.2f'),' m^3/m^1'};
+    results2Plot = {
+        'Er: ',num2str(erosionVolume,'%8.2f'),' m^3/m^1'};
 end
 % remove lines with nans
-results2plot(isnan(Er),:) = [];
+results2Plot(isnan(erosionVolume),:) = [];
 
 try
-    hwl = plot([min(x) max(x)], repmat(WL_t,1,2),'--b');
+    hwl = plot([min(xInitial) max(xInitial)], repmat(waterLevel,1,2),'--b');
     try
-        set(hwl,'Tag',['WL: ', num2str(WL_t, '%8.2f'), ' m w.r.t. ' OPT.vertdatum],...
-            'DisplayName',['WL: ', num2str(WL_t, '%8.2f'), ' m w.r.t. ' OPT.vertdatum],...
+        set(hwl,'Tag',['WL: ', num2str(waterLevel, '%8.2f'), ' m w.r.t. ' OPT.vertdatum],...
+            'DisplayName',['WL: ', num2str(waterLevel, '%8.2f'), ' m w.r.t. ' OPT.vertdatum],...
             'HandleVisibility','on');
     catch %#ok<CTCH>
-        set(hwl,'Tag',['WL: ', num2str(WL_t, '%8.2f'), ' m w.r.t. ' OPT.vertdatum],...
+        set(hwl,'Tag',['WL: ', num2str(waterLevel, '%8.2f'), ' m w.r.t. ' OPT.vertdatum],...
             'HandleVisibility','on');
     end
-    input2plot = {...
-        'Hs: ', num2str(result(1).info.input.Hsig_t, '%8.2f'), ' m'; ...
-        'Tp: ', num2str(result(1).info.input.Tp_t, '%8.2f'), ' s'; ...
-        'D50: ', num2str(result(1).info.input.D50*1e6, '%8.2f'), ' \mum'};
+    input2Plot = {...
+        'Hs: ', num2str(Result(1).info.input.Hsig_t, '%8.2f'), ' m'; ...
+        'Tp: ', num2str(Result(1).info.input.Tp_t, '%8.2f'), ' s'; ...
+        'D50: ', num2str(Result(1).info.input.D50*1e6, '%8.2f'), ' \mum'};
 catch %#ok<CTCH>
-    input2plot = {};
+    input2Plot = {};
 end
-displayResultsOnFigure(parent,[input2plot; results2plot])
+displayResultsOnFigure(parent,[input2Plot; results2Plot])
 if strcmp(OPT.xdir,'normal')
     leg = legend(parent);
     set(leg,'Location','NorthEast');
     legendxdir(leg,'xdir','reverse');
 end
-if TpCorrected
+if tpCorrected
     leg = legend(parent);
     ch = findobj(leg,'Type','text');
     str = get(ch,'String');
-    Tpid = strncmp(str,'Tp:',3);
-    if sum(Tpid==1)==1
-        set(ch(Tpid),...
-            'String',cat(2,get(ch(Tpid),'String'),[' (target: ' num2str(oldTp, '%8.2f') ' s)']),...
+    tpId = strncmp(str,'Tp:',3);
+    if sum(tpId==1)==1
+        set(ch(tpId),...
+            'String',cat(2,get(ch(tpId),'String'),[' (target: ' num2str(oldTp, '%8.2f') ' s)']),...
             'Color','r');
     end
 end
 %% store results in userdata.
 % In this way storing one figure stores the
 % complete result. No need to seperately store the .mat file anymore
-set(parent,'UserData',result);
+set(parent,'UserData',Result);
 
 function resetaxis(varargin)
 
 set(varargin{3}, 'XLim', varargin{4}, 'YLim', varargin{5})
-% set(varargin{1},'State','off');
-% set(lh,'fontsize',6,'orientation','horizontal','location','SouthOutside');
-
-% axisprop = axis;
-% height_width_ratio = (axisprop(4) - axisprop(3))/(axisprop(2) - axisprop(1));
-% paperposition = get(gcf,'paperposition');
-% paperposition(3) = paperposition(4);%/height_width_ratio;
-
-% set(gcf, 'paperposition',paperposition)
