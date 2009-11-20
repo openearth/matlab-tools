@@ -133,8 +133,8 @@ for iprofinf = 2:length(varargin)
                 end
             end
             numcalls = prntsinfo2([prntsinfo2.Index]==ifunc).NumCalls;
-            if ~isempty(infoout.FunctionTable(id).Parents) && any([infoout.FunctionTable(id).Parents.Index]==find(funcid))
-                prntid = find([infoout.FunctionTable(id).Parents.Index]==find(funcid));
+            if ~isempty(infoout.FunctionTable(id).Parents) && any(cellfun(@findifislogical,{infoout.FunctionTable(id).Parents.Index})==find(funcid))
+                prntid = find(cellfun(@findifislogical,{infoout.FunctionTable(id).Parents.Index})==find(funcid));
                 infoout.FunctionTable(id).Parents(prntid).NumCalls = infoout.FunctionTable(id).Parents(prntid).NumCalls + numcalls;
             else
                 infoout.FunctionTable(id).Parents(end+1) = struct(...
@@ -143,4 +143,12 @@ for iprofinf = 2:length(varargin)
             end
         end
     end
+end
+end
+
+function outputArray = findifislogical(inputArray)
+outputArray = inputArray;
+if islogical(inputArray)
+    outputArray = find(inputArray);
+end
 end
