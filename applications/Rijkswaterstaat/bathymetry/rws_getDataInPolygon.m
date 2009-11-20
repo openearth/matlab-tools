@@ -1,4 +1,4 @@
-function [X, Y, Z, Ztime] = getDataInPolygon(varargin)
+function [X, Y, Z, Ztime] = rws_getDataInPolygon(varargin)
 %rws_GETDATAINPOLYGON  Script to load fixed maps from OPeNDAP, identify which maps are located inside a polygon and retrieve the data
 %
 %       [X, Y, Z, Ztime] = rws_getdatainpolygon(<keyword,value>);
