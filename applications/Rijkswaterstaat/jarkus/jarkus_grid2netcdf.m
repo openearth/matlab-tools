@@ -242,9 +242,7 @@ STRINGSIZE = 100;
     nc_varput(filename, 'rsp_x'      , grid.x_0);
     nc_varput(filename, 'rsp_y'      , grid.y_0);
     % converte coordinates
-    [CoordinateSystems, Operations] = GetCoordinateSystems();
     [lon,lat,OPT]=convertCoordinates(grid.X,grid.Y,'CS1.code',28992,'CS2.code',4326);
-    % [lon, lat] = ConvertCoordinates(grid.X,grid.Y, 28992, 'xy', 4326, 'geo', CoordinateSystems, Operations);
     nc_varput(filename, 'lat', lat);
     nc_varput(filename, 'lon', lon);
 
