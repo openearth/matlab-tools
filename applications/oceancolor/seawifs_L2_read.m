@@ -6,7 +6,7 @@ function [D,M] = seawifs_l2_read(fname,varname,varargin);
 % load one image from a <a href="http://oceancolor.gsfc.nasa.gov/SeaWiFS/">SeaWiFS</a> L2 HDF file incl. full lat and lon arrays.
 % D contains geophysical data (not integer data), units and long_name
 %
-%  [D,m] = seawifs_l2_read(...) also returns RAW meta-data.
+%  [D,M] = seawifs_l2_read(...) also returns RAW meta-data.
 %
 % Example:
 % 
@@ -55,18 +55,39 @@ function [D,M] = seawifs_l2_read(fname,varname,varargin);
 % $HeadURL$
 % $Keywords: $
 
-  %fname   = 'S1998128121603.L2_HDUN_ZUNO.hdf'
-  %varname = 'nLw_555'
+%% Input
 
-   %% Keywords
+   if odd(nargin)
+      varnames = {'chlor_a',...
+                  'angstrom_510',...
+                  'K_490',...
+                  'nLw_412',...
+                  'nLw_443',...
+                  'nLw_490',...
+                  'nLw_510',...
+                  'nLw_555',...
+                  'nLw_670',...
+                  'tau_865',...
+                  'eps_78',...
+                  'l2_flags',...
+                  'tau_555'}; % get these from file 
+                  
+      [varind, ok] = listdlg('ListString', varnames, .....
+                          'SelectionMode', 'single', ...
+                           'PromptString', 'Select a geophysical parameter', ....
+                                   'Name', 'Selection of substance',...
+                               'ListSize', [500, 300]);
+                               varname = varnames{varind};
+   end
+
+%% Keywords
 
    OPT.debug = 0;
    OPT.plot  = 0;
-   OPT.geo   = 1; % 0 = raw int data
-   OPT       = setproperty(OPT,varargin{:});
+   OPT.geo   = 1; % 0 = raw int data, 1 = geophysical DATA
+   OPT       = setProperty(OPT,varargin{:});
 
-   %% Load
-   
+%% Data, coordinates, time
    
    D.fname = fname;
    I       = hdfinfo(D.fname);
@@ -83,17 +104,27 @@ function [D,M] = seawifs_l2_read(fname,varname,varargin);
    T.cntl_pt_rows = hdfread(D.fname,'cntl_pt_rows');
    T.cntl_pt_cols = hdfread(D.fname,'cntl_pt_cols');
    
-   %% meta-info
+%% meta-info
 
-   for isds=1:length(I.Vgroup(5).SDS);
+   %% find correct group
    
-      if strcmpi(I.Vgroup(5).SDS(isds).Name,varname);
+   % TO DO group_index = h4_group_find(I,'group_name')
+
+   for igroup=1:length(I.Vgroup);if strcmpi(I.Vgroup(igroup).Name,'Geophysical Data');
+      break;end
+   end   
+
+   for isds=1:length(I.Vgroup(igroup).SDS); 
    
-      M = I.Vgroup(5).SDS(isds);
+      if strcmpi(I.Vgroup(igroup).SDS(isds).Name,varname);
+   
+      M = I.Vgroup(igroup).SDS(isds);
    
       break;end;
       
    end   
+   
+   % TO DO D.(att_name) = h4_att_get(I,'sds_name','att_name')
    
    for iatt=1:length(M.Attributes);if strcmpi(M.Attributes(iatt).Name,'long_name');
       D.long_name = M.Attributes(iatt).Value;break;end
@@ -111,17 +142,17 @@ function [D,M] = seawifs_l2_read(fname,varname,varargin);
       D.intercept = M.Attributes(iatt).Value;break;end
    end   
    
-   %% (geodata = rawdata * slope + intercept)
-   %  http://www.icess.ucsb.edu/seawifs/software/seadas4.8/src/idl_utils/io/wr_swf_hdf_sd.pro
+%% (geodata = rawdata * slope + intercept)
+%  http://www.icess.ucsb.edu/seawifs/software/seadas4.8/src/idl_utils/io/wr_swf_hdf_sd.pro
 
    if OPT.geo
    D.(varname) = double(D.(varname)).*double(D.slope) + double(D.intercept);
    end
 
-   %% georeference full matrices
-   %  http://oceancolor.gsfc.nasa.gov/forum/oceancolor/topic_show.pl?pid=2029
-   %  for each swatch the (lat,lon) arrays are only stored every 8th pixel.
-   %  to get the full matrix interpolte to the full pixel range, with a spline.
+%% georeference full matrices
+%  http://oceancolor.gsfc.nasa.gov/forum/oceancolor/topic_show.pl?pid=2029
+%  for each swath the (lat,lon) arrays are only stored every 8th pixel.
+%  To get the full matrix interpolate to the full pixel range, with a spline.
    
    if size(D.(varname),1)==length(T.cntl_pt_rows)
       D.longitude = repmat(nan,size(D.(varname)));
@@ -129,13 +160,13 @@ function [D,M] = seawifs_l2_read(fname,varname,varargin);
       nrow        =            size(D.(varname),1);
       ncol        =            size(D.(varname),2);
       for irow = 1:nrow
-         D.longitude(irow,:) = interp1(single(T.cntl_pt_cols),double(T.longitude(irow,:)),1:ncol,'spline' );
-         D.latitude (irow,:) = interp1(single(T.cntl_pt_cols),double(T.latitude (irow,:)),1:ncol,'spline' );
+         D.longitude(irow,:) = interp1(single(T.cntl_pt_cols),double(T.longitude(irow,:)),1:ncol,'spline');
+         D.latitude (irow,:) = interp1(single(T.cntl_pt_cols),double(T.latitude (irow,:)),1:ncol,'spline');
       end
    
    end   
 
-   %% debug: for last row   
+%% debug: show results last row   
    
    if OPT.debug
       clf
@@ -154,6 +185,9 @@ function [D,M] = seawifs_l2_read(fname,varname,varargin);
       xlabel('latitude')
       
    end
+
+%% plot image (can be slow: no default)
+
    if OPT .plot
       figure
       pcolorcorcen(D.longitude,D.latitude,double(D.nLw_555))
@@ -162,5 +196,6 @@ function [D,M] = seawifs_l2_read(fname,varname,varargin);
       L.lat = nc_varget(L.url,'lat');
       hold on
       plot(L.lon,L.lat,'w')
+      % TO DO: add worldcoastline
       
    end

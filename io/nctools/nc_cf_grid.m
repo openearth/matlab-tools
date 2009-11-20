@@ -126,29 +126,27 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 %% Get datenum
 
    timename        = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'time');
-   M.datenum.units = nc_attget(ncfile,timename,'units');
-   D.datenum       = nc_varget(ncfile,timename);
-   D.datenum       = udunits2datenum(D.datenum,M.datenum.units); % convert units to datenum
+   if ~isempty(timename)
+      M.datenum.units = nc_attget(ncfile,timename,'units');
+      D.datenum       = nc_varget(ncfile,timename);
+      D.datenum       = udunits2datenum(D.datenum,M.datenum.units); % convert units to datenum
+   end
    
 %% Get location info
 
    lonname        = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'longitude');
-   if isempty(lonname)
-      error('no longitude present')
-   else
-   M.lon.units    = nc_attget(ncfile,lonname,'units');
-   D.lon          = nc_varget(ncfile,lonname);
+   if ~isempty(lonname)
+      disp('no longitude present')
+      M.lon.units    = nc_attget(ncfile,lonname,'units');
+      D.lon          = nc_varget(ncfile,lonname);
    end
 
    latname        = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'latitude');
-   if isempty(latname)
-      error('no latitude present')
-   else
-   M.lat.units    = nc_attget(ncfile,latname,'units');
-   D.lat          = nc_varget(ncfile,latname);
+   if ~isempty(latname)
+      disp('no latitude present')
+      M.lat.units    = nc_attget(ncfile,latname,'units');
+      D.lat          = nc_varget(ncfile,latname);
    end
-
-   idname         = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'station_id');
 
 %% Find specified (or all parameters) that have latitude AND longitude as either
 %  * dimension

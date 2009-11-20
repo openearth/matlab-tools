@@ -61,6 +61,9 @@ function ZI = griddata_nearest(X,Y,Z,XI,YI)
 %        analytical fit of linear surface (if inside the triangle), 
 %        or use inverse distance
 
+% TO DO: throw away any points outside (note: they can be nearest !!)
+
+
    OPT.ndisp = 100;
 
    ZI   = repmat(NaN,(size(XI)));

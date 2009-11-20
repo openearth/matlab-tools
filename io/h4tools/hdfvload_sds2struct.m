@@ -8,7 +8,7 @@ function varargout = hdfvload_sds2struct(finfo,file_name,hdftree,varargin)
 % Note: do not use HDFVLOAD_SDS2STRUCT directly, use through HDFVLOAD.
 %
 %    [..] = hdfvload_sds2struct(finfo,file_name,hdftree)
-%    [..] = hdfvload_sds2struct(finfo,file_name,hdftree,<keuyword,value>)
+%    [..] = hdfvload_sds2struct(finfo,file_name,hdftree,<keyword,value>)
 %
 % Where the following <keyword, value> have been implemented:
 %
