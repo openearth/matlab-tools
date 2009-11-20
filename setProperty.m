@@ -108,6 +108,10 @@ Set = cell2struct(repmat({false}, size(PropertyNames)), PropertyNames);
 % Default is similar to OPT, initially all fields are true
 Default = cell2struct(repmat({true}, size(PropertyNames)), PropertyNames);
 
+if isempty(varargin)
+    % No need to set anything
+    return
+end
 %% keyword,value loop
 [i0 iend] = deal(1, length(varargin)); % specify index of first and last element of varargin to search for keyword/value pairs
 for iargin = i0:2:iend
