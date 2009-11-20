@@ -1,4 +1,4 @@
-function nc_cf_merge_catalogs
+function nc_cf_merge_catalogs(varargin)
 %NC_CF_MERGE_CATALOGS   test script for
 %
 %See also: NC_CF_DIRECTORY2CATALOG, NC_CF2CATALOG
@@ -49,9 +49,12 @@ function nc_cf_merge_catalogs
 % $Keywords: $
 
 %% get catalog
+OPT = struct(...
+    'base', [] ...           % base dir
+    );
 
-OPT.baseurl = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/';
-OPT.base    = 'D:\checkouts\VO-rawdata\waveclimates\';
+% overrule default settings by property pairs, given in varargin
+OPT = setProperty(OPT, varargin{:});
 
 filenames = findAllFiles( ...
     'pattern_excl', {[filesep,'.svn']}, ...   % description of input argument 1
@@ -64,22 +67,12 @@ cat_fieldnames = fieldnames(catalog);
 for i = 2:length(filenames)
     catalog_add = load(filenames{i}); %#ok<NASGU>
     for j = 1:length(cat_fieldnames)
-        if eval(['ischar(catalog.' cat_fieldnames{j} ')'])
+        if eval(['ischar(catalog.' cat_fieldnames{j} ')'])      % for the fields that are chars
             eval(['catalog.' cat_fieldnames{j} ' = char([cellstr(catalog.' cat_fieldnames{j} '); catalog_add.' cat_fieldnames{j} ']);']);
-        elseif eval(['isfloat(catalog.' cat_fieldnames{j} ')'])
+        elseif eval(['isfloat(catalog.' cat_fieldnames{j} ')']) % for the fields that are floats
             eval(['catalog.' cat_fieldnames{j} ' = [catalog.' cat_fieldnames{j} '; catalog_add.' cat_fieldnames{j} '];']);
         end
     end
 end
 struct2nc([OPT.base filesep 'main_catalog.nc'],catalog)
 
-if dbstate
-    %% retrieving the data
-    C = nc2struct('d:\main_catalog.nc');
-    
-    index       = (...
-        C.datenum_start                      > datenum(1990,1,1) & ...
-        C.datenum_end                        < datenum(2010,1,1)  );
-    
-    C.urlPath(find(index))
-end
