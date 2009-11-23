@@ -210,28 +210,28 @@ if DuneErosionSettings('get', 'DUROS')
                 end
                 idAddProf = 3;
                 idAddVol = 3;
+                
+                % the shifted DUROS profile has been constructed with respect
+                % to the initial profile. To create the correct patch, the
+                % active profile has to adapted, to the original DUROS result.
+                
+                % part of the seaward tail has to become part of the active
+                % profile
+                idSea = result(end).xSea <= result(1).xActive(end);
+                result(end).xActive = [result(end).xActive; result(end).xSea(idSea)];
+                result(end).xSea = result(end).xSea(~idSea);
+                result(end).z2Active = [result(end).z2Active; result(end).zSea(idSea)];
+                result(end).zSea = result(end).zSea(~idSea);
+                % zActive can now be interpolated based on the original DUROS
+                % result
+                result(end).zActive = interp1([result(1).xLand; result(1).xActive; result(1).xSea],...
+                    [result(1).zLand; result(1).z2Active; result(1).zSea],...
+                    result(end).xActive);
             else
                 writemessage(55, 'Coastal bend outside scope of regulations (Bend > 24)');
                 idAddProf = 1;
                 idAddVol = 2;
             end
-            
-            % the shifted DUROS profile has been constructed with respect
-            % to the initial profile. To create the correct patch, the
-            % active profile has to adapted, to the original DUROS result.
-            
-            % part of the seaward tail has to become part of the active
-            % profile
-            idSea = result(end).xSea <= result(1).xActive(end);
-            result(end).xActive = [result(end).xActive; result(end).xSea(idSea)];
-            result(end).xSea = result(end).xSea(~idSea);
-            result(end).z2Active = [result(end).z2Active; result(end).zSea(idSea)];
-            result(end).zSea = result(end).zSea(~idSea);
-            % zActive can now be interpolated based on the original DUROS
-            % result
-            result(end).zActive = interp1([result(1).xLand; result(1).xActive; result(1).xSea],...
-                [result(1).zLand; result(1).z2Active; result(1).zSea],...
-                result(end).xActive);
         else
             idAddProf = 1;
             idAddVol = 2;
