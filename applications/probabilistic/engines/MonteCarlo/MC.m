@@ -1,5 +1,5 @@
 function result = MC(stochast, varargin)
-%MC  One line description goes here.
+%MC  perform Monte Carlo simulation
 %
 %   More detailed description goes here.
 %
@@ -87,7 +87,7 @@ OPT = struct(...
     'x2zFunction', @x2z,...  % Function to transform x to z
     'variables', {{}} ...    % aditional variables to use in x2zFunction
     );
-% overrule default settings by property pairs, given in varargin
+% overrule default settings by propertyName-propertyValue pairs, given in varargin
 OPT = setProperty(OPT, varargin{:});
 
 getdefaults('stochast', exampleStochastVar, 0);
@@ -131,19 +131,20 @@ if OPT.f1 < Inf && OPT.f2 > 0
         pgrid = (0.01:0.01:maxpgrid)';
         Ponder = unique([flipud(0.5*(10.^-pgrid)); (0.489:0.001:0.511)';  (1-0.5*10.^-pgrid)]);
 
-        % bepaal kansverdeling en kansdichtheid van H in tabelvorm
-        % deze kansverdeling is nodig om de correctie te bepalen
-        % die noodzakelijk is bij importance sampling
+        % derive probability distribution and probability density of H as
+        % table
+        % this distribution is needed to derive the correction coefficient
+        % which essential for Importance Sampling
         cdf = feval(stochast(idIS).Distr, Ponder, stochast(idIS).Params{:});
 
         [xcentr dPdx] = cdf2pdf(Ponder, cdf(:,end));
 
-        % bepaal grenzen voor waterstand-sampling:
-        Pgrens = exp(-[OPT.f1 OPT.f2]);    % onderschrijdingskans grenswaarden
-        Hgrens = feval(stochast(idIS).Distr, Pgrens', stochast(idIS).Params{:});    % grenswaarden uit CDF
-        Hgrens = [0.9; 1.1].*Hgrens(:,end); % neem deze grenzen wat ruimer, vanwege meer/minder afslag door golven:
+        % find boundaries for sampling of the Importance Sampling variable
+        Pgrens = exp(-[OPT.f1 OPT.f2]); % probability of non-exceedance boundaries
+        Hgrens = feval(stochast(idIS).Distr, Pgrens', stochast(idIS).Params{:});% boundaries from CDF
+        Hgrens = [0.9; 1.1].*Hgrens(:,end); % make boundaries a bit wider, because of possibly correlated other variables
 
-        % sample H-waarden
+        % sample Importance Sampling variable
         H = Hgrens(1) + P(:,idIS)*(Hgrens(2)-Hgrens(1));
         
         P(:,idIS) = interp1(cdf(:,end), Ponder, H);
@@ -152,8 +153,8 @@ if OPT.f1 < Inf && OPT.f2 > 0
             NaNsinP = false;
         end
     end
-    % correctie voor bias in waterstand-sampling:
-    p_correctie = interp1(xcentr, dPdx, H);   % PDF waterstand
+    % correction coefficient for bias in Importance Sampling variable
+    p_correctie = interp1(xcentr, dPdx, H);   % PDF Importance Sampling variable
     p_correctie = repmat((Hgrens(2)-Hgrens(1))*p_correctie, 1, length(OPT.Resistance));
 else
     p_correctie = 1;
@@ -172,7 +173,7 @@ x = feval(OPT.P2xFunction, stochast, P);
 
 % derive z based on x
 z = feval(OPT.x2zFunction, x, {stochast.Name}, OPT.Resistance,...
-    OPT.variables{:}); % bepaal z(u) uit x(u)
+    OPT.variables{:});
 idFail = z<0;
 
 P_f = sum(idFail.* p_correctie)/(OPT.NrSamples*OPT.W);
