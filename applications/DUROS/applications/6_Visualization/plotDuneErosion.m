@@ -120,14 +120,14 @@ if ~issorted(xInitial)
     zInitial = zInitial(IX);
 end
 
-hInitialProfile = plot(xInitial, zIniaitl,...
+hInitialProfile = plot(xInitial, zInitial,...
     'Color','k',...
     'LineStyle','-',...
     'Parent',parent,...
     'LineWidth',1,...
     'DisplayName','Initial profile');
 
-initXLimits = [min(x) max(x)];
+initXLimits = [min(xInitial) max(xInitial)];
 initZLimits = get(parent, 'YLim');
 Tmp = guihandles(fig);
 
@@ -155,7 +155,7 @@ for i = 1 : lastFilledField
         if isfield(Result(i).info, 'ID')
             txt{i} = Result(i).info.ID; % not applicable in case of debugging when result(i).info.ID doesn't exist
         end
-        volumePatch = [Result(i).xActive'+OPT.xoffset fliplr(Result(i).xActive')+OPT.xoffset; Result(i).z2Active'+OPT.zoffset fliplr(result(i).zActive')+OPT.zoffset]';
+        volumePatch = [Result(i).xActive'+OPT.xoffset fliplr(Result(i).xActive')+OPT.xoffset; Result(i).z2Active'+OPT.zoffset fliplr(Result(i).zActive')+OPT.zoffset]';
         hp(i) = patch(volumePatch(:,1), volumePatch(:,2), ones(size(volumePatch(:,2)))*-(lastFilledField-i),color{i},...
             'EdgeColor',[1 1 1]*0.5,...
             'Parent',parent);
@@ -346,8 +346,8 @@ catch %#ok<CTCH>
         aVolumeId = ~cellfun(@isempty, strfind(get(hpTemp, 'Tag'), 'Erosion above SSL'));
         tVolumeId = ~cellfun(@isempty, strfind(get(hpTemp, 'Tag'), 'Additional Erosion'));
     end
-    set(hptemp(aVolumeId), 'Tag', [get(hpTemp(aVolumeId), 'Tag') ' (' num2str(aVolume,'%8.2f'),' m^3/m^1)'])
-    set(hptemp(tVolumeId), 'Tag', [get(hpTemp(tVolumeId), 'Tag') ' (' num2str(tVolume,'%8.2f'),' m^3/m^1)'])
+    set(hpTemp(aVolumeId), 'Tag', [get(hpTemp(aVolumeId), 'Tag') ' (' num2str(aVolume,'%8.2f'),' m^3/m^1)'])
+    set(hpTemp(tVolumeId), 'Tag', [get(hpTemp(tVolumeId), 'Tag') ' (' num2str(tVolume,'%8.2f'),' m^3/m^1)'])
 end
 
 results2Plot = {};
