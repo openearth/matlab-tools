@@ -1,5 +1,5 @@
 function varargout = nc_cf_directory2catalog(varargin)
-%NC_CF_DIRECTORY2CATALOG   creates catalog of CF complaint netCDF files in one directory (BETA)
+%NC_CF_DIRECTORY2CATALOG   creates catalog of CF compliant netCDF files in one directory (BETA)
 %
 %   ATT = nc_cf_directory2catalog(<basedirectory>,<keyword,value>)
 %
@@ -302,8 +302,8 @@ for ifile=1:length(OPT.files)
         
         %% get latitude (actual_range or min() max() full array)
         
-        [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'latitude');
-        names = cellstr(names);
+        [names, indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'latitude');
+        names            = cellstr(names);
         
         % cycle all latitudes
         for idat=indices
