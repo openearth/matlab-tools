@@ -1,4 +1,4 @@
-function OpenDAPinfo = getOpenDAPinfo(varargin) %#ok<STOUT>
+function [OPeNDAPinfo, OPeNDAPlinks] = getOpenDAPinfo(varargin) %#ok<STOUT>
 %GETOPENDAPINFO  Routine returns a struct of all datafiles available from an OpenDAP url.
 %
 %   The routine returns a structure containing all information about a user
@@ -180,6 +180,13 @@ while ~isempty(i)
     end
 end
 
+%% create output OPeNDAPlinks (this is a cell array of urls to all available nc files)
+roots   = repmat([fileparts(strrep(OPT.url,'catalog','dodsC')) '/'], size(datacell));
+ncfiles = char(datacell);
+OPeNDAPlinks = cellstr([roots ncfiles]);
+
+%% create output OPeNDAPinfo (this is a structure of all available nc files)
+warning off
 [structpath, filename, ext] = cellfun(@fileparts, datacell, 'UniformOutput', 0);
 
 % structpath(idsempty) = filename(idsempty);
@@ -192,11 +199,11 @@ idsempty   = vertcat(idsempty{:});
 
 % for those entries where structpath is empty (nc files in search root)
 filename(idsempty)  = cellfun(@horzcat, repmat({'temp_'}, size(structpath(idsempty))), filename(idsempty), 'UniformOutput', 0);
-structpath(idsempty)  = cellfun(@horzcat, repmat({'OpenDAPinfo'}, size(structpath(idsempty))), structpath(idsempty), 'UniformOutput', 0);
+structpath(idsempty)  = cellfun(@horzcat, repmat({'OPeNDAPinfo'}, size(structpath(idsempty))), structpath(idsempty), 'UniformOutput', 0);
 
 % for those entries where structpath is NOT empty 
 structpath(~idsempty) = cellfun(@horzcat, repmat({'temp_'}, size(structpath(~idsempty))), structpath(~idsempty), 'UniformOutput', 0);
-structpath(~idsempty) = cellfun(@horzcat, repmat({'OpenDAPinfo.'}, size(structpath(~idsempty))), structpath(~idsempty), 'UniformOutput', 0);
+structpath(~idsempty) = cellfun(@horzcat, repmat({'OPeNDAPinfo.'}, size(structpath(~idsempty))), structpath(~idsempty), 'UniformOutput', 0);
 
 tempo = unique(structpath);
 for i = 1 : length(tempo)
@@ -205,6 +212,6 @@ for i = 1 : length(tempo)
         eval([tempo{i} '(' num2str(j) ',1)={''' filename{ids(j)}  ext{ids(j)} '''};']);
     end
 end
-
+warning on
 disp(' ')
 disp(['Analysis finished in ' num2str(toc) ' seconds'])
