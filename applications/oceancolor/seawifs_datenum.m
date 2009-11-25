@@ -1,5 +1,5 @@
 function out = seawifsdatenum(in)
-%seawifsdatenum   map between SeaWiFS yyyydoyHHMMSS and datenum
+%SEAWIFS_DATENUM   map between SeaWiFS yyyydoyHHMMSS and datenum
 %
 %   out = seawifs_datenum(char   ) makes datenum from SeaWiFS date string
 %   out = seawifs_datenum(numeric) makes SeaWiFS date string from datenum

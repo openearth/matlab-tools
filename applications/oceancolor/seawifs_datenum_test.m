@@ -1,5 +1,5 @@
 function success=seawifsdatenum_test
-%SEAWIFSDATENUM_TEST   unit test for seawifsdatenum
+%SEAWIFS_DATENUM_TEST   unit test for seawifsdatenum
 %
 %See also: seawifsdatenum_test.m
 

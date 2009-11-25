@@ -1,32 +1,32 @@
-function mask = meris_mask(l2_flags,bits,varargin),
-%MERIS_MASK  makes one mask from multiple MERIS flags.
+function mask = seawifs_mask(l2_flags,bits,varargin),
+%SEAWIFS_MASK  makes one mask from multiple SeaWiFS flags.
 %
-% mask = meris_mask(l2_flags,bits,<keyword,value>)
+% mask = seawifs_mask(l2_flags,bits,<keyword,value>)
 %
-% where l2_flags  is a double array, 
-%       bits      are the bit numbers to be REMOVED from the image and
+% where l2_flags  is an integer array as read by SEAWIFS_L2_READ, 
 %       bits      are the bit numbers to be REMOVED from the image 
-%                 defined in MERIS_FLAGS
+%                 defined in SEAWIFS_FLAGS
 %       mask      is a double array meant for multiplication with the data:
 %                 1   where pixels should be KEPT
 %                 NaN where pixels should be REMOVED
 %
-% Example to remove land and clouds: (note land is only true where there are no clouds!)
+% Example to remove land, clouds and ice:
 %
-% SAT.mask     = meris_mask(SAT.l2_flags,[22 23]);
+% SAT.mask     = seawifs_mask(SAT.l2_flags,[2 10]);
 %
-%See also: BITAND, MERIS_NAME2META, MERIS_FLAGS, DEC2BIN, BIN2DEC, SEAWIFS_MASK
+%See also: BITAND, SEAWIFS_FLAGS, SEAWIFS_L2_READ, DEC2BIN, BIN2DEC, MERIS_MASK
  
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2008 Oct. Deltares
-%       G.J.de Boer
+%   Copyright (C) 2009 Delft University of Technology
+%       Gerben J. de Boer
 %
-%       gerben.deboer@deltares.nl	
+%       g.j.deboer@tudelft.nl	
 %
-%       Deltares (former Delft Hydraulics)
-%       P.O. Box 177
-%       2600 MH Delft
+%       Fluid Mechanics Section
+%       Faculty of Civil Engineering and Geosciences
+%       PO Box 5048
+%       2600 GA Delft
 %       The Netherlands
 %
 %   This library is free software: you can redistribute it and/or
@@ -57,7 +57,7 @@ function mask = meris_mask(l2_flags,bits,varargin),
 % $HeadURL$
 % $Keywords: $
 
-% TO DO: allow also cellstr for bits, and get associated bit numbers from MERIS_FLAGS
+% TO DO: allow also cellstr for bits, and get associated bit numbers from SEAWIFS_FLAGS
 
 %% Keywords
 
@@ -71,23 +71,24 @@ function mask = meris_mask(l2_flags,bits,varargin),
    
 %% Apply
 
-   mask  = ones(size(l2_flags));
-   flags = meris_flags;
+   mask     = ones(size(l2_flags));
+   flags    = seawifs_flags;
    
    for ibit=1:length(bits)
    
       bit = bits(ibit);
       
       if OPT.disp
-         disp(['meris_mask: removed bit ',num2str(bit),' : ',flags.name{find(bit==flags.bit)}])
+         disp(['seawifs_mask: removed bit ',num2str(bit),' : ',flags.name{find(bit==flags.bit)}])
       end
    
-      bitmask = (bitand(l2_flags,2^bit))~=0;
+      bitmask = (bitand(uint32(l2_flags + 2^31),2^bit))~=0;
       
       mask(bitmask) = 0;
    
    end
    
    mask(mask==0)=NaN;
+
 
 %% EOF
