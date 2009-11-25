@@ -1,4 +1,4 @@
-function nc_cf_merge_catalogs(varargin)
+function catalog = nc_cf_merge_catalogs(varargin)
 %NC_CF_MERGE_CATALOGS   test script for
 %
 %See also: NC_CF_DIRECTORY2CATALOG, NC_CF2CATALOG
@@ -50,29 +50,52 @@ function nc_cf_merge_catalogs(varargin)
 
 %% get catalog
 OPT = struct(...
-    'base', [] ...           % base dir
+    'filenames', [], ...            % names of catalogs to merge
+    'base', [], ... % base dir (routine will look recursively in all subdirectories and merge all catalog.nc's found)
+    'save', 0 ...
     );
 
 % overrule default settings by property pairs, given in varargin
 OPT = setProperty(OPT, varargin{:});
 
-filenames = findAllFiles( ...
-    'pattern_excl', {[filesep,'.svn']}, ...   % description of input argument 1
-    'pattern_incl', 'catalog.mat', ...        % description of input argument 2
-    'basepath', OPT.base ...                  % description of input argument 3
-    );
+try
+    delete([OPT.base filesep 'main_catalog.nc'])
+end
 
-catalog = load(filenames{1});
-cat_fieldnames = fieldnames(catalog);
-for i = 2:length(filenames)
-    catalog_add = load(filenames{i}); %#ok<NASGU>
+if isempty(OPT.filenames) && ~isempty(OPT.base)
+    OPT.filenames = findAllFiles( ...
+        'pattern_excl', {[filesep,'.svn']}, ...   % exclude any .svn directories (related to subversion)
+        'pattern_incl', '*catalog*.nc', ...               % include all catalog.nc files
+        'basepath', OPT.base ...                  % use OPT.base as the base path
+        );
+end
+
+catalog         = nc2struct(OPT.filenames{1});
+cat_fieldnames  = fieldnames(catalog);
+for i = 2:length(OPT.filenames)
+    catalog_add = nc2struct(OPT.filenames{i});
     for j = 1:length(cat_fieldnames)
-        if eval(['ischar(catalog.' cat_fieldnames{j} ')'])      % for the fields that are chars
-            eval(['catalog.' cat_fieldnames{j} ' = char([cellstr(catalog.' cat_fieldnames{j} '); catalog_add.' cat_fieldnames{j} ']);']);
-        elseif eval(['isfloat(catalog.' cat_fieldnames{j} ')']) % for the fields that are floats
-            eval(['catalog.' cat_fieldnames{j} ' = [catalog.' cat_fieldnames{j} '; catalog_add.' cat_fieldnames{j} '];']);
+        if eval(['iscellstr(catalog.' cat_fieldnames{j} ')']) % for the fields that are chars
+            if isfield(catalog_add,cat_fieldnames{j})
+                eval(['catalog.' cat_fieldnames{j} ' = [catalog.' cat_fieldnames{j} '; catalog_add.' cat_fieldnames{j} '];']);
+            end
+        else % for the fields that are floats
+            if isfield(catalog_add,cat_fieldnames{j})
+                eval(['catalog.' cat_fieldnames{j} ' = [catalog.' cat_fieldnames{j} '; catalog_add.' cat_fieldnames{j} '];']);
+            end
         end
     end
 end
-struct2nc([OPT.base filesep 'main_catalog.nc'],catalog)
 
+% remove potential attributes that are all of zero length
+cat_fieldnames  = fieldnames(catalog);
+for i = 1:length(cat_fieldnames)
+    if size(catalog.(cat_fieldnames{i}),2) == 0
+        disp(num2str(i))
+        catalog = rmfield(catalog, cat_fieldnames{i});
+    end
+end
+
+if OPT.save % user can save as a nc file ... default a structure is returned
+    struct2nc([OPT.base filesep 'main_catalog.nc'],catalog)
+end
