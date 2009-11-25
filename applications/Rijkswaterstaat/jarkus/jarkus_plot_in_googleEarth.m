@@ -2,7 +2,11 @@ function varargout = jarkus_plot_in_googleEarth(varargin)
 %JARKUS_PLOT_IN_GOOGLEEARTH  plot one or more jarkus transects in google Earth
 %
 %   Specify transect id and year(s) to plot the chosen transects in google
-%   Earth.
+%   Earth. The transect can be specified by the 7 or 8 digit id number, by
+%   a logical vector with the length of the available transects (2178), or
+%   by vector of identifiers between 1 and 2178. The google Earth plot
+%   information is written to a file which can be specified with the
+%   keyword 'kmlfilename'. This .kml file can be opened in google Earth. 
 %
 %   Syntax:
 %   varargout = jarkus_plot_in_googleEarth(varargin)
@@ -63,8 +67,8 @@ function varargout = jarkus_plot_in_googleEarth(varargin)
 
 %%
 OPT = struct(...
-    'id', 7004000,...
-    'year', 2008,... % leave empty for all available years
+    'id', [7005375 7005400 7005425],...
+    'year', [],... % leave empty for all available years
     'kmlfilename', 'Jarkus.kml',...
     'url', jarkus_url);
 
