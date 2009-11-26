@@ -55,6 +55,7 @@ function arcgis2nc(ncfile,D,varargin)
 
    OPT.dump           = 1;
    OPT.disp           = 10; % stride in progres display
+   OPT.convertperline = 1;
 
 %% User defined meta-info
 
@@ -167,10 +168,15 @@ function arcgis2nc(ncfile,D,varargin)
       
        %consider as 1D matrix and do section bys ection
       
+      if    OPT.convertperline
       for ii=1:size(D.lat,1)
       disp([num2str(ii),'/',num2str(size(D.lat,1))])
      [D.lon(ii,:),D.lat(ii,:)] = convertcoordinates(x(ii,:),y(ii,:),'CS1.code',OPT.epsg,'CS2.code',4326);
-     end
+      end
+      else
+     [D.lon      ,D.lat      ] = convertcoordinates(x      ,y      ,'CS1.code',OPT.epsg,'CS2.code',4326);
+      end
+      
       clear x y
       
       %% Longitude
