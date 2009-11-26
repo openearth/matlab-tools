@@ -39,7 +39,7 @@ curdir=pwd;
 handles.EPSG = load('EPSG.mat');
 handles.OPT=[];
 
-handles.MainWindow      = MakeNewWindow('SuperTrans',[760 550]);
+handles.MainWindow      = MakeNewWindow_st('SuperTrans',[760 550]);
 handles.BackgroundColor = get(gcf,'Color');
 bgc                     = handles.BackgroundColor;
 handles.FilterIndex     = 1;
