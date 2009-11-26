@@ -58,10 +58,6 @@ OPT = struct(...
 % overrule default settings by property pairs, given in varargin
 OPT = setProperty(OPT, varargin{:});
 
-try
-    delete([OPT.base filesep 'main_catalog.nc'])
-end
-
 if isempty(OPT.filenames) && ~isempty(OPT.base)
     OPT.filenames = findAllFiles( ...
         'pattern_excl', {[filesep,'.svn']}, ...   % exclude any .svn directories (related to subversion)
