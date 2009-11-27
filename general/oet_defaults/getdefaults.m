@@ -1,8 +1,8 @@
 function getdefaults(varargin)
-%GETDEFAULTS  checks all input and sets defaults specified in ini file
+%GETDEFAULTS  checks all input and sets predefined defaults
 %
 %This function can be called within another function. It checks
-%for the existance of input variables. When a varianlble is not found
+%for the existance of input variables. When a variable is not found
 %it is set to default. A message can be displayed and is stored using
 %writemessage.
 %
@@ -59,10 +59,12 @@ function getdefaults(varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% $Id$ 
+% $Id$
 % $Date$
 % $Author$
 % $Revision$
+% $HeadURL$
+% $Keywords: $
 
 %% Process input
 
