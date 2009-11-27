@@ -37,6 +37,9 @@ waitforbuttonpress;
 p1       = get(h,'CurrentPoint');       % get starting point
 p1       = p1(1,1:2);                   % extract x and y
 lh       = plot(p1(1),p1(2),'+:');      % plot starting point
+
+drawnow
+
 udata.p1 = p1;                          % add info to udata (first click location)
 udata.h  = h;                           % add info to udata (axes handle)
 udata.lh = lh;                          % add info to udata (line handle)
