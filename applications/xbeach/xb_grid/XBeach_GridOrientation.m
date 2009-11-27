@@ -21,7 +21,7 @@ function [X Y Z alfa propertyVar] = XBeach_GridOrientation(xw, yw, Zbathy, varar
 %   Copyright (C) 2009 Deltares
 %       Dano Roelvink / Ap van Dongeren / C.(Kees) den Heijer
 %
-%       Kees.denHeijer@Deltares.nl	
+%       Kees.denHeijer@Deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -66,7 +66,7 @@ OPT = struct(...
 
 % apply custom properties
 OPT = setProperty(OPT, varargin{:});
-   
+
 %% show data, for selection
 if OPT.manual
     figure;
@@ -77,8 +77,12 @@ if OPT.manual
     if length(xw)<=10000
         scatter(xw, yw, 5, Zbathy, 'filled');
     else
-        rd_ids = randi(length(xw),10000,1);
-        scatter(xw(rd_ids), yw(rd_ids), 5, Zbathy(rd_ids), 'filled');
+        try
+            rd_ids = randi(length(xw),10000,1);
+            scatter(xw(rd_ids), yw(rd_ids), 5, Zbathy(rd_ids), 'filled');
+        catch
+            scatter(xw, yw, 5, Zbathy, 'filled');
+        end
     end
     axis([min(xw)-.5*(max(xw)-min(xw)) ...
         max(xw)+.5*(max(xw)-min(xw)) ...
@@ -88,14 +92,14 @@ if OPT.manual
     axis manual
     colorbar
     hold on
-
+    
     % Loop, picking up the points.
     disp('Click grid corner x=0,y=0')
     disp('Then click point x=xn,y=0')
     disp('Finally click to select extent of y')
-
+    
     [xi yi]     = select_oblique_rectangle;
-
+    
     OPT.xori    = xi(1);
     OPT.yori    = yi(1);
     OPT.xend_y0 = [xi(2) yi(2)];

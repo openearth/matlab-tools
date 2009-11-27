@@ -88,7 +88,7 @@ if ~isempty(XBid)
     XB = varargin{XBid};
     varargin(XBid) = [];
 end
-try 
+try
     % the functions keyword_value and CreateEmptyXBeachVar are available in OpenEarthTools
     OPT = setProperty(OPT, varargin{:});
     if ~exist('XB', 'var')
@@ -119,10 +119,14 @@ if OPT.manual
     if length(OPT.bathy{1})<=10000
         scatter(OPT.bathy{1}, OPT.bathy{2}, 5, OPT.bathy{3}, 'filled');
     else
-        rd_ids = randi(length(OPT.bathy{1}),10000,1);
-        scatter(OPT.bathy{1}(rd_ids),OPT.bathy{2}(rd_ids), 5, OPT.bathy{3}(rd_ids), 'filled');
+        try
+            rd_ids = randi(length(OPT.bathy{1}),10000,1);
+            scatter(OPT.bathy{1}(rd_ids),OPT.bathy{2}(rd_ids), 5, OPT.bathy{3}(rd_ids), 'filled');
+        catch
+            scatter(OPT.bathy{1}, OPT.bathy{2}, 5, OPT.bathy{3}, 'filled');
+        end
     end
-
+    
     colorbar;
     hold on
     xn = max(max(X));
