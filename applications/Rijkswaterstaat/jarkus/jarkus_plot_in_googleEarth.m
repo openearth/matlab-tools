@@ -90,7 +90,8 @@ else
 end
 
 % read time (in days since 1970-01-01 00:00 +1:00) and translate to years
-years = round(nc_varget(url, 'time') / 365.24) + 1970;
+  years = year(nc_cf_time(jarkus_url, 'time'));% instead of years = round(nc_varget(url, 'time') / 365.24) + 1970;
+
 if isempty(OPT.year)
     % select all years if not specified
     yearid = 1:length(years);

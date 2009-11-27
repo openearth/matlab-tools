@@ -1,4 +1,4 @@
-function datenumbers = udunits2datenum(varargin)
+function varargout = udunits2datenum(varargin)
 %UDUNITS2DATENUM   converts date(s) in ISO 8601 units to Matlab datenumber(s)
 %
 %    datenumbers = udunits2datenum(time,isounits)
@@ -6,11 +6,13 @@ function datenumbers = udunits2datenum(varargin)
 %
 % Examples (N.B. vectorized):
 %
-%    datenumbers = udunits2datenum( [602218 648857], 'days since 0000-0-0 00:00:00 +01:00')
-%    datenumbers = udunits2datenum( [602218 648857],{'days since 0000-0-0 00:00:00 +01:00',...
-%                                                    'days since 0000-0-0 00:00:00 +01:00'})
-%    datenumbers = udunits2datenum({'602218           days since 0000-0-0 00:00:00 +01:00',...
-%                                   '648857           days since 0000-0-0 00:00:00 +01:00'})
+%    [datenum,<zone>] = udunits2datenum( [602218 648857], 'days since 0000-0-0 00:00:00 +01:00')
+%    [datenum,<zone>] = udunits2datenum( [602218 648857],{'days since 0000-0-0 00:00:00 +01:00',...
+%                                                         'days since 0000-0-0 00:00:00 +01:00'})
+%    [datenum,<zone>] = udunits2datenum({'602218           days since 0000-0-0 00:00:00 +01:00',...
+%                                        '648857           days since 0000-0-0 00:00:00 +01:00'})
+%
+% where <zone> is optional and has the length of isounits.
 %
 %See web: <a href="http://www.unidata.ucar.edu/software/udunits/">http://www.unidata.ucar.edu/software/udunits/</a>
 %See also: DATENUM, DATESTR, ISO2DATENUM, TIME2DATENUM, XLSDATE2DATENUM
@@ -52,13 +54,11 @@ function datenumbers = udunits2datenum(varargin)
 % 2009 jul 09: added option to pass only 1 string argument [GJdB]
 
 %% Handle input
-%--------------------
+% --------------------
 
    if     nargin==1
-      if     iscell(varargin{1})
-         celltime = varargin{1};
-      elseif ischar(varargin{1})
-         celltime = cellstr(varargin{1});
+      if     iscell(varargin{1});celltime =         varargin{1};
+      elseif ischar(varargin{1});celltime = cellstr(varargin{1});
       end
 
       for irow=1:length(celltime)
@@ -66,6 +66,7 @@ function datenumbers = udunits2datenum(varargin)
       isounits{irow}] = strtok(celltime{irow});
       end
       time = str2num(char(time));
+      time = time(:)';
       
    elseif nargin==2
       time      = varargin{1};
@@ -73,15 +74,15 @@ function datenumbers = udunits2datenum(varargin)
    end   
    
 %% Interpret unit and reference date string
-%--------------------
+% --------------------
 
-      refdatenum = repmat(nan,[length(isounits) 1]);
+      refdatenum = repmat(nan,[1 length(isounits)]);
    for irow=1:length(isounits)
       rest              = isounits{irow};
      [units{irow},rest] = strtok(rest);
      [dummy      ,rest] = strtok(rest);
      [refdatenum(irow),...
-      zone]             = iso2datenum(rest);
+      zone{irow}]       = iso2datenum(rest);
    end
 
    if length(time) >1 & length(isounits)==1
@@ -93,6 +94,17 @@ function datenumbers = udunits2datenum(varargin)
          unitfactor(irow) = convert_units(units{irow},'day');
       end
       datenumbers = time.*unitfactor + refdatenum;
+   end
+   
+%% Output
+% --------------------
+
+   if     nargout==1
+      varargout = {datenumbers};
+   elseif nargout==2
+      varargout = {datenumbers,strtrim(zone)};
+   else
+      error('to much output parameters')
    end
 
    
