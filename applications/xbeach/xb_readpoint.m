@@ -1,4 +1,6 @@
-function Pointdata=readpoint(fname,XBdims,nvar)
+function Pointdata=xb_readpoint(fname,XBdims,nvar)
+%XB_READPOINT load xbeach point
+%
 % Pointdata=readpoint(fname,XBdims,nvar)
 %
 % Output Point is [ntp,nvar+1] array, where ntp is XBdims.ntp
@@ -9,6 +11,8 @@ function Pointdata=readpoint(fname,XBdims,nvar)
 %       - XBdims: dimension data provided by getdimensions function
 %       - nvar  : number of variables output at this point location
 %
+%See also: xbeach
+
 % Created 19-06-2008 : XBeach-group Delft
  
 Pointdata=zeros(XBdims.ntp,nvar+1);

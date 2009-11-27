@@ -1,3 +1,8 @@
+function xb_makeprofile
+%XB_MAKEPROFILE generate xbeach profile
+%
+%See also: xbeach
+
 dx=5;
 profname='profile.dat';
 

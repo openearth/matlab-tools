@@ -1,5 +1,7 @@
-function XBdims=getdimensions
-% XBdims=getdimensions
+function XBdims=xb_getdimensions
+%XB_GETDIMENSIONS load xbeach dimensions
+%
+% XBdims=xb_getdimensions
 % 
 % Must start in XBeach output directory
 % Output structure XBdims
@@ -13,25 +15,27 @@ function XBdims=getdimensions
 % XBdims.tsglobal = times at which regular output is given
 % XBdims.tspoints = times at which point output is given
 % XBdims.tsmean   = times at which time-averaged output is given
-% XBdims.x   = x-coordinates grid
-% XBdims.y   = y-coordinates grid
+% XBdims.x        = x-coordinates grid
+% XBdims.y        = y-coordinates grid
 % 
+%See also: xbeach
+
 % Created 19-06-2008 : XBeach-group Delft
  
 fid=fopen('dims.dat','r');
-XBdims.nt=fread(fid,[1],'double'); 
-XBdims.nx=fread(fid,[1],'double');         
-XBdims.ny=fread(fid,[1],'double');        
-XBdims.ntheta=fread(fid,[1],'double');        
-XBdims.kmax=fread(fid,[1],'double');        
-XBdims.ngd=fread(fid,[1],'double');       
-XBdims.nd=fread(fid,[1],'double');        
-XBdims.ntp=fread(fid,[1],'double');       
-XBdims.ntc=fread(fid,[1],'double');       
-XBdims.ntm=fread(fid,[1],'double');  
-XBdims.tsglobal=fread(fid,[XBdims.nt],'double');
-XBdims.tspoints=fread(fid,[XBdims.ntp],'double');
-XBdims.tsmean=fread(fid,[XBdims.ntm],'double');
+XBdims.nt      = fread(fid,[1],'double'); 
+XBdims.nx      = fread(fid,[1],'double');         
+XBdims.ny      = fread(fid,[1],'double');        
+XBdims.ntheta  = fread(fid,[1],'double');        
+XBdims.kmax    = fread(fid,[1],'double');        
+XBdims.ngd     = fread(fid,[1],'double');       
+XBdims.nd      = fread(fid,[1],'double');        
+XBdims.ntp     = fread(fid,[1],'double');       
+XBdims.ntc     = fread(fid,[1],'double');       
+XBdims.ntm     = fread(fid,[1],'double');  
+XBdims.tsglobal= fread(fid,[XBdims.nt],'double');
+XBdims.tspoints= fread(fid,[XBdims.ntp],'double');
+XBdims.tsmean  = fread(fid,[XBdims.ntm],'double');
 fclose(fid);
  
 fidxy=fopen('xy.dat','r');
