@@ -65,6 +65,7 @@ OPT.cLim         = [];
 OPT.zScaleFun    = @(z) (z+20).*5;
 OPT.timeIn       = [];
 OPT.timeOut      = [];
+OPT.colorbar     = 1;
 
 if nargin==0
   return
@@ -134,6 +135,11 @@ OPT_header = struct(...
     'open',0);
 output = KML_header(OPT_header);
 
+if OPT.colorbar
+   clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colors);
+   output = [output clrbarstring];
+end
+
 %% STYLE
 OPT_stylePoly = struct(...
     'name'       ,['style' num2str(1)],...
@@ -153,10 +159,13 @@ for ii = 1:OPT.colorSteps
     output = [output KML_stylePoly(OPT_stylePoly)];
 end
 
-output = [output '<!--############################-->\n'];
+output = [output '<!--############################-->' fprinteol];
 
 %% print and clear output
-fprintf(OPT.fid,output); output = [];
+fprintf(OPT.fid,'%s',output); output = [];
+fprintf(OPT.fid,'<Folder>');
+fprintf(OPT.fid,'  <name>patches</name>');
+fprintf(OPT.fid,'  <open>0</open>');
 
 %% POLYGON
 OPT_poly = struct(...
@@ -212,6 +221,8 @@ for ii=1:length(lat(:,1))-1
 end
 fprintf(OPT.fid,output(1:kk-1)); output = ''; % print and clear output
 
+fprintf(OPT.fid,'</Folder>');
+
 %% FOOTER
 output = KML_footer;
 fprintf(OPT.fid,output);
@@ -220,7 +231,7 @@ fprintf(OPT.fid,output);
 fclose(OPT.fid);
 
 %% compress to kmz?
-if strcmpi  ( OPT.fileName(end),'z')
+if strcmpi  ( OPT.fileName(end-2:end),'kmz')
     movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
     zip     ( OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
     movefile([OPT.fileName '.zip'],OPT.fileName)

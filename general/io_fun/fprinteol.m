@@ -1,10 +1,11 @@
-function fprinteol(fid,varargin)
+function str = fprinteol(varargin)
 %FPRINTEOL   Write end-of-line symbol(s) of specific OS to file.
 %
 % Writes the system depenedent ASCII end of line 
-% character to a text file.
+% character to an open text file (fid) or string (str).
 %
-%    FPRINTEOL(fid,OperationSystem)
+% str = FPRINTEOL(    OperationSystem)
+%       FPRINTEOL(fid,OperationSystem)
 %
 % where fid is a file indentifier as returned by FOPEN,
 % where OperationSystem is a string with value
@@ -51,16 +52,28 @@ function fprinteol(fid,varargin)
 % $HeadURL$
 % $Keywords$
 
-   if nargin==2
-      OS = varargin{1};
-   else
-      OS = 'l';
-   end
+   OS = 'l';
 
+if nargout==1
+   if nargin==1
+      OS = varargin{1};
+   end
+    fid = [];
+       if strcmp(lower(OS(1)),'u');str = sprintf('\n');
+   elseif strcmp(lower(OS(1)),'l');str = sprintf('\n');
+   elseif strcmp(lower(OS(1)),'w');str = sprintf('\r\n');
+   elseif strcmp(lower(OS(1)),'d');str = sprintf('\r\n');
+       end 
+else
+    fid = varargin{1};
+   if nargin==2
+      OS = varargin{2}
+   end
        if strcmp(lower(OS(1)),'u');fprintf(fid,'\n');
    elseif strcmp(lower(OS(1)),'l');fprintf(fid,'\n');
    elseif strcmp(lower(OS(1)),'w');fprintf(fid,'\r\n');
    elseif strcmp(lower(OS(1)),'d');fprintf(fid,'\r\n');
-   end 
+       end 
+end
 
 %% EOF

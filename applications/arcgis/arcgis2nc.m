@@ -1,11 +1,14 @@
-function arcgis2nc(ncfile,D,varargin)
+function varargout = arcgis2nc(ncfile,D,varargin)
 %ARCGIS2NC  save arcGRID file, with optional meta-info, as netCDF file
 %
 %   arcgis2nc(ncfilename,D,<keyword,value>)
 %
 % saves struct D as read by ARCGISREAD as netCDF-CF file.
 % When keyword 'epsg' is supplied, full latitude and longitude
-% matrixes are written to the netCDF file too.
+% matrixes are written to the netCDF file too. To get a list 
+% of all keywords, call ARCGIS2NC without arguments.
+%
+%   OPT = arcgis2nc()
 %
 %See also: ARCGISREAD, SNCTOOLS, NC_CF_GRID, ARCGRIDREAD (in $ mapping toolbox)
 
@@ -55,7 +58,7 @@ function arcgis2nc(ncfile,D,varargin)
 
    OPT.dump           = 1;
    OPT.disp           = 10; % stride in progres display
-   OPT.convertperline = 1;
+   OPT.convertperline = 1;  % when memory limitations are present
 
 %% User defined meta-info
 
@@ -71,7 +74,8 @@ function arcgis2nc(ncfile,D,varargin)
    OPT.title          = '';
    OPT.institution    = '';
    OPT.source         = '';
-   OPT.history        = '';
+   OPT.history        = ['Original filename: ',filename(D.filename),...
+                         ', tranformation to NetCDF: $HeadURL$'];
    OPT.references     = '';
    OPT.email          = '';
    OPT.comment        = '';
@@ -101,8 +105,7 @@ function arcgis2nc(ncfile,D,varargin)
       nc_attput(outputfile, nc_global, 'title'         , OPT.title);
       nc_attput(outputfile, nc_global, 'institution'   , OPT.institution);
       nc_attput(outputfile, nc_global, 'source'        , OPT.source);
-      nc_attput(outputfile, nc_global, 'history'       ,['Original filename: ',filename(D.filename),...
-                                                         ', tranformation to NetCDF: $HeadURL$']);
+      nc_attput(outputfile, nc_global, 'history'       , OPT.history);
       nc_attput(outputfile, nc_global, 'references'    , OPT.references);
       nc_attput(outputfile, nc_global, 'email'         , OPT.email);
    
@@ -117,8 +120,8 @@ function arcgis2nc(ncfile,D,varargin)
       
 %% 2 Create dimensions
    
-      nc_add_dimension(outputfile, 'x_cen', D.ncols)
-      nc_add_dimension(outputfile, 'y_cen', D.nrows)
+      nc_add_dimension(outputfile, 'x_cen', D.ncols); % use this as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
+      nc_add_dimension(outputfile, 'y_cen', D.nrows); % use this as 2nd array dimension to get correct plot in ncBrowse (snctools swaps for us)
 
 %% 3 Create variables
    
@@ -249,6 +252,10 @@ function arcgis2nc(ncfile,D,varargin)
    
       if OPT.dump
       nc_dump(outputfile);
+      end
+
+      if nargout==1
+         varargout = {D};
       end
 
 %% EOF
