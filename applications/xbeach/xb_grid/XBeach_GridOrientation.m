@@ -56,13 +56,13 @@ function [X Y Z alfa propertyVar] = XBeach_GridOrientation(xw, yw, Zbathy, varar
 
 %% default properties
 OPT = struct(...
-    'manual', false,...
-    'dx', 2,...
-    'dy', 2,...
-    'xori', 0,...
-    'yori', 0,...
-    'xend_y0', [max(max(xw)) 0],...
-    'x_yend', [0 max(max(yw))]);
+    'manual',             false, ...
+    'dx',                     2, ...
+    'dy',                     2, ...
+    'xori',                   0, ...
+    'yori',                   0, ...
+    'xend_y0', [max(max(xw)) 0], ...
+    'x_yend',  [0 max(max(yw))]);
 
 % apply custom properties
 OPT = setProperty(OPT, varargin{:});
@@ -70,7 +70,16 @@ OPT = setProperty(OPT, varargin{:});
 %% show data, for selection
 if OPT.manual
     figure;
-    scatter(xw, yw, 5, Zbathy, 'filled');
+    ids = convhull(xw, yw);
+    lh = line(xw(ids),yw(ids),Zbathy(ids));
+    set(lh,'color','r')
+    hold on
+    if length(xw)<=10000
+        scatter(xw, yw, 5, Zbathy, 'filled');
+    else
+        rd_ids = randi(length(xw),10000,1);
+        scatter(xw(rd_ids), yw(rd_ids), 5, Zbathy(rd_ids), 'filled');
+    end
     axis([min(xw)-.5*(max(xw)-min(xw)) ...
         max(xw)+.5*(max(xw)-min(xw)) ...
         min(yw)-.5*(max(yw)-min(yw)) ...
@@ -85,29 +94,30 @@ if OPT.manual
     disp('Then click point x=xn,y=0')
     disp('Finally click to select extent of y')
 
-    [xi yi] = select_oblique_rectangle;
+    [xi yi]     = select_oblique_rectangle;
 
-    OPT.xori = xi(1);
-    OPT.yori = yi(1);
+    OPT.xori    = xi(1);
+    OPT.yori    = yi(1);
     OPT.xend_y0 = [xi(2) yi(2)];
-    OPT.x_yend = [xi(3) yi(3)];
+    OPT.x_yend  = [xi(3) yi(3)];
 end
 
-alfa = atan2(OPT.xend_y0(2)-OPT.yori, OPT.xend_y0(1)-OPT.xori);
-Xbathy = cos(alfa)*(xw-OPT.xori)+sin(alfa)*(yw-OPT.yori);
-Ybathy = -sin(alfa)*(xw-OPT.xori)+cos(alfa)*(yw-OPT.yori);
-xn = cos(alfa)*(OPT.xend_y0(1)-OPT.xori)+sin(alfa)*(OPT.xend_y0(2)-OPT.yori);
-yn = -sin(alfa)*(OPT.x_yend(1)-OPT.xori)+cos(alfa)*(OPT.x_yend(2)-OPT.yori);
-xx = (0:OPT.dx:xn)';
-yy = 0:OPT.dy:yn;
-X = repmat(xx, 1, length(yy));
-Y = repmat(yy, length(xx), 1);
+alfa        = atan2(OPT.xend_y0(2) - OPT.yori, OPT.xend_y0(1) - OPT.xori);
+Xbathy      =  cos(alfa) * (xw - OPT.xori) + sin(alfa) * (yw - OPT.yori);
+Ybathy      = -sin(alfa) * (xw - OPT.xori) + cos(alfa) * (yw - OPT.yori);
+xn          =  cos(alfa) * (OPT.xend_y0(1) - OPT.xori) + sin(alfa) * (OPT.xend_y0(2) - OPT.yori);
+yn          = -sin(alfa) * (OPT.x_yend(1)  - OPT.xori) + cos(alfa) * (OPT.x_yend(2)  - OPT.yori);
+xx          = (0:OPT.dx:xn)';
+yy          =  0:OPT.dy:yn;
+X           = repmat( xx, 1,          length(yy) );
+Y           = repmat( yy, length(xx), 1          );
+
 try
-    Z   = griddata(Xbathy, Ybathy, Zbathy, X, Y);
+    Z       = griddata(Xbathy, Ybathy, Zbathy, X, Y);
 catch
-    Err = lasterror;
+    Err     = lasterror;
     if strcmp(Err.identifier, 'MATLAB:qhullmx:UndefinedError')
-        Z = griddata(Xbathy,Ybathy,Zbathy,X,Y,'linear',{'QJ'});
+        Z   = griddata(Xbathy,Ybathy,Zbathy,X,Y,'linear',{'QJ'});
     else
         rethrow(Err)
     end

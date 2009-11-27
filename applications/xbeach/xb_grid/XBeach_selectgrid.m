@@ -22,7 +22,7 @@ function XB = XBeach_selectgrid(X, Y, Z, varargin)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
-%       Dano Roelvink / Ap van Dongeren / C.(Kees) den Heijer
+%       Dano Roelvink / Ap van Dongeren / C.(Kees) den Heijer / Mark van Koningsveld
 %
 %       Kees.denHeijer@Deltares.nl
 %
@@ -88,7 +88,7 @@ if ~isempty(XBid)
     XB = varargin{XBid};
     varargin(XBid) = [];
 end
-try %#ok<TRYNC>
+try 
     % the functions keyword_value and CreateEmptyXBeachVar are available in OpenEarthTools
     OPT = setProperty(OPT, varargin{:});
     if ~exist('XB', 'var')
@@ -106,22 +106,30 @@ else
     [xi yi] = deal(OPT.polygon(1,:), OPT.polygon(2,:));
 end
 
-% modify deepval and dryval to make them correspond with posdwm (and so,
-% with Z)
-OPT.deepval = OPT.posdwn * abs(OPT.deepval);
-OPT.dryval = -OPT.posdwn * abs(OPT.dryval);
-
-
+% modify deepval and dryval to make them correspond with posdwm (and so, with Z)
+OPT.deepval =  OPT.posdwn * abs(OPT.deepval);
+OPT.dryval  = -OPT.posdwn * abs(OPT.dryval);
 
 if OPT.manual
     figure;
-    scatter(OPT.bathy{1}, OPT.bathy{2}, 5, OPT.bathy{3}, 'filled');
+    ids     = convhull(OPT.bathy{1}, OPT.bathy{2});
+    lh      = line(OPT.bathy{1}(ids),OPT.bathy{2}(ids),OPT.bathy{3}(ids));
+    set(lh,'color','m')
+    hold on
+    if length(OPT.bathy{1})<=10000
+        scatter(OPT.bathy{1}, OPT.bathy{2}, 5, OPT.bathy{3}, 'filled');
+    else
+        rd_ids = randi(length(OPT.bathy{1}),10000,1);
+        scatter(OPT.bathy{1}(rd_ids),OPT.bathy{2}(rd_ids), 5, OPT.bathy{3}(rd_ids), 'filled');
+    end
+
     colorbar;
     hold on
     xn = max(max(X));
     yn = max(max(Y));
     plot([0 xn xn 0 0],[0 0 yn yn 0],'r-')
     axis ([0 xn 0 yn]);axis equal
+    
     % Select polygon to include in bathy
     % Loop, picking up the points.
     disp('Select polygon to include in bathy')
@@ -198,17 +206,6 @@ if OPT.struct
     disp('Right mouse button picks last point.')
     [xi yi]=select_polygon
 end
-
-
-
-
-
-
-
-
-
-
-
 
 %% x-grid
 xnew = X(:,1);
