@@ -89,20 +89,20 @@ else
     transectid = find(ismember(nc_varget(url, 'id'), OPT.id));
 end
 
-% interprete the time id
+% read time (in days since 1970-01-01 00:00 +1:00) and translate to years
+years = round(nc_varget(url, 'time') / 365.24) + 1970;
 if isempty(OPT.year)
-    OPT.year = nc_varget(url, 'time');
+    % select all years if not specified
+    yearid = 1:length(years);
+else
+    % select the predefined years
+    yearid = find(ismember(years, OPT.year));
 end
-yearid = find(ismember(nc_varget(url, 'time'), OPT.year));
+year = years(yearid);
+
 stride = max(diff(yearid)) == min(diff(yearid));
 if stride
     yearstride = max(diff(yearid));
-    year = nc_varget(url, 'time', yearid(1)-1, length(yearid), yearstride);
-else
-    year = [];
-    for j = 1:length(yearid)
-        year(j) = nc_varget(url, 'time', yearid(j)-1, 1);
-    end
 end
 
 % obtain the relevant data
@@ -111,8 +111,10 @@ for i = 1:length(transectid)
     lat(i,:) = nc_varget(url, 'lat', [transectid(i)-1 0], [1 -1]);
     lon(i,:) = nc_varget(url, 'lon', [transectid(i)-1 0], [1 -1]);
     if stride
+        % get altitude (Dimension: {'time'  'alongshore'  'cross_shore'})
         z(:,i,:) = nc_varget(url, 'altitude', [0 transectid(i)-1 0], [length(yearid) 1 -1], [yearstride 1 1]);
     else
+        % get altitude (Dimension: {'time'  'alongshore'  'cross_shore'})
         for j = 1:length(yearid)
             z(j,i,:) = nc_varget(url, 'altitude', [yearid(j)-1 transectid(i)-1 0], [1 1 -1]);
         end
