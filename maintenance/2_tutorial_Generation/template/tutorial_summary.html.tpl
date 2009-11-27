@@ -38,9 +38,26 @@
 		{
 		$("#contentspanel").load(event.data.html,"html",function()
 			{
-			$("document").ajaxStop(linkimages());
+			$("document").ajaxStop(finishtutorials());
 			});
 
+		}
+
+	function finishtutorials()
+		{
+				// Perform document ready operations of tutorial
+
+				// Copy content
+				copycontent();
+
+				// validate href of links to matlab tutorials
+				matlabpreparehelprefs();
+
+				// Accordion
+				collapsible($(".collapsible"));
+
+				// link images
+				linkimages();
 		}
 
 	function linkimages()
