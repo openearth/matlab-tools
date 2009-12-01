@@ -99,7 +99,7 @@ else
     % select the predefined years
     yearid = find(ismember(years, OPT.year));
 end
-year = years(yearid);
+years = years(yearid);
 
 stride = max(diff(yearid)) == min(diff(yearid));
 if stride
@@ -158,9 +158,9 @@ zi      = reshape(zi, no_of_years * no_of_transects, []);
 %% 
 % * Time data also has to be reshaped
 
-year    = repmat(year, no_of_transects, 1)';
-timeIn  = datenum(year, 1, 1);
-timeOut = datenum(year+1, 1, 1);
+years    = repmat(years, no_of_transects, 1)';
+timeIn  = datenum(years, 1, 1);
+timeOut = datenum(years+1, 1, 1);
 
 %%
 % * And finally we can call KMLline
