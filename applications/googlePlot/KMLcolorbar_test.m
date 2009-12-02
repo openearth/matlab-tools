@@ -53,5 +53,5 @@ function nan = KMLcolorbar_test()
 try
    KMLcolorbar('fileName',KML_testdir('KMLcolorbar_test'),'colorMap',hsv,'clim',[-2 2]);
 catch
-    testresult = false;
+   testresult = false;
 end

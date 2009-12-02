@@ -63,6 +63,10 @@ function KMLfig2png_alpha(directory,factor)
    
    nfile = length(list);
    
+ if nfile==0
+    disp(['No png files in ',directory])
+ else
+   
    for ifile=1:nfile
    
       disp([num2str(ifile),'/',num2str(nfile)])
@@ -72,5 +76,7 @@ function KMLfig2png_alpha(directory,factor)
       imwrite(im,[directory,filesep,list(ifile).name],'alpha',alpha)
    
    end
+   
+ end   
 
 %% EOF

@@ -93,6 +93,7 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 % see if height is defined
 
 OPT.fileName      = [];
+OPT.description   = '';
 OPT.kmlName       = [];
 OPT.lineWidth     = 1;
 OPT.lineColor     = [0 0 0];
@@ -200,8 +201,9 @@ OPT.fid=fopen(OPT.fileName,'w');
 
 %% HEADER
 OPT_header = struct(...
-    'name',OPT.kmlName,...
-    'open',0);
+           'name',OPT.kmlName,...
+           'open',0,...
+    'description',OPT.description);
 output = KML_header(OPT_header);
 
 %% define line and fill  styles

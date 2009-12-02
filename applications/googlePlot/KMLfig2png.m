@@ -72,7 +72,6 @@ OPT.levels          = [-2 2]; % steps to zoom out and zoom in. For levels [-aa b
                               % the number of tiles created is aa+(4/3*4^bb)-1/3.
 OPT.ha              =    gca; % handle to axes
 OPT.hf              =    gcf; % handle to figure
-OPT.h               =      h; % handle to input figure
 OPT.timeIn          =     []; % time properties
 OPT.timeOut         =     [];
 OPT.drawOrder       =     10; 
@@ -82,10 +81,13 @@ OPT.light.az        =   -180; % default light azimuth
 OPT.light.dist      =     60; % default light distance
 OPT.scaleHeight     =   true; % rescale height for zoomlevels. 
 OPT.scaleableLight  =  false; % adds a light that can be scaled (do not add additional lights)
+OPT.colorbar        =      1;
 
 if nargin==0
   return
 end
+
+OPT.h               =      h; % handle to input figure
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
@@ -199,11 +201,18 @@ if succes
 
    OPT.fid=fopen(OPT.fileName,'w');
    OPT_header = struct(...
-       'name',OPT.kmlName,...
+              'name',OPT.kmlName,...
               'open',0,...
        'description',OPT.description);
 
    output = [KML_header(OPT_header) output];
+   
+   % COLORBAR   
+   
+   if OPT.colorbar
+      clrbarstring = KMLcolorbar('clim',clim,'fileName',OPT.fileName,'colorMap',colormap);
+      output = [output clrbarstring];
+   end   
 
    % FOOTER
    

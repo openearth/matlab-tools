@@ -8,27 +8,38 @@ function KML_colorbar(OPT)
    h.fig = figure;
    colormap(OPT.colorMap)
    set(h.fig,'color',OPT.bgcolor./255,'InvertHardcopy','off')
-   if              strcmpi(OPT.orientation,'horizontal') & ...
+   if              strcmpi(OPT.orientation      ,'horizontal') & ...
                    strcmpi(OPT.verticalalignment,'top')
       axes('position',[    OPT.tipmargin 
                        1-  OPT.thickness-OPT.alignmargin
-                       1-2*OPT.tipmargin
-                           OPT.thickness]);
+                       1-2*OPT.tipmargin    % width
+                           OPT.thickness]); % height
                            OPT.XAxisLocation = 'bottom';
-   elseif          strcmpi(OPT.orientation,'horizontal') & ...
+                           OPT.YAxisLocation = 'left'; % dummy
+   elseif          strcmpi(OPT.orientation      ,'horizontal') & ...
                    strcmpi(OPT.verticalalignment,'bottom')
       axes('position',[    OPT.tipmargin 
                            OPT.alignmargin
-                       1-2*OPT.tipmargin
-                           OPT.thickness]);
+                       1-2*OPT.tipmargin    % width
+                           OPT.thickness]); % height
                            OPT.XAxisLocation = 'top';
+                           OPT.YAxisLocation = 'left'; % dummy
    elseif          strcmpi(OPT.orientation       ,'vertical') & ...
                    strcmpi(OPT.horizonalalignment,'right')
-      axes('position',[1-  OPT.thickness-OPT.alignmargin ...
-                           OPT.tipmargin ...
-                           OPT.thickness...
-                       1-2*OPT.tipmargin]);
+      axes('position',[1-  OPT.thickness-OPT.alignmargin
+                           OPT.tipmargin
+                           OPT.thickness    % width
+                       1-2*OPT.tipmargin]); % height
                            OPT.XAxisLocation = 'bottom'; % dummy
+                           OPT.YAxisLocation = 'left';
+   elseif          strcmpi(OPT.orientation       ,'vertical') & ...
+                   strcmpi(OPT.horizonalalignment,'left')
+      axes('position',[    OPT.alignmargin
+                           OPT.tipmargin
+                           OPT.thickness    % width
+                       1-2*OPT.tipmargin]); % height
+                           OPT.XAxisLocation = 'bottom'; % dummy
+                           OPT.YAxisLocation = 'right';
    else
       error('KMLcolorbar')
    end
@@ -37,6 +48,7 @@ function KML_colorbar(OPT)
    set   (h.c,'xcolor'       ,OPT.fontcolor)
    set   (h.c,'ycolor'       ,OPT.fontcolor)
    set   (h.c,'XAxisLocation',OPT.XAxisLocation);
+   set   (h.c,'YAxisLocation',OPT.YAxisLocation);
    delete(h.ax)
    box on
    print ([OPT.fileName,'.png'],'-dpng')

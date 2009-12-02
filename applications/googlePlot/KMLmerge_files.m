@@ -1,16 +1,25 @@
-function KMLmerge_files(varargin)
+function varargout = KMLmerge_files(varargin)
+%KMLMERGE_FILES   Merges all KML files in a certain directory
 %
-% Merges all KML files in a certain directory
+%   kmlmerge_files(<keyword,value>)
+%
+% Merges all KML files in a certain directory.
 %
 %See also: googlePLot
 
 OPT.fileName          = [];
 OPT.kmlName           = [];
 OPT.sourceFiles       = [];
+OPT.description       = '';
 OPT.deleteSourceFiles = false;
 
 %% set properties
 [OPT, Set, Default] = setProperty(OPT, varargin{:});
+
+if nargin==0 & nargout==1
+    varargout = {OPT};
+    return
+end
 
 %% source files
 if isempty(OPT.sourceFiles)
@@ -38,7 +47,8 @@ end
 %% Write the new file
 fid0=fopen(OPT.fileName,'w');
 OPT_header = struct(...
-    'name',OPT.kmlName);
+       'name',OPT.kmlName,...
+'description',OPT.description);
 fprintf(fid0,'%s',KML_header(OPT_header));
 
 for ii = 1:length(OPT.sourceFiles)
