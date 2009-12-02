@@ -207,7 +207,7 @@ elseif type==2&&PopupNR==3
     % get info from database
     objTag='GridsName';
     
-    intervals = [1:10*12];
+    intervals = [1:100*12];
 
     for i = 1:max(size(intervals))
         string{i}=intervals(i);
