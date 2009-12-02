@@ -22,12 +22,26 @@ set(OPT.ha,'XLim',[c.W - c.dWE c.E + c.dWE]);
 
 % scale height to preserve lighting effects for different zoom levels
 if OPT.scaleHeight
-    zdata = get(OPT.h ,'ZDATA');
     clim  = get(OPT.ha,'CLim');
     scale = (OPT.c0.N - OPT.c0.S)/(c.N - c.S + 2*c.dNS);
-    set(OPT.h ,'ZDATA',zdata.*scale);
     set(OPT.ha,'CLim' ,clim .*scale);
+else
+    scale = 1;
 end
+
+if OPT.cropping
+    R = G.lon>=(c.W - c.dWE) & G.lon<=c.E + c.dWE &...
+        G.lat>=(c.S - c.dNS) & G.lat<=c.N + c.dNS;
+    set(OPT.h,'ZDATA',G.z  (any(R'),any(R)).*scale,...
+              'XDATA',G.lon(any(R'),any(R)),...
+              'YDATA',G.lat(any(R'),any(R)))
+else
+    if OPT.scaleHeight
+        set(OPT.h,'ZDATA',G.z.*scale)
+    end
+end
+
+
 % also set appropriate lightangle
 if OPT.scaleableLight
     lightangle(OPT.light.h,OPT.light.az,OPT.light.dist);
@@ -44,7 +58,6 @@ mask = bsxfun(@eq,im,reshape(bgcolor,1,1,3));
 
 % rescale height
 if OPT.scaleHeight
-    set(OPT.h ,'ZDATA',zdata);
     set(OPT.ha,'CLim' ,clim );
 end
 
@@ -55,7 +68,15 @@ if all(all(mask,3))
     succes = false;
     return
 end
-imwrite(im,PNGfileName,'Alpha',OPT.alpha*ones(size(mask(:,:,1))).*(1-double(all(mask,3))),'Author','$HeadURL$'); % NOT 'Transparency' as non-existent pixels have alpha = 0
+
+% now move image around to color transparent pixels with the value of the
+% nearest neighbour.
+im2 = bsxfun(@max,bsxfun(@max,im([1 1:end-1],[1 1:end-1],1:3),im([2:end end],[1 1:end-1],1:3)),...
+bsxfun(@max,im([2:end end],[2:end end],1:3),im([1 1:end-1],[2:end end],1:3)));
+im(mask) = im2(mask);
+
+imwrite(im,PNGfileName,'Alpha',OPT.alpha*ones(size(mask(:,:,1))).*(1-double(all(mask,3))),...
+    'Author','$HeadURL$'); % NOT 'Transparency' as non-existent pixels have alpha = 0
 
 if level==OPT.levels(1)
     minLod = OPT.minLod0;

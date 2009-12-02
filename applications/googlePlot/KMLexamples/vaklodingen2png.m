@@ -5,7 +5,7 @@
 outputDir               = 'D:\KML\Vaklodingen';
 url                     = vaklodingen_url;
 EPSG                    = load('EPSG');
-time_at_starting_script = datenum('2009-11-01');%datestr(now,'yyyy-mm-dd');
+time_at_starting_script = datenum('2009-12-14');%datestr(now,'yyyy-mm-dd');
 
 for ii = 1:length(url);
     [path, fname] = fileparts(url{ii});

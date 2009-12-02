@@ -82,6 +82,7 @@ OPT.light.dist      =     60; % default light distance
 OPT.scaleHeight     =   true; % rescale height for zoomlevels. 
 OPT.scaleableLight  =  false; % adds a light that can be scaled (do not add additional lights)
 OPT.colorbar        =      1;
+OPT.cropping        =   true; % crops data off of the figure when zooming in, to make it render faster
 
 if nargin==0
   return
