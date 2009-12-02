@@ -4,10 +4,40 @@ function UCIT_plotSandBalance(OPT, results, Volumes)
 if strcmp(OPT.datatype,'jarkus'),datatype = 'Jarkus';,end
 if strcmp(OPT.datatype,'vaklodingen'),datatype = 'Vaklodingen';,end
 
+%% Overview plot of used datapoints for method 2
+nameInfo=['UCIT - used data points for method 2'];
+fh = figure('tag','dpPlot'); clf; ah=axes;
+set(fh,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
+[fh,ah] = UCIT_prepareFigureN(0, fh, 'UL', ah);
+UCIT_plotLandboundary(datatype,0)
+hold on;
+load(['datafiles' filesep 'timewindow = ' num2str(OPT.timewindow) filesep results.polyname '_' num2str(OPT.inputyears(1),'%04i') '_1231.mat']);
+
+d.id = OPT.id*2;
+d.id((OPT.id==0)) = nan;
+
+pcolorcorcen(d.X,d.Y,d.id*2);view(2);shading interp;
+
+% text
+title(['Used data points for method 2 ' strrep(results.polyname,'_',' ') ' (' OPT.datatype ')']); 
+
+% set axis
+axis tight
+box on
+axis equal
+set(gca,'fontsize', 8 );
+ylabel('Northing [m]');
+xlabel('Easting [m]');
+set(gca,'Xlim',[d.X(1,1) d.X(1,end)]);
+set(gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
+
+% save figure
+print(fh,'-dpng',['results' filesep 'timewindow = ' num2str(OPT.timewindow) filesep 'ref=' num2str(OPT.min_coverage) filesep strrep(results.polyname,'_',' ') '_used_data_points_method_2']);
+
+
 %% Polygon overview plot
 
 nameInfo=['UCIT - Sandbalance polygon plot'];
-
 % if isempty(findobj('tag','sbPlot'))
     fh = figure('tag','sbPlot'); clf; ah=axes;
     set(fh,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
