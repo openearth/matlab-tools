@@ -151,7 +151,10 @@ for j = 1:length(nam)
         continue
     end
     for i = 1:XB.Output.nt
-        temp(:,:,i) = fread(fid,[XB.Output.nx,XB.Output.ny],'double');  % all data
+        data = fread(fid,[XB.Output.nx,XB.Output.ny],'double');
+        if sum(abs(size(data) - size(temp(:,:,i)))) == 0 % check dimensions of data
+            temp(:,:,i) = data;  % all data
+        end
     end
     fclose(fid);
     [dummy name] = fileparts(nam{j});
