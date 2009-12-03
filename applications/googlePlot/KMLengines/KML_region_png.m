@@ -55,7 +55,7 @@ print(OPT.hf,'-dpng','-r1',PNGfileName);
 im   = imread(PNGfileName);
 im   = im(OPT.dimExt+1:OPT.dimExt+dim,OPT.dimExt+1:OPT.dimExt+dim,:);
 mask = bsxfun(@eq,im,reshape(bgcolor,1,1,3));
-
+mask = repmat(all(mask,3),[1 1 3]);
 % rescale height
 if OPT.scaleHeight
     set(OPT.ha,'CLim' ,clim );
@@ -72,7 +72,7 @@ end
 % now move image around to color transparent pixels with the value of the
 % nearest neighbour.
 im2 = bsxfun(@max,bsxfun(@max,im([1 1:end-1],[1 1:end-1],1:3),im([2:end end],[1 1:end-1],1:3)),...
-bsxfun(@max,im([2:end end],[2:end end],1:3),im([1 1:end-1],[2:end end],1:3)));
+                  bsxfun(@max,im([2:end end],[2:end end],1:3),im([1 1:end-1],[2:end end],1:3)));
 im(mask) = im2(mask);
 
 imwrite(im,PNGfileName,'Alpha',OPT.alpha*ones(size(mask(:,:,1))).*(1-double(all(mask,3))),...
