@@ -20,6 +20,8 @@ function BSS = BrierSkillScore(xc, zc, xm, zm, x0, z0, varargin)
 %       'lower_threshold' : - [] empty for no threshold
 %                           - <lower_threshold> any value to ceil all lower
 %                             values to
+%       'verbose' : - true for displaying messages
+%                   - false for suppressing messages
 %
 %   Output:
 %   BSS =
@@ -69,7 +71,8 @@ function BSS = BrierSkillScore(xc, zc, xm, zm, x0, z0, varargin)
 %%
 OPT = struct(...
     'equidistant', false,... % either false or # gridcells
-    'lower_threshold', []);
+    'lower_threshold', [],...
+    'verbose', true);
 
 if ~isempty(varargin) && ischar(varargin{1})
     OPT = setProperty(OPT, varargin{:});
@@ -128,6 +131,8 @@ BSS = 1. - (mse_p/mse_0);
 %% apply lower threshold
 below_threshold = BSS < OPT.lower_threshold;
 if any(below_threshold)
-    disp(['Replaced Brier Skill Score <' num2str(OPT.lower_threshold) ' with a skill score of ' num2str(OPT.lower_threshold)]);
+    if OPT.verbose
+        disp(['Replaced Brier Skill Score <' num2str(OPT.lower_threshold) ' with a skill score of ' num2str(OPT.lower_threshold)]);
+    end
     BSS(below_threshold) = OPT.lower_threshold;
 end
