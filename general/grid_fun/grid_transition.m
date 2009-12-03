@@ -153,9 +153,9 @@ for ni = n
             stage = 2;
         end
         
-        % check whether lower limit has reached almost zero and the risk of
-        % an infinite loop is high
-        if fj(1) < OPT.precision
+        % check whether lower limit has reached almost zero or infinity and
+        % the risk of an infinite loop is high
+        if fj(1) < OPT.precision || any(isinf(fj)) || any(isnan(fj)) || diff(fj) < OPT.precision
             fj = [Inf Inf];
             break;
         end
