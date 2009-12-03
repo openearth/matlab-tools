@@ -65,6 +65,8 @@ function [curvatures radii relativeAngle distances] = jarkus_deriveCurvature(var
 %                                     possibly curvatures (default: false)
 %                 verbose           = flag to enable progress bar (default:
 %                                     false)
+%                 christmas         = flag to enable all visual effects
+%                                     (default: false)
 %
 %   Output:
 %   curvatures      = array of curvatures in degrees per kilometer
@@ -140,10 +142,18 @@ OPT = struct( ...
     'order', true, ...
     'plot', false, ...
     'plotMap', false, ...
-    'verbose', false ...
+    'verbose', false, ...
+    'christmas', false ...
 );
 
 OPT = setProperty(OPT, varargin{:});
+
+% show all
+if OPT.christmas
+    OPT.plot = true;
+    OPT.plotMap = true;
+    OPT.verbose = true;
+end
 
 if OPT.verbose; wb = waitbar(0, 'Initializing'); end;
 
@@ -367,19 +377,21 @@ if OPT.plot
     if ~isempty(error); plot(s3,abs(curvatures)+error,':b'); plot(s3,abs(curvatures)-error,':b'); end;
 
     % set plot settings
-    set(s1,'YLim',[0 OPT.angleThreshold]); title(s1,'relative angle'); xlabel(s1,'jarkus nr [-]'); ylabel(s1,'angle [^o]');
-    set(s2,'YLim',[0 OPT.distanceThreshold]); title(s2,'relative distance'); xlabel(s2,'jarkus nr [-]'); ylabel(s2,'distance [m]');
-    set(s3,'YLim',[0 180/pi/OPT.Rmin*1000]); title(s3,['curvature (error: ' num2str(mean(error)) ')']); xlabel(s3,'jarkus nr [-]'); ylabel(s3,'curvature [^o/km]');
+    set(s1,'YLim',[0 min(OPT.angleThreshold,max(relativeAngle))]); title(s1,'relative angle'); xlabel(s1,'jarkus nr [-]'); ylabel(s1,'angle [^o]');
+    set(s2,'YLim',[0 min(OPT.distanceThreshold,max(distances))]); title(s2,'relative distance'); xlabel(s2,'jarkus nr [-]'); ylabel(s2,'distance [m]');
+    set(s3,'YLim',[0 min(180/pi/OPT.Rmin*1000,max(curvatures))]); title(s3,['curvature (error: ' num2str(mean(error)) ')']); xlabel(s3,'jarkus nr [-]'); ylabel(s3,'curvature [^o/km]');
 
     % FIXME
     % indicate areacode borders
-    areas = [113 285 486 590 848 1142 1307 1441 1562 1636 1755 1865 1873 1893 2088 2178];
-    areas = areas(areas >= transectRange(1) & areas <= transectRange(end)) - transectRange(1) + 1;
-    
-    if ~isempty(areas)
-        plot(s1,ones(2,1)*areas,[0 OPT.angleThreshold],'Color','k','LineStyle',':');
-        plot(s2,ones(2,1)*areas,[0 OPT.distanceThreshold],'Color','k','LineStyle',':');
-        plot(s3,ones(2,1)*areas,[0 180/pi/OPT.Rmin*1000],'Color','k','LineStyle',':');
+    if OPT.order
+        areas = [113 285 486 590 848 1142 1307 1441 1562 1636 1755 1865 1873 1893 2088 2178];
+        areas = areas(areas >= transectRange(1) & areas <= transectRange(end)) - transectRange(1) + 1;
+        
+        if ~isempty(areas)
+            plot(s1,ones(2,1)*areas,get(s1,'YLim'),'Color','k','LineStyle',':');
+            plot(s2,ones(2,1)*areas,get(s2,'YLim'),'Color','k','LineStyle',':');
+            plot(s3,ones(2,1)*areas,get(s3,'YLim'),'Color','k','LineStyle',':');
+        end
     end
 
     % plot maximum curvature known in current regulations
