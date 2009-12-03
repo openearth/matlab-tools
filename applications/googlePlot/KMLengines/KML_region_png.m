@@ -71,8 +71,12 @@ end
 
 % now move image around to color transparent pixels with the value of the
 % nearest neighbour.
-im2 = bsxfun(@max,bsxfun(@max,im([1 1:end-1],[1 1:end-1],1:3),im([2:end end],[1 1:end-1],1:3)),...
-                  bsxfun(@max,im([2:end end],[2:end end],1:3),im([1 1:end-1],[2:end end],1:3)));
+im2      = im;
+im(mask) = 0;
+
+im2 = bsxfun(@max,bsxfun(@max,im2([1 1:end-1],[1 1:end-1],1:3),im2([2:end end],[1 1:end-1],1:3)),...
+                  bsxfun(@max,im2([2:end end],[2:end end],1:3),im2([1 1:end-1],[2:end end],1:3)));
+                  
 im(mask) = im2(mask);
 
 imwrite(im,PNGfileName,'Alpha',OPT.alpha*ones(size(mask(:,:,1))).*(1-double(all(mask,3))),...
