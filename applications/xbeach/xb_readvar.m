@@ -12,13 +12,14 @@ function Vardata=xb_readvar(fname,XBdims)
 % Created 19-06-2008 : XBeach-group Delft
  
 if (length(fname)>9 && strcmp(fname(end-8:end), '_mean.dat'))
-    nt=XBdims.ntm;
+    nt  = XBdims.ntm;
 else
-    nt=XBdims.nt;
+    nt  = XBdims.nt;
 end
-fid=fopen(fname,'r');
-Vardata=zeros(XBdims.nx+1,XBdims.ny+1,nt);
-for i=1:nt
-    Vardata(:,:,i)=fread(fid,size(XBdims.x),'double');
+
+fid     = fopen(fname,'r');
+Vardata = zeros(XBdims.nx+1,XBdims.ny+1,nt);
+for i   = 1:nt
+    Vardata(:,:,i) = fread(fid,size(XBdims.x),'double');
 end
 fclose(fid)
