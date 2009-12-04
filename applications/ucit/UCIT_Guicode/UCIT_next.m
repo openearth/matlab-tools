@@ -86,7 +86,7 @@ if ~isempty(findobj('tag','plotWindowMKL'))
 end
 
 if ~isempty(findobj('tag','plotWindowTKL'))
-    calculateTKL
+    UCIT_calculateTKL
 end
 
 if ~isempty(findobj('tag','plotWindowTimestack'))
