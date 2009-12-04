@@ -53,7 +53,11 @@ function D = meris_WaterInsight_load(fname)
 
 %% Add known meta info
 
-   D.timezone                     = '+00:00'; % GMT
+   D.institution                 = 'WaterInsight';
+   D.references                  = 'http://www.waterinsight.nl';
+   D.email                       = 'info@waterinsight.nl';
+
+   D.timezone                    = '+00:00'; % GMT
    D.epsg                        = 4326;      % wgs84
    D.longitude_of_prime_meridian = 0.0;       % http://www.epsg-registry.org/
    D.semi_major_axis             = 6378137.0;
@@ -67,6 +71,28 @@ function D = meris_WaterInsight_load(fname)
    D = mergestructs(D,load([filepathstr(D.filename),filesep,D.basename,'_hydropt74.mat']));
    D = mergestructs(D,load([filepathstr(D.filename),filesep,D.basename,'_l2flags.mat'  ]));
    D = mergestructs(D,load([filepathstr(D.filename),filesep,D.basename,'_latlon.mat'   ]));
+   
+%% processing meta info
+
+   D.metaData.SIOP = '>CLASSIFIED<';
+   
+%% Change field names to match those of IVMMoS2
+
+   D.lon          = D.biglon;
+   D.lat          = D.biglat;
+  %D.?            = D.c (:,:,1);
+  %D.?_std_err    = D.dc(:,:,1);
+   D.Chla         = D.c (:,:,2);
+   D.Chla_std_err = D.dc(:,:,2);
+   D.TSM          = D.c (:,:,3);
+   D.TSM_std_err  = D.dc(:,:,3);
+   D.CDOM         = D.c (:,:,4);
+   D.CDOM_std_err = D.dc(:,:,4);
+   
+   D = rmfield(D,'biglon');
+   D = rmfield(D,'biglat');
+   D = rmfield(D,'c'     );
+   D = rmfield(D,'dc'    );
 
 %% Append meta-info
 %  http://www.mumm.ac.be/OceanColour/Sensors/meris.php

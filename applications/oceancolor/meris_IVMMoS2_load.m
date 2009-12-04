@@ -51,7 +51,11 @@ function D = meris_IVMMoS2_load(fname)
 
 %% Add known meta info
 
-   D.timezone                     = '+00:00'; % GMT
+   D.institution                 = 'IVM';
+   D.references                  = 'http://www.vu.nl/ivm';
+   D.email                       = 'marieke.eleveld@ivm.vu.nl';
+   
+   D.timezone                    = '+00:00'; % GMT
    D.epsg                        = 4326;      % wgs84
    D.longitude_of_prime_meridian = 0.0;       % http://www.epsg-registry.org/
    D.semi_major_axis             = 6378137.0;
@@ -65,10 +69,19 @@ function D = meris_IVMMoS2_load(fname)
    load([filepathstr(D.filename),filesep,D.basename,'_deltares.mat']);
    D = mergestructs(D,d);
    clear 'd';
-%   D = mergestructs(D,load([filepathstr(D.filename),filesep,D.basename,'_hydropt74.mat']));
-%   D = mergestructs(D,load([filepathstr(D.filename),filesep,D.basename,'_l2flags.mat'  ]));
-%   D = mergestructs(D,load([filepathstr(D.filename),filesep,D.basename,'_latlon.mat'   ]));
 
+%% Processing meta info
+
+   D.metaData.T          = [0 1 1 1]);
+   D.metaData.Ci	 = [1 5 5 0.3000]);
+   D.metaData.b		 = [1 2 3 4 5 6 7 9]);
+   D.metaData.Fdiff	 = 0.4000);
+   D.metaData.method	 = 1);
+   D.metaData.errormodel = 0);
+   D.metaData.maxIter	 = 100);
+   D.metaData.SIOP	 = 'NEWSIOP2006_5_ASnHGnPCD113yBIy'); % ME NEWSIOP2006_5_ASnHGnPCD113yBIy
+   D.metaData.fName	 = 'C:\Bio-Opti\AAN\LUT16.dat');
+   
 %% Append meta-info
 %  http://www.mumm.ac.be/OceanColour/Sensors/meris.php
 
