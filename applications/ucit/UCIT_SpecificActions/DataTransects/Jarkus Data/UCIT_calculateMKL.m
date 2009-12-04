@@ -49,7 +49,7 @@ d = jarkus_readTransectDataNetcdf(url, UCIT_getInfoFromPopup('TransectsArea'),UC
 
 if ~all(isnan(d.ze))
     %% prepare plot
-    nameInfo=['UCIT - Volume analysis - ', 'Area: ', d.area, '  Transect: ', d.transectID,'  Year: ', num2str(d.year)];
+    nameInfo=['UCIT - MKL analysis - ', 'Area: ', d.area, '  Transect: ', d.transectID,'  Year: ', num2str(d.year)];
 
     guiH=findobj('tag','UCIT_mainWin');
     if ~isempty(guiH)
@@ -114,17 +114,20 @@ if ~all(isnan(d.ze))
 
     xlabel('Cross shore distance [m]');
     ylabel('Elevation [m to datum]', 'Rotation', 270, 'VerticalAlignment', 'top');
-    title({'Momentane Coastline Position (MKL)',['Area: ', d.area, '  Transect: ', d.transectID,'  Year: ',num2str(d.year)]});
+%     title({'Momentane Coastline Position (MKL)',['Area: ', d.area, '  Transect: ', d.transectID,'  Year: ',num2str(d.year)]});
+
+    
+    title(['MKL for targetyear ',num2str(d.year),' : ' num2str(MKL, '%4.0f'), ' m to RSP-line'], 'fontsize', 9, 'fontweight','bold');
 
     % plot MKL result
-
-    ax = axis;
-    x = d.xe(~isnan(d.ze));z = d.ze(~isnan(d.ze));
-    axis([min(d(1).xi(~isnan(d(1).ze))) max(d(1).xi(~isnan(d(1).ze))) min(z)-1 35]);
-    MKLtext = text(0.6*ax(2),0.8*ax(4),['MKL: ', num2str(MKL,'%3.1f'), ' m to RSP-line']);
-    set(MKLtext,...
-        'FontSize',8,...
-        'fontweight','bold');
+ 
+     ax = axis;
+     x = d.xe(~isnan(d.ze));z = d.ze(~isnan(d.ze));
+     axis([min(d(1).xi(~isnan(d(1).ze))) max(d(1).xi(~isnan(d(1).ze))) min(z)-1 35]);
+%     MKLtext = text(0.6*ax(2),0.8*ax(4),['MKL: ', num2str(MKL,'%3.1f'), ' m to RSP-line']);
+%     set(MKLtext,...
+%         'FontSize',8,...
+%         'fontweight','bold');
     set(gca,'xdir','reverse')
 
     % varargin = { ...
