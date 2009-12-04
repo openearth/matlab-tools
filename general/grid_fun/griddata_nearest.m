@@ -1,9 +1,9 @@
-function ZI = griddata_nearest(X,Y,Z,XI,YI)
+function ZI = griddata_nearest(X,Y,Z,XI,YI,varargin)
 %GRIDDATA_NEAREST Data gridding and surface fitting.
 %
-%     ZI = GRIDDATA_NEAREST(X,Y,Z,XI,YI) 
+%     ZI = griddata_nearest(X,Y,Z,XI,YI) 
 %
-%   fits a surface of the form Z = F(X,Y) to the
+%   GRIDDATA_NEAREST fits a surface of the form Z = F(X,Y) to the
 %   data in the (usually) nonuniformly-spaced vectors (X,Y,Z). GRIDDATA_NEAREST
 %   interpolates this surface at the points specified by (XI,YI) to produce
 %   ZI.  The surface always goes through the data points. XI and YI are
@@ -22,7 +22,7 @@ function ZI = griddata_nearest(X,Y,Z,XI,YI)
 %    i) GRIDDATA leads to gives DELAUNAY triangulation errors.
 %   ii) laaarge X and Y matrixes lead to MEMORY issues in GRIDDATA
 %
-%See also: GRIDDATA
+%See also: GRIDDATA, INTERP2, BIN2
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -60,17 +60,26 @@ function ZI = griddata_nearest(X,Y,Z,XI,YI)
 % TO DO: find closest of 3 points and interpolate value using
 %        analytical fit of linear surface (if inside the triangle), 
 %        or use inverse distance
-
 % TO DO: throw away any points outside (note: they can be nearest !!)
-
-
+% TO DO: make space varying Rmax official ? 
    OPT.ndisp = 100;
+   OPT.Rmax  = Inf; % make this optionally same size as X and Y.
+ % Rmax      = [];
+ % 
+ % if ~odd(nargin)
+ %    Rmax     = varargin{1};
+ %    nextarg  = 2;
+ % else
+      nextarg  = 1;
+ % end
+   
+   OPT  = setProperty(OPT,varargin{nextarg:end})
 
    ZI   = repmat(NaN,(size(XI)));
    R    = repmat(NaN,(size(X )));
    npix = length(XI(:));
 
-   for ipix = 1:npix
+   for ipix = 1:npix % index in new (orthogonal) grid
    
       R = sqrt((XI(ipix) - X).^2 + ...
                (YI(ipix) - Y).^2);
@@ -79,11 +88,20 @@ function ZI = griddata_nearest(X,Y,Z,XI,YI)
       % * update R with the distance between  XI(ipix) and XI(ipix+1), or is min() the slowest process?
       % * do not use pixel by pixel but use larger chunks
       
-      [pix.distance,pix.index] = min(R(:));
+      [pix.distance,pix.index] = min(R(:)); % index in old (random point) grid
+      
+    % if ~isempty(Rmax);
+    %    OPT.Rmax = Rmax(pix.index); % locally varying max distance
+    % end
+      
+      if (pix.distance < OPT.Rmax)
       ZI(ipix)                 = Z(pix.index);
-
-      if mod(ipix,floor(npix/OPT.ndisp))==0
-      disp(['processed ',num2str(100.*ipix./npix),' % in ',num2str(toc),' s'])
+     %else
+     %NaN
+      end
+      
+      if mod(ipix-1,floor(npix/OPT.ndisp))==0 
+      disp(['processed ',num2str(100.*ipix./npix,'%0.2f'),' % in ',num2str(toc,'%0.2f'),' s'])
       end
 
    end
