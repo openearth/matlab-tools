@@ -49,9 +49,14 @@ function nan = KMLcolorbar_test()
 %% $Description (Name = KMLpcolor)
 % Publishable code that describes the test.
 
+h.fig = figure;
+OPT.colormap = hsv;
+try;close(h.fig);end
+
 %% $RunCode
 try
-   KMLcolorbar('fileName',KML_testdir('KMLcolorbar_test'),'colorMap',hsv,'clim',[-2 2]);
+  KMLcolorbar('fileName',KML_testdir('KMLcolorbar_test_halo'   ),'colorMap',OPT.colormap,'clim',[-2 2],'halo',1);
+  KMLcolorbar('fileName',KML_testdir('KMLcolorbar_test_vanilla'),'colorMap',OPT.colormap,'clim',[-2 2],'halo',0);
 catch
    testresult = false;
 end

@@ -95,8 +95,8 @@ OPT.h               =      h; % handle to input figure
 %% set maxLod and minLod defaults
 
 if isempty(OPT.minLod),                 OPT.minLod =   OPT.dim/1.5; end
-if isempty(OPT.maxLod)&&OPT.alpha  < 1, OPT.maxLod = 2*OPT.dim/1.5; end
-if isempty(OPT.maxLod)&&OPT.alpha == 1, OPT.maxLod = 4*OPT.dim/1.5; end
+if isempty(OPT.maxLod)&&OPT.alpha  < 1, OPT.maxLod = 2*OPT.dim/1.5; end % you see 1 layers always
+if isempty(OPT.maxLod)&&OPT.alpha == 1, OPT.maxLod = 4*OPT.dim/1.5; end % you see 2 layers, except when fully zoomed in
 
 %% filename
 % gui for filename, if not set yet

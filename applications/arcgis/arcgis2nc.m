@@ -62,11 +62,11 @@ function varargout = arcgis2nc(ncfile,D,varargin)
 
 %% User defined meta-info
 
-   OPT.varname        = 'val';
+   OPT.varname        = 'val'; % consistent with default ArcGisRead
    OPT.long_name      = '';
    OPT.standard_name  = '';
    OPT.units          = '';
-   OPT.epsg           = [];  % if specified, (lat,lon) are added
+   OPT.epsg           = []; % if specified, (lat,lon) are added
    OPT.type           = []; % [] = auto, single or double
    OPT.latitude_type  = 'double'; % 'double' % 'single'
    OPT.longitude_type = 'double'; % 'double' % 'single'
@@ -80,7 +80,7 @@ function varargout = arcgis2nc(ncfile,D,varargin)
    OPT.email          = '';
    OPT.comment        = '';
    OPT.version        = '';
-   OPT.acknowledge    = 'These data can be used freely for research purposes provided that the following source is acknowledged: ?';
+   OPT.acknowledge    =['These data can be used freely for research purposes provided that the following source is acknowledged: ',OPT.institution];
    OPT.disclaimer     = 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
 
    if nargin==0;D = OPT;return;end; % make function act as object
@@ -100,7 +100,7 @@ function varargout = arcgis2nc(ncfile,D,varargin)
    
       %% Add overall meta info
       %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
-      %------------------
+      % ------------------
    
       nc_attput(outputfile, nc_global, 'title'         , OPT.title);
       nc_attput(outputfile, nc_global, 'institution'   , OPT.institution);
@@ -130,12 +130,12 @@ function varargout = arcgis2nc(ncfile,D,varargin)
    
       %% Coordinate system
       %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#appendix-grid-mappings
-      %------------------
+      % ------------------
       
       % TO DO, based on OPT.epsg
    
       %% Local Cartesian coordinates
-      %------------------
+      % ------------------
 
         ifld = ifld + 1;
       nc(ifld).Name         = 'x_cen';
@@ -160,16 +160,16 @@ function varargout = arcgis2nc(ncfile,D,varargin)
       end
 
       %% Latitude-longitude
-      %------------------
+      % ------------------
       
       if ~isempty(OPT.epsg)
       
-      %c calculate per row because of memeroy issues for large matrices
+      % calculate per row because of memeroy issues for large matrices
      [x    ,y    ] = meshgrid(D.x,D.y);
       D.lon        = repmat(nan,size(D.(OPT.varname)));
       D.lat        = repmat(nan,size(D.(OPT.varname)));
       
-       %consider as 1D matrix and do section bys ection
+      % compromise: consider 2D matrix as 1D vector and do section by section
       
       if    OPT.convertperline
       for ii=1:size(D.lat,1)
@@ -184,7 +184,7 @@ function varargout = arcgis2nc(ncfile,D,varargin)
       
       %% Longitude
       % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
-      %------------------
+      % ------------------
 
         ifld = ifld + 1;
       nc(ifld).Name         = 'longitude_cen';
@@ -197,7 +197,7 @@ function varargout = arcgis2nc(ncfile,D,varargin)
 
       %% Latitude
       % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
-      %------------------
+      % ------------------
 
         ifld = ifld + 1;
       nc(ifld).Name         = 'latitude_cen';
@@ -212,10 +212,10 @@ function varargout = arcgis2nc(ncfile,D,varargin)
 
       %% Parameters with standard names
       % * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
-      %------------------
+      % ------------------
    
       %% Define dimensions in this order:
-      %  time,z,y,x
+      %  time,z,y,x (note: snctools swaps)
 
         ifld = ifld + 1;
       nc(ifld).Name         = OPT.varname;

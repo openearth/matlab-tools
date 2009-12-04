@@ -1,7 +1,7 @@
 function odv2nc
-%ODV2NC  transforms directory of ODV CDT casts into directory of NetCDF files
+%ODV2NC  transforms directory of ODV CTD casts into directory of netCDF files
 %
-%     ODV2NC(<keyword,value>) 
+%     odv2nc(<keyword,value>) 
 %
 %  where the following <keyword,value> pairs have been implemented:
 %
@@ -15,8 +15,8 @@ function odv2nc
 %   * pause          pause between files (default 0)
 %
 % Example:
-%  odv2nc('directory_raw','',...
-%         'directory_nc', '')
+%  odv2nc('directory_raw','F:\foo\raw',...
+%         'directory_nc', 'F:\foo\processed')
 %
 %See also: OceanDataView
 
@@ -47,7 +47,7 @@ function odv2nc
 
 %% Keyword,value
 
-  %OPT = setProperty(OPT,varargin{:});
+   OPT = setProperty(OPT,varargin{:});
 
 %% File loop
 
@@ -55,19 +55,19 @@ function odv2nc
    
 %% 0 Read raw data
 
-for ifile=1:length(OPT.files)
+   for ifile=1:length(OPT.files)
+      
+      OPT.filename = OPT.files(ifile).name;
+   	
+      disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)])
    
-   OPT.filename = OPT.files(ifile).name;
-	
-   disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)])
-
-   R(ifile)   = odvread([OPT.directory_raw,filesep,OPT.filename]);
+      R(ifile)   = odvread([OPT.directory_raw,filesep,OPT.filename]);
+      
+   end
    
-end
-   
-%-%disp('saving mat of R ...'); % slow, and bigger than D
-%-%save('usergd30d98-data_centre630-260409_result.mat','R')
-%-%load('usergd30d98-data_centre630-260409_result.mat','R')
+   %-%disp('saving mat of R ...'); % slow, and bigger than D
+   %-%save('usergd30d98-data_centre630-260409_result.mat','R')
+   %-%load('usergd30d98-data_centre630-260409_result.mat','R')
    
 %% 0 Transform raw data
 
@@ -75,9 +75,9 @@ end
    D.version  = '0';
    D.timezone = 'GMT';
    
-%-%disp('saving mat of D ...')
-%-%save('usergd30d98-data_centre630-260409_result_matrix.mat','D');
-%-%load('usergd30d98-data_centre630-260409_result_matrix.mat','D');
+   %-%disp('saving mat of D ...')
+   %-%save('usergd30d98-data_centre630-260409_result_matrix.mat','D');
+   %-%load('usergd30d98-data_centre630-260409_result_matrix.mat','D');
    
    D.cruise           = char(D.cruise) ;
    D.station          = char(D.station); 
@@ -85,7 +85,7 @@ end
    D.LOCAL_CDI_ID     = char(D.LOCAL_CDI_ID);
    D.EDMO_code        = char(D.EDMO_code);
 
-%% 1a Create file
+%% 1a Create netCDF file
 
    outputfile    = [OPT.directory_nc filesep OPT.prefix,'.nc'];
    
@@ -93,7 +93,7 @@ end
 
    %% Add overall meta info
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
-   %------------------
+   % ------------------
 
    nc_attput(outputfile, nc_global, 'title'         , 'CTD casts');
    nc_attput(outputfile, nc_global, 'institution'   , 'NIOZ');
@@ -199,7 +199,7 @@ end
   %nc(ifld).Attribute(5) = struct('Name', 'bounds'         ,'Value', '');
    
    %% Longitude
-   % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
+   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
    
       ifld = ifld + 1;
    nc(ifld).Name         = 'lon';
@@ -210,7 +210,7 @@ end
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'longitude');
     
    %% Latitude
-   % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
+   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
    
       ifld = ifld + 1;
    nc(ifld).Name         = 'lat';
@@ -221,7 +221,7 @@ end
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'latitude');
     
    %% Bottom depth
-   % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
+   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
    
       ifld = ifld + 1;
    nc(ifld).Name         = 'bot_depth';
@@ -232,7 +232,7 @@ end
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', '');
 
    %% Parameters with standard names
-   % * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
+   %  * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
 
       ifld = ifld + 1;
    nc(ifld).Name         = 'pressure';
@@ -291,9 +291,9 @@ end
    end
    
 %% 4 Create variables with attibutes
-% When variable definitons are created before actually writing the
-% data in the next cell, netCDF can nicely fit all data into the
-% file without the need to relocate any info.
+%    When variable definitons are created before actually writing the
+%    data in the next cell, netCDF can nicely fit all data into the
+%    file without the need to relocate any info.
 
    for ifld=1:length(nc)
       if OPT.disp;disp(['adding ',num2str(ifld),' ',nc(ifld).Name]);end
@@ -302,21 +302,21 @@ end
 
 %% 5 Fill variables
 
-   nc_varput(outputfile, 'cruise_id'                  , D.cruise);
-   nc_varput(outputfile, 'station_id'                 , D.station);
-   nc_varput(outputfile, 'type'                       , D.type);
-   nc_varput(outputfile, 'time'                       , D.datenum-OPT.refdatenum);
-   nc_varput(outputfile, 'lon'                        , D.longitude);
-   nc_varput(outputfile, 'lat'                        , D.latitude);
-   nc_varput(outputfile, 'bot_depth'                  , D.bot_depth);
+   nc_varput(outputfile, 'cruise_id'    , D.cruise);
+   nc_varput(outputfile, 'station_id'   , D.station);
+   nc_varput(outputfile, 'type'         , D.type);
+   nc_varput(outputfile, 'time'         , D.datenum-OPT.refdatenum);
+   nc_varput(outputfile, 'lon'          , D.longitude);
+   nc_varput(outputfile, 'lat'          , D.latitude);
+   nc_varput(outputfile, 'bot_depth'    , D.bot_depth);
 
-   nc_varput(outputfile, 'pressure'                   , D.sea_water_pressure);
-   nc_varput(outputfile, 'temperature'                , D.sea_water_temperature);
-   nc_varput(outputfile, 'salinity'                   , D.sea_water_salinity);
-   nc_varput(outputfile, 'fluorescence'               , D.sea_water_fluorescence);
+   nc_varput(outputfile, 'pressure'     , D.sea_water_pressure);
+   nc_varput(outputfile, 'temperature'  , D.sea_water_temperature);
+   nc_varput(outputfile, 'salinity'     , D.sea_water_salinity);
+   nc_varput(outputfile, 'fluorescence' , D.sea_water_fluorescence);
    
-   nc_varput(outputfile, 'LOCAL_CDI_ID'               , D.LOCAL_CDI_ID);
-   nc_varput(outputfile, 'EDMO_code'                  , D.EDMO_code);
+   nc_varput(outputfile, 'LOCAL_CDI_ID' , D.LOCAL_CDI_ID);
+   nc_varput(outputfile, 'EDMO_code'    , D.EDMO_code);
 
 %% 6 Check
 

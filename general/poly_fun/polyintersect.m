@@ -1,26 +1,26 @@
 function  varargout = polyintersect(varargin)
 %POLYINTERSECT  Finds all intersections of 2 polygons.
 %
-% [xr,yr] = POLYINTERSECT(x1,y1,x2,y2)
+%    [xr,yr] = polyintersect(x1,y1,x2,y2)
 %
 % returns all intersections between the line pieces of polygons
 % (x1,y1) and (x2,y2).
 %
-% It calculates analytically any possible intersection if 
-% the line segments would have infinate length, and subsequently
+% POLYINTERSECT calculates analytically any possible intersection 
+% if the line segments would have infinate length, and subsequently
 % discards those intersections that are outside the 
 % support points (begin and end points) of each segment. This 
 % method is in principle fool-proof, (and also works for vertical line segments).
 %
-% Note that whether line 1 or line 2 is longest does not matter
-% (nor for speed, not for solution).
+% Note that whether line 1 or line 2 is longest does 
+% not matter (nor for speed, not for solution).
 % Note that line 1 and line2 can be NaN-separated polygons.
 % Note that for two parallel lines no crossing is returned 
 % (even if they partly overlap).
 %
-% [xr,yr] = POLYINTERSECT(x1,y1,x2,y2,<keyword,value>)
+%    [xr,yr] = polyintersect(x1,y1,x2,y2,<keyword,value>)
 %
-%   where implemented <keyword,value> pairs are:
+% implemented <keyword,value> pairs are:
 %   * debug    :   0, 1 (default) for plot of intersects
 %                  2 for plotting all segments of line 2 one by one.
 %   * disp     :   0, 1 (default) for printing progress to command line
@@ -142,7 +142,7 @@ function  varargout = polyintersect(varargin)
    
    for imesh1=1:line(1).n_meshes
       if OPT.disp
-         disp(['Processing intersect line piece ',num2str(imesh1),' of line 1 with all pieces of line 2.'])
+         disp(['Processing intersect line piece ',num2str(imesh1),' / ',num2str(line(1).n_meshes),' of line 1 with all pieces of line 2.'])
       end
       for imesh2=1:line(2).n_meshes
 

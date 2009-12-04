@@ -5,8 +5,8 @@ function KML_colorbar(OPT)
 %
 %See also: GOOGLEPLOT, KMLcolorbar
 
-   h.fig = figure;
-   colormap(OPT.colorMap)
+   h.fig = figure('Visible','off');
+   colormap(OPT.colorMap);
    set(h.fig,'color',OPT.bgcolor./255,'InvertHardcopy','off')
    if              strcmpi(OPT.orientation      ,'horizontal') & ...
                    strcmpi(OPT.verticalalignment,'top')
@@ -45,8 +45,8 @@ function KML_colorbar(OPT)
    end
    h.ax = gca;
    h.c  = colorbarlegend(gca,[0 1],[0 1],OPT.clim,'ontop',1,'reference','gca','orientation',OPT.orientation);
-   set   (h.c,'xcolor'       ,OPT.fontcolor)
-   set   (h.c,'ycolor'       ,OPT.fontcolor)
+   set   (h.c,'xcolor'       ,OPT.fontrgb)
+   set   (h.c,'ycolor'       ,OPT.fontrgb)
    set   (h.c,'XAxisLocation',OPT.XAxisLocation);
    set   (h.c,'YAxisLocation',OPT.YAxisLocation);
    delete(h.ax)
@@ -54,5 +54,35 @@ function KML_colorbar(OPT)
    print ([OPT.fileName,'.png'],'-dpng')
    im   = imread([OPT.fileName,'.png']);
    mask = bsxfun(@eq,im,reshape(OPT.bgcolor,1,1,3));
+   
+   %% replace all colors under invisble pixels with black (0 0 0) (OPT.fontrgb)
+   %  which are the well readable google letters
+
+   for ic=1:3
+      onecolor = im(:,:,ic);
+      onecolor(all(mask,3)) = OPT.halorgb(ic)*255;
+      im(:,:,ic)  = onecolor;
+   end
+   
+   %% now let alpha gradually decrease from 0 inside to 1 outside
+
+   if OPT.halo
+   s1 = all(mask,3);
+   s2 = ~ceil((~s1([1 1:end-1],[1 1:end-1]) + ...
+               ~s1([2:end end],[1 1:end-1]) + ...
+               ~s1([1 1:end-1],[2:end end]) + ...
+               ~s1([2:end end],[2:end end]))/4); % move letters 1 pixel around
+   s3 = ~ceil((~s2([1 1:end-1],[1 1:end-1]) + ...
+               ~s2([2:end end],[1 1:end-1]) + ...
+               ~s2([1 1:end-1],[2:end end]) + ...
+               ~s2([2:end end],[2:end end]))/4); % move letters 1other pixel around
+   
+   blend = zeros(size(s1)); % alpha value to add ONLY to pixels adjacent to letters and colorbar
+   blend(logical(s1-s3))= 0.5;       
+   blend(logical(s1-s2))= 1.0;
+   imwrite(im,[OPT.fileName,'.png'],'Alpha',ones(size(mask(:,:,1))).*(1-double(all(mask,3)) + blend));
+   else
    imwrite(im,[OPT.fileName,'.png'],'Alpha',ones(size(mask(:,:,1))).*(1-double(all(mask,3))));
-   close(h.fig);
+   end
+   
+   try;close(h.fig);end

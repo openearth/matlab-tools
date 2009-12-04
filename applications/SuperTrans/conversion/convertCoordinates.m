@@ -37,17 +37,19 @@ function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
 %    CS1.name = coordinate system name
 %    CS1.code = coordinate system reference code 
 %    CS1.type = projection type
+%
+% When insufficient combinations are specified, remaining choices are suggested.
 % 
-% Projection types supported    : projected and geographic 2D
-% Projection not (yet) supported: engineering, geographic 3D, vertical, geocentric,  compound
+% Projection types supported     : projected and geographic 2D
+% Projection not (yet) supported : engineering, geographic 3D, vertical, geocentric,  compound
 % 
 % Allowed synonyms for 'projected'    : 'xy','proj','cartesian','cart'
 % Allowed synonyms for 'geographic 2D': 'geo','latlon','lat lon','geographic','geographic2d'
 %
 % Example 1: 4 different notations of 1 single transformation case:
 %
-%    [x,y,OPT]=convertCoordinates(52,5,'CS1.name','WGS 84','CS1.type','geo','CS2.name','WGS 84 / UTM zone 31N','CS2.type','xy')
-%    [x,y,OPT]=convertCoordinates(52,5,'CS1.code',4326                     ,'CS2.name','WGS 84 / UTM zone 31N')
+%    [x,y,OPT]=convertCoordinates(5,52,'CS1.name','WGS 84','CS1.type','geo','CS2.name','WGS 84 / UTM zone 31N','CS2.type','xy')
+%    [x,y,OPT]=convertCoordinates(5,52,'CS1.code',4326                     ,'CS2.name','WGS 84 / UTM zone 31N')
 %
 %    ESPG = load('EPSG')
 %
@@ -65,7 +67,7 @@ function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
 % To find specifications of coordinate systems (name <=> code):
 % <a href="http://www.epsg-registry.org">www.epsg-registry.org</a>.
 %
-% See also: SuperTransData, EPSG
+% See also: SuperTrans, EPSG.mat
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

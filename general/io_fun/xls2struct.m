@@ -1,5 +1,5 @@
 function varargout = xls2struct(fname,varargin)
-%XLS2STRUCT    Reads 1D data + fieldnames from xls file into matlab struct (BETA).
+%XLS2STRUCT    Reads 1D data + fieldnames from xls/csv file into matlab struct (BETA).
 %
 % DATA = xls2struct(fname)
 % DATA = xls2struct(fname,work_sheet_name)
@@ -14,7 +14,7 @@ function varargout = xls2struct(fname,varargin)
 % * units at the second line.
 % * every line starting with one of '*%#' is interpreted 
 %   as a comment line.
-% * all text fields with text 'nan' are interpreted as numeric NaNs
+% * all text fields with text 'NaN' are interpreted as numeric NaNs
 %
 % Example:
 %
@@ -34,7 +34,9 @@ function varargout = xls2struct(fname,varargin)
 % and <keyword,value> pairs are:
 %
 % * addunits    true by default, adds units to DATA struct when 
-%               there is only 1 output argument.
+%               there is only 1 output argument (this option should be 
+%               removed, as there can be columns in the xls labelled units)
+%               e.g. ..\..\applications\knmi\knmi_etmgeg.csv
 % * error       throw error when instead of returning empty matrices.
 % * units       true by default, specifies whether the units at 
 %               the second line are present.
@@ -57,7 +59,7 @@ function varargout = xls2struct(fname,varargin)
 %
 % See also: STRUCT2XLS, XLSDATE2DATENUM, XLSREAD, XLSWRITE (2006b+, otherwise mathsworks downloadcentral) 
 
-% Tested for matlab releases 2008a, 2007ab, 2006B and 6.5
+% Tested for matlab releases 2009b, 2008a, 2007ab, 2006B and 6.5
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006-2008 Delft University of Technology
@@ -124,7 +126,7 @@ end
    %% Input
    %------------------------
 
-   OPT.addunits    = true;   
+   OPT.addunits    = false; % this option should be phased out   
    OPT.error       = true;   
    OPT.units       = true;
    OPT.sheet       = [];
@@ -229,8 +231,6 @@ end
          if strfind(version('-release'),'13')==1
              
              [tstdat,tsttxt] = xlsread(fname); % ,'basic'
-             
-             whos
              dimtxt = size(tsttxt);
              dimdat = size(tstdat);
              maxdim = max(dimtxt,dimdat);
@@ -257,14 +257,18 @@ end
              maxdim = size(tstraw);
              for i1=1:maxdim(1)
                 for i2=1:maxdim(2)
-                   if strcmpi(tstraw{i1,i2},'nan')
-                      tstraw{i1,i2} = nan; 
-                   elseif strcmpi(tstraw{i1,i2},'ActiveX VT_ERROR: '); 
-                   % In matlab 7.3.0.267 (R2006b) xlsread gives for 
-                   % #DIV/0! the following: 'ActiveX VT_ERROR: '
-                      tstraw{i1,i2} = nan; 
-                   end % if
+                   % tstraw{i1,i2}
+                   if ischar(tstraw{i1,i2})
+                      if strcmpi(strtrim(tstraw{i1,i2}),'nan') % remove leading and trailing blanks for reading *.csv files.
+                         tstraw{i1,i2} = nan; 
+                      elseif strcmpi(tstraw{i1,i2},'ActiveX VT_ERROR: '); 
+                      % In matlab 7.3.0.267 (R2006b) xlsread gives for 
+                      % #DIV/0! the following: 'ActiveX VT_ERROR: '
+                         tstraw{i1,i2} = nan; 
+                      end % if
+                   end
                 end % i2
+                %pausedisp
              end % i1
          end % release
       end
@@ -272,7 +276,7 @@ end
       %% Take care of fact that excel skips certain rows/columns
       %  depending on data type (numerical/string)
       %----------------------------------------
-
+      
       if iscell(tsttxt) 
          commentlines       = zeros(1,size(tstraw,1));
          for j=1:size(tstraw,1)
@@ -292,7 +296,7 @@ end
      %col_skipped_in_numeric_data = size(tstraw,2) - size(tstdat,2);
       
       %% Test entire columns for presence of non-numbers.
-      %  One single non-number is sufficient to treat entirte column as text.
+      %  One single non-number is sufficient to treat entire column as text.
       %----------------------------------------
 
       numeric_columns = repmat(true ,[1 size(tstraw,2)]);
@@ -326,7 +330,7 @@ end
       end
       
       %% Take care of nans
-      %----------------------------------------
+      % ----------------------------------------
       
       % for i=1:size(tsttxt,1)
       % for j=1:size(tsttxt,2)
@@ -399,23 +403,21 @@ end
                DAT.(fldname)    = tstraw(not_a_comment_line(3:end),ifld:ifld2);
                DAT.(fldname)    = cell2mat(DAT.(fldname));
             else
-               %% Leave out empty field.
-               %% Only empty fields in header end of column are OK,
-               %% empty fields in data region are skipped, and lead to
-               %% shifting of data over columns.
-               %% ------------------------------------------------
-               %% DAT.(fldname)    = tstraw(not_a_comment_line(3:end),ifld:ifld2);
-               %% ------------------------------------------------
+               %% Leave out empty rows
+               %  Only empty rows in header end of column are OK,
+               %  empty fields in data region are skipped, and lead to
+               %  shifting of data over rows. Onlt when whole row is NaN.
+               %  ------------------------------------------------
+               %  DAT.(fldname)    = tstraw(not_a_comment_line(3:end),ifld:ifld2);
+               %  ------------------------------------------------
                irow_not_nan = 0;
-               for ifld_per_column=[ifld:ifld2]
-                 for irow=3:length(not_a_comment_line)
-                   if ~isnan(tstraw{not_a_comment_line(irow),ifld_per_column})
+               for irow=3:length(not_a_comment_line)
+                 for ifld_per_column=[ifld:ifld2]
                      irow_not_nan = irow_not_nan + 1;
                      DAT.(fldname)(irow_not_nan            ,1)    = ...
                             tstraw(not_a_comment_line(irow),ifld_per_column);
-                   end % isnan
-                 end % irow
-               end % ifld_per_column
+                 end % ifld_per_column
+               end % irow
             end % numeric_columns
         else    
             if numeric_columns(ifld)

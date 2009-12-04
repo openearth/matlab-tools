@@ -52,9 +52,11 @@ function varargout = KMLcolorbar(varargin)
    OPT.clim               = [];
 
    OPT.bgcolor            = [100 155 100];  % background color to be made transparent
-   OPT.fontcolor          = 'w';
+   OPT.fontrgb            = [1 1 1]; % white as Google letters
    OPT.name               = 'colorbar';
    OPT.fileName           = 'KMLcolorbar';
+   OPT.halo               = 1;       % for colorbar add halo of pixels with different color as fontrgb
+   OPT.halorgb            = [0 0 0]; % black as Google letters
    
    if nargin==0
      varargout = OPT;
@@ -63,7 +65,7 @@ function varargout = KMLcolorbar(varargin)
 
    [OPT, Set, Default] = setProperty(OPT, varargin);   
    
-%% make colorbar pngs
+%% make colorbar pngs as separate files
 
    [PATHSTR,NAME,EXT] = fileparts(OPT.fileName);
     
@@ -72,7 +74,7 @@ function varargout = KMLcolorbar(varargin)
    OPT.tipmargin          = 0.05; % prevent overlap between S and E colorbars
    OPT.alignmargin        = 0.03;
    OPT.thickness          = 0.013;
-   OPT.fileName           = [fullfile(PATHSTR,NAME),'hor_bot'];
+   OPT.fileName           = [fullfile(PATHSTR,NAME),'_hor_bot'];
    KML_colorbar(OPT)
     
    OPT.orientation        = 'horizontal';
@@ -80,7 +82,7 @@ function varargout = KMLcolorbar(varargin)
    OPT.tipmargin          = 0.05; % prevent overlap between S and E colorbars
    OPT.alignmargin        = 0.03;
    OPT.thickness          = 0.013;
-   OPT.fileName           = [fullfile(PATHSTR,NAME),'hor_top'];
+   OPT.fileName           = [fullfile(PATHSTR,NAME),'_hor_top'];
    KML_colorbar(OPT)
 
    OPT.orientation        = 'vertical';
@@ -88,7 +90,7 @@ function varargout = KMLcolorbar(varargin)
    OPT.tipmargin          = 0.15; % prevent overlap with time ruler, google logo and N-rose
    OPT.alignmargin        = 0.01;
    OPT.thickness          = 0.01;
-   OPT.fileName           = [fullfile(PATHSTR,NAME),'ver_rgt'];
+   OPT.fileName           = [fullfile(PATHSTR,NAME),'_ver_rgt'];
    KML_colorbar(OPT)
 
    OPT.orientation        = 'vertical';
@@ -96,7 +98,7 @@ function varargout = KMLcolorbar(varargin)
    OPT.tipmargin          = 0.15; % prevent overlap with time ruler, google logo and N-rose
    OPT.alignmargin        = 0.01;
    OPT.thickness          = 0.01;
-   OPT.fileName           = [fullfile(PATHSTR,NAME),'ver_lft'];
+   OPT.fileName           = [fullfile(PATHSTR,NAME),'_ver_lft'];
    KML_colorbar(OPT)
 
     OPT.fileName          =  fullfile(PATHSTR,NAME);
@@ -221,10 +223,10 @@ function varargout = KMLcolorbar(varargin)
     '<!--############################-->\n'...
    '  <Folder>\n'...
    '  <name>W</name>\n'...
-   '  <visibility>1</visibility>\n'...
+   '  <visibility>1</visibility>\n'...  % DEFAULT AT EASTERN SIDE
    '  <ScreenOverlay>\n'...
    '  <name>colorbar</name>\n'...
-   '  <visibility>1</visibility>\n'...
+   '  <visibility>1</visibility>\n'...  % DEFAULT AT EASTERN SIDE
    '  <Icon><href>%s.png</href></Icon>\n'...
    '   <overlayXY x="0" y="0" xunits="fraction" yunits="fraction"/>\n'...
    '   <screenXY  x="0" y="0" xunit ="fraction" yunits="fraction"/>\n'...
@@ -256,10 +258,10 @@ function varargout = KMLcolorbar(varargin)
    '  </ScreenOverlay>\n'...
    '  </Folder>\n'...
    ' </Folder>'],...
-   OPT.name,[NAME,'hor_bot'],[NAME,'hor_bot'],[NAME,'hor_bot'],...
-            [NAME,'ver_rgt'],[NAME,'ver_rgt'],[NAME,'ver_rgt'],...
-            [NAME,'hor_top'],[NAME,'hor_top'],[NAME,'hor_top'],...
-            [NAME,'ver_lft'],[NAME,'ver_lft'],[NAME,'ver_lft']);
+   OPT.name,[NAME,'_hor_bot'],[NAME,'_hor_bot'],[NAME,'_hor_bot'],...
+            [NAME,'_ver_rgt'],[NAME,'_ver_rgt'],[NAME,'_ver_rgt'],...
+            [NAME,'_hor_top'],[NAME,'_hor_top'],[NAME,'_hor_top'],...
+            [NAME,'_ver_lft'],[NAME,'_ver_lft'],[NAME,'_ver_lft']);
 
    if nargout==1
       varargout = {colorbarstring};
@@ -273,5 +275,5 @@ function varargout = KMLcolorbar(varargin)
       fclose(OPT.fid);
    end
 
-%%
+%% EOF
 

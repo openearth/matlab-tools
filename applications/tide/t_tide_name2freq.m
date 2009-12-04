@@ -58,7 +58,7 @@ function  varargout= t_tide_name2freq(varargin)
 %   --------------------------------------------------------------------
 
 %% Defaults
-%% -----------------------------------
+%  -----------------------------------
 
    OPT.unit = 'rad/s'; 
    tidenames    = varargin{1};
@@ -75,14 +75,14 @@ function  varargout= t_tide_name2freq(varargin)
    end
 
 %% Load
-%% -----------------------------------
+%  -----------------------------------
 
    load           t_constituents;   % [cyc/hr] const.freq 
    freq          = const.freq/3600; % [cyc/s ] = [Hz]
    cnames        = cellstr(const.name);
 
 %% Search 
-%% -----------------------------------
+%  -----------------------------------
 
    index=[];
    if length(tidenames) ==0
@@ -99,7 +99,7 @@ function  varargout= t_tide_name2freq(varargin)
    omega  = 2*pi*freq(index)';    
 
 %% Units
-%% -----------------------------------
+%  -----------------------------------
 
    OPT.unit   = strrep(OPT.unit,'\','/');
    
@@ -123,7 +123,7 @@ function  varargout= t_tide_name2freq(varargin)
    end;
 
 %% Output
-%% -----------------------------------
+%  -----------------------------------
 
    if     nargout<2 
         varargout{1}   = omega;

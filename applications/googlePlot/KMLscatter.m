@@ -10,8 +10,7 @@ function varargout = KMLscatter(lat,lon,c,varargin)
 %  * colorMap           = colormap (default @(m) jet(m));
 %  * colorSteps         = number of colors in colormap (default 20);
 %  * cLim               = cLim aka caxis (default [min(c) max(c)]);
-%  * long_name          = ''; used for point description ... (default 'value=')
-%  * units              = ''; 'long_name = x units'
+%  * html               = cell array with html text per point
 %
 % For the <keyword,value> pairs and their defaults call
 %
@@ -60,8 +59,9 @@ OPT.kmlName            =  [];
 OPT.colorMap           =  @(m) jet(m);
 OPT.colorSteps         =  20;
 OPT.cLim               =  [];
-OPT.long_name          =  'value';
-OPT.units              =  '';
+%OPT.long_name          =  'value';
+OPT.html               = [];
+%OPT.units              =  '';
 OPT.iconnormalState    =  'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
 OPT.iconhighlightState =  'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
 OPT.scalenormalState   =  0.25;
@@ -76,8 +76,6 @@ if nargin==0
 end
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
-
-strrep(OPT.units,'%','\%');
 
 %% get filename
 
@@ -123,9 +121,9 @@ output = [output '<!--############################-->\n'];
 
 for ii = 1:OPT.colorSteps
 
-    OPT_stylePoly.name      = ['style' num2str(ii)];
-    temp        = dec2hex(round([OPT.markerAlpha, colors(ii,:)].*255),2);
-    markerColor = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
+    OPT_stylePoly.name  = ['style' num2str(ii)];
+    temp                = dec2hex(round([OPT.markerAlpha, colors(ii,:)].*255),2);
+    markerColor         = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
 
     output = [output ...
         '<StyleMap id="Speed_marker_',num2str(ii,'%0.3d'),'map">\n'...
@@ -176,11 +174,11 @@ for ii=1:length(lon)
         '<Placemark>\n'...
         ' <name></name>\n'...                          % no names so we see just the scatter points
         ' <visibility>1</visibility>\n'...
-        ' <description>%s = %.2f%s</description>\n'... % long name, value, units
+        ' <description>%s</description>\n'...
         ' <styleUrl>#%s</styleUrl>\n'...               % styleName
         ' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n'...
         ' </Placemark>\n'],...
-        OPT.long_name, c(ii), OPT.units,...
+        OPT.html{ii},...
         OPT_poly.styleName,...
         lon(ii),lat(ii));
 

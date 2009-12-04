@@ -39,6 +39,8 @@ function standard_name = odvname2standard_name(varargin)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+%% TO DO: use *.csv instead of *.xls
+
    OPT.xlsfile = [filepathstr(mfilename('fullpath')),filesep,'odvname2standard_name.xls'];
    DAT         = xls2struct(OPT.xlsfile);
    codes       = varargin{1};

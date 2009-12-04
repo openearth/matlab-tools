@@ -10,7 +10,7 @@
 %   vs_get_constituent_index   - get index information required to read constituents by name.
 %   vs_get_elm_def             - Extract NEFIS Element data
 %   vs_get_elm_size            - Extract size of NEFIS Element data
-%   vs_get_grp_def             - vs_get_grp_def   Extract NEFIS Element data
+%   vs_get_grp_def             - Extract NEFIS Element data
 %   vs_get_grp_size            - Extract size of NEFIS Element data
 %   vs_getmnk                  - Reads the grid size from NEFIS file.
 %   vs_let_scalar              - Reads scalar data defined on grid centers from a trim- or com-file.

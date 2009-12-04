@@ -5,14 +5,14 @@ function varargout = grid_corner2perimeter(varargin)
 %                           ^ GUV
 %                           | 
 %                           | G.v.ddim1                                     
-%                    <----- |-GVV--->                        
+%                     <---- |-GVV--->                        
 %                    o-------+-------o^                     
 %                    |      |        ||    G.u.ddim1
 %                    |      |        ||    GVU
 %                    |      v <----- |----->                
 %        G.u.ddim2   +       +       +|    
-%        = GUU       |               ||    
-%                    |               || G.u.ddim2   
+%        = GUU       |<------------->||    
+%                    |     cen.ddim1 || G.u.ddim2   
 %      ^             |               || GUU                                 
 %  dim |             o-------+-------oV                     
 %  2   |                   G.v.ddim1                                 
@@ -25,14 +25,14 @@ function varargout = grid_corner2perimeter(varargin)
 % where the main field refers to the position, and the 
 % second subfield refers to the direction.
 %
-% [cen.ddim1,cen.ddim2] = GRID_CORNER2PERIMETER(G)
+% [cen.ddim1,cen.ddim2] = grid_corner2perimeter(G)
 % [cen.ddim1,cen.ddim2,...
-%    u.ddim1,  v.ddim2] = GRID_CORNER2PERIMETER(G)
+%    u.ddim1,  v.ddim2] = grid_corner2perimeter(G)
 % [cen.ddim1,cen.ddim2,...
 %    u.ddim1,  v.ddim2,...
-%    v.ddim1,  u.ddim2] = GRID_CORNER2PERIMETER(G)
+%    v.ddim1,  u.ddim2] = grid_corner2perimeter(G)
 %
-% [.............] = GRID_CORNER2PERIMETER(cor.x,cor.y)
+% [.............] = grid_corner2perimeter(cor.x,cor.y)
 %
 %See also: CORNER2CENTER, CENTER2CORNER
 
@@ -114,7 +114,7 @@ function varargout = grid_corner2perimeter(varargin)
    if nargout==1
       varargout={G};
    elseif nargout==2
-      varargout={G.cen.ddim1,G.cen.dddim2};
+      varargout={G.cen.ddim1,G.cen.ddim2};
    elseif nargout==4
       varargout={G.cen.ddim1,G.cen.ddim2,...
                    G.u.ddim1,  G.v.ddim2};

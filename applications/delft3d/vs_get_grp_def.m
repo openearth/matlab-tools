@@ -1,5 +1,5 @@
 function INFO = vs_get_grp_def(NFSstruct,GrpName,varargin)
-%vs_get_grp_def   Extract NEFIS Element data
+%VS_GET_GRP_DEF   Extract NEFIS Element data
 %
 % Sz = vs_get_grp_def(NFSstruct,ElmName) returns
 % the information from the Group GrpDef 
