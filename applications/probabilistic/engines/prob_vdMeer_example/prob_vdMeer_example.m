@@ -95,7 +95,7 @@ stochast = struct(...
     {{@logn_moments2lambda 0.1  0.05} {@logn_moments2zeta 0.1  0.05}}...  % [-] P        notional permeability
     {5  }...        % [-] S        damage number
     {7000}...       % [-] N        number of waves
-    {1 3.83}...     % [m] H        significant wave height
+    {3.83 1}...     % [m] H        significant wave height
     {0.6 0.05}...   % [m] D        stone size
     {6.2 0.43}...	% [-] Cpl      constant in vdMeer formula
     } ...
