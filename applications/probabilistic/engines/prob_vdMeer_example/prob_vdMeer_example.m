@@ -93,7 +93,7 @@ stochast = struct(...
     {0.25 0.0125}...% [-] TanAlfa  slope of structure
     {0.05 0.01}...  % [-] Steep    wave steepness
     {{@logn_moments2lambda 0.1  0.05} {@logn_moments2zeta 0.1  0.05}}...  % [-] P        notional permeability
-    {5  }...        % [-] S        damage number
+    {2  }...        % [-] S        damage number
     {7000}...       % [-] N        number of waves
     {3.83 1}...     % [m] H        significant wave height
     {0.6 0.05}...   % [m] D        stone size
