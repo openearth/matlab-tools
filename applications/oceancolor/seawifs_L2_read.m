@@ -89,222 +89,240 @@ function varargout = seawifs_l2_read(fname,varargin);
    if OPT.gunzip & strcmpi(fname(end-2:end),'.gz')
       gunzip(fname)
       zipname = fname;
-      D.fname = fname(1:end-3);
+      hdfname = fname(1:end-3);
    else
-      D.fname = fname;
+      hdfname = fname;
    end
+   
+   D.fname = fname;
 
 %% Variable selection
 
-   I       = hdfinfo(D.fname);
+% TO DO; check  for existence of file
+
+   I       = hdfinfo(hdfname);
    
-   %% find correct group
+   if ~isfield(I,'Vgroup')   ; % happens for instance when ancillary data was missing
    
-   % TO DO group_index = h4_group_find(I,'group_name')
-
-   for group=1:length(I.Vgroup);if strcmpi(I.Vgroup(group).Name,'Geophysical Data');
-      break;end
-   end   
-
-   if odd(nargin)
-   
-      varnames = {I.Vgroup(group).SDS.Name};
-
-    % varnames = {'chlor_a',...
-    %             'angstrom_510',...
-    %             'K_490',...
-    %             'nLw_412',...
-    %             'nLw_443',...
-    %             'nLw_490',...
-    %             'nLw_510',...
-    %             'nLw_555',...
-    %             'nLw_670',...
-    %             'tau_865',...
-    %             'eps_78',...
-    %             'l2_flags',...
-    %             'tau_555'}; % better to get them from file 
-                  
-      [varind, ok] = listdlg('ListString', varnames, .....
-                          'SelectionMode', 'single', ...                           % we can only plot one for now
-                           'PromptString', 'Select a geophysical parameter:', .... % title of pulldown menu
-                                   'Name', 'Loading SeaWiFS L2 file:',...          % title of window
-                               'ListSize', [500, 300]);
-                               varname = varnames{varind};
-   end
-
-   
-
-%% Data, coordinates, time
-   
-   for iatt=1:length(I.Attributes);if strcmpi(I.Attributes(iatt).Name,'start time'      );break;end;end   
-   D.datenum(1) = seawifs_datenum(I.Attributes(iatt).Value);
-   
-   for iatt=1:length(I.Attributes);if strcmpi(I.Attributes(iatt).Name,'end time'        );break;end;end   
-   D.datenum(2) = seawifs_datenum(I.Attributes(iatt).Value);
-
-   for iatt=1:length(I.Attributes);if strcmpi(I.Attributes(iatt).Name,'Input Parameters');break;end;end   
-   val = I.Attributes(iatt).Value;
-
-%% Special MUMM case 2 parameters
-
-   
-   if OPT.mumm
-   val = I.Attributes(iatt).Value;
-   ind = strfind(val,'MUMM_ALPHA');
-   ind2 = strfind(val(ind:end),'=');
-   ind3 = strfind(val(ind:end),'|');
-   D.mumm_alpha = str2num(val(ind + (ind2:ind3-2)));
-
-   val = I.Attributes(iatt).Value;
-   ind = strfind(val,'MUMM_GAMMA');
-   ind2 = strfind(val(ind:end),'=');
-   ind3 = strfind(val(ind:end),'|');
-   D.mumm_gamma = str2num(val(ind + (ind2:ind3-2)));
-
-   val = I.Attributes(iatt).Value;
-   ind = strfind(val,'MUMM_EPSM78');
-   ind2 = strfind(val(ind:end),'=');
-   ind3 = strfind(val(ind:end),'|');
-   D.mumm_epsm78 = str2num(val(ind + (ind2:ind3-2)));
-   end
-
-%% Flags
-
-   D.(varname)    = hdfread(D.fname,varname);
-   if ~strcmpi(varname,'l2_flags')
-   D.l2_flags     = hdfread(D.fname,'l2_flags');
-   D.flags        = seawifs_flags;
-   end
-   T.lon          = hdfread(D.fname,'longitude');
-   T.lat          = hdfread(D.fname,'latitude' );
-   T.cntl_pt_rows = hdfread(D.fname,'cntl_pt_rows');
-   T.cntl_pt_cols = hdfread(D.fname,'cntl_pt_cols');
-   
-%% meta-info
-
-   for isds=1:length(I.Vgroup(group).SDS); 
-   
-      if strcmpi(I.Vgroup(group).SDS(isds).Name,varname);
-   
-      M = I.Vgroup(group).SDS(isds);
-   
-      break;end;
+      fprintf(2, '??? Warning using ==> seawifs_L2_read: skipped empty hdf file: %s \n', fname); % this gives red letters
       
-   end   
-   
-   % TO DO D.(att_name) = h4_att_get(I,'sds_name','att_name')
-   
-   for iatt=1:length(M.Attributes);if strcmpi(M.Attributes(iatt).Name,'long_name');
-      D.long_name = M.Attributes(iatt).Value(1:end-1);break;end % remove trailing char(0)
-   end   
-   
-   D.units     = ''; % for L2 flags
-   for iatt=1:length(M.Attributes);if strcmpi(M.Attributes(iatt).Name,'units');
-      D.units     = M.Attributes(iatt).Value(1:end-1);break;end % remove trailing char(0)
-   end   
-
-   for iatt=1:length(M.Attributes);if strcmpi(M.Attributes(iatt).Name,'slope');
-      D.slope = M.Attributes(iatt).Value;break;end
-   end   
-
-   for iatt=1:length(M.Attributes);if strcmpi(M.Attributes(iatt).Name,'intercept');
-      D.intercept = M.Attributes(iatt).Value;break;end
-   end   
-   
-%% (geodata = rawdata * slope + intercept)
-%  http://www.icess.ucsb.edu/seawifs/software/seadas4.8/src/idl_utils/io/wr_swf_hdf_sd.pro
-
-   if OPT.geo & isfield(D,'slope') & isfield(D,'intercept') % note l2_flags have no slope, intercept
-   D.(varname) = double(D.(varname)).*double(D.slope) + double(D.intercept);
-   end
-
-%% georeference full matrices
-%  http://oceancolor.gsfc.nasa.gov/forum/oceancolor/topic_show.pl?pid=2029
-%  for each swath the (lat,lon) arrays are only stored every 8th pixel.
-%  To get the full matrix interpolate to the full pixel range, with a spline.
-   
-   if size(D.(varname),1)==length(T.cntl_pt_rows)
-      D.lon       = repmat(nan,size(D.(varname)));
-      D.lat       = repmat(nan,size(D.(varname)));
-      nrow        =            size(D.(varname),1);
-      ncol        =            size(D.(varname),2);
-      for irow = 1:nrow
-         D.lon(irow,:) = interp1(single(T.cntl_pt_cols),double(T.lon(irow,:)),1:ncol,'spline');
-         D.lat(irow,:) = interp1(single(T.cntl_pt_cols),double(T.lat(irow,:)),1:ncol,'spline');
-      end
-   
-   end   
-
-%% debug: show results last row   
-   
-   if OPT.debug
-      clf
-      subplot(1,2,1)
-      plot(single(T.cntl_pt_cols),T.lon(irow,:),'.-b','Displayname','per 8')
-      hold on
-      plot(                1:ncol,D.lon(irow,:),'.-r','Displayname','interp1')
-      xlabel('pixel #')
-      xlabel('longitude')
-   
-      subplot(1,2,2)
-      plot(single(T.cntl_pt_cols),T.lat(irow,:),'.-b','Displayname','per 8')
-      hold on
-      plot(                1:ncol,D.lat(irow,:),'.-r','Displayname','interp1')
-      xlabel('pixel #')
-      xlabel('latitude')
+      %varargout = {[],[],[]};
+      %return; % thos does not clean up unzipped hdf !!
       
-   end
-
-   %% mask
+   else   
    
-   if OPT.mask
-      D.mask      = seawifs_mask(D.l2_flags,[2 10],'disp',0); % remove clouds, ice and land
-      D.(varname) = D.(varname) .*D.mask;
-   end
-
-   %% plot image (can be slow: no default)
-
-   if OPT.plot
-      figure
-      pcolorcorcen(D.lon,D.lat,double(D.(varname)))
-      title(['SeaWiFS image ',...
-             datestr(D.datenum(1),'yyyy-mm-dd  HH:MM:SS'),' - ',...
-             datestr(D.datenum(2),            'HH:MM:SS'),' (doy:',...
-             num2str(yearday(D.datenum(1))),')'])
-      colorbarwithhtext([char(D.long_name),'  [',mktex(D.units),']'],'horiz');
-      axislat
-      grid on
-      tickmap('ll')
-      %% plot outline of image
-      hold on
-      plot(D.lon(  1,  :),D.lat(  1,  :),'color',[.5 .5 .5])
-      plot(D.lon(  :,  1),D.lat(  :,  1),'color',[.5 .5 .5])
-      plot(D.lon(end,  :),D.lat(end,  :),'color',[.5 .5 .5])
-      plot(D.lon(  :,end),D.lat(  :,end),'color',[.5 .5 .5])
-      %% plot land
-      try
-       L.lon = nc_varget(OPT.ldb,'lon');
-       L.lat = nc_varget(OPT.ldb,'lat');
-       hold on
-       plot(L.lon,L.lat,'k')
-      end
-      text(1,0,' image: $Id$','units','normalized','rotation',90,'verticalalignment','top','fontsize',6)
-      if OPT.export
-         print2screensize([D.fname,'.png']);
+      %% find correct group
+      
+      % TO DO group_index = h4_group_find(I,'group_name')
+      
+      for group=1:length(I.Vgroup);if strcmpi(I.Vgroup(group).Name,'Geophysical Data');
+         break;end
+      end   
+      
+      if odd(nargin)
+      
+         varnames = {I.Vgroup(group).SDS.Name};
+      
+       % varnames = {'chlor_a',...
+       %             'angstrom_510',...
+       %             'K_490',...
+       %             'nLw_412',...
+       %             'nLw_443',...
+       %             'nLw_490',...
+       %             'nLw_510',...
+       %             'nLw_555',...
+       %             'nLw_670',...
+       %             'tau_865',...
+       %             'eps_78',...
+       %             'l2_flags',...
+       %             'tau_555'}; % better to get them from file 
+                     
+         [varind, ok] = listdlg('ListString', varnames, .....
+                             'SelectionMode', 'single', ...                           % we can only plot one for now
+                              'PromptString', 'Select a geophysical parameter:', .... % title of pulldown menu
+                                      'Name', 'Loading SeaWiFS L2 file:',...          % title of window
+                                  'ListSize', [500, 300]);
+                                  varname = varnames{varind};
       end
       
-   end
+      
+      
+%%    Data, coordinates, time
+      
+      for iatt=1:length(I.Attributes);if strcmpi(I.Attributes(iatt).Name,'start time'      );break;end;end   
+      D.datenum(1) = seawifs_datenum(I.Attributes(iatt).Value);
+      
+      for iatt=1:length(I.Attributes);if strcmpi(I.Attributes(iatt).Name,'end time'        );break;end;end   
+      D.datenum(2) = seawifs_datenum(I.Attributes(iatt).Value);
+      
+      for iatt=1:length(I.Attributes);if strcmpi(I.Attributes(iatt).Name,'Input Parameters');break;end;end   
+      val = I.Attributes(iatt).Value;
+      
+%%    Special MUMM case 2 parameters
+      
+      
+      if OPT.mumm
+      val = I.Attributes(iatt).Value;
+      ind = strfind(val,'MUMM_ALPHA');
+      ind2 = strfind(val(ind:end),'=');
+      ind3 = strfind(val(ind:end),'|');
+      D.mumm_alpha = str2num(val(ind + (ind2:ind3-2)));
+      
+      val = I.Attributes(iatt).Value;
+      ind = strfind(val,'MUMM_GAMMA');
+      ind2 = strfind(val(ind:end),'=');
+      ind3 = strfind(val(ind:end),'|');
+      D.mumm_gamma = str2num(val(ind + (ind2:ind3-2)));
+      
+      val = I.Attributes(iatt).Value;
+      ind = strfind(val,'MUMM_EPSM78');
+      ind2 = strfind(val(ind:end),'=');
+      ind3 = strfind(val(ind:end),'|');
+      D.mumm_epsm78 = str2num(val(ind + (ind2:ind3-2)));
+      end
+      
+%%    Flags
+      
+      D.(varname)    = hdfread(hdfname,varname);
+      if ~strcmpi(varname,'l2_flags')
+      D.l2_flags     = hdfread(hdfname,'l2_flags');
+      D.flags        = seawifs_flags;
+      end
+      T.lon          = hdfread(hdfname,'longitude');
+      T.lat          = hdfread(hdfname,'latitude' );
+      T.cntl_pt_rows = hdfread(hdfname,'cntl_pt_rows');
+      T.cntl_pt_cols = hdfread(hdfname,'cntl_pt_cols');
+      
+%%    meta-info
+      
+      for isds=1:length(I.Vgroup(group).SDS); 
+      
+         if strcmpi(I.Vgroup(group).SDS(isds).Name,varname);
+      
+         M = I.Vgroup(group).SDS(isds);
+      
+         break;end;
+         
+      end   
+      
+      % TO DO D.(att_name) = h4_att_get(I,'sds_name','att_name')
+      
+      for iatt=1:length(M.Attributes);if strcmpi(M.Attributes(iatt).Name,'long_name');
+         D.long_name = M.Attributes(iatt).Value(1:end-1);break;end % remove trailing char(0)
+      end   
+      
+      D.units     = ''; % for L2 flags
+      for iatt=1:length(M.Attributes);if strcmpi(M.Attributes(iatt).Name,'units');
+         D.units     = M.Attributes(iatt).Value(1:end-1);break;end % remove trailing char(0)
+      end   
+      
+      for iatt=1:length(M.Attributes);if strcmpi(M.Attributes(iatt).Name,'slope');
+         D.slope = M.Attributes(iatt).Value;break;end
+      end   
+      
+      for iatt=1:length(M.Attributes);if strcmpi(M.Attributes(iatt).Name,'intercept');
+         D.intercept = M.Attributes(iatt).Value;break;end
+      end   
+      
+%%    (geodata = rawdata * slope + intercept)
+%     http://www.icess.ucsb.edu/seawifs/software/seadas4.8/src/idl_utils/io/wr_swf_hdf_sd.pro
+      
+      if OPT.geo & isfield(D,'slope') & isfield(D,'intercept') % note l2_flags have no slope, intercept
+      D.(varname) = double(D.(varname)).*double(D.slope) + double(D.intercept);
+      end
+      
+%%    georeference full matrices
+%     http://oceancolor.gsfc.nasa.gov/forum/oceancolor/topic_show.pl?pid=2029
+%     for each swath the (lat,lon) arrays are only stored every 8th pixel.
+%     To get the full matrix interpolate to the full pixel range, with a spline.
+      
+      if size(D.(varname),1)==length(T.cntl_pt_rows)
+         D.lon       = repmat(nan,size(D.(varname)));
+         D.lat       = repmat(nan,size(D.(varname)));
+         nrow        =            size(D.(varname),1);
+         ncol        =            size(D.(varname),2);
+         for irow = 1:nrow
+            D.lon(irow,:) = interp1(single(T.cntl_pt_cols),double(T.lon(irow,:)),1:ncol,'spline');
+            D.lat(irow,:) = interp1(single(T.cntl_pt_cols),double(T.lat(irow,:)),1:ncol,'spline');
+         end
+      
+      end   
+      
+%%    debug: show results last row   
+      
+      if OPT.debug
+         clf
+         subplot(1,2,1)
+         plot(single(T.cntl_pt_cols),T.lon(irow,:),'.-b','Displayname','per 8')
+         hold on
+         plot(                1:ncol,D.lon(irow,:),'.-r','Displayname','interp1')
+         xlabel('pixel #')
+         xlabel('longitude')
+      
+         subplot(1,2,2)
+         plot(single(T.cntl_pt_cols),T.lat(irow,:),'.-b','Displayname','per 8')
+         hold on
+         plot(                1:ncol,D.lat(irow,:),'.-r','Displayname','interp1')
+         xlabel('pixel #')
+         xlabel('latitude')
+         
+      end
+      
+      %% mask
+      
+      if OPT.mask
+         D.mask      = seawifs_mask(D.l2_flags,[2 10],'disp',0); % remove clouds, ice and land
+         D.(varname) = D.(varname) .*D.mask;
+      end
+      
+      %% plot image (can be slow: no default)
+      
+      if OPT.plot
+         h.fig = figure;
+         pcolorcorcen(D.lon,D.lat,double(D.(varname)))
+         title(['SeaWiFS image ',...
+                datestr(D.datenum(1),'yyyy-mm-dd  HH:MM:SS'),' - ',...
+                datestr(D.datenum(2),            'HH:MM:SS'),' (doy:',...
+                num2str(yearday(D.datenum(1))),')'])
+         colorbarwithhtext([char(D.long_name),'  [',mktex(D.units),']'],'horiz');
+         axislat
+         grid on
+         tickmap('ll')
+         %% plot outline of image
+         hold on
+         plot(D.lon(  1,  :),D.lat(  1,  :),'color',[.5 .5 .5])
+         plot(D.lon(  :,  1),D.lat(  :,  1),'color',[.5 .5 .5])
+         plot(D.lon(end,  :),D.lat(end,  :),'color',[.5 .5 .5])
+         plot(D.lon(  :,end),D.lat(  :,end),'color',[.5 .5 .5])
+         %% plot land
+         try
+          L.lon = nc_varget(OPT.ldb,'lon');
+          L.lat = nc_varget(OPT.ldb,'lat');
+          hold on
+          plot(L.lon,L.lat,'k')
+         end
+         text(1,0,mktex(' image: $Id$'),'units','normalized','rotation',90,'verticalalignment','top','fontsize',6)
+         if OPT.export
+            print2screensize([hdfname,'_',varname,'.png']);
+         end
+         try;close(h.fig);end
+         
+      end
+      
+   end % empty file
 
    if      OPT.delete & OPT.gunzip & strcmpi(fname(end-2:end),'.gz')
-      delete(D.fname)
+      delete(hdfname)
    elseif ~OPT.delete & OPT.gunzip & strcmpi(fname(end-2:end),'.gz')
-      disp(['gunzipped ',zipname,'. Please remind to monitor diskspace.']);
+      disp(['gunzipped ',zipname,': monitor diskspace or use seawifs_L2_read(...,''delete'',1).']);
    end
    
-   if nargout==1
-      varargout = {D};
+   if     nargout==1
+        varargout = {D};
+   elseif nargout==2
+        varargout = {D,M};
    else
-      varargout = {D,M};
+        varargout = {D,M};
    end
    
 %% EOF   
