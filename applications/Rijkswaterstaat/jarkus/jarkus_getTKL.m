@@ -67,7 +67,6 @@ for i = min(idjaar):max(idjaar)
         tkldata(i,2) = jarkus_getMKL(d(i).xe(~isnan(d(i).ze)), d(i).ze(~isnan(d(i).ze)), dunefoot, dunefoot - 2*(dunefoot - d(i).MLW));
     else
         errordlg('No TKL could be computed because no data was found')
-        error('No TKL could be computed because no data was found')
         return
     end
 end
