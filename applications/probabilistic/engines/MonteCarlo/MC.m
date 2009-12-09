@@ -171,8 +171,9 @@ end
 % transform P to x
 x = feval(OPT.P2xFunction, stochast, P);
 
+samples = cell2struct(mat2cell(x, size(x,1), ones(size(x,2),1)), {stochast.Name}, 2);
 % derive z based on x
-z = feval(OPT.x2zFunction, x, {stochast.Name}, OPT.Resistance,...
+z = feval(OPT.x2zFunction, samples, OPT.Resistance,...
     OPT.variables{:});
 idFail = z<0;
 

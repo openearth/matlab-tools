@@ -112,16 +112,11 @@ resultFORM = FORM(stochast,...
     'x2zFunction', @prob_vdMeer_example_x2z);
 
 %% Z-function
-function z = prob_vdMeer_example_x2z(x, varnames, Resistance, varargin)
-
-%% retrieve calculation values
-for i = 1:size(x,2)
-    samples.(varnames{i}) = x(:,i);
-end
+function z = prob_vdMeer_example_x2z(samples, Resistance, varargin)
 
 %%
 g = 9.81;                               %[m/s2]
-for i = 1:size(x,1)
+for i = 1:length(samples.RhoS)
     Delta = (samples.RhoS(i) - samples.RhoW(i)) / samples.RhoW(i);    % [-] relative density
     Ksi = samples.TanAlfa(i)/sqrt(samples.Steep(i));      % [-] Iribarren number
     z(i,:) = samples.Cpl(i)*samples.P(i)^0.18*(samples.S(i)/sqrt(samples.N(i)))^0.2*Ksi^(-0.5)-samples.H(i)/Delta/samples.D(i); %[-] vdMeer

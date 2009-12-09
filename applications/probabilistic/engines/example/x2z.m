@@ -1,4 +1,4 @@
-function [z ErosionVolume result] = x2z(x, varnames, Resistance, varargin)
+function [z ErosionVolume result] = x2z(samples, Resistance, varargin)
 %X2Z  Limit state function
 %
 %   More detailed description goes here.
@@ -73,28 +73,23 @@ else
 end
 xRef = max(findCrossings(xInitial, zInitial, [min(xInitial) max(xInitial)]', ones(2,1)*zRef));
 
-%% retrieve calculation values
-for i = 1:size(x,2)
-    eval([varnames{i} ' = [' num2str(x(:,i)') ']'';'])
-end
-
-for i = 1:size(x,1)
+for i = 1:length(samples.D50)
 %     try
         %% set calculation values for additional volume
         DuneErosionSettings('set',...
-            'AdditionalVolume', [num2str(Duration(i)) '*Volume + ' num2str(Accuracy(i)) '*Volume'],... string voor het bepalen van het toeslagvolume gedurende de berekening (afslagvolume is negatief)
+            'AdditionalVolume', [num2str(samples.Duration(i)) '*Volume + ' num2str(samples.Accuracy(i)) '*Volume'],... string voor het bepalen van het toeslagvolume gedurende de berekening (afslagvolume is negatief)
             'BoundaryProfile', false,...       % Grensprofiel berekenen is niet nodig, gebruiken we niet
             'FallVelocity', {@getFallVelocity 'a' 0.476 'b' 2.18 'c' 3.226 'D50'});
         
         % set coastal curvature, if provided
-        if ~isempty(R(i))
-            DuneErosionSettings('set', 'Bend', 180 / (pi * R(i)) * 1000);
+        if ~isempty(samples.R(i))
+            DuneErosionSettings('set', 'Bend', 180 / (pi * samples.R(i)) * 1000);
         else
             DuneErosionSettings('set', 'Bend', 0);
         end
         
         %% carry out DUROS+ computation
-        result = getDuneErosion(xInitial, zInitial, D50(i), WL_t(i), Hsig_t(i), Tp_t(i));
+        result = getDuneErosion(xInitial, zInitial, samples.D50(i), samples.WL_t(i), samples.Hsig_t(i), samples.Tp_t(i));
         Tp_t(i) = result(1).info.input.Tp_t;
 
         %% Derive z-value
@@ -104,8 +99,8 @@ for i = 1:size(x,1)
 
         %%
         if length(result) > 1
-            Duration(i) = -result(2).Volumes.Volume*Duration(i);
-            Accuracy(i) = -result(2).Volumes.Volume*Accuracy(i);
+            samples.Duration(i) = -result(2).Volumes.Volume*Duration(i);
+            samples.Accuracy(i) = -result(2).Volumes.Volume*Accuracy(i);
         end
 %         for var = {'D50' 'WL_t' 'Hsig_t' 'Tp_t' 'Duration' 'Accuracy' 'RD'}
 %             fprintf('%10e ', eval([var{1} '(' num2str(i) ')']))

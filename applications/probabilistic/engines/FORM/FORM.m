@@ -151,8 +151,9 @@ while NextIter
         error('FORM:xBecameNonFinite', 'One or more x-values became Inf or NaN')
     end
     
+    samples = cell2struct(mat2cell(x(Calc,:), length(Calc), ones(size(x,2),1)), {stochast.Name}, 2);
     % derive z based on x
-    z(Calc,1) = feval(OPT.x2zFunction, x(Calc,:), {stochast.Name}, OPT.Resistance,...
+    z(Calc,1) = feval(OPT.x2zFunction, samples, OPT.Resistance,...
         OPT.variables{:});  %#ok<AGROW> % bepaal z(u) uit x(u)
 
     if Converged || maxIterReached
