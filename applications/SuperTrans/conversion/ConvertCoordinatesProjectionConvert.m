@@ -1,7 +1,10 @@
 function [y1,x1] = ConvertCoordinatesProjectionConvert(x1,y1,CS,proj_conv,direction,STD)
 % CONVERTCOORDINATESPROJECTIONCONVERT 
+%
+% [y1,x1] = ...
+% ConvertCoordinatesProjectionConvert(x1,y1,CS,proj_conv,direction,STD)
 % 
-% watch the order of lat-lon / x-y!
+% watch the order: lon-lat / x-y (NOT lat-lon !)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -124,7 +127,6 @@ switch method.name
 
         [x1,y1]= HotineObliqueMercator(x1,y1,a,invf,latc,lonc,alphac,gammac,kc,fe,fn,iopt);
 
-        
     otherwise
         error(['tranformation method ' method.name ' not (yet) supported'])
 end

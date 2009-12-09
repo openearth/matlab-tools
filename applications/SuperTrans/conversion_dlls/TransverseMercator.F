@@ -36,15 +36,15 @@ C
       integer mxCreateDoubleMatrix, mxGetPr
       integer mxGetM, mxGetN
  
-      integer x1_pr
-      integer y1_pr
-      integer x2_pr
-      integer y2_pr
-      integer a_pr
+      integer   x1_pr
+      integer   y1_pr
+      integer   x2_pr
+      integer   y2_pr
+      integer    a_pr
       integer finv_pr
-      integer k0_pr
-      integer fe_pr
-      integer fn_pr
+      integer   k0_pr
+      integer   fe_pr
+      integer   fn_pr
       integer lat0_pr
       integer lon0_pr
       integer iopt_pr
@@ -79,13 +79,13 @@ C     Create matrix for the return argument.
       plhs(1) = mxCreateDoubleMatrix(m1,n1,0)
       plhs(2) = mxCreateDoubleMatrix(m1,n1,0)
 
-      x1_pr   = mxGetPr(prhs(1))
-      y1_pr   = mxGetPr(prhs(2))
-      a_pr    = mxGetPr(prhs(3))
+        x1_pr = mxGetPr(prhs(1))
+        y1_pr = mxGetPr(prhs(2))
+         a_pr = mxGetPr(prhs(3))
       finv_pr = mxGetPr(prhs(4))
-      k0_pr   = mxGetPr(prhs(5))
-      fe_pr   = mxGetPr(prhs(6))
-      fn_pr   = mxGetPr(prhs(7))
+        k0_pr = mxGetPr(prhs(5))
+        fe_pr = mxGetPr(prhs(6))
+        fn_pr = mxGetPr(prhs(7))
       lat0_pr = mxGetPr(prhs(8))
       lon0_pr = mxGetPr(prhs(9))
       iopt_pr = mxGetPr(prhs(10))
@@ -94,13 +94,13 @@ C     Create matrix for the return argument.
       y2_pr    = mxGetPr(plhs(2))
 
 C     Load the data into Fortran arrays.
-      call mxCopyPtrToReal8(x1_pr,x1,np)
-      call mxCopyPtrToReal8(y1_pr,y1,np)
-      call mxCopyPtrToReal8(a_pr,a,1)
+      call mxCopyPtrToReal8(  x1_pr,x1  ,np)
+      call mxCopyPtrToReal8(  y1_pr,y1  ,np)
+      call mxCopyPtrToReal8(   a_pr,a   ,1)
       call mxCopyPtrToReal8(finv_pr,finv,1)
-      call mxCopyPtrToReal8(k0_pr,k0,1)
-      call mxCopyPtrToReal8(fe_pr,fe,1)
-      call mxCopyPtrToReal8(fn_pr,fn,1)
+      call mxCopyPtrToReal8(  k0_pr,k0  ,1)
+      call mxCopyPtrToReal8(  fe_pr,fe  ,1)
+      call mxCopyPtrToReal8(  fn_pr,fn  ,1)
       call mxCopyPtrToReal8(lat0_pr,lat0,1)
       call mxCopyPtrToReal8(lon0_pr,lon0,1)
       call mxCopyPtrToReal8(iopt_pr,iopt,1)
