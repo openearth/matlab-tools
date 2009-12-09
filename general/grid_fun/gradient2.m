@@ -4,28 +4,30 @@ function varargout = gradient2(varargin)
 %      gradient2(x,y,z) 
 %
 %   calculates gradient dz/dx and dz/dy (in global co-ordinates)
-%   for data on curvilinear grid (x,y).
+%   for data on curvilinear grid (x,y) (unlike GRADIENT, wich only
+%   calculates gradients in matrix-space).
 %
 %    out    = GRADIENT2(...) returns a struct with fields fx and fy
 %   [fx,fy] = GRADIENT2(...) returns 2 matrices fx and fy
 %
-%   Note that fx and fy are given at the centers of the grid (x,y)
+%   Note that by default fx and fy are given at the centers of the grid (x,y)
 %   The size of fx and fy is therefore 1 element smaller in both
-%   matrix directions. This is unlike GRADIENT that uses a central
-%   scheme so the gradients are defined at the data points, with the
-%   border containing a lower order gradient definition. With GRADIENT2
-%   there are no  border defintions, so total area of data 
-%   covered is reduced with 0.5 grid ceel at every boundary (also 
-%   internal ones where you have NaN's).
+%   matrix directions. With the default GRADIENT2 there are no border
+%   effects: the total area covered with data is reduced with 
+%   0.5 grid cell at every boundary (also internal holes where you have NaN's).
+%   Optionally a central scheme can be chosen as used in GRADIENT. 
+%   In this case the gradients are defined at the data points, with the
+%   border containing gradients filled in with NaN (no confusing lower 
+%   order approximations at all). 
 %
 %   out    = GRADIENT2(x,y,z,<'keyword',value>) where the following options 
 %   are implemented:
 %
 %  * 'average': GRADIENT2(x,y,z,'average',value) with value 'min', 'max' or 'mean.
 %
-%      The inout grid is triangulated. For each triangle the 
+%      The input grid is triangulated. For each triangle the 
 %      gradient is determined by fitting a plane through the 3 corner
-%      points, by solving the exact equations of a plane. Every quadrangle
+%      points, by solving the exact equations of a plane. Thus, every quadrangle
 %      contains 2 triangles. By default the gradient values in these 2 triangles
 %      are averaged to get the gradient of the quadrangles. An extra (optional) 
 %      argument can be provided to choose between 'min', 'max, and 'mean'. This 
@@ -59,7 +61,7 @@ function varargout = gradient2(varargin)
 %      discretisation: 'upwind'            discretisation: 'central'         
 %                                                                            
 %      the corner values at                the corner values at
-%      (1,1), (1,2), (2,1), (2,2)          (2,1), (1,2),(2,3), (3,2)
+%      (1,1), (1,2), (2,1), (2,2)          (2,1), (1,2), (2,3), (3,2)
 %      are used to get a gradient at       are used to get a gradient at
 %      CERNTER points (a,a)                CORNER points (2,2), corner points
 %                                          at the boundary like (1,1), (2,1),(1,2)
@@ -105,7 +107,7 @@ function varargout = gradient2(varargin)
 
 
 %% In
-%------------------------------
+% ------------------------------
 
    x   = squeeze(varargin{1});
    y   = squeeze(varargin{2});
@@ -132,7 +134,7 @@ function varargout = gradient2(varargin)
    sz2cen = sz2cor - 1;
    
 %% Keywords
-%------------------------------
+% ------------------------------
 
    OPT.discretisation = 'upwind';
    OPT.average        = 'mean';
@@ -141,7 +143,7 @@ function varargout = gradient2(varargin)
    %  to overwrite default values.
    %  Align code lines as much as possible
    %  to allow for block editing in textpad.
-   %------------------------
+   % ------------------------
    
    if nargin>3
    iargin = 4;
@@ -162,7 +164,7 @@ function varargout = gradient2(varargin)
 
       %% Triangulate curvi-linear grid
       %  and calculate gradients in all separate triangles.
-      %-------------------------------------
+      % -------------------------------------
       
          map     = triquat(x,y);
          
@@ -176,7 +178,7 @@ function varargout = gradient2(varargin)
          % map      = tri2quat(tri,quat);
       
       %% Calculate gradient per triangle
-      %-------------------------------------
+      % -------------------------------------
 
          [tri.fx,tri.fy] = tri_grad(x,y,z,map.tri);
          
@@ -185,7 +187,7 @@ function varargout = gradient2(varargin)
          
       %% Map value at centres of trangles to centers
       %  of quadrangles using mapper provided by triquat.
-      %-------------------------------------
+      % -------------------------------------
       
       % 1ST traingle per quadrangle : tri_per_quat(:,1)
       % 2ND traingle per quadrangle : tri_per_quat(:,2)
@@ -219,7 +221,7 @@ function varargout = gradient2(varargin)
          fyB =  nan.*zeros(szcor);   
          
    %% Calculations
-   %--------------------
+   % --------------------
 
 %     |       |       |       |         
 %     +   x   +   x   +   x   +   x     
@@ -236,7 +238,7 @@ function varargout = gradient2(varargin)
 %            A3
 
   %% Looped approach
-  %------------------
+  % ------------------
 
    n_triangles = 1; % one triangle per time in a looped manner
    
@@ -265,7 +267,7 @@ function varargout = gradient2(varargin)
    end
    
   %% Vectorized attempt
-  %------------------
+  % ------------------
   
   %   %% all inpout excpet outer rows and columns
   %   n_triangles = (szcor(1)-2)*(szcor(2)-2)
@@ -294,7 +296,7 @@ function varargout = gradient2(varargin)
   %                    
 
   %% Average
-  %------------------
+  % ------------------
 
       if     strcmp(OPT.average,'min')
          fx  = min(fxA, fxB);  
@@ -317,7 +319,7 @@ function varargout = gradient2(varargin)
 
 
 %% Out
-%------------------------------
+% ------------------------------
 
 if nargout<2
    out.fx    = fx;

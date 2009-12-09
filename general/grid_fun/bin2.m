@@ -67,9 +67,6 @@ function [varargout] = bin2(fx,fy,fz,varargin)
 %   --------------------------------------------------------------------
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 08 Jul 2009
-% Created with Matlab version: 7.6.0.324 (R2008a)
-
 % $Id$
 % $Date$
 % $Author$
