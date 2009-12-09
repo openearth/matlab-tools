@@ -141,6 +141,7 @@ if OPT.colorbar
 end
 
 %% STYLE
+
 OPT_stylePoly = struct(...
     'name'       ,['style' num2str(1)],...
     'fillColor'  ,colors(1,:),...
@@ -159,9 +160,8 @@ for ii = 1:OPT.colorSteps
     output = [output KML_stylePoly(OPT_stylePoly)];
 end
 
-output = [output '<!--############################-->' fprinteol];
-
 %% print and clear output
+output = [output '<!--############################-->' fprinteol];
 fprintf(OPT.fid,'%s',output); output = [];
 fprintf(OPT.fid,'<Folder>');
 fprintf(OPT.fid,'  <name>patches</name>');
@@ -242,3 +242,5 @@ end
 if OPT.openInGE
     system(OPT.fileName);
 end
+
+%% EOF

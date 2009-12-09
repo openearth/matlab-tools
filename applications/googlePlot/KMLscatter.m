@@ -10,7 +10,10 @@ function varargout = KMLscatter(lat,lon,c,varargin)
 %  * colorMap           = colormap (default @(m) jet(m));
 %  * colorSteps         = number of colors in colormap (default 20);
 %  * cLim               = cLim aka caxis (default [min(c) max(c)]);
-%  * html               = cell array with html text per point
+%  * name               = cellstr with name per point (shown when highlighted)
+%                         by default empty
+%  * html               = cellstr with text per point (shown when highlighted)
+%                         by default displays value c per point
 %
 % For the <keyword,value> pairs and their defaults call
 %
@@ -61,6 +64,7 @@ OPT.colorSteps         =  20;
 OPT.cLim               =  [];
 %OPT.long_name          =  'value';
 OPT.html               = [];
+OPT.name               = [];
 %OPT.units              =  '';
 OPT.iconnormalState    =  'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
 OPT.iconhighlightState =  'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
@@ -69,6 +73,7 @@ OPT.scalehighlightState=  1.0;
 OPT.openInGE           =  0;
 OPT.markerAlpha        =  0.6;
 OPT.description        =  '';
+OPT.colorbar           = 1;
 
 if nargin==0
     varargout = {OPT};
@@ -83,8 +88,8 @@ if isempty(OPT.fileName)
     [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','untitled.kml');
     OPT.fileName = fullfile(filePath,fileName);
 end
-% set kmlName if it is not set yet
 
+% set kmlName if it is not set yet
 if isempty(OPT.kmlName)
     [ignore OPT.kmlName] = fileparts(OPT.fileName);
 end
@@ -102,6 +107,9 @@ lon    = lon(~isnan(c(:)));
 lat    = lat(~isnan(c(:)));
 c      =   c(~isnan(c(:)));
 colors = OPT.colorMap(OPT.colorSteps);
+if isempty(OPT.html);OPT.html = cellstr(num2str(c(:)));end
+if  ischar(OPT.html);OPT.html = cellstr(OPT.html  );end
+if  ischar(OPT.name);OPT.name = cellstr(OPT.name  );end
 
 %% start KML
 
@@ -115,6 +123,11 @@ OPT_header = struct(...
     'description',OPT.description);
 output = KML_header(OPT_header);
 
+if OPT.colorbar
+   clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colors);
+   output = [output clrbarstring];
+end
+
 output = [output '<!--############################-->\n'];
 
 %% STYLE
@@ -126,36 +139,39 @@ for ii = 1:OPT.colorSteps
     markerColor         = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
 
     output = [output ...
-        '<StyleMap id="Speed_marker_',num2str(ii,'%0.3d'),'map">\n'...
-        ' <Pair><key>normal</key><styleUrl>#Speed_marker_',num2str(ii,'%0.3d'),'n</styleUrl></Pair>\n'...
-        ' <Pair><key>highlight</key><styleUrl>#Speed_marker_',num2str(ii,'%0.3d'),'h</styleUrl></Pair>\n'...
+        '<StyleMap id="cmarker_',num2str(ii,'%0.3d'),'map">\n'...
+        ' <Pair><key>normal</key><styleUrl>#cmarker_',num2str(ii,'%0.3d'),'n</styleUrl></Pair>\n'...
+        ' <Pair><key>highlight</key><styleUrl>#cmarker_',num2str(ii,'%0.3d'),'h</styleUrl></Pair>\n'...
         '</StyleMap>\n'...
-        '<Style id="Speed_marker_',num2str(ii,'%0.3d'),'n">\n'...
+        '<Style id="cmarker_',num2str(ii,'%0.3d'),'n">\n'...
         ' <IconStyle>\n'...
         ' <color>' markerColor '</color>\n'...
         ' <scale>' num2str(OPT.scalenormalState) '</scale>\n'...
         ' <Icon><href>'    OPT.iconnormalState '</href></Icon>\n'...
         ' </IconStyle>\n'...
-        ' <LabelStyle><color>ff0055ff</color></LabelStyle>\n'...
+        ' <LabelStyle><color>000000ff</color><scale>0</scale></LabelStyle>\n'... % no text except when mouse hoover
         ' </Style>\n'...
-        '<Style id="Speed_marker_',num2str(ii,'%0.3d'),'h">\n'...
+        '<Style id="cmarker_',num2str(ii,'%0.3d'),'h">\n'...
         ' <BalloonStyle><text>\n'...
-        ' $[description]\n'...
+        ' <h3>$[name]</h3>'... % variable per dot
+        ' $[description]\n'... % variable per dot
         ' </text></BalloonStyle>\n'...
         ' <IconStyle>\n'...
         ' <color>' markerColor '</color>\n'...
         ' <scale>' num2str(OPT.scalehighlightState) '</scale>\n'...
         ' <Icon><href>'    OPT.iconhighlightState '</href></Icon>\n'...
         ' </IconStyle>\n'...
-        ' <LabelStyle><color>ff0055ff</color></LabelStyle>\n'...
+        ' <LabelStyle></LabelStyle>\n'...
         ' </Style>\n'];
 end
 
-output = [output '<!--############################-->\n'];
-
 %% print and clear output
+output = [output '<!--############################-->\n'];
+fprintf(OPT.fid,output);output = [];
+fprintf(OPT.fid,'<Folder>');
+fprintf(OPT.fid,'  <name>patches</name>');
+fprintf(OPT.fid,'  <open>0</open>');
 
-fprintf(OPT.fid,output);
 output = repmat(char(1),1,1e5);
 kk = 1;
 
@@ -168,19 +184,37 @@ for ii=1:length(lon)
     cindex = min(cindex,OPT.colorSteps);
     cindex = max(cindex,1); % style numbering is 1-based
 
-    OPT_poly.styleName = ['Speed_marker_',num2str(cindex,'%0.3d'),'map'];
-
+    OPT_poly.styleName = ['cmarker_',num2str(cindex,'%0.3d'),'map'];
+    if isempty(OPT.name)
     newOutput= sprintf([...
         '<Placemark>\n'...
         ' <name></name>\n'...                          % no names so we see just the scatter points
         ' <visibility>1</visibility>\n'...
-        ' <description>%s</description>\n'...
+        ' <description><![CDATA['... % start required wrapper for html
+        '%s'...
+        ']]></description>\n'...     % end   required wrapper for html
         ' <styleUrl>#%s</styleUrl>\n'...               % styleName
         ' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n'...
         ' </Placemark>\n'],...
         OPT.html{ii},...
         OPT_poly.styleName,...
         lon(ii),lat(ii));
+    else
+    newOutput= sprintf([...
+        '<Placemark>\n'...
+        ' <name>%s</name>\n'...                          % no names so we see just the scatter points
+        ' <visibility>1</visibility>\n'...
+        ' <description><![CDATA['... % start required wrapper for html
+        '%s'...
+        ']]></description>\n'...     % end   required wrapper for html
+        ' <styleUrl>#%s</styleUrl>\n'...               % styleName
+        ' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n'...
+        ' </Placemark>\n'],...
+        OPT.name{ii},...
+        OPT.html{ii},...
+        OPT_poly.styleName,...
+        lon(ii),lat(ii));
+    end
 
     % add newOutput to output
     output(kk:kk+length(newOutput)-1) = newOutput;
@@ -199,6 +233,8 @@ end
 
 % print output
 fprintf(OPT.fid,'%s',output(1:kk-1));
+
+fprintf(OPT.fid,'</Folder>');
 
 %% FOOTER
 
