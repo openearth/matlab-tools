@@ -70,7 +70,7 @@ OPT = setProperty(OPT, varargin{:});
 
 %% get OpenDAP links
 try
-txt = urlread(OPT.url);
+    txt = urlread(OPT.url);
 catch
     xx=0
 end

@@ -1,47 +1,33 @@
-function [OPeNDAPinfo, OPeNDAPlinks] = getOpenDAPinfo(varargin) %#ok<STOUT>
+function OPeNDAPlinks = getOpenDAPinfo(varargin) 
 %GETOPENDAPINFO  Routine returns a struct of all datafiles available from an OpenDAP url.
 %
-%   The routine returns a structure containing all information about a user
+%   The routine returns a cell array containing all information about a user
 %   specified OpenDAP url based on parsing the information contained in
 %   catalog.xml. The url entered is expected to refer to a location that
 %   includes catalog.xml information.  The routine should work starting at
 %   any level.
 %
-%   The routine assumes the variables at the level of the specified OpenDAP
-%   url to start with a letter. To prevent crashing in case a datasetname
-%   or a datafile should start with a number the prefix 'temp_' is glued to
-%   all deeper levels. This prefix may of course be removed later (e.g.
-%   when reconstructing urls from the struct).
-%
-%   To prevent the occurence of undesired sublevels in the info structure
-%   all points in dataset names (e.g. waterbase.nl) have been replaced by
-%   '_dot_'. This replacement may also be undone later (e.g. when
-%   reconstructing urls from the struct).
-%
-%   NB: routine works only on the recent Hyrax version of OpenDAP as
-%   xml catalog information needs to be present for this to work.
-%
 %   Syntax:
-%       OpenDAPinfo = getOpenDAPinfo(varargin)
+%       OPeNDAPlinks = getOpenDAPinfo(varargin)
 %
 %   Input:
 %       For the following keywords, values are accepted (values indicated are the current default settings):
-%           'url', 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/catalog.xml' % default is OpenDAP test server url
+%           'url', 'http://opendap.deltares.nl/thredds/catalog/opendap/catalog.xml' % default is OpenDAP test server url
 %
 %   Output:
 %       OpenDAPinfo = cell array with info about the user specified url
 %
 %   Example:
-%       url     = 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/catalog.xml'; % base url to use
+%       url     = 'http://opendap.deltares.nl/thredds/catalog/opendap/catalog.xml'; % base url to use
 %       OpenDAPinfo = getOpenDAPinfo_new('url', url);
 % 
-%       url     = 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/catalog.xml'; % base url to use
+%       url     = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/catalog.xml'; % base url to use
 %       OpenDAPinfo = getOpenDAPinfo_new('url', url);
 % 
-%       url     = 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml'; % base url to use
+%       url     = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml'; % base url to use
 %       OpenDAPinfo = getOpenDAPinfo_new('url', url);
 % 
-%       url     = 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/jarkus/catalog.xml'; % base url to use
+%       url     = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/catalog.xml'; % base url to use
 %       OpenDAPinfo = getOpenDAPinfo_new('url', url);
 %
 %   See also getOpenDAPlinks
@@ -185,33 +171,4 @@ roots   = repmat([fileparts(strrep(OPT.url,'catalog','dodsC')) '/'], size(datace
 ncfiles = char(datacell);
 OPeNDAPlinks = cellstr([roots ncfiles]);
 
-%% create output OPeNDAPinfo (this is a structure of all available nc files)
-warning off
-[structpath, filename, ext] = cellfun(@fileparts, datacell, 'UniformOutput', 0);
-
-% structpath(idsempty) = filename(idsempty);
-structpath = cellfun(@strrep, structpath, repmat({'.'}, size(structpath)), repmat({'_dot_'}, size(structpath)), 'UniformOutput', 0);
-structpath = cellfun(@strrep, structpath, repmat({'/'}, size(structpath)), repmat({'.temp_'}, size(structpath)), 'UniformOutput', 0);
-
-% find entries where structpath is empty
-idsempty   = cellfun(@isempty, structpath, 'UniformOutput', 0);
-idsempty   = vertcat(idsempty{:});
-
-% for those entries where structpath is empty (nc files in search root)
-filename(idsempty)  = cellfun(@horzcat, repmat({'temp_'}, size(structpath(idsempty))), filename(idsempty), 'UniformOutput', 0);
-structpath(idsempty)  = cellfun(@horzcat, repmat({'OPeNDAPinfo'}, size(structpath(idsempty))), structpath(idsempty), 'UniformOutput', 0);
-
-% for those entries where structpath is NOT empty 
-structpath(~idsempty) = cellfun(@horzcat, repmat({'temp_'}, size(structpath(~idsempty))), structpath(~idsempty), 'UniformOutput', 0);
-structpath(~idsempty) = cellfun(@horzcat, repmat({'OPeNDAPinfo.'}, size(structpath(~idsempty))), structpath(~idsempty), 'UniformOutput', 0);
-
-tempo = unique(structpath);
-for i = 1 : length(tempo)
-    ids = find(ismember(structpath,tempo(i)));
-    for j = 1:length(ids)
-        eval([tempo{i} '(' num2str(j) ',1)={''' filename{ids(j)}  ext{ids(j)} '''};']);
-    end
-end
-warning on
-disp(' ')
 disp(['Analysis finished in ' num2str(toc) ' seconds'])
