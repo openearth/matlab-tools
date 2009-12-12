@@ -1,0 +1,108 @@
+function nc_oe_standard_names(varargin)
+%NC_OE_STANDARD_NAMES  Routine facilitates adding variables that are part of standard-name glossaries (CF-1.4, OE-1.0, VO-1.0)
+%
+%   Routine facilitates adding variables that are part of standard-name glossaries (CF-1.4, OE-1.0, VO-1.0).
+%
+%   Syntax:
+%      nc_oe_standard_names(varargin)
+%
+%   Example:
+%
+%      nc_oe_standard_names('outputfile', outputfile, ...
+%                           'varname', {'time'}, ...
+%                           'oe_standard_name', {'time'}, ...
+%                           'dimension', {'time'}, ...
+%                           'timezone', '+01:00')
+%
+%   Standard names supported:
+%        (OE-1.0) 'time'
+%
+%   See also nc_oe_standard_names_generate
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2009 Van Oord
+%       Mark van Koningsveld
+%
+%       mrv@vanoord.com
+%
+%       Watermanweg 64
+%       POBox 8574
+%       3009 AN Rotterdam
+%       Netherlands
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tools is part of VOTools which is the internal clone of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 13 Nov 2009
+% Created with Matlab version: 7.7.0.471 (R2008b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% settings
+% defaults
+OPT = struct(...
+    'outputfile',       {[]}, ...                            % description of input argument 1
+    'varname',          {{{'test1'};{'test2'}}}, ...         % description of input argument 2
+    'oe_standard_name', {{{'test1'};{'test2'}}}, ...         % description of input argument 3
+    'dimension',        {{{'time'};{'x' ,'y', 'time'}}}, ... % description of input argument 4
+    'timezone',        '+00:00' ...  			     % description of input argument 5
+    );
+
+% overrule default settings by property pairs, given in varargin
+OPT = setProperty(OPT, varargin{:});
+
+%% check some basic input properties
+if size(OPT.oe_standard_name,1) ~= size(OPT.dimension,1)
+    error('nc_oe_standard_names:argChk', 'Input arguments not of equal length')
+end
+if isempty(OPT.outputfile)
+    error('nc_oe_standard_names:outputChk',  'No outputfilename indicated')
+end
+
+%% one by one add each variable
+for i = 1:size(OPT.oe_standard_name,1)
+    switch OPT.oe_standard_name{i}
+        case 'time'
+            % add variable: time
+            Variable = struct(...
+               'Name',       OPT.varname{i} , ...
+               'Nctype',    'double', ... 
+               'Dimension', {{OPT.dimension{i,:}}}, ... 
+               'Attribute', struct( ... 
+                   'Name', ... 
+                   {'standard_name', 'long_name', 'units', 'fill_value'}, ...
+                   'Value', ... 
+                   {'time', 'time', ['days since 1970-01-01 00:00:00' ' ' OPT.timezone], NaN} ...
+                   ) ...
+                );
+ 
+    end
+    
+    % add variable to output file
+    nc_addvar(OPT.outputfile, Variable);
+end
+

@@ -1,0 +1,5 @@
+    end
+    
+    % add variable to output file
+    nc_addvar(OPT.outputfile, Variable);
+end

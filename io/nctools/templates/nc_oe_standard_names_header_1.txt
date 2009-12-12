@@ -1,0 +1,17 @@
+function nc_oe_standard_names(varargin)
+%NC_OE_STANDARD_NAMES  Routine facilitates adding variables that are part of standard-name glossaries (CF-1.4, OE-1.0, VO-1.0)
+%
+%   Routine facilitates adding variables that are part of standard-name glossaries (CF-1.4, OE-1.0, VO-1.0).
+%
+%   Syntax:
+%      nc_oe_standard_names(varargin)
+%
+%   Example:
+%
+%      nc_oe_standard_names('outputfile', outputfile, ...
+%                           'varname', {'time'}, ...
+%                           'oe_standard_name', {'time'}, ...
+%                           'dimension', {'time'}, ...
+%                           'timezone', '+01:00')
+%
+%   Standard names supported:
