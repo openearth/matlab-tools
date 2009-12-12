@@ -1,4 +1,4 @@
-function urls = getFixedMapOutlines(type)
+function OPeNDAPlinks = rws_getFixedMapOutlines(type)
 %rws_GETFIXEDMAPOUTLINES   Routine to retrieve information from OPeNDAP server
 %
 %   Syntax:
@@ -13,7 +13,6 @@ function urls = getFixedMapOutlines(type)
 %   Example:
 %
 % See also: rws_getDataInPolygon, rws_createFixedMapsOnAxes, rws_identifyWhichMapsAreInPolygon, getDataFromNetCDFGrid
-
 
 % --------------------------------------------------------------------
 % Copyright (C) 2004-2009 Delft University of Technology
@@ -53,26 +52,28 @@ function urls = getFixedMapOutlines(type)
 % info = getOpenDAPinfo('url', 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/catalog.xml');
 % info = getOpenDAPinfo('url', 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml');
 
+if nargin == 0
+    type = 'jarkus';
+end
+
 %% extract ncfile names from OPeNDAP info
 if strcmp(type,'vaklodingen')
-%     ncfiles = info.vaklodingen;
-    info = getOpenDAPinfo('url', 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml');
-    path =                       'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/';
+    OPeNDAPlinks = getOpenDAPinfo('url', 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml');
+    path         =                       'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/';
 elseif strcmp(type,'jarkus')
-%     ncfiles = info.jarkus.temp_grids;
-    info = getOpenDAPinfo('url', 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml');
-    path =                       'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids/';
+    OPeNDAPlinks = getOpenDAPinfo('url', 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml');
+    path         =                       'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids/';
 else
     return
 end
-
-%% construct full url for each ncfile
-% initialise variable
-urls{length(info),1} = '.';
-
-% one by one fill the urls variable
-for i = 1:length(info)
-    urls{i,1} = [path info{i}];
-end
-urls = cellfun(@strrep, urls, repmat({'_dot_'} , size(urls)), repmat({'.'}, size(urls)), 'UniformOutput', 0);
-urls = cellfun(@strrep, urls, repmat({'/temp_'}, size(urls)), repmat({'/'}, size(urls)), 'UniformOutput', 0);
+% 
+% %% construct full url for each ncfile
+% % initialise variable
+% urls{length(info),1} = '.';
+% 
+% % one by one fill the urls variable
+% for i = 1:length(info)
+%     urls{i,1} = [path info{i}];
+% end
+% urls = cellfun(@strrep, urls, repmat({'_dot_'} , size(urls)), repmat({'.'}, size(urls)), 'UniformOutput', 0);
+% urls = cellfun(@strrep, urls, repmat({'/temp_'}, size(urls)), repmat({'/'}, size(urls)), 'UniformOutput', 0);

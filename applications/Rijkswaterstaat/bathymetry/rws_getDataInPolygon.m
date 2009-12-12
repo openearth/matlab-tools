@@ -64,7 +64,7 @@ OPT.searchwindow = -2*365;
 OPT.polygon      = [];
 OPT.cellsize     = 20;
 OPT.datathinning = 1;
-OPT.ldburl       = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
+OPT.ldburl       = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
 OPT.plotresult   = 1;
 
 OPT = setProperty(OPT, varargin{:});
