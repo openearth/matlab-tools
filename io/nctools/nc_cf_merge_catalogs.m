@@ -74,10 +74,14 @@ for i = 2:length(OPT.filenames)
         if eval(['iscellstr(catalog.' cat_fieldnames{j} ')']) % for the fields that are chars
             if isfield(catalog_add,cat_fieldnames{j})
                 eval(['catalog.' cat_fieldnames{j} ' = [catalog.' cat_fieldnames{j} '; catalog_add.' cat_fieldnames{j} '];']);
+            else 
+                eval(['catalog.' cat_fieldnames{j} ' = [catalog.' cat_fieldnames{j} '; repmat({''''}, size(catalog_add.urlPath))];']);
             end
         else % for the fields that are floats
             if isfield(catalog_add,cat_fieldnames{j})
                 eval(['catalog.' cat_fieldnames{j} ' = [catalog.' cat_fieldnames{j} '; catalog_add.' cat_fieldnames{j} '];']);
+            else 
+                eval(['catalog.' cat_fieldnames{j} ' = [catalog.' cat_fieldnames{j} '; repmat({''''}, size(catalog_add.urlPath))];']);
             end
         end
     end

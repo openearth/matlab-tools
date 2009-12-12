@@ -1,45 +1,34 @@
-function XB_Plot_Results(XB, vars, varargin)
-%XB_PLOT_RESULTS  Plots selected variables from XBeach result structure
+function output = xb_plot_results(varargin)
+%XB_PLOT_RESULTS  Simple routine for first basic inspection of XBeach results
 %
-%   Plots selected variables from XBeach result structure in 2D or 3D
-%   depending on the type of structure.
+%   Simple routine for first basic inspection of XBeach results.
 %
 %   Syntax:
-%   XB_Plot_Results(XB, vars, varargin)
+%   output = xb_plot_results(varargin)
 %
 %   Input:
-%   XB          = XBeach result structure
-%   vars        = cell with variables to be plotted
-%   varargin    = key/value pairs of optional parameters
-%                 fh            = figure handle (default: [])
-%                 t             = time step to be observed (default: 1)
-%                 title         = title of figure (default: XBeach output
-%                                 plot)
-%                 size          = size of figure (default: [800 600])
-%                 view          = view angle of plot, if 3D (default: [37.5
-%                                 30])
-%                 xlim          = x limits of plot (default: [])
-%                 ylim          = y limits of plot (default: [])
-%                 zlim          = z limits of plot (default: [])
-%                 showCoastline = flag to show coastline in plot (default:
-%                                 false)
+%   varargin  =
 %
-%   Output: no output
+%   Output:
+%   output =
 %
 %   Example
-%   XB_Plot_Results(XB, vars)
+%   XB_plot_results
 %
-%   See also XB_Read_Results, XB_Animate_Results, XB_Read_Coastline
+%   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
-%       Bas Hoonhout
+%       Mark van Koningsveld
 %
-%       bas@hoonhout.com
+%       m.vankoningsveld@tudelft.nl	
 %
+%       Hydraulic Engineering Section
+%       Faculty of Civil Engineering and Geosciences
 %       Stevinweg 1
 %       2628CN Delft
+%       The Netherlands
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -55,15 +44,15 @@ function XB_Plot_Results(XB, vars, varargin)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-% This tool is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
 % OpenEarthTools is an online collaboration to share and manage data and 
 % programming tools in an open source, version controlled environment.
 % Sign up to recieve regular updates of this function, and to contribute 
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 2 Dec 2009
-% Created with Matlab version: 7.5.0.338 (R2007b)
+% Created: 27 Nov 2009
+% Created with Matlab version: 7.7.0.471 (R2008b)
 
 % $Id$
 % $Date$
@@ -71,99 +60,121 @@ function XB_Plot_Results(XB, vars, varargin)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
-
+clc
 %% settings
+% defaults
+OPT.basedir   = [];    % description of input argument 1
+OPT.var       = { ...
+    'zb', ...          % bed level [m]
+    'zs', ...          % waterlevel including long waves [m]
+    'u',  ...          % crossshore velocity [m/s]
+    'v'};              % alongshore [m/s]
+OPT.stride_t  = 1;     % take a stride of OPT.stride_t through the time vector
 
-OPT = struct( ...
-    'fh', [], ...
-    't', 1, ...
-    'title', 'XBeach output plot', ...
-    'size', [800 600], ...
-    'grid', true, ...
-    'view', [37.5 30], ...
-    'xlim', [], ...
-    'ylim', [], ...
-    'zlim', [], ...
-    'showCoastline', false ...
-);
+% overrule default settings by property pairs, given in varargin
+OPT     = setProperty(OPT, varargin{:});
 
-OPT = setProperty(OPT, varargin{:});
-
-% make sure variable is a cell structure
-if ~iscell(vars); vars = {vars}; end;
-
-%% initialization
-
-% create figure
-if isempty(OPT.fh)
-    fig = figure();
+%% Open the dims.dat to extract all relevant dimensions
+if isempty(OPT.basedir)
+    fid = fopen(fullfile(pwd,'dims.dat'),'r');
 else
-    fig = OPT.fh;
+    fid = fopen(fullfile(OPT.basedir,'dims.dat'),'r');
 end
-    
-% set figure size
-pos = get(fig, 'Position'); pos(3:4) = OPT.size;
-set(fig, 'Position', pos);
-    
-% read grid
-xVar = XB.Output.x;
-yVar = XB.Output.y;
-dVar = XB.Output.zb;
 
-wPlots = ceil(sqrt(length(vars)));
-hPlots = ceil(length(vars)/wPlots);
+nt      = fread(fid,1,'double');
+nx      = fread(fid,1,'double');
+ny      = fread(fid,1,'double');
+
+fclose(fid);
+
+%% Read x and y grids
+fixy    = fopen('xy.dat','r');
+
+output.x       = fread(fixy,[nx+1,ny+1],'double');
+output.y       = fread(fixy,[nx+1,ny+1],'double');
+
+fclose(fixy);
+
+%% read variables indicated in OPT.var
+% initialise the tdim
+tdim = 1:OPT.stride_t:nt;
+output.time = tdim;
+
+for i   = 1:length(OPT.var)
+    % initialise
+    output.(OPT.var{i}) = zeros(nx+1, ny+1, length(tdim))*nan;
     
-%% plot data
-
-% loop through variables to animate
-for i = 1:length(vars)
-    var = vars{i};
-    
-    % create subplot
-    hp = subplot(wPlots, hPlots, i);
-
-    % read output variable
-    zVar = XB.Output.(var);
-    zSize = size(zVar);
-
-    % determine space and time dimensions
-    switch length(zSize)
-        case 2
-            plot3D = false;
-            plotAxis = [min(min(xVar)) max(max(xVar)) min(min(zVar)) max(max(zVar))];
-        case 3
-            plot3D = true;
-            plotAxis = [min(min(xVar)) max(max(xVar)) min(min(yVar)) max(max(yVar)) min(min(min(zVar))) max(max(max(zVar)))];
-        otherwise
-            error('Provided variable has not the right amount of dimensions');
-    end
-    
-    if OPT.xlim; plotAxis(1:2) = OPT.xlim; end;
-    if OPT.ylim; plotAxis(3:4) = OPT.ylim; end;
-    if OPT.zlim; plotAxis(5:6) = OPT.zlim; end;
-
-    % plot frame
-    if plot3D
-        surface(xVar, yVar, zVar(:,:,OPT.t));
-        axis(plotAxis);
-        
-        if OPT.showCoastline ~= false
-            [x y] = XB_Read_Coastline(XB, OPT.showCoastline, 't', OPT.t);
-            
-            hold on
-            
-            plot(x, y, '-r', 'LineWidth', 3);
+    fid = fopen([OPT.var{i} '.dat'],'r');
+    for j = 1 : length(tdim);
+        if ismember(j,tdim)
+            output.(OPT.var{i})(:,:,j) = fread(fid,[nx+1,ny+1],'double');
+        else
+            fread(fid,[nx+1,ny+1],'double');
         end
-
-        set(gca, 'View', OPT.view);
-    else
-        plot(xVar, zVar(:,OPT.t));
-        axis(plotAxis);
+        if j==1 && strcmpi(OPT.var{i}, 'z')
+            output.z0 = z;
+        end
     end
-        
-    % set grid
-    if OPT.grid; grid on; else grid off; end;
-
-    % update title
-    title({[OPT.title] ['Variable: ' var ' ; Timestep: ' num2str(OPT.t)]});
 end
+
+% figure(2);
+% 
+% for i=1:nt;
+% end
+% if 1
+%     if mod(i,1)==0
+%         %     subplot(221);pcolor(x,y,f);shading interp;colorbar;title('Hrms');caxis([0 2]);axis equal
+%         %     subplot(222);pcolor(x,y,z);shading flat;caxis([-10 5]);colorbar;title('zb');axis equal
+%         %     subplot(223);pcolor(x,y,s);shading interp;colorbar;title('setup');axis equal;caxis([-1 1])
+%         %     subplot(224);pcolor(x,y,sqrt(u.^2+v.^2));shading interp;caxis([-.5 .5]);colorbar;hold on;quiver(x,y,u,v,2,'k');title('velocity');hold off;axis equal
+%         pcolor(x,y,z-z0);shading interp;caxis([-2 2]);colorbar;hold on;quiver(x,y,u,v,2,'k');title('H,Velocity');hold off;axis equal
+%         %       pcolor(x,y,z);shading interp;caxis([-10 2]);colorbar;hold on;quiver(x,y,u,v,2,'k');title('H,Velocity');hold off;axis equal
+%         
+%         drawnow
+%         %pause(0.5);
+%         %F = getframe(gcf);
+%         %mov = addframe(mov,F);
+%     end
+% end;
+% fclose(fid)
+% %mov = close(mov);
+% 
+% 
+%     
+% % fiz     = fopen('zb.dat','r');
+% % fiu     = fopen('u.dat','r');
+% % fiv     = fopen('v.dat','r');
+% % fis     = fopen('zs.dat','r');
+% % fidzl   = fopen('dzlayer.dat','r');
+% % fis=fopen('v.dat','r');
+% %mov = avifile('mov','fps',5,'keyframe',9999);
+% for i=1:nt;
+%     f=fread(fid,[nx+1,ny+1],'double');
+%     z=fread(fiz,[nx+1,ny+1],'double');
+%     s=fread(fis,[nx+1,ny+1],'double');
+%     u=fread(fiu,[nx+1,ny+1],'double');
+%     v=fread(fiv,[nx+1,ny+1],'double');
+%     %    dzlayer=fread(fidzl,[nx+1,ny+1],'double');
+%     if i==1
+%         z0=z;
+%     end
+% end
+% 
+% if 1
+%     if mod(i,1)==0
+%         %     subplot(221);pcolor(x,y,f);shading interp;colorbar;title('Hrms');caxis([0 2]);axis equal
+%         %     subplot(222);pcolor(x,y,z);shading flat;caxis([-10 5]);colorbar;title('zb');axis equal
+%         %     subplot(223);pcolor(x,y,s);shading interp;colorbar;title('setup');axis equal;caxis([-1 1])
+%         %     subplot(224);pcolor(x,y,sqrt(u.^2+v.^2));shading interp;caxis([-.5 .5]);colorbar;hold on;quiver(x,y,u,v,2,'k');title('velocity');hold off;axis equal
+%         pcolor(x,y,z-z0);shading interp;caxis([-2 2]);colorbar;hold on;quiver(x,y,u,v,2,'k');title('H,Velocity');hold off;axis equal
+%         %       pcolor(x,y,z);shading interp;caxis([-10 2]);colorbar;hold on;quiver(x,y,u,v,2,'k');title('H,Velocity');hold off;axis equal
+%         
+%         drawnow
+%         %pause(0.5);
+%         %F = getframe(gcf);
+%         %mov = addframe(mov,F);
+%     end
+% end;
+% fclose(fid)
+% %mov = close(mov);
+% 
