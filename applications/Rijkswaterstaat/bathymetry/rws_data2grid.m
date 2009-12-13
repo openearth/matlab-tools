@@ -1,16 +1,50 @@
-function [X, Y, Z, Ztime] = data2grid(mapurls, minx, maxx, miny, maxy, OPT)
+function [X, Y, Z, Ztime] = rws_data2grid(mapurls, minx, maxx, miny, maxy, OPT)
 %RWS_DATA2GRID get data in fixed otrhogonal grid from bundle of netCDF files
 %
 %   [X, Y, Z, Ztime] = rws_data2grid(mapurls, minx, maxx, miny, maxy, <keyword,value>)
 %
-%%See also: 
+% See also: 
+
+% --------------------------------------------------------------------
+% Copyright (C) 2004-2009 Delft University of Technology
+% Version:      Version 1.0, February 2004
+%     Mark van Koningsveld
+%
+%     m.vankoningsveld@tudelft.nl	
+%
+%     Hydraulic Engineering Section 
+%     Faculty of Civil Engineering and Geosciences
+%     Stevinweg 1
+%     2628CN Delft
+%     The Netherlands
+%
+% This library is free software; you can redistribute it and/or
+% modify it under the terms of the GNU Lesser General Public
+% License as published by the Free Software Foundation; either
+% version 2.1 of the License, or (at your option) any later version.
+%
+% This library is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+% Lesser General Public License for more details.
+%
+% You should have received a copy of the GNU Lesser General Public
+% License along with this library; if not, write to the Free Software
+% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+% USA
+% --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
 
 % generate x and y vectors spanning the fixed map extents
-x         = minx: OPT.cellsize*OPT.datathinning:maxx;
+x         = minx :  OPT.cellsize*OPT.datathinning : maxx;
 x         = roundoff(x,6); maxx =  roundoff(maxx,6);
 if x(end)~= maxx; x = [x maxx];end % make sure maxx is included as a point
 
-y         = maxy:-OPT.cellsize*OPT.datathinning:miny; % thinning runs from the lower left corner upward and right
+y         = maxy : -OPT.cellsize*OPT.datathinning : miny; % thinning runs from the lower left corner upward and right
 y         = roundoff(y,6); miny =  roundoff(miny,6);
 if y(end)~=miny; y = [y miny];end % make sure miny is included as a point
 
@@ -39,7 +73,7 @@ for i = 1:length(mapurls)
     % convert vectors to grids
     x = repmat(x',size(z,1),1);
     y = repmat(y, 1, size(z,2));
-    
+
     idsLargeGrid = ismember(X,x) & ismember(Y,y);
     idsSmallGrid = ismember(x,X) & ismember(y,Y);
     

@@ -1,5 +1,5 @@
-function [mapurls, minx, maxx, miny, maxy] = identifyWhichMapsAreInPolygon(ah, polygon)
-%rws_IDENTIFYWHICHMAPSAREINPOLYGON  Script to identify which fixed maps are located inside a polygon partly or as a whole
+function [mapurls, minx, maxx, miny, maxy] = rws_identifyWhichMapsAreInPolygon(ah, polygon)
+%RWS_IDENTIFYWHICHMAPSAREINPOLYGON  Script to identify which fixed maps are located inside a polygon partly or as a whole
 %
 % See also: rws_getDataInPolygon, rws_getFixedMapOutlines, rws_createFixedMapsOnAxes, getDataFromNetCDFGrid
 
@@ -48,8 +48,8 @@ include = 0;
 for i = 1:length(maps)
     % include if a fixed map and polygon have an intersection
 
-   %[xcr, zcr] = polyintersect                   (maps{i,1},maps{i,2},polygon(:,1),polygon(:,2)); %#ok<*NASGU>
     [xcr, zcr] = findCrossingsOfPolygonAndPolygon(maps{i,1},maps{i,2},polygon(:,1),polygon(:,2)); %#ok<*NASGU>
+   %[xcr, zcr] = polyintersect                   (maps{i,1},maps{i,2},polygon(:,1),polygon(:,2)); %#ok<*NASGU>
 
     if ~isempty(xcr)
         include = 1;
@@ -66,7 +66,7 @@ for i = 1:length(maps)
     end
     
     % see if based on the above there is something to include
-    if include > 0 & (~isempty(strfind(get(objs(i),'tag'),'vaklodingenKB'))|~isempty(strfind(get(objs(i),'tag'),'jarkusKB'))) %#ok<*OR2,*AND2>
+    if include > 0 %& (~isempty(strfind(get(objs(i),'tag'),'vaklodingenKB'))|~isempty(strfind(get(objs(i),'tag'),'jarkusKB'))) %#ok<*OR2,*AND2>
         mapurls{end+1,1} = get(objs(i),'tag'); %#ok<*AGROW>
         minx = min([minx; maps{i,1}]);
         maxx = max([maxx; maps{i,1}]);

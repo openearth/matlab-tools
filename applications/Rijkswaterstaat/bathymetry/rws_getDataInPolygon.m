@@ -1,7 +1,7 @@
 function [X, Y, Z, Ztime] = rws_getDataInPolygon(varargin)
-%rws_GETDATAINPOLYGON  Script to load fixed maps from OPeNDAP, identify which maps are located inside a polygon and retrieve the data
+%RWS_GETDATAINPOLYGON  Script to load fixed maps from OPeNDAP, identify which maps are located inside a polygon and retrieve the data
 %
-%       [X, Y, Z, Ztime] = rws_getdatainpolygon(<keyword,value>);
+%       [X, Y, Z, Ztime] = rws_getDataInPolygon(<keyword,value>);
 %
 %   Input:
 %   where the following <keyword,value> pairs have been implemented (values indicated are the current default settings):
@@ -59,12 +59,13 @@ function [X, Y, Z, Ztime] = rws_getDataInPolygon(varargin)
 %% TODO: the script does not work yet for all thinning factors. Some counter problems remain.
 
 OPT.datatype     = 'vaklodingen';
-OPT.starttime    = datenum([1997 01 01]);
+OPT.starttime    = datenum([2009 12 31]);
 OPT.searchwindow = -2*365;
 OPT.polygon      = [];
 OPT.cellsize     = 20;
 OPT.datathinning = 1;
 OPT.ldburl       = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
+OPT.ldburl       = 'http://dtvirt5.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
 OPT.plotresult   = 1;
 
 OPT = setProperty(OPT, varargin{:});

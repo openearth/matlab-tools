@@ -55,10 +55,10 @@ OPT = setProperty(OPT, varargin{:});
 % place z values onto Z grid at proper location (Z is preallocated for speed)
 Z     = ones(size(OPT.X));    Z(:,:)=nan;
 for i = 1:length(OPT.xyz(:,1))
-    try
-        Z(idY(i),idX(i)) = OPT.xyz(i,3);
-    catch
-        [Z] = deal([]);
+    if idX(i) ~= 0 && idY(i) ~= 0
+        try
+            Z(idY(i),idX(i)) = OPT.xyz(i,3);
+        end
     end
 end
 

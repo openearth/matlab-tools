@@ -1,5 +1,5 @@
 function OPeNDAPlinks = rws_getFixedMapOutlines(type)
-%rws_GETFIXEDMAPOUTLINES   Routine to retrieve information from OPeNDAP server
+%RWS_GETFIXEDMAPOUTLINES   Routine to retrieve information from OPeNDAP server
 %
 %   Syntax:
 %   urls = opendap_getFixedMapOutlines(type)
@@ -48,10 +48,6 @@ function OPeNDAPlinks = rws_getFixedMapOutlines(type)
 % $Author$
 % $Revision$
 
-%% get info from OpenDAP (may take a while)
-% info = getOpenDAPinfo('url', 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/catalog.xml');
-% info = getOpenDAPinfo('url', 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml');
-
 if nargin == 0
     type = 'jarkus';
 end
@@ -59,21 +55,24 @@ end
 %% extract ncfile names from OPeNDAP info
 if strcmp(type,'vaklodingen')
     OPeNDAPlinks = getOpenDAPinfo('url', 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml');
-    path         =                       'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/';
+
 elseif strcmp(type,'jarkus')
     OPeNDAPlinks = getOpenDAPinfo('url', 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml');
-    path         =                       'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids/';
+
+elseif strcmp(type,'multibeam_delfland')
+    OPeNDAPlinks = findAllFiles( ...
+        'pattern_excl', {[filesep,'.svn']}, ...                 
+        'pattern_incl', '*.nc', ...                           
+        'basepath', 'D:\checkouts\VO-rawdata\projects\154040_delflandse_kust\nc_files\multibeam\' ...	  
+        );
+
+elseif strcmp(type,'multibeam_delfland2')
+    OPeNDAPlinks = findAllFiles( ...
+        'pattern_excl', {[filesep,'.svn']}, ...            
+        'pattern_incl', '*.nc', ...                        
+        'basepath', 'D:\checkouts\VO-Delflandsekust\nc_files\multibeam\' ...	   
+        );
+
 else
     return
 end
-% 
-% %% construct full url for each ncfile
-% % initialise variable
-% urls{length(info),1} = '.';
-% 
-% % one by one fill the urls variable
-% for i = 1:length(info)
-%     urls{i,1} = [path info{i}];
-% end
-% urls = cellfun(@strrep, urls, repmat({'_dot_'} , size(urls)), repmat({'.'}, size(urls)), 'UniformOutput', 0);
-% urls = cellfun(@strrep, urls, repmat({'/temp_'}, size(urls)), repmat({'/'}, size(urls)), 'UniformOutput', 0);
