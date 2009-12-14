@@ -33,9 +33,14 @@ else
                     % (any precision). Must include leading zero in minutes and
                     % seconds and exclude decimal point for seconds. Convert to
                     % degree using formula.
-                    degs =floor(abs(x1));
-                    mins = floor(100*(abs(x1)-degs)+1000*eps); %correct for numerical error
-                    secs = 10000*(abs(x1)-degs-mins/100);
+                    x1a  = abs(x1)+2*eps(x1); %correct for numerical error
+                    degs = floor(x1a);
+                    mins = floor(100*(x1a-degs));
+                    secs = 10000*(x1a-degs-mins/100);
+                    if secs>60
+                        mins = mins+1;
+                        secs = 0;
+                    end
                     xSI = sign(x1).*(degs+mins/60+secs/3600)/180*pi;
                 case 'sexagesimal DM'
                     % Pseudo unit. Format: sign - degrees - decimal point - integer
