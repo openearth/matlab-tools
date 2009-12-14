@@ -1,7 +1,10 @@
 function [mapurls, minx, maxx, miny, maxy] = rws_identifyWhichMapsAreInPolygon(ah, polygon)
 %RWS_IDENTIFYWHICHMAPSAREINPOLYGON  Script to identify which fixed maps are located inside a polygon partly or as a whole
 %
-% See also: rws_getDataInPolygon, rws_getFixedMapOutlines, rws_createFixedMapsOnAxes, getDataFromNetCDFGrid
+% See also: rws_createFixedMapsOnAxes, rws_createFixedMapsOnFigure,
+%   rws_data2grid, rws_getDataFromNetCDFGrid, rws_getDataFromNetCDFGrid_test,
+%   rws_getDataInPolygon, rws_getDataInPolygon_test, rws_getFixedMapOutlines,
+%   rws_identifyWhichMapsAreInPolygon, rws_plotDataInPolygon, getDataFromNetCDFGrid
 
 % --------------------------------------------------------------------
 % Copyright (C) 2004-2009 Delft University of Technology

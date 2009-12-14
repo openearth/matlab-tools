@@ -3,7 +3,10 @@ function [X, Y, Z, Ztime] = rws_data2grid(mapurls, minx, maxx, miny, maxy, OPT)
 %
 %   [X, Y, Z, Ztime] = rws_data2grid(mapurls, minx, maxx, miny, maxy, <keyword,value>)
 %
-% See also: 
+% See also: rws_createFixedMapsOnAxes, rws_createFixedMapsOnFigure,
+%   rws_data2grid, rws_getDataFromNetCDFGrid, rws_getDataFromNetCDFGrid_test,
+%   rws_getDataInPolygon, rws_getDataInPolygon_test, rws_getFixedMapOutlines,
+%   rws_identifyWhichMapsAreInPolygon, rws_plotDataInPolygon
 
 % --------------------------------------------------------------------
 % Copyright (C) 2004-2009 Delft University of Technology
