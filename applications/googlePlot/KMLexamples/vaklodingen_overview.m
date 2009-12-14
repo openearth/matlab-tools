@@ -1,4 +1,4 @@
-%JARKUS_GRIDS_OVERVIEW   make kml file with links to all jarkus files in a folder on OPeNDAP server
+%VAKLODINGEN_OVERVIEW   make kml file with links to all vaklodingen files in a folder on OPeNDAP server
 %
 %See also: vaklodingen_overview, jarkus_grids2kml, jarkusgrids2png
 
@@ -8,6 +8,7 @@ url           = 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswa
 KMLbaseString = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen/'; % where kml's are stored
 
 contents      = opendap_folder_contents(url);
+
 EPSG          = load('EPSG');
 
 for ii = 1:length(contents);
