@@ -57,7 +57,6 @@ function resultout = noAdditionaleErosionResult(xInitial,zInitial,result,maxRetr
 %%
 % no additional erosion because DUROS solution does not have
 % any point above the water level.
-TODO('Test this routine');
 
 %% write message
 writemessage(4,'No profile information above sea level after DUROS calculation');
