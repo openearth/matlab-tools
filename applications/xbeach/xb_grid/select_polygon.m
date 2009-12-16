@@ -3,9 +3,10 @@ function [xi,yi]=select_polygon
 xi = [];yi=[];
 n = 0;
 % Loop, picking up the points.
-disp('Select polygon to include in bathy')
-disp('Left mouse button picks points.')
-disp('Right mouse button picks last point.')
+fprintf(1, '%s\n',...
+	'Select polygon to include in bathy',...
+	'Left mouse button picks points.',...
+	'Right mouse button picks last point.')
 but = 1;
 while but == 1
     n = n+1;

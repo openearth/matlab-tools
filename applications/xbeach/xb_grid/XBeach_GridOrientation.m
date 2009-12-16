@@ -94,9 +94,11 @@ if OPT.manual
     hold on
     
     % Loop, picking up the points.
-    disp('Click grid corner x=0,y=0')
-    disp('Then click point x=xn,y=0')
-    disp('Finally click to select extent of y')
+    fprintf(1, '%s\n',...
+    	'Click grid corner x=0,y=0 (corner at seaside)',...
+    	'Then click point x=xn,y=0 (corresponding corner at landside)',...
+    	'Finally click to select extent of y (arbitrary point at other alongshore side of the domain)')
+    fprintf(1, '\n')
     
     [xi yi]     = select_oblique_rectangle;
     
