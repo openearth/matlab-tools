@@ -364,7 +364,10 @@ resultout.VTVinfo.TVolume = TVolume;
 %% Check the result on boundaries and write messages if necessary
 if ~resultout.info.resultinboundaries
     % perform check and write message
-    if resultout.info.x0 == x0min
+    msg = writemessage('get');
+    msgcodes = [msg{:,1}];
+    msgcodes(1:find(msgcodes==300))=[];
+    if resultout.info.x0 == x0min || any(msgcodes == 24)
         AdditionalRetreat = resultout.VTVinfo.Xr - DUROSresult.VTVinfo.Xr;
         switch x0minBoundary{1}
             case {'maxRetreat', 'dunevalley'}
@@ -382,7 +385,7 @@ if ~resultout.info.resultinboundaries
                 % positive TargetVolume. If this (Volume = 0) is the best
                 % solution, something went wrong. This should not occur.
         end
-    else %(resultout.info.x0 == x0max)
+    else %(resultout.info.x0 == x0max) || any(msgcodes == 23)
         switch x0maxBoundary{1}
             case 'XpDUROS'
                 % Should not occur. This is only the case when TargetVolume
