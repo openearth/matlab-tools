@@ -1,18 +1,19 @@
 function X = unif_inv(P, a, b)
-%UNIF_INV  One line description goes here.
+%UNIF_INV  inverse of the uniform cumulative distribution function (cdf)
 %
-%   More detailed description goes here.
+%   This function returns the inverse of the cdf of the uniform
+%   distribution, evaluated at the values in P.
 %
 %   Syntax:
 %   X = unif_inv(P, a, b)
 %
 %   Input:
-%   P =
-%   a =
-%   b =
+%   P = cdf
+%   a = lower limit
+%   b = upper limit
 %
 %   Output:
-%   X =
+%   X = variable values
 %
 %   Example
 %   unif_inv
@@ -21,7 +22,7 @@ function X = unif_inv(P, a, b)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
-%       C.(Kees) den Heijer
+%       Kees den Heijer
 %
 %       C.denHeijer@TUDelft.nl	
 %

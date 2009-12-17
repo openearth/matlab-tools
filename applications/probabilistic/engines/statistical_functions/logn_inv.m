@@ -1,16 +1,19 @@
 function X = logn_inv(P, mu, sigma)
-%LOGN_INV  One line description goes here.
+%LOGN_INV  inverse of the lognormal cumulative distribution function (cdf)
 %
-%   More detailed description goes here.
+%   This function returns the inverse cdf of the lognormal distribution,
+%   evaluated at the values in P.
 %
 %   Syntax:
-%   varargout = logn_inv(varargin)
+%   X = logn_inv(P, mu, sigma)
 %
 %   Input:
-%   varargin  =
+%   X     = variable values
 %
 %   Output:
-%   varargout =
+%   P     = cdf
+%   mu    = mean value
+%   sigma = standard deviation
 %
 %   Example
 %   logn_inv
@@ -19,7 +22,7 @@ function X = logn_inv(P, mu, sigma)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
-%       C.(Kees) den Heijer
+%       Kees den Heijer
 %
 %       C.denHeijer@TUDelft.nl	
 %
@@ -56,7 +59,6 @@ function X = logn_inv(P, mu, sigma)
 % Return NaN for out of range parameters or probabilities.
 sigma(sigma <= 0) = NaN;
 P(P < 0 | 1 < P) = NaN;
-
 
 logx0 = -sqrt(2).*erfcinv(2*P);
 X = exp(sigma.*logx0 + mu);

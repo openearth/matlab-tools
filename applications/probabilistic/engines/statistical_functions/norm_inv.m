@@ -1,7 +1,8 @@
 function X = norm_inv(P, mu, sigma)
-%NORM_INV  One line description goes here.
+%NORM_INV  inverse of the normal cumulative distribution function (cdf)
 %
-% The inverse of the Gaussian (normal) distribution function with mean "mu" and standard deviation "sigma"
+% The inverse of the Gaussian (normal) distribution function with mean "mu"
+% and standard deviation "sigma"
 %
 % input
 %    - P:      array of probabilties of non-exceedance. All elements of this array have to be between 0 and 1
@@ -17,7 +18,7 @@ function X = norm_inv(P, mu, sigma)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
-%       C.(Kees) den Heijer
+%       Kees den Heijer
 %
 %       C.denHeijer@TUDelft.nl	
 %

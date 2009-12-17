@@ -1,5 +1,5 @@
 function Zeta = logn_moments2zeta(Mu, Sigma)
-%LOGN_MOMENTS2ZETA  One line description goes here.
+%LOGN_MOMENTS2ZETA  transform lognormal parameters Mu/Sigma to Zeta
 %
 %   More detailed description goes here.
 %
@@ -21,7 +21,7 @@ function Zeta = logn_moments2zeta(Mu, Sigma)
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
-%       C.(Kees) den Heijer
+%       Kees den Heijer
 %
 %       C.denHeijer@TUDelft.nl	
 %

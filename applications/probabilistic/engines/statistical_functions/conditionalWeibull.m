@@ -1,7 +1,8 @@
 function x = conditionalWeibull(P, omega, rho, alpha, sigma, lambda)
-%CONDITIONALWEIBULL  routine to get probability density function
+%CONDITIONALWEIBULL  inverse of the conditional weibull cumulative density function
 %
-%   More detailed description goes here.
+%   This function returns the inverse cdf of the conditional weibull
+%   distribution, evaluated at the values in P.
 %
 %   Syntax:
 %   x = conditionalWeibull(P, omega, rho, alpha, sigma)
@@ -19,7 +20,7 @@ function x = conditionalWeibull(P, omega, rho, alpha, sigma, lambda)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
-%       C.(Kees) den Heijer
+%       Kees den Heijer
 %
 %       C.denHeijer@TUDelft.nl	
 %

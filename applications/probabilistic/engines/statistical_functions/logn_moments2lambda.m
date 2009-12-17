@@ -1,5 +1,5 @@
 function Lambda = logn_moments2lambda(Mu, Sigma)
-%LOGN_MOMENTS2LAMBDA  One line description goes here.
+%LOGN_MOMENTS2LAMBDA  transform lognormal parameters Mu/Sigma to Lambda
 %
 %   More detailed description goes here.
 %
@@ -21,7 +21,7 @@ function Lambda = logn_moments2lambda(Mu, Sigma)
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
-%       C.(Kees) den Heijer
+%       Kees den Heijer
 %
 %       C.denHeijer@TUDelft.nl	
 %

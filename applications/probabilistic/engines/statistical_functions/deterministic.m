@@ -1,25 +1,26 @@
-function X = deterministic(P, x, varargin)
-%DETERMINISTIC  One line description goes here.
+function X = deterministic(P, x)
+%DETERMINISTIC  deterministic "distribution function"
 %
-%   More detailed description goes here.
+%   This funtion returns X = x for all values in P.
 %
 %   Syntax:
 %   varargout = deterministic(varargin)
 %
 %   Input:
-%   varargin  =
+%   P = cdf
+%   x = deterministic variable value
 %
 %   Output:
-%   varargout =
+%   X = variable values
 %
 %   Example
 %   deterministic
 %
-%   See also 
+%   See also FORM MC
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
-%       C.(Kees) den Heijer
+%       Kees den Heijer
 %
 %       C.denHeijer@TUDelft.nl	
 %

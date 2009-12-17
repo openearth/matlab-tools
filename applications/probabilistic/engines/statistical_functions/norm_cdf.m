@@ -1,7 +1,8 @@
 function P = norm_cdf(X, mu, sigma)
-%NORM_CDF  One line description goes here.
+%NORM_CDF  normal cumulative distribution function (cdf)
 %
-% The Gaussian (normal) distribution function with mean "mu" and standard deviation "sigma"
+% The Gaussian (normal) distribution function with mean "mu" and standard
+% deviation "sigma".
 %
 % input
 %    - X:      standard normaly distributed value(s)
@@ -17,7 +18,7 @@ function P = norm_cdf(X, mu, sigma)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
-%       C.(Kees) den Heijer
+%       Kees den Heijer
 %
 %       C.denHeijer@TUDelft.nl	
 %

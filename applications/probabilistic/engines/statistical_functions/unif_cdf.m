@@ -1,18 +1,19 @@
 function P = unif_cdf(X, a, b)
-%UNIF_CDF  One line description goes here.
+%UNIF_CDF  uniform cumulative distribution function (cdf)
 %
-%   More detailed description goes here.
+%   This function returns the cdf of the uniform distribution, evaluated at
+%   the values in X.
 %
 %   Syntax:
 %   P = unif_cdf(X, a, b)
 %
 %   Input:
-%   X =
-%   a =
-%   b =
+%   X = variable values
+%   a = lower limit
+%   b = upper limit
 %
 %   Output:
-%   P =
+%   P = cdf
 %
 %   Example
 %   unif_cdf
@@ -21,7 +22,7 @@ function P = unif_cdf(X, a, b)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
-%       C.(Kees) den Heijer
+%       Kees den Heijer
 %
 %       C.denHeijer@TUDelft.nl	
 %

@@ -1,16 +1,19 @@
 function x = exp_inv(P, lambda, epsilon)
-%EXP_INV  One line description goes here.
+%EXP_INV  inverse of the exponential cumulative distribution function (cdf)
 %
-%   More detailed description goes here.
+%   This function returns the inverse cdf of the exponential distribution,
+%   evaluated at the values in P.
 %
 %   Syntax:
-%   varargout = exp_inv(varargin)
+%   x = exp_inv(P, lambda, epsilon)
 %
 %   Input:
-%   varargin  =
+%   x       = variable values
 %
 %   Output:
-%   varargout =
+%   P       = cdf
+%   lambda  = rate parameter
+%   epsilon = offset
 %
 %   Example
 %   exp_inv
@@ -20,7 +23,7 @@ function x = exp_inv(P, lambda, epsilon)
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
-%       C.(Kees) den Heijer
+%       Kees den Heijer
 %
 %       C.denHeijer@TUDelft.nl	
 %
