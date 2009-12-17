@@ -23,7 +23,8 @@
 
 
 	  // fetch the KML
-	  var url = 'http://dtvirt5.deltares.nl/kml/Katrina/hurricane.kmz';
+	  // relative urls do not work in v5.0 --> see issue 290
+	  var url = 'http://dtvirt5.deltares.nl/kml/Westerschelde/bathymetry.kml';
 	  google.earth.fetchKml(ge, url, finished);
 
       }
@@ -39,8 +40,8 @@
 	    }
 	    ge.getFeatures().appendChild(object);
 	    var la = ge.createLookAt('');
-	    la.set(25.7347, -89, 0, ge.ALTITUDE_RELATIVE_TO_GROUND,
-	           20, 20, 3000000);
+	    la.set(51.4, 3.3, 0, ge.ALTITUDE_RELATIVE_TO_GROUND,
+	           90, 70, 40000);
 	    ge.getView().setAbstractView(la);
 	  }
 
