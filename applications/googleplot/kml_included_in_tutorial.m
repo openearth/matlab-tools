@@ -15,8 +15,7 @@
 % i">Google Earth API documentation</a>. Keys are freely available, but they only work at child 
 % pages of the base url for which it was registered. At this moment there are two keys registered 
 % that can be used to include google earth on the wiki:
-%
-% <table>
+% <table border="1">
 %   <tr>
 %     <th>Key</th>
 %     <th>Useage</th>

@@ -62,7 +62,7 @@ To make changes, update the M-file and republish this document.
     <script type="text/javascript" src="script/js/matlabhelp.js"></script>
     
     <!-- include google earth stuff. Always the key first as the js file already needs it when initializing -->
-    <script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRSy_gnlezoEvdu0tA7HZgv5qdaupRRCGAytCifAIns0R25EQD_uP7lUDw"> </script>
+    <script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ"> </script>
     <script type="text/javascript" src="script/js/googleEarthApi.js"></script>
     
     <script type="text/javascript">

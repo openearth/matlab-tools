@@ -14,7 +14,7 @@ To make changes, update the M-file and republish this document.
       <meta name="date" content="2009-12-18">
       <meta name="m-file" content="kml_included_in_tutorial">
       <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
-      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRSy_gnlezoEvdu0tA7HZgv5qdaupRRCGAytCifAIns0R25EQD_uP7lUDw"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
+      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
     $(document).ready(function ()
       {
         // Copy content
@@ -93,10 +93,15 @@ p.footer {
             <div>
                <h2><a name="1">Google earth API licence key</a></h2>
                <div>
-                  <p><a href="html">html</a> How to include a google Earth API in a html file is described in the <a href="a">href="http://code.google.com/intl/nl/apis/earth/documentation/index.html#using_the_google_earth_ap i"&gt;Google Earth API documentation&lt;/a</a>. Keys are freely available, but they only work at child pages of the base url for which it was registered. At this moment
-                     there are two keys registered that can be used to include google earth on the wiki:
+                  <p><html> How to include a google Earth API in a html file is described in the <a href="http://code.google.com/intl/nl/apis/earth/documentation/index.html#using_the_google_earth_ap
+                     i">Google Earth API documentation</a>. Keys are freely available, but they only work at child pages of the base url for which
+                     it was registered. At this moment there are two keys registered that can be used to include google earth on the wiki: <table
+                     border="1">   <tr>     <th>Key</th>     <th>Useage</th>   </tr>   <tr>     <td>ABQIAAAA9KO06BPsmsvzw4PogoawhRSy_gnlezoEvdu0tA7HZgv5qdaupRRCGAytCifAIns0R25EQD_uP7lUDw</td>
+                     <td>This key can be used directly in all OpenEarth wiki pages whereas it was registered for http://public.deltares.nl (which
+                     actually is the base url of the server that hosts the OpenEarth wiki) </td>   </tr>   <tr>     <td>ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ</td>
+                     <td>This key needs to be used in order to get the tutorials working. The key was registered for http://crucible.deltgeosystems.nl
+                     (which is used to host all files that are in the repository - including version info etc. -) </td>   </tr> </table> </html>
                   </p>
-                  <p><a href="table">table</a>   <a href="tr">tr</a>     <a href="th&gt;Key</th">th&gt;Key&lt;/th</a>     <a href="th&gt;Useage</th">th&gt;Useage&lt;/th</a>   <a href="/tr">/tr</a>   <a href="tr">tr</a>     <a href="td&gt;ABQIAAAA9KO06BPsmsvzw4PogoawhRSy_gnlezoEvdu0tA7HZgv5qdaupRRCGAytCifAIns0R25EQD_uP7lUDw</td">td&gt;ABQIAAAA9KO06BPsmsvzw4PogoawhRSy_gnlezoEvdu0tA7HZgv5qdaupRRCGAytCifAIns0R25EQD_uP7lUDw&lt;/td</a>     <a href="td&gt;This">key can be used directly in all OpenEarth wiki pages whereas it was registered for &lt;http://public.deltares.nl</a> (which actually is the base url of the server that hosts the OpenEarth wiki) <a href="/td">/td</a>   <a href="/tr">/tr</a>   <a href="tr">tr</a>     <a href="td&gt;ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ</td">td&gt;ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ&lt;/td</a>     <a href="td&gt;This">key needs to be used in order to get the tutorials working. The key was registered for &lt;http://crucible.deltgeosystems.nl</a> (which is used to host all files that are in the repository - including version info etc. -) <a href="/td">/td</a>   <a href="/tr">/tr</a> <a href="/table">/table</a> <a href="/html">/html</a></p>
                </div>
             </div>
             <div>
@@ -176,8 +181,7 @@ Published with MATLAB&reg; 7.6<br></p>
 % i">Google Earth API documentation</a>. Keys are freely available, but they only work at child 
 % pages of the base url for which it was registered. At this moment there are two keys registered 
 % that can be used to include google earth on the wiki:
-%
-% <table>
+% <table border="1">
 %   <tr>
 %     <th>Key</th>
 %     <th>Useage</th>
