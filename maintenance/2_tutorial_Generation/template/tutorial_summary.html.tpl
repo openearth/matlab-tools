@@ -15,6 +15,11 @@
 	<script src="html/script/js/jquery.treeview.js" type="text/javascript"></script>
 	<script src="html/script/js/jquery.collapsible.js" type="text/javascript"></script>
     <script type="text/javascript" src="html/script/js/matlabhelp.js"></script>
+    
+    <!-- include google earth stuff. Always the key first as the js file already needs it when initializing -->
+        <script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRSy_gnlezoEvdu0tA7HZgv5qdaupRRCGAytCifAIns0R25EQD_uP7lUDw"> </script>
+    <script type="text/javascript" src="html/script/js/googleEarthApi.js"></script>
+    
 	<script type="text/javascript">
 	$(document).ready(function(){
 		$(".maintree").treeview({});
@@ -53,6 +58,9 @@
 				// validate href of links to matlab tutorials
 				matlabpreparehelprefs();
 
+				// google thing
+				currentGeApiDiv = $(".geapi");
+				
 				// Accordion
 				collapsible($(".collapsible"));
 

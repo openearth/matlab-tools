@@ -60,10 +60,15 @@ To make changes, update the M-file and republish this document.
     <script type="text/javascript" src="script/js/matlab2collapsible.js"></script>
     <script type="text/javascript" src="script/js/jquery.collapsible.js"></script>
     <script type="text/javascript" src="script/js/matlabhelp.js"></script>
+    
+    <!-- include google earth stuff. Always the key first as the js file already needs it when initializing -->
+    <script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRSy_gnlezoEvdu0tA7HZgv5qdaupRRCGAytCifAIns0R25EQD_uP7lUDw"> </script>
+    <script type="text/javascript" src="script/js/googleEarthApi.js"></script>
+    
     <script type="text/javascript">
-  	$(document).ready(function ()
-  	{
-  	// Copy content
+    $(document).ready(function ()
+      {
+        // Copy content
 	copycontent();
 
 	// validate href of links to matlab tutorials
@@ -71,7 +76,10 @@ To make changes, update the M-file and republish this document.
 
   	// Accordion
   	collapsible($(".collapsible"));
-  	});
+	
+	// googleearth($(".geapi"));
+	currentGeApiDiv = $(".geapi");	
+      });
     </script>
 
     <!-- inclue the css style sheet as specified in the template lateron in this file -->
