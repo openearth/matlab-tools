@@ -16,7 +16,7 @@ info = nc_info(url);
 altitude_id = strcmp({info.Dataset.Name}, 'altitude');
 
 %% locate the relevant positions along the dimensions
-time_id = nc_varget(url, 'time') == year;
+time_id = (1970 + floor(nc_varget(url, 'time')/365)) == year;
 alongshore_id = nc_varget(url, 'areacode') == getKustvak(kustvak) &...
     nc_varget(url, 'alongshore') == transect;
 cross_shore_id = true(size(nc_varget(url, 'cross_shore')));

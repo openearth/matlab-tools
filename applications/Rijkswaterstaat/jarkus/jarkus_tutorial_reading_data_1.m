@@ -64,10 +64,12 @@ transect_nr = find(id==7003800)-1;
 id          = nc_varget(url,'id',transect_nr,1)
 
 %%
-% now that we have the correct transect, we can do the same for the year
+% now that we have the correct transect, we can do the same for the year.
+% the 'time' variable is specified in days since 1-1-1970, so the first
+% (additional) step is to convert this to understandable numbers
 
-year        = nc_varget(url,'time');
-year_nr     = find(year == 1966)-1;
+year        = 1970 + floor(nc_varget(url,'time')/365);
+year_nr     = find(year == 1999)-1;
 year        = nc_varget(url,'time',year_nr,1)
 
 %% Extract the data

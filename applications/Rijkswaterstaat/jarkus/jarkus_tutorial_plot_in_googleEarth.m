@@ -7,7 +7,7 @@
 url         = jarkus_url;
 id          = nc_varget(url,'id');
 transect_nr = find(id==8007000)-1;
-year        = nc_varget(url,'time');
+year        = 1970 + floor(nc_varget(url,'time')/365);
 year_nr     = find(year == 1993)-1;
 lat         = nc_varget(url,'lat',[transect_nr,0],[1,-1]);
 lon         = nc_varget(url,'lon',[transect_nr,0],[1,-1]);
@@ -81,14 +81,14 @@ no_of_years     = 15;
 url             = jarkus_url;
 id              = nc_varget(url,'id');
 start_transect  = find(id==8007000)-1;
-year            = nc_varget(url,'time');
+year            = 1970 + floor(nc_varget(url,'time')/365);
 start_year      = find(year == 1990)-1;
 lat             = nc_varget(url,'lat',[start_transect,0],[no_of_transects,-1]);
 lon             = nc_varget(url,'lon',[start_transect,0],[no_of_transects,-1]);
 z               = nc_varget(url,'altitude',...
                    [start_year,start_transect,0],...
                    [no_of_years,no_of_transects,-1]);
-year            = nc_varget(url,'time',start_year,no_of_years);
+year            = 1970 + floor(nc_varget(url,'time',start_year,no_of_years)/365);
 xRSP            = nc_varget(url,'cross_shore');
 
 %%
