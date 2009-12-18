@@ -118,7 +118,7 @@ end
 
 %% Copy script files to html dir 
 tmpdir = tempname;
-templatedir = fullfile(openearthtoolsroot,'maintenance','tutorialGeneration','template');
+templatedir = fullfile(openearthtoolsroot,'maintenance','2_tutorial_Generation','template');
 scriptdir = fullfile(templatedir,'html','script');
 copyfile(scriptdir,tmpdir,'f');
 drs = strread(genpath(tmpdir),'%s',-1,'delimiter',';');
