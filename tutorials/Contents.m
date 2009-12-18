@@ -46,8 +46,9 @@
 %     SuperTrans:
 %       <a href="matlab:web(['jar:file:///' strrep(openearthtoolsroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/convertCoordinates_tutorial.html'], '-helpbrowser');">Coordinate conversion</a>
 %
-%     googlePlot:
+%     googleplot:
 %       <a href="matlab:web(['jar:file:///' strrep(openearthtoolsroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/KMLcurvedArrows_tutorial.html'], '-helpbrowser');">Animated arrows</a>
+%       <a href="matlab:web(['jar:file:///' strrep(openearthtoolsroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/kml_included_in_tutorial.html'], '-helpbrowser');">Include KML in tutorial</a>
 %       <a href="matlab:web(['jar:file:///' strrep(openearthtoolsroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/KMLcontour3_tutorial.html'], '-helpbrowser');">KMLcontour3</a>
 %       <a href="matlab:web(['jar:file:///' strrep(openearthtoolsroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/KMLline_tutorial.html'], '-helpbrowser');">KMLline</a>
 %

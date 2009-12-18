@@ -4,7 +4,7 @@
 
 <?xml-stylesheet type="text/xsl" href="http://www.mathworks.com/namespace/info/v1/info.xsl"?>
 
-<matlabrelease>2009b</matlabrelease>
+<matlabrelease>2008a</matlabrelease>
 <name>OpenEarthTools</name>
 <type>toolbox</type>
 <icon>icons/DeltaresLogo16.PNG</icon>

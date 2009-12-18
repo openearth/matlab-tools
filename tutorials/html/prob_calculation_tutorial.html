@@ -10,14 +10,14 @@ This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
       -->
       <title>setting up a probabilistic calculation</title>
-      <meta name="generator" content="MATLAB 7.9">
-      <meta name="date" content="2009-11-05">
+      <meta name="generator" content="MATLAB 7.6">
+      <meta name="date" content="2009-12-18">
       <meta name="m-file" content="prob_calculation_tutorial">
       <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
-      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script type="text/javascript">
-  	$(document).ready(function ()
-  	{
-  	// Copy content
+      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRSy_gnlezoEvdu0tA7HZgv5qdaupRRCGAytCifAIns0R25EQD_uP7lUDw"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
+    $(document).ready(function ()
+      {
+        // Copy content
 	copycontent();
 
 	// validate href of links to matlab tutorials
@@ -25,7 +25,10 @@ To make changes, update the M-file and republish this document.
 
   	// Accordion
   	collapsible($(".collapsible"));
-  	});
+	
+	// googleearth($(".geapi"));
+	currentGeApiDiv = $(".geapi");	
+      });
     </script><style>
 
 pre.codeinput {
@@ -79,13 +82,13 @@ p.footer {
                <ul>
                   <li><a href="#1">create a new function to define the stochastic variables</a></li>
                   <li><a href="#2">define the "stochast"-variable</a></li>
-                  <li><a href="#4">create a new function to define the Z-function</a></li>
-                  <li><a href="#5">define the limit state function (Z-function)</a></li>
-                  <li><a href="#6">run the calculation with FORM</a></li>
-                  <li><a href="#7">get a summary of the calculations results</a></li>
-                  <li><a href="#8">plot the calculation development</a></li>
-                  <li><a href="#9">run the calculation with Monte Carlo</a></li>
-                  <li><a href="#10">plot the calculation results</a></li>
+                  <li><a href="#5">create a new function to define the Z-function</a></li>
+                  <li><a href="#6">define the limit state function (Z-function)</a></li>
+                  <li><a href="#7">run the calculation with FORM</a></li>
+                  <li><a href="#8">get a summary of the calculations results</a></li>
+                  <li><a href="#9">plot the calculation development</a></li>
+                  <li><a href="#10">run the calculation with Monte Carlo</a></li>
+                  <li><a href="#11">plot the calculation results</a></li>
                </ul>
             </div>
          </div>
@@ -118,7 +121,10 @@ p.footer {
     <span class="string">'Params'</span>, {
         {8 1}<span class="keyword">...</span><span class="comment"> % mu and sigma (of R)</span>
         {6 1}<span class="keyword">...</span><span class="comment"> % mu and sigma (of S)</span>
-        } <span class="keyword">...</span>
+</pre></div>
+            </div>
+            <div>
+               <div><pre class="codeinput">        } <span class="keyword">...</span>
     );
 </pre></div>
             </div>
@@ -134,32 +140,26 @@ OPT = setProperty(OPT, varargin{:});
 </pre></div>
             </div>
             <div>
-               <h2><a name="4">create a new function to define the Z-function</a></h2>
+               <h2><a name="5">create a new function to define the Z-function</a></h2>
                <div>
                   <p>The input and output variables as specified here must be used.</p><pre class="codeinput">oetnewfun(<span class="string">'prob_example1_x2z'</span>,<span class="keyword">...</span>
     <span class="string">'output'</span>, <span class="string">'z'</span>,<span class="keyword">...</span>
-    <span class="string">'input'</span>, {<span class="string">'x'</span> <span class="string">'varnames'</span> <span class="string">'Resistance'</span> <span class="string">'varargin'</span>})
+    <span class="string">'input'</span>, {<span class="string">'samples'</span> <span class="string">'Resistance'</span> <span class="string">'varargin'</span>})
 </pre></div>
             </div>
             <div>
-               <h2><a name="5">define the limit state function (Z-function)</a></h2>
+               <h2><a name="6">define the limit state function (Z-function)</a></h2>
                <div>
-                  <p>Define the Z-function in the newly created function. The first loop is to retrieve the calculation values in order to have
-                     all variables clearly recognisable by name. Subsequently, Z must be calculated. This part can be customised, as long as the
-                     output "z" is a column vector with the same number of rows as input "x". In this example, z is easily calculated in one line
-                     of code. However, many alternatives are possible. Other functions can be called, or even external programs. Note that in some
-                     cases a loop is required to calculate all instances separately.
-                  </p><pre class="codeinput"><span class="comment">% retrieve calculation values</span>
-<span class="keyword">for</span> i = 1:size(x,2)
-    samples.(varnames{i}) = x(:,i);
-<span class="keyword">end</span>
-
-<span class="comment">% calculate z (in this case: Z = R - S)</span>
+                  <p>Define the Z-function in the newly created function. Z must be calculated. This part can be customised, as long as the output
+                     "z" is a column vector with the same number of rows as samples.R (or of samples.S, which is the same). In this example, z
+                     is easily calculated in one line of code. However, many alternatives are possible. Other functions can be called, or even
+                     external programs. Note that in some cases a loop is required to calculate all instances separately.
+                  </p><pre class="codeinput"><span class="comment">% calculate z (in this case: Z = R - S)</span>
 z = samples.R - samples.S;
 </pre></div>
             </div>
             <div>
-               <h2><a name="6">run the calculation with FORM</a></h2>
+               <h2><a name="7">run the calculation with FORM</a></h2>
                <div>
                   <p>After saving both the stochast-function and the x2z-function, the model is ready to run. When calling the FORM routine, it
                      is essential that both the stochast and the x2z-funtion are parsed.
@@ -168,17 +168,17 @@ z = samples.R - samples.S;
 </pre></div>
             </div>
             <div>
-               <h2><a name="7">get a summary of the calculations results</a></h2>
+               <h2><a name="8">get a summary of the calculations results</a></h2>
                <div><pre class="codeinput">displayFORMresult(FORMres)
 </pre></div>
             </div>
             <div>
-               <h2><a name="8">plot the calculation development</a></h2>
+               <h2><a name="9">plot the calculation development</a></h2>
                <div><pre class="codeinput">plotFORMresult(FORMres)
 </pre></div>
             </div>
             <div>
-               <h2><a name="9">run the calculation with Monte Carlo</a></h2>
+               <h2><a name="10">run the calculation with Monte Carlo</a></h2>
                <div>
                   <p>A similar calculation can be easily carried out with the Monte Carlo method as well.</p><pre class="codeinput">MCres = MC(prob_example1_stochast,<span class="keyword">...</span>
     <span class="string">'x2zFunction'</span>, @prob_example1_x2z,<span class="keyword">...</span>
@@ -186,15 +186,14 @@ z = samples.R - samples.S;
 </pre></div>
             </div>
             <div>
-               <h2><a name="10">plot the calculation results</a></h2>
+               <h2><a name="11">plot the calculation results</a></h2>
                <div><pre class="codeinput">plotMCResult(MCres,<span class="keyword">...</span><span class="comment">)</span>
-    <span class="string">'space'</span>, <span class="string">'x'</span>);
 </pre></div>
             </div>
          </div>
          <p class="footer"><br>
-            this tutorial is based on: <a class="matlabhref" href="matlab:edit('prob_calculation_tutorial');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=1892/OpenEarthTools/trunk/matlab/applications/probabilistic/prob_calculation_tutorial.m">prob_calculation_tutorial.m (revision: 1892)</a><br>
-Published with MATLAB&reg; 7.9<br></p>
+            this tutorial is based on: <a class="matlabhref" href="matlab:edit('prob_calculation_tutorial');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=2078/OpenEarthTools/trunk/matlab/applications/probabilistic/prob_calculation_tutorial.m">prob_calculation_tutorial.m (revision: 2078)</a><br>
+Published with MATLAB&reg; 7.6<br></p>
       </div>
       <!--
 ##### SOURCE BEGIN #####
@@ -247,22 +246,16 @@ end
 % The input and output variables as specified here must be used.
 oetnewfun('prob_example1_x2z',...
     'output', 'z',...
-    'input', {'x' 'varnames' 'Resistance' 'varargin'})
+    'input', {'samples' 'Resistance' 'varargin'})
 
 %% define the limit state function (Z-function)
-% Define the Z-function in the newly created function. The first loop is to
-% retrieve the calculation values in order to have all variables clearly
-% recognisable by name. Subsequently, Z must be calculated. This part can
-% be customised, as long as the output "z" is a column vector with the same
-% number of rows as input "x". In this example, z is easily calculated in
-% one line of code. However, many alternatives are possible. Other
-% functions can be called, or even external programs. Note that in some
-% cases a loop is required to calculate all instances separately.
-
-% retrieve calculation values
-for i = 1:size(x,2)
-    samples.(varnames{i}) = x(:,i);
-end
+% Define the Z-function in the newly created function. Z must be calculated. 
+% This part can be customised, as long as the output "z" is a column vector 
+% with the same number of rows as samples.R (or of samples.S, which is the 
+% same). In this example, z is easily calculated in one line of code. 
+% However, many alternatives are possible. Other functions can be called, 
+% or even external programs. Note that in some cases a loop is required to 
+% calculate all instances separately.
 
 % calculate z (in this case: Z = R - S)
 z = samples.R - samples.S;

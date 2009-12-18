@@ -10,14 +10,14 @@ This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
       -->
       <title>3. Automated testing</title>
-      <meta name="generator" content="MATLAB 7.9">
-      <meta name="date" content="2009-11-05">
+      <meta name="generator" content="MATLAB 7.6">
+      <meta name="date" content="2009-12-18">
       <meta name="m-file" content="tutorial_automatedtesting">
       <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
-      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script type="text/javascript">
-  	$(document).ready(function ()
-  	{
-  	// Copy content
+      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRSy_gnlezoEvdu0tA7HZgv5qdaupRRCGAytCifAIns0R25EQD_uP7lUDw"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
+    $(document).ready(function ()
+      {
+        // Copy content
 	copycontent();
 
 	// validate href of links to matlab tutorials
@@ -25,7 +25,10 @@ To make changes, update the M-file and republish this document.
 
   	// Accordion
   	collapsible($(".collapsible"));
-  	});
+	
+	// googleearth($(".geapi"));
+	currentGeApiDiv = $(".geapi");	
+      });
     </script><style>
 
 pre.codeinput {
@@ -78,72 +81,32 @@ p.footer {
                      in which the basic functionalities are recorded and tested. Within the framework of OpenEarthTools a matlab based test environment
                      is developt to facilitate testing of the functions.
                   </p>
-                  <p>
-                     <table border="0" cellpadding="5" width="100%">
-                     <tr valign="top">
-                     <td width="400">
-                     <a class="relref" href="testsInGeneral_tutorial.html" relhref="testsInGeneral_tutorial.html">Tests in general and in OpenEarthTools</a>
-                     </td>
-                     <td width="600">
-                     General information about various types of tests and how we should use them in OpenEarthTools.
-                     </td>
-                     </tr>
-                     <tr valign="top">
-                     <td width="400">
-                     <a class="relref" href="testdefinitions_tutorial.html" relhref="testdefinitions_tutorial.html">Creating a test</a>
-                     </td>
-                     <td width="600">
-                     Describes how to write your own testdefinition and what possibilities the test toolbox has regarding to documenting your testcases.
-                     </td>
-                     </tr>
-                     <tr valign="top">
-                     <td width="400">
-                     <a class="relref" href="runningatest_tutorial.html" relhref="runningatest_tutorial.html">Running an individual test</a>
-                     </td>
-                     <td width="600">
-                     There are vaious ways to run a test created according to the definition used in OpenEarthTools. This document describes how
-                     to run an individual test.
-                     </td>
-                     </tr>
-                     <tr valign="top">
-                     <td width="400">
-                     <a class="relref" href="runtestswithmtestengine_tutorial.html" relhref="runtestswithmtestengine_tutorial.html">Automated testing</a>
-                     </td>
-                     <td width="600">
-                     Describes the basics of testing with the mtest toolbox.
-                     </td>
-                     </tr>
-                     </table>
-                     
+                  <p><html> <table border="0" cellpadding="5" width="100%">   <tr valign="top">       <td width="400">           <a class="relref"
+                     href="testsInGeneral_tutorial.html" relhref="testsInGeneral_tutorial.html">Tests in general and in OpenEarthTools</a>    
+                     </td>       <td width="600">           General information about various types of tests and how we should use them in OpenEarthTools.
+                     </td>   </tr>   <tr valign="top">       <td width="400">           <a class="relref" href="testdefinitions_tutorial.html"
+                     relhref="testdefinitions_tutorial.html">Creating a test</a>       </td>       <td width="600">           Describes how to
+                     write your own testdefinition and what possibilities the test toolbox has regarding to documenting your testcases.       </td>
+                     </tr>   <tr valign="top">       <td width="400">           <a class="relref" href="runningatest_tutorial.html" relhref="runningatest_tutorial.html">Running
+                     an individual test</a>       </td>       <td width="600">           There are vaious ways to run a test created according
+                     to the definition used in OpenEarthTools. This document describes how to run an individual test.       </td>   </tr>   <tr
+                     valign="top">       <td width="400">           <a class="relref" href="runtestswithmtestengine_tutorial.html" relhref="runtestswithmtestengine_tutorial.html">Automated
+                     testing</a>       </td>       <td width="600">           Describes the basics of testing with the mtest toolbox.       </td>
+                     </tr> </table> </html>
                   </p>
-                  <p>
-                     <style>
-                     #notediv {
-                     background-color:   #D8E4F1;
-                     border:             solid;
-                     border-width:       1px;
-                     padding:            10px;
-                     }
-                     </style>
-                     <div id="notediv">
-                     <strong>
-                     <p>Tests are meant to check the basic functionalities of functions in the most simple form, so:</p>
-                     <ul>
-                     <li>Test are not meant to show off, keep the tests as simple as possible!!!</li>
-                     <li>Do not write a test that needs user input</li>
-                     <li>Do not write a test that needs an internet connection to run</li>
-                     </ul>
-                     <p>(Tests that do need user input will be added to the ignore list for automatic testing of the toolbox)</p>
-                     </strong>
-                     </div>
-                     
+                  <p><html> <style> #notediv {   background-color:   #D8E4F1;   border:             solid;   border-width:       1px;   padding:
+                     10px;   } </style> <div id="notediv">   <strong>       <p>Tests are meant to check the basic functionalities of functions
+                     in the most simple form, so:</p>       <ul>           <li>Test are not meant to show off, keep the tests as simple as possible!!!</li>
+                     <li>Do not write a test that needs user input</li>           <li>Do not write a test that needs an internet connection to
+                     run</li>       </ul>       <p>(Tests that do need user input will be added to the ignore list for automatic testing of the
+                     toolbox)</p>   </strong> </div> </html>
                   </p>
                </div>
             </div>
          </div>
          <p class="footer"><br>
-            this tutorial is based on: <a class="matlabhref" href="matlab:edit('_tutorial_automatedtesting');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=1892/OpenEarthTools/trunk/matlab/general/_tutorial_automatedtesting.m">_tutorial_automatedtesting.m (revision: 1892)</a><br>
-Published with MATLAB&reg; 7.9<br></p>
+            this tutorial is based on: <a class="matlabhref" href="matlab:edit('_tutorial_automatedtesting');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=2078/OpenEarthTools/trunk/matlab/general/_tutorial_automatedtesting.m">_tutorial_automatedtesting.m (revision: 2078)</a><br>
+Published with MATLAB&reg; 7.6<br></p>
       </div>
       <!--
 ##### SOURCE BEGIN #####

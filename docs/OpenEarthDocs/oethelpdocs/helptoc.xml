@@ -101,8 +101,10 @@
 <tocitem target="html/convertCoordinates_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">Coordinate conversion
 </tocitem>
 </tocitem>
-<tocitem target="html/dir_googlePlot.html" image="$toolbox/matlab/icons/pagesicon.gif">googlePlot
+<tocitem target="html/dir_googleplot.html" image="$toolbox/matlab/icons/pagesicon.gif">googleplot
 <tocitem target="html/KMLcurvedArrows_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">Animated arrows
+</tocitem>
+<tocitem target="html/kml_included_in_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">Include KML in tutorial
 </tocitem>
 <tocitem target="html/KMLcontour3_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">KMLcontour3
 </tocitem>
