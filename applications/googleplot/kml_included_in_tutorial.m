@@ -12,14 +12,27 @@
 % <html>
 % How to include a google Earth API in a html file is described in the <a
 % href="http://code.google.com/intl/nl/apis/earth/documentation/index.html#using_the_google_earth_ap
-% i">Google Earth API documentation</a>. For useage on the OpenEarth wiki we created the following
-% key:
+% i">Google Earth API documentation</a>. Keys are freely available, but they only work at child 
+% pages of the base url for which it was registered. At this moment there are two keys registered 
+% that can be used to include google earth on the wiki:
+%
+% <table>
+%   <tr>
+%     <th>Key</th>
+%     <th>Useage</th>
+%   </tr>
+%   <tr>
+%     <td>ABQIAAAA9KO06BPsmsvzw4PogoawhRSy_gnlezoEvdu0tA7HZgv5qdaupRRCGAytCifAIns0R25EQD_uP7lUDw</td>
+%     <td>This key can be used directly in all OpenEarth wiki pages whereas it was registered for http://public.deltares.nl (which actually is the base url of the server that hosts the OpenEarth wiki) </td>
+%   </tr>
+%   <tr>
+%     <td>ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ</td>
+%     <td>This key needs to be used in order to get the tutorials working. The key was registered for http://crucible.deltgeosystems.nl (which is used to host all files that are in the repository - including version info etc. -) </td>
+%   </tr>
+% </table>
 % </html>
 %
-% ABQIAAAA9KO06BPsmsvzw4PogoawhRSy_gnlezoEvdu0tA7HZgv5qdaupRRCGAytCifAIns0R25EQD_uP7lUDw
-%  
-% Keys are freely available, but do only work at child pages of one base url (in our case
-% http://public.deltares.nl/, which hosts the OpenEarth wiki).
+
 
 %% Google Earth in OpenEarth matlab tutorials
 % To make life easier the code necessary to run the google api in a html page is included in the
