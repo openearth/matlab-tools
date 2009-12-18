@@ -47,22 +47,16 @@ end
 % The input and output variables as specified here must be used.
 oetnewfun('prob_example1_x2z',...
     'output', 'z',...
-    'input', {'x' 'varnames' 'Resistance' 'varargin'})
+    'input', {'samples' 'Resistance' 'varargin'})
 
 %% define the limit state function (Z-function)
-% Define the Z-function in the newly created function. The first loop is to
-% retrieve the calculation values in order to have all variables clearly
-% recognisable by name. Subsequently, Z must be calculated. This part can
-% be customised, as long as the output "z" is a column vector with the same
-% number of rows as input "x". In this example, z is easily calculated in
-% one line of code. However, many alternatives are possible. Other
-% functions can be called, or even external programs. Note that in some
-% cases a loop is required to calculate all instances separately.
-
-% retrieve calculation values
-for i = 1:size(x,2)
-    samples.(varnames{i}) = x(:,i);
-end
+% Define the Z-function in the newly created function. Z must be calculated. 
+% This part can be customised, as long as the output "z" is a column vector 
+% with the same number of rows as samples.R (or of samples.S, which is the 
+% same). In this example, z is easily calculated in one line of code. 
+% However, many alternatives are possible. Other functions can be called, 
+% or even external programs. Note that in some cases a loop is required to 
+% calculate all instances separately.
 
 % calculate z (in this case: Z = R - S)
 z = samples.R - samples.S;
