@@ -114,6 +114,18 @@ resultFORM = FORM(stochast,...
 %% Z-function
 function z = prob_vdMeer_example_x2z(samples, Resistance, varargin)
 
+%%
+g = 9.81;                               %[m/s2]
+for i = 1:length(samples.RhoS)
+    Delta = (samples.RhoS(i) - samples.RhoW(i)) / samples.RhoW(i);    % [-] relative density
+    Ksi = samples.TanAlfa(i)/sqrt(samples.Steep(i));      % [-] Iribarren number
+    z(i,:) = samples.Cpl(i)*samples.P(i)^0.18*(samples.S(i)/sqrt(samples.N(i)))^0.2*Ksi^(-0.5)-samples.H(i)/Delta/samples.D(i); %[-] vdMeer
+end
+
+%{
+% alternatively, the z can be calculated as matrix operation (so, no loop
+% needed) as follows:
 Delta = (samples.RhoS - samples.RhoW) ./ samples.RhoW;    % [-] relative density
 Ksi = samples.TanAlfa ./ sqrt(samples.Steep);      % [-] Iribarren number
 z = samples.Cpl .* samples.P .^0.18.*(samples.S./sqrt(samples.N)).^0.2.*Ksi.^(-0.5)-samples.H./Delta./samples.D; %[-] vdMeer
+%}
