@@ -55,6 +55,7 @@ To make changes, update the M-file and republish this document.
 
     <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
     <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet" />
+    
     <script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script>
     <script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script>
     <script type="text/javascript" src="script/js/matlab2collapsible.js"></script>
@@ -175,47 +176,7 @@ To make changes, update the M-file and republish this document.
 
 <!-- Stylesheet template -->
 <xsl:template name="stylesheet">
-<style>
-
-pre.codeinput {
-  overflow-x: auto;
-  background: #EEEEEE;
-  padding: 10px;
-}
-@media print {
-  pre.codeinput {word-wrap:break-word; width:100%;}
-}
-
-span.keyword {color: #0000FF}
-span.comment {color: #228B22}
-span.string {color: #9F1EF4}
-span.untermstring {color: #B20000}
-span.syscmd {color: #B28C00}
-
-pre.codeoutput {
-  overflow-x: auto;
-  color: #666666;
-  padding: 10px;
-}
-
-pre.error {
-  color: red;
-}
-
-p.footer {
-  text-align: right;
-  font-size: xx-small;
-  font-weight: lighter;
-  font-style: italic;
-  color: gray;
-}
-
-#contents {
-  border-style:solid;
-  border-width:1px;
-}
-
-  </style>
+<link type="text/css" href="script/css/matlabcode.css" rel="stylesheet" />
 </xsl:template>
 
 <!-- Header -->
