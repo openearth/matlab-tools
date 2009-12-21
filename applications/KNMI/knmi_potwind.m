@@ -4,8 +4,8 @@ function varargout = knmi_potwind(varargin)
 % W = knmi_potwind(filename) 
 %
 % reads a wind file from
-%    <http://www.knmi.nl/samenw/hydra>
-%    <http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/>
+%     Old data: <http://www.knmi.nl/samenw/hydra>
+%     New data: <http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/>
 % into a struct W with the following fields:
 %
 %    DD      = wind direction in degrees north
@@ -34,9 +34,8 @@ function varargout = knmi_potwind(varargin)
 % See also: CART2POL, POL2CART, DEGN2DEGUC, DEGUC2DEGN, HMCZ_WIND_READ
 %           KNMI_ETMGEG, KNMI_POTWIND_MULTI
 
-% uses <ctransdv>   (optional)
-%      time2datenum (OET)
-%      deg2rad      (matlab)
+% uses time2datenum (OET)
+%      deg2rad      (matlab and OET)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005-8 Delft University of Technology
@@ -176,6 +175,7 @@ function varargout = knmi_potwind(varargin)
       w.file.bytes    = tmp.bytes;
 
 %% Read header
+
          fid             = fopen(w.file.name);
          w.comments{1}   = fgetl(fid);
          if isempty(strfind(w.comments{1},'POTENTIAL WIND'))
@@ -202,13 +202,11 @@ function varargout = knmi_potwind(varargin)
          delimiter       = strfind (w.comments{2},';');
          w.xpar          = str2num (w.comments{2}(semicolon(1)+1:delimiter-1));%str2num(strtrim(line2(30:40)));
          w.ypar          = str2num (w.comments{2}(semicolon(2)+1:end        ));%str2num(strtrim(line2(48:end)));
-         if exist('ctransdv')==2
-         [w.lon,w.lat]   = ctransdv(w.xpar,w.ypar,'par','ll');
-         end
+        [w.lon,w.lat]    = convertCoordinates(w.xpar,w.ypar,'CS1.code',28992,'CS2.code',4326); % RD to [lat,lon] WGS84
          
          char1           = strfind (w.comments{ 3},'MEASURED AT')+11;
          char2           = strfind (w.comments{ 3},'METER');
-         w.height        = str2num (w.comments{3}(char1+1:char2-2));
+         w.height        =         (w.comments{3}(char1+1:char2-2)); % char!: contains comment "Begroeing in 1999 in NW en N (310-010) te hoog geworden" for station 235.
          
          w.over          =          w.comments{ 6}(7:11);
          char1           = strfind (w.comments{ 6},'LENGTH')+6;
@@ -220,6 +218,7 @@ function varargout = knmi_potwind(varargin)
          w.timezone      = strtrim (w.comments{16}(9:end));
       
 %% Read legend
+
          w.DD_longname      = 'WIND DIRECTION IN DEGREES NORTH';
          w.QQD_longname     = 'QUALITY CODE DD';
          w.UP_longname      = 'POTENTIAL WIND SPEED IN M/S'; % edited UP comment from 0.1 m/s to 1 m/s
@@ -231,6 +230,7 @@ function varargout = knmi_potwind(varargin)
          end
          
 %% Read data
+
          [itdate,hour,w.DD,w.QQD,w.UP,w.QUP] = textread(w.file.name,'%n%n%n%n%n%n',...
            'delimiter'  ,',',...
            'emptyvalue' ,NaN,...
@@ -240,6 +240,7 @@ function varargout = knmi_potwind(varargin)
          w.datenum       = time2datenum(itdate) + hour./24; % make matlab days
          
 %% Add u,v
+
          if H.pol2cart
            [w.UX,...
             w.UY] = pol2cart(deg2rad(degn2deguc(w.DD)),...

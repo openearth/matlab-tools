@@ -34,7 +34,7 @@ function knmi_potwind2nc(varargin)
    OPT.pause             = 0;
    
    OPT.refdatenum        = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
-   OPT.refdatenum        = datenum(1970,1,1); % lunix  datenumber convention
+   OPT.refdatenum        = datenum(1970,1,1); % linux  datenumber convention
    OPT.fillvalue         = nan; % NaNs do work in netcdf API
    
    OPT.stationTimeSeries = 0; % last items to adhere to for upcoming convenction, but not yet supported by QuickPlot
@@ -52,21 +52,28 @@ function knmi_potwind2nc(varargin)
    
 %% File loop
 
-   OPT.files         = dir([OPT.directory_raw,filesep,OPT.mask]);
+%%%OPT.files = dir([OPT.directory_raw,filesep,OPT.mask]);
+   OPT.files = knmi_potwind_directory([OPT.directory_raw,filesep,OPT.mask]);
 
-for ifile=1:length(OPT.files)  
+for ifile=1:length(OPT.files)
 
-   OPT.filename = [OPT.directory_raw, filesep, OPT.files(ifile).name]; % e.g. 'potwind_210_1981'
+   basename = filename(OPT.files{ifile}{1});
+   basename = basename(1:11);
 
-   disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)])
+%%%OPT.filename = [OPT.directory_raw, filesep, OPT.files(ifile).name]; % e.g. 'potwind_210_1981'
+
+   disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',basename,' +'])
 
 %% 0 Read raw data
 
-   D             = knmi_potwind(OPT.filename,'variables',OPT.fillvalue);
+% use knmi_potwind_multi here to concatenate the decadal files
+
+%%%D             = knmi_potwind      (OPT.filename    ,'variables',OPT.fillvalue);
+   D             = knmi_potwind_multi(OPT.files{ifile},'variables',OPT.fillvalue);
 
 %% 1a Create file
 
-   outputfile    = [OPT.directory_nc filesep  filename(D.file.name),OPT.ext,'.nc'];
+   outputfile    = [OPT.directory_nc,filesep,basename,OPT.ext,'.nc'];
    
    nc_create_empty (outputfile)
 
@@ -77,15 +84,15 @@ for ifile=1:length(OPT.files)
    nc_attput(outputfile, nc_global, 'title'         , '');
    nc_attput(outputfile, nc_global, 'institution'   , 'KNMI');
    nc_attput(outputfile, nc_global, 'source'        , 'surface observation');
-   nc_attput(outputfile, nc_global, 'history'       , ['Original filename: ',filename(D.file.name),...
-                                                       ', version:' ,D.version,...
-                                                       ', filedate:',D.file.date,...
+   nc_attput(outputfile, nc_global, 'history'       , ['Original filename: ',str2line(filename(char(OPT.files{ifile})),'s',';'),...
+                                                       ', version:' ,str2line(D.version  ,'s',';'),...
+                                                       ', filedate:',str2line(D.file.date,'s',';'),...
                                                        ', tranformation to NetCDF: $HeadURL$ $Revision$ $Date$ $Author$']);
    nc_attput(outputfile, nc_global, 'references'    , '<http://www.knmi.nl/samenw/hydra>,<http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/>,<http://openearth.deltares.nl>');
    nc_attput(outputfile, nc_global, 'email'         , '<klimaatdesk@knmi.nl>');
    
    nc_attput(outputfile, nc_global, 'comment'       , '');
-   nc_attput(outputfile, nc_global, 'version'       , D.version);
+   nc_attput(outputfile, nc_global, 'version'       , str2line(D.version  ,'s',';'));
 						    
    nc_attput(outputfile, nc_global, 'Conventions'   , 'CF-1.4');
    nc_attput(outputfile, nc_global, 'CF:featureType', 'stationTimeSeries');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
@@ -93,7 +100,7 @@ for ifile=1:length(OPT.files)
    nc_attput(outputfile, nc_global, 'stationnumber' , D.stationnumber);
    nc_attput(outputfile, nc_global, 'stationname'   , D.stationname);
    nc_attput(outputfile, nc_global, 'over'          , D.over);
-   nc_attput(outputfile, nc_global, 'height'        , num2str(D.height));
+   nc_attput(outputfile, nc_global, 'height'        , str2line(D.height  ,'s',';'));
    
    nc_attput(outputfile, nc_global, 'terms_for_use' , 'These data can be used freely for research purposes provided that the following source is acknowledged: KNMI.');
    nc_attput(outputfile, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
@@ -102,10 +109,10 @@ for ifile=1:length(OPT.files)
 
    %  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html
    
-   nc_attput(outputfile, nc_global, 'geospatial_lat_min'         , min(D.latcor(:)));
-   nc_attput(outputfile, nc_global, 'geospatial_lat_max'         , max(D.latcor(:)));
-   nc_attput(outputfile, nc_global, 'geospatial_lon_min'         , min(D.loncor(:)));
-   nc_attput(outputfile, nc_global, 'geospatial_lon_max'         , max(D.loncor(:)));
+   nc_attput(outputfile, nc_global, 'geospatial_lat_min'         , min(D.lat(:)));
+   nc_attput(outputfile, nc_global, 'geospatial_lat_max'         , max(D.lat(:)));
+   nc_attput(outputfile, nc_global, 'geospatial_lon_min'         , min(D.lon(:)));
+   nc_attput(outputfile, nc_global, 'geospatial_lon_max'         , max(D.lon(:)));
    nc_attput(outputfile, nc_global, 'time_coverage_start'        , datestr(D.datenum(  1),'yyyy-mm-ddPHH:MM:SS'));
    nc_attput(outputfile, nc_global, 'time_coverage_end'          , datestr(D.datenum(end),'yyyy-mm-ddPHH:MM:SS'));
    nc_attput(outputfile, nc_global, 'geospatial_lat_units'       , 'degrees_north');
@@ -260,6 +267,16 @@ for ifile=1:length(OPT.files)
    nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lat lon');  % QuickPlot error
    end
 
+   % Filename of origin
+
+      ifld = ifld + 1;
+   nc(ifld).Name         = 'origin_number';
+   nc(ifld).Nctype       = 'int';
+   nc(ifld).Dimension    = {'locations','time'};
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'KNMI file number of origin');
+   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', '#');
+   nc(ifld).Attribute(3) = struct('Name', 'comment'        ,'Value', str2line(filename(char(OPT.files{ifile}))));
+
 %% 4 Create variables with attibutes
 % When variable definitons are created before actually writing the
 % data in the next cell, netCDF can nicely fit all data into the
@@ -281,6 +298,7 @@ for ifile=1:length(OPT.files)
    nc_varput(outputfile, 'wind_from_direction'        , D.DD(:)'); % does not work with NaNs.
    nc_varput(outputfile, 'wind_speed_quality'         , int8(D.QUP(:)'));
    nc_varput(outputfile, 'wind_from_direction_quality', int8(D.QQD(:)'));
+   nc_varput(outputfile, 'origin_number'              , int8(D.origin_number(:)'));
    
 %% 6 Check
 

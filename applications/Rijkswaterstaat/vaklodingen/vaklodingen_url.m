@@ -5,7 +5,7 @@ function url = vaklodingen_url
 % netCDF are available locally on the Deltares network, this is returned, 
 % otherwise the internet link is returned
 % 
-% See also: nc_dump,nc_varget
+% See also: nc_dump, nc_varget
 
 %% Copyright notice
 %   --------------------------------------------------------------------

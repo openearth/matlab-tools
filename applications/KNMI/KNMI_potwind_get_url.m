@@ -5,8 +5,8 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
 %
 % downloads all potwind data from KNMI website and stores relative to 'basepath' in:
 %
-%   .\OpenEarthRawData\KNMI\potwind\cache\
-%   .\OpenEarthRawData\KNMI\potwind\raw\
+%   .\cache\
+%   .\raw\
 %
 % Implemented <keyword,value> pairs are:
 % * download : switch whether to download from url (default 1)
@@ -53,7 +53,7 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
    end
 
 %% Set <keyword,value> pairs
-%----------------------
+% ----------------------
    
    OPT.debug    = 0; % load local download.html from DIR.cache
    OPT.download = 1;
@@ -64,11 +64,11 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
    OPT = setProperty(OPT,varargin{:});
 
 %% Settings
-%----------------------
+% ----------------------
 
    DIR.url      =  'http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/'; %datafiles/
-   DIR.cache    = [basepath,'\OpenEarthRawData\KNMI\potwind\cache\'];
-   DIR.raw      = [basepath,'\OpenEarthRawData\KNMI\potwind\raw\'];
+   DIR.cache    = [basepath,filesep,'cache',filesep];
+   DIR.raw      = [basepath,filesep,'raw',filesep];
    
    if ~(exist(DIR.cache)==7)
       disp('The following target path ')
@@ -87,7 +87,7 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
    end   
 
 %% Load website
-%----------------------
+% ----------------------
 
    if ~(OPT.debug)
    website   = urlread ('http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/');
@@ -100,7 +100,7 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
    end
 
 %% Extract names of files to be downloaded from webpage
-%----------------------
+% ----------------------
 
    indices   = strfind(website,'"potwind_');
    
@@ -119,7 +119,7 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
    nfile = length(OPT.files);
    
 %% Download *.zip files
-%----------------------
+% ----------------------
 
    if OPT.download
       for ifile=1:nfile
@@ -135,7 +135,7 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
    end
 
 %% Extract *.zip files
-%----------------------
+% ----------------------
 
    if OPT.unzip
       
@@ -150,20 +150,20 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
    end
    
 %% Transform to *.nc files
-%----------------------
+% ----------------------
 
    if OPT.nc
    %knmi_potwind2nc_time_direct
    end
    
 %% Copy to OPeNDAP server 
-%----------------------
+% ----------------------
 
    if OPT.opendap
    end
    
 %% Output 
-%----------------------
+% ----------------------
 
    if nargout==1
       varargout = {OPT};
