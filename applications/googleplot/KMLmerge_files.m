@@ -52,6 +52,7 @@ OPT_header = struct(...
 fprintf(fid0,'%s',KML_header(OPT_header));
 
 for ii = 1:length(OPT.sourceFiles)
+if exist(OPT.sourceFiles{ii})
     contents = textread(OPT.sourceFiles{ii},'%s','delimiter','\n','bufsize',1e6);
     cutoff = strfind(contents,'Document');
  
@@ -72,6 +73,9 @@ for ii = 1:length(OPT.sourceFiles)
     fprintf(fid0,'%s','<Folder>');
     fprintf(fid0,'   %s\n',contents{:});
     fprintf(fid0,'%s','</Folder>');
+else
+   disp(['Does not exist:',OPT.sourceFiles{ii}])
+end
 end
 
 % FOOTER
@@ -85,10 +89,10 @@ if OPT.deleteSourceFiles
 end
 
 %% compress to kmz?
-if strcmpi(OPT.fileName(end),'z')
-    movefile(OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
-    zip(OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
+if strcmpi   (OPT.fileName(end),'z')
+    movefile (OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
+    zip      (OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
     movefile([OPT.fileName '.zip'],OPT.fileName)
-    delete([OPT.fileName(1:end-3) 'kml'])
+    delete  ([OPT.fileName(1:end-3) 'kml'])
 end
 

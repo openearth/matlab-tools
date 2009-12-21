@@ -11,9 +11,9 @@ function varargout = KMLscatter(lat,lon,c,varargin)
 %  * colorSteps         = number of colors in colormap (default 20);
 %  * cLim               = cLim aka caxis (default [min(c) max(c)]);
 %  * name               = cellstr with name per point (shown when highlighted)
-%                         by default empty
+%                         by default empty.
 %  * html               = cellstr with text per point (shown when highlighted)
-%                         by default displays value c per point
+%                         by default equal to value of c
 %
 % For the <keyword,value> pairs and their defaults call
 %
@@ -57,76 +57,82 @@ function varargout = KMLscatter(lat,lon,c,varargin)
 
 %% process options
 
-OPT.fileName           =  [];
-OPT.kmlName            =  [];
-OPT.colorMap           =  @(m) jet(m);
-OPT.colorSteps         =  20;
-OPT.cLim               =  [];
-%OPT.long_name          =  'value';
-OPT.html               = [];
-OPT.name               = [];
-%OPT.units              =  '';
-OPT.iconnormalState    =  'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
-OPT.iconhighlightState =  'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
-OPT.scalenormalState   =  0.25;
-OPT.scalehighlightState=  1.0;
-OPT.openInGE           =  0;
-OPT.markerAlpha        =  0.6;
-OPT.description        =  '';
-OPT.colorbar           = 1;
+   OPT.fileName           =  [];
+   OPT.kmlName            =  [];
+   OPT.colorMap           =  @(m) jet(m);
+   OPT.colorSteps         =  20;
+   OPT.cLim               =  [];
+  %OPT.long_name          =  'value';
+  %OPT.units              =  '';
+   OPT.html               = [];
+   OPT.name               = [];
+   OPT.iconnormalState    =  'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
+   OPT.iconhighlightState =  'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
+   OPT.scalenormalState   =  0.25;
+   OPT.scalehighlightState=  1.0;
+   OPT.openInGE           =  0;
+   OPT.markerAlpha        =  0.6;
+   OPT.description        =  '';
+   OPT.colorbar           = 1;
+   OPT.colorbarlocation   = {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
 
-if nargin==0
-    varargout = {OPT};
-    return
-end
-
-[OPT, Set, Default] = setProperty(OPT, varargin);
+   if nargin==0
+       varargout = {OPT};
+       return
+   end
+   
+   [OPT, Set, Default] = setProperty(OPT, varargin);
 
 %% get filename
 
-if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','untitled.kml');
-    OPT.fileName = fullfile(filePath,fileName);
-end
+   if isempty(OPT.fileName)
+       [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','untitled.kml');
+       OPT.fileName = fullfile(filePath,fileName);
+   end
 
 % set kmlName if it is not set yet
-if isempty(OPT.kmlName)
-    [ignore OPT.kmlName] = fileparts(OPT.fileName);
-end
+   if isempty(OPT.kmlName)
+       [ignore OPT.kmlName] = fileparts(OPT.fileName);
+   end
 
 %% set cLim
 
-if isempty(OPT.cLim)
-    OPT.cLim         = [min(c(:)) max(c(:))];
-end
+   if isempty(OPT.cLim)
+       OPT.cLim         = [min(c(:)) max(c(:))];
+   end
 
 %% pre-process data
 %  make 1D and remove NaNs
 
-lon    = lon(~isnan(c(:)));
-lat    = lat(~isnan(c(:)));
-c      =   c(~isnan(c(:)));
-colors = OPT.colorMap(OPT.colorSteps);
-if isempty(OPT.html);OPT.html = cellstr(num2str(c(:)));end
-if  ischar(OPT.html);OPT.html = cellstr(OPT.html  );end
-if  ischar(OPT.name);OPT.name = cellstr(OPT.name  );end
+   lon    = lon(~isnan(c(:)));
+   lat    = lat(~isnan(c(:)));
+   c      =   c(~isnan(c(:)));
+   colors = OPT.colorMap(OPT.colorSteps);
+   
+   %% shwoing numbe rnxt to scatter point makes iconhighlightState too SLOW, 
+   %  so show values only in pop-up.
+
+   if isempty(OPT.html);OPT.html = cellstr(num2str(c(:)));end
+   if  ischar(OPT.html);OPT.html = cellstr(OPT.html  );end
+  %if isempty(OPT.name);OPT.name = cellstr(num2str(c(:)));end %  makes iconhighlightState too SLOW!
+   if  ischar(OPT.name);OPT.name = cellstr(OPT.name  );end
 
 %% start KML
 
-OPT.fid=fopen(OPT.fileName,'w');
+   OPT.fid=fopen(OPT.fileName,'w');
 
 %% HEADER
 
-OPT_header = struct(...
-    'name',OPT.kmlName,...
-    'open',0,...
-    'description',OPT.description);
-output = KML_header(OPT_header);
-
-if OPT.colorbar
-   clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colors);
-   output = [output clrbarstring];
-end
+   OPT_header = struct(...
+       'name',OPT.kmlName,...
+       'open',0,...
+       'description',OPT.description);
+   output = KML_header(OPT_header);
+   
+   if OPT.colorbar
+      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colors,'colorbarlocation',OPT.colorbarlocation);
+      output = [output clrbarstring];
+   end
 
 output = [output '<!--############################-->\n'];
 
@@ -166,26 +172,28 @@ for ii = 1:OPT.colorSteps
 end
 
 %% print and clear output
-output = [output '<!--############################-->\n'];
-fprintf(OPT.fid,output);output = [];
-fprintf(OPT.fid,'<Folder>');
-fprintf(OPT.fid,'  <name>patches</name>');
-fprintf(OPT.fid,'  <open>0</open>');
 
-output = repmat(char(1),1,1e5);
-kk = 1;
+   output = [output '<!--############################-->\n'];
+   fprintf(OPT.fid,output);output = [];
+   fprintf(OPT.fid,'<Folder>');
+   fprintf(OPT.fid,'  <name>patches</name>');
+   fprintf(OPT.fid,'  <open>0</open>');
+   
+   output = repmat(char(1),1,1e5);
+   kk = 1;
 
 %% Plot the points
 
-for ii=1:length(lon)
+   for ii=1:length(lon)
 
     % convert color values into colorRGB index values
     cindex = round(((c(ii)-OPT.cLim(1))/(OPT.cLim(2)-OPT.cLim(1))*(OPT.colorSteps-1))+1);
     cindex = min(cindex,OPT.colorSteps);
     cindex = max(cindex,1); % style numbering is 1-based
+    
 
     OPT_poly.styleName = ['cmarker_',num2str(cindex,'%0.3d'),'map'];
-    if isempty(OPT.name)
+    if isempty(OPT.name) & ~isempty(OPT.html)
     newOutput= sprintf([...
         '<Placemark>\n'...
         ' <name></name>\n'...                          % no names so we see just the scatter points
@@ -196,7 +204,28 @@ for ii=1:length(lon)
         ' <styleUrl>#%s</styleUrl>\n'...               % styleName
         ' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n'...
         ' </Placemark>\n'],...
-        OPT.html{ii},...
+        str2line(cellstr(OPT.html{ii}),'s',''),... % remove trailing blanks per line (blanks are skipped in html anyway), and reshape 2D array correctly to 1D
+        OPT_poly.styleName,...
+        lon(ii),lat(ii));
+    elseif isempty(OPT.name) & isempty(OPT.html)
+    newOutput= sprintf([...
+        '<Placemark>\n'...
+        ' <name></name>\n'...                          % no names so we see just the scatter points
+        ' <visibility>1</visibility>\n'...
+        ' <styleUrl>#%s</styleUrl>\n'...               % styleName
+        ' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n'...
+        ' </Placemark>\n'],...
+        OPT_poly.styleName,...
+        lon(ii),lat(ii));
+    elseif ~isempty(OPT.name) & isempty(OPT.html)
+    newOutput= sprintf([...
+        '<Placemark>\n'...
+        ' <name>%s</name>\n'...                          % no names so we see just the scatter points
+        ' <visibility>1</visibility>\n'...
+        ' <styleUrl>#%s</styleUrl>\n'...               % styleName
+        ' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n'...
+        ' </Placemark>\n'],...
+        OPT.name{ii},...
         OPT_poly.styleName,...
         lon(ii),lat(ii));
     else
@@ -211,7 +240,7 @@ for ii=1:length(lon)
         ' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n'...
         ' </Placemark>\n'],...
         OPT.name{ii},...
-        OPT.html{ii},...
+        str2line(cellstr(OPT.html{ii}),'s',''),... % remove trailing blanks per line (blanks are skipped in html anyway), and reshape 2D array correctly to 1D
         OPT_poly.styleName,...
         lon(ii),lat(ii));
     end
@@ -227,35 +256,36 @@ for ii=1:length(lon)
         output = repmat(char(1),1,1e5);
     end
 
-end
+   end
 
 %% print and clear output
 
 % print output
-fprintf(OPT.fid,'%s',output(1:kk-1));
 
-fprintf(OPT.fid,'</Folder>');
+   fprintf(OPT.fid,'%s',output(1:kk-1));
+   
+   fprintf(OPT.fid,'</Folder>');
 
 %% FOOTER
 
-output = KML_footer;
-fprintf(OPT.fid,output);
+   output = KML_footer;
+   fprintf(OPT.fid,output);
 
 %% close KML
 
-fclose(OPT.fid);
+   fclose(OPT.fid);
 
 %% openInGoogle?
 
-if OPT.openInGE
+   if OPT.openInGE
     system(OPT.fileName);
-end
+   end
 
 %% Output
 
-if nargout==1
+   if nargout==1
     varargout = {handles};
-end
+   end
 
 %% EOF
 

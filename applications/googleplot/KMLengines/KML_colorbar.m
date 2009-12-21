@@ -8,6 +8,9 @@ function KML_colorbar(OPT)
    h.fig = figure('Visible','off');
    colormap(OPT.colorMap);
    set(h.fig,'color',OPT.bgcolor./255,'InvertHardcopy','off')
+   %% +###+
+   %  |   |
+   %  +---+
    if              strcmpi(OPT.orientation      ,'horizontal') & ...
                    strcmpi(OPT.verticalalignment,'top')
       axes('position',[    OPT.tipmargin 
@@ -16,6 +19,9 @@ function KML_colorbar(OPT)
                            OPT.thickness]); % height
                            OPT.XAxisLocation = 'bottom';
                            OPT.YAxisLocation = 'left'; % dummy
+   %% +---+
+   %  |   |
+   %  +###+
    elseif          strcmpi(OPT.orientation      ,'horizontal') & ...
                    strcmpi(OPT.verticalalignment,'bottom')
       axes('position',[    OPT.tipmargin 
@@ -24,6 +30,9 @@ function KML_colorbar(OPT)
                            OPT.thickness]); % height
                            OPT.XAxisLocation = 'top';
                            OPT.YAxisLocation = 'left'; % dummy
+   %% +---+
+   %  |   #
+   %  +---+
    elseif          strcmpi(OPT.orientation       ,'vertical') & ...
                    strcmpi(OPT.horizonalalignment,'right')
       axes('position',[1-  OPT.thickness-OPT.alignmargin
@@ -32,6 +41,9 @@ function KML_colorbar(OPT)
                        1-2*OPT.tipmargin]); % height
                            OPT.XAxisLocation = 'bottom'; % dummy
                            OPT.YAxisLocation = 'left';
+   %% +---+
+   %  #   |
+   %  +---+
    elseif          strcmpi(OPT.orientation       ,'vertical') & ...
                    strcmpi(OPT.horizonalalignment,'left')
       axes('position',[    OPT.alignmargin
@@ -86,3 +98,5 @@ function KML_colorbar(OPT)
    end
    
    try;close(h.fig);end
+   
+%% EOF   

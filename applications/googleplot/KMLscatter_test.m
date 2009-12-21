@@ -55,6 +55,8 @@ function testresult = KMLscatter_test()
 %% $RunCode
 try
 
+%% name and html empty
+
    D.x    = linspace(53.10 ,53.75,21);
    D.y    = linspace( 4.75 , 8   ,21);
    D.z    = linspace(-1    , 4   ,21);
@@ -65,6 +67,8 @@ try
      'description','mud content derived from sediment size distribution curves in <a href="http://www.waddenzee.nl/Sedimentatlas.729.0.html"> Sediment Atlas WaddenZee </a>.',...
          'kmlName','mud content',...
             'cLim',[0 3])
+
+%% name = # and html = table
 
    D.x    = linspace(53.10 ,53.75,21);
    D.y    = linspace( 4.75 , 8   ,21);
@@ -82,18 +86,24 @@ try
             'html',D.html,...
      'description','mud content derived from sediment size distribution curves in <a href="http://www.waddenzee.nl/Sedimentatlas.729.0.html"> Sediment Atlas WaddenZee </a>.',...
          'kmlName','mud content',...
-            'cLim',[0 3])
+            'cLim',[0 3],...
+'colorbarlocation',{'W','E','N','S'})
              
+%% name and html empty
+
     [lat,lon] = meshgrid(56:.02:57,6:.02:7);
     z = peaks(51);
     KMLscatter(lat,lon,z,...
         'fileName',KML_testdir('KMLscatter_3.kml'))
 
+%% name and html empty
+
     [lat,lon] = meshgrid([56:.02:57]-1.5,6:.02:7);
     z = peaks(51);
     KMLscatter(lat,lon,z,...
         'fileName',KML_testdir('KMLscatter_4.kml'),...
-        'cLim',[-3 3])
+        'cLim',[-3 3],...
+        'name',[])
 
     testresult = true;
 
