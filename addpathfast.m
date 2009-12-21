@@ -1,5 +1,5 @@
 function addpathfast(basepath,varargin)
-%ADDPATHFAST   adds paths to your matlab path fast
+%ADDPATHFAST   adds Matlab paths while allowing to exlude some patterns (notably .svn)
 %
 %   addpathfast(basepath,<keyword,value>)
 %
@@ -21,24 +21,31 @@ function addpathfast(basepath,varargin)
 % See also: ADDPATH, REGEXP, OETSETTINGS
 
    OPT.patterns = {[filesep,'.svn']}; % case sensitive
+   OPT.method   = 2; % 1 = via OS system call, 2 = Matlab (used to be slower but not any more)
    
    OPT = setProperty(OPT,varargin{:});
 
 %% Find all subdirs in basepath
 %---------------------------------------------
 
-   if ispc
-       [a b] = system(['dir /b /ad /s ' '"' basepath '"']); % "'s added to enable spaces in directory and filenames
+   if OPT.method==1
+   % via OS system call, was faster in older Matlab releases
+      if ispc
+          [a b] = system(['dir /b /ad /s ' '"' basepath '"']); % "'s added to enable spaces in directory and filenames
+      else
+          [a b] = system(['find ' basepath ' -type d']);
+      end
+      b = [basepath char(10) b];
+      s = strread(b, '%s', 'delimiter', char(10));  % read path as cell
    else
-       [a b] = system(['find ' basepath ' -type d']);
+   % via matlab, faster in later releases
+      b = genpath(basepath);
+      s = strread(b, '%s', 'delimiter', ';');  % read path as cell
    end
-   b = [basepath char(10) b];
-
+   
 %% Exclude the .svn directories from the path
 %---------------------------------------------
 
-   s = strread(b, '%s', 'delimiter', char(10));  % read path as cell
-   
    % clear cells which contain [filesep '.svn']
 
    for imask = 1:length(OPT.patterns)

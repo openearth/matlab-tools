@@ -9,7 +9,7 @@ function oetsettings(varargin)
 %
 % For more information on OpenEarthTools refer to the following sources:
 %
-% * wiki:        <a href="http://OpenEarth.deltares.nl"                               >OpenEarth.Deltares.nl</a>
+% * wiki:        <a href="http://OpenEarth.nl">OpenEarth.nl</a>
 % * repository:  <a href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab">https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab</a>
 % * help blocks: Scroll through the OpenEarthTools directories by clicking 
 %                to see also links, or typing:
@@ -62,7 +62,7 @@ function oetsettings(varargin)
 % $Keywords: $
 
 %% Retrieve verbose state from input
-%-----------------------
+% -----------------------
    OPT.quiet = false;
    nextarg   = 1;
    
@@ -78,50 +78,50 @@ function oetsettings(varargin)
    OPT = setProperty(OPT,varargin{nextarg:end});
    
 %% Acknowledge user we started adding the toolbox
-%-----------------------
+% -----------------------
    if ~(OPT.quiet)
        disp('Adding <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a>, please wait ...')
        disp(' ')
    end
       
 %% Collect warning and directory state
-%-----------------------
+% -----------------------
    state.warning = warning;
    state.pwd     = cd;
 
 %% Add paths
-%-----------------------
+% -----------------------
    basepath = fileparts(mfilename('fullpath'));
-   warning off %#ok<WNOFF>
+   warning off
    addpathfast(basepath); % excludes *.svn directories!
 
 %% Create tutorial search database
-%------------------------
+% ------------------------
  
-    try
+    try % does not work when using read-only checkout
         DocumentationExists = exist(fullfile(openearthtoolsroot,'docs','OpenEarthDocs','oethelpdocs','helptoc.xml'),'file');
         if DocumentationExists && exist('builddocsearchdb','file')
             builddocsearchdb(fullfile(openearthtoolsroot,'docs','OpenEarthDocs','oethelpdocs'));
         end
-    catch %#ok<CTCH>
+    catch
         warning('OET:NoSearchDB',['Could not build search database because ',openearthtoolsroot,' is read-only.', char(10),...
             'the OpenEarthTools help documentation is still available in the matlab help navigator.']);
     end
     
 %% Restore warning and directory state
-%-----------------------
+% -----------------------
    warning(state.warning)
         cd(state.pwd)
 
    clear state
 
 %% set svn:keywords automatically to any new m-file
-%-----------------------
+% -----------------------
    autosetSVNkeywords
    
 %% NETCDF (if not present yet)
 %  (NB RESTOREDEFAULTPATH does not restore java paths)
-%-----------------------
+% -----------------------
    java2add         = path2os(fullfile(openearthtoolsroot, '/io/nctools', 'toolsUI-2.2.22.jar'));
    dynjavaclasspath = path2os(javaclasspath);
    indices          = strfind(dynjavaclasspath,java2add);
@@ -135,7 +135,7 @@ function oetsettings(varargin)
    setpref ('SNCTOOLS', 'USE_JAVA', true); % this requires SNCTOOLS 2.4.8 or better
     
 %% Report
-%-----------------------
+% -----------------------
    if ~(OPT.quiet)
        help oetsettings
        fprintf('\n*** OpenEarthTools settings enabled! ***\n');
