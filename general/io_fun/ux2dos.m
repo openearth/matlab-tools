@@ -9,8 +9,6 @@ function ux2dos(files_in,varargin)
 % where files_out is set to files_in, and files_in
 % are backup-ed to files_in.bak
 %
-% © Deltares, G.J. de Boer, 2008.
-%
 %See also: FPRINTEOL, DOS2UX, PATH2OS.
 
 %   --------------------------------------------------------------------

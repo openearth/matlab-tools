@@ -28,14 +28,13 @@ function varargout = tickmap(varargin)
 % * horizontalalignment
 %
 % Example:
-% tickmap('x',[-40e3:10e3:0],'units','x 1000')
-% tickmap('z',[-25:;5:0]    ,'units','m','scale',1)
 %
-% G.J. de Boer, April 3rd 2006
+%    tickmap('x',[-40e3:10e3:0],'units','x 1000')
+%    tickmap('z',[-25:;5:0]    ,'units','m','scale',1)
 %
 % See also: TICK
 
-%   --------------------------------------------------------------------
+%%  --------------------------------------------------------------------
 %   Copyright (C) 2005-8 Delft University of Technology
 %       Gerben J. de Boer
 %
@@ -64,7 +63,7 @@ function varargout = tickmap(varargin)
 %   -------------------------------------------------------------------
 
 %%  Defaults
-%% -----------------------------
+%  -----------------------------
 
    OPT.format               = '%.0f';
    OPT.stride               = 1;
@@ -79,7 +78,7 @@ function varargout = tickmap(varargin)
    handles                  = []; % to store handles of texttype (optional)
 
 %% Chek for latitude/longitude
-%% -----------------------------
+%  -----------------------------
 
    ax = varargin{1};
    
@@ -90,7 +89,7 @@ function varargout = tickmap(varargin)
    end
    
 %% Get limits
-%% -----------------------------
+%  -----------------------------
 
    if odd(nargin)
        if any(findstr(lower(ax),'x'))
@@ -113,15 +112,15 @@ function varargout = tickmap(varargin)
 
   
 %%  Keywords
-%% -----------------------------
+%  -----------------------------
     
    OPT = setProperty(OPT,varargin{nextarg:end});
     
 %% Generate tick labels
-%% -----------------------------
+%  -----------------------------
 
    %% Only for last text label add units
-   %% for the rest add spaces.
+   %  for the rest add spaces.
    
    if ischar(OPT.units)
       units        = OPT.units;
@@ -135,7 +134,7 @@ function varargout = tickmap(varargin)
    nspaces = length(OPT.units{1});
    
 %% Draw text
-%% -----------------------------
+%  -----------------------------
 
 %if any(findstr(lower(ax),'x'))
 %   
@@ -177,18 +176,18 @@ for ix=1:3
   if any(findstr(lower(ax),AX))
        
   %% Set ticks
-  %% -----------------------------
+  %  -----------------------------
   set (gca,[AX,'tick']     ,ticks.(AX))
          
   %% Set tick labels
-  %% -----------------------------
+  %  -----------------------------
 
     if ~isempty(OPT.format)
         
       ticklabels.(AX) = addrowcol(num2str((ticks.(AX)(:) - OPT.offset)./OPT.scale,OPT.format),0,1,spaces);
          
       %% Fill all those tick that are not in the stride vector with spaces
-      %% -----------------------------
+      %  -----------------------------
       remove          = ~isnan(ticks.(AX));
       keep            = 1:OPT.stride:length(ticks.(AX));
       remove(keep)    = false;
@@ -196,19 +195,19 @@ for ix=1:3
       ticklabels.(AX)(remove,:) = ' ';
       
       %% Add units to last tick that is not removed ( and mind whether last tick
-      %% is removed !!)
-      %% -----------------------------
+      %  is removed !!)
+      %  -----------------------------
       ticklabels.(AX)(keep(end-OPT.dellast),end-nspaces+1:end) = OPT.units{ix}';
       
       %% Remove redundant spaces (so labels are centered at ticks)
-      %% -----------------------------
+      %  -----------------------------
       ticklabels.(AX) = cellstr(ticklabels.(AX));
       for it=1:length(ticklabels.(AX))
          ticklabels.(AX){it} = strtrim(ticklabels.(AX){it});
       end
       
       %% Apply specials
-      %% -----------------------------
+      %  -----------------------------
 
       if OPT.dellast
          ticklabels.(AX){end} = '';
@@ -218,7 +217,7 @@ for ix=1:3
       end
 
       %% Set tick labels
-      %% -----------------------------
+      %  -----------------------------
       if     strcmp(OPT.texttype,'axes') | ...
              strcmp(OPT.texttype,'axis')
          set (gca,[AX,'ticklabel'],ticklabels.(AX))

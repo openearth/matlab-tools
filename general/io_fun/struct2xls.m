@@ -288,7 +288,7 @@ function varargout = struct2xls(fname,S,varargin)
       %end
    end
    
-   success = xlswrite(fname,M);
+   success = xlswrite(path2os(fname),M); % microsoft does not like double \ in path if file does not yet exist
 
    if nargout==1
       varargout = {success};

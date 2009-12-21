@@ -15,6 +15,8 @@ function line1D = str2line(str2D,varargin)
 %   NOTE that trailing blanks are preserved.
 %   NOTE that you can pass symbol end-of-line as in SPRINTF by 
 %        using STR2LINE(..,'s','\n')
+%   NOTE that you can remove trailing blanks of a 2D char
+%        using STR2LINE(CELLSTR(..),'s','')
 %
 %   Example;
 %
@@ -31,7 +33,7 @@ function line1D = str2line(str2D,varargin)
 %   
 %   aap_noot_mies_
 %
-%See also: LINE2STR, SPRINTF, STRCAT
+%See also: LINE2STR, SPRINTF, STRCAT, STRVCAT, CELLSTR
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology

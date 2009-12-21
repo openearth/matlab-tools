@@ -1,4 +1,4 @@
-function str2D = line2str(line1D)
+function str2D = line2str(line1D,linesep)
 %LINE2STR reshape newline-delimited 1D string to 2D char array
 %
 %   str2D = line2str(line1D)
@@ -15,9 +15,6 @@ function str2D = line2str(line1D)
 %   otherwise it will be a cell string.
 %
 %   The CR and LF characters itself are removed.
-%
-%   © G.J. de Boer, TU Delft, May 2006
-%
 % See also: STR2LINE
 
 %   --------------------------------------------------------------------
@@ -160,7 +157,7 @@ elseif strcmp(lower(OS(1)),'w')
       if LFs == length(line1D)
           str2D = line1D(1:end-2); % remove last 2 characters
       else
-         error('oLFy 1 newline, and not at end of string')
+         error('only 1 newline, and not at end of string')
       end
   
    else
