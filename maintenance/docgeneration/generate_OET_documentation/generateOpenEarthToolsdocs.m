@@ -11,7 +11,7 @@ function generateOpenEarthToolsdocs()
 % These steps are further elaborated below.
 
 %% Some initial values
-targetdir = fullfile(openearthtoolsroot,'docs','OpenEarthDocs');
+targetdir = fullfile(oetroot,'docs','OpenEarthDocs');
 helpdir = 'oethelpdocs';
 
 %% Initialization of the main generation object
@@ -228,10 +228,10 @@ toolboxdoc.contentitems(4).children(3).children(2) = tbcontentitem(...
     'icon','pagesicon');
 
 %% Load and copy tutorials
-load(fullfile(openearthtoolsroot,'tutorials','tutorials_listed.mat'))
+load(fullfile(oetroot,'tutorials','tutorials_listed.mat'))
 tmp = tempname;
 mkdir(tmp);
-copyfile(fullfile(openearthtoolsroot,'tutorials','html','*'),...
+copyfile(fullfile(oetroot,'tutorials','html','*'),...
     tmp);
 s = strread(genpath(tmp),'%s','delimiter',';');
 s(cellfun(@isempty,strfind(s,'.svn')))=[];
@@ -457,7 +457,7 @@ for ii=1:size(alldirs,1)
 end
 
 %% Generate Contents.m for tutorial directory
-fid = fopen(fullfile(openearthtoolsroot,'tutorials','Contents.m'),'w');
+fid = fopen(fullfile(oetroot,'tutorials','Contents.m'),'w');
 fprintf(fid,'%s',contentstr);
 fclose(fid);
 

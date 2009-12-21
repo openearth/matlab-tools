@@ -109,7 +109,7 @@
 % To all OpenEarth tutorials are published in the tutorials html directory. This can be found by
 % executing:
 
-fullfile(openearthtoolsroot,'tutorials','html')
+fullfile(oetroot,'tutorials','html')
 
 %%
 % This directory has a subdir called 'prerendered_images'. The best way to include a prerendered

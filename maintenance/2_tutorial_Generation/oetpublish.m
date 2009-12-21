@@ -71,7 +71,7 @@ function oetpublish(varargin)
 if any(strcmpi(varargin,'all'))
     %% delete old documentation
     try
-        dr = fullfile(openearthtoolsroot,'docs','OpenEarthDocs','oethelpdocs');
+        dr = fullfile(oetroot,'docs','OpenEarthDocs','oethelpdocs');
         delete(fullfile(dr,'*.jar'));
         delete(fullfile(dr,'*.xml'));
         delete(fullfile(dr,'*.html'));
@@ -118,7 +118,7 @@ end
 
 %% Copy script files to html dir 
 tmpdir = tempname;
-templatedir = fullfile(openearthtoolsroot,'maintenance','2_tutorial_Generation','template');
+templatedir = fullfile(oetroot,'maintenance','2_tutorial_Generation','template');
 scriptdir = fullfile(templatedir,'html','script');
 copyfile(scriptdir,tmpdir,'f');
 drs = strread(genpath(tmpdir),'%s',-1,'delimiter',';');
@@ -138,14 +138,14 @@ publishedfile = publish(filename,publishopts);
 %% hack prerendered images to file
 html_file = textread(publishedfile,'%s','delimiter','\n');
 html_file = strrep(html_file,'src="prerendered_images',...
-    ['src="file:///' fullfile(openearthtoolsroot,'tutorials','html','prerendered_images',[])]);
+    ['src="file:///' fullfile(oetroot,'tutorials','html','prerendered_images',[])]);
 fid = fopen(publishedfile,'w');
 fprintf(fid,'%s\n',html_file{:});
 fclose(fid);
 
 %% Get revision number
 cdtemp   = cd;
-cd(openearthtoolsroot);
+cd(oetroot);
 [dum txt] = system('svn info');
 dps = strfind(txt,':');
 ends = strfind(txt,char(10));
@@ -157,7 +157,7 @@ cd(cdtemp);
 strfrep(publishedfile,...
     'Published with MATLAB',...
     ['this tutorial is based on: ',...
-    '<a class="matlabhref" href="matlab:edit(''',filename ,''');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=' num2str(revisionnr) '/OpenEarthTools/trunk/matlab/' strrep([strrep(fullfile(dr,filename),openearthtoolsroot,''),'.m'],filesep,'/') '">',...
+    '<a class="matlabhref" href="matlab:edit(''',filename ,''');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=' num2str(revisionnr) '/OpenEarthTools/trunk/matlab/' strrep([strrep(fullfile(dr,filename),oetroot,''),'.m'],filesep,'/') '">',...
     filename, '.m (revision: ' num2str(revisionnr) ')',...
     '</a><br>',...
     char(10),...

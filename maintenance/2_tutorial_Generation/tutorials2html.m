@@ -73,7 +73,7 @@ mlock;
 
 %% process input
 % maindir
-maindir = openearthtoolsroot;
+maindir = oetroot;
 id = find(strcmpi(varargin,'maindir'));
 if ~isempty(id)
     maindir = varargin{id+1};
@@ -92,7 +92,7 @@ if ~isempty(id)
     summarytemplate = varargin{id+1};
 end
 
-outputdir = fullfile(openearthtoolsroot,'tutorials');
+outputdir = fullfile(oetroot,'tutorials');
 id = find(strcmpi(varargin,'outputdir'));
 if ~isempty(id)
     outputdir = varargin{id+1};
@@ -135,7 +135,7 @@ tutorials(~id) = [];
 
 %% Get revision number
 cdtemp   = cd;
-cd(openearthtoolsroot);
+cd(oetroot);
 [dum txt] = system('svn info');
 dps = strfind(txt,':');
 ends = strfind(txt,char(10));
@@ -225,7 +225,7 @@ for idr = 1:length(alldirs)
                 strfrep(htmlref{idr}{itutorials},...
                     'Published with MATLAB',...
                     ['this tutorial is based on: ',...
-                    '<a class="matlabhref" href="matlab:edit(''',fnamemother ,''');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=' num2str(revisionnr) '/OpenEarthTools/trunk/matlab/' strrep(strrep(mothermfile,openearthtoolsroot,''),filesep,'/') '">',...
+                    '<a class="matlabhref" href="matlab:edit(''',fnamemother ,''');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=' num2str(revisionnr) '/OpenEarthTools/trunk/matlab/' strrep(strrep(mothermfile,oetroot,''),filesep,'/') '">',...
                     fnamemother, '.m (revision: ' num2str(revisionnr) ')',...
                     '</a><br>',...
                     char(10),...
@@ -285,7 +285,7 @@ applicationstr = str(min(returnid(returnid > strfind(str,'##BEGINAPP'))):...
     max(returnid(returnid < strfind(str,'##ENDAPP'))));
 
 %% identify general tutorials and application tutorials (m-files)
-[alldirsstripped sid] = sort(strrep(alldirs,openearthtoolsroot,''));
+[alldirsstripped sid] = sort(strrep(alldirs,oetroot,''));
 dirnamesseparated = cellfun(@strread,...
     alldirsstripped,...
     repmat({'%s'},size(alldirs)),...

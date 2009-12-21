@@ -14,7 +14,7 @@
 %
 % * The matlab documentation is unlocked (for example with "Unlocker.exe" which is also available in
 % the openearthtools repository). Matlab help documentation is located at:
-% |fullfile(openearthtoolsroot,'docs','OpenEarthDocs');|
+% |fullfile(oetroot,'docs','OpenEarthDocs');|
 % * The help browser is not opened during the matlab session that is pending (in other words restart
 % matlab to make sure that they are not locked).
 %
@@ -32,7 +32,7 @@ oetpublish all
 % The html pages that are included on the wiki can be examined in two ways. 
 %
 % # By clicking one of the links that are printed in the command window during the process
-% # By opening tutorial_summary.html manually (located at fullfile(openearthtoolsroot,'tutorials');)
+% # By opening tutorial_summary.html manually (located at fullfile(oetroot,'tutorials');)
 %
 % *Matlab documentation*
 %

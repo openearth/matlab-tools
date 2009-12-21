@@ -13,7 +13,7 @@ function URL = SVNgetURL(varargin)
 %   URL         =
 %
 %   Example
-%   URL = SVNgetURL(openearthtoolsroot)
+%   URL = SVNgetURL(oetroot)
 %
 %   See also
 

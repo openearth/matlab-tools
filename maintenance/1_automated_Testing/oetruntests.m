@@ -52,8 +52,8 @@ function oetruntests(varargin)
 % $Keywords: $
 
 %% initiate variables:
-maindir = openearthtoolsroot;
-targetdir = fullfile(openearthtoolsroot,'testresults');
+maindir = oetroot;
+targetdir = fullfile(oetroot,'testresults');
 exclusions = {...
     '.svn',...
     '_tutorial',...

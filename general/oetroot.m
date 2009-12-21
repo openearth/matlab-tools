@@ -1,7 +1,7 @@
-function S = openearthtoolsroot
-% OPENEARTHTOOLSROOT root directory of OpenEarthTools Matlab installation
+function S = oetroot
+% OETROOT  root directory of OpenEarthTools Matlab installation
 %
-% S = openearthtoolsroot returns a string that is the name of the directory
+% S = oetroot returns a string that is the name of the directory
 % where the OpenEarthTools Matlab software is installed.
 %
 % see also: matlabroot

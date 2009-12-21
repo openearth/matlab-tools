@@ -14,7 +14,7 @@ function varargout = SVNrevision(varargin)
 %               highest revision of the referenced path 
 %
 %   Example
-%   revision = SVNrevision(openearthtoolsroot)
+%   revision = SVNrevision(oetroot)
 %
 %   See also
 

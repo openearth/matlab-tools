@@ -48,6 +48,6 @@ function testpath = KML_testdir(fileName)
 if nargin ==0
     fileName = [];
 end
-testpath = fullfile(openearthtoolsroot,'applications','googlePlot','KMLtest',fileName);
+testpath = fullfile(oetroot,'applications','googlePlot','KMLtest',fileName);
 
     

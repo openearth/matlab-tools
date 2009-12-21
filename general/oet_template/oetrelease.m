@@ -103,7 +103,7 @@ while i < length(files)
     i = i + 1;
     [pathstr filename fileext] = fileparts(files{i});
     if strcmp(fileext, '.m')
-        tempfiles = getCalls(files{i}, openearthtoolsroot, 'quiet');
+        tempfiles = getCalls(files{i}, oetroot, 'quiet');
         tempid = ~ismember(tempfiles, files);
         files(end+1:end+sum(tempid)) = tempfiles(tempid);
     end
@@ -121,7 +121,7 @@ end
 %% copy all selected files to separate folder
 for i = 1:length(files)
     mkpath(fileparts(files{i}))
-    destinationfile = strrep(files{i}, openearthtoolsroot, [OPT.targetdir filesep]);
+    destinationfile = strrep(files{i}, oetroot, [OPT.targetdir filesep]);
     mkpath(fileparts(destinationfile))
     if ~exist(destinationfile, 'file')
         copyfile(files{i}, destinationfile)
@@ -129,7 +129,7 @@ for i = 1:length(files)
 end
 
 %% create zipfile of newly created folder
-zip(OPT.zipfilename, OPT.targetdir, openearthtoolsroot)
+zip(OPT.zipfilename, OPT.targetdir, oetroot)
 
 %% prepare output
 [zipfilename targetdir] = deal(OPT.zipfilename, OPT.targetdir);

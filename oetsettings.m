@@ -99,12 +99,12 @@ function oetsettings(varargin)
 % ------------------------
  
     try % does not work when using read-only checkout
-        DocumentationExists = exist(fullfile(openearthtoolsroot,'docs','OpenEarthDocs','oethelpdocs','helptoc.xml'),'file');
+        DocumentationExists = exist(fullfile(oetroot,'docs','OpenEarthDocs','oethelpdocs','helptoc.xml'),'file');
         if DocumentationExists && exist('builddocsearchdb','file')
-            builddocsearchdb(fullfile(openearthtoolsroot,'docs','OpenEarthDocs','oethelpdocs'));
+            builddocsearchdb(fullfile(oetroot,'docs','OpenEarthDocs','oethelpdocs'));
         end
     catch
-        warning('OET:NoSearchDB',['Could not build search database because ',openearthtoolsroot,' is read-only.', char(10),...
+        warning('OET:NoSearchDB',['Could not build search database because ',oetroot,' is read-only.', char(10),...
             'the OpenEarthTools help documentation is still available in the matlab help navigator.']);
     end
     
@@ -122,7 +122,7 @@ function oetsettings(varargin)
 %% NETCDF (if not present yet)
 %  (NB RESTOREDEFAULTPATH does not restore java paths)
 % -----------------------
-   java2add         = path2os(fullfile(openearthtoolsroot, '/io/nctools', 'toolsUI-2.2.22.jar'));
+   java2add         = path2os(fullfile(oetroot, '/io/nctools', 'toolsUI-2.2.22.jar'));
    dynjavaclasspath = path2os(javaclasspath);
    indices          = strfind(dynjavaclasspath,java2add);
     
