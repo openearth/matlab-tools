@@ -69,7 +69,7 @@ switch mtype
       
   case 'int32',   nctype = 'int';
   case 'int16',   nctype = 'short';
-  case 'int8',    nctype = 'schar';
+  case 'int8',    nctype = 'short'; %'schar';
  %case 'uint8',   nctype = 'uchar';
  
   case 'char',    nctype = 'char';
@@ -78,6 +78,10 @@ switch mtype
   case 'uint32',  error('unsigned Matlab types (uint32) have no netCDF equivalent.')
   case 'uint16',  error('unsigned Matlab types (uint16) have no netCDF equivalent.')
   case 'uint8',   error('unsigned Matlab types (uint8)  have no netCDF equivalent.')
+      
+  case 'logical', nctype = 'int';
+
+      
   otherwise
     error(sprintf('nctype(): can''t match type %s\n', mtype));
 end

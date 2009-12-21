@@ -217,7 +217,7 @@ for ifld=1:nfld
             %nc_varput(outputfile, fldname , D.(fldname)(row,:),[row 1]-1,[1 col],[1 1]); % zero-based !!
             %end
         end
-        nc_varput(outputfile, fldname , D.(fldname));
+        nc_varput(outputfile, fldname , D.(fldname)); % cannot handle logicals
         
     end
     
