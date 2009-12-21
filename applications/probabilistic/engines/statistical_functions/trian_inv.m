@@ -10,8 +10,8 @@ function x = trian_inv(P, a, b, c)
 %   Input:
 %   P = probability
 %   a = lower limit of x
-%   b = mode of x
-%   c = upper limit of x
+%   b = upper limit of x
+%   c = mode of x
 %
 %   Output:
 %   x = parameter value
