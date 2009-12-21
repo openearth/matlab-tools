@@ -36,6 +36,8 @@ function [varargout] = harmanal(t,h,varargin);
 %     * plotM           whether to plot spectrum (default 0)
 %     * screenoutput    whether to plot spectrum (default 1)
 %     * errors          whether to plot spectrum (default 1)
+%     * timeseries      matrix defined at same times t as h, to which 
+%                       a coefficient will be fitted too (default []).
 %
 % For proper workings of the inversion matrix, t and h should 
 % have size [1 length(h)]. If not, internally the matrices are 
@@ -84,6 +86,7 @@ function [varargout] = harmanal(t,h,varargin);
    OPT.omega            = []; 
    OPT.names            = []; 
    OPT.T                = [];
+   OPT.timeseries       = [];
    
    if nargin>3
       nextarg = 1;
@@ -117,8 +120,11 @@ function [varargout] = harmanal(t,h,varargin);
       end
    end
    
+   nw     = length(OPT.omega);
+   
+   
    if isempty(OPT.names)
-      OPT.names = num2str([1:length(OPT.omega)]');
+      OPT.names = num2str([1:nw]');
    elseif iscell(OPT.names)
        OPT.names1 = [];
        for i=1:length(OPT.names)
@@ -138,6 +144,17 @@ function [varargout] = harmanal(t,h,varargin);
    sizehin = size(h);
    if ~(size(t,1)==1); t = t';end
    if ~(size(h,1)==1); h = h';end
+   
+   if ~isempty(OPT.timeseries)
+   if ~(size(OPT.timeseries,1)==1)
+    OPT.timeseries = OPT.timeseries';
+   end
+   end
+   
+   nc = size(OPT.timeseries,1); % size 2 is time
+   if nc>0 & OPT.screenoutput
+      disp(['Message: harmanal: fitting ',num2str(nc),' non-harmonic functions'])
+   end
 
 %% REMOVE NANS FROM DATA
 
@@ -168,7 +185,7 @@ function [varargout] = harmanal(t,h,varargin);
    % Pre allocate coefficients array containing 
    % b0, A1, B1, ... , A2, B2
    % ------------------------------------------
-   coef = repmat(0,1,2*length(OPT.omega)+1);
+   coef = repmat(0,1,2*nw+1+nc);
    
    % Fill matrix M that gives relation between h on the left hand side and 
    %        __
@@ -176,17 +193,20 @@ function [varargout] = harmanal(t,h,varargin);
    %        /_ i
    % on the right hand side according to h = M * coef
    % ------------------------------------------
-   
-   %M      = repmat(0,  2*length(OPT.omega)+1,length(t));
-    M      = repmat(0,  2*length(OPT.omega)+1,sum(mask2keep(:)));
+   %M      = repmat(0,  2*nw+1   ,length(t));
+    M      = repmat(0,  2*nw+1+nc,sum(mask2keep(:)));
    
    M(1,:) = 1; 
    
-   for iw=1:length(OPT.omega)
+   for iw=1:nw
       M(1 + 2*iw-1,:) = cos(OPT.omega(iw).*t(mask2keep)); % Ai*cos(wi*t)
       M(1 + 2*iw  ,:) = sin(OPT.omega(iw).*t(mask2keep)); % Bi*sin(wi*t)
    end
    
+   for ic=1:nc
+      M(1 + 2*nw+ic,:) = OPT.timeseries(ic,mask2keep);  % Ci*f(t)
+   end
+
 %% get least square solution to tidal parameters
    
       if OPT.plotM
@@ -207,8 +227,9 @@ function [varargout] = harmanal(t,h,varargin);
       FIT.(OPT.parameter)             = nan.*zeros(size(h));
       FIT.(OPT.parameter)(mask2keep)  = coef*M;
       
-      a = coef(2:2:end);
-      b = coef(3:2:end);
+      a = coef(2:2:2*nw+1);
+      b = coef(3:2:2*nw+1);
+      c = coef(  2*nw+2:end);
 
       %            sqrt[(Ai)^2 + (Bi)^2]
       amplitudes = sqrt(a.^2 + ...
@@ -362,7 +383,7 @@ function [varargout] = harmanal(t,h,varargin);
                     num2str(0                  ,'%010.4g'),' | ',...
                     num2str(0                  ,'%010.4g'),' | '])
          
-           for iw=1:length(OPT.omega)
+           for iw=1:nw
               disp([num2str(iw                 ,'%0.3i') ,  '| ',...
                     num2str(amplitude_order(iw),'%0.3i') ,  '| ',...
                     OPT.names(iw,:)              ,           ' | ',...
@@ -434,7 +455,6 @@ function [varargout] = harmanal(t,h,varargin);
       disp(['----------',spaces1,'--------------------------------------------------------------------------------'])
       end
 
-
 %% RETURN VALUES
 
    if nargout==1
@@ -442,6 +462,7 @@ function [varargout] = harmanal(t,h,varargin);
       FIT.(OPT.parameter) = reshape(FIT.(OPT.parameter), sizehin);
       FIT.a               = a         ;
       FIT.b               = b         ;
+      FIT.c               = c         ;
       FIT.coef            = coef      ;
       FIT.hamplitudes     = amplitudes;
       FIT.amplitude_order = amplitude_order;
