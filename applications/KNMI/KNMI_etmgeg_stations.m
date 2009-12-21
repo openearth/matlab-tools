@@ -8,6 +8,7 @@ function varargout = KNMI_etmgeg_stations(station)
 %
 %   code long_name           
 %   210  Valkenburg          
+%   225  IJmuiden
 %   235  De Kooy             
 %   240  Schiphol            
 %   242  Vlieland            
@@ -92,7 +93,7 @@ function varargout = KNMI_etmgeg_stations(station)
 %% Load data file
 %------------------
 
-   OPT.xlsfile = [filepathstr(mfilename('fullpath')),filesep,'KNMI_etmgeg_stations.xls'];
+   OPT.xlsfile = [filepathstr(mfilename('fullpath')),filesep,'KNMI_etmgeg_stations.csv'];
 
    D           = xls2struct(OPT.xlsfile);
    
@@ -100,7 +101,10 @@ function varargout = KNMI_etmgeg_stations(station)
 %------------------
   
    for ival=1:length(D.code)
-   icirc       = strfind(D.position{ival},'°');
+   icirc       = strfind(D.position{ival},'°'); % in xls file
+   if isempty(icirc)
+   icirc       = strfind(D.position{ival},'ø'); % in csv file
+   end
    iprime      = strfind(D.position{ival},'''');
    
    D.londeg(ival)= str2num(D.position{ival}(icirc(1)-2:icirc (1)-1));

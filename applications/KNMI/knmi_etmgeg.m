@@ -1,60 +1,29 @@
 function varargout = knmi_etmgeg(varargin)
 %KNMI_ETMGEG   Reads KNMI ASCII climate time series
 %
-% W = knmi_etmgeg(filename) 
+%    W = knmi_etmgeg(filename) 
 %
 % reads a wind file from
-%    <http://www.knmi.nl/klimatologie/daggegevens/download.cgi>
-% into a struct W with the following fields:
+%    http://www.knmi.nl/klimatologie/daggegevens/download.html
+% into a struct W.
 %
-%   FIELD     LONG_NAME                                        UNITS
-%   -------   ----------------------------------------------   ------------------------
-%   datenum = matlab datenumber
-%   STN     = WMO-number       .                               (235=De Kooy,240=Schiphol,260=De Bilt,270=Leeuwarden,280=Eelde,290=Twenthe,310=Vlissingen,344=Rotterdam,370=Eindhoven,380=Maastricht)
-%   DDVEC   = prevailing wind direction in degrees             (360=North, 180=South, 270=West, 0=calm/variable)
-%   FG      = daily mean windspeed                             [m/s] (let op! inhomogene reeks door meethoogte wijzigingen /
-%   FHX     = maximum hourly mean windspeed                    [m/s]
-%   FHN     = minimum hourly mean windspeed                    [m/s]
-%   FX      = maximum wind gust                                [m/s]
-%   TG      = daily mean temperature                           [degrees Celsius]
-%   TN      = minimum temperature                              [degrees Celsius]
-%   TX      = maximum temperature                              [degrees Celsius]
-%   T10N    = minimum temperature (surface)                    [degrees Celsius]
-%   SQ      = sunshine duration                                [hour] (NaN for <0.05 hour)
-%   SP      = percentage of maximum possible sunshine duration [%]
-%   Q       = global radiation                                 [J/cm2]
-%   DR      = precipitation duration                           [hour]
-%   RH      = daily precipitation amount                       [mm]   (NaN for <0,05 mm)
-%   PG      = daily mean surface air pressure                  [hPa]
-%   PGX     = maximum surface air pressure                     [hPa]
-%   PGN     = minimum surface air pressure                     [hPa]
-%   VVN     = minimum visibility                               (0=less than 100m, 1=100-200m, 2=200-300m,..., 49=4900-5000m, 50=5-6km, 56=6-7km, 57=7-8km,..., 79=29-30km, 80=30-35km, 81=35-40km,..., 89=more than 70km)
-%   VVX     = maximum visibility                               (0=less than 100m, 1=100-200m, 2=200-300m,..., 49=4900-5000m, 50=5-6km, 56=6-7km, 57=7-8km,..., 79=29-30km, 80=30-35km, 81=35-40km,..., 89=more than 70km)
-%   NG      = cloud cover                                      [octants] (9=sky invisible)
-%   UG      = daily mean relative atmospheric humidity         [%]
-%   UX      = maximum relative atmospheric humidity            [%]
-%   UN      = minimum relative atmospheric humidity            [%]
-%   EV24    = Potential evapotranspiration (Makkink)           [mm]
+%    [W,iostat] = knmi_etmgeg(filename) 
 %
-% [W,iostat] = knmi_etmgeg(filename) 
+% returns error status in iostat (OK/cancel/file not found/)
 %
-% returns error status in iostat
-%
-% OK/cancel/file not found/
-%
-% W = knmi_etmgeg(filename,<keyword,value>) 
+%    W = knmi_etmgeg(filename,<keyword,value>) 
 %
 % where the following optional <keyword,value> pairs are implemented:
 % (see: http://www.knmi.nl/samenw/hydra/meta_data/dir_codes.htm
 % * debug    : debug or not (default 0
+% * version  : version of knmi_etmgeg.csv descriptor to be used (default 'current')
+% * nheader  : number of header lines skip (default: corrent for current version)
 %
-% Missing data are fuilled in with NaN.
+% Missing data are filled in with NaN.
 %
 % NOTE THAT THE VALUES FROM THE FILE HAVE BEEN MULTIPLIED WITH A FACTOR TO GET SI-UNITS.
 %
-% See also: KNMI_POTWIND
-
-% uses <sortfieldnames>   (optional)
+% See also: KNMI_POTWIND, KNMI_ETMGEG2NC, KNMI_ETMGEG_GET_URL, KNMI_ETMGEG_STATIONS
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
@@ -94,7 +63,7 @@ function varargout = knmi_etmgeg(varargin)
    if mod(nargin,2)     == 0 
      [shortfilename, pathname, filterindex] = uigetfile( ...
         {'etmgeg*.*' ,'KNMI climate time series (etmgeg*.*)'; ...
-         '*.*'   ,'All Files (*.*)'}, ...
+         '*.*'       ,'All Files (*.*)'}, ...
          'KNMI climate time series (etmgeg*.*)');
       
       if ~ischar(shortfilename) % uigetfile cancelled
@@ -112,7 +81,7 @@ function varargout = knmi_etmgeg(varargin)
       end
 
 %% No file name specified if odd number of arguments
-   
+
    elseif mod(nargin,2) == 1 % i.e. 3 or 5 input parameters
       W.file.name   = varargin{1};
       iostat       = 1;
@@ -121,28 +90,10 @@ function varargout = knmi_etmgeg(varargin)
 %% Keywords
 
       OPT.debug         = 0;
-      OPT.header.n      = 35; % 27; due to 9 extra parameters
-      OPT.header.offset = 6;
+      OPT.version       = 'current';
+      OPT.nheader       = 49; % 35; 27; due to 9 extra parameters in datafiles2, another extra 15 in datafiles3
 
-%       if nargin>2
-%          if isstruct(varargin{2})
-%             H = mergestructs(H,varargin{2});
-%          else
-%             iargin = 2;
-%             %% remaining number of arguments is always even now
-%             while iargin<=nargin-1,
-%                 switch lower ( varargin{iargin})
-%                 % all keywords lower case
-%                 case 'debug'    ;iargin=iargin+1;OPT.debug     = varargin{iargin};
-%                 otherwise
-%                   error(sprintf('Invalid string argument (caps?): "%s".',varargin{iargin}));
-%                 end
-%                 iargin=iargin+1;
-%             end
-%          end  
-%       end
-
-          OPT = setProperty(OPT,varargin{2:end});
+      OPT = setProperty(OPT,varargin{2:end});
    
 %% I - Check if file exists (actually redundant after file GUI)
 
@@ -158,171 +109,73 @@ function varargout = knmi_etmgeg(varargin)
       
    elseif length(tmp)>0
 
-      W.file.date     = tmp.date;
-      W.file.bytes    = tmp.bytes;
-
 %% Read header
-         fid             = fopen(W.file.name);
-         for iline = 1:(OPT.header.n)
-            W.comments{iline} = fgetl(fid);
-         end
+
+      fid             = fopen(W.file.name);
+      for iline = 1:(OPT.nheader)
+         W.comments{iline} = fgetl(fid);
+      end
       
-%% Extract meta-info from header
-      
-        %W.parameter_names          = {'STN','YYYYMMDD','DDVEC','FG','FHX','FX','TG','TN','TX','SQ','SP','DR','RH','PG','VVN','NG','UG'};
-         W.parameter_names          = {'STN','YYYYMMDD','DDVEC','FG','FHX','FHN','FX','TG','TN','TX','T10N','SQ','SP','Q','DR','RH','PG','PGX','PGN','VVN','VVX','NG','UG','UX','UN','EV24'};
-         
-         W.parameter_long_name { 1} =  'STN      = WMO-number';
-         W.parameter_long_name { 2} =  'YYYYMMDD = date';
-         W.parameter_long_name { 3} =  'DDVEC    = revailing wind direction in degrees';
-         W.parameter_long_name { 4} =  'FG       = daily mean windspeed';
-         W.parameter_long_name { 5} =  'FHX      = maximum hourly mean windspeed';
-         W.parameter_long_name { 6} =  'FHN      = minimum hourly mean windspeed';
-         W.parameter_long_name { 7} =  'FX       = maximum wind gust';
+%% Extract meta-info for use in interpretation
 
-         W.parameter_long_name { 8} =  'TG       = daily mean temperature';
-         W.parameter_long_name { 9} =  'TN       = minimum temperature';
-         W.parameter_long_name {10} =  'TX       = maximum temperature';
-         W.parameter_long_name {11} =  'TN10     = minimum temperature (surface)';
+      W               = xls2struct([fileparts(mfilename('fullpath')),filesep,'knmi_etmgeg.',OPT.version,'.csv']);
 
-         W.parameter_long_name {12} =  'SQ       = sunshine duration in hour';
-         W.parameter_long_name {13} =  'SP       = percentage of maximum possible sunshine duration';
-         W.parameter_long_name {14} =  'Q        = global radiation';
-
-         W.parameter_long_name {15} =  'DR       = precipitation duration';
-         W.parameter_long_name {16} =  'RH       = daily precipitation amount in ';
-
-         W.parameter_long_name {17} =  'PG       = daily mean surface air pressure';
-         W.parameter_long_name {18} =  'PGX      = maximum surface air pressure';
-         W.parameter_long_name {19} =  'PGN      = minimum surface air pressure';
-
-         W.parameter_long_name {20} =  'VVN      = minimum visibility';
-         W.parameter_long_name {21} =  'VVX      = maximum visibility';
-         W.parameter_long_name {22} =  'NG       = cloud cover in octants';
-
-         W.parameter_long_name {23} =  'UG       = daily mean relative atmospheric humidity';
-         W.parameter_long_name {24} =  'UX       = maximum relative atmospheric humidity';
-         W.parameter_long_name {25} =  'UN       = minimum relative atmospheric humidity';
-         W.parameter_long_name {26} =  'EV24     = Potential evapotranspiration (Makkink)';
-         
-       %  W.parameter_lange_naam{ 1} =  'STN      = stationsnummer';
-       %  W.parameter_lange_naam{ 2} =  'YYYYMMDD = datum';
-       %  W.parameter_lange_naam{ 3} =  'DDVEC    = overheersende windrichting';
-       %  W.parameter_lange_naam{ 4} =  'FG       = etmaalgemiddelde windsnelheid';
-       %  W.parameter_lange_naam{ 5} =  'FHX      = hoogste uurgemiddelde windsnelheid';
-       %  W.parameter_lange_naam{ 6} =  'FX       = hoogste windstoot';
-       %  W.parameter_lange_naam{ 7} =  'TG       = etmaalgemiddelde temperatuur';
-       %  W.parameter_lange_naam{ 8} =  'TN       = minimum temperatuur';
-       %  W.parameter_lange_naam{ 9} =  'TX       = maximum temperatuur';
-       %  W.parameter_lange_naam{10} =  'SQ       = zonneschijnduur';
-       %  W.parameter_lange_naam{11} =  'SP       = percentage van de langst mogelijke zonneschijnduur';
-       %  W.parameter_lange_naam{12} =  'DR       = duur van de neerslag';
-       %  W.parameter_lange_naam{13} =  'RH       = etmaalsom van de neerslag';
-       %  W.parameter_lange_naam{14} =  'PG       = etmaalgemiddelde luchtdruk';
-       %  W.parameter_lange_naam{15} =  'VVN      = minimum opgetreden zicht';
-       %  W.parameter_lange_naam{16} =  'NG       = bedekkingsgraad van de bovenlucht';
-       %  W.parameter_lange_naam{17} =  'UG       = etmaalgemiddelde relatieve vochtigheid';
-
-         %-% for icol=1:length(W.parameter_names)
-         %-% 
-         %-%    index =                strfind(W.comments{icol+OPT.header.offset},'=');
-         %-%    W.parameter_long_names{icol} = W.comments{icol+OPT.header.offset}(index+1:1:end);
-         %-%    
-         %-% end
-         
-%% Read legend
-
-        %W.DD_longname      = 'WIND DIRECTION IN DEGREES NORTH';
-
+      W.knmi_name     = strtrim(W.knmi_name);
+      W.long_name     = strtrim(W.long_name);
+      W.standard_name = strtrim(W.standard_name);
+      W.cell_methods  = strtrim(W.cell_methods);
+      W.units         = strtrim(W.units);
          
 %% Read data
+
+      W.file.name     = tmp.name;
+      W.file.date     = tmp.date;
+      W.file.bytes    = tmp.bytes;
       
-%    1        2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17
-%  ------------------------------------------------------------------------------------------------------
-%old  STN,YYYYMMDD,DDVEC,   FG,  FHX,   FX,   TG,   TN,   TX,   SQ,   SP,   DR,   RH,   PG,  VVN,   NG,   UG
-%old
-%old  235,20010101,  177,   88,  110,  170,   40,    9,   76,    0,    0,   71,   88, 9944,   22,    8,   93
-%  ------------------------------------------------------------------------------------------------------
-% STN,YYYYMMDD,DDVEC,   FG,  FHX,  FHN,   FX,   TG,   TN,   TX, T10N,   SQ,   SP,    Q,   DR,   RH,   PG,  PGX,  PGN,  VVN,  VVX,   NG,   UG,   UX,   UN, EV24
-%
-% 210,19510101,  202,  108,  190,   51,     ,   15,   -9,   42,     ,     ,     ,     ,     ,     , 9882, 9947, 9821,     ,     ,    7,     ,     ,     ,     ,
-%  ------------------------------------------------------------------------------------------------------
+%% Read data
+      
+%     1        2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17
+%   ------------------------------------------------------------------------------------------------------
+% older  STN,YYYYMMDD,DDVEC,   FG,  FHX,   FX,   TG,   TN,   TX,   SQ,   SP,   DR,   RH,   PG,  VVN,   NG,   UG
+% older
+% older  235,20010101,  177,   88,  110,  170,   40,    9,   76,    0,    0,   71,   88, 9944,   22,    8,   93
+%   ------------------------------------------------------------------------------------------------------
+% datafiles2
+% old    STN,YYYYMMDD,DDVEC,   FG,  FHX,  FHN,   FX,   TG,   TN,   TX, T10N,   SQ,   SP,    Q,   DR,   RH,   PG,  PGX,  PGN,  VVN,  VVX,   NG,   UG,   UX,   UN, EV24
+% old   
+% old    210,19510101,  202,  108,  190,   51,     ,   15,   -9,   42,     ,     ,     ,     ,     ,     , 9882, 9947, 9821,     ,     ,    7,     ,     ,     ,     ,
+%          RAW = textscan(fid,'%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n','delimiter',',');
+%   ------------------------------------------------------------------------------------------------------
+% datafiles3
+%        STN,YYYYMMDD,DDVEC,FHVEC,   FG,  FHX, FHXH,  FHN, FHNH,  FXX, FXXH,   TG,   TN,  TNH,   TX,  TXH, T10N,T10NH,   SQ,   SP,    Q,   DR,   RH,  RHX, RHXH,   PG,   PX,  PXH,   PN,  PNH,  VVN, VVNH,  VVX, VVXH,   NG,   UG,   UX,  UXH,   UN,  UNH, EV24
+%        210,19510101,  202,   93,  108,  190,   17,   51,   23,     ,     ,   15,   -9,    1,   42,   18,     ,     ,     ,     ,     ,     ,     ,     ,     , 9882, 9947,     , 9821,     ,     ,     ,     ,     ,    7,     ,     ,     ,     ,     ,     ,
+%   ------------------------------------------------------------------------------------------------------
          
-         RAW = textscan(fid,'%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n','delimiter',',');
+         RAW = textscan(fid,'%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n','delimiter',',');
          
-         for icol=1:length(W.parameter_names)
-         
-            %% use netcdf-CF names here !!!
-            
-            fldname = W.parameter_names{icol};
-            
+         for icol=1:length(W.knmi_name)
+
+            fldname          = W.knmi_name{icol};
+            if ischar(W.slope{icol})
+            W.slope{icol}    = str2num(W.slope{icol});
+            end
+            if ~isnan(W.slope{icol}) % char data
+            W.data.(fldname) = [RAW{icol}]*W.slope{icol};
+            else
             W.data.(fldname) = [RAW{icol}];
+            end
             
          end
-      
-         W.data.datenum           = time2datenum(W.data.YYYYMMDD);
-         W.data.datenum_units     = 'days since 0 jan 0000 00:00';
-         W.data.datenum_long_name = 'day';
-         
-      
-         W.data.STN      = W.data.STN       ; W.parameter_units{ 1} =  '#';
-         W.data.YYYYMMDD = W.data.YYYYMMDD  ; W.parameter_units{ 2} =  'YYYYMMDD';
-         W.data.DDVEC    = W.data.DDVEC     ; W.parameter_units{ 3} =  'deg';
-         W.data.FG       = W.data.FG ./10   ; W.parameter_units{ 4} =  'm/s';
-         W.data.FHX      = W.data.FHX./10   ; W.parameter_units{ 5} =  'm/s';
-         W.data.FHN      = W.data.FHN./10   ; W.parameter_units{ 6} =  'm/s';
-         W.data.FX       = W.data.FX ./10   ; W.parameter_units{ 7} =  'm/s';
-
-         W.data.TG       = W.data.TG  ./10  ; W.parameter_units{ 8} =  'deg C';
-         W.data.TN       = W.data.TN  ./10  ; W.parameter_units{ 9} =  'deg C';
-         W.data.TX       = W.data.TX  ./10  ; W.parameter_units{10} =  'deg C';
-         W.data.T10N     = W.data.T10N./10  ; W.parameter_units{11} =  'deg C';
-
-         W.data.SQ(W.data.SQ==-1) = nan;
-         W.data.SQ       = W.data.SQ ./10   ; W.parameter_units{12} =  'hour';
-         W.data.SP       = W.data.SP        ; W.parameter_units{13} =  '%';
-         W.data.Q        = W.data.Q         ; W.parameter_units{14} =  'J/cm^2';
-
-         W.data.DR       = W.data.DR ./10   ; W.parameter_units{15} =  'hour';
-         W.data.RH(W.data.RH==-1) = nan;
-         W.data.RH       = W.data.RH ./10   ; W.parameter_units{16} =  'mm';
-
-         W.data.PG       = W.data.PG ./10   ; W.parameter_units{17} =  'hPa';
-         W.data.PGX      = W.data.PGX./10   ; W.parameter_units{18} =  'hPa';
-         W.data.PGN      = W.data.PGN./10   ; W.parameter_units{19} =  'hPa';
-
-         W.data.VVN      = W.data.VVN       ; W.parameter_units{20} =  '#';
-         W.data.VVX      = W.data.VVX       ; W.parameter_units{21} =  '#';
-         W.data.NG       = W.data.NG        ; W.parameter_units{22} =  'octants';
-
-         W.data.UG       = W.data.UG        ; W.parameter_units{23} =  '%';
-         W.data.UX       = W.data.UX        ; W.parameter_units{24} =  '%';
-         W.data.UN       = W.data.UN        ; W.parameter_units{25} =  '%';
-         W.data.EV24     = W.data.EV24./10  ; W.parameter_units{26} =  'mm';
-         
-%% Copy explanation to data substruct
-         
-         for icol=1:length(W.parameter_names)
-         
-            %% use netcdf-CF names here !!!
-            
-            fldname = W.parameter_names{icol};
-            
-            W.data.([fldname,'_units'    ]) = W.parameter_units    {icol};
-            
-            index                   = strfind(W.parameter_long_name{icol},'=');
-            W.data.([fldname,'_long_name']) = W.parameter_long_name{icol}(index(1)+1:end);
-            
-         end      
-         
-         if exist('sortfieldnames')==2
-         W.data = sortfieldnames(W.data);
-         end
-
+         W.slope   = [W.slope{:}]; % all numeric now
+         W.datenum = time2datenum(W.data.YYYYMMDD);
          fclose(fid);
          
    end % if length(tmp)==0
    
+%% Append meta-info
+
+   [W.code,W.stationname,W.lon,W.lat] = KNMI_etmgeg_stations(unique(W.data.STN));
+
    W.read.with     = '$Id$'; % SVN keyword, will insert name of this function
    W.read.at       = datestr(now);
    W.read.iostatus = iostat;
