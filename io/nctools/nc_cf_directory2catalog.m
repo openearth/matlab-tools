@@ -24,6 +24,7 @@ function varargout = nc_cf_directory2catalog(varargin)
 %          (ii) THREDDS meta-data keywords
 %              'urlPath'
 %              'standard_names'
+%              'long_names'
 %              'timecoverage_start'
 %              'timecoverage_end'
 %              'datenum_start'
@@ -45,6 +46,7 @@ function varargout = nc_cf_directory2catalog(varargin)
 %See also: STRUCT2NC, NC2STRUCT
 
 % TO DO: standard_name_vocabulary
+% TO DO: read from opendap directory instead of local directory: OPENDAP_FOLDER_CONTENTS
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -105,6 +107,7 @@ OPT.attname        = {'title',...
     'disclaimer',...
     'urlPath',... %
     'standard_names',...
+    'long_names',...
     'timecoverage_start',...
     'timecoverage_end',...
     'datenum_start',...
@@ -127,6 +130,7 @@ OPT.atttype        = [ 0   % 'title',...
     0   % 'disclaimer',...
     0   % 'urlPath',...
     0   % 'standard_names',...
+    0   % 'long_names',...
     0   % 'timecoverage_start',...
     0   % 'timecoverage_end',...
     1   % 'datenum_start',...
@@ -170,6 +174,7 @@ end
 %% File inquiry
 
 OPT.files        = dir([OPT.base,filesep,OPT.directory,filesep,OPT.mask]);
+% TO DO: OPENDAP_FOLDER_CONTENTS 
 
 %% pre-allocate catalog (Note: expanding char array lead to 0 as fillvalues)
 
@@ -199,12 +204,12 @@ for ifile=1:length(OPT.files)
         
         %% Get global attributes (PRE-ALLOCATE)
         
-        ATT.geospatialCoverage_northsouth(entry,1:2)                    = nan;
-        ATT.geospatialCoverage_eastwest  (entry,1:2)                    = nan;
-        ATT.timecoverage_start           (entry,:)                      = ' ';
-        ATT.timecoverage_end             (entry,:)                      = ' ';
-        ATT.datenum_start                (entry)                        = nan;
-        ATT.datenum_end                  (entry)                        = nan;
+        ATT.geospatialCoverage_northsouth(entry,1:2) = nan;
+        ATT.geospatialCoverage_eastwest  (entry,1:2) = nan;
+        ATT.timecoverage_start           (entry,:)   = ' ';
+        ATT.timecoverage_end             (entry,:)   = ' ';
+        ATT.datenum_start                (entry)     = nan;
+        ATT.datenum_end                  (entry)     = nan;
         
         %% get relevant attributes
         
@@ -237,6 +242,7 @@ for ifile=1:length(OPT.files)
         
         fileinfo       = nc_info([OPT.base,filesep,OPT.directory, filesep, OPT.filename]);
         standard_names = [];
+        long_names     = [];
         
         % cycle all datasets
         ndat = length(fileinfo.Dataset);
@@ -254,8 +260,8 @@ for ifile=1:length(OPT.files)
                     Value = fileinfo.Dataset(idat).Attribute(iatt).Value;
                     
                     % ... once
-                    if ~any(strfind(standard_names,[' ',Value]))  % remove redudant standard_names (can occur with statistics)
-                        standard_names = [standard_names ' ' Value];  % needs to be char
+                    if ~any(strfind(standard_names,[' ',Value]))      % remove redudant standard_names (can occur with statistics)
+                        standard_names = [standard_names ' ' Value];  % needs to be char, space separatred
                     end
                     
                     %   %% get spatial
@@ -291,6 +297,18 @@ for ifile=1:length(OPT.files)
                     
                 end % standard_names
                 
+                %% get long_names only ...
+                if strcmpi(Name,'long_name')
+                    
+                    Value = fileinfo.Dataset(idat).Attribute(iatt).Value;
+                    
+                    % ... once
+                    if ~any(strfind(long_names,[' ',Value]))   % remove redudant long_names (can occur with statistics)
+                        long_names = [long_names ';' Value];  % needs to be char, ; separatred
+                    end
+
+                end % long_names
+                
             end % iatt
         end % idat
         
@@ -298,7 +316,12 @@ for ifile=1:length(OPT.files)
             standard_names = ' ';
         end
         
+        if isempty(long_names)
+            long_names = ' ';
+        end
+
         ATT.standard_names(entry,1:length(standard_names)) = standard_names;
+        ATT.long_names    (entry,1:length(long_names))     = long_names;
         
         %% get latitude (actual_range or min() max() full array)
         
@@ -316,7 +339,6 @@ for ifile=1:length(OPT.files)
                 
                 Name  = fileinfo.Dataset(idat).Attribute(iatt).Name;
                 
-                %% get standard_names only ...
                 if strcmpi(Name,'actual_range')
                     
                     latitude = fileinfo.Dataset(idat).Attribute(iatt).Value;
@@ -347,7 +369,6 @@ for ifile=1:length(OPT.files)
                 
                 Name  = fileinfo.Dataset(idat).Attribute(iatt).Name;
                 
-                %% get standard_names only ...
                 if strcmpi(Name,'actual_range')
                     
                     longitude = fileinfo.Dataset(idat).Attribute(iatt).Value;
@@ -372,53 +393,53 @@ end % ifile
 
 %% remove amount to much pre-allocated in catalog dimension
 
-for ifld=1:length(OPT.attname)
-    
-    fldname = mkvar(OPT.attname{ifld});
-    
-    ATT.(fldname) = ATT.(fldname)(1:entry,:);
-    
-end
-
-ATT.timecoverage_start   = datestr(ATT.datenum_start,'yyyy-mm-ddTHH:MM:SS');
-ATT.timecoverage_end     = datestr(ATT.datenum_end  ,'yyyy-mm-ddTHH:MM:SS');
+   for ifld=1:length(OPT.attname)
+       
+       fldname = mkvar(OPT.attname{ifld});
+       
+       ATT.(fldname) = ATT.(fldname)(1:entry,:);
+       
+   end
+   
+   ATT.timecoverage_start   = datestr(ATT.datenum_start,'yyyy-mm-ddTHH:MM:SS');
+   ATT.timecoverage_end     = datestr(ATT.datenum_end  ,'yyyy-mm-ddTHH:MM:SS');
 
 %% remove amount to much pre-allocated in char dimension
 
-for ifld=1:length(OPT.attname)
-    
-    fldname = mkvar(OPT.attname{ifld});
-    
-    if ischar(ATT.(fldname))
-        
-        ATT.(fldname) = strtrim(ATT.(fldname))
-        
-        if isempty(ATT.(fldname))
-            ATT.(fldname) = repmat(' ',[entry 1]);
-        end
-        
-    end
-    
-end
+   for ifld=1:length(OPT.attname)
+       
+       fldname = mkvar(OPT.attname{ifld});
+       
+       if ischar(ATT.(fldname))
+           
+           ATT.(fldname) = strtrim(ATT.(fldname));
+           
+           if isempty(ATT.(fldname))
+               ATT.(fldname) = repmat(' ',[entry 1]);
+           end
+           
+       end
+       
+   end
 
 %% store database (mat file, netCDF file, xls file, ..... and perhaps some day as xml file)
 
-if OPT.save
-    struct2nc ([OPT.base,filesep,OPT.directory,filesep,OPT.catalog_name,'.nc' ],ATT);
-    save      ([OPT.base,filesep,OPT.directory,filesep,OPT.catalog_name,'.mat'],'-struct','ATT');
-end
+   if OPT.save
+       struct2nc ([OPT.base,filesep,OPT.directory,filesep,OPT.catalog_name,'.nc' ],ATT);
+       save      ([OPT.base,filesep,OPT.directory,filesep,OPT.catalog_name,'.mat'],'-struct','ATT');
+   end
 
 % load database as check
 
-if OPT.test
-    ATT1 = nc2struct ([          'catalog.nc' ]); % WRONG, because nc chars in nc are wrong.
-    ATT2 = load      ([          'catalog.mat']);
-end
+   if OPT.test
+       ATT1 = nc2struct ([          'catalog.nc' ]); % WRONG, because nc chars in nc are wrong.
+       ATT2 = load      ([          'catalog.mat']);
+   end
 
 %% Java issue
 
-setpref ('SNCTOOLS', 'USE_JAVA', OPT.USE_JAVA)
+   setpref ('SNCTOOLS', 'USE_JAVA', OPT.USE_JAVA)
 
-varargout = {ATT};
+   varargout = {ATT};
 
 %% EOF

@@ -67,7 +67,7 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 %TO DO: rename nt to number_of_observations
 
    OPT.directory_nc   = [];
-   OPT.mask           = '*.nc';
+   OPT.mask           = '*.nc'; % exclude catalog.nc
    OPT.basename       = 0; %'catalog';
    OPT.datestr        = 'yyyy-mm-dd HH:MM:SS';
    OPT.vc             = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc'; % vector coastline, WVC in future ?
@@ -100,7 +100,8 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 
 %% File loop to get meta-data
 
-   OPT.files        = dir([OPT.directory_nc,filesep,OPT.mask]);
+   OPT.files = dir([OPT.directory_nc,filesep,OPT.mask]);
+   OPT.files = OPT.files(~strcmp({OPT.files.name},'catalog.nc')); % exclude catalog.nc
 
    for ifile=1:length(OPT.files)
    
@@ -141,8 +142,8 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 
       for iname=1:length(OPT.standard_names)
       OPT.standard_name = OPT.standard_names{iname};    
-      OPT.parameter    = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue',OPT.standard_name);
-      parameter        = nc_varget(OPT.filename,OPT.parameter);
+      OPT.parameter     = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue',OPT.standard_name);
+      parameter         = nc_varget(OPT.filename,OPT.parameter);
       files(ifile).([OPT.parameter,'_min' ]) = nanmin (parameter);
       files(ifile).([OPT.parameter,'_mean']) = nanmean(parameter);
       files(ifile).([OPT.parameter,'_max' ]) = nanmax (parameter);
@@ -194,6 +195,7 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    
    for iname=1:length(OPT.standard_names)
    OPT.standard_name = OPT.standard_names{iname};
+   OPT.parameter     = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue',OPT.standard_name);
    units.([OPT.parameter,'_min' ])          = nc_attget(OPT.filename,OPT.parameter,'units');
    units.([OPT.parameter,'_mean'])          = units.([OPT.parameter,'_min' ]);
    units.([OPT.parameter,'_max' ])          = units.([OPT.parameter,'_min' ]);
@@ -205,7 +207,7 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    TMP = figure;
    plot   (A.longitude,A.latitude,'ko','linewidth',2)
    hold    on
-   OPT.ctick = 10.^[0:5];
+   OPT.ctick = 10.^[2:6];
    colormap(jet((length(OPT.ctick)-1)*2));
    caxis  (log10(OPT.ctick([1 end])))
    plotc  (A.longitude,A.latitude,log10(A.number_of_observations),'o','linewidth',2)
@@ -243,13 +245,13 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
              ['This file has been created with struct2xls.m > xlswrite.m @ ',datestr(now)],...
              ['This file can be read in matlab with xls2struct.m < xlsread.m']};
    
-   struct2xls([OPT.directory_out,filesep,OPT.basename,'.xls'],A,'units',units,'header',header);
+   ok = struct2xls([OPT.directory_out,filesep,OPT.basename,'.xls'],A,'units',units,'header',header);
    
   % TO DO nc_putall ([OPT.directory_nc,filesep,OPT.basename,'.nc'] ,A,'units',units,'header',header);
   
   % TO DO write2('catalog.xml',A)
    
-%% Outout
+%% Output
 
    if     nargout==1
         varargout = {A};

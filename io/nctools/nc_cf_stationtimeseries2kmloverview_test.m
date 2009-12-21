@@ -1,7 +1,7 @@
 function nc_cf_stationtimeseries2kmloverview_test
 %NC_CF_STATIONTIMESERIES2KMLOVERVIEW_TEST tts for nc_cf_stationtimeseries2kmloverview
 %
-%See also: NC_CF_STATIONTIMESERIES2KMLOVERVIEW
+%See also: NC_CF_STATIONTIMESERIES2KMLOVERVIEW, KNMI_ALL
 
 % TO DO: allow for multiple parameters in one kml file instead of one per kml
 
@@ -13,32 +13,7 @@ clear OPT
  % urlbase = 'http://dtvirt5.deltares.nl:8080'; % test server
    urlbase = 'http://opendap.deltares.nl:8080'; % production server
 
-%% KNMI
-
-   subdirs = {...%'etmgeg',...
-              'potwind'};
-   
-   for ii=1:length(subdirs)
-   
-   disp(['Processing ',num2str(ii),' / ',num2str(length(subdirs)),': ',subdirs{ii}])
-   
-       directory          = 'P:\mcdata\opendap\knmi\';
-   OPT.fileName           = [directory,filesep,subdirs{ii},'.kml'];
-   OPT.kmlName            =  subdirs{ii};
-   OPT.THREDDSbase        = [urlbase,'/thredds/dodsC/opendap/knmi/',     subdirs{ii},'/'];
-   OPT.HYRAXbase          = [urlbase,'/opendap/knmi/',                   subdirs{ii},'/'];
-   OPT.ftpbase            = [urlbase,'/thredds/fileServer/opendap/knmi/',subdirs{ii},'/'];
-   OPT.standard_name      = 'wind_speed';
-   OPT.description        = {['parameter: ',OPT.standard_name],...
-                              'source: <a href="http://www.knmi.nl">KNMI</a>'};
-   
-   
-   OPT.iconnormalState    = 'http://maps.google.com/mapfiles/kml/shapes/placemark_square.png';
-   OPT.iconhighlightState = 'http://www.rijkswaterstaat.nl/images/favicon.ico';
-   
-   nc_cf_stationtimeseries2kmloverview([directory,filesep,subdirs{ii},'.xls'],OPT);
-   
-   end
+%% KNMI, see KNMI_all.m
 
 %% Rijkswaterstaat
 
