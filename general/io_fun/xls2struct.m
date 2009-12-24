@@ -141,26 +141,16 @@ end
    else
       i     = 1;
    end
-   
-   %% Keywords
-   %------------------------
-
-%    while i<=nargin-2,
-%      if ischar(varargin{i}),
-%        switch lower(varargin{i})
-%        case 'addunits'   ;i=i+1;OPT.addunits  = varargin{i};
-%        case 'units'      ;i=i+1;OPT.units     = varargin{i};
-%        otherwise
-%           error(sprintf('Invalid string argument: %s.',varargin{i}));
-%        end
-%      end;
-%      i=i+1;
-%    end;   
 
    OPT           = setProperty(OPT,varargin{i:end});
    
+   if nargin==0
+      output = OPT;
+      return
+   end
+   
    %% Read
-   %------------------------
+   % ------------------------
 
    META.filename = fname;
    iostat        = 1;
@@ -184,7 +174,7 @@ end
       sptfilenameshort = filename(fname);
          
       %% Load raw data
-      %------------------------
+      % ------------------------
    
       if ~isempty(OPT.sheet)
          if strfind(version('-release'),'13')==1
@@ -275,7 +265,7 @@ end
       
       %% Take care of fact that excel skips certain rows/columns
       %  depending on data type (numerical/string)
-      %----------------------------------------
+      % ----------------------------------------
       
       if iscell(tsttxt) 
          commentlines       = zeros(1,size(tstraw,1));
@@ -297,7 +287,7 @@ end
       
       %% Test entire columns for presence of non-numbers.
       %  One single non-number is sufficient to treat entire column as text.
-      %----------------------------------------
+      % ----------------------------------------
 
       numeric_columns = repmat(true ,[1 size(tstraw,2)]);
       txt_columns     = repmat(false,[1 size(tstraw,2)]);
@@ -344,7 +334,7 @@ end
       % end
       
       %% Take care of commentlines and header
-      %----------------------------------------
+      % ----------------------------------------
    
       not_a_comment_line = find(~commentlines);
       
@@ -354,7 +344,7 @@ end
       end
       
       %% Remove empty field names at end of row
-      %----------------------------------------
+      % ----------------------------------------
       
       nfld         = length(fldnames);
       fldnamesmask = ones(1,nfld);
@@ -369,7 +359,7 @@ end
       nfld               = length(fldnames);
       
    %% Read data
-   %------------------------
+   % ------------------------
 
       for ifld   = 1:nfld
       
@@ -440,6 +430,13 @@ end
       META.iomethod = 'xls2struct';
       META.read_at  = datestr(now);
       META.iostatus = iostat;
+      ii = 0;
+      for i=1:length(commentlines)
+        if commentlines(i)
+          ii = ii+1;
+          META.commentlines(ii) = tstraw(i,1);
+        end
+      end
    
    if nargout<2
       if OPT.units & OPT.addunits
