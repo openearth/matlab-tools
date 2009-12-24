@@ -63,9 +63,10 @@ function filenames = findAllFiles(varargin)
 %% settings
 % defaults
 OPT = struct(...
-    'pattern_excl', {{[filesep,'.svn']}}, ...                 % description of input argument 1
-    'pattern_incl', {'*.dat'}, ...                          % description of input argument 2
-    'basepath', 'D:\checkouts\VO-rawdata\waveclimates\' ... % description of input argument 3
+    'pattern_excl', {{[filesep,'.svn']}}, ...                % pattern to exclude
+    'pattern_incl', {'*.dat'}, ...                           % pattern to include
+    'basepath', 'D:\checkouts\VO-rawdata\waveclimates\', ... % indicate basedpath to start looking
+    'recursive', 1 ...                                       % indicate whether or not the request is recursive
     );
 
 % overrule default settings by property pairs, given in varargin
@@ -75,7 +76,11 @@ OPT = setProperty(OPT, varargin{:});
 %---------------------------------------------
 
 if ispc
-    [a b] = system(['dir /b /a /s ' '"' OPT.basepath filesep OPT.pattern_incl '"']);
+    if OPT.recursive
+        [a b] = system(['dir /b /a /s ' '"' OPT.basepath filesep OPT.pattern_incl '"']);
+    else
+        [a b] = system(['dir /b /a ' '"' OPT.basepath filesep OPT.pattern_incl '"']);
+    end
 else
     disp('Not supported yet for this operating system')
 end
