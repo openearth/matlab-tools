@@ -67,8 +67,8 @@ clc
 %% get standard names info from xls file
 [num, txt, raw] = xlsread('nc_cf_standard_names_catalogue.xls','Sheet1');
 
-ids = cellfun(@isnan, raw(2:end,1), 'UniformOutput', false);ids = ~vertcat(ids{:})';
-raw = raw([false ids],:);
+ids = cellfun(@isnan, raw(6:end,1), 'UniformOutput', false);ids = ~vertcat(ids{:});
+raw = raw([false; false; false; false; false; ids],:);
 
 nc_cf_standard_names_create_header_1(OPT.filename);
 
