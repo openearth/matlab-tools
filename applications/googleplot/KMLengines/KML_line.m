@@ -1,9 +1,10 @@
-function [output] = KML_line(lat,lon,z,varargin)
+function [output] = KML_line(lat,lon,varargin)
 %KML_LINE  low-level routine for creating KML string of line
 %
-%   kmlstring = KML_line(lat,lon,z,<keyword,value>)
+%   kmlstring = KML_poly(lat,lon,<z>,<keyword,value>)
 %
-% where the following <keyword,value> pairs have been implemented:
+% where z can be 'clampToGround'.
+% The following <keyword,value> pairs have been implemented:
 %
 %   * styleName   name of previously define style with KML_style
 %                 (required, default 'black' being default of KML_style)
@@ -63,20 +64,46 @@ function [output] = KML_line(lat,lon,z,varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% Properties
+if  ( odd(nargin) & ~isstruct(varargin{2})) | ...
+    (~odd(nargin) &  isstruct(varargin{2}));
+   z       = varargin{1};
+   nextarg = 2;
+else
+   z       = 'clampToGround';
+   nextarg = 1;
+end
 
-OPT.styleName  = [];
-OPT.visibility = 1;
-OPT.extrude    = [];
-OPT.timeIn     = [];
-OPT.timeOut    = [];
-OPT.tessellate  = [];
-OPT.name       = 'line';
+%% keyword,value
 
-OPT = setProperty(OPT,varargin{:});
+   OPT.styleName  = [];
+   OPT.visibility = 1;
+   OPT.extrude    = [];
+   OPT.timeIn     = [];
+   OPT.timeOut    = [];
+   OPT.name       = 'line';
+   OPT.tessellate = [];
+   
+   OPT = setProperty(OPT,varargin{nextarg:end});
+   
+   if nargin==0
+      output = OPT;
+      return
+   end
+
+if nargin==0
+   output = OPT;
+   return
+end
 
 if isempty(OPT.styleName)
-    warning('property ''stylename'' required') %#ok<WNTAG>
+    warning('property ''stylename'' required');
+end
+
+%%
+
+if all(isnan(z(:)))
+    output = '';
+    return
 end
 
 %% preprocess visibility
@@ -103,14 +130,14 @@ if  ~isempty(OPT.timeIn)
     if ~isempty(OPT.timeOut)
         timeSpan = sprintf([...
             '<TimeSpan>\n'...
-            '<begin>%s</begin>\n'...OPT.timeIn
-            '<end>%s</end>\n'...OPT.timeOut
+            '<begin>%s</begin>\n'...% OPT.timeIn
+            '<end>%s</end>\n'...    % OPT.timeOut
             '</TimeSpan>\n'],...
             OPT.timeIn,OPT.timeOut);
     else
         timeSpan = sprintf([...
             '<TimeStamp>\n'...
-            '<when>%s</when>\n'...OPT.timeIn
+            '<when>%s</when>\n'...  % OPT.timeIn
             '</TimeStamp>\n'],...
             OPT.timeIn);
     end
@@ -120,7 +147,7 @@ end
 %% preproces altitude mode
 if strcmpi(z,'clampToGround')
     altitudeMode = sprintf([...
-        '<altitudeMode>clampToGround</altitudeMode>\n']); %#ok<NBRAK>
+        '<altitudeMode>clampToGround</altitudeMode>\n']);
     z = zeros(size(lon));
 else
     altitudeMode =  '<altitudeMode>absolute</altitudeMode>\n';
@@ -141,21 +168,24 @@ for ii = 1:size(coords_index,1)
     coordinateString  = sprintf(...
         '%3.8f,%3.8f,%3.3f ',...coords);
         coordinates(:,coords_index(ii,1):coords_index(ii,2)));
+        
     % generate output
     output = [output sprintf([...
         '<Placemark>\n'...
-        '%s'...visibility
-        '%s'...timeSpan
-        '<name>%s</name>\n'...,OPT.name);
-        '<styleUrl>#%s</styleUrl>\n'...,OPT.styleName);
+        '%s'...                         % visibility
+        '%s'...                         % timeSpan
+        '<name>%s</name>\n'...,         % OPT.name
+        '<styleUrl>#%s</styleUrl>\n'...,% OPT.styleName
         '<LineString>\n'...
-        '%s'...extrude
-        '%s'...tessellate
-        '%s'...altitudeMode
+        '%s'...                         % extrude
+        '%s'...                         % tessellate
+        '%s'...                         % altitudeMode
         '<coordinates>\n'...
-        '%s'...coordinates
+        '%s'...                         % coordinates
         '</coordinates>\n',...
         '</LineString>\n'...
         '</Placemark>\n'],...
         visibility,timeSpan,OPT.name,OPT.styleName,extrude,tessellate,altitudeMode,coordinateString)];
 end
+
+%% EOF

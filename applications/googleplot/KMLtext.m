@@ -11,14 +11,14 @@ function [OPT, Set, Default] = KMLtext(lat,lon,label,varargin)
 %                              % defined a gui pops up
 %  'kmlName'    = 'untitled';  % name of kml that shows in GE
 %
-% See also: googlePlot, text
-%
 % Example: 
 % 
 % [lat,lon] = meshgrid(54:.1:55, 4:.1:5);
 % label = sprintf('%d,%d',lat(:),lon(:));
 % labels=arrayfun(@(x,y) sprintf('%2.1f %2.1f',x,y),lat,lon,'uni',false);
 % KMLtext(lat,lon,labels)
+%
+% See also: googlePlot, text
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -178,16 +178,20 @@ for ii=1:length(lat)
 end
 
 % print output
+
 fprintf(OPT.fid,output(1:kk-1)); 
 
 %% FOOTER
+
 output = KML_footer;
 fprintf(OPT.fid,output);
 
 %% close KML
+
 fclose(OPT.fid);
 
 %% compress to kmz?
+
 if strcmpi  ( OPT.fileName(end),'z')
     movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
     zip     ( OPT.fileName,[OPT.fileName(1:end-3) 'kml']);

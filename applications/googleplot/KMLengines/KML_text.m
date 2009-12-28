@@ -1,7 +1,7 @@
 function [output] = KML_text(lat,lon,label,varargin)
 %KML_TEXT   low-level routine for creating KML string of text
 %
-%   kmlstring = KML_text(lat,lon,label,z)
+%   kmlstring = KML_text(lat,lon,label,<z>)
 %
 % See also: KML_footer, KML_header, KML_line, KML_poly, KML_style, 
 % KML_stylePoly, KML_upload
@@ -51,50 +51,68 @@ else
     z = zeros(size(lat));
     OPT.is3D = false;
 end
- 
-%%
-OPT.timeIn     = [];
-OPT.timeOut    = [];
 
-OPT = setProperty(OPT,varargin{:});
+
+if ischar(label)
+   label = cellstr(label);
+end
+
+if ~isequal(length(label),length(lat))
+   error('label should have same length as coordinates')
+end
+ 
+%% keyword,value
+
+   OPT.timeIn      = [];
+   OPT.timeOut     = [];
+   
+   OPT = setProperty(OPT,varargin{:});
+   
+   if nargin==0
+      output = OPT;
+      return
+   end
 
 %% preproces timespan
 if  ~isempty(OPT.timeIn)
     if ~isempty(OPT.timeOut)
         timeSpan = sprintf([...
             '<TimeSpan>\n'...
-            '<begin>%s</begin>\n'...OPT.timeIn
-            '<end>%s</end>\n'...OPT.timeOut
+            '<begin>%s</begin>\n'... % OPT.timeIn
+            '<end>%s</end>\n'...     % OPT.timeOut
             '</TimeSpan>\n'],...
             OPT.timeIn,OPT.timeOut);
     else
         timeSpan = sprintf([...
             '<TimeStamp>\n'...
-            '<when>%s</when>\n'...OPT.timeIn
+            '<when>%s</when>\n'...   % OPT.timeIn
             '</TimeStamp>\n'],...
             OPT.timeIn);
     end
 else
-    timeSpan ='';
+    timeSpan =' ';
 end
 
 %% preprocess altitude mode
 if OPT.is3D
     altitudeMode = '<altitudeMode>absolute</altitudeMode>';
 else
-    altitudeMode = '';  
+    altitudeMode = ' ';  
 end
 
-%% type HEADER
+for i=1:length(lat)
+
 output = sprintf([...
-	'<Placemark>\n'...
-    '%s',...% timeSpan
-    '<name>%s</name>\n'...label
-	'<Style><IconStyle><Icon></Icon></IconStyle></Style>\n'...
-	'<Point>'...
-    '%s'...altitude mode
-    '<coordinates>%3.8f,%3.8f,%3.4f</coordinates></Point>\n'...
-	'</Placemark>\n'],...
-    timeSpan,label,altitudeMode,lon,lat,z);
+ '<Placemark>\n'...
+ '%s'...                % timeSpan
+ '<name>%s</name>\n'... % label
+ '<Style><IconStyle><Icon></Icon></IconStyle></Style>\n'...
+ '<Point>'...
+ '%s'...                % altitude mode
+ '<coordinates>%3.8f,%3.8f,%3.3f </coordinates></Point>\n'...
+ '</Placemark>\n'],...
+    timeSpan,label{i},altitudeMode,lon(i),lat(i),z(i));
+    
+end    
 
 %% EOF

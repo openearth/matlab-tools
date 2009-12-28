@@ -276,7 +276,7 @@ for ii=1:length(lat(1,:))
         if OPT.is3D
             newOutput = KML_line(lat(:,ii),lon(:,ii),OPT.zScaleFun(z(:,ii)),OPT_line);        
         else
-            newOutput =  KML_line(lat(:,ii),lon(:,ii),'clampToGround',OPT_line);
+            newOutput = KML_line(lat(:,ii),lon(:,ii),'clampToGround'       ,OPT_line);
         end
 
         % add a fill if needed

@@ -217,10 +217,13 @@ for ii=1:length(lat(1,:))
 end
 
 %% FOOTER
+
 output = [output '</Folder>' KML_footer];
 fprintf(OPT.fid,output);
+
 %% close KML
 fclose(OPT.fid);
+
 %% compress to kmz?
 if strcmpi  ( OPT.fileName(end),'z')
     movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])

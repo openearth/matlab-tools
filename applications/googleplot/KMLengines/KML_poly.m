@@ -1,7 +1,12 @@
-function [output] = KML_poly(lat,lon,z,varargin)
+function [output] = KML_poly(lat,lon,varargin)
 %KML_POLY  low-level routine for creating KML string of polygon
 %
-% <documentation not yet finished>
+%   kmlstring = KML_poly(lat,lon,<z>,<keyword,value>)
+%
+% where z can be 'clampToGround'.
+% The implemented <keyword,value> pairs and their defaults are given by
+%
+%   OPT = KML_line()
 %
 % See also: KML_footer, KML_header, KML_line, KML_style, KML_stylePoly,
 % KML_text, KML_upload
@@ -38,19 +43,33 @@ function [output] = KML_poly(lat,lon,z,varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% Properties
+if  ( odd(nargin) & ~isstruct(varargin{2})) | ...
+    (~odd(nargin) &  isstruct(varargin{2}));
+   z       = varargin{1};
+   nextarg = 2;
+else
+   z       = 'clampToGround';
+   nextarg = 1;
+end
 
-OPT.styleName  = [];
-OPT.visibility = 1;
-OPT.extrude    = 0;
-OPT.timeIn     = [];
-OPT.timeOut    = [];
-OPT.name       = '';
+%% keyword,value
 
-OPT = setProperty(OPT,varargin{:});
+   OPT.styleName  = [];
+   OPT.visibility = 1;
+   OPT.extrude    = 0;
+   OPT.timeIn     = [];
+   OPT.timeOut    = [];
+   OPT.name       = 'poly';
+   
+   OPT = setProperty(OPT,varargin{nextarg:end});
+   
+   if nargin==0
+      output = OPT;
+      return
+   end
 
 if isempty(OPT.styleName)
-   warning('property ''stylename'' required')
+   warning('property ''stylename'' required');
 end
 
 %%
@@ -59,6 +78,7 @@ if all(isnan(z(:)))
     output = '';
     return
 end
+
 %% preprocess visibility
 if  ~OPT.visibility
     visibility = '<visibility>0</visibility>\n';
@@ -76,14 +96,14 @@ if  ~isempty(OPT.timeIn)
     if ~isempty(OPT.timeOut)
         timeSpan = sprintf([...
             '<TimeSpan>\n'...
-            '<begin>%s</begin>\n'...OPT.timeIn
-            '<end>%s</end>\n'...OPT.timeOut
+            '<begin>%s</begin>\n'...% OPT.timeIn
+            '<end>%s</end>\n'...    % OPT.timeOut
             '</TimeSpan>\n'],...
             OPT.timeIn,OPT.timeOut);
     else
         timeSpan = sprintf([...
             '<TimeStamp>\n'...
-            '<when>%s</when>\n'...OPT.timeIn
+            '<when>%s</when>\n'...  % OPT.timeIn
             '</TimeStamp>\n'],...
             OPT.timeIn);
     end
@@ -93,7 +113,7 @@ end
 %% preproces altitude mode
 if strcmpi(z,'clampToGround')
     altitudeMode = sprintf([...
-        '<altitudeMode>clampToGround</altitudeMode>\n']); %#ok<NBRAK>
+        '<altitudeMode>clampToGround</altitudeMode>\n']);
     z = zeros(size(lon));
 else
     altitudeMode = sprintf([...
@@ -104,21 +124,22 @@ end
 %% preproces coordinates
 coords=[lon(:)'; lat(:)'; z(:)'];
 coordinates  = sprintf(...
-    '%3.8f,%3.8f,%3.3f ',...coords);
+    '%3.8f,%3.8f,%3.3f\n',...       % coords (separated by \n or space)
     coords);
+    
 %% generate output
 output = sprintf([...
     '<Placemark>\n'...
-    '%s'...visibility
-    '%s'...timeSpan
-    '<name>%s</name>\n'...,OPT.name);
-    '<styleUrl>#%s</styleUrl>\n'...,OPT.styleName);
+    '%s'...                        % visibility
+    '%s'...                        % timeSpan
+    '<name>%s</name>\n'...         % OPT.name
+    '<styleUrl>#%s</styleUrl>\n'...% OPT.styleName
     '<Polygon>\n'...
-    '%s'...altitudeMode
+    '%s'...                        % altitudeMode
     '<outerBoundaryIs>\n'...
     '<LinearRing>\n'...
     '<coordinates>\n'...
-    '%s'...coordinates
+    '%s'...                        % coordinates
     '</coordinates>\n',...
     '</LinearRing>\n'...
     '</outerBoundaryIs>\n'...

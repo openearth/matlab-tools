@@ -1,8 +1,8 @@
 function [output] = KML_marker(lat,lon,varargin)
 %KML_MARKER     low-level routine for creating KML string of marker
 %
-% <documentation not yet finished>
-% 
+%   kmlstring = KML_marker(lat,lon,<keyword,value>)
+%
 % See also: KML_footer, KML_header, KML_line, KML_poly, KML_style, 
 % KML_stylePoly, KML_upload
 
@@ -38,14 +38,50 @@ function [output] = KML_marker(lat,lon,varargin)
 % $HeadURL$
 % $Keywords: $
 
+%% keyword,value
+
+   OPT.description = [];
+   OPT.icon        = 'http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png';
+   OPT.name        = [];
+   OPT.timeIn      = [];
+   OPT.timeOut     = [];
+   
+   OPT = setProperty(OPT,varargin{:});
+   
+   if nargin==0
+      output = OPT;
+      return
+   end
+
+%% preproces timespan
+if  ~isempty(OPT.timeIn)
+    if ~isempty(OPT.timeOut)
+        timeSpan = sprintf([...
+            '<TimeSpan>\n'...
+            '<begin>%s</begin>\n'... % OPT.timeIn
+            '<end>%s</end>\n'...     % OPT.timeOut
+            '</TimeSpan>\n'],...
+            OPT.timeIn,OPT.timeOut);
+    else
+        timeSpan = sprintf([...
+            '<TimeStamp>\n'...
+            '<when>%s</when>\n'...   % OPT.timeIn
+            '</TimeStamp>\n'],...
+            OPT.timeIn);
+    end
+else
+    timeSpan =' ';
+end
+
 %% 
 output = sprintf([...
-	'<Placemark>'...
-	'<name>%s</name>'...name
-    '<description>%s</description>'...description
-	'<Style><IconStyle><Icon>%s</Icon></IconStyle></Style>'...icon
-	'<Point><coordinates>%3.8f,%3.8f,0</coordinates></Point>'...
-	'</Placemark>'],...
-    OPT.text,OPT.description,OPT.icon,lon,lat);
+ '<Placemark>'...
+ '%s'...                                                   % timeSpan
+ '<name>%s</name>'...                                      % name
+ '<description>%s</description>'...                        % description
+ '<Style><IconStyle><Icon>%s</Icon></IconStyle></Style>'...% icon
+ '<Point><coordinates>%3.8f,%3.8f,0</coordinates></Point>'...
+ '</Placemark>'],...
+ timeSpan,OPT.name,['<![CDATA[',OPT.description,']]>'],OPT.icon,lon,lat);
 
 %% EOF

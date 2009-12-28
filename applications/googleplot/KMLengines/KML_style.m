@@ -6,9 +6,9 @@ function [output] = KML_style(varargin)
 % where the following <keyword,value> pairs have been implemented:
 %
 %   * name        name of style (default '')
-%   * lineColor   color of the lines in RGB (0..1) values, default ()
+%   * lineColor   color of the lines in RGB (0..1) values, default white ([0 0 0])
 %   * lineAlpha   transparency of the line, (0..1) with 0 transparent
-%   * lineWidth   line width, can be a fraction
+%   * lineWidth   line width, can be a fraction (default 1)
 %
 % See also: KML_footer, KML_header, KML_line, KML_poly, KML_stylePoly,
 % KML_text, KML_upload
@@ -58,9 +58,23 @@ if isempty(OPT.name)
    warning('property ''name'' required')
 end
 
+if nargin==0
+   output = OPT;
+   return
+end
+
 %% type STYLE
 temp      = dec2hex(round([OPT.lineAlpha, OPT.lineColor].*255),2);
-lineColor = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
+%http://code.google.com/intl/nl/apis/kml/documentation/kmlreference.html#color
+%
+% Color and opacity (alpha) values are expressed in hexadecimal notation. 
+% The range of values for any one color is 0 to 255 (00 to ff). 
+% For alpha, 00 is fully transparent and ff is fully opaque. The order of 
+% expression is aabbggrr, where aa=alpha (00 to ff); bb=blue (00 to ff); 
+% gg=green (00 to ff); rr=red (00 to ff). For example, if you want to apply
+% a blue color with 50 percent opacity to an overlay, you would specify the 
+% following: <color>7fff0000</color>, where alpha=0x7f, blue=0xff, green=0x00, and red=0x00.
+lineColor = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)]; % a b g r
 
 output = sprintf([...
     '<Style id="%s">\n'...OPT.name

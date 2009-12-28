@@ -1,5 +1,5 @@
-function testresult = KMLline_test()
-% KMLLINE_TEST  One line description goes here
+function testresult = KMLcontour_test()
+% KMLCONTOUR_TEST  One line description goes here
 %  
 % More detailed description of the test goes here.
 %
@@ -8,15 +8,12 @@ function testresult = KMLline_test()
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2009 Deltares
-%       Pieter van Geer
+%   Copyright (C) $date(yyyy) $Company
+%       $author
 %
-%       pieter.vangeer@deltares.nl	
+%       $email	
 %
-%       Rotterdamseweg 185
-%       2629 HD Delft
-%       P.O. 177
-%       2600 MH Delft
+%       $address
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -39,8 +36,8 @@ function testresult = KMLline_test()
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 22 Sep 2009
-% Created with Matlab version: 7.8.0.347 (R2009a)
+% Created: 02 Sep 2009
+% Created with Matlab version: 7.5.0.342 (R2007b)
 
 % $Id$
 % $Date$
@@ -49,16 +46,25 @@ function testresult = KMLline_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = KMLline)
+%% $Description (Name = KMLcontour)
 % Publishable code that describes the test.
 
 %% $RunCode
-[lat,lon] = meshgrid([51:54],[3:7]);
+try
 
-kmlline(lat ,lon ,'fileName',KML_testdir('KMLline_testh.kml'),'lineColor',jet(3) ,'kmlName','horizontal');%,'text',{'1','2','3','4'});
-kmlline(lat',lon','fileName',KML_testdir('KMLline_testv.kml'),'lineWidth',[1 3 3],'kmlName','vertical'  );%,'text',{'a','b','c','d','e'});
+    scale = 5e3;
+    [lat,lon] = meshgrid(54:.1:57,2:.1:5);
+    z = peaks(31);
+    z = abs(z);
+    
+   [u,v] = gradient(z);
 
-testresult = nan;
+    KMLquiver(lat,lon,-scale.*v,scale.*u,'fileName',KML_testdir('KMLquiver_test_arrows.kml'))
+    KMLpcolor(lat,lon,                z,'fileName',KML_testdir('KMLquiver_test_streamfunction.kml'))
+    testresult = true;
+catch
+    testresult = false;
+end
 
 %% $PublishResult
 % Publishable code that describes the test.

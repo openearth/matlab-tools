@@ -62,7 +62,7 @@ function varargout = KMLcolorbar(varargin)
    OPT.fontrgb            = [1 1 1]; % white as Google letters
    OPT.name               = 'colorbar';
    OPT.fileName           = 'KMLcolorbar';
-   OPT.colorbarlocation   = {'E'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
+   OPT.colorbarlocation   = {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
    OPT.halo               = 1;       % for colorbar add halo of pixels with different color as fontrgb
    OPT.halorgb            = [0 0 0]; % black as Google letters
    

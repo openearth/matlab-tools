@@ -11,8 +11,8 @@ y         = nc_varget(url,   'y',[   1  ],[  -1   ]);
 z         = nc_varget(url,   'z',[1 1 1],[1 -1 -1]);
 z         = (z+30)*4;
 [x,y]     = meshgrid(x,y);
-EPSG      = load('EPSGnew');
-[lat,lon] = convertCoordinatesNew(x,y,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+EPSG      = load('EPSG');
+[lon,lat] = convertCoordinates(x,y,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
 [OPT]     =  KMLsurf(lat,lon,z,'fileName','jarkusKB128_1312a1.kmz','polyOutline',0,'colorSteps',50,'fillAlpha',0.7,'reversePoly',false);
 
 
@@ -36,17 +36,18 @@ KMLline(lat,lon,'fileName','JARKUS2.kmz');
 clear all
 url      = 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/';
 contents = opendap_folder_contents(url);
-EPSG     = load('EPSGnew');
+EPSG     = load('EPSG');
 for ii = 1:length(contents);
     [path, fname] = fileparts(contents{ii});
     x             = nc_varget(contents{ii},   'x');
     y             = nc_varget(contents{ii},   'y');
     x2            = [x(1) x(end) x(end) x(1) x(1)];
     y2            = [y(1) y(1) y(end) y(end) y(1)];
-    [lat(:,ii),...
-     lon(:,ii)]   = convertCoordinatesNew(x2,y2,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+    [lon(:,ii),...
+     lat(:,ii)]   = convertCoordinates(x2,y2,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
     text{ii}      = fname;
 end
-KMLline(lat,lon,'fileName','vaklodingenOutlineDisco.kml','text',text,'lineColor',jet(length(lat2(1,:))))
-KMLline(lat,lon,'fileName','vaklodingenOutline.kml'     ,'text',text,'lineColor',[0 0 0])
+KMLline(lat,lon,'fileName','vaklodingenOutlineDisco.kml','lineColor',jet(length(lat(1,:))));%,'text',text
+KMLline(lat,lon,'fileName','vaklodingenOutline.kml'     ,'lineColor',[0 0 0]              );%,'text',text
+
 
