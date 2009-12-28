@@ -1,10 +1,10 @@
-function standard_name = donarname2standard_name(varargin)
-%DONARNAME2STANDARD_NAME   convert between ODV substance name and CF standard_name
+function standard_name = rws_waterbase_name2standard_name(varargin)
+%RWS_WATERBASE_NAME2STANDARD_NAME   convert between ODV substance name and CF standard_name
 %
-%   standard_names = donarname2standard_name(DONARcodes)
+%   standard_names = rws_waterbase_name2standard_name(DONARcodes)
 %
-% Note : vectorized for codes, e.g.: donarname2standard_name({'22','23'})
-% Note : codes can be numeric, e.g.: donarname2standard_name([ 22   23])
+% Note : vectorized for codes, e.g.: rws_waterbase_name2standard_name({'22','23'})
+% Note : codes can be numeric, e.g.: rws_waterbase_name2standard_name([ 22   23])
 %
 % Examples:
 %
@@ -38,7 +38,7 @@ function standard_name = donarname2standard_name(varargin)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-   OPT.xlsfile = [filepathstr(mfilename('fullpath')),filesep,'donarname2standard_name.xls'];
+   OPT.xlsfile = [filepathstr(mfilename('fullpath')),filesep,'rws_waterbase_name2standard_name.xls'];
    DAT         = xls2struct(OPT.xlsfile);
    codes       = varargin{1};
    if ischar(codes) | iscell(codes)
@@ -47,7 +47,7 @@ function standard_name = donarname2standard_name(varargin)
    
    for icode=1:length(codes)
       code                 = codes(icode);
-      index                = find(code==DAT.donar_code);
+      index                = find(code==DAT.rws_waterbase_code);
       if ~isempty(index)
       standard_name{icode} = DAT.standard_name{index};
       else

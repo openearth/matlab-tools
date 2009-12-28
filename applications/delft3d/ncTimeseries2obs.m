@@ -40,12 +40,13 @@ function OBS = ncTimeseries2obs(GRD, iYear, varargin)
 % $Keywords: $
 
 %% Default values
-OPT.source = 'all';
-OPT.output = 'all';
-OPT.prefix = 'zunogrof';
-OPT.coord = 'PARIJS';
+
+OPT.source     = 'all';
+OPT.output     = 'all';
+OPT.prefix     = 'zunogrof';
+OPT.coord      = 'PARIJS';
 OPT.refdatenum = datenum(1970,1,1); 
-OPT.ncdir = { ...
+OPT.ncdir      = { ...
     'P:\mcdata\opendap\rijkswaterstaat\waterbase\', ... % Donar data
     'F:\checkouts\OpenEarthRawData\cefas\nc\'};         % Cefas data
 
@@ -60,8 +61,9 @@ elseif (strcmpi(OPT.source, 'cefas'))
 end
 
 %% Build mask for grid in order to identify the outer edge of the domain
-GRD.ind = find(isfinite(GRD.cor.x));
-GRD.tmask = zeros(size(GRD.cor.x));
+
+GRD.ind            = find(isfinite(GRD.cor.x));
+GRD.tmask          = zeros(size(GRD.cor.x));
 GRD.tmask(GRD.ind) = 1;
 [GRD.tm, GRD.tc] = boundary(GRD.tmask);
 GRD.ind = find(GRD.tc < 0);
@@ -70,7 +72,7 @@ for i = 2:GRD.ind(2)
     if (isfinite(GRD.tm(i,1)) && isfinite(GRD.tm(i,2)))
         GRD.xypos{j} = sprintf('%f %f', ...
             [GRD.cor.x(GRD.tm(i,1), GRD.tm(i,2)), ...
-            GRD.cor.y(GRD.tm(i,1), GRD.tm(i,2))]);
+             GRD.cor.y(GRD.tm(i,1), GRD.tm(i,2))]);
         j = j + 1;
     end
 end
@@ -81,6 +83,7 @@ for i = 1:length(GRD.xypos)
 end
 
 %% Reading all xls files in order to list all the stations
+
 iStation = 1;
 DATA = struct;
 for iDir = OPT.dir_index
@@ -103,9 +106,9 @@ for iDir = OPT.dir_index
         idColumn.DateMax = ...
             find(strcmpi(overview.text(overview.offset-1,:), 'datenummax'));
         for iSta = overview.offset+1:size(overview.raw, 1)
-            DATA.namst{iStation} = strtrim(overview.raw{iSta,idColumn.Station});
-            DATA.lat(iStation) = overview.raw{iSta,idColumn.Latitude};
-            DATA.lon(iStation) = overview.raw{iSta,idColumn.Longitude};
+            DATA.namst{iStation}  = strtrim(overview.raw{iSta,idColumn.Station});
+            DATA.lat(iStation)     = overview.raw{iSta,idColumn.Latitude};
+            DATA.lon(iStation)     = overview.raw{iSta,idColumn.Longitude};
             DATA.datemin(iStation) = OPT.refdatenum + ...
                 overview.raw{iSta,idColumn.DateMin};
             DATA.datemax(iStation) = OPT.refdatenum + ...
@@ -122,6 +125,7 @@ end
 
 %% Only stations for which there is data during the modeled year are used
 %% (in order to limit the size of the model files)
+
 [listUniqueStation, idx] = unique(DATA.namst);
 ind = find(DATA.inDomain(idx) & ...
     (DATA.datemin(idx) <= datenum(iYear+1,1,1)) & ...
@@ -129,28 +133,30 @@ ind = find(DATA.inDomain(idx) & ...
 uniqueStruct = struct;
 for iStation = 1:length(ind)
     uniqueStruct(iStation).namst = DATA.namst{idx(ind(iStation))};
-    uniqueStruct(iStation).lat = DATA.lat(idx(ind(iStation)));
-    uniqueStruct(iStation).lon = DATA.lon(idx(ind(iStation)));
-    uniqueStruct(iStation).x = DATA.x(idx(ind(iStation)));
-    uniqueStruct(iStation).y = DATA.y(idx(ind(iStation)));
+    uniqueStruct(iStation).lat   = DATA.lat(idx(ind(iStation)));
+    uniqueStruct(iStation).lon   = DATA.lon(idx(ind(iStation)));
+    uniqueStruct(iStation).x     = DATA.x(idx(ind(iStation)));
+    uniqueStruct(iStation).y     = DATA.y(idx(ind(iStation)));
     [uniqueStruct(iStation).n, uniqueStruct(iStation).m, mn] = ...
         xy2mn(GRD.cen.x, GRD.cen.y, ...
         uniqueStruct(iStation).x, uniqueStruct(iStation).y);
-    uniqueStruct(iStation).k = 0;
+    uniqueStruct(iStation).k     = 0;
 end
 
 %% Build OBS structs used for output
+
 for iSta = 1:length(uniqueStruct)
     OBS.flow.namst{iSta} = uniqueStruct(iSta).namst;
-    OBS.flow.m(iSta) = uniqueStruct(iSta).m;
-    OBS.flow.n(iSta) = uniqueStruct(iSta).n;
-    OBS.waq.namst{iSta} = uniqueStruct(iSta).namst;
-    OBS.waq.x(iSta) = uniqueStruct(iSta).x;
-    OBS.waq.y(iSta) = uniqueStruct(iSta).y;
-    OBS.waq.k(iSta) = 0;
+    OBS.flow.m(iSta)     = uniqueStruct(iSta).m;
+    OBS.flow.n(iSta)     = uniqueStruct(iSta).n;
+    OBS.waq.namst{iSta}  = uniqueStruct(iSta).namst;
+    OBS.waq.x(iSta)      = uniqueStruct(iSta).x;
+    OBS.waq.y(iSta)      = uniqueStruct(iSta).y;
+    OBS.waq.k(iSta)      = 0;
 end
 
 %% Write .obs files
+
 if (strcmpi(OPT.output, 'all') || strcmpi(OPT.output, 'flow'))
     delft3d_io_obs('write', [OPT.prefix '_flow' ...
         sprintf('%d', iYear) '.obs'], OBS.flow);
@@ -159,9 +165,9 @@ end
 if (strcmpi(OPT.output, 'all') || strcmpi(OPT.output, 'waq'))
     fid = fopen([OPT.prefix '_waq' sprintf('%d', iYear) '.obs'], 'w+');
     for i = 1:length(OBS.waq.x)
-        fprintf(fid, '%f,\t', OBS.waq.x(i));
-        fprintf(fid, '%f,\t', OBS.waq.y(i));
-        fprintf(fid, '%d,\t', OBS.waq.k(i));
+        fprintf(fid, '%f,\t'  , OBS.waq.x(i));
+        fprintf(fid, '%f,\t'  , OBS.waq.y(i));
+        fprintf(fid, '%d,\t'  , OBS.waq.k(i));
         fprintf(fid, '%-20s\n', OBS.waq.namst{i});
     end
     fclose(fid);

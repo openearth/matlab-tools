@@ -1,7 +1,7 @@
-function D = getWaterbaseData_substances(varargin)
-%GETWATERBASEDATA_SUBSTANCES   list of waterbase substances from <a href="http://www.waterbase.nl">www.waterbase.nl</a>
+function D = rws_waterbase_get_substances(varargin)
+%RWS_WATERBASE_GET_SUBSTANCES   list of waterbase substances from www.waterbase.nl
 %
-%    Substance = getWaterbaseData_substances
+%    Substance = rws_waterbase_get_substances()
 %
 % gets list of all SUBSTANCES available for queries at <a href="http://www.waterbase.nl">www.waterbase.nl</a>.
 %
@@ -11,7 +11,7 @@ function D = getWaterbaseData_substances(varargin)
 % * CodeName, e.g. 22%7CSignificante+golfhoogte+uit+energiespectrum+van+30-500+mhz+in+cm+in+oppervlaktewater"
 % * Code    , e.g. 22
 %
-% See also: DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>, GETWATERBASEDATA, GETWATERBASEDATA_LOCATIONS
+% See also: DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>, GETWATERBASEDATA, RWS_WATERBASE_GET_LOCATIONS
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -57,6 +57,7 @@ function D = getWaterbaseData_substances(varargin)
 
    %% Special HTML symbols to be encodied as hex value with ISO 8859-1 Latin alphabet No. 1
    % http://www.ascii.cl/htmlcodes.htm:ISO 8859-1 Latin alphabet No. 1
+   % ' '    20 space
    % |      7C
    % /      2F
    % <      3C
@@ -64,7 +65,7 @@ function D = getWaterbaseData_substances(varargin)
    % (      28
    % )      29
    % '      27
-   OPT.symbols = {'|','/','<',',','(',')',''''}; 
+   OPT.symbols = {' ','|','/','<',',','(',')',''''}; 
    
    %% Get page
    [s status]    = urlread('http://www.waterbase.nl/index.cfm?page=start');
@@ -101,7 +102,7 @@ function D = getWaterbaseData_substances(varargin)
    
    %% check substances from website by comparing with csv file.
    if OPT.debug
-      E = getWaterbaseData_substances_csv;
+      E = rws_waterbase_get_substances_csv;
       for ii=1:length(D.Code)
          if ~strcmpi(D.CodeName{ii},E.CodeName{ii})
             disp(num2str(ii))

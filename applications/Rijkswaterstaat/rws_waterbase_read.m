@@ -1,7 +1,7 @@
-function varargout = donar_read(fnames,varargin)
-%DONAR_READ   Read ASCII text file from www.waterbase.nl
+function varargout = rws_waterbase_read(fnames,varargin)
+%RWS_WATERBASE_READ   Read ASCII text file from www.waterbase.nl
 %
-%   DAT = donar_read(fname,<keyword,value>)
+%   DAT = rws_waterbase_read(fname,<keyword,value>)
 %
 % reads ONE txt file of ONE parameter at MULTIPLE locations to ONE structure DAT.
 %       or
@@ -29,7 +29,7 @@ function varargout = donar_read(fnames,varargin)
 %             'fgetl':          is very fast and uses no more memory then needed. However, with 
 %                               fgetl only 5 columns are read (datenum,waarde,x,y,epsg. With
 %                               fgetl the other meta-data are ONLY read for the first location.
-% LIMITATIONS: with method 'textread' DONAR_READ cannot handle lines with empty values as:
+% LIMITATIONS: with method 'textread' RWS_WATERBASE_READ cannot handle lines with empty values as:
 %
 %      Maasmond;Debiet in m3/s in oppervlaktewater;;;;Geen data beschikbaar/No data available;;9;9;9;9;9;9;9;9;9;9;9,9,9
 %

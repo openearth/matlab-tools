@@ -1,5 +1,5 @@
-function OutputName = getWaterbaseData(varargin);
-%GETWATERBASEDATA   load data from <a href="http://www.waterbase.nl">www.waterbase.nl</a>
+function OutputName = rws_waterbase_get_url(varargin);
+%RWS_WATERBASE_GET_URL   load data from <a href="http://www.waterbase.nl">www.waterbase.nl</a>
 %
 % Download data from the <a href="http://www.waterbase.nl">www.waterbase.nl</a> website for one specified
 % substance at one or more specified locations during one specified
@@ -7,38 +7,39 @@ function OutputName = getWaterbaseData(varargin);
 %
 % Without input arguments a GUI is launched.
 %
-%    getWaterbaseData(<Code>    ) % or
-%    getWaterbaseData(<FullName>) % NOTE: NOT CodeName
+%    rws_waterbase_get_url(<Code>    ) % or
+%    rws_waterbase_get_url(<FullName>) % NOTE: NOT CodeName
 %
 % where Code or FullName are the unique DONAR numeric or string
-% substance identifier respectively (e.g. 22).
+% substance identifier respectively (e.g. 22 and 
+% 'Significante golfhoogte uit energiespectrum van 30-500 mhz in cm in oppervlaktewater').
 %
-%    getWaterbaseData( Code     ,<ID>)
-%    getWaterbaseData( FullName ,<ID>)
+%    rws_waterbase_get_url( Code     ,<ID>)
+%    rws_waterbase_get_url( FullName ,<ID>)
 %
 % where ID is  the unique DONAR string location identifier (e.g. 'AUKFPFM').
 %
-%    getWaterbaseData( Code     ,ID,<datenum>)
-%    getWaterbaseData( FullName ,ID,<datenum>)
+%    rws_waterbase_get_url( Code     ,ID,<datenum>)
+%    rws_waterbase_get_url( FullName ,ID,<datenum>)
 %
 % where datenum is a 2 element vector with teh start and end time
 % of the query in datenumbers (e.g. datenum([1961 2008],1,1)).
 %
-%    getWaterbaseData( Code     ,ID,datenum,<FileName>)
-%    getWaterbaseData( FullName ,ID,datenum,<FileName>)
+%    rws_waterbase_get_url( Code     ,ID,datenum,<FileName>)
+%    rws_waterbase_get_url( FullName ,ID,datenum,<FileName>)
 %
 % where FileName is the name of the output file. When it is a directory
 % the FileName will be chosen as DONAR does (with extension '.txt').
 %
-%    name = getWaterbaseData(...) returns the local filename to which the data was written.
+%    name = rws_waterbase_get_url(...) returns the local filename to which the data was written.
 %
 % Example:
 %
-%    getWaterbaseData(22,'AUKFPFM',datenum([1961 2008],1,1),pwd)
+%    rws_waterbase_get_url(22,'AUKFPFM',datenum([1961 2008],1,1),pwd)
 %
 % See web:  <a href="http://www.waterbase.nl">www.waterbase.nl</a>,
-% See also: DONAR_READ, GETWATERBASEDATA_SUBSTANCES, GETWATERBASEDATA_LOCATIONS
-%           GETWATERBASEDATALOOP
+% See also: DONAR_READ, RWS_WATERBASE_GET_SUBSTANCES, RWS_WATERBASE_GET_LOCATIONS
+%           RWS_WATERBASE_GET_URL_LOOP
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
@@ -67,11 +68,12 @@ function OutputName = getWaterbaseData(varargin);
 %% Substance names
 
    OPT.strmatch = 'exact';
+   OPT.version  = 2; % 1 is before summer 2009, 2 is after mid dec 2009
 
 %% Substance names
 
-   Substance = getWaterbaseData_substances;
-  %Substance = getWaterbaseData_substances_csv('donar_substances.csv');
+   Substance = rws_waterbase_get_substances;
+  %Substance = rws_waterbase_get_substances_csv('donar_substances.csv');
 
 %% Select substance name
 
@@ -90,13 +92,13 @@ function OutputName = getWaterbaseData(varargin);
       if (ok == 0);OutputName = [];return;end
    end
 
-   disp(['message: getWaterbaseData: loading Substance # ',num2str(indSub                ,'%0.3d'),': ',...
+   disp(['message: rws_waterbase_get_url: loading Substance # ',num2str(indSub                ,'%0.3d'),': ',...
                                                            num2str(Substance.Code(indSub),'%0.3d'),' "',...
                                                                    Substance.FullName{indSub},'"'])
 
 %% Location names
 
-   Station = getWaterbaseData_locations(Substance.Code(indSub));
+   Station = rws_waterbase_get_locations(Substance.Code(indSub),Substance.CodeName{indSub});
 
 %% Select Location names
 
@@ -115,9 +117,9 @@ function OutputName = getWaterbaseData(varargin);
    end
 
    if length(indLoc)>1
-   disp(['message: getWaterbaseData: loading Location    ',num2str(length(indLoc),'%0.3d'),'x: #',num2str(indLoc(:)','%0.3d,')])
+   disp(['message: rws_waterbase_get_url: loading Location    ',num2str(length(indLoc),'%0.3d'),'x: #',num2str(indLoc(:)','%0.3d,')])
    else
-   disp(['message: getWaterbaseData: loading Location  # ',num2str(indLoc,'%0.3d'),': ',Station.ID{indLoc},' "',Station.FullName{indLoc},'"'])
+   disp(['message: rws_waterbase_get_url: loading Location  # ',num2str(indLoc,'%0.3d'),': ',Station.ID{indLoc},' "',Station.FullName{indLoc},'"'])
    end
 
 %% Times
@@ -148,8 +150,8 @@ function OutputName = getWaterbaseData(varargin);
       enddate   = [ListYear{max(indDate)} '12312359'];
    end
 
-   disp(['message: getWaterbaseData: loading startdate        ',startdate]);
-   disp(['message: getWaterbaseData: loading enddate          ',enddate]);
+   disp(['message: rws_waterbase_get_url: loading startdate        ',startdate]);
+   disp(['message: rws_waterbase_get_url: loading enddate          ',enddate]);
 
 %% Select Times
 
@@ -166,7 +168,7 @@ function OutputName = getWaterbaseData(varargin);
       if (isequal(FileName, 0));return;OutputName = [];end
    end
 
-   disp(['message: getWaterbaseData: loading file             ',fullfile(FilePath,FileName)]);
+   disp(['message: rws_waterbase_get_url: loading file             ',fullfile(FilePath,FileName)]);
    
 %% get data = f(Substance.Code, Station.ID, startdate, enddate
 
@@ -178,10 +180,20 @@ function OutputName = getWaterbaseData(varargin);
 
       iLoc = 1;
 
+      if OPT.version==1
       urlName = ['http://www.waterbase.nl/Sites/waterbase/wbGETDATA.xitng?ggt=id' ...
              sprintf('%d', Substance.Code(indSub)) '&site=MIV&lang=nl&a=getData&gaverder=GaVerder&from=' ...
           startdate '&loc=' Station.ID{indLoc(iLoc)} '&to=' enddate '&fmt=text'];
+          
+      elseif OPT.version==2
 
+      urlName = ['http://www.waterbase.nl/wswaterbase/cgi-bin/wbGETDATA?ggt=id' ...
+             sprintf('%d', Substance.Code(indSub)) '&site=MIV&lang=nl&a=getData&gaverder=GaVerder&from=' ...
+          startdate '&loc=' Station.ID{indLoc(iLoc)} '&to=' enddate '&fmt=text'];
+
+     end
+
+          
       disp(urlName)
 
       [s status] = urlwrite([urlName],OutputName);

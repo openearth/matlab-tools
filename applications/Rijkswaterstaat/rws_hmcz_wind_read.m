@@ -1,9 +1,9 @@
-function DAT = hmcz_wind_read(varargin)
-%HMCZ_WIND_READ   Reads ASCII wind file from www.hmcz.nl
+function DAT = rws_hmcz_wind_read(varargin)
+%RWS_HMCZ_WIND_READ   Reads ASCII wind file from www.hmcz.nl
 %
-%   D = HMCZ_WIND_READ('fname')
+%      D = rws_hmcz_wind_read('fname')
 %
-%   Reads ASCII wind data file from www.hmcz.nl of type 
+%   eeads ASCII wind data file from www.hmcz.nl of type 
 %   WNr2 (see 2nd line) that looks like:
 %
 %   ----------------------------------------------------------

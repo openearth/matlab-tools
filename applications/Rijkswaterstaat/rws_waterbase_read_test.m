@@ -1,5 +1,5 @@
-function D = donar_read_test(varargin)
-%DONAR_READ_TEST   test script for DONAR_READ
+function D = rws_waterbase_read_test(varargin)
+%RWS_WATERBASE_READ_TEST   test script for DONAR_READ
 %
 %   donar_read_test(<filename>)
 %
@@ -25,7 +25,7 @@ else
 end
 
 %% load
-D = donar_read(F)
+D = rws_waterbase_read(F)
 
 %% plot
 plot    (D.data.datenum,D.data.waarde)

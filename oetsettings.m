@@ -98,6 +98,7 @@ function oetsettings(varargin)
 %% Create tutorial search database
 % ------------------------
  
+    disp('Creating <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a> search database, please wait ...')
     try % does not work when using read-only checkout
         DocumentationExists = exist(fullfile(oetroot,'docs','OpenEarthDocs','oethelpdocs','helptoc.xml'),'file');
         if DocumentationExists && exist('builddocsearchdb','file')

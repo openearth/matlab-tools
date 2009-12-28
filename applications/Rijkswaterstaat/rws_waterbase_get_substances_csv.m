@@ -1,5 +1,5 @@
-function Substance = getWaterbaseData_substances_CSV(fname)
-%GETWATERBASEDATA_SUBSTANCES_CSV   list of waterbase substances from 'donar_substances.csv'
+function Substance = rws_waterbase_get_substances_csv(fname)
+%RWS_WATERBASE_GET_SUBSTANCES_CSV   list of waterbase substances from 'donar_substances.csv'
 %
 %    Substance = getWaterbaseData_substances(<fname.csv>)
 %
@@ -12,7 +12,7 @@ function Substance = getWaterbaseData_substances_CSV(fname)
 % * CodeName, e.g. 22%7CSignificante+golfhoogte+uit+energiespectrum+van+30-500+mhz+in+cm+in+oppervlaktewater"
 % * Code    , e.g. 22
 %
-% See also: DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>, GETWATERBASEDATA, GETWATERBASEDATA_LOCATIONS
+% See also: DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>, GETWATERBASEDATA, RWS_WATERBASE_GET_LOCATIONS
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares

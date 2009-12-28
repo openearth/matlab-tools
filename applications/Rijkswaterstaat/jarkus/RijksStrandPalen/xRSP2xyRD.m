@@ -27,7 +27,7 @@ function [xRD,yRD] = xRSP2xyRD(varargin)
 %  !  Beware of certain old transects where alpha is based on a 
 %  !  400 degree system in stead of 'normal' 360 degrees
 %
-% See also: convertCoordinatesNew
+% See also: convertCoordinates
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -70,7 +70,7 @@ if nargin == 3;
     alongshore  = varargin{3};
     
     % load raai data
-    fid = fopen('raaien.txt', 'r');
+    fid  = fopen('rws_raaien.txt', 'r');
     data = textscan(fid, '%n %n %n %n %n', 'headerlines', 1);
     fclose(fid);
 
@@ -87,8 +87,8 @@ if nargin == 3;
 
     % assign variables
     alpha = data{5}(ind)/100;
-    x0 = data{3}(ind)/100;
-    y0 = data{4}(ind)/100;
+    x0    = data{3}(ind)/100;
+    y0    = data{4}(ind)/100;
 else
     %assign varargin
     x0          = varargin{1}; 

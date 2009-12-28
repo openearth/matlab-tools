@@ -1,13 +1,12 @@
 function [x z] = getJARKUSProfile(year, area, transect, varargin)
 %GETJARKUSPROFILE  get JARKUS profile from JARKUS repository from year, area name & transect number
 %
-%   Retrieves JARKUS profile from JARKUS repository based on a four digit
-%   representation of the year of measurement, a full name of the area of
-%   measurement (see getKustvak) and a four digit representation of the
-%   transect number.
+%     [x z] = getJARKUSProfile(year, area, transect, varargin)
 %
-%   Syntax:
-%   [x z] = getJARKUSProfile(year, area, transect, varargin)
+%   retrieves JARKUS profile from JARKUS repository based on a four digit
+%   representation of the year of measurement, a full name of the area of
+%   measurement (see RWS_KUSTVAK) and a four digit representation of the
+%   transect number.
 %
 %   Input:
 %   year        = four digit representation of year of measurement
@@ -27,7 +26,7 @@ function [x z] = getJARKUSProfile(year, area, transect, varargin)
 %   Example
 %   [x z] = getJARKUSProfile(year, area, transect)
 %
-%   See also getKustvak
+%   See also: rws_kustvak
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
@@ -75,23 +74,26 @@ OPT = struct( ...
 OPT = setProperty(OPT, varargin{:});
 
 %% retrieve JARKUS profile from repository
-
 % read matching records from respository based on year, area name and
 % transect number
-yearID = nc_varget(OPT.repository, 'year') == year;
-areaID = nc_varget(OPT.repository, 'areacode') == getKustvak(area);
+
+yearID     = nc_varget(OPT.repository, 'year') == year;
+areaID     = nc_varget(OPT.repository, 'areacode') == rws_kustvak(area);
 transectID = nc_varget(OPT.repository, 'coastward_distance') == transect;
 
 % identify unique transect based on combination of both area and transect
 % number
+
 transectID = areaID & transectID;
 
-% read profile
+%% read profile
+
 x = nc_varget(OPT.repository, 'seaward_distance');
 z = nc_varget(OPT.repository, 'height', ...
     [find(yearID, 1, 'first') - 1 find(transectID, 1, 'first') - 1 0], ...
     [sum(yearID) sum(transectID) length(x)]);
 
-% remove NaN's
+%% remove NaN's
+
 idxs = find(isnan(z));
 x(idxs) = []; z(idxs) = [];

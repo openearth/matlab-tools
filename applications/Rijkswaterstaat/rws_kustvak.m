@@ -1,30 +1,25 @@
-function varargout = getKustvak(varargin)
-%GETKUSTVAK  routine to return area name from code or code from area name
+function varargout = rws_kustvak(varargin)
+%RWS_KUSTVAK  routine to switch between area name <-> area code for Rijkswaterstaat Kustvakken
 %
-%   This routine returns the name of the coastal area 'Kustvak' along the Dutch 
-%   coast when an area code is input, and the code of the area if the name is 
-%   input. An overview of all areas, including codes, is listed in the
-%   command window if no input arguments are given and no output arguments
-%   are asked.
+%      Output = rws_kustvak(Input)
 %
-%   Syntax:
-%   varargout = getKustvak(varargin)
+%   returns the name of the coastal area 'Kustvak' along the Dutch 
+%   coast when an area code is input, and returns the code of the area if the  
+%   name is input.
 %
-%   Input:
-%   varargin  =
+%      rws_kustvak()
+%
+%   displays an overview of all areas, including codes.
+%
+%   Input: either
 %       AreaCode  = number of area 'Kustvak' along the Dutch coast
 %       AreaName  = name of area 'Kustvak' along the Dutch coast
 %
-%   Output:
-%   varargout =
+%   Output: either
+%       AreaCode  = number of area 'Kustvak' along the Dutch coast
+%       AreaName  = name of area 'Kustvak' along the Dutch coast
 %
-%   Example
-%   % display list of area codes and area names
-%   for AreaCode = 1:17
-%       fprintf('%2i %s\n', AreaCode, getKustvak(AreaCode));
-%   end
-%
-%   See also 
+% See also:
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -83,21 +78,35 @@ Areas = {
     };
 
 %% show overview of areas including codes
-if nargin == 0 && nargout == 0
-    fprintf(1, 'code  name\n')
-    for i = 1:length(Areas)
-        fprintf(1, '%2i    %s\n', i, Areas{i})
-    end
-end
 
-%%
-for i = 1:nargin
-    if isnumeric(varargin{i}) % area code
-        varargout{i} = Areas{varargin{i}}; % return area name
-    elseif ischar(varargin{i}) % area name
-        varargout{i} = find(strcmp(Areas, varargin{i})); % return area code
-    end
-end
+   if nargin == 0 && nargout == 0
+       fprintf(1, 'code  name\n')
+       for i = 1:length(Areas)
+           fprintf(1, '%2i    %s\n', i, Areas{i})
+       end
+   end
+
+%% name <-> code
+
+   if nargin==1
+      nrs = varargin{1};
+      if isnumeric(nrs) % area code
+         for i = 1:length(nrs)
+             out{i} = Areas{nrs(i)}; % return area name
+         end
+      end
+      varargout = {out};
+   else
+      for i = 1:nargin
+          if isnumeric(varargin{i}) % area code
+              varargout{i} = Areas{varargin{i}}; % return area name
+          elseif ischar(varargin{i}) % area name
+              varargout{i} = find(strcmp(Areas, varargin{i})); % return area code
+          end
+      end
+   end
+
+%% output
 
 if nargin > 1 && nargout < length(varargout)
     varargout = {varargout};

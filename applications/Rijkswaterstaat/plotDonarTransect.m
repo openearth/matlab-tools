@@ -52,31 +52,31 @@ OPT.listTransect = {'appzk', 'walcrn', 'schouwn', 'goere', 'terhde', ...
 OPT.listTransectName = {'Appelzak', 'Walcheren', 'Schouwen', 'Goeree', ...
     'Ter Heide', 'Noordwijk', 'Egmond aan Zee', 'Callantsoog', ...
     'Terschelling', 'Rottumerplaat'};
-OPT.stationDist{1} = [1, 2, 4, 10, 20, 30, 50, 70];
-OPT.stationDist{2} = [2, 4, 10, 20, 30, 50, 70];
-OPT.stationDist{3} = [1, 4, 10, 20, 30, 50, 70];
-OPT.stationDist{4} = [2, 6, 10, 20, 30, 50, 70];
-OPT.stationDist{5} = [1, 2, 4, 10, 20, 30, 50, 70];
-OPT.stationDist{6} = [1, 2, 4, 10, 20, 30, 50, 70];
-OPT.stationDist{7} = [1, 2, 4, 10, 20, 30, 50, 70];
-OPT.stationDist{8} = [1, 2, 4, 10, 20, 30, 50, 70];
-OPT.stationDist{9} = [4, 10, 20, 30, 50, 70, 100, 135, 175, 235];
+OPT.stationDist{ 1} = [1, 2, 4, 10, 20, 30, 50, 70];
+OPT.stationDist{ 2} = [2, 4, 10, 20, 30, 50, 70];
+OPT.stationDist{ 3} = [1, 4, 10, 20, 30, 50, 70];
+OPT.stationDist{ 4} = [2, 6, 10, 20, 30, 50, 70];
+OPT.stationDist{ 5} = [1, 2, 4, 10, 20, 30, 50, 70];
+OPT.stationDist{ 6} = [1, 2, 4, 10, 20, 30, 50, 70];
+OPT.stationDist{ 7} = [1, 2, 4, 10, 20, 30, 50, 70];
+OPT.stationDist{ 8} = [1, 2, 4, 10, 20, 30, 50, 70];
+OPT.stationDist{ 9} = [4, 10, 20, 30, 50, 70, 100, 135, 175, 235];
 OPT.stationDist{10} = [3, 5, 10, 15, 20, 30, 50, 70];
 
 %% Directory of Waterbase data
 OPT.ncBaseDir = 'P:\mcdata\opendap\rijkswaterstaat\waterbase\';
 
 %% Season names
-OPT.seasName = {'DJF', 'MAM', 'JJA', 'SON'};
+OPT.seasName  = {'DJF', 'MAM', 'JJA', 'SON'};
 
 %% Default values: all transects and SPM concentrations
-OPT.transect = 'all';
+OPT.transect  = 'all';
 OPT.substance = 'concentration_of_suspended_matter_in_sea_water';
-OPT.save = 1;
-OPT.prefix = '';
-OPT.format = 'png';
-OPT.cco = '';
-OPT.log = 0;
+OPT.save      = 1;
+OPT.prefix    = '';
+OPT.format    = 'png';
+OPT.cco       = '';
+OPT.log       = 0;
 
 OPT = setProperty(OPT, varargin{:});
 
@@ -121,7 +121,7 @@ if (isempty(listFiles))
     error('Specified substance does not exist.');
 end
 OPT.ncPrefix = strtok(listFiles(end).name, '-');
-OPT.ncDir = [OPT.ncBaseDir OPT.substance '\'];
+OPT.ncDir    = [OPT.ncBaseDir OPT.substance '\'];
 
 %% Check that filename prefix is specified if user wants to save results
 if (OPT.save && isempty(OPT.prefix))

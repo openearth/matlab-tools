@@ -1,6 +1,6 @@
-%GETWATERBASEDATALOOP   download waterbase: 1 parameter, all stations, selected time period 
+%RWS_WATERBASE_GET_URL_LOOP   download waterbase: 1 parameter, all stations, selected time period 
 %
-% See also: GETWATERBASEDATA, DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>,  
+% See also: RWS_WATERBASE_GET_URL, DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>,  
 %           GETWATERBASEDATA_SUBSTANCES, GETWATERBASEDATA_LOCATIONS, GETWATERBASE2NC_TIME_DIRECT
 %           DONARNAME2STANDARD_NAME
 
@@ -44,36 +44,38 @@
 
 clear all
 
-   OPT.codes(1)          = 1;
-   OPT.standard_names{1} = 'sea_surface_height'; % takes 24 hours
-  
-   OPT.codes(2)          = 54;
-   OPT.standard_names{2} = 'sea_surface_height';
+   OPT.codes(01)          = 1;
+   OPT.standard_names{01} = 'sea_surface_height'; % takes 24 hours
+   OPT.codes(02)          = 54;
+   OPT.standard_names{02} = 'sea_surface_height';
    
-   OPT.codes(3)          = 410;
-   OPT.standard_names{3} = 'concentration_of_suspended_matter_in_sea_water';
+   OPT.codes(03)          = 410;
+   OPT.standard_names{03} = 'concentration_of_suspended_matter_in_sea_water';
    
-   OPT.codes(4)          = 22 
-   OPT.standard_names{4} = 'sea_surface_wave_significant_height';
+   OPT.codes(04)          = 22 
+   OPT.standard_names{04} = 'sea_surface_wave_significant_height';
    
-   OPT.codes(5)          = 23 
-   OPT.standard_names{5} = 'sea_surface_wave_from_direction'; % alias: sea_surface_wave_to_direction
+   OPT.codes(05)          = 23 
+   OPT.standard_names{05} = 'sea_surface_wave_from_direction'; % alias: sea_surface_wave_to_direction
    
-   OPT.codes(6)          = 24;
-   OPT.standard_names{6} = 'sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment';
+   OPT.codes(06)          = 24;
+   OPT.standard_names{06} = 'sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment';
    
-   OPT.codes(7)          = 559 
-   OPT.standard_names{7} = 'sea_surface_salinity'; % alias: sea_water_salinity
+   OPT.codes(07)          = 559 
+   OPT.standard_names{07} = 'sea_surface_salinity'; % alias: sea_water_salinity
    
-   OPT.codes(8)          = 44 
-   OPT.standard_names{8} = 'sea_surface_temperature'; % alias: sea_water_temperature
+   OPT.codes(08)          = 44 
+   OPT.standard_names{08} = 'sea_surface_temperature'; % alias: sea_water_temperature
    
-   OPT.codes(9)          = 282;
-   OPT.standard_names{9} = 'concentration_of_chlorophyll_in_sea_water'; % alias: chlorophyll_concentration_in_sea_water
+   OPT.codes(09)          = 282;
+   OPT.standard_names{09} = 'concentration_of_chlorophyll_in_sea_water'; % alias: chlorophyll_concentration_in_sea_water
+   
+   OPT.codes(10)          = 29;
+   OPT.standard_names{10} = 'water_volume_transport_into_sea_water_from_rivers'; % alias: water_volume_transport_into_ocean_from_rivers
                          
 %% Initialize
 
-   OPT.directory.raw = 'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';
+   OPT.directory.raw = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\cache\'; %'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';
 
    OPT.period        = [datenum(1798, 5,24) floor(now)]; % 24 mei 1798: Oprichting voorloper Rijkswaterstaat in Bataafse Republiek
    OPT.period        = [datenum(1648,10,24) floor(now)]; % 24 okt 1648: Oprichting Staat der Nederlanden, Vrede van Munster
@@ -85,14 +87,14 @@ clear all
    
 %% Parameter loop
 
-for ivar=1:length(OPT.codes)
+for ivar=10%1:length(OPT.codes)
 
    OPT.code           = OPT.codes(ivar);
    OPT.standard_name  = OPT.standard_names{ivar};
 
 %% Match and check Substance
    
-      SUB        = getWaterbaseData_substances;
+      SUB        = rws_waterbase_get_substances;
       OPT.indSub = find(SUB.Code==OPT.code);
    
       disp(['--------------------------------------------'])
@@ -103,7 +105,7 @@ for ivar=1:length(OPT.codes)
    
 %% get and check Locations
    
-      LOC = getWaterbaseData_locations(SUB.Code(OPT.indSub));
+      LOC = rws_waterbase_get_locations(SUB.Code(OPT.indSub),SUB.CodeName{OPT.indSub});
       
       if ~exist([OPT.directory.raw,filesep,OPT.standard_name])
           mkdir([OPT.directory.raw,filesep,OPT.standard_name])
@@ -117,9 +119,9 @@ for ivar=1:length(OPT.codes)
          disp(['ID       :',        LOC.ID{indLoc} ])
          
          OPT.filename = ...
-         getWaterbaseData(SUB.Code(OPT.indSub),LOC.ID{indLoc},...
-                          OPT.period,...
-                         [OPT.directory.raw,filesep,OPT.standard_name]);
+         rws_waterbase_get_url(SUB.Code(OPT.indSub),LOC.ID{indLoc},...
+                               OPT.period,...
+                              [OPT.directory.raw,filesep,OPT.standard_name]);
 
 %% Zip (especially useful for large sea_surface_height series)
    

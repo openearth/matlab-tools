@@ -53,7 +53,7 @@ prepareBatchReports(workdir, 'batchreport.txt')
 for id =  1:size(data,1)
     fun         = 'getDuneErosion'; %#ok<NASGU>
     DataType    = 'Jarkus Data';
-    Area        = getKustvak(AreaCode(id));
+    Area        = rws_kustvak(AreaCode(id));
 
     d           = readTransectData(DataType, Area, num2str(TransectID(id),'%05i'), num2str(SoundingID(id)));
 
