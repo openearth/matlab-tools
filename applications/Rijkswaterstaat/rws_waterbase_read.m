@@ -316,7 +316,17 @@ for ifile=1:length(fnames)
          
           D.data(istat).(OPT.fieldname)    = waarde(mask);
           D.data(istat).datenum            = datenumbers(mask);
+          D.data(istat).datestring         = cell2mat(datestring(mask));
 
+          D.data(istat).month              = str2num(D.data(istat).datestring(:,6:7));
+          
+          isummer = D.data(istat).month >= 5 & D.data(istat).month <= 10;   % May, Jun, Jul, Aug, Sep, Oct
+          iwinter = D.data(istat).month == 12 | D.data(istat).month >= 1 & D.data(istat).month <= 3;  % Dec, Jan, Feb, Mar
+          
+          myy = waarde(mask);
+          
+          D.stat(istat).summermean = trimmean(myy(isummer),1);
+          D.stat(istat).wintermean = trimmean(myy(iwinter),1);
           %% Get uniform co-ordinates (lat,lon)
           
              D.data(istat).lon = repmat(nan,size(D.data(istat).x));
