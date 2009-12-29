@@ -1,3 +1,4 @@
+function rws_waterbase_get_url_loop(varargin)
 %RWS_WATERBASE_GET_URL_LOOP   download waterbase: 1 parameter, all stations, selected time period 
 %
 % See also: RWS_WATERBASE_GET_URL, DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>,  
@@ -42,54 +43,62 @@
 %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
 %  See also: donarname2standard_name
 
-clear all
-
-   OPT.codes(01)          = 1;
+   OPT.codes{01}          = [1 2];
    OPT.standard_names{01} = 'sea_surface_height'; % takes 24 hours
-   OPT.codes(02)          = 54;
-   OPT.standard_names{02} = 'sea_surface_height';
    
-   OPT.codes(03)          = 410;
-   OPT.standard_names{03} = 'concentration_of_suspended_matter_in_sea_water';
+   OPT.codes{02}          = 410;
+   OPT.standard_names{02} = 'concentration_of_suspended_matter_in_sea_water';
    
-   OPT.codes(04)          = 22 
-   OPT.standard_names{04} = 'sea_surface_wave_significant_height';
+   OPT.codes{03}          = 22;
+   OPT.standard_names{03} = 'sea_surface_wave_significant_height';
    
-   OPT.codes(05)          = 23 
-   OPT.standard_names{05} = 'sea_surface_wave_from_direction'; % alias: sea_surface_wave_to_direction
+   OPT.codes{04}          = 23;
+   OPT.standard_names{04} = 'sea_surface_wave_from_direction'; % alias: sea_surface_wave_to_direction
    
-   OPT.codes(06)          = 24;
-   OPT.standard_names{06} = 'sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment';
+   OPT.codes{05}          = 24;
+   OPT.standard_names{05} = 'sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment';
    
-   OPT.codes(07)          = 559 
-   OPT.standard_names{07} = 'sea_surface_salinity'; % alias: sea_water_salinity
+   OPT.codes{06}          = 559;
+   OPT.standard_names{06} = 'sea_surface_salinity'; % alias: sea_water_salinity
    
-   OPT.codes(08)          = 44 
-   OPT.standard_names{08} = 'sea_surface_temperature'; % alias: sea_water_temperature
+   OPT.codes{07}          = 44;
+   OPT.standard_names{07} = 'sea_surface_temperature'; % alias: sea_water_temperature
    
-   OPT.codes(09)          = 282;
-   OPT.standard_names{09} = 'concentration_of_chlorophyll_in_sea_water'; % alias: chlorophyll_concentration_in_sea_water
+   OPT.codes{08}          = 282;
+   OPT.standard_names{08} = 'concentration_of_chlorophyll_in_sea_water'; % alias: chlorophyll_concentration_in_sea_water
    
-   OPT.codes(10)          = 29;
-   OPT.standard_names{10} = 'water_volume_transport_into_sea_water_from_rivers'; % alias: water_volume_transport_into_ocean_from_rivers
+   OPT.codes{09}          = 29;
+   OPT.standard_names{09} = 'water_volume_transport_into_sea_water_from_rivers'; % alias: water_volume_transport_into_ocean_from_rivers
                          
+   OPT.parameter          = 0; %[9]; % 0=all or select index from OPT.names above
+
 %% Initialize
 
-   OPT.directory.raw = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\cache\'; %'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';
+   OPT.directory_raw      = 'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';
 
-   OPT.period        = [datenum(1798, 5,24) floor(now)]; % 24 mei 1798: Oprichting voorloper Rijkswaterstaat in Bataafse Republiek
-   OPT.period        = [datenum(1648,10,24) floor(now)]; % 24 okt 1648: Oprichting Staat der Nederlanden, Vrede van Munster
+   OPT.period             = [datenum(1798, 5,24) floor(now)]; % 24 mei 1798: Oprichting voorloper Rijkswaterstaat in Bataafse Republiek
+   OPT.period             = [datenum(1648,10,24) floor(now)]; % 24 okt 1648: Oprichting Staat der Nederlanden, Vrede van Munster
+   
    %Note: first water level in waterbase 1737 @ Katwijk
    
-   OPT.zip           = 1; % zip txt file and delete it
-   OPT.nc            = 0; % not implemented yet
-   OPT.opendap       = 0; % not implemented yet
+   OPT.zip                = 1; % zip txt file and delete it
+   OPT.nc                 = 0; % not implemented yet
+   OPT.opendap            = 0; % not implemented yet
+   
+%% Keyword,value
+
+   OPT = setProperty(OPT,varargin{:});
    
 %% Parameter loop
 
-for ivar=10%1:length(OPT.codes)
+if  OPT.parameter==0
+    OPT.parameter = 1:length(OPT.codes);
+end
 
-   OPT.code           = OPT.codes(ivar);
+for ivar=[OPT.parameter]
+for ialt=1:length(OPT.codes{ivar});
+
+   OPT.code           = OPT.codes{ivar}(ialt);
    OPT.standard_name  = OPT.standard_names{ivar};
 
 %% Match and check Substance
@@ -107,8 +116,8 @@ for ivar=10%1:length(OPT.codes)
    
       LOC = rws_waterbase_get_locations(SUB.Code(OPT.indSub),SUB.CodeName{OPT.indSub});
       
-      if ~exist([OPT.directory.raw,filesep,OPT.standard_name])
-          mkdir([OPT.directory.raw,filesep,OPT.standard_name])
+      if ~exist([OPT.directory_raw])
+          mkdir([OPT.directory_raw])
       end
    
       for indLoc=1:length(LOC.ID)
@@ -121,7 +130,7 @@ for ivar=10%1:length(OPT.codes)
          OPT.filename = ...
          rws_waterbase_get_url(SUB.Code(OPT.indSub),LOC.ID{indLoc},...
                                OPT.period,...
-                              [OPT.directory.raw,filesep,OPT.standard_name]);
+                              [OPT.directory_raw]);
 
 %% Zip (especially useful for large sea_surface_height series)
    
@@ -132,22 +141,7 @@ for ivar=10%1:length(OPT.codes)
          
       end % for indLoc=1:length(LOC.ID)
       
-%% Transform to *.nc files (future)
-   
-      if OPT.nc
-      for indLoc=1:length(LOC.ID)
-        %getWaterbase2nc_time_direct(OPT.standard_name,directory.raw,directory.nc)
-      end
-      end
-      
-%% Copy to OPeNDAP server (future)
-   
-      if OPT.opendap
-      for indLoc=1:length(LOC.ID)
-        %filecopy(...)
-      end
-      end
-
+end % for ialt
 end % for ivar=1:length(OPT.codes)
 
 %% EOF

@@ -99,7 +99,6 @@ function varargout = rws_waterbase_read(fnames,varargin)
 %     an 11-year 10-minute time series you need: 11*366*24*6 = 579744.
 
 % uses: time2datenum
-%       ctransdv (optionally)
 
 %% Defaults
 
@@ -112,11 +111,10 @@ function varargout = rws_waterbase_read(fnames,varargin)
    OPT.preallocate            = Inf; %11*366*24*6; % 11 years every 10 minute for method = 'fgetl'
    OPT.headerlines            = 'auto'; %changed from 4 to 5 after inclusion of EPSG names of coordinates and is 7 on 2007 june 27th
    OPT.start_last_header_line = 'locatie;waarnemingssoort;datum;tijd';
-   OPT.display                = 0;
-   OPT.displayskip            = 1000;
+   OPT.display                = 1;
+   OPT.displayskip            = 10000;
    OPT.ntmax                  = -1;
    OPT.locationcode           = 1;
-   OPT.ctransdv               = exist('ctransdv')==2; % only required for parijs RD coordiantes
 
 %% Key words
 
@@ -145,7 +143,7 @@ for ifile=1:length(fnames)
 	 record        = fgetl(fid); % read one record
 	 n_headerlines = 0;
 	 finished      = 0;
-	 if length(record) >= length(OPT.start_last_header_line)
+	 if length(record) >=   length(OPT.start_last_header_line)
 	    if strcmpi(record(1:length(OPT.start_last_header_line)),...
 	                               OPT.start_last_header_line)
 	       finished = 1;
@@ -156,8 +154,8 @@ for ifile=1:length(fnames)
 	    D.header{n_headerlines} = record;
 	    record = fgetl(fid); % read one record
 	    if length(record) >= length(OPT.start_last_header_line)
-	    if strcmpi(record(1:length(OPT.start_last_header_line)),...
-	                               OPT.start_last_header_line)
+	    if strcmpi(record(1:length (OPT.start_last_header_line)),...
+	                                OPT.start_last_header_line)
 	       finished                = 1;
 	       n_headerlines           = n_headerlines + 1;
 	       D.header{n_headerlines} = record;
@@ -202,12 +200,13 @@ for ifile=1:length(fnames)
    
       if OPT.headerlines==4
       %% Old file type, no extra headerline, AND extra column with EPSG number
+      %% File type after relaunch of waterbase dec 2009
       [location          ,...
        waarnemingssoort  ,...
        datestring        ,...
        timestring        ,...
        bepalingsgrenscode,...
-       waarde            ,...
+       waardestring      ,...
        eenheid           ,...
        hoedanigheid      ,...
        anamet            ,...
@@ -215,10 +214,11 @@ for ifile=1:length(fnames)
        vat               ,...
        bemhgt            ,...
        refvlk            ,...
+       epsg              ,...
        x                 ,...
        y                 ,...
        orgaan            ,...
-       biotaxon] = textread(fname,'%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s',OPT.ntmax,...
+       biotaxon] = textread(fname,'%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s',OPT.ntmax,...
                            'headerlines',OPT.headerlines,...
                            'delimiter'  ,';');
        else
@@ -316,41 +316,26 @@ for ifile=1:length(fnames)
          
           D.data(istat).(OPT.fieldname)    = waarde(mask);
           D.data(istat).datenum            = datenumbers(mask);
-          D.data(istat).datestring         = cell2mat(datestring(mask));
 
-          D.data(istat).month              = str2num(D.data(istat).datestring(:,6:7));
-          
-          isummer = D.data(istat).month >= 5 & D.data(istat).month <= 10;   % May, Jun, Jul, Aug, Sep, Oct
-          iwinter = D.data(istat).month == 12 | D.data(istat).month >= 1 & D.data(istat).month <= 3;  % Dec, Jan, Feb, Mar
-          
-          myy = waarde(mask);
-          
-          D.stat(istat).summermean = trimmean(myy(isummer),1);
-          D.stat(istat).wintermean = trimmean(myy(iwinter),1);
           %% Get uniform co-ordinates (lat,lon)
           
              D.data(istat).lon = repmat(nan,size(D.data(istat).x));
              D.data(istat).lat = repmat(nan,size(D.data(istat).x));
           
-                               geomask.ed50   =         D.data(istat).epsg==4230;
-             D.data(istat).lat(geomask.ed50)  =         D.data(istat).x(geomask.ed50);
-             D.data(istat).lon(geomask.ed50)  =         D.data(istat).y(geomask.ed50);
+                               geomask.ed50   =                    D.data(istat).epsg==4230;
+             D.data(istat).lat(geomask.ed50)  =                    D.data(istat).x(geomask.ed50);
+             D.data(istat).lon(geomask.ed50)  =                    D.data(istat).y(geomask.ed50);
 
-                               geomask.ll     =         D.data(istat).epsg==4326;
-             D.data(istat).lat(geomask.ll )   =         D.data(istat).x(geomask.ll );
-             D.data(istat).lon(geomask.ll )   =         D.data(istat).y(geomask.ll );
+                               geomask.ll     =                    D.data(istat).epsg==4326;
+             D.data(istat).lat(geomask.ll )   =                    D.data(istat).x(geomask.ll );
+             D.data(istat).lon(geomask.ll )   =                    D.data(istat).y(geomask.ll );
 
-          if OPT.ctransdv 
-                               geomask.par    =         D.data(istat).epsg==7415;
+                               geomask.par    =                    D.data(istat).epsg==7415;
             [D.data(istat).lon(geomask.par),...
-             D.data(istat).lat(geomask.par)]  =ctransdv(D.data(istat).x(geomask.par),...
-                                                        D.data(istat).y(geomask.par),'par','ll');
+             D.data(istat).lat(geomask.par)]  = convertcoordinates(D.data(istat).x(geomask.par),...
+                                                                   D.data(istat).y(geomask.par),'CS1.code',7415,'CS2.code',4326);
 
                                geomask.unknow = ~(geomask.ed50 | geomask.par | geomask.ll);
-          else
-             % try different mapping toolbox, m_map, or matlab mapping toolbox or upcoming supertrans
-          end
-          
           
        end
    
@@ -367,17 +352,17 @@ for ifile=1:length(fnames)
       if isinf(OPT.preallocate) %%%-%%% & 0
          fid = fopen(fname,'r');
          nt  = 0;
-         if OPT.display;disp('Fast scanning file  to check number of lines');end
+         if OPT.display;disp('Fast scanning file to check number of lines');end
          while 1
             tline = fgetl(fid);
             nt    = nt+1;
             if ~ischar(tline), break, end
-            if mod(nt,1000)==0
+            if mod(nt,OPT.displayskip)==0
                disp([num2str(nt)])
             end
          end
          fclose(fid);      
-         if OPT.display;disp(['Slow scanning file to read data on # ',num2str(nt),' lines is.']);end
+         if OPT.display;disp(['Slow scanning file to read data on # ',num2str(nt),' lines (incl.header).']);end
       else
          nt = OPT.preallocate;
       end
@@ -498,25 +483,20 @@ for ifile=1:length(fnames)
          D(nloc).data.lon = repmat(nan,size(D(nloc).data.x)); % 5
          D(nloc).data.lat = repmat(nan,size(D(nloc).data.x)); % 6
       
-                          geomask.ed50   =         D(nloc).data.epsg==4230;
-         D(nloc).data.lat(geomask.ed50)  =         D(nloc).data.x(geomask.ed50);
-         D(nloc).data.lon(geomask.ed50)  =         D(nloc).data.y(geomask.ed50);
+                          geomask.ed50   =                    D(nloc).data.epsg==4230;
+         D(nloc).data.lat(geomask.ed50)  =                    D(nloc).data.x(geomask.ed50);
+         D(nloc).data.lon(geomask.ed50)  =                    D(nloc).data.y(geomask.ed50);
 
-                          geomask.ll     =         D(nloc).data.epsg==4326;
-         D(nloc).data.lat(geomask.ll )   =         D(nloc).data.x(geomask.ll );
-         D(nloc).data.lon(geomask.ll )   =         D(nloc).data.y(geomask.ll );
+                          geomask.ll     =                    D(nloc).data.epsg==4326;
+         D(nloc).data.lat(geomask.ll )   =                    D(nloc).data.x(geomask.ll );
+         D(nloc).data.lon(geomask.ll )   =                    D(nloc).data.y(geomask.ll );
 
-      if OPT.ctransdv
-      
-                          geomask.par    =         D(nloc).data.epsg==7415;
+                          geomask.par    =                    D(nloc).data.epsg==7415;
         [D(nloc).data.lon(geomask.par),...
-         D(nloc).data.lat(geomask.par)]  =ctransdv(D(nloc).data.x(geomask.par),...
-                                                   D(nloc).data.y(geomask.par),'par','ll');
+         D(nloc).data.lat(geomask.par)]  = convertcoordinates(D(nloc).data.x(geomask.par),...
+                                                              D(nloc).data.y(geomask.par),'CS1.code',7415,'CS2.code',4326);
 
                           geomask.unknow = ~(geomask.ed50 | geomask.par | geomask.ll);
-      else
-         % try different mapping toolbox, m_map, or matlab mapping toolbox or upcoming supertrans
-      end      
       
       %% Remove too much pre-allocated data.
       %  This need to be done even if OPT.preallocate is specified, because
@@ -537,8 +517,8 @@ for ifile=1:length(fnames)
    else
       error(['method unknown, only fgetl and textread allowed: ',OPT.method])
    end % OPT.method
-
-   %% apply scales to get rid of STUPID non-SI units of Rijkswaterstaat
+   
+%% apply scales to get rid of STUPID non-SI units of Rijkswaterstaat
    
    for idat = 1:length(D.data)
       D.data(idat).(OPT.fieldname) = D.data(idat).(OPT.fieldname)./OPT.fieldnamescale;
@@ -554,8 +534,23 @@ for ifile=1:length(fnames)
       D.data.y = D.data.y./OPT.yscale;
    end   
    
-   %% In case of more files, copy to multiple-file structure
+%% In case of more files, copy to multiple-file structure
+
    if length(D.locations)==1
+   
+      % reduce redundant meta-info 
+
+         if length(unique(D.data.x           ))==1;D.data.x               =      unique(D.data.x           );end
+         if length(unique(D.data.y           ))==1;D.data.y               =      unique(D.data.y           );end
+         if length(unique(D.data.epsg        ))==1;D.data.epsg            =      unique(D.data.epsg        );end
+         if length(unique(D.data.lon         ))==1;D.data.lon             =      unique(D.data.lon         );end
+         if length(unique(D.data.lat         ))==1;D.data.lat             =      unique(D.data.lat         );end
+      if strcmp(OPT.method,'textread')
+         if length(unique(D.data.hoedanigheid))==1;D.data.hoedanigheid    = char(unique(D.data.hoedanigheid));end
+         if length(unique(D.data.anamet      ))==1;D.data.anamet          = char(unique(D.data.anamet      ));end
+         if length(unique(D.data.ogi         ))==1;D.data.ogi             = char(unique(D.data.ogi         ));end
+         if length(unique(D.data.vat         ))==1;D.data.vat             = char(unique(D.data.vat         ));end
+      end
    
       %if ~(length(D.locations)==1)
       %   error('With MULTIPLE file names only ONE station per file is allowed.')
