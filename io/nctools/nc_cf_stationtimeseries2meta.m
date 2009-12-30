@@ -150,7 +150,7 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
       files(ifile).([OPT.parameter,'_std' ]) = nanstd (parameter);
       end
       
-   end
+   end % for ifile=1:length(OPT.files)
 
 %% Reorganize meta-data
 

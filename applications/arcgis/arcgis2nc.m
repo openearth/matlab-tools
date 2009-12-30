@@ -98,9 +98,8 @@ function varargout = arcgis2nc(ncfile,D,varargin)
    
       nc_create_empty (outputfile)
    
-      %% Add overall meta info
-      %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
-      % ------------------
+   %% Add overall meta info
+   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
    
       nc_attput(outputfile, nc_global, 'title'         , OPT.title);
       nc_attput(outputfile, nc_global, 'institution'   , OPT.institution);
@@ -128,14 +127,10 @@ function varargout = arcgis2nc(ncfile,D,varargin)
       clear nc
       ifld = 0;
    
-      %% Coordinate system
-      %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#appendix-grid-mappings
-      % ------------------
-      
-      % TO DO, based on OPT.epsg
-   
-      %% Local Cartesian coordinates
-      % ------------------
+   %% Coordinate system
+   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#appendix-grid-mappings
+   %  TO DO, based on OPT.epsg
+   %  Local Cartesian coordinates
 
         ifld = ifld + 1;
       nc(ifld).Name         = 'x_cen';
@@ -144,8 +139,9 @@ function varargout = arcgis2nc(ncfile,D,varargin)
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'x-coordinate in Cartesian system');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate'); % standard name
+      nc(ifld).Attribute(4) = struct('Name', 'actual_range'   ,'Value', [min(D.x(:)) max(D.x(:))]);
       if ~isempty(OPT.epsg)
-      nc(ifld).Attribute(4) = struct('Name', 'epsg'           ,'Value', OPT.epsg);
+      nc(ifld).Attribute(5) = struct('Name', 'epsg'           ,'Value', OPT.epsg);
       end
    
         ifld = ifld + 1;
@@ -155,12 +151,12 @@ function varargout = arcgis2nc(ncfile,D,varargin)
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'y-coordinate in Cartesian system');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate'); % standard name
+      nc(ifld).Attribute(4) = struct('Name', 'actual_range'   ,'Value', [min(D.y(:)) max(D.y(:))]);
       if ~isempty(OPT.epsg)
-      nc(ifld).Attribute(4) = struct('Name', 'epsg'           ,'Value', OPT.epsg);
+      nc(ifld).Attribute(5) = struct('Name', 'epsg'           ,'Value', OPT.epsg);
       end
 
-      %% Latitude-longitude
-      % ------------------
+   %% Latitude-longitude
       
       if ~isempty(OPT.epsg)
       
@@ -182,9 +178,8 @@ function varargout = arcgis2nc(ncfile,D,varargin)
       
       clear x y
       
-      %% Longitude
-      % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
-      % ------------------
+   %% Longitude
+   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
 
         ifld = ifld + 1;
       nc(ifld).Name         = 'longitude_cen';
@@ -195,9 +190,8 @@ function varargout = arcgis2nc(ncfile,D,varargin)
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'longitude'); % standard name
       nc(ifld).Attribute(4) = struct('Name', 'actual_range'   ,'Value', [min(D.lon(:)) max(D.lon(:))]); % 
 
-      %% Latitude
-      % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
-      % ------------------
+   %% Latitude
+   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
 
         ifld = ifld + 1;
       nc(ifld).Name         = 'latitude_cen';
@@ -210,9 +204,8 @@ function varargout = arcgis2nc(ncfile,D,varargin)
 
        end
 
-      %% Parameters with standard names
-      % * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
-      % ------------------
+   %% Parameters with standard names
+   %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
    
       %% Define dimensions in this order:
       %  time,z,y,x (note: snctools swaps)

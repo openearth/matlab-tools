@@ -63,14 +63,16 @@ function varargout = nc_cf_time(ncfile,varargin)
 % $HeadURL$
 % $Keywords: $
 
-   %% get info from ncfile
+%% get info from ncfile
+
    if isstruct(ncfile)
       fileinfo = ncfile;
    else
       fileinfo = nc_info(ncfile);
    end
    
-   %% deal with name change in scntools: DataSet > Dataset
+%% deal with name change in scntools: DataSet > Dataset
+
    if     isfield(fileinfo,'Dataset'); % new
      fileinfo.DataSet = fileinfo.Dataset;
    elseif isfield(fileinfo,'DataSet'); % old
@@ -80,7 +82,8 @@ function varargout = nc_cf_time(ncfile,varargin)
       error('neither field ''Dataset'' nor ''DataSet'' returned by nc_info')
    end
    
-   %% cycle Dimensions
+%% cycle Dimensions
+
    % index = [];
    % for idim=1:length(fileinfo.Dimension)
    %    if strcmpi(fileinfo.Dimension(idim).Name,'TIME');
@@ -117,22 +120,24 @@ function varargout = nc_cf_time(ncfile,varargin)
          index           = 1;
    end
    
-if nargout<3
-   if     length(index)==0
-      warning('no time vectors present.')
-      varargout = {[]};
-   elseif length(index)==1
-      if     nargout==1
-         varargout = {D(1).datenum};
-      elseif nargout==2
-         varargout = {D(1).datenum,D(1).zone};
+%% output
+   
+   if nargout<3
+      if     length(index)==0
+         warning('no time vectors present.')
+         varargout = {[]};
+      elseif length(index)==1
+         if     nargout==1
+            varargout = {D(1).datenum};
+         elseif nargout==2
+            varargout = {D(1).datenum,D(1).zone};
+         else
+            error('to much output parameters')
+         end
       else
-         error('to much output parameters')
+         warning('multiple time vectors present, please specify furter.')
+         varargout = {D};
       end
-   else
-      warning('multiple time vectors present, please specify furter.')
-      varargout = {D};
    end
-end
 
 %% EOF
