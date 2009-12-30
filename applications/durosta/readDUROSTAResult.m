@@ -144,17 +144,12 @@ if OPT.readDAF && ~isempty(fun_file) && isfield(fun_file, 'name') && ~isempty(da
         for j = 1:length(dataProps)
             dataProp = dataProps(j);
 
-            % walk through time
-            for k = 1:length(times)
-                time = times(k);
+            % retrieve data for specific variable and time
+            data = qpread(daf, dataProp, 'data', 0);
 
-                % retrieve data for specific variable and time
-                data = qpread(daf, dataProp, 'data');
-
-                % add data to result struct if valid
-                if isfield(data, 'Val') && dataProp.Quant1 > 0
-                    D.Output.RAW.(daf.Quant.ShortName{dataProp.Quant1})(end + 1, :) = data.Val';
-                end
+            % add data to result struct if valid
+            if isfield(data, 'Val') && dataProp.Quant1 > 0
+                D.Output.RAW.(daf.Quant.ShortName{dataProp.Quant1}) = data.Val;
             end
         end
     else

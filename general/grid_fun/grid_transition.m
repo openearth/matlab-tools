@@ -22,6 +22,8 @@ function [ff nf gridf error] = grid_transition(cell1, cell2, distance, varargin)
 %   distance    = distance available for transition
 %   varargin    = key/value pairs of optional parameters
 %                 precision     = precision of fitting (default: 1e-10)
+%                 maxLoop       = maximum number of fitting attempts
+%                                 (default: 1e5)
 %                 plot          = flag to plot the calculated grid size
 %                                 development along the transition
 %                                 (default: false)
@@ -84,6 +86,7 @@ function [ff nf gridf error] = grid_transition(cell1, cell2, distance, varargin)
 
 OPT = struct( ...
     'precision', 1e-10, ...
+    'maxLoop', 1e5, ...
     'plot', false ...
 );
 
@@ -155,7 +158,8 @@ for ni = n
         
         % check whether lower limit has reached almost zero or infinity and
         % the risk of an infinite loop is high
-        if fj(1) < OPT.precision || any(isinf(fj)) || any(isnan(fj)) || diff(fj) < OPT.precision
+        if fj(1) < OPT.precision || any(isinf(fj)) || any(isnan(fj)) || ...
+                (diff(fj) < OPT.precision && j > OPT.maxLoop)
             fj = [Inf Inf];
             break;
         end
