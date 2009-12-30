@@ -1,4 +1,4 @@
-function OPeNDAPlinks = rws_getFixedMapOutlines(type)
+function OPeNDAPlinks = rws_getFixedMapOutlines(type,varargin)
 %RWS_GETFIXEDMAPOUTLINES   Routine to retrieve information from OPeNDAP server
 %
 %   Syntax:
@@ -12,7 +12,8 @@ function OPeNDAPlinks = rws_getFixedMapOutlines(type)
 %
 %   Example:
 %
-% See also: rws_getDataInPolygon, rws_createFixedMapsOnAxes, rws_identifyWhichMapsAreInPolygon, getDataFromNetCDFGrid
+% See also: rws_getDataInPolygon, rws_createFixedMapsOnAxes, 
+%           rws_identifyWhichMapsAreInPolygon, rws_getDataFromNetCDFGrid
 
 % --------------------------------------------------------------------
 % Copyright (C) 2004-2009 Delft University of Technology
@@ -48,31 +49,46 @@ function OPeNDAPlinks = rws_getFixedMapOutlines(type)
 % $Author$
 % $Revision$
 
+OPeNDAPlinks = [];
+
+OPT.catalog  = [];
+OPT.pattern  = '*.nc';
+varargin{:}
+OPT = setProperty(OPT,varargin{:})
+
 if nargin == 0
     type = 'jarkus';
+    warning('please specify datatype')
 end
 
 %% extract ncfile names from OPeNDAP info
-if strcmp(type,'vaklodingen')
-    OPeNDAPlinks = getOpenDAPinfo('url', 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml');
+if     strcmp(type,'vaklodingen')
+    
+    OPT.catalog = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
 
 elseif strcmp(type,'jarkus')
-    OPeNDAPlinks = getOpenDAPinfo('url', 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml');
+    
+    OPT.catalog = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml';
 
 elseif strcmp(type,'multibeam_delfland')
     OPeNDAPlinks = findAllFiles( ...
         'pattern_excl', {[filesep,'.svn']}, ...                 
-        'pattern_incl', '*.nc', ...                           
-        'basepath', 'D:\checkouts\VO-rawdata\projects\154040_delflandse_kust\nc_files\multibeam\' ...	  
+        'pattern_incl', OPT.pattern, ...                           
+        'basepath'    , 'D:\checkouts\VO-rawdata\projects\154040_delflandse_kust\nc_files\multibeam\' ...	  
         );
 
 elseif strcmp(type,'multibeam_delfland2')
     OPeNDAPlinks = findAllFiles( ...
         'pattern_excl', {[filesep,'.svn']}, ...            
-        'pattern_incl', '*.nc', ...                        
-        'basepath', 'D:\checkouts\VO-Delflandsekust\nc_files\multibeam\' ...	   
+        'pattern_incl', OPT.pattern, ...                        
+        'basepath'    , 'D:\checkouts\VO-Delflandsekust\nc_files\multibeam\' ...	   
         );
+end
 
-else
-    return
+if isempty(OPeNDAPlinks)
+    if ~isempty(OPT.catalog)
+    OPeNDAPlinks = getOpenDAPinfo('url', OPT.catalog);
+    else
+        error('catalog url and type is empty, please specify')
+    end
 end

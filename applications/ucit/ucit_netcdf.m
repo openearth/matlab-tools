@@ -1,7 +1,11 @@
 function varargout = ucit_netcdf(varargin)
 %UCIT   gui-based utility for the McToolbox
 %
-% UCIT loads a GUI for coastal analysis.
+%   ucit_netcdf()
+%
+% launches a GUI for coastal analysis that retrieves data from
+% netCDF files at the OPeNDAP server of Deltares:
+% <a href="http://opendap.deltares.nl/">opendap.deltares.nl</a>
 %
 %See also: 
 
@@ -37,17 +41,22 @@ function varargout = ucit_netcdf(varargin)
    % $Author$
    % $Revision$
    
+% TO DO: add points of timeseries from opendap.deltares.nl
+% TO DO: add lines  of timeseries from opendap.deltares.nl
+% TO DO: compile into stand-alone release version
 
 %% Open the UCIT console
-% ------------------------
+
    fig = UCIT_makeUCITConsole; set(fig,'visible','off')
  
    %% Use system color scheme for figure:
+   
    set(fig,'name','UCIT 2.0 - Universal Coastal Intelligence Toolkit (based on NetCDF)')
    set(fig,'Units','normalized')
    set(fig,'Position', UCIT_getPlotPosition('LR'))
    
-   %% Generate a structure of handles to pass to callbacks, and store it. 
+%% Generate a structure of handles to pass to callbacks, and store it.
+   
    handles = guihandles(fig);
    guidata(fig, handles);
    
@@ -56,32 +65,36 @@ function varargout = ucit_netcdf(varargin)
    end
    
    
-   %% Initialise datafields 
-   %% reset all 4 popup values for both types (1: transects, 2: grids)
+%% Initialise datafields 
+%  reset all 4 popup values for both types (1: transects, 2: grids)
+   
    UCIT_resetValuesOnPopup(1,1,1,1,1,1)
    UCIT_resetValuesOnPopup(2,1,1,1,1,1)
    UCIT_resetValuesOnPopup(3,1,1,1,1,1)
    UCIT_resetValuesOnPopup(4,1,1,1,1,1)
    
-   %% set for proper type (1: transects, 2: grids, 3: lines, 4: points) first popup menu: DataType
+%% set for proper type (1: transects, 2: grids, 3: lines, 4: points) first popup menu: DataType
+   
    disp('finding available transect data ...')
    
        UCIT_loadRelevantInfo2Popup(1,1)
    
+%% set for proper type (1: transects, 2: grids, 3: lines, 4: points) first popup menu: DataType
    
-   %% set for proper type (1: transects, 2: grids, 3: lines, 4: points) first popup menu: DataType
    disp('finding available grid data ...')
    try
        UCIT_loadRelevantInfo2Popup(2,1)
    end
    
-   %% set for proper type (1: transects, 2: grids, 3: lines, 4: points) first popup menu: DataType
+%% set for proper type (1: transects, 2: grids, 3: lines, 4: points) first popup menu: DataType
+   
    disp('finding available line data ...')
    try
        UCIT_loadRelevantInfo2Popup(3,1)
    end
    
-   %% set for proper type (1: transects, 2: grids, 3: lines, 4: points) first popup menu: DataType
+%% set for proper type (1: transects, 2: grids, 3: lines, 4: points) first popup menu: DataType
+   
    disp('finding available point data ...')
    try
        UCIT_loadRelevantInfo2Popup(4,1)
@@ -89,7 +102,8 @@ function varargout = ucit_netcdf(varargin)
    
    set(fig,'visible','on');
    
-   % change icon  (dll will not work in future versions of matlab)
+%% change icon  (dll will not work in future versions of matlab)
+   
    try
        figure(fig);icon(101, get(fig,'name'), which('Deltares_logo_32x32.ico'));
    end

@@ -50,18 +50,20 @@ if isempty(findobj('tag','gridOverview'))
 else
     figure(findobj('tag','gridOverview'));
 end
-
-if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'),datatype = 'jarkus';,end
+UCIT_getInfoFromPopup('GridsDatatype')
+if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'     ),datatype = 'jarkus';     ,end
 if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen'),datatype = 'vaklodingen';,end
+if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'AHN100'     ),datatype = 'AHN10';      ,end
+
 
 
 %% get data from right netcdf files
 [X, Y, Z, Ztime] = rws_getDataInPolygon(...
-    'datatype', datatype, ...
-    'starttime', datenum(UCIT_getInfoFromPopup('GridsName')), ...
+    'datatype'    , datatype, ...
+    'starttime'   ,        datenum(UCIT_getInfoFromPopup('GridsName')), ...
     'searchwindow', -30*str2double(UCIT_getInfoFromPopup('GridsInterval')), ...
-    'datathinning', str2double(UCIT_getInfoFromPopup('GridsSoundingID')),...
-    'plotresult',0);
+    'datathinning',     str2double(UCIT_getInfoFromPopup('GridsSoundingID')),...
+    'plotresult'  ,0);
 
 if ~isempty(findobj('tag','gridPlot'))
     close(findobj('tag','gridPlot'))

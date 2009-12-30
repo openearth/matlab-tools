@@ -14,7 +14,7 @@ function [d] = UCIT_getMetaData(type)
 % output:
 %    function has no output
 %
-% see also ucit, displayTransectOutlines, plotDotsInPolygon
+% See also: ucit, UCIT_plotDotsInPolygon
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
@@ -48,10 +48,13 @@ function [d] = UCIT_getMetaData(type)
 % $Author$
 % $Revision$
 
-if type == 1 % transect
-        if ~(strcmp(UCIT_getInfoFromPopup('TransectsArea'),'Select area ...') && strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Lidar Data US'))
+%% TRANSECT   
+if type == 1
+        if ~(strcmp(UCIT_getInfoFromPopup('TransectsArea')    ,'Select area ...') && ...
+             strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Lidar Data US'  ))
 
-            %% get metadata
+         %% get metadata
+            
             getDataFromDatabase = false;
 
             % try to get metadata variable d from userdata UCIT console
@@ -65,8 +68,9 @@ if type == 1 % transect
 
                 % ... if the datatype info as well as the soundingID data matches with the
                 % values in the gui the data will not have to be collected again
-                if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Jarkus Data') && ~strcmp(d.datatypeinfo(1), UCIT_getInfoFromPopup('TransectsDatatype')) || ...
-                        strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Lidar Data US') && (~strcmp(d.datatypeinfo(1), UCIT_getInfoFromPopup('TransectsDatatype')) || ~strcmp(d.area(1), UCIT_getInfoFromPopup('TransectsArea')))
+                if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Jarkus Data  ') &&  ~strcmp(d.datatypeinfo(1), UCIT_getInfoFromPopup('TransectsDatatype')) || ...
+                   strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Lidar Data US') && (~strcmp(d.datatypeinfo(1), UCIT_getInfoFromPopup('TransectsDatatype')) || ...
+                                                                                           ~strcmp(d.area(1)        , UCIT_getInfoFromPopup('TransectsArea')))
 
                     % ... if there is not a match the data will have to be collected again
                     disp('data needs to be collected from database again ... please wait!')
@@ -76,47 +80,50 @@ if type == 1 % transect
                 getDataFromDatabase = true;
             end
 
-            %% if getDataFromDatabase == true get the metadata and store it in the userdata of the UCIT console
+         %% if getDataFromDatabase == true get the metadata and store it in the userdata of the UCIT console
+            
             if getDataFromDatabase
 
                 datatypes = UCIT_getDatatypes;
-                url = datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
+                ind       = find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names));
+                url       = datatypes.transect.urls{ind};
 
                 if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Lidar Data US')
                     url = url{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
                 end
+                
                 crossshore = nc_varget(url, 'cross_shore');
                 alongshore = nc_varget(url, 'alongshore');
                 areacodes  = nc_varget(url, 'areacode');
                 areanames  = nc_varget(url, 'areaname');
-                years  = nc_varget(url, 'time');
-                ids = nc_varget(url, 'id');
+                years      = nc_varget(url, 'time');
+                ids        = nc_varget(url, 'id');
 
-                areanames = cellstr(areanames);
+                areanames  = cellstr(areanames);
                 transectID = cellstr(num2str(ids));
                 soundingID = cellstr(num2str(years));
 
                 if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Jarkus Data')
 
-                    contours(:,1) = nc_varget(url, 'x',[0 0],[length(alongshore) 1]);
+                    contours(:,1) = nc_varget(url, 'x',[0 0                   ],[length(alongshore) 1]);
                     contours(:,2) = nc_varget(url, 'x',[0 length(crossshore)-1],[length(alongshore) 1]);
-                    contours(:,3) = nc_varget(url, 'y',[0 0],[length(alongshore) 1]);
+                    contours(:,3) = nc_varget(url, 'y',[0 0                   ],[length(alongshore) 1]);
                     contours(:,4) = nc_varget(url, 'y',[0 length(crossshore)-1],[length(alongshore) 1]);
-                    d.area = areanames;
+                    d.area        = areanames;
 
                 elseif strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Lidar Data US')
 
                     contours = nc_varget(url, 'contour'); % if you want all lidar data use UCIT_getLidarMetaData
-                    d.area = repmat({UCIT_getInfoFromPopup('TransectsArea')},length(areanames),1);
+                    d.area   = repmat({UCIT_getInfoFromPopup('TransectsArea')},length(areanames),1);
 
                 end
 
                 d.datatypeinfo = repmat({UCIT_getInfoFromPopup('TransectsDatatype')},length(alongshore),1);
-                d.contour =  [contours(:,1) contours(:,2) contours(:,3) contours(:,4)];
-                d.areacode = areacodes;
-                d.soundingID = soundingID;
-                d.transectID = transectID;
-                d.year = years;
+                d.contour      = [contours(:,1) contours(:,2) contours(:,3) contours(:,4)];
+                d.areacode     = areacodes;
+                d.soundingID   = soundingID;
+                d.transectID   = transectID;
+                d.year         = years;
 
                 set(findobj('tag','UCIT_mainWin'),'UserData',d);
             else
@@ -126,9 +133,12 @@ if type == 1 % transect
             d = [];
             errordlg('Select an area first')
         end
-elseif type == 2 % 'grid'
+        
+%% GRID        
+elseif type == 2
     
-                %% get metadata
+         %% get metadata
+         
             getDataFromDatabase = false;
 
             % try to get metadata variable d from userdata UCIT console
@@ -151,29 +161,37 @@ elseif type == 2 % 'grid'
                 getDataFromDatabase = true;
             end
             
-            %% if getDataFromDatabase == true get the metadata and store it in the userdata of the UCIT console
+         %% if getDataFromDatabase == true get the metadata and store it in the userdata of the UCIT console
+            
             if getDataFromDatabase
 
-                datatypes = UCIT_getDatatypes;
-                url = datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup('GridsDatatype'),datatypes.grid.names))};
+                datatypes = UCIT_getDatatypes
+                ind       = find(strcmp(UCIT_getInfoFromPopup('GridsDatatype'),datatypes.grid.names))
+                url       = datatypes.grid.urls{ind};
                 
-                if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'),datatype = 'jarkus';,end
-                if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen'),datatype = 'vaklodingen';,end
-                
-                
-                urls = rws_getFixedMapOutlines(datatype);
+                if     strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'     )
+                    datatype = 'jarkus'     ;
+                elseif strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen')
+                    datatype = 'vaklodingen';
+                else
+                    datatype = '';
+                end
+
+                urls = rws_getFixedMapOutlines(datatype,'catalog',datatypes.grid.catalog{ind});
                 
                 for i = 1:length(urls)
-                    info = nc_getvarinfo(urls{i}, 'x');
-                    x = str2num(info.Attribute(ismember({info.Attribute.Name}, 'actual_range')).Value);
-                    info = nc_getvarinfo(urls{i}, 'y');
-                    y = str2num(info.Attribute(ismember({info.Attribute.Name}, 'actual_range')).Value);
+
+                    name = nc_varfind   (urls{i},'attributename','standard_name','attributevalue','projection_x_coordinate');
+                    x    = nc_actual_range(urls{i}, name);
+
+                    name = nc_varfind   (urls{i},'attributename','standard_name','attributevalue','projection_y_coordinate');
+                    y    = nc_actual_range(urls{i}, name);
                     contour(i,:) = [x y];
                 end
                 
                 d.datatypeinfo = UCIT_getInfoFromPopup('GridsDatatype');
-                d.contour =  contour;
-                d.names = urls;
+                d.contour      =  contour;
+                d.names        = urls;
                
 
                 set(findobj('tag','UCIT_mainWin'),'UserData',d);

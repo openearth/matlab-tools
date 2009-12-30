@@ -75,7 +75,7 @@ axes = findobj('type','axes');
 if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.datatype})) % if an overview figure is already present don't run this function again
 
     % Step 0.1: get fixed map urls from OPeNDAP server
-    urls = rws_getFixedMapOutlines(OPT.datatype); %#ok<*UNRCH,*USENS>
+    urls = rws_getFixedMapOutlines(OPT.datatype);
 
     % Step 0.2: create a figure with tagged patches
     figure(10);clf;axis equal;box on;hold on
@@ -86,7 +86,7 @@ if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.datatype})) % if an ove
     plot(OPT.x, OPT.y, 'k', 'linewidth', 2);
 
     % Step 0.4: plot fixed map patches on axes and return the axes handle
-    ah = rws_createFixedMapsOnAxes(gca, urls, 'tag', OPT.datatype); %#ok<*NODEF,*NASGU>
+    ah = rws_createFixedMapsOnAxes(gca, urls, 'tag', OPT.datatype);
 
 end
 

@@ -1,10 +1,9 @@
 function UCIT_loadRelevantInfo2Popup(type,PopupNR)
 %UCIT_DC_LOADRELEVANTINFO2POPUP   This routine loads info from the database to the next popup
 %
-% This routine loads info from the database to the next popup
-%
-% syntax:    
 %    UCIT_loadRelevantInfo2Popup(type,PopupNR)
+
+% loads info from the database to the next popup.
 %
 % input: 
 %    type = variable identifying which kind of data is selected
@@ -20,7 +19,7 @@ function UCIT_loadRelevantInfo2Popup(type,PopupNR)
 % example:      
 % 	UCIT_loadRelevantInfo2Popup(1,1)
 % 
-% see also UCIT_getInfoFromPopup
+% See also: UCIT_getInfoFromPopup
 
 % --------------------------------------------------------------------
 % Copyright (C) 2004-2008 Delft University of Technology

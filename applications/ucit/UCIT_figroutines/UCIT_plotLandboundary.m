@@ -41,11 +41,13 @@ function UCIT_plotLandboundary(datatypeinfo,fill)
 if ismember(datatypeinfo,{...
         'Jarkus Data',...
         'Jarkus', ...
-        'Vaklodingen'})
+        'Vaklodingen',...
+        'AHN100',...
+        'AHN250'})
     ldb = landboundary('read',which(['Netherlands_inclBelGer_RD.ldb']));
-    % axis_settings = 1E5*[-0.282042339266554   2.324770614179054   3.720482792355521   6.461840930495095];
-    axis_settings = 1E5*[-0.239487510616072   2.901701352260693   3.483909234909159   6.787223974579561];
-    
+    %axis_settings = 1E5*[-0.282042339266554   2.324770614179054   3.720482792355521   6.461840930495095];
+    %axis_settings = 1E5*[-0.239487510616072   2.901701352260693   3.483909234909159   6.787223974579561];
+     axis_settings = 1E5*[-0.239487510616072   2.901701352260693   2.99950             6.787223974579561]; % for AHN
     
     [X,Y]=landboundary('read',which(['Netherlands_inclBelGer_RD.ldb']));
 
@@ -53,11 +55,11 @@ elseif strcmp(datatypeinfo,'Lidar Data US');
     area = UCIT_getInfoFromPopup('TransectsArea');
     switch area
         case {'Oregon'}
-            [X,Y] = landboundary('read',which(['OR_coast_UTM5.ldb']));
-            ldb2=landboundary('read',which(['ref20OR2.ldb'])); % this is their reference line
+            [X,Y]         = landboundary('read',which(['OR_coast_UTM5.ldb']));
+            ldb2          = landboundary('read',which(['ref20OR2.ldb'])); % this is their reference line
             axis_settings = 1E6*[0.3382    0.4796    4.6537    5.1275];
         case {'Washington'}
-            [X,Y] = landboundary('read',which(['WA_coast1_UTM.ldb']));
+            [X,Y]         = landboundary('read',which(['WA_coast1_UTM.ldb']));
             axis_settings = 1E6*[0.367164048997129   0.446396990873151   5.125163267511952   5.370968814517868];
     end
 end

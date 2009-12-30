@@ -39,40 +39,44 @@ function UCIT_plotGridOverview(datatype)
 %   --------------------------------------------------------------------
 
 %% get metadata (either from the console or the database)
-tic
-[d] = UCIT_getMetaData(2);
-toc
 
-if ~isempty(findobj('tag','gridOverview'))
-    close(findobj('tag','gridOverview'))
-end
+   tic
+   [d] = UCIT_getMetaData(2);
+   toc
+   
+   if ~isempty(findobj('tag','gridOverview'))
+         close(findobj('tag','gridOverview'))
+   end
 
 %% set up figure
-fh=figure('tag','mapWindow');clf;
-ah=axes;
-[fh,ah] = UCIT_prepareFigureN(2, fh, 'LL', ah);
-set(fh,'name','UCIT - Grid overview');
-set(gca, 'fontsize',8);
 
-hold on
-
-if nargin == 0
-    if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'),datatype = 'jarkus';,end
-    if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen'),datatype = 'vaklodingen';,end
-end
-
-disp('plotting landboundary...');
-UCIT_plotLandboundary(d.datatypeinfo);
+   fh=figure('tag','mapWindow');clf;
+   ah=axes;
+   [fh,ah] = UCIT_prepareFigureN(2, fh, 'LL', ah);
+   set(fh,'name','UCIT - Grid overview');
+   set(gca, 'fontsize',8);
+   
+   hold on
+   
+   if nargin == 0
+       if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus')     ,datatype = 'jarkus'     ;,end
+       if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen'),datatype = 'vaklodingen';,end
+       if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'AHN100')     ,datatype = 'AHN100'     ;,end
+   end
+   
+   disp('plotting landboundary...');
+   UCIT_plotLandboundary(d.datatypeinfo);
 
 %% plot kaartbladen
-for i = 1:length(d.contour)
-    ph(i)=patch([d.contour(i,1),d.contour(i,2),d.contour(i,2),d.contour(i,1),d.contour(i,1)],...
-        [d.contour(i,3),d.contour(i,3),d.contour(i,4),d.contour(i,4),d.contour(i,3)], 'k');
-    set(ph(i),'edgecolor','k','facecolor','none');
-    set(ph(i),'tag',[d.names{i}]);
-    set(gca,'tag',[datatype]);
-end
 
-set(gcf,'tag','gridOverview');
-
-box on
+   for i = 1:size(d.contour,1)
+       ph(i)=patch([d.contour(i,1),d.contour(i,2),d.contour(i,2),d.contour(i,1),d.contour(i,1)],...
+                   [d.contour(i,3),d.contour(i,3),d.contour(i,4),d.contour(i,4),d.contour(i,3)], 'k');
+       set(ph(i),'edgecolor','k','facecolor','none');
+       set(ph(i),'tag',[d.names{i}]);
+       set(gca  ,'tag',[datatype]);
+   end
+   
+   set(gcf,'tag','gridOverview');
+   
+   box on
