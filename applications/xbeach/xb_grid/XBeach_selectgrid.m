@@ -129,8 +129,8 @@ if OPT.manual
     
     colorbar;
     hold on
-    xn = max(max(X));
-    yn = max(max(Y));
+    xn = max(X(:));
+    yn = max(Y(:));
     plot([0 xn xn 0 0],[0 0 yn yn 0],'r-')
     axis ([0 xn 0 yn]);axis equal
     
@@ -201,8 +201,8 @@ if OPT.struct
     scatter(OPT.bathy{1}, OPT.bathy{2}, 5, OPT.bathy{3}, 'filled');
     colorbar;
     hold on
-    xn = max(max(X));
-    yn = max(max(Y));
+    xn = max(X(:));
+    yn = max(Y(:));
     plot([0 xn xn 0 0],[0 0 yn yn 0],'r-')
     axis ([0 xn 0 yn]);axis equal
     % Select polygon to define structure
