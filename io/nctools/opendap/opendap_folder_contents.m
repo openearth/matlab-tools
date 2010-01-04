@@ -22,6 +22,8 @@ function contents = opendap_folder_contents(url)
 %
 % See also: SNCTOOLS
 
+warning('opendap_folder_contents is deprecated, use opendap_catalog instead')
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma

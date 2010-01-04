@@ -32,6 +32,8 @@ function OPeNDAPlinks = getOpenDAPinfo(varargin)
 %
 %   See also getOpenDAPlinks
 
+warning('getOpenDAPinfo is deprecated, use opendap_catalog instead')
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
 %       Mark van Koningsveld

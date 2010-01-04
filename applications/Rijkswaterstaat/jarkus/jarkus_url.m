@@ -5,7 +5,7 @@ function url = jarkus_url
 % available locally on the Deltares network, this is returned, otherwise 
 % the internet link is returned
 % 
-% See also: nc_dump,nc_varget
+% See also: NC_DUMP,NC_VARGET
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -50,7 +50,21 @@ function url = jarkus_url
 % $HeadURL$
 % $Keywords: $
 
+local = 'p:\mcdata\pendap\rijkswaterstaat\jarkus\profiles\transect.nc';
 
-	url = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
+if exist(local)
+
+   url = local;
+
+else
+
+   % OPeNDAP HYRAX
+   
+   url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
+   
+   % OPeNDAP THREDDS
+   
+   url = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
+
 end
 

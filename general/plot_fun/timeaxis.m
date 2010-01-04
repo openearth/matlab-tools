@@ -1,25 +1,32 @@
-function varargout = timeaxis(tlim,varargin)
+function varargout = timeaxis(varargin)
 %TIMEAXIS   sets lim and tick for a time axis
 %
-% timeaxis(ttick)        % tlim is a vector (can be irregular)
-% timeaxis(ttick,[])     % same
-% timeaxis(tlim ,nt)     % tlim is a 2 element vector
-%                        % nt is the number if INTERVALS
-% timeaxis(tlim ,nt,fmt) % see datestr for fmt format options
-%                        % default 0. For character formats use a cellstring.
-%                        % [] for grid lines at tlim, but no labels
-%                        % (e.g. for upper panel of 2 stacked timeplots).
+%    <handle> = timeaxis(<ttick>) 
 %
-% timeaxis(tlim,nt,fmt,<keyword,value>) where <keyword,value> pairs are:
-%  * 'ax'    'x','y','z'
-%  * 'type'  'datestr' (default)
-%            'tick'    (only WL)
-%            'text'    removes all ticklabels and draws tick as text,
-%                      NOTE: Text has fixed y position, so set ylim before timaxis.
-%                      If fmt is an array, every fmt option
-%                      is drawn as a separate text line.
-%                      h = timeaxis(tlim ,nt,fmt) returns handles 
-%                      in case of type = 'text'.
+% draws tick marks at at locations specified 
+% in vector ttick (which can be irregular)
+%
+%    timeaxis(tlim,<keyword,value>) 
+%
+% takes the following <keyword,value> pairs into account:
+%
+%  * fmt     see datestr for fmt format options, default 0.
+%            For character formats use a cellstring.
+%            [] for grid lines at tlim, but no labels
+%            (e.g. for upper panel of 2 stacked timeplots).
+%  * nt      nt is the number if INTERVALS (default 6) applied when length(ttick)=2
+%  * ax      'x'(default) ,'y','z'
+%  * type    'datestr' (default)
+%              'tick'    (only Deltares)
+%              'text'    removes all ticklabels and draws tick as text,
+%                        NOTE 1: Text has fixed y position, so set ylim before timaxis.
+%                        If fmt is an array, every fmt option
+%                        is drawn as a separate text line.
+%                        h = timeaxis(tlim ,nt,fmt) returns handles 
+%                        in case of type = 'text'.
+%                        NOTE 2: a text object remains after calling timetick again
+%                        so ask for the hande of the ticks to be used in delete(h)
+%                        <h> = timeaxis(tlim,'type','text') 
 %
 %  * tick     0 plots datetexts centered at the ticks (default)
 %            -2 plots datetexts centered at the ticks
@@ -34,15 +41,15 @@ function varargout = timeaxis(tlim,varargin)
 %              |      may_7    may_8      |         tick = -2
 %              +--------+--------+--------+
 %
-% Examples:
+% Example: draws tick every 3 days in match 1998
 %
-% timeaxis(datenum(1998,3,[1 31])  ,[10],1);           %  same as
-% timeaxis(datenum(1998,3,[1:3:31]),[]  ,1);           %  same effect as
-% timeaxis(datenum(1998,3,[1:6:31]),[]  ,[1],'text',0);
+%        timeaxis(datenum(1998,3,[1   31]),'fmt','mmm-dd','nt',10,1) 
+%        timeaxis(datenum(1998,3,[1:3:31]),'fmt','mmm-dd'); exactly the same
 %
-% G.J. de Boer
+%    h = timeaxis(datenum(1998,3,[1 31]),'nt',10,'fmt','mmm-dd','type','text','tick',-2);
+%    h = timeaxis(datenum(1998,3,[1 31]),'nt',10,'fmt','mmm-dd','type','text','tick',-1)
 %
-% See also: datestr, datenum, datetick, tick
+% See also: DATETICK, DATESTR, DATENUM, <TICK>
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Delft University of Technology
@@ -74,142 +81,121 @@ function varargout = timeaxis(tlim,varargin)
 %   -------------------------------------------------------------------- 
 
 %% Input
-%% ----------------------
 
-   nt            = [];
-   if nargin>1
-       nt            = varargin{1};
-   end    
-
-   datestrformat = 1;
-   if nargin>2
-       datestrformat = varargin{2};
-       if iscell(datestrformat)
-          if isnumeric(datestrformat{1})
-          else
-             datestrformat = char(datestrformat);
-          end
-       end
-   end    
+   if nargin==0
+      tlim    = [];
+      nextarg = 1;
+   else
+      tlim    = varargin{1};
+      nextarg = 2;
+   end
 
 %% Options
-%% ----------------------
    
-   OPT.ax             = 'x';
-   OPT.type           = 'datestr';
-   OPT.plot_last_tick = 0;
-   if nargin > 3
-      i                  = 3;
-      %% remaining number of arguments is always even now
-      while i<=nargin-1,
-          switch lower ( varargin{i  })
-          % all keywords lower case
-          case 'ax'  ;i=i+1;OPT.ax             = varargin{i};
-          case 'tick';i=i+1;OPT.plot_last_tick = varargin{i};
-          case 'type';i=i+1;OPT.type           = varargin{i};
-          otherwise
-            error(sprintf('Invalid string argument (caps?): "%s".',...
-            varargin{i}));
-          end
-          i=i+1;
-      end   
+   OPT.fmt  = 1;
+   OPT.nt   = 6;
+   OPT.ax   = 'x';
+   OPT.type = 'datestr';
+   OPT.tick = 0;
+   
+   OPT = setproperty(OPT,varargin{nextarg:end});
+   
+%% Input
+
+   if isempty(tlim)
+      tlim = get(gca,[OPT.ax,'lim']);
    end
 
 %% Limits
-%% ----------------------
 
-   %t0    = tlim(1);
-   %t1    = tlim(end);
-
-   if isempty(nt)
-      ttick = tlim; % can be irregular
-   elseif length(tlim)==2
-      ttick = linspace(tlim(1),tlim(end),(nt+1));
+   if length(tlim)==2
+      ttick = linspace(tlim(1),tlim(end),(OPT.nt+1));
    else
-      error('either specify nt, or pass a time vector longer than 2 not both.')
+      ttick = tlim;
    end
 
   %set(gca,'xlim',[t0 t1]);
    set(gca,[OPT.ax,'lim'],ttick([1 end]));
 
 %% Options
-%% ----------------------
 
-if strcmp(OPT.type,'tick')
-
-   tick(gca,OPT.ax,ttick,'date',datestrformat)
-
-elseif strcmp(OPT.type,'datestr')
-
-   set(gca,[OPT.ax,'tick'     ],ttick);
-   if ~(isempty(datestrformat) | ...
-         strcmp(datestrformat,'')) % because matlab 6 cannot deal with '' format for empty
-   set(gca,[OPT.ax,'ticklabel'],datestr(ttick,datestrformat));
-   % datestrformat same for all values, except when you use (OPT.type,'text')
-   else
-   set(gca,[OPT.ax,'ticklabel'],repmat({''},1,length(ttick)));
-   end
-
-elseif strcmp(OPT.type,'text')
-
-   set(gca,[OPT.ax,'lim'],ttick([1 end]));
-
-   if OPT.plot_last_tick      == 0
-      horizontalalignment = 'center';
-   elseif OPT.plot_last_tick  == -2
-      horizontalalignment = 'center';
-      ttick               =  ttick(2:end-1);
-   elseif OPT.plot_last_tick  == -1
-      horizontalalignment = 'left';
-      ttick               =  ttick(1:end-1);
-   else
-      error('tick should be -2, -1 or 0.')
-   end
-
-   set(gca,[OPT.ax,'tick'     ],ttick);
-   set(gca,[OPT.ax,'ticklabel'],{});
+   if strcmp(OPT.type,'tick')
    
-   for i=1:length(ttick)
-      txt = [];
-      if ischar(datestrformat)
-          datestrformat = cellstr(datestrformat);
+      tick(gca,OPT.ax,ttick,'date',OPT.fmt);
+      Handles = [];
+   
+   elseif strcmp(OPT.type,'datestr')
+   
+      set(gca,[OPT.ax,'tick'     ],ttick);
+      if ~(isempty(OPT.fmt) | ...
+            strcmp(OPT.fmt,'')) % because matlab 6 cannot deal with '' format for empty
+      set(gca,[OPT.ax,'ticklabel'],datestr(ttick,OPT.fmt));
+      % OPT.fmt same for all values, except when you use (OPT.type,'text')
+      else
+      set(gca,[OPT.ax,'ticklabel'],repmat({''},1,length(ttick)));
       end
-      if isnumeric(datestrformat)
-          for j=1:length(datestrformat)
-             %if     j==1
-             %  %txt = strvcat(txt,['\lceil',datestr(ttick(i),datestrformat(j))]);
-             %   txt = strvcat(txt,[' ',datestr(ttick(i),datestrformat(j))]);
-             %elseif j==length(datestrformat)
-             %   txt = strvcat(txt,['\lfloor',datestr(ttick(i),datestrformat(j))]);
-             %else
-             %   txt = strvcat(txt,[' ',datestr(ttick(i),datestrformat(j))]);
-             %end
-             txt = strvcat(txt,[datestr(ttick(i),datestrformat(j))]);
-          end
-      elseif iscell(datestrformat)
-          for j=1:length(datestrformat)
-             if ~isempty(datestrformat{j}) | ...
-                  strcmp(datestrformat{j},'') % because matlab 6 cannot deal with '' format for empty
-             txt = strvcat(txt,[datestr(ttick(i),datestrformat{j})]);
-             else
-             txt = strvcat(txt,'');
+      Handles = [];
+   
+   elseif strcmp(OPT.type,'text')
+   
+      set(gca,[OPT.ax,'lim'],ttick([1 end]));
+   
+      if OPT.tick      == 0
+         horizontalalignment = 'center';
+      elseif OPT.tick  == -2
+         horizontalalignment = 'center';
+         ttick               =  ttick(2:end-1);
+      elseif OPT.tick  == -1
+         horizontalalignment = 'left';
+         ttick               =  ttick(1:end-1);
+      else
+         error('tick should be -2, -1 or 0.')
+      end
+   
+      set(gca,[OPT.ax,'tick'     ],ttick);
+      set(gca,[OPT.ax,'ticklabel'],{});
+      
+      for i=1:length(ttick)
+         txt = [];
+         if ischar(OPT.fmt)
+             OPT.fmt = cellstr(OPT.fmt);
+         end
+         if isnumeric(OPT.fmt)
+             for j=1:length(OPT.fmt)
+                %if     j==1
+                %  %txt = strvcat(txt,['\lceil',datestr(ttick(i),OPT.fmt(j))]);
+                %   txt = strvcat(txt,[' ',datestr(ttick(i),OPT.fmt(j))]);
+                %elseif j==length(OPT.fmt)
+                %   txt = strvcat(txt,['\lfloor',datestr(ttick(i),OPT.fmt(j))]);
+                %else
+                %   txt = strvcat(txt,[' ',datestr(ttick(i),OPT.fmt(j))]);
+                %end
+                txt = strvcat(txt,[datestr(ttick(i),OPT.fmt(j))]);
              end
-          end
+         elseif iscell(OPT.fmt)
+             for j=1:length(OPT.fmt)
+                if ~isempty(OPT.fmt{j}) | ...
+                     strcmp(OPT.fmt{j},'') % because matlab 6 cannot deal with '' format for empty
+                txt = strvcat(txt,[datestr(ttick(i),OPT.fmt{j})]);
+                else
+                txt = strvcat(txt,'');
+                end
+             end
+         end
+         if strcmp(lower(OPT.ax),'x')
+         Handles(i) = text(ttick(i),ylim1(1),txt,'verticalalignment'  ,'top',...
+                                                'horizontalalignment',horizontalalignment);
+         elseif strcmp(lower(OPT.ax),'y')
+         Handles(i) = text(xlim1(1),ttick(i),txt,'verticalalignment'  ,'bottom',...
+                                                'horizontalalignment',horizontalalignment,...
+                                                'rotation'           ,90);
+         end
       end
-      if strcmp(lower(OPT.ax),'x')
-      Handles(i) = text(ttick(i),ylim1(1),txt,'verticalalignment'  ,'top',...
-                                             'horizontalalignment',horizontalalignment);
-      elseif strcmp(lower(OPT.ax),'y')
-      Handles(i) = text(xlim1(1),ttick(i),txt,'verticalalignment'  ,'bottom',...
-                                             'horizontalalignment',horizontalalignment,...
-                                             'rotation'           ,90);
-      end
+      
    end
-   
-   if nargout==1
-      varargout = {Handles};
-   end
-   
-end
 
+   if nargout==1
+      varargout = {Handles}; % only useful when type=text
+   end
+      
 %% EOF

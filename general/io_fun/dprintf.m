@@ -3,22 +3,30 @@ function dprintf(debug,varargin)
 %
 %   dprintf(fid,text)
 %
-% writes text and '\n' to fid, and to screen when fid=0,
-% as used to work with FPRITNF in earlier Matlab versions.
+% writes text to fid, and does nothing when fid=0.
+% dprintf exists because fid=0 used to work with 
+% FPRITNF in earlier Matlab versions.
 %
 % Useful for debug purposes: messages can be written to a log file or screen.
 %
 % Example:
 %
-%   dprintf(0,'read such and so succesfully')
+%   dprintf( 0,'read such and so succesfully\n') % does nothing
+%   dprintf( 1,'read such and so succesfully\n') % writes to screen
+%   dprintf(>2,'read such and so succesfully\n') % write to file with identiefier
 %
 %See also: FPRINTF, WARNING, DISP
 
-   if debug
+   if debug > 0
        fprintf(debug,varargin{:});
-       fprinteol(debug);
-   else
-       disp(varargin{:});
-   end
+   end   
+
+  % if debug
+  %     fprintf(debug,varargin{:});
+  %     fprinteol(debug);
+  % else
+  %     disp(varargin{:});
+  % end
+   
 
 %% EOF

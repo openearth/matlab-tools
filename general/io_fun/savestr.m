@@ -3,9 +3,8 @@ function savestr(fname,str)
 %
 %   SAVESTR(filename,string)
 %
+% saves 2D char or cellstr string to file filename.
 % Note: does not prompt if filename already exists.
-%
-% saves 2D string to file.
 %
 %See also: FOPEN, FPRINTF, FCLOSE, SAVE (*,'-ASCII')
 
@@ -44,6 +43,10 @@ function savestr(fname,str)
 % $HeadURL$
 % $Keywords$
 
+if iscellstr(str)
+   str = char(str);
+end
+
 fid = fopen(fname,'w');
 
 for ii=1:size(str,1)
@@ -52,6 +55,6 @@ for ii=1:size(str,1)
    
 end   
 
-fclose(fid)
+fclose(fid);
 
 %% EOF

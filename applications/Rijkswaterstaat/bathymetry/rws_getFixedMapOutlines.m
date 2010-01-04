@@ -87,7 +87,7 @@ end
 
 if isempty(OPeNDAPlinks)
     if ~isempty(OPT.catalog)
-    OPeNDAPlinks = getOpenDAPinfo('url', OPT.catalog);
+    OPeNDAPlinks = opendap_catalog('url', OPT.catalog);
     else
         error('catalog url and type is empty, please specify')
     end

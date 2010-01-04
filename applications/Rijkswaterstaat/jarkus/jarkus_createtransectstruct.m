@@ -7,7 +7,7 @@ function [transect] = jarkus_createtransectstruct()
 % See also: JARKUS_TRANSECT2GRID  , JARKUS_NETCDF2GRID, JARKUS_UPDATEGRID, 
 %           JARKUS_TRANSECT2NETCDF, JARKUS_GRID2NETCDF 
 
-    % Create a transect structure with default values
+%% Create a transect structure with default values
     
     % this should be a general transect structure not specific to 1
     % dataset. It will be preferably replaced by 1 or more classdefs if
