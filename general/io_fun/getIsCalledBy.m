@@ -107,21 +107,25 @@ for i = 1:length(subdirectories)
         filename = which(files(j).name);
         spaceinname = ~isempty(strfind(filename, ' '));
         if spaceinname
-            fprintf(2, '%s ommitted due to spaces in file name', filename);
+            fprintf(2, 'ommitted due to spaces in path and/or file name %s\n', filename);
         else
-            str = mlintmex('-calls', filename);
-            [code, templine, temploc, funcname] = strread(str,'%s %f %f %s');
-            for k = 1:length(list)
-                [dummy tempfuncname] = fileparts(list{k});
-                if strcmpi(tempfuncname,fun) % function 'fun' occurs in list
-                    ID = find(strcmpi(funcname, tempfuncname));
-                    for m = 1:length(ID)
-                        IsCalledBy{id} = files(j).name; %#ok<AGROW> % that particular file calls 'fun'
-                        Line(id) = templine(ID(m));
-                        Column(id) = temploc(ID(m));
-                        id = id + 1;
+            try
+                str = mlintmex('-calls', filename);
+                [code, templine, temploc, funcname] = strread(str,'%s %f %f %s');
+                for k = 1:length(list)
+                    [dummy tempfuncname] = fileparts(list{k});
+                    if strcmpi(tempfuncname,fun) % function 'fun' occurs in list
+                        ID = find(strcmpi(funcname, tempfuncname));
+                        for m = 1:length(ID)
+                            IsCalledBy{id} = files(j).name; %#ok<AGROW> % that particular file calls 'fun'
+                            Line(id) = templine(ID(m));
+                            Column(id) = temploc(ID(m));
+                            id = id + 1;
+                        end
                     end
                 end
+            catch %#ok<CTCH>
+                fprintf(2, 'ommitted due to unknown error %s\n', filename)
             end
         end
     end
