@@ -107,7 +107,7 @@ for i = 1:length(subdirectories)
         filename = which(files(j).name);
         spaceinname = ~isempty(strfind(filename, ' '));
         if spaceinname
-            fprintf(2, 'ommitted due to spaces in path and/or file name %s\n', filename);
+            fprintf(2, 'ommitted due to spaces in path and/or file name: %s\n', filename);
         else
             try
                 str = mlintmex('-calls', filename);
@@ -125,7 +125,7 @@ for i = 1:length(subdirectories)
                     end
                 end
             catch %#ok<CTCH>
-                fprintf(2, 'ommitted due to unknown error %s\n', filename)
+                fprintf(2, 'ommitted due to unknown error: %s\n', filename)
             end
         end
     end
