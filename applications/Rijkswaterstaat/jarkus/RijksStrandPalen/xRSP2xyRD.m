@@ -10,7 +10,7 @@ function [xRD,yRD] = xRSP2xyRD(varargin)
 %    cross_shore: cross shore coordinate (distance from RSP line 
 %    	          (rijksstrandpalen lijn), positive in seaward direction) 
 %    areacode:    area code of transect Dutch: 'Kustvak'. 
-%    alongshore:  Alongshore distance of transect in decametres, consistent
+%    alongshore:  Alongshore distance of transect in DECAMETRES, consistent
 %                 common practice (transect number). The beach pole of 
 %                 Egmond is beachpole 38, beacuse it is 38km from Den 
 %                 Helder. It's alongshore number is 3800. Must be either a 
@@ -27,7 +27,10 @@ function [xRD,yRD] = xRSP2xyRD(varargin)
 %  !  Beware of certain old transects where alpha is based on a 
 %  !  400 degree system in stead of 'normal' 360 degrees
 %
-% See also: convertCoordinates
+% See also: convertCoordinates, rws_raaien
+
+% TO DO: rename to rws_raai2xy
+% TO DO implement next to exact also closest
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -61,34 +64,57 @@ function [xRD,yRD] = xRSP2xyRD(varargin)
 % $HeadURL$
 % $Keywords: $
 
+OPT.log    = 0;
+OPT.method = 'nearest'; % 'exact','nearest','linear'
+OPT.rmax   = 600;
+
 %% get data from database
 if nargin == 3;
     
-    %assign varargin
-    cross_shore = varargin{1}; 
-    areacode    = varargin{2};
-    alongshore  = varargin{3};
+    %% assign varargin
+
+       cross_shore = varargin{1};
+       areacode    = varargin{2};
+       alongshore  = varargin{3};
     
-    % load raai data
-    fid  = fopen('rws_raaien.txt', 'r');
-    data = textscan(fid, '%n %n %n %n %n', 'headerlines', 1);
-    fclose(fid);
+    %% load raai data
+    
+       D = rws_raaien;
 
-    % loop through data
-   ind = nan(size(alongshore));
-    for ii = 1:numel(alongshore)
-        try
-            ind(ii) = find(data{:,1}== areacode(ii)&data{:,2}==10*alongshore(ii));
-        catch
-            error('could not convert section %d, transect number %d', areacode(ii), alongshore(ii))
-        end
-    end
-   
-
-    % assign variables
-    alpha = data{5}(ind)/100;
-    x0    = data{3}(ind)/100;
-    y0    = data{4}(ind)/100;
+    %% find raaien that match specified request
+    %  set rest to nan
+    
+       alpha = nan(size(alongshore));
+       x0    = nan(size(alongshore));
+       y0    = nan(size(alongshore));
+       for ii = 1:numel(alongshore)
+          ind = find(D.kustvak  ==     areacode(ii)&...
+                     D.metrering==10*alongshore(ii));
+          if ~isempty(ind)
+             alpha(ii) = D.angle(ind);
+             x0   (ii) = D.x    (ind);
+             y0   (ii) = D.y    (ind);
+          else
+          
+             if strcmpi(OPT.method,'exact')
+                dprintf(OPT.log,'could not convert item %0.4d section %0.2d, transect number %06.2f \n', ii, areacode(ii), alongshore(ii))
+             elseif strcmpi(OPT.method,'nearest')
+                ind     =     find(D.kustvak  ==     areacode(ii));
+               [r,ind2] =  min(abs(D.metrering(ind)-10*alongshore(ii)));
+                if r < OPT.rmax
+                dprintf(OPT.log,'could not convert item %0.4d section %0.2d, transect number %06.2f exactly, used nearest\n', ii, areacode(ii), alongshore(ii))
+                alpha(ii) = D.angle(ind(ind2));
+                x0   (ii) = D.x    (ind(ind2));
+                y0   (ii) = D.y    (ind(ind2));
+                else
+                dprintf(OPT.log,'could not convert item %0.4d section %0.2d, transect number %06.2f, distance %f > %f \n', ii, areacode(ii), alongshore(ii),r,OPT.rmax);
+                end
+             elseif strcmpi(OPT.method,'linear')
+             end
+             
+          end
+       end
+    
 else
     %assign varargin
     x0          = varargin{1}; 
@@ -101,7 +127,6 @@ end
 
 xRD = x0 + cross_shore.*sind(alpha);
 yRD = y0 + cross_shore.*cosd(alpha);
-end
 
 %% EOF
 
