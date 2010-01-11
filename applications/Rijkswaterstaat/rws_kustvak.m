@@ -3,21 +3,26 @@ function varargout = rws_kustvak(varargin)
 %
 %      Output = rws_kustvak(Input)
 %
-%   returns the name of the coastal area 'Kustvak' along the Dutch 
-%   coast when an area code is input, and returns the code of the area if the  
-%   name is input.
+%   returns the 
+%   - name of coastal area 'Kustvak' along the Dutch coast when input is code
+%   - code of coastal area 'Kustvak' along the Dutch coast when input is name
 %
 %      rws_kustvak()
 %
-%   displays an overview of all areas, including codes.
+%   displays an overview of all 17 areas, including codes.
 %
 %   Input: either
 %       AreaCode  = number of area 'Kustvak' along the Dutch coast
-%       AreaName  = name of area 'Kustvak' along the Dutch coast
+%       AreaName  = name   of area 'Kustvak' along the Dutch coast
 %
 %   Output: either
 %       AreaCode  = number of area 'Kustvak' along the Dutch coast
-%       AreaName  = name of area 'Kustvak' along the Dutch coast
+%       AreaName  = name   of area 'Kustvak' along the Dutch coast
+%
+% Examples:
+%
+%    rws_kustvak(rws_kustvak('Noord-Holland')) = 'Noord-Holland
+%    rws_kustvak(rws_kustvak(7)) = 7
 %
 % See also:
 
@@ -94,8 +99,18 @@ Areas = {
          for i = 1:length(nrs)
              out{i} = Areas{nrs(i)}; % return area name
          end
+         varargout = {out};
+      else % area name
+         for i = 1:length(nrs)
+            nr = find(strcmp(Areas, nrs{i}));
+            if ~isempty(nr)
+                out(i) = nr;
+            else
+               error(['input no. ',num2str(i),' is not valid kustvak name: ''',nrs{i},''''])
+            end;
+         end
+         varargout = {out}; % return area code  
       end
-      varargout = {out};
    else
       for i = 1:nargin
           if isnumeric(varargin{i}) % area code
