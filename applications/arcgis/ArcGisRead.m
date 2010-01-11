@@ -14,11 +14,12 @@ function [D] = ArcGisRead(fname,varargin)
 %  OPT.units         - netCDF-CF convention
 %
 %See web: <a href="http://en.wikipedia.org/wiki/ESRI_grid">http://en.wikipedia.org/wiki/ESRI_grid</a>
+%         <a href="http://webhelp.esri.com/arcgisdesktop/9.2/index.cfm?id=1309&pid=1308&topicname=ASCII_to_Raster_%28Conversion%29">@ESRI</a>
 %See also: ARCGIS2NC, ARCGRIDREAD (in $ mapping toolbox)
 
 %% User defined keywords
 
-   OPT.plot          = 0;  % plot (defualt off, to prevent grinding of PC with big matrices)
+   OPT.plot          = 0;  % plot (default off, to prevent grinding of PC with big matrices)
    OPT.clim          = [-5 45]; % in OPT.units
    OPT.export        = 1;  % export plot
    OPT.mat           = 1;  % save as mat
@@ -63,16 +64,21 @@ function [D] = ArcGisRead(fname,varargin)
 %% Create rectangular grid
 
    for irow=1:D.ncols
-      D.x(irow)=D.xllcorner+D.cellsize*(  irow-0.5             );
+      D.x(irow)=D.xllcorner+D.cellsize*(  irow-0.5           );
    end
    for jcol=1:D.nrows
-      D.y(jcol)=D.yllcorner+D.cellsize*(-(jcol-0.5)+(D.nrows-1));
+      D.y(jcol)=D.yllcorner+D.cellsize*(-(jcol-0.5)+(D.nrows)); % fixed bug in OET revision 2120
+      % lowest row lies 0.5* cellsize above yllcorner
+      % substitution of lowest row index jcol = nrows, gives
+      % (-(jcol  -0.5)+(D.nrows)) = ...
+      % (-(nrows -0.5)+(  nrows)) = ...
+      %   -nrows +0.5+    nrows   = +0.5
    end
 
 %% Write to *.mat file
 
    if OPT.mat
-      save([basename,'.mat'],'-struct','D')
+      save([basename,'.mat'],'-struct','D');
    end
 
 %% Write to netCDF (*.nc) file
@@ -83,7 +89,7 @@ function [D] = ArcGisRead(fname,varargin)
    
    end
 
-%% Plot data (do this last, as it cna be really sloooow)
+%% Plot data (do this last, as it can be really sloooow)
 
    if OPT.plot
       TMP = figure;
@@ -91,7 +97,9 @@ function [D] = ArcGisRead(fname,varargin)
       shading interp;
       axis    equal;
       caxis  (OPT.clim)
-      tickmap('xy')
+     %tickmap('xy')
+      xlim([D.xllcorner D.xllcorner+D.cellsize*D.ncols])
+      ylim([D.yllcorner D.yllcorner+D.cellsize*D.nrows])
       colorbarwithtitle([OPT.long_name,' [',OPT.units,']']);
       if OPT.export
          print2screensize([basename,'.png'])

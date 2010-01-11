@@ -1,16 +1,23 @@
 function varargout = arcgis2nc(ncfile,D,varargin)
 %ARCGIS2NC  save arcGRID file, with optional meta-info, as netCDF file
 %
-%   arcgis2nc(ncfilename,D,<keyword,value>)
+%   arcgis2nc(ncfilename,D             ,<keyword,value>)
+%   arcgis2nc(ncfilename,arcgisfilename,<keyword,value>)
 %
-% saves struct D as read by ARCGISREAD as netCDF-CF file.
-% When keyword 'epsg' is supplied, full latitude and longitude
+% saves struct D as read by ARCGISREAD as netCDF-CF file (*.nc).
+% When keyword 'epsg' is supplied, the full latitude and longitude
 % matrixes are written to the netCDF file too. To get a list 
 % of all keywords, call ARCGIS2NC without arguments.
 %
 %   OPT = arcgis2nc()
 %
+% The following keywords are required:
+% * units       units of arcgis variable
+% * long_name   description of arcgis variable as to appear in plots
+%
 %See also: ARCGISREAD, SNCTOOLS, NC_CF_GRID, ARCGRIDREAD (in $ mapping toolbox)
+
+% TO DO: add corner matrices
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -54,6 +61,12 @@ function varargout = arcgis2nc(ncfile,D,varargin)
 %  $HeadURL$
 %  $Keywords: $
 
+ if ischar(D); 
+   fname = D;
+ else
+   fname = D.filename;
+end
+
 %% User defined keywords
 
    OPT.dump           = 1;
@@ -62,35 +75,62 @@ function varargout = arcgis2nc(ncfile,D,varargin)
 
 %% User defined meta-info
 
-   OPT.varname        = 'val'; % consistent with default ArcGisRead
-   OPT.long_name      = '';
-   OPT.standard_name  = '';
-   OPT.units          = '';
-   OPT.epsg           = []; % if specified, (lat,lon) are added
-   OPT.type           = []; % [] = auto, single or double
-   OPT.latitude_type  = 'double'; % 'double' % 'single'
-   OPT.longitude_type = 'double'; % 'double' % 'single'
-   
-   OPT.title          = '';
-   OPT.institution    = '';
-   OPT.source         = '';
-   OPT.history        = ['Original filename: ',filename(D.filename),...
-                         ', tranformation to NetCDF: $HeadURL$'];
-   OPT.references     = '';
-   OPT.email          = '';
-   OPT.comment        = '';
-   OPT.version        = '';
-   OPT.acknowledge    =['These data can be used freely for research purposes provided that the following source is acknowledged: ',OPT.institution];
-   OPT.disclaimer     = 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
+   %% global
 
-   if nargin==0;D = OPT;return;end; % make function act as object
+      OPT.title          = '';
+      OPT.institution    = '';
+      OPT.source         = '';
+      OPT.history        = ['Original filename: ',fname,...
+                            ', tranformation to NetCDF: $HeadURL$'];
+      OPT.references     = '';
+      OPT.email          = '';
+      OPT.comment        = '';
+      OPT.version        = '';
+      OPT.acknowledge    =['These data can be used freely for research purposes provided that the following source is acknowledged: ',OPT.institution];
+      OPT.disclaimer     = 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
    
-   OPT      = setProperty(OPT,varargin{:})
+   %% dimensions/coordinates
 
-   if isempty(OPT.type)
-   OPT.type          = class(D.(OPT.varname)); % single or double
+      OPT.epsg           = []; % if specified, (lat,lon) are added
+      OPT.latitude_type  = 'double'; % 'double' % 'single'
+      OPT.longitude_type = 'double'; % 'double' % 'single'
+      
+   %% variables
+
+      OPT.units          = '';
+      OPT.varname        = 'val'; % consistent with default ArcGisRead
+      OPT.long_name      = '';
+      OPT.standard_name  = '';
+      OPT.type           = []; % [] = auto, single or double
+
+   %% handle meta-info
+
+      if nargin==0;D = OPT;return;end; % make function act as object
+   
+      OPT      = setProperty(OPT,varargin{:});
+      
+   %% errors
+
+   if isempty(OPT.units    );error  ('For a netCDF file is required   : units'        );end
+   if isempty(OPT.long_name);error  ('For a netCDF file is required   : long_name'    );end
+   if isempty(OPT.long_name);warning('For a netCDF file is recommended: standard_name');end
+   if isempty(OPT.epsg     );warning('For a netCDF file is recommended: epsg'         );end
+      
+%% Data
+
+   if ischar(D)
+      D = arcgisread(D,'units',OPT.units,...
+                     'varname',OPT.varname,...
+                   'long_name',OPT.long_name,...
+               'standard_name',OPT.standard_name);
    end
-   OPT.fillvalue     = nan(OPT.type); % as to appear in netCDF file, not as appeared in arcgrid file
+
+%% Type
+
+      if isempty(OPT.type)
+      OPT.type          = class(D.(OPT.varname)); % single or double
+      end
+      OPT.fillvalue     = nan(OPT.type); % as to appear in netCDF file, not as appeared in arcgrid file
 
 %% 1a Create file
 
@@ -160,7 +200,8 @@ function varargout = arcgis2nc(ncfile,D,varargin)
       
       if ~isempty(OPT.epsg)
       
-      % calculate per row because of memeroy issues for large matrices
+      % calculate per row because of memory issues for large matrices
+      
      [x    ,y    ] = meshgrid(D.x,D.y);
       D.lon        = repmat(nan,size(D.(OPT.varname)));
       D.lat        = repmat(nan,size(D.(OPT.varname)));
@@ -169,7 +210,7 @@ function varargout = arcgis2nc(ncfile,D,varargin)
       
       if    OPT.convertperline
       for ii=1:size(D.lat,1)
-      disp([num2str(ii),'/',num2str(size(D.lat,1))])
+      disp(['converting coordinates to (lat,lon): ',num2str(ii),'/',num2str(size(D.lat,1))])
      [D.lon(ii,:),D.lat(ii,:)] = convertcoordinates(x(ii,:),y(ii,:),'CS1.code',OPT.epsg,'CS2.code',4326);
       end
       else
@@ -214,14 +255,16 @@ function varargout = arcgis2nc(ncfile,D,varargin)
       nc(ifld).Name         = OPT.varname;
       nc(ifld).Nctype       = nc_type(OPT.type);
       nc(ifld).Dimension    = {'x_cen','y_cen'};
-      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', OPT.long_name);
-      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', OPT.units);
-      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
-      nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-      nc(ifld).Attribute(5) = struct('Name', 'actual_range'   ,'Value', [min(D.(OPT.varname)(:)) max(D.(OPT.varname)(:))]);
-
+      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', OPT.long_name    );
+      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', OPT.units        );
+      nc(ifld).Attribute(3) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue    );
+      nc(ifld).Attribute(4) = struct('Name', 'actual_range'   ,'Value', [min(D.(OPT.varname)(:)) max(D.(OPT.varname)(:))]);
+      if ~isempty(OPT.standard_name)
+      nc(ifld).Attribute(5) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
+      end
       if ~isempty(OPT.epsg)
-      nc(ifld).Attribute(6) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
+      j = length(nc(ifld).Attribute)+1; % 5 or 6
+      nc(ifld).Attribute(j) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
       end
       
 %% 4 Create variables with attibutes
@@ -232,8 +275,8 @@ function varargout = arcgis2nc(ncfile,D,varargin)
       
 %% 5 Fill variables
    
-      nc_varput(outputfile, 'x_cen'        , D.x);
-      nc_varput(outputfile, 'y_cen'        , D.y);
+      nc_varput(outputfile, 'x_cen'        , D.x');
+      nc_varput(outputfile, 'y_cen'        , D.y');
       nc_varput(outputfile, OPT.varname    , D.(OPT.varname)'); % save x as first dimension so ensure correct plotting in ncBrowse
       
       if ~isempty(OPT.epsg)
