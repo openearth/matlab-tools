@@ -42,7 +42,7 @@ function [mapurls, minx, maxx, miny, maxy] = rws_identifyWhichMapsAreInPolygon(a
 
 %% select all data that is inpolygon
 % Step 1: find all patch objects from the mapwindow and store their xdata and ydata in the variable maps
-objs = findobj(ah, 'type', 'patch');
+objs = findobj(ah, 'type', 'patch', '-regexp','Tag','[''*.nc'']');
 maps = [get(objs, 'XData') get(objs, 'YData')];
 
 % Step 2: identify which of the fixed maps lie whole or partially inpolygon initialise variables
