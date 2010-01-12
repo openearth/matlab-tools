@@ -9,6 +9,13 @@ function [output] = KML_header(varargin)
 %   * description that appears in Google Earth Places list
 %   * open        whether to open kml file in GoogleEarth in call of KMLline(default 0)
 %
+%   * lon         specify camera viewpoint
+%   * lat         specify camera viewpoint
+%   * z           specify camera viewpoint
+%
+%   * timeIn      specify timespan of timeslider
+%   * timeOut     specify timespan of timeslider
+%
 % See also: KML_footer, KML_line, KML_poly, KML_style, KML_stylePoly,
 % KML_text, KML_upload
 
@@ -46,20 +53,56 @@ function [output] = KML_header(varargin)
 
 %% Properties
 
-OPT.open        = [];
-OPT.name        = 'ans.kml';
-OPT.description = '';
+   OPT.open        = [];
+   OPT.name        = 'ans.kml';
+   OPT.description = '';
+   
+   OPT.lon         = [];
+   OPT.lat         = [];
+   OPT.z           = [];
+   
+   OPT.timeIn      = [];
+   OPT.timeOut     = [];
+   
+   OPT = setProperty(OPT,varargin{:});
 
-OPT = setProperty(OPT,varargin{:});
+%% timespan slider
+
+   if ~(isempty(OPT.timeIn) | isempty(OPT.timeOut))
+      timespan = sprintf([...
+              '   <TimeSpan>\n'...
+              '     <begin>%s</begin>\n'...
+              '     <end>%s</end>\n'...
+              '   </TimeSpan>\n'],...
+              OPT.timeIn,OPT.timeOut);
+   else           
+      timespan = '';
+   end
+   
+%% camera
+
+   if ~(isempty(OPT.lon) | isempty(OPT.lat) | isempty(OPT.z))
+      camera = sprintf([...
+      '<Camera>\n'...
+      '  <longitude>%g</longitude>\n'...
+      '  <latitude>%g</latitude>\n'...
+      '  <altitude>%g</altitude>\n'...
+      '%s'...
+      '</Camera>\n'],OPT.lon,OPT.lat,OPT.z,timespan);
+   else
+      camera = '';
+   end
 
 %% type HEADER
-output = sprintf([...
+
+   output = sprintf([...
     '<?xml version="1.0" encoding="UTF-8"?>\n'...
     '<kml xmlns="http://earth.google.com/kml/2.2">\n'...
     '<!-- Created with Matlab (R) googlePlot toolbox from OpenEarthTools http://www.OpenEarth.eu-->\n',...
     '<Document>\n'...
+    '%s'...
     '<name>%s</name>\n'...
     '<description>%s</description>\n'...
     '<visibility>1</visibility>\n'...
-    '<open>%d</open>\n'],...
-    OPT.name,OPT.description, OPT.open);
+    '<open>%d</open>\n' ],...
+    camera,OPT.name,OPT.description, OPT.open);
