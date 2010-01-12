@@ -101,6 +101,7 @@ axis equal;axis tight;box on
 set(fh,'Units','normalized');
 set(fh,'Position',UCIT_getPlotPosition('UR',1))
 set(fh,'Name','UCIT - Difference Map','NumberTitle','Off','Units','characters','visible','on');
+title([num2str(year1) '-' num2str(year2)]);
 set(gca,'Xlim',[d.X(1,1) d.X(1,end)]);
 set(gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
 

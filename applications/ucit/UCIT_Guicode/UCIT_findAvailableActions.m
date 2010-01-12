@@ -60,13 +60,13 @@ switch  type
         datatype =  {'Jarkus Data' , 'Lidar Data US'};
         DataRootCommon0 = [fileparts(which('ucit_commonactions.dir'))  filesep 'DataTransects' filesep];
         DataRootCommon1 = [fileparts(which('ucit_commonactions.dir'))  filesep 'DataTransects' filesep];
-        DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataTransects' filesep UCIT_getInfoFromPopup('TransectsDatatype') filesep];
+        DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataTransects' filesep strrep(UCIT_getInfoFromPopup('TransectsDatatype'),' ',''), filesep];
     case 2
         objTag='GrActions';
         datatype = {'Jarkus' 'Vaklodingen'};
         DataRootCommon0 = [fileparts(which('ucit_commonactions.dir'))  filesep 'DataGrids' filesep];
         DataRootCommon1 = [fileparts(which('ucit_commonactions.dir'))  filesep 'DataGrids' filesep];
-        DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataGrids' filesep UCIT_getInfoFromPopup('GridsDatatype') filesep];
+        DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataGrids' filesep strrep(UCIT_getInfoFromPopup('GridsDatatype'),' ','') filesep];
     case 3
         objTag='LnActions';
         datatype = DBgetUniqueFields('line','datatype',{'datatypeinfo',UCIT_getInfoFromPopup('LinesDatatype')});

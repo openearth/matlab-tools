@@ -68,7 +68,7 @@ if type == 1
 
                 % ... if the datatype info as well as the soundingID data matches with the
                 % values in the gui the data will not have to be collected again
-                if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Jarkus Data  ') &&  ~strcmp(d.datatypeinfo(1), UCIT_getInfoFromPopup('TransectsDatatype')) || ...
+                if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Jarkus Data') &&  ~strcmp(d.datatypeinfo(1), UCIT_getInfoFromPopup('TransectsDatatype')) || ...
                    strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Lidar Data US') && (~strcmp(d.datatypeinfo(1), UCIT_getInfoFromPopup('TransectsDatatype')) || ...
                                                                                            ~strcmp(d.area(1)        , UCIT_getInfoFromPopup('TransectsArea')))
 
@@ -180,13 +180,24 @@ elseif type == 2
                 urls = rws_getFixedMapOutlines(datatype,'catalog',datatypes.grid.catalog{ind});
                 
                 for i = 1:length(urls)
+% 
+%                     name = nc_varfind   (urls{i},'attributename','standard_name','attributevalue','projection_x_coordinate');
+%                     x    = nc_actual_range(urls{i}, name); 
+%                     name = nc_varfind   (urls{i},'attributename','standard_name','attributevalue','projection_y_coordinate');
+%                     y    = nc_actual_range(urls{i}, name);
+%                     if ischar(x)
+%                         x = str2num(x);
+%                         y = str2num(y);
+%                     end
+%                     contour(i,:) = [x y];
 
-                    name = nc_varfind   (urls{i},'attributename','standard_name','attributevalue','projection_x_coordinate');
-                    x    = nc_actual_range(urls{i}, name);
+                    x_range = nc_getvarinfo(urls{i}, 'x');
+                    y_range = nc_getvarinfo(urls{i}, 'y');
+                    x_range = str2num(x_range.Attribute(ismember({x_range.Attribute.Name}, 'actual_range')).Value); %#ok<*ST2NM>
+                    y_range = str2num(y_range.Attribute(ismember({y_range.Attribute.Name}, 'actual_range')).Value);
 
-                    name = nc_varfind   (urls{i},'attributename','standard_name','attributevalue','projection_y_coordinate');
-                    y    = nc_actual_range(urls{i}, name);
-                    contour(i,:) = [x y];
+                    contour(i,:) = [x_range y_range];
+
                 end
                 
                 d.datatypeinfo = UCIT_getInfoFromPopup('GridsDatatype');
