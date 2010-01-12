@@ -3,9 +3,13 @@ function url = jarkus_url
 %
 % Returns the link to the Jarkus netCDF file. If the JarKus netCDT is 
 % available locally on the Deltares network, this is returned, otherwise 
-% the internet link is returned
+% the internet link is returned.
+%
+% Example:
+%
+%   nc_dump(jarkus_url)
 % 
-% See also: NC_DUMP,NC_VARGET
+% See also: NC_DUMP, NC_VARGET, jarkus
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -50,7 +54,7 @@ function url = jarkus_url
 % $HeadURL$
 % $Keywords: $
 
-local = 'p:\mcdata\pendap\rijkswaterstaat\jarkus\profiles\transect.nc';
+local = 'p:\mcdata\opendap\rijkswaterstaat\jarkus\profiles\transect.nc';
 
 if exist(local)
 

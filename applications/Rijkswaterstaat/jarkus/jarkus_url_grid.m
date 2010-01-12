@@ -5,7 +5,12 @@ function url = jarkus_url_grid
 % available locally on the Deltares network, this is returned, otherwise 
 % the internet link is returned
 % 
-% See also: nc_dump,nc_varget,jarkus_url,vaklodingen_url
+% Example:
+%
+%   files = jarkus_url_grid
+%   nc_dump(files{1})
+%
+% See also: nc_dump, nc_varget, vaklodingen_url, jarkus_url, jarkus
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -50,13 +55,14 @@ function url = jarkus_url_grid
 % $HeadURL$
 % $Keywords: $
 
-if exist(fullfile('P:','mcdata','opendap','rijkswaterstaat','jarkus','grids'),'dir')
-	names = dir(fullfile('P:','mcdata','opendap','rijkswaterstaat','jarkus','grids','jarkus*.nc'));
+local = fullfile('P:','mcdata','opendap','rijkswaterstaat','jarkus','grids');
+
+if exist(local,'dir')
+	names = dir(fullfile(local,'jarkus*.nc'));
     for ii = 1:length(names)
-        url{ii} = fullfile('P:','mcdata','opendap','rijkswaterstaat','jarkus','grids',names(ii).name);
+        url{ii} = fullfile(local,names(ii).name);
     end
 else
-    url = opendap_folder_contents(...
-        'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/grids');
+    url = opendap_catalog('http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/grids');
 end
 

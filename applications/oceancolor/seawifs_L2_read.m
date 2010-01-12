@@ -5,7 +5,7 @@ function varargout = seawifs_l2_read(fname,varargin);
 %
 % load one image from a <a href="http://oceancolor.gsfc.nasa.gov/SeaWiFS/">SeaWiFS</a> L2 HDF file 
 % incl. full lat, lon arrays and L2 flags.
-% The Lw hdf file can be gzipped.
+% The L2 hdf file can be gzipped.
 % D contains geophysical data (not integer data), l2_flags, units and long_name.
 %
 %  [D,M] = seawifs_l2_read(...) also returns RAW meta-data.

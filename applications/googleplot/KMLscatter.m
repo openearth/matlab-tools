@@ -5,15 +5,20 @@ function varargout = KMLscatter(lat,lon,c,varargin)
 %
 % where - amongst others - the following <keyword,value> pairs have been implemented:
 %
-%  * filename           = []; % file name
-%  * kmlname            = []; % name that appears in Google Earth places list
-%  * colorMap           = colormap (default @(m) jet(m));
-%  * colorSteps         = number of colors in colormap (default 20);
-%  * cLim               = cLim aka caxis (default [min(c) max(c)]);
-%  * name               = cellstr with name per point (shown when highlighted)
-%                         by default empty.
-%  * html               = cellstr with text per point (shown when highlighted)
-%                         by default equal to value of c
+%  * filename               = []; % file name
+%  * kmlname                = []; % name that appears in Google Earth places list
+%  * colorMap               = colormap (default @(m) jet(m));
+%  * colorSteps             = number of colors in colormap (default 20);
+%  * cLim                   = cLim aka caxis (default [min(c) max(c)]);
+%  * name                   = cellstr with name per point (shown when highlighted)
+%                             by default empty.
+%  * html                   = cellstr with text per point (shown when highlighted)
+%                             by default equal to value of c
+%  * OPT.iconnormalState    = marker, default 'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png'
+%  * OPT.iconhighlightState = see also, http://www.mymapsplus.com/Markers, 
+%                                       http://www.visual-case.it/cgi-bin/vc/GMapsIcons.pl
+%                                       http://www.benjaminkeen.com/?p=105
+%                                       http://code.google.com/p/google-maps-icons/
 %
 % For the <keyword,value> pairs and their defaults call
 %

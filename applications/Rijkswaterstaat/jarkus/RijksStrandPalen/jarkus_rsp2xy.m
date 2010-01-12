@@ -1,11 +1,11 @@
-function [xRD,yRD] = xRSP2xyRD(varargin)
-%XRSP2XYRD   transform RijksStrandPalen coordinates to RD coordinates
+function [xRD,yRD] = jarkus_rsp2xy(varargin)
+%jarkus_rsp2xy   transform RijksStrandPalen coordinates to RD coordinates
 %    
 % depending on inputs arguments, function will be:
-%    nargin = 3: [xRD,yRD] = xRSP2xyRD(cross_shore,areacode,alongshore);
-%    nargin = 4: [xRD,yRD] = xRSP2xyRD(x0,y0,alpha,xRSP); 
+%    nargin = 3: [xRD,yRD] = jarkus_rsp2xy(cross_shore,areacode,alongshore);
+%    nargin = 4: [xRD,yRD] = jarkus_rsp2xy(x0,y0,alpha,xRSP); 
 %
-%   [xRD,yRD] = xRSP2xyRD(cross_shore,areacode,alongshore)
+%   [xRD,yRD] = jarkus_rsp2xy(cross_shore,areacode,alongshore)
 %   
 %    cross_shore: cross shore coordinate (distance from RSP line 
 %    	          (rijksstrandpalen lijn), positive in seaward direction) 
@@ -16,7 +16,7 @@ function [xRD,yRD] = xRSP2xyRD(varargin)
 %                 Helder. It's alongshore number is 3800. Must be either a 
 %                 single value or an array of size cross_shore. 
 %
-%   [xRD,yRD] = xRSP2xyRD(x0,y0,alpha,xRSP)
+%   [xRD,yRD] = jarkus_rsp2xy(x0,y0,alpha,xRSP)
 %       
 %        x0/y0:   zero point coordinates of transect; can be either single
 %                 values, or arrays of the same length as xRSP.
@@ -27,7 +27,7 @@ function [xRD,yRD] = xRSP2xyRD(varargin)
 %  !  Beware of certain old transects where alpha is based on a 
 %  !  400 degree system in stead of 'normal' 360 degrees
 %
-% See also: convertCoordinates, rws_raaien
+% See also: convertCoordinates, jarkus_raaien
 
 % TO DO: rename to rws_raai2xy
 % TO DO implement next to exact also closest
@@ -79,7 +79,7 @@ if nargin == 3;
     
     %% load raai data
     
-       D = rws_raaien;
+       D = jarkus_raaien;
 
     %% find raaien that match specified request
     %  set rest to nan

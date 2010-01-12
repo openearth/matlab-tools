@@ -1,21 +1,17 @@
 function filenames = findAllFiles(varargin)
-%UNTITLED  One line description goes here.
+%FINDALLFILES   get list of all files in a directory tree.
 %
-%   More detailed description goes here.
+%    files = findAllFiles(<keyword,value>)
 %
-%   Syntax:
-%   varargout = Untitled(varargin)
+% returns cellstr files with a list of all files in a directory tree.
+% The following <keyword,value> pairs have been implemented.
 %
-%   Input:
-%   varargin  =
+% * pattern_excl (default '.svn')
+% * pattern_incl (default '*')
+% * basepath     (default ')
+% * recursive    (default 1)
 %
-%   Output:
-%   varargout =
-%
-%   Example
-%   Untitled
-%
-%   See also
+%See also: dir, opendap_catalog, addpathfast
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -43,6 +39,10 @@ function filenames = findAllFiles(varargin)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+% TO DO make basepath first optional argument
+% TO DO rename to something sensible: e.g. dir_files?
+% TO DO add that sensible name to see also line of opendap_catalog
+
 % This tools is part of VOTools which is the internal clone of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
 % OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
@@ -61,39 +61,45 @@ function filenames = findAllFiles(varargin)
 % $Keywords: $
 
 %% settings
-% defaults
-OPT = struct(...
-    'pattern_excl', {{[filesep,'.svn']}}, ...                % pattern to exclude
-    'pattern_incl', {'*.dat'}, ...                           % pattern to include
-    'basepath', 'D:\checkouts\VO-rawdata\waveclimates\', ... % indicate basedpath to start looking
-    'recursive', 1 ...                                       % indicate whether or not the request is recursive
-    );
+%  defaults
 
-% overrule default settings by property pairs, given in varargin
-OPT = setProperty(OPT, varargin{:});
+   OPT = struct(...
+       'pattern_excl', {{[filesep,'.svn']}}, ... % pattern to exclude
+       'pattern_incl', {'*'}, ...                % pattern to include
+       'basepath', '', ...                       % indicate basedpath to start looking
+       'recursive', 1 ...                        % indicate whether or not the request is recursive
+       );
+
+   % overrule default settings by property pairs, given in varargin
+
+   OPT = setProperty(OPT, varargin{:});
 
 %% Find all subdirs in basepath
-%---------------------------------------------
 
-if ispc
-    if OPT.recursive
-        [a b] = system(['dir /b /a /s ' '"' OPT.basepath filesep OPT.pattern_incl '"']);
-    else
-        [a b] = system(['dir /b /a ' '"' OPT.basepath filesep OPT.pattern_incl '"']);
-    end
-else
-    disp('Not supported yet for this operating system')
-end
+   if ispc
+       if OPT.recursive
+           [a b] = system(['dir /b /a /s ' '"' OPT.basepath filesep OPT.pattern_incl '"']);
+       else
+           [a b] = system(['dir /b /a ' '"'    OPT.basepath filesep OPT.pattern_incl '"']);
+       end
+   else
+       disp('Not supported yet for this operating system')
+   end
 
 %% Exclude the .svn directories from the path
-% read path as cell
-s = strread(b, '%s', 'delimiter', char(10));  
+%  read path as cell
 
-% clear cells which contain OPT.pattern_excl
-for imask = 1:length(OPT.pattern_excl)
-    OPT.pattern = OPT.pattern_excl{imask};
-    s = s(cellfun('isempty', regexp(s, [OPT.pattern]))); % keep only paths not containing [filesep '.svn']
-end
+   s = strread(b, '%s', 'delimiter', char(10));  
+
+%% clear cells which contain OPT.pattern_excl
+
+   for imask = 1:length(OPT.pattern_excl)
+       OPT.pattern = OPT.pattern_excl{imask};
+       s = s(cellfun('isempty', regexp(s, [OPT.pattern]))); % keep only paths not containing [filesep '.svn']
+   end
 
 %% return cell with resulting files (including pathnames)
-filenames = s;
+
+   filenames = s;
+   
+%% EOF   

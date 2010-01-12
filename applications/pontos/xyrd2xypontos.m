@@ -18,7 +18,7 @@ function [xpontos, ypontos] = xyrd2xypontos(xrd, yrd)
 %   Example
 %   xyrd2xypontos
 %
-%   See also xRSP2xyRD
+%   See also: jarkus_rsp2xy
 
 %% Copyright notice
 %   --------------------------------------------------------------------

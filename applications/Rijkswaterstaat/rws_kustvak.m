@@ -24,7 +24,7 @@ function varargout = rws_kustvak(varargin)
 %    rws_kustvak(rws_kustvak('Noord-Holland')) = 'Noord-Holland
 %    rws_kustvak(rws_kustvak(7)) = 7
 %
-% See also:
+% See also: jarkus_raaien, jarkus
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology

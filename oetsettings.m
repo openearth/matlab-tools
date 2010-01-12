@@ -9,10 +9,13 @@ function oetsettings(varargin)
 %
 % For more information on OpenEarthTools refer to the following sources:
 %
-% * wiki:        <a href="http://OpenEarth.nl">OpenEarth.nl</a>
-% * repository:  <a href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab">https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab</a>
-% * help blocks: Scroll through the OpenEarthTools directories by clicking 
-%                to see also links, or typing:
+% * wiki:          <a href="http://OpenEarth.nl">OpenEarth.nl</a>
+% * data, raw:     <a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/matlab">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/matlab</a>
+% * data, netCDF:  <a href="http://opendap.deltares.nl">http://opendap.deltares.nl</a>
+% * models, input: <a href="https://repos.deltares.nl/repos/OpenEartModels/trunk/matlab">https://repos.deltares.nl/repos/OpenEartModels/trunk/matlab</a>
+% * tools:         <a href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab">https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab</a>
+% * help blocks:   Scroll through the OpenEarthTools directories by clicking 
+%                  to see also links, or typing:
 %
 %    help oetsettings
 %    help general
