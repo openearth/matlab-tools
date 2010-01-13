@@ -61,8 +61,8 @@ function urlPath = opendap_catalog_dataset(D,OPT)
       
          if OPT.debug
             dprintf(OPT.log,['opendap_catalog: xml.service(',num2str(i),').\n'])
-            dprintf(OPT.log,[char(fieldnames(D.service(i))),'\n'])
-            dprintf(OPT.log,[char(fieldnames(D.service(i).ATTRIBUTE)),'\n'])
+            dprintf(OPT.log,['fieldnames: ',str2line(fieldnames(D.service(i)),          's',','),'\n'])
+           %dprintf(OPT.log,[str2line(fieldnames(D.service(i)).ATTRIBUTE,'s',','),'\n'])
          end      
          
          %% check overall service ...
@@ -137,8 +137,8 @@ function urlPath = opendap_catalog_dataset(D,OPT)
 
          if OPT.debug
             dprintf(OPT.log,['opendap_catalog: xml.dataset.(...).dataset(',num2str(i),'/',num2str(length(D.dataset)),').\n'])
-            dprintf(OPT.log,[char(fieldnames(D.dataset(i))),'\n'])
-            dprintf(OPT.log,[char(fieldnames(D.dataset(i).ATTRIBUTE)),'\n'])
+            dprintf(OPT.log,['fieldnames: ',str2line(fieldnames(D.dataset(i)),'s',','),'\n'])
+           %dprintf(OPT.log,[char(fieldnames(D.dataset(i).ATTRIBUTE)),'\n'])
          end
       
          if ~isfield(D.dataset(i).ATTRIBUTE,'name')

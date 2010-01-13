@@ -11,8 +11,10 @@ function varargout = opendap_catalog(varargin)
 % The following important <keyword,value> pairs are implemented
 % You can list all keyword by calling OPT = filelist = opendap_catalog().
 %
-%  * maxlevel : specify how deep to crawl linked catalogs (default 2, not too slow, set to Inf for all levels)
-%  * debug    : display debug info
+%  * maxlevel : specify how deep to crawl linked catalogs (default 1for speed, set to Inf for all levels)
+%  * leveltype: specify how levels are defined: 'tree' when new level  = extra / in catalog url  (local catalog is not a new level)
+%                                               'link' when new level  = linked (local catalog is a new level)
+%  * debug    : display debug info (default 0)
 %  * external : whether to include links to external catalogs (default 0)
 %  * log      : log progress, 0 = quiet, 1 = command line, nr is fid passed to fprintf (default 0)
 %  * ...
@@ -25,6 +27,11 @@ function varargout = opendap_catalog(varargin)
 % * THREDDS: http://coast-enviro.er.usgs.gov/thredds/catalog.xml (externals do not work yet)
 %
 % * HYRAX:   http://data.nodc.noaa.gov/opendap/catalog.xml (with maxlevel=4, some forbidden catalogs are handled with try, catch)
+%
+% Example:
+%
+%    files = opendap_catalog('http://opendap.deltares.nl/thredds/catalog/opendap/knmi/NOAA/mom/1990_mom/5/catalog.xml')
+%    nc_dump(files{1})
 %   
 %See web:  http://www.unidata.ucar.edu/Projects/THREDDS/tech/catalog/v1.0.2/Primer.html
 %See also: OPENDAP_CATALOG_DATASET, XML_READ, XMLREAD
@@ -76,14 +83,14 @@ function varargout = opendap_catalog(varargin)
    OPT.serviceBase           = [];
    OPT.serviceName           = [];
    OPT.level                 = 1;  % level of current catalog
-   OPT.maxlevel              = 2;  %  how deep to load local/remote catalogs, default fast, not deep
+   OPT.maxlevel              = 1;  % how deep to load local/remote catalogs, default fast, not deep
    OPT.external              = 0;  % load external (remote) catalogs
    OPT.serviceName_inherited = '';
-   OPT.leveltype             = 'link'; %'tree' 'or 'link': defines when a catalog is considered one level deeper
-   OPT.debug                 = 0;  % writes levels to screen
+   OPT.leveltype             = 'tree'; %'tree' 'or 'link': defines when a catalog is considered one level deeper
    OPT.serviceBaseURL        = '';
    OPT.toplevel              = ''; % to solve end catalogs in HYRAX
-   OPT.log                   = 1;  % log progress, 0 = quiet, 1 = command line, nr is fid passed to fprintf (default 0)
+   OPT.debug                 = 0;  % writes levels to OPT.log
+   OPT.log                   = 0;  % log progress, 0 = quiet, 1 = command line, nr is fid passed to fprintf (default 0)
 
    if nargin==0
       varargout = {OPT};
@@ -106,6 +113,12 @@ function varargout = opendap_catalog(varargin)
 
    OPT = setProperty(OPT,varargin{nextarg:end});
    
+%% warn
+
+   if ~strcmpi(OPT.url(end-3:end),'.xml')
+      fprintf(2,'warning: opendap_catalog: url does not have extension ".xml"')
+   end
+   
 %% pre-allocate
 
    urlPath     = {}; % we cannot pre-allocate as some datasets may be a container with lots of urlPaths inside it
@@ -122,12 +135,13 @@ function varargout = opendap_catalog(varargin)
       pref.KeepNS = 0; % hyrax has thredds namespace, while thredds has not
    
    try
+      
       D   = xml_read(OPT.url,pref);
       
       if OPT.debug
          dprintf(OPT.log,'opendap_catalog: xml.\n')
-         dprintf(OPT.log,D,'\n')
-         dprintf(OPT.log,D.ATTRIBUTE,'\n')
+         dprintf(OPT.log,['fieldnames: ',str2line(fieldnames(D),'s',','),'\n'])
+        %dprintf(OPT.log,D.ATTRIBUTE,'\n')
       end
    
    %% check
