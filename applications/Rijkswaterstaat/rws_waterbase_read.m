@@ -27,7 +27,7 @@ function varargout = rws_waterbase_read(fnames,varargin)
 %                               textread requires an exceptional amount of memory (e.g ~ 1.3 Gb of 
 %                               memory for 150 MB file). With textread all meta-data vectors are read.
 %             'fgetl':          is very fast and uses no more memory then needed. However, with 
-%                               fgetl only 5 columns are read (datenum,waarde,x,y,epsg. With
+%                               fgetl only 6 columns are read (datenum,waarde,x,y,epsg,z). With
 %                               fgetl the other meta-data are ONLY read for the first location.
 % LIMITATIONS: with method 'textread' RWS_WATERBASE_READ cannot handle lines with empty values as:
 %
@@ -300,13 +300,14 @@ for ifile=1:length(fnames)
          %D.data(istat).tijd               = 
          %D.data(istat).bepalingsgrenscode = 
          %D.data(istat).waarde             = 
-          D.data(istat).units              = char(eenheid          (mask(1),:)); % assumed
-          D.data(istat).hoedanigheid       = hoedanigheid          (mask,:); 
-          D.data(istat).anamet             = anamet                (mask,:);
-          D.data(istat).ogi                = ogi                   (mask,:);
-          D.data(istat).vat                = vat                   (mask,:);
-         %D.data(istat).bemhgt             = 
-         %D.data(istat).refvlk             = 
+          D.data(istat).units              = char(eenheid       (mask(1),:)); % assumed
+          D.data(istat).hoedanigheid       = hoedanigheid       (mask,:); 
+          D.data(istat).anamet             = anamet             (mask,:);
+          D.data(istat).ogi                = ogi                (mask,:);
+          D.data(istat).vat                = vat                (mask,:);
+          bemhgt = strrep(lower(bemhgt),'nvt','nan');
+          D.data(istat).z                  = str2num(char(bemhgt(mask,:)))./100; % I assume they are in cm
+          D.data(istat).refvlk             =              refvlk(mask,:); % tested to be not unique
          
           D.data(istat).epsg               = str2num(char(epsg{mask,:})); % tested to be not unique
           D.data(istat).x                  = str2num(char(   x{mask,:})); % tested to be not unique
@@ -370,7 +371,7 @@ for ifile=1:length(fnames)
       %% Pre-allocate arrays
       % pre-allocate any extra vector too !!!
 
-      D.readme               = ['Except the for five fields datenum,',OPT.fieldname,',x,y,epsg the fields contain only the first record !!!'];
+      D.readme               = ['Except the for five fields datenum,',OPT.fieldname,',x,y,epsg,z, the fields contain only the unique values !!!'];
       D.data.datenum         = repmat(nan,[1 nt]); % 1
       D.data.(OPT.fieldname) = repmat(nan,[1 nt]); % 2
       D.data.x               = repmat(nan,[1 nt]); % 3
@@ -378,6 +379,7 @@ for ifile=1:length(fnames)
       D.data.lon             = repmat(nan,[1 nt]); % 5
       D.data.lat             = repmat(nan,[1 nt]); % 6
       D.data.epsg            = repmat(nan,[1 nt]); % 7
+      D.data.z               = repmat(nan,[1 nt]); % 7
 
       nt              = 0; % number of time per location
       nloc            = 1;
@@ -421,29 +423,56 @@ for ifile=1:length(fnames)
              dlm = strfind(rec,';');
              
              if nt==1
-             D(nloc).meta1.location               =         rec(1        :dlm( 1)-1);
-             D(nloc).meta1.waarnemingssoort       =         rec(dlm( 1)+1:dlm( 2)-1);
-                                                                   % 2
-                                                                   % 3
-             D(nloc).meta1.bepalingsgrenscode     =         rec(dlm( 4)+1:dlm( 5)-1);
-                                                                   % 5
-             D(nloc).meta1.units                  =         rec(dlm( 6)+1:dlm( 7)-1);
-             D(nloc).meta1.what                   =         rec(dlm( 7)+1:dlm( 8)-1);
-             D(nloc).meta1.anamet                 =         rec(dlm( 8)+1:dlm( 9)-1);
-             D(nloc).meta1.ogi                    =         rec(dlm( 9)+1:dlm(10)-1);
-             D(nloc).meta1.vat                    =         rec(dlm(10)+1:dlm(11)-1);
-             D(nloc).meta1.bemhgt                 =         rec(dlm(11)+1:dlm(12)-1);
-             D(nloc).meta1.refvlk                 =         rec(dlm(12)+1:dlm(13)-1);
-                                                                   %13
-                                                                   %14
-                                                                   %15
-             D(nloc).meta1.orgaan                 =         rec(dlm(16)+1:dlm(17)-1);
-             D(nloc).meta1.biotaxon               =         rec(dlm(17)+1:end      );
+             
+                D(nloc).data.location               =         rec(1        :dlm( 1)-1);
+                D(nloc).data.waarnemingssoort       =         rec(dlm( 1)+1:dlm( 2)-1);
+                                                                     % 2
+                                                                     % 3
+               %D(nloc).data.bepalingsgrenscode     =         rec(dlm( 4)+1:dlm( 5)-1);
+                                                                     % 5
+                D(nloc).data.units                  =         rec(dlm( 6)+1:dlm( 7)-1);
+                D(nloc).data.what                   =         rec(dlm( 7)+1:dlm( 8)-1);
+                D(nloc).data.anamet                 =         rec(dlm( 8)+1:dlm( 9)-1);
+                D(nloc).data.ogi                    =         rec(dlm( 9)+1:dlm(10)-1);
+                D(nloc).data.vat                    =         rec(dlm(10)+1:dlm(11)-1);
+                                                                     %11
+                D(nloc).data.refvlk                 =         rec(dlm(12)+1:dlm(13)-1);
+                                                                     %13
+                                                                     %14
+                                                                     %15
+                D(nloc).data.orgaan                 =         rec(dlm(16)+1:dlm(17)-1);
+                D(nloc).data.biotaxon               =         rec(dlm(17)+1:end      );
+                
+                D(nloc).data.README = 'For the following fields only the unique values have been processed, not all values: location, waarnemingssoort, bepalingsgrenscode, units, what, anamet, ogi, vat, refvlk, orgaan';
+                fprintf(2,'WARNING: rws_waterbase_read: For the following fields only the unique values have been processed, not all values: location, waarnemingssoort, bepalingsgrenscode, units, what, anamet, ogi, vat, refvlk, orgaan.\n');
+             
              else
-                location                          =         rec(1        :dlm( 1)-1);
-                if ~strcmpi(D(nloc).meta1.location,location)
+             
+                location                             =         rec(1        :dlm( 1)-1);
+                
+                if ~strcmpi(D(nloc).data.location,location)
                    error('More than one location in file, only one is allowed with method fgetl')
                 end
+                
+                D(nloc).data.location               = rws_expand(D(nloc).data.location          ,rec(1        :dlm( 1)-1));
+                D(nloc).data.waarnemingssoort       = rws_expand(D(nloc).data.waarnemingssoort  ,rec(dlm( 1)+1:dlm( 2)-1));
+                                                                                                ,       % 2
+                                                                                                ,       % 3
+               %D(nloc).data.bepalingsgrenscode     = rws_expand(D(nloc).data.bepalingsgrenscode,rec(dlm( 4)+1:dlm( 5)-1));
+                                                                                                ,       % 5
+                D(nloc).data.units                  = rws_expand(D(nloc).data.units             ,rec(dlm( 6)+1:dlm( 7)-1));
+                D(nloc).data.what                   = rws_expand(D(nloc).data.what              ,rec(dlm( 7)+1:dlm( 8)-1));
+                D(nloc).data.anamet                 = rws_expand(D(nloc).data.anamet            ,rec(dlm( 8)+1:dlm( 9)-1));
+                D(nloc).data.ogi                    = rws_expand(D(nloc).data.ogi               ,rec(dlm( 9)+1:dlm(10)-1));
+                D(nloc).data.vat                    = rws_expand(D(nloc).data.vat               ,rec(dlm(10)+1:dlm(11)-1));
+                                                                                                ,       %11
+                D(nloc).data.refvlk                 = rws_expand(D(nloc).data.refvlk            ,rec(dlm(12)+1:dlm(13)-1));
+                                                                                                ,       %13
+                                                                                                ,       %14
+                                                                                                ,       %15
+                D(nloc).data.orgaan                 = rws_expand(D(nloc).data.orgaan            ,rec(dlm(16)+1:dlm(17)-1));
+                D(nloc).data.biotaxon               = rws_expand(D(nloc).data.biotaxon          ,rec(dlm(17)+1:end      ));
+                
              end         
    
              datestring          = rec(dlm( 2)+1:dlm( 3)-1);
@@ -462,6 +491,10 @@ for ifile=1:length(fnames)
                 D(nloc).data.epsg           (nt) = str2num   (rec(dlm(13)+1:dlm(14)-1)); % 7
                 D(nloc).data.x              (nt) = str2num   (rec(dlm(14)+1:dlm(15)-1)); % 3
                 D(nloc).data.y              (nt) = str2num   (rec(dlm(15)+1:dlm(16)-1)); % 4
+                             z                   =            rec(dlm(11)+1:dlm(12)-1);
+                if ~strcmpi('nvt',z)
+                D(nloc).data.z              (nt) = str2num(z)./100; % 5
+                end
    	        
              else
 
@@ -470,6 +503,7 @@ for ifile=1:length(fnames)
                 D(nloc).data.epsg           (nt) = nan;
                 D(nloc).data.x              (nt) = nan;
                 D(nloc).data.y              (nt) = nan;
+                D(nloc).data.z              (nt) = nan;
              
              end
              
@@ -509,8 +543,9 @@ for ifile=1:length(fnames)
       D.data.epsg            = D.data.epsg           (1:nt); % 5
       D.data.lon             = D.data.lon            (1:nt); % 6
       D.data.lat             = D.data.lat            (1:nt); % 7
+      D.data.z               = D.data.z              (1:nt); % 7
       
-      D.locations{1} = D(nloc).meta1.location;
+      D.locations{1} = D(nloc).data.location;
    
       fclose(fid);
       
@@ -545,11 +580,18 @@ for ifile=1:length(fnames)
          if length(unique(D.data.epsg        ))==1;D.data.epsg            =      unique(D.data.epsg        );end
          if length(unique(D.data.lon         ))==1;D.data.lon             =      unique(D.data.lon         );end
          if length(unique(D.data.lat         ))==1;D.data.lat             =      unique(D.data.lat         );end
+
       if strcmp(OPT.method,'textread')
          if length(unique(D.data.hoedanigheid))==1;D.data.hoedanigheid    = char(unique(D.data.hoedanigheid));end
          if length(unique(D.data.anamet      ))==1;D.data.anamet          = char(unique(D.data.anamet      ));end
          if length(unique(D.data.ogi         ))==1;D.data.ogi             = char(unique(D.data.ogi         ));end
          if length(unique(D.data.vat         ))==1;D.data.vat             = char(unique(D.data.vat         ));end
+         if length(unique(D.data.z           ))==1;D.data.z               = char(unique(D.data.z           ));end
+         if length(unique(D.data.refvlk      ))==1;D.data.refvlk          = char(unique(D.data.refvlk      ));end
+      end
+      
+      if all (isnan(D.data.z))
+         D.data.z = nan;
       end
    
       %if ~(length(D.locations)==1)
@@ -597,3 +639,11 @@ end % for ifile=1:length(fnames)
    end
    
 %% EOF
+
+function c = rws_expand(a,b)
+
+if ~any(strcmpi(a,b));
+   c = cellstrvcat(a,b);
+else   
+   c = a;
+end
