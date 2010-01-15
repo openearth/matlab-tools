@@ -89,7 +89,7 @@
 
       outputfile    = [OPT.directory.nc,filesep,D.basename,OPT.ext,'.nc']; % 30 (ISO 8601) 'yyyymmddTHHMMSS' name
    
-      meris2nc(outputfile)
+      meris2nc(outputfile,D)
 
 %% 6 Check
    
