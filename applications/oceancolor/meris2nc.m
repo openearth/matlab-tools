@@ -351,14 +351,14 @@ function meris2nc(outputfile,D,varargin);
       nc_varput(outputfile, 'spectral_bands' ,  D.bands.wavelength);
       nc_varput(outputfile, 'time'           ,  D.datenum(1) - OPT.refdatenum);
       if isfield(D,'chla')
-      nc_varput(outputfile, 'Chla'           ,  D.Chla;
-      nc_varput(outputfile, 'Chla_std_err'   ,  D.Chla_std_err;
+      nc_varput(outputfile, 'Chla'           ,  D.Chla);
+      nc_varput(outputfile, 'Chla_std_err'   ,  D.Chla_std_err);
       end
       nc_varput(outputfile, 'TSM'            ,  D.cTSM);
       nc_varput(outputfile, 'TSM_std_err'    ,  D.dcTSM);
       if isfield(D,'chla')
-      nc_varput(outputfile, 'CDOM'           ,  D.CDOM;
-      nc_varput(outputfile, 'CDOM_std_err'   ,  D.CDOM_std_err;
+      nc_varput(outputfile, 'CDOM'           ,  D.CDOM);
+      nc_varput(outputfile, 'CDOM_std_err'   ,  D.CDOM_std_err);
       end
       nc_varput(outputfile, 'Kd'             ,  D.Kd);
       nc_varput(outputfile, 'chisq'          ,  D.chisq);
