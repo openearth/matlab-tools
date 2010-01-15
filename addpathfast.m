@@ -40,7 +40,8 @@ function addpathfast(basepath,varargin)
    else
    % via matlab, faster in later releases
       b = genpath(basepath);
-      s = strread(b, '%s', 'delimiter', ';');  % read path as cell
+      s = strread(b, '%s',...
+                  'delimiter', pathsep);  % read path as cell
    end
    
 %% Exclude the .svn directories from the path
