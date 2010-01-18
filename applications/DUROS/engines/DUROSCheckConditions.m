@@ -12,7 +12,7 @@ if WL_t ~= roundoff(WL_t, decdigs)
     writemessage(-9, ['Water level has been rounded to ' num2str(decdigs) ' decimal digits.']);
 end
 
-%%
+%% Check value of Tp
 n_d = DuneErosionSettings('get', 'n_d');
 Plus = DuneErosionSettings('get', 'Plus');
 TP12slimiter = DuneErosionSettings('get', 'TP12slimiter');

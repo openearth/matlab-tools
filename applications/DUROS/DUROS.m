@@ -142,6 +142,9 @@ writemessage(100,'Start first step: Get and fit DUROS profile');
 [xInitial,zInitial,D50,WL_t,Hsig_t,Tp_t] = DUROSCheckConditions(xInitial,zInitial,D50,WL_t,Hsig_t,Tp_t);
 if islogical(xInitial)
     % serious warning occured. We cannot perform a calculation.
+    result = CreateEmptyDUROSResult;
+    result.info.resultinboundaries = false;
+    messages = writemessage('get');
     return;
 end
 
