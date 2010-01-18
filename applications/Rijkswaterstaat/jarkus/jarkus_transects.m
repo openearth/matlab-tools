@@ -44,7 +44,7 @@ function transects = jarkus_transects(varargin)
 %   transects = jarkus_transects('year', [2001:2008], 'areacode', 13)
 %   transects = jarkus_transects('year', 2008, 'id', 17000000:17000500, 'altitude', 0:20, 'precision', 0)
 %
-%   See also jarkus_decurve numel2coord
+%   See also jarkus_decurve
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -226,7 +226,7 @@ for i = datasetOrder'
         end
         
         % get coordinates of hits
-        coords = numel2coord(indices, count);
+        coords = ind2sub(count, indices);
         coords = coords + ones(size(coords,1),1)*(start-1);
         
         % narrow selected indices for each dimension based on filter
@@ -334,7 +334,7 @@ for i = 1:length(OPT.output)
             if OPT.verbose; disp(['    ' var ' ' num2str(j) ' of ' num2str(n) '...']); end;
 
             % determine coordinates in output variable for current request
-            coords = numel2coord(j, gets);
+            coords = ind2sub(gets, j);
 
             % allocate output mapping struct
             idx = cell(1,dims);
