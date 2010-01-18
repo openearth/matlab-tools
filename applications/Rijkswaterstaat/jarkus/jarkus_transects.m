@@ -226,7 +226,7 @@ for i = datasetOrder'
         end
         
         % get coordinates of hits
-        coords = ind2sub(count, indices);
+        coords = numel2coord(count, indices);
         coords = coords + ones(size(coords,1),1)*(start-1);
         
         % narrow selected indices for each dimension based on filter
@@ -334,7 +334,7 @@ for i = 1:length(OPT.output)
             if OPT.verbose; disp(['    ' var ' ' num2str(j) ' of ' num2str(n) '...']); end;
 
             % determine coordinates in output variable for current request
-            coords = ind2sub(gets, j);
+            coords = numel2coord(gets, j);
 
             % allocate output mapping struct
             idx = cell(1,dims);
