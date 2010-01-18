@@ -71,6 +71,7 @@ function D = meris_WaterInsight_load(fname)
    D = mergestructs(D,load([filepathstr(D.filename),filesep,D.basename,'_hydropt74.mat']));
    D = mergestructs(D,load([filepathstr(D.filename),filesep,D.basename,'_l2flags.mat'  ]));
    D = mergestructs(D,load([filepathstr(D.filename),filesep,D.basename,'_latlon.mat'   ]));
+   D = mergestructs(D,load([filepathstr(D.filename),filesep,D.basename,'_SD.mat'   ]));
    
 %% processing meta info
 
@@ -88,7 +89,9 @@ function D = meris_WaterInsight_load(fname)
    D.TSM_std_err  = D.dc(:,:,3);
    D.CDOM         = D.c (:,:,4);
    D.CDOM_std_err = D.dc(:,:,4);
-   
+   if(isfield(D,'sd2'))
+    D.SD           = D.sd2(:,:);
+   end
    D = rmfield(D,'biglon');
    D = rmfield(D,'biglat');
    D = rmfield(D,'c'     );

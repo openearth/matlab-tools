@@ -48,9 +48,9 @@
 %% Initialize
 
    OPT.fillvalue      = nan; % NaNs do work in netcdf API
-   OPT.dump           = 1;
-   OPT.pause          = 1;
-   OPT.debug          = 1;
+   OPT.dump           = 0;
+   OPT.pause          = 0;
+   OPT.debug          = 0;
    OPT.zip            = 0; % when data becomes to big, zip or bzip2 the nc files (TO DO).
    OPT.version        = 'V1.0 Twigt-DeBoer-Blaas';
    
@@ -90,6 +90,7 @@
       outputfile    = [OPT.directory.nc,filesep,D.basename,OPT.ext,'.nc']; % 30 (ISO 8601) 'yyyymmddTHHMMSS' name
    
       meris2nc(outputfile,D)
+
 
 %% 6 Check
    
