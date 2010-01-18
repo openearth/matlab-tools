@@ -213,8 +213,8 @@ for i = datasetOrder'
             data = nc_varget(OPT.url, name, start-1, count);
             
             % set precision
-            data = roundn(data, OPT.precision);
-            filter = roundn(filter, OPT.precision);
+            data = round(data*10^-OPT.precision)/10^-OPT.precision;
+            filter = round(filter*10^-OPT.precision)/10^-OPT.precision;
             
             % match filter with data
             indices = find(ismember(data, filter));
