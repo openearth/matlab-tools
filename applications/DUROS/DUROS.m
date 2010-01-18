@@ -140,6 +140,10 @@ SKIPBOUNDPROF = false;
 writemessage(100,'Start first step: Get and fit DUROS profile');
 % step 1 initiated early to include correction of the Tp in the messages.
 [xInitial,zInitial,D50,WL_t,Hsig_t,Tp_t] = DUROSCheckConditions(xInitial,zInitial,D50,WL_t,Hsig_t,Tp_t);
+if islogical(xInitial)
+    % serious warning occured. We cannot perform a calculation.
+    return;
+end
 
 % debug plot initial profile
 if dbstate

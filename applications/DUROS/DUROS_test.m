@@ -1,4 +1,4 @@
-%% Temporal tests for getDuneErosion
+%% Temporal tests for DUROS
 
 % $Id$
 % $Date$
@@ -16,7 +16,7 @@ WL_t = 5;
 Hsig_t = 9;
 Tp_t = 12;
 
-[result, messages] = getDuneErosion(xInitial, zInitial,...
+[result, messages] = DUROS(xInitial, zInitial,...
     'D50',D50,...
     'WL_t',WL_t,...
     'Hsig_t',Hsig_t,...
@@ -31,7 +31,7 @@ WL_t = 5;
 Hsig_t = 9;
 Tp_t = 12;
 
-[result, messages] = getDuneErosion(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t);
+[result, messages] = DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t);
 plotDuneErosion(result,figure);
 
 %% case 3 Reference profile with a dune breach
@@ -45,7 +45,7 @@ Tp_t = 16;
 % temporarily shut down Bondary profile. An error occurs...
 DuneErosionSettings('set','BoundaryProfile',false);
 
-[result, messages] = getDuneErosion(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t);
+[result, messages] = DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t);
 plotDuneErosion(result,figure);
 
 %% case 4 Profile Noord-Holland transect 5475, year 2005
@@ -67,7 +67,7 @@ DuneErosionSettings('set',...
     'BoundaryProfile', false,...
     'FallVelocity', {@getFallVelocity 'a' 0.476 'b' 2.18 'c' 3.226 'D50'});
 
-result = getDuneErosion(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t);
+result = DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t);
 plotDuneErosion(result, figure);
 
 %% case 5 Test settings as input as well
@@ -78,7 +78,7 @@ WL_t = 5;
 Hsig_t = 9;
 Tp_t = 12;
 
-[result, messages] = getDuneErosion(xInitial, zInitial,...
+[result, messages] = DUROS(xInitial, zInitial,...
     'Hsig_t',Hsig_t,...
     'WL_t',WL_t,...
     'D50',D50,...

@@ -31,19 +31,30 @@ end
 
 %% Check profile
 if ~isnumeric(xInitial)
-    error('DUROSCHECKCONDITIONS:notnumeric', 'xInitial must be numeric');
+    writemessage(-11, 'Input profile (c) is not a valid array.');
+    xInitial = false;
+    warning('DUROSCHECKCONDITIONS:notnumeric', 'xInitial must be numeric');
 elseif isempty(xInitial)
-    error('DUROSCHECKCONDITIONS:empty', 'xInitial must be non-empty');
+    writemessage(-11, 'Input profile (x) is empty.');
+    xInitial = false;
+    warning('DUROSCHECKCONDITIONS:empty', 'xInitial must be non-empty');
 end
 if ~isnumeric(zInitial)
-    error('DUROSCHECKCONDITIONS:notnumeric', 'zInitial must be numeric');
+    writemessage(-11, 'Input profile (z) is not a valid array.');
+    xInitial = false;
+    warning('DUROSCHECKCONDITIONS:notnumeric', 'zInitial must be numeric');
 elseif isempty(zInitial)
-    error('DUROSCHECKCONDITIONS:empty', 'zInitial must be non-empty');
+    writemessage(-11, 'Input profile (z) is empty.');
+    xInitial = false;
+    warning('DUROSCHECKCONDITIONS:empty', 'zInitial must be non-empty');
 end
 
 % check whether information is available above the waterline
 if max(zInitial) < WL_t
-    error('DUROSCHECKCONDITIONS:lowprofile', 'There is no part of the profile above the specified water level. Please check your input');
+    writemessage(-10, 'Water level exceeds the maximum profile height.');
+    xInitial = false;
+    warning('DUROSCHECKCONDITIONS:lowprofile', 'There is no part of the profile above the specified water level. Please check your input');
+    return;
 end
 
 % remove nan values
