@@ -5,15 +5,22 @@ function transects = jarkus_transects(varargin)
 %   plain struct. The retrieved data can be controlled using filters.
 %   Filters narrow the range of data in all available dimensions. The
 %   filters match to the actual JARKUS data and translates the result to
-%   the available dimensions. Currently the following dimensions are
-%   available: time, alongshore, cross-shore. The dimension filters are
-%   source independent. The introduction of new dimensions does not need
-%   any modification of this script. The execution of the filters is
-%   optimized for speed by filtering the small datasets first. Furthermore
-%   it is checked whether the resulting ranges for all dimensions are
-%   equidistant. If so, strides are determined to limit the number of
-%   requests needed. Finally all JARKUS data within the determined ranges
-%   is retrieved and stored in a plain struct.
+%   the available dimensions. JARKUS data that is filtered should be
+%   present in the output variable list in order for the filter to show any
+%   effect. Currently the following dimensions are available: time,
+%   alongshore, cross-shore. The dimension filters are source independent.
+%   The introduction of new dimensions does not need any modification of
+%   this script. The execution of the filters is optimized for speed by
+%   filtering the small datasets first. Furthermore it is checked whether
+%   the resulting ranges for all dimensions are equidistant. If so, strides
+%   are determined to limit the number of requests needed. Finally all
+%   JARKUS data within the determined ranges is retrieved and stored in a
+%   plain struct.
+%   Special filters do not exist in the actual NetCDF file, but are
+%   translated to a field that does exist. Special filter fields cannot be
+%   part of the output variable list, but the field to which the special
+%   filter is translated should. Special filters currently available are:
+%   year (translated to time) and areaname (translated to areacode).
 %
 %   Syntax:
 %   transects = jarkus_transects(varargin)
@@ -96,6 +103,8 @@ OPT = struct( ...
     'verbose', false ...
 );
 
+FLTR = struct();
+
 % update option struct and interpret other arguments as jarkus filters
 varargin1 = {};
 varargin2 = {};
@@ -176,6 +185,33 @@ if isfield(FLTR, 'year')
             FLTR.time = years(i):years(i)+365;
         end
     end
+    
+    FLTR = rmfield(FLTR, 'year');
+end
+
+if isfield(FLTR, 'areaname')
+    if ~iscell(FLTR.areaname); FLTR.areaname = {FLTR.areaname}; end;
+    
+    a1 = jarkus_transects('output', {{'areaname'}});
+    a2 = jarkus_transects('output', {{'areacode'}});
+    
+    [dummy n1] = unique(a1.areaname, 'rows');
+    areanames = char(a1.areaname(sort(n1),:));
+    areacodes = unique(a2.areacode);
+    
+    for i = 1:length(FLTR.areaname)
+        for j = 1:size(areanames,1)
+            if strcmpi(strtrim(areanames(j,:)), FLTR.areaname{i})
+                if isfield(FLTR, 'areacode')
+                    FLTR.areacode = [FLTR.areacode areacodes(j)];
+                else
+                    FLTR.areacode = areacodes(j);
+                end
+            end
+        end
+    end
+    
+    FLTR = rmfield(FLTR, 'areaname');
 end
 
 % create dataset filters
