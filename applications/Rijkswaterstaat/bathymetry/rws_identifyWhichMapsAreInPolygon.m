@@ -44,11 +44,12 @@ function [mapurls, minx, maxx, miny, maxy] = rws_identifyWhichMapsAreInPolygon(a
 % Step 1: find all patch objects from the mapwindow and store their xdata and ydata in the variable maps
 objs = findobj(ah, 'type', 'patch', '-regexp','Tag','[''*.nc'']');
 maps = [get(objs, 'XData') get(objs, 'YData')];
+if ~iscell(maps),maps = {maps(:,1) maps(:,2)};end
 
 % Step 2: identify which of the fixed maps lie whole or partially inpolygon initialise variables
 [mapurls, minx, maxx, miny, maxy] = deal([]);
 include = 0;
-for i = 1:length(maps)
+for i = 1:size(maps,1)
     % include if a fixed map and polygon have an intersection
 
     [xcr, zcr] = findCrossingsOfPolygonAndPolygon(maps{i,1},maps{i,2},polygon(:,1),polygon(:,2)); %#ok<*NASGU>
