@@ -39,13 +39,21 @@ function UCIT_displayTransectOutlines
 %   --------------------------------------------------------------------
 
 %% get metadata (either from the console or the database)
-tic
 [d] = UCIT_getMetaData(1);
-toc
 
 %% now plot the transectcontours gathered in d
 if ~isempty(d)
     UCIT_plotFilteredTransectContours(d);
 end
 
+%% Adjust axis and labels
+axis equal;
+axis([d.axes])
+ylabel('Northing [m]')
+xlabel('Easting [m]')
+
+%% Make figure visible
+fh = findobj('tag','mapWindow');
+figure(fh);
+set(fh,'visible','on');
 

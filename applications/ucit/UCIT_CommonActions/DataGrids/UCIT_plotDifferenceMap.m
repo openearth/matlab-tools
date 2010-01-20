@@ -46,6 +46,10 @@ else
     figure(findobj('tag','gridOverview'));
 end
 
+tic
+[d] = UCIT_getMetaData(2);
+toc
+
 if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'),datatype = 'jarkus';,end
 if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen'),datatype = 'vaklodingen';,end
 
@@ -93,7 +97,7 @@ dd.Z = -(d1.Z - d2.Z);
 fh = figure('tag','diffplot');clf;
 ah = axes;
 [fh,ah] = UCIT_prepareFigureN(0, fh, 'UR', ah);
-UCIT_plotlandBoundary('Jarkus',0); % plot land boundary
+UCIT_plotlandBoundary(d.ldb,'none'); % plot land boundary
 surf(d.X,d.Y,dd.Z);shading interp;view(2);hold on;
 cm = colormap(['erosed']); caxis([-3 3]);
 c  =colorbar('vert');

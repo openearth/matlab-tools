@@ -1,4 +1,4 @@
-function plotGrid(X,Y,Z,scheme,datatypeinfo,v)
+function plotGrid(X,Y,Z,scheme,d,v)
 %UCIT_plotGrid  ucit routine to plot grid information
 %
 %   Summary:    This routine generates a number of default plots for grids.
@@ -61,7 +61,7 @@ if nargin >= 5
         set(fh,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
         [fh,ah] = UCIT_prepareFigureN(0, fh, 'UL', ah);
         hold on
-        UCIT_plotLandboundary(datatypeinfo,0)
+        UCIT_plotLandboundary(d.ldb,'none')
     else
         mapW=findobj('tag','gridPlot');
         figure(mapW); set(mapW,'CurrentObject',mapW);

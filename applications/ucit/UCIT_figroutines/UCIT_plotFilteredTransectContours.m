@@ -48,7 +48,6 @@ function UCIT_plotFilteredTransectContours(d, axisNew) %#ok<INUSD>
 if nargin == 2 % remake figure using zoom
     fh = findobj('tag','mapWindow');
     figure(fh);
-    %     ah = gca;
 else % make figure new
     if ~isempty(findobj('tag','mapWindow'))
         close(findobj('tag','mapWindow'));
@@ -59,8 +58,6 @@ else % make figure new
     [fh] = UCIT_prepareFigureN(1, fh, 'LL', ah, @UCIT_plotFilteredTransectContours, {get(findobj('tag','UCIT_mainWin'),'Userdata'), axis(ah)}, @UCIT_plotTransectContours, {get(findobj('tag','UCIT_mainWin'),'Userdata'), axis(ah)});
     set(fh,'name','UCIT - Transect overview');
     set(gca, 'fontsize',8);
-%     xlabel('x-distance [m]')
-%     ylabel('y-distance [m]', 'Rotation', 270, 'VerticalAlignment', 'top')
 
 end
 
@@ -69,13 +66,21 @@ handles = guidata(fh);
 % compare axis with axis new
 if ~isfield(handles,'axisOld'); %if the transect contours are plotted for the first time
     axis equal;
-    tic
     disp('plotting landboundary...');
-    UCIT_plotLandboundary(d.datatypeinfo{1});
+    UCIT_plotLandboundary(d.ldb);
+    set(fh,'visible','off');
     set(fh,'userdata',axis);    
-    toc
     hold on;
     box on
+    
+    % Add additional lines
+    if isfield(d,'extra')
+        if ~strcmp(d.extra,'')
+        X2	=  nc_varget(d.extra,'x');
+        Y2	=  nc_varget(d.extra,'y');
+        plot(X2,Y2,'r','linewidth',1.5);hold on;
+    end
+end
 
     id = zeros(length(d.contour),1);
     

@@ -44,26 +44,30 @@ function [X,Y,Z,Ztemps,in]=UCIT_plotDataInPolygon
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+UCIT_getInfoFromPopup('GridsDatatype')
+if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'     ),datatype = 'jarkus';     ,end
+if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen'),datatype = 'vaklodingen';,end
+if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'AHN100'     ),datatype = 'AHN100';      ,end
+if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'AHN250'     ),datatype = 'AHN250';      ,end
 
-if isempty(findobj('tag','gridOverview'))
+if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
     UCIT_plotGridOverview;
 else
     figure(findobj('tag','gridOverview'));
 end
-UCIT_getInfoFromPopup('GridsDatatype')
-if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'     ),datatype = 'jarkus';     ,end
-if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen'),datatype = 'vaklodingen';,end
-if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'AHN100'     ),datatype = 'AHN10';      ,end
 
-
+tic
+[d] = UCIT_getMetaData(2);
+toc
 
 %% get data from right netcdf files
 [X, Y, Z, Ztime] = rws_getDataInPolygon(...
     'datatype'    , datatype, ...
-    'starttime'   ,        datenum(UCIT_getInfoFromPopup('GridsName')), ...
+    'starttime'   , datenum(UCIT_getInfoFromPopup('GridsName')), ...
     'searchwindow', -30*str2double(UCIT_getInfoFromPopup('GridsInterval')), ...
-    'datathinning',     str2double(UCIT_getInfoFromPopup('GridsSoundingID')),...
-    'plotresult'  ,0);
+    'datathinning', str2double(UCIT_getInfoFromPopup('GridsSoundingID')),...
+    'plotresult'  , 0,...
+    'cellsize'    , d.cellsize);
 
 if ~isempty(findobj('tag','gridPlot'))
     close(findobj('tag','gridPlot'))
@@ -76,7 +80,7 @@ Z(Z>1e10) = nan;
 %% plot results
 if ~all(all(isnan(Z)))
 
-    UCIT_plotGrid(X,Y,Z,1,UCIT_getInfoFromPopup('GridsDatatype'));
+    UCIT_plotGrid(X,Y,Z,1,d);
     tempTag=get(gcf,'tag');
     set(gcf,'tag','tempTag');
 
@@ -91,15 +95,17 @@ if ~all(all(isnan(Z)))
         close(findobj('tag','tempsWindow'));
     end
 
-    UCIT_plotGrid(X,Y,Ztime,7,UCIT_getInfoFromPopup('GridsDatatype'),unique(Ztime(find(~isnan(Ztime)))));
-    set(gcf,'tag','tempsWindow');
-    set(gcf,'position',UCIT_getPlotPosition('UR'));
+    if ~all(isnan(Ztime(:)))
+        UCIT_plotGrid(X,Y,Ztime,7,d,unique(Ztime(find(~isnan(Ztime)))));
+        set(gcf,'tag','tempsWindow');
+        set(gcf,'position',UCIT_getPlotPosition('UR'));
 
-    % reset the tag of the original figure (needed for get cross section)
-    set(findobj('tag','tempTag'),'tag',tempTag);
+        % reset the tag of the original figure (needed for get cross section)
+        set(findobj('tag','tempTag'),'tag',tempTag);
 
-    set(gca,'Xlim',[d.X(1,1) d.X(1,end)]);
-    set(gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
+        set(gca,'Xlim',[d.X(1,1) d.X(1,end)]);
+        set(gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
+    end
 
 else
     warndlg('No data found for these search criteria');

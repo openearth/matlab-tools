@@ -1,22 +1,17 @@
-function UCIT_plotLandboundary(datatypeinfo,fill)
-%PLOTLANDBOUNDARY   plots a landboundary for a given <datatypeinfo>
-%
-%   This routine finds a landboundary given <datatypeinfo>
+function UCIT_plotLandboundary(filename,color)
+%UCIT_PLOTLANDBOUNDARY   plots a landboundary with an optional fill color
 %
 %   syntax:
-%   plotLandboundary(datatypeinfo,landcolor)
+%   UCIT_plotLandboundary(filename,fillcolor)
 %
 %   input:
-%       datatypeinfo = datatype info from McDatabase
+%       filename: either local or on the internet
+%       fill color: color or 'none'
 %
-%
-
 %   --------------------------------------------------------------------
-%   Copyright (C) 2009 Deltares
-%   Mark van Koningsveld
+%   Copyright (C) 2010 Deltares
 %   Ben de Sonneville
 %
-%       M.vankoningsveld@tudelft.nl
 %       Ben.deSonneville@Deltares.nl
 %
 %       Deltares
@@ -38,46 +33,18 @@ function UCIT_plotLandboundary(datatypeinfo,fill)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-if ismember(datatypeinfo,{...
-        'Jarkus Data',...
-        'Jarkus', ...
-        'Vaklodingen',...
-        'AHN100',...
-        'AHN250'})
-    ldb = landboundary('read',which(['Netherlands_inclBelGer_RD.ldb']));
-    %axis_settings = 1E5*[-0.282042339266554   2.324770614179054   3.720482792355521   6.461840930495095];
-    %axis_settings = 1E5*[-0.239487510616072   2.901701352260693   3.483909234909159   6.787223974579561];
-     axis_settings = 1E5*[-0.239487510616072   2.901701352260693   2.99950             6.787223974579561]; % for AHN
-    
-    [X,Y]=landboundary('read',which(['Netherlands_inclBelGer_RD.ldb']));
+%% load landboundary from server
+X	=  nc_varget(filename,'x');
+Y	=  nc_varget(filename,'y');
 
-elseif strcmp(datatypeinfo,'Lidar Data US');
-    area = UCIT_getInfoFromPopup('TransectsArea');
-    switch area
-        case {'Oregon'}
-            [X,Y]         = landboundary('read',which(['OR_coast_UTM5.ldb']));
-            ldb2          = landboundary('read',which(['ref20OR2.ldb'])); % this is their reference line
-            axis_settings = 1E6*[0.3382    0.4796    4.6537    5.1275];
-        case {'Washington'}
-            [X,Y]         = landboundary('read',which(['WA_coast1_UTM.ldb']));
-            axis_settings = 1E6*[0.367164048997129   0.446396990873151   5.125163267511952   5.370968814517868];
-    end
-end
-if nargin < 2 ||  fill  == 1
+%% plot it (either filled or not filled)
+if nargin < 2 
     fillpolygon([X,Y],'k',[1 1 0.6],100,-100); hold on;
-else
-    shph = plot(X,Y,'k','linewidth',1);hold on;
-end
-%;
-
-if exist('ldb2')
-    plot(ldb2(:,1),ldb2(:,2),'color','k','linewidth',2);
-end
-axis equal;
-axis([axis_settings])
-
-if nargin < 2 ||  fill  == 1
+    set(gca,'color',[0.4 0.6 1])
+elseif nargin == 2 &&  strcmp(color,'none')
+    plot(X,Y,'k','linewidth',1);hold on;
+elseif nargin == 2 
+    fillpolygon([X,Y],'k',color,100,-100); hold on;
     set(gca,'color',[0.4 0.6 1])
 end
-ylabel('Northing [m]')
-xlabel('Easting [m]')
+
