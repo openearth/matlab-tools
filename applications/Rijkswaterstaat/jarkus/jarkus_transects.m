@@ -192,12 +192,10 @@ end
 if isfield(FLTR, 'areaname')
     if ~iscell(FLTR.areaname); FLTR.areaname = {FLTR.areaname}; end;
     
-    a1 = jarkus_transects('output', {{'areaname'}});
-    a2 = jarkus_transects('output', {{'areacode'}});
+    a = jarkus_transects('output', {{'areacode' 'areaname'}});
     
-    [dummy n1] = unique(a1.areaname, 'rows');
-    areanames = char(a1.areaname(sort(n1),:));
-    areacodes = unique(a2.areacode);
+    [areacodes n] = unique(a.areacode);
+    areanames = char(a.areaname(n,:));
     
     for i = 1:length(FLTR.areaname)
         for j = 1:size(areanames,1)
