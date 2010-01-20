@@ -1,4 +1,4 @@
-function transects = jarkus_transects(varargin)
+function [transects dimensions] = jarkus_transects(varargin)
 %JARKUS_TRANSECTS  Retrieves a selection of JARKUS data from repository
 %
 %   Retrieves JARKUS data based on NetCDF protocol and stores it into a
@@ -20,7 +20,7 @@ function transects = jarkus_transects(varargin)
 %   translated to a field that does exist. Special filter fields cannot be
 %   part of the output variable list, but the field to which the special
 %   filter is translated should. Special filters currently available are:
-%   year (translated to time) and areaname (translated to areacode).
+%   year (translated to time).
 %
 %   Syntax:
 %   transects = jarkus_transects(varargin)
@@ -123,6 +123,7 @@ FLTR = setProperty(FLTR, varargin2{:});
 %% retrieve jarkus info
 
 transects = struct();
+dimensions = struct();
 
 % get jarkus info
 jInfo = nc_info(OPT.url);
@@ -189,28 +190,28 @@ if isfield(FLTR, 'year')
     FLTR = rmfield(FLTR, 'year');
 end
 
-if isfield(FLTR, 'areaname')
-    if ~iscell(FLTR.areaname); FLTR.areaname = {FLTR.areaname}; end;
-    
-    a = jarkus_transects('output', {{'areacode' 'areaname'}});
-    
-    [areacodes n] = unique(a.areacode);
-    areanames = char(a.areaname(n,:));
-    
-    for i = 1:length(FLTR.areaname)
-        for j = 1:size(areanames,1)
-            if strcmpi(strtrim(areanames(j,:)), FLTR.areaname{i})
-                if isfield(FLTR, 'areacode')
-                    FLTR.areacode = [FLTR.areacode areacodes(j)];
-                else
-                    FLTR.areacode = areacodes(j);
-                end
-            end
-        end
-    end
-    
-    FLTR = rmfield(FLTR, 'areaname');
-end
+% if isfield(FLTR, 'areaname')
+%     if ~iscell(FLTR.areaname); FLTR.areaname = {FLTR.areaname}; end;
+%     
+%     a = jarkus_transects('output', {{'areacode' 'areaname'}});
+%     
+%     [areacodes n] = unique(a.areacode);
+%     areanames = char(a.areaname(n,:));
+%     
+%     for i = 1:length(FLTR.areaname)
+%         for j = 1:size(areanames,1)
+%             if strcmpi(strtrim(areanames(j,:)), FLTR.areaname{i})
+%                 if isfield(FLTR, 'areacode')
+%                     FLTR.areacode = [FLTR.areacode areacodes(j)];
+%                 else
+%                     FLTR.areacode = areacodes(j);
+%                 end
+%             end
+%         end
+%     end
+%     
+%     FLTR = rmfield(FLTR, 'areaname');
+% end
 
 % create dataset filters
 for i = datasetOrder'
@@ -221,6 +222,8 @@ for i = datasetOrder'
         if OPT.verbose; disp(['    ' name]); end;
         
         filter = FLTR.(name);
+        
+        if ischar(filter); filter = {filter}; end;
         
         dims = length(jInfo.Dataset(i).Dimension);
         
@@ -247,8 +250,10 @@ for i = datasetOrder'
             data = nc_varget(OPT.url, name, start-1, count);
             
             % set precision
-            data = round(data*10^-OPT.precision)/10^-OPT.precision;
-            filter = round(filter*10^-OPT.precision)/10^-OPT.precision;
+            if ~ischar(data)
+                data = round(data*10^-OPT.precision)/10^-OPT.precision;
+                filter = round(filter*10^-OPT.precision)/10^-OPT.precision;
+            end
             
             % match filter with data
             indices = find(ismember(data, filter));
@@ -361,6 +366,7 @@ for i = 1:length(OPT.output)
         % allocate output variable
         if length(rsize) == 1; rsize = [1 rsize]; end;
         transects.(var) = zeros(rsize);
+        dimensions.(var) = jInfo.Dataset(ivar).Dimension;
 
         % execute number of requests necessary
         n = prod(gets);
