@@ -1,4 +1,4 @@
-function fig2pngNew (h,lat,lon,z,varargin)
+function KMLfig2pngNew (h,lat,lon,z,varargin)
 % KMLFIG2PNG   makes a tiled png figure for google earth
 %
 %   h = surf(lon,lat,z)
@@ -62,35 +62,35 @@ D.S   = min(D.lat(:));
 D.W   = min(D.lon(:));
 D.E   = max(D.lon(:));
 
-OPT.basecode        = KML_fig2pngNew_SmallestTileThatContainsAllData(D);
-OPT.ha              =    gca; % handle to axes
-OPT.hf              =    gcf; % handle to figure
-OPT.dim             =    256; % tile size
-OPT.dimExt          =      0; % render tiles expanded by n pixels, to remove edge effects
-OPT.bgcolor         = [100 155 100];  % background color to be made transparent
-OPT.alpha           = 1;
-OPT.highestLevel    = length(OPT.basecode);
-OPT.lowestLevel     = OPT.highestLevel+4;
-OPT.fileName        =     [];
-OPT.kmlName         =     []; % name in Google Earth Place list
-OPT.url             =     ''; % webserver storaga needs absolute paths, local files can have relative paths. Only needed in mother KML.
-OPT.alpha           =      1;
-OPT.dim             =    256; % tile size
-OPT.dimExt          =     16; % render tiles expanded by n pixels, to remove edge effects
-OPT.minLod          =     []; % minimum level of detail to keep a tile in view. Is calculated when left blank.
-OPT.minLod0         =     -1; % minimum level of detail to keep most detailed tile in view. Default is -1 (don't hide when zoomed in a lot)
-OPT.maxLod          =     [];
-OPT.maxLod0         =     -1;
-OPT.dWE             =    0.2*360/2^OPT.lowestLevel; % determines how much extra data to tiles to be able 
-OPT.dNS             =    0.2*360/2^OPT.lowestLevel; % to generate them as fraction of size of smalles tile
-OPT.ha              =    gca; % handle to axes
-OPT.hf              =    gcf; % handle to figure
-OPT.timeIn          =     []; % time properties
-OPT.timeOut         =     [];
-OPT.drawOrder       =      1; 
-OPT.bgcolor         = [100 155 100];  % background color to be made transparent
-OPT.description     =     ''; 
-OPT.colorbar        =   true;
+OPT.basecode          = KML_fig2pngNew_SmallestTileThatContainsAllData(D);
+OPT.ha                =    gca; % handle to axes
+OPT.hf                =    gcf; % handle to figure
+OPT.dim               =    256; % tile size
+OPT.dimExt            =      8; % render tiles expanded by n pixels, to remove edge effects
+OPT.bgcolor           = [100 155 100];  % background color to be made transparent
+OPT.alpha             = 1;
+OPT.highestLevel      = length(OPT.basecode);
+OPT.lowestLevel       = OPT.highestLevel+4;
+OPT.fileName          =     [];
+OPT.kmlName           =     []; % name in Google Earth Place list
+OPT.url               =     ''; % webserver storaga needs absolute paths, local files can have relative paths. Only needed in mother KML.
+OPT.alpha             =      1;
+OPT.dim               =    256; % tile size
+OPT.dimExt            =     16; % render tiles expanded by n pixels, to remove edge effects
+OPT.minLod            =     []; % minimum level of detail to keep a tile in view. Is calculated when left blank.
+OPT.minLod0           =     -1; % minimum level of detail to keep most detailed tile in view. Default is -1 (don't hide when zoomed in a lot)
+OPT.maxLod            =     [];
+OPT.maxLod0           =     -1;
+OPT.dWE               =    0.2*360/2^OPT.lowestLevel; % determines how much extra data to tiles to be able 
+OPT.dNS               =    0.2*360/2^OPT.lowestLevel; % to generate them as fraction of size of smalles tile
+OPT.ha                =    gca; % handle to axes
+OPT.hf                =    gcf; % handle to figure
+OPT.timeIn            =     []; % time properties
+OPT.timeOut           =     [];
+OPT.drawOrder         =      1; 
+OPT.bgcolor           = [100 155 100];  % background color to be made transparent
+OPT.description       =     ''; 
+OPT.colorbar          =   true;
 OPT.mergeExistingTiles = false;
 
 if nargin==0

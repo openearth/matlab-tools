@@ -38,7 +38,7 @@ for level = OPT.highestLevel:OPT.lowestLevel
             for ii = 1:2
                 for jj = 1:2
                     code = [tiles(nn,:) addCode(ii,jj)];
-                    B = fig2pngNew_code2boundary(code);
+                    B = KML_fig2pngNew_code2boundary(code);
                     PNGfileName = fullfile(OPT.Path,OPT.Name,[OPT.Name '_' code '.png']);
                     if exist(PNGfileName,'file')
                         output = [output sprintf([...
@@ -62,7 +62,7 @@ for level = OPT.highestLevel:OPT.lowestLevel
         end
         
         %% add png to kml+
-        B = fig2pngNew_code2boundary(tiles(nn,:));
+        B = KML_fig2pngNew_code2boundary(tiles(nn,:));
         output = [output sprintf([...
             '<Region>\n'...
             '<Lod><minLodPixels>%d</minLodPixels><maxLodPixels>%d</maxLodPixels></Lod>\n'...minLod,maxLod

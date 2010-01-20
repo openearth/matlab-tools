@@ -31,7 +31,7 @@ for addCode = ['0','1','2','3']
                 
                 if length(code) < OPT.lowestLevel
                     fprintf('%-16s %-10s\n',code,'CONTINUING')
-                    fig2pngNew_printTile(code,D2,OPT)
+                    KML_fig2pngNew_printTile(code,D2,OPT)
                 else
                      fprintf('%-16s %-10s',code,'PRINTING TILE')
                     
