@@ -1,4 +1,4 @@
-function fig2pngNew_joinTiles(OPT)
+function KML_fig2pngNew_joinTiles(OPT)
 for level = OPT.lowestLevel:-1:OPT.highestLevel+1
     tiles = dir(fullfile(OPT.Path,OPT.Name,[OPT.Name '_*.png']));
     tileCodes = nan(length(tiles),level);

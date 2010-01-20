@@ -1,4 +1,4 @@
-function fig2pngNew_makeKML(OPT)
+function KML_fig2pngNew_makeKML(OPT)
 
 
 

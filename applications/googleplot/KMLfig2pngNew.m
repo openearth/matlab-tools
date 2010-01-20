@@ -62,7 +62,7 @@ D.S   = min(D.lat(:));
 D.W   = min(D.lon(:));
 D.E   = max(D.lon(:));
 
-OPT.basecode        = fig2pngNew_getCodeOfSmallestTileThatContainsAllData(D);
+OPT.basecode        = KML_fig2pngNew_SmallestTileThatContainsAllData(D);
 OPT.ha              =    gca; % handle to axes
 OPT.hf              =    gcf; % handle to figure
 OPT.dim             =    256; % tile size
@@ -168,19 +168,23 @@ set(OPT.hf,'PaperUnits', 'inches','PaperPosition',...
     [0 0 OPT.dim+2*OPT.dimExt OPT.dim+2*OPT.dimExt],...
     'color',OPT.bgcolor/255,'InvertHardcopy','off');
 
-%% run scripts
-fig2pngNew_printTile(OPT.basecode,D,OPT)
-fig2pngNew_joinTiles(OPT)
-fig2pngNew_makeKML(OPT)
-
+%% run scripts (These are the core functions)
+%   --------------------------------------------------------------------
+% Generates tiles at most detailed level
+KML_fig2pngNew_printTile(OPT.basecode,D,OPT)
+%   --------------------------------------------------------------------
+% Generates tiles other levels based on already created tiles (merging & resizing)
+KML_fig2pngNew_joinTiles(OPT)
+%   --------------------------------------------------------------------
+% Generates KML based on png file names
+KML_fig2pngNew_makeKML(OPT)
+%   --------------------------------------------------------------------
 %% and write the 'mother' KML
 if ~isempty(OPT.url)
     if ~strcmpi(OPT.url(end),'/');
         OPT.url = [OPT.url '\'];
     end
 end
-
-B = fig2pngNew_code2boundary(OPT.basecode);
 
 output = sprintf([...
     '<NetworkLink>'...

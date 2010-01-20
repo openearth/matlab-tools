@@ -1,7 +1,7 @@
-function fig2pngNew_printTile(baseCode,D,OPT)
+function KML_fig2pngNew_printTile(baseCode,D,OPT)
 for addCode = ['0','1','2','3']
     code = [baseCode addCode];
-    B   = fig2pngNew_code2boundary(code);
+    B   = KML_fig2pngNew_code2boundary(code);
     
     % stop if tile is out of bounds
     if ~((D.E>B.W&&D.W<B.E)&&(D.N>B.S&&D.S<B.N))

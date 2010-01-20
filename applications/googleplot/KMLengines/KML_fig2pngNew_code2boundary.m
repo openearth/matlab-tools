@@ -1,4 +1,4 @@
-function bnd =  code2boundary(code)
+function bnd =  KML_fig2pngNew_code2boundary(code)
 
 bnd.N     =  180;
 bnd.S     = -180;

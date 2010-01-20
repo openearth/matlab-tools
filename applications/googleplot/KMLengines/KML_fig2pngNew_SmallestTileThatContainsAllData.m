@@ -1,4 +1,4 @@
-function code = fig2pngNew_getCodeOfSmallestTileThatContainsAllData(D)
+function code = KML_fig2pngNew_SmallestTileThatContainsAllData(D)
 
 dataBounds.N = max(D.lat(:));
 dataBounds.S = min(D.lat(:));
@@ -10,7 +10,7 @@ search = true;
 while search;
     dataIntile = 0;
     for addCode = ['0','1','2','3']
-        tileBounds = fig2pngNew_code2boundary([code addCode]);
+        tileBounds = KML_fig2pngNew_code2boundary([code addCode]);
         if ((dataBounds.E>tileBounds.W&&dataBounds.W<tileBounds.E)&&...
                 (dataBounds.N>tileBounds.S&&dataBounds.S<tileBounds.N))
             dataIntile = dataIntile+1;
