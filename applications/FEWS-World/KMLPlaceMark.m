@@ -63,11 +63,11 @@ function KMLPlaceMark(lat,lon,kmlName,varargin)
 %   USA
 %   --------------------------------------------------------------------
 
-% $Id
-% $Date
-% $Author
-% $Revision
-% $HeadURL
+% $Id:
+% $Date:
+% $Author:
+% $Revision:
+% $HeadURL:
 
 
 OPT.name          = '';

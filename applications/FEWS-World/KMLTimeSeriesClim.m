@@ -63,11 +63,11 @@ function KMLTimeSeriesClim(lats,lons,model,scenario,variable)
 %   USA
 %   --------------------------------------------------------------------
 
-% $Id
-% $Date
-% $Author
-% $Revision
-% $HeadURL
+% $Id:
+% $Date:
+% $Author:
+% $Revision:
+% $HeadURL:
  
 % OPT.name          = '';
 % [OPT, Set, Default] = setProperty(OPT, varargin{:}); 

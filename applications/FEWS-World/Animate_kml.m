@@ -8,7 +8,7 @@ function animate_kml(inFile, outFile, MapNames, begintime, timestep, timeunit)
 % inFile, non-animated kml file, containing several images
 % outFile: name of resulting animated kml
 % MapNames: specify a cell array of strings, indicating the mapnames, where
-% animation should occur. 
+% animation should occur.
 % begintime: a datevector [yyyy mm dd HH MM SS] or [yyyy mm dd], indicating the start date/time of the first image
 % timestep: it is assumed that all images are separated by the same timestep. Here a number should be given concurring with the unit given.
 % timeunit: unit of timesteps (can be 'year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond')
@@ -40,11 +40,11 @@ function animate_kml(inFile, outFile, MapNames, begintime, timestep, timeunit)
 %   USA
 %   --------------------------------------------------------------------
 
-% $Id
-% $Date
-% $Author
-% $Revision
-% $HeadURL
+% $Id:
+% $Date:
+% $Author:
+% $Revision:
+% $HeadURL:
 
 %% START PROCESSING
 % Open input kml-file for reading
@@ -58,7 +58,7 @@ endtime = addtodate(datenum(begintime),timestep,timeunit);
 MapNameCount = 1;
 CurrentMapName = MapNames{MapNameCount};
 while 1
-    
+
 	% Read until end of file
     line = fgetl(fid_in);
     if ~ischar(line)
