@@ -84,12 +84,20 @@ if type == 1
             
             if getDataFromDatabase
 
+                d = [];
                 datatypes = UCIT_getDatatypes;
                 ind       = find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names));
                 url       = datatypes.transect.urls{ind};
+                ldb       = datatypes.transect.ldbs{ind};
+                axis_settings = datatypes.transect.axes{ind};
+                
 
                 if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Lidar Data US')
                     url = url{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
+                    ldb = ldb{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
+                    axis_settings = axis_settings{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
+                    extra = datatypes.transect.extra{ind};
+                    extra = extra{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
                 end
                 
                 crossshore = nc_varget(url, 'cross_shore');
@@ -115,6 +123,7 @@ if type == 1
 
                     contours = nc_varget(url, 'contour'); % if you want all lidar data use UCIT_getLidarMetaData
                     d.area   = repmat({UCIT_getInfoFromPopup('TransectsArea')},length(areanames),1);
+                    d.extra  = extra;
 
                 end
 
@@ -124,6 +133,8 @@ if type == 1
                 d.soundingID   = soundingID;
                 d.transectID   = transectID;
                 d.year         = years;
+                d.ldb          = ldb;
+                d.axes         = axis_settings;
 
                 set(findobj('tag','UCIT_mainWin'),'UserData',d);
             else
@@ -164,46 +175,48 @@ elseif type == 2
          %% if getDataFromDatabase == true get the metadata and store it in the userdata of the UCIT console
             
             if getDataFromDatabase
-
+                d = [];
                 datatypes = UCIT_getDatatypes
                 ind       = find(strcmp(UCIT_getInfoFromPopup('GridsDatatype'),datatypes.grid.names))
-                url       = datatypes.grid.urls{ind};
                 
-                if     strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'     )
-                    datatype = 'jarkus'     ;
-                elseif strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen')
-                    datatype = 'vaklodingen';
-                else
-                    datatype = '';
-                end
+                url             = datatypes.grid.urls{ind};
+                d.ldb           = datatypes.grid.ldbs{ind};
+                d.axes          = datatypes.grid.axes{ind};
+                d.cellsize      =  datatypes.grid.cellsize{ind};
+                d.datatypeinfo  = UCIT_getInfoFromPopup('GridsDatatype');
+                
+%                 if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'     )
+%                     datatype = 'jarkus'     ;
+%                 elseif strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen')
+%                     datatype = 'vaklodingen';
+%                 else
+%                      datatype = '';
+%                 end
 
-                urls = rws_getFixedMapOutlines(datatype,'catalog',datatypes.grid.catalog{ind});
+                urls = rws_getFixedMapOutlines('','catalog',datatypes.grid.catalog{ind});  
                 
+                %% temporary workaround until catalogfile AHN fixed
+                if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'AHN100')
+                    temp_url = urls{1};urls = [];urls{1} = temp_url;
+                elseif strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'AHN250')
+                    temp_url = urls{2};urls = [];urls{1} = temp_url;
+                end
+                               
                 for i = 1:length(urls)
-% 
-%                     name = nc_varfind   (urls{i},'attributename','standard_name','attributevalue','projection_x_coordinate');
-%                     x    = nc_actual_range(urls{i}, name); 
-%                     name = nc_varfind   (urls{i},'attributename','standard_name','attributevalue','projection_y_coordinate');
-%                     y    = nc_actual_range(urls{i}, name);
-%                     if ischar(x)
-%                         x = str2num(x);
-%                         y = str2num(y);
-%                     end
-%                     contour(i,:) = [x y];
+                    
+                    name    = nc_varfind   (urls{i},'attributename','standard_name','attributevalue','projection_x_coordinate');
+                    x_range = nc_actual_range(urls{i}, name);
+                    name    = nc_varfind   (urls{i},'attributename','standard_name','attributevalue','projection_y_coordinate');
+                    y_range = nc_actual_range(urls{i}, name);
+ 
+                    if ischar(x_range),x_range = str2num(x_range);,end;
+                    if ischar(y_range),y_range = str2num(y_range);,end;
 
-                    x_range = nc_getvarinfo(urls{i}, 'x');
-                    y_range = nc_getvarinfo(urls{i}, 'y');
-                    x_range = str2num(x_range.Attribute(ismember({x_range.Attribute.Name}, 'actual_range')).Value); %#ok<*ST2NM>
-                    y_range = str2num(y_range.Attribute(ismember({y_range.Attribute.Name}, 'actual_range')).Value);
-
-                    contour(i,:) = [x_range y_range];
+                    d.contour(i,:) = [x_range y_range];
 
                 end
-                
-                d.datatypeinfo = UCIT_getInfoFromPopup('GridsDatatype');
-                d.contour      =  contour;
+
                 d.names        = urls;
-               
 
                 set(findobj('tag','UCIT_mainWin'),'UserData',d);
             else
