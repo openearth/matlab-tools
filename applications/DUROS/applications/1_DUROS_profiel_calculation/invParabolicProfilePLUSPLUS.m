@@ -1,4 +1,4 @@
-function dx = invParabolicProfile(WL_t,Hsig_t,Tp_t,w,z)
+function dx = invParabolicProfile2(WL_t,Hsig_t,Tp_t,w,z)
 %INVPARABOLICPROFILE  Calculates the exact x-position of a contour line for in the parabolic profile.
 %
 %   Based on the (inverse) formulation of a parabolic profile this function 
@@ -97,6 +97,12 @@ elseif strcmp(Plus,'-plusplus')
     %c_1 = c_1*(Hsig_t/d_t)^cp_c1;
     %c_2 = c_2*(Hsig_t/d_t)^cp_c2;
     two = c_1*sqrt(c_2); % term in formulation which is 2 by approximation for DUROS and D+; by using this expression, the profile will exactly cross (x0,0)
+    cp_d = 0;
+elseif strcmp(Plus,'-plusplus2') | strcmp(Plus,'-plusplus3') | strcmp(Plus,'-plusplus4') | strcmp(Plus,'-plusplus5')
+    two = c_1*sqrt(c_2); % term in formulation which is 2 by approximation for DUROS and D+; by using this expression, the profile will exactly cross (x0,0)
+    d_t = 25;
+    c_d = 25;
+    cp_d = 0;    %depthcmpt = 1
 else
     error('Warning: variable "Plus" should be either '''' or ''-plus'' or ''-plusplus''')
 end
