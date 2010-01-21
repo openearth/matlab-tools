@@ -122,6 +122,8 @@ function [curvatures radii relativeAngle distances] = jarkus_deriveCurvature(var
 
 %% settings
 
+error('DEPRECATED: please use jarkus_transects and jarkus_curvature !!!');
+
 OPT = struct( ...
     'url', jarkus_url, ...
     'method', 2, ...
@@ -317,7 +319,7 @@ relativeAngle(iisNaN) = 0;
 distances(iisGap) = mean(abs(distances(~iisGap & ~iisNaN)));
 distances(iisNaN) = mean(abs(distances(~iisGap & ~iisNaN)));
 
-error = [];
+err = [];
 circles = [];
 
 if OPT.verbose; waitbar(0, wb, 'Calculating curvatures'); end;
@@ -345,13 +347,13 @@ switch OPT.method
             
             radii(i) = R;
             curvatures(i) = 180/pi/R*1000;
-            error(i) = 180/pi/(R-rms)*1000-curvatures(i);
+            err(i) = 180/pi/(R-rms)*1000-curvatures(i);
             circles(i,:,:) = [center(1)+R*sin(d) ; center(2)+R*cos(d)]';
             
             if OPT.verbose; waitbar(i/length(jarkusTransectIDs), wb); end;
         end
         
-        error(isinf(error)|isnan(error)) = 0;
+        err(isinf(err)|isnan(err)) = 0;
         curvatures(isinf(curvatures)|isnan(curvatures)) = 0;
 end
 
@@ -374,12 +376,12 @@ if OPT.plot
     plot(s1,abs(relativeAngle),'-b'); plot(s1,[0 length(curvatures)],mean(abs(relativeAngle))*ones(1,2),'-r');
     plot(s2,abs(distances),'-b'); plot(s2,[0 length(curvatures)],mean(abs(distances))*ones(1,2),'-r');
     plot(s3,abs(curvatures),'-b'); plot(s3,[0 length(curvatures)],mean(abs(curvatures))*ones(1,2),'-r');
-    if ~isempty(error); plot(s3,abs(curvatures)+error,':b'); plot(s3,abs(curvatures)-error,':b'); end;
+    if ~isempty(err); plot(s3,abs(curvatures)+err,':b'); plot(s3,abs(curvatures)-err,':b'); end;
 
     % set plot settings
     set(s1,'YLim',[0 min(OPT.angleThreshold,max(relativeAngle))]); title(s1,'relative angle'); xlabel(s1,'jarkus nr [-]'); ylabel(s1,'angle [^o]');
     set(s2,'YLim',[0 min(OPT.distanceThreshold,max(distances))]); title(s2,'relative distance'); xlabel(s2,'jarkus nr [-]'); ylabel(s2,'distance [m]');
-    set(s3,'YLim',[0 min(180/pi/OPT.Rmin*1000,max(curvatures))]); title(s3,['curvature (error: ' num2str(mean(error)) ')']); xlabel(s3,'jarkus nr [-]'); ylabel(s3,'curvature [^o/km]');
+    set(s3,'YLim',[0 min(180/pi/OPT.Rmin*1000,max(curvatures))]); title(s3,['curvature (error: ' num2str(mean(err)) ')']); xlabel(s3,'jarkus nr [-]'); ylabel(s3,'curvature [^o/km]');
 
     % FIXME
     % indicate areacode borders

@@ -80,26 +80,30 @@ OPT = setProperty(OPT, varargin{:});
 % allocate result variable
 transects_decurved = transects;
 
-%% check jarkus data
+%% check
+
+if ~isstruct(transects)
+    error('Invalid transect structure given, see jarkus_transects for more information');
+end
 
 if ~isfield(transects, 'id')
-    error('transect ids are missing');
+    error(['Required property "id" not given']);
 end
 
 if ~isfield(transects, 'x')
-    error('x-coordinates are missing');
+    error(['Required property "x" not given']);
 end
 
 if ~isfield(transects, 'y')
-    error('y-coordinates are missing');
+    error(['Required property "y" not given']);
 end
 
 if ~isfield(transects, 'cross_shore')
-    error('cross-shore coordinates are missing');
+    error(['Required property "cross_shore" not given']);
 end
 
 if ~isfield(transects, 'altitude')
-    error('altitudes are missing');
+    error(['Required property "altitude" not given']);
 end
 
 %% align transects

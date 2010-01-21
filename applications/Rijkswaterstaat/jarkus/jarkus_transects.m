@@ -190,29 +190,6 @@ if isfield(FLTR, 'year')
     FLTR = rmfield(FLTR, 'year');
 end
 
-% if isfield(FLTR, 'areaname')
-%     if ~iscell(FLTR.areaname); FLTR.areaname = {FLTR.areaname}; end;
-%     
-%     a = jarkus_transects('output', {{'areacode' 'areaname'}});
-%     
-%     [areacodes n] = unique(a.areacode);
-%     areanames = char(a.areaname(n,:));
-%     
-%     for i = 1:length(FLTR.areaname)
-%         for j = 1:size(areanames,1)
-%             if strcmpi(strtrim(areanames(j,:)), FLTR.areaname{i})
-%                 if isfield(FLTR, 'areacode')
-%                     FLTR.areacode = [FLTR.areacode areacodes(j)];
-%                 else
-%                     FLTR.areacode = areacodes(j);
-%                 end
-%             end
-%         end
-%     end
-%     
-%     FLTR = rmfield(FLTR, 'areaname');
-% end
-
 % create dataset filters
 for i = datasetOrder'
     name = jInfo.Dataset(i).Name;
