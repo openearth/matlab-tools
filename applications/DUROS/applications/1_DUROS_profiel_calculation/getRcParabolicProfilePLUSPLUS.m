@@ -1,4 +1,4 @@
-function rcparab = getRcParabolicProfile(WL_t, Hsig_t, Tp_t, w, z)
+function rcparab = getRcParabolicProfile2(WL_t, Hsig_t, Tp_t, w, z)
 %GETRCPARABOLICPROFILE calculates the derivative of the parabolic profile given input and height
 %
 % This routine returns the derivative of the parabolic profile given the input
@@ -63,10 +63,13 @@ elseif strcmp(Plus,'-plus')
 %  -----------------------DUROS plusplus (for testing purposes only)--------------------------
 %  -------------------------------------------------------------------------------------------
 elseif strcmp(Plus,'-plusplus')
-    %including depth contribution into the 'constants' C1, C2 and 'two'
-    %c_1 = c_1*(Hsig_t/d_t)^cp_c1;
-    %c_2 = c_2*(Hsig_t/d_t)^cp_c2;
     two = c_1*sqrt(c_2);
+    cp_d = 0;
+elseif strcmp(Plus,'-plusplus2') | strcmp(Plus,'-plusplus3') | strcmp(Plus,'-plusplus4') | strcmp(Plus,'-plusplus5')
+    two = c_1*sqrt(c_2); % term in formulation which is 2 by approximation for DUROS and D+; by using this expression, the profile will exactly cross (x0,0)
+    d_t = 25;
+    c_d = 25;
+    cp_d = 0;    %depthcmpt = 1
 else
     error('Warning: variable "Plus" should be either '''' or ''-plus'' or ''-plusplus''')
 end
