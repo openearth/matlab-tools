@@ -3,7 +3,7 @@ function varargout = rws_kustvak(varargin)
 %
 %      Output = rws_kustvak(Input)
 %
-%   returns the 
+%   returns the
 %   - name of coastal area 'Kustvak' along the Dutch coast when input is code
 %   - code of coastal area 'Kustvak' along the Dutch coast when input is name
 %
@@ -30,7 +30,7 @@ function varargout = rws_kustvak(varargin)
 %   Copyright (C) 2009 Delft University of Technology
 %       C.(Kees) den Heijer
 %
-%       C.denHeijer@TUDelft.nl	
+%       C.denHeijer@TUDelft.nl
 %
 %       Faculty of Civil Engineering and Geosciences
 %       P.O. Box 5048
@@ -84,42 +84,33 @@ Areas = {
 
 %% show overview of areas including codes
 
-   if nargin == 0 && nargout == 0
-       fprintf(1, 'code  name\n')
-       for i = 1:length(Areas)
-           fprintf(1, '%2i    %s\n', i, Areas{i})
-       end
-   end
+if nargin == 0 && nargout == 0
+    fprintf(1, 'code  name\n')
+    for i = 1:length(Areas)
+        fprintf(1, '%2i    %s\n', i, Areas{i})
+    end
+end
 
 %% name <-> code
 
-   if nargin==1
-      nrs = varargin{1};
-      if isnumeric(nrs) % area code
-         for i = 1:length(nrs)
-             out{i} = Areas{nrs(i)}; % return area name
-         end
-         varargout = {out};
-      else % area name
-         for i = 1:length(nrs)
-            nr = find(strcmp(Areas, nrs{i}));
-            if ~isempty(nr)
-                out(i) = nr;
-            else
-               error(['input no. ',num2str(i),' is not valid kustvak name: ''',nrs{i},''''])
-            end;
-         end
-         varargout = {out}; % return area code  
-      end
-   else
-      for i = 1:nargin
-          if isnumeric(varargin{i}) % area code
-              varargout{i} = Areas{varargin{i}}; % return area name
-          elseif ischar(varargin{i}) % area name
-              varargout{i} = find(strcmp(Areas, varargin{i})); % return area code
-          end
-      end
-   end
+for i = 1:nargin
+    if iscell(varargin{i})
+        varargout{i} = feval(mfilename, varargin{i}{:});
+    elseif isnumeric(varargin{i})  % area code
+        if any(varargin{i} < 1 | varargin{i} > length(Areas))
+            error(sprintf('Area codes should be between 1 and %i', length(Areas)))
+        end
+        for j = 1:length(varargin{i})
+            varargout{i}{j} = Areas{varargin{i}(j)}; % return area name
+        end
+    elseif ischar(varargin{i}) % area name
+        areacode = find(strcmp(Areas, varargin{i})); % return area code
+        if isempty(areacode)
+            error(sprintf('"%s" is not a valid kustvak name', varargin{i}))
+        end
+        varargout{i} = areacode; % return area code
+    end
+end
 
 %% output
 
