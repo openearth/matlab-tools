@@ -62,36 +62,39 @@ D.S   = min(D.lat(:));
 D.W   = min(D.lon(:));
 D.E   = max(D.lon(:));
 
-OPT.basecode          = KML_fig2pngNew_SmallestTileThatContainsAllData(D);
-OPT.ha                =    gca; % handle to axes
-OPT.hf                =    gcf; % handle to figure
-OPT.dim               =    256; % tile size
-OPT.dimExt            =      8; % render tiles expanded by n pixels, to remove edge effects
-OPT.bgcolor           = [100 155 100];  % background color to be made transparent
-OPT.alpha             = 1;
-OPT.highestLevel      = length(OPT.basecode);
-OPT.lowestLevel       = OPT.highestLevel+4;
-OPT.fileName          =     [];
-OPT.kmlName           =     []; % name in Google Earth Place list
-OPT.url               =     ''; % webserver storaga needs absolute paths, local files can have relative paths. Only needed in mother KML.
-OPT.alpha             =      1;
-OPT.dim               =    256; % tile size
-OPT.dimExt            =     16; % render tiles expanded by n pixels, to remove edge effects
-OPT.minLod            =     []; % minimum level of detail to keep a tile in view. Is calculated when left blank.
-OPT.minLod0           =     -1; % minimum level of detail to keep most detailed tile in view. Default is -1 (don't hide when zoomed in a lot)
-OPT.maxLod            =     [];
-OPT.maxLod0           =     -1;
-OPT.dWE               =    0.2*360/2^OPT.lowestLevel; % determines how much extra data to tiles to be able 
-OPT.dNS               =    0.2*360/2^OPT.lowestLevel; % to generate them as fraction of size of smalles tile
-OPT.ha                =    gca; % handle to axes
-OPT.hf                =    gcf; % handle to figure
-OPT.timeIn            =     []; % time properties
-OPT.timeOut           =     [];
-OPT.drawOrder         =      1; 
-OPT.bgcolor           = [100 155 100];  % background color to be made transparent
-OPT.description       =     ''; 
-OPT.colorbar          =   true;
+OPT.basecode           = KML_fig2pngNew_SmallestTileThatContainsAllData(D);
+OPT.ha                 =    gca; % handle to axes
+OPT.hf                 =    gcf; % handle to figure
+OPT.dim                =    256; % tile size
+OPT.dimExt             =      8; % render tiles expanded by n pixels, to remove edge effects
+OPT.bgcolor            = [100 155 100];  % background color to be made transparent
+OPT.alpha              = 1;
+OPT.highestLevel       = length(OPT.basecode);
+OPT.lowestLevel        = OPT.highestLevel+4;
+OPT.fileName           =     [];
+OPT.kmlName            =     []; % name in Google Earth Place list
+OPT.url                =     ''; % webserver storaga needs absolute paths, local files can have relative paths. Only needed in mother KML.
+OPT.alpha              =      1;
+OPT.dim                =    256; % tile size
+OPT.dimExt             =     16; % render tiles expanded by n pixels, to remove edge effects
+OPT.minLod             =     []; % minimum level of detail to keep a tile in view. Is calculated when left blank.
+OPT.minLod0            =     -1; % minimum level of detail to keep most detailed tile in view. Default is -1 (don't hide when zoomed in a lot)
+OPT.maxLod             =     [];
+OPT.maxLod0            =     -1;
+OPT.dWE                =    0.2*360/2^OPT.lowestLevel; % determines how much extra data to tiles to be able 
+OPT.dNS                =    0.2*360/2^OPT.lowestLevel; % to generate them as fraction of size of smalles tile
+OPT.ha                 =    gca; % handle to axes
+OPT.hf                 =    gcf; % handle to figure
+OPT.timeIn             =     []; % time properties
+OPT.timeOut            =     [];
+OPT.drawOrder          =      1; 
+OPT.bgcolor            = [100 155 100];  % background color to be made transparent
+OPT.description        =     ''; 
+OPT.colorbar           =   true;
 OPT.mergeExistingTiles = false;
+OPT.printTiles         = true;
+OPT.mergeTiles         = true;
+OPT.makeKML            = true;
 
 if nargin==0
   return
@@ -169,15 +172,25 @@ set(OPT.hf,'PaperUnits', 'inches','PaperPosition',...
     'color',OPT.bgcolor/255,'InvertHardcopy','off');
 
 %% run scripts (These are the core functions)
+
 %   --------------------------------------------------------------------
 % Generates tiles at most detailed level
-KML_fig2pngNew_printTile(OPT.basecode,D,OPT)
+if OPT.printTiles
+    KML_fig2pngNew_printTile(OPT.basecode,D,OPT)
+end
+
 %   --------------------------------------------------------------------
 % Generates tiles other levels based on already created tiles (merging & resizing)
-KML_fig2pngNew_joinTiles(OPT)
+if OPT.mergeTiles
+    OPT.makeKML            = true;
+    KML_fig2pngNew_joinTiles(OPT)
+end
+
 %   --------------------------------------------------------------------
 % Generates KML based on png file names
-KML_fig2pngNew_makeKML(OPT)
+if OPT.makeKML
+    KML_fig2pngNew_makeKML(OPT)
+end
 %   --------------------------------------------------------------------
 %% and write the 'mother' KML
 if ~isempty(OPT.url)
@@ -193,7 +206,7 @@ output = sprintf([...
     '<Link><href>%s</href><viewRefreshMode>onRegion</viewRefreshMode></Link>'...                                     % link
     '</NetworkLink>'],...
     OPT.kmlName,OPT.timeSpan,...
-    fullfile(OPT.url, OPT.Path, OPT.Name, [OPT.Name '_' OPT.basecode '.kml']));
+    fullfile(OPT.url, OPT.Path, OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']));
 
 OPT.fid=fopen([OPT.fileName '.kml'],'w');
 OPT_header = struct(...

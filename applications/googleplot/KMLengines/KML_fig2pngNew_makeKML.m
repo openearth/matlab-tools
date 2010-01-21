@@ -1,7 +1,5 @@
 function KML_fig2pngNew_makeKML(OPT)
 
-
-
 OPT.timeSpan = '';
 
 for level = OPT.highestLevel:OPT.lowestLevel
