@@ -1,17 +1,21 @@
-function animate_kml(inFile, outFile, MapNames, begintime, timestep, timeunit)
+function KMLanimate(inFile, outFile, MapNames, begintime, timestep, timeunit)
+%KMLANIMATE   adapts kml existing file
 %
-%% Function description
+%   KMLanimate(inFile, outFile, MapNames, begintime, timestep, timeunit)
 %
-% This function opens a .kml (not kmz) file and inserts lines at the right spots to make it an animation instead of single images.
+% opens a .kml (not kmz) file and inserts lines at the right spots to make 
+% it an animation instead of single images.
 %
-% Input: (all inputs are compulsory)
-% inFile, non-animated kml file, containing several images
-% outFile: name of resulting animated kml
-% MapNames: specify a cell array of strings, indicating the mapnames, where
-% animation should occur.
+% Input:    (all inputs are compulsory)
+% inFile:    non-animated kml file, containing several images
+% outFile:   name of resulting animated kml
+% MapNames:  specify a cell array of strings, indicating the mapnames, where
+%            animation should occur.
 % begintime: a datevector [yyyy mm dd HH MM SS] or [yyyy mm dd], indicating the start date/time of the first image
-% timestep: it is assumed that all images are separated by the same timestep. Here a number should be given concurring with the unit given.
-% timeunit: unit of timesteps (can be 'year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond')
+% timestep:  it is assumed that all images are separated by the same timestep. Here a number should be given concurring with the unit given.
+% timeunit:  unit of timesteps (can be 'year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond')
+%
+%See also: googleplot
 
 %% OpenEarth general information
 %   --------------------------------------------------------------------

@@ -1,4 +1,4 @@
-% Test for plotting in google earth
+%fews_plot_test   Test for plotting in google earth
 
 % 
 lat = [0:100];

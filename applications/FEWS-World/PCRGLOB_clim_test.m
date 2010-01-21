@@ -1,8 +1,12 @@
+%PCRGLOB_CLIM_TEST   test for PCRGLOB_clim
+
 % function PCRGLOB_clim(lat_range, lon_range, var)
+
 lat_range = [0 30];
 lon_range = [0 60];
-nc_file = '';
-nryears = 20;
+nc_file   = '';
+nryears   = 20;
+
 % Bereken assen
 
 for t = 1:1
