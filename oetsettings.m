@@ -126,18 +126,32 @@ function oetsettings(varargin)
 %% NETCDF (if not present yet)
 %  (NB RESTOREDEFAULTPATH does not restore java paths)
 % -----------------------
-   java2add         = path2os(fullfile(oetroot, '/io/nctools', 'toolsUI-2.2.22.jar'));
-   dynjavaclasspath = path2os(javaclasspath);
-   indices          = strfind(dynjavaclasspath,java2add);
+vs = datenum(version('-date'));
+if (vs > datenum(2003,1,1)) 
     
-   if isempty(cell2mat(indices))
-      javaaddpath (java2add)
-   elseif ~(OPT.quiet)
-      disp(['Java path not added, already there: ',java2add]);
-      disp(' ');
-   end
-   setpref ('SNCTOOLS', 'USE_JAVA', true); % this requires SNCTOOLS 2.4.8 or better
+    java2add         = path2os(fullfile(oetroot, '/io/nctools', 'toolsUI-2.2.22.jar'));
+    dynjavaclasspath = path2os(javaclasspath);
+    indices          = strfind(dynjavaclasspath,java2add);
     
+    if isempty(cell2mat(indices))
+        javaaddpath (java2add)
+    elseif ~(OPT.quiet)
+        disp(['Java path not added, already there: ',java2add]);
+        disp(' ');
+    end
+    setpref ('SNCTOOLS', 'USE_JAVA', true); % this requires SNCTOOLS 2.4.8 or better
+    
+else
+    
+    if ~(OPT.quiet)
+        disp(' ');
+        disp('Java path not added, your version of matlab is too old.');
+        disp('Because of this the nctools will not work properly.');
+        disp(' ');
+    end
+    
+end
+
 %% Report
 % -----------------------
    if ~(OPT.quiet)
