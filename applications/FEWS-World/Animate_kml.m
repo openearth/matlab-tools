@@ -40,11 +40,11 @@ function animate_kml(inFile, outFile, MapNames, begintime, timestep, timeunit)
 %   USA
 %   --------------------------------------------------------------------
 
-% $Id:
-% $Date:
-% $Author:
-% $Revision:
-% $HeadURL:
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 %% START PROCESSING
 % Open input kml-file for reading
