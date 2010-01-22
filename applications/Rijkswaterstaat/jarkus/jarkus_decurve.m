@@ -82,28 +82,8 @@ transects_decurved = transects;
 
 %% check
 
-if ~isstruct(transects)
-    error('Invalid transect structure given, see jarkus_transects for more information');
-end
-
-if ~isfield(transects, 'id')
-    error(['Required property "id" not given']);
-end
-
-if ~isfield(transects, 'x')
-    error(['Required property "x" not given']);
-end
-
-if ~isfield(transects, 'y')
-    error(['Required property "y" not given']);
-end
-
-if ~isfield(transects, 'cross_shore')
-    error(['Required property "cross_shore" not given']);
-end
-
-if ~isfield(transects, 'altitude')
-    error(['Required property "altitude" not given']);
+if ~jarkus_check(transects, 'id', 'x', 'y', 'cross_shore', 'altitude')
+    error('Invalid jarkus transect structure');
 end
 
 %% align transects

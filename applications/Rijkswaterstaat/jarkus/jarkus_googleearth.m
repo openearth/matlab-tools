@@ -74,28 +74,8 @@ OPT = setProperty(OPT, varargin{:});
 
 %% check
 
-if ~isstruct(transects)
-    error('Invalid transect structure given, see jarkus_transects for more information');
-end
-
-if ~isfield(transects, 'id')
-    error(['Required property "id" not given']);
-end
-
-if ~isfield(transects, 'time')
-    error(['Required property "time" not given']);
-end
-
-if ~isfield(transects, 'lat')
-    error(['Required property "lat" not given']);
-end
-
-if ~isfield(transects, 'lon')
-    error(['Required property "lon" not given']);
-end
-
-if ~isfield(transects, 'altitude')
-    error(['Required property "altitude" not given']);
+if ~jarkus_check(transects, 'id', 'time', 'lat', 'lon', 'altitude')
+    error('Invalid jarkus transect structure');
 end
 
 %% interpolate nan's

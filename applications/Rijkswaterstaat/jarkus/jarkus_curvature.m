@@ -132,32 +132,8 @@ if OPT.verbose; wb = waitbar(0, 'Initializing'); end;
 
 %% check
 
-if ~isstruct(transects)
-    error('Invalid transect structure given, see jarkus_transects for more information');
-end
-
-if ~isfield(transects, 'id')
-    error(['Required property "id" not given']);
-end
-
-if ~isfield(transects, 'time')
-    error(['Required property "time" not given']);
-end
-
-if ~isfield(transects, 'x')
-    error(['Required property "x" not given']);
-end
-
-if ~isfield(transects, 'y')
-    error(['Required property "y" not given']);
-end
-
-if ~isfield(transects, 'cross_shore')
-    error(['Required property "cross_shore" not given']);
-end
-
-if ~isfield(transects, 'altitude')
-    error(['Required property "altitude" not given']);
+if ~jarkus_check(transects, 'id', 'time', 'x', 'y', 'cross_shore', 'altitude')
+    error('Invalid jarkus transect structure');
 end
 
 %% read transects

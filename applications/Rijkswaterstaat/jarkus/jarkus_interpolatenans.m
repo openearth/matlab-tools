@@ -77,26 +77,14 @@ OPT = setProperty(OPT, varargin{:});
 
 %% check
 
-if ~isstruct(transects)
-    error('Invalid transect structure given, see jarkus_transects for more information');
+if ~jarkus_check(transects, {OPT.prop OPT.dim}, OPT.interp)
+    error('Invalid jarkus transect structure');
 end
-
-if ~isfield(transects, OPT.prop)
-    error(['Required property "' OPT.prop '" not given']);
-end
-
-if ~isfield(transects, OPT.interp)
-    error(['Required property "' OPT.interp '" not given']);
-end
-
-dims = size(transects.(OPT.prop));
-if length(dims) < OPT.dim
-    error(['Invalid interpolation dimension given (' num2str(OPT.dim) '), only ' ...
-        num2str(length(dims)) ' dimensions available']);
-end
-dims(OPT.dim) = 1;
 
 %% interpolate
+
+dims = size(transects.(OPT.prop));
+dims(OPT.dim) = 1;
 
 n = prod(dims);
 for i = 1:n
