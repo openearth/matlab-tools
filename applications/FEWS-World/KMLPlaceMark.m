@@ -83,11 +83,32 @@ end
 
 fid = fopen(kmlName,'w');
 fprintf(fid,'%s\n','<Document>');
-for place = 1:length(lat)
-    fprintf(fid,'%s\n','<Placemark id="point">');
+    fprintf(fid,'%s\n','<Style id="sh_caution">');
     fprintf(fid,'%s\n','<IconStyle><scale>2.0</scale><Icon>');
     fprintf(fid,'%s\n',['  <href>' OPT.icon]);
     fprintf(fid,'%s\n','  </href></Icon></IconStyle>');
+    fprintf(fid,'%s\n','  <ListStyle>');
+	fprintf(fid,'%s\n','  </ListStyle>');
+    fprintf(fid,'%s\n','</Style>');
+    fprintf(fid,'%s\n','<Style id="sn_caution">');
+    fprintf(fid,'%s\n','<IconStyle><scale>1.4</scale><Icon>');
+    fprintf(fid,'%s\n',['  <href>' OPT.icon]);
+    fprintf(fid,'%s\n','  </href></Icon></IconStyle>');
+    fprintf(fid,'%s\n','  <ListStyle>');
+	fprintf(fid,'%s\n','  </ListStyle>');
+    fprintf(fid,'%s\n','</Style>');
+	fprintf(fid,'%s\n','<StyleMap id="msn_caution">');
+	fprintf(fid,'%s\n','	<Pair>');
+	fprintf(fid,'%s\n','		<key>normal</key>');
+	fprintf(fid,'%s\n','		<styleUrl>#sn_caution</styleUrl>');
+	fprintf(fid,'%s\n','	</Pair>');
+	fprintf(fid,'%s\n','	<Pair>');
+	fprintf(fid,'%s\n','        <key>highlight</key>');
+	fprintf(fid,'%s\n','		<styleUrl>#sh_caution</styleUrl>');
+	fprintf(fid,'%s\n','	</Pair>');
+	fprintf(fid,'%s\n','</StyleMap>');
+for place = 1:length(lat)
+    fprintf(fid,'%s\n','<Placemark id="point">');
     fprintf(fid,'%s\n','<name>');
     fprintf(fid,'%s\n',['  ' OPT.name{place}]);
     fprintf(fid,'%s\n','</name>');
@@ -97,8 +118,7 @@ for place = 1:length(lat)
     fprintf(fid,'%s\n','<description>');
     fprintf(fid,'%s\n',['  <![CDATA[' OPT.description{place} ']]>']);
     fprintf(fid,'%s\n','</description>');
-    fprintf(fid,'%s\n','<Style>');
-    fprintf(fid,'%s\n','</Style>');
+    fprintf(fid,'%s\n','<styleUrl>#msn_caution</styleUrl>');
     fprintf(fid,'%s\n',['<Point id="Marker_' num2str(place) '">']);
     fprintf(fid,'%s\n','<altitudeMode>relativeToGround</altitudeMode>');
     fprintf(fid,'%s\n','<tessellate>');
