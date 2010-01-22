@@ -1,7 +1,7 @@
-function PCRGLOB2KMLTimeSeriesClim(lats,lons,model,scenario,variable)
+function PCRGLOB2KMLTimeSeriesClim(lats,lons,model,scenario,var)
 %PCRGLOB2KMLTIMESERIESCLIM   time series of computed from PCR-GLOBWB climate scenarios
 %
-%   PCRGLOB2KMLTimeSeriesClim(lats,lons,model,scenario,variable)
+%   PCRGLOB2KMLTimeSeriesClim(lats,lons,model,scenario,var)
 %
 % General description
 % ==============================
@@ -10,7 +10,7 @@ function PCRGLOB2KMLTimeSeriesClim(lats,lons,model,scenario,variable)
 % are based on a certain climate model and scenarios, which the user can
 % specify. This script then provides climatologies of the current climate
 % (1971-1990) and of the future climate (2081-2100)
-% usage:    PCRGLOB2KMLTimeSeriesClim(lat,lon,model,scenario,variable)
+% usage:    PCRGLOB2KMLTimeSeriesClim(lat,lon,model,scenario,var)
 %
 % Inputs:
 % ==============================
@@ -23,14 +23,14 @@ function PCRGLOB2KMLTimeSeriesClim(lats,lons,model,scenario,variable)
 % scenario: Scenario computed: can be the following:
 %           'SRESA1B'
 %           'SRESA2'
-% variable: variable of interest: can be the following:
+% var:      variable of interest: can be the following:
 %           'EACT'    : actual evaporation (m/day)
 %           'ETP'     : potential evaporation (m/day)
 %           'QC'      : accumulated river discharge (m3/s)
 %
 % MATLAB will not give any outputs to the screen. The result will be a
 % KML-file located in a new folder, specified by
-% <model>_<scenario>_<variable>. Do not change the file structure within
+% <model>_<scenario>_<var>. Do not change the file structure within
 % this folder, it will render the kml unusable! You can however shift the
 % whole folder to other locations.
 %
@@ -77,7 +77,7 @@ function PCRGLOB2KMLTimeSeriesClim(lats,lons,model,scenario,variable)
 % Fix the location of nc-files. Can be either local or OpenDAP
 % (https://....);
 nc_location = 'F:\python\FEWSWorld';
-
+baseline = '20CM3';
 if max(lats) > 90 | min(lats) < -90 | max(lons) > 180 | min(lons) < -180
     disp('Latitude or longitude out range. Permitted range for longitudes is -180....180, permitted range for latitudes -90....90. Exiting...');
     return
@@ -87,20 +87,18 @@ if length(lats)~=length(lons)
     return
 end
 legendEntries = {'Current (1971-1990)';'Future (2081-2100)'};
-%ncFile{1} = [nc_location filesep scenario '_' model '_1971-1990.nc'];
-ncFile{1} = [nc_location filesep scenario '_' model '_2081-2100.nc'];
+ncFile{1} = [nc_location filesep baseline '_' model '_1971-1990.nc'];
+ncFile{2} = [nc_location filesep scenario '_' model '_2081-2100.nc'];
 col = {'k','r'};
 
-KMLName = [model '_' scenario '_' variable '.kml'];
-lats = [0 20];
-lons = [20 -10];
-Folder = [model '_' scenario '_' variable];
+KMLName = [model '_' scenario '_' var '.kml'];
+Folder = [model '_' scenario '_' var];
 if(isdir(Folder)==0)
     mkdir(Folder);
 end
 % Check for units:
 try
-    info = nc_getvarinfo(ncFile{1},variable);
+    info = nc_getvarinfo(ncFile{1},var);
     units = info.Attribute(1).Value;
     % Retrieve variables indicating extent of dimensions
     time = nc_varget(ncFile{1},'time');
@@ -136,7 +134,7 @@ for place = 1:length(lats)
     hold;
     for climperiod = 1:length(ncFile)
         try
-            time_series = nc_varget(ncFile{climperiod},variable,[0 latpos(place) lonpos(place)],[-1 1 1]);
+            time_series = nc_varget(ncFile{climperiod},var,[0 latpos(place) lonpos(place)],[-1 1 1]);
     % Read NetCDF according to Lineke's scripts
     % Choose correct time series and average over months
     %units = nc_varget....
@@ -144,7 +142,7 @@ for place = 1:length(lats)
             clim = reshape(time_series,12,length(time_series)/12);
             clim_series(:,climperiod) = mean(clim,2);
         catch
-            fprintf('%s\n%s\n%s\n%s\n%s\n','The variable of interest is not available. Variable can be:',...
+            fprintf('%s\n%s\n%s\n%s\n%s\n','The var of interest is not available. Variable can be:',...
                 ': ''EACT''',...
                 ': ''ETP''',...
                 ': QC''',...
@@ -155,16 +153,16 @@ for place = 1:length(lats)
     end
     datetick('x',3); % display months on x axis.
     xlabel('Time');
-    ylabel([variable ' [' units ']']);
+    ylabel([var ' [' units ']']);
     grid on;
-    title([variable 'model: ' model ' scenario: ' scenario ' Lat: ' num2str(lats(place)) ', Lon: ' num2str(lons(place))]);
+    title([var 'model: ' model ' scenario: ' scenario ' Lat: ' num2str(lats(place)) ', Lon: ' num2str(lons(place))]);
     legend(legendEntries(1:length(ncFile)));
     % Save the figure to .jpg format, in the end make sure the files are
     % saved in a separate folder, that indicates the chosen climate
     % scenario, variable, etc.
-    ImgName{place} = [model '_' scenario '_' variable '_clim' num2str(place) '.jpg'];
-    PlaceMarkText{place} = [variable 'Lat: ' num2str(lats(place)) ', Lon: ' num2str(lons(place)) '<img src="' ImgName{place} '">'];
-    Name{place} = [scenario ' ' variable ' ' num2str(place)];
+    ImgName{place} = [model '_' scenario '_' var '_clim' num2str(place) '.jpg'];
+    PlaceMarkText{place} = [var 'Lat: ' num2str(lats(place)) ', Lon: ' num2str(lons(place)) '<img src="' ImgName{place} ' " width=600>'];
+    Name{place} = [scenario ' ' var ' ' num2str(place)];
     print(h,'-djpeg',[Folder filesep ImgName{place}]);
     close(h);
 end
