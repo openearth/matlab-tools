@@ -64,7 +64,7 @@ function KMLPlaceMark(lat,lon,kmlName,varargin)
 OPT.name          = '';
 OPT.description   = '';
 OPT.Z             = zeros(size(lat));
-OPT.icon          = 'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
+OPT.icon          = 'http://maps.google.com/mapfiles/kml/shapes/caution.png';
 [OPT, Set, Default] = setProperty(OPT, varargin{:});
 if nargin<3
     disp('Minimal number of arguments is 3 (lat, lon, filename)');
@@ -85,9 +85,9 @@ fid = fopen(kmlName,'w');
 fprintf(fid,'%s\n','<Document>');
 for place = 1:length(lat)
     fprintf(fid,'%s\n','<Placemark id="point">');
-    fprintf(fid,'%s\n','<IconStyle><Icon><href>');
-    fprintf(fid,'%s\n',['  ' OPT.icon]);
-    fprintf(fid,'%s\n','</href></Icon></IconStyle>');
+    fprintf(fid,'%s\n','<IconStyle><scale>2.0</scale><Icon>');
+    fprintf(fid,'%s\n',['  <href>' OPT.icon]);
+    fprintf(fid,'%s\n','  </href></Icon></IconStyle>');
     fprintf(fid,'%s\n','<name>');
     fprintf(fid,'%s\n',['  ' OPT.name{place}]);
     fprintf(fid,'%s\n','</name>');
@@ -106,7 +106,7 @@ for place = 1:length(lat)
     fprintf(fid,'%s\n','</tessellate>');
     fprintf(fid,'%s\n','<extrude>0</extrude>');
     fprintf(fid,'%s\n','<coordinates>');
-    fprintf(fid,'%s\n',['  ' num2str(lat(place)) ',' num2str(lon(place)) ',' num2str(OPT.Z(place))]);
+    fprintf(fid,'%s\n',['  ' num2str(lon(place)) ',' num2str(lat(place)) ',' num2str(OPT.Z(place))]);
     fprintf(fid,'%s\n','</coordinates>');
     fprintf(fid,'%s\n','</Point>');
     fprintf(fid,'%s\n','</Placemark>');

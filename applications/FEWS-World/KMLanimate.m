@@ -77,7 +77,7 @@ while 1
     if ~isempty(stringyn)
 		% In the new kml-file, write a time span in between the original lines of the kml
         fprintf(fid_out,'%s\n','<TimeSpan>');
-        fprintf(fid_out,'\t%s\n',['<begin>' datestr(begintime,'yyyy-mm-ddTHH:MM:SSZ') '</begin>']);
+        fprintf(fid_out,'\t%s\n',['<begin>' datestr(datenum(begintime),'yyyy-mm-ddTHH:MM:SSZ') '</begin>']);
         fprintf(fid_out,'\t%s\n',['<end>' datestr(endtime,'yyyy-mm-ddTHH:MM:SSZ') '</end>']);
         fprintf(fid_out,'%s\n','</TimeSpan>');
         % Update the time beginning and end for the next image
