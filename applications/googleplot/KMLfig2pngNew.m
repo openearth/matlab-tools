@@ -87,13 +87,14 @@ OPT.ha                 =    gca; % handle to axes
 OPT.hf                 =    gcf; % handle to figure
 OPT.timeIn             =     []; % time properties
 OPT.timeOut            =     [];
+OPT.timeFormat        = 'yyyy-mm-ddTHH:MM:SS';
 OPT.drawOrder          =      1; 
 OPT.bgcolor            = [100 155 100];  % background color to be made transparent
 OPT.description        =     ''; 
 OPT.colorbar           =   true;
 OPT.mergeExistingTiles = false;
 OPT.printTiles         = true;
-OPT.mergeTiles         = true;
+OPT.joinTiles          = true;
 OPT.makeKML            = true;
 
 if nargin==0
@@ -158,7 +159,7 @@ if  ~isempty(OPT.timeIn)
             '<TimeStamp>\n'...
             '<when>%s</when>\n'...OPT.timeIn
             '</TimeStamp>\n'],...
-            datestr(OPT.timeIn,'yyyy-mm-ddTHH:MM:SS'));
+            datestr(OPT.timeIn,OPT.timeFormat));
     end
 else
     OPT.timeSpan ='';
@@ -181,9 +182,8 @@ end
 
 %   --------------------------------------------------------------------
 % Generates tiles other levels based on already created tiles (merging & resizing)
-if OPT.mergeTiles
-    OPT.makeKML            = true;
-    KML_fig2pngNew_joinTiles(OPT)
+if OPT.joinTiles
+   KML_fig2pngNew_joinTiles(OPT)
 end
 
 %   --------------------------------------------------------------------
@@ -193,42 +193,44 @@ if OPT.makeKML
 end
 %   --------------------------------------------------------------------
 %% and write the 'mother' KML
-if ~isempty(OPT.url)
-    if ~strcmpi(OPT.url(end),'/');
-        OPT.url = [OPT.url '\'];
+if OPT.makeKML
+    if ~isempty(OPT.url)
+        if ~strcmpi(OPT.url(end),'/');
+            OPT.url = [OPT.url '\'];
+        end
     end
+
+    output = sprintf([...
+        '<NetworkLink>'...
+        '<name>%s</name>'...                                                                                             % name
+        '%s'... %timespan                                                                                                          % time
+        '<Link><href>%s</href><viewRefreshMode>onRegion</viewRefreshMode></Link>'...                                     % link
+        '</NetworkLink>'],...
+        OPT.kmlName,OPT.timeSpan,...
+        fullfile(OPT.url, OPT.Path, OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']));
+
+    OPT.fid=fopen([OPT.fileName '.kml'],'w');
+    OPT_header = struct(...
+        'name',OPT.kmlName,...
+        'open',0,...
+        'description',OPT.description);
+
+    output = [KML_header(OPT_header) output];
+
+   %% COLORBAR
+
+    if OPT.colorbar
+        clrbarstring = KMLcolorbar('clim',clim,'fileName', [OPT.Name filesep OPT.fileName] ,'colorMap',colormap);
+        clrbarstring = strrep(clrbarstring,['<Icon><href>' OPT.fileName '_'],['<Icon><href>' OPT.Name filesep OPT.fileName '_']);
+        output = [output clrbarstring];
+    end
+
+    %% FOOTER
+
+    output = [output KML_footer];
+    fprintf(OPT.fid,'%s',output);
+
+    % close KML
+
+    fclose(OPT.fid);
 end
-
-output = sprintf([...
-    '<NetworkLink>'...
-    '<name>%s</name>'...                                                                                             % name
-    '%s'... %timespan                                                                                                          % time
-    '<Link><href>%s</href><viewRefreshMode>onRegion</viewRefreshMode></Link>'...                                     % link
-    '</NetworkLink>'],...
-    OPT.kmlName,OPT.timeSpan,...
-    fullfile(OPT.url, OPT.Path, OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']));
-
-OPT.fid=fopen([OPT.fileName '.kml'],'w');
-OPT_header = struct(...
-    'name',OPT.kmlName,...
-    'open',0,...
-    'description',OPT.description);
-
-output = [KML_header(OPT_header) output];
-
-%% COLORBAR
-
-if OPT.colorbar
-    clrbarstring = KMLcolorbar('clim',clim,'fileName', [OPT.Name filesep OPT.fileName] ,'colorMap',colormap);
-    clrbarstring = strrep(clrbarstring,['<Icon><href>' OPT.fileName '_'],['<Icon><href>' OPT.Name filesep OPT.fileName '_']);
-    output = [output clrbarstring];
-end
-
-%% FOOTER
-
-output = [output KML_footer];
-fprintf(OPT.fid,'%s',output);
-
-% close KML
-
-fclose(OPT.fid);
