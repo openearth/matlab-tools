@@ -1,4 +1,4 @@
-function PCRGLOB2KMLTimeSeriesClim(lats,lons,model,scenario,var)
+function PCRGLOB2KMLTimeSeriesClim(lats,lons,model,scenario,var,varargin)
 %PCRGLOB2KMLTIMESERIESCLIM   time series of computed from PCR-GLOBWB climate scenarios
 %
 %   PCRGLOB2KMLTimeSeriesClim(lats,lons,model,scenario,var)
@@ -27,7 +27,9 @@ function PCRGLOB2KMLTimeSeriesClim(lats,lons,model,scenario,var)
 %           'EACT'    : actual evaporation (m/day)
 %           'ETP'     : potential evaporation (m/day)
 %           'QC'      : accumulated river discharge (m3/s)
-%
+% Optional inputs:
+% ============================
+% OPT.Description:  cell array with strings, with additional description of each location
 % MATLAB will not give any outputs to the screen. The result will be a
 % KML-file located in a new folder, specified by
 % <model>_<scenario>_<var>. Do not change the file structure within
@@ -76,6 +78,10 @@ function PCRGLOB2KMLTimeSeriesClim(lats,lons,model,scenario,var)
 
 % Fix the location of nc-files. Can be either local or OpenDAP
 % (https://....);
+
+OPT.description   = '';
+[OPT, Set, Default] = setProperty(OPT, varargin{:});
+
 nc_location = 'F:\python\FEWSWorld';
 baseline = '20CM3';
 if max(lats) > 90 | min(lats) < -90 | max(lons) > 180 | min(lons) < -180
@@ -155,13 +161,13 @@ for place = 1:length(lats)
     xlabel('Time');
     ylabel([var ' [' units ']']);
     grid on;
-    title([var 'model: ' model ' scenario: ' scenario ' Lat: ' num2str(lats(place)) ', Lon: ' num2str(lons(place))]);
+    title(['variable: ' var '; model: ' model '; scenario: ' scenario ' at ' OPT.description{place} '; Lat: ' num2str(lats(place)) ', Lon: ' num2str(lons(place))]);
     legend(legendEntries(1:length(ncFile)));
     % Save the figure to .jpg format, in the end make sure the files are
     % saved in a separate folder, that indicates the chosen climate
     % scenario, variable, etc.
     ImgName{place} = [model '_' scenario '_' var '_clim' num2str(place) '.jpg'];
-    PlaceMarkText{place} = [var 'Lat: ' num2str(lats(place)) ', Lon: ' num2str(lons(place)) '<img src="' ImgName{place} ' " width=600>'];
+    PlaceMarkText{place} = [var ' at ' OPT.description{place} '; Lat: ' num2str(lats(place)) ', Lon: ' num2str(lons(place)) '<img src="' ImgName{place} ' " width=600>'];
     Name{place} = [scenario ' ' var ' ' num2str(place)];
     print(h,'-djpeg',[Folder filesep ImgName{place}]);
     close(h);
