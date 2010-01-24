@@ -58,6 +58,7 @@ for addCode = ['0','1','2','3']
                     im   = im(OPT.dimExt+1:OPT.dimExt+OPT.dim,OPT.dimExt+1:OPT.dimExt+OPT.dim,:);
                     mask = bsxfun(@eq,im,reshape(OPT.bgcolor,1,1,3));
                     mask = repmat(all(mask,3),[1 1 3]);
+                    im(mask) = 0;
                     
                     % merge data from different tiles
                     if mergeExistingTiles

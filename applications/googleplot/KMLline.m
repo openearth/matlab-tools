@@ -309,9 +309,9 @@ fclose(OPT.fid);
 
 %% compress to kmz?
 if strcmpi  ( OPT.fileName(end),'z')
-    movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
+    movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'],'f')
     zip     ( OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
-    movefile([OPT.fileName '.zip'],OPT.fileName)
+    movefile([OPT.fileName '.zip'],OPT.fileName,'f')
     delete  ([OPT.fileName(1:end-3) 'kml'])
 end
 
