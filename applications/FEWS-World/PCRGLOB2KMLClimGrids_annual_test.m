@@ -110,11 +110,11 @@ lat_range = [latmin latmax];
 lon_range = [lonmin lonmax];
 
 %Get data
-info = nc_getvarinfo(nc_file,var);
+info = nc_getvarinfo(nc_file{1},var);
 units = info.Attribute(1).Value;
-lat = nc_varget(nc_file,'latitude');
-lon = nc_varget(nc_file,'longitude');
-time = nc_varget(nc_file,'time');
+lat = nc_varget(nc_file{1},'latitude');
+lon = nc_varget(nc_file{1},'longitude');
+time = nc_varget(nc_file{1},'time');
 nryears = floor(info.Size(1)/12);
 
 %Get rows for chosen latitudes and longitudes
@@ -134,6 +134,7 @@ lon2 = linspace(lon(startlon),lon(endlon),nrcols);
 
 % Calculate axes and create images
 [loni,lati] = meshgrid(lon2,lat2);
+nrofyears = 20;
 out_raster = zeros(nrrows,nrcols,nrofyears);
 % count number of pixels for quality
 nrofpix = length(loni(:));
@@ -155,10 +156,10 @@ climavg(:,:,climperiod) = mean(out_raster,3);
 end
 
 % interpolate values from 1970-1991 average to 2080-2100 average (5 year intervals)
+interval  = 5; %years
 nrofsteps = (2090-1980)/interval+1;
-timestep  = 5 %years
 
-deriv=(((climavg(:,:,2))-(climavg(:,:,1)))/(((2090-1980)/timestep)+1));
+deriv=(((climavg(:,:,2))-(climavg(:,:,1)))/(((2090-1980)/interval)+1));
 
 % % determine minimum value and maximum value to fix plot
 % maxval = max(max(max(out_raster)));
