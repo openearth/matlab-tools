@@ -1,4 +1,4 @@
-function PCRGLOB2KMLClimGrids(lat_range, lon_range, model, scenario, var)
+function PCRGLOB2KMLClimGrids_annual_test(lat_range, lon_range, model, scenario, var)
 %PCRGLOB2KMLClimGrids   climatology grids computed from PCR-GLOBWB climate scenarios
 %
 %   PCRGLOB2KMLClimGrids(lat_range,lon_range,model,scenario,var)
@@ -80,7 +80,7 @@ function PCRGLOB2KMLClimGrids(lat_range, lon_range, model, scenario, var)
 % note HCW 22-01-2010: ncLocation will soon be changed to OpenDAP!!
 % (https://....);
 % model = CCSR-MIROC32med
-ncLocation = 'f:\raw_data';
+ncLocation = ('f:\raw_data');
 
 try
     if strcmp(scenario,'SRESA1B') | strcmp(scenario,'SRESA2')
