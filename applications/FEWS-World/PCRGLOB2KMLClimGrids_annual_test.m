@@ -80,7 +80,8 @@ function PCRGLOB2KMLClimGrids(lat_range, lon_range, model, scenario, var)
 % note HCW 22-01-2010: ncLocation will soon be changed to OpenDAP!!
 % (https://....);
 % model = CCSR-MIROC32med
-ncLocation = 'f:\python\FEWSWorld';
+ncLocation = 'f:\raw_data';
+
 try
     if strcmp(scenario,'SRESA1B') | strcmp(scenario,'SRESA2')
         period = '2081-2100';
@@ -91,12 +92,14 @@ catch
     disp(['Scenario ''' scenario ''' is not available. Exiting....']);
 end
 % Build the filename from all provided information
-nc_file = [ncLocation filesep scenario '_' model '_' period '.nc'];
+nc_file{1} = [nc_location filesep baseline '_' model '_1971-1990.nc'];
+nc_file{2} = [nc_location filesep scenario '_' model '_2081-2100.nc'];
 kmlFolder = [scenario '_' model '_' period '_' var];
 % if target directory does not exist, create the directory
 if isdir(kmlFolder)==0
     mkdir(kmlFolder)
 end
+
 latmin=max(min(lat_range),-90);
 latmax=min(max(lat_range),90);
 lonmin=max(min(lon_range),-180);
@@ -136,33 +139,36 @@ nrofpix = length(loni(:));
 
 % generate average of variable (1971-1990 and 2080-2100)
 %nc_file for 1971-1990:
-climavg = zeros(nrrows,nrcols,length(ncFile));
-%for climperiod = 1:length(ncFile)....
+climavg = zeros(nrrows,nrcols,length(nc_file));
+
+for climperiod = 1:length(nc_file)
 for y = 1:nrofyears 
     rasters = zeros(nrrows,nrcols,12);
     for t = 1:12
-        rasters(:,:,t) = nc_varget(ncFile{climperiod},var,[(t-1)+(y-1)*12 startlat-1 startlon-1],[1 nrrows nrcols]);
+        rasters(:,:,t) = nc_varget(nc_file{climperiod},var,[(t-1)+(y-1)*12 startlat-1 startlon-1],[1 nrrows nrcols]);
     end
     out_raster(:,:,y) = mean(rasters,3);
     %[loni,lati];
 end
 climavg(:,:,climperiod) = mean(out_raster,3);
-% end....
+end
 
 % interpolate values from 1970-1991 average to 2080-2100 average (5 year intervals)
-nrofsteps = (2090-1980)/5+1;
-deriv=(((climavg(:,:,2))-(climavg(:,:,1)))/(((2090-1980)/5)+1));
+nrofsteps = (2090-1980)/interval+1;
+timestep  = 5 %years
+
+deriv=(((climavg(:,:,2))-(climavg(:,:,1)))/(((2090-1980)/timestep)+1));
 
 % % determine minimum value and maximum value to fix plot
 % maxval = max(max(max(out_raster)));
 % minval = min(min(min(out_raster)));
 out_raster = climavg(:,:,1);
-% Now plot the climatology in KML
+% Now plot the interpolation in KML
 for t = 1:nrofsteps
     currdir = pwd;
     cd(kmlFolder);
-    kmlName{t} = [scenario '_' model '_interpolation_' datestr([1980+5*(t-1) 1 1 0 0 0],'yyyy') '.kml'];
-    mapName{t} = [scenario '_' model '_interpolation_' datestr([1980+5*(t-1) 1 1 0 0 0],'yyyy')];
+    kmlName{t} = [scenario '_' model '_interpolation_' datestr([1980+timestep*(t-1) 1 1 0 0 0],'yyyy') '.kml'];
+    mapName{t} = [scenario '_' model '_interpolation_' datestr([1980+timestep*(t-1) 1 1 0 0 0],'yyyy')];
     h=pcolorcorcen(loni,lati,out_raster);
     % fix color axis
     caxis([0 round(maxval*10000)/10000]);
