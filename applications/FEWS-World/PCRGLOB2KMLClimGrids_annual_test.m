@@ -80,7 +80,8 @@ function PCRGLOB2KMLClimGrids_annual_test(lat_range, lon_range, model, scenario,
 % note HCW 22-01-2010: ncLocation will soon be changed to OpenDAP!!
 % (https://....);
 % model = CCSR-MIROC32med
-ncLocation = ('f:\raw_data');
+nc_location = ('f:\raw_data');
+baseline = '20CM3';
 
 try
     if strcmp(scenario,'SRESA1B') | strcmp(scenario,'SRESA2')
