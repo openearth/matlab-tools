@@ -169,8 +169,8 @@ out_raster = climavg(:,:,1);
 for t = 1:nrofsteps
     currdir = pwd;
     cd(kmlFolder);
-    kmlName{t} = [scenario '_' model '_interpolation_' datestr([1980+timestep*(t-1) 1 1 0 0 0],'yyyy') '.kml'];
-    mapName{t} = [scenario '_' model '_interpolation_' datestr([1980+timestep*(t-1) 1 1 0 0 0],'yyyy')];
+    kmlName{t} = [scenario '_' model '_interpolation_' datestr([1980+interval*(t-1) 1 1 0 0 0],'yyyy') '.kml'];
+    mapName{t} = [scenario '_' model '_interpolation_' datestr([1980+interval*(t-1) 1 1 0 0 0],'yyyy')];
     h=pcolorcorcen(loni,lati,out_raster);
     % fix color axis
     caxis([0 round(maxval*10000)/10000]);
