@@ -80,6 +80,8 @@ function PCRGLOB2KMLClimGrids(lat_range, lon_range, model, scenario, var)
 % note HCW 22-01-2010: ncLocation will soon be changed to OpenDAP!!
 % (https://....);
 ncLocation = 'f:\python\FEWSWorld';
+% Any value > thres is assumed to be wrong! these values are removed
+thres = 1e7;
 try
     if strcmp(scenario,'SRESA1B') | strcmp(scenario,'SRESA2')
         period = '2081-2100';
@@ -141,6 +143,9 @@ for t = 1:12
     out_raster(:,:,t) = mean(rasters,3);
     %[loni,lati];
 end
+% remove incorrect values
+ii = find(out_raster > thres)
+out_raster(ii) = NaN;
 % determine minimum value and maximum value to fix plot
 maxval = max(max(max(out_raster)));
 minval = min(min(min(out_raster)));
@@ -151,8 +156,9 @@ for t = 1:12
     kmlName{t} = [scenario '_' model '_clim_' datestr([2000 t 1 0 0 0],'mmm') '.kml'];
     mapName{t} = [scenario '_' model '_clim_' datestr([2000 t 1 0 0 0],'mmm')];
     h=pcolorcorcen(loni,lati,out_raster(:,:,t));
+    colormap([var 'map']);
     % fix color axis
-    caxis([0 round(maxval*7000)/10000]);
+    caxis([0 round(maxval*10000)/10000]);
     colorbarwithtitle(units);
     KMLfig2png(h,'fileName',kmlName{t},'levels',[0 0],'dim',min(round(nrofpix/20),1024));
     close all
