@@ -78,7 +78,7 @@ function PCRGLOB2KMLTimeSeriesClim(lats,lons,model,scenario,var,varargin)
 
 % Fix the location of nc-files. Can be either local or OpenDAP
 % (https://....);
-
+% model = CCSR-MIROC32med
 OPT.description   = '';
 [OPT, Set, Default] = setProperty(OPT, varargin{:});
 
