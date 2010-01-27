@@ -162,8 +162,8 @@ nrofsteps = (2090-1980)/interval+1;
 deriv=(((climavg(:,:,2))-(climavg(:,:,1)))/(((2090-1980)/interval)+1));
 
 % % determine minimum value and maximum value to fix plot
-% maxval = max(max(max(out_raster)));
-% minval = min(min(min(out_raster)));
+maxval = max(max(max(out_raster)));
+minval = min(min(min(out_raster)));
 out_raster = climavg(:,:,1);
 % Now plot the interpolation in KML
 for t = 1:nrofsteps
@@ -173,7 +173,7 @@ for t = 1:nrofsteps
     mapName{t} = [scenario '_' model '_interpolation_' datestr([1980+interval*(t-1) 1 1 0 0 0],'yyyy')];
     h=pcolorcorcen(loni,lati,out_raster);
     % fix color axis
-    caxis([0 round(maxval*10000)/10000]);
+    %caxis([0 round(maxval*10000)/10000]);
     colorbarwithtitle(units);
     KMLfig2png(h,'fileName',kmlName{t},'levels',[0 0],'dim',min(round(nrofpix/20),1024));
     close all
