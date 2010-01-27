@@ -93,7 +93,7 @@ catch
 end
 % Build the filename from all provided information
 nc_file = [ncLocation filesep scenario '_' model '_' period '.nc'];
-kmlFolder = [scenario '_' model '_' period '_' var];
+kmlFolder = [scenario '_' model '_' period '_' var '_clim'];
 % if target directory does not exist, create the directory
 if isdir(kmlFolder)==0
     mkdir(kmlFolder)

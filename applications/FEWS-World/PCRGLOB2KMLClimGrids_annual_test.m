@@ -95,7 +95,7 @@ end
 % Build the filename from all provided information
 nc_file{1} = [nc_location filesep baseline '_' model '_1971-1990.nc'];
 nc_file{2} = [nc_location filesep scenario '_' model '_2081-2100.nc'];
-kmlFolder = [scenario '_' model '_' period '_' var];
+kmlFolder = [scenario '_' model '_' period '_' var '_annual_interpolated'];
 % if target directory does not exist, create the directory
 if isdir(kmlFolder)==0
     mkdir(kmlFolder)
@@ -172,8 +172,9 @@ for t = 1:nrofsteps
     kmlName{t} = [scenario '_' model '_interpolation_' datestr([1980+interval*(t-1) 1 1 0 0 0],'yyyy') '.kml'];
     mapName{t} = [scenario '_' model '_interpolation_' datestr([1980+interval*(t-1) 1 1 0 0 0],'yyyy')];
     h=pcolorcorcen(loni,lati,out_raster);
+    colormap([var 'map']);
     % fix color axis
-    %caxis([0 round(maxval*10000)/10000]);
+    caxis([0 round(maxval*10000)/10000]);
     colorbarwithtitle(units);
     KMLfig2png(h,'fileName',kmlName{t},'levels',[0 0],'dim',min(round(nrofpix/20),1024));
     close all
