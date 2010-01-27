@@ -5,8 +5,10 @@ function remcount = remcount(x,y)
 %
 % remcount = rem(x-1,y)+1;
 %
-% Useful together with divmcount to determine
-% position in a rectangular grid.
+% Useful together with divcount to determine
+% position in a rectangular grid,.
+%
+%  Example where x=1:12, y=3
 %
 %  x         1  2  3  4  5  6  7  8  9 10 11 12
 %
@@ -18,7 +20,12 @@ function remcount = remcount(x,y)
 %  div       0  0  1  1  1  2  2  2  3  3  3  4
 %  divcount  1  1  1  2  2  2  3  3  3  4  4  4 
 %
-% SEE ALSO: REM, MOD, DIV, DIVCOUNT
+%  Similar to use of [i,j]=ind2sub([y inf],x)
+%
+%  i         1  2  3  1  2  3  1  2  3  1  2  3 ~ remcount
+%  j         1  1  1  2  2  2  3  3  3  4  4  4 ~ divcount
+%
+% SEE ALSO: REM, MOD, DIV, DIVCOUNT, IND2SUB
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology

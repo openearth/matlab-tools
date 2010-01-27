@@ -1,5 +1,5 @@
 function divcount = divcount(x,y)
-%DIVCOUNT   Number of times y fits into x
+%DIVCOUNT  Number of times y fits into x
 %
 % divcount = divcount(x,y)
 %
@@ -7,6 +7,8 @@ function divcount = divcount(x,y)
 %
 % Useful together with remcount to determine
 % position in a rectangular grid.
+%
+%  Example where x=1:12, y=3
 %
 %  x         1  2  3  4  5  6  7  8  9 10 11 12
 %
@@ -18,7 +20,12 @@ function divcount = divcount(x,y)
 %  div       0  0  1  1  1  2  2  2  3  3  3  4
 %  divcount  1  1  1  2  2  2  3  3  3  4  4  4 
 %
-% SEE ALSO: REM, MOD, DIV, REMCOUNT
+%  Similar to use of [i,j]=ind2sub([y inf],x)
+%
+%  i         1  2  3  1  2  3  1  2  3  1  2  3 ~ remcount
+%  j         1  1  1  2  2  2  3  3  3  4  4  4 ~ divcount
+%
+% SEE ALSO: REM, MOD, DIV, REMCOUNT, IND2SUB
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
