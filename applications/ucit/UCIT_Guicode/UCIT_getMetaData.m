@@ -62,6 +62,9 @@ if type == 1
             try % to find metadata
                 d = get(findobj('tag','UCIT_mainWin'),'Userdata');
             end
+            
+            % set areaname
+            if strcmp(UCIT_getInfoFromPopup('TransectsArea'),'Oregon'),areaid = 'Oregon';elseif strcmp(UCIT_getInfoFromPopup('TransectsArea'),'Washington');areaid = 'Washington';end
 
             % if no data was on UCIT console yet (or if it is the wrong data) reload from database
             if ~isempty(d) % Check to see if some data is available in d ...
@@ -70,7 +73,7 @@ if type == 1
                 % values in the gui the data will not have to be collected again
                 if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Jarkus Data') &&  ~strcmp(d.datatypeinfo(1), UCIT_getInfoFromPopup('TransectsDatatype')) || ...
                    strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Lidar Data US') && (~strcmp(d.datatypeinfo(1), UCIT_getInfoFromPopup('TransectsDatatype')) || ...
-                                                                                           ~strcmp(d.area(1)        , UCIT_getInfoFromPopup('TransectsArea')))
+                                                                                           ~strcmp(areaid        , UCIT_getInfoFromPopup('TransectsArea')))
 
                     % ... if there is not a match the data will have to be collected again
                     disp('data needs to be collected from database again ... please wait!')
