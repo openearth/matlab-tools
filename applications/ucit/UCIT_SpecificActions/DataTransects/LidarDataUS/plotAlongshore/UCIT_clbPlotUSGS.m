@@ -75,7 +75,7 @@ end
 
 % define parameters for figures and legends
 USGSParameters      = {'Significant wave height','Peak wave period','Wave length (L0)','Shoreline position','Shoreline change','Beach slope','Bias','Mean High Water Level'};
-USGSParametersshort = {'H_s','T_p','L_0','Shoreline','Shoreline change since 1930','\beta','Bias','Z_m_h_w'};
+USGSParametersshort = {'H_s','T_p','L_0','Shoreline Position','Shoreline change since 1930','\beta','Bias','Z_m_h_w'};
 selecteditems       = get(findobj('Tag','Input'),'Value');
 
 lat = get(findobj('tag','lattitude'),'value');
@@ -157,27 +157,39 @@ else
         if str2num(parameter) == 4
             plot(x,y,'color','b','linewidth',2);hold on;
             plot(x,y2,'color','r','linewidth',2);
+            if flipaxis
+               set(gca,'xdir','reverse');
+            end
             legend('Shoreline 2002','Shoreline 1930');
         elseif str2num(parameter) == 5
-            id = a:b;
-            stack_width = 0.25;
-            for j = 1:length(id);
-                if lat==0
-                    x1 = [x(j)-stack_width;x(j)+stack_width;x(j)+stack_width;x(j)-stack_width];
-                else
-                    x1 = [x(j)-stack_width/5000;x(j)+stack_width/5000;x(j)+stack_width/5000;x(j)-stack_width/5000];
-                end
-                y1 = [0;0;shoreline_change(j);shoreline_change(j)];
-                if shoreline_change(j) > 0
-                    patch(x1,y1,'g');
-                else
-                    patch(x1,y1,'r');
-                end
-            end
+            % plot shoreline change
+            % afarris@usgs.gov 2010feb03 changed the way the plot looks
+            plot(x,y)
+            hold on
+            ax=axis;
+            plot([ax(1) ax(2)],[0 0],'k')
+%             id = a:b;
+%             stack_width = 0.25;
+%             for j = 1:length(id);
+%                 if lat==0
+%                     x1 = [x(j)-stack_width;x(j)+stack_width;x(j)+stack_width;x(j)-stack_width];
+%                 else
+%                     x1 = [x(j)-stack_width/5000;x(j)+stack_width/5000;x(j)+stack_width/5000;x(j)-stack_width/5000];
+%                 end
+%                 y1 = [0;0;shoreline_change(j);shoreline_change(j)];
+%                 if shoreline_change(j) > 0
+%                     patch(x1,y1,'g');
+%                 else
+%                     patch(x1,y1,'r');
+%                 end
+%             end
         else
             plot(x,y,'color','b','linewidth',2);
         end
         
+        if flipaxis
+           set(gca,'xdir','reverse');
+        end
         grid on;box on;
         title([]);
         font=12-length(selecteditems);
@@ -205,9 +217,9 @@ else
         results(counter).y = y;
         clear x y
     end
-    if flipaxis
-        set(gca,'xdir','reverse');
-    end
+    % afarris@usgs.gov 2010Feb02 moved the code that flips the axis.
+    % (the old version only reversed the axis of one plot and it messed up
+    % the legend)  The axis are fliped earlier in the code (f necessary).
     
     set(findobj('tag','par'), 'visible', 'on');    
     figure(findobj('tag','par'))
