@@ -1,4 +1,4 @@
-function KMLfig2pngNew (h,lat,lon,z,varargin)
+function OPT = KMLfig2pngNew (h,lat,lon,z,varargin)
 % KMLFIG2PNG   makes a tiled png figure for google earth
 %
 %   h = surf(lon,lat,z)
@@ -153,7 +153,7 @@ if  ~isempty(OPT.timeIn)
             '<begin>%s</begin>\n'...OPT.timeIn
             '<end>%s</end>\n'...OPT.timeOut
             '</TimeSpan>\n'],...
-            datestr(OPT.timeIn,'yyyy-mm-ddTHH:MM:SS'),datestr(OPT.timeOut,'yyyy-mm-ddTHH:MM:SS'));
+            datestr(OPT.timeIn,OPT.timeFormat),datestr(OPT.timeOut,OPT.timeFormat));
     else
         OPT.timeSpan = sprintf([...
             '<TimeStamp>\n'...
