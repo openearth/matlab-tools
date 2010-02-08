@@ -381,7 +381,14 @@ if status >= 0
          %% Characters
          %% ----------------------------------
    
-         elseif ischar(datastruct(idim).(fldname))
+         elseif ischar   (datastruct(idim).(fldname)) | ...
+                iscellstr(datastruct(idim).(fldname))
+             
+             if     ischar   (datastruct(idim).(fldname))
+                str =      datastruct(idim).(fldname);
+             elseif iscellstr(datastruct(idim).(fldname))
+                str = char(datastruct(idim).(fldname));
+             end
          
             if OPT.debug
                disp(['ischar(datastruct(idim).(fldname)): ',fldname])
@@ -389,16 +396,16 @@ if status >= 0
             end
          
             if (OPT.save_1Dchar_array_as_sds) & ...
-               (min(size(datastruct(idim).(fldname)))==1)
-               status = hdfvsave_char2sdsatr  (file_id,file_name,VGROUP_ID_PARENT,fldname,datastruct(idim).(fldname));
+               (min(size(str))==1)
+               status = hdfvsave_char2sdsatr  (file_id,file_name,VGROUP_ID_PARENT,fldnamestr);
                disp(['Saved char field ''',fldname,''' as SDS atr, cannot be attached to a Vgroup'])
             else
-               status = hdfvsave_matrix2vdata (file_id,datastruct(idim).(fldname),fldname,VGROUP_ID_PARENT);
+               status = hdfvsave_matrix2vdata (file_id,str,fldname,VGROUP_ID_PARENT);
               %disp(['Saved char field ''',fldname,''' as VData'])
             end
     
             if status == -1
-    	    error('HDF sdsetattr failed')
+    	         error('HDF sdsetattr failed')
             end
     
          %% Logicals
@@ -428,7 +435,8 @@ if status >= 0
          %% Cells
          %% ----------------------------------
    
-         elseif iscell(datastruct(idim).(fldname))
+         elseif    iscell(datastruct(idim).(fldname)) & ...
+               ~iscellstr(datastruct(idim).(fldname))
          
             disp(['Warning: Cell field ''',fldname,''' not saved, as there is no data class for that in HDF library'])
     
