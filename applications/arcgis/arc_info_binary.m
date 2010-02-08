@@ -1,5 +1,5 @@
 function varargout = arc_info_binary(varargin)
-%ARC_INFO_BINARY  read arc/info binary grid format
+%ARC_INFO_BINARY  read arc/info binary grid format (BETA!!!)
 %
 %        D    = arc_info_binary(name)
 %   [X,Y,D]   = arc_info_binary(name)
@@ -130,7 +130,7 @@ function varargout = arc_info_binary(varargin)
 %% keywords
 
    OPT.base        = [];
-   OPT.debug       = 1; % display some info
+   OPT.debug       = 1; % display some info (2 displays every integer run)
    OPT.plot        = 1;
    OPT.export      = 1;
    OPT.vc          = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc'; % vector coastline
@@ -294,51 +294,159 @@ function varargout = arc_info_binary(varargin)
    D.RMin         = 0*D.TileSize;
    end
    
-   if OPT.debug
-      D
-   end
+   %if OPT.debug
+   %   D
+   %end
 
 %% RTileType/RTileData
 %
-% Each tile contains HBlockXSize * HBlockYSize pixels of data. For floating
-% point blocks The data is just the tile size (in two bytes) followed by 
-% the pixel data as 4 byte MSB order IEEE floating point words. For all 
-% integer tiles it is necessary to interpret the RTileType to establish the
-% details of the tile organization: 
+% Each tile contains HBlockXSize * HBlockYSize pixels of data:%
+%
+% * D.HCellType==1: For all integer tiles it is necessary to  
+%                   interpret the RTileType to establish the
+%                   details of the tile organization: 
+% * D.HCellType==2: For floating point blocks The data is just the 
+%                   tile size (in two bytes) followed by the pixel 
+%                   data as 4 byte MSB order IEEE floating point words.
 
    for t=1:D.nTiles
       
                        fseek(fid,D.TileOffset(t)*2,'bof'   ); % TileOffset is in 2 byte short, fseeks wants it in bytes
-      D.RTileSize(t) = fread(fid,                1,'uint16');
-      
-   if D.HCellType==1
-      D.RTileType(t)=  fread(fid,  1,'uint8' );
-      D.RMinSize(t) =  fread(fid,  1,'uint8' );
-      D.RMin(t)     =  fread(fid,  1,'uint8' );
-     %RTileData      = fread(fid,D.TileSize  (t)/2,'?' ); % TileSize in 2 byte words / 2 =  TileSize in 4 byte words
-      
-      if OPT.debug
-      disp(num2str([t ],'%d '));
-      end
-      
-      if t==D.nTiles
-      fprintf(2,'error: arc_info_binary: integer data not yet implemented, only floats are implemented: no data read, only pointers.\n')
-      end
-
-   else
-      
-      RTileData      = fread(fid,D.TileSize  (t)/2,'float' ); % TileSize in 2 byte words / 2 =  TileSize in 4 byte words
-      RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]);
-      RTileData(RTileData==OPT.nodatavalue)=nan;
+      D.RTileSize(t) = fread(fid,                1,'uint16'); % RTileSize is defined in 2 byte words, which is exactly the uint16 we have here
       
       [i,j]=ind2sub([D.HTilesPerRow D.HTilesPerColumn],t);
       dim1 = (j -1)*D.HTileYSize+1:j*D.HTileYSize;
       dim2 = (i -1)*D.HTileXSize+1:i*D.HTileXSize;
       
+   if D.HCellType==1
+      D.RTileType(t)=  fread(fid,             1,'uint8' ); % 1 byte
+      D.RMinSize(t) =  fread(fid,             1,'uint8' ); % 1 byte
+      fmt = ['int',num2str(8*D.RMinSize(t))];              % (RMinSize bytes), 1 byte =int8
+      if ~D.RMinSize(t)==0
+      D.RMin(t)     =  fread(fid,             1,fmt); % int160 not possible
+      end
+      
+      if t==D.nTiles
+      fprintf(2,'error: arc_info_binary: integer data not yet implemented, only floats are implemented: no data read, only pointers.\n')
+      end
+      
       if OPT.debug
-      disp(num2str([t i j dim1([1 end]) dim2([1 end])],'%d '));
+      disp([dec2hex(D.RTileType(t)),': ',num2str([t i j dim1([1 end]) dim2([1 end])],'%d ')]);
       end
 
+      %% RTileType = 0x00 (constant block)
+      %  All pixels take the value of the RMin. Data is ignored. It appears there is sometimes a bit of meaningless data (up to four bytes) in the block.
+      if     D.RTileType(t)==hex2dec('00')
+
+        %RTileData= repmat(D.RMin(t)     ,[D.HTileXSize D.HTileYSize]);
+         RTileData= repmat(nan           ,[D.HTileXSize D.HTileYSize]);
+         
+      %% RTileType = 0x08 (raw byte data)
+      %  One full tiles worth of data pixel values (one byte per pixel) follows the RMin field.
+      elseif D.RTileType(t)==hex2dec('08')
+
+        %n = (D.RTileSize(t)*2)-3-D.RMinSize(t) % error in GDAL ?: 3 should be 2 
+         n = (D.RTileSize(t)*2)-2-D.RMinSize(t); % TileSize in 2 byte words * 2 =  TileSize in 1 byte words
+         RTileData      = fread(fid,n,'uint8' );
+         RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
+         
+     %% RTileType = 0xD7 (literal runs/nodata runs)
+     %  The data is organized in a series of runs. Each run starts with a marker which should be interpreted as:
+     %    * Marker < 128: The marker is followed by Marker pixels of literal data with one byte per pixel.
+     %    * Marker > 127: The marker indicates that 256-Marker pixels of no data pixels should be 
+     %                    put into the output stream. No data (other than the next marker) follows this marker.          
+      elseif D.RTileType(t)==hex2dec('D7')
+      
+         bytes_read = 0;
+         RTileData  = [];
+         run        = 0;
+         markersize = 1; % does the marker add to RTileSize?
+         n          = D.HTileXSize*D.HTileYSize;
+      
+         while bytes_read < D.RTileSize(t)*2
+
+               marker     = fread(fid,     1,'uint8' );
+            if marker     < 128
+               stream     = fread(fid,marker,'uint8' );
+               bytes_read = bytes_read + markersize + marker;
+            elseif marker > 127
+               bytes_read = bytes_read + markersize;
+               stream     = nan(256-marker,1);
+            end
+            
+            RTileData     = [RTileData(:)' stream(:)']';
+            run           = run + 1;
+
+            if OPT.debug > 1
+            disp(['D7:',num2str([t run length(stream) length(RTileData) bytes_read D.RTileSize(t) n],'%0.4d ')])
+            end
+
+         end
+         
+         %if length(RTileData) > n
+         %   disp(['n_read n_required last_marker ( > 127 is NaNs):',num2str([length(RTileData ) n marker])])
+         %end
+         
+         %% chop data exceeding tilesize ??
+         RTileData = RTileData(1:n);
+         RTileData = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);         
+
+      elseif D.RTileType(t)==hex2dec('DF')
+      
+         bytes_read = 0;
+         RTileData  = [];
+         run        = 0;
+         markersize = 1; % does the marker add to RTileSize?
+         n          = D.HTileXSize*D.HTileYSize;
+      
+         while bytes_read < D.RTileSize(t)*2
+
+               marker     = fread(fid,     1,'uint8' );
+            if marker     < 128
+               stream     = fread(fid,marker,'uint8' );
+               stream     = zeros(marker,1);
+               bytes_read = bytes_read + markersize;% + marker;
+            elseif marker > 127
+               bytes_read = bytes_read + markersize;
+               stream     = nan(256-marker,1);
+            end
+            
+            RTileData     = [RTileData(:)' stream(:)']';
+            run           = run + 1;
+
+            if OPT.debug > 1
+            disp(['DF:',num2str([t run length(stream) length(RTileData) bytes_read D.RTileSize(t) n],'%0.4d ')])
+            end
+
+         end
+         
+         %if length(RTileData) > n
+         %   disp(['n_read n_required last_marker ( > 127 is NaNs):',num2str([length(RTileData ) n marker])])
+         %end
+         
+         %% chop data exceeding tilesize ??
+         RTileData = RTileData(1:n);
+         RTileData = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);         
+         
+      else
+         
+         RTileData= repmat(Inf           ,[D.HTileXSize D.HTileYSize]);
+         fprintf(2,['error: arc_info_binary: integer data type ''',dec2hex(D.RTileType(t)),''' not yet implemented, inserted Inf.\n'])
+         
+      end
+
+     Data(dim1,dim2) = RTileData';
+
+   else
+      
+      if OPT.debug
+      disp(['float: ',num2str([t i j dim1([1 end]) dim2([1 end])],'%d ')]);
+      end      
+      
+      RTileData      = fread(fid,D.TileSize  (t)/2,'float' ); % TileSize in 2 byte words / 2 =  TileSize in 4 byte words
+      RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]);
+      RTileData(RTileData==OPT.nodatavalue)=nan;
+      
       Data(dim1,dim2) = RTileData';
 
    end
@@ -376,10 +484,10 @@ function varargout = arc_info_binary(varargin)
       %%
       if OPT.export
          if ~isempty(OPT.clim)
-         print2a4([OPT.base,'w001001.png'])
+         print2a4overwrite([OPT.base,'w001001.png'])
          caxis([OPT.clim]);
          colorbarwithtitle([mktex(OPT.long_name),' [',OPT.units,']']);
-         print2a4([OPT.base,'w001001_',num2str(OPT.clim(1)),'_',num2str(OPT.clim(2)),'.png'])
+         print2a4overwrite([OPT.base,'w001001_',num2str(OPT.clim(1)),'_',num2str(OPT.clim(2)),'.png'])
          end
       end
    end
