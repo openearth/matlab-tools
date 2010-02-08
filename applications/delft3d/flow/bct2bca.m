@@ -75,6 +75,22 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
 %
 %  It is also to possible to call with all the <keyword,value> pairs as struct fields:
 %  bct2bca(bctfile,bcafile,bndfile,struct)
+% 
+% Example:
+%
+% H.components  = {'K1','P1','O1','M2','N2','S2','K2','M4','MS4'};
+% H.infername   = {'P1'   ;'K2'};
+% H.inferfrom   = {'K1'   ;'S2'};
+% H.infamp      = [ 0.320 ; 0.291 ];
+% H.infphase    = [-4.25  ; 0.0   ];
+% H.latitude    = 22.5; % eps; %52;
+% H.plot        = 0;
+% H.pause       = 0;
+% H.output      = 'none';
+% H.residue     = [];
+% H.prediction  = [];
+% H.A0          = 1;
+% bct2bca('test.bct', 'test.bca','bca.bnd', H);
 %
 % See also: BCT2BCA, DELFT3D_NAME2T_TIDE, T_TIDE_NAME2DELFT3D,
 %           TIME2DATENUM, BCT2BCH,
