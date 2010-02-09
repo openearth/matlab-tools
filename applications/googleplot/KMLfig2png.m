@@ -94,83 +94,94 @@ OPT.h               =      h; % handle to input figure
 
 %% set maxLod and minLod defaults
 
-if isempty(OPT.minLod),                 OPT.minLod =   OPT.dim/1.5; end
-if isempty(OPT.maxLod)&&OPT.alpha  < 1, OPT.maxLod = 2*OPT.dim/1.5; end % you see 1 layers always
-if isempty(OPT.maxLod)&&OPT.alpha == 1, OPT.maxLod = 4*OPT.dim/1.5; end % you see 2 layers, except when fully zoomed in
+   if isempty(OPT.minLod),                 OPT.minLod =   OPT.dim/1.5; end
+   if isempty(OPT.maxLod)&&OPT.alpha  < 1, OPT.maxLod = 2*OPT.dim/1.5; end % you see 1 layers always
+   if isempty(OPT.maxLod)&&OPT.alpha == 1, OPT.maxLod = 4*OPT.dim/1.5; end % you see 2 layers, except when fully zoomed in
 
 %% filename
 % gui for filename, if not set yet
-if isempty(OPT.fileName)
-    [OPT.Name, OPT.Path] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','renderedPNG.kml');
-    OPT.fileName = fullfile(OPT.Path,OPT.Name);
-else
-    [OPT.Path OPT.Name] = fileparts(OPT.fileName);
-end
 
-% set kmlName if it is not set yet
-[OPT.Path OPT.Name] = fileparts(OPT.fileName);
-if isempty(OPT.kmlName)
-    OPT.kmlName = OPT.Name;
-end
+   if isempty(OPT.fileName)
+       [OPT.Name, OPT.Path] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','renderedPNG.kml');
+       OPT.fileName = fullfile(OPT.Path,OPT.Name);
+   else
+       [OPT.Path OPT.Name] = fileparts(OPT.fileName);
+   end
 
-% make a folder for the sub files
-if ~isempty(OPT.Path)
-    mkdir(OPT.Path,OPT.Name)
-end
+%% set kmlName if it is not set yet
+
+   [OPT.Path OPT.Name] = fileparts(OPT.fileName);
+   if isempty(OPT.kmlName)
+       OPT.kmlName = OPT.Name;
+   end
+
+%% make a folder for the sub files
+
+   if ~isempty(OPT.Path)
+       mkdir(OPT.Path,OPT.Name)
+   end
 
 %% prepare figure
-axis off;axis tight;view(0,90);
-bgcolor = OPT.bgcolor;
-set(OPT.ha,'Position',[0 0 1 1])
 
-% get bounding coordinates
-c.NS =get(OPT.ha,'YLim');
-c.WE =get(OPT.ha,'XLim');
-c.N = max(c.NS); c.S = min(c.NS);
-c.W = min(c.WE); c.E = max(c.WE);
+   axis off;axis tight;view(0,90);
+   bgcolor = OPT.bgcolor;
+   set(OPT.ha,'Position',[0 0 1 1])
 
-% store original size data for height deformations
-OPT.c0 = c;
+%% get bounding coordinates
+
+   c.NS =get(OPT.ha,'YLim');
+   c.WE =get(OPT.ha,'XLim');
+   c.N = max(c.NS); c.S = min(c.NS);
+   c.W = min(c.WE); c.E = max(c.WE);
+
+%% store original size data for height deformations
+
+   OPT.c0 = c;
+
+%
 
 % set light 
-if OPT.scaleableLight
-    OPT.light.h = lightangle(OPT.light.az,OPT.light.dist);
-end
 
-% get data from figure
-G.lon = get(h,'XData');
-G.lat = get(h,'YData');
-G.z   = get(h,'ZData');
+   if OPT.scaleableLight
+      OPT.light.h = lightangle(OPT.light.az,OPT.light.dist);
+   end
+
+%% get data from figure
+
+   G.lon = get(h,'XData');
+   G.lat = get(h,'YData');
+   G.z   = get(h,'ZData');
 
 %% preproces timespan
 %  http://code.google.com/apis/kml/documentation/kmlreference.html#timespan
 
-if  ~isempty(OPT.timeIn)
-    if ~isempty(OPT.timeOut)
-        OPT.timeSpan = sprintf([...
-            '<TimeSpan>\n'...
-            '<begin>%s</begin>\n'...OPT.timeIn
-            '<end>%s</end>\n'...OPT.timeOut
-            '</TimeSpan>\n'],...
-            datestr(OPT.timeIn,'yyyy-mm-ddTHH:MM:SS'),datestr(OPT.timeOut,'yyyy-mm-ddTHH:MM:SS'));
-    else
-        OPT.timeSpan = sprintf([...
-            '<TimeStamp>\n'...
-            '<when>%s</when>\n'...OPT.timeIn
-            '</TimeStamp>\n'],...
-            datestr(OPT.timeIn,'yyyy-mm-ddTHH:MM:SS'));
-    end
-else
-    OPT.timeSpan ='';
-end
+   if  ~isempty(OPT.timeIn)
+       if ~isempty(OPT.timeOut)
+           OPT.timeSpan = sprintf([...
+               '<TimeSpan>\n'...
+               '<begin>%s</begin>\n'... % OPT.timeIn
+               '<end>%s</end>\n'...     % OPT.timeOut
+               '</TimeSpan>\n'],...
+               datestr(OPT.timeIn,'yyyy-mm-ddTHH:MM:SS'),...
+               datestr(OPT.timeOut,'yyyy-mm-ddTHH:MM:SS'));
+       else
+           OPT.timeSpan = sprintf([...
+               '<TimeStamp>\n'...
+               '<when>%s</when>\n'...   % OPT.timeIn
+               '</TimeStamp>\n'],...
+               datestr(OPT.timeIn,'yyyy-mm-ddTHH:MM:SS'));
+       end
+   else
+       OPT.timeSpan ='';
+   end
 
 %% do the magic
 
-kml_id = 0;
-level = OPT.levels(1);
-if OPT.levels(1) == OPT.levels(2),OPT.maxLod = OPT.maxLod0;else OPT.maxLod = OPT.maxLod; end
-
-[succes, kml_id] = KML_region_png(level,G,c,kml_id,OPT);
+   kml_id = 0;
+   level = OPT.levels(1);
+   if OPT.levels(1) == OPT.levels(2),OPT.maxLod = OPT.maxLod0;else OPT.maxLod = OPT.maxLod; end
+   
+   [succes, kml_id] = KML_region_png(level,G,c,kml_id,OPT);
 
 %% make the 'mother' kml content
 

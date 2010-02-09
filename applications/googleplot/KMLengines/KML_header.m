@@ -13,8 +13,8 @@ function [output] = KML_header(varargin)
 %   * lat         specify camera viewpoint
 %   * z           specify camera viewpoint
 %
-%   * timeIn      specify timespan of timeslider
-%   * timeOut     specify timespan of timeslider
+%   * timeIn      specify timespan of timeslider (datenum or yyyy-mm-ddTHH:MM:SS)
+%   * timeOut     specify timespan of timeslider (datenum or yyyy-mm-ddTHH:MM:SS)
 %
 % See also: KML_footer, KML_line, KML_poly, KML_style, KML_stylePoly,
 % KML_text, KML_upload
@@ -68,6 +68,13 @@ function [output] = KML_header(varargin)
 
 %% timespan slider
 
+   if isnumeric(OPT.timeIn)
+      OPT.timeIn = datestr(OPT.timeIn ,'yyyy-mm-ddTHH:MM:SS');
+   end
+   if isnumeric(OPT.timeOut)
+      OPT.timeOut = datestr(OPT.timeOut,'yyyy-mm-ddTHH:MM:SS');
+   end
+
    if ~(isempty(OPT.timeIn) | isempty(OPT.timeOut))
       timespan = sprintf([...
               '   <TimeSpan>\n'...
@@ -88,7 +95,7 @@ function [output] = KML_header(varargin)
       '  <latitude>%g</latitude>\n'...
       '  <altitude>%g</altitude>\n'...
       '%s'...
-      '</Camera>\n'],OPT.lon,OPT.lat,OPT.z,timespan);
+      '</Camera>\n'],OPT.lon,OPT.lat,OPT.z,timespan); % timespan only works when also coordinates are supplied
    else
       camera = '';
    end

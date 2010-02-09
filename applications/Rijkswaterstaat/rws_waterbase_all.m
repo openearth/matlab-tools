@@ -25,7 +25,7 @@ subdirs = {'concentration_of_chlorophyll_in_sea_water',...
            'sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment',...
            'water_volume_transport_into_sea_water_from_rivers'};
 
-for ii=9 %1:length(subdirs)   
+for ii= 1:length(subdirs)   
        
       subdir            = subdirs{ii};
       OPT.directory_nc  = [locbase,         '\opendap\rijkswaterstaat\waterbase\'      ,filesep,subdir];
@@ -70,7 +70,12 @@ for ii=9 %1:length(subdirs)
       OPT2.iconnormalState    = 'http://maps.google.com/mapfiles/kml/shapes/placemark_square.png';
       OPT2.iconhighlightState = 'http://www.rijkswaterstaat.nl/images/favicon.ico';
       
-      [OPT.directory_nc,'.xls']
+      % camera
+
+      OPT2.lon = 1;
+      OPT2.lat = 54;
+      OPT2.z   = 100e4;
+
       nc_cf_stationtimeseries2kmloverview([OPT.directory_nc,'.xls'],OPT2);
       
 end
