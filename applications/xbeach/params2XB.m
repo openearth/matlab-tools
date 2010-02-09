@@ -63,6 +63,8 @@ if isvector(varargin)
     OPT = setProperty(OPT, 'filename', varargin{end});
 end
 
+pathstr = fileparts(OPT.filename);
+
 %%
 if exist(OPT.filename, 'file')
     % read file
@@ -119,7 +121,28 @@ if exist(OPT.filename, 'file')
     end
     % create XB-structure using PropertyName-propertyValue pairs as
     % specified in file
-    varargout = {CreateEmptyXBeachVar(Inputargs{:}, 'empty'),Inputargs};
+    XB = CreateEmptyXBeachVar(Inputargs{:}, 'empty');
+    % read depfile if available
+    depfile = fullfile(pathstr, XB.settings.Grid.depfile);
+    depfileExists = exist(depfile, 'file');
+    if depfileExists
+        XB.Input.zInitial = load(depfile);
+    end
+    if XB.settings.Grid.vardx
+        % read depfile if available
+        xfile = fullfile(pathstr, XB.settings.Grid.xfile);
+        xfileExists = exist(xfile, 'file');
+        if xfileExists
+            XB.Input.xInitial = load(xfile);
+        end
+        % read depfile if available
+        yfile = fullfile(pathstr, XB.settings.Grid.yfile);
+        yfileExists = exist(yfile, 'file');
+        if yfileExists
+            XB.Input.yInitial = load(yfile);
+        end
+    end
+    varargout = {XB Inputargs};
 else
     warning('PARAMS2XB:FileNotFound', ['File ' OPT.filename ' not found.'])
 end
