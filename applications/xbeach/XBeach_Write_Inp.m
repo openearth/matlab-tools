@@ -136,6 +136,10 @@ if XB.settings.Grid.vardx
 else
     xgrid = (0:1:XB.settings.Grid.nx)*XB.settings.Grid.dx+XB.settings.Grid.xori;
     ygrid = (0:1:XB.settings.Grid.ny)*XB.settings.Grid.dy+XB.settings.Grid.yori;
+    
+    if isempty(XB.Input.xInitial)
+        XB.Input.xInitial = xgrid;
+    end
 
     % Initial bottom (specific for delta flume)
     if max(xgrid)>max(XB.Input.xInitial)
@@ -248,7 +252,7 @@ if ~isempty(XB.settings.Waves.Hrms) && ~isempty(XB.settings.Waves.Tm01)
             case 'PM'
                 fpeak= 1/WaveCond(iwavbound,3);
                 Ef   = g^2*(2*pi)^-4*f.^-5.*exp(-5/4*(f./fpeak).^-4);
-                Hm0t= 4*sqrt(nansum1(Ef*df));
+                Hm0t= 4*sqrt(nansum(Ef*df));
                 Ef   = WaveCond(iwavbound,2)^2/Hm0t^2*Ef;
             case 'DP01'
                 % read from file
