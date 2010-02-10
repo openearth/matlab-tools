@@ -1,5 +1,0 @@
-run('D:\checkouts\VO-tools\trunk\matlab\vosettings.m')
-fprintf(1, '\n\n\n\n\n\nPresent working directory\n');
-fprintf(1, '%s\n\n', pwd);
-addpath(pwd)
-fprintf(1, 'Type "doc volt" for a description of volt.\n\n')
