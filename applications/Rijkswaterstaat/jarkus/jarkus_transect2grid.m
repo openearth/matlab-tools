@@ -22,9 +22,9 @@ function [grid] = jarkus_transect2grid(transectStruct)
 
  %% find areacodes per id corresponding names
     
-    uniqueTransectStruct       =              transectStruct(uniqueIdArray);
-    sortedUniqueTransectStruct =        uniqueTransectStruct(sortedIdArray);
-    grid.areaCode              = [sortedUniqueTransectStruct.areaCode];
+    uniqueTransectStruct       =                   transectStruct(uniqueIdArray);
+    sortedUniqueTransectStruct =             uniqueTransectStruct(sortedIdArray);
+    grid.areaCode              =      [sortedUniqueTransectStruct.areaCode];
     grid.areaName              = char({sortedUniqueTransectStruct.areaName});
     grid.alongshoreCoordinate  =      [sortedUniqueTransectStruct.alongshoreCoordinate];
     
@@ -36,7 +36,7 @@ function [grid] = jarkus_transect2grid(transectStruct)
     
     minCrossShoreCoordinate    = min(cellfun(@min, {transectStruct.crossShoreCoordinate}));
     maxCrossShoreCoordinate    = max(cellfun(@max, {transectStruct.crossShoreCoordinate}));
-    grid.crossShoreCoordinate  = minCrossShoreCoordinate:5:maxCrossShoreCoordinate;
+    grid.crossShoreCoordinate  = minCrossShoreCoordinate:5:maxCrossShoreCoordinate; % what is the 5 doing here !
     
  %% display result
     

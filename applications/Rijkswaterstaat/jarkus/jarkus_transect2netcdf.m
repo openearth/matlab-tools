@@ -25,17 +25,17 @@ function transect = mergetransects(transects)
     % create sorting columns, most precise data at the end
     col1 = arrayfun(@(x) (-max(x.crossShoreCoordinate)), transects); % most landward maximum seaward last
     col2 = arrayfun(@(x) (x.timeBathy), transects); % latest dates at the end
-    col3 = arrayfun(@(x) (x.timeTopo), transects); % latest dates at the end
-    col4 = arrayfun(@(x) (x.n), transects); % largest at the end
+    col3 = arrayfun(@(x) (x.timeTopo),  transects); % latest dates at the end
+    col4 = arrayfun(@(x) (x.n),         transects); % largest at the end
     
-    [a, ia] = sortrows([col1;col2;col3;col4]);
-    transect=transects(1);
-    newX    = sort(unique([transects.crossShoreCoordinate]));
-    newH    = zeros(size(newX)) * NaN;
+    [a, ia]   = sortrows([col1;col2;col3;col4]);
+    transect  = transects(1);
+    newX      = sort(unique([transects.crossShoreCoordinate]));
+    newH      = zeros(size(newX)) * NaN;
     newOrigin = zeros(size(newX)) * NaN;
     for k = 1 : length(transects)
-        [c, ia, ib] = intersect(newX , transects(k).crossShoreCoordinate); % find ids transect k
-        newH(ia)    = transects(k).altitude(ib);
+        [c, ia, ib]   = intersect(newX , transects(k).crossShoreCoordinate); % find ids transect k
+        newH(ia)      = transects(k).altitude(ib);
         newOrigin(ia) = transects(k).origin(ib);
     end
     transect.crossShoreCoordinate = newX; % assign new grid
@@ -61,12 +61,12 @@ for i = 1 : length(yearArray)
     %block to store to netcdf. Storing more data at once is faster. But
     %it will require more memory.
     transectsForYearStruct = transectStruct([transectStruct.time] == year);
-    altitudeBlock = repmat(missing, length(transectIdArray), length(crossShoreCoordinateArray));
-    originBlock = repmat(nan, length(transectIdArray), length(crossShoreCoordinateArray)); % use nan for missing here (only a short)
-    minCrossBlock = repmat(nan, size(transectIdArray)); % defaults to nan
-    maxCrossBlock = repmat(nan, size(transectIdArray)); % defaults to nan
-    timeTopoBlock = repmat(nan, size(transectIdArray)); % write 1 per transect
-    timeBathyBlock = repmat(nan, size(transectIdArray)); % write 1 per transect
+     altitudeBlock = repmat(missing, length(transectIdArray), length(crossShoreCoordinateArray));
+       originBlock = repmat(nan,     length(transectIdArray), length(crossShoreCoordinateArray)); % use nan for missing here (only a short)
+     minCrossBlock = repmat(nan,       size(transectIdArray)); % defaults to nan
+     maxCrossBlock = repmat(nan,       size(transectIdArray)); % defaults to nan
+     timeTopoBlock = repmat(nan,       size(transectIdArray)); % write 1 per transect
+    timeBathyBlock = repmat(nan,       size(transectIdArray)); % write 1 per transect
     
     for j = 1 : length(transectIdArray)
         id = transectIdArray(j);
@@ -77,22 +77,22 @@ for i = 1 : length(yearArray)
             transect = mergetransects(transect);
         end
         [c, ia, ib] = intersect(crossShoreCoordinateArray, transect.crossShoreCoordinate);
-        altitudeBlock(j, ia) = transect.altitude(ib);
-        minCrossBlock(j) = min(ia);
-        maxCrossBlock(j) = max(ia);
-        originBlock(j, ia) = transect.origin(ib);
-        timeTopoBlock(j) = transect.timeTopo;
-        timeBathyBlock(j) = transect.timeBathy;
+         altitudeBlock(j, ia) = transect.altitude(ib);
+         minCrossBlock(j)     = min(ia);
+         maxCrossBlock(j)     = max(ia);
+           originBlock(j, ia) = transect.origin(ib);
+         timeTopoBlock(j)     = transect.timeTopo;
+        timeBathyBlock(j)     = transect.timeBathy;
         
     end
     % should this be in jarkus_transect
     nc_varput(filename, 'min_cross_shore_measurement', minCrossBlock , [i-1, 0], [1, length(minCrossBlock)])
     nc_varput(filename, 'max_cross_shore_measurement', maxCrossBlock , [i-1, 0], [1, length(maxCrossBlock)])
-    nc_varput(filename, 'time', year, [i-1], [1]);
-    nc_varput(filename, 'time_topo', timeTopoBlock, [i-1,0], [1, length(timeTopoBlock)]);
-    nc_varput(filename, 'time_bathy', timeBathyBlock, [i-1,0], [1, length(timeBathyBlock)]);
-    nc_varput(filename, 'altitude', altitudeBlock, [i-1, 0, 0], [1, size(altitudeBlock)]); % (/i-1, 0, 0/) -> in fortran
-    nc_varput(filename, 'origin', originBlock, [i-1, 0, 0], [1, size(originBlock)]); % (/i-1, 0, 0/) -> in fortran
+    nc_varput(filename, 'time'      , year          , [i-1      ], [1                        ]);
+    nc_varput(filename, 'time_topo' , timeTopoBlock , [i-1, 0   ], [1, length(timeTopoBlock) ]);
+    nc_varput(filename, 'time_bathy', timeBathyBlock, [i-1, 0   ], [1, length(timeBathyBlock)]);
+    nc_varput(filename, 'altitude'  , altitudeBlock , [i-1, 0, 0], [1,   size(altitudeBlock) ]); % (/i-1, 0, 0/) -> in fortran
+    nc_varput(filename, 'origin'    , originBlock   , [i-1, 0, 0], [1,   size(originBlock)   ]); % (/i-1, 0, 0/) -> in fortran
     
 end
 
