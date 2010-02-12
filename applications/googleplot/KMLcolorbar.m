@@ -59,13 +59,15 @@ function varargout = KMLcolorbar(varargin)
    OPT.clim               = [];
 
    OPT.bgcolor            = [100 155 100];  % background color to be made transparent
-   OPT.fontrgb            = [1 1 1]; % white as Google letters
-   OPT.name               = 'colorbar';
-   OPT.fileName           = 'KMLcolorbar';
-   OPT.colorbarlocation   = {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
-   OPT.halo               = 1;       % for colorbar add halo of pixels with different color as fontrgb
-   OPT.halorgb            = [0 0 0]; % black as Google letters
-   
+   OPT.fontrgb            = [1 1 1];        % white as Google letters
+   OPT.name               = 'colorbar';     % 
+   OPT.fileName           = 'KMLcolorbar';  % Name of .png file containing colorbar
+   OPT.colorbarlocation   = {'W'};          %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
+   OPT.halo               = 1;              % for colorbar add halo of pixels with different color as fontrgb
+   OPT.halorgb            = [0 0 0];        % black as Google letters
+   OPT.colorTitle         = '';             % The title of the colorbar as it appears on top of the bar
+   OPT.colorTick          = [];             % Ticks on colorbar. If isempty, nothing is changed
+   OPT.colorTickLabel     = '';             % Is isempty, nothing is changed
    if nargin==0
      varargout = OPT;
      return

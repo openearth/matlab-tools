@@ -82,6 +82,9 @@ OPT.light.dist      =     60; % default light distance
 OPT.scaleHeight     =   true; % rescale height for zoomlevels. 
 OPT.scaleableLight  =  false; % adds a light that can be scaled (do not add additional lights)
 OPT.colorbar        =      1;
+OPT.colorTitle      =   '';
+OPT.colorTick       =   [];
+OPT.colorTickLabel  =   '';
 OPT.cropping        =   true; % crops data off of the figure when zooming in, to make it render faster
 
 if nargin==0
@@ -222,7 +225,8 @@ if succes
    % COLORBAR   
    
    if OPT.colorbar
-      clrbarstring = KMLcolorbar('clim',clim,'fileName',OPT.fileName,'colorMap',colormap);
+      clrbarstring = KMLcolorbar('clim',clim,'fileName',OPT.fileName,'colorMap',colormap,...
+          'colorTitle',OPT.colorTitle,'colorTick',OPT.colorTick,'colorTickLabel',OPT.colorTickLabel);
       output = [output clrbarstring];
    end   
 

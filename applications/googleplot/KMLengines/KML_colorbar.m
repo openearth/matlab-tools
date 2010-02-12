@@ -13,7 +13,7 @@ function KML_colorbar(OPT)
    %  +---+
    if              strcmpi(OPT.orientation      ,'horizontal') & ...
                    strcmpi(OPT.verticalalignment,'top')
-      axes('position',[    OPT.tipmargin 
+      axes('position',[    OPT.tipmargin
                        1-  OPT.thickness-OPT.alignmargin
                        1-2*OPT.tipmargin    % width
                            OPT.thickness]); % height
@@ -24,7 +24,7 @@ function KML_colorbar(OPT)
    %  +###+
    elseif          strcmpi(OPT.orientation      ,'horizontal') & ...
                    strcmpi(OPT.verticalalignment,'bottom')
-      axes('position',[    OPT.tipmargin 
+      axes('position',[    OPT.tipmargin
                            OPT.alignmargin
                        1-2*OPT.tipmargin    % width
                            OPT.thickness]); % height
@@ -61,12 +61,25 @@ function KML_colorbar(OPT)
    set   (h.c,'ycolor'       ,OPT.fontrgb)
    set   (h.c,'XAxisLocation',OPT.XAxisLocation);
    set   (h.c,'YAxisLocation',OPT.YAxisLocation);
+   % set the tick marks if they have been provided
+   if isfield(OPT.colorTick)
+	  if ~isempty(OPT.colorTick)
+	       set(h.c,'YTick',OPT.colorTick);
+	  end
+   end
+   % set the ticklabels if they have been provided
+   if isfield(OPT.colorTickLabel)
+       if ~isempty(OPT.colorTickLabel)
+           set(h.c,'YTickLabel',OPT.colorTickLabel);
+       end
+   end
+   set   (get(h.c,'Title'),'String',OPT.colorTitle,'Color',OPT.fontrgb,'HorizontalAlignment',OPT.horizonalalignment)
    delete(h.ax)
    box on
    print ([OPT.fileName,'.png'],'-dpng')
    im   = imread([OPT.fileName,'.png']);
    mask = bsxfun(@eq,im,reshape(OPT.bgcolor,1,1,3));
-   
+
    %% replace all colors under invisble pixels with black (0 0 0) (OPT.fontrgb)
    %  which are the well readable google letters
 
@@ -75,7 +88,7 @@ function KML_colorbar(OPT)
       onecolor(all(mask,3)) = OPT.halorgb(ic)*255;
       im(:,:,ic)  = onecolor;
    end
-   
+
    %% now let alpha gradually decrease from 0 inside to 1 outside
 
    if OPT.halo
@@ -88,15 +101,15 @@ function KML_colorbar(OPT)
                ~s2([2:end end],[1 1:end-1]) + ...
                ~s2([1 1:end-1],[2:end end]) + ...
                ~s2([2:end end],[2:end end]))/4); % move letters 1other pixel around
-   
+
    blend = zeros(size(s1)); % alpha value to add ONLY to pixels adjacent to letters and colorbar
-   blend(logical(s1-s3))= 0.5;       
+   blend(logical(s1-s3))= 0.5;
    blend(logical(s1-s2))= 1.0;
    imwrite(im,[OPT.fileName,'.png'],'Alpha',ones(size(mask(:,:,1))).*(1-double(all(mask,3)) + blend));
    else
    imwrite(im,[OPT.fileName,'.png'],'Alpha',ones(size(mask(:,:,1))).*(1-double(all(mask,3))));
    end
-   
+
    try;close(h.fig);end
-   
-%% EOF   
+
+%% EOF
