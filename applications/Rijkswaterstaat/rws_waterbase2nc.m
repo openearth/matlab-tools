@@ -79,15 +79,15 @@ function rws_waterbase2nc(varargin)
        'River dicharge'};
        
    OPT.unitss = ...
-      {'m',... % unit conversion to m is done below
-       'kg/m^3',...
+      {'m',...              % unit conversion to m is done below
+       'kg/m^3',...         % unit conversion to kg/m3 is done below
        'degree_Celsius',...
        '1e-3',...
-       'm',...% unit conversion to m is done below
+       'm',...              % unit conversion to m is done below
        'degree_true',...
        's',...
-       'microg/l',... % ug/l is not in UDunits
-       'm^3/s'}; % ug/l is not in UDunits
+       'microg/l',...       % ug/l is not in UDunits
+       'm^3/s'};
    
    OPT.parameter          = 0; %[9]; % 0=all or select index from OPT.names above
 
@@ -153,7 +153,7 @@ for ivar=[OPT.parameter]
             D = load([OPT.filename,'.mat']);% speeds up considerably
 
                 %quick fix of previous errors in units
-                %if strcmpi(D.meta1.units,'cm t.o.v. Mean Sea Level') % id54
+                %if strcmpi(D.data.units,'cm t.o.v. Mean Sea Level') % id54
                 %   D.data.(OPT.name) = D.data.(OPT.name)./100;
                 %end
 
@@ -171,14 +171,17 @@ for ivar=[OPT.parameter]
                             'method','fgetl');
 
                 %% Unit conversion
-                % make units meters for waterlevels and wave heights
-                % for waterlevels 'cm t.o.v. NAP' is used
-                % for wave heights 'cm' is used
-                % both strings need to be compared
-                if strcmpi(D.meta1.units(1:2),'cm')
-                   % strcmpi(D.meta1.units,'cm t.o.v. NAP') || ...     % id1
-                   % strcmpi(D.meta1.units,'cm t.o.v. Mean Sea Level') % id54
+                %  make units meters for waterlevels and wave heights
+                %  for waterlevels 'cm t.o.v. NAP' is used
+                %  for wave heights 'cm' is used
+                %  both strings need to be compared
+                %  for concentrations 'mg.l' is used
+                if  strcmpi(D.data.units(1:2),'cm')
+                   % strcmpi(D.data.units,'cm t.o.v. NAP') || ...     % id1
+                   % strcmpi(D.data.units,'cm t.o.v. Mean Sea Level') % id54
                    D.data.(OPT.name) = D.data.(OPT.name)./100;
+                elseif strcmpi(D.data.units(1:4),'mg/l')
+                   D.data.(OPT.name) = D.data.(OPT.name)./1e3;
                 end
             end
 
@@ -229,8 +232,8 @@ for ivar=[OPT.parameter]
         nc_attput(outputfile, nc_global, 'donar_code'      , D.data.locationcode);
         nc_attput(outputfile, nc_global, 'locationcode'    , D.data.locationcode);
 
-        nc_attput(outputfile, nc_global, 'waarnemingssoort', D.meta1.waarnemingssoort);
-        nc_attput(outputfile, nc_global, 'reference_level' , D.meta1.what);
+        nc_attput(outputfile, nc_global, 'waarnemingssoort', D.data.waarnemingssoort);
+        nc_attput(outputfile, nc_global, 'reference_level' , D.data.what);
         
         if isfield(D.data,'hoedanigheid')
         if  length(D.data.hoedanigheid)==1;nc_attput(outputfile, nc_global, 'hoedanigheid' , D.data.hoedanigheid);end
@@ -316,6 +319,23 @@ for ivar=[OPT.parameter]
         nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_north');
         nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'latitude');
 
+        % Z:
+        % 
+
+        ifld = ifld + 1;
+        nc(ifld).Name         = 'z';
+        nc(ifld).Nctype       = 'float'; % no double needed
+        if length(D.z)==1
+        nc(ifld).Dimension    = {'locations'};
+        else
+        nc(ifld).Dimension    = {'locations','time'};
+        end
+        nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station depth');
+        nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'meters');
+        nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'height_above_reference_ellipsoid');
+        nc(ifld).Attribute(4) = struct('Name', 'positive'       ,'Value', 'up');
+        nc(ifld).Attribute(5) = struct('Name', 'axis'           ,'Value', 'Z');
+
         % Time:
         % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
         % time is a dimension, so there are two options:
@@ -373,6 +393,7 @@ for ivar=[OPT.parameter]
         nc_varput(outputfile, 'station_name', D.data.location);
         nc_varput(outputfile, 'lon'         , unique(D.data.lon));
         nc_varput(outputfile, 'lat'         , unique(D.data.lat));
+        nc_varput(outputfile, 'z'           , D.data.z);
         nc_varput(outputfile, 'time'        , D.data.datenum' - OPT.refdatenum);
         nc_varput(outputfile, OPT.name      , D.data.(OPT.name));
 

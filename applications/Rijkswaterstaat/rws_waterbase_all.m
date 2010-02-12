@@ -47,7 +47,7 @@ for ii= 1:length(subdirs)
    %% Make overview png and xls
           
       nc_cf_stationtimeseries2meta('directory_nc'  ,[OPT.directory_nc],...
-                                   'standard_names',{'water_volume_transport_into_sea_water_from_rivers'});
+                                   'standard_names',{subdir});
    
    %% Make catalog.nc
    

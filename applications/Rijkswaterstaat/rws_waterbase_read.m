@@ -543,7 +543,7 @@ for ifile=1:length(fnames)
       D.data.epsg            = D.data.epsg           (1:nt); % 5
       D.data.lon             = D.data.lon            (1:nt); % 6
       D.data.lat             = D.data.lat            (1:nt); % 7
-      D.data.z               = D.data.z              (1:nt); % 7
+      D.data.z               = D.data.z              (1:nt); % 8
       
       D.locations{1} = D(nloc).data.location;
    
@@ -575,18 +575,18 @@ for ifile=1:length(fnames)
    
       % reduce redundant meta-info 
 
-         if length(unique(D.data.x           ))==1;D.data.x               =      unique(D.data.x           );end
-         if length(unique(D.data.y           ))==1;D.data.y               =      unique(D.data.y           );end
-         if length(unique(D.data.epsg        ))==1;D.data.epsg            =      unique(D.data.epsg        );end
-         if length(unique(D.data.lon         ))==1;D.data.lon             =      unique(D.data.lon         );end
-         if length(unique(D.data.lat         ))==1;D.data.lat             =      unique(D.data.lat         );end
+         if length(unique(D.data.x           ))==1;D.data.x               =      unique(D.data.x           ) ;end
+         if length(unique(D.data.y           ))==1;D.data.y               =      unique(D.data.y           ) ;end
+         if length(unique(D.data.epsg        ))==1;D.data.epsg            =      unique(D.data.epsg        ) ;end
+         if length(unique(D.data.lon         ))==1;D.data.lon             =      unique(D.data.lon         ) ;end
+         if length(unique(D.data.lat         ))==1;D.data.lat             =      unique(D.data.lat         ) ;end
 
       if strcmp(OPT.method,'textread')
          if length(unique(D.data.hoedanigheid))==1;D.data.hoedanigheid    = char(unique(D.data.hoedanigheid));end
          if length(unique(D.data.anamet      ))==1;D.data.anamet          = char(unique(D.data.anamet      ));end
          if length(unique(D.data.ogi         ))==1;D.data.ogi             = char(unique(D.data.ogi         ));end
          if length(unique(D.data.vat         ))==1;D.data.vat             = char(unique(D.data.vat         ));end
-         if length(unique(D.data.z           ))==1;D.data.z               = char(unique(D.data.z           ));end
+         if length(unique(D.data.z           ))==1;D.data.z               =      unique(D.data.z           ) ;end
          if length(unique(D.data.refvlk      ))==1;D.data.refvlk          = char(unique(D.data.refvlk      ));end
       end
       
