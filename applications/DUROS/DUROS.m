@@ -289,6 +289,8 @@ if DuneErosionSettings('get', 'BoundaryProfile') && ~NoDUROSResult
         writemessage(400,'Start fourth step: fit boundary profile');
         x2 = [result(end).xLand; result(end).xActive; result(end).xSea];
         z2 = [result(end).zLand; result(end).z2Active; result(end).zSea];
+        [x2 idUnique] = unique(x2);
+        z2 = z2(idUnique);
         result(end+1) = fitBoundaryProfile(xInitial, zInitial, x2, z2, WL_t, Tp_t, Hsig_t, x00min, result(end).info.x0, x0except);
     else
         result(end+1) = createEmptyDUROSResult;
