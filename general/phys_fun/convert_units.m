@@ -34,18 +34,18 @@ function Factor=convert_units(InUnits,OutUnits);
 % 2008 apr 14: added plural versions [Gerben J. de Boer]
 
    %% Definitions  
-   %---------------------
+   % ---------------------
    RAD             = 180./pi;
    cyc             = 1;
    cycle           = 1;
    cycles          = 1;
    
    %% Definitions  
-   %---------------------
+   % ---------------------
    ppm             = 1e-6;
 
    %% Length units 
-   %---------------------
+   % ---------------------
    mm              = 1e-3;                    % mms
    mms             = mm;                      % mms
    millimeter      = mm;                      % mms
@@ -76,8 +76,16 @@ function Factor=convert_units(InUnits,OutUnits);
    mile            = 1609;                    % miles
    miles           = mile;                    % miles
    
+   %% Volume units 
+   % ---------------------
+   l               = 1e-3;                    % liter
+   liter           = l;                       % liter
+   liters          = l;                       % liter
+   litre           = l;                       % liter
+   litres          = l;                       % liter
+
    %% Time units 
-   %---------------------
+   % ---------------------
    
    s               = 1;                       % seconds
    sec             = s;                       % seconds
@@ -140,14 +148,14 @@ function Factor=convert_units(InUnits,OutUnits);
    months          = month;                   % months
    
    %% Pressure units 
-   %---------------------
+   % ---------------------
    Pa              = 1;                       % pascal
    hPa             = 100;                     % hectopascal
    bar             = 1e5;                     % bar
    mbar            = 100;                     % millibar
 
    %% Force units 
-   %---------------------
+   % ---------------------
    dyn             = 1e-5;                    % dyne
    dyne            = 1e-5;                    % dyne
    dynes           = 1e-5;                    % dyne
@@ -157,7 +165,10 @@ function Factor=convert_units(InUnits,OutUnits);
    Newton          = N;                       % Newton
    
    %% Mass units 
-   %---------------------
+   % ---------------------
+   mg               = 1e-6;                   % ug
+   mgr              = 1e-6;                   % ug
+
    gr               = 1e-3;                   % grams
    grs              = gr;                     % grams
    gram             = gr;                     % grams
@@ -172,14 +183,14 @@ function Factor=convert_units(InUnits,OutUnits);
    pound            = 0.45359237;             % pound
    
    %% Angle units 
-   %---------------------
+   % ---------------------
    rad             = 1;                       % radian
    deg             = 1./RAD;                  % degree
    amin            = deg./60;                 % arcmin
    asec            = amin./60;                % arcsec
    
    %% Solid Angle units 
-   %---------------------
+   % ---------------------
    ster            = 1;                       % steradian
    sdeg            = 1./(RAD.^2);             % square degree
    smin            = 1./((60.*RAD).^2);       % square arcmin
