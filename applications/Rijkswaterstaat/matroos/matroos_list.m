@@ -3,9 +3,9 @@ function [locs,sources,units] = matroos_list(varargin)
 %
 %    [locs,sources,units] = matroos_list(<keyword,value>);
 %
-% matroos_list caches the results and does not connect to the server
-% untill i) the next matlab session, ii) a "clear global" is issued, or iii) this
-% function is altered.
+% matroos_list caches the results and does not connect again to the MATROOS server
+% untill i) the next matlab session, ii) a "clear global" is issued, or 
+% iii) matroos_list is altered.
 %
 %See also: matroos
 
@@ -114,5 +114,5 @@ function [locs,sources,units] = matroos_list(varargin)
    sources   = COLUMS{2};
    units     = COLUMS{3};
 
-%% parse
+%% EOF
 

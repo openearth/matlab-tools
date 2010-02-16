@@ -1,10 +1,12 @@
-function [ t, values ] = matroos_get_series(varargin);
+function varargout = matroos_get_series(varargin);
 %MATROOS_GET_SERIES  retrieve timeseries from Rijkswaterstaat MATROOS database
 %
 % matlab wraper for matroos url call /direct/get_series.php
 % on http://matroos.deltares.nl. You need a free password for this.
 %
-% [ t, values ] = matroos_get_series(<keyword,value>);
+%  struct                 = matroos_get_series(<keyword,value>);
+% [ t, values ]           = matroos_get_series(<keyword,value>);
+% [ t, values , metainfo] = matroos_get_series(<keyword,value>);
 %
 % where the following <keyword,value> are defined:
 % REQUIRED matroos url keywords:
@@ -19,6 +21,7 @@ function [ t, values ] = matroos_get_series(varargin);
 % * check     : check existence of: loc, source, unit:
 %               0,nan,'' no check (FAST) / 'c' check with local cached table / 's' check with server
 % * debug     : display some debugging info
+% * file      : filename for saving data
 %
 % Example:
 % [t,wl]=get_series('units','waterlevel',...
@@ -101,19 +104,20 @@ function [ t, values ] = matroos_get_series(varargin);
    OPT.tstart     = []; % always
    OPT.tstop      = []; % always
    
-   OPT.tinc       = ''; 
-   OPT.timezone   = ''; 
-   OPT.anal_time  = ''; 
-   OPT.last_anal  = ''; 
-   OPT.fc_min     = ''; 
-   OPT.fc_max     = ''; 
-   OPT.print_anal = ''; 
-   OPT.get_anal   = ''; 
-  %OPT.list       = ''; 
-   OPT.format     = ''; 
+ % OPT.tinc       = ''; 
+ % OPT.timezone   = ''; 
+ % OPT.anal_time  = ''; 
+ % OPT.last_anal  = ''; 
+ % OPT.fc_min     = ''; 
+ % OPT.fc_max     = ''; 
+ % OPT.print_anal = ''; 
+ % OPT.get_anal   = ''; 
+ % OPT.list       = ''; 
+ % OPT.format     = ''; 
 
    OPT.check      = 's'; 
    OPT.debug      = 0;   
+   OPT.file       = '';   
    
    OPT = setProperty(OPT,varargin{:});
    
@@ -148,7 +152,7 @@ function [ t, values ] = matroos_get_series(varargin);
    fprintf('last time =%s\n',OPT.tstop   );
    end
 
-%% get data from matroos
+%% get data from matroos server
 
    serverurl = [OPT.server,'/direct/get_series.php?'];
 
@@ -157,36 +161,36 @@ function [ t, values ] = matroos_get_series(varargin);
    if OPT.debug;disp(urlChar);;end
    %eg temp=geturl('http://user:passwd@matroos.deltares.nl/direct/get_series.php?loc=hoekvanholland&source=observed&unit=waterlevel&tstart=200802180000&tstop=200802190000')
    allLines = matroos_urlread(urlChar);
-
-%% parse NOOS format
-
-   % skip header
-   i=0;done=0;
-   while((done==0)&(i<length(allLines))),
-       i=i+1;
-       done=(length(findstr(allLines{i},'#'))==0);
-   end;
    
-   % read allLines
-   done=0;
-   pointIndex=1;
-   t=[];
-   values=[];
-   while(i<length(allLines)),
-       line = allLines{i};
-       data = sscanf(line,'%f %f');
-       values(pointIndex) = data(end);
-       year = sscanf(line( 1: 4),'%d');
-       month= sscanf(line( 5: 6),'%d');
-       day  = sscanf(line( 7: 8),'%d');
-       hour = sscanf(line( 9:10),'%d');
-       min  = sscanf(line(11:12),'%d');
-       sec  = 0;
-       t(pointIndex) = datenum(year,month,day,hour,min,sec);
-       i=i+1;
-       pointIndex=pointIndex+1;
-   end;
+%% save to NOOS file (optional)
 
+   if ~isempty(OPT.file)
+      fid = fopen(OPT.file,'w');
+      for i=1:length(allLines)
+      fprintf(fid,'%s \n',allLines{i});
+      end
+      fclose(fid);
+   end
+
+%% parse NOOS data
+
+   [t, values ,header] = noos_read(allLines);
+
+   meta                = matroos_noos_header2meta(header); % not official noos, so not in NOOS_READ
+   
+%% deal output
+
+   if nargout==1
+      meta.datenum    = t;
+      meta.(OPT.unit) = values;
+      varargout       = {meta};
+   elseif nargout==2
+      varargout       = {t, values };
+   elseif nargout==3
+      varargout       = {t, values ,meta};
+   end
+
+%% EOF
 
 %% 2010 feb 16
 % ----------------------
