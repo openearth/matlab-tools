@@ -4,7 +4,7 @@ function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
 % [x2,y2,<OPT>] = convertCoordinatesNew(x1,y1,'keyword','value')
 %
 % Note 1: Beware of the Lon-Lat order of in- and output arguments!
-% Note 2: (x1,y1) can be vectors or matrices (vectorized).
+% Note 2: (x1,y1) can be vectors or matrices.
 % Note 3: Does not work for MatLab 7.0 and older (gives invalid MEX file
 %         warnings)
 % Note 4: Rijksdriehoek(RD) to WGS 84 conversions are NOT exact. Accuracy 
