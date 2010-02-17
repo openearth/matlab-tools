@@ -17,8 +17,8 @@ function UCIT_plotDotsAmy
 
 % afarris@usgs.gov 2010Feb08: Takes already selected transects and makes  
 % a colored dots plot (prev. version allowed user to select the transects) 
-% afarris wrote quite a bit of this program and the gui is set up differently that
-% the UCIT gui, this is b/c this is how afarris knows how to do it.  
+% afarris wrote quite a bit of this program and the gui is set up
+% differently than the UCIT gui, this is b/c this is how I know how to do it.  
 % Maybe someday I'll go back and use their method.
 %
 % based on the code UCIT_plotPointsInPolygon.m written by Ben:
@@ -131,33 +131,46 @@ else
  
     
     % create figure and axis
-    close(findobj('tag','Dotfig'));
-    fh=figure('tag','Dotfig');clf;
-    set(fh,'visible','off')
+    close(findobj('tag','Dotfig2'));
+    fhandle=figure('tag','Dotfig2');clf;
+    % afarris@usgs.gov 2010Feb16 I got a little confused about what fh is.
+    % I still am not sure whether it is a tag or handle.  I think up to
+    % this point it was the handle of the main figure.  After the following
+    % line it is the handle of the current figure and a little later it I
+    % think becomes the tag of the current figure.  I am not sure. I set
+    % fhandle to be the handle of the figure (since that is what I needed)
+    % but then the code crashed, so I put in the following line.  The code
+    % now works.
+    fh=fhandle;
+    set(fhandle,'visible','off')
     RaaiInformatie = [ 'UCIT - Top view - Area : ' UCIT_getInfoFromPopup('TransectsArea') ' Transects ' d.transectID{find(id==1,1,'first')} '-' d.transectID{find(id==1,1,'last')} ' Time: ' UCIT_getInfoFromPopup('TransectsSoundingID')];
     set(fh,'Name',RaaiInformatie,'NumberTitle','Off','Units','normalized');
-    ah=axes;
-    hold on;
-    box on;
 
+    % prepare axes:
+    ahandle = axes('parent',fhandle,'position',[0.13 0.25 0.775 0.67]);
+    
     % use prepare UCIT_prepareFigure to give it the UCIT look and feel
-    figure(findobj('tag','Dotfig')) 
+    figure(findobj('tag','Dotfig2')) 
     % make the figure current is apparently needed to actually make the repositioning statement work
-    [fh] = UCIT_prepareFigureN(2, fh, 'UL', ah);
-
-    set(fh,'visible','off')
-    set(findobj('tag','Dotfig'),'position',UCIT_getPlotPosition('UL'));
+    [fh] = UCIT_prepareFigureN(2, fh, 'UL', ahandle);
+    % fh is the 'tag' of the figure, which is what Ben uses, I am more used
+    % to handles, the handle of the figure is fhandle
+    
+    set(fhandle,'visible','off')
+    set(findobj('tag','Dotfig2'),'position',UCIT_getPlotPosition('UL'));
 
     % prepare colormap info for cdots_amy function
     load colormapMHWjump20
-    
+       
     % plot data (NB: coloring depends on the Mean High Water info)
-    UCIT_cdots_amy(x,y,z,zmin_a,zmax_a,cmapMHWjump20)
+    UCIT_cdots_amy(x,y,z,zmin_a,zmax_a,cmapMHWjump20,ahandle)
 
     %% plot shoreline position
+    hold on
+    box on
     plot(shoreX,shoreY,'o','linewidth',2,'markerEdgeColor',...
         'k','markerFaceColor','w','markerSize',6);
-    handles.axes = gca;
+    handles.axes = ahandle;
 
     %% Set figure properties
 
@@ -191,24 +204,37 @@ else
     title(cb,'Height (m)')
     colormap(cmapMHWjump20);
     
-    %% add buttons
-    handles.figure = fh;
-    % add button for user to press to get profile number
-    % (of most recently clicked point)
-    handles.buttonGetPrNum = uicontrol('style','pushbutton','string',...
-        'Find profile number',...
-        'position',[500 350 100 30],'parent',handles.figure,'fontSize',8);
+    %% add text and buttons
+    handles.figure = fhandle;
+    set(fhandle,'units','normalized')
+    % add explanatory text:
+    htext = uicontrol(fhandle,'Style','text','units','normalized',...
+        'String','Colored dots are the height of transect data.  White circles with blcak outlines are the shoreline positions. They should occure at the color contrast yellow/blue.',...
+          'Position',[.01 .01 .3 .15],'backgroundcolor',[1 1 1]) ;
+      
+    % add text explaining button
+    htext = uicontrol('Style','text','units','normalized',...
+        'String','Click on a circle then click on this button to find its transect number.',...
+          'Position',[.37 .06 .25 .1],'backgroundcolor',[1 1 1]);
+    % add button 
+    handles.buttonGetPrNum = uicontrol('style','pushbutton','units','normalized',...
+        'string','Find #',...
+        'position',[.37 .01 .1 .05],'parent',handles.figure,'fontSize',8);
     % add box to disply profile number
-    handles.textBoxShowPrNum = uicontrol('Style','text','string',...
-        'Profile #','position',[500 300 100 30],'tag','profileNum');
+    handles.textBoxShowPrNum = uicontrol('Style','text','units','normalized',...
+        'position',[.49 .01 .1 .05],'tag','profileNum');
+    
+    % add text explaining next box
+    htext = uicontrol('Style','text','units','normalized',...
+        'String','Or enter a transect number in ths box and that circle will turn green.',...
+      'Position',[.67 .06 .3 .1],'backgroundcolor',[1 1 1]);
     % add box to allow user to enter a profile number
-    handles.buttonGivenPrNum = uicontrol('style','edit','string',...
-        'Enter profile # here ',...
-        'position',[500 200 100 30],'parent',handles.figure,'fontSize',8);
+    handles.buttonGivenPrNum = uicontrol('style','edit','units','normalized',...
+        'position',[.75 .01 .12 .05]);
 
 
     % make figure visible only after all is plotted
-    set(fh,'visible','on')
+    set(fhandle,'visible','on')
    
     
     %% add callbacks
@@ -239,7 +265,7 @@ d=sqrt((handles.shoreX - p(1,1)).^2 + (handles.shoreY-p(2,2)).^2);
 [i,j] = min(d);
 % the use of curley braces below converts from cell to char:
 chosenProfileNum = handles.shoreNums(j);
-set(handles.textBoxShowPrNum,'String',['Profile # is ',num2str(chosenProfileNum)]);
+set(handles.textBoxShowPrNum,'String',num2str(chosenProfileNum));
 
 end % buttonGetPrNum_callback
 
@@ -260,7 +286,7 @@ end
 i = find(handles.shoreNums == givenPrNum);
 if isempty(i) || isnan(handles.shoreX(i))
     errordlg('This profile number is not shown on this plot')
-    set(handles.buttonGivenPrNum,'String','Enter Profile # ');
+    set(handles.buttonGivenPrNum,'String','  ');
     return
 end
     
