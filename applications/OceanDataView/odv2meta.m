@@ -1,9 +1,9 @@
-%ODV2META   script to test ODVRREAD, ODVDISP, ODVPLOT
+%ODV2META   script to test ODVRREAD, ODVDISP, ODVPLOT_CAST, ODVPLOT_OVERVIEW
 %
 % get meta-info from all CTDCAST files in a user-defined directory one by one.
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
-%See also: ODVREAD, ODVDISP, ODVPLOT
+%See also: OceanDataView
 
 % $Id$
 % $Date$

@@ -1,13 +1,15 @@
-function odvplot(D,varargin)
-%ODVPLOT   plot file in ODV format read by ODVREAD (still test project)
+function odvplot_cast(D,varargin)
+%ODVPLOT_CAST   plot profile view (parameter,z) of ODV file read by ODVREAD (still test project)
 %
 %   D = odvread(fname)
-%       odvplot(D,<coastline.lon,coastline.lat>)
+%   odvplot_cast(D,<coastline.lon,coastline.lat>)
 %
-% Example plotm function that shows vertical profiles of temperature, salinity, fluorescence.
+% Example plot function that shows vertical profiles of temperature, salinity, fluorescence.
+%
+% Works only for profile data, i.e. when D.cast = 1;
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
-%See also: ODVREAD, ODVDISP
+%See also: OceanDataView
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
@@ -43,6 +45,8 @@ function odvplot(D,varargin)
 
    AX = subplot_meshgrid(4,1,[.04],[.1]);
    
+   if D.cast==1
+
     axes(AX(1)); cla %subplot(1,4,1)
        var.x = 'sea_water_temperature';
        var.y = 'sea_water_pressure';
@@ -95,11 +99,14 @@ function odvplot(D,varargin)
        noaxis(AX(3))
        end
        
+end       
+       
     axes(AX(4)); cla %subplot(1,4,4)
     
-       plot(D.lon,D.lat,'ro')
+       plot(D.data.longitude,D.data.latitude,'ro')
        hold on
-       plot(D.lon,D.lat,'r.')
+       plot(D.data.longitude,D.data.latitude,'r.')
+       axis      tight
        
        if nargin>1
        lon = varargin{1};
@@ -107,7 +114,6 @@ function odvplot(D,varargin)
        plot(lon,lat,'k')
        end
        axislat   (52)
-       axis      ([-2.5750 10.4010 50 62]) ; % [-2.5750 10.4010 50.2330 58.5000] range of local dataset
        grid       on
        tickmap   ('ll','texttype','text')
        box        on
@@ -118,9 +124,14 @@ function odvplot(D,varargin)
     axes(AX(5)); cla %subplot(1,4,4)
     noaxis(AX(5))
        % text rather than titles per subplot, because subplots can be empty
-       text (0,1,['Cruise: ',D.data.cruise{1},...
-                  '   -   Station: ',mktex(D.data.station{1}),' (',num2str(D.data.lat(1)),'\circE, ',num2str(D.data.lon(1)),'\circN)',...
-                  '   -   ',datestr(D.data.datenum(1),31)],...
+       if D.cast
+          txt = ['Cruise: ',D.data.cruise{1},...
+                  '   -   Station: ',mktex(D.data.station{1}),' (',num2str(D.data.latitude(1)),'\circE, ',num2str(D.data.longitude(1)),'\circN)',...
+                  '   -   ',datestr(D.data.datenum(1),31)];
+       else
+          txt = ['Cruise: ',D.data.cruise{1}];
+       end
+       text (0,1,txt,...
                   'units','normalized',...
                   'horizontalalignment','left',...
                   'verticalalignment','bottom')

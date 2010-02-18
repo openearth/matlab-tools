@@ -4,6 +4,8 @@ function varargout = odv_read(fullfilename)
 %   D = odvread(fname)
 %
 % loads ASCII file in Ocean Data Viewer (ODV) format into struct D.
+% D.cast=1 for profile data (> ODVPLOT_CAST)
+% D.cast=0 for point time series or trajectories (> ODVPLOT_OVERVIEW)
 %
 % ODV is one of the standard file formats of 
 % <a href="http://www.SeaDataNet.org">www.SeaDataNet.org</a> of which <a href="http://www.nodc.nl">www.nodc.nl</a> is a member.
@@ -32,7 +34,7 @@ function varargout = odv_read(fullfilename)
 % +---------------------------------------------+----------------------------------------
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a> (Ocean Data Viewer)
-%See also: ODVDISP, ODVPLOT
+%See also: OceanDataView
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -317,21 +319,31 @@ function varargout = odv_read(fullfilename)
    
 %% Get extraction info: 1 value per cast (and check for uniqueness: i.e. are there time-consuming, sidewards-drifting casts?)
    [D.cruise      ,ind]   = unique(D.data.cruise      );if length(ind) > 1;error('no unique value: cruise      ');end
-   [D.station     ,ind]   = unique(D.data.station     );if length(ind) > 1;error('no unique value: station     ');end
    [D.type        ,ind]   = unique(D.data.type        );if length(ind) > 1;error('no unique value: type        ');end
-   [D.datenum     ,ind]   = unique(D.data.datenum     );if length(ind) > 1;error('no unique value: datenum     ');end
-   [D.latitude    ,ind]   = unique(D.data.latitude    );if length(ind) > 1;error('no unique value: latitude    ');end
-   [D.longitude   ,ind]   = unique(D.data.longitude   );if length(ind) > 1;error('no unique value: longitude   ');end
-   [D.bot_depth   ,ind]   = unique(D.data.bot_depth   );if length(ind) > 1;error('no unique value: bot_depth   ');end
    [D.LOCAL_CDI_ID,ind]   = unique(D.data.LOCAL_CDI_ID);if length(ind) > 1;error('no unique value: LOCAL_CDI_ID');end
    [D.EDMO_code   ,ind]   = unique(D.data.EDMO_code   );if length(ind) > 1;error('no unique value: EDMO_code   ');end
     D.file.name             = char(D.file.name   );		      
     D.cruise                = char(D.cruise      );		      
-    D.station               = char(D.station     );		      
     D.type                  = char(D.type        );		      
     D.LOCAL_CDI_ID          = char(D.LOCAL_CDI_ID);		      
     D.EDMO_code             = char(D.EDMO_code   );		      
-   
+
+   [T.station     ,ind1]   = unique(D.data.station     );if length(ind1) == 1;D.station   = T.station  ;station= char(D.station);end 
+   [T.datenum     ,ind2]   = unique(D.data.datenum     );if length(ind2) == 1;D.datenum   = T.datenum  ;end
+   [T.latitude    ,ind3]   = unique(D.data.latitude    );if length(ind3) == 1;D.latitude  = T.latitude ;end
+   [T.longitude   ,ind4]   = unique(D.data.longitude   );if length(ind4) == 1;D.longitude = T.longitude;end
+   [T.bot_depth   ,ind5]   = unique(D.data.bot_depth   );if length(ind5) == 1;D.bot_depth = T.bot_depth;end
+
+   if length(ind1)==1 & ...
+      length(ind2)==1 & ...
+      length(ind3)==1 & ...
+      length(ind4)==1 & ...
+      length(ind5)==1
+      D.cast = 1;
+      else
+      D.cast = 0;
+   end
+
 %% Output
 
    D.read.with   = '$Id$';

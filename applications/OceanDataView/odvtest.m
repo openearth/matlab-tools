@@ -1,9 +1,9 @@
-%ODVTEST   script to test ODVRREAD, ODVDISP, ODVPLOT
+%ODVTEST   script to test ODVRREAD, ODVDISP, ODVPLOT_CAST, ODVPLOT_OVERVIEW
 %
 % plots all CTDCAST files in a directory one by one.
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
-%See also: ODVREAD, ODVDISP, ODVPLOT
+%See also: OceanDataView
 
 % $Id$
 % $Date$
@@ -12,34 +12,45 @@
 % $HeadURL
 % $Keywords:
 
-OPT.directory = [fileparts(mfilename('fullpath')),filesep,'usergd30d98-data_centre630-260409_result\'];
-OPT.prefix    = 'result_CTDCAST';
-OPT.mask      = '*.txt';
-OPT.files     = dir([OPT.directory,filesep,OPT.prefix,'*',OPT.mask]);
+OPT(1).directory = [fileparts(mfilename('fullpath')),filesep,'usergd30d98-data_centre630-270409_result\'];
+OPT(1).mask      = 'result_CTDCAST*.txt';
 
-% Coastline of world
-% and of North sea
+OPT(2).directory = [fileparts(mfilename('fullpath')),filesep,'userkc30e50-data_centre632-090210_result\'];
+OPT(2).mask      = 'world*.txt';
 
-   L.lon = nc_varget('http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc','lon');
-   L.lat = nc_varget('http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc','lat');
+for i=1:length(OPT)
 
-for ifile=1:length(OPT.files); %239 not all colummns, 264 empty
+   files     = dir([OPT(i).directory,filesep,OPT(i).mask]);
 
-    OPT.filename = OPT.files(ifile).name;
-    
-    set(gcf,'name',[num2str(ifile),': ',OPT.filename])
-
-    D = odvread([OPT.directory,filesep,OPT.filename]);
-    
-   %odvdisp(D)
-
-    if ~(isempty(D.lat) | isnan(D.lat))
-    odvplot(D,L.lon,L.lat)
-    else
-    clf
-    end
-    
-    disp(['plotting # ',num2str(ifile,'%0.3d'),', press key to continue'])
-    pause
+   % Coastline of world
+   % and of North sea
+   
+     %L.lon = nc_varget('http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/northsea.nc','lon');
+     %L.lat = nc_varget('http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/northsea.nc','lat');
+   
+      L.lon = nc_varget('F:\checkouts\OpenEarthRawData\noaa\gshhs\processed\gshhs_i.nc','lon');
+      L.lat = nc_varget('F:\checkouts\OpenEarthRawData\noaa\gshhs\processed\gshhs_i.nc','lat');
+   
+   for ifile=1:length(files);
+   
+       fname = files(ifile).name;
        
-end % ifile       
+       set(gcf,'name',[num2str(ifile),': ',fname])
+   
+       D = odvread([OPT(i).directory,filesep,fname]);
+       
+      %odvdisp(D)
+   
+       if D.cast==1
+       odvplot_cast    (D,L.lon,L.lat)
+       else
+       odvplot_overview(D,L.lon,L.lat)
+       end
+       
+       disp(['plotting # ',num2str(ifile,'%0.3d'),', press key to continue'])
+       pause
+       clf
+          
+   end % ifile 
+   
+end   

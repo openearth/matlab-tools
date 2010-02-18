@@ -1,10 +1,12 @@
-function odvdisp(D)
-%ODVDISP    display contents of file in ODV format  (still test project)
+function odvplot_overview(D,varargin)
+%ODVPLOT_OVERVIEW   plot map view (lon,lat) of ODV file read by ODVREAD (still test project)
 %
-%   D = odvdisp(D)
+%   D = odvplot_overview(fname)
+%       odvplot_overview(D,<coastline.lon,coastline.lat>)
 %
-% displays content of  ASCII file in Ocean Data Viewer (ODV) format
-% that was read by ODVREAD into structure D.
+% Show overview of ODV locations, ue when D.cast=0.
+%
+% Works when D.cast = 0;
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
 %See also: OceanDataView
@@ -39,21 +41,32 @@ function odvdisp(D)
 % $Author$
 % $Revision$
 % $HeadURL
-% $Keywords:
 
-  %disp('error: ODVREAD is still a test project!')
+   AX = subplot_meshgrid(1,1,[.04],[.1]);
+   
+    axes(AX(1)); cla %subplot(1,4,4)
+    
+       plot(D.data.longitude,D.data.latitude,'ro')
+       hold on
+       plot(D.data.longitude,D.data.latitude,'r.')
+       axis      tight
+       
+       if nargin>1
+       lon = varargin{1};
+       lat = varargin{2};
+       plot(lon,lat,'k')
+       end
+       axislat   (52)
+       grid       on
+       tickmap   ('ll','texttype','text')
+       box        on
+       hold       off
 
-  %disp('META-INFO:')
-   
-   disp(['META-INFO: ',pad('filename',12,' '),':',D.file.name])
-   disp(['           ',pad('filesize',12,' '),':',num2str(D.file.bytes)])
-   
-   disp('VARIABLES: ')
-   
-   for ivar=1:length(D.variables)
-   
-   disp(['           ',pad(num2str(ivar),4,' '),' ',D.variables{ivar}])
-   
-   end
+       txt = ['Cruise: ',D.data.cruise{1},...
+               '   -   ',datestr(min(D.data.datenum),31),...
+               '   -   ',datestr(max(D.data.datenum),31)];
 
-%% EOF
+       title     (txt)
+
+       
+%% EOF       

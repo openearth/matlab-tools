@@ -18,7 +18,7 @@ function M = odvread_struct2matrix(D)
 %
 %   D = odvread_struct2matrix(R);
 %
-%See also: ODVREAD, ODVDISP, ODVPLOT, ODV2NC
+%See also: OceanDataView
 
    OPT.sort = 1; % on datenum
 
