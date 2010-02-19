@@ -46,7 +46,7 @@ OPT.kmlName        = [];
 OPT.lineWidth      = 1;
 OPT.lineColor      = [0 0 0];
 OPT.lineAlpha      = 1;
-OPT.colormap       = 'jet';
+OPT.colorMap       = @(m) jet(m);
 OPT.colorSteps     = 16;
 OPT.fillAlpha      = 0.6;
 OPT.fileName       = '';
@@ -103,7 +103,7 @@ if isempty(OPT.cLim)
 end
 
 %% pre-process data
-eval(sprintf('colorRGB = %s(%d);',OPT.colormap,OPT.colorSteps));
+colorRGB = OPT.colorMap(OPT.colorSteps);
 
 %clip c to min and max 
 c(c<OPT.cLim(1)) = OPT.cLim(1);
