@@ -4,8 +4,10 @@
 %   arcgis          - tools to read Arc ASCII Grid Format
 %   bzip            - bzip compression/decompression <a href="http://www.bzip.org">www.bzip.org</a>
 %   delft3d         - model: <a href="http://www.delft3d.nl">Delft3d</a>
+%   DuneErosionLibrary - general duen erosion library
 %   DUROS           - model: duros
 %   durosta         - model: durosta
+%   FEWS-World      - visualize <a href="http://vanbeek.geo.uu.nl/suppinfo/vanbeekbierkens2009.pdf">PCR-GLOBWB </a> hydrological climate scenarios
 %   googleearth     - viewer: <a href="http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=12954">Google Earth Toolbox</a>
 %   googlePlot      - viewer: Google Earth Toolbox, with options for curvi-linear grids
 %   KNMI            - data:  <a href="http://www.knmi.nl">KNMI</a>
@@ -16,9 +18,10 @@
 %   pontos          - model: <a href="http://www.alkyon.nl/Tools/Pontos.htm">PonTos</a>
 %   probabilistic   - application
 %   Rijkswaterstaat - data: <a href="http://www.Rijkswaterstaat.nl">Rijkswaterstaat</a>
-%   *  jarkus       - tools for Rijkswaterstaat <a href="http://www.watermarkt.nl/kustenzeebodem/">JarKus</a> coastal bathymetry dataset
+%   *  JarKus       - tools for Rijkswaterstaat <a href="http://www.watermarkt.nl/kustenzeebodem/">JarKus</a> coastal bathymetry dataset
 %   *  vaklodingen  - tools for Rijkswaterstaat <a href="http://www.watermarkt.nl/kustenzeebodem/">vaklodingen</a> coastal bathymetry dataset
 %   *  bathymetry   - tools for extracting JarKus and vaklodingen bahtymetries from OPeNDAP server
+%   *  MATROOS      - tools for extracting data from Rijkswaterstaat operational <a href="http://matroos.deltares.nl/">MATROOS</a> database
 %   sobek           - model: <a href="http://www.SOBEK.nl">SOBEK</a>
 %   SuperTrans      - global coordinate transformations for <a href="http://www.epsg-registry.org/">OGP EPSG</a> systems.
 %   SWAN            - model: <a href="http://www.SWAN.tudelft.nl">SWAN</a>  (see also: waves)

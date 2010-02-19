@@ -8,7 +8,7 @@ function url = matroos_server(varargin)
 %    http://username:password@matroos.deltares.nl
 %
 % Adapt this function to contain your own server & username and password
-% and place it in your local path.
+% and place it in your local Matlab path.
 %
 %See also: MATROOS
 

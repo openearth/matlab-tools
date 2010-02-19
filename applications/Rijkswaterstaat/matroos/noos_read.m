@@ -1,5 +1,11 @@
-function [t, values ,header] = noos_read(allLines)
+function [t, values, header] = noos_read(allLines)
 %NOOS_READ   read NOOS timeseries ASCII format
+%
+%   [time, values, headerlines] = noos_read(cellstr)
+%
+% where the headerlines can be interpreted with 
+% MATROOS_NOOS_HEADER2META is the NOOS file file originates
+% from matroos.
 %
 %See also: MATROOS_NOOS_HEADER2META
 
@@ -50,14 +56,13 @@ function [t, values ,header] = noos_read(allLines)
        done      = (length(findstr(allLines{i},'#'))==0);
    end;
    
-   n    = length(allLines) - length(header);
-   
-%% read data lines, pre-allocate for speed
+%% read data lines, with pre-allocated vectors for speed
    
    done       = 0;
    pointIndex = 1;
-   t          = repmat(nan,[1 n]);
-   values     = repmat(nan,[1 n]);
+   nt         = length(allLines) - length(header);
+   t          = repmat(nan,[1 nt]);
+   values     = repmat(nan,[1 nt]);
    
    while(i<length(allLines)),
        line = allLines{i};

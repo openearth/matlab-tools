@@ -67,7 +67,7 @@ if nargout==1
 else
     fid = varargin{1};
    if nargin==2
-      OS = varargin{2}
+      OS = varargin{2};
    end
        if strcmp(lower(OS(1)),'u');fprintf(fid,'\n');
    elseif strcmp(lower(OS(1)),'l');fprintf(fid,'\n');

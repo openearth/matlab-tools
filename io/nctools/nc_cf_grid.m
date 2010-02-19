@@ -119,6 +119,7 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 %% Check whether is time series
 
    index = findstrinstruct(fileinfo.Attribute,'Name','Conventions');
+   fileinfo.Attribute(index).Value;
    if isempty(index)
       error(['netCDF file is not a grid: needs Attribute Conventions=CF-1.4'])
    end
@@ -136,16 +137,18 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 
    lonname        = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'longitude');
    if ~isempty(lonname)
-      disp('no longitude present')
       M.lon.units    = nc_attget(ncfile,lonname,'units');
       D.lon          = nc_varget(ncfile,lonname);
+   else
+      disp('no longitude present')
    end
 
    latname        = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'latitude');
    if ~isempty(latname)
-      disp('no latitude present')
       M.lat.units    = nc_attget(ncfile,latname,'units');
       D.lat          = nc_varget(ncfile,latname);
+   else
+      disp('no latitude present')      
    end
 
 %% Find specified (or all parameters) that have latitude AND longitude as either

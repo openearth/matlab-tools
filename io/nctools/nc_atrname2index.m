@@ -61,7 +61,8 @@ function index = atrname2index(ncfile,name,varargin)
      fileinfo.Dataset = fileinfo.DataSet;
      disp(['warning: please use newer version of snctools (e.g. ',which('matlab\io\snctools\nc_info'),') instead of (',which('nc_info'),')'])
    else
-      error('neither field ''Dataset'' nor ''DataSet'' returned by nc_info')
+      %error('neither field ''Dataset'' nor ''DataSet'' returned by nc_info')
+      %can be variable attributes
    end
 
 %% Do atrname2index
