@@ -101,7 +101,7 @@ if isempty(OPT.kmlName)
     [ignore OPT.kmlName] = fileparts(OPT.fileName);
 end
 %% find contours
-coords = tricontours(tri,lat,lon,z,OPT.levels);
+coords = tricontourc(tri,lat,lon,z,OPT.levels);
 
 %% pre allocate, find dimensions
 max_size = 1;
