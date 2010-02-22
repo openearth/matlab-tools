@@ -55,8 +55,11 @@ try;close(h.fig);end
 
 %% $RunCode
 try
-  KMLcolorbar('fileName',KML_testdir('KMLcolorbar_test_halo'   ),'colorMap',OPT.colormap,'clim',[-2 2],'halo',1);
-  KMLcolorbar('fileName',KML_testdir('KMLcolorbar_test_vanilla'),'colorMap',OPT.colormap,'clim',[-2 2],'halo',0,'colorbarlocation',{'W','N','S'});
+  KMLcolorbar('fileName',KML_testdir('KMLcolorbar_test_halo'   ),'colorMap',OPT.colormap,'clim',[-2 2],'halo',0,...
+     'colorTitle','ABCDEFGHIJKLMNOPQRSTUVWYZ abcdefghijklmnopqrstuvwyz 0123456789 ~!@#$% &*() +','titlergb',[0 0 0]);
+  KMLcolorbar('fileName',KML_testdir('KMLcolorbar_test_vanilla'),'colorMap',OPT.colormap,'clim',[-2 2],'halo',1,...
+     'colorbarlocation',{'W','N','S','E'},...
+     'colorTitle','ABCDEFGHIJKLMNOPQRSTUVWYZ abcdefghijklmnopqrstuvwyz 0123456789 ~!@#$% &*() +');
 catch
    testresult = false;
 end

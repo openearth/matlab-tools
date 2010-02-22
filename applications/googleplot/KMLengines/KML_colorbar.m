@@ -5,10 +5,48 @@ function KML_colorbar(OPT)
 %
 %See also: GOOGLEPLOT, KMLcolorbar
 
+%   --------------------------------------------------------------------
+%   Copyright (C) 2009 Deltares for Building with Nature
+%       Gerben de Boer
+%
+%       g.j.deboer@deltares.nl	
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+% $Id: K$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
    h.fig = figure('Visible','off');
    colormap(OPT.colorMap);
    set(h.fig,'color',OPT.bgcolor./255,'InvertHardcopy','off')
-   %% +###+
+   %  +###+
    %  |   |
    %  +---+
    if              strcmpi(OPT.orientation      ,'horizontal') & ...
@@ -19,7 +57,7 @@ function KML_colorbar(OPT)
                            OPT.thickness]); % height
                            OPT.XAxisLocation = 'bottom';
                            OPT.YAxisLocation = 'left'; % dummy
-   %% +---+
+   %  +---+
    %  |   |
    %  +###+
    elseif          strcmpi(OPT.orientation      ,'horizontal') & ...
@@ -30,7 +68,7 @@ function KML_colorbar(OPT)
                            OPT.thickness]); % height
                            OPT.XAxisLocation = 'top';
                            OPT.YAxisLocation = 'left'; % dummy
-   %% +---+
+   %  +---+
    %  |   #
    %  +---+
    elseif          strcmpi(OPT.orientation       ,'vertical') & ...
@@ -41,7 +79,7 @@ function KML_colorbar(OPT)
                        1-2*OPT.tipmargin]); % height
                            OPT.XAxisLocation = 'bottom'; % dummy
                            OPT.YAxisLocation = 'left';
-   %% +---+
+   %  +---+
    %  #   |
    %  +---+
    elseif          strcmpi(OPT.orientation       ,'vertical') & ...
@@ -56,24 +94,44 @@ function KML_colorbar(OPT)
       error('KMLcolorbar')
    end
    h.ax = gca;
-   h.c  = colorbarlegend(gca,[0 1],[0 1],OPT.clim,'ontop',1,'reference','gca','orientation',OPT.orientation);
+   h.c  = colorbarlegend(gca,[0 1],[0 1],OPT.clim,...
+            'ontop',10,...
+        'reference','gca',...
+      'orientation',OPT.orientation);%,...
+           %'title',OPT.colorTitle,...
+   %'titleposition',[OPT.orientation(1),'text'],...
+      %'titlecolor',OPT.fontrgb);
+        if     strcmpi(OPT.orientation      ,'vertical') 
+           text(-0.1,0,[' ',OPT.colorTitle],'color',OPT.titlergb,'units','normalized','rotation',90,'verticalalignment','top');
+        elseif strcmpi(OPT.orientation      ,'horizontal')
+           text(0,0.05,[' ',OPT.colorTitle],'color',OPT.titlergb,'units','normalized','rotation', 0,'verticalalignment','bottom');
+        end
+  %h.t = get(h.c,'Title');    
+  %set   (h.t,'color'        ,OPT.fontrgb)
    set   (h.c,'xcolor'       ,OPT.fontrgb)
    set   (h.c,'ycolor'       ,OPT.fontrgb)
    set   (h.c,'XAxisLocation',OPT.XAxisLocation);
    set   (h.c,'YAxisLocation',OPT.YAxisLocation);
    % set the tick marks if they have been provided
-   if isfield(OPT.colorTick)
+   if isfield(OPT,'colorTick')
 	  if ~isempty(OPT.colorTick)
-	       set(h.c,'YTick',OPT.colorTick);
+        if     strcmpi(OPT.orientation      ,'vertical')  
+        set(h.c,'YTick',OPT.colorTick);
+        elseif strcmpi(OPT.orientation      ,'horizontal')
+        set(h.c,'XTick',OPT.colorTick);           
+        end
 	  end
    end
    % set the ticklabels if they have been provided
-   if isfield(OPT.colorTickLabel)
+   if isfield(OPT,'colorTickLabel')
        if ~isempty(OPT.colorTickLabel)
+        if     strcmpi(OPT.orientation      ,'vertical');          
            set(h.c,'YTickLabel',OPT.colorTickLabel);
+        elseif strcmpi(OPT.orientation      ,'horizontal')
+           set(h.c,'XTickLabel',OPT.colorTickLabel);           
+        end
        end
    end
-   set   (get(h.c,'Title'),'String',OPT.colorTitle,'Color',OPT.fontrgb,'HorizontalAlignment',OPT.horizonalalignment)
    delete(h.ax)
    box on
    print ([OPT.fileName,'.png'],'-dpng')

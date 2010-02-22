@@ -63,13 +63,15 @@ function varargout = KMLcolorbar(varargin)
    OPT.name               = 'colorbar';     % 
    OPT.fileName           = 'KMLcolorbar';  % Name of .png file containing colorbar
    OPT.colorbarlocation   = {'W'};          %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
-   OPT.halo               = 1;              % for colorbar add halo of pixels with different color as fontrgb
+   OPT.halo               = 1;              % for colorbar add halo of pixels with different color as OPT.fontrgb
    OPT.halorgb            = [0 0 0];        % black as Google letters
-   OPT.colorTitle         = '';             % The title of the colorbar as it appears on top of the bar
-   OPT.colorTick          = [];             % Ticks on colorbar. If isempty, nothing is changed
+   OPT.colorTitle         = '';             % The title of the colorbar as it appears in the bar
+   OPT.colorTick          = [];             % Ticks on colorbar. If isempty, nothing is changed, see help colorberlegend
    OPT.colorTickLabel     = '';             % Is isempty, nothing is changed
+   OPT.titlergb           = [1 1 1];        % white as Google letters
+   
    if nargin==0
-     varargout = OPT;
+     varargout = {OPT};
      return
    end
 
@@ -84,7 +86,7 @@ function varargout = KMLcolorbar(varargin)
    OPT.verticalalignment  = 'top';
    OPT.tipmargin          = 0.05; % prevent overlap between S and E colorbars
    OPT.alignmargin        = 0.03;
-   OPT.thickness          = 0.013;
+   OPT.thickness          = 0.026;%0.013;
    OPT.fileName           = [fullfile(PATHSTR,NAME),'_hor_top'];
    KML_colorbar(OPT)
    end
@@ -94,7 +96,7 @@ function varargout = KMLcolorbar(varargin)
    OPT.verticalalignment  = 'bottom';
    OPT.tipmargin          = 0.05; % prevent overlap between S and E colorbars
    OPT.alignmargin        = 0.03;
-   OPT.thickness          = 0.013;
+   OPT.thickness          = 0.026;%0.013;
    OPT.fileName           = [fullfile(PATHSTR,NAME),'_hor_bot'];
    KML_colorbar(OPT)
    end
@@ -104,7 +106,7 @@ function varargout = KMLcolorbar(varargin)
    OPT.horizonalalignment = 'right';
    OPT.tipmargin          = 0.15; % prevent overlap with time ruler, google logo and N-rose
    OPT.alignmargin        = 0.01;
-   OPT.thickness          = 0.01;
+   OPT.thickness          = 0.02;%0.01;
    OPT.fileName           = [fullfile(PATHSTR,NAME),'_ver_rgt'];
    KML_colorbar(OPT)
    end
@@ -114,7 +116,7 @@ function varargout = KMLcolorbar(varargin)
    OPT.horizonalalignment = 'left';
    OPT.tipmargin          = 0.15; % prevent overlap with time ruler, google logo and N-rose
    OPT.alignmargin        = 0.01;
-   OPT.thickness          = 0.01;
+   OPT.thickness          = 0.02;%0.01;
    OPT.fileName           = [fullfile(PATHSTR,NAME),'_ver_lft'];
    KML_colorbar(OPT)
    end
