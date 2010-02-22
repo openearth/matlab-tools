@@ -1,12 +1,17 @@
 function [OPT, Set, Default] = KMLtrisurf(tri,lat,lon,z,varargin)
 % KMLTRISURF   Just like trisurf
 %
-% see the keyword/vaule pair defaults for additional options
+%   [OPT, Set, Default] = KMLtrisurf(lat,lon,z,<keyword,value>)
+%   [OPT, Set, Default] = KMLtrisurf(lat,lon,z,c,<keyword,value>)
 %
 % use in combination with delaunay_simplified to make simple grids
 % that google can easily display 
 %
-% See also: googlePlot, delaunay_simplified, trisurf
+% For the <keyword,value> pairs and their defaults call
+%
+%    OPT = KMLtrisurf()
+%
+% See also: googlePlot, surf, delaunay_simplified
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -41,24 +46,25 @@ function [OPT, Set, Default] = KMLtrisurf(tri,lat,lon,z,varargin)
 % $Keywords: $
 
 %% process varargin
-OPT.fileName       = [];
-OPT.kmlName        = [];
-OPT.lineWidth      = 1;
-OPT.lineColor      = [0 0 0];
-OPT.lineAlpha      = 1;
-OPT.colorMap       = @(m) jet(m);
-OPT.colorSteps     = 16;
-OPT.fillAlpha      = 0.6;
-OPT.fileName       = '';
-OPT.polyOutline    = 0;
-OPT.polyFill       = 1;
-OPT.openInGE       = false;
-OPT.reversePoly    = false;
-OPT.extrude        = 0;
-OPT.cLim           = [];
-OPT.zScaleFun      = @(z) (z+20).*5;
+OPT.fileName      = '';
+OPT.kmlName       = '';
+OPT.lineWidth     = 1;
+OPT.lineColor     = [0 0 0];
+OPT.lineAlpha     = 1;
+OPT.colorMap      = @(m) jet(m);
+OPT.colorSteps    = 16;
+OPT.fillAlpha     = 0.6;
+OPT.polyOutline   = false;
+OPT.polyFill      = true;
+OPT.openInGE      = false;
+OPT.reversePoly   = false;
+OPT.extrude       = false;
+OPT.cLim          = [];
+OPT.zScaleFun     = @(z) (z+20).*5;
 OPT.timeIn        = [];
 OPT.timeOut       = [];
+OPT.colorbar      = 1;
+OPT.colorbartitle = '';
 
 if nargin==0
   return
@@ -69,6 +75,7 @@ if all(isnan(z(:)))
     disp('warning: No surface could be constructed, because there was no valid height data provided...') %#ok<WNTAG>
     return
 end
+
 %% assign c if it is given
 if ~isempty(varargin)
     if ~ischar(varargin{1})&&~isstruct(varargin{1});
@@ -81,111 +88,133 @@ else
     c =  mean(z(tri),2);
 end
 
-[OPT, Set, Default] = setProperty(OPT, varargin);
-
 %% set properties
 [OPT, Set, Default] = setProperty(OPT, varargin{:});
 
-%% filename
-% gui for filename, if not set yet
-if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','trisurf.kml');
-    OPT.fileName = fullfile(filePath,fileName);
-end
-% set kmlName if it is not set yet
-if isempty(OPT.kmlName)
-    [ignore OPT.kmlName] = fileparts(OPT.fileName);
-end
+%% get filename, gui for filename, if not set yet
 
-%% set cLim
-if isempty(OPT.cLim)
-    OPT.cLim         = [min(c(:)) max(c(:))];
-end
+   if isempty(OPT.fileName)
+      [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','trisurf.kml');
+      OPT.fileName = fullfile(filePath,fileName);
+   end
 
-%% pre-process data
-colorRGB = OPT.colorMap(OPT.colorSteps);
+%% set kmlName if it is not set yet
 
-%clip c to min and max 
-c(c<OPT.cLim(1)) = OPT.cLim(1);
-c(c>OPT.cLim(2)) = OPT.cLim(2);
+   if isempty(OPT.kmlName)
+      [ignore OPT.kmlName] = fileparts(OPT.fileName);
+   end
 
-%convert color values into colorRGB index values
-c = round(((c-OPT.cLim(1))/(OPT.cLim(2)-OPT.cLim(1))*(OPT.colorSteps-1))+1);
+%% pre-process color data
+
+   if isempty(OPT.cLim)
+      OPT.cLim         = [min(c(:)) max(c(:))];
+   end
+
+   colorRGB = OPT.colorMap(OPT.colorSteps);
+
+   % clip c to min and max 
+
+   c(c<OPT.cLim(1)) = OPT.cLim(1);
+   c(c>OPT.cLim(2)) = OPT.cLim(2);
+
+   %  convert color values into colorRGB index values
+
+   c = round(((c-OPT.cLim(1))/(OPT.cLim(2)-OPT.cLim(1))*(OPT.colorSteps-1))+1);
 
 %% start KML
-OPT.fid=fopen(OPT.fileName,'w');
-%% HEADER
-OPT_header = struct(...
-    'name',OPT.kmlName,...
-    'open',0);
-output = KML_header(OPT_header);
+
+   OPT.fid=fopen(OPT.fileName,'w');
+   
+   OPT_header = struct(...
+       'name',OPT.kmlName,...
+       'open',0);
+   output = KML_header(OPT_header);
+   
+   if OPT.colorbar
+      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorTitle',OPT.colorbartitle);
+      output = [output clrbarstring];
+   end
+
 %% STYLE
-OPT_stylePoly = struct(...
-    'name',['style' num2str(1)],...
-    'fillColor',colorRGB(1,:),...
-    'lineColor',OPT.lineColor ,...
-    'lineAlpha',OPT.lineAlpha,...
-    'lineWidth',OPT.lineWidth,...
-    'fillAlpha',OPT.fillAlpha,...
-    'polyFill',OPT.polyFill,...
-    'polyOutline',OPT.polyOutline); 
-for ii = 1:OPT.colorSteps
-    OPT_stylePoly.name = ['style' num2str(ii)];
-    OPT_stylePoly.fillColor = colorRGB(ii,:);
-    output = [output KML_stylePoly(OPT_stylePoly)];
-end
-%% print and clear output
-fprintf(OPT.fid,output); 
+
+   OPT_stylePoly = struct(...
+       'name'       ,['style' num2str(1)],...
+       'fillColor'  ,colorRGB(1,:),...
+       'lineColor'  ,OPT.lineColor,...
+       'lineAlpha'  ,OPT.lineAlpha,...
+       'lineWidth'  ,OPT.lineWidth,...
+       'fillAlpha'  ,OPT.fillAlpha,...
+       'polyFill'   ,OPT.polyFill,...
+       'polyOutline',OPT.polyOutline); 
+   for ii = 1:OPT.colorSteps
+       OPT_stylePoly.name = ['style' num2str(ii)];
+       OPT_stylePoly.fillColor = colorRGB(ii,:);
+       output = [output KML_stylePoly(OPT_stylePoly)];
+   end
+   
+   % print and clear output
+   
+   output = [output '<!--############################-->' fprinteol];
+   fprintf(OPT.fid,output); 
+   
 %% POLYGON
-%% POLYGON
-OPT_poly = struct(...
-'name','',...
-'styleName',['style' num2str(1)],...
-'timeIn' ,datestr(OPT.timeIn ,29),...
-'timeOut',datestr(OPT.timeOut,29),...
-'visibility',1,...
-'extrude',OPT.extrude);
-% preallocate output
-output = repmat(char(1),1,1e5);
-kk = 1;
 
-disp(['creating surf with ' num2str(size(tri,1)) ' elements...'])
+   OPT_poly = struct(...
+   'name','',...
+   'styleName',['style' num2str(1)],...
+   'timeIn' ,datestr(OPT.timeIn ,29),...
+   'timeOut',datestr(OPT.timeOut,29),...
+   'visibility',1,...
+   'extrude',OPT.extrude);
+   
+   % preallocate output
+   
+   output = repmat(char(1),1,1e5);
+   kk = 1;
+   
+   disp(['creating surf with ' num2str(size(tri,1)) ' elements...'])
+   
+   if OPT.reversePoly
+      tri =  tri(:,[3 2 1]);
+   end
+   
+   for ii=1:size(tri,1)
+       OPT_poly.styleName = sprintf('style%d',c(ii));
+       %             if OPT.reversePoly
+       %                 LAT = LAT(end:-1:1);
+       %                 LON = LON(end:-1:1);
+       %                   Z =   Z(end:-1:1);
+       %             end
+       newOutput = KML_poly(lat(tri(ii,[1:3 1])),lon(tri(ii,[1:3 1])),OPT.zScaleFun(z(tri(ii,[1:3 1]))),OPT_poly);
+       output(kk:kk+length(newOutput)-1) = newOutput;
+       kk = kk+length(newOutput);
+       if kk>1e5
+           %then print and reset
+           fprintf(OPT.fid,output(1:kk-1));
+           kk = 1;
+           output = repmat(char(1),1,1e5);
+       end
+   end
+   fprintf(OPT.fid,output(1:kk-1)); % print output
 
-if OPT.reversePoly
-   tri =  tri(:,[3 2 1]);
-end
-
-for ii=1:size(tri,1)
-    OPT_poly.styleName = sprintf('style%d',c(ii));
-    %             if OPT.reversePoly
-    %                 LAT = LAT(end:-1:1);
-    %                 LON = LON(end:-1:1);
-    %                   Z =   Z(end:-1:1);
-    %             end
-    newOutput = KML_poly(lat(tri(ii,[1:3 1])),lon(tri(ii,[1:3 1])),OPT.zScaleFun(z(tri(ii,[1:3 1]))),OPT_poly);
-    output(kk:kk+length(newOutput)-1) = newOutput;
-    kk = kk+length(newOutput);
-    if kk>1e5
-        %then print and reset
-        fprintf(OPT.fid,output(1:kk-1));
-        kk = 1;
-        output = repmat(char(1),1,1e5);
-    end
-end
-fprintf(OPT.fid,output(1:kk-1)); % print output
-%% FOOTER
-output = KML_footer;
- fprintf(OPT.fid,output);
 %% close KML
-fclose(OPT.fid);
+
+   output = KML_footer;
+   fprintf(OPT.fid,output);
+   fclose(OPT.fid);
+
 %% compress to kmz?
-if strcmpi(OPT.fileName(end),'z')
-    movefile(OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
-    zip(OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
-    movefile([OPT.fileName '.zip'],OPT.fileName)
-    delete([OPT.fileName(1:end-3) 'kml'])
-end
+
+   if strcmpi  ( OPT.fileName(end-2:end),'kmz')
+       movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
+       zip     ( OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
+       movefile([OPT.fileName '.zip'],OPT.fileName)
+       delete  ([OPT.fileName(1:end-3) 'kml'])
+   end
+
 %% openInGoogle?
-if OPT.openInGE
-    system(OPT.fileName);
-end
+   if OPT.openInGE
+       system(OPT.fileName);
+   end
+
+%% EOF

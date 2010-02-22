@@ -55,15 +55,22 @@ function testresult = KMLtrisurf_test()
 %% $RunCode
 % Write test code here
 try
+
+% 1a
+
     [lat,lon] = meshgrid(54:.1:57,2:.1:5);
     z = peaks(31); z = abs(z);  z(z<1) = nan;
     tolerance = .5;
   
     tri1 = delaunay_simplified(lat,lon,z,tolerance);
-    KMLtrisurf(tri1,lat-3,lon-3,z,'fileName',KML_testdir('KMLtrisurf_1.kml'),'zScaleFun',@(z) (z+1).*2000,'reversePoly',true);
+    KMLtrisurf(tri1,lat-3,lon-3,z,'fileName',KML_testdir('KMLtrisurf_1a.kml'),'zScaleFun',@(z) (z+1).*2000,'reversePoly',true,...
+    'colorbartitle',mktex('KMLtrisurf_test 1 delaunay_simplified'));
+
+% 1b
 
     tri2 = delaunay(lat,lon);
-    KMLtrisurf(tri2,lat-3,lon-6,z,'fileName',KML_testdir('KMLtrisurf_2.kml'),'zScaleFun',@(z) (z+1).*2000,'reversePoly',true);
+    KMLtrisurf(tri2,lat-3,lon-6,z,'fileName',KML_testdir('KMLtrisurf_1b.kml'),'zScaleFun',@(z) (z+1).*2000,'reversePoly',true,...
+    'colorbartitle',mktex('KMLtrisurf_test 1 delaunay'));
 
     % data from netCDF
     url = vaklodingen_url; url = url{127};
@@ -72,18 +79,24 @@ try
     z = nc_varget(url,'z',[0,0,0],[1,-1,-1]);
     [x,y] = meshgrid(x,y);
 
+% 2
+
     disp(['elements: ' num2str(sum(~isnan(z(:))))]);
     tolerance = 2;
     tri = delaunay_simplified(x,y,z,tolerance,'maxSize',10000);
     [lon,lat] = convertCoordinates(x,y,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
     % plot in Google Earth
-    KMLtrisurf(tri,lat,lon,z,'fileName',KML_testdir('KMLtrisurf_3.kml'),'zScaleFun',@(z) abs(z).*10);
+    KMLtrisurf(tri,lat,lon,z,'fileName',KML_testdir('KMLtrisurf_2.kml'),'zScaleFun',@(z) abs(z).*10,...
+    'colorbartitle',mktex('KMLtrisurf_test 2 delaunay_simplified'));
+
+% 3
 
     [lat,lon] = meshgrid(54:.1:57,2:.1:5);
     z = peaks(31); z = abs(z); tolerance = 0.3;
     tri = delaunay_simplified(lat,lon,z,tolerance);
-    for ii =4:9;
-        KMLtrisurf(tri,lat+12,lon,z,'fileName',KML_testdir(['KMLtrisurf_' num2str(ii) '.kml']),'zScaleFun',@(z) (z+5)*(3+cos(ii))*500,'reversePoly',true,'timeIn',ii,'timeOut',ii+1);
+    for ii = 1:6;
+        KMLtrisurf(tri,lat+12,lon,z,'fileName',KML_testdir(['KMLtrisurf_3_' num2str(ii) '.kml']),'zScaleFun',@(z) (z+5)*(cos(ii))*500,'reversePoly',true,'timeIn',ii,'timeOut',ii+1,...
+       'colorbartitle',mktex(['KMLtrisurf_test 1:6 movie']));
     end
     testresult = true;
 catch
