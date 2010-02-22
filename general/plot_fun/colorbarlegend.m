@@ -27,6 +27,8 @@ function varargout = colorbarlegend(varargin)
 % - ontop           1,           ,0            <default> passed to axesontop
 %
 % - title           string array
+% - titleposition   string array: title, xlabel, ylabel, htext, vtext
+% - titlecolor      .
 % - orientation    'vertical'    ,'horizontal' <default>
 % - ctick           real array
 %                   [] for ctick=clim
@@ -44,9 +46,7 @@ function varargout = colorbarlegend(varargin)
 % Note: colorbar does not appear correctly on screen, but prints
 % correctly to A4 paper when no automatic subplots and colorbars are present.
 %
-% G.J. de Boer, TU Delft, Environmental FLuid Mechanics, Jan 2005 - 2008.
-%
-%See also: COLORBAR, AXESONTOP
+%See also: COLORBAR, AXESONTOP, KML colorbar
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
@@ -82,18 +82,19 @@ ylims       = [];
 
 if ishandle(varargin{1})
    AX          = varargin{1};
-   if isnumeric(varargin{3})
+   if isnumeric(varargin{4})
       xlims    = varargin{2};
       ylims    = varargin{3};
       clims    = varargin{4};
+      argstart = 5;
    else
       xlims    = [];
       ylims    = [];
       clims    = varargin{2};
+      argstart = 3;
    end
-   argstart = 2;
 else
-   if isnumeric(varargin{2})
+   if isnumeric(varargin{3})
       xlims    = varargin{1};
       ylims    = varargin{2};
       clims    = varargin{3};
@@ -111,42 +112,19 @@ OPT.ontop          = 0;
 
 OPT.title          = [];
 OPT.titleposition  = 'title';
+OPT.titlecolor     = 'k';
 OPT.orientation    = 'horizontal'; % 'vertical';
 OPT.ctick          = nan; % nan = auto, [] = clims, values = values
 
-OPT.curaxes        = gca;
-OPT.curfigure      = gcf;
+OPT.axes           = gca;
+OPT.figure         = gcf;
 
-OPT.curfigure0     = gcf;
-OPT.curaxes0       = gca;
+OPT.figure0        = gcf;
+OPT.axes0          = gca;
 
-%% Keywords
-%% --------------------------------
-i=argstart;
-while i<=nargin
-  if ischar(varargin{i}),
-    switch lower(varargin{i})
-    case 'units';         i=i+1;OPT.units          = varargin{i};
-    case 'reference'     ;i=i+1;OPT.reference = varargin{i};
-    case 'ontop';         i=i+1;OPT.ontop          = varargin{i};
-    
-    case 'title';         i=i+1;OPT.title          = varargin{i};
-    case 'titleposition'; i=i+1;OPT.titleposition  = varargin{i};
-    case 'axes';          i=i+1;OPT.curaxes        = varargin{i};
-    case 'figure';        i=i+1;OPT.curfigure      = varargin{i};
-    case 'orientation';   i=i+1;OPT.orientation    = varargin{i};
-    case 'ctick';         i=i+1;OPT.ctick          = varargin{i};
-    otherwise
-      i=i+1;
-      % error(sprintf('Invalid string argument: %s.',varargin{i}));
-      % IGNORE KEYWORDS WHICH ARE NOT RECOGNIZED
-    end
-  end;
-  i=i+1;
-end;
+OPT = setProperty(OPT,varargin{argstart:end});
    
-   %% Make colorbar axes active
-   %% --------------------------------
+%% Make colorbar axes active
 
    if ~isempty(xlims)
    AX        = axesontop(xlims,ylims,'units',OPT.units,...
@@ -155,8 +133,8 @@ end;
    end
    axes(AX);
    
-   %% Calculate position
-   %% --------------------------------
+%% Calculate position
+
    if isempty(xlims)
       xlims   = get(AX  ,'xlim');
    else
@@ -186,8 +164,8 @@ end;
    c       = [c;c]';
    z       = zeros(size(c)) + zposition;
 
-   %% Old code
-   %% --------------------------------
+%% Old code
+
    %image([xlims],[ylims],clrmap)
    %clrbar      = colorbar(A);
    %clrbarchild = get(clrbar,'Children');
@@ -201,12 +179,12 @@ end;
    %set(clrbarchild,'Xdata',Xdata);
    %set(clrbarchild,'Ydata',Ydata);
 
-   %% Fix color limits
-   %% --------------------------------
+%% Fix color limits
+
    caxis(clims);
    
-   %% Draw colorbar patch
-   %% --------------------------------
+%% Draw colorbar patch
+
    if strcmp(lower(OPT.orientation(1)),'h')
 
       P  = surf(x,y,z,c);
@@ -250,27 +228,28 @@ end;
    grid off
    axis tight
    
-   %% Add title
-   %% --------------------------------
+%% Add title
+
    if ~isempty(OPT.title)
       if     strcmpi(OPT.titleposition,'title')
-         title(OPT.title,'VerticalAlignment','bottom','HorizontalAlignment','center');
+         h.title = title(OPT.title,'VerticalAlignment','bottom','HorizontalAlignment','center');
       elseif strcmpi(OPT.titleposition,'xlabel')
-         xlabel(OPT.title,'VerticalAlignment','bottom','HorizontalAlignment','center');
+         h.title = xlabel(OPT.title,'VerticalAlignment','bottom','HorizontalAlignment','center');
       elseif strcmpi(OPT.titleposition,'ylabel')
-         ylabel(OPT.title,'VerticalAlignment','bottom','HorizontalAlignment','center');
+         h.title = ylabel(OPT.title,'VerticalAlignment','bottom','HorizontalAlignment','center');
       elseif strcmpi(OPT.titleposition,'htext')
-         text(.5,.5,OPT.title,'units','normalized','horizontalalignment','center');
+         h.title = text(.5,.5,OPT.title,'units','normalized','horizontalalignment','center');
       elseif strcmpi(OPT.titleposition,'vtext')
-         text(.5,.5,OPT.title,'units','normalized','horizontalalignment','center','rotation',90);
+         h.title = text(.5,.5,OPT.title,'units','normalized','horizontalalignment','center','rotation',90);
       end
+      set(h.title,'color',OPT.titlecolor)
    end
 
-   %% Restore previous figure and axes
-   %% --------------------------------
-   figure(OPT.curfigure0);
+%% Restore previous figure and axes
+
+   figure(OPT.figure0);
    if    ~OPT.ontop
-   axes  (OPT.curaxes0);
+   axes  (OPT.axes0);
    end
 
 if nargout==1

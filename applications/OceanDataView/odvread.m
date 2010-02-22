@@ -278,7 +278,7 @@ function varargout = odv_read(fullfilename)
                D.data.sea_water_salinity     =  nan;
                D.data.sea_water_fluorescence =  nan;
                D.data.LOCAL_CDI_ID           = {['']}; % {} gives error with char
-               D.data.EDMO_code              = {['']}; % {} gives error with char
+               D.data.EDMO_code              =  nan;
 
             else
 
@@ -296,8 +296,9 @@ function varargout = odv_read(fullfilename)
                D.data.sea_water_temperature  = str2num(char(D.rawdata{D.index.sea_water_temperature ,:}));
                D.data.sea_water_salinity     = str2num(char(D.rawdata{D.index.sea_water_salinity    ,:}));
                D.data.sea_water_fluorescence = str2num(char(D.rawdata{D.index.sea_water_fluorescence,:}));
-               D.data.LOCAL_CDI_ID           =              {D.rawdata{D.index.LOCAL_CDI_ID ,:}};
-               D.data.EDMO_code              =              {D.rawdata{D.index.EDMO_code    ,:}};
+               
+               D.data.LOCAL_CDI_ID           =             {D.rawdata{D.index.LOCAL_CDI_ID ,1}};  % unique for ODV file
+               D.data.EDMO_code              = str2num(char(D.rawdata{D.index.EDMO_code    ,1})); % unique for ODV file
                
             end
 
@@ -318,30 +319,31 @@ function varargout = odv_read(fullfilename)
    end % if length(tmp)==0
    
 %% Get extraction info: 1 value per cast (and check for uniqueness: i.e. are there time-consuming, sidewards-drifting casts?)
-   [D.cruise      ,ind]   = unique(D.data.cruise      );if length(ind) > 1;error('no unique value: cruise      ');end
-   [D.type        ,ind]   = unique(D.data.type        );if length(ind) > 1;error('no unique value: type        ');end
-   [D.LOCAL_CDI_ID,ind]   = unique(D.data.LOCAL_CDI_ID);if length(ind) > 1;error('no unique value: LOCAL_CDI_ID');end
-   [D.EDMO_code   ,ind]   = unique(D.data.EDMO_code   );if length(ind) > 1;error('no unique value: EDMO_code   ');end
-    D.file.name             = char(D.file.name   );		      
-    D.cruise                = char(D.cruise      );		      
-    D.type                  = char(D.type        );		      
-    D.LOCAL_CDI_ID          = char(D.LOCAL_CDI_ID);		      
-    D.EDMO_code             = char(D.EDMO_code   );		      
 
-   [T.station     ,ind1]   = unique(D.data.station     );if length(ind1) == 1;D.station   = T.station  ;station= char(D.station);end 
-   [T.datenum     ,ind2]   = unique(D.data.datenum     );if length(ind2) == 1;D.datenum   = T.datenum  ;end
-   [T.latitude    ,ind3]   = unique(D.data.latitude    );if length(ind3) == 1;D.latitude  = T.latitude ;end
-   [T.longitude   ,ind4]   = unique(D.data.longitude   );if length(ind4) == 1;D.longitude = T.longitude;end
-   [T.bot_depth   ,ind5]   = unique(D.data.bot_depth   );if length(ind5) == 1;D.bot_depth = T.bot_depth;end
+   [D.cruise      ]   = unique(D.data.cruise      );if length(D.cruise      ) > 1;error('no unique value: cruise      ');end
+   [D.type        ]   = unique(D.data.type        );if length(D.type        ) > 1;error('no unique value: type        ');end
+   [D.LOCAL_CDI_ID]   = unique(D.data.LOCAL_CDI_ID);if length(D.LOCAL_CDI_ID) > 1;error('no unique value: LOCAL_CDI_ID');end
+   [D.EDMO_code   ]   = unique(D.data.EDMO_code   );if length(D.EDMO_code   ) > 1;error('no unique value: EDMO_code   ');end
+    D.file.name       = char(D.file.name   );		      
+    D.cruise          = char(D.cruise      );		      
+    D.type            = char(D.type        );		      
+    D.LOCAL_CDI_ID    = char(D.LOCAL_CDI_ID);		      
 
+   [D.station  ,ind1] = unique(D.data.station     );if length(D.station  ) == 1;D.data.station   = D.station  ;station= char(D.station);end 
+   [D.datenum  ,ind2] = unique(D.data.datenum     );if length(D.datenum  ) == 1;D.data.datenum   = D.datenum  ;end
+   [D.latitude ,ind3] = unique(D.data.latitude    );if length(D.latitude ) == 1;D.data.latitude  = D.latitude ;end
+   [D.longitude,ind4] = unique(D.data.longitude   );if length(D.longitude) == 1;D.data.longitude = D.longitude;end
+   [D.bot_depth,ind5] = unique(D.data.bot_depth   );if length(D.bot_depth) == 1;D.data.bot_depth = D.bot_depth;end
+   
    if length(ind1)==1 & ...
       length(ind2)==1 & ...
       length(ind3)==1 & ...
       length(ind4)==1 & ...
       length(ind5)==1
-      D.cast = 1;
+      D.cast    = 1;
+      D.station = char(D.station);		      
       else
-      D.cast = 0;
+      D.cast    = 0;
    end
 
 %% Output
