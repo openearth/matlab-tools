@@ -111,7 +111,8 @@ set(fh,'visible','on');
 %% add USGS meta information
 try
     line([min(d.xe(d.xe~=-9999)) max(d.xe(d.xe~=-9999))],[d.MHW d.MHW],'color','k');
-    plot(d.shorePos, d.MHW,'mo','markersize',10);
+    plot(d.shorePos, d.MHW,'go','markersize',10,'markerEdgeColor',...
+        'g','markerFaceColor','g');
 end
 
 set(fh,'userdata',legendtext);
