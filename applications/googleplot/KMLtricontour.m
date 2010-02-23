@@ -98,7 +98,7 @@ if isempty(OPT.fileName)
 end
 % set kmlName if it is not set yet
 if isempty(OPT.kmlName)
-    [ignore OPT.kmlName] = fileparts(OPT.fileName);
+    [~, OPT.kmlName] = fileparts(OPT.fileName);
 end
 %% find contours
 coords = tricontourc(tri,lat,lon,z,OPT.levels);
@@ -113,7 +113,7 @@ while jj<size(coords,2)
 end
 lat = nan(max_size,ii);
 lon = nan(max_size,ii);
-level = nan(1,ii);
+height = nan(1,ii);
 %%
 jj = 1;ii = 0;
 while jj<size(coords,2) 
