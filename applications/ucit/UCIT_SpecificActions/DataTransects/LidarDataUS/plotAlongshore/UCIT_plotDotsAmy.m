@@ -11,10 +11,6 @@ function UCIT_plotDotsAmy
 %
 % see also ucit, displayTransectOutlines
 
-% TODO the buttons are not placed intelegently, fix this!
-% I'd like to make the figure taller and put the buttons along the bottom.
-% Would this be OK with Ben?  Or is there a better way?
-
 % afarris@usgs.gov 2010Feb08: Takes already selected transects and makes  
 % a colored dots plot (prev. version allowed user to select the transects) 
 % afarris wrote quite a bit of this program and the gui is set up
