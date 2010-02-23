@@ -110,7 +110,7 @@ else
         end
         if refline == 1
             x = 0:2:length(d.transectID)*2;
-            x = x(a:b);
+            x = (x(a:b))/1000;
         end
         
        parameter = num2str(i);
@@ -156,7 +156,7 @@ else
         % make plot        
         if str2num(parameter) == 4
             plot(x,y,'color','b','linewidth',2);hold on;
-            plot(x,y2,'color','r','linewidth',2);
+            %plot(x,y2,'color','r','linewidth',2);
             if flipaxis
                set(gca,'xdir','reverse');
             end
@@ -205,7 +205,7 @@ else
             xlabel('Lattitude (degrees)');
         end
         if refline==1
-            xlabel('Distance along reference line (m)');
+            xlabel('Distance along reference line (km)');
         end
         if lat==0 && refline==0
             xlabel('Profile number');
