@@ -87,9 +87,9 @@ if get(findobj(guiH,'tag','UCIT_holdFigure'),'value')==0&&~isempty(findobj('tag'
            
             ph1=plot(d.xe(~isnan(d.ze)),d.ze(~isnan(d.ze)),'color','b','linestyle','none','marker','diamond','MarkerFaceColor','b','Markersize',4);
             
-            % make grey patch
-            x = d.xe(~isnan(d.ze));z = d.ze(~isnan(d.ze));
-            patch([x(1); x; x(end)],[min(z)-1; z; min(z)-1],[0 0 0],'LineStyle','none','FaceAlpha',0.1)
+%             % make grey patch
+%             x = d.xe(~isnan(d.ze));z = d.ze(~isnan(d.ze));
+%             patch([x(1); x; x(end)],[min(z)-1; z; min(z)-1],[0 0 0],'LineStyle','none','FaceAlpha',0.1)
             
             hold on
 
@@ -127,8 +127,8 @@ else
             ph1 = plot(d.xe(~isnan(d.ze)),d.ze(~isnan(d.ze)),'color','b','linestyle','none','marker','diamond','MarkerFaceColor','b','Markersize',4);hold on
 
             % make grey patch
-            x = d.xe(~isnan(d.ze));z = d.ze(~isnan(d.ze));
-            patch([x(1); x; x(end)],[min(z)-1; z; min(z)-1],[0 0 0],'LineStyle','none','FaceAlpha',0.1)
+%             x = d.xe(~isnan(d.ze));z = d.ze(~isnan(d.ze));
+%             patch([x(1); x; x(end)],[min(z)-1; z; min(z)-1],[0 0 0],'LineStyle','none','FaceAlpha',0.1)
             
             xlabel('Distance to profile origin [m]');
             ylabel('Height [m]');
@@ -149,7 +149,8 @@ end
 
 %% add USGS meta information
 try
-    plot(d.shorePos, d.MHW,'g*','markersize',10);
+    plot(d.shorePos, d.MHW,'go','markersize',10,...
+        'markerEdgeColor', 'g','markerFaceColor','g');
     line([min(d.xe(d.xe~=-9999)) max(d.xe(d.xe~=-9999))],[d.MHW d.MHW],'color','k');
     plot(d.xe(~isnan(d.regression)),d.ze(~isnan(d.regression)),'or');
 
