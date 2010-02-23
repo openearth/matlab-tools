@@ -150,9 +150,9 @@ else
     ahandle = axes('parent',fhandle,'position',[0.13 0.25 0.775 0.67]);
     
     % use prepare UCIT_prepareFigure to give it the UCIT look and feel
-    figure(findobj('tag','Dotfig2')) 
+    fh=figure(findobj('tag','Dotfig2')) 
     % make the figure current is apparently needed to actually make the repositioning statement work
-    [fh] = UCIT_prepareFigureN(2, fh, 'UL', ahandle);
+    [fh,ah] = UCIT_prepareFigureN(2, fh, 'UL', ahandle);
     % fh is the 'tag' of the figure, which is what Ben uses, I am more used
     % to handles, the handle of the figure is fhandle
     
