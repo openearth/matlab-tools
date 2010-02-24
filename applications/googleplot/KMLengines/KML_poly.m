@@ -167,6 +167,8 @@ if size(lat,2)>1 % only add if they are there
         '%s'...
         '</innerBoundaryIs>\n'],...
         innerCoords);
+else
+    innerCoords = '';
 end
 
 

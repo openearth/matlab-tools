@@ -1,17 +1,17 @@
 function testresult = KMLtricontourf_test()
 % KMLTRICONTOURF_TEST  One line description goes here
-%  
+%
 % More detailed description of the test goes here.
 %
 %
-%   See also 
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 <COMPANY>
 %       Thijs
 %
-%       <EMAIL>	
+%       <EMAIL>
 %
 %       <ADDRESS>
 %
@@ -30,9 +30,9 @@ function testresult = KMLtricontourf_test()
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -51,14 +51,21 @@ function testresult = KMLtricontourf_test()
 
 %% $RunCode
 % Write test code here
-[x,y] = meshgrid(1:100,201:300);
-z = repmat(peaks(50),2,2)+peaks(100);
-x = x(:)/10;
-y = y(:)/10;
-z = z(:);
-tri = delaunay(x,y);
-KMLtricontourf(tri,x,y,z,'levels',10,'fileName','test.kml','zScaleFun',@(z)(z+10)*1000)
-KMLtricontour3(tri,x,y,z,'levels',10,'fileName','test2.kml','zScaleFun',@(z)(z+10)*1000)
+try
+    [x,y] = meshgrid(1:100,201:300);
+    z = repmat(peaks(50),2,2)+peaks(100);
+    x = x(:)/10;
+    y = y(:)/10;
+    z = z(:);
+    tri = delaunay(x,y);
+    KMLtricontourf(tri,x,y,z,'levels',10,'fileName',KML_testdir('KMLtricontourf1.kml'),'zScaleFun',@(z)(z+7)*1000)
+    
+    KMLtricontourf(tri,x,y,z,'levels',10,'fileName',KML_testdir('KMLtricontourf2.kml'),'zScaleFun',@(z)(z+7)*1000,'staggered',false)
+    KMLtricontour3(tri,x,y,z,'levels',10,'fileName',KML_testdir('KMLtricontour3.kml'),'zScaleFun',@(z)(z+7)*10000)
+    testresult = true;
+catch
+    testresult = false;
+end
 %% $PublishResult
 % Publishable code that describes the test.
 

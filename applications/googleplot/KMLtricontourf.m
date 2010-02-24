@@ -45,12 +45,12 @@ OPT.kmlName       = [];
 OPT.lineWidth     = 3;
 OPT.lineColor     = [0 0 0];
 OPT.lineAlpha     = 1;
-OPT.fillAlpha     = 0.6;
+OPT.fillAlpha     = 1;
 OPT.polyOutline   = false;
 OPT.polyFill      = true;
 OPT.openInGE      = false;
 OPT.colorMap      = @(m) jet(m);
-OPT.colorSteps    = 32;   
+OPT.colorSteps    = [];   
 OPT.timeIn        = [];
 OPT.timeOut       = [];
 OPT.is3D          = false;
@@ -61,25 +61,16 @@ OPT.labelInterval = 5;
 OPT.zScaleFun     = @(z) (z+0)*0;
 OPT.colorbar      = 0;
 OPT.extrude       = true;
+OPT.staggered     = true;
 if nargin==0
   return
-end
-%% assign c if it is given
-if ~isempty(varargin)
-    if ~ischar(varargin{1})&&~isstruct(varargin{1});
-        c = varargin{1};
-        varargin = varargin(2:length(varargin));
-    else
-        c =  mean(z(tri),2);
-    end
-else
-    c =  mean(z(tri),2);
 end
 
 %% set properties
 
 [OPT, Set, Default] = setProperty(OPT, varargin{:});
 
+if isempty(OPT.colorSteps), OPT.colorSteps = OPT.levels; end
 %% input check
 
 % correct lat and lon
@@ -103,23 +94,6 @@ end
 if isempty(OPT.kmlName)
     [~, OPT.kmlName] = fileparts(OPT.fileName);
 end
-
-%% pre-process color data
-
-   if isempty(OPT.cLim)
-      OPT.cLim         = [min(c(:)) max(c(:))];
-   end
-
-   colorRGB = OPT.colorMap(OPT.colorSteps);
-
-   % clip c to min and max 
-
-   c(c<OPT.cLim(1)) = OPT.cLim(1);
-   c(c>OPT.cLim(2)) = OPT.cLim(2);
-
-   %  convert color values into colorRGB index values
-
-   c = round(((c-OPT.cLim(1))/(OPT.cLim(2)-OPT.cLim(1))*(OPT.colorSteps-1))+1);
 
 %% find contours
 C = tricontourc(tri,lat,lon,z,OPT.levels);
@@ -147,8 +121,18 @@ while jj<size(C,2)
                      C(2,jj+1)==C(2,jj+C(2,jj));
     jj = jj+C(2,jj)+1;
 end
+%% pre-process color data
 
-%% find if the coordinates are a closed loop
+   if isempty(OPT.cLim)
+      OPT.cLim         = [min(z(:)) max(z(:))];
+   end
+
+   colorRGB = OPT.colorMap(OPT.colorSteps);
+
+   %  convert color values into colorRGB index values
+    [~,~,c] = unique(height);
+
+%% find polygon area if the coordinates are a closed loop
 polyArea = nan(1,nContours);
 for ii=1:nContours
     if closedLoop(ii)
@@ -156,49 +140,48 @@ for ii=1:nContours
     end
 end
 
-[~,outerPoly] = max(polyArea);
-
-% OuterPoly is the outer boundary.
-
-
-% find the largest loop that is contained by that loop
-% polygons that form the inner boundaries
-innerPoly = [];
-% only check inpolygon for the first 
-inOuterPoly  = inpolygon(lat(1,:),lon(1,:),...
-    lat(~isnan(lat(:,outerPoly)),outerPoly),...
-    lon(~isnan(lat(:,outerPoly)),outerPoly));
-inOuterPoly(outerPoly) = false; % OuterPoly is not in OuterPoly
-
-% check if there are polygons inside the outer poly, but not in one of the
-% inner polygons
-inOuterPoly = find(inOuterPoly);
-
-while ~isempty(inOuterPoly)
-    for ii = innerPoly
-        % remove self
-        inOuterPoly(inOuterPoly==ii)=[];
-        
-        % find polygons inside the outer poly and in this innerPoly
-        inInnerPoly  = inpolygon(lat(1,inOuterPoly),lon(1,inOuterPoly),...
-            lat(~isnan(lat(:,ii)),ii),...
-            lon(~isnan(lat(:,ii)),ii));
-        
-        % remove those the polygons from inOuterPoly
-        inOuterPoly(inInnerPoly)=[];
-    end
+% [~,outerPoly] = max(polyArea);
+mm = 0;
+for outerPoly = find(closedLoop)
+    % OuterPoly is the outer boundary.
     
-    if ~isempty(inOuterPoly)
-        [~,ii] = max(polyArea(inOuterPoly));
-        innerPoly(end+1) = inOuterPoly(ii); %#ok<AGROW>
+    
+    % find the largest loop that is contained by that loop
+    % polygons that form the inner boundaries
+    innerPoly = [];
+    % only check inpolygon for the first
+    inOuterPoly  = inpolygon(lat(1,:),lon(1,:),...
+        lat(~isnan(lat(:,outerPoly)),outerPoly),...
+        lon(~isnan(lat(:,outerPoly)),outerPoly));
+    inOuterPoly(outerPoly) = false; % OuterPoly is not in OuterPoly
+    
+    % check if there are polygons inside the outer poly, but not in one of the
+    % inner polygons
+    inOuterPoly = find(inOuterPoly);
+    
+    while ~isempty(inOuterPoly)
+        for ii = innerPoly
+            % remove self
+            inOuterPoly(inOuterPoly==ii)=[];
+            
+            % find polygons inside the outer poly and in this innerPoly
+            inInnerPoly  = inpolygon(lat(1,inOuterPoly),lon(1,inOuterPoly),...
+                lat(~isnan(lat(:,ii)),ii),...
+                lon(~isnan(lat(:,ii)),ii));
+            
+            % remove those the polygons from inOuterPoly
+            inOuterPoly(inInnerPoly)=[];
+        end
+        
+        if ~isempty(inOuterPoly)
+            [~,ii] = max(polyArea(inOuterPoly));
+            innerPoly(end+1) = inOuterPoly(ii); %#ok<AGROW>
+        end
     end
+    mm = mm+1;
+    D(mm).outerPoly = outerPoly;
+    D(mm).innerPoly = innerPoly;
 end
-
-
-x1 = lat(:,[outerPoly innerPoly]);
-y1 = lon(:,[outerPoly innerPoly]);
-z1 = height([outerPoly innerPoly]);
-z1 = repmat(z1,length(x1),1);
 
 %% start KML
 
@@ -251,13 +234,19 @@ z1 = repmat(z1,length(x1),1);
    output = repmat(char(1),1,1e5);
    kk = 1;
     
-   for ii=1
-       OPT_poly.styleName = sprintf('style%d',c(ii));
-       %             if OPT.reversePoly
-       %                 LAT = LAT(end:-1:1);
-       %                 LON = LON(end:-1:1);
-       %                   Z =   Z(end:-1:1);
-       %             end
+   for ii=1:mm
+       OPT_poly.styleName = sprintf('style%d',c(D(ii).outerPoly));
+       
+       x1 =  lat(:,[D(ii).outerPoly D(ii).innerPoly]);
+       y1 =  lon(:,[D(ii).outerPoly D(ii).innerPoly]);
+       if OPT.staggered
+       z1 = height(D(ii).outerPoly);
+       z1 = repmat(z1,size(x1,1),size(x1,2));
+       else
+       z1 = height([D(ii).outerPoly D(ii).innerPoly]);
+       z1 = repmat(z1,size(x1,1),1);
+           
+       end
        newOutput = KML_poly(x1,y1,OPT.zScaleFun(z1),OPT_poly);
        output(kk:kk+length(newOutput)-1) = newOutput;
        kk = kk+length(newOutput);
