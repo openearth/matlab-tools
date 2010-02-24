@@ -17,14 +17,15 @@ function description = nerc_verify(nerc)
 %
 % Please report these cases to: webmaster@bodc.ac.uk <webmaster@bodc.ac.uk>
 %
-%See also: OCEANDATAVIEW, SDN_VERIFY
+%See also: OCEANDATAVIEW, SDN_VERIFY, SDN2CF
 
 % Example: 
 % http://vocab.ndg.nerc.ac.uk/axis2/services/vocab/getRelatedRecordByTerm?subjectTerm=http://vocab.ndg.nerc.ac.uk/term/P011/current/EWDAZZ01&predicate=1&inferences=true
 
    OPT.method       = 'web';
    OPT.create_cache = 0;
-   OPT.save         = 1;
+   OPT.save         = 0;
+   OPT.disp         = 0;
 
    index            = strfind(nerc,':');
    listReference    =  nerc(         1:index(2)-2); % e.g.'P011';
@@ -35,31 +36,29 @@ function description = nerc_verify(nerc)
 if strcmpi(OPT.method,'web')
    
    % construct URI
-
-   server           =  'http://vocab.ndg.nerc.ac.uk/';
-   service          =  'axis2/services/vocab/';
-   method           =  'getRelatedRecordByTerm';
-   query            = ['subjectTerm=',server,'term/'];
-   keywords         =  '&predicate=1&inferences=true';
-   url              = [server,service,method,'?',query,listReference,'/',listVersion,'/',entryReference,keywords];
    
-   disp(url)
+   server           =  'http://vocab.ndg.nerc.ac.uk/';
+   service          =  'term/';
+   url              = [server,service,listReference,'/',listVersion,'/',entryReference];
+      
+   if OPT.disp;disp(url);end
    
    if OPT.save
    fname            = [mkvar(nerc) '.xml'];
                       urlwrite(url,fname);
    end
    
-   XML              = xmlread(url,fname);
-   D                = xml_read(XML,pref);
-   if isfield(D,'codeTableRecord')
-   description      = D.codeTableRecord.entryTerm;
+   D                = xml_read(url,pref);
+   if isfield(D,'Concept')
+   description      = D.Concept.prefLabel;
    else
    description      = 'error';
    end
    
+   if OPT.disp
    disp(description)
    disp(' ')
+   end
    
 elseif strcmpi(OPT.method,'loc')
 

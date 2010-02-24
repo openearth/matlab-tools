@@ -23,13 +23,9 @@ for i=1:length(OPT)
    files     = dir([OPT(i).directory,filesep,OPT(i).mask]);
 
    % Coastline of world
-   % and of North sea
    
-     %L.lon = nc_varget('http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/northsea.nc','lon');
-     %L.lat = nc_varget('http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/northsea.nc','lat');
-   
-      L.lon = nc_varget('F:\checkouts\OpenEarthRawData\noaa\gshhs\processed\gshhs_i.nc','lon');
-      L.lat = nc_varget('F:\checkouts\OpenEarthRawData\noaa\gshhs\processed\gshhs_i.nc','lat');
+      L.lon = nc_varget('http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc','lon');
+      L.lat = nc_varget('http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc','lat');
    
    for ifile=1:length(files);
    
@@ -48,7 +44,7 @@ for i=1:length(OPT)
        end
        
        disp(['plotting # ',num2str(ifile,'%0.3d'),', press key to continue'])
-       pause
+       pausedisp
        clf
           
    end % ifile 

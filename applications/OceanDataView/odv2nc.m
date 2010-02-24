@@ -80,20 +80,20 @@ for ifile=1:length(OPT.files)
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
    % ------------------
 
-   nc_attput(outputfile, nc_global, 'title'          , 'CTD cast');
-   nc_attput(outputfile, nc_global, 'institution'    , 'NIOZ');
+   nc_attput(outputfile, nc_global, 'title'          , 'Profile data');
+   nc_attput(outputfile, nc_global, 'institution'    , D.institution);
    nc_attput(outputfile, nc_global, 'source'         , '');
-   nc_attput(outputfile, nc_global, 'history'        , ['Tranformation to NetCDF: $HeadURL$']);
-   nc_attput(outputfile, nc_global, 'references'     , 'data:<http://www.nioz.nl>, distribution:<http://www.nodc.nl>,<http://www.seadatanet.org>, netCDF conversion:<http://www.openearth.eu>');
+   nc_attput(outputfile, nc_global, 'history'        , ['Tranformation to netCDF: $HeadURL$']);
+   nc_attput(outputfile, nc_global, 'references'     , 'data:<http://www.nioz.nl>, distribution:<http://www.nodc.nl>,<http://www.seadatanet.org>, netCDF conversion:<http://www.OpenEarth.eu>');
    nc_attput(outputfile, nc_global, 'email'          , '');
    
-   nc_attput(outputfile, nc_global, 'comment'        , 'There is no SeaDataNet netCDF convention yet, this is a trial.');
+   nc_attput(outputfile, nc_global, 'comment'        , 'There is no SeaDataNet netCDF convention yet, this is just a trial to speed-up the SDN netCDF process.');
    nc_attput(outputfile, nc_global, 'version'        , D.version);
 						    
    nc_attput(outputfile, nc_global, 'Conventions'    , 'CF-1.4');
    nc_attput(outputfile, nc_global, 'CF:featureType' , '');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
    						    
-   nc_attput(outputfile, nc_global, 'terms_for_use'  , 'These data can be used freely for research purposes provided that the following source is acknowledged: NIOZ.');
+   nc_attput(outputfile, nc_global, 'terms_for_use'  ,['These data can be used freely for research purposes provided that the following source is acknowledged:.',D.institution]);
    nc_attput(outputfile, nc_global, 'disclaimer'     , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
    
    %% Add SeaDataNet attrbutes: this allows only one ODV file per netCDF file !!!
@@ -104,7 +104,7 @@ for ifile=1:length(OPT.files)
 %% 2 Create dimensions
 
    nc_add_dimension(outputfile, 'station', 1) % a CTD/bottle cast has one time per station
-   nc_add_dimension(outputfile, 'z'      , length(D.data.sea_water_pressure))
+   nc_add_dimension(outputfile, 'z'      , size(D.rawdata,2))
 
    nc_add_dimension(outputfile, 'cruise_str'            , size(D.cruise       ,2));
    nc_add_dimension(outputfile, 'station_str'           , size(D.station      ,2));
@@ -220,56 +220,26 @@ for ifile=1:length(OPT.files)
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'meter');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', '');
    nc(ifld).Attribute(4) = struct('Name', 'positive'       ,'Value', 'down');
+
+%% 3 Create variables: SDN data, skip flags for now
+
+   for ivar=[10:2:length(D.local_name)]
+
+         ifld = ifld + 1;
+      nc(ifld).Name         = mkvar(D.local_name{ivar});
+      nc(ifld).Nctype       = 'float';
+      nc(ifld).Dimension    = {'station','z'};
+      nc(ifld).Attribute(1) = struct('Name', 'long_name'         ,'Value', D.local_name{ivar});
+      nc(ifld).Attribute(2) = struct('Name', 'units'             ,'Value', D.units{ivar});
+      nc(ifld).Attribute(3) = struct('Name', 'standard_name'     ,'Value', D.standard_name{ivar});
+      nc(ifld).Attribute(4) = struct('Name', 'sdn_units'         ,'Value', D.sdn_units{ivar});
+      nc(ifld).Attribute(5) = struct('Name', 'sdn_long_name'     ,'Value', D.sdn_long_name{ivar});
+      nc(ifld).Attribute(6) = struct('Name', 'sdn_standard_name' ,'Value', D.sdn_standard_name{ivar});
+      nc(ifld).Attribute(7) = struct('Name', '_FillValue'        ,'Value', OPT.fillvalue);
+      nc(ifld).Attribute(8) = struct('Name', 'cell_bounds'       ,'Value', 'point');
    
-%% 3 Create variables: SDN data
+   end
 
-   %% Parameters with standard names
-   %  * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
-
-      ifld = ifld + 1;
-   nc(ifld).Name         = 'pressure';
-   nc(ifld).Nctype       = 'float';
-   nc(ifld).Dimension    = {'station','z'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'pressure');
-   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'dbar');
-   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'pressure');
-   nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-   nc(ifld).Attribute(5) = struct('Name', 'cell_bounds'    ,'Value', 'point');
-
-
-      ifld = ifld + 1;
-   nc(ifld).Name         = 'temperature';
-   nc(ifld).Nctype       = 'float';
-   nc(ifld).Dimension    = {'station','z'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'sea water temperature');
-   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degree_Celsius');
-   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'sea_water_temperature');
-   nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-   nc(ifld).Attribute(5) = struct('Name', 'cell_bounds'    ,'Value', 'point');
-
-
-      ifld = ifld + 1;
-   nc(ifld).Name         = 'salinity';
-   nc(ifld).Nctype       = 'float';
-   nc(ifld).Dimension    = {'station','z'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'sea water salinity');
-   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', '1e-3');
-   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'sea_water_salinity');
-   nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-   nc(ifld).Attribute(5) = struct('Name', 'cell_bounds'    ,'Value', 'point');
-
-
-      ifld = ifld + 1;
-   nc(ifld).Name         = 'fluorescence';
-   nc(ifld).Nctype       = 'float';
-   nc(ifld).Dimension    = {'station','z'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'sea water fluorescence');
-   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'ug/l');
-   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'sea_water_fluorescence');
-   nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-   nc(ifld).Attribute(5) = struct('Name', 'cell_bounds'    ,'Value', 'point');
-
-   
 %% 4 Create variables with attibutes
 %    When variable definitons are created before actually writing the
 %    data in the next cell, netCDF can nicely fit all data into the
@@ -280,7 +250,7 @@ for ifile=1:length(OPT.files)
       nc_addvar(outputfile, nc(ifld));   
    end
 
-%% 5 Fill variables
+%% 5 Fill variables: SDN data, skip flags for now
 
    nc_varput(outputfile, 'cruise_id'    , D.cruise);
    nc_varput(outputfile, 'station_id'   , D.station);
@@ -292,12 +262,16 @@ for ifile=1:length(OPT.files)
    nc_varput(outputfile, 'EDMO_code'    , D.EDMO_code);
    nc_varput(outputfile, 'bot_depth'    , D.bot_depth);
 
-   nc_varput(outputfile, 'pressure'     , D.data.sea_water_pressure);
-   nc_varput(outputfile, 'temperature'  , D.data.sea_water_temperature);
-   nc_varput(outputfile, 'salinity'     , D.data.sea_water_salinity);
-   nc_varput(outputfile, 'fluorescence' , D.data.sea_water_fluorescence);
+   for ivar=[10:2:length(D.local_name)]
    
-
+   data = str2num(char(D.rawdata{ivar,:}));
+   
+   if ~isempty(data)
+      nc_varput(outputfile, mkvar(D.local_name{ivar}), data);
+   end
+   
+   end
+   
 %% 6 Check
 
    if OPT.dump

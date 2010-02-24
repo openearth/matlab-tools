@@ -11,6 +11,8 @@ function odvplot_cast(D,varargin)
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
 %See also: OceanDataView
 
+error('currently not operational due to updates in odvread')
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
 %       Gerben J. de Boer
@@ -53,8 +55,8 @@ function odvplot_cast(D,varargin)
        if ~isempty(D.data.(var.x))
        plot  (D.data.(var.x),D.data.(var.y),'.-')
        set   (gca,'ydir','reverse')
-       xlabel([D.variables{D.index.(var.x)},' [',D.units{D.index.(var.x)},']'])
-       ylabel([D.variables{D.index.(var.y)},' [',D.units{D.index.(var.y)},']'])
+       xlabel([D.local_name{D.index.(var.x)},' [',D.local_units{D.index.(var.x)},']'])
+       ylabel([D.local_name{D.index.(var.y)},' [',D.local_units{D.index.(var.y)},']'])
        grid on
        hold on
        plot(xlim,[D.bot_depth D.bot_depth],'r')
@@ -69,7 +71,7 @@ function odvplot_cast(D,varargin)
        var.y = 'sea_water_pressure';
        if ~isempty(D.data.(var.x))
        plot  (D.data.(var.x),D.data.(var.y),'.-')
-       xlabel([D.variables{D.index.(var.x)},' [',D.units{D.index.(var.x)},']'])
+       xlabel([D.local_name{D.index.(var.x)},' [',D.local_units{D.index.(var.x)},']'])
        xlim ([30.5 35.5])
        set   (gca,'ydir','reverse')
        set   (gca,'yticklabel',{})
@@ -88,7 +90,7 @@ function odvplot_cast(D,varargin)
        if ~isempty(D.data.(var.x))
        plot  (D.data.(var.x),D.data.(var.y),'.-')
        set   (gca,'ydir','reverse')
-       xlabel([D.variables{D.index.(var.x)},' [',D.units{D.index.(var.x)},']'])
+       xlabel([D.local_name{D.index.(var.x)},' [',D.local_units{D.index.(var.x)},']'])
        set   (gca,'yticklabel',{})
        grid on
        hold on
