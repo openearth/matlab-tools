@@ -96,7 +96,7 @@ if isempty(OPT.kmlName)
 end
 
 %% find contours
-C = tricontourc(tri,lat,lon,z,OPT.levels);
+[C,E] = tricontourc(tri,lat,lon,z,OPT.levels);
 
 %% pre allocate, find dimensions
 max_size = 1;
@@ -121,6 +121,51 @@ while jj<size(C,2)
                      C(2,jj+1)==C(2,jj+C(2,jj));
     jj = jj+C(2,jj)+1;
 end
+
+%% close open polygons by following edge lines
+
+
+E;
+% stitch elements of E together to form coninouos loops
+%moet ingewikkelder....
+% hou de volgorde erin.
+E(:,7) = nan;
+ii = 0;
+while any(isnan(E(:,7)))
+   ii = ii+1;
+   % first try to find connectingLIne form the first row of coordinates
+   connectingLines = find(E(ii,4)==E(:,1)&E(ii,5)==E(:,2));
+   % if nothing found, find it form the secod row
+   if isempty(connectingLines)
+       connectingLines = find(E(ii,4)==E(:,4)&E(ii,5)==E(:,5));
+       connectingLines(connectingLines==ii)=[];
+       foundFromRow2 = false;
+   else
+       foundFromRow2 = true;
+   end
+   if numel(connectingLines)~=1
+       error('the mesh is to complicated, holes and edges may not connect')
+   end
+   
+   % reverse coordinates if foundFromRow2
+   if foundFromRow2
+        E(ii,[1:6]) = E(ii,[4:6 1:3]);   
+   end
+   
+   E(ii,7) = connectingLines;
+end
+
+
+
+
+
+
+
+
+
+
+
+
 %% pre-process color data
 
    if isempty(OPT.cLim)
