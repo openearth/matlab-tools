@@ -52,26 +52,32 @@ function testresult = KMLtricontourf_test()
 %% $RunCode
 % Write test code here
 % try
-    [x,y] = meshgrid(1:100,201:300);
-    z = repmat(peaks(50),2,2)+peaks(100);
-    
-    x(1:30,:) = [];
-    y(1:30,:) = [];
-    z(1:30,:) = [];
-    
+
+   
+[x,y] = meshgrid(-74:75,-74:75);
+    z = repmat(peaks(50),3,3)+3*cos(peaks(150))+6*sin(peaks(150))+peaks(150)-(abs(x)+abs(y))/3;
+    [x,y] = meshgrid(1:150,201:350);
+       x(1:25,:) = [];
+    y(1:25,:) = [];
+    z(1:25,:) = [];
+%     
     x = x(:)/10;
     y = y(:)/10;
-    z = z(:);
-    
-    tri = delaunay(x,y);
-    
-%     tri(500:800,:) = [];
-%     trisurf(tri,x,y,z);
-    
-    KMLtricontourf(tri,x,y,z,'levels',10,'fileName',KML_testdir('KMLtricontourf1.kml'),'zScaleFun',@(z)(z+7)*5000,'staggered',false)
+    z = z(:)+40;
+%   [x,y] = meshgrid(1:10,21:30);  
+%   z = peaks(10);
+% 
+% x([1:3 9 10],:) = [];
+% y([1:3 9 10],:) = [];
+% z([1:3 9 10],:) = [];
+ tri = delaunay(x,y);
+
+tri(10500:14800,:) = [];
+
+KMLtricontourf(tri,x,y,z,'levels',100,'fileName',KML_testdir('KMLtricontourf.kml'),'zScaleFun',@(z)(z)*10000,'staggered',false)
     
 %     KMLtricontourf(tri,x,y,z,'levels',10,'fileName',KML_testdir('KMLtricontourf2.kml'),'zScaleFun',@(z)(z+7)*1000,'staggered',false)
-   KMLtricontour3(tri,x,y,z,'levels',10,'fileName',KML_testdir('KMLtricontour3.kml'),'zScaleFun',@(z)(z+7)*10000)
+%    KMLtricontour3(tri,x,y,z,'levels',10,'fileName',KML_testdir('KMLtricontour3.kml'),'zScaleFun',@(z)(z+7)*10000)
 %     testresult = true;
 % catch
 %     testresult = false;
