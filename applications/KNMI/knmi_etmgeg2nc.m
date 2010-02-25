@@ -75,13 +75,13 @@ for ifile=1:length(OPT.files)
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
    %------------------
 
-   nc_attput(outputfile, nc_global, 'title'         , '');
+   nc_attput(outputfile, nc_global, 'title'         , 'daily averaged meteo parameter.');
    nc_attput(outputfile, nc_global, 'institution'   , 'KNMI');
    nc_attput(outputfile, nc_global, 'source'        , 'surface observation');
    nc_attput(outputfile, nc_global, 'history'       , ['Original filename: ',filename(D.file.name),...
                                                        ', version:' ,D.version,...
                                                        ', filedate:',D.file.date,...
-                                                       ', tranformation to NetCDF: $HeadURL$ $Revision$ $Date$ $Author$']);
+                                                       ', tranformation to netCDF: $HeadURL$ $Revision$ $Date$ $Author$']);
    nc_attput(outputfile, nc_global, 'references'    , '<http://www.knmi.nl/klimatologie/daggegevens/download.html>,<http://openearth.deltares.nl>');
    nc_attput(outputfile, nc_global, 'email'         , 'http://www.knmi.nl/contact/emailformulier.htm?klimaatdesk');
    nc_attput(outputfile, nc_global, 'comment'       , '');
@@ -112,8 +112,8 @@ for ifile=1:length(OPT.files)
 %% 2 Create dimensions
 
    nc_add_dimension(outputfile, 'time'        , length(D.datenum))
-   nc_add_dimension(outputfile, 'locations'   , 1)
-   nc_add_dimension(outputfile, 'name_strlen1', length(D.stationname)); % for multiple stations get max length
+   nc_add_dimension(outputfile, 'locations'   , size(D.stationname,1)); %
+   nc_add_dimension(outputfile, 'name_strlen1', size(D.stationname,2)); % for multiple stations get max length
 
 %% 3 Create variables
    clear nc

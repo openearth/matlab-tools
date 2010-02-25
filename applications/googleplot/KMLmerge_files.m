@@ -12,12 +12,12 @@ function varargout = KMLmerge_files(varargin)
 
 %% set properties
 
-   OPT.fileName          = [];
-   OPT.kmlName           = [];
-   OPT.sourceFiles       = [];
+   OPT.fileName          = '';
+   OPT.kmlName           = '';
+   OPT.sourceFiles       = {};
+   OPT.foldernames       = {}; % TO DO check for existing folder names
    OPT.description       = '';
    OPT.deleteSourceFiles = false;
-   OPT.foldernames       = {};
 
    [OPT, Set, Default] = setProperty(OPT, varargin{:});
    

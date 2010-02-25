@@ -47,7 +47,7 @@ function odv2nc(varargin)
 
 %% Keyword,value
 
-   OPT = setProperty(OPT,varargin{:})
+   OPT = setProperty(OPT,varargin{:});
 
 %% File loop
 
@@ -61,7 +61,7 @@ for ifile=1:length(OPT.files)
 
 %% 0 Read all raw data
 
-   D = odvread([OPT.directory_raw,filesep,OPT.filename])
+   D = odvread([OPT.directory_raw,filesep,OPT.filename]);
    
    if D.cast==0
       error('only ODV profile data can be written to netCDF yet, timeseries and trajectories not yet.')
@@ -103,8 +103,10 @@ for ifile=1:length(OPT.files)
 
 %% 2 Create dimensions
 
+   dimz = mkvar(D.local_name{10});
+
    nc_add_dimension(outputfile, 'station', 1) % a CTD/bottle cast has one time per station
-   nc_add_dimension(outputfile, 'z'      , size(D.rawdata,2))
+   nc_add_dimension(outputfile, dimz, size(D.rawdata,2))
 
    nc_add_dimension(outputfile, 'cruise_str'            , size(D.cruise       ,2));
    nc_add_dimension(outputfile, 'station_str'           , size(D.station      ,2));
@@ -228,15 +230,25 @@ for ifile=1:length(OPT.files)
          ifld = ifld + 1;
       nc(ifld).Name         = mkvar(D.local_name{ivar});
       nc(ifld).Nctype       = 'float';
-      nc(ifld).Dimension    = {'station','z'};
-      nc(ifld).Attribute(1) = struct('Name', 'long_name'         ,'Value', D.local_name{ivar});
-      nc(ifld).Attribute(2) = struct('Name', 'units'             ,'Value', D.units{ivar});
-      nc(ifld).Attribute(3) = struct('Name', 'standard_name'     ,'Value', D.standard_name{ivar});
-      nc(ifld).Attribute(4) = struct('Name', 'sdn_units'         ,'Value', D.sdn_units{ivar});
-      nc(ifld).Attribute(5) = struct('Name', 'sdn_long_name'     ,'Value', D.sdn_long_name{ivar});
-      nc(ifld).Attribute(6) = struct('Name', 'sdn_standard_name' ,'Value', D.sdn_standard_name{ivar});
-      nc(ifld).Attribute(7) = struct('Name', '_FillValue'        ,'Value', OPT.fillvalue);
-      nc(ifld).Attribute(8) = struct('Name', 'cell_bounds'       ,'Value', 'point');
+      if ivar==10
+      nc(ifld).Dimension    = {dimz};
+      else
+      nc(ifld).Dimension    = {'station',dimz};
+      end
+      nc(ifld).Attribute( 1) = struct('Name', 'long_name'         ,'Value', D.local_name{ivar});
+      nc(ifld).Attribute( 2) = struct('Name', 'units'             ,'Value', D.units{ivar});
+      nc(ifld).Attribute( 3) = struct('Name', 'standard_name'     ,'Value', D.standard_name{ivar});
+      nc(ifld).Attribute( 4) = struct('Name', 'sdn_units'         ,'Value', D.sdn_units{ivar});
+      nc(ifld).Attribute( 5) = struct('Name', 'sdn_long_name'     ,'Value', D.sdn_long_name{ivar});
+      nc(ifld).Attribute( 6) = struct('Name', 'sdn_standard_name' ,'Value', D.sdn_standard_name{ivar});
+      nc(ifld).Attribute( 7) = struct('Name', '_FillValue'        ,'Value', OPT.fillvalue);
+      nc(ifld).Attribute( 8) = struct('Name', 'cell_bounds'       ,'Value', 'point');
+      if ivar==10
+      nc(ifld).Attribute( 9) = struct('Name', 'positive'          ,'Value', 'down');
+      nc(ifld).Attribute(10) = struct('Name', 'AXIS'              ,'Value', 'Z');
+      else
+      nc(ifld).Attribute( 9) = struct('Name', 'coordinates'       ,'Value', mkvar(D.local_name{10}));
+      end
    
    end
 
@@ -246,7 +258,10 @@ for ifile=1:length(OPT.files)
 %    file without the need to relocate any info.
 
    for ifld=1:length(nc)
-      if OPT.disp;disp(['adding ',num2str(ifld),' ',nc(ifld).Name]);end
+      if OPT.disp;
+         disp(['adding ',num2str(ifld),' ',nc(ifld).Name]);
+         var2evalstr(nc(ifld))
+      end
       nc_addvar(outputfile, nc(ifld));   
    end
 

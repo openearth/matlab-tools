@@ -38,7 +38,7 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 % Example 2: draw the mean low water line of the netherlands as a function 
 %            of time
 %   % read data from server
-%   url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/strandlijnen/strandlijnen.nc';
+%   url  = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/strandlijnen/strandlijnen.nc';
 %   time = nc_varget(url, 'time')+datenum(1970,1,1);
 %   trID = nc_varget(url, 'trID');
 %   lat  = nc_varget(url, 'MLWLat');

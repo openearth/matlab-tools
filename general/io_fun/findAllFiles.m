@@ -8,10 +8,14 @@ function filenames = findAllFiles(varargin)
 %
 % * pattern_excl (default '.svn')
 % * pattern_incl (default '*')
-% * basepath     (default ')
+% * basepath     (default '')
 % * recursive    (default 1)
 %
-%See also: dir, opendap_catalog, addpathfast
+% For the <keyword,value> pairs and their defaults call
+%
+%    OPT = findAllFiles()
+%
+%See also: dir, OPENDAP_CATALOG, ADDPATHFAST
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -73,6 +77,15 @@ function filenames = findAllFiles(varargin)
    % overrule default settings by property pairs, given in varargin
 
    OPT = setProperty(OPT, varargin{:});
+   
+   if nargin==0
+      filenames = OPT;
+      return
+   end
+   
+   if ~exist(OPT.basepath)
+      error(['directory ''',OPT.basepath,''' does not exist'])
+   end
 
 %% Find all subdirs in basepath
 
