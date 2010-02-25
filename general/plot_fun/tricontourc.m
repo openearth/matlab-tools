@@ -186,7 +186,7 @@ for contourLevel = contourLevels;
         x_contour =  sum(temp2.*x(vertices(contour_vertex,:)),2);
         y_contour =  sum(temp2.*y(vertices(contour_vertex,:)),2);
         
-        % assigne coordinates to C
+        % assign coordinates to C
         nn              = length(x_contour);
         C(:,jj)         = [contourLevel;nn];
         jj              = jj+1;

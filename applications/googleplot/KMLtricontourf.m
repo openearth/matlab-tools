@@ -107,9 +107,11 @@ while jj<size(C,2)
     jj = jj+C(2,jj)+1;
 end
 nContours = ii;
-lat          = nan(max_size,nContours);
-lon          = nan(max_size,nContours);
-height       = nan(1,nContours);
+lat           = nan(max_size,nContours);
+lon           = nan(max_size,nContours);
+height        = nan(1,nContours);
+contourEndLat = nan(1,nContours);
+contourEndLon = nan(1,nContours);
 closedLoop   = false(1,nContours);
 jj = 1;ii = 0;
 while jj<size(C,2) 
@@ -117,6 +119,8 @@ while jj<size(C,2)
     height(ii) = C(1,jj);
     lat(1:C(2,jj),ii) = C(1,jj+1:jj+C(2,jj)); 
     lon(1:C(2,jj),ii) = C(2,jj+1:jj+C(2,jj)); 
+    contourEndLat(ii) = C(1,jj+C(2,jj));
+    contourEndLon(ii) = C(2,jj+C(2,jj));
     closedLoop(ii) = C(1,jj+1)==C(1,jj+C(2,jj)) &&...
                      C(2,jj+1)==C(2,jj+C(2,jj));
     jj = jj+C(2,jj)+1;
@@ -124,47 +128,164 @@ end
 
 %% close open polygons by following edge lines
 
+% stitch elements of E together to form continouos loops
 
-E;
-% stitch elements of E together to form coninouos loops
-%moet ingewikkelder....
-% hou de volgorde erin.
 E(:,7) = nan;
-ii = 0;
+ii = 1;
 while any(isnan(E(:,7)))
-   ii = ii+1;
-   % first try to find connectingLIne form the first row of coordinates
-   connectingLines = find(E(ii,4)==E(:,1)&E(ii,5)==E(:,2));
-   % if nothing found, find it form the secod row
-   if isempty(connectingLines)
-       connectingLines = find(E(ii,4)==E(:,4)&E(ii,5)==E(:,5));
-       connectingLines(connectingLines==ii)=[];
-       foundFromRow2 = false;
-   else
-       foundFromRow2 = true;
-   end
-   if numel(connectingLines)~=1
-       error('the mesh is to complicated, holes and edges may not connect')
-   end
-   
-   % reverse coordinates if foundFromRow2
-   if foundFromRow2
-        E(ii,[1:6]) = E(ii,[4:6 1:3]);   
-   end
-   
-   E(ii,7) = connectingLines;
+    % first try to find connectingLIne form the first row of coordinates
+    connectingLines = find(E(ii,4)==E(:,1)&E(ii,5)==E(:,2));
+    % if nothing found, find it form the second row
+    if isempty(connectingLines)
+        connectingLines = find(E(ii,4)==E(:,4)&E(ii,5)==E(:,5));
+        connectingLines(connectingLines==ii)=[];
+        foundFromRow2 = true;
+    else
+        foundFromRow2 = false;
+    end
+    if numel(connectingLines)~=1
+        error('the mesh is to complicated, holes and edges may not connect')
+    end
+    
+    % reverse coordinates if foundFromRow2
+    if foundFromRow2
+        E(connectingLines,1:6) = E(connectingLines,[4:6 1:3]);
+    end
+
+    if isnan(E(ii,7))
+        E(ii,7) = connectingLines;
+        ii = connectingLines;
+    else
+        E(ii,7) = connectingLines;
+        ii = find(isnan(E(:,7)),1);
+    end
 end
 
+% now close loops by walking along the edge where a contour ends, until one runs
+% into another contour that starts on the edge. Follow that contour, and
+% then coninue along the edge, and so forth, until the routine is back at
+% the beginning of the initial contour. 
+%
+% Unfortunately, the code got extremely messy...
+%
 
 
+lat2 = [lat; nan(size(lat,1)*5,size(lat,2))]; 
+lon2 = [lon; nan(size(lat,1)*5,size(lat,2))];
+
+for ii = 12%find(~closedLoop)
+
+    endOfContour = find(~isnan(lat(:,ii)),1,'last');
+searchDirection = 1;
 
 
+while ~(lat2(1,ii)==lat2(endOfContour,ii) &&...
+        lon2(1,ii)==lon2(endOfContour,ii));
+     
+    % determine where the contour end could possibly be
+    % find all lines on the edge that cross the continue
+    if searchDirection == 1;
+        temp0 = xor(E(:,3)<height(ii),E(:,6)<height(ii));
+            % calculate exact crossing locations
+        temp1     = E(temp0,[3 6])-height(ii);
+    else
+        temp0 = xor(E(:,3)<nextHeight,E(:,6)<nextHeight);
+            % calculate exact crossing locations
+        temp1     = E(temp0,[3 6])-nextHeight;
+    end    
+    temp2     = abs([temp1(:,2)./(temp1(:,1)-temp1(:,2)),...
+        temp1(:,1)./(temp1(:,1)-temp1(:,2))]);
+    crossingX =  sum(temp2.*E(temp0,[1 4]),2);
+    crossingY =  sum(temp2.*E(temp0,[2 5]),2);
+ 
+    
+    temp3 = (crossingX == lat2(endOfContour,ii) &...
+        crossingY == lon2(endOfContour,ii));
+    temp4 = find(temp0);
+    edgeLineAtEndOfContour = temp4(temp3);
+    
+    % determine to go forwards of backwards through edge lines,
+    % searchDirection = 1  go in the direction of the highest z value 
+    % searchDirection = 2  go in the direction of the lowest z value
+    
+    
+    [~,temp5] = max(E(edgeLineAtEndOfContour,[3 6]));
+    if temp5==searchDirection
+        x_to_add = 1;
+        y_to_add = 2;
+        z_to_add = 3;
+        searchForwards = false;
+    else
+        x_to_add = 4;
+        y_to_add = 5;
+        z_to_add = 6;
+        searchForwards = true;
+    end
+    
+    % determine the next highest height level
+    nextHeight = min(height(height>height(ii)));
+    
+    % start adding edge coordinates to the polygon
+    edgeCoordinateToAdd = edgeLineAtEndOfContour;
+    
+    while E(edgeCoordinateToAdd,z_to_add)>height(ii)&&...
+            E(edgeCoordinateToAdd,z_to_add)<nextHeight
+        endOfContour = endOfContour+1;
+        lat2(endOfContour,ii) = E(edgeCoordinateToAdd,x_to_add);
+        lon2(endOfContour,ii) = E(edgeCoordinateToAdd,y_to_add);
+        if searchForwards
+            edgeCoordinateToAdd = E(edgeCoordinateToAdd,7);
+        else
+            edgeCoordinateToAdd = find(E(:,7)==edgeCoordinateToAdd);
+        end
+    end
+    
+    % find which height was actually crossed
+    if E(edgeCoordinateToAdd,z_to_add)>height(ii)
+        crossedHeight = nextHeight;
+        searchDirection = 2;
+    else
+        crossedHeight = height(ii);
+        searchDirection = 1;
+    end
+    
+    % find exactly where that height was crossed
+    temp1     = E(edgeCoordinateToAdd,[3 6])-crossedHeight;
+    temp2     = abs([temp1(:,2)./(temp1(:,1)-temp1(:,2)),...
+        temp1(:,1)./(temp1(:,1)-temp1(:,2))]);
+    crossingX =  sum(temp2.*E(edgeCoordinateToAdd,[1 4]),2);
+    crossingY =  sum(temp2.*E(edgeCoordinateToAdd,[2 5]),2);
+    
+    % find which contour line ends or begins exactly on that point
+    
+    nextContour = find(contourEndLat == crossingX &...
+        contourEndLon == crossingY, 1);
+    if isempty(nextContour)
+        nextContour = find((lat(1,:) == crossingX &...
+            lon(1,:) == crossingY),1);
+        nextContourIndices = 1:find(~isnan(lat(:,nextContour)),1,'last');
+    else
+        nextContourIndices = find(~isnan(lat(:,nextContour)),1,'last'):-1:1;
+    end
+    if nextContour == ii
+        % the crossing point is the beginning of the initial contour
+        lat2(endOfContour,ii) = lat2(1,ii);
+        lon2(endOfContour,ii) = lon2(1,ii);
+    else
+        lat2(endOfContour+(1:max(nextContourIndices)),ii) = lat(nextContourIndices,nextContour);
+        lon2(endOfContour+(1:max(nextContourIndices)),ii) = lon(nextContourIndices,nextContour);
+    end
+    endOfContour = find(~isnan(lat2(:,ii)),1,'last');
+end
+closedLoop(ii) = true;
+end
 
+%%
+lat2(all(isnan(lat2),2),:) = [];
+lon2(all(isnan(lat2),2),:) = [];
 
-
-
-
-
+lat = lat2;
+lon = lon2;
 
 %% pre-process color data
 

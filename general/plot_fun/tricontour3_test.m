@@ -1,17 +1,17 @@
-function testresult = KMLtricontourf_test()
-% KMLTRICONTOURF_TEST  One line description goes here
-%
+function testresult = tricontour3_test()
+% TRICONTOUR3_TEST  One line description goes here
+%  
 % More detailed description of the test goes here.
 %
 %
-%   See also
+%   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 <COMPANY>
 %       Thijs
 %
-%       <EMAIL>
+%       <EMAIL>	
 %
 %       <ADDRESS>
 %
@@ -30,13 +30,13 @@ function testresult = KMLtricontourf_test()
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and
+% OpenEarthTools is an online collaboration to share and manage data and 
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute
+% Sign up to recieve regular updates of this function, and to contribute 
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 24 Feb 2010
+% Created: 21 Feb 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -51,31 +51,22 @@ function testresult = KMLtricontourf_test()
 
 %% $RunCode
 % Write test code here
-% try
-    [x,y] = meshgrid(1:100,201:300);
-    z = repmat(peaks(50),2,2)+peaks(100);
+try
+    [x,y] = meshgrid(1.1:10.1,1.1:10.1);
+    z = peaks(10);
+    plot3(x,y,z,'k')
     
-    x(1:30,:) = [];
-    y(1:30,:) = [];
-    z(1:30,:) = [];
+    hold on
+    plot3(x',y',z','k')
+    contour3(x,y,z,'--');
     
-    x = x(:)/10;
-    y = y(:)/10;
-    z = z(:);
+    tri = delaunay(x(:),y(:));
     
-    tri = delaunay(x,y);
-    
-%     tri(500:800,:) = [];
-%     trisurf(tri,x,y,z);
-    
-    KMLtricontourf(tri,x,y,z,'levels',10,'fileName',KML_testdir('KMLtricontourf1.kml'),'zScaleFun',@(z)(z+7)*5000,'staggered',false)
-    
-%     KMLtricontourf(tri,x,y,z,'levels',10,'fileName',KML_testdir('KMLtricontourf2.kml'),'zScaleFun',@(z)(z+7)*1000,'staggered',false)
-   KMLtricontour3(tri,x,y,z,'levels',10,'fileName',KML_testdir('KMLtricontour3.kml'),'zScaleFun',@(z)(z+7)*10000)
-%     testresult = true;
-% catch
-%     testresult = false;
-% end
+    tricontour3(tri,x(:),y(:),z(:),-6:2:6);
+    testresult = true;
+catch
+    testresult = false;
+end
 %% $PublishResult
 % Publishable code that describes the test.
 
