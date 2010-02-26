@@ -60,7 +60,7 @@ function testresult = KMLtricontourf_test()
        x(1:25,:) = [];
     y(1:25,:) = [];
     z(1:25,:) = [];
-%     
+% %     
     x = x(:)/10;
     y = y(:)/10;
     z = z(:)+40;
@@ -74,7 +74,7 @@ function testresult = KMLtricontourf_test()
 
 tri(10500:14800,:) = [];
 
-KMLtricontourf(tri,x,y,z,'levels',100,'fileName',KML_testdir('KMLtricontourf.kml'),'zScaleFun',@(z)(z)*10000,'staggered',false)
+KMLtricontourf(tri,x,y,z,'levels',100,'fileName',KML_testdir('KMLtricontourf.kml'),'zScaleFun',@(z)(z)*5000,'staggered',false)
     
 %     KMLtricontourf(tri,x,y,z,'levels',10,'fileName',KML_testdir('KMLtricontourf2.kml'),'zScaleFun',@(z)(z+7)*1000,'staggered',false)
 %    KMLtricontour3(tri,x,y,z,'levels',10,'fileName',KML_testdir('KMLtricontour3.kml'),'zScaleFun',@(z)(z+7)*10000)

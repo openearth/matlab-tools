@@ -1,20 +1,21 @@
 function [OPT, Set, Default] = KMLtricontourf(tri,lat,lon,z,varargin)
-% KMLCONTOUR   Just like contour
+% KMLTRICONTOURC   Just like contour
 %
 % see the keyword/vaule pair defaults for additional options
 %
-% See also: googlePlot, contour
+% See also: googlePlot, tricontourc
+% TODO:
+% * Also inclue *all* edge vertices in contours
+% * Multiple contour crossings on one boundary gives a problem
+% * Improve edge find algortihm (and turn it into seperate function)
+% * Major code cleaning
+% * Optimization of slow routines (think it can be made faster)
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2009 Deltares for Building with Nature
+%   Copyright (C) 2010 Deltares for Building with Nature
 %       Thijs Damsma
 %
-%       Thijs.Damsma@deltares.nl	
-%
-%       Deltares
-%       P.O. Box 177
-%       2600 MH Delft
-%       The Netherlands
+%       Thijs@Damsma.net	
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -144,7 +145,7 @@ while any(isnan(E(:,7)))
     connectingLines = find(E(ii,4)==E(:,1)&E(ii,5)==E(:,2));
     % if nothing found, find it form the second row
     if isempty(connectingLines)
-        connectingLines = find(E(ii,4)==E(:,4)&E(ii,5)==E(:,5));
+        connectingLines = find( abs(E(ii,4)-E(:,4))<eps(1000)&abs(E(ii,5)-E(:,5))<eps(1000));
         connectingLines(connectingLines==ii)=[];
         foundFromRow2 = true;
     else
@@ -177,136 +178,148 @@ end
 %
 
 
-lat2 = [lat; nan(size(lat,1)*5,size(lat,2))]; 
+lat2 = [lat; nan(size(lat,1)*5,size(lat,2))];
 lon2 = [lon; nan(size(lat,1)*5,size(lat,2))];
+
+z2 = repmat(height,size(lat2,1),1);
+z2(isnan(lat2))=nan;
+
 contourToBeDeleted = [];
 for ii = find(~closedLoop)
-    
-    endOfContour = find(~isnan(lat(:,ii)),1,'last');
-    searchDirection = 1;
-    
-    
-    while ~(lat2(1,ii)==lat2(endOfContour,ii) &&...
-            lon2(1,ii)==lon2(endOfContour,ii));
-        
-        % determine where the contour end could possibly be
-        % find all lines on the edge that cross the continue
-        if searchDirection == 1;
-            temp0 = xor(E(:,3)<height(ii),E(:,6)<height(ii));
-            % calculate exact crossing locations
-            temp1     = E(temp0,[3 6])-height(ii);
-        else
-            temp0 = xor(E(:,3)<nextHeight,E(:,6)<nextHeight);
-            % calculate exact crossing locations
-            temp1     = E(temp0,[3 6])-nextHeight;
-        end
-        temp2     = abs([temp1(:,2)./(temp1(:,1)-temp1(:,2)),...
-            temp1(:,1)./(temp1(:,1)-temp1(:,2))]);
-        crossingX =  sum(temp2.*E(temp0,[1 4]),2);
-        crossingY =  sum(temp2.*E(temp0,[2 5]),2);
+    if ismember(ii,contourToBeDeleted)
+        %do nothing
+    else
+        endOfContour = find(~isnan(lat(:,ii)),1,'last');
+        searchDirection = 1;
         
         
-        temp3 = (crossingX == lat2(endOfContour,ii) &...
-            crossingY == lon2(endOfContour,ii));
-        temp4 = find(temp0);
-        edgeLineAtEndOfContour = temp4(temp3);
-        
-        % determine to go forwards of backwards through edge lines,
-        % searchDirection = 1  go in the direction of the highest z value
-        % searchDirection = 2  go in the direction of the lowest z value
-        
-        [~,temp5] = max(E(edgeLineAtEndOfContour,[3 6]));
-        if temp5==searchDirection
-            x_to_add = 1;
-            y_to_add = 2;
-            z_to_add = 3;
-            searchForwards = false;
-        else
-            x_to_add = 4;
-            y_to_add = 5;
-            z_to_add = 6;
-            searchForwards = true;
-        end
-        
-        % determine the next highest height level
-        nextHeight = min(height(height>height(ii)));
-        if isempty(nextHeight)
-            nextHeight = inf;
-        end
-        % start adding edge coordinates to the polygon
-        edgeCoordinateToAdd = edgeLineAtEndOfContour;
-   
-        while E(edgeCoordinateToAdd,z_to_add)>height(ii)&&...
-                E(edgeCoordinateToAdd,z_to_add)<nextHeight
-            endOfContour = endOfContour+1;
-            E(edgeCoordinateToAdd,8) = 1; % record that that edge piece is used in a contour
-            lat2(endOfContour,ii) = E(edgeCoordinateToAdd,x_to_add);
-            lon2(endOfContour,ii) = E(edgeCoordinateToAdd,y_to_add);
-            if searchForwards
-                edgeCoordinateToAdd = E(edgeCoordinateToAdd,7);
+        while ~(lat2(1,ii)==lat2(endOfContour,ii) &&...
+                lon2(1,ii)==lon2(endOfContour,ii));
+            
+            % determine where the contour end could possibly be
+            % find all lines on the edge that cross the continue
+            if searchDirection == 1;
+                temp0 = xor(E(:,3)<height(ii),E(:,6)<height(ii));
+                % calculate exact crossing locations
+                temp1     = E(temp0,[3 6])-height(ii);
             else
-                edgeCoordinateToAdd = find(E(:,7)==edgeCoordinateToAdd);
+                temp0 = xor(E(:,3)<nextHeight,E(:,6)<nextHeight);
+                % calculate exact crossing locations
+                temp1     = E(temp0,[3 6])-nextHeight;
             end
-        end
- 
-        % find which height was actually crossed
-        if E(edgeCoordinateToAdd,z_to_add)>height(ii)
-            crossedHeight = nextHeight;
-            searchDirection = 2;
-        else
-            crossedHeight = height(ii);
-            searchDirection = 1;
-        end
-        
-        % find exactly where that height was crossed
-        temp1     = E(edgeCoordinateToAdd,[3 6])-crossedHeight;
-        temp2     = abs([temp1(:,2)./(temp1(:,1)-temp1(:,2)),...
-            temp1(:,1)./(temp1(:,1)-temp1(:,2))]);
-        crossingX =  sum(temp2.*E(edgeCoordinateToAdd,[1 4]),2);
-        crossingY =  sum(temp2.*E(edgeCoordinateToAdd,[2 5]),2);
-        
-        % find which contour line ends or begins exactly on that point
-        
-        nextContour = find(contourEndLat == crossingX &...
-            contourEndLon == crossingY, 1);
-        if isempty(nextContour)
-            nextContour = find((lat(1,:) == crossingX &...
-                lon(1,:) == crossingY),1);
-            nextContourIndices = 1:find(~isnan(lat(:,nextContour)),1,'last');
-        else
-            nextContourIndices = find(~isnan(lat(:,nextContour)),1,'last'):-1:1;
-        end
-        if nextContour == ii
-            % the crossing point is the beginning of the initial contour
-            lat2(endOfContour,ii) = lat2(1,ii);
-            lon2(endOfContour,ii) = lon2(1,ii);
-        else
-            lat2(endOfContour+(1:max(nextContourIndices)),ii) = lat(nextContourIndices,nextContour);
-            lon2(endOfContour+(1:max(nextContourIndices)),ii) = lon(nextContourIndices,nextContour);
-            if height(nextContour)==height(ii)&~ismember(ii,contourToBeDeleted)
-                % then the nextContour in itself would result in a
-                % cennecting contour identical to the one already being
-                % created.
-                contourToBeDeleted(end+1) = nextContour;
+            temp2     = abs([temp1(:,2)./(temp1(:,1)-temp1(:,2)),...
+                temp1(:,1)./(temp1(:,1)-temp1(:,2))]);
+            crossingX =  sum(temp2.*E(temp0,[1 4]),2);
+            crossingY =  sum(temp2.*E(temp0,[2 5]),2);
+            
+            
+            temp3 = (crossingX == lat2(endOfContour,ii) &...
+                crossingY == lon2(endOfContour,ii));
+            temp4 = find(temp0);
+            edgeLineAtEndOfContour = temp4(temp3);
+            
+            % determine to go forwards of backwards through edge lines,
+            % searchDirection = 1  go in the direction of the highest z value
+            % searchDirection = 2  go in the direction of the lowest z value
+            
+            [~,temp5] = max(E(edgeLineAtEndOfContour,[3 6]));
+            if temp5==searchDirection
+                x_to_add = 1;
+                y_to_add = 2;
+                z_to_add = 3;
+                searchForwards = false;
+            else
+                x_to_add = 4;
+                y_to_add = 5;
+                z_to_add = 6;
+                searchForwards = true;
             end
+            
+            % determine the next highest height level
+            nextHeight = min(height(height>height(ii)));
+            if isempty(nextHeight)
+                nextHeight = inf;
+            end
+            % start adding edge coordinates to the polygon
+            edgeCoordinateToAdd = edgeLineAtEndOfContour;
+            
+            while E(edgeCoordinateToAdd,z_to_add)>height(ii)&&...
+                    E(edgeCoordinateToAdd,z_to_add)<nextHeight
+                endOfContour = endOfContour+1;
+                E(edgeCoordinateToAdd,8) = 1; % record that that edge piece is used in a contour
+                lat2(endOfContour,ii) = E(edgeCoordinateToAdd,x_to_add);
+                lon2(endOfContour,ii) = E(edgeCoordinateToAdd,y_to_add);
+                  z2(endOfContour,ii) = E(edgeCoordinateToAdd,z_to_add);
+                
+                if searchForwards
+                    edgeCoordinateToAdd = E(edgeCoordinateToAdd,7);
+                else
+                    edgeCoordinateToAdd = find(E(:,7)==edgeCoordinateToAdd);
+                end
+            end
+            
+            % find which height was actually crossed
+            if E(edgeCoordinateToAdd,z_to_add)>height(ii)
+                crossedHeight = nextHeight;
+                searchDirection = 2;
+            else
+                crossedHeight = height(ii);
+                searchDirection = 1;
+            end
+            
+            % find exactly where that height was crossed
+            temp1     = E(edgeCoordinateToAdd,[3 6])-crossedHeight;
+            temp2     = abs([temp1(:,2)./(temp1(:,1)-temp1(:,2)),...
+                temp1(:,1)./(temp1(:,1)-temp1(:,2))]);
+            crossingX =  sum(temp2.*E(edgeCoordinateToAdd,[1 4]),2);
+            crossingY =  sum(temp2.*E(edgeCoordinateToAdd,[2 5]),2);
+            
+            % find which contour line ends or begins exactly on that point
+            
+            nextContour = find(contourEndLat == crossingX &...
+                contourEndLon == crossingY, 1);
+            if isempty(nextContour)
+                nextContour = find((lat(1,:) == crossingX &...
+                    lon(1,:) == crossingY),1);
+                nextContourIndices = 1:find(~isnan(lat(:,nextContour)),1,'last');
+            else
+                nextContourIndices = find(~isnan(lat(:,nextContour)),1,'last'):-1:1;
+            end
+            if nextContour == ii
+                % the crossing point is the beginning of the initial contour
+                lat2(endOfContour,ii) = lat2(1,ii);
+                lon2(endOfContour,ii) = lon2(1,ii);
+                  z2(endOfContour,ii) = height(ii);   
+            else
+                lat2(endOfContour+(1:max(nextContourIndices)),ii) = lat(nextContourIndices,nextContour);
+                lon2(endOfContour+(1:max(nextContourIndices)),ii) = lon(nextContourIndices,nextContour);
+                  z2(endOfContour+(1:max(nextContourIndices)),ii) = height(nextContour);
+                if height(nextContour)==height(ii)&~ismember(ii,contourToBeDeleted)
+                    % then the nextContour in itself would result in a
+                    % cennecting contour identical to the one already being
+                    % created.
+                    contourToBeDeleted(end+1) = nextContour;
+                end
+            end
+            endOfContour = find(~isnan(lat2(:,ii)),1,'last');
         end
-        endOfContour = find(~isnan(lat2(:,ii)),1,'last');
+        closedLoop(ii) = true;
+        % some test plotting for debugging
+        %
+        %     disp(num2str(ii));
+        %     plot(lon2(:,ii),lat2(:,ii),'.')
+        %     axis([min(lon2(:))-1,max(lon2(:))+1,min(lat2(:))-1,max(lat2(:))+1]);
+        %     hold on
+        %     plot(lon2(:,ii),lat2(:,ii))
+        %     scatter3(lon2(:,ii),lat2(:,ii),1:numel(lon2(:,ii)))
+        %     fill(lon2(~isnan(lon2(:,ii)),ii),lat2( ~isnan(lat2(:,ii)),ii),'c')
+        %     title(num2str([polyIsClockwise(lon2(:,ii),lat2(:,ii))]))
+        %     hold off
     end
-    closedLoop(ii) = true;
-    % some test plotting for debugging
-% 
-%     disp(num2str(ii));
-%     plot(lon2(:,ii),lat2(:,ii),'.')
-%     axis([min(lon2(:))-1,max(lon2(:))+1,min(lat2(:))-1,max(lat2(:))+1]);
-%     hold on
-%     plot(lon2(:,ii),lat2(:,ii))
-%     scatter3(lon2(:,ii),lat2(:,ii),1:numel(lon2(:,ii)))
-%     fill(lon2(~isnan(lon2(:,ii)),ii),lat2( ~isnan(lat2(:,ii)),ii),'c')
-%     title(num2str([polyIsClockwise(lon2(:,ii),lat2(:,ii))]))
-%     hold off  
 end
 
 %%
+  z2(all(isnan(lat2),2),:) = [];
 lat2(all(isnan(lat2),2),:) = [];
 lon2(all(isnan(lon2),2),:) = [];
 
@@ -315,6 +328,7 @@ lon = lon2;
 
 lat(:,contourToBeDeleted) = [];
 lon(:,contourToBeDeleted) = [];
+ z2(:,contourToBeDeleted) = [];
 closedLoop(contourToBeDeleted) = [];
 nContours = nContours -numel(contourToBeDeleted);
 height(contourToBeDeleted) = [];
@@ -324,6 +338,7 @@ for ii=1:size(lat,2)
         endOfContour = find(~isnan(lat(:,ii)),1,'last');
         lat(1:endOfContour,ii) = lat(endOfContour:-1:1,ii);
         lon(1:endOfContour,ii) = lon(endOfContour:-1:1,ii);
+         z2(1:endOfContour,ii) =  z2(endOfContour:-1:1,ii);
     end
 end
 
@@ -447,12 +462,10 @@ end
        x1 =  lat(:,[D(ii).outerPoly D(ii).innerPoly]);
        y1 =  lon(:,[D(ii).outerPoly D(ii).innerPoly]);
        if OPT.staggered
-       z1 = height(D(ii).outerPoly);
-       z1 = repmat(z1,size(x1,1),size(x1,2));
+           z1 = height(D(ii).outerPoly);
+           z1 = repmat(z1,size(x1,1),size(x1,2));
        else
-       z1 = height([D(ii).outerPoly D(ii).innerPoly]);
-       z1 = repmat(z1,size(x1,1),1);
-           
+           z1 = z2(:,[D(ii).outerPoly D(ii).innerPoly]);
        end
        newOutput = KML_poly(x1,y1,OPT.zScaleFun(z1),OPT_poly);
 %        newOutput = KML_poly(x1,y1,'clampToGround',OPT_poly);
