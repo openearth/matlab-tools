@@ -87,8 +87,9 @@ if get(findobj(guiH,'tag','UCIT_holdFigure'),'value')==0&&~isempty(findobj('tag'
            
             ph1=plot(d.xe(~isnan(d.ze)),d.ze(~isnan(d.ze)),'color','b','linestyle','none','marker','diamond','MarkerFaceColor','b','Markersize',4);
             
+            z = d.ze(~isnan(d.ze));
 %             % make grey patch
-%             x = d.xe(~isnan(d.ze));z = d.ze(~isnan(d.ze));
+%             x = d.xe(~isnan(d.ze));
 %             patch([x(1); x; x(end)],[min(z)-1; z; min(z)-1],[0 0 0],'LineStyle','none','FaceAlpha',0.1)
             
             hold on
@@ -126,8 +127,9 @@ else
         if ~isempty(d.ze)
             ph1 = plot(d.xe(~isnan(d.ze)),d.ze(~isnan(d.ze)),'color','b','linestyle','none','marker','diamond','MarkerFaceColor','b','Markersize',4);hold on
 
+            z = d.ze(~isnan(d.ze));
             % make grey patch
-%             x = d.xe(~isnan(d.ze));z = d.ze(~isnan(d.ze));
+%             x = d.xe(~isnan(d.ze));
 %             patch([x(1); x; x(end)],[min(z)-1; z; min(z)-1],[0 0 0],'LineStyle','none','FaceAlpha',0.1)
             
             xlabel('Distance to profile origin [m]');
