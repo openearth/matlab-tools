@@ -65,6 +65,7 @@ function varargout = matrix2latex(x, varargin)
 %%
 OPT = struct(...
     'title', 'table',...
+    'standalone', false,...
     'filename', 'table.tex',...
     'where', '!tbp',...
     'rowlabel', '',...
@@ -75,32 +76,62 @@ OPT = struct(...
 
 OPT = setProperty(OPT, varargin{:});
 
+%%
+[nrow ncol] = deal(size(x,1), size(x,2));
+[irow icol] = deal(1);
+
+if ~isempty(OPT.collabel)
+    nrow = nrow + 1;
+    irow = 2;
+end
+
+if ~isempty(OPT.rowlabel)
+    ncol = ncol + 1;
+    icol = 2;
+end
+
+xcell = cell(nrow,ncol);
+xcell(irow:end,icol:end) = num2cell(x);
+xcell = cellfun(@num2str, xcell,...
+    'UniformOutput', false);
+
+if ~isempty(OPT.collabel)
+    % put columnlabels at the last n columns
+    xcell(1,end+1-length(OPT.collabel):end) = OPT.collabel;
+end
+
+if ~isempty(OPT.rowlabel)
+    % put rowlabels at the last n rows
+    xcell(end+1-length(OPT.rowlabel):end,1) = OPT.rowlabel;
+end
+
+delimiters = repmat({' & '}, 1, size(xcell,2));
+delimiters{end} = '\\';
+
 %% build table
 % table preamble 
 texcell = {};
+
+if OPT.standalone
+    % document preamble
+    texcell{end+1} = sprintf('%s\n', '\documentclass{article}', '', '\begin{document}');
+end
+
 texcell{end+1} = sprintf('%s', '\begin{table}[', OPT.where, ']');
 texcell{end+1} = sprintf('%s', ' \caption{', OPT.caption, '\label{', OPT.title, '}}'); 
 texcell{end+1} = sprintf('%s', ' \begin{', OPT.justification, '}');
-texcell{end+1} = sprintf('%s', ' \begin{tabular}{', repmat(OPT.rowjustification, 1, size(x,2)), '}\hline\hline');
-% table header
-if ~isempty(OPT.collabel)
-    columnheader = '';
-    for i = 1:size(x,2)-1
-        columnheader = sprintf('%s', columnheader, '\multicolumn{1}{c}{', OPT.collabel{i}, '}', '&');
-    end
-    columnheader = sprintf('%s', columnheader, '\multicolumn{1}{c}{', OPT.collabel{i+1}, '}', '\tabularnewline');
-    texcell{end+1} = columnheader;
-    texcell{end+1} = sprintf('%s', '\hline');
+rowlabeljustification = '';
+if ~isempty(OPT.rowlabel)
+    rowlabeljustification = [OPT.rowjustification '|'];
 end
+texcell{end+1} = sprintf('%s', ' \begin{tabular}{', rowlabeljustification, repmat(OPT.rowjustification, 1, size(x,2)), '}\hline\hline');
 
-% table contents
-for i = 1:size(x,1)
-    tabrow = '';
-    for j = 1:size(x,2)-1
-        tabrow = sprintf('%s', tabrow, num2str(x(i,j)), '&');
+for irow = 1:size(xcell,1)
+    if ~isempty(OPT.collabel) && irow == 2
+        texcell{end+1} = '\hline';
     end
-    tabrow = sprintf('%s', tabrow, num2str(x(i,j+1)), '\tabularnewline');
-    texcell{end+1} = tabrow;
+    rowcell = [xcell(irow,:); delimiters];
+    texcell{end+1} = sprintf('%s', rowcell{:});
 end
 
 % table closure
@@ -111,6 +142,12 @@ texcell{end+1} = sprintf('%s', '\end{tabular}');
 texcell{end+1} = sprintf('%s', '\end{', OPT.justification, '}');
 
 texcell{end+1} = sprintf('%s', '\end{table}');
+
+if OPT.standalone
+    % document closure
+    texcell{end+1} = sprintf('%s\n', '', '\end{document}');
+end
+
 
 %% write table to file
 fid = fopen(OPT.filename, 'w');
