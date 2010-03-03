@@ -13,6 +13,11 @@ function DISout = disunpack(DISin)
 % 'flux/discharge rate'         > Q
 % 'Salinity'                    > salinity
 % 'Temperature'                 > temperature
+% 'Sediment1'                   > sediment1
+%
+% Parameter names other than flux/discharge rate are converted 
+% automatically to fieldnames (based on their name in the dis file). 
+% This is required as some names (e.g. for sediments) are user defined
 %
 %See also: BCT_IO, DELFT3D_IO_DIS
 
@@ -69,16 +74,18 @@ for itable = 1:DISin.NTables
    
    H.parameternames = {'QA',...                         %       *.bct
                        'QB',...                         %       *.bct
-                       'Q',...                          % *.dis
-                       'salinity',...                   % *.dis
-                       'temperature'};                  % *.dis
+                       'Q'};                  % *.dis
+                   for ipar = 3:length(DISin.Table(1).Parameter)
+                       H.parameternames{ipar+1} = lower(DISin.Table(1).Parameter(ipar).Name);
+                   end
    % units determined from file
    H.tablenames     = {'total discharge (t)  end A',... %       *.bct
                        'total discharge (t)  end B',... %       *.bct
-                       'flux/discharge rate',...        % *.dis
-                       'Salinity',...                   % *.dis
-                       'Temperature',...                % *.dis
-                       };
+                       'flux/discharge rate'};
+                   for ipar = 3:length(DISin.Table(1).Parameter)
+                       H.tablenames{ipar+1} = DISin.Table(1).Parameter(ipar).Name;
+                   end
+                   
 
     DISout.data(itable).datenum  = time2datenum(DISin.Table(itable).ReferenceTime) + ...
                                                 DISin.Table(itable).Data(:,1)./60./24; % minutes to days
