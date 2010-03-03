@@ -156,7 +156,7 @@ else
         % make plot        
         if str2num(parameter) == 4
             plot(x,y,'color','b','linewidth',2);hold on;
-            %plot(x,y2,'color','r','linewidth',2);
+            plot(x,y2,'color','r','linewidth',2);
             if flipaxis
                set(gca,'xdir','reverse');
             end
