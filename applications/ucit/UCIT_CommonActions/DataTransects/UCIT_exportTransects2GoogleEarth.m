@@ -1,11 +1,11 @@
 function UCIT_exportTransects2GoogleEarth
+%UCIT_EXPORTTRANSECTS2GOOGLEEARTH   export a transect to Google Earth
 %
 % input: select transects in UCIT GUI
 %   
 % output: temporary kml file
 %   
-%
-%   See also KMLline
+%   See also KMLline, KMLtext
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
@@ -44,7 +44,7 @@ if isempty(mapW)
 end
 %% select transects to plot
 fh = figure(findobj('tag','mapWindow'));set(fh,'visible','off');
-[xv,yv] = UCIT_WS_drawPolygon;
+[xv,yv] = UCIT_WS_polydraw;
 polygon=[xv yv];
 
 %% get metadata (either from the console or the database)
@@ -52,9 +52,9 @@ d = UCIT_getMetaData(1);
 
 %% filter transects using inpolygon
 test = d.contour;
-id1 = inpolygon(test(:,1),test(:,3),polygon(:,1),polygon(:,2));
-id2 = inpolygon(test(:,2),test(:,4),polygon(:,1),polygon(:,2));
-id = (id1|id2);
+id1  = inpolygon(test(:,1),test(:,3),polygon(:,1),polygon(:,2));
+id2  = inpolygon(test(:,2),test(:,4),polygon(:,1),polygon(:,2));
+id   = (id1|id2);
 
 %% Find all transects and colour them blue
 figure(fh);
@@ -64,9 +64,9 @@ dpTs=get(rayH,'tag');
 
 for i = 1:length(dpTs)
     if ~strcmp(dpTs{i},'')
-        tagtext = dpTs{i};
+        tagtext     = dpTs{i};
         underscores = strfind(tagtext,'_');
-        id_text(i) = str2double(tagtext([underscores(2)+1:underscores(3)-1]));
+        id_text(i)  = str2double(tagtext([underscores(2)+1:underscores(3)-1]));
     end
 end
 
@@ -96,9 +96,9 @@ end
 filename = [getenv('TEMP'),'transects'];
 counter = 1;
 for j = 1 : 3: length(transectcontours)-1
-    KMLline([lat(j) lat(j+1)],[lon(j) lon(j+1)],'fileName',[filename '_' num2str(j) '_1.kml'],'fillColor',jet(5),'fillAlpha',[1 0 1 0 1],'lineColor',[1 1 1],'lineWidth',[1],'lineAlpha',[0.5]);
-    KMLline([lat(j) lat(j)]',[lon(j) lon(j)]',[0 35]','fileName',[filename '_' num2str(j) '_2.kml'],'lineColor',[1 1 1]) ;
-    KMLtext(lat(j),lon(j),[num2str(str2double(transectids{counter}))],40,'fileName',[filename '_' num2str(j)  '_3.kml']);
+    KMLline([lat(j) lat(j+1)], [lon(j) lon(j+1)],'fileName',[filename '_' num2str(j) '_1.kml'],'fillColor',jet(5),'fillAlpha',[1 0 1 0 1],'lineColor',[1 1 1],'lineWidth',[1],'lineAlpha',[0.5]);
+    KMLline([lat(j) lat(j  )]',[lon(j) lon(j)]',[0 35]','fileName',[filename '_' num2str(j) '_2.kml'],'lineColor',[1 1 1]) ;
+    KMLtext( lat(j),lon(j  ),[num2str(str2double(transectids{counter}))],40,'fileName',[filename '_' num2str(j)  '_3.kml']);
     KMLmerge_files('fileName',[transectids{counter} '.kml'],'sourceFiles',{[filename '_' num2str(j) '_1.kml'] [filename '_' num2str(j) '_2.kml'] [filename '_' num2str(j) '_3.kml']});
     delete([filename '_*.kml']);
     sourceFiles{counter}=[transectids{counter} '.kml'];

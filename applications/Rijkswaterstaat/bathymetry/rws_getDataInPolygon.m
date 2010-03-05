@@ -101,9 +101,9 @@ if isempty(OPT.polygon)
     % make sure the proper axes is current
     try axes(ah); end
 
-    % draw a polygon using Gerben's drawpolygon routine making sure its tagged properly
+    % draw a polygon using Gerben's polydraw routine making sure its tagged properly
     disp('Please click a polygon from which to select data ...')
-    [x,y] = drawpolygon('g','linewidth',2,'tag','selectionpoly');
+    [x,y] = polydraw('g','linewidth',2,'tag','selectionpoly');
 
     % combine x and y in the variable polygon and close it
     OPT.polygon = [x' y'];

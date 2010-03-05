@@ -1,5 +1,7 @@
 function [XB calcdir] = xb_generate_model_2D(X, Y, Z, varargin)
 % XB_GENERATE_MODEL_2D  place tag of selected object in editable textbox 
+%
+%See also: xbeach
 
 % --------------------------------------------------------------------
 % Copyright (C) 2004-2009 Delft University of Technology
@@ -54,7 +56,7 @@ end
 axis equal
 
 % next select the area of focus by applying the crosshair (right-click to close)
-ginp    = drawpolygon;
+ginp    = polydraw;
 polygon = [ginp.x; ginp.y]';
 ids     = inpolygon(X, Y, polygon(:,1), polygon(:,2));
 X       = X(ids);

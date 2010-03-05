@@ -50,7 +50,7 @@ end
 
 %% select transects to plot
 fh = figure(findobj('tag','mapWindow'));set(fh,'visible','off');
-[xv,yv] = UCIT_WS_drawPolygon;
+[xv,yv] = UCIT_WS_polydraw;
 polygon=[xv yv];
 
 %% get metadata (either from the console or the database)
@@ -58,9 +58,9 @@ d = UCIT_getLidarMetaData;
 
 %% filter transects using inpolygon
 test = d.contour;
-id1 = inpolygon(test(:,1),test(:,3),polygon(:,1),polygon(:,2));
-id2 = inpolygon(test(:,2),test(:,4),polygon(:,1),polygon(:,2));
-id = (id1|id2);
+id1  = inpolygon(test(:,1),test(:,3),polygon(:,1),polygon(:,2));
+id2  = inpolygon(test(:,2),test(:,4),polygon(:,1),polygon(:,2));
+id   = (id1|id2);
 
 
 %% Find all transects and colour them blue
@@ -91,9 +91,9 @@ time = nc_varget(url, 'time');
 ids = find(id>0);
 time_id = find(time == datenum(UCIT_getInfoFromPopup('TransectsSoundingID'))-datenum(1970,1,1));
 
-x = nc_varget(url, 'x',         [time_id-1,ids(1)-1,0], [1,ids(end)-ids(1),length(crossShoreCoordinate)]);
-y = nc_varget(url, 'y',         [time_id-1,ids(1)-1,0], [1,ids(end)-ids(1),length(crossShoreCoordinate)]);
-z = nc_varget(url, 'altitude',  [time_id-1,ids(1)-1,0], [1,ids(end)-ids(1),length(crossShoreCoordinate)]);
+x      = nc_varget(url, 'x',         [time_id-1,ids(1)-1,0], [1,ids(end)-ids(1),length(crossShoreCoordinate)]);
+y      = nc_varget(url, 'y',         [time_id-1,ids(1)-1,0], [1,ids(end)-ids(1),length(crossShoreCoordinate)]);
+z      = nc_varget(url, 'altitude',  [time_id-1,ids(1)-1,0], [1,ids(end)-ids(1),length(crossShoreCoordinate)]);
 shoreX = nc_varget(url, 'shore_east',[ids(1)-1],[ids(end)-ids(1)]);
 shoreY = nc_varget(url,'shore_north',[ids(1)-1],[ids(end)-ids(1)]);
 
@@ -156,7 +156,7 @@ else
     xlabel('Easting (m, UTM)','fontsize',9);
     ylabel('Northing (m, UTM)','fontsize',9);
     axis equal
-    dx=100;
+    dx  =100;
     maxx=max(max(x(x~=-9999)));
     minx=min(min(x(x~=-9999)));
     maxy=max(max(y(y~=-9999)));

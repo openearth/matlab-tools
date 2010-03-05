@@ -21,9 +21,10 @@ function oetsettings(varargin)
 %    help general
 %    help applications
 %    help io
-%	
+%
 %See also: ADDPATHFAST, RESTOREDEFAULTPATH,
 %          OpenEarthTools: general, applications, io, tutorials
+%          highlights: CONVERTCOORDINATES, GOOGLEPLOT
 
 %% Copyright notice
 %   --------------------------------------------------------------------

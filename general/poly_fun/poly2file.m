@@ -6,7 +6,7 @@ function poly2file
 % 2. Terminate with enter
 % 3. Choose filename
 % 
-% See also: UCIT_WS_drawPolygon, drawpolygon 
+% See also: UCIT_WS_polydraw, polydraw 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
 %       Ben de Sonneville
@@ -33,7 +33,7 @@ function poly2file
 %   --------------------------------------------------------------------
 
 
-[xv,yv] = UCIT_WS_drawPolygon;
+[xv,yv] = UCIT_WS_polydraw;
 polygon=[xv yv];
 [FileName,PathName] = uiputfile('d:\*.mat','Save polygon to file', 'Saved_polygon.mat');
 if FileName==0 & PathName==0

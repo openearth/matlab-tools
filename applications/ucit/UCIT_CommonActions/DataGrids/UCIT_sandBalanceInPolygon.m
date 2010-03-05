@@ -11,6 +11,7 @@ function UCIT_sandBalanceInPolygon
 %       function has no output
 %
 %   See also UCIT_findCoverage, UCIT_plotDataInPolygon, rws_getDataInPolygon
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
 %
@@ -60,31 +61,31 @@ mkdir(['polygons']);
 
 %% get polygon
 figure(fh);
-[xv,yv] = UCIT_WS_drawPolygon;
+[xv,yv] = UCIT_WS_polydraw;
 polygon = [xv yv];
 
 %% get other input
 if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'),datatype = 'jarkus';,end
 if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen'),datatype = 'vaklodingen';,end
 
-prompt = {'Polygon name','Minimal coverage [%]','First year','Last year','Search window [months]'};
+prompt    = {'Polygon name','Minimal coverage [%]','First year','Last year','Search window [months]'};
 dlg_title = 'Input for sand balance';
 num_lines = 1;
-def = {'Polygon','10','2000','2004',UCIT_getInfoFromPopup('GridsInterval')};
-answer = inputdlg(prompt,dlg_title,num_lines,def);
+def       = {'Polygon','10','2000','2004',UCIT_getInfoFromPopup('GridsInterval')};
+answer    = inputdlg(prompt,dlg_title,num_lines,def);
 
 save(['polygons\' answer{1},'.mat'],'polygon')
 
 %% arrange input in OPT structure
 OPT.datatype        = datatype;
-OPT.thinning        = str2double(UCIT_getInfoFromPopup('GridsSoundingID'));
-OPT.timewindow    = str2double(answer{5});
+OPT.thinning        =  str2double(UCIT_getInfoFromPopup('GridsSoundingID'));
+OPT.timewindow      =  str2double(answer{5});
 OPT.inputyears      = [str2double(answer{3}) : str2double(answer{4})];
-OPT.min_coverage    = str2double(answer{2});
+OPT.min_coverage    =  str2double(answer{2});
 
 %% delete previous data
-delete(['results\timewindow = ' answer{5} '\ref='  answer{2} '\*.*'])
-delete(['coverage\timewindow = ' answer{5} '\*.*'])
+delete(['results\timewindow = '   answer{5} '\ref='  answer{2} '\*.*'])
+delete(['coverage\timewindow = '  answer{5} '\*.*'])
 delete(['datafiles\timewindow = ' answer{5} '\*.*'])
 
 %% get sandbalance

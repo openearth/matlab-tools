@@ -1,15 +1,15 @@
-function varargout=drawpolygon(varargin)
-%DRAWPOLYGON   draw polygon manually in current axes
+function varargout=polydraw(varargin)
+%POLYDRAW   draw polygon manually in current axes
 %
-%  [x,y]= drawpolygon(varargin)
+%  [x,y]= polydraw(varargin)
 %
-%  s    = drawpolygon(varargin) where s has fields x, y and n
+%  s    = polydraw(varargin) where s has fields x, y and n
 %
 % Draw a polygon by left clicking the mouse.
 % Terminate with a right click of by ESC
 % Optional arguments can be anything one can also pass to plot(x,y,<options>)
 % E.g. for a thick red line.
-% [x,y]=drawpolygon('r','linewidth',2) 
+% [x,y]=polydraw('r','linewidth',2) 
 % 
 % See also: POLYSPLIT, POLYJOIN
 

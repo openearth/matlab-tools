@@ -78,163 +78,159 @@ function varargout = quiver2(varargin)
 %   --------------------------------------------------------------------
 
 %% Defaults
-%% -----------------
 
-scaling   = [1 1];
-thinning  = [1 1];
-zpos      = nan;
+  scaling   = [1 1];
+  thinning  = [1 1];
+  zpos      = nan;
 
 %% Input
-%% -----------------
 
-if isstr(varargin{1})
-    quiverfun = varargin{1};
-    nextarg   = 2;
-else
-    quiverfun = 'quiver';
-    nextarg   = 1;
-end
+   if isstr(varargin{1})
+       quiverfun = varargin{1};
+       nextarg   = 2;
+   else
+       quiverfun = 'quiver';
+       nextarg   = 1;
+   end
+   
+   x         = varargin{nextarg+0};
+   y         = varargin{nextarg+1};
+   u         = varargin{nextarg+2};
+   v         = varargin{nextarg+3};
+   
+   if prod(size(x))==1
+       x = repmat(x,size(y));
+   end
+   if prod(size(y))==1
+       y = repmat(y,size(x));
+   end
+   
+   if prod(size(u))==1
+       u = repmat(u,size(x));
+   end
+   if prod(size(v))==1
+       v = repmat(v,size(x));
+   end
 
-x         = varargin{nextarg+0};
-y         = varargin{nextarg+1};
-u         = varargin{nextarg+2};
-v         = varargin{nextarg+3};
+%% args
 
-if prod(size(x))==1
-    x = repmat(x,size(y));
-end
-if prod(size(y))==1
-    y = repmat(y,size(x));
-end
+   linespecargs = [];
 
-if prod(size(u))==1
-    u = repmat(u,size(x));
-end
-if prod(size(v))==1
-    v = repmat(v,size(x));
-end
-
-while 1
-    
-    if nargin>nextarg+3
-        if ischar(varargin{nextarg+4})
-            linespecargs = nextarg+4:nargin;
-            break
-        else
-            scaling   = varargin{nextarg+4};
-        end
-    end
-    
-    if nargin>nextarg+4
-        if ischar(varargin{nextarg+5})
-            linespecargs = nextarg+5:nargin;
-            break
-        else
-            thinning  = round(varargin{nextarg+5});
-        end
-    end
-    
-    if nargin>nextarg+5
-        if ischar(varargin{nextarg+6})
-            linespecargs = nextarg+6:nargin;
-            break
-        else
-            zpos  = round(varargin{nextarg+6});
-        end
-    end
-    
-    if nargin>nextarg+6
-        if ischar(varargin{nextarg+7})
-            linespecargs = nextarg+7:nargin;
-        else
-            linespecargs = [];
-        end
-    end
-    
-    %       linespecargs = [];
-    break
-    
-end
+   while 1
+       
+       if nargin>nextarg+3
+           if ischar(varargin{nextarg+4})
+               linespecargs = nextarg+4:nargin;
+               break
+           else
+               scaling   = varargin{nextarg+4};
+           end
+       end
+       
+       if nargin>nextarg+4
+           if ischar(varargin{nextarg+5})
+               linespecargs = nextarg+5:nargin;
+               break
+           else
+               thinning  = round(varargin{nextarg+5});
+           end
+       end
+       
+       if nargin>nextarg+5
+           if ischar(varargin{nextarg+6})
+               linespecargs = nextarg+6:nargin;
+               break
+           else
+               zpos  = round(varargin{nextarg+6});
+           end
+       end
+       
+       if nargin>nextarg+6
+           if ischar(varargin{nextarg+7})
+               linespecargs = nextarg+7:nargin;
+           else
+               linespecargs = [];
+           end
+       end
+       
+       %       linespecargs = [];
+       break
+       
+   end
 
 %% Set defaults when requested
-%% -----------------
 
-if isnan(scaling) | isempty(scaling)
-    scaling   = [1 1];
-end
-
-if isnan(thinning) | isempty(thinning)
-    thinning  = [1 1];
-end
-
-if     length(scaling)==1
-    uscale =   scaling;
-    vscale =   scaling;
-elseif length(scaling)==2
-    uscale =   scaling(1);
-    vscale =   scaling(2);
-end
-
-if     length(thinning)==1
-    d1 =       thinning;
-    d2 =       thinning;
-elseif length(thinning)==2
-    d1 =       thinning(1);
-    d2 =       thinning(2);
-end
+   if isnan(scaling) | isempty(scaling)
+       scaling   = [1 1];
+   end
+   
+   if isnan(thinning) | isempty(thinning)
+       thinning  = [1 1];
+   end
+   
+   if     length(scaling)==1
+       uscale =   scaling;
+       vscale =   scaling;
+   elseif length(scaling)==2
+       uscale =   scaling(1);
+       vscale =   scaling(2);
+   end
+   
+   if     length(thinning)==1
+       d1 =       thinning;
+       d2 =       thinning;
+   elseif length(thinning)==2
+       d1 =       thinning(1);
+       d2 =       thinning(2);
+   end
 
 %% Prepare arrays
-%% -----------------
 
-
-x = squeeze(x);
-y = squeeze(y);
-u = squeeze(u);
-v = squeeze(v);
+   x = squeeze(x);
+   y = squeeze(y);
+   u = squeeze(u);
+   v = squeeze(v);
 
 %% Draw arrows
-%% -----------------
 
-if strcmp(lower(quiverfun),'quiver')
-    if strcmp(version('-release'),'14')    | ...
-            strcmp(version('-release'),'2006a') | ...
-            strcmp(version('-release'),'2006b') | ...
-            strcmp(version('-release'),'2007a') | ...%  arrow head is still not fixed yet !?!?
-            strcmp(version('-release'),'2009b') %  nope, still not fixed...
-        warning('off','MATLAB:quiver:DeprecatedV6Argument');
-        out = quiver('v6',...
-            x(1:d1:end,1:d2:end),...
-            y(1:d1:end,1:d2:end),...
-            u(1:d1:end,1:d2:end).*uscale,...
-            v(1:d1:end,1:d2:end).*vscale,0,varargin{linespecargs});
-        warning('on','MATLAB:quiver:DeprecatedV6Argument');        
-    else
-        out = quiver(x(1:d1:end,1:d2:end),...
-            y(1:d1:end,1:d2:end),...
-            u(1:d1:end,1:d2:end).*uscale,...
-            v(1:d1:end,1:d2:end).*vscale,0,varargin{linespecargs});
-    end
-elseif strcmp(lower(quiverfun),'arrow2')
-    out = arrow2(x(1:d1:end,1:d2:end),...
-        y(1:d1:end,1:d2:end),...
-        u(1:d1:end,1:d2:end).*uscale,...
-        v(1:d1:end,1:d2:end).*vscale,1);
-elseif strcmp(lower(quiverfun),'arrow')
-    error('arrow not implemented yet')
-end
+   if strcmp(lower(quiverfun),'quiver')
+       release = version('-release');
+       if strcmp(release,'14')    | ...
+          strcmp(release(1:3),'200') % arrow head is still not fixed yet despite complint at Mathworks
+           warning('off','MATLAB:quiver:DeprecatedV6Argument');
+           out = quiver('v6',...
+               x(1:d1:end,1:d2:end),...
+               y(1:d1:end,1:d2:end),...
+               u(1:d1:end,1:d2:end).*uscale,...
+               v(1:d1:end,1:d2:end).*vscale,0,varargin{linespecargs});
+           warning('on','MATLAB:quiver:DeprecatedV6Argument');        
+       else
+           out = quiver(x(1:d1:end,1:d2:end),...
+                        y(1:d1:end,1:d2:end),...
+                        u(1:d1:end,1:d2:end).*uscale,...
+                        v(1:d1:end,1:d2:end).*vscale,0,varargin{linespecargs});
+       end
+   elseif strcmp(lower(quiverfun),'arrow2')
+       out = arrow2(x(1:d1:end,1:d2:end),...
+                    y(1:d1:end,1:d2:end),...
+                    u(1:d1:end,1:d2:end).*uscale,...
+                    v(1:d1:end,1:d2:end).*vscale,1);
+   elseif strcmp(lower(quiverfun),'arrow')
+       error('arrow not implemented yet')
+   end
 
 %% vertical positioning
-%% -----------------
 
-if ~isnan(zpos)
-    for i=1:length(out)
-        set(out(i),'ZData',zpos + zeros(size(get(out(i),'XData'))));
-    end
-end
+   if ~isnan(zpos)
+       for i=1:length(out)
+           set(out(i),'ZData',zpos + zeros(size(get(out(i),'XData'))));
+       end
+   end
 
 %% Output
-%% -----------------
 
-if nargout > 0
-    varargout = {out};
-end
+   if nargout > 0
+       varargout = {out};
+   end
+   
+%% EOF

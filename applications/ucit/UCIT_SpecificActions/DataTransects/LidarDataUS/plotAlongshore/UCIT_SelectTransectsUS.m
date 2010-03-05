@@ -1,9 +1,13 @@
 function d = UCIT_SelectTransectsUS(datatype,transectsSoundingID,begintransect,endtransect)
-%UCIT_SELECTTRANSECTSUS select a number of alongshore transects to plot
-%certain parameters of
-% Syntax: SelectTransectsUS('Lidar Data US','2002',9,1200)
+%UCIT_SELECTTRANSECTSUS  select a number of alongshore US Lidar transects to plot
 %
-%   See also plotAlongshore
+%   d = UCIT_SelectTransectsUS(datatype,transectsSoundingID,begintransect,endtransect)
+%
+% Example:
+%
+% D = UCIT_SelectTransectsUS('Lidar Data US','2002',9,1200)
+%
+% See also: plotAlongshore
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
@@ -46,12 +50,12 @@ end
 
 if nargin==0
     figure(mapWhandle)
-    [xv,yv] = UCIT_WS_drawPolygon;
+    [xv,yv] = UCIT_WS_polydraw;
     polygon=[xv yv];
     test = d.contour;
-    id1 = inpolygon(test(:,1),test(:,3),polygon(:,1),polygon(:,2));
-    id2 = inpolygon(test(:,2),test(:,4),polygon(:,1),polygon(:,2));
-    id = (id1|id2);
+    id1  = inpolygon(test(:,1),test(:,3),polygon(:,1),polygon(:,2));
+    id2  = inpolygon(test(:,2),test(:,4),polygon(:,1),polygon(:,2));
+    id  =  (id1|id2);
     
     e=find(id>0);NHandle.beginTransect=findobj('tag','beginTransect');NHandle.endTransect=findobj('tag','endTransect');
     

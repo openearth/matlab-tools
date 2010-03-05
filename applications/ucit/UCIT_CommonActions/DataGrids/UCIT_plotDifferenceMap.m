@@ -50,11 +50,11 @@ tic
 [d] = UCIT_getMetaData(2);
 toc
 
-if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'),datatype = 'jarkus';,end
+if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus')     ,datatype = 'jarkus';,end
 if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen'),datatype = 'vaklodingen';,end
 
 %% draw polygon
-[xv,yv] = UCIT_WS_drawPolygon;
+[xv,yv] = UCIT_WS_polydraw;
 polygon = [xv yv];
 
 %% select years
@@ -100,7 +100,7 @@ ah = axes;
 UCIT_plotlandBoundary(d.ldb,'none'); % plot land boundary
 surf(d.X,d.Y,dd.Z);shading interp;view(2);hold on;
 cm = colormap(['erosed']); caxis([-3 3]);
-c  =colorbar('vert');
+c  = colorbar('vert');
 axis equal;axis tight;box on
 set(fh,'Units','normalized');
 set(fh,'Position',UCIT_getPlotPosition('UR',1))

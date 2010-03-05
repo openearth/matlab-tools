@@ -1,8 +1,8 @@
-function [xv,yv] = UCIT_WS_drawPolygon
-%UCIT_WS_DRAWPOLYGON  gets coordinates of used defined polygon
+function [xv,yv] = UCIT_WS_polydraw
+%UCIT_WS_POLYDRAW  gets coordinates of used defined polygon
 %
 %
-%   See also 
+% See also: polydraw
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
@@ -29,7 +29,9 @@ function [xv,yv] = UCIT_WS_drawPolygon
 %
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
-%   --------------------------------------------------------------------% Draw polygon (from Argus IBM)
+%   --------------------------------------------------------------------
+
+% Draw polygon (from Argus IBM)
 % pick some boundaries
 
 uo = []; vo = []; button = [];
@@ -40,7 +42,8 @@ hold on; hp = plot(uo,vo,'+g');
 
 while lfrt == 1
     [u,v,lfrt] = ginput(1);
-    uo=[uo;u]; vo=[vo;v]; button=[button;lfrt];      
+    uo=[uo;u]; 
+    vo=[vo;v]; button=[button;lfrt];      
     delete(hp);
     hp = plot(uo,vo,'color','g','linewidth',2);
 end

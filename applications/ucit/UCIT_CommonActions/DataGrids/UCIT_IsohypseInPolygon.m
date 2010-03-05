@@ -54,7 +54,7 @@ colors={'b',[0.2 0.6 0],'k','c','m','r', [0.6 0.4 0],[0.2 0.4 0 ], [0.5 0.5 0.5]
 % define which polygon to use
 if nargin == 0
     figure(fh);
-    [xv,yv] = UCIT_WS_drawPolygon;
+    [xv,yv] = UCIT_WS_polydraw;
     polygon=[xv yv];
 else
     load(polygonname)

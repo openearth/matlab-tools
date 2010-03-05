@@ -46,7 +46,7 @@ function results = UCIT_computeGridVolume(reference_year, targetyear, polyname, 
 fns = dir(['polygons' filesep '*.mat']);
 
 if ~isfield(OPT,'polygon')
-    [xv,yv] = UCIT_WS_drawPolygon;
+    [xv,yv] = UCIT_WS_polydraw;
     polygon=[xv yv];
 end
 
@@ -78,8 +78,8 @@ d2 = d;
 
 %% compute volume
 results.volume = sum((d2.Z(id)-d1.Z(id))*(cellsize*OPT.thinning*cellsize*OPT.thinning));
-results.area = sum(sum(sum(id))*(cellsize*OPT.thinning*cellsize*OPT.thinning));
+results.area   =        sum(sum(sum(id))*(cellsize*OPT.thinning*cellsize*OPT.thinning));
         
 %% add extra info
 results.polyname = polyname;
-results.year = targetyear;
+results.year     = targetyear;

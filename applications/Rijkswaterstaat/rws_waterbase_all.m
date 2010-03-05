@@ -58,7 +58,7 @@ for ii= 1:length(subdirs)
       disp(['Processing ',num2str(ii),' / ',num2str(length(subdirs)),': ',subdirs{ii}])
       
       OPT2.fileName           = [OPT.directory_nc,'.kml'];
-      OPT2.kmlName            =  subdir;
+      OPT2.kmlName            =  ['rijkswaterstaat/waterbase/' subdir];
       OPT2.THREDDSbase        = [urlbase,'/thredds/dodsC/opendap/rijkswaterstaat/waterbase/',     subdirs{ii},'/'];
       OPT2.HYRAXbase          = [urlbase,'/opendap/rijkswaterstaat/waterbase/',                   subdirs{ii},'/'];
       OPT2.ftpbase            = [urlbase,'/thredds/fileServer/opendap/rijkswaterstaat/waterbase/',subdirs{ii},'/'];
