@@ -99,6 +99,7 @@ ver = 0;
 fontsize = 7;
 peeraxes = gca;
 unit = '';
+fixed = false;
 
 %% optional arguments
 optvals = varargin;
@@ -137,6 +138,9 @@ for i=1:size(optvals,2),
         case 'unit',
             unit = optvals{2,i};
             OptionUsed(i)=1;
+        case 'fixed'
+            fixed = optvals{2,i};
+            OptionUsed(i)=1;
     end
 end;
 optvals(:,OptionUsed)=[];                                                   % delete used options
@@ -146,28 +150,37 @@ axes(peeraxes);
 
 cl = clim;
 mycolors = colormap;
-nrofcolorlevels = length(mycolors);
-colorlevels = cl(1):(cl(end)-cl(1))/(nrofcolorlevels-1):cl(end);
-mydiscretecolors = [];
-for i = 1:length(levels)
-    if levels(i)<colorlevels(1)
-        mydiscretecolors(i,1) = mycolors(1,1);
-        mydiscretecolors(i,2) = mycolors(1,2);
-        mydiscretecolors(i,3) = mycolors(1,3);
+if fixed
+    if length(levels)==length(mycolors)
+        mydiscretecolors = mycolors;
     else
-        if levels(i)>colorlevels(end)
-            mydiscretecolors(i,1) = mycolors(end,1);
-            mydiscretecolors(i,2) = mycolors(end,2);
-            mydiscretecolors(i,3) = mycolors(end,3);
-            
+        error('Number of levels should be equal to number of colors');
+    end
+else
+    nrofcolorlevels = length(mycolors);
+    colorlevels = cl(1):(cl(end)-cl(1))/(nrofcolorlevels-1):cl(end);
+    mydiscretecolors = [];
+    for i = 1:length(levels)
+        if levels(i)<colorlevels(1)
+            mydiscretecolors(i,1) = mycolors(1,1);
+            mydiscretecolors(i,2) = mycolors(1,2);
+            mydiscretecolors(i,3) = mycolors(1,3);
         else
-            mydiscretecolors(i,1) = interp1(colorlevels,mycolors(:,1),levels(i));
-            mydiscretecolors(i,2) = interp1(colorlevels,mycolors(:,2),levels(i));
-            mydiscretecolors(i,3) = interp1(colorlevels,mycolors(:,3),levels(i));
+            if levels(i)>colorlevels(end)
+                mydiscretecolors(i,1) = mycolors(end,1);
+                mydiscretecolors(i,2) = mycolors(end,2);
+                mydiscretecolors(i,3) = mycolors(end,3);
+                
+            else
+                mydiscretecolors(i,1) = interp1(colorlevels,mycolors(:,1),levels(i));
+                mydiscretecolors(i,2) = interp1(colorlevels,mycolors(:,2),levels(i));
+                mydiscretecolors(i,3) = interp1(colorlevels,mycolors(:,3),levels(i));
+            end
+            
         end
-        
     end
 end
+
 
 TextAndLineColor = 'k';
 nv = length(levels);
@@ -207,7 +220,7 @@ if (nc == nv)
         xp = [x, x+dx, x+dx, x, x];
         yp = [y, y,    y+dy, y+dy, y];
         patch(xp,yp,1e13*ones(size(xp)),mydiscretecolors(i,:),'EdgeColor',TextAndLineColor);
-
+        
         %        place texts for v-ranges
         
         if (i==nc)
