@@ -1,5 +1,12 @@
 % DELFT3D - tools related to <a href="http://www.delft3d.nl">Delft3d</a>
 %
+% For most functionality, you need the proprietery Delft3D Matlab toolbox first:
+%
+%    addpath('C:\Delft3D\w32\matlab\')
+%
+% Note that any useful functions in C:\Delft3D\w32\matlab\private\ only
+% work when you copy them to one directory level up.
+%
 % Files
 %   d3d_sigma                  - calculates the relative vertical sigma positions in %
 %   d3d_z                      - calculates the absolute z-layer positions in m

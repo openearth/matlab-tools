@@ -1,10 +1,12 @@
 function OBS = ncTimeseries2obs(GRD, iYear, varargin)
-%ncTimeseries2obs  list all NETCDF Excel tables and builds Delft3d-FLOW and
-%Delft3d-WAQ observation files. The choice of observation points to include
-%is based on a check to the year, in order to limit the size of the list of
-%observation files, and hence of the model output.
-%The D3D-FLOW OBS file can be included as is in the MDF file, the D3D-WAQ 
-%OBS file needs to be imported through the GUI.
+%NCTIMESERIES2OBS ...  
+%
+% list all NETCDF Excel tables and builds Delft3d-FLOW and
+% Delft3d-WAQ observation files. The choice of observation points to include
+% is based on a check to the year, in order to limit the size of the list of
+% observation files, and hence of the model output.
+% The D3D-FLOW OBS file can be included as is in the MDF file, the D3D-WAQ 
+% OBS file needs to be imported through the GUI.
 %
 %    OBS = ncTimeseries2obs(GRD, iYear, <keyword,value>)
 %
