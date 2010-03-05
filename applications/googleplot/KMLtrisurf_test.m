@@ -49,12 +49,14 @@ function testresult = KMLtrisurf_test()
 % $HeadURL$
 % $Keywords: $
 
+disp(['... running test:',mfilename])
+
 %% $Description (Name = KMLtrisurf)
 % Publishable code that describes the test.
 
 %% $RunCode
 % Write test code here
-try
+%try
 
 % 1a
 
@@ -99,9 +101,9 @@ try
        'colorbartitle',mktex(['KMLtrisurf_test 1:6 movie']));
     end
     testresult = true;
-catch
-    testresult = false;
-end
+%catch
+%    testresult = false;
+%end
 
 %% $PublishResult
 % Publishable code that describes the test.

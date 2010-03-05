@@ -5,7 +5,8 @@ function [OPT, Set, Default] = KMLpatch(lat,lon,varargin)
 % 
 % only works for a singe patch (filled polygon)
 % see the keyword/value pair defaults for additional options. 
-% For the <keyword,value> pairs call
+% For the <keyword,value> pairs call. Toe orientation of 
+% lat,lon doe snot matter.
 %
 %    OPT = KMLpatch()
 %
@@ -46,8 +47,8 @@ function [OPT, Set, Default] = KMLpatch(lat,lon,varargin)
 %% process varargin
 z = 'clampToGround';
 
-OPT.fileName    = [];
-OPT.kmlName     = 'untitled';
+OPT.fileName    = '';
+OPT.kmlName     = '';
 OPT.lineWidth   = 1;
 OPT.lineColor   = [0 0 0];
 OPT.lineAlpha   = 1;
@@ -60,17 +61,30 @@ OPT.openInGE    = false;
 OPT.reversePoly = false;
 OPT.extrude     = 0;
 OPT.text        = '';
+OPT.latText     = [];
+OPT.lonText     = [];
+
+if nargin==0
+  return
+else
 OPT.latText     = lat(1);
 OPT.lonText     = lon(1);
+end
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
-%% get filename
+%% get filename, gui for filename, if not set yet
 
-if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','untitled.kml');
-    OPT.fileName = fullfile(filePath,fileName);
-end
+   if isempty(OPT.fileName)
+      [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
+      OPT.fileName = fullfile(filePath,fileName);
+   end
+
+%% set kmlName if it is not set yet
+
+   if isempty(OPT.kmlName)
+      [ignore OPT.kmlName] = fileparts(OPT.fileName);
+   end
 
 %% start KML
 
@@ -106,7 +120,7 @@ OPT_poly = struct(...
 'visibility',1,...
 'extrude'   ,OPT.extrude);
 
-output = [output KML_poly(lat,lon,z,OPT_poly)];
+output = [output KML_poly(lat(:),lon(:),z,OPT_poly)]; % make sure that lat(:),lon(:) have correct dimension nx1
 
 %% text
 

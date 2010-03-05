@@ -1,5 +1,5 @@
-function testresult = KMLcontour_test()
-% KMLCONTOUR_TEST  One line description goes here
+function testresult = KMLquiver_test()
+% KMLQUIVER_TEST  One line description goes here
 %  
 % More detailed description of the test goes here.
 %
@@ -46,6 +46,8 @@ function testresult = KMLcontour_test()
 % $HeadURL$
 % $Keywords: $
 
+disp(['... running test:',mfilename])
+
 %% $Description (Name = KMLcontour)
 % Publishable code that describes the test.
 
@@ -59,8 +61,8 @@ try
     
    [u,v] = gradient(z);
 
-    KMLquiver(lat,lon,-scale.*v,scale.*u,'fileName',KML_testdir('KMLquiver_test_arrows.kml'))
-    KMLpcolor(lat,lon,                z,'fileName',KML_testdir('KMLquiver_test_streamfunction.kml'))
+    KMLquiver(lat,lon,-scale.*v,scale.*u,'fileName',KML_testdir('KMLquiver_test_arrows.kml'));
+    KMLpcolor(lat,lon,                 z,'fileName',KML_testdir('KMLquiver_test_streamfunction.kml'));
     testresult = true;
 catch
     testresult = false;

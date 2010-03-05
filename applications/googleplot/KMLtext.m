@@ -79,8 +79,8 @@ lon = mod(lon+180, 360)-180;
 
 %% process varargin
 
-OPT.fileName      = [];
-OPT.kmlName       = 'untitled';
+OPT.fileName      = '';
+OPT.kmlName       = '';
 OPT.openInGE      = false;
 OPT.timeIn        = [];
 OPT.timeOut       = [];
@@ -101,12 +101,18 @@ else
     label = label(:);
 end
 
-%% get filename
+%% get filename, gui for filename, if not set yet
 
-if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','text.kml');
-    OPT.fileName = fullfile(filePath,fileName);
-end
+   if isempty(OPT.fileName)
+      [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
+      OPT.fileName = fullfile(filePath,fileName);
+   end
+
+%% set kmlName if it is not set yet
+
+   if isempty(OPT.kmlName)
+      [ignore OPT.kmlName] = fileparts(OPT.fileName);
+   end
 
 %% start KML
 

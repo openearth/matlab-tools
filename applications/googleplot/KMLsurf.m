@@ -90,7 +90,7 @@ end
 %% get filename, gui for filename, if not set yet
 
    if isempty(OPT.fileName)
-      [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','trisurf.kml');
+      [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
       OPT.fileName = fullfile(filePath,fileName);
    end
 
@@ -219,7 +219,7 @@ end
                    LON = LON(end:-1:1);
                      Z =   Z(end:-1:1);
                end
-               newOutput = KML_poly(LAT,LON,OPT.zScaleFun(Z),OPT_poly);
+               newOutput = KML_poly(LAT(:),LON(:),OPT.zScaleFun(Z(:)),OPT_poly); % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
                output(kk:kk+length(newOutput)-1) = newOutput;
                kk = kk+length(newOutput);
                if kk>1e5

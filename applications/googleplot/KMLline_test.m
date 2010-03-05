@@ -49,16 +49,24 @@ function testresult = KMLline_test()
 % $HeadURL$
 % $Keywords: $
 
+disp(['... running test:',mfilename])
+
 %% $Description (Name = KMLline)
 % Publishable code that describes the test.
 
 %% $RunCode
-[lat,lon] = meshgrid([51:54],[3:7]);
+% Write test code here
+try
+    [lat,lon] = meshgrid([51:54],[3:7]);
+ 
+    KMLline(lat ,lon ,'fileName',KML_testdir('KMLline_testh.kml'),'lineColor',jet(3) ,'kmlName','horizontal');%,'text',{'1','2','3','4'});
+    KMLline(lat',lon','fileName',KML_testdir('KMLline_testv.kml'),'lineWidth',[1 3 3],'kmlName','vertical'  );%,'text',{'a','b','c','d','e'});
 
-kmlline(lat ,lon ,'fileName',KML_testdir('KMLline_testh.kml'),'lineColor',jet(3) ,'kmlName','horizontal');%,'text',{'1','2','3','4'});
-kmlline(lat',lon','fileName',KML_testdir('KMLline_testv.kml'),'lineWidth',[1 3 3],'kmlName','vertical'  );%,'text',{'a','b','c','d','e'});
-
-testresult = nan;
+    testresult = true;
+catch
+    testresult = false;
+end
 
 %% $PublishResult
 % Publishable code that describes the test.
+

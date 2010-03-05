@@ -92,7 +92,7 @@ function [OPT, Set, Default] = KMLline(lat,lon,varargin)
 %% process varargin
 % see if height is defined
 
-OPT.fileName      = [];
+OPT.fileName      = '';
 OPT.description   = '';
 OPT.kmlName       = [];
 OPT.lineWidth     = 1;
@@ -185,16 +185,19 @@ if OPT.is3D&&OPT.fill
         [ignore,fill_ind,OPT.fill_nr] = unique([OPT.fillColor,OPT.fillAlpha],'rows');
     end
 end
-%% filename
-% gui for filename, if not set yet
-if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','line.kml');
-    OPT.fileName = fullfile(filePath,fileName);
-end
-% set kmlName if it is not set yet
-if isempty(OPT.kmlName)
-    [ignore OPT.kmlName] = fileparts(OPT.fileName);
-end
+
+%% get filename, gui for filename, if not set yet
+
+   if isempty(OPT.fileName)
+      [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
+      OPT.fileName = fullfile(filePath,fileName);
+   end
+
+%% set kmlName if it is not set yet
+
+   if isempty(OPT.kmlName)
+      [ignore OPT.kmlName] = fileparts(OPT.fileName);
+   end
 
 %% start KML
 OPT.fid=fopen(OPT.fileName,'w');

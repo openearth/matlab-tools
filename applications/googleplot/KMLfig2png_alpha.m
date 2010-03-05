@@ -1,5 +1,5 @@
 function KMLfig2png_alpha(directory,factor)
-%KMLfig2png_alpha(directory)
+%KMLFIG2PNG_ALPHA  change alpha of directory of png
 %
 %  KMLfig2png(directory,factor)
 %

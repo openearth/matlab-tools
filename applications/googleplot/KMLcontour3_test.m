@@ -1,10 +1,10 @@
 function testresult = KMLcontour3_test()
-% KMLCONTOUR3_TEST  One line description goes here
+%KMLCONTOUR3_TEST  One line description goes here
 %  
 % More detailed description of the test goes here.
 %
 %
-%   See also 
+%See also: KMLcontour3
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -45,6 +45,8 @@ function testresult = KMLcontour3_test()
 % $Revision$
 % $HeadURL$
 % $Keywords: $
+
+disp(['... running test:',mfilename])
 
 %% $Description (Name = KMLcontour3)
 % Publishable code that describes the test.

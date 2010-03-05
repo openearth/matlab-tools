@@ -1,5 +1,5 @@
-function testresult = KMLcontour_test()
-% KMLCONTOUR_TEST  One line description goes here
+function testresult = KMLpatch_test()
+% KMLPATCH_TEST  One line description goes here
 %  
 % More detailed description of the test goes here.
 %
@@ -46,12 +46,17 @@ function testresult = KMLcontour_test()
 % $HeadURL$
 % $Keywords: $
 
+disp(['... running test:',mfilename])
+
 %% $Description (Name = KMLcontour)
 % Publishable code that describes the test.
 
 %% $RunCode
 try
-    KMLpatch([50 50 51 51],[0 1 1 0],'fileName',KML_testdir('KMLpatch_test.kml'),'fillColor',[1 0 0]);
+    KMLpatch([50 50 51 51] ,[0 1 1 0] ,'fileName',KML_testdir('KMLpatch_test1a.kml'),'fillColor',[1 0 0]);
+    KMLpatch([51 51 50 50] ,[0 1 1 0] ,'fileName',KML_testdir('KMLpatch_test2a.kml'),'fillColor',[1 0 0]);
+    KMLpatch([50 50 51 51]',[0 1 1 0]','fileName',KML_testdir('KMLpatch_test1b.kml'),'fillColor',[1 0 0]);
+    KMLpatch([51 51 50 50]',[0 1 1 0]','fileName',KML_testdir('KMLpatch_test2b.kml'),'fillColor',[1 0 0]);
     testresult = true;
 catch
     testresult = false;

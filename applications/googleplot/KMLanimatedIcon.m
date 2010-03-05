@@ -1,5 +1,5 @@
 function varargout = KMLanimatedIcon(lat,lon,varargin)
-%KMLAMINATEDICON
+%KMLANIMATEDICON  adds place markers with color varying in time
 %
 %   KMLanimatedIcon(lat,lon,c,<keyword,value>)
 %
@@ -12,6 +12,8 @@ function varargout = KMLanimatedIcon(lat,lon,varargin)
 %  * cLim               = cLim aka caxis (default [min(c) max(c)]);
 %  * long_name          = ''; used for point description ... (default 'value=')
 %  * units              = ''; 'long_name = x units'
+%  * OPT.timeIn         = [];
+%  * OPT.timeOut        = [];
 %
 % For the <keyword,value> pairs and their defaults call
 %

@@ -1,4 +1,4 @@
-function nan = KMLcolorbar_test()
+function testresult = KMLcolorbar_test()
 %KMLCOLORBAR_TEST   test for KMLcolorbar
 %
 % More detailed description of the test goes here.
@@ -46,6 +46,8 @@ function nan = KMLcolorbar_test()
 % $HeadURL$
 % $Keywords: $
 
+disp(['... running test:',mfilename])
+
 %% $Description (Name = KMLpcolor)
 % Publishable code that describes the test.
 
@@ -60,6 +62,7 @@ try
   KMLcolorbar('fileName',KML_testdir('KMLcolorbar_test_vanilla'),'colorMap',OPT.colormap,'clim',[-2 2],'halo',1,...
      'colorbarlocation',{'W','N','S','E'},...
      'colorTitle','ABCDEFGHIJKLMNOPQRSTUVWYZ abcdefghijklmnopqrstuvwyz 0123456789 ~!@#$% &*() +');
+   testresult = true;
 catch
    testresult = false;
 end

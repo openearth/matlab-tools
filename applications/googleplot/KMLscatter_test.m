@@ -49,6 +49,8 @@ function testresult = KMLscatter_test()
 % $HeadURL$
 % $Keywords: $
 
+disp(['... running test:',mfilename])
+
 %% $Description (Name = KMLscatter)
 % Publishable code that describes the test.
 

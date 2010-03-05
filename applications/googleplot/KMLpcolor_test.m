@@ -46,6 +46,8 @@ function testresult = KMLpcolor_test()
 % $HeadURL$
 % $Keywords: $
 
+disp(['... running test:',mfilename])
+
 %% $Description (Name = KMLpcolor)
 % Publishable code that describes the test.
 

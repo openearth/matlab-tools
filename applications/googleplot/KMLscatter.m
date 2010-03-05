@@ -62,8 +62,8 @@ function varargout = KMLscatter(lat,lon,c,varargin)
 
 %% process options
 
-   OPT.fileName           =  [];
-   OPT.kmlName            =  [];
+   OPT.fileName           =  '';
+   OPT.kmlName            =  '';
    OPT.colorMap           =  @(m) jet(m);
    OPT.colorSteps         =  20;
    OPT.cLim               =  [];
@@ -88,16 +88,17 @@ function varargout = KMLscatter(lat,lon,c,varargin)
    
    [OPT, Set, Default] = setProperty(OPT, varargin);
 
-%% get filename
+%% get filename, gui for filename, if not set yet
 
    if isempty(OPT.fileName)
-       [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','untitled.kml');
-       OPT.fileName = fullfile(filePath,fileName);
+      [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
+      OPT.fileName = fullfile(filePath,fileName);
    end
 
-% set kmlName if it is not set yet
+%% set kmlName if it is not set yet
+
    if isempty(OPT.kmlName)
-       [ignore OPT.kmlName] = fileparts(OPT.fileName);
+      [ignore OPT.kmlName] = fileparts(OPT.fileName);
    end
 
 %% set cLim

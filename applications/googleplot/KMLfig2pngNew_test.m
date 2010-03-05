@@ -57,6 +57,8 @@ function varargout = KMLfig2pngNew_test(varargin)
 % $HeadURL$
 % $Keywords: $
 
+disp(['... running test:',mfilename])
+
 %%
 
 [lat,lon] = meshgrid(40:.03:42,-10:.03:-8);

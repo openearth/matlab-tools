@@ -1,5 +1,5 @@
 function [OPT, Set, Default] = KMLtricontourf(tri,lat,lon,z,varargin)
-% KMLTRICONTOURC   Just like contour
+% KMLTRICONTOURF   Just like contour
 %
 % see the keyword/vaule pair defaults for additional options
 %
@@ -91,16 +91,18 @@ if isempty(OPT.cLim)
     OPT.cLim = ([min(z(~isnan(z))) max(z(~isnan(z)))]);
 end
 
-%% filename
-% gui for filename, if not set yet
-if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','contour.kml');
-    OPT.fileName = fullfile(filePath,fileName);
-end
-% set kmlName if it is not set yet
-if isempty(OPT.kmlName)
-    [~, OPT.kmlName] = fileparts(OPT.fileName);
-end
+%% get filename, gui for filename, if not set yet
+
+   if isempty(OPT.fileName)
+      [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
+      OPT.fileName = fullfile(filePath,fileName);
+   end
+
+%% set kmlName if it is not set yet
+
+   if isempty(OPT.kmlName)
+      [ignore OPT.kmlName] = fileparts(OPT.fileName);
+   end
 
 %% find contours
 C =   tricontourc(tri,lat,lon,z,OPT.levels);

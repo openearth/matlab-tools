@@ -54,7 +54,7 @@ function [output] = KML_header(varargin)
 %% Properties
 
    OPT.open        = [];
-   OPT.name        = 'ans.kml';
+   OPT.name        = '';
    OPT.description = '';
    
    OPT.lon         = [];

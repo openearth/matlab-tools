@@ -1,5 +1,5 @@
 function [OPT, Set, Default] = KMLtricontour(tri,lat,lon,z,varargin)
-% KMLCONTOUR   Just like contour
+% KMLTRICONTOUR   Just like contour
 %
 % see the keyword/vaule pair defaults for additional options
 %

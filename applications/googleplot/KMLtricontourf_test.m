@@ -46,6 +46,8 @@ function testresult = KMLtricontourf_test()
 % $HeadURL$
 % $Keywords: $
 
+disp(['... running test:',mfilename])
+
 %% $Description (Name = Name of the test goes here)
 % Publishable code that describes the test.
 

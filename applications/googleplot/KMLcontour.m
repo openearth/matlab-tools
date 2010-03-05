@@ -40,8 +40,8 @@ function [OPT, Set, Default] = KMLcontour(lat,lon,z,varargin)
 %% process varargin
 % see if height is defined
 OPT.levels        = 10;
-OPT.fileName      = [];
-OPT.kmlName       = [];
+OPT.fileName      = '';
+OPT.kmlName       = '';
 OPT.lineWidth     = 1;
 OPT.lineAlpha     = 1;
 OPT.openInGE      = false;
@@ -90,16 +90,19 @@ if isempty(OPT.cLim)
     OPT.cLim = ([min(z(~isnan(z))) max(z(~isnan(z)))]);
 end
 
-%% filename
-% gui for filename, if not set yet
-if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','contour.kml');
-    OPT.fileName = fullfile(filePath,fileName);
-end
-% set kmlName if it is not set yet
-if isempty(OPT.kmlName)
-    [ignore OPT.kmlName] = fileparts(OPT.fileName);
-end
+%% get filename, gui for filename, if not set yet
+
+   if isempty(OPT.fileName)
+      [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
+      OPT.fileName = fullfile(filePath,fileName);
+   end
+
+%% set kmlName if it is not set yet
+
+   if isempty(OPT.kmlName)
+      [ignore OPT.kmlName] = fileparts(OPT.fileName);
+   end
+
 %% find contours
 coords = contours(lat,lon,z,OPT.levels);
 

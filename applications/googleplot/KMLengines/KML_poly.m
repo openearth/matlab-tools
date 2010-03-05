@@ -5,7 +5,7 @@ function [output] = KML_poly(lat,lon,varargin)
 %
 % where z can be 'clampToGround'.
 %
-% If lat and lon have multiple rows, these rows are seen as  
+% If lat and lon have multiple rows, these rows are seen as  separate polygons.
 %
 % The implemented <keyword,value> pairs and their defaults are given by
 %
@@ -46,13 +46,27 @@ function [output] = KML_poly(lat,lon,varargin)
 % $HeadURL$
 % $Keywords: $
 
-if  ( odd(nargin) & ~isstruct(varargin{2})) | ...
-    (~odd(nargin) &  isstruct(varargin{2}));
-   z       = varargin{1};
-   nextarg = 2;
-else
+if nargin==2
    z       = 'clampToGround';
    nextarg = 1;
+elseif nargin==3
+   z       = varargin{1};
+else
+   if  ( odd(nargin) & ~isstruct(varargin{2})) | ...
+       (~odd(nargin) &  isstruct(varargin{2}));
+      z       = varargin{1};
+      nextarg = 2;
+   else
+      z       = 'clampToGround';
+      nextarg = 1;
+   end
+end
+
+if length(size(lon)) > 2
+   error('lat,lon should be to have size nx1, or nxm, NOT have more than 2 dimensions.')
+end
+if size(lon,1)==1
+   error('lat,lon should be to have size nx1, or nxm, NOT 1xn.')
 end
 
 %% keyword,value

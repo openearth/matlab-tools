@@ -1,5 +1,5 @@
 function OPT = KMLfig2pngNew (h,lat,lon,z,varargin)
-% KMLFIG2PNG   makes a tiled png figure for google earth
+% KMLFIG2PNGnew   makes a tiled png figure for google earth
 %
 %   h = surf(lon,lat,z)
 %   KMLfig2png(h,<keyword,value>) 
@@ -220,7 +220,7 @@ if OPT.makeKML
    %% COLORBAR
 
     if OPT.colorbar
-        clrbarstring = KMLcolorbar('clim',clim,'fileName', [OPT.Name filesep OPT.fileName] ,'colorMap',colormap);
+        clrbarstring = KMLcolorbar('clim',clim,'fileName', [OPT.fileName] ,'colorMap',colormap);
         clrbarstring = strrep(clrbarstring,['<Icon><href>' OPT.fileName '_'],['<Icon><href>' OPT.Name filesep OPT.fileName '_']);
         output = [output clrbarstring];
     end

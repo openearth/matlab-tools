@@ -1,4 +1,5 @@
-%% KMLline
+%% KMLline_tutorial  tutorial for KMLline
+%
 % This tutorial explains KMLline
 
 %% A simple case

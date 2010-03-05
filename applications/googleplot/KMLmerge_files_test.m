@@ -49,6 +49,8 @@ function testresult = KMLmerge_files_test()
 % $HeadURL$
 % $Keywords: $
 
+disp(['... running test:',mfilename])
+
 %% $Description (Name = KMLmerge_files)
 % Publishable code that describes the test.
 

@@ -46,6 +46,8 @@ function testresult = KMLcontour_test()
 % $HeadURL$
 % $Keywords: $
 
+disp(['... running test:',mfilename])
+
 %% $Description (Name = KMLcontour)
 % Publishable code that describes the test.
 
