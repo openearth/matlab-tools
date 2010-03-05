@@ -1,4 +1,4 @@
-function [C,E] = tricontourc(tri, x, y, z, N)
+function [C] = tricontourc(tri, x, y, z, N)
 %TRICONTOURC Contouring over triangulated surface.
 %
 %   TRICONTOURC calculates the contour matrix C for use by TRICONTOUR,
@@ -32,9 +32,9 @@ function [C,E] = tricontourc(tri, x, y, z, N)
 %            pairs1 y1 y2 y3 ... pairs2 y2 y2 y3 ...]
 %
 %   Example
-%   tricontours
+%   
 %
-%   See also 
+%   See also tricontours
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -198,10 +198,3 @@ for contourLevel = contourLevels;
     end
 end
 C(:,jj:end) = [];
-E = [...
-    x(vertices(vertices_on_edge,1)),...
-    y(vertices(vertices_on_edge,1)),...
-    z(vertices(vertices_on_edge,1)),...
-    x(vertices(vertices_on_edge,2)),...
-    y(vertices(vertices_on_edge,2)),...
-    z(vertices(vertices_on_edge,2))];

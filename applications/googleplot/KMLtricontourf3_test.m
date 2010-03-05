@@ -58,7 +58,8 @@ try
     z = peaks(10);
     tri = delaunay(x,y);
     tri(60:74,:)=[];
-    KMLtricontourf(tri,x,y-10,z,'levels',100,'fileName',KML_testdir('KMLtricontourf - 1.kml'));
+    KMLtricontourf3(tri,x,y,z,'levels',100,'fileName',KML_testdir('KMLtricontourf3 - 1.kml'),...
+        'zScaleFun',@(z) (abs(z)+0.3)*10000,'staggered',false);
     %test 2
     
     [x,y] = meshgrid(1.1:.5:100.1,201.2:.5:300.2);
@@ -68,7 +69,8 @@ try
     tri = delaunay(x,y);
     tri(any((((x(tri)-50).^2 + (y(tri)-250).^2).^.5)>44,2),:)=[];
     x = x/10+10;y = y/10+10;
-    KMLtricontourf(tri,x,y-10,z,'levels',40,'fileName',KML_testdir('KMLtricontourf - 2.kml'));
+    KMLtricontourf3(tri,x,y,z,'levels',40,'fileName',KML_testdir('KMLtricontourf3 - 2.kml'),...
+        'zScaleFun',@(z) (abs(z)+0.3)*3000,'staggered',true);
     testresult = true;
 catch
     testresult = false;

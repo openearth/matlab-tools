@@ -59,9 +59,9 @@ OPT.cLim          = [];
 OPT.writeLabels   = true;
 OPT.labelDecimals = 1;
 OPT.labelInterval = 5;
-OPT.zScaleFun     = @(z) (z+0)*0;
+OPT.zScaleFun     = @(z) z;
 OPT.colorbar      = 0;
-OPT.extrude       = true;
+OPT.extrude       = false;
 OPT.staggered     = true;
 if nargin==0
   return
@@ -103,7 +103,8 @@ if isempty(OPT.kmlName)
 end
 
 %% find contours
-[C,E] = tricontourc(tri,lat,lon,z,OPT.levels);
+C =   tricontourc(tri,lat,lon,z,OPT.levels);
+E = trisurf_edges(tri,lat,lon,z);
 
 %% pre allocate, find dimensions
 max_size = 1;
@@ -134,49 +135,12 @@ while jj<size(C,2)
 end
 
 %% close open polygons by following edge lines
-
-% stitch elements of E together to form continouos loops
-
-E(:,7) = nan; % The index of the next line will be stored here
-E(:,8) = 0;   % Keep track if this specific line element is included in a contour 
-ii = 1;
-while any(isnan(E(:,7)))
-    % first try to find connectingLIne form the first row of coordinates
-    connectingLines = find(E(ii,4)==E(:,1)&E(ii,5)==E(:,2));
-    % if nothing found, find it form the second row
-    if isempty(connectingLines)
-        connectingLines = find( abs(E(ii,4)-E(:,4))<eps(1000)&abs(E(ii,5)-E(:,5))<eps(1000));
-        connectingLines(connectingLines==ii)=[];
-        foundFromRow2 = true;
-    else
-        foundFromRow2 = false;
-    end
-    if numel(connectingLines)~=1
-        error('the mesh is to complicated, holes and edges may not connect. Or it is a floating point error because of my lousy programming')
-    end
-    
-    % reverse coordinates if foundFromRow2
-    if foundFromRow2
-        E(connectingLines,1:6) = E(connectingLines,[4:6 1:3]);
-    end
-
-    if isnan(E(ii,7))
-        E(ii,7) = connectingLines;
-        ii = connectingLines;
-    else
-        E(ii,7) = connectingLines;
-        ii = find(isnan(E(:,7)),1);
-    end
-end
-
-% now close loops by walking along the edge where a contour ends, until one runs
+% close loops by walking along the edge where a contour ends, until one runs
 % into another contour that starts on the edge. Follow that contour, and
 % then coninue along the edge, and so forth, until the routine is back at
 % the beginning of the initial contour. 
 %
 % Unfortunately, the code got extremely messy...
-%
-
 
 lat2 = [lat; nan(size(lat,1)*5,size(lat,2))];
 lon2 = [lon; nan(size(lat,1)*5,size(lat,2))];
@@ -224,14 +188,10 @@ for ii = find(~closedLoop)
             
             [~,temp5] = max(E(edgeLineAtEndOfContour,[3 6]));
             if temp5==searchDirection
-                x_to_add = 1;
-                y_to_add = 2;
-                z_to_add = 3;
+                x_to_add = 1;y_to_add = 2;z_to_add = 3;
                 searchForwards = false;
             else
-                x_to_add = 4;
-                y_to_add = 5;
-                z_to_add = 6;
+                x_to_add = 4;y_to_add = 5;z_to_add = 6;
                 searchForwards = true;
             end
             
@@ -246,18 +206,17 @@ for ii = find(~closedLoop)
             while E(edgeCoordinateToAdd,z_to_add)>height(ii)&&...
                     E(edgeCoordinateToAdd,z_to_add)<nextHeight
                 endOfContour = endOfContour+1;
-                E(edgeCoordinateToAdd,8) = 1; % record that that edge piece is used in a contour
+                E(edgeCoordinateToAdd,9) = 1; % record that that edge piece is used in a contour
                 lat2(endOfContour,ii) = E(edgeCoordinateToAdd,x_to_add);
                 lon2(endOfContour,ii) = E(edgeCoordinateToAdd,y_to_add);
                   z2(endOfContour,ii) = E(edgeCoordinateToAdd,z_to_add);
                 
                 if searchForwards
-                    edgeCoordinateToAdd = E(edgeCoordinateToAdd,7);
+                    edgeCoordinateToAdd = E(edgeCoordinateToAdd,8);
                 else
-                    edgeCoordinateToAdd = find(E(:,7)==edgeCoordinateToAdd);
+                    edgeCoordinateToAdd = E(edgeCoordinateToAdd,7);
                 end
             end
-            
             % find which height was actually crossed
             if E(edgeCoordinateToAdd,z_to_add)>height(ii)
                 crossedHeight = nextHeight;
@@ -287,6 +246,7 @@ for ii = find(~closedLoop)
             end
             if nextContour == ii
                 % the crossing point is the beginning of the initial contour
+                endOfContour = endOfContour+1;
                 lat2(endOfContour,ii) = lat2(1,ii);
                 lon2(endOfContour,ii) = lon2(1,ii);
                   z2(endOfContour,ii) = height(ii);   
@@ -455,20 +415,25 @@ end
    
    output = repmat(char(1),1,1e5);
    kk = 1;
-    
+   
    for ii=1:mm
        OPT_poly.styleName = sprintf('style%d',c(D(ii).outerPoly));
        
        x1 =  lat(:,[D(ii).outerPoly D(ii).innerPoly]);
        y1 =  lon(:,[D(ii).outerPoly D(ii).innerPoly]);
-       if OPT.staggered
-           z1 = height(D(ii).outerPoly);
-           z1 = repmat(z1,size(x1,1),size(x1,2));
+       if OPT.is3D
+           if OPT.staggered
+               z1 = height(D(ii).outerPoly);
+               z1 = repmat(z1,size(x1,1),size(x1,2));
+               z1 = OPT.zScaleFun(z1);
+           else
+               z1 = z2(:,[D(ii).outerPoly D(ii).innerPoly]);
+               z1 = OPT.zScaleFun(z1);
+           end
        else
-           z1 = z2(:,[D(ii).outerPoly D(ii).innerPoly]);
+           z1 = 'clampToGround';
        end
-       newOutput = KML_poly(x1,y1,OPT.zScaleFun(z1),OPT_poly);
-%        newOutput = KML_poly(x1,y1,'clampToGround',OPT_poly);
+       newOutput = KML_poly(x1,y1,z1,OPT_poly);
        output(kk:kk+length(newOutput)-1) = newOutput;
        kk = kk+length(newOutput);
        if kk>1e5
