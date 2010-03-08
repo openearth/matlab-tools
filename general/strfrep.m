@@ -1,4 +1,4 @@
-function strfrep(filename,origtext,newtext)
+function strfrep(filename,origtext,newtext,varargin)
 %STRFREP  Quickly replaces strings in files.
 %
 %   This function quickly replaces one or more strings in a file.
@@ -61,7 +61,7 @@ function strfrep(filename,origtext,newtext)
 
 %% Check input
 if nargin < 3
-    error('This function requires three input arguments');
+    error('This function requires at least three input arguments');
 end
 
 %% Check file existance
@@ -84,6 +84,13 @@ fclose(fid1);
 
 %% replace text
 for irep = 1:length(origtext)
+    if isnumeric(newtext{irep})
+        if nargin > 3
+            newtext{irep} = num2str(newtext{irep},varargin{1});
+        else
+            newtext{irep} = num2str(newtext{irep});
+        end
+    end
     fulltext = strrep(fulltext,origtext{irep},newtext{irep});
 end
 
