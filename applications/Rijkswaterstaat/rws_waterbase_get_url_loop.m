@@ -89,11 +89,17 @@ function rws_waterbase_get_url_loop(varargin)
 
    OPT = setProperty(OPT,varargin{:});
    
-%% Parameter loop
+%% Parameter choice
 
-if  OPT.parameter==0
-    OPT.parameter = 1:length(OPT.codes);
-end
+   if ischar(OPT.parameter)
+      OPT.parameter = strmatch(OPT.parameter,OPT.standard_names)
+   else   
+      if  OPT.parameter==0
+          OPT.parameter = 1:length(OPT.codes);
+      end
+   end   
+
+%% Parameter loop
 
 for ivar=[OPT.parameter]
 for ialt=1:length(OPT.codes{ivar});

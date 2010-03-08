@@ -45,18 +45,7 @@ function rws_waterbase2nc(varargin)
 %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table/
 %  keep name shorter than namelengthmax (=63)
 
-   OPT.names = ...
-      {'sea_surface_height',... % takes 36 hours
-       'concentration_of_suspended_matter_in_sea_water',...
-       'sea_surface_temperature',...
-       'sea_surface_salinity',...
-       'sea_surface_wave_significant_height',...
-       'sea_surface_wave_from_direction',...
-       'sea_surface_wind_wave_mean_period_Tm02',...
-       'concentration_of_chlorophyll_in_sea_water',...
-       'water_volume_transport_into_sea_water_from_rivers'}; % keep shorter than 63 characters = limitation matlab field names (namelengthmax)
-   
-   OPT.standard_names = ...
+   OPT.standard_names = ...  % some to long for matlab struct field name, chop to 63
       {'sea_surface_height',...
        'concentration_of_suspended_matter_in_sea_water',...
        'sea_surface_temperature',...
@@ -65,7 +54,7 @@ function rws_waterbase2nc(varargin)
        'sea_surface_wave_from_direction',...
        'sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment',...
        'concentration_of_chlorophyll_in_sea_water',...
-       'water_volume_transport_into_sea_water_from_rivers'}; % to long for matlab struct field name
+       'water_volume_transport_into_sea_water_from_rivers'};
    
    OPT.long_names = ...
       {'sea surface height',...
@@ -119,16 +108,22 @@ function rws_waterbase2nc(varargin)
 
    OPT = setProperty(OPT,varargin{:});
 
-%% Parameter loop
+%% Parameter choice
 
-if  OPT.parameter==0
-    OPT.parameter = 1:length(OPT.names);
-end
+   if ischar(OPT.parameter)
+      OPT.parameter = strmatch(OPT.parameter,OPT.standard_names)
+   else   
+      if  OPT.parameter==0
+          OPT.parameter = 1:length(OPT.codes);
+      end
+   end   
+
+%% Parameter loop
 
 for ivar=[OPT.parameter]
 
-    OPT.name           = OPT.names{ivar};
     OPT.standard_name  = OPT.standard_names{ivar};
+    OPT.name           = OPT.standard_name(1:min(63,length(OPT.standard_name))); % matlab names have a max length of 63 characters
     OPT.long_name      = OPT.long_names{ivar};
     OPT.units          = OPT.unitss{ivar};
 
@@ -150,12 +145,8 @@ for ivar=[OPT.parameter]
         %% 0 Read raw data
 
         if exist([OPT.filename,'.mat'],'file')==2
-            D = load([OPT.filename,'.mat']);% speeds up considerably
 
-                %quick fix of previous errors in units
-                %if strcmpi(D.data.units,'cm t.o.v. Mean Sea Level') % id54
-                %   D.data.(OPT.name) = D.data.(OPT.name)./100;
-                %end
+            D = load([OPT.filename,'.mat']);% speeds up considerably
 
         else
             if OPT.unzip
@@ -176,11 +167,12 @@ for ivar=[OPT.parameter]
                 %  for wave heights 'cm' is used
                 %  both strings need to be compared
                 %  for concentrations 'mg.l' is used
-                if  strcmpi(D.data.units(1:2),'cm')
+                units = pad(D.data.units,4,' ');
+                if  strcmpi(units(1:2),'cm')
                    % strcmpi(D.data.units,'cm t.o.v. NAP') || ...     % id1
                    % strcmpi(D.data.units,'cm t.o.v. Mean Sea Level') % id54
                    D.data.(OPT.name) = D.data.(OPT.name)./100;
-                elseif strcmpi(D.data.units(1:4),'mg/l')
+                elseif strcmpi(units(1:2),'mg/l')
                    D.data.(OPT.name) = D.data.(OPT.name)./1e3;
                 end
             end
@@ -325,7 +317,7 @@ for ivar=[OPT.parameter]
         ifld = ifld + 1;
         nc(ifld).Name         = 'z';
         nc(ifld).Nctype       = 'float'; % no double needed
-        if length(D.z)==1
+        if length(D.data.z)==1
         nc(ifld).Dimension    = {'locations'};
         else
         nc(ifld).Dimension    = {'locations','time'};
@@ -365,7 +357,7 @@ for ivar=[OPT.parameter]
         % * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table/
 
         ifld = ifld + 1;
-        nc(ifld).Name         = OPT.name;
+        nc(ifld).Name         = OPT.standard_name;
         nc(ifld).Nctype       = 'float'; % no double needed
         nc(ifld).Dimension    = {'locations','time'};
         nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', OPT.long_name);
@@ -389,13 +381,13 @@ for ivar=[OPT.parameter]
 
         %% 5 Fill variables
 
-        nc_varput(outputfile, 'station_id'  , D.data.locationcode);
-        nc_varput(outputfile, 'station_name', D.data.location);
-        nc_varput(outputfile, 'lon'         , unique(D.data.lon));
-        nc_varput(outputfile, 'lat'         , unique(D.data.lat));
-        nc_varput(outputfile, 'z'           , D.data.z);
-        nc_varput(outputfile, 'time'        , D.data.datenum' - OPT.refdatenum);
-        nc_varput(outputfile, OPT.name      , D.data.(OPT.name));
+        nc_varput(outputfile, 'station_id'      , D.data.locationcode);
+        nc_varput(outputfile, 'station_name'    , D.data.location);
+        nc_varput(outputfile, 'lon'             , unique(D.data.lon));
+        nc_varput(outputfile, 'lat'             , unique(D.data.lat));
+        nc_varput(outputfile, 'z'               , D.data.z);
+        nc_varput(outputfile, 'time'            , D.data.datenum' - OPT.refdatenum);
+        nc_varput(outputfile, OPT.standard_name , D.data.(OPT.name));
 
         %% 6 Check
 

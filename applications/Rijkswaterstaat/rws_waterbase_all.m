@@ -25,7 +25,9 @@ subdirs = {'concentration_of_chlorophyll_in_sea_water',...
            'sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment',...
            'water_volume_transport_into_sea_water_from_rivers'};
 
-for ii= 1:length(subdirs)   
+%-% for ii= 1:length(subdirs)   
+
+for ii= 8
        
       subdir            = subdirs{ii};
       OPT.directory_nc  = [locbase,         '\opendap\rijkswaterstaat\waterbase\'      ,filesep,subdir];
@@ -33,14 +35,14 @@ for ii= 1:length(subdirs)
       
    
    %% Download from waterbase.nl
-   %  make sure list above is synchronized with definition inside rws_waterbase_get_url_loop    
-      rws_waterbase_get_url_loop('parameter'    ,ii,...
-                                 'directory_raw',OPT.directory_raw);
+   %  make sure items in list above are defined inside rws_waterbase_get_url_loop    
+%-%      rws_waterbase_get_url_loop('parameter'    ,subdir,...
+%-%                                 'directory_raw',OPT.directory_raw);
    
    %% Make netCDF
-   %  make sure list above is synchronized with definition inside rws_waterbase2nc    
+   %  make sure items in list above are defined inside rws_waterbase2nc    
    
-      rws_waterbase2nc('parameter'    ,ii,...
+      rws_waterbase2nc('parameter'    ,subdirs{ii},...
                        'directory_nc' ,OPT.directory_nc,...
                        'directory_raw',OPT.directory_raw);
 

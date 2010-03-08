@@ -31,6 +31,10 @@ function varargout = matroos_get_series(varargin);
 %                  'tstart',datestr(now)+3,... % 3 day forecast
 %                   'check','');               % fast, in batch mode after being tested
 %
+% Example 2:
+%
+% D = matroos_get_series('unit','wave_height','loc','amelander zeegat, boei 1-1','source','observed','tstart',datenum(2009,1,1),'tstop',now)
+%
 %See also: MATROOS, MATROOS_LIST
 
 % TO DO
@@ -115,13 +119,17 @@ function varargout = matroos_get_series(varargin);
  % OPT.list       = ''; 
  % OPT.format     = ''; 
 
-   OPT.check      = 's'; 
+   OPT.check      = 'server'; 
    OPT.debug      = 0;   
    OPT.file       = '';   
    
    OPT = setProperty(OPT,varargin{:});
    
-%% check and prepare input
+%% check input
+
+   if isempty(OPT.unit  );error('unit     empty, minimally define: unit, source, location.');end
+   if isempty(OPT.source);error('source   empty, minimally define: unit, source, location.');end
+   if isempty(OPT.loc   );error('location empty, minimally define: unit, source, location.');end
 
    if ~isempty(OPT.check) | OPT.check==0 | isnan(OPT.check)
    
@@ -131,12 +139,17 @@ function varargout = matroos_get_series(varargin);
          [locs,sources,units]=matroos_list('server','');
       end
       
-      iunit   = strmatch(OPT.unit  ,units  );if(length(iunit)==0),  error('could not find unit'    );end;
-      isource = strmatch(OPT.source,sources);if(length(isource)==0),error('could not find source'  );end;
-      iloc    = strmatch(OPT.loc   ,locs   );if(length(iloc)==0),   error('could not find location');end;
+      iunit   = strmatch(OPT.unit  ,units  ,'exact');if(length(iunit)==0),  error(['could not find unit: '''    ,OPT.unit  ,'''']);end;
+      isource = strmatch(OPT.source,sources,'exact');if(length(isource)==0),error(['could not find source: '''  ,OPT.source,'''']);end;
+      iloc    = strmatch(OPT.loc   ,locs   ,'exact');if(length(iloc)==0),   error(['could not find location: ''',OPT.loc   ,'''']);end;
       
    end
+   
+   if isempty(intersect(intersect(iunit,isource),iloc))
+      error(['could not find combination of unit: ''',OPT.unit,''', source: ''',OPT.source,''', location: ''',OPT.loc])
+   end
 
+%% prepare input
 
    OPT.unit    = strrep (OPT.unit    ,' ','%20'); % %20=<space>
    OPT.source  = strrep (OPT.source  ,' ','%20'); % %20=<space>

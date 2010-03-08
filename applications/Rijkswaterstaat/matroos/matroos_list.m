@@ -77,9 +77,9 @@ function [locs,sources,units] = matroos_list(varargin)
    
       fprintf(1,['matroos_list: downloading list, please wait ... \n'])
    
-      serverurl = [OPT.server,'/direct/get_series.php?list=1'];
-      file      = urlread_basicauth(serverurl);
-      COLUMS    = textscan(file,'%s%s%s');
+      serverurl  = [OPT.server,'/direct/get_series.php?list=1'];
+      file       = urlread_basicauth(serverurl);
+      COLUMNS    = textscan(file,'%s%s%s','Delimiter',char(9)); % list is tab-delimited, names can contain spaces !!!
       
       try
       fid = fopen(matroos_list_cache.name1,'w');
@@ -99,7 +99,7 @@ function [locs,sources,units] = matroos_list(varargin)
 %% read cached version of list, MUCH FASTER
    
       fid       = fopen(matroos_list_cache.name,'r');
-      COLUMS    = textscan(fid,'%s%s%s');
+      COLUMNS   = textscan(fid,'%s%s%s','Delimiter',char(9)); % list is tab-delimited, names can contain spaces !!!
       fclose(fid);
 
       if OPT.disp
@@ -110,9 +110,9 @@ function [locs,sources,units] = matroos_list(varargin)
 
 %% parse
 
-   locs      = COLUMS{1};
-   sources   = COLUMS{2};
-   units     = COLUMS{3};
+   locs      = COLUMNS{1};
+   sources   = COLUMNS{2};
+   units     = COLUMNS{3};
 
 %% EOF
 
