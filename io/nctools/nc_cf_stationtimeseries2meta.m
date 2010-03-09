@@ -70,7 +70,7 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    OPT.mask           = '*.nc'; % exclude catalog.nc
    OPT.basename       = 0; %'catalog';
    OPT.datestr        = 'yyyy-mm-dd HH:MM:SS';
-   OPT.vc             = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc'; % vector coastline, WVC in future ?
+   OPT.vc             = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc'; % vector coastline, WVC in future ?
    OPT.standard_names = [];
    
 %% Keyword,value
