@@ -1,26 +1,87 @@
-function [Var info]=xb_readvar(fname,XBdims,dims)
-% Var=readvar(fname,XBdims,dims) or
-% [Var info]=readvar(fname,XBdims,dims)
+function [Var info] = xb_readvar(fname, XBdims, dims)
+%XB_READVAR  reads XBeach output variables
 %
-% Input - fname : name of data file to open, e.g. 'zb.dat' or 'u_mean.dat'
-%       - XBdims: dimension data provided by getdimensions function
-%       - dims  : rank of the variable matrix being read ('2D','3Dwave',
-%                 '3Dbed','3Dsed', or '4Dbed')
+%     Input - fname : name of data file to open, e.g. 'zb.dat' or 'u_mean.dat'
+%           - XBdims: dimension data provided by getdimensions function
+%           - dims  : rank of the variable matrix being read ('2D','3Dwave',
+%                     '3Dbed','3Dsed', or '4Dbed')
+% 
+%     If no dims is given, this function will try to automatically find the
+%     best way to read the file
+% 
+%     Output Var is XBeach output ND array
+%     Output info is character array describing the dimensions of Var, i.e.
+%     info = ['x' 'y' 't'], where the first dimension in Var is the x-coordinate,
+%     the second dimension in Var is the y-coordinate and the third dimension in
+%     Var is the time coordinate (XBdims.nt or XBdims.ntm)
 %
-% If no dims is given, this function will try to automatically find the
-% best way to read the file
+%   Syntax:
+%   [Var info] = xb_readvar(fname, XBdims, dims)
 %
-% Output Var is XBeach output ND array
-% Output info is character array describing the dimensions of Var, i.e.
-% info = ['x' 'y' 't'], where the first dimension in Var is the x-coordinate,
-% the second dimension in Var is the y-coordinate and the third dimension in
-% Var is the time coordinate (XBdims.nt or XBdims.ntm)
+%   Input:
+%   fname  = name of data file to open, e.g. 'zb.dat' or 'u_mean.dat'
+%   XBdims = dimension data provided by xb_getdimensions function
+%   dims   = rank of the variable matrix being read ('2D','3Dwave',
+%            '3Dbed','3Dsed', or '4Dbed')
 %
-% Created 24-11-2008 : XBeach-group Delft
+%   Output:
+%     Output Var is XBeach output ND array
+%     Output info is character array describing the dimensions of Var, i.e.
+%     info = ['x' 'y' 't'], where the first dimension in Var is the x-coordinate,
+%     the second dimension in Var is the y-coordinate and the third dimension in
+%     Var is the time coordinate (XBdims.nt or XBdims.ntm)
 %
-% See also getdimensions, read2Dout, readpoint, readgraindist, readbedlayers,
-%          readsediment
+%   Example
+%   xb_readvar
+%
+%   See also getdimensions, read2Dout, readpoint, readgraindist, readbedlayers,
+%            readsediment
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2010 Deltares
+%       modified by Kees den Heijer
+%       originally created by XBeach-group Delft
+%
+%       Kees.denHeijer@Deltares.nl	
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 09 Mar 2010
+% Created with Matlab version: 7.7.0.471 (R2008b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 options=[' 3Dwave';' 3Dsed ';' 3Dbed ';' 4Dbed '];
 
 % Determine output time series length in dims.dat
