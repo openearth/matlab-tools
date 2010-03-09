@@ -94,52 +94,58 @@ else
    end
 end
 
-absL = abs(L);
+%% pad
 
-if (size(prepad,2) < absL)
-        
-   if length(symbol)==0
-	
-      error('syntax: pad(array,L,symbol) where symbol should not be empty');
-	
-   else  
-	
-      padded = repmat(symbol,[size(prepad,1) absL]);
-	
-      if sign(L) < 0
-      
-      padded(:,absL-size(prepad,2)+1:end) = prepad(:,:);
-      
-      elseif sign(L) > 0
-      
-      padded(:,1:size(prepad,2)) = prepad(:,:);
-      
-      end
-	
+   absL = abs(L);
+   
+   if isempty(prepad)
+      prepad = symbol;
    end
-    
-    iostat = 1;
+   
+   if (size(prepad,2) < absL)
+           
+      if length(symbol)==0
+   	
+         error('syntax: pad(array,L,symbol) where symbol should not be empty');
+   	
+      else  
+   	
+         padded = repmat(symbol,[size(prepad,1) absL]);
+   	
+         if sign(L) < 0
+         
+         padded(:,absL-size(prepad,2)+1:end) = prepad(:,:);
+         
+         elseif sign(L) > 0
+         
+         padded(:,1:size(prepad,2)) = prepad(:,:);
+         
+         end
+   	
+      end
+       
+       iostat = 1;
+   
+   else
+       
+       if displaywarning
+       disp(['Array not padded, as its length ',num2str(length(prepad)),' >= ',num2str(absL)])
+       end
+       
+       padded = prepad;
+       
+       iostat = 0;
+       
+   end    
 
-else
-    
-    if displaywarning
-    disp(['Array not padded, as its length ',num2str(length(prepad)),' >= ',num2str(absL)])
-    end
-    
-    padded = prepad;
-    
-    iostat = 0;
-    
-end    
-
-
+%% output
 
    if nargout < 2
-
-   varargout = {padded};
-
-elseif nargout == 2
-
-   varargout = {padded,iostat};
-
-end
+   
+      varargout = {padded};
+   
+   elseif nargout == 2
+   
+      varargout = {padded,iostat};
+   
+   end

@@ -1,7 +1,7 @@
 function filenames = findAllFiles(varargin)
 %FINDALLFILES   get list of all files in a directory tree.
 %
-%    files = findAllFiles(<keyword,value>)
+%    files = findAllFiles(basepath,<keyword,value>)
 %
 % returns cellstr files with a list of all files in a directory tree.
 % The following <keyword,value> pairs have been implemented.
@@ -73,10 +73,17 @@ function filenames = findAllFiles(varargin)
        'basepath', '', ...                       % indicate basedpath to start looking
        'recursive', 1 ...                        % indicate whether or not the request is recursive
        );
+       
+   if odd(nargin)
+      OPT.basepath = varargin{1};
+      nextarg = 2;
+   else
+      nextarg = 1;
+   end
 
    % overrule default settings by property pairs, given in varargin
 
-   OPT = setProperty(OPT, varargin{:});
+   OPT = setProperty(OPT, varargin{nextarg:end});
    
    if nargin==0
       filenames = OPT;
