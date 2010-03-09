@@ -88,20 +88,19 @@ if nargin>2
 end
 %% dimensions
 if ~quiet
-    hwb = waitbar(0,'Reading dims.dat');
+    hwb = waitbar(0,'Reading dimensions');
 end
 try
-    fid = fopen([resdir filesep 'dims.dat'],'r');
-    temp = fread(fid,[3,1],'double');
-    XB.Output.nt = temp(1);
-    XB.Output.nx = temp(2)+1;
-    XB.Output.ny = temp(3)+1;
-    fclose(fid);
+    XBdims = xb_getdimensions(resdir);
+
+    XB.Output.nt = XBdims.nt;
+    XB.Output.nx = XBdims.nx + 1;
+    XB.Output.ny = XBdims.ny + 1;
 catch
     if ~quiet
         close(hwb);
     end
-    error('XBEACHREAD:NODIMS',['Could not find the file: ' resdir filesep 'dims.dat']);
+    error('XBEACHREAD:NODIMS',['Could not find the file: ' fullfile(resdir, 'dims.dat')]);
 end
 
 %% read grid coordinates
@@ -109,12 +108,10 @@ if ~quiet
     hwb = waitbar(0,hwb,'Reading xy.dat');
 end
 try
-    fid = fopen([resdir filesep 'xy.dat'],'r');
-    XB.Output.xw = fread(fid,[XB.Output.nx,XB.Output.ny],'double');
-    XB.Output.yw = fread(fid,[XB.Output.nx,XB.Output.ny],'double');
-    XB.Output.x = fread(fid,[XB.Output.nx,XB.Output.ny],'double');
-    XB.Output.y = fread(fid,[XB.Output.nx,XB.Output.ny],'double');
-    fclose(fid);
+    XB.Output.xw = XBdims.x;
+    XB.Output.yw = XBdims.y;
+    XB.Output.x = XBdims.xc;
+    XB.Output.y = XBdims.yc;
 catch
     if ~quiet
         close(hwb);
