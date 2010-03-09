@@ -60,6 +60,7 @@ try
     tri(60:74,:)=[];
     KMLtricontourf3(tri,x,y,z,'levels',100,'fileName',KML_testdir('KMLtricontourf3 - 1.kml'),...
         'zScaleFun',@(z) (abs(z)+0.3)*10000,'staggered',false);
+    
     %test 2
     
     [x,y] = meshgrid(1.1:.5:100.1,201.2:.5:300.2);
@@ -71,6 +72,19 @@ try
     x = x/10+10;y = y/10+10;
     KMLtricontourf3(tri,x,y,z,'levels',40,'fileName',KML_testdir('KMLtricontourf3 - 2.kml'),...
         'zScaleFun',@(z) (abs(z)+0.3)*3000,'staggered',true);
+    
+    %test3
+    [x,y] = meshgrid(1:3,7:9);
+    z = ones(3,3);
+    z(2,2) = 5;
+    z(3,2) = 9;
+    tri = delaunay(x,y);
+    tri(6,:)=[];
+    trisurf(tri,x,y,z);
+
+    KMLtricontourf3(tri,x,y,z,'levels',3,'fileName',KML_testdir('KMLtricontourf3 - 3.kml'),...
+        'zScaleFun',@(z) (abs(z)+0.3)*10000,'staggered',true);
+    
     testresult = true;
 catch
     testresult = false;

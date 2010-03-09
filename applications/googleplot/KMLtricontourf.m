@@ -157,13 +157,20 @@ for ii = find(~closedLoop)
     else
         endOfContour = find(~isnan(lat(:,ii)),1,'last');
         searchDirection = 1;
-        
-        
+                
         while ~(lat2(1,ii)==lat2(endOfContour,ii) &&...
                 lon2(1,ii)==lon2(endOfContour,ii));
             
             % determine where the contour end could possibly be
-            % find all lines on the edge that cross the continue
+            % find all lines on the edge that cross the contour
+            
+            
+            % temp0 = indices of all the edge lines that cross height(ii)
+            % temp1 = difference of z and height(ii) on edge lines that
+            %         cross the height
+            % temp2 = weigting of the first and second coordinate (to find
+            %         the crossing location on the edge line
+            % temp3 = exact crossing locations
             if searchDirection == 1;
                 temp0 = xor(E(:,3)<height(ii),E(:,6)<height(ii));
                 % calculate exact crossing locations
@@ -178,11 +185,14 @@ for ii = find(~closedLoop)
             crossingX =  sum(temp2.*E(temp0,[1 4]),2);
             crossingY =  sum(temp2.*E(temp0,[2 5]),2);
             
-            
             temp3 = (crossingX == lat2(endOfContour,ii) &...
                 crossingY == lon2(endOfContour,ii));
             temp4 = find(temp0);
             edgeLineAtEndOfContour = temp4(temp3);
+            % in some cases, more than one edgeLineAtEndOfContour is found,
+            % namely when the crossing is at the end or begin of the edge
+            % line.
+            edgeLineAtEndOfContour = edgeLineAtEndOfContour(end);
             
             % determine to go forwards of backwards through edge lines,
             % searchDirection = 1  go in the direction of the highest z value
@@ -204,7 +214,7 @@ for ii = find(~closedLoop)
             end
             % start adding edge coordinates to the polygon
             edgeCoordinateToAdd = edgeLineAtEndOfContour;
-            
+           try 
             while E(edgeCoordinateToAdd,z_to_add)>height(ii)&&...
                     E(edgeCoordinateToAdd,z_to_add)<nextHeight
                 endOfContour = endOfContour+1;
@@ -219,6 +229,9 @@ for ii = find(~closedLoop)
                     edgeCoordinateToAdd = E(edgeCoordinateToAdd,7);
                 end
             end
+           catch
+               a=1
+           end
             % find which height was actually crossed
             if E(edgeCoordinateToAdd,z_to_add)>height(ii)
                 crossedHeight = nextHeight;
@@ -258,7 +271,7 @@ for ii = find(~closedLoop)
                   z2(endOfContour+(1:max(nextContourIndices)),ii) = height(nextContour);
                 if height(nextContour)==height(ii)&~ismember(ii,contourToBeDeleted)
                     % then the nextContour in itself would result in a
-                    % cennecting contour identical to the one already being
+                    % connecting contour identical to the one already being
                     % created.
                     contourToBeDeleted(end+1) = nextContour;
                 end

@@ -78,7 +78,10 @@ end
 [OPT, Set, Default] = setProperty(OPT, varargin{:});
 
 %% input check
-
+% vectorize input
+lat = lat(:);
+lon = lon(:);
+z = z(:);
 % correct lat and lon
 if any((abs(lat)/90)>1)
     error('latitude out of range, must be within -90..90')
