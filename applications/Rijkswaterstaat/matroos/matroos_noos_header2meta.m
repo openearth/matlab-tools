@@ -47,7 +47,7 @@ for i=1:length(header)
 
    if any(strfind(header{i},'Location'    )); 
    index              = strfind(header{i},':');
-   M.loc              = strtok(header{i}(index+1:end));
+   M.loc              =        (header{i}(index+1:end));
    end
 
    if any(strfind(header{i},'Position'    )); 
@@ -70,10 +70,15 @@ for i=1:length(header)
    M.unit             = strtok(header{i}(index+1:end));
    end
 
-   if any(strfind(header{i},'Analyse time')); 
+   if any(strfind(header{i},'Analyse time'));
+   if any(strfind(header{i},'*** no data found ***'))
+   M.tanalysis        = [];
+   M.datenumanalysis  = [];
+   else
    index              = strfind(header{i},':');
    M.tanalysis        = strtok(header{i}(index+1:end));
    M.datenumanalysis  = datenum(M.tanalysis,'yyyymmddHHMM');
+   end
    end
 
    if any(strfind(header{i},'Timezone'    )); 

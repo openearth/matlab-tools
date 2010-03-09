@@ -4,19 +4,25 @@
 
 %% get data, save to file
 
-   O = matroos_get_series('unit','waterlevel','source','observed' ,'loc','hoekvanholland','tstart',now-7,'tstop',now+7,'check','','file','O.txt');
-   P = matroos_get_series('unit','waterlevel','source','dcsm_oper','loc','hoekvanholland','tstart',now-7,'tstop',now+7,'check','','file','P.txt');
+   O = matroos_get_series('unit','waterlevel','source','observed' ,'loc','hoekvanholland;den helder;delfzijl','tstart',now-7,'tstop',now+7,'check','','file','O.txt');
+   P = matroos_get_series('unit','waterlevel','source','dcsm_oper','loc','hoekvanholland;den helder;delfzijl','tstart',now-7,'tstop',now+7,'check','','file','P.txt');
    
 %% plot data
 
-   plot    (P.datenum,P.waterlevel,'b-','displayname',mktex('observed' ));
+for iloc=1:length(O)
+
+   figure
+
+   plot    (P(iloc).datenum,P(iloc).waterlevel,'b-','displayname',mktex('observed' ));
    hold     on
-   plot    (O.datenum,O.waterlevel,'k.','displayname',mktex('dcsm_oper'));
+   plot    (O(iloc).datenum,O(iloc).waterlevel,'k.','displayname',mktex('dcsm_oper'));
    vline   (now)
    datetick(gca);
    xlabel  ('time');
    ylabel  ('water level [m]')
-   xlabel  (['time ',O.timezone])
+   xlabel  (['time ',O(iloc).timezone])
    legend   show
    grid     on
-   title   ([O.loc,' ',O.latlonstr])
+   title   ([O(iloc).loc,' ',O(iloc).latlonstr])
+
+end

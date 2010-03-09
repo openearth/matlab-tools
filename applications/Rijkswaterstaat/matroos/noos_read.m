@@ -1,19 +1,26 @@
-function [t, values, header] = noos_read(allLines)
+function varargout = noos_read(varargin)
 %NOOS_READ   read NOOS timeseries ASCII format
 %
 %   [time, values, headerlines] = noos_read(cellstr)
 %
 % where the headerlines can be interpreted with 
 % MATROOS_NOOS_HEADER2META is the NOOS file file originates
-% from matroos.
+% from matroos. when the file contains multpel data blocks,
+% [time, values, headerlines], are cells. Alternative output:
+%
+%   D = noos_read(cellstr)
+%
+% where D has fields  datenum, value and headers.
 %
 %See also: MATROOS_NOOS_HEADER2META
 
+%% TO DO: parse a file with only concatenated comment blocks (in cas eof no data)
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Rijkswaterstaat
-%       Martin Verlaan
+%       Gerben de Boer
 %
-%       Martin.Verlaan@deltares.nl
+%       g.j.deboer@deltares.nl	
 %
 %       Deltares
 %       P.O. Box 177
@@ -47,37 +54,80 @@ function [t, values, header] = noos_read(allLines)
 % $HeadURL$
 % $Keywords: $
 
-%% skip and store header
+   OPT.varname = 'value';
    
-   i=0;done=0;
-   while((done==0)&(i<length(allLines))),
-       i         = i+1;
-       header{i} = allLines{i};
-       done      = (length(findstr(allLines{i},'#'))==0);
-   end;
+   OPT = setProperty(OPT,varargin{2:end});
+
+%% load file, if necesarry
+
+   if ischar(varargin{1})
+      fname    = varargin{1}; 
+      fid      = fopen(fname,'r');
+      allLines = textscan(fid,'%s','Delimiter','');
+      allLines = allLines{1}';
+      fclose(fid);
+   else
+      allLines = varargin{1};
+   end
+
+%% detect blocks and headers
+%  Mind that data sections can be missing altogether!: so header blocks are concatenated
+
+   ind   = strmatch('# Timeseries retrieved from the MATROOS series database',allLines);
+   nloc  = length(ind);
    
-%% read data lines, with pre-allocated vectors for speed
+   hind0 = ind-1;
+   hind1 = ind+9;
+   ind0  = ind+10;
+   ind1  = [(ind(2:end)-2)' length(allLines)];
    
-   done       = 0;
-   pointIndex = 1;
-   nt         = length(allLines) - length(header);
-   t          = repmat(nan,[1 nt]);
-   values     = repmat(nan,[1 nt]);
+%% parse data
+
+   for iloc=1:nloc
    
-   while(i<length(allLines)),
-       line = allLines{i};
-       data = sscanf(line,'%f %f');
-       values(pointIndex) = data(end);
-       year = sscanf(line( 1: 4),'%d');
-       month= sscanf(line( 5: 6),'%d');
-       day  = sscanf(line( 7: 8),'%d');
-       hour = sscanf(line( 9:10),'%d');
-       min  = sscanf(line(11:12),'%d');
-       sec  = 0;
-       t(pointIndex) = datenum(year,month,day,hour,min,sec);
-       i          = i+1;
-       pointIndex = pointIndex+1;
-   end;
+      %% read data lines, with pre-allocated vectors for speed
+      
+      done                 = 0;
+      pointIndex           = 1;
+      nt                   = ind1(iloc) - ind0(iloc) + 1;
+      D(iloc).header       = allLines(hind0(iloc):hind1(iloc));
+      D(iloc).datenum      = repmat(nan,[1 nt]);
+      D(iloc).(OPT.varname) = repmat(nan,[1 nt]);
+      
+      for i = ind0(iloc):ind1(iloc)
+          line                              = allLines{i};
+          data                              = sscanf(line,'%f %f');
+          D(iloc).(OPT.varname)(pointIndex) = data(end);
+          year                              = sscanf(line( 1: 4),'%d');
+          month                             = sscanf(line( 5: 6),'%d');
+          day                               = sscanf(line( 7: 8),'%d');
+          hour                              = sscanf(line( 9:10),'%d');
+          min                               = sscanf(line(11:12),'%d');
+          sec                               = 0;
+          D(iloc).datenum(pointIndex)       = datenum(year,month,day,hour,min,sec);
+          i                                 = i+1;
+          pointIndex                        = pointIndex+1;
+      end;
+      
+   end
+   
+%% output
+
+   if nargout==1
+      varargout = {D};
+   elseif nargout==2
+      if nloc==1
+         varargout = { D.datenum , D.(OPT.varname) };
+      else
+         varargout = {{D.datenum},{D.(OPT.varname)}};
+      end
+   elseif nargout==3
+      if nloc==1
+         varargout = { D.datenum , D.(OPT.varname) , D.header };
+      else
+         varargout = {{D.datenum},{D.(OPT.varname)},{D.header}};
+      end
+   end
 
 %% EOF   
    

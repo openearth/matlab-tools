@@ -11,6 +11,8 @@ function varargout = matroos_get_series(varargin);
 % where the following <keyword,value> are defined:
 % REQUIRED matroos url keywords:
 % - loc       : The location as known by Matroos (see MATROOS_LIST).
+%               note: several locations can be a ; separated list of locations.
+%               provided check = 0
 % - source    : The source as known by Matroos (see MATROOS_LIST).
 % - unit      : A unit as known by Matroos (see MATROOS_LIST).
 % - tstart    : First time for the timeseries in format YYYYMMDDHHMM.
@@ -21,7 +23,7 @@ function varargout = matroos_get_series(varargin);
 % * check     : check existence of: loc, source, unit:
 %               0,nan,'' no check (FAST) / 'c' check with local cached table / 's' check with server
 % * debug     : display some debugging info
-% * file      : filename for saving data
+% * file      : filename for saving data (optionally, default '' means that no file will be saved)
 %
 % Example:
 % [t,wl]=get_series('units','waterlevel',...
@@ -103,7 +105,7 @@ function varargout = matroos_get_series(varargin);
    OPT.server     = matroos_server;
    
    OPT.loc        = ''; % always
-   OPT.source     = ''; % alwaysw
+   OPT.source     = ''; % always
    OPT.unit       = ''; % always
    OPT.tstart     = []; % always
    OPT.tstop      = []; % always
@@ -131,7 +133,7 @@ function varargout = matroos_get_series(varargin);
    if isempty(OPT.source);error('source   empty, minimally define: unit, source, location.');end
    if isempty(OPT.loc   );error('location empty, minimally define: unit, source, location.');end
 
-   if ~isempty(OPT.check) | OPT.check==0 | isnan(OPT.check)
+   if ~(isempty(OPT.check) | OPT.check==0 | isnan(OPT.check))
    
       if     strcmpi(OPT.check(1),'s')
          [locs,sources,units]=matroos_list('server',OPT.server);
@@ -143,10 +145,10 @@ function varargout = matroos_get_series(varargin);
       isource = strmatch(OPT.source,sources,'exact');if(length(isource)==0),error(['could not find source: '''  ,OPT.source,'''']);end;
       iloc    = strmatch(OPT.loc   ,locs   ,'exact');if(length(iloc)==0),   error(['could not find location: ''',OPT.loc   ,'''']);end;
       
-   end
-   
-   if isempty(intersect(intersect(iunit,isource),iloc))
+      if isempty(intersect(intersect(iunit,isource),iloc))
       error(['could not find combination of unit: ''',OPT.unit,''', source: ''',OPT.source,''', location: ''',OPT.loc])
+      end
+
    end
 
 %% prepare input
@@ -187,20 +189,34 @@ function varargout = matroos_get_series(varargin);
 
 %% parse NOOS data
 
-   [t, values ,header] = noos_read(allLines);
+   [t,v,h] = noos_read(allLines,'varname',OPT.unit);
 
-   meta                = matroos_noos_header2meta(header); % not official noos, so not in NOOS_READ
-   
+   if ~isempty(t)
+      for iloc=1:length(t)
+      D(iloc) = matroos_noos_header2meta(h{iloc}); % not official noos, so not in NOOS_READ
+      end
+      
+      for iloc=1:length(t)
+      D(iloc).datenum    = t{iloc};
+      D(iloc).(OPT.unit) = v{iloc};
+      D(iloc).header     = h{iloc};
+      end
+   else
+      disp('matroos_get_series: *** no data found ***')
+      D = matroos_noos_header2meta(h); % not official noos, so not in NOOS_READ
+      D.datenum    = [];
+      D.(OPT.unit) = [];
+      D.header     = h;
+   end
+
 %% deal output
 
    if nargout==1
-      meta.datenum    = t;
-      meta.(OPT.unit) = values;
-      varargout       = {meta};
+      varargout       = {D};
    elseif nargout==2
-      varargout       = {t, values };
+      varargout       = {D.datenum, D.values };
    elseif nargout==3
-      varargout       = {t, values ,meta};
+      varargout       = {D.datenum, D.alues ,D.meta};
    end
 
 %% EOF
