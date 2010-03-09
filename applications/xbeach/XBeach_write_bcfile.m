@@ -65,8 +65,8 @@ OPT = setProperty(OPT, varargin{:});
 %%
 fid = fopen(OPT.bcfile, 'w');
 fprintf(fid, 'FILELIST\n');
-maxspaces1 = length(num2str(max(OPT.rt)))+1;
-maxspaces2 = length(num2str(max(OPT.dtbf)))+1;
+maxspaces1 = length(num2str(max(OPT.rt)))+3;
+maxspaces2 = length(num2str(max(OPT.dtbf)))+3;
 for i = 1:length(OPT.rt)
     rt_str = num2str(OPT.rt(i), '%g');
     dtbf_str =  num2str(OPT.dtbf(i), '%g');
