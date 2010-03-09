@@ -1,4 +1,4 @@
-function [Var info]=readvar(fname,XBdims,dims)
+function [Var info]=xb_readvar(fname,XBdims,dims)
 % Var=readvar(fname,XBdims,dims) or
 % [Var info]=readvar(fname,XBdims,dims)
 %
@@ -127,3 +127,301 @@ else
         end
     end
 end
+
+%%
+function [Var info]=read2Dout(fname,XBdims)
+% Var=readvar(fname,XBdims,nodims) or
+% [Var info]=readvar(fname,XBdims,nodims)
+%
+% Output Var is XBeach output 3D array
+% Output info is character array describing the dimensions of Var, i.e.
+% info = ['x' 'y' 't'], where the first dimension in Var is the x-coordinate,
+% the second dimension in Var is the y-coordinate and the third dimension in
+% Var is the time coordinate (XBdims.nt or XBdims.ntm)
+% Input - fname : name of data file to open, e.g. 'zb.dat' or 'u_mean.dat'
+%       - XBdims: dimension data provided by getdimensions function
+%       - nodims: rank of the variable matrix being read (default = 2)
+%
+% Created 19-06-2008 : XBeach-group Delft
+%
+% See also getdimensions, readpoint, readgraindist, readbedlayers,
+%          readsediment, readwaves
+
+
+nodims=2;
+
+if (length(fname)>9 && strcmp(fname(end-8:end), '_mean.dat'))
+    nt=XBdims.ntm;
+    nameend=9;
+elseif (length(fname)>8 && strcmp(fname(end-7:end), '_max.dat'))
+    nt=XBdims.ntm;
+    nameend=8;
+elseif (length(fname)>8 && strcmp(fname(end-7:end), '_min.dat'))
+    nt=XBdims.ntm;
+    nameend=8;
+elseif (length(fname)>8 && strcmp(fname(end-7:end), '_var.dat'))
+    nt=XBdims.ntm;
+    nameend=8;
+else
+    nt=XBdims.nt;
+    nameend=4;
+end
+
+integernames={'wetz';
+              'wetu';
+              'wetv';
+              'struct';
+              'nd';
+              'respstruct'};
+
+if any(strcmpi(fname(1:end-nameend),integernames))
+    type='integer';
+else
+    type='double';
+end
+          
+fid=fopen(fname,'r');
+switch type
+    case'double'
+        switch nodims
+            case 2
+                Var=zeros(XBdims.nx+1,XBdims.ny+1,nt);
+                for i=1:nt
+                    Var(:,:,i)=fread(fid,size(XBdims.x),'double');
+                end
+                info=['x ' 'y ' 't '];
+            case 3
+                Var=zeros(XBdims.nx+1,XBdims.ny+1,nt);
+            case 4
+                Var=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.nd,XBdims.ngd,nt);
+                for i=1:nt
+                    for ii=1:XBdims.ngd
+                        for iii=1:XBdims.nd
+                            Var(:,:,iii,ii,i)=fread(fid,size(XBdims.x),'double');
+                        end
+                    end
+                end
+                info=['x   ' 'y   ' 'nd  ' 'ngd ' 't   '];
+        end
+    case 'integer'
+        switch nodims
+            case 2
+                Var=zeros(XBdims.nx+1,XBdims.ny+1,nt);
+                for i=1:nt
+                    Var(:,:,i)=fread(fid,size(XBdims.x),'int');
+                end
+                info=['x ' 'y ' 't '];
+            case 3
+                Var=zeros(XBdims.nx+1,XBdims.ny+1,nt);
+            case 4
+                Var=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.nd,XBdims.ngd,nt);
+                for i=1:nt
+                    for ii=1:XBdims.ngd
+                        for iii=1:XBdims.nd
+                            Var(:,:,iii,ii,i)=fread(fid,size(XBdims.x),'int');
+                        end
+                    end
+                end
+                info=['x   ' 'y   ' 'nd  ' 'ngd ' 't   '];
+        end
+end
+
+fclose(fid);
+
+%%
+function [bedlayers info]=readbedlayers(fname,XBdims)
+% Var=readbedlayers(fname,XBdims) or
+% [Var info]=readbedlayers(fname,XBdims)
+%
+% Output Var is XBeach output 4D array with bed layer data
+% Output info is character array describing the dimensions of Var, i.e.
+% info = ['x' 'y' 'nd' 't'], where the first dimension in Var is the x-coordinate,
+% etc.
+% Input - fname : name of data file to open, e.g. 'dzbed.dat'
+%       - XBdims: dimension data provided by getdimensions function
+%
+% Created 24-11-2009 : XBeach-group Delft
+%
+% See also getdimensions, readvar, readpoint, readgraindist, readsediment,
+%          readwaves
+
+if (length(fname)>9 && strcmp(fname(end-8:end), '_mean.dat'))
+    nt=XBdims.ntm;
+elseif (length(fname)>8 && strcmp(fname(end-7:end), '_max.dat'))
+    nt=XBdims.ntm;
+elseif (length(fname)>8 && strcmp(fname(end-7:end), '_min.dat'))
+    nt=XBdims.ntm;
+elseif (length(fname)>8 && strcmp(fname(end-7:end), '_var.dat'))
+    nt=XBdims.ntm;
+else
+    nt=XBdims.nt;
+end
+
+bedlayers=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.nd,nt);
+info=['x  ' 'y  ' 'nd ' 't  '];
+
+fid=fopen(fname,'r');
+
+for i=1:nt
+    for jj=1:XBdims.nd
+        bedlayers(:,:,jj,i)=fread(fid,[XBdims.nx+1,XBdims.ny+1],'double');
+    end
+end
+
+fclose(fid);
+
+
+%%
+function [graindis info]=readgraindist(fname,XBdims)
+% Var=readgraindis(fname,XBdims) or
+% [Var info]=readgraindist(fname,XBdims)
+%
+% Output Var is XBeach output 5D array with bed composition data
+% Output info is character array describing the dimensions of Var, i.e.
+% info = ['x' 'y' 'nd' 'ngd' 't'], where the first dimension in Var is the x-coordinate,
+% etc.
+% Input - fname : name of data file to open, e.g. 'pbbed.dat'
+%       - XBdims: dimension data provided by getdimensions function
+%
+% Created 24-11-2009 : XBeach-group Delft
+%
+% See also getdimensions, readvar, readpoint, readbedlayers, readsediment,
+%          readwaves
+
+if (length(fname)>9 && strcmp(fname(end-8:end), '_mean.dat'))
+    nt=XBdims.ntm;
+elseif (length(fname)>8 && strcmp(fname(end-7:end), '_max.dat'))
+    nt=XBdims.ntm;
+elseif (length(fname)>8 && strcmp(fname(end-7:end), '_min.dat'))
+    nt=XBdims.ntm;
+elseif (length(fname)>8 && strcmp(fname(end-7:end), '_var.dat'))
+    nt=XBdims.ntm;
+else
+    nt=XBdims.nt;
+end
+
+graindis=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.nd,XBdims.ngd,nt);
+info=['x  ' 'y  ' 'nd ' 'ngd' '  t'];
+
+fid=fopen(fname,'r');
+
+for i=1:nt
+    for ii=1:XBdims.ngd
+        for jj=1:XBdims.nd
+            graindis(:,:,jj,ii,i)=fread(fid,[XBdims.nx+1,XBdims.ny+1],'double');
+        end
+    end
+end
+
+fclose(fid);
+
+
+%%
+function Pointdata=readpoint(fname,XBdims,nvar)
+% Pointdata=readpoint(fname,XBdims,nvar)
+%
+% Output Point is [ntp,nvar+1] array, where ntp is XBdims.ntp
+%                 First column of Pointdata is time
+%                 Second and further columns of Pointdata are values of
+%                 variables
+% Input - fname : name of data file to open, e.g. 'point001.dat' or 'rugau001.dat'
+%       - XBdims: dimension data provided by getdimensions function
+%       - nvar  : number of variables output at this point location
+%
+% Created 19-06-2008 : XBeach-group Delft
+%
+% See also getdimensions, readvar, readgraindist, readbedlayers,
+%          readsediment, readwaves
+
+Pointdata=zeros(XBdims.ntp,nvar+1);
+fid=fopen(fname,'r');
+for i=1:XBdims.ntp
+    Pointdata(i,:)=fread(fid,nvar+1,'double');
+end
+fclose(fid);
+
+%%
+function [sed info]=readsediment(fname,XBdims)
+% Var=readsediment(fname,XBdims) or
+% [Var info]=readsediment(fname,XBdims)
+%
+% Output Var is XBeach output 4D array with sediment concentrations and transport data
+% Output info is character array describing the dimensions of Var, i.e.
+% info = ['x' 'y' 'ngd' 't'], where the first dimension in Var is the x-coordinate,
+% etc.
+% Input - fname : name of data file to open, e.g. 'Subg.dat'
+%       - XBdims: dimension data provided by getdimensions function
+%
+% Created 24-11-2009 : XBeach-group Delft
+%
+% See also getdimensions, readvar, readpoint, readgraindist, readbedlayers,
+%          readwaves
+
+
+if (length(fname)>9 && strcmp(fname(end-8:end), '_mean.dat'))
+    nt=XBdims.ntm;
+elseif (length(fname)>8 && strcmp(fname(end-7:end), '_max.dat'))
+    nt=XBdims.ntm;
+elseif (length(fname)>8 && strcmp(fname(end-7:end), '_min.dat'))
+    nt=XBdims.ntm;
+elseif (length(fname)>8 && strcmp(fname(end-7:end), '_var.dat'))
+    nt=XBdims.ntm;
+else
+    nt=XBdims.nt;
+end
+
+sed=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.ngd,nt);
+info=['x  ' 'y  ' 'ngd ' 't  '];
+
+fid=fopen(fname,'r');
+
+for i=1:nt
+    for ii=1:XBdims.ngd
+        sed(:,:,ii,i)=fread(fid,[XBdims.nx+1,XBdims.ny+1],'double');
+    end
+end
+
+fclose(fid);
+
+%%
+function [var info]=readwaves(fname,XBdims)
+% Var=readwaves(fname,XBdims) or
+% [Var info]=readwaves(fname,XBdims)
+%
+% Output Var is XBeach output 4D array with wave data per wave bin
+% Output info is character array describing the dimensions of Var, i.e.
+% info = ['x' 'y' 'ntheta' 't'], where the first dimension in Var is the x-coordinate,
+% etc.
+% Input - fname : name of data file to open, e.g. 'Subg.dat'
+%       - XBdims: dimension data provided by getdimensions function
+%
+% Created 24-11-2009 : XBeach-group Delft
+%
+% See also getdimensions, readvar, readpoint, readgraindist, readbedlayers,
+%          readsediment
+
+
+if (length(fname)>9 && strcmp(fname(end-8:end), '_mean.dat'))
+    nt=XBdims.ntm;
+elseif (length(fname)>8 && strcmp(fname(end-7:end), '_max.dat'))
+    nt=XBdims.ntm;
+elseif (length(fname)>8 && strcmp(fname(end-7:end), '_min.dat'))
+    nt=XBdims.ntm;
+elseif (length(fname)>8 && strcmp(fname(end-7:end), '_var.dat'))
+    nt=XBdims.ntm;
+else
+    nt=XBdims.nt;
+end
+
+var=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.ngd,nt);
+info=['x  ' 'y  ' 'ntheta ' 't  '];
+
+fid=fopen(fname,'r');
+
+for i=1:nt
+    for ii=1:XBdims.ntheta
+        var(:,:,ii,i)=fread(fid,[XBdims.nx+1,XBdims.ny+1],'double');
+    end
+end
+
+fclose(fid);

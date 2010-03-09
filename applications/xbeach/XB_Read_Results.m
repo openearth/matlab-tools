@@ -54,10 +54,13 @@ function XB = XB_Read_Results(resdir, XB, varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% $Id$ 
+% $Id$
 % $Date$
 % $Author$
 % $Revision$
+% $HeadURL$
+% $Keywords: $
+
 
 %%
 ddd = false;
@@ -139,21 +142,7 @@ for j = 1:length(nam)
     if ~quiet
         hwb = waitbar(j/length(nam),hwb,['Reading ' nam{j}]);
     end
-    temp = zeros(XB.Output.nx,XB.Output.ny,XB.Output.nt);
-    fid = fopen([resdir filesep nam{j}],'r');
-    if fid==-1
-        if ~nodisp
-            disp(['Could not find file: ' resdir filesep nam{j}]);
-        end
-        continue
-    end
-    for i = 1:XB.Output.nt
-        data = fread(fid,[XB.Output.nx,XB.Output.ny],'double');
-        if sum(abs(size(data) - size(temp(:,:,i)))) == 0 % check dimensions of data
-            temp(:,:,i) = data;  % all data
-        end
-    end
-    fclose(fid);
+    temp = xb_readvar(fullfile(resdir, nam{j}), XBdims, '2D');
     [dummy name] = fileparts(nam{j});
     if ddd
         XB.Output.(name) = temp;
