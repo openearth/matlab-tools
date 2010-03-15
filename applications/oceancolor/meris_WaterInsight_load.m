@@ -67,12 +67,25 @@ function D = meris_WaterInsight_load(fname)
    % units
 
 %% Load data
+  tmp_fnam=[filepathstr(D.filename),filesep,D.basename,'_hydropt74.mat'];
+  if(exist(tmp_fnam))
+    D = mergestructs(D,load(tmp_fnam));
+  end
+  
+  tmp_fnam=[filepathstr(D.filename),filesep,D.basename,'_l2flags.mat'];
+  if(exist(tmp_fnam))
+    D = mergestructs(D,load(tmp_fnam));
+  end
+  
+  tmp_fnam=[filepathstr(D.filename),filesep,D.basename,'_latlon.mat'];
+  if(exist(tmp_fnam))
+    D = mergestructs(D,load(tmp_fnam));
+  end
 
-   D = mergestructs(D,load([filepathstr(D.filename),filesep,D.basename,'_hydropt74.mat']));
-   D = mergestructs(D,load([filepathstr(D.filename),filesep,D.basename,'_l2flags.mat'  ]));
-   D = mergestructs(D,load([filepathstr(D.filename),filesep,D.basename,'_latlon.mat'   ]));
-   D = mergestructs(D,load([filepathstr(D.filename),filesep,D.basename,'_SD.mat'   ]));
-   
+  tmp_fnam=[filepathstr(D.filename),filesep,D.basename,'_SD.mat'];
+  if(exist(tmp_fnam))   
+    D = mergestructs(D,load(tmp_fnam));
+ end
 %% processing meta info
 
    D.metaData.SIOP = '>CLASSIFIED<';
