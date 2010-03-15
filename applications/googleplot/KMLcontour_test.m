@@ -1,10 +1,7 @@
 function testresult = KMLcontour_test()
-% KMLCONTOUR_TEST  One line description goes here
+% KMLCONTOUR_TEST  unit test for KMLcontour
 %  
-% More detailed description of the test goes here.
-%
-%
-%   See also 
+% See also: googleplot
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -57,10 +54,14 @@ try
     z = peaks(31);
     z = abs(z);
 
-    KMLcontour(lat   ,lon,   z,'fileName',KML_testdir('contour1.kml'),'zScaleFun',@(z) (z+1)*2000,'writeLabels',true);
-    KMLcontour(lat+5 ,lon,   z,'fileName',KML_testdir('contour2.kml'),'writeLabels',false,'colorMap',@(m) gray(m));
-    KMLcontour(lat+10,lon,   z,'fileName',KML_testdir('contour3.kml'),'is3D',false,'writeLabels',false,'cLim',[-10 10],'lineWidth',3,'colorMap',@(m) colormap_cpt('temperature',m));
-    KMLcontour(lat+10,lon*10,z,'fileName',KML_testdir('contour4.kml'),'zScaleFun',@(z) (z.^2)*10000,'writeLabels',true,'cLim',[200 300],'labelDecimals',4);
+    KMLcontour(lat   ,lon,   z,'fileName',KML_testdir('KMLcontour1.kml'),'writeLabels',true ,'zScaleFun',@(z) (z+1)*2000,'labelInterval',5);
+    KMLcontour(lat   ,lon,   z,'fileName',KML_testdir('KMLcontour1clabel.kml'),'writeLabels',true ,'zScaleFun',@(z) (z+1)*2000,'labelInterval',nan);
+
+    KMLcontour(lat+5 ,lon,   z,'fileName',KML_testdir('KMLcontour2.kml'),'writeLabels',false,'colorMap',@(m) gray(m));
+    KMLcontour(lat+10,lon,   z,'fileName',KML_testdir('KMLcontour3.kml'),'writeLabels',false,'colorMap',@(m) colormap_cpt('temperature',m),'is3D',false,'cLim',[-10 10],'lineWidth',3);
+    
+    KMLcontour(lat+10,lon*10,z,'fileName',KML_testdir('KMLcontour4.kml'),'writeLabels',true ,'zScaleFun',@(z) (z.^2)*10000,'cLim',[200 300],'labelDecimals',4,'labelInterval',5);
+    KMLcontour(lat+10,lon*10,z,'fileName',KML_testdir('KMLcontour4clabel.kml'),'writeLabels',true ,'zScaleFun',@(z) (z.^2)*10000,'cLim',[200 300],'labelDecimals',4,'labelInterval',nan);
     testresult = true;
 catch
     testresult = false;

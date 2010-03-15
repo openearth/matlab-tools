@@ -1,10 +1,7 @@
 function testresult = KMLtrisurf_test()
-% KMLTRISURF_TEST  One line description goes here
+% KMLTRISURF_TEST  unit test for KMLtrisurf
 %
-% More detailed description of the test goes here.
-%
-%
-%   See also
+% See also: googleplot
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -74,14 +71,17 @@ disp(['... running test:',mfilename])
     KMLtrisurf(tri2,lat-3,lon-6,z,'fileName',KML_testdir('KMLtrisurf_1b.kml'),'zScaleFun',@(z) (z+1).*2000,'reversePoly',true,...
     'colorbartitle',mktex('KMLtrisurf_test 1 delaunay'));
 
+% 2
+[s,r]=system(['ping http://opendap.deltares.nl']); 
+if any(strfind(r,'Ping request could not find host'))
+   warning('KMLtrisurf_test: skipped a test case that needs because an internet connection.')
+else
     % data from netCDF
     url = vaklodingen_url; url = url{127};
     x = nc_varget(url,'x');
     y = nc_varget(url,'y');
     z = nc_varget(url,'z',[0,0,0],[1,-1,-1]);
     [x,y] = meshgrid(x,y);
-
-% 2
 
     disp(['elements: ' num2str(sum(~isnan(z(:))))]);
     tolerance = 2;
@@ -90,6 +90,7 @@ disp(['... running test:',mfilename])
     % plot in Google Earth
     KMLtrisurf(tri,lat,lon,z,'fileName',KML_testdir('KMLtrisurf_2.kml'),'zScaleFun',@(z) abs(z).*10,...
     'colorbartitle',mktex('KMLtrisurf_test 2 delaunay_simplified'));
+end
 
 % 3
 

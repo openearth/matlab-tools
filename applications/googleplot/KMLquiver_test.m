@@ -1,10 +1,7 @@
 function testresult = KMLquiver_test()
-% KMLQUIVER_TEST  One line description goes here
+% KMLQUIVER_TEST  unit test for KMLquiver
 %  
-% More detailed description of the test goes here.
-%
-%
-%   See also 
+% See also : googleplot, quiver
 
 %% Copyright notice
 %   --------------------------------------------------------------------

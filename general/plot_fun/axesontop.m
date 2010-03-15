@@ -36,11 +36,7 @@ function varargout = axesontop(xlims,ylims,varargin)
 % realize that the next plotting event
 % will happen in the very colorbar axes.
 %
-% G.J. de Boer, TU Delft, 
-% Environmental FLuid Mechanics
-% Jan 2005
-%
-%See also: NOAXIS, subplot_meshgrid, SUBPLOT
+%See also: NOAXIS, SUBPLOT_MESHGRID, SUBPLOT
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005-2008 Delft University of Technology
@@ -100,11 +96,10 @@ end;
 
 % go to wanted figure and axes
 % figure(curfigure);
-axes  (OPT.curaxes); % goes automaticaaly to correct figure
 
-mainx   = get(gca,'xlim');
-mainy   = get(gca,'ylim');
-mainpos = get(gca,'position');
+mainx   = get(OPT.curaxes,'xlim');
+mainy   = get(OPT.curaxes,'ylim');
+mainpos = get(OPT.curaxes,'position');
 
 switch OPT.reference;
    
@@ -161,9 +156,8 @@ end
    A = axes('position', [left, bottom, width, height]);
 
    % Restore previous figure and axes
-   figure(OPT.curfigure0);
-   if    ~OPT.ontop
-   axes  (OPT.curaxes0);
+   if    OPT.ontop
+   axes  (OPT.curaxes);
    end
 
 if nargout==1

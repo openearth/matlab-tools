@@ -3,6 +3,7 @@ function varargout = KMLscatter(lat,lon,c,varargin)
 %
 %   kmlscatter(lat,lon,c,<keyword,value>)
 %
+% where can can be one scaler or an array of size(lon)
 % where - amongst others - the following <keyword,value> pairs have been implemented:
 %
 %  * filename               = []; % file name
@@ -106,14 +107,39 @@ function varargout = KMLscatter(lat,lon,c,varargin)
    if isempty(OPT.cLim)
        OPT.cLim         = [min(c(:)) max(c(:))];
    end
+   
+   if isnumeric(OPT.colorMap)
+      OPT.colorSteps = size(OPT.colorMap,1);
+   end   
 
 %% pre-process data
 %  make 1D and remove NaNs
 
+   if length(c)==1
+      c = repmat( c,size(lon));
+   elseif ~length(c)==length(lon)
+      error('c should have length 1 or have same size as lon')
+   end
+
    lon    = lon(~isnan(c(:)));
    lat    = lat(~isnan(c(:)));
    c      =   c(~isnan(c(:)));
-   colors = OPT.colorMap(OPT.colorSteps);
+
+   if isnumeric(OPT.colorMap)
+      OPT.colorSteps = size(OPT.colorMap,1);
+   end
+   
+   if isa(OPT.colorMap,'function_handle')
+     colorRGB           = OPT.colorMap(OPT.colorSteps);
+   elseif isnumeric(OPT.colorMap)
+     if size(OPT.colorMap,1)==1
+       colorRGB         = repmat(OPT.colorMap,[OPT.colorSteps 1]);
+     elseif size(OPT.colorMap,1)==OPT.colorSteps
+       colorRGB         = OPT.colorMap;
+     else
+       error(['size ''colorMap'' (=',num2str(size(OPT.colorMap,1)),') does not match ''colorSteps''  (=',num2str(OPT.colorSteps),')'])
+     end
+   end   
    
    %% shwoing numbe rnxt to scatter point makes iconhighlightState too SLOW, 
    %  so show values only in pop-up.
@@ -136,7 +162,7 @@ function varargout = KMLscatter(lat,lon,c,varargin)
    output = KML_header(OPT_header);
    
    if OPT.colorbar
-      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colors,'colorbarlocation',OPT.colorbarlocation);
+      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorbarlocation',OPT.colorbarlocation);
       output = [output clrbarstring];
    end
 
@@ -147,7 +173,7 @@ output = [output '<!--############################-->\n'];
 for ii = 1:OPT.colorSteps
 
     OPT_stylePoly.name  = ['style' num2str(ii)];
-    temp                = dec2hex(round([OPT.markerAlpha, colors(ii,:)].*255),2);
+    temp                = dec2hex(round([OPT.markerAlpha, colorRGB(ii,:)].*255),2);
     markerColor         = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
 
     output = [output ...

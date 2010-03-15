@@ -1,10 +1,7 @@
 function testresult = KMLpatch_test()
-% KMLPATCH_TEST  One line description goes here
+% KMLPATCH_TEST  test for KMLpatch
 %  
-% More detailed description of the test goes here.
-%
-%
-%   See also 
+% See also : googlepLot, patch
 
 %% Copyright notice
 %   --------------------------------------------------------------------

@@ -1,10 +1,9 @@
 function testresult = KMLmerge_files_test()
-% KMLMERGE_FILES_TEST  One line description goes here
+% KMLMERGE_FILES_TEST   unit test for KMLmerge_files
 %  
-% More detailed description of the test goes here.
+% merges the test results from all googleplot tests (KML_testdir).
 %
-%
-%   See also 
+% See also: googleplot
 
 %% Copyright notice
 %   --------------------------------------------------------------------

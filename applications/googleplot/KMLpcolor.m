@@ -1,4 +1,4 @@
-function [OPT, Set, Default] = KMLpcolor(lat,lon,c,varargin)
+function varargout = KMLpcolor(lat,lon,c,varargin)
 % KMLPCOLOR Just like pcolor
 %
 %    [<OPT, Set, Default>] = KMLpcolor(lat,lon,c,<keyword,value>)
@@ -48,13 +48,16 @@ function [OPT, Set, Default] = KMLpcolor(lat,lon,c,varargin)
 % KMLline(lat,lon)
 % KMLline(lat',lon')
 
-OPT            = KMLsurf();
-OPT.zScaleFun  = @(z) 'clampToGround';
+   OPT            = KMLsurf();
+   OPT.zScaleFun  = @(z) 'clampToGround';
+   
+   if nargin==0
+     varargout = {OPT};
+     return
+   end
+   
+   [OPT, Set, Default] = setProperty(OPT, varargin);
+   
+   KMLsurf(lat,lon,0.*lat,c,OPT); % do not pass c as z, because c can be at centers, while z needs to be at corners
 
-if nargin==0
-  return
-end
-
-[OPT, Set, Default] = setProperty(OPT, varargin);
-
-KMLsurf(lat,lon,0.*lat,c,OPT); % do not pass c as z, because c can be at centers, while z needs to be at corners
+%% EOF

@@ -55,13 +55,14 @@ function varargout = KMLcolorbar(varargin)
 
 %% Options
 
+   OPT.fileName           = '';
+   OPT.kmlName            = '';
+
    OPT.colorMap           = [];
    OPT.clim               = [];
 
    OPT.bgcolor            = [100 155 100];  % background color to be made transparent
    OPT.fontrgb            = [1 1 1];        % white as Google letters
-   OPT.name               = 'colorbar';     % 
-   OPT.fileName           = 'KMLcolorbar';  % Name of .png file containing colorbar
    OPT.colorbarlocation   = {'W'};          %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
    OPT.halo               = 1;              % for colorbar add halo of pixels with different color as OPT.fontrgb
    OPT.halorgb            = [0 0 0];        % black as Google letters
@@ -77,6 +78,25 @@ function varargout = KMLcolorbar(varargin)
 
    [OPT, Set, Default] = setProperty(OPT, varargin);   
    
+%% get filename, gui for filename, if not set yet
+
+   if isempty(OPT.fileName)
+      [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
+      OPT.fileName = fullfile(filePath,fileName);
+   end
+
+%% set kmlName if it is not set yet
+
+   if isempty(OPT.kmlName)
+      [ignore OPT.kmlName] = fileparts(OPT.fileName);
+   end
+
+%% handle error when only one color is supplied
+
+   if OPT.clim(1)==OPT.clim(2)
+      OPT.clim = OPT.clim + [-eps eps];
+   end
+
 %% make colorbar pngs as separate files
 
    [PATHSTR,NAME,EXT] = fileparts(OPT.fileName);
@@ -129,7 +149,7 @@ function varargout = KMLcolorbar(varargin)
    '<Folder>\n'...
    ' <name>%s</name>\n'...
    ' <open>1</open>\n'],...
-   OPT.name);
+   OPT.kmlName);
    
    if length((intersect({'S'},OPT.colorbarlocation)))>0
    
@@ -390,7 +410,7 @@ function varargout = KMLcolorbar(varargin)
 
    colorbarstring = [colorbarstring sprintf([...
    '</Folder>'],...
-   OPT.name)];
+   OPT.kmlName)];
 
 %% finish 
 
@@ -399,7 +419,7 @@ function varargout = KMLcolorbar(varargin)
    else
       OPT.fid    = fopen([OPT.fileName,'.kml'],'w');
       OPT_header = struct(...
-          'name',OPT.name,...
+          'name',OPT.kmlName,...
           'open',0);
       output = [KML_header(OPT_header) colorbarstring KML_footer];
       fprintf(OPT.fid,'%s',output);

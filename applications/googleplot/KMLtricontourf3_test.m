@@ -1,10 +1,7 @@
-function testresult = KMLtricontourf_test()
-% KMLTRICONTOURF_TEST  One line description goes here
+function testresult = KMLtricontourf3_test()
+% KMLTRICONTOURF3_TEST  unit test for KMLtricontourf3_test
 %
-% More detailed description of the test goes here.
-%
-%
-%   See also
+% See also: googleplot
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -51,7 +48,7 @@ function testresult = KMLtricontourf_test()
 
 %% $RunCode
 % Write test code here
-try
+%try
     
     %test 1
     [x,y] = meshgrid(1:10,21:30);
@@ -86,9 +83,9 @@ try
         'zScaleFun',@(z) (abs(z)+0.3)*10000,'staggered',true);
     
     testresult = true;
-catch
-    testresult = false;
-end
+%catch
+%    testresult = false;
+%end
 %% $PublishResult
 % Publishable code that describes the test.
 

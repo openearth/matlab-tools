@@ -37,29 +37,31 @@ function [output] = KML_text(lat,lon,label,varargin)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
+
+% TO DO: implement text at an angle/rotation
+
 %% Check if 3d
-if ~isempty(varargin)
-    if isnumeric(varargin{1})
-        z = varargin{1};
-        varargin(1) = [];
-        OPT.is3D = true;
-    else
-        z = zeros(size(lat));
-        OPT.is3D = false;
-    end
-else
-    z = zeros(size(lat));
-    OPT.is3D = false;
-end
+   if ~isempty(varargin)
+       if isnumeric(varargin{1})
+           z = varargin{1};
+           varargin(1) = [];
+           OPT.is3D = true;
+       else
+           z = zeros(size(lat));
+           OPT.is3D = false;
+       end
+   else
+       z = zeros(size(lat));
+       OPT.is3D = false;
+   end
 
+   if ischar(label)
+      label = cellstr(label);
+   end
 
-if ischar(label)
-   label = cellstr(label);
-end
-
-if ~isequal(length(label),length(lat))
-   error('label should have same length as coordinates')
-end
+   if ~isequal(length(label),length(lat))
+      error('label should have same length as coordinates')
+   end
  
 %% keyword,value
 
@@ -74,45 +76,47 @@ end
    end
 
 %% preproces timespan
-if  ~isempty(OPT.timeIn)
-    if ~isempty(OPT.timeOut)
-        timeSpan = sprintf([...
-            '<TimeSpan>\n'...
-            '<begin>%s</begin>\n'... % OPT.timeIn
-            '<end>%s</end>\n'...     % OPT.timeOut
-            '</TimeSpan>\n'],...
-            OPT.timeIn,OPT.timeOut);
-    else
-        timeSpan = sprintf([...
-            '<TimeStamp>\n'...
-            '<when>%s</when>\n'...   % OPT.timeIn
-            '</TimeStamp>\n'],...
-            OPT.timeIn);
-    end
-else
-    timeSpan =' ';
-end
+
+   if  ~isempty(OPT.timeIn)
+       if ~isempty(OPT.timeOut)
+           timeSpan = sprintf([...
+               '<TimeSpan>\n'...
+               '<begin>%s</begin>\n'... % OPT.timeIn
+               '<end>%s</end>\n'...     % OPT.timeOut
+               '</TimeSpan>\n'],...
+               OPT.timeIn,OPT.timeOut);
+       else
+           timeSpan = sprintf([...
+               '<TimeStamp>\n'...
+               '<when>%s</when>\n'...   % OPT.timeIn
+               '</TimeStamp>\n'],...
+               OPT.timeIn);
+       end
+   else
+       timeSpan =' ';
+   end
 
 %% preprocess altitude mode
-if OPT.is3D
-    altitudeMode = '<altitudeMode>absolute</altitudeMode>';
-else
-    altitudeMode = ' ';  
-end
 
-for i=1:length(lat)
-
-output = sprintf([...
- '<Placemark>\n'...
- '%s'...                % timeSpan
- '<name>%s</name>\n'... % label
- '<Style><IconStyle><Icon></Icon></IconStyle></Style>\n'...
- '<Point>'...
- '%s'...                % altitude mode
- '<coordinates>%3.8f,%3.8f,%3.3f </coordinates></Point>\n'...
- '</Placemark>\n'],...
-    timeSpan,label{i},altitudeMode,lon(i),lat(i),z(i));
-    
-end    
+   if OPT.is3D
+       altitudeMode = '<altitudeMode>absolute</altitudeMode>';
+   else
+       altitudeMode = ' ';  
+   end
+   
+   for i=1:length(lat)
+   
+   output = sprintf([...
+    '<Placemark>\n'...
+    '%s'...                % timeSpan
+    '<name>%s</name>\n'... % label
+    '<Style><IconStyle><Icon></Icon></IconStyle></Style>\n'...
+    '<Point>'...
+    '%s'...                % altitude mode
+    '<coordinates>%3.8f,%3.8f,%3.3f </coordinates></Point>\n'...
+    '</Placemark>\n'],...
+       timeSpan,label{i},altitudeMode,lon(i),lat(i),z(i));
+       
+   end    
 
 %% EOF

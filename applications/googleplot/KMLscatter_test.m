@@ -1,10 +1,7 @@
 function testresult = KMLscatter_test()
-% KMLSCATTER_TEST  test for kmlscatter
+% KMLSCATTER_TEST  unit test for KMLscatter
 %  
-% %See also: googlePlot, KMLscatter, scatter, plotc
-%
-%
-%   See also 
+% See also: googleplot, scatter, plotc
 
 %% Copyright notice
 %   --------------------------------------------------------------------

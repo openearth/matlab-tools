@@ -9,9 +9,6 @@ function [C] = tricontourc(tri, x, y, z, N)
 %   TRICONTOURS(X,Y,Z,V) computes LENGTH(V) contour
 %      lines at the values specified in vector V.
 %
-%
-%   See also TRICONTOUR3, TRICONTOURF, TRICONTOUR, CONTOURS, CONTOUR, CONTOUR3 and CONTOURF.
-
 %   Syntax:
 %   C = tricontourc(tri, x, y, z, N)
 %
@@ -31,10 +28,7 @@ function [C] = tricontourc(tri, x, y, z, N)
 %       C = [level1 x1 x2 x3 ... level2 x2 x2 x3 ...;
 %            pairs1 y1 y2 y3 ... pairs2 y2 y2 y3 ...]
 %
-%   Example
-%   
-%
-%   See also tricontours
+% See also: tricontours, TRICONTOUR3, TRICONTOURF, TRICONTOUR, CONTOURS, CONTOUR, CONTOUR3 and CONTOURF.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -96,7 +90,7 @@ vertex_tri_index = repmat((1:length(tri))',3,1);
 % sort the vertices and the associated triangle indices
 [vertices ndx]   = sortrows(vertices,[1 2]);
 vertex_tri_index = vertex_tri_index(ndx);
-[~,ndx1]         = unique(vertices,'rows','first');
+[dummy,ndx1]     = unique(vertices,'rows','first');
 [vertices,ndx2]  = unique(vertices,'rows','last');
 vertex_tri_index = [vertex_tri_index(ndx1) vertex_tri_index(ndx2)];
 

@@ -1,5 +1,5 @@
 function varargout = KMLmerge_files(varargin)
-%KMLMERGE_FILES   Merges all KML files in a certain directory
+%KMLMERGE_FILES   merges all KML files in a certain directory
 %
 %   KMLmerge_files(<keyword,value>)
 %

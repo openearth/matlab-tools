@@ -71,7 +71,7 @@ if x(end)==x(1)&&y(end)==y(1)
     y(end) = [];
 end
 ind1 = find(y==min(y));
-[~,ind2] = min(x(ind1));
+[dummy,ind2] = min(x(ind1));
 ind0 = ind1(ind2);
 
 

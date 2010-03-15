@@ -1,4 +1,4 @@
-%% KMLcontour3
+%% KMLcontour3_tutorial tutorial for KMLcontour3
 % This tutorial explains KMLcontour3
 
 %% Simple case

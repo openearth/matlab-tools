@@ -1,21 +1,7 @@
-function varargout = KMLfig2pngNew_test(varargin)
-%KMLFIG2PNGNEW_TEST  One line description goes here.
+function testresult = KMLfig2pngNew_test(varargin)
+%KMLFIG2PNGNEW_TEST  unit test for KMLfig2png
 %
-%   More detailed description goes here.
-%
-%   Syntax:
-%   varargout = KMLfig2pngNew_test(varargin)
-%
-%   Input:
-%   varargin  =
-%
-%   Output:
-%   varargout =
-%
-%   Example
-%   KMLfig2pngNew_test
-%
-%   See also 
+% See also : googleplot
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -59,23 +45,30 @@ function varargout = KMLfig2pngNew_test(varargin)
 
 disp(['... running test:',mfilename])
 
-%%
+%% $Description (Name = KMLpcolor)
+% Publishable code that describes the test.
 
+%% $RunCode
+try
 [lat,lon] = meshgrid(40:.03:42,-10:.03:-8);
-z = peaks(67)+rand(size(lat));
-surf(lat,lon,z)
-    
-    
-figure('Visible','Off')
-h               = surf(peaks-.1);
-shading interp;material([.9 0.08 .07]);lighting phong
-axis off;axis tight;view(0,90);lightangle(0,90)
-colormap(colormap_cpt('bathymetry_vaklodingen',500));clim([-50 25]);
 
-KMLfig2pngNew(h,lat,lon,z,'highestLevel',6,'lowestLevel',14,...
-    'mergeExistingTiles',true,'bgcolor',[255 0 255],...
-    'fileName',KML_testdir('KMLfig2pngNew.kml'))
+   z = peaks(67)+rand(size(lat));
+   surf(lat,lon,z)
+       
+       
+   %FIG = figure('Visible','Off')
+   %h               = surf(peaks-.1);
+   %shading interp;material([.9 0.08 .07]);lighting phong
+   %axis off;axis tight;view(0,90);lightangle(0,90)
+   %colormap(colormap_cpt('bathymetry_vaklodingen',500));clim([-50 25]);
+   
+   %KMLfig2pngNew(h,lat,lon,z,'highestLevel',6,'lowestLevel',14,...
+   %    'mergeExistingTiles',true,'bgcolor',[255 0 255],...
+   %    'fileName',KML_testdir('KMLfig2pngNew.kml'))
+   
+   try;close(FIG);end
 
-
-
-
+   testresult = true;
+catch
+   testresult = false;
+end

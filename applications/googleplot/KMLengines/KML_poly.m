@@ -11,6 +11,10 @@ function [output] = KML_poly(lat,lon,varargin)
 %
 %   OPT = KML_line()
 %
+% Note that Google Earth shows a a KML_poly unsharp at small view 
+% angles, whereas a KML_line is shown sharp at all view angles. 
+% A recommendation is therefore to plot edges with KML_line too.
+%
 % See also: KML_footer, KML_header, KML_line, KML_style, KML_stylePoly,
 % KML_text, KML_upload
 

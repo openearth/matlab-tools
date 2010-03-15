@@ -1,9 +1,21 @@
 function [OPT, Set, Default] = KMLcontour3(lat,lon,z,varargin)
 % KMLCONTOUR3   Just like contour3
 %
-% see the keyword/vaule pair defaults for additional options
+%    KMLcontour3(lat,lon,z,<keyword,value>)
 %
-% See also: googlePlot, contour3
+% For the <keyword,value> pairs and their defaults call
+%
+%    OPT = KMLcontour3()
+%
+% The most important keywords are 'fileName' and 'levels';
+%
+%    OPT = KMLcontour3(lat,lon,z,'fileName','mycontour3.kml','levels',20)
+%
+% The kml code hat is written to fle 'fileName' can optionally be returned.
+%
+%    kmlcode = KMLcontour3(lat,lon,<keyword,value>)
+%
+% See also: googlePlot, contour, contour3
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -49,4 +61,10 @@ end
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
-KMLcontour(lat,lon,z,OPT);
+kmlcode = KMLcontour(lat,lon,z,OPT);
+
+if nargout ==1
+   OPT = {kmlcode};
+end
+
+%% EOF

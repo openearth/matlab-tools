@@ -1,4 +1,4 @@
-function [OPT, Set, Default] = KMLsurf(lat,lon,z,varargin)
+function varargout = KMLsurf(lat,lon,z,varargin)
 % KMLSURF Just like surf
 %
 %   [OPT, Set, Default] = KMLsurf(lat,lon,z,<keyword,value>)
@@ -12,6 +12,9 @@ function [OPT, Set, Default] = KMLsurf(lat,lon,z,varargin)
 % For the <keyword,value> pairs and their defaults call
 %
 %    OPT = KMLsurf()
+%
+% The keyword 'colorMap' can either be a function handle to be sampled with
+% keyword 'colorSteps', or a colormap rgb array (then 'colorSteps' is ignored).
 %
 % See also: googlePlot, surf
 
@@ -47,45 +50,49 @@ function [OPT, Set, Default] = KMLsurf(lat,lon,z,varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% process varargin
-OPT.fileName      = '';
-OPT.kmlName       = '';
-OPT.lineWidth     = 1;
-OPT.lineColor     = [0 0 0];
-OPT.lineAlpha     = 1;
-OPT.colorMap      = @(m) jet(m);
-OPT.colorSteps    = 16;
-OPT.fillAlpha     = 0.6;
-OPT.polyOutline   = false;
-OPT.polyFill      = true;
-OPT.openInGE      = false;
-OPT.reversePoly   = false;
-OPT.extrude       = false;
-OPT.cLim          = [];
-OPT.zScaleFun     = @(z) (z+20).*5;
-OPT.timeIn        = [];
-OPT.timeOut       = [];
-OPT.colorbar      = 1;
-OPT.colorbartitle = '';
+%% process <keyword,value>
 
-if nargin==0
-  return
-end
+   OPT.fileName      = '';
+   OPT.kmlName       = '';
+   OPT.lineWidth     = 1;
+   OPT.lineColor     = [0 0 0];
+   OPT.lineAlpha     = 1;
+   OPT.colorMap      = @(m) jet(m); % function(OPT.colorSteps) or an rgb array
+   OPT.colorSteps    = 16;
+   OPT.fillAlpha     = 0.6;
+   OPT.polyOutline   = false;
+   OPT.polyFill      = true;
+   OPT.openInGE      = false;
+   OPT.reversePoly   = false;
+   OPT.extrude       = false;
+   OPT.cLim          = [];
+   OPT.zScaleFun     = @(z) (z+20).*5;
+   OPT.timeIn        = [];
+   OPT.timeOut       = [];
+   OPT.colorbar      = 1;
+   OPT.colorbartitle = '';
+   
+   if nargin==0
+      varargout = {OPT};
+      return
+   end
 
 %% assign c if it is given
-if ~isempty(varargin)
-    if ~ischar(varargin{1})&&~isstruct(varargin{1});
-        c = varargin{1};
-        varargin = varargin(2:length(varargin));
-    else
-        c = z;
-    end
-else
-    c = z;
-end
+
+   if ~isempty(varargin)
+       if ~ischar(varargin{1})&&~isstruct(varargin{1});
+           c = varargin{1};
+           varargin = varargin(2:length(varargin));
+       else
+           c = z;
+       end
+   else
+       c = z;
+   end
 
 %% set properties
-[OPT, Set, Default] = setProperty(OPT, varargin{:});
+
+   [OPT, Set, Default] = setProperty(OPT, varargin{:});
 
 %% get filename, gui for filename, if not set yet
 
@@ -101,20 +108,22 @@ end
    end
 
 %% error check
-if all(isnan(z(:)))
-    disp('warning: No surface could be constructed, because there was no valid height data provided...') %#ok<WNTAG>
-    return
-end
+
+   if all(isnan(z(:)))
+      disp('warning: No surface could be constructed, because there was no valid height data provided...') %#ok<WNTAG>
+      return
+   end
 
 %% calaculate center color values
-if all(size(c)==size(lat))
-    c = (c(1:end-1,1:end-1)+...
-         c(2:end-0,2:end-0)+...
-         c(2:end-0,1:end-1)+...
-         c(1:end-1,2:end-0))/4;
-elseif ~all(size(c)+[1 1]==size(lat))
-    error('wrong color dimension, must be equal or one less as lat/lon')
-end
+
+   if all(size(c)==size(lat))
+       c = (c(1:end-1,1:end-1)+...
+            c(2:end-0,2:end-0)+...
+            c(2:end-0,1:end-1)+...
+            c(1:end-1,2:end-0))/4;
+   elseif ~all(size(c)+[1 1]==size(lat))
+       error('wrong color dimension, must be equal or one less as lat/lon')
+   end
 
 %% pre-process color data
 
@@ -122,7 +131,21 @@ end
       OPT.cLim         = [min(c(:)) max(c(:))];
    end
 
-   colorRGB = OPT.colorMap(OPT.colorSteps);
+   if isnumeric(OPT.colorMap)
+      OPT.colorSteps = size(OPT.colorMap,1);
+   end
+   
+   if isa(OPT.colorMap,'function_handle')
+     colorRGB           = OPT.colorMap(OPT.colorSteps);
+   elseif isnumeric(OPT.colorMap)
+     if size(OPT.colorMap,1)==1
+       colorRGB         = repmat(OPT.colorMap,[OPT.colorSteps 1]);
+     elseif size(OPT.colorMap,1)==OPT.colorSteps
+       colorRGB         = OPT.colorMap;
+     else
+       error(['size ''colorMap'' (=',num2str(size(OPT.colorMap,1)),') does not match ''colorSteps''  (=',num2str(OPT.colorSteps),')'])
+     end
+   end
 
    % clip c to min and max 
 
@@ -146,7 +169,7 @@ end
       clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorTitle',OPT.colorbartitle);
       output = [output clrbarstring];
    end
-
+   
 %% STYLE
 
    OPT_stylePoly = struct(...

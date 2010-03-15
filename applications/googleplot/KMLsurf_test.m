@@ -1,10 +1,7 @@
 function testresult = KMLsurf_test()
-% KMLSURF_TEST  One line description goes here
+% KMLSURF_TEST  unit tets for KMLsurf
 %  
-% More detailed description of the test goes here.
-%
-%
-%   See also 
+% See also: googleplot
 
 %% Copyright notice
 %   --------------------------------------------------------------------

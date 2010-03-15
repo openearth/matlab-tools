@@ -1,9 +1,14 @@
 function [OPT, Set, Default] = KMLtricontourf(tri,lat,lon,z,varargin)
-% KMLTRICONTOURF   Just like contour
+% KMLTRICONTOURF   Just like tricontourc
 %
-% see the keyword/vaule pair defaults for additional options
+%   KMLtricontourf(tri,lat,lon,z,<keyword,value>)
+%
+% For the <keyword,value> pairs and their defaults call
+%
+%    OPT = KMLtricontourf()
 %
 % See also: googlePlot, tricontourc
+
 % TODO:
 % * Also inclue *all* edge vertices in contours
 % * Multiple contour crossings on one boundary gives a problem
@@ -198,7 +203,7 @@ for ii = find(~closedLoop)
             % searchDirection = 1  go in the direction of the highest z value
             % searchDirection = 2  go in the direction of the lowest z value
             
-            [~,temp5] = max(E(edgeLineAtEndOfContour,[3 6]));
+            [dummy,temp5] = max(E(edgeLineAtEndOfContour,[3 6]));
             if temp5==searchDirection
                 x_to_add = 1;y_to_add = 2;z_to_add = 3;
                 searchForwards = false;
@@ -327,7 +332,7 @@ end
    colorRGB = OPT.colorMap(OPT.colorSteps);
 
    %  convert color values into colorRGB index values
-    [~,~,c] = unique(height);
+    [dummy,dummy,c] = unique(height);
 
 %% find polygon area if the coordinates are a closed loop
 polyArea = nan(1,nContours);
@@ -371,7 +376,7 @@ for outerPoly = find(closedLoop)
         end
         
         if ~isempty(inOuterPoly)
-            [~,ii] = max(polyArea(inOuterPoly));
+            [dummy,ii] = max(polyArea(inOuterPoly));
             innerPoly(end+1) = inOuterPoly(ii); %#ok<AGROW>
         end
     end

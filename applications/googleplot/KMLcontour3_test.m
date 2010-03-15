@@ -1,9 +1,6 @@
 function testresult = KMLcontour3_test()
-%KMLCONTOUR3_TEST  One line description goes here
+%KMLCONTOUR3_TEST  unit test for KMLcontour3
 %  
-% More detailed description of the test goes here.
-%
-%
 %See also: KMLcontour3
 
 %% Copyright notice
@@ -52,18 +49,18 @@ disp(['... running test:',mfilename])
 % Publishable code that describes the test.
 
 %% $RunCode
-try
+%try
     [lat,lon] = meshgrid(54:.1:57,2:.1:5);
     z = peaks(31);
     z = abs(z);
-    KMLcontour3(lat   ,lon,   z,'fileName',KML_testdir('KMLcontour3_1.kml'),'zScaleFun',@(z) (z+1)*2000,'writeLabels',true);
     KMLcontour3(lat+5 ,lon,   z,'fileName',KML_testdir('KMLcontour3_2.kml'),'writeLabels',false,'colorMap',@(m) gray(m));
+    KMLcontour3(lat   ,lon,   z,'fileName',KML_testdir('KMLcontour3_1.kml'),'zScaleFun',@(z) (z+1)*2000,'writeLabels',true,'labelInterval',10);
     KMLcontour3(lat+10,lon,   z,'fileName',KML_testdir('KMLcontour3_3.kml'),'writeLabels',false,'cLim',[-10 10],'lineWidth',3,'colorMap',@(m) colormap_cpt('temperature',m));
     KMLcontour3(lat+10,lon*10,z,'fileName',KML_testdir('KMLcontour3_4.kml'),'zScaleFun',@(z) (z.^2)*10000,'writeLabels',true,'cLim',[200 300],'labelDecimals',4);
     testresult = true;
-catch
-    testresult = false;
-end
+%catch
+%    testresult = false;
+%end
 
 %% $PublishResult
 % Publishable code that describes the test.

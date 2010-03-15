@@ -1,4 +1,4 @@
-function [OPT, Set, Default] = KMLtext(lat,lon,label,varargin)
+function varargout = KMLtext(lat,lon,label,varargin)
 % KMLTEXT Just like text 
 %
 %    KMLtext(lat,lon,'fileName',fname,<keyword,value>)
@@ -54,52 +54,62 @@ function [OPT, Set, Default] = KMLtext(lat,lon,label,varargin)
 
 %% input check
 
-if ~isempty(varargin)
-    if isnumeric(varargin{1})
-        z = varargin{1};
-        varargin(1) = [];
-        OPT.is3D = true;
-    else
-        z = zeros(size(lat));
-        OPT.is3D = false;
-    end
-else
-    z = zeros(size(lat));
-    OPT.is3D = false;
-end
+%% process <keyword,value>
 
-lat = lat(:);
-lon = lon(:);
-
-% correct lat and lon
-if any((abs(lat)/90)>1)
-    error('latitude out of range, must be within -90..90')
-end
-lon = mod(lon+180, 360)-180;
+   OPT.fileName      = '';
+   OPT.kmlName       = '';
+   OPT.openInGE      = false;
+   OPT.timeIn        = [];
+   OPT.timeOut       = [];
+   OPT.textColor     = [];% TO DO
+   OPT.textSize      = [];% TO DO
+   OPT.textAlpha     = [];% TO DO
+   OPT.labelDecimals = 1;
+   
+   if nargin==0
+     varargout = {OPT};
+     return
+   end
 
 %% process varargin
 
-OPT.fileName      = '';
-OPT.kmlName       = '';
-OPT.openInGE      = false;
-OPT.timeIn        = [];
-OPT.timeOut       = [];
-OPT.textColor     = [];% TO DO
-OPT.textSize      = [];% TO DO
-OPT.textAlpha     = [];% TO DO
-OPT.labelDecimals = 1;
+   if ~isempty(varargin)
+       if isnumeric(varargin{1})
+           z = varargin{1};
+           varargin(1) = [];
+           OPT.is3D = true;
+       else
+           z = zeros(size(lat));
+           OPT.is3D = false;
+       end
+   else
+       z = zeros(size(lat));
+       OPT.is3D = false;
+   end
+   
+   [OPT, Set, Default] = setProperty(OPT, varargin);
 
-[OPT, Set, Default] = setProperty(OPT, varargin);
+%% correct lat and lon
+
+   lat = lat(:);
+   lon = lon(:);
+
+   if any((abs(lat)/90)>1)
+       error('latitude out of range, must be within -90..90')
+   end
+   lon = mod(lon+180, 360)-180;
+
 %% make sure the labels are in a cell array.
-if isnumeric(label)
-    label = label(:);
-    labelFormat = sprintf('%%.%df',OPT.labelDecimals);
-    label = arrayfun(@(x) sprintf(labelFormat,x),label,'uni',false);
-elseif ischar(label)
-    label = cellstr(label);
-else
-    label = label(:);
-end
+
+   if isnumeric(label)
+       label       = label(:);
+       labelFormat = sprintf('%%.%df',OPT.labelDecimals);
+       label       = arrayfun(@(x) sprintf(labelFormat,x),label,'uni',false);
+   elseif ischar(label)
+       label       = cellstr(label);
+   else
+       label       = label(:);
+   end
 
 %% get filename, gui for filename, if not set yet
 
@@ -116,14 +126,14 @@ end
 
 %% start KML
 
-OPT.fid=fopen(OPT.fileName,'w');
+   OPT.fid=fopen(OPT.fileName,'w');
 
 %% HEADER
 
-OPT_header = struct(...
-    'name',OPT.kmlName,...
-    'open',0);
-output = KML_header(OPT_header);
+   OPT_header = struct(...
+       'name',OPT.kmlName,...
+       'open',0);
+   output = KML_header(OPT_header);
 
 %% define line styles
 
@@ -137,13 +147,15 @@ output = KML_header(OPT_header);
 % end
 % 
 % % print styles
-fprintf(OPT.fid,output);
+
+   fprintf(OPT.fid,output);
 
 %% generate contents
 
 % preallocate output
-output = repmat(char(1),1,1e5);
-kk = 1;
+
+   output = repmat(char(1),1,1e5);
+   kk = 1;
 
 % % line properties
 % OPT_line = struct(...
@@ -152,61 +164,65 @@ kk = 1;
 %     'visibility',1,...
 %     'extrude',0);
 % 
-if isempty(OPT.timeIn)
-   OPT_text.timeIn = [];
-else
-   OPT_text.timeIn = datestr(OPT.timeIn(1),29); 
-end
 
-if isempty(OPT.timeOut)
-   OPT_text.timeOut = [];
-else
-   OPT_text.timeOut = datestr(OPT.timeOut(1),29); 
-end
+   if isempty(OPT.timeIn)
+      OPT_text.timeIn = [];
+   else
+      OPT_text.timeIn = datestr(OPT.timeIn(1),29); 
+   end
+   
+   if isempty(OPT.timeOut)
+      OPT_text.timeOut = [];
+   else
+      OPT_text.timeOut = datestr(OPT.timeOut(1),29); 
+   end
 
 % loop through number of lines
-for ii=1:length(lat)
-    if OPT.is3D
-        newOutput = KML_text(lat(ii),lon(ii),label{ii},z(ii),OPT_text);
-    else
-        newOutput = KML_text(lat(ii),lon(ii),label{ii},OPT_text);
-    end
-    % add newOutput to output
-    output(kk:kk+length(newOutput)-1) = newOutput;
-    kk = kk+length(newOutput);
 
-    % write output to file if output is full, and reset
-    if kk>1e5
-        fprintf(OPT.fid,output(1:kk-1));
-        kk = 1;
-        output = repmat(char(1),1,1e5);
-    end
-end
+   for ii=1:length(lat)
+       if OPT.is3D
+           newOutput = KML_text(lat(ii),lon(ii),label{ii},z(ii),OPT_text);
+       else
+           newOutput = KML_text(lat(ii),lon(ii),label{ii},OPT_text);
+       end
+       % add newOutput to output
+       output(kk:kk+length(newOutput)-1) = newOutput;
+       kk = kk+length(newOutput);
+   
+       % write output to file if output is full, and reset
+       if kk>1e5
+           fprintf(OPT.fid,output(1:kk-1));
+           kk = 1;
+           output = repmat(char(1),1,1e5);
+       end
+   end
 
 % print output
 
-fprintf(OPT.fid,output(1:kk-1)); 
+   fprintf(OPT.fid,output(1:kk-1)); 
 
 %% FOOTER
 
-output = KML_footer;
-fprintf(OPT.fid,output);
+   output = KML_footer;
+   fprintf(OPT.fid,output);
 
 %% close KML
 
-fclose(OPT.fid);
+   fclose(OPT.fid);
 
 %% compress to kmz?
 
-if strcmpi  ( OPT.fileName(end),'z')
-    movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
-    zip     ( OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
-    movefile([OPT.fileName '.zip'],OPT.fileName)
-    delete  ([OPT.fileName(1:end-3) 'kml'])
-end
+   if strcmpi  ( OPT.fileName(end),'z')
+      movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
+      zip     ( OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
+      movefile([OPT.fileName '.zip'],OPT.fileName)
+      delete  ([OPT.fileName(1:end-3) 'kml'])
+   end
+
 %% openInGoogle?
-if OPT.openInGE
-    system(OPT.fileName);
-end
+
+   if OPT.openInGE
+      system(OPT.fileName);
+   end
 
 %% EOF

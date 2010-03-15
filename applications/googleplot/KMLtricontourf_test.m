@@ -1,10 +1,7 @@
 function testresult = KMLtricontourf_test()
-% KMLTRICONTOURF_TEST  One line description goes here
+% KMLTRICONTOURF_TEST  unit test for contourf
 %
-% More detailed description of the test goes here.
-%
-%
-%   See also
+% See also: googleplot
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -53,7 +50,7 @@ disp(['... running test:',mfilename])
 
 %% $RunCode
 % Write test code here
-try
+%try
     
     %test 1
     [x,y] = meshgrid(1:10,21:30);
@@ -72,9 +69,9 @@ try
     x = x/10+10;y = y/10+10;
     KMLtricontourf(tri,x,y-10,z,'levels',40,'fileName',KML_testdir('KMLtricontourf - 2.kml'));
     testresult = true;
-catch
-    testresult = false;
-end
+%catch
+%    testresult = false;
+%end
 %% $PublishResult
 % Publishable code that describes the test.
 

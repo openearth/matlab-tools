@@ -68,7 +68,7 @@ vertex_tri_index = repmat((1:size(tri,1))',3,1);
 % sort the vertices and the associated triangle indices
 [vertices ndx]   = sortrows(vertices,[1 2]);
 vertex_tri_index = int32(vertex_tri_index(ndx));
-[~,ndx1]         = unique(vertices,'rows','first');
+[dummy,ndx1]     = unique(vertices,'rows','first');
 [vertices,ndx2]  = unique(vertices,'rows','last');
 vertex_tri_index = [vertex_tri_index(ndx1) vertex_tri_index(ndx2)];
 

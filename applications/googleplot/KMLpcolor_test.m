@@ -1,10 +1,7 @@
 function testresult = KMLpcolor_test()
-%KMLPCOLOR_TEST  test for KMLpcolor
+%KMLPCOLOR_TEST  unit test for KMLpcolor
 %
-% More detailed description of the test goes here.
-%
-%
-%See also: KMLPCOLOR, KMLCOLORBAR_TEST
+%See also: googleplot, pcolor
 
 %% Copyright notice
 %   --------------------------------------------------------------------

@@ -4,7 +4,8 @@ function varargout = opendap_catalog(varargin)
 %   urlPath = opendap_catalog(url)
 %
 % loads the urls of all datsets that reside in under the OPeNDAP catalog.xml 
-% located at url and all catalogs it links to. 
+% located at url and all catalogs it links to. when url does not start with 'http',
+% url is assumed to be a lcoal directory, from which all netCDF files (*.nc) are returned.
 %
 %   urlPath = opendap_catalog(url,<keyword,value>)
 %
@@ -34,7 +35,7 @@ function varargout = opendap_catalog(varargin)
 %    nc_dump(files{1})
 %   
 %See web:  http://www.unidata.ucar.edu/Projects/THREDDS/tech/catalog/v1.0.2/Primer.html
-%See also: OPENDAP_CATALOG_DATASET, XML_READ, XMLREAD
+%See also: OPENDAP_CATALOG_DATASET, XML_READ, XMLREAD, FINDALLFILES
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -113,17 +114,29 @@ function varargout = opendap_catalog(varargin)
 
    OPT = setProperty(OPT,varargin{nextarg:end});
    
-%% warn
+%% remote vs. local url
+
+if ~strcmpi(OPT.url(1:4),'http') 
+
+   if OPT.maxlevel > 1
+      fprintf(2,'opendap_catalog: maxlevel ignored because request concerns local file system.\n')
+   end
+   
+   urlPath = findAllFiles(OPT.url,'pattern_incl','*nc');
+   
+else
+
+   %% warn
 
    if ~strcmpi(OPT.url(end-3:end),'.xml')
       fprintf(2,'warning: opendap_catalog: url does not have extension ".xml"')
    end
-   
-%% pre-allocate
+      
+   %% pre-allocate
 
    urlPath     = {}; % we cannot pre-allocate as some datasets may be a container with lots of urlPaths inside it
 
-%% check
+   %% check
 
    if OPT.level > OPT.maxlevel
       dprintf(OPT.log,['Skipped>maxlevel ',num2str(OPT.level,'%0.2d'),' catalog: ',OPT.url,'\n'])
@@ -162,6 +175,10 @@ function varargout = opendap_catalog(varargin)
 
    end % OPT.level    
    
+end
+
+%% output
+
    varargout = {urlPath};
   
    %% EOF

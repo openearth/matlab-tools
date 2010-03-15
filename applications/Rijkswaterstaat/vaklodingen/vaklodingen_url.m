@@ -56,7 +56,7 @@ if exist(fullfile('P:','mcdata','opendap','rijkswaterstaat','vaklodingen'),'dir'
         url{ii} = fullfile('P:','mcdata','opendap','rijkswaterstaat','vaklodingen',names(ii).name);
     end
 else
-    url = opendap_folder_contents(...
+    url = opendap_catalog(...
         'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen');
 end
 

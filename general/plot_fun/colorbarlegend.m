@@ -131,7 +131,6 @@ OPT = setProperty(OPT,varargin{argstart:end});
                                  'reference',OPT.reference,...
                                      'ontop',OPT.ontop);
    end
-   axes(AX);
    
 %% Calculate position
 
@@ -247,9 +246,8 @@ OPT = setProperty(OPT,varargin{argstart:end});
 
 %% Restore previous figure and axes
 
-   figure(OPT.figure0);
-   if    ~OPT.ontop
-   axes  (OPT.axes0);
+   if    OPT.ontop
+   axes  (OPT.axes);
    end
 
 if nargout==1

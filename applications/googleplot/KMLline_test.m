@@ -1,10 +1,7 @@
 function testresult = KMLline_test()
-% KMLLINE_TEST  One line description goes here
+% KMLline_TEST  unit test for KMLline
 %  
-% More detailed description of the test goes here.
-%
-%
-%   See also 
+% See also: KMLline, line, plot
 
 %% Copyright notice
 %   --------------------------------------------------------------------

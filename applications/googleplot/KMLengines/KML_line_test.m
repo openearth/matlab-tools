@@ -1,7 +1,9 @@
 function testresult = KML_line_test()
 %KML_line_test  test for KML_line
 %
-%See also: KML_line
+% Please compare results of KML_line and KML_poly at a lagre zoom level.
+%
+%See also: KML_line, KML_Poly_test
 
 disp(['... running test:',mfilename])
 
@@ -11,7 +13,24 @@ disp(['... running test:',mfilename])
 %% $RunCode
 try
 
-   fid         = fopen(KML_testdir('a_red_line.kml'),'w');
+   %% compare this one to KML_poly_test
+
+   lat = [52 52 53 53]';
+   lon = [ 3  4  4  3]'+1;
+   nam = '4x1';
+
+   OPT.fid = fopen(KML_testdir(['KML_line',nam,'.kml']),'w');
+   output = [];
+   output = [output KML_header('name',nam)];
+   output = [output KML_stylePoly('name','default')];
+   output = [output KML_line(lat ,lon ,'styleName','default')];
+   output = [output KML_footer];
+   fprintf(OPT.fid,output);
+   fclose(OPT.fid);
+
+   %% example 2
+
+   fid         = fopen(KML_testdir('KML_line_red_world_spiral.kml'),'w');
    S.name      = 'red';
    S.lineColor = [1 0 0];  % color of the lines in RGB (0..1) values
    S.lineAlpha = [1] ;     % transparency of the line, (0..1) with 0 transparent

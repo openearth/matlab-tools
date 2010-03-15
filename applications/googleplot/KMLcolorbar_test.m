@@ -1,10 +1,7 @@
 function testresult = KMLcolorbar_test()
-%KMLCOLORBAR_TEST   test for KMLcolorbar
+%KMLCOLORBAR_TEST   unit test for KMLcolorbar
 %
-% More detailed description of the test goes here.
-%
-%
-%See also: KMLcolorbar, KMLPCOLOR_TEST   
+%See also: googleplot, KML_colorbar, colorbarlegend
 
 %% Copyright notice
 %   --------------------------------------------------------------------
