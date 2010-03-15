@@ -100,7 +100,7 @@ XBdims.tscross=fread(fid,[XBdims.ntc],'double');
 XBdims.tsmean=fread(fid,[XBdims.ntm],'double');
 fclose(fid);
 
-fidxy = fopen('xy.dat','r');
+fidxy = fopen(fullfile(resdir,'xy.dat') ,'r');
 XBdims.x=fread(fidxy,[XBdims.nx+1,XBdims.ny+1],'double');
 XBdims.y=fread(fidxy,[XBdims.nx+1,XBdims.ny+1],'double');
 XBdims.xc=fread(fidxy,[XBdims.nx+1,XBdims.ny+1],'double');
