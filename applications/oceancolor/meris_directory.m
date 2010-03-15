@@ -59,7 +59,7 @@ function varargout = meris_directory(directory,varargin)
       ext = varargin{1};
    end
    
-   S.filenames = dir([directory,filesep,'*',ext])
+   S.filenames = dir([directory,filesep,'MER*',ext])
    S.n         = length(S.filenames)
   
    %% Check for double occurences of images after removal of extensions (SIOPS)
