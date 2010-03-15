@@ -1,4 +1,7 @@
+function OK = KMLtest
 %KMLTEST   batch for all unit tests of googleplot
+%
+%See also: googleplot
 
  %% OK
  j=0;clear OK

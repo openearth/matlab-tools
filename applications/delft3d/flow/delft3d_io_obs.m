@@ -1,12 +1,16 @@
 function varargout=delft3d_io_obs(cmd,varargin),
 %DELFT3D_IO_OBS   read/write observations points file (*.obs) <<beta version!>>
 %
-%  DATA = delft3d_io_obs('read' ,filename);
+%  OBS = delft3d_io_obs('read' ,filename);
 %
-%         delft3d_io_obs('write',filename,DATA);
+%        delft3d_io_obs('write',filename,OBS);
 %
 % where OBS is a struct with fields 'm','n','namst'
 % where namst is read as a 2C char array, but can also be a cellstr.
+%
+%  OBS = delft3d_io_obs('read' ,filename,G);
+%
+% also returns the x and y coordinates, where G = delft3d_io_grd('read',...)
 %
 % See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
@@ -81,29 +85,37 @@ end;
 % ------------------------------------
 % ------------------------------------
 
-function STRUCT=Local_read(varargin),
+function S=Local_read(varargin),
 
-STRUCT.filename = varargin{1};
+S.filename = varargin{1};
 
    try
 
-   [STRUCT.namst,...
-    STRUCT.m    ,...
-    STRUCT.n    ]=textread(STRUCT.filename,'%20c%d%d');
-
-   STRUCT.NTables = length(STRUCT.m);
-   STRUCT.m=STRUCT.m';
-   STRUCT.n=STRUCT.n';
+      [S.namst,...
+       S.m    ,...
+       S.n    ]=textread(S.filename,'%20c%d%d');
+      
+      S.NTables = length(S.m);
+      S.m=S.m';
+      S.n=S.n';
+      
+      if nargin >1
+         G = varargin{2};
+         for i=1:length(S.m)
+            S.x(i) = G.cen.x(S.n(i)-1,S.m(i)-1);
+            S.y(i) = G.cen.y(S.n(i)-1,S.m(i)-1);
+         end
+      end
    
-      STRUCT.iostat  = 1;
+      S.iostat  = 1;
    catch
-      STRUCT.iostat  = -1;
+      S.iostat  = -1;
    end
 
 if nargout==1
-   varargout = {STRUCT};   
+   varargout = {S};   
 else
-   varargout = {STRUCT,STRUCT.iostat};   
+   varargout = {S,S.iostat};   
 end
 
 

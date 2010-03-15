@@ -5,15 +5,15 @@ function [OPT, Set, Default] = KMLmesh(lat,lon,varargin)
 % 
 % KMLmesh differs from KMLpcolor in the sense that KMLmesh
 % plots actual lines, whereas KMLpcolor plots patches. 
-% KMLline objects loads an order of mangitude FASTER. Consequently, 
-% KMLline does not color the mesh as a function of as MESH does. 
-% Use KMLpcolor or KMLsurf instead for that.
+% KMLline objects loads an order of mangitude FASTER in Google Earth. 
+% Consequently, KMLline does not color the mesh as a function of as MESH 
+% does. Use KMLpcolor or KMLsurf instead for meshes colorized by z value.
 %
 % For the <keyword,value> pairs and their defaults call
 %
 %    OPT = KMLmesh()
 %
-% See also: googlePlot, KMLpcolor, mesh
+% See also: googlePlot, KMLpcolor, mesh, pcolor
 
 %% Copyright notice
 %   --------------------------------------------------------------------

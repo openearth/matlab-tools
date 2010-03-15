@@ -38,10 +38,10 @@ ploStruct = delwaq('open', FileName);
 ploStruct.MNK = [ploStruct.GridSize(1), ploStruct.GridSize(2), ploStruct.K];
 ploStruct.XY0 = [ploStruct.PlotWindow(1), ploStruct.PlotWindow(3)];
 ploStruct.XY1 = [ploStruct.PlotWindow(2), ploStruct.PlotWindow(4)];
-ploStruct.X = zeros(ploStruct.MNK(1), ploStruct.MNK(2));
-ploStruct.Y = zeros(ploStruct.MNK(1), ploStruct.MNK(2));
-X = zeros(ploStruct.MNK(1), ploStruct.MNK(2));
-Y = zeros(ploStruct.MNK(1), ploStruct.MNK(2));
+ploStruct.X   = zeros(ploStruct.MNK(1), ploStruct.MNK(2));
+ploStruct.Y   = zeros(ploStruct.MNK(1), ploStruct.MNK(2));
+X             = zeros(ploStruct.MNK(1), ploStruct.MNK(2));
+Y             = zeros(ploStruct.MNK(1), ploStruct.MNK(2));
 for j = 1:ploStruct.MNK(2)
     X(:,j) = ploStruct.XY0(1) + ...
         (ploStruct.XY1(1)-ploStruct.XY0(1))*[0:ploStruct.MNK(1)-1]/(ploStruct.MNK(1)-1);

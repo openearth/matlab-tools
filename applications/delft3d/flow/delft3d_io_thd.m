@@ -1,33 +1,19 @@
 function varargout=delft3d_io_thd(cmd,varargin),
 %DELFT3D_IO_THD   read/write thin dams <<beta version!>>
 %
-%  DATA=delft3d_io_thd('read' ,filename);
+%  THD = delft3d_io_thd('read' ,filename);
 %
-%       delft3d_io_thd('write',filename,DATA);
+%        delft3d_io_thd('write',filename,THD);
+%
+% where THD is a struct with fields 'm','n'
+%
+%  THD = delft3d_io_thd('read' ,filename,G);
+%
+% also returns the x and y coordinates, where G = delft3d_io_grd('read',...)
 %
 % To plot thin dams use the example below:
 %
-% >>   for ithd = 1:THD.NTables
-% >>   
-% >>      m = THD.DATA(ithd).m;
-% >>      n = THD.DATA(ithd).n;
-% >>      
-% >>      if length(m)==1
-% >>         m = [m m];
-% >>         n = [n n];
-% >>      end
-% >>   
-% >>      if     strcmpi(THD.DATA(ithd).direction,'u')
-% >>      plot([G.cor.x(n(1)-1,m(1)  ) G.cor.x(n(end)  ,m(end)  )]./OPT.scale,...
-% >>           [G.cor.y(n(1)-1,m(1)  ) G.cor.y(n(end)  ,m(end)  )]./OPT.scale,'k','linewidth',2,'color',[.8 .8 .8])
-% >>      elseif strcmpi(THD.DATA(ithd).direction,'v')
-% >>      plot([G.cor.x(n(1)  ,m(1)-1) G.cor.x(n(end)  ,m(end)  )]./OPT.scale,...
-% >>           [G.cor.y(n(1)  ,m(1)-1) G.cor.y(n(end)  ,m(end)  )]./OPT.scale,'k','linewidth',2,'color',[.8 .8 .8])
-% >>      end
-% >>           
-% >>      hold on
-% >>      
-% >>   end
+%   plot(THD.x,THD.y)
 %
 % See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
@@ -42,7 +28,7 @@ function varargout=delft3d_io_thd(cmd,varargin),
 %   Copyright (C) 2004 Delft University of Technology
 %       Gerben J. de Boer
 %
-%       g.j.deboer@citg.tudelft.nl	
+%       g.j.deboer@tudelft.nl	
 %
 %       Fluid Mechanics Section
 %       Faculty of Civil Engineering and Geosciences
@@ -103,9 +89,9 @@ end;
 % ------------------------------------
 % ------------------------------------
 
-function STRUCT=Local_read(varargin),
+function S=Local_read(varargin),
 
-STRUCT.filename = varargin{1};
+S.filename = varargin{1};
 
 %     mmax = Inf;
 %     nmax = Inf;
@@ -117,52 +103,78 @@ STRUCT.filename = varargin{1};
 %     nmax = varargin{4};
 %  end   
 
-fid          = fopen(STRUCT.filename,'r');
+fid          = fopen(S.filename,'r');
 if fid==-1
-   STRUCT.iostat   = fid;
+   S.iostat   = fid;
 else
-   STRUCT.iostat   = -1;
+   S.iostat   = -1;
    i            = 0;
    
    while ~feof(fid)
    
       i = i + 1;
    
-      STRUCT.DATA(i).mn           = fscanf(fid,'%i'  ,4);
+      S.DATA(i).mn           = fscanf(fid,'%i'  ,4);
       
-      %  if STRUCT.DATA(i).mn(1)==mmax+1
-      %     STRUCT.DATA(i).mn(1)= mmax;
+      %  if S.DATA(i).mn(1)==mmax+1
+      %     S.DATA(i).mn(1)= mmax;
       %  end
-      %  if STRUCT.DATA(i).mn(2)==nmax+1
-      %     STRUCT.DATA(i).mn(2)= nmax;
+      %  if S.DATA(i).mn(2)==nmax+1
+      %     S.DATA(i).mn(2)= nmax;
       %  end
-      %  if STRUCT.DATA(i).mn(3)==mmax+1
-      %     STRUCT.DATA(i).mn(3)= mmax;
+      %  if S.DATA(i).mn(3)==mmax+1
+      %     S.DATA(i).mn(3)= mmax;
       %  end
-      %  if STRUCT.DATA(i).mn(4)==nmax+1
-      %     STRUCT.DATA(i).mn(4)= nmax;
+      %  if S.DATA(i).mn(4)==nmax+1
+      %     S.DATA(i).mn(4)= nmax;
       %  end
       
-      STRUCT.DATA(i).direction = fscanf(fid,'%s',1);
+      S.DATA(i).direction = fscanf(fid,'%s',1);
       
       % turn the endpoint-description along gridlines into vectors
       % and make sure smallest index is first
 
-      [STRUCT.DATA(i).m,...
-       STRUCT.DATA(i).n]=meshgrid(min(STRUCT.DATA(i).mn([1,3])):max(STRUCT.DATA(i).mn([1,3])),...
-                                  min(STRUCT.DATA(i).mn([2,4])):max(STRUCT.DATA(i).mn([2,4])));
+      [S.DATA(i).m,...
+       S.DATA(i).n]=meshgrid(min(S.DATA(i).mn([1,3])):max(S.DATA(i).mn([1,3])),...
+                             min(S.DATA(i).mn([2,4])):max(S.DATA(i).mn([2,4])));
 
       fgetl(fid); % read rest of line
       
    end   
    
-   STRUCT.iostat   = 1;
-   STRUCT.NTables  = i;
+   S.iostat   = 1;
+   S.NTables  = i;
    
-   for i=1:STRUCT.NTables
-      STRUCT.m(i,:) = [STRUCT.DATA(i).mn(1) STRUCT.DATA(i).mn(3)];
-      STRUCT.n(i,:) = [STRUCT.DATA(i).mn(2) STRUCT.DATA(i).mn(4)];
+   for i=1:S.NTables
+      S.m(:,i) = [S.DATA(i).mn(1) S.DATA(i).mn(3)];
+      S.n(:,i) = [S.DATA(i).mn(2) S.DATA(i).mn(4)];
    end
+   
+   if nargin >1
+      G   = varargin{2};
+      S.x = nan.*S.m;
+      S.y = nan.*S.m;
+
+      for i=1:S.NTables
+      
+         m = S.DATA(i).m;
+         n = S.DATA(i).n;
+
+         if     strcmpi(S.DATA(i).direction,'u')
+         
+         S.x(:,i) = [G.cor.x(n-1,m  ) G.cor.x(n  ,m  )];
+         S.y(:,i) = [G.cor.y(n-1,m  ) G.cor.y(n  ,m  )];
+         
+         elseif strcmpi(S.DATA(i).direction,'v')
+         
+         S.x(:,i) = [G.cor.x(n  ,m-1) G.cor.x(n  ,m  )];
+         S.y(:,i) = [G.cor.y(n  ,m-1) G.cor.y(n  ,m  )];
+         
+         end
+
+      end
+   end
+   
    
 end
 

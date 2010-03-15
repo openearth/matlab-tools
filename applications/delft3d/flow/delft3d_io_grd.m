@@ -94,6 +94,7 @@ end
 
    OPT.nodatavalue       = 0;   % of file
    OPT.missingvalue      = NaN; % in struct
+   OPT.epsg              = [];
 
    %% Keywords
    %% ----------------------
@@ -156,6 +157,10 @@ end
       G.cor.y_units  = '';
       
       G.cor.comment  = 'corner points without dummy rows/columns (1:nmax-1) x (1:mmax-1)';
+      
+      if ~isempty(OPT.epsg)
+      [G.cor.lon,G.cor.lat,OPT]=convertCoordinates(G.cor.x,G.cor.y,'CS1.code',OPT.epsg,'CS2.code',4326);
+      end
 
       G.cen.x        = corner2center(G.cor.x);
       G.cen.y        = corner2center(G.cor.y);
