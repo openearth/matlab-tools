@@ -1,4 +1,5 @@
-%MERIS_WATERINSIGHT2NC  rewrite bundle of processed MERIS files as defined by WaterInsight into NetCDF files
+function varargout = meris__WaterInsight2nc(year,ncdir)
+%MERIS_WATERINSIGHT2NC(year,ncdir)  rewrite bundle of processed MERIS files as defined by WaterInsight into NetCDF files
 %
 %
 %See also: MERIS_MASK, MERIS_FLAGS, MERIS_NAME2META,MERIS_WaterInsight_LOAD
@@ -52,25 +53,33 @@
    OPT.pause          = 0;
    OPT.debug          = 0;
    OPT.zip            = 0; % when data becomes to big, zip or bzip2 the nc files (TO DO).
-   OPT.version        = 'V1.0 Twigt-DeBoer-Blaas';
+   OPT.version        = 'V1.1 Twigt-DeBoer-Blaas';
    
    OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
    OPT.refdatenum     = datenum(1970,1,1); % linux  datenumber convention
 
 %% File loop
 
-   OPT.directory.raw  = [pwd,filesep,'mat'];
-   OPT.directory.nc   = [pwd,filesep,'nc'];
+   OPT.directory.raw  = [pwd,filesep,num2str(year)];
+   OPT.subdirectory   = dir([OPT.directory.raw filesep num2str(year) '*']);
+   OPT.directory.nc   = ncdir;
+%  OPT.directory.nc   = [pwd,filesep,'nc'];
+%  OPT.directory.nc   ='\\pmr-ncv.deltares.nl\rawdata\MERIS\nc\';
+
    
    mkpath(OPT.directory.nc)
-
-   OPT.files          = dir([OPT.directory.raw filesep 'MER*.mat']);
+   for idir=1:length(OPT.subdirectory) %!NB all other fields are only nonempty under OPT(1) (index idir only for debugging)
+   OPT.subdirectory(idir).files         = dir([OPT.directory.raw, filesep, OPT.subdirectory(idir).name filesep 'MER*.mat']);
+   [IMAGE_names,extensions] = meris_directory([OPT.directory.raw, filesep, OPT.subdirectory(idir).name]);
    
-   [IMAGE_names,extensions] = meris_directory(OPT.directory.raw);
+   %OPT.subdirectory(idir).files(ifile)
+%%
+
 
    for ifile=1:length(IMAGE_names)  
    
-      OPT.filename = ([OPT.directory.raw, filesep, IMAGE_names{ifile}]); % MER_RR__2CNACR20090502_102643_000022462078_00366_37494_0000*.mat
+      OPT.filename = ([OPT.directory.raw, filesep, OPT.subdirectory(idir).name, filesep, IMAGE_names{ifile}]); 
+      % MER_RR__2CNACR20090502_102643_000022462078_00366_37494_0000
    
       disp(['Processing ',num2str(ifile),'/',num2str(length(IMAGE_names)),': ',filename(OPT.filename)])
 
@@ -104,6 +113,7 @@
          pausedisp
       end
       
-   end %for ifile=1:length(IMAGE_names)  
+   end %for ifile=1:length(IMAGE_names)  %1 if subdirs made by Steef
+   end %for idir
 
 %% EOF
