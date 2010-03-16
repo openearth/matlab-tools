@@ -1,5 +1,5 @@
 function varargout = delft3d_io_grd(varargin)
-%DELFT3D_IO_GRD   wrapper for WLGRID to deal with ambgiuous dummy rows. <<beta version!>>
+%DELFT3D_IO_GRD   wrapper for WLGRID to deal with ambiguous dummy rows. <<beta version!>>
 %
 %   G = delft3d_io_grd('read' ,filename)
 %
@@ -20,13 +20,12 @@ function varargout = delft3d_io_grd(varargin)
 %
 % * nodatavalue : nodatavalue of data in grid file    (default 0)
 % * missingvalue: nodatavalue of data in the G struct (default NaN)
+% * epsg;        [lat,lon] WGS84 are calculated when epsg code is supplied (default [])
 %
 %       delft3d_io_grd('write',filename,cor.x,cor.y)
 %       delft3d_io_grd('write',filename,STRUC)
 %
 % where struct has fields cor.x,cor.y.
-%
-% © G.J de Boer (TU Delft)
 %
 % See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 

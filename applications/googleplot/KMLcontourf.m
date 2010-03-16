@@ -1,22 +1,23 @@
-function varargout = KMLpcolor(lat,lon,c,varargin)
-% KMLPCOLOR Just like pcolor
+function varargin = KMLcontourf(lat,lon,z,varargin)
+% KMLCONTOURF Just like contourf (BETA!!!, still sawtooh edges )
 %
-%    KMLpcolor(lat,lon,c,<keyword,value>)
+%    KMLcontourf(lat,lon,z,<keyword,value>)
 % 
-% If c and lat have the same dimensions, c is calculated as the mean value 
-% of the surrounding gridpoints. 
+% KMLcontourf triangulates a curvi-linear grid (mesh) and then
+% calls KMLtricontourf on all active cells.
 %
 % For the <keyword,value> pairs and their defaults call
 %
-%    OPT = KMLpcolor()
+%    OPT = KMLcontourf()
 %
-% See also: googlePlot, pcolor
+% See also: googlePlot, KMLtricontourf, contourf
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
-%       Thijs Damsma
+%       Gerben J. de Boer
 %
-%       Thijs.Damsma@deltares.nl	
+%       gerben.deboer@Deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -44,20 +45,20 @@ function varargout = KMLpcolor(lat,lon,c,varargin)
 % $HeadURL$
 % $Keywords: $
 
-% TO DO: patches without outlines, outline as separate polygons, to prevent course resolution lines at low angles
-% KMLline(lat,lon)
-% KMLline(lat',lon')
+%% process <keyword,value>
 
-   OPT            = KMLsurf();
-   OPT.zScaleFun  = @(z) 'clampToGround';
-   
+   OPT            = KMLtricontourf();
+
    if nargin==0
-     varargout = {OPT};
-     return
+      varargout = {OPT};
+      return
    end
-   
-   [OPT, Set, Default] = setProperty(OPT, varargin);
-   
-   KMLsurf(lat,lon,0.*lat,c,OPT); % do not pass c as z, because c can be at centers, while z needs to be at corners
 
+   [OPT, Set, Default] = setProperty(OPT, varargin);
+
+%% contourf
+
+   [tri,quat] = triquat(lon,lat,'active',1); % active removes inactive quadrangles
+   KMLtricontourf(tri,lat,lon,z,OPT);
+   
 %% EOF

@@ -3,7 +3,6 @@ function varargout = KMLtext(lat,lon,label,varargin)
 %
 %    KMLtext(lat,lon,'fileName',fname,<keyword,value>)
 %
-%
 % The following see <keyword,value> pairs have been implemented:
 % The first arguemnt can be a z value
 %  'fileName'   = [];          % name of output file. Can be either a *.kml 
@@ -14,8 +13,8 @@ function varargout = KMLtext(lat,lon,label,varargin)
 % Example: 
 % 
 % [lat,lon] = meshgrid(54:.1:55, 4:.1:5);
-% label = sprintf('%d,%d',lat(:),lon(:));
-% labels=arrayfun(@(x,y) sprintf('%2.1f %2.1f',x,y),lat,lon,'uni',false);
+% label     = sprintf('%d,%d',lat(:),lon(:));
+% labels    = arrayfun(@(x,y) sprintf('%2.1f %2.1f',x,y),lat,lon,'uni',false);
 % KMLtext(lat,lon,labels)
 %
 % See also: googlePlot, text

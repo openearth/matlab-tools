@@ -1,8 +1,8 @@
 function varargout = KMLsurf(lat,lon,z,varargin)
 % KMLSURF Just like surf
 %
-%   [OPT, Set, Default] = KMLsurf(lat,lon,z,<keyword,value>)
-%   [OPT, Set, Default] = KMLsurf(lat,lon,z,c,<keyword,value>)
+%   KMLsurf(lat,lon,z,<keyword,value>)
+%   KMLsurf(lat,lon,z,c,<keyword,value>)
 %
 % where z needs to be specified at the corners (same size as lon,lat
 % wheras c can be specified  either at the corners or at the centers.

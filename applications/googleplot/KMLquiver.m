@@ -1,7 +1,7 @@
 function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 % KMLQUIVER Just like quiver
 %
-%    [<OPT, Set, Default>] = KMLquiver(lat,lon,u,v,<keyword,value>)
+%    KMLquiver(lat,lon,u,v,<keyword,value>)
 %
 % Keywords:
 % 

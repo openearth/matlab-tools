@@ -1,7 +1,7 @@
-function [OPT, Set, Default] = KMLmesh(lat,lon,varargin)
+function varargin = KMLmesh(lat,lon,varargin)
 % KMLMESH Just like mesh
 %
-%    [<OPT, Set, Default>] = KMLmesh(lat,lon,z,<keyword,value>)
+%    KMLmesh(lat,lon,z,<keyword,value>)
 % 
 % KMLmesh differs from KMLpcolor in the sense that KMLmesh
 % plots actual lines, whereas KMLpcolor plots patches. 

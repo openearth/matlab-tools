@@ -8,6 +8,7 @@ function OK = KMLtest
  j=j+1;OK(j) = KMLcolorbar_test
  j=j+1;OK(j) = KMLcontour3_test
  j=j+1;OK(j) = KMLcontour_test
+ j=j+1;OK(j) = KMLcontourf_test
  j=j+1;OK(j) = KMLline_test
  j=j+1;OK(j) = KMLmesh_test
  j=j+1;OK(j) = KMLpatch_test
@@ -18,7 +19,7 @@ function OK = KMLtest
  j=j+1;OK(j) = KMLtricontourf_test
  j=j+1;OK(j) = KMLtricontourf3_test
  j=j+1;OK(j) = KMLtrisurf_test
- j=j+1;OK(j) = KMLfig2pngNew_test % slow
+%j=j+1;OK(j) = KMLfig2pngNew_test % very slow
 
  %% merge
  j=j+1;OK(j) = KMLmerge_files_test

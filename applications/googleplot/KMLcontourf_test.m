@@ -1,7 +1,7 @@
-function testresult = KMLtricontourf_test()
-% KMLTRICONTOURF_TEST  unit test for KMLtricontourf
+function testresult = KMLcontourf_test()
+% KMLCONTOURF_TEST  unit test for KMLcontourf
 %
-% See also: googleplot, KMLcontourf_test
+% See also: googleplot, KMLtricontourf_test
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -54,20 +54,20 @@ disp(['... running test:',mfilename])
     
     %test 1
     [x,y] = meshgrid(1:10,21:30);
+    x(3:4,3:4) = nan; % test a hole 
+    y(3:4,3:4) = nan;
     z = peaks(10);
-    tri = delaunay(x,y);
-    tri(60:74,:)=[];
-    KMLtricontourf(tri,x,y-10,z,'levels',100,'fileName',KML_testdir('KMLtricontourf - 1.kml'),'colorbartitle','KMLtricontourf - 1');
+    KMLcontourf(x,y,z,'levels',100,'fileName',KML_testdir('KMLcontourf - 1.kml'),'colorbartitle','KMLcontourf - 1');
     %test 2
     
     [x,y] = meshgrid(1.1:.5:100.1,201.2:.5:300.2);
+    x(60:80,60:80) = nan; % test a hole 
+    y(60:80,60:80) = nan;
     x = (x+sin(y).^3);
     y = (y+sin(x));
     z = repmat(peaks(100),2,2)+2*cos(peaks(200))+3*sin(peaks(200))+3*peaks(200);
-    tri = delaunay(x,y);
-    tri(any((((x(tri)-50).^2 + (y(tri)-250).^2).^.5)>44,2),:)=[];
     x = x/10+10;y = y/10+10;
-    KMLtricontourf(tri,x,y-10,z,'levels',40,'fileName',KML_testdir('KMLtricontourf - 2.kml'),'colorbartitle','KMLtricontourf - 2');
+    KMLcontourf(x,y,z,'levels',40,'fileName',KML_testdir('KMLcontourf - 2.kml'),'colorbartitle','KMLcontourf - 2');
     testresult = true;
 %catch
 %    testresult = false;

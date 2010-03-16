@@ -1,9 +1,11 @@
-function varargout = TRIQUAT(x,y)
+function varargout = TRIQUAT(x,y,varargin)
 %TRIQUAT   triangulate curvi-linear mesh
 %
-%    triquat(x,y) 
+%    S = triquat(x,y) 
+%    [tri, quat] = triquat(x,y) 
+%    [tri, quattri_per_quat, quat_per_tri] = triquat(x,y) 
 %
-% triangulates and quadrangulates a mesh 
+% triangulates and quadrangulates a curvi-linear mesh 
 % into triangles and quadrangles. It also gives the mappers
 % array of the traingles to the quadrangles and v.v.
 % This is faster than using DELAUNAY and QUAT and 
@@ -14,9 +16,9 @@ function varargout = TRIQUAT(x,y)
 % 
 % It does the same as the following 3 actions:
 %
-%    delaunay(x,y)
-%    quat(x,y)
-%    tri2quat(tri,quat)
+%    tri  = delaunay(x,y)
+%    quat = quat(x,y)
+%    [tri_per_quat,quat_per_tri] = tri2quat(tri,quat)
 %
 % Do note that ALL TRIANGLES ARE ORIENTED IN THE SAME WAY,
 % whereas DELAUNAY has a random distribution of orientations
@@ -37,6 +39,14 @@ function varargout = TRIQUAT(x,y)
 % - quat
 % - tri_per_quad
 % - quad_per_tri
+%
+% [...] = triquat(x,y,<keyword,value>) 
+%
+% where the following <keyword,value> pairs have been implemented.
+% * active: of 1 only cells with 4 nont-NaN corners are considered (default 0)
+%           very useful for traingulating  curvi-linear grids. When  using
+%           DELAUNAY with not-NaN vertices, holes are filled, whereas TRIQUAT
+%           leaves hole sopen.
 %
 % Example:
 %                                                          
@@ -65,7 +75,7 @@ function varargout = TRIQUAT(x,y)
 % 
 % see also: QUAT, TRI2QUAT, DELAUNAY, GRADIENT2
 
-%%
+%% Copyright
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
 %       Gerben J. de Boer
@@ -95,22 +105,33 @@ function varargout = TRIQUAT(x,y)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   -------------------------------------------------------------------- 
 
+% TO DO: take triangle which has shortest diagonal
+% TO DO: remove inactive cells from curvi-linear mesh
+
+%% set properties
+
+   OPT.active = 1; % onle return tringales of active quadrangles
+
+   [OPT, Set, Default] = setProperty(OPT, varargin{:});
+
 szcor1 = size(x,1);
 szcor2 = size(x,2);
 
 szcen1 = szcor1-1;
 szcen2 = szcor2-1;
 
-nquat = szcen1*szcen2;
-ntri  = nquat*2;
+nquat  = szcen1*szcen2;
+ntri   = nquat*2;
 
 quat         = repmat(0,[nquat   4]); % 4 corners    per quadrangle
 tri          = repmat(0,[ntri    3]); % 3 corners    per triangle
 tri_per_quat = repmat(0,[nquat   2]); % 2 triangles  per quadrangle
 quat_per_tri = repmat(0,[ntri    1]); % 1 quadrangle per triangle
 
-mncor  = -1;
-mncen  = 0;
+mncor    = -1;
+mncen    = 0;
+mnactive = 0;
+itri     = [];
 
 %% first walk alomng 1st dimension, 
 %  while keeping the 2nd dimension constant
@@ -128,35 +149,90 @@ for ncen=1:szcen2
       %  always define a C or V or U shape.
       %---------------------------
       
-      quat(mncen,:) = [mncor              ,...
+      quat1         = [mncor              ,...
                        mncor + 1          ,...
                        mncor + szcor1 + 1 ,...
                        mncor + szcor1    ];
+      realcoordinates = ~any(isnan(x(quat1)));
+      
+      if ~OPT.active
+      
+         %% Define mapping indices triangles <> quadrangle
+         %---------------------------
+         
+         itri                     = [2*mncen-1 2*mncen];
+         tri_per_quat(mncen,:)    = itri;  % 2 traingles per quadrangle
+         quat_per_tri(itri)       = mncen; % 1 quadrangle for both traingles
+         
+         %% Define 2 non-overlapping polygons for 2 triangles
+         %  - For perfect orthogonal grid the trainagle definition should 
+         %    be more or less random
+         %  - For curvilinear grids the trainagle definition should 
+         %    be such that the diagonal is short as possible
+         %---------------------------
+         
+         tri(itri(1),:)      = [mncor             , ...
+                                mncor + 1         , ...
+                                mncor + szcor1    ];
+         tri(itri(2),:)      = [mncor + 1         , ...
+                                mncor + szcor1 + 1, ...
+                                mncor + szcor1    ];
 
-      %% Define mapping indices triangles <> quadrangle
-      %---------------------------
+         quat(mncen,:)       = [mncor              ,...
+                                mncor + 1          ,...
+                                mncor + szcor1 + 1 ,...
+                                mncor + szcor1    ];
+         
+      else
+      
+         if realcoordinates
 
-      itri                      = [2*mncen-1 2*mncen];
-      tri_per_quat(mncen,:) = itri;  % 2 traingles per quadrangle
-      quat_per_tri(itri)    = mncen; % 1 quadrangle for both traingles
+         mnactive = mnactive + 1;
 
-      %% Define 2 non-overlapping polygons for 2 triangles
-      %  - For perfect orthogonal grid the trainagle definition should 
-      %    be more or less random
-      %  - For curvilinear grids the trainagle definition should 
-      %    be such that the diagonal is short as possible
-      %---------------------------
+         itri                     = [2*mnactive-1 2*mnactive];
+         tri_per_quat(mnactive,:) = itri;  % 2 traingles per quadrangle
+         quat_per_tri(itri)       = mnactive; % 1 quadrangle for both traingles
+         
+         %% Define 2 non-overlapping polygons for 2 triangles
+         %  - For perfect orthogonal grid the trainagle definition should 
+         %    be more or less random
+         %  - For curvilinear grids the trainagle definition should 
+         %    be such that the diagonal is short as possible
+         %---------------------------
+         
+         tri(itri(1),:)      = [mncor             , ...
+                                mncor + 1         , ...
+                                mncor + szcor1    ];
+         tri(itri(2),:)      = [mncor + 1         , ...
+                                mncor + szcor1 + 1, ...
+                                mncor + szcor1    ];
 
-      tri(itri(1),:)      = [mncor             , ...
-                             mncor + 1         , ...
-                             mncor + szcor1    ];
-      tri(itri(2),:)      = [mncor + 1         , ...
-                             mncor + szcor1 + 1, ...
-                             mncor + szcor1    ];
+         quat(mnactive,:)    = [mncor              ,...
+                                mncor + 1          ,...
+                                mncor + szcor1 + 1 ,...
+                                mncor + szcor1    ];
+
+         else
+         
+            % skip inactive quadrangle
+         
+         end
+
+      end
+      
    end
 
 end
 
+if ~isempty(itri)
+   tri          = tri (1:itri(2) ,:); % remove triangles   not needed for inactive cells
+   quat         = quat(1:mnactive,:); % remove quadrangles not needed for inactive cells
+else
+   tri          = [];
+   quat         = [];
+   tri_per_quat = [];
+   quat_per_tri = []
+end
 
 if nargout < 2
    
@@ -165,6 +241,11 @@ if nargout < 2
    OUT.tri_per_quat = tri_per_quat;
    OUT.quat_per_tri = quat_per_tri;
    varargout = {OUT};
+
+elseif nargout == 2
+   
+   varargout = {tri         ,...
+                quat};
 
 elseif nargout ==4
 
