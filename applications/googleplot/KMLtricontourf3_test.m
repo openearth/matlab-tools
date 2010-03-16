@@ -1,14 +1,17 @@
 function testresult = KMLtricontourf3_test()
-% KMLTRICONTOURF3_TEST  unit test for KMLtricontourf3_test
+% KMLTRICONTOURF3_TEST  One line description goes here
+%  
+% More detailed description of the test goes here.
 %
-% See also: googleplot
+%
+%   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 <COMPANY>
 %       Thijs
 %
-%       <EMAIL>
+%       <EMAIL>	
 %
 %       <ADDRESS>
 %
@@ -27,13 +30,13 @@ function testresult = KMLtricontourf3_test()
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and
+% OpenEarthTools is an online collaboration to share and manage data and 
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute
+% Sign up to recieve regular updates of this function, and to contribute 
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 24 Feb 2010
+% Created: 16 Mar 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -48,44 +51,29 @@ function testresult = KMLtricontourf3_test()
 
 %% $RunCode
 % Write test code here
-%try
-    
     %test 1
+    clc
     [x,y] = meshgrid(1:10,21:30);
     z = peaks(10);
     tri = delaunay(x,y);
-    tri(60:74,:)=[];
-    KMLtricontourf3(tri,x,y,z,'levels',100,'fileName',KML_testdir('KMLtricontourf3 - 1.kml'),...
-        'zScaleFun',@(z) (abs(z)+0.3)*10000,'staggered',false);
-    
-    %test 2
-    
-    [x,y] = meshgrid(1.1:.5:100.1,201.2:.5:300.2);
-    x = (x+sin(y).^3);
-    y = (y+sin(x));
-    z = repmat(peaks(100),2,2)+2*cos(peaks(200))+3*sin(peaks(200))+3*peaks(200);
-    tri = delaunay(x,y);
-    tri(any((((x(tri)-50).^2 + (y(tri)-250).^2).^.5)>44,2),:)=[];
-    x = x/10+10;y = y/10+10;
-    KMLtricontourf3(tri,x,y,z,'levels',40,'fileName',KML_testdir('KMLtricontourf3 - 2.kml'),...
-        'zScaleFun',@(z) (abs(z)+0.3)*3000,'staggered',true);
-    
-    %test3
-    [x,y] = meshgrid(1:3,7:9);
-    z = ones(3,3);
-    z(2,2) = 5;
-    z(3,2) = 9;
-    tri = delaunay(x,y);
-    tri(6,:)=[];
-    trisurf(tri,x,y,z);
+    tri(1:28,:)=[];
+%    tri(60:84,:)=[];
+    nn=9;
+    tricontour3(tri,y,x,z,nn);
+    E = trisurf_edges(tri,x,y,z);
+    for ii=1:E(end,4)
+        jj = find(E(:,4)==ii);
+             line(E(jj,1),E(jj,2),E(jj,3));
+    end
+    for ii=1:E(end,4)
+        jj = find(E(:,4)==ii);
+             line(E(jj,2),E(jj,1),E(jj,3));
+    end
+    h = text(E(:,2),E(:,1),reshape(sprintf('%5d',1:size(E,1)),5,[])');
+    set(h,'color','r','FontSize',6,'VerticalAlignment','top')
+    view(0,90)
+    KMLtricontourf3(tri,x./10,y./10,z,'levels',nn,'fileName',KML_testdir('KMLtricontourf3 - 1.kml'),...
+        'zScaleFun',@(z) (z+6)*1000,'staggered',false)
 
-    KMLtricontourf3(tri,x,y,z,'levels',3,'fileName',KML_testdir('KMLtricontourf3 - 3.kml'),...
-        'zScaleFun',@(z) (abs(z)+0.3)*10000,'staggered',true);
-    
-    testresult = true;
-%catch
-%    testresult = false;
-%end
 %% $PublishResult
 % Publishable code that describes the test.
-

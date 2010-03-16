@@ -1,4 +1,4 @@
-function varargout = KMLtricontourf3(tri,lat,lon,z,varargin)
+function [OPT, Set, Default] = KMLtricontourf3(tri,lat,lon,z,varargin)
 %KMLTRICONTOURF3  Wrapper for KMLtricontourf, to make it 3D
 %
 %   See also 

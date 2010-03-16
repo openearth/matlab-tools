@@ -34,7 +34,6 @@ function [C] = tricontourc(tri, x, y, z, N)
 %    - Probably the function can bee speeded up a lot by making use of the
 %      TriRep functionality. Only found out about it's existence too late..
 %
-%   See also tricontours
 % See also: tricontours, TRICONTOUR3, TRICONTOURF, TRICONTOUR, CONTOURS, CONTOUR, CONTOUR3 and CONTOURF.
 
 %% Copyright notice
