@@ -54,14 +54,15 @@ function testresult = tricontour3_test()
 try
     [x,y] = meshgrid(1.1:10.1,1.1:10.1);
     z = peaks(10);
-    plot3(x,y,z,'k')
+    plot3(x,y,z,'k:')
     
     hold on
-    plot3(x',y',z','k')
-    contour3(x,y,z,'--');
-    
+    plot3(x',y',z','k:')
+    contour3(x,y,z,-6:2:6,'b:');
+    h = get(gca,'Children');
+    set(h(1:11),'lineWidth',2)
     tri = delaunay(x(:),y(:));
-    
+    colormap([1 0 0])
     tricontour3(tri,x(:),y(:),z(:),-6:2:6);
     testresult = true;
 catch

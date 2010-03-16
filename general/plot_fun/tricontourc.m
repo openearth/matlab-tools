@@ -28,6 +28,13 @@ function [C] = tricontourc(tri, x, y, z, N)
 %       C = [level1 x1 x2 x3 ... level2 x2 x2 x3 ...;
 %            pairs1 y1 y2 y3 ... pairs2 y2 y2 y3 ...]
 %
+%   Example
+%   
+%   TODO:
+%    - Probably the function can bee speeded up a lot by making use of the
+%      TriRep functionality. Only found out about it's existence too late..
+%
+%   See also tricontours
 % See also: tricontours, TRICONTOUR3, TRICONTOURF, TRICONTOUR, CONTOURS, CONTOUR, CONTOUR3 and CONTOURF.
 
 %% Copyright notice

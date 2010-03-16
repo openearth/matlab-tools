@@ -67,6 +67,10 @@ function [cout h msg] = tricontour3(tri, x, y, z, N, varargin)
 % $Keywords: $
 
 %%
+x = x(:);
+y = y(:);
+z = z(:);
+
 % Parse possible Axes input
 error(nargchk(1,6,nargin,'struct'));
 [cax,args,nargs] = axescheck(varargin{:});

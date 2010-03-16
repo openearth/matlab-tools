@@ -1,17 +1,17 @@
 function testresult = trisurf_edges_test()
 % TRISURF_EDGES_TEST  One line description goes here
-%  
+%
 % More detailed description of the test goes here.
 %
 %
-%   See also 
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 <COMPANY>
 %       Thijs
 %
-%       <EMAIL>	
+%       <EMAIL>
 %
 %       <ADDRESS>
 %
@@ -30,9 +30,9 @@ function testresult = trisurf_edges_test()
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -50,45 +50,47 @@ function testresult = trisurf_edges_test()
 % Publishable code that describes the test.
 
 %% $RunCode
-
-[x,y] = meshgrid(1.1:100.1,201.2:300.2);
-x = x+sin(y).^3;
-y = y+sin(x);
-z = abs(peaks(100));
-tri = delaunay(x,y);
-
-tri(any((((x(tri)-50).^2 + (y(tri)-250).^2).^.5)>44,2),:)=[];
-tri(any((((x(tri)-70).^2 + (y(tri)-270).^2).^.5)<7,2),:)=[];
-tri(any((((x(tri)-30).^2 + (y(tri)-220).^2).^.5)<7,2),:)=[];
-tri(any((((x(tri)-40).^2 + (y(tri)-260).^2).^.5)<7,2),:)=[];
-
-tri(any(x(tri)>49&x(tri)<51,2),:)=[];
-tri(any(y(tri)>249&y(tri)<251,2),:)=[];
-for ii = 1200:-1:1100
-    tri(ii:ii:end,:)=[];
-end
-trisurf(tri,x,y,z,1)
-view(90,90)
-
-E = trisurf_edges(tri,x,y,z);
-
-colors = jet(size(E,1));
-E(:,9)=0;
-jj = find(E(:,7)==1);
-ii = 0;
-while any((~E(:,9)))
-    ii = ii+1;
-    hl = line(E(jj,[1 4]),E(jj,[2 5]),E(jj,[3 6]));
-    set(hl,'Color',colors(ii,:),'LineWidth',2)
-    E(jj,9) = 1;
-    jj = E(jj,7);
-    if E(jj,9)
-        jj = find(~E(:,9),1);
+try
+    [x,y] = meshgrid(1.1:100.1,201.2:300.2);
+    x = x+sin(y).^3;
+    y = y+sin(x);
+    z = abs(peaks(100));
+    tri = delaunay(x,y);
+    
+    tri(any((((x(tri)-50).^2 + (y(tri)-250).^2).^.5)>44,2),:)=[];
+    tri(any((((x(tri)-70).^2 + (y(tri)-270).^2).^.5)<7,2),:)=[];
+    tri(any((((x(tri)-30).^2 + (y(tri)-220).^2).^.5)<7,2),:)=[];
+    tri(any((((x(tri)-40).^2 + (y(tri)-260).^2).^.5)<7,2),:)=[];
+    
+    tri(any(x(tri)>49&x(tri)<51,2),:)=[];
+    tri(any(y(tri)>249&y(tri)<251,2),:)=[];
+    for ii = 1200:-1:1100
+        tri(ii:ii:end,:)=[];
     end
+    trisurf(tri,x,y,z,1)
+    view(90,90)
+    
+    E = trisurf_edges(tri,x,y,z);
+    nn=8;
+    colors1 = flipud(jet(nn*3));
+    colors2 = jet(nn*3);
+    
+    for ii=1:E(end,4)
+        jj = find(E(:,4)==ii);
+        hl = line(E(jj,1),E(jj,2),E(jj,3));
+        if E(jj(1),5)
+            set(hl,'Color',colors1(mod(ii,nn-1)+1,:),'LineWidth',3)
+        else
+            set(hl,'Color',colors2(mod(ii,nn-1)+1,:),'LineWidth',3)
+        end
+            
+    end
+        
+    testresult = true;
+catch
+    testresult = false;
 end
-
-testresult = true;
-
 %% $PublishResult
-% Publishable code that describes the test.
-
+% If all is well, a complicated triangulated mesh is drawn. The outer edges
+% are in shades of red, the inner edges (holes in the mesh) are colored in
+% blues.
