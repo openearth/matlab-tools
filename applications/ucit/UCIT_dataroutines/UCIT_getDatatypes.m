@@ -85,8 +85,8 @@ function [datatypes] = UCIT_getDatatypes
    %% Vaklodingen
 
    datatypes.grid.names{2}       =  'Vaklodingen';
-   datatypes.grid.urls {2}       =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/';
-   datatypes.grid.catalog{2}     =  'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
+   datatypes.grid.urls {2}       =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/';
+   datatypes.grid.catalog{2}     =  'http://dtvirt5.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
    datatypes.grid.ldbs{2}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
    datatypes.grid.axes{2}        =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{2}    =  20;
