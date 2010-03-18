@@ -72,7 +72,7 @@ end
 set(h.dirfield,'String',dirname);
 
 TODO('User specification of variables that have to be read?');
-XB = XB_Read_Results(dirname,CreateEmptyXBeachVar,'3d','zb','zs','H','Hrms','nodisp');
+XB = XB_Read_Results(dirname,CreateEmptyXBeachVar,'3d','zb','zs','H','nodisp');
 
 set(h.fig,'UserData',XB);
 
