@@ -8,12 +8,20 @@ classdef XBeachResult < DuneErosionResult
         zPostStorm;
     end
     
+    properties (Hidden = true)
+        resdir;
+        XBdims;
+    end
+    
     properties
+        outputVariables = XBeachOutputVariable;
     end
     
     methods
         function obj = XBeachResult(varargin)
-            % use XB_read_result
+            % Read xbdims
+            % Construct output variables
+            % read params.txt
         end
     end
 end
