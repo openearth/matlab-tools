@@ -58,7 +58,7 @@ switch method.name
         ii = strmatch('Latitude of false origin'             ,param.name); latf  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
         ii = strmatch('Northing at false origin'             ,param.name); fn    = convertUnits(param.value(ii),param.UoM.name{ii},'metre',STD);
         ii = strmatch('Latitude of 1st standard parallel'    ,param.name); lat1  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
-        ii = strmatch('Latitude of 2st standard parallel'    ,param.name); lat2  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+        ii = strmatch('Latitude of 2nd standard parallel'    ,param.name); lat2  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
 
         [x1,y1]= LambertConicConformal2SP(x1,y1,a,invf,lonf,fe,latf,fn,lat1,lat2,iopt);
 
@@ -69,7 +69,7 @@ switch method.name
         ii = strmatch('Latitude of false origin'             ,param.name); latf  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
         ii = strmatch('Northing at false origin'             ,param.name); fn    = convertUnits(param.value(ii),param.UoM.name{ii},'metre',STD);
         ii = strmatch('Latitude of 1st standard parallel'    ,param.name); lat1  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
-        ii = strmatch('Latitude of 2st standard parallel'    ,param.name); lat2  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+        ii = strmatch('Latitude of 2nd standard parallel'    ,param.name); lat2  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
 
         [x1,y1]= LambertConicConformal2SPBelgium(x1,y1,a,invf,lonf,fe,latf,fn,lat1,lat2,iopt);
 

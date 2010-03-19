@@ -157,10 +157,10 @@ if ischar(OPT.datum_trans)
     lon2 = lon1;
 else
     if ~isfield(OPT,'datum_trans_from_WGS84') %only exists when tranforming via WGS 84
-        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,'datum_trans');
+        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,'datum_trans',STD);
     else
-        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,'datum_trans_to_WGS84');
-        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat2,lon2,OPT,'datum_trans_from_WGS84');
+        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,'datum_trans_to_WGS84',STD);
+        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat2,lon2,OPT,'datum_trans_from_WGS84',STD);
     end
 end
 

@@ -37,6 +37,28 @@ function SuperTrans(varargin)
 curdir=pwd;
 
 handles.EPSG = load('EPSG.mat');
+
+if exist('EPSG_ud.mat','file')
+    sud=load('EPSG_ud.mat');
+    fnames1=fieldnames(handles.EPSG);
+    for i=1:length(fnames1)
+        fnames2=fieldnames(handles.EPSG.(fnames1{i}));
+        for j=1:length(fnames2)
+            if ~isempty(sud.(fnames1{i}).(fnames2{j}))
+                nori=length(handles.EPSG.(fnames1{i}).(fnames2{j}));
+                nnew=length(sud.(fnames1{i}).(fnames2{j}));
+                for k=1:nnew
+                    if iscell(handles.EPSG.(fnames1{i}).(fnames2{j}))
+                        handles.EPSG.(fnames1{i}).(fnames2{j}){nori+k}=sud.(fnames1{i}).(fnames2{j}){k};
+                    else
+                        handles.EPSG.(fnames1{i}).(fnames2{j})(nori+k)=sud.(fnames1{i}).(fnames2{j})(k);
+                    end
+                end
+            end
+        end
+    end
+end
+
 handles.OPT=[];
 
 handles.MainWindow      = MakeNewWindow_st('SuperTrans',[760 550]);
@@ -527,8 +549,8 @@ params=datum_trans.params;
 set(handles.TextTransformationMethod,'String',['Datum Transformation Method : ' datum_trans.method_name],'Visible','on');
 
 % Check if transformation method is available
-switch datum_trans.method_code
-    case{9603,9606,9607}
+switch datum_trans.method_name
+    case{'Geocentric translations','Position Vector 7-param. transformation','Coordinate Frame rotation','Molodensky-Badekas 10-parameter transformation'}
         handles.TransformationOK=1;
     otherwise
         % Conversion method not available
@@ -536,12 +558,12 @@ switch datum_trans.method_code
         set(handles.TextTransformationMethod,'String',['Datum Transformation Method : ' datum_trans.method_name ' - NOT YET AVAILABLE !'],'Visible','on');
 end
 
-switch datum_trans.method_code
-    case{9603}
+switch datum_trans.method_name
+    case{'Geocentric translations'}
         pars{1}='X-axis translation';
         pars{2}='Y-axis translation';
         pars{3}='Z-axis translation';
-    case{9606,9607}
+    case{'Position Vector 7-param. transformation','Coordinate Frame rotation'}
         pars{1}='X-axis translation';
         pars{2}='Y-axis translation';
         pars{3}='Z-axis translation';

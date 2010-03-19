@@ -80,8 +80,8 @@ else
                     % (any precision). Must include leading zero in minutes and
                     % seconds and exclude decimal point for seconds. Convert to
                     % degree using formula.
-                    xSI     = (xSI+100*eps)*180/pi; % eps is added to deal 
-                                                    % with numerical precision
+                    xSI     = (xSI+100*eps)*180/pi; % eps is added to deal
+                    % with numerical precision
                     degs    = floor(abs(xSI));
                     mins    = floor((abs(xSI)-degs)*60);
                     secs    = ((abs(xSI)-degs)*60 - mins)*60;
@@ -92,4 +92,4 @@ else
         end
     end
 end
-end
+

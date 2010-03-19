@@ -1,4 +1,4 @@
-function [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,datum_trans)
+function [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,datum_trans,STD)
 %CONVERTCOORDINATESDATUMTRANSFORM .
 
 %   --------------------------------------------------------------------
@@ -55,34 +55,49 @@ switch method_name
         f    = 1/invf;
         e2   = 2*f-f^2;
         [x,y,z]=ell2xyz(lat1,lon1,h,a,e2);
-        
-        ii = strmatch('X-axis translation'            ,param.name); dx = inv*param.value(ii);
-        ii = strmatch('Y-axis translation'            ,param.name); dy = inv*param.value(ii);
-        ii = strmatch('Z-axis translation'            ,param.name); dz = inv*param.value(ii);
+
         switch method_name
+
             case 'Geocentric translations'
+
+                dx = inv*getParamValue(param,'X-axis translation','metre',STD);
+                dy = inv*getParamValue(param,'Y-axis translation','metre',STD);
+                dz = inv*getParamValue(param,'Z-axis translation','metre',STD);
                 [x,y,z]=Helmert3(x,y,z,dx,dy,dz);
 
             case {'Position Vector 7-param. transformation','Coordinate Frame rotation'}
-                ii = strmatch('X-axis rotation'               ,param.name); rx = inv*param.value(ii)/1000000;
-                ii = strmatch('Y-axis rotation'               ,param.name); ry = inv*param.value(ii)/1000000;
-                ii = strmatch('Z-axis rotation'               ,param.name); rz = inv*param.value(ii)/1000000;
-                ii = strmatch('Scale difference'              ,param.name); ds = inv*param.value(ii);
+
+                dx = inv*getParamValue(param,'X-axis translation','metre',STD);
+                dy = inv*getParamValue(param,'Y-axis translation','metre',STD);
+                dz = inv*getParamValue(param,'Z-axis translation','metre',STD);
+                rx = inv*getParamValue(param,'X-axis rotation','radian',STD);
+                ry = inv*getParamValue(param,'Y-axis rotation','radian',STD);
+                rz = inv*getParamValue(param,'Z-axis rotation','radian',STD);
+                ds = inv*getParamValue(param,'Scale difference','',STD);
                 if strcmp(method_name,'Coordinate Frame rotation')
                     rx=rx*-1;
                     ry=ry*-1;
                     rz=rz*-1;
                 end
                 [x,y,z]=Helmert7(x,y,z,dx,dy,dz,rx,ry,rz,ds);
+
             case {'Molodensky-Badekas 10-parameter transformation'} 
-                ii = strmatch('X-axis rotation'               ,param.name); rx = inv*param.value(ii)/1000000;
-                ii = strmatch('Y-axis rotation'               ,param.name); ry = inv*param.value(ii)/1000000;
-                ii = strmatch('Z-axis rotation'               ,param.name); rz = inv*param.value(ii)/1000000;
-                ii = strmatch('Scale difference'              ,param.name); ds = inv*param.value(ii);
-                ii = strmatch('Ordinate 1 of evaluation point',param.name); xp =     param.value(ii);
-                ii = strmatch('Ordinate 2 of evaluation point',param.name); yp =     param.value(ii);
-                ii = strmatch('Ordinate 3 of evaluation point',param.name); zp =     param.value(ii);
+
+                dx = inv*getParamValue(param,'X-axis translation','metre',STD);
+                dy = inv*getParamValue(param,'Y-axis translation','metre',STD);
+                dz = inv*getParamValue(param,'Z-axis translation','metre',STD);
+                rx = inv*getParamValue(param,'X-axis rotation','radian',STD);
+                ry = inv*getParamValue(param,'Y-axis rotation','radian',STD);
+                rz = inv*getParamValue(param,'Z-axis rotation','radian',STD);
+                ds = inv*getParamValue(param,'Scale difference','',STD);
+                xp = inv*getParamValue(param,'Ordinate 1 of evaluation point','',STD);
+                yp = inv*getParamValue(param,'Ordinate 2 of evaluation point','',STD);
+                zp = inv*getParamValue(param,'Ordinate 3 of evaluation point','',STD);
                 [x,y,z]=MolodenskyBadekas(x,y,z,dx,dy,dz,rx,ry,rz,xp,yp,zp,ds);
+
+            case 'NADCON'
+%                [x,y,z]=NADCON(x,y,z);
+        
         end
 
         % convert geocentric coordinates to geographic 3D coordinates 
@@ -96,5 +111,14 @@ switch method_name
         error(['Warning: Datum transformation method ''' method_name ''' not yet supported!']);
 end
 
+%% 
+function val = getParamValue(param,name,unit,STD)
+
+ii = strmatch(name,param.name);
+if ~isempty(unit)
+    val  = convertUnits(param.value(ii),param.UoM.sourceN{ii},unit,STD);
+else
+    val = param.value(ii);
+end
 
 
