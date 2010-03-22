@@ -66,25 +66,21 @@ OPT.basecode           = KML_fig2pngNew_SmallestTileThatContainsAllData(D);
 OPT.ha                 =    gca; % handle to axes
 OPT.hf                 =    gcf; % handle to figure
 OPT.dim                =    256; % tile size
-OPT.dimExt             =      8; % render tiles expanded by n pixels, to remove edge effects
+OPT.dimExt             =     16; % render tiles expanded by n pixels, to remove edge effects
 OPT.bgcolor            = [100 155 100];  % background color to be made transparent
-OPT.alpha              = 1;
+OPT.alpha              =      1;
 OPT.highestLevel       = length(OPT.basecode);
 OPT.lowestLevel        = OPT.highestLevel+4;
 OPT.fileName           =     [];
 OPT.kmlName            =     []; % name in Google Earth Place list
-OPT.url                =     ''; % webserver storaga needs absolute paths, local files can have relative paths. Only needed in mother KML.
+OPT.url                =     ''; % webserver storage needs absolute paths, local files can have relative paths. Only needed in mother KML.
 OPT.alpha              =      1;
-OPT.dim                =    256; % tile size
-OPT.dimExt             =     16; % render tiles expanded by n pixels, to remove edge effects
 OPT.minLod             =     []; % minimum level of detail to keep a tile in view. Is calculated when left blank.
 OPT.minLod0            =     -1; % minimum level of detail to keep most detailed tile in view. Default is -1 (don't hide when zoomed in a lot)
 OPT.maxLod             =     [];
 OPT.maxLod0            =     -1;
 OPT.dWE                =    0.2*360/2^OPT.lowestLevel; % determines how much extra data to tiles to be able 
 OPT.dNS                =    0.2*360/2^OPT.lowestLevel; % to generate them as fraction of size of smalles tile
-OPT.ha                 =    gca; % handle to axes
-OPT.hf                 =    gcf; % handle to figure
 OPT.timeIn             =     []; % time properties
 OPT.timeOut            =     [];
 OPT.timeFormat        = 'yyyy-mm-ddTHH:MM:SS';
@@ -92,10 +88,10 @@ OPT.drawOrder          =      1;
 OPT.bgcolor            = [100 155 100];  % background color to be made transparent
 OPT.description        =     ''; 
 OPT.colorbar           =   true;
-OPT.mergeExistingTiles = false;
-OPT.printTiles         = true;
-OPT.joinTiles          = true;
-OPT.makeKML            = true;
+OPT.mergeExistingTiles =  false;
+OPT.printTiles         =   true;
+OPT.joinTiles          =   true;
+OPT.makeKML            =   true;
 
 if nargin==0
   return
@@ -209,7 +205,7 @@ if OPT.makeKML
         OPT.kmlName,OPT.timeSpan,...
         fullfile(OPT.url, OPT.Path, OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']));
 
-    OPT.fid=fopen([OPT.fileName '.kml'],'w');
+    OPT.fid=fopen(OPT.fileName,'w');
     OPT_header = struct(...
         'name',OPT.kmlName,...
         'open',0,...
