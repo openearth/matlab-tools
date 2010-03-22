@@ -189,16 +189,20 @@ delft3d_io_dep_version = 'beta';
       %% ----------------------
 
       %% Read bare number matrix without additional information
-      %% Note SIZE is here [mmax nmax] % m first
+      %  Note SIZE is here [mmax nmax] % m first
+
+      %  GJ de Boer, swapped 2010 mar 16 
+      %  for use with $Id$
+      %  for use with $Id$
       
       if ~OPT.dummy
-         D3Dmatrix                = wldep ('read',fname,[SIZE(2),SIZE(1)])';
+         D3Dmatrix                = wldep ('read',fname,[SIZE(1),SIZE(2)])';
       else
       if     strcmpi(G.location,'cor')
-         matrix                   = wldep ('read',fname,[SIZE(2)-1,SIZE(1)-1])';
+         matrix                   = wldep ('read',fname,[SIZE(1)-1,SIZE(2)-1])';
          D3Dmatrix                = addrowcol(matrix,[1   ],[1   ],OPT.missingvalue);
       elseif strcmpi(G.location,'cen')
-         matrix                   = wldep ('read',fname,[SIZE(2)-2,SIZE(1)-2])';
+         matrix                   = wldep ('read',fname,[SIZE(1)-2,SIZE(2)-2])';
          D3Dmatrix                = addrowcol(matrix,[-1 1],[-1 1],OPT.missingvalue);
       end
       end

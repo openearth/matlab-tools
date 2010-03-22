@@ -146,8 +146,8 @@ end
    %% Calculate
    %% ----------------------
 
-      G.mmax         = size(TMP.X,2)+1;% GJ de Boer, swapped 2009 apr 22  
-      G.nmax         = size(TMP.X,1)+1;% GJ de Boer, swapped 2009 apr 22
+      G.mmax         = size(TMP.X,1)+1;% GJ de Boer, swapped 2009 apr 22, swapped back 2010 mar 16 for use with $Id$
+      G.nmax         = size(TMP.X,2)+1;% GJ de Boer, swapped 2009 apr 22, swapped back 2010 mar 16 for use with $Id$
       
       %% make sure n is first dimension, just like vs_ functionaility.
       G.cor.x        = TMP.X';
