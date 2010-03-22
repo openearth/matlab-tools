@@ -1,5 +1,5 @@
 function varargout = arc_info_binary(varargin)
-%ARC_INFO_BINARY  read arc/info binary grid format (BETA!!!)
+%ARC_INFO_BINARY  read arc/info binary grid format (BETA in progress !!!)
 %
 %        D    = arc_info_binary(name)
 %   [X,Y,D]   = arc_info_binary(name)
@@ -64,6 +64,8 @@ function varargout = arc_info_binary(varargin)
 % * metadata.xml: contains log of process that created the file
 %
 %See also: ArcGisRead, ArcGisRead
+
+warning('arc_info_binary is a development in progress.')
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -130,14 +132,15 @@ function varargout = arc_info_binary(varargin)
 %% keywords
 
    OPT.base        = [];
-   OPT.debug       = 1; % display some info (2 displays every integer run)
-   OPT.plot        = 1;
+   OPT.debug       = 0; % display some info (2 displays every integer run)
+   OPT.plot        = 0;
    OPT.export      = 1;
    OPT.vc          = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc'; % vector coastline
    OPT.long_name   = [];    % TO DO: get this from info directory
    OPT.units       = '';    % TO DO: get this from info directory
    OPT.epsg        = 32631; % TO DO: get this from *.prj file, if any
    OPT.clim        = [];
+   OPT.data        = 1; % 0 means to get only meta-data and pointers
    OPT.nodatavalue = -realmax('single'); %-3.4028234663852885e+038; % value in arc gis file
                    %  realmax('single'); = 3.402823e+038
                    %  realmin('single'); = 1.175494e-038
@@ -156,7 +159,7 @@ function varargout = arc_info_binary(varargin)
    end   
 
 %% dblbnd.adf: Contains the bounds (LLX, LLY, URX, URY) of the portion of
-%% utilized portion of the grid.
+%  utilized portion of the grid.
 
    fid           = fopen([OPT.base,'dblbnd.adf'],'r','ieee-be'); % MSB > 'ieee-be'
    D.D_LLX       =      fread(fid,  1,'double');  % Lower left  X (easting)  of the grid. Generally -0.5 for an ungeoreferenced grid. 
@@ -166,8 +169,8 @@ function varargout = arc_info_binary(varargin)
    fclose(fid);
 
 %% hdr.adf: This is the header, and contains information on the tile sizes,
-%% and number of tiles in the dataset. It also contains assorted other
-%% information I have yet to identify.
+%  and number of tiles in the dataset. It also contains assorted other
+%  information I have yet to identify.
 
    fid           = fopen([OPT.base,'hdr.adf'],'r','ieee-be');% MSB > 'ieee-be'
    D.HMagic      = char(fread(fid,  8,'uchar' )');% Magic Number - always "GRID1.2\0"
@@ -188,7 +191,7 @@ function varargout = arc_info_binary(varargin)
    fclose(fid);
 
 %% sta.adf: This contains raster statistics. In particular, the raster min,
-%% max, mean and standard deviation.
+%  max, mean and standard deviation.
 
    fid           = fopen([OPT.base,'sta.adf'],'r','ieee-be'); % MSB > 'ieee-be'
    D.SMin        =      fread(fid,  1,'double');
@@ -259,7 +262,7 @@ function varargout = arc_info_binary(varargin)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% w001001x.adf: This is an index file containing pointers to each of the
-%% tiles in the w001001.adf raster file.
+%  tiles in the w001001.adf raster file.
 
    fid           = fopen([OPT.base,'w001001x.adf'],'r','ieee-be'); % MSB > 'ieee-be'
    D.RMagic      =      fread(fid,  8,'uint8' );   % Magic Number (always hex 00 00 27 0A FF FF FC 14 or 00 00 27 0A FF FF FB F8 in some (all?) Arc8 products).  (dec2hex(D.RMagic) is indeed 00 00 27 0A FF FF FC 14)
@@ -297,6 +300,8 @@ function varargout = arc_info_binary(varargin)
    %if OPT.debug
    %   D
    %end
+   
+if OPT.data
 
 %% RTileType/RTileData
 %
@@ -321,7 +326,7 @@ function varargout = arc_info_binary(varargin)
    if D.HCellType==1
       D.RTileType(t)=  fread(fid,             1,'uint8' ); % 1 byte
       D.RMinSize(t) =  fread(fid,             1,'uint8' ); % 1 byte
-      fmt = ['int',num2str(8*D.RMinSize(t))];              % (RMinSize bytes), 1 byte =int8
+      fmt = ['int',num2str(8*D.RMinSize(t))];              % (RMinSize bytes), 1 byte = int8
       if ~D.RMinSize(t)==0
       D.RMin(t)     =  fread(fid,             1,fmt); % int160 not possible
       end
@@ -335,26 +340,39 @@ function varargout = arc_info_binary(varargin)
       end
 
       %% RTileType = 0x00 (constant block)
-      %  All pixels take the value of the RMin. Data is ignored. It appears there is sometimes a bit of meaningless data (up to four bytes) in the block.
+      %  All pixels take the value of the RMin. Data is ignored. It appears 
+      %  there is sometimes a bit of meaningless data (up to four bytes) in the block.
+      
       if     D.RTileType(t)==hex2dec('00')
 
         %RTileData= repmat(D.RMin(t)     ,[D.HTileXSize D.HTileYSize]);
          RTileData= repmat(nan           ,[D.HTileXSize D.HTileYSize]);
          
       %% RTileType = 0x08 (raw byte data)
-      %  One full tiles worth of data pixel values (one byte per pixel) follows the RMin field.
+      %  One full tiles worth of data pixel values (one byte per pixel) 
+      % follows the RMin field.
+      
       elseif D.RTileType(t)==hex2dec('08')
 
-        %n = (D.RTileSize(t)*2)-3-D.RMinSize(t) % error in GDAL ?: 3 should be 2 
          n = (D.RTileSize(t)*2)-2-D.RMinSize(t); % TileSize in 2 byte words * 2 =  TileSize in 1 byte words
          RTileData      = fread(fid,n,'uint8' );
-         RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
+         RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);         
+         
+      %% RTileType = 0x10 (raw byte data)
+      %  One full tiles worth of data pixel values (one byte per pixel) follows the RMin field.
+      
+      elseif D.RTileType(t)==hex2dec('10')
+
+         n = (D.RTileSize(t)*1)-2-D.RMinSize(t) % TileSize in 2 byte words * 1 =  TileSize in 1 byte words
+         RTileData      = fread(fid,n,'uint16' );
+         RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);         
          
      %% RTileType = 0xD7 (literal runs/nodata runs)
      %  The data is organized in a series of runs. Each run starts with a marker which should be interpreted as:
      %    * Marker < 128: The marker is followed by Marker pixels of literal data with one byte per pixel.
      %    * Marker > 127: The marker indicates that 256-Marker pixels of no data pixels should be 
-     %                    put into the output stream. No data (other than the next marker) follows this marker.          
+     %                    put into the output stream. No data (other than the next marker) follows this marker.  
+     
       elseif D.RTileType(t)==hex2dec('D7')
       
          bytes_read = 0;
@@ -388,6 +406,7 @@ function varargout = arc_info_binary(varargin)
          %end
          
          %% chop data exceeding tilesize ??
+         
          RTileData = RTileData(1:n);
          RTileData = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);         
 
@@ -425,6 +444,7 @@ function varargout = arc_info_binary(varargin)
          %end
          
          %% chop data exceeding tilesize ??
+         
          RTileData = RTileData(1:n);
          RTileData = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);         
          
@@ -440,12 +460,16 @@ function varargout = arc_info_binary(varargin)
    else
       
       if OPT.debug
-      disp(['float: ',num2str([t i j dim1([1 end]) dim2([1 end])],'%d ')]);
+      disp(['float: ',num2str([t D.nTiles i j dim1([1 end]) dim2([1 end])],'%d ')]);
       end      
       
-      RTileData      = fread(fid,D.TileSize  (t)/2,'float' ); % TileSize in 2 byte words / 2 =  TileSize in 4 byte words
+      if ~(D.TileSize(t)==0)
+      RTileData      = fread(fid,D.TileSize(t)/2,'float' ); % TileSize in 2 byte words / 2 =  TileSize in 4 byte words
       RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]);
       RTileData(RTileData==OPT.nodatavalue)=nan;
+      else
+      RTileData      = repmat(nan,[D.HTileXSize D.HTileYSize]);
+      end
       
       Data(dim1,dim2) = RTileData';
 
@@ -492,17 +516,20 @@ function varargout = arc_info_binary(varargin)
       end
    end
 
+end
+
 %% metadata
 
    if  exist([OPT.base,'\metadata.xml'])
-      D.metadata = urlread(['file:///',OPT.base,'\metadata.xml'])
+      if strcmpi(OPT.base(2),':')
+         D.metadata = urlread(['file:///',OPT.base,'\metadata.xml'])
+      else
+         D.metadata = urlread(['file:///',pwd,filesep,OPT.base,'\metadata.xml'])
+      end
    else
       disp([OPT.base,'metadata.xml missing']);
       D.metadata = [];
    end
-
-   
-   
    
 %% output
 
