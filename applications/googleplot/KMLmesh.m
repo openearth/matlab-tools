@@ -86,17 +86,6 @@ function varargin = KMLmesh(lat,lon,varargin)
       [ignore OPT.kmlName] = fileparts(OPT.fileName);
    end
 
-%% make mesh
-
-   kmlcode = [];
-   if OPT.is3D
-   kmlcode = [kmlcode KMLline(lat ,lon ,z ,varargin{:})];
-   kmlcode = [kmlcode KMLline(lat',lon',z',varargin{:})]; % overwrites previous one
-   else
-   kmlcode = [kmlcode KMLline(lat ,lon ,varargin{:})];
-   kmlcode = [kmlcode KMLline(lat',lon',varargin{:})]; % overwrites previous one
-   end
-
 %% start KML
 
    OPT.fid=fopen(OPT.fileName,'w');
@@ -110,9 +99,21 @@ function varargin = KMLmesh(lat,lon,varargin)
    output = KML_header(OPT_header);
    fprintf(OPT.fid,output);
 
-% print output
+%% make mesh
 
-   fprintf(OPT.fid,kmlcode);
+   fileName     = OPT.fileName;
+   OPT.fileName = OPT.fid;
+
+   kmlcode = [];
+   if OPT.is3D
+      KMLline(lat ,lon ,z ,OPT);
+      KMLline(lat',lon',z',OPT);
+   else
+      KMLline(lat ,lon ,OPT);
+      KMLline(lat',lon',OPT);
+   end
+
+   OPT.fileName = fileName;
 
 %% close KML
 

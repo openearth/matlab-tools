@@ -96,7 +96,7 @@ function varargout = KMLline(lat,lon,varargin)
 
 %% process <keyword,value>
 
-   OPT.fileName      = '';
+   OPT.fileName      = ''; % header/footer are skipped when is a fid = fopen(OPT.fileName,'w')
    OPT.description   = '';
    OPT.kmlName       = [];
    OPT.lineWidth     = 1;
@@ -114,6 +114,7 @@ function varargout = KMLline(lat,lon,varargin)
    OPT.extrude       = true;
    OPT.tessellate    = ~OPT.is3D;
    OPT.zScaleFun     = @(z) (z+0)*1;
+   OPT.fid           = -1;
    
    if nargin==0
       varargout = {OPT};
@@ -130,7 +131,7 @@ function varargout = KMLline(lat,lon,varargin)
        end
    end
    
-   [OPT, Set, Default] = setProperty(OPT, varargin);
+   [OPT, Set, Default] = setProperty(OPT, varargin{:});
 
 %% input check
 
@@ -211,7 +212,8 @@ function varargout = KMLline(lat,lon,varargin)
 
 %% start KML
 
-   OPT.fid=fopen(OPT.fileName,'w');
+if ischar(OPT.fileName)
+   OPT.fid = fopen(OPT.fileName,'w');
 
 %% HEADER
 
@@ -221,7 +223,11 @@ function varargout = KMLline(lat,lon,varargin)
        'description',OPT.description);
    output = KML_header(OPT_header);
    
-   fprintf(OPT.fid,output);output = '';
+   fprintf(OPT.fid,output);
+
+end
+
+output = '';
 
 %% define line and fill  styles
 %  line styles
@@ -326,6 +332,8 @@ function varargout = KMLline(lat,lon,varargin)
 
    fprintf(OPT.fid,       output(1:kk-1));if nargout==1;kmlcode = [kmlcode output(1:kk-1)];end
 
+if ischar(OPT.fileName)
+
 %% close KML
 
    output = KML_footer;
@@ -347,8 +355,10 @@ function varargout = KMLline(lat,lon,varargin)
        system(OPT.fileName);
    end
 
-   if nargout ==1
-     varargout = {kmlcode};
-   end
+end
+
+if nargout ==1
+  varargout = {kmlcode};
+end
 
 %% EOF

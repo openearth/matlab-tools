@@ -1,5 +1,7 @@
 function KMLsurf_tiled(lat,lon,z)
-% KMLSURF_TILED  BETA!!!!
+%KMLSURF_TILED  BETA!!!!
+%
+%  KMLsurf_tiled(lat,lon,z)
 %
 %See also: googlePlot, surf
 
@@ -38,8 +40,8 @@ OPT_stylePoly = struct(...
     'lineAlpha',OPT.lineAlpha,...
     'lineWidth',OPT.lineWidth,...
     'fillAlpha',OPT.fillAlpha,...
-    'polyFill',OPT.polyFill,...
-    'polyOutline',OPT.polyOutline);
+     'polyFill',OPT.polyFill,...
+  'polyOutline',OPT.polyOutline);
 
 for ii = 1:OPT.colorSteps
     OPT_stylePoly.name = ['style' num2str(ii)];
