@@ -17,6 +17,7 @@ classdef XBeachOutputVariable < handle
     end
 
     methods
+        % Constructor
         function obj = XBeachOutputVariable(varargin)
             if nargin==1
                 [obj.resdir fname ext] = fileparts(varargin{1});
@@ -66,6 +67,7 @@ classdef XBeachOutputVariable < handle
             
             obj.fid=fopen(fullfile(obj.resdir,obj.filename),'r');
         end
+        % Destructor
         function delete(obj)
             if ~isempty(obj.fid)
                 if any(obj.fid==[0, 1, 2, -1])
@@ -76,9 +78,16 @@ classdef XBeachOutputVariable < handle
         end
     end
     methods
-        function value = Content(obj,it)
+        % Obtain values
+        function value = values(obj,it,idm,idn)
             fseek(obj.fid,(it-1)*numel(obj.XBdims.x)*8,'bof');
             value = fread(obj.fid,size(obj.XBdims.x),obj.contentType);
+            if exist('idm','var')
+                value = value(idm,:);
+            end
+            if exist('idn','var')
+                value = value(:,idn);
+            end
         end
     end
 end
