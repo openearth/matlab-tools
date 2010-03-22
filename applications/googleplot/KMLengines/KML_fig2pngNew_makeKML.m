@@ -2,7 +2,7 @@ function KML_fig2pngNew_makeKML(OPT)
 
 OPT.timeSpan = '';
 
-for level = OPT.highestLevel:OPT.lowestLevel-1
+for level = OPT.highestLevel:OPT.lowestLevel
     tiles = dir(fullfile(OPT.Path,OPT.Name,[OPT.Name '_*.png']));
     tileCodes = nan(length(tiles),level);
     for ii = 1:length(tiles)
@@ -22,7 +22,7 @@ for level = OPT.highestLevel:OPT.lowestLevel-1
         minLod = OPT.minLod;
     end
     
-    if level == OPT.lowestLevel-1
+    if level == OPT.lowestLevel
         maxLod = OPT.maxLod0;
     else
         maxLod = OPT.maxLod;
