@@ -70,8 +70,8 @@ h.fig = figure('Units','pixels',...
     'CloseRequestFcn',@XBRV_CB_Close,...
     'Position',[200 200 1000 600]); 
 
-% fh = get(h.fig,'JavaFrame'); % Get Java Frame 
-% fh.setFigureIcon(javax.swing.ImageIcon('DeltaresLogo.gif'));
+fh = get(h.fig,'JavaFrame'); % Get Java Frame 
+fh.setFigureIcon(javax.swing.ImageIcon(which('DeltaresLogo_transp.gif')));
 
 %% Menus
 h.menu.File.Main = uimenu(h.fig,...
