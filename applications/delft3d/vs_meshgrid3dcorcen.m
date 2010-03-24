@@ -10,13 +10,14 @@ function varargout=vs_meshgrid3dcorcen(varargin),
 % Works for fully for sigma and partially (cell centers only) for z planes.
 %
 % Implemented optional <'keyword',value> pairs are:
-% * 'centres',struct with fields 1 or more of the fields
+%  * 'centres',struct with fields 1 or more of the fields
 %      - cor (default 0)
 %      - cen (default 1)
 %      - u   (default 0)
 %      - v   (default 0)
 %    with value 0 indicating to not calulcate them, and 1 to calculate them
-% * 'intface',same as for keyword 'centres' 
+%  * 'intface',same as for keyword 'centres' 
+%  * 'latlon'   labels x to lon, and y to lat if coordinate system is spherical (default 1)
 %
 % See also: VS_USE, VS_LET, VS_DISP, VS_MESHGRID2DCORCEN, VS_LET_SCALAR
 
@@ -59,7 +60,7 @@ NFSstruct      = [];
 TimeStep       = 1;
 
 % Defaults
-% -----------------------------------
+%------------------------------------
 
 % calculate G.elevationcor SOMEHOW
 
@@ -73,8 +74,8 @@ TimeStep       = 1;
    P.u.intf        = 0; % = u velocity points
    P.v.intf        = 0; % = v velocity points
 
-% Read position of these grid points;
-% ----------------------------------
+%% Read position of these grid points;
+%-----------------------------------
 
    P.cor.zwl       = 1; % CAN BE CALCULATED WITH PRELIMINARY VERSION OF CENTER2CORNER
    P.xy3d          = 1; % same for every layers, so no need THERE IS NEED WHEN MAKING CROSS SLICES
@@ -85,10 +86,10 @@ TimeStep       = 1;
      P.v.depth0    = 0; % provided P.face
      P.u.elevation = 0; % provided P.face
      P.v.elevation = 0; % provided P.face
+   P.latlon        = 1; % labels x to lon, and y to lat if spherical
    
-
-% Arguments
-% -----------------------------------
+%% Arguments
+%------------------------------------
    
    NFSstruct = varargin{1};
    iargin    = 2;
@@ -104,6 +105,7 @@ TimeStep       = 1;
        switch lower(varargin{iargin})
        case 'centres'        ;iargin=iargin+1;P.cen = mergestructs(P.centres,varargin{iargin});
        case 'intface'        ;iargin=iargin+1;P.int = mergestructs(P.intface,varargin{iargin});
+       case 'latlon'         ;iargin=iargin+1;P.int = mergestructs(P.latlon ,varargin{iargin});
        otherwise
          error(sprintf('Invalid string argument: %s.',varargin{i}));
        end
@@ -116,19 +118,27 @@ TimeStep       = 1;
    end;
    
 % Read time in-dependent grid geometry
-% -----------------------------------
+%------------------------------------
 
    if isempty(G)
       G = vs_meshgrid2dcorcen(NFSstruct);
    end
 
+   if P.latlon & ~any(strfind(G.coordinates,'CARTESIAN'))
+      x = 'lon';
+      y = 'lat';
+   else
+      x = 'x';
+      y = 'y';
+   end
+
 % Read time dependent grid geometry (waterlevel)
-% -----------------------------------
+%------------------------------------
 
    switch vs_type(NFSstruct),
 
    %% Comfile
-   %% -----------------------------------
+   %-------------------------------------
 
    case {'Delft3D-com','Delft3D-tram','Delft3D-botm'},
 
@@ -140,7 +150,7 @@ TimeStep       = 1;
 
 
    %% Trimfile
-   %% -----------------------------------
+   %-------------------------------------
 
    case 'Delft3D-trim',
 
@@ -155,7 +165,7 @@ TimeStep       = 1;
   end; % switch vs_type(NFSstruct),
   
   %% Apply masks
-  %% -----------------------------------
+  %-------------------------------------
 
   d3dcen.kfu =        max(1,conv2([double(d3du.kfu(:,1))>0 double(d3du.kfu>0)],[1 1],'valid'));
   d3dcen.kfv =        max(1,conv2([double(d3dv.kfv(1,:))>0;double(d3dv.kfv>0)],[1;1],'valid'));
@@ -166,7 +176,7 @@ TimeStep       = 1;
   d3dcen.zwl(d3dcen.kfu==0 & d3dcen.kfv==0)=NaN;
   
   %% Subset center data and extrapolate to corner data
-  %% -----------------------------------
+  %-------------------------------------
   
      G.cen.zwl = d3dcen.zwl(2:end-1,2:end-1);
      G.cen.zwl_comment = 'Waterlevel at centers with application of time dependent velocity point masks';
@@ -178,10 +188,10 @@ TimeStep       = 1;
   end
   
   %% Start 3D coordinates
-  %% -----------------------------------
+  %-------------------------------------
 
 % CALCULATE Z LEVELS
-% -----------------------------------
+%------------------------------------
 
    %% Calculate also 3D x-y-grids if P.xy3d==1
    %% These contain the same, i.e. redundant, information
@@ -191,75 +201,75 @@ TimeStep       = 1;
 if strmatch('SIGMA-MODEL', G.layer_model)
    
 %% SIGMA-MODEL
-%% ---------------------------------
+%-----------------------------------
 
    %% Calculate sigma vertical positions
-   %% ------------------------
+   %--------------------------
 
    [G.sigma_cent,...
     G.sigma_intf]   = d3d_sigma(G.sigma_dz);
 
    %% CENTRES IN VERTICAL
-   %% ---------------------------------
+   %-----------------------------------
    
    if P.cor.cent
-                G.cor.cent.z = zeros(size(G.cor.x,1),size(G.cor.x,2),G.kmax);
-      if P.xy3d;G.cor.cent.x = zeros(size(G.cor.x,1),size(G.cor.x,2),G.kmax);end
-      if P.xy3d;G.cor.cent.y = zeros(size(G.cor.x,1),size(G.cor.x,2),G.kmax);end
+                G.cor.cent.z   = zeros(size(G.cor.(x),1),size(G.cor.(x),2),G.kmax);
+      if P.xy3d;G.cor.cent.(x) = zeros(size(G.cor.(x),1),size(G.cor.(x),2),G.kmax);end
+      if P.xy3d;G.cor.cent.(y) = zeros(size(G.cor.(x),1),size(G.cor.(x),2),G.kmax);end
       for k = 1:G.kmax
                    G.cor.cent.z(:,:,k) = G.sigma_cent(k).*(G.cor.zwl - G.cor.dep) + G.cor.dep; % <<<<<
-         if P.xy3d;G.cor.cent.x(:,:,k) = G.cor.x;end
-         if P.xy3d;G.cor.cent.x(:,:,k) = G.cor.y;end
+         if P.xy3d;G.cor.cent.(x)(:,:,k) = G.cor.(x);end
+         if P.xy3d;G.cor.cent.(y)(:,:,k) = G.cor.(y);end
       end
    end
    if P.cen.cent
-                G.cen.cent.z= zeros(size(G.cen.x,1),size(G.cen.x,2),G.kmax);
-      if P.xy3d;G.cen.cent.x= zeros(size(G.cen.x,1),size(G.cen.x,2),G.kmax);;end
-      if P.xy3d;G.cen.cent.y= zeros(size(G.cen.x,1),size(G.cen.x,2),G.kmax);;end
+                G.cen.cent.z  = zeros(size(G.cen.(x),1),size(G.cen.(x),2),G.kmax);
+      if P.xy3d;G.cen.cent.(x)= zeros(size(G.cen.(x),1),size(G.cen.(x),2),G.kmax);;end
+      if P.xy3d;G.cen.cent.(y)= zeros(size(G.cen.(x),1),size(G.cen.(x),2),G.kmax);;end
       for k = 1:G.kmax
                    G.cen.cent.z(:,:,k) = G.sigma_cent(k).*(G.cen.zwl - G.cen.dep) + G.cen.dep;
-         if P.xy3d;G.cen.cent.x(:,:,k) = G.cen.x;end
-         if P.xy3d;G.cen.cent.y(:,:,k) = G.cen.y;end
+         if P.xy3d;G.cen.cent.(x)(:,:,k) = G.cen.(x);end
+         if P.xy3d;G.cen.cent.(y)(:,:,k) = G.cen.(y);end
       end
    end
 
    %% INTERFACES IN VERTICAL
-   %% ---------------------------------
+   %-----------------------------------
 
    if P.cor.intf
-                G.cor.intf.z= zeros(size(G.cor.x,1),size(G.cor.x,2),G.kmax+1);
-      if P.xy3d;G.cor.intf.x= zeros(size(G.cor.x,1),size(G.cor.x,2),G.kmax+1);end
-      if P.xy3d;G.cor.intf.y= zeros(size(G.cor.x,1),size(G.cor.x,2),G.kmax+1);end
+                G.cor.intf.z  = zeros(size(G.cor.(x),1),size(G.cor.(x),2),G.kmax+1);
+      if P.xy3d;G.cor.intf.(x)= zeros(size(G.cor.(x),1),size(G.cor.(x),2),G.kmax+1);end
+      if P.xy3d;G.cor.intf.(y)= zeros(size(G.cor.(x),1),size(G.cor.(x),2),G.kmax+1);end
       for k = 1:G.kmax+1
                    G.cor.intf.z(:,:,k) = G.sigma_intf(k).*(G.cor.zwl - G.cor.dep) + G.cor.dep; % <<<<<
-         if P.xy3d;G.cor.intf.x(:,:,k) = G.cor.x;end
-         if P.xy3d;G.cor.intf.y(:,:,k) = G.cor.y;end
+         if P.xy3d;G.cor.intf.(x)(:,:,k) = G.cor.(x);end
+         if P.xy3d;G.cor.intf.(y)(:,:,k) = G.cor.(y);end
       end
    end
    if P.cen.intf
-                G.cen.intf.z= zeros(size(G.cen.x,1),size(G.cen.x,2),G.kmax+1);
-      if P.xy3d;G.cen.intf.x= zeros(size(G.cen.x,1),size(G.cen.x,2),G.kmax+1);end
-      if P.xy3d;G.cen.intf.y= zeros(size(G.cen.x,1),size(G.cen.x,2),G.kmax+1);end
+                G.cen.intf.z  = zeros(size(G.cen.(x),1),size(G.cen.(x),2),G.kmax+1);
+      if P.xy3d;G.cen.intf.(x)= zeros(size(G.cen.(x),1),size(G.cen.(x),2),G.kmax+1);end
+      if P.xy3d;G.cen.intf.(y)= zeros(size(G.cen.(x),1),size(G.cen.(x),2),G.kmax+1);end
       for k = 1:G.kmax+1
-                   G.cen.intf.z(:,:,k) = G.sigma_intf(k).*(G.cen.zwl - G.cen.dep) + G.cen.dep;
-         if P.xy3d;G.cen.intf.x(:,:,k) = G.cen.x;end
-         if P.xy3d;G.cen.intf.y(:,:,k) = G.cen.y;end
+                   G.cen.intf.z(:,:,k)   = G.sigma_intf(k).*(G.cen.zwl - G.cen.dep) + G.cen.dep;
+         if P.xy3d;G.cen.intf.(x)(:,:,k) = G.cen.(x);end
+         if P.xy3d;G.cen.intf.(y)(:,:,k) = G.cen.(y);end
       end
    end
    
 elseif strmatch('Z-MODEL', G.layer_model)
 
 %% Z-MODEL
-%% ---------------------------------
+%-----------------------------------
 
    %% Calculate z vertical positions
-   %% ------------------------
+   %--------------------------
 
    G.z_intf    = G.ZK;
    G.z_cent    = corner2center1(G.ZK);
    
    %% Calculate layer number of bottom
-   %% ------------------------
+   %--------------------------
 
    for n=1:size(G.cen.dep,1)
    for m=1:size(G.cen.dep,2)
@@ -274,14 +284,14 @@ elseif strmatch('Z-MODEL', G.layer_model)
    G.cen.kbot_comments     = 'Vertical layer number in which the bottom resides with with k=1 just above ZBOT and k=kmax+1 just below ZTOP';
       
    %% Calculate layer number of waterlevel
-   %% ------------------------
+   %--------------------------
       
    for n=1:size(G.cen.zwl,1)
    for m=1:size(G.cen.zwl,2)
       
       %% from trisim 3.55 onwards
-      %% ZTOP is fixed at the *.mdf file value, and floats upward with any higher waterlevels
-      %% rather then being mirrored internaly to get twice the water depth.
+      %  ZTOP is fixed at the *.mdf file value, and floats upward with any higher waterlevels
+      %  rather then being mirrored internaly to get twice the water depth.
       
       ztop_local   = max(G.z_intf(end),G.cen.zwl(n,m)); 
       z_intf_local = [G.z_intf(1:end-1) ztop_local];
@@ -301,7 +311,7 @@ elseif strmatch('Z-MODEL', G.layer_model)
        
 
    %% CENTRES IN VERTICAL
-   %% ---------------------------------
+   %-----------------------------------
    
 %   if P.cor.cent
 %   
@@ -324,7 +334,7 @@ elseif strmatch('Z-MODEL', G.layer_model)
 %   end
  
    %% INTERFACES IN VERTICAL
-   %% ---------------------------------
+   %-----------------------------------
  
 %   if P.cor.intf
 %
@@ -396,7 +406,7 @@ elseif strmatch('Z-MODEL', G.layer_model)
    
       G.cen.intf_comment = 'The coordinates of the layer interfaces at the cell centers.';
    
-                G.cen.intf.z= zeros(size(G.cen.x,1),size(G.cen.x,2),G.kmax+1);
+                G.cen.intf.z= zeros(size(G.cen.(x),1),size(G.cen.(x),2),G.kmax+1);
 
       for n=1:size(G.cen.zwl,1)
       for m=1:size(G.cen.zwl,2)
@@ -411,33 +421,33 @@ elseif strmatch('Z-MODEL', G.layer_model)
          else
          
             %% the local ZTOP is equal to the hightes input ZTOP
-            %% or the waterlevel if that is higher 
-            %% (so that the highest interface floats upward)
-            %% --------------------------------
+            %  or the waterlevel if that is higher 
+            %  (so that the highest interface floats upward)
+            %----------------------------------
             
             G.cen.intf.z(n,m,:)                = G.z_intf;
 
             %% The waterlevel is always by definition the uppermost active layer
-            %% either above ZTOP (because it floats upward), 
-            %% or below ZTOP because the waterlevel is below ZTOP. Therefore
-            %% >> ztop_local = max( G.z_intf(end) , G.cen.zwl(n,m) );
-            %% irrelevant
-            %% --------------------------------
+            %  either above ZTOP (because it floats upward), 
+            %  or below ZTOP because the waterlevel is below ZTOP. Therefore
+            %  >> ztop_local = max( G.z_intf(end) , G.cen.zwl(n,m) );
+            %  irrelevant
+            %----------------------------------
 
             G.cen.intf.z(n,m,G.cen.ktop(n,m)+1    ) =  G.cen.zwl(n,m);
             
             %% except when the waterlevel is not in the upper layer, but below that,
-            %% so we have to remove all layers above that
-            %% and put the upper active interface at the waterlevel
-            %% --------------------------------
+            %  so we have to remove all layers above that
+            %  and put the upper active interface at the waterlevel
+            %----------------------------------
 
             if               G.cen.ktop(n,m) < G.kmax
             G.cen.intf.z(n,m,G.cen.ktop(n,m)+2:end)  = NaN;
             end
 
             %% the local ZBOT is equal to the actual depth,
-            %% while below rthat is inactive
-            %% --------------------------------
+            %  while below rthat is inactive
+            %----------------------------------
 
             G.cen.intf.z(n,m,  G.cen.kbot(n,m)  )  = G.cen.dep(n,m);
             
@@ -450,11 +460,11 @@ elseif strmatch('Z-MODEL', G.layer_model)
       end % n
       end % m   
    %
-   %   if P.xy3d;G.cen.intf.x= zeros(size(G.cen.x,1),size(G.cen.x,2),G.kmax+1);end
-   %   if P.xy3d;G.cen.intf.y= zeros(size(G.cen.x,1),size(G.cen.x,2),G.kmax+1);end
+   %   if P.xy3d;G.cen.intf.(x)= zeros(size(G.cen.(x),1),size(G.cen.(x),2),G.kmax+1);end
+   %   if P.xy3d;G.cen.intf.(y)= zeros(size(G.cen.(x),1),size(G.cen.(x),2),G.kmax+1);end
    %   for k = 1:G.kmax+1
-   %      if P.xy3d;G.cen.intf.x(:,:,k) = G.cen.x;end
-   %      if P.xy3d;G.cen.intf.y(:,:,k) = G.cen.y;end
+   %      if P.xy3d;G.cen.intf.(x)(:,:,k) = G.cen.(x);end
+   %      if P.xy3d;G.cen.intf.(y)(:,:,k) = G.cen.(y);end
    %   end
 
    end % if P.cen.intf
@@ -462,7 +472,7 @@ elseif strmatch('Z-MODEL', G.layer_model)
 end
 
 %% Return variables
-%% ------------------------
+%--------------------------
 
    if nargout == 1
       varargout = {G};

@@ -18,11 +18,11 @@ function varargout=vs_meshgrid2dcorcen(varargin),
 %         n+1          |       |       |      
 %                  x   +   x   +   x   +      
 %        - - -         |       |       |      
-%               ---+---Q===#===Q---+---o      
+%               ---+---Q%%%#%%%Q---+---o      
 %         n            %:::::::%    :::|      
 %                  x   #:::@:::#   x:::+      
 %        - - -         %:::::::%    :::|      
-%               ---+---Q===#===Q---+---o      
+%               ---+---Q%%%#%%%Q---+---o      
 %         n-1          |       |       |      
 %                  x   +   x   +   x   +      
 %        - - -         |       |       |      
@@ -63,11 +63,12 @@ function varargout=vs_meshgrid2dcorcen(varargin),
 %  * 'dpsopt'   method to calculate depths at center points  (only valid when 'mdf' isempty)
 %  * 'dpuopt'   method to calculate depths at velocity faces (only valid when 'mdf' isempty)
 %  * 'timestep' timestep for time dependent wave grid (default 1)
+%  * 'latlon'   labels x to lon, and y to lat if coordinate system is spherical (default 1)
 %
 %  Implemented are:
 %  - comfile 
 %  - trimfile
-%  - wavmfile (hwgxy), all co-ordimnates are read, not subset, and only cor, u and v
+%  - wavmfile (hwgxy), all co-ordinates are read, not subset, and only cor, u and v
 %
 % Remarks:
 %  * The depth is the initial depth.
@@ -131,7 +132,7 @@ NFSstruct      = varargin{1};
    end
    
 %% Define staggered ElementIndices
-%% -----------------------
+%-------------------------
 
    nz = ElementIndex{1}; % indices centers
    mz = ElementIndex{2}; % indices centers
@@ -153,10 +154,10 @@ NFSstruct      = varargin{1};
    kz  = 0;
    end
    
-   mu = [mz(1)-1,mz]; % indices u faces % add one before
-   nu = nz          ; % indices u faces 
-   mv = mz          ; % indices v faces 
-   nv = [nz(1)-1,nz]; % indices v faces % add one before
+   mu   = [mz(1)-1,mz]; % indices u faces % add one before
+   nu   = nz          ; % indices u faces 
+   mv   = mz          ; % indices v faces 
+   nv   = [nz(1)-1,nz]; % indices v faces % add one before
    
    mcor = [mz(1)-1,mz];% indices v faces % add one before 
    ncor = [nz(1)-1,nz];% indices v faces % add one before
@@ -169,7 +170,7 @@ NFSstruct      = varargin{1};
    %disp(['n v: ',num2str(nv)])
 
 %% READ POSITION OF THESE GRID POINTS;
-%% ----------------------------------
+%------------------------------------
 
 P.face         = 1; % calculate      u.x, u.y, v.x, v.y
 P.geometry     = 1; % calculate/load guu, guv, gvu, gvv
@@ -178,9 +179,10 @@ P.mdf          = [];
 P.dpsopt       = [];% method to calculate depth at cen  from cor.
 P.dpuopt       = [];% method to calculate depth at face from cor/cen.
 P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
+P.latlon       = 1; % labels x to lon, and y to lat if spherical
 
 %% Arguments
-%% -----------------------------------
+%-------------------------------------
    
    while iargin<=nargin,
      if    isstruct(varargin{iargin}),
@@ -188,13 +190,14 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
      elseif  ischar(varargin{iargin}),
        switch lower(varargin{iargin})
        
-       case 'geometry';iargin=iargin+1;P.geometry = varargin{iargin};
        case 'face'    ;iargin=iargin+1;P.face     = varargin{iargin};
+       case 'geometry';iargin=iargin+1;P.geometry = varargin{iargin};
        case 'area'    ;iargin=iargin+1;P.area     = varargin{iargin};
        case 'mdf'     ;iargin=iargin+1;P.mdf      = varargin{iargin};
        case 'dpsopt'  ;iargin=iargin+1;P.dpsopt   = varargin{iargin};
        case 'dpuopt'  ;iargin=iargin+1;P.dpuopt   = varargin{iargin};
        case 'timestep';iargin=iargin+1;P.timestep = varargin{iargin};
+       case 'latlon'  ;iargin=iargin+1;P.latlon   = varargin{iargin};
        
        otherwise
          error(sprintf('Invalid string argument: %s.',varargin{i}));
@@ -214,7 +217,7 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
    end;
    
 %% Read depth interpolation options from input file
-%% -----------------------------------
+%-------------------------------------
 
    if ~isempty(P.mdf),
      mdf      = delft3d_io_mdf('read',P.mdf);
@@ -229,7 +232,7 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
    switch vs_type(NFSstruct),
 
 %% comfile
-%% -----------------------------------
+%-------------------------------------
 
    case {'Delft3D-com','Delft3D-tram','Delft3D-botm'},
 
@@ -277,15 +280,15 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
         end
      end
      
-     G.cor.x       =  vs_get(NFSstruct,'GRID',     'XCOR' ,{ncor,mcor},'quiet');%'
-     G.cor.y       =  vs_get(NFSstruct,'GRID',     'YCOR' ,{ncor,mcor},'quiet');%'
-     G.cen.x       =  vs_get(NFSstruct,'TEMPOUT',  'XWAT' ,{nz  ,mz  },'quiet');%'
-     G.cen.y       =  vs_get(NFSstruct,'TEMPOUT',  'YWAT' ,{nz  ,mz  },'quiet');%'
+     G.cor.(x)     =  vs_get(NFSstruct,'GRID',     'XCOR' ,{ncor,mcor},'quiet');%'
+     G.cor.(y)     =  vs_get(NFSstruct,'GRID',     'YCOR' ,{ncor,mcor},'quiet');%'
+     G.cen.(x)     =  vs_get(NFSstruct,'TEMPOUT',  'XWAT' ,{nz  ,mz  },'quiet');%'
+     G.cen.(y)     =  vs_get(NFSstruct,'TEMPOUT',  'YWAT' ,{nz  ,mz  },'quiet');%'
      
      G.cen.alfa    =  vs_get(NFSstruct,'GRID',     'ALFAS',{nz  ,mz  },'quiet');%'
 
 %% TRIMFILE
-%% -----------------------------------
+%-------------------------------------
 
    case 'Delft3D-trim',
 
@@ -296,7 +299,7 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
      G.dryflp      =  vs_get(NFSstruct,'map-const','DRYFLP'           ,'quiet');
 
      %% Checks for Z model legacy
-     %% -----------------------------------
+     %-------------------------------------
      if ~isempty(vs_get_elm_size(NFSstruct,'LAYER_MODEL'))
       G.layer_model =  vs_let(NFSstruct,'map-const','LAYER_MODEL'      ,'quiet');
       G.layer_model =  permute(G.layer_model,[1 3 2]);
@@ -321,7 +324,7 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
      % depfile       = -vs_get(NFSstruct,'map-const','DP0'  ,{ncor,mcor},'quiet')
 
      %% Read center data (if any)
-     %% ------------------------
+     %--------------------------
      DPS0 = 0;
      for ielm =1:length(NFSstruct.ElmDef)
         if strcmpi(NFSstruct.ElmDef(ielm).Name,'DPS0')
@@ -353,54 +356,62 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
 %    DPS0            REAL    *  4                  [   M   ]        ( 7 6 )
 %        Initial bottom depth at zeta points (positive down)     
 
-     G.cor.x       =  vs_get(NFSstruct,'map-const','XCOR' ,{ncor,mcor},'quiet');%'
-     G.cor.y       =  vs_get(NFSstruct,'map-const','YCOR' ,{ncor,mcor},'quiet');%'
-     G.cen.x       =  vs_get(NFSstruct,'map-const','XZ'   ,{nz  ,mz  },'quiet');%'
-     G.cen.y       =  vs_get(NFSstruct,'map-const','YZ'   ,{nz  ,mz  },'quiet');%'
+     if P.latlon & ~any(strfind(G.coordinates,'CARTESIAN'))
+        x = 'lon';
+        y = 'lat';
+     else
+        x = 'x';
+        y = 'y';
+     end
+
+     G.cor.(x)     =  vs_get(NFSstruct,'map-const','XCOR' ,{ncor,mcor},'quiet');%'
+     G.cor.(y)     =  vs_get(NFSstruct,'map-const','YCOR' ,{ncor,mcor},'quiet');%'
+     G.cen.(x)     =  vs_get(NFSstruct,'map-const','XZ'   ,{nz  ,mz  },'quiet');%'
+     G.cen.(y)     =  vs_get(NFSstruct,'map-const','YZ'   ,{nz  ,mz  },'quiet');%'
      
      G.cen.alfa    =  vs_get(NFSstruct,'map-const','ALFAS',{nz  ,mz  },'quiet');%'
       
 %% wavm file
-%% -----------------------------------
+%-------------------------------------
 
    case {'Delft3D-hwgxy'},
 
      disp('For hwgxy all co-ordimnates are read, not subset.')
      % NOTE THAT M AND N ARE SWAPPED HRE TO GET SAME M and N AS FLOW GRID !!!
-     G.cor.x       =  vs_get(NFSstruct,'map-series',{1},'XP'  ,{0,0},'quiet')';
-     G.cor.y       =  vs_get(NFSstruct,'map-series',{1},'YP'  ,{0,0},'quiet')';
+     G.cor.(x)     =  vs_get(NFSstruct,'map-series',{1},'XP'  ,{0,0},'quiet')';
+     G.cor.(y)     =  vs_get(NFSstruct,'map-series',{1},'YP'  ,{0,0},'quiet')';
      G.cor.mask    =  vs_get(NFSstruct,'map-series',{1},'CODE',{0,0},'quiet')';
      
-     G.cor.x(~G.cor.mask) = NaN;
-     G.cor.y(~G.cor.mask) = NaN;
+     G.cor.(x)(~G.cor.mask) = NaN;
+     G.cor.(y)(~G.cor.mask) = NaN;
      
   otherwise,
     error('Invalid NEFIS file for this action.');
   end;
 
 %% Calculate masks
-%% -----------------------------------
+%-------------------------------------
 
    switch vs_type(NFSstruct),
    case {'Delft3D-com','Delft3D-tram','Delft3D-botm',...
          'Delft3D-trim'}, % not wave
 
       %% 0/1 Non-active/Active velocity point (fixed)
-      %% -----------------------------------
+      %-------------------------------------
          u.KCU (  u.KCU  ==0 ) = nan;
          v.KCV (  v.KCV  ==0 ) = nan;
 
       %% 0/1/2 Non-active/Active/Boundary water level point (fixed)
-      %% -----------------------------------
+      %-------------------------------------
          cen.KCS (  cen.KCS  ==0 ) = nan;
          cen.KCS (  cen.KCS  ==2 ) = nan;
 
       %% -1/1 Non-active/Active bottom point (fixed)
-      %% -----------------------------------
+      %-------------------------------------
          cor.CODB(  cor.CODB ==-1) = nan;
  
       %% -1/1 Non-active/Active water level point (fixed)
-      %% -----------------------------------
+      %-------------------------------------
          cen.CODW(  cen.CODW ==-1) = nan; % = now G.KCS
 
          if P.logicalmask
@@ -413,26 +424,26 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
          end
          
       %% Calculate grid properties
-      %% velocity points are correct.
-      %% They are nan when a point is dry.
-      %% tested with thindam scripts of Bert Jagers
-      %% AND
+      %  velocity points are correct.
+      %  They are nan when a point is dry.
+      %  tested with thindam scripts of Bert Jagers
+      %  AND
          
-      %% Apply masks
-      %% Do not set the inactive corner points to nan before calculating
-      %% the velocity points, otherwise coordinates at your boundayr get lost.
-      %% -----------------------------------
+      %  Apply masks
+      %  Do not set the inactive corner points to nan before calculating
+      %  the velocity points, otherwise coordinates at your boundayr get lost.
+      %-------------------------------------
 
-         G.cen.x(~(cen.CODW)) = nan;
-         G.cen.y(~(cen.CODW)) = nan;
+         G.cen.(x)(~(cen.CODW)) = nan;
+         G.cen.(y)(~(cen.CODW)) = nan;
          
-         G.cor.x(~(cor.CODB)) = nan;
-         G.cor.y(~(cor.CODB)) = nan;
+         G.cor.(x)(~(cor.CODB)) = nan;
+         G.cor.(y)(~(cor.CODB)) = nan;
          
 
       %% Redefine masks
-      %% Set overall masks as [ones and NaNs] to allow for muliplication
-      %% -----------------------------------
+      %  Set overall masks as [ones and NaNs] to allow for muliplication
+      %-------------------------------------
          
          G.cen.mask            = ones(size(cen.KCS));
          G.cen.mask(~cen.KCS)  = nan;
@@ -451,7 +462,7 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
          
 
 %% Calculate depths at velocity points
-%% -----------------------------------
+%-------------------------------------
 
      G.u.dep = nan.*ones(size(G.u.mask));
      G.v.dep = nan.*ones(size(G.v.mask));
@@ -489,11 +500,11 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
    end;
 
 %% Calculate velocity points
-%% -----------------------------------
+%-------------------------------------
 
    if P.face
 
-      [G.u.x, G.u.y, G.v.x, G.v.y] = grid_corner2face(G.cor.x,G.cor.y,2);
+      [G.u.(x), G.u.(y), G.v.(x), G.v.(y)] = grid_corner2face(G.cor.(x),G.cor.(y),2);
       
       % DO NOT SET TEMPORARY DRY VELOCITY POINTS TO NAN 
       % NOR BOUNDARY POINTS
@@ -507,14 +518,14 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
    end
    
 %% Load grid cell areas
-%% -----------------------------------
+%-------------------------------------
    
    if P.area
    
       switch vs_type(NFSstruct),
       
       %% comfile
-      %% -----------------------------------
+      %-------------------------------------
       case {'Delft3D-com','Delft3D-tram','Delft3D-botm'},
       
          G.cen.area = vs_let(NFSstruct,'GRID','GSQS',{nz,mz},'quiet');
@@ -522,10 +533,10 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
          G.cen.area_comment = 'This area is incorrectly calculated by Delft3D-FLOW,and is not equal to the area of the two constituting triangles.';
       
       %% trimfile, wavm file
-      %% -----------------------------------
+      %-------------------------------------
       case {'Delft3D-trim','Delft3D-hwgxy'}
       
-         G.cen.area = grid_area(G.cor.x,G.cor.y);
+         G.cen.area = grid_area(G.cor.(x),G.cor.(y));
          G.cen.area_comment = 'This area is calculated exactly as the area of the two constituting triangles, whereas Delft3D-FLOW uses an approximation.';
       
       otherwise,
@@ -535,14 +546,14 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
    end
 
 %% Load grid cell sizes
-%% -----------------------------------
+%-------------------------------------
    
    if P.geometry
    
       switch vs_type(NFSstruct),
       
       %% comfile
-      %% -----------------------------------
+      %-------------------------------------
       case {'Delft3D-com','Delft3D-tram','Delft3D-botm'},
       
          G.u.gvu = vs_let(NFSstruct,'GRID','GVU',{nu,mu},'quiet');
@@ -558,11 +569,11 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
          G.v.gvv = permute(G.v.gvv,[2 3 1]);
 
       %% trimfile, wavm file
-      %% -----------------------------------
+      %-------------------------------------
       case {'Delft3D-trim','Delft3D-hwgxy'}
       
          [G.v.guv,G.u.gvu,...
-          G.u.guu,G.v.gvv] = grid_corner2perimeter(G.cor.x,G.cor.y);
+          G.u.guu,G.v.gvv] = grid_corner2perimeter(G.cor.(x),G.cor.(y));
 
          %% At the boundary the comfile gives realistic boundary-perpendicular distances
          %% while with this method they are undefined (NaN).
@@ -572,8 +583,8 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
       end;
       
       %% Calculate grid distance at center points
-      %% (needed for du_dksi at center points)
-      %% -----------------------------------
+      %  (needed for du_dksi at center points)
+      %-------------------------------------
 
       G.cen.guu = (G.u.guu(:      ,1:end-1) + G.u.guu(:    ,2:end))./2; % average in m-direction, is 2nd dim
       G.cen.gvv = (G.v.gvv(1:end-1,:      ) + G.v.gvv(2:end,:    ))./2; % average in n-direction, is 1st dim
@@ -582,7 +593,7 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
       % G.cen.gvv should be G.cen.gv as 2nd letter is direction
 
       %% Apply masks
-      %% -----------
+      %-------------
 
       % DO NOT SET TEMPORARY DRY VELOCITY POINTS TO NAN 
       % NOR BOUNDARY POINTS
@@ -596,14 +607,14 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
 
 
 %% rembember input file as meta info
-%% for later version checking
-%% ------------------------
+%  for later version checking
+%--------------------------
 
    %G.NFSstruct = NFSstruct;
     G.FileName = NFSstruct.FileName;
 
 %% Return variables
-%% ------------------------
+%--------------------------
    
    if nargout == 1
       varargout = {G};
