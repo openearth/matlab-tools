@@ -51,6 +51,7 @@ function teamcityrunoettests(varargin)
 % $HeadURL$
 % $Keywords: $
 
+try
 %% initiate variables:
 maindir = oetroot;
 targetdir = fullfile(oetroot,'teamcitytesthtml');
@@ -88,3 +89,7 @@ fclose(fid);
 
 %% Remove template files
 delete(fullfile(targetdir,'mxdom2defaulthtml.xsl'));
+
+catch me
+	disp('something went wrong');
+end
