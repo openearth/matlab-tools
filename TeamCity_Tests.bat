@@ -17,7 +17,7 @@ rem Call matlab
 rem http://www.mathworks.com/support/solutions/data/1-16B8X.html
 rem -----------------------------------
 :oet_perform
-matlab -nosplash -nodesktop -minimize -r "run('oetsettings');surf(peaks);print('tst.png','-dpng');exit;" -logfile mlogfile
+matlab -nosplash -nodesktop -minimize -r "run('F:\OpenEarthTools\oetsettings');surf(peaks);print('tst.png','-dpng');exit;" -logfile mlogfile
 echo 'teamcity OK'
 
 rem Remove drive with matlab
