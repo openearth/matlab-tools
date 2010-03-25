@@ -1114,6 +1114,11 @@ classdef mtest < handle
                 obj.testresult = false;
                 error('Mtest:WrongTestdef','This test does not seem to be working due to a missing function declaration.');
             end
+            
+            if ~isnan(obj.testresult) && ~islogical(obj.testresult)
+                obj.testresult = false;
+            end
+            
             %% cd back
             cd(cdtemp);
             
