@@ -25,7 +25,7 @@ matlab -nosplash -nodesktop -minimize -r "run('oetsettings');teamcityrunoettests
 
 rem hold reporting until matlab status file has been deleted
 :loopmatlabbusy
-If exist matlabruns.busy then goto loopmatlabbusy
+If exist matlabruns.busy goto loopmatlabbusy
 
 echo 'teamcity OK'
 
