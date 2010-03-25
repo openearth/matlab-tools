@@ -17,7 +17,16 @@ rem Call matlab
 rem http://www.mathworks.com/support/solutions/data/1-16B8X.html
 rem -----------------------------------
 :oet_perform
-matlab -nosplash -nodesktop -minimize -r "run('oetsettings');teamcityrunoettests;exit;" -logfile mlogfile.log
+
+rem Create a temp file
+echo Matlab is running > matlabruns.busy
+
+matlab -nosplash -nodesktop -minimize -r "run('oetsettings');teamcityrunoettests;delete('matlabruns.busy');exit;" -logfile mlogfile.log
+
+rem hold reporting until matlab status file has been deleted
+:loopmatlabbusy
+If exist matlabruns.busy then goto loopmatlabbusy
+
 echo 'teamcity OK'
 
 rem Remove drive with matlab
