@@ -573,12 +573,14 @@ classdef mtestengine < handle
                     run(fullfile(mfiles{ifiles,1},mfiles{ifiles,2}));
                 end
             end
+            
             %% try opening index.html or home.html
-            if exist(fullfile(obj.targetdir,'index.html'),'file')
-                winopen(fullfile(obj.targetdir,'index.html'));
-            elseif exist(fullfile(obj.targetdir,'home.html'),'file')
-                winopen(fullfile(obj.targetdir,'home.html'));
-            end
+            % if exist(fullfile(obj.targetdir,'index.html'),'file')
+            %     winopen(fullfile(obj.targetdir,'index.html'));
+            % elseif exist(fullfile(obj.targetdir,'home.html'),'file')
+            %     winopen(fullfile(obj.targetdir,'home.html'));
+            % end
+            
             %% Set output
             if nargout == 1
                 varargout = {obj};
