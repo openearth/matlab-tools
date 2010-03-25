@@ -1264,7 +1264,7 @@ classdef mtestcase < handle
             %% publish file
             tempcd = cd;
             cd(tempdir)
-            if datenum(version('-date')) >= datenum(2009,08,12)
+            if datenum(version('-date')) >= datenum(2009,08,12) && datenum(version('-date')) < datenum(2010,01,01)
                 intwarning('off');
             end
             publish(tempfilename,publishoptions);
