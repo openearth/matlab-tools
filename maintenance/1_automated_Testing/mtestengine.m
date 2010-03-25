@@ -303,7 +303,7 @@ classdef mtestengine < handle
             
             %% Teamcity message
             if obj.verbose
-                system('echo ##teamcity[testSuiteStarted name = ''OpenEarthTools - Tests'']');
+                dos('echo ##teamcity[testSuiteStarted name = ''OpenEarthTools - Tests'']');
             end
             
             %% get current dir
@@ -314,7 +314,7 @@ classdef mtestengine < handle
             %% cataloguq tests if not done already
             if ~obj.testscatalogued
                 if obj.verbose
-                    system('echo ##teamcity[progressMessage ''Collecting tests'']');
+                    dos('echo ##teamcity[progressMessage ''Collecting tests'']');
                 end
                 obj.catalogueTests;
             end
