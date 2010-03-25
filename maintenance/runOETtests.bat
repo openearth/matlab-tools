@@ -5,11 +5,6 @@ rem <http://www.jetbrains.com/teamcity/>
 
 rem TO DO: put entire mapping command in environment variable %openearth_map%
 
-rem Settings
-rem -----------------------------------
-set     matlab_path=
-set openearth_mpath=D:\checkouts\OpenEarthTools\matlab\
-
 rem Map drive with matlab
 rem -----------------------------------
 if exist %openearth_password% goto oet_map
