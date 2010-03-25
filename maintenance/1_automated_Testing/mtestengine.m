@@ -301,6 +301,11 @@ classdef mtestengine < handle
             %
             %               %   See also mtestengine mtestengine.mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
             
+            %% Teamcity message
+            if obj.verbose
+                system('echo ##teamcity[testSuiteStarted name = ''OpenEarthTools - Tests'']');
+            end
+            
             %% get current dir
             startdir = cd;
             
@@ -308,6 +313,9 @@ classdef mtestengine < handle
             varargout = {};
             %% cataloguq tests if not done already
             if ~obj.testscatalogued
+                if obj.verbose
+                    system('echo ##teamcity[progressMessage ''Collecting tests'']');
+                end
                 obj.catalogueTests;
             end
             
