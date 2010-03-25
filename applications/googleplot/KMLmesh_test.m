@@ -38,7 +38,7 @@ function testresult = KMLmesh_test()
 
 disp(['... running test:',mfilename])
 
-%% $Description (Name = KMLline)
+%% $Description (Name = KMLmesh)
 % Publishable code that describes the test.
 
 %% $RunCode
