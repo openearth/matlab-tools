@@ -462,7 +462,7 @@ classdef mtestengine < handle
                     obj.tests(itests).testname = obj.tests(itests).filename;
                 end
                 testname = obj.tests(itests).testname;
-                filename = obj.tests(itests).filename;
+                filename = [obj.tests(itests).filename, '.m'];
                 if obj.verbose
                     postmessage('testSuiteStarted',obj.postteamcity, 'name',filename);
                     postmessage('testStarted',obj.postteamcity,...
