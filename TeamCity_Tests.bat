@@ -1,4 +1,4 @@
-echo on
+echo off
 rem Build script to test OpenEarthTools matlab scripts
 rem with TeamCity Distributed Build Management and Continuous Integration Server
 rem <http://www.jetbrains.com/teamcity/>

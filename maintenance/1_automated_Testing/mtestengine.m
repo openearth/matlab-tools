@@ -312,19 +312,25 @@ classdef mtestengine < handle
             
             %% initiate output
             varargout = {};
+            
             %% cataloguq tests if not done already
             if ~obj.testscatalogued
                 if obj.verbose
-                    dos('echo ##teamcity[progressMessage ''Collecting tests'']');
+                    postmessage('progressMessage',obj.postteamcity, 'Collecting tests');
                 end
                 obj.catalogueTests;
+                if obj.verbose
+                    postmessage('progressMessage',obj.postteamcity, ['Collected ' length(obj.tests) ' tests']);
+                end
             end
             
             %% Check if we even have tests
             if isempty(obj.tests)
                 warning('MtestEngine:NoTest','There were no tests in the maindir or one of the subdirs');
+                postmessage('progressMessage',obj.postteamcity, ['Collected ' length(obj.tests) ' tests']);
                 return
             end
+                        
             %% subtract props
             maxwidth = [];
             id = find(strcmp(varargin,'maxwidth'));
@@ -337,6 +343,9 @@ classdef mtestengine < handle
                 maxheight = varargin{id+1};
             end
             %% clear and prepare target dir
+            if obj.verbose
+                postmessage('progressMessage',obj.postteamcity, 'Preparing output files');
+            end
             if ~isdir(obj.targetdir)
                 mkdir(obj.targetdir);
             else
@@ -432,6 +441,7 @@ classdef mtestengine < handle
             end
             
             if obj.verbose
+                postmessage('progressMessage',obj.postteamcity, ['Started running tests']);
                 disp('## start running tests ##');
             end
             %% Check profiler
@@ -451,6 +461,9 @@ classdef mtestengine < handle
             for itests = 1:length(obj.tests)
                 %% Display progress
                 if obj.verbose
+                    postmessage('testStarted',obj.postteamcity,...
+                        'name',obj.tests(itests).testname,...
+                        'captureStandardOutput','true');
                     disp([' ' num2str(itests) '. ' obj.tests(itests).testname]);
                 end
                 %% set options
@@ -473,18 +486,37 @@ classdef mtestengine < handle
                             'resdir',fullfile(obj.targetdir,'html'),...
                             'stylesheet',publishstylesheet);
                     end
+                    if ~isnan(obj.tests(itests).testresult) && ~obj.tests(itests).testresult
+                        % test failed
+                        if obj.verbose
+                            postmessage('testFailed',obj.postteamcity,...
+                                'name',obj.tests(itests).testname,...
+                                'message','Test result was negative');
+                        end
+                    end
                 catch me %#ok<NASGU>
                     cd(startdir);
                     if isdir(obj.tests(itests).rundir)
                         fclose('all');
                         rmdir(obj.tests(itests).rundir,'s');
                     end
+                    % test failed, wrong test definition
+                    if obj.verbose
+                        postmessage('testFailed',obj.postteamcity,...
+                            'name',obj.tests(itests).testname,...
+                            'message','Error while reading or executing the test. There could be an error in either the test definition or the actual test code');
+                    end
                     wrongtests(itests)=true;
                     obj.wrongtestdefs{end+1} = fullfile(obj.tests(itests).filepath,[obj.tests(itests).filename '.m']);
                 end
+                if obj.verbose
+                    postmessage('testFinished',obj.postteamcity,...
+                        'name',obj.tests(itests).testname,...
+                        'duration',num2str(round(obj.tests(itests).time*1000)));
+                end
+                newfigs = findobj('Type','figure');
+                close(newfigs(~ismember(newfigs,existingfigs)));
             end
-            newfigs = findobj('Type','figure');
-            close(newfigs(~ismember(newfigs,existingfigs)));
             
             obj.tests(wrongtests) = [];            
             %% Get profiler information
@@ -493,6 +525,9 @@ classdef mtestengine < handle
             end
             %% print coverage html pages
             if obj.includecoverage
+                if obj.verbose
+                    postmessage('progressMessage',obj.postteamcity, 'Printing test coverage');
+                end
                 %% create coverage dir
                 if ~isdir(fullfile(obj.targetdir,'html','fcncoverage'))
                     mkdir(fullfile(obj.targetdir,'html','fcncoverage'));
@@ -557,6 +592,9 @@ classdef mtestengine < handle
             %% return the previous searchpath
             path(pt);
             %% loop all tpl files and fill keywords
+            if obj.verbose
+                postmessage('progressMessage',obj.postteamcity, 'Printing test result and documentation to html');
+            end
             for itpl = 1:size(tplfiles,1)
                 tplfilename = fullfile(tplfiles{itpl,1},tplfiles{itpl,2});
                 
@@ -576,11 +614,13 @@ classdef mtestengine < handle
             end
             
             %% try opening index.html or home.html
-            % if exist(fullfile(obj.targetdir,'index.html'),'file')
-            %     winopen(fullfile(obj.targetdir,'index.html'));
-            % elseif exist(fullfile(obj.targetdir,'home.html'),'file')
-            %     winopen(fullfile(obj.targetdir,'home.html'));
-            % end
+            if ~obj.postteamcity
+                % if exist(fullfile(obj.targetdir,'index.html'),'file')
+                %     winopen(fullfile(obj.targetdir,'index.html'));
+                % elseif exist(fullfile(obj.targetdir,'home.html'),'file')
+                %     winopen(fullfile(obj.targetdir,'home.html'));
+                % end
+            end
             
             %% Set output
             if nargout == 1
@@ -588,6 +628,11 @@ classdef mtestengine < handle
             end
             %% Return to initial dir
             cd(startdir);
+            
+            %% Finish tests
+            if obj.verbose
+                postmessage('testSuiteFinished',obj.postteamcity, 'name','OpenEarthTools - Tests');
+            end
         end
     end
     methods (Hidden=true)
@@ -1177,9 +1222,15 @@ end
 
 function postmessage(message,postteamcity,varargin)
 if postteamcity
-    teamcityString = ['echo ##teamcity[', message, ' '];
-    for ivararg = 1:2:length(varargin)
-        teamcityString = cat(2,teamcityString,varargin{ivararg},'=''', varargin{ivararg+1},'''');
+    teamcityString = ['##teamcity[', message, ' '];
+    if nargin/2~=round(nargin/2)
+        for ivararg = 1:length(varargin)
+            teamcityString = cat(2,teamcityString,varargin{ivararg},' ');
+        end
+    else
+        for ivararg = 1:2:length(varargin)
+            teamcityString = cat(2,teamcityString,varargin{ivararg},'=''', varargin{ivararg+1},'''',' ');
+        end
     end
     teamcityString = cat(2,teamcityString,']');
     dlmwrite('teamcitymessage.matlabtemp',...
