@@ -512,7 +512,7 @@ classdef mtestengine < handle
                     postmessage('testFinished',obj.postteamcity,...
                         'name',obj.tests(itests).testname,...
                         'duration',num2str(round(obj.tests(itests).time*1000)));
-                    postmessage('testSuiteStarted',obj.postteamcity, 'name',obj.tests(itests).filename);
+                    postmessage('testSuiteFinished',obj.postteamcity, 'name',obj.tests(itests).filename);
                 end
                 newfigs = findobj('Type','figure');
                 close(newfigs(~ismember(newfigs,existingfigs)));
@@ -1217,10 +1217,18 @@ end
 
 function postmessage(message,postteamcity,varargin)
 if postteamcity
+    h = tic;
+    while exist('teamcitymessage.matlab','file')
+        pause(0.001);
+        if toc(h) > 1
+            delete('teamcitymessage.matlab');
+        end
+    end
+    
     teamcityString = ['##teamcity[', message, ' '];
     if nargin/2~=round(nargin/2)
         for ivararg = 1:length(varargin)
-            teamcityString = cat(2,teamcityString,varargin{ivararg},' ');
+            teamcityString = cat(2,teamcityString,'''',varargin{ivararg},'''');
         end
     else
         for ivararg = 1:2:length(varargin)
