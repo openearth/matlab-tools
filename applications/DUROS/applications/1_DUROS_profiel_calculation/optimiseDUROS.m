@@ -275,24 +275,33 @@ solutionprecision = min(diff([Volume(iterid) ProfileFluct])); % precision is the
 if ~SolutionPossibleWithinBoundaries && abs(precision) < abs(solutionprecision)
     % tweede conditie wellicht overbodig...(precisie is per definitie niet gehaald als er geen oplossing is)??
     msgs = writemessage('get');
-    SeawardBoundaryBasedOnWL = any([msgs{:,1}]==14);
-    if iterid==1 && SeawardBoundaryBasedOnWL
+    SeawardBoundaryBasedOnWLOrProfileShape = any(ismember([msgs{:,1}],[14 22]));
+    if iterid==1 && SeawardBoundaryBasedOnWLOrProfileShape
         result = result(iterid);
+        result.info.ID = 'No Erosion';
         result.info.x0 = x0(iterid);
         result.info.precision = 0;
         result.info.iter = Iter;
         result.info.time = toc;
         result.info.resultinboundaries = true;
-        x0maxid = find(xInitial==x0max);
-        [result.VTVinfo.Xp result.VTVinfo.Xr] = deal(x0(iterid));
-        [result.VTVinfo.Zp result.VTVinfo.Zr] = deal(WL_t);
-        result.xLand = xInitial(1:x0maxid-1);
-        result.xSea = xInitial(x0maxid+1:end);
-        result.xActive = xInitial(x0maxid);
-        result.zLand = zInitial(1:x0maxid-1);
-        result.zSea = zInitial(x0maxid+1:end);
-        result.zActive = zInitial(x0maxid);
-        result.z2Active = zInitial(x0maxid);
+        x0Solution = x0(iterid);
+        if any([msgs{:,1}]==22)
+            z0Solution = interp1(xInitial,zInitial,x0Solution);
+            [xInitial sid] = unique(cat(1,xInitial,x0Solution));
+            zInitial = cat(1,zInitial,z0Solution);
+            zInitial = zInitial(sid);
+        else
+            z0Solution = WL_t;
+        end
+        [result.VTVinfo.Xp result.VTVinfo.Xr] = deal(x0Solution);
+        [result.VTVinfo.Zp result.VTVinfo.Zr] = deal(z0Solution );
+        result.xLand = xInitial(xInitial < x0Solution);
+        result.xSea = xInitial(xInitial > x0Solution);
+        result.xActive = x0Solution;
+        result.zLand = zInitial(xInitial < x0Solution);
+        result.zSea = zInitial(xInitial > x0Solution);
+        result.zActive = z0Solution;
+        result.z2Active = z0Solution;
         [result.Volumes.Accretion, result.Volumes.Erosion, result.Volumes.Volume, result.Volumes.volumes] = deal(0);
         if dbstate
             dbPlotDuneErosion('final parab')

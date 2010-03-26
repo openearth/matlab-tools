@@ -72,6 +72,7 @@ classdef mtestengine < handle
         copymode = [];
         testscatalogued = false;
         profInfo = [];
+        postteamcity = false;           % prints a teamcity log file.
     end
     
     %% Methods
@@ -303,7 +304,7 @@ classdef mtestengine < handle
             
             %% Teamcity message
             if obj.verbose
-                dos('echo ##teamcity[testSuiteStarted name = ''OpenEarthTools - Tests'']');
+                postmessage('testSuiteStarted',obj.postteamcity, 'name','OpenEarthTools - Tests');
             end
             
             %% get current dir
@@ -1172,4 +1173,19 @@ classdef mtestengine < handle
             end
         end
     end
+end
+
+function postmessage(message,postteamcity,varargin)
+if postteamcity
+    teamcityString = ['echo ##teamcity[', message, ' '];
+    for ivararg = 1:2:length(varargin)
+        teamcityString = cat(2,teamcityString,varargin{ivararg},'=''', varargin{ivararg+1},'''');
+    end
+    teamcityString = cat(2,teamcityString,']');
+    dlmwrite('teamcitymessage.matlab',...
+        teamcityString,...
+        'delimiter','','-append');
+else
+    disp(message);
+end
 end
