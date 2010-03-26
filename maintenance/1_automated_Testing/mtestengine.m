@@ -1182,9 +1182,11 @@ if postteamcity
         teamcityString = cat(2,teamcityString,varargin{ivararg},'=''', varargin{ivararg+1},'''');
     end
     teamcityString = cat(2,teamcityString,']');
-    dlmwrite('teamcitymessage.matlab',...
+    dlmwrite('teamcitymessage.matlabtemp',...
         teamcityString,...
         'delimiter','','-append');
+    % To prevent echo that is too early
+    movefile('teamcitymessage.matlabtemp','teamcitymessage.matlab');
 else
     disp(message);
 end
