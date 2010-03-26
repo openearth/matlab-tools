@@ -458,10 +458,15 @@ classdef mtestengine < handle
             existingfigs = findobj('Type','figure');
             for itests = 1:length(obj.tests)
                 %% Display progress
+                if isempty(obj.tests(itests).testname)
+                    obj.tests(itests).testname = obj.tests(itests).filename;
+                end
+                testname = obj.tests(itests).testname;
+                filename = obj.tests(itests).filename;
                 if obj.verbose
-                    postmessage('testSuiteStarted',obj.postteamcity, 'name',obj.tests(itests).filename);
+                    postmessage('testSuiteStarted',obj.postteamcity, 'name',filename);
                     postmessage('testStarted',obj.postteamcity,...
-                        'name',obj.tests(itests).testname,...
+                        'name',testname,...
                         'captureStandardOutput','true');
                     disp([' ' num2str(itests) '. ' obj.tests(itests).testname]);
                 end
@@ -489,7 +494,7 @@ classdef mtestengine < handle
                         % test failed
                         if obj.verbose
                             postmessage('testFailed',obj.postteamcity,...
-                                'name',obj.tests(itests).testname,...
+                                'name',testname,...
                                 'message','Test result was negative');
                         end
                     end
@@ -502,7 +507,7 @@ classdef mtestengine < handle
                     % test failed, wrong test definition
                     if obj.verbose
                         postmessage('testFailed',obj.postteamcity,...
-                            'name',obj.tests(itests).testname,...
+                            'name',testname,...
                             'message','Error while reading or executing the test. There could be an error in either the test definition or the actual test code');
                     end
                     wrongtests(itests)=true;
@@ -510,9 +515,9 @@ classdef mtestengine < handle
                 end
                 if obj.verbose
                     postmessage('testFinished',obj.postteamcity,...
-                        'name',obj.tests(itests).testname,...
+                        'name',testname,...
                         'duration',num2str(round(obj.tests(itests).time*1000)));
-                    postmessage('testSuiteFinished',obj.postteamcity, 'name',obj.tests(itests).filename);
+                    postmessage('testSuiteFinished',obj.postteamcity, 'name',filename);
                 end
                 newfigs = findobj('Type','figure');
                 close(newfigs(~ismember(newfigs,existingfigs)));
@@ -1221,7 +1226,7 @@ if postteamcity
     while exist('teamcitymessage.matlab','file')
         pause(0.001);
         if toc(h) > 1
-            delete('teamcitymessage.matlab');
+            delete(which('teamcitymessage.matlab'));
         end
     end
     
