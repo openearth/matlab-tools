@@ -128,6 +128,7 @@ function varargout = odv_read(fullfilename)
    
    OPT.delimiter     = char(9);% columns are TAB sepa-rated [ODV manual section 15.6]
    OPT.variablesonly = 1; % remove units from variables
+   sdn_code_warning  = 1;
 
   [D.file.path D.file.name D.file.ext] = fileparts(fullfilename);
    D.file.fullfilename = fullfilename;
@@ -237,7 +238,10 @@ function varargout = odv_read(fullfilename)
                         D.sdn_units         {iSDN-1} =  u;
                         D.sdn_units         {iSDN  } =  u;
                      catch
-                        warning('failed to verify sdn code with nerc vocab webserver')
+                        if sdn_code_warning
+                           fprintf(2,'failed to verify sdn codes with nerc vocab webserver\n')
+                           sdn_code_warning = 0;
+                        end
                         D.sdn_long_name     {iSDN-1} =  '';
                         D.sdn_long_name     {iSDN  } =  '';
                         D.sdn_units         {iSDN-1} =  '';
@@ -318,15 +322,10 @@ function varargout = odv_read(fullfilename)
                 rec = fgetl(fid);
                 if ~ischar(rec), break, end
                 idat = idat + 1;
+                sep = [0 strfind(rec,char(9)) (length(rec)+1)]; % tab-delimited with empty values possible
                 for ivar=1:nvar
-                  [D.rawdata{ivar,idat} ,rec] = strtok(rec,OPT.delimiter);
+                   D.rawdata{ivar,idat}       = rec(sep(ivar)+1:sep(ivar+1)-1);
                 end
-               %[D.data.cruise{idat} ,rec] = strtok(rec,OPT.delimiter);
-               %[D.data.station{idat},rec] = strtok(rec,OPT.delimiter);
-               %[D.data.type{idat}   ,rec] = strtok(rec,OPT.delimiter);
-               %[D.data.time{idat}   ,rec] = strtok(rec,OPT.delimiter);
-               %[D.data.lat{idat}    ,rec] = strtok(rec,OPT.delimiter);
-               %[D.data.lon{idat}    ,rec] = strtok(rec,OPT.delimiter);
             end
             
             if idat == 0
@@ -384,11 +383,11 @@ function varargout = odv_read(fullfilename)
     D.type            = char(D.type        );		      
     D.LOCAL_CDI_ID    = char(D.LOCAL_CDI_ID);		      
 
-   [D.station  ,ind1] = unique(D.data.station     );if length(D.station  ) == 1;D.data.station   = D.station  ;station= char(D.station);end 
-   [D.datenum  ,ind2] = unique(D.data.datenum     );if length(D.datenum  ) == 1;D.data.datenum   = D.datenum  ;end
-   [D.latitude ,ind3] = unique(D.data.latitude    );if length(D.latitude ) == 1;D.data.latitude  = D.latitude ;end
-   [D.longitude,ind4] = unique(D.data.longitude   );if length(D.longitude) == 1;D.data.longitude = D.longitude;end
-   [D.bot_depth,ind5] = unique(D.data.bot_depth   );if length(D.bot_depth) == 1;D.data.bot_depth = D.bot_depth;end
+   [station  ,ind1] = unique(D.data.station     );if length(station  ) == 1;D.data.station   = station  ;station = char(station);end 
+   [ddatenum ,ind2] = unique(D.data.datenum     );if length(ddatenum ) == 1;D.data.datenum   = ddatenum ;end
+   [latitude ,ind3] = unique(D.data.latitude    );if length(latitude ) == 1;D.data.latitude  = latitude ;end
+   [longitude,ind4] = unique(D.data.longitude   );if length(longitude) == 1;D.data.longitude = longitude;end
+   [bot_depth,ind5] = unique(D.data.bot_depth   );if length(bot_depth) == 1;D.data.bot_depth = bot_depth;end
    
    if length(ind1)==1 & ...
       length(ind2)==1 & ...

@@ -93,6 +93,9 @@ function varargout = KMLcolorbar(varargin)
 
 %% handle error when only one color is supplied
 
+   if isempty(OPT.clim)
+      error('clim not supplied')
+   end
    if OPT.clim(1)==OPT.clim(2)
       OPT.clim = OPT.clim + [-eps eps];
    end

@@ -25,7 +25,7 @@ function varargout = KMLscatter(lat,lon,c,varargin)
 %
 %    OPT = kmlscatter()
 %
-%See also: GOOGLEPLOT, SCATTER, PLOTC
+%See also: GOOGLEPLOT, KMLANIMATEDICON, SCATTER, PLOTC
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -81,6 +81,7 @@ function varargout = KMLscatter(lat,lon,c,varargin)
    OPT.description        =  '';
    OPT.colorbar           = 1;
    OPT.colorbarlocation   = {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
+   OPT.colorbartitle = '';
 
    if nargin==0
        varargout = {OPT};
@@ -162,7 +163,7 @@ function varargout = KMLscatter(lat,lon,c,varargin)
    output = KML_header(OPT_header);
    
    if OPT.colorbar
-      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorbarlocation',OPT.colorbarlocation);
+      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorTitle',OPT.colorbartitle);
       output = [output clrbarstring];
    end
 

@@ -1,8 +1,8 @@
-function odvplot_overview(D,varargin)
-%ODVPLOT_OVERVIEW   plot map view (lon,lat) of ODV file read by ODVREAD (still test project)
+function odvplot_overview_kml(D,varargin)
+%ODVPLOT_OVERVIEW_KML   plots map view (lon,lat) of ODV file read by ODVREAD (still test project)
 %
-%   D = odvplot_overview(fname)
-%       odvplot_overview(D,<keyword,value>)
+%   D = odvplot_overview_kml(fname)
+%       odvplot_overview_kml(D)
 %
 % Show overview of ODV locations, ue when D.cast=0.
 %
@@ -42,10 +42,11 @@ function odvplot_overview(D,varargin)
 % $Revision$
 % $HeadURL
 
-   OPT.variable = 'P011::PSSTTS01'; % char or numeric: nerc vocab string (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
-   OPT.lon      = [];
-   OPT.lat      = [];
-   OPT.clim     = [];
+   OPT.variable      = 'P011::PSSTTS01'; % char or numeric: nerc vocab string (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
+   OPT.colorbar      = 1;
+   OPT.colormap      = @(m) jet(m);
+   OPT.fileName      = '';
+   OPT.clim          = [];
    
    if nargin==0
        varargout = {OPT};
@@ -61,37 +62,14 @@ function odvplot_overview(D,varargin)
       end
    end
    
-   AX = subplot_meshgrid(1,1,[.04],[.1]);
-   
-    axes(AX(1)); cla %subplot(1,4,4)
-    
-       if OPT.variable==0
-          plot (D.data.longitude,D.data.latitude,'ro')
-          hold on
-          plot (D.data.longitude,D.data.latitude,'r.')
-       else
-          if ~isempty(OPT.clim)
-          clim(OPT.clim)
-          end
-          plotc(D.data.longitude,D.data.latitude,str2num(char(D.rawdata{OPT.variable,:})))
-          hold on
-          colorbarwithtitle('')
-       end
-       
-       axis      tight
-       
-       plot(OPT.lon,OPT.lat,'k')
-       axislat   (52)
-       grid       on
-       tickmap   ('ll','texttype','text')
-       box        on
-       hold       off
+   KMLanimatedIcon(D.data.latitude,D.data.longitude,str2num(char(D.rawdata{OPT.variable,:})),...
+        'fileName',OPT.fileName,...
+          'timeIn',D.data.datenum-1,...
+         'timeOut',D.data.datenum+1,...
+         'kmlName',[D.LOCAL_CDI_ID],...
+     'description',['cruise: ',D.cruise,', EDMO_code:',num2str(D.EDMO_code)],...
+        'colorbar',OPT.colorbar,...
+            'cLim',[5 25],...
+   'colorbartitle',[D.local_name{OPT.variable},' (',D.local_units{OPT.variable},')'])
 
-       txt = ['Cruise: ',D.data.cruise{1},...
-               '   -   ',datestr(min(D.data.datenum),31),...
-               '   -   ',datestr(max(D.data.datenum),31)];
-
-       title     (txt)
-
-       
-%% EOF       
+%% EOF

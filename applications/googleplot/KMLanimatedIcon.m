@@ -19,7 +19,7 @@ function varargout = KMLanimatedIcon(lat,lon,varargin)
 %
 %    OPT = KMLanimatedIcon()
 %
-% See also: GOOGLEPLOT
+% See also: GOOGLEPLOT, KMLscatter
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -69,19 +69,22 @@ else
     OPT.coloredIcon    = false;
 end
 
-OPT.fileName           = [];
-OPT.kmlName            = [];
-OPT.icon               = 'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
-OPT.scale              = 1.0;
-OPT.openInGE           = 0;
-OPT.markerAlpha        = 1;
-OPT.timeIn             = [];
-OPT.timeOut            = [];
-OPT.description        = 'Animated Icon';
-OPT.dateStrStyle       = 29; % set to yyyy-mm-ddTHH:MM:SS for detailed times
-OPT.colorMap           = @(m) jet(m);
-OPT.colorSteps         = 20;
-OPT.cLim               = [];
+   OPT.fileName           = [];
+   OPT.kmlName            = [];
+   OPT.icon               = 'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
+   OPT.scale              = 1.0;
+   OPT.openInGE           = 0;
+   OPT.markerAlpha        = 1;
+   OPT.timeIn             = [];
+   OPT.timeOut            = [];
+   OPT.description        = 'Animated Icon';
+   OPT.dateStrStyle       = 29; % set to yyyy-mm-ddTHH:MM:SS for detailed times
+   OPT.colorMap           = @(m) jet(m);
+   OPT.colorSteps         = 20;
+   OPT.cLim               = [];
+   OPT.colorbar           = 1;
+   OPT.colorbarlocation   = {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
+   OPT.colorbartitle = '';
 
 if nargin==0
     varargout = {OPT};
@@ -106,17 +109,34 @@ end
 if OPT.coloredIcon
     % set cLim
 
-    if isempty(OPT.cLim)
-        OPT.cLim         = [min(c(:)) max(c(:))];
-    end
+   if isempty(OPT.cLim)
+       OPT.cLim         = [min(c(:)) max(c(:))];
+   end
 
-    % pre-process data
-    %  make 1D and remove NaNs
+   % pre-process data
+   %  make 1D and remove NaNs
 
-    lon    = lon(~isnan(c(:)));
-    lat    = lat(~isnan(c(:)));
-    c      =   c(~isnan(c(:)));
-    colors = OPT.colorMap(OPT.colorSteps);
+   lon    = lon(~isnan(c(:)));
+   lat    = lat(~isnan(c(:)));
+   c      =   c(~isnan(c(:)));
+
+
+   if isnumeric(OPT.colorMap)
+      OPT.colorSteps = size(OPT.colorMap,1);
+   end
+   
+   if isa(OPT.colorMap,'function_handle')
+     colorRGB           = OPT.colorMap(OPT.colorSteps);
+   elseif isnumeric(OPT.colorMap)
+     if size(OPT.colorMap,1)==1
+       colorRGB         = repmat(OPT.colorMap,[OPT.colorSteps 1]);
+     elseif size(OPT.colorMap,1)==OPT.colorSteps
+       colorRGB         = OPT.colorMap;
+     else
+       error(['size ''colorMap'' (=',num2str(size(OPT.colorMap,1)),') does not match ''colorSteps''  (=',num2str(OPT.colorSteps),')'])
+     end
+   end   
+
 end
 %% start KML
 
@@ -130,13 +150,18 @@ OPT_header = struct(...
     'description',OPT.description);
 output = KML_header(OPT_header);
 
+   if OPT.colorbar
+      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorTitle',OPT.colorbartitle);
+      output = [output clrbarstring];
+   end
+
 output = [output '<!--############################-->\n'];
 
 %% STYLE
 if OPT.coloredIcon
     for ii = 1:OPT.colorSteps
 
-    temp                = dec2hex(round([OPT.markerAlpha, colors(ii,:)].*255),2);
+    temp                = dec2hex(round([OPT.markerAlpha, colorRGB(ii,:)].*255),2);
     markerColor         = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
 
     output = [output ...
