@@ -107,37 +107,31 @@ points = [x(CornerIds) z(CornerIds); x(end) z(end)];
 SeawardBoundaryofInterest = x(end);
 
 % calculate x0 values for seaward boundary points
-x0max_new = ones(1, size(points, 1)) * x0max_wl; % pre-allocation
-for i = 1:length(x0max_new)
-    ztemp = points(i,2);
-    if ztemp>zparab(end)
-        dx = invParabolicProfileMain(WL_t,Hsig_t,Tp_t,w,ztemp);
-%         dx = (((-(ztemp-WL_t).*(7.6/Hsig_t)+0.4714*sqrt(18))/0.4714).^2-18) / (((7.6/Hsig_t).^1.28)*((12/Tp_t).^0.45)*((w/0.0268).^0.56));
-%         TODO('Seperate formulation and make dependant (invParabolicProfileMain)');
-    else
-        dx = xparab(end) + 12.5*(zparab(end)-points(i,2));
-    end
-    x0max_new(i) = points(i,1) - dx;
-end
+dx = ones(size(points, 1),1) * x0max_wl; % pre-allocation
+dx(points(:,2)>zparab(end)) = invParabolicProfileMain(WL_t,Hsig_t,Tp_t,w,points(points(:,2)>zparab(end),2));
+dx(points(:,2)<=zparab(end)) = xparab(end) + 12.5*zparab(end)-points(points(:,2)<=zparab(end),2);
+x0max_new = points(:,1) - dx;
+
+% rerieve x0max point of maximum x-coordinate of the profile
 x0max_maxprofile = x0max_new(end); % Basisid = 6;
 x0max_new(end) = [];
 
-id = x0max_new<=x0max_wl;
-x0max_corn = x0max_new(id);
-x0max = min([x0max_wl max([x0max_corn x0max_maxprofile])]);
+x0max_corn = x0max_new(x0max_new<=x0max_wl);
+x0max = min([x0max_wl max([x0max_corn; x0max_maxprofile])]);
+
 % if parabolic profile is under the initial profile use x0max_maxprofile as
 % a definite boundary!!!
 parabToeUnderMaxSeaInitProfile = min(zparab) < zInitial(xInitial == max(xInitial));
 if parabToeUnderMaxSeaInitProfile
-    x0max = min([x0max_wl max(x0max_corn) x0max_maxprofile]);
+    x0max = min([x0max x0max_maxprofile]);
 end
 if x0max == x0max_wl
-    Basis.x0max(end+1) = 4;
+    Basis.x0max(end+1) = 4; % Crossing between max(zparab) and initial profile
 elseif x0max == x0max_maxprofile
-    Basis.x0max(end+1) = 6;
+    Basis.x0max(end+1) = 6; 
     NrCrossingsInitialParab = length(findCrossings(xInitial, zInitial, xparab+x0max, zparab, 'keeporiginalgrid')); % Number of crossings between Initial and Parab (at most seaward position)
     if NrCrossingsInitialParab==0
-        Basis.general(end+1) = 7;
+        Basis.general(end+1) = 7; % Should be different code. This is not a problem of lack of data on landward side
         [x00min, x0min, x0max, x0except, chpoints_new]= deal([]);
         SeawardBoundaryofInterest = xInitial(end);
         Reason2message(Basis)
@@ -174,7 +168,7 @@ if zInitial(xInitial==min(xInitial))< WL_t
 end
 
 xcross = xcross(xcross>x00min & xcross<max(xcross)); % possible intersections of WL_t with part initial profile seaward of x00min and landward of x0max
-xcrossid = repmat(false,size(xInitial,1),1);
+xcrossid = false(size(xInitial,1),1);
 for icr = 1:length(xcross)
     xcrossid(xInitial==xcross(icr))=true;
 end
@@ -288,7 +282,7 @@ if ChannelSlopes
         for i = 1:size(channelpoints,1)
             ztemp = channelpoints(i,2);
             if ztemp>zparab(end)
-                dx = invParabolicProfileMain(WL_t,ztemp,Hsig_t,Tp_t,w);
+                % dx = invParabolicProfileMain(WL_t,ztemp,Hsig_t,Tp_t,w);
                 dx = (((-(ztemp-WL_t).*(7.6/Hsig_t)+0.4714*sqrt(18))/0.4714).^2-18) / (((7.6/Hsig_t).^1.28)*((12/Tp_t).^0.45)*((w/0.0268).^0.56));
                 TODO('Adjust to new formulation');
             else
