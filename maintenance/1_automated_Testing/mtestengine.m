@@ -508,7 +508,8 @@ classdef mtestengine < handle
                     if obj.verbose
                         postmessage('testFailed',obj.postteamcity,...
                             'name',testname,...
-                            'message','Error while reading or executing the test. There could be an error in either the test definition or the actual test code');
+                            'message','Error while reading or executing the test. There could be an error in either the test definition or the actual test code',...
+                            'details',getReport(me));
                     end
                     wrongtests(itests)=true;
                     obj.wrongtestdefs{end+1} = fullfile(obj.tests(itests).filepath,[obj.tests(itests).filename '.m']);
