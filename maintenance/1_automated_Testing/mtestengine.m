@@ -303,9 +303,7 @@ classdef mtestengine < handle
             %               %   See also mtestengine mtestengine.mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
             
             %% Teamcity message
-            if obj.verbose
-                postmessage('testSuiteStarted',obj.postteamcity, 'name','OpenEarthTools - Tests');
-            end
+            
             
             %% get current dir
             startdir = cd;
@@ -461,6 +459,7 @@ classdef mtestengine < handle
             for itests = 1:length(obj.tests)
                 %% Display progress
                 if obj.verbose
+                    postmessage('testSuiteStarted',obj.postteamcity, 'name',obj.tests(itests).filename);
                     postmessage('testStarted',obj.postteamcity,...
                         'name',obj.tests(itests).testname,...
                         'captureStandardOutput','true');
@@ -513,6 +512,7 @@ classdef mtestengine < handle
                     postmessage('testFinished',obj.postteamcity,...
                         'name',obj.tests(itests).testname,...
                         'duration',num2str(round(obj.tests(itests).time*1000)));
+                    postmessage('testSuiteStarted',obj.postteamcity, 'name',obj.tests(itests).filename);
                 end
                 newfigs = findobj('Type','figure');
                 close(newfigs(~ismember(newfigs,existingfigs)));
@@ -615,11 +615,11 @@ classdef mtestengine < handle
             
             %% try opening index.html or home.html
             if ~obj.postteamcity
-                % if exist(fullfile(obj.targetdir,'index.html'),'file')
-                %     winopen(fullfile(obj.targetdir,'index.html'));
-                % elseif exist(fullfile(obj.targetdir,'home.html'),'file')
-                %     winopen(fullfile(obj.targetdir,'home.html'));
-                % end
+                if exist(fullfile(obj.targetdir,'index.html'),'file')
+                    winopen(fullfile(obj.targetdir,'index.html'));
+                elseif exist(fullfile(obj.targetdir,'home.html'),'file')
+                    winopen(fullfile(obj.targetdir,'home.html'));
+                end
             end
             
             %% Set output
@@ -628,11 +628,6 @@ classdef mtestengine < handle
             end
             %% Return to initial dir
             cd(startdir);
-            
-            %% Finish tests
-            if obj.verbose
-                postmessage('testSuiteFinished',obj.postteamcity, 'name','OpenEarthTools - Tests');
-            end
         end
     end
     methods (Hidden=true)
