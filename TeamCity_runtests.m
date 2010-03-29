@@ -107,12 +107,21 @@ try
     mte.runAndPublish;
     
     %% publish list with files that did not run.
-    fid = fopen(fullfile(targetdir,'CrashTests.txt'),'w');
-    fprintf(fid,'%s\n',mte.wrongtestdefs{:});
-    fclose(fid);
+    if ~isempty(mte.wrongtestdefs)
+        fid = fopen(fullfile(targetdir,'CrashTests.txt'),'w');
+        fprintf(fid,'%s\n',mte.wrongtestdefs{:});
+        fclose(fid);
+    end
     
     %% Remove template files
     delete(fullfile(targetdir,'mxdom2defaulthtml.xsl'));
+    
+    %% zip result
+    delete('testresult.zip');
+    zip('testresult',{fullfile(targetdir,'*.*')});
+    
+    %% remove targetdir
+    rmdir(targetdir,'s');
     
 catch me
     postmessage('message', true, 'text', 'Something went wrong while running the tests.',...
@@ -121,3 +130,6 @@ catch me
     delete('matlabruns.busy');
     exit;
 end
+
+delete('matlabruns.busy');
+exit;
