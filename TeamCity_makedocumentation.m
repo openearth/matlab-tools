@@ -52,6 +52,7 @@ function TeamCity_makedocumentation(varargin)
 % $Keywords: $
 
 %% First load oetsettings
+save('test.mat','varargin');
 try
     %% temp remove targetdir from repos checkout
     matlabdir = fileparts(mfilename('fullpath'));
