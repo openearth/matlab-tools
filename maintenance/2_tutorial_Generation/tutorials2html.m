@@ -134,13 +134,18 @@ alldirs(~id)   = [];
 tutorials(~id) = [];
 
 %% Get revision number
-cdtemp   = cd;
-cd(oetroot);
-[dum txt] = system('svn info');
-dps = strfind(txt,':');
-ends = strfind(txt,char(10));
-revtxt = strfind(txt,'Revision');
-revisionnr = str2double(txt(min(dps(dps>revtxt))+1:min(ends(ends>revtxt))));
+if nargin>0
+    revisionnr = varargin{1};
+else
+    [dum txt] = system('svn info');
+    dps = strfind(txt,':');
+    ends = strfind(txt,char(10));
+    revtxt = strfind(txt,'Revision');
+    revisionnr = nan;
+    if ~isempty(revtxt)
+        revisionnr = str2double(txt(min(dps(dps>revtxt))+1:min(ends(ends>revtxt))));
+    end
+end
 
 %% publish tutorials (if not already published)
 % target dirs

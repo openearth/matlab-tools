@@ -20,7 +20,7 @@ rem -----------------------------------
 rem Create a temp file
 echo Matlab is running > matlabruns.busy
 rem now run matlab
-matlab -nosplash -nodesktop -minimize -r "TeamCity_makedocumentation;" -logfile mlogfile.log
+matlab -nosplash -nodesktop -minimize -r "TeamCity_makedocumentation(%env.BUILD_VCS_NUMBER_svn__https___repos_deltares_nl_repos_OpenEarthTools_trunk_matlab%);" -logfile mlogfile.log
 rem hold reporting until matlab status file has been deleted
 
 :loopmatlabbusy

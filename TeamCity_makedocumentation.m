@@ -80,7 +80,7 @@ try
 
     %% start documenting
     postmessage('progressStart',true,'Prepare for creating documentation.');
-    tutorials2html;
+    tutorials2html(varargin{:});
     
     %% zip result
     delete('htmldocumentation.zip');
