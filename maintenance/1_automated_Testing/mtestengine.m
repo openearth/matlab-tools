@@ -1220,33 +1220,3 @@ classdef mtestengine < handle
     end
 end
 
-function postmessage(message,postteamcity,varargin)
-if postteamcity
-    h = tic;
-    while exist('teamcitymessage.matlab','file')
-        pause(0.001);
-        if toc(h) > 1
-            delete(which('teamcitymessage.matlab'));
-        end
-    end
-    
-    teamcityString = ['##teamcity[', message, ' '];
-    if nargin/2~=round(nargin/2)
-        for ivararg = 1:length(varargin)
-            teamcityString = cat(2,teamcityString,'''',varargin{ivararg},'''');
-        end
-    else
-        for ivararg = 1:2:length(varargin)
-            teamcityString = cat(2,teamcityString,varargin{ivararg},'=''', varargin{ivararg+1},'''',' ');
-        end
-    end
-    teamcityString = cat(2,teamcityString,']');
-    dlmwrite('teamcitymessage.matlabtemp',...
-        teamcityString,...
-        'delimiter','','-append');
-    % To prevent echo that is too early
-    movefile('teamcitymessage.matlabtemp','teamcitymessage.matlab');
-else
-    disp(message);
-end
-end

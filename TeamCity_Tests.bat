@@ -20,7 +20,7 @@ rem -----------------------------------
 rem Create a temp file
 echo Matlab is running > matlabruns.busy
 rem now run matlab
-matlab -nosplash -nodesktop -minimize -r "run('oetsettings');teamcityrunoettests;delete('matlabruns.busy');exit;" -logfile mlogfile.log
+matlab -nosplash -nodesktop -minimize -r "TeamCity_runtests;" -logfile mlogfile.log
 rem hold reporting until matlab status file has been deleted
 
 :loopmatlabbusy
