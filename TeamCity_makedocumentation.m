@@ -55,17 +55,21 @@ function TeamCity_makedocumentation(varargin)
 try
     %% temp remove targetdir from repos checkout
     matlabdir = fileparts(mfilename('fullpath'));
-    rmdir(fullfile(matlabdir,'tutorials'),'s');
-    rmdir(fullfile(matlabdir,'docs'),'s');
+    if isdir(fullfile(matlabdir,'tutorials'))
+        rmdir(fullfile(matlabdir,'tutorials'),'s');
+    end
+    if isdir(fullfile(matlabdir,'docs'))
+        rmdir(fullfile(matlabdir,'docs'),'s');
+    end
 
     %% load oetsettings
     addpath(fullfile(matlabdir,'maintenance'));
     postmessage('progressStart',true,'Running oetsettings.');
     oetsettings;
     postmessage('progressFinish',true,'Oetsettings enabled.');
-catch
+catch me
     postmessage('message', true, 'text', 'Matlab was unable to run oetsettings.',...
-        'errorDetails','stack trace',...
+        'errorDetails',me.message,...
         'status','ERROR');
     %% Remove template files
     delete('matlabruns.busy');
