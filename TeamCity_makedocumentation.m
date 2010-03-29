@@ -1,4 +1,4 @@
-function varargout = TeamCity_makedocumentation(varargin)
+function TeamCity_makedocumentation(varargin)
 %TEAMCITY_MAKEDOCUMENTATION  Function that creates all tutorials in the OpenEarthTools repository.
 %
 %   This function gathers and creates all tutorials in the OpenEarthTools repository.
@@ -54,7 +54,7 @@ function varargout = TeamCity_makedocumentation(varargin)
 %% First load oetsettings
 try
     %% temp remove targetdir from repos checkout
-    matlabdir = fullfile(fileparts(mfilename('fullpath')));
+    matlabdir = fileparts(mfilename('fullpath'));
     rmdir(fullfile(matlabdir,'tutorials'),'s');
     rmdir(fullfile(matlabdir,'docs'),'s');
 
