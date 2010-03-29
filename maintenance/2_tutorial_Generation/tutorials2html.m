@@ -78,6 +78,7 @@ id = find(strcmpi(varargin,'maindir'));
 if ~isempty(id)
     maindir = varargin{id+1};
 end
+cdtemp = maindir;
 
 % templatename
 publishtemplate = which('mxdom2tutorialhtmllocal.xsl');
@@ -178,7 +179,7 @@ for idr = 1:length(alldirs)
             %% read first line
             fid = fopen(which(tutorialname));
             first_line = fgetl(fid);
-            fclose(fid)
+            fclose(fid);
             title{idr}{itutorials} = first_line(3:end);
         else
             if all(id)
