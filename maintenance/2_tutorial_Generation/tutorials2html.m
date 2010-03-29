@@ -117,8 +117,15 @@ if any(strcmpi(varargin,'quiet'))
     quiet = true;
 end
 
+teamcity = false;
+if any(strcmpi(varargin,'teamcity'))
+    teamcity = true;
+end
+
+
 %% Gather all tutorial m-files
 % all directories
+postmessage('progressMessage',teamcity,'Gathering tutorial m-files');
 alldirs = sort(strread(genpath(maindir),'%s',-1,'delimiter',';'));
 alldirs(~cellfun(@isempty,strfind(alldirs,'.svn')))=[];
 
@@ -135,6 +142,7 @@ alldirs(~id)   = [];
 tutorials(~id) = [];
 
 %% Get revision number
+postmessage('progressMessage',teamcity,'Retrieve revision number');
 if nargin>0
     revisionnr = varargin{1};
 else
@@ -150,6 +158,7 @@ end
 
 %% publish tutorials (if not already published)
 % target dirs
+postmessage('progressMessage',teamcity,'Start publishing general tutorials');
 outputhtmldir = fullfile(outputdir,'html');
 
 % create outputdir
@@ -164,8 +173,10 @@ title    = cell(size(alldirs));
 
 openfigs = findobj('Type','figure');
 for idr = 1:length(alldirs)
+    postmessage('testSuiteStarted',teamcity,'name',alldirs{idr});
     htmlref{idr} = cell(size(tutorials{idr}));
     for itutorials = 1:length(tutorials{idr})
+        
         %% look for html files with the same name
         [dum tutorialname] = fileparts(tutorials{idr}{itutorials});
         htmlfilesthere     = which([tutorialname '.html'],'-all');
@@ -173,6 +184,8 @@ for idr = 1:length(alldirs)
             htmlfilesthere = which([tutorialname(2:end) '.html'],'-all');
         end
         id = strncmp(htmlfilesthere,outputhtmldir,length(outputhtmldir));
+        postmessage('testStarted',teamcity,'name',tutorialname);
+        
         if summaryonly
             htmlref{idr}{itutorials} = htmlfilesthere{find(id,1,'first')};
             
@@ -259,11 +272,14 @@ for idr = 1:length(alldirs)
                 htmlref{idr}{itutorials} = fullfile(outputhtmldir,[tutorialname,'.html']);
             end
         end
+        postmessage('testFinished',teamcity,'name',tutorialname);
     end
+    postmessage('testSuiteFinished',teamcity,'name',alldirs{idr});
 end
 cd(cdtemp);
 
 %% Copy script files to html dir 
+postmessage('progressMessage',teamcity,'Publishing summary pages');
 tmpdir = tempname;
 copyfile(scriptdir,tmpdir,'f');
 drs = strread(genpath(tmpdir),'%s',-1,'delimiter',';');
@@ -440,4 +456,5 @@ end
 munlock
 
 %% regenerate the help toc page (to succeed the help navigator must be closed)
+postmessage('progressMessage',teamcity,'Generate Matlab toc files (info.xml)');
 generateOpenEarthToolsdocs;
