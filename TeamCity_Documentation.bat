@@ -24,10 +24,11 @@ rem TODO: create and copy documentation (zip as artifact as well)
 rem matlab -nosplash -nodesktop -minimize -r "run('oetsettings');teamcityrunoettests;delete('matlabruns.busy');exit;" -logfile mlogfile.log
 rem hold reporting until matlab status file has been deleted
 
-:loopmatlabbusy
-if exist teamcitymessage.matlab goto echo_teamcity_message
-:continueloobmatlabbusy
-If exist matlabruns.busy goto loopmatlabbusy
+rem TODO: enable loop when we really do something
+rem :loopmatlabbusy
+rem if exist teamcitymessage.matlab goto echo_teamcity_message
+rem :continueloobmatlabbusy
+rem If exist matlabruns.busy goto loopmatlabbusy
 
 echo 'teamcity OK'
 
