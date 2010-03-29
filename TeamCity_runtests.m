@@ -1,4 +1,4 @@
-function teamcityrunoettests(varargin)
+function TeamCity_runtests(varargin)
 %TEAMCITYRUNOETTESTS  Function that runs all tests available in the OpenEarthTools repository.
 %
 %   This function gathers and runs all tests in the OpenEarthTools repository.
