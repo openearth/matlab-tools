@@ -56,7 +56,7 @@ function testresult = getDuneErosion_additional_test()
 
 testresult = true;
 
-getDuneErosion_additional_testdir = fileparts(mfilename('fullpath'));
+getDuneErosion_additional_testdir = fileparts(which('getDuneErosion_additional_testcase1.mat'));
 disp('Precision / TargetVolume:');
 
 %% case 1: normal dune erosion calculation with reference profile
