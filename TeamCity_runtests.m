@@ -53,6 +53,7 @@ function TeamCity_runtests(varargin)
 
 %% First load oetsettings
 try
+    addpath(fullfile(fileparts(mfilename('fullpath')),'maintenance'));
     postmessage('progressStart',true,'Running oetsettings.');
     oetsettings;
     postmessage('progressFinish',true,'Oetsettings enabled.');
