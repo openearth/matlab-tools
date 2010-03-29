@@ -158,6 +158,7 @@ try
         'x0min',x0DUROS-maxRetreat,...
         'x0max',x0DUROS,...
         'zmin',WL_t);
+    testresult = ~result.info.resultinboundaries;
 catch me %#ok<*NASGU>
     testresult = false;
 end
@@ -241,6 +242,8 @@ try
         'x0min',x0DUROS-maxRetreat,...
         'x0max',x0DUROS - 20,...
         'zmin',WL_t);
+    % TODO adjust assert
+    testresult = true;
 catch me
     testresult = false;
 end

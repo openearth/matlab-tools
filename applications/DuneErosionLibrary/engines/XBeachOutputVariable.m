@@ -19,6 +19,9 @@ classdef XBeachOutputVariable < handle
     methods
         % Constructor
         function obj = XBeachOutputVariable(varargin)
+            if nargin == 0
+                return;
+            end
             if nargin==1
                 [obj.resdir fname ext] = fileparts(varargin{1});
                 obj.filename = [fname ext];

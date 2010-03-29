@@ -109,7 +109,7 @@ SeawardBoundaryofInterest = x(end);
 % calculate x0 values for seaward boundary points
 dx = ones(size(points, 1),1) * x0max_wl; % pre-allocation
 dx(points(:,2)>zparab(end)) = invParabolicProfileMain(WL_t,Hsig_t,Tp_t,w,points(points(:,2)>zparab(end),2));
-dx(points(:,2)<=zparab(end)) = xparab(end) + 12.5*zparab(end)-points(points(:,2)<=zparab(end),2);
+dx(points(:,2)<=zparab(end)) = xparab(end) + 12.5*(zparab(end)-points(points(:,2)<=zparab(end),2));
 x0max_new = points(:,1) - dx;
 
 % rerieve x0max point of maximum x-coordinate of the profile
