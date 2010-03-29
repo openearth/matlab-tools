@@ -95,12 +95,12 @@ unique_YI=unique(YI)';
 unique_XI = [2*unique_XI(1) - unique_XI(2) - 2*eps(unique_XI(1)) unique_XI 2*unique_XI(end) - unique_XI(end-1) + 2*eps(unique_XI(end))];
 unique_YI = [2*unique_YI(1) - unique_YI(2) - 2*eps(unique_YI(1)) unique_YI 2*unique_YI(end) - unique_YI(end-1) + 2*eps(unique_YI(end))];
 
-for ii = 1:length(x)
+for ii = 1:find(~ismember(x,unique_XI))' %#ok<BDSCA>
     [~,nn] = min(abs(x(ii)-unique_XI));
     x(ii) = unique_XI(nn);
 end
 
-for ii = 1:length(y)
+for ii = 1:find(~ismember(y,unique_YI))' %#ok<BDSCA>
     [~,nn] = min(abs(y(ii)-unique_YI));
     y(ii) = unique_YI(nn);
 end
