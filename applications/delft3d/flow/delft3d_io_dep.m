@@ -39,9 +39,6 @@ function G = delft3d_io_dep(varargin)
 % * location:    location of depth file data ('cen','cor') to be written to file (mandatory)
 % * nodatavalue: nodatavalue written to file (default -999)
 %
-%
-% © G.J de Boer (TU Delft)
-%
 % See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
 %           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf, 
@@ -174,6 +171,9 @@ delft3d_io_dep_version = 'beta';
             if ~isfield(G,'location')
                G.location = 'cen';
             else
+               if isempty(G.location)
+                  G.location = 'cen';
+               end
                if ~strcmpi(G.location,'cen')
                   error('When dpsopt = dp, location should be cen');
                end
@@ -181,6 +181,13 @@ delft3d_io_dep_version = 'beta';
          else
             if ~isfield(G,'location')
                G.location = 'cor';
+            else
+               if isempty(G.location)
+                  G.location = 'cor';
+               end
+               if ~strcmpi(G.location,'cor')
+                  error('When dpsopt <> dp, location should be cor');
+               end
             end
          end
       end
@@ -212,11 +219,7 @@ delft3d_io_dep_version = 'beta';
       %% D3Dmatrix = D3Dmatrix';
       
       %% Aply mask
-      
-      if ~isfield(G,'MissingValue')
-         G.MissingValue = OPT.missingvalue;
-      end
-      D3Dmatrix(D3Dmatrix ==OPT.nodatavalue) = G.MissingValue;      
+      D3Dmatrix(D3Dmatrix ==OPT.nodatavalue) = OPT.missingvalue;      
       
       G.cen.dep_comment = 'positive: down';
       G.cor.dep_comment = 'positive: down';

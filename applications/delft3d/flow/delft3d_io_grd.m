@@ -178,7 +178,15 @@ end
                         'values filled with mirroring',...
                         'location of scalar boundary conditions',...
                         'extra d stand for <d>ummy or <d>elft3d'};
-
+                     
+      %% add to allow delft3d_io_dep to update this structure
+      G.cen.dep         = [];
+      G.cen.dep_comment = '';
+      G.cor.dep         = [];
+      G.cor.dep_comment = '';
+      G.dpsopt          = '';
+      G.location        = '';
+      
 %-%disp('NOTE')
 %-%disp('still to be implemented: nan seperated external and internal enxclosures')
 %-%disp('seperation when both m and n index differ between successive elements')

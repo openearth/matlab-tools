@@ -226,6 +226,16 @@ function varargout=Local_read(fname,varargin),
                error('function wlgrid missing.')
             end
             
+            if ~exist(D.data.keywords.grid_file)
+               new = [fileparts(fname),filesep,D.data.keywords.grid_file];
+               if exist(new)
+                  D.data.keywords.grid_file = new;
+                  disp('delft3d_io_meteo: found grid file in directory of meteo file, note that Deft3D-flow needs it as as an the absolute path, or relative to the active working directory.')
+               else
+                  error(['cannot find grid file:',D.data.keywords.grid_file])
+               end
+            end
+            
             G = wlgrid('read',D.data.keywords.grid_file);
                
             if OPT.latlon & strcmpi(G.CoordinateSystem,'Spherical')
@@ -309,7 +319,8 @@ function varargout=Local_read(fname,varargin),
                timestep = timestep + 1;
             end
             
-            D.data.time    = char(D.data.time);
+            D.data.datenum = D.data.datenum(timestep);
+            D.data.time    = char(D.data.time(timestep));
             D.data.datestr = datestr(D.data.datenum,0);
 
          end

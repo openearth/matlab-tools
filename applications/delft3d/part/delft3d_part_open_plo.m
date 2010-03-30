@@ -1,7 +1,8 @@
-function ploStruct = open_plo(FileName)
-%OPEN_PLO   Open Delft3D-PART *.plo file into struct
+function ploStruct = delft3d_part_open_plo(FileName)
+%DELFT3D_PART_OPEN_PLO   Open Delft3D-PART *.plo file into struct
 %
-%    Struct=open_plo(FileName)
+%    Struct=delft3d_part_open_plo(FileName)
+%
 %    opens the specified PART plo file and loads the information
 %    into a structure.
 %

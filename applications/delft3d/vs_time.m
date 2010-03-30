@@ -279,7 +279,7 @@ elseif strcmp(NFSstruct.SubType,'Delft3D-hwgxy')
       end
 
  elseif (strcmp(NFSstruct.SubType,'Delft3D-waq-map') || ...
-     strcmp(NFSstruct.SubType,'Delft3D-waq-history'))
+         strcmp(NFSstruct.SubType,'Delft3D-waq-history'))
  %% -------------------------------------------
 
       tmp.title       = vs_let(NFSstruct,'DELWAQ_PARAMS'     ,'TITLE',{0});
@@ -297,6 +297,10 @@ elseif strcmp(NFSstruct.SubType,'Delft3D-hwgxy')
              T.tunit  = 1;
       end
       T.t             = T.t.*T.tunit;
+      
+ else
+    
+   error(['NEFIS type does not implemented: ',NFSstruct.SubType])
 
  end
  %% -------------------------------------------
