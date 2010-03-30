@@ -1,9 +1,6 @@
-%WAQ_MAP_PLOT_EXAMPLE  Example matlab script for plotting delwaq map information
+%DELFT3D_WAQ_EXAMPLE_COMPLEX  Example matlab script for batch-plotting delwaq map info
 %
-% Missing m-files can be obtained by running:
-% >> addpath(genpath('C:\Delft3D\w32\matlab\'))
-%
-% See also: DELWAQ
+%See also: DELFT3D_WAQ_EXAMPLE_SIMPLE, DELWAQ (in 'C:\Delft3D\w32\matlab\')
 
 % © TU Delft, G.J. de Boer <g.j.deboer@tudelft.nl> Dec. 2004 - Oct 2007
 
@@ -12,6 +9,9 @@
 % $Author$
 % $Revision$
 % $HeadURL$
+
+% Missing m-files can be obtained by running:
+% >> addpath(genpath('C:\Delft3D\w32\matlab\'))
 
 %% Initialize
 %----------------------------------------

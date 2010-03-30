@@ -1,4 +1,4 @@
-%GETFETCH4WAQ_ANALYTICAL   script to calculate fetch from landboundary on flow grid
+%DELFT3D_WAQ_GETFETCH4WAQ_ANALYTICAL   script to calculate fetch from landboundary on flow grid
 %
 % For every point, per sector of say 5 degree, all landboundary points are binned.
 % The smallest value per bin is taken as the fetch. When the landboundary points

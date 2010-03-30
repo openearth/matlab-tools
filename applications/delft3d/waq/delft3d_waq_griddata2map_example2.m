@@ -1,27 +1,27 @@
-%%EXAMPLE_GRIDDATA2WAQMAP2  Example to grid/write spatio-temporal data to WAQ *.map file 
-%%
-%% (c) WL | Delft Hydraulics, Z3451, G.J. de Boer, 2007 Jul 01st
-%% Script to bin IVM bi-monhtly SeaWiFS TSM data to WAQ map files.
-%%
-%% Note that the fortran tools map2sgf of Jan v Beek is needed
-%% to convert the resulting WAQ *.map file to WAQ *.sgf file.
-%% Because the *.sgf does not contain any meta-information (not quite Good Modelling Practise ...),
-%% it is trongly advised to store only the *.map files (that may contain
-%% a little bit of meta-information, notably UNTIS!!), and convert them only to 
-%% *.sgf files when actually running WAQ.
-%%
-%% Do mind during this script:
-%% * cell corner/center differences
-%% * any dummy rows in the Delft3D-FLOW/WAQ grids
-%%
-%% Any missing m=files are in:
-%% * wl_settings
-%% * p:/McTools/
-%% * bulletin/boer_g
-%% * absent, because they were project speficic, this file is just an example
-%% ---------------------------------------------------
-%%
-%%See also: DELWAQ, FLOW2WAQ3D, ADDROWCOL, CORNER2CENTER
+%DELFT3D_WAQ_GRIDDATA2MAP_EXAMPLE2  Example to grid/write spatio-temporal data to WAQ *.map file 
+%
+% (c) WL | Delft Hydraulics, Z3451, G.J. de Boer, 2007 Jul 01st
+% Script to bin IVM bi-monhtly SeaWiFS TSM data to WAQ map files.
+%
+% Note that the fortran tools map2sgf of Jan v Beek is needed
+% to convert the resulting WAQ *.map file to WAQ *.sgf file.
+% Because the *.sgf does not contain any meta-information (not quite Good Modelling Practise ...),
+% it is trongly advised to store only the *.map files (that may contain
+% a little bit of meta-information, notably UNTIS!!), and convert them only to 
+% *.sgf files when actually running WAQ.
+%
+% Do mind during this script:
+% * cell corner/center differences
+% * any dummy rows in the Delft3D-FLOW/WAQ grids
+%
+% Any missing m=files are in:
+% * wl_settings
+% * p:/McTools/
+% * bulletin/boer_g
+% * absent, because they were project speficic, this file is just an example
+% ---------------------------------------------------
+%
+%See also: DELWAQ, FLOW2WAQ3D, ADDROWCOL, CORNER2CENTER
 
 % $Id$
 % $Date$

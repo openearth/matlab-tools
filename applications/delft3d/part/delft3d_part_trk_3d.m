@@ -1,6 +1,14 @@
 function delft3d_part_trk_3d(varargin)
 %DELFT3D_PART_TRK_3D   visualize delft3d particle tracks in 3D
 %
+%   Example 1: launche GUI
+%
+%      delft3d_io_part_trk_3d
+%
+%   Example 2: command line
+%
+%      delft3d_io_part_trk_3d('trk-cont-release03.dat','axis',[80e3 150e3 460e3 500e3 -5 0])
+%
 %See also: vs_use
 
 OPT.axis = [80e3 150e3 460e3 500e3 -5 0];

@@ -1,27 +1,27 @@
-%%EXAMPLE_GRIDDATA2WAQMAP3  Example to grid/write spatio-temporal data to WAQ *.map file 
-%%
-%% (c) WL | Delft Hydraulics, G.J. de Boer, 2007 May 13th.
-%% Script to bin WAVM SWAN to WAQ map files.
-%%
-%% Note that the fortran tools map2sgf of Jan v Beek is needed
-%% to convert the resulting WAQ *.map file to WAQ *.sgf file.
-%% Because the *.sgf does not contain any meta-information (not quite Good Modelling Practise ...),
-%% it is trongly advised to store only the *.map files (that may contain
-%% a little bit of meta-information, notably UNTIS!!), and convert them only to 
-%% *.sgf files when actually running WAQ.
-%%
-%% Do mind during this script:
-%% * cell corner/center differences
-%% * any dummy rows in the Delft3D-FLOW/WAQ grids
-%%
-%% Any missing m=files are in:
-%% * cd Y:\app\matlab\toolbox\
-%% * wlsettings
-%% * cd P:\mctools\mc_toolbox\
-%% * mcsettings
-%% ---------------------------------------------------
-%%
-%%See also: DELWAQ, FLOW2WAQ3D, ADDROWCOL, CORNER2CENTER
+%DELFT3D_WAQ_GRIDDATA2MAP_EXAMPLE3  Example to grid/write spatio-temporal data to WAQ *.map file 
+%
+% (c) WL | Delft Hydraulics, G.J. de Boer, 2007 May 13th.
+% Script to bin WAVM SWAN to WAQ map files.
+%
+% Note that the fortran tools map2sgf of Jan v Beek is needed
+% to convert the resulting WAQ *.map file to WAQ *.sgf file.
+% Because the *.sgf does not contain any meta-information (not quite Good Modelling Practise ...),
+% it is trongly advised to store only the *.map files (that may contain
+% a little bit of meta-information, notably UNTIS!!), and convert them only to 
+% *.sgf files when actually running WAQ.
+%
+% Do mind during this script:
+% * cell corner/center differences
+% * any dummy rows in the Delft3D-FLOW/WAQ grids
+%
+% Any missing m=files are in:
+% * cd Y:\app\matlab\toolbox\
+% * wlsettings
+% * cd P:\mctools\mc_toolbox\
+% * mcsettings
+% ---------------------------------------------------
+%
+%See also: DELWAQ, FLOW2WAQ3D, ADDROWCOL, CORNER2CENTER
 
 % $Id$
 % $Date$
