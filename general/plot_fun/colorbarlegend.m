@@ -2,10 +2,10 @@ function varargout = colorbarlegend(varargin)
 %COLORBARLEGEND   Overlays colorbar in separate axes.
 % 
 % COLORBARLEGEND plots a colorbar in another axes.
-% This axes is (i) either an exisioting axes passed by handle
+% This axes is (i) either an exisiting axes passed by handle
 % or (ii) it is created on top of axising axes in the current figure.
 % at the specified position. When the colorbar is drawn 
-% a a specified position it does not affect the position of other axes.
+% at a specified position it does not affect the position of other axes.
 % Does not work properly for suplots due to 'OuterPosition' property.
 %
 % Use:

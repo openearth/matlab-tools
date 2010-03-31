@@ -1,15 +1,17 @@
 function [tri,x1,y1,z1] = delaunay_simplified(x,y,z,tolerance,varargin)
 % DELAUNAY_SIMPLIFIED makes a simplified delaunay triangulated mesh
+%
+%   [tri,x1,y1,z1] = delaunay_simplified(x,y,z,tolerance,<keyword,value>)
 % 
-% For creating meshes that resemble a more complex mesh to a certain
-% degree (specified by tolerance;, the maximum error that may exist
+% creates meshes that resemble a more complex mesh to a certain
+% degree, specified by tolerance, the maximum error that may exist
 % between the final grid and the original datapoints.
 %
-% All nan edges withing the grid are used in triangulation, but no 
-% triangles are created where nan's are available.   
+% All NaN edges within the grid are used in triangulation, but no 
+% triangles are created where NaN's are available.   
 %
-% The script is does not find an optimum solution, but works well enough in
-% reducing triangles.
+% The script is does not find an optimum solution, but works well 
+% enough in reducing triangles.
 %
 % Example1
 %
@@ -110,9 +112,9 @@ ind = [ind; convhull(x,y)];
 ind = unique(ind);
 
 %% iteration
-fault = inf;
+fault     = inf;
 iteration = 0;
-tri2 = 0;
+tri2      = 0;
 while fault>tolerance && size(tri2,1)<OPT.maxSize && iteration<OPT.maxIterations
     iteration = iteration+1;
     % Triangulate the data
@@ -149,18 +151,19 @@ while fault>tolerance && size(tri2,1)<OPT.maxSize && iteration<OPT.maxIterations
     temp = 0.1/ceil(max(abs(fault)));
     M = t(:)+fault*temp;
     [M,ind2] = sort(M);
-    addInd = ind2([true;diff(M)>.3]|[diff(M)>.3;true]) ;
-    addInd = addInd(abs(fault(addInd))>tolerance);
+    addInd   = ind2([true;diff(M)>.3]|[diff(M)>.3;true]) ;
+    addInd   = addInd(abs(fault(addInd))>tolerance);
     %add newCoords
-    ind = unique([ind; addInd]);
+    ind      = unique([ind; addInd]);
 
     [fault,ind2] = max(abs(fault(~nans)));
   
     disp(sprintf('iteration: % 3d  Number of triangles:% 6d  error = % 6.2f at index % 4d',...
         iteration,size(tri2,1),fault,ind2));
+        
 end
 
-tri = delaunay(x(ind),y(ind));
+tri  = delaunay(x(ind),y(ind));
 %% find triangles with nan values inside
 ind2 = ismember(tri,find(z(ind)==max(z(:))));
 ind2 = any(ind2,2);
@@ -169,7 +172,7 @@ ind2 = any(ind2,2);
 tri(ind2,:) = [];
 
 if nargout == 1
-    tri = ind(tri);
+    tri     = ind(tri);
 elseif nargout==4
     x1      = x(ind);
     y1      = y(ind);

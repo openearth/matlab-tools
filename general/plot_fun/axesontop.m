@@ -136,7 +136,7 @@ case {'gca','axes'}
       left   = mainpos(1) + mainpos(3).*(xlims(1)-0       );
       bottom = mainpos(2) + mainpos(4).*(ylims(1)-0       );
       width  =              mainpos(3).*(xlims(2)-xlims(1));
-      height = 		        mainpos(4).*(ylims(2)-ylims(1));
+      height =              mainpos(4).*(ylims(2)-ylims(1));
 
    case 'data'
 

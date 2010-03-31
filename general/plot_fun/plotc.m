@@ -56,11 +56,13 @@ function varargout = plotc(x,y,c,marker,varargin)
 %  Copyright: Uli Theune, University of Alberta, 2004
 
 %% Input
+
    if nargin <4
        marker='.';
    end
 
 %% make 1D and remove NaNs
+
    x = x(~isnan(c(:)));
    y = y(~isnan(c(:)));
    c = c(~isnan(c(:)));
@@ -68,8 +70,13 @@ function varargout = plotc(x,y,c,marker,varargin)
    map = colormap;
 
 %% Define RGB color scaling limits
+
    miv = min(c);
    mav = max(c);
+   
+   if isempty(miv)
+      return
+   end
    
    if strcmpi(get(gca,'CLimMode'),'auto')
       caxis([miv mav])
@@ -79,6 +86,7 @@ function varargout = plotc(x,y,c,marker,varargin)
    end
 
 %% Plot the points
+
    hold on
    for i=1:length(x)
        in=round((c(i)-miv)*(length(map)-1)/(mav-miv));
@@ -90,14 +98,18 @@ function varargout = plotc(x,y,c,marker,varargin)
    end
    hold off
 
+if 0 % does not work
+
 %% Re-format the colorbar
+
    h=colorbar;
    
-   set(h,'ylim', [1 length(map)]);
+   set(h,'ylim', [1 length(map)]); % this screws up the colorbar in 7.7.0.471 (R2008b)
    yal = linspace(1,length(map),10);
    set(h,'ytick',yal);
 
 %% Create the yticklabels
+
    ytl = linspace(miv,mav,10);
    s   = char(10,4);
    for i=1:10
@@ -109,6 +121,8 @@ function varargout = plotc(x,y,c,marker,varargin)
    set  (h,'yticklabel',s);
    grid on
    view (2)
+   
+end % reformatcolorbar   
 
 %% Output
 

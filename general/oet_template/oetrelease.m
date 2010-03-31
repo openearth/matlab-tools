@@ -7,8 +7,7 @@ function [zipfilename files targetdir] = oetrelease(varargin)
 %   is created as separate folder and as zipfile.
 %
 %   Syntax:
-%   [zipfilename files targetdir] = oetrelease(varargin)
-%
+%   [zipfilename files targetdir] = oetrelease(<targetdir>,<keyword,value>)
 %   Input:
 %   varargin    =
 %
@@ -17,8 +16,11 @@ function [zipfilename files targetdir] = oetrelease(varargin)
 %   files       =
 %   targetdir   =
 %
-%   Example
-%   oetrelease
+%   Example: make a release of the current folder:
+%      oetrelease
+%
+%   Example: make a release of a specific folder:
+%      oetrelease('f:\checkouts\mymtools\atoolbox')
 %
 %   See also 
 
@@ -67,13 +69,18 @@ function [zipfilename files targetdir] = oetrelease(varargin)
 
 %%
 OPT = struct(...
-    'targetdir', fullfile(cd, ['release_' datestr(now, 'ddmmmyyyy')]),...
-    'zipfilename', tempname,...
-    'folders', cd,...
-    'files', 'oetsettings',...
+    'targetdir'     , fullfile(cd, ['release_' datestr(now, 'ddmmmyyyy')]),...
+    'zipfilename'   , tempname,...
+    'folders'       , cd,...
+    'files'         , 'oetsettings',...
     'omitextensions', {{'.asv' '.m~'}});
-
-OPT = setProperty(OPT, varargin{:});
+ 
+if odd(nargin)
+   OPT = setProperty(OPT, varargin{2:end});
+   OPT.folders = varargin{1};
+else
+   OPT = setProperty(OPT, varargin);
+end
 
 %% gather all files of the selected folders
 if ischar(OPT.folders)
