@@ -142,6 +142,20 @@ if exist(OPT.filename, 'file')
             XB.Input.yInitial = load(yfile);
         end
     end
+    % read bcfile if available
+    bcfile = fullfile(pathstr, XB.settings.Waves.bcfile);
+    bcfileExists = exist(bcfile, 'file');
+    if bcfileExists
+        XB = XB_read_bcfile(XB,...
+            'path', pathstr);
+    end
+    % read zs0file if available
+    zs0file = fullfile(pathstr, XB.settings.Flow.zs0file);
+    zs0fileExists = exist(zs0file, 'file');
+    if zs0fileExists
+        XB.settings.Flow.zs0 = load(zs0file);
+    end
+    
     varargout = {XB Inputargs};
 else
     warning('PARAMS2XB:FileNotFound', ['File ' OPT.filename ' not found.'])
