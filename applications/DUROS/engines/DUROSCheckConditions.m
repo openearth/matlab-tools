@@ -12,7 +12,7 @@ if WL_t ~= roundoff(WL_t, decdigs)
     writemessage(-9, ['Water level has been rounded to ' num2str(decdigs) ' decimal digits.']);
 end
 
-%% Check value of Tp
+%% Check TP (DUROS+ and D++ only)
 n_d = DuneErosionSettings('get', 'n_d');
 Plus = DuneErosionSettings('get', 'Plus');
 TP12slimiter = DuneErosionSettings('get', 'TP12slimiter');
@@ -27,6 +27,30 @@ if (strcmp(Plus,'-plus') || strcmp(Plus,'-plusplus')) && TP12slimiter
         Tp_t = 20*sqrt(n_d)^-1;
         writemessage(-2, ['Parabolic shape is based on Tp_t = ' num2str(Tp_t) ' s, instead of ',num2str(Tpold,'%.2f'),' s']);
     end
+end
+
+%% Check kh of wave boundary condition (D++ only)
+if ~isempty(strfind(Plus,'plusplus'))
+    h            = WL_t-min([zInitial(1),zInitial(end)]);
+    HS_d         = Hsig_t/h;
+    omega        = (2*pi)./Tp_t;
+    kh           = omega.^2.*h/9.81.*(1-exp(-1*(omega.*(h/9.81).^0.5).^2.5)).^-0.4; % kh value according to GUO, 2002
+    HS_dcrit     = 0.29*kh+0.25;
+    ratio        =(HS_d./HS_dcrit);
+    if ratio>=1.005
+        writemessage(-10, ['Wave conditions at boundary out of range (Hs/d>0.29kh+0.25): HS/d= ',num2str(ratio,'%2.2f'),'x HS/d_c_r_i_t.']);
+    end
+end
+
+%% Check for use of correct parabolic profile function
+if strcmp(Plus,'') || strcmp(Plus,'-plus')
+    DuneErosionSettings('set','ParabolicProfileFcn',@getParabolicProfile);
+    DuneErosionSettings('set','rcParabolicProfileFcn',@getRcParabolicProfile);
+    DuneErosionSettings('set','invParabolicProfileFcn',@invParabolicProfile);
+elseif ~isempty(strfind(Plus,'plusplus'))
+    DuneErosionSettings('set','ParabolicProfileFcn',@getParabolicProfilePLUSPLUS);
+    DuneErosionSettings('set','rcParabolicProfileFcn',@getRcParabolicProfilePLUSPLUS);
+    DuneErosionSettings('set','invParabolicProfileFcn',@invParabolicProfilePLUSPLUS);
 end
 
 %% Check profile
