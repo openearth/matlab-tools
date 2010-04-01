@@ -1,5 +1,5 @@
-function rcparab = getRcParabolicProfile2(WL_t, Hsig_t, Tp_t, w, z)
-%GETRCPARABOLICPROFILE calculates the derivative of the parabolic profile given input and height
+function rcparab = getRcParabolicProfilePLUSPLUS(WL_t, Hsig_t, Tp_t, w, z)
+%GETRCPARABOLICPROFILEPLUSPLUS calculates the derivative of the parabolic profile given input and height
 %
 % This routine returns the derivative of the parabolic profile given the input
 % WL_t, Hsig_t, Tp_t, w and z
@@ -29,39 +29,31 @@ function rcparab = getRcParabolicProfile2(WL_t, Hsig_t, Tp_t, w, z)
 
 %% initiate variables
 Plus                                    = DuneErosionSettings('get','Plus');
-[c_hs c_tp c_w c_1 c_2]                 = DuneErosionSettings('get','c_hs','c_tp','c_w','c_1','c_2');
-[cp_hs cp_tp cp_w]                      = DuneErosionSettings('get','cp_hs','cp_tp','cp_w');
+[c_hs, c_tp, c_w]                       = DuneErosionSettings('get','c_hs','c_tp','c_w');
+[cp_hs, cp_tp, cp_w]                    = DuneErosionSettings('get','cp_hs','cp_tp','cp_w');
+[c_1, c_2, c_1plusplus, c_2plusplus]    = DuneErosionSettings('get','c_1','c_2','c_1plusplus','c_2plusplus');
 dz     = 0.05;
 ztemp  = [z-dz, z+dz];
 [dxparab,rcparab,waveheightcmpt,waveperiodcmpt,fallvelocitycmpt] = deal([]);
 
 
-%% -------------------------------------------------------------------------------------------- 
-%-------------------------------------------DUROS---------------------------------------------- 
-%---------------------------------------------------------------------------------------------- 
+%% ----------- DUROS ----------- 
 if strcmp(Plus,'')
-    two = c_1*sqrt(c_2); % term in formulation which is 2 by approximation; by using this expression, the profile will exactly cross (x0,0)
-    Tp_t = 12;
-    c_tp = 12;
-    cp_tp = 0;   %waveperiodcmpt = 1
-
-%% -------------------------------------------------------------------------------------------- 
-%----------------------------------------DUROS plus-------------------------------------------- 
-%---------------------------------------------------------------------------------------------- 
+    Tp_t      = 12;
+    c_tp      = 12;
+    cp_tp     = 0;   %waveperiodcmpt = 1
+    two       = c_1*sqrt(c_2);   % by using this expression, the profile will exactly cross (x0,0)
+%% ----------- DUROS+ ----------- 
 elseif strcmp(Plus,'-plus')
-    two = c_1*sqrt(c_2); % term in formulation which is 2 by approximation; by using this expression, the profile will exactly cross (x0,0)
-
-%% --------------------------------------------------------------------------------------------
-%--------------------------------------DUROS plusplus------------------------------------------
-%----------------------------------------------------------------------------------------------
-elseif strcmp(Plus,'-plusplus')
-    %overrule c1, c2 and xref with D++ values
-    %[c_1 c_2 xref] = DuneErosionSettings('get','c_1plusplus','c_2plusplus','xrefplusplus');
-    two = c_1*sqrt(c_2); % term in formulation which is 2 by approximation; by using this expression, the profile will exactly cross (x0,0)
+    two       = c_1*sqrt(c_2);   % by using this expression, the profile will exactly cross (x0,0)
+%% ----------- D++ ----------- 
+elseif strcmp(Plus,'-plusplus')  | strcmp(Plus,'-plusplus0')  | strcmp(Plus,'-plusplus1')  | strcmp(Plus,'-plusplus2')  | strcmp(Plus,'-plusplus3')
+    c_1       = c_1plusplus;
+    c_2       = c_2plusplus;
+    two       = c_1*sqrt(c_2);   % by using this expression, the profile will exactly cross (x0,0)
 else
     error('Warning: variable "Plus" should be either '''' or ''-plus'' or ''-plusplus''')
 end
-
 
 %% Calculate x coordinates
 % for all z values of z+dz and z-dz
