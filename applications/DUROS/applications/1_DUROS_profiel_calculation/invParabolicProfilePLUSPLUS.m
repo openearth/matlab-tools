@@ -1,5 +1,5 @@
-function dx = invParabolicProfile2(WL_t,Hsig_t,Tp_t,w,z)
-%INVPARABOLICPROFILE  Calculates the exact x-position of a contour line for in the parabolic profile.
+function dx = invParabolicProfilePLUSPLUS(WL_t,Hsig_t,Tp_t,w,z)
+%INVPARABOLICPROFILEPLUSPLUS  Calculates the exact x-position of a contour line for in the parabolic profile.
 %
 %   Based on the (inverse) formulation of a parabolic profile this function 
 %   calculates the exact x-position (relative to x0) of a contour line.
@@ -60,33 +60,26 @@ function dx = invParabolicProfile2(WL_t,Hsig_t,Tp_t,w,z)
 
 %% Switch method
 Plus                                    = DuneErosionSettings('get','Plus');
-[c_hs c_tp c_w c_1 c_2]                 = DuneErosionSettings('get','c_hs','c_tp','c_w','c_1','c_2');
-[cp_hs cp_tp cp_w]                      = DuneErosionSettings('get','cp_hs','cp_tp','cp_w');
+[c_hs, c_tp, c_w]                       = DuneErosionSettings('get','c_hs','c_tp','c_w');
+[cp_hs, cp_tp, cp_w]                    = DuneErosionSettings('get','cp_hs','cp_tp','cp_w');
+[c_1, c_2, c_1plusplus, c_2plusplus]    = DuneErosionSettings('get','c_1','c_2','c_1plusplus','c_2plusplus');
 [dx,waveheightcmpt,waveperiodcmpt,fallvelocitycmpt] = deal([]);
 
 
-%% -------------------------------------------------------------------------------------------- 
-%-------------------------------------------DUROS---------------------------------------------- 
-%---------------------------------------------------------------------------------------------- 
+%% ----------- DUROS ----------- 
 if strcmp(Plus,'')
-    two = c_1*sqrt(c_2); % term in formulation which is 2 by approximation; by using this expression, the profile will exactly cross (x0,0)
-    Tp_t = 12;
-    c_tp = 12;
-    cp_tp = 0;   %waveperiodcmpt = 1
-
-%% -------------------------------------------------------------------------------------------- 
-%----------------------------------------DUROS plus-------------------------------------------- 
-%---------------------------------------------------------------------------------------------- 
+    Tp_t      = 12;
+    c_tp      = 12;
+    cp_tp     = 0;   %waveperiodcmpt = 1
+    two       = c_1*sqrt(c_2);   % by using this expression, the profile will exactly cross (x0,0)
+%% ----------- DUROS+ ----------- 
 elseif strcmp(Plus,'-plus')
-    two = c_1*sqrt(c_2); % term in formulation which is 2 by approximation; by using this expression, the profile will exactly cross (x0,0)
-
-%% --------------------------------------------------------------------------------------------
-%--------------------------------------DUROS plusplus------------------------------------------
-%----------------------------------------------------------------------------------------------
-elseif strcmp(Plus,'-plusplus')
-    %overrule c1, c2 and xref with D++ values
-    %[c_1 c_2 xref] = DuneErosionSettings('get','c_1plusplus','c_2plusplus','xrefplusplus');
-    two = c_1*sqrt(c_2); % term in formulation which is 2 by approximation for DUROS and D+; by using this expression, the profile will exactly cross (x0,0)
+    two       = c_1*sqrt(c_2);   % by using this expression, the profile will exactly cross (x0,0)
+%% ----------- D++ ----------- 
+elseif strcmp(Plus,'-plusplus')  | strcmp(Plus,'-plusplus0')  | strcmp(Plus,'-plusplus1')  | strcmp(Plus,'-plusplus2')  | strcmp(Plus,'-plusplus3')
+    c_1       = c_1plusplus;
+    c_2       = c_2plusplus;
+    two       = c_1*sqrt(c_2);   % by using this expression, the profile will exactly cross (x0,0)
 else
     error('Warning: variable "Plus" should be either '''' or ''-plus'' or ''-plusplus''')
 end
