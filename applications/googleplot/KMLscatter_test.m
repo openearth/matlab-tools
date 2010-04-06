@@ -52,7 +52,7 @@ disp(['... running test:',mfilename])
 % Publishable code that describes the test.
 
 %% $RunCode
-try
+%try
 
 %% name and html empty
 
@@ -63,8 +63,8 @@ try
 
    KMLscatter(D.x,D.y,D.z,...
         'fileName',KML_testdir('KMLscatter_1.kml'),...
-     'description','mud content derived from sediment size distribution curves in <a href="http://www.waddenzee.nl/Sedimentatlas.729.0.html"> Sediment Atlas WaddenZee </a>.',...
-         'kmlName','mud content',...
+     'description','name and html empty',...
+         'kmlName','name and html empty',...
             'cLim',[0 3])
 
 %% name = # and html = table
@@ -76,39 +76,53 @@ try
    D.name = num2str([1:length(D.x)]');
    
    for i=1:length(D.x)
-   D.html{i} = ['<hr> <table border="1"> <tr> <td>mud content = </td><td>',num2str(D.x(i)),' %</td></tr>'];
+   D.html{i} = ['<table border="1"> <tr> <td>mud content = </td><td>',num2str(D.x(i)),' %</td></tr>'];
    end
 
    KMLscatter(D.x,D.y,D.z,...
         'fileName',KML_testdir('KMLscatter_2.kml'),...
             'name',D.name,...
             'html',D.html,...
-     'description','mud content derived from sediment size distribution curves in <a href="http://www.waddenzee.nl/Sedimentatlas.729.0.html"> Sediment Atlas WaddenZee </a>.',...
-         'kmlName','mud content',...
+     'description','name = # and html = table',...
+         'kmlName','name = # and html = table',...
             'cLim',[0 3],...
 'colorbarlocation',{'W','E','N','S'})
              
 %% name and html empty
 
     [lat,lon] = meshgrid(56:.02:57,6:.02:7);
-    z = peaks(51);
+    z     = peaks(51);
+    names = num2str(z(:));
     KMLscatter(lat,lon,z,...
-        'fileName',KML_testdir('KMLscatter_3.kml'))
+        'fileName',KML_testdir('KMLscatter_3.kml'),...
+            'name',names,...
+     'description','name = # and html empty',...
+         'kmlName','name = # and html empty')
 
 %% name and html empty
 
-    [lat,lon] = meshgrid([56:.02:57]-1.5,6:.02:7);
-    z = peaks(51);
-    KMLscatter(lat,lon,z,...
+   D.x    = linspace(53.10 ,53.75,21);
+   D.y    = linspace( 4.75 , 8   ,21);
+   D.z    = linspace(-1    , 4   ,21);
+   D.txt  = addrowcol(addrowcol(num2str(D.z'),0,-1,' = dum'),0,1,'%');
+   D.name = num2str([1:length(D.x)]');
+   
+   for i=1:length(D.x)
+   D.html{i} = ['<hr> <table border="1"> <tr> <td>mud content = </td><td>',num2str(D.x(i)),' %</td></tr>'];
+   end
+   
+    KMLscatter(D.x,D.y,D.z,...
         'fileName',KML_testdir('KMLscatter_4.kml'),...
-        'cLim',[-3 3],...
-        'name',[])
+            'html',D.html,...
+     'description','name empty and html = table',...
+         'kmlName','name empty and html = table',...
+            'cLim',[-3 3])
 
     testresult = true;
 
-catch
-    testresult = false;
-end
+%catch
+%    testresult = false;
+%end
 
 %% $PublishResult
 % Publishable code that describes the test.

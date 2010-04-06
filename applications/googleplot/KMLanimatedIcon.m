@@ -19,7 +19,7 @@ function varargout = KMLanimatedIcon(lat,lon,varargin)
 %
 %    OPT = KMLanimatedIcon()
 %
-% See also: GOOGLEPLOT, KMLscatter
+% See also: GOOGLEPLOT, KMLscatter, KMLtext, KMLmarker
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -71,20 +71,21 @@ end
 
    OPT.fileName           = [];
    OPT.kmlName            = [];
-   OPT.icon               = 'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
-   OPT.scale              = 1.0;
-   OPT.openInGE           = 0;
-   OPT.markerAlpha        = 1;
-   OPT.timeIn             = [];
-   OPT.timeOut            = [];
-   OPT.description        = 'Animated Icon';
-   OPT.dateStrStyle       = 29; % set to yyyy-mm-ddTHH:MM:SS for detailed times
    OPT.colorMap           = @(m) jet(m);
    OPT.colorSteps         = 20;
    OPT.cLim               = [];
+   OPT.openInGE           = 0;
+   OPT.markerAlpha        = 1;
+   OPT.description        = '';
    OPT.colorbar           = 1;
    OPT.colorbarlocation   = {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
-   OPT.colorbartitle = '';
+   OPT.colorbartitle      = '';
+
+   OPT.icon               = 'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
+   OPT.scale              = 1.0;
+   OPT.timeIn             = [];
+   OPT.timeOut            = [];
+   OPT.dateStrStyle       = 29; % set to yyyy-mm-ddTHH:MM:SS for detailed times
 
 if nargin==0
     varargout = {OPT};
@@ -93,14 +94,14 @@ end
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
-%% get filename
+%% get filename, gui for filename, if not set yet
 
 if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','untitled.kml');
+      [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
     OPT.fileName = fullfile(filePath,fileName);
 end
 
-% set kmlName if it is not set yet
+%% set kmlName if it is not set yet
 if isempty(OPT.kmlName)
     [ignore OPT.kmlName] = fileparts(OPT.fileName);
 end
@@ -113,13 +114,22 @@ if OPT.coloredIcon
        OPT.cLim         = [min(c(:)) max(c(:))];
    end
 
-   % pre-process data
-   %  make 1D and remove NaNs
+   if isnumeric(OPT.colorMap)
+      OPT.colorSteps = size(OPT.colorMap,1);
+   end   
+
+%% pre-process data
+%  make 1D and remove NaNs
+
+   if length(c)==1
+      c = repmat( c,size(lon));
+   elseif ~length(c)==length(lon)
+      error('c should have length 1 or have same size as lon')
+   end
 
    lon    = lon(~isnan(c(:)));
    lat    = lat(~isnan(c(:)));
    c      =   c(~isnan(c(:)));
-
 
    if isnumeric(OPT.colorMap)
       OPT.colorSteps = size(OPT.colorMap,1);
@@ -150,15 +160,16 @@ OPT_header = struct(...
     'description',OPT.description);
 output = KML_header(OPT_header);
 
-   if OPT.colorbar
-      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorTitle',OPT.colorbartitle);
-      output = [output clrbarstring];
-   end
-
 output = [output '<!--############################-->\n'];
 
 %% STYLE
 if OPT.coloredIcon
+
+    if OPT.colorbar
+      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorTitle',OPT.colorbartitle);
+      output = [output clrbarstring];
+    end
+
     for ii = 1:OPT.colorSteps
 
     temp                = dec2hex(round([OPT.markerAlpha, colorRGB(ii,:)].*255),2);
@@ -182,10 +193,10 @@ else
         ' </IconStyle>\n'...
         ' </Style>\n'];
 end
-output = [output '<!--############################-->\n'];
 
 %% print and clear output
 
+output = [output '<!--############################-->\n'];
 fprintf(OPT.fid,output);
 output = repmat(char(1),1,1e5);
 kk = 1;

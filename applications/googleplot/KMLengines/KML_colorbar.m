@@ -96,6 +96,9 @@ function KML_colorbar(OPT)
       error('KMLcolorbar')
    end
    h.ax = gca;
+   if OPT.clim(1)==OPT.clim(2)
+      OPT.clim = OPT.clim + 10.*[-eps eps];
+   end
    h.c  = colorbarlegend(gca,[0 1],[0 1],OPT.clim,...
             'ontop',0,...
         'reference','gca',...

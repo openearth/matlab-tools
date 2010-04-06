@@ -79,7 +79,7 @@ function varargin = KMLmesh(lat,lon,varargin)
       [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
       OPT.fileName = fullfile(filePath,fileName);
    end
-
+   
 %% set kmlName if it is not set yet
 
    if isempty(OPT.kmlName)

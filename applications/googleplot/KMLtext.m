@@ -17,7 +17,7 @@ function varargout = KMLtext(lat,lon,label,varargin)
 % labels    = arrayfun(@(x,y) sprintf('%2.1f %2.1f',x,y),lat,lon,'uni',false);
 % KMLtext(lat,lon,labels)
 %
-% See also: googlePlot, text
+%See also: GOOGLEPLOT, KMLanimatedicon, KMLscatter, KMLmarker
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -55,15 +55,17 @@ function varargout = KMLtext(lat,lon,label,varargin)
 
 %% process <keyword,value>
 
-   OPT.fileName      = '';
-   OPT.kmlName       = '';
-   OPT.openInGE      = false;
-   OPT.timeIn        = [];
-   OPT.timeOut       = [];
-   OPT.textColor     = [];% TO DO
-   OPT.textSize      = [];% TO DO
-   OPT.textAlpha     = [];% TO DO
-   OPT.labelDecimals = 1;
+   OPT.fileName            = '';
+   OPT.kmlName             = '';
+   OPT.openInGE            = false;
+   OPT.markerAlpha         =  0.6;
+   OPT.description         =  '';
+   OPT.timeIn              = [];
+   OPT.timeOut             = [];
+   OPT.textColor           = [];% TO DO
+   OPT.textSize            = [];% TO DO
+   OPT.textAlpha           = [];% TO DO
+   OPT.labelDecimals       = 1;
    
    if nargin==0
      varargout = {OPT};
@@ -131,38 +133,23 @@ function varargout = KMLtext(lat,lon,label,varargin)
 
    OPT_header = struct(...
        'name',OPT.kmlName,...
-       'open',0);
+       'open',0,...
+       'description',OPT.description);
    output = KML_header(OPT_header);
 
-%% define line styles
+output = [output '<!--############################-->\n'];
 
-% for ii = 1:length(ind);
-%     OPT_style = struct(...
-%         'name',['style' num2str(ii)],...
-%         'lineColor',OPT.lineColor(ind(ii),:) ,...
-%         'lineAlpha',OPT.lineAlpha(ind(ii)),...
-%         'lineWidth',OPT.lineWidth(ind(ii)));
-%     output = [output KML_style(OPT_style)];     %#ok<AGROW>
-% end
-% 
-% % print styles
+%% STYLE
 
-   fprintf(OPT.fid,output);
+%% print and clear output
 
-%% generate contents
-
-% preallocate output
-
+   output = [output '<!--############################-->\n'];
+   fprintf(OPT.fid,output);output = [];
+   fprintf(OPT.fid,'<Folder>');
+   fprintf(OPT.fid,'  <name>placeholders</name>');
+   fprintf(OPT.fid,'  <open>0</open>');
    output = repmat(char(1),1,1e5);
    kk = 1;
-
-% % line properties
-% OPT_line = struct(...
-%     'name','',...
-%     'styleName',['style' num2str(OPT.styleNR(1))],...
-%     'visibility',1,...
-%     'extrude',0);
-% 
 
    if isempty(OPT.timeIn)
       OPT_text.timeIn = [];
@@ -190,15 +177,19 @@ function varargout = KMLtext(lat,lon,label,varargin)
    
        % write output to file if output is full, and reset
        if kk>1e5
-           fprintf(OPT.fid,output(1:kk-1));
+           fprintf(OPT.fid,'%s',output(1:kk-1));
            kk = 1;
            output = repmat(char(1),1,1e5);
        end
    end
 
-% print output
+%% print and clear output
 
-   fprintf(OPT.fid,output(1:kk-1)); 
+%  print output
+
+   fprintf(OPT.fid,'%s',output(1:kk-1));
+
+   fprintf(OPT.fid,'</Folder>');
 
 %% FOOTER
 
@@ -222,6 +213,12 @@ function varargout = KMLtext(lat,lon,label,varargin)
 
    if OPT.openInGE
       system(OPT.fileName);
+   end
+
+%% Output
+
+   if nargout==1
+    varargout = {handles};
    end
 
 %% EOF

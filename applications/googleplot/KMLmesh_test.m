@@ -43,7 +43,7 @@ disp(['... running test:',mfilename])
 
 %% $RunCode
 % Write test code here
-try
+%try
 
    [lat,lon] = meshgrid(-90:1:90,[-180:1:180]+30);
    
@@ -55,9 +55,9 @@ try
    KMLmesh(lat ,lon ,  'fileName',KML_testdir('KMLmesh_test2d.kml'),'lineColor',hsv);
    KMLmesh(lat ,lon ,z,'fileName',KML_testdir('KMLmesh_test3d.kml'),'lineColor',hsv);
     testresult = true;
-catch
-    testresult = false;
-end
+%catch
+%    testresult = false;
+%end
 
 %% $PublishResult
 % Publishable code that describes the test.

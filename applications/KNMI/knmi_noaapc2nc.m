@@ -233,22 +233,22 @@
       %  time,z,y,x
 
         ifld = ifld + 1;
-      nc(ifld).Name         = 'SST';
-      nc(ifld).Nctype       = 'double';
-      nc(ifld).Dimension    = {'x_cen','y_cen','time'};
-      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'sea surface temperature');
-      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_Celcius');
-      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'sea_surface_skin_temperature'); % standard name
-      nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
-      nc(ifld).Attribute(6) = struct('Name', 'grid_mapping'   ,'Value', 'polar_stereographic');
+      nc(ifld).Name          = 'SST';
+      nc(ifld).Nctype        = 'double';
+      nc(ifld).Dimension     = {'x_cen','y_cen','time'};
+      nc(ifld).Attribute(1)  = struct('Name', 'long_name'      ,'Value', 'sea surface temperature');
+      nc(ifld).Attribute(2)  = struct('Name', 'units'          ,'Value', 'degrees_Celcius');
+      nc(ifld).Attribute(3)  = struct('Name', 'standard_name'  ,'Value', 'sea_surface_skin_temperature'); % standard name
+      nc(ifld).Attribute(4)  = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+      nc(ifld).Attribute(5)  = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
+      nc(ifld).Attribute(6)  = struct('Name', 'grid_mapping'   ,'Value', 'polar_stereographic');
 
-      nc(ifld).Attribute(7) = struct('Name', 'valid_min'      ,'Value', D.data_min_value);
-      nc(ifld).Attribute(8) = struct('Name', 'valid_max'      ,'Value', D.data_max_value);
+      nc(ifld).Attribute(7)  = struct('Name', 'valid_min'      ,'Value', D.data_min_value);
+      nc(ifld).Attribute(8)  = struct('Name', 'valid_max'      ,'Value', D.data_max_value);
       
       if OPT.pack
-      nc(ifld).Nctype       = 'int'; %'byte'; %short
-      nc(ifld).Attribute(9) = struct('Name', 'valid_min'      ,'Value', D.count_min_value);
+      nc(ifld).Nctype        = 'int'; %'byte'; %short
+      nc(ifld).Attribute(9)  = struct('Name', 'valid_min'      ,'Value', D.count_min_value);
       nc(ifld).Attribute(10) = struct('Name', 'valid_max'      ,'Value', D.count_max_value);
       nc(ifld).Attribute(11) = struct('Name', 'scale_factor'   ,'Value', D.gain);
       nc(ifld).Attribute(12) = struct('Name', 'add_offset'     ,'Value', D.offset);

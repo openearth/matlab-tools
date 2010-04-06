@@ -1,31 +1,23 @@
-function varargout = KMLscatter(lat,lon,c,varargin)
-%KMLscatter  Just like scatter and plotc
+function varargout = KMLmarker(lat,lon,varargin)
+%KMLMARKER  add a placemarker pushpin with text ballon
 %
-%   kmlscatter(lat,lon,c,<keyword,value>)
+%   KMLmarker(lat,lon,'fileName',fname,<keyword,value>)
 %
 % where can can be one scaler or an array of size(lon)
 % where - amongst others - the following <keyword,value> pairs have been implemented:
 %
 %  * filename               = []; % file name
 %  * kmlname                = []; % name that appears in Google Earth places list
-%  * colorMap               = colormap (default @(m) jet(m));
-%  * colorSteps             = number of colors in colormap (default 20);
-%  * cLim                   = cLim aka caxis (default [min(c) max(c)]);
 %  * name                   = cellstr with name per point (shown when highlighted)
 %                             by default empty.
 %  * html                   = cellstr with text per point (shown when highlighted)
 %                             by default equal to value of c
-%  * OPT.iconnormalState    = marker, default 'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png'
-%  * OPT.iconhighlightState = see also, http://www.mymapsplus.com/Markers, 
-%                                       http://www.visual-case.it/cgi-bin/vc/GMapsIcons.pl
-%                                       http://www.benjaminkeen.com/?p=105
-%                                       http://code.google.com/p/google-maps-icons/
 %
 % For the <keyword,value> pairs and their defaults call
 %
-%    OPT = kmlscatter()
+%    OPT = KMLmarker()
 %
-%See also: GOOGLEPLOT, KMLanimatedicon, KMLmarker, KMLtext, SCATTER, PLOTC
+%See also: GOOGLEPLOT, KMLanimatedicon, KMLscatter, KMLtext
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -61,33 +53,57 @@ function varargout = KMLscatter(lat,lon,c,varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% process options
+%% input check
 
-   OPT.fileName           =  '';
-   OPT.kmlName            =  '';
-   OPT.colorMap           =  @(m) jet(m);
-   OPT.colorSteps         =  20;
-   OPT.cLim               =  [];
-   OPT.openInGE           =  0;
-   OPT.markerAlpha        =  0.6;
-   OPT.description        =  '';
-   OPT.colorbar           = 1;
-   OPT.colorbarlocation   = {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
-   OPT.colorbartitle = '';
+%% process <keyword,value>
 
-   OPT.html               = [];
-   OPT.name               = [];
-   OPT.iconnormalState    =  'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
-   OPT.iconhighlightState =  'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
-   OPT.scalenormalState   =  0.25;
-   OPT.scalehighlightState=  1.0;
+   OPT.fileName            =  '';
+   OPT.kmlName             =  '';
+   OPT.openInGE            = false;
+   OPT.markerAlpha         =  0.6;
+   OPT.description         =  '';
+
+   OPT.html                = [];
+   OPT.name                = [];
+  %OPT.iconnormalState     =  '';
+  %OPT.iconhighlightState  =  '';
+   OPT.scalenormalState    =  0.5;
+   OPT.scalehighlightState =  1.0;
+   OPT.colornormalState    =  [1 1 0]; % [1 1 0] = yellow
+   OPT.colorhighlightState =  [1 1 0];
 
    if nargin==0
        varargout = {OPT};
        return
    end
    
+%% process varargin
+
+   if ~isempty(varargin)
+       if isnumeric(varargin{1})
+           z = varargin{1};
+           varargin(1) = [];
+           OPT.is3D = true;
+       else
+           z = zeros(size(lat));
+           OPT.is3D = false;
+       end
+   else
+       z = zeros(size(lat));
+       OPT.is3D = false;
+   end
+
    [OPT, Set, Default] = setProperty(OPT, varargin);
+
+%% correct lat and lon
+
+   lat = lat(:);
+   lon = lon(:);
+
+   if any((abs(lat)/90)>1)
+       error('latitude out of range, must be within -90..90')
+   end
+   lon = mod(lon+180, 360)-180;
 
 %% get filename, gui for filename, if not set yet
 
@@ -102,54 +118,9 @@ function varargout = KMLscatter(lat,lon,c,varargin)
       [ignore OPT.kmlName] = fileparts(OPT.fileName);
    end
 
-%% set cLim
-
-   if isempty(OPT.cLim)
-       OPT.cLim         = [min(c(:)) max(c(:))];
-       if OPT.cLim(1)==OPT.cLim(2)
-       OPT.cLim = OPT.cLim + 10.*[-eps eps];
-       end
-   end
-   
-   if isnumeric(OPT.colorMap)
-      OPT.colorSteps = size(OPT.colorMap,1);
-   end   
-
 %% pre-process data
-%  make 1D and remove NaNs
 
-   if length(c)==1
-      c = repmat( c,size(lon));
-   elseif ~length(c)==length(lon)
-      error('c should have length 1 or have same size as lon')
-   end
-
-   lon    = lon(~isnan(c(:)));
-   lat    = lat(~isnan(c(:)));
-   c      =   c(~isnan(c(:)));
-
-   if isnumeric(OPT.colorMap)
-      OPT.colorSteps = size(OPT.colorMap,1);
-   end
-   
-   if isa(OPT.colorMap,'function_handle')
-     colorRGB           = OPT.colorMap(OPT.colorSteps);
-   elseif isnumeric(OPT.colorMap)
-     if size(OPT.colorMap,1)==1
-       colorRGB         = repmat(OPT.colorMap,[OPT.colorSteps 1]);
-     elseif size(OPT.colorMap,1)==OPT.colorSteps
-       colorRGB         = OPT.colorMap;
-     else
-       error(['size ''colorMap'' (=',num2str(size(OPT.colorMap,1)),') does not match ''colorSteps''  (=',num2str(OPT.colorSteps),')'])
-     end
-   end   
-   
-   %% showing number next to scatter point makes iconhighlightState too SLOW, 
-   %  so show values only in pop-up.
-
-   if isempty(OPT.html);OPT.html = cellstr(num2str(c(:)));end
    if  ischar(OPT.html);OPT.html = cellstr(OPT.html  );end
-  %if isempty(OPT.name);OPT.name = cellstr(num2str(c(:)));end %  makes iconhighlightState too SLOW!
    if  ischar(OPT.name);OPT.name = cellstr(OPT.name  );end
 
 %% start KML
@@ -164,78 +135,67 @@ function varargout = KMLscatter(lat,lon,c,varargin)
        'description',OPT.description);
    output = KML_header(OPT_header);
    
-   if OPT.colorbar
-      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorTitle',OPT.colorbartitle);
-      output = [output clrbarstring];
-   end
-
 output = [output '<!--############################-->\n'];
 
 %% STYLE
 
-for ii = 1:OPT.colorSteps
-
-    OPT_stylePoly.name  = ['style' num2str(ii)];
-    temp                = dec2hex(round([OPT.markerAlpha, colorRGB(ii,:)].*255),2);
-    markerColor         = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
+    temp                    = dec2hex(round([OPT.markerAlpha OPT.colornormalState].*255),2);
+    OPT.colornormalState    = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
+    temp                    = dec2hex(round([OPT.markerAlpha OPT.colorhighlightState].*255),2);
+    OPT.colorhighlightState = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
 
     if ~isempty(OPT.html)
     output = [output ...
-        '<StyleMap id="cmarker_',num2str(ii,'%0.3d'),'map">\n'...
-        ' <Pair><key>normal</key><styleUrl>#cmarker_',num2str(ii,'%0.3d'),'n</styleUrl></Pair>\n'...
-        ' <Pair><key>highlight</key><styleUrl>#cmarker_',num2str(ii,'%0.3d'),'h</styleUrl></Pair>\n'...
+        '<StyleMap id="cmarker_map">\n'...
+        ' <Pair><key>normal</key><styleUrl>#cmarker_n</styleUrl></Pair>\n'...
+        ' <Pair><key>highlight</key><styleUrl>#cmarker_h</styleUrl></Pair>\n'...
         '</StyleMap>\n'...
-        '<Style id="cmarker_',num2str(ii,'%0.3d'),'n">\n'...
+        '<Style id="cmarker_n">\n'...
         ' <IconStyle>\n'...
-        ' <color>' markerColor '</color>\n'...
-        ' <scale>' num2str(OPT.scalenormalState) '</scale>\n'...
-        ' <Icon><href>'    OPT.iconnormalState '</href></Icon>\n'...
+        ' <color>' OPT.colornormalState '</color>\n'...
+        ' <scale>' num2str(OPT.scalenormalState) '</scale>\n'... % ' <Icon><href>'    OPT.iconnormalState '</href></Icon>\n'...
         ' </IconStyle>\n'...
         ' <LabelStyle><color>000000ff</color><scale>0</scale></LabelStyle>\n'... % no text except when mouse hoover
         ' </Style>\n'...
-        '<Style id="cmarker_',num2str(ii,'%0.3d'),'h">\n'...
+        '<Style id="cmarker_h">\n'...
         ' <BalloonStyle><text>\n'...
         ' <h3>$[name]</h3>'... % variable per dot
         ' $[description]\n'... % variable per dot
         ' </text></BalloonStyle>\n'...
         ' <IconStyle>\n'...
-        ' <color>' markerColor '</color>\n'...
-        ' <scale>' num2str(OPT.scalehighlightState) '</scale>\n'...
-        ' <Icon><href>'    OPT.iconhighlightState '</href></Icon>\n'...
+        ' <color>' OPT.colorhighlightState '</color>\n'...
+        ' <scale>' num2str(OPT.scalehighlightState) '</scale>\n'...  % ' <Icon><href>'    OPT.iconhighlightState '</href></Icon>\n'...
         ' </IconStyle>\n'...
         ' <LabelStyle></LabelStyle>\n'...
         ' </Style>\n'];
     else
     output = [output ...
-        '<StyleMap id="cmarker_',num2str(ii,'%0.3d'),'map">\n'...
-        ' <Pair><key>normal</key><styleUrl>#cmarker_',num2str(ii,'%0.3d'),'n</styleUrl></Pair>\n'...
-        ' <Pair><key>highlight</key><styleUrl>#cmarker_',num2str(ii,'%0.3d'),'h</styleUrl></Pair>\n'...
+        '<StyleMap id="cmarker_map">\n'...
+        ' <Pair><key>normal</key><styleUrl>#cmarker_n</styleUrl></Pair>\n'...
+        ' <Pair><key>highlight</key><styleUrl>#cmarker_h</styleUrl></Pair>\n'...
         '</StyleMap>\n'...
-        '<Style id="cmarker_',num2str(ii,'%0.3d'),'n">\n'...
+        '<Style id="cmarker_n">\n'...
         ' <IconStyle>\n'...
-        ' <color>' markerColor '</color>\n'...
-        ' <scale>' num2str(OPT.scalenormalState) '</scale>\n'...
-        ' <Icon><href>'    OPT.iconnormalState '</href></Icon>\n'...
+        ' <color>' OPT.colornormalState '</color>\n'...
+        ' <scale>' num2str(OPT.scalenormalState) '</scale>\n'... % ' <Icon><href>'    OPT.iconnormalState '</href></Icon>\n'...
         ' </IconStyle>\n'...
         ' <LabelStyle><color>000000ff</color><scale>0</scale></LabelStyle>\n'... % no text except when mouse hoover
         ' </Style>\n'...
-        '<Style id="cmarker_',num2str(ii,'%0.3d'),'h">\n'...
+        '<Style id="cmarker_h">\n'...
         ' <IconStyle>\n'...
-        ' <color>' markerColor '</color>\n'...
-        ' <scale>' num2str(OPT.scalehighlightState) '</scale>\n'...
-        ' <Icon><href>'    OPT.iconhighlightState '</href></Icon>\n'...
+        ' <color>' OPT.colorhighlightState '</color>\n'...
+        ' <scale>' num2str(OPT.scalehighlightState) '</scale>\n'...  % ' <Icon><href>'    OPT.iconhighlightState '</href></Icon>\n'...
         ' </IconStyle>\n'...
         ' <LabelStyle></LabelStyle>\n'...
         ' </Style>\n'];
     end
-end
-
+        
 %% print and clear output
 
    output = [output '<!--############################-->\n'];
    fprintf(OPT.fid,output);output = [];
    fprintf(OPT.fid,'<Folder>');
-   fprintf(OPT.fid,'  <name>patches</name>');
+   fprintf(OPT.fid,'  <name>placeholders</name>');
    fprintf(OPT.fid,'  <open>0</open>');
    
    output = repmat(char(1),1,1e5);
@@ -245,13 +205,7 @@ end
 
    for ii=1:length(lon)
 
-    % convert color values into colorRGB index values
-    cindex = round(((c(ii)-OPT.cLim(1))/(OPT.cLim(2)-OPT.cLim(1))*(OPT.colorSteps-1))+1);
-    cindex = min(cindex,OPT.colorSteps);
-    cindex = max(cindex,1); % style numbering is 1-based
-    
-
-    OPT_poly.styleName = ['cmarker_',num2str(cindex,'%0.3d'),'map'];
+    OPT_poly.styleName = ['cmarker_map'];
     if isempty(OPT.name) & ~isempty(OPT.html)
     newOutput= sprintf([...
         '<Placemark>\n'...
@@ -279,7 +233,7 @@ end
     elseif ~isempty(OPT.name) & isempty(OPT.html)
     newOutput= sprintf([...
         '<Placemark>\n'...
-        ' <name>%s</name>\n'...                          % no names so we see just the scatter points
+        ' <name>%s</name>\n'...                        % no names so we see just the scatter points
         ' <visibility>1</visibility>\n'...
         ' <styleUrl>#%s</styleUrl>\n'...               % styleName
         ' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n'...
@@ -333,6 +287,15 @@ end
 %% close KML
 
    fclose(OPT.fid);
+
+%% compress to kmz?
+
+   if strcmpi  ( OPT.fileName(end),'z')
+      movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
+      zip     ( OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
+      movefile([OPT.fileName '.zip'],OPT.fileName)
+      delete  ([OPT.fileName(1:end-3) 'kml'])
+   end
 
 %% openInGoogle?
 

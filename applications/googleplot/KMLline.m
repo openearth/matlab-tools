@@ -124,7 +124,7 @@ function varargout = KMLline(lat,lon,varargin)
 %% see if height is defined
 
    if ~isempty(varargin)
-       if ~ischar(varargin{1});
+       if isnumeric(varargin{1});
            z = varargin{1};
            varargin = varargin(2:length(varargin));
            OPT.is3D        = true;        

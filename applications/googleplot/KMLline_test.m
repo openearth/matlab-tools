@@ -56,8 +56,12 @@ disp(['... running test:',mfilename])
 try
     [lat,lon] = meshgrid([51:54],[3:7]);
  
-    KMLline(lat ,lon ,'fileName',KML_testdir('KMLline_testh.kml'),'lineColor',jet(3) ,'kmlName','horizontal');%,'text',{'1','2','3','4'});
-    KMLline(lat',lon','fileName',KML_testdir('KMLline_testv.kml'),'lineWidth',[1 3 3],'kmlName','vertical'  );%,'text',{'a','b','c','d','e'});
+    KMLline(lat ,lon ,'fileName',KML_testdir('KMLline_testh.kml'),'lineColor',jet(3) ,'kmlName','horizontal');
+    KMLline(lat',lon','fileName',KML_testdir('KMLline_testv.kml'),'lineWidth',[1 3 3],'kmlName','vertical'  );
+    
+    lat = [52 53 NaN 54 55];
+    lon = [ 2  3 NaN  4  5];
+    KMLline(lat',lon','fileName',KML_testdir('KMLline_nan.kml')  ,'lineWidth',[1 3 3],'kmlName','separated by a nan');
 
     testresult = true;
 catch

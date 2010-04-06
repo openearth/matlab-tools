@@ -111,7 +111,7 @@ end
 %% set kmlName if it is not set yet
 
 if isempty(OPT.kmlName)
-    [~, OPT.kmlName] = fileparts(OPT.fileName);
+    [dummy, OPT.kmlName] = fileparts(OPT.fileName);
 end
 
 %% find contours and edges
@@ -367,7 +367,7 @@ for ii=1:contour.n
     contour.area(ii) = polyarea(lon(~isnan(lat(:,ii)),ii),lat(~isnan(lat(:,ii)),ii));
 end
 
-% [~,outerPoly] = max(contour.area);
+% [dummy,outerPoly] = max(contour.area);
 mm = 0;
 for outerPoly = 1:contour.n
     % OuterPoly is the outer boundary.
@@ -401,7 +401,7 @@ for outerPoly = 1:contour.n
         end
         
         if ~isempty(inOuterPoly)
-            [~,ii] = max(contour.area(inOuterPoly));
+            [dummy,ii] = max(contour.area(inOuterPoly));
             innerPoly(end+1) = inOuterPoly(ii); %#ok<AGROW>
         end
     end
@@ -423,7 +423,7 @@ for ii = 1:contour.n
 end
 
 %  convert color values into colorRGB index values
-[~,~,c] = unique(contour.colorLevel);
+[dummy,dummy,c] = unique(contour.colorLevel);
 
 %% start KML
 

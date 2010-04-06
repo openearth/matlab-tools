@@ -97,7 +97,7 @@ function varargout = KMLcolorbar(varargin)
       error('clim not supplied')
    end
    if OPT.clim(1)==OPT.clim(2)
-      OPT.clim = OPT.clim + [-eps eps];
+      OPT.clim = OPT.clim + 10.*[-eps eps];
    end
 
 %% make colorbar pngs as separate files
