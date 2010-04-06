@@ -29,9 +29,14 @@ if (strcmp(Plus,'-plus') || strcmp(Plus,'-plusplus')) && TP12slimiter
     end
 end
 
-%% Check kh of wave boundary condition (D++ only)
-if ~isempty(strfind(Plus,'-plusplus'))
+%% Set water depth at wave boundary (D++ only)
+if ~isempty(strfind(Plus,'plusplus'))
     h            = WL_t-min([zInitial(1),zInitial(end)]);
+    DuneErosionSettings('set','d',min(h,25));
+end
+
+%% Check kh of wave boundary condition (D++ only)
+if ~isempty(strfind(Plus,'plusplus'))
     HS_d         = Hsig_t/h;
     omega        = (2*pi)./Tp_t;
     kh           = omega.^2.*h/9.81.*(1-exp(-1*(omega.*(h/9.81).^0.5).^2.5)).^-0.4; % kh value according to GUO, 2002
@@ -47,7 +52,7 @@ if strcmp(Plus,'') || strcmp(Plus,'-plus')
     DuneErosionSettings('set','ParabolicProfileFcn',@getParabolicProfile);
     DuneErosionSettings('set','rcParabolicProfileFcn',@getRcParabolicProfile);
     DuneErosionSettings('set','invParabolicProfileFcn',@invParabolicProfile);
-elseif ~isempty(strfind(Plus,'-plusplus'))
+elseif ~isempty(strfind(Plus,'plusplus'))
     DuneErosionSettings('set','ParabolicProfileFcn',@getParabolicProfilePLUSPLUS);
     DuneErosionSettings('set','rcParabolicProfileFcn',@getRcParabolicProfilePLUSPLUS);
     DuneErosionSettings('set','invParabolicProfileFcn',@invParabolicProfilePLUSPLUS);
