@@ -85,13 +85,13 @@ epsg = [32631 % 'WGS 84 / UTM zone 31N'
         28992
         28992];
 
-for im= 1:length(maps)
+for im= 16 %:length(maps)
 
 close all
 
-   try
+   %try
    [X,Y,D,M] = arc_info_binary([maps{im},'\'],...
-        'debug',0,...
+        'debug',1,...
          'plot',1,...
        'export',1,...
         'clim',[100 300],...
@@ -99,10 +99,10 @@ close all
           'vc','F:\checkouts\OpenEarthRawData\deltares\landboundaries\processed\northsea.nc');
        disp(['succes: ',num2str(im),' ',maps{im}])
        succes(im) = 1;
-   catch
-       disp(['failed: ',num2str(im),' ',maps{im}])
-       succes(im) = 0;
-   end
+   %catch
+   %    disp(['failed: ',num2str(im),' ',maps{im}])
+   %    succes(im) = 0;
+   %end
           
    %A = ArcGisRead(ascii{im})       
 

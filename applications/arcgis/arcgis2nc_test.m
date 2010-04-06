@@ -5,7 +5,7 @@ function ok = arcgis2nc_test
 
    ok = 1;
 
-   OPT.basename = [fileparts(mfilename('fullpath')),filesep,'test'];
+   OPT.basename = [fileparts(mfilename('fullpath')),'test',filesep,'test'];
 
 %% create an ascii ascgrid file
    
