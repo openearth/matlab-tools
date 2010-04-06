@@ -15,7 +15,7 @@ function [D] = ArcGisRead(fname,varargin)
 %
 %See web: <a href="http://en.wikipedia.org/wiki/ESRI_grid">http://en.wikipedia.org/wiki/ESRI_grid</a>
 %         <a href="http://webhelp.esri.com/arcgisdesktop/9.2/index.cfm?id=1309&pid=1308&topicname=ASCII_to_Raster_%28Conversion%29">@ESRI</a>
-%See also: ARCGIS2NC, ARCGRIDREAD (in $ mapping toolbox)
+%See also: ARCGIS2NC, ARC_SHAPE_READ, ARCGRIDREAD (in $ mapping toolbox)
 
 %% User defined keywords
 

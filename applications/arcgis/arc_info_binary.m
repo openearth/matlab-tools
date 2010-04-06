@@ -63,7 +63,7 @@ function varargout = arc_info_binary(varargin)
 %                 tiles in the w001001.adf raster file.
 % * metadata.xml: contains log of process that created the file
 %
-%See also: ArcGisRead, ArcGisRead
+%See also: ArcGisRead, ARC_SHAPE_READ
 
 warning('arc_info_binary is a development in progress.')
 
