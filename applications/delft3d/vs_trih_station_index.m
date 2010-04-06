@@ -1,5 +1,5 @@
 function indices = vs_trih_station_index(trih,varargin)
-%VS_TRIH_STATION_INDEX   get index of history station (obs point)
+%VS_TRIH_STATION_INDEX   Read index of history station (obs point)
 %
 %   index = vs_trih_station_index(trih,stationname)
 %

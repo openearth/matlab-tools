@@ -1,5 +1,5 @@
 function varargout=vs_meshgrid3dcorcen(varargin),
-%VS_MESHGRID3DCORCEN   Reads 3D time-dependent grid info from NEFIS file.
+%VS_MESHGRID3DCORCEN   Read 3D time-dependent grid info from NEFIS file.
 %
 %  G = VS_MESHGRID3DCORCEN(NFSstruct,TimeStep,G,<'keyword',value>);
 %

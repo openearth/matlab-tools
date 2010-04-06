@@ -1,5 +1,5 @@
 function OPT = delft3d_grd2kml(grdfile,varargin)
-%DELFT3D_GRD2KML   saves Delft3D grid fle as kml file
+%DELFT3D_GRD2KML   Save grid (and depth) file as kml feed for Google Earth
 %
 %   delft3d_grd2kml(grdfile,<keyword,value>)
 %

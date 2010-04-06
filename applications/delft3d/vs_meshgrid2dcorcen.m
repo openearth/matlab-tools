@@ -1,5 +1,5 @@
 function varargout=vs_meshgrid2dcorcen(varargin),
-%VS_MESHGRID2DCORCEN   Reads 2D time-independent grid info from NEFIS file.
+%VS_MESHGRID2DCORCEN   Read 2D time-independent grid info from NEFIS file.
 %
 %  G = VS_MESHGRID2DCORCEN(NFSstruct);
 %

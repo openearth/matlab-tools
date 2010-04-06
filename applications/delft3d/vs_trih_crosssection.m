@@ -1,5 +1,5 @@
 function varargout = vs_trih_crosssection(trih,crosssection_id)
-%VS_TRIH_CROSSSECTION   Reads NEFIS cross-section data for one transect.
+%VS_TRIH_CROSSSECTION   Read NEFIS cross-section data for one transect.
 %
 % ST = vs_trih_crosssection(trih,crosssection_id)
 %

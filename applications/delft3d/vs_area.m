@@ -1,5 +1,5 @@
 function varargout = vs_mask(varargin);
-%VS_AREA   reads INCORRECT cell areas from com-file.
+%VS_AREA   Read INCORRECT cell areas from com-file.
 %
 %   area = vs_area(comfile);
 %

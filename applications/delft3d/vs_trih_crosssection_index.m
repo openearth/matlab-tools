@@ -1,5 +1,5 @@
 function indices = vs_trih_crosssection_index(trih,varargin)
-%VS_TRIH_CROSSSECTION_INDEX   List index NEFIS cross-section properties.
+%VS_TRIH_CROSSSECTION_INDEX   Read index NEFIS cross-section properties.
 %
 % index = vs_trih_crosssection_index(trih,crosssectionname)
 %

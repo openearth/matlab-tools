@@ -1,5 +1,5 @@
 function mask=vs_mask(C,varargin);
-%VS_MASK   returns active/inactive mask of Delft3D results in trim- or com-file.
+%VS_MASK   Read active/inactive mask of Delft3D results in trim- or com-file.
 %
 %   centermask = vs_mask(NFStruct,<timeindex>,<keyword,value>);
 %

@@ -1,5 +1,5 @@
 function delft3d_3d_visualisation_example(varargin)
-%DELFT3D_3D_VISUALISATION_EXAMPLE   example to make 3D graphics from delft3d trim file
+%DELFT3D_3D_VISUALISATION_EXAMPLE   Example to make 3D graphics from delft3d trim file
 %
 %See also: VS_MESHGRID3DCORCEN, VS_TIME, VS_LET_SCALAR, VS_LET_VECTOR_CEN
 

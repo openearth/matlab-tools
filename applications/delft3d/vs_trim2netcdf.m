@@ -1,5 +1,5 @@
 function varargout = vs_trim2netcdf(vsfile,varargin)
-%VS_TRIM2NETCDF  convert part of a Delft3D trim file to netCDF (BETA)
+%VS_TRIM2NETCDF  Convert part of a Delft3D trim file to netCDF (BETA)
 %
 %   vs_trim2netcdf(NEFISfile,<'keyword',value>)
 %

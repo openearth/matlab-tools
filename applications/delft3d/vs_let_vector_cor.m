@@ -1,5 +1,5 @@
 function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,ElementIndex,varargin);
-%VS_LET_VECTOR_COR    Reads U,V vector data to corners from a trim- or com-file.
+%VS_LET_VECTOR_COR    Read U,V vector data to corners from a trim- or com-file.
 %
 %   [U,V]=vs_let_vector_cor(NFStruct,'GroupName',GroupIndex,{'ElementName','ElementName'},ElementIndex,<'quiet'>)
 %

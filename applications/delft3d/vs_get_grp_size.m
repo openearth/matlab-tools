@@ -1,5 +1,5 @@
 function Sz = vs_get_grp_size(NFSstruct,GrpName,varargin)
-%VS_GET_GRP_SIZE      Extract size of NEFIS Element data
+%VS_GET_GRP_SIZE      Read size of NEFIS Element data
 %
 % Sz = vs_get_grp_size(NFSstruct,GrpName) returns 
 % size of Group GrpName in NEFIS struct

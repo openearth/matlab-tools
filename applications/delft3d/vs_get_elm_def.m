@@ -1,5 +1,5 @@
 function INFO = vs_get_elm_def(NFSstruct,ElmName,varargin)
-%VS_GET_ELM_DEF   Extract NEFIS Element data
+%VS_GET_ELM_DEF   Read NEFIS Element data
 %
 % Sz = vs_get_elm_def(NFSstruct,ElmName) returns
 % the information from the fielde ElmDef 

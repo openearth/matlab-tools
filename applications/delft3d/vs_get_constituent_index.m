@@ -1,5 +1,5 @@
 function varargout = vs_get_constituent_index(NFSstruct,varargin)
-%VS_GET_CONSTITUENT_INDEX   get index information required to read constituents by name.
+%VS_GET_CONSTITUENT_INDEX   Read index information required to read constituents by name.
 %
 % INDEX = vs_get_constituent_index(NFSstruct)
 %    returns a struct INDEX with a field per parameter (lower case)

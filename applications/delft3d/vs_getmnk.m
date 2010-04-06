@@ -1,5 +1,5 @@
 function varargout=vs_getmnk(varargin),
-%VS_GETMNK    Reads the grid size from NEFIS file.
+%VS_GETMNK    Read the grid size from NEFIS file.
 %
 %                    vs_getmnk(NFSstruct) Displays on mmax,nmax,kmax command line.
 % G                = vs_getmnk(NFSstruct) where G has fields 'mmax','nmax' and 'kmax'

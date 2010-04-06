@@ -1,5 +1,5 @@
 function Sz = vs_get_elm_size(NFSstruct,ElmName,varargin)
-%VS_GET_ELM_SIZE   Extract size of NEFIS Element data
+%VS_GET_ELM_SIZE   Read size of NEFIS Element data
 %
 % Sz = vs_get_elm_size(NFSstruct,ElmName) returns
 % size of Element ElmName in NEFIS struct

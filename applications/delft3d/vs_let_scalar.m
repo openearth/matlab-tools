@@ -1,5 +1,5 @@
 function scalar = vs_let_scalar(varargin)
-%VS_LET_SCALAR   Reads scalar data defined on grid centers from a trim- or com-file.
+%VS_LET_SCALAR   Read scalar data defined on grid centers from a trim- or com-file.
 %
 %     scalar = vs_let_scalar(NEFISstruct,groupname,groupindex,elementname)
 %

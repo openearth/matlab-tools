@@ -1,5 +1,5 @@
 function varargout = vs_trih_station(trih,varargin)
-%VS_TRIH_STATION   get [x,y,m,n,name] information of history stations (obs point)
+%VS_TRIH_STATION   Read [x,y,m,n,name] information of history stations (obs point)
 %
 % ST = VS_TRIH_STATION(trih,<station_id>)
 %

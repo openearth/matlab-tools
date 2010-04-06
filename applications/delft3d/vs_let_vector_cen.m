@@ -1,5 +1,5 @@
 function varargout=VS_LET_VECTOR_CEN(NFStruct,GroupName,GroupIndex,ElementNames,ElementIndex,varargin);
-%VS_LET_VECTOR_CEN Reads U,V vector data to centers from a trim- or com-file.
+%VS_LET_VECTOR_CEN Read U,V vector data to centers from a trim- or com-file.
 %
 %   [U,V]=vs_let_vector_cen(NFStruct,'GroupName',GroupIndex,{'ElementName','ElementName'},ElementIndex,<'quiet'>)
 %

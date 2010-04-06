@@ -1,5 +1,5 @@
 function varargout=vs_meshgrid2d0(varargin),
-%VS_MESHGRID2D0   reads all time-independent grid info from trim/com file
+%VS_MESHGRID2D0   Read all time-independent grid info from trim/com file
 %
 % vs_meshgrid2d0(NEFISstruct) reads all the relevant griddata
 % 2D time-invariant form NEFIS struct as returned by vs_use()
