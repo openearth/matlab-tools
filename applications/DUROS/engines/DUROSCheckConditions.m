@@ -30,7 +30,7 @@ if (strcmp(Plus,'-plus') || strcmp(Plus,'-plusplus')) && TP12slimiter
 end
 
 %% Check kh of wave boundary condition (D++ only)
-if ~isempty(strfind(Plus,'plusplus'))
+if ~isempty(strfind(Plus,'-plusplus'))
     h            = WL_t-min([zInitial(1),zInitial(end)]);
     HS_d         = Hsig_t/h;
     omega        = (2*pi)./Tp_t;
@@ -47,7 +47,7 @@ if strcmp(Plus,'') || strcmp(Plus,'-plus')
     DuneErosionSettings('set','ParabolicProfileFcn',@getParabolicProfile);
     DuneErosionSettings('set','rcParabolicProfileFcn',@getRcParabolicProfile);
     DuneErosionSettings('set','invParabolicProfileFcn',@invParabolicProfile);
-elseif ~isempty(strfind(Plus,'plusplus'))
+elseif ~isempty(strfind(Plus,'-plusplus'))
     DuneErosionSettings('set','ParabolicProfileFcn',@getParabolicProfilePLUSPLUS);
     DuneErosionSettings('set','rcParabolicProfileFcn',@getRcParabolicProfilePLUSPLUS);
     DuneErosionSettings('set','invParabolicProfileFcn',@invParabolicProfilePLUSPLUS);

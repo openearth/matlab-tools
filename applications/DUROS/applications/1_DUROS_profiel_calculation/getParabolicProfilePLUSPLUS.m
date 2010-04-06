@@ -48,7 +48,7 @@ if strcmp(Plus,'')
 elseif strcmp(Plus,'-plus')
     two       = c_1*sqrt(c_2);   % by using this expression, the profile will exactly cross (x0,0)
 %% ----------- D++ ----------- 
-elseif strcmp(Plus,'-plusplus') | strcmp(Plus,'-plusplus0') | strcmp(Plus,'-plusplus1') | strcmp(Plus,'-plusplus2')
+elseif strcmp(Plus,'-plusplus') || strcmp(Plus,'-plusplus0') || strcmp(Plus,'-plusplus1') || strcmp(Plus,'-plusplus2')
     c_1       = c_1plusplus;
     c_2       = c_2plusplus;
     xref      = xrefplusplus;
