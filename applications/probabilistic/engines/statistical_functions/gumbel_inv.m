@@ -80,7 +80,7 @@ if nargin < 3
 end
 
 %%
-id = 0 <= p & p < 1 & ~isnan(P);
+id = 0 <= P & P < 1 & ~isnan(P);
 
 q = NaN(size(P));
 q(id) = log(-log(1-P(id)));
