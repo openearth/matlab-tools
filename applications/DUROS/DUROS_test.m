@@ -136,5 +136,7 @@ Tp_t = 12;
 'AdditionalErosion',false);
 plotDuneErosion(result,figure);
 
+DuneErosionSettings('default');
+
 %% $PublishResult
 % Publishable code that describes the test.

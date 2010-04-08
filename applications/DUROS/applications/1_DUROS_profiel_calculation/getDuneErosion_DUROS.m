@@ -100,7 +100,7 @@ end
 
 messgs=writemessage('get');
 CorrAboveWL = any([messgs{:,1}]==-5);
-if isempty(result(1).z2Active) || ~SolutionPossibleBetweenBoundaries || CorrAboveWL
+if isempty(result(1).z2Active) || ~SolutionPossibleBetweenBoundaries %|| CorrAboveWL
     NoDUROSResult=true;
     [AVolume,x00min, x0max, x0except]=deal([]);
 end

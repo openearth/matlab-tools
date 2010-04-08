@@ -222,7 +222,7 @@ x0exceptID = ones(m,1)*2;
 %% Initialize iteration parameters
 Iter = 0;               % Iteration number
 iterid = 1;             % dummy value for iteration number which gives the best possible solution;
-[Volume xmax xmin] = deal(repmat(NaN, 1, OPT.maxiter)); % Preallocation of variable to store calculated volumes
+[Volume xmax xmin] = deal(NaN(1, OPT.maxiter)); % Preallocation of variable to store calculated volumes
 NextIteration = true;
 x2 = [diff([min(x) max(x)]) 0 -diff([OPT.zmin max(z)])/OPT.slope];
 z2 = [OPT.zmin OPT.zmin max(z)];

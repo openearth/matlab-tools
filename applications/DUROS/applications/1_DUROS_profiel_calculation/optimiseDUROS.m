@@ -142,7 +142,7 @@ end
 if PreventLandwardTransport && ProfileFluct >=0
     IterateWithLandwardTransport = false;
     if PrecisionNotReached
-        [Volumechange CorrectionApplied DuneCorrected] = deal(zeros(1,Iter),repmat(false,1,Iter),repmat(false,1,Iter));
+        [Volumechange CorrectionApplied DuneCorrected] = deal(zeros(1,Iter),false(1,Iter),false(1,Iter));
         for i = 1 : Iter
             % Correct volume in case of landward directed transport
             [Volume(i), Volumechange(i), CorrectionApplied(i), DuneCorrected(i),  result(i).xActive, result(i).zActive, result(i).z2Active] = getVolumeCorrection(result(i).xActive, result(i).zActive, result(i).z2Active, WL_t); % check for landward directed transport
