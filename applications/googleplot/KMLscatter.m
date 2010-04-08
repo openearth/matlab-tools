@@ -165,7 +165,7 @@ function varargout = KMLscatter(lat,lon,c,varargin)
    output = KML_header(OPT_header);
    
    if OPT.colorbar
-      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorTitle',OPT.colorbartitle);
+      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorTitle',OPT.colorbartitle,'colorbarlocation',OPT.colorbarlocation);
       output = [output clrbarstring];
    end
 

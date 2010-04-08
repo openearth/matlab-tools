@@ -1,4 +1,4 @@
-%MATROOS_LOOP   exampel of hwo to extract data from matroos
+%MATROOS_GET_SERIES_EXAMPLE  exampel of hwo to extract data from matroos
 %
 %See also: matroos
 
@@ -24,10 +24,11 @@ OPT.vc     = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/g
    axislat
    axis(axis)
    
+   try
    L.lon = nc_varget(OPT.vc,'lon');
    L.lat = nc_varget(OPT.vc,'lat');
-   
    plot(L.lon,L.lat)
+   end
 
 %% method 2: all stations sequentially
 
@@ -50,5 +51,7 @@ OPT.vc     = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/g
    L.lon = nc_varget(OPT.vc,'lon');
    L.lat = nc_varget(OPT.vc,'lat');
    
+   try
    plot(L.lon,L.lat)
+   end
    

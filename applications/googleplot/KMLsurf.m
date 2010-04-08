@@ -52,25 +52,26 @@ function varargout = KMLsurf(lat,lon,z,varargin)
 
 %% process <keyword,value>
 
-   OPT.fileName      = '';
-   OPT.kmlName       = '';
-   OPT.lineWidth     = 1;
-   OPT.lineColor     = [0 0 0];
-   OPT.lineAlpha     = 1;
-   OPT.colorMap      = @(m) jet(m); % function(OPT.colorSteps) or an rgb array
-   OPT.colorSteps    = 16;
-   OPT.fillAlpha     = 0.6;
-   OPT.polyOutline   = false;
-   OPT.polyFill      = true;
-   OPT.openInGE      = false;
-   OPT.reversePoly   = false;
-   OPT.extrude       = false;
-   OPT.cLim          = [];
-   OPT.zScaleFun     = @(z) (z+20).*5;
-   OPT.timeIn        = [];
-   OPT.timeOut       = [];
-   OPT.colorbar      = 1;
-   OPT.colorbartitle = '';
+   OPT.fileName           = '';
+   OPT.kmlName            = '';
+   OPT.lineWidth          = 1;
+   OPT.lineColor          = [0 0 0];
+   OPT.lineAlpha          = 1;
+   OPT.colorMap           = @(m) jet(m); % function(OPT.colorSteps) or an rgb array
+   OPT.colorSteps         = 16;
+   OPT.fillAlpha          = 0.6;
+   OPT.polyOutline        = false;
+   OPT.polyFill           = true;
+   OPT.openInGE           = false;
+   OPT.reversePoly        = false;
+   OPT.extrude            = false;
+   OPT.cLim               = [];
+   OPT.zScaleFun          = @(z) (z+20).*5;
+   OPT.timeIn             = [];
+   OPT.timeOut            = [];
+   OPT.colorbar           = 1;
+   OPT.colorbarlocation   = {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
+   OPT.colorbartitle      = '';
    
    if nargin==0
       varargout = {OPT};
@@ -166,7 +167,7 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    output = KML_header(OPT_header);
 
    if OPT.colorbar
-      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorTitle',OPT.colorbartitle);
+      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorTitle',OPT.colorbartitle,'colorbarlocation',OPT.colorbarlocation);
       output = [output clrbarstring];
    end
    
