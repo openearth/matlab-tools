@@ -113,6 +113,10 @@ z0_new = interp1(x0, z0, x_new);
 zc_new = interp1(xc, zc, x_new);
 zm_new = interp1(xm, zm, x_new);
 
+% reduce vectors if any nans are left
+id = ~(isnan(z0_new) | isnan(zc_new) | isnan(zm_new));
+[x_new z0_new zc_new zm_new] = deal(x_new(id), z0_new(id), zc_new(id), zm_new(id));
+
 %% calculate BSS
 if OPT.equidistant
     % weight is equaly devided over all points.
