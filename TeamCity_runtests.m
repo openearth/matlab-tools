@@ -57,9 +57,9 @@ try
     postmessage('progressStart',true,'Running oetsettings.');
     oetsettings;
     postmessage('progressFinish',true,'Oetsettings enabled.');
-catch
+catch me
     postmessage('message', true, 'text', 'Matlab was unable to run oetsettings.',...
-        'errorDetails','stack trace',...
+        'errorDetails',me.getReport,...
         'status','ERROR');
     %% Remove template files
     delete('matlabruns.busy');
@@ -67,6 +67,7 @@ catch
 end
 
 try
+    plot(b);
     postmessage('progressStart',true,'Prepare for running tests.');
     %% initiate variables:
     maindir = oetroot;
@@ -125,7 +126,7 @@ try
     
 catch me
     postmessage('message', true, 'text', 'Something went wrong while running the tests.',...
-        'errorDetails',me.message,...
+        'errorDetails',me.getReport,...
         'status','ERROR');
     delete('matlabruns.busy');
     exit;

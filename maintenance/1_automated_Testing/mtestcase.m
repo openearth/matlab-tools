@@ -743,32 +743,34 @@ classdef mtestcase < handle
             end
             
             %% calculate coverage
-            fcns = {obj.functioncalls.functionname}';
-            
-            if isempty(fcns{1})
-                fcns = [];
-            else
-                fcnspath = cellfun(@fileparts,{obj.functioncalls.filename}','UniformOutput',false);
-                id = cellfun(@isempty,{obj.functioncalls.coverage});
-                cov = nan(size(obj.functioncalls,2),1);
-                cov(~id) = deal([obj.functioncalls(~id).coverage]);
-                id = true(size(fcns));
-                if ~isempty(include)
-                    id = false(size(fcns));
-                    for i = 1:length(include)
-                        id(~cellfun(@isempty,strfind(lower(fcns),lower(include{i}))))=true;
-                        id(~cellfun(@isempty,strfind(lower(fcnspath),lower(include{i}))))=true;
-                    end
-                end
-                for i = 1:length(exclude)
-                    id(~cellfun(@isempty,strfind(fcns,exclude{i})))=false;
-                    id(~cellfun(@isempty,strfind(fcnspath,exclude{i})))=false;
-                end
-                fcns(~id)=[];
+            fcns = [];
+            if ~isempty(obj.functioncalls)
+                fcns = {obj.functioncalls.functionname}';
                 
-                cov(~id)=[];
+                if isempty(fcns{1})
+                    fcns = [];
+                else
+                    fcnspath = cellfun(@fileparts,{obj.functioncalls.filename}','UniformOutput',false);
+                    id = cellfun(@isempty,{obj.functioncalls.coverage});
+                    cov = nan(size(obj.functioncalls,2),1);
+                    cov(~id) = deal([obj.functioncalls(~id).coverage]);
+                    id = true(size(fcns));
+                    if ~isempty(include)
+                        id = false(size(fcns));
+                        for i = 1:length(include)
+                            id(~cellfun(@isempty,strfind(lower(fcns),lower(include{i}))))=true;
+                            id(~cellfun(@isempty,strfind(lower(fcnspath),lower(include{i}))))=true;
+                        end
+                    end
+                    for i = 1:length(exclude)
+                        id(~cellfun(@isempty,strfind(fcns,exclude{i})))=false;
+                        id(~cellfun(@isempty,strfind(fcnspath,exclude{i})))=false;
+                    end
+                    fcns(~id)=[];
+                    
+                    cov(~id)=[];
+                end
             end
-            
             %% Create header
             s{1} = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
             s{2} = '<html xmlns="http://www.w3.org/1999/xhtml">';

@@ -62,6 +62,9 @@ infoout = varargin{1};
 
 for iprofinf = 2:length(varargin)
     info2 = varargin{iprofinf};
+    if isempty(info2) || isempty(info2.FunctionTable)
+        continue;
+    end
     %% Add functionnames of second info
     for ifunc = 1:length(info2.FunctionTable)
         funcid = strcmp({infoout.FunctionTable.CompleteName},info2.FunctionTable(ifunc).CompleteName);

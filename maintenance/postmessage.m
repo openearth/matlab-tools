@@ -77,7 +77,14 @@ if postteamcity
         end
     else
         for ivararg = 1:2:length(varargin)
-            teamcityString = cat(2,teamcityString,varargin{ivararg},'=''', varargin{ivararg+1},'''',' ');
+            tmpstring = varargin{ivararg+1};
+            id1 = unique(cat(2,strfind(tmpstring,'<a href'),strfind(tmpstring,'</a')));
+            id2 = strfind(tmpstring,'>');
+            for ii = length(id1):-1:1
+                tmpstring(id1(ii):min(id2(id2>id1(ii)))) = [];
+            end
+            tmpstring = strrep(tmpstring,char(10),' ');
+            teamcityString = cat(2,teamcityString,varargin{ivararg},'=''', tmpstring,'''',' ');
         end
     end
     teamcityString = cat(2,teamcityString,']');
