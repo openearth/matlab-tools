@@ -1,4 +1,4 @@
-function testresult = rws_getDataFromNetCDFGrid_test()
+function testResult = rws_getDataFromNetCDFGrid_test()
 % RWS_GETDATAFROMNETCDFGRID_TEST  test for rws_getdatafromnetcdfgrid
 %  
 % %See also: rws_getDataFromNetCDFGrid
@@ -78,7 +78,7 @@ title('Testing getDataFromNetCDFGrid.m on Delflandsekust')
 url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/vanoordboskalis/delflandsekust/delflandsekust.nc';
 [X, Y, Z, T] = rws_getDataFromNetCDFGrid('ncfile', url, 'starttime', datenum([2009 03 10]), 'searchwindow', -10, 'polygon', poly);
 
-testresult = nan;
+testResult = nan;
 
 %% $PublishResult
 % Publishable code that describes the test.
