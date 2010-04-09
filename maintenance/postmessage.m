@@ -83,11 +83,11 @@ if postteamcity
             for ii = length(id1):-1:1
                 tmpstring(id1(ii):min(id2(id2>id1(ii)))) = [];
             end
+            tmpstring = strrep(tmpstring,'|','||');
             tmpstring = strrep(tmpstring,char(10),'|n');
+            tmpstring = strrep(tmpstring,']','|]');
             tmpstring = strrep(tmpstring,'\n','|n');
             tmpstring = strrep(tmpstring,'''','|''');
-            tmpstring = strrep(tmpstring,'|','||');
-            tmpstring = strrep(tmpstring,']','|]');
             teamcityString = cat(2,teamcityString,varargin{ivararg},'=''', tmpstring,'''',' ');
         end
     end
