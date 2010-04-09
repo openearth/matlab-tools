@@ -142,7 +142,7 @@ OPT2 = struct(...
 
 % OPT2.timeIn = [];
 % OPT2.timeOut = [];
-OPT2.dateStrStyle  = 29; % set to yyyy-mm-ddTHH:MM:SS for detailed times
+OPT2.dateStrStyle = 'yyyy-mm-ddTHH:MM:SS';
 
 
 switch lower(OPT.arrowStyle)
