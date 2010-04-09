@@ -4,15 +4,15 @@ function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 %    KMLquiver(lat,lon,u,v,<keyword,value>)
 %
 % Keywords:
-% 
+%
 % 'arrowScale': Arrows lengths are plotted in meters (for easy measuring of
-%               speeds in GE with Ruler). If speeds are low compared to 
+%               speeds in GE with Ruler). If speeds are low compared to
 %               grid size, use a high value for 'arrowScale'.
 % 'arrowStyle': can be either
-%               'blackTip', 'block', 'line'. 
+%               'blackTip', 'block', 'line'.
 %               If you make a
 %               nicer arrow yourself, it can easily be added to the
-%               presets. 
+%               presets.
 %
 % For the additional <keyword,value> pairs call
 %
@@ -31,43 +31,43 @@ function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 % Adjust 'W1'..'W4' and 'L1'..'L4' for user defined arrow shapes
 % All lengths are a fraction of the base length.
 %
-%                                   W2       W2                            
-%                 positive  +------------+------------+- negative          
-%                           .       W3   |   W3       .                    
-%                           .--+---------+---------+- .                    
-%                           .  .         |         .  .                    
-%                           .  .    -+---+---+-    .  .                    
-%                           .  .     . W1 W1 .     .  .                    
-%                           .  .     .       .     .  .                    
-%                           .  .     .   A   .     .  .                    
-%            + ..........................o   .     .  .                    
-%            |              .  .     .  /6\  .     .  .                    
-%            |              .  .     . /   \ .     .  .                    
-%            |              .  .     ./     \.     .  .                    
-%          b |              .  .     / head  \     .  .                    
-%          a |              .  .    /.       .\    .  .                
-%          s |              .  .   / .       . \   .  .         
-%          e |              .  .  /  .       .  \  .  .                    
-%            |     L1       .  . /  A9       A3  \ .  .                    
-%          l |     +............/... o...... o    \.  .                    
-%          e |     |        .  /    /|S2   S6|\    \  .                    
-%          n |     |        . /.   / |       | \   .\ .                    
-%          g |     | L2     ./ .  /  |       |  \  . \.                    
-%          t |     |  +.....o  . /   |       |   \ .  o                    
-%          h |     |  |    A7\ ./   |         |   \. /A5                   
-%            |     |  |  +... \o    |         |    o/                      
-%            |     |  |  |     A8   |         |   A4                       
-%            |     |  |  |L3        |         |                            
-%            |     |  |  |         |     A1    |                           
-%            +-----+--+--+.........|.... o.....|............. point S4 is the origin       
-%            |                     |    / \    |                           
-%         L4 |                     |  /     \  |                           
-%            + ................... o/.........\o                           
-%                                  A10         A2                           
-%                                                                           
-%                                  +-----+-----+                           
+%                                   W2       W2
+%                 positive  +------------+------------+- negative
+%                           .       W3   |   W3       .
+%                           .--+---------+---------+- .
+%                           .  .         |         .  .
+%                           .  .    -+---+---+-    .  .
+%                           .  .     . W1 W1 .     .  .
+%                           .  .     .       .     .  .
+%                           .  .     .   A   .     .  .
+%            + ..........................o   .     .  .
+%            |              .  .     .  /6\  .     .  .
+%            |              .  .     . /   \ .     .  .
+%            |              .  .     ./     \.     .  .
+%          b |              .  .     / head  \     .  .
+%          a |              .  .    /.       .\    .  .
+%          s |              .  .   / .       . \   .  .
+%          e |              .  .  /  .       .  \  .  .
+%            |     L1       .  . /  A9       A3  \ .  .
+%          l |     +............/... o...... o    \.  .
+%          e |     |        .  /    /|S2   S6|\    \  .
+%          n |     |        . /.   / |       | \   .\ .
+%          g |     | L2     ./ .  /  |       |  \  . \.
+%          t |     |  +.....o  . /   |       |   \ .  o
+%          h |     |  |    A7\ ./   |         |   \. /A5
+%            |     |  |  +... \o    |         |    o/
+%            |     |  |  |     A8   |         |   A4
+%            |     |  |  |L3        |         |
+%            |     |  |  |         |     A1    |
+%            +-----+--+--+.........|.... o.....|............. point S4 is the origin
+%            |                     |    / \    |
+%         L4 |                     |  /     \  |
+%            + ................... o/.........\o
+%                                  A10         A2
+%
+%                                  +-----+-----+
 %                                    W4     W4
-%                                     
+%
 %
 % Note: Notice the difference in how polygons and line are rendered by GE.
 %   Especially take care when plotting large figures near pole's
@@ -78,7 +78,7 @@ function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma
 %
-%       Thijs.Damsma@deltares.nl	
+%       Thijs.Damsma@deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -108,23 +108,29 @@ function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 
 %% default settings
 OPT = struct(...
-'arrowStyle','default',...
-'arrowScale',1,...
-'fileName'  ,[],...
-'kmlName'   ,'quiver',...
-'openInGE'  ,false,...
-'arrowFill',[],'lineWidth',[],'lineColor',[],...
-'lineAlpha',[],'fillColor',[],'fillAlpha',[],...
-'W1'       ,[],'W2'       ,[],'W3'       ,[],'W4'       ,[],...
-'L1'       ,[],'L2'       ,[],'L3'       ,[],'L4'       ,[]);
+    'arrowStyle','default',...
+    'arrowScale',1,...
+    'fileName'  ,[],...
+    'kmlName'   ,'quiver',...
+    'openInGE'  ,false,...
+    'arrowFill',[],'lineWidth',[],'lineColor',[],...
+    'lineAlpha',[],'fillColor',[],'fillAlpha',[],...
+    'W1'       ,[],'W2'       ,[],'W3'       ,[],'W4'       ,[],...
+    'L1'       ,[],'L2'       ,[],'L3'       ,[],'L4'       ,[]);
+
+OPT.timeIn = [];
+OPT.timeOut = [];
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
 %% pre defined arrow types
 % additional user settings override presets
 
+
 OPT2 = struct(...
     'arrowStyle',[],'arrowScale',[],'fileName'  ,[],...
     'kmlName'   ,[],'openInGE'  ,[],...
+    'timeIn' ,datestr(OPT.timeIn ,29),...
+    'timeOut',datestr(OPT.timeOut,29),...
     'arrowFill',true,...
     'lineWidth',1.5,...
     'lineColor',[0 0 0],...
@@ -133,6 +139,11 @@ OPT2 = struct(...
     'fillAlpha',0.75,...
     'W1'       ,0.12,'W2'       ,0.30,'W3'       ,0.30,'W4'       ,0.15,...
     'L1'       ,0.80,'L2'       ,0.70,'L3'       ,0.70,'L4'       ,0.20);
+
+% OPT2.timeIn = [];
+% OPT2.timeOut = [];
+OPT2.dateStrStyle  = 29; % set to yyyy-mm-ddTHH:MM:SS for detailed times
+
 
 switch lower(OPT.arrowStyle)
     case 'default'
@@ -155,7 +166,7 @@ switch lower(OPT.arrowStyle)
         OPT2.L4             = 0.00;
         OPT2.arrowFill      = false;
         OPT2.lineWidth      = 2;
-    otherwise 
+    otherwise
         error('unsupported Arrow %s', OPT.arrow)
 end
 
@@ -185,8 +196,8 @@ v           =   v(:)';
 nans = isnan(lat+lon+u+v);
 lat(nans) = [];
 lon(nans) = [];
-  u(nans) = [];
-  v(nans) = [];
+u(nans) = [];
+v(nans) = [];
 
 [angle,scale] = cart2pol(u,v);
 scale = scale/40000000*360*OPT.arrowScale;
@@ -196,7 +207,7 @@ scale = scale/40000000*360*OPT.arrowScale;
 [A.ang( 2),A.abs( 2)] = cart2pol(-OPT.L4,  OPT.W4);
 [A.ang( 3),A.abs( 3)] = cart2pol( OPT.L1,  OPT.W1);
 [A.ang( 4),A.abs( 4)] = cart2pol( OPT.L3,  OPT.W3);
-[A.ang( 5),A.abs( 5)] = cart2pol( OPT.L2,  OPT.W2); 
+[A.ang( 5),A.abs( 5)] = cart2pol( OPT.L2,  OPT.W2);
 [A.ang( 6),A.abs( 6)] = cart2pol(      1,       0); % symmetry point
 [A.ang( 7),A.abs( 7)] = cart2pol( OPT.L2, -OPT.W2);
 [A.ang( 8),A.abs( 8)] = cart2pol( OPT.L3, -OPT.W3);
@@ -220,11 +231,11 @@ end
 
 arrowLat =   repmat(lat,length(A.abs),1)+A.ABS.*cos(A.ANG);
 arrowLon =   repmat(lon,length(A.abs),1)+A.ABS.*sin(A.ANG)...
-           ./repmat(cosd(lat),length(A.abs),1);
+    ./repmat(cosd(lat),length(A.abs),1);
 
 arrowLon = mod(arrowLon+180, 360)-180;
-       
-       
+
+
 %% get filename
 if isempty(OPT.fileName)
     [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz',...
@@ -247,7 +258,7 @@ OPT_style = struct(...
     'lineColor' ,OPT.lineColor(1,:),...
     'lineAlpha' ,OPT.lineAlpha(1),...
     'lineWidth' ,OPT.lineWidth(1));
-    output = [output KML_style(OPT_style)];
+output = [output KML_style(OPT_style)];
 
 % if multiple styles are define, generate them
 if length(OPT.lineColor(:,1))+length(OPT.lineWidth)+length(OPT.lineAlpha)>3
@@ -264,8 +275,8 @@ if length(OPT.lineColor(:,1))+length(OPT.lineWidth)+length(OPT.lineAlpha)>3
         end
         output = [output KML_style(OPT_style)];
     end
-end    
-    
+end
+
 %% POLYSTYLE
 
 if OPT.arrowFill
@@ -277,8 +288,8 @@ if OPT.arrowFill
         'lineAlpha'  ,0,...
         'lineWidth'  ,0,...
         'polyFill'   ,1,...
-        'polyOutline',0); 
-        output = [output KML_stylePoly(OPT_stylePoly)];
+        'polyOutline',0);
+    output = [output KML_stylePoly(OPT_stylePoly)];
 end
 
 % if multiple styles are define, generate them
@@ -326,6 +337,9 @@ for ii=1:length(lat(1,:))
     if length(OPT.lineColor(:,1))+length(OPT.lineWidth)+length(OPT.lineAlpha)>3
         OPT_line.styleName = ['arrowline' num2str(ii)];
     end
+    if isempty(OPT.timeIn) , OPT_line.timeIn = [];else  OPT_line.timeIn = datestr( OPT.timeIn(1),OPT.dateStrStyle); end
+    if isempty(OPT.timeOut),OPT_line.timeOut = [];else OPT_line.timeOut = datestr(OPT.timeOut(1),OPT.dateStrStyle); end
+    
     newOutput = KML_line(arrowLat(:,ii),arrowLon(:,ii),'clampToGround',OPT_line);
     
     if OPT.arrowFill
@@ -333,6 +347,10 @@ for ii=1:length(lat(1,:))
         if length(OPT.fillColor(:,1))+length(OPT.fillAlpha)>2
             OPT_poly.styleName = ['arrowfill' num2str(ii)];
         end
+        
+        if isempty(OPT.timeIn) , OPT_poly.timeIn = [];else  OPT_poly.timeIn = datestr( OPT.timeIn(1),OPT.dateStrStyle); end
+        if isempty(OPT.timeOut),OPT_poly.timeOut = [];else OPT_poly.timeOut = datestr(OPT.timeOut(1),OPT.dateStrStyle); end
+        
         newOutput = [newOutput...
             KML_poly(arrowLat(:,ii),arrowLon(:,ii),'clampToGround',OPT_poly)];
     end
