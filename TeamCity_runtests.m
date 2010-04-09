@@ -67,7 +67,6 @@ catch me
 end
 
 try
-    plot(b);
     postmessage('progressStart',true,'Prepare for running tests.');
     %% initiate variables:
     maindir = oetroot;
