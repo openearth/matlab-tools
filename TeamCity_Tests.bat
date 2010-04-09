@@ -7,9 +7,6 @@ rem TO DO: put entire mapping command in environment variable %openearth_map%
 
 rem Map drive with matlab
 rem -----------------------------------
-if exist %openearth_password% goto oet_map
-goto oet_perform
-:oet_map
 net use y: /delete
 net use y: \\wlhost\library %openearth_password% /USER:%openearth_user% 
 
@@ -20,7 +17,8 @@ rem -----------------------------------
 rem Create a temp file
 echo Matlab is running > matlabruns.busy
 rem now run matlab
-matlab -nosplash -nodesktop -minimize -r "TeamCity_runtests;" -logfile mlogfile.log
+
+Y:\app\MATLAB2010a\bin\matlab.exe -nosplash -nodesktop -minimize -r "TeamCity_runtests;" -logfile mlogfile.log -sd "%teamcity.build.workingDir%"
 rem hold reporting until matlab status file has been deleted
 
 :loopmatlabbusy
@@ -32,8 +30,6 @@ echo 'teamcity OK'
 
 rem Remove drive with matlab
 rem -----------------------------------
-if exist %openearth_password% goto oet_unmap
-:oet_unmap
 net use y: /delete
 goto end
 
