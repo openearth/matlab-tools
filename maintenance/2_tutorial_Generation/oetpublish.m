@@ -150,7 +150,11 @@ cd(oetroot);
 dps = strfind(txt,':');
 ends = strfind(txt,char(10));
 revtxt = strfind(txt,'Revision');
-revisionnr = str2double(txt(min(dps(dps>revtxt))+1:min(ends(ends>revtxt))));
+if ~isempty(dps)
+    revisionnr = str2double(txt(min(dps(dps>revtxt))+1:min(ends(ends>revtxt))));
+else
+    revisionnr = NaN;
+end
 cd(cdtemp);
 
 %% add reference
