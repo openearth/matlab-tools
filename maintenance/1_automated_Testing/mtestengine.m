@@ -302,9 +302,6 @@ classdef mtestengine < handle
             %
             %               %   See also mtestengine mtestengine.mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
             
-            %% Teamcity message
-            
-            
             %% get current dir
             startdir = cd;
             
@@ -559,20 +556,23 @@ classdef mtestengine < handle
                 copyfile(fullfile(temptemplatedir,'*.*'),fullfile(obj.targetdir,'html','fcncoverage'),'f');
                 rmdir(temptemplatedir,'s');
                 %% publish coverage files
-                fnames = {obj.profInfo.FunctionTable.FileName}';
-                mainfnames = fnames(strncmpi(fnames,obj.maindir,length(obj.maindir)));
-                
-                obj.functionsrun = mtestfunction;
-                for ifunc = 1:length(obj.profInfo.FunctionTable)
-                    if ismember(obj.profInfo.FunctionTable(ifunc).FileName,mainfnames) &&...
-                            ismember(obj.profInfo.FunctionTable(ifunc).Type,{'M-subfunction','M-function'})
-                        %% Create mtestfunction object
-                        obj.functionsrun(ifunc) = mtestfunction(obj.profInfo,ifunc);                       
-                        %% construct name of outputfile
-                        [dummy fn] = fileparts(obj.functionsrun(ifunc).functionname);
-                        obj.functionsrun(ifunc).htmlfilename = fullfile(obj.targetdir,'html','fcncoverage',mtestfunction.constructfilename([fn '_coverage.html']));
-                        %% publish coverage files.
-                        obj.functionsrun(ifunc).publishCoverage;
+                mainfnames = {};
+                if ~isempty(obj.profInfo)
+                    fnames = {obj.profInfo.FunctionTable.FileName}';
+                    mainfnames = fnames(strncmpi(fnames,obj.maindir,length(obj.maindir)));
+
+                    obj.functionsrun = mtestfunction;
+                    for ifunc = 1:length(obj.profInfo.FunctionTable)
+                        if ismember(obj.profInfo.FunctionTable(ifunc).FileName,mainfnames) &&...
+                                ismember(obj.profInfo.FunctionTable(ifunc).Type,{'M-subfunction','M-function'})
+                            %% Create mtestfunction object
+                            obj.functionsrun(ifunc) = mtestfunction(obj.profInfo,ifunc);
+                            %% construct name of outputfile
+                            [dummy fn] = fileparts(obj.functionsrun(ifunc).functionname);
+                            obj.functionsrun(ifunc).htmlfilename = fullfile(obj.targetdir,'html','fcncoverage',mtestfunction.constructfilename([fn '_coverage.html']));
+                            %% publish coverage files.
+                            obj.functionsrun(ifunc).publishCoverage;
+                        end
                     end
                 end
                 
@@ -973,17 +973,26 @@ classdef mtestengine < handle
                         
                         % #TESTHTML (backwards compatibility)
                         % #DESCRIPTIONHTML
-                        [dum fn ext] = fileparts(obj.tests(id).descriptionoutputfile);
-                        tempstr = strrep(tempstr,'#TESTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
-                        tempstr = strrep(tempstr,'#DESCRIPTIONHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                        if ~isempty(obj.tests(id).descriptionoutputfile)
+                            [dum fn ext] = fileparts(obj.tests(id).descriptionoutputfile);
+                            tempstr = strrep(tempstr,'#TESTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                            tempstr = strrep(tempstr,'#DESCRIPTIONHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                        else
+                            tempstr = strrep(tempstr,'#TESTHTML','');
+                            tempstr = strrep(tempstr,'#DESCRIPTIONHTML','');
+                        end
                         
                         % #COVERAGEHTML
                         [dum fn ext] = fileparts(obj.tests(id).coverageoutputfile);
                         tempstr = strrep(tempstr,'#COVERAGEHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
                         
                         % #RESULTHTML
-                        [dum fn ext] = fileparts(obj.tests(id).publishoutputfile);
-                        tempstr = strrep(tempstr,'#RESULTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                        if ~isempty(obj.tests(id).publishoutputfile)
+                            [dum fn ext] = fileparts(obj.tests(id).publishoutputfile);
+                            tempstr = strrep(tempstr,'#RESULTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                        else
+                            tempstr = strrep(tempstr,'#RESULTHTML','');
+                        end
                         
                         % #TESTDATE
                         if isempty(obj.tests(id).date)
@@ -1108,14 +1117,22 @@ classdef mtestengine < handle
                 
                 % #TESTHTML (backwards compatibility)
                 % #DESCRIPTIONHTML
-                [dum fn ext] = fileparts(obj.tests(id).descriptionoutputfile);
-                tempstr = strrep(tempstr,'#TESTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
-                tempstr = strrep(tempstr,'#DESCRIPTIONHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                if ~isempty(obj.tests(id).descriptionoutputfile)
+                    [dum fn ext] = fileparts(obj.tests(id).descriptionoutputfile);
+                    tempstr = strrep(tempstr,'#TESTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                    tempstr = strrep(tempstr,'#DESCRIPTIONHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                else
+                    tempstr = strrep(tempstr,'#DESCRIPTIONHTML','');
+                end
                 
                 % #RESULTHTML
-                [dum fn ext] = fileparts(obj.tests(id).publishoutputfile);
-                tempstr = strrep(tempstr,'#RESULTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
-                
+                if ~isempty(obj.tests(id).publishoutputfile)
+                    [dum fn ext] = fileparts(obj.tests(id).publishoutputfile);
+                    tempstr = strrep(tempstr,'#RESULTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                else
+                    tempstr = strrep(tempstr,'#RESULTHTML','');
+                end
+                    
                 % #TESTDATE
                 if isempty(obj.tests(id).date)
                     obj.tests(id).date = NaN;
