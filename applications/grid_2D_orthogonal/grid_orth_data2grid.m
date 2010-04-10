@@ -1,0 +1,98 @@
+function [X, Y, Z, Ztime] = grid_orth_data2grid(mapurls, minx, maxx, miny, maxy, OPT)
+%GRID_ORTH_DATA2GRID get data in fixed otrhogonal grid from bundle of netCDF files
+%
+%   [X, Y, Z, Ztime] = grid_orth_data2grid(mapurls, minx, maxx, miny, maxy, <keyword,value>)
+%
+% See also: grid_orth_createFixedMapsOnAxes, grid_orth_createFixedMapsOnFigure,
+%   grid_orth_data2grid, grid_orth_getDataFromNetCDFGrid, grid_orth_getDataFromNetCDFGrid_test,
+%   grid_orth_getDataInPolygon, grid_orth_getDataInPolygon_test, grid_orth_getFixedMapOutlines,
+%   grid_orth_identifyWhichMapsAreInPolygon, grid_orth_plotDataInPolygon
+
+% --------------------------------------------------------------------
+% Copyright (C) 2004-2009 Delft University of Technology
+% Version:      Version 1.0, February 2004
+%     Mark van Koningsveld
+%
+%     m.vankoningsveld@tudelft.nl	
+%
+%     Hydraulic Engineering Section 
+%     Faculty of Civil Engineering and Geosciences
+%     Stevinweg 1
+%     2628CN Delft
+%     The Netherlands
+%
+% This library is free software; you can redistribute it and/or
+% modify it under the terms of the GNU Lesser General Public
+% License as published by the Free Software Foundation; either
+% version 2.1 of the License, or (at your option) any later version.
+%
+% This library is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+% Lesser General Public License for more details.
+%
+% You should have received a copy of the GNU Lesser General Public
+% License along with this library; if not, write to the Free Software
+% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+% USA
+% --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+
+% get cell size
+urls      = grid_orth_getFixedMapOutlines(OPT.dataset); %#ok<*UNRCH,*USENS>
+x         = nc_varget(urls{1}, nc_varfind(urls{1}, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate')); OPT.cellsize = mean(diff(x));
+
+% generate x and y vectors spanning the fixed map extents
+x         = minx :  OPT.cellsize*OPT.datathinning : maxx;
+x         = roundoff(x,6); maxx =  roundoff(maxx,6);
+if x(end)~= maxx; x = [x maxx];end % make sure maxx is included as a point
+
+y         = maxy : -OPT.cellsize*OPT.datathinning : miny; % thinning runs from the lower left corner upward and right
+y         = roundoff(y,6); miny =  roundoff(miny,6);
+if y(end)~=miny; y = [y miny];end % make sure miny is included as a point
+
+nrcols    = max(size(x));
+nrofrows  = max(size(y));
+
+% create the dummy X, Y, Z and Ztemps grids
+X      = ones(nrofrows,1); X=X*x;      %X = roundoff(X, 6); - no longer needed if roundoff is already called above
+Y      = ones(1,nrcols);   Y=y'*Y;     %Y = roundoff(Y, 6); - no longer needed if roundoff is already called above 
+Z      = ones(size(X));    Z(:,:)=nan;
+Ztime  = Z;
+
+% clear unused variables to save memory
+clear x y minx maxx miny maxy
+
+% no one by one 
+for i = 1:length(mapurls)
+    % report on progress
+    disp(' ')
+    [pathstr, name, ext, versn] = fileparts(mapurls{i,1}); %#ok<*NASGU>
+    disp(['Processing (' num2str(i) '/' num2str(length(mapurls)) ') : ' name ext])
+    
+    % get data and plot
+    [x, y, z, zt] = grid_orth_getDataFromNetCDFGrid('ncfile', mapurls{i,1}, 'starttime', OPT.starttime, 'searchwindow', OPT.searchwindow, 'polygon', OPT.polygon, 'stride', [1 1 1]);
+
+    % convert vectors to grids
+    x = repmat(x',size(z,1),1);
+    y = repmat(y, 1, size(z,2));
+
+    idsLargeGrid = ismember(X,x) & ismember(Y,y);
+    idsSmallGrid = ismember(x,X) & ismember(y,Y);
+    
+    % clear unused variables to save memory
+    clear x y
+    
+    % add values to Z matrix
+    Z(idsLargeGrid) = z(idsSmallGrid);
+    
+    % add values to Ztemps matrix
+    Ztime(idsLargeGrid) = zt(idsSmallGrid); 
+    
+    % clear unused variables to save memory
+    clear z zt
+end
