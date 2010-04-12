@@ -81,10 +81,10 @@ bd=isnan(ysig);
 gd=find(~bd);
 bd([1:(min(gd)-1) (max(gd)+1):end])=0;
 ysig(bd)=interp1(gd,ysig(gd),find(bd)); 
-[Pxs,F]=psd(ysig(finite(ysig)),nfft,1,[],ceil(nfft/2));
+[Pxs,F]=psd(ysig(isfinite(ysig)),nfft,1,[],ceil(nfft/2));
 %[Pxs,F]=pmtm(ysig(finite(ysig)),4,4096,1);
 yerr(bd)=interp1(gd,yerr(gd),find(bd)); 
-[Pxe,F]=psd(yerr(finite(ysig)),nfft,1,[],ceil(nfft/2));
+[Pxe,F]=psd(yerr(isfinite(ysig)),nfft,1,[],ceil(nfft/2));
 %[Pxe,F]=pmtm(yerr(finite(ysig)),4,4096,1);
 
 semilogy(F,Pxs);
