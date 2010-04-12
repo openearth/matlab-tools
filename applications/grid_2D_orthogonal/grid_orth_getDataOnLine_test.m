@@ -57,8 +57,6 @@ function testresult = grid_orth_getDataInPolygon_test()
 
 tr(1) = test1;
 tr(2) = test2;
-tr(3) = test3;
-
 testresult = all(tr);
 
 
@@ -71,53 +69,80 @@ function testresult = test1()
 %% $Description 
 
 %% $RunCode
-% Test 1: work on JARUS grids
-grid_orth_getDataInPolygon(...
-    'dataset', 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml', ...
-    'starttime', datenum([1997 01 01]), ...
-    'searchwindow', -2*365, ...
-    'polygon', [70796.8 438560
-    78910.8 438779
-    78618.4 461001
-    70869.9 461001
-    70796.8 438560], ...
-    'datathinning', 1); %#ok<*UNRCH>
-testresult = nan;
+% make test data
+x = -10:29;
+y = -20:39;
+[X,Y] = meshgrid(x,y);
+alpha = 1108.8466/180*pi;
+X2 = Y*sin(alpha)+X*cos(alpha);
+Y = -X*sin(alpha)+Y*cos(alpha);
+X = X2;
+Z = repmat(peaks(20),3,2);
+
+% define line 
+xi = [0 1000];
+yi = [0 -250];
+
+[crossing_x,crossing_y,crossing_z,crossing_dist] = grid_orth_getDataOnLine(X,Y,Z,xi,yi);
+
+% plot demo
+subplot(1,3,1)
+mesh(X,Y,Z)
+
+hold on
+plot3(crossing_x,crossing_y,crossing_z,'.');
+% plot3(xi([1 1 ]),yi([1 1]),[-10 10])
+% plot3(xi([2 2 ]),yi([2 2]),[-10 10])
+hold off
+view(0,90)
+axis([-10 50 -30 30])
+axis square
+
+subplot(1,3,2)
+plot(crossing_dist,crossing_z,crossing_dist,crossing_z,'.')
+axis square
+axis([0 60 -8 8])
+%
+testresult = true;
 %% $PublishResult
 
 end
+
 
 function testresult = test2()
-%% $Description (Name = Undefined)
-% Test 2: work on VAKLODINGEN grids
+%% $Description 
 
 %% $RunCode
-grid_orth_getDataInPolygon(...
-    'dataset', 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml', ...
-    'starttime', datenum([1997 01 01]), ...
-    'searchwindow', -5*365, ...
-    'polygon', [50214.6 425346
-    50318.5 441438
-    60440.5 441386
-    60129 425398
-    50214.6 425346], ...
-    'datathinning', 1);
-testresult = nan;
-%% $PublishResult
+% make test data
 
+x = -10:29;
+y = -20:39;
+[X,Y] = meshgrid(x,y);
+Z = repmat(peaks(20),3,2);
+
+
+x = nan(360,100);
+y = nan(360,100);
+z = nan(360,100);
+d = nan(360,100);
+for ii = 1:5:360
+alpha = ii+0.1/180*pi;
+X2 = Y*sin(alpha)+X*cos(alpha);
+Y2 = -X*sin(alpha)+Y*cos(alpha);
+
+% define line 
+xi = [0 1000];
+yi = [0 -250];
+
+[crossing_x,crossing_y,crossing_z,crossing_d] = grid_orth_getDataOnLine(X2,Y2,Z,xi,yi);
+x(ii,1:length(crossing_x)) =  crossing_y*sin(alpha)+crossing_x*cos(alpha);
+y(ii,1:length(crossing_x)) = -crossing_x*sin(alpha)+crossing_y*cos(alpha);
+z(ii,1:length(crossing_x)) = crossing_z;
+d(ii,1:length(crossing_x)) = crossing_d;
 end
-
-function testresult = test3()
-%% $Description (Name = Undefined)
-% Test 1: work on VAKLODINGEN grids
-
-%% $RunCode
-[X, Y, Z, Ztime] = grid_orth_getDataInPolygon(...
-    'datatype', 'vaklodingen', ...
-    'starttime', datenum([2009 01 01]), ...
-    'searchwindow', -20*365, ...
-    'datathinning', 1);
-testresult = nan;
+subplot(1,3,3)
+plot3(x',y',z')
+testresult = true;
 %% $PublishResult
 
 end

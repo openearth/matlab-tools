@@ -1,50 +1,5 @@
-function [X, Y, Z, Ztime, OPT] = grid_orth_getDataOnLine(varargin)
+function [crossing_x,crossing_y,crossing_z,crossing_d] = grid_orth_getDataOnLine(X,Y,Z,xi,yi)
 %GRID_ORTH_GETDATAONLINE  ...
-%
-%   Script to load fixed maps from OPeNDAP (or directory), identify which maps are located
-%   inside a polygon and retrieve the data. This script is based on the
-%   rws_getDataInPolygon script. This grid_orth_ version is more generic.
-%
-%       [X, Y, Z, Ztime] = grid_orth_getDataInPolygon(<keyword,value>);
-%
-%   Input:
-%   where the following <keyword,value> pairs have been implemented (values indicated are the current default settings):
-%   	'dataset'     , URL                   = URL for fixed map dataset to use ('http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml')
-%   	'starttime'   , datenum([1997 01 01]) = indicates starttime (datenum) from which to look back or forward (depending on searchwindow setting)
-%   	'searchwindow', -2*365                = indicates search window in number of days ([-] backward in time, [+] forward in time)
-%   	'polygon'     , []                    = polygon to use gathering the data (should preferably be closed) [-]
-%   	'cellsize'    , []                    = cellsize of fixed grid (same cellsize assumed in both directions) [-]
-%   	'datathinning', 1                     = factor used to stride through the data [-]
-%       'plotresult'  , 1                     = indicates whether the output should be plotted
-%
-%   Output:
-%       function has no output
-%
-%   Example:
-%{
-    polygon = [59090.8 438855
-    	58110.4 439599
-    	59293.6 441289
-    	60409.3 440512
-    	59090.8 438855];
-    
-    datasets = {...
-        'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
-        'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml'}; 
-    
-    for i = 1:length(datasets)
-        close all
-        [X, Y, Z, Ztime] = grid_orth_getDataInPolygon(...
-            'dataset', datasets{i}, ...
-            'starttime', datenum([2010 06 01]), ...
-            'searchwindow', -10*365, ...
-            'datathinning', 1, ...
-            'polygon', polygon);
-        pause
-    end
-%}
-%
-% Works for all bathymetry data that is stored in so-called fixed map style
 %
 % See also: grid_orth_getFixedMapOutlines, grid_orth_createFixedMapsOnAxes, grid_orth_identifyWhichMapsAreInPolygon, grid_orth_getDataFromNetCDFGrid
 
@@ -82,72 +37,113 @@ function [X, Y, Z, Ztime, OPT] = grid_orth_getDataOnLine(varargin)
 % $Author$
 % $Revision$
 
-%% TODO: the script does not work yet for all thinning factors. Some counter problems remain.
+%% input
+if X(1,1)>X(1,end)
+    X = fliplr(X);
+    Y = fliplr(Y);
+    Z = fliplr(Z);
+end
 
-OPT.dataset      = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
-OPT.starttime    = datenum([2009 12 31]);
-OPT.searchwindow = -2*365;
-OPT.polygon      = [];
-OPT.cellsize     = []; % cellsize is assumed to be regular in x and y direction and is determined automatically
-OPT.datathinning = 1;
-OPT.ldburl       = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
-OPT.plotresult   = 1;
+if Y(1,1)>Y(end,1)
+    X = flipud(X);
+    Y = flipud(Y);
+    Z = flipud(Z);
+end
+%% lengthen 
+if xi(1)<xi(2)
+    dx =  max(max(diff(X,[],2)))*2;
+else
+    dx = -max(max(diff(X,[],2)))*2;
+end
+dy = dx*(yi(2) - yi(1)) / (xi(2) - xi(1));
 
-OPT = setProperty(OPT, varargin{:});
+xi2 = xi + [-dx dx];
+yi2 = yi + [-dy dy];
 
-%% Step 0: create a figure with tagged patches
-axes = findobj('type','axes');
-if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.dataset})) % if an overview figure is already present don't run this function again
-    % Step 0.1: get fixed map urls from OPeNDAP server
-    urls = grid_orth_getFixedMapOutlines(OPT.dataset); %#ok<*UNRCH,*USENS>
+%% pre allocate
+crossing_x = nan(size(X,1)+size(X,2),1);
+crossing_y = nan(size(X,1)+size(X,2),1);
+crossing_z = nan(size(X,1)+size(X,2),1);
 
-    % Step 0.2: create a figure with tagged patches
-    figure(10);clf;axis equal;box on;hold on
-
-    % Step 0.3: plot landboundary
-    try % try loop to prevent crashing when no internet connection is available
-        OPT.x = nc_varget(OPT.ldburl, nc_varfind(OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate'));
-        OPT.y = nc_varget(OPT.ldburl, nc_varfind(OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate'));
-        plot(OPT.x, OPT.y, 'k', 'linewidth', 2);
-    end
+jj = 0;
     
-    % Step 0.4: plot fixed map patches on axes and return the axes handle
-    ah = grid_orth_createFixedMapsOnAxes(gca, urls, 'tag', OPT.dataset); %#ok<*NODEF,*NASGU>
+for ii = find(min(xi2)<max(X,[],2)& max(xi2)>min(X,[],2))'
+    P = InterX([X(ii,:);Y(ii,:)],[xi2;yi2]);
+    if ~isempty(P)
+        jj = jj+1;
+        crossing_x(jj) = P(1,1);
+        crossing_y(jj) = P(2,1);
+        a = find(X(ii,:)<=crossing_x(jj),1,'last');
+        b = find(X(ii,:)>crossing_x(jj),1,'first');
+        c = (crossing_x(jj) - X(ii,a))/(X(ii,b) - X(ii,a));
+        crossing_z(jj) = Z(ii,a) * (1-c) + Z(ii,b) * c;
+    end
 end
 
-%% Step 1: go to the axes with tagged patches and select fixed maps using a polygon
-ah = findobj('type','axes','tag',OPT.dataset);
-try delete(findobj(ah,'tag','selectionpoly'));  end %#ok<*TRYNC> delete any remaining poly
+for ii = find(min(yi2)<max(Y,[],1)& max(yi2)>min(Y,[],1))
+    P = InterX([X(:,ii)';Y(:,ii)'],[xi2;yi2]);
+    if ~isempty(P)
+        jj = jj+1;
+        crossing_x(jj) = P(1,1);
+        crossing_y(jj) = P(2,1);
+        a = find(Y(:,ii)<=crossing_y(jj),1,'last');
+        b = find(Y(:,ii)>crossing_y(jj),1,'first');
+        c = (crossing_y(jj) - Y(a,ii))/(Y(b,ii) - Y(a,ii));
+        crossing_z(jj) = Z(a,ii) * (1-c) + Z(b,ii) * c;
+    end
+end
+%% delete nan data
+crossing_z(isnan(crossing_x)) = [];
+crossing_y(isnan(crossing_x)) = [];
+crossing_x(isnan(crossing_x)) = [];
 
-% if no polygon is available yet draw one
-if isempty(OPT.polygon)
-    % make sure the proper axes is current
-    try axes(ah); end
+%% sort
 
-    % draw a polygon using Gerben's drawpolygon routine making sure its tagged properly
-    disp('Please click a polygon from which to select data ...')
-    [x,y] = polydraw('g','linewidth',2,'tag','selectionpoly');
+ crossing_d = ((crossing_x - xi(1)).^2 + (crossing_y-yi(1)).^2).^.5;
+ 
+          a = find(crossing_x<=min(xi));
+[dummy, b]  = min(crossing_d(a));
+          a = a(b);
+crossing_x1 =  crossing_x(a);
+crossing_y1 =  crossing_y(a);
+crossing_z1 =  crossing_z(a);
+crossing_d1 = -crossing_d(a);
 
-    % combine x and y in the variable polygon and close it
-    OPT.polygon = [x' y'];
-    OPT.polygon = [OPT.polygon; OPT.polygon(1,:)];
+          a = find(crossing_x>=max(xi));
+[dummy, b]  = min(crossing_d(a));
+          a = a(b);
+crossing_x2 =  crossing_x(a);
+crossing_y2 =  crossing_y(a);
+crossing_z2 =  crossing_z(a);
+crossing_d2 =  crossing_d(a);
+
+[dummy,ind] = sort(crossing_d);
+        ind = ind(crossing_x(ind)>min(xi)&crossing_x(ind)<max(xi));
+
+if ~isempty(crossing_x1)
+    a = (crossing_x(ind(1)) - min(xi))/(crossing_x(ind(1)) - crossing_x1);
+    crossing_x1 = crossing_x1*a + crossing_x(ind(1))*(1-a);
+    crossing_y1 = crossing_y1*a + crossing_y(ind(1))*(1-a);
+    crossing_z1 = crossing_z1*a + crossing_z(ind(1))*(1-a);
+    crossing_d1 = 0;
 end
 
-% delete the pre existing polygon and replace it with the just generated closed one
-delete(findobj(ah,'tag','selectionpoly')); try axes(ah); end; hold on
-plot(OPT.polygon(:,1),OPT.polygon(:,2),'g','linewidth',2,'tag','selectionpoly'); drawnow
-
-%% Step 2: identify which maps are in polygon
-[mapurls, minx, maxx, miny, maxy] = grid_orth_identifyWhichMapsAreInPolygon(ah, OPT.polygon);
-
-%% Step 3: retrieve data and place it on one overall grid
-[X, Y, Z, Ztime]                  = grid_orth_data2grid(mapurls, minx, maxx, miny, maxy, OPT);
-
-%% Step 4: plot the end result (Z and Ztime)
-if OPT.plotresult
-    % reduce the number of point to plot
-    OPT.datathinning = OPT.datathinning * 2;
-
-    % plot X, Y, Z and X, Y, Ztime
-    grid_orth_plotDataInPolygon(X, Y, Z, Ztime,'polygon',OPT.polygon,'datathinning',OPT.datathinning,'ldburl',OPT.ldburl)
+if ~isempty(crossing_x2)
+    a = (crossing_x(ind(end)) - max(xi))/(crossing_x(ind(end)) - crossing_x2);
+    crossing_x2 = crossing_x2*a + crossing_x(ind(end))*(1-a);
+    crossing_y2 = crossing_y2*a + crossing_y(ind(end))*(1-a);
+    crossing_z2 = crossing_z2*a + crossing_z(ind(end))*(1-a);
+    crossing_d2 = ((xi(2) - xi(1)).^2 + (yi(2)-yi(1)).^2)^.5;
 end
+
+
+crossing_x    =[crossing_x1; crossing_x(ind); crossing_x2];
+crossing_y    =[crossing_y1; crossing_y(ind); crossing_y2];
+crossing_z    =[crossing_z1; crossing_z(ind); crossing_z2];
+crossing_d    =[crossing_d1; crossing_d(ind); crossing_d2];
+
+
+
+
+%% find distance
+ distance(crossing_x,crossing_y);
