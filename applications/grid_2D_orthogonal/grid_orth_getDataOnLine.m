@@ -1,5 +1,5 @@
-function [X, Y, Z, Ztime, OPT] = grid_orth_getDataInPolygon(varargin)
-%GRID_ORTH_GETDATAINPOLYGON  Script to load fixed maps from OPeNDAP, identify which maps are located inside a polygon and retrieve the data
+function [X, Y, Z, Ztime, OPT] = grid_orth_getDataOnLine(varargin)
+%GRID_ORTH_GETDATAONLINE  ...
 %
 %   Script to load fixed maps from OPeNDAP (or directory), identify which maps are located
 %   inside a polygon and retrieve the data. This script is based on the
@@ -18,10 +18,7 @@ function [X, Y, Z, Ztime, OPT] = grid_orth_getDataInPolygon(varargin)
 %       'plotresult'  , 1                     = indicates whether the output should be plotted
 %
 %   Output:
-%       X
-%       Y
-%       Z
-% 
+%       function has no output
 %
 %   Example:
 %{
