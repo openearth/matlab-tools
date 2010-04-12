@@ -32,7 +32,13 @@ SeawardBoundary(SeawardBoundary==length(CumVolume)) = [];
 
 % landward boundary
 if length(xcr)>=2
-    LandWardBoundary = find(volumes(find(x==xcr(2)):end)<0,1,'first') + find(x==xcr(2));
+    if find(x==xcr(2),1) < length(volumes) && volumes(x==xcr(2)) < 0
+        % Most landward part starts with accretion. This is the most seaward solution (without any
+        % erosion above the waterline)
+        LandWardBoundary = find(x==xcr(2),1,'first');
+    else
+        LandWardBoundary = find(volumes(find(x==xcr(2)):end)<0,1,'first') + find(x==xcr(2));
+    end
     if isempty(LandWardBoundary)
         LandWardBoundary = length(x);
     end
