@@ -62,3 +62,11 @@ for i = 1:length(OPT.xyz(:,1))
     end
 end
 
+if sum(sum(~isnan(Z)))==0
+    try
+        Z = griddata(OPT.xyz(:,1),OPT.xyz(:,2),OPT.xyz(:,3),OPT.X,OPT.Y,'cubic');
+        Z = Z.*nan;
+    end
+end
+X = OPT.X;
+Y = OPT.Y;
