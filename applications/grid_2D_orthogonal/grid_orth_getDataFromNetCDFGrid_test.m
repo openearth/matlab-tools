@@ -52,16 +52,20 @@ function testresult = grid_orth_getDataFromNetCDFGrid_test()
 % plot landboundary
 figure(10);clf;axis equal;box on;hold on
 ldburl = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
-x      = nc_varget(ldburl, nc_varfind(ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate'));
-y      = nc_varget(ldburl, nc_varfind(ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate'));
+
+nc_index.x = nc_varfind(ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate')
+nc_index.y = nc_varfind(ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate')
+
+x      = nc_varget(ldburl, nc_index.x);
+y      = nc_varget(ldburl, nc_index.y);
 plot(x, y, 'k', 'linewidth', 2);
 axis equal
 
 % identify arbitrary polygon
 poly = [68321.2 445431
-67495 446061
-68754 447753
-69698.3 447438];
+        67495 446061
+        68754 447753
+        69698.3 447438];
 
 % add polygon used as well
 plot(poly(:,1), poly(:,2), 'r')

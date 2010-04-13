@@ -1,4 +1,5 @@
 function testResult = rws_getDataFromNetCDFGrid_test()
+warning('This function is deprecated in favour of grid_orth_getDataFromNetCDFGrid_test')
 % RWS_GETDATAFROMNETCDFGRID_TEST  test for rws_getdatafromnetcdfgrid
 %  
 % %See also: rws_getDataFromNetCDFGrid

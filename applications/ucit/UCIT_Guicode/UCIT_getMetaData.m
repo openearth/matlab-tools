@@ -88,10 +88,10 @@ if type == 1
             if getDataFromDatabase
 
                 d = [];
-                datatypes = UCIT_getDatatypes;
-                ind       = find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names));
-                url       = datatypes.transect.urls{ind};
-                ldb       = datatypes.transect.ldbs{ind};
+                datatypes     = UCIT_getDatatypes;
+                ind           = find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names));
+                url           = datatypes.transect.urls{ind};
+                ldb           = datatypes.transect.ldbs{ind};
                 axis_settings = datatypes.transect.axes{ind};
                 
 
@@ -178,15 +178,15 @@ elseif type == 2
          %% if getDataFromDatabase == true get the metadata and store it in the userdata of the UCIT console
             
             if getDataFromDatabase
-                d = [];
-                datatypes = UCIT_getDatatypes
-                ind       = find(strcmp(UCIT_getInfoFromPopup('GridsDatatype'),datatypes.grid.names))
+                d               = [];
+                datatypes       = UCIT_getDatatypes;
+                d.datatypeinfo  = UCIT_getInfoFromPopup('GridsDatatype');
+                ind             = find(strcmp(d.datatypeinfo,datatypes.grid.names));
                 
                 url             = datatypes.grid.urls{ind};
                 d.ldb           = datatypes.grid.ldbs{ind};
                 d.axes          = datatypes.grid.axes{ind};
-                d.cellsize      =  datatypes.grid.cellsize{ind};
-                d.datatypeinfo  = UCIT_getInfoFromPopup('GridsDatatype');
+                d.cellsize      = datatypes.grid.cellsize{ind};
                 
 %                 if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'     )
 %                     datatype = 'jarkus'     ;
@@ -196,21 +196,21 @@ elseif type == 2
 %                      datatype = '';
 %                 end
 
-                urls = rws_getFixedMapOutlines('','catalog',datatypes.grid.catalog{ind});  
+                d.urls = opendap_catalog(datatypes.grid.catalog{ind});
                 
                 %% temporary workaround until catalogfile AHN fixed
                 if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'AHN100')
-                    temp_url = urls{1};urls = [];urls{1} = temp_url;
+                    temp_url = d.urls{1};d.urls = [];d.urls{1} = temp_url;
                 elseif strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'AHN250')
-                    temp_url = urls{2};urls = [];urls{1} = temp_url;
+                    temp_url = d.urls{2};d.urls = [];d.urls{1} = temp_url;
                 end
                                
-                for i = 1:length(urls)
+                for i = 1:length(d.urls)
                     
-                    name    = nc_varfind   (urls{i},'attributename','standard_name','attributevalue','projection_x_coordinate');
-                    x_range = nc_actual_range(urls{i}, name);
-                    name    = nc_varfind   (urls{i},'attributename','standard_name','attributevalue','projection_y_coordinate');
-                    y_range = nc_actual_range(urls{i}, name);
+                    name    = nc_varfind     (d.urls{i},'attributename','standard_name','attributevalue','projection_x_coordinate');
+                    x_range = nc_actual_range(d.urls{i}, name);
+                    name    = nc_varfind     (d.urls{i},'attributename','standard_name','attributevalue','projection_y_coordinate');
+                    y_range = nc_actual_range(d.urls{i}, name);
  
                     if ischar(x_range),x_range = str2num(x_range);,end;
                     if ischar(y_range),y_range = str2num(y_range);,end;
@@ -219,7 +219,7 @@ elseif type == 2
 
                 end
 
-                d.names        = urls;
+                d.names        = d.urls;
 
                 set(findobj('tag','UCIT_mainWin'),'UserData',d);
             else

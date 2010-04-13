@@ -1,4 +1,5 @@
 function rws_plotDataInPolygon(X, Y, Z, Ztime, varargin)
+warning('This function is deprecated in favour of grid_orth_plotDataInPolygon')
 %RWS_PLOTDATAINPOLYGON
 %
 %   rws_plotDataInPolygon(X, Y, Z, Ztime, <keyword,value>)
@@ -55,18 +56,20 @@ end
 
 %% find unqiue date values
 %-----------------
-v = unique(Ztime(find(~isnan(Ztime)))); %#ok<*FNDSB>
-if length(v)==1
-    v=[v(1) - 1 v];
-end
-nv = length(v);
 
-if nv == 0
-   warning('no data found: only selection polygon plotted')
-end
+   v = unique(Ztime(find(~isnan(Ztime)))); %#ok<*FNDSB>
+   if length(v)==1
+       v=[v(1) - 1 v];
+   end
+   nv = length(v);
+   
+   if nv == 0
+      warning('no data found: only selection polygon plotted')
+   end
 
 %% Step 1: plot resulting X, Y and Z grid
 %-----------------
+
 figure(2);clf;
 
 % plot
@@ -91,6 +94,7 @@ figure(2);clf;
 
 %% Step 2: plot X, Y and Ztime
 %-----------------
+
 figure(3); clf; 
 
 
@@ -112,7 +116,7 @@ figure(3); clf;
    if nv > 0
    caxis   ([1-.5 nv+.5])
    colormap(jet(nv));
-   [ax,c1] =  colorbarwithtitle('',1:nv+1); %#ok<NASGU>
+   [ax,c1] =  colorbarwithtitle('',1:nv+1);
    set(ax,'yticklabel',datestr(v,1))
    end
    

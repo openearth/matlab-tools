@@ -2,7 +2,7 @@ function UCIT_loadRelevantInfo2Popup(type,PopupNR)
 %UCIT_DC_LOADRELEVANTINFO2POPUP   This routine loads info from the database to the next popup
 %
 %    UCIT_loadRelevantInfo2Popup(type,PopupNR)
-
+%
 % loads info from the database to the next popup.
 %
 % input: 
@@ -58,7 +58,8 @@ function UCIT_loadRelevantInfo2Popup(type,PopupNR)
 datatypes = UCIT_getDatatypes;
      
 if type==1&&PopupNR==1
-    %% TRANSECTS 
+%% TRANSECTS : 
+
     % *** set TransectsDatatype
 
      
@@ -75,7 +76,9 @@ if type==1&&PopupNR==1
     set(findobj('tag','UCIT_mainWin'),'Userdata',[]); % test
     
 elseif type==1&&PopupNR==2
+
     % *** set TransectsArea
+
     objTag='TransectsDatatype';[popupValue, info]=UCIT_getInfoFromPopup(objTag);
     
     if info.value==1
@@ -88,7 +91,7 @@ elseif type==1&&PopupNR==2
     if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Jarkus Data')
         % get from single netCDF file
         areanames = nc_varget(datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup(objTag),datatypes.transect.names))}, 'areaname');
-        areas = unique(cellstr(areanames));
+        areas     = unique(cellstr(areanames));
     else
         areas = datatypes.transect.areas{2};
     end
@@ -107,15 +110,17 @@ elseif type==1&&PopupNR==2
     UCIT_findAvailableActions(1)
    
 elseif type==1&&PopupNR==3
+
     % *** set TransectsTransectID
+
     objTag='TransectsDatatype';
     
     % get info from database   
     
     if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Jarkus Data')
-        areanames = nc_varget(datatypes.transect.urls{strcmp(UCIT_getInfoFromPopup(objTag),datatypes.transect.names)}, 'areaname');
-        ids = nc_varget(datatypes.transect.urls{strcmp(UCIT_getInfoFromPopup(objTag),datatypes.transect.names)}, 'id');
-        id_match = cellfun(@(x) (strcmp(x, UCIT_getInfoFromPopup('TransectsArea'))==1), {cellstr(areanames)}, 'UniformOutput',false);
+        areanames   = nc_varget(datatypes.transect.urls{strcmp(UCIT_getInfoFromPopup(objTag),datatypes.transect.names)}, 'areaname');
+        ids         = nc_varget(datatypes.transect.urls{strcmp(UCIT_getInfoFromPopup(objTag),datatypes.transect.names)}, 'id');
+        id_match    = cellfun(@(x) (strcmp(x, UCIT_getInfoFromPopup('TransectsArea'))==1), {cellstr(areanames)}, 'UniformOutput',false);
         transectIDs = {ids(id_match{1})- unique(round(ids(id_match{1})/1000000))*1000000}; % convert back from uniqu id
     else
         areanames = datatypes.transect.areas{2};
@@ -138,14 +143,16 @@ elseif type==1&&PopupNR==3
     UCIT_resetValuesOnPopup(1,0,0,0,1,0)
 
 elseif type==1&&PopupNR==4
+
     % *** set TransectsSoundingID
+
     % get info from database
     objTag='TransectsDatatype';
     if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Jarkus Data')
-        years = nc_varget(datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup(objTag),datatypes.transect.names))}, 'time');
+        years     = nc_varget(datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup(objTag),datatypes.transect.names))}, 'time');
     else
-        urls = datatypes.transect.urls{strcmp(UCIT_getInfoFromPopup(objTag),datatypes.transect.names)};
-        years = nc_varget(urls{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))}, 'time');
+        urls      = datatypes.transect.urls{strcmp(UCIT_getInfoFromPopup(objTag),datatypes.transect.names)};
+        years     = nc_varget(urls{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))}, 'time');
     end
      years = sort(years,'descend');
      soundingIDs = {datestr(years+datenum(1970,1,1))};
@@ -160,10 +167,12 @@ elseif type==1&&PopupNR==4
     set(findobj('tag','TransectsSoundingID'), 'string', string, 'value', 1, 'enable', 'on', 'backgroundcolor', 'w');
 
 elseif type==2&&PopupNR==1
-    %% GRIDS
+%% GRIDS
+
     % *** set GridsDataType
     % get info from database
-    datatypes = datatypes.grid.names;
+
+    datatypes = datatypes.grid.names; % datatype; % allows ame datsset to be on different locations: same type, other name
         
     % manufacture the string for in the popup menu
     string{length(datatypes)}=[]; string{1}='Select datatype ...';
@@ -192,10 +201,10 @@ elseif type==2&&PopupNR==2
     % fill the proper popup menu and reset others if required
     if length(string)==2
         set(findobj('tag','GridsName'), 'string', string, 'value', 2, 'enable', 'on', 'backgroundcolor', 'w');
-        UCIT_loadRelevantInfo2Popup(2,3);    
+                           UCIT_loadRelevantInfo2Popup(2,3);    
     else
         set(findobj('tag','GridsName'), 'string', string, 'value', 1, 'enable', 'on', 'backgroundcolor', 'w');
-        UCIT_resetValuesOnPopup(2,0,0,1,1,0)
+                           UCIT_resetValuesOnPopup(2,0,0,1,1,0)
     end
 
     UCIT_findAvailableActions(2)
@@ -243,7 +252,7 @@ elseif type==3&&PopupNR==1
     %% LINES
     % set LinesDataType
     datatypes = DBgetUniqueFields('line','datatypeinfo');
-    datatypes=sort(datatypes);
+    datatypes = sort(datatypes);
     
     % manufacture the string for in the popup menu
     string{length(datatypes)+1}=[]; string{1}='Select datatype ...';
@@ -265,7 +274,7 @@ elseif type==3&&PopupNR==2
 
     % get info from database
     areas = DBgetUniqueFields('line','area',{...
-        'datatypeinfo',UCIT_getInfoFromPopup('LinesDatatype')});
+        'datatypeinfo'     ,UCIT_getInfoFromPopup('LinesDatatype')});
     areas = sort(areas);
 
     % manufacture the string for in the popup menu
@@ -284,8 +293,8 @@ elseif type==3&&PopupNR==3
     % set GridsInterval
     % set GridsInterval
     soundingIDs = DBgetUniqueFields('line','soundingID',{...
-        'datatypeinfo',UCIT_getInfoFromPopup('LinesDatatype'),...
-        'area',UCIT_getInfoFromPopup('LinesArea')});
+        'datatypeinfo'     ,UCIT_getInfoFromPopup('LinesDatatype'),...
+        'area'             ,UCIT_getInfoFromPopup('LinesArea')});
     soundingIDs=sort(soundingIDs);
     
     % manufacture the string for in the popup menu
@@ -302,9 +311,9 @@ elseif type==3&&PopupNR==4
     % set LinesLineID
     % set LinesSoundingID
     lineID = DBgetUniqueFields('line','lineID',{...
-        'datatypeinfo',UCIT_getInfoFromPopup('LinesDatatype'),...
-        'area',UCIT_getInfoFromPopup('LinesArea'),...
-        'soundingID',UCIT_getInfoFromPopup('LinesSoundingID')});
+        'datatypeinfo'    ,UCIT_getInfoFromPopup('LinesDatatype'),...
+        'area'            ,UCIT_getInfoFromPopup('LinesArea'),...
+        'soundingID'      ,UCIT_getInfoFromPopup('LinesSoundingID')});
     
     % manufacture the string for in the popup menu
     [lineID]=parseStringOnToken(lineID,';');
@@ -320,7 +329,7 @@ elseif type==4&&PopupNR==1
     %% POINTS
     % get info from database
     datatypes = DBgetUniqueFields('point','datatypeinfo');
-    datatypes=sort(datatypes);
+    datatypes = sort(datatypes);
     
     % manufacture the string for in the popup menu
     string{length(datatypes)+1}=[]; string{1}='Select datatype ...';
@@ -341,7 +350,7 @@ elseif type==4&&PopupNR==2
 
     % get info from database
     names = DBgetUniqueFields('point','station',{...
-        'datatypeinfo',UCIT_getInfoFromPopup('PointsDatatype')});
+        'datatypeinfo'    ,UCIT_getInfoFromPopup('PointsDatatype')});
     names=sort(names);
 
     % manufacture the string for in the popup menu
@@ -359,8 +368,8 @@ elseif type==4&&PopupNR==2
 elseif type==4&&PopupNR==3
     % set GridsSoundingID
     soundingIDs = DBgetUniqueFields('point','soundingID',{...
-        'datatypeinfo',UCIT_getInfoFromPopup('PointsDatatype'),...
-        'station',UCIT_getInfoFromPopup('PointsStation')});
+        'datatypeinfo'    ,UCIT_getInfoFromPopup('PointsDatatype'),...
+        'station'         ,UCIT_getInfoFromPopup('PointsStation')});
     soundingIDs=sort(soundingIDs);
     
     % manufacture the string for in the popup menu
@@ -384,13 +393,13 @@ elseif type==4&&PopupNR==4
     if strcmp(UCIT_getInfoFromPopup('PointsSoundingID'),'All')
         dataID = DBgetUniqueFields('point','dataID',{...
             'datatypeinfo',UCIT_getInfoFromPopup('PointsDatatype'),...
-            'station',UCIT_getInfoFromPopup('PointsStation')});
+            'station'     ,UCIT_getInfoFromPopup('PointsStation')});
         dataID=sort(dataID);
     else
         dataID = DBgetUniqueFields('point','dataID',{...
             'datatypeinfo',UCIT_getInfoFromPopup('PointsDatatype'),...
-            'station',UCIT_getInfoFromPopup('PointsStation'),...
-            'soundingID',UCIT_getInfoFromPopup('PointsSoundingID')});
+            'station'     ,UCIT_getInfoFromPopup('PointsStation'),...
+            'soundingID'  ,UCIT_getInfoFromPopup('PointsSoundingID')});
         dataID=sort(dataID);
     end
     % manufacture the string for in the popup menu

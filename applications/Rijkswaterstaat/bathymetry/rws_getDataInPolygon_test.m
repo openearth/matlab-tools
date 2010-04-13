@@ -1,4 +1,5 @@
 function testresult = rws_getDataInPolygon_test()
+warning('This function is deprecated in favour of grid_orth_getDataInPolygon_test')
 % RWS_GETDATAINPOLYGON_TEST  test for rws_getdatainpolygon
 %  
 % % See also: rws_getDataInPolygon_test

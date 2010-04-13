@@ -3,10 +3,7 @@ function grid_orth_plotDataInPolygon(X, Y, Z, Ztime, varargin)
 %
 %   grid_orth_plotDataInPolygon(X, Y, Z, Ztime, <keyword,value>)
 %
-% See also: grid_orth_createFixedMapsOnAxes, grid_orth_createFixedMapsOnFigure,
-%   grid_orth_data2grid, grid_orth_getDataFromNetCDFGrid, grid_orth_getDataFromNetCDFGrid_test,
-%   grid_orth_getDataInPolygon, grid_orth_getDataInPolygon_test, grid_orth_getFixedMapOutlines,
-%   grid_orth_identifyWhichMapsAreInPolygon, grid_orth_plotDataInPolygon
+% See also: grid_2D_orthogonal
 
 % --------------------------------------------------------------------
 % Copyright (C) 2004-2009 Delft University of Technology

@@ -40,12 +40,12 @@ function UCIT_plotGridOverview(datatype)
 
 %% get metadata (either from the console or the database)
 
-tic
+%tic
 [d] = UCIT_getMetaData(2);
-toc
+%toc
 
-if ~isempty(findobj('tag','gridOverview'))
-    close(findobj('tag','gridOverview'))
+if ~isempty(findobj('tag','gridOverview'));
+      close(findobj('tag','gridOverview'));
 end
 
 %% set up figure
@@ -59,10 +59,9 @@ set(gca, 'fontsize',8);
 hold on
 
 if nargin == 0
-    if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus')     ,datatype = 'jarkus'     ;,end
-    if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen'),datatype = 'vaklodingen';,end
-    if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'AHN100')     ,datatype = 'AHN100'     ;,end
-     if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'AHN250')     ,datatype = 'AHN250'     ;,end
+
+   datatype = UCIT_getInfoFromPopup('GridsDatatype');
+
 end
 
 disp('plotting landboundary...');
@@ -72,7 +71,7 @@ UCIT_plotLandboundary(d.ldb);
 
 for i = 1:size(d.contour,1)
     ph(i)=patch([d.contour(i,1),d.contour(i,2),d.contour(i,2),d.contour(i,1),d.contour(i,1)],...
-        [d.contour(i,3),d.contour(i,3),d.contour(i,4),d.contour(i,4),d.contour(i,3)], 'k');
+                [d.contour(i,3),d.contour(i,3),d.contour(i,4),d.contour(i,4),d.contour(i,3)], 'k');
     set(ph(i),'edgecolor','k','facecolor','none');
     set(ph(i),'tag',[d.names{i}]);
     set(gca  ,'tag',[datatype]);
@@ -82,10 +81,9 @@ set(gcf,'tag','gridOverview');
 box on
 
 %% Adjust axis and labels
-axis equal;
-axis([d.axes])
-ylabel('Northing [m]')
-xlabel('Easting [m]')
+axis    equal;
+axis   ([d.axes])
+tickmap('xy','dellast',1)
 
 %% Make figure visible
 set(fh,'visible','on');

@@ -1,10 +1,7 @@
 function [mapurls, minx, maxx, miny, maxy] = grid_orth_identifyWhichMapsAreInPolygon(ah, polygon)
 %GRID_ORTH_IDENTIFYWHICHMAPSAREINPOLYGON  Script to identify which fixed maps are located inside a polygon partly or as a whole
 %
-% See also: grid_orth_createFixedMapsOnAxes, grid_orth_createFixedMapsOnFigure,
-%   grid_orth_data2grid, grid_orth_getDataFromNetCDFGrid, grid_orth_getDataFromNetCDFGrid_test,
-%   grid_orth_getDataInPolygon, grid_orth_getDataInPolygon_test, grid_orth_getFixedMapOutlines,
-%   grid_orth_identifyWhichMapsAreInPolygon, grid_orth_plotDataInPolygon, getDataFromNetCDFGrid
+% See also: grid_2D_orthogonal
 
 % --------------------------------------------------------------------
 % Copyright (C) 2004-2009 Delft University of Technology
@@ -70,11 +67,14 @@ for i = 1:length(maps)
     
     % see if based on the above there is something to include
     if include > 0 %& (~isempty(strfind(get(objs(i),'tag'),'vaklodingenKB'))|~isempty(strfind(get(objs(i),'tag'),'jarkusKB'))) %#ok<*OR2,*AND2>
-        mapurls{end+1,1} = get(objs(i),'tag'); %#ok<*AGROW>
-        minx = min([minx; maps{i,1}]);
-        maxx = max([maxx; maps{i,1}]);
-        miny = min([miny; maps{i,2}]);
-        maxy = max([maxy; maps{i,2}]);
+        
+        if ~isempty(get(objs(i),'tag'))
+        mapurls{end+1,1} = get(objs(i),'tag');
+        minx    = min([minx; maps{i,1}]);
+        maxx    = max([maxx; maps{i,1}]);
+        miny    = min([miny; maps{i,2}]);
+        maxy    = max([maxy; maps{i,2}]);
+        end
         include = 0;
     else 
         include = 0;

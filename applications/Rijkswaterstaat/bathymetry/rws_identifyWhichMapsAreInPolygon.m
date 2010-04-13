@@ -1,4 +1,5 @@
 function [mapurls, minx, maxx, miny, maxy] = rws_identifyWhichMapsAreInPolygon(ah, polygon)
+warning('This function is deprecated in favour of grid_orth_identifyWhichMapsAreInPolygon')
 %RWS_IDENTIFYWHICHMAPSAREINPOLYGON  Script to identify which fixed maps are located inside a polygon partly or as a whole
 %
 % See also: rws_createFixedMapsOnAxes, rws_createFixedMapsOnFigure,
@@ -71,7 +72,7 @@ for i = 1:size(maps,1)
     
     % see if based on the above there is something to include
     if include > 0 %& (~isempty(strfind(get(objs(i),'tag'),'vaklodingenKB'))|~isempty(strfind(get(objs(i),'tag'),'jarkusKB'))) %#ok<*OR2,*AND2>
-        mapurls{end+1,1} = get(objs(i),'tag'); %#ok<*AGROW>
+        mapurls{end+1,1} = get(objs(i),'tag');
         minx = min([minx; maps{i,1}]);
         maxx = max([maxx; maps{i,1}]);
         miny = min([miny; maps{i,2}]);

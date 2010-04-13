@@ -3,9 +3,13 @@ function varargout = opendap_catalog(varargin)
 %
 %   urlPath = opendap_catalog(url)
 %
-% loads the urls of all datsets that reside in under the OPeNDAP catalog.xml 
-% located at url and all catalogs it links to. when url does not start with 'http',
-% url is assumed to be a lcoal directory, from which all netCDF files (*.nc) are returned.
+% loads the urls of all datsets (netCDF files) that reside in under 
+% the OPeNDAP catalog.xml located at the specified url,
+% as well as all catalogs that it links to
+%
+% When url does not start with 'http', the url is assumed
+% to be a local directory, and all netCDF files (*.nc) 
+% in the directory tree below it are returned.
 %
 %   urlPath = opendap_catalog(url,<keyword,value>)
 %
@@ -13,6 +17,7 @@ function varargout = opendap_catalog(varargin)
 % You can list all keyword by calling OPT = filelist = opendap_catalog().
 %
 %  * maxlevel : specify how deep to crawl linked catalogs (default 1for speed, set to Inf for all levels)
+%               Does not work when url is on a local file system.
 %  * leveltype: specify how levels are defined: 'tree' when new level  = extra / in catalog url  (local catalog is not a new level)
 %                                               'link' when new level  = linked (local catalog is a new level)
 %  * debug    : display debug info (default 0)
@@ -28,6 +33,7 @@ function varargout = opendap_catalog(varargin)
 % * THREDDS: http://coast-enviro.er.usgs.gov/thredds/catalog.xml (externals do not work yet)
 %
 % * HYRAX:   http://data.nodc.noaa.gov/opendap/catalog.xml (with maxlevel=4, some forbidden catalogs are handled with try, catch)
+% * local directory
 %
 % Example:
 %
@@ -122,7 +128,7 @@ if ~strcmpi(OPT.url(1:4),'http')
       fprintf(2,'opendap_catalog: maxlevel ignored because request concerns local file system.\n')
    end
    
-   urlPath = findAllFiles(OPT.url,'pattern_incl','*nc');
+   urlPath = findAllFiles(OPT.url,'pattern_incl','*.nc');
    
 else
 

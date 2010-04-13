@@ -1,10 +1,10 @@
 function varargout = ucit_netcdf(varargin)
-%UCIT   gui-based utility for the McToolbox
+%UCIT   gui for data extraction and manipulation from OPeNDAP servers
 %
 %   ucit_netcdf()
 %
 % launches a GUI for coastal analysis that retrieves data from
-% netCDF files at the OPeNDAP server of Deltares:
+% netCDF files at, amongst others, the OPeNDAP server of Deltares:
 % <a href="http://opendap.deltares.nl/">opendap.deltares.nl</a>
 %
 %See also: 
@@ -51,7 +51,7 @@ function varargout = ucit_netcdf(varargin)
  
    %% Use system color scheme for figure:
    
-   set(fig,'name','UCIT 2.0 - Universal Coastal Intelligence Toolkit (based on NetCDF)')
+   set(fig,'name','UCIT 2.0 - Universal Coastal Intelligence Toolkit (netCDF/OPeNDAP database explorer)')
    set(fig,'Units','normalized')
    set(fig,'Position', UCIT_getPlotPosition('LR'))
    

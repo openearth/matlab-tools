@@ -151,7 +151,7 @@ while any(edgeIndices(:,3)==0)
     edgeIndices(ii,3) = find(edgeIndices(:,4)==ii);
 end
 
-[~,~,edgeIndices(:,5)] = unique(edgeIndices(:,5));
+[dummy,dummy,edgeIndices(:,5)] = unique(edgeIndices(:,5));
 
 E = [x(edgeIndices(:,1)),...
      y(edgeIndices(:,1)),...

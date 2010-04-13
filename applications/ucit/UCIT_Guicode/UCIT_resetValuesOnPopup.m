@@ -54,89 +54,91 @@ function UCIT_DC_resetValuesOnPopup(type,popup1,popup2,popup3,popup4,popup5)
 % $Author$
 % $Revision$
 
+OPT.backgroundcolor = [0.7529    0.7529    0.7529];
+
 if type==1
     if popup1==1
         string{1}='Datatype (load first)';
-        set(findobj('tag','TransectsDatatype'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','TransectsDatatype')  ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
     if popup2==1
         string{1}='Area (load first)';
-        set(findobj('tag','TransectsArea'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','TransectsArea')      ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
     if popup3==1
         string{1}='Transect ID (load first)';
-        set(findobj('tag','TransectsTransectID'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','TransectsTransectID'),'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
     if popup4==1
         string{1}='Date (load first)';
-        set(findobj('tag','TransectsSoundingID'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','TransectsSoundingID'),'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
     if popup5==1
         string{1}='Actions (load first)';
-        set(findobj('tag','TrActions'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','TrActions')          ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
 elseif type==2
     if popup1==1
         string{1}='Datatype (load first)';
-        set(findobj('tag','GridsDatatype'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','GridsDatatype')      ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
     if popup2==1
         string{1}='Date (load first)';
-        set(findobj('tag','GridsName'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','GridsName')          ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
     if popup3==1
         string{1}='Search window (load first)';
-        set(findobj('tag','GridsInterval'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','GridsInterval')      ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
     if popup4==1
         string{1}='Thinning factor (load first)';
-        set(findobj('tag','GridsSoundingID'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','GridsSoundingID')    ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
     if popup5==1
         string{1}='Actions (load first)';
-        set(findobj('tag','GrActions'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','GrActions')          ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
 elseif type==3
     if popup1==1
         string{1}='Datatype (load first)';
-        set(findobj('tag','LinesDatatype'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','LinesDatatype')      ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
     if popup2==1
         string{1}='Name (load first)';
-        set(findobj('tag','LinesArea'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','LinesArea')          ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
     if popup3==1
         string{1}='Interval (load first)';
-        set(findobj('tag','LinesSoundingID'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','LinesSoundingID')    ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
     if popup4==1
         string{1}='Date (load first)';
-        set(findobj('tag','LinesLineID'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','LinesLineID')        ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
     if popup5==1
         string{1}='Actions (load first)';
-        set(findobj('tag','LnActions'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','LnActions')          ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
 elseif type==4
     if popup1==1
         string{1}='Datatype (load first)';
-        set(findobj('tag','PointsDatatype'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','PointsDatatype')     ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
     if popup2==1
         string{1}='Station (load first)';
-        set(findobj('tag','PointsStation'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','PointsStation')      ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
     if popup3==1
         string{1}='Date (load first)';
-        set(findobj('tag','PointsSoundingID'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','PointsSoundingID')   ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
     if popup4==1
         string{1}='Data ID (load first)';
-        set(findobj('tag','PointsDataID'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','PointsDataID')       ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
     if popup5==1
         string{1}='Actions (load first)';
-        set(findobj('tag','PtActions'),'string',string,'value',1,'enable','off','backgroundcolor',[0.7529    0.7529    0.7529]);
+        set(findobj('tag','PtActions')          ,'string',string,'value',1,'enable','off','backgroundcolor',OPT.backgroundcolor);
     end
 
 end

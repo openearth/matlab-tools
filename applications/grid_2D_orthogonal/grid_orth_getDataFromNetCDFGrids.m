@@ -1,12 +1,9 @@
-function [X, Y, Z, Ztime] = grid_orth_data2grid(mapurls, minx, maxx, miny, maxy, OPT)
-%GRID_ORTH_DATA2GRID get data in fixed otrhogonal grid from bundle of netCDF files
+function [X, Y, Z, Ztime] = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, OPT)
+%GRID_ORTH_GETDATAFROMNETCDFGRIDS get data in fixed otrhogonal grid from bundle of netCDF files
 %
-%   [X, Y, Z, Ztime] = grid_orth_data2grid(mapurls, minx, maxx, miny, maxy, <keyword,value>)
+%   [X, Y, Z, Ztime] = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, <keyword,value>)
 %
-% See also: grid_orth_createFixedMapsOnAxes, grid_orth_createFixedMapsOnFigure,
-%   grid_orth_data2grid, grid_orth_getDataFromNetCDFGrid, grid_orth_getDataFromNetCDFGrid_test,
-%   grid_orth_getDataInPolygon, grid_orth_getDataInPolygon_test, grid_orth_getFixedMapOutlines,
-%   grid_orth_identifyWhichMapsAreInPolygon, grid_orth_plotDataInPolygon
+% See also: grid_2D_orthogonal
 
 % --------------------------------------------------------------------
 % Copyright (C) 2004-2009 Delft University of Technology
@@ -43,8 +40,8 @@ function [X, Y, Z, Ztime] = grid_orth_data2grid(mapurls, minx, maxx, miny, maxy,
 % $Revision$
 
 % get cell size
-urls      = grid_orth_getFixedMapOutlines(OPT.dataset); %#ok<*UNRCH,*USENS>
-x         = nc_varget(urls{1}, nc_varfind(urls{1}, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate')); OPT.cellsize = mean(diff(x));
+%urls      = grid_orth_getFixedMapOutlines(OPT.dataset); %#ok<*UNRCH,*USENS>
+x         = nc_varget(mapurls{1}, nc_varfind(mapurls{1}, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate')); OPT.cellsize = mean(diff(x));
 
 % generate x and y vectors spanning the fixed map extents
 x         = minx :  OPT.cellsize*OPT.datathinning : maxx;
@@ -75,7 +72,14 @@ for i = 1:length(mapurls)
     disp(['Processing (' num2str(i) '/' num2str(length(mapurls)) ') : ' name ext])
     
     % get data and plot
-    [x, y, z, zt] = grid_orth_getDataFromNetCDFGrid('ncfile', mapurls{i,1}, 'starttime', OPT.starttime, 'searchwindow', OPT.searchwindow, 'polygon', OPT.polygon, 'stride', [1 1 1]);
+    [x, y, z, zt] = grid_orth_getDataFromNetCDFGrid('ncfile', mapurls{i},...
+                                           'starttime',OPT.starttime,...
+                                        'searchwindow',OPT.searchwindow,...
+                                             'polygon',OPT.polygon,...
+                                              'stride',[1 1 1]);
+
+% TO DO: do not read full array from netCDF but only data depending on thinning
+% TO DO: use spatial mean, min, max in addition to nearest
 
     % convert vectors to grids
     x = repmat(x',size(z,1),1);

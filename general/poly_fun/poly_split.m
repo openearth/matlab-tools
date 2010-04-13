@@ -2,6 +2,7 @@ function [xcells,ycells] = poly_split(x,y)
 %POLY_SPLIT  split NaN-separated polygon into its segments
 %
 %   [segments.x, segments.y] = poly_split(x,y)
+%    segments.x              = poly_split(x)
 %
 %See also: SHAPE_READ
 
@@ -50,7 +51,7 @@ function [xcells,ycells] = poly_split(x,y)
 %% insert dummy indices when dummy start/end separators are missing
    
    if ~isnan(x(1))
-      separators = [0, separators];
+      separators = [0, separators(:)'];
    end
    
    if ~isnan(x(end))
@@ -68,9 +69,10 @@ function [xcells,ycells] = poly_split(x,y)
    
       xcells{i} = x(separators(i  )+1:...
                     separators(i+1)-1); 
-   
+      if nargin > 1
       ycells{i} = y(separators(i  )+1:...
                     separators(i+1)-1);  
+      end
    
    end
    

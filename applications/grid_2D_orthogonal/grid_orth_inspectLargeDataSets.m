@@ -4,7 +4,7 @@ function varargout = grid_orth_inspectLargeDataSets(X, Y, Z)
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = Untitled(varargin)
+%   grid_orth_inspectLargeDataSets(X, Y, Z)
 %
 %   Input:
 %   varargin  =
@@ -15,7 +15,7 @@ function varargout = grid_orth_inspectLargeDataSets(X, Y, Z)
 %   Example
 %   Untitled
 %
-%   See also 
+%   See also grid_2D_orthogonal
 
 %% Copyright notice
 %   --------------------------------------------------------------------

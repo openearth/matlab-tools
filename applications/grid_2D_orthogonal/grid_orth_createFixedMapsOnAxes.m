@@ -1,7 +1,7 @@
 function ah = grid_orth_createFixedMapsOnAxes(ah, urls, varargin)
 %GRID_ORTH_CREATEFIXEDMAPSONAXES   plot fixed maps retrieved from OPeNDAP server to any arbitrary axes
 %
-% See also: grid_orth_getDataInPolygon, grid_orth_getFixedMapOutlines, grid_orth_identifyWhichMapsAreInPolygon, getDataFromNetCDFGrid
+% See also: grid_2D_orthogonal
 
 
 % --------------------------------------------------------------------
@@ -47,7 +47,8 @@ for i = 1:length(urls)
     x_range = nc_getvarinfo(urls{i}, 'x');
     y_range = nc_getvarinfo(urls{i}, 'y');
     
-    if any(ismember({y_range.Attribute.Name}, 'actual_range')) && any(ismember({x_range.Attribute.Name}, 'actual_range'))
+    if any(ismember({y_range.Attribute.Name}, 'actual_range')) && ...
+       any(ismember({x_range.Attribute.Name}, 'actual_range'))
         x_range = str2num(x_range.Attribute(ismember({x_range.Attribute.Name}, 'actual_range')).Value); %#ok<*ST2NM>
         y_range = str2num(y_range.Attribute(ismember({y_range.Attribute.Name}, 'actual_range')).Value);
     else

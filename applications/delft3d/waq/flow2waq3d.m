@@ -69,6 +69,7 @@ function WAQarray = flow2waq3D(FLOWarray,couplingarray,varargin)
    % TODO: allow for other inout matrix shape ([nxm] and [mxn])
 
    OPT.number_of_messages = 10;
+   OPT.disp               = 0;
    OPT                    = setProperty(OPT, varargin{:});
 
    if isfield(couplingarray,'i') | isfield(couplingarray,'nmk')
@@ -90,9 +91,11 @@ function WAQarray = flow2waq3D(FLOWarray,couplingarray,varargin)
          
             WAQarray(iWAQ) = nanmean(FLOWarray(iFLOW));
             
-            %if mod(iWAQ,round((nWAQ/OPT.number_of_messages)))==1
-            %   disp(['flow2waq3D finished :',num2str(round(100*iWAQ/nWAQ)),' %'])
-            %end
+            if OPT.disp
+            if mod(iWAQ,round((nWAQ/OPT.number_of_messages)))==1
+               disp(['flow2waq3D finished :',num2str(round(100*iWAQ/nWAQ)),' %'])
+            end
+            end
          
          end % for iWAQ=1:length(couplingarray)
       
@@ -118,9 +121,11 @@ function WAQarray = flow2waq3D(FLOWarray,couplingarray,varargin)
          
          WAQarray(iWAQ) = nanmean(temporary);
          
+         if OPT.disp
          if mod(iWAQ,round((nWAQ/OPT.number_of_messages)))==1
             disp(['flow2waq3D finished :',num2str(round(100*iWAQ/nWAQ)),' %'])
-         end      
+         end
+         end
          
       end % for iWAQ=1:length(couplingarray)
    
@@ -142,8 +147,10 @@ function WAQarray = flow2waq3D(FLOWarray,couplingarray,varargin)
          
          WAQarray(iWAQ) = nanmean(temporary);
       
+         if OPT.disp
          if mod(iWAQ,round((nWAQ/OPT.number_of_messages)))==1
             disp(['flow2waq3D finished :',num2str(round(100*iWAQ/nWAQ)),' %'])
+         end
          end
          
       end % for iWAQ=1:length(couplingarray)

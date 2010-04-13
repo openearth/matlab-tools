@@ -1,7 +1,7 @@
 function ah = grid_orth_createFixedMapsOnAxes(ah, urls, varargin)
 %GRID_ORTH_CREATEFIXEDMAPSONFIGURE   .
 %
-% See also: 
+% See also: grid_2D_orthogonal
 
 %% make the axes to use the current one
 axes(ah);

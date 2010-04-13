@@ -184,9 +184,8 @@ switch  scheme
 end
 
 axis tight
-box on
-set(gcf,'r','z')
-
+box  on
+set(gcf,'renderer','zbuffer')
 set(gca,'fontsize', 8 );
-ylabel('Northing [m]');
-xlabel('Easting [m]');
+%ylabel('Northing [m]');
+%xlabel('Easting [m]');

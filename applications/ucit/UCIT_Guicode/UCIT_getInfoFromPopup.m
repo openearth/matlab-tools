@@ -18,6 +18,7 @@ function [popupValue, info] = UCIT_DC_getInfoFromPopup(objTag)
 %    objTag='GridsDatatype'; [popupValue, info] = UCIT_DC_getInfoFromPopup(objTag)
 %    objTag='GridsDatatype'; [popupValue]       = UCIT_DC_getInfoFromPopup(objTag)
 %
+% See also
 
 % --------------------------------------------------------------------
 % Copyright (C) 2004-2008 Delft University of Technology

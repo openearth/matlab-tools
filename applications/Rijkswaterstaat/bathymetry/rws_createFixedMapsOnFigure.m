@@ -1,4 +1,5 @@
 function ah = rws_createFixedMapsOnAxes(ah, urls, varargin)
+warning('This function is deprecated in favour of grid_orth_createFixedMapsOnFigure   ')
 %rws_createFixedMapsOnFigure   .
 %
 %See also: 

@@ -158,15 +158,15 @@ if ~isempty(OPT.input)
 else
     str = strrep(str, '($input)', OPT.input);
 end
-str = strrep(str, '%   $varargin  =', OPT.varargin);
-str = strrep(str, '$FILENAME', upper(fname));
-str = strrep(str, '$description', OPT.description);
+str = strrep(str, '%   $varargin  ='  , OPT.varargin);
+str = strrep(str, '$FILENAME'         , upper(fname));
+str = strrep(str, '$description'      , OPT.description);
 str = strrep(str, '$date(dd mmm yyyy)', datestr(now, 'dd mmm yyyy'));
-str = strrep(str, '$date(yyyy)', datestr(now, 'yyyy'));
-str = strrep(str, '$Company', OPT.COMPANY);
-str = strrep(str, '$author', OPT.NAME);
-str = strrep(str, '$email', OPT.EMAIL);
-address = sprintf('%%       %s\n', OPT.ADDRESS{:});
+str = strrep(str, '$date(yyyy)'       , datestr(now, 'yyyy'));
+str = strrep(str, '$Company'          , OPT.COMPANY);
+str = strrep(str, '$author'           , OPT.NAME);
+str = strrep(str, '$email'            , OPT.EMAIL);
+address = sprintf('%%       %s\n'     , OPT.ADDRESS{:});
 address = address(1:end-1);
 str = strrep(str, '%       $address', address);
 str = strrep(str, '$version', version);

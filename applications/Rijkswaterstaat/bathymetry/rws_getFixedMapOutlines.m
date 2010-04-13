@@ -1,11 +1,12 @@
 function OPeNDAPlinks = rws_getFixedMapOutlines(type,varargin)
-%RWS_GETFIXEDMAPOUTLINES   Routine to retrieve information from OPeNDAP server
+warning('This function is deprecated in favour of grid_orth_getFixedMapOutlines')
+%RWS_GETFIXEDMAPOUTLINES   retrieve list of availble netCDF files from OPeNDAP server/local disc
 %
 %   Syntax:
 %   urls = opendap_getFixedMapOutlines(type)
 %
 %   Input:
-%   	datatype = type indicator for fixed map dataset to use ('jarkus', 'vaklodingen')
+%   	datatype = type indicator for fixed map dataset to use ('jarkus', 'vaklodingen', 'ahn')
 %
 %   Output:
 %       urls     = function outputs the urls of all available fixed maps
@@ -53,42 +54,32 @@ OPeNDAPlinks = [];
 
 OPT.catalog  = [];
 OPT.pattern  = '*.nc';
-varargin{:}
-OPT = setProperty(OPT,varargin{:})
+OPT = setProperty(OPT,varargin{:});
 
 if nargin == 0
     type = 'jarkus';
     warning('please specify datatype')
 end
 
+datatypes = UCIT_getDatatypes;
+
 %% extract ncfile names from OPeNDAP info
-if     strcmp(type,'vaklodingen')
-    
-    OPT.catalog = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
+% no from UCIT_get
 
-elseif strcmp(type,'jarkus')
-    
-    OPT.catalog = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml';
-
-elseif strcmp(type,'multibeam_delfland')
-    OPeNDAPlinks = findAllFiles( ...
-        'pattern_excl', {[filesep,'.svn']}, ...                 
-        'pattern_incl', OPT.pattern, ...                           
-        'basepath'    , 'D:\checkouts\VO-rawdata\projects\154040_delflandse_kust\nc_files\multibeam\' ...	  
-        );
-
-elseif strcmp(type,'multibeam_delfland2')
-    OPeNDAPlinks = findAllFiles( ...
-        'pattern_excl', {[filesep,'.svn']}, ...            
-        'pattern_incl', OPT.pattern, ...                        
-        'basepath'    , 'D:\checkouts\VO-Delflandsekust\nc_files\multibeam\' ...	   
-        );
-end
-
-if isempty(OPeNDAPlinks)
+%% OPeNDAP
+if strcmpi(OPT.catalog(1:7),'http://')
     if ~isempty(OPT.catalog)
     OPeNDAPlinks = opendap_catalog('url', OPT.catalog);
     else
         error('catalog url and type is empty, please specify')
     end
+else    
+%% local
+    OPeNDAPlinks = findAllFiles( ...
+        'pattern_excl', {[filesep,'.svn']}, ...            
+        'pattern_incl', OPT.pattern, ...                        
+        'basepath'    , OPT.catalog...	   
+        );
 end
+
+%% EOF
