@@ -1,7 +1,8 @@
 function [crossing_x,crossing_y,crossing_z,crossing_d] = grid_orth_getDataOnLine(X,Y,Z,xi,yi)
 %GRID_ORTH_GETDATAONLINE  ...
 %
-% See also: grid_orth_getFixedMapOutlines, grid_orth_createFixedMapsOnAxes, grid_orth_identifyWhichMapsAreInPolygon, grid_orth_getDataFromNetCDFGrid
+% See also: grid_orth_getFixedMapOutlines, grid_orth_createFixedMapsOnAxes, 
+%           grid_orth_identifyWhichMapsAreInPolygon, grid_orth_getDataFromNetCDFGrid
 
 % --------------------------------------------------------------------
 % Copyright (C) 2004-2009 Delft University of Technology

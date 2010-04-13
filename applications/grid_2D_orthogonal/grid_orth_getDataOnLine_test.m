@@ -1,34 +1,38 @@
-function testresult = grid_orth_getDataInPolygon_test()
-%GRID_ORTH_GETDATAINPOLYGON_TEST  test for grid_orth_getdatainpolygon
+function testresult = grid_orth_getDataOnLine_test()
+%GRID_ORTH_GETDATAONLINE_TEST  test for grid_orth_getDataOnLine
 %  
 % 
-% See also: grid_orth_getDataInPolygon_test
+% See also: grid_orth_getDataOnLine
 
 %% Copyright notice
-%   --------------------------------------------------------------------
-%   Copyright (C) 2009 Deltares
-%       Pieter van Geer
+% --------------------------------------------------------------------
+% Copyright (C) 2004-2009 Delft University of Technology
+% Version:      Version 1.0, February 2004
+%     Mark van Koningsveld
 %
-%       pieter.vangeer@deltares.nl	
+%     m.vankoningsveld@tudelft.nl
 %
-%       Rotterdamseweg 185
-%       2629 HD Delft
-%       P.O. 177
-%       2600 MH Delft
+%     Hydraulic Engineering Section
+%     Faculty of Civil Engineering and Geosciences
+%     Stevinweg 1
+%     2628CN Delft
+%     The Netherlands
 %
-%   This library is free software: you can redistribute it and/or
-%   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation, either
-%   version 2.1 of the License, or (at your option) any later version.
+% This library is free software; you can redistribute it and/or
+% modify it under the terms of the GNU Lesser General Public
+% License as published by the Free Software Foundation; either
+% version 2.1 of the License, or (at your option) any later version.
 %
-%   This library is distributed in the hope that it will be useful,
-%   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-%   Lesser General Public License for more details.
+% This library is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+% Lesser General Public License for more details.
 %
-%   You should have received a copy of the GNU Lesser General Public
-%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
-%   --------------------------------------------------------------------
+% You should have received a copy of the GNU Lesser General Public
+% License along with this library; if not, write to the Free Software
+% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+% USA
+% --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
 % OpenEarthTools is an online collaboration to share and manage data and 
