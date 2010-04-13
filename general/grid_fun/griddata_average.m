@@ -85,9 +85,11 @@ function ZI = griddata_average(X,Y,Z,XI,YI)
 x=X(:);
 y=Y(:);
 z=Z(:);
+
 [x ind]=sort(x,'ascend');
 y=y(ind);
 z=z(ind);
+
 %% remap x and y to rounded gridpoints
 unique_XI=unique(XI)';
 unique_YI=unique(YI)';
@@ -96,12 +98,12 @@ unique_XI = [2*unique_XI(1) - unique_XI(2) - 2*eps(unique_XI(1)) unique_XI 2*uni
 unique_YI = [2*unique_YI(1) - unique_YI(2) - 2*eps(unique_YI(1)) unique_YI 2*unique_YI(end) - unique_YI(end-1) + 2*eps(unique_YI(end))];
 
 for ii = find(~ismember(x,unique_XI))' 
-    [~,nn] = min(abs(x(ii)-unique_XI));
+    [dummy,nn] = min(abs(x(ii)-unique_XI));
     x(ii) = unique_XI(nn);
 end
 
 for ii = find(~ismember(y,unique_YI))' 
-    [~,nn] = min(abs(y(ii)-unique_YI));
+    [dummy,nn] = min(abs(y(ii)-unique_YI));
     y(ii) = unique_YI(nn);
 end
 
@@ -115,13 +117,14 @@ z(temp)=[];
 ZI = nan(length(unique_YI)-2,length(unique_XI)-2);
 unique_x = unique(x)';
 
-for ix=2:length(unique_XI)-1 % skip first and last
-    if ismember(unique_XI(ix),unique_x)
+for ix=2:length(unique_XI)-1 % skip first and last ... then step through each x
+    if ismember(unique_XI(ix),unique_x) % returns 1 when to-grid x-value is present in the from-x-grid
         f=find(unique_XI(ix)==x,1,'first');
         l=find(unique_XI(ix)==x,1,'last');
         x_temp=x(f:l); % generate temporary, limited vectors to improve search speed of data
         y_temp=y(f:l); 
         z_temp=z(f:l);
+        
         for iy=2:length(unique_YI)-1 % skip first and last
             temp=(y_temp==unique_YI(iy)&x_temp==unique_XI(ix));
             if any(temp)
