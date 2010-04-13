@@ -150,7 +150,7 @@ while NextIter
     if any(any(~isfinite(x(Calc,:))))
         error('FORM:xBecameNonFinite', 'One or more x-values became Inf or NaN')
     end
-    
+      
     samples = cell2struct(mat2cell(x(Calc,:), length(Calc), ones(size(x,2),1)), {stochast.Name}, 2);
     % derive z based on x
     z(Calc,1) = feval(OPT.x2zFunction, samples, OPT.Resistance,...
@@ -184,7 +184,7 @@ while NextIter
         % Toetsen op convergentie: is z dicht genoeg bij 0?
         criteriumZ = abs(z(Calc(end))/A_abs) < OPT.epsZ;
         criteriumBeta = OPT.epsBeta == Inf ||...
-            Iter>1 && abs(diff(beta(Iter-1:Iter)));
+            (Iter>1 && abs(diff(beta(Iter-1:Iter))) <= OPT.epsBeta);
         
         if criteriumZ && criteriumBeta
             % convergence criteria have been met
@@ -235,7 +235,7 @@ result.Output.designpoint = struct(designpoint{:},...
 
 %% subfunction to predefine a series of u-values
 function [u id_low id_upp] = prescribeU(currentU, u, du, Relaxation, rel_ids)
-Calc = size(u,1);
+Calc = size(u,1); 
 if ~isempty(u)
     currentU = diff([u(end,:); currentU])*Relaxation + u(end,:);
 end
