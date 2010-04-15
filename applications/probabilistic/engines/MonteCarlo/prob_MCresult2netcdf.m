@@ -199,7 +199,14 @@ if ~exist(ncfile, 'file')
     nc_addvar(OPT.ncfile, s);
 
     %% put variables
-    nc_varput(OPT.ncfile, 'variable_name', char({MCresult.Input.Name}));
+    var_names = {MCresult.Input.Name};
+    var_blanks = stringsize - cellfun(@length, var_names);
+    nvar = length(var_names);
+    for ivar = 1:nvar
+        var_str(ivar,:) = [var_names{ivar} blanks(var_blanks(ivar))];
+    end
+    
+    nc_varput(OPT.ncfile, 'variable_name', var_str);
     nc_varput(OPT.ncfile, 'probability_distribution', char(cellfun(@char, {MCresult.Input.Distr}, 'UniformOutput', false)));
     
     start_3d = [0 0 0];
