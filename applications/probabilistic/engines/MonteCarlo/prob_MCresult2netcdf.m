@@ -212,7 +212,7 @@ if ~exist(ncfile, 'file')
     start_3d = [0 0 0];
 else
     % append to existing file
-    start_3d = [length(nc_varget(ncfile, 'u', [0 0 0], [-1 1 1])) 0 0];
+    start_3d = [length(nc_varget(ncfile, 'run_id')) 0 0];
 end
 
 count_3d = [length(MCresult) n_samples n_variables];
