@@ -1,8 +1,10 @@
-function strrep_in_files(fileNames,str1,str2,varargin)
-%STRREP_IN_FILES  replace strings in Ascii files
+function strrep_in_large_files(fileNames,str1,str2,varargin)
+%STRREP_IN_FILES  replace strings in very large Ascii files
 %
-%   Similar to strrep, but can search multiple files
-%
+%   Similar to strrep, but can search multiple very large files
+%   Should be able to handle files of infinite size (if your OS can handle
+%   that).  
+%   
 %   Syntax:
 %   OPT = strrep_in_files(fileNames,str1,str2,varargin)
 %
@@ -12,14 +14,14 @@ function strrep_in_files(fileNames,str1,str2,varargin)
 %   str2      = string to replace it with
 %   varargin  = keyword/value pairs for additional options
 %
-% 
+%
 %   Example
-% 
+%
 %   strrep_in_files({'strrep_in_files.m'},'thijs','Thijs')
-% 
-%   strrep_in_files([],'a','b') 
+%
+%   strrep_in_files([],'a','b')
 %   replaces 'a' with 'b' in files selected with the gui
-% 
+%
 %   See also
 
 %% Copyright notice
@@ -66,6 +68,7 @@ function strrep_in_files(fileNames,str1,str2,varargin)
 
 OPT.copy        = false; % make the new files as a copy
 OPT.quiet       = false; % disable output
+OPT.readBlock   =  1e6;
 
 if nargin==0
     return
@@ -77,6 +80,7 @@ if ischar(fileNames)
     fileNames = {fileNames};
 end
 %% gui to select fileNames if left empty
+
 if isempty(fileNames)
     [sourceName,sourcePath] = uigetfile('*.*','Select files to search','MultiSelect','on');
     if ischar(sourceName)
@@ -93,33 +97,50 @@ end
 fprintf('\nprocessing files');
 numberOfReplacements = 0;
 changedFiles = 0;
+jj = 0;
 for ii = 1:length(fileNames)
-    fid = fopen(fileNames{ii},'r');
-    contents = fread(fid,'*char')';
-    fclose(fid);
-    
-    replacementsToMake = length(findstr(contents,str1));
-    if replacementsToMake>0
-        newcontents = strrep(contents,str1,str2);
-        numberOfReplacements = numberOfReplacements + replacementsToMake;
-        changedFiles = changedFiles+1;
-        if OPT.copy
-            fid = fopen([fileNames{ii}(1:end-4) '_copy' fileNames{ii}(end-3:end)],'w');
+    fid0 = fopen(fileNames{ii},'r');
+    fid1 = fopen([fileNames{ii}(1:end-4) '_copy' fileNames{ii}(end-3:end)],'w');
+    changedFile = false;
+    while ~feof(fid0)
+        contents = fread(fid0,OPT.readBlock,'*char')';
+        if ~feof(fid0)
+            adjust = -length(str1)-1;
+            fseek(fid0,adjust,'cof');
         else
-            fid = fopen(fileNames{ii},'w');
+            adjust = 0;
         end
-        fprintf(fid,'%s',newcontents);
-        fclose all;
+        
+        replacementsToMake = length(findstr(contents,str1));
+        if replacementsToMake>0
+            newcontents = strrep(contents,str1,str2);
+            numberOfReplacements = numberOfReplacements + replacementsToMake;
+            changedFile = true;
+            fprintf(fid1,'%s',newcontents(1:end+adjust));
+        else
+            fprintf(fid1,'%s',contents(1:end+adjust));
+        end
+        
+        % output something to screen
+        if ~OPT.quiet
+            jj = jj+1;
+            if jj == 100*round(jj/100)
+                fprintf('.');
+            end
+        end
+    end
+    if changedFile
+        changedFiles = changedFiles+1;
+        percentageDone = floor(ii/length(fileNames)*100);
+        fprintf(' %3.0f%% done \nprocessing files',percentageDone);
     end
     
-    % output something to screen
-    if ~OPT.quiet
-        if ii == 60*round(ii/60)
-            percentageDone = floor(ii/length(fileNames)*100);
-            fprintf(' %3.0f%% done \nprocessing files',percentageDone);
-        else
-            fprintf('.');
-        end
+    fclose(fid0);
+    fclose(fid1);
+    if OPT.copy
+    else
+        delete(fileNames{ii});
+        movefile([fileNames{ii}(1:end-4) '_copy' fileNames{ii}(end-3:end)],fileNames{ii});
     end
 end
 if ~OPT.quiet
