@@ -14,6 +14,7 @@ function varargout = KMLtricontourf(tri,lat1,lon1,z1,varargin)
 % * Multiple contour crossings on one boundary gives a problem - fixed
 % * Improve edge find algortihm (and turn it into seperate function) - done
 % * Major code cleaning - wip
+% * Better identification of local lowest ring.
 % * Optimization of slow routines (think it can be made faster) - no
 %   priority
 % * make rest OPT arguments consistent with other KML functions
@@ -72,6 +73,7 @@ function varargout = KMLtricontourf(tri,lat1,lon1,z1,varargin)
    OPT.colorbartitle = '';
    OPT.extrude       = false;
    OPT.staggered     = true;
+   OPT.debug         = false;
 
    if nargin==0
       varargout = {OPT};
@@ -81,8 +83,6 @@ function varargout = KMLtricontourf(tri,lat1,lon1,z1,varargin)
 %% set properties
 
 [OPT, Set, Default] = setProperty(OPT, varargin{:});
-
-if isempty(OPT.colorSteps), OPT.colorSteps = OPT.levels+1; end
 
 %% input check
 
@@ -115,27 +115,19 @@ if isempty(OPT.kmlName)
 end
 
 %% find contours and edges
-if numel(OPT.levels)==1&&OPT.levels==fix(OPT.levels)&&OPT.levels>0
+if numel(OPT.levels)==1&&OPT.levels==fix(OPT.levels)&&OPT.levels>=0
     OPT.levels = linspace(min(z),max(z),OPT.levels+2);
     OPT.levels = OPT.levels(1:end-1);
 end
 
+if isempty(OPT.colorSteps), OPT.colorSteps = length(OPT.levels)+1; end
+
 C = tricontourc(tri,lat,lon,z,OPT.levels);
 E = trisurf_edges(tri,lat,lon,z);
 
-Ecrossings = nan(size(E,1),2,numel(OPT.levels));
-for ii = 1:numel(OPT.levels)
-    crossings = find(xor(E(1:end-1,3)<OPT.levels(ii),E(2:end,3)<OPT.levels(ii))&...
-        E(1:end-1,4)==E(2:end,4));
-    weighting = abs([E(crossings+1,3) E(crossings,3)] - OPT.levels(ii))./...
-        repmat(abs(E(crossings,3) - E(crossings+1,3)),1,2);
-    Ecrossings(crossings,1,ii) = sum([E(crossings,1) E(crossings+1,1)].*weighting,2);
-    Ecrossings(crossings,2,ii) = sum([E(crossings,2) E(crossings+1,2)].*weighting,2);
-end
-
-verySmall = eps(3*max([lat;lon]));
 
 %% pre allocate, find dimensions
+verySmall = eps(30*max([lat;lon]));
 max_size = 1;
 jj = 1;ii = 0;
 while jj<size(C,2)
@@ -144,10 +136,10 @@ while jj<size(C,2)
     jj = jj+C(2,jj)+1;
 end
 contour.n      = ii;
-lat            = nan(max_size*15,contour.n*2);
-lon            = nan(max_size*15,contour.n*2);
-z              = nan(max_size*15,contour.n*2);
-contour.level  = nan(1,contour.n*2);
+lat            = nan(max_size,contour.n);
+lon            = nan(max_size,contour.n);
+z              = nan(max_size,contour.n);
+contour.level  = nan(1,contour.n);
 contour.begin  = nan(3,contour.n);
 contour.end    = nan(3,contour.n);
 contour.closed = false(1,contour.n);
@@ -168,164 +160,183 @@ contour.open              = find(~contour.closed);
 contour.toBeDeleted       = false(1,size(lat,2));
 contour.usedAsUpperBnd    = false(1,size(lat,2));
 contour.usedAsLowerBnd    = false(1,size(lat,2));
-%% close open polygons by following edge lines
-% close loops by walking along the edge where a contour ends, until one runs
-% into another contour that starts on the edge. Follow that contour, and
-% then coninue along the edge, and so forth, until the routine is back at
-% the beginning of the initial contour.
-%
-% Unfortunately, the code got extremely messy...
+%% find crossing locations
+Ecrossings = nan(size(E,1),2,numel(OPT.levels)+1);
+for ii = 1:numel(OPT.levels)
+    crossings = find(xor(E(1:end-1,3)<OPT.levels(ii),E(2:end,3)<OPT.levels(ii))&...
+        E(1:end-1,4)==E(2:end,4));
+    weighting = abs([E(crossings+1,3) E(crossings,3)] - OPT.levels(ii))./...
+        repmat(abs(E(crossings,3) - E(crossings+1,3)),1,2);
+    Ecrossings(crossings,1,ii) = sum([E(crossings,1) E(crossings+1,1)].*weighting,2);
+    Ecrossings(crossings,2,ii) = sum([E(crossings,2) E(crossings+1,2)].*weighting,2);
+end
 
-% new attempt:
-% walk along all edges. At upward crossings of a contour level:
-%  * find the connecting contour
-%  * connect to it
-%  * follow that contour and it's edges till back to original corssing
-%  * store which contours lines have been 'hooked up'
-%  * note that there was at least one contour crossed in that edge-ring
-%  * continue
-% Finally, connect the lowest contour in downward direction
-iNewContour = contour.n;
-for iE = find(any(~isnan(squeeze(Ecrossings(:,1,:))),2))'
-    isUpwardCrossing = E(iE,3)<E(iE+1,3);
-    isLowestContour  = any(ismember(find(~isnan(squeeze(Ecrossings(iE,1,:)))),...
-        find(any(~isnan(squeeze(Ecrossings(E(:,4)==E(iE,4),1,:)))),1,'first')));
-    if isUpwardCrossing || isLowestContour  
-        iCrossedLevels = find(~isnan(squeeze(Ecrossings(iE,1,:))));
-        if isLowestContour && ~isUpwardCrossing
-            iCrossedLevels = iCrossedLevels(1);
+F = nan(size(E,1)+sum(sum(~isnan(squeeze(Ecrossings(:,1,:))))),7);
+kk=0;
+for ii = 1:size(E,1)
+    kk = kk+1;
+    F(kk,1:5)= E(ii,:);
+    if any(~isnan(squeeze(Ecrossings(ii,1,:))))
+        jj = find(~isnan(squeeze(Ecrossings(ii,1,:))))';
+        if E(ii,3) > E(ii+1,3)
+            jj = fliplr(jj);
         end
-        for iCrossedLevel = iCrossedLevels'
-            % search direction for new contour
-            searchUpwards = isUpwardCrossing;
-            edgeWalk      = 1;
-            crossedLevel  = iCrossedLevel;
-            % adjust counters
-            iNewContour = iNewContour+1;
-            iLastCoord  = 0;
-            
-            % reset indices of first and last coordinate
-            firstCoord = [Ecrossings(iE,1,iCrossedLevel),...
-                Ecrossings(iE,2,iCrossedLevel),...
-                OPT.levels(iCrossedLevel)];
-            lastCoord = [nan nan nan];
-            iE2 = iE;
-            fprintf('a\n\n')
-            while ~all(abs(firstCoord-lastCoord)<verySmall)
-                %  find the crossed contour(s)
-                iContour = abs(contour.begin(1,contour.open)-Ecrossings(iE2,1,crossedLevel))<verySmall&...
-                    abs(contour.begin(2,contour.open)-Ecrossings(iE2,2,crossedLevel))<verySmall;
-                
-                % if no matching coordinates are found at the contour
-                % begin, then also look at the ends
-                if ~any(iContour)
-                    iContour = abs(contour.end(1,contour.open)-Ecrossings(iE2,1,crossedLevel))<verySmall&...
-                        abs(contour.end(2,contour.open)-Ecrossings(iE2,2,crossedLevel))<verySmall;
-                    addContourReversed = true;
-                else
-                    addContourReversed = false;
-                end
-                iContour = contour.open(iContour);
-                
-                % indices of the coordinate to be added
-                addContourCoordinates = find(~isnan(lat(:,iContour)));
-                if addContourReversed; 
-                    addContourCoordinates = flipud(addContourCoordinates); 
-                end
-                
-                % adjust indices
-                jNewContour = iLastCoord+1:iLastCoord+numel(addContourCoordinates);
-                iLastCoord  = iLastCoord+numel(addContourCoordinates);
-                
-                % store contour level
-                contour.level(iNewContour) = contour.level(iContour);
-                
-                % mark that contour as 'to be deleted'
-                contour.toBeDeleted(iContour) = true;
-%                 if searchUpwards
-%                     if   contour.usedAsLowerBnd(iContour);        break
-%                     else contour.usedAsLowerBnd(iContour) = true; end
-%                 else
-%                     if   contour.usedAsUpperBnd(iContour);        break
-%                     else contour.usedAsUpperBnd(iContour) = true; end
-%                 end
-                
-                % add the contour
-                lat(jNewContour,iNewContour) = lat(addContourCoordinates,iContour);
-                lon(jNewContour,iNewContour) = lon(addContourCoordinates,iContour);
-                z  (jNewContour,iNewContour) =             contour.level(iContour) ;           
-
-                % find the index of the edgecontour that continues
-                % where the previous contour has ended
-                lastCoord = [lat(iLastCoord,iNewContour),...
-                    lon(iLastCoord,iNewContour),...
-                    z(iLastCoord,iNewContour)];
-                
-                % The 'local' edge index iE2 counter (versus the global iE)
-                iE2 = find(...
-                    abs(Ecrossings(:,1,crossedLevel) - lastCoord(1))<verySmall &...
-                    abs(Ecrossings(:,2,crossedLevel) - lastCoord(2))<verySmall);
-                
-                fprintf('starting from %02d\n',iE2)
-                disp(['isUpwardCrossing = ' num2str(isUpwardCrossing)]) 
-                disp(['isLowestContour = ' num2str(isLowestContour)]) 
-                disp(['searchUpwards = ' num2str(searchUpwards)]) 
-                
-                % determine the direction to walk along the edge coordinates
-                nn      = find(E(:,4)==E(iE2,4),1,'first');
-                kk      = find(E(:,4)==E(iE2,4),1, 'last');
-                iE2next = mod(iE2+edgeWalk-nn,kk-nn)+nn;
-                
-                if xor(searchUpwards,E(iE2,3)>E(iE2next,3))
-                    iE2 = mod(iE2+1-nn,kk-nn)+nn;
-                    edgeWalk = 1;
-                else
-                    edgeWalk =  -1;
-                end
-                
-                % reverse search direction for next iteration
-                searchUpwards = ~searchUpwards;
-                
-                first=true;
-                while ~(~first&&any(~isnan(Ecrossings(iE2,1,crossedLevel)))||...                  
-                    any(~isnan(Ecrossings(iE2,1,iCrossedLevel+iCrossedLevel+1-crossedLevel)))&&~isLowestContour)
-                    first=false;
-                    % add coordinate
-                    fprintf('adding %02d\n',iE2);
-                    iLastCoord                = iLastCoord+1;
-                    lat(iLastCoord,iNewContour) = E(iE2,1);
-                    lon(iLastCoord,iNewContour) = E(iE2,2);
-                    z  (iLastCoord,iNewContour) = E(iE2,3);
-                    iE2 = mod(iE2+edgeWalk-nn,kk-nn)+nn;
-                end
-                fprintf('stopt adding at %02d\n',iE2);
-                iLastCoord                = iLastCoord+1;
-                if isnan(Ecrossings(iE2,1,iCrossedLevel))
-                    crossedLevel = iCrossedLevel+1;
-                    searchUpwards = ~searchUpwards;
-                else
-                    crossedLevel = iCrossedLevel;
-                end
-                lastCoord = [Ecrossings(iE2,1,crossedLevel),...
-                    Ecrossings(iE2,2,crossedLevel),...
-                    OPT.levels(crossedLevel)];
-                
-                lat(iLastCoord,iNewContour) = lastCoord(1);
-                lon(iLastCoord,iNewContour) = lastCoord(2);
-                z  (iLastCoord,iNewContour) = lastCoord(3);
+        for ll = jj
+            kk = kk+1;
+            F(kk,1) = Ecrossings(ii,1,ll);%assign x
+            F(kk,2) = Ecrossings(ii,2,ll);% assign y
+            F(kk,3) = OPT.levels(ll);% assign z
+            F(kk,4) = E(ii,4);
+            F(kk,5) = E(ii,5);
+            %  find the crossed contour
+            iContour = abs(contour.begin(1,contour.open)-F(kk,1))<verySmall&...
+                abs(contour.begin(2,contour.open)-F(kk,2))<verySmall;
+            % if no matching coordinates are found at the contour
+            % begin, then also look at the ends
+            if ~any(iContour)
+                iContour = abs(contour.end(1,contour.open)-F(kk,1))<verySmall&...
+                    abs(contour.end(2,contour.open)-F(kk,2))<verySmall;
+                F(kk,7) = 0;
+            else
+                F(kk,7) = 1;
             end
+            if sum(iContour == 1)~=1
+                error
+            end
+            F(kk,6) = contour.open(iContour);
         end
     end
 end
+E = F;
+clear F
+if OPT.debug
+    hold on
+    for ii=1:E(end,4)
+        jj = find(E(:,4)==ii&isnan(E(:,6)));
+        plot3(E(jj,2),E(jj,1),E(jj,3),'r.');
+    end
+    for ii=1:E(end,4)
+        jj = find(E(:,4)==ii&~isnan(E(:,6)));
+        plot3(E(jj,2),E(jj,1),E(jj,3),'k*');
+        h = text(E(jj,2),E(jj,1),reshape(sprintf('%5d',E(jj,6)),5,[])');
+        set(h,'color','r','FontSize',6,'VerticalAlignment','top')
+    end
+    h = text(E(:,2),E(:,1),reshape(sprintf('%5d',1:size(E,1)),5,[])');
+    set(h,'color','b','FontSize',6,'VerticalAlignment','bottom')
+end
 
-% chek for edge rings without any crossings
+
+% E = 1 | 2 | 3 | 4       | 5              | 6                 | 7            | 8 
+%     x | y | z | loop_nr | outer_boundary | cross contour ind | begin or end | section is used
+
+%% 
+E(:,8) = 0;
+iNewContour = contour.n;
 for ii =1:E(end,4)
-    if all(all(all(isnan(Ecrossings(E(:,4)==ii,:,:)),3),2),1)
+    iE = E(:,4)==ii;
+    E(find(iE==1,1,'last'),8) = 2;
+    
+    % for mod looping
+    nn      = find( E(:,4)==ii,1,'first');
+    kk      = find( E(:,4)==ii,1, 'last');
+    
+    while any(E(iE,8)<2) % there are non used sections in E2
+        iE0 = find(E(iE,8)<2,1,'first')-1+nn; % start somewhere
         iNewContour = iNewContour+1;
-        lat(1:numel(E(:,4)==ii),iNewContour) = E(E(:,4)==ii,1);
-        lon(1:numel(E(:,4)==ii),iNewContour) = E(E(:,4)==ii,2);
-        z  (1:numel(E(:,4)==ii),iNewContour) = E(E(:,4)==ii,3);
-        contour.level(ii) = OPT.levels(find(OPT.levels<z(1,iNewContour),1,'last'));
+        if iNewContour>contour.n
+            lat            = [lat nan(size(lat,1),20)]; %#ok<AGROW>
+            lon            = [lon nan(size(lat,1),20)]; %#ok<AGROW>
+            z              = [z   nan(size(lat,1),20)]; %#ok<AGROW>
+            contour.level  = [contour.level nan(1,20)];
+            contour.n      = contour.n+20;
+        end
+      
+        contour.level(iNewContour) = max([max(OPT.levels(OPT.levels<E(iE0,3))) OPT.levels(1)]);
+        
+        jNewContour = 0;
+        
+        iE1 = iE0;
+        
+        if E((mod(iE1+1-nn,kk-nn)+nn),8)<2;
+            walk = 1;
+        else
+            walk = -1;
+        end
+        
+        
+        while jNewContour == 0 || iE1 ~= iE0
+            edgeAddedAsLast = true;
+            % add edge coordinates
+            while jNewContour == 0 || (iE1 ~= iE0 && isnan(E(iE1,6)))
+                E(iE1,8) = 2;
+                jNewContour = jNewContour +1;
+                if jNewContour>size(lat,1)
+                    lat            = [lat; nan(5,size(z,2))]; %#ok<AGROW>
+                    lon            = [lon; nan(5,size(z,2))]; %#ok<AGROW>
+                    z              = [z  ; nan(5,size(z,2))]; %#ok<AGROW>
+                end
+                lat(jNewContour,iNewContour) = E(iE1,1);
+                lon(jNewContour,iNewContour) = E(iE1,2);
+                z  (jNewContour,iNewContour) = E(iE1,3);
+                
+                iE1 = mod(iE1+walk-nn,kk-nn)+nn;
+            end
+
+            % add contour coordinates
+            if jNewContour == 0 || iE1 ~= iE0
+                edgeAddedAsLast = false;
+                E(iE1,8) = E(iE1,8)+1;
+                iContour = E(iE1,6);
+                % indices of the coordinate to be added
+                addContourCoordinates = find(~isnan(lat(:,iContour)));
+                if ~E(iE1,7); 
+                    addContourCoordinates = flipud(addContourCoordinates); 
+                end
+
+                % adjust indices
+                jNewContour = jNewContour+1:jNewContour+numel(addContourCoordinates);
+
+                % mark that contour as 'to be deleted'
+                contour.toBeDeleted(iContour) = true;
+
+                if jNewContour(end)>size(lat,1)
+                    lat            = [lat; nan(length(jNewContour),size(z,2))]; %#ok<AGROW>
+                    lon            = [lon; nan(length(jNewContour),size(z,2))]; %#ok<AGROW>
+                    z              = [z  ; nan(length(jNewContour),size(z,2))]; %#ok<AGROW>
+                end
+
+                % add the contour
+                lat(jNewContour,iNewContour) = lat(addContourCoordinates,iContour);
+                lon(jNewContour,iNewContour) = lon(addContourCoordinates,iContour);
+                z  (jNewContour,iNewContour) =             contour.level(iContour);           
+
+                jNewContour = jNewContour(end);
+                
+                % find where to continue
+                iE1 = find(E(:,6) ==  E(iE1,6) & E(:,7)+ E(iE1,7)==1,1);
+                E(iE1,8) = E(iE1,8)+1;
+                
+%                 if xor((E(iE0,3) > E(iE1,3)),E((mod(iE1+1-nn,kk-nn)+nn),3) < E(iE1,3));
+%                     walk = 1;
+%                 else
+%                     walk = -1;
+%                 end
+                if iE1 ~= iE0
+                    iE1 = mod(iE1+walk-nn,kk-nn)+nn;
+                end
+            end
+        end
+        if edgeAddedAsLast
+            jNewContour = jNewContour +1;
+            if jNewContour>size(lat,1)
+                lat            = [lat; nan(1,size(z,2))]; %#ok<AGROW>
+                lon            = [lon; nan(1,size(z,2))]; %#ok<AGROW>
+                z              = [z  ; nan(1,size(z,2))]; %#ok<AGROW>
+            end
+            lat(jNewContour,iNewContour) = E(iE1,1);
+            lon(jNewContour,iNewContour) = E(iE1,2);
+            z  (jNewContour,iNewContour) = E(iE1,3);
+        end
     end
 end
 
@@ -343,6 +354,10 @@ lon(all(isnan(lon),2),:) = [];
 contour.level(contour.toBeDeleted) = [];
 contour.n = size(lat,2);
 
+makeTheKML(OPT,lat,lon,z,lat1,lon1,z1,contour);
+
+
+function OPT = makeTheKML(OPT,lat,lon,z,lat1,lon1,z1,contour)
 %% make all contour lines counterclockwise
 for ii=1:size(lat,2)
     if ~polyIsClockwise(lon(:,ii),lat(:,ii))
@@ -412,18 +427,26 @@ end
 
 contour.colorLevel = nan(size(contour.level));
 % set level to the minimum level of inner and outer polygon
+c = nan(size(1,contour.n));
 for ii = 1:contour.n
-    contour.colorLevel(ii) = min(contour.level([D(ii).outerPoly D(ii).innerPoly]));
-    if isempty(D(ii).innerPoly)
-        % then find out if is a valley, then lower contour color
-        if mean(z1(inpolygon(lat1,lon1,lat(:,D(ii).outerPoly),lon(:,D(ii).outerPoly))))<contour.colorLevel(ii)
-            contour.colorLevel(ii) = OPT.levels(max(find(OPT.levels==contour.level(D(ii).outerPoly))-1,1));
-        end
-    end
+    c(ii) = find(OPT.levels<=max(max(z(:,[D(ii).outerPoly D(ii).innerPoly]))),1,'last');
+    % ind if the loop is a local maximum
+%     if c(ii) == find(OPT.levels<min(min(z(:,[D(ii).outerPoly D(ii).innerPoly]))),1,'last')
+%         x1 =  lat(:,[D(ii).outerPoly D(ii).innerPoly]);
+%         y1 =  lon(:,[D(ii).outerPoly D(ii).innerPoly]);      
+%         ind = find(lat1 > min(x1) & lat1 < max(x1) & lon1 > min(y1) & lon1 < max(y1));
+%         ind = ind(inpolygon(lat1(ind),lon1(ind),x1,y1));
+%         c(ii) = max([find(OPT.levels<max([max(z1(ind)); min(z1(:))]),1,'last') c(ii)]);
+%         
+%     end
 end
 
-%  convert color values into colorRGB index values
-[dummy,dummy,c] = unique(contour.colorLevel);
+OPT.colorLevels = linspace(OPT.cLim(1),OPT.cLim(2),OPT.colorSteps);
+
+[dummy,ind] = min(abs(repmat(OPT.colorLevels,length(OPT.levels),1) - repmat(OPT.levels',1,length(OPT.colorLevels))),[],2);
+
+c = ind(c);
+
 
 %% start KML
 
@@ -450,7 +473,7 @@ OPT_stylePoly = struct(...
     'fillAlpha'  ,OPT.fillAlpha,...
     'polyFill'   ,OPT.polyFill,...
     'polyOutline',OPT.polyOutline);
-for ii = 1:OPT.colorSteps
+for ii = unique(c)'
     OPT_stylePoly.name = ['style' num2str(ii)];
     OPT_stylePoly.fillColor = colorRGB(ii,:);
     output = [output KML_stylePoly(OPT_stylePoly)];
@@ -477,7 +500,7 @@ output = repmat(char(1),1,1e5);
 kk = 1;
 
 for ii=1:mm
-    OPT_poly.styleName = sprintf('style%d',c(D(ii).outerPoly));
+    OPT_poly.styleName = sprintf('style%d',c(ii));
     
     x1 =  lat(:,[D(ii).outerPoly D(ii).innerPoly]);
     y1 =  lon(:,[D(ii).outerPoly D(ii).innerPoly]);

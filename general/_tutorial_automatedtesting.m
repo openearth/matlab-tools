@@ -3,7 +3,7 @@
 % create problems when one of the main engines is adjusted. To overcome this problem many projects
 % tend to write test functions for these key-functions in which the basic functionalities are
 % recorded and tested. Within the framework of OpenEarthTools a matlab based test environment is
-% developt to facilitate testing of the functions.
+% developed to facilitate testing of the functions.
 % 
 % <html>
 % <table border="0" cellpadding="5" width="100%">

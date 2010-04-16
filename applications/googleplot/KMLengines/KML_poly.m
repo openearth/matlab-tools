@@ -81,6 +81,7 @@ end
    OPT.timeIn     = [];
    OPT.timeOut    = [];
    OPT.name       = 'poly';
+   OPT.precision  = 8;
    
    OPT = setProperty(OPT,varargin{nextarg:end});
    
@@ -148,6 +149,8 @@ ii=1;
 nn = ~isnan(lon(:,ii));
 coords=[lon(nn,ii)'; lat(nn,ii)'; z(nn,ii)'];
 
+coordPrintString = sprintf('%%3.%df,%%3.%df,%%3.3f\\n',OPT.precision,OPT.precision);
+
 outerCoords  = sprintf([...
     '<outerBoundaryIs>\n'...
     '<LinearRing>\n'...
@@ -157,7 +160,7 @@ outerCoords  = sprintf([...
     '</LinearRing>\n'...
     '</outerBoundaryIs>\n'],...
     sprintf(...
-       '%3.8f,%3.8f,%3.3f\n',...       % coords (separated by \n or space)
+       coordPrintString,...       % coords (separated by \n or space)
     coords));
 
 

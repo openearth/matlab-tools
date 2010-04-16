@@ -1,4 +1,4 @@
-function varargout = KMLmerge_files(varargin)
+function OPT = KMLmerge_files(varargin)
 %KMLMERGE_FILES   merges all KML files in a certain directory
 %
 %   KMLmerge_files(<keyword,value>)
@@ -22,7 +22,6 @@ function varargout = KMLmerge_files(varargin)
    [OPT, Set, Default] = setProperty(OPT, varargin{:});
    
    if nargin==0 & nargout==1
-       varargout = {OPT};
        return
    end
 

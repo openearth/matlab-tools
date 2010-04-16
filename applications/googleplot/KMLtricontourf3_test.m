@@ -1,17 +1,17 @@
 function testresult = KMLtricontourf3_test()
 % KMLTRICONTOURF3_TEST  One line description goes here
-%  
+%
 % More detailed description of the test goes here.
 %
 %
-%   See also 
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 <COMPANY>
 %       Thijs
 %
-%       <EMAIL>	
+%       <EMAIL>
 %
 %       <ADDRESS>
 %
@@ -30,9 +30,9 @@ function testresult = KMLtricontourf3_test()
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -50,30 +50,149 @@ function testresult = KMLtricontourf3_test()
 % Publishable code that describes the test.
 
 %% $RunCode
-% Write test code here
-    %test 1
-    clc
-    [x,y] = meshgrid(1:10,21:30);
-    z = peaks(10);
-    tri = delaunay(x,y);
-    tri(1:28,:)=[];
-%    tri(60:84,:)=[];
-    nn=9;
-    tricontour3(tri,y,x,z,nn);
-    E = trisurf_edges(tri,x,y,z);
-    for ii=1:E(end,4)
-        jj = find(E(:,4)==ii);
-             line(E(jj,1),E(jj,2),E(jj,3));
-    end
-    for ii=1:E(end,4)
-        jj = find(E(:,4)==ii);
-             line(E(jj,2),E(jj,1),E(jj,3));
-    end
-    h = text(E(:,2),E(:,1),reshape(sprintf('%5d',1:size(E,1)),5,[])');
-    set(h,'color','r','FontSize',6,'VerticalAlignment','top')
-    view(0,90)
-    KMLtricontourf3(tri,x./10,y./10,z,'levels',nn,'fileName',KML_testdir('KMLtricontourf3 - 1.kml'),...
-        'zScaleFun',@(z) (z+6)*1000,'staggered',false)
+tr(1) = test1;
+tr(2) = test2;
+tr(2) = test3;
+ tr(2) = test4;
+testresult = all(tr);
 
 %% $PublishResult
 % Publishable code that describes the test.
+end
+
+function testresult = test1()
+%% $Description
+
+%% $RunCode
+
+[x,y] = meshgrid(11:20,21:30);
+z = peaks(10);
+tri = delaunay(x,y);
+tri(any((x(tri)<15&x(tri)>13.5),2),:)=[];
+x = x+sin(y)/10;
+% nn=[-5 0 2:0.1:3];
+nn = 25;
+% tricontour3(tri,y,x,z,nn);
+% E = trisurf_edges(tri,x,y,z);
+% for ii=1:E(end,4)
+%     jj = find(E(:,4)==ii);
+%     line(E(jj,2),E(jj,1),E(jj,3));
+% end
+% h = text(E(:,2),E(:,1),reshape(sprintf('%5d',1:size(E,1)),5,[])');
+% set(h,'color','r','FontSize',6,'VerticalAlignment','top')
+view(0,90)
+
+KMLtricontourf3(tri,x,y,z,'levels',nn,'fileName',KML_testdir('KMLtricontourf3 - 1.kmz'),...
+    'zScaleFun',@(z) (z+10)*1400,'staggered',false,'debug',0,'colorbar',false)
+testresult = true;
+%% $PublishResult
+
+end
+
+function testresult = test2()
+%% $Description
+
+%% $RunCode
+
+[x,y] = meshgrid(1:10,21:30);
+z = peaks(10);
+tri = delaunay(x,y);
+tri(any((x(tri)<5),2),:)=[];
+tri(any((x(tri)>6),2),:)=[];
+x = x+sin(y)/10;
+nn=4;
+% tricontour3(tri,y,x,z,nn);
+% E = trisurf_edges(tri,x,y,z);
+% for ii=1:E(end,4)
+%     jj = find(E(:,4)==ii);
+%     line(E(jj,1),E(jj,2),E(jj,3));
+% end
+% for ii=1:E(end,4)
+%     jj = find(E(:,4)==ii);
+%     line(E(jj,2),E(jj,1),E(jj,3));
+% end
+% h = text(E(:,2),E(:,1),reshape(sprintf('%5d',1:size(E,1)),5,[])');
+% set(h,'color','r','FontSize',6,'VerticalAlignment','top')
+view(0,90)
+
+KMLtricontourf3(tri,x,y,z,'levels',nn,'fileName',KML_testdir('KMLtricontourf3 - 2.kmz'),...
+    'zScaleFun',@(z) (z+200)*400,'staggered',false,'debug',false,'colorbar',false)
+testresult = true;
+%% $PublishResult
+
+end
+
+function testresult = test3()
+%% $Description
+
+%% $RunCode
+[x,y] = meshgrid(1:100,201:300);
+z = repmat(peaks(25),4,4)+3*peaks(100)+2*repmat(peaks(50),2,2);
+remove = [1:15 85:100];
+x(remove,:)=[];
+y(remove,:)=[];
+z(remove,:)=[];
+tri = delaunay(x,y);
+tri(any((x(tri)<50&x(tri)>30.5),2),:)=[];
+x = x+sin(y)/10;
+nn=30;
+
+% tri([500:510],:) = [];
+% tri(rand(length(tri),1)>0.999,:) = [];
+
+% trisurf(tri,y,x,z)
+
+KMLtricontourf3(tri,x/30,y/30,z,'levels',nn,'fileName',KML_testdir('KMLtricontourf3 - 3.kmz'),...
+    'zScaleFun',@(z) (z+20)*400,'staggered',false,'colorbar',false,'debug',false)
+testresult = true;
+%% $PublishResult
+
+end
+
+function testresult = test4()
+%% $Description
+
+%% $RunCode
+url = 'http://opendap.deltares.nl:8080/opendap/hyrax/rijkswaterstaat/vaklodingen/vaklodingenKB136_0908.nc';
+x = nc_varget(url,'x');
+y = nc_varget(url,'y');
+[X,Y] = meshgrid(x,y);
+Z = nc_varget(url,'z',[0 0 0],[1 -1 -1]);
+
+
+nn = 1:1:325;
+mm = 300:1:350;
+[lon,lat] = convertCoordinates(X(nn,mm),Y(nn,mm),'CS1.code',28992,'CS2.code',4326);
+z = Z(nn,mm);
+tri = delaunay(X(nn,mm),Y(nn,mm));
+tri(any(isnan(z(tri)),2),:) = [];
+KMLtricontourf3(tri,lat,lon,z,'levels',50,'fileName',KML_testdir('KMLtricontourf3 - 4a.kmz'),...
+    'zScaleFun',@(z) (z+10)*4,'staggered',0,'debug',0,'colorbar',false)
+
+
+levels=[-11:-1:-3 -2:0.25:2 3:1:26];
+
+nn = 1:1:325;
+mm = 250:1:300;
+[lon,lat] = convertCoordinates(X(nn,mm),Y(nn,mm),'CS1.code',28992,'CS2.code',4326);
+z = Z(nn,mm);
+tri = delaunay(X(nn,mm),Y(nn,mm));
+tri(any(isnan(z(tri)),2),:) = [];
+KMLtricontourf3(tri,lat,lon,z,'levels',levels,'fileName',KML_testdir('KMLtricontourf3 - 4b.kmz'),...
+    'zScaleFun',@(z) (z+10)*4,'staggered',0,'debug',0,'colorbar',false,...
+    'colorMap',@(m)colormap_cpt('bathymetry_vaklodingen',m),'colorSteps',250,'cLim',[-50 25])
+
+
+nn = 1:325;
+mm = 200:250;
+[lon,lat] = convertCoordinates(X(nn,mm),Y(nn,mm),'CS1.code',28992,'CS2.code',4326);
+z = Z(nn,mm);
+tri = delaunay(X(nn,mm),Y(nn,mm));
+tri(any(isnan(z(tri)),2),:) = [];
+KMLtricontourf(tri,lat,lon,z,'levels',levels,'fileName',KML_testdir('KMLtricontourf - 4.kmz'),...
+    'staggered',false,'debug',0,'colorbar',false,...
+    'colorMap',@(m)colormap_cpt('bathymetry_vaklodingen',m),'colorSteps',250,'cLim',[-50 25])
+testresult = true;
+%% $PublishResult
+
+end
