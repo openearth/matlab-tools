@@ -1,6 +1,8 @@
 function KMLsurf_tiled(lat,lon,z)
 %KMLSURF_TILED  BETA!!!!
 %
+% Experimental function to tile elements of a KMLsurf plot. 
+%
 %  KMLsurf_tiled(lat,lon,z)
 %
 %See also: googlePlot, surf

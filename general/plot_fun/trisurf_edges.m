@@ -16,7 +16,7 @@ function E = trisurf_edges(tri,x,y,z)
 %   trisurf_edges
 %   
 %   TODO:
-%    - Probably the function can bee speeded up a lot by making use of the
+%    - Probably the function can be speeded up a lot by making use of the
 %      TriRep functionality. Only found out about it's existence too late..
 %
 %   See also
