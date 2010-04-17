@@ -80,7 +80,7 @@ nn = 25;
 % end
 % h = text(E(:,2),E(:,1),reshape(sprintf('%5d',1:size(E,1)),5,[])');
 % set(h,'color','r','FontSize',6,'VerticalAlignment','top')
-view(0,90)
+% view(0,90)
 
 KMLtricontourf3(tri,x,y,z,'levels',nn,'fileName',KML_testdir('KMLtricontourf3 - 1.kmz'),...
     'zScaleFun',@(z) (z+10)*1400,'staggered',false,'debug',0,'colorbar',false)
@@ -113,7 +113,7 @@ nn=4;
 % end
 % h = text(E(:,2),E(:,1),reshape(sprintf('%5d',1:size(E,1)),5,[])');
 % set(h,'color','r','FontSize',6,'VerticalAlignment','top')
-view(0,90)
+% view(0,90)
 
 KMLtricontourf3(tri,x,y,z,'levels',nn,'fileName',KML_testdir('KMLtricontourf3 - 2.kmz'),...
     'zScaleFun',@(z) (z+200)*400,'staggered',false,'debug',false,'colorbar',false)

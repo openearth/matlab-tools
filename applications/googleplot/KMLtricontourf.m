@@ -262,8 +262,7 @@ for ii =1:E(end,4)
         else
             walk = -1;
         end
-        
-        
+       
         while jNewContour == 0 || iE1 ~= iE0
             edgeAddedAsLast = true;
             % add edge coordinates
@@ -316,11 +315,6 @@ for ii =1:E(end,4)
                 iE1 = find(E(:,6) ==  E(iE1,6) & E(:,7)+ E(iE1,7)==1,1);
                 E(iE1,8) = E(iE1,8)+1;
                 
-%                 if xor((E(iE0,3) > E(iE1,3)),E((mod(iE1+1-nn,kk-nn)+nn),3) < E(iE1,3));
-%                     walk = 1;
-%                 else
-%                     walk = -1;
-%                 end
                 if iE1 ~= iE0
                     iE1 = mod(iE1+walk-nn,kk-nn)+nn;
                 end
@@ -426,23 +420,61 @@ for outerPoly = 1:contour.n
 end
 
 contour.colorLevel = nan(size(contour.level));
+
 % set level to the minimum level of inner and outer polygon
-c = nan(size(1,contour.n));
+contour.min = nan(size(1,contour.n));
+contour.max = nan(size(1,contour.n));
+c           = nan(size(1,contour.n));
 for ii = 1:contour.n
-    c(ii) = find(OPT.levels<=max(max(z(:,[D(ii).outerPoly D(ii).innerPoly]))),1,'last');
-    % ind if the loop is a local maximum
+   contour.min(ii) = min(min(z(:,[D(ii).outerPoly D(ii).innerPoly])));
+   contour.max(ii) = max(max(z(:,[D(ii).outerPoly D(ii).innerPoly])));
+end
+
+OPT.levels = [(2*OPT.levels(1) - OPT.levels(2)) OPT.levels];
+
+for ii = 1:contour.n
+    if contour.min(ii)~=contour.max(ii)
+        c(ii) = find(OPT.levels<contour.max(ii),1,'last');
+    else
+        kk = 0;
+        for nn = [1:ii-1 ii+1:contour.n]
+            if any(ismember(D(ii).outerPoly,D(nn).innerPoly))
+                if z(1,D(nn).outerPoly)>contour.max(ii)
+                    kk = 1;
+                else
+                    kk = 0;
+                end
+            end
+        end
+        c(ii) = find(OPT.levels>=contour.max(ii),1,'first')-kk;
+    end
+end
+
+% find if the loop is a local maximum
+% for ii = 1:contour.n
 %     if c(ii) == find(OPT.levels<min(min(z(:,[D(ii).outerPoly D(ii).innerPoly]))),1,'last')
+%         
+%         
+%         
+%         find(any(ismember(lat,lat(1,D(ii).outerPoly))&ismember(lon,lon(1,D(ii).outerPoly))))
+%         
+%         
 %         x1 =  lat(:,[D(ii).outerPoly D(ii).innerPoly]);
-%         y1 =  lon(:,[D(ii).outerPoly D(ii).innerPoly]);      
+%         y1 =  lon(:,[D(ii).outerPoly D(ii).innerPoly]);
 %         ind = find(lat1 > min(x1) & lat1 < max(x1) & lon1 > min(y1) & lon1 < max(y1));
 %         ind = ind(inpolygon(lat1(ind),lon1(ind),x1,y1));
 %         c(ii) = max([find(OPT.levels<max([max(z1(ind)); min(z1(:))]),1,'last') c(ii)]);
 %         
 %     end
-end
+% end
+
+
+
+
+
+
 
 OPT.colorLevels = linspace(OPT.cLim(1),OPT.cLim(2),OPT.colorSteps);
-
 [dummy,ind] = min(abs(repmat(OPT.colorLevels,length(OPT.levels),1) - repmat(OPT.levels',1,length(OPT.colorLevels))),[],2);
 
 c = ind(c);

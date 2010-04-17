@@ -48,7 +48,7 @@ function varargout = KMLtricontour(tri,lat,lon,z,varargin)
    OPT.lineAlpha     = 1;
    OPT.openInGE      = false;
    OPT.colorMap      = @(m) jet(m);
-   OPT.colorSteps    = 32;   
+   OPT.colorSteps    = [];   
    OPT.timeIn        = [];
    OPT.timeOut       = [];
    OPT.is3D          = false;
@@ -100,6 +100,13 @@ function varargout = KMLtricontour(tri,lat,lon,z,varargin)
        OPT.cLim = ([min(z(~isnan(z))) max(z(~isnan(z)))]);
    end
 
+    % interpret levels
+    if numel(OPT.levels)==1&&OPT.levels==fix(OPT.levels)&&OPT.levels>=0
+        OPT.levels = linspace(min(z),max(z),OPT.levels+2);
+        OPT.levels = OPT.levels(1:end-1);
+    end
+    
+    if isempty(OPT.colorSteps), OPT.colorSteps = length(OPT.levels)+1; end
 %% get filename, gui for filename, if not set yet
 
    if isempty(OPT.fileName)
