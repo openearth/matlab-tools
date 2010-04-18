@@ -1,4 +1,4 @@
-function varargout = KMLtricontourf(tri,lat1,lon1,z1,varargin)
+function varargout = KMLtricontourf(tri,lat,lon,z,varargin)
 % KMLTRICONTOURF   Just like tricontourc
 %
 %   KMLtricontourf(tri,lat,lon,z,<keyword,value>)
@@ -82,13 +82,14 @@ function varargout = KMLtricontourf(tri,lat1,lon1,z1,varargin)
 
 %% set properties
 
-[OPT, Set, Default] = setProperty(OPT, varargin{:});
+OPT = setProperty(OPT, varargin{:});
 
 %% input check
 
-lat = lat1(:);
-lon = lon1(:);
-z   =   z1(:);
+% vectorize input
+lat = lat(:);
+lon = lon(:);
+z   = z(:);
 
 % correct lat and lon
 if any((abs(lat)/90)>1)
@@ -111,7 +112,7 @@ end
 %% set kmlName if it is not set yet
 
 if isempty(OPT.kmlName)
-    [dummy, OPT.kmlName] = fileparts(OPT.fileName);
+    [dummy, OPT.kmlName] = fileparts(OPT.fileName); %#ok<ASGLU>
 end
 
 %% find contours and edges
@@ -125,7 +126,6 @@ if isempty(OPT.colorSteps), OPT.colorSteps = length(OPT.levels)+1; end
 C = tricontourc(tri,lat,lon,z,OPT.levels);
 E = trisurf_edges(tri,lat,lon,z);
 
-
 %% pre allocate, find dimensions
 verySmall = eps(30*max([lat;lon]));
 max_size = 1;
@@ -136,9 +136,9 @@ while jj<size(C,2)
     jj = jj+C(2,jj)+1;
 end
 contour.n      = ii;
-lat            = nan(max_size,contour.n);
-lon            = nan(max_size,contour.n);
-z              = nan(max_size,contour.n);
+latC            = nan(max_size,contour.n);
+lonC            = nan(max_size,contour.n);
+zC              = nan(max_size,contour.n);
 contour.level  = nan(1,contour.n);
 contour.begin  = nan(3,contour.n);
 contour.end    = nan(3,contour.n);
@@ -147,19 +147,19 @@ jj = 1;ii = 0;
 while jj<size(C,2)
     ii = ii+1;
     contour.level(1,ii) = C(1,jj);
-    lat(1:C(2,jj),ii)   = C(1,jj+1:jj+C(2,jj));
-    lon(1:C(2,jj),ii)   = C(2,jj+1:jj+C(2,jj));
+    latC(1:C(2,jj),ii)   = C(1,jj+1:jj+C(2,jj));
+    lonC(1:C(2,jj),ii)   = C(2,jj+1:jj+C(2,jj));
     contour.begin(:,ii) = [C(1,jj+1)      ,C(2,jj+1)      ,C(1,jj)];
     contour.end(:,ii)   = [C(1,jj+C(2,jj)),C(2,jj+C(2,jj)),C(1,jj)];
     jj = jj+C(2,jj)+1;
 end
-z(1:max_size,1:contour.n) = repmat(contour.level(1:contour.n),max_size,1);
-z(isnan(lat))             = nan;
+zC(1:max_size,1:contour.n) = repmat(contour.level(1:contour.n),max_size,1);
+zC(isnan(latC))             = nan;
 contour.closed            = all(contour.begin==contour.end,1);
 contour.open              = find(~contour.closed);
-contour.toBeDeleted       = false(1,size(lat,2));
-contour.usedAsUpperBnd    = false(1,size(lat,2));
-contour.usedAsLowerBnd    = false(1,size(lat,2));
+contour.toBeDeleted       = false(1,size(latC,2));
+contour.usedAsUpperBnd    = false(1,size(latC,2));
+contour.usedAsLowerBnd    = false(1,size(latC,2));
 %% find crossing locations
 Ecrossings = nan(size(E,1),2,numel(OPT.levels)+1);
 for ii = 1:numel(OPT.levels)
@@ -201,7 +201,7 @@ for ii = 1:size(E,1)
                 F(kk,7) = 1;
             end
             if sum(iContour == 1)~=1
-                error
+                 error %#ok<LTARG>
             end
             F(kk,6) = contour.open(iContour);
         end
@@ -210,6 +210,7 @@ end
 E = F;
 clear F
 if OPT.debug
+    tricontour3(tri,lon,lat,z,OPT.levels)
     hold on
     for ii=1:E(end,4)
         jj = find(E(:,4)==ii&isnan(E(:,6)));
@@ -223,6 +224,7 @@ if OPT.debug
     end
     h = text(E(:,2),E(:,1),reshape(sprintf('%5d',1:size(E,1)),5,[])');
     set(h,'color','b','FontSize',6,'VerticalAlignment','bottom')
+    view([0 90])
 end
 
 
@@ -244,9 +246,9 @@ for ii =1:E(end,4)
         iE0 = find(E(iE,8)<2,1,'first')-1+nn; % start somewhere
         iNewContour = iNewContour+1;
         if iNewContour>contour.n
-            lat            = [lat nan(size(lat,1),20)]; %#ok<AGROW>
-            lon            = [lon nan(size(lat,1),20)]; %#ok<AGROW>
-            z              = [z   nan(size(lat,1),20)]; %#ok<AGROW>
+            latC            = [latC nan(size(latC,1),20)]; %#ok<AGROW>
+            lonC            = [lonC nan(size(latC,1),20)]; %#ok<AGROW>
+            zC              = [zC   nan(size(latC,1),20)]; %#ok<AGROW>
             contour.level  = [contour.level nan(1,20)];
             contour.n      = contour.n+20;
         end
@@ -269,14 +271,14 @@ for ii =1:E(end,4)
             while jNewContour == 0 || (iE1 ~= iE0 && isnan(E(iE1,6)))
                 E(iE1,8) = 2;
                 jNewContour = jNewContour +1;
-                if jNewContour>size(lat,1)
-                    lat            = [lat; nan(5,size(z,2))]; %#ok<AGROW>
-                    lon            = [lon; nan(5,size(z,2))]; %#ok<AGROW>
-                    z              = [z  ; nan(5,size(z,2))]; %#ok<AGROW>
+                if jNewContour>size(latC,1)
+                    latC            = [latC; nan(5,size(zC,2))]; %#ok<AGROW>
+                    lonC            = [lonC; nan(5,size(zC,2))]; %#ok<AGROW>
+                    zC              = [zC  ; nan(5,size(zC,2))]; %#ok<AGROW>
                 end
-                lat(jNewContour,iNewContour) = E(iE1,1);
-                lon(jNewContour,iNewContour) = E(iE1,2);
-                z  (jNewContour,iNewContour) = E(iE1,3);
+                latC(jNewContour,iNewContour) = E(iE1,1);
+                lonC(jNewContour,iNewContour) = E(iE1,2);
+                zC  (jNewContour,iNewContour) = E(iE1,3);
                 
                 iE1 = mod(iE1+walk-nn,kk-nn)+nn;
             end
@@ -287,7 +289,7 @@ for ii =1:E(end,4)
                 E(iE1,8) = E(iE1,8)+1;
                 iContour = E(iE1,6);
                 % indices of the coordinate to be added
-                addContourCoordinates = find(~isnan(lat(:,iContour)));
+                addContourCoordinates = find(~isnan(latC(:,iContour)));
                 if ~E(iE1,7); 
                     addContourCoordinates = flipud(addContourCoordinates); 
                 end
@@ -298,16 +300,16 @@ for ii =1:E(end,4)
                 % mark that contour as 'to be deleted'
                 contour.toBeDeleted(iContour) = true;
 
-                if jNewContour(end)>size(lat,1)
-                    lat            = [lat; nan(length(jNewContour),size(z,2))]; %#ok<AGROW>
-                    lon            = [lon; nan(length(jNewContour),size(z,2))]; %#ok<AGROW>
-                    z              = [z  ; nan(length(jNewContour),size(z,2))]; %#ok<AGROW>
+                if jNewContour(end)>size(latC,1)
+                    latC            = [latC; nan(length(jNewContour),size(zC,2))]; %#ok<AGROW>
+                    lonC            = [lonC; nan(length(jNewContour),size(zC,2))]; %#ok<AGROW>
+                    zC              = [zC  ; nan(length(jNewContour),size(zC,2))]; %#ok<AGROW>
                 end
 
                 % add the contour
-                lat(jNewContour,iNewContour) = lat(addContourCoordinates,iContour);
-                lon(jNewContour,iNewContour) = lon(addContourCoordinates,iContour);
-                z  (jNewContour,iNewContour) =             contour.level(iContour);           
+                latC(jNewContour,iNewContour) = latC(addContourCoordinates,iContour);
+                lonC(jNewContour,iNewContour) = lonC(addContourCoordinates,iContour);
+                zC  (jNewContour,iNewContour) =             contour.level(iContour);           
 
                 jNewContour = jNewContour(end);
                 
@@ -322,50 +324,50 @@ for ii =1:E(end,4)
         end
         if edgeAddedAsLast
             jNewContour = jNewContour +1;
-            if jNewContour>size(lat,1)
-                lat            = [lat; nan(1,size(z,2))]; %#ok<AGROW>
-                lon            = [lon; nan(1,size(z,2))]; %#ok<AGROW>
-                z              = [z  ; nan(1,size(z,2))]; %#ok<AGROW>
+            if jNewContour>size(latC,1)
+                latC            = [latC; nan(1,size(zC,2))]; %#ok<AGROW>
+                lonC            = [lonC; nan(1,size(zC,2))]; %#ok<AGROW>
+                zC              = [zC  ; nan(1,size(zC,2))]; %#ok<AGROW>
             end
-            lat(jNewContour,iNewContour) = E(iE1,1);
-            lon(jNewContour,iNewContour) = E(iE1,2);
-            z  (jNewContour,iNewContour) = E(iE1,3);
+            latC(jNewContour,iNewContour) = E(iE1,1);
+            lonC(jNewContour,iNewContour) = E(iE1,2);
+            zC  (jNewContour,iNewContour) = E(iE1,3);
         end
     end
 end
 
 %% Delete all duplicate data, and the data from contoursToBeDeleted
-contour.toBeDeleted(all(isnan(lat)))=true;
-lat(:,contour.toBeDeleted) = [];
-lon(:,contour.toBeDeleted) = [];
-z  (:,contour.toBeDeleted) = [];
+contour.toBeDeleted(all(isnan(latC)))=true;
+latC(:,contour.toBeDeleted) = [];
+lonC(:,contour.toBeDeleted) = [];
+zC  (:,contour.toBeDeleted) = [];
 
 %% trim superfluous nan values from the coordinate arrays
-z  (all(isnan(lon),2),:) = [];
-lat(all(isnan(lon),2),:) = [];
-lon(all(isnan(lon),2),:) = [];
+zC  (all(isnan(lonC),2),:) = [];
+latC(all(isnan(lonC),2),:) = [];
+lonC(all(isnan(lonC),2),:) = [];
 
 contour.level(contour.toBeDeleted) = [];
-contour.n = size(lat,2);
+contour.n = size(latC,2);
 
-makeTheKML(OPT,lat,lon,z,lat1,lon1,z1,contour);
+makeTheKML(OPT,lat,lon,z,latC,lonC,zC,contour);
 
 
-function OPT = makeTheKML(OPT,lat,lon,z,lat1,lon1,z1,contour)
+function OPT = makeTheKML(OPT,lat,lon,z,latC,lonC,zC,contour)
 %% make all contour lines counterclockwise
-for ii=1:size(lat,2)
-    if ~polyIsClockwise(lon(:,ii),lat(:,ii))
-        endOfContour = find(~isnan(lat(:,ii)),1,'last');
-        lat(1:endOfContour,ii) = lat(endOfContour:-1:1,ii);
-        lon(1:endOfContour,ii) = lon(endOfContour:-1:1,ii);
-        z  (1:endOfContour,ii) = z  (endOfContour:-1:1,ii);
+for ii=1:size(latC,2)
+    if ~polyIsClockwise(lonC(:,ii),latC(:,ii))
+        endOfContour = find(~isnan(latC(:,ii)),1,'last');
+        latC(1:endOfContour,ii) = latC(endOfContour:-1:1,ii);
+        lonC(1:endOfContour,ii) = lonC(endOfContour:-1:1,ii);
+        zC  (1:endOfContour,ii) = zC  (endOfContour:-1:1,ii);
     end
 end
 
 %% pre-process color data
 
 if isempty(OPT.cLim)
-    OPT.cLim         = [min(z(:)) max(z(:))];
+    OPT.cLim         = [min(zC(:)) max(zC(:))];
 end
 
 colorRGB = OPT.colorMap(OPT.colorSteps);
@@ -373,7 +375,7 @@ colorRGB = OPT.colorMap(OPT.colorSteps);
 % determine the area's of the different polygons
 contour.area = nan(1,contour.n);
 for ii=1:contour.n
-    contour.area(ii) = polyarea(lon(~isnan(lat(:,ii)),ii),lat(~isnan(lat(:,ii)),ii));
+    contour.area(ii) = polyarea(lonC(~isnan(latC(:,ii)),ii),latC(~isnan(latC(:,ii)),ii));
 end
 
 % [dummy,outerPoly] = max(contour.area);
@@ -385,9 +387,9 @@ for outerPoly = 1:contour.n
     % polygons that form the inner boundaries
     innerPoly = [];
     % only check inpolygon for the first
-    [inOuterPoly, onOuterPoly] = inpolygon(lat(1,:),lon(1,:),...
-        lat(~isnan(lat(:,outerPoly)),outerPoly),...
-        lon(~isnan(lat(:,outerPoly)),outerPoly));
+    [inOuterPoly, onOuterPoly] = inpolygon(latC(1,:),lonC(1,:),...
+        latC(~isnan(latC(:,outerPoly)),outerPoly),...
+        lonC(~isnan(latC(:,outerPoly)),outerPoly));
     % if a line point is on the outerPoly, it is not in it.
     inOuterPoly(onOuterPoly) = false; % OuterPoly is not in OuterPoly
     
@@ -401,22 +403,22 @@ for outerPoly = 1:contour.n
             inOuterPoly(inOuterPoly==ii)=[];
             
             % find polygons inside the outer poly and in this innerPoly
-            inInnerPoly  = inpolygon(lat(1,inOuterPoly),lon(1,inOuterPoly),...
-                lat(~isnan(lat(:,ii)),ii),...
-                lon(~isnan(lat(:,ii)),ii));
+            inInnerPoly  = inpolygon(latC(1,inOuterPoly),lonC(1,inOuterPoly),...
+                latC(~isnan(latC(:,ii)),ii),...
+                lonC(~isnan(latC(:,ii)),ii));
             
             % remove those the polygons from inOuterPoly
             inOuterPoly(inInnerPoly)=[];
         end
         
         if ~isempty(inOuterPoly)
-            [dummy,ii] = max(contour.area(inOuterPoly));
+            [dummy,ii] = max(contour.area(inOuterPoly)); %#ok<ASGLU>
             innerPoly(end+1) = inOuterPoly(ii); %#ok<AGROW>
         end
     end
     mm = mm+1;
-    D(mm).outerPoly = outerPoly;
-    D(mm).innerPoly = innerPoly;
+    D(mm).outerPoly = outerPoly; %#ok<AGROW>
+    D(mm).innerPoly = innerPoly; %#ok<AGROW>
 end
 
 contour.colorLevel = nan(size(contour.level));
@@ -426,8 +428,8 @@ contour.min = nan(size(1,contour.n));
 contour.max = nan(size(1,contour.n));
 c           = nan(size(1,contour.n));
 for ii = 1:contour.n
-   contour.min(ii) = min(min(z(:,[D(ii).outerPoly D(ii).innerPoly])));
-   contour.max(ii) = max(max(z(:,[D(ii).outerPoly D(ii).innerPoly])));
+   contour.min(ii) = min(min(zC(:,[D(ii).outerPoly D(ii).innerPoly])));
+   contour.max(ii) = max(max(zC(:,[D(ii).outerPoly D(ii).innerPoly])));
 end
 
 OPT.levels = [(2*OPT.levels(1) - OPT.levels(2)) OPT.levels];
@@ -437,32 +439,50 @@ for ii = 1:contour.n
         c(ii) = find(OPT.levels<contour.max(ii),1,'last');
     else
         kk = 0;
-        for nn = [1:ii-1 ii+1:contour.n]
-            if any(ismember(D(ii).outerPoly,D(nn).innerPoly))
-                if z(1,D(nn).outerPoly)>contour.max(ii)
-                    kk = 1;
-                else
-                    kk = 0;
-                end
-            end
+ 
+
+        % Find the 5 points nearest to the first point of the polygon
+        [dummy,ind] = sort((lat - latC(1,D(ii).outerPoly)).^2+(lon - lonC(1,D(ii).outerPoly)).^2);
+        in = inpolygon(lat(ind(1:5)),lon(ind(1:5)),latC(:,D(ii).outerPoly),lonC(:,D(ii).outerPoly));
+        if ~any(in)
+            in = inpolygon(lat(ind(:)),lon(ind(:)),latC(:,D(ii).outerPoly),lonC(:,D(ii).outerPoly));
         end
-        c(ii) = find(OPT.levels>=contour.max(ii),1,'first')-kk;
+        if  max(z(ind(in)))>contour.max(ii)
+            kk = 0;
+        else
+            kk = -1;
+        end
+%         % start searching for a contour ...
+%         for nn = [1:ii-1 ii+1:contour.n]
+%             if ~isempty(D(nn).innerPoly)
+%                 if any(D(nn).innerPoly == D(ii).outerPoly)
+%                     if zC(1,D(nn).outerPoly)>contour.max(ii)
+%                         kk = -1;
+%                         break
+%                     else
+%                         kk = +0;
+%                         break
+%                     end
+%                 end
+%             end
+%         end
+        c(ii) = find(OPT.levels>=contour.max(ii),1,'first')+kk;
     end
 end
 
 % find if the loop is a local maximum
 % for ii = 1:contour.n
-%     if c(ii) == find(OPT.levels<min(min(z(:,[D(ii).outerPoly D(ii).innerPoly]))),1,'last')
+%     if c(ii) == find(OPT.levels<min(min(zC(:,[D(ii).outerPoly D(ii).innerPoly]))),1,'last')
 %         
 %         
 %         
-%         find(any(ismember(lat,lat(1,D(ii).outerPoly))&ismember(lon,lon(1,D(ii).outerPoly))))
+%         find(any(ismember(latC,latC(1,D(ii).outerPoly))&ismember(lonC,lonC(1,D(ii).outerPoly))))
 %         
 %         
-%         x1 =  lat(:,[D(ii).outerPoly D(ii).innerPoly]);
-%         y1 =  lon(:,[D(ii).outerPoly D(ii).innerPoly]);
-%         ind = find(lat1 > min(x1) & lat1 < max(x1) & lon1 > min(y1) & lon1 < max(y1));
-%         ind = ind(inpolygon(lat1(ind),lon1(ind),x1,y1));
+%         x1 =  latC(:,[D(ii).outerPoly D(ii).innerPoly]);
+%         y1 =  lonC(:,[D(ii).outerPoly D(ii).innerPoly]);
+%         ind = find(latC1 > min(x1) & latC1 < max(x1) & lonC1 > min(y1) & lonC1 < max(y1));
+%         ind = ind(inpolygon(latC1(ind),lonC1(ind),x1,y1));
 %         c(ii) = max([find(OPT.levels<max([max(z1(ind)); min(z1(:))]),1,'last') c(ii)]);
 %         
 %     end
@@ -475,7 +495,7 @@ end
 
 
 OPT.colorLevels = linspace(OPT.cLim(1),OPT.cLim(2),OPT.colorSteps);
-[dummy,ind] = min(abs(repmat(OPT.colorLevels,length(OPT.levels),1) - repmat(OPT.levels',1,length(OPT.colorLevels))),[],2);
+[dummy,ind] = min(abs(repmat(OPT.colorLevels,length(OPT.levels),1) - repmat(OPT.levels',1,length(OPT.colorLevels))),[],2); %#ok<ASGLU>
 
 c = ind(c);
 
@@ -508,7 +528,7 @@ OPT_stylePoly = struct(...
 for ii = unique(c)'
     OPT_stylePoly.name = ['style' num2str(ii)];
     OPT_stylePoly.fillColor = colorRGB(ii,:);
-    output = [output KML_stylePoly(OPT_stylePoly)];
+    output = [output KML_stylePoly(OPT_stylePoly)]; %#ok<AGROW>
 end
 
 % print and clear output
@@ -534,15 +554,15 @@ kk = 1;
 for ii=1:mm
     OPT_poly.styleName = sprintf('style%d',c(ii));
     
-    x1 =  lat(:,[D(ii).outerPoly D(ii).innerPoly]);
-    y1 =  lon(:,[D(ii).outerPoly D(ii).innerPoly]);
+    x1 =  latC(:,[D(ii).outerPoly D(ii).innerPoly]);
+    y1 =  lonC(:,[D(ii).outerPoly D(ii).innerPoly]);
     if OPT.is3D
         if OPT.staggered
             z1 = height(D(ii).outerPoly);
             z1 = repmat(z1,size(x1,1),size(x1,2));
             z1 = OPT.zScaleFun(z1);
         else
-            z1 = z(:,[D(ii).outerPoly D(ii).innerPoly]);
+            z1 = zC(:,[D(ii).outerPoly D(ii).innerPoly]);
             z1 = OPT.zScaleFun(z1);
         end
     else

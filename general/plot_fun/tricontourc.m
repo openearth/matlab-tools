@@ -132,11 +132,11 @@ for contourLevel = contourLevels;
         else
             contour_tri = triangles_on_contour(1);
         end
-        
-        contour_vertex_options = find(vertices_on_contour&...
-            (vertex_tri_index(:,1)==contour_tri|...
-            vertex_tri_index(:,2)==contour_tri));
-        
+
+        temp = find(vertices_on_contour);
+        contour_vertex_options = temp((vertex_tri_index(vertices_on_contour,1)==contour_tri|...
+            vertex_tri_index(vertices_on_contour,2)==contour_tri));
+
         contour_vertex = nan(length(triangles_on_contour),1);
         
         if interrupted_loop
@@ -164,15 +164,17 @@ for contourLevel = contourLevels;
         while ~stop
             
             ii = ii+1;
+
             contour_vertex_options = vertex_tri_index3(vertex_tri_index2(:,1)==contour_tri|...
                 vertex_tri_index2(:,2)==contour_tri);
+            
             contour_vertex(ii) = contour_vertex_options(...
                 contour_vertex_options~=contour_vertex(ii-1));
             
             contour_tri_options = vertex_tri_index(contour_vertex(ii),:);
             contour_tri = contour_tri_options(contour_tri_options~=contour_tri);
             if interrupted_loop
-                stop =  ismember(contour_vertex(ii),interrupted_vertices_start_vertex_options);
+                stop =  any(interrupted_vertices_start_vertex_options == contour_vertex(ii));
             else
                 stop = contour_vertex(ii)==contour_vertex(1);
             end
