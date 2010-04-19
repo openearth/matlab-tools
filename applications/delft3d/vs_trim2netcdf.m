@@ -2,6 +2,7 @@ function varargout = vs_trim2netcdf(vsfile,varargin)
 %VS_TRIM2NETCDF  Convert part of a Delft3D trim file to netCDF (BETA)
 %
 %   vs_trim2netcdf(NEFISfile,<'keyword',value>)
+%   vs_trim2netcdf(NEFISfile,<netCDFfile>,<'keyword',value>)
 %
 % converts Delft3D trim file (NEFIS file) to a netCDF file in 
 % the same directory with extension replaced by nc.
@@ -66,6 +67,13 @@ function varargout = vs_trim2netcdf(vsfile,varargin)
       OPT.debug          = 0;
       OPT.time           = 0;
       OPT.epsg           = [];
+      
+      if ~odd(nargin)
+         ncfile   = varargin{1};
+         varargin = {varargin{2:end}};
+      else
+         ncfile   = [fileparts(vsfile) filesep filename(vsfile) '.nc'];
+      end
 
       OPT      = setProperty(OPT,varargin{:});
       
@@ -73,8 +81,6 @@ function varargout = vs_trim2netcdf(vsfile,varargin)
          varargout = {OPT};
          return
       end
-
-      ncfile = [fileparts(vsfile) filesep filename(vsfile) '.nc'];
 
 %% 0 Read raw data
 
@@ -152,38 +158,38 @@ function varargout = vs_trim2netcdf(vsfile,varargin)
    %% dimensions
 
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW m index of cell centers');
-      attr(2)  = struct('Name', 'units'        , 'Value', '1');
-      attr(3)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m = 1 and m = mmax removed.');
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW m index of cell centers');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m = 1 and m = mmax removed.');
       nc(ifld) = struct('Name', 'm', ...
-          'Nctype', 'int', ...
+          'Nctype'   , 'int', ...
           'Dimension', {{'m'}}, ...
           'Attribute', attr);
 
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW n index of cell centers');
-      attr(2)  = struct('Name', 'units'        , 'Value', '1');
-      attr(3)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ n = 1 and n = nmax removed.');
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW n index of cell centers');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ n = 1 and n = nmax removed.');
       nc(ifld) = struct('Name', 'n', ...
-          'Nctype', 'int', ...
+          'Nctype'   , 'int', ...
           'Dimension', {{'n'}}, ...
           'Attribute', attr);
 
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW m index of cell corners');
-      attr(2)  = struct('Name', 'units'        , 'Value', '1');
-      attr(3)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m = 1 removed.');
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW m index of cell corners');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m = 1 removed.');
       nc(ifld) = struct('Name', 'm_cor', ...
-          'Nctype', 'int', ...
+          'Nctype'   , 'int', ...
           'Dimension', {{'m_cor'}}, ...
           'Attribute', attr);
 
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW n index of cell corners');
-      attr(2)  = struct('Name', 'units'        , 'Value', '1');
-      attr(3)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ n = 1 removed.');
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW n index of cell corners');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ n = 1 removed.');
       nc(ifld) = struct('Name', 'n_cor', ...
-          'Nctype', 'int', ...
+          'Nctype'   , 'int', ...
           'Dimension', {{'n_cor'}}, ...
           'Attribute', attr);
 
@@ -192,46 +198,54 @@ function varargout = vs_trim2netcdf(vsfile,varargin)
    if any(strfind(G.coordinates,'CARTESIAN'))
    
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'standard_name', 'Value', 'projection_x_coordinate');
-      attr(2)  = struct('Name', 'long_name'    , 'Value', 'x of cell centers');
-      attr(3)  = struct('Name', 'units'        , 'Value', 'm');
-      attr(4)  = struct('Name', 'axis'         , 'Value', 'X');
-      attr(5)  = struct('Name', 'delft3d_name' , 'Value', 'XWAT,XZ');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_x_coordinate');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'x of cell centers');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XWAT,XZ');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.x(:)) max(G.cen.x(:))]);
       nc(ifld) = struct('Name', 'x', ...
-          'Nctype', 'double', ...
+          'Nctype'   , 'double', ...
           'Dimension', {{'n', 'm'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'standard_name', 'Value', 'projection_y_coordinate');
-      attr(2)  = struct('Name', 'long_name'    , 'Value', 'y of cell centers');
-      attr(3)  = struct('Name', 'units'        , 'Value', 'm');
-      attr(4)  = struct('Name', 'axis'         , 'Value', 'Y');
-      attr(5)  = struct('Name', 'delft3d_name' , 'Value', 'YWAT,YZ');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_y_coordinate');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'y of cell centers');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'YWAT,YZ');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.y(:)) max(G.cen.y(:))]);
       nc(ifld) = struct('Name', 'y', ...
-          'Nctype', 'double', ...
+          'Nctype'   , 'double', ...
           'Dimension', {{'n', 'm'}}, ...
           'Attribute', attr);
 
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'standard_name', 'Value', 'projection_x_coordinate');
-      attr(2)  = struct('Name', 'long_name'    , 'Value', 'x of cell corners');
-      attr(3)  = struct('Name', 'units'        , 'Value', 'm');
-      attr(4)  = struct('Name', 'axis'         , 'Value', 'X');
-      attr(5)  = struct('Name', 'delft3d_name' , 'Value', 'XCOR');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_x_coordinate');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'x of cell corners');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XCOR');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.x(:)) max(G.cor.x(:))]);
       nc(ifld) = struct('Name', 'x_cor', ...
-          'Nctype', 'double', ...
+          'Nctype'   , 'double', ...
           'Dimension', {{'n_cor', 'm_cor'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'standard_name', 'Value', 'projection_y_coordinate');
-      attr(2)  = struct('Name', 'long_name'    , 'Value', 'y of cell corners');
-      attr(3)  = struct('Name', 'units'        , 'Value', 'm');
-      attr(4)  = struct('Name', 'axis'         , 'Value', 'Y');
-      attr(5)  = struct('Name', 'delft3d_name' , 'Value', 'YCOR');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_y_coordinate');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'y of cell corners');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'YCOR');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.y(:)) max(G.cor.y(:))]);
       nc(ifld) = struct('Name', 'y_cor', ...
-          'Nctype', 'double', ...
+          'Nctype'   , 'double', ...
           'Dimension', {{'n_cor', 'm_cor'}}, ...
           'Attribute', attr);
    end
@@ -239,84 +253,94 @@ function varargout = vs_trim2netcdf(vsfile,varargin)
    if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CARTESIAN')))
 
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'standard_name', 'Value', 'longitude');
-      attr(2)  = struct('Name', 'long_name'    , 'Value', 'longitude of cell centers');
-      attr(3)  = struct('Name', 'units'        , 'Value', 'degrees_east');
-      attr(4)  = struct('Name', 'axis'         , 'Value', 'X');
-      attr(5)  = struct('Name', 'delft3d_name' , 'Value', 'XWAT,XZ');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'longitude');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'longitude of cell centers');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
+      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XWAT,XZ');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.lon(:)) max(G.cen.lon(:))]);
       nc(ifld) = struct('Name', 'longitude', ...
-          'Nctype', 'double', ...
+          'Nctype'   , 'double', ...
           'Dimension', {{'n', 'm'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'standard_name', 'Value', 'latitude');
-      attr(2)  = struct('Name', 'long_name'    , 'Value', 'latitude of cell centers');
-      attr(3)  = struct('Name', 'units'        , 'Value', 'degrees_north');
-      attr(4)  = struct('Name', 'axis'         , 'Value', 'Y');
-      attr(5)  = struct('Name', 'delft3d_name' , 'Value', 'YWAT,YZ');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'latitude');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'latitude of cell centers');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_north');
+      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'YWAT,YZ');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.lat(:)) max(G.cen.lat(:))]);
       nc(ifld) = struct('Name', 'latitude', ...
-          'Nctype', 'double', ...
+          'Nctype'   , 'double', ...
           'Dimension', {{'n', 'm'}}, ...
           'Attribute', attr);
 
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'standard_name', 'Value', 'longitude');
-      attr(2)  = struct('Name', 'long_name'    , 'Value', 'longitude of cell corners');
-      attr(3)  = struct('Name', 'units'        , 'Value', 'degrees_east');
-      attr(4)  = struct('Name', 'axis'         , 'Value', 'X');
-      attr(5)  = struct('Name', 'delft3d_name' , 'Value', 'XCOR');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'longitude');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'longitude of cell corners');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
+      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XCOR');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.lon(:)) max(G.cor.lon(:))]);
       nc(ifld) = struct('Name', 'longitude_cor', ...
-          'Nctype', 'double', ...
+          'Nctype'   , 'double', ...
           'Dimension', {{'n_cor', 'm_cor'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'standard_name', 'Value', 'latitude');
-      attr(2)  = struct('Name', 'long_name'    , 'Value', 'latitude of cell corners');
-      attr(3)  = struct('Name', 'units'        , 'Value', 'degrees_north');
-      attr(4)  = struct('Name', 'axis'         , 'Value', 'Y');
-      attr(5)  = struct('Name', 'delft3d_name' , 'Value', 'YCOR');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'latitude');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'latitude of cell corners');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_north');
+      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'YCOR');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.lat(:)) max(G.cor.lat(:))]);
       nc(ifld) = struct('Name', 'latitude_cor', ...
-          'Nctype', 'double', ...
+          'Nctype'   , 'double', ...
           'Dimension', {{'n_cor', 'm_cor'}}, ...
           'Attribute', attr);
    end
 
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'long_name'    , 'Value', 'sigma');
-      attr(2)  = struct('Name', 'units'        , 'Value', '1');
-      attr(3)  = struct('Name', 'axis'         , 'Value', 'Z');
-      attr(4)  = struct('Name', 'positive'     , 'Value', 'down');
-      attr(5)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1, the bottom layer has index kmax.');
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
+      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Z');
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1, the bottom layer has index kmax.');
       nc(ifld) = struct('Name', 'sigma', ...
-          'Nctype', 'double', ...
+          'Nctype'   , 'double', ...
           'Dimension', {{'sigma'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'standard_name', 'Value', 'time');
-      attr(2)  = struct('Name', 'long_name'    , 'Value', 'time');
-      attr(3)  = struct('Name', 'units'        , 'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
-      attr(4)  = struct('Name', 'axis'         , 'Value', 'T');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'time');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'time');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
+      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'T');
       nc(ifld) = struct('Name', 'time', ...
-          'Nctype', 'double', ...
+          'Nctype'   , 'double', ...
           'Dimension', {{'time'}}, ...
           'Attribute', attr);
 
 %% 3 Create variables
 
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'standard_name', 'Value', 'sea_surface_elevation');
-      attr(2)  = struct('Name', 'long_name'    , 'Value', 'water level');
-      attr(3)  = struct('Name', 'units'        , 'Value', 'm');
-      attr(4)  = struct('Name', 'positive'     , 'Value', 'up');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_surface_elevation');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'water level');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
       if isempty(OPT.epsg)
-      attr(5)  = struct('Name', 'coordinates'  , 'Value', 'x y');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
       else
-      attr(5)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
       end
-      attr(6)  = struct('Name', 'delft3d_name' , 'Value', 'S1');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'S1');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'eta', ...
           'Nctype'   , 'double', ...
           'Dimension', {{'time', 'n', 'm'}}, ...
@@ -324,15 +348,17 @@ function varargout = vs_trim2netcdf(vsfile,varargin)
       
       if isfield(I,'salinity')
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'standard_name', 'Value', 'salinity');
-      attr(2)  = struct('Name', 'long_name'    , 'Value', 'salinity');
-      attr(3)  = struct('Name', 'units'        , 'Value', '1e-3');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'salinity');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'salinity');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', '1e-3');
       if isempty(OPT.epsg)
-      attr(4)  = struct('Name', 'coordinates'  , 'Value', 'x y');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
       else
-      attr(4)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
       end
-      attr(5)  = struct('Name', 'delft3d_name' , 'Value', 'R1');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'R1');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'salinity', ...
           'Nctype'   , 'double', ...
           'Dimension', {{'time', 'sigma', 'n', 'm'}}, ...
@@ -341,15 +367,17 @@ function varargout = vs_trim2netcdf(vsfile,varargin)
 
       if isfield(I,'temperature')
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'standard_name', 'Value', 'temperature');
-      attr(2)  = struct('Name', 'long_name'    , 'Value', 'temperature');
-      attr(3)  = struct('Name', 'units'        , 'Value', 'degree_Celsius');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'temperature');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'temperature');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'degree_Celsius');
       if isempty(OPT.epsg)
-      attr(4)  = struct('Name', 'coordinates'  , 'Value', 'x y');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
       else
-      attr(4)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
       end
-      attr(5)  = struct('Name', 'delft3d_name' , 'Value', 'R1');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'R1');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'temperature', ...
           'Nctype'   , 'double', ...
           'Dimension', {{'time', 'sigma', 'n', 'm'}}, ...
@@ -357,45 +385,52 @@ function varargout = vs_trim2netcdf(vsfile,varargin)
       end
 
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'standard_name', 'Value', 'u');
-      attr(2)  = struct('Name', 'long_name'    , 'Value', 'horizontal velocity component in x-direction');
-      attr(3)  = struct('Name', 'units'        , 'Value', 'm/s');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_x_velocity');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'horizontal velocity component in x-direction');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
       if isempty(OPT.epsg)
-      attr(4)  = struct('Name', 'coordinates'  , 'Value', 'x y');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
       else
-      attr(4)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
       end
-      attr(5)  = struct('Name', 'delft3d_name' , 'Value', 'U1');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'U1');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'u', ...
           'Nctype'   , 'double', ...
           'Dimension', {{'time', 'sigma', 'n', 'm'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'standard_name', 'Value', 'v');
-      attr(2)  = struct('Name', 'long_name'    , 'Value', 'horizontal velocity component in y-direction');
-      attr(3)  = struct('Name', 'units'        , 'Value', 'm/s');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_y_velocity');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'horizontal velocity component in y-direction');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
       if isempty(OPT.epsg)
-      attr(4)  = struct('Name', 'coordinates'  , 'Value', 'x y');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
       else
-      attr(4)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
       end
-      attr(5)  = struct('Name', 'delft3d_name' , 'Value', 'V1');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'V1');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'v', ...
           'Nctype'   , 'double', ...
           'Dimension', {{'time', 'sigma', 'n', 'm'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
-      attr(1)  = struct('Name', 'standard_name', 'Value', 'w');
-      attr(2)  = struct('Name', 'long_name'    , 'Value', 'vertical velocity');
-      attr(3)  = struct('Name', 'units'        , 'Value', 'm/s');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'upward_sea_water_velocity');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'vertical velocity');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
       if isempty(OPT.epsg)
-      attr(4)  = struct('Name', 'coordinates'  , 'Value', 'x y');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
       else
-      attr(4)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
       end
-      attr(5)  = struct('Name', 'delft3d_name' , 'Value', 'WPHY');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'WPHY');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'w', ...
           'Nctype'   , 'double', ...
           'Dimension', {{'time', 'sigma', 'n', 'm'}}, ...
@@ -412,16 +447,16 @@ function varargout = vs_trim2netcdf(vsfile,varargin)
 
 %% 5 Fill variables
 
-      nc_varput(ncfile, 'm'    , 2:G.mmax-1);
-      nc_varput(ncfile, 'n'    , 2:G.nmax-1);
-      nc_varput(ncfile, 'm_cor', 1:G.mmax-1);
-      nc_varput(ncfile, 'n_cor', 1:G.nmax-1);
-      nc_varput(ncfile, 'x'    ,   G.cen.x );
-      nc_varput(ncfile, 'y'    ,   G.cen.y );
-      nc_varput(ncfile, 'x_cor',   G.cor.x );
-      nc_varput(ncfile, 'y_cor',   G.cor.y );
-      nc_varput(ncfile, 'time' , T.datenum - OPT.refdatenum);
-      nc_varput(ncfile, 'sigma', 1:G.kmax  );
+      nc_varput(ncfile, 'm'            , 2:G.mmax-1);
+      nc_varput(ncfile, 'n'            , 2:G.nmax-1);
+      nc_varput(ncfile, 'm_cor'        , 1:G.mmax-1);
+      nc_varput(ncfile, 'n_cor'        , 1:G.nmax-1);
+      nc_varput(ncfile, 'x'            ,   G.cen.x );
+      nc_varput(ncfile, 'y'            ,   G.cen.y );
+      nc_varput(ncfile, 'x_cor'        ,   G.cor.x );
+      nc_varput(ncfile, 'y_cor'        ,   G.cor.y );
+      nc_varput(ncfile, 'time'         , T.datenum - OPT.refdatenum);
+      nc_varput(ncfile, 'sigma'        , 1:G.kmax  );
       if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CARTESIAN')))
       nc_varput(ncfile, 'longitude'    ,G.cen.lon);
       nc_varput(ncfile, 'latitude'     ,G.cen.lat);
@@ -430,6 +465,11 @@ function varargout = vs_trim2netcdf(vsfile,varargin)
       end      
 
       i = 0;
+      
+      R.eta = [Inf -Inf];
+      R.u   = [Inf -Inf];
+      R.v   = [Inf -Inf];
+      R.w   = [Inf -Inf];
 
       for it = OPT.time
       
@@ -455,12 +495,33 @@ function varargout = vs_trim2netcdf(vsfile,varargin)
           D.u      = permute(D.u,[4 2 3 1]); % z y x
           D.v      = permute(D.v,[4 2 3 1]); % z y x
           D.w      = permute(D.w,[3 1 2]);   % z y x
-      
-          nc_varput(ncfile,'eta'     , G.cen.zwl   ,[i-1, 0, 0   ],[1, size(G.cen.zwl   )]);
-          nc_varput(ncfile,'u'       , D.u         ,[i-1, 0, 0, 0],[1, size(D.u         )]);
-          nc_varput(ncfile,'v'       , D.v         ,[i-1, 0, 0, 0],[1, size(D.v         )]);
-          nc_varput(ncfile,'w'       , D.w         ,[i-1, 0, 0, 0],[1, size(D.w         )]);
+          
+          %% apply masks
+          
+          G.cen.zwl = G.cen.zwl.*G.cen.mask;
+          for k=1:size(D.u,1)
+          D.u(k,:,:) = D.u(k,:,:).*permute(G.cen.mask,[3 1 2]);
+          D.v(k,:,:) = D.v(k,:,:).*permute(G.cen.mask,[3 1 2]);
+          D.w(k,:,:) = D.w(k,:,:).*permute(G.cen.mask,[3 1 2]);
+          end
+          
+          %% write matrices
+
+          nc_varput(ncfile,'eta'     , G.cen.zwl,[i-1, 0, 0   ],[1, size(G.cen.zwl   )]);
+          nc_varput(ncfile,'u'       , D.u      ,[i-1, 0, 0, 0],[1, size(D.u         )]);
+          nc_varput(ncfile,'v'       , D.v      ,[i-1, 0, 0, 0],[1, size(D.v         )]);
+          nc_varput(ncfile,'w'       , D.w      ,[i-1, 0, 0, 0],[1, size(D.w         )]);
+          
+          R.eta = [min(R.eta(1),min(G.cen.zwl(:))) max(R.eta(2),max(G.cen.zwl(:)))];
+          R.u   = [min(R.u  (1),min(D.u      (:))) max(R.u  (2),max(D.u      (:)))];  
+          R.v   = [min(R.v  (1),min(D.v      (:))) max(R.v  (2),max(D.v      (:)))];  
+          R.w   = [min(R.w  (1),min(D.w      (:))) max(R.w  (2),max(D.w      (:)))];  
           
       end
+      
+      nc_attput(ncfile,'eta','actual_range',R.eta)
+      nc_attput(ncfile,'u'  ,'actual_range',R.u  );
+      nc_attput(ncfile,'v'  ,'actual_range',R.v  );
+      nc_attput(ncfile,'w'  ,'actual_range',R.w  );
       
 %% EOF      
