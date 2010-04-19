@@ -65,14 +65,14 @@ testResult = all(tr);
 end
 
 function testResult = createEmptyDurosResult_test()
-
+%% $RunCode
 result = DuneErosionResultProvider.createDurosResult;
 testResult = strcmp(class(result),'DurosResult');
 
 end
 
 function testResult = createEmptyXBeachResult_test()
-
+%% $RunCode
 result = DuneErosionResultProvider.createXBeachResult;
 testResult = strcmp(class(result),'XBeachResult');
 
