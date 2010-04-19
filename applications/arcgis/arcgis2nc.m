@@ -102,6 +102,7 @@ end
       OPT.long_name      = '';
       OPT.standard_name  = '';
       OPT.type           = []; % [] = auto, single or double
+      OPT.wgs84          = 4326;
 
    %% handle meta-info
 
@@ -173,32 +174,32 @@ end
    %  Local Cartesian coordinates
 
         ifld = ifld + 1;
-      nc(ifld).Name         = 'x_cen';
-      nc(ifld).Nctype       = 'int';
-      nc(ifld).Dimension    = {'x_cen'};
-      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'x-coordinate in Cartesian system');
-      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm');
-      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate'); % standard name
-      nc(ifld).Attribute(4) = struct('Name', 'actual_range'   ,'Value', [min(D.x(:)) max(D.x(:))]);
+      nc(ifld).Name             = 'x_cen';
+      nc(ifld).Nctype           = 'int';
+      nc(ifld).Dimension        = {'x_cen'};
+      nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'x-coordinate in Cartesian system');
+      nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
+      nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate'); % standard name
+      nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.x(:)) max(D.x(:))]);
       if ~isempty(OPT.epsg)
-      nc(ifld).Attribute(5) = struct('Name', 'epsg'           ,'Value', OPT.epsg);
+      nc(ifld).Attribute(end+1) = struct('Name', 'epsg'           ,'Value', OPT.epsg);
       end
    
         ifld = ifld + 1;
-      nc(ifld).Name         = 'y_cen';
-      nc(ifld).Nctype       = 'int';
-      nc(ifld).Dimension    = {'y_cen'};
-      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'y-coordinate in Cartesian system');
-      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm');
-      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate'); % standard name
-      nc(ifld).Attribute(4) = struct('Name', 'actual_range'   ,'Value', [min(D.y(:)) max(D.y(:))]);
+      nc(ifld).Name             = 'y_cen';
+      nc(ifld).Nctype           = 'int';
+      nc(ifld).Dimension        = {'y_cen'};
+      nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'y-coordinate in Cartesian system');
+      nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
+      nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate'); % standard name
+      nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.y(:)) max(D.y(:))]);
       if ~isempty(OPT.epsg)
-      nc(ifld).Attribute(5) = struct('Name', 'epsg'           ,'Value', OPT.epsg);
+      nc(ifld).Attribute(end+1) = struct('Name', 'epsg'           ,'Value', OPT.epsg);
       end
 
    %% Latitude-longitude
       
-      if ~isempty(OPT.epsg)
+   if ~isempty(OPT.epsg)
       
       % calculate per row because of memory issues for large matrices
       
@@ -209,12 +210,15 @@ end
       % compromise: consider 2D matrix as 1D vector and do section by section
       
       if    OPT.convertperline
-      for ii=1:size(D.lat,1)
-      disp(['converting coordinates to (lat,lon): ',num2str(ii),'/',num2str(size(D.lat,1))])
-     [D.lon(ii,:),D.lat(ii,:)] = convertcoordinates(x(ii,:),y(ii,:),'CS1.code',OPT.epsg,'CS2.code',4326);
+      d = 2;
+      for ii=1:d:size(D.lat,1)
+      iii = ii+(1:d)-1;
+      iii = iii(iii < size(D.lat,1));
+      disp(['converting coordinates to (lat,lon): ',num2str(min(iii)),'-',num2str(max(iii)),'/',num2str(size(D.lat,1))])
+     [D.lon(iii,:),D.lat(iii,:),log] = convertcoordinates(x(iii,:),y(iii,:),'CS1.code',OPT.epsg,'CS2.code',OPT.wgs84);
       end
       else
-     [D.lon      ,D.lat      ] = convertcoordinates(x      ,y      ,'CS1.code',OPT.epsg,'CS2.code',4326);
+     [D.lon      ,D.lat      ,log] = convertcoordinates(x      ,y      ,'CS1.code',OPT.epsg,'CS2.code',OPT.wgs84);
       end
       
       clear x y
@@ -223,27 +227,79 @@ end
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
 
         ifld = ifld + 1;
-      nc(ifld).Name         = 'longitude_cen';
-      nc(ifld).Nctype       = nc_type(OPT.longitude_type);
-      nc(ifld).Dimension    = {'x_cen','y_cen'};
-      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'longitude');
-      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_east');
-      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'longitude'); % standard name
-      nc(ifld).Attribute(4) = struct('Name', 'actual_range'   ,'Value', [min(D.lon(:)) max(D.lon(:))]); % 
+      nc(ifld).Name             = 'longitude_cen';
+      nc(ifld).Nctype           = nc_type(OPT.longitude_type);
+      nc(ifld).Dimension        = {'x_cen','y_cen'};
+      nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'longitude');
+      nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
+      nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude'); % standard name
+      nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.lon(:)) max(D.lon(:))]); % 
+      nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
+      nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
    %% Latitude
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
 
         ifld = ifld + 1;
-      nc(ifld).Name         = 'latitude_cen';
-      nc(ifld).Nctype       = nc_type(OPT.latitude_type);
-      nc(ifld).Dimension    = {'x_cen','y_cen'};
-      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'latitude');
-      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_north');
-      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'latitude'); % standard name
-      nc(ifld).Attribute(4) = struct('Name', 'actual_range'   ,'Value', [min(D.lat(:)) max(D.lat(:))]); % 
+      nc(ifld).Name             = 'latitude_cen';
+      nc(ifld).Nctype           = nc_type(OPT.latitude_type);
+      nc(ifld).Dimension        = {'x_cen','y_cen'};
+      nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'latitude');
+      nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
+      nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude'); % standard name
+      nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.lat(:)) max(D.lat(:))]); % 
+      nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
+      nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
-       end
+   %% Coordinate system
+   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
+
+        ifld = ifld + 1;
+      nc(ifld).Name         = 'epsg';
+      nc(ifld).Nctype       = nc_int;
+      nc(ifld).Dimension    = {};
+      nc(ifld).Attribute = struct('Name', ...
+       {'grid_mapping_name', ...
+        'semi_major_axis', ...
+        'semi_minor_axis', ...
+        'inverse_flattening', ...
+        'latitude_of_projection_origin', ...
+        'longitude_of_projection_origin', ...
+        'false_easting', ...
+        'false_northing', ...
+        'scale_factor_at_projection_origin', ...
+        'comment'}, ...
+        'Value', ...
+        {log.proj_conv1.method.name,     ...
+         log.CS1.ellips.semi_major_axis, ...
+         log.CS1.ellips.semi_minor_axis, ...
+         log.CS1.ellips.inv_flattening,  ...
+         log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,'Latitude of natural origin'    )),...
+         log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,'Longitude of natural origin'   )),...
+         log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,'False easting'                 )),...
+         log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,'False northing'                )),...
+         log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,'Scale factor at natural origin')),...
+        'value is equal to EPSG code'});
+
+   %% Coordinate system
+   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
+
+        ifld = ifld + 1;
+      nc(ifld).Name         = 'wgs84';
+      nc(ifld).Nctype       = nc_int;
+      nc(ifld).Dimension    = {};
+      nc(ifld).Attribute = struct('Name', ...
+       {'semi_major_axis', ...
+        'semi_minor_axis', ...
+        'inverse_flattening', ...
+        'comment'}, ...
+        'Value', ...
+        {log.CS2.ellips.semi_major_axis, ...
+         log.CS2.ellips.semi_minor_axis, ...
+         log.CS2.ellips.inv_flattening,  ...
+        'value is equal to EPSG code'});
+
+   end
 
    %% Parameters with standard names
    %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
@@ -252,19 +308,19 @@ end
       %  time,z,y,x (note: snctools swaps)
 
         ifld = ifld + 1;
-      nc(ifld).Name         = OPT.varname;
-      nc(ifld).Nctype       = nc_type(OPT.type);
-      nc(ifld).Dimension    = {'x_cen','y_cen'};
-      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', OPT.long_name    );
-      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', OPT.units        );
-      nc(ifld).Attribute(3) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue    );
-      nc(ifld).Attribute(4) = struct('Name', 'actual_range'   ,'Value', [min(D.(OPT.varname)(:)) max(D.(OPT.varname)(:))]);
+      nc(ifld).Name             = OPT.varname;
+      nc(ifld).Nctype           = nc_type(OPT.type);
+      nc(ifld).Dimension        = {'x_cen','y_cen'};
+      nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name    );
+      nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', OPT.units        );
+      nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue    );
+      nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.(OPT.varname)(:)) max(D.(OPT.varname)(:))]);
       if ~isempty(OPT.standard_name)
-      nc(ifld).Attribute(5) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
+      nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
       end
       if ~isempty(OPT.epsg)
-      j = length(nc(ifld).Attribute)+1; % 5 or 6
-      nc(ifld).Attribute(j) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
+      nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
+      nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
       end
       
 %% 4 Create variables with attibutes
@@ -278,8 +334,10 @@ end
       nc_varput(outputfile, 'x_cen'        , D.x');
       nc_varput(outputfile, 'y_cen'        , D.y');
       nc_varput(outputfile, OPT.varname    , D.(OPT.varname)'); % save x as first dimension so ensure correct plotting in ncBrowse
+      nc_varput(outputfile, 'wgs84'        , OPT.wgs84);
       
       if ~isempty(OPT.epsg)
+      nc_varput(outputfile, 'epsg'         , OPT.epsg);
       nc_varput(outputfile, 'longitude_cen', D.lon');
       nc_varput(outputfile, 'latitude_cen' , D.lat');
       end
