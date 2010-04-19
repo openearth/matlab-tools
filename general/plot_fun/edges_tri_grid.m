@@ -1,5 +1,5 @@
-function E = trisurf_edges(tri,x,y,z)
-%TRISURFEDGES finds the edge vertices of a triangluated mesh
+function E = edges_tri_grid(tri,x,y,z)
+%EDGES_TRI_GRID finds the edge vertices of a triangluated mesh
 %
 %   More detailed description goes here.
 %
@@ -76,7 +76,7 @@ vertex_tri_index = int32(vertex_tri_index(ndx));
 [vertices,ndx2]  = unique(vertices,'rows','last');
 vertex_tri_index = [vertex_tri_index(ndx1) vertex_tri_index(ndx2)];
 
-% find the vertices which are on an edge of the
+% find the vertices which are on an edge of two triangles
 edgeVertices = vertex_tri_index(:,1)==vertex_tri_index(:,2);
 edgeTriIndex = vertex_tri_index(edgeVertices,1);
 edgeIndices = vertices(edgeVertices,:);

@@ -1,5 +1,5 @@
-function testresult = trisurf_edges_test()
-% TRISURF_EDGES_TEST  One line description goes here
+function testresult = edges_structured_grid_test()
+% EDGES_STRUCTURED_GRID_TEST  One line description goes here
 %
 % More detailed description of the test goes here.
 %
@@ -36,7 +36,7 @@ function testresult = trisurf_edges_test()
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 04 Mar 2010
+% Created: 19 Apr 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -50,47 +50,26 @@ function testresult = trisurf_edges_test()
 % Publishable code that describes the test.
 
 %% $RunCode
+% Write test code here
 try
-    [x,y] = meshgrid(1.1:100.1,201.2:300.2);
-    x = x+sin(y).^3;
-    y = y+sin(x);
-    z = abs(peaks(100));
-    tri = delaunay(x,y);
-    
-    tri(any((((x(tri)-50).^2 + (y(tri)-250).^2).^.5)>44,2),:)=[];
-    tri(any((((x(tri)-70).^2 + (y(tri)-270).^2).^.5)<7,2),:)=[];
-    tri(any((((x(tri)-30).^2 + (y(tri)-220).^2).^.5)<7,2),:)=[];
-    tri(any((((x(tri)-40).^2 + (y(tri)-260).^2).^.5)<7,2),:)=[];
-    
-    tri(any(x(tri)>49&x(tri)<51,2),:)=[];
-    tri(any(y(tri)>249&y(tri)<251,2),:)=[];
-    for ii = 1200:-1:1100
-        tri(ii:ii:end,:)=[];
-    end
-    trisurf(tri,x,y,z,1)
-    view(90,90)
-    
-    E = trisurf_edges(tri,x,y,z);
-    nn=8;
-    colors1 = flipud(jet(nn*3));
-    colors2 = jet(nn*3);
-    
-    for ii=1:E(end,4)
-        jj = find(E(:,4)==ii);
-        hl = line(E(jj,1),E(jj,2),E(jj,3));
-        if E(jj(1),5)
-            set(hl,'Color',colors1(mod(ii,nn-1)+1,:),'LineWidth',3)
-        else
-            set(hl,'Color',colors2(mod(ii,nn-1)+1,:),'LineWidth',3)
-        end
-            
-    end
-        
-    testresult = true;
+%     x = 1:100;
+%     y = 201:400;
+%     [X,Y] = meshgrid(x,y);
+%     Z = repmat(peaks(100),2,1);
+%     
+%     Z(50:55,:) = nan;
+%     Z(40:65,20:60) = nan;
+%     Z(rand(size(Z))>0.999) = nan;
+%     profile on
+%     E = edges_structured_grid(X,Y,Z);
+%     
+%     profile viewer
+%   surf(X,Y,Z,ones(size(Z)))
+%     
+%  line(X(E(:,1:2)),Y(E(:,1:2)),Z(E(:,1:2)))
 catch
     testresult = false;
 end
 %% $PublishResult
-% If all is well, a complicated triangulated mesh is drawn. The outer edges
-% are in shades of red, the inner edges (holes in the mesh) are colored in
-% blues.
+% Publishable code that describes the test.
+

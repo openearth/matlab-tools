@@ -124,7 +124,7 @@ end
 if isempty(OPT.colorSteps), OPT.colorSteps = length(OPT.levels)+1; end
 
 C = tricontourc(tri,lat,lon,z,OPT.levels);
-E = trisurf_edges(tri,lat,lon,z);
+E = edges_tri_grid(tri,lat,lon,z);
 
 %% pre allocate, find dimensions
 verySmall = eps(30*max([lat;lon]));
