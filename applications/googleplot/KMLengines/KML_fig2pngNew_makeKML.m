@@ -1,4 +1,7 @@
 function KML_fig2pngNew_makeKML(OPT)
+%KML_FIG2PNGNEW_MAKEKML   subsidiary of KMLfig2pngNew
+%
+%See also:KMLfig2pngNew
 
 OPT.timeSpan = '';
 

@@ -2,7 +2,7 @@ function OPT = KMLfig2pngNew (h,lat,lon,z,varargin)
 % KMLFIG2PNGnew   makes a tiled png figure for google earth
 %
 %   h = surf(lon,lat,z)
-%   KMLfig2png(h,<keyword,value>) 
+%   KMLfig2png(h,lat,lon,z,<keyword,value>) 
 %
 % make a surf or pcolor in lon/lat/z, and then pass it to KMLfig2png
 %
@@ -57,6 +57,9 @@ function OPT = KMLfig2pngNew (h,lat,lon,z,varargin)
 D.lat = lat;
 D.lon = lon;
 D.z   = z;
+%if ~isequal(size(D.lon) - size(D.z),[0 0])
+%  D.z = addrowcol(D.z,1,1,Inf); % no, lat KML_fig2pngNew_printTile handle that
+%end
 D.N   = max(D.lat(:));
 D.S   = min(D.lat(:));
 D.W   = min(D.lon(:));
@@ -65,7 +68,7 @@ D.E   = max(D.lon(:));
 OPT.basecode           = KML_fig2pngNew_SmallestTileThatContainsAllData(D);
 OPT.ha                 =    gca; % handle to axes
 OPT.hf                 =    gcf; % handle to figure
-OPT.dim                =    256; % tile size
+OPT.dim                =    256; % tile size in pixels
 OPT.dimExt             =     16; % render tiles expanded by n pixels, to remove edge effects
 OPT.bgcolor            = [100 155 100];  % background color to be made transparent
 OPT.alpha              =      1;
@@ -88,7 +91,9 @@ OPT.drawOrder          =      1;
 OPT.bgcolor            = [100 155 100];  % background color to be made transparent
 OPT.description        =     ''; 
 OPT.colorbar           =   true;
-OPT.mergeExistingTiles =  false;
+OPT.colorbarlocation   = {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
+OPT.colorbartitle      = '';
+OPT.mergeExistingTiles =  false; % does not work when changing dim
 OPT.printTiles         =   true;
 OPT.joinTiles          =   true;
 OPT.makeKML            =   true;
@@ -97,16 +102,16 @@ if nargin==0
   return
 end
 
-OPT.h               =      h;  % handle to input figure
-clear lat lon z h;    % take out the garbage
+OPT.h = h;  % handle to input surf object
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
 %% 
 if OPT.lowestLevel <= OPT.highestLevel 
-    error('OPT.lowestLevel <= OPT.highestLevel')
+   error('OPT.lowestLevel <= OPT.highestLevel')
 end
 
+OPT.highestLevel  = max(OPT.highestLevel,1);
 
 %% set maxLod and minLod defaults
 
@@ -146,14 +151,14 @@ if  ~isempty(OPT.timeIn)
     if ~isempty(OPT.timeOut)
         OPT.timeSpan = sprintf([...
             '<TimeSpan>\n'...
-            '<begin>%s</begin>\n'...OPT.timeIn
-            '<end>%s</end>\n'...OPT.timeOut
+            '<begin>%s</begin>\n'...% OPT.timeIn
+            '<end>%s</end>\n'...    % OPT.timeOut
             '</TimeSpan>\n'],...
             datestr(OPT.timeIn,OPT.timeFormat),datestr(OPT.timeOut,OPT.timeFormat));
     else
         OPT.timeSpan = sprintf([...
             '<TimeStamp>\n'...
-            '<when>%s</when>\n'...OPT.timeIn
+            '<when>%s</when>\n'...  % OPT.timeIn
             '</TimeStamp>\n'],...
             datestr(OPT.timeIn,OPT.timeFormat));
     end
@@ -195,15 +200,21 @@ if OPT.makeKML
             OPT.url = [OPT.url '\'];
         end
     end
-
+    
+    % relative for local files
+    if isempty(OPT.url)
+       href = fullfile(OPT.url, OPT.Path, OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']);
+    else
+       href = fullfile(                   OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']);
+    end
+    
     output = sprintf([...
         '<NetworkLink>'...
-        '<name>%s</name>'...                                                                                             % name
-        '%s'... %timespan                                                                                                          % time
-        '<Link><href>%s</href><viewRefreshMode>onRegion</viewRefreshMode></Link>'...                                     % link
+        '<name>%s</name>'... % name
+        '%s'...              % timespan                                                                                                          % time
+        '<Link><href>%s</href><viewRefreshMode>onRegion</viewRefreshMode></Link>'... % link
         '</NetworkLink>'],...
-        OPT.kmlName,OPT.timeSpan,...
-        fullfile(OPT.url, OPT.Path, OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']));
+        OPT.kmlName,OPT.timeSpan,href);
 
     OPT.fid=fopen(OPT.fileName,'w');
     OPT_header = struct(...
@@ -216,7 +227,7 @@ if OPT.makeKML
    %% COLORBAR
 
     if OPT.colorbar
-        clrbarstring = KMLcolorbar('clim',clim,'fileName', [OPT.fileName] ,'colorMap',colormap);
+        clrbarstring = KMLcolorbar('clim',clim,'fileName',OPT.fileName,'colorMap',colormap,'colorTitle',OPT.colorbartitle,'colorbarlocation',OPT.colorbarlocation);
         clrbarstring = strrep(clrbarstring,['<Icon><href>' OPT.fileName '_'],['<Icon><href>' OPT.Name filesep OPT.fileName '_']);
         output = [output clrbarstring];
     end

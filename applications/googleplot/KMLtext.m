@@ -60,11 +60,12 @@ function varargout = KMLtext(lat,lon,label,varargin)
    OPT.openInGE            = false;
    OPT.markerAlpha         =  0.6;
    OPT.description         =  '';
+   OPT.visible             =  1;
    OPT.timeIn              = [];
    OPT.timeOut             = [];
-   OPT.textColor           = [];% TO DO
-   OPT.textSize            = [];% TO DO
-   OPT.textAlpha           = [];% TO DO
+  %OPT.textColor           = [];% TO DO
+  %OPT.textSize            = [];% TO DO
+  %OPT.textAlpha           = [];% TO DO
    OPT.labelDecimals       = 1;
    
    if nargin==0
@@ -134,6 +135,7 @@ function varargout = KMLtext(lat,lon,label,varargin)
    OPT_header = struct(...
        'name',OPT.kmlName,...
        'open',0,...
+       'visible',OPT.visible,...
        'description',OPT.description);
    output = KML_header(OPT_header);
 

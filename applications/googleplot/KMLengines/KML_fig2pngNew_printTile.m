@@ -1,7 +1,13 @@
 function KML_fig2pngNew_printTile(baseCode,D,OPT)
+%KML_FIG2PNGNEW_PRINTTILE subsidiary of KMLfig2pngNew
+%
+%See also:KMLfig2pngNew
+
+OPT.debug = 0;
+
 for addCode = ['0','1','2','3']
     code = [baseCode addCode];
-    B   = KML_fig2pngNew_code2boundary(code);
+    B    = KML_fig2pngNew_code2boundary(code);
     
     % stop if tile is out of bounds
     if ~((D.E>B.W&&D.W<B.E)&&(D.N>B.S&&D.S<B.N))
@@ -9,23 +15,58 @@ for addCode = ['0','1','2','3']
     else
         
         R   = D.lon>=(B.W - OPT.dWE) & D.lon<=B.E + OPT.dWE &...
-            D.lat>=(B.S - OPT.dNS) & D.lat<=B.N + OPT.dNS;
-        
+              D.lat>=(B.S - OPT.dNS) & D.lat<=B.N + OPT.dNS;
+              
         % stop if no data is present in tile
         if ~any(R(:))
-                  fprintf('%-16s %-10s Reason: %s\n',code,'ABORTED','no data in tile')
+            fprintf('%-16s %-10s Reason: %s\n',code,'ABORTED','no data in tile')
         else
             
-            D2.z   = D.z  (any(R'),any(R));
-            if all(isnan(D2.z(:)))
-          fprintf('%-16s %-10s Reason: %s\n',code,'ABORTED','only NAN''s in tile')
+% attempt to handle shading flat cases, 
+% still does not work correctly though.
+% For curvi-linear grids with nan holes corner2center requires
+% a continuous piece of matrix, we we need to get 
+% rid of all intermediate exclusions that works fiej with shading interp. 
+% In this sketch attempt of a U-shaped curvi-linear grid think of the upper left part:
+%
+%    __
+%   /  \
+%  |  +--\-----+ GE tile
+%   \ |    \   |  
+%     \      \ |  
+%     | \      \  
+%     |   \    | \ a U-shaped curvi-linear grid line
+%     +-----\--+  
+%             \   
+
+            mask1 = any(R'); % can be 0 0 0 1 1 1 0 0 0 1 1 1 in curvi-linear grids, so set all intermediate 0 to 1.
+            mask2 = any(R) ;
+            ind   = find(mask1==1);if ~isempty(ind);mask1(ind(1):ind(end)) = 1;end
+            ind   = find(mask2==1);if ~isempty(ind);mask2(ind(1):ind(end)) = 1;end
+
+            if isequal(size(R) - size(D.z),[0 0])
+            D2.z  = D.z  (mask1,mask2);
+            elseif isequal(size(R) - size(D.z),[1 1])
+               Rc     =  ceil(corner2center(R));
+               mask1c = floor(corner2center1(mask1))==1;
+               mask2c = floor(corner2center1(mask2))==1;
+               indc   = find(mask1c==1);if ~isempty(indc);mask1c(indc(1):indc(end)) = 1;end
+               indc   = find(mask2c==1);if ~isempty(indc);mask2c(indc(1):indc(end)) = 1;end
+               D2.z   = D.z(mask1c,mask2c); % keep one smaller, do not add until plot
             else
-                D2.lat = D.lat(any(R'),any(R));
-                D2.lon = D.lon(any(R'),any(R));
-                D2.N = max(D.lat(:));
-                D2.S = min(D.lat(:));
-                D2.W = min(D.lon(:));
-                D2.E = max(D.lon(:));
+                error('we did not imagine this could happoen')
+            end
+            
+            
+            if all(isnan(D2.z(:)))
+            fprintf('%-16s %-10s Reason: %s\n',code,'ABORTED','only NAN''s in tile')
+            else
+                D2.lat = D.lat(mask1,mask2);
+                D2.lon = D.lon(mask1,mask2);
+                D2.N   = max(D.lat(:));
+                D2.S   = min(D.lat(:));
+                D2.W   = min(D.lon(:));
+                D2.E   = max(D.lon(:));
                 % stop if no data is present in tile
                 
                 
@@ -33,15 +74,19 @@ for addCode = ['0','1','2','3']
                     fprintf('%-16s %-10s\n',code,'CONTINUING')
                     KML_fig2pngNew_printTile(code,D2,OPT)
                 else
-                     fprintf('%-16s %-10s',code,'PRINTING TILE')
+                    fprintf('%-16s %-10s\n',code,'PRINTING TILE')
                     
                     dNS = OPT.dimExt/OPT.dim*(B.N - B.S);
                     dWE = OPT.dimExt/OPT.dim*(B.E - B.W);
                     
-                    set(OPT.h,'ZDATA',D2.z,'YDATA',D2.lat,'XDATA',D2.lon)
+                    if isequal(size(R) - size(D.z),[0 0]) % shading interp case
+                    set(OPT.h ,'CDATA',          D2.z          ,'ZDATA',          D2.z          ,'YDATA',D2.lat,'XDATA',D2.lon); % also CDATA for pcolor objects
+                    else % shading flat case
+                    set(OPT.h ,'CDATA',addrowcol(D2.z,1,1,-Inf),'ZDATA',addrowcol(D2.z,1,1,-Inf),'YDATA',D2.lat,'XDATA',D2.lon); % also CDATA for pcolor objects
+                    end
                     set(OPT.ha,'YLim',[B.S - dNS B.N + dNS]);
                     set(OPT.ha,'XLim',[B.W - dWE B.E + dWE]);
-                    
+
                     PNGfileName = fullfile(OPT.Path,OPT.Name,[OPT.Name '_' code '.png']);
                     
                     % read a previous image if necessary
@@ -73,13 +118,13 @@ for addCode = ['0','1','2','3']
                         delete(PNGfileName)
                             fprintf(' ...TILE DELETED, no data in tile\n')
                     else
-                        fprintf('\n')
+                        %fprintf('\n')
                         % now move image around to color transparent pixels with the value of the
                         % nearest neighbour.
                         im2       = im;
                         im2(mask) = 0;
                         im2 = bsxfun(@max,bsxfun(@max,im2([1 1:end-1],[1 1:end-1],1:3),im2([2:end end],[1 1:end-1],1:3)),...
-                            bsxfun(@max,im2([2:end end],[2:end end],1:3),im2([1 1:end-1],[2:end end],1:3)));
+                              bsxfun(@max,            im2([2:end end],[2:end end],1:3),im2([1 1:end-1],[2:end end],1:3)));
                         im(mask) = im2(mask);
                         imwrite(im,PNGfileName,'Alpha',OPT.alpha*ones(size(mask(:,:,1))).*(1-double(all(mask,3))),...
                             'Author','$HeadURL$'); % NOT 'Transparency' as non-existent pixels have alpha = 0

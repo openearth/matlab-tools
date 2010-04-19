@@ -7,10 +7,16 @@ EPSG                    = load('EPSG');
 
 figure('Visible','Off')
 h = surf(2*peaks-.1);
-shading interp;material([.88 0.11 .08]);lighting phong
-axis off;axis tight;view(0,90);lightangle(0,90)
 
-colormap(colormap_cpt('bathymetry_vaklodingen',500));clim([-50 25]);
+shading    interp;
+material  ([.88 0.11 .08]);
+lighting   phong
+axis       off;
+axis       tight;
+view      (0,90);
+lightangle(0,90)
+clim      ([-50 25]);
+colormap  (colormap_cpt('bathymetry_vaklodingen',500));
 
 for ii = 1:length(url);
     [path, fname] = fileparts(url{ii});
@@ -22,7 +28,7 @@ for ii = 1:length(url);
     x = [x(1) + (x(1)-x(2))*.75; x; x(end) + (x(end)-x(end-1))*.75];
     y = [y(1) + (y(1)-y(2))*.75; y; y(end) + (y(end)-y(end-1))*.75];
     % coordinates:
-    [X,Y] = meshgrid(x,y);
+    [X  ,Y  ] = meshgrid(x,y);
     [lon,lat] = convertCoordinates(X,Y,...
         EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
     
@@ -38,9 +44,12 @@ for ii = 1:length(url);
         z = z([1 1:end end],:);
         z = z(:,[1 1:end end]);
         
-        colormap(colormap_cpt('bathymetry_vaklodingen',500));clim([-50 25]);
-        KMLfig2pngNew(h,lon,lat,z,'highestLevel',6,'lowestLevel',14,...
-            'fileName','vaklodingen');
+        KMLfig2pngNew(h,lon,lat,z,...
+             'highestLevel',6,...
+              'lowestLevel',14,...
+       'mergeExistingTiles',true,...
+                  'bgcolor',[255 0 255],...
+                 'fileName','vaklodingen');
     else
         disp(['data coverage is ' num2str(sum(~isnan(z(:)))/numel(z)*100) '%, no file created'])
     end

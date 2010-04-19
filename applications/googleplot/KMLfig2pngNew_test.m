@@ -57,13 +57,22 @@ try
        
    FIG = figure('Visible','Off')
    h               = surf(peaks-.1);
-   shading interp;material([.9 0.08 .07]);lighting phong
-   axis off;axis tight;view(0,90);lightangle(0,90)
-   colormap(colormap_cpt('bathymetry_vaklodingen',500));clim([-50 25]);
+   shading    interp;
+   material  ([.9 0.08 .07]);
+   lighting   phong
+   axis       off;
+   axis       tight;
+   view      (0,90);
+   lightangle(0,90)
+   clim      ([-50 25]);
+   colormap  (colormap_cpt('bathymetry_vaklodingen',500));
    
-   KMLfig2pngNew(h,lat,lon,z,'highestLevel',6,'lowestLevel',14,...
-       'mergeExistingTiles',true,'bgcolor',[255 0 255],...
-       'fileName',KML_testdir('KMLfig2pngNew.kml'))
+   KMLfig2pngNew(h,lat,lon,z,...
+             'highestLevel',6,...
+              'lowestLevel',14,...
+       'mergeExistingTiles',true,...
+                  'bgcolor',[255 0 255],...
+                 'fileName',KML_testdir('KMLfig2pngNew.kml'))
    
    try;close(FIG);end
 
