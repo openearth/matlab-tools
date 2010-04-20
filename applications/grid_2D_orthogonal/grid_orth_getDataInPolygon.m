@@ -103,7 +103,7 @@ OPT = setProperty(OPT, varargin{:});
 axes = findobj('type','axes');
 if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.tag})) % if an overview figure is already present don't run this function again
     % Step 0.1: get fixed map urls from OPeNDAP server
-    urls = opendap_catalog(dataset);
+    urls = opendap_catalog(OPT.dataset);
 
     % Step 0.2: create a figure with tagged patches
     figure(10);clf;axis equal;box on;hold on
@@ -163,7 +163,7 @@ end
 % delete the pre existing polygon and replace it with the just generated closed one
    delete(findobj(ah,'tag','selectionpoly')); try axes(ah); end; hold on
    plot(ah,OPT.polygon(:,1),OPT.polygon(:,2),'g','linewidth',2,'tag','selectionpoly'); drawnow
-   axis([min(x) min(y) max(x) max(y)]) % does not work
+   axis([min(OPT.polygon(:,1)) min(OPT.polygon(:,2)) max(OPT.polygon(:,1)) max(OPT.polygon(:,2))]) % does not work
 
 %% Step 2: identify which maps are in polygon
 
