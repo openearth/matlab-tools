@@ -87,9 +87,16 @@ OPT = setProperty(OPT, varargin{:});
 %% input check
 
 % vectorize input
+
+
 lat = lat(:);
 lon = lon(:);
 z   = z(:);
+
+% check for nan values
+if any(isnan(lat+lon))
+    error('KMLtricontourf does not accept nan values (yet) in the lat and lon data')
+end
 
 % correct lat and lon
 if any((abs(lat)/90)>1)

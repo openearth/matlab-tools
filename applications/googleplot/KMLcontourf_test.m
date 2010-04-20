@@ -53,22 +53,23 @@ disp(['... running test:',mfilename])
 %try
     
     %test 1
-    [x,y] = meshgrid(1:10,21:30);
-    x(3:4,3:4) = nan; % test a hole 
-    y(3:4,3:4) = nan;
-    z = peaks(10);
-    KMLcontourf(x,y,z,'levels',100,'fileName',KML_testdir('KMLcontourf - 1.kml'),'colorbartitle','KMLcontourf - 1');
-    %test 2
+    [x,y] = meshgrid(0.5:0.5:100,200.5:0.5:400);
+
+    z = [peaks(200); peaks(200)]+9;  
+%     z(3:4,3:4) = nan; % test a hole 
+    KMLcontourf(x/10,y/10,z*1000,'levels',100,'fileName',KML_testdir('KMLcontourf - 1.kml'),...
+        'colorbartitle','KMLcontourf - 1','is3D',false,'staggered',false,'extrude',true);
     
-    [x,y] = meshgrid(1.1:.5:100.1,201.2:.5:300.2);
-    x(60:80,60:80) = nan; % test a hole 
-    y(60:80,60:80) = nan;
-    x = (x+sin(y).^3);
-    y = (y+sin(x));
-    z = repmat(peaks(100),2,2)+2*cos(peaks(200))+3*sin(peaks(200))+3*peaks(200);
-    x = x/10+10;y = y/10+10;
-    KMLcontourf(x,y,z,'levels',40,'fileName',KML_testdir('KMLcontourf - 2.kml'),'colorbartitle','KMLcontourf - 2');
-    testresult = true;
+%     %test 2
+%     [x,y] = meshgrid(1.1:.5:100.1,201.2:.5:300.2);
+%     x(60:80,60:80) = nan; % test a hole 
+%     y(60:80,60:80) = nan;
+%     x = (x+sin(y).^3);
+%     y = (y+sin(x));
+%     z = repmat(peaks(100),2,2)+2*cos(peaks(200))+3*sin(peaks(200))+3*peaks(200);
+%     x = x/10+10;y = y/10+10;
+%     KMLcontourf(x,y,z,'levels',40,'fileName',KML_testdir('KMLcontourf - 2.kml'),'colorbartitle','KMLcontourf - 2');
+%     testresult = true;
 %catch
 %    testresult = false;
 %end
