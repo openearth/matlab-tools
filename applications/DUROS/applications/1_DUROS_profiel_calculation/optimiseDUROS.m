@@ -232,14 +232,6 @@ end
 % best possible solution.
 iterid = find(abs(Volume-ProfileFluct)==min(abs(Volume-ProfileFluct)),1,'last');
 
-if CorrectionApplied(iterid)
-    % disp('Warning: Landward directed transport in iteration prevented')
-    writemessage(-4, 'Warning: Landward directed transport in iteration prevented');
-    if DuneCorrected(iterid)
-        % disp('Error: Part of the correction is made above the water line')
-        writemessage(-5, 'Error: Part of the correction for landward transport is made above the water line');
-    end
-end
 
 %% #2 - Check whether solution has been influenced steep channel slopes
 SteepPointsExist = ~isempty(channelslope_xpoints);
@@ -267,6 +259,17 @@ if ChannelSlopes && SteepPointsExist...
         end
     end
 end
+
+%% Post message if a correction was applied
+if CorrectionApplied(iterid)
+    % disp('Warning: Landward directed transport in iteration prevented')
+    writemessage(-4, 'Warning: Landward directed transport in iteration prevented');
+    if DuneCorrected(iterid)
+        % disp('Error: Part of the correction is made above the water line')
+        writemessage(-5, 'Error: Part of the correction for landward transport is made above the water line');
+    end
+end
+
 
 %% isolate best result
 
