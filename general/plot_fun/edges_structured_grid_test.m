@@ -52,21 +52,32 @@ function testresult = edges_structured_grid_test()
 %% $RunCode
 % Write test code here
 try
-%     x = 1:100;
-%     y = 201:400;
-%     [X,Y] = meshgrid(x,y);
-%     Z = repmat(peaks(100),2,1);
-%     
-%     Z(50:55,:) = nan;
-%     Z(40:65,20:60) = nan;
-%     Z(rand(size(Z))>0.999) = nan;
+    x = 1:100;
+    y = 201:400;
+    [X,Y] = meshgrid(x,y);
+    Z = repmat(peaks(100),2,1);
+    
+    Z(50:55,:) = nan;
+    Z(40:65,20:60) = nan;
+    Z(Z>5) = nan;
+    Z(Z<-5) = nan;
+    Z(Z>-0.1&Z<0.1) = nan;
+    
+    
 %     profile on
-%     E = edges_structured_grid(X,Y,Z);
-%     
+    E = edges_structured_grid(X,Y,Z);
 %     profile viewer
-%   surf(X,Y,Z,ones(size(Z)))
-%     
-%  line(X(E(:,1:2)),Y(E(:,1:2)),Z(E(:,1:2)))
+    
+    
+    surf(X,Y,Z,ones(size(Z)))
+    hold on
+    aa = E(:,5)==1;
+    plot3(E(aa,1),E(aa,2),E(aa,3),'.')
+    plot3(E(~aa,1),E(~aa,2),E(~aa,3),'ro')
+    view([0,90])
+    hold off
+    
+    legend('surface','filled loop','empty loop')
 catch
     testresult = false;
 end

@@ -106,9 +106,7 @@ while any(edgeIndices(:,4)==0)
     connectingLines(connectingLines==kk)=[];
     if numel(connectingLines)~=1
         % find the connecting line which is on the same triangle.
-        connectingLines = possibleConnectingLines;
-        
-        
+        error('the mesh is to complicated for this routine for the moment. will try to fix it sometime /Thijs')
     end
     % reverse coordinates if found from the second row
     if edgeIndices(kk,2)==edgeIndices(connectingLines,2)
@@ -144,7 +142,7 @@ E = [x(edgeIndices(:,1)),...
      double(edgeIndices(:,5)),...
      double(edgeIndices(:,4))];
  
- %% sort trisurf edges
+ %% sort edges
  
 E2 = nan(size(E,1)+max(E(:,4)),4);
 kk = 0;
@@ -158,12 +156,47 @@ for ii = 1:max(E(:,4))
 end
 E=E2;
 
-% %% determine if the loop is empty or filled or not
-% for ii=1:E(end,4)
-%     jj = find(E(:,4)==ii);
-%     E(jj,5) = inpolygon(...
-%         mean(x(tri(E(jj(1),5),:))),...
-%         mean(y(tri(E(jj(1),5),:))),...
-%         E(jj,1),E(jj,2));
-% end
+%% make the loop clockwise, and determine if the loop is empty or filled or not
+for kk=1:E(end,4)
+    ll = find(E(:,4)==kk);
+    if ~poly_isclockwise(E(ll,1),E(ll,2));
+        E(ll,:) = E(flipud(ll),:);
+    end
+    
+    [ii   ,jj   ] = ind2sub([nn,mm],find(x == E(ll(1),1) & y == E(ll(1),2)));
+    [ii(2),jj(2)] = ind2sub([nn,mm],find(x == E(ll(2),1) & y == E(ll(2),2)));
+   
+    if jj(1)==jj(2)
+        if ii(2)>ii(1)
+            jj([3 4]) = jj([1 2])+1;
+        else
+            jj([3 4]) = jj([1 2])-1;
+        end
+        ii([3 4]) = ii([1 2]);
+    else
+        if jj(2)<jj(1)
+            ii([3 4]) = ii([1 2])+1;
+        else
+            ii([3 4]) = ii([1 2])-1;
+        end
+        jj([3 4]) = jj([1 2]);
+    end
+
+    E(ll,5) = ~any(any(isnan(x(ii,jj)+y(ii,jj)+z(ii,jj))));
+    
+
+    
+        
+%         surf(x,y,z,ones(size(z)))
+%     view([0,90])
+%     
+%     hold on
+%     plot3(E(ll(1),1),E(ll(1),2),E(ll(1),3),'ro')
+%     plot3(E(ll(2),1),E(ll(2),2),E(ll(2),3),'bo')
+%     
+%     plot3([x(ii(1),jj(1)) x(ii(2),jj(2)) x(ii(3),jj(3)) x(ii(4),jj(4))],...
+%         [y(ii(1),jj(1)) y(ii(2),jj(2)) y(ii(3),jj(3)) y(ii(4),jj(4))],...
+%         [z(ii(1),jj(1)) z(ii(2),jj(2)) z(ii(3),jj(3)) z(ii(4),jj(4))],'k*')
+%     hold off      
+end
 
