@@ -94,14 +94,17 @@ end
 % find all 'outer' corner points under SSL
 rcInt = diff(z)./diff(x);
 CornerIds = find([false; [diff(rcInt)<0; false]] & z>zparab(end)); % all 'outer' corners
+ToeCornerIds = find([false; [diff(rcInt)<0; false]] & z<zparab(end)); % all 'outer' corners under the parabolic profile
 rcparab = rcParabolicProfileMain(WL_t, Hsig_t, Tp_t, w, z(CornerIds)); % derivative of the profile at the determined corners
 % rcparab2 = getRcParabolicProfile(WL_t, Hsig_t, Tp_t, w, z(CornerIds)); % derivative of the profile at the determined corners
 % TODO('Come up with new formulation');
+% This does not check whether the 1:12,5 toe crosses the initial profile.
 CornerIds = CornerIds(rcInt(CornerIds-1)> rcparab & rcInt(CornerIds)< rcparab); % Only select local maxima that "touch" (not cross) the parabolic profile.
+ToeCornerIds = ToeCornerIds(rcInt(ToeCornerIds-1) < -1/12.5 & rcInt(ToeCornerIds)< 1/12.5);
 
 % list all points that could act as most seaward point in solution.
-Basisid = ones(1,length(CornerIds))*12;
-points = [x(CornerIds) z(CornerIds); x(end) z(end)];
+Basisid = ones(1,length(CornerIds)+length(ToeCornerIds))*12;
+points = [x(CornerIds) z(CornerIds); x(ToeCornerIds) z(ToeCornerIds); x(end) z(end)];
 
 % temp seaward boundary = most seaward point of profile
 SeawardBoundaryofInterest = x(end);
