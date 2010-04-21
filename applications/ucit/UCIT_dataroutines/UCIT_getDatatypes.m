@@ -121,7 +121,7 @@ if 0
    datatypes.grid.urls {i}        =  'f:\opendap\thredds\rijkswaterstaat\vaklodingen\';
    datatypes.grid.catalog{i}      =  'f:\opendap\thredds\rijkswaterstaat\vaklodingen\';
    datatypes.grid.ldbs{i}         =  'f:\opendap\thredds\deltares\holland_fillable.nc';
-   datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
+   datatypes.grid.axes{i}         =  1E5*[0.9783    1.2039    5.4272    5.6993];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
 end   

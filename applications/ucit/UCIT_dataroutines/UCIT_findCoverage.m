@@ -40,8 +40,13 @@ function batchvar = UCIT_findCoverage(OPT)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+warningstate = warning;
+warning off
+
+datatype = UCIT_getInfoFromPopup('GridsDatatype');
 
 %% load the polygons from the polygon directory
+
 if isfield(OPT,'polygon');
     mkdir(['polygons']);
     polygon = OPT.polygon;
@@ -51,13 +56,17 @@ end
 fns = dir(['polygons' filesep '*.mat']);
 
 %% Set input for sandbalance
-% executeyes/no, thinning, polyname, plotcolor, linewidth, years
+%  executeyes/no, thinning, polyname, plotcolor, linewidth, years
+
 if ~isempty(fns)
     for r = 1:length(fns)
         batchvar1(r,:) = {1,OPT.thinning, fns(r,1).name(1:end-4)     , 'b', 1, [] };
     end
 
 %% Get coverage
+
+[d] = UCIT_getMetaData(2);
+
     for i = 1:size(batchvar1,1)
         if batchvar1{i,1}==1
 
@@ -71,22 +80,23 @@ if ~isempty(fns)
                         load(['datafiles' filesep 'timewindow = ' num2str(OPT.timewindow) filesep fns(i,1).name '_' num2str(OPT.inputyears(j)) '_1231.mat']);
                     else
 
-                        [X, Y, Z, Ztime] = rws_getDataInPolygon(...
-                            'datatype', OPT.datatype, ...
-                            'starttime', datenum(OPT.inputyears(j),12,31), ...
+                        [X, Y, Z, Ztime] = grid_orth_getDataInPolygon(...
+                            'dataset'     , d.urls, ...
+                            'tag'         , datatype, ...
+                            'starttime'   , datenum(OPT.inputyears(j),12,31), ...
                             'searchwindow', -365/12*OPT.timewindow, ...
                             'datathinning', OPT.thinning,...
-                            'plotresult',0, ...
-                            'polygon',polygon);
+                            'plotresult'  ,0, ...
+                            'polygon'     ,polygon);
                         in = inpolygon(X, Y, polygon(:,1), polygon(:,2));
-                        d.name = fns(i,1).name(1:end-4);
-                        d.year = OPT.inputyears(j);
+                        d.name       = fns(i,1).name(1:end-4);
+                        d.year       = OPT.inputyears(j);
                         d.soundingID = '1231';
-                        d.X = X;
-                        d.Y = Y;
-                        d.Z = Z;
-                        d.Ztemps = Ztime;
-                        d.inpolygon = in;
+                        d.X          = X;
+                        d.Y          = Y;
+                        d.Z          = Z;
+                        d.Ztemps     = Ztime;
+                        d.inpolygon   = in;
 
                         save(['datafiles' filesep 'timewindow = ' num2str(OPT.timewindow) filesep d.name '_' num2str(d.year) '_1231.mat'],'d');
                     end
@@ -143,3 +153,7 @@ if ~isempty(fns)
         end
     end
 end
+
+warning(warningstate)
+
+%% EOF

@@ -96,6 +96,7 @@ OPT.cellsize     = []; % cellsize is assumed to be regular in x and y direction 
 OPT.datathinning = 1;
 OPT.ldburl       = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
 OPT.plotresult   = 1;
+OPT.warning      = 1;
 
 OPT = setProperty(OPT, varargin{:});
 
@@ -157,19 +158,26 @@ if isempty(OPT.polygon)
     % combine x and y in the variable polygon and close it
     OPT.polygon = [x' y'];
     OPT.polygon = [OPT.polygon; OPT.polygon(1,:)];
+    
+else
+
+   x = OPT.polygon(:,1);
+   y = OPT.polygon(:,2);
 
 end
 
 % delete the pre existing polygon and replace it with the just generated closed one
-   delete(findobj(ah,'tag','selectionpoly')); try axes(ah); end; hold on
+
+   try;delete(findobj(ah,'tag','selectionpoly')); end
+   try axes(ah); end; hold on
    plot(ah,OPT.polygon(:,1),OPT.polygon(:,2),'g','linewidth',2,'tag','selectionpoly'); drawnow
-   axis([min(OPT.polygon(:,1)) min(OPT.polygon(:,2)) max(OPT.polygon(:,1)) max(OPT.polygon(:,2))]) % does not work
+  %axis([min(x) max(x) min(y) max(y)]) % does not work
 
 %% Step 2: identify which maps are in polygon
 
    [mapurls, minx, maxx, miny, maxy] = grid_orth_identifyWhichMapsAreInPolygon(ah, OPT.polygon);
 
-   if isempty(mapurls)
+   if isempty(mapurls) & OPT.warning
    
       X     = [];
       Y     = [];
@@ -182,9 +190,9 @@ end
    %% Step 3: retrieve data and place it on one overall grid
    [X, Y, Z, Ztime]                  = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, OPT);
    
-      if all(isnan(Ztime))
-      warndlg('No data found in specified time period (yet grids available in polygon)')
-      end
+   if all(isnan(Ztime)) & OPT.warning
+         warndlg('No data found in specified time period (yet grids available in polygon)')
+   end
 
    
    %% Step 4: plot the end result (Z and Ztime)

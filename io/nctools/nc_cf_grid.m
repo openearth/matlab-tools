@@ -278,8 +278,12 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
       end
       tickmap ('ll')
       grid     on
+      if isfield(D,'datenum')
       title   ({mktex(fileinfo.Filename),...
                 datestr(D.datenum)})
+      else
+      title   ({mktex(fileinfo.Filename)})
+      end
       colorbarwithvtext([mktex(M.(OPT.varname).long_name),' [',...
                          mktex(M.(OPT.varname).units    ),']']);
    

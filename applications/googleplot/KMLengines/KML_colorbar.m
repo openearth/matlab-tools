@@ -143,7 +143,7 @@ function KML_colorbar(OPT)
    im   = imread([OPT.fileName,'.png']);
    mask = bsxfun(@eq,im,reshape(OPT.bgcolor,1,1,3));
 
-   %% replace all colors under invisble pixels with black (0 0 0) (OPT.fontrgb)
+   %% replace all colors under invisible pixels with black (0 0 0) (OPT.fontrgb)
    %  which are the well readable google letters
 
    for ic=1:3

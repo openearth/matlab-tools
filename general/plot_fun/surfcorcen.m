@@ -275,7 +275,7 @@ if plot_later
             %% SHADING FLAT
             %% -------------------------------
         elseif size(x,1)==size(c,1)+1 & ...
-                size(x,2)==size(c,2)+1;
+               size(x,2)==size(c,2)+1;
             
             P = surf(x,y,addrowcol(z,1,1,nan),addrowcol(c,1,1,nan));
             if isnan(edgecolor)
@@ -391,12 +391,12 @@ dm            = 1;
 dn            = 1;
 illegalmarker = NaN;
 
-if nargin02==2
+if nargin==2
     illegalmarker = varargin{1};
-elseif nargin02==3
+elseif nargin==3
     dm            = varargin{1};
     dn            = varargin{2};
-elseif nargin02==4
+elseif nargin==4
     dm            = varargin{1};
     dn            = varargin{2};
     illegalmarker = varargin{3};

@@ -1,12 +1,11 @@
 function poly2file
-
-%POLY2FILE   draw and save polygon in current axes
+%POLY2FILE   draw and save polygon in current axes to mat file
 %
 % 1. Draw a polygon by left clicking the mouse.
 % 2. Terminate with enter
 % 3. Choose filename
 % 
-% See also: UCIT_WS_polydraw, polydraw 
+% See also: polydraw 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
 %       Ben de Sonneville
@@ -33,12 +32,11 @@ function poly2file
 %   --------------------------------------------------------------------
 
 
-[xv,yv] = UCIT_WS_polydraw;
-polygon=[xv yv];
+[xv,yv] = polydraw;polygon=[xv' yv'];
 [FileName,PathName] = uiputfile('d:\*.mat','Save polygon to file', 'Saved_polygon.mat');
 if FileName==0 & PathName==0
     return
 else
     save([PathName FileName],'polygon');
-    hold on; plot(polygon(:,1),polygon(:,2));
+    hold on; plot(xv,yv);
 end

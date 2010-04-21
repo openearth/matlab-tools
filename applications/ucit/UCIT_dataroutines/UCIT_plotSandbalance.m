@@ -40,16 +40,19 @@ function UCIT_plotSandBalance(OPT, results, Volumes)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+warningstate = warning;
+warning off
 
-if strcmp(OPT.datatype,'jarkus'),datatype = 'Jarkus';,end
-if strcmp(OPT.datatype,'vaklodingen'),datatype = 'Vaklodingen';,end
+datatype = UCIT_getInfoFromPopup('GridsDatatype');
+[d] = UCIT_getMetaData(2);
 
 %% Overview plot of used datapoints for method 2
+
 nameInfo=['UCIT - used data points for method 2'];
 fh = figure('tag','dpPlot'); clf; ah=axes;
 set(fh,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
 [fh,ah] = UCIT_prepareFigureN(0, fh, 'UL', ah);
-UCIT_plotLandboundary(datatype,0)
+UCIT_plotLandboundary(d.ldb,[0 1 0])
 hold on;
 load(['datafiles' filesep 'timewindow = ' num2str(OPT.timewindow) filesep results.polyname '_' num2str(OPT.inputyears(1),'%04i') '_1231.mat']);
 
@@ -62,14 +65,14 @@ pcolorcorcen(d.X,d.Y,d.id*2);view(2);shading interp;
 title(['Used data points for method 2 ' strrep(results.polyname,'_',' ') ' (' OPT.datatype ')']); 
 
 % set axis
-axis tight
-box on
-axis equal
-set(gca,'fontsize', 8 );
+axis   tight
+box    on
+axis   equal
+set   (gca,'fontsize', 8 );
 ylabel('Northing [m]');
 xlabel('Easting [m]');
-set(gca,'Xlim',[d.X(1,1) d.X(1,end)]);
-set(gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
+set   (gca,'Xlim',[d.X(1,1) d.X(1,end)]);
+set   (gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
 
 % save figure
 print(fh,'-dpng',['results' filesep 'timewindow = ' num2str(OPT.timewindow) filesep 'ref=' num2str(OPT.min_coverage) filesep strrep(results.polyname,'_',' ') '_used_data_points_method_2']);
@@ -83,7 +86,7 @@ nameInfo=['UCIT - Sandbalance polygon plot'];
     set(fh,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
     [fh,ah] = UCIT_prepareFigureN(0, fh, 'UL', ah);
     hold on;
-    UCIT_plotLandboundary(datatype)
+    UCIT_plotLandboundary(d.ldb,[0 1 0])
 % else
 %     fh=findobj('tag','sbPlot');
 %     figure(fh);try delete(findobj('tag','polygon')),end;
@@ -125,13 +128,19 @@ ph = plot(datenum(Volumes{2}(:,1),1,1), Volumes{2}(:,2) - Volumes{2}(1,2),'color
 datetick;grid;
 
 % set text
+
 title(['Volume development for ' strrep(results.polyname,'_',' ') ' (' OPT.datatype ')'],'fontsize',8); 
 legend(['Method 1: based on data points covered by target year and reference year (' num2str(OPT.reference_year) ')'],['Method 2: based on data points covered in all years'],'location','SouthOutside');
 
 % set axis
+
 xlabel('Time [years]','fontsize',8);ylabel('Volume [m^3]','fontsize',8);
 set(gca,'fontsize',8);
 
 % save figure
-print(fh,'-dpng',['results' filesep 'timewindow = ' num2str(OPT.timewindow) filesep 'ref=' num2str(OPT.min_coverage) filesep strrep(results.polyname,'_',' ')]);
 
+print(fh,'-dpng',['results' filesep 'timewindow = ' num2str(OPT.timewindow) filesep 'ref=' num2str(OPT.min_coverage) filesep strrep(results.polyname,'_',' ')]);
+ 
+warning(warningstate)
+
+%% EOF   

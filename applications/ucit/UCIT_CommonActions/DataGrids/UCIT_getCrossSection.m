@@ -2,7 +2,7 @@ function UCIT_getCrossSection
 %UCIT_GETCROSSSECTION   allows use to draw a line over a plotted grid to which the data from that grid is interpolated for multiple years
 %
 %   syntax:
-%       getCrossSectionMultipleYears
+%       UCIT_getCrossSection()
 %
 %   input:
 %       function has no input
@@ -10,9 +10,8 @@ function UCIT_getCrossSection
 %   output:
 %       function has no output
 %
-%   See also getCrossSection
-%
-%   See also UCIT_plotDataInPolygon
+%   See also UCIT_plotDataInPolygon, grid_2D_orthogonal
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
 %
@@ -38,67 +37,75 @@ function UCIT_getCrossSection
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+warningstate = warning;
+warning off
+
+datatype = UCIT_getInfoFromPopup('GridsDatatype');
+
 %% Select in either grid plot or grid overview plot
-mapW = findobj('tag','gridPlot');
-if isempty(mapW)
-    if isempty(findobj('tag','gridOverview'))
-        UCIT_plotGridOverview;
-    else
-        fh = figure(findobj('tag','gridOverview'));figure(fh);
-    end
-else
-    fh = figure(findobj('tag','gridPlot')); figure(fh);
-end
 
-colors={'b',[0.2 0.6 0],'k','c','m','r', [0.6 0.4 0],[0.2 0.4 0 ], [0.5 0.5 0.5], [1 0.5 0.5],'y',  [0.25 0.5 0.5],[0.5 0 0.5] ,[1 0.5 0.25],[0.5 1 0.5],[0.2 0 1],[1 0.5 1],[0.5 0.5 0.75],rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]) };
+   mapW = findobj('tag','gridPlot');
+   if isempty(mapW)
+       if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
+           fh = UCIT_plotGridOverview;
+       else
+           fh = figure(findobj('tag','gridOverview'));figure(fh);
+       end
+   else
+       fh = figure(findobj('tag','gridPlot')); figure(fh);
+   end
+   
+   curdir=pwd;
+   colors={'b',[0.2 0.6 0],'k','c','m','r', [0.6 0.4 0],[0.2 0.4 0 ], [0.5 0.5 0.5], [1 0.5 0.5],'y',  [0.25 0.5 0.5],[0.5 0 0.5] ,[1 0.5 0.25],[0.5 1 0.5],[0.2 0 1],[1 0.5 1],[0.5 0.5 0.75],rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]) };
+   
+%% Specify line
 
-try delete(findobj(fh,'tag','crs_line'));  end %#ok<*TRYNC> delete any remaining poly
+   try delete(findobj(fh,'tag','crs_line'));  end
 
-%% Click line
-disp('Please click a line from which to select data ...')
-input=ginput(2);
-lh=line(input(:,1),input(:,2));
-set(lh,'color','g','linewidth',2,'tag','crs_line');
-xi=input(:,1);
-yi=input(:,2);
-xi=linspace(xi(1),xi(2),1000);
-yi=linspace(yi(1),yi(2),1000);
-polygon = ([min(xi)-1000 min(yi)-1000;max(xi)+1000 min(yi)-1000;max(xi)+1000 max(yi)+1000; min(xi)-1000 max(yi)+1000;min(xi)-1000 min(yi)-1000]);
-
-if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'),datatype = 'jarkus';,end
-if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen'),datatype = 'vaklodingen';,end
+   disp('Please click a line from which to select data ...')
+   input= ginput(2);
+   lh   = line(input(:,1),input(:,2));
+   set(lh,'color','g','linewidth',2,'tag','crs_line');
+   xi   = input(:,1);
+   yi   = input(:,2);
+   xi   = linspace(xi(1),xi(2),1000);
+   yi   = linspace(yi(1),yi(2),1000);
+   polygon = ([min(xi)-1000 min(yi)-1000;max(xi)+1000 min(yi)-1000;max(xi)+1000 max(yi)+1000; min(xi)-1000 max(yi)+1000;min(xi)-1000 min(yi)-1000]);
 
 %% Get user input
-year1 = str2double(datestr(datenum(UCIT_getInfoFromPopup('GridsName')) - 30*(str2double(UCIT_getInfoFromPopup('GridsInterval'))),10));
-year2 = str2double(datestr(datenum(UCIT_getInfoFromPopup('GridsName')),10));
-years = [year1 : year2];
 
-teller=0;teller2=0;
+   year1 = str2double(datestr(datenum(UCIT_getInfoFromPopup('GridsName')) ...
+     - 30*(str2double(                UCIT_getInfoFromPopup('GridsInterval'))),10));
+   year2 = str2double(datestr(datenum(UCIT_getInfoFromPopup('GridsName')),10));
+   years = [year1 : year2];
 
 %% Set up figure
-fn=findobj('tag', 'crosssectionView');
-if isempty(fn)
-    nameInfo = ['UCIT - Crosssection view'];
-    fn=figure('tag','crosssectionView','visible','off'); clf; ah=axes;
-    set(fn,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
-    UCIT_prepareFigureN(0, fn, 'UR', ah);
-    title('Bed level of requested crossection')
-    xlabel('Local x direction');
-    ylabel('Bed level (m)');
-    set(gca,'fontsize',8);
-end
 
-%% Retrieve data for all years
+   fn=findobj('tag', 'crosssectionView');
+   if isempty(fn)
+       nameInfo = ['UCIT - Crosssection view'];
+       fn=figure('tag','crosssectionView','visible','off'); clf; ah=axes;
+       set   (fn,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
+       UCIT_prepareFigureN(0, fn, 'UR', ah);
+   end
+
+%% Find data for selected polygon for selected years
+
+[d] = UCIT_getMetaData(2);
+
+teller = 0; teller2 = 0;emptyyears = [];
 for xx = 1:length(years)
 
     figure(fh);
-    [X, Y, Z] = rws_getDataInPolygon(...
-        'datatype', datatype, ...
-        'starttime', datenum(years(xx),12,31), ...
-        'searchwindow', -365, ...
-        'datathinning', 1,...
-        'polygon', polygon,...
-        'plotresult',0);
+    [X, Y, Z] = grid_orth_getDataInPolygon(...
+    'dataset'     , d.urls, ...
+    'tag'         , datatype, ...
+    'starttime'   , datenum(years(xx),12,31), ...
+    'searchwindow', -365.25, ... % this call is inside a year-loop
+    'datathinning', 1,...        % line data do not need thinning
+    'plotresult'  , 0,...
+    'polygon'     , polygon,...  % this functionality is also inside grid_orth_getDataInPolygon
+    'warning'     , 0);          % prevent zillions of warnings for each one year in this loop is empty
 
     try delete(findobj('tag','selectionpoly'));  end %#ok<*TRYNC> delete any remaining poly
 
@@ -108,10 +115,13 @@ for xx = 1:length(years)
     stepsize=lengthc/size(xi,2);
     xl=[0:stepsize:(size(xi,2)-1)*stepsize];
     zl=interp2(X,Y,Z,xi,yi);
+
+    %% plot data or warn that no data is available
+    figure(fn);
     if sum(~isnan(zl))>0
         teller=teller+1;
-        figure(fn);set(fn,'visible','on');
         try
+            figure(fn);set(fn,'visible','on');
             plot(xl,zl,'color',colors{teller},'linewidth',2);hold on;
             legendtext{teller}=([num2str(years(xx))]);
         catch
@@ -124,24 +134,27 @@ for xx = 1:length(years)
     end
 end
 
-%% Add legend
+%% add figure properties
+
 if exist('legendtext')
     figure(fn);
     legend(legendtext);grid;
-    disp([]);
-    disp(['Years without data are: '])
-if exist('emptyyears')
+    title ('Bed level of requested crossection')
+    xlabel('Local x direction');
+    ylabel('Bed level (m)');
+    set   (gca,'fontsize',8);
+
+    disp  ([]);
+    disp  (['Years without data are: '])
     for yy=1:length(emptyyears)
         disp([emptyyears{yy}]);
     end
-end
 
 else
-    close(fh)
     warning(['No data was found']);
+    close(fn)
 end
 
+warning(warningstate)
 
-
-
-
+%% EOF

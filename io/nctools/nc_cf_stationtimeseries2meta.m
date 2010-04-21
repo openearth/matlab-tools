@@ -107,7 +107,7 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    
       OPT.filename = [OPT.directory_nc, filesep, OPT.files(ifile).name]; % e.g. 'etmgeg_273.txt'
    
-      disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)]);
+        disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename),' to xls/png overview']);
       
 %% Get global attributes
 

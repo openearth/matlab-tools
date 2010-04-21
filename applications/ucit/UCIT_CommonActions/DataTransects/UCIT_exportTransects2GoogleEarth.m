@@ -44,8 +44,7 @@ if isempty(mapW)
 end
 %% select transects to plot
 fh = figure(findobj('tag','mapWindow'));set(fh,'visible','off');
-[xv,yv] = UCIT_WS_polydraw;
-polygon=[xv yv];
+[xv,yv] = polydraw;polygon=[xv' yv'];
 
 %% get metadata (either from the console or the database)
 d = UCIT_getMetaData(1);

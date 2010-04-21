@@ -46,8 +46,7 @@ function results = UCIT_computeGridVolume(reference_year, targetyear, polyname, 
 fns = dir(['polygons' filesep '*.mat']);
 
 if ~isfield(OPT,'polygon')
-    [xv,yv] = UCIT_WS_polydraw;
-    polygon=[xv yv];
+   [xv,yv] = polydraw;polygon=[xv' yv'];
 end
 
 %% load targetyear

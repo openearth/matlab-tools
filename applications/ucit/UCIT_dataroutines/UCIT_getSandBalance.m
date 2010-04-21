@@ -6,9 +6,9 @@ function UCIT_getSandBalance(OPT)
 %
 %   Syntax:     UCIT_getSandBalance
 %
-%   Input:      polygons    =   specified in polygons directory
-%               ref         =   minimal coverage treshold for a year to be used in the budget computation
-%               monthsmargin  =   number of months to look back for additional data
+%   Input:      polygons     =   specified in polygons directory
+%               ref          =   minimal coverage treshold for a year to be used in the budget computation
+%               monthsmargin =   number of months to look back for additional data
 %
 %   Output:     RAW: Output is stored in files. The coverage of each polygon is
 %               stored in the 'polygon' directory. The depth data is stored
@@ -45,23 +45,31 @@ function UCIT_getSandBalance(OPT)
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
-warning off;
+
+warningstate = warning;
+warning off
+
+datatype = UCIT_getInfoFromPopup('GridsDatatype');
+
 %% define postprocessing
-postProcessing              = 1; % 0 = off; 1 = on ;
-whattodo(1)                 = 1; % volume plots
+
+   postProcessing              = 1; % 0 = off; 1 = on ;
+   whattodo(1)                 = 1; % volume plots
 
 %% initial settings
-OPT.type  = 1;
-curdir = pwd;
-counter = 0;
+
+   OPT.type  = 1;
+   curdir    = pwd;
+   counter   = 0;
 
 %% set defaults
+
 if nargin == 0
-    OPT.datatype        = 'jarkus';
-    OPT.thinning        = 1;
-    OPT.monthsmargin    = 12;
-    OPT.inputyears      = [2000:2003];
-    OPT.min_coverage    = 70;
+    OPT.datatype     = 'jarkus';
+    OPT.thinning     = 1;
+    OPT.monthsmargin = 12;
+    OPT.inputyears   = [2000:2003];
+    OPT.min_coverage = 70;
 end
 
 
@@ -69,8 +77,9 @@ for n = 1:size(OPT.min_coverage,2)
 
     %% make dirs for output
     mkdir([curdir filesep 'datafiles' filesep 'timewindow = ',num2str(OPT.timewindow)]);
-    mkdir([curdir filesep 'coverage' filesep 'timewindow = ' num2str(OPT.timewindow)]);
-    mkdir([curdir filesep 'results' filesep 'timewindow = ' num2str(OPT.timewindow) filesep 'ref=' num2str(OPT.min_coverage(n)) ])
+    mkdir([curdir filesep 'coverage'  filesep 'timewindow = ' num2str(OPT.timewindow)]);
+    mkdir([curdir filesep 'results'   filesep 'timewindow = ' num2str(OPT.timewindow) filesep 'ref=' num2str(OPT.min_coverage(n)) ])
+    
     batchvar = UCIT_findCoverage(OPT);
 
     %% find polygons directory
@@ -88,9 +97,9 @@ for n = 1:size(OPT.min_coverage,2)
                 end
 
                 %% load coverage
-                [OPT.inputyears, OPT.coverages] = textread(['coverage' filesep 'timewindow = ' num2str(OPT.timewindow) filesep num2str(fns(i,1).name(1:end-4)) '_coverage.dat'],'%f%f','headerlines',1);
+               [OPT.inputyears, OPT.coverages] = textread(['coverage' filesep 'timewindow = ' num2str(OPT.timewindow) filesep num2str(fns(i,1).name(1:end-4)) '_coverage.dat'],'%f%f','headerlines',1);
                 OPT.inputyears = OPT.inputyears(OPT.coverages*100 > OPT.min_coverage);
-                OPT.coverages = OPT.coverages(OPT.coverages*100 > OPT.min_coverage);
+                OPT.coverages  = OPT.coverages (OPT.coverages*100 > OPT.min_coverage);
 
                 if ~isempty(OPT.inputyears)
 
@@ -139,6 +148,7 @@ for n = 1:size(OPT.min_coverage,2)
         end
     end
 end
+ 
+warning(warningstate)
 
-
-
+%% EOF   

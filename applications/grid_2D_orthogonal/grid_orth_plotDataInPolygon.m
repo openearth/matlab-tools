@@ -52,7 +52,7 @@ end
 
 %% find unqiue date values
 %-----------------
-v = unique(Ztime(find(~isnan(Ztime)))); %#ok<*FNDSB>
+v = unique(Ztime(find(~isnan(Ztime))));
 if length(v)==1
     v=[v(1) - 1 v];
 end

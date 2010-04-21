@@ -13,7 +13,7 @@ function UCIT_plotDataInGoogleEarth
 %
 %
 %
-% See also: rws_getDataInPolygon, rws_getFixedMapOutlines, rws_createFixedMapsOnAxes, rws_identifyWhichMapsAreInPolygon, rws_getDataFromNetCDFGrid
+% See also: grid_2D_orthogonal, grid_2D_orthogonal
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
@@ -40,56 +40,75 @@ function UCIT_plotDataInGoogleEarth
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-if isempty(findobj('tag','gridOverview'))
-    UCIT_plotGridOverview;
+warningstate = warning;
+warning off
+
+datatype = UCIT_getInfoFromPopup('GridsDatatype');
+
+%% Select in grid overview plot
+
+if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
+    fh = UCIT_plotGridOverview;
 else
-    figure(findobj('tag','gridOverview'));
+    fh = figure(findobj('tag','gridOverview'));figure(fh);
 end
 
-if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'),datatype = 'jarkus';,end
-if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen'),datatype = 'vaklodingen';,end
-
+[d] = UCIT_getMetaData(2);
 
 %% get data from right netcdf files
-[X, Y, Z, Ztime] = rws_getDataInPolygon(...
-    'datatype'    , datatype, ...
-    'starttime'   ,        datenum(UCIT_getInfoFromPopup('GridsName')), ...
+
+[X, Y, Z, Ztime] = grid_orth_getDataInPolygon(...
+    'dataset'     , d.urls, ...
+    'tag'         , datatype, ...
+    'starttime'   ,        datenum(UCIT_getInfoFromPopup('GridsName'), 'yyyy-mm-dd'), ...
     'searchwindow', -30*str2double(UCIT_getInfoFromPopup('GridsInterval')), ...
     'datathinning',     str2double(UCIT_getInfoFromPopup('GridsSoundingID')),...
     'plotresult'  ,0);
 
 if ~isempty(findobj('tag','gridPlot'))
-    close(findobj('tag','gridPlot'))
+      close(findobj('tag','gridPlot'))
 end
 
 %% workaround
 Ztime(Z>1e10) = nan;
-Z(Z>1e10) = nan;
+Z    (Z>1e10) = nan;
 
-%% Make kml file
-filename = gettmpfilename(getenv('TEMP'),'grid','.kml');% plot results
+%% plot results
+if ~all(all(isnan(Z)))
 
-%% Thin out if needed
-matrix_size = round(size(X,1)*size(X,2));
- if matrix_size > 20000
-    thinning = max(1,round(matrix_size / 600000));
- else 
-    thinning = 1;
- end
- 
-%% Convert coordinates
+   %% Make kml file
+   filename = gettmpfilename(getenv('TEMP'),'grid','.kml');% plot results
+   
+   %% Thin out if needed
+   matrix_size = round(size(X,1)*size(X,2));
+    if matrix_size > 20000
+       thinning = max(1,round(matrix_size / 600000));
+    else 
+       thinning = 1;
+    end
+    
+   %% Convert coordinates
+   
+   if ~all(isnan(Z(:)))
+       [lat,lon] = convertCoordinates(X(1:thinning:end,1:thinning:end),Y(1:thinning:end,1:thinning:end),'CS1.name','Amersfoort / RD New','CS2.code',4326);
+       KMLsurf(lon,lat,Z(1:thinning:end,1:thinning:end),'fileName',[filename '.kml'],'zScaleFun',@(z)(z+50)*4,'colorMap',@(m)colormap_cpt('bathymetry_vaklodingen',m),'colorSteps',200,'cLim',[-50 25]);
+   else
+       warndlg('No data found for these search criteria');
+   end
+   
+   %% Run kml file in Google Earth
+   eval(['!', filename '.kml']);
 
-if ~all(isnan(Z(:)))
-    [lat,lon] = convertCoordinates(X(1:thinning:end,1:thinning:end),Y(1:thinning:end,1:thinning:end),'CS1.name','Amersfoort / RD New','CS2.code',4326);
-    KMLsurf(lon,lat,Z(1:thinning:end,1:thinning:end),'fileName',[filename '.kml'],'zScaleFun',@(z)(z+50)*4,'colorMap',@(m)colormap_cpt('bathymetry_vaklodingen',m),'colorSteps',200,'cLim',[-50 25]);
+   disp(['Saved Google Earth file as ',filename])
+
 else
-    warndlg('No data found for these search criteria');
+    % warndlg('No data found for these search criteria');
+    % grid_orth_getDataInPolygon already throws wanring
 end
 
-%% Run kml file in Google Earth
-eval(['!', filename '.kml']);
+warning(warningstate)
 
-disp(['Saved Google Earth file as ',filename])
+%% EOF
 
 
 

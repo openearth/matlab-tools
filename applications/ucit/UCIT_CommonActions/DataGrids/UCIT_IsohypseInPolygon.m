@@ -2,15 +2,16 @@ function UCIT_isohypseInPolygon(polygonname)
 %ISOHYPSEINPOLYGON   computes  isohypse for a given polygon and settings
 %
 %   syntax:
-%       UCIT_isoHypseInPolygon
+%       UCIT_isoHypseInPolygon(<polygonname>)
 %
 %   input:
-%       function has no input
+%       when polygonname is not specified, a polygon can be clicked.
 %
 %   output:
 %       function has no output
 %
-%   See also getCrossSection, UCIT_plotDataInPolygon
+%   See also UCIT_plotDataInPolygon, grid_2D_orthogonal
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
 %
@@ -35,62 +36,76 @@ function UCIT_isohypseInPolygon(polygonname)
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+warningstate = warning;
 warning off
+
+datatype = UCIT_getInfoFromPopup('GridsDatatype');
+
 %% Select in either grid plot or grid overview plot
-mapW = findobj('tag','gridPlot');
-if isempty(mapW)
-    if isempty(findobj('tag','gridOverview'))
-        UCIT_plotGridOverview;
-    else
-        fh = figure(findobj('tag','gridOverview'));figure(fh);
-    end
-else
-    fh = figure(findobj('tag','gridPlot')); figure(fh);
-end
 
-curdir=pwd;
-colors={'b',[0.2 0.6 0],'k','c','m','r', [0.6 0.4 0],[0.2 0.4 0 ], [0.5 0.5 0.5], [1 0.5 0.5],'y',  [0.25 0.5 0.5],[0.5 0 0.5] ,[1 0.5 0.25],[0.5 1 0.5],[0.2 0 1],[1 0.5 1],[0.5 0.5 0.75] };
+   mapW = findobj('tag','gridPlot');
+   if isempty(mapW)
+       if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
+           fh = UCIT_plotGridOverview;
+       else
+           fh = figure(findobj('tag','gridOverview'));figure(fh);
+       end
+   else
+       fh = figure(findobj('tag','gridPlot')); figure(fh);
+   end
+   
+   curdir=pwd;
+   colors={'b',[0.2 0.6 0],'k','c','m','r', [0.6 0.4 0],[0.2 0.4 0 ], [0.5 0.5 0.5], [1 0.5 0.5],'y',  [0.25 0.5 0.5],[0.5 0 0.5] ,[1 0.5 0.25],[0.5 1 0.5],[0.2 0 1],[1 0.5 1],[0.5 0.5 0.75] };
 
-% define which polygon to use
-if nargin == 0
-    figure(fh);
-    [xv,yv] = UCIT_WS_polydraw;
-    polygon=[xv yv];
-else
-    load(polygonname)
-end
+%% Specify polygon
 
-if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'),datatype = 'jarkus';,end
-if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen'),datatype = 'vaklodingen';,end
+   try delete(findobj(fh,'tag','isohypse_polygon'));  end
+
+   if nargin == 0
+       figure(fh);
+       [xv,yv] = polydraw;polygon=[xv' yv'];
+   else
+       load(polygonname)
+   end
+
+   lh   = line(xv,yv);
+   set(lh,'color','g','linewidth',2,'tag','isohypse_polygon');
 
 %% Get user input
-year1 = str2double(datestr(datenum(UCIT_getInfoFromPopup('GridsName')) - 30*(str2double(UCIT_getInfoFromPopup('GridsInterval'))),10));
-year2 = str2double(datestr(datenum(UCIT_getInfoFromPopup('GridsName')),10));
-years = [year1 : year2];
+
+   year1 = str2double(datestr(datenum(UCIT_getInfoFromPopup('GridsName')) ...
+     - 30*(str2double(                UCIT_getInfoFromPopup('GridsInterval'))),10));
+   year2 = str2double(datestr(datenum(UCIT_getInfoFromPopup('GridsName')),10));
+   years = [year1 : year2];
 
 %% Set up figure
-fn=findobj('tag', 'crosssectionView');
-if isempty(fn)
-    nameInfo = ['UCIT - Isohypse'];
-    fn=figure('tag','crosssectionView'); clf; ah=axes;
-    set(fh,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
-    UCIT_prepareFigureN(0, fn, 'UR', ah);
-end
+
+   fn=findobj('tag', 'crosssectionView');
+   if isempty(fn)
+       nameInfo = ['UCIT - Isohypse'];
+       fn=figure('tag','crosssectionView','visible','off'); clf; ah=axes;
+       set(fn,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
+       UCIT_prepareFigureN(0, fn, 'UR', ah);
+   end
 
 % Find data around selected crosssection for selected years
 
+[d] = UCIT_getMetaData(2);
+
 teller = 0; teller2 = 0;emptyyears = [];
 for xx = 1 : length(years)
-    clear d;
 
     figure(fh);
-    [X, Y, Z] = rws_getDataInPolygon(...
-        'datatype', datatype, ...
-        'starttime', datenum(years(xx),12,31), ...
-        'searchwindow', -365, ...
-        'datathinning', 1,...
-        'polygon', polygon,...
-        'plotresult',0);
+    [X, Y, Z] = grid_orth_getDataInPolygon(...
+    'dataset'     , d.urls, ...
+    'tag'         , datatype, ...
+    'starttime'   , datenum(years(xx),12,31), ...
+    'searchwindow', -365.25, ...% this call is inside a year-loop
+    'datathinning', 1,...       % line data do not need thinning
+    'plotresult'  , 0,...
+    'polygon'     , polygon,... % this functionality is also inside grid_orth_getDataInPolygon
+    'warning'     , 0);          % prevent zillions of warnings for each one year in this loop is empty
 
     try delete(findobj('tag','selectionpoly'));  end %#ok<*TRYNC> delete any remaining poly
     
@@ -99,7 +114,7 @@ for xx = 1 : length(years)
     for n = -50 : dh : 50
         teller3 = teller3 +1;
         height(teller3) = n;
-        area(teller3) = 20*20*sum(sum(Z < n));
+        area  (teller3) = 20*20*sum(sum(Z < n));
     end
 
     %% cut off uninteresting ends
@@ -113,6 +128,7 @@ for xx = 1 : length(years)
     if sum(sum(~isnan(Z))) > 0
         teller=teller+1;
         try
+            figure(fn);set(fn,'visible','on');
             plot(area,height,'color',colors{teller},'linewidth',2);hold on;
             legendtext{teller}=([num2str(years(xx))]);
         catch
@@ -125,26 +141,27 @@ for xx = 1 : length(years)
     end
 end
 
+%% add figure properties
 
-
-% add figure properties
 if exist('legendtext')
+    figure(fn);
     legend(legendtext);grid;
-    disp([]);
-    disp(['Years without data are: '])
-    title('Cumulative area')
+    title ('Cumulative area')
     xlabel('Area (m^2)');
     ylabel('Height (m)');
+    set   (gca,'fontsize',8);
 
+    disp  ([]);
+    disp  (['Years without data are: '])
     for yy=1:length(emptyyears)
         disp([emptyyears{yy}]);
     end
 
 else
-    close(fh)
     warning(['No data was found']);
+    close(fn)
 end
 
+warning(warningstate)
 
-
-
+%% EOF

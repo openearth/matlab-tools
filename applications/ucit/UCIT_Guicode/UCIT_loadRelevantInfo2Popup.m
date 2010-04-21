@@ -226,7 +226,7 @@ elseif type==2&&PopupNR==3
         set(findobj('tag','GridsInterval'), 'string', string, 'value', 2, 'enable', 'on', 'backgroundcolor', 'w');
         UCIT_loadRelevantInfo2Popup(2,4);
     else
-        set(findobj('tag','GridsInterval'), 'string', string, 'value', 12, 'enable', 'on', 'backgroundcolor', 'w');
+        set(findobj('tag','GridsInterval'), 'string', string, 'value',60, 'enable', 'on', 'backgroundcolor', 'w');
         UCIT_resetValuesOnPopup(2,0,0,0,1,0)
     end
     

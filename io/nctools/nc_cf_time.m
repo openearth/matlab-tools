@@ -127,7 +127,7 @@ function varargout = nc_cf_time(ncfile,varargin)
          warning('no time vectors present.')
          varargout = {[]};
       elseif length(index)==1
-         if     nargout==1
+         if     nargout==0 || nargout==1
             varargout = {D(1).datenum};
          elseif nargout==2
             varargout = {D(1).datenum,D(1).zone};

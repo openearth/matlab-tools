@@ -1,13 +1,15 @@
-function UCIT_plotGridOverview(datatype)
+function fh = UCIT_plotGridOverview(datatype)
 %PLOTGRIDOVERVIEW   this routine displays all grid outlines
 %
 % This routine displays all transect outlines.
 %
+%  <figure_handle> = UCIT_plotGridOverview(datatype)
+%
 % input:
-%    function has no input
+%    datatype = UCIT_getInfoFromPopup('GridsDatatype');
 %
 % output:
-%    function has no output
+%    <figure_handle>
 %
 % see also ucit_netcdf
 

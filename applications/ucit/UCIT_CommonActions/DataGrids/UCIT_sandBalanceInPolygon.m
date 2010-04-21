@@ -10,7 +10,7 @@ function UCIT_sandBalanceInPolygon
 %   output:
 %       function has no output
 %
-%   See also UCIT_findCoverage, UCIT_plotDataInPolygon, rws_getDataInPolygon
+%   See also UCIT_findCoverage, UCIT_plotDataInPolygon, grid_orth_getDataInPolygon
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
@@ -37,56 +37,73 @@ function UCIT_sandBalanceInPolygon
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+warningstate = warning;
 warning off
 
-%% Select in either grid plot or grid overview plot
-mapW = findobj('tag','gridPlot');
-if isempty(mapW)
-    if isempty(findobj('tag','gridOverview'))
-        UCIT_plotGridOverview;
-        fh = figure(findobj('tag','gridOverview'));
-    else
-        fh = figure(findobj('tag','gridOverview'));figure(fh);
-    end
-else
-    fh = figure(findobj('tag','gridPlot')); figure(fh);
-end
+datatype = UCIT_getInfoFromPopup('GridsDatatype');
 
-curdir = pwd;
+%% Select in either grid plot or grid overview plot
+
+   mapW = findobj('tag','gridPlot');
+   
+   if isempty(mapW)
+       if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
+           fh = UCIT_plotGridOverview;
+
+       else
+           fh = figure(findobj('tag','gridOverview'));figure(fh);
+       end
+   else
+       fh = figure(findobj('tag','gridPlot')); figure(fh);
+   end
+
+   curdir=pwd;
 
 %% make folder for results
-dname = uigetdir(curdir,'Select folder to store data');cd(dname);
-mkdir(['polygons']);
 
+   dname = uigetdir(curdir,'Select folder to store data');cd(dname);
+   mkdir(['polygons']);
 
-%% get polygon
-figure(fh);
-[xv,yv] = UCIT_WS_polydraw;
-polygon = [xv yv];
+%% Specify polygon
+
+   figure(fh);
+   
+   if nargin == 0
+       figure(fh);
+       [xv,yv] = polydraw;
+       polygon=[xv' yv'];
+   else
+       load(polygonname)
+   end
 
 %% get other input
-if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus'),datatype = 'jarkus';,end
-if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen'),datatype = 'vaklodingen';,end
 
-prompt    = {'Polygon name','Minimal coverage [%]','First year','Last year','Search window [months]'};
-dlg_title = 'Input for sand balance';
-num_lines = 1;
-def       = {'Polygon','10','2000','2004',UCIT_getInfoFromPopup('GridsInterval')};
-answer    = inputdlg(prompt,dlg_title,num_lines,def);
-
-save(['polygons\' answer{1},'.mat'],'polygon')
+   prompt    = {'Polygon name','Minimal coverage [%]','First year','Last year','Search window [months]'};
+   dlg_title = 'Input for sand balance';
+   num_lines = 1;
+   def       = {'Polygon','10','2000','2004',UCIT_getInfoFromPopup('GridsInterval')};
+   answer    = inputdlg(prompt,dlg_title,num_lines,def);
+   
+   save(['polygons\' answer{1},'.mat'],'polygon')
 
 %% arrange input in OPT structure
-OPT.datatype        = datatype;
-OPT.thinning        =  str2double(UCIT_getInfoFromPopup('GridsSoundingID'));
-OPT.timewindow      =  str2double(answer{5});
-OPT.inputyears      = [str2double(answer{3}) : str2double(answer{4})];
-OPT.min_coverage    =  str2double(answer{2});
+
+   OPT.datatype        = datatype;
+   OPT.thinning        =  str2double(UCIT_getInfoFromPopup('GridsSoundingID'));
+   OPT.timewindow      =  str2double(answer{5});
+   OPT.inputyears      = [str2double(answer{3}) : str2double(answer{4})];
+   OPT.min_coverage    =  str2double(answer{2});
 
 %% delete previous data
-delete(['results\timewindow = '   answer{5} '\ref='  answer{2} '\*.*'])
-delete(['coverage\timewindow = '  answer{5} '\*.*'])
-delete(['datafiles\timewindow = ' answer{5} '\*.*'])
+
+   delete(['results\timewindow = '   answer{5} '\ref='  answer{2} '\*.*'])
+   delete(['coverage\timewindow = '  answer{5} '\*.*'])
+   delete(['datafiles\timewindow = ' answer{5} '\*.*'])
 
 %% get sandbalance
-UCIT_getSandBalance(OPT)
+
+   UCIT_getSandBalance(OPT)
+   
+warning(warningstate)
+
+%% EOF   

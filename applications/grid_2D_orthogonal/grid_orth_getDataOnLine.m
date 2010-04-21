@@ -147,4 +147,4 @@ crossing_d    =[crossing_d1; crossing_d(ind); crossing_d2];
 
 
 %% find distance
- distance(crossing_x,crossing_y);
+distance(crossing_x,crossing_y); % issue with identically named funtion in mapping tlbox

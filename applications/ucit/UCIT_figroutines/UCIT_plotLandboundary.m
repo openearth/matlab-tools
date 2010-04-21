@@ -41,7 +41,7 @@ Y	=  nc_varget(filename,'y');
 if nargin < 2 
     fillpolygon([X,Y],'b',[1 1 0.6],100,-100); hold on;
     set(gca,'color',[0.4 0.6 1])
-elseif nargin == 2 &&  strcmp(color,'none')
+elseif nargin == 2 && strcmp(color,'none')
     plot(X,Y,'b','linewidth',1);hold on;
 elseif nargin == 2 
     fillpolygon([X,Y],'k',color,100,-100); hold on;

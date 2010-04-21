@@ -44,19 +44,23 @@ function [X,Y,Z,Ztemps,in]=UCIT_plotDataInPolygon
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-   datatype = UCIT_getInfoFromPopup('GridsDatatype');
+warningstate = warning;
+warning off
+
+datatype = UCIT_getInfoFromPopup('GridsDatatype');
+
+%% Select in grid overview plot
 
 if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
-    UCIT_plotGridOverview;
+    fh = UCIT_plotGridOverview;
 else
-    figure(findobj('tag','gridOverview'));
+    fh = figure(findobj('tag','gridOverview'));figure(fh);
 end
 
-%tic
 [d] = UCIT_getMetaData(2);
-%toc
 
 %% get data from right netcdf files
+
 [X, Y, Z, Ztime] = grid_orth_getDataInPolygon(...
     'dataset'     , d.urls, ...
     'tag'         , datatype, ...
@@ -110,9 +114,6 @@ else
     % grid_orth_getDataInPolygon already throws wanring
 end
 
+warning(warningstate)
 
-
-
-
-
-
+%% EOF

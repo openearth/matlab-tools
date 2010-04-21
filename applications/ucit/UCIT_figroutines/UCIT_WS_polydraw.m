@@ -1,4 +1,5 @@
 function [xv,yv] = UCIT_WS_polydraw
+warning('UCIT_WS_polydraw deprecated in favour of poly_draw')
 %UCIT_WS_POLYDRAW  gets coordinates of used defined polygon
 %
 %
@@ -42,8 +43,8 @@ hold on; hp = plot(uo,vo,'+g');
 
 while lfrt == 1
     [u,v,lfrt] = ginput(1);
-    uo=[uo;u]; 
-    vo=[vo;v]; button=[button;lfrt];      
+     uo = [uo;u]; 
+     vo = [vo;v]; button=[button;lfrt];      
     delete(hp);
     hp = plot(uo,vo,'color','g','linewidth',2);
 end

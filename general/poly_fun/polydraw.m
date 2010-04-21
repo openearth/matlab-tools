@@ -49,6 +49,7 @@ function varargout=polydraw(varargin)
    true = 1;
    x    = [];
    y    = [];
+   n    = 0;
 
 %% draw
 %-----------------------
@@ -63,20 +64,26 @@ function varargout=polydraw(varargin)
       else
         x = [x x0];
         y = [y y0];
-        if first
+        if n==0
+           pp0   = plot(x,y,'g+');
+        elseif n==1
            pp    = plot(x,y,varargin{:});
-           first = 0;
         else
            set(pp,'xdata',x);
            set(pp,'ydata',y);
         end
       end
       
+      n = n + 1;
+      
    end   
    
    if ~holdstate
       hold off
-   end   
+   end
+   
+   delete(pp0)
+   delete(pp)
 
 %% Output
 %-----------------------

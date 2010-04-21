@@ -13,7 +13,7 @@ function UCIT_plotDifferenceMap(datatype1,year1,targetmonth1,datatype2,year2,tar
 %
 %
 %
-%   See also rws_getDataInPolygon
+%   See also grid_orth_getDataInPolygon
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
@@ -40,22 +40,23 @@ function UCIT_plotDifferenceMap(datatype1,year1,targetmonth1,datatype2,year2,tar
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-if isempty(findobj('tag','gridOverview'))
-    UCIT_plotGridOverview;
+warningstate = warning;
+warning off
+
+datatype = UCIT_getInfoFromPopup('GridsDatatype');
+
+if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
+    fh = UCIT_plotGridOverview;
 else
-    figure(findobj('tag','gridOverview'));
+    fh = figure(findobj('tag','gridOverview'));figure(fh);
 end
 
 tic
 [d] = UCIT_getMetaData(2);
 toc
 
-if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Jarkus')     ,datatype = 'jarkus';,end
-if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'Vaklodingen'),datatype = 'vaklodingen';,end
-
 %% draw polygon
-[xv,yv] = UCIT_WS_polydraw;
-polygon = [xv yv];
+[xv,yv] = polydraw;polygon=[xv' yv'];
 
 %% select years
 years = [1926:str2double(datestr(now,10))];
@@ -64,8 +65,8 @@ for i = 1:length(years)
     str{i} = num2str(years(i));
 end
 v = listdlg('PromptString','Select two years:',...
-    'SelectionMode','multiple',...
-    'ListString',str);
+           'SelectionMode','multiple',...
+              'ListString',str);
 if length(v) > 2
     errordlg('Please select only two years');
 end
@@ -73,22 +74,24 @@ year1 = years(v(1));
 year2 = years(v(2));
 
 %% get data of first year
-[d.X, d.Y, d1.Z, d1.Ztime] = rws_getDataInPolygon(...
-    'datatype'    , datatype, ...
+[d.X, d.Y, d1.Z, d1.Ztime] = grid_orth_getDataInPolygon(...
+    'dataset'     , d.urls, ...
+    'tag'         , datatype, ...
     'starttime'   , datenum([year1 01 01]), ...
     'searchwindow', -365, ...
-    'datathinning',     1,...
-    'plotresult'  ,0,...
-    'polygon'     ,polygon);
+    'datathinning', 1,...
+    'plotresult'  , 0,...
+    'polygon'     , polygon);  % this functionality is also inside grid_orth_getDataInPolygon
 
 %% get data of second year
-[d.X, d.Y, d2.Z, d1.Ztime] = rws_getDataInPolygon(...
-    'datatype'    , datatype, ...
+[d.X, d.Y, d2.Z, d1.Ztime] = grid_orth_getDataInPolygon(...
+    'dataset'     , d.urls, ...
+    'tag'         , datatype, ...
     'starttime'   , datenum([year2 01 01]), ...
     'searchwindow', -365, ...
-    'datathinning',     1,...
-    'plotresult'  ,0,...
-    'polygon'     ,polygon);
+    'datathinning', 1,...
+    'plotresult'  , 0,...
+    'polygon'     , polygon);  % this functionality is also inside grid_orth_getDataInPolygon
 
 %% Subtract years
 dd.Z = -(d1.Z - d2.Z);
@@ -98,14 +101,20 @@ fh = figure('tag','diffplot');clf;
 ah = axes;
 [fh,ah] = UCIT_prepareFigureN(0, fh, 'UR', ah);
 UCIT_plotlandBoundary(d.ldb,'none'); % plot land boundary
-surf(d.X,d.Y,dd.Z);shading interp;view(2);hold on;
-cm = colormap(['erosed']); caxis([-3 3]);
+surf   (d.X,d.Y,dd.Z);shading interp;view(2);hold on;
+cm = colormap(['erosed']); 
+caxis([-3 3]);
 c  = colorbar('vert');
-axis equal;axis tight;box on
-set(fh,'Units','normalized');
-set(fh,'Position',UCIT_getPlotPosition('UR',1))
-set(fh,'Name','UCIT - Difference Map','NumberTitle','Off','Units','characters','visible','on');
+axis   equal;
+axis   tight;
+box    on
+set   (fh,'Units','normalized');
+set   (fh,'Position',UCIT_getPlotPosition('UR',1))
+set   (fh,'Name','UCIT - Difference Map','NumberTitle','Off','Units','characters','visible','on');
 title([num2str(year1) '-' num2str(year2)]);
-set(gca,'Xlim',[d.X(1,1) d.X(1,end)]);
-set(gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
+set   (gca,'Xlim',[d.X(1,1) d.X(1,end)]);
+set   (gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
+ 
+warning(warningstate)
 
+%% EOF   

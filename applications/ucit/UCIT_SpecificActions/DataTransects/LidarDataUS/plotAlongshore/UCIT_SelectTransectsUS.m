@@ -50,8 +50,7 @@ end
 
 if nargin==0
     figure(mapWhandle)
-    [xv,yv] = UCIT_WS_polydraw;
-    polygon=[xv yv];
+   [xv,yv] = polydraw;polygon=[xv' yv'];
     test = d.contour;
     id1  = inpolygon(test(:,1),test(:,3),polygon(:,1),polygon(:,2));
     id2  = inpolygon(test(:,2),test(:,4),polygon(:,1),polygon(:,2));

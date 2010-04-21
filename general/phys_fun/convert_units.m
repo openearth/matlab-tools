@@ -33,6 +33,9 @@ function Factor=convert_units(InUnits,OutUnits);
 % 2008 jan 23: removed refs to constants [Gerben J. de Boer]
 % 2008 apr 14: added plural versions [Gerben J. de Boer]
 
+    InUnits = strrep( InUnits,'%','0.01');
+   OutUnits = strrep(OutUnits,'%','0.01');
+
    %% Definitions  
    % ---------------------
    RAD             = 180./pi;
