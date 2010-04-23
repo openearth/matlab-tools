@@ -22,7 +22,8 @@ function ZI = griddata_nearest(X,Y,Z,XI,YI,varargin)
 %    i) GRIDDATA leads to gives DELAUNAY triangulation errors.
 %   ii) laaarge X and Y matrixes lead to MEMORY issues in GRIDDATA
 %
-%See also: GRIDDATA, INTERP2, BIN2
+%   See also: GRIDDATA, GRIDDATA_NEAREST, GRIDDATA_AVERAGE, GRIDDATE_REMAP,
+%   INTERP2, BIN2 
 
 %% Copyright notice
 %   --------------------------------------------------------------------

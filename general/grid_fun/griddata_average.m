@@ -39,7 +39,8 @@ function ZI = griddata_average(X,Y,Z,XI,YI)
 %     title griddata
 %     hold off
 %
-%   See also: BIN2, GRIDDATA
+%   See also: GRIDDATA, GRIDDATA_NEAREST, GRIDDATA_AVERAGE, GRIDDATE_REMAP,
+%   INTERP2, BIN2 
 
 %% Copyright notice
 %   --------------------------------------------------------------------

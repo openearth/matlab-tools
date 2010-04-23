@@ -1,5 +1,5 @@
-function testresult = griddata_average_test()
-% GRIDDATA_AVERAGE_TEST  One line description goes here
+function testresult = griddata_remap_test()
+% GRIDDATA_REMAP_TEST  One line description goes here
 %  
 % More detailed description of the test goes here.
 %
@@ -36,7 +36,7 @@ function testresult = griddata_average_test()
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 26 Mar 2010
+% Created: 21 Apr 2010
 % Created with Matlab version: 7.10.0.499 (R2010a)
 
 % $Id$
@@ -51,53 +51,17 @@ function testresult = griddata_average_test()
 
 %% $RunCode
 % Write test code here
-try
-    close gcf
-    figure
-    x = (randn(200)-.5).*2;
-    y = (rand(200)-.5).*6;
-    z = peaks(x,y);
-    x = x(1:10,:);
-    y = y(1:10,:);
-    z = z(1:10,:);
-    nn = 30;
-    [XI,YI] = meshgrid(linspace(-4,4,nn),linspace(-4,4,nn*2));
-    ZI = griddata_average(x,y,z,XI,YI);
-    subplot(2,1,1)
-    hold on
-    plot3(x,y,z,'g.')
-    line(XI,YI,ZI)
-    line(XI',YI',ZI')
-    plot3(XI,YI,ZI,'bo')
-    title 'griddata average'
-    hold off
-    subplot(2,1,2)
-    ZI = griddata(x,y,z,XI,YI); %#ok<FPARK>
-        hold on
-    plot3(x,y,z,'g.')
-    line(XI,YI,ZI)
-    line(XI',YI',ZI')
-    plot3(XI,YI,ZI,'bo')
-    title griddata
-    hold off
-    testresult = true;
-catch
-    testresult = false;    
-end
 
-try
-    [XI,YI]     = meshgrid(1:100,201:400);
-    ZI          = repmat(peaks(100),2,1);
-    ZI(4:6,2:7) = nan;
-    x           = XI(:);
-    y           = YI(:);
-    z           = ZI(:);
-    ZI          = griddata_average(x,y,z,XI,YI);
+[XI,YI]     = meshgrid(1:100,201:400);
+ZI          = repmat(peaks(100),2,1);
+ZI(4:6,2:7) = nan;
+x           = XI(:);
+y           = YI(:);
+z           = ZI(:);
+ZI          = griddata_remap(x,y,z,XI,YI);
 
-    testresult  = all(ZI(~isnan(ZI)) == z(~isnan(z)));
-catch
-    testresult = false;    
-end
+testresult  = all(ZI(~isnan(ZI)) == z(~isnan(z)));
+
 
 %% $PublishResult
 % Publishable code that describes the test.
