@@ -1,12 +1,8 @@
 clc
+clear
 EPSG = load('EPSG');
 % urls = vaklodingen_url;
-
-% for kk = 1:length(urls)
-%
-%     url = urls{kk}
-
-% end
+% 
 % url = 'http://opendap.deltares.nl/opendap/hyrax/rijkswaterstaat/vaklodingen/vaklodingenKB130_1312.nc';
 % 
 % x = nc_varget(url,'x');
@@ -24,17 +20,14 @@ load testdata
 nn = [100:1:300];
 mm = [100:1:300];
 [lon,lat] = convertCoordinates(X(nn,mm),Y(nn,mm),EPSG,'CS1.code',28992,'CS2.code',4326);
-TRI = delaunay(X(nn,mm),Y(nn,mm));
 profile on
 
 
-for time = 1:1:length(times)-1;
+for time = 1%:1:length(times)-1;
     z = squeeze(Z(time,nn,mm));
     
     if numel(z(~isnan(z)))>30
-        tri = TRI;
-        tri(any(isnan(z(tri)),2),:) = [];
-        
+       
         levels=[-52:4:-12 -11:2:-3 -2.5 -2:0.25:2 2.5 3:2:11 12:4:30]+0.001;
         
         [dummy,nc_name] = fileparts(url);
@@ -42,19 +35,24 @@ for time = 1:1:length(times)-1;
         plot(levels,'.')
         plot(1)
         colormap(colormap_cpt('bathymetry_vaklodingen',250))
-        clim([-15 25])
+        clim([-12.5 25])
+        
+        
+        
+        z(50:70,50:70) = nan;
+        
         
 %         KMLtricontourf3(tri,lat,lon,z,'levels',levels,'fileName',KML_testdir(['3D_' nc_name '_' datestr(times(time),'yyyy') '.kml']),...
 %             'zScaleFun',@(z) (z+15)*4,'staggered',0,'debug',0,'colorbar',false,...
 %             'colorMap',@(m)colormap_cpt('bathymetry_vaklodingen',m),'colorSteps',250,'cLim',[-50 25],'timeIn',times(time))
-        KMLtricontourf(tri,lat,lon,z,'levels',levels,'zScaleFun',@(z) (z+15)*4,...
-            'fileName',KML_testdir(['2D_' nc_name '_' datestr(times(time),'yyyy') '.kml']),...
-            'staggered',0,'debug',0,'colorbar',false,'colorSteps',250,...
-            'colorMap',@(m)colormap_cpt('bathymetry_vaklodingen',m),...
-            'cLim',[-50 25],'timeIn',times(time),'timeOut',times(time+1))
-        KMLtricontourf3(tri,lat,lon,z,'levels',levels,'zScaleFun',@(z) (z+15)*4,...
+%         KMLcontourf(lat,lon,z,'levels',levels,'zScaleFun',@(z) (z+15)*4,...
+%             'fileName',KML_testdir(['2D_' nc_name '_' datestr(times(time),'yyyy') '.kml']),...
+%             'staggered',0,'debug',0,'colorbar',false,'colorSteps',250,...
+%             'colorMap',@(m)colormap_cpt('bathymetry_vaklodingen',m),...
+%             'cLim',[-50 25],'timeIn',times(time),'timeOut',times(time+1))
+        KMLcontourf3(lat,lon,z,'levels',levels,'zScaleFun',@(z) (z+15)*4,...
             'fileName',KML_testdir(['3D_' nc_name '_' datestr(times(time),'yyyy') '.kml']),...
-            'staggered',0,'debug',0,'colorbar',false,'colorSteps',250,...
+            'staggered',1,'debug',0,'colorbar',false,'colorSteps',250,...
             'colorMap',@(m)colormap_cpt('bathymetry_vaklodingen',m),...
             'cLim',[-50 25],'timeIn',times(time),'timeOut',times(time+1))
     end

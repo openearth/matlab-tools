@@ -58,7 +58,7 @@ function [latC,lonC,zC,contour] = KML_filledContoursProcess(OPT,E,C)
 % $Keywords: $
 
 %% pre allocate, find dimensions
-OPT.verySmall = eps(30*max([lat(:);lon(:)]));
+
 max_size = 1;
 jj = 1;ii = 0;
 while jj<size(C,2)

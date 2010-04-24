@@ -58,7 +58,7 @@ disp(['... running test:',mfilename])
     z = [peaks(200); peaks(200)]+9;  
 %     z(3:4,3:4) = nan; % test a hole 
     KMLcontourf(x/10,y/10,z*1000,'levels',100,'fileName',KML_testdir('KMLcontourf - 1.kml'),...
-        'colorbartitle','KMLcontourf - 1','is3D',false,'staggered',false,'extrude',true);
+        'colorbartitle','KMLcontourf - 1','is3D',false,'staggered',true,'extrude',true);
     
 %     %test 2
 %     [x,y] = meshgrid(1.1:.5:100.1,201.2:.5:300.2);

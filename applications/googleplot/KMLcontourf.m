@@ -1,16 +1,26 @@
-function varargin = KMLcontourf(lat,lon,z,varargin)
-% KMLCONTOURF Just like contourf (BETA!!!, still sawtooh edges )
+function varargout = KMLcontourf(lat,lon,z,varargin)
+% KMLCONTOURF Just like contourf (BETA!!!)
+%
+% The main function used by KMLtricontourf, KMLtricontourf3, KMLcontourf3.
+% KMLcontourf can also be used by itself. Function is still very BETA.
+% Please discuss suggestions for improvements wit me (Thijs), or just put
+% them on the TODO list. 
 %
 %    KMLcontourf(lat,lon,z,<keyword,value>)
 % 
-% KMLcontourf triangulates a curvi-linear grid (mesh) and then
-% calls KMLtricontourf on all active cells.
-%
 % For the <keyword,value> pairs and their defaults call
 %
 %    OPT = KMLcontourf()
 %
-% See also: googlePlot, KMLtricontourf, contourf
+% TODO: Still needs lots of testing. Known problems:
+%       * big holes in grids are not properly supported, can cause the
+%         function to hang
+%       * polygons for holes are drawn
+%       * tidey up the test functions
+%
+% See also: googlePlot, contour, contourf, contour3,
+%           KMLtricontour, KMLtricontour3, KMLcontour, KMLcontour3
+%           KMLtricontourf, KMLtricontourf3, KMLcontourf3
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -46,8 +56,9 @@ function varargin = KMLcontourf(lat,lon,z,varargin)
 % $Keywords: $
 
 %% process varargin
-% see if height is defined 
-
+   % get colorbar options first
+   OPT                = KMLcolorbar();
+   % rest of the options
    OPT.levels         = 10;
    OPT.fileName       = [];
    OPT.kmlName        = [];
@@ -73,8 +84,16 @@ function varargin = KMLcontourf(lat,lon,z,varargin)
    OPT.extrude        = false;
    OPT.staggered      = true;
    OPT.debug          = false;
-   OPT.verySmall      = eps(30*max([lat(:);lon(:)]));
-   OPT.triangularGrid = false;
+   OPT.verySmall      = [];
+   
+   % see if a triangluation has been given
+   tri = [];
+   if ~isempty(varargin)
+       if ~ischar(varargin{1})&&~isstruct(varargin{1});
+           tri = varargin{1};
+           varargin(1) = [];
+       end
+   end
    
    if nargin==0
       varargout = {OPT};
@@ -87,8 +106,14 @@ OPT = setProperty(OPT, varargin{:});
 
 %% input check
 
-% vectorize input
+if isempty(OPT.verySmall); OPT.verySmall = eps(30*max([lat(:);lon(:)])); end
 
+% vectorize input for triangluar grids
+if ~isempty(tri)
+    lat = lat(:);
+    lon = lon(:);
+    z   =   z(:);
+end
 
 % check for nan values
 if any(isnan(lat+lon))
@@ -106,19 +131,6 @@ if isempty(OPT.cLim)
     OPT.cLim = ([min(z(~isnan(z(:)))) max(z(~isnan(z(:))))]);
 end
 
-%% get filename, gui for filename, if not set yet
-
-if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
-    OPT.fileName = fullfile(filePath,fileName);
-end
-
-%% set kmlName if it is not set yet
-
-if isempty(OPT.kmlName)
-    [dummy, OPT.kmlName] = fileparts(OPT.fileName); %#ok<ASGLU>
-end
-
 %% find contours and edges
 if numel(OPT.levels)==1&&OPT.levels==fix(OPT.levels)&&OPT.levels>=0
     OPT.levels = linspace(min(z(:)),max(z(:)),OPT.levels+2);
@@ -127,10 +139,9 @@ end
 
 if isempty(OPT.colorSteps), OPT.colorSteps = length(OPT.levels)+1; end
 
-
-if OPT.triangularGrid
-    C = tricontourc(lat(1,:),lon(:,1),z,OPT.levels);
-    E = edges_tri_grid(lat,lon,z);
+if ~isempty(tri)
+    C = tricontourc(tri,lat,lon,z,OPT.levels);
+    E = edges_tri_grid(tri,lat,lon,z);
 else
     C = contours(lat,lon,z,OPT.levels);
     E = edges_structured_grid(lat,lon,z);
@@ -138,6 +149,7 @@ end
 
 [latC,lonC,zC,contour] = KML_filledContoursProcess(OPT,E,C);
 
+%% make kml file
 
-
+KML_filledContoursWriteKML(OPT,lat,lon,z,latC,lonC,zC,contour);
 

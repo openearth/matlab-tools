@@ -1,4 +1,4 @@
-function [OPT, Set, Default] = KMLtricontourf3(tri,lat,lon,z,varargin)
+function varargout = KMLtricontourf3(tri,lat,lon,z,varargin)
 %KMLTRICONTOURF3  Wrapper for KMLtricontourf, to make it 3D
 %
 %   See also 
@@ -43,17 +43,17 @@ function [OPT, Set, Default] = KMLtricontourf3(tri,lat,lon,z,varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
 %% process varargin
 
-OPT               = KMLtricontourf();
+OPT               = KMLcontourf();
 OPT.is3D          = true;
 OPT.extrude       = true;
 OPT.staggered     = true;
 if nargin==0
+    varargout = {OPT};
   return
 end
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
-KMLtricontourf(tri,lat,lon,z,OPT);
+KMLcontourf(lat,lon,z,tri,OPT);

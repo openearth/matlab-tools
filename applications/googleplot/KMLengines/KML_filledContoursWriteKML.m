@@ -57,9 +57,22 @@ function KML_filledContoursWriteKML(OPT,lat,lon,z,latC,lonC,zC,contour)
 % $HeadURL$
 % $Keywords: $
 
+%% get filename, gui for filename, if not set yet
+
+if isempty(OPT.fileName)
+    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
+    OPT.fileName = fullfile(filePath,fileName);
+end
+
+%% set kmlName if it is not set yet
+
+if isempty(OPT.kmlName)
+    [dummy, OPT.kmlName] = fileparts(OPT.fileName); %#ok<ASGLU>
+end
+
 %% make all contour lines counterclockwise
 for ii=1:size(latC,2)
-    if ~polyIsClockwise(lonC(:,ii),latC(:,ii))
+    if poly_isclockwise(lonC(~isnan(lonC(:,ii)),ii),latC(~isnan(lonC(:,ii)),ii))
         endOfContour = find(~isnan(latC(:,ii)),1,'last');
         latC(1:endOfContour,ii) = latC(endOfContour:-1:1,ii);
         lonC(1:endOfContour,ii) = lonC(endOfContour:-1:1,ii);
@@ -129,7 +142,7 @@ contour.colorLevel = nan(size(contour.level));
 % set level to the minimum level of inner and outer polygon
 contour.min = nan(size(1,contour.n));
 contour.max = nan(size(1,contour.n));
-c           = nan(size(1,contour.n));
+z1          = nan(size(1,contour.n));
 for ii = 1:contour.n
    contour.min(ii) = min(min(zC(:,[D(ii).outerPoly D(ii).innerPoly])));
    contour.max(ii) = max(max(zC(:,[D(ii).outerPoly D(ii).innerPoly])));
@@ -139,7 +152,7 @@ OPT.levels = [(2*OPT.levels(1) - OPT.levels(2)) OPT.levels];
 
 for ii = 1:contour.n
     if contour.min(ii)~=contour.max(ii)
-        c(ii) = find(OPT.levels<contour.max(ii),1,'last');
+        z1(ii) = find(OPT.levels<contour.max(ii),1,'last');
     else
         kk = 0;
  
@@ -154,13 +167,13 @@ for ii = 1:contour.n
         else
             kk = -1;
         end
-        c(ii) = find(OPT.levels>=contour.max(ii),1,'first')+kk;
+        z1(ii) = find(OPT.levels>=contour.max(ii),1,'first')+kk;
     end
 end
 OPT.colorLevels = linspace(OPT.cLim(1),OPT.cLim(2),OPT.colorSteps);
 [dummy,ind] = min(abs(repmat(OPT.colorLevels,length(OPT.levels),1) - repmat(OPT.levels',1,length(OPT.colorLevels))),[],2); %#ok<ASGLU>
 
-c = ind(c);
+c = ind(z1);
 
 
 %% start KML
@@ -173,7 +186,7 @@ OPT_header = struct(...
 output = KML_header(OPT_header);
 
 if OPT.colorbar
-    clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorTitle',OPT.colorbartitle);
+    clrbarstring = KMLcolorbar(OPT);
     output = [output clrbarstring];
 end
 
@@ -221,17 +234,16 @@ for ii=1:mm
     y1 =  lonC(:,[D(ii).outerPoly D(ii).innerPoly]);
     if OPT.is3D
         if OPT.staggered
-            z1 = height(D(ii).outerPoly);
-            z1 = repmat(z1,size(x1,1),size(x1,2));
-            z1 = OPT.zScaleFun(z1);
+            z2 = repmat(OPT.levels(z1(ii)),size(x1,1),size(x1,2));
+            z2 = OPT.zScaleFun(z2);
         else
-            z1 = zC(:,[D(ii).outerPoly D(ii).innerPoly]);
-            z1 = OPT.zScaleFun(z1);
+            z2 = zC(:,[D(ii).outerPoly D(ii).innerPoly]);
+            z2 = OPT.zScaleFun(z2);
         end
     else
-        z1 = 'clampToGround';
+        z2 = 'clampToGround';
     end
-    newOutput = KML_poly(x1,y1,z1,OPT_poly);
+    newOutput = KML_poly(x1,y1,z2,OPT_poly);
     output(kk:kk+length(newOutput)-1) = newOutput;
     kk = kk+length(newOutput);
     if kk>1e5

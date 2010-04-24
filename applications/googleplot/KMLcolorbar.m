@@ -68,7 +68,7 @@ OPT.CBcolorTick          = [];             % Ticks on colorbar. If isempty, noth
 OPT.CBcolorTickLabel     = '';             % Is isempty, nothing is changed
 OPT.CBtitlergb           = [1 1 1];        % black
 OPT.CBframergb           = [1 1 1];        % white
-OPT.CBalpha              = 1;              % transparency
+OPT.CBalpha              = 0.8;            % transparency
 
 
 if nargin==0

@@ -67,7 +67,8 @@ function testresult = test1()
 
 [x,y] = meshgrid(11:20,21:30);
 z = peaks(10);
-tri = delaunay(x,y);
+tri = triquat(x,y);
+tri = tri.tri;
 tri(any((x(tri)<15&x(tri)>13.5),2),:)=[];
 x = x+sin(y)/10;
 % nn=[-5 0 2:0.1:3];

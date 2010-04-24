@@ -51,7 +51,9 @@ function varargout = KMLsurf(lat,lon,z,varargin)
 % $Keywords: $
 
 %% process <keyword,value>
-
+   % get colorbar options first
+   OPT                    = KMLcolorbar();
+   % rest of the options
    OPT.fileName           = '';
    OPT.kmlName            = '';
    OPT.lineWidth          = 1;
@@ -70,8 +72,6 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    OPT.timeIn             = [];
    OPT.timeOut            = [];
    OPT.colorbar           = 1;
-   OPT.colorbarlocation   = {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
-   OPT.colorbartitle      = '';
    
    if nargin==0
       varargout = {OPT};
@@ -167,7 +167,7 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    output = KML_header(OPT_header);
 
    if OPT.colorbar
-      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorTitle',OPT.colorbartitle,'colorbarlocation',OPT.colorbarlocation);
+      clrbarstring = KMLcolorbar(OPT);
       output = [output clrbarstring];
    end
    

@@ -1,22 +1,7 @@
-function isClockwise = polyIsClockwise(x,y)
-%POLYISCLOCKWISE  Determines if polygon is clockwise.
+function varargout = KMLcontourf3(lat,lon,z,varargin)
+%KMLTRICONTOURF3  Wrapper for KMLtricontourf, to make it 3D
 %
-%   Is faster than poly_isclockwise, but can only handle non self
-%   intersecting polygons. 
-%
-%   Syntax:
-%   varargout = polyIsClockwise(varargin)
-%
-%   Input:
-%   varargin  =
-%
-%   Output:
-%   varargout =
-%
-%   Example
-%   polyIsClockwise
-%
-%   See also: poly_isclockwise 
+%   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -48,7 +33,7 @@ function isClockwise = polyIsClockwise(x,y)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 25 Feb 2010
+% Created: 05 Mar 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -59,36 +44,17 @@ function isClockwise = polyIsClockwise(x,y)
 % $Keywords: $
 
 %%
-x = x(:);
-y = y(:);
-%ignore nan values
-nans = isnan(x+y);
-x(nans) = [];
-y(nans) = [];
-%find left most lowest coordinate
+%% process varargin
 
-if x(end)==x(1)&&y(end)==y(1)
-    x(end) = [];
-    y(end) = [];
-end
-ind1 = find(y==min(y));
-[dummy,ind2] = min(x(ind1));
-ind0 = ind1(ind2);
-
-
-ind_down = ind0-1;
-if ind_down==0
-    ind_down=numel(x);
-end
-ind_up = ind0+1;
-if ind_up>numel(x)
-    ind_up=1;
+OPT               = KMLcontourf();
+OPT.is3D          = true;
+OPT.extrude       = true;
+OPT.staggered     = true;
+if nargin==0
+    varargout = {OPT};
+    return
 end
 
-dx_up  = x(ind_up)    - x(ind0);
-dy_up  = y(ind_up)    - y(ind0);
-dx_down = x(ind_down) - x(ind0);
-dy_down = y(ind_down) - y(ind0);
+[OPT, Set, Default] = setProperty(OPT, varargin);
 
-isClockwise = (dx_up/dy_up)>(dx_down/dy_down);
-
+KMLcontourf(lat,lon,z,OPT);
