@@ -49,16 +49,16 @@ disp(['... running test:',mfilename])
 % Publishable code that describes the test.
 
 h.fig = figure;
-OPT.colormap = hsv;
+
 try;close(h.fig);end
 
 %% $RunCode
 try
-  KMLcolorbar('fileName',KML_testdir('KMLcolorbar_test_halo'   ),'colorMap',OPT.colormap,'clim',[-2 2],'halo',0,...
-     'colorTitle','ABCDEFGHIJKLMNOPQRSTUVWYZ abcdefghijklmnopqrstuvwyz 0123456789 ~!@#$% &*() +','titlergb',[0 0 0]);
-  KMLcolorbar('fileName',KML_testdir('KMLcolorbar_test_vanilla'),'colorMap',OPT.colormap,'clim',[-2 2],'halo',1,...
-     'colorbarlocation',{'W','N','S','E'},...
-     'colorTitle','ABCDEFGHIJKLMNOPQRSTUVWYZ abcdefghijklmnopqrstuvwyz 0123456789 ~!@#$% &*() +');
+  KMLcolorbar('CBfileName',KML_testdir('KMLcolorbar_test_1'   ),'CBcolorMap',@(m) jet(m),'CBcolorSteps',4,'CBcLim',[-2 2],...
+     'CBcolorTitle',{'ABCDEFGHIJKLMNOPQRSTUVWYZ','abcdefghijklmnopqrstuvwyz'},'CBtitlergb',[0 0 0]);
+  KMLcolorbar('CBfileName',KML_testdir('KMLcolorbar_test_2'),'CBcolorMap',hsv,'CBcLim',[-2 2],...
+     'CBcolorbarlocation',{'NNW','N','NNE','SSE','S','SSW','ENE','E','ESE','WSW','W','WNW'},...
+     'CBcolorTitle','0123456789 ~!@#$% &*() +');
    testresult = true;
 catch
    testresult = false;

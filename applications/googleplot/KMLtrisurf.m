@@ -46,6 +46,10 @@ function [OPT, Set, Default] = KMLtrisurf(tri,lat,lon,z,varargin)
 % $Keywords: $
 
 %% process varargin
+
+   % deal with colorbar options first
+   OPT                    = KMLcolorbar();
+   % rest of the options
    OPT.fileName           = '';
    OPT.kmlName            = '';
    OPT.lineWidth          = 1;
@@ -64,8 +68,6 @@ function [OPT, Set, Default] = KMLtrisurf(tri,lat,lon,z,varargin)
    OPT.timeIn             = [];
    OPT.timeOut            = [];
    OPT.colorbar           = 1;
-   OPT.colorbarlocation   = {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
-   OPT.colorbartitle      = '';
 
 if nargin==0
   return
@@ -132,7 +134,7 @@ end
    output = KML_header(OPT_header);
    
    if OPT.colorbar
-      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorTitle',OPT.colorbartitle,'colorbarlocation',OPT.colorbarlocation);
+      clrbarstring = KMLcolorbar(OPT);
       output = [output clrbarstring];
    end
 

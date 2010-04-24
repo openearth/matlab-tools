@@ -47,8 +47,10 @@ function varargout = KMLtricontourf(tri,lat,lon,z,varargin)
 % $Keywords: $
 
 %% process varargin
-% see if height is defined
-
+  
+   % get colorbar options first
+   OPT               = KMLcolorbar();
+   % rest of the options
    OPT.levels        = 10;
    OPT.fileName      = [];
    OPT.kmlName       = [];
@@ -70,11 +72,12 @@ function varargout = KMLtricontourf(tri,lat,lon,z,varargin)
    OPT.labelInterval = 5;
    OPT.zScaleFun     = @(z) z;
    OPT.colorbar      = 1;
-   OPT.colorbartitle = '';
    OPT.extrude       = false;
    OPT.staggered     = true;
    OPT.debug         = false;
-
+   OPT.colorbar      = true;   
+   OPT.colorbarOPT   = KMLcolorbar();
+  
    if nargin==0
       varargout = {OPT};
       return
@@ -517,7 +520,7 @@ OPT_header = struct(...
 output = KML_header(OPT_header);
 
 if OPT.colorbar
-    clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorTitle',OPT.colorbartitle);
+    clrbarstring = KMLcolorbar(OPT);
     output = [output clrbarstring];
 end
 

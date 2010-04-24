@@ -40,7 +40,9 @@ function varargout = KMLtricontour(tri,lat,lon,z,varargin)
 % $Keywords: $
 
 %% process varargin
-% see if height is defined
+   % get colorbar options first
+   OPT               = KMLcolorbar();
+   % rest of the options
    OPT.levels        = 10;
    OPT.fileName      = [];
    OPT.kmlName       = [];
@@ -58,7 +60,6 @@ function varargout = KMLtricontour(tri,lat,lon,z,varargin)
    OPT.labelInterval = 5;
    OPT.zScaleFun     = @(z) (z+0)*0;
    OPT.colorbar      = 1;
-   OPT.colorbartitle = '';
 
    if nargin==0
       varargout = {OPT};
@@ -187,6 +188,11 @@ function varargout = KMLtricontour(tri,lat,lon,z,varargin)
            'timeIn',OPT.timeIn,'timeOut',OPT.timeOut);
    end
 
+%% colorbar
+   if OPT.colorbar
+      KMLcolorbar(OPT);
+   end
+   
 %% openInGoogle?
 
    if OPT.openInGE

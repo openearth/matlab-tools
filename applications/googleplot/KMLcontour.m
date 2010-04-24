@@ -61,7 +61,9 @@ function varargout = KMLcontour(lat,lon,z,varargin)
 % TO DO: implement angle/rotation of Matlab clabels in KML_text()
 
 %% process <keyword,value>
-
+   % get colorbar options first
+   OPT               = KMLcolorbar();
+   % rest of the options
    OPT.levels        = 10;
    OPT.fileName      = '';
    OPT.kmlName       = '';
@@ -273,16 +275,14 @@ function varargout = KMLcontour(lat,lon,z,varargin)
 %% colorbar
 
    if OPT.colorbar
-      KMLcolorbar('clim',OPT.cLim,'fileName',[OPT.fileName(1:end-4) 'colorbar.kml'],...
-                                   'kmlName','colorbar',...
-                                  'colorMap',colorRGB,...
-                                'colorTitle',OPT.colorbartitle);
-      sourceFiles = {sourceFiles{:},[OPT.fileName(1:end-4) 'colorbar.kml']};
+      OPT.CBfileName = [OPT.fileName(1:end-4) 'colorbar.kml'];
+      KMLcolorbar(OPT);
+      sourceFiles = [sourceFiles {OPT.CBfileName}];
    end
 
 %% merge labels, lines and colorbar
 
-   sourceFiles = {sourceFiles{:},[OPT.fileName(1:end-4) 'lines.kml']};
+   sourceFiles = [sourceFiles {[OPT.fileName(1:end-4) 'lines.kml']}];
    
    KMLmerge_files('fileName',OPT.fileName,...
                'sourceFiles',sourceFiles);

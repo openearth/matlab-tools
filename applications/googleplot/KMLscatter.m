@@ -63,6 +63,9 @@ function varargout = KMLscatter(lat,lon,c,varargin)
 
 %% process options
 
+   % get colorbar options first
+   OPT                    = KMLcolorbar();
+   % rest of the options
    OPT.fileName           =  '';
    OPT.kmlName            =  '';
    OPT.colorMap           =  @(m) jet(m);
@@ -72,8 +75,6 @@ function varargout = KMLscatter(lat,lon,c,varargin)
    OPT.markerAlpha        =  0.6;
    OPT.description        =  '';
    OPT.colorbar           = 1;
-   OPT.colorbarlocation   = {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
-   OPT.colorbartitle = '';
 
    OPT.html               = [];
    OPT.name               = [];
@@ -165,7 +166,7 @@ function varargout = KMLscatter(lat,lon,c,varargin)
    output = KML_header(OPT_header);
    
    if OPT.colorbar
-      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorTitle',OPT.colorbartitle,'colorbarlocation',OPT.colorbarlocation);
+      clrbarstring = KMLcolorbar(OPT);
       output = [output clrbarstring];
    end
 

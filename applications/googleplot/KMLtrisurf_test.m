@@ -63,13 +63,13 @@ disp(['... running test:',mfilename])
   
     tri1 = delaunay_simplified(lat,lon,z,tolerance);
     KMLtrisurf(tri1,lat-3,lon-3,z,'fileName',KML_testdir('KMLtrisurf_1a.kml'),'zScaleFun',@(z) (z+1).*2000,'reversePoly',true,...
-    'colorbartitle',mktex('KMLtrisurf_test 1 delaunay_simplified'));
+    'CBcolorTitle',mktex('KMLtrisurf_test 1 delaunay_simplified'));
 
 % 1b
 
     tri2 = delaunay(lat,lon);
     KMLtrisurf(tri2,lat-3,lon-6,z,'fileName',KML_testdir('KMLtrisurf_1b.kml'),'zScaleFun',@(z) (z+1).*2000,'reversePoly',true,...
-    'colorbartitle',mktex('KMLtrisurf_test 1 delaunay'));
+    'CBcolorTitle',mktex('KMLtrisurf_test 1 delaunay'));
 
 % 2
 [s,r]=system(['ping http://opendap.deltares.nl']); 
@@ -99,7 +99,7 @@ end
     tri = delaunay_simplified(lat,lon,z,tolerance);
     for ii = 1:6;
         KMLtrisurf(tri,lat+12,lon,z,'fileName',KML_testdir(['KMLtrisurf_3_' num2str(ii) '.kml']),'zScaleFun',@(z) (z+5)*(cos(ii))*500,'reversePoly',true,'timeIn',ii,'timeOut',ii+1,...
-       'colorbartitle',mktex(['KMLtrisurf_test 1:6 movie']));
+       'CBcolorTitle',mktex(['KMLtrisurf_test 1:6 movie']));
     end
     testresult = true;
 %catch

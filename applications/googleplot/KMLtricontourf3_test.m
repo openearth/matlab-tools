@@ -51,10 +51,10 @@ function testresult = KMLtricontourf3_test()
 
 %% $RunCode
 tr(1) = test1;
-tr(2) = test2;
-tr(2) = test3;
- tr(2) = test4;
-testresult = all(tr);
+% tr(2) = test2;
+% tr(2) = test3;
+%  tr(2) = test4;
+% testresult = all(tr);
 
 %% $PublishResult
 % Publishable code that describes the test.
@@ -83,7 +83,8 @@ nn = 25;
 % view(0,90)
 
 KMLtricontourf3(tri,x,y,z,'levels',nn,'fileName',KML_testdir('KMLtricontourf3 - 1.kmz'),...
-    'zScaleFun',@(z) (z+10)*1400,'staggered',false,'debug',0,'colorbar',false)
+    'zScaleFun',@(z) (z+10)*1400,'staggered',false,'debug',0,...
+    'colorbar',true,'colorMap', @(m) colormap_cpt('bathymetry_vaklodingen',m),'CBcolorbarlocation',{'NNW','WNW'})
 testresult = true;
 %% $PublishResult
 
@@ -115,8 +116,9 @@ nn=4;
 % set(h,'color','r','FontSize',6,'VerticalAlignment','top')
 % view(0,90)
 
+
 KMLtricontourf3(tri,x,y,z,'levels',nn,'fileName',KML_testdir('KMLtricontourf3 - 2.kmz'),...
-    'zScaleFun',@(z) (z+200)*400,'staggered',false,'debug',false,'colorbar',false)
+    'zScaleFun',@(z) (z+200)*400,'staggered',false,'debug',false,'colorbar',false,'colorMap', @(m) colormap_cpt('bathymetry_vaklodingen',m))
 testresult = true;
 %% $PublishResult
 
@@ -169,7 +171,6 @@ tri(any(isnan(z(tri)),2),:) = [];
 KMLtricontourf3(tri,lat,lon,z,'levels',50,'fileName',KML_testdir('KMLtricontourf3 - 4a.kmz'),...
     'zScaleFun',@(z) (z+10)*4,'staggered',0,'debug',0,'colorbar',false)
 
-
 levels=[-11:-1:-3 -2:0.25:2 3:1:26];
 
 nn = 1:1:325;
@@ -181,7 +182,6 @@ tri(any(isnan(z(tri)),2),:) = [];
 KMLtricontourf3(tri,lat,lon,z,'levels',levels,'fileName',KML_testdir('KMLtricontourf3 - 4b.kmz'),...
     'zScaleFun',@(z) (z+10)*4,'staggered',0,'debug',0,'colorbar',false,...
     'colorMap',@(m)colormap_cpt('bathymetry_vaklodingen',m),'colorSteps',250,'cLim',[-50 25])
-
 
 nn = 1:325;
 mm = 200:250;
