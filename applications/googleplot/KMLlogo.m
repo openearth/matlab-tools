@@ -1,11 +1,17 @@
-function KMLlogo(imname)
-%KMLlogo   make a white logo with transparent background of an image
+function varargout = KMLlogo(imname,varargin)
+%KMLlogo   make a white logo *.png with transparent background of an image
 %
-%    KMLlogo(imagename,<keyword,value>)
+%    <kmlcode> = KMLlogo(imagename,<keyword,value>)
 % 
 % For the <keyword,value> pairs and their defaults call
 %
 %    OPT = KMLlogo()
+%
+% The following see <keyword,value> pairs have been implemented:
+%  'fileName'       name of output file, Can be either a *.kml or *.kmz
+%                   or *.kmz (zipped *.kml) file. If not defined a gui pops up.
+%                   (When 0 or fid = fopen(...) writing to file is skipped
+%                   and optional <kmlcode> is returned without KML_header/KML_footer.)
 %
 % See also: googlePlot, imread
 
@@ -43,22 +49,35 @@ function KMLlogo(imname)
 % $Keywords: $
 
 %% import
+ 
+   OPT.fileName         = ''; % header/footer are skipped when is a fid = 0 or fopen(OPT.fileName,'w')
+   OPT.kmlName          = '';
+   OPT.description      = '';
+   OPT.invertblackwhite = 0; % invert black/white
 
-if 0
    if nargin==0
       varargout = {OPT};
       return
    end
 
    [OPT, Set, Default] = setProperty(OPT, varargin);
-end
 
-%% do image stuff: whote image with transparancy ~ lack of white
+%% get filename, gui for filename, if not set yet
 
-   OPT.bgcolor = 255.*[1 1 1];  % background color to be made transparent
+   if ischar(OPT.fileName) & isempty(OPT.fileName); % can be char ('', default) or fid
+      [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
+      OPT.fileName = fullfile(filePath,fileName);
+      
+      error('a')
 
-   OPT.logorgb = [1 1 1];
-   OPT.backrgb = [1 0 0];
+%% set kmlName if it is not set yet
+
+      if isempty(OPT.kmlName)
+      [ignore OPT.kmlName] = fileparts(OPT.fileName);
+      end
+   end
+
+%% do image stuff: white image with transparancy ~ lack of white
 
   [im,map] = imread([imname]);
   
@@ -66,31 +85,66 @@ end
    im = ind2rgb(im,map).*255;
    end
    
-   mask   = bsxfun(@eq,im,reshape(OPT.bgcolor,1,1,3));
-   
    % make alpha sum of rgb values
-   im4alpha = 1-sum(im,3)./255./3; %ind2gray(im,map); % ones(size(mask(:,:,1))).*(1-double(all(mask,3)))
+   if OPT.invertblackwhite
+   im4alpha =  sum(im,3)./255./3;
+   else
+   im4alpha = 1-sum(im,3)./255./3;
+   end
    im4alpha = im4alpha./max(im4alpha(:));% scale so lightest pixel is fully white
+   
+   logoname = [fileparts(OPT.fileName) filesep filename(imname),'4GE.png'];
 
-   imwrite(ones(size(im)),[filename(imname),'4GE.png'],'Alpha',im4alpha);
+   imwrite(ones(size(im)),logoname,'Alpha',im4alpha);
    
 %% make kml encapsulation
 
-% TO DO
-
-% <?xml version="1.0" encoding="UTF-8"?>
-% <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
-% <Document>
-% <name>OPT.kmlName</name>
-% <description>OPT.description</description>
-% <Folder>
-% 	<ScreenOverlay>
-% 		<Icon><href>OPT.FileName</href></Icon>
-% 		<overlayXY  x="-0.20"  y="0.05"  xunits="fraction" yunits="fraction"/>
-% 		<screenXY   x="-0.20"  y="0.05"  xunits="pixels"   yunits="fraction" xunit="fraction"/>
-% 		<rotationXY x="0"  y="0"  xunits="pixels"   yunits="fraction" xunit="fraction"/>
-% 		<size       x="-1" y="-1" xunits="pixels"   yunits="pixels"/>
-% 	</ScreenOverlay>
+% <name>logo</name>
+%   <ScreenOverlay>
+% 	<Icon><href>hydro4GE.png</href></Icon>
+% 		<overlayXY  x="0"      y="0.00"  xunits="fraction" yunits="fraction"/>
+% 		<screenXY   x="0.02"   y="0.05"  xunits="fraction" yunits="fraction"/>
+% 		<size       x="-1"     y="-1"    xunits="fraction"   yunits="fraction"/>
+%   </ScreenOverlay>
 % </Folder>
-% </Document>
-% </kml>
+
+   if ischar(OPT.fileName)
+      OPT.fid = fopen(OPT.fileName,'w');
+      OPT_header = struct(...
+                 'name',OPT.kmlName,...
+                 'open',0,...
+          'description',OPT.description);
+      output = KML_header(OPT_header);
+      fprintf(OPT.fid,output);
+   else
+      OPT.fid = OPT.fileName;
+   end
+
+   output = '';
+   
+   output = [output ...
+       '<name>logo</name>' ...
+       '<Folder><ScreenOverlay>' ...
+       '	<Icon><href>' filenameext(logoname) '</href></Icon>\n' ... % only relative path
+       '	<overlayXY  x="0"      y="0.00"  xunits="fraction" yunits="fraction"/>\n' ...
+       '	<screenXY   x="0.02"   y="0.05"  xunits="fraction" yunits="fraction"/>\n' ...
+       '	<size       x="-1"     y="-1"    xunits="fraction" yunits="fraction"/>\n' ...
+       '</ScreenOverlay></Folder>' ];
+
+   if OPT.fid > 0
+   fprintf(OPT.fid,output,'%s');
+   end
+   if nargout==1;kmlcode = output;end % collect all kml for function output
+
+   if ischar(OPT.fileName)
+      output = KML_footer;
+      fprintf(OPT.fid,output);
+      fclose (OPT.fid);
+   end
+   
+if nargout ==1
+  varargout = {kmlcode};
+end
+
+
+%% EOF

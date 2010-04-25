@@ -76,6 +76,7 @@ OPT.highestLevel       = length(OPT.basecode);
 OPT.lowestLevel        = OPT.highestLevel+4;
 OPT.fileName           =     [];
 OPT.kmlName            =     []; % name in Google Earth Place list
+OPT.logo               =     '';
 OPT.url                =     ''; % webserver storage needs absolute paths, local files can have relative paths. Only needed in mother KML.
 OPT.alpha              =      1;
 OPT.minLod             =     []; % minimum level of detail to keep a tile in view. Is calculated when left blank.
@@ -193,7 +194,9 @@ if OPT.makeKML
     KML_fig2pngNew_makeKML(OPT)
 end
 %   --------------------------------------------------------------------
+
 %% and write the 'mother' KML
+
 if OPT.makeKML
     if ~isempty(OPT.url)
         if ~strcmpi(OPT.url(end),'/');
@@ -203,28 +206,34 @@ if OPT.makeKML
     
     % relative for local files
     if isempty(OPT.url)
-       href = fullfile(OPT.url, OPT.Path, OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']);
-    else
        href = fullfile(                   OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']);
+    else
+       href = fullfile(OPT.url, OPT.Path, OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']);
     end
     
     output = sprintf([...
         '<NetworkLink>'...
-        '<name>%s</name>'... % name
+        '<name>network-linked-tiled-pngs</name>'... % name
         '%s'...              % timespan                                                                                                          % time
         '<Link><href>%s</href><viewRefreshMode>onRegion</viewRefreshMode></Link>'... % link
         '</NetworkLink>'],...
-        OPT.kmlName,OPT.timeSpan,href);
+        OPT.timeSpan,href);
 
     OPT.fid=fopen(OPT.fileName,'w');
     OPT_header = struct(...
         'name',OPT.kmlName,...
         'open',0,...
         'description',OPT.description);
+        
+    if isempty(OPT.logo)
+    logo   = '';
+    else
+    logo   = ['<Folder>' KMLlogo(OPT.logo,'fileName',0,'kmlName', 'logo') '</Folder>'];
+    end
 
-    output = [KML_header(OPT_header) output];
+    output = [KML_header(OPT_header) logo output];
 
-   %% COLORBAR
+ %% COLORBAR
 
     if OPT.colorbar
         clrbarstring = KMLcolorbar('clim',clim,'fileName',OPT.fileName,'colorMap',colormap,'colorTitle',OPT.colorbartitle,'colorbarlocation',OPT.colorbarlocation);
@@ -232,7 +241,7 @@ if OPT.makeKML
         output = [output clrbarstring];
     end
 
-    %% FOOTER
+ %% FOOTER
 
     output = [output KML_footer];
     fprintf(OPT.fid,'%s',output);

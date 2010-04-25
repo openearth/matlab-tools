@@ -21,10 +21,11 @@ function varargout = KMLline(lat,lon,varargin)
 %    kmlcode = kmlline(lat,lon,<keyword,value>)
 %
 % The following see <keyword,value> pairs have been implemented:
-%  'fileName'   = [];          % name of output file. Can be either a *.kml 
-%                              % or *.kmz (zipped *.kml) file. if not  
-%                              % defined a gui pops up
-%  'kmlName'    = 'untitled';  % name of kml that shows in GE
+%  'fileName'       name of output file, Can be either a *.kml or *.kmz
+%                   or *.kmz (zipped *.kml) file. If not defined a gui pops up.
+%                   (When 0 or fid = fopen(...) writing to file is skipped
+%                   and optional <kmlcode> is returned without KML_header/KML_footer.)
+%  'kmlName'        name of kml that shows in GE
 %
 %  The following line properties can each be defined as either a single
 %  entry or an array with the same lenght as the number of (unique) styles 
@@ -199,15 +200,15 @@ function varargout = KMLline(lat,lon,varargin)
 
 %% get filename, gui for filename, if not set yet
 
-   if isempty(OPT.fileName)
+   if ischar(OPT.fileName) & isempty(OPT.fileName); % can be char ('', default) or fid
       [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
       OPT.fileName = fullfile(filePath,fileName);
-   end
 
 %% set kmlName if it is not set yet
 
-   if isempty(OPT.kmlName)
+      if isempty(OPT.kmlName)
       [ignore OPT.kmlName] = fileparts(OPT.fileName);
+      end
    end
 
 %% start KML
@@ -225,6 +226,8 @@ if ischar(OPT.fileName)
    
    fprintf(OPT.fid,output);
 
+else
+   OPT.fid = OPT.fileName;
 end
 
 output = '';

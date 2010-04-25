@@ -1,14 +1,14 @@
 function CG = cgroup(SIG,K)
-%CGROUP   Calculates group velocity c_g = dw / dk
+%CGROUP   Calculates group velocity c_g = domega / dk
 %
-% cg = cgroup(w,k)
+% cg = cgroup(omega,k)
 %
-% where cg(:) = group velocity    in   [m/s]
-%       w (:) = radial frequency  in [rad/s]
-%       k (:) = wavenumber        in [rad/m]
+% where cg   (:) = group velocity    in   [m/s]
+%       omega(:) = radial frequency  in [rad/s]
+%       k    (:) = wavenumber        in [rad/m]
 %
 % Central difference is applied, with upwind at the array edges.
-% Equidistant spacing is not required, but w needs to be 1D.
+% Equidistant spacing is not required, but omega needs to be 1D.
 %
 %See also: DISPER, WAVEDISPERSION, SPEC2HS, SPEC2TM01, SPEC2TM02
 
@@ -41,8 +41,6 @@ function CG = cgroup(SIG,K)
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% copied from SWMUD module subroutine SWAPARM of SWANmud
-
    sz = size(SIG);
    sz = sort(sz,'descend');
    sz = sz(sz>1);
@@ -54,6 +52,8 @@ function CG = cgroup(SIG,K)
    MMT = length(SIG(:));
    CG  = nan.*zeros(size(SIG));
    
+   % copied from SWMUD module subroutine SWAPARM of SWANmud
+
    for IS=1:MMT
    
       if     IS==1                                       

@@ -1,43 +1,33 @@
 function testresult = KMLmarker_test()
-% KMLMARKER_TEST  One line description goes here
-%
-% More detailed description of the test goes here.
-%
-%
-%   See also
+% KMLmarker_test  unit test for KMLtext
+%  
+% See also: KMLmarker
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
-%       Thijs
+%   Copyright (C) 2009 Deltares for Building with Nature
+%       Gerben J. de Boer
 %
-%       <EMAIL>
+%       gerben.deboer@Deltares.nl
 %
-%       <ADDRESS>
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
 %
-%   This library is free software: you can redistribute it and/or
-%   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation, either
-%   version 2.1 of the License, or (at your option) any later version.
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-%   Lesser General Public License for more details.
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
 %
-%   You should have received a copy of the GNU Lesser General Public
-%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
-
-% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and
-% programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute
-% your own tools.
-
-%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 17 Apr 2010
-% Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
 % $Date$
@@ -46,43 +36,70 @@ function testresult = KMLmarker_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
+disp(['... running test:',mfilename])
+
+%% $Description (Name = KMLmesh)
 % Publishable code that describes the test.
 
 %% $RunCode
 % Write test code here
-try
-    nn = 100;
-    
-    xRD = 60500+1000*randn(nn,1);
-    yRD = 450000-6500+1000*randn(nn,1);
-    
-    [lon,lat]=convertCoordinates(xRD,yRD,'CS1.code',28992,'CS2.code',4326);
-    
-    OPT.fileName            =  KML_testdir('marker.kml');
-    OPT.kmlName             =  'CPT';
-    OPT.openInGE            =  false;
-    OPT.markerAlpha         =  1;
-    OPT.description         =  'CPT';
-    OPT.iconnormalState     =  'http://damsma.net/cpt.png';
-    OPT.iconhighlightState  =  'http://damsma.net/cpt.png';
-    OPT.scalenormalState    =  0.5;
-    OPT.scalehighlightState =  1.0;
-    OPT.colornormalState    =  [1 1 1];
-    OPT.colorhighlightState =  [1 1 0];
-    
-    for ii = 1:nn
-        OPT.name{ii} = sprintf('ctp %d',ii);
-    end
-    
-    OPT.timeIn = now+1000*rand(nn);
-    
-    OPT.html = '<img border="0" src="http://damsma.net/cpt.png">';
-    KMLmarker(lat,lon,OPT);
+%try
+
+
+
+   D.x    = linspace(53.10 ,53.75,21);
+   D.y    = linspace( 4.75 , 8   ,21);
+   D.z    = linspace(-1    , 4   ,21);
+   D.txt  = addrowcol(addrowcol(num2str(D.z'),0,-1,' = dum'),0,1,'%');
+   D.name = num2str([1:length(D.x)]');
+   
+   for i=1:length(D.x)
+   D.html{i} = ['<hr> <table border="1"> <tr> <td>mud content = </td><td>',num2str(D.x(i)),' %</td></tr>'];
+   end
+
+%% name and html empty
+
+   KMLmarker(D.x,D.y,...
+        'fileName',KML_testdir('KMLmarker_1.kml'),...
+     'description','name and html empty',...
+         'kmlName','name and html empty')
+
+%% name = # and html = table
+
+   KMLmarker(D.x,D.y,...
+        'fileName',KML_testdir('KMLmarker_2.kml'),...
+            'name',D.name,...
+            'html',D.html,...
+     'description','name = # and html = table',...
+         'kmlName','name = # and html = table')
+             
+%% name = # and html empty
+
+   KMLmarker(D.x,D.y,...
+        'fileName',KML_testdir('KMLmarker_3.kml'),...
+            'name',D.name,...
+     'description','name = # and html empty',...
+         'kmlName','name = # and html empty')
+
+%% name empty and html = table
+
+   for i=1:length(D.x)
+   D.html{i} = ['<table border="1"> <tr> <td>mud content = </td><td>',num2str(D.x(i)),' %</td></tr>'];
+   end
+
+   KMLmarker(D.x,D.y,...
+        'fileName',KML_testdir('KMLmarker_4.kml'),...
+            'html',D.html,...
+     'description','name empty and html = table',...
+         'kmlName','name empty and html = table')
+
     testresult = true;
-catch
-    testresult = false;
-end
+
+%catch
+%   testresult = false;
+%end
+
 %% $PublishResult
 % Publishable code that describes the test.
+
 
