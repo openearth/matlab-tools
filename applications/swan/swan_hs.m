@@ -52,20 +52,18 @@ function Hs = swan_hs(f,E,varargin)
    OPT.disp  = 0; % display mx and mx_tail
 
    %% contribution of known spectrum to total energy density
-   %% Note that SWAN uses N = E/sigma as variable
-   %% so the formulations in SWAN subroutine SWOEXA have an extra power of f
-   %% ------------------------------
+   %  Note that SWAN uses N = E/sigma as variable
+   %  so the formulations in SWAN subroutine SWOEXA have an extra power of f
 
-      m0        = trapz(f,E);
-      m1        = trapz(f,f.*E);
-      m2        = trapz(f,f.^2.*E);
+      m0        = trapz(f(:),E(:));
+      m1        = trapz(f(:),E(:).*f(:));
+      m2        = trapz(f(:),E(:).*f(:).^2);
 
    %% contribution of tail to total energy density
-   %% ------------------------------
-   %% command GEN1        : [pwtail] = 5
-   %% command GEN2        : [pwtail] = 5
-   %% command GEN3 KOMEN  : [pwtail] = 4
-   %% command GEN3 JANSEN : [pwtail] = 5   
+   %  command GEN1        : [pwtail] = 5
+   %  command GEN2        : [pwtail] = 5
+   %  command GEN3 KOMEN  : [pwtail] = 4
+   %  command GEN3 JANSEN : [pwtail] = 5   
    
       PWTAIL = 4;
       if nargin==3
@@ -81,12 +79,10 @@ function Hs = swan_hs(f,E,varargin)
       m0        = m0 + m0hfr;
       
    %% Hs
-   %% ------------------------------
 
       Hs = 4.*sqrt(m0);
 
    %% Debug
-   %% ------------------------------
       
       if OPT.debug
          %5 swanout1.for

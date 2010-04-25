@@ -61,11 +61,10 @@ function Tm01 = swan_tm01(f,E,varargin)
       m2        = trapz(f,f.^2.*E);
 
    %% contribution of tail to total energy density
-   %% ------------------------------
-   %% command GEN1        : [pwtail] = 5
-   %% command GEN2        : [pwtail] = 5
-   %% command GEN3 KOMEN  : [pwtail] = 4
-   %% command GEN3 JANSEN : [pwtail] = 5   
+   %  command GEN1        : [pwtail] = 5
+   %  command GEN2        : [pwtail] = 5
+   %  command GEN3 KOMEN  : [pwtail] = 4
+   %  command GEN3 JANSEN : [pwtail] = 5   
 
       PWTAIL = 4;
       if nargin==3
@@ -99,12 +98,10 @@ function Tm01 = swan_tm01(f,E,varargin)
       m1     = m1 + m1hfr;
 
    %% Tm01
-   %% ------------------------------
 
       Tm01   = m0./m1;%Tm01 = 2.*PI * ETOT / EFTOT % in SWAN
 
    %% Debug
-   %% ------------------------------
 
       if OPT.debug
               ETOT  = 0.;
@@ -124,11 +121,10 @@ function Tm01 = swan_tm01(f,E,varargin)
             % EFTOT = m2, so why is Tm01 = 2.*PI * ETOT / EFTOT
 
            %% contribution of tail to total energy density
-           %% ------------------------------
-           %% command GEN1 : [pwtail] = 5
-           %% command GEN2 : [pwtail] = 5
-           %% command GEN3 KOMEN : [pwtail] = 4
-           %% command GEN3 JANSEN : [pwtail] = 5   
+          %  command GEN1 : [pwtail] = 5
+           %  command GEN2 : [pwtail] = 5
+           %  command GEN3 KOMEN : [pwtail] = 4
+           %  command GEN3 JANSEN : [pwtail] = 5   
            
       end 
       
