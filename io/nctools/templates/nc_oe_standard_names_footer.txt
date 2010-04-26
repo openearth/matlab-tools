@@ -1,5 +1,11 @@
     end
-    
+
     % add variable to output file
-    nc_addvar(OPT.outputfile, Variable);
+    switch OPT.nc_library
+        case 'snc'
+            nc_addvar(OPT.outputfile, Variable);
+            varargout = {[]};       
+ 	case 'matlab'
+            varargout = {netcdf_addvar(OPT.ncid, Variable )};
+    end
 end

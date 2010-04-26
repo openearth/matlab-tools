@@ -1,7 +1,8 @@
-function nc_cf_standard_names(varargin)
+function varargout = nc_cf_standard_names(varargin)
 %NC_CF_STANDARD_NAMES  Routine facilitates adding variables that are part of standard-name glossaries (CF-1.4, OE-1.0, VO-1.0)
 %
 %   Routine facilitates adding variables that are part of standard-name glossaries (CF-1.4, OE-1.0, VO-1.0).
+%   Works with both the Maltab and SNC netcdf libraries.   
 %
 %   Syntax:
 %      nc_cf_standard_names(varargin)
@@ -82,11 +83,15 @@ function nc_cf_standard_names(varargin)
 %% settings
 % defaults
 OPT = struct(...
-    'outputfile',       {[]}, ...                            % description of input argument 1
-    'varname',          {{{'test1'};{'test2'}}}, ...         % description of input argument 2
-    'cf_standard_name', {{{'test1'};{'test2'}}}, ...         % description of input argument 3
-    'dimension',        {{{'time'};{'x' ,'y', 'time'}}}, ... % description of input argument 4
-    'timezone',        '+00:00' ...  			     % description of input argument 5
+    'nc_library',       'snc', ...                           % snc or matlab 
+    'ncid',             '', ...                              % nectdf id (only for matlab library)
+    'outputfile',       {[]}, ...                            % name of the nc file. 
+    'varname',          {{{'test1'};{'test2'}}}, ...         % variable name
+    'cf_standard_name', {{{'test1'};{'test2'}}}, ...         % open earth standard name
+    'dimension',        {{{'test1'};{'test2'}}}, ...	     % dimension names					
+    'dimid',            [], ...                              % dimension id's for use with matlab nc library only
+    ...                                                      %   It is (a little) faster to indicate dimid's than dimension names
+    'timezone',         '+01:00' ...                         % timezone
     );
 
 % overrule default settings by property pairs, given in varargin
@@ -96,8 +101,18 @@ OPT = setProperty(OPT, varargin{:});
 if size(OPT.cf_standard_name,1) ~= size(OPT.dimension,1)
     error('nc_cf_standard_names:argChk', 'Input arguments not of equal length')
 end
-if isempty(OPT.outputfile)
-    error('nc_cf_standard_names:outputChk',  'No outputfilename indicated')
+
+switch OPT.nc_library
+    case 'snc'
+        if isempty(OPT.outputfile)
+            error('nc_cf_standard_names:outputChk',  'No outputfilename indicated')
+        end
+    case 'matlab'
+        if isempty(OPT.ncid)
+            error('nc_cf_standard_names:outputChk',  'No ncid indicated')
+        end
+    otherwise
+        error('nc_cf_standard_names:outputChk',  'unknown nc_library, only snc and matlab are supported')
 end
 
 %% one by one add each variable
@@ -370,8 +385,14 @@ for i = 1:size(OPT.cf_standard_name,1)
                 );
  
     end
-    
+
     % add variable to output file
-    nc_addvar(OPT.outputfile, Variable);
+    switch OPT.nc_library
+        case 'snc'
+            nc_addvar(OPT.outputfile, Variable);
+            varargout = {[]};       
+ 	case 'matlab'
+            varargout = {netcdf_addvar(OPT.ncid, Variable )};
+    end
 end
 
