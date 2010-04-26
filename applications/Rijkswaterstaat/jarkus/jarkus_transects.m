@@ -111,9 +111,9 @@ varargin2 = {};
 for i = 1:2:length(varargin)
     if ~isfield(OPT, varargin{i})
         FLTR.(varargin{i}) = [];
-        varargin2 = [varargin2 varargin{i:i+1}];
+        varargin2 = [varargin2 varargin(i:i+1)];
     else
-        varargin1 = [varargin1 varargin{i:i+1}];
+        varargin1 = [varargin1 varargin(i:i+1)];
     end
 end
 
