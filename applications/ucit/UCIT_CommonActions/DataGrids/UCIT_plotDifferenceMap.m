@@ -45,11 +45,16 @@ warning off
 
 datatype = UCIT_getInfoFromPopup('GridsDatatype');
 
-if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
-    fh = UCIT_plotGridOverview(datatype,'refreshonly',1);
-else
-    fh = figure(findobj('tag','gridOverview'));figure(fh);
-end
+   mapW = findobj('tag','gridPlot');
+   if isempty(mapW)
+      if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
+         fh = UCIT_plotGridOverview(datatype,'refreshonly',1);
+      else
+         fh = figure(findobj('tag','gridOverview'));figure(fh);
+      end
+   else
+      fh = figure(findobj('tag','gridPlot')); figure(fh);
+   end
 
 tic
 [d] = UCIT_getMetaData(2);

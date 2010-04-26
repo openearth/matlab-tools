@@ -46,13 +46,13 @@ datatype = UCIT_getInfoFromPopup('GridsDatatype');
 
    mapW = findobj('tag','gridPlot');
    if isempty(mapW)
-       if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
-           fh = UCIT_plotGridOverview(datatype,'refreshonly',1);
-       else
-           fh = figure(findobj('tag','gridOverview'));figure(fh);
-       end
+      if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
+         fh = UCIT_plotGridOverview(datatype,'refreshonly',1);
+      else
+         fh = figure(findobj('tag','gridOverview'));figure(fh);
+      end
    else
-       fh = figure(findobj('tag','gridPlot')); figure(fh);
+      fh = figure(findobj('tag','gridPlot')); figure(fh);
    end
    
    curdir=pwd;

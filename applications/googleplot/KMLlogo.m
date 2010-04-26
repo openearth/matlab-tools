@@ -68,8 +68,6 @@ function varargout = KMLlogo(imname,varargin)
       [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
       OPT.fileName = fullfile(filePath,fileName);
       
-      error('a')
-
 %% set kmlName if it is not set yet
 
       if isempty(OPT.kmlName)

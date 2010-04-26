@@ -47,11 +47,16 @@ datatype = UCIT_getInfoFromPopup('GridsDatatype');
 
 %% Select in grid overview plot
 
-if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
-    fh = UCIT_plotGridOverview(datatype,'refreshonly',1);
-else
-    fh = figure(findobj('tag','gridOverview'));figure(fh);
-end
+   mapW = findobj('tag','gridPlot');
+   if isempty(mapW)
+      if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
+         fh = UCIT_plotGridOverview(datatype,'refreshonly',1);
+      else
+         fh = figure(findobj('tag','gridOverview'));figure(fh);
+      end
+   else
+      fh = figure(findobj('tag','gridPlot')); figure(fh);
+   end
 
 [d] = UCIT_getMetaData(2);
 
@@ -91,7 +96,12 @@ if ~all(all(isnan(Z)))
    
    if ~all(isnan(Z(:)))
        [lat,lon] = convertCoordinates(X(1:thinning:end,1:thinning:end),Y(1:thinning:end,1:thinning:end),'CS1.name','Amersfoort / RD New','CS2.code',4326);
-       KMLsurf(lon,lat,Z(1:thinning:end,1:thinning:end),'fileName',[filename '.kml'],'zScaleFun',@(z)(z+50)*4,'colorMap',@(m)colormap_cpt('bathymetry_vaklodingen',m),'colorSteps',200,'cLim',[-50 25]);
+       KMLsurf(lon,lat,Z(1:thinning:end,1:thinning:end),'fileName',[filename '.kml'],...
+        'zScaleFun',@(z)(z+50)*4,...
+         'colorMap',@(m)colormap_cpt('bathymetry_vaklodingen',m),...
+       'colorSteps',200,...
+             'cLim',[-50 25],...
+          'KMLname',mktex(mfilename));
    else
        warndlg('No data found for these search criteria');
    end

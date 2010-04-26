@@ -218,7 +218,7 @@ end
      [D.lon(iii,:),D.lat(iii,:),log] = convertcoordinates(x(iii,:),y(iii,:),'CS1.code',OPT.epsg,'CS2.code',OPT.wgs84);
       end
       else
-     [D.lon      ,D.lat      ,log] = convertcoordinates(x      ,y      ,'CS1.code',OPT.epsg,'CS2.code',OPT.wgs84);
+     [D.lon       ,D.lat       ,log] = convertcoordinates(x      ,y      ,'CS1.code',OPT.epsg,'CS2.code',OPT.wgs84);
       end
       
       clear x y

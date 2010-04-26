@@ -6,7 +6,7 @@ function varargout = KMLcolorbar(varargin)
 %
 % For the <keyword,value> pairs and their defaults call
 %
-%    OPT = KMLsurf()
+%    OPT = KMLcolorbar()
 %
 % keyword 'colorbarlocation' specifies where to put colorbars. The first
 % colorbar in the list is shown by default, the other can be ticked. Useful

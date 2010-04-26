@@ -52,7 +52,7 @@ for addCode = ['0','1','2','3']
                mask2c = floor(corner2center1(mask2))==1;
                indc   = find(mask1c==1);if ~isempty(indc);mask1c(indc(1):indc(end)) = 1;end
                indc   = find(mask2c==1);if ~isempty(indc);mask2c(indc(1):indc(end)) = 1;end
-               D2.z   = D.z(mask1c,mask2c); % keep one smaller, do not add until plot
+               D2.z   =  D.z(mask1c,mask2c); % keep one smaller, do not add until plot
             else
                 error('we did not imagine this could happen')
             end

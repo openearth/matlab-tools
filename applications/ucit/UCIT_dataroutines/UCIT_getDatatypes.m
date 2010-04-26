@@ -115,7 +115,7 @@ function [datatypes] = UCIT_getDatatypes;
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
 
    %% Vaklodingen
-if 0
+if 1
    i = i + 1;
    datatypes.grid.names{i}        =  'Vaklodingen (local)';
    datatypes.grid.urls {i}        =  'f:\opendap\thredds\rijkswaterstaat\vaklodingen\';

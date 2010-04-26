@@ -1,4 +1,3 @@
-
 function KML_colorbar(OPT)
 %KML_COLORBAR   make KML colorbar png
 %
@@ -46,7 +45,7 @@ function KML_colorbar(OPT)
 
    h.fig = figure('Visible','off');
    if isnumeric(OPT.CBcolorMap)
-    colormap(  OPT.CBcolorMap);
+       colormap(OPT.CBcolorMap);
    else
        colormap(  OPT.CBcolorMap(OPT.CBcolorSteps));
    end
@@ -56,7 +55,6 @@ function KML_colorbar(OPT)
    %% !!!!! temporary set all locations to right
    OPT.CBhorizonalalignment = 'left';
    OPT.CBverticalalignment  = 'top';
-   
    
    
    %% locations
@@ -117,36 +115,36 @@ function KML_colorbar(OPT)
         'reference','gca',...
       'orientation',OPT.CBorientation);%,...
            %'title',OPT.CBcolorTitle,...
-   %'titleposition',[OPT.CBorientation(1),'text'],...
-      %'titlecolor',OPT.CBfontrgb);
+%   'titleposition',[OPT.CBorientation(1),'text'],...
+%      'titlecolor',OPT.CBfontrgb);
         if     strcmpi(OPT.CBorientation      ,'vertical') 
            text(-2.1,0,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation',90,'verticalalignment','top');
         elseif strcmpi(OPT.CBorientation      ,'horizontal')
-           text(0,2,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation', 0,'verticalalignment','bottom');
+           text(   0,2,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation', 0,'verticalalignment','bottom');
         end
-  %h.t = get(h.c,'Title');    
-%   set   (h.t,'color'        ,OPT.CBfontrgb)
+%  h.t = get(h.c,'Title');    
+%  set   (h.t,'color'        ,OPT.CBfontrgb)
    set   (h.c,'xcolor'       ,OPT.CBfontrgb)
    set   (h.c,'ycolor'       ,OPT.CBfontrgb)
    set   (h.c,'XAxisLocation',OPT.CBXAxisLocation);
    set   (h.c,'YAxisLocation',OPT.CBYAxisLocation);
    % set the tick marks if they have been provided
    if isfield(OPT,'colorTick')
-	  if ~isempty(OPT.CBcolorTick)
-        if     strcmpi(OPT.CBorientation      ,'vertical')  
-        set(h.c,'YTick',OPT.CBcolorTick);
+       if ~isempty(OPT.CBcolorTick)
+        if  strcmpi(OPT.CBorientation      ,'vertical');
+         set(h.c,'YTick',OPT.CBcolorTick);
         elseif strcmpi(OPT.CBorientation      ,'horizontal')
-        set(h.c,'XTick',OPT.CBcolorTick);           
+         set(h.c,'XTick',OPT.CBcolorTick);
         end
-	  end
+       end
    end
    % set the ticklabels if they have been provided
    if isfield(OPT,'colorTickLabel')
        if ~isempty(OPT.CBcolorTickLabel)
-        if     strcmpi(OPT.CBorientation      ,'vertical');          
-           set(h.c,'YTickLabel',OPT.CBcolorTickLabel);
+        if     strcmpi(OPT.CBorientation      ,'vertical');
+         set(h.c,'YTickLabel',OPT.CBcolorTickLabel);
         elseif strcmpi(OPT.CBorientation      ,'horizontal')
-           set(h.c,'XTickLabel',OPT.CBcolorTickLabel);           
+         set(h.c,'XTickLabel',OPT.CBcolorTickLabel);
         end
        end
    end
@@ -154,13 +152,13 @@ function KML_colorbar(OPT)
    box on
    
    % copy axes and set box color seperately
-   c_axes = copyobj(gca,gcf);
+   c_axes = copyobj(gca,h.fig);
    set(c_axes, 'color', 'none', 'xcolor', OPT.CBframergb, 'xgrid', 'off', 'ycolor',OPT.CBframergb, 'ygrid','off','xtick',[],'ytick',[]);
  
-   set(gcf,'paperUnits','inch')
-   set(gcf,'PaperSize',[4.6 5.8])
-   set(gcf,'PaperPosition',[0 0 4.6 5.8])
-   print ([OPT.CBfileName,'.png'],'-r100','-dpng')
+   set  (h.fig,'paperUnits','inch')
+   set  (h.fig,'PaperSize',[4.6 5.8])
+   set  (h.fig,'PaperPosition',[0 0 4.6 5.8])
+   print(h.fig,[OPT.CBfileName,'.png'],'-r100','-dpng'); % explicitly refer to h.fig, otherwise another figure (e.g. UCIT GUI) is printed.
    im   = imread([OPT.CBfileName,'.png']);
    
    switch OPT.CBorientation
@@ -173,7 +171,7 @@ function KML_colorbar(OPT)
            % place all non invisible pixels in the template)
            templateColobarArea = template((1:100)+14,(1:440)+140,:);
            templateColobarArea(repmat(any(~mask,3),1,3)) = im(repmat(any(~mask,3),1,3));
-          template((1:100)+14,(1:440)+140,:) = templateColobarArea;
+           template((1:100)+14,(1:440)+140,:) = templateColobarArea;
        case 'vertical'
            % crop image to 100 by 440
            im   = im((1:440)+70,1:100,:);
