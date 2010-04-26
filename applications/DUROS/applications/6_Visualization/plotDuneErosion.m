@@ -40,6 +40,7 @@ function plotDuneErosion(Result, varargin)
 %%
 
 OPT = struct(...
+    'title', '',...
     'xdir','reverse',...
     'xoffset',0,...
     'zoffset',0,...
@@ -61,7 +62,7 @@ if nargin>1
         fig = figure(nr);
     end
 
-    OPT = setproperty(OPT,varargin);
+    OPT = setproperty(OPT, varargin{:});
     
     OPT.xlabel = strrep(OPT.xlabel, 'RSP', OPT.hordatum);
     OPT.ylabel = strrep(OPT.ylabel, 'NAP', OPT.vertdatum);
@@ -101,6 +102,9 @@ xlabel(OPT.xlabel)
 ylabel(OPT.ylabel),...
 %     'Rotation', 270,...
 %     'VerticalAlignment', 'top')
+if ~isempty(OPT.title)
+    title(OPT.title)
+end
 
 lastFilledField = [];
 for i = fliplr(1 : length(Result))
@@ -131,6 +135,10 @@ initXLimits = [min(xInitial) max(xInitial)];
 initZLimits = get(parent, 'YLim');
 Tmp = guihandles(fig);
 
+if ~isempty(get(Tmp.FigureToolBar, 'children'))
+    % delete existing toolbar items
+    delete(get(Tmp.FigureToolBar, 'children'))
+end
 %if exist('stretchaxes.bmp','file')
     pushIm = imread('stretchaxes.bmp');
 %else
