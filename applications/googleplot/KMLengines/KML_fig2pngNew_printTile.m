@@ -11,7 +11,7 @@ for addCode = ['0','1','2','3']
     
     % stop if tile is out of bounds
     if ~((D.E>B.W&&D.W<B.E)&&(D.N>B.S&&D.S<B.N))
-       fprintf('%-16s %-10s Reason: %s\n',code,'ABORTED','tile out of bounds')
+       fprintf('%-20s %-10s Reason: %s\n',code,'ABORTED','tile out of bounds')
     else
         
         R   = D.lon>=(B.W - OPT.dWE) & D.lon<=B.E + OPT.dWE &...
@@ -19,7 +19,7 @@ for addCode = ['0','1','2','3']
               
         % stop if no data is present in tile
         if ~any(R(:))
-            fprintf('%-16s %-10s Reason: %s\n',code,'ABORTED','no data in tile')
+            fprintf('%-20s %-10s Reason: %s\n',code,'ABORTED','no data in tile')
         else
             
 % attempt to handle shading flat cases, 
@@ -54,12 +54,12 @@ for addCode = ['0','1','2','3']
                indc   = find(mask2c==1);if ~isempty(indc);mask2c(indc(1):indc(end)) = 1;end
                D2.z   = D.z(mask1c,mask2c); % keep one smaller, do not add until plot
             else
-                error('we did not imagine this could happoen')
+                error('we did not imagine this could happen')
             end
             
             
             if all(isnan(D2.z(:)))
-            fprintf('%-16s %-10s Reason: %s\n',code,'ABORTED','only NAN''s in tile')
+            fprintf('%-20s %-10s Reason: %s\n',code,'ABORTED','only NAN''s in tile')
             else
                 D2.lat = D.lat(mask1,mask2);
                 D2.lon = D.lon(mask1,mask2);
@@ -71,18 +71,18 @@ for addCode = ['0','1','2','3']
                 
                 
                 if length(code) < OPT.lowestLevel
-                    fprintf('%-16s %-10s\n',code,'CONTINUING')
+                    fprintf('%-20s %-10s\n',code,'CONTINUING')
                     KML_fig2pngNew_printTile(code,D2,OPT)
                 else
-                    fprintf('%-16s %-10s\n',code,'PRINTING TILE')
+                    fprintf('%-20s %-10s\n',code,'PRINTING TILE')
                     
                     dNS = OPT.dimExt/OPT.dim*(B.N - B.S);
                     dWE = OPT.dimExt/OPT.dim*(B.E - B.W);
                     
                     if isequal(size(R) - size(D.z),[0 0]) % shading interp case
-                    set(OPT.h ,'CDATA',          D2.z          ,'ZDATA',          D2.z          ,'YDATA',D2.lat,'XDATA',D2.lon); % also CDATA for pcolor objects
+                        set(OPT.h ,'CDATA',          D2.z          ,'ZDATA',          D2.z          ,'YDATA',D2.lat,'XDATA',D2.lon); % also CDATA for pcolor objects
                     else % shading flat case
-                    set(OPT.h ,'CDATA',addrowcol(D2.z,1,1,-Inf),'ZDATA',addrowcol(D2.z,1,1,-Inf),'YDATA',D2.lat,'XDATA',D2.lon); % also CDATA for pcolor objects
+                        set(OPT.h ,'CDATA',addrowcol(D2.z,1,1,-Inf),'ZDATA',addrowcol(D2.z,1,1,-Inf),'YDATA',D2.lat,'XDATA',D2.lon); % also CDATA for pcolor objects
                     end
                     set(OPT.ha,'YLim',[B.S - dNS B.N + dNS]);
                     set(OPT.ha,'XLim',[B.W - dWE B.E + dWE]);
@@ -90,7 +90,6 @@ for addCode = ['0','1','2','3']
                     PNGfileName = fullfile(OPT.Path,OPT.Name,[OPT.Name '_' code '.png']);
                     
                     % read a previous image if necessary
-                    mergeExistingTiles = false;
                     if OPT.mergeExistingTiles
                         if exist(PNGfileName,'file')
                             [oldIm ignore oldImAlpha] = imread(PNGfileName);

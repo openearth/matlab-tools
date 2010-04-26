@@ -172,7 +172,7 @@ function KML_colorbar(OPT)
            [template, map, alpha] = imread('KML_colorbar_template_horizontal.png');
            % place all non invisible pixels in the template)
            templateColobarArea = template((1:100)+14,(1:440)+140,:);
-           templateColobarArea(repmat(all(~mask,3),1,3)) = im(repmat(all(~mask,3),1,3));
+           templateColobarArea(repmat(any(~mask,3),1,3)) = im(repmat(any(~mask,3),1,3));
           template((1:100)+14,(1:440)+140,:) = templateColobarArea;
        case 'vertical'
            % crop image to 100 by 440
@@ -182,7 +182,7 @@ function KML_colorbar(OPT)
            [template, map, alpha] = imread('KML_colorbar_template_vertical.png');
            % place all non invisible pixels in the template)
            templateColobarArea = template((1:440)+90,(1:100)+18,:);
-           templateColobarArea(repmat(all(~mask,3),1,3)) = im(repmat(all(~mask,3),1,3));
+           templateColobarArea(repmat(any(~mask,3),1,3)) = im(repmat(any(~mask,3),1,3));
            template((1:440)+90,(1:100)+18,:) = templateColobarArea;
    end
  
