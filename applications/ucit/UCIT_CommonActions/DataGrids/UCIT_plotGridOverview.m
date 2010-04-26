@@ -1,4 +1,4 @@
-function fh = UCIT_plotGridOverview(datatype)
+function fh = UCIT_plotGridOverview(datatype,varargin)
 %PLOTGRIDOVERVIEW   this routine displays all grid outlines
 %
 % This routine displays all transect outlines.
@@ -40,6 +40,10 @@ function fh = UCIT_plotGridOverview(datatype)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+OPT.refreshonly = 0;
+
+OPT = setProperty(OPT,varargin{:});
+
 %% get metadata (either from the console or the database)
 
 %tic
@@ -47,7 +51,10 @@ function fh = UCIT_plotGridOverview(datatype)
 %toc
 
 if ~isempty(findobj('tag','gridOverview'));
-      close(findobj('tag','gridOverview'));
+   h = findobj('tag','gridOverview');
+   figure(h)
+   OPT.axis = axis;
+   close(h);
 end
 
 %% set up figure
@@ -80,12 +87,17 @@ for i = 1:size(d.contour,1)
 end
 
 set(gcf,'tag','gridOverview');
-box on
 
 %% Adjust axis and labels
-axis    equal;
-axis   ([d.axes])
-tickmap('xy','dellast',1)
+   box on
+   if OPT.refreshonly
+      axis    equal;
+      axis(OPT.axis)
+   else
+      axis    equal;
+      axis   ([d.axes])
+   end
+   tickmap('xy','dellast',1)
 
 %% Make figure visible
 set(fh,'visible','on');

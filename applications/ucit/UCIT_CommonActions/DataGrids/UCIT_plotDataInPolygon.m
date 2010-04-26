@@ -52,7 +52,7 @@ datatype = UCIT_getInfoFromPopup('GridsDatatype');
 %% Select in grid overview plot
 
 if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
-    fh = UCIT_plotGridOverview;
+    fh = UCIT_plotGridOverview(datatype,'refreshonly',1);
 else
     fh = figure(findobj('tag','gridOverview'));figure(fh);
 end
