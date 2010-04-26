@@ -23,7 +23,7 @@ function [valid message] = jarkus_check(transects, varargin)
 %   Example
 %   [valid message] = jarkus_check(transects, 'id', {'altitude' 3}, {'time'})
 %
-%   See also 
+%   See also jarkus_transects
 
 %% Copyright notice
 %   --------------------------------------------------------------------
