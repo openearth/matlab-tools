@@ -13,6 +13,9 @@ function varargout = KMLcolorbar(varargin)
 % when multiple parameters with different colormaps are shown together in GE.
 % Default: {'W'}, options: {'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'}
 %
+% TODO: CBcLim should crop the colorbar range when is it different from
+% cLim (if that is defined)
+%
 %See also: GOOGLEPLOT
 
 %   --------------------------------------------------------------------
