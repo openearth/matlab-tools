@@ -119,8 +119,9 @@ else
     % point; first and last point are considered to have only one side.
     weight = diff([x_new(1) diff(x_new)/2 + x_new(1:end-1) x_new(end)]);
 end
-total = sum(weight);
     
 Obs = abs(zm_new - z0_new); % absolute values of difference between model final profile and initial profile
 Exp = abs(zc_new - z0_new); % absolute values of difference between computed final profile and initial profile
-Chi2 = sum(((Obs - Exp).^2 ./ Exp) .* weight) / total; % weighted chi square value
+id = Exp ~= 0 | Obs ~= 0;
+total = sum(weight(id));
+Chi2 = sum(((Obs(id) - Exp(id)).^2 ./ Exp(id)) .* weight(id)) / total; % weighted chi square value
