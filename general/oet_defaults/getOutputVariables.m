@@ -73,6 +73,11 @@ end
 %% get fuinction call
 str = getFunctionCall(fun);
 
+if isempty(str)
+    varsout = {'varargout'};
+    return
+end
+
 %% isolate output variables
 id = strfind(str, '=');
 outstr = strtrim(str(1:id-1));

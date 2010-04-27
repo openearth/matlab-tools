@@ -72,7 +72,12 @@ if fl
         % open the m-file and read lines until start of call is encountered
         fid = fopen(funinfo.file);
         while ~feof(fid)
-            str = strtrim(fgetl(fid));
+            str = fgetl(fid);
+            if ~ischar(str)
+                str = '';
+                return
+            end
+            str = strtrim(str);
             id = strfind(str, 'function');
             idcomment = strfind(str, '%');
             if ~isempty(id) && isempty(idcomment) || ~isempty(id) && ~isempty(idcomment) && min(idcomment)>min(id)

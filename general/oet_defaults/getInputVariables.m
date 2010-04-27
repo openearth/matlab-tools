@@ -81,6 +81,11 @@ end
 
 str = getFunctionCall(fun);
 
+if isempty(str)
+    inputVariables = 'varargin';
+    return
+end
+
 ids = [strfind(str, '(')+1 strfind(str, ')')-1];
         
 %% read input variables from string
