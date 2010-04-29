@@ -45,51 +45,22 @@ function rws_waterbase2nc(varargin)
 %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table/
 %  keep name shorter than namelengthmax (=63)
 
-   OPT.standard_names = ...  % some to long for matlab struct field name, chop to 63
-      {'sea_surface_height',...
-       'concentration_of_suspended_matter_in_sea_water',...
-       'sea_surface_temperature',...
-       'sea_surface_salinity',...
-       'sea_surface_wave_significant_height',...
-       'sea_surface_wave_from_direction',...
-       'sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment',...
-       'concentration_of_chlorophyll_in_sea_water',...
-       'water_volume_transport_into_sea_water_from_rivers'};
-   
-   OPT.long_names = ...
-      {'sea surface height',...
-       'concentration of suspended matter in sea water',...
-       'sea surface temperature',...
-       'sea surface salinity',...
-       'H_s',...
-       'sea surface wave from direction',...
-       'T_{m0,2}',...
-       'concentration of chlorophyll in sea water',...
-       'River dicharge'};
-       
-   OPT.unitss = ...
-      {'m',...              % unit conversion to m is done below
-       'kg/m^3',...         % unit conversion to kg/m3 is done below
-       'degree_Celsius',...
-       '1e-3',...
-       'm',...              % unit conversion to m is done below
-       'degree_true',...
-       's',...
-       'microg/l',...       % ug/l is not in UDunits
-       'm^3/s'};
-   
-   OPT.parameter          = 0; %[9]; % 0=all or select index from OPT.names above
+   OPT.donar_wnsnum       = []; %[9]; % 0=all or select index from OPT.names above
 
 %% Initialize
 
    OPT.dump               = 0;
    OPT.disp               = 0;
    OPT.pause              = 0;
+   OPT.debug              = 0;
    
    OPT.refdatenum         = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
    OPT.refdatenum         = datenum(1970,1,1); % lunix  datenumber convention
    OPT.fillvalue          = nan; % NaNs do work in netcdf API
    
+   OPT.att_name           = {''};
+   OPT.att_val            = {''};
+
    OPT.stationTimeSeries  = 0; % last items to adhere to for upcoming convenction, but not yet supported by QuickPlot
 
 %% File loop
@@ -103,32 +74,31 @@ function rws_waterbase2nc(varargin)
    OPT.mask               = 'id*.zip';
    OPT.unzip              = 1; % process only zipped files: unzip them, and delete if afterwards
    OPT.load               = 1; % load slow *.txt file
-
+   OPT.method             = 'fgetl';
 %% Keyword,value
 
    OPT = setProperty(OPT,varargin{:});
 
 %% Parameter choice
 
-   if ischar(OPT.parameter)
-      OPT.parameter = strmatch(OPT.parameter,OPT.standard_names)
-   else   
-      if  OPT.parameter==0
-          OPT.parameter = 1:length(OPT.codes);
-      end
-   end   
+   DONAR = xls2struct([fileparts(mfilename('fullpath')) filesep 'rws_waterbase_name2standard_name.xls']);
+
+%% Parameter choice
+
+   if  OPT.donar_wnsnum==0
+       OPT.donar_wnsnum = 1:length(OPT.codes);
+   end
 
 %% Parameter loop
 
-for ivar=[OPT.parameter]
+for ivar=[OPT.donar_wnsnum]
 
-    OPT.standard_name  = OPT.standard_names{ivar};
-    OPT.name           = OPT.standard_name(1:min(63,length(OPT.standard_name))); % matlab names have a max length of 63 characters
-    OPT.long_name      = OPT.long_names{ivar};
-    OPT.units          = OPT.unitss{ivar};
+    index = find(DONAR.donar_wnsnum==ivar);
 
-   %OPT.directory_raw1 = [OPT.directory_raw,filesep,OPT.standard_name,filesep];%'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\raw\'
-   %OPT.directory_nc1  = [OPT.directory_nc ,filesep,OPT.standard_name,filesep];%'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\nc\'
+    OPT.standard_name  = DONAR.cf_standard_name{index};
+    OPT.name           = DONAR.name{index}; %(1:min(63,length(OPT.standard_name))); % matlab names have a max length of 63 characters
+    OPT.long_name      = DONAR.donar_wns_oms{index};
+    OPT.units          = DONAR.units{index};
 
     mkpath(OPT.directory_nc);
 
@@ -140,7 +110,7 @@ for ivar=[OPT.parameter]
 
         OPT.filename = fullfile(OPT.directory_raw, OPT.files(ifile).name(1:end-4)); % id1-AMRGBVN-196101010000-200801010000.txt
 
-        disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)])
+        disp(['  Processing ',num2str(ifile,'%0.4d'),'/',num2str(length(OPT.files),'%0.4d'),': ',filename(OPT.filename),' to netCDF.'])
 
         %% 0 Read raw data
 
@@ -155,26 +125,25 @@ for ivar=[OPT.parameter]
             end
 
             if OPT.load
+
+                % Load
+                
                 D = rws_waterbase_read([OPT.filename],...% ,'.txt'
                       'locationcode',1,... 
                          'fieldname',OPT.name,...
                     'fieldnamescale',1,...
-                            'method','fgetl');
+                            'method',OPT.method);
 
-                %% Unit conversion
-                %  make units meters for waterlevels and wave heights
-                %  for waterlevels 'cm t.o.v. NAP' is used
-                %  for wave heights 'cm' is used
-                %  both strings need to be compared
-                %  for concentrations 'mg.l' is used
-                units = pad(D.data.units,4,' ');
-                if  strcmpi(units(1:2),'cm')
-                   % strcmpi(D.data.units,'cm t.o.v. NAP') || ...     % id1
-                   % strcmpi(D.data.units,'cm t.o.v. Mean Sea Level') % id54
-                   D.data.(OPT.name) = D.data.(OPT.name)./100;
-                elseif strcmpi(units(1:2),'mg/l')
-                   D.data.(OPT.name) = D.data.(OPT.name)./1e3;
+                % Unit conversion
+
+                if ~(isempty(OPT.units) | isnan(OPT.units))
+                  if OPT.debug
+                    ['data > goal units = ' D.data.units, ' > ' OPT.units]
+                  end
+                  D.data.(OPT.name) = D.data.(OPT.name).*convert_units(D.data.units,OPT.units);
+                  D.data.units      = OPT.units;
                 end
+                
             end
 
             if OPT.unzip
@@ -184,6 +153,8 @@ for ivar=[OPT.parameter]
             save([OPT.filename,'.mat'],'-struct','D'); % to save time 2nd attempt
 
         end % exist([OPT.filename,'.mat'])
+        
+    if ~(length(D.data.datenum)==1 & isnan(D.data.datenum))
 
         D.version     = '';
 
@@ -225,7 +196,7 @@ for ivar=[OPT.parameter]
         nc_attput(outputfile, nc_global, 'locationcode'    , D.data.locationcode);
 
         nc_attput(outputfile, nc_global, 'waarnemingssoort', D.data.waarnemingssoort);
-        nc_attput(outputfile, nc_global, 'reference_level' , D.data.what);
+        nc_attput(outputfile, nc_global, 'reference_level' , D.data.refvlk);
         
         if isfield(D.data,'hoedanigheid')
         if  length(D.data.hoedanigheid)==1;nc_attput(outputfile, nc_global, 'hoedanigheid' , D.data.hoedanigheid);end
@@ -279,10 +250,10 @@ for ivar=[OPT.parameter]
         % Station long name
 
         ifld = ifld + 1;
-        nc(ifld).Name         = 'station_name';
-        nc(ifld).Nctype       = 'char';
-        nc(ifld).Dimension    = {'locations','name_strlen2'};
-        nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station name');
+        nc(ifld).Name             = 'station_name';
+        nc(ifld).Nctype           = 'char';
+        nc(ifld).Dimension        = {'locations','name_strlen2'};
+        nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'station name');
 
         % Define dimensions in this order:
         % [time,z,y,x]
@@ -293,40 +264,40 @@ for ivar=[OPT.parameter]
         % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
 
         ifld = ifld + 1;
-        nc(ifld).Name         = 'lon';
-        nc(ifld).Nctype       = 'float'; % no double needed
-        nc(ifld).Dimension    = {'locations'};
-        nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station longitude');
-        nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_east');
-        nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'longitude');
+        nc(ifld).Name             = 'lon';
+        nc(ifld).Nctype           = 'float'; % no double needed
+        nc(ifld).Dimension        = {'locations'};
+        nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'station longitude');
+        nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
+        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude');
 
         % Latitude:
         % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
 
         ifld = ifld + 1;
-        nc(ifld).Name         = 'lat';
-        nc(ifld).Nctype       = 'float'; % no double needed
-        nc(ifld).Dimension    = {'locations'};
-        nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station latitude');
-        nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_north');
-        nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'latitude');
+        nc(ifld).Name             = 'lat';
+        nc(ifld).Nctype           = 'float'; % no double needed
+        nc(ifld).Dimension        = {'locations'};
+        nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'station latitude');
+        nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
+        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude');
 
         % Z:
         % 
 
         ifld = ifld + 1;
-        nc(ifld).Name         = 'z';
-        nc(ifld).Nctype       = 'float'; % no double needed
+        nc(ifld).Name             = 'z';
+        nc(ifld).Nctype           = 'float'; % no double needed
         if length(D.data.z)==1
-        nc(ifld).Dimension    = {'locations'};
+        nc(ifld).Dimension        = {'locations'};
         else
-        nc(ifld).Dimension    = {'locations','time'};
+        nc(ifld).Dimension        = {'locations','time'};
         end
-        nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station depth');
-        nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'meters');
-        nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'height_above_reference_ellipsoid');
-        nc(ifld).Attribute(4) = struct('Name', 'positive'       ,'Value', 'up');
-        nc(ifld).Attribute(5) = struct('Name', 'axis'           ,'Value', 'Z');
+        nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'station depth');
+        nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'meters');
+        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'height_above_reference_ellipsoid');
+        nc(ifld).Attribute(end+1) = struct('Name', 'positive'       ,'Value', 'up');
+        nc(ifld).Attribute(end+1) = struct('Name', 'axis'           ,'Value', 'Z');
 
         % Time:
         % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
@@ -339,17 +310,17 @@ for ivar=[OPT.parameter]
         OPT.timezone = timezone_code2iso('MET');
 
         ifld = ifld + 1;
-        nc(ifld).Name         = 'time';
-        nc(ifld).Nctype       = 'double'; % float not sufficient as datenums are big: doubble
+        nc(ifld).Name             = 'time';
+        nc(ifld).Nctype           = 'double'; % float not sufficient as datenums are big: doubble
         if OPT.stationTimeSeries
-        nc(ifld).Dimension    = {'locations','time'}; % QuickPlot error: plots dimensions instead of datestr
+        nc(ifld).Dimension        = {'locations','time'}; % QuickPlot error: plots dimensions instead of datestr
         else
-        nc(ifld).Dimension    = {'time'}; % {'locations','time'} % does not work in ncBrowse, nor in Quickplot (is indirect time mapping)
+        nc(ifld).Dimension        = {'time'}; % {'locations','time'} % does not work in ncBrowse, nor in Quickplot (is indirect time mapping)
         end
-        nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'time');
-        nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
-        nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'time');
-        nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+        nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'time');
+        nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
+        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'time');
+        nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
         
         %nc(ifld).Attribute(5) = struct('Name', 'bounds'         ,'Value', '');
 
@@ -357,17 +328,26 @@ for ivar=[OPT.parameter]
         % * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table/
 
         ifld = ifld + 1;
-        nc(ifld).Name         = OPT.standard_name;
-        nc(ifld).Nctype       = 'float'; % no double needed
-        nc(ifld).Dimension    = {'locations','time'};
-        nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', OPT.long_name);
-        nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', OPT.units);
-        nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
-        nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-        nc(ifld).Attribute(5) = struct('Name', 'cell_methods'   ,'Value', 'time: point area: point');
+        nc(ifld).Name             = OPT.name; % thre isn't always a standard name, and it can be over 63 chars long
+        nc(ifld).Nctype           = 'float'; % no double needed
+        nc(ifld).Dimension        = {'locations','time'};
+        nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name);
+        nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', OPT.units);
+        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
+        nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+        nc(ifld).Attribute(end+1) = struct('Name', 'cell_methods'   ,'Value', 'time: point area: point');
         if OPT.stationTimeSeries
-        nc(ifld).Attribute(6) = struct('Name', 'coordinates'    ,'Value', 'lat lon');  % QuickPlot error
+        nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');  % QuickPlot error
         end
+        for jj=1:length(OPT.att_name)
+        nc(ifld).Attribute(end+1) = struct('Name', OPT.att_name{jj} ,'Value', OPT.att_val{jj});
+        end
+        
+      %  'donar_wnsnum
+      %  'aquo_lex_code'
+      %  'sdn_standard_name'
+      %  'sdn_long_name'
+      %  'sdn_units'
 
         %% 4 Create variables with attibutes
         % When variable definitons are created before actually writing the
@@ -375,19 +355,19 @@ for ivar=[OPT.parameter]
         % file without the need to relocate any info.
 
         for ifld=1:length(nc)
-            if OPT.disp;disp([num2str(ifld),' ',nc(ifld).Name]);end
+            if OPT.debug;disp([num2str(ifld),' ',nc(ifld).Name]);end
             nc_addvar(outputfile, nc(ifld));
         end
 
         %% 5 Fill variables
 
-        nc_varput(outputfile, 'station_id'      , D.data.locationcode);
-        nc_varput(outputfile, 'station_name'    , D.data.location);
-        nc_varput(outputfile, 'lon'             , unique(D.data.lon));
-        nc_varput(outputfile, 'lat'             , unique(D.data.lat));
-        nc_varput(outputfile, 'z'               , D.data.z);
-        nc_varput(outputfile, 'time'            , D.data.datenum' - OPT.refdatenum);
-        nc_varput(outputfile, OPT.standard_name , D.data.(OPT.name));
+        nc_varput(outputfile, 'station_id'  , D.data.locationcode);
+        nc_varput(outputfile, 'station_name', D.data.location);
+        nc_varput(outputfile, 'lon'         , unique(D.data.lon));
+        nc_varput(outputfile, 'lat'         , unique(D.data.lat));
+        nc_varput(outputfile, 'z'           , D.data.z);
+        nc_varput(outputfile, 'time'        , D.data.datenum' - OPT.refdatenum);
+        nc_varput(outputfile, OPT.name      , D.data.(OPT.name));
 
         %% 6 Check
 
@@ -400,6 +380,8 @@ for ivar=[OPT.parameter]
         if OPT.pause
             pausedisp
         end
+        
+    end
 
     end %file loop % for ifile=1:length(OPT.files)
 

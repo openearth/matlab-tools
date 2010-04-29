@@ -67,6 +67,11 @@ if iscell(datestring)
    datestring = char(datestring);
 end   
 
+if isempty(datestring)
+   dtnm = [];
+   return
+end
+
 if nargin==2
    timestring = varargin{1};
    if iscell(timestring)

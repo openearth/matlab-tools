@@ -1,5 +1,5 @@
 function varargout = nc_cf_stationtimeseries2meta(varargin)
-%NC_CF_STATIONTIMESERIES2META   extract meta info from all NetCDF files in directory to ...
+%NC_CF_STATIONTIMESERIES2META   extract meta info from all netCDF files in directory to ...
 %
 %      nc_cf_stationtimeseries2meta(<keyword,value>) 
 %  M = nc_cf_stationtimeseries2meta(<keyword,value>) 
@@ -15,7 +15,10 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 %   * mask            file mask (default '*.nc')
 %   * basename        name of *.png and *.xls of output files (default 'catalog')
 %   * vc              opendap adress of vector coastline for overview plot
+%   * parameters      netCDF variable name of parameters for which to calculate min, mean, max and std
+%                     (currently only 1)
 %   * standard_names  standard_name of parameters for which to calculate min, mean, max and std
+%                     (only used when parameter is empty) (currently only 1)
 %
 %See also: snctools
 
@@ -72,7 +75,8 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    OPT.datestr        = 'yyyy-mm-dd HH:MM:SS';
    OPT.vc             = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc'; % vector coastline, WVC in future ?
    OPT.standard_names = [];
-   
+   OPT.parameters     = [];
+
 %% Keyword,value
 
    OPT = setProperty(OPT,varargin{:});
@@ -107,7 +111,7 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    
       OPT.filename = [OPT.directory_nc, filesep, OPT.files(ifile).name]; % e.g. 'etmgeg_273.txt'
    
-        disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename),' to xls/png overview']);
+        disp(['  Processing ',num2str(ifile,'%0.4d'),'/',num2str(length(OPT.files),'%0.4d'),': ',filename(OPT.filename),' to xls/png overview']);
       
 %% Get global attributes
 
@@ -140,14 +144,24 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
       files(ifile).station_name           = nc_varget(OPT.filename,'station_name');
       end
 
-      for iname=1:length(OPT.standard_names)
-      OPT.standard_name = OPT.standard_names{iname};    
-      OPT.parameter     = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue',OPT.standard_name);
-      parameter         = nc_varget(OPT.filename,OPT.parameter);
-      files(ifile).([OPT.parameter,'_min' ]) = nanmin (parameter);
-      files(ifile).([OPT.parameter,'_mean']) = nanmean(parameter);
-      files(ifile).([OPT.parameter,'_max' ]) = nanmax (parameter);
-      files(ifile).([OPT.parameter,'_std' ]) = nanstd (parameter);
+%% get all variable names (OPT.standard_names > OPT.parameters)
+
+      if isempty(OPT.parameters)
+        for iname=1:length(OPT.standard_names)
+          OPT.standard_name = OPT.standard_names{iname};    
+          OPT.parameters{iname} = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue',OPT.standard_name);
+        end
+      end
+
+%% extract all statistics
+
+      for iname=1:length(OPT.parameters)
+       OPT.parameter     = OPT.parameters{iname};
+       parameter         = nc_varget(OPT.filename,OPT.parameter);
+       files(ifile).([OPT.parameter,'_min' ]) = nanmin (parameter);
+       files(ifile).([OPT.parameter,'_mean']) = nanmean(parameter);
+       files(ifile).([OPT.parameter,'_max' ]) = nanmax (parameter);
+       files(ifile).([OPT.parameter,'_std' ]) = nanstd (parameter);
       end
       
    end % for ifile=1:length(OPT.files)
@@ -166,13 +180,12 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    A.station_id                = {files.station_id};
    A.station_name              = {files.station_name};
    
-   for iname=1:length(OPT.standard_names)
-   OPT.standard_name = OPT.standard_names{iname};    
-   OPT.parameter    = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue',OPT.standard_name);
-   A.([OPT.parameter,'_min' ]) = [files.([OPT.parameter,'_min' ])];
-   A.([OPT.parameter,'_mean']) = [files.([OPT.parameter,'_mean'])];
-   A.([OPT.parameter,'_max' ]) = [files.([OPT.parameter,'_max' ])];
-   A.([OPT.parameter,'_std' ]) = [files.([OPT.parameter,'_std' ])];
+   for iname=1:length(OPT.parameters)
+    OPT.parameter     = OPT.parameters{iname};
+    A.([OPT.parameter,'_min' ]) = [files.([OPT.parameter,'_min' ])];
+    A.([OPT.parameter,'_mean']) = [files.([OPT.parameter,'_mean'])];
+    A.([OPT.parameter,'_max' ]) = [files.([OPT.parameter,'_max' ])];
+    A.([OPT.parameter,'_std' ]) = [files.([OPT.parameter,'_std' ])];
    end
 
    if isnumeric(A.station_id{1})
@@ -222,6 +235,7 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    
    %% Add vector coastline
 
+   try
    OPT.USE_JAVA = getpref ('SNCTOOLS', 'USE_JAVA');
    setpref ('SNCTOOLS', 'USE_JAVA', 1)
 
@@ -234,6 +248,7 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 
    axis(axis)
    plot(tmp.lon,tmp.lat,'k');
+   end
    
    print2screensize([OPT.directory_out,filesep,OPT.basename,'.png']);
 

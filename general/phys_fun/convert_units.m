@@ -32,9 +32,35 @@ function Factor=convert_units(InUnits,OutUnits);
 % 2008 jan 23: started forces and pressure section [Gerben J. de Boer]
 % 2008 jan 23: removed refs to constants [Gerben J. de Boer]
 % 2008 apr 14: added plural versions [Gerben J. de Boer]
+% 2010 apr 26: allow cases like m2 in addition to m^2 [Gerben J. de Boer]
+
+%% deal with % character
 
     InUnits = strrep( InUnits,'%','0.01');
    OutUnits = strrep(OutUnits,'%','0.01');
+
+%% replace all occurences like m2 with m^2
+
+   ind      = regexpi(InUnits,'[abcdefghijklmnopqrstuvwxyz]\d');
+   jj = 0;
+   for ii=1:length(ind)
+      InUnits = strrep(InUnits,[InUnits(ind(ii)+jj)     InUnits(ind(ii)+jj+1)],...
+                               [InUnits(ind(ii)+jj) '^' InUnits(ind(ii)+jj+1)]);
+      jj = jj + 1;
+   end
+   
+   ind      = regexpi(OutUnits,'[abcdefghijklmnopqrstuvwxyz]\d');
+   jj = 0;
+   for ii=1:length(ind)
+      OutUnits = strrep(OutUnits,[OutUnits(ind(ii)+jj)     OutUnits(ind(ii)+jj+1)],...
+                                 [OutUnits(ind(ii)+jj) '^' OutUnits(ind(ii)+jj+1)]);
+      jj = jj + 1;
+   end
+   
+   %InUnits
+   %OutUnits
+
+%% start unit conversion
 
    %% Definitions  
    % ---------------------
@@ -58,6 +84,8 @@ function Factor=convert_units(InUnits,OutUnits);
    cms             = cm;                      % cms
    centimeter      = cm;                      % cms
    centimeters     = cm;                      % cms
+
+   dm              = 1e-1;                    % decimeter
 
    inch            = 0.0254;                  % inch
    	     

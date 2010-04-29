@@ -9,66 +9,70 @@ function rws_waterbase_all
   %urlbase = 'p:\mcdata\opendap\';              % @ deltares internally
   %urlbase = 'http://dtvirt5.deltares.nl:8080'; % test server
    urlbase = 'http://opendap.deltares.nl:8080'; % production server
-   locbase = 'P:\mcdata';                       % @ deltares internally
+
+  %rawbase = 'P:\mcdata';                       % @ deltares internally
+  % ncbase = 'P:\mcdata';                       % @ deltares internally
+   rawbase = 'f:\checkouts\OpenEarthRawData';   % @ local
+    ncbase = 'f:\opendap\thredds\';             % @ local
    
-%% define parameters over which to loop
-%  make sure this list correspnds with the definition inside rws_waterbase_get_url_loop    
-%  make sure this list correspnds with the definition inside rws_waterbase2nc    
+   OPT.donar_wnsnum = [209 332 346 347 360 363 364 380 491 492 493 541 560 1083]; % 0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls
+   OPT.donar_wnsnum = [209 332]; % 0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls
 
-subdirs = {'concentration_of_chlorophyll_in_sea_water',...
-           'concentration_of_suspended_matter_in_sea_water',...
-           'sea_surface_height',...
-           'sea_surface_salinity',...
-           'sea_surface_temperature',...
-           'sea_surface_wave_from_direction',...
-           'sea_surface_wave_significant_height',...
-           'sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment',...
-           'water_volume_transport_into_sea_water_from_rivers'};
+%% Parameter choice
 
-%-% for ii= 1:length(subdirs)   
+   DONAR = xls2struct([fileparts(mfilename('fullpath')) filesep 'rws_waterbase_name2standard_name.xls']);
 
-for ii= 8
-       
-      subdir            = subdirs{ii};
-      OPT.directory_nc  = [locbase,         '\opendap\rijkswaterstaat\waterbase\'      ,filesep,subdir];
-      OPT.directory_raw = [locbase,'\OpenEarthRawData\rijkswaterstaat\waterbase\cache\',filesep,subdir];
+   if  OPT.donar_wnsnum==0
+       OPT.donar_wnsnum = DONAR.donar_wnsnum;
+   end
+
+   %% Parameter loop
+
+   for ivar=[OPT.donar_wnsnum]
+
+   disp(['Processing donar_wnsnum: ',num2str(ivar)])
       
-   
+   index = find(DONAR.donar_wnsnum==ivar);
+
+      OPT.code           = DONAR.donar_wnsnum(index);
+      OPT.standard_name  = DONAR.cf_standard_name{index};
+      OPT.name           = DONAR.name{index};
+
+      subdir             = OPT.name;
+      OPT.directory_nc   = [ ncbase,'\rijkswaterstaat\waterbase\'      ,filesep,subdir];
+      OPT.directory_raw  = [rawbase,'\rijkswaterstaat\waterbase\cache\',filesep,subdir];
+      
    %% Download from waterbase.nl
-   %  make sure items in list above are defined inside rws_waterbase_get_url_loop    
-%-%      rws_waterbase_get_url_loop('parameter'    ,subdir,...
-%-%                                 'directory_raw',OPT.directory_raw);
+%     rws_waterbase_get_url_loop('donar_wnsnum' ,OPT.code,...
+%                                'directory_raw',OPT.directory_raw);
    
    %% Make netCDF
-   %  make sure items in list above are defined inside rws_waterbase2nc    
    
-      rws_waterbase2nc('parameter'    ,subdirs{ii},...
+      rws_waterbase2nc('donar_wnsnum' ,OPT.code,...
                        'directory_nc' ,OPT.directory_nc,...
-                       'directory_raw',OPT.directory_raw);
-
+                       'directory_raw',OPT.directory_raw,...
+                              'method','fgetl',... % 'fgetl' for water levels or discharges
+                            'att_name',{'aquo_lex_code'           ,'donar_wnsnum'           ,'sdn_standard_name'},...
+                             'att_val',{DONAR.aquo_lex_code(index),DONAR.donar_wnsnum(index),DONAR.sdn_standard_name(index) }); 
    %% Make overview png and xls
           
       nc_cf_stationtimeseries2meta('directory_nc'  ,[OPT.directory_nc],...
-                                   'standard_names',{subdir});
+                                   'parameters'    ,{OPT.name});
    
    %% Make catalog.nc
    
-      nc_cf_directory2catalog                      ([OPT.directory_nc])
+      nc_cf_directory2catalog([OPT.directory_nc])
    
    %% Make KML overview with links to netCDF on opendap.deltares.nl
       
-      disp(['Processing ',num2str(ii),' / ',num2str(length(subdirs)),': ',subdirs{ii}])
-      
       OPT2.fileName           = [OPT.directory_nc,'.kml'];
-      OPT2.kmlName            =  ['rijkswaterstaat/waterbase/' subdir];
-      OPT2.THREDDSbase        = [urlbase,'/thredds/dodsC/opendap/rijkswaterstaat/waterbase/',     subdirs{ii},'/'];
-      OPT2.HYRAXbase          = [urlbase,'/opendap/rijkswaterstaat/waterbase/',                   subdirs{ii},'/'];
-      OPT2.ftpbase            = [urlbase,'/thredds/fileServer/opendap/rijkswaterstaat/waterbase/',subdirs{ii},'/'];
-      OPT2.description        = {['parameter: ',subdir],...
+      OPT2.kmlName            = [                                    'rijkswaterstaat/waterbase/' subdir];
+      OPT2.HYRAXbase          = [urlbase,                   '/opendap/rijkswaterstaat/waterbase/',subdir,'/'];
+      OPT2.THREDDSbase        = [urlbase,     '/thredds/dodsC/opendap/rijkswaterstaat/waterbase/',subdir,'/'];
+      OPT2.ftpbase            = [urlbase,'/thredds/fileServer/opendap/rijkswaterstaat/waterbase/',subdir,'/'];
+      OPT2.description        = {['parameter: ',OPT.name],...
                                  'source: <a href="http://www.waterbase.nl">Rijkswaterstaat</a>'};
-      
-      OPT2.standard_name      = subdirs{ii};
-      
+      OPT2.name               = OPT.name;
       OPT2.iconnormalState    = 'http://maps.google.com/mapfiles/kml/shapes/placemark_square.png';
       OPT2.iconhighlightState = 'http://www.rijkswaterstaat.nl/images/favicon.ico';
       

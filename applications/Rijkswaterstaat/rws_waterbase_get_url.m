@@ -193,8 +193,7 @@ function OutputName = rws_waterbase_get_url(varargin);
 
      end
 
-          
-      disp(urlName)
+      %disp(urlName)
 
       [s status] = urlwrite([urlName],OutputName);
 

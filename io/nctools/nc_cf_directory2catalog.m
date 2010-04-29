@@ -200,7 +200,7 @@ for ifile=1:length(OPT.files)
         
         entry = entry + 1;
         
-        disp(['  Processing ',num2str(entry,'%0.4d'),'/',num2str(length(OPT.files),'%0.4d'),': ',filename(OPT.filename)]);
+        disp(['  Processing ',num2str(entry,'%0.4d'),'/',num2str(length(OPT.files),'%0.4d'),': ',filename(OPT.filename),' to catalog.nc']);
         
         %% Get global attributes (PRE-ALLOCATE)
         
@@ -260,8 +260,10 @@ for ifile=1:length(OPT.files)
                     Value = fileinfo.Dataset(idat).Attribute(iatt).Value;
                     
                     % ... once
+                    if ~isnan(Value) % is NaN in absence of standard_name att 
                     if ~any(strfind(standard_names,[' ',Value]))      % remove redudant standard_names (can occur with statistics)
                         standard_names = [standard_names ' ' Value];  % needs to be char, space separatred
+                    end
                     end
                     
                     %   %% get spatial
