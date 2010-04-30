@@ -83,8 +83,8 @@ OPT.minLod             =     []; % minimum level of detail to keep a tile in vie
 OPT.minLod0            =     -1; % minimum level of detail to keep most detailed tile in view. Default is -1 (don't hide when zoomed in a lot)
 OPT.maxLod             =     [];
 OPT.maxLod0            =     -1;
-OPT.dWE                =    0.2*360/2^OPT.lowestLevel; % determines how much extra data to tiles to be able 
-OPT.dNS                =    0.2*360/2^OPT.lowestLevel; % to generate them as fraction of size of smalles tile
+OPT.dWE                =     []; % determines how much extra data to tiles to be able 
+OPT.dNS                =     []; % to generate them as fraction of size of smalles tile
 OPT.timeIn             =     []; % time properties
 OPT.timeOut            =     [];
 OPT.timeFormat        = 'yyyy-mm-ddTHH:MM:SS';
@@ -115,7 +115,14 @@ end
 OPT.highestLevel  = max(OPT.highestLevel,1);
 
 %% set maxLod and minLod defaults
-
+if  isempty(OPT.dWE)
+    OPT.dWE           = 0.2*360/(2^OPT.lowestLevel); % determines how much extra data to tiles to be able 
+end
+if isempty(OPT.dNS)
+    OPT.dNS           = 0.2*360/(2^OPT.lowestLevel); % to generate them as fraction of size of smalles tile
+end
+    
+    
 if isempty(OPT.minLod),                 OPT.minLod = round(  OPT.dim/1.5); end
 if isempty(OPT.maxLod)&&OPT.alpha  < 1, OPT.maxLod = round(2*OPT.dim/1.5); end % you see 1 layers always
 if isempty(OPT.maxLod)&&OPT.alpha == 1, OPT.maxLod = round(4*OPT.dim/1.5); end % you see 2 layers, except when fully zoomed in

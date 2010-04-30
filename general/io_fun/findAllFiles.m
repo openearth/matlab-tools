@@ -15,7 +15,7 @@ function filenames = findAllFiles(varargin)
 %
 %    OPT = findAllFiles()
 %
-%See also: dir, OPENDAP_CATALOG, ADDPATHFAST
+%See also: dir, OPENDAP_CATALOG, ADDPATHFAST, regexp
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -46,6 +46,7 @@ function filenames = findAllFiles(varargin)
 % TO DO make basepath first optional argument
 % TO DO rename to something sensible: e.g. dir_files?
 % TO DO add that sensible name to see also line of opendap_catalog
+% TO DO explain regexp for people who work with '*', cause it should be '.'
 
 % This tools is part of VOTools which is the internal clone of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
 % OpenEarthTools is an online collaboration to share and manage data and

@@ -11,22 +11,25 @@ for addCode = ['0','1','2','3']
     
     % stop if tile is out of bounds
     if ~((D.E>B.W&&D.W<B.E)&&(D.N>B.S&&D.S<B.N))
-       fprintf('%-20s %-10s Reason: %s\n',code,'ABORTED','tile out of bounds')
+       fprintf('%-20s %-20s Reason: %s\n',code,'ABORTED','tile out of bounds')
     else
         
         R   = D.lon>=(B.W - OPT.dWE) & D.lon<=B.E + OPT.dWE &...
               D.lat>=(B.S - OPT.dNS) & D.lat<=B.N + OPT.dNS;
-              
+        R2  = D.lon>=(B.W          ) & D.lon<=B.E           &...
+              D.lat>=(B.S          ) & D.lat<=B.N          ;
+        
+          
         % stop if no data is present in tile
-        if ~any(R(:))
-            fprintf('%-20s %-10s Reason: %s\n',code,'ABORTED','no data in tile')
+        if ~any(R2(:))
+            fprintf('%-20s %-20s Reason: %s\n',code,'ABORTED','no data in tile')
         else
             
 % attempt to handle shading flat cases, 
 % still does not work correctly though.
 % For curvi-linear grids with nan holes corner2center requires
 % a continuous piece of matrix, we we need to get 
-% rid of all intermediate exclusions that works fiej with shading interp. 
+% rid of all intermediate exclusions that works fine with shading interp. 
 % In this sketch attempt of a U-shaped curvi-linear grid think of the upper left part:
 %
 %    __
@@ -57,9 +60,8 @@ for addCode = ['0','1','2','3']
                 error('we did not imagine this could happen')
             end
             
-            
             if all(isnan(D2.z(:)))
-            fprintf('%-20s %-10s Reason: %s\n',code,'ABORTED','only NAN''s in tile')
+            fprintf('%-20s %-20s Reason: %s\n',code,'ABORTED','only NAN''s in tile')
             else
                 D2.lat = D.lat(mask1,mask2);
                 D2.lon = D.lon(mask1,mask2);
@@ -69,12 +71,11 @@ for addCode = ['0','1','2','3']
                 D2.E   = max(D.lon(:));
                 % stop if no data is present in tile
                 
-                
                 if length(code) < OPT.lowestLevel
-                    fprintf('%-20s %-10s\n',code,'CONTINUING')
+                    fprintf('%-20s %-20s\n',code,'CONTINUING')
                     KML_fig2pngNew_printTile(code,D2,OPT)
                 else
-                    fprintf('%-20s %-10s\n',code,'PRINTING TILE')
+                    fprintf('%-20s %-20s',code,'PRINTING TILE')
                     
                     dNS = OPT.dimExt/OPT.dim*(B.N - B.S);
                     dWE = OPT.dimExt/OPT.dim*(B.E - B.W);
@@ -89,6 +90,7 @@ for addCode = ['0','1','2','3']
 
                     PNGfileName = fullfile(OPT.Path,OPT.Name,[OPT.Name '_' code '.png']);
                     
+                    mergeExistingTiles = false;
                     % read a previous image if necessary
                     if OPT.mergeExistingTiles
                         if exist(PNGfileName,'file')
@@ -111,13 +113,12 @@ for addCode = ['0','1','2','3']
                         mask(repmat(oldImAlpha>0,[1 1 3])) = false;
                     end
                     
-                    
                     % return if no data is present in tile
                     if all(mask(:))
                         delete(PNGfileName)
-                            fprintf(' ...TILE DELETED, no data in tile\n')
+                            fprintf('...TILE DELETED, no data in tile\n')
                     else
-                        %fprintf('\n')
+                        fprintf('\n')
                         % now move image around to color transparent pixels with the value of the
                         % nearest neighbour.
                         im2       = im;
