@@ -19,7 +19,7 @@ function description = nerc_verify(nerc)
 %
 % Please report these cases to: webmaster@bodc.ac.uk <webmaster@bodc.ac.uk>
 %
-%See also: OCEANDATAVIEW, SDN_VERIFY, SDN2CF
+%See also: OCEANDATAVIEW, SDN_VERIFY, SDN2CF, P011
 
    OPT.method       = 'web';
    OPT.create_cache = 0;
