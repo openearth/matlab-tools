@@ -21,7 +21,7 @@ function [X, Y, Z, Ztime, OPT] = grid_orth_getDataInPolygon(varargin)
 %       X
 %       Y
 %       Z
-% 
+%
 %
 %   Example:
 %
@@ -30,11 +30,11 @@ function [X, Y, Z, Ztime, OPT] = grid_orth_getDataInPolygon(varargin)
 %    	59293.6 441289
 %    	60409.3 440512
 %    	59090.8 438855];
-%    
+%
 %    datasets = {...
 %        'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
-%        'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml'}; 
-%    
+%        'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml'};
+%
 %    for i = 1:length(datasets)
 %        close all
 %        [X, Y, Z, Ztime] = grid_orth_getDataInPolygon(...
@@ -94,7 +94,7 @@ OPT.polygondir      = 'D:\checkouts\VO-rawdata\projects\151027_maasvlakte_2\scri
 OPT.polygon         = [];
 OPT.cellsize        = [];                               % left empty will be determined automatically
 OPT.datathinning    = 1;                                % stride with which to skip through the data
-OPT.inputtimes      = datenum((2000:2008)',12, 31);     % starting points (in Matlab epoch time) 
+OPT.inputtimes      = datenum((2000:2008)',12, 31);     % starting points (in Matlab epoch time)
 OPT.starttime       = OPT.inputtimes(1);
 OPT.searchinterval  = -730;                             % acceptable interval to include data from (in days)
 OPT.min_coverage    = 25;                               % coverage percentage (can be several, e.g. [50 75 90]
@@ -111,7 +111,7 @@ OPT = setProperty(OPT, varargin{:});
 %% Step 0: create a figure with tagged patches
 axes = findobj('type','axes');
 if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.tag})) % if an overview figure is already present don't run this function again
-
+    
     % Step 0.1: get fixed map urls from OPeNDAP server
     if ~isempty(OPT.OPT)
         urls = OPT.OPT.urls;
@@ -120,7 +120,7 @@ if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.tag})) % if an overview
     end
     % Step 0.2: create a figure with tagged patches
     figure(10);clf;axis equal;box on;hold on
-
+    
     % Step 0.3: plot landboundary
     try % try loop to prevent crashing when no internet connection is available
         OPT.x = nc_varget(OPT.ldburl, nc_varfind(OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate'));
@@ -140,84 +140,84 @@ try delete(findobj(ah,'tag','selectionpoly'));  end %#ok<*TRYNC> delete any rema
 if isempty(OPT.polygon)
     % make sure the proper axes is current
     try axes(ah); end
-
+    
     jjj = menu({'Zoom to your place of interest first.',...
-                'Next select one of the following options.',...
-                'Finish clicking of a polygon with the <right mouse> button.'},...
-                '1. click a polygon',...
-                '2. click a polygon and save to file',...
-                '3. load a polygon from file');
-
+        'Next select one of the following options.',...
+        'Finish clicking of a polygon with the <right mouse> button.'},...
+        '1. click a polygon',...
+        '2. click a polygon and save to file',...
+        '3. load a polygon from file');
+    
     if jjj<3
-       % draw a polygon using polydraw making sure it is tagged properly
-       disp('Please click a polygon from which to select data ...')
-       [x,y] = polydraw('g','linewidth',2,'tag','selectionpoly');
-
+        % draw a polygon using polydraw making sure it is tagged properly
+        disp('Please click a polygon from which to select data ...')
+        [x,y] = polydraw('g','linewidth',2,'tag','selectionpoly');
+        
     elseif jjj==3
-       % load and plot a polygon
-       [fileName, filePath] = uigetfile({'*.ldb','Delt3D landboundary file (*.ldb)'},'Pick a landboundary file');
-       [x,y]=landboundary_da('read',fullfile(filePath,fileName));
-       x = x';
-       y = y';
+        % load and plot a polygon
+        [fileName, filePath] = uigetfile({'*.ldb','Delt3D landboundary file (*.ldb)'},'Pick a landboundary file');
+        [x,y]=landboundary_da('read',fullfile(filePath,fileName));
+        x = x';
+        y = y';
     end
-
+    
     % save polygon
     if jjj==2
-       [fileName, filePath] = uiputfile({'*.ldb','Delt3D landboundary file (*.ldb)'},'Specifiy a landboundary file',...
-       ['polygon_',datestr(now)]);
-       landboundary_da('write',fullfile(filePath,fileName),x,y);
+        [fileName, filePath] = uiputfile({'*.ldb','Delt3D landboundary file (*.ldb)'},'Specifiy a landboundary file',...
+            ['polygon_',datestr(now)]);
+        landboundary_da('write',fullfile(filePath,fileName),x,y);
     end
-
+    
     % combine x and y in the variable polygon and close it
     OPT.polygon = [x' y'];
     OPT.polygon = [OPT.polygon; OPT.polygon(1,:)];
     
 else
-
-   x = OPT.polygon(:,1);
-   y = OPT.polygon(:,2);
-
+    
+    x = OPT.polygon(:,1);
+    y = OPT.polygon(:,2);
+    
 end
 
 % delete the pre existing polygon and replace it with the just generated closed one
 
-   try;delete(findobj(ah,'tag','selectionpoly')); end
-   try axes(ah); end; hold on
-   if ~all(OPT.polygon(1,:)==OPT.polygon(end,:))
-       OPT.polygon = [OPT.polygon;OPT.polygon(1,:)];
-   end
-   plot(OPT.polygon(:,1),OPT.polygon(:,2),'g','linewidth',2,'tag','selectionpoly'); drawnow
-  %axis([min(x) max(x) min(y) max(y)]) % does not work
+try;delete(findobj(ah,'tag','selectionpoly')); end
+try axes(ah); end; hold on
+if ~all(OPT.polygon(1,:)==OPT.polygon(end,:))
+    OPT.polygon = [OPT.polygon;OPT.polygon(1,:)];
+end
+plot(OPT.polygon(:,1),OPT.polygon(:,2),'g','linewidth',2,'tag','selectionpoly'); drawnow
+%axis([min(x) max(x) min(y) max(y)]) % does not work
 
 %% Step 2: identify which maps are in polygon
 
-   [mapurls, minx, maxx, miny, maxy] = grid_orth_identifyWhichMapsAreInPolygon(OPT.OPT, OPT.polygon);
+[mapurls, minx, maxx, miny, maxy] = grid_orth_identifyWhichMapsAreInPolygon(OPT.OPT, OPT.polygon);
 
-   if isempty(mapurls) & OPT.warning
-   
-      X     = [];
-      Y     = [];
-      Z     = [];
-      Ztime = [];
-      warndlg('No data found in specified polygon');
-   
-   else
-
-   %% Step 3: retrieve data and place it on one overall grid
-   [X, Y, Z, Ztime]                  = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, OPT);
-   
-   if all(isnan(Ztime)) & OPT.warning
-         warndlg('No data found in specified time period (yet grids available in polygon)')
-   end
-
-   
-   %% Step 4: plot the end result (Z and Ztime)
-   if OPT.plotresult
-       % reduce the number of point to plot
-       OPT.datathinning = OPT.datathinning * 2;
-   
-       % plot X, Y, Z and X, Y, Ztime
-       grid_orth_plotDataInPolygon(X, Y, Z, Ztime,'polygon',OPT.polygon,'datathinning',OPT.datathinning,'ldburl',OPT.ldburl)
-   end
-
+if isempty(mapurls) & OPT.warning
+    
+    X     = [];
+    Y     = [];
+    Z     = [];
+    Ztime = [];
+    warndlg('No data found in specified polygon');
+    
+else
+    
+    %% Step 3: retrieve data and place it on one overall grid
+    [X, Y, Z, Ztime]                  = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, OPT);
+    
+    if all(isnan(Ztime)) & OPT.warning
+        warndlg('No data found in specified time period (yet grids available in polygon)')
+    end
+    
+    
+    %% Step 4: plot the end result (Z and Ztime)
+    if OPT.plotresult
+        % reduce the number of point to plot
+        OPT.datathinning = OPT.datathinning * 2;
+        
+        % plot X, Y, Z and X, Y, Ztime
+        grid_orth_plotDataInPolygon(X, Y, Z, Ztime,'polygon',OPT.polygon,'datathinning',OPT.datathinning,'ldburl',OPT.ldburl)
+    end
+    
 end

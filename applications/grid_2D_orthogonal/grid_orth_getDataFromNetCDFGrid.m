@@ -71,7 +71,7 @@ function [X, Y, Z, T] = grid_orth_getDataFromNetCDFGrid(varargin)
 OPT = struct(...
     'ncfile', [], ...                               % filename of nc file to use
     'starttime', [], ...                            % this is a datenum of the starting time to search
-    'searchwindow', -30, ...                        % this indicates the search window (nr of days, '-': backward in time, '+': forward in time)
+    'searchinterval', -30, ...                        % this indicates the search window (nr of days, '-': backward in time, '+': forward in time)
     'polygon', [], ...                              % search polygon (default: [] use entire grid)
     'stride', [1 1 1] ...                           % stride vector indicating thinning factor
     );
@@ -79,8 +79,9 @@ OPT = struct(...
 % overrule default settings by property pairs, given in varargin
 OPT = setProperty(OPT, varargin{:});
 
-%% find nc variables of coordinates
+[X, Y, Z, T] = deal([]);
 
+%% find nc variables of coordinates
 nc_index.x = nc_varfind(OPT.ncfile, 'attributename','standard_name','attributevalue','projection_x_coordinate');
 nc_index.y = nc_varfind(OPT.ncfile, 'attributename','standard_name','attributevalue','projection_y_coordinate');
 nc_index.t = nc_varfind(OPT.ncfile, 'attributename','standard_name','attributevalue','time');
@@ -118,61 +119,64 @@ else
     ylength  = size(Y,1);
 end
 
-%% get relevant data (possibly using stride)
-X        = nc_varget(OPT.ncfile, nc_index.x, xstart - 1, floor((xlength-(xstart-1))/OPT.stride(3)), OPT.stride(3));
-Y        = nc_varget(OPT.ncfile, nc_index.y, ystart - 1, floor((ylength-(ystart-1))/OPT.stride(2)), OPT.stride(2));
-Z        = zeros(size(Y,1), size(X,1))*nan;
-T        = zeros(size(Y,1), size(X,1))*nan;
-
-%% find the data files that lie within the temporal search window
-if ~isempty(nc_index.t)
-    t        = nc_varget(OPT.ncfile, nc_index.t);
-    [t,idt]  = sort(t,'descend');
+if ~isempty(xstart) || isempty(ystart)
     
-    [start_idx, end_idx, extents, matches, tokens, names, splits]  = regexp(nc_attget(OPT.ncfile,nc_varfind(OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'time'),'units'), '\d+'); %#ok<*NASGU>
-    t        = t + datenum([matches{1:6}], 'yyyymmddHHMMSS');
+    %% get relevant data (possibly using stride)
+    X        = nc_varget(OPT.ncfile, nc_index.x, xstart - 1, floor((xlength-(xstart-1))/OPT.stride(3)), OPT.stride(3));
+    Y        = nc_varget(OPT.ncfile, nc_index.y, ystart - 1, floor((ylength-(ystart-1))/OPT.stride(2)), OPT.stride(2));
+    Z        = zeros(size(Y,1), size(X,1))*nan;
+    T        = zeros(size(Y,1), size(X,1))*nan;
     
-    idt_in   = find(t <= OPT.starttime & ...
-        t >= OPT.starttime + OPT.searchwindow);
-    
-    % TO DO: add nearest in time
-    % TO DO: add linear interpolation in time
-    
-    %% one by one place separate grids on overall grid
-    for id_t = [idt(idt_in)-1]'
-        % So long as not all Z values inpolygon are nan try to add data
-        if sum(isnan(Z(inpolygon(repmat(X',size(Y,1),1), repmat(Y, 1, size(X',2)), OPT.polygon(:,1), OPT.polygon(:,2)))))~=0
-            Z_next    = nc_varget(OPT.ncfile, nc_index.z, [id_t ystart-1 xstart-1], [1 floor((ylength-(ystart-1))/OPT.stride(2)) floor((xlength-(xstart-1))/OPT.stride(3))], OPT.stride);
-            if sum(sum(~isnan(Z_next))) ~=0
-                disp(['... adding data from: ' datestr(t(idt(id_t+1)))])
-                ids2add = ~isnan(Z_next) & isnan(Z);    % helpul to be in a variable as the nature of Z changes in the next two lines
-                Z(ids2add) = Z_next(ids2add);           % add Z values from Z_next grid to Z grid at places where there is data in Z_next and no data in Z yet
-                T(ids2add) = t(idt(id_t+1));            % add time information to T at those places where Z data was added
+    %% find the data files that lie within the temporal search window
+    if ~isempty(nc_index.t)
+        t        = nc_varget(OPT.ncfile, nc_index.t);
+        [t,idt]  = sort(t,'descend');
+        
+        [start_idx, end_idx, extents, matches, tokens, names, splits]  = regexp(nc_attget(OPT.ncfile,nc_varfind(OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'time'),'units'), '\d+'); %#ok<*NASGU>
+        t        = t + datenum([matches{1:6}], 'yyyymmddHHMMSS');
+        
+        idt_in   = find(t <= OPT.starttime & ...
+            t >= OPT.starttime + OPT.searchinterval);
+        
+        % TO DO: add nearest in time
+        % TO DO: add linear interpolation in time
+        
+        %% one by one place separate grids on overall grid
+        for id_t = [idt(idt_in)-1]'
+            % So long as not all Z values inpolygon are nan try to add data
+            if sum(isnan(Z(inpolygon(repmat(X',size(Y,1),1), repmat(Y, 1, size(X',2)), OPT.polygon(:,1), OPT.polygon(:,2)))))~=0
+                Z_next    = nc_varget(OPT.ncfile, nc_index.z, [id_t ystart-1 xstart-1], [1 floor((ylength-(ystart-1))/OPT.stride(2)) floor((xlength-(xstart-1))/OPT.stride(3))], OPT.stride);
+                if sum(sum(~isnan(Z_next))) ~=0
+                    disp(['... adding data from: ' datestr(t(idt(id_t+1)))])
+                    ids2add = ~isnan(Z_next) & isnan(Z);    % helpul to be in a variable as the nature of Z changes in the next two lines
+                    Z(ids2add) = Z_next(ids2add);           % add Z values from Z_next grid to Z grid at places where there is data in Z_next and no data in Z yet
+                    T(ids2add) = t(idt(id_t+1));            % add time information to T at those places where Z data was added
+                end
             end
         end
+    else % do this if there is no time variable in the nc file (e.g. AHN)
+        
+        OPT.stride  = OPT.stride(2:3);
+        
+        % find right indices
+        xstart_inv  = find(X0 == X1(xstart));
+        xlength     = length(xstart:xlength);
+        ystart_inv  = find(Y0 == Y1(ystart));
+        ylength     = length(ystart:ylength);
+        
+        % get data without time variable
+        X        = nc_varget(OPT.ncfile, nc_index.x,  xstart_inv - 1,       xlength/OPT.stride(2), OPT.stride(2));
+        Y        = nc_varget(OPT.ncfile, nc_index.y,  ystart_inv - ylength, ylength/OPT.stride(1), OPT.stride(1));
+        Z_next   = nc_varget(OPT.ncfile, nc_index.z, [xstart_inv - 1       ystart_inv - ylength], [xlength/OPT.stride(1) ylength/OPT.stride(2)], OPT.stride);
+        Z        = Z_next';
+        
     end
-else % do this if there is no time variable in the nc file (e.g. AHN)
     
-    OPT.stride  = OPT.stride(2:3);
-    
-    % find right indices
-    xstart_inv  = find(X0 == X1(xstart));
-    xlength     = length(xstart:xlength);
-    ystart_inv  = find(Y0 == Y1(ystart));
-    ylength     = length(ystart:ylength);
-    
-    % get data without time variable
-    X        = nc_varget(OPT.ncfile, nc_index.x,  xstart_inv - 1,       xlength/OPT.stride(2), OPT.stride(2));
-    Y        = nc_varget(OPT.ncfile, nc_index.y,  ystart_inv - ylength, ylength/OPT.stride(1), OPT.stride(1));
-    Z_next   = nc_varget(OPT.ncfile, nc_index.z, [xstart_inv - 1       ystart_inv - ylength], [xlength/OPT.stride(1) ylength/OPT.stride(2)], OPT.stride);
-    Z        = Z_next';
-    
-end
-
-%% set values outside polygon to nan if a polygon is available
-if ~isempty(OPT.polygon)
-    disp('Setting values not in polygon to nan ...')
-    idout = ~inpolygon(repmat(X',size(Y,1),1), repmat(Y, 1, size(X',2)), OPT.polygon(:,1), OPT.polygon(:,2));
-    Z(idout) = nan;
-    T(idout) = nan;
+    %% set values outside polygon to nan if a polygon is available
+    if ~isempty(OPT.polygon)
+        disp('Setting values not in polygon to nan ...')
+        idout = ~inpolygon(repmat(X',size(Y,1),1), repmat(Y, 1, size(X',2)), OPT.polygon(:,1), OPT.polygon(:,2));
+        Z(idout) = nan;
+        T(idout) = nan;
+    end
 end
