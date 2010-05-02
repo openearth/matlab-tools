@@ -81,22 +81,22 @@ OPT = setProperty(OPT, varargin{:});
 
 %% find nc variables of coordinates
 
-   nc_index.x = nc_varfind(OPT.ncfile, 'attributename','standard_name','attributevalue','projection_x_coordinate');
-   nc_index.y = nc_varfind(OPT.ncfile, 'attributename','standard_name','attributevalue','projection_y_coordinate');
-   nc_index.t = nc_varfind(OPT.ncfile, 'attributename','standard_name','attributevalue','time');
-   nc_index.z = nc_varfind(OPT.ncfile, 'attributename','standard_name','attributevalue','altitude'); % JarKus
-   if isempty(nc_index.z)
-   nc_index.z = nc_varfind(OPT.ncfile, 'attributename','standard_name','attributevalue','height_above_reference_ellipsoid'); % AHN
-   end
+nc_index.x = nc_varfind(OPT.ncfile, 'attributename','standard_name','attributevalue','projection_x_coordinate');
+nc_index.y = nc_varfind(OPT.ncfile, 'attributename','standard_name','attributevalue','projection_y_coordinate');
+nc_index.t = nc_varfind(OPT.ncfile, 'attributename','standard_name','attributevalue','time');
+nc_index.z = nc_varfind(OPT.ncfile, 'attributename','standard_name','attributevalue','altitude'); % JarKus
+if isempty(nc_index.z)
+    nc_index.z = nc_varfind(OPT.ncfile, 'attributename','standard_name','attributevalue','height_above_reference_ellipsoid'); % AHN
+end
 
 %% find data area of interest
 
-   X0        = nc_varget(OPT.ncfile, nc_index.x);
-   Y0        = nc_varget(OPT.ncfile, nc_index.y);
+X0        = nc_varget(OPT.ncfile, nc_index.x);
+Y0        = nc_varget(OPT.ncfile, nc_index.y);
 
 % sort X and Y. NB: Y is ussumed to descend! This may not be the case for AHN - need to check!
 X1 = sort(X0,'ascend');
-Y1 = sort(Y0,'descend'); 
+Y1 = sort(Y0,'descend');
 
 if ~isempty(OPT.polygon)
     % determine the extent of the polygon
@@ -104,7 +104,7 @@ if ~isempty(OPT.polygon)
     maxx = max(OPT.polygon(:,1));
     miny = min(OPT.polygon(:,2));
     maxy = max(OPT.polygon(:,2));
-
+    
     % Find out which part of X and Y data lies within the extent of the polygon
     % NB: these are indexes, should be reduced with one for netCDF call as nc files start counting at 0
     xstart   = find(X1>minx, 1, 'first');
@@ -128,18 +128,18 @@ T        = zeros(size(Y,1), size(X,1))*nan;
 if ~isempty(nc_index.t)
     t        = nc_varget(OPT.ncfile, nc_index.t);
     [t,idt]  = sort(t,'descend');
-
+    
     [start_idx, end_idx, extents, matches, tokens, names, splits]  = regexp(nc_attget(OPT.ncfile,nc_varfind(OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'time'),'units'), '\d+'); %#ok<*NASGU>
     t        = t + datenum([matches{1:6}], 'yyyymmddHHMMSS');
-
+    
     idt_in   = find(t <= OPT.starttime & ...
-                    t >= OPT.starttime + OPT.searchwindow);
-
-% TO DO: add nearest in time 
-% TO DO: add linear interpolation in time
-
+        t >= OPT.starttime + OPT.searchwindow);
+    
+    % TO DO: add nearest in time
+    % TO DO: add linear interpolation in time
+    
     %% one by one place separate grids on overall grid
-    for id_t = [idt(idt_in)-1]' 
+    for id_t = [idt(idt_in)-1]'
         % So long as not all Z values inpolygon are nan try to add data
         if sum(isnan(Z(inpolygon(repmat(X',size(Y,1),1), repmat(Y, 1, size(X',2)), OPT.polygon(:,1), OPT.polygon(:,2)))))~=0
             Z_next    = nc_varget(OPT.ncfile, nc_index.z, [id_t ystart-1 xstart-1], [1 floor((ylength-(ystart-1))/OPT.stride(2)) floor((xlength-(xstart-1))/OPT.stride(3))], OPT.stride);
@@ -152,21 +152,21 @@ if ~isempty(nc_index.t)
         end
     end
 else % do this if there is no time variable in the nc file (e.g. AHN)
-
+    
     OPT.stride  = OPT.stride(2:3);
-
+    
     % find right indices
     xstart_inv  = find(X0 == X1(xstart));
     xlength     = length(xstart:xlength);
     ystart_inv  = find(Y0 == Y1(ystart));
     ylength     = length(ystart:ylength);
-
+    
     % get data without time variable
     X        = nc_varget(OPT.ncfile, nc_index.x,  xstart_inv - 1,       xlength/OPT.stride(2), OPT.stride(2));
     Y        = nc_varget(OPT.ncfile, nc_index.y,  ystart_inv - ylength, ylength/OPT.stride(1), OPT.stride(1));
     Z_next   = nc_varget(OPT.ncfile, nc_index.z, [xstart_inv - 1       ystart_inv - ylength], [xlength/OPT.stride(1) ylength/OPT.stride(2)], OPT.stride);
     Z        = Z_next';
-
+    
 end
 
 %% set values outside polygon to nan if a polygon is available

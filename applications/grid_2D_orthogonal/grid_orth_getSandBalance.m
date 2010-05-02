@@ -1,0 +1,165 @@
+function OPT = grid_orth_getSandBalance(varargin)
+% GRID_ORTH_GETSANDBALANCE  This script computes a sediment budget for an
+%                           indicated dataset for all polygons that are
+%                           listed in a polygon directory. They are
+%                           subdivided per UCIT datatype folder (see
+%                           example). The year with best coverage is used
+%                           as reference year.
+%
+%   Syntax:     grid_orth_getSandBalance
+%
+%   Input:      polygons     =   specified in polygons directory
+%               ref          =   minimal coverage treshold for a year to be used in the budget computation
+%               monthsmargin =   number of months to look back for additional data
+%
+%   Output:     RAW: Output is stored in files. The coverage of each polygon is
+%               stored in the 'polygon' directory. The depth data is stored
+%               in 'datafiles' and the temporal sediment budget is stored in
+%               'results'.
+%               POSTPROCESSING: Separate scripts visualize the results. See
+%               different types of plots at postprocessing.
+%
+%   See also UCIT_findCoverage, batchViewResults
+
+%   --------------------------------------------------------------------
+%   Copyright (C) 2009 Deltares
+%   Mark van Koningsveld
+%   Ben de Sonneville
+%
+%       M.vankoningsveld@tudelft.nl
+%       Ben.deSonneville@Deltares.nl
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% TODO: make the search process more efficient by inventorying the
+% available years.
+
+warningstate = warning;
+warning off
+
+%% set defaults
+OPT.dataset         = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
+OPT.tag             = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
+OPT.ldburl          = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
+OPT.workdir         = pwd;
+OPT.polygondir      = [];
+OPT.polygon         = [];
+OPT.cellsize        = [];                               % cellsize is assumed to be regular in x and y direction and is determined automatically
+OPT.datathinning    = 1;                                % stride with which to skip through the data
+OPT.inputtimes      = datenum((2000:2003)',12, 31);     % starting points (in Matlab epoch time)
+OPT.starttime       = OPT.inputtimes(1);
+OPT.searchinterval  = 730;                              % acceptable interval to include data from (in days)
+OPT.min_coverage    = 25;                               % coverage percentage (can be several, e.g. [50 75 90]
+OPT.plotresult      = 1;                                % 0 = off; 1 = on;
+OPT.warning         = 1;                                % 0 = off; 1 = on;
+OPT.postProcessing	= 1;                                % 0 = off; 1 = on;
+OPT.whattodo(1)     = 1;                                % volume plots
+OPT.type            = 1;
+OPT.counter         = 0;
+OPT.urls            = [];
+OPT.x_ranges        = [];
+OPT.y_ranges        = [];
+
+OPT = setProperty(OPT, varargin{:});
+
+%% generate sediment budget information
+for n = 1:size(OPT.min_coverage,2)
+    % make dirs for output
+    mkdir([OPT.workdir filesep 'datafiles' filesep 'timewindow = ',num2str(OPT.searchinterval)]);
+    mkdir([OPT.workdir filesep 'coverage'  filesep 'timewindow = ' num2str(OPT.searchinterval)]);
+    mkdir([OPT.workdir filesep 'results'   filesep 'timewindow = ' num2str(OPT.searchinterval) filesep 'ref=' num2str(OPT.min_coverage(n)) ])
+    
+    % get coverage info
+    [batchvar, OPT] = grid_orth_findCoverage(OPT);
+    
+    % find polygons directory
+    fns = dir([OPT.workdir filesep 'polygons' filesep '*.mat']);
+    
+    if ~isempty(batchvar)
+        for i = 1:size(batchvar,1)
+            if batchvar{i,1}==1
+                disp(['*** Processing ' batchvar{i,3} ' - coverage percentage: ' num2str(OPT.min_coverage(n)) '% with timewindow: ',num2str(OPT.searchinterval),' days'])
+                
+                % load polygon
+                %                 if isempty(OPT.polygon)
+                load([OPT.workdir filesep 'polygons' filesep fns(i,1).name]);
+                OPT.polygon = polygon;
+                %                 end
+                
+                % load coverage
+                [OPT.inputtimes, OPT.coverages] = textread([OPT.workdir filesep 'coverage' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep num2str(fns(i,1).name(1:end-4)) '_coverage.dat'],'%f%f','headerlines',1);
+                OPT.inputtimes = OPT.inputtimes(OPT.coverages*100 > OPT.min_coverage);
+                OPT.coverages  = OPT.coverages (OPT.coverages*100 > OPT.min_coverage);
+                
+                if ~isempty(OPT.inputtimes)
+                    % determine reference year
+                    OPT.reference_year = OPT.inputtimes(find(OPT.coverages == max(OPT.coverages),1,'first'));
+                    
+                    % find ids that are present in all years (for method 2 JdR)
+                    for j = 1:length(OPT.inputtimes)
+                        load([OPT.workdir filesep 'datafiles' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep fns(i,1).name(1:end-4) '_' num2str(OPT.inputtimes(j),'%04i') '_1231.mat']);
+                        id_of_year  = ~isnan(d.Z);
+                        if j == 1
+                            OPT.id = id_of_year;
+                        else
+                            OPT.id = OPT.id & id_of_year;
+                        end
+                    end
+                    
+                    % compute volume
+                    for k = 1 : 2 % use 2 methods
+                        OPT.type = k;
+                        for j = 1:size(OPT.inputtimes,1)
+                            results = grid_orth_computeGridVolume(OPT.reference_year, OPT.inputtimes(j), fns(i,1).name(1:end-4), OPT);
+                            VolumeOverview(j,1) = results.year;
+                            VolumeOverview(j,2) = results.volume;
+                            VolumeOverview(j,3) = OPT.coverages(j);
+                            VolumeOverview(j,4) = results.area;
+                            VolumeOverview(j,5) = results.volume/results.area;
+                        end
+                        
+                        Volumes{k} = VolumeOverview;
+                        
+                        % write text file
+                        fid = fopen([OPT.workdir filesep 'results' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep 'ref=' num2str(OPT.min_coverage(n)) filesep fns(i,1).name(1:end-4) '_method' num2str(OPT.type) '.dat'],'w');
+                        fprintf(fid,'%s\n',' Year      Volume     Coverage     Area     Vol/Area');
+                        fprintf(fid,'%5.0f %12.0f %9.2f   %9.0f %9.2f \n',[VolumeOverview]');
+                        fclose(fid);
+                    end
+                    
+                    % make volume plot
+                    if OPT.postProcessing && OPT.whattodo(1)
+                        %                         OPT.polygon = polygon;
+                        grid_orth_plotSandbalance(OPT, results, Volumes);
+                    end
+                    disp(['Data written to: ' pwd '\results']);
+                else
+                    errordlg(['Selected minimal coverage for ' fns(i,1).name(1:end-4) ' too high!']);
+                    disp('No data written; coverage criteria too high!')
+                end
+                
+            end
+        end
+    end
+end
+
+warning(warningstate)
+
+%% EOF

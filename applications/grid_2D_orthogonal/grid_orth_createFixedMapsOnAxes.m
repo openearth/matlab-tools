@@ -1,4 +1,4 @@
-function ah = grid_orth_createFixedMapsOnAxes(ah, urls, varargin)
+function ah = grid_orth_createFixedMapsOnAxes(ah, OPT, varargin)
 %GRID_ORTH_CREATEFIXEDMAPSONAXES   plot fixed maps retrieved from OPeNDAP server to any arbitrary axes
 %
 % See also: grid_2D_orthogonal
@@ -39,31 +39,12 @@ function ah = grid_orth_createFixedMapsOnAxes(ah, urls, varargin)
 % $Revision$
 
 %% make the axes to use the current one
-axes(ah);
-set(ah, varargin{:}); % make sure it is properly tagged
-
-%% for each available url get the actual_range and creat a patch
-for i = 1:length(urls)
-    x_range = nc_getvarinfo(urls{i}, 'x');
-    y_range = nc_getvarinfo(urls{i}, 'y');
-    
-    if any(ismember({y_range.Attribute.Name}, 'actual_range')) && ...
-       any(ismember({x_range.Attribute.Name}, 'actual_range'))
-        x_range = str2num(x_range.Attribute(ismember({x_range.Attribute.Name}, 'actual_range')).Value); %#ok<*ST2NM>
-        y_range = str2num(y_range.Attribute(ismember({y_range.Attribute.Name}, 'actual_range')).Value);
-    else
-        x = nc_varget(urls{i}, 'x');
-        y = nc_varget(urls{i}, 'y');
-        x_range = [min(x) max(x)];
-        y_range = [min(y) max(y)];
-    end
-    ph = patch([x_range(1) x_range(2) x_range(2) x_range(1) x_range(1)], ...
-        [y_range(1) y_range(1) y_range(2) y_range(2) y_range(1)], 'k');
+for i = 1:length(OPT.urls)
+    ph = patch(...
+        [OPT.x_ranges(i,1) OPT.x_ranges(i,2) OPT.x_ranges(i,2) OPT.x_ranges(i,1) OPT.x_ranges(i,1)], ...
+        [OPT.y_ranges(i,1) OPT.y_ranges(i,1) OPT.y_ranges(i,2) OPT.y_ranges(i,2) OPT.y_ranges(i,1)], 'k');
     set(ph, 'edgecolor', 'r', 'facecolor', 'none');
     drawnow
-    tickmap('xy');
-    set(ph,'tag',urls{i});
+    set(ph,'tag',OPT.urls{i});
 end
 
-tickmap ('xy','texttype','text')
-box on

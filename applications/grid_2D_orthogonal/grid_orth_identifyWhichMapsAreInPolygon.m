@@ -1,4 +1,4 @@
-function [mapurls, minx, maxx, miny, maxy] = grid_orth_identifyWhichMapsAreInPolygon(ah, polygon)
+function [mapurls, minx, maxx, miny, maxy] = grid_orth_identifyWhichMapsAreInPolygon(OPT, polygon, ah)
 %GRID_ORTH_IDENTIFYWHICHMAPSAREINPOLYGON  Script to identify which fixed maps are located inside a polygon partly or as a whole
 %
 % See also: grid_2D_orthogonal
@@ -8,9 +8,9 @@ function [mapurls, minx, maxx, miny, maxy] = grid_orth_identifyWhichMapsAreInPol
 % Version:      Version 1.0, February 2004
 %     Mark van Koningsveld
 %
-%     m.vankoningsveld@tudelft.nl	
+%     m.vankoningsveld@tudelft.nl
 %
-%     Hydraulic Engineering Section 
+%     Hydraulic Engineering Section
 %     Faculty of Civil Engineering and Geosciences
 %     Stevinweg 1
 %     2628CN Delft
@@ -37,24 +37,32 @@ function [mapurls, minx, maxx, miny, maxy] = grid_orth_identifyWhichMapsAreInPol
 % $Author$
 % $Revision$
 
-%% select all data that is inpolygon
-% Step 1: find all patch objects from the mapwindow and store their xdata and ydata in the variable maps
-objs = findobj(ah, 'type', 'patch');
-maps = [get(objs, 'XData') get(objs, 'YData')];
+%% Step 1: find all patch objects from the mapwindow and store their xdata and ydata in the variable maps
+if nargin == 3
+    ah   = gca;
+    objs = findobj(ah, 'type', 'patch');
+    maps = [get(objs, 'XData') get(objs, 'YData')];
+else
+    objs = OPT.urls;
+    for i = 1:length(OPT.urls)
+        maps{i,1} = [OPT.x_ranges(i,1); OPT.x_ranges(i,2); OPT.x_ranges(i,2); OPT.x_ranges(i,1); OPT.x_ranges(i,1)];
+        maps{i,2} = [OPT.y_ranges(i,1); OPT.y_ranges(i,1); OPT.y_ranges(i,2); OPT.y_ranges(i,2); OPT.y_ranges(i,1)];
+    end
+end
 
-% Step 2: identify which of the fixed maps lie whole or partially inpolygon initialise variables
+%% Step 2: identify which of the fixed maps lie whole or partially inpolygon initialise variables
 [mapurls, minx, maxx, miny, maxy] = deal([]);
 include = 0;
 for i = 1:length(maps)
     % include if a fixed map and polygon have an intersection
-
+    
     [xcr, zcr] = findCrossingsOfPolygonAndPolygon(maps{i,1},maps{i,2},polygon(:,1),polygon(:,2)); %#ok<*NASGU>
-   %[xcr, zcr] = polyintersect                   (maps{i,1},maps{i,2},polygon(:,1),polygon(:,2)); %#ok<*NASGU>
-
+    %[xcr, zcr] = polyintersect                   (maps{i,1},maps{i,2},polygon(:,1),polygon(:,2)); %#ok<*NASGU>
+    
     if ~isempty(xcr)
         include = 1;
     end
-        
+    
     % include if a fixed map lies within the polygon
     if inpolygon(maps{i,1},maps{i,2},polygon(:,1),polygon(:,2));
         include = 2;
@@ -68,15 +76,14 @@ for i = 1:length(maps)
     % see if based on the above there is something to include
     if include > 0 %& (~isempty(strfind(get(objs(i),'tag'),'vaklodingenKB'))|~isempty(strfind(get(objs(i),'tag'),'jarkusKB'))) %#ok<*OR2,*AND2>
         
-        if ~isempty(get(objs(i),'tag'))
-        mapurls{end+1,1} = get(objs(i),'tag');
+        mapurls{end+1,1} = objs{i};
         minx    = min([minx; maps{i,1}]);
         maxx    = max([maxx; maps{i,1}]);
         miny    = min([miny; maps{i,2}]);
         maxy    = max([maxy; maps{i,2}]);
-        end
+        
         include = 0;
-    else 
+    else
         include = 0;
     end
     
