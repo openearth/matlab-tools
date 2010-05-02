@@ -1,4 +1,4 @@
-function [batchvar, OPT] = grid_orth_findCoverage(OPT)
+function [batchvar, OPT] = grid_orth_findCoverage(OPT, n)
 % GRID_ORTH_FINDCOVERAGE  This script computes grid data coverage
 %
 %
@@ -66,7 +66,11 @@ if ~isempty(fns)
             load([OPT.workdir filesep 'polygons' filesep fns(i,1).name]);
             
             if ~exist([OPT.workdir 'coverage' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep fns(i,1).name(1:end-4) '_coverage.dat'])
-                
+                if isempty(OPT.inputtimes)
+                    OPT.polygon = polygon;
+                    OPT = grid_orth_getTimeInfoInPolygon(OPT);
+                end
+    
                 for j = 1:length(OPT.inputtimes)
                     
                     if exist([OPT.workdir filesep 'datafiles' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep fns(i,1).name '_' num2str(OPT.inputtimes(j)) '_1231.mat'],'file')
@@ -118,7 +122,7 @@ if ~isempty(fns)
             results(:,2)                = results(:,2).*covfactor;
             
             %% generate best years
-            r1                          = find(results(:,2) >= OPT.min_coverage);
+            r1                          = find(results(:,2) >= OPT.min_coverage(n));
             years1                      = results(r1,1); yt = [years1']; yearstemp = unique(yt);
             
             if ~isempty(yearstemp)
@@ -136,7 +140,7 @@ if ~isempty(fns)
                 yearsofgoodcov(i,1)={unique(yearstemp)}; % dit moet cell array zijn, anders omdat bij elke i een andere grootte: Subscripted assignment dimension mismatch
                 
                 % create batchvar
-                lines1(i,:)={[num2str(fns(i,1).name(1:end-4)),' - minimal data coverage ', num2str(OPT.min_coverage),'%: ',num2str(yearsofgoodcov{i,1}(1,:)),'; Best coverage year = ',num2str(bestyear(i,1))]};
+                lines1(i,:)={[num2str(fns(i,1).name(1:end-4)),' - minimal data coverage ', num2str(OPT.min_coverage(n)),'%: ',num2str(yearsofgoodcov{i,1}(1,:)),'; Best coverage year = ',num2str(bestyear(i,1))]};
                 batchvar(i,:)={1, OPT.datathinning, fns(i,1).name(1:end-4) , 'g', 1, [yearsofgoodcov{i,1}(1,:)], [find(yearsofgoodcov{i,1}(1,:)==bestyear(i,1))]};
                 
             else

@@ -87,7 +87,7 @@ for n = 1:size(OPT.min_coverage,2)
     mkdir([OPT.workdir filesep 'results'   filesep 'timewindow = ' num2str(OPT.searchinterval) filesep 'ref=' num2str(OPT.min_coverage(n)) ])
     
     % get coverage info
-    [batchvar, OPT] = grid_orth_findCoverage(OPT);
+    [batchvar, OPT] = grid_orth_findCoverage(OPT, n);
     
     % find polygons directory
     fns = dir([OPT.workdir filesep 'polygons' filesep '*.mat']);
@@ -103,8 +103,8 @@ for n = 1:size(OPT.min_coverage,2)
                 
                 % load coverage
                 [OPT.inputtimes, OPT.coverages] = textread([OPT.workdir filesep 'coverage' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep num2str(fns(i,1).name(1:end-4)) '_coverage.dat'],'%f%f','headerlines',1);
-                OPT.inputtimes = OPT.inputtimes(OPT.coverages*100 > OPT.min_coverage);
-                OPT.coverages  = OPT.coverages (OPT.coverages*100 > OPT.min_coverage);
+                OPT.inputtimes = OPT.inputtimes(OPT.coverages*100 > OPT.min_coverage(n));
+                OPT.coverages  = OPT.coverages (OPT.coverages*100 > OPT.min_coverage(n));
                 
                 if isempty(OPT.inputtimes)
                     OPT = grid_orth_getTimeInfoInPolygon(OPT);
@@ -126,13 +126,14 @@ for n = 1:size(OPT.min_coverage,2)
                     end
                     
                     % compute volume
+                    [VolumeOverview, Volumes] = deal([]);
                     for k = 1 : 2 % use 2 methods
                         OPT.type = k;
                         for j = 1:size(OPT.inputtimes,1)
                             results = grid_orth_computeGridVolume(OPT.reference_year, OPT.inputtimes(j), fns(i,1).name(1:end-4), OPT);
                             VolumeOverview(j,1) = results.year;  %#ok<*AGROW>
                             VolumeOverview(j,2) = results.volume;
-                            VolumeOverview(j,3) = OPT.coverages(j);
+                            VolumeOverview(j,3) = OPT.coverages(n);
                             VolumeOverview(j,4) = results.area;
                             VolumeOverview(j,5) = results.volume/results.area;
                         end
@@ -148,7 +149,7 @@ for n = 1:size(OPT.min_coverage,2)
                     
                     % make volume plots
                     if OPT.postProcessing && OPT.whattodo(1)
-                        grid_orth_plotSandbalance(OPT, results, Volumes);
+                        grid_orth_plotSandbalance(OPT, results, Volumes, n);
                     end
                     disp(['Data written to: ' OPT.workdir '\results']);
                 else

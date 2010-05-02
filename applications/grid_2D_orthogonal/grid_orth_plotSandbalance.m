@@ -1,4 +1,4 @@
-function grid_orth_plotSandbalance(OPT, results, Volumes)
+function grid_orth_plotSandbalance(OPT, results, Volumes, n)
 %UCIT_PLOTSANDBALANCE  plots results of sand balance computation
 %
 %       UCIT_plotSandBalance(OPT, results, Volumes)
@@ -63,16 +63,17 @@ if ~all(OPT.polygon(1,:)==OPT.polygon(end,:))
 end
 plot(OPT.polygon(:,1), OPT.polygon(:,2),'color','g','tag','polygon','linewidth',1);
 
-% plot used data
-load([OPT.workdir filesep 'datafiles' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep results.polyname '_' num2str(OPT.inputtimes(1),'%04i') '_1231.mat']);
-d.id              = OPT.id*-1;
-d.id((OPT.id==0)) = nan;
-
-surf(d.X,d.Y,d.id);view(2);shading interp;
-caxis([-1 0]);
-
 % plot fixed maps
 grid_orth_createFixedMapsOnAxes(gca, OPT);
+
+% plot used data
+% load([OPT.workdir filesep 'datafiles' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep results.polyname '_' num2str(OPT.inputtimes(1),'%04i') '_1231.mat']);
+% d.id              = OPT.id*-1;
+% d.id((OPT.id==0)) = nan;
+% 
+% surf(d.X,d.Y,d.id);view(2);shading interp;
+% caxis([-1 0]);
+
 
 % text
 title({['Overview fixed maps, used data and polygon for: ' strrep(results.polyname,'_',' ')]; OPT.dataset});
@@ -84,7 +85,7 @@ set(gca,'fontsize',8);
 box on
 
 % save figure
-print(fh,'-dpng',[OPT.workdir filesep 'results' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep 'ref=' num2str(OPT.min_coverage) filesep strrep(results.polyname,'_',' ') '_sandbalanceplot']);
+print(fh,'-dpng',[OPT.workdir filesep 'results' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep 'ref=' num2str(OPT.min_coverage(n)) filesep strrep(results.polyname,'_',' ') '_sandbalanceplot']);
 close(fh)
 
 %% Volume development plot
@@ -113,7 +114,7 @@ xlabel('Time [years]','fontsize',8);ylabel('Volume [m^3]','fontsize',8);
 set(gca,'fontsize',8);
 
 % save figure
-print(fh,'-dpng',[OPT.workdir filesep 'results' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep 'ref=' num2str(OPT.min_coverage) filesep strrep(results.polyname,'_',' ')]);
+print(fh,'-dpng',[OPT.workdir filesep 'results' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep 'ref=' num2str(OPT.min_coverage(n)) filesep strrep(results.polyname,'_',' ')]);
 close(fh)
 
 warning(warningstate)

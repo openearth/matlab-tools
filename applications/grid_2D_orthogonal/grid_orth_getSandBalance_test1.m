@@ -16,7 +16,7 @@ OPT.datathinning    = 1;                                % stride with which to s
 OPT.inputtimes      = [];                               % starting points (in Matlab epoch time); if left empty determined automatically 
 OPT.starttime       = [];
 OPT.searchinterval  = -730;                             % acceptable interval to include data from (in days)
-OPT.min_coverage    = 25;                               % coverage percentage (can be several, e.g. [50 75 90]
+OPT.min_coverage    = [50 75 90];                       % coverage percentage (can be several, e.g. [50 75 90]
 OPT.plotresult      = 1;
 OPT.warning         = 1;
 OPT.postProcessing  = 1;
@@ -563,5 +563,10 @@ OPT.y_ranges = [475000 487500
 	375000 387500
 	425000 437500
 	549740 550000];
+if 0
+try rmdir([OPT.workdir filesep 'coverage'], 's');  end
+try rmdir([OPT.workdir filesep 'datafiles'], 's'); end
+try rmdir([OPT.workdir filesep 'results'], 's');   end
+end
 
 grid_orth_getSandBalance(OPT);

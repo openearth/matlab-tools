@@ -50,7 +50,6 @@ if ~isfield(OPT,'polygon')
    [xv,yv] = polydraw;polygon=[xv' yv'];
 end
 
-
 %% load reference year
 load([OPT.workdir filesep 'datafiles' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep polyname '_' num2str(reference_year,'%04i') '_1231.mat']);
 d1 = d;
