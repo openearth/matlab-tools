@@ -52,7 +52,7 @@ function OPT = grid_orth_getSandBalance(varargin)
 % available years.
 
 warningstate = warning;
-warning off
+warning off %#ok<WNOFF>
 
 %% set defaults
 OPT.dataset         = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
@@ -65,7 +65,7 @@ OPT.cellsize        = [];                               % cellsize is assumed to
 OPT.datathinning    = 1;                                % stride with which to skip through the data
 OPT.inputtimes      = datenum((2000:2003)',12, 31);     % starting points (in Matlab epoch time)
 OPT.starttime       = OPT.inputtimes(1);
-OPT.searchinterval  = 730;                              % acceptable interval to include data from (in days)
+OPT.searchinterval  = -730;                             % acceptable interval to include data from (in days)
 OPT.min_coverage    = 25;                               % coverage percentage (can be several, e.g. [50 75 90]
 OPT.plotresult      = 1;                                % 0 = off; 1 = on;
 OPT.warning         = 1;                                % 0 = off; 1 = on;
@@ -95,18 +95,20 @@ for n = 1:size(OPT.min_coverage,2)
     if ~isempty(batchvar)
         for i = 1:size(batchvar,1)
             if batchvar{i,1}==1
+                disp(' ')
                 disp(['*** Processing ' batchvar{i,3} ' - coverage percentage: ' num2str(OPT.min_coverage(n)) '% with timewindow: ',num2str(OPT.searchinterval),' days'])
                 
-                % load polygon
-                %                 if isempty(OPT.polygon)
                 load([OPT.workdir filesep 'polygons' filesep fns(i,1).name]);
                 OPT.polygon = polygon;
-                %                 end
                 
                 % load coverage
                 [OPT.inputtimes, OPT.coverages] = textread([OPT.workdir filesep 'coverage' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep num2str(fns(i,1).name(1:end-4)) '_coverage.dat'],'%f%f','headerlines',1);
                 OPT.inputtimes = OPT.inputtimes(OPT.coverages*100 > OPT.min_coverage);
                 OPT.coverages  = OPT.coverages (OPT.coverages*100 > OPT.min_coverage);
+                
+                if isempty(OPT.inputtimes)
+                    OPT = grid_orth_getTimeInfoInPolygon(OPT);
+                end
                 
                 if ~isempty(OPT.inputtimes)
                     % determine reference year
@@ -128,7 +130,7 @@ for n = 1:size(OPT.min_coverage,2)
                         OPT.type = k;
                         for j = 1:size(OPT.inputtimes,1)
                             results = grid_orth_computeGridVolume(OPT.reference_year, OPT.inputtimes(j), fns(i,1).name(1:end-4), OPT);
-                            VolumeOverview(j,1) = results.year;
+                            VolumeOverview(j,1) = results.year;  %#ok<*AGROW>
                             VolumeOverview(j,2) = results.volume;
                             VolumeOverview(j,3) = OPT.coverages(j);
                             VolumeOverview(j,4) = results.area;
@@ -140,16 +142,15 @@ for n = 1:size(OPT.min_coverage,2)
                         % write text file
                         fid = fopen([OPT.workdir filesep 'results' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep 'ref=' num2str(OPT.min_coverage(n)) filesep fns(i,1).name(1:end-4) '_method' num2str(OPT.type) '.dat'],'w');
                         fprintf(fid,'%s\n',' Year      Volume     Coverage     Area     Vol/Area');
-                        fprintf(fid,'%5.0f %12.0f %9.2f   %9.0f %9.2f \n',[VolumeOverview]');
+                        fprintf(fid,'%5.0f %12.0f %9.2f   %9.0f %9.2f \n', VolumeOverview');
                         fclose(fid);
                     end
                     
-                    % make volume plot
+                    % make volume plots
                     if OPT.postProcessing && OPT.whattodo(1)
-                        %                         OPT.polygon = polygon;
                         grid_orth_plotSandbalance(OPT, results, Volumes);
                     end
-                    disp(['Data written to: ' pwd '\results']);
+                    disp(['Data written to: ' OPT.workdir '\results']);
                 else
                     errordlg(['Selected minimal coverage for ' fns(i,1).name(1:end-4) ' too high!']);
                     disp('No data written; coverage criteria too high!')

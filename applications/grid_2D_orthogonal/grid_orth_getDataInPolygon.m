@@ -181,7 +181,7 @@ end
 
 % delete the pre existing polygon and replace it with the just generated closed one
 
-try;delete(findobj(ah,'tag','selectionpoly')); end
+try delete(findobj(ah,'tag','selectionpoly')); end
 try axes(ah); end; hold on
 if ~all(OPT.polygon(1,:)==OPT.polygon(end,:))
     OPT.polygon = [OPT.polygon;OPT.polygon(1,:)];
@@ -193,7 +193,7 @@ plot(OPT.polygon(:,1),OPT.polygon(:,2),'g','linewidth',2,'tag','selectionpoly');
 
 [mapurls, minx, maxx, miny, maxy] = grid_orth_identifyWhichMapsAreInPolygon(OPT.OPT, OPT.polygon);
 
-if isempty(mapurls) & OPT.warning
+if isempty(mapurls) && OPT.warning
     
     X     = [];
     Y     = [];
@@ -206,7 +206,7 @@ else
     %% Step 3: retrieve data and place it on one overall grid
     [X, Y, Z, Ztime]                  = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, OPT);
     
-    if all(isnan(Ztime)) & OPT.warning
+    if all(isnan(Ztime)) && OPT.warning
         warndlg('No data found in specified time period (yet grids available in polygon)')
     end
     
