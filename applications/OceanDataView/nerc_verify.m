@@ -21,13 +21,47 @@ function description = nerc_verify(nerc)
 %
 %See also: OCEANDATAVIEW, SDN_VERIFY, SDN2CF, P011
 
-   OPT.method       = 'web';
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2010 Deltares for Building with Nature
+%       Gerben J. de Boer
+%
+%       gerben.deboer@Deltares.nl
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+   OPT.method       = 'loc'; % 'loc' is much faster than 'web'
    OPT.create_cache = 0;
    OPT.save         = 0;
    OPT.disp         = 0;
 
-if strcmpi(OPT.method,'web')
-   
+%% peel name
+
    if strcmpi(nerc(1:7),'http://')
    
       % copy URI
@@ -50,7 +84,10 @@ if strcmpi(OPT.method,'web')
       if OPT.disp;disp(url);end
 
    end
-      
+
+%% get description
+
+if strcmpi(OPT.method,'web') | strcmpi(nerc(1:7),'http://')
    
    if OPT.save
    fname            = [mkvar(nerc) '.xml'];
@@ -72,27 +109,8 @@ if strcmpi(OPT.method,'web')
    
 elseif strcmpi(OPT.method,'loc')
 
-  %  if OPT.create_cache
-  %     url           = ['http://vocab.ndg.nerc.ac.uk/axis2/services/vocab/getList?recordKey=http://vocab.ndg.nerc.ac.uk/list/',...
-  %                      listReference,,'/current&earliestRecord=1900-01-01T00:00:00Z'];
-  %     xml           = urlread(url);
-  %     pref.KeepNS   = 0;
-  %     tic;
-  %     D             = xml_read('P011.xml',pref);
-  %     toc
-  %     save([fileparts(mfilename('fullpath')) filesep listReference '.mat'],'-struct','xml'.'-v7')
-  %  end
-
-   xml              = load([fileparts(mfilename('fullpath')) filesep listReference '.mat']);
+   description  = P011('description',entryReference,'listReference',listReference);
    
-   for i=1:length(xml.codeTableRecord);
-      if strcmpi(xml.codeTableRecord(i).entryTermAbbr,entryReference);
-      break;
-      end;
-   end
-   
-   description     = xml.codeTableRecord(i).entryTerm;
-
 end   
    
 

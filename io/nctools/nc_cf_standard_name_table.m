@@ -1,40 +1,40 @@
-function varargout = P011(varargin);
-%P011   read/search BODC P011 parameter vocabulary
+function varargout = nc_cf_standard_name_table(varargin);
+%nc_cf_standard_name_table    read/search CF parameter vocabulary
 %
-%    L = P011('read',1)
+%    L = nc_cf_standard_name_table('read',1)
 %
 % returns struct with field per database entry.
 %
-%    <indices> = P011(<L>,'find','pattern')
+%    <indices> = nc_cf_standard_name_table(<L>,'find','pattern')
 %
 % displays table AND returns indices into fields of L after
-% searching the description (long_name, entryTerm).
+% searching the description (long_name).
 %
-%    OK = P011(<L>,'verify','standard_name')
+%    OK = nc_cf_standard_name_table(<L>,'verify','standard_name')
 %
-% checks whether standard_name (entryKey) is present in vocab.
+% checks whether standard_name (id) is present in vocab.
 %
-%    description = P011(<L>,'find'  ,'standard_name')
+%    description = nc_cf_standard_name_table(<L>,'find'  ,'standard_name')
 %
-% returns description (long_name, entryTerm) of standard_name (entryKey).
+% returns description (long_name) of standard_name (id).
 %
-% The P011 parameter vocabulary needs to be downloaded (xml) 
+% The nc_cf_standard_name_table parameter vocabulary needs to be downloaded (xml) 
 % first from
-% http://www.bodc.ac.uk/products/web_services/
-% into the directory >> fileparts(which('p011')).
+% http://cf-pcmdi.llnl.gov/documents/cf-conventions
+% into the directory >> fileparts(which('nc_cf_standard_names_table')).
 %
 % Examples:
 %
-%    L         = P011(  'read'       ,1         )
-%    indices   = P011(L,'find'       ,'salinity');
-%    OK        = P011(L,'verify'     ,'ODSDM021')
-%    long_name = P011(L,'description','ODSDM021')
-%    long_name = P011(L,'description','ODSDM0')
+%    L         = nc_cf_standard_name_table(  'read'       ,1         )
+%    indices   = nc_cf_standard_name_table(L,'find'       ,'salinity');
+%    OK        = nc_cf_standard_name_table(L,'verify'     ,'sea_water_salinity')
+%    long_name = nc_cf_standard_name_table(L,'description','sea_water_salinity','exact',1)
+%    long_name = nc_cf_standard_name_table(L,'description','sea_water_salinity','exact',0)
 %
-%See also: NERC_VERIFY, NC_CF_STANDARD_NAME_TABLE
+%See also: P011
 
 %% Copyright notice
-%   --------------------------------------------------------------------
+%   ----------------------------------------------------- ---------------
 %   Copyright (C) 2010 Deltares for Building with Nature
 %       Gerben J. de Boer
 %
@@ -69,11 +69,12 @@ function varargout = P011(varargin);
 
 %% input
 
-L                 = [];
-OPT.listReference = 'P011';
+L = [];
+OPT.listReference = 'cf-standard-name-table';
 OPT.disp          = 1;
-OPT.standard_name = 'entryKey';  % fieldname of L (xml)
-OPT.long_name     = 'entryTerm'; % fieldname of L (xml)
+OPT.standard_name = 'id';          % fieldname of L (xml)
+OPT.long_name     = 'description'; % fieldname of L (xml)
+OPT.exact         = 1; % whether match description for standard_name should be exact
 
 OPT.read          = '';
 OPT.find          = ''; % description to standard_name
@@ -81,7 +82,7 @@ OPT.verify        = ''; % check existence of standard_name
 OPT.description   = ''; % standard_name to description 
 
 if isstruct(varargin{1})
-   L        =  varargin{1};
+   L        = varargin{1};
    varargin = {varargin{2:end}};
 end
 
@@ -114,19 +115,34 @@ if ~isempty(OPT.read) | isempty(L)
       L2  = xml_read([OPT.listReference '.xml'],PREF);
       
      %save([fileparts(mfilename('fullpath')) OPT.listReference '.xml.mat'],'-struct','L2');
-      
+     
       % parse xml file, to allow indentical behavior for nc_cf_standard_name_table and P011
-
-      fldnames = fieldnames(L2.codeTableRecord);
       
-      for ifld=1:length(fldnames)
-      
-         fldname = fldnames{ifld};
-      
-         L.(fldname) = {L2.codeTableRecord(:).(fldname)};
-         
+      L.(OPT.standard_name)  = cell(1,length(L2.entry));
+      for i=1:length(L2.entry)
+      L.(OPT.standard_name){i} = L2.entry(i).ATTRIBUTE.(OPT.standard_name); % can we do this shorter ?
       end
       
+      L.(OPT.long_name) = {L2.entry(:).(OPT.long_name)};
+      L.canonical_units = {L2.entry(:).canonical_units};
+      
+      ii = find((cellfun(@isnumeric,L.canonical_units)));
+      for iii=1:length(ii)
+         L.canonical_units{ii(iii)} = num2str(L.canonical_units{ii(iii)});
+      end
+
+      %% set empty to '' to make them char, so iscellstr is 1, so struct2nc works
+      fldnames = fieldnames(L);
+      for ifld = 1:length(fldnames)
+      fldname = fldnames{ifld};
+         ii = find((cellfun(@isempty,L.(fldname))));
+         for iii=1:length(ii)
+            L.(fldname){ii(iii)} = ' ';
+         end
+         iscellstr(L.(fldname)) % after
+      end
+      
+      save([fileparts(mfilename('fullpath')) filesep 'cf-standard-name-table.mat'],'-struct','L');
       struct2nc(ncfile,L); % issue with cellstr
    
    end
@@ -139,13 +155,13 @@ end
 
 %% find and display results of a search (description to standard_name)
 
-if ~isempty(OPT.find)
+   if ~isempty(OPT.find)
 
    % find indices
 
    searchpattern = OPT.find;
    ii = regexpi(L.(OPT.long_name),searchpattern); % per cell item, empty or start index of searchpattern
-   ii = find(~cellfun(@isempty,ii));       % indices of non-empty searchpattern matches
+   ii = find(~cellfun(@isempty,ii));          % indices of non-empty searchpattern matches
 
    % make table
    
@@ -181,15 +197,10 @@ if ~isempty(OPT.verify)
 
    searchpattern = OPT.verify;
 
-   % cannot search for exact omly due to presence of list and list number in standard_name
-   ii = regexpi(L.(OPT.standard_name),searchpattern); % per cell item, empty or start index of searchpattern
-   ii = find(~cellfun(@isempty,ii));                  % indices of non-empty searchpattern matches
+   ii = strmatch(lower(searchpattern),lower(char(L.(OPT.standard_name)))) % only exact matches
    
    if length(ii)==1
       OK = 1;
-   elseif ii > 1
-      disp(char({L.(OPT.long_name){ii}}))
-      error('multiple occurences found, please specify unique id.')
    else
       OK = 0;
    end
@@ -206,8 +217,12 @@ if ~isempty(OPT.description)
 
    searchpattern = OPT.description;
 
-   ii = regexpi(L.(OPT.standard_name),searchpattern); % per cell item, empty or start index of searchpattern
-   ii = find(~cellfun(@isempty,ii));                  % indices of non-empty searchpattern matches
+   if OPT.exact
+      ii = strmatch(lower(searchpattern),lower(char(L.(OPT.standard_name)))) % only exact matches
+   else
+      ii = regexpi(L.(OPT.standard_name),searchpattern); % per cell item, empty or start index of searchpattern
+      ii = find(~cellfun(@isempty,ii));                  % indices of non-empty searchpattern matches
+   end
    
    long_name = char({L.(OPT.long_name){ii}}); % can be more than one
 

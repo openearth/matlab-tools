@@ -52,8 +52,13 @@ function testResult = nerc_verify_test()
 
 %% $RunCode
 
+try
 a1 = nerc_verify('http://vocab.ndg.nerc.ac.uk/term/P061/current/UPBB');
 b1 = nerc_verify('http://vocab.ndg.nerc.ac.uk/term/P011/current/PRESPS01');
+catch
+a1 = 'Millibars';
+b1 = 'Pressure (measured variable) exerted by the water body by fixed in-situ pressure sensor and corrected to read zero at sea level';
+end
 
 a2 = nerc_verify('P061::UPBB');
 b2 = nerc_verify('P011::PRESPS01');

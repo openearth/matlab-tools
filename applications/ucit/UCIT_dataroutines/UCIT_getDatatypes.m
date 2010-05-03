@@ -115,12 +115,12 @@ function [datatypes] = UCIT_getDatatypes;
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
 
    %% Vaklodingen
-if 1
+if 0
    i = i + 1;
    datatypes.grid.names{i}        =  'Vaklodingen (local)';
-   datatypes.grid.urls {i}        =  'f:\opendap\thredds\rijkswaterstaat\vaklodingen\';
-   datatypes.grid.catalog{i}      =  'f:\opendap\thredds\rijkswaterstaat\vaklodingen\';
-   datatypes.grid.ldbs{i}         =  'f:\opendap\thredds\deltares\holland_fillable.nc';
+   datatypes.grid.urls {i}        =  'F:\opendap\thredds\rijkswaterstaat\vaklodingen\';
+   datatypes.grid.catalog{i}      =  'F:\opendap\thredds\rijkswaterstaat\vaklodingen\';
+   datatypes.grid.ldbs{i}         =  'F:\opendap\thredds\deltares\holland_fillable.nc';
    datatypes.grid.axes{i}         =  1E5*[0.9783    1.2039    5.4272    5.6993];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
