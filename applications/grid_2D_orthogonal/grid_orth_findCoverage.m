@@ -45,7 +45,10 @@ warning off
 
 %% identify which polygons are availabel in the polygon directory
 fns = dir([OPT.workdir filesep 'polygons' filesep '*.mat']);
-
+if isempty(fns)
+    warning('grid_orth_findCoverage:noPolygonsAvailable', ...
+        'No polygons available in polygon directory')
+end
 %% Set input for sandbalance
 %  executeyes/no, thinning, polyname, plotcolor, linewidth, years
 if ~isempty(fns)
