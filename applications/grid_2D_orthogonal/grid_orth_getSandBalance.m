@@ -56,15 +56,14 @@ warning off %#ok<WNOFF>
 
 %% set defaults
 OPT.dataset         = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
-OPT.tag             = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
 OPT.ldburl          = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
 OPT.workdir         = pwd;
 OPT.polygondir      = [];
 OPT.polygon         = [];
 OPT.cellsize        = [];                               % cellsize is assumed to be regular in x and y direction and is determined automatically
 OPT.datathinning    = 1;                                % stride with which to skip through the data
-OPT.inputtimes      = datenum((2000:2003)',12, 31);     % starting points (in Matlab epoch time)
-OPT.starttime       = OPT.inputtimes(1);
+OPT.inputtimes      = [];                               % starting points (in Matlab epoch time)
+OPT.starttime       = [];
 OPT.searchinterval  = -730;                             % acceptable interval to include data from (in days)
 OPT.min_coverage    = 25;                               % coverage percentage (can be several, e.g. [50 75 90]
 OPT.plotresult      = 1;                                % 0 = off; 1 = on;
@@ -99,13 +98,13 @@ for n = 1:size(OPT.min_coverage,2)
                 disp(' ')
                 disp(['*** Processing ' batchvar{i,3} ' - coverage percentage: ' num2str(OPT.min_coverage(n)) '% with timewindow: ',num2str(OPT.searchinterval),' days'])
                 
-                load([OPT.workdir filesep 'polygons' filesep fns(i,1).name]);
+                load(fullfile(OPT.workdir, 'polygons', fns(i,1).name));
                 OPT.polygon = polygon;
                 
                 % load coverage
-                [OPT.inputtimes, OPT.coverages] = textread([OPT.workdir filesep 'coverage' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep num2str(fns(i,1).name(1:end-4)) '_coverage.dat'],'%f%f','headerlines',1);
-                OPT.inputtimes = OPT.inputtimes(OPT.coverages*100 > OPT.min_coverage(n));
-                OPT.coverages  = OPT.coverages (OPT.coverages*100 > OPT.min_coverage(n));
+                [OPT.inputtimes, OPT.coverages] = textread(fullfile(OPT.workdir, 'coverage', ['timewindow = ' num2str(OPT.searchinterval)], [num2str(fns(i,1).name(1:end-4)) '_coverage.dat']),'%f%f','headerlines',1);
+                OPT.inputtimes = OPT.inputtimes(OPT.coverages > OPT.min_coverage(n));
+                OPT.coverages  = OPT.coverages (OPT.coverages > OPT.min_coverage(n));
                 
                 if isempty(OPT.inputtimes)
                     OPT = grid_orth_getTimeInfoInPolygon(OPT);
@@ -117,7 +116,7 @@ for n = 1:size(OPT.min_coverage,2)
                     
                     % find ids that are present in all years (for method 2 JdR)
                     for j = 1:length(OPT.inputtimes)
-                        load([OPT.workdir filesep 'datafiles' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep fns(i,1).name(1:end-4) '_' num2str(OPT.inputtimes(j),'%04i') '_1231.mat']);
+                        load([OPT.workdir filesep 'datafiles' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep fns(i,1).name(1:end-4) '_' datestr(OPT.inputtimes(j)) '.mat']);
                         id_of_year  = ~isnan(d.Z);
                         if j == 1
                             OPT.id = id_of_year;

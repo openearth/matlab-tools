@@ -48,7 +48,9 @@ fns = dir([OPT.workdir filesep 'polygons' filesep '*.mat']);
 if isempty(fns)
     warning('grid_orth_findCoverage:noPolygonsAvailable', ...
         'No polygons available in polygon directory')
+    return
 end
+
 %% Set input for sandbalance
 %  executeyes/no, thinning, polyname, plotcolor, linewidth, years
 if ~isempty(fns)
@@ -59,7 +61,7 @@ if ~isempty(fns)
     
     % initialise temporary batchvar1
     for r = 1:length(fns)
-        batchvar1(r,:) = {1,OPT.datathinning, fns(r,1).name(1:end-4)     , 'b', 1, [] };
+        batchvar1(r,:) = {1,OPT.datathinning, fns(r,1).name(1:end-4)     , 'b', 1, [] }; %#ok<AGROW>
     end
     
     % get coverage
@@ -68,16 +70,16 @@ if ~isempty(fns)
             % load polygon from polygon directory
             load([OPT.workdir filesep 'polygons' filesep fns(i,1).name]);
             
-            if ~exist([OPT.workdir 'coverage' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep fns(i,1).name(1:end-4) '_coverage.dat'])
+            if ~exist(fullfile(OPT.workdir, 'coverage', ['timewindow = ' num2str(OPT.searchinterval)], [fns(i,1).name(1:end-4) '_coverage.dat']),'file')
                 if isempty(OPT.inputtimes)
-                    OPT.polygon = polygon;
+                    OPT.polygon = polygon; %#ok<NODEF>
                     OPT = grid_orth_getTimeInfoInPolygon(OPT);
                 end
     
                 for j = 1:length(OPT.inputtimes)
                     
-                    if exist([OPT.workdir filesep 'datafiles' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep fns(i,1).name '_' num2str(OPT.inputtimes(j)) '_1231.mat'],'file')
-                        load([OPT.workdir filesep 'datafiles' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep fns(i,1).name '_' num2str(OPT.inputtimes(j)) '_1231.mat']);
+                    if exist(fullfile(OPT.workdir, 'datafiles', ['timewindow = ' num2str(OPT.searchinterval)], [fns(i,1).name '_' datestr(OPT.inputtimes(j)) '.mat']),'file')
+                        load(fullfile(OPT.workdir, 'datafiles', ['timewindow = ' num2str(OPT.searchinterval)], [fns(i,1).name '_' datestr(OPT.inputtimes(j)) '.mat']));
                     else
                         
                         [X, Y, Z, Ztime] = grid_orth_getDataInPolygon(...
@@ -90,61 +92,46 @@ if ~isempty(fns)
                             'OPT'           , OPT);
                         
                         in = inpolygon(X, Y, polygon(:,1), polygon(:,2));
-                        d.name       = fns(i,1).name(1:end-4);
-                        d.year       = OPT.inputtimes(j);
-                        d.soundingID = '1231';
-                        d.X          = X;
-                        d.Y          = Y;
-                        d.Z          = Z;
-                        d.Ztemps     = Ztime;
-                        d.inpolygon  = in;
+                        d.name              = fns(i,1).name(1:end-4);
+                        d.time              = OPT.inputtimes(j);
+                        d.X                 = X;
+                        d.Y                 = Y;
+                        d.Z                 = Z;
+                        d.Ztemps            = Ztime;
+                        d.inpolygon         = in;
                         
-                        save([OPT.workdir filesep 'datafiles' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep d.name '_' num2str(d.year) '_1231.mat'],'d');
+                        save(fullfile(OPT.workdir, 'datafiles', ['timewindow = ' num2str(OPT.searchinterval)], [d.name '_' datestr(d.time) '.mat']),'d');
                     end
                     
-                    
-                    %% compute coverage
-                    total        = sum(sum(d.inpolygon));
-                    cov(j).year  = sum(sum((~isnan(d.Z))))/total; % coverage per jaar voor polygoon j
-                    results(j,:) = ([OPT.inputtimes(j) cov(j).year]);
+                    % compute coverage
+                    total                   = sum(sum(d.inpolygon));
+                    cov(j).year             = sum(sum((~isnan(d.Z))))/total; %#ok<AGROW> % coverage per jaar voor polygoon j
+                    results(j,:)            = ([OPT.inputtimes(j) cov(j).year]); %#ok<AGROW>
                 end
                 
-                %% save to text file
-                fid = fopen([OPT.workdir filesep 'coverage' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep num2str(d.name) '_coverage.dat'],'w');
-                fprintf(fid,'%s\n',['Year      Coverage']);
-                fprintf(fid,'%5.0f %9.2f\n',[results]');
+                % scale coverage info so that the maximum coverage is set to 100 %
+                maxCov                      = max(results(:,2));
+                covfactor                   = 100/maxCov(1);
+                results(:,2)                = results(:,2).*covfactor;
+                
+                % save to text file
+                fid = fopen(fullfile(OPT.workdir , 'coverage' , ['timewindow = ' num2str(OPT.searchinterval)], [num2str(d.name) '_coverage.dat']),'w');
+                fprintf(fid,'%s\n','Year      Coverage');
+                fprintf(fid,'%5.0f %9.2f\n',results');
                 fclose(fid);
                 
             else
-                [results(:,1),results(:,2)] = textread([OPT.workdir filesep 'coverage' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep num2str(fns(i,1).name(1:end-4)) '_coverage.dat'],'%f%f','headerlines',1);
+                [results(:,1),results(:,2)] = textread(fullfile(OPT.workdir, 'coverage', ['timewindow = ' num2str(OPT.searchinterval)], [num2str(fns(i,1).name(1:end-4)) '_coverage.dat']),'%f%f','headerlines',1);
             end
             
-            %% normalise coverage to 100%
-            maxCov                      = max(results(:,2));
-            covfactor                   = 100/maxCov(1);
-            results(:,2)                = results(:,2).*covfactor;
-            
             %% generate best years
-            r1                          = find(results(:,2) >= OPT.min_coverage(n));
-            years1                      = results(r1,1); yt = [years1']; yearstemp = unique(yt);
+            yearstemp                       = unique( results( results(:,2) >= OPT.min_coverage(n) ,1)' );
             
             if ~isempty(yearstemp)
-                clear r2; clear r3
-                for q=1:size(yearstemp,2)
-                    r2(q)=find(yearstemp(q)==results(:,1));
-                    r3(q)=results(r2(q),2);
-                end
-                
-                w2=find(max(r3)==results(:,2),1,'first');
-                bestyear1=results(w2,1);
-                
-                % convert date to 1231 format
-                bestyear(i,:)=([bestyear1].*10000+1231); yearstemp=[yearstemp.*10000+1231];
-                yearsofgoodcov(i,1)={unique(yearstemp)}; % dit moet cell array zijn, anders omdat bij elke i een andere grootte: Subscripted assignment dimension mismatch
-                
                 % create batchvar
-                lines1(i,:)={[num2str(fns(i,1).name(1:end-4)),' - minimal data coverage ', num2str(OPT.min_coverage(n)),'%: ',num2str(yearsofgoodcov{i,1}(1,:)),'; Best coverage year = ',num2str(bestyear(i,1))]};
-                batchvar(i,:)={1, OPT.datathinning, fns(i,1).name(1:end-4) , 'g', 1, [yearsofgoodcov{i,1}(1,:)], [find(yearsofgoodcov{i,1}(1,:)==bestyear(i,1))]};
+                bestyear                    = results(find(max(results(:,2)),1,'first'),1);
+                yearsofgoodcov              = {yearstemp}; % dit moet cell array zijn, anders omdat bij elke i een andere grootte: Subscripted assignment dimension mismatch
+                batchvar(i,:)               = {1, OPT.datathinning, fns(i,1).name(1:end-4) , 'g', 1, yearsofgoodcov, find(yearsofgoodcov{:}==bestyear,1,'first')}; %#ok<AGROW>
                 
             else
                 disp([fns(i,1).name(1:end-4), ' - No years founding matching coverage criteria']);

@@ -44,40 +44,26 @@ function results = grid_orth_computeGridVolume(reference_year, targetyear, polyn
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-fns = dir([OPT.workdir filesep 'polygons' filesep '*.mat']);
-
-if ~isfield(OPT,'polygon')
-   [xv,yv] = polydraw;polygon=[xv' yv'];
-end
-
 %% load reference year
-load([OPT.workdir filesep 'datafiles' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep polyname '_' num2str(reference_year,'%04i') '_1231.mat']);
-d1 = d;
+load(fullfile(OPT.workdir, 'datafiles', ['timewindow = ' num2str(OPT.searchinterval)], [polyname '_' datestr(reference_year) '.mat']));
+d1               = d;
 
 %% load targetyear
-load([OPT.workdir filesep 'datafiles' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep polyname '_' num2str(targetyear,'%04i') '_1231.mat']);
-d2 = d;
+load(fullfile(OPT.workdir, 'datafiles', ['timewindow = ' num2str(OPT.searchinterval)], [polyname '_' datestr(targetyear) '.mat']));
+d2               = d;
 
 %% identify overlapping zone
-if OPT.type == 1; % ids used based on comparing reference year and targetyear
-    id = ~isnan(d1.Z) & ~isnan(d2.Z);
+if OPT.type     == 1; % ids used based on comparing reference year and targetyear
+    id           = ~isnan(d1.Z) & ~isnan(d2.Z);
 elseif OPT.type == 2 % ids used that are found in all years
-    id = OPT.id;
+    id           = OPT.id;
 end
 
-%% load reference year
-load([OPT.workdir filesep 'datafiles' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep polyname '_' num2str(reference_year,'%04i') '_1231.mat']);
-d1 = d;
-
-%% load targetyear
-load([OPT.workdir filesep 'datafiles' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep polyname '_' num2str(targetyear,'%04i') '_1231.mat']);
-d2 = d;  
-
 %% compute volume
-cellsize = median(diff(d1.X(1,:)));
+cellsize         = median(diff(d1.X(1,:)));
 
-results.volume = sum((d2.Z(id)-d1.Z(id))*(cellsize*OPT.datathinning*cellsize*OPT.datathinning));
-results.area   =        sum(sum(sum(id))*(cellsize*OPT.datathinning*cellsize*OPT.datathinning));
+results.volume   = sum((d2.Z(id)-d1.Z(id)) * (cellsize * OPT.datathinning * cellsize * OPT.datathinning));
+results.area     =        sum(sum(sum(id)) * (cellsize * OPT.datathinning * cellsize * OPT.datathinning));
         
 %% add extra info
 results.polyname = polyname;

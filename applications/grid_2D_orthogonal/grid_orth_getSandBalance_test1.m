@@ -6,23 +6,11 @@ clc
 %% NB: first put polygons in a directory called polygons
 %% next run sand balance
 OPT.dataset         = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
-OPT.tag             = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
 OPT.ldburl          = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
 OPT.workdir         = 'D:\checkouts\VO-rawdata\projects\151027_maasvlakte_2\scripts\sedbudget\vaklodingen\';
 OPT.polygondir      = 'D:\checkouts\VO-rawdata\projects\151027_maasvlakte_2\scripts\sedbudget\vaklodingen\polygons\';
-OPT.polygon         = [];
-OPT.cellsize        = [];                               % left empty will be determined automatically
-OPT.datathinning    = 1;                                % stride with which to skip through the data
-OPT.inputtimes      = [];                               % starting points (in Matlab epoch time); if left empty determined automatically 
-OPT.starttime       = [];
 OPT.searchinterval  = -730;                             % acceptable interval to include data from (in days)
 OPT.min_coverage    = [50 75 90];                       % coverage percentage (can be several, e.g. [50 75 90]
-OPT.plotresult      = 1;
-OPT.warning         = 1;
-OPT.postProcessing  = 1;
-OPT.whattodo        = 1;
-OPT.type            = 1;
-OPT.counter         = 0;
 OPT.urls = {'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB120_3332.nc'
 	'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB115_4342.nc'
 	'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB117_5150.nc'
@@ -563,10 +551,11 @@ OPT.y_ranges = [475000 487500
 	375000 387500
 	425000 437500
 	549740 550000];
+
 if 0
-try rmdir([OPT.workdir filesep 'coverage'], 's');  end
-try rmdir([OPT.workdir filesep 'datafiles'], 's'); end
-try rmdir([OPT.workdir filesep 'results'], 's');   end
+    try rmdir(fullfile(OPT.workdir, 'coverage'),  's'); end
+    try rmdir(fullfile(OPT.workdir, 'datafiles'), 's'); end
+    try rmdir(fullfile(OPT.workdir, 'results'),   's'); end
 end
 
 grid_orth_getSandBalance(OPT);

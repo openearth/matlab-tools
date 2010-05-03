@@ -110,7 +110,7 @@ OPT = setProperty(OPT, varargin{:});
 
 %% Step 0: create a figure with tagged patches
 axes = findobj('type','axes');
-if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.tag})) % if an overview figure is already present don't run this function again
+if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.dataset})) % if an overview figure is already present don't run this function again
     
     % Step 0.1: get fixed map urls from OPeNDAP server
     if ~isempty(OPT.OPT)
