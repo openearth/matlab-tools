@@ -133,7 +133,7 @@ for n = 1:size(OPT.min_coverage,2)
                             results = grid_orth_computeGridVolume(OPT.reference_year, OPT.inputtimes(j), fns(i,1).name(1:end-4), OPT);
                             VolumeOverview(j,1) = results.year;  %#ok<*AGROW>
                             VolumeOverview(j,2) = results.volume;
-                            VolumeOverview(j,3) = OPT.coverages(j);
+                            VolumeOverview(j,3) = results.coverage;
                             VolumeOverview(j,4) = results.area;
                             VolumeOverview(j,5) = results.volume/results.area;
                         end

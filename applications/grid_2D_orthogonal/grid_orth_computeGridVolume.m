@@ -63,8 +63,11 @@ end
 cellsize         = median(diff(d1.X(1,:)));
 
 results.volume   = sum((d2.Z(id)-d1.Z(id)) * (cellsize * OPT.datathinning * cellsize * OPT.datathinning));
-results.area     =        sum(sum(sum(id)) * (cellsize * OPT.datathinning * cellsize * OPT.datathinning));
-        
+results.area     = sum(sum(sum(id)) * (cellsize * OPT.datathinning * cellsize * OPT.datathinning));
+
+total            = sum(sum(d.inpolygon));
+results.coverage = sum(sum((~isnan(d2.Z(id)-d1.Z(id)))))/total; 
+
 %% add extra info
 results.polyname = polyname;
 results.year     = targetyear;
