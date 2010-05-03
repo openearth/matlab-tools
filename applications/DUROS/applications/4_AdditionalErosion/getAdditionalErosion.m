@@ -149,7 +149,8 @@ temp = cumsum(flipud(crossdir.*idValley));
 idValleydwnwrd = flipud([NaN; temp(1:end-1)] == 0) & idValley;
 idValleyupwrd = flipud(temp == 0) & idValley;
 
-if sum(idValleydwnwrd) ~= sum(idValleyupwrd)
+mostLandwardPointAboveZmin = z(x==min(x)) > OPT.zmin;
+if ~mostLandwardPointAboveZmin
     % landward end of profile is below zmin level. Assign most landward
     % crossing as x0min
     x0min = xcr(find(idValleydwnwrd, 1, 'first'));
@@ -215,7 +216,8 @@ if diff(x0) >= 0
 end
 
 %% get x0except (valley stretches)
-OPT.x0except = [xcr(idValleyupwrd & idValley) xcr(idValleydwnwrd & idValley)];
+idToIgnore = xcr >= max(x0) | xcr <= min(x0);
+OPT.x0except = [xcr(idValleyupwrd & idValley & ~idToIgnore) xcr(idValleydwnwrd & idValley & ~idToIgnore)];
 m = size(OPT.x0except,1);
 x0exceptID = ones(m,1)*2;
 
