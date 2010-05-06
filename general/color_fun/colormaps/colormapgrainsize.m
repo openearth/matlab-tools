@@ -1,15 +1,15 @@
-function col = colormapbathymetry(m)
-%COLORMAPBATHYMETRY   colormap with varying height and shading to represent a bathymetry
+function col = colormapgrainsize(m)
+%COLORMAPGRAINSIZE   colormap with varying height and shading to represent grain sizes
 %  
-%   col = colormapbathymetry(m) where M is the number of colors (default 16).
+%   col = colormapgrainsize(m) where M is the number of colors (default 32).
 %
-%See also: colormap2Dbathymetry, colormapbluewhitered
+%See also: colormapbathymetry, colormapbluewhitered, copper
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2009 Deltares for Building with Nature
-%       Thijs Damsma
+%   Copyright (C) 2010 Deltares for Building with Nature
+%       Gerben de Boer
 %
-%       Thijs.Damsma@deltares.nl	
+%       g.j.deboer@deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -30,6 +30,12 @@ function col = colormapbathymetry(m)
 %   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+% This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
 % $Id$
 % $Date$
 % $Author$
@@ -37,34 +43,49 @@ function col = colormapbathymetry(m)
 % $HeadURL$
 % $Keywords: $
 
-x(1)=0.0;
-r(1)=10;
-g(1)=10;
-b(1)=140;
+x(1)=0; % black mud
+r(1)=0;
+g(1)=0;
+b(1)=0;
 
-x(2)=0.45;
-r(2)=170;
-g(2)=230;
-b(2)=254;
+x(end+1)=1/8; % brown silt
+r(end+1)=174;
+g(end+1)=119;
+b(end+1)=0;
 
-x(3)=0.49;
-r(3)=235;
-g(3)=255;
-b(3)=205;
+x(end+1)=2/8; % fine white sane
+r(end+1)=255;
+g(end+1)=255;
+b(end+1)=255;
 
-x(4)=0.51;
-r(4)=255;
-g(4)=255;
-b(4)=90;
+x(end+1)=3/8; % yellow sand
+r(end+1)=255;
+g(end+1)=255;
+b(end+1)=0;
 
-x(5)=1.0;
-r(5)=0.0;
-g(5)=127;
-b(5)=34;
+x(end+1)=4/8; % yellow/brown sand
+r(end+1)=191;
+g(end+1)=191;
+b(end+1)=0;
+
+x(end+1)=4/6; % orange/pinkish sand
+r(end+1)=255;
+g(end+1)=177;
+b(end+1)=100;
+
+x(end+1)=5/6; % purplish
+r(end+1)=131;
+g(end+1)=97;
+b(end+1)=123;
+
+x(end+1)=1.;  % gray pebbles/cobbles
+r(end+1)=128;
+g(end+1)=128;
+b(end+1)=128;
 
 
 if nargin < 1
-   ncol = 16;
+   ncol = 32;
 else
    ncol=m;
 end
