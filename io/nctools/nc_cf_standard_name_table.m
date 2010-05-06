@@ -191,7 +191,7 @@ end
 
 end
 
-%% find and display results of a search (long_name to standard_name)
+%% find and display results of a search (standard_name presence)
 
 if ~isempty(OPT.verify)
 
