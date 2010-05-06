@@ -115,11 +115,10 @@ if XB.settings.Grid.vardx
         XB.settings.Flow.zs0=0;
     else
         zs0=XB.settings.Flow.zs0;
-        XB.settings.Flow.zs0=[];
         if length(zs0)>1
             % time series
             %             zs0(:,1)=zs0(:,1)*OPT.timefactor/XB.settings.SedInput.morfac;
-            %         TODO('adjust this line that it only accepts [s] and not hours as interval times');
+            TODO('adjust this line that it only accepts [s] and not hours as interval times');
             % New version of xbeach times do not have to be multiplied ith the
             % morfac
             zs0(:,1)=zs0(:,1)*OPT.timefactor;
