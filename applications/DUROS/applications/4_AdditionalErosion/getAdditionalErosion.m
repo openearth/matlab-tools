@@ -143,6 +143,11 @@ x0max = xcr(idDuneFace);
 % potential dune valley indicators
 idValley = crossdir ~= 0;
 idValley(idDuneFace:end) = false;
+if crossdir(find(crossdir.*idValley~=0,1,'last')) == 1
+    % Dune face is located right at a horizontal part of the profile that lies exactly at the
+    % waterline
+   idValley(find(crossdir.*idValley~=0,1,'last')) = false;
+end
 
 % take cumsum to filter for horizontal profile parts at the zmin level
 temp = cumsum(flipud(crossdir.*idValley));
@@ -216,8 +221,9 @@ if diff(x0) >= 0
 end
 
 %% get x0except (valley stretches)
-idToIgnore = xcr >= max(x0) | xcr <= min(x0);
-OPT.x0except = [xcr(idValleyupwrd & idValley & ~idToIgnore) xcr(idValleydwnwrd & idValley & ~idToIgnore)];
+% idToIgnore = xcr >= max(x0) | xcr <= min(x0);
+% OPT.x0except = [xcr(idValleyupwrd & idValley & ~idToIgnore) xcr(idValleydwnwrd & idValley & ~idToIgnore)];
+OPT.x0except = [xcr(idValleyupwrd & idValley) xcr(idValleydwnwrd & idValley)];
 m = size(OPT.x0except,1);
 x0exceptID = ones(m,1)*2;
 

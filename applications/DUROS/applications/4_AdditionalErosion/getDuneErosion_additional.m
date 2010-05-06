@@ -53,7 +53,7 @@ if TargetVolume < 0
     % determine minimum x0 that can be placed in the profile
     x0endBound = {'endofprofile'};
     if zInitial(1) > WL_t
-        x0endofprofile = min(xInitial) + zInitial(end)-WL_t;
+        x0endofprofile = min(xInitial) + zInitial(xInitial==min(xInitial))-WL_t;
     else
         x0endofprofile = min(findCrossings(xInitial,zInitial,[min(xInitial),max(xInitial)],ones(1,2)*WL_t,'keeporiginalgrid'));
         if ~isempty(maxRetreat)
