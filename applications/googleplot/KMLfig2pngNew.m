@@ -54,26 +54,15 @@ function OPT = KMLfig2pngNew (h,lat,lon,z,varargin)
 % $HeadURL$
 % $Keywords: $
 
-D.lat = lat;
-D.lon = lon;
-D.z   = z;
-%if ~isequal(size(D.lon) - size(D.z),[0 0])
-%  D.z = addrowcol(D.z,1,1,Inf); % no, lat KML_fig2pngNew_printTile handle that
-%end
-D.N   = max(D.lat(:));
-D.S   = min(D.lat(:));
-D.W   = min(D.lon(:));
-D.E   = max(D.lon(:));
+% TO DO: ignore colorbar, if present
+% TO DO: also correct kml if hightest levels < default highestLevel
 
-OPT.basecode           = KML_fig2pngNew_SmallestTileThatContainsAllData(D);
-OPT.ha                 =    gca; % handle to axes
-OPT.hf                 =    gcf; % handle to figure
+OPT.ha                 =     []; % handle to axes
+OPT.hf                 =     []; % handle to figure
 OPT.dim                =    256; % tile size in pixels
 OPT.dimExt             =     16; % render tiles expanded by n pixels, to remove edge effects
 OPT.bgcolor            = [100 155 100];  % background color to be made transparent
 OPT.alpha              =      1;
-OPT.highestLevel       = length(OPT.basecode);
-OPT.lowestLevel        = OPT.highestLevel+4;
 OPT.fileName           =     [];
 OPT.kmlName            =     []; % name in Google Earth Place list
 OPT.logo               =     '';
@@ -92,24 +81,42 @@ OPT.drawOrder          =      1;
 OPT.bgcolor            = [100 155 100];  % background color to be made transparent
 OPT.description        =     ''; 
 OPT.colorbar           =   true;
-OPT.colorbarlocation   = {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
-OPT.colorbartitle      = '';
+OPT.CBcolorbarlocation = {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
+OPT.CBcolorbartitle    = '';
 OPT.mergeExistingTiles =   true; % does not work when changing dim
 OPT.printTiles         =   true;
 OPT.joinTiles          =   true;
 OPT.makeKML            =   true;
+OPT.basecode           = '';
+OPT.highestLevel       = [];
+OPT.lowestLevel        = [];
 
 if nargin==0
   return
+else
+   D.lat = lat;
+   D.lon = lon;
+   D.z   = z;
+   %if ~isequal(size(D.lon) - size(D.z),[0 0])
+   %  D.z = addrowcol(D.z,1,1,Inf); % no, lat KML_fig2pngNew_printTile handle that
+   %end
+   D.N   = max(D.lat(:));
+   D.S   = min(D.lat(:));
+   D.W   = min(D.lon(:));
+   D.E   = max(D.lon(:));
+
+   OPT.basecode           = KML_fig2pngNew_SmallestTileThatContainsAllData(D);
+   OPT.highestLevel       = length(OPT.basecode);
+   OPT.lowestLevel        = OPT.highestLevel+4;
 end
 
-OPT.h = h;  % handle to input surf object
+OPT.h    = h;  % handle to input surf object
 
 [OPT, Set, Default] = setProperty(OPT, varargin);
 
 %% 
-if OPT.lowestLevel <= OPT.highestLevel 
-   error('OPT.lowestLevel <= OPT.highestLevel')
+if OPT.lowestLevel < OPT.highestLevel 
+   error(['OPT.lowestLevel ',num2str(OPT.lowestLevel),' < OPT.highestLevel (',num2str(OPT.highestLevel ),')'])
 end
 
 OPT.highestLevel  = max(OPT.highestLevel,1);
@@ -176,10 +183,15 @@ end
 
 %% figure settings
 
-set(OPT.ha,'Position',[0 0 1 1])
-set(OPT.hf,'PaperUnits', 'inches','PaperPosition',...
-    [0 0 OPT.dim+2*OPT.dimExt OPT.dim+2*OPT.dimExt],...
-    'color',OPT.bgcolor/255,'InvertHardcopy','off');
+OPT.ha  = get(OPT.h ,'Parent');
+OPT.hf  = get(OPT.ha,'Parent');
+daspect = get(OPT.ha,'DataAspectRatio');
+          set(OPT.ha,'DataAspectRatio',[1 1 1]); % repair effect of for instance axislat()
+
+          set(OPT.ha,'Position',[0 0 1 1])
+          set(OPT.hf,'PaperUnits', 'inches','PaperPosition',...
+          [0 0 OPT.dim+2*OPT.dimExt OPT.dim+2*OPT.dimExt],...
+          'color',OPT.bgcolor/255,'InvertHardcopy','off');
 
 %% run scripts (These are the core functions)
 
@@ -232,19 +244,47 @@ if OPT.makeKML
         'open',0,...
         'description',OPT.description);
         
-    if isempty(OPT.logo)
+ %% LOGO
+ %  add png to directory of tiles (split png and href in KMLcolorbar)
+
+ if isempty(OPT.logo)
     logo   = '';
     else
-    logo   = ['<Folder>' KMLlogo(OPT.logo,'fileName',0,'kmlName', 'logo') '</Folder>'];
+    logoName = fullfile(fileparts(OPT.fileName),OPT.Name, [filename(OPT.logo),'4GE.png']);
+    logo   = ['<Folder>' KMLlogo(OPT.logo,'fileName',0,'kmlName', 'logo',...
+             'logoName',logoName) '</Folder>'];
     end
+        logo = strrep(logo,['<Icon><href>'                  filename(logoName)],...
+                           ['<Icon><href>' OPT.Name filesep filename(logoName)]);
+    
 
     output = [KML_header(OPT_header) logo output];
 
  %% COLORBAR
+ %  add png to directory of tiles (split png and href in KMLcolorbar)
 
     if OPT.colorbar
-        clrbarstring = KMLcolorbar('clim',clim,'fileName',OPT.fileName,'colorMap',colormap,'colorTitle',OPT.colorbartitle,'colorbarlocation',OPT.colorbarlocation);
-        clrbarstring = strrep(clrbarstring,['<Icon><href>' OPT.fileName '_'],['<Icon><href>' OPT.Name filesep OPT.fileName '_']);
+       
+       % relative for local files
+       if isempty(OPT.url)
+          CBhref = fullfile(                   [OPT.Name '.kml']);
+       else
+          CBhref = fullfile(OPT.url, OPT.Path, [OPT.Name '.kml']);
+       end
+       
+       % add to one level deeper
+       OPT.CBfileName = fullfile(fileparts(OPT.fileName), OPT.Name, [OPT.Name '.kml']);
+
+       clrbarstring = KMLcolorbar('CBcLim',clim,...
+                              'CBfileName',OPT.CBfileName,...
+                               'CBkmlName','colorbar',...
+                              'CBcolorMap',colormap,...
+                            'CBcolorTitle',OPT.CBcolorbartitle,...
+                      'CBcolorbarlocation',OPT.CBcolorbarlocation);
+        
+        % refer to one level deeper,  KMLcolorbar chops directory in <href>
+        clrbarstring = strrep(clrbarstring,['<Icon><href>'                  filename(OPT.CBfileName)],...
+                                           ['<Icon><href>' OPT.Name filesep filename(OPT.CBfileName)]);
         output = [output clrbarstring];
     end
 
@@ -256,4 +296,8 @@ if OPT.makeKML
     % close KML
 
     fclose(OPT.fid);
+
+%% restore
+
+    set(OPT.ha,'DataAspectRatio',daspect); % restore
 end

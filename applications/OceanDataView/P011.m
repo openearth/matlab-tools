@@ -175,13 +175,13 @@ if ~isempty(OPT.find)
 
 end
 
-%% find and display results of a search (long_name to standard_name)
+%% find and display results of a search (standard_name presence)
 
 if ~isempty(OPT.verify)
 
    searchpattern = OPT.verify;
 
-   % cannot search for exact omly due to presence of list and list number in standard_name
+   % cannot search for exact only due to presence of both list and list number in standard_name
    ii = regexpi(L.(OPT.standard_name),searchpattern); % per cell item, empty or start index of searchpattern
    ii = find(~cellfun(@isempty,ii));                  % indices of non-empty searchpattern matches
    

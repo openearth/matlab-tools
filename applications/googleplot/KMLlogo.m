@@ -51,6 +51,7 @@ function varargout = KMLlogo(imname,varargin)
 %% import
  
    OPT.fileName         = ''; % header/footer are skipped when is a fid = 0 or fopen(OPT.fileName,'w')
+   OPT.logoName         = '';
    OPT.kmlName          = '';
    OPT.description      = '';
    OPT.invertblackwhite = 0; % invert black/white
@@ -91,9 +92,11 @@ function varargout = KMLlogo(imname,varargin)
    end
    im4alpha = im4alpha./max(im4alpha(:));% scale so lightest pixel is fully white
    
-   logoname = [fileparts(OPT.fileName) filesep filename(imname),'4GE.png'];
+   if isempty(OPT.logoName)
+   OPT.logoName = [fileparts(imname) filesep filename(imname),'4GE.png'];
+   end
 
-   imwrite(ones(size(im)),logoname,'Alpha',im4alpha);
+   imwrite(ones(size(im)),OPT.logoName,'Alpha',im4alpha);
    
 %% make kml encapsulation
 
@@ -123,7 +126,7 @@ function varargout = KMLlogo(imname,varargin)
    output = [output ...
        '<name>logo</name>' ...
        '<Folder><ScreenOverlay>' ...
-       '	<Icon><href>' filenameext(logoname) '</href></Icon>\n' ... % only relative path
+       '	<Icon><href>' filenameext(OPT.logoName) '</href></Icon>\n' ... % only relative path
        '	<overlayXY  x="0"      y="0.00"  xunits="fraction" yunits="fraction"/>\n' ...
        '	<screenXY   x="0.02"   y="0.05"  xunits="fraction" yunits="fraction"/>\n' ...
        '	<size       x="-1"     y="-1"    xunits="fraction" yunits="fraction"/>\n' ...

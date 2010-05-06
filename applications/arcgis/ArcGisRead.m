@@ -1,12 +1,14 @@
-function [D] = ArcGisRead(fname,varargin)
+function varargout = ArcGisRead(fname,varargin)
 %ARCGISREAD  read gridded data set in Arc ASCII Grid Format, and save as *.mat, *.nc file
 %
-%   D = arcgisread(filename,<keyword,value>)
+%   S      = arcgisread(filename,<keyword,value>)
+%  [X,Y,D] = arcgisread(filename,<keyword,value>)
 %
-% reads contents of <a href="http://en.wikipedia.org/wiki/ESRI_grid">ESRI arcGIS file</a> into struct D that
+% reads contents of <a href="http://en.wikipedia.org/wiki/ESRI_grid">ESRI arcGIS file</a> into 
+% variables X,Y and D, or into a struct S that
 % directly can be plotted with pcolor(D.x,D.y.D.val)
 %
-% The following keywords are recommended:
+% The following keywords are recommended when using struct S:
 %
 %  OPT.varname       - name of data block (default 'val')
 %  OPT.long_name     - netCDF-CF convention
@@ -105,6 +107,14 @@ function [D] = ArcGisRead(fname,varargin)
          print2screensize([basename,'.png'])
       end
       try;close(TMP);end
+   end
+   
+%% output
+
+   if nargin==1
+      varargout = {D};
+   elseif nargin==3
+      varargout = {D.x,D.y,D.(D.varname)};
    end
 
 %% EOF

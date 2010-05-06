@@ -56,6 +56,8 @@ function varargout = KMLcolorbar(varargin)
 % $HeadURL$
 % $Keywords: $
 
+% TO DO: split png name (absolute) and png href (relative)
+
 %% Options
 
 OPT.CBfileName           = '';
@@ -65,7 +67,7 @@ OPT.CBcolorSteps         = [];             %
 OPT.CBcLim               = [];             %
 OPT.CBbgcolor            = [255 253 2];    % background color to be made transparent
 OPT.CBfontrgb            = [0 0 0];        % black
-OPT.CBcolorbarlocation   = {'N'};        %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
+OPT.CBcolorbarlocation   = {'W'};        %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
 OPT.CBcolorTitle         = '';             % The title of the colorbar as it appears in the bar
 OPT.CBcolorTick          = [];             % Ticks on colorbar. If isempty, nothing is changed, see help colorberlegend
 OPT.CBcolorTickLabel     = '';             % Is isempty, nothing is changed

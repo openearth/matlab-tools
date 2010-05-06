@@ -522,9 +522,9 @@ end
 
    if  exist([OPT.base,'\metadata.xml'])
       if strcmpi(OPT.base(2),':')
-         D.metadata = urlread(['file:///',OPT.base,'\metadata.xml'])
+         D.metadata = urlread(['file:///',OPT.base,'\metadata.xml']);
       else
-         D.metadata = urlread(['file:///',pwd,filesep,OPT.base,'\metadata.xml'])
+         D.metadata = urlread(['file:///',pwd,filesep,OPT.base,'\metadata.xml']);
       end
    else
       disp([OPT.base,'metadata.xml missing']);
