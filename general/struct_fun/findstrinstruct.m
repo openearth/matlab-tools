@@ -57,6 +57,8 @@ function n=findstrinstruct(h,fld1,val1,varargin)
 
 % 2009 mar 30: added comments [Gerben de Boer]
 
+      h = h(:)'; % allow for both (1,3) and S(3,1)
+
       n     = [];
       flds  = fieldnames(h);
       c0    = struct2cell(h);
