@@ -116,6 +116,7 @@ if XB.settings.Grid.vardx
     else
         zs0=XB.settings.Flow.zs0;
         if length(zs0)>1
+            XB.settings.Flow.zs0=[];
             % time series
             %             zs0(:,1)=zs0(:,1)*OPT.timefactor/XB.settings.SedInput.morfac;
             TODO('adjust this line that it only accepts [s] and not hours as interval times');
