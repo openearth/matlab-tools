@@ -613,8 +613,13 @@ for ifile=1:length(fnames)
          %% Copy location code (as obtained from file name)
          if OPT.locationcode
          
+            try % works only of filename is 
+                % id22-IJMDMNTSPS-190001010000-201003062359
             index            = strfind(fname,'-');
             locationcode     = lower(fname([index(1)+1]:[index(2)-1]));
+            catch
+            locationcode     = '';
+            end
          
             if length(D.locations)==1
             D.data.location          = D.locations{1};
