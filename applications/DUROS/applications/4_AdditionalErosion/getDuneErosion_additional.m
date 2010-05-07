@@ -350,13 +350,22 @@ else
 end
 
 % Calculate correct volumes etc
-[TVolume resulttemp] = getVolume(...
-    'x',resultout.xActive,...          = column array with x points (increasing index and positive x in seaward direction)
-    'z',resultout.zActive,...            = column array with z points
-    'LowerBoundary',WL_t,...  = lower horizontal plane of volume area (not specified please enter [] as argument)
-    'x2',  resultout.xActive,...     = column array with x2 points (increasing index and positive x in seaward direction)
-    'z2',  resultout.z2Active);
-resultout.Volumes = resulttemp.Volumes;
+if numel(resultout.xActive)==1
+    % No additional erosion
+    TVolume = 0;
+    resultout.Volumes.Volume = 0;
+    resultout.Volumes.volumes = 0;
+    resultout.Volumes.Accretion = 0;
+    resultout.Volumes.Erosion = 0;
+else
+    [TVolume resulttemp] = getVolume(...
+        'x',resultout.xActive,...          = column array with x points (increasing index and positive x in seaward direction)
+        'z',resultout.zActive,...            = column array with z points
+        'LowerBoundary',WL_t,...  = lower horizontal plane of volume area (not specified please enter [] as argument)
+        'x2',  resultout.xActive,...     = column array with x2 points (increasing index and positive x in seaward direction)
+        'z2',  resultout.z2Active);
+    resultout.Volumes = resulttemp.Volumes;
+end
 
 % write VTV info
 resultout.VTVinfo.TVolume = TVolume;

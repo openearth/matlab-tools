@@ -269,7 +269,7 @@ while NextIteration
     % create conditions for if statement to adjust profile shift x0
     FirstTwoItersCompleted = Iter==numel(x0); % after the second iteration, x0 is extended for each next iteration
     PrecisionNotReached = abs(diff([OPT.TargetVolume Volume(Iter)])) >= abs(OPT.precision);
-    SolutionPossibleWithinBoundaries = diff(sign(Volume(1:2)-OPT.TargetVolume))~=0;
+    SolutionPossibleWithinBoundaries = diff(sign(Volume(1:2)-OPT.TargetVolume))~=0 | ~PrecisionNotReached;
     MaxNrItersReached = Iter == OPT.maxiter;
     if FirstTwoItersCompleted && ~any(x0InValley)
         % difference between last two iterations is smaller than precision
