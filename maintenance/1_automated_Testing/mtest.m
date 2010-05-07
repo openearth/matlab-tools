@@ -1,4 +1,4 @@
-classdef mtest < handle
+classdef mtest < handle & mtestdefinitionblock
     % MTEST - Object to handle tests written in mtest format
     %
     % TODO: edit help. Adjust to new format and maybe put this in the documentation
@@ -69,27 +69,18 @@ classdef mtest < handle
     
     %% Properties
     properties
-        testname = [];                      % Name of the test
         filename = [];                      % Original name of the testfile
         filepath = [];                      % Path of the "_test.m" file
         
-        header   = [];                      % Function call of the testfunction
         h1line   = [];                      % A one line description of the test (h1 line)
         description = {};                   % Detailed description of the test that appears in the help block
         author   = [];                      % Last author of the test (obtained from svn keywords)
         seealso  = {};                      % see also references
         
-        descriptioncode = {};               % Description of the test (first part of the testdescription file before the start of the first testcase)
-        descriptionincludecode = false;                % indicates whether the code must be included when publishing the test description
-        descriptionevaluatecode = true;
         descriptionoutputfile = {};         % Name of the published output file of the description
         
-        runcode  = {};
         coverageoutputfile = {};
         
-        publishcode = {};                   % TODO , not included yet..
-        publishincludecode = false;
-        publishevaluatecode = true;
         publishoutputfile = {};
         
         testcases = mtestcase;              % mtestcases objects that contain testcase information for each individual testcase
@@ -222,49 +213,42 @@ classdef mtest < handle
             %% #3 Close the input file
             fclose(fid);
             %% #4 Process contents of the input file
-            str = strtrim(str);
             obj.filename = fn;
             obj.filepath = pt;
             obj.fullstring = str;
+            %% #5 Interpret the definition string
+            obj.interpretDefinitionString;
+            %% #6 add event listeners
+            obj.eventlisteners = cat(1,...
+                event.listener(obj.testcases,'NeedToInitialize',@obj.prepareTest),...
+                event.listener(obj,'TestPerformed',@obj.storeRunWorkspace),...
+                event.listener(obj,'RunWorkspaceSaved',@obj.fullPublish));
+        end
+        function interpretDefinitionString(obj)
+            str = strtrim(obj.fullstring);
+            
             %% -- find function calls
             fcnid = find(strncmp(str,'function ',9));
             endid = find(strcmp(str,'end') | strncmp(str,'end ',4) | strncmp(str,'end%',4) | strncmp(str,'end...',6));
-            
-            % Create temp testcase struct
-            testcasesstruct = struct(...
-                'fullstring',[],...
-                'functioncall',[],...
-                'functionname',[],...
-                'fullfunctioncall',[],...
-                'functionoutputname',[],...
-                'initcode',[],...
-                'baseruncode',[],...
-                'inputneeded',[],...
-                'caseNumber',[],...
-                'caseName',[],...
-                'description',[],...
-                'descrIncludeCode',[],...
-                'descrEvaluateCode',[],...
-                'runcode',[],...
-                'publishcode',[],...
-                'publishIncludeCode',[],...
-                'publishEvaluateCode',[]);
-            %% -- Divide info string
+
+            %% -- Divide info string into teststring and testcases
             if length(fcnid)>1
                 %% subtract testinfo
                 teststr = str(1:max(endid(endid<min(fcnid(fcnid>1))))-1);                
                 %% seperate full strings of testcases
                 fcnid = cat(1,fcnid,length(str)+1);
                 for icase = 1:length(fcnid)-2
-                    testcasesstruct(icase).fullstring = str(fcnid(icase+1):max(endid(endid<fcnid(icase+2))));
+                    obj.testcases(icase) = mtestcase(icase,'fulldefinitionstring',str(fcnid(icase+1):max(endid(endid<fcnid(icase+2)))));
+                    obj.testcases(icase).interpretDefinitionBlock;
+                    obj.testcases(icase).functionoutputname = mtest.argsinname(obj.testcases(icase).functionheader,obj.testcases(icase).functionname);
                 end
             elseif length(fcnid)==1
                 %% subtract testinfo
                 teststr = str(fcnid:end);
-                testcasesstruct = [];
+                obj.testcases(1) = [];
             else
                 teststr = str;
-                testcasesstruct = [];
+                obj.testcases(1) = [];
             end
             %% -- Process test information
             % Read test specifications
@@ -279,23 +263,25 @@ classdef mtest < handle
             if ~isempty(teststr)
                 comments = strncmp(teststr,'%',1);
 
-                % header
+                %% header
                 id = strfind(teststr{1},'function');
                 if ~comments(1) && ~isempty(id)
-                    obj.header = teststr{1};
+                    obj.functionheader = teststr{1};
                     teststr(1)=[];
                     comments(1)=[];
                 end
                 
-                % h1line
+                %% h1line
                 if comments(1)
                     h1linetemp = teststr{1};
-                    obj.h1line = strtrim(strrep(lower(h1linetemp(find(~ismember(1:length(h1linetemp),strfind(h1linetemp,'%')),1,'first'):end)),lower(fn),''));
-                    teststr(1)=[];
-                    comments(1)=[];
+                    if ~strncmp(h1linetemp,'%%',2)
+                        obj.h1line = strtrim(strrep(lower(h1linetemp(find(~ismember(1:length(h1linetemp),strfind(h1linetemp,'%')),1,'first'):end)),lower(obj.filename),''));
+                        teststr(1)=[];
+                        comments(1)=[];
+                    end
                 end
                 
-                % remaining helpblock
+                %% remaining helpblock
                 idcommend = min([find((~comments),1,'first') find(strncmp(teststr,'%% ',3),1,'first')]);
                 if ~isempty(idcommend) && idcommend > 1
                     helpblock = teststr(1:idcommend-1);
@@ -323,17 +309,16 @@ classdef mtest < handle
                     obj.description = helpblock;
                 end
                 
-                % Credentials 
+                %% Credentials 
                 credid = find(strncmp(teststr,'%% Credentials',14) | strncmp(teststr,'%% Copyright',12));
                 if ~isempty(credid)
                     credend = find(~comments);
                     credend = min(credend(credend>credid));
-%                     credentialstr = teststr(credid:credend);
                     teststr(credid:credend)=[];
                     comments(credid:credend)=[];
                 end
                 
-                % Version info
+                %% Version info
                 versionid = find(strncmp(teststr,'%% Version',10));
                 if ~isempty(versionid)
                     authorid = find(strncmp(teststr,'% $Author:',10), 1);
@@ -346,209 +331,20 @@ classdef mtest < handle
                     else
                         versionend = min(versionend(versionend>versionid));
                     end
-%                     versionstr = teststr(1:versionend);
                     teststr(1:versionend)=[];
-%                     comments(1:versionend)=[];
-                end
-                
-                iddescr = find(~cellfun(@isempty,strfind(teststr,'$Description')));
-                if isempty(iddescr)
-                    iddescr = nan;
-                end
-                idrun = find(~cellfun(@isempty,strfind(teststr,'$RunCode')));
-                if isempty(idrun)
-                    idrun = nan;
-                end
-                idpublish = find(~cellfun(@isempty,strfind(teststr,'$PublishResult')));
-                if isempty(idpublish)
-                    idpublish = nan;
-                end
-                clls = [iddescr, idrun, idpublish length(teststr)+1];
-                                
-                if sum(~isnan(clls))<2
-                    obj.runcode = teststr;
-                else
-                    idused = false(size(teststr));
-                    if ~isnan(iddescr)
-                        tempid = min(clls(clls>iddescr));
-                        % publishdescription
-                        obj.descriptioncode = teststr(iddescr+1:tempid-1);
-                        idused(iddescr:tempid-1) = true;
-                        
-                        % test attributes (Name, IncludeCode, EvaluateCode)
-                        testdeclaration = strtrim(teststr{iddescr});
-                        attrid = [min(strfind(testdeclaration,'('))+1, length(testdeclaration)-1];
-                        if length(attrid)==2 && ~strcmp(testdeclaration(end),')')
-                            disp('Attributes could be wrong..');
-                            attrid = [strfind(testdeclaration,'(')+1, length(testdeclaration)];
-                        end
-                        if length(attrid)==2
-                            attributes = strread(testdeclaration(attrid(1):attrid(2)),'%s','delimiter','&');
-                            attr = {'name','includecode','evaluatecode'};
-                            objname = {'name','descriptionincludecode','descriptionevaluatecode'};
-                            for iattr = 1:length(attributes)
-                                attrinfo = strtrim(strread(attributes{iattr},'%s','delimiter','='));
-                                if ismember(lower(attrinfo{1}),attr)
-                                    if strcmpi(attrinfo{1},'name')
-                                        obj.testname = attrinfo{2};
-                                    else
-                                        obj.(objname{strcmpi(attrinfo{1},attr)}) = eval(strrep(attrinfo{2},'''',''));
-                                    end
-                                end
-                            end
-                        end
-                    end
-                    
-                    if ~isnan(idpublish)
-                        tempid = min(clls(clls>idpublish));
-                        % publishdescription
-                        obj.publishcode = teststr(idpublish+1:tempid-1);
-                        idused(idpublish:tempid-1) = true;
-                        
-                        % attributes (IncludeCode, EvaluateCode)
-                        publishheader = strtrim(teststr{idpublish});
-                        attrid = [min(strfind(publishheader,'('))+1, length(publishheader)-1];
-                        if length(attrid)==2 && ~strcmp(publishheader(end),')')
-                            disp('Attributes could be wrong..');
-                            attrid = [strfind(publishheader,'(')+1, length(publishheader)];
-                        end
-                        if length(attrid)==2
-                            attributes = strread(publishheader(attrid(1):attrid(2)),'%s','delimiter','&');
-                            attr = {'name','includecode','evaluatecode'};
-                            objname = {'name','publishincludecode','publishevaluatecode'};
-                            for iattr = 1:length(attributes)
-                                attrinfo = strtrim(strread(attributes{iattr},'%s','delimiter','='));
-                                if ismember(lower(attrinfo{1}),attr)
-                                    if strcmpi(attrinfo{1},'name')
-                                        obj.testname = attrinfo{2};
-                                    else
-                                        obj.(objname{strcmpi(attrinfo{1},attr)}) = eval(strrep(attrinfo{2},'''',''));
-                                    end
-                                end
-                            end
-                        end
-                    end
-                    
-                    if isnan(idrun) && isempty(teststr)
-                        warning('Mtest:NoRunCode','No runcode defined...');
-                        % build runcode for all testcases. Todo if testcases are ready.
-                    elseif isnan(idrun)
-                        obj.runcode = teststr(~idused);
-                    else
-                        tempid =  min(clls(clls>idrun));
-                        % runcode
-                        obj.runcode = teststr(idrun+1:tempid-1);
-                    end
                 end
             else
-                % No runcode as well
+                % No runcode
                 obj.testname = obj.filename;
-                obj.descriptioncode = {'% This test still has no general description. This can be placed on the first lines of the test description file (*_test.m).'};
-            end
-            %% -- Process testcases
-            for icase = 1:length(testcasesstruct)
-                str = testcasesstruct(icase).fullstring(2:end-1);
-                
-                testcasesstruct(icase).fullfunctioncall = testcasesstruct(icase).fullstring{1};
-                testcasesstruct(icase).functioncall = strtrim(testcasesstruct(icase).fullstring{1}(strfind(testcasesstruct(icase).fullstring{1},'=')+1:end));
-                % name of the testcase subfunction
-                tmp = strfind(testcasesstruct(icase).functioncall,'(');
-                if isempty(tmp)
-                    tmp = length(testcasesstruct(icase).functioncall)+1;
-                end
-                % find the name of the testcase function in the base workspace code
-                testcasesstruct(icase).functionname = testcasesstruct(icase).functioncall(1:tmp-1);
-                testcasesstruct(icase).functionoutputname = mtest.argsinname(testcasesstruct(icase).fullfunctioncall,testcasesstruct(icase).functionname);
-                
-                % First find the celldividers between the description parts, the runtTest parts and the Publish part
-                descrid = find(~cellfun(@isempty,strfind(str,'$Description')));
-                runcodeid = find(~cellfun(@isempty,strfind(str,'$RunCode')));
-                publishcodeid = find(~cellfun(@isempty,strfind(str,'$PublishResult')));
-                
-                % Error if there is no RunTest part (test code)
-                if isempty(runcodeid)
-                    continue
-                    %                     error('MTest:NoTestDefinition',['The specified testcase (' strrep(fullfile(obj.filepath,[obj.filename '.m']),filesep,'/') ') does not contain a test definition cell']);
-                end
-                
-                % list all celldividers that separate important parts
-                celldividers = sort(cat(1,descrid,runcodeid,publishcodeid,length(str)+1));
-                
-                testcasesstruct(icase).caseNumber = icase;
-                %% Isolate description
-                if ~isempty(descrid)
-                    % header
-                    descrheader = str{descrid};
-                    % body
-                    idend = min(celldividers(celldividers>descrid))-1;
-                    descstr = str(descrid+1:idend);
-                    
-                    % store body information
-                    testcasesstruct(icase).description = descstr;
-                    testcasesstruct(icase).descrIncludeCode = false;
-                    testcasesstruct(icase).descrEvaluateCode = true;
-                    
-                    % isolate attributes
-                    attributes = strread(descrheader(strfind(descrheader,'(')+1:strfind(descrheader,')')-1),'%s','delimiter','&');
-                    for iattr = 1:length(attributes)
-                        attrinfo = strtrim(strread(attributes{iattr},'%s','delimiter','='));
-                        switch lower(attrinfo{1})
-                            case 'name'
-                                testcasesstruct(icase).caseName = attrinfo{2};
-                            case 'includecode'
-                                testcasesstruct(icase).descrIncludeCode = eval(strrep(attrinfo{2},'''',''));
-                            case 'evaluatecode'
-                                testcasesstruct(icase).descrEvaluateCode = eval(strrep(attrinfo{2},'''',''));
-                        end
-                    end
-                end
-                
-                %% Isolate Run Codes
-                if ~isempty(runcodeid)
-                    % body
-                    idend = min(celldividers(celldividers>runcodeid))-1;
-                    testcasesstruct(icase).runcode = str(runcodeid+1:idend);
-                else
-                    %                     error('MTest:NoTestDefinition',['The specified testcase (' strrep(fullfile(obj.filepath,[obj.filename '.m']),filesep,'/') ') does not contain a test definition cell']);
-                end
-                
-                %% Isolate publish codes
-                if ~isempty(publishcodeid)
-                    % header
-                    publishheader = str{publishcodeid};
-                    % body
-                    idend = min(celldividers(celldividers>publishcodeid))-1;
-                    publishstr = str(publishcodeid+1:idend);
-                    
-                    % store body
-                    testcasesstruct(icase).publishcode = publishstr;
-                    testcasesstruct(icase).publishIncludeCode = false;
-                    testcasesstruct(icase).publishEvaluateCode = true;
-                    
-                    % isolate attributes
-                    attributes = strread(publishheader(strfind(publishheader,'(')+1:strfind(publishheader,')')-1),'%s','delimiter','&');
-                    for iattr = 1:length(attributes)
-                        attrinfo = strtrim(strread(attributes{iattr},'%s','delimiter','='));
-                        switch lower(attrinfo{1})
-                            case 'includecode'
-                                testcasesstruct(icase).publishIncludeCode = eval(strrep(attrinfo{2},'''',''));
-                            case 'evaluatecode'
-                                testcasesstruct(icase).publishEvaluateCode = eval(strrep(attrinfo{2},'''',''));
-                        end
-                    end
-                end
-            end
-            %% -- check runcode
-            % fill if it is empty (should not be necessary)
-            if isempty(obj.runcode)
-                tmp = '';
-                for icase = 1:length(testcasesstruct)
-                    tmp = cat(2,tmp,'tr(', num2str(icase), ') = ', testcasesstruct(icase).functioncall, ';', char(10));
-                end
-                tmp = cat(2,tmp,'testresult = all(tr);');
-                obj.runcode = tmp;
+                obj.ignore = true;
+                obj.ignoremessage = 'No run code in definition.';
             end
             
+            %% Analyse test definition blocks of test and testcases
+            obj.fulldefinitionstring = teststr;
+            obj.interpretDefinitionBlock
+            
+            %% -- check runcode
             if ischar(obj.runcode)
                 obj.runcode = strread(obj.runcode,'%s',-1,'delimiter',char(10));
             end
@@ -556,56 +352,25 @@ classdef mtest < handle
             
             % subtract run code for individual testcases
             if ~isempty(rncode)
-                for icase = length(testcasesstruct):-1:1
-                    call = strfind(rncode,testcasesstruct(icase).functionname);
+                for icase = length(obj.testcases):-1:1
+                    call = strfind(rncode,obj.testcases(icase).functionname);
                     if isempty(call)
                         % No call to the testcase. This one is disabled. We do not have to remember it.
-                        testcasesstruct(icase) = [];
+                        obj.testcases(icase) = [];
                     end
                 end
             end
-            %% -- create mtestcase objects
-            for itestcases = 1:length(testcasesstruct)
-                
+            
+            %% -- Correct testcase numbers
+            for itestcases = 1:length(obj.testcases)
                 % create outputfilenames
                 obj.currentcase = itestcases;
-                if isempty(testcasesstruct(itestcases).publishcode)
-                    testcasesstruct(itestcases).publishEvaluateCode = true;
-                    testcasesstruct(itestcases).publishIncludeCode = false;
-                end
-                if isempty(testcasesstruct(itestcases).description)
-                    testcasesstruct(itestcases).descrIncludeCode = false;
-                    testcasesstruct(itestcases).descrEvaluateCode = true;
-                end
                 
-                descroutputfilen = [obj.filename '_description_case_' num2str(testcasesstruct(itestcases).caseNumber) '.html'];
-                publishoutputfilen = [obj.filename '_results_case_' num2str(testcasesstruct(itestcases).caseNumber) '.html'];
-                
-                % create the object
-                obj.testcases(itestcases) = mtestcase(...
-                    testcasesstruct(itestcases).caseNumber,...
-                    'casename',testcasesstruct(itestcases).caseName,...
-                    'functionname',testcasesstruct(itestcases).functionname,...
-                    'functionheader',testcasesstruct(itestcases).fullfunctioncall,... function header
-                    'functionoutputname',testcasesstruct(itestcases).functionoutputname,...
-                    'description',testcasesstruct(itestcases).description,... description code of the testcase
-                    'descriptionoutputfile',descroutputfilen,... see property documentation of the mtestcase object
-                    'descriptionincludecode',testcasesstruct(itestcases).descrIncludeCode,...
-                    'descriptionevaluatecode',testcasesstruct(itestcases).descrEvaluateCode,...
-                    'runcode',testcasesstruct(itestcases).runcode,...
-                    'publishcode',testcasesstruct(itestcases).publishcode,...
-                    'publishoutputfile',publishoutputfilen,...
-                    'publishincludecode',testcasesstruct(itestcases).publishIncludeCode,...
-                    'publishevaluatecode',testcasesstruct(itestcases).publishEvaluateCode);
-            end
-            if isempty(testcasesstruct)
-                obj.testcases(1) = [];
-            end
-            %% add event listeners
-            obj.eventlisteners = cat(1,...
-                event.listener(obj.testcases,'NeedToInitialize',@obj.prepareTest),...
-                event.listener(obj,'TestPerformed',@obj.storeRunWorkspace),...
-                event.listener(obj,'RunWorkspaceSaved',@obj.fullPublish));
+                % give default output filenames
+                obj.testcases(itestcases).descriptionoutputfile = [obj.filename '_description_case_' num2str(obj.testcases(itestcases).casenumber) '.html'];
+                obj.testcases(itestcases).publishoutputfile = [obj.filename '_results_case_' num2str(obj.testcases(itestcases).casenumber) '.html'];
+                % TODO coverage outputname?
+             end
         end
         function publishDescription(obj,varargin)
             %publishDescription  Creates an html file from the test description with publish
@@ -734,7 +499,7 @@ classdef mtest < handle
             mtestcase.publishCodeString(obj.descriptionoutputfile,...
                 [],...
                 [],...
-                cat(1,{['%% Test description of "' obj.testname '"']},obj.descriptioncode),...
+                cat(1,{['%% Test description of "' obj.name '"']},obj.descriptioncode),...
                 opt);
             %% Close all remaining open figures from the test
             newopenfigures = findobj('Type','figure');
@@ -787,7 +552,7 @@ classdef mtest < handle
             %% run general part of the code
             obj.tmpobjname = ['mtest_test_function_' obj.filename];
             str = sprintf('%s\n',...
-                strrep(obj.header,obj.filename,'mtest_testfunction'),...
+                strrep(obj.functionheader,obj.filename,'mtest_testfunction'),...
                 obj.descriptioncode{~strncmp(obj.descriptioncode,'%',1)},...
                 obj.runcode{:},...
                 ['notify(getappdata(0,''' obj.tmpobjname '''),''TestPerformed'',mtesteventdata(whos,''remove'',true));']);
@@ -1043,12 +808,12 @@ classdef mtest < handle
             end
             
             %% include testname
-            if isempty(obj.testname)
-                obj.testname = obj.filename;
+            if isempty(obj.name)
+                obj.name = obj.filename;
             end
             id = find(strcmp(varargin,'testname'));
             if ~isempty(id)
-                obj.testname = varargin{id+1};
+                obj.name = varargin{id+1};
                 varargin(id:id+1)=[];
             end
             if isempty(caseoutputfile)
@@ -1074,7 +839,7 @@ classdef mtest < handle
                         end
                     end
                 end
-                obj.testcases(icase).testname = obj.testname;
+                obj.testcases(icase).name = obj.name;
                 obj.testcases(icase).outputfile = caseoutputfile;
                 obj.testcases(icase).descriptionoutputfile = fullfile(obj.resdir,[caseoutputfile '_case_' num2str(icase) '_description.html']);
                 obj.testcases(icase).publishoutputfile = fullfile(obj.resdir,[caseoutputfile '_case_' num2str(icase) '_results.html']);
@@ -1085,11 +850,11 @@ classdef mtest < handle
             cd(obj.rundir);
             
             %% run general part of the code
-            if ~isempty(obj.header)
+            if ~isempty(obj.functionheader)
                 obj.tmpobjname = ['mtest_test_function_' obj.filename];
                 if isempty(obj.testcases)
                     str = sprintf('%s\n',...
-                        strrep(obj.header,obj.filename,'mtest_testfunction'),...
+                        strrep(obj.functionheader,obj.filename,'mtest_testfunction'),...
                         'mtest_245y7e_tic = tic;',...
                         'profile clear',...
                         obj.descriptioncode{~strncmp(obj.descriptioncode,'%',1)},...
@@ -1100,7 +865,7 @@ classdef mtest < handle
                         ['notify(getappdata(0,''' obj.tmpobjname '''),''RunWorkspaceSaved'',mtesteventdata(whos,''remove'',true));']);
                 else
                     str = sprintf('%s\n',...
-                        strrep(obj.header,obj.filename,'mtest_testfunction'),...
+                        strrep(obj.functionheader,obj.filename,'mtest_testfunction'),...
                         obj.descriptioncode{~strncmp(obj.descriptioncode,'%',1)},...
                         obj.runcode{:},...
                         ['notify(getappdata(0,''' obj.tmpobjname '''),''TestPerformed'',mtesteventdata(whos,''remove'',false));'],...
@@ -1286,7 +1051,7 @@ classdef mtest < handle
             mtestcase.publishCodeString(obj.publishoutputfile,...
                 [],...
                 obj.runworkspace,...
-                cat(1,{['%% Test Results of "' obj.testname '"']},obj.publishcode),...
+                cat(1,{['%% Test Results of "' obj.name '"']},obj.publishcode),...
                 opt);
             
             %% Close all remaining open figures from the test

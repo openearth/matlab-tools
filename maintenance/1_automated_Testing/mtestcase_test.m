@@ -35,18 +35,16 @@ function testresult = mtestcase_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = mtest functionality test)
-% This testcase tests the functionality of the mtestcase object. This is done according to the
-% mtestcase methods. Since an mtestcase can only contain one testcase, we try to test the basic
-% functionality of the object in one testcase to avoid multiple creation of the object in tests.
-% (No real reason, but ok... the code is there already..).
+%% $Description 
+% Name('mtest functionality test')
+% This testcase tests the functionality of the mtestcase object. 
 
 %% $RunCode
 try
     % first create general variable. For this to work both mtest and mtestcase constructors have to
     % work. If they do not work all tests fail anyway.
     
-    t = mtest('mte_dummy_test');
+    t = mtest('mte_examplewithtestcases_test');
     mtc = t.testcases(1);
 catch me
     mtc = [];
@@ -71,7 +69,7 @@ function constructortest = Constructor_Method()
 % object is initiated from an mtest object and not directly possible from a test
 % definition file. This object is created with the following variables:
 
-description = {...
+descriptioncode = {...
     '% This is just a dummy test it always returns true'};
 
 runcode = {...
@@ -82,7 +80,7 @@ publishcode = {...
 %%
 % On creation of the object these variables are assigned to the properties:
 %
-% * description
+% * descriptioncode
 % * runcode
 % * publishcode
 %
@@ -93,7 +91,7 @@ publishcode = {...
 try
     constructortest = true;
     mtc = mtestcase(1,...
-        'description',description,...
+        'descriptioncode',descriptioncode,...
         'runcode',runcode,...
         'publishcode',publishcode);
     if ~strcmp(class(mtc),'mtestcase') || isempty(mtc)
@@ -136,29 +134,13 @@ try
     mtc.publishDescription(...
         'resdir',resdir,...
         'filename',outfilename);
-    if exist(fullfile(resdir,outfilename),'file')
-        rmdir(resdir,'s');
-        publishdescrtest = true;
-    end
-catch me 
+    publishdescrtest = exist(fullfile(resdir,outfilename),'file');
+    rmdir(resdir,'s');
+ catch me
     try
         rmdir(resdir,'s');
     end
 end
-%% $PublishResults(IncludeCode = false & EvaluateCode = true)
-% The description was published:
-clr = 'r';
-txt = 'unseccessful';
-if publishdescrtest
-    clr = 'g';
-    txt = 'successful';
-end
-h = figure('Units','centimeter','Position',[10 10 0.5 0.5],'Color',clr,'MenuBar','none','Toolbar','none');
-ha = axes('Parent',h,'Units','normalized','Position',[0 0 1 1],'Color',clr);
-axis(ha,'off');
-text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',clr);
-snapnow;
-close(h);
 end
 
 function runtest = run_Method(mtc)
@@ -198,30 +180,13 @@ function publishrestest = publishResults_Method(mtc)
 % Now publish the dummy result
 try
     resdir = tempname;
-    publishrestest = false;
     mkdir(resdir);
     mtc.publishResults('resdir',resdir);
-    if exist(fullfile(resdir,mtc.publishoutputfile),'file')
-        publishrestest = true;
-    end
+    publishrestest = exist(fullfile(resdir,mtc.publishoutputfile),'file');
     rmdir(resdir,'s');
 catch err
     publishrestest = false;
 end
-%% $PublishResults(IncludeCode = false & EvaluateCode = true)
-% The results were published:
-clr = 'r';
-txt = 'unseccessful';
-if publishrestest
-    clr = 'g';
-    txt = 'successful';
-end
-h = figure('Units','centimeter','Position',[10 10 0.5 0.5],'Color',clr,'MenuBar','none','Toolbar','none');
-ha = axes('Parent',h,'Units','normalized','Position',[0 0 1 1],'Color',clr);
-axis(ha,'off');
-text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',clr);
-snapnow;
-close(h);
 end
 
 function runandpublishtest = runAndPublish_Method(mtc)
@@ -242,20 +207,6 @@ try %#ok<*TRYNC>
     end
     rmdir(resdir,'s');
 end
-%% $PublishResults(IncludeCode = false & EvaluateCode = true)
-% runAndPublished was performed:
-clr = 'r';
-txt = 'unseccessful';
-if runandpublishtest
-    clr = 'g';
-    txt = 'successful';
-end
-h = figure('Units','centimeter','Position',[10 10 0.5 0.5],'Color',clr,'MenuBar','none','Toolbar','none');
-ha = axes('Parent',h,'Units','normalized','Position',[0 0 1 1],'Color',clr);
-axis(ha,'off');
-text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',clr);
-snapnow;
-close(h);
 end
 
 function cleanuptest = cleanUp_Method(mtc)
@@ -273,19 +224,4 @@ catch err
     cleanuptest = false;
     return
 end
-%% $PublishResults(IncludeCode = false & EvaluateCode = true)
-% after performing the cleanUp function, the object was:
-% runAndPublished was performed:
-clr = 'r';
-txt = 'not clean';
-if cleanuptest
-    clr = 'g';
-    txt = 'clean';
-end
-h = figure('Units','centimeter','Position',[10 10 0.5 0.5],'Color',clr,'MenuBar','none','Toolbar','none');
-ha = axes('Parent',h,'Units','normalized','Position',[0 0 1 1],'Color',clr);
-axis(ha,'off');
-text(mean(xlim),mean(ylim),txt,'HorizontalAlignment','center','BackGroundColor',clr);
-snapnow;
-close(h);
 end

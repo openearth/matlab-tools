@@ -455,17 +455,17 @@ classdef mtestengine < handle
             existingfigs = findobj('Type','figure');
             for itests = 1:length(obj.tests)
                 %% Display progress
-                if isempty(obj.tests(itests).testname)
-                    obj.tests(itests).testname = obj.tests(itests).filename;
+                if isempty(obj.tests(itests).name)
+                    obj.tests(itests).name = obj.tests(itests).filename;
                 end
-                testname = obj.tests(itests).testname;
+                testname = obj.tests(itests).name;
                 filename = [obj.tests(itests).filename, '.m'];
                 if obj.verbose
                     postmessage('testSuiteStarted',obj.postteamcity, 'name',filename);
                     postmessage('testStarted',obj.postteamcity,...
                         'name',testname,...
                         'captureStandardOutput','true');
-                    disp([' ' num2str(itests) '. ' obj.tests(itests).testname]);
+                    disp([' ' num2str(itests) '. ' testname ' (' filename ')']);
                 end
                 %% set options
                 if ~isempty(maxwidth)

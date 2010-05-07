@@ -1,4 +1,4 @@
-classdef mtestcase < handle
+classdef mtestcase < handle & mtestdefinitionblock
     % MTESTCASE - Object to handle testcases written in WaveLab format
     %
     % This objects stores the information written in a WaveLab format test file. The test files
@@ -69,24 +69,12 @@ classdef mtestcase < handle
     %% Properties
     properties
         casenumber = [];                    % Number of the testcase
-        casename = [];                      % Name of the testcase
 
-        functionheader = '';                % Header of the testcase function (first line)
-        functionname = '';                  % Name of the testcase function
-        functionoutputname = '';            % Name of 1x1 output boolean
-
-        description = {};                   % Code that was included in the testfile description cell
         descriptionoutputfile = {};         % Name of the published output file of the description
-        descriptionincludecode = false;     % Attribute IncludeCode for publishing the description cell
-        descriptionevaluatecode = true;     % Attribute EvaluateCode for publishing the description cell
 
-        runcode = {};                       % Code that was included in the testfile RunTest cell
         coverageoutputfile = {};            % Name of the published coverage output file
 
-        publishcode = {};                   % Code that was included in the testfile TestResults cell
         publishoutputfile = {};             % Name of the published output file of the TestResults cell
-        publishincludecode = false;         % Attribute IncludeCode for publishing the TestResults cell
-        publishevaluatecode = true;         % Attribute EvaluateCode for publishing the TestResults cell
         
         testresult = false;                 % Boolean indicating whether the test was run successfully
         time = [];                          % time needed for the testcase
@@ -246,7 +234,12 @@ classdef mtestcase < handle
                 for im = 1:length(memid)
                     prop = varargin{propsid(im)};
                     if ~memid(im)
-                        warning('MTest:NoProperty',['The property "' prop '" could not be found or sets.']);
+                        try
+                            % in case of hidden property
+                            obj.(prop) = varargin{propsid(im)+1};
+                        catch me %#ok<NASGU>
+                            warning('MTest:NoProperty',['The property "' prop '" could not be found or sets.']);
+                        end
                     else
                         obj.(prop) = varargin{propsid(im)+1};
                     end
@@ -398,10 +391,10 @@ classdef mtestcase < handle
             openfigures = findobj('Type','figure');
       
             %% publish results to resdir
-            if ~isempty(obj.casename)
-                descrstr = cat(1,{['%% Test description of testcase: "' obj.casename '"']},obj.description);
+            if ~isempty(obj.name)
+                descrstr = cat(1,{['%% Test description of testcase: "' obj.name '"']},obj.descriptioncode);
             else
-                descrstr = cat(1,{['%% Test description of "' obj.testname '" (Case' num2str(obj.casenumber) ')']},obj.description);
+                descrstr = cat(1,{['%% Test description of "' obj.testname '" (Case' num2str(obj.casenumber) ')']},obj.descriptioncode);
             end
             mtestcase.publishCodeString(outputname,...
                 [],...
@@ -456,7 +449,7 @@ classdef mtestcase < handle
                 'setappdata(0,''mtesttempworkspace'',mtest_12thf9e230eu.varargout);');
             
             mtestworkspace.str = sprintf('%s\n',...
-                obj.description{~strncmp(obj.description,'%',1)},... % Always run the description before running the test
+                obj.descriptioncode{~strncmp(obj.descriptioncode,'%',1)},... % Always run the description before running the test
                 obj.runcode{:},...
                 char(10),...
                 storevarsstring);
@@ -503,7 +496,7 @@ classdef mtestcase < handle
                 %% create testresult
                 mtestworkspace.testresult = nan;
                 if ~isempty(mtestworkspace.obj.functionoutputname)
-                    mtestworkspace.testresult = eval(mtestworkspace.obj.functionoutputname);
+                    mtestworkspace.testresult = eval(mtestworkspace.obj.functionoutputname{1});
                 end
                 
                 %% Store variables that were created during the test 
@@ -939,8 +932,8 @@ classdef mtestcase < handle
             openfigures = findobj('Type','figure');
       
             %% publish results to resdir
-            if ~isempty(obj.casename)
-                publstr = cat(1,{['%% Test results of testcase: "' obj.casename '"']},obj.publishcode);
+            if ~isempty(obj.name)
+                publstr = cat(1,{['%% Test results of testcase: "' obj.name '"']},obj.publishcode);
             else
                 publstr = cat(1,{['%% Test results of "' obj.testname '" (Case' num2str(obj.casenumber) ')']},obj.publishcode);
             end
@@ -1017,7 +1010,9 @@ classdef mtestcase < handle
             else
                 % setappdata
                 if ~isempty(obj.tmpobjname)
-                    rmappdata(0,obj.tmpobjname);
+                    try %#ok<TRYNC>
+                        rmappdata(0,obj.tmpobjname);
+                    end
                 end
                 setappdata(0,varargin{1},obj);
                 obj.tmpobjname = varargin{1};
@@ -1058,7 +1053,7 @@ classdef mtestcase < handle
             str = sprintf('%s\n',...
                 obj.functionheader,...
                 ['notify(getappdata(0,''' obj.tmpobjname '''),''CaseInitialized'',mtesteventdata(whos,''remove'',true));'],...
-                [obj.functionoutputname ' = true;']);
+                [obj.functionoutputname{1} ' = true;']);
             
             %% write function
             fid = fopen(fname,'w');
@@ -1077,7 +1072,7 @@ classdef mtestcase < handle
                 obj.functionheader,...
                 'mtest_245y7e_tic = tic;',...
                 ['notify(getappdata(0,''' obj.tmpobjname '''),''CaseInitialized'',mtesteventdata(whos,''remove'',false));'],...
-                obj.description{~strncmp(obj.description,'%',1)},...
+                obj.descriptioncode{~strncmp(obj.descriptioncode,'%',1)},...
                 'profile on',...
                 obj.runcode{:},...
                 'profile off',...
@@ -1101,7 +1096,7 @@ classdef mtestcase < handle
                 obj.functionheader,...
                 'mtest_245y7e_tic = tic;',...
                 ['notify(getappdata(0,''' obj.tmpobjname '''),''CaseInitialized'',mtesteventdata(whos,''remove'',false));'],...
-                obj.description{~strncmp(obj.description,'%',1)},...
+                obj.descriptioncode{~strncmp(obj.descriptioncode,'%',1)},...
                 'profile on',...
                 obj.runcode{:},...
                 'profile off',...
