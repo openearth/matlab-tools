@@ -4,12 +4,14 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
 %   delft3d_grd2kml(grdfile,<keyword,value>)
 %
 %   Input:
-%   grdfile  = filename of the grd file
+%      grdfile    = filename of the grd file
 %   varargin:
-%       epsg = epsg code of the grid
-%       dep = filename of the dep file
-%       dpsopt = dpsopt in mdf file or provided by user, e.g. 'max' or 'mean'
-%       ddep = depth offset
+%       epsg      = epsg code of the grid
+%       dep       = filename of the dep file
+%       mdf       = name of mdf file toretrieve dpsopt
+%       dpsopt    = only when mdf not specified: dpsopt in mdf file 
+%                   to specify location of depth values in *.dep filee.g. 'max','mean', 'dp'
+%       ddep      = depth offset
 %       linecolor = color of the grid lines
 %
 %   Output:
@@ -27,9 +29,8 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
 %   delft3d_grd2kml('g04.grd','epsg',28992,'dep','g04.dep','dpsopt','mean','ddep',150,'clim',[-50 0])
 %
 %See also: googlePlot, delft3d
-%
-% updated by Bart Grasmeijer, Alkyon Hydraulic Consultancy & Research
-% 19 November 2009
+
+% updated by Bart Grasmeijer, Alkyon Hydraulic Consultancy & Research 19 November 2009
 
 
   %grdfile         = 'lake_and_sea_5_ll.grd';
