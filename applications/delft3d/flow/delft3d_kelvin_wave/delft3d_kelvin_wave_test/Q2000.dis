@@ -1,0 +1,13 @@
+table-name           'Discharge : 1'
+contents             'regular   '
+location             '(155,210)           '
+time-function        'non-equidistant'
+reference-time       20040101
+time-unit            'minutes'
+interpolation        'linear'
+parameter            'time                '                     unit '[min]'
+parameter            'flux/discharge rate '                     unit '[m3/s]'
+parameter            'Salinity            '                     unit '[ppt]'
+records-in-table     2
+ 0.0000000e+000  2000 0
+ 9.9999999e+006  2000 0
