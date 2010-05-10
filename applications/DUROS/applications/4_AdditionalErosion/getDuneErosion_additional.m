@@ -70,7 +70,7 @@ if TargetVolume < 0
         newZr = interp1(xInitial,zInitial,newXr);
         
         % add point to profile
-        if ~ismember(newXr, xInitial)
+        if ~ismember(newXr, xInitial) && newXr > max(xInitial)
             [xInitial sid] = sort(cat(1,xInitial,newXr));
             zInitial = cat(1,zInitial,newZr);
             zInitial = zInitial(sid);

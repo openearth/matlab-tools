@@ -85,8 +85,13 @@ if KnownRestrictedSolutionPossible
         resultout.zActive = zInitial(xInitial==result(1).info.x0);
         resultout.z2Active = zInitial(xInitial==result(1).info.x0);
     else
-        resultout.zActive = interp1(xInitial,zInitial,result(1).info.x0);
-        resultout.z2Active = interp1(xInitial,zInitial,result(1).info.x0);
+        % Hack, because interp1 crashes whenever tw0 x-points are closer to each other than 1e-6
+        % (unique does not filter them out...)
+        id = find(xInitial<result(1).info.x0,1,'last'):find(xInitial>result(1).info.x0,1,'first');
+        xInitialinterp = xInitial(id);
+        zInitialinterp = zInitial(id);
+        resultout.zActive = interp1(xInitialinterp,zInitialinterp,result(1).info.x0);
+        resultout.z2Active = interp1(xInitialinterp,zInitialinterp,result(1).info.x0);
     end
     
     % construct the sea part of the profile
