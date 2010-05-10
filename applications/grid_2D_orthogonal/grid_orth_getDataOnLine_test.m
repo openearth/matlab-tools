@@ -74,39 +74,42 @@ function testresult = test1()
 
 %% $RunCode
 % make test data
-x = -10:29;
-y = -20:39;
+x = 1:12;
+y = 11:28;
 [X,Y] = meshgrid(x,y);
-alpha = 1108.8466/180*pi;
+alpha = 4/180*pi;
 X2 = Y*sin(alpha)+X*cos(alpha);
 Y = -X*sin(alpha)+Y*cos(alpha);
-X = X2;
-Z = repmat(peaks(20),3,2);
+X = X2+sin(Y);
+Y = Y+sin(X2);
+Z = peaks(20);
+Z = Z(3:20,5:16);
 
 % define line 
-xi = [0 1000];
-yi = [0 -250];
+xi = [ 0   21.2];
+yi = [11.7 19.2];
 
-[crossing_x,crossing_y,crossing_z,crossing_dist] = grid_orth_getDataOnLine(X,Y,Z,xi,yi);
+[crossing_x,crossing_y,crossing_z,crossing_d] = grid_orth_getDataOnLine(X,Y,Z,xi,yi);
 
-% plot demo
+%% plot demo
 subplot(1,3,1)
-mesh(X,Y,Z)
+
 
 hold on
+plot3(X,Y,Z,'k');
+plot3(X',Y',Z','k');
 plot3(crossing_x,crossing_y,crossing_z,'.');
-% plot3(xi([1 1 ]),yi([1 1]),[-10 10])
-% plot3(xi([2 2 ]),yi([2 2]),[-10 10])
+plot3(crossing_x(  1),crossing_y(  1),crossing_z(  1),'ro');
+plot3(crossing_x(end),crossing_y(end),crossing_z(end),'k*');
+plot3(crossing_x,crossing_y,crossing_z,'b');
+line('XDATA',xi,'YDATA',yi,'linewidth',2,'color','r','linestyle',':')
+line('XDATA',xi(1),'YDATA',yi(1),'linewidth',2,'color','r','linestyle','*')
 hold off
-view(0,90)
-axis([-10 50 -30 30])
-axis square
 
 subplot(1,3,2)
-plot(crossing_dist,crossing_z,crossing_dist,crossing_z,'.')
-axis square
-axis([0 60 -8 8])
-%
+plot(crossing_d,crossing_z,crossing_d,crossing_z,'*')
+
+
 testresult = true;
 %% $PublishResult
 
@@ -120,19 +123,20 @@ function testresult = test2()
 % make test data
 
 x = -10:29;
-y = -20:39;
+y = -20:59;
 [X,Y] = meshgrid(x,y);
-Z = repmat(peaks(20),3,2);
+Z = repmat(peaks(40),2,1)+X/10-Y/10;
+Z(20:30,15:25) = nan;
 
 
 x = nan(360,100);
 y = nan(360,100);
 z = nan(360,100);
 d = nan(360,100);
-for ii = 1:5:360
+for ii = 1:10:360
 alpha = ii+0.1/180*pi;
-X2 = Y*sin(alpha)+X*cos(alpha);
-Y2 = -X*sin(alpha)+Y*cos(alpha);
+X2 = -Y*sin(alpha)+X*cos(alpha);
+Y2 = X*sin(alpha)+Y*cos(alpha);
 
 % define line 
 xi = [0 1000];
@@ -146,6 +150,9 @@ d(ii,1:length(crossing_x)) = crossing_d;
 end
 subplot(1,3,3)
 plot3(x',y',z')
+hold on
+mesh(X,Y,Z)
+hold off
 testresult = true;
 %% $PublishResult
 

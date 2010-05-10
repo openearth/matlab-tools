@@ -1,6 +1,8 @@
 function [crossing_x,crossing_y,crossing_z,crossing_d] = grid_orth_getDataOnLine(X,Y,Z,xi,yi)
 %GRID_ORTH_GETDATAONLINE  ...
 %
+% X and Y are expected to be created with meshgrid or similar
+%
 % See also: grid_orth_getFixedMapOutlines, grid_orth_createFixedMapsOnAxes, 
 %           grid_orth_identifyWhichMapsAreInPolygon, grid_orth_getDataFromNetCDFGrid
 
@@ -50,46 +52,65 @@ if Y(1,1)>Y(end,1)
     Y = flipud(Y);
     Z = flipud(Z);
 end
-%% lengthen 
-if xi(1)<xi(2)
-    dx =  max(max(diff(X,[],2)))*2;
-else
-    dx = -max(max(diff(X,[],2)))*2;
-end
-dy = dx*(yi(2) - yi(1)) / (xi(2) - xi(1));
 
-xi2 = xi + [-dx dx];
-yi2 = yi + [-dy dy];
+if xi(1)>xi(2)
+    xi      = xi([2 1]);
+    yi      = yi([2 1]);
+    reverse = true;
+else
+    reverse = false;
+end
+%% crop area to search for crossings to line
+temp = X>min(xi)&X<max(xi)&Y>min(yi)&Y<max(yi);
+mm   = max(1,find(any(temp,2),1,'first')-1):1:min(size(X,1),find(any(temp,2),1,'last')+1);
+nn   = max(1,find(any(temp,1),1,'first')-1):1:min(size(X,2),find(any(temp,1),1,'last')+1);
+
+%% lengthen search line
+
+dx  = xi(2) - xi(1);
+dy  = yi(2) - yi(1);
+xi2 = xi + [-dx dx]*3;
+yi2 = yi + [-dy dy]*3;
 
 %% pre allocate
-crossing_x = nan(size(X,1)+size(X,2),1);
-crossing_y = nan(size(X,1)+size(X,2),1);
-crossing_z = nan(size(X,1)+size(X,2),1);
+crossing_x = nan(numel(mm)+numel(nn),1);
+crossing_y = nan(numel(mm)+numel(nn),1);
+crossing_z = nan(numel(mm)+numel(nn),1);
 
 jj = 0;
-    
-for ii = find(min(xi2)<max(X,[],2)& max(xi2)>min(X,[],2))'
+
+% find all locations of crossings with rows
+for ii = mm
     P = InterX([X(ii,:);Y(ii,:)],[xi2;yi2]);
     if ~isempty(P)
         jj = jj+1;
         crossing_x(jj) = P(1,1);
         crossing_y(jj) = P(2,1);
-        a = find(X(ii,:)<=crossing_x(jj),1,'last');
-        b = find(X(ii,:)>crossing_x(jj),1,'first');
-        c = (crossing_x(jj) - X(ii,a))/(X(ii,b) - X(ii,a));
+        a = find(X(ii,:)<=crossing_x(jj),1, 'last');
+        b = find(X(ii,:)>=crossing_x(jj),1,'first');
+        if a~=b
+            c = (crossing_x(jj) - X(ii,a))/(X(ii,b) - X(ii,a));
+        else
+            c = 1;
+        end
         crossing_z(jj) = Z(ii,a) * (1-c) + Z(ii,b) * c;
     end
 end
 
-for ii = find(min(yi2)<max(Y,[],1)& max(yi2)>min(Y,[],1))
+% find all locations of crossings with columns
+for ii = nn
     P = InterX([X(:,ii)';Y(:,ii)'],[xi2;yi2]);
     if ~isempty(P)
         jj = jj+1;
         crossing_x(jj) = P(1,1);
         crossing_y(jj) = P(2,1);
-        a = find(Y(:,ii)<=crossing_y(jj),1,'last');
-        b = find(Y(:,ii)>crossing_y(jj),1,'first');
-        c = (crossing_y(jj) - Y(a,ii))/(Y(b,ii) - Y(a,ii));
+        a = find(Y(:,ii)<=crossing_y(jj),1, 'last');
+        b = find(Y(:,ii)>=crossing_y(jj),1,'first');
+        if a~=b
+            c = (crossing_y(jj) - Y(a,ii))/(Y(b,ii) - Y(a,ii));
+        else
+            c = 1;
+        end
         crossing_z(jj) = Z(a,ii) * (1-c) + Z(b,ii) * c;
     end
 end
@@ -136,15 +157,14 @@ if ~isempty(crossing_x2)
     crossing_z2 = crossing_z2*a + crossing_z(ind(end))*(1-a);
     crossing_d2 = ((xi(2) - xi(1)).^2 + (yi(2)-yi(1)).^2)^.5;
 end
-
-
 crossing_x    =[crossing_x1; crossing_x(ind); crossing_x2];
 crossing_y    =[crossing_y1; crossing_y(ind); crossing_y2];
 crossing_z    =[crossing_z1; crossing_z(ind); crossing_z2];
 crossing_d    =[crossing_d1; crossing_d(ind); crossing_d2];
 
-
-
-
-%% find distance
-distance(crossing_x,crossing_y); % issue with identically named funtion in mapping tlbox
+if reverse 
+    crossing_x = flipud(crossing_x);
+    crossing_y = flipud(crossing_y);
+    crossing_z = flipud(crossing_z);
+    crossing_d = ((crossing_x - xi(2)).^2 + (crossing_y-yi(2)).^2).^.5;
+end
