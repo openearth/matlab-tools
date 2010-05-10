@@ -99,6 +99,10 @@ if issorted(size(zInitial))
     zInitial = zInitial';
 end
 
+% Check uniqueness of profile
+[xInitial unid] = unique(xInitial);
+zInitial = zInitial(unid);
+
 %{
 % optional: make sure that profile is positive seaward
 [xInitial zInitial] = checkCrossShoreProfile(xInitial, zInitial,...
