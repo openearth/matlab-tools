@@ -17,6 +17,9 @@ classdef mtestdefinitionblock < handle
         publishincludecode = false;         % Attribute IncludeCode for publishing the TestResults cell
         publishevaluatecode = true;         % Attribute EvaluateCode for publishing the TestResults cell
         
+        publish = true;                     % Determines whether test results, coverage and description are published to html
+        % TODO implement the publish property
+        
         ignore = false;                     % If ignore = true, this test is ignored
         ignoremessage = '';                 % Optional string to point out why this test(case) was ignored
         category = 'unit';                  % Category of the test(case)
@@ -33,7 +36,6 @@ classdef mtestdefinitionblock < handle
             obj.fulldefinitionstring = str;
             obj.interpretDefinitionBlock;
         end
-        
         function interpretDefinitionBlock(obj)
             
             %% Retrieve the definition block string from the object
