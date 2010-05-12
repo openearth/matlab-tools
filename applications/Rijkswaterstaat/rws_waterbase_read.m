@@ -87,7 +87,7 @@ function varargout = rws_waterbase_read(fnames,varargin)
 %   * 'preallocate' = integer value (only for method = 'fgetl')
 %     The method fgetl is not vectorized, and is therefore exceptionally slow 
 %     for large data sets. But, it requires significantly less memory than 
-%     textread. If you set fgetl to Inf, DONAR_READ, first scrolls the entire 
+%     textread. If you set fgetl to Inf, RWS_WATERBASE_READ, first scrolls the entire 
 %     file to count the number of lines, and then reads the file again with 
 %     just a little bit over-preallocation with the # of header lines (default).
 %   * ntmax, (default Inf for method='fgetl')
@@ -251,7 +251,7 @@ for ifile=1:length(fnames)
        datenumbers = time2datenum(datestring,timestring);
        end
        
-       if OPT.display;disp(['donar_read: read raw data: ',fname]);end
+       if OPT.display;disp(['rws_waterbase_read: read raw data: ',fname]);end
        
        % Method below (%n) cannot deal with Not Available data as in:
        % Maassluis;Temperatuur in oC in oppervlaktewater;1994-08-03;07:14;;25;graden Celsius;NVT;Onbekend;Nationaal;;-100;T.o.v. Waterspiegel;7415;77500;436100;NVT;NVT,NVT,Niet van toepassing
@@ -294,7 +294,7 @@ for ifile=1:length(fnames)
        
        for istat=1:length(D.locations)
        
-          if OPT.display;disp(['donar_read: transforming to struct: ',num2str(istat),'/',num2str(length(D.locations))]);;end
+          if OPT.display;disp(['rws_waterbase_read: transforming to struct: ',num2str(istat),'/',num2str(length(D.locations))]);;end
        
           mask = strmatch(D.locations{istat},location);
    
@@ -633,7 +633,7 @@ for ifile=1:length(fnames)
          %% Copy data
          DS.data(ifile) = D.data;
          
-      if OPT.display;disp(['donar_read: read file ',num2str(ifile),' of ',num2str(length(fnames))]);end
+      if OPT.display;disp(['rws_waterbase_read: read file ',num2str(ifile),' of ',num2str(length(fnames))]);end
    
    end % D.locations==1
    
