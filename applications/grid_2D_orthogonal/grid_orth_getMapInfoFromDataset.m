@@ -1,4 +1,13 @@
-function OPT = grid_orth_getMapInfoFromDataset(OPT)
+function OPT = grid_orth_getMapInfoFromDataset(dataset)
+%GRID_ORTH_GETMAPINFOFROMDATASET
+%
+%   OPT = grid_orth_getmapinfofromdataset(url)
+%
+% extract meta info from an OPeNDAP catalog or a local directory.
+%
+%See also: GRID_2D_ORTHOGONAL
+
+OPT.dataset = dataset;
 
 disp('Retrieving map info from dataset ...')
 OPT.urls     = opendap_catalog(OPT.dataset);

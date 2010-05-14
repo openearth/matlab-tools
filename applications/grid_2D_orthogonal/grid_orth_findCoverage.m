@@ -56,7 +56,7 @@ end
 if ~isempty(fns)
     % find mapurls
     if isempty(OPT.urls)
-        OPT = grid_orth_getMapInfoFromDataset(OPT);
+        OPT = mergestructs(OPT,grid_orth_getMapInfoFromDataset(OPT.dataset));
     end
     
     % initialise temporary batchvar1

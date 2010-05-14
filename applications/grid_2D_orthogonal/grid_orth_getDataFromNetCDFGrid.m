@@ -145,13 +145,22 @@ if ~isempty(xstart) || isempty(ystart)
         for id_t = [idt(idt_in)-1]'
             % So long as not all Z values inpolygon are nan try to add data
             if sum(isnan(Z(inpolygon(repmat(X',size(Y,1),1), repmat(Y, 1, size(X',2)), OPT.polygon(:,1), OPT.polygon(:,2)))))~=0
-                Z_next    = nc_varget(OPT.ncfile, nc_index.z, [id_t ystart-1 xstart-1], [1 floor((ylength-(ystart-1))/OPT.stride(2)) floor((xlength-(xstart-1))/OPT.stride(3))], OPT.stride);
-                if sum(sum(~isnan(Z_next))) ~=0
+               if getpref('SNCTOOLS','PRESERVE_FVD')==0 
+               Z_next    = nc_varget(OPT.ncfile, nc_index.z, [id_t                ystart-1                                  xstart-1], ...
+                                                             [1   floor((ylength-(ystart-1))/OPT.stride(2)) floor((xlength-(xstart-1))/OPT.stride(3))], ...
+                                                              OPT.stride);
+               elseif getpref('SNCTOOLS','PRESERVE_FVD')==1
+               Z_next    = nc_varget(OPT.ncfile, nc_index.z, [                xstart-1                                  ystart-1                  id_t], ...
+                                                             [floor((xlength-(xstart-1))/OPT.stride(3)) floor((ylength-(ystart-1))/OPT.stride(2)) 1], ...
+                                                              OPT.stride);
+               Z_next = transpose(Z_next);
+               end
+               if sum(sum(~isnan(Z_next))) ~=0
                     disp(['... adding data from: ' datestr(t(idt(id_t+1)))])
                     ids2add = ~isnan(Z_next) & isnan(Z);    % helpul to be in a variable as the nature of Z changes in the next two lines
                     Z(ids2add) = Z_next(ids2add);           % add Z values from Z_next grid to Z grid at places where there is data in Z_next and no data in Z yet
                     T(ids2add) = t(idt(id_t+1));            % add time information to T at those places where Z data was added
-                end
+               end
             end
         end
     else % do this if there is no time variable in the nc file (e.g. AHN)

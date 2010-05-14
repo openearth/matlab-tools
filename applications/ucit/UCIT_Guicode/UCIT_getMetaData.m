@@ -96,8 +96,8 @@ if type == 1
                 
 
                 if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Lidar Data US')
-                    url = url{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
-                    ldb = ldb{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
+                    url   = url{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
+                    ldb   = ldb{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
                     axis_settings = axis_settings{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
                     extra = datatypes.transect.extra{ind};
                     extra = extra{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
@@ -184,6 +184,7 @@ elseif type == 2
                 ind             = find(strcmp(d.datatypeinfo,datatypes.grid.names));
                 
                 url             = datatypes.grid.urls{ind};
+                d.catalog       = datatypes.grid.catalog{ind}; % need for grid_2D_orthogonal toolbox
                 d.ldb           = datatypes.grid.ldbs{ind};
                 d.axes          = datatypes.grid.axes{ind};
                 d.cellsize      = datatypes.grid.cellsize{ind};

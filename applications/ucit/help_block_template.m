@@ -1,4 +1,4 @@
-%X  One line description goes here.
+%help_block_template  One line description goes here.
 %
 %   More detailed description goes here.
 %

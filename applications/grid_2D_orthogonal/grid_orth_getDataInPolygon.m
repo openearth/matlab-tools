@@ -9,13 +9,13 @@ function [X, Y, Z, Ztime, OPT] = grid_orth_getDataInPolygon(varargin)
 %
 %   Input:
 %   where the following <keyword,value> pairs have been implemented (values indicated are the current default settings):
-%   	'dataset'     , URL                   = URL for fixed map dataset to use ('http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml')
-%   	'starttime'   , datenum([1997 01 01]) = indicates starttime (datenum) from which to look back or forward (depending on searchwindow setting)
-%   	'searchwindow', -2*365                = indicates search window in number of days ([-] backward in time, [+] forward in time)
-%   	'polygon'     , []                    = polygon to use gathering the data (should preferably be closed) [-]
-%   	'cellsize'    , []                    = cellsize of fixed grid (same cellsize assumed in both directions) [-]
-%   	'datathinning', 1                     = factor used to stride through the data [-]
-%       'plotresult'  , 1                     = indicates whether the output should be plotted
+%   	'dataset'       , URL                   = URL for fixed map dataset to use ('http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml')
+%   	'starttime'     , datenum([1997 01 01]) = indicates starttime (datenum) from which to look back or forward (depending on searchinterval setting)
+%   	'searchinterval', -2*365                = indicates search window in number of days ([-] backward in time, [+] forward in time)
+%   	'polygon'       , []                    = polygon to use gathering the data (should preferably be closed) [-]
+%   	'cellsize'      , []                    = cellsize of fixed grid (same cellsize assumed in both directions) [-]
+%   	'datathinning'  , 1                     = factor used to stride through the data [-]
+%       'plotresult'    , 1                     = indicates whether the output should be plotted
 %
 %   Output:
 %       X
@@ -38,11 +38,11 @@ function [X, Y, Z, Ztime, OPT] = grid_orth_getDataInPolygon(varargin)
 %    for i = 1:length(datasets)
 %        close all
 %        [X, Y, Z, Ztime] = grid_orth_getDataInPolygon(...
-%            'dataset', datasets{i}, ...
-%            'starttime', datenum([2010 06 01]), ...
+%            'dataset'     , datasets{i}, ...
+%            'starttime'   , datenum([2010 06 01]), ...
 %            'searchwindow', -10*365, ...
 %            'datathinning', 1, ...
-%            'polygon', polygon);
+%            'polygon'     , polygon);
 %        pause
 %    end
 %
@@ -110,7 +110,7 @@ OPT = setProperty(OPT, varargin{:});
 
 %% Step 0: create a figure with tagged patches
 axes = findobj('type','axes');
-if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.dataset})) % if an overview figure is already present don't run this function again
+if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.tag})) % if an overview figure is already present don't run this function again
     
     % Step 0.1: get fixed map urls from OPeNDAP server
     if ~isempty(OPT.OPT)
@@ -190,7 +190,6 @@ plot(OPT.polygon(:,1),OPT.polygon(:,2),'g','linewidth',2,'tag','selectionpoly');
 %axis([min(x) max(x) min(y) max(y)]) % does not work
 
 %% Step 2: identify which maps are in polygon
-
 [mapurls, minx, maxx, miny, maxy] = grid_orth_identifyWhichMapsAreInPolygon(OPT.OPT, OPT.polygon);
 
 if isempty(mapurls) & OPT.warning

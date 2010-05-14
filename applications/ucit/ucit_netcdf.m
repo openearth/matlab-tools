@@ -1,5 +1,5 @@
 function varargout = ucit_netcdf(varargin)
-%UCIT   gui for data extraction and manipulation from OPeNDAP servers
+%ucit_netcdf   gui for data extraction and manipulation from OPeNDAP servers
 %
 %   ucit_netcdf()
 %
