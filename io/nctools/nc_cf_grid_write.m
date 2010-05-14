@@ -1,10 +1,10 @@
 function varargout = nc_cf_grid_write(varargin)
-%nc_cf_grid_write  save orthogonal/curvi-linear grid as netCDF-Cf compliant file
+%nc_cf_grid_write  save orthogonal/curvi-linear grid as netCDF-CF compliant file
 %
 %   nc_cf_grid_write(ncfilename,<keyword,value>)
 %   nc_cf_grid_write(ncfilename,<keyword,value>)
 %
-% To get a list of all keywords, call ARCGIS2NC without arguments.
+% To get a list of all keywords, call NC_CF_GRID_WRITE without arguments.
 %
 %   OPT = nc_cf_grid_write()
 %
@@ -13,8 +13,8 @@ function varargout = nc_cf_grid_write(varargin)
 % * x           x vector of length ncols, required
 % * y           y vector of lenght nrows, required
 % * val         matrix   of size [nrows,ncols], required
-% * units       units of arcgis variable
-% * long_name   description of arcgis variable as to appear in plots
+% * units       units of val
+% * long_name   description of val as to appear in plots
 %
 % The following keywords are optional:
 %
@@ -22,7 +22,7 @@ function varargout = nc_cf_grid_write(varargin)
 % * nrows       length of y vector (calculated from y)
 % * epsg        when supplied, the full latitude and longitude
 %               matrixes are written to the netCDF file too, calculated
-%               from the x and y, unless you specified already:
+%               from the x and y, unless you specified them already:
 % * lat
 % * lon
 %
