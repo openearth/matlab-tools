@@ -90,16 +90,18 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    
    if ~odd(nargin)
    OPT.varname = varargin{1};
-   OPT = setProperty(OPT,varargin{2:end});
+   nextarg     = 2;
    else
-   OPT = setProperty(OPT,varargin{1:end});
+   nextarg     = 1;
    end
    
    if ~isempty(OPT.varname)
       OPT.plot = 0;
    end
 
-%% Load file info
+   OPT = setProperty(OPT,varargin{nextarg:end});
+
+   %% Load file info
 
    %% get info from ncfile
    
@@ -129,7 +131,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 
 %% Get datenum
 
-   D.datenum       = nc_cf_time(ncfile);
+  [D.datenum,M.datenum.timezone] = nc_cf_time(ncfile);
    
 %% Get location info
 
@@ -240,8 +242,22 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
                ['"',D.station_name(:)','"',...
                 ' (',num2str(D.lon(1)),'\circE',...
                  ',',num2str(D.lat(1)),'\circN)']})
-      ylabel  ([mktex(M.(OPT.varname).long_name),' [',...
-                mktex(M.(OPT.varname).units    ),']']);
+              
+      if     isfield(M.(OPT.varname),'long_name')
+         long_name = M.(OPT.varname).long_name;
+      elseif isfield(M.(OPT.varname),'standard_name')
+         long_name = M.(OPT.varname).standard_name;
+      else
+         long_name = OPT.varname;
+      end
+      
+      if     isfield(M.(OPT.varname),'units')
+         units = M.(OPT.varname).units;
+      else
+         units = '?';
+      end
+              
+      ylabel  ([mktex(long_name),' [',mktex(units),']']);
    
    end
    end

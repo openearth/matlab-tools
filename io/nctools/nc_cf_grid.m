@@ -84,6 +84,7 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 %TO DO: allow to get all time related parameters, and plot them on by one (with pause in between)
 %TO DO: document <keyword,value> pairs
 %TO DO: test also simple case where dimensions are have standard_name latitude, longitude
+%TO DO: also extract x and y vectors
 
 %% Keyword,values
 
@@ -121,21 +122,21 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
    index = findstrinstruct(fileinfo.Attribute,'Name','Conventions');
    fileinfo.Attribute(index).Value;
    if isempty(index)
-      error(['netCDF file is not a grid: needs Attribute Conventions=CF-1.4'])
+      warning(['netCDF file might not be a grid: needs Attribute Conventions=CF-1.4'])
    end
 
 %% Get datenum
 
-   timename        = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'time');
+   timename           = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'time');
    if ~isempty(timename)
       M.datenum.units = nc_attget(ncfile,timename,'units');
       D.datenum       = nc_varget(ncfile,timename);
       D.datenum       = udunits2datenum(D.datenum,M.datenum.units); % convert units to datenum
    end
    
-%% Get location info
+%% Get coordinates
 
-   lonname        = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'longitude');
+   lonname           = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'longitude');
    if ~isempty(lonname)
       M.lon.units    = nc_attget(ncfile,lonname,'units');
       D.lon          = nc_varget(ncfile,lonname);
@@ -143,7 +144,7 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
       disp('no longitude present')
    end
 
-   latname        = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'latitude');
+   latname           = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'latitude');
    if ~isempty(latname)
       M.lat.units    = nc_attget(ncfile,latname,'units');
       D.lat          = nc_varget(ncfile,latname);
@@ -228,7 +229,6 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
       
       coordvarlist = cellstr(char(fileinfo.Dataset(coordvar).Name));
 
-
       [ii, ok] = listdlg('ListString', coordvarlist, .....
                       'SelectionMode', 'single', ...
                        'PromptString', 'Select one variable', ....
@@ -241,7 +241,7 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
       
    else
    
-   %% get index
+   %% get index of chosen variable name
    
       nvar = length(fileinfo.Dataset);
       
@@ -273,19 +273,39 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 
       if OPT.oned
       pcolorcorcen(D.lon,D.lat,D.(OPT.varname)')
-      else
+      elseif length(size(D.(OPT.varname)))==2
       pcolorcorcen(D.lon,D.lat,D.(OPT.varname))
+      else % figure out proper x and y dimensions (there might also be z or t dimensions)
+         if getpref('SNCTOOLS','PRESERVE_FVD')
+         pcolorcorcen(D.lon,D.lat,D.(OPT.varname)(:,:,1))
+         else
+         pcolorcorcen(D.lon,D.lat,D.(OPT.varname)(1,:,:))
+         end
       end
       tickmap ('ll')
       grid     on
       if isfield(D,'datenum')
       title   ({mktex(fileinfo.Filename),...
-                datestr(D.datenum)})
+                datestr(D.datenum(1))}); % TO DO: there might be more times
       else
       title   ({mktex(fileinfo.Filename)})
       end
-      colorbarwithvtext([mktex(M.(OPT.varname).long_name),' [',...
-                         mktex(M.(OPT.varname).units    ),']']);
+      
+      if     isfield(M.(OPT.varname),'long_name')
+         long_name = M.(OPT.varname).long_name;
+      elseif isfield(M.(OPT.varname),'standard_name')
+         long_name = M.(OPT.varname).standard_name;
+      else
+         long_name = OPT.varname;
+      end
+      
+      if     isfield(M.(OPT.varname),'units')
+         units = M.(OPT.varname).units;
+      else
+         units = '?';
+      end
+      
+      colorbarwithvtext([mktex(long_name),' [',mktex(units),']']);
    
    end
    end

@@ -22,13 +22,15 @@ function varargout = nc_cf_grid_write(varargin)
 % * nrows       length of y vector (calculated from y)
 % * epsg        when supplied, the full latitude and longitude
 %               matrixes are written to the netCDF file too, calculated
-%               from the x and y 
-%
+%               from the x and y, unless you specified already:
+% * lat
+% * lon
 %
 %See also: ARCGISREAD, ARC_INFO_BINARY, ARCGRIDREAD (in $ mapping toolbox)
 %          SNCTOOLS, NC_CF_GRID
 
 % TO DO: add corner matrices too ?
+% TO DO: allow lat and lon to be the dimension vectors
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -97,6 +99,8 @@ function varargout = nc_cf_grid_write(varargin)
 
       OPT.x              = [];
       OPT.y              = [];
+      OPT.lon            = [];
+      OPT.lat            = [];
       OPT.ncols          = [];
       OPT.nrows          = [];
       OPT.epsg           = []; % if specified, (lat,lon) are added
@@ -123,15 +127,26 @@ function varargout = nc_cf_grid_write(varargin)
 
       if isempty(OPT.varname      );  error('For a netCDF file is required   : varname'      );end
       if isempty(OPT.units        );  error('For a netCDF file is required   : units'        );end
-      if isempty(OPT.long_name    );  error('For a netCDF file is required   : long_name'    );end
-      if isempty(OPT.x            );  error('For a netCDF file is recommended: x'            );end
-      if isempty(OPT.y            );  error('For a netCDF file is recommended: y'            );end
-
-      if isempty(OPT.standard_name);warning('For a netCDF file is recommended: standard_name');end
       if isempty(OPT.epsg         );warning('For a netCDF file is recommended: epsg'         );end
 
+      if isempty(OPT.x        ) & isempty(OPT.lon          )
+         error('For a netCDF file is required: x and/or lon');end
+      if isempty(OPT.y        ) & isempty(OPT.lat          )
+         error('For a netCDF file is required: y and/or lat');end
+      if isempty(OPT.long_name) & isempty(OPT.standard_name);
+         error('For a netCDF file is required: standard_name and/or long_name');end
+
+      if ~isempty(OPT.val)
+      OPT.ncols =   size(OPT.val,1);
+      else
       OPT.ncols = length(OPT.x);
+      end
+      
+      if ~isempty(OPT.val)
+      OPT.nrows =   size(OPT.val,2);
+      else
       OPT.nrows = length(OPT.y);
+      end
       
 %% Type
 
@@ -142,13 +157,13 @@ function varargout = nc_cf_grid_write(varargin)
       
 %% lat,lon
 
-   if ~isempty(OPT.epsg)
+   if ~isempty(OPT.epsg) & (isempty(OPT.lat & OPT.lon))
       
       % calculate per row because of memory issues for large matrices
       
      [x    ,y    ] = meshgrid(OPT.x,OPT.y);
-      OPT.lon        = repmat(nan,size(OPT.val));
-      OPT.lat        = repmat(nan,size(OPT.val));
+      OPT.lon      = repmat(nan,size(OPT.val));
+      OPT.lat      = repmat(nan,size(OPT.val));
       
       % compromise: consider 2D matrix as 1D vector and do section by section
       
@@ -165,7 +180,7 @@ function varargout = nc_cf_grid_write(varargin)
       end
       
       clear x y
-      
+
    end
 
 %% 1a Create file
@@ -207,6 +222,7 @@ function varargout = nc_cf_grid_write(varargin)
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#appendix-grid-mappings
    %  TO DO, based on OPT.epsg
    %  Local Cartesian coordinates
+   if ~isempty(OPT.x) & ~isempty(OPT.y)
 
         ifld = ifld + 1;
       nc(ifld).Name             = 'x_cen';
@@ -231,10 +247,10 @@ function varargout = nc_cf_grid_write(varargin)
       if ~isempty(OPT.epsg)
       nc(ifld).Attribute(end+1) = struct('Name', 'epsg'           ,'Value', OPT.epsg);
       end
+   end
 
    %% Latitude-longitude
-      
-   if ~isempty(OPT.epsg)
+   if ~isempty(OPT.lon) & ~isempty(OPT.lat)
 
    %% Longitude
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
@@ -252,7 +268,6 @@ function varargout = nc_cf_grid_write(varargin)
 
    %% Latitude
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
-
         ifld = ifld + 1;
       nc(ifld).Name             = 'latitude_cen';
       nc(ifld).Nctype           = nc_type(OPT.latitude_type);
@@ -263,9 +278,10 @@ function varargout = nc_cf_grid_write(varargin)
       nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lat(:)) max(OPT.lat(:))]); % 
       nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
       nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
-
+   end
    %% Coordinate system
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
+   if ~isempty(OPT.epsg)
 
         ifld = ifld + 1;
       nc(ifld).Name         = 'epsg';
@@ -324,7 +340,7 @@ function varargout = nc_cf_grid_write(varargin)
    %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
    
       %% Define dimensions in this order:
-      %  time,z,y,x (note: snctools swaps)
+      %  time,z,y,x (note: snctools swaps, see getpref('SNCTOOLS')
 
         ifld = ifld + 1;
       nc(ifld).Name             = OPT.varname;
@@ -337,8 +353,10 @@ function varargout = nc_cf_grid_write(varargin)
       if ~isempty(OPT.standard_name)
       nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
       end
-      if ~isempty(OPT.epsg)
+      if ~isempty(OPT.lon) & ~isempty(OPT.lat)
       nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
+      end
+      if ~isempty(OPT.epsg)
       nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
       end
       
@@ -349,16 +367,23 @@ function varargout = nc_cf_grid_write(varargin)
       end
       
 %% 5 Fill all variables
-   
+
+      if ~isempty(OPT.x) & ~isempty(OPT.y)
       nc_varput(outputfile, 'x_cen'        , OPT.x');
       nc_varput(outputfile, 'y_cen'        , OPT.y');
-      nc_varput(outputfile, OPT.varname    , OPT.val'); % save x as first dimension so ensure correct plotting in ncBrowse
+      end
+
+      nc_varput(outputfile, OPT.varname    , OPT.val); % save x as first dimension so ensure correct plotting in ncBrowse
       
       if ~isempty(OPT.epsg)
       nc_varput(outputfile, 'wgs84'        , OPT.wgs84);
       nc_varput(outputfile, 'epsg'         , OPT.epsg);
-      nc_varput(outputfile, 'longitude_cen', OPT.lon');
-      nc_varput(outputfile, 'latitude_cen' , OPT.lat');
+      end
+      if ~isempty(OPT.lon) & ~isempty(OPT.lat)
+         % nc_dump(outputfile,'longitude_cen')
+         % size(OPT.lon)
+      nc_varput(outputfile, 'longitude_cen', OPT.lon);
+      nc_varput(outputfile, 'latitude_cen' , OPT.lat);
       end
       
 %% 6 Check
