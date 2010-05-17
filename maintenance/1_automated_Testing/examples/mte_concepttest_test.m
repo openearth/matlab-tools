@@ -5,7 +5,7 @@ function unit = concepttest_test()
 
 unit = 0;
 
-% if TeamCity.ignore('wip');  return; end
+% TeamCity.ignore('wip');  return;
 % TeamCity.category('unit','integration','performace') 
 
 assert(1==2,'1 is not 2')
