@@ -22,6 +22,7 @@ function addpathfast(basepath,varargin)
 
    OPT.patterns = {[filesep,'.svn']}; % case sensitive
    OPT.method   = 2; % 1 = via OS system call, 2 = Matlab (used to be slower but not any more)
+   OPT.append   = true; % add new path before or after existing path
    
    OPT = setProperty(OPT,varargin{:});
 
@@ -65,6 +66,10 @@ function addpathfast(basepath,varargin)
    s = [s; repmat({pathsep}, size(s))] ;
    newpath = [s{:}];
    % add newpath to path
-   path(path, newpath);
+   if   OPT.append
+       path(path, newpath);
+   else
+       path(newpath, path);
+   end
 
 %% EOF
