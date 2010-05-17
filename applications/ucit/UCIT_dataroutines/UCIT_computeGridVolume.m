@@ -1,10 +1,10 @@
 function results = UCIT_computeGridVolume(reference_year, targetyear, polyname, OPT)
 %UCIT_COMPUTEGRIDVOLUME   this routine computes volumes based on data that is stored in grid format
 %
-%   syntax:     results = getSandBalance(j,OPT)
+%   syntax:     results = getSandBalance(reference_year, targetyear, polyname,OPT)
 %
 %   input:
-%     datatype = datatype indicator (1: Kaartblad data)
+%     datatype      = datatype indicator (1: Kaartblad data)
 %     workdir       = indicates the working directory for data storage
 %     year1, year2  = from year2 the data from year1 will be subtracted
 %     style1, style2= style indicator looking for data 1: look only backward in time for data, 2: look backward and forward in time for data then interpolate between these values
@@ -43,6 +43,7 @@ function results = UCIT_computeGridVolume(reference_year, targetyear, polyname, 
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
 fns = dir(['polygons' filesep '*.mat']);
 
 if ~isfield(OPT,'polygon')
