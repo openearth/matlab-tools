@@ -2,52 +2,67 @@ function [X, Y, Z, Ztime, OPT] = grid_orth_getDataInPolygon(varargin)
 %GRID_ORTH_GETDATAINPOLYGON  Script to load fixed maps from OPeNDAP, identify which maps are located inside a polygon and retrieve the data
 %
 %   Script to load fixed maps from OPeNDAP (or directory), identify which maps are located
-%   inside a polygon and retrieve the data. This script is based on the
-%   rws_getDataInPolygon script. This grid_orth_ version is more generic.
+%   inside a polygon and retrieve the data. This script is based on prevous versions of the
+%   rws_getDataInPolygon script. This grid_orth_ version is more generic. It works for all bathymetry 
+%   data that is stored in so-called fixed map style.
+%
+%   Syntax:
 %
 %       [X, Y, Z, Ztime] = grid_orth_getDataInPolygon(<keyword,value>);
 %
 %   Input:
 %   where the following <keyword,value> pairs have been implemented (values indicated are the current default settings):
-%   	'dataset'       , URL                   = URL for fixed map dataset to use ('http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml')
-%   	'starttime'     , datenum([1997 01 01]) = indicates starttime (datenum) from which to look back or forward (depending on searchinterval setting)
-%   	'searchinterval', -2*365                = indicates search window in number of days ([-] backward in time, [+] forward in time)
-%   	'polygon'       , []                    = polygon to use gathering the data (should preferably be closed) [-]
-%   	'cellsize'      , []                    = cellsize of fixed grid (same cellsize assumed in both directions) [-]
-%   	'datathinning'  , 1                     = factor used to stride through the data [-]
-%       'plotresult'    , 1                     = indicates whether the output should be plotted
+%       'dataset'        , 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml' = URL for fixed map dataset to use 
+%       'tag             , 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml' =
+%       'ldburl          , 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc' 
+%       'workdir         , 'sedbudget\'                      = directory where to store all results
+%       'polygondir      , 'sedbudget\polygons\'             = directory with polygons to use
+%       'polygon         , []                                = two column matrix containing x and y values of polygon
+%       'cellsize        , []                                = left empty will be determined automatically
+%       'datathinning    , 1                                 = stride with which to skip through the data
+%       'inputtimes      , datenum((2000:2008)',12, 31)      = starting points (in Matlab epoch time), left empty will be determined automatically
+%       'starttime       , OPT.inputtimes(1)                 = starting time is by default the first of the input times, left empty will be determined automatically
+%       'searchinterval  , -730                              = acceptable interval to include data from (in days)
+%       'min_coverage    , 25                                = coverage percentage (can be several, e.g. [50 75 90]
+%       'plotresult      , 1                                 = indicates whether the output should be plotted
+%       'warning         , 1                                 = indicates whether warnings should be turned on (1) or off (0)
+%       'postProcessing  , 1                                 =  
+%       'whattodo        , 1                                 =  
+%       'type            , 1                                 =  
+%       'counter         , 0                                 = 
+%       'urls            , []                                = urls of the fixed maps 
+%       'x_ranges        , []                                = values of x_ranges of fixed maps (for plotting on an overview)
+%       'y_ranges        , []                                = values of y_ranges of fixed maps (for plotting on an overview)
 %
 %   Output:
-%       X
-%       Y
-%       Z
-%
+%       X                = x-coordinates of extracted data
+%       Y                = y-coordinates of extracted data
+%       Z                = elevation values 
+%       Ztime            = time stamp of elevation values
 %
 %   Example:
-%
-%    polygon = [59090.8 438855
-%    	58110.4 439599
-%    	59293.6 441289
-%    	60409.3 440512
-%    	59090.8 438855];
-%
-%    datasets = {...
-%        'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
-%        'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml'};
-%
-%    for i = 1:length(datasets)
-%        close all
-%        [X, Y, Z, Ztime] = grid_orth_getDataInPolygon(...
-%            'dataset'     , datasets{i}, ...
-%            'starttime'   , datenum([2010 06 01]), ...
-%            'searchwindow', -10*365, ...
-%            'datathinning', 1, ...
-%            'polygon'     , polygon);
-%        pause
-%    end
-%
-%
-% Works for all bathymetry data that is stored in so-called fixed map style
+%{
+    polygon = [59090.8 438855
+    	58110.4 439599
+    	59293.6 441289
+    	60409.3 440512
+    	59090.8 438855];
+
+    datasets = {...
+        'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
+        'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml'};
+
+    for i = 1:length(datasets)
+        close all
+        [X, Y, Z, Ztime] = grid_orth_getDataInPolygon(...
+            'dataset'     , datasets{i}, ...
+            'starttime'   , datenum([2010 06 01]), ...
+            'searchinterval', -10*365, ...
+            'datathinning', 1, ...
+            'polygon'     , polygon);
+        pause
+    end
+%}
 %
 % See also: grid_2D_orthogonal
 
