@@ -104,7 +104,9 @@ OPT.postProcessing  = 1;
 OPT.whattodo        = 1;
 OPT.type            = 1;
 OPT.counter         = 0;
-OPT.OPT             = [];
+OPT.urls            = [];
+OPT.x_ranges        = [];
+OPT.y_ranges        = [];
 
 OPT = setProperty(OPT, varargin{:});
 
@@ -113,10 +115,12 @@ axes = findobj('type','axes');
 if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.tag})) % if an overview figure is already present don't run this function again
     
     % Step 0.1: get fixed map urls from OPeNDAP server
-    if ~isempty(OPT.OPT)
-        urls = OPT.OPT.urls;
+    if ~isempty(OPT.urls)
+        urls = OPT.urls;
     else
         urls = opendap_catalog(OPT.dataset);
+        OPT = mergestructs(OPT,grid_orth_getMapInfoFromDataset(OPT.dataset));
+%         OPT.OPT.urls = urls;
     end
     % Step 0.2: create a figure with tagged patches
     figure(10);clf;axis equal;box on;hold on
@@ -129,7 +133,7 @@ if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.tag})) % if an overview
     end
     
     % Step 0.4: plot fixed map patches on axes and return the axes handle
-    ah = grid_orth_createFixedMapsOnAxes(gca, OPT.OPT, 'tag', OPT.tag); %#ok<*NODEF,*NASGU>
+    ah = grid_orth_createFixedMapsOnAxes(gca, OPT, 'tag', OPT.tag); %#ok<*NODEF,*NASGU>
 end
 
 %% Step 1: go to the axes with tagged patches and select fixed maps using a polygon
@@ -190,7 +194,7 @@ plot(OPT.polygon(:,1),OPT.polygon(:,2),'g','linewidth',2,'tag','selectionpoly');
 %axis([min(x) max(x) min(y) max(y)]) % does not work
 
 %% Step 2: identify which maps are in polygon
-[mapurls, minx, maxx, miny, maxy] = grid_orth_identifyWhichMapsAreInPolygon(OPT.OPT, OPT.polygon);
+[mapurls, minx, maxx, miny, maxy] = grid_orth_identifyWhichMapsAreInPolygon(OPT, OPT.polygon);
 
 if isempty(mapurls) & OPT.warning
     
@@ -206,7 +210,8 @@ else
     [X, Y, Z, Ztime]                  = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, OPT);
     
     if all(isnan(Ztime)) & OPT.warning
-        warndlg('No data found in specified time period (yet grids available in polygon)')
+        disp(' ')
+        disp('No data found in specified time period (yet grids available in polygon)')
     end
     
     

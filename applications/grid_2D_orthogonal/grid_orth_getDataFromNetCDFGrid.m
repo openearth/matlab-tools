@@ -155,6 +155,7 @@ if ~isempty(xstart) || isempty(ystart)
                                                               OPT.stride);
                Z_next = transpose(Z_next);
                end
+               
                if sum(sum(~isnan(Z_next))) ~=0
                     disp(['... adding data from: ' datestr(t(idt(id_t+1)))])
                     ids2add = ~isnan(Z_next) & isnan(Z);    % helpul to be in a variable as the nature of Z changes in the next two lines

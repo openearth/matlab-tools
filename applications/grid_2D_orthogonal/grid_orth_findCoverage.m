@@ -78,8 +78,8 @@ if ~isempty(fns)
     
                 for j = 1:length(OPT.inputtimes)
                     
-                    if exist(fullfile(OPT.workdir, 'datafiles', ['timewindow = ' num2str(OPT.searchinterval)], [fns(i,1).name '_' datestr(OPT.inputtimes(j)) '.mat']),'file')
-                        load(fullfile(OPT.workdir, 'datafiles', ['timewindow = ' num2str(OPT.searchinterval)], [fns(i,1).name '_' datestr(OPT.inputtimes(j)) '.mat']));
+                    if exist(fullfile(OPT.workdir, 'datafiles', ['timewindow = ' num2str(OPT.searchinterval)], [fns(i,1).name(1:end-4) '_' datestr(OPT.inputtimes(j)) '.mat']),'file')
+                        load(fullfile(OPT.workdir, 'datafiles', ['timewindow = ' num2str(OPT.searchinterval)], [fns(i,1).name(1:end-4) '_' datestr(OPT.inputtimes(j)) '.mat']));
                     else
                         
                         [X, Y, Z, Ztime] = grid_orth_getDataInPolygon(...
@@ -89,7 +89,9 @@ if ~isempty(fns)
                             'datathinning'  , OPT.datathinning,...
                             'plotresult'    , 0, ...
                             'polygon'       , polygon, ...
-                            'OPT'           , OPT);
+                            'urls'          , OPT.urls, ...
+                            'x_ranges'      , OPT.x_ranges, ...
+                            'y_ranges'      , OPT.y_ranges);
                         
                         in = inpolygon(X, Y, polygon(:,1), polygon(:,2));
                         d.name              = fns(i,1).name(1:end-4);

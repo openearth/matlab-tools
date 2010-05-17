@@ -57,7 +57,6 @@ function testresult = grid_orth_getDataInPolygon_test()
 
 tr(1) = test1;
 tr(2) = test2;
-tr(3) = test3;
 
 testresult = all(tr);
 
@@ -75,14 +74,14 @@ function testresult = test1()
 grid_orth_getDataInPolygon(...
     'dataset', 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml', ...
     'starttime', datenum([1997 01 01]), ...
-    'searchwindow', -2*365, ...
+    'searchinterval', -2*365, ...
     'polygon', [70796.8 438560
                 78910.8 438779
                 78618.4 461001
                 70869.9 461001
                 70796.8 438560], ...
     'datathinning', 1); %#ok<*UNRCH>
-testresult = nan;
+testresult = 1;
 %% $PublishResult
 
 end
@@ -95,29 +94,14 @@ function testresult = test2()
 grid_orth_getDataInPolygon(...
     'dataset', 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml', ...
     'starttime', datenum([1997 01 01]), ...
-    'searchwindow', -5*365, ...
+    'searchinterval', -5*365, ...
     'polygon', [50214.6 425346
                 50318.5 441438
                 60440.5 441386
                 60129 425398
                 50214.6 425346], ...
     'datathinning', 1);
-testresult = nan;
-%% $PublishResult
-
-end
-
-function testresult = test3()
-%% $Description (Name = Undefined)
-% Test 1: work on VAKLODINGEN grids
-
-%% $RunCode
-[X, Y, Z, Ztime] = grid_orth_getDataInPolygon(...
-    'datatype', 'vaklodingen', ...
-    'starttime', datenum([2009 01 01]), ...
-    'searchwindow', -20*365, ...
-    'datathinning', 1);
-testresult = nan;
+testresult = 1;
 %% $PublishResult
 
 end
