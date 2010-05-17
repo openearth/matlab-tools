@@ -107,7 +107,7 @@
       nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'longitude');
       nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
       nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude'); % standard name
-      nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lon(:)) max(OPT.lon(:))]); % 
+      nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lon(:)) max(OPT.lon(:))]);
       nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
       nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
@@ -121,11 +121,11 @@
       nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'latitude');
       nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
       nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude'); % standard name
-      nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lat(:)) max(OPT.lat(:))]); % 
+      nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lat(:)) max(OPT.lat(:))]);
       nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
       nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
-   %% Coordinate system (WGS 84, ED 50, INT 1924, ETRS 89 and the upcoming ETRS 212 etc.)
+   %% Coordinate system (WGS 84, ED 50, INT 1924, ETRS 89 and the upcoming ETRS update etc.)
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
 
         ifld = ifld + 1;

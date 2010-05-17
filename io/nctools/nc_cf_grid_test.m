@@ -3,46 +3,23 @@ function nc_cf_grid_test
 %
 %See also: nc_cf_grid
 
-%% read grid (local)
-
-% figure('name','grid local')
-% f  = 'f:\opendap\thredds\rijkswaterstaat\vaklodingen\vaklodingenKB122_2120.nc';
+%% read grid (OPeNDAP)
 
    figure('name','grid OPeNDAP')
-   f  = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB122_2120.nc';
-
-%% test for new version of snctools in OpenEarthTools branch
-
-%    disp('=====================================')
-%    setpref('SNCTOOLS','PRESERVE_FVD',0) 
-%    disp(' transpose: consistent with ncBrowse')
-%    nc_dump(f,'z')
-%    disp('-------------------------------------')
-%    disp(' <> ncBrowse (time,y,x)')
-%    
-%    disp('=====================================')
-%    setpref('SNCTOOLS','PRESERVE_FVD',1)
-%    disp(' do not transpose: consistent with Matlab native netcdf')
-%    nc_dump(f,'z')
-%    disp('-------------------------------------')
-%    disp(' <> Matlab native netcdf')
-%    ncid = netcdf.open(f,'NOWRITE');
-%    varid = netcdf.inqVarID(ncid,'z');
-%    [varname,xtype,dimids,natts] = netcdf.inqVar(ncid,varid);
-%    
-%    for i=dimids
-%       [dimname, dimlen] = netcdf.inqDim(ncid,i);
-%       disp(['  ',dimname,' : ',num2str(i),'[',num2str(dimlen),']']);
-%    end
-%    netcdf.close(ncid)
-%    disp('=====================================')
+   f = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB122_2120.nc';
 
    [G,GM] =nc_cf_grid(f,'z');
+   
+   pngfile  = fullfile(fileparts(mfilename('fullpath')),['nc_cf_grid_write_test_',num2str(getpref('SNCTOOLS','PRESERVE_FVD')),'_',version('-release'),  '.png']);
+   print2screensizeoverwrite(pngfile)
 
 %% write grid
 
-   ncfile = fullfile(fileparts(mfilename('fullpath')),['nc_cf_grid_write_test_',num2str(getpref('SNCTOOLS','PRESERVE_FVD')),'.nc']);
+    ncfile  = fullfile(fileparts(mfilename('fullpath')),['nc_cf_grid_write_test_',num2str(getpref('SNCTOOLS','PRESERVE_FVD')),'_',version('-release'),  '.nc']);
+   cdlfile  = fullfile(fileparts(mfilename('fullpath')),['nc_cf_grid_write_test_',num2str(getpref('SNCTOOLS','PRESERVE_FVD')),'_',version('-release'),  '.cdl']);
+   pngfile2 = fullfile(fileparts(mfilename('fullpath')),['nc_cf_grid_write_test_',num2str(getpref('SNCTOOLS','PRESERVE_FVD')),'_',version('-release'),'rw.png']);
    
+
    if getpref('SNCTOOLS','PRESERVE_FVD')==0
       nc_cf_grid_write(ncfile,...
                'lon',permute(G.lon(:,:),  [2 1]),...
@@ -65,6 +42,9 @@ function nc_cf_grid_test
 
    figure('name','grid (local, just written)');
    [G2,GM2] = nc_cf_grid(ncfile,'z');
-   fid = fopen(fullfile(fileparts(mfilename('fullpath')),['nc_cf_grid_write_test_',num2str(getpref('SNCTOOLS','PRESERVE_FVD')),'.cdl']),'w');
+   fid = fopen(cdlfile,'w');
    nc_dump(ncfile,fid)
    fclose(fid);
+   title({char(get(get(gca,'title'),'String')),''}); % add dummy 2nd title 
+   print2screensizeoverwrite(pngfile2)
+   
