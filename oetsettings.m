@@ -140,7 +140,13 @@ if (vs > datenum(2003,1,1))
         disp(['Java path not added, already there: ',java2add]);
         disp(' ');
     end
-    setpref ('SNCTOOLS', 'USE_JAVA', true); % this requires SNCTOOLS 2.4.8 or better
+    setpref ('SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
+    % for upcoming snctools update
+    setpref ('SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
+                                           % 1: We do not want to transpose matrices because:
+                                           %    (i)  we have some LARGE datasets and need a performance boost
+                                           %    (ii) some use the netCDF API directly which does not do this. 
+                                           %    May break previous work though ...
     
 else
     
