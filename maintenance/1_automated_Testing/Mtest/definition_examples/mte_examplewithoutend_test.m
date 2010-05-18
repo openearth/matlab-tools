@@ -59,4 +59,3 @@ assert(tr==true,'subfunction did not return true');
 
 function returnvalue = subfunction1()
 returnvalue = true;
-end

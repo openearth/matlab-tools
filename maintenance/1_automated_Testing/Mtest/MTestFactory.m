@@ -76,7 +76,7 @@ classdef MTestFactory
             newTest = MTestFactory.findname(newTest);
             
             %% Apply other input
-            newTest = setproperty(newTest);
+            newTest = setproperty(newTest,varargin{:});
             
         end
         function obj = retrievestringfromdefinition(obj)
@@ -93,8 +93,7 @@ classdef MTestFactory
         end
         function obj = resetstringids(obj)
             idBase = false(numel(obj.FullString),1);
-            obj.IDTestString = idBase;
-            obj.IDSubfunctionsString = idBase;
+            obj.IDTestFunction = idBase;
             obj.IDOetHeaderString = idBase;
             obj.IDTestCode = idBase;
             obj.IDDescriptionCode = idBase;
@@ -105,26 +104,27 @@ classdef MTestFactory
             str = strtrim(obj.FullString);
             
             %% -- find function calls
-            fcnid = find(strncmp(str,'function ',9));
-            
-            %% -- Divide info string into teststring and subfunctions
-            if length(fcnid)>1
-                %% subtract testinfo
-                obj.IDTestString(1:min(fcnid(fcnid>min(fcnid)))-1) = true;
-                %% store subfunctions
-                obj.IDSubfunctionsString(min(fcnid(fcnid>min(fcnid))):end) = true;
-            elseif length(fcnid)==1
-                %% subtract testinfo
-                obj.IDTestString(fcnid:end)=true;
-            else
+            % getcallinfo is an undocumented function and can be changed in future...
+            if ~exist(fullfile(obj.FilePath,[obj.FileName '.m']),'file')
+                error('MTestFactory:DefinitionFileNotFound','Definition file could not be found.');
+            end
+            fcncalls = getcallinfo(fullfile(obj.FilePath,[obj.FileName,'.m']));
+            mainFunction = fcncalls(cellfun(@(tp) tp == internal.matlab.codetools.reports.matlabType.Function,{fcncalls.type}));
+            obj.SubFunctions = fcncalls(cellfun(@(tp) strcmp(tp,'subfunction') ,{fcncalls.type}));
+
+            if isempty(mainFunction)
                 % No function declaration. This is not a test definition
                 error('MTestFactory:NoFunction','This test definition file has no function declaration. definition could not be read.');
             end
-            
+            obj.IDTestFunction = mainFunction.linemask;
+            obj.FunctionName = mainFunction.name;
+            if strncmp(str{mainFunction.lastline},'end',3)
+                obj.IDTestFunction(mainFunction.lastline) = false;
+            end
         end
         function obj = interpretheader(obj)
-            teststr = cell(numel(obj.FullString),1);
-            teststr(obj.IDTestString) = strtrim(obj.FullString(obj.IDTestString));
+            teststr = repmat({''},numel(obj.FullString),1);
+            teststr(obj.IDTestFunction) = strtrim(obj.FullString(obj.IDTestFunction));
             if ~isempty(teststr)
                 comments = strncmp(teststr,'%',1);
                 empties = cellfun(@isempty,teststr);
@@ -138,7 +138,7 @@ classdef MTestFactory
                 
                 obj.FunctionHeader = teststr{1};
                 oetTestHeaderString = teststr(2:find(codelines(2:end),1,'first'));
-                obj.IDTestCode = obj.IDTestString;
+                obj.IDTestCode = obj.IDTestFunction;
                 obj.IDTestCode(1:find(codelines(2:end),1,'first'))=false;
                 
                 if ~isempty(oetTestHeaderString)
@@ -239,7 +239,7 @@ classdef MTestFactory
                     idend = min(celldividers(celldividers>iddescr))-1;
                     
                     %% store body information
-                    obj.IDDescriptionCode(iddescr+1:idend) = true;
+                    obj.IDDescriptionCode(iddescr+1:idend) = obj.IDTestFunction(iddescr+1:idend);
                     obj.DescriptionIncludecode = false;
                     obj.DescriptionEvaluatecode = true;
                     
@@ -262,18 +262,17 @@ classdef MTestFactory
                 if ~isnan(idrun)
                     %% body
                     idend = min(celldividers(celldividers>idrun))-1;
-                    obj.IDRunCode(idrun+1:idend) = true;
+                    obj.IDRunCode(idrun+1:idend) = obj.IDTestFunction(idrun+1:idend);
                 end
                 
                 %% Isolate publish codes
                 if ~isnan(idpublish)
                     %% header
                     publishheader = str{idpublish};
-                    %% body
-                    idend = min(celldividers(celldividers>idpublish))-1;
-                    obj.IDPublishCode(idpublish+1:idend)=true;
                     
-                    %% store body
+                    %% storebody
+                    idend = min(celldividers(celldividers>idpublish))-1;
+                    obj.IDPublishCode(idpublish+1:idend) = obj.IDTestFunction(idpublish+1:idend);
                     obj.PublishIncludecode = false;
                     obj.PublishEvaluatecode = true;
                     
@@ -307,6 +306,9 @@ classdef MTestFactory
         function obj = findname(obj)
             testCode = obj.FullString(obj.IDTestCode);
             id = strfind(testCode,'MTest.name');
+            
+        end
+        function flag = checkfilename(obj)
             
         end
     end

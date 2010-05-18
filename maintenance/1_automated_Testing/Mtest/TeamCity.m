@@ -2,6 +2,8 @@ classdef TeamCity < handle
     properties
         CurrentTest
         TeamCityRunning = false;
+        WorkDirectory = cd;
+        Timer
     end
     methods
         function obj = TeamCity()
@@ -45,7 +47,7 @@ classdef TeamCity < handle
             obj = TeamCity;
             if obj.TeamCityRunning
                 currentTest = obj.CurrentTest;
-                if ~isempy(currentTest)
+                if ~isempty(currentTest)
                     currentTest.Category = category;
                 end
             end
@@ -106,10 +108,10 @@ classdef TeamCity < handle
             
             %% Check whether we still have an outstanding message
             h = tic;
-            while exist('teamcitymessage.matlab','file')
+            while exist(fullfile(obj.WorkDirectory,'teamcitymessage.matlab'),'file')
                 pause(0.001);
                 if toc(h) > 0.1 % Give teamcity som time to read the file
-                    delete(which('teamcitymessage.matlab'));
+                    delete(fullfile(obj.WorkDirectory,'teamcitymessage.matlab'));
                 end
             end
             
@@ -154,14 +156,62 @@ classdef TeamCity < handle
                 % This is necessary to prevent TeamCity from echoing before we finished writeing the
                 % messagefile
                 teamcityString = cat(2,teamcityString,']');
-                dlmwrite('teamcitymessage.matlabtemp',...
+                dlmwrite(fullfile(obj.WorkDirectory,'teamcitymessage.matlabtemp'),...
                     teamcityString,...
                     'delimiter','','-append');
-                movefile('teamcitymessage.matlabtemp','teamcitymessage.matlab');
+                movefile(fullfile(obj.WorkDirectory,'teamcitymessage.matlabtemp'),...
+                    fullfile(obj.WorkDirectory,'teamcitymessage.matlab'));
             else
                 %% Display message to command widow:
                 disp(teamcityString);
             end
+        end
+        function options = publishoptions(varargin)
+            options = [];
+            obj = TeamCity;
+            if obj.TeamCityRunning
+                currentTest = obj.CurrentTest;
+                if ~isempty(currentTest)
+                    options = struct(...
+                        'stylesheet',currentTest.stylesheet,...
+                        '',currentTest.maxwidth,...
+                        '',currentTest.maxheight,...
+                        '',currentTest);
+                end
+            end
+        end
+        function publishdescription(varargin)
+            mt = TeamCity.currenttest;
+%             mt.publishdescription(...
+%                 'outputfile',fullfile(TeamCity.OutputDir,'');
+        end
+        function publishresult(varargin)
+            mt = TeamCity.currenttest;
+%             mt.publishresult(...
+%                 'outputfile',fullfile(TeamCity.OutputDir,'');
+        end
+        function starttimer(varargin)
+            tc = TeamCity;
+            tc.Timer = tic;
+        end
+        function stoptimer(varargin)
+            tc = TeamCity;
+            if isempty(tc.Timer)
+                return;
+            end
+            
+            mt = tc.CurrentTest;
+            if ~isempty(mt)
+                mt.Time = toc(tc.Timer);
+            end
+        end
+        function obj = currenttest()
+            tc = TeamCity;
+            obj = tc.CurrentTest;
+        end
+        function collectprofilerinfo()
+            mt = TeamCity.currenttest;
+            mt.ProfilerInfo = profile('info');
         end
     end
     methods (Static = true, Hidden = true)

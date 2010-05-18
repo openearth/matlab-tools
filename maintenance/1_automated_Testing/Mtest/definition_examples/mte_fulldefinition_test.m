@@ -64,5 +64,5 @@ assert(tr==true,'subfuncion did not return true');
 end
 
 function testResult = subfunction1(arg1,arg2)
-testResult = arg1+arg2 = 3;
+testResult = arg1+arg2 == 3;
 end
