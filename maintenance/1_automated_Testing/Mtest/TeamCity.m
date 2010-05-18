@@ -176,12 +176,17 @@ classdef TeamCity < handle
                         'stylesheet',currentTest.stylesheet,...
                         '',currentTest.maxwidth,...
                         '',currentTest.maxheight,...
-                        '',currentTest);
+                        'OutputDir',obj.OutputDir);
                 end
             end
         end
         function publishdescription(varargin)
             mt = TeamCity.currenttest;
+            %% Write scipt file to publish
+            
+            %% Get publish options
+            
+            %% evalin caller... publish
 %             mt.publishdescription(...
 %                 'outputfile',fullfile(TeamCity.OutputDir,'');
         end
