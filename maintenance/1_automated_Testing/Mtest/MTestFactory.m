@@ -79,13 +79,15 @@ classdef MTestFactory
             newTest = setproperty(newTest,varargin{:});
             
         end
+    end
+    methods (Static = true, Hidden = true)
         function obj = retrievestringfromdefinition(obj)
             %% #1 Open the input file
             % first try full file name
             fid = fopen(fullfile(obj.FilePath,[obj.FileName '.m']));
             %% #2 Read the contents of the file
-            str = fread(fid,'*char')';
-            str = strread(str,'%s','delimiter',char(10));
+            str = textscan(fid,'%s','delimiter','\n','whitespace','','bufSize',10000);
+            str = str{1};
             %% #3 Close the input file
             fclose(fid);
             %% #4 Process contents of the input file
@@ -118,7 +120,7 @@ classdef MTestFactory
             end
             obj.IDTestFunction = mainFunction.linemask;
             obj.FunctionName = mainFunction.name;
-            if strncmp(str{mainFunction.lastline},'end',3)
+            if strncmp(str{mainFunction.lastline},'end',3) && ~isempty(obj.SubFunctions)
                 obj.IDTestFunction(mainFunction.lastline) = false;
             end
         end
@@ -300,15 +302,38 @@ classdef MTestFactory
             obj.Category = mTestFactory.Category;
 
             testCode = obj.FullString(obj.IDTestCode);
-            id = strfind(testCode,'TeamCity.category');
+            id = find(~cellfun(@isempty,strfind(testCode,'TeamCity.category')),1,'first');
+            if any(id)
+                command = testCode{id};
+                idbegin = strfind(command,'TeamCity.category(')+18;
+                idend = max(strfind(command,')'))-1;
+                if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
+                    try
+                        obj.Category = eval(command(idbegin:idend));
+                    catch me
+                        warning('MTestFactory:UnableToSetCategory',['MTestFactory was not able to set the category.';'The following exeption was thrown when evaluating the input:';me.getReport]);
+                    end
+                end
+            end
             
         end
         function obj = findname(obj)
-            testCode = obj.FullString(obj.IDTestCode);
-            id = strfind(testCode,'MTest.name');
+            obj.Name = obj.FileName;
             
-        end
-        function flag = checkfilename(obj)
+            testCode = obj.FullString(obj.IDTestCode);
+            id = find(~cellfun(@isempty,strfind(testCode,'TeamCity.name')),1,'first');
+            if any(id)
+                command = testCode{id};
+                idbegin = strfind(command,'TeamCity.name(')+14;
+                idend = max(strfind(command,')'))-1;
+                if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
+                    try
+                        obj.Name = eval(command(idbegin:idend));
+                    catch me
+                        warning('MTestFactory:UnableToSetCategory',['MTestFactory was not able to set the category.';'The following exeption was thrown when evaluating the input:';me.getReport]);
+                    end
+                end
+            end
             
         end
     end

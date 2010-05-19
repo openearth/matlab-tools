@@ -51,7 +51,7 @@ function testResult = mte_ignore_test()
 testResult = true;
 
 %% $Description 
-MTest.name('Ignore test')
+TeamCity.name('Ignore test')
 TeamCity.ignore('ignore test example'); return;
 
 %% $Run

@@ -4,6 +4,7 @@ classdef TeamCity < handle
         TeamCityRunning = false;
         WorkDirectory = cd;
         Timer
+        CurrentWorkSpace
     end
     methods
         function obj = TeamCity()
@@ -49,6 +50,22 @@ classdef TeamCity < handle
                 currentTest = obj.CurrentTest;
                 if ~isempty(currentTest)
                     currentTest.Category = category;
+                end
+            end
+        end
+        function name(proposedname)
+            obj = TeamCity;
+            currentTest = obj.CurrentTest;
+            
+            if ~isempty(currentTest)
+                if obj.TeamCityRunning
+                    %% Set test properties
+                    if ~strcmp(currentTest.Name,proposedname)
+                        return;
+                        % TODO give warning
+                    end
+                else
+                    currentTest.Name = proposedname;
                 end
             end
         end
@@ -166,57 +183,40 @@ classdef TeamCity < handle
                 disp(teamcityString);
             end
         end
-        function options = publishoptions(varargin)
-            options = [];
-            obj = TeamCity;
-            if obj.TeamCityRunning
-                currentTest = obj.CurrentTest;
-                if ~isempty(currentTest)
-                    options = struct(...
-                        'stylesheet',currentTest.stylesheet,...
-                        '',currentTest.maxwidth,...
-                        '',currentTest.maxheight,...
-                        'OutputDir',obj.OutputDir);
-                end
-            end
-        end
         function publishdescription(varargin)
+            tc = TeamCity;
             mt = TeamCity.currenttest;
-            %% Write scipt file to publish
-            
-            %% Get publish options
-            
-            %% evalin caller... publish
-%             mt.publishdescription(...
-%                 'outputfile',fullfile(TeamCity.OutputDir,'');
+            mt.publishdescription('outputdir',tc.WorkDirectory);
         end
         function publishresult(varargin)
+            tc = TeamCity;
             mt = TeamCity.currenttest;
-%             mt.publishresult(...
-%                 'outputfile',fullfile(TeamCity.OutputDir,'');
-        end
-        function starttimer(varargin)
-            tc = TeamCity;
-            tc.Timer = tic;
-        end
-        function stoptimer(varargin)
-            tc = TeamCity;
-            if isempty(tc.Timer)
-                return;
+            saveWorkSpace = true;
+            if islogical(varargin{1})
+                saveWorkSpace = varargin{1};
             end
-            
-            mt = tc.CurrentTest;
-            if ~isempty(mt)
-                mt.Time = toc(tc.Timer);
-            end
+            mt.publishresult('outputdir',tc.WorkDirectory,'saveworkspace',saveWorkSpace);
         end
         function obj = currenttest()
             tc = TeamCity;
             obj = tc.CurrentTest;
         end
-        function collectprofilerinfo()
-            mt = TeamCity.currenttest;
-            mt.ProfilerInfo = profile('info');
+        function storeworkspace()
+            varnames = evalin('caller','whos;');
+            obj = TeamCity;
+            obj.CurrentWorkSpace = {};
+            for ivarnames = 1:length(varnames)
+                varname = varnames(ivarnames).name;
+                varvalue = evalin('caller',varname);
+                obj.CurrentWorkSpace(ivarnames,1:2) = {varname,varvalue};
+            end
+        end
+        function restoreworkspace()
+            tc = TeamCity;
+            evalin('caller','clear;');
+            for ivars = 1:size(tc.CurrentWorkSpace,1)
+                assignin('caller',tc.CurrentWorkSpace{ivars,1},tc.CurrentWorkSpace{ivars,2});
+            end
         end
     end
     methods (Static = true, Hidden = true)
