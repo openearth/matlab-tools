@@ -31,9 +31,9 @@ set(handles.GUIHandles.Menu.File.SaveAllDomains,   'Enable','on');
 
 % fill in the model specific items of the view-menu
 % first delete previous menu items
-delete(get(findobj(gcf,'Type','uimenu','Tag',['ddb_menuViewModel']),'Children'));
+delete(get(findobj(gcf,'Type','uimenu','Tag','menuViewModel'),'Children'));
 % change name of model menu (to Delft3D-FLOW)
-set(findobj(gcf,'Type','uimenu','Tag',['ddb_menuViewModel']),'Label','Delft3D-FLOW');
+set(findobj(gcf,'Type','uimenu','Tag','menuViewModel'),'Label','Delft3D-FLOW');
 % add model specific items to menu
 handles=ddb_addMenuItem(handles,'ViewModel','Grid',                'Callback',{@ddb_menuViewDelft3DFLOW},'Checked','on');
 handles=ddb_addMenuItem(handles,'ViewModel','Model Bathymetry',    'Callback',{@ddb_menuViewDelft3DFLOW},'Checked','on');

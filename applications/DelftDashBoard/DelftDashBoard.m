@@ -23,6 +23,8 @@ end
 disp('Finding directories ...');
 handles=ddb_getDirectories(handles);
 
+warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
+
 % Open Splash Screen
 frame=splash([handles.SettingsDir 'icons' filesep 'DelftDashBoard.jpg'],30);
 

@@ -1,7 +1,5 @@
 function handles=ddb_saveDelft3DFLOW(handles,opt)
 
-ii=strmatch('Delft3DFLOW',{handles.Model.Name},'exact');
-
 switch lower(opt)
     case{'save'}
         ddb_saveMDF(handles,ad);

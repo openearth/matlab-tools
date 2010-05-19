@@ -84,7 +84,7 @@ function PushGenerateBoundaryConditions_Callback(hObject,eventdata)
 
 handles=getHandles;
 
-f=str2func(['GenerateTransportBoundaryConditions' handles.Model(md).Name]);
+f=str2func(['ddb_generateTransportBoundaryConditions' handles.Model(md).Name]);
 try
     handles=feval(f,handles,ad,'all','ddb_test');
 catch

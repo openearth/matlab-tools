@@ -73,7 +73,7 @@ function PushGenerateInitialConditions_CallBack(hObject,eventdata)
 
 handles=getHandles;
 
-f=str2func(['GenerateInitialConditions' handles.Model{md}.Name]);
+f=str2func(['ddb_generateInitialConditions' handles.Model(md).Name]);
 
 try
     handles=feval(f,handles,ad,'ddb_test','ddb_test');

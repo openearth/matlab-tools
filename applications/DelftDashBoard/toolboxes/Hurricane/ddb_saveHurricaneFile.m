@@ -12,7 +12,7 @@ if size(usr,1)>0
     usrstring=[' - File created by ' usr];
 end
 
-txt=['# ddb_hurricaneToolbox - DelftDashBoard v' handles.DelftDashBoard usrstring ' - ' datestring];
+txt=['# ddb_hurricaneToolbox - DelftDashBoard v' handles.DelftDashBoardVersion usrstring ' - ' datestring];
 fprintf(fid,'%s \n',txt);
 
 txt='';

@@ -50,17 +50,10 @@ end
 %% View -> from now model specific items to be filled in by a model select function (for example: ddb_selectDelft3DFLOW.m)
 uimenu('Label','View','Tag','menuView');
 handles=ddb_addMenuItem(handles,'View','Background Bathymetry','Callback',{@ddb_menuView},'Checked','on','longname','Bathymetry');
-handles=ddb_addMenuItem(handles,'View','Land Boundaries',     'Callback',{@ddb_menuView},'Checked','on','longname','World Vector Shoreline');
-handles=ddb_addMenuItem(handles,'View','Cities',              'Callback',{@ddb_menuView});
-handles=ddb_addMenuItem(handles,'View','Model',     'longname','Model specific items','Separator','on');
-% handles=ddb_addMenuItem(handles,'View','Grid',                'Callback',{@ddb_menuView},'Separator','on','Checked','on');
-% handles=ddb_addMenuItem(handles,'View','Model Bathymetry',    'Callback',{@ddb_menuView},'Checked','on');
-% handles=ddb_addMenuItem(handles,'View','Open Boundaries',     'Callback',{@ddb_menuView},'Checked','on');
-% handles=ddb_addMenuItem(handles,'View','Observation Points',  'Callback',{@ddb_menuView},'Checked','on');
-% handles=ddb_addMenuItem(handles,'View','Cross Sections',      'Callback',{@ddb_menuView},'Checked','on');
-% handles=ddb_addMenuItem(handles,'View','Thin Dams',           'Callback',{@ddb_menuView},'Checked','on');
-% handles=ddb_addMenuItem(handles,'View','Dry Points',          'Callback',{@ddb_menuView},'Checked','on');
-handles=ddb_addMenuItem(handles,'View','Settings',            'Callback',{@ddb_menuView},'Separator','on');
+handles=ddb_addMenuItem(handles,'View','Land Boundaries',      'Callback',{@ddb_menuView},'Checked','on','longname','World Vector Shoreline');
+handles=ddb_addMenuItem(handles,'View','Cities',               'Callback',{@ddb_menuView});
+handles=ddb_addMenuItem(handles,'View','Model',                'longname','Model specific items','Separator','on');
+handles=ddb_addMenuItem(handles,'View','Settings',             'Callback',{@ddb_menuView},'Separator','on');
 
 %% Coordinate System
 uimenu('Label','Coordinate System','Tag','menuCoordinateSystem');

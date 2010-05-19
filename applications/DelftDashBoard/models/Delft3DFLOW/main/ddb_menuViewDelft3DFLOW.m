@@ -5,24 +5,24 @@ handles=getHandles;
 tg=get(hObject,'Tag');
 
 switch tg,
-    case{'ddb_menuViewModelGrid'}
-        ddb_menuViewGrid_Callback(hObject,eventdata,handles);
-    case{'ddb_menuViewModelModelBathymetry'}
-        ddb_menuViewModelBathymetry_Callback(hObject,eventdata,handles);
-    case{'ddb_menuViewModelObservationPoints'}
-        ddb_menuViewObservationPoints_Callback(hObject,eventdata,handles);
-    case{'ddb_menuViewModelOpenBoundaries'}
-        ddb_menuViewOpenBoundaries_Callback(hObject,eventdata,handles);
-    case{'ddb_menuViewModelThinDams'}
-        ddb_menuViewThinDams_Callback(hObject,eventdata,handles);
-    case{'ddb_menuViewModelDryPoints'}
-        ddb_menuViewDryPoints_Callback(hObject,eventdata,handles);
-    case{'ddb_menuViewModelCrossSections'}
-        ddb_menuViewCrossSections_Callback(hObject,eventdata,handles);
+    case{'menuViewModelGrid'}
+        menuViewGrid_Callback(hObject,eventdata,handles);
+    case{'menuViewModelModelBathymetry'}
+        menuViewModelBathymetry_Callback(hObject,eventdata,handles);
+    case{'menuViewModelObservationPoints'}
+        menuViewObservationPoints_Callback(hObject,eventdata,handles);
+    case{'menuViewModelOpenBoundaries'}
+        menuViewOpenBoundaries_Callback(hObject,eventdata,handles);
+    case{'menuViewModelThinDams'}
+        menuViewThinDams_Callback(hObject,eventdata,handles);
+    case{'menuViewModelDryPoints'}
+        menuViewDryPoints_Callback(hObject,eventdata,handles);
+    case{'menuViewModelCrossSections'}
+        menuViewCrossSections_Callback(hObject,eventdata,handles);
 end    
 
 %%
-function ddb_menuViewGrid_Callback(hObject, eventdata, handles)
+function menuViewGrid_Callback(hObject, eventdata, handles)
 
 checked=get(hObject,'Checked');
 
@@ -41,7 +41,7 @@ else
 end    
 
 %%
-function ddb_menuViewModelBathymetry_Callback(hObject, eventdata, handles)
+function menuViewModelBathymetry_Callback(hObject, eventdata, handles)
 
 checked=get(hObject,'Checked');
 
@@ -67,7 +67,7 @@ else
 end
 
 %%
-function ddb_menuViewOpenBoundaries_Callback(hObject, eventdata, handles)
+function menuViewOpenBoundaries_Callback(hObject, eventdata, handles)
 
 checked=get(hObject,'Checked');
 
@@ -94,7 +94,7 @@ else
 end    
 
 %%
-function ddb_menuViewObservationPoints_Callback(hObject, eventdata, handles)
+function menuViewObservationPoints_Callback(hObject, eventdata, handles)
 
 checked=get(hObject,'Checked');
 
@@ -121,7 +121,7 @@ else
 end    
 
 %%
-function ddb_menuViewThinDams_Callback(hObject, eventdata, handles)
+function menuViewThinDams_Callback(hObject, eventdata, handles)
 
 checked=get(hObject,'Checked');
 
@@ -140,7 +140,7 @@ else
 end    
 
 %%
-function ddb_menuViewDryPoints_Callback(hObject, eventdata, handles)
+function menuViewDryPoints_Callback(hObject, eventdata, handles)
 
 checked=get(hObject,'Checked');
 
@@ -159,7 +159,7 @@ else
 end    
 
 %%
-function ddb_menuViewCrossSections_Callback(hObject, eventdata, handles)
+function menuViewCrossSections_Callback(hObject, eventdata, handles)
 
 checked=get(hObject,'Checked');
 

@@ -1,42 +1,44 @@
 function ddb_editD3DFlowTransportConditionsTimeSeries
 
-h=guidata(findobj('Tag','MainWindow'));
+h=getHandles;
 
-kmax=h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).KMax;
+kmax=h.Model(md).Input(ad).KMax;
 handles.KMax=kmax;
-handles.Bnd=h.GUIData.ActiveOpenBoundary;
+
+ii=h.GUIData.ActiveOpenBoundary;
+handles.Bnd=h.Model(md).Input(ad).OpenBoundaries(ii);
 
 handles.ActiveConstituent=1;
 
 k=0;
-if h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Salinity.Include
+if h.Model(md).Input(ad).Salinity.Include
     k=k+1;
     handles.Constituents{k}='Salinity';
     handles.Constituent(k)=handles.Bnd.Salinity;
 end
-if h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Temperature.Include
+if h.Model(md).Input(ad).Temperature.Include
     k=k+1;
     handles.Constituents{k}='Temperature';
     handles.Constituent(k)=handles.Bnd.Temperature;
 end
-if h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Sediments
-    for j=1:h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).NrSediments
+if h.Model(md).Input(ad).Sediments
+    for j=1:h.Model(md).Input(ad).NrSediments
         k=k+1;
-        handles.Constituents{k}=h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Sediment(j).Name;
+        handles.Constituents{k}=h.Model(md).Input(ad).Sediment(j).Name;
         handles.Constituent(k)=handles.Bnd.Sediment(j);
     end
 end
-if h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Tracers
-    for j=1:h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).NrTracers
+if h.Model(md).Input(ad).Tracers
+    for j=1:h.Model(md).Input(ad).NrTracers
         k=k+1;
-        handles.Constituents{k}=h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Tracer(j).Name;
+        handles.Constituents{k}=h.Model(md).Input(ad).Tracer(j).Name;
         handles.Constituent(k)=handles.Bnd.Tracer(j);
     end
 end
 
 % prf=handles.Bnd.Profile;
 
-MakeNewWindow('Time Series Transport Boundary Conditions',[590 490],'modal',[handles.SettingsDir '\icons\deltares.gif']);
+MakeNewWindow('Time Series Transport Boundary Conditions',[590 490],'modal',[h.SettingsDir '\icons\deltares.gif']);
 
 uipanel('Title','Time Series', 'Units','pixels','Position',[40 80 510 230],'Tag','UIControl');
 
@@ -101,30 +103,30 @@ guidata(gcf,handles);
 function PushOK_Callback(hObject,eventdata)
 
 handles=guidata(gcf);
-h=guidata(findobj('Tag','MainWindow'));
+h=getHandles;
 ib=h.GUIData.ActiveOpenBoundary;
 ic=0;
-if h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Salinity.Include
+if h.Model(md).Input(ad).Salinity.Include
     ic=ic+1;
-    handles.Model(md).Input(ad).OpenBoundaries(ib).Salinity=handles.Constituent(ic);
+    h.Model(md).Input(ad).OpenBoundaries(ib).Salinity=handles.Constituent(ic);
 end
-if h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Temperature.Include
+if h.Model(md).Input(ad).Temperature.Include
     ic=ic+1;
-    handles.Model(md).Input(ad).OpenBoundaries(ib).Temperature=handles.Constituent(ic);
+    h.Model(md).Input(ad).OpenBoundaries(ib).Temperature=handles.Constituent(ic);
 end
-if h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Sediments
-    for j=1:h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).NrSediments
+if h.Model(md).Input(ad).Sediments
+    for j=1:h.Model(md).Input(ad).NrSediments
         ic=ic+1;
-        handles.Model(md).Input(ad).OpenBoundaries(ib).Sediment(j)=handles.Constituent(ic);
+        h.Model(md).Input(ad).OpenBoundaries(ib).Sediment(j)=handles.Constituent(ic);
     end
 end
-if h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Tracers
-    for j=1:h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).NrTracers
+if h.Model(md).Input(ad).Tracers
+    for j=1:h.Model(md).Input(ad).NrTracers
         ic=ic+1;
-        handles.Model(md).Input(ad).OpenBoundaries(ib).Tracer(j)=handles.Constituent(ic);
+        h.Model(md).Input(ad).OpenBoundaries(ib).Tracer(j)=handles.Constituent(ic);
     end
 end
-guidata(findobj('Tag','MainWindow'),h);
+setHandles(h);
 closereq;
 
 %%

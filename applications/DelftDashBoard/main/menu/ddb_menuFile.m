@@ -9,29 +9,29 @@ ii=handles.ActiveModel.Nr;
 kappen=0;
 
 switch tg,
-    case{'ddb_menuFileNew'}
+    case{'menuFileNew'}
         handles=ddb_resetAll(handles);
-    case{'ddb_menuFileOpen'}
+    case{'menuFileOpen'}
         handles=feval(handles.Model(ii).OpenFcn,handles,handles.ActiveDomain);
-    case{'ddb_menuFileAddDomain'}
+    case{'menuFileAddDomain'}
         handles=feval(handles.Model(ii).OpenFcn,handles,handles.ActiveDomain+1);
-    case{'ddb_menuFileOpenDomains'}
+    case{'menuFileOpenDomains'}
         handles=feval(handles.Model(ii).OpenFcn,handles,0);
-    case{'ddb_menuFileSave'}
+    case{'menuFileSave'}
         handles=feval(handles.Model(ii).SaveFcn,handles,'Save');
-    case{'ddb_menuFileSaveAs'}
+    case{'menuFileSaveAs'}
         handles=feval(handles.Model(ii).SaveFcn,handles,'SaveAs');
-    case{'ddb_menuFileSaveAll'}
+    case{'menuFileSaveAll'}
         handles=feval(handles.Model(ii).SaveFcn,handles,'SaveAll');
-    case{'ddb_menuFileSaveAllAs'}
+    case{'menuFileSaveAllAs'}
         handles=feval(handles.Model(ii).SaveFcn,handles,'SaveAllAs');
-    case{'ddb_menuFileSaveAllDomains'}
+    case{'menuFileSaveAllDomains'}
         handles=feval(handles.Model(ii).SaveFcn,handles,'SaveAllDomains');
-    case{'ddb_menuFileOpenLandboundary'}
+    case{'menuFileOpenLandboundary'}
         handles=ddb_menuFileOpenLandboundary(handles);
-    case{'ddb_menuFileSelectWorkingDirectory'}
+    case{'menuFileSelectWorkingDirectory'}
         handles=SelectWorkingDirectory(handles);
-    case{'ddb_menuFileExit'}
+    case{'menuFileExit'}
         ddb_menuExit;
         kappen=1;
 end    

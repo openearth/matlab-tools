@@ -71,9 +71,6 @@ end
 
 fid = fopen(filename2,'w');
 
-% time=clock;
-D3DTimeStringing=D3DTimeString(datenum(clock),31);
-
 usrstring='- Unknown user';
 usr=getenv('username');
 
@@ -81,7 +78,7 @@ if size(usr,1)>0
     usrstring=[' - File created by ' usr];
 end
 
-txt=['* ddb_hurricaneToolbox - DelftDashBoard v' handles.DelftDashBoardVersion usrstring ' - ' D3DTimeStringing];
+txt=['* ddb_hurricaneToolbox - DelftDashBoard v' handles.DelftDashBoardVersion usrstring ' - ' datestr(datenum(clock),31)];
 fprintf(fid,'%s \n',txt);
 
 txt = '*year MM DD HH  LAT  LON      Dm     Vm      MaxW   R100  R50    R35    B      A     Pdrop';
@@ -129,7 +126,7 @@ else
 %      [YY MM DD] = datevec(handles.Toolbox(tb).Input.Date{i});
 %      dattim     = [ num2str(YY,'%04d') ' ' num2str(MM,'%02d') ' ' ...
 %                     num2str(DD,'%02d') ' ' num2str(handles.Toolbox(tb).Input.Time{i},'%02d')];
-     dattim=D3DTimeString(handles.Toolbox(tb).Input.Date(i),'yyyy mm dd HH');
+     dattim=datestr(handles.Toolbox(tb).Input.Date(i),'yyyy mm dd HH');
      if i==1
        txt=[ dattim ' ' ...
              num2str(handles.Toolbox(tb).Input.TrY(i),'%6.2f') ' ' num2str(handles.Toolbox(tb).Input.TrX(i),'%6.2f') '  ' ...
@@ -170,7 +167,7 @@ fprintf(fout,'%s\n','SPIDERS_WEB_DIMENS. = 100  36');
 fprintf(fout,'%s\n','RADIUS_OF_CYCLONE   = 400000.000');
 fprintf(fout,'%s\n','WIND CONVERSION FAC = 1.00');
 fprintf(fout,'%s\n','WIND CONV. FAC (TRK)= 1.00');
-itdat=D3DTimeString(handles.Model(md).Input(ad).ItDate,'yyyymmdd HHMM');
+itdat=datestr(handles.Model(md).Input(ad).ItDate,'yyyymmdd HHMM');
 %stdat=D3DTimeString(handles.Model(md).Input(ad).ItDate,'yyyymmdd HHMM');
 fprintf(fout,'%s%s%s\n','D3D_START_DATE      = ',itdat,'  UTC');
 %tim=(handles.Model(md).Input(ad).StopTime-handles.Model(md).Input(ad).StartTime)*1440;
