@@ -1,0 +1,85 @@
+function handles=ddb_makeMenu(handles)
+
+%% File
+uimenu('Label','File','Tag','menuFile');
+handles=ddb_addMenuItem(handles,'File','New',                     'Callback',{@ddb_menuFile});
+handles=ddb_addMenuItem(handles,'File','Open',                    'Callback',{@ddb_menuFile});
+handles=ddb_addMenuItem(handles,'File','Add Domain',              'Callback',{@ddb_menuFile});
+handles=ddb_addMenuItem(handles,'File','Open Domains',            'Callback',{@ddb_menuFile});
+handles=ddb_addMenuItem(handles,'File','Save',                    'Callback',{@ddb_menuFile},'Separator','on');
+handles=ddb_addMenuItem(handles,'File','Save As ...',             'Callback',{@ddb_menuFile});
+handles=ddb_addMenuItem(handles,'File','Save All',                'Callback',{@ddb_menuFile},'Separator','on');
+handles=ddb_addMenuItem(handles,'File','Save All As ...',         'Callback',{@ddb_menuFile});
+handles=ddb_addMenuItem(handles,'File','Save All Domains',        'Callback',{@ddb_menuFile});
+handles=ddb_addMenuItem(handles,'File','Open Landboundary',       'Callback',{@ddb_menuFile},'Separator','on');
+handles=ddb_addMenuItem(handles,'File','Select Working Directory','Callback',{@ddb_menuFile},'Separator','on');
+handles=ddb_addMenuItem(handles,'File','Exit',                    'Callback',{@ddb_menuFile},'Separator','on');
+
+%% Toolbox
+uimenu('Label','Toolbox','Tag','menuToolbox');
+for k=1:length(handles.Toolbox)
+    if k==2
+        handles=ddb_addMenuItem(handles,'Toolbox',handles.Toolbox(k).Name,'Callback',{@ddb_menuToolbox},'longname',handles.Toolbox(k).LongName,'Separator','on');
+    else
+        handles=ddb_addMenuItem(handles,'Toolbox',handles.Toolbox(k).Name,'Callback',{@ddb_menuToolbox,},'longname',handles.Toolbox(k).LongName);
+    end
+end
+
+%% Models
+uimenu('Label','Model','Tag','menuModel');
+for k=1:length(handles.Model)
+    handles=ddb_addMenuItem(handles,'Model',handles.Model(k).Name,     'Callback',{@ddb_menuModel},'longname',handles.Model(k).LongName,'Checked','off');
+end
+
+%% Domain
+uimenu('Label','Domain','Tag','menuDomain');
+handles=ddb_addMenuItem(handles,'Domain','Add Domain ...',      'Callback',{@ddb_menuDomain});
+handles=ddb_addMenuItem(handles,'Domain','tst',                 'Callback',{@ddb_menuDomain},'Separator','on','HandleName','FirstDomain');
+
+
+%% Bathymetry
+uimenu('Label','Bathymetry','Tag','menuBathymetry');
+for i=1:handles.Bathymetry.NrDatasets
+    if strcmpi(handles.Bathymetry.Datasets{i},handles.ScreenParameters.BackgroundBathymetry)
+        handles=ddb_addMenuItem(handles,'Bathymetry',handles.Bathymetry.Datasets{i},'Callback',{@ddb_menuBathymetry},'Checked','on');
+    else
+        handles=ddb_addMenuItem(handles,'Bathymetry',handles.Bathymetry.Datasets{i},'Callback',{@ddb_menuBathymetry},'Checked','off');
+    end
+end
+
+%% View -> from now model specific items to be filled in by a model select function (for example: ddb_selectDelft3DFLOW.m)
+uimenu('Label','View','Tag','menuView');
+handles=ddb_addMenuItem(handles,'View','Background Bathymetry','Callback',{@ddb_menuView},'Checked','on','longname','Bathymetry');
+handles=ddb_addMenuItem(handles,'View','Land Boundaries',     'Callback',{@ddb_menuView},'Checked','on','longname','World Vector Shoreline');
+handles=ddb_addMenuItem(handles,'View','Cities',              'Callback',{@ddb_menuView});
+handles=ddb_addMenuItem(handles,'View','Model',     'longname','Model specific items','Separator','on');
+% handles=ddb_addMenuItem(handles,'View','Grid',                'Callback',{@ddb_menuView},'Separator','on','Checked','on');
+% handles=ddb_addMenuItem(handles,'View','Model Bathymetry',    'Callback',{@ddb_menuView},'Checked','on');
+% handles=ddb_addMenuItem(handles,'View','Open Boundaries',     'Callback',{@ddb_menuView},'Checked','on');
+% handles=ddb_addMenuItem(handles,'View','Observation Points',  'Callback',{@ddb_menuView},'Checked','on');
+% handles=ddb_addMenuItem(handles,'View','Cross Sections',      'Callback',{@ddb_menuView},'Checked','on');
+% handles=ddb_addMenuItem(handles,'View','Thin Dams',           'Callback',{@ddb_menuView},'Checked','on');
+% handles=ddb_addMenuItem(handles,'View','Dry Points',          'Callback',{@ddb_menuView},'Checked','on');
+handles=ddb_addMenuItem(handles,'View','Settings',            'Callback',{@ddb_menuView},'Separator','on');
+
+%% Coordinate System
+uimenu('Label','Coordinate System','Tag','menuCoordinateSystem');
+handles=ddb_addMenuItem(handles,'CoordinateSystem','WGS 84',               'Callback',{@ddb_menuCoordinateSystem},'Checked','on','HandleName','Geographic');
+handles=ddb_addMenuItem(handles,'CoordinateSystem','Other Geographic ...',     'Callback',{@ddb_menuCoordinateSystem});
+handles=ddb_addMenuItem(handles,'CoordinateSystem','Amersfoort / RD New',  'Callback',{@ddb_menuCoordinateSystem},'Separator','on','HandleName','Cartesian');
+handles=ddb_addMenuItem(handles,'CoordinateSystem','Other Cartesian ...',      'Callback',{@ddb_menuCoordinateSystem});
+handles=ddb_addMenuItem(handles,'CoordinateSystem','WGS 84 / UTM zone 31N','Callback',{@ddb_menuCoordinateSystem},'Separator','on','HandleName','UTM');
+handles=ddb_addMenuItem(handles,'CoordinateSystem','Select UTM Zone ...',  'Callback',{@ddb_menuCoordinateSystem});
+
+%% Options
+uimenu('Label','Options','Tag','menuOptions');
+handles=ddb_addMenuItem(handles,'Options','Coordinate Conversion','Callback',{@ddb_menuOptions});
+handles=ddb_addMenuItem(handles,'Options','Quickplot',            'Callback',{@ddb_menuOptions});
+handles=ddb_addMenuItem(handles,'Options','Muppet',               'Callback',{@ddb_menuOptions});
+handles=ddb_addMenuItem(handles,'Options','Ldb Tool',             'Callback',{@ddb_menuOptions});
+
+%% Help
+uimenu('Label','Help','Tag','menuHelp');
+handles=ddb_addMenuItem(handles,'Help','Deltares Online',        'Callback',{@ddb_menuHelp});
+handles=ddb_addMenuItem(handles,'Help','Delft Dashboard Online', 'Callback',{@ddb_menuHelp});
+handles=ddb_addMenuItem(handles,'Help','About Delft Dashboard',  'Callback',{@ddb_menuHelp});

@@ -1,0 +1,181 @@
+function handles = ddb_dnami_compute(handles)
+
+wb = waitbox('Generating Initial Tsunami ...');
+
+progdir=[handles.ToolBoxDir 'tsunami'];
+
+workdir=pwd;
+
+degrad=pi/180;
+raddeg=180/pi;
+
+nseg=handles.Toolbox(tb).Input.NrSegments;
+
+for i=1:nseg
+   userfaultL(i)=handles.Toolbox(tb).Input.FaultLength(i);
+   strike    (i)=handles.Toolbox(tb).Input.Strike(i);
+   dip       (i)=handles.Toolbox(tb).Input.Dip(i);
+   slip      (i)=handles.Toolbox(tb).Input.SlipRake(i);
+end    
+
+Mw=handles.Toolbox(tb).Input.Magnitude;
+totflength=handles.Toolbox(tb).Input.TotalFaultLength;
+fwidth=handles.Toolbox(tb).Input.FaultWidth;
+disloc=handles.Toolbox(tb).Input.Dislocation;
+fdtop=handles.Toolbox(tb).Input.DepthFromTop;
+
+faultX=handles.Toolbox(tb).Input.FaultX;
+faultY=handles.Toolbox(tb).Input.FaultY;
+xvrt=handles.Toolbox(tb).Input.VertexX;
+yvrt=handles.Toolbox(tb).Input.VertexY;
+
+filout=['dtt_out.txt'];
+fid=fopen(filout,'w');
+
+fprintf(fid,'%s %s\n','* East   North  strike    area   depth  dip   lambda         mu', .....
+                      '    U1    U2      U3     L     W     name     Figure');
+fprintf(fid,'%s %s \n','* (km)   (km)  (deg CW N)  0/1  (km)   (deg)         ', .....
+            '             (mm)   (mm)    (mm)  (km)   (km)            ');
+%
+% assume strike and fault direction are identical (as in the rest of the program)
+% i.e. U3 == 0 always
+%
+utmz = fix( ( faultX(1) / 6 ) + 31);
+for i=1:nseg
+    [x,y] = ddb_ddb_deg2utm(xvrt(i,4),yvrt(i,4),utmz);
+    fd = fwidth*sin(dip(i)*degrad) + fdtop;
+    x=x/1000;
+    y=y/1000;
+    U1=disloc*cos(slip(i)*degrad)*1000;
+    U2=disloc*sin(slip(i)*degrad)*1000;
+    U3=0;
+    txt=['Segment' int2str(i)];
+    fprintf(fid,'%s %6.1f %6.1f %6.1f %2s %6.1f %6.1f %s %6.0f %6.0f %6.0f %6.1f %6.1f %s %s\n', ......
+        ' ',x,y,strike(i), '        1',fd,dip(i),' 4.39e+9   3.64e+9 ', ......
+        U1,U2,U3,userfaultL(i),fwidth,txt,' xxx');
+end
+fclose(fid);
+%
+% Write data to file 2; grid input for the OKADA model
+%
+filout=['gridspec.txt'];
+fid=fopen(filout,'w');
+%
+% First the zone
+%
+axes(handles.GUIHandles.Axis);
+xgrdarea=get(gca,'XLim');
+ygrdarea=get(gca,'YLim');
+grdsize=(xgrdarea(2)-xgrdarea(1))/200;
+%grdsize=(xgrdarea(2)-xgrdarea(1))/100;
+
+fprintf(fid,'%s %4.0f %6.1f %6.1f\n', 'Z ', utmz,((utmz-1)*6-180),ygrdarea(1));
+%
+% Simple Grid; single file no mask
+%
+Mg=fix((xgrdarea(2)-xgrdarea(1))/grdsize) + 1;
+Ng=fix((ygrdarea(2)-ygrdarea(1))/grdsize) + 1;
+fprintf(fid,'%s %12.5f %12.5f %12.5f %12.5f %5s %5s\n', 'G ', .....
+        xgrdarea(1),ygrdarea(1),grdsize,grdsize,int2str(Mg),int2str(Ng));
+
+ngfile=1;
+fprintf(fid,'%s %s\n', 'S ', [workdir '\' handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).GrdFile]);
+fprintf(fid,'%s %s\n', 'D ', [workdir '\' handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).DepFile]);
+fclose(fid);
+pause(2);
+%
+% execute program
+%
+evaltxt=[progdir '\rngchn_init.exe ' workdir '\gridspec.txt ' workdir '\dtt_out.txt ' workdir '\disp.xyz ascii'];
+system(evaltxt);
+%
+%present result only on the simple grid file
+%
+close(wb);
+fig3 = figure('Tag','Figure3','Name', 'Result');
+set(fig3,'menubar','none');
+set(fig3,'toolbar','figure');
+set(fig3,'renderer','opengl');
+tbh = findall(fig3,'Type','uitoolbar');
+delete(findall(tbh,'TooltipString','Edit Plot'));
+delete(findall(tbh,'TooltipString','Rotate 3D'));
+delete(findall(tbh,'TooltipString','Show Plot Tools and Dock Figure'));
+delete(findall(tbh,'TooltipString','New Figure'));
+delete(findall(tbh,'TooltipString','Open File'));
+delete(findall(tbh,'TooltipString','Save Figure'));
+delete(findall(tbh,'TooltipString','Print Figure'));
+delete(findall(tbh,'TooltipString','Data Cursor'));
+delete(findall(tbh,'TooltipString','Insert Colorbar'));
+delete(findall(tbh,'TooltipString','Insert Legend'));
+delete(findall(tbh,'TooltipString','Hide Plot Tools'));
+delete(findall(tbh,'TooltipString','Show Plot Tools'));
+
+title('Initial Tsunami');
+
+xrange = xgrdarea(1):grdsize:xgrdarea(2); M = length(xrange);
+yrange = ygrdarea(1):grdsize:ygrdarea(2); N = length(yrange);
+
+[X Y] = meshgrid(xrange,yrange);
+
+dp=ddb_wldep('read','disp.ini',[M N]);
+dp(dp==-999)=NaN;
+surf(X,Y,dp');
+shading flat;
+grid on;
+hold on;
+
+[xldb,yldb]=landboundary('read',[handles.GeoDir '\worldcoastline5000000.ldb']);
+z=zeros(size(xldb))+10;
+landb=plot3(xldb,yldb,z,'k');
+
+[xplates,yplates]=landboundary('read',[handles.GeoDir '\plates2.ldb']);
+zplates=zeros(size(xplates))+10;
+h=plot3(xplates,yplates,zplates);
+set(h,'Color',[1.0 0.5 0.00]);
+set(h,'LineWidth',1.5);
+set(h,'HitTest','off');
+
+xlabel ('X');
+ylabel ('Y');
+clbar=colorbar;
+set(get(clbar,'YLabel'),'String','Initial water level (m w.r.t. MSL)');
+axis equal;
+view(2);
+set(gca,'XLim',xgrdarea,'YLim',ygrdarea);
+
+
+if ~isempty(handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).GrdFile)
+    s=handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).GrdFile;
+    ii=findstr(s,'.grd');
+    fname=[handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).GrdFile(1:ii-1) '.ini'];
+else
+    fname=handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).AttName;
+end
+
+[filename, pathname, filterindex] = uiputfile('*.ini', 'Select Initial Conditions File',fname);
+if strcmpi(pathname(1:end-1),pwd)
+    handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).IniFile=filename;
+else
+    handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).IniFile=[pathname filename];
+end
+handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).InitialConditions='ini';
+
+evaltxt=['! move ' fname ' ' filename];
+eval(evaltxt);
+
+ButtonName = questdlg('Reset all boundaries to Riemann?','','No', 'Yes', 'Yes');
+switch ButtonName,
+    case 'Yes',
+        id=handles.ActiveDomain;
+        for nb=1:handles.Model(handles.ActiveModel.Nr).Input(id).NrOpenBoundaries
+            handles.Model(handles.ActiveModel.Nr).Input(id).OpenBoundaries(nb).Type='R';
+            handles.Model(handles.ActiveModel.Nr).Input(id).OpenBoundaries(nb).Forcing='T';
+            t0=handles.Model(handles.ActiveModel.Nr).Input(id).StartTime;
+            t1=handles.Model(handles.ActiveModel.Nr).Input(id).StopTime;
+            handles.Model(handles.ActiveModel.Nr).Input(id).OpenBoundaries(nb).TimeSeriesT=[t0 t1];
+            handles.Model(handles.ActiveModel.Nr).Input(id).OpenBoundaries(nb).TimeSeriesA=[0.0 0.0];
+            handles.Model(handles.ActiveModel.Nr).Input(id).OpenBoundaries(nb).TimeSeriesB=[0.0 0.0];
+        end
+end
+
+figure(handles.GUIHandles.MainWindow);

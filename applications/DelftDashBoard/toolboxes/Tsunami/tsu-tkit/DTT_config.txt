@@ -1,0 +1,59 @@
+****************************************************
+* Delft Tsunami Toolkit Config file                *
+* ---------------------                            *
+*                                                  *
+* The keywords are case-INsenitive, but it MUST    *
+* start at the 1st col. and contained within 1 line*
+*                                                  *
+****************************************************
+Directories
+****************************************************
+Location of program dir
+Location of default data & grid + Workdirectory
+
+Progdir=E:\work\DelftAlmighty\DelftAlmighty_v1.09\toolbox\tsunami\tsu-tkit\
+Datadir=E:\work\DelftAlmighty\DelftAlmighty_v1.09\toolbox\tsunami\tsu-tkit\default\
+Workdir=E:\work\DelftAlmighty\DelftAlmighty_v1.09\toolbox\tsunami\tsu-tkit\
+Tooldir=c:\delft3d\w32\matlab\
+
+***************************************************************************************************************************************
+GUI output settings
+***************************************************************************************************************************************
+Grid definition (for presenting the computed data on Fig3) [degrees]
+GridAreaLft=90
+GridAreaRgt=100
+GridAreaBot=-10
+GridAreaTop=12
+GridSize=0.025
+
+Allowed difference in the length of the fault Area
+ (between computed by the program and set by user)
+TolerancefLength=0.10
+
+Options to detrmine the fault area, names below refers to the authors
+        {1 = Ward 2004;
+         2 = Coopersmith / Wells 1994 [Dreger 1999];
+         3 = average (Jef);
+         4 = Max. Length and Max width from both options
+        }
+Area_eq=4
+
+***************************************************************************************************************************************
+Grid files for the Output
+***************************************************************************************************************************************
+
+Interpolate data to the following grid & depth files (used as masker)
+Files need to be available in the workdirectory
+NoGridFile=1
+grf1=x07d-abcde-overall.grd
+dpf1=x07d-overall.dep
+grf2=east04-fine200.grd
+grf3=nias01-fine200.grd
+grf4=north02-fine200.grd
+grf5=simeulue01-fine200.grd
+grf6=west02-fine200.grd
+dpf2=east06-fine200.dep
+dpf3=nias02-fine200.dep
+dpf4=north06b3-fine200.dep
+dpf5=simeulue03-fine200.dep
+dpf6=west06-fine200.dep

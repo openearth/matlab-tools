@@ -1,0 +1,14 @@
+function ddb_selectModel
+
+handles=getHandles;
+
+ii=strmatch(handles.ActiveModel.Name,{handles.Model.Name},'exact');
+
+% handles.ActiveModel.Name=model;
+% handles.ActiveModel.Nr=ii;
+
+% setHandles(handles);
+
+feval(handles.Model(ii).CallFcn);
+
+tabpanel(handles.GUIHandles.MainWindow,'tabpanel','select','Toolbox');

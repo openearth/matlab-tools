@@ -1,0 +1,299 @@
+function ddb_editD3DFlowTransportConditionsTimeSeries
+
+h=guidata(findobj('Tag','MainWindow'));
+
+kmax=h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).KMax;
+handles.KMax=kmax;
+handles.Bnd=h.GUIData.ActiveOpenBoundary;
+
+handles.ActiveConstituent=1;
+
+k=0;
+if h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Salinity.Include
+    k=k+1;
+    handles.Constituents{k}='Salinity';
+    handles.Constituent(k)=handles.Bnd.Salinity;
+end
+if h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Temperature.Include
+    k=k+1;
+    handles.Constituents{k}='Temperature';
+    handles.Constituent(k)=handles.Bnd.Temperature;
+end
+if h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Sediments
+    for j=1:h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).NrSediments
+        k=k+1;
+        handles.Constituents{k}=h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Sediment(j).Name;
+        handles.Constituent(k)=handles.Bnd.Sediment(j);
+    end
+end
+if h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Tracers
+    for j=1:h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).NrTracers
+        k=k+1;
+        handles.Constituents{k}=h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Tracer(j).Name;
+        handles.Constituent(k)=handles.Bnd.Tracer(j);
+    end
+end
+
+% prf=handles.Bnd.Profile;
+
+MakeNewWindow('Time Series Transport Boundary Conditions',[590 490],'modal',[handles.SettingsDir '\icons\deltares.gif']);
+
+uipanel('Title','Time Series', 'Units','pixels','Position',[40 80 510 230],'Tag','UIControl');
+
+cltp={'edittime','editreal','editreal','editreal','editreal'};
+callbacks={@EditTable,@EditTable,@EditTable,@EditTable,@EditTable};
+wdt=[120 60 60 60 60];
+for i=1:2
+    data{i,1}=now;
+    data{i,2}=0;
+    data{i,3}=0;
+    data{i,4}=0;
+    data{i,5}=0;
+end
+table(gcf,'table','create','position',[50 90],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons');
+
+handles.GUIHandles.TextTime                = uicontrol(gcf,'Style','text','String','Time','Position',[50 265 120 15],'HorizontalAlignment','center');
+handles.GUIHandles.Textyyyy                = uicontrol(gcf,'Style','text','String','yyyy mm dd HH MM SS','Position',[50 250 120 15],'HorizontalAlignment','center');
+
+handles.GUIHandles.TextEndASurface         = uicontrol(gcf,'Style','text','String','End A',  'Position',[170 265 60 15],'HorizontalAlignment','center');
+handles.GUIHandles.TextSurfaceA            = uicontrol(gcf,'Style','text','String','Surface','Position',[170 250 60 15],'HorizontalAlignment','center');
+handles.GUIHandles.TextEndBSurface         = uicontrol(gcf,'Style','text','String','End B',  'Position',[230 265 60 15],'HorizontalAlignment','center');
+handles.GUIHandles.TextSurfaceB            = uicontrol(gcf,'Style','text','String','Surface','Position',[230 250 60 15],'HorizontalAlignment','center');
+
+handles.GUIHandles.TextEndABottom          = uicontrol(gcf,'Style','text','String','End A',  'Position',[290 265 60 15],'HorizontalAlignment','center');
+handles.GUIHandles.TextBottomA             = uicontrol(gcf,'Style','text','String','Bottom', 'Position',[290 250 60 15],'HorizontalAlignment','center');
+handles.GUIHandles.TextEndBBottom          = uicontrol(gcf,'Style','text','String','End B',  'Position',[350 265 60 15],'HorizontalAlignment','center');
+handles.GUIHandles.TextBottomB             = uicontrol(gcf,'Style','text','String','Bottom', 'Position',[350 250 60 15],'HorizontalAlignment','center');
+
+uipanel('Title','Boundary Section','Units','pixels','Position',[40 320 390 150]);
+handles.GUIHandles.TextBoundary      = uicontrol(gcf,'Style','text','String','Boundary :' ,'Position',[50 430 200 20],'HorizontalAlignment','left');
+handles.GUIHandles.TextBoundaryName  = uicontrol(gcf,'Style','text','String',handles.Bnd.Name,'Position',[125 430 150 20],'HorizontalAlignment','left');
+handles.GUIHandles.TextConstituent   = uicontrol(gcf,'Style','text','String','Quantity :','Position',[50 406 200 20],'HorizontalAlignment','left');
+handles.GUIHandles.SelectConstituent = uicontrol(gcf,'Style','popupmenu','String',handles.Constituents,'Position',[125 410 100 20],'BackgroundColor',[1 1 1]);
+handles.GUIHandles.TextProfile     = uicontrol(gcf,'Style','text','String','Profile :','Position',[50 381 200 20],'HorizontalAlignment','left');
+handles.Profiles={'Uniform','Linear','Step','Per Layer'};
+handles.GUIHandles.SelectProfile   = uicontrol(gcf,'Style','popupmenu','String',handles.Profiles,'Position',[125 385 100 20],'BackgroundColor',[1 1 1]);
+handles.GUIHandles.TextProfileJump = uicontrol(gcf,'Style','text','String','Step (m) :','Position',[50 356 200 20],'HorizontalAlignment','left');
+handles.GUIHandles.EditProfileJump = uicontrol(gcf,'Style','edit','String',' ','Position',[125 360 100 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1]);
+for k=1:kmax
+    str{k}=num2str(k);
+end
+handles.GUIHandles.TextLayer   = uicontrol(gcf,'Style','text','String','Layer : ','Position',[50 331 50 20],'HorizontalAlignment','left');
+handles.GUIHandles.SelectLayer = uicontrol(gcf,'Style','popupmenu','String',str,'Position',[125 335 30 20],'BackgroundColor',[1 1 1]);
+
+handles.GUIHandles.PushOK     = uicontrol(gcf,'Style','pushbutton','String','OK',    'Position',[370 30 60 20]);
+handles.GUIHandles.PushCancel = uicontrol(gcf,'Style','pushbutton','String','Cancel','Position',[300 30 60 20]);
+
+set(handles.GUIHandles.PushOK,              'Callback',{@PushOK_Callback});
+set(handles.GUIHandles.PushCancel,          'Callback',{@PushCancel_Callback});
+set(handles.GUIHandles.SelectLayer,         'Callback',{@SelectLayer_Callback});
+set(handles.GUIHandles.SelectConstituent,   'Callback',{@SelectConstituent_Callback});
+set(handles.GUIHandles.SelectProfile,       'Callback',{@SelectProfile_Callback});
+set(handles.GUIHandles.EditProfileJump,     'Callback',{@EditProfileJump_Callback});
+
+SetUIBackgroundColors;
+
+RefreshAll(handles);
+
+guidata(gcf,handles);
+
+%%
+function PushOK_Callback(hObject,eventdata)
+
+handles=guidata(gcf);
+h=guidata(findobj('Tag','MainWindow'));
+ib=h.GUIData.ActiveOpenBoundary;
+ic=0;
+if h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Salinity.Include
+    ic=ic+1;
+    handles.Model(md).Input(ad).OpenBoundaries(ib).Salinity=handles.Constituent(ic);
+end
+if h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Temperature.Include
+    ic=ic+1;
+    handles.Model(md).Input(ad).OpenBoundaries(ib).Temperature=handles.Constituent(ic);
+end
+if h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Sediments
+    for j=1:h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).NrSediments
+        ic=ic+1;
+        handles.Model(md).Input(ad).OpenBoundaries(ib).Sediment(j)=handles.Constituent(ic);
+    end
+end
+if h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Tracers
+    for j=1:h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).NrTracers
+        ic=ic+1;
+        handles.Model(md).Input(ad).OpenBoundaries(ib).Tracer(j)=handles.Constituent(ic);
+    end
+end
+guidata(findobj('Tag','MainWindow'),h);
+closereq;
+
+%%
+function PushCancel_Callback(hObject,eventdata)
+closereq;
+
+%%
+function SelectConstituent_Callback(hObject,eventdata)
+handles=guidata(gcf);
+k=get(hObject,'Value');
+handles.ActiveConstituent=k;
+RefreshAll(handles);
+guidata(gcf,handles);
+
+%%
+function SelectLayer_Callback(hObject,eventdata)
+handles=guidata(gcf);
+RefreshTable(handles);
+guidata(gcf,handles);
+
+%%
+function SelectProfile_Callback(hObject,eventdata)
+handles=guidata(gcf);
+k=get(hObject,'Value');
+ic=handles.ActiveConstituent;
+switch k
+    case 1
+        handles.Constituent(ic).Profile='Uniform';
+    case 2
+        handles.Constituent(ic).Profile='Linear';
+    case 3
+        handles.Constituent(ic).Profile='Step';
+    case 4
+        handles.Constituent(ic).Profile='3D-Profile';
+end
+nr=handles.Constituent(ic).NrTimeSeries;
+switch handles.Constituent(ic).Profile
+    case{'Linear','Step'}
+        if size(handles.Constituent(ic).TimeSeriesA,2)<2
+            handles.Constituent(ic).TimeSeriesA=zeros(nr,2);
+            handles.Constituent(ic).TimeSeriesB=zeros(nr,2);
+        end
+    case{'3D-Profile'}
+        kmax=handles.KMax;
+        if size(handles.Constituent(ic).TimeSeriesA,2)<kmax
+            handles.Constituent(ic).TimeSeriesA=zeros(nr,kmax);
+            handles.Constituent(ic).TimeSeriesB=zeros(nr,kmax);
+        end
+end
+guidata(gcf,handles);
+RefreshAll(handles);
+
+%%
+function EditProfileJump_Callback(hObject,eventdata)
+handles=guidata(gcf);
+ic=handles.ActiveConstituent;
+str=get(hObject,'String');
+handles.Constituent(ic).Discontinuity=str2double(str);
+guidata(gcf,handles);
+
+%%
+function EditTable
+handles=guidata(gcf);
+k=get(handles.GUIHandles.SelectLayer,'Value');
+ic=handles.ActiveConstituent;
+data=table(gcf,'table','getdata');
+nr=size(data,1);
+for i=1:nr
+    switch lower(handles.Constituent(ic).Profile)
+        case{'linear','step'}
+            handles.Constituent(ic).TimeSeriesT(i)=data{i,1};
+            handles.Constituent(ic).TimeSeriesA(i,1)=data{i,2};
+            handles.Constituent(ic).TimeSeriesB(i,1)=data{i,3};
+            handles.Constituent(ic).TimeSeriesA(i,2)=data{i,4};
+            handles.Constituent(ic).TimeSeriesB(i,2)=data{i,5};
+        otherwise
+            handles.Constituent(ic).TimeSeriesT(i)=data{i,1};
+            handles.Constituent(ic).TimeSeriesA(i,k)=data{i,2};
+            handles.Constituent(ic).TimeSeriesB(i,k)=data{i,3};
+    end
+end
+handles.Constituent(ic).NrTimeSeries=nr;
+guidata(gcf,handles);
+
+%%
+function RefreshAll(handles)
+
+ic=handles.ActiveConstituent;
+if handles.KMax>1
+    set(handles.GUIHandles.TextProfile,'Enable','on');
+    set(handles.GUIHandles.SelectProfile,'Enable','on');
+    set(handles.GUIHandles.SelectProfile,'String',handles.Profiles);
+    prf=handles.Constituent(ic).Profile;
+    switch lower(prf)
+        case{'uniform'}
+            set(handles.GUIHandles.SelectProfile,'Value',1);
+        case{'linear'}
+            set(handles.GUIHandles.SelectProfile,'Value',2);
+        case{'step'}
+            set(handles.GUIHandles.SelectProfile,'Value',3);
+        case{'3d-profile'}
+            set(handles.GUIHandles.SelectProfile,'Value',4);
+    end
+    switch lower(prf)
+        case{'uniform','linear','step'}
+            set(handles.GUIHandles.SelectLayer,'Enable','off');
+            set(handles.GUIHandles.SelectLayer,'Value',1);
+            set(handles.GUIHandles.TextLayer,  'Enable','off');
+        case{'3d-profile'}
+            set(handles.GUIHandles.SelectLayer,'Enable','on');
+            set(handles.GUIHandles.TextLayer,  'Enable','on');
+    end
+    switch lower(prf)
+        case{'uniform','3d-profile'}
+            set(handles.GUIHandles.TextBottomA,   'Visible','off');
+            set(handles.GUIHandles.TextEndABottom,'Visible','off');
+            set(handles.GUIHandles.TextBottomB,   'Visible','off');
+            set(handles.GUIHandles.TextEndBBottom,'Visible','off');
+            set(handles.GUIHandles.TextSurfaceA,  'Visible','off');
+            set(handles.GUIHandles.TextSurfaceB,  'Visible','off');
+        otherwise
+            set(handles.GUIHandles.TextBottomA,   'Visible','on');
+            set(handles.GUIHandles.TextEndABottom,'Visible','on');
+            set(handles.GUIHandles.TextBottomB,   'Visible','on');
+            set(handles.GUIHandles.TextEndBBottom,'Visible','on');
+            set(handles.GUIHandles.TextSurfaceA,  'Visible','on');
+            set(handles.GUIHandles.TextSurfaceB,  'Visible','on');
+    end
+    if strcmpi(prf,'step')
+        set(handles.GUIHandles.TextProfileJump,'Enable','on');
+        set(handles.GUIHandles.EditProfileJump,'Enable','on');
+        set(handles.GUIHandles.EditProfileJump,'String',num2str(handles.Constituent(ic).Discontinuity));
+    else
+        set(handles.GUIHandles.TextProfileJump,'Enable','off');
+        set(handles.GUIHandles.EditProfileJump,'Enable','off');
+        set(handles.GUIHandles.EditProfileJump,'String','');
+    end
+else
+    set(handles.GUIHandles.TextProfile,'Enable','off');
+    set(handles.GUIHandles.SelectProfile,'Enable','off');
+    set(handles.GUIHandles.TextProfileJump,'Enable','off');
+    set(handles.GUIHandles.EditProfileJump,'Enable','off');
+    set(handles.GUIHandles.EditProfileJump,'String','');
+end
+
+RefreshTable(handles);
+
+%%
+function RefreshTable(handles)
+k=get(handles.GUIHandles.SelectLayer,'Value');
+ic=handles.ActiveConstituent;
+enab=zeros(handles.Constituent(ic).NrTimeSeries,5)+1;
+switch lower(handles.Constituent(ic).Profile)
+    case{'linear','step'}
+        for i=1:handles.Constituent(ic).NrTimeSeries
+            data{i,1}=handles.Constituent(ic).TimeSeriesT(i);
+            data{i,2}=handles.Constituent(ic).TimeSeriesA(i,1);
+            data{i,3}=handles.Constituent(ic).TimeSeriesB(i,1);
+            data{i,4}=handles.Constituent(ic).TimeSeriesA(i,2);
+            data{i,5}=handles.Constituent(ic).TimeSeriesB(i,2);
+        end
+    otherwise
+        for i=1:handles.Constituent(ic).NrTimeSeries
+            data{i,1}=handles.Constituent(ic).TimeSeriesT(i);
+            data{i,2}=handles.Constituent(ic).TimeSeriesA(i,k);
+            data{i,3}=handles.Constituent(ic).TimeSeriesB(i,k);
+            data{i,4}=[];
+            data{i,5}=[];
+        end
+        enab(:,end-1:end)=0;
+end
+table(gcf,'table','change','data',data,'enable',enab);

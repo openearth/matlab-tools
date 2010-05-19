@@ -1,0 +1,252 @@
+function ddb_zoomInOutPan(src,eventdata,zoommode,callback1, varargin1, callback2, varargin2) % Update Data, Figure handle
+
+handles=getHandles;
+
+h1=handles.GUIHandles.ToolBar.ZoomIn;
+h2=handles.GUIHandles.ToolBar.ZoomOut;
+h3=handles.GUIHandles.ToolBar.Pan;
+
+if zoommode==1 || zoommode==2
+    set(h3,'State','off');
+end
+if zoommode==1 || zoommode==3
+    set(h2,'State','off');
+end
+if zoommode==2 || zoommode==3
+    set(h1,'State','off');
+end
+
+pan off;
+
+switch(zoommode),
+    case 1
+        if strcmp(get(h1,'State'),'on')
+%            if ~isempty(callback1)
+                set(gcf, 'windowbuttonmotionfcn', {@MoveMouse, callback1, varargin1});
+%            end
+        else
+            ddb_setWindowButtonUpDownFcn;
+            ddb_setWindowButtonMotionFcn;
+        end
+    case 2
+        if strcmp(get(h2,'State'),'on')
+%            if ~isempty(callback1)
+                set(gcf, 'windowbuttonmotionfcn', {@MoveMouse, callback1, varargin1});
+%            end
+        else
+            ddb_setWindowButtonUpDownFcn;
+            ddb_setWindowButtonMotionFcn;
+        end
+    case 3
+        if strcmp(get(h3,'State'),'on')
+%            if ~isempty(callback1)
+                set(gcf, 'windowbuttonmotionfcn', {@MoveMouse, callback1, varargin1});
+%            end
+        else
+            ddb_setWindowButtonUpDownFcn;
+            ddb_setWindowButtonMotionFcn;
+        end
+    case 4
+        [xl,yl]=CompXYLim(handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange,handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange);
+        set(gca,'xlim',xl);
+        set(gca,'ylim',yl);
+        handles.ScreenParameters.XLim=xl;
+        handles.ScreenParameters.YLim=yl;
+        setHandles(handles);
+        if ~isempty(varargin2)
+            feval(callback2, varargin2);
+        else
+            feval(callback2);
+        end
+    case 5
+        if ~isempty(varargin2)
+            feval(callback2, varargin2);
+        else
+            feval(callback2);
+        end
+end
+
+%%
+function ZoomInOut(imagefig, varargins, callback, varargin)
+
+handles=getHandles;
+
+leftmouse=strcmp(get(gcf,'SelectionType'),'normal');
+rightmouse=strcmp(get(gcf,'SelectionType'),'alt');
+
+hzoomin=handles.GUIHandles.ToolBar.ZoomIn;
+
+if strcmp(get(hzoomin,'State'),'on')
+    zmin=1;
+else
+    zmin=0;
+end
+
+xl=get(gca,'xlim');
+yl=get(gca,'ylim');
+
+if (leftmouse==1 && zmin==1) || (rightmouse==1 && zmin==0)
+    % Zoom Out
+    point1 = get(gca,'CurrentPoint');
+    rect = rbbox;
+    point2 = get(gca,'CurrentPoint');
+    if rect(3)==0
+        xl=get(gca,'xlim');
+        yl=get(gca,'ylim');
+        point1=point1(1,1:2);
+        p1(1)=point1(1)-((xl(2)-xl(1))/4);
+        p1(2)=point1(2)-((yl(2)-yl(1))/4);
+        offset(1)=((xl(2)-xl(1))/2);
+        offset(2)=((yl(2)-yl(1))/2);
+    else
+        point1 = point1(1,1:2);
+        point2 = point2(1,1:2);
+        p1 = min(point1,point2);
+        offset = abs(point1-point2);
+    end
+    if ischar(callback)
+        xl(1)=p1(1);
+        yl(1)=p1(2);
+        xl(2)=p1(1)+offset(1);
+        yl(2)=p1(2)+offset(2);
+    else
+        [xl,yl]=CompXYLim([p1(1) p1(1)+offset(1) ],[p1(2) p1(2)+offset(2)],handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange);
+    end
+elseif (leftmouse==1 && zmin==0) || (rightmouse==1 && zmin==1)
+    % Zoom Out
+    point1 = get(gca,'CurrentPoint');
+    xl=get(gca,'xlim');
+    yl=get(gca,'ylim');
+    point1=point1(1,1:2);
+    p1(1)=point1(1)-((xl(2)-xl(1)));
+    p1(2)=point1(2)-((yl(2)-yl(1)));
+    offset(1)=2*((xl(2)-xl(1)));
+    offset(2)=2*((yl(2)-yl(1)));
+    if ischar(callback)
+        xl(1)=p1(1);
+        yl(1)=p1(2);
+        xl(2)=p1(1)+offset(1);
+        yl(2)=p1(2)+offset(2);
+    else
+        [xl,yl]=CompXYLim([p1(1) p1(1)+offset(1) ],[p1(2) p1(2)+offset(2)],handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange);
+    end
+end
+set(gca,'xlim',xl,'ylim',yl);
+handles.ScreenParameters.XLim=xl;
+handles.ScreenParameters.YLim=yl;
+
+setHandles(handles);
+
+varargin = varargin{:};
+
+h=findobj(gcf,'Tag','UIAutomaticallyRefreshBathymetry');
+if ~isempty(h)
+    if strcmp(get(h,'State'),'on')
+        if isa(callback,'function_handle')
+            if ~isempty(varargin)
+                feval(callback, varargin{:});
+            else
+                feval(callback);
+            end
+        end
+    end
+else
+    if isa(callback,'function_handle')
+        if ~isempty(varargin)
+            feval(callback, varargin{:});
+        else
+            feval(callback);
+        end
+    end
+end
+
+%%
+function MoveMouse(imagefig, varargins, callback, varargin)
+
+handles=getHandles;
+
+hzoomin  = handles.GUIHandles.ToolBar.ZoomIn;
+hzoomout = handles.GUIHandles.ToolBar.ZoomOut;
+hpan     = handles.GUIHandles.ToolBar.Pan;
+
+if strcmp(get(hzoomin,'State'),'on')
+    pntr='glassplus';
+    fn={@ZoomInOut, callback, varargin{:}};
+elseif strcmp(get(hzoomout,'State'),'on')
+    pntr='glassminus';
+    fn={@ZoomInOut, callback, varargin{:}};
+elseif strcmp(get(hpan,'State'),'on')
+    pntr='hand';
+    fn={@StartPan, callback, varargin{:}};
+else
+    pntr='arrow';
+    fn=[];
+end
+
+ddb_setWindowButtonUpDownFcn(fn,[]);
+ddb_updateCoordinateText(pntr);
+
+%%
+function StartPan(imagefig, varargins, callback, varargin)
+handles=getHandles;
+pos0=get(gca,'CurrentPoint');
+pos0=pos0(1,1:2);
+xl0=get(gca,'XLim');
+yl0=get(gca,'YLim');
+set(gcf, 'windowbuttonmotionfcn', {@PanMove,xl0,yl0,pos0,handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange});
+
+varargin = varargin{:};
+set(gcf, 'windowbuttonupfcn', {@StopPan, callback, varargin});
+setptr(gcf,'closedhand');
+
+%%
+function PanMove(imagefig, varargins,xl0,yl0,pos0,xrange,yrange)
+xl1=get(gca,'XLim');
+yl1=get(gca,'YLim');
+pos1=get(gca,'CurrentPoint');
+pos1=pos1(1,1:2);
+pos1(1)=xl0(1)+(xl0(2)-xl0(1))*(pos1(1)-xl1(1))/(xl1(2)-xl1(1));
+pos1(2)=yl0(1)+(yl0(2)-yl0(1))*(pos1(2)-yl1(1))/(yl1(2)-yl1(1));
+dpos=pos1-pos0;
+xl=xl0-dpos(1);
+yl=yl0-dpos(2);
+[xl,yl]=CompXYLim(xl,yl,xrange,yrange);
+set(gca,'XLim',xl,'YLim',yl);
+ddb_updateCoordinateText('closedhand');
+
+%%
+function StopPan(imagefig, varargins, callback, varargin)
+
+set(gcf, 'windowbuttonmotionfcn', {@MoveMouse, callback, varargin{1}});
+set(gcf, 'windowbuttonupfcn',[]);
+setptr(gcf,'hand');
+
+handles=getHandles;
+
+handles.ScreenParameters.XLim=get(gca,'XLim');
+handles.ScreenParameters.YLim=get(gca,'YLim');
+
+setHandles(handles);
+
+h=handles.GUIHandles.ToolBar.AutoRefreshBathymetry;
+
+if ~isempty(h)
+    if strcmp(get(h,'State'),'on')
+        if isa(callback,'function_handle')
+            if ~isempty(varargin)
+                feval(callback, varargin{:});
+            else
+                feval(callback);
+            end
+        end
+    end
+else
+    if isa(callback,'function_handle')
+        if ~isempty(varargin)
+            feval(callback, varargin{:});
+        else
+            feval(callback);
+        end
+    end
+end
+

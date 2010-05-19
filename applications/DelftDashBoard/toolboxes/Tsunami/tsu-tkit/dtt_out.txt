@@ -1,0 +1,3 @@
+* East   North  strike    area   depth  dip   lambda         mu     U1    U2      U3     L     W     name     Figure
+* (km)   (km)  (deg CW N)  0/1  (km)   (deg)                       (mm)   (mm)    (mm)  (km)   (km)             
+   771.4  300.2  314.0         1   30.9   20.0  4.39e+9   3.64e+9       0   5024      0  336.0   90.3 Segment1  xxx

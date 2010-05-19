@@ -1,0 +1,51 @@
+function ddb_editHLES
+
+h=guidata(findobj('Tag','MainWindow'));
+
+handles=h.Model(md).Input(ad);
+
+fig=MakeNewWindow('Horizontal Large Eddy Simulation',[300 250],'modal',[handles.SettingsDir '\icons\deltares.gif']);
+
+bgc=get(fig,'Color');
+
+handles.GUIHandles.EditHtural=uicontrol(gcf,'Style','edit','String',num2str(h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Htural),'Position',[210 200 60 20],'HorizontalAlignment','right');
+handles.GUIHandles.EditHturnd=uicontrol(gcf,'Style','edit','String',num2str(h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Hturnd),'Position',[210 175 60 20],'HorizontalAlignment','right');
+handles.GUIHandles.EditHturst=uicontrol(gcf,'Style','edit','String',num2str(h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Hturst),'Position',[210 150 60 20],'HorizontalAlignment','right');
+handles.GUIHandles.EditHturlp=uicontrol(gcf,'Style','edit','String',num2str(h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Hturlp),'Position',[210 125 60 20],'HorizontalAlignment','right');
+handles.GUIHandles.EditHturrt=uicontrol(gcf,'Style','edit','String',num2str(h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Hturrt),'Position',[210 100 60 20],'HorizontalAlignment','right');
+handles.GUIHandles.EditHturdm=uicontrol(gcf,'Style','edit','String',num2str(h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Hturdm),'Position',[210  75 60 20],'HorizontalAlignment','right');
+
+handles.GUIHandles.TextHtural=uicontrol(gcf,'Style','text','String','Slope in log-log spectrum [-]',          'Position',[25 197 175 20],'HorizontalAlignment','right','BackgroundColor',bgc);
+handles.GUIHandles.TextHturnd=uicontrol(gcf,'Style','text','String','Dimensional number [-]',                 'Position',[25 172 175 20],'HorizontalAlignment','right','BackgroundColor',bgc);
+handles.GUIHandles.TextHturst=uicontrol(gcf,'Style','text','String','Prandtl-Schmidt number [-]',             'Position',[25 147 175 20],'HorizontalAlignment','right','BackgroundColor',bgc);
+handles.GUIHandles.TextHturlp=uicontrol(gcf,'Style','text','String','Spatial low-pass filter coefficient [-]','Position',[25 122 175 20],'HorizontalAlignment','right','BackgroundColor',bgc);
+handles.GUIHandles.TextHturrt=uicontrol(gcf,'Style','text','String','Relaxation time [min]',                  'Position',[25  97 175 20],'HorizontalAlignment','right','BackgroundColor',bgc);
+handles.GUIHandles.TextHturdm=uicontrol(gcf,'Style','text','String','Molecular diffusivity [m2/s]',           'Position',[25  72 175 20],'HorizontalAlignment','right','BackgroundColor',bgc);
+
+handles.GUIHandles.PushOK     = uicontrol(gcf,'Style','pushbutton','String','OK',    'Position',[210 25 60 30]);
+handles.GUIHandles.PushCancel = uicontrol(gcf,'Style','pushbutton','String','Cancel','Position',[140 25 60 30]);
+
+set(handles.GUIHandles.PushOK,              'CallBack',{@PushOK_CallBack});
+set(handles.GUIHandles.PushCancel,          'CallBack',{@PushCancel_CallBack});
+
+SetUIBackgroundColors;
+
+guidata(findobj('Name','Horizontal Large Eddy Simulation'),handles);
+
+%%
+function PushOK_CallBack(hObject,eventdata)
+h2=guidata(findobj('Name','Horizontal Large Eddy Simulation'));
+handles=getHandles;
+handles.Model(md).Input(ad).Htural=str2double(get(h2.GUIHandles.EditHtural,'String'));
+handles.Model(md).Input(ad).Hturnd=str2double(get(h2.GUIHandles.EditHturnd,'String'));
+handles.Model(md).Input(ad).Hturst=str2double(get(h2.GUIHandles.EditHturst,'String'));
+handles.Model(md).Input(ad).Hturlp=str2double(get(h2.GUIHandles.EditHturlp,'String'));
+handles.Model(md).Input(ad).Hturrt=str2double(get(h2.GUIHandles.EditHturrt,'String'));
+handles.Model(md).Input(ad).Hturdm=str2double(get(h2.GUIHandles.EditHturdm,'String'));
+%    handles.Model(md).Input(ad).Hturel=1;
+setHandles(handles);
+closereq;
+
+%%
+function PushCancel_CallBack(hObject,eventdata)
+closereq;
