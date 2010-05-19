@@ -1,0 +1,52 @@
+table-name           'Boundary Section : 1'
+contents             'Uniform   '
+location             'west                '
+time-function        'non-equidistant'
+reference-time       20100518
+time-unit            'minutes'
+interpolation        'linear'
+parameter            'time                '  unit '[min]'
+parameter            'Sediment1            end A uniform'       unit '[kg/m3]'
+parameter            'Sediment1            end B uniform'       unit '[kg/m3]'
+records-in-table     2
+ 0.0000000e+000  0.0000000e+000  0.0000000e+000
+ 1.2000000e+002  0.0000000e+000  0.0000000e+000
+table-name           'Boundary Section : 1'
+contents             'Uniform   '
+location             'west                '
+time-function        'non-equidistant'
+reference-time       20100518
+time-unit            'minutes'
+interpolation        'linear'
+parameter            'time                '  unit '[min]'
+parameter            'Sediment2            end A uniform'       unit '[kg/m3]'
+parameter            'Sediment2            end B uniform'       unit '[kg/m3]'
+records-in-table     2
+ 0.0000000e+000  0.0000000e+000  0.0000000e+000
+ 1.2000000e+002  0.0000000e+000  0.0000000e+000
+table-name           'Boundary Section : 2'
+contents             'Uniform   '
+location             'east                '
+time-function        'non-equidistant'
+reference-time       20100518
+time-unit            'minutes'
+interpolation        'linear'
+parameter            'time                '  unit '[min]'
+parameter            'Sediment1            end A uniform'       unit '[kg/m3]'
+parameter            'Sediment1            end B uniform'       unit '[kg/m3]'
+records-in-table     2
+ 0.0000000e+000  0.0000000e+000  0.0000000e+000
+ 1.2000000e+002  0.0000000e+000  0.0000000e+000
+table-name           'Boundary Section : 2'
+contents             'Uniform   '
+location             'east                '
+time-function        'non-equidistant'
+reference-time       20100518
+time-unit            'minutes'
+interpolation        'linear'
+parameter            'time                '  unit '[min]'
+parameter            'Sediment2            end A uniform'       unit '[kg/m3]'
+parameter            'Sediment2            end B uniform'       unit '[kg/m3]'
+records-in-table     2
+ 0.0000000e+000  0.0000000e+000  0.0000000e+000
+ 1.2000000e+002  0.0000000e+000  0.0000000e+000
