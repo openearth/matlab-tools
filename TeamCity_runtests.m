@@ -63,7 +63,8 @@ catch me
         'status','ERROR');
     %% Remove template files
     delete('matlabruns.busy');
-    exit;
+    rethrow(me);
+%     exit;
 end
 
 try
@@ -80,6 +81,7 @@ try
         '_tutorial',...
         'KML_testdir',...
         'mtest',...
+        '1_automated_Testing',...
         ...
         ... These tests ask for user input....
         'rws_waterbase_read_test',...
@@ -129,8 +131,9 @@ catch me
         'errorDetails',me.getReport,...
         'status','ERROR');
     delete('matlabruns.busy');
-    exit;
+    rethrow(me);
+%     exit;
 end
 
 delete('matlabruns.busy');
-exit;
+%     exit;
