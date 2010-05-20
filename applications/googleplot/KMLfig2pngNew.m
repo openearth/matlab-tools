@@ -65,7 +65,7 @@ OPT.bgcolor            = [100 155 100];  % background color to be made transpare
 OPT.alpha              =      1;
 OPT.fileName           =     [];
 OPT.kmlName            =     []; % name in Google Earth Place list
-OPT.logo               =     '';
+OPT.logo               =     [];
 OPT.url                =     ''; % webserver storage needs absolute paths, local files can have relative paths. Only needed in mother KML.
 OPT.alpha              =      1;
 OPT.minLod             =     []; % minimum level of detail to keep a tile in view. Is calculated when left blank.
@@ -73,7 +73,7 @@ OPT.minLod0            =     -1; % minimum level of detail to keep most detailed
 OPT.maxLod             =     [];
 OPT.maxLod0            =     -1;
 OPT.dWE                =     []; % determines how much extra data to tiles to be able 
-OPT.dNS                =     []; % to generate them as fraction of size of smalles tile
+OPT.dNS                =     []; % to generate them as fraction of size of smallest tile
 OPT.timeIn             =     []; % time properties
 OPT.timeOut            =     [];
 OPT.timeFormat        = 'yyyy-mm-ddTHH:MM:SS';
@@ -185,8 +185,7 @@ end
 
 OPT.ha  = get(OPT.h ,'Parent');
 OPT.hf  = get(OPT.ha,'Parent');
-daspect = get(OPT.ha,'DataAspectRatio');
-          set(OPT.ha,'DataAspectRatio',[1 1 1]); % repair effect of for instance axislat()
+daspect(OPT.ha,'auto') % repair effect of for instance axislat()
 
           set(OPT.ha,'Position',[0 0 1 1])
           set(OPT.hf,'PaperUnits', 'inches','PaperPosition',...
@@ -248,14 +247,15 @@ if OPT.makeKML
  %  add png to directory of tiles (split png and href in KMLcolorbar)
 
  if isempty(OPT.logo)
-    logo   = '';
-    else
-    logoName = fullfile(fileparts(OPT.fileName),OPT.Name, [filename(OPT.logo),'4GE.png']);
-    logo   = ['<Folder>' KMLlogo(OPT.logo,'fileName',0,'kmlName', 'logo',...
-             'logoName',logoName) '</Folder>'];
-    end
-        logo = strrep(logo,['<Icon><href>'                  filename(logoName)],...
-                           ['<Icon><href>' OPT.Name filesep filename(logoName)]);
+     logo   = '';
+ else
+     logoName = fullfile(fileparts(OPT.fileName),OPT.Name, [filename(OPT.logo),'4GE.png']);
+     logo   = ['<Folder>' KMLlogo(OPT.logo,'fileName',0,'kmlName', 'logo',...
+         'logoName',logoName) '</Folder>'];
+     logo = strrep(logo,['<Icon><href>'                  filename(logoName)],...
+         ['<Icon><href>' OPT.Name filesep filename(logoName)]);
+ end
+
     
 
     output = [KML_header(OPT_header) logo output];
@@ -291,8 +291,11 @@ if OPT.makeKML
  %% FOOTER
 
     output = [output KML_footer];
+    try
     fprintf(OPT.fid,'%s',output);
-
+    catch
+        1
+    end
     % close KML
 
     fclose(OPT.fid);
