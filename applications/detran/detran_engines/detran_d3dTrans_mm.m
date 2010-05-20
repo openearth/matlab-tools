@@ -157,7 +157,7 @@ for ii = 1 : length(condMap)
         ssvva = weightFac(ii) * vs_get(N,series,{lastTimeStep},['SSVV' postfix],'quiet');
         
         if ii == 1
-            d3dTransData.namSed {jj} = vs_get(N,'map-const','NAMSED');
+            d3dTransData.namSed {jj} = vs_get(N,'map-const','NAMSED','quiet');
             d3dTransData.xcor   {jj} = vs_get(N,'map-const','XCOR','quiet');
             d3dTransData.ycor   {jj} = vs_get(N,'map-const','YCOR','quiet');
             d3dTransData.alfa   {jj} = vs_get(N,'map-const','ALFAS','quiet');

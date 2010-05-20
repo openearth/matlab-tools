@@ -111,7 +111,7 @@ for jj = 1 : length(names)
     else
         lastTimeStep = timeStep;
     end
-    d3dTransData.namSed {jj} = vs_get(N,'map-const','NAMSED');
+    d3dTransData.namSed {jj} = vs_get(N,'map-const','NAMSED','quiet');
     sbuua = vs_get(N,series,{lastTimeStep},['SBUU' postfix],'quiet');
     sbvva = vs_get(N,series,{lastTimeStep},['SBVV' postfix],'quiet');
     ssuua = vs_get(N,series,{lastTimeStep},['SSUU' postfix],'quiet');

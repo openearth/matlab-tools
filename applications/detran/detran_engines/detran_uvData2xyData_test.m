@@ -49,7 +49,7 @@ function testresult = detran_uvData2xyData_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
+%% $Description (Name = detran_uvData2xyData_test)
 % Publishable code that describes the test.
 
 %% $RunCode

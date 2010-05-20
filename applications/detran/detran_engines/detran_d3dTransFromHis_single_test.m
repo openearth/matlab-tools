@@ -49,13 +49,14 @@ function testresult = detran_d3dTransFromHis_single_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
+%% $Description (Name = detran_d3dTransFromHis_single_test)
 % Publishable code that describes the test.
 
 %% $RunCode
 % Write test code here
 try
-    [crossName, crossXY, transport, namsed]=detran_d3dTransFromHis_single('mean','testmodel\trih-example.dat',0);
+    file = which('trih-example.dat');
+    [crossName, crossXY, transport, namsed]=detran_d3dTransFromHis_single('mean',file,0);
     testresult = true;
 catch
     testresult = false;

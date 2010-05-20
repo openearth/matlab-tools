@@ -1,4 +1,4 @@
-function testresult = detran_detran_TransArbCSEngine_test()
+function testresult = detran_TransArbCSEngine_test()
 % DETRAN_DETRAN_TRANSARBCSENGINE_TEST One line description goes here
 %  
 % More detailed description of the test goes here.
@@ -49,14 +49,14 @@ function testresult = detran_detran_TransArbCSEngine_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
+%% $Description (Name = detran_TransArbCSEngine_test)
 % Publishable code that describes the test.
 
 %% $RunCode
 % Write test code here
 
 % create a grid
-[x,y]=meshgrid([1:5],[1:5])
+[x,y]=meshgrid([1:5],[1:5]);
 
 % specify transport rates
 xt = repmat(0,size(x));
@@ -70,7 +70,7 @@ try
     [tr, trPlus, trMin] = detran_TransArbCSEngine(x,y,xt,yt,transect(1,:),transect(2,:));
     
     % this should result in a transport rate of 4
-    testresult = tr==4
+    testresult = tr==4;
 catch
     testresult = false;
 end
@@ -79,6 +79,7 @@ end
 % Publishable code that describes the test.
 wlsettings;
 figure;
-drawgrid(x,y,'g');
+hold on;
+drawgrid(x,y,'color','g');
 [p,h1,t1]=detran_plotTransportThroughTransect(transect(1,:),transect(2,:),tr,1);
 

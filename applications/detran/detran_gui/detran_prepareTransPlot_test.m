@@ -49,7 +49,7 @@ function testresult = detran_prepareTransPlot_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
+%% $Description (Name = detran_prepareTransPlot_test)
 % This code tests the routine detran_prepareTransPlot. The Detran data
 % input structure will be generated in this code. It will represents a case
 % with a single trih-file.

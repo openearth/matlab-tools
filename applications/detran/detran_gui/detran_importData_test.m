@@ -49,13 +49,15 @@ function testresult = detran_importData_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
+%% $Description (Name = detran_importData_test)
 % Publishable code that describes the test.
 
 %% $RunCode
 % Write test code here
 try
-    detranData = detran_importData ('testmodel\trim-example.dat', nan, 'Trim-file(s)', 'Single file', 'mean', 0);
+    file = which('trim-example.dat');
+    detranData = detran_importData (file, nan, 'Trim-file(s)', 'Single file', 'mean', 0);
+    testresult = true;
 catch
     testresult = false;
 end
