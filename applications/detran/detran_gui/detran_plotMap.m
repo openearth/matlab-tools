@@ -81,7 +81,7 @@ if get(findobj(fig,'tag','detran_plotMapBox'),'Value')==1
             idRed=reducepntsq(vSp,xcor,ycor);
             xcor([find(xcor==0);find(tx==0&ty==0);idSmall])=nan; % nannen maken als xcor=0 of als transport=0 (anders plot ie puntjes...)
             ycor([find(ycor==0);find(tx==0&ty==0);idSmall])=nan;
-            p=pcolor(xcor,ycor,sqrt(tx.^2 + ty.^2));set(p,'EdgeColor','none')'
+            p=pcolor(xcor,ycor,sqrt(tx.^2 + ty.^2));set(p,'EdgeColor','none');
             q=quiver(xcor(idRed),ycor(idRed),vSc*tx(idRed),vSc*ty(idRed),0,'k');
     end
     cm=detran_makeSedconcColMap;
