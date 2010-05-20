@@ -1,6 +1,8 @@
 function [time obs_x obs_y velocity depth discharge] = xb_generateOvertoppingTimeseries(varargin)
 % XB_GENERATEOVERTOPPINGTIMESERIES  extract from XBeach output info and translate to overtopping timeseries
 %
+% 
+%
 % See also: xbeach
 
 % --------------------------------------------------------------------
@@ -42,12 +44,6 @@ function [time obs_x obs_y velocity depth discharge] = xb_generateOvertoppingTim
 %% settings
 % defaults
 OPT.basedir   = 'D:\checkouts\OpenEarthTools\trunk\matlab\applications\xbeach\output_translation\';    % description of input argument 1
-OPT.var       = { ...
-    'H', ...           % long wave evelope [m]
-    'zb', ...          % bed level [m]
-    'zs', ...          % waterlevel including long waves [m]
-    'u',  ...          % crossshore velocity [m/s]
-    'v'};              % alongshore [m/s]
 OPT.stride_t  = 1;     % take a stride of OPT.stride_t through the time vector
 OPT.obs_x     = [];
 OPT.obs_y     = [];

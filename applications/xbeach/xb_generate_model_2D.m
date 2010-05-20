@@ -1,7 +1,15 @@
 function [XB calcdir] = xb_generate_model_2D(X, Y, Z, varargin)
-% XB_GENERATE_MODEL_2D  place tag of selected object in editable textbox 
+% XB_GENERATE_MODEL_2D  generate a 2D XBeach model based on X, Y, Z input 
 %
-%See also: xbeach
+% This routine helps a user to setup a 2D XBeach model based on know X, Y,
+% and Z input. The procedure contains the following steps:
+%
+%  * Plot provided X,Y,Z data and allow the user to focus on a subset of these
+%  * Take the data through the XBeach grid orientor (user can place computational domain over the data)
+%  * Select within the computational domain what data to use and where data should be extrapolated
+%  * Write XBeach input files
+%
+% See also: xbeach, xb_generate_model_2D_example
 
 % --------------------------------------------------------------------
 % Copyright (C) 2004-2009 Delft University of Technology

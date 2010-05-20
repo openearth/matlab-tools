@@ -66,7 +66,7 @@ clc
 %% settings
 % defaults
 OPT.basedir   = [];    % description of input argument 1
-OPT.stride_t  = 5;     % take a stride of OPT.stride_t through the time vector
+OPT.stride_t  = 100;     % take a stride of OPT.stride_t through the time vector
 % OPT.plottype  = {'uv'};                                % type of plot to make
 OPT.plottype  = {'uv', 'zb-z0'};                                % type of plot to make
 % OPT.plottype  = {'H', 'zs', 'zb', 'u', 'v', 'uv', 'zb-z0'};    % type of plot to make

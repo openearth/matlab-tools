@@ -1,21 +1,14 @@
 function xb_generate_model_2D_example(varargin)
 %XB_GENERATE_MODEL_2D_EXAMPLE  example of generating an XBeach 2D model
 %
-%   More detailed description goes here.
+% This routine helps a user to setup a 2D XBeach model based on know X, Y,
+% and Z input. The procedure contains the following steps:
 %
-%   Syntax:
-%   varargout = XBeach2D_example(varargin)
+%  * Get data (X, Y, Z)
+%  * Generate input files with xb_generate_model_2D
+%  * Run model
 %
-%   Input:
-%   varargin  =
-%
-%   Output:
-%   varargout =
-%
-%   Example
-%   XBeach2D_example
-%
-%   See also XBeach2D
+% See also XBeach, xb_generate_model_2D
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology

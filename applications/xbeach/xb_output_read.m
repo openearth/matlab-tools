@@ -10,10 +10,10 @@ function output = xb_output_read(varargin)
 %   varargin  =
 %
 %   Output:
-%   output =
+%   output = contains x, y and variables indicated
 %
 %   Example
-%       output = xb_plot_results('var', {'H'}, 'stride_t', 10)
+%       output = xb_output_read('var', {'H'}, 'stride_t', 10)
 %
 %   See also xb_output_plot
 
@@ -89,7 +89,7 @@ ny      = fread(fid,1,'double');
 fclose(fid);
 
 %% Read x and y grids
-fixy    = fopen('xy.dat','r');
+fixy    = fopen(fullfile(OPT.basedir,'xy.dat'),'r');
 
 output.x       = fread(fixy,[nx+1,ny+1],'double');
 output.y       = fread(fixy,[nx+1,ny+1],'double');
@@ -105,7 +105,7 @@ for i   = 1:length(OPT.var)
     % initialise
     output.(OPT.var{i}) = zeros(nx+1, ny+1, length(tdim))*nan;
     
-    fid = fopen([OPT.var{i} '.dat'],'r');
+    fid = fopen(fullfile(OPT.basedir,[OPT.var{i} '.dat']),'r');
     cntr = 0;
     for j = 1 : nt;
         if ismember(j,tdim)
