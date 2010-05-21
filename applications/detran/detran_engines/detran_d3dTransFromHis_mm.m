@@ -62,6 +62,23 @@ function [namtra, xytra, transport, namsed]=avgTransFromHis_mm(type,filename,tim
 % Sign up to recieve regular updates of this function, and to contribute 
 % your own tools.
 
+% check if wlsettings are available
+wldir = which('vs_use');
+if isempty(wldir)
+    try % try wlsettings
+        wlsettings;
+    catch % wlsettings not found, check if Delft3D has been installed
+        d3ddir = getenv('D3D_HOME');
+        arch = getenv('ARCH');
+        if isempty(d3ddir)
+            error('Delft3D installation is required...');
+            return
+        else
+            addpath([d3ddir filesep arch filesep 'matlab']);
+        end
+    end
+end
+
 if isempty(filename)
     curDir = pwd;
     patName = uigetdir(pwd,'Please select map with simulation results');

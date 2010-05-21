@@ -81,6 +81,23 @@ if nargin<5
     save=0;
 end
 
+% check if wlsettings are available
+wldir = which('vs_use');
+if isempty(wldir)
+    try % try wlsettings
+        wlsettings;
+    catch % wlsettings not found, check if Delft3D has been installed
+        d3ddir = getenv('D3D_HOME');
+        arch = getenv('ARCH');
+        if isempty(d3ddir)
+            error('Delft3D installation is required...');
+            return
+        else
+            addpath([d3ddir filesep arch filesep 'matlab']);
+        end
+    end
+end
+
 switch type
     case 'mean'
         series='map-avg-series';
