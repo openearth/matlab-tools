@@ -55,8 +55,6 @@ function [tr, trPlus, trMin] = detran_TransArbCSEngine(x,y,xt,yt,pntn,pntnn)
 % Sign up to recieve regular updates of this function, and to contribute 
 % your own tools.
 
-
-
 xv=[pntn(1) pntnn(1)];
 yv=[pntn(2) pntnn(2)];
 
@@ -69,7 +67,11 @@ yv=[pntn(2) pntnn(2)];
 % yt =  vt.*cos(alfa/360*2*pi)+ut.*sin(alfa/360*2*pi);
 
 % determine crossings of transect with grid
-[xc,yc]=int_lngrd(xv,yv,x,y);
+% [xc,yc]=int_lngrd(xv,yv,x,y);
+[xc,yc,dum,dum] = grid_orth_getDataOnLine(x,y,repmat(1,size(x)),xv,yv);
+xc = [xv(1) ; xc ; xv(2)];
+yc = [yv(1) ; yc ; yv(2)];
+
 % figure;
 % hold on;
 % drawgrid(x,y,'color','k');

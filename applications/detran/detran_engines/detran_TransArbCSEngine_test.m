@@ -77,9 +77,9 @@ end
 
 %% $PublishResult
 % Publishable code that describes the test.
-wlsettings;
 figure;
 hold on;
-drawgrid(x,y,'color','g');
+grid_plot(x,y);
+axis equal;
 [p,h1,t1]=detran_plotTransportThroughTransect(transect(1,:),transect(2,:),tr,1);
 
