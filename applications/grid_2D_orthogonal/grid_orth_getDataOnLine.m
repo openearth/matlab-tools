@@ -61,7 +61,7 @@ else
     reverse = false;
 end
 %% crop area to search for crossings to line
-temp = X>min(xi)&X<max(xi)&Y>min(yi)&Y<max(yi);
+temp = X>=min(xi)&X<=max(xi)&Y>=min(yi)&Y<=max(yi);
 mm   = max(1,find(any(temp,2),1,'first')-1):1:min(size(X,1),find(any(temp,2),1,'last')+1);
 nn   = max(1,find(any(temp,1),1,'first')-1):1:min(size(X,2),find(any(temp,1),1,'last')+1);
 
