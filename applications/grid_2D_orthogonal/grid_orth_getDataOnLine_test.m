@@ -59,8 +59,11 @@ function testresult = grid_orth_getDataOnLine_test()
 
 %% $RunCode
 
-tr(1) = test1;
-tr(2) = test2;
+% test 1 and 2 are examples
+tr(1) = test3;
+tr(2) = test4;
+tr(3) = test5;
+
 testresult = all(tr);
 
 
@@ -86,7 +89,7 @@ Z = peaks(20);
 Z = Z(3:20,5:16);
 
 % define line 
-xi = [ 0   21.2];
+xi = [ 2   21.2];
 yi = [11.7 19.2];
 
 [crossing_x,crossing_y,crossing_z,crossing_d] = grid_orth_getDataOnLine(X,Y,Z,xi,yi);
@@ -103,7 +106,8 @@ plot3(crossing_x(  1),crossing_y(  1),crossing_z(  1),'ro');
 plot3(crossing_x(end),crossing_y(end),crossing_z(end),'k*');
 plot3(crossing_x,crossing_y,crossing_z,'b');
 line('XDATA',xi,'YDATA',yi,'linewidth',2,'color','r','linestyle',':')
-line('XDATA',xi(1),'YDATA',yi(1),'linewidth',2,'color','r','linestyle','*')
+line('XDATA',xi(1),'YDATA',yi(1),'linewidth',2,'color','r','linestyle','none','marker','+')
+line('XDATA',xi(2),'YDATA',yi(2),'linewidth',2,'color','k','linestyle','none','marker','+')
 hold off
 
 subplot(1,3,2)
@@ -154,6 +158,79 @@ hold on
 mesh(X,Y,Z)
 hold off
 testresult = true;
+%% $PublishResult
+
+end
+
+
+function testresult = test3()
+%% $Description 
+
+%% $RunCode
+% make test data
+x =  0.5:.5:10;
+y = 20.5:.5:32;
+
+[X,Y] = meshgrid(x,y);
+Z = sin(sqrt((X).^2+(Y-20).^2));
+
+% define line
+xi = [0 9];
+yi = [20 29];
+
+[crossing_x,crossing_y,crossing_z,crossing_d] = grid_orth_getDataOnLine(X,Y,Z,xi,yi);
+    
+testresult = max(abs(sin(crossing_d) - crossing_z))<eps(100);
+
+
+%% $PublishResult
+
+end
+
+function testresult = test4()
+%% $Description 
+%same as test3, but with a distorted grid
+%% $RunCode
+% make test data
+x =  0.5:.5:10;
+y = 20.5:.5:32;
+
+[X,Y] = meshgrid(x,y);
+X = X+sin(X+Y.^2)/4;
+Y = Y+cos(X.^2+Y)/4;
+Z = sin(sqrt((X).^2+(Y-20).^2));
+
+% define line
+xi = [0 9];
+yi = [20 29];
+
+[crossing_x,crossing_y,crossing_z,crossing_d] = grid_orth_getDataOnLine(X,Y,Z,xi,yi);
+    
+testresult = max(abs(sin(crossing_d) - crossing_z))<0.05;
+%% $PublishResult
+
+end
+
+function testresult = test5()
+%% $Description 
+
+%% $RunCode
+% make test data
+x =  -10:.5:10;
+y = -2:.5:32;
+
+[X,Y] = meshgrid(x,y);
+Z = sin(sqrt(X.^2+Y.^2));
+
+% define line
+xi = [0 10];
+yi = [0 0];
+
+[crossing_x,crossing_y,crossing_z,crossing_d] = grid_orth_getDataOnLine(X,Y,Z,xi,yi);
+    
+testresult = max(abs(sin(crossing_d) - crossing_z))<eps(100);
+
+
 %% $PublishResult
 
 end
