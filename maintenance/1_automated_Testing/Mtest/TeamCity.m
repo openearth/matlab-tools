@@ -3,6 +3,7 @@ classdef TeamCity < handle
         CurrentTest
         TeamCityRunning = false;
         WorkDirectory = cd;
+        PublishDirectory = fullfile(cd,'TeamcityPublish');
         Timer
         CurrentWorkSpace
     end
@@ -17,10 +18,9 @@ classdef TeamCity < handle
         end
     end
     methods (Static = true)
-        function teamCityRunning = ignore(ignoreMessage)
+        function ignore(ignoreMessage)
             %% Retrieve TeamCity object
             obj = TeamCity;
-            teamCityRunning = obj.TeamCityRunning;
                         
             %% find ignore message
             if nargin==0
@@ -186,16 +186,22 @@ classdef TeamCity < handle
         function publishdescription(varargin)
             tc = TeamCity;
             mt = TeamCity.currenttest;
-            mt.publishdescription('outputdir',tc.WorkDirectory);
+            if ~isdir(tc.PublishDirectory)
+                mkdir(tc.PublishDirectory);
+            end
+            mt.publishdescription('outputdir',tc.PublishDirectory);
         end
         function publishresult(varargin)
             tc = TeamCity;
             mt = TeamCity.currenttest;
             saveWorkSpace = true;
+            if ~isdir(tc.PublishDirectory)
+                mkdir(tc.PublishDirectory);
+            end
             if islogical(varargin{1})
                 saveWorkSpace = varargin{1};
             end
-            mt.publishresult('outputdir',tc.WorkDirectory,'saveworkspace',saveWorkSpace);
+            mt.publishresult('outputdir',tc.PublishDirectory,'saveworkspace',saveWorkSpace);
         end
         function obj = currenttest()
             tc = TeamCity;
@@ -217,6 +223,10 @@ classdef TeamCity < handle
             for ivars = 1:size(tc.CurrentWorkSpace,1)
                 assignin('caller',tc.CurrentWorkSpace{ivars,1},tc.CurrentWorkSpace{ivars,2});
             end
+        end
+        function answer = running()
+            tc = TeamCity;
+            answer = tc.TeamCityRunning;
         end
     end
     methods (Static = true, Hidden = true)

@@ -101,6 +101,7 @@ classdef MTestFactory
             obj.IDDescriptionCode = idBase;
             obj.IDRunCode = idBase;
             obj.IDPublishCode = idBase;
+            obj.IDTeamCityCommands = idBase;
         end
         function obj = splitdefinitionstring(obj)
             str = strtrim(obj.FullString);
@@ -119,6 +120,9 @@ classdef MTestFactory
                 error('MTestFactory:NoFunction','This test definition file has no function declaration. definition could not be read.');
             end
             obj.IDTestFunction = mainFunction.linemask;
+            obj.IDTeamCityCommands = cellfun(@length,strfind(str,'TeamCity.')) - cellfun(@length,strfind(str,'TeamCity.running')) > 0;
+            % Do not find the running command. This is often used in an if statement and therefore
+            % causes an error if only the if (and not the matching end) is transferred
             obj.FunctionName = mainFunction.name;
             if strncmp(str{mainFunction.lastline},'end',3) && ~isempty(obj.SubFunctions)
                 obj.IDTestFunction(mainFunction.lastline) = false;
@@ -241,7 +245,8 @@ classdef MTestFactory
                     idend = min(celldividers(celldividers>iddescr))-1;
                     
                     %% store body information
-                    obj.IDDescriptionCode(iddescr+1:idend) = obj.IDTestFunction(iddescr+1:idend);
+                    obj.IDDescriptionCode(iddescr+1:idend) = obj.IDTestFunction(iddescr+1:idend) & ~obj.IDTeamCityCommands(iddescr+1:idend);
+                    
                     obj.DescriptionIncludecode = false;
                     obj.DescriptionEvaluatecode = true;
                     

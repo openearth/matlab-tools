@@ -47,6 +47,7 @@ classdef MTest < handle
         IDRunCode = [];                     % boolean the size of FullStrin with true for the lines that are part of the run code
         IDPublishCode = [];                 % boolean the size of FullStrin with true for the lines that are part of the publish code part
         IDOetHeaderString = [];             % boolean the size of FullStrin with true for the lines that are part of the oet function header
+        IDTeamCityCommands = [];            % boolean the size of FullStrin with true for the lines that contain a command to TeamCity
         
         SubFunctions = [];                  % Struct with output of getcallinfo for all subfunctions
         RunDir = [];
@@ -155,13 +156,13 @@ classdef MTest < handle
             if obj.Publish
                 testString(obj.IDDescriptionCode) = deal({' '});
                 if any(obj.IDDescriptionCode)
-                    testString{find(obj.IDDescriptionCode,1,'first')} = 'profile(''off''); TeamCity.storeworkspace; TeamCity.publishdescription; TeamCity.restoreworkspace; profile(''on'');';
+                    testString{find(obj.IDDescriptionCode,1,'last')} = 'profile(''off''); TeamCity.storeworkspace; TeamCity.publishdescription; TeamCity.restoreworkspace; profile(''on'');';
                 end
                 if any(obj.IDPublishCode)
                     if find(obj.IDTestFunction & ~obj.IDPublishCode,1,'last') > find(obj.IDPublishCode,1,'first')
-                        testString{find(obj.IDPublishCode,1,'first')} = 'profile(''off''); TeamCity.storeworkspace; TeamCity.publishresult; TeamCity.restoreworkspace; profile(''on'');';
+                        testString{find(obj.IDPublishCode,1,'last')} = 'profile(''off''); TeamCity.storeworkspace; TeamCity.publishresult; TeamCity.restoreworkspace; profile(''on'');';
                     else
-                        testString{find(obj.IDPublishCode,1,'first')} = 'profile(''off''); TeamCity.storeworkspace; TeamCity.publishresult(false);';
+                        testString{find(obj.IDPublishCode,1,'last')} = 'profile(''off''); TeamCity.storeworkspace; TeamCity.publishresult(false);';
                     end
                 end
             end
@@ -278,6 +279,13 @@ classdef MTest < handle
             TeamCity.postmessage('testFinished',...
                 'name',obj.Name,...
                 'duration',num2str(round(obj.Time*1000)));
+        end
+        function edit(obj,varargin)
+            if nargin > 1
+                opentoline(fullfile(obj.FilePath,[obj.FileName '.m']),varargin{1});
+            else
+                opentoline(fullfile(obj.FilePath,[obj.FileName '.m']),max([1 find(obj.IDTestCode,1,'first')]),1);
+            end
         end
     end
     methods (Hidden = true)

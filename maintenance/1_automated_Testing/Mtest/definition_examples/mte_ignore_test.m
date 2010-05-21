@@ -52,7 +52,9 @@ testResult = true;
 
 %% $Description 
 TeamCity.name('Ignore test')
-TeamCity.ignore('ignore test example'); return;
+if TeamCity.running, 
+    TeamCity.ignore('ignore test example'); return;
+end
 
 %% $Run
 disp('This test is not executed while running the mtestengine');

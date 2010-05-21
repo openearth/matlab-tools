@@ -1,4 +1,4 @@
-function unit = concepttest_test()
+function unit = mte_givename_test()
 unit = 0;
 
-MTest.name('name of the test');
+TeamCity.name('name of the test');

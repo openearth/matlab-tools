@@ -164,6 +164,7 @@ classdef MTestRunner < handle
                 end
             end
             if isempty(files)
+                obj.Tests = [];
                 return
             end
             
@@ -184,17 +185,19 @@ classdef MTestRunner < handle
             
             %% add read testdefinitions and store in engine
             wrongfiles = false(size(files,1),1);
+            errors = cell(size(files,1),1);
             fnames = cell(size(files,1),1);
             for ifiles = 1:size(files,1)
                 fnames{ifiles} = fullfile(files{ifiles,1},[files{ifiles,2} files{ifiles,3}]);
                 try
                     obj.Tests(ifiles) = MTest(fnames{ifiles});
                 catch me %#ok<*NASGU>
+                    errors{ifiles} = me;
                     wrongfiles(ifiles) = true;
                 end
             end
             obj.Tests = obj.Tests(~wrongfiles(1:length(obj.Tests)));
-            obj.WrongTestDefs = fnames(wrongfiles);
+            obj.WrongTestDefs = cat(2,fnames(wrongfiles),errors(wrongfiles));
             
             %% store hidden prop
             obj.TestsCatalogued = true;
@@ -256,6 +259,7 @@ classdef MTestRunner < handle
                 return
             end
             
+            %% Prepare publication
             if obj.Publish
                 %% subtract props
                 maxwidth = [];
@@ -307,6 +311,9 @@ classdef MTestRunner < handle
                         end
                     end
                 end
+                tc = TeamCity;
+                tc.PublishDirectory = fullfile(obj.TargetDir,'html');
+                
                 %% copy template files and dirs
                 templatedir = fullfile(fileparts(mfilename('fullpath')),'templates');
                 if ~isdir(templatedir)
@@ -384,6 +391,26 @@ classdef MTestRunner < handle
             if obj.Verbose
                 TeamCity.postmessage('progressMessage', 'Started running tests');
                 disp('## start running tests ##');
+            end
+            
+            %% First post all testdefinitions that could not be read
+            if obj.Verbose && size(obj.WrongTestDefs,1)>0
+                TeamCity.postmessage('testSuitStarted','name','wrong test definitions');
+                for iwrongtest = 1:size(obj.WrongTestDefs,1)
+                    [pt name] = fileparts(obj.WrongTestDefs{iwrongtest,1});
+                    me = obj.WrongTestDefs{iwrongtest,2};
+                    TeamCity.postmessage('testStarted',...
+                        'name',name,...
+                        'captureStandardOutput','true');
+                    TeamCity.postmessage('testFailed',...
+                        'name',name,...
+                        'message','Error while reading test definition',...
+                        'details',me.getReport);
+                    TeamCity.postmessage('testFinished',...
+                        'name',name,...
+                        'duration',num2str(0));
+                end
+                TeamCity.postmessage('testSuitFinished','name','wrong test definitions');
             end
             
             %% Run each individual test.
@@ -493,24 +520,16 @@ classdef MTestRunner < handle
                     end
                     
                     %% Loop tests and publish overview
+%                         if ~isempty(obj.MainDir) && strcmp(obj.MainDir(end),filesep)
+%                             obj.MainDir(end)=[];
+%                         end
 %                     for itest = 1:length(obj.Tests)
 %                         if obj.Tests(itest).Ignore
 %                             continue;
 %                         end
-%                         if ~isempty(obj.MainDir) && strcmp(obj.MainDir(end),filesep)
-%                             obj.MainDir(end)=[];
-%                         end
 % %                         obj.Tests(itest).publishCoverage('include',{obj.maindir},...
 % %                             'resdir',fullfile(obj.targetdir,'html'),...
 % %                             'coveragedir',fullfile('html','fcncoverage'));
-% %                         for icase = 1:length(obj.tests(itest).testcases)
-% %                             obj.tests(itest).testcases(icase).coverageoutputfile = ...
-% %                                 fullfile(obj.targetdir,'html',[obj.tests(itest).filename,'_coverage_case_' num2str(icase) '.html']);
-% %                             obj.tests(itest).testcases(icase).publishCoverage(...
-% %                                 'include',{obj.maindir},...
-% %                                 'resdir',fullfile(obj.targetdir,'html'),...
-% %                                 'coveragedir',fullfile('html','fcncoverage'));
-% %                         end
 %                     end
                 end
                 %% loop all tpl files and fill keywords
@@ -546,6 +565,7 @@ classdef MTestRunner < handle
                 end
                 
             end
+            
             %% return to the previous searchpath settings
             path(pt);
             
@@ -884,17 +904,19 @@ classdef MTestRunner < handle
                             tempstr = strrep(tempstr,'#TESTNAME',obj.Tests(id).FileName);
                         end
                         
-                        %{
-%                         % #TESTHTML (backwards compatibility)
-%                         % #DESCRIPTIONHTML
-%                         if ~isempty(obj.Tests(id).descriptionoutputfile)
-%                             [dum fn ext] = fileparts(obj.tests(id).descriptionoutputfile);
-%                             tempstr = strrep(tempstr,'#TESTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
-%                             tempstr = strrep(tempstr,'#DESCRIPTIONHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
-%                         else
-%                             tempstr = strrep(tempstr,'#TESTHTML','');
-%                             tempstr = strrep(tempstr,'#DESCRIPTIONHTML','');
-%                         end
+                        
+                        % #TESTHTML (backwards compatibility)
+                        % #DESCRIPTIONHTML
+                        tc = TeamCity;
+                        fNameDescription = fullfile(tc.PublishDirectory,[obj.Tests(id).FileName,'_description.html']);
+                        if exist(fNameDescription,'file')
+                            [dum fn ext] = fileparts(fNameDescription);
+                            tempstr = strrep(tempstr,'#TESTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                            tempstr = strrep(tempstr,'#DESCRIPTIONHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                        else
+                            tempstr = strrep(tempstr,'#TESTHTML','');
+                            tempstr = strrep(tempstr,'#DESCRIPTIONHTML','');
+                        end
                         
 %                         % #COVERAGEHTML
 %                         if ~isempty(obj.tests(id).coverageoutputfile)
@@ -904,14 +926,15 @@ classdef MTestRunner < handle
 %                             tempstr = strrep(tempstr,'#COVERAGEHTML','');
 %                         end
                         
-%                         % #RESULTHTML
-%                         if ~isempty(obj.tests(id).publishoutputfile)
-%                             [dum fn ext] = fileparts(obj.tests(id).publishoutputfile);
-%                             tempstr = strrep(tempstr,'#RESULTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
-%                         else
-%                             tempstr = strrep(tempstr,'#RESULTHTML','');
-%                         end
-                        %}
+                        % #RESULTHTML
+                        fNamePublish = fullfile(tc.PublishDirectory,[obj.Tests(id).FileName,'_publish.html']);
+                        if exist(fNamePublish,'file')
+                            [dum fn ext] = fileparts(fNamePublish);
+                            tempstr = strrep(tempstr,'#RESULTHTML',strrep(fullfile('html',[fn ext]),filesep,'/'));
+                        else
+                            tempstr = strrep(tempstr,'#RESULTHTML','');
+                        end
+
                         
                         % #TESTDATE
                         if isempty(obj.Tests(id).Date)
