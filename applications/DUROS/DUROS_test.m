@@ -50,7 +50,7 @@ function testResult = DUROS_test()
 % $Keywords: $
 
 %% $Description (Name = DUROS integration tests)
-% To be written.
+TeamCity.ignore('WIP'); return;
 
 %% $RunCode
 
