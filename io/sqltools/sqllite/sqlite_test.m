@@ -1,4 +1,6 @@
-function mksqlite_test ()
+function sqlite_test ()
+
+if TeamCity.running, TeamCity.ignore('Test crashes on the buildserver. It causes the complete searhpath to disappear'); return; end
 
 database = 'my_testdb';
 table = 'testtabelle';
