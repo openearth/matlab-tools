@@ -70,6 +70,7 @@ catch me
 end
 
 try
+    TeamCity.running(true);
     TeamCity.postmessage('progressStart','Prepare for running tests.');
     %% initiate variables:
     maindir = oetroot;

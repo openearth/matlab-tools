@@ -224,8 +224,11 @@ classdef TeamCity < handle
                 assignin('caller',tc.CurrentWorkSpace{ivars,1},tc.CurrentWorkSpace{ivars,2});
             end
         end
-        function answer = running()
+        function answer = running(varargin)
             tc = TeamCity;
+            if nargin > 0
+                tc.TeamCityRunning = varargin{1};
+            end
             answer = tc.TeamCityRunning;
         end
     end
