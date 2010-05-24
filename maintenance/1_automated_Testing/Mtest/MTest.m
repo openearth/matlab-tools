@@ -94,6 +94,8 @@ classdef MTest < handle
             %
             %   See also mtestcase mtestcase.mtestcase mtestcase.publishDescription mtest.publishResults mtestcase.runTest mtestengine mtest
             
+            %% Lock this workspace and function code
+            mlock;
             
             %% subtract outputfilename
             obj = setproperty(obj,varargin{:});
@@ -279,6 +281,9 @@ classdef MTest < handle
             TeamCity.postmessage('testFinished',...
                 'name',obj.Name,...
                 'duration',num2str(round(obj.Time*1000)));
+
+            %% Unlock the workspace
+            munlock;
         end
         function edit(obj,varargin)
             if nargin > 1

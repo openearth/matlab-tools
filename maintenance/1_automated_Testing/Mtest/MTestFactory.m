@@ -112,7 +112,11 @@ classdef MTestFactory
                 error('MTestFactory:DefinitionFileNotFound','Definition file could not be found.');
             end
             fcncalls = getcallinfo(fullfile(obj.FilePath,[obj.FileName,'.m']));
-            mainFunction = fcncalls(cellfun(@(tp) tp == internal.matlab.codetools.reports.matlabType.Function,{fcncalls.type}));
+            if datenum(version('-date')) > datenum(2010,1,1)
+                mainFunction = fcncalls(cellfun(@(tp) tp == internal.matlab.codetools.reports.matlabType.Function,{fcncalls.type}));
+            else
+                mainFunction = fcncalls(cellfun(@(tp) strcmp(tp,'function'), {fcncalls.type}));
+            end
             obj.SubFunctions = fcncalls(cellfun(@(tp) strcmp(tp,'subfunction') ,{fcncalls.type}));
 
             if isempty(mainFunction)
