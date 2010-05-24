@@ -78,7 +78,8 @@ catch me
 end
 
 try
-
+    TeamCity.running(true);
+    
     %% start documenting
     tutorials2html(varargin{:},'teamcity');
     
