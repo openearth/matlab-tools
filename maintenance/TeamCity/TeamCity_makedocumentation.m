@@ -65,11 +65,11 @@ try
     %% load oetsettings
     addpath(matlabdir);
     addpath(genpath(fullfile(matlabdir,'maintenance')));
-    postmessage('progressStart',true,'Running oetsettings.');
+    TeamCity.postmessage('progressStart','Running oetsettings.');
     oetsettings;
-    postmessage('progressFinish',true,'Oetsettings enabled.');
+    TeamCity.postmessage('progressFinish','Oetsettings enabled.');
 catch me
-    postmessage('message', true, 'text', 'Matlab was unable to run oetsettings.',...
+    TeamCity.postmessage('message', 'text', 'Matlab was unable to run oetsettings.',...
         'errorDetails',me.message,...
         'status','ERROR');
     %% Remove template files
@@ -92,8 +92,8 @@ try
     rmdir(fullfile(oetroot,'tutorials'),'s');
     rmdir(fullfile(oetroot,'docs'),'s');
 catch me
-    postmessage('message', true, 'text', 'Something went wrong while running the tests.',...
-        'errorDetails',me.message,...
+    TeamCity.postmessage('message', 'text', 'Something went wrong while making documentation.',...
+        'errorDetails',me.getReport,...
         'status','ERROR');
     delete('matlabruns.busy');
     exit;

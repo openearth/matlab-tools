@@ -140,10 +140,8 @@ classdef TeamCity < handle
             else
                 teamcityString = ['TeamCity: ',messageName,char(10)];
             end
-            if numel(varargin)/2~=round(numel(varargin)/2)
-                for ivararg = 1:length(varargin)
-                    teamcityString = cat(2,teamcityString,' = ',varargin{ivararg},', ');
-                end
+            if numel(varargin)==1
+                teamcityString = cat(2,teamcityString,' ''',varargin{1},'''');
             else
                 for ivararg = 1:2:length(varargin)
                     tmpstring = varargin{ivararg+1};
