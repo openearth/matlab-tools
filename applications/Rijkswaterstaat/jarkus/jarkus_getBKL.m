@@ -5,7 +5,6 @@ function BKL = jarkus_getBKL(transectID)
 %
 % Input:        transectID = sum of area code (x1000000) and alongshore coordinate
 %               
-%               
 % Output:       BKL for the indicated transect is stored in a variable 'BKL'
 %
 % Remark: the BKL data is also stored in this file. Nicer would be to store
