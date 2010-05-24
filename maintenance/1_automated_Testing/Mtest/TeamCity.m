@@ -15,6 +15,8 @@ classdef TeamCity < handle
             else
                 setappdata(0,'MTestTeamCityObject',obj);
             end
+            %% Lock the teamcity file
+            mlock;
         end
     end
     methods (Static = true)

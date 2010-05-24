@@ -65,8 +65,8 @@ catch me
         'status','ERROR');
     %% Remove template files
     delete('matlabruns.busy');
-    rethrow(me);
-%     exit;
+%     rethrow(me);
+    exit;
 end
 
 try
@@ -138,9 +138,9 @@ catch me
         'errorDetails',me.getReport,...
         'status','ERROR');
     delete('matlabruns.busy');
-    rethrow(me);
-%     exit;
+%     rethrow(me);
+    exit;
 end
 
 delete('matlabruns.busy');
-%     exit;
+exit;
