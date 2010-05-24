@@ -36,6 +36,8 @@ function testresult = KMLmesh_test()
 % $HeadURL$
 % $Keywords: $
 
+if TeamCity.running, TeamCity.ignore('Test requires user input'); return; end
+
 disp(['... running test:',mfilename])
 
 %% $Description (Name = KMLmesh)

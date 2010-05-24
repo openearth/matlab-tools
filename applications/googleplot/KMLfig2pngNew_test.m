@@ -43,6 +43,8 @@ function testresult = KMLfig2pngNew_test(varargin)
 % $HeadURL$
 % $Keywords: $
 
+if TeamCity.running, TeamCity.ignore('Test takes too long'); return; end
+
 disp(['... running test:',mfilename])
 
 %% $Description (Name = KMLpcolor)

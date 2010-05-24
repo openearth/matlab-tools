@@ -50,6 +50,8 @@ warning('This function is deprecated in favour of grid_orth_getDataInPolygon_tes
 % $HeadURL$
 % $Keywords: $
 
+if TeamCity.running, TeamCity.ignore('Test requires user input'); return; end
+
 %% $Description (Name = Name of the test goes here)
 % Publishable code that describes the test.
 % NB1: onderstaande testcases zijn met voorgedefinieerde polygonen. Als je de polygonen niet opgeeft mag je ze zelf selecteren met de crosshair (rechter muisknop om te sluiten)

@@ -43,6 +43,8 @@ function testresult = KMLcontourf_test()
 % $HeadURL$
 % $Keywords: $
 
+if TeamCity.running, TeamCity.ignore('Test takes too long'); return; end
+
 disp(['... running test:',mfilename])
 
 %% $Description (Name = Name of the test goes here)
