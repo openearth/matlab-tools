@@ -272,7 +272,9 @@ classdef MTest < handle
             cd(cdtemp);
             
             %% remove tempdir
-            rmdir(obj.RunDir,'s');
+            try %#ok<TRYNC>
+                rmdir(obj.RunDir,'s');
+            end
             
             %% set additional parameters
             obj.Date = now;

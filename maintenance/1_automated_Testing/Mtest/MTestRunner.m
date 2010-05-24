@@ -384,7 +384,7 @@ classdef MTestRunner < handle
             end
             
             %% Make sure the current dir is in the searchpath
-            pt = path;
+            mtestpath = path;
             addpath(cd);
             
             %% Run and Publish individual tests tests
@@ -567,7 +567,7 @@ classdef MTestRunner < handle
             end
             
             %% return to the previous searchpath settings
-            path(pt);
+            path(mtestpath);
             
             %% assign output
             if nargout==1
