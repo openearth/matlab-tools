@@ -51,51 +51,52 @@ function TeamCity_makedocumentation(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% First load oetsettings
 try
-    %% temp remove targetdir from repos checkout
-    teamCityDir= fileparts(mfilename('fullpath'));
-    matlabdir = strrep(fileparts(mfilename('fullpath')),'maintenance\TeamCity','');
-    if isdir(fullfile(matlabdir,'tutorials'))
-        rmdir(fullfile(matlabdir,'tutorials'),'s');
+    %% First load oetsettings
+    try
+        %% temp remove targetdir from repos checkout
+        teamCityDir= fileparts(mfilename('fullpath'));
+        matlabdir = strrep(fileparts(mfilename('fullpath')),'maintenance\TeamCity','');
+        if isdir(fullfile(matlabdir,'tutorials'))
+            rmdir(fullfile(matlabdir,'tutorials'),'s');
+        end
+        if isdir(fullfile(matlabdir,'docs'))
+            rmdir(fullfile(matlabdir,'docs'),'s');
+        end
+        
+        %% load oetsettings
+        addpath(matlabdir);
+        addpath(genpath(fullfile(matlabdir,'maintenance')));
+        TeamCity.postmessage('progressStart','Running oetsettings.');
+        oetsettings;
+        TeamCity.postmessage('progressFinish','Oetsettings enabled.');
+    catch me
+        TeamCity.postmessage('message', 'text', 'Matlab was unable to run oetsettings.',...
+            'errorDetails',me.message,...
+            'status','ERROR');
+        exit;
     end
-    if isdir(fullfile(matlabdir,'docs'))
-        rmdir(fullfile(matlabdir,'docs'),'s');
+    
+    try
+        TeamCity.running(true);
+        
+        %% start documenting
+        tutorials2html(varargin{:},'teamcity');
+        
+        %% zip result
+        delete(fullfile(teamCityDir,'htmldocumentation.zip'));
+        delete(fullfile(teamCityDir,'matlabtocfiles.zip'));
+        zip(fullfile(teamCityDir,'htmldocumentation'),{fullfile(oetroot,'tutorials','*.*')});
+        zip(fullfile(teamCityDir,'matlabtocfiles'),{fullfile(oetroot,'docs','OpenEarthDocs','*.*')});
+        
+        %% remove targetdir
+        rmdir(fullfile(oetroot,'tutorials'),'s');
+        rmdir(fullfile(oetroot,'docs'),'s');
+    catch me
+        TeamCity.postmessage('message', 'text', 'Something went wrong while making documentation.',...
+            'errorDetails',me.getReport,...
+            'status','ERROR');
+        exit;
     end
-
-    %% load oetsettings
-    addpath(matlabdir);
-    addpath(genpath(fullfile(matlabdir,'maintenance')));
-    TeamCity.postmessage('progressStart','Running oetsettings.');
-    oetsettings;
-    TeamCity.postmessage('progressFinish','Oetsettings enabled.');
-catch me
-    TeamCity.postmessage('message', 'text', 'Matlab was unable to run oetsettings.',...
-        'errorDetails',me.message,...
-        'status','ERROR');
-    exit;
 end
-
-try
-    TeamCity.running(true);
-    
-    %% start documenting
-    tutorials2html(varargin{:},'teamcity');
-    
-    %% zip result
-    delete(fullfile(teamCityDir,'htmldocumentation.zip'));
-    delete(fullfile(teamCityDir,'matlabtocfiles.zip'));
-    zip(fullfile(teamCityDir,'htmldocumentation'),{fullfile(oetroot,'tutorials','*.*')});
-    zip(fullfile(teamCityDir,'matlabtocfiles'),{fullfile(oetroot,'docs','OpenEarthDocs','*.*')});
-    
-    %% remove targetdir
-    rmdir(fullfile(oetroot,'tutorials'),'s');
-    rmdir(fullfile(oetroot,'docs'),'s');
-catch me
-    TeamCity.postmessage('message', 'text', 'Something went wrong while making documentation.',...
-        'errorDetails',me.getReport,...
-        'status','ERROR');
-    exit;
-end
-
 exit;

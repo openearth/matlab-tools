@@ -51,78 +51,79 @@ function TeamCity_runtests(varargin)
 % $HeadURL$
 % $Keywords: $
 
-mlock;
-
-%% First load oetsettings
-try
-    oetdir = strrep(fileparts(mfilename('fullpath')),'maintenance\TeamCity',''); 
-    addpath(oetdir);
-    addpath(genpath(fullfile(oetdir,'maintenance')));
-    TeamCity.postmessage('progressStart','Running oetsettings.');
-    oetsettings;
-    TeamCity.postmessage('progressFinish','Oetsettings enabled.');
-catch me
-    TeamCity.postmessage('message', 'text', 'Matlab was unable to run oetsettings.',...
-        'errorDetails',me.getReport,...
-        'status','ERROR');
-%     rethrow(me);
-    exit;
-end
-
-try
-    TeamCity.running(true);
-    TeamCity.postmessage('progressStart','Prepare for running tests.');
-    %% initiate variables:
-    maindir = oetroot;
-    targetdir = fullfile(oetroot,'teamcitytesthtml');
-    if isdir(targetdir)
-        rmdir(targetdir,'s');
-    end
+try %#ok<TRYNC>
+    mlock;
     
-    exclusions = {...
-        '.svn',...
-        '_tutorial',...
-        'KML_testdir',...
-        'maintenance'...
-        };
-    
-    %% Create testengine
-    mtr = MTestRunner(...
-        'MainDir'  ,maindir,...
-        'Recursive',true,...
-        'TargetDir',targetdir,...
-        'Exclusions',exclusions,...
-        'Verbose'  ,true,...
-        'CopyMode' ,'svnkeep',...
-        'IncludeCoverage',false,...
-        'Publish',true,...
-        'Template' ,'oet');
-    
-    %% Run tests and publish results
-    mtr.run;
-    TeamCity.postmessage('progressFinish','Tests finished.');
-    
-    %% Remove template files
-    delete(fullfile(targetdir,'mxdom2defaulthtml.xsl'));
-    
-    %% zip result
-    delete('testresult.zip');
-    zip('testresult',{fullfile(targetdir,'*.*')});
-    
-    %% save tests
-    save('tests.mat','mtr');
-    
-    %% remove targetdir
-    rmdir(targetdir,'s');
-    
-catch me
-    try %#ok<TRYNC>
-        TeamCity.postmessage('message', 'text', 'Something went wrong while running the tests.',...
+    %% First load oetsettings
+    try
+        oetdir = strrep(fileparts(mfilename('fullpath')),'maintenance\TeamCity','');
+        addpath(oetdir);
+        addpath(genpath(fullfile(oetdir,'maintenance')));
+        TeamCity.postmessage('progressStart','Running oetsettings.');
+        oetsettings;
+        TeamCity.postmessage('progressFinish','Oetsettings enabled.');
+    catch me
+        TeamCity.postmessage('message', 'text', 'Matlab was unable to run oetsettings.',...
             'errorDetails',me.getReport,...
             'status','ERROR');
+        %     rethrow(me);
+        exit;
     end
-%     rethrow(me);
-    exit;
+    
+    try
+        TeamCity.running(true);
+        TeamCity.postmessage('progressStart','Prepare for running tests.');
+        %% initiate variables:
+        maindir = oetroot;
+        targetdir = fullfile(oetroot,'teamcitytesthtml');
+        if isdir(targetdir)
+            rmdir(targetdir,'s');
+        end
+        
+        exclusions = {...
+            '.svn',...
+            '_tutorial',...
+            'KML_testdir',...
+            'maintenance'...
+            };
+        
+        %% Create testengine
+        mtr = MTestRunner(...
+            'MainDir'  ,maindir,...
+            'Recursive',true,...
+            'TargetDir',targetdir,...
+            'Exclusions',exclusions,...
+            'Verbose'  ,true,...
+            'CopyMode' ,'svnkeep',...
+            'IncludeCoverage',false,...
+            'Publish',true,...
+            'Template' ,'oet');
+        
+        %% Run tests and publish results
+        mtr.run;
+        TeamCity.postmessage('progressFinish','Tests finished.');
+        
+        %% Remove template files
+        delete(fullfile(targetdir,'mxdom2defaulthtml.xsl'));
+        
+        %% zip result
+        delete('testresult.zip');
+        zip('testresult',{fullfile(targetdir,'*.*')});
+        
+        %% save tests
+        save('tests.mat','mtr');
+        
+        %% remove targetdir
+        rmdir(targetdir,'s');
+        
+    catch me
+        try %#ok<TRYNC>
+            TeamCity.postmessage('message', 'text', 'Something went wrong while running the tests.',...
+                'errorDetails',me.getReport,...
+                'status','ERROR');
+        end
+        %     rethrow(me);
+        exit;
+    end
 end
-
 exit;
