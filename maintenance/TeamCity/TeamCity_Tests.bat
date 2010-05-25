@@ -3,40 +3,40 @@ rem Build script to test OpenEarthTools matlab scripts
 rem with TeamCity Distributed Build Management and Continuous Integration Server
 rem <http://www.jetbrains.com/teamcity/>
 
-rem TO DO: put entire mapping command in environment variable %openearth_map%
-
 rem Map drive with matlab
 rem -----------------------------------
 net use y: /delete
-net use y: \\wlhost\library /USER:%openearth_user% %openearth_password% 
+net use y: \\wlhost\library %openearth_password% /USER:%openearth_user% 
+rem net use y: \\wlhost\library 
 
-:oet_perform
 rem Call matlab
 rem http://www.mathworks.com/support/solutions/data/1-16B8X.html
 rem -----------------------------------
-rem Create a temp file
-echo Matlab is running > matlabruns.busy
-rem now run matlab
 
 Y:\app\MATLAB2010a\bin\matlab.exe -nosplash -nodesktop -minimize -r "TeamCity_runtests;" -logfile mlogfile.log -sd "%teamcity.build.workingDir%"
-rem hold reporting until matlab status file has been deleted
 
 :loopmatlabbusy
+
 if exist teamcitymessage.matlab goto echo_teamcity_message
-:continueloobmatlabbusy
-If exist matlabruns.busy goto loopmatlabbusy
+
+set tempfile = temp_file_containing_linecount.TXT
+tasklist /fi "imagename eq MATLAB.exe" /nh 2> null | find /C "MATLAB.exe" > tempfile  
+FOR /f "tokens=* delims=" %%c IN (tempfile ) DO (
+if not %%c == 0 goto loopmatlabbusy
+)
+del tempfile
 
 echo 'teamcity OK'
 
 rem Remove drive with matlab
 rem -----------------------------------
-taskkill /im MATLAB.exe
 net use y: /delete
+
 goto end
 
 :echo_teamcity_message
 type teamcitymessage.matlab
 del teamcitymessage.matlab
-goto continueloobmatlabbusy
+goto loopmatlabbusy
 
 :end

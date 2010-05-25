@@ -73,8 +73,6 @@ catch me
     TeamCity.postmessage('message', 'text', 'Matlab was unable to run oetsettings.',...
         'errorDetails',me.message,...
         'status','ERROR');
-    %% Remove template files
-    delete(which('matlabruns.busy'));
     exit;
 end
 
@@ -97,9 +95,7 @@ catch me
     TeamCity.postmessage('message', 'text', 'Something went wrong while making documentation.',...
         'errorDetails',me.getReport,...
         'status','ERROR');
-    delete(which('matlabruns.busy'));
     exit;
 end
 
-delete(which('matlabruns.busy'));
 exit;
