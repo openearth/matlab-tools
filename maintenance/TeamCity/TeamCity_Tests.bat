@@ -8,7 +8,7 @@ rem TO DO: put entire mapping command in environment variable %openearth_map%
 rem Map drive with matlab
 rem -----------------------------------
 net use y: /delete
-net use y: \\wlhost\library %openearth_password% /USER:%openearth_user% 
+net use y: \\wlhost\library /USER:%openearth_user% %openearth_password% 
 
 :oet_perform
 rem Call matlab
@@ -30,6 +30,7 @@ echo 'teamcity OK'
 
 rem Remove drive with matlab
 rem -----------------------------------
+taskkill /im MATLAB.exe
 net use y: /delete
 goto end
 

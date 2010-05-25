@@ -30,6 +30,7 @@ echo 'teamcity OK'
 
 rem Remove drive with matlab
 rem -----------------------------------
+taskkill /im MATLAB.exe
 net use y: /delete
 goto end
 
