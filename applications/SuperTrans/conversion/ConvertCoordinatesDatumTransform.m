@@ -44,7 +44,8 @@ ell2        = OPT.(OPT.(datum_trans).ellips2).ellips;
 
 switch method_name
     case {'Geocentric translations','Position Vector 7-param. transformation',...
-            'Coordinate Frame rotation','Molodensky-Badekas 10-parameter transformation'}
+            'Coordinate Frame rotation','Coordinate Frame Rotation (geog2D domain)',...
+            'Molodensky-Badekas 10-parameter transformation'}
         % convert geographic 2D coordinates to geographic 3D, by assuming
         % height is 0
         h    = zeros(size(lat1));
@@ -65,7 +66,7 @@ switch method_name
                 dz = inv*getParamValue(param,'Z-axis translation','metre',STD);
                 [x,y,z]=Helmert3(x,y,z,dx,dy,dz);
 
-            case {'Position Vector 7-param. transformation','Coordinate Frame rotation'}
+            case {'Position Vector 7-param. transformation','Coordinate Frame rotation','Coordinate Frame Rotation (geog2D domain)'}
 
                 dx = inv*getParamValue(param,'X-axis translation','metre',STD);
                 dy = inv*getParamValue(param,'Y-axis translation','metre',STD);
@@ -74,7 +75,7 @@ switch method_name
                 ry = inv*getParamValue(param,'Y-axis rotation','radian',STD);
                 rz = inv*getParamValue(param,'Z-axis rotation','radian',STD);
                 ds = inv*getParamValue(param,'Scale difference','',STD);
-                if strcmp(method_name,'Coordinate Frame rotation')
+                if any(strcmp(method_name,{'Coordinate Frame rotation','Coordinate Frame Rotation (geog2D domain)'}))
                     rx=rx*-1;
                     ry=ry*-1;
                     rz=rz*-1;

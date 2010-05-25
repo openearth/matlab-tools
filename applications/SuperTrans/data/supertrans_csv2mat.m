@@ -86,7 +86,7 @@ for iCsvFile = 1:length(csvFiles)
     end
    
     %% read entire file
-    for ii=1:inf
+    for ii=1:2147483647 %max size of for loop
         tLine = fgetl(fid);
         if ~ischar(tLine),   break,   end
         % check for text qualifiers '"'; if they are found, 
