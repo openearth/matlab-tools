@@ -28,9 +28,11 @@ If exist matlabruns.busy goto loopmatlabbusy
 
 echo 'teamcity OK'
 
+rem hack to wait 10 seconds (10000 miliseconds)
+ping -n 1 -w 10000 0.0.0.1
+
 rem Remove drive with matlab
 rem -----------------------------------
-taskkill /im MATLAB.exe
 net use y: /delete
 goto end
 
