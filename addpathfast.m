@@ -13,6 +13,7 @@ function addpathfast(basepath,varargin)
 % The following <keyword,value> pairs have been implemented;
 % * patterns:  cell array with regular expression patterns to be excluded
 %              default {[filesep,'.svn']}. (i.e. <a href="subversion.tigris.org">Subversion</a> directories)
+% * append:    add new path before (0) or after existing path (1, default)
 %
 % Example: to exclude all mexnc and (s)nctools related stuff too:
 %

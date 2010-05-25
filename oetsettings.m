@@ -127,37 +127,8 @@ function oetsettings(varargin)
 %% NETCDF (if not present yet)
 %  (NB RESTOREDEFAULTPATH does not restore java paths)
 % -----------------------
-vs = datenum(version('-date'));
-if (vs > datenum(2003,1,1)) 
-    
-    java2add         = path2os(fullfile(oetroot, '/io/nctools', 'toolsUI-2.2.22.jar'));
-    dynjavaclasspath = path2os(javaclasspath);
-    indices          = strfind(dynjavaclasspath,java2add);
-    
-    if isempty(cell2mat(indices))
-        javaaddpath (java2add)
-    elseif ~(OPT.quiet)
-        disp(['Java path not added, already there: ',java2add]);
-        disp(' ');
-    end
-    setpref ('SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
-    % for upcoming snctools update
-    setpref ('SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
-                                           % 1: We do not want to transpose matrices because:
-                                           %    (i)  we have some LARGE datasets and need a performance boost
-                                           %    (ii) some use the netCDF API directly which does not do this. 
-                                           %    May break previous work though ...
-    
-else
-    
-    if ~(OPT.quiet)
-        disp(' ');
-        disp('Java path not added, your version of matlab is too old.');
-        disp('Because of this the nctools will not work properly.');
-        disp(' ');
-    end
-    
-end
+
+   netcdf_settings('quiet',OPT.quiet) % in /io/netcdf/
 
 %% Report
 % -----------------------

@@ -2,8 +2,8 @@
 %
 % OpenEarthTools Input/Output toolboxes.
 %   h4tools             - HDF4 tools
-%   mexnc               - MATLAB gateway to NetCDF interface (low-level)
-%   nctools             - netCDF tools
-%   snctools            - netCDF tools (external)
+%   netcdf              - netCDF tools
+%   * snctools          - simple netCDF io
+%   * nctools           - netCDF tools
 %
 % See also: OpenEarthTools: general, applications
