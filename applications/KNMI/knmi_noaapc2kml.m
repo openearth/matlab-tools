@@ -8,7 +8,7 @@ function [OPT, Set, Default] =knmi_noaapc2kml(noaapcfile,varargin)
 %
 % Example:
 %
-%    knmi_noaapc2kml('K010590N.SST','clim',[9 16]);
+%    knmi_noaapc2kml('K010590N.SST','clim',[6 14]);
 %
 %See also: KMLfig2png, knmi_noaapc_read
 
@@ -19,6 +19,7 @@ tic
 
    OPT.directoryin  = 'F:\checkouts\OpenEarthRawData\knmi\noaapc\mom\1990_mom\5\';
    OPT.directoryout = '.kml';
+   OPT.opendap      = 'http://opendap.deltares.nl:8080/';
    OPT.clim         = [10 14]; % same as icons in http://dx.doi.org/10.1016/j.csr.2007.06.011
    OPT.disp         = 1; % toc per image
    noaapcfiles      = {'K010590N.SST',...% 1 % Do make sure they are in chronological order, 4 images/day
@@ -42,7 +43,6 @@ tic
                        'K070590N.SST',...%19
                        'K080590M.SST',...%20
                        'K080590A.SST'};  %21
-   
 %   [OPT, Set, Default] =setProperty(OPT,varargin{:});
 %   
 %   if nargin==0
@@ -70,11 +70,22 @@ for ifile= 1:nfile
       error(['images not in chronological order: #',num2str(ifile +1),' is before #',num2str(ifile)]);
    end
    
+   fname       = ['N',datestr(D.datenum,30),'_SST.nc'];
+   
+   urls = ...
+   ['(<a href="',OPT.opendap,     'thredds/dodsC/opendap/knmi/NOAA/mom/1990_mom/5/',fname,'.html">','THREDDS</a>,',...
+     '<a href="',OPT.opendap,                   'opendap/knmi/NOAA/mom/1990_mom/5/',fname,'.html">','HYRAX</a>,',...
+     '<a href="',OPT.opendap,'thredds/fileServer/opendap/knmi/NOAA/mom/1990_mom/5/',fname,     '">','ftp</a>)'] ;
+   
    h = pcolorcorcen(D.loncor,D.latcor,D.data);
    caxis(OPT.clim)
    colorbarwithtitle([D.producttex,' [',D.unitstex,']']);
    KMLfig2png(h,'fileName',[filename(D.filename),'.kml'],...
                  'kmlName',[D.product,' [',D.units,'] ',datestr(D.datenum,'yyyy-mmm-dd HH-MM-SS')],...
+             'description',[D.product,' [',D.units,'] product from <a href="http://www.knmi.nl/onderzk/applied/sd/en/AVHRR_archive_KNMI.html"> KNMI</a> ',...
+                           'from data recored by the <a href="http://www.oso.noaa.gov/poes/"> NOAA POES AVHRR instrument</a>: ',...
+                           '',D.satellite,num2str(D.satnum),' on ',datestr(D.datenum,'yyyy-mmm-dd HH-MM-SS'),...
+                           ' provided as kml and via ',urls,' by <a href="http://www.OpenEarth.eu"> OpenEarthTools</a>'],...
                   'levels',[-1 3],... % sufficient for 1 km resolution
                   'timeIn',D.datenum,...
              'scaleHeight',false,...
@@ -83,10 +94,15 @@ for ifile= 1:nfile
    D    = NEXT;
 
    if OPT.disp
-   num2str([ifile toc])
+   num2str(['file #:',num2str(ifile),', time elapsed: ',num2str(toc)])
+   end
+
+   if OPT.pause
+      pausedisp
    end
 
 end
+
    
 %% vectgorized image is bad idea:
 

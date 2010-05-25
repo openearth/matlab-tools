@@ -242,9 +242,7 @@
       nc(ifld).Attribute(4)  = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
       nc(ifld).Attribute(5)  = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
       nc(ifld).Attribute(6)  = struct('Name', 'grid_mapping'   ,'Value', 'polar_stereographic');
-
-      nc(ifld).Attribute(7)  = struct('Name', 'valid_min'      ,'Value', D.data_min_value);
-      nc(ifld).Attribute(8)  = struct('Name', 'valid_max'      ,'Value', D.data_max_value);
+      nc(ifld).Attribute(7)  = struct('Name', 'actual_range'   ,'Value', [D.data_min_value D.data_max_value]);
       
       if OPT.pack
       nc(ifld).Nctype        = 'int'; %'byte'; %short

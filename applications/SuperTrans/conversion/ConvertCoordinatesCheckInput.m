@@ -48,6 +48,9 @@ end
 
 if ~isempty(CS.code)
     ind1              = find(STD.coordinate_reference_system.coord_ref_sys_code == CS.code);
+    if isempty(ind1)
+       error(['epsg code unknown: ',num2str(CS.code)])
+    else
 
     switch STD.coordinate_reference_system.coord_ref_sys_kind{ind1}
 
@@ -65,6 +68,7 @@ if ~isempty(CS.code)
              error(['coordinate type '''...
                  STD.coordinate_reference_system.coord_ref_sys_kind{ind1}...
                  ''' is not supported']);
+    end
     end
 end
     
