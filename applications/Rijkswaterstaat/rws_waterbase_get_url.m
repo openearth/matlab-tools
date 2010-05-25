@@ -92,7 +92,7 @@ function OutputName = rws_waterbase_get_url(varargin);
       if (ok == 0);OutputName = [];return;end
    end
 
-   disp(['message: rws_waterbase_get_url: loading Substance # ',num2str(indSub                ,'%0.3d'),': ',...
+   disp(['message: rws_waterbase_get_url: loading Substance # ',num2str(indSub           ,'%0.3d'),': ',...
                                                            num2str(Substance.Code(indSub),'%0.3d'),' "',...
                                                                    Substance.FullName{indSub},'"'])
 
@@ -206,7 +206,7 @@ function OutputName = rws_waterbase_get_url(varargin);
 
    else
 
-%% Pad multiple files returned for multiplelocations
+%% Pad multiple files returned for multiple locations
 
       h = waitbar(0,'Downloading data...');
 

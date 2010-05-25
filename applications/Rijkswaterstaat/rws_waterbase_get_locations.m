@@ -39,16 +39,17 @@ function Station = rws_waterbase_get_locations(Code,CodeName,varargin)
 % 2009 jan 27: removed from getWaterbaseData to separate function [Gerben de Boer]
 % 2009 dec 28: adapted to new waterbase.nl html page [Gerben de Boer]
 
-   OPT.version  = 2; % 1 is before summer 2009, 2 is after mid dec 2009
+   OPT.version  = 2; % 0 = local cache, 1 is before summer 2009, 2 is after mid dec 2009
 
 %% load url
 
-   if   OPT.version==1
-     url = ['http://www.waterbase.nl/getGML.cfm?wbwns=' sprintf('%d', Code)]
+   if       OPT.version==0
+     url = ['file:///' fileparts(mfilename('fullpath')) filesep 'locations.txt'];
+   elseif   OPT.version==1
+     url = ['http://www.waterbase.nl/getGML.cfm?wbwns=' sprintf('%d', Code)];
    elseif   OPT.version==2
-     url = ['http://www.waterbase.nl/index.cfm?page=start.locaties&whichform=1&wbwns1=' sprintf('%s', CodeName) '&wbthemas=&search=']
+     url = ['http://www.waterbase.nl/index.cfm?page=start.locaties&whichform=1&wbwns1=' sprintf('%s', CodeName) '&wbthemas=&search='];
    end
-   %url = 'file:///F:\checkouts\OpenEarthTools\matlab\applications\Rijkswaterstaat\locations.txt';
 
 %% load locations data file   
 

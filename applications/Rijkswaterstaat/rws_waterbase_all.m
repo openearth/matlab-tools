@@ -16,7 +16,6 @@ function rws_waterbase_all
     ncbase = 'f:\opendap\thredds\';             % @ local
    
    OPT.donar_wnsnum = [209 332 346 347 360 363 364 380 491 492 493 541 560 1083]; % 0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls
-   OPT.donar_wnsnum = [209 332]; % 0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls
 
 %% Parameter choice
 
@@ -43,8 +42,8 @@ function rws_waterbase_all
       OPT.directory_raw  = [rawbase,'\rijkswaterstaat\waterbase\cache\',filesep,subdir];
       
    %% Download from waterbase.nl
-%     rws_waterbase_get_url_loop('donar_wnsnum' ,OPT.code,...
-%                                'directory_raw',OPT.directory_raw);
+    rws_waterbase_get_url_loop('donar_wnsnum' ,OPT.code,...
+                               'directory_raw',OPT.directory_raw);
    
    %% Make netCDF
    

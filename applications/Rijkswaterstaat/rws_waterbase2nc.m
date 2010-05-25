@@ -78,7 +78,7 @@ function rws_waterbase2nc(varargin)
 %% Keyword,value
 
    OPT = setProperty(OPT,varargin{:});
-
+   
 %% Parameter choice
 
    DONAR = xls2struct([fileparts(mfilename('fullpath')) filesep 'rws_waterbase_name2standard_name.xls']);
@@ -266,10 +266,15 @@ for ivar=[OPT.donar_wnsnum]
         ifld = ifld + 1;
         nc(ifld).Name             = 'lon';
         nc(ifld).Nctype           = 'float'; % no double needed
+        if length(D.data.lon)==1
         nc(ifld).Dimension        = {'locations'};
+        else
+        nc(ifld).Dimension        = {'locations','time'}; % location can drift in time in some occasions
+        end
         nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'station longitude');
         nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
         nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude');
+        nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
         % Latitude:
         % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
@@ -277,12 +282,107 @@ for ivar=[OPT.donar_wnsnum]
         ifld = ifld + 1;
         nc(ifld).Name             = 'lat';
         nc(ifld).Nctype           = 'float'; % no double needed
+        if length(D.data.lat)==1
         nc(ifld).Dimension        = {'locations'};
+        else
+        nc(ifld).Dimension        = {'locations','time'};
+        end
         nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'station latitude');
         nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
         nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude');
+        nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
-        % Z:
+        % x:
+
+        ifld = ifld + 1;
+        nc(ifld).Name             = 'x';
+        nc(ifld).Nctype           = 'float'; % no double needed
+        if length(D.data.lat)==1
+        nc(ifld).Dimension        = {'locations'};
+        else
+        nc(ifld).Dimension        = {'locations','time'};
+        end
+        nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'station x');
+        nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
+        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate');
+        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate');
+        nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
+
+        % y:
+
+        ifld = ifld + 1;
+        nc(ifld).Name             = 'y';
+        nc(ifld).Nctype           = 'float'; % no double needed
+        if length(D.data.lat)==1
+        nc(ifld).Dimension        = {'locations'};
+        else
+        nc(ifld).Dimension        = {'locations','time'};
+        end
+        nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'station y');
+        nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
+        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate');
+        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate');
+        nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
+        
+   [dummy,dummy,log]=convertCoordinates(nan,nan,'CS1.code',D.data.epsg,'CS2.code',4326);
+
+   %% Coordinate system
+   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
+   if length(D.data.epsg)==1
+   if ~strcmpi(log.CS1.type,'geographic 2D'); % e.g. ED50 epsg 4230
+
+        ifld = ifld + 1;
+      nc(ifld).Name         = 'epsg';
+      nc(ifld).Nctype       = nc_int;
+      nc(ifld).Dimension    = {};
+      nc(ifld).Attribute = struct('Name', ...
+       {'name',...
+        'grid_mapping_name', ...
+        'semi_major_axis', ...
+        'semi_minor_axis', ...
+        'inverse_flattening', ...
+        'latitude_of_projection_origin', ...
+        'longitude_of_projection_origin', ...
+        'false_easting', ...
+        'false_northing', ...
+        'scale_factor_at_projection_origin', ...
+        'comment'}, ...
+        'Value', ...
+        {log.CS1.name,...
+         log.proj_conv1.method.name,     ...
+         log.CS1.ellips.semi_major_axis, ...
+         log.CS1.ellips.semi_minor_axis, ...
+         log.CS1.ellips.inv_flattening,  ...
+         log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,'Latitude of natural origin'    )),...
+         log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,'Longitude of natural origin'   )),...
+         log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,'False easting'                 )),...
+         log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,'False northing'                )),...
+         log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,'Scale factor at natural origin')),...
+        'value is equal to EPSG code'});
+   end
+   end
+
+      %% Coordinate system
+      %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
+
+        ifld = ifld + 1;
+      nc(ifld).Name         = 'wgs84';
+      nc(ifld).Nctype       = nc_int;
+      nc(ifld).Dimension    = {};
+      nc(ifld).Attribute = struct('Name', ...
+       {'name',...
+        'semi_major_axis', ...
+        'semi_minor_axis', ...
+        'inverse_flattening', ...
+        'comment'}, ...
+        'Value', ...
+        {log.CS2.name,...
+         log.CS2.ellips.semi_major_axis, ...
+         log.CS2.ellips.semi_minor_axis, ...
+         log.CS2.ellips.inv_flattening,  ...
+        'value is equal to EPSG code'});
+
+        % z:
         % 
 
         ifld = ifld + 1;
@@ -363,12 +463,17 @@ for ivar=[OPT.donar_wnsnum]
 
         nc_varput(outputfile, 'station_id'  , D.data.locationcode);
         nc_varput(outputfile, 'station_name', D.data.location);
-        nc_varput(outputfile, 'lon'         , unique(D.data.lon));
-        nc_varput(outputfile, 'lat'         , unique(D.data.lat));
+        nc_varput(outputfile, 'lon'         , D.data.lon);
+        nc_varput(outputfile, 'lat'         , D.data.lat);
+        nc_varput(outputfile, 'x'           , D.data.x);
+        nc_varput(outputfile, 'y'           , D.data.y);
         nc_varput(outputfile, 'z'           , D.data.z);
         nc_varput(outputfile, 'time'        , D.data.datenum' - OPT.refdatenum);
         nc_varput(outputfile, OPT.name      , D.data.(OPT.name));
-
+        nc_varput(outputfile, 'wgs84'       , log.CS2.code);
+        if ~strcmpi(log.CS1.type,'geographic 2D'); % e.g. ED50 epsg 4230
+        nc_varput(outputfile, 'epsg'        , log.CS1.code);        
+        end
         %% 6 Check
 
         if OPT.dump
