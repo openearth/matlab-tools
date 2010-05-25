@@ -54,6 +54,7 @@ function TeamCity_makedocumentation(varargin)
 %% First load oetsettings
 try
     %% temp remove targetdir from repos checkout
+    teamCityDir= fileparts(mfilename('fullpath'));
     matlabdir = strrep(fileparts(mfilename('fullpath')),'maintenance\TeamCity','');
     if isdir(fullfile(matlabdir,'tutorials'))
         rmdir(fullfile(matlabdir,'tutorials'),'s');
@@ -73,7 +74,7 @@ catch me
         'errorDetails',me.message,...
         'status','ERROR');
     %% Remove template files
-    delete('matlabruns.busy');
+    delete(which('matlabruns.busy'));
     exit;
 end
 
@@ -84,10 +85,10 @@ try
     tutorials2html(varargin{:},'teamcity');
     
     %% zip result
-    delete('htmldocumentation.zip');
-    delete('matlabtocfiles.zip');
-    zip('htmldocumentation',{fullfile(oetroot,'tutorials','*.*')});
-    zip('matlabtocfiles',{fullfile(oetroot,'docs','OpenEarthDocs','*.*')});
+    delete(fullfile(teamCityDir,'htmldocumentation.zip'));
+    delete(fullfile(teamCityDir,'matlabtocfiles.zip'));
+    zip(fullfile(teamCityDir,'htmldocumentation'),{fullfile(oetroot,'tutorials','*.*')});
+    zip(fullfile(teamCityDir,'matlabtocfiles'),{fullfile(oetroot,'docs','OpenEarthDocs','*.*')});
     
     %% remove targetdir
     rmdir(fullfile(oetroot,'tutorials'),'s');
@@ -96,9 +97,9 @@ catch me
     TeamCity.postmessage('message', 'text', 'Something went wrong while making documentation.',...
         'errorDetails',me.getReport,...
         'status','ERROR');
-    delete('matlabruns.busy');
+    delete(which('matlabruns.busy'));
     exit;
 end
 
-delete('matlabruns.busy');
+delete(which('matlabruns.busy'));
 exit;
