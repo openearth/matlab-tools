@@ -279,6 +279,7 @@ function varargout = nc_cf_grid_write(varargin)
       nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
       nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
    end
+
    %% Coordinate system
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
    if ~isempty(OPT.epsg)

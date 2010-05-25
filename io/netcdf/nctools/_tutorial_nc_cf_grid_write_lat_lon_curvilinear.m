@@ -1,27 +1,30 @@
-%_TUTORIAL_NC_CF_GRID_WRITE_LAT_LON_ORTHOGONAL   example of how to create a netCDF grid file of an orthogonal lat-lon grid
+%_TUTORIAL_NC_CF_GRID_WRITE_LAT_LON_CURVILINEAR   example of how to create a netCDF grid file of a curvi-linear lat-lon grid
 %
 %  example of how to make a netCDF file of a variable
-%  that is defined on a grid that is orthogonal
-%  in a lat-lon coordinate system. In this special case 
-%  the dimensions coincide with the coordinate axes.
+%  that is defined on a grid that is curvi-linear
+%  in a lat-lon coordinate system. In this case 
+%  the dimensions (m,n) do not coincide with the coordinate axes.
 %
 %  This case is described in:
-%  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984551
-%  as "Independent Latitude, Longitude Axes".
+%  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984605
+%  as "Two-Dimensional Latitude, Longitude, Coordinate Variables".
 %
 %    ^ latitude (degrees_north)
 %    |
-%    |      ncols
-%    |     +-----+
-%    |
-%    |      -----   +
-%    |     |#####|  |
-%    |     |#####|  |
-%    |     |#####|  | nrows
-%    |     |#####|  |
-%    |     |#####|  |
-%    |      -----   +
-%    |
+%    |         +
+%    |  ncols/   \
+%    |     /    A  \
+%    |    +   /###\  \
+%    |      <######\   \
+%    |       \######\    \
+%    |        )######)    nrows
+%    |       /######/ 	  / 
+%    |      /######/  	/
+%    |     <######/   /
+%    |      \####/  /
+%    |        \/  /
+%    |           +
+%    |            
 %    +----------------------> longitude (degrees_east)
 %
 %See also: SNCTOOLS, NC_CF_GRID, NC_CF_GRID_WRITE,
@@ -53,6 +56,12 @@
 
      [lon,lat]                   = ndgrid(OPT.lon,OPT.lat);
 
+      lon2                       = cosd(30).*(lon - mean(OPT.lon)) - sind(30).*(lat - mean(OPT.lat)) + mean(OPT.lon);
+      lat2                       = sind(30).*(lat - mean(OPT.lat)) + cosd(30).*(lon - mean(OPT.lon)) + mean(OPT.lat);
+      
+      OPT.lon                    = lon2; clear lon2
+      OPT.lat                    = lat2; clear lat2
+      
       OPT.wgs84                  = 4326;
       OPT.ellips.name            = 'WGS 84';
       OPT.ellips.semi_major_axis = 6378137.0;
@@ -73,7 +82,7 @@
       
 %% 1a Create file
 
-      outputfile = fullfile(fileparts(mfilename('fullpath')),['_tutorial_nc_cf_grid_write_lat_lon_orthogonal','.nc']);
+      outputfile = fullfile(fileparts(mfilename('fullpath')),['_tutorial_nc_cf_grid_write_lat_lon_curvilinear','.nc']);
    
       nc_create_empty (outputfile)
    
@@ -98,9 +107,9 @@
       
 %% 2 Create matrix span dimensions
 %    http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#dimensions   
-   
-      nc_add_dimension(outputfile, 'lon', OPT.ncols); % use this as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
-      nc_add_dimension(outputfile, 'lat', OPT.nrows); % use this as 2nd array dimension to get correct plot in ncBrowse (snctools swaps for us)
+
+      nc_add_dimension(outputfile, 'col', OPT.ncols); % use this as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
+      nc_add_dimension(outputfile, 'row', OPT.nrows); % use this as 2nd array dimension to get correct plot in ncBrowse (snctools swaps for us)
 
 %% 3a Create coordinate variables
    
@@ -113,11 +122,12 @@
         ifld = ifld + 1;
       nc(ifld).Name             = 'lon';
       nc(ifld).Nctype           = nc_type(OPT.lon_type);
-      nc(ifld).Dimension        = {'lon'};
+      nc(ifld).Dimension        = {'col','row'};
       nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'longitude');
       nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
       nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude'); % standard name
       nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lon(:)) max(OPT.lon(:))]);
+      nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon'); % lon matrix can be plotted as a function of lat and itself
       nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
    %% Latitude
@@ -126,17 +136,18 @@
         ifld = ifld + 1;
       nc(ifld).Name             = 'lat';
       nc(ifld).Nctype           = nc_type(OPT.lat_type);
-      nc(ifld).Dimension        = {'lat'};
+      nc(ifld).Dimension        = {'col','row'};
       nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'latitude');
       nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
       nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude'); % standard name
       nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lat(:)) max(OPT.lat(:))]);
+      nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon'); % lat matrix can be plotted as a function of lon and itself
       nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
    %% Coordinate system (WGS 84, ED 50, INT 1924, ETRS 89 and the upcoming ETRS update etc.)
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#grid-mappings-and-projections
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#appendix-grid-mappings
-   
+
         ifld = ifld + 1;
       nc(ifld).Name         = 'wgs84'; % preferred
       nc(ifld).Nctype       = nc_int;
@@ -163,7 +174,7 @@
         ifld = ifld + 1;
       nc(ifld).Name             = OPT.varname;
       nc(ifld).Nctype           = nc_type(OPT.val_type);
-      nc(ifld).Dimension        = {'lon','lat'};
+      nc(ifld).Dimension        = {'col','row'};
       nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name    );
       nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', OPT.units        );
       nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue    );

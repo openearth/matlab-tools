@@ -1,7 +1,0 @@
-* changes on snctools -r3085
-- allow an nc_dump to file directly 
-- transpose vectors (1xn & nx1) so they always fit on a netCDF vector
-- remember full path in nc_info (so you can pass it on as file handle)
-- tmw backend cannot write empty attribute: added netCDf library fix for 2008b and 2009
-- add comment on inconsistency with native matlab netcdf library to nc_dump and contents.m
-- adapted get_varinfo.m and nc_get_attribute_struct.m for mexnc
