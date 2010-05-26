@@ -76,7 +76,7 @@ function varargout = arc_shape2kml(shape_filename,varargin)
 
    OPT.fname         = shape_filename;
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
    
   %OPT.fname         = 'vogel en habitat\habitat gebieden\habitat.shp';% 'habitat noordzee\habitat.shp'; % OK
   %OPT.epsg          = 23031; % 'ED50 / UTM zone 31N'

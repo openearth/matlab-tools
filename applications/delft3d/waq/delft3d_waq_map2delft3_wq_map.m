@@ -50,7 +50,7 @@ function varargout = delft3d_waq_map2delft3_wq_map(lga_in, map_in, k_in, lga_to,
       return
    end
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
 
 %% load grids
 

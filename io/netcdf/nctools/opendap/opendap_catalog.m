@@ -118,7 +118,7 @@ function varargout = opendap_catalog(varargin)
      end
    end
 
-   OPT = setProperty(OPT,varargin{nextarg:end});
+   OPT = setproperty(OPT,varargin{nextarg:end});
    
 %% remote vs. local url
 

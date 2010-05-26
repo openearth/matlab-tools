@@ -94,7 +94,7 @@ function varargout = deltares_logo(fname,varargin)
    %% Update defaults
    %------------------------
    
-      LOGO   = setProperty(LOGO,varargin{:});
+      LOGO   = setproperty(LOGO,varargin{:});
       
       
    %% Now get last of three of [dx, x(1), x(2)] OR

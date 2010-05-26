@@ -111,7 +111,7 @@ OPT = struct( ...
     'pivot', [0 0] ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 if ~isempty(OPT.x); x = OPT.x; end;
 if ~isempty(OPT.z); z = OPT.z; end;

@@ -90,7 +90,7 @@ OPT = struct( ...
     'plot', false ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% determine cell ranges
 

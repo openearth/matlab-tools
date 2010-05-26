@@ -70,7 +70,7 @@ OPT = struct(...
     'globalattributes', {{}},...
     'run_id', 0);
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %%
 if ~isscalar(MCresult)

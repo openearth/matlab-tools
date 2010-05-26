@@ -56,7 +56,7 @@ function varargout = KMLpcolor(lat,lon,c,varargin)
      return
    end
    
-   [OPT, Set, Default] = setProperty(OPT, varargin);
+   [OPT, Set, Default] = setproperty(OPT, varargin);
    
    KMLsurf(lat,lon,0.*lat,c,OPT); % do not pass c as z, because c can be at centers, while z needs to be at corners
 

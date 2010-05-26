@@ -72,7 +72,7 @@ OPT = struct(...
     'kmlfilename', 'Jarkus.kml',...
     'url', jarkus_url);
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %%
 url = OPT.url;

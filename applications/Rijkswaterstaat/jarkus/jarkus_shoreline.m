@@ -74,7 +74,7 @@ OPT = struct( ...
     'z', 0 ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% check
 

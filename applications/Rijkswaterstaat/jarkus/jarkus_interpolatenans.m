@@ -73,7 +73,7 @@ OPT = struct( ...
     'dim', 3 ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% check
 

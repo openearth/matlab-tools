@@ -61,7 +61,7 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
    OPT.nc       = 1;
    OPT.opendap  = 1; 
 
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
 
 %% Settings
 % ----------------------

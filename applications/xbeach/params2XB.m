@@ -60,7 +60,7 @@ OPT = struct(...
     'filename', fullfile(cd, 'params.txt'));
 
 if isvector(varargin)
-    OPT = setProperty(OPT, 'filename', varargin{end});
+    OPT = setproperty(OPT, 'filename', varargin{end});
 end
 
 pathstr = fileparts(OPT.filename);

@@ -47,7 +47,7 @@ OPT.polygon      = [];
 OPT.datathinning = 1;
 OPT.ldburl       = []; % x of coastline
 
-OPT = setProperty(OPT,varargin{:});
+OPT = setproperty(OPT,varargin{:});
 
 if ~isempty(OPT.ldburl)
     OPT.x = nc_varget(OPT.ldburl, nc_varfind(OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate'));

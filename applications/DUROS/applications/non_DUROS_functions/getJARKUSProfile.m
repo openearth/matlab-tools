@@ -71,7 +71,7 @@ OPT = struct( ...
     'repository', 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc' ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% retrieve JARKUS profile from repository
 % read matching records from respository based on year, area name and

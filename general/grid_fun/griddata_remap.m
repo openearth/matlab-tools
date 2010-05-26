@@ -67,7 +67,7 @@ function ZI = griddata_remap(X, Y, Z, XI, YI, varargin)
 OPT.errorCheck = true;
 
 % overrule default settings by property pairs, given in varargin
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% vectorize data
 x=X(:);

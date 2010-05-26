@@ -53,7 +53,7 @@ function [locs,sources,units] = matroos_list(varargin)
    OPT.disp     = 1;
    OPT.fmt      = 'yyyymmdd'; % for matroos_list cache: max every day a new one is OK. overwrites previous ones.
 
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
 
 %% cache matroos_list as server call is very slow
 %  preference is to cache in matroos toolbox

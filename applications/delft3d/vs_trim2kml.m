@@ -77,7 +77,7 @@ if nargin==0
    return
 end
 
-OPT = setProperty(OPT,varargin{:});
+OPT = setproperty(OPT,varargin{:});
 
 %% load time and grid
 

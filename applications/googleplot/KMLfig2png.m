@@ -93,7 +93,7 @@ end
 
 OPT.h               =      h; % handle to input figure
 
-[OPT, Set, Default] = setProperty(OPT, varargin);
+[OPT, Set, Default] = setproperty(OPT, varargin);
 
 %% set maxLod and minLod defaults
 

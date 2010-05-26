@@ -37,7 +37,7 @@ stochast = struct(...
 OPT = struct(...
     'active', true(size(stochast)));
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 for i = find(~OPT.active)
     stochast(i).Distr = @deterministic;

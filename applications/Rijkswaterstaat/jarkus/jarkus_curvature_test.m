@@ -91,7 +91,7 @@ OPT = struct( ...
     'method', 'angle' ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% create spiral shaped coastline
 

@@ -75,10 +75,10 @@ OPT = struct(...
     'verbose', true);
 
 if ~isempty(varargin) && ischar(varargin{1})
-    OPT = setProperty(OPT, varargin{:});
+    OPT = setproperty(OPT, varargin{:});
 elseif ~isempty(varargin)
     % backward compatible (varargin{1} = nx)
-    OPT = setProperty(OPT, 'equidistant', varargin{1});
+    OPT = setproperty(OPT, 'equidistant', varargin{1});
 end
 
 %% clear all nan values in input (to avoid problems with interpolation)

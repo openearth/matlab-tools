@@ -20,7 +20,7 @@ function result = mergestructs(varargin)
 %   value of the struct appearing <last> among the
 %   input arguments.
 %
-%See also: struct, setProperty
+%See also: struct, setproperty
 
 %21-8-2006
 

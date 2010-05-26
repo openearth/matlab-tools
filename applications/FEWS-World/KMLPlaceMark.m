@@ -65,7 +65,7 @@ OPT.name          = '';
 OPT.description   = '';
 OPT.Z             = zeros(size(lat));
 OPT.icon          = 'http://maps.google.com/mapfiles/kml/shapes/caution.png';
-[OPT, Set, Default] = setProperty(OPT, varargin{:});
+[OPT, Set, Default] = setproperty(OPT, varargin{:});
 if nargin<3
     disp('Minimal number of arguments is 3 (lat, lon, filename)');
   return

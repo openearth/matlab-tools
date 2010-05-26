@@ -152,7 +152,7 @@ else % command line use of detran
     OPT.fraction    = 0;
     OPT.timeStep    = 0;
     
-    OPT = setProperty(OPT, varargin{3:end});
+    OPT = setproperty(OPT, varargin{3:end});
     
     [pat, nam]=fileparts(trimFile);
     

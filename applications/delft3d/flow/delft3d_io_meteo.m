@@ -132,7 +132,7 @@ function varargout=Local_read(fname,varargin),
                                      'dy',...
                              'n_quantity'};
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
    
    %% Locate
    %--------------------------

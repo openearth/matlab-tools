@@ -60,7 +60,7 @@ if isvector(varargin) && ~any(strcmp(fieldnames(OPT), varargin{1}))
     end
 end
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% input file
 if ~exist(OPT.inpfile, 'file')

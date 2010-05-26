@@ -48,7 +48,7 @@ function meris2nc(outputfile,D,varargin);
    OPT.refdatenum     = datenum(1970,1,1); % linux  datenumber convention
    OPT.fillvalue      = nan; % NaNs do work in netcdf API
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
 
 %% 1a Create file
    

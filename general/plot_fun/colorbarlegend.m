@@ -122,7 +122,7 @@ OPT.figure         = gcf;
 OPT.figure0        = gcf;
 OPT.axes0          = gca;
 
-OPT = setProperty(OPT,varargin{argstart:end});
+OPT = setproperty(OPT,varargin{argstart:end});
    
 %% Make colorbar axes active
 

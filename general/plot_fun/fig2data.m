@@ -66,7 +66,7 @@ OPT = struct(...
     'DisplayName', '',...
     'data', {{'XData' 'YData'}});
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 if isempty(OPT.figfile)
     error('"figfile" must be specified')

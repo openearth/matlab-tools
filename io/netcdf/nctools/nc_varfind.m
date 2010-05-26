@@ -76,7 +76,7 @@ OPT.attributename  = [];  % this is a datenum of the starting time to search
 OPT.attributevalue = [];  % this indicates the search window (nr of days, '-': backward in time, '+': forward in time)
 
 % overrule default settings by property pairs, given in varargin
-OPT = setProperty(OPT, varargin{1:end});
+OPT = setproperty(OPT, varargin{1:end});
 
 % initialise output
 varname  = '';

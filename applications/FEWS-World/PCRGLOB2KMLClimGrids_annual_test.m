@@ -74,7 +74,7 @@ function PCRGLOB2KMLClimGrids_annual_test(lat_range, lon_range, model, scenario,
 % $HeadURL$
 
 % OPT.name          = '';
-% [OPT, Set, Default] = setProperty(OPT, varargin{:});
+% [OPT, Set, Default] = setproperty(OPT, varargin{:});
 
 % Fix the location of nc-files. Can be either local or OpenDAP
 % note HCW 22-01-2010: ncLocation will soon be changed to OpenDAP!!

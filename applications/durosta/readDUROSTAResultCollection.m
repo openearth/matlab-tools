@@ -100,7 +100,7 @@ OPT = struct( ...
     'crossShoreAverage', true ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% read results
 

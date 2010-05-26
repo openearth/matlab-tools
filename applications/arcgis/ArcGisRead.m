@@ -35,7 +35,7 @@ function varargout = ArcGisRead(fname,varargin)
    
    if nargin==0;D = OPT;return;end; % make function act as object
    
-   OPT      = setProperty(OPT,varargin{:});
+   OPT      = setproperty(OPT,varargin{:});
 
    D.varname         = OPT.varname;      
    D.long_name       = OPT.long_name;    

@@ -155,7 +155,7 @@ function varargout = knmi_potwind(varargin)
 %          end  
 %       end
       
-      H = setProperty(H,varargin{2:end});
+      H = setproperty(H,varargin{2:end});
    
 %% I - Check if file exists (actually redundant after file GUI)
 

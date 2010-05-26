@@ -68,7 +68,7 @@ function varargout = matroos_disp(varargin)
    OPT.unit     = ''; % always
    OPT.disp     = 1; 
 
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
 
 %% get TOC
 

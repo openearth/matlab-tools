@@ -267,7 +267,7 @@ function varargout = applyInput(OPT, varargin)
 if any(strcmp(varargin, 'empty'))
     inputvar(1:2:length(fieldnames(OPT))*2) = fieldnames(OPT)';
     inputvar(length(fieldnames(OPT))*2) = {[]};
-    OPT = setProperty(OPT, inputvar);
+    OPT = setproperty(OPT, inputvar);
 end
 id = false(size(varargin));
 i = 1;
@@ -283,4 +283,4 @@ while i < length(varargin)
     end
 end
 
-varargout = {setProperty(OPT, varargin{id}), id};
+varargout = {setproperty(OPT, varargin{id}), id};

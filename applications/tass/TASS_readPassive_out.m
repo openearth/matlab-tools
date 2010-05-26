@@ -67,7 +67,7 @@ OPT = struct( ...
     );
 
 %% overrule default settings by property pairs, given in varargin
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 if isempty(OPT.filename)
     disp('Error: Input file needed')

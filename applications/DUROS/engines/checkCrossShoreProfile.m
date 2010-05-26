@@ -74,7 +74,7 @@ OPT = struct(...
     'x_origin', [],...
     'Shift', 0);
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% sort x ascending and derive current positive x-direction
 [x IX]  = sort(x); % sort x ascending, get permutation vector

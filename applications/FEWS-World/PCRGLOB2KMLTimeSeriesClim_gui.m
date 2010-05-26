@@ -64,7 +64,7 @@
 % $HeadURL$
 
 % OPT.name          = '';
-% [OPT, Set, Default] = setProperty(OPT, varargin{:});
+% [OPT, Set, Default] = setproperty(OPT, varargin{:});
 
 % source oetsettings
 run(['..' filesep '..' filesep 'oetsettings']);

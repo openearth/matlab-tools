@@ -77,7 +77,7 @@ function rws_waterbase2nc(varargin)
    OPT.method             = 'fgetl';
 %% Keyword,value
 
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
    
 %% Parameter choice
 

@@ -86,7 +86,7 @@ function [tri,x1,y1,z1] = delaunay_simplified(x,y,z,tolerance,varargin)
 OPT.maxSize       = 1000;
 OPT.maxIterations = 100;
 
-[OPT, Set, Default] = setProperty(OPT, varargin);
+[OPT, Set, Default] = setproperty(OPT, varargin);
 
 %% find convex hull of not nan z values
 

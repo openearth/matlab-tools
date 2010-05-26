@@ -86,7 +86,7 @@ if isstruct(varargin{1})
    varargin = {varargin{2:end}};
 end
 
-OPT = setProperty(OPT,varargin{:});
+OPT = setproperty(OPT,varargin{:});
 
 %% load and cache vocab
 

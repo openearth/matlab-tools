@@ -100,7 +100,7 @@ OPT = struct(OPTstructArgs{:});
 
 % update property structure with input specified as propertyName
 % propertyValue pairs
-OPT = setProperty(OPT, varargin{id+1:end});
+OPT = setproperty(OPT, varargin{id+1:end});
 
 %% create figure file name if not defined
 if isempty(OPT.location)

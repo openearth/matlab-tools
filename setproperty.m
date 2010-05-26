@@ -1,4 +1,4 @@
-function [OPT, Set, Default] = setProperty(OPT, varargin)
+function [OPT, Set, Default] = setproperty(OPT, varargin)
 % SETPROPERTY  generic routine to set values in PropertyName-PropertyValue pairs
 %
 % Routine to set properties based on PropertyName-PropertyValue 
@@ -6,21 +6,21 @@ function [OPT, Set, Default] = setProperty(OPT, varargin)
 % where PropertyName-PropertyValue pairs are used.
 %   
 % syntax:
-% [OPT Set Default] = setProperty(OPT, varargin{:})
-%  OPT              = setProperty(OPT, 'PropertyName', PropertyValue,...)
-%  OPT              = setProperty(OPT, OPT2)
+% [OPT Set Default] = setproperty(OPT, varargin{:})
+%  OPT              = setproperty(OPT, 'PropertyName', PropertyValue,...)
+%  OPT              = setproperty(OPT, OPT2)
 %
 % input:
 % OPT      = structure in which fieldnames are the keywords and the values are the defaults 
 % varargin = series of PropertyName-PropertyValue pairs to set
 % OPT2     = is a structure with the same fields as OPT. 
 %
-%            Internally setProperty translates OPT2 into a set of
+%            Internally setproperty translates OPT2 into a set of
 %            PropertyName-PropertyValue pairs (see example below) as in:
 %            OPT2    = struct( 'propertyName1', 1,...
 %                              'propertyName2', 2);
 %            varcell = reshape([fieldnames(OPT2)'; struct2cell(OPT2)'], 1, 2*length(fieldnames(OPT2)));
-%            OPT     = setProperty(OPT, varcell{:});
+%            OPT     = setproperty(OPT, varcell{:});
 %
 % output:
 % OPT     = structure, similar to the input argument OPT, with possibly
@@ -35,7 +35,7 @@ function [OPT, Set, Default] = setProperty(OPT, varargin)
 % +------------------------------------------->
 % function y = dosomething(x,'debug',1)
 % OPT.debug  = 0;
-% OPT        = setProperty(OPT, varargin{:});
+% OPT        = setproperty(OPT, varargin{:});
 % y          = x.^2;
 % if OPT.debug; plot(x,y);pause; end
 % +------------------------------------------->
@@ -93,8 +93,8 @@ PropertyNames = fieldnames(OPT); % read PropertyNames from structure fieldnames
 
 if length(varargin) == 1
     % to prevent errors when this function is called as 
-    % "OPT = setProperty(OPT, varargin);" instead of 
-    % "OPT = setProperty(OPT, varargin{:})"
+    % "OPT = setproperty(OPT, varargin);" instead of 
+    % "OPT = setproperty(OPT, varargin{:})"
     if isstruct(varargin{1})
        OPT2     = varargin{1};
        varargin = reshape([fieldnames(OPT2)'; struct2cell(OPT2)'], 1, 2*length(fieldnames(OPT2)));

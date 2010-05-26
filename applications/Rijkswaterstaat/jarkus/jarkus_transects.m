@@ -117,8 +117,8 @@ for i = 1:2:length(varargin)
     end
 end
 
-OPT = setProperty(OPT, varargin1{:});
-FLTR = setProperty(FLTR, varargin2{:});
+OPT = setproperty(OPT, varargin1{:});
+FLTR = setproperty(FLTR, varargin2{:});
 
 %% retrieve jarkus info
 

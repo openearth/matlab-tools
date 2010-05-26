@@ -42,7 +42,7 @@ function fh = UCIT_plotGridOverview(datatype,varargin)
 
 OPT.refreshonly = 0;
 
-OPT = setProperty(OPT,varargin{:});
+OPT = setproperty(OPT,varargin{:});
 
 %% get metadata (either from the console or the database)
 

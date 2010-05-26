@@ -64,7 +64,7 @@ function D = readDUROSTAInput(fname, varargin)
 OPT = struct( ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% read input data
 

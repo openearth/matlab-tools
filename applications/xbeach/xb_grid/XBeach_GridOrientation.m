@@ -65,7 +65,7 @@ OPT = struct(...
     'x_yend',  [0 max(yw(:))]);
 
 % apply custom properties
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% show data, for selection
 if OPT.manual

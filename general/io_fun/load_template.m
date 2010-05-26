@@ -65,7 +65,7 @@ function varargout  = load_template(fname,varargin)
    OPT.debug        = 0;
 
 %% keywords
-   OPT = setProperty(OPT, varargin{1:end});
+   OPT = setproperty(OPT, varargin{1:end});
 
 %% check for file existence (1)
 

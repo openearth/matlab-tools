@@ -84,7 +84,7 @@ function filenames = findAllFiles(varargin)
 
    % overrule default settings by property pairs, given in varargin
 
-   OPT = setProperty(OPT, varargin{nextarg:end});
+   OPT = setproperty(OPT, varargin{nextarg:end});
    
    if nargin==0
       filenames = OPT;

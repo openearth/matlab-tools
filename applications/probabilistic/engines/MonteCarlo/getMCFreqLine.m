@@ -66,7 +66,7 @@ function [zValues freqs bins P] = getMCFreqLine(result, freqs, varargin)
 OPT = struct(...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% determine z-values
 

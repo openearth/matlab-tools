@@ -88,7 +88,7 @@ OPTstructArgs(2:2:2*id) = varargin(1:id);
 OPTstructArgs = [OPTstructArgs varargin(id+1:end)];
 
 % include the input in the OPT-structure
-OPT = setProperty(OPT, OPTstructArgs{:});
+OPT = setproperty(OPT, OPTstructArgs{:});
 
 %% fall velocity formulation
 % $$^{10} \log \left( {{1 \over w}} \right) = a\left( {^{10} \log D_{50} } \right)^2  + b\left( ^{10} \log D_{50} \right)  + c$$

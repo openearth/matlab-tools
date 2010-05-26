@@ -52,7 +52,7 @@ OPT.ncdir      = { ...
     'P:\mcdata\opendap\rijkswaterstaat\waterbase\', ... % Donar data
     'F:\checkouts\OpenEarthRawData\cefas\nc\'};         % Cefas data
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 if (strcmpi(OPT.source, 'all'))
     OPT.dir_index = 1:length(OPT.ncdir);

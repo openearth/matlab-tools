@@ -90,7 +90,7 @@ if ~isempty(XBid)
 end
 try
     % the functions keyword_value and CreateEmptyXBeachVar are available in OpenEarthTools
-    OPT = setProperty(OPT, varargin{:});
+    OPT = setproperty(OPT, varargin{:});
     if ~exist('XB', 'var')
         XB = CreateEmptyXBeachVar;
     end

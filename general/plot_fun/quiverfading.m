@@ -57,7 +57,7 @@ function varargout = quiverfading(varargin);
    OPT.tref          = OPT.t(end);
    OPT.dt            = [-24 0]./24;
    
-   OPT               = setProperty(OPT, varargin{6:end});
+   OPT               = setproperty(OPT, varargin{6:end});
 
    %% Get subset in specified time range
    %% ----------------

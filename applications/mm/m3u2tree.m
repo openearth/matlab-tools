@@ -17,7 +17,7 @@ cp.to   = destination;
 OPT.prefix = 1; % [] % prefix like 001 to ensure proper order from playlist
 OPT.pause  = 0;
 
-OPT = setProperty(OPT,varargin{:});
+OPT = setproperty(OPT,varargin{:});
 
 %% path
    if ~isdir(cp.to)

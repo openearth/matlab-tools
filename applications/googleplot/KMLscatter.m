@@ -88,7 +88,7 @@ function varargout = KMLscatter(lat,lon,c,varargin)
        return
    end
    
-   [OPT, Set, Default] = setProperty(OPT, varargin);
+   [OPT, Set, Default] = setproperty(OPT, varargin);
 
 %% get filename, gui for filename, if not set yet
 

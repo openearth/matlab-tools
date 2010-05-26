@@ -79,7 +79,7 @@ OPT = struct( ...
     'optimizeDP', '' ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% print tables
 

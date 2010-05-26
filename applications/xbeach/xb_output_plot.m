@@ -72,7 +72,7 @@ OPT.plottype  = {'uv', 'zb-z0'};                                % type of plot t
 % OPT.plottype  = {'H', 'zs', 'zb', 'u', 'v', 'uv', 'zb-z0'};    % type of plot to make
 
 % overrule default settings by property pairs, given in varargin
-OPT     = setProperty(OPT, varargin{:});
+OPT     = setproperty(OPT, varargin{:});
 
 if nargin == 0
     output = xb_output_read('stride_t', OPT.stride_t);

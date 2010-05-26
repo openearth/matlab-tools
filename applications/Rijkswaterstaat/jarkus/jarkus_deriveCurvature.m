@@ -148,7 +148,7 @@ OPT = struct( ...
     'christmas', false ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 % show all
 if OPT.christmas

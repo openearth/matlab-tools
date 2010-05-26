@@ -66,7 +66,7 @@ OPT = struct(...
     'Ycolumn', 7,...
     'Zcolumn', 8);
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %%
 [X Y Z] = deal([]);

@@ -75,7 +75,7 @@ OPT = struct( ...
     'angle', 0 ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 % allocate result variable
 transects_decurved = transects;

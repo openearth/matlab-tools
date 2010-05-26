@@ -74,7 +74,7 @@ OPT = struct(...
     'caption', '',...
     'justification', 'center');
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %%
 [nrow ncol] = deal(size(x,1), size(x,2));

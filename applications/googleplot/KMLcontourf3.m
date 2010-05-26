@@ -55,6 +55,6 @@ if nargin==0
     return
 end
 
-[OPT, Set, Default] = setProperty(OPT, varargin);
+[OPT, Set, Default] = setproperty(OPT, varargin);
 
 KMLcontourf(lat,lon,z,OPT);

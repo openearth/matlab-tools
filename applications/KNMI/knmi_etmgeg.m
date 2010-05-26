@@ -93,7 +93,7 @@ function varargout = knmi_etmgeg(varargin)
       OPT.version       = 'current';
       OPT.nheader       = 49; % 35; 27; due to 9 extra parameters in datafiles2, another extra 15 in datafiles3
 
-      OPT = setProperty(OPT,varargin{2:end});
+      OPT = setproperty(OPT,varargin{2:end});
    
 %% I - Check if file exists (actually redundant after file GUI)
 

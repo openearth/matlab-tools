@@ -60,7 +60,7 @@ function rws_waterbase_get_url_loop(varargin)
    
 %% Keyword,value
 
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
    
 %% Parameter choice
 

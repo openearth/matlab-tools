@@ -120,7 +120,7 @@ if isempty(id)
 end
 
 %% Set OPT properties
-OPT = setProperty(OPT, varargin{i0:end});
+OPT = setproperty(OPT, varargin{i0:end});
 
 %% Convert Address to cell
 if ischar(OPT.ADDRESS)

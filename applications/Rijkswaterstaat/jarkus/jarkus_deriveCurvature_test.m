@@ -92,7 +92,7 @@ OPT = struct( ...
     'dR', 500 ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% create spiral shaped coastline
 

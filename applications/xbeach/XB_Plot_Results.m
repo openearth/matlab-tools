@@ -72,7 +72,7 @@ OPT.var       = { ...
 OPT.stride_t  = 1;     % take a stride of OPT.stride_t through the time vector
 
 % overrule default settings by property pairs, given in varargin
-OPT     = setProperty(OPT, varargin{:});
+OPT     = setproperty(OPT, varargin{:});
 
 %% Open the dims.dat to extract all relevant dimensions
 if isempty(OPT.basedir)

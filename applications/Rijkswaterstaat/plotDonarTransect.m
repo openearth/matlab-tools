@@ -78,7 +78,7 @@ OPT.format    = 'png';
 OPT.cco       = '';
 OPT.log       = 0;
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% Identify specified transect
 if (strcmpi(OPT.transect, 'all'))

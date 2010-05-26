@@ -96,7 +96,7 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
    OPT.varname = varargin{1};
    end
    
-   OPT = setProperty(OPT,varargin{2:end});
+   OPT = setproperty(OPT,varargin{2:end});
 
 %% Load file info
 

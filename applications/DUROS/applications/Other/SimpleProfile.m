@@ -22,7 +22,7 @@ function [x z] = SimpleProfile(varargin)
 %   Example
 %   SimpleProfile
 %
-%   See also setProperty
+%   See also setproperty
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -72,7 +72,7 @@ OPT = struct(...
     );
 
 % set options based on input from varargin (PropertyName-PropertyValue pairs)
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %%
 x = [5.625 55.725 230.625]';

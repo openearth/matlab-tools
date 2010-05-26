@@ -94,7 +94,7 @@ function [varargout] = harmanal(t,h,varargin);
       error('at least one <keyword,value> pair required: tide/frequency/period')
    end
    
-   OPT = setProperty(OPT,varargin{nextarg:end});
+   OPT = setproperty(OPT,varargin{nextarg:end});
 
 %% Add and reformat (optional) fieldnames
 

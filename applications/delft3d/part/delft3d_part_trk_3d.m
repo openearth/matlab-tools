@@ -33,7 +33,7 @@ OPT.axis = [];
    
    end
 
-   OPT = setProperty(OPT,varargin{nextarg:end});
+   OPT = setproperty(OPT,varargin{nextarg:end});
 
 %% open tracks
 

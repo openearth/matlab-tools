@@ -79,7 +79,7 @@ elseif nargin > 0
     end 
 end    
 
-OPT = setProperty(OPT, varargin{i0:end});
+OPT = setproperty(OPT, varargin{i0:end});
 
 if ischar(OPT.ADDRESS)
     OPT.ADDRESS = {OPT.ADDRESS};

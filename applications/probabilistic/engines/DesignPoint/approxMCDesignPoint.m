@@ -98,7 +98,7 @@ OPT = struct( ...
     'optimize', '' ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% approximate design point
 

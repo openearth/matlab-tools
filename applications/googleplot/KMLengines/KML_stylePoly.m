@@ -65,7 +65,7 @@ if nargin==0
    return
 end
 
-OPT = setProperty(OPT,varargin{:});
+OPT = setproperty(OPT,varargin{:});
 
 %% type STYLE
 temp      = dec2hex(round([OPT.lineAlpha, OPT.lineColor].*255),2);

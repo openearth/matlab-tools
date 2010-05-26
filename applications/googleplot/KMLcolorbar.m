@@ -91,7 +91,7 @@ if nargin == 1 % don't set prperties if an OPT struct was already given
     if isempty(OPT.CBcolorSteps), OPT.CBcolorSteps = OPT.colorSteps; end
     if isempty(OPT.CBcLim      ), OPT.CBcLim       = OPT.cLim      ; end
 else
-    [OPT, Set, Default] = setProperty(OPT, varargin);
+    [OPT, Set, Default] = setproperty(OPT, varargin);
 end
 
 

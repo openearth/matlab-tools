@@ -48,7 +48,7 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
    OPT.mdf         = [];  % or dpsopt
    OPT.dpsopt      = [];  % or mdf
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
    
    if nargin==0
       return

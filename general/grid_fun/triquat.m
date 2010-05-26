@@ -111,7 +111,7 @@ function varargout = TRIQUAT(x,y,varargin)
 
    OPT.active = 1; % onle return triangles of active quadrangles
 
-   [OPT, Set, Default] = setProperty(OPT, varargin{:});
+   [OPT, Set, Default] = setproperty(OPT, varargin{:});
 
 szcor1 = size(x,1);
 szcor2 = size(x,2);

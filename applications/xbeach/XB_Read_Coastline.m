@@ -73,7 +73,7 @@ OPT = struct( ...
     't', 1 ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 if ndims(XB.Output.zb) < 3; error('No 3D XBeach result struct given'); end;
     

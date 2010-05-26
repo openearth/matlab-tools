@@ -79,7 +79,7 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 
 %% Keyword,value
 
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
 
    OPT.attname       = {'title',...
                         'institution',...

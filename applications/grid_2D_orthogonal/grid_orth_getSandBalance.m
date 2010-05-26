@@ -76,7 +76,7 @@ OPT.urls            = [];
 OPT.x_ranges        = [];
 OPT.y_ranges        = [];
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% generate sediment budget information
 for n = 1:size(OPT.min_coverage,2)

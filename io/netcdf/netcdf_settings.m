@@ -28,7 +28,7 @@ function netcdf_settings(varargin)
        nextarg   = 2;
    end
    
-   OPT = setProperty(OPT,varargin{nextarg:end});
+   OPT = setproperty(OPT,varargin{nextarg:end});
 
 %% remove any netcdf paths already added by oetsettings
 % -----------------------

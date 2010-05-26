@@ -80,7 +80,7 @@ value_ids = [false keyword_ids(1:length(keyword_ids)-1)];
 variable_ids = ~keyword_ids & ~value_ids & cellfun(@ischar, varargin);
 
 %% set options
-OPT = setProperty(OPT, varargin{keyword_ids | value_ids});
+OPT = setproperty(OPT, varargin{keyword_ids | value_ids});
 
 %% isolate variables and double the quotes
 variables = strrep(varargin(variable_ids), '''', '''''');

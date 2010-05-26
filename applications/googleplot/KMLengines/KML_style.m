@@ -52,7 +52,7 @@ OPT.lineColor  = [0 0 0];
 OPT.lineAlpha  = 1;
 OPT.lineWidth  = 1;
 
-OPT = setProperty(OPT,varargin{:});
+OPT = setproperty(OPT,varargin{:});
 
 if isempty(OPT.name)
    warning('property ''name'' required')

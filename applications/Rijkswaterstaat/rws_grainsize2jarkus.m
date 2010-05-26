@@ -69,7 +69,7 @@ OPT = struct(...
     'method', 'nearest',...
     'extrap', true);
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% check whether requested output is available
 info = nc_info(OPT.grainsize_url);

@@ -99,7 +99,7 @@ if nargin > 3
     end
 end
    
-   OPT = setProperty(OPT,varargin{nextarg:end});
+   OPT = setproperty(OPT,varargin{nextarg:end});
    
 %% Open file
 %-----------------------------

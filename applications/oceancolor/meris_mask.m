@@ -66,7 +66,7 @@ function mask = meris_mask(l2_flags,bits,varargin),
    if nargin==0
       varargout = {OPT};return
    else
-      OPT       = setProperty(OPT,varargin{:});
+      OPT       = setproperty(OPT,varargin{:});
    end
    
 %% Apply

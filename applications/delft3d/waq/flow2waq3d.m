@@ -23,7 +23,7 @@ function WAQarray = flow2waq3D(FLOWarray,couplingarray,varargin)
 % FLOW2WAQ3D_COUPLING, WAQ2FLOW2D, WAQ2FLOW3D, DELWAQ,DELWAQ_MESHGRID2DCORCEN
 
 % 2008, Oct 08: Added field 'nmk' [GJdB]
-% 2008, Dec 19: Added setProperty [GJdB]
+% 2008, Dec 19: Added setproperty [GJdB]
 % 2009, Jan 12: Removed double .i(fldname) adressing [Claire van Oeveren]
 
 %   --------------------------------------------------------------------
@@ -70,7 +70,7 @@ function WAQarray = flow2waq3D(FLOWarray,couplingarray,varargin)
 
    OPT.number_of_messages = 10;
    OPT.disp               = 0;
-   OPT                    = setProperty(OPT, varargin{:});
+   OPT                    = setproperty(OPT, varargin{:});
 
    if isfield(couplingarray,'i') | isfield(couplingarray,'nmk')
    

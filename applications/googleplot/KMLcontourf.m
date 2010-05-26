@@ -102,7 +102,7 @@ function varargout = KMLcontourf(lat,lon,z,varargin)
 
 %% set properties
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% input check
 

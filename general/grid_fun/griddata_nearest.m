@@ -74,7 +74,7 @@ function ZI = griddata_nearest(X,Y,Z,XI,YI,varargin)
       nextarg  = 1;
  % end
    
-   OPT  = setProperty(OPT,varargin{nextarg:end})
+   OPT  = setproperty(OPT,varargin{nextarg:end})
 
    ZI   = repmat(NaN,(size(XI)));
    R    = repmat(NaN,(size(X )));

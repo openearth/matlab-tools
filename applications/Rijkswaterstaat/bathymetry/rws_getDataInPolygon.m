@@ -69,7 +69,7 @@ OPT.ldbs         = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/la
 OPT.ldbs         = 'http://dtvirt5.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
 OPT.plotresult   = 1;
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% Step 0: create a figure with tagged patches
 

@@ -44,7 +44,7 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
       return
    end
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
 
 %% get meta data
 

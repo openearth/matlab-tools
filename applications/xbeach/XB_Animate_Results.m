@@ -84,7 +84,7 @@ OPT = struct( ...
     'showAverage', true ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 % make sure variable is a cell structure
 if ~iscell(vars); vars = {vars}; end;

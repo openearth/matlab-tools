@@ -66,7 +66,7 @@ function [output] = KML_header(varargin)
    OPT.timeIn      = [];
    OPT.timeOut     = [];
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
 
 %% timespan slider
 

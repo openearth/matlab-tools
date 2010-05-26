@@ -82,7 +82,7 @@ function varargout = KMLtricontour(tri,lat,lon,z,varargin)
 
 %% set properties
 
-   [OPT, Set, Default] = setProperty(OPT, varargin{:});
+   [OPT, Set, Default] = setproperty(OPT, varargin{:});
 
 %% input check
 %  vectorize input

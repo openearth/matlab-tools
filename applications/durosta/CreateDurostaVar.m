@@ -199,4 +199,4 @@ for i = 1:2:length(varargin)
     [id(i) id(i+1)] = deal(any(strcmpi(varargin{i}, fieldnames(OPT))));
 end
 
-varargout = {setProperty(OPT, varargin{id})};
+varargout = {setproperty(OPT, varargin{id})};

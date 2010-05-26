@@ -62,7 +62,7 @@ function varargout  = m3u_read(fname,varargin)
    OPT.absolute     = 1;
 
 %% keywords
-   OPT = setProperty(OPT, varargin{1:end});
+   OPT = setproperty(OPT, varargin{1:end});
 
 %% check for file existence (1)
 

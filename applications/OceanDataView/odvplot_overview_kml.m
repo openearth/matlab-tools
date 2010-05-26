@@ -53,7 +53,7 @@ function odvplot_overview_kml(D,varargin)
        return
    end
    
-   [OPT, Set, Default] = setProperty(OPT, varargin);
+   [OPT, Set, Default] = setproperty(OPT, varargin);
    
    for i=1:length(D.sdn_standard_name)
       if any(strfind(D.sdn_standard_name{i},OPT.variable))

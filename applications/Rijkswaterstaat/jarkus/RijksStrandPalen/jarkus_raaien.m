@@ -10,7 +10,7 @@ function D = jarkus_raaien(varargin)
    OPT.plot = 0;
    OPT.vc   = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland.nc'; % vector coastline
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
 
 %% load
 

@@ -107,7 +107,7 @@ classdef MTestRunner < handle
             %
             %   See also mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
             
-            %% Use the setProperty function to set all properties.
+            %% Use the setproperty function to set all properties.
             setproperty(obj,varargin);
         end
         function varargout = cataloguetests(obj,varargin)

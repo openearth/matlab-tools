@@ -60,7 +60,7 @@ OPT = struct(...
     'filenames', {{}},...
     'ext', '.inp');
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %%
 fid = fopen(OPT.bcfile, 'w');

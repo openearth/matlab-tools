@@ -72,7 +72,7 @@ function TH = grid_angle(varargin)
    OPT.dim       = 1;
    OPT.debug     = 0;
    
-   OPT = setProperty(OPT,varargin{3:end});
+   OPT = setproperty(OPT,varargin{3:end});
 
 %% Swap
 

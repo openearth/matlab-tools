@@ -43,7 +43,7 @@ classdef tbcontentitem
             % to html pages created for a certain toolbox. This requires a
             % special setup of the object.
             % * If the input does not contain 'fcnref', the properties are
-            % set with the use of setProperty.
+            % set with the use of setproperty.
             
             if any(strcmp(varargin,'fcnref'))
                 %This is the location where function references must be
@@ -52,7 +52,7 @@ classdef tbcontentitem
                 obj.target = 'n.t.b.';
                 obj.icon = '';
             else
-                obj = setProperty(obj,varargin);
+                obj = setproperty(obj,varargin);
             end
         end
         

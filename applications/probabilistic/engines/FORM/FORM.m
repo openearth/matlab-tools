@@ -13,7 +13,7 @@ function result = FORM(stochast, varargin)
 % output:
 % result = structure with settings, input and output
 %
-% See also setProperty exampleStochastVar
+% See also setproperty exampleStochastVar
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -68,7 +68,7 @@ OPT = struct(...
     'variables', {{}} ...    % aditional variables to use in x2zFunction
     );
 % overrule default settings by property pairs, given in varargin
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 getdefaults('stochast', exampleStochastVar, 0);
 

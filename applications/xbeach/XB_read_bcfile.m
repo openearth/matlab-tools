@@ -71,7 +71,7 @@ end
 OPT = struct(...
     'path', cd);
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %%
 if isstruct(XB)

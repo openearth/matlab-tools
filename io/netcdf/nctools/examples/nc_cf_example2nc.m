@@ -50,7 +50,7 @@ function nc_cf_example2nc(varargin)
    OPT.fillvalue  = nan;
    OPT.filename   = 'nc_cf_example2nc.inp';
    
-   OPT = setProperty(OPT,varargin);
+   OPT = setproperty(OPT,varargin);
 
 %% 0. Read raw data
 % Make a function that returns all data + meta-data in one struct, e.g.:

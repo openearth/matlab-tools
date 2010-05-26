@@ -103,7 +103,7 @@ OPT = struct(...
     'forceDP', false ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 % do not plot design point in other space than u
 if ~strcmp(OPT.space, 'u')

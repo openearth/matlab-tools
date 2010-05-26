@@ -70,7 +70,7 @@ OPT.latText     = lat(1);
 OPT.lonText     = lon(1);
 end
 
-[OPT, Set, Default] = setProperty(OPT, varargin);
+[OPT, Set, Default] = setproperty(OPT, varargin);
 
 %% get filename, gui for filename, if not set yet
 

@@ -95,7 +95,7 @@ function varargout = KMLmarker(lat,lon,varargin)
        OPT.is3D = false;
    end
 
-   [OPT, Set, Default] = setProperty(OPT, varargin{:});
+   [OPT, Set, Default] = setproperty(OPT, varargin{:});
 
 %% correct lat and lon
 

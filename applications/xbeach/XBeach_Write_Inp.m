@@ -60,7 +60,7 @@ OPT = struct(...
     'depfile', 'bath.dep',...
     'zs0file', 'waterlevels.wls');
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% make grid and dep file
 if XB.settings.Grid.vardx

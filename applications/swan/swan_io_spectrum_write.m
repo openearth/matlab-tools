@@ -96,7 +96,7 @@ function varargout = swan_io_spectrum(varargin)
    if nargin==2
    DAT          = varargin{2};
    else
-   DAT = setProperty(DAT,varargin{2:end});
+   DAT = setproperty(DAT,varargin{2:end});
    end
    
    DAT.filename = varargin{1}; % overwrite one in struct

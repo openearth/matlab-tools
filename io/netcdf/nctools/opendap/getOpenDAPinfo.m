@@ -80,7 +80,7 @@ OPT = struct(...
     'catpat', 'catalog.xml' ...                                                          % catalog string pattern to use
     );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% initialise
 url1     = OPT.url;

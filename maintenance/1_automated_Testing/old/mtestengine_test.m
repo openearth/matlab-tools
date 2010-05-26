@@ -38,7 +38,7 @@ function testresult = mtestengine_test()
 
 
 %% $Description (CaseName = Constructor method)
-% This testcase tests the constructor method. It simply uses setProperty to set the properties of
+% This testcase tests the constructor method. It simply uses setproperty to set the properties of
 % the object before leaving the constructor. The test should therefore be no large problem.
 
 %% $RunCode

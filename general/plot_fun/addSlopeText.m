@@ -151,9 +151,9 @@ defaults = {
 OPT = getdefaultProperties('Text');
 OPT.Parent = Parent;
 
-% call setProperty to set the defaults and (re)set properties possibly
+% call setproperty to set the defaults and (re)set properties possibly
 % passed through by varargin
-OPT = setProperty(OPT, defaults{:}, varargin{:});
+OPT = setproperty(OPT, defaults{:}, varargin{:});
 
 %%
 set(OPT.Parent,...

@@ -51,7 +51,7 @@ OPT.obs_n     = [100 100];
 OPT.obs_m     = [100 110];
 
 % overrule default settings by property pairs, given in varargin
-OPT     = setProperty(OPT, varargin{:});
+OPT     = setproperty(OPT, varargin{:});
 
 %% read output data
 output      = xb_output_read('basedir', OPT.basedir, 'var', {'zb'}, 'stride_t', OPT.stride_t);

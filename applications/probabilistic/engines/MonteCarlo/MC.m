@@ -88,7 +88,7 @@ OPT = struct(...
     'variables', {{}} ...    % aditional variables to use in x2zFunction
     );
 % overrule default settings by propertyName-propertyValue pairs, given in varargin
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 getdefaults('stochast', exampleStochastVar, 0);
 

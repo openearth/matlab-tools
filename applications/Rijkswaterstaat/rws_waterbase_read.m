@@ -81,7 +81,7 @@ function varargout = rws_waterbase_read(fnames,varargin)
 % 2006 Feb    : first version [Gerben J de Boer]
 % 2009 apr 21 : fixed error that swapped [lon,lat] for EPSG codes 4230 and 4326 [Gerben J de Boer]
 % 2009 may 03 : updated commetns to reflect matlab code-cells
-% 2009 may 03 : used setProperty now (for whoch I ahd to delete scale keyword)
+% 2009 may 03 : used setproperty now (for whoch I ahd to delete scale keyword)
 
 %%  Superseded keywords with ntmax=Inf
 %   * 'preallocate' = integer value (only for method = 'fgetl')
@@ -118,7 +118,7 @@ function varargout = rws_waterbase_read(fnames,varargin)
 
 %% Key words
 
-   OPT = setProperty(OPT,varargin{1:end});
+   OPT = setproperty(OPT,varargin{1:end});
 
 %% Loop over file names
 fnames = cellstr(fnames);

@@ -77,7 +77,7 @@ warning('This function is deprecated in favour of grid_orth_getDataFromNetCDFGri
 
 % overrule default settings by property pairs, given in varargin
 
-   OPT = setProperty(OPT, varargin{:});
+   OPT = setproperty(OPT, varargin{:});
 
 %% find nc variables of coordinates
 

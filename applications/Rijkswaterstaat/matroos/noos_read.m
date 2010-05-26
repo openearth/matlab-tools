@@ -56,7 +56,7 @@ function varargout = noos_read(varargin)
 
    OPT.varname = 'value';
    
-   OPT = setProperty(OPT,varargin{2:end});
+   OPT = setproperty(OPT,varargin{2:end});
 
 %% load file, if necesarry
 

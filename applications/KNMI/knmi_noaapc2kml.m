@@ -43,7 +43,7 @@ tic
                        'K070590N.SST',...%19
                        'K080590M.SST',...%20
                        'K080590A.SST'};  %21
-%   [OPT, Set, Default] =setProperty(OPT,varargin{:});
+%   [OPT, Set, Default] =setproperty(OPT,varargin{:});
 %   
 %   if nargin==0
 %      return

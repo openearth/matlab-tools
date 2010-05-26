@@ -70,7 +70,7 @@ OPT = struct( ...
     'file', 'jarkus.kml' ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% check
 

@@ -65,7 +65,7 @@ OPT = struct(...
     'step',1 ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% determine z-values
 

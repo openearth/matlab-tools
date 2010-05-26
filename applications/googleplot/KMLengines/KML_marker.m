@@ -46,7 +46,7 @@ function [output] = KML_marker(lat,lon,varargin)
    OPT.timeIn      = [];
    OPT.timeOut     = [];
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
    
    if nargin==0
       output = OPT;

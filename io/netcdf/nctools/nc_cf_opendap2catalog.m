@@ -155,7 +155,7 @@ function ATT = nc_cf_opendap2catalog(varargin)
        nextarg  = 2;
    end
    
-   OPT = setProperty(OPT,varargin{nextarg:end});
+   OPT = setproperty(OPT,varargin{nextarg:end});
 
 %% File loop to get meta-data from subdirectories (recursively)
 

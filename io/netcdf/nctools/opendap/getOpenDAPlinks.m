@@ -68,7 +68,7 @@ OPT = struct(...
     'pattern', ' xlink:title="' ... % default is pattern at levels below the actual data files (e.g. institute level)
     );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% get OpenDAP links
 try

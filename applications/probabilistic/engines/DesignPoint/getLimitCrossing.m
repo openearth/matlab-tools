@@ -79,7 +79,7 @@ OPT = struct( ...
     'maxIterations', 100 ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% get limit crossing
 

@@ -70,7 +70,7 @@ function KMLTimeSeriesClim(lats,lons,model,scenario,variable)
 % $HeadURL
  
 % OPT.name          = '';
-% [OPT, Set, Default] = setProperty(OPT, varargin{:}); 
+% [OPT, Set, Default] = setproperty(OPT, varargin{:}); 
 
 % Fix the location of nc-files. Can be either local or OpenDAP
 % (https://....);

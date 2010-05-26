@@ -69,7 +69,7 @@ OPT = struct( ...
     );
 
 %% overrule default settings by property pairs, given in varargin
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 workdir = 'd:\Documents and Settings\mrv\VanOord\Projecten\96.8015 TASS P15 Slibpluimmeting\Software\ExampleData\';
 

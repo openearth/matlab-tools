@@ -103,7 +103,7 @@ OPT = struct( ...
     'plot', false ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 % tranlate degrees to radians
 OPT.amin = OPT.amin/180*pi;

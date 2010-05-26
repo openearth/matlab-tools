@@ -108,7 +108,7 @@ end
 
       if nargin==0;D = OPT;return;end; % make function act as object
    
-      OPT      = setProperty(OPT,varargin{:});
+      OPT      = setproperty(OPT,varargin{:});
       
    %% errors
 

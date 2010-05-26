@@ -47,7 +47,7 @@ function odv2nc(varargin)
 
 %% Keyword,value
 
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
 
 %% File loop
 

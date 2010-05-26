@@ -69,7 +69,7 @@ OPT = struct(...
     'ext', '.inp',...
     'calcdir', cd);
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %%
 doubleID = find(cellfun(@isnumeric, varargin));

@@ -76,7 +76,7 @@ OPT = struct( ...
     'reversed', false ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% check
 

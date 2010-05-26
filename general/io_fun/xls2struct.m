@@ -142,7 +142,7 @@ end
       i     = 1;
    end
 
-   OPT           = setProperty(OPT,varargin{i:end});
+   OPT           = setproperty(OPT,varargin{i:end});
    
    if nargin==0
       output = OPT;

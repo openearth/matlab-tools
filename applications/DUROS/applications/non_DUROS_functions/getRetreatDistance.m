@@ -58,7 +58,7 @@ function varargout = getRetreatDistance(result, varargin)
 OPT = struct(...
     'zRef', 5);
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 [xInitial zInitial] = deal([result(1).xLand; result(1).xActive; result(1).xSea],...
     [result(1).zLand; result(1).zActive; result(1).zSea]);

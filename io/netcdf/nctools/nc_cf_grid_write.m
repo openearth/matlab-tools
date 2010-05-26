@@ -121,7 +121,7 @@ function varargout = nc_cf_grid_write(varargin)
 
       if nargin==0;varargout = {OPT};return;end; % make function act as object
 
-      OPT      = setProperty(OPT,varargin{2:end});
+      OPT      = setproperty(OPT,varargin{2:end});
       
  %% errors
 

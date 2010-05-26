@@ -83,7 +83,7 @@ end
    OPT.name       = 'line';
    OPT.tessellate = [];
    
-   OPT = setProperty(OPT,varargin{nextarg:end});
+   OPT = setproperty(OPT,varargin{nextarg:end});
    
    if nargin==0
       output = OPT;

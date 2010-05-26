@@ -54,7 +54,7 @@ OPeNDAPlinks = [];
 
 OPT.catalog  = [];
 OPT.pattern  = '*.nc';
-OPT = setProperty(OPT,varargin{:});
+OPT = setproperty(OPT,varargin{:});
 
 if nargin == 0
     type = 'jarkus';

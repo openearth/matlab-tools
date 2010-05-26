@@ -43,7 +43,7 @@ function index = atrname2index(ncfile,name,varargin)
 %   --------------------------------------------------------------------
 
    OPT.debug = 0;
-   OPT       = setProperty(OPT,varargin{:});
+   OPT       = setproperty(OPT,varargin{:});
    
 %% Load file info
 

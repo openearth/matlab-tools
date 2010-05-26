@@ -77,7 +77,7 @@ OPT = struct(...
     );
 
 % overrule default settings by property pairs, given in varargin
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 [X, Y, Z, T] = deal([]);
 

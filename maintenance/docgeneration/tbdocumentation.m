@@ -90,7 +90,7 @@ classdef tbdocumentation
             end
 
             % set all properties that are left in varargin
-            obj = setProperty(obj,varargin);
+            obj = setproperty(obj,varargin);
 
             % load template
             if ~isempty(tmpid)

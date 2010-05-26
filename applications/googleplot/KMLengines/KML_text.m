@@ -68,7 +68,7 @@ function [output] = KML_text(lat,lon,label,varargin)
    OPT.timeIn      = [];
    OPT.timeOut     = [];
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
    
    if nargin==0
       output = OPT;

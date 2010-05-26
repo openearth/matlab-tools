@@ -124,7 +124,7 @@ function varargout = struct2xls(fname,S,varargin)
    %  iargin=iargin+1;
    %end; 
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
    
    if ischar(OPT.header)
      OPT.header = cellstr(OPT.header);

@@ -25,7 +25,7 @@ OPT = struct(...
 %%
 % then setproperies is used to overwrite default settings 
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %%
 % This is clear when we make the plot. Note that the default 'Default plot title' has been replaced with 'Title text included as keyword-value pair'.
@@ -40,7 +40,7 @@ title (OPT.title_text)
 varargin = {'line_spec','.r'};
 
 try
-    OPT = setProperty(OPT, varargin{:});
+    OPT = setproperty(OPT, varargin{:});
 catch
     lasterr
 end
@@ -56,7 +56,7 @@ OPT = struct(...
     'xlabel_text', 'Crossshore distance (m wrt. RSP = 0)', ...
     'ylabel_text', 'Surface elevation (m wrt. NAP = 0)',...
     'line_spec'  , ''); %default value is empty
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 figure;clf
 plot  (OPT.xInitial, OPT.zInitial,OPT.line_spec); 
@@ -75,7 +75,7 @@ OPT = struct(...
     'xlabel_text', 'Crossshore distance (m wrt. RSP = 0)', ...
     'ylabel_text', 'Surface elevation (m wrt. NAP = 0)',...
     'line_spec'  , ''); %default value is empty
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 figure;clf
 plot  (OPT.xInitial, OPT.zInitial,OPT.line_spec); 

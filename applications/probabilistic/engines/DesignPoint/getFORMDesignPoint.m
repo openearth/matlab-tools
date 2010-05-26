@@ -66,7 +66,7 @@ function result = getFORMDesignPoint(result, varargin)
 OPT = struct( ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% get design point
 

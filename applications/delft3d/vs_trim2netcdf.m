@@ -76,7 +76,7 @@ function varargout = vs_trim2netcdf(vsfile,varargin)
          ncfile   = fullfile(fileparts(vsfile),[filename(vsfile) '.nc']);
       end
 
-      OPT      = setProperty(OPT,varargin{:});
+      OPT      = setproperty(OPT,varargin{:});
       
       if nargin==0
          varargout = {OPT};

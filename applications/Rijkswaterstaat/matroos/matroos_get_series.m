@@ -125,7 +125,7 @@ function varargout = matroos_get_series(varargin);
    OPT.debug      = 0;   
    OPT.file       = '';   
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
    
 %% check input
 

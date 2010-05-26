@@ -79,7 +79,7 @@ OPT = struct( ...
     'readDAF', true ...
 );
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% read results
 

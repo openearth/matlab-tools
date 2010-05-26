@@ -123,7 +123,7 @@ OPT = struct(...
 OPT.timeIn = [];
 OPT.timeOut = [];
 
-[OPT, Set, Default] = setProperty(OPT, varargin);
+[OPT, Set, Default] = setproperty(OPT, varargin);
 %% pre defined arrow types
 % additional user settings override presets
 
@@ -186,7 +186,7 @@ for ii = 1:length(fields)
 end
 
 % set properties again
-[OPT, Set, Default] = setProperty(OPT2, OPT);
+[OPT, Set, Default] = setproperty(OPT2, OPT);
 
 %% Calculate coordinates, scaling and orientation of arrows
 

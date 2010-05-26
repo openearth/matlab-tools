@@ -25,7 +25,7 @@ function addpathfast(basepath,varargin)
    OPT.method   = 2; % 1 = via OS system call, 2 = Matlab (used to be slower but not any more)
    OPT.append   = true; % add new path before or after existing path
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
 
 %% Find all subdirs in basepath
 %---------------------------------------------

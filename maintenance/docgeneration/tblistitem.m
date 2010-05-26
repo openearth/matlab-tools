@@ -28,7 +28,7 @@ classdef tblistitem
             if nargin==0
                 obj(1) = [];
             else
-                obj = setProperty(obj,varargin);
+                obj = setproperty(obj,varargin);
             end
         end
         %% Publication methods

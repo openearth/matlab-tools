@@ -114,7 +114,7 @@ function varargout = tickmap(varargin)
 %%  Keywords
 %  -----------------------------
     
-   OPT = setProperty(OPT,varargin{nextarg:end});
+   OPT = setproperty(OPT,varargin{nextarg:end});
     
 %% Generate tick labels
 %  -----------------------------

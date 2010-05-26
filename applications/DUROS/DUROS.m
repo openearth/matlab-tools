@@ -384,7 +384,7 @@ DuneErosionSettings('set',settings{:});
 % the input that are not settings
 OPTstructArgs = [OPTstructArgs varargin(id+1:end)];
 % include the input in the OPT-structure
-[OPT, Set, Default] = setProperty(OPT, OPTstructArgs{:});
+[OPT, Set, Default] = setproperty(OPT, OPTstructArgs{:});
 % find which variables are still default and not set.
 defaultsid = cell2mat(struct2cell(Default)') & ~cell2mat(struct2cell(Set)');
 for varName = varNames(defaultsid)

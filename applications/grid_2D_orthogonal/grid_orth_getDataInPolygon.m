@@ -123,7 +123,7 @@ OPT.urls            = [];
 OPT.x_ranges        = [];
 OPT.y_ranges        = [];
 
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% Step 0: create a figure with tagged patches
 axes = findobj('type','axes');

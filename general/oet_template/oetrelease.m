@@ -76,10 +76,10 @@ OPT = struct(...
     'omitextensions', {{'.asv' '.m~'}});
  
 if odd(nargin)
-   OPT = setProperty(OPT, varargin{2:end});
+   OPT = setproperty(OPT, varargin{2:end});
    OPT.folders = varargin{1};
 else
-   OPT = setProperty(OPT, varargin);
+   OPT = setproperty(OPT, varargin);
 end
 
 %% gather all files of the selected folders

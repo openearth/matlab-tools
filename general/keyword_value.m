@@ -19,7 +19,7 @@ function [OPT Set Default] = keyword_value(OPT, varargin)
 % Default = structure, similar to OPT, values are true where the values of
 %           OPT are equal to the original OPT
 %
-% See also: setProperty
+% See also: setproperty
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
@@ -56,7 +56,7 @@ function [OPT Set Default] = keyword_value(OPT, varargin)
 
 %%
 try
-    TODO('Use setProperty instead of keyword_value', 1);
+    TODO('Use setproperty instead of keyword_value', 1);
 catch
     ST = dbstack(1);
     if ~isempty(ST)
@@ -64,9 +64,9 @@ catch
     else
         txt = '';
     end
-    fprintf('Use setProperty instead of keyword_value %s', txt);
+    fprintf('Use setproperty instead of keyword_value %s', txt);
 end
-[OPT Set Default] = setProperty(OPT, varargin{:});
+[OPT Set Default] = setproperty(OPT, varargin{:});
 return
 
 %%

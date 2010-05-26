@@ -75,12 +75,12 @@ function varargout = seawifs_l2_read(fname,varargin);
    OPT.ldb     = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc';
    
    if odd(nargin)
-      OPT        = setProperty(OPT,varargin{:});
+      OPT        = setproperty(OPT,varargin{:});
    elseif nargin==0
       varargout = {OPT};
       return
    else
-      OPT        = setProperty(OPT,varargin{2:end});
+      OPT        = setproperty(OPT,varargin{2:end});
       varname    = varargin{1};
    end
    

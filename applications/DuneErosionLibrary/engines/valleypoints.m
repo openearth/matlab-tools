@@ -65,7 +65,7 @@ OPT = struct(...
     'SeawardBoundary',[],...
     'LandwardBoundary',[]);
 
-[OPT Set] = setProperty(OPT,varargin);
+[OPT Set] = setproperty(OPT,varargin);
 if ~Set.SeawardBoundary
     OPT.SeawardBoundary = max(xInitial);
 end

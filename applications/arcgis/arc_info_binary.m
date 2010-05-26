@@ -151,7 +151,7 @@ warning('arc_info_binary is a development in progress.')
       nextarg = 2;
    end
                    
-   OPT = setProperty(OPT,varargin{nextarg:end});
+   OPT = setproperty(OPT,varargin{nextarg:end});
    
    OPT.base = [OPT.base,filesep];
    if isempty(OPT.long_name)

@@ -19,7 +19,7 @@ function OPT = KMLmerge_files(varargin)
    OPT.description       = '';
    OPT.deleteSourceFiles = false;
 
-   [OPT, Set, Default] = setProperty(OPT, varargin{:});
+   [OPT, Set, Default] = setproperty(OPT, varargin{:});
    
    if nargin==0 & nargout==1
        return

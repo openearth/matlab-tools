@@ -79,7 +79,7 @@ function oetsettings(varargin)
        nextarg   = 2;
    end
    
-   OPT = setProperty(OPT,varargin{nextarg:end});
+   OPT = setproperty(OPT,varargin{nextarg:end});
    
 %% Acknowledge user we started adding the toolbox
 % -----------------------

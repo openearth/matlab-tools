@@ -46,7 +46,7 @@ OPT = struct(...
     );
 
 % overrule default settings by property pairs, given in varargin
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 % find locations of z values on X and Y grid
 [dummy, idX] = ismember(OPT.xyz(:,1),OPT.X(1,:));

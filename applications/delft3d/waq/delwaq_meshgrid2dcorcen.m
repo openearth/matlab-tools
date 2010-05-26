@@ -53,7 +53,7 @@ function G = delwaq_flowmeshgrid2dcorcen(lganame,varargin)
 % $HeadURL$
 
    OPT.order = 'nm';
-   OPT       = setProperty(OPT, varargin{:});
+   OPT       = setproperty(OPT, varargin{:});
 
    %% Open delwaq struct
    %% -------------------------------

@@ -99,7 +99,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
       OPT.plot = 0;
    end
 
-   OPT = setProperty(OPT,varargin{nextarg:end});
+   OPT = setproperty(OPT,varargin{nextarg:end});
 
    %% Load file info
 

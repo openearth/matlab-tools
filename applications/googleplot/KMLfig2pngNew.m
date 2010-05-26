@@ -112,7 +112,7 @@ end
 
 OPT.h    = h;  % handle to input surf object
 
-[OPT, Set, Default] = setProperty(OPT, varargin);
+[OPT, Set, Default] = setproperty(OPT, varargin);
 
 %% 
 if OPT.lowestLevel < OPT.highestLevel 
