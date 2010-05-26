@@ -83,8 +83,8 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 %TO DO: handle indirect time mapping where there is no variable time(time)
 %TO DO: allow to get all time related parameters, and plot them on by one (with pause in between)
 %TO DO: document <keyword,value> pairs
-%TO DO: test also simple case where dimensions are have standard_name latitude, longitude
 %TO DO: also extract x and y vectors
+%TO DO: make it work when more lat and lon matrices are present
 
 %% Keyword,values
 
@@ -117,7 +117,7 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
       error('neither field ''Dataset'' nor ''DataSet'' returned by nc_info')
    end
    
-%% Check whether is time series
+%% Check whether is grid
 
    index = findstrinstruct(fileinfo.Attribute,'Name','Conventions');
    fileinfo.Attribute(index).Value;
@@ -169,11 +169,11 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
          
          for idim=1:length(fileinfo.Dataset(ivar).Dimension)
 
-            if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),'latitude'))))
+            if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),latname))));
                lat = true;
             end
 	    
-            if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),'longitude'))))
+            if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),lonname))));
                lon = true;
             end
             
@@ -181,11 +181,8 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
          
          %% indirect mapping: find index of coordinates attribute
          if (lat && lon)
-
+            
             coordvar = [coordvar ivar];
-            D.lon    = D.lon(:)';
-            D.lat    = D.lat(:)';
-            OPT.oned = 1;
          
          else
 
@@ -251,11 +248,24 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
          break
          end
       end
+      
    end
    
 %% get data
 
       D.(OPT.varname) = nc_varget(ncfile,OPT.varname);
+
+%% get coordinates
+
+     coordinates = nc_attget(ncfile,OPT.varname,'coordinates');
+     
+     % use lat, lon as specified in coordinates (when nmore lats are there)
+     
+     if isvector(D.lat) & isvector(D.lon)
+        OPT.oned = 1;
+        D.lat    = D.lat(:)';
+        D.lon    = D.lon(:)';
+     end
       
 %% get Attributes
 
@@ -283,6 +293,7 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
          end
       end
       tickmap ('ll')
+      axislat
       grid     on
       if isfield(D,'datenum')
       title   ({mktex(fileinfo.Filename),...
