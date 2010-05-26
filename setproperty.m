@@ -81,12 +81,12 @@ function [OPT, Set, Default] = setproperty(OPT, varargin)
 % Created: 26 Feb 2009
 % Created with Matlab version: 7.4.0.287 (R2007a)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
-% $Keywords:
+% $Id: setproperty.m 2616 2010-05-26 09:06:00Z geer $
+% $Date: 2010-05-26 11:06:00 +0200 (wo, 26 mei 2010) $
+% $Author: geer $
+% $Revision: 2616 $
+% $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/setproperty.m $
+% $Keywords: $
 
 %% input
 PropertyNames = fieldnames(OPT); % read PropertyNames from structure fieldnames
