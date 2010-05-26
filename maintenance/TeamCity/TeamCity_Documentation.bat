@@ -6,8 +6,8 @@ rem <http://www.jetbrains.com/teamcity/>
 rem Map drive with matlab
 rem -----------------------------------
 net use y: /delete
-net use y: \\wlhost\library %openearth_password% /USER:%openearth_user% 
-rem net use y: \\wlhost\library 
+rem net use y: \\wlhost\library %openearth_password% /USER:%openearth_user% 
+net use y: \\wlhost\library 
 
 rem Call matlab
 rem http://www.mathworks.com/support/solutions/data/1-16B8X.html
@@ -19,12 +19,9 @@ Y:\app\MATLAB2010a\bin\matlab.exe -nosplash -nodesktop -minimize -r "TeamCity_ma
 
 if exist teamcitymessage.matlab goto echo_teamcity_message
 
-set tempfile = temp_file_containing_linecount.TXT
-tasklist /fi "imagename eq MATLAB.exe" /nh 2> null | find /C "MATLAB.exe" > tempfile  
-FOR /f "tokens=* delims=" %%c IN (tempfile ) DO (
-if not %%c == 0 goto loopmatlabbusy
-)
-del tempfile
+rem check whether matlab.exe is still running
+tasklist /FI "IMAGENAME eq MATLAB.exe" 2>NUL | find /I /N "MATLAB.exe">NUL
+if "%ERRORLEVEL%"=="0" goto loopmatlabbusy
 
 echo 'teamcity OK'
 
