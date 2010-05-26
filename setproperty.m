@@ -30,7 +30,7 @@ function [OPT, Set, Default] = setproperty(OPT, varargin)
 % Default = structure, similar to OPT, values are true where the values of
 %           OPT are equal to the original OPT
 %
-% Example:
+% Example: 
 %
 % +------------------------------------------->
 % function y = dosomething(x,'debug',1)
