@@ -46,8 +46,8 @@ function z=internaldiffusion(z,varargin)
 %   --------------------------------------------------------------------
 
 mask=ones(size(z));
-nmax=100;
-ffac=0.2;
+nsteps=100;
+fac=0.2;
 
 for i=1:nargin-1
     if ischar(varargin{i})
@@ -186,8 +186,6 @@ else
     % Whole matrix
 
     for n=1:nmax
-
-        nstep2=nstep2+1;
 
         % Fluxes
         fx=zeros(ny,nx+1);
