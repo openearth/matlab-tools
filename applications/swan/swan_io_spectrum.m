@@ -220,8 +220,17 @@ if iostat==1 %  0 when uigetfile was cancelled
             
 %% Read # locations and coordinates
             
-            if strcmp(strtok(upper(rec)),'LOCATIONS')
-   
+            if strcmp(strtok(upper(rec)),'LOCATIONS') | strcmp(strtok(upper(rec)),'LONLAT');
+               
+               if strcmp(strtok(upper(rec)),'LOCATIONS')
+                  x = 'x';
+                  y = 'y';
+               end
+               if strcmp(strtok(upper(rec)),'LONLAT');
+                  x = 'lon';
+                  y = 'lat';
+               end
+
                rec = fgetl_no_comment_line(fid,'$');
               %[DAT.number_of_locations]     = sscanf(rec,'%i',1);
                [DAT.number_of_locations,rec] = strtok(rec);
@@ -243,37 +252,37 @@ if iostat==1 %  0 when uigetfile was cancelled
                  disp(['number_of_locations mxc ',num2str(DAT.mxc)])
                  disp(['number_of_locations myc ',num2str(DAT.myc)])
                end         
-               DAT.x = repmat(nan,[1 DAT.number_of_locations]);
-               DAT.y = repmat(nan,[1 DAT.number_of_locations]);
+               DAT.(x) = repmat(nan,[1 DAT.number_of_locations]);
+               DAT.(y) = repmat(nan,[1 DAT.number_of_locations]);
                
                if ~OPT.fast
                %% OLD: slow, but comments are allowed between numbers with this approach
                   for iloc=1:DAT.number_of_locations
                      rec         = fgetl_no_comment_line(fid,'$');
                      numbers     = sscanf(rec,'%e',2);
-                     DAT.x(iloc) = numbers(1);
-                     DAT.y(iloc) = numbers(2);
+                     DAT.(x)(iloc) = numbers(1);
+                     DAT.(y)(iloc) = numbers(2);
                      if OPT.debug(2)
                         if mod(iloc,OPT.mod)==0
-                        disp(['   iloc,x,y: ',num2str([iloc,DAT.x(iloc),DAT.y(iloc)])]);
+                        disp(['   iloc,',x,',',y,': ',num2str([iloc,DAT.(x)(iloc),DAT.(y)(iloc)])]);
                         end
                      end         
                   end
                elseif OPT.fast
                %%  NEW:fast, but no comments allowed between numbers
                   raw = fscanf(fid,'%f',2*DAT.number_of_locations);
-                  DAT.x = raw(1:2:end);
-                  DAT.y = raw(2:2:end);
+                  DAT.(x) = raw(1:2:end);
+                  DAT.(y) = raw(2:2:end);
                end % OPT.fast
-               DAT.x = reshape(DAT.x,DAT.myc, DAT.mxc);
-               DAT.y = reshape(DAT.y,DAT.myc, DAT.mxc);
+               DAT.(x) = reshape(DAT.(x),DAT.myc, DAT.mxc);
+               DAT.(y) = reshape(DAT.(y),DAT.myc, DAT.mxc);
                
-               DAT.x(DAT.x==-99) = nan;
-               DAT.y(DAT.y==-99) = nan;
+               DAT.(x)(DAT.(x)==-99) = nan;
+               DAT.(y)(DAT.(y)==-99) = nan;
                
                if OPT.debug(3)==1 & DAT.myc>1
                   TMP = figure;
-                  pcolorcorcen(DAT.x,DAT.y,DAT.x,[.5 .5 .5])
+                  pcolorcorcen(DAT.(x),DAT.(y),DAT.(x),[.5 .5 .5])
                   axis equal
                   pausedisp
                   try
@@ -283,38 +292,10 @@ if iostat==1 %  0 when uigetfile was cancelled
                
                rec = fgetl_no_comment_line(fid,'$');
                
-            elseif strcmp(strtok(upper(rec)),'LONLAT');
-   
-               rec = fgetl_no_comment_line(fid,'$')
-               [DAT.number_of_locations] = sscanf(rec,'%i',1);
-               if OPT.debug(1)
-                  disp(['number_of_locations ',num2str(DAT.number_of_locations)])
-               end         
-               
-               DAT.lon = repmat(nan,[1 DAT.number_of_locations]);
-               DAT.lat = repmat(nan,[1 DAT.number_of_locations]);
-               
-               for iloc=1:DAT.number_of_locations
-                  if OPT.debug(2)
-                     disp(['   location ',num2str(i)])
-                  end         
-                  rec           = fgetl_no_comment_line(fid,'$');
-                  numbers       = sscanf(rec,'%e',2);
-                  DAT.lon(iloc) = numbers(1);
-                  DAT.lat(iloc) = numbers(2);
-                  if OPT.debug(2)
-                     if mod(iloc,OPT.mod)==0
-                     disp(['   iloc,lon,lat: ',num2str([iloc,DAT.lon(iloc),DAT.lat(iloc)])])
-                     end
-                  end         
-               end
-   
-               rec = fgetl_no_comment_line(fid,'$');
-   
             else
             
                fclose(fid);
-               error('keyword LOCATIONS or LONLAT required.')
+               error('either keyword LOCATIONS or LONLAT required.')
                
             end
             
