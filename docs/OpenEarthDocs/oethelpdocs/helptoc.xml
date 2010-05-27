@@ -61,8 +61,16 @@
 <tocitem target="html/tutorials_include_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">4. Include a tutorial in the OpenEarth tutorial overview
 </tocitem>
 </tocitem>
-<tocitem target="html/dir_netCDF.html" image="$toolbox/matlab/icons/pagesicon.gif">netCDF
-<tocitem target="html/tutorial_netCDF_create.html" image="$toolbox/matlab/icons/pageicon.gif">Creating a netCDF file
+<tocitem target="html/dir_nctools.html" image="$toolbox/matlab/icons/pagesicon.gif">nctools
+<tocitem target="html/nc_cf_grid_write_lat_lon_curvilinear_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">_CF_GRID_WRITE_LAT_LON_CURVILINEAR_TUTORIAL   example of how to create a netCDF grid file of a curvi-linear lat-lon grid
+</tocitem>
+<tocitem target="html/nc_cf_grid_write_x_y_orthogonal_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">_CF_GRID_WRITE_X_Y_ORTHOGONAL_TUTORIAL   example of how to create a netCDF grid file of an orthogonal lat-lon grid
+</tocitem>
+<tocitem target="html/nc_cf_grid_write_lat_lon_orthogonal_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">_cf_grid_write_lat_lon_orthogonal_tutorial   example of how to create a netCDF grid file of an orthogonal lat-lon grid
+</tocitem>
+</tocitem>
+<tocitem target="html/dir_netcdf.html" image="$toolbox/matlab/icons/pagesicon.gif">netcdf
+<tocitem target="html/tutorial_netCDF_create.html" image="$toolbox/matlab/icons/pageicon.gif">Creating a netCDF file (basic)
 </tocitem>
 <tocitem target="html/tutorial_netCDF_read_functions.html" image="$toolbox/matlab/icons/pageicon.gif">Reading a netCDF file
 </tocitem>
@@ -72,7 +80,7 @@
 </tocitem>
 </tocitem>
 <tocitem target="html/dir_tips_and_tricks.html" image="$toolbox/matlab/icons/pagesicon.gif">tips and tricks
-<tocitem target="html/tutorial_keyword_value_pairs.html" image="$toolbox/matlab/icons/pageicon.gif">5. Keyword Value pairs
+<tocitem target="html/tutorial_keyword_value_pairs.html" image="$toolbox/matlab/icons/pageicon.gif">Keyword Value pairs
 </tocitem>
 <tocitem target="html/TODO_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">TODO function
 </tocitem>
@@ -101,14 +109,18 @@
 <tocitem target="html/convertCoordinates_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">Coordinate conversion
 </tocitem>
 </tocitem>
+<tocitem target="html/dir_detran.html" image="$toolbox/matlab/icons/pagesicon.gif">detran
+<tocitem target="html/detran_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">detran_tutorial tutorial for Detran
+</tocitem>
+</tocitem>
 <tocitem target="html/dir_googleplot.html" image="$toolbox/matlab/icons/pagesicon.gif">googleplot
 <tocitem target="html/KMLcurvedArrows_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">Animated arrows
 </tocitem>
 <tocitem target="html/kml_included_in_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">Include KML in tutorial
 </tocitem>
-<tocitem target="html/KMLcontour3_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">KMLcontour3
+<tocitem target="html/KMLcontour3_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">KMLcontour3_tutorial tutorial for KMLcontour3
 </tocitem>
-<tocitem target="html/KMLline_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">KMLline
+<tocitem target="html/KMLline_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">KMLline_tutorial  tutorial for KMLline
 </tocitem>
 </tocitem>
 <tocitem target="html/dir_probabilistic.html" image="$toolbox/matlab/icons/pagesicon.gif">probabilistic

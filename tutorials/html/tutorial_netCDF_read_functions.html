@@ -10,8 +10,8 @@ This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
       -->
       <title>Reading a netCDF file</title>
-      <meta name="generator" content="MATLAB 7.6">
-      <meta name="date" content="2009-12-21">
+      <meta name="generator" content="MATLAB 7.10">
+      <meta name="date" content="2010-05-27">
       <meta name="m-file" content="tutorial_netCDF_read_functions">
       <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
       <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
@@ -86,97 +86,141 @@ To make changes, update the M-file and republish this document.
                <h2><a name="6">Interacting with a netCDF file</a></h2>
                <div>
                   <p>To let matlab talk with a netCDF file, the snc toolbox has been developed. See what is in there:</p><pre class="codeinput">help <span class="string">snctools</span>
-</pre><pre class="codeoutput">  SNC NetCDF toolbox (&lt;a href="http://mexcdf.sourceforge.net/"&gt;http://mexcdf.sourceforge.net/&lt;/a&gt;).
+</pre><pre class="codeoutput">  SNCTOOLS (&lt;a href="http://mexcdf.sourceforge.net/"&gt;http://mexcdf.sourceforge.net/&lt;/a&gt;).
  
-  SNCTools uses the the C (mexnc), java interface (toolsUI-2.2.22.jar) or Matlab (2008b+) 
-  low-level netCDF interface. You can switch with the following preference:
-  setpref ('SNCTOOLS', 'USE_JAVA', true/false);
+  SNCTOOLS is a package of simple tools for manipulating netCDF files, or
+  at least it started out that way.  The focus used to be just on reading
+  and writing netCDF files, but can also handle the following formats under
+  certain conditions. 
  
-  NC_ADDHIST         - Either appends or constructs a history attribute.
-  NC_ADD_DIMENSION   - adds a dimension to an existing netcdf file
-  NC_ADDHIST         - Either appends or constructs a history attribute.
-  NC_ADDNEWRECS      - Tacks on new data from simple matlab structure to an unlimited-dimension netcdf file
-  NC_ADD_RECS        - add records onto the end of a netcdf file
-  NC_ADDVAR          - adds a variable to a NetCDF file
-  NC_ATTGET          - Get the values of a NetCDF attribute.
-  NC_ATTPUT          - put an attribute into a netcdf file
-  NC_CAT_A           - concatentates a set of netcdf files into ascending order
-  NC_CREATE_EMPTY    - creates an empty netCDF file 
-  NC_DATATYPE_STRING - convert an enumerated datatype to human-readable string
-  NC_DIFF            - determines if two NetCDF files contain the same data
-  NC_DUMP            - is a Matlab counterpart to the NetCDF utility 'ncdump'.
-  NC_GETALL          - read the entire contents of a netcdf file into a nested structure
-  NC_GETBUFFER       - read the record variables of a netcdf file into a structure
-  NC_GETDIMINFO      - returns metadata about a specific NetCDF dimension
-  NC_GETLAST         - Get last few datums from an unlimited NetCDF variable.
-  NC_GETVARINFO      - returns metadata about a specific NetCDF variable
-  NC_INFO            - information about a NetCDF 2 or 3 file
-  NC_ISCOORDVAR      - yes if the given variable is also a coordinate variable.
-  NC_ISUNLIMITEDVAR  - yes if the given variable has a record dimension
-  NC_ISVAR           - yes if the given variable is in the netcdf file
-  NC_PADHEADER       - pads the metadata header of a netcdf file
-  NC_VARGET          - Retrieve data from a NetCDF variable (zero-based indices!).
-  NC_VARPUT          - Write data into a NetCDF file.
-  NC_VARRENAME       - Renames a NetCDF variable.
-  NC_VARSIZE         - return the size of the requested netncfile variable
-  SNC2MAT            - saves netcdf file to *.mat format
+    HDF4:  can read and write datasets via MATLAB's HDFSD interface.
+ 
+    netCDF4, GRIB2, OPeNDAP:  can read datasets via netcdf-java.  For GRIB2
+    please check the README.
+ 
+  Note that by default, SNCTOOLS will transpose data ordering and 
+  dimensions for the sake of backwards compatibility.  This behavior can
+  be controlled with the PRESERVE_FVD preference.
+   
+  -------------------------------------------------------------------------
+ 
+  NC_ADDHIST         -  Either appends or constructs a history attribute.
+  NC_ADDDIM          -  Adds a dimension to an existing netcdf file
+  NC_ADDRECS         -  Adds records to unlimited-dimension file.
+  NC_ADDNEWRECS      -  Adds monotonically increasing records to file.
+  NC_ADDVAR          -  Adds a variable to a NetCDF file.
+  NC_ATTGET          -  Get the values of a NetCDF attribute.
+  NC_ATTPUT          -  Put an attribute into a netcdf file.
+  NC_CAT_A           -  Concatentates set of files into ascending order.
+  NC_CREATE_EMPTY    -  Creates an empty netCDF file.
+  NC_DATATYPE_STRING -  Convert enumerated datatype to string.
+  NC_DIFF            -  Determines if two NetCDF files contain same data.
+  NC_DUMP            -  Matlab counterpart to the NetCDF utility 'ncdump'.
+  NC_GETALL          -  Read the entire netCDF contents into structure
+  NC_GETDIMINFO      -  Returns metadata about a specific netCDF dimension.
+  NC_GETLAST         -  Get last few datums from unlimited NetCDF variable.
+  NC_GETVARINFO      -  Returns metadata about a specific NetCDF variable.
+  NC_INFO            -  Information about a netCDF file.
+  NC_ISCOORDVAR      -  Yes if the given variable is a coordinate variable.
+  NC_ISUNLIMITEDVAR  -  Yes if the given variable has a record dimension.
+  NC_ISATT           -  Yes if the given attribute is in the file.
+  NC_ISVAR           -  Yes if the given variable is in the netcdf file.
+  NC_PADHEADER       -  Pads the metadata header of a netcdf file.
+  NC_VARGET          -  Retrieve data from a NetCDF variable.
+  NC_VARPUT          -  Write data into a NetCDF file.
+  NC_VARRENAME       -  Renames a NetCDF variable.
+  SNC2MAT            -  Saves netcdf file to *.mat format
 
 </pre></div>
             </div>
             <div>
                <div>
                   <p>Important functions are nc_varget and nc_dump</p><pre class="codeinput">help <span class="string">nc_dump</span>
-</pre><pre class="codeoutput">  NC_DUMP:  a Matlab counterpart to the NetCDF utility 'ncdump'.
-      NC_DUMP(NCFILE) prints metadata about the netCDF file NCFILE.  
-      NC_DUMP(NCFILE,VARNAME) prints metadata about just the one netCDF variable
-      named VARNAME.
+</pre><pre class="codeoutput"> NC_DUMP:  a Matlab counterpart to the netCDF utility 'ncdump'.
+    NC_DUMP(NCFILE) prints metadata about the netCDF file NCFILE. 
  
+    NC_DUMP(NCFILE,VARNAME) prints metadata about just the one netCDF 
+    variable named VARNAME.
+ 
+    NC_DUMP(NCFILE,&lt;VARNAME&gt;,fid) prints output to file opened 
+    with fid = fopen(...) instead of to screen (default fid=1: screen).
+    NC_DUMP(NCFILE,VARNAME,&lt;'fname'&gt;) prints output to new file 'fname'.
+ 
+    If the preference 'USE_JAVA' is set to true and netcdf-java is on the
+    javaclasspath, NC_DUMP can also display metadata for GRIB2 files and 
+    OPeNDAP URLS files as if they were netCDF files.
+ 
+    Setting the preference 'PRESERVE_FVD' to true will compel MATLAB to 
+    display the dimensions in the opposite order from what the C utility 
+    ncdump displays.  
+  
+    Example:  This example file is shipped with R2008b.
+        nc_dump('example.nc');
+   
+    Example:  Display metadata for an OPeNDAP URL.  This requires the
+    netcdf-java backend.
+        url = 'http://coast-enviro.er.usgs.gov/models/share/balop.nc';
+        nc_dump(url);
+ 
+    See also nc_info.
 
 </pre></div>
             </div>
             <div>
                <div><pre class="codeinput">help <span class="string">nc_varget</span>
-</pre><pre class="codeoutput">  NC_VARGET  Retrieve data from a netCDF variable (zero-based indices!).
+</pre><pre class="codeoutput"> NC_VARGET:  Retrieve data from a netCDF variable.
+    DATA = NC_VARGET(NCFILE,VARNAME) retrieves all the data from the 
+    variable VARNAME in the netCDF file NCFILE.
  
-  DATA = NC_VARGET(NCFILE,VARNAME) retrieves all the data from the 
-  variable VARNAME in the netCDF file NCFILE.
+    DATA = NC_VARGET(NCFILE,VARNAME,START,COUNT) retrieves the contiguous
+    portion of the variable specified by the index vectors START and 
+    COUNT.  Remember that SNCTOOLS indexing is zero-based, not 
+    one-based.  Specifying a -1 in COUNT means to retrieve everything 
+    along that dimension from the START coordinate.
  
-  DATA = NC_VARGET(NCFILE,VARNAME,START,COUNT) retrieves the contiguous
-  portion of the variable specified by the index vectors START and 
-  COUNT.  Remember that SNCTOOLS indexing is zero-based, not 
-  one-based.  Specifying a -1 in COUNT means to retrieve everything 
-  along that dimension from the START coordinate.
+    DATA = NC_VARGET(NCFILE,VARNAME,START,COUNT,STRIDE) retrieves 
+    a non-contiguous portion of the dataset.  The amount of
+    skipping along each dimension is given through the STRIDE vector.
  
-  DATA = NC_VARGET(NCFILE,VARNAME,START,COUNT,STRIDE) retrieves 
-  a non-contiguous portion of the dataset.  The amount of
-  skipping along each dimension is given through the STRIDE vector.
+    A '_FillValue' attribute is honored by flagging those datums as NaN.
+    A 'missing_value' attribute is honored by flagging those datums as 
+    NaN.  The data is returned as double precision.
  
-  NCFILE can also be an OPeNDAP URL if the proper SNCTOOLS backend is
-  installed.  See the README for details.
+    If the named NetCDF variable has valid scale_factor and add_offset 
+    attributes, then the data is scaled accordingly. The data is returned
+    as double precision.
+ 
+    Preferences
+    -----------
+      PRESERVE_FVD - Setting the preference 'PRESERVE_FVD' to true will 
+                     compel NC_VARGET to preserve the fastest varying 
+                     dimension, i.e. NC_VARGET will not transpose the data.  
+                     This flips the order of the dimension IDs from what 
+                     one would see by using the ncdump C utility.  This may
+                     result in a performance boost when working with large
+                     data.
+ 
+      USE_STD_HDF4_SCALING 
+                   - The CF conventions differ from HDF4 in how scale
+                     factors are to be applied; check their respective
+                     references for details.  By default, HDF4 datasets are
+                     scaled according to CF conventions, but setting this
+                     preference to true forces NC_VARGET to use standard
+                     HDF4 conventions.
   
-  NC_VARGET tries to be intelligent about retrieving the data.
-  Since most general matlab operations are done in double precision,
-  retrieved numeric data will be cast to double precision, while 
-  character data remains just character data.  
+    EXAMPLE:  This example file is shipped with R2008b.
+        data = nc_varget('example.nc','peaks',[0 0], [20 30]);
  
-  Singleton dimensions are removed from the output data.  
+    EXAMPLE: Retrieve data from a URL.  This requires the netcdf-java 
+    backend.
+        url = 'http://coast-enviro.er.usgs.gov/models/share/balop.nc';
+        data = nc_varget(url,'lat_rho');
  
-  A '_FillValue' attribute is honored by flagging those datums as NaN.
-  A 'missing_value' attribute is honored by flagging those datums as 
-  NaN.  The exception to this is for NC_CHAR variables, as mixing 
-  character data and NaN doesn't really seem to work in matlab.
- 
-  If the named NetCDF variable has valid scale_factor and add_offset 
-  attributes, then the data is scaled accordingly.  
- 
-  EXAMPLE:
-  #1.  In this case, the variable in question has rank 2, and has size 
-       500x700.  We want to retrieve starting at row 300, column 250.
-       We want 100 contiguous rows, 200 contiguous columns.
+    Example:  Retrieve data from the example HDF4 file.
+        data = nc_varget('example.hdf','Example SDS');
   
-       vardata = nc_varget ( file, variable_name, [300 250], [100 200] );
+    See also:  nc_varput, nc_attget, nc_attput, nc_dump.
  
- See also: snctools
 
 </pre></div>
             </div>
@@ -186,7 +230,7 @@ To make changes, update the M-file and republish this document.
                   <p>We can get data from this file using the function nc_varget. But first, let's see what is in the file using nc_dump. nc_dump
                      shows all the metadata in the file. In the case of the JarKus file this is a lot.
                   </p><pre class="codeinput">nc_dump(url)
-</pre><pre class="codeoutput">netcdf http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc { 
+</pre><pre class="codeoutput">URL http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc { 
 
 dimensions:
 	alongshore = 2178 ;
@@ -196,10 +240,12 @@ dimensions:
 
 
 variables:
-	long id(alongshore), shape = [2178]
+	// Preference 'PRESERVE_FVD':  false,
+	// dimensions consistent with ncBrowse, not with native MATLAB netcdf package.
+	int32 id(alongshore), shape = [2178]
 		id:long_name = "identifier" 
 		id:comment = "sum of area code (x1000000) and alongshore coordinate" 
-	long areacode(alongshore), shape = [2178]
+	int32 areacode(alongshore), shape = [2178]
 		areacode:long_name = "area code" 
 		areacode:comment = "codes for the 15 coastal areas as defined by rijkswaterstaat" 
 	char areaname(alongshore,stringsize), shape = [2178 100]
@@ -218,7 +264,7 @@ variables:
 		time:axis = "T" 
 		time:units = "days since 1970-01-01 00:00 +1:00" 
 		time:comment = "measurement year see bathy and time_topo for more details" 
-	long crs([]), shape = [1]
+	int32 crs([]), shape = [1]
 		crs:grid_mapping_name = "Oblique Stereographic" 
 		crs:semi_major_axis = 6.3774e+006 
 		crs:semi_minor_axis = "" 
@@ -259,39 +305,49 @@ variables:
 		rsp_lon:units = "degrees_east" 
 		rsp_lon:comment = "Location of the beach pole (Rijks strand paal)" 
 	double x(alongshore,cross_shore), shape = [2178 1925]
+		x:_CoordinateAxes = "alongshore cross_shore " 
 		x:standard_name = "projection_x_coordinate" 
 		x:units = "m" 
 		x:axis = "X" 
 	double y(alongshore,cross_shore), shape = [2178 1925]
+		y:_CoordinateAxes = "alongshore cross_shore " 
 		y:standard_name = "projection_y_coordinate" 
 		y:units = "m" 
 		y:axis = "Y" 
 	double lat(alongshore,cross_shore), shape = [2178 1925]
+		lat:_CoordinateAxes = "alongshore cross_shore " 
 		lat:standard_name = "latitude" 
 		lat:units = "degree_north" 
 		lat:axis = "X" 
 	double lon(alongshore,cross_shore), shape = [2178 1925]
+		lon:_CoordinateAxes = "alongshore cross_shore " 
 		lon:standard_name = "longitude" 
 		lon:units = "degree_east" 
 		lon:axis = "Y" 
-	long max_cross_shore_measurement(time,alongshore), shape = [44 2178]
+	int32 max_cross_shore_measurement(time,alongshore), shape = [44 2178]
+		max_cross_shore_measurement:_CoordinateAxes = "time alongshore " 
 		max_cross_shore_measurement:long_name = "Maximum cross shore measurement index" 
 		max_cross_shore_measurement:comment = "Index of the cross shore measurement (0 based)" 
-	long min_cross_shore_measurement(time,alongshore), shape = [44 2178]
+	int32 min_cross_shore_measurement(time,alongshore), shape = [44 2178]
+		min_cross_shore_measurement:_CoordinateAxes = "time alongshore " 
 		min_cross_shore_measurement:long_name = "Minimum cross shore measurement index" 
 		min_cross_shore_measurement:comment = "Index of the cross shore measurement (0 based)" 
 	double time_topo(time,alongshore), shape = [44 2178]
+		time_topo:_CoordinateAxes = "time alongshore " 
 		time_topo:long_name = "measurement date of topography" 
 		time_topo:units = "days since 1970-01-01 00:00 +1:00" 
 		time_topo:comment = "Measurement date of the topography" 
 	double time_bathy(time,alongshore), shape = [44 2178]
+		time_bathy:_CoordinateAxes = "time alongshore " 
 		time_bathy:long_name = "measurement date of bathymetry" 
 		time_bathy:units = "days since 1970-01-01 00:00 +1:00" 
 		time_bathy:comment = "Measurement date of the bathymetry" 
-	short origin(time,alongshore,cross_shore), shape = [44 2178 1925]
+	int16 origin(time,alongshore,cross_shore), shape = [44 2178 1925]
+		origin:_CoordinateAxes = "time alongshore cross_shore " 
 		origin:long_name = "measurement method" 
 		origin:comment = "Measurement method {1:"..", 3:"...", 5:"...."} used short for space considerations" 
 	double altitude(time,alongshore,cross_shore), shape = [44 2178 1925]
+		altitude:_CoordinateAxes = "lat lon time alongshore cross_shore " 
 		altitude:standard_name = "surface_altitude" 
 		altitude:units = "m" 
 		altitude:comment = "altitude above geoid (NAP)" 
@@ -355,8 +411,8 @@ ans =
             </div>
          </div>
          <p class="footer"><br>
-            this tutorial is based on: <a class="matlabhref" href="matlab:edit('_tutorial_netCDF_read_functions');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=2096/OpenEarthTools/trunk/matlab/general/netCDF/_tutorial_netCDF_read_functions.m">_tutorial_netCDF_read_functions.m (revision: 2096)</a><br>
-Published with MATLAB&reg; 7.6<br></p>
+            this tutorial is based on: <a class="matlabhref" href="matlab:edit('_tutorial_netCDF_read_functions');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=2623/OpenEarthTools/trunk/matlab/io/netcdf/_tutorial_netCDF_read_functions.m">_tutorial_netCDF_read_functions.m (revision: 2623)</a><br>
+Published with MATLAB&reg; 7.10<br></p>
       </div>
       <!--
 ##### SOURCE BEGIN #####

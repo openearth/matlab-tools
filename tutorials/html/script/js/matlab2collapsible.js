@@ -85,7 +85,7 @@ function formatheader()
 
               if (nm == name)
                 {
-                  $($(contentlink).find('a')).bind('click',{'item':parentdiv},togglediv)
+                  $(contentlink).find('a').bind('click',{'item':parentdiv,'expand':true},togglediv)
                 }
             });
         });
