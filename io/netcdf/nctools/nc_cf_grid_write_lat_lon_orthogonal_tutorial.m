@@ -32,7 +32,9 @@
 %See also: SNCTOOLS, NC_CF_GRID, NC_CF_GRID_WRITE,
 %          NC_CF_GRID_WRITE_LAT_LON_CURVILINEAR_TUTORIAL, 
 %          NC_CF_GRID_WRITE_X_Y_ORTHOGONAL_TUTORIAL,
-%          NC_CF_GRID_WRITE_X_Y_CURVILINEAR_TUTORIAL,
+%          NC_CF_GRID_WRITE_X_Y_CURVILINEAR_TUTORIAL
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a> under the <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> license.
 
 %% Define meta-info: global
 
@@ -49,19 +51,19 @@
    
 %% Define dimensions/coordinates: lat,lon sticks
 
-   OPT.lon                    = [2 4 6];
-   OPT.lat                    = [50 51 52 53 54];
+   OPT.lat_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
+   OPT.lon_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
 
    OPT.ncols                  = length(OPT.lon);
    OPT.nrows                  = length(OPT.lat);
+   OPT.lon                    = [2 4 6];
+   OPT.lat                    = [50 51 52 53 54];
 
    OPT.wgs84.code             = 4326;
    OPT.wgs84.name             = 'WGS 84';
    OPT.wgs84.semi_major_axis  = 6378137.0;
    OPT.wgs84.semi_minor_axis  = 6356752.314247833;
    OPT.wgs84.inv_flattening   = 298.2572236;
-   OPT.lat_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
-   OPT.lon_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
 
 %% Define variable (define some data)
 
@@ -104,6 +106,11 @@
    nc_add_dimension(ncfile, 'lon', OPT.ncols); % !!! use this as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
    nc_add_dimension(ncfile, 'lat', OPT.nrows); % !!! use this as 2nd array dimension to get correct plot in ncBrowse (snctools swaps for us)
 
+   % You might insert a vector 'col' that runs [OPT.ncols:-1:1] to have
+   % the arcGIS ASCII file approach of having upper-left corner of 
+   % the data matrix at index (1,1) rather than the default of having the 
+   % lower-left corner of the data matrix  at index (1,1).
+
 %% 3.a Create coordinate variables: longitude
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
 
@@ -113,7 +120,7 @@
    nc(ifld).Dimension        = {'lon'}; % !!!
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'longitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
-   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude'); % standard name
+   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lon(:)) max(OPT.lon(:))]);
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
@@ -126,7 +133,7 @@
    nc(ifld).Dimension        = {'lat'}; % !!!
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'latitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
-   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude'); % standard name
+   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lat(:)) max(OPT.lat(:))]);
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 

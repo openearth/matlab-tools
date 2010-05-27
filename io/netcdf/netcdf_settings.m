@@ -7,9 +7,9 @@ function netcdf_settings(varargin)
 % * 2007a mexnc_legacy added
 % * 2007b mexnc_legacy added
 % * 2008a mexnc_legacy added
-% * 2008b native netCDF bugfix added (+netcdf)
-% * 2009a native netCDF bugfix added (+netcdf)
-% * 2009b native netCDF bugfix added (+netcdf)
+% * 2008b add yourselves http://www.mathworks.com/support/bugreports/609383
+% * 2009a add yourselves http://www.mathworks.com/support/bugreports/609383
+% * 2009b add yourselves http://www.mathworks.com/support/bugreports/609383
 % * 2010b OK
 %
 %See also: OETSETTINGS, NC_CF_GRID_TEST

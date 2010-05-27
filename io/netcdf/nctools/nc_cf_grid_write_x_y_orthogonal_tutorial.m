@@ -1,4 +1,4 @@
-%NC_CF_GRID_WRITE_X_Y_ORTHOGONAL_TUTORIAL   example of how to create a netCDF grid file of an orthogonal lat-lon grid
+%NC_CF_GRID_WRITE_X_Y_ORTHOGONAL_TUTORIAL   example of how to create a netCDF grid file of an orthogonal x-y grid
 %
 %  example of how to make a netCDF file of a variable
 %  that is defined on a grid that is orthogonal
@@ -10,7 +10,7 @@
 %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#grid-mappings-and-projections
 %  as "Horizontal Coordinate Reference Systems, Grid Mappings, and Projections".
 %
-%  An example of a curvi-linear x,y grid is for instance
+%  An example of an orthogonal x,y grid is for instance
 %  a data product defined on an otrhogonal grid in a certain 
 %  local geograhic projection by programs like arcGIS. For each
 %  vertex in this grid a the lat,lon values need to be calculated
@@ -28,8 +28,8 @@
 %    |       \        \     |             |      |        |  |
 %    |        )3  8  xx)    | nrows       |      |03 08 xx|  | nrows
 %    |       /        /     |             |      |        |  |
-%    |      /2       /	    |             |      |02 07 12|  | 
-%    |     /   7    /  	   /              |      |        |  |
+%    |      /2       /      |             |      |02 07 12|  | 
+%    |     /   7    /      /              |      |        |  |
 %    |    <1     12/     /                |      |01 06 11|  +
 %    |     \6    /     /                  |      +--------+
 %    |       \11/    /                    |
@@ -40,14 +40,16 @@
 %
 % Note that ncBrowse does not contain plot support for 
 % curvi-linear grids, so ncBrowse will display the same 
-% rectangular plotas for the netCDF file created by
+% rectangular plot as for the netCDF file created by
 % NC_CF_GRID_WRITE_LAT_LON_ORTHOGONAL_TUTORIAL, albeit with
 % different axes annotations (col/row instead of lat/lon).
 %
 %See also: SNCTOOLS, NC_CF_GRID, NC_CF_GRID_WRITE,
 %          NC_CF_GRID_WRITE_LAT_LON_ORTHOGONAL_TUTORIAL, 
 %          NC_CF_GRID_WRITE_LAT_LON_CURVILINEAR_TUTORIAL, 
-%          NC_CF_GRID_WRITE_X_Y_CURVILINEAR_TUTORIAL,
+%          NC_CF_GRID_WRITE_X_Y_CURVILINEAR_TUTORIAL
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a> under the <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> license.
 
 %% Define meta-info: global: x,y sticks > lat,lon matrices
 
@@ -71,16 +73,17 @@
 
    OPT.ncols                  = length(OPT.x);
    OPT.nrows                  = length(OPT.y);
-
-   OPT.epsg.epsg              = 32631;
-
-   OPT.wgs84.epsg             = 4326;
-   OPT.wgs84.name             = 'WGS 84';
-   OPT.wgs84.semi_major_axis  = 6378137.0;
-   OPT.wgs84.semi_minor_axis  = 6356752.314247833;
-   OPT.wgs84.inv_flattening   = 298.2572236;
    OPT.lat_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
    OPT.lon_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
+
+   OPT.epsg.epsg              = 32631; % epsg code of local projection
+   OPT.wgs84.epsg             = 4326;  % epsg code of global grid
+   % in the case of a grid defined in a local x-y 
+   % projection, the properties of the grid in a WGS84
+   % lat,lon system do not have to be specified here, but 
+   % can be retrieved from the log of the coordinate 
+   % transformation carried out by convertCoordinates.
+   % get (lat,lon) associated with each vertex (x,y), note order [OPT.lon,OPT.lat ...
 
   [OPT.lon,OPT.lat,log]       = convertCoordinates(x,y,'CS1.code',OPT.epsg.epsg,'CS2.code',OPT.wgs84.epsg);
 
@@ -197,8 +200,9 @@
    nc(ifld).Dimension        = {'x','y'};
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'longitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
-   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude'); % standard name
+   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lon(:)) max(OPT.lon(:))]);
+   nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
 %% 3.b Create coordinate variables: latitude
@@ -210,8 +214,9 @@
    nc(ifld).Dimension        = {'x','y'};
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'latitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
-   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude'); % standard name
+   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lat(:)) max(OPT.lat(:))]);
+   nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
 %% 3.c Create coordinate variables: coordinate system: WGS84 default
@@ -230,10 +235,10 @@
      'inverse_flattening', ...
      'comment'}, ...
      'Value', ...
-     {OPT.wgs84.name,...
-      OPT.wgs84.semi_major_axis, ...
-      OPT.wgs84.semi_minor_axis, ...
-      OPT.wgs84.inv_flattening,  ...
+     {log.CS2.name,...
+      log.CS2.ellips.semi_major_axis, ...
+      log.CS2.ellips.semi_minor_axis, ...
+      log.CS2.ellips.inv_flattening,  ...
      'value is equal to EPSG code'});
 
 %% 3.d Create dependent variable
