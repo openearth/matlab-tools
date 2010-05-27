@@ -6,8 +6,8 @@ rem <http://www.jetbrains.com/teamcity/>
 rem Map drive with matlab
 rem -----------------------------------
 net use y: /delete
-rem net use y: \\wlhost\library %openearth_password% /USER:%openearth_user% 
-net use y: \\wlhost\library 
+net use y: \\wlhost\library %openearth_password% /USER:%openearth_user% 
+rem net use y: \\wlhost\library 
 
 rem Call matlab
 rem http://www.mathworks.com/support/solutions/data/1-16B8X.html
