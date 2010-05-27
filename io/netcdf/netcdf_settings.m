@@ -163,10 +163,40 @@ function netcdf_settings(varargin)
       %  
       %  If you have a current subscription to MathWorks Software Maintenance Service (SMS), 
       %  you can download product updates. If not, learn more about MathWorks SMS. 
+      
+% however, this fix results in an the following error on some machines
+
+%  ??? Invalid MEX-file 'D:\checkouts\openearthtools\matlab\io\netcdf\2008b\+netcdf\private\netcdflib.mexw64': This
+%  application has failed to start because the application configuration is incorrect. Reinstalling the application may
+%  fix this problem.
+%  
+%  Error in ==> inqLibVers at 20
+%  libvers = netcdflib('inqLibVers');
+%  
+%  Error in ==> mexnc_tmw>handle_inq_libvers at 149
+%  output = netcdf.inqLibvers();
+%  
+%  Error in ==> mexnc_tmw at 111
+%      [varargout{:}] = handler ( varargin{:} );
+%  
+%  Error in ==> mexnc at 539
+%  	[varargout{:}] = backend(varargin{:});
+%  
+%  Error in ==> snc_read_backend at 34
+%  v = mexnc('inq_libvers');
+%  
+%  Error in ==> nc_info at 49
+%  [backend,fmt] = snc_read_backend(ncfile);
+%  
+%  Error in ==> nc_cf_grid at 107
+%        fileinfo = nc_info(ncfile);
+%  
+%  Error in ==> nc_cf_grid_test at 13
+%     [G,GM] =nc_cf_grid(f,'z');
 
    elseif strcmpi(version('-release'),'2008b')       % OK
    
-      addpathfast([ncroot,filesep,'2008b'],'append',0); % overrule erronous +netcdf in matlab path by prepadding
+     %addpathfast([ncroot,filesep,'2008b'],'append',0); % overrule erronous +netcdf in matlab path by prepadding
 
       if ~(OPT.quiet)
       disp('  netCDF: note: netcdf and snctools use different matrix orientation: see nc_dump');
@@ -175,13 +205,13 @@ function netcdf_settings(varargin)
    elseif strcmpi(version('-release'),'2009a') | ... % OK
           strcmpi(version('-release'),'2009b') 
           
-      addpathfast([ncroot,filesep,'2009' ],'append',0); % overrule erronous +netcdf in matlab path by prepadding
+     %addpathfast([ncroot,filesep,'2009' ],'append',0); % overrule erronous +netcdf in matlab path by prepadding
 
       if ~(OPT.quiet)
       disp('  netCDF: note: netcdf and snctools use different matrix orientation: see nc_dump');
       end
 
-%% Fix legacies/bugs not avialalbe
+%% Fix legacies/bugs not needed
 
    elseif (vs > datenum(2010,1,1)) 
 
