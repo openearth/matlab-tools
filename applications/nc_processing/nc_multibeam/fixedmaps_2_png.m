@@ -9,7 +9,7 @@ if nargin == 0
     lowestLevel = 16;
 end
 
-figure('Visible','On')
+figure('Visible','Off')
 x = linspace(0,0.01,100);
 [x,y] = meshgrid(x,x);
 z = kron([10 1;5 1],peaks(50))-rand(100)    ;
