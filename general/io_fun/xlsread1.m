@@ -1,4 +1,4 @@
-function [data, text, rawData, customOutput]=xlsread1(Excel,file,sheet,range,mode,customFun)
+function [data, text, rawData, customOutput]=xlsread1(file,sheet,range,mode,customFun)
 % XLSREAD1 a faster way to read multiple excel files
 %
 % This is a modified version of the Matlab built in xlsread function,
@@ -125,22 +125,22 @@ function [data, text, rawData, customOutput]=xlsread1(Excel,file,sheet,range,mod
 %   Copyright 1984-2007 The MathWorks, Inc.
 %   $Revision$  $Date$
 %=============================================================================
-
+Excel = evalin('caller','Excel'); % added command (Brandao 12/09/2008)
 % initialise variables
 data = [];
 text = {};
 rawData = {};
 
 Sheet1 = 1;
-if nargin < 3
+if nargin < 2
     sheet = Sheet1;
     range = '';
-elseif nargin < 4
+elseif nargin < 3
     range = '';
 end
 
 % handle input values
-if nargin < 2 || isempty(file)
+if nargin < 1 || isempty(file)
     error('MATLAB:xlsread:FileName','Filename must be specified.');
 end
 
@@ -148,7 +148,7 @@ if ~ischar(file)
     error('MATLAB:xlsread:InputClass','Filename must be a string.');
 end
 
-if nargin > 2
+if nargin > 1
     % Verify class of sheet parameter
     if ~ischar(sheet) && ...
             ~(isnumeric(sheet) && length(sheet)==1 && ...
@@ -172,14 +172,14 @@ if nargin > 2
         end
     end
 end
-if nargin > 3
+if nargin > 2
     % verify class of range parameter
     if ~ischar(range)
         error('MATLAB:xlsread:InputClass',...
             'Range argument must a string. See HELP XLSREAD.');
     end
 end
-if nargin >= 5
+if nargin >= 4
     % verify class of mode parameter
     if ~isempty(mode) && ~(strcmpi(mode,'basic'))
         warning('MATLAB:xlsread:InputClass',...
@@ -191,7 +191,7 @@ else
 end
 
 custom = false;
-if nargin >= 6 
+if nargin >= 5 
     if strcmpi(mode,'basic') || ~ispc
         warning('MATLAB:xlsread:Incompatible',...
          ['Custom functions cannot be used in basic mode or on non-Windows platforms.\n'...

@@ -41,7 +41,7 @@ function [X, Y, Z, Ztime] = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx
 
 % get cell size
 %urls      = grid_orth_getFixedMapOutlines(OPT.dataset); %#ok<*UNRCH,*USENS>
-x         = nc_varget(mapurls{1}, nc_varfind(mapurls{1}, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate')); OPT.cellsize = mean(diff(x));
+% x         = nc_varget(mapurls{1}, nc_varfind(mapurls{1}, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate')); OPT.cellsize = mean(diff(x));
 
 % generate x and y vectors spanning the fixed map extents
 x         = minx :  OPT.cellsize*OPT.datathinning : maxx;
