@@ -45,11 +45,11 @@ x         = nc_varget(mapurls{1}, nc_varfind(mapurls{1}, 'attributename', 'stand
 
 % generate x and y vectors spanning the fixed map extents
 x         = minx :  OPT.cellsize*OPT.datathinning : maxx;
-x         = roundoff(x,6); maxx =  roundoff(maxx,6);
+x         = roundoff(x,2); maxx =  roundoff(maxx,2);
 if x(end)~= maxx; x = [x maxx];end % make sure maxx is included as a point
 
 y         = maxy : -OPT.cellsize*OPT.datathinning : miny; % thinning runs from the lower left corner upward and right
-y         = roundoff(y,6); miny =  roundoff(miny,6);
+y         = roundoff(y,2); miny =  roundoff(miny,2);
 if y(end)~=miny; y = [y miny];end % make sure miny is included as a point
 
 nrcols    = max(size(x));
