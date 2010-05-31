@@ -77,7 +77,7 @@ title('Testing getDataFromNetCDFGrid.m on Delflandsekust')
 %% $RunCode
 % get data within that polygon from NetCDF file
 url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/vanoordboskalis/delflandsekust/delflandsekust.nc';
-[X, Y, Z, T] = grid_orth_getDataFromNetCDFGrid('ncfile', url, 'starttime', datenum([2009 03 10]), 'searchwindow', -10, 'polygon', poly);
+[X, Y, Z, T] = grid_orth_getDataFromNetCDFGrid('ncfile', url, 'starttime', datenum([2009 03 10]), 'searchinterval', -10, 'polygon', poly);
 
 testresult = nan;
 
