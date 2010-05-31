@@ -59,7 +59,7 @@ OPT = struct(...
     );
 
 % overrule default settings by property pairs, given in varargin
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% check some basic input properties
 if size(OPT.oe_standard_name,1) ~= size(OPT.dimension,1)
