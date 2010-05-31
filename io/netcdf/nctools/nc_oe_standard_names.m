@@ -1,5 +1,5 @@
 function varargout = nc_oe_standard_names(varargin)
-%NC_OE_STANDARD_NAMES  facilitate adding variables from standard-name vocabularies (CF-1.4, OE-1.0, VO-1.0)
+%NC_OE_STANDARD_NAMES  Routine facilitates adding variables that are part of standard-name glossaries (CF-1.4, OE-1.0, VO-1.0)
 %
 %   Routine facilitates adding variables that are part of standard-name glossaries (CF-1.4, OE-1.0, VO-1.0).
 %   Works with both the Maltab and SNC netcdf libraries.
@@ -78,7 +78,7 @@ OPT = struct(...
     );
 
 % overrule default settings by property pairs, given in varargin
-OPT = setproperty(OPT, varargin{:});
+OPT = setProperty(OPT, varargin{:});
 
 %% check some basic input properties
 if size(OPT.oe_standard_name,1) ~= size(OPT.dimension,1)
