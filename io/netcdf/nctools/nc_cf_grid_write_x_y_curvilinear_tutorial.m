@@ -1,4 +1,4 @@
-%NC_CF_GRID_WRITE_X_Y_CURVILINEAR_TUTORIAL   example of how to create a netCDF grid file of an curvilinear x-y grid
+%% Create netCDF of curvilinear x-y grid
 %
 %  example of how to make a netCDF file of a variable
 %  that is defined on a grid that is curvilinear

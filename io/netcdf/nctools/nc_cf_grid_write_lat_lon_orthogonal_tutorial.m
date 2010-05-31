@@ -1,4 +1,4 @@
-%nc_cf_grid_write_lat_lon_orthogonal_tutorial   example of how to create a netCDF grid file of an orthogonal lat-lon grid
+%% Create netCDF of orthogonal lat-lon grid
 %
 %  example of how to make a netCDF file of a variable
 %  that is defined on a grid that is orthogonal
@@ -54,10 +54,10 @@
    OPT.lat_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
    OPT.lon_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
 
-   OPT.ncols                  = length(OPT.lon);
-   OPT.nrows                  = length(OPT.lat);
    OPT.lon                    = [2 4 6];
    OPT.lat                    = [50 51 52 53 54];
+   OPT.ncols                  = length(OPT.lon);
+   OPT.nrows                  = length(OPT.lat);
 
    OPT.wgs84.code             = 4326;
    OPT.wgs84.name             = 'WGS 84';

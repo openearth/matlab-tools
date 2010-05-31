@@ -127,13 +127,13 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 
 %% Get ordinates ~(dimensions)
 
-      OPT.lat          = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','latitude'       );
-      OPT.lon          = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','longitude'      );
-      OPT.time         = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','time'           );
-      OPT.station_id   = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','station_id'     );
+      OPT.lat          = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','latitude'  );
+      OPT.lon          = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','longitude' );
+      OPT.time         = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','time'      );
+      OPT.station_id   = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue','station_id');
       
-      files(ifile).latitude               = nc_varget(OPT.filename,OPT.lat);
-      files(ifile).longitude              = nc_varget(OPT.filename,OPT.lon);
+      files(ifile).latitude               = mean(nc_varget(OPT.filename,OPT.lat)); % there are "drifting" stations
+      files(ifile).longitude              = mean(nc_varget(OPT.filename,OPT.lon)); % there are "drifting" stations
       time                                = nc_varget(OPT.filename,OPT.time);
       isounits                            = nc_attget(OPT.filename,OPT.time,'units');
       files(ifile).number_of_observations = length(time);

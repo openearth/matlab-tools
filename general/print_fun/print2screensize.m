@@ -27,7 +27,7 @@ function print2screensize(fname,varargin)
 % linewidth cannot be displayed 
 % and all lines have the same width.
 %
-% Creates directory of if filename it doesn't exist yet.
+% Creates directory if filename it doesn't exist yet.
 %
 % print2screensize(filename, 800)
 % print2screensize(filename,1024)

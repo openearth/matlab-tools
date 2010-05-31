@@ -1,4 +1,4 @@
-%NC_CF_GRID_WRITE_LAT_LON_CURVILINEAR_TUTORIAL   example of how to create a netCDF grid file of a curvi-linear lat-lon grid
+%% Create netCDF of curvilinear lat-lon grid
 %
 %  example of how to make a netCDF file of a variable
 %  that is defined on a grid that is curvi-linear

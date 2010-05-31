@@ -1,4 +1,4 @@
-%NC_CF_GRID_WRITE_X_Y_ORTHOGONAL_TUTORIAL   example of how to create a netCDF grid file of an orthogonal x-y grid
+%% Create netCDF of orthogonal x-y grid
 %
 %  example of how to make a netCDF file of a variable
 %  that is defined on a grid that is orthogonal

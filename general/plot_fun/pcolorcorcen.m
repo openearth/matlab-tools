@@ -145,9 +145,9 @@ elseif (nargin==3 | nargin==4)
      ~(size(y,2)==1) % not 1D, and for 2D plots 1 row or columns makes no sense to draw a pixel with an area, because that requires extrapolation.
      
      %% values and co-ordinates at corner points
-     %% x,y,and c same size
-     %% SHADING INTERP
-     %% -------------------------------
+     %  x,y,and c same size
+     %  SHADING INTERP
+     %  -------------------------------
      if size(x,1)==size(c,1) & ...
         size(x,2)==size(c,2)
   
@@ -162,9 +162,9 @@ elseif (nargin==3 | nargin==4)
         set(P,'facecolor',facecolor);
   
      %% values at center points, co-ordinates at corner points
-     %% c in all directions one smaller than x,y
-     %% SHADING FLAT
-     %% -------------------------------
+     %  c in all directions one smaller than x,y
+     %  SHADING FLAT
+     %  -------------------------------
      elseif size(x,1)==size(c,1)+1 & ...
             size(x,2)==size(c,2)+1;
   
