@@ -93,11 +93,11 @@ OPT = struct(...
 % overrule default settings by property pairs, given in varargin
 OPT = setProperty(OPT, varargin{:});
 
-OPT.netcdf_path   = [fileparts(fileparts(fileparts(OPT.rootpath  ))) filesep 'nc_files'  filesep 'elevation_data' filesep OPT.datatype filesep];
-OPT.kml_path      = [fileparts(fileparts(fileparts(OPT.rootpath  ))) filesep 'kml_files' filesep 'elevation_data' filesep];
+OPT.netcdf_path   = fullfile(OPT.rootpath,'nc_files','elevation_data',OPT.datatype);
+OPT.kml_path      = fullfile(OPT.rootpath,'kml_files','elevation_data',OPT.datatype);
 OPT.netcdf_server = fullfile(OPT.ncserverpath,OPT.netcdf_path);
 OPT.kml_server    = fullfile(OPT.kmlserverpath,OPT.kml_path);
-OPT.raw_path      = [OPT.rootpath filesep 'raw' filesep OPT.rawdata_ext];
+OPT.raw_path      = fullfile(OPT.rootpath,'elevation_data',OPT.datatype,'raw');
 
 %% *** prepare ***
 EPSG        = load('EPSG');
@@ -106,7 +106,7 @@ if OPT.nc_make
     disp('generating nc files...')
     if OPT.nc_delete_existing
         % delete existing nc_files
-        delete([OPT.netcdf_path '*.nc'])
+        delete(fullfile(OPT.netcdf_path, '*.nc'))
     end
     
     % set the extent of the fixed maps (decide according to desired nc filesize)
@@ -115,7 +115,7 @@ if OPT.nc_make
     ysize       = OPT.mapsizey; % size of fixed map in y-direction
     ystepsize   = OPT.gridsize; % y grid resolution
     
-    fns         = dir(OPT.raw_path);
+    fns         = dir(fullfile(OPT.raw_path,OPT.rawdata_ext));
     
     %% first: determine the outline of the dataset getting all the timestamps
     time = nan(1,length(fns));
@@ -130,7 +130,7 @@ if OPT.nc_make
     OPT.wb                   = waitbar(0, 'initializing file...');
     OPT.WBbytesDoneClosedFiles = 0;
     for kk = 1:size(fns,1)
-        fid             = fopen(fullfile(OPT.rootpath, 'raw', fns(kk).name));
+        fid             = fopen(fullfile(OPT.raw_path, fns(kk).name));
         headerlines     = OPT.headerlines;
         while ~feof(fid)
             %% read data
@@ -212,8 +212,8 @@ if OPT.kml_make
         case 'fixedmaps_2_png'
             % inputDir, outputDir, serverURL, EPSGcode, lowestLevel, datatype
             try
-                fixedmaps_2_png(OPT.netcdf_path, fullfile(OPT.VO_rawdata_path,OPT.kml_path,OPT.datatype),...
-                    fullfile(OPT.webserverpath,OPT.kml_path), OPT.EPSGcode, OPT.kml_detaillevel, OPT.datatype)
+                fixedmaps_2_png(OPT.netcdf_path,OPT.kml_path,...
+                    [fullfile(OPT.webserverpath,'elevation_data') filesep], OPT.EPSGcode, OPT.kml_detaillevel, OPT.datatype)      
             catch
                 warning(lasterr)
             end

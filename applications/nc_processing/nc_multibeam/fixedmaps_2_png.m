@@ -142,6 +142,14 @@ dates = findAllFiles('basepath',outputDir,'recursive',false);
 datenums = datenum(dates,'yyyy-mm-dd');
 
 tilefull = findAllFiles('basepath',outputDir,'pattern_incl','*.png');
+tilefull2 = tilefull;
+for ii = 1:length(tilefull)
+    tilefull2{ii} = tilefull2{ii}(end-40:end);
+end
+    
+    
+tilefull = findAllFiles('basepath',outputDir,'pattern_incl','*.png');
+
 tiles = cell(size(tilefull));
 [path, fname] = fileparts(tilefull{1});
 id = strfind(tilefull{1},'_'); id = id(end)-length(path);
@@ -193,7 +201,6 @@ for level = OPT.highestLevel:OPT.lowestLevel
         maxLod = OPT.maxLod;
     end
     
-    
     for nn = 1:size(tilesOnLevel,1)
         output = '';
         %% add png to kml+
@@ -201,7 +208,8 @@ for level = OPT.highestLevel:OPT.lowestLevel
         
         for iDate = 1: length(dates)
             pngFile = [dates{iDate} filesep dates{iDate} '_' tilesOnLevel(nn,:) '.png'];
-            if any(strcmp(fullfile(outputDir, pngFile),tilefull))
+            temp = fullfile(outputDir, pngFile);
+            if any(strcmp(temp(end-40:end),tilefull2))
                 OPT.timeIn = datenums(iDate);
                 OPT.timeOut = OPT.timeIn+1;
                 OPT.drawOrder = datenum(iDate);
