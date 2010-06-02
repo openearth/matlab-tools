@@ -80,6 +80,7 @@
 
    OPT.epsg.code              = 32631; % epsg code of local projection
    OPT.wgs84.code             = 4326;  % epsg code of global grid
+   % http://www.epsg-registry.org/
    % in the case of a grid defined in a local x-y 
    % projection, the properties of the grid in a WGS84
    % lat,lon system do not have to be specified here, but 
@@ -124,7 +125,7 @@
    nc_attput(ncfile, nc_global, 'terms_for_use' , OPT.acknowledge);
    nc_attput(ncfile, nc_global, 'disclaimer'    , OPT.disclaimer);
       
-%% 2.a Create matrix span dimensions
+%% 2   Create matrix span dimensions
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#dimensions   
    
    nc_add_dimension(ncfile, 'col', OPT.ncols); % !!! use this as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
@@ -135,11 +136,11 @@
    % the data matrix at index (1,1) rather than the default of having the 
    % lower-left corner of the data matrix  at index (1,1).
 
-   nc_add_dimension(ncfile, 'time', 1); % if you would like to include more instances of the same grid, 
-                                        % you can optionally use 'time' as a 3rd dimension
+%  nc_add_dimension(ncfile, 'time', 1); % if you would like to include more instances of the same grid, 
+                                        % you can optionally use 'time' as a 3rd dimension. see 
+                                        % nc_cf_stationTimeSeries_write_tutorial for info on time.          
 
-%% 2.a Create coordinate variables: x
-%      http://
+%% 3.a Create coordinate variables: x and y
 
    clear nc;ifld = 1;
    nc(ifld).Name             = 'x';
@@ -152,9 +153,6 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
 
-%% 2.b Create coordinate variables: y
-%      http://
-   
    ifld = ifld + 1;
    nc(ifld).Name             = 'y';
    nc(ifld).Nctype           = nc_type(OPT.lat_type);
@@ -166,8 +164,8 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
 
-%% 2.c Create coordinate variables: coordinate system: epsg
-%      http://..
+%% 3.b Create coordinate variables: coordinate system: epsg
+%      http://www.epsg-registry.org/
    
    ifld = ifld + 1;
    nc(ifld).Name         = 'epsg';
@@ -198,7 +196,7 @@
          log.proj_conv2.param.value(strcmp(log.proj_conv2.param.name,'Scale factor at natural origin')),...
         'value is equal to EPSG code'});
 
-%% 3.a Create coordinate variables: longitude
+%% 3.c Create coordinate variables: longitude
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
 
    ifld = ifld + 1;
@@ -212,7 +210,7 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'x y'); % 'lat lon');
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
-%% 3.b Create coordinate variables: latitude
+%% 3.d Create coordinate variables: latitude
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
    
    ifld = ifld + 1;
@@ -226,7 +224,7 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'x y'); % 'lat lon');
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
-%% 3.c Create coordinate variables: coordinate system: WGS84 default
+%% 3.e Create coordinate variables: coordinate system: WGS84 default
 %      global ellispes: WGS 84, ED 50, INT 1924, ETRS 89 and the upcoming ETRS update etc.
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#grid-mappings-and-projections
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#appendix-grid-mappings
@@ -248,7 +246,7 @@
       log.CS1.ellips.inv_flattening,  ...
      'value is equal to EPSG code'});
 
-%% 3.d Create dependent variable
+%% 4   Create dependent variable
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#variables
 %      Parameters with standard names:
 %      http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
@@ -267,7 +265,7 @@
    ifld = ifld + 1;
    nc(ifld).Name             = OPT.varname;
    nc(ifld).Nctype           = nc_type(OPT.val_type);
-   nc(ifld).Dimension        = {'time','col','row'}; % !!!
+   nc(ifld).Dimension        = {'col','row'}; % {'time','col','row'}
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name    );
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', OPT.units        );
    nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue    );
@@ -279,13 +277,13 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
    end
       
-%% 4   Create all variables with attibutes
+%% 5.a Create all variables with attributes
    
    for ifld=1:length(nc)
       nc_addvar(ncfile, nc(ifld));   
    end
       
-%% 5   Fill all variables
+%% 5.b Fill all variables
 
    nc_varput(ncfile, 'x'            , OPT.x         );
    nc_varput(ncfile, 'y'            , OPT.y         );

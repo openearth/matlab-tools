@@ -60,7 +60,7 @@
    OPT.ncols                  = length(OPT.lon);
    OPT.nrows                  = length(OPT.lat);
 
-   OPT.wgs84.code             = 4326;
+   OPT.wgs84.code             = 4326; % % epsg code of global grid: http://www.epsg-registry.org/
    OPT.wgs84.name             = 'WGS 84';
    OPT.wgs84.semi_major_axis  = 6378137.0;
    OPT.wgs84.semi_minor_axis  = 6356752.314247833;
@@ -112,10 +112,11 @@
    % the data matrix at index (1,1) rather than the default of having the 
    % lower-left corner of the data matrix  at index (1,1).
 
-   nc_add_dimension(ncfile, 'time', 1); % if you would like to include more instances of the same grid, 
-                                        % you can optionally use 'time' as a 3rd dimension
+%  nc_add_dimension(ncfile, 'time', 1); % if you would like to include more instances of the same grid, 
+                                        % you can optionally use 'time' as a 3rd dimension. see 
+                                        % nc_cf_stationTimeSeries_write_tutorial for info on time.          
 
-%% 3.a Create coordinate variables: longitude
+%% 3.a Create coordinate vector: longitude
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
 
    clear nc;ifld = 1;
@@ -128,7 +129,7 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lon(:)) max(OPT.lon(:))]);
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
-%% 3.b Create coordinate variables: latitude
+%% 3.b Create coordinate vector: latitude
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
    
    ifld = ifld + 1;
@@ -163,7 +164,7 @@
       OPT.wgs84.inv_flattening,  ...
      'value is equal to EPSG code'});
 
-%% 3.d Create dependent variable
+%% 4   Create dependent variable
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#variables
 %      Parameters with standard names:
 %      http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
@@ -171,7 +172,7 @@
    ifld = ifld + 1;
    nc(ifld).Name             = OPT.varname;
    nc(ifld).Nctype           = nc_type(OPT.val_type);
-   nc(ifld).Dimension        = {'time','lon','lat'}; % !!!
+   nc(ifld).Dimension        = {'lon','lat'}; % {'time','lon','lat'}
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name    );
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', OPT.units        );
    nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue    );
@@ -182,13 +183,13 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
    end
       
-%% 4   Create all variables with attibutes
+%% 5.a Create all variables with attributes
    
    for ifld=1:length(nc)
       nc_addvar(ncfile, nc(ifld));   
    end
       
-%% 5   Fill all variables
+%% 5.b Fill all variables
 
    nc_varput(ncfile, 'lon'          , OPT.lon       );
    nc_varput(ncfile, 'lat'          , OPT.lat       );

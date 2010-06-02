@@ -11,7 +11,7 @@ To make changes, update the M-file and republish this document.
 -->
 <title>nc_cf_grid_write_x_y_orthogonal_tutorial</title>
 <meta name="generator" content="MATLAB 7.7">
-<meta name="date" content="2010-05-31">
+<meta name="date" content="2010-06-02">
 <meta name="m-file" content="nc_cf_grid_write_x_y_orthogonal_tutorial">
 <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
 <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
@@ -36,33 +36,32 @@ currentGeApiDiv = $(".geapi");
 <h2>Contents</h2>
 <div>
 <ul>
-<li><a href="#1">Create netCDF of orthogonal x-y grid</a></li>
+<li><a href="#1">Create netCDF-CF of orthogonal x-y grid</a></li>
 <li><a href="#2">Define meta-info: global: x,y sticks &gt; lat,lon matrices</a></li>
 <li><a href="#3">Define dimensions/coordinates</a></li>
 <li><a href="#4">Define variable (define some data)</a></li>
 <li><a href="#5">1.a Create netCDF file</a></li>
 <li><a href="#6">1.b Add overall meta info</a></li>
 <li><a href="#7">2.a Create matrix span dimensions</a></li>
-<li><a href="#8">2.a Create coordinate variables: x</a></li>
-<li><a href="#9">2.b Create coordinate variables: y</a></li>
-<li><a href="#10">2.c Create coordinate variables: coordinate system: epsg</a></li>
-<li><a href="#11">3.a Create coordinate variables: longitude</a></li>
-<li><a href="#12">3.b Create coordinate variables: latitude</a></li>
-<li><a href="#13">3.c Create coordinate variables: coordinate system: WGS84 default</a></li>
-<li><a href="#14">3.d Create dependent variable</a></li>
-<li><a href="#15">4   Create all variables with attibutes</a></li>
-<li><a href="#16">5   Fill all variables</a></li>
-<li><a href="#17">6   Check file summary</a></li>
-<li><a href="#18">7.a Load the data: using the variable names from nc_dump</a></li>
-<li><a href="#19">7.b Load the data: using standard_names and coordinate attribute</a></li>
-<li><a href="#20">7.c Load the data: using a dedicated function developed for grids</a></li>
+<li><a href="#8">3.a Create coordinate vectors: x and y</a></li>
+<li><a href="#9">3.b Create coordinate variables: coordinate system: epsg</a></li>
+<li><a href="#10">3.c Create coordinate variables: longitude</a></li>
+<li><a href="#11">3.d Create coordinate variables: latitude</a></li>
+<li><a href="#12">3.e Create coordinate variables: coordinate system: WGS84 default</a></li>
+<li><a href="#13">4   Create dependent variable</a></li>
+<li><a href="#14">5.a Create all variables with attributes</a></li>
+<li><a href="#15">5.b Fill all variables</a></li>
+<li><a href="#16">6   Check file summary</a></li>
+<li><a href="#17">7.a Load the data: using the variable names from nc_dump</a></li>
+<li><a href="#18">7.b Load the data: using standard_names and coordinate attribute</a></li>
+<li><a href="#19">7.c Load the data: using a dedicated function developed for grids</a></li>
 </ul>
 </div>
 <div class="collapsible">
 <div>
-<h2><a name="1">Create netCDF of orthogonal x-y grid</a></h2>
-<div><pre>example of how to make a netCDF file of a variable
-that is defined on a grid that is orthogonal
+<h2><a name="1">Create netCDF-CF of orthogonal x-y grid</a></h2>
+<div><pre>example of how to make a netCDF file with CF conventions of a
+variable that is defined on a grid that is orthogonal
 in a x-y coordinate system. In this special case
 the dimensions coincide with the x-y coordinate axes.
 The associated lat-lon coordinate matrices are curvi-linear.</pre><pre>This case is described in:
@@ -97,7 +96,8 @@ instead of lat/lon).
 </p><pre class="codeinput"><span class="comment">%See also: SNCTOOLS, NC_CF_GRID, NC_CF_GRID_WRITE,</span>
 <span class="comment">%          NC_CF_GRID_WRITE_LAT_LON_ORTHOGONAL_TUTORIAL,</span>
 <span class="comment">%          NC_CF_GRID_WRITE_LAT_LON_CURVILINEAR_TUTORIAL,</span>
-<span class="comment">%          NC_CF_GRID_WRITE_X_Y_CURVILINEAR_TUTORIAL</span>
+<span class="comment">%          NC_CF_GRID_WRITE_X_Y_CURVILINEAR_TUTORIAL,</span>
+<span class="comment">%          NC_CF_STATIONTIMESERIES</span>
 
 <span class="comment">% This tool is part of &lt;a href="http://www.OpenEarth.eu"&gt;OpenEarthTools&lt;/a&gt; under the &lt;a href="http://www.gnu.org/licenses/gpl.html"&gt;GPL&lt;/a&gt; license.</span>
 </pre></div>
@@ -128,8 +128,9 @@ OPT.nrows                  = length(OPT.y);
 OPT.lat_type               = <span class="string">'single'</span>; <span class="comment">% 'single', 'double' for high-resolution data (eps 1m)</span>
 OPT.lon_type               = <span class="string">'single'</span>; <span class="comment">% 'single', 'double' for high-resolution data (eps 1m)</span>
 
-OPT.epsg.epsg              = 32631; <span class="comment">% epsg code of local projection</span>
-OPT.wgs84.epsg             = 4326;  <span class="comment">% epsg code of global grid</span>
+OPT.epsg.code              = 32631; <span class="comment">% epsg code of local projection</span>
+OPT.wgs84.code             = 4326;  <span class="comment">% epsg code of global grid</span>
+<span class="comment">% http://www.epsg-registry.org/</span>
 <span class="comment">% in the case of a grid defined in a local x-y</span>
 <span class="comment">% projection, the properties of the grid in a WGS84</span>
 <span class="comment">% lat,lon system do not have to be specified here, but</span>
@@ -137,7 +138,7 @@ OPT.wgs84.epsg             = 4326;  <span class="comment">% epsg code of global 
 <span class="comment">% transformation carried out by convertCoordinates.</span>
 <span class="comment">% get (lat,lon) associated with each vertex (x,y), note order [OPT.lon,OPT.lat ...</span>
 
-[OPT.lon,OPT.lat,log]       = convertCoordinates(x,y,<span class="string">'CS1.code'</span>,OPT.epsg.epsg,<span class="string">'CS2.code'</span>,OPT.wgs84.epsg);
+[OPT.lon,OPT.lat,log]       = convertCoordinates(x,y,<span class="string">'CS1.code'</span>,OPT.epsg.code,<span class="string">'CS2.code'</span>,OPT.wgs84.code);
 </pre></div>
 </div>
 <div>
@@ -175,20 +176,6 @@ nc_attput(ncfile, nc_global, <span class="string">'CF:featureType'</span>, <span
 
 nc_attput(ncfile, nc_global, <span class="string">'terms_for_use'</span> , OPT.acknowledge);
 nc_attput(ncfile, nc_global, <span class="string">'disclaimer'</span>    , OPT.disclaimer);
-</pre><pre class="codeoutput">Warning: Changing attribute from empty to single
-space, please consult the README. 
-Warning: Changing attribute from empty to single
-space, please consult the README. 
-Warning: Changing attribute from empty to single
-space, please consult the README. 
-Warning: Changing attribute from empty to single
-space, please consult the README. 
-Warning: Changing attribute from empty to single
-space, please consult the README. 
-Warning: Changing attribute from empty to single
-space, please consult the README. 
-Warning: Changing attribute from empty to single
-space, please consult the README. 
 </pre></div>
 </div>
 <div>
@@ -200,12 +187,16 @@ nc_add_dimension(ncfile, <span class="string">'y'</span>, OPT.nrows); <span clas
 <span class="comment">% the arcGIS ASCII file approach of having upper-left corner of</span>
 <span class="comment">% the data matrix at index (1,1) rather than the default of having the</span>
 <span class="comment">% lower-left corner of the data matrix  at index (1,1).</span>
+
+<span class="comment">%  nc_add_dimension(ncfile, 'time', 1); % if you would like to include more instances of the same grid,</span>
+<span class="comment">% you can optionally use 'time' as a 3rd dimension. see</span>
+<span class="comment">% nc_cf_stationTimeSeries_write_tutorial for info on time.</span>
 </pre></div>
 </div>
 <div>
-<h2><a name="8">2.a Create coordinate variables: x</a></h2>
-<div><pre>    http://</pre><pre class="codeinput">   clear <span class="string">nc</span>;ifld = 1;
-nc(ifld).Name             = <span class="string">'x'</span>;
+<h2><a name="8">3.a Create coordinate vectors: x and y</a></h2>
+<div><pre class="codeinput">   clear <span class="string">nc</span>;ifld = 1;
+nc(ifld).Name             = <span class="string">'x'</span>; <span class="comment">% dimension 'x' is here filled with variable 'x'</span>
 nc(ifld).Nctype           = nc_type(OPT.lon_type);
 nc(ifld).Dimension        = {<span class="string">'x'</span>};
 nc(ifld).Attribute(    1) = struct(<span class="string">'Name'</span>, <span class="string">'long_name'</span>      ,<span class="string">'Value'</span>, <span class="string">'x Rijksdriehoek'</span>);
@@ -213,12 +204,9 @@ nc(ifld).Attribute(end+1) = struct(<span class="string">'Name'</span>, <span cla
 nc(ifld).Attribute(end+1) = struct(<span class="string">'Name'</span>, <span class="string">'standard_name'</span>  ,<span class="string">'Value'</span>, <span class="string">'projection_x_coordinate'</span>); <span class="comment">% standard name</span>
 nc(ifld).Attribute(end+1) = struct(<span class="string">'Name'</span>, <span class="string">'actual_range'</span>   ,<span class="string">'Value'</span>, [min(OPT.x(:)) max(OPT.x(:))]);
 nc(ifld).Attribute(end+1) = struct(<span class="string">'Name'</span>, <span class="string">'grid_mapping'</span>   ,<span class="string">'Value'</span>, <span class="string">'epsg'</span>);
-</pre></div>
-</div>
-<div>
-<h2><a name="9">2.b Create coordinate variables: y</a></h2>
-<div><pre>    http://</pre><pre class="codeinput">   ifld = ifld + 1;
-nc(ifld).Name             = <span class="string">'y'</span>;
+
+ifld = ifld + 1;
+nc(ifld).Name             = <span class="string">'y'</span>; <span class="comment">% dimension 'y' is here filled with variable 'y'</span>
 nc(ifld).Nctype           = nc_type(OPT.lat_type);
 nc(ifld).Dimension        = {<span class="string">'y'</span>};
 nc(ifld).Attribute(    1) = struct(<span class="string">'Name'</span>, <span class="string">'long_name'</span>      ,<span class="string">'Value'</span>, <span class="string">'y Rijksdriehoek'</span>);
@@ -229,8 +217,8 @@ nc(ifld).Attribute(end+1) = struct(<span class="string">'Name'</span>, <span cla
 </pre></div>
 </div>
 <div>
-<h2><a name="10">2.c Create coordinate variables: coordinate system: epsg</a></h2>
-<div><pre>    http://..</pre><pre class="codeinput">   ifld = ifld + 1;
+<h2><a name="9">3.b Create coordinate variables: coordinate system: epsg</a></h2>
+<div><pre>    http://www.epsg-registry.org/</pre><pre class="codeinput">   ifld = ifld + 1;
 nc(ifld).Name         = <span class="string">'epsg'</span>;
 nc(ifld).Nctype       = nc_int;
 nc(ifld).Dimension    = {};
@@ -261,7 +249,7 @@ log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,<span class="string"
 </pre></div>
 </div>
 <div>
-<h2><a name="11">3.a Create coordinate variables: longitude</a></h2>
+<h2><a name="10">3.c Create coordinate variables: longitude</a></h2>
 <div><pre>    http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate</pre><pre class="codeinput">   ifld = ifld + 1;
 nc(ifld).Name             = <span class="string">'lon'</span>;
 nc(ifld).Nctype           = nc_type(OPT.lon_type);
@@ -275,7 +263,7 @@ nc(ifld).Attribute(end+1) = struct(<span class="string">'Name'</span>, <span cla
 </pre></div>
 </div>
 <div>
-<h2><a name="12">3.b Create coordinate variables: latitude</a></h2>
+<h2><a name="11">3.d Create coordinate variables: latitude</a></h2>
 <div><pre>    http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate</pre><pre class="codeinput">   ifld = ifld + 1;
 nc(ifld).Name             = <span class="string">'lat'</span>;
 nc(ifld).Nctype           = nc_type(OPT.lat_type);
@@ -289,7 +277,7 @@ nc(ifld).Attribute(end+1) = struct(<span class="string">'Name'</span>, <span cla
 </pre></div>
 </div>
 <div>
-<h2><a name="13">3.c Create coordinate variables: coordinate system: WGS84 default</a></h2>
+<h2><a name="12">3.e Create coordinate variables: coordinate system: WGS84 default</a></h2>
 <div><pre>    global ellispes: WGS 84, ED 50, INT 1924, ETRS 89 and the upcoming ETRS update etc.
 http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#grid-mappings-and-projections
 http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#appendix-grid-mappings</pre><pre class="codeinput">   ifld = ifld + 1;
@@ -311,13 +299,13 @@ log.CS2.ellips.inv_flattening,  <span class="keyword">...</span>
 </pre></div>
 </div>
 <div>
-<h2><a name="14">3.d Create dependent variable</a></h2>
+<h2><a name="13">4   Create dependent variable</a></h2>
 <div><pre>    http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#variables
 Parameters with standard names:
 http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/</pre><pre class="codeinput">   ifld = ifld + 1;
 nc(ifld).Name             = OPT.varname;
 nc(ifld).Nctype           = nc_type(OPT.val_type);
-nc(ifld).Dimension        = {<span class="string">'x'</span>,<span class="string">'y'</span>};
+nc(ifld).Dimension        = {<span class="string">'x'</span>,<span class="string">'y'</span>}; <span class="comment">% {'time','x','y'};</span>
 nc(ifld).Attribute(    1) = struct(<span class="string">'Name'</span>, <span class="string">'long_name'</span>      ,<span class="string">'Value'</span>, OPT.long_name    );
 nc(ifld).Attribute(end+1) = struct(<span class="string">'Name'</span>, <span class="string">'units'</span>          ,<span class="string">'Value'</span>, OPT.units        );
 nc(ifld).Attribute(end+1) = struct(<span class="string">'Name'</span>, <span class="string">'_FillValue'</span>     ,<span class="string">'Value'</span>, OPT.fillvalue    );
@@ -330,25 +318,25 @@ nc(ifld).Attribute(end+1) = struct(<span class="string">'Name'</span>, <span cla
 </pre></div>
 </div>
 <div>
-<h2><a name="15">4   Create all variables with attibutes</a></h2>
+<h2><a name="14">5.a Create all variables with attributes</a></h2>
 <div><pre class="codeinput">   <span class="keyword">for</span> ifld=1:length(nc)
 nc_addvar(ncfile, nc(ifld));
 <span class="keyword">end</span>
 </pre></div>
 </div>
 <div>
-<h2><a name="16">5   Fill all variables</a></h2>
+<h2><a name="15">5.b Fill all variables</a></h2>
 <div><pre class="codeinput">   nc_varput(ncfile, <span class="string">'x'</span>            , OPT.x         );
 nc_varput(ncfile, <span class="string">'y'</span>            , OPT.y         );
-nc_varput(ncfile, <span class="string">'epsg'</span>         , OPT.epsg.epsg );
+nc_varput(ncfile, <span class="string">'epsg'</span>         , OPT.epsg.code );
 nc_varput(ncfile, <span class="string">'lon'</span>          , OPT.lon       );
 nc_varput(ncfile, <span class="string">'lat'</span>          , OPT.lat       );
-nc_varput(ncfile, <span class="string">'wgs84'</span>        , OPT.wgs84.epsg);
+nc_varput(ncfile, <span class="string">'wgs84'</span>        , OPT.wgs84.code);
 nc_varput(ncfile, OPT.varname    , OPT.val       );
 </pre></div>
 </div>
 <div>
-<h2><a name="17">6   Check file summary</a></h2>
+<h2><a name="16">6   Check file summary</a></h2>
 <div><pre class="codeinput">   nc_dump(ncfile);
 </pre><pre class="codeoutput">netCDF F:\checkouts\OpenEarthTools\matlab\io\netcdf\nctools\nc_cf_grid_write_x_y_orthogonal_tutorial.nc { 
 
@@ -415,14 +403,14 @@ depth:standard_name = "sea_floor_depth_below_geoid"
 
 
 //global attributes:
-:title = " " 
-:institution = " " 
-:source = " " 
+:title = "" 
+:institution = "" 
+:source = "" 
 :history = "tranformation to netCDF: $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/io/netcdf/nctools/nc_cf_grid_write_x_y_orthogonal_tutorial.m $" 
-:references = " " 
-:email = " " 
-:comment = " " 
-:version = " " 
+:references = "" 
+:email = "" 
+:comment = "" 
+:version = "" 
 :Conventions = "CF-1.4" 
 :CF:featureType = "Grid" 
 :terms_for_use = "These data can be used freely for research purposes provided that the following source is acknowledged: " 
@@ -431,13 +419,15 @@ depth:standard_name = "sea_floor_depth_below_geoid"
 </pre></div>
 </div>
 <div>
-<h2><a name="18">7.a Load the data: using the variable names from nc_dump</a></h2>
+<h2><a name="17">7.a Load the data: using the variable names from nc_dump</a></h2>
 <div><pre class="codeinput">   Da.dep   = nc_varget(ncfile,<span class="string">'depth'</span>);
 Da.lat   = nc_varget(ncfile,<span class="string">'lon'</span>);
 Da.lon   = nc_varget(ncfile,<span class="string">'lat'</span>)
 </pre><pre class="codeoutput">
 Da = 
 
+datenum: [6x1 double]
+var: [1 2 3 NaN 5 6]
 dep: [3x5 double]
 lat: [3x5 single]
 lon: [3x5 single]
@@ -445,7 +435,7 @@ lon: [3x5 single]
 </pre></div>
 </div>
 <div>
-<h2><a name="19">7.b Load the data: using standard_names and coordinate attribute</a></h2>
+<h2><a name="18">7.b Load the data: using standard_names and coordinate attribute</a></h2>
 <div><pre class="codeinput">   depname  = nc_varfind(ncfile,<span class="string">'attributename'</span>, <span class="string">'standard_name'</span>, <span class="string">'attributevalue'</span>, <span class="string">'sea_floor_depth_below_geoid'</span>)
 Db.z     = nc_varget(ncfile,depname);
 
@@ -466,6 +456,8 @@ depth
 
 Db = 
 
+datenum: [6x1 double]
+var: [1 2 3 NaN 5 6]
 z: [3x5 double]
 lat: [3x5 single]
 lon: [3x5 single]
@@ -473,7 +465,7 @@ lon: [3x5 single]
 </pre></div>
 </div>
 <div>
-<h2><a name="20">7.c Load the data: using a dedicated function developed for grids</a></h2>
+<h2><a name="19">7.c Load the data: using a dedicated function developed for grids</a></h2>
 <div><pre class="codeinput">   [Dc,Mc] = nc_cf_grid(ncfile,OPT.varname)
 </pre><pre class="codeoutput">
 Dc = 
@@ -498,10 +490,10 @@ Published with MATLAB&reg; 7.7<br></p>
 </div>
 <!--
 ##### SOURCE BEGIN #####
-%% Create netCDF of orthogonal x-y grid
+%% Create netCDF-CF of orthogonal x-y grid
 %
-%  example of how to make a netCDF file of a variable
-%  that is defined on a grid that is orthogonal
+%  example of how to make a netCDF file with CF conventions of a 
+%  variable that is defined on a grid that is orthogonal
 %  in a x-y coordinate system. In this special case 
 %  the dimensions coincide with the x-y coordinate axes.
 %  The associated lat-lon coordinate matrices are curvi-linear.
@@ -547,7 +539,8 @@ Published with MATLAB&reg; 7.7<br></p>
 %See also: SNCTOOLS, NC_CF_GRID, NC_CF_GRID_WRITE,
 %          NC_CF_GRID_WRITE_LAT_LON_ORTHOGONAL_TUTORIAL, 
 %          NC_CF_GRID_WRITE_LAT_LON_CURVILINEAR_TUTORIAL, 
-%          NC_CF_GRID_WRITE_X_Y_CURVILINEAR_TUTORIAL
+%          NC_CF_GRID_WRITE_X_Y_CURVILINEAR_TUTORIAL,
+%          NC_CF_STATIONTIMESERIES
 
 % This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a> under the <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> license.
 
@@ -576,8 +569,9 @@ OPT.nrows                  = length(OPT.y);
 OPT.lat_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
 OPT.lon_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
 
-OPT.epsg.epsg              = 32631; % epsg code of local projection
-OPT.wgs84.epsg             = 4326;  % epsg code of global grid
+OPT.epsg.code              = 32631; % epsg code of local projection
+OPT.wgs84.code             = 4326;  % epsg code of global grid
+% http://www.epsg-registry.org/
 % in the case of a grid defined in a local x-y 
 % projection, the properties of the grid in a WGS84
 % lat,lon system do not have to be specified here, but 
@@ -585,7 +579,7 @@ OPT.wgs84.epsg             = 4326;  % epsg code of global grid
 % transformation carried out by convertCoordinates.
 % get (lat,lon) associated with each vertex (x,y), note order [OPT.lon,OPT.lat ...
 
-[OPT.lon,OPT.lat,log]       = convertCoordinates(x,y,'CS1.code',OPT.epsg.epsg,'CS2.code',OPT.wgs84.epsg);
+[OPT.lon,OPT.lat,log]       = convertCoordinates(x,y,'CS1.code',OPT.epsg.code,'CS2.code',OPT.wgs84.code);
 
 %% Define variable (define some data)
 
@@ -633,11 +627,14 @@ nc_add_dimension(ncfile, 'y', OPT.nrows); % use this as 2nd array dimension to g
 % the data matrix at index (1,1) rather than the default of having the 
 % lower-left corner of the data matrix  at index (1,1).
 
-%% 2.a Create coordinate variables: x
-%      http://
+%  nc_add_dimension(ncfile, 'time', 1); % if you would like to include more instances of the same grid, 
+% you can optionally use 'time' as a 3rd dimension. see 
+% nc_cf_stationTimeSeries_write_tutorial for info on time.          
+
+%% 3.a Create coordinate vectors: x and y
 
 clear nc;ifld = 1;
-nc(ifld).Name             = 'x';
+nc(ifld).Name             = 'x'; % dimension 'x' is here filled with variable 'x'
 nc(ifld).Nctype           = nc_type(OPT.lon_type);
 nc(ifld).Dimension        = {'x'};
 nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'x Rijksdriehoek');
@@ -646,11 +643,8 @@ nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projectio
 nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.x(:)) max(OPT.x(:))]);
 nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
 
-%% 2.b Create coordinate variables: y
-%      http://
-
 ifld = ifld + 1;
-nc(ifld).Name             = 'y';
+nc(ifld).Name             = 'y'; % dimension 'y' is here filled with variable 'y'
 nc(ifld).Nctype           = nc_type(OPT.lat_type);
 nc(ifld).Dimension        = {'y'};
 nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'y Rijksdriehoek');
@@ -659,8 +653,8 @@ nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projectio
 nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.y(:)) max(OPT.y(:))]);
 nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
 
-%% 2.c Create coordinate variables: coordinate system: epsg
-%      http://..
+%% 3.b Create coordinate variables: coordinate system: epsg
+%      http://www.epsg-registry.org/
 
 ifld = ifld + 1;
 nc(ifld).Name         = 'epsg';
@@ -691,7 +685,7 @@ log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,'False northing'    
 log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,'Scale factor at natural origin')),...
 'value is equal to EPSG code'});
 
-%% 3.a Create coordinate variables: longitude
+%% 3.c Create coordinate variables: longitude
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
 
 ifld = ifld + 1;
@@ -705,7 +699,7 @@ nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.l
 nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
 nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
-%% 3.b Create coordinate variables: latitude
+%% 3.d Create coordinate variables: latitude
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
 
 ifld = ifld + 1;
@@ -719,7 +713,7 @@ nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.l
 nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
 nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
-%% 3.c Create coordinate variables: coordinate system: WGS84 default
+%% 3.e Create coordinate variables: coordinate system: WGS84 default
 %      global ellispes: WGS 84, ED 50, INT 1924, ETRS 89 and the upcoming ETRS update etc.
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#grid-mappings-and-projections
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#appendix-grid-mappings
@@ -741,7 +735,7 @@ log.CS2.ellips.semi_minor_axis, ...
 log.CS2.ellips.inv_flattening,  ...
 'value is equal to EPSG code'});
 
-%% 3.d Create dependent variable
+%% 4   Create dependent variable
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#variables
 %      Parameters with standard names:
 %      http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
@@ -749,7 +743,7 @@ log.CS2.ellips.inv_flattening,  ...
 ifld = ifld + 1;
 nc(ifld).Name             = OPT.varname;
 nc(ifld).Nctype           = nc_type(OPT.val_type);
-nc(ifld).Dimension        = {'x','y'};
+nc(ifld).Dimension        = {'x','y'}; % {'time','x','y'};
 nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name    );
 nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', OPT.units        );
 nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue    );
@@ -760,20 +754,20 @@ if ~isempty(OPT.standard_name)
 nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
 end
 
-%% 4   Create all variables with attibutes
+%% 5.a Create all variables with attributes
 
 for ifld=1:length(nc)
 nc_addvar(ncfile, nc(ifld));   
 end
 
-%% 5   Fill all variables
+%% 5.b Fill all variables
 
 nc_varput(ncfile, 'x'            , OPT.x         );
 nc_varput(ncfile, 'y'            , OPT.y         );
-nc_varput(ncfile, 'epsg'         , OPT.epsg.epsg );
+nc_varput(ncfile, 'epsg'         , OPT.epsg.code );
 nc_varput(ncfile, 'lon'          , OPT.lon       );
 nc_varput(ncfile, 'lat'          , OPT.lat       );
-nc_varput(ncfile, 'wgs84'        , OPT.wgs84.epsg);
+nc_varput(ncfile, 'wgs84'        , OPT.wgs84.code);
 nc_varput(ncfile, OPT.varname    , OPT.val       );
 
 %% 6   Check file summary
