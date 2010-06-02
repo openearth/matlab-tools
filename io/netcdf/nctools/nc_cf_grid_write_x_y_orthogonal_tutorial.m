@@ -1,7 +1,7 @@
-%% Create netCDF of orthogonal x-y grid
+%% Create netCDF-CF of orthogonal x-y grid
 %
-%  example of how to make a netCDF file of a variable
-%  that is defined on a grid that is orthogonal
+%  example of how to make a netCDF file with CF conventions of a 
+%  variable that is defined on a grid that is orthogonal
 %  in a x-y coordinate system. In this special case 
 %  the dimensions coincide with the x-y coordinate axes.
 %  The associated lat-lon coordinate matrices are curvi-linear.
@@ -47,7 +47,8 @@
 %See also: SNCTOOLS, NC_CF_GRID, NC_CF_GRID_WRITE,
 %          NC_CF_GRID_WRITE_LAT_LON_ORTHOGONAL_TUTORIAL, 
 %          NC_CF_GRID_WRITE_LAT_LON_CURVILINEAR_TUTORIAL, 
-%          NC_CF_GRID_WRITE_X_Y_CURVILINEAR_TUTORIAL
+%          NC_CF_GRID_WRITE_X_Y_CURVILINEAR_TUTORIAL,
+%          NC_CF_STATIONTIMESERIES
 
 % This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a> under the <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> license.
 
@@ -76,8 +77,8 @@
    OPT.lat_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
    OPT.lon_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
 
-   OPT.epsg.epsg              = 32631; % epsg code of local projection
-   OPT.wgs84.epsg             = 4326;  % epsg code of global grid
+   OPT.epsg.code              = 32631; % epsg code of local projection
+   OPT.wgs84.code             = 4326;  % epsg code of global grid
    % in the case of a grid defined in a local x-y 
    % projection, the properties of the grid in a WGS84
    % lat,lon system do not have to be specified here, but 
@@ -85,7 +86,7 @@
    % transformation carried out by convertCoordinates.
    % get (lat,lon) associated with each vertex (x,y), note order [OPT.lon,OPT.lat ...
 
-  [OPT.lon,OPT.lat,log]       = convertCoordinates(x,y,'CS1.code',OPT.epsg.epsg,'CS2.code',OPT.wgs84.epsg);
+  [OPT.lon,OPT.lat,log]       = convertCoordinates(x,y,'CS1.code',OPT.epsg.code,'CS2.code',OPT.wgs84.code);
 
   %% Define variable (define some data)
 
@@ -133,11 +134,14 @@
    % the data matrix at index (1,1) rather than the default of having the 
    % lower-left corner of the data matrix  at index (1,1).
 
+   nc_add_dimension(ncfile, 'time', 1); % if you would like to include more instances of the same grid, 
+                                        % you can optionally use 'time' as a 3rd dimension
+
 %% 2.a Create coordinate variables: x
 %      http://
 
    clear nc;ifld = 1;
-   nc(ifld).Name             = 'x';
+   nc(ifld).Name             = 'x'; % dimension 'x' is here filled with variable 'x'
    nc(ifld).Nctype           = nc_type(OPT.lon_type);
    nc(ifld).Dimension        = {'x'};
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'x Rijksdriehoek');
@@ -150,7 +154,7 @@
 %      http://
    
    ifld = ifld + 1;
-   nc(ifld).Name             = 'y';
+   nc(ifld).Name             = 'y'; % dimension 'y' is here filled with variable 'y'
    nc(ifld).Nctype           = nc_type(OPT.lat_type);
    nc(ifld).Dimension        = {'y'};
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'y Rijksdriehoek');
@@ -249,7 +253,7 @@
    ifld = ifld + 1;
    nc(ifld).Name             = OPT.varname;
    nc(ifld).Nctype           = nc_type(OPT.val_type);
-   nc(ifld).Dimension        = {'x','y'};
+   nc(ifld).Dimension        = {'time','x','y'};
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name    );
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', OPT.units        );
    nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue    );
@@ -270,10 +274,10 @@
 
    nc_varput(ncfile, 'x'            , OPT.x         );
    nc_varput(ncfile, 'y'            , OPT.y         );
-   nc_varput(ncfile, 'epsg'         , OPT.epsg.epsg );
+   nc_varput(ncfile, 'epsg'         , OPT.epsg.code );
    nc_varput(ncfile, 'lon'          , OPT.lon       );
    nc_varput(ncfile, 'lat'          , OPT.lat       );
-   nc_varput(ncfile, 'wgs84'        , OPT.wgs84.epsg);
+   nc_varput(ncfile, 'wgs84'        , OPT.wgs84.code);
    nc_varput(ncfile, OPT.varname    , OPT.val       );
       
 %% 6   Check file summary

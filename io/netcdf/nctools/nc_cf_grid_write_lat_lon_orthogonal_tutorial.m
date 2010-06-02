@@ -1,7 +1,7 @@
-%% Create netCDF of orthogonal lat-lon grid
+%% Create netCDF-CF of orthogonal lat-lon grid
 %
-%  example of how to make a netCDF file of a variable
-%  that is defined on a grid that is orthogonal
+%  example of how to make a netCDF file with CF conventions of a 
+%  variable that is defined on a grid that is orthogonal
 %  in a lat-lon coordinate system. In this special case 
 %  the dimensions coincide with the coordinate axes.
 %
@@ -32,7 +32,8 @@
 %See also: SNCTOOLS, NC_CF_GRID, NC_CF_GRID_WRITE,
 %          NC_CF_GRID_WRITE_LAT_LON_CURVILINEAR_TUTORIAL, 
 %          NC_CF_GRID_WRITE_X_Y_ORTHOGONAL_TUTORIAL,
-%          NC_CF_GRID_WRITE_X_Y_CURVILINEAR_TUTORIAL
+%          NC_CF_GRID_WRITE_X_Y_CURVILINEAR_TUTORIAL,
+%          NC_CF_STATIONTIMESERIES
 
 % This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a> under the <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> license.
 
@@ -111,11 +112,14 @@
    % the data matrix at index (1,1) rather than the default of having the 
    % lower-left corner of the data matrix  at index (1,1).
 
+   nc_add_dimension(ncfile, 'time', 1); % if you would like to include more instances of the same grid, 
+                                        % you can optionally use 'time' as a 3rd dimension
+
 %% 3.a Create coordinate variables: longitude
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
 
    clear nc;ifld = 1;
-   nc(ifld).Name             = 'lon';
+   nc(ifld).Name             = 'lon'; % dimension 'lon' is here filled with variable 'lon'
    nc(ifld).Nctype           = nc_type(OPT.lon_type);
    nc(ifld).Dimension        = {'lon'}; % !!!
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'longitude');
@@ -128,7 +132,7 @@
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
    
    ifld = ifld + 1;
-   nc(ifld).Name             = 'lat';
+   nc(ifld).Name             = 'lat'; % dimension 'lat' is here filled with variable 'lat'
    nc(ifld).Nctype           = nc_type(OPT.lat_type);
    nc(ifld).Dimension        = {'lat'}; % !!!
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'latitude');
@@ -167,7 +171,7 @@
    ifld = ifld + 1;
    nc(ifld).Name             = OPT.varname;
    nc(ifld).Nctype           = nc_type(OPT.val_type);
-   nc(ifld).Dimension        = {'lon','lat'}; % !!!
+   nc(ifld).Dimension        = {'time','lon','lat'}; % !!!
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name    );
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', OPT.units        );
    nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue    );

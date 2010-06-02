@@ -1,7 +1,7 @@
-%% Create netCDF of curvilinear x-y grid
+%% Create netCDF-CF of curvilinear x-y grid
 %
-%  example of how to make a netCDF file of a variable
-%  that is defined on a grid that is curvilinear
+%  example of how to make a netCDF file with CF conventions of a 
+%  variable that is defined on a grid that is curvilinear
 %  in a x-y coordinate system. In this case 
 %  the dimensions (m,n) do not coincide with the coordinate axes.
 %
@@ -45,7 +45,8 @@
 %See also: SNCTOOLS, NC_CF_GRID, NC_CF_GRID_WRITE,
 %          NC_CF_GRID_WRITE_LAT_LON_ORTHOGONAL_TUTORIAL, 
 %          NC_CF_GRID_WRITE_LAT_LON_CURVILINEAR_TUTORIAL, 
-%          NC_CF_GRID_WRITE_X_Y_ORTHOGONAL_TUTORIAL
+%          NC_CF_GRID_WRITE_X_Y_ORTHOGONAL_TUTORIAL,
+%          NC_CF_STATIONTIMESERIES
 
 % This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a> under the <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> license.
 
@@ -77,8 +78,8 @@
    OPT.lat_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
    OPT.lon_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
 
-   OPT.epsg.epsg              = 32631; % epsg code of local projection
-   OPT.wgs84.epsg             = 4326;  % epsg code of global grid
+   OPT.epsg.code              = 32631; % epsg code of local projection
+   OPT.wgs84.code             = 4326;  % epsg code of global grid
    % in the case of a grid defined in a local x-y 
    % projection, the properties of the grid in a WGS84
    % lat,lon system do not have to be specified here, but 
@@ -86,7 +87,7 @@
    % transformation carried out by convertCoordinates:
    % get (x,y) associated with each vertex (lat,lon), note order (OPT.lon,OPT.lat ...
 
-  [OPT.x,OPT.y,log]           = convertCoordinates(OPT.lon,OPT.lat,'CS1.code',OPT.wgs84.epsg,'CS2.code',OPT.epsg.epsg);
+  [OPT.x,OPT.y,log]           = convertCoordinates(OPT.lon,OPT.lat,'CS1.code',OPT.wgs84.code,'CS2.code',OPT.epsg.code);
 
   %% Define variable (define some data)
 
@@ -133,6 +134,9 @@
    % the arcGIS ASCII file approach of having upper-left corner of 
    % the data matrix at index (1,1) rather than the default of having the 
    % lower-left corner of the data matrix  at index (1,1).
+
+   nc_add_dimension(ncfile, 'time', 1); % if you would like to include more instances of the same grid, 
+                                        % you can optionally use 'time' as a 3rd dimension
 
 %% 2.a Create coordinate variables: x
 %      http://
@@ -263,7 +267,7 @@
    ifld = ifld + 1;
    nc(ifld).Name             = OPT.varname;
    nc(ifld).Nctype           = nc_type(OPT.val_type);
-   nc(ifld).Dimension        = {'col','row'}; % !!!
+   nc(ifld).Dimension        = {'time','col','row'}; % !!!
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name    );
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', OPT.units        );
    nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue    );
@@ -285,10 +289,10 @@
 
    nc_varput(ncfile, 'x'            , OPT.x         );
    nc_varput(ncfile, 'y'            , OPT.y         );
-   nc_varput(ncfile, 'epsg'         , OPT.epsg.epsg );
+   nc_varput(ncfile, 'epsg'         , OPT.epsg.code );
    nc_varput(ncfile, 'lon'          , OPT.lon       );
    nc_varput(ncfile, 'lat'          , OPT.lat       );
-   nc_varput(ncfile, 'wgs84'        , OPT.wgs84.epsg);
+   nc_varput(ncfile, 'wgs84'        , OPT.wgs84.code);
    nc_varput(ncfile, OPT.varname    , OPT.val       );
       
 %% 6   Check file summary
