@@ -46,9 +46,7 @@ OPT = setproperty(OPT,varargin{:});
 
 %% get metadata (either from the console or the database)
 
-%tic
-[d] = UCIT_getMetaData(2);
-%toc
+d    = UCIT_getMetaData(2);
 
 if ~isempty(findobj('tag','gridOverview'));
    h = findobj('tag','gridOverview');

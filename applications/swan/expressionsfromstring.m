@@ -3,9 +3,10 @@ function DAT = expressionsfromstring(string,var_names,varargin)
 %
 % DAT = expressionsfromstring(string,var_names)
 %
-% reads space delimited  expressions like a=3
-% from a string for the variable names passed in the cell
-% var_names into a struct.
+% reads space delimited expressions like a=3
+% from a string for the variable names passed in 
+% the cell var_names into a struct.
+%
 % Example of string:
 % expressionsfromstring('MUD alpha=1. rhom=1300. nu=0.01 layer=0.01',..
 %                      {'rhom','nu','layer','alpha'})

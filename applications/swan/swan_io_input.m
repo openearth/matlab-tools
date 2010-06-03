@@ -9,10 +9,10 @@ function varargout = swan_io_input(varargin)
 %
 % For now only the following keywords are implemented 
 % correctly. The other keywords still contain the raw ASCII records,
-% merged over lines where continutation symbols ('_','&') arte present.
+% merged over lines where continutation symbols ('_','&') are present.
 % 
-% Multiple fields for keywords are overwritten, excpet for 
-% curve, group, table, block, spec.
+% Multiple fields for keywords are overwritten, except for 
+% CURVE, GROUP, TABLE, BLOCK, SPEC.
 %
 % NOTE that the output parameter keywords are replaced with their short name equivalents.
 %

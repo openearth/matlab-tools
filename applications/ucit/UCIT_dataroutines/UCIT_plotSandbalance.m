@@ -75,7 +75,10 @@ set   (gca,'Xlim',[d.X(1,1) d.X(1,end)]);
 set   (gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
 
 % save figure
+try
 print(fh,'-dpng',['results' filesep 'timewindow = ' num2str(OPT.timewindow) filesep 'ref=' num2str(OPT.min_coverage) filesep strrep(results.polyname,'_',' ') '_used_data_points_method_2']);
+catch
+end
 
 
 %% Polygon overview plot

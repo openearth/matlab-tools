@@ -2,12 +2,12 @@ function varargout = swan_io_bot(cmd,fname,varargin)
 %SWAN_IO_BOT              read/write SWAN ASCII bottom file   (BETA VERSION)
 %
 % dep = swan_io_bot('read' ,fname,[mcx myc],<IDLA>)
-% dep = swan_io_bot('read' ,fname,struct ,<IDLA>)
+% dep = swan_io_bot('read' ,fname,struct   ,<IDLA>)
 %
 % dep = swan_io_bot('load' ,fname,[mcx myc],<IDLA>)
-% dep = swan_io_bot('load' ,fname,struct ,<IDLA>)
+% dep = swan_io_bot('load' ,fname,struct   ,<IDLA>)
 %
-% dep = swan_io_bot('write',fname,dep    ,<IDLA>)
+% dep = swan_io_bot('write',fname,dep      ,<IDLA>)
 %
 %    where struc has fields 'mcx','myc'
 %    which can be obtained by reading the associated *.swn input 
@@ -30,9 +30,10 @@ function varargout = swan_io_bot(cmd,fname,varargin)
 %    
 %    % valid for IDLA  = 3
 %    % ---------------------------
-%    % (1,1   )  (2,1)   (mmax,1)
-%    % (1,2   )  (2,2)   (mmax,2)
-%    % (1,nmax)          (mmax,1)   
+%    % (1,1   )  (2,1)   ... (mmax,1)
+%    % (1,2   )  (2,2)   ... (mmax,2)
+%    % ...       ...     ... ...
+%    % (1,nmax)  ...     ... (mmax,1)   
 %    
 %    % valid for IDLA  = 4, same as 3, but no new lines required.
 %    % ---------------------------
