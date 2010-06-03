@@ -129,12 +129,12 @@ end
 %%
 function z1=smoothing(z1,isn0,mask,nmax,ffac)
 
-nx=size(z1,2);
-ny=size(z1,1);
+ni=size(z1,1);
+nj=size(z1,2);
 
 [ii,jj]=find(isn0 & mask);
 
-if length(ii)<0.2*nx*ny
+if length(ii)<0.2*ni*nj
 
     % Less than 20 percent missing points
     % Point by point
@@ -155,7 +155,7 @@ if length(ii)<0.2*nx*ny
             else
                 fx1=0;
             end
-            if j<ny && mask(i,j+1)
+            if j<nj && mask(i,j+1)
                 fx2=z1(i,j)-z1(i,j+1);
             else
                 fx2=0;
@@ -166,7 +166,7 @@ if length(ii)<0.2*nx*ny
             else
                 fy1=0;
             end
-            if i<nx && mask(i+1,j)
+            if i<ni && mask(i+1,j)
                 fy2=z1(i,j)-z1(i+1,j);
             else
                 fy2=0;
@@ -188,8 +188,8 @@ else
     for n=1:nmax
 
         % Fluxes
-        fx=zeros(ny,nx+1);
-        fy=zeros(ny+1,nx);
+        fx=zeros(ni,nj+1);
+        fy=zeros(ni+1,nj);
 
         fx(:,2:end-1)=z1(:,1:end-1)-z1(:,2:end);
         fy(2:end-1,:)=z1(1:end-1,:)-z1(2:end,:);
