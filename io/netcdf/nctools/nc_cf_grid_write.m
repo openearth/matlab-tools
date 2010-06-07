@@ -10,8 +10,8 @@ function varargout = nc_cf_grid_write(varargin)
 %
 % The following keywords are required:
 %
-% * x           x vector of length ncols, required
-% * y           y vector of lenght nrows, required
+% * x           x vector of length ncols,       required
+% * y           y vector of lenght nrows,       required
 % * val         matrix   of size [nrows,ncols], required
 % * units       units of val
 % * long_name   description of val as to appear in plots
@@ -137,15 +137,17 @@ function varargout = nc_cf_grid_write(varargin)
          error('For a netCDF file is required: standard_name and/or long_name');end
 
       if ~isempty(OPT.val)
-      OPT.ncols =   size(OPT.val,1);
-      else
-      OPT.ncols = length(OPT.x);
+         OPT.ncols =   size(OPT.val,2);
+         if ~(length(OPT.x)==OPT.ncols)
+            error('dimension 2 of matrix should match length(x)')
+         end
       end
       
       if ~isempty(OPT.val)
-      OPT.nrows =   size(OPT.val,2);
-      else
-      OPT.nrows = length(OPT.y);
+         OPT.nrows =   size(OPT.val,1);
+         if ~(length(OPT.y)==OPT.nrows)
+            error('dimension 1 of matrix should match length(y)')
+         end
       end
       
 %% Type
@@ -210,8 +212,8 @@ function varargout = nc_cf_grid_write(varargin)
       
 %% 2 Create x and y dimensions
    
-      nc_add_dimension(outputfile, 'x_cen', OPT.ncols); % use this as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
-      nc_add_dimension(outputfile, 'y_cen', OPT.nrows); % use this as 2nd array dimension to get correct plot in ncBrowse (snctools swaps for us)
+      nc_add_dimension(outputfile, 'x', OPT.ncols); % use this as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
+      nc_add_dimension(outputfile, 'y', OPT.nrows); % use this as 2nd array dimension to get correct plot in ncBrowse (snctools swaps for us)
 
 %% 3a Create coordinate variables
    
@@ -225,9 +227,9 @@ function varargout = nc_cf_grid_write(varargin)
    if ~isempty(OPT.x) & ~isempty(OPT.y)
 
         ifld = ifld + 1;
-      nc(ifld).Name             = 'x_cen';
+      nc(ifld).Name             = 'x';
       nc(ifld).Nctype           = 'int';
-      nc(ifld).Dimension        = {'x_cen'};
+      nc(ifld).Dimension        = {'x'};
       nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'x-coordinate in Cartesian system');
       nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
       nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate'); % standard name
@@ -237,9 +239,9 @@ function varargout = nc_cf_grid_write(varargin)
       end
    
         ifld = ifld + 1;
-      nc(ifld).Name             = 'y_cen';
+      nc(ifld).Name             = 'y';
       nc(ifld).Nctype           = 'int';
-      nc(ifld).Dimension        = {'y_cen'};
+      nc(ifld).Dimension        = {'y'};
       nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'y-coordinate in Cartesian system');
       nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
       nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate'); % standard name
@@ -256,27 +258,27 @@ function varargout = nc_cf_grid_write(varargin)
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
 
         ifld = ifld + 1;
-      nc(ifld).Name             = 'longitude_cen';
+      nc(ifld).Name             = 'longitude';
       nc(ifld).Nctype           = nc_type(OPT.longitude_type);
-      nc(ifld).Dimension        = {'x_cen','y_cen'};
+      nc(ifld).Dimension        = {'x','y'};
       nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'longitude');
       nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
       nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude'); % standard name
       nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lon(:)) max(OPT.lon(:))]); % 
-      nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
+      nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude');
       nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
    %% Latitude
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
         ifld = ifld + 1;
-      nc(ifld).Name             = 'latitude_cen';
+      nc(ifld).Name             = 'latitude';
       nc(ifld).Nctype           = nc_type(OPT.latitude_type);
-      nc(ifld).Dimension        = {'x_cen','y_cen'};
+      nc(ifld).Dimension        = {'x','y'};
       nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'latitude');
       nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
       nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude'); % standard name
       nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lat(:)) max(OPT.lat(:))]); % 
-      nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
+      nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude');
       nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
    end
 
@@ -346,7 +348,7 @@ function varargout = nc_cf_grid_write(varargin)
         ifld = ifld + 1;
       nc(ifld).Name             = OPT.varname;
       nc(ifld).Nctype           = nc_type(OPT.type);
-      nc(ifld).Dimension        = {'x_cen','y_cen'};
+      nc(ifld).Dimension        = {'x','y'};
       nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name    );
       nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', OPT.units        );
       nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue    );
@@ -355,7 +357,7 @@ function varargout = nc_cf_grid_write(varargin)
       nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
       end
       if ~isempty(OPT.lon) & ~isempty(OPT.lat)
-      nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
+      nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude');
       end
       if ~isempty(OPT.epsg)
       nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
@@ -370,21 +372,21 @@ function varargout = nc_cf_grid_write(varargin)
 %% 5 Fill all variables
 
       if ~isempty(OPT.x) & ~isempty(OPT.y)
-      nc_varput(outputfile, 'x_cen'        , OPT.x');
-      nc_varput(outputfile, 'y_cen'        , OPT.y');
+      nc_varput(outputfile, 'x'        , OPT.x);
+      nc_varput(outputfile, 'y'        , OPT.y);
       end
 
-      nc_varput(outputfile, OPT.varname    , OPT.val); % save x as first dimension so ensure correct plotting in ncBrowse
+      nc_varput(outputfile, OPT.varname    , OPT.val'); % save x as first dimension so ensure correct plotting in ncBrowse
       
       if ~isempty(OPT.epsg)
       nc_varput(outputfile, 'wgs84'        , OPT.wgs84);
       nc_varput(outputfile, 'epsg'         , OPT.epsg);
       end
       if ~isempty(OPT.lon) & ~isempty(OPT.lat)
-         % nc_dump(outputfile,'longitude_cen')
+         % nc_dump(outputfile,'longitude')
          % size(OPT.lon)
-      nc_varput(outputfile, 'longitude_cen', OPT.lon);
-      nc_varput(outputfile, 'latitude_cen' , OPT.lat);
+      nc_varput(outputfile, 'longitude', OPT.lon');
+      nc_varput(outputfile, 'latitude' , OPT.lat');
       end
       
 %% 6 Check
