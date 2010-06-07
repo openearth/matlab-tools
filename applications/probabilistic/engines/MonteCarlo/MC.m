@@ -86,6 +86,7 @@ OPT = struct(...
     'P2xFunction', @P2x,...  % Function to transform P to x
     'x2zFunction', @x2z,...  % Function to transform x to z
     'variables', {{}} ...    % aditional variables to use in x2zFunction
+    'seed', NaN,...          % seed for random generator
     );
 % overrule default settings by propertyName-propertyValue pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
@@ -112,6 +113,9 @@ if OPT.f1 < Inf && OPT.f2 > 0 || OPT.W ~= 1
 end
 
 % get random samples of P
+if ~isnan(OPT.seed)
+    rand('seed', OPT.seed)
+end
 P = rand(OPT.NrSamples, Nstoch);
 P(:, ~active) = 0.5;
 
