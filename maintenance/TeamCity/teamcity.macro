@@ -1,0 +1,49 @@
+## Macro name: teamcity
+## Macro has a body: Y
+## Body format: Macro body wiki to html
+## Output: html
+##
+## Version: 0.1
+##
+## Developed by: Pieter van Geer
+## Date created: 08/06/2010
+## Installed by: <admin>
+ 
+## This macro enables the teamcity widget to be displayed in a confluence page.
+
+#if (!($param0 == "help") && !($generalUtil.convertToString($body).replaceAll(' ', '').replaceAll('\n', '') == ""))
+	## Include style
+	<style type="text/css">
+		@import "$paramurl/css/status/externalStatus.css";
+	</style>
+
+	## Retrieve string from body
+	#set($bodyList= $generalUtil.convertToString($body).replaceAll(' ', '').replaceAll('\n', ''))
+	
+	## Include confluence widget
+	<script type="text/javascript" src="$paramurl/externalStatus.html?js=1$bodyList">
+	</script>
+
+#else
+	<div>
+		This macro can be used to include the teamcity status widget in your confluence page. Useage is as follows:<br />
+		<br />
+		{teamcity:url=http://yourteamcityserver.com}<br />
+		{teamcity-configuration:#conf_number1}<br />
+		{teamcity-configuration:#conf_number2}<br />
+		{teamcity}<br />
+		<br />
+		or:<br />
+		<br />
+		{teamcity:url=http://yourteamcityserver.com}<br />
+		{teamcity-project:#proj_number}<br />
+		{teamcity}<br />
+		<br />
+		In which:<br />
+		<ul>
+		<li>#conf_number = The number of the buildTypeId of the configuration that should be included</li>
+		<li>#proj_number = The number of the projectId of the project that should be included</li>
+		</ul>
+		How to find configuration and project numbers is described in the <a href="http://confluence.jetbrains.net/display/TCD4/Build+Configuration">Teamcity documentation</a>
+	</div>
+#end
