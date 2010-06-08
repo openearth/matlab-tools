@@ -15,10 +15,9 @@ function OPT = KMLfig2pngNew (h,lat,lon,z,varargin)
 % For plots with    light effects set:  'scaleHeight',true ,...
 % For plots without light effects set:  'scaleHeight',false,...
 %
-% Note that the set generated this way works only locally.
-% To make it also work on a server use
-% KMLMERGE_FILES to merge all kml files into one big kml
-% and insert absolute url's before every kml filename
+% fileName  relative filename, incl relative subPath. 
+% basePath  absolute path where to write kml files (will not appear inside kml, those contain only fileName)
+% baseUrl   absolute url where kml will appear. (A webkml needs absolute url, albeit only needed in the mother KML, local files can have relative paths.)
 %
 % See also: GOOGLEPLOT, PCOLOR, KMLFIG2PNG_ALPHA
 
@@ -63,10 +62,11 @@ OPT.dim                =    256; % tile size in pixels
 OPT.dimExt             =     16; % render tiles expanded by n pixels, to remove edge effects
 OPT.bgcolor            = [100 155 100];  % background color to be made transparent
 OPT.alpha              =      1;
-OPT.fileName           =     [];
+OPT.fileName           =     []; % relative filename, incl relative subpath
+OPT.basePath           =     ''; % absolute path where to write kml files (will not appear inside kml, those remain relative)
+OPT.baseUrl            =     ''; % absolute url where kml will appear. (A webkml needs absolute url, albeit only needed in the mother KML, local files can have relative paths.)
 OPT.kmlName            =     []; % name in Google Earth Place list
 OPT.logo               =     [];
-OPT.url                =     ''; % webserver storage needs absolute paths, local files can have relative paths. Only needed in mother KML.
 OPT.alpha              =      1;
 OPT.minLod             =     []; % minimum level of detail to keep a tile in view. Is calculated when left blank.
 OPT.minLod0            =     -1; % minimum level of detail to keep most detailed tile in view. Default is -1 (don't hide when zoomed in a lot)
@@ -90,6 +90,7 @@ OPT.makeKML            =   true;
 OPT.basecode           = '';
 OPT.highestLevel       = [];
 OPT.lowestLevel        = [];
+OPT.debug              = 0;  % display some progress info
 
 if nargin==0
   return
@@ -114,9 +115,10 @@ OPT.h    = h;  % handle to input surf object
 
 [OPT, Set, Default] = setproperty(OPT, varargin);
 
-%% 
-if OPT.lowestLevel < OPT.highestLevel 
-   error(['OPT.lowestLevel ',num2str(OPT.lowestLevel),' < OPT.highestLevel (',num2str(OPT.highestLevel ),')'])
+%% make sure you always see somehting in GE, even at really low lowestLevel
+if OPT.lowestLevel <= OPT.highestLevel 
+   disp(['OPT.lowestLevel (',num2str(OPT.lowestLevel),') set to OPT.highestLevel (',num2str(OPT.highestLevel ),') + 1 = ',num2str(OPT.highestLevel+1)])
+   OPT.lowestLevel = OPT.highestLevel + 1;
 end
 
 OPT.highestLevel  = max(OPT.highestLevel,1);
@@ -134,19 +136,30 @@ if isempty(OPT.minLod),                 OPT.minLod = round(  OPT.dim/1.5); end
 if isempty(OPT.maxLod)&&OPT.alpha  < 1, OPT.maxLod = round(2*OPT.dim/1.5); end % you see 1 layers always
 if isempty(OPT.maxLod)&&OPT.alpha == 1, OPT.maxLod = round(4*OPT.dim/1.5); end % you see 2 layers, except when fully zoomed in
 
+if isempty(OPT.basePath)
+    OPT.basePath = pwd;
+end
+
 %% filename
+%            fileName:           relative link in kml
+%   Path    /-------------\      where to save files (fopen, mkdir)
+% /----------------\
+% basePath + subPath + Name
+%
+% baseUrl  + subPath + Name
+% \-----------------------/
+%  Url                           absolute link in mother kml
+%
 % gui for filename, if not set yet
 if isempty(OPT.fileName)
     [OPT.Name, OPT.Path] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','renderedPNG.kml');
     OPT.fileName = fullfile(OPT.Path,OPT.Name);
+    OPT.subPath  =  '';       % relative part of path that will appear in kml
+    OPT.basePath =  OPT.Path; % here we do not know difference between basepath
 else
-    [OPT.Path OPT.Name] = fileparts(OPT.fileName);
+    [OPT.subPath OPT.Name] = fileparts(OPT.fileName);
+    OPT.Path = [OPT.basePath filesep OPT.subPath];
 end
-
-if isempty(OPT.Path)
-    OPT.Path = pwd;
-end
-% OPT.fileName = fullfile(OPT.Path,OPT.Name);
 
 % set kmlName if it is not set yet
 [ignore OPT.Name] = fileparts(OPT.fileName);
@@ -155,8 +168,8 @@ if isempty(OPT.kmlName)
 end
 
 % make a folder for the sub files
-if ~exist([OPT.Path filesep OPT.Name],'dir')
-    mkdir(OPT.Path,OPT.Name)
+if ~exist([OPT.basePath filesep OPT.Name],'dir')
+     mkdir(OPT.basePath,OPT.Name);
 end
 
 %% preproces timespan
@@ -216,17 +229,17 @@ end
 %% and write the 'mother' KML
 
 if OPT.makeKML
-    if ~isempty(OPT.url)
-        if ~strcmpi(OPT.url(end),'/');
-            OPT.url = [OPT.url '\'];
+    if ~isempty(OPT.baseUrl)
+        if ~strcmpi(OPT.baseUrl(end),'/');
+            OPT.baseUrl = [OPT.baseUrl '\'];
         end
     end
     
     % relative for local files
-    if isempty(OPT.url)
-       href = fullfile(                   OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']);
+    if isempty(OPT.baseUrl)
+       href.kml = fullfile(             OPT.subPath, OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']);
     else
-       href = fullfile(OPT.url, OPT.Path, OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']);
+       href.kml = fullfile(OPT.baseUrl, OPT.subPath, OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']);
     end
     
     output = sprintf([...
@@ -235,9 +248,9 @@ if OPT.makeKML
         '%s'...              % timespan                                                                                                          % time
         '<Link><href>%s</href><viewRefreshMode>onRegion</viewRefreshMode></Link>'... % link
         '</NetworkLink>'],...
-        OPT.timeSpan,href);
-
-    OPT.fid=fopen(OPT.fileName,'w');
+        OPT.timeSpan,href.kml);
+    file.kml = [OPT.basePath, filesep,OPT.fileName];
+    OPT.fid=fopen(file.kml,'w');
     OPT_header = struct(...
         'name',OPT.kmlName,...
         'open',0,...
@@ -249,15 +262,21 @@ if OPT.makeKML
  if isempty(OPT.logo)
      logo   = '';
  else
-     logoName = fullfile(fileparts(OPT.fileName),OPT.Name, [filename(OPT.logo),'4GE.png']);
+
+      % add to one level deeper
+     file.logo = fullfile(OPT.basePath,OPT.Name, [filename(OPT.logo),'4GE.png']);
+     
+     % relative for local files
+     if isempty(OPT.baseUrl)
+        href.logo = fullfile(             OPT.subPath, OPT.Name, filenameext(file.logo));
+     else
+        href.logo = fullfile(OPT.baseUrl, OPT.subPath, OPT.Name, filenameext(file.logo));
+     end     
      logo   = ['<Folder>' KMLlogo(OPT.logo,'fileName',0,'kmlName', 'logo',...
-         'logoName',logoName) '</Folder>'];
-     logo = strrep(logo,['<Icon><href>'                  filename(logoName)],...
-         ['<Icon><href>' OPT.Name filesep filename(logoName)]);
+         'logoName',file.logo) '</Folder>'];
+     logo = strrep(logo,['<Icon><href>' filenameext(file.logo)],...
+                        ['<Icon><href>' href.logo]);
  end
-
-    
-
     output = [KML_header(OPT_header) logo output];
 
  %% COLORBAR
@@ -265,27 +284,32 @@ if OPT.makeKML
 
     if OPT.colorbar
        
+       % add to one level deeper
+       file.CB = fullfile(OPT.basePath, OPT.Name, [OPT.Name]);
+
        % relative for local files
-       if isempty(OPT.url)
-          CBhref = fullfile(                   [OPT.Name '.kml']);
+       if isempty(OPT.baseUrl)
+          href.CB = fullfile(             OPT.subPath, OPT.Name, [OPT.Name]);
        else
-          CBhref = fullfile(OPT.url, OPT.Path, [OPT.Name '.kml']);
+          href.CB = fullfile(OPT.baseUrl, OPT.subPath, OPT.Name, [OPT.Name]);
        end
        
-       % add to one level deeper
-       OPT.CBfileName = fullfile(fileparts(OPT.fileName), OPT.Name, [OPT.Name '.kml']);
-
        clrbarstring = KMLcolorbar('CBcLim',clim,...
-                              'CBfileName',OPT.CBfileName,...
+                              'CBfileName',file.CB,...
                                'CBkmlName','colorbar',...
                               'CBcolorMap',colormap,...
                             'CBcolorTitle',OPT.CBcolorbartitle,...
                       'CBcolorbarlocation',OPT.CBcolorbarlocation);
         
         % refer to one level deeper,  KMLcolorbar chops directory in <href>
-        clrbarstring = strrep(clrbarstring,['<Icon><href>'                  filename(OPT.CBfileName)],...
-                                           ['<Icon><href>' OPT.Name filesep filename(OPT.CBfileName)]);
+        clrbarstring = strrep(clrbarstring,['<Icon><href>' filename(file.CB)],...
+                                           ['<Icon><href>' href.CB]);
         output = [output clrbarstring];
+    end
+    
+    if OPT.debug
+    var2evalstr(href)
+    var2evalstr(file)
     end
 
  %% FOOTER
