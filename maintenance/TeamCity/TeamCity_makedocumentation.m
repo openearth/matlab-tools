@@ -63,7 +63,7 @@ try
         if isdir(fullfile(matlabdir,'docs'))
             rmdir(fullfile(matlabdir,'docs'),'s');
         end
-        
+
         %% load oetsettings
         addpath(matlabdir);
         addpath(genpath(fullfile(matlabdir,'maintenance')));
@@ -76,21 +76,21 @@ try
             'status','ERROR');
         exit;
     end
-    
+
     try
         TeamCity.running(true);
-        
+
         %% start documenting
         tutorials2html(varargin{:},'teamcity');
-        
+
         %% zip result
         delete(fullfile(teamCityDir,'htmldocumentation.zip'));
         delete(fullfile(teamCityDir,'matlabtocfiles.zip'));
         zip(fullfile(teamCityDir,'htmldocumentation'),{fullfile(oetroot,'tutorials','*.*')});
         zip(fullfile(teamCityDir,'matlabtocfiles'),{fullfile(oetroot,'docs','OpenEarthDocs','*.*')});
-        
+
         %% remove targetdir
-        rmdir(fullfile(oetroot,'tutorials'),'s');
+        % rmdir(fullfile(oetroot,'tutorials'),'s');
         rmdir(fullfile(oetroot,'docs'),'s');
     catch me
         TeamCity.postmessage('message', 'text', 'Something went wrong while making documentation.',...
