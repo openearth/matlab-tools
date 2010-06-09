@@ -13,7 +13,7 @@
 
 #if (!($param0 == "help") && !($generalUtil.convertToString($body).replaceAll(' ', '').replaceAll('\n', '') == ""))
 	#set($url= $paramurl)
-	## Check for valid excerpt size, otherwise use default of 35
+	## Check for url, otherwise use default (http://wl06978.wldelft.nl)
 	#if (!$url)
 		#set($url="http://wl06978.wldelft.nl")
 	#end
