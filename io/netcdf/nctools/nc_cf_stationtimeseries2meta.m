@@ -236,15 +236,15 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    %% Add vector coastline
 
    try
-   OPT.USE_JAVA = getpref ('SNCTOOLS', 'USE_JAVA');
-   setpref ('SNCTOOLS', 'USE_JAVA', 1)
+   %OPT.USE_JAVA = getpref ('SNCTOOLS', 'USE_JAVA');
+   %setpref ('SNCTOOLS', 'USE_JAVA', 1)
 
    tmp.lat        = nc_varfind(OPT.vc, 'attributename', 'standard_name', 'attributevalue','latitude'  );
    tmp.lon        = nc_varfind(OPT.vc, 'attributename', 'standard_name', 'attributevalue','longitude' );
    tmp.lat        = nc_varget (OPT.vc,tmp.lat);
    tmp.lon        = nc_varget (OPT.vc,tmp.lon);
    
-   setpref ('SNCTOOLS', 'USE_JAVA', OPT.USE_JAVA);
+   %setpref ('SNCTOOLS', 'USE_JAVA', OPT.USE_JAVA);
 
    axis(axis)
    plot(tmp.lon,tmp.lat,'k');

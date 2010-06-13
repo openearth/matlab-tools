@@ -1,5 +1,5 @@
 function varargout = nc_cf_grid_write(varargin)
-%nc_cf_grid_write  save orthogonal/curvi-linear grid as netCDF-CF compliant file
+%nc_cf_grid_write  save curvilinear lat-lon grid as netCDF-CF file x-y optional
 %
 %   nc_cf_grid_write(ncfilename,<keyword,value>)
 %   nc_cf_grid_write(ncfilename,<keyword,value>)
@@ -31,6 +31,10 @@ function varargout = nc_cf_grid_write(varargin)
 
 % TO DO: add corner matrices too ?
 % TO DO: allow lat and lon to be the dimension vectors
+% TO DO: handle other 3 of 4 different cases:
+% - add curvi-linear x,y  (dims:m,n)
+% - add orthogonal lat,lon(dims:lat,lon)
+% - add curvi-linear lat,lon: dims(m,n)
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -107,6 +111,11 @@ function varargout = nc_cf_grid_write(varargin)
       OPT.wgs84          = 4326;
       OPT.latitude_type  = 'double'; % 'double' % 'single'
       OPT.longitude_type = 'double'; % 'double' % 'single'
+      OPT.dim.val         = {};
+      OPT.dim.x           = {};
+      OPT.dim.y           = {};
+      OPT.dim.lon         = {};
+      OPT.dim.lat         = {};
       
    %% variables
 
@@ -138,15 +147,80 @@ function varargout = nc_cf_grid_write(varargin)
 
       if ~isempty(OPT.val)
          OPT.ncols =   size(OPT.val,2);
-         if ~(length(OPT.x)==OPT.ncols)
-            error('dimension 2 of matrix should match length(x)')
-         end
+         OPT.nrows =   size(OPT.val,1);
       end
       
-      if ~isempty(OPT.val)
-         OPT.nrows =   size(OPT.val,1);
+      if isvector(OPT.lon) & isvector(OPT.lat)
+         if ~(length(OPT.lon)==OPT.ncols)
+           error('dimension 2 of matrix should match length(lon)')
+         end
+         if ~(length(OPT.lat)==OPT.nrows)
+           error('dimension 1 of matrix should match length(lat)')
+         end
+         OPT.dim.val   = {'lon','lat'};
+      end
+      
+      %% 4 configurations, see
+      % a1.lon vector          : (lon,lat) nc_cf_grid_write_lat_lon_orthogonal_tutorial
+      % a2.lon vector, x matrix: (lon,lat) ,,
+      % b .lon matrix          : (col,row) nc_cf_grid_write_lat_lon_curvilinear_tutorial
+      % c1.lon matrix, x vector: (x  ,y  ) nc_cf_grid_write_x_y_orthogonal_tutorial
+      % c2.            x vector: error
+      % d1.lon matrix, x matrix: (col,row) nc_cf_grid_write_x_y_curvilinear_tutorial
+      % d2.            x matrix: error
+
+      if     isempty (OPT.x) & isempty (OPT.y)
+        if isvector(OPT.lon) & isvector(OPT.lat)
+% a1
+         OPT.dim.val   = {'lon','lat'};
+         OPT.dim.x     = {};
+         OPT.dim.y     = {};
+         OPT.dim.lon   = {'lon'};
+         OPT.dim.lat   = {'lat'};
+         else
+% b
+         OPT.dim.val   = {'col','row'};
+         OPT.dim.x     = {};
+         OPT.dim.y     = {};
+         OPT.dim.lon   = {'col','row'};
+         OPT.dim.lat   = {'col','row'};
+         end
+      elseif isvector(OPT.x) & isvector(OPT.y)
+% c1
+         OPT.dim.val   = {'x','y'};
+         OPT.dim.lon   = {'x','y'};
+         OPT.dim.lat   = {'x','y'};
+         OPT.dim.x     = {'x'};
+         OPT.dim.y     = {'y'};
+         if ~(length(OPT.x)==OPT.ncols)
+           error('dimension 2 of matrix should match length(x)')
+         end
          if ~(length(OPT.y)==OPT.nrows)
-            error('dimension 1 of matrix should match length(y)')
+           error('dimension 1 of matrix should match length(y)')
+         end
+% c2
+         if ~isvector(OPT.lon) & ~isvector(OPT.lat)
+         error('lat,lon required')
+         end
+      else
+         if isvector(OPT.lon) & isvector(OPT.lat)
+% a2
+         OPT.dim.val   = {'lon','lat'}; % repeat
+         OPT.dim.x     = {'lon','lat'};
+         OPT.dim.y     = {'lon','lat'};
+         OPT.dim.lon   = {'lon'};
+         OPT.dim.lat   = {'lat'};
+         else
+% d1
+         OPT.dim.val   = {'col','row'};
+         OPT.dim.x     = {'col','row'};
+         OPT.dim.y     = {'col','row'};
+         OPT.dim.lon   = {'col','row'};
+         OPT.dim.lat   = {'col','row'};
+         end
+% d2
+         if ~isvector(OPT.lon) & ~isvector(OPT.lat)
+         error('lat,lon required')
          end
       end
       
@@ -188,6 +262,10 @@ function varargout = nc_cf_grid_write(varargin)
 %% 1a Create file
 
       outputfile = varargin{1};
+      
+      if ~exist(fileparts(outputfile),'dir')
+         mkdir(fileparts(outputfile))
+      end
    
       nc_create_empty (outputfile)
    
@@ -212,8 +290,8 @@ function varargout = nc_cf_grid_write(varargin)
       
 %% 2 Create x and y dimensions
    
-      nc_add_dimension(outputfile, 'x', OPT.ncols); % use this as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
-      nc_add_dimension(outputfile, 'y', OPT.nrows); % use this as 2nd array dimension to get correct plot in ncBrowse (snctools swaps for us)
+      nc_add_dimension(outputfile, OPT.dim.val{1}, OPT.ncols); % use this as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
+      nc_add_dimension(outputfile, OPT.dim.val{2}, OPT.nrows); % use this as 2nd array dimension to get correct plot in ncBrowse (snctools swaps for us)
 
 %% 3a Create coordinate variables
    
@@ -229,7 +307,7 @@ function varargout = nc_cf_grid_write(varargin)
         ifld = ifld + 1;
       nc(ifld).Name             = 'x';
       nc(ifld).Nctype           = 'int';
-      nc(ifld).Dimension        = {'x'};
+      nc(ifld).Dimension        = OPT.dim.x;
       nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'x-coordinate in Cartesian system');
       nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
       nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate'); % standard name
@@ -241,7 +319,7 @@ function varargout = nc_cf_grid_write(varargin)
         ifld = ifld + 1;
       nc(ifld).Name             = 'y';
       nc(ifld).Nctype           = 'int';
-      nc(ifld).Dimension        = {'y'};
+      nc(ifld).Dimension        = OPT.dim.y;
       nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'y-coordinate in Cartesian system');
       nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
       nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate'); % standard name
@@ -260,7 +338,7 @@ function varargout = nc_cf_grid_write(varargin)
         ifld = ifld + 1;
       nc(ifld).Name             = 'longitude';
       nc(ifld).Nctype           = nc_type(OPT.longitude_type);
-      nc(ifld).Dimension        = {'x','y'};
+      nc(ifld).Dimension        = OPT.dim.lon;
       nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'longitude');
       nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
       nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude'); % standard name
@@ -273,7 +351,7 @@ function varargout = nc_cf_grid_write(varargin)
         ifld = ifld + 1;
       nc(ifld).Name             = 'latitude';
       nc(ifld).Nctype           = nc_type(OPT.latitude_type);
-      nc(ifld).Dimension        = {'x','y'};
+      nc(ifld).Dimension        = OPT.dim.lat;
       nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'latitude');
       nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
       nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude'); % standard name
@@ -348,7 +426,7 @@ function varargout = nc_cf_grid_write(varargin)
         ifld = ifld + 1;
       nc(ifld).Name             = OPT.varname;
       nc(ifld).Nctype           = nc_type(OPT.type);
-      nc(ifld).Dimension        = {'x','y'};
+      nc(ifld).Dimension        = OPT.dim.val;
       nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name    );
       nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', OPT.units        );
       nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue    );
@@ -366,28 +444,30 @@ function varargout = nc_cf_grid_write(varargin)
 %% 4 Create all variables with attibutes
    
       for ifld=1:length(nc)
+         var2evalstr(nc(ifld))
          nc_addvar(outputfile, nc(ifld));   
       end
       
 %% 5 Fill all variables
 
       if ~isempty(OPT.x) & ~isempty(OPT.y)
-      nc_varput(outputfile, 'x'        , OPT.x);
-      nc_varput(outputfile, 'y'        , OPT.y);
-      end
-
-      nc_varput(outputfile, OPT.varname    , OPT.val'); % save x as first dimension so ensure correct plotting in ncBrowse
-      
-      if ~isempty(OPT.epsg)
-      nc_varput(outputfile, 'wgs84'        , OPT.wgs84);
-      nc_varput(outputfile, 'epsg'         , OPT.epsg);
+      nc_varput(outputfile, 'x'         , OPT.x');
+      nc_varput(outputfile, 'y'         , OPT.y');
       end
       if ~isempty(OPT.lon) & ~isempty(OPT.lat)
-         % nc_dump(outputfile,'longitude')
-         % size(OPT.lon)
-      nc_varput(outputfile, 'longitude', OPT.lon');
-      nc_varput(outputfile, 'latitude' , OPT.lat');
+         nc_dump(outputfile)
+         OPT
+      OPT.dim
+      nc_varput(outputfile, 'longitude' , OPT.lon');
+      nc_varput(outputfile, 'latitude'  , OPT.lat');
       end
+      if ~isempty(OPT.epsg)
+      nc_varput(outputfile, 'wgs84'     , OPT.wgs84);
+      nc_varput(outputfile, 'epsg'      , OPT.epsg);
+      end
+
+      nc_varput(outputfile, OPT.varname , OPT.val'); % save x/lon/col as first dimension so ensure correct plotting in ncBrowse
+      
       
 %% 6 Check
    

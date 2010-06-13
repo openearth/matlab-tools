@@ -76,8 +76,8 @@ function varargout = nc_cf_directory2catalog(varargin)
 
 %% netCDF JAVA issues
 
-OPT.USE_JAVA = getpref ('SNCTOOLS', 'USE_JAVA');
-setpref                ('SNCTOOLS', 'USE_JAVA', 0)
+%OPT.USE_JAVA = getpref ('SNCTOOLS', 'USE_JAVA');
+%setpref                ('SNCTOOLS', 'USE_JAVA', 0)
 
 %% which directories to scan
 
@@ -440,7 +440,7 @@ end % ifile
 
 %% Java issue
 
-   setpref ('SNCTOOLS', 'USE_JAVA', OPT.USE_JAVA)
+   %setpref ('SNCTOOLS', 'USE_JAVA', OPT.USE_JAVA)
 
    varargout = {ATT};
 
