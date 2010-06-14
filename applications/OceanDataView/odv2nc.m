@@ -18,7 +18,7 @@ function odv2nc(varargin)
 %  odv2nc('directory_raw','F:\foo\raw',...
 %         'directory_nc', 'F:\foo\processed')
 %
-%See also: OceanDataView
+%See also: OceanDataView, snctools
 
 % $Id$
 % $Date$
@@ -260,7 +260,7 @@ for ifile=1:length(OPT.files)
    for ifld=1:length(nc)
       if OPT.disp;
          disp(['adding ',num2str(ifld),' ',nc(ifld).Name]);
-         var2evalstr(nc(ifld))
+         %var2evalstr(nc(ifld))
       end
       nc_addvar(outputfile, nc(ifld));   
    end
@@ -270,12 +270,13 @@ for ifile=1:length(OPT.files)
    nc_varput(outputfile, 'cruise_id'    , D.cruise);
    nc_varput(outputfile, 'station_id'   , D.station);
    nc_varput(outputfile, 'type'         , D.type);
-   nc_varput(outputfile, 'time'         , D.datenum-OPT.refdatenum);
-   nc_varput(outputfile, 'lon'          , D.longitude);
-   nc_varput(outputfile, 'lat'          , D.latitude);
    nc_varput(outputfile, 'LOCAL_CDI_ID' , D.LOCAL_CDI_ID);
    nc_varput(outputfile, 'EDMO_code'    , D.EDMO_code);
-   nc_varput(outputfile, 'bot_depth'    , D.bot_depth);
+
+   nc_varput(outputfile, 'time'         , D.data.datenum-OPT.refdatenum);
+   nc_varput(outputfile, 'lon'          , D.data.longitude);
+   nc_varput(outputfile, 'lat'          , D.data.latitude);
+   nc_varput(outputfile, 'bot_depth'    , D.data.bot_depth);
 
    for ivar=[10:2:length(D.local_name)]
    

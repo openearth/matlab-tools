@@ -351,8 +351,8 @@ function varargout = odv_read(fullfilename)
                D.data.longitude              = str2num(char(D.rawdata{D.index.longitude    ,:}));
                D.data.bot_depth              = str2num(char(D.rawdata{D.index.bot_depth    ,:}));
 
-               D.data.LOCAL_CDI_ID           =             {D.rawdata{D.index.LOCAL_CDI_ID ,1}};  % unique for ODV file
-               D.data.EDMO_code              = str2num(char(D.rawdata{D.index.EDMO_code    ,1})); % unique for ODV file
+               D.LOCAL_CDI_ID                =              D.rawdata{D.index.LOCAL_CDI_ID ,1};  % unique for ODV file
+               D.EDMO_code                   = str2num(char(D.rawdata{D.index.EDMO_code    ,1})); % unique for ODV file
 
             end
 
@@ -376,26 +376,23 @@ function varargout = odv_read(fullfilename)
 
    [D.cruise      ]   = unique(D.data.cruise      );if length(D.cruise      ) > 1;error('no unique value: cruise      ');end
    [D.type        ]   = unique(D.data.type        );if length(D.type        ) > 1;error('no unique value: type        ');end
-   [D.LOCAL_CDI_ID]   = unique(D.data.LOCAL_CDI_ID);if length(D.LOCAL_CDI_ID) > 1;error('no unique value: LOCAL_CDI_ID');end
-   [D.EDMO_code   ]   = unique(D.data.EDMO_code   );if length(D.EDMO_code   ) > 1;error('no unique value: EDMO_code   ');end
     D.file.name       = char(D.file.name   );		      
     D.cruise          = char(D.cruise      );		      
     D.type            = char(D.type        );		      
-    D.LOCAL_CDI_ID    = char(D.LOCAL_CDI_ID);		      
 
-   [station  ,ind1] = unique(D.data.station     );if length(station  ) == 1;D.data.station   = station  ;station = char(station);end 
+   [station  ,ind1] = unique(D.data.station     );if length(station  ) == 1;D.data.station   = station  ;end 
    [ddatenum ,ind2] = unique(D.data.datenum     );if length(ddatenum ) == 1;D.data.datenum   = ddatenum ;end
    [latitude ,ind3] = unique(D.data.latitude    );if length(latitude ) == 1;D.data.latitude  = latitude ;end
    [longitude,ind4] = unique(D.data.longitude   );if length(longitude) == 1;D.data.longitude = longitude;end
    [bot_depth,ind5] = unique(D.data.bot_depth   );if length(bot_depth) == 1;D.data.bot_depth = bot_depth;end
-   
+
    if length(ind1)==1 & ...
       length(ind2)==1 & ...
       length(ind3)==1 & ...
       length(ind4)==1 & ...
       length(ind5)==1
       D.cast    = 1;
-      D.station = char(D.station);		      
+      D.station = char(D.data.station);
       else
       D.cast    = 0;
    end
