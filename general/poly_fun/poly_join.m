@@ -1,10 +1,12 @@
-function [xcells,ycells] = poly_split(x,y)
-%POLY_SPLIT  split NaN-separated polygon into its segments
+function [x,y] = poly_split(xcells,ycells)
+%POLY_JOIN  join segments into NaN-separated polygon
 %
-%   [segments.x, segments.y] = poly_split(x,y)
-%    segments.x              = poly_split(x)
+%   [x,y] = poly_join(segments.x, segments.y)
+%    x    = poly_join(segments.x)
 %
-%See also: POLY_JOIN
+% x and y and with a NaN-separator.
+%
+%See also: POLY_SPLIT
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -46,34 +48,22 @@ function [xcells,ycells] = poly_split(x,y)
 % $HeadURL$
 % $Keywords: $
 
-   separators = find(isnan(x));
-   
-%% insert dummy indices when dummy start/end separators are missing
-   
-   if ~isnan(x(1))
-      separators = [0, separators(:)'];
-   end
-   
-   if ~isnan(x(end))
-      separators = [separators, length(x)+1];
-   end
-   
-%% chunk
+   n = length(xcells);
 
-   n = length(separators)-1;
-
-   xcells = cell(1,n);
-   ycells = cell(1,n);
-   
    for i=1:n
-   
-      xcells{i} = x(separators(i  )+1:...
-                    separators(i+1)-1); 
+
+      xcells{i} = [xcells{i}(:)' nan]; 
+                    
       if nargin > 1
-      ycells{i} = y(separators(i  )+1:...
-                    separators(i+1)-1);  
+      ycells{i} = [ycells{i}(:)' nan]; 
       end
    
    end
    
+   x = cell2mat(xcells);
+   
+   if nargin > 1
+   y = cell2mat(ycells);
+   end
+
 %% EOF   

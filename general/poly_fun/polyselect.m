@@ -37,7 +37,6 @@ function varargout = polyselect(varargin)
 %   --------------------------------------------------------------------
 
 %% input
-%-----------------------
 
       xi     = varargin{1};
       yi     = varargin{2};
@@ -50,29 +49,21 @@ function varargout = polyselect(varargin)
    end   
 
 %% split
-%-----------------------
 
-   [xicells,...
-    yicells] = polysplit(xi,...
-                         yi);
+   [xicells,yicells] = poly_split(xi,yi);
 
 %% select
-%-----------------------
 
-   for ii = index
-      xocells{ii} = xicells{ii};
-      yocells{ii} = yicells{ii};
+   for ii = 1:length(index)
+      xocells{ii} = xicells{index(ii)};
+      yocells{ii} = yicells{index(ii)};
    end
    
-%% join
-%-----------------------
+   %% join
 
-   [xo    ,...
-    yo     ] = polyjoin (xocells,...
-                         yocells);
+   [xo,yo] = poly_join(xocells,yocells);
 
 %% output
-%-----------------------
 
    if     nargin==3
       varargout = {xo,yo};

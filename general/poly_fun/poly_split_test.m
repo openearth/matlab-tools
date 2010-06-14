@@ -1,5 +1,5 @@
 function OK = poly_split_test
-%POLY_SPLIT_TEST  test for poly_split_test
+%POLY_SPLIT_TEST  test for poly_split
 %
 %See also: POLY_SPLIT
 
