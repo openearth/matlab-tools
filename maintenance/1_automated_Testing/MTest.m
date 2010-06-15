@@ -1,4 +1,70 @@
 classdef MTest < handle
+    % MTEST - Object to handle tests written in MTest format
+    %
+    % This objects stores the information written in an mtest format test definition file. The test
+    % files consist of three parts divided by a cell break (%%). The three cells represent:
+    %
+    %   1.  Description of the testcase (%% $Description)
+    %   2.  The actual test code (%% $Run)
+    %   3.  Publishable code that describes the results (%% $Publish)
+    %
+    % 1. The Description is seen purely as documentation of the test (in other words: what do we test, 
+    % how do we test it and what outcome do we expect).
+    %
+    % 2. The Run section contains code that must be executed in order to test the function (Any
+    % code that was already used in the Description gets executed prior to running this section. 
+    % Preferrably the test code should issue an error when the test fails. This gives the most
+    % information on what went wrong. It is advised to use the assert function:
+    %
+    % assert(1==2, 'One should be equal to two');
+    %
+    % 3. The Publish section includes code that can be used to publish the results of the test. It
+    % is published to html with the Matlab publish function. Any variables created in the first two
+    % sections of a test (description and run) can be used in this section. For more information on 
+    % producing publishable code, see the Matlab documentation on cell formatting:
+    %
+    % docsearch('Formatting M-File Code for Publishing');
+    %
+    % See also MTest.MTest MTestRunner MTestFactory
+    
+    %% Copyright notice
+    %     Copyright (c) 2008  DELTARES.
+    %
+    %       Pieter van Geer
+    %
+    %       Pieter.vanGeer@deltares.nl
+    %
+    %       Rotterdamseweg 185
+    %       2629 HD Delft
+    %       P.O. 177
+    %       2600 MH Delft
+    %
+    %   This library is free software: you can redistribute it and/or
+    %   modify it under the terms of the GNU Lesser General Public
+    %   License as published by the Free Software Foundation, either
+    %   version 2.1 of the License, or (at your option) any later version.
+    %
+    %   This library is distributed in the hope that it will be useful,
+    %   but WITHOUT ANY WARRANTY; without even the implied warranty of
+    %   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    %   Lesser General Public License for more details.
+    %
+    %   You should have received a copy of the GNU Lesser General Public
+    %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+    %   --------------------------------------------------------------------
+    
+    %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+    % Created: 15 Jun 2010
+    % Created with Matlab version: 7.10.0.499 (R2010a)
+    
+    % $Id$
+    % $Date$
+    % $Author$
+    % $Revision$
+    % $HeadURL$
+    % $Keywords: testing test unittest$
+
+    %% Properties
     properties
         Name = [];                          % Name of the test
         
@@ -50,49 +116,76 @@ classdef MTest < handle
         IDTeamCityCommands = [];            % boolean the size of FullStrin with true for the lines that contain a command to TeamCity
         
         SubFunctions = [];                  % Struct with output of getcallinfo for all subfunctions
-        RunDir = [];
-        OutputDir = [];
+        RunDir = [];                        % This dir is used to run the test (if it needs to be run in a different dir)
+        OutputDir = [];                     % The output (published html) will be placed in this dir
     end
     
     methods
         function obj = MTest(varargin)
+            %MTest  Creates an MTest object from a test definition file.
+            %
+            %   This function reads the contents of an MTest definition file and creates an
+            %   MTest object that stores all the necessary test information and results. This object
+            %   can later be used to publish the description (MTest.publishdescription), run the
+            %   test (MTest.run) or publish the testresults (MTest.publishresults).
+            %
+            %   Syntax:
+            %   obj = MTest(filename,...);
+            %   obj = MTest(...,'filename',filename);
+            %   obj = MTest(...,'property','value');
+            %
+            %   Input:
+            %   filename  = name of a file that is in the matlab search path or a full filename to
+            %               the test definition file that has to be converted to an mtest object.
+            %               This parameter must be entered to load a test definition.
+            %
+            %   Property - value pairs:
+            %       descriptionoutputfile   -   Name of the html output file created when publishing
+            %                                   the description of the test.
+            %       includecode             -   TODO
+            %       evaluatecode            -   TODO
+            %
+            %   Output:
+            %   obj - mtest object
+            %
+            %   See also MTest MTest.run MTestRunner MTestFactory
+
+            %% Return in case of no input
             if nargin==0
                 return;
             end
+            
             %% Create shortcut to MtestFactory to create a test
             obj = MTestFactory.createtest(varargin{:});
         end
         function run(obj,varargin)
-            % This method is still work in progress
-            
-            %runAndPublish  Runs the test and publishes the descriptions and results of all testcases.
+            %RUN  Runs the test and publishes the descriptions and results of all testcases.
             %
-            %   This function runs the mtest object and publishes all case descriptions and results.
-            %   The variables of the description and runcode of the test are stored in the hidden
-            %   workspace, so that the publishResult function can directly be called after running
+            %   This function runs the MTest object and publishes the descriptions and results.
+            %   The variables of the description and runcode of the test are stored in a hidden
+            %   workspace, so that the publishresult function can be called after running
             %   the test.
             %
             %   Syntax:
-            %   runAndPublish(obj,'property','value');
-            %   obj.publisResults(...'property','value');
+            %   run(obj,'property','value');
+            %   obj.run(...'property','value');
             %
             %   Input:
-            %   obj  = An instance of an mtest object.
+            %   obj  = An instance of an MTest object.
             %
             %   property value pairs:
-            %           'resdir'     -  Specifies the output directory (current dir is default).
-            %           'outputfile' -  Main part of the name of the output file. The description is
-            %                           output file appends _description to this name. The results
-            %                           output file appends _results to it.
-            %           'testname'   -  Name of the main test.
-            %           'maxwidth'  -   Maximum width of the published figures (in pixels). By
-            %                           default the maximum width is set to 600 pixels.
-            %           'maxheight' -   Maximum height of the published figures (in pixels). By
-            %                           default the maximum height is set to 600 pixels.
-            %           'stylesheet'-   Style sheet that is used for publishing (see publish
-            %                           documentation for more information).
+            %           'OutputDir' -  Specifies the output directory (current dir is default).
+            %           'RunDir'    -  Specifies the directory that is used to run the test.
+            %           'Name'      -  Name of the main test.
+            %           'MaxWidth'  -  Maximum width of the published figures (in pixels). By
+            %                          default the maximum width is set to 600 pixels.
+            %           'MaxHeight' -  Maximum height of the published figures (in pixels). By
+            %                          default the maximum height is set to 600 pixels.
+            %           'StyleSheet'-  Style sheet that is used for publishing (see publish
+            %                          documentation for more information).
+            %           And all other valid properties of the MTest object.
             %
-            %   See also mtestcase mtestcase.mtestcase mtestcase.publishDescription mtest.publishResults mtestcase.runTest mtestengine mtest
+            %   See also MTest MTest.MTest MTestRunner            
             
             %% Lock this workspace and function code
             mlock;
@@ -192,56 +285,59 @@ classdef MTest < handle
 
             %% Evaluate test
             try
-                runTime = 0;
                 errorReport = '';
                 errorMessage = '';
-                commandWindowString = evalc(sprintf('%s\n',...
-                    'try',...
-                    '    tic;',...
-                    '    profile clear',...
-                    '    profile on',...
-                    ['    obj.TestResult = ' obj.FunctionName ';'],...
-                    '    profile off',...
-                    '    runTime = toc;',...
-                    '    if ~islogical(obj.TestResult)',...
-                    '        obj.TestResult = true;',...
-                    '    end',...
-                    'catch me',...
-                    '    path(pt);',...
-                    '    if strcmp(me.identifier,''MATLAB:TooManyOutputs'')',...
-                    '        % Function does not have an output argument',...
-                    '        clear me',...
-                    '        eval(sprintf(''%s\n'',...',...
-                    '            ''try'',...',...
-                    '            ''    tic;'',...',...
-                    '            ''    profile clear'',...',...
-                    '            ''    profile on'',...',...
-                    ['            ''    ' obj.FunctionName ';'',...'],...
-                    '            ''    profile off'',...',...
-                    '            ''    runTime = toc;'',...',...
-                    '            ''    obj.TestResult = true;'',...',...
-                    '            ''catch me'',...',...
-                    '            ''    path(pt);'',...',...
-                    '            ''    obj.TestResult = false;'',...',...
-                    '            ''    profile off'',...',...
-                    '            ''    runTime = toc;'',...',...
-                    '            ''    errorReport = me.getReport;'',...',...
-                    '            ''    errorMessage = me.message;'',...',...
-                    '            ''end''));',...
-                    '    else',...
-                    '        profile off',...
-                    '        runTime = toc;',...
-                    '        obj.TestResult = false;',...
-                    '        errorReport = me.getReport;',...
-                    '        errorMessage = me.message;',...
-                    '    end',...
-                    'end'));
+                try
+                    % Try to perform test with output argument (testResult)
+                    tic;
+                    profile clear
+                    profile on
+                    [commandWindowString obj.TestResult] = evalc([obj.FunctionName ';']);
+                    profile off
+                    runTime = toc;
+                    if ~islogical(obj.TestResult)
+                        obj.TestResult = true;
+                    end
+                catch me
+                    % Test did not run, figure out if it is because we expect output
+                    path(pt);
+                    if strcmp(me.identifier,'MATLAB:TooManyOutputs')
+                        % Function does not have an output argument, run the test without output
+                        clear me
+                        try
+                            tic;
+                            profile clear
+                            profile on
+                            commandWindowString = evalc([obj.FunctionName ';']);
+                            profile off
+                            runTime = toc;
+                            obj.TestResult = true;
+                        catch me
+                            % Test failed, report failure
+                            path(pt);
+                            obj.TestResult = false;
+                            profile off
+                            runTime = toc;
+                            errorReport = me.getReport;
+                            errorMessage = me.message;
+                        end
+                    else
+                        % Another error occurred, Report failure of the test
+                        profile off
+                        runTime = toc;
+                        obj.TestResult = false;
+                        errorReport = me.getReport;
+                        errorMessage = me.message;
+                    end
+                end
                 
+                %% Save stacktrace information
                 obj.StackTrace = strrep(sprintf('%s\n',commandWindowString,errorReport),obj.RunDir,obj.FilePath);
                 obj.ProfilerInfo = profile('info');
                 obj.Time = runTime;
+                
                 if ~obj.TestResult
-                    % Something went wrong
+                    % Something went wrong, Post failure message
                     obj.Time = 0;
                     TeamCity.postmessage('testFailed',...
                         'name',obj.Name,...
