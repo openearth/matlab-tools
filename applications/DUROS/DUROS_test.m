@@ -49,10 +49,8 @@ function testResult = DUROS_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = DUROS integration tests)
-TeamCity.ignore('WIP'); return;
-
-%% $RunCode
+TeamCity.category('Integration');
+if TeamCity.running, TeamCity.ignore('WIP'); return; end
 
 testResult = nan;
 DuneErosionSettings('default');
