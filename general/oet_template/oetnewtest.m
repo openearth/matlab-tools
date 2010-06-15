@@ -28,13 +28,10 @@ function oetnewtest(varargin)
 %       'h1line'      -   One line description
 %       'description' -   Detailed description of the test
 %       'testname'    -   An alternate name for the test
-%       'testcases'   -   Cell array of strings with names of the testcases
-%                         you want to create.
 %
 %   Example:
-%       oetnewtest('oetnewtest_test',...
-%               'testcases', {'Case 1','Case 2','Case 3'});
-%       oetnewtest
+%       oetnewtest('oetnewtest_test');
+%       oetnewtest('currentfile');
 %
 %   See also: oetnewfun, getlocalsettings, load_template
 
@@ -84,20 +81,15 @@ function oetnewtest(varargin)
 %% defaults
 OPT                     = getlocalsettings;
 
-OPT.h1line              = 'One line description goes here';
-OPT.description         = 'More detailed description of the test goes here.';
-OPT.basedescriptioncode = '% Publishable code that describes the test.';
-OPT.baseruncode         = [];
-OPT.basepublishcode     = '% Publishable code that describes the test.';
-OPT.testname            = 'Name of the test goes here';
-OPT.seeAlso             = '';
+OPT.H1Line              = 'One line description goes here';
+OPT.Description         = 'More detailed description of the test goes here.';
+OPT.DescriptionCode     = [];
+OPT.RunCode             = [];
+OPT.PublishCode         = [];
+OPT.SeeAlso             = '';
+OPT.Category            = 'UnCategorized';
 
-OPT.testcases           = {};
-OPT.descriptioncode     = '% Publishable code that describes the testcase.';
-OPT.runcode             = ['% Write testcase code here' char(10) 'testresult = false;'];
-OPT.publishcode         = '% Publishable code that describes the testcase.';
-
-OPT.code                = '';
+OPT.Code                = '';
 
 FunctionName            = 'Untitled_test';
 
@@ -132,45 +124,30 @@ if ~isempty(which(cat(2,FunctionName,'.m')))
     answ = questdlg('The specified test definition file is already present. What would you like to do?','Test definition already in use','Open Existing file','Copy contents in new template','Create test from scratch','Open Existing file');
     switch answ
         case 'Copy contents in new template'
-            
             try
                 %% Create mtest object
-                t = mtest(FunctionName);
+                t = MTest(FunctionName);
                 
                 %% Copy test variables to OPT
-                tvars   = {'testname','descriptioncode'    ,'h1line','description','seealso','runcode'    ,'publishcode'    };
-                optvars = {'testname','basedescriptioncode','h1line','description','seeAlso','baseruncode','basepublishcode'};
-                for ivar = 1:length(tvars)
-                    if ~isempty(t.(tvars{ivar}))
-                        OPT.(optvars{ivar}) = t.(tvars{ivar});
+                vars   = {'DescriptionCode','H1Line','Description','SeeAlso','RunCode','PublishCode','Category'};
+                for ivar = 1:length(vars)
+                    if ~isempty(t.(vars{ivar}))
+                        OPT.(vars{ivar}) = t.(vars{ivar});
                     end
                 end
-                OPT.basedescriptioncode(~strncmp(OPT.basedescriptioncode,'%',1))=[];
-                if strcmp(OPT.basedescriptioncode{1}(1),'%')
-                          OPT.basedescriptioncode{1} = strtrim(OPT.basedescriptioncode{1}(2:end));
+                if ~isempty(OPT.Description)
+                    if ischar(OPT.Description) && strncmp(OPT.Description,'%',1)
+                       OPT.Description(1) = [];
+                    elseif iscell(OPT.Description) && strncmp(OPT.Description{1},'%',1)
+                        OPT.Description{1} = strtrim(OPT.Description{1}(2:end));
+                    end
                 end
                 
-                %% Copy testcase vars to OPT
-                optvars             = {'testcases','descriptioncode','runcode','publishcode'};
-                tvars               = {'casename','description','runcode','publishcode'};
-                OPT.descriptioncode = repmat({OPT.descriptioncode},1,length(t.testcases));
-                OPT.runcode         = repmat({OPT.runcode},1,length(t.testcases));
-                OPT.publishcode     = repmat({OPT.publishcode},1,length(t.testcases));
-                for itc = 1:length(t.testcases)
-                    for ivar = 1:length(tvars)
-                        if ~isempty(t.testcases(itc).(tvars{ivar}))
-                            OPT.(optvars{ivar}){itc} = t.testcases(itc).(tvars{ivar});
-                        end
-                    end
-                end
-                if isempty(t.testcases)
-                    OPT.testcases = [];
-                end
                 %% No code left
-                OPT.code = [];
+                OPT.Code = t.FullString(~t.IDTestFunction);
             catch me %#ok<NASGU>
                 fid = fopen(cat(2,FunctionName,'.m'));
-                OPT.code = cat(2,char(10),char(10),'%% Original code of ', FunctionName, '.m', char(10), fread(fid,'*char')');
+                OPT.Code = cat(2,char(10),char(10),'%% Original code of ', FunctionName, '.m', char(10), fread(fid,'*char')');
                 fclose(fid);
             end
         case 'Open Existing file'
@@ -179,7 +156,7 @@ if ~isempty(which(cat(2,FunctionName,'.m')))
         case 'Create test from scratch'
             % Do nothing. Test will be generated with correct name, but with no input.
         otherwise
-            return
+            return;
     end
 end
 
@@ -189,123 +166,99 @@ str = fread(fid, '*char')';
 fclose(fid);
 
 %% replace keywords in template string
-str = strrep(str, '$testname', OPT.testname);
-publishdescription = OPT.basepublishcode;
-if iscell(publishdescription)
-    publishdescription      = sprintf('%s\n',publishdescription{:});
-    publishdescription(end) = [];
-end
-if iscell(OPT.description)
-    OPT.description         = sprintf('%s\n',OPT.description{:});
-    OPT.description(end)    = [];
-end
-str = strrep(str, '$publishdescription', publishdescription);
-if iscell(OPT.seeAlso)
-    OPT.seeAlso             = sprintf('%s ',OPT.seeAlso{:});
-end
-str = strrep(str, '$seeAlso', OPT.seeAlso);
+
+% First the helpblock part
 [fpath fname] = fileparts(fullfile(cd, FunctionName));
 str = strrep(str, '$filename', fname);
 str = strrep(str, '$FILENAME', upper(fname));
-str = strrep(str, '$description', OPT.description);
-str = strrep(str, '$date(dd mmm yyyy)', datestr(now, 'dd mmm yyyy'));
+str = strrep(str, '$h1line', OPT.H1Line);
+if iscell(OPT.Description)
+    OPT.Description         = sprintf('%s\n',OPT.Description{:});
+    OPT.Description(end)    = [];
+end
+str = strrep(str, '$helpblockdescription', OPT.Description);
+if iscell(OPT.SeeAlso)
+    OPT.SeeAlso             = sprintf('%s ',OPT.SeeAlso{:});
+end
+str = strrep(str, '$seeAlso', OPT.SeeAlso);
+
+% Now all keywords in the credentials/copyright part
 str = strrep(str, '$date(yyyy)', datestr(now, 'yyyy'));
 str = strrep(str, '$Company', OPT.COMPANY);
 str = strrep(str, '$author', OPT.NAME);
 str = strrep(str, '$email', OPT.EMAIL);
-address = sprintf('%%       %s\n', OPT.ADDRESS{:});
-address = address(1:end-1);
-str = strrep(str, '%       $address', address);
+OPT.ADDRESS = sprintf('%%       %s\n', OPT.ADDRESS{:});
+OPT.ADDRESS(end) = [];
+str = strrep(str, '%       $address', OPT.ADDRESS);
+
+% Now the svn version part
+str = strrep(str, '$date(dd mmm yyyy)', datestr(now, 'dd mmm yyyy'));
 str = strrep(str, '$version', version);
-str = strrep(str, '$h1line', OPT.h1line);
-if iscell(OPT.basepublishcode)
-    OPT.basepublishcode      = sprintf('%s\n',OPT.basepublishcode{:});
-    OPT.basepublishcode(end) = [];
-end 
 
-%% Check testcase names
-if ~isempty(OPT.testcases) && ischar(OPT.testcases)
-    OPT.testcases = {OPT.testcases};
-end
+% replace category
+str = strrep(str, '$testcategory', ['TeamCity.category(''' OPT.Category ''');']);
 
-%% Check if the testcase contents were filled
-if ischar(OPT.descriptioncode)
-    OPT.descriptioncode = repmat({OPT.descriptioncode},1,length(OPT.testcases));
-end
-if ischar(OPT.runcode)
-    OPT.runcode         = repmat({OPT.runcode}        ,1,length(OPT.testcases));
-end
-if ischar(OPT.publishcode)
-    OPT.publishcode     = repmat({OPT.publishcode}    ,1,length(OPT.testcases));
-end
-
-%% Identify begin and end of the testcasestrings
-tcbegin = strfind(str,'%$begintestcases');
-tcend = strfind(str,'%$endtestcases');
-
-if ~isempty(OPT.testcases)
-    %% append end
-    OPT.basepublishcode = sprintf('%s\n',OPT.basepublishcode,'end');
-    
-    %% build testcase string
-    tcstring = buildtestcasestring(str(tcbegin+17:tcend-1),OPT);
-    
-    %% replace in str
-    str = cat(2,str(1:strfind(str,'%$begintestcases')-1),tcstring);
-    
-    %% build test code
-    if isempty(OPT.baseruncode)
-        OPT.baseruncode = [];
-        for itc = 1:length(OPT.runcode)
-            OPT.baseruncode = cat(2,OPT.baseruncode,'testresult(', num2str(itc), ') = ', strrep(OPT.testcases{itc},' ','_'), ';', char(10));
-        end
-        OPT.baseruncode     = cat(2,OPT.baseruncode,char(10),'testresult = all(testresult);');
+% Include the description code if there is any
+if ~isempty(OPT.DescriptionCode)
+    if iscell(OPT.DescriptionCode)
+        OPT.DescriptionCode = sprintf('%s\n',...
+            '%% $Description',...
+            OPT.DescriptionCode{:});
+    else
+        OPT.DescriptionCode = sprintf('%s\n',...
+            '%% $Description',...
+            OPT.DescriptionCode);
     end
+    str = strrep(str, '$descriptioncode', OPT.DescriptionCode);
 else
-    str = str(1:strfind(str,'%$begintestcases')-1);
+    str = strrep(str, '$descriptioncode', '');
 end
-if isempty(OPT.baseruncode)
-    OPT.baseruncode = ['% Write test code here' char(10) 'testresult = false;'];
-end
-if iscell(OPT.baseruncode)
-    OPT.baseruncode      = sprintf('%s\n',OPT.baseruncode{:});
-    OPT.baseruncode(end) = [];
-end
-str = strrep(str,'$testcode'     ,OPT.baseruncode);
-str = strrep(str,'$publishresult',OPT.basepublishcode);
 
+% Include Runnable code (if there is none, initialize the output variable)
+if ~isempty(OPT.RunCode)
+    if iscell(OPT.RunCode)
+        OPT.RunCode = sprintf('%s\n',...
+            '%% $Run',...
+            OPT.RunCode{:});
+    else
+        OPT.RunCode = sprintf('%s\n',...
+            '%% $Run',...
+            OPT.RunCode);
+    end
+    str = strrep(str, '$runcode', OPT.RunCode);
+else
+    str = strrep(str, '$runcode', 'testResult = false;');
+end
+
+% Include the code to publish results (if there is any)
+if ~isempty(OPT.PublishCode)
+    if iscell(OPT.PublishCode)
+        OPT.PublishCode = sprintf('%s\n',...
+            '%% $Publish',...
+            OPT.PublishCode{:});
+    else
+        OPT.PublishCode = sprintf('%s\n',...
+            '%% $Publish',...
+            OPT.PublishCode);
+    end
+    str = strrep(str, '$publishcode', OPT.PublishCode);
+else
+    str = strrep(str, '$publishcode', '');
+end
 
 %% Append any other code
 % If the file was not according to the correct format and mtest couldn't read it, the complete
 % string is pasted behind the normal content.
-if ~isempty(OPT.code)
-    str = cat(2, str, OPT.code);
+if ~isempty(OPT.Code)
+    if iscell(OPT.Code)
+        str = cat(2,str,char(10),...
+            sprintf('%s\n',OPT.Code{:}));
+    else
+        str = cat(2, str, char(10), OPT.Code);
+    end
 end
 
 %% open new file in editor
 com.mathworks.mlservices.MLEditorServices.newDocument(str)
 
-end
-function tcstr = buildtestcasestring(strtpl,OPT)
-%% Build testcase string
-tcstr = [];
-for icase = 1:length(OPT.testcases)
-    tempstr = strtpl;
-    tempstr = strrep(tempstr,'$CaseNumber',num2str(icase));
-    tempstr = strrep(tempstr,'$FunctionCaseName',strrep(OPT.testcases{icase},' ','_'));
-    tempstr = strrep(tempstr,'$CaseName',OPT.testcases{icase});
-    if iscell(OPT.descriptioncode{icase})
-        OPT.descriptioncode{icase} = sprintf('%s\n',OPT.descriptioncode{icase}{:});
-    end
-    tempstr = strrep(tempstr,'$casedescription',OPT.descriptioncode{icase});
-    if iscell(OPT.runcode{icase})
-        OPT.runcode{icase} = sprintf('%s\n',OPT.runcode{icase}{:});
-    end
-    tempstr = strrep(tempstr,'$runcode',OPT.runcode{icase});
-    if iscell(OPT.publishcode{icase})
-        OPT.publishcode{icase} = sprintf('%s\n',OPT.publishcode{icase}{:});
-    end
-    tempstr = strrep(tempstr,'$resultscode',OPT.publishcode{icase});
-    tcstr = cat(2,tcstr,tempstr);
-end
 end

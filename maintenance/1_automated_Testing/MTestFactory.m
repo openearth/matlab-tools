@@ -149,7 +149,13 @@ classdef MTestFactory
                 obj.FunctionHeader = teststr{1};
                 oetTestHeaderString = teststr(2:find(codelines(2:end),1,'first'));
                 obj.IDTestCode = obj.IDTestFunction;
-                obj.IDTestCode(1:find(codelines(2:end),1,'first'))=false;
+                beginTestCode = find((strncmp(obj.FullString,'%% $Description',15) & obj.IDTestFunction) |...
+                    (strncmp(obj.FullString,'%% $Run',15) & obj.IDTestFunction) |...
+                    (strncmp(obj.FullString,'%% $Publish',15) & obj.IDTestFunction),1,'first');
+                if isempty(beginTestCode)
+                    beginTestCode = find(codelines(2:end),1,'first');
+                end
+                obj.IDTestCode(1:beginTestCode-1)=false;
                 
                 if ~isempty(oetTestHeaderString)
                     %% h1line

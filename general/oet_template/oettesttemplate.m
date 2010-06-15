@@ -1,7 +1,7 @@
-function testresult = $filename()
+function testResult = $filename()
 % $FILENAME  $h1line
 %  
-% $description
+% $helpblockdescription
 %
 %
 %   See also $seeAlso
@@ -46,22 +46,8 @@ function testresult = $filename()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = $testname)
-$publishdescription
+$testcategory
 
-%% $RunCode
-$testcode
-
-%% $PublishResult
-$publishresult
-
-%$begintestcases
-function testresult = $FunctionCaseName()
-%% $Description (Name = $CaseName)
-$casedescription
-%% $RunCode
+$descriptioncode
 $runcode
-%% $PublishResult
-$resultscode
-end
-%$endtestcases
+$publishcode
