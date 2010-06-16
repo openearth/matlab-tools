@@ -82,7 +82,13 @@ datatype = UCIT_getInfoFromPopup('GridsDatatype');
    def       = {'Polygon','10','2000','2004',UCIT_getInfoFromPopup('GridsInterval')};
    answer    = inputdlg(prompt,dlg_title,num_lines,def);
    
-   save(['polygons\' answer{1},'.mat'],'polygon')
+   %% save polygon
+%    save(['polygons\' answer{1},'.mat'],'polygon');
+   fid = fopen(['polygons\' answer{1},'.ldb'],'w');
+   fprintf(fid,'%s\n',['polygon']);
+   fprintf(fid,'%3.0f %3.0f \n',[size(polygon,1) size(polygon,2)]);
+   fprintf(fid,'%8.2f %8.2f \n',[polygon]');
+   fclose(fid);
 
 %% arrange input in OPT structure
 

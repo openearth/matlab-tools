@@ -52,7 +52,7 @@ nameInfo=['UCIT - used data points for method 2'];
 fh = figure('tag','dpPlot'); clf; ah=axes;
 set(fh,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
 [fh,ah] = UCIT_prepareFigureN(0, fh, 'UL', ah);
-UCIT_plotLandboundary(d.ldb,[0 1 0])
+UCIT_plotLandboundary(d.ldb,'none')
 hold on;
 load(['datafiles' filesep 'timewindow = ' num2str(OPT.timewindow) filesep results.polyname '_' num2str(OPT.inputyears(1),'%04i') '_1231.mat']);
 
@@ -65,7 +65,7 @@ pcolorcorcen(d.X,d.Y,d.id*2);view(2);shading interp;
 title(['Used data points for method 2 ' strrep(results.polyname,'_',' ') ' (' OPT.datatype ')']); 
 
 % set axis
-axis   tight
+
 box    on
 axis   equal
 set   (gca,'fontsize', 8 );
@@ -73,6 +73,10 @@ ylabel('Northing [m]');
 xlabel('Easting [m]');
 set   (gca,'Xlim',[d.X(1,1) d.X(1,end)]);
 set   (gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
+tickmap('xy');
+
+% plot used polygon
+ph = plot(OPT.polygon(:,1), OPT.polygon(:,2),'color','k','tag','polygon','linewidth',1);
 
 % save figure
 try
@@ -83,30 +87,30 @@ end
 
 %% Polygon overview plot
 
-nameInfo=['UCIT - Sandbalance polygon plot'];
-% if isempty(findobj('tag','sbPlot'))
-    fh = figure('tag','sbPlot'); clf; ah=axes;
-    set(fh,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
-    [fh,ah] = UCIT_prepareFigureN(0, fh, 'UL', ah);
-    hold on;
-    UCIT_plotLandboundary(d.ldb,[0 1 0])
+% nameInfo=['UCIT - Sandbalance polygon plot'];
+% % if isempty(findobj('tag','sbPlot'))
+%     fh = figure('tag','sbPlot'); clf; ah=axes;
+%     set(fh,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
+%     [fh,ah] = UCIT_prepareFigureN(0, fh, 'UL', ah);
+%     hold on;
+%     UCIT_plotLandboundary(d.ldb,'none')
 % else
 %     fh=findobj('tag','sbPlot');
 %     figure(fh);try delete(findobj('tag','polygon')),end;
 %     hold on
 % end
 
-% plot used polygon
-ph = plot(OPT.polygon(:,1), OPT.polygon(:,2),'color','g','tag','polygon','linewidth',1);
-fill(OPT.polygon(:,1),OPT.polygon(:,2),'g','tag','polygon','facealpha',0.2,'linestyle','none');
-
-% text
-title(['Volume development for ' strrep(results.polyname,'_',' ') ' (' OPT.datatype ')']); 
-
-% set axis
-set(gca, 'Xlim',[min(OPT.polygon(:,1))- 10000 max(OPT.polygon(:,1)) + 10000]);
-set(gca, 'Ylim',[min(OPT.polygon(:,2))- 10000 max(OPT.polygon(:,2)) + 10000]);
-set(gca,'fontsize',8);box
+% % plot used polygon
+% ph = plot(OPT.polygon(:,1), OPT.polygon(:,2),'color','g','tag','polygon','linewidth',1);
+% fill(OPT.polygon(:,1),OPT.polygon(:,2),'g','tag','polygon','facealpha',0.2,'linestyle','none');
+% 
+% % text
+% title(['Volume development for ' strrep(results.polyname,'_',' ') ' (' OPT.datatype ')']); 
+% 
+% % set axis
+% set(gca, 'Xlim',[min(OPT.polygon(:,1))- 10000 max(OPT.polygon(:,1)) + 10000]);
+% set(gca, 'Ylim',[min(OPT.polygon(:,2))- 10000 max(OPT.polygon(:,2)) + 10000]);
+% set(gca,'fontsize',8);box
 
 %% Volume development plot
 nameInfo=['UCIT - Volume development plot'];

@@ -181,9 +181,10 @@ switch  scheme
             [ax,c1] =  colorbarwithtitle('',1:nv+1); %#ok<NASGU>
             set(ax,'yticklabel',datestr(v,1))
         end
+        axis equal
 end
 
-axis tight
+
 box  on
 set(gcf,'renderer','zbuffer')
 set(gca,'fontsize', 8 );

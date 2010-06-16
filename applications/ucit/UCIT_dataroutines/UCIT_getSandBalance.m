@@ -82,9 +82,10 @@ for n = 1:size(OPT.min_coverage,2)
     
     batchvar = UCIT_findCoverage(OPT);
 
-    %% find polygons directory
-    fns = dir([curdir filesep 'polygons' filesep '*.mat']);
-
+    %% find polygons
+    fns = dir([curdir filesep 'polygons' filesep '*.*']);
+    fns(find(strcmp({fns.name},'.')|strcmp({fns.name},'..')))= [];
+    
     if ~isempty(batchvar)
         for i = 1:size(batchvar,1)
             if batchvar{i,1}==1
@@ -92,7 +93,13 @@ for n = 1:size(OPT.min_coverage,2)
 
                 %% load polygon
                 if ~isfield(OPT,'polygon')
-                    load(['polygons',filesep fns(i,1).name]);
+                    if strcmp(fns(i,1).name(end-2:end),'ldb')
+                        polygon = landboundary('read',['polygons',filesep fns(i,1).name]); 
+                    elseif strcmp(fns(i,1).name(end-2:end),'mat')
+                        load(['polygons',filesep fns(i,1).name]);
+                    else
+                        error('Please specify polygons as ldb or matfiles')
+                    end
                     OPT.polygon = polygon;
                 end
 

@@ -199,28 +199,19 @@ elseif type == 2
 
                 d.urls = opendap_catalog(datatypes.grid.catalog{ind});
                 
+                               
                 %% temporary workaround until catalogfile AHN fixed
                 if strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'AHN100')
                     temp_url = d.urls{1};d.urls = [];d.urls{1} = temp_url;
                 elseif strcmp(UCIT_getInfoFromPopup('GridsDatatype'),'AHN250')
                     temp_url = d.urls{2};d.urls = [];d.urls{1} = temp_url;
                 end
-                               
-                for i = 1:length(d.urls)
-                    
-                    name    = nc_varfind     (d.urls{i},'attributename','standard_name','attributevalue','projection_x_coordinate');
-                    x_range = nc_actual_range(d.urls{i}, name);
-                    name    = nc_varfind     (d.urls{i},'attributename','standard_name','attributevalue','projection_y_coordinate');
-                    y_range = nc_actual_range(d.urls{i}, name);
- 
-                    if ischar(x_range),x_range = str2num(x_range);,end;
-                    if ischar(y_range),y_range = str2num(y_range);,end;
-
-                    d.contour(i,:) = [x_range y_range];
-
-                end
-
+                
+                OPT2 = grid_orth_getMapInfoFromDataset(d.catalog);
+                d.contour = [OPT2.x_ranges OPT2.y_ranges] ;              
                 d.names        = d.urls;
+                d.x_ranges     = OPT2.x_ranges;
+                d.y_ranges     = OPT2.y_ranges;
 
                 set(findobj('tag','UCIT_mainWin'),'UserData',d);
             else

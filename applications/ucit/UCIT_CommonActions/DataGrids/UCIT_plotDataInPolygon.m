@@ -51,22 +51,22 @@ datatype = UCIT_getInfoFromPopup('GridsDatatype');
 
 %% Select in grid overview plot
 
-if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
+if isempty(findobj('tag','gridOverview'))% || ~any(ismember(get(axes, 'tag'), {datatype}))
     fh = UCIT_plotGridOverview(datatype,'refreshonly',0);
 else
     fh = figure(findobj('tag','gridOverview'));figure(fh);
 end
 
 d    = UCIT_getMetaData(2);
-OPT2 = grid_orth_getMapInfoFromDataset(d.catalog);
+% OPT2 = grid_orth_getMapInfoFromDataset(d.catalog);
 
 %% get data from right netcdf files
 
 [X, Y, Z, Ztime] = grid_orth_getDataInPolygon(...
     'dataset'       , d.catalog, ...
-    'urls'          , OPT2.urls, ...
-    'x_ranges'      , OPT2.x_ranges, ...
-    'y_ranges'      , OPT2.y_ranges, ...
+    'urls'          , d.urls, ...
+    'x_ranges'      , d.x_ranges, ...
+    'y_ranges'      , d.y_ranges, ...
     'tag'           , datatype, ...
     'starttime'     ,        datenum(UCIT_getInfoFromPopup('GridsName'), 'yyyy-mm-dd'), ...
     'searchinterval', -30*str2double(UCIT_getInfoFromPopup('GridsInterval')), ...
@@ -96,6 +96,7 @@ if ~all(all(isnan(Z)))
 
     set(gca,'Xlim',[d.X(1,1) d.X(1,end)]);
     set(gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
+    tickmap('xy');
 
     if ~isempty(findobj('tag','tempsWindow'))
           close(findobj('tag','tempsWindow'));
@@ -111,7 +112,7 @@ if ~all(all(isnan(Z)))
 
         set(gca,'Xlim',[d.X(1,1) d.X(1,end)]);
         set(gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
-        tickmap('xy')
+        tickmap('xy');
     end
 
 else
