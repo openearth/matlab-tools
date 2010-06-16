@@ -1,7 +1,7 @@
 function nc_multibeam_createNCfile(OPT,ncfile,X,Y,EPSG)
 %% *** create empty outputfile
-OPT.WBmsg{2}  = 'Creating NC File';
-waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
+% OPT.WBmsg{2}  = 'Creating NC File';
+% waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
 % indicate NetCDF outputfile name and create empty structure
 if ~exist(OPT.netcdf_path,'dir')
     mkdir(OPT.netcdf_path)
@@ -13,8 +13,8 @@ dimSizeY = (OPT.mapsizey/OPT.gridsize)+1;
 
 
 %% add attributes global to the dataset
-OPT.WBmsg{2}  = 'Adding attributes to NC File';
-waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
+% OPT.WBmsg{2}  = 'Adding attributes to NC File';
+% waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
 
 netcdf.putAtt(NCid,globalID, 'Conventions',     OPT.Conventions);
 netcdf.putAtt(NCid,globalID, 'CF:featureType',  OPT.CF_featureType); % http://www.unidata.ucar.edu/software/netcdf-java/v4.1/javadoc/ucar/nc2/constants/CF.FeatureType.html
@@ -35,8 +35,8 @@ netcdf.defDim(NCid,          'y',           dimSizeY);
 netcdf.defDim(NCid,          'x',           dimSizeX);
 
 %% *** add variables ***
-OPT.WBmsg{2}  = 'Adding variables to NC File';
-waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
+% OPT.WBmsg{2}  = 'Adding variables to NC File';
+% waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
 % add variable: coordinate system reference (this variable contains all projection information, e.g. for use in ArcGIS)
 crsVariable = struct(...
     'Name', 'crs', ...
@@ -59,14 +59,14 @@ nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'y'},    
 nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'z'},    'cf_standard_name', {'altitude'},                'dimension', {'x','y','time'});
 
 %% Expand NC file
-OPT.WBmsg{2}  = 'Expanding NC File';
-waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
+% OPT.WBmsg{2}  = 'Expanding NC File';
+% waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
 
 netcdf.endDef(NCid)
 
 %% add data
-OPT.WBmsg{2}  = 'Adding data to NC File';
-waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
+% OPT.WBmsg{2}  = 'Adding data to NC File';
+% waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
 
 varid = netcdf.inqVarID(NCid,'y');
 netcdf.putVar(NCid,varid,Y(:,1));
@@ -80,8 +80,8 @@ varid = netcdf.inqVarID(NCid,'lon');
 netcdf.putVar(NCid,varid,lon);
 
 %% close NC file
-OPT.WBmsg{2}  = 'Closing NC File';
-waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
+% OPT.WBmsg{2}  = 'Closing NC File';
+% waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
 
 netcdf.close(NCid)
 end

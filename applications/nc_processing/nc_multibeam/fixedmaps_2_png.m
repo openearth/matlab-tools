@@ -2,12 +2,10 @@ function fixedmaps_2_png(inputDir, outputDir, serverURL, EPSGcode, lowestLevel, 
 %FIXEDMAPS_2_PNG   make kml files with vaklodingen as georeferenced pngs
 %
 %See also: jarkusgrids2png, vaklodingen2kml, vaklodingen_overview
-if nargin == 0
-    inputDir                = 'D:\checkouts\VO-rawdata\projects\151027_maasvlakte_2\nc_files\elevation_data\multibeam\';
-    outputDir               = 'D:\checkouts\VO-rawdata\projects\151027_maasvlakte_2\kml_files\elevation_data\multibeam\';
-    EPSGcode                = 28992;
-    lowestLevel = 16;
-end
+
+OPTfixedMaps.clim = [-20 10]+5;
+OPTfixedMaps.lightAdjust = 2^(lowestLevel-16);
+
 
 figure('Visible','Off')
 x = linspace(0,0.01,100);
@@ -22,7 +20,7 @@ material([0.7 0.2 0.15 100]);
 shading interp;
 lighting phong
 axis off;axis tight;view(0,90);lightangle(hl,180,65)
-colormap(colormap_cpt('bathymetry_vaklodingen',500));clim([-50 25]);
+colormap(colormap_cpt('bathymetry_vaklodingen',500));clim(OPTfixedMaps.clim*OPTfixedMaps.lightAdjust);
 
 try
     rmdir(outputDir, 's')
@@ -63,10 +61,18 @@ for ii = 1:length(url);
     
     % convert time to years
     date          = time+datenum(1970,1,1);
-    date(end+1,:) = date(end) + 1; %#ok<AGROW>
+    date(end+1,:) = date(end) + 1; 
     
     for jj = size(time,1):-1:1%size(time,1)+1 - min(size(time,1),3)   ;
         fileName = fullfile(outputDir,[datestr(date(jj),29) '.kml']);
+        
+        
+%         if ~exist(fullfile(outputDir,datestr(date(jj),29)),'dir')
+%             mkdir(fullfile(outputDir,datestr(date(jj),29)))
+%         end
+        
+
+        
         if ~exist(fileName,'file')
             % display progress
             disp([num2str(ii) '/' num2str(length(url)) ' ' fname ' ' datestr(date(jj),29)]);
@@ -97,11 +103,13 @@ for ii = 1:length(url);
                     end
                 end
                 
+    
                 z = z(2:end-1,2:end-1);
-                KMLfig2pngNew(h,lat,lon,z,'highestLevel',10,'lowestLevel',lowestLevel,...
+                KMLfig2pngNew(h,lat,lon,z*OPTfixedMaps.lightAdjust,'highestLevel',10,'lowestLevel',lowestLevel,...
                     'timeIn',date(jj),'timeOut',date(jj+1),...
-                    'fileName',fileName,'timeFormat','yyyy-mm-dd',...
-                    'drawOrder',round(date(jj)),'joinTiles',false,'makeKML',false,'mergeExistingTiles',true);
+                    'fileName',[datestr(date(jj),29) '.kml'],'timeFormat','yyyy-mm-dd',...
+                    'drawOrder',round(date(jj)),'joinTiles',false,...
+                    'makeKML',false,'mergeExistingTiles',true,'basePath',outputDir);
 
                 minlat = min(minlat,min(lat(:)));
                 minlon = min(minlon,min(lon(:)));
@@ -151,7 +159,7 @@ end
 tilefull = findAllFiles('basepath',outputDir,'pattern_incl','*.png');
 
 tiles = cell(size(tilefull));
-[path, fname] = fileparts(tilefull{1});
+[path, fname] = fileparts(tilefull{1}); %#ok<NASGU>
 id = strfind(tilefull{1},'_'); id = id(end)-length(path);
 
 for ii = 1:length(tilefull)
@@ -272,7 +280,7 @@ for level = OPT.highestLevel:OPT.lowestLevel
         output = [KML_header(OPT_header) output];
         
         % FOOTER
-        output = [output KML_footer];
+        output = [output KML_footer]; %#ok<*AGROW>
         fprintf(fid,'%s',output);
         
         % close KML
@@ -281,9 +289,9 @@ for level = OPT.highestLevel:OPT.lowestLevel
 end
 
 %% generate a locally readable kml file
-if ~isempty(OPT.url)
-    if ~strcmpi(OPT.url(end),'/');
-        OPT.url = [OPT.url '\'];
+if ~isempty(OPT.baseUrl)
+    if ~strcmpi(OPT.baseUrl(end),'/');
+        OPT.baseUrl = [OPT.baseUrl '\'];
     end
 end
 
@@ -298,18 +306,27 @@ output = sprintf([...
     OPT.kmlName,...
     fullfile(datatype , 'KML', [fileID '.kml']));
 
+
+
+
+
 OPT.fid=fopen(fullfile(outputDir, 'doc.kml'),'w');
 OPT_header = struct(...
-    'name',OPT.kmlName,...
-    'open',0,...
-    'description',OPT.description);
+    'name',         OPT.kmlName,...
+    'open',         0,...
+    'description',  OPT.description,...
+    'lon',          mean([maxlon minlon]),...
+    'lat',          mean([maxlat minlat]),...
+    'z',            1e3,...
+    'timeIn',       min(datenums),...
+    'timeOut',      max(datenums));
 
 output = [KML_header(OPT_header) output];
 
 %% COLORBAR
 
 if OPT.colorbar
-    clrbarstring = KMLcolorbar('CBcLim',clim,'CBfileName', fullfile(outputDir,'KML','colorbar') ,'CBcolorMap',colormap,'CBcolorbarlocation','W');
+    clrbarstring = KMLcolorbar('CBcLim',OPTfixedMaps.clim,'CBfileName', fullfile(outputDir,'KML','colorbar') ,'CBcolorMap',colormap,'CBcolorbarlocation','W');
     clrbarstring = strrep(clrbarstring,'<Icon><href>colorbar_',['<Icon><href>' [datatype filesep 'KML' filesep 'colorbar'] '_']);
     output = [output clrbarstring];
 end
