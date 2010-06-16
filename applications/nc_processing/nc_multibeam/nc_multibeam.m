@@ -97,6 +97,7 @@ OPT.kml_path      = fullfile(OPT.rootpath,'kml_files','elevation_data',OPT.datat
 OPT.netcdf_server = fullfile(OPT.ncserverpath,OPT.netcdf_path);
 OPT.kml_server    = fullfile(OPT.kmlserverpath,OPT.kml_path);
 OPT.raw_path      = fullfile(OPT.rootpath,'elevation_data',OPT.datatype,'raw');
+OPT.cache_path    = fullfile(OPT.rootpath,'cache');
 
 %% *** prepare ***
 EPSG        = load('EPSG');
