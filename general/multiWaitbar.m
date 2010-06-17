@@ -1,5 +1,5 @@
 function multiWaitbar( label, varargin )
-%multiWaitbar: add, remove or update an entry on the multi waitbar
+%MULTIWAITBAR add, remove or update an entry on the multi waitbar
 %
 %   multiWaitbar(LABEL,VALUE) adds a waitbar for the specified label, or
 %   if it already exists updates the value. LABEL must be a string and
@@ -9,8 +9,10 @@ function multiWaitbar( label, varargin )
 %
 %   multiWaitbar(LABEL,COMMAND,VALUE,...) passes one or more command/value
 %   pairs for changing the named waitbar entry. Possible commands include:
+%   'LABEL'     Define an alternative label. Thie first argument is still
+%               the identifier
 %   'VALUE'     Set the value of the named waitbar entry. The corresponding
-%   value must be a number between 0 and 1.
+%               value must be a number between 0 and 1.
 %   'INCREMENT' Increment the value of the named waitbar entry. The
 %               corresponding value must be a number between 0 and 1.
 %   'COLOR'     Change the color of the named waitbar entry. The
@@ -46,30 +48,30 @@ function multiWaitbar( label, varargin )
 
 % Copyright (c) 2010, The MathWorks, Inc.
 % All rights reserved.
-% 
-% Redistribution and use in source and binary forms, with or without 
-% modification, are permitted provided that the following conditions are 
+%
+% Redistribution and use in source and binary forms, with or without
+% modification, are permitted provided that the following conditions are
 % met:
-% 
-%     * Redistributions of source code must retain the above copyright 
+%
+%     * Redistributions of source code must retain the above copyright
 %       notice, this list of conditions and the following disclaimer.
-%     * Redistributions in binary form must reproduce the above copyright 
-%       notice, this list of conditions and the following disclaimer in 
+%     * Redistributions in binary form must reproduce the above copyright
+%       notice, this list of conditions and the following disclaimer in
 %       the documentation and/or other materials provided with the distribution
-%     * Neither the name of the The MathWorks, Inc. nor the names 
-%       of its contributors may be used to endorse or promote products derived 
+%     * Neither the name of the The MathWorks, Inc. nor the names
+%       of its contributors may be used to endorse or promote products derived
 %       from this software without specific prior written permission.
-%       
-% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+%
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
 persistent figh;
@@ -127,6 +129,10 @@ else
     needs_update = false;
     for ii=1:numel( params )
         switch upper( params{ii} )
+            case 'LABEL'
+                entries(idx).altLabel = values{ii};
+                needs_update = true;
+                
             case 'VALUE'
                 entries(idx).LastValue = entries(idx).Value;
                 entries(idx).Value = max( 0, min( 1, values{ii} ) );
@@ -369,8 +375,8 @@ if force || (filled<lastfilled)
     % We use slightly bizarre indexing notation to achieve REPMAT of the
     % column at roughly 10x the speed. Blame Jon Cherrie (who showed me
     % that it was even faster than BSXFUN at doing REPMAT)!
-%     empty = zeros( psize(2), filled, 3, 'uint8' );
-%     barim = bsxfun( @plus, empty, entry.CData );
+    %     empty = zeros( psize(2), filled, 3, 'uint8' );
+    %     barim = bsxfun( @plus, empty, entry.CData );
     barim = entry.CData(:,ones( 1, filled ),:);
     progresscdata = [barim,bgim];
     
@@ -400,7 +406,7 @@ elseif filled > lastfilled
     startidx = max(1,lastfilled-1);
     % Repmat is the obvious way to fill the bar, but BSXFUN is often faster
     %     progresscdata(:,startidx:filled,:) = repmat( entry.CData, [1,filled-startidx+1,1] );
-%     progresscdata(:,startidx:filled,:) = 0;
+    %     progresscdata(:,startidx:filled,:) = 0;
     empty = zeros( psize(2), filled-startidx+1, 3, 'uint8' );
     progresscdata(:,startidx:filled,:) = bsxfun( @plus, empty, entry.CData );
     
@@ -477,7 +483,11 @@ end
 if elapsedtime > minTime
     decval = round( val*100 );
     if force || (decval ~= round( lastval*100 ))
-        labelstr = [entry.Label, sprintf( ' (%d%%)', decval )];
+        if isfield(entry,'altLabel')
+            labelstr = [entry.altLabel, sprintf( ' (%d%%)', decval )];
+        else
+            labelstr = [entry.Label, sprintf( ' (%d%%)', decval )];
+        end
         set( entry.LabelText, 'String', labelstr );
         updated = true;
     end
