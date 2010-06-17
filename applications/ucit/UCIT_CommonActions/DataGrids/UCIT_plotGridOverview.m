@@ -45,7 +45,6 @@ OPT.refreshonly = 0;
 OPT = setproperty(OPT,varargin{:});
 
 %% get metadata (either from the console or the database)
-
 d    = UCIT_getMetaData(2);
 
 if ~isempty(findobj('tag','gridOverview'));
@@ -56,7 +55,6 @@ if ~isempty(findobj('tag','gridOverview'));
 end
 
 %% set up figure
-
 fh=figure('tag','mapWindow');clf;
 ah=axes;
 [fh,ah] = UCIT_prepareFigureN(2, fh, 'LL', ah);
@@ -75,7 +73,6 @@ disp('plotting landboundary...');
 UCIT_plotLandboundary(d.ldb);
 
 %% plot kaartbladen
-
 for i = 1:size(d.contour,1)
     ph(i)=patch([d.contour(i,1),d.contour(i,2),d.contour(i,2),d.contour(i,1),d.contour(i,1)],...
                 [d.contour(i,3),d.contour(i,3),d.contour(i,4),d.contour(i,4),d.contour(i,3)], 'k');

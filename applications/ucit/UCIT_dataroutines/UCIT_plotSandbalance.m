@@ -3,11 +3,11 @@ function UCIT_plotSandBalance(OPT, results, Volumes)
 %
 %       UCIT_plotSandBalance(OPT, results, Volumes)
 %
-%   
+%
 %
 %
 %   Output: plots in a selected result directory
-%       
+%
 %
 %   Example:
 %
@@ -43,29 +43,29 @@ function UCIT_plotSandBalance(OPT, results, Volumes)
 warningstate = warning;
 warning off
 
-datatype = UCIT_getInfoFromPopup('GridsDatatype');
-[d] = UCIT_getMetaData(2);
-
-%% Overview plot of used datapoints for method 2
-
-nameInfo=['UCIT - used data points for method 2'];
+%% Overview plot of polygon and used datapoints for method 2
+nameInfo = ['UCIT - used data points for method 2'];
 fh = figure('tag','dpPlot'); clf; ah=axes;
 set(fh,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
 [fh,ah] = UCIT_prepareFigureN(0, fh, 'UL', ah);
-UCIT_plotLandboundary(d.ldb,'none')
+UCIT_plotLandboundary(OPT.ldb,'none')
 hold on;
-load(['datafiles' filesep 'timewindow = ' num2str(OPT.timewindow) filesep results.polyname '_' num2str(OPT.inputyears(1),'%04i') '_1231.mat']);
 
+% get meta(data)
+load(['datafiles' filesep 'timewindow = ' num2str(OPT.timewindow) filesep results.polyname '_' num2str(OPT.inputyears(1),'%04i') '_1231.mat']);
 d.id = OPT.id*2;
 d.id((OPT.id==0)) = nan;
 
+% plot data
 pcolorcorcen(d.X,d.Y,d.id*2);view(2);shading interp;
 
+% plot used polygon
+ph = plot(OPT.polygon(:,1), OPT.polygon(:,2),'color','k','tag','polygon','linewidth',1);
+
 % text
-title(['Used data points for method 2 ' strrep(results.polyname,'_',' ') ' (' OPT.datatype ')']); 
+title(['Used data points for method 2 ' strrep(results.polyname,'_',' ') ' (' OPT.datatypeinfo ')']);
 
 % set axis
-
 box    on
 axis   equal
 set   (gca,'fontsize', 8 );
@@ -75,56 +75,18 @@ set   (gca,'Xlim',[d.X(1,1) d.X(1,end)]);
 set   (gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
 tickmap('xy');
 
-% plot used polygon
-ph = plot(OPT.polygon(:,1), OPT.polygon(:,2),'color','k','tag','polygon','linewidth',1);
-
 % save figure
-try
 print(fh,'-dpng',['results' filesep 'timewindow = ' num2str(OPT.timewindow) filesep 'ref=' num2str(OPT.min_coverage) filesep strrep(results.polyname,'_',' ') '_used_data_points_method_2']);
-catch
-end
 
-
-%% Polygon overview plot
-
-% nameInfo=['UCIT - Sandbalance polygon plot'];
-% % if isempty(findobj('tag','sbPlot'))
-%     fh = figure('tag','sbPlot'); clf; ah=axes;
-%     set(fh,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
-%     [fh,ah] = UCIT_prepareFigureN(0, fh, 'UL', ah);
-%     hold on;
-%     UCIT_plotLandboundary(d.ldb,'none')
-% else
-%     fh=findobj('tag','sbPlot');
-%     figure(fh);try delete(findobj('tag','polygon')),end;
-%     hold on
-% end
-
-% % plot used polygon
-% ph = plot(OPT.polygon(:,1), OPT.polygon(:,2),'color','g','tag','polygon','linewidth',1);
-% fill(OPT.polygon(:,1),OPT.polygon(:,2),'g','tag','polygon','facealpha',0.2,'linestyle','none');
-% 
-% % text
-% title(['Volume development for ' strrep(results.polyname,'_',' ') ' (' OPT.datatype ')']); 
-% 
-% % set axis
-% set(gca, 'Xlim',[min(OPT.polygon(:,1))- 10000 max(OPT.polygon(:,1)) + 10000]);
-% set(gca, 'Ylim',[min(OPT.polygon(:,2))- 10000 max(OPT.polygon(:,2)) + 10000]);
-% set(gca,'fontsize',8);box
 
 %% Volume development plot
-nameInfo=['UCIT - Volume development plot'];
 
-% if isempty(findobj('tag','VolPlot'))
-    fh = figure('tag','VolPlot'); clf; ah=axes;
-    set(fh,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
-    [fh,ah] = UCIT_prepareFigureN(0, fh, 'UR', ah);
-    hold on
-% else
-%     fh=findobj('tag','VolPlot');
-%     figure(fh);clf;
-%     hold on
-% end
+% set up figure
+nameInfo=['UCIT - Volume development plot'];
+fh = figure('tag','VolPlot'); clf; ah=axes;
+set(fh,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
+[fh,ah] = UCIT_prepareFigureN(0, fh, 'UR', ah);
+hold on
 
 % plot results method 1 (as line)
 ph = plot(datenum(Volumes{1}(:,1),1,1), Volumes{1}(:,2) - Volumes{1}(1,2),'color','b','linewidth',2,'marker','o','MarkerFaceColor','b');
@@ -132,22 +94,17 @@ ph = plot(datenum(Volumes{1}(:,1),1,1), Volumes{1}(:,2) - Volumes{1}(1,2),'color
 % plot results method 2 (as  stippelline)
 ph = plot(datenum(Volumes{2}(:,1),1,1), Volumes{2}(:,2) - Volumes{2}(1,2),'color','b','linewidth',2,'marker','o','MarkerFaceColor','w','linestyle','--');
 
-datetick;grid;
-
 % set text
-
-title(['Volume development for ' strrep(results.polyname,'_',' ') ' (' OPT.datatype ')'],'fontsize',8); 
+title(['Volume development for ' strrep(results.polyname,'_',' ') ' (' OPT.datatypeinfo ')'],'fontsize',8);
 legend(['Method 1: based on data points covered by target year and reference year (' num2str(OPT.reference_year) ')'],['Method 2: based on data points covered in all years'],'location','SouthOutside');
 
 % set axis
-
 xlabel('Time [years]','fontsize',8);ylabel('Volume [m^3]','fontsize',8);
-set(gca,'fontsize',8);
+set(gca,'fontsize',8);datetick;grid;
 
 % save figure
-
 print(fh,'-dpng',['results' filesep 'timewindow = ' num2str(OPT.timewindow) filesep 'ref=' num2str(OPT.min_coverage) filesep strrep(results.polyname,'_',' ')]);
- 
+
 warning(warningstate)
 
-%% EOF   
+%% EOF

@@ -43,14 +43,14 @@ function batchvar = UCIT_findCoverage(OPT)
 warningstate = warning;
 warning off
 
-datatype = UCIT_getInfoFromPopup('GridsDatatype');
+if ~isfield(OPT, 'datatype')
+    OPT.datatype = UCIT_getInfoFromPopup('GridsDatatype');
+end
 
-%% load the polygons from the polygon directory
-
+%% if polygon exists within OPT save it as ldb
 if isfield(OPT,'polygon');
     mkdir(['polygons']);
     polygon = OPT.polygon;
-    %     save('polygons\Polygon.mat','polygon');
     fid = fopen(['polygons\Polygon.ldb'],'w');
     fprintf(fid,'%s\n',['polygon']);
     fprintf(fid,'%3.0f %3.0f \n',[size(polygon,1) size(polygon,2)]);
@@ -58,26 +58,20 @@ if isfield(OPT,'polygon');
     fclose(fid);
 end
 
+%% load all polygons from the polygon directory (mat and ldb)
 fns = dir(['polygons' filesep '*.*']);
 fns(find(strcmp({fns.name},'.')|strcmp({fns.name},'..')))= [];
 
-
-%% Set input for sandbalance
-%  executeyes/no, thinning, polyname, plotcolor, linewidth, years
-
+%% compute coverage based on batch structure (batchvar)
 if ~isempty(fns)
     for r = 1:length(fns)
         batchvar1(r,:) = {1,OPT.thinning, fns(r,1).name(1:end-4)     , 'b', 1, [] };
     end
     
-    %% Get coverage
-    
-    d    = UCIT_getMetaData(2);
-    
-    
     for i = 1:size(batchvar1,1)
         if batchvar1{i,1}==1
             
+            % load polygon i
             if strcmp(fns(i,1).name(end-2:end),'ldb')
                 polygon = landboundary('read',['polygons',filesep fns(i,1).name]);
             elseif strcmp(fns(i,1).name(end-2:end),'mat')
@@ -94,16 +88,17 @@ if ~isempty(fns)
                         load(['datafiles' filesep 'timewindow = ' num2str(OPT.timewindow) filesep fns(i,1).name '_' num2str(OPT.inputyears(j)) '_1231.mat']);
                     else
                         
+                        % get data of selected year
                         [X, Y, Z, Ztime] = grid_orth_getDataInPolygon(...
-                            'dataset'       , d.catalog, ...
-                            'urls'          , d.urls, ...
-                            'x_ranges'      , d.x_ranges, ...
-                            'y_ranges'      , d.y_ranges, ...
-                            'tag'           , datatype, ...
+                            'dataset'       , OPT.catalog, ...
+                            'urls'          , OPT.urls, ...
+                            'x_ranges'      , OPT.x_ranges, ...
+                            'y_ranges'      , OPT.y_ranges, ...
+                            'tag'           , OPT.datatype, ...
                             'starttime'     , datenum(OPT.inputyears(j),12,31), ...
                             'searchinterval', -365/12*OPT.timewindow, ...
                             'datathinning'  , OPT.thinning,...
-                            'cellsize'      , d.cellsize,...
+                            'cellsize'      , OPT.cellsize,...
                             'plotresult'    ,0, ...
                             'polygon'       ,polygon);
                         in = inpolygon(X, Y, polygon(:,1), polygon(:,2));
@@ -118,7 +113,6 @@ if ~isempty(fns)
                         
                         save(['datafiles' filesep 'timewindow = ' num2str(OPT.timewindow) filesep d.name '_' num2str(d.year) '_1231.mat'],'d');
                     end
-                    
                     
                     %% compute coverage
                     total = sum(sum(d.inpolygon));

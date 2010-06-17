@@ -43,71 +43,62 @@ warning off
 datatype = UCIT_getInfoFromPopup('GridsDatatype');
 
 %% Select in either grid plot or grid overview plot
+mapW = findobj('tag','gridPlot');
+if isempty(mapW)
+    if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
+        fh = UCIT_plotGridOverview(datatype,'refreshonly',1);
+    else
+        fh = figure(findobj('tag','gridOverview'));figure(fh);
+    end
+else
+    fh = figure(findobj('tag','gridPlot')); figure(fh);
+end
 
-   mapW = findobj('tag','gridPlot');
-   if isempty(mapW)
-      if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
-         fh = UCIT_plotGridOverview(datatype,'refreshonly',1);
-      else
-         fh = figure(findobj('tag','gridOverview'));figure(fh);
-      end
-   else
-      fh = figure(findobj('tag','gridPlot')); figure(fh);
-   end
-
-   curdir=pwd;
+curdir=pwd;
 
 %% make folder for results
-
-   dname = uigetdir(curdir,'Select folder to store data');cd(dname);
-   mkdir(['polygons']);
+dname = uigetdir(curdir,'Select folder to store data');cd(dname);
+mkdir(['polygons']);
 
 %% Specify polygon
-
-   figure(fh);
-   
-   if nargin == 0
-       figure(fh);
-       [xv,yv] = polydraw;
-       polygon=[xv' yv'];
-   else
-       load(polygonname)
-   end
+figure(fh);
+if nargin == 0
+    figure(fh);
+    [xv,yv] = polydraw;
+    polygon=[xv' yv'];
+else
+    load(polygonname)
+end
 
 %% get other input
+prompt    = {'Polygon name','Minimal coverage [%]','First year','Last year'};
+dlg_title = 'Input for sand balance';
+num_lines = 1;
+def       = {'Polygon','10','2000','2004'};
+answer    = inputdlg(prompt,dlg_title,num_lines,def);
 
-   prompt    = {'Polygon name','Minimal coverage [%]','First year','Last year','Search window [months]'};
-   dlg_title = 'Input for sand balance';
-   num_lines = 1;
-   def       = {'Polygon','10','2000','2004',UCIT_getInfoFromPopup('GridsInterval')};
-   answer    = inputdlg(prompt,dlg_title,num_lines,def);
-   
-   %% save polygon
-%    save(['polygons\' answer{1},'.mat'],'polygon');
-   fid = fopen(['polygons\' answer{1},'.ldb'],'w');
-   fprintf(fid,'%s\n',['polygon']);
-   fprintf(fid,'%3.0f %3.0f \n',[size(polygon,1) size(polygon,2)]);
-   fprintf(fid,'%8.2f %8.2f \n',[polygon]');
-   fclose(fid);
+%% save polygon
+fid = fopen(['polygons\' answer{1},'.ldb'],'w');
+fprintf(fid,'%s\n',['polygon']);
+fprintf(fid,'%3.0f %3.0f \n',[size(polygon,1) size(polygon,2)]);
+fprintf(fid,'%8.2f %8.2f \n',[polygon]');
+fclose(fid);
 
 %% arrange input in OPT structure
-
-   OPT.datatype        = datatype;
-   OPT.thinning        =  str2double(UCIT_getInfoFromPopup('GridsSoundingID'));
-   OPT.timewindow      =  str2double(answer{5});
-   OPT.inputyears      = [str2double(answer{3}) : str2double(answer{4})];
-   OPT.min_coverage    =  str2double(answer{2});
+OPT.datatype        = datatype;
+OPT.thinning        =  str2double(UCIT_getInfoFromPopup('GridsSoundingID'));
+OPT.timewindow      =  str2double(UCIT_getInfoFromPopup('GridsInterval'));
+OPT.inputyears      = [str2double(answer{3}) : str2double(answer{4})];
+OPT.min_coverage    =  str2double(answer{2});
 
 %% delete previous data
-
-   delete(['results\timewindow = '   answer{5} '\ref='  answer{2} '\*.*'])
-   delete(['coverage\timewindow = '  answer{5} '\*.*'])
-   delete(['datafiles\timewindow = ' answer{5} '\*.*'])
+delete(['results\timewindow = ' num2str(OPT.timewindow)  '\ref='  answer{2} '\*.*'])
+delete(['coverage\timewindow = '  num2str(OPT.timewindow) '\*.*'])
+delete(['datafiles\timewindow = ' num2str(OPT.timewindow) '\*.*'])
 
 %% get sandbalance
+UCIT_getSandBalance(OPT)
 
-   UCIT_getSandBalance(OPT)
-   
 warning(warningstate)
 
-%% EOF   
+%% EOF

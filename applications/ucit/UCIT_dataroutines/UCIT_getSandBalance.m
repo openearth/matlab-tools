@@ -49,7 +49,6 @@ function UCIT_getSandBalance(OPT)
 warningstate = warning;
 warning off
 
-datatype = UCIT_getInfoFromPopup('GridsDatatype');
 
 %% define postprocessing
 
@@ -72,6 +71,8 @@ if nargin == 0
     OPT.min_coverage = 70;
 end
 
+%% add metadata to OPT
+OPT = UCIT_getMetaData(OPT);
 
 for n = 1:size(OPT.min_coverage,2)
 
