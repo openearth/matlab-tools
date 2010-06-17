@@ -55,12 +55,12 @@
 %% clear the command prompt
 clc
 
-%% close all open files
-fclose all;
-
 %% close netcdf files
 % because close all dloes not exist, try to close a range of files
-for ncid = -10:100; try netcdf.close(NCid); end; end %#ok<TRYNC>
+for ncid = -10:100; try netcdf.close(ncid); end; end
+
+%% close all open files
+fclose all;
 
 %% close all figures
 % including hidden figures like waitbars

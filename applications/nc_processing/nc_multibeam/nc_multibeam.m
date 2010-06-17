@@ -103,10 +103,10 @@ OPT.cache_path    = fullfile(OPT.rootpath,'cache');
 EPSG        = load('EPSG');
 
 %% make nc file
-OPT.raw_to_nc_function(OPT)
+OPT.raw_to_nc_function(OPT);
 
 %% copy nc files to server
-nc_copy_nc_files_to_server(OPT)
+nc_copy_nc_files_to_server(OPT);
 
 %% make kml files
 if OPT.kml_make
@@ -115,7 +115,7 @@ if OPT.kml_make
             % inputDir, outputDir, serverURL, EPSGcode, lowestLevel, datatype
             try
                 fixedmaps_2_png(OPT.netcdf_path,OPT.kml_path,...
-                    [fullfile(OPT.webserverpath,'elevation_data') filesep], OPT.EPSGcode, OPT.kml_detaillevel, OPT.datatype)      
+                    [fullfile(OPT.webserverpath,'elevation_data') filesep], OPT.EPSGcode, OPT.kml_detaillevel, OPT.datatype);      
             catch
                 warning(lasterr)
             end
@@ -127,4 +127,4 @@ else
 end
 
 %% copy kml files to server
-nc_copy_kml_files_to_server(OPT)
+nc_copy_kml_files_to_server(OPT);

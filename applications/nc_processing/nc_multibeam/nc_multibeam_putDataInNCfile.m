@@ -27,7 +27,7 @@ if jj ~= length(time0) % then existing nc file already has data
 %     OPT.WBmsg{2}  = 'Reading Z data from NC File';
 %     waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
     
-    Z0 = netcdf.getVar(NCid,varid,[0 0 1],[dimSizeY dimSizeX 1]);
+    Z0 = netcdf.getVar(NCid,varid,[0 0 jj],[dimSizeX dimSizeY 1]);
     Z0(Z0>1e35) = nan;
     
     %% Merge Z data
@@ -36,9 +36,12 @@ if jj ~= length(time0) % then existing nc file already has data
     
     % check if data will be overwritten
     if ~all(isnan(Z0(~isnan(Z))))
-        warning('data will be overwritten') %#ok<*WNTAG>
+        if max(Z0(~isnan(Z0)&~isnan(Z)) - Z(~isnan(Z0)&~isnan(Z)))>0
+            warning('data will be overwritten') %#ok<*WNTAG>
+        else
+            disp('in an nc, data will be overwritten by identical values from a different source')
+        end
     end
-    
     Z0(~isnan(Z)) = Z(~isnan(Z));
     Z = Z0;
 end
