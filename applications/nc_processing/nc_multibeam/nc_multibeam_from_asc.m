@@ -33,21 +33,23 @@ if OPT.nc_make
     
     WB.done       = 0;
     WB.bytesToDo  = 0;
-    multiWaitbar( 'Total progress',    WB.done, 'Color', [0.2 0.6 0.2] )
-%     a = get(WB.children,'Children')
-%     get(get(a(4),'Annotation'))
-    
+     %% initialize waitbar
+     multiWaitbar('close all')
+     multiWaitbar( 'Raw data to NetCDF',0, 'Color', [0.2 0.6 0.2] )
+     if OPT.zip
+        multiWaitbar('unzipping'       ,0,'Color',    [0.2 0.7 0.9])
+     end
+     multiWaitbar('reading'            ,0,'Color', [0.1 0.5 0.8],'label','Reading')
+     multiWaitbar('writing'            ,0,'Color', [0.1 0.3 0.6],'label','Writing')
     for ii = 1:length(fns)
         WB.bytesToDo = WB.bytesToDo + fns(ii).bytes;
     end
     WB.bytesToDo =  WB.bytesToDo*2;
-     
     WB.bytesDoneClosedFiles = 0;
-    
-    OPT.zipratio = 1;
+    WB.zipratio = 1;
     for jj = 1:length(fns)
         if OPT.zip
-            multiWaitbar('unzipping', jj/length(fns),'label',sprintf('Unzipping %s',fns(jj).name), 'Color', [0.7 0.7 0.7] );
+            multiWaitbar('unzipping', 'increment',0.5/length(fns),'label',sprintf('Unzipping %s',fns(jj).name));
             %delete files in cache
             delete(fullfile(OPT.cache_path, '*'))
             unzip(fullfile(OPT.raw_path,fns(jj).name),OPT.cache_path)
@@ -57,23 +59,25 @@ if OPT.nc_make
             for kk = 1:length(fns_unzipped)
                 unpacked_size = unpacked_size + fns_unzipped(kk).bytes;
             end
-            
-            WB.bytesToDo = WB.bytesToDo/OPT.zipratio;
-            OPT.zipratio = (OPT.zipratio*(jj-1)+unpacked_size/fns(jj).bytes)/jj;
-            WB.bytesToDo = WB.bytesToDo*OPT.zipratio;
-            multiWaitbar('unzipping',0,'label','Processing zipfile contents')
+            WB.bytesToDo = WB.bytesToDo/WB.zipratio;
+            WB.zipratio = (WB.zipratio*(jj-1)+unpacked_size/fns(jj).bytes)/jj;
+            WB.bytesToDo = WB.bytesToDo*WB.zipratio;
+            multiWaitbar('unzipping', jj/length(fns),'label',sprintf('Processing %s contents',fns(jj).name));
         else
             fns_unzipped = fns(jj);
         end
         
-        
         for ii = 1:length(fns_unzipped)
+            %% set waitbars to 0 and update label
+            multiWaitbar('writing',0,'label','Writing: *.nc')
+            multiWaitbar('reading',0,'label',sprintf('Reading: %s...', (fns_unzipped(ii).name)))
             %% read data
-            multiWaitbar('reading',0,'label',sprintf('Reading %s:', (fns_unzipped(ii).name)),'Color', [1.0 0.4 0.0])
             
+            % process time
             timestr = fns_unzipped(ii).name(1:8);
             timestr = strrep(timestr,'mei','may');
-            time     =                     datenum(timestr,'yyyy mmm') - datenum(1970,1,1);
+            time    = datenum(timestr,'yyyy mmm') - datenum(1970,1,1);
+            
             if OPT.zip
                 fid      = fopen(fullfile(OPT.cache_path,fns_unzipped(ii).name));
             else
@@ -93,8 +97,8 @@ if OPT.nc_make
             
             while ~feof(fid)
 
-                multiWaitbar( 'Total progress',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
-                multiWaitbar('reading',ftell(fid)/fns_unzipped(ii).bytes,'label',sprintf('Reading: %s', (fns_unzipped(ii).name))) ;
+                multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
+                multiWaitbar('reading',ftell(fid)/fns_unzipped(ii).bytes,'label',sprintf('Reading: %s...', (fns_unzipped(ii).name))) ;
                 kk = kk+1;
                 D{kk}     = textscan(fid,repmat('%f32',1,ncols),floor(OPT.block_size/ncols),'CollectOutput',true);
                 if all(D{kk}{1}(:)==nodata_value)
@@ -103,7 +107,7 @@ if OPT.nc_make
                     D{kk}{1}(D{kk}{1}==nodata_value) = nan;
                 end
             end
-            multiWaitbar( 'Total progress',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
+            multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
             multiWaitbar('reading',ftell(fid)/fns_unzipped(ii).bytes,'label',sprintf('Reading: %s', (fns_unzipped(ii).name))) ;
             fclose(fid);
             
@@ -111,7 +115,7 @@ if OPT.nc_make
             %------------------------------------------------------------------------------------------------------------------------------------------
             
             %% write data to nc files
-            multiWaitbar(sprintf('Writing %s:', (fns_unzipped(ii).name)),0,'Color', [0.1 0.5 0.8])
+            multiWaitbar('writing',0,'label',sprintf('Writing: %s...', (fns_unzipped(ii).name)))
             % set the extent of the fixed maps (decide according to desired nc filesize)
             xsize       = OPT.mapsizex; % size of fixed map in x-direction
             xstepsize   = OPT.gridsize; % x grid resolution
@@ -164,19 +168,16 @@ if OPT.nc_make
                         length(minx : xsize : maxx)+ find(y0==miny : ysize : maxy,1,'first')/...
                         length(miny : ysize : maxy)/...
                         length(minx : xsize : maxx);
-                    multiWaitbar(sprintf('Writing %s:', (fns_unzipped(ii).name)),WB.writtenDone)
-                    multiWaitbar( 'Total progress',(WB.bytesDoneClosedFiles*2+(1+WB.writtenDone)*fns_unzipped(ii).bytes)/WB.bytesToDo)
+                    multiWaitbar('writing',WB.writtenDone,'label',sprintf('%8.2f_%8.2f_%s_data.nc',x0,y0,OPT.datatype))
+                    multiWaitbar( 'Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+(1+WB.writtenDone)*fns_unzipped(ii).bytes)/WB.bytesToDo)
                 end
             end
-            multiWaitbar(sprintf('Writing %s:', (fns_unzipped(ii).name)),'close')
             WB.bytesDoneClosedFiles = WB.bytesDoneClosedFiles+fns_unzipped(ii).bytes;
         end
     end
-    
-     multiWaitbar( 'CloseAll' );
     if OPT.zip
        try %#ok<TRYNC>
-           rmdir(OPT.cache_path)
+           rmdir(OPT.cache_path,'s')
        end
     end
     disp('generation of nc files completed')

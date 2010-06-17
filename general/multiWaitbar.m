@@ -74,7 +74,29 @@ function multiWaitbar( label, varargin )
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
+
+
 persistent figh;
+
+%% check os and matlab version
+if isempty(figh)
+    if (ispc||ismac) && datenum(version('-date'))<datenum('1-1-2009')
+        fprintf('WARNING: the function you are using called multiWaitbar, \n         but that function is only available in newer Matlab versions \n')
+        figh = false; %could be anything but a handle
+        % Check for close all and stop early
+        if any( strcmpi( label, {'CLOSEALL','CLOSE ALL'} ) )
+            clear figh;
+        end
+        return
+    end
+else
+    if ~ishandle(figh)
+        if any( strcmpi( label, {'CLOSEALL','CLOSE ALL'} ) )
+            clear figh;
+        end
+        return
+    end
+end
 
 % Check basic inputs
 error( nargchk( 1, inf, nargin ) );
@@ -130,9 +152,11 @@ else
     for ii=1:numel( params )
         switch upper( params{ii} )
             case 'LABEL'
+                if ~strcmp(entries(idx).altLabel,values{ii})
+                    force_update = true;
+                end
                 entries(idx).altLabel = values{ii};
                 needs_update = true;
-                
             case 'VALUE'
                 entries(idx).LastValue = entries(idx).Value;
                 entries(idx).Value = max( 0, min( 1, values{ii} ) );
@@ -312,6 +336,7 @@ mypanel = uipanel( 'Parent', parent, 'Units', 'Pixels' );
 
 newentry = struct( ...
     'Label', label, ...
+    'altLabel', label, ...
     'Value', value, ...
     'LastValue', inf, ...
     'Created', tic(), ...
@@ -483,7 +508,7 @@ end
 if elapsedtime > minTime
     decval = round( val*100 );
     if force || (decval ~= round( lastval*100 ))
-        if isfield(entry,'altLabel')
+        if ~isempty(entry.altLabel)
             labelstr = [entry.altLabel, sprintf( ' (%d%%)', decval )];
         else
             labelstr = [entry.Label, sprintf( ' (%d%%)', decval )];
@@ -491,6 +516,14 @@ if elapsedtime > minTime
         set( entry.LabelText, 'String', labelstr );
         updated = true;
     end
+else
+    if ~isempty(entry.altLabel)
+        labelstr = entry.altLabel;
+    else
+        labelstr = entry.Label;
+    end
+    set( entry.LabelText, 'String', labelstr );
+    updated = true;
 end
 
 end % iUpdateEntry
