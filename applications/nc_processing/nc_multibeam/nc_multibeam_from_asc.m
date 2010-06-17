@@ -47,7 +47,7 @@ if OPT.nc_make
     OPT.zipratio = 1;
     for jj = 1:length(fns)
         if OPT.zip
-            multiWaitbar(sprintf('Unzipping %s',fns(jj).name), jj/length(fns), 'Color', [0.7 0.7 0.7] );
+            multiWaitbar('unzipping', jj/length(fns),'label',sprintf('Unzipping %s',fns(jj).name), 'Color', [0.7 0.7 0.7] );
             %delete files in cache
             delete(fullfile(OPT.cache_path, '*'))
             unzip(fullfile(OPT.raw_path,fns(jj).name),OPT.cache_path)
@@ -61,7 +61,7 @@ if OPT.nc_make
             WB.bytesToDo = WB.bytesToDo/OPT.zipratio;
             OPT.zipratio = (OPT.zipratio*(jj-1)+unpacked_size/fns(jj).bytes)/jj;
             WB.bytesToDo = WB.bytesToDo*OPT.zipratio;
-            multiWaitbar(sprintf('Unzipping %s',fns(jj).name),'close')
+            multiWaitbar('unzipping',0,'label','Processing zipfile contents')
         else
             fns_unzipped = fns(jj);
         end
@@ -69,7 +69,7 @@ if OPT.nc_make
         
         for ii = 1:length(fns_unzipped)
             %% read data
-            multiWaitbar(sprintf('Reading %s:', (fns_unzipped(ii).name)),0,'Color', [1.0 0.4 0.0])
+            multiWaitbar('reading',0,'label',sprintf('Reading %s:', (fns_unzipped(ii).name)),'Color', [1.0 0.4 0.0])
             
             timestr = fns_unzipped(ii).name(1:8);
             timestr = strrep(timestr,'mei','may');
@@ -94,7 +94,7 @@ if OPT.nc_make
             while ~feof(fid)
 
                 multiWaitbar( 'Total progress',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
-                multiWaitbar(sprintf('Reading %s:', (fns_unzipped(ii).name)),ftell(fid)/fns_unzipped(ii).bytes) ;
+                multiWaitbar('reading',ftell(fid)/fns_unzipped(ii).bytes,'label',sprintf('Reading: %s', (fns_unzipped(ii).name))) ;
                 kk = kk+1;
                 D{kk}     = textscan(fid,repmat('%f32',1,ncols),floor(OPT.block_size/ncols),'CollectOutput',true);
                 if all(D{kk}{1}(:)==nodata_value)
@@ -104,9 +104,9 @@ if OPT.nc_make
                 end
             end
             multiWaitbar( 'Total progress',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
-            multiWaitbar(sprintf('Reading %s:', (fns_unzipped(ii).name)),ftell(fid)/fns_unzipped(ii).bytes)
+            multiWaitbar('reading',ftell(fid)/fns_unzipped(ii).bytes,'label',sprintf('Reading: %s', (fns_unzipped(ii).name))) ;
             fclose(fid);
-            multiWaitbar(sprintf('Reading %s:', (fns_unzipped(ii).name)),'close')
+            
             
             %------------------------------------------------------------------------------------------------------------------------------------------
             
