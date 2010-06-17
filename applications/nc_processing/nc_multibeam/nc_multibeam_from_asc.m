@@ -34,7 +34,7 @@ if OPT.nc_make
     WB.done       = 0;
     WB.bytesToDo  = 0;
      %% initialize waitbar
-     multiWaitbar('close all')
+
      multiWaitbar( 'Raw data to NetCDF',0, 'Color', [0.2 0.6 0.2] )
      if OPT.zip
         multiWaitbar('unzipping'       ,0,'Color',    [0.2 0.7 0.9])
@@ -51,15 +51,23 @@ if OPT.nc_make
         if OPT.zip
             multiWaitbar('unzipping', 'increment',0.5/length(fns),'label',sprintf('Unzipping %s',fns(jj).name));
             %delete files in cache
-            delete(fullfile(OPT.cache_path, '*'))
-            unzip(fullfile(OPT.raw_path,fns(jj).name),OPT.cache_path)
+            delete(fullfile(OPT.cache_path, '*'));
+            
+            % uncompress files with a gui for progres indication
+            uncompress(fullfile(OPT.raw_path,fns(jj).name),'outpath',OPT.cache_path,'gui',true,'quiet',true);
+            
+            % read the output of unpacked files
             fns_unzipped = dir(fullfile(OPT.cache_path,'*.asc'));
             
+            % get the size of the unpacked files that will be processed
             unpacked_size = 0;
             for kk = 1:length(fns_unzipped)
                 unpacked_size = unpacked_size + fns_unzipped(kk).bytes;
             end
             WB.bytesToDo = WB.bytesToDo/WB.zipratio;
+            
+            % calculate a zip rati0 te estimate the compression level (used
+            % to estimate the total work for the progress bar)
             WB.zipratio = (WB.zipratio*(jj-1)+unpacked_size/fns(jj).bytes)/jj;
             WB.bytesToDo = WB.bytesToDo*WB.zipratio;
             multiWaitbar('unzipping', jj/length(fns),'label',sprintf('Processing %s contents',fns(jj).name));

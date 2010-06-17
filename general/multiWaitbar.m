@@ -79,24 +79,27 @@ function multiWaitbar( label, varargin )
 persistent figh;
 
 %% check os and matlab version
-if isempty(figh)
-    if (ispc||ismac) && datenum(version('-date'))<datenum('1-1-2009')
-        fprintf('WARNING: the function you are using called multiWaitbar, \n         but that function is only available in newer Matlab versions \n')
-        figh = false; %could be anything but a handle
-        % Check for close all and stop early
-        if any( strcmpi( label, {'CLOSEALL','CLOSE ALL'} ) )
-            clear figh;
-        end
-        return
-    end
+if ~islogical(figh)
+    %then continue
 else
-    if ~ishandle(figh)
+    if isempty(figh)
+        if (ispc||ismac) && datenum(version('-date'))<datenum('1-1-2009')
+            fprintf('WARNING: the function you are using called multiWaitbar, \n         but that function is only available in newer Matlab versions \n')
+            figh = false; %could be anything but a handle
+            % Check for close all and stop early
+            if any( strcmpi( label, {'CLOSEALL','CLOSE ALL'} ) )
+                clear figh;
+            end
+            return
+        end
+    else
         if any( strcmpi( label, {'CLOSEALL','CLOSE ALL'} ) )
             clear figh;
         end
         return
     end
 end
+
 
 % Check basic inputs
 error( nargchk( 1, inf, nargin ) );
