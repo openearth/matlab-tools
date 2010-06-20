@@ -77,7 +77,7 @@ OPT.quiet       = false;    % do not surpress output
 OPT.gui         = false;    % do not show 7zip gui
 OPT.args        = '-y';
 % overrule default settings by property pairs, given in varargin
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %%
 % define outpath

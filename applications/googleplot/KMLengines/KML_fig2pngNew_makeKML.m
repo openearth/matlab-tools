@@ -31,7 +31,6 @@ for level = OPT.highestLevel:OPT.lowestLevel
         maxLod = OPT.maxLod;
     end
     
-    
     for nn = 1:size(tiles,1)
         output = '';
         if level ~= OPT.lowestLevel
@@ -62,7 +61,7 @@ for level = OPT.highestLevel:OPT.lowestLevel
             end
         end
         
-        %% add png to kml+
+        %% add png to kml
         B = KML_fig2pngNew_code2boundary(tiles(nn,:));
         output = [output sprintf([...
             '<Region>\n'...

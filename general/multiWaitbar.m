@@ -470,30 +470,53 @@ else
     elapsedtime = toc( entry.Created ); % in seconds
     
     % Only show the remaining time if we've had time to estimate
-    if elapsedtime < minTime
+    if elapsedtime < minTime && val~=1
         % Not enough time has passed since starting, so leave blank
         eta = '';
     else
         % Calculate a rough ETA
         remainingtime = elapsedtime * (1-val) / val;
-        
-        if remainingtime > 172800 % 2 days
-            eta = sprintf( '%d days', round(remainingtime/86400) );
-        else
-            if remainingtime > 7200 % 2 hours
-                eta = sprintf( '%d hours', round(remainingtime/3600) );
+        if val ==1
+            if elapsedtime > 172800 % 2 days
+                eta = sprintf( 'Completed in %d days', round(elapsedtime/86400) );
             else
-                if remainingtime > 120 % 2 mins
-                    eta = sprintf( '%d mins', round(remainingtime/60) );
+                if elapsedtime > 7200 % 2 hours
+                    eta = sprintf( 'Completed in %d hours', round(elapsedtime/3600) );
                 else
-                    % Seconds
-                    remainingtime = round( remainingtime );
-                    if remainingtime > 1
-                        eta = sprintf( '%d secs', remainingtime );
-                    elseif remainingtime == 1
-                        eta = '1 sec';
+                    if elapsedtime > 120 % 2 mins
+                        eta = sprintf( 'Completed in %d mins', round(elapsedtime/60) );
                     else
-                        eta = ''; % Nearly done (<1sec)
+                        % Seconds
+                        elapsedtime = round( elapsedtime );
+                        if elapsedtime > 1
+                            eta = sprintf( 'Completed in %d secs', elapsedtime );
+                        elseif elapsedtime == 1
+                            eta = 'Completed in 1 sec';
+                        else
+                            eta = 'Completed in within 1 sec'; % Nearly done (<1sec)
+                        end
+                    end
+                end
+            end
+        else
+            if remainingtime > 172800 % 2 days
+                eta = sprintf( '%d days', round(remainingtime/86400) );
+            else
+                if remainingtime > 7200 % 2 hours
+                    eta = sprintf( '%d hours', round(remainingtime/3600) );
+                else
+                    if remainingtime > 120 % 2 mins
+                        eta = sprintf( '%d mins', round(remainingtime/60) );
+                    else
+                        % Seconds
+                        remainingtime = round( remainingtime );
+                        if remainingtime > 1
+                            eta = sprintf( '%d secs', remainingtime );
+                        elseif remainingtime == 1
+                            eta = '1 sec';
+                        else
+                            eta = ''; % Nearly done (<1sec)
+                        end
                     end
                 end
             end

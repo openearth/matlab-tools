@@ -1,7 +1,7 @@
 function nc_copy_kml_files_to_server(OPT)
 if OPT.kml_copy2server 
     disp('copying kml files to server...')
-    OPT.wb = waitbar(0, 'removing KML files on the server...');
+    multiWaitbar('kml_copy',0,'label','removing KML files on the server...');
     
     % delete current kml files on the server
     if ~exist(OPT.kml_server,'dir')
@@ -24,7 +24,7 @@ if OPT.kml_copy2server
     %% copy the files
     fns = findAllFiles('pattern_excl',{'.localmachine.'}, 'pattern_incl', [OPT.datatype '*'], 'basepath', OPT.kml_path, 'recursive', false) ; 
     for ii = 1:length(fns)
-        waitbar(ii/length(fns),OPT.wb,'copying kml files to the server');
+        multiWaitbar('kml_copy',ii/length(fns),'label','copying kml files to the server');
         try
             copyfile(fullfile(OPT.kml_path,fns{ii}),fullfile(fileparts(fileparts(fileparts((OPT.kml_server)))),fns{ii}))
         catch

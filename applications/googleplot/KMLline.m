@@ -355,7 +355,7 @@ if ischar(OPT.fileName)
 %% openInGoogle?
 
    if OPT.openInGE
-       system(OPT.fileName);
+       system([OPT.fileName ' &']);
    end
 
 end

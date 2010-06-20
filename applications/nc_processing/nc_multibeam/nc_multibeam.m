@@ -97,7 +97,7 @@ OPT.kml_path      = fullfile(OPT.rootpath,'kml_files','elevation_data',OPT.datat
 OPT.netcdf_server = fullfile(OPT.ncserverpath,OPT.netcdf_path);
 OPT.kml_server    = fullfile(OPT.kmlserverpath,OPT.kml_path);
 OPT.raw_path      = fullfile(OPT.rootpath,'elevation_data',OPT.datatype,'raw');
-OPT.cache_path    = 'd:\matlab_temp';
+OPT.cache_path    = 'c:\temp';
 
 %% *** prepare ***
 EPSG        = load('EPSG');
@@ -110,18 +110,8 @@ nc_copy_nc_files_to_server(OPT);
 
 %% make kml files
 if OPT.kml_make
-    switch OPT.kml_function
-        case 'fixedmaps_2_png'
-            % inputDir, outputDir, serverURL, EPSGcode, lowestLevel, datatype
-            try
-                fixedmaps_2_png(OPT.netcdf_path,OPT.kml_path,...
-                    [fullfile(OPT.webserverpath,'elevation_data') filesep], OPT.EPSGcode, OPT.kml_detaillevel, OPT.datatype);      
-            catch
-                warning(lasterr)
-            end
-        otherwise 
-            disp(' not able to make KML using the proposed function (yet)');
-    end
+    fixedmaps_2_png(OPT.netcdf_path,OPT.kml_path,...
+        [fullfile(OPT.webserverpath,'elevation_data') filesep], OPT.EPSGcode, OPT.kml_detaillevel, OPT.datatype);
 else
     disp('generation of kml files skipped')
 end

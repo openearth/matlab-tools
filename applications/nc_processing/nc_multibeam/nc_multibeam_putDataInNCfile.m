@@ -1,12 +1,9 @@
 function nc_multibeam_putDataInNCfile(OPT,ncfile,time,Z)
 
-dimSizeX = (OPT.mapsizex/OPT.gridsize)+1;
-dimSizeY = (OPT.mapsizey/OPT.gridsize)+1;
+dimSizeX = (OPT.mapsizex/OPT.gridsizex)+1;
+dimSizeY = (OPT.mapsizey/OPT.gridsizex)+1;
 
 %% Open NC file
-% OPT.WBmsg{2}  = 'Closing NC File';
-% waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
-
 NCid = netcdf.open(ncfile, 'NC_WRITE');
 
 %% add time
@@ -22,17 +19,12 @@ else
 end
 
 varid = netcdf.inqVarID(NCid,'z');
+
+%% Merge Z data with existing data if it exists
 if jj ~= length(time0) % then existing nc file already has data
-    %% read Z data
-%     OPT.WBmsg{2}  = 'Reading Z data from NC File';
-%     waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
-    
+    % read Z data
     Z0 = netcdf.getVar(NCid,varid,[0 0 jj],[dimSizeX dimSizeY 1]);
     Z0(Z0>1e35) = nan;
-    
-    %% Merge Z data
-%     OPT.WBmsg{2}  = 'Merging Z data';
-%     waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
     
     % check if data will be overwritten
     if ~all(isnan(Z0(~isnan(Z))))
@@ -45,16 +37,11 @@ if jj ~= length(time0) % then existing nc file already has data
     Z0(~isnan(Z)) = Z(~isnan(Z));
     Z = Z0;
 end
-%% Write z data
-% OPT.WBmsg{2}  = 'Writing Z data to NC File';
-% waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
 
+%% Write z data
 netcdf.putVar(NCid,varid,[0 0 jj],[dimSizeX dimSizeY 1],Z);
 
 %% Close NC file
-% OPT.WBmsg{2}  = 'Closing NC File';
-% waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
-
 netcdf.close(NCid)
 end
 

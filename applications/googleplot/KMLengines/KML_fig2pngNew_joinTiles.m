@@ -3,6 +3,7 @@ function KML_fig2pngNew_joinTiles(OPT)
 %
 %See also:KMLfig2pngNew
 
+multiWaitbar('fig2png_merge_tiles' ,0,'label',['Merging tiles in ' OPT.Name])
 for level = OPT.lowestLevel:-1:OPT.highestLevel+1
     tiles = dir(fullfile(OPT.Path,OPT.Name,[OPT.Name '_*.png']));
     tileCodes = nan(length(tiles),level);
@@ -15,15 +16,20 @@ for level = OPT.lowestLevel:-1:OPT.highestLevel+1
     tileCodes(any(isnan(tileCodes),2),:) = [];
     tileCodes =   char(tileCodes);
     newTiles  = unique(tileCodes(:,1:end-1),'rows');
+   
+    WB.a = 1-0.25.^(OPT.lowestLevel - level);
+    WB.b = (1-WB.a)*0.75;
     
     for nn = 1:size(newTiles,1);
-        imL = zeros(OPT.dim*2,OPT.dim*2,3);
-        aaL = uint8(zeros(OPT.dim*2,OPT.dim*2));
+        
+        imL = zeros(OPT.dim*2,OPT.dim*2,3);         % image Large (composed of up to 4 smaller images
+        aaL = uint8(zeros(OPT.dim*2,OPT.dim*2));    % alpha data of large image
         code = ['01';'23'];
         for ii = 1:2
             for jj = 1:2
                 PNGfileName = fullfile(OPT.Path,OPT.Name,[OPT.Name '_' newTiles(nn,:) code(ii,jj) '.png']);
                 if exist(PNGfileName,'file')
+                    % add data to 
                     [imL((ii-1)*OPT.dim+1:ii*OPT.dim,...
                          (jj-1)*OPT.dim+1:jj*OPT.dim,1:3),...
                         ignore,...
@@ -75,5 +81,10 @@ for level = OPT.lowestLevel:-1:OPT.highestLevel+1
         PNGfileName = fullfile(OPT.Path,OPT.Name,[OPT.Name '_' newTiles(nn,:) '.png']);
         imwrite(imS,PNGfileName,'Alpha',aaS ,...
             'Author','$HeadURL$');
+        
+        if mod(nn,5)==1;
+            multiWaitbar('fig2png_merge_tiles' ,WB.a + WB.b*nn/size(newTiles,1),'label',['Merging tiles in ' OPT.Name])
+        end
     end
 end
+multiWaitbar('fig2png_merge_tiles' ,1,'label',['Merging tiles in ' OPT.Name])
