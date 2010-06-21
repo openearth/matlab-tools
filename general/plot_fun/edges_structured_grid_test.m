@@ -1,4 +1,4 @@
-function testresult = edges_structured_grid_test()
+function edges_structured_grid_test()
 % EDGES_STRUCTURED_GRID_TEST  One line description goes here
 %
 % More detailed description of the test goes here.
@@ -46,41 +46,30 @@ function testresult = edges_structured_grid_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
-% Publishable code that describes the test.
+x = 1:100;
+y = 201:400;
+[X,Y] = meshgrid(x,y);
+Z = repmat(peaks(100),2,1);
 
-%% $RunCode
-% Write test code here
-try
-    x = 1:100;
-    y = 201:400;
-    [X,Y] = meshgrid(x,y);
-    Z = repmat(peaks(100),2,1);
-    
-    Z(50:55,:) = nan;
-    Z(40:65,20:60) = nan;
-    Z(Z>5) = nan;
-    Z(Z<-5) = nan;
-    Z(Z>-0.1&Z<0.1) = nan;
-    
-    
+Z(50:55,:) = nan;
+Z(40:65,20:60) = nan;
+Z(Z>5) = nan;
+Z(Z<-5) = nan;
+Z(Z>-0.1&Z<0.1) = nan;
+
+
 %     profile on
-    E = edges_structured_grid(X,Y,Z);
+E = edges_structured_grid(X,Y,Z);
 %     profile viewer
-    
-    
-    surf(X,Y,Z,ones(size(Z)))
-    hold on
-    aa = E(:,5)==1;
-    plot3(E(aa,1),E(aa,2),E(aa,3),'.')
-    plot3(E(~aa,1),E(~aa,2),E(~aa,3),'ro')
-    view([0,90])
-    hold off
-    
-    legend('surface','filled loop','empty loop')
-catch
-    testresult = false;
-end
-%% $PublishResult
-% Publishable code that describes the test.
+
+
+surf(X,Y,Z,ones(size(Z)))
+hold on
+aa = E(:,5)==1;
+plot3(E(aa,1),E(aa,2),E(aa,3),'.')
+plot3(E(~aa,1),E(~aa,2),E(~aa,3),'ro')
+view([0,90])
+hold off
+
+legend('surface','filled loop','empty loop')
 

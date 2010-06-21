@@ -1,6 +1,6 @@
-function testResult = DUROS_test()
+function DUROS_test()
 % DUROS_TEST  temporal tests for duros
-%  
+%
 % More detailed description of the test goes here.
 %
 %
@@ -11,7 +11,7 @@ function testResult = DUROS_test()
 %   Copyright (C) 2010 Deltares
 %       Pieter van Geer
 %
-%       pieter.vangeer@deltares.nl	
+%       pieter.vangeer@deltares.nl
 %
 %       Rotterdamseweg 185
 %       2629 HD Delft
@@ -33,9 +33,9 @@ function testResult = DUROS_test()
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>

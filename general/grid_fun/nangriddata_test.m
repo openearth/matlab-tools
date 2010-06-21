@@ -1,4 +1,4 @@
-function nan=nangriddata_test
+function nangriddata_test
 %NANGRIDDATA_TEST  Visual illustration test for nangriddata
 %
 %See also: NANGRIDDATA

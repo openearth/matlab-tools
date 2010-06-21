@@ -1,6 +1,6 @@
-function testresult = KMLmesh_test()
+function KMLmesh_test()
 % KMLmesh_test  unit test for KMLmesh
-%  
+%
 % See also: KMLmesh, mesh
 
 %% Copyright notice
@@ -48,12 +48,12 @@ disp(['... running test:',mfilename])
 %try
 
    [lat,lon] = meshgrid(-90:1:90,[-180:1:180]+30);
-   
+
    a = 5e5;
    b = 5e5;
-   
+
    z = a.*sin(5*(2*pi).*lon./180) + b.*sin(8.*(2*pi).*lon./360) + max(abs(a),abs(b));
-   
+
    KMLmesh(lat ,lon ,  'fileName',KML_testdir('KMLmesh_test2d.kml'),'lineColor',hsv);
    KMLmesh(lat ,lon ,z,'fileName',KML_testdir('KMLmesh_test3d.kml'),'lineColor',hsv);
     testresult = true;
