@@ -172,10 +172,10 @@ for jj = 1:length(fns)
         delete(fullfile(OPT.cache_path, '*'));
         
         % uncompress files with a gui for progres indication
-        uncompress(fullfile(OPT.raw_path,fns(jj).name),'outpath',OPT.cache_path,'gui',false,'quiet',true);
+        uncompress(fullfile(OPT.raw_path,fns(jj).name),'outpath',OPT.cache_path,'gui',true,'quiet',true);
         
         % read the output of unpacked files
-        fns_unzipped = dir(fullfile(OPT.cache_path,'*.asc'));
+        fns_unzipped = dir(fullfile(OPT.cache_path,OPT.raw_extension));
         
         % get the size of the unpacked files that will be processed
         unpacked_size = 0;
@@ -184,7 +184,7 @@ for jj = 1:length(fns)
         end
         WB.bytesToDo = WB.bytesToDo/WB.zipratio;
         
-        % calculate a zip rati0 te estimate the compression level (used
+        % calculate a zip ratio to estimate the compression level (used
         % to estimate the total work for the progress bar)
         WB.zipratio = (WB.zipratio*(jj-1)+unpacked_size/fns(jj).bytes)/jj;
         WB.bytesToDo = WB.bytesToDo*WB.zipratio;
@@ -201,57 +201,59 @@ for jj = 1:length(fns)
         
         % process time
         timestr = fns_unzipped(ii).name(1:8);
-        timestr = strrep(timestr,'mei','may');
-        time    = datenum(timestr,'yyyy mmm') - datenum(1970,1,1);
+        time    = datenum(str2double(timestr(1:4)),str2double(timestr(5:6)),str2double(timestr(7:8))) - datenum(1970,1,1);
+
+        if OPT.zip
+            fid      = fopen(fullfile(OPT.cache_path,fns_unzipped(ii).name));
+        else
+            fid      = fopen(fullfile(OPT.raw_path,fns_unzipped(ii).name));
+        end
         
+        % waitbar stuff
+        WB.bytesDoneOfCurrentFile = 0;
+        WB.bytesWritten  = 0;
+        WB.bytesRead     = 0;
         
-        fid             = fopen(fullfile(OPT.raw_path, fns_unzipped(ii).name));
-        headerlines     = OPT.headerlines;
-        kk = 0;
+        headerlines      = OPT.headerlines;
         while ~feof(fid)
-            multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
+            multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+WB.bytesRead+WB.bytesWritten)/WB.bytesToDo)
             multiWaitbar('nc_reading',ftell(fid)/fns_unzipped(ii).bytes,'label',sprintf('Reading: %s...', (fns_unzipped(ii).name))) ;
+            WB.bytesDoneOfCurrentFile = ftell(fid);
             D     = textscan(fid,OPT.format,OPT.block_size,'delimiter',OPT.delimiter,...
                 'headerlines',headerlines,'MultipleDelimsAsOne',OPT.MultipleDelimsAsOne);
             headerlines     = 0; % only skip headerlines on first read
-            OPT.WBbytesRead = ftell(fid) - OPT.WBbytesDoneOfCurrentFile;
             
-            multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
-            multiWaitbar('nc_reading'        ,ftell(fid)/fns_unzipped(ii).bytes,...
+            % waitbar stuff
+            WB.bytesRead = ftell(fid);
+            multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ WB.bytesRead+WB.bytesWritten)/WB.bytesToDo)
+            multiWaitbar('nc_reading'        ,WB.bytesRead/fns_unzipped(ii).bytes,...
                 'label',sprintf('Reading: %s', (fns_unzipped(ii).name))) ;
+            WB.numel        = length(D{OPT.xid});
             
             
             %% find min and max
-            
             minx    = min(D{OPT.xid});
             miny    = min(D{OPT.yid});
             maxx    = max(D{OPT.xid});
             maxy    = max(D{OPT.yid});
-            minx    = floor(minx/OPT.xsize)*OPT.xsize - OPT.xoffset;
-            miny    = floor(miny/OPT.ysize)*OPT.ysize - OPT.yoffset;
+            minx    = floor(minx/OPT.mapsizex)*OPT.mapsizex - OPT.xoffset;
+            miny    = floor(miny/OPT.mapsizey)*OPT.mapsizey - OPT.yoffset;
             
             %% loop through data
-            OPT.WBnumel = length(D{OPT.xid});
-            for x0      = minx : OPT.xsize : maxx
-                for y0  = miny : OPT.ysize : maxy
-                    
-                    OPT.WBdone
-                    
+            
+            for x0      = minx : OPT.mapsizex : maxx
+                for y0  = miny : OPT.mapsizey : maxy
+                   
                     ids =  inpolygon(D{OPT.xid},D{OPT.yid},...
-                        [x0 x0+OPT.xsize x0+OPT.xsize x0 x0],...
-                        [y0 y0 y0+OPT.ysize y0+OPT.ysize y0]);
+                        [x0 x0+OPT.mapsizex x0+OPT.mapsizex x0 x0],...
+                        [y0 y0 y0+OPT.mapsizey y0+OPT.mapsizey y0]);
                     x   =  D{OPT.xid}(ids);
                     y   =  D{OPT.yid}(ids);
                     z   =  D{OPT.zid}(ids);
-                    
-                    %  waitbar stuff
-                    OPT.WBnumelDone              = length(x);
-                    OPT.WBbytesDoneOfCurrentFile = OPT.WBbytesDoneOfCurrentFile+OPT.WBnumelDone/OPT.WBnumel*OPT.WBbytesRead;
-                    OPT.WBdone                   = (OPT.WBbytesDoneClosedFiles+OPT.WBbytesDoneOfCurrentFile)/OPT.WBbytesToDo;
-                    
+                   
                     % generate X,Y,Z
-                    x_vector = x0:xstepsize:x0+OPT.xsize;
-                    y_vector = y0:ystepsize:y0+OPT.ysize;
+                    x_vector = x0:OPT.gridsizex:x0+OPT.mapsizex;
+                    y_vector = y0:OPT.gridsizey:y0+OPT.mapsizey;
                     [X,Y]    = meshgrid(x_vector,y_vector);
                     
                     % place xyz data on XY matrices
@@ -264,14 +266,35 @@ for jj = 1:length(fns)
                         % to a nc file
                         ncfile = fullfile(OPT.netcdf_path,sprintf('%8.2f_%8.2f_%s_data.nc',x0,y0,OPT.datatype));
                         if ~exist(ncfile, 'file')
-                            nc_multibeam_createNCfile(OPT,ncfile,X,Y,EPSG)
+                            nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
                         end
-                        nc_multibeam_putDataInNCfile(OPT,ncfile,time(kk),Z')
+                        nc_multibeam_putDataInNCfile(OPT,ncfile,time,Z')
                     end
+                    
+                    %  waitbar stuff
+                    WB.numelDone               = length(x);
+                    WB.bytesWritten            = WB.bytesWritten + WB.numelDone/WB.numel*(WB.bytesRead-WB.bytesDoneOfCurrentFile);
+                    multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+WB.bytesRead+WB.bytesWritten)/WB.bytesToDo)
+                    multiWaitbar('nc_writing',WB.bytesWritten/fns_unzipped(ii).bytes,...
+                        'label',sprintf('%8.2f_%8.2f_%s_data.nc',x0,y0,OPT.datatype))
                 end
             end
+            WB.bytesWritten = WB.bytesRead;
         end
-        OPT.WBbytesDoneClosedFiles = OPT.WBbytesDoneClosedFiles + fns(kk).bytes;
+        WB.bytesDoneClosedFiles = WB.bytesDoneClosedFiles + fns_unzipped(ii).bytes;
     end
 end
+if OPT.zip
+    try %#ok<TRYNC>
+        rmdir(OPT.cache_path,'s')
+    end
+    multiWaitbar('raw_unzipping','close')
+end
+
+multiWaitbar('Raw data to NetCDF',1)
+multiWaitbar('nc_reading','close')
+multiWaitbar('nc_writing','close')
 disp('generation of nc files completed')
+
+multiWaitbar('Raw data to NetCDF',1)
+varargout = {OPT};

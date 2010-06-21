@@ -91,18 +91,13 @@ if ~OPT.quiet
 end
 tic
 
-
-% dosstring     = [' "' fileparts(mfilename('fullpath')) filesep '7z" -y e "' fullfile(OPT.fileDir,[OPT.fileName OPT.fileExt]) '" -o"' OPT.outpath '"'];
 if OPT.gui
     path7zip      = fullfile(fileparts(mfilename('fullpath')),'private','7z','7z914','7zG.exe');
 else
-    path7zip      = fullfile(fileparts(mfilename('fullpath')),'private','7z','7z');
+    path7zip      = fullfile(fileparts(mfilename('fullpath')),'private','7z','7z914','7z.exe');
 end
 
 dosstring     = sprintf('"%s" %s e "%s" -o"%s"',path7zip,OPT.args,fullfile(fileName),OPT.outpath);
-% !"D:\Repositories\OpenEarthTools\general\io_fun\private\7z\7z914\7zG.exe" -y e "D:\Repositories\vorawdata\projects\154229_onderhoud_waal\elevation_data\multibeam\raw\2005 apr JMP 1 Waal 1.0_deelgebied_RIJN01.zip" -o"d:\matlab_temp" &
-% !"D:\Repositories\OpenEarthTools\general\io_fun\private\7z\7z914\7zG.exe" -y e "projects\154229_onderhoud_waal\elevation_data\multibeam\raw\2005 apr JMP 1 Waal 1.0_deelgebied_RIJN01.zip" -o"d:\matlab_temp" &
-% [a,b] = system('" D:\Repositories\OpenEarthTools\general\io_fun\private\7z\7z.exe " -y e " D:\Repositories\projects\154229_onderhoud_waal\elevation_data\multibeam\raw\2005 apr JMP 1 Waal 1.0_deelgebied_RIJN01.zip " -o " d:\matlab_temp " &')
 
 [OPT.status, OPT.info] = system(dosstring);
 

@@ -172,7 +172,7 @@ end
 [minlat,minlon,maxlat,maxlon] = deal(nan);
 
 %% MAKE TILES in this loop      
-for ii = 1%:length(fns);
+for ii = 1:length(fns);
     url = fullfile(OPT.inputDir,fns(ii).name); %#ok<*ASGLU>
     time = nc_varget(url,'time');
     
@@ -478,10 +478,10 @@ copyfile(fullfile(OPT.outputDir,OPT.outputKml, 'doc.kml'),fullfile(OPT.outputDir
 copyfile(fullfile(OPT.outputDir,OPT.outputKml, 'doc.kml'),fullfile(OPT.outputDir, [OPT.outputKml '_server.kml']))
 strrep_in_files(fullfile(OPT.outputDir, [OPT.outputKml '_server.kml']),'<href>', ['<href>' OPT.serverURL])
 strrep_in_files(fullfile(OPT.outputDir, [OPT.outputKml '_server.kml']),'\', '/')
-% if OPT.make_kmz
-%     zip(fullfile(fileparts(OPT.outputDir), OPT.datatype), OPT.outputDir)
-%     movefile(fullfile(fileparts(OPT.outputDir), [OPT.datatype '.zip']), fullfile(fileparts(OPT.outputDir), [OPT.datatype '.kmz']))
-% end
+if OPT.make_kmz
+    zip(fullfile(OPT.outputDir, OPT.outputKml), OPT.outputDir)
+    movefile(fullfile(OPT.outputDir, [OPT.outputKml '.zip']), fullfile(OPT.outputDir, [OPT.outputKml '_portable.kmz']))
+end
 delete(fullfile(OPT.outputDir,OPT.outputKml, 'doc.kml'))
 
 disp('generation of kml files completed')
