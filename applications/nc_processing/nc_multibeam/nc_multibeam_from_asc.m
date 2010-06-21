@@ -100,6 +100,12 @@ end
 
 [OPT, Set, Default] = setproperty(OPT, varargin{:});
 
+if ~OPT.make
+    disp('generation of nc files skipped')
+    varargout = {OPT};
+    return
+end
+
 multiWaitbar( 'Raw data to NetCDF',0,'Color',[0.2 0.6 0.2])
 
 if OPT.make
@@ -112,7 +118,6 @@ if OPT.make
             error
         end
         
-    disp('generating nc files...')
     if OPT.delete_existing
         % delete existing nc_files
         delete(fullfile(OPT.netcdf_path, '*.nc'))
@@ -133,7 +138,7 @@ if OPT.make
         fns = dir(fullfile(OPT.raw_path,OPT.raw_extension));
     end
     
-    %% check if files are foun
+    %% check if files are found
     if isempty(fns)
         error('no raw files')
     end
@@ -159,7 +164,7 @@ if OPT.make
             delete(fullfile(OPT.cache_path, '*'));
             
             % uncompress files with a gui for progres indication
-            uncompress(fullfile(OPT.raw_path,fns(jj).name),'outpath',OPT.cache_path,'gui',true,'quiet',true);
+            uncompress(fullfile(OPT.raw_path,fns(jj).name),'outpath',OPT.cache_path,'gui',false,'quiet',true);
             
             % read the output of unpacked files
             fns_unzipped = dir(fullfile(OPT.cache_path,'*.asc'));
@@ -206,10 +211,9 @@ if OPT.make
             try             nodata_value = strread(s,'nodata_value %f');
             catch;          nodata_value = strread(s,'NODATA_value %f'); %#ok<CTCH>
             end
-            kk = 0;
             
+            kk = 0;
             while ~feof(fid)
-                
                 multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
                 multiWaitbar('nc_reading',ftell(fid)/fns_unzipped(ii).bytes,'label',sprintf('Reading: %s...', (fns_unzipped(ii).name))) ;
                 kk = kk+1;
@@ -221,7 +225,8 @@ if OPT.make
                 end
             end
             multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
-            multiWaitbar('nc_reading',ftell(fid)/fns_unzipped(ii).bytes,'label',sprintf('Reading: %s', (fns_unzipped(ii).name))) ;
+            multiWaitbar('nc_reading'        ,ftell(fid)/fns_unzipped(ii).bytes,...
+                'label',sprintf('Reading: %s', (fns_unzipped(ii).name))) ;
             fclose(fid);
             
             
@@ -298,9 +303,7 @@ if OPT.make
     
     multiWaitbar('nc_reading','close')
     multiWaitbar('nc_writing','close')
-   disp('generation of nc files completed')
-else
-    disp('generation of nc files skipped')
-end
+    disp('generation of nc files completed')
+
 multiWaitbar('Raw data to NetCDF',1)
 varargout = {OPT};

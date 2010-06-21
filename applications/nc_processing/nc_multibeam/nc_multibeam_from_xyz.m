@@ -1,69 +1,248 @@
-function OPT = nc_from_xyz_multibeam(OPT)
-if OPT.nc_make
-    disp('generating nc files...')
-    if OPT.nc_delete_existing
-        % delete existing nc_files
-        delete(fullfile(OPT.netcdf_path, '*.nc'))
+function varargout = nc_multibeam_from_xyz(varargin)
+%NC_MULTIBEAM_FROM_XYZ  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   varargout = nc_multibeam_from_asc(varargin)
+%
+%   Input:
+%   varargin  =
+%
+%   Output:
+%   varargout =
+%
+%   Example
+%   nc_multibeam_from_asc
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2010 <COMPANY>
+%       Thijs
+%
+%       <EMAIL>
+%
+%       <ADDRESS>
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 19 Jun 2010
+% Created with Matlab version: 7.9.0.529 (R2009b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
+OPT.block_size          = 3e6;
+OPT.make                = true;
+OPT.delete_existing     = true;
+
+OPT.raw_path            = [];
+OPT.raw_extension       = '*.xyz';
+OPT.netcdf_path         = [];
+OPT.cache_path          = fullfile(tempdir,'nc_asc');
+OPT.zip                 = true;          % are the files zipped?
+OPT.zip_extension       = '*.zip';       % are the files zipped?
+OPT.format              = '%f%f%f';
+OPT.delimiter           = '\t';
+OPT.MultipleDelimsAsOne = false;
+OPT.headerlines         = 0;
+OPT.xid                 = 1;
+OPT.yid                 = 2;
+OPT.zid                 = 3;
+OPT.gridFcn             = @(X,Y,Z,XI,YI) griddata_remap(X,Y,Z,XI,YI,'errorCheck',true);
+
+OPT.datatype           = 'multibeam';
+OPT.EPSGcode           = 28992;
+
+OPT.mapsizex           = 5000;          % size of fixed map in x-direction
+OPT.mapsizey           = 5000;          % size of fixed map in y-direction
+OPT.gridsizex          = 5;             % x grid resolution
+OPT.gridsizey          = 5;             % y grid resolution
+OPT.xoffset            = 0;             % zero point of x grid
+OPT.yoffset            = 0;             % zero point of y grid
+OPT.zfactor            = 1;             % scale z by this facto
+
+OPT.Conventions        = 'CF-1.4';
+OPT.CF_featureType     = 'grid';
+OPT.title              = 'Multibeam';
+OPT.institution        = ' ';
+OPT.source             = 'Topography measured with multibeam on project survey vessel';
+OPT.history            = 'Created with: $Id$ $HeadURL$';
+OPT.references         = 'No reference material available';
+OPT.comment            = 'Data surveyed by survey department for ...';
+OPT.email              = 'e@mail.com';
+OPT.version            = 'Trial';
+OPT.terms_for_use      = 'These data is for internal use by ... staff only!';
+OPT.disclaimer         = 'These data are made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
+
+
+if nargin==0
+    varargout = {OPT};
+    return
+end
+
+OPT = setproperty(OPT, varargin{:});
+
+if ~OPT.make
+    disp('generation of nc files skipped')
+    varargout = {OPT};
+    return
+end
+
+disp('generating nc files... ')
+%% limited input check
+if isempty(OPT.raw_path)
+    error('''OPT.raw_path'' is empty')
+end
+if isempty(OPT.netcdf_path)
+    error('''netcdf_path'' is empty')
+end
+
+if OPT.delete_existing
+    % delete existing nc_files
+    delete(fullfile(OPT.netcdf_path, '*.nc'))
+end
+
+EPSG             = load('EPSG');
+mkpath(OPT.netcdf_path)
+
+fns = dir( fullfile(OPT.netcdf_path,'*.nc'));
+for ii = 1:length(fns)
+    delete(fullfile(OPT.netcdf_path,fns(ii).name));
+end
+
+if OPT.zip
+    mkpath(OPT.cache_path);
+    fns = dir(fullfile(OPT.raw_path,OPT.zip_extension));
+else
+    fns = dir(fullfile(OPT.raw_path,OPT.raw_extension));
+end
+
+%% check if files are found
+if isempty(fns)
+    error('no raw files')
+end
+
+%% initialize waitbar
+WB.done       = 0;
+WB.bytesToDo  = 0;
+multiWaitbar( 'Raw data to NetCDF',0,'Color',[0.2 0.6 0.2])
+if OPT.zip
+    multiWaitbar('raw_unzipping'  ,0,'Color',[0.2 0.7 0.9])
+end
+multiWaitbar('nc_reading'         ,0,'Color',[0.1 0.5 0.8],'label','Reading')
+multiWaitbar('nc_writing'         ,0,'Color',[0.1 0.3 0.6],'label','Writing')
+for ii = 1:length(fns)
+    WB.bytesToDo = WB.bytesToDo + fns(ii).bytes;
+end
+WB.bytesToDo =  WB.bytesToDo*2;
+WB.bytesDoneClosedFiles = 0;
+WB.zipratio = 1;
+
+for jj = 1:length(fns)
+    if OPT.zip
+        multiWaitbar('raw_unzipping', 0,'label',sprintf('Unzipping %s',fns(jj).name));
+        %delete files in cache
+        delete(fullfile(OPT.cache_path, '*'));
+        
+        % uncompress files with a gui for progres indication
+        uncompress(fullfile(OPT.raw_path,fns(jj).name),'outpath',OPT.cache_path,'gui',false,'quiet',true);
+        
+        % read the output of unpacked files
+        fns_unzipped = dir(fullfile(OPT.cache_path,'*.asc'));
+        
+        % get the size of the unpacked files that will be processed
+        unpacked_size = 0;
+        for kk = 1:length(fns_unzipped)
+            unpacked_size = unpacked_size + fns_unzipped(kk).bytes;
+        end
+        WB.bytesToDo = WB.bytesToDo/WB.zipratio;
+        
+        % calculate a zip rati0 te estimate the compression level (used
+        % to estimate the total work for the progress bar)
+        WB.zipratio = (WB.zipratio*(jj-1)+unpacked_size/fns(jj).bytes)/jj;
+        WB.bytesToDo = WB.bytesToDo*WB.zipratio;
+        multiWaitbar('raw_unzipping', 1);
+    else
+        fns_unzipped = fns(jj);
     end
     
-    % set the extent of the fixed maps (decide according to desired nc filesize)
-    xsize       = OPT.mapsizex; % size of fixed map in x-direction
-    xstepsize   = OPT.gridsize; % x grid resolution
-    ysize       = OPT.mapsizey; % size of fixed map in y-direction
-    ystepsize   = OPT.gridsize; % y grid resolution
-    
-    fns         = dir(fullfile(OPT.raw_path,OPT.rawdata_ext));
-    
-    %% first: determine the outline of the dataset getting all the timestamps
-    time = nan(1,length(fns));
-    
-    OPT.WBbytesToDo = 0;
-    for kk = 1:size(fns,1)
-        time(kk) = datenum(str2double(fns(kk).name(1:4)), str2double(fns(kk).name(5:6)), str2double(fns(kk).name(7:8))) ...
-            - datenum(1970,01,01);
-        OPT.WBbytesToDo = OPT.WBbytesToDo+fns(kk).bytes;
-    end
-    
-    OPT.wb                   = waitbar(0, 'initializing file...');
-    OPT.WBbytesDoneClosedFiles = 0;
-    for kk = 1:size(fns,1)
-        fid             = fopen(fullfile(OPT.raw_path, fns(kk).name));
+    for ii = 1:length(fns_unzipped)
+        %% set waitbars to 0 and update label
+        multiWaitbar('nc_writing',0,'label','Writing: *.nc')
+        multiWaitbar('nc_reading',0,'label',sprintf('Reading: %s...', (fns_unzipped(ii).name)))
+        %% read data
+        
+        % process time
+        timestr = fns_unzipped(ii).name(1:8);
+        timestr = strrep(timestr,'mei','may');
+        time    = datenum(timestr,'yyyy mmm') - datenum(1970,1,1);
+        
+        
+        fid             = fopen(fullfile(OPT.raw_path, fns_unzipped(ii).name));
         headerlines     = OPT.headerlines;
+        kk = 0;
         while ~feof(fid)
-            %% read data
-            OPT.WBbytesDoneOfCurrentFile = ftell(fid);
-            OPT.WBdone = (OPT.WBbytesDoneClosedFiles+OPT.WBbytesDoneOfCurrentFile)/OPT.WBbytesToDo;
-            OPT.WBmsg       = {sprintf('processing %s:',mktex(fns(kk).name(1:8))),'Reading data'};
-            waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
-            % read the data with 'OPT.block_size' lines at a time
-            data            = textscan(fid,OPT.format,OPT.block_size,'delimiter',OPT.delimiter,...
-                            'headerlines',headerlines,'MultipleDelimsAsOne',OPT.MultipleDelimsAsOne);
+            multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
+            multiWaitbar('nc_reading',ftell(fid)/fns_unzipped(ii).bytes,'label',sprintf('Reading: %s...', (fns_unzipped(ii).name))) ;
+            D     = textscan(fid,OPT.format,OPT.block_size,'delimiter',OPT.delimiter,...
+                'headerlines',headerlines,'MultipleDelimsAsOne',OPT.MultipleDelimsAsOne);
             headerlines     = 0; % only skip headerlines on first read
             OPT.WBbytesRead = ftell(fid) - OPT.WBbytesDoneOfCurrentFile;
+            
+            multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
+            multiWaitbar('nc_reading'        ,ftell(fid)/fns_unzipped(ii).bytes,...
+                'label',sprintf('Reading: %s', (fns_unzipped(ii).name))) ;
+            
+            
             %% find min and max
             
-            minx    = min(data{OPT.xid});
-            miny    = min(data{OPT.yid});
-            maxx    = max(data{OPT.xid});
-            maxy    = max(data{OPT.yid});
-            minx    = floor(minx/xsize)*xsize - OPT.xoffset;
-            miny    = floor(miny/ysize)*ysize - OPT.yoffset;
-            
+            minx    = min(D{OPT.xid});
+            miny    = min(D{OPT.yid});
+            maxx    = max(D{OPT.xid});
+            maxy    = max(D{OPT.yid});
+            minx    = floor(minx/OPT.xsize)*OPT.xsize - OPT.xoffset;
+            miny    = floor(miny/OPT.ysize)*OPT.ysize - OPT.yoffset;
             
             %% loop through data
-            OPT.WBnumel = length(data{OPT.xid});
-            for x0      = minx : xsize : maxx
-                for y0  = miny : ysize : maxy
-                    OPT.WBmsg{2}  = 'Gridding Z data';
-                    waitbar(OPT.WBdone,OPT.wb,OPT.WBmsg);
-                    try
-                    ids =  inpolygon(data{OPT.xid},data{OPT.yid},[x0 x0+xsize x0+xsize x0 x0],[y0 y0 y0+ysize y0+ysize y0]);
-                    catch
-                        1
-                    end
-                    x   =  data{OPT.xid}(ids);
-                    y   =  data{OPT.yid}(ids);
-                    z   =  data{OPT.zid}(ids);
+            OPT.WBnumel = length(D{OPT.xid});
+            for x0      = minx : OPT.xsize : maxx
+                for y0  = miny : OPT.ysize : maxy
+                    
+                    OPT.WBdone
+                    
+                    ids =  inpolygon(D{OPT.xid},D{OPT.yid},...
+                        [x0 x0+OPT.xsize x0+OPT.xsize x0 x0],...
+                        [y0 y0 y0+OPT.ysize y0+OPT.ysize y0]);
+                    x   =  D{OPT.xid}(ids);
+                    y   =  D{OPT.yid}(ids);
+                    z   =  D{OPT.zid}(ids);
                     
                     %  waitbar stuff
                     OPT.WBnumelDone              = length(x);
@@ -71,8 +250,8 @@ if OPT.nc_make
                     OPT.WBdone                   = (OPT.WBbytesDoneClosedFiles+OPT.WBbytesDoneOfCurrentFile)/OPT.WBbytesToDo;
                     
                     % generate X,Y,Z
-                    x_vector = x0:xstepsize:x0+xsize;
-                    y_vector = y0:ystepsize:y0+ysize;
+                    x_vector = x0:xstepsize:x0+OPT.xsize;
+                    y_vector = y0:ystepsize:y0+OPT.ysize;
                     [X,Y]    = meshgrid(x_vector,y_vector);
                     
                     % place xyz data on XY matrices
@@ -94,8 +273,5 @@ if OPT.nc_make
         end
         OPT.WBbytesDoneClosedFiles = OPT.WBbytesDoneClosedFiles + fns(kk).bytes;
     end
-    close(OPT.wb)
-    disp('generation of nc files completed')
-else
-    disp('generation of nc files skipped')
 end
+disp('generation of nc files completed')

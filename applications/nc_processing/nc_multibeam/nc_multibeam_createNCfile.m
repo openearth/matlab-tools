@@ -65,9 +65,9 @@ netcdf.putVar(NCid,varid,X(1,:));
 
 [lon,lat] = convertCoordinates(X,Y,EPSG,'CS1.code',OPT.EPSGcode,'CS2.code',4326);
 varid = netcdf.inqVarID(NCid,'lat');
-netcdf.putVar(NCid,varid,lat);
+netcdf.putVar(NCid,varid,lat');
 varid = netcdf.inqVarID(NCid,'lon');
-netcdf.putVar(NCid,varid,lon);
+netcdf.putVar(NCid,varid,lon');
 
 %% close NC file
 

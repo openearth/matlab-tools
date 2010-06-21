@@ -58,21 +58,27 @@ function varargout = nc_multibeam_to_kml_tiled_png(varargin)
 % $Keywords: $
 
 %%
-OPT.make        = true;
-OPT.EPSGcode    = [];
-OPT.clim        = [-50 25];
-OPT.colormap    = @() colormap_cpt('bathymetry_vaklodingen',500);
-OPT.colorbar    = true;
-OPT.datatype    = 'multibeam';
-OPT.description = 'multibeam';
-OPT.inputDir    = [];
-OPT.kmlName     = 'multibeam';
-OPT.lightAdjust = [];
-OPT.lowestLevel = 18;
-OPT.make_kmz    = false;
-OPT.outputDir   = [];
-OPT.serverURL   = [];
-OPT.tiledim     = 256;
+OPT.inputNc                 = [];
+OPT.inputDir                = [];
+OPT.outputDir               = [];
+OPT.outputKml               = [];
+OPT.deleteExistingOutputDir = false;
+
+OPT.kmlName                 = [];
+OPT.make                    = true;
+OPT.make_kmz                = false;
+OPT.lowestLevel             = 15;
+OPT.tiledim                 = 256;
+
+OPT.clim                    = [-50 25];
+OPT.colorMap                = @(m) colormap_cpt('bathymetry_vaklodingen',m);
+OPT.colorSteps              = 500;
+OPT.colorbar                = true;
+OPT.datatype                = 'multibeam';
+OPT.description             = [];
+OPT.lightAdjust             = [];
+OPT.serverURL               = [];
+
 
 if nargin==0
     varargout = {OPT};
@@ -86,13 +92,46 @@ if ~OPT.make
     return
 end
 
-fprintf('generating kml files... ')
-% initialize waitbars
+%% error checking
+if isempty(OPT.inputDir)
+    [OPT.inputDir, fname, ext]  = fileparts(OPT.inputNc);
+    OPT.inputNc                 = [fname ext];
+end
 
-multiWaitbar('kml_print_all_tiles' ,0,'label','Printing tiles' ,'color',[0.0 0.5 0.4])
-multiWaitbar('fig2png_print_tile'  ,0,'label','Printing tiles' ,'color',[0.0 0.4 0.9])
-multiWaitbar('fig2png_merge_tiles' ,0,'label','Merging tiles'  ,'color',[0.6 0.2 0.2])
-multiWaitbar('fig2png_write_kml'   ,0,'label','Writing KML'    ,'color',[0.9 0.4 0.1])
+if isempty(OPT.inputDir)
+    OPT.inputDir = pwd;
+end
+
+if isempty(OPT.inputNc)
+    OPT.inputNc = '*.nc';
+end
+
+if isempty(OPT.outputKml)
+    [ignore,fname,ignore] = fileparts(OPT.inputNc); %#ok<*NASGU>
+    if strcmpi(fname,'*'); fname = OPT.datatype; end
+    OPT.outputKml = fname;
+else
+    [ignore,OPT.outputKml,ignore] = fileparts(OPT.outputKml);
+end
+
+if isempty(OPT.outputDir)
+    OPT.outputDir = OPT.inputDir;
+end
+fns = dir(fullfile(OPT.inputDir,OPT.inputNc));
+
+disp('generating kml files... ')
+%% initialize waitbars
+multiWaitbar('kml_print_all_tiles' ,'close')
+multiWaitbar('fig2png_print_tile'  ,'close')
+multiWaitbar('merge_all_tiles'     ,'close')
+multiWaitbar('fig2png_merge_tiles' ,'close')
+multiWaitbar('fig2png_write_kml'   ,'close')
+
+multiWaitbar('kml_print_all_tiles' ,0,'label','Printing tiles: total'       ,'color',[0.0 0.3 0.6])
+multiWaitbar('fig2png_print_tile'  ,0,'label','Printing tiles: per file'    ,'color',[0.0 0.5 1.0])
+multiWaitbar('merge_all_tiles'     ,0,'label','Merging tiles: total'        ,'color',[0.5 0.1 0.1])
+multiWaitbar('fig2png_merge_tiles' ,0,'label','Merging tiles: per timestep' ,'color',[0.7 0.3 0.3])
+multiWaitbar('fig2png_write_kml'   ,0,'label','Writing KML: total'          ,'color',[0.9 0.4 0.1])
 
 if isempty(OPT.lightAdjust)
     OPT.lightAdjust = 2^(OPT.lowestLevel-16);
@@ -109,32 +148,24 @@ z = kron([10 1;5 1],peaks(50))-rand(100);
 h = surf(x,y,z);
 hl = light;material([0.7 0.2 0.15 100]);shading interp;lighting phong;axis off;
 axis tight;view(0,90);lightangle(hl,180,65);
-colormap(OPT.colormap());clim(OPT.clim*OPT.lightAdjust);
+colormap(OPT.colorMap(OPT.colorSteps));clim(OPT.clim*OPT.lightAdjust);
 
 %% create kml directory if it does not yet exist
-% try
-%     rmdir(OPT.outputDir, 's')
-% end    
-% if ~exist(OPT.outputDir,'dir')
-%     mkdir(OPT.outputDir)
-% end
-
-%% find nc files    
-fns = dir(fullfile(OPT.inputDir,'*.nc'));
-% url = findAllFiles( ...
-%     'pattern_excl', {[filesep,'.svn']}, ...
-%     'pattern_incl', '*.nc', ...
-%     'basepath', OPT.inputDir ...
-%     );
-
-
+if exist(fullfile(OPT.outputDir,OPT.outputKml),'dir')
+    if OPT.deleteExistingOutputDir 
+        rmdir(fullfile(OPT.outputDir,OPT.outputKml), 's')
+    else
+        error('the output directory is not empy, but ''deleteExistingOutputDir'' is set to false')
+    end
+else
+    mkpath(fullfile(OPT.outputDir,OPT.outputKml))
+end
 
 %% get total file size
-
 WB.bytesToDo = 0;
 WB.bytesDone = 0;
 for ii = 1:length(fns)
-WB.bytesToDo = WB.bytesToDo+fns(ii).bytes;
+    WB.bytesToDo = WB.bytesToDo+fns(ii).bytes;
 end
 
 %% pre-allocate    
@@ -143,26 +174,34 @@ end
 %% MAKE TILES in this loop      
 for ii = 1%:length(fns);
     url = fullfile(OPT.inputDir,fns(ii).name); %#ok<*ASGLU>
-    x    = nc_varget(url,   'x');
-    y    = nc_varget(url,   'y');
     time = nc_varget(url,'time');
-
-    % expand x and y in each direction to create some overlap
-    x = [x(1) + (x(1)-x(2))*.55; x; x(end) + (x(end)-x(end-1))*.55];
-    y = [y(1) + (y(1)-y(2))*.55; y; y(end) + (y(end)-y(end-1))*.55];
-
-    % convert coordinates:
-    [X,Y] = meshgrid(x,y);
-    [lon,lat] = convertCoordinates(X,Y,...
-        EPSG,'CS1.code',OPT.EPSGcode,'CS2.name','WGS 84','CS2.type','geo');
+    
+    multiWaitbar('kml_print_all_tiles'  ,WB.bytesDone/WB.bytesToDo,...
+        'label',sprintf('Printing tiles: %s Timestep: %d/%d',fns(ii).name,1,size(time,1)))
+    
+    lon  = nc_varget(url, 'lon');
+    lat  = nc_varget(url, 'lat');
+    
+    % expand lat and lon in each direction to create some overlap
+    lon = [lon(:,1) + (lon(:,1)-lon(:,2))*.55  lon  lon(:,end) + (lon(:,end)-lon(:,end-1))*.55];
+    lat = [lat(:,1) + (lat(:,1)-lat(:,2))*.55  lat  lat(:,end) + (lat(:,end)-lat(:,end-1))*.55];
+    lon = [lon(1,:) + (lon(1,:)-lon(2,:))*.55; lon; lon(end,:) + (lon(end,:)-lon(end-1,:))*.55];
+    lat = [lat(1,:) + (lat(1,:)-lat(2,:))*.55; lat; lat(end,:) + (lat(end,:)-lat(end-1,:))*.55];
 
     % convert time to years
     date          = time+datenum(1970,1,1);
     date(end+1,:) = date(end) + 1;
+    
+    % get dimension info of z
+    z_dim_info = nc_getvarinfo(url,'z') ;
+    time_dim = strcmp(z_dim_info.Dimension,'time');
+    
 
     for jj = size(time,1):-1:1
         % load z data
-        z = nc_varget(url,'z',[jj-1,0,0],[1,-1,-1]);
+        z = nc_varget(url,'z',...
+            [ 0, 0, 0] + (jj-1)*time_dim,...
+            [-1,-1,-1] + 2*time_dim);
         if sum(~isnan(z(:)))>=3
             disp(['data coverage is ' num2str(sum(~isnan(z(:)))/numel(z)*100) '%'])
             z = z([1 1 1:end end end],:); z = z(:,[1 1 1:end end end]); % expand z
@@ -190,11 +229,12 @@ for ii = 1%:length(fns);
 
             z = z(2:end-1,2:end-1);
 %% MAKE TILES
-%             KMLfig2pngNew(h,lat,lon,z*OPT.lightAdjust,'highestLevel',10,'lowestLevel',OPT.lowestLevel,...
-%                 'timeIn',date(jj),'timeOut',date(jj+1),...
-%                 'fileName',[datestr(date(jj),29) '.kml'],'timeFormat','yyyy-mm-dd',...
-%                 'drawOrder',round(date(jj)),'joinTiles',false,...
-%                 'makeKML',false,'mergeExistingTiles',true,'basePath',OPT.outputDir,'dim',OPT.tiledim);
+            KMLfig2pngNew(h,lat,lon,z*OPT.lightAdjust,'highestLevel',10,'lowestLevel',OPT.lowestLevel,...
+                'timeIn',date(jj),'timeOut',date(jj+1),...
+                'fileName',[datestr(date(jj),29) '.kml'],'timeFormat','yyyy-mm-dd',...
+                'drawOrder',round(date(jj)),'joinTiles',false,...
+                'makeKML',false,'mergeExistingTiles',true,...
+                'basePath',fullfile(OPT.outputDir,OPT.outputKml),'dim',OPT.tiledim);
 
             minlat = min(minlat,min(lat(:)));
             minlon = min(minlon,min(lon(:)));
@@ -206,22 +246,28 @@ for ii = 1%:length(fns);
         end
         WB.bytesDone =  WB.bytesDone + fns(ii).bytes/size(time,1);
         multiWaitbar('kml_print_all_tiles'  ,WB.bytesDone/WB.bytesToDo,...
-            'label',sprintf('Processing: %s Timestep: %d/%d',fns(ii).name,jj,size(time,1)))
+            'label',sprintf('Printing tiles: %s Timestep: %d/%d',fns(ii).name,jj,size(time,1)))
     end
 end
-multiWaitbar('kml_print_all_tiles' ,1,'label','Printing tiles')
-%% JOIN TILES
-fns = dir(OPT.outputDir);
+multiWaitbar('fig2png_print_tile','close')
+multiWaitbar('kml_print_all_tiles',1,'label','Printing tiles')
 
+%% JOIN TILES
+fns = dir(fullfile(OPT.outputDir,OPT.outputKml));
+multiWaitbar('merge_all_tiles'     ,0,'label','Merging tiles: total')
 for ii = 3:length(fns)
+    multiWaitbar('merge_all_tiles' ,(ii-3)/(length(fns)-2),'label',sprintf('Merging tiles: %d/%d',ii-3,length(fns)-2))
     if fns(ii).isdir
         OPT2 = KMLfig2pngNew(h,lat,lon,z,'highestLevel',6,'lowestLevel',OPT.lowestLevel,...
             'timeIn',datenum(fns(ii).name),'timeOut',datenum(fns(ii).name)+1,...
-            'basePath',OPT.outputDir,'fileName',fullfile([fns(ii).name '.kml']),...
+            'basePath',fullfile(OPT.outputDir,OPT.outputKml),'fileName',fullfile([fns(ii).name '.kml']),...
             'timeFormat','yyyy-mm-dd','drawOrder',round(datenum(fns(ii).name)),...
             'printTiles',false,'joinTiles',true,'makeKML',false,'dim',OPT.tiledim);
     end
+    multiWaitbar('merge_all_tiles' ,(ii-2)/(length(fns)-2),'label',sprintf('Merging tiles: %d/%d',ii-2,length(fns)-2))
 end
+multiWaitbar('fig2png_merge_tiles','close')
+multiWaitbar('merge_all_tiles',1,'label','Merging tiles')
 
 %% make kml files
 multiWaitbar('fig2png_write_kml'   ,0,'label','Writing KML - Getting unique png file names...','color',[0.9 0.4 0.1])
@@ -232,17 +278,17 @@ try %#ok<*TRYNC>
     rmdir([folderName filesep 'KML'], 's')
 end
 
-dates = findAllFiles('basepath',OPT.outputDir,'recursive',false);
+dates = findAllFiles('basepath',fullfile(OPT.outputDir,OPT.outputKml),'recursive',false);
 datenums = datenum(dates,'yyyy-mm-dd');
 
-tilefull = findAllFiles('basepath',OPT.outputDir,'pattern_incl','*.png');
+tilefull = findAllFiles('basepath',fullfile(OPT.outputDir,OPT.outputKml),'pattern_incl','*.png');
 tilefull2 = tilefull;
 for ii = 1:length(tilefull)
     tilefull2{ii} = tilefull2{ii}(end-40:end);
 end
 
 
-tilefull = findAllFiles('basepath',OPT.outputDir,'pattern_incl','*.png');
+tilefull = findAllFiles('basepath',fullfile(OPT.outputDir,OPT.outputKml),'pattern_incl','*.png');
 
 tiles = cell(size(tilefull));
 [path, fname] = fileparts(tilefull{1}); %#ok<NASGU>
@@ -254,7 +300,7 @@ for ii = 1:length(tilefull)
     OPT2.highestLevel = min(length(tiles{ii}),OPT2.highestLevel);
     OPT2.lowestLevel  = max(length(tiles{ii}),OPT.lowestLevel);
 end
-mkdir([OPT.outputDir filesep 'KML'])
+mkdir(fullfile(OPT.outputDir,OPT.outputKml,'KML'));
 
 %% MAKE KML  
 multiWaitbar('fig2png_write_kml'   ,0,'label','Writing KML...','color',[0.9 0.4 0.1])
@@ -331,7 +377,7 @@ for level = OPT2.highestLevel:OPT2.lowestLevel
         B = KML_fig2pngNew_code2boundary(tilesOnLevel(nn,:));
         for iDate = 1: length(dates)
             pngFile = [dates{iDate} filesep dates{iDate} '_' tilesOnLevel(nn,:) '.png'];
-            temp = fullfile(OPT.outputDir, pngFile);
+            temp = fullfile(OPT.outputDir, OPT.outputKml, pngFile);
             if any(strcmp(temp(end-40:end),tilefull2))
                 OPT2.timeIn = datenums(iDate);
                 OPT2.timeOut = OPT2.timeIn+1;
@@ -358,7 +404,7 @@ for level = OPT2.highestLevel:OPT2.lowestLevel
                     B.N,B.S,B.W,B.E)];
             end
         end
-        fid=fopen(fullfile(OPT.outputDir,'KML',[tilesOnLevel(nn,:) '.kml']),'w');
+        fid=fopen(fullfile(OPT.outputDir,OPT.outputKml,'KML',[tilesOnLevel(nn,:) '.kml']),'w');
         OPT_header = struct(...
             'name',tilesOnLevel(nn,:),...
             'open',0);
@@ -387,7 +433,6 @@ end
 OPT2.kmlName = OPT.datatype;
 OPT2.description = '';
 
-[ignore, fname] = fileparts(OPT.outputDir);
 
 output = sprintf([...
     '<NetworkLink>'...
@@ -395,9 +440,9 @@ output = sprintf([...
     '<Link><href>%s</href><viewRefreshMode>onRegion</viewRefreshMode></Link>'...                                     % link
     '</NetworkLink>'],...
     OPT2.kmlName,...
-    fullfile(fname, 'KML', [fileID '.kml']));
+    fullfile(OPT.outputKml, 'KML', [fileID '.kml']));
 
-OPT2.fid=fopen(fullfile(OPT.outputDir, 'doc.kml'),'w');
+OPT2.fid=fopen(fullfile(OPT.outputDir,OPT.outputKml, 'doc.kml'),'w');
 OPT_header = struct(...
     'name',         OPT.kmlName,...
     'open',         0,...
@@ -413,8 +458,9 @@ output = [KML_header(OPT_header) output];
 %% COLORBAR
 
 if OPT.colorbar
-    clrbarstring = KMLcolorbar('CBcLim',OPT.clim,'CBfileName', fullfile(OPT.outputDir,'KML','colorbar') ,'CBcolorMap',colormap,'CBcolorbarlocation','W');
-    clrbarstring = strrep(clrbarstring,'<Icon><href>colorbar_',['<Icon><href>' [fname filesep 'KML' filesep 'colorbar'] '_']);
+    clrbarstring = KMLcolorbar('CBcLim',OPT.clim,'CBfileName', fullfile(OPT.outputDir,OPT.outputKml,'KML','colorbar') ,...
+        'CBcolorMap',OPT.colorMap,'CBcolorSteps',OPT.colorSteps,'CBcolorbarlocation','W');
+    clrbarstring = strrep(clrbarstring,'<Icon><href>colorbar_',['<Icon><href>' [OPT.outputKml filesep 'KML' filesep 'colorbar'] '_']);
     output = [output clrbarstring];
 end
 
@@ -428,15 +474,15 @@ fclose(OPT2.fid);
 multiWaitbar('fig2png_write_kml' ,1,'label','Writing KML')
 
 %% generate different vversions of the KML
-copyfile(fullfile(OPT.outputDir, 'doc.kml'),fullfile(fileparts(OPT.outputDir), [OPT.datatype '_localmachine.kml']))
-copyfile(fullfile(OPT.outputDir, 'doc.kml'),fullfile(fileparts(OPT.outputDir), [OPT.datatype '_server.kml']))
-strrep_in_files(fullfile(fileparts(OPT.outputDir), [OPT.datatype '_server.kml']),'<href>', ['<href>' OPT.serverURL])
-strrep_in_files(fullfile(fileparts(OPT.outputDir), [OPT.datatype '_server.kml']),'\', '/')
-if OPT.make_kmz
-    zip(fullfile(fileparts(OPT.outputDir), OPT.datatype), OPT.outputDir)
-    movefile(fullfile(fileparts(OPT.outputDir), [OPT.datatype '.zip']), fullfile(fileparts(OPT.outputDir), [OPT.datatype '.kmz']))
-end
-delete(fullfile(OPT.outputDir, 'doc.kml'))
+copyfile(fullfile(OPT.outputDir,OPT.outputKml, 'doc.kml'),fullfile(OPT.outputDir, [OPT.outputKml '_localmachine.kml']))
+copyfile(fullfile(OPT.outputDir,OPT.outputKml, 'doc.kml'),fullfile(OPT.outputDir, [OPT.outputKml '_server.kml']))
+strrep_in_files(fullfile(OPT.outputDir, [OPT.outputKml '_server.kml']),'<href>', ['<href>' OPT.serverURL])
+strrep_in_files(fullfile(OPT.outputDir, [OPT.outputKml '_server.kml']),'\', '/')
+% if OPT.make_kmz
+%     zip(fullfile(fileparts(OPT.outputDir), OPT.datatype), OPT.outputDir)
+%     movefile(fullfile(fileparts(OPT.outputDir), [OPT.datatype '.zip']), fullfile(fileparts(OPT.outputDir), [OPT.datatype '.kmz']))
+% end
+delete(fullfile(OPT.outputDir,OPT.outputKml, 'doc.kml'))
 
 disp('generation of kml files completed')
 
