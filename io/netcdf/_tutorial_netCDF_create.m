@@ -114,7 +114,7 @@ figure(1);clf
 surface(x, y, z); shading flat
 hold on;
 for i = 1:length(y)
-    ph = plot3(x,ones(1,size(z,2)).*y(i),z(i,:));
+    ph = plot3(x,ones(1,size(z,2)).*double(y(i)),z(i,:));
     set(ph,'color', 'k')
 end
 set(gca,'ytick', y)
