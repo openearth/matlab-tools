@@ -48,7 +48,7 @@ transect = [200 150 450 150;...
             200 150 200 10;...
             700 150 700 10];
 tr = detran('single',trimfile,'transects',transect);
-disp(num2str(3600*tr,'%5.0f');
+disp(num2str(3600*tr,'%5.0f'));
 
 %%
 % By specifying 3 output arguments, detran also gives the gross transport
