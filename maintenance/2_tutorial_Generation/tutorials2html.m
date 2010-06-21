@@ -117,12 +117,6 @@ if any(strcmpi(varargin,'quiet'))
     quiet = true;
 end
 
-teamcity = false;
-if any(strcmpi(varargin,'teamcity'))
-    teamcity = true;
-end
-
-
 %% Gather all tutorial m-files
 % all directories
 TeamCity.postmessage('progressMessage','Gathering tutorial m-files');

@@ -13,34 +13,32 @@
 %
 % There are several ways to call oetnewtest:
 % 
-% * Without input arguments
-% * With the name of the test function
-% * with the name of the function that is tested by the new testfunction
-% * For the file currently edited in the matlab editor
+% * Without input arguments: "_oetnewtest;_"
+% * With the name of the test function: "_oetnewtest('newtest_test');_"
+% * with the name of the function that is tested by the new testfunction: "_oetnewtest('newtest');_"
+% * For the file currently edited in the matlab editor: "_oetnewtest('currentfile');_"
 % 
-% The help of oetnewtest provides more information on the options that can be specified for _oetnewfun_.
+% The help of oetnewtest provides more information on the options that can be specified for _oetnewtest_.
 
 help oetnewtest
 
 %% Simple test
-% For the sake of simplicity the most simple test is just a function that returns a testresult. The
+% For the sake of simplicity the most simple test is just a function with one line of code. The
 % function must obay the following rules:
 %
 % * The function name should contain *_"_test"_*.
 % * The function should be addressed *_without any input parameters_*
-% * The *_first output argument_* of the function should be a *_boolean_* (logical) indicating the result of the test {true | false | NaN}
 %
 % Such a function could look like this:
 
-% function testresult = testname_test()
-%
-% testresult = sum([2,3])==5;
+% function testname_test()
+% assert(true,'This test does not crash');
 
 %% Basic elements of a test
 % A Testdefinition can be divided into two parts:
 %
 % # Function help block
-% # Basic parts of the test definition
+% # the test code itself
 %
 % *Function help block*
 %
@@ -53,117 +51,99 @@ help oetnewtest
 %
 % <<prerendered_images/test_helpblock.png>>
 %
-% *Basic parts of the test definition*
+% *Test code*
 %
-% Secondly (regression) tests are often accompanied by an extensive documentation. Many developers
-% have to cope with the problem of updating / renewing the tests and at the same time keeping the
-% documentation of these tests up to date. In an attempt to deal with this problem testdefinitions 
-% in OpenEarthTools can contain documentation of the tests and visualization of the results. This is
-% achieved distinguishing three code blocks:
+% The code body of the test contains code to test a function or functions. If the function does not
+% return a variable it is counted as succeeded whenever there is no error detected. It is also
+% possible to include a boolean variable as first output argument, which indicates whether the test
+% was successfull or not.
 %
-% # Description of the test
-% # The actual code that is executed
-% # Documentation / visualization of the results
-% 
-% <<prerendered_images/test_documentation_blocks.png>>
+% The use of the matlab build-in function "_assert_" can come in handy when testing the result of a
+% function against requirements. For example:
 %
-% *Description block*
-% 
-% The description typically does not depend on the test result. This block can contain publishable
-% code (see next section for formatting tips) to document the purpose of the test and what can be
-% expected as outcome. This block is preceeded by a cell divider ("%% ") followed by the keyword
-% $Description:
+% a = sum([1, 1]);
+% assert(a==1,'1+1 should be equal to 2');
 %
-% %% $Description
+% Furthermore one can use several functions available in the MTest toolbox to ignore tests, or
+% document a test or its result:
 %
-% *RunCode block*
+% * TeamCity.running
+% * TeamCity.ignore
+% * TeamCity.publishdescription
+% * TeamCity.publishresult
+% * MTest.name
+% * MTest.category
 %
-% This block of code contains the actual test. The test engine automatically runs this block of code
-% preceeded by the description code (so that all variables created in the description block are
-% known) and saves the resulting workspace. Any figures created during the test will be deleted and
-% are not included in the publication (This is no real problem, since we seperate computational
-% functions from plot functions). During this block of code the first output argument should be
-% created (indicating the testresult by either a boolean (false / true) or a NaN. The start of the
-% RunCode block is indicated with a cell divider similar to the one to indicate the Description, but
-% now with the keyword $RunCode:
+% *TeamCity.running*
+% returns a boolean that is true whenever the TeamCity server is running tests. This function can
+% typically be used to do something that is only needed when running test at the buildserver (for
+% example ignore the result).
 %
-% %% $RunCode
+% *TeamCity.ignore*
+% Causes the teamcity server to ignore the current test. The reason to ignore should be included as 
+% a string input into this function. If the TeamCity server is not running this function will do
+% nothing.
 %
-% This cell divider automatically defines the end of the preceeding block of code ($Description or
-% $PublishResult).
+% An example of using both methods mentioned above to ignore tests:
 %
-% *PublishResult block*
+if TeamCity.running
+    TeamCity.ignore('Work In Progress');
+    return;
+end
+
+%%
+% *TeamCity.publishdescription*
+% This function adds a reference to the documentation of the test. This documentation can be located
+% in a subfunction of the test, or a file outside the testdefinition (as a script or function). When
+% using this function to publish the test description, the code of the specified function is copied
+% and pasted into a temp file. This temp file gets published. Before and after publication of the
+% description the active workspace (of the test function) is copied in such a way that the result of
+% the publishable description is available in the workspace after finishing publication. Som of the
+% publish options can be included as input parameters. An example of how to use this function is
+% given below:
+TeamCity.publishdescription(@mte_descriptionhelper,...
+    'EvaluateCode',true,...
+    'IncludeCode',true,...
+    'maxWidht',400);
+
+%%
+% Or:
+
+TeamCity.publishdescription('mte_descriptionhelper',...
+    'EvaluateCode',true,...
+    'IncludeCode',true,...
+    'maxWidht',400);
+
+%% 
+% *TeamCity.publishresult*
+% Similar to TeamCity.publishdescription, this function adds a reference to publishable code that
+% describes the test result. Useage is also similar to TeamCity.publishdescription.
 %
-% This block of code (ending at the end of the file in case no testcases are defined, or at the last
-% "end" keyword prior to a testcase) contains publishable code to visualize the test result.
-% Typically this can contain some plots of the result in case of a regression test to visually
-% inspect the result. The following section explaines more about the publication blocks. The start
-% of the PublishResult block is indicated with:
-%
-% %% $PublishResult
+% *MTest.name*
+% Can be used to give a test a custome name (by default a tests gets the filename as name).
+
+MTest.name('New name');
+
+%%
+% *MTest.category*
+% This method specifies the Category of the test.
+
+MTest.category('Integration');
+
+%%
+% Or:
+
+MTest.category('Slow');
+
+%%
+% Or:
+
+MTest.category('UnitTest');
 
 %% Formatting the publishable elements of a test
-% There are two publishable elements in a test definition (description and publishresult blocks).
+% There are two publishable elements in a test definition (description and result).
 % Publication of these parts to html is done with the matlab function *_"publish"_*. A lot of
 % information on formatting the output html pages can be found in the matlab documentation.
-%
-% *Block attributes*
-%
-% Each publishable block in the testdefinition (see previous section of this document) can contain
-% atributes in its header. The attributes determine publish options of the specific block, test or
-% testcase. The following table gives an overview of the possible attributes that can be defined for
-% the $Description and $PublishResult code blocks.
-%
-% <html>
-% <table cellspacing="0" class="body" cellpadding="4" summary="" width="100%" border="2">
-%   <colgroup>
-%       <col width="16%">
-%       <col width="21%">
-%       <col width="63%">
-%   </colgroup>
-%   <thead>
-%       <tr valign="top">
-%           <th bgcolor="#B2B2B2">Attribute Name</th>
-%           <th bgcolor="#B2B2B2"><p>Class</p></th>
-%           <th bgcolor="#B2B2B2"><p>Description</p></th>
-%       </tr>
-%   </thead>
-%   <tbody>
-%       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>Name</tt></td>
-%           <td bgcolor="#F2F2F2"><p><tt>char</tt> Default=<tt>''</tt></p></td>
-%           <td bgcolor="#F2F2F2">
-%               Custom name of the test or testcase.
-%           </td>
-%       </tr>
-%       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>IncludeCode</tt></td>
-%           <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>false</tt></p></td>
-%           <td bgcolor="#F2F2F2">
-%               Determines the publish option showCode for this publishable section.
-%           </td>
-%       </tr>
-%       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>EvaluateCode</tt></td>
-%           <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>true</tt></p></td>
-%           <td bgcolor="#F2F2F2">
-%               Determines the publish option evalCode for this publishable section.
-%           </td>
-%       </tr>
-%   </tbody>
-% </table>
-% </html>
-%
-% Attributes can be added between brackets after the dedicated keyword that defines the function of
-% the cell in particular:
-%
-% %% $Description (Name = Tutorial Name)
-%
-% Attributes can be seperated by the *_"&"_* sign.
-%
-% %% $Description (Name = Tutorial Name & IncludeCode = true)
-%
-% *Formatting of cells for publishing*
 %
 % <html>
 % The 
@@ -176,24 +156,6 @@ help oetnewtest
 % </html>
 %
 % <<prerendered_images/test_cell_menu.png>>
-
-%% Working with testcases
-% The test definition allows for the use of testcases. One test can contain an unlimited amount of
-% testcases. Typically one uses testcases to test different functionalities of the same applicaion
-% or engine to avoid including multiple testdefinitions for one function. A testcase can be defined
-% by including a subfunction that is addressed in the RunCode block. It is important to know that:
-%
-% # It should be subfunctions, not nested functions (in other words, the main function should be 
-%   terminated with an "end" keyword before declaration of the subfunction / testcase.
-% # A testcase can have input arguments (generated in the Description or RunCode part of the test)
-% # A testcase can have multiple output arguments.
-% # The first output argument should be of type boolean (logical), indicating whether the testcase
-%   was successfull.
-% # A testcase is also a function and therefore its name cannot interfere with other functionsnames
-%
-% The following image shows an example of a testcase declaration.
-%
-% <<prerendered_images/test_testcases.png>>
 
 %% Examples
 % The following files contain examples of how te use the testdefinition to obtain the desired

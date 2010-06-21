@@ -1,6 +1,6 @@
 %% 3. Running individual tests
-% Once we have generated a testdefinition we would like to run a test and publish its results. In
-% general there are three ways to either run a test, publish the documentation or do both. This
+% Once we have generated a testdefinition we would like to run a test. In general there are three 
+% ways to run a test and optionally publish the documentation. This
 % tutorial describes these three ways.
 %
 % <html>
@@ -9,12 +9,12 @@
 
 %% Command line execution
 % Testdefinitions are designed in such a way that simply running the function from the command line
-% will evaulate the test and testcases. The first output argument of a testdefinition is always a
-% boolean indicating whtether the test was successfull.
+% will evaulate the test. If the test is not successfull it should crash when running command line,
+% providing error information on what went wrong in which file.
 %
 % Example:
 
-testresult = mte_simple_test
+mte_simple_test;
 
 %%
 % *Advantage*
@@ -26,11 +26,11 @@ testresult = mte_simple_test
 %
 % It is not possible to print either documentation or vizualisation of the result with one command.
 
-%% Run a test with the mtest toolbox
+%% Run a test with the MTest toolbox
 % A testdefinition can also be run with the use of the mtest toolbox. To do this first an instance
 % of an mtest object must be created.
 
-t = mtest('mte_simple_test');
+t = MTest('mte_simple_test');
 
 %%
 % This object contains all information from the testdefinition in the property fields (fields like a
@@ -41,68 +41,59 @@ t = mtest('mte_simple_test');
 run(t);
 
 %%
-% The testresult is now stored in the field: "testresult":
+% The testresult is now stored in the field: "TestResult":
 
-t.testresult
-
-%%
-% With the same object it is also possible to publish the description:
-
-help mtest.publishDescription
+t.TestResult
 
 %%
-% publish the results:
+% With the same object it is also possible to publish the description and result (if specified in the test definition):
 
-help mtest.publishResult
-
-%%
-% Or run and publish the complete test:
-
-help mtest.runAndPublish
+t.Publish = true;
+t.run;
 
 %%
 % *Advantage*
 %
-% With this method additional to running the test, the documentation can also be generated. It
-% requires a relatively small effort.
+% * With this method additional to running the test, the documentation can also be generated. It
+% * requires a relatively small effort.
 %
 % *Disadvantage*
 %
-% The testdefinition must be converted to an object before it can be run or published. Compared to
-% command line usage this increases the amount of actions that must be undertaken. Next to that, the
+% * he testdefinition must be converted to an object before it can be run or published. Compared to
+% command line usage this increases the amount of actions that must be undertaken. 
+% * Next to that, the
 % mtest toolbox is programmed with the use of object oriented programming as introduced with Matlab 
 % version 7.4 (2008a). This method cannot be used with matlab versions prior to 2008a.
 
-%% Run a test with the mtestengine
-% The third way to run a test is with the use of the mtestengine that is also used to scan the
+%% Run a test with the MTestRunner
+% The third way to run a test is with the use of the MTestRunner that is also used to scan the
 % toolbox for testdefinitions and automatically run them. This is done in the same way as with the
 % mtest object:
 %
 % Create an mtestengine object
 
-mte = mtestengine('template','oet');
+mtr = MTestRunner('Template','oet');
 
 %%
-% More information about calling mtestengine:
+% More information about calling MTestRunner:
 
-help mtestengine.mtestengine
+help MTestRunner
 
 %%
 % For automatic running test the engine can look for all tests in a particular maindir:
 
-help mtestengine.catalogueTests
+help MTestRunner.cataloguetests
 
 %%
-% We only want to execute one test, so we add this to the tests in the mtestengine object:
+% We only want to execute one test, so we add this to the tests in the MTestRunner object:
 
-mte.tests(1) = mtest('mte_simple_test');
-
-%%
-% To prevent the engine from indexing all testdefinitions we have to set the following field:
-
-mte.testscatalogued = true;
+mtr.Tests(1) = MTest('mte_simple_test');
 
 %%
-% Now we can use the runAndPublish command to run the test and publish the result.
+% Now we can use the run command to run the test and publish the result.
 
-help mtestengine.runAndPublish
+help MTestRunner.run
+
+%%
+% TODO: simple method to directly load multiple tests in the MTestRunner
+% TODO: simple method to print a summary of the test info to the command window after running

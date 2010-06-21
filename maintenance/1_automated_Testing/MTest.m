@@ -949,7 +949,7 @@ classdef MTest < handle
         function name(proposedname)
             currentTest = TeamCity.currenttest;
             if ~isempty(currentTest)
-                if obj.TeamCityRunning
+                if TeamCity.running
                     %% Set test properties
                     if ~strcmp(currentTest.Name,proposedname)
                         return;
@@ -962,7 +962,7 @@ classdef MTest < handle
         end
         function category(newcategory)
             %% Give Category name
-            if TeamCity.runnnig
+            if TeamCity.running
                 currentTest = TeamCity.currenttest;
                 if ~isempty(currentTest)
                     currentTest.Category = newcategory;

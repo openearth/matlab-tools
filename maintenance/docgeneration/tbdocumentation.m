@@ -277,7 +277,9 @@ classdef tbdocumentation
                     disp('    # Copying icons');
                 end
                 [path fname ext] = fileparts(obj.icon);
-                copyfile(obj.icon,fullfile(obj.targetdir,'icons',[fname,ext]));
+                if ~strcmp(obj.icon,fullfile(obj.targetdir,'icons',[fname,ext]))
+                    copyfile(obj.icon,fullfile(obj.targetdir,'icons',[fname,ext]));
+                end
                 fprintf(finfo,['<icon>icons/' fname ext '</icon>\n']);
             else
                 warning('Icon not found.'); %#ok<WNTAG>
