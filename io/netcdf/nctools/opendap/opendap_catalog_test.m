@@ -3,8 +3,13 @@ function OK = opendap_catalog_test
 %
 %See also: OPENDAP_CATALOG, OPENDAP_CATALOG_DATASET
 
-%% Define tests
+OK = true;
+if TeamCity.running
+    TeamCity.ignore('Test takes too long');
+    return;
+end
 
+%% Define tests
 OPT.run      = [0 0  1 0  0 0  0 0 0    0 0]; % which tests to run
 OPT.run      = [1 1  0 1  1 1  1 1 1    0 0]; % which tests to run
 success      = [1 1  1 1  1 1  1 1 1    1 1]; % by default all tests get 1, they can only fail when active
