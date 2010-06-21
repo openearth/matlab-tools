@@ -65,16 +65,6 @@
 			<!--##BEGINTESTS-->
 				<div id="#TESTNUMBER">
 					<h3><a href="#" class="Mtest" deltares:mtestdescriptionref = "#DESCRIPTIONHTML" deltares:mtestresultsref = "#RESULTHTML"><img class="icon_image" src="#ICON" height="12"> #TESTNAME</a></h3>
-					<div>
-						<!--##BEGINTESTCASE-->
-						<div>
-						<img class="icon_image" src="#ICON" height="12">
-							<a href="#" class = "MtestCase" deltares:mtestdescriptionref = "#DESCRIPTIONHTML" deltares:mtestresultsref = "#RESULTHTML">
-								 #TESTCASENAME
-							</a>
-						</div>
-						<!--##ENDTESTCASE-->
-					</div>
 				</div>
 			<!--##ENDTESTS-->
 			</div>

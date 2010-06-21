@@ -9,7 +9,7 @@ classdef MTestRunner < handle
     % Publishing the results is done based on a template (which is the default deltares template if
     % not specified and created).
     %
-    % See also mtestengine.mtestengine mtestengine.catalogueTests mtestengine.run mtestengine.runAndPublish mtest mtestcase
+    % See also MTestRunner.MTestRunner MTestRunner.cataloguetests MTestRunner.run MTest TeamCity
     
     %% Copyright notice
     %     Copyright (c) 2008  DELTARES.
@@ -50,18 +50,20 @@ classdef MTestRunner < handle
     
     %% Properties
     properties
-        TargetDir = cd;                 % Directory that is used to place the final html files
         MainDir = cd;                   % Main directory of the tests
         Recursive = true;               % Recursive determines whether the engine searches for tests in the maindir only or in subdirs as well
+        Publish = false;                % Determines whether the publishable parts of a test get published
         Verbose = false;                % Determines display messages to be posted while running (Not implemented yet).
         IncludeCoverage = true;         % Includes a dir with html files expressing the coverage of the tests for each function
+
+        TargetDir = cd;                 % Directory that is used to place the final html files
         TestID = '_test';               % ID of the test files. all files that include this string in the filename are selected as tests
         Exclusions = {'.svn','_tutorial','_exclude'};% A cell array of strings determining the test definitions that must be skipped
         Template = 'default';           % Overview template of the testengine results (that maybe links to the descriptiontemplate and resulttemplate).
+
         Tests = MTest;                  % Stores all tests found in the maindir (and subdirs if recursive = true)
         WrongTestDefs = {};             % Files identified as testdefinitions, but unreadable.
         FunctionsRun = {};              % Table that contains information about functions that were called during the tests (Cell N x 3, with columns functionname, html reference and coverage percentage).
-        Publish = false;
     end
     properties (Hidden=true)
         CopyMode = [];
@@ -138,6 +140,11 @@ classdef MTestRunner < handle
             %% initiate output
             varargout = {};
             
+            if obj.Verbose
+                TeamCity.postmessage('progressMessage', 'Collecting tests');
+                disp('Collecting tests');
+            end
+                
             %% list all the tests in the toolbox
             % get directories
             if obj.Recursive
@@ -206,17 +213,17 @@ classdef MTestRunner < handle
             if nargout==1
                 varargout{1} = obj;
             end
+
+            if obj.Verbose
+                TeamCity.postmessage('progressMessage', ['Collected ' num2str(length(obj.Tests)) ' tests']);
+            end
         end
         function varargout = run(obj,varargin)
-            %RUN  Runs all mtest objects
+            %RUN  Runs all tests (that are in the "Test" property)
             %
-            %   This function executes the run function of all mtest objects in the mtestengine.
-            %   After running the mtestengine does not call cleanUp. Large test results can
-            %   therefore become a problem when using this run function.
+            %   This function executes the run function of all mtest objects in the Tests property.
             %
             %   TODO:
-            %       - include input argument 'cleanUp' to cleanUp each tests after running leaving only
-            %         the testresult (without a possibility to publish the results).
             %       - include input argument to specify test numbers (instead of just all tests).
             %
             %   Syntax:
@@ -224,34 +231,22 @@ classdef MTestRunner < handle
             %   outobj = run(obj);
             %
             %   Input:
-            %   obj     -   an mtestengine object.
+            %   obj     -   an MTestRunner object.
             %
             %   Output:
-            %   outobj  -   The same mtestengine object, but with mtest objects for all tests in the
-            %               maindir. It is not necessary to have an output, since the mtestengine is
-            %               of type handle. This automatically adjusts all copies of the object that
-            %               are in the matlab memory. The one that is in the base workspace is
-            %               therefore automatically updated and does not need to be output of the
-            %               function.
+            %   outobj  -   The same MTestRunner object as the input argument obj. It is not 
+            %               necessary to have an output, since the MTestRunner is of type handle. 
+            %               This automatically adjusts all copies of the object that are in the 
+            %               matlab memory. The one that is in the base workspace is therefore 
+            %               automatically updated and does not need to be output of the function.
             %
-            %   See also mtestengine mtestengine.mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
+            %   See also MTestRunner MTestRunner.MTestRunner MTestRunner.run MTest MTestFactory TeamCity
             
             %% get current dir
             startdir = cd;
             
             %% assign output
             varargout = {};
-            
-            %% catalogue tests if not done already
-            if ~obj.TestsCatalogued
-                if obj.Verbose
-                    TeamCity.postmessage('progressMessage', 'Collecting tests');
-                end
-                obj.cataloguetests;
-                if obj.Verbose
-                    TeamCity.postmessage('progressMessage', ['Collected ' num2str(length(obj.Tests)) ' tests']);
-                end
-            end
             
             %% Check if we even have tests
             if isempty(obj.Tests)
@@ -260,6 +255,8 @@ classdef MTestRunner < handle
             end
             
             %% Prepare publication
+            tc = TeamCity;
+            tc.Publish = obj.Publish;
             if obj.Publish
                 %% subtract props
                 maxwidth = [];
@@ -274,8 +271,9 @@ classdef MTestRunner < handle
                 end
                 
                 %% clear and prepare target dir
+                TeamCity.postmessage('progressMessage', 'Preparing output files');
                 if obj.Verbose
-                    TeamCity.postmessage('progressMessage', 'Preparing output files');
+                    disp('Preparing output files');
                 end
                 if ~isdir(obj.TargetDir)
                     mkdir(obj.TargetDir);
@@ -388,13 +386,13 @@ classdef MTestRunner < handle
             addpath(cd);
             
             %% Run and Publish individual tests tests
+            TeamCity.postmessage('progressMessage', 'Started running tests');
             if obj.Verbose
-                TeamCity.postmessage('progressMessage', 'Started running tests');
                 disp('## start running tests ##');
             end
             
             %% First post all testdefinitions that could not be read
-            if obj.Verbose && size(obj.WrongTestDefs,1)>0
+            if size(obj.WrongTestDefs,1)>0
                 TeamCity.postmessage('testSuitStarted','name','wrong test definitions');
                 for iwrongtest = 1:size(obj.WrongTestDefs,1)
                     [pt name] = fileparts(obj.WrongTestDefs{iwrongtest,1});
@@ -409,6 +407,9 @@ classdef MTestRunner < handle
                     TeamCity.postmessage('testFinished',...
                         'name',name,...
                         'duration',num2str(0));
+                    if obj.Verbose
+                        disp(['     ', name, ' Could not be interpreted as a valid testdefinition.']);
+                    end
                 end
                 TeamCity.postmessage('testSuitFinished','name','wrong test definitions');
             end
@@ -422,7 +423,6 @@ classdef MTestRunner < handle
                     obj.Tests(itest).Name = obj.Tests(itest).FileName;
                 end
                 if obj.Verbose
-                    %                     postmessage('testSuiteStarted',obj.postteamcity, 'name',filename);
                     disp([' ' num2str(itest) '. ' obj.Tests(itest).Name ' (' obj.Tests(itest).FileName ')']);
                 end
                 if obj.Publish
@@ -452,12 +452,8 @@ classdef MTestRunner < handle
                     wrongtests(itest)=true;
                     obj.WrongTestDefs{end+1} = fullfile(obj.Tests(itest).FilePath,[obj.Tests(itest).FileName '.m']);
                 end
-                if obj.Verbose
-                    %                     postmessage('testSuiteFinished',obj.postteamcity, 'name',filename);
-                end
                 newfigs = findobj('Type','figure');
                 close(newfigs(~ismember(newfigs,existingfigs)));
-                
             end
             obj.Tests(wrongtests) = [];
             
@@ -469,8 +465,9 @@ classdef MTestRunner < handle
                 
                 %% print coverage html pages
                 if obj.IncludeCoverage
+                    TeamCity.postmessage('progressMessage', 'Calculating test coverage');
                     if obj.Verbose
-                        TeamCity.postmessage('progressMessage', 'Calculating test coverage');
+                        disp('Calculating test coverage');
                     end
                     %% create coverage dir
                     if ~isdir(fullfile(obj.TargetDir,'html','fcncoverage'))
@@ -533,8 +530,9 @@ classdef MTestRunner < handle
 %                     end
                 end
                 %% loop all tpl files and fill keywords
+                TeamCity.postmessage('progressMessage', 'Printing test result and documentation to html');
                 if obj.Verbose
-                    TeamCity.postmessage('progressMessage', 'Printing test result and documentation to html');
+                    disp('Printing test result and documentation to html');
                 end
                 for itpl = 1:size(tplfiles,1)
                     tplfilename = fullfile(tplfiles{itpl,1},tplfiles{itpl,2});

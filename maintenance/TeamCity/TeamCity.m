@@ -3,6 +3,7 @@ classdef TeamCity < handle
         CurrentTest
         TeamCityRunning = false;
         WorkDirectory = cd;
+        Publish = false;
         PublishDirectory = fullfile(cd,'TeamcityPublish');
         Timer
         CurrentWorkSpace
@@ -16,10 +17,28 @@ classdef TeamCity < handle
                 setappdata(0,'MTestTeamCityObject',obj);
             end
             %% Lock the teamcity file
-            mlock;
+%             mlock;
         end
     end
     methods (Static = true)
+        function value = publish(varargin)
+            tc = TeamCity;
+            if nargin > 0
+                tc.Publish = varargin{1};
+            end
+            value = tc.Publish;
+        end
+        function answer = running(varargin)
+            tc = TeamCity;
+            if nargin > 0
+                tc.TeamCityRunning = varargin{1};
+            end
+            answer = tc.TeamCityRunning;
+        end
+        function obj = currenttest()
+            tc = TeamCity;
+            obj = tc.CurrentTest;
+        end
         function ignore(ignoreMessage)
             %% Retrieve TeamCity object
             obj = TeamCity;
@@ -39,36 +58,12 @@ classdef TeamCity < handle
                     currentTest.IgnoreMessage = ignoreMessage;
                     %% Post TeamCity message
                     TeamCity.postmessage('testIgnored','name',currentTest.Name,'message',currentTest.IgnoreMessage);
+                    if currentTest.Verbose
+                        disp(['     Test Ignored: ' currentTest.IgnoreMessage]);
+                    end
                 end
             else
-                %% Post TeamCity message to command window
-                TeamCity.postmessage('testIgnored','message',ignoreMessage);
-            end
-        end
-        function category(category)
-            %% Give Category name
-            obj = TeamCity;
-            if obj.TeamCityRunning
-                currentTest = obj.CurrentTest;
-                if ~isempty(currentTest)
-                    currentTest.Category = category;
-                end
-            end
-        end
-        function name(proposedname)
-            obj = TeamCity;
-            currentTest = obj.CurrentTest;
-            
-            if ~isempty(currentTest)
-                if obj.TeamCityRunning
-                    %% Set test properties
-                    if ~strcmp(currentTest.Name,proposedname)
-                        return;
-                        % TODO give warning
-                    end
-                else
-                    currentTest.Name = proposedname;
-                end
+                disp(['     Test Ignored: ' ignoreMessage]);
             end
         end
         function postmessage(messageName,varargin)
@@ -124,6 +119,9 @@ classdef TeamCity < handle
             
             %% Retrieve TeamCity object
             obj = TeamCity;
+            if ~obj.TeamCityRunning
+                return;
+            end
             
             %% Check whether we still have an outstanding message
             h = tic;
@@ -135,11 +133,7 @@ classdef TeamCity < handle
             end
             
             %% Build TeamCity message string
-            if obj.TeamCityRunning
-                teamcityString = ['##teamcity[', messageName, ' '];
-            else
-                teamcityString = ['TeamCity: ',messageName,char(10)];
-            end
+            teamcityString = ['##teamcity[', messageName, ' '];
             if numel(varargin)==1
                 teamcityString = cat(2,teamcityString,' ''',varargin{1},'''');
             else
@@ -160,52 +154,93 @@ classdef TeamCity < handle
                         tmpstring = strrep(tmpstring,'''','|''');
                     end
                     %% Concatenate the current property value pair
-                    if obj.TeamCityRunning
-                        teamcityString = cat(2,teamcityString,varargin{ivararg},'=''', tmpstring,'''',' ');
-                    else
-                        teamcityString = cat(2,teamcityString,'* ',varargin{ivararg},' = ', tmpstring,char(10));
-                    end
+                    teamcityString = cat(2,teamcityString,varargin{ivararg},'=''', tmpstring,'''',' ');
                 end
             end
             
-            if obj.TeamCityRunning
-                %% Write the string to a temp file
-                % This is necessary to prevent TeamCity from echoing before we finished writeing the
-                % messagefile
-                teamcityString = cat(2,teamcityString,']');
-                dlmwrite(fullfile(obj.WorkDirectory,'teamcitymessage.matlabtemp'),...
-                    teamcityString,...
-                    'delimiter','','-append');
-                movefile(fullfile(obj.WorkDirectory,'teamcitymessage.matlabtemp'),...
-                    fullfile(obj.WorkDirectory,'teamcitymessage.matlab'));
-            else
-                %% Display message to command widow:
-                disp(teamcityString);
-            end
+            %% Write the string to a temp file
+            % This is necessary to prevent TeamCity from echoing before we finished writeing the
+            % messagefile
+            teamcityString = cat(2,teamcityString,']');
+            dlmwrite(fullfile(obj.WorkDirectory,'teamcitymessage.matlabtemp'),...
+                teamcityString,...
+                'delimiter','','-append');
+            movefile(fullfile(obj.WorkDirectory,'teamcitymessage.matlabtemp'),...
+                fullfile(obj.WorkDirectory,'teamcitymessage.matlab'));
         end
         function publishdescription(varargin)
+            profile off
             tc = TeamCity;
             mt = TeamCity.currenttest;
             if ~isdir(tc.PublishDirectory)
                 mkdir(tc.PublishDirectory);
             end
-            mt.publishdescription('outputdir',tc.PublishDirectory);
+            if nargin < 1
+                error('TeamCity:Publish','TeamCity.publishdescription should have the name or handle of a function as first input argument');
+            end
+            functionname = varargin{1};
+            varargin{1} = [];
+            
+            evalin('caller','TeamCity.storeworkspace;');
+            if tc.Publish
+                mt.publishdescription(functionname,...
+                    'outputdir',tc.PublishDirectory,...
+                    varargin{:});
+            else
+                mt.evaluatedescription(functionname);
+            end
+            evalin('caller','TeamCity.restoreworkspace;');
+            profile on
         end
         function publishresult(varargin)
+            profile off
             tc = TeamCity;
             mt = TeamCity.currenttest;
-            saveWorkSpace = true;
             if ~isdir(tc.PublishDirectory)
                 mkdir(tc.PublishDirectory);
             end
-            if islogical(varargin{1})
-                saveWorkSpace = varargin{1};
+            if nargin < 1
+                error('TeamCity:Publish','TeamCity.publishdescription should have the name or handle of a function as first input argument');
             end
-            mt.publishresult('outputdir',tc.PublishDirectory,'saveworkspace',saveWorkSpace);
+            functionname = varargin{1};
+            varargin{1} = [];
+            
+            evalin('caller','TeamCity.storeworkspace;');
+            if tc.Publish
+                % We assume there is no testcode after publication....?
+                mt.publishresult(functionname,...
+                    'outputdir',tc.PublishDirectory,...
+                    varargin{:});
+            end
+            profile on
         end
-        function obj = currenttest()
-            tc = TeamCity;
-            obj = tc.CurrentTest;
+    end
+    methods (Static = true, Hidden = true)
+        function category(category)
+            %% Give Category name
+            obj = TeamCity;
+            if obj.TeamCityRunning
+                currentTest = obj.CurrentTest;
+                if ~isempty(currentTest)
+                    currentTest.Category = category;
+                end
+            end
+        end
+        function name(proposedname)
+            obj = TeamCity;
+            currentTest = obj.CurrentTest;
+            
+            if ~isempty(currentTest)
+                if obj.TeamCityRunning
+                    %% Set test properties
+                    if ~strcmp(currentTest.Name,proposedname)
+                        return;
+                        % TODO give warning
+                    end
+                else
+                    currentTest.Name = proposedname;
+                end
+            end
         end
         function storeworkspace()
             varnames = evalin('caller','whos;');
@@ -224,15 +259,6 @@ classdef TeamCity < handle
                 assignin('caller',tc.CurrentWorkSpace{ivars,1},tc.CurrentWorkSpace{ivars,2});
             end
         end
-        function answer = running(varargin)
-            tc = TeamCity;
-            if nargin > 0
-                tc.TeamCityRunning = varargin{1};
-            end
-            answer = tc.TeamCityRunning;
-        end
-    end
-    methods (Static = true, Hidden = true)
         function destroy()
             % DESTROY deletes the stored object and therefore all stored information
             if isappdata(0,'MTestTeamCityObject')

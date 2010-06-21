@@ -52,7 +52,7 @@ function TeamCity_runtests(varargin)
 % $Keywords: $
 
 try %#ok<TRYNC>
-    mlock;
+%     mlock;
     
     %% First load oetsettings
     try
@@ -66,8 +66,8 @@ try %#ok<TRYNC>
         TeamCity.postmessage('message', 'text', 'Matlab was unable to run oetsettings.',...
             'errorDetails',me.getReport,...
             'status','ERROR');
-        %     rethrow(me);
-        exit;
+            rethrow(me);
+%         exit;
     end
     
     try
@@ -100,6 +100,7 @@ try %#ok<TRYNC>
             'Template' ,'oet');
         
         %% Run tests and publish results
+        mtr.cataloguetests;
         mtr.run;
         TeamCity.postmessage('progressFinish','Tests finished.');
         
@@ -122,8 +123,8 @@ try %#ok<TRYNC>
                 'errorDetails',me.getReport,...
                 'status','ERROR');
         end
-        %     rethrow(me);
-        exit;
+            rethrow(me);
+%         exit;
     end
 end
-exit;
+% exit;

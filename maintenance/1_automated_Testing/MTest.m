@@ -78,16 +78,6 @@ classdef MTest < handle
         Author   = [];                      % Last author of the test (obtained from svn keywords)
         SeeAlso  = {};                      % see also references
         
-        DescriptionCode = {};               % Code that was included in the testfile description cell
-        DescriptionIncludecode = false;     % Attribute IncludeCode for publishing the description cell
-        DescriptionEvaluatecode = true;     % Attribute EvaluateCode for publishing the description cell
-        
-        RunCode = {};                       % Code that was included in the testfile RunTest cell
-        
-        PublishCode = {};                   % Code that was included in the testfile TestResults cell
-        PublishIncludecode = false;         % Attribute IncludeCode for publishing the TestResults cell
-        PublishEvaluatecode = true;         % Attribute EvaluateCode for publishing the TestResults cell
-        
         Publish = true;                     % Determines whether test results, coverage and description are published to html
         MaxWidth  = 600;                    % Maximum width of the published figures (in pixels). By default the maximum width is set to 600 pixels.
         MaxHeight = 600;                    % Maximum height of the published figures (in pixels). By default the maximum height is set to 600 pixels.
@@ -104,16 +94,13 @@ classdef MTest < handle
         ProfilerInfo = [];                  % Profile info structure
         FunctionCalls = [];                 % Called functions
         StackTrace    = [];                 % Stack trace (diary + error message)
+        
+        Verbose = true;                     % Determines whether messages are written to the command window whenever the run function gets executed
     end
     properties (Hidden = true)
         FullString = [];                    % Full string of the contents of the test file
         IDTestFunction = [];                % boolean the size of FullStrin with true for the lines that are part of the main test
-        IDTestCode = [];                    % boolean the size of FullStrin with true for the lines that are part of the runnable code of the main test
-        IDDescriptionCode = [];             % boolean the size of FullStrin with true for the lines that are part of the (publishable) test description
-        IDRunCode = [];                     % boolean the size of FullStrin with true for the lines that are part of the run code
-        IDPublishCode = [];                 % boolean the size of FullStrin with true for the lines that are part of the publish code part
         IDOetHeaderString = [];             % boolean the size of FullStrin with true for the lines that are part of the oet function header
-        IDTeamCityCommands = [];            % boolean the size of FullStrin with true for the lines that contain a command to TeamCity
         
         SubFunctions = [];                  % Struct with output of getcallinfo for all subfunctions
         RunDir = [];                        % This dir is used to run the test (if it needs to be run in a different dir)
@@ -159,12 +146,9 @@ classdef MTest < handle
             obj = MTestFactory.createtest(varargin{:});
         end
         function run(obj,varargin)
-            %RUN  Runs the test and publishes the descriptions and results of all testcases.
+            %RUN  Runs the test and publishes the descriptions and results.
             %
             %   This function runs the MTest object and publishes the descriptions and results.
-            %   The variables of the description and runcode of the test are stored in a hidden
-            %   workspace, so that the publishresult function can be called after running
-            %   the test.
             %
             %   Syntax:
             %   run(obj,'property','value');
@@ -183,12 +167,15 @@ classdef MTest < handle
             %                          default the maximum height is set to 600 pixels.
             %           'StyleSheet'-  Style sheet that is used for publishing (see publish
             %                          documentation for more information).
-            %           And all other valid properties of the MTest object.
+            %           'Publish'   -  {true} | false specifies whether description and result
+            %                          section should be published.
+            %           'Category'  -  {string} overrides the category of the test.
             %
-            %   See also MTest MTest.MTest MTestRunner            
+            %   See also MTest MTest.MTest MTestFactory MTestRunner
             
             %% Lock this workspace and function code
             mlock;
+            teamcity = TeamCity;
             
             %% subtract outputfilename
             obj = setproperty(obj,varargin{:});
@@ -199,12 +186,21 @@ classdef MTest < handle
             end
             
             %% notify begin of test
-            TeamCity.postmessage('testStarted',...
-                'name',obj.Name,...
-                'captureStandardOutput','true');
+            if teamcity.running
+                TeamCity.postmessage('testStarted',...
+                    'name',obj.Name,...
+                    'captureStandardOutput','true');
+            end
+            if obj.Verbose
+                disp(['     Test started: ' obj.Name]);
+            end
             
             %% return if obj has to be ignored
             if obj.Ignore
+                if obj.Verbose
+                    disp(['     Ignored: ' obj.IgnoreMessage]);
+                    disp(['     Test finished: ' obj.Name]);
+                end
                 TeamCity.postmessage('testIgnored',...
                     'name',obj.Name,...
                     'message',obj.IgnoreMessage);
@@ -222,14 +218,16 @@ classdef MTest < handle
             pt = path;
             addpath(obj.FilePath);
             
-            %% construct temp rundir
-            obj.RunDir = tempname;
-            mkdir(obj.RunDir);
-            
+            %% Remember current dir
+            cdtemp = cd;
             
             %% Check whether the function has a proper header
             if isempty(obj.FunctionHeader)
                 obj.testresult = false;
+                if obj.Verbose
+                    disp('    Error occurred: Error in test definition');
+                    disp(['     Test finished: ' obj.Name]);
+                end
                 TeamCity.postmessage('testFailed',...
                     'name',obj.Name,...
                     'message','Error in test definition',...
@@ -240,46 +238,6 @@ classdef MTest < handle
                 return;
             end
             
-            %% go to rundir
-            cdtemp = cd;
-            cd(obj.RunDir);
-            
-            %% Print Run file
-            testString = obj.FullString;
-            testString(~obj.IDTestFunction | obj.IDPublishCode) = deal({' '});
-            
-            if obj.Publish
-                testString(obj.IDDescriptionCode) = deal({' '});
-                if any(obj.IDDescriptionCode)
-                    testString{find(obj.IDDescriptionCode,1,'last')} = 'profile(''off''); TeamCity.storeworkspace; TeamCity.publishdescription; TeamCity.restoreworkspace; profile(''on'');';
-                end
-                if any(obj.IDPublishCode)
-                    if find(obj.IDTestFunction & ~obj.IDPublishCode,1,'last') > find(obj.IDPublishCode,1,'first')
-                        testString{find(obj.IDPublishCode,1,'last')} = 'profile(''off''); TeamCity.storeworkspace; TeamCity.publishresult; TeamCity.restoreworkspace; profile(''on'');';
-                    else
-                        testString{find(obj.IDPublishCode,1,'last')} = 'profile(''off''); TeamCity.storeworkspace; TeamCity.publishresult(false);';
-                    end
-                end
-            end
-            
-            str = sprintf('%s\n',testString{:});
-            
-            fid = fopen(fullfile(obj.RunDir,[obj.FunctionName '.m']),'w');
-            fprintf(fid,'%s\n',str);
-            fclose(fid);
-            
-            %% Print subfunctions
-            for isub = 1:length(obj.SubFunctions)
-                fid = fopen(fullfile(obj.RunDir,[obj.SubFunctions(isub).name,'.m']),'w');
-                fprintf(fid,'%s\n',sprintf('%s\n',obj.FullString{obj.SubFunctions(isub).linemask}));
-                fclose(fid);
-            end
-            
-            if ~exist(fullfile(obj.RunDir,[obj.FunctionName '.m']),'file')
-                % Since Windows is slower in writing the file than the matlab fclose function..?
-                % This is a workaround to let windows finish the file...
-            end
-   
             %% Check open figures
             openfigures = findobj('Type','figure');
 
@@ -287,6 +245,7 @@ classdef MTest < handle
             try
                 errorReport = '';
                 errorMessage = '';
+                commandWindowString = '';
                 try
                     % Try to perform test with output argument (testResult)
                     tic;
@@ -332,13 +291,21 @@ classdef MTest < handle
                 end
                 
                 %% Save stacktrace information
-                obj.StackTrace = strrep(sprintf('%s\n',commandWindowString,errorReport),obj.RunDir,obj.FilePath);
+                if ~isempty(obj.RunDir) && ~isempty(obj.FilePath)
+                    stacktrace = strrep(sprintf('%s\n',commandWindowString,errorReport),obj.RunDir,obj.FilePath);
+                else
+                    stacktrace = sprintf('%s\n',commandWindowString,errorReport);
+                end
+                obj.StackTrace = stacktrace;
                 obj.ProfilerInfo = profile('info');
                 obj.Time = runTime;
                 
                 if ~obj.TestResult
                     % Something went wrong, Post failure message
                     obj.Time = 0;
+                    if obj.Verbose
+                        disp(['     Error occurred: ' errorMessage]);
+                    end
                     TeamCity.postmessage('testFailed',...
                         'name',obj.Name,...
                         'message',errorMessage,...
@@ -355,6 +322,9 @@ classdef MTest < handle
                     'name',obj.Name,...
                     'message',me.message,...
                     'details',me.getReport);
+                if obj.Verbose
+                    disp(['     Error occurred: ' me.message]);
+                end
             end
             
             %% Close all remaining open figures from the test
@@ -367,11 +337,6 @@ classdef MTest < handle
             %% cd back
             cd(cdtemp);
             
-            %% remove tempdir
-            try %#ok<TRYNC>
-                rmdir(obj.RunDir,'s');
-            end
-            
             %% set additional parameters
             obj.Date = now;
             
@@ -382,7 +347,9 @@ classdef MTest < handle
             TeamCity.postmessage('testFinished',...
                 'name',obj.Name,...
                 'duration',num2str(round(obj.Time*1000)));
-
+            if obj.Verbose
+                disp(['     Test finished: ' obj.Name]);
+            end
             %% Unlock the workspace
             munlock;
         end
@@ -395,7 +362,7 @@ classdef MTest < handle
         end
     end
     methods (Hidden = true)
-        function publishdescription(obj,varargin)
+        function publishdescription(obj,functionname,varargin)
             %publishDescripton  Creates an html file from the description code with publish
             %
             %   This function publishes the code included in the Description cell of the test file
@@ -438,11 +405,41 @@ classdef MTest < handle
             %
             %   See also mtest mtestcase mtestengine mtest.publishResults
             
-            %% Do not publish if there is no description or the test should be ignored
-            if isempty(obj.DescriptionCode) || obj.Ignore
+            %% Do not publish if the object should be ignored
+            if obj.Ignore
                 return;
             end
-            
+
+            %% Determine whether the publish code is a subfunction, function or script
+            functionType = 'subfunction';
+            if isa(functionname,'function_handle')
+                functionname = func2str(functionname);
+            end
+            idfunction = strcmp({obj.SubFunctions.name},functionname);
+
+            if all(~idfunction)
+                % function is not a subfunction
+                if ~exist(which(functionname),'file')
+                    % There is no external file with this name
+                    error('TeamCity:Publish','TeamCity.publishdescription should have the name or handle of a function or script as first input argument');
+                end
+                % read the code of the external file to see if it is a function or a script
+                fcncalls = getcallinfo(which(functionname));
+                if datenum(version('-date')) > datenum(2010,1,1)
+                    if fcncalls(1).type == internal.matlab.codetools.reports.matlabType.Function
+                        functionType = 'function';
+                    else
+                        functionType = 'script';
+                    end
+                else
+                    if strcmp(fcncalls(1).type,'function')
+                        functionType = 'function';
+                    else
+                        functionType = 'script';
+                    end
+                end
+            end
+
             %% subtract result dir from input
             resdir = obj.OutputDir;
             id = find(strcmp(varargin,'outputdir'));
@@ -454,12 +451,6 @@ classdef MTest < handle
                 resdir = cd;
             end
             
-            saveWorkSpace = true;
-            id = find(strcmp(varargin,'saveworkspace'));
-            if ~isempty(id)
-                saveWorkSpace = varargin{id+1};
-                varargin(id:id+1) = [];
-            end
             %% Get filename from input
             id = find(strcmp(varargin,'outputfile'));
             outputfile = fullfile(resdir,[obj.FileName, '_description.html']);
@@ -474,15 +465,17 @@ classdef MTest < handle
             
             %% Process other input arguments
             % includeCode
+            includeCode = false;
             if any(strcmpi(varargin,'includecode'))
                 id = find(strcmpi(varargin,'includecode'));
-                obj.DescriptionIncludecode = varargin{id+1};
+                includeCode = varargin{id+1};
             end
             
             % evaluateCode
+            evaluateCode = true;
             if any(strcmpi(varargin,'evaluatecode'))
                 id = find(strcmpi(varargin,'evaluatecode'));
-                obj.DescriptionEvaluatecode = varargin{id+1};
+                evaluateCode = varargin{id+1};
             end
             
             % Maxwidth
@@ -517,24 +510,51 @@ classdef MTest < handle
                 'outputDir',fileparts(outputname),...
                 'maxHeight',obj.MaxHeight,...
                 'maxWidth',obj.MaxWidth,...
-                'showCode',obj.DescriptionIncludecode,...
+                'showCode',includeCode,...
                 'useNewFigure',false,... % Maybe add this to the input of properties?
-                'evalCode',obj.DescriptionEvaluatecode);
+                'evalCode',evaluateCode);
             
             %% Check open figures
             openfigures = findobj('Type','figure');
             
             %% publish results to resdir
-            if ~isempty(obj.Name)
-                descrstr = cat(1,{['%% Description ("' obj.Name '")']},obj.DescriptionCode);
-            else
-                descrstr = cat(1,{['%% Description ("' obj.FunctionName '")']},obj.DescriptionCode);
+            switch functionType
+                case 'subfunction'
+                    idPublishString = obj.SubFunctions(idfunction).linemask;
+                    if strncmp(obj.FullString(obj.SubFunctions(idfunction).firstline),'function ',9)
+                        idPublishString(obj.SubFunctions(idfunction).firstline) = false;
+                    end
+                    
+                    % ==> This can lead to errors if someone somehow does not end the subfunction with end end
+                    % also begins the last line with end....
+                    if strncmp(obj.FullString(obj.SubFunctions(idfunction).lastline),'end',3)
+                        idPublishString(obj.SubFunctions(idfunction).lastline) = false;
+                    end
+                    
+                    descrstr = obj.FullString(idPublishString);
+                otherwise
+                    fid = fopen(which(functionname),'r');
+                    str = textscan(fid,'%s','delimiter','\n','whitespace','','bufSize',10000);
+                    functioncontent = str{1};
+                    fclose(fid);
+                    if strcmp(functionType,'script')
+                        descrstr = sprintf('%s\n',functioncontent{:});
+                    else
+                        if length(fcncalls)>1
+                            descrstr = sprintf('%s\n',functioncontent{:});
+                        else
+                            functioncontent(fcncalls.firstline) = [];
+                            descrstr = sprintf('%s\n',functioncontent{:});
+                        end
+                    end
             end
+            
+            %% Publish
             MTest.publishcodestring(outputname,...
                 [],...
                 descrstr,...
                 opt,...
-                saveWorkSpace);
+                true);
             
             %% Close all remaining open figures from the test
             newopenfigures = findobj('Type','figure');
@@ -542,9 +562,88 @@ classdef MTest < handle
             if any(id) && isempty(find(strcmpi(varargin,'keepfigures'), 1))
                 close(newopenfigures(id));
             end
-            
         end
-        function publishresult(obj,varargin)
+        function evaluatedescription(obj,functionname)
+            %% Do not publish if the object should be ignored
+            if obj.Ignore
+                return;
+            end
+
+            %% Determine whether the publish code is a subfunction, function or script
+            functionType = 'subfunction';
+            if isa(functionname,'function_handle')
+                functionname = func2str(functionname);
+            end
+            idfunction = strcmp({obj.SubFunctions.name},functionname);
+
+            if all(~idfunction)
+                % function is not a subfunction
+                if ~exist(which(functionname),'file')
+                    % There is no external file with this name
+                    error('TeamCity:Publish','TeamCity.publishdescription should have the name or handle of a function or script as first input argument');
+                end
+                % read the code of the external file to see if it is a function or a script
+                fcncalls = getcallinfo(which(functionname));
+                if datenum(version('-date')) > datenum(2010,1,1)
+                    if fcncalls(1).type == internal.matlab.codetools.reports.matlabType.Function
+                        functionType = 'function';
+                    else
+                        functionType = 'script';
+                    end
+                else
+                    if strcmp(fcncalls(1).type,'function')
+                        functionType = 'function';
+                    else
+                        functionType = 'script';
+                    end
+                end
+            end
+
+            switch functionType
+                case 'subfunction'
+                    idPublishString = obj.SubFunctions(idfunction).linemask;
+                    if strncmp(obj.FullString(obj.SubFunctions(idfunction).firstline),'function ',9)
+                        idPublishString(obj.SubFunctions(idfunction).firstline) = false;
+                    end
+            
+                    % ==> This can lead to errors if someone somehow does not end the subfunction with end end
+                    % also begins the last line with end....
+                    if strncmp(obj.FullString(obj.SubFunctions(idfunction).lastline),'end',3)
+                        idPublishString(obj.SubFunctions(idfunction).lastline) = false;
+                    end
+                    
+                    descrstr = sprintf('%s\n',...
+                        'TeamCity.restoreworkspace;',...
+                        'profile on',...
+                        obj.FullString{idPublishString},...
+                        'profile off',...
+                        'TeamCity.storeworkspace;');
+                    
+                    evalinemptyworkspace(descrstr);
+                case 'function'
+                    fid = fopen(which(functionname),'r');
+                    str = textscan(fid,'%s','delimiter','\n','whitespace','','bufSize',10000);
+                    functioncontent = str{1};
+                    fclose(fid);
+                    descrstr = sprintf('%s\n',...
+                        'TeamCity.restoreworkspace;',...
+                        'profile on',...
+                        functioncontent{:},...
+                        'profile off',...
+                        'TeamCity.storeworkspace;');
+                    evalinemptyworkspace(descrstr);
+                case 'script'
+                    descrstr = sprintf('%s\n',...
+                        'TeamCity.restoreworkspace;',...
+                        'profile on',...
+                        [functionname ';'],...
+                        'profile off',...
+                        'TeamCity.storeworkspace;');
+                    evalinemptyworkspace(descrstr);
+            end
+
+        end
+        function publishresult(obj,functionname,varargin)
             %publishResults  Creates an html file from the test result with publish
             %
             %   This function publishes the code included in the Publish(Result) cell of the test file
@@ -586,29 +685,55 @@ classdef MTest < handle
             %
             %   See also mtest mtestcase mtestengine mtestpublishable.publishDescription mtestpublishable.publishCoverage
             
-            %% Don't publish if the test was ignored
-            if obj.Ignore || isempty(obj.PublishCode)
+            %% Do not publish if the object should be ignored
+            if obj.Ignore
                 return;
             end
-                        
+
+            %% Determine whether the publish code is a subfunction, function or script
+            functionType = 'subfunction';
+            if isa(functionname,'function_handle')
+                functionname = func2str(functionname);
+            end
+            idfunction = strcmp({obj.SubFunctions.name},functionname);
+
+            if all(~idfunction)
+                % function is not a subfunction
+                if ~exist(which(functionname),'file')
+                    % There is no external file with this name
+                    error('TeamCity:Publish','TeamCity.publishdescription should have the name or handle of a function or script as first input argument');
+                end
+                % read the code of the external file to see if it is a function or a script
+                fcncalls = getcallinfo(which(functionname));
+                if datenum(version('-date')) > datenum(2010,1,1)
+                    if fcncalls(1).type == internal.matlab.codetools.reports.matlabType.Function
+                        functionType = 'function';
+                    else
+                        functionType = 'script';
+                    end
+                else
+                    if strcmp(fcncalls(1).type,'function')
+                        functionType = 'function';
+                    else
+                        functionType = 'script';
+                    end
+                end
+            end
+                
             %% subtract result dir from input
-            resdir = cd;
+            resdir = obj.OutputDir;
             id = find(strcmp(varargin,'outputdir'));
             if ~isempty(id)
                 resdir = varargin{id+1};
                 varargin(id:id+1) = [];
             end
-            
-            saveWorkSpace = true;
-            id = find(strcmp(varargin,'saveworkspace'));
-            if ~isempty(id)
-                saveWorkSpace = varargin{id+1};
-                varargin(id:id+1) = [];
+            if isempty(resdir)
+                resdir = cd;
             end
             
             %% Get filename from input
             id = find(strcmp(varargin,'outputfile'));
-            outputfile = fullfile(resdir,[obj.FileName, '_publish.html']);
+            outputfile = fullfile(resdir,[obj.FileName, 'publish.html']);
             if ~isempty(id)
                 [pt nm] = fileparts(varargin{id+1});
                 outputfile = [nm '.html'];
@@ -620,15 +745,17 @@ classdef MTest < handle
             
             %% Process other input arguments
             % includeCode
+            includeCode = false;
             if any(strcmpi(varargin,'includecode'))
                 id = find(strcmpi(varargin,'includecode'));
-                obj.DescriptionIncludecode = varargin{id+1};
+                includeCode = varargin{id+1};
             end
             
             % evaluateCode
+            evaluateCode = true;
             if any(strcmpi(varargin,'evaluatecode'))
                 id = find(strcmpi(varargin,'evaluatecode'));
-                obj.DescriptionEvaluatecode = varargin{id+1};
+                evaluateCode = varargin{id+1};
             end
             
             % Maxwidth
@@ -663,24 +790,51 @@ classdef MTest < handle
                 'outputDir',fileparts(outputname),...
                 'maxHeight',obj.MaxHeight,...
                 'maxWidth',obj.MaxWidth,...
-                'showCode',obj.PublishIncludecode,...
+                'showCode',includeCode,...
                 'useNewFigure',false,... % Maybe add this to the input of properties?
-                'evalCode',obj.PublishEvaluatecode);
+                'evalCode',evaluateCode);
             
             %% Check open figures
             openfigures = findobj('Type','figure');
             
             %% publish results to resdir
-            if ~isempty(obj.Name)
-                publstr = cat(1,{['%% Results ("' obj.Name '")']},obj.PublishCode);
-            else
-                publstr = cat(1,{['%% Results ("' obj.FunctionName '")']},obj.PublishCode);
+            % Todo: in future it should be possible to call a script outside the function
+            switch functionType
+                case 'subfunction'
+                    idPublishString = obj.SubFunctions(idfunction).linemask;
+                    if strncmp(obj.FullString(obj.SubFunctions(idfunction).firstline),'function ',9)
+                        idPublishString(obj.SubFunctions(idfunction).firstline) = false;
+                    end
+                    
+                    % ==> This can lead to errors if someone somehow does not end the subfunction with end end
+                    % also begins the last line with end....
+                    if strncmp(obj.FullString(obj.SubFunctions(idfunction).lastline),'end',3)
+                        idPublishString(obj.SubFunctions(idfunction).lastline) = false;
+                    end
+                    
+                    publishstr = obj.FullString(idPublishString);
+                otherwise
+                    fid = fopen(which(functionname),'r');
+                    str = textscan(fid,'%s','delimiter','\n','whitespace','','bufSize',10000);
+                    functioncontent = str{1};
+                    fclose(fid);
+                    if strcmp(functionType,'script')
+                        publishstr = sprintf('%s\n',functioncontent{:});
+                    else
+                        if length(fcncalls)>1
+                            publishstr = sprintf('%s\n',functioncontent{:});
+                        else
+                            functioncontent(fcncalls.firstline) = [];
+                            publishstr = sprintf('%s\n',functioncontent{:});
+                        end
+                    end
             end
+            
             MTest.publishcodestring(outputname,...
                 [],...
-                publstr,...
+                publishstr,...
                 opt,...
-                saveWorkSpace);
+                true);
             
             %% Close all remaining open figures from the test
             newopenfigures = findobj('Type','figure');
@@ -748,15 +902,15 @@ classdef MTest < handle
             % store mtest_workspace in UserData of the matlab root. The publish function is preceded
             % by code to retrieve the variables from the root UserData.
             % Build a string that restores the variables and executes the tempfile.
-            string2evaluate = ['TeamCity.restoreworkspace;', tempfileshortname, ';'];
+            string2evaluate = ['TeamCity.restoreworkspace; profile on;', tempfileshortname, ';'];
             if saveWorkSpace
-                string2evaluate = cat(2,string2evaluate,' TeamCity.storeworkspace;');
+                string2evaluate = cat(2,string2evaluate,' profile off; TeamCity.storeworkspace;');
             end
             
             % Now specify the code to evaluate. The string constructed above should be evaluated in
             % an empty workspace. Therefore in the base workspace we only call evalinemptyworkspace,
             % with the string we just constructed as input.
-            publishoptions.codeToEvaluate = ['evalinemptyworkspace(' string2evaluate ');'];
+            publishoptions.codeToEvaluate = ['evalinemptyworkspace(''' string2evaluate ''');'];
             
             %% publish file
             tempcd = cd;
@@ -776,54 +930,6 @@ classdef MTest < handle
                 movefile(fullfile(publishoptions.outputDir,[fname '.html']),outputname);
             end
         end
-        function [testResult errorMessage errorReport runTime] = mtestrunner(functionName)
-            %% Default output
-            errorReport = '';
-            errorMessage = '';
-            testResult = false;
-            runTime = 0;
-            
-            %% Evaluate the test to avoid information about the test engine in the exeption
-            % First try the test with an output parameter. Then also try the test without...
-            eval(sprintf('%s\n',...
-                'try',...
-                '    tic;',...
-                '    profile clear',...
-                '    profile on',...
-                ['    testResult = eval(' functionName ');'],...
-                '    profile off',...
-                '    runTime = toc;',...
-                '    if ~islogical(testResult)',...
-                '        testResult = true;',...
-                '    end',...
-                'catch me',...
-                '    if strcmp(me.identifier,''MATLAB:TooManyOutputs'')',...
-                '        % Function does not have an output argument',...
-                '        eval(sprintf(''%s\n'',...',...
-                '            ''try'',...',...
-                '            ''    tic;'',...',...
-                '            ''    profile clear'',...',...
-                '            ''    profile on'',...',...
-                '            [''    '' functionName '';''],...',...
-                '            ''    profile off'',...',...
-                '            ''    runTime = toc;'',...',...
-                '            ''    testResult = true;'',...',...
-                '            ''catch me2'',...',...
-                '            ''    testResult = false;'',...',...
-                '            ''    profile off'',...',...
-                '            ''    runTime = toc;'',...',...
-                '            ''    errorReport = me2.getReport;'',...',...
-                '            ''    errorMessage = me2.message;'',...',...
-                '            ''end''));',...
-                '    else',...
-                '        profile off',...
-                '        runTime = toc;',...
-                '        testResult = false;',...
-                '        errorReport = me.getReport;',...
-                '        errorMessage = me.message;',...
-                '    end',...
-                'end'));
-        end
         function fname = makeTempFile(tempdir,str,fn)
             if ~ischar(str)
                 str = sprintf('%s\n',str{:});
@@ -839,26 +945,28 @@ classdef MTest < handle
             fclose(fid);
         end
     end
-    methods
-        function value = get.DescriptionCode(obj)
-            value = {};
-            
-            if length(obj.FullString)==length(obj.IDDescriptionCode)
-                value = obj.FullString(obj.IDDescriptionCode);
+    methods (Static = true)
+        function name(proposedname)
+            currentTest = TeamCity.currenttest;
+            if ~isempty(currentTest)
+                if obj.TeamCityRunning
+                    %% Set test properties
+                    if ~strcmp(currentTest.Name,proposedname)
+                        return;
+                        % TODO give warning
+                    end
+                else
+                    currentTest.Name = proposedname;
+                end
             end
         end
-        function value = get.RunCode(obj)
-            value = {};
-            
-            if length(obj.FullString)==length(obj.IDRunCode)
-                value = obj.FullString(obj.IDRunCode);
-            end
-        end
-        function value = get.PublishCode(obj)
-            value = {};
-            
-            if length(obj.FullString)==length(obj.IDPublishCode)
-                value = obj.FullString(obj.IDPublishCode);
+        function category(newcategory)
+            %% Give Category name
+            if TeamCity.runnnig
+                currentTest = TeamCity.currenttest;
+                if ~isempty(currentTest)
+                    currentTest.Category = newcategory;
+                end
             end
         end
     end

@@ -97,38 +97,6 @@ table td {
 					</table>
 				</div>
 			</div>
-			<div id="TestDocumentation">
-				<h3><a>Test Documentation</a></h3>
-				<div id="TestDocumentationContent">
-					<div id="Testtree" class="ui-widget ui-widget-content ui-corner-all">
-						<ul id="browser" class="filetree treeview maintree">
-							<!--##BEGINTESTS-->
-							<li><a class="Mtest" deltares:mtestdescriptionref = "#DESCRIPTIONHTML" deltares:mtestcoverageref = "#COVERAGEHTML" deltares:mtestresultsref = "#RESULTHTML"><span class="folder"><img class="icon_image" src="#ICON" height="12">#TESTNAME</span></a>
-								<ul>
-									<!--##BEGINTESTCASE-->
-									<li><a class = "MtestCase" deltares:mtestdescriptionref = "#DESCRIPTIONHTML" deltares:mtestcoverageref = "#COVERAGEHTML" deltares:mtestresultsref = "#RESULTHTML"><span class="file"><img class="icon_image" src="#ICON" height="12">#TESTCASENAME</span></a></li>
-									<!--##ENDTESTCASE-->
-								</ul>
-							</li>
-							<!--##ENDTESTS-->
-						</ul>
-					</div>
-					<div id="result_viewer">
-						<div id="result_tab">
-							<div id="tabs" index = "2">
-								<ul>
-									<li><a href="#tabs_description">Description</a></li>
-									<li><a href="#tabs_function_coverage">Function coverage</a></li>
-									<li><a href="#tabs_result">Result</a></li>
-								</ul>
-								<div id="tabs_description">Click one of the items on the left to show a test description or testcase result.</div>
-								<div id="tabs_function_coverage">Click one of the items on the left to show a test description or testcase result.</div>
-								<div id="tabs_result">Click one of the items on the left to show a test description or testcase result.</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
 			<div id="TestCoverage">
 				<h3><a>Tested Functions</a></h3>
 				<div id="TestCoverageContent">

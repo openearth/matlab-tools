@@ -3,7 +3,7 @@ classdef MTestFactory
         MaxWidth  = 600;                    % Maximum width of the published figures (in pixels). By default the maximum width is set to 600 pixels.
         MaxHeight = 600;                    % Maximum height of the published figures (in pixels). By default the maximum height is set to 600 pixels.
         StyleSheet = '';                    % Style sheet that is used for publishing (see publish documentation for more information).
-        Category = 'Unit';
+        Category = 'UnCategorized';
     end
     
     methods (Static = true)
@@ -68,9 +68,6 @@ classdef MTestFactory
             %% Interpret Header
             newTest = MTestFactory.interpretheader(newTest);
             
-            %% Identify Definition Blocks
-            newTest = MTestFactory.splitdefinitionblocks(newTest);
-            
             %% Search for Category and Name
             newTest = MTestFactory.findcatagory(newTest);
             newTest = MTestFactory.findname(newTest);
@@ -97,21 +94,19 @@ classdef MTestFactory
             idBase = false(numel(obj.FullString),1);
             obj.IDTestFunction = idBase;
             obj.IDOetHeaderString = idBase;
-            obj.IDTestCode = idBase;
-            obj.IDDescriptionCode = idBase;
-            obj.IDRunCode = idBase;
-            obj.IDPublishCode = idBase;
-            obj.IDTeamCityCommands = idBase;
         end
         function obj = splitdefinitionstring(obj)
-            str = strtrim(obj.FullString);
-            
             %% -- find function calls
             % getcallinfo is an undocumented function and can be changed in future...
             if ~exist(fullfile(obj.FilePath,[obj.FileName '.m']),'file')
                 error('MTestFactory:DefinitionFileNotFound','Definition file could not be found.');
             end
+            
+            % ----> Be carefull, this function does not take comments into accoutn if there is no
+            % runnable code at all <---------
             fcncalls = getcallinfo(fullfile(obj.FilePath,[obj.FileName,'.m']));
+            %<----------------------------------------------------------------------------------->
+            
             if datenum(version('-date')) > datenum(2010,1,1)
                 mainFunction = fcncalls(cellfun(@(tp) tp == internal.matlab.codetools.reports.matlabType.Function,{fcncalls.type}));
             else
@@ -124,13 +119,7 @@ classdef MTestFactory
                 error('MTestFactory:NoFunction','This test definition file has no function declaration. definition could not be read.');
             end
             obj.IDTestFunction = mainFunction.linemask;
-            obj.IDTeamCityCommands = cellfun(@length,strfind(str,'TeamCity.')) - cellfun(@length,strfind(str,'TeamCity.running')) > 0;
-            % Do not find the running command. This is often used in an if statement and therefore
-            % causes an error if only the if (and not the matching end) is transferred
             obj.FunctionName = mainFunction.name;
-            if strncmp(str{mainFunction.lastline},'end',3) && ~isempty(obj.SubFunctions)
-                obj.IDTestFunction(mainFunction.lastline) = false;
-            end
         end
         function obj = interpretheader(obj)
             teststr = repmat({''},numel(obj.FullString),1);
@@ -148,14 +137,6 @@ classdef MTestFactory
                 
                 obj.FunctionHeader = teststr{1};
                 oetTestHeaderString = teststr(2:find(codelines(2:end),1,'first'));
-                obj.IDTestCode = obj.IDTestFunction;
-                beginTestCode = find((strncmp(obj.FullString,'%% $Description',15) & obj.IDTestFunction) |...
-                    (strncmp(obj.FullString,'%% $Run',15) & obj.IDTestFunction) |...
-                    (strncmp(obj.FullString,'%% $Publish',15) & obj.IDTestFunction),1,'first');
-                if isempty(beginTestCode)
-                    beginTestCode = find(codelines(2:end),1,'first');
-                end
-                obj.IDTestCode(1:beginTestCode-1)=false;
                 
                 if ~isempty(oetTestHeaderString)
                     %% h1line
@@ -199,14 +180,6 @@ classdef MTestFactory
                 end
                 oetTestHeaderString(1:helpend) = [];
                 
-                %% Credentials
-%                 celldivisions = find(strncmp(oetTestHeaderString,'%%',2));
-%                 credid = find(strncmp(oetTestHeaderString,'%% Credentials',14) | strncmp(oetTestHeaderString,'%% Copyright',12));
-%                 if ~isempty(credid)
-%                     %% do something with the credentials?
-%                     % credend = min([length(oetTestHeaderString) celldivisions(celldivisions>credid)-1]);
-%                 end
-                
                 %% Version info
                 versionid = find(strncmp(oetTestHeaderString,'%% Version',10), 1);
                 if ~isempty(versionid)
@@ -222,104 +195,17 @@ classdef MTestFactory
                 error('MTestFactory:NoTestCode','The MTestFactory could not find code to run.');
             end
         end
-        function obj = splitdefinitionblocks(obj)
-            str = repmat({''},numel(obj.FullString),1);
-            str(obj.IDTestCode) = strtrim(obj.FullString(obj.IDTestCode));
-            
-            %% Scan definition block for a Description, RunCode and PublishResult section
-            iddescr = find(~cellfun(@isempty,strfind(str,'$Description')));
-            if isempty(iddescr)
-                iddescr = nan;
-            end
-            
-            idrun = find(~cellfun(@isempty,strfind(str,'$Run'))); % Also accepts RunCode
-            if isempty(idrun)
-                idrun = nan;
-            end
-            
-            idpublish = find(~cellfun(@isempty,strfind(str,'$Publish'))); % Also accepts PublishResult
-            if isempty(idpublish)
-                idpublish = nan;
-            end
-            
-            %% list all celldividers that separate the main definition parts
-            celldividers = sort(cat(1,iddescr,idrun,idpublish,find(obj.IDTestCode,1,'last')+1));
-            
-            %% Analyse the definition
-            if sum(~isnan(celldividers))>=2
-                %% Isolate description
-                if ~isnan(iddescr)
-                    %% header
-                    descrheader = str{iddescr};
-                    %% body
-                    idend = min(celldividers(celldividers>iddescr))-1;
-                    
-                    %% store body information
-                    obj.IDDescriptionCode(iddescr+1:idend) = obj.IDTestFunction(iddescr+1:idend) & ~obj.IDTeamCityCommands(iddescr+1:idend);
-                    
-                    obj.DescriptionIncludecode = false;
-                    obj.DescriptionEvaluatecode = true;
-                    
-                    %% isolate attributes
-                    attributes = strread(descrheader(strfind(descrheader,'(')+1:strfind(descrheader,')')-1),'%s','delimiter','&');
-                    for iattr = 1:length(attributes)
-                        attrinfo = strtrim(strread(attributes{iattr},'%s','delimiter','='));
-                        switch lower(attrinfo{1})
-                            case 'name'
-                                obj.Name = attrinfo{2};
-                            case 'includecode'
-                                obj.DescriptionIncludecode = eval(strrep(attrinfo{2},'''',''));
-                            case 'evaluatecode'
-                                obj.DescriptionEvaluatecode = eval(strrep(attrinfo{2},'''',''));
-                        end
-                    end
-                end
-                
-                %% Isolate Run Codes
-                if ~isnan(idrun)
-                    %% body
-                    idend = min(celldividers(celldividers>idrun))-1;
-                    obj.IDRunCode(idrun+1:idend) = obj.IDTestFunction(idrun+1:idend);
-                end
-                
-                %% Isolate publish codes
-                if ~isnan(idpublish)
-                    %% header
-                    publishheader = str{idpublish};
-                    
-                    %% storebody
-                    idend = min(celldividers(celldividers>idpublish))-1;
-                    obj.IDPublishCode(idpublish+1:idend) = obj.IDTestFunction(idpublish+1:idend);
-                    obj.PublishIncludecode = false;
-                    obj.PublishEvaluatecode = true;
-                    
-                    %% isolate attributes
-                    attributes = strread(publishheader(strfind(publishheader,'(')+1:strfind(publishheader,')')-1),'%s','delimiter','&');
-                    for iattr = 1:length(attributes)
-                        attrinfo = strtrim(strread(attributes{iattr},'%s','delimiter','='));
-                        switch lower(attrinfo{1})
-                            case 'name'
-                                obj.name = attrinfo{2};
-                            case 'includecode'
-                                obj.PublishIncludecode = eval(strrep(attrinfo{2},'''',''));
-                            case 'evaluatecode'
-                                obj.PublishEvaluatecode = eval(strrep(attrinfo{2},'''',''));
-                        end
-                    end
-                end
-            else
-                %% All code is runcode
-                obj.IDRunCode = obj.IDTestCode;
-            end
-        end
         function obj = findcatagory(obj)
             mTestFactory = MTestFactory;
             obj.Category = mTestFactory.Category;
 
-            testCode = obj.FullString(obj.IDTestCode);
-            id = find(~cellfun(@isempty,strfind(testCode,'TeamCity.category')),1,'first');
-            if any(id)
-                command = testCode{id};
+            testCode = obj.FullString(obj.IDTestFunction);
+            idTeamCityCategoryInTestCode = ...
+                ~cellfun(@isempty,strfind(testCode,'TeamCity.category')) &...
+                ~strncmp(testCode,'%',1);
+            idCategory = find(idTeamCityCategoryInTestCode,1,'first');
+            if any(idCategory)
+                command = testCode{idCategory};
                 idbegin = strfind(command,'TeamCity.category(')+18;
                 idend = max(strfind(command,')'))-1;
                 if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
@@ -335,10 +221,13 @@ classdef MTestFactory
         function obj = findname(obj)
             obj.Name = obj.FileName;
             
-            testCode = obj.FullString(obj.IDTestCode);
-            id = find(~cellfun(@isempty,strfind(testCode,'TeamCity.name')),1,'first');
-            if any(id)
-                command = testCode{id};
+            testCode = obj.FullString(obj.IDTestFunction);
+            idTeamCityNameInTestCode = ...
+                ~cellfun(@isempty,strfind(testCode,'TeamCity.name')) &...
+                ~strncmp(testCode,'%',1);
+            idName = find(idTeamCityNameInTestCode,1,'first');
+            if any(idName)
+                command = testCode{idName};
                 idbegin = strfind(command,'TeamCity.name(')+14;
                 idend = max(strfind(command,')'))-1;
                 if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
@@ -349,7 +238,6 @@ classdef MTestFactory
                     end
                 end
             end
-            
         end
     end
 end

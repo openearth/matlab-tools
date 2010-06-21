@@ -166,14 +166,6 @@ h1 {
 			<div>
 				<h3><a href="#" class="MtestDescription" deltares:mtestdescriptionref = "#TESTHTML"><img class="icon_image" src="#ICON" height="12"> Test #TESTNUMBER (#TESTNAME)</a></h3>
 				<div>
-					<!--##BEGINTESTCASE-->
-					<div>
-						<img class="icon_image" src="#ICON" height="12">
-						<a href="#" class = "MtestCase" deltares:mtestdescriptionref = "#DESCRIPTIONHTML" deltares:mtestresultsref = "#RESULTHTML">
-							 #TESTCASENAME
-						</a>
-					</div>
-					<!--##ENDTESTCASE-->
 				</div>
 			</div>
 		<!--##ENDTESTS-->

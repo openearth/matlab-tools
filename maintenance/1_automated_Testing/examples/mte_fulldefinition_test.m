@@ -53,7 +53,7 @@ function testResult = mte_fulldefinition_test()
 testResult = true;
 
 %% Publish a description of the test
-TeamCity.description(description_publishcode);
+TeamCity.publishdescription(description_publishcode);
 MTest.name('testname');
 
 %% Run the actual test (partly in a subfunction that can be called for example in a loop.
@@ -64,7 +64,7 @@ tr = subfunction1(1,2);
 assert(tr==true,'subfuncion did not return true');
 
 %% Publish the result
-TeamCity.description(result_publishcode);
+TeamCity.publishresult(result_publishcode);
 end
 
 function testResult = subfunction1(arg1,arg2)
