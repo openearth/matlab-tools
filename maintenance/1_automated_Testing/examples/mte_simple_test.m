@@ -1,4 +1,4 @@
-function testresult = mte_simple_test()
+function mte_simple_test()
 % MTE_SIMPLE_TEST  Performs a test is its most basal form
 %
 % This test performs a very simple test of the sum function
@@ -34,16 +34,7 @@ function testresult = mte_simple_test()
 % $Revision$
 % $HeadURL$
 % $Keywords: $
-testResult = true;
 
-%% $Description (Name = Simple test (sum))
 % We are going to test whether 2 + 3 = 5
-
-%% $RunCode
 vect = [2 3];
-answer = sum(vect);
-assert(answer==5,['Sum of ' num2str(vect) ' is not equal to 5']);
-
-%% $PublishResult (IncludeCode = true)
-% Result of the test:
-disp(num2str(testResult));
+assert(sum(vect)==5,['Sum of ' num2str(vect) ' is not equal to 5']);

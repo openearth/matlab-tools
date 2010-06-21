@@ -1,10 +1,10 @@
-function testResult = mte_fulldefinition_test()
-% MTE_FULLDEFINITION_TEST  test h1line
+function mt_definitionwithdescription_newstyle_test()
+% MT_DEFINITIONWITHDESCRIPTION_NEWSTYLE_TEST  One line description goes here
 %  
-% test description.
+% More detailed description of the test goes here.
 %
 %
-%   See also testseealso
+%   See also MTest
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -39,7 +39,7 @@ function testResult = mte_fulldefinition_test()
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 07 May 2010
+% Created: 18 Jun 2010
 % Created with Matlab version: 7.10.0.499 (R2010a)
 
 % $Id$
@@ -49,37 +49,35 @@ function testResult = mte_fulldefinition_test()
 % $HeadURL$
 % $Keywords: $
 
-%% Initialize optional output
-testResult = true;
+%% Give this test a category
+MTest.category('UnCategorized');
 
-%% Publish a description of the test
-TeamCity.description(description_publishcode);
-MTest.name('testname');
+%% Publish a description
+TeamCity.publishdescription(@test_testdescription,...
+    'IncludeCode',true,...
+    'EvaluateCode',true);
 
-%% Run the actual test (partly in a subfunction that can be called for example in a loop.
-tr = subfunction1(1,2);
+b = a.*5;
 
-%% Assert the result of the test
-% When asserting before the publication, nothing will get published....
-assert(tr==true,'subfuncion did not return true');
+%% Publish a result
+TeamCity.publishresult(@test_publishresult,...
+    'IncludeCode',true,...
+    'EvaluateCode',true);
 
-%% Publish the result
-TeamCity.description(result_publishcode);
 end
 
-function testResult = subfunction1(arg1,arg2)
-testResult = arg1+arg2 == 3;
+function test_testdescription()
+%% Publishable Description code Test Title
+a = [1, 2, 3];
+plot(a);
 end
 
-function description_publishcode()
-%% This is a description (Title)
-% test description code
-end
+function test_publishresult()
+%% Titel bovenaan de pagina
+% Dit is een test
 
-function result_publishcode()
-%% This is a publication of the result (Title)
-
-%% Chapter 1
-% test publish code
-
+%% Eerste hoofdstuk, plot a nog een keertje (zou in het geheugen moeten staan)
+disp('Dit is een test');
+plot(b);
+disp('Nog een keertje');
 end

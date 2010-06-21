@@ -1,4 +1,4 @@
-function testResult = mte_ignore_test()
+function mte_ignore_test()
 % MTE_IGNORE_TEST  Short test that is ignored
 %  
 % This example shows how to ignore a test.
@@ -48,14 +48,11 @@ function testResult = mte_ignore_test()
 % $Revision$
 % $HeadURL$
 % $Keywords: $
-testResult = true;
 
-%% $Description 
-TeamCity.name('Ignore test')
+MTest.name('Ignore test')
 if TeamCity.running, 
     TeamCity.ignore('ignore test example'); return;
 end
 
-%% $Run
-disp('This test is not executed while running the mtestengine');
+disp('This test is not executed while running the mtestengine (and TeamCity.running = true)');
 assert(true==false);

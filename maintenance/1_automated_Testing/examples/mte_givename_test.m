@@ -1,4 +1,3 @@
-function unit = mte_givename_test()
-unit = 0;
+function mte_givename_test()
 
-TeamCity.name('name of the test');
+MTest.name('name of the test');

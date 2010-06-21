@@ -1,2 +1,2 @@
-function testResult = mte_simplest_test()
-testResult = true;
+function mte_simplest_test()
+assert(true,'This test is OK');
