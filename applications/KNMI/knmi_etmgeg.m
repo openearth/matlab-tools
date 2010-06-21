@@ -119,6 +119,9 @@ function varargout = knmi_etmgeg(varargin)
 %% Extract meta-info for use in interpretation
 
       W               = xls2struct([fileparts(mfilename('fullpath')),filesep,'knmi_etmgeg.',OPT.version,'.csv']);
+      if iscell(W.slope)
+      W.slope         = [W.slope{:}]; % all numeric now
+      end
 
       W.knmi_name     = strtrim(W.knmi_name);
       W.long_name     = strtrim(W.long_name);
@@ -156,17 +159,16 @@ function varargout = knmi_etmgeg(varargin)
          for icol=1:length(W.knmi_name)
 
             fldname          = W.knmi_name{icol};
-            if ischar(W.slope{icol})
-            W.slope{icol}    = str2num(W.slope{icol});
+            if ischar(W.slope(icol))
+            W.slope{icol}    = str2num(W.slope(icol));
             end
-            if ~isnan(W.slope{icol}) % char data
-            W.data.(fldname) = [RAW{icol}]*W.slope{icol};
+            if ~isnan(W.slope(icol)) % char data
+            W.data.(fldname) = [RAW{icol}]*W.slope(icol);
             else
             W.data.(fldname) = [RAW{icol}];
             end
             
          end
-         W.slope   = [W.slope{:}]; % all numeric now
          W.datenum = time2datenum(W.data.YYYYMMDD);
          fclose(fid);
          
