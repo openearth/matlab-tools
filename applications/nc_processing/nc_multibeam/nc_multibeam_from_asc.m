@@ -100,6 +100,8 @@ end
 
 [OPT, Set, Default] = setproperty(OPT, varargin{:});
 
+multiWaitbar( 'Raw data to NetCDF',0,'Color',[0.2 0.6 0.2])
+
 if OPT.make
     disp('generating nc files... ')
     %% limited input check 
@@ -139,7 +141,6 @@ if OPT.make
     %% initialize waitbar
     WB.done       = 0;
     WB.bytesToDo  = 0;
-    multiWaitbar( 'Raw data to NetCDF',0,'Color',[0.2 0.6 0.2])
     if OPT.zip
         multiWaitbar('raw_unzipping'  ,0,'Color',[0.2 0.7 0.9])
     end
@@ -297,9 +298,9 @@ if OPT.make
     
     multiWaitbar('nc_reading','close')
     multiWaitbar('nc_writing','close')
-    multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+(1+WB.writtenDone)*fns_unzipped(ii).bytes)/WB.bytesToDo)
-    disp('generation of nc files completed')
+   disp('generation of nc files completed')
 else
     disp('generation of nc files skipped')
 end
+multiWaitbar('Raw data to NetCDF',1)
 varargout = {OPT};

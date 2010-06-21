@@ -112,12 +112,12 @@ axis tight;view(0,90);lightangle(hl,180,65);
 colormap(OPT.colormap());clim(OPT.clim*OPT.lightAdjust);
 
 %% create kml directory if it does not yet exist
-try
-    rmdir(OPT.outputDir, 's')
-end    
-if ~exist(OPT.outputDir,'dir')
-    mkdir(OPT.outputDir)
-end
+% try
+%     rmdir(OPT.outputDir, 's')
+% end    
+% if ~exist(OPT.outputDir,'dir')
+%     mkdir(OPT.outputDir)
+% end
 
 %% find nc files    
 fns = dir(fullfile(OPT.inputDir,'*.nc'));
@@ -141,7 +141,7 @@ end
 [minlat,minlon,maxlat,maxlon] = deal(nan);
 
 %% MAKE TILES in this loop      
-for ii = 1:length(fns);
+for ii = 1%:length(fns);
     url = fullfile(OPT.inputDir,fns(ii).name); %#ok<*ASGLU>
     x    = nc_varget(url,   'x');
     y    = nc_varget(url,   'y');
@@ -190,11 +190,11 @@ for ii = 1:length(fns);
 
             z = z(2:end-1,2:end-1);
 %% MAKE TILES
-            KMLfig2pngNew(h,lat,lon,z*OPT.lightAdjust,'highestLevel',10,'lowestLevel',OPT.lowestLevel,...
-                'timeIn',date(jj),'timeOut',date(jj+1),...
-                'fileName',[datestr(date(jj),29) '.kml'],'timeFormat','yyyy-mm-dd',...
-                'drawOrder',round(date(jj)),'joinTiles',false,...
-                'makeKML',false,'mergeExistingTiles',true,'basePath',OPT.outputDir,'dim',OPT.tiledim);
+%             KMLfig2pngNew(h,lat,lon,z*OPT.lightAdjust,'highestLevel',10,'lowestLevel',OPT.lowestLevel,...
+%                 'timeIn',date(jj),'timeOut',date(jj+1),...
+%                 'fileName',[datestr(date(jj),29) '.kml'],'timeFormat','yyyy-mm-dd',...
+%                 'drawOrder',round(date(jj)),'joinTiles',false,...
+%                 'makeKML',false,'mergeExistingTiles',true,'basePath',OPT.outputDir,'dim',OPT.tiledim);
 
             minlat = min(minlat,min(lat(:)));
             minlon = min(minlon,min(lon(:)));
@@ -209,11 +209,11 @@ for ii = 1:length(fns);
             'label',sprintf('Processing: %s Timestep: %d/%d',fns(ii).name,jj,size(time,1)))
     end
 end
-
+multiWaitbar('kml_print_all_tiles' ,1,'label','Printing tiles')
 %% JOIN TILES
 fns = dir(OPT.outputDir);
 
-for ii = 3%:length(fns)
+for ii = 3:length(fns)
     if fns(ii).isdir
         OPT2 = KMLfig2pngNew(h,lat,lon,z,'highestLevel',6,'lowestLevel',OPT.lowestLevel,...
             'timeIn',datenum(fns(ii).name),'timeOut',datenum(fns(ii).name)+1,...
