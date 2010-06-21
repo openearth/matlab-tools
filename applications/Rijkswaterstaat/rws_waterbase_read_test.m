@@ -13,6 +13,7 @@ function D = rws_waterbase_read_test(varargin)
 % $Revision$
 % $HeadURL$
 
+D = [];
 if TeamCity.running, TeamCity.ignore('Test requires user input'); return; end
 
 %% get filename

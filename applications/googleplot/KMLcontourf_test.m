@@ -1,4 +1,4 @@
-function testresult = KMLcontourf_test()
+function KMLcontourf_test()
 % KMLCONTOURF_TEST  unit test for KMLcontourf
 %
 % See also: googleplot, KMLtricontourf_test
@@ -47,24 +47,17 @@ if TeamCity.running, TeamCity.ignore('Test takes too long'); return; end
 
 disp(['... running test:',mfilename])
 
-%% $Description (Name = Name of the test goes here)
-% Publishable code that describes the test.
+%test 1
+[x,y] = meshgrid(0.5:0.5:100,200.5:0.5:400);
 
-%% $RunCode
-% Write test code here
-%try
-    
-    %test 1
-    [x,y] = meshgrid(0.5:0.5:100,200.5:0.5:400);
+z = [peaks(200); peaks(200)]+9;
+%     z(3:4,3:4) = nan; % test a hole
+KMLcontourf(x/10,y/10,z*1000,'levels',100,'fileName',KML_testdir('KMLcontourf - 1.kml'),...
+    'colorbartitle','KMLcontourf - 1','is3D',false,'staggered',true,'extrude',true);
 
-    z = [peaks(200); peaks(200)]+9;  
-%     z(3:4,3:4) = nan; % test a hole 
-    KMLcontourf(x/10,y/10,z*1000,'levels',100,'fileName',KML_testdir('KMLcontourf - 1.kml'),...
-        'colorbartitle','KMLcontourf - 1','is3D',false,'staggered',true,'extrude',true);
-    
 %     %test 2
 %     [x,y] = meshgrid(1.1:.5:100.1,201.2:.5:300.2);
-%     x(60:80,60:80) = nan; % test a hole 
+%     x(60:80,60:80) = nan; % test a hole
 %     y(60:80,60:80) = nan;
 %     x = (x+sin(y).^3);
 %     y = (y+sin(x));
@@ -72,9 +65,3 @@ disp(['... running test:',mfilename])
 %     x = x/10+10;y = y/10+10;
 %     KMLcontourf(x,y,z,'levels',40,'fileName',KML_testdir('KMLcontourf - 2.kml'),'colorbartitle','KMLcontourf - 2');
 %     testresult = true;
-%catch
-%    testresult = false;
-%end
-%% $PublishResult
-% Publishable code that describes the test.
-

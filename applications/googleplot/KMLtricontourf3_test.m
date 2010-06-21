@@ -1,4 +1,4 @@
-function testresult = KMLtricontourf3_test()
+function KMLtricontourf3_test()
 % KMLTRICONTOURF3_TEST  One line description goes here
 %
 % More detailed description of the test goes here.
@@ -46,25 +46,14 @@ function testresult = KMLtricontourf3_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
-% Publishable code that describes the test.
+test1;
+test2;
+test3;
+test4;
 
-%% $RunCode
-tr(1) = test1;
-tr(2) = test2;
-tr(2) = test3;
-tr(2) = test4;
-% testresult = all(tr);
-
-%% $PublishResult
-% Publishable code that describes the test.
 end
 
-function testresult = test1()
-%% $Description
-
-%% $RunCode
-
+function test1()
 [x,y] = meshgrid(11:20,21:30);
 z = peaks(10);
 tri = triquat(x,y);
@@ -86,16 +75,9 @@ nn = 25;
 KMLtricontourf3(tri,x,y,z,'levels',nn,'fileName',KML_testdir('KMLtricontourf3 - 1.kmz'),...
     'zScaleFun',@(z) (z+10)*1400,'staggered',false,'debug',0,...
     'colorbar',true,'colorMap', @(m) colormap_cpt('bathymetry_vaklodingen',m),'CBcolorbarlocation',{'NNW','WNW'})
-testresult = true;
-%% $PublishResult
-
 end
 
-function testresult = test2()
-%% $Description
-
-%% $RunCode
-
+function test2()
 [x,y] = meshgrid(1:10,21:30);
 z = peaks(10);
 tri = triquat(x,y);
@@ -106,15 +88,9 @@ y = y+sin(x)/10;
 nn=7;
 KMLtricontourf3(tri,x,y,z,'levels',nn,'fileName',KML_testdir('KMLtricontourf3 - 2.kmz'),...
     'zScaleFun',@(z) (z+20)*4000,'staggered',true,'debug',false,'colorbar',true,'colorMap', @(m) bone(m))
-testresult = true;
-%% $PublishResult
-
 end
 
-function testresult = test3()
-%% $Description
-
-%% $RunCode
+function test3()
 [x,y] = meshgrid(1:100,201:300);
 z = repmat(peaks(25),4,4)+3*peaks(100)+2*repmat(peaks(50),2,2);
 remove = [1:15 85:100];
@@ -134,15 +110,9 @@ nn=30;
 
 KMLtricontourf3(tri,x/30,y/30,z,'levels',nn,'fileName',KML_testdir('KMLtricontourf3 - 3.kmz'),...
     'zScaleFun',@(z) (z+20)*400,'staggered',false,'colorbar',false,'debug',false)
-testresult = true;
-%% $PublishResult
-
 end
 
-function testresult = test4()
-%% $Description
-
-%% $RunCode
+function test4()
 url = 'http://opendap.deltares.nl:8080/opendap/hyrax/rijkswaterstaat/vaklodingen/vaklodingenKB136_0908.nc';
 x = nc_varget(url,'x');
 y = nc_varget(url,'y');
@@ -200,7 +170,4 @@ tri(any(isnan(z(tri)),2),:) = [];
 KMLtricontourf(tri,lat,lon,z,'levels',levels,'fileName',KML_testdir('KMLtricontourf - 4.kmz'),...
     'staggered',false,'debug',0,'colorbar',true,...
     'colorMap',@(m)colormap_cpt('bathymetry_vaklodingen',m),'colorSteps',250,'cLim',[-50 25],'CBcLim',[-10 10])
-testresult = true;
-%% $PublishResult
-
 end

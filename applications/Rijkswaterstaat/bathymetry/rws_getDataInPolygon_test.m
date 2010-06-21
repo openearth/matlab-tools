@@ -50,6 +50,7 @@ warning('This function is deprecated in favour of grid_orth_getDataInPolygon_tes
 % $HeadURL$
 % $Keywords: $
 
+testresult = [];
 if TeamCity.running, TeamCity.ignore('Test requires user input'); return; end
 
 %% $Description (Name = Name of the test goes here)
