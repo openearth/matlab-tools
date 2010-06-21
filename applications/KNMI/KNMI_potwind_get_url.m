@@ -67,8 +67,9 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
 % ----------------------
 
    DIR.url      =  'http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/'; %datafiles/
-   DIR.cache    = [basepath,filesep,'cache',filesep];
-   DIR.raw      = [basepath,filesep,'raw',filesep];
+   DIR.cache    = [basepath,filesep,'cache'    ,filesep];
+   DIR.raw      = [basepath,filesep,'raw'      ,filesep];
+   DIR.nc       = [basepath,filesep,'processed',filesep];
    
    if ~(exist(DIR.cache)==7)
       disp('The following target path ')
@@ -153,7 +154,8 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
 % ----------------------
 
    if OPT.nc
-   %knmi_potwind2nc_time_direct
+      knmi_potwind2nc('directory_raw',DIR.raw,...
+                      'directory_nc' ,DIR.nc)
    end
    
 %% Copy to OPeNDAP server 
@@ -162,6 +164,9 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
    if OPT.opendap
    end
    
+%% Make various overviews
+% ----------------------
+
 %% Output 
 % ----------------------
 

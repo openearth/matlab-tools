@@ -153,8 +153,9 @@ function varargout = knmi_etmgeg_get_url(basepath,varargin)
 
    DIR.url      = '"./datafiles3/'; % unique string to recognize datafiles in html page
    DIR.preurl   = 'http://www.knmi.nl/klimatologie//daggegevens/'; % rpefix to relative link in DIR.url
-   DIR.cache    = [basepath,filesep,'cache',filesep];
-   DIR.raw      = [basepath,filesep,'raw',filesep];
+   DIR.cache    = [basepath,filesep,'cache'    ,filesep];
+   DIR.raw      = [basepath,filesep,'raw'      ,filesep];
+   DIR.nc       = [basepath,filesep,'processed',filesep];
 
    if ~(exist(DIR.cache)==7)
       disp('The following target path ')
@@ -238,7 +239,8 @@ function varargout = knmi_etmgeg_get_url(basepath,varargin)
 % ----------------------
 
    if OPT.nc
-   %knmi_etmgeg2nc_time_direct
+      knmi_etmgeg2nc('directory_raw',DIR.raw,...
+                      'directory_nc',DIR.nc)
    end
    
 %% Copy to OPeNDAP server 
@@ -247,6 +249,9 @@ function varargout = knmi_etmgeg_get_url(basepath,varargin)
    if OPT.opendap
    end
    
+%% Make various overviews
+% ----------------------
+
 %% Output 
 % ----------------------
 
