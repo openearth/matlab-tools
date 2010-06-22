@@ -67,10 +67,12 @@ try
         %% load oetsettings
         addpath(matlabdir);
         addpath(genpath(fullfile(matlabdir,'maintenance')));
+        TeamCity.running(true);
         TeamCity.postmessage('progressStart','Running oetsettings.');
         oetsettings;
         TeamCity.postmessage('progressFinish','Oetsettings enabled.');
     catch me
+        TeamCity.running(true);
         TeamCity.postmessage('message', 'text', 'Matlab was unable to run oetsettings.',...
             'errorDetails',me.message,...
             'status','ERROR');

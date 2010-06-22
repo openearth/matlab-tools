@@ -167,7 +167,6 @@ title    = cell(size(alldirs));
 
 openfigs = findobj('Type','figure');
 for idr = 1:length(alldirs)
-    TeamCity.postmessage('testSuiteStarted','name',alldirs{idr});
     htmlref{idr} = cell(size(tutorials{idr}));
     for itutorials = 1:length(tutorials{idr})
         
@@ -178,8 +177,9 @@ for idr = 1:length(alldirs)
             htmlfilesthere = which([tutorialname(2:end) '.html'],'-all');
         end
         id = strncmp(htmlfilesthere,outputhtmldir,length(outputhtmldir));
-        TeamCity.postmessage('testStarted','name',tutorialname);
-        
+        TeamCity.postmessage('progressMessage','Started publishing ',tutorialname);
+        % temp hack to prevent echoing test information where it is not needed.
+        TeamCity.running(false);
         if summaryonly
             htmlref{idr}{itutorials} = htmlfilesthere{find(id,1,'first')};
             
@@ -266,9 +266,9 @@ for idr = 1:length(alldirs)
                 htmlref{idr}{itutorials} = fullfile(outputhtmldir,[tutorialname,'.html']);
             end
         end
-        TeamCity.postmessage('testFinished','name',tutorialname);
+        TeamCity.running(true);
+        TeamCity.postmessage('progressMessage','Finished publishing ',tutorialname);
     end
-    TeamCity.postmessage('testSuiteFinished','name',alldirs{idr});
 end
 cd(cdtemp);
 
