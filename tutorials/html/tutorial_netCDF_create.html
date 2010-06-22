@@ -11,7 +11,7 @@ To make changes, update the M-file and republish this document.
       -->
       <title>Creating a netCDF file (basic)</title>
       <meta name="generator" content="MATLAB 7.10">
-      <meta name="date" content="2010-05-27">
+      <meta name="date" content="2010-06-22">
       <meta name="m-file" content="tutorial_netCDF_create">
       <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
       <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
@@ -222,7 +222,7 @@ z = nc_varget(outputfile, <span class="string">'altitude'</span>);
 surface(x, y, z); shading <span class="string">flat</span>
 hold <span class="string">on</span>;
 <span class="keyword">for</span> i = 1:length(y)
-    ph = plot3(x,ones(1,size(z,2)).*y(i),z(i,:));
+    ph = plot3(x,ones(1,size(z,2)).*double(y(i)),z(i,:));
     set(ph,<span class="string">'color'</span>, <span class="string">'k'</span>)
 <span class="keyword">end</span>
 set(gca,<span class="string">'ytick'</span>, y)
@@ -233,18 +233,7 @@ ylabel(<span class="string">'Time [y]'</span>)
 zlabel(<span class="string">'Elevation [m] (datum: NAP = 0)'</span>)
 title(<span class="string">'NetCDF demonstration: 3 transects'</span>)
 set(gca, <span class="string">'cameraposition'</span>, [4492.56 1996.08 115.897])
-</pre><pre class="codeoutput">Error using ==&gt; times
-Class of operand is not supported.
-
-Error in ==&gt; tutorial_netCDF_create at 117
-    ph = plot3(x,ones(1,size(z,2)).*y(i),z(i,:));
-
-Error in ==&gt; evalinemptyworkspace&gt;eval_fun at 8
-eval(getappdata(0,'emptyworkspaceevaluation'));
-
-Error in ==&gt; evalinemptyworkspace at 3
-eval_fun();
-</pre></div>
+</pre><img vspace="5" hspace="5" src="tutorial_netCDF_create_01.png" relsrc="tutorial_netCDF_create_01.png"> </div>
             </div>
             <div>
                <h2><a name="16">Finding out more</a></h2>
@@ -256,7 +245,7 @@ eval_fun();
             </div>
          </div>
          <p class="footer"><br>
-            this tutorial is based on: <a class="matlabhref" href="matlab:edit('_tutorial_netCDF_create');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=2623/OpenEarthTools/trunk/matlab/io/netcdf/_tutorial_netCDF_create.m">_tutorial_netCDF_create.m (revision: 2623)</a><br>
+            this tutorial is based on: <a class="matlabhref" href="matlab:edit('_tutorial_netCDF_create');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=2703/OpenEarthTools/trunk/matlab/io/netcdf/_tutorial_netCDF_create.m">_tutorial_netCDF_create.m (revision: 2703)</a><br>
 Published with MATLAB&reg; 7.10<br></p>
       </div>
       <!--
@@ -377,7 +366,7 @@ figure(1);clf
 surface(x, y, z); shading flat
 hold on;
 for i = 1:length(y)
-    ph = plot3(x,ones(1,size(z,2)).*y(i),z(i,:));
+    ph = plot3(x,ones(1,size(z,2)).*double(y(i)),z(i,:));
     set(ph,'color', 'k')
 end
 set(gca,'ytick', y)

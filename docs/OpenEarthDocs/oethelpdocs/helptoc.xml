@@ -48,7 +48,7 @@
 </tocitem>
 <tocitem target="html/runningatest_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">3. Running individual tests
 </tocitem>
-<tocitem target="html/runtestswithmtestengine_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">4. Automated tesing with the mtest toolbox
+<tocitem target="html/runtestswithmtestengine_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">4. Automated tesing with the MTest toolbox
 </tocitem>
 </tocitem>
 <tocitem target="html/dir_2_tutorial_Generation.html" image="$toolbox/matlab/icons/pagesicon.gif">2 tutorial Generation
@@ -62,11 +62,15 @@
 </tocitem>
 </tocitem>
 <tocitem target="html/dir_nctools.html" image="$toolbox/matlab/icons/pagesicon.gif">nctools
-<tocitem target="html/nc_cf_grid_write_lat_lon_curvilinear_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">_CF_GRID_WRITE_LAT_LON_CURVILINEAR_TUTORIAL   example of how to create a netCDF grid file of a curvi-linear lat-lon grid
+<tocitem target="html/nc_cf_stationTimeSeries_write_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">Create netCDF-CF of a timeseries
 </tocitem>
-<tocitem target="html/nc_cf_grid_write_x_y_orthogonal_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">_CF_GRID_WRITE_X_Y_ORTHOGONAL_TUTORIAL   example of how to create a netCDF grid file of an orthogonal lat-lon grid
+<tocitem target="html/nc_cf_grid_write_lat_lon_curvilinear_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">Create netCDF-CF of curvilinear lat-lon grid
 </tocitem>
-<tocitem target="html/nc_cf_grid_write_lat_lon_orthogonal_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">_cf_grid_write_lat_lon_orthogonal_tutorial   example of how to create a netCDF grid file of an orthogonal lat-lon grid
+<tocitem target="html/nc_cf_grid_write_x_y_curvilinear_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">Create netCDF-CF of curvilinear x-y grid
+</tocitem>
+<tocitem target="html/nc_cf_grid_write_lat_lon_orthogonal_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">Create netCDF-CF of orthogonal lat-lon grid
+</tocitem>
+<tocitem target="html/nc_cf_grid_write_x_y_orthogonal_tutorial.html" image="$toolbox/matlab/icons/pageicon.gif">Create netCDF-CF of orthogonal x-y grid
 </tocitem>
 </tocitem>
 <tocitem target="html/dir_netcdf.html" image="$toolbox/matlab/icons/pagesicon.gif">netcdf

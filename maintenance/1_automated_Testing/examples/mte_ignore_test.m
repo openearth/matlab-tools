@@ -50,9 +50,13 @@ function mte_ignore_test()
 % $Keywords: $
 
 MTest.name('Ignore test')
-if TeamCity.running, 
-    TeamCity.ignore('ignore test example'); return;
-end
 
-disp('This test is not executed while running the mtestengine (and TeamCity.running = true)');
-assert(true==false);
+if TeamCity.running, 
+    TeamCity.ignore('ignore test example'); 
+    return;
+end
+disp('This part still gets executed if TeamCity is not running.');
+
+TeamCity.ignore('ignore test example');return;
+disp('This part never gets executed.');
+

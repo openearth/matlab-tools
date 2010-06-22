@@ -1,4 +1,4 @@
-%% 4. Automated tesing with the mtest toolbox
+%% 4. Automated tesing with the MTest toolbox
 %
 % <html>
 % The MTest toolbox is based on object oriented programming as introduced in matlab version 7.6 

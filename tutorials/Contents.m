@@ -11,7 +11,7 @@
 %       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/testsInGeneral_tutorial.html'], '-helpbrowser');">1. General information on testing</a>
 %       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/testdefinitions_tutorial.html'], '-helpbrowser');">2. Creating a test</a>
 %       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/runningatest_tutorial.html'], '-helpbrowser');">3. Running individual tests</a>
-%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/runtestswithmtestengine_tutorial.html'], '-helpbrowser');">4. Automated tesing with the mtest toolbox</a>
+%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/runtestswithmtestengine_tutorial.html'], '-helpbrowser');">4. Automated tesing with the MTest toolbox</a>
 %
 %     2 tutorial Generation:
 %       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/tutorials_cell_formatting_tutorial.html'], '-helpbrowser');">1. Basics of writing a tutorial</a>
@@ -20,9 +20,11 @@
 %       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/tutorials_include_tutorial.html'], '-helpbrowser');">4. Include a tutorial in the OpenEarth tutorial overview</a>
 %
 %     nctools:
-%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/nc_cf_grid_write_lat_lon_curvilinear_tutorial.html'], '-helpbrowser');">_CF_GRID_WRITE_LAT_LON_CURVILINEAR_TUTORIAL   example of how to create a netCDF grid file of a curvi-linear lat-lon grid</a>
-%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/nc_cf_grid_write_x_y_orthogonal_tutorial.html'], '-helpbrowser');">_CF_GRID_WRITE_X_Y_ORTHOGONAL_TUTORIAL   example of how to create a netCDF grid file of an orthogonal lat-lon grid</a>
-%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/nc_cf_grid_write_lat_lon_orthogonal_tutorial.html'], '-helpbrowser');">_cf_grid_write_lat_lon_orthogonal_tutorial   example of how to create a netCDF grid file of an orthogonal lat-lon grid</a>
+%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/nc_cf_stationTimeSeries_write_tutorial.html'], '-helpbrowser');">Create netCDF-CF of a timeseries</a>
+%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/nc_cf_grid_write_lat_lon_curvilinear_tutorial.html'], '-helpbrowser');">Create netCDF-CF of curvilinear lat-lon grid</a>
+%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/nc_cf_grid_write_x_y_curvilinear_tutorial.html'], '-helpbrowser');">Create netCDF-CF of curvilinear x-y grid</a>
+%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/nc_cf_grid_write_lat_lon_orthogonal_tutorial.html'], '-helpbrowser');">Create netCDF-CF of orthogonal lat-lon grid</a>
+%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/nc_cf_grid_write_x_y_orthogonal_tutorial.html'], '-helpbrowser');">Create netCDF-CF of orthogonal x-y grid</a>
 %
 %     netcdf:
 %       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/tutorial_netCDF_create.html'], '-helpbrowser');">Creating a netCDF file (basic)</a>

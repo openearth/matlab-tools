@@ -46,7 +46,6 @@
 			{
 			$("document").ajaxStop(finishtutorials());
 			});
-
 		}
 
 	function finishtutorials()
@@ -74,7 +73,7 @@
 		var images = $("img");
 		images.each(function(i)
 			{
-			$(this).attr('src',"html/" + $(this).attr('relsrc'))
+			$(this).attr('src',"html/" + $(this).attr('relsrc'));
 			});
 		var relrefs = $(".relref");
 		relrefs.each(function(i)
@@ -132,7 +131,7 @@
 
 							<li><a><span class="file" ref="html/runningatest_tutorial.html">3. Running individual tests</span></a></li>
 
-							<li><a><span class="file" ref="html/runtestswithmtestengine_tutorial.html">4. Automated tesing with the mtest toolbox</span></a></li>
+							<li><a><span class="file" ref="html/runtestswithmtestengine_tutorial.html">4. Automated tesing with the MTest toolbox</span></a></li>
 							<!-- ##ENDFILEITEM -->
 						</ul>
 					</li>
@@ -154,11 +153,15 @@
 					<li><span class="folder">nctools</span>
 						<ul>
 							<!-- ##BEGINFILEITEM -->
-							<li><a><span class="file" ref="html/nc_cf_grid_write_lat_lon_curvilinear_tutorial.html">_CF_GRID_WRITE_LAT_LON_CURVILINEAR_TUTORIAL   example of how to create a netCDF grid file of a curvi-linear lat-lon grid</span></a></li>
+							<li><a><span class="file" ref="html/nc_cf_stationTimeSeries_write_tutorial.html">Create netCDF-CF of a timeseries</span></a></li>
 
-							<li><a><span class="file" ref="html/nc_cf_grid_write_x_y_orthogonal_tutorial.html">_CF_GRID_WRITE_X_Y_ORTHOGONAL_TUTORIAL   example of how to create a netCDF grid file of an orthogonal lat-lon grid</span></a></li>
+							<li><a><span class="file" ref="html/nc_cf_grid_write_lat_lon_curvilinear_tutorial.html">Create netCDF-CF of curvilinear lat-lon grid</span></a></li>
 
-							<li><a><span class="file" ref="html/nc_cf_grid_write_lat_lon_orthogonal_tutorial.html">_cf_grid_write_lat_lon_orthogonal_tutorial   example of how to create a netCDF grid file of an orthogonal lat-lon grid</span></a></li>
+							<li><a><span class="file" ref="html/nc_cf_grid_write_x_y_curvilinear_tutorial.html">Create netCDF-CF of curvilinear x-y grid</span></a></li>
+
+							<li><a><span class="file" ref="html/nc_cf_grid_write_lat_lon_orthogonal_tutorial.html">Create netCDF-CF of orthogonal lat-lon grid</span></a></li>
+
+							<li><a><span class="file" ref="html/nc_cf_grid_write_x_y_orthogonal_tutorial.html">Create netCDF-CF of orthogonal x-y grid</span></a></li>
 							<!-- ##ENDFILEITEM -->
 						</ul>
 					</li>

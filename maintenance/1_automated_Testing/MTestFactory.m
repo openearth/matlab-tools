@@ -68,10 +68,6 @@ classdef MTestFactory
             %% Interpret Header
             newTest = MTestFactory.interpretheader(newTest);
             
-            %% Search for Category and Name
-            newTest = MTestFactory.findcatagory(newTest);
-            newTest = MTestFactory.findname(newTest);
-            
             %% Apply other input
             newTest = setproperty(newTest,varargin{:});
             
@@ -108,10 +104,11 @@ classdef MTestFactory
             %<----------------------------------------------------------------------------------->
             
             if datenum(version('-date')) > datenum(2010,1,1)
-                mainFunction = fcncalls(cellfun(@(tp) tp == internal.matlab.codetools.reports.matlabType.Function,{fcncalls.type}));
+                mainFunctionId = cellfun(@(tp) tp == internal.matlab.codetools.reports.matlabType.Function,{fcncalls.type});
             else
-                mainFunction = fcncalls(cellfun(@(tp) strcmp(tp,'function'), {fcncalls.type}));
+                mainFunctionId = cellfun(@(tp) strcmp(tp,'function'), {fcncalls.type});
             end
+            mainFunction = fcncalls(mainFunctionId);
             obj.SubFunctions = fcncalls(cellfun(@(tp) strcmp(tp,'subfunction') ,{fcncalls.type}));
 
             if isempty(mainFunction)
@@ -120,6 +117,39 @@ classdef MTestFactory
             end
             obj.IDTestFunction = mainFunction.linemask;
             obj.FunctionName = mainFunction.name;
+            
+            %% Extract name
+            dotCalls = fcncalls(mainFunctionId).calls.dotCalls;
+            if ~isempty(dotCalls) && any(ismember(dotCalls.names,{'MTest.name','TeamCity.name'}))
+                ln = min(dotCalls.lines(ismember(dotCalls.names,{'MTest.name','TeamCity.name'})));
+                command = obj.FullString{ln};
+                idbegin = min([strfind(command,'TeamCity.name(')+14, strfind(command,'MTest.name(')+11]);
+                idend = max(strfind(command,')'))-1;
+                if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
+                    try
+                        % TODO, Maybe set current test and run entire command?
+                        obj.Name = eval(command(idbegin:idend));
+                    catch me
+                        warning('MTestFactory:UnableToSetCategory',['MTestFactory was not able to set the category.';'The following exeption was thrown when evaluating the input:';me.getReport]);
+                    end
+                end
+            end
+            
+            %% Exctract Category
+            if ~isempty(dotCalls) && any(ismember(dotCalls.names,{'MTest.category','TeamCity.category'}))
+                ln = min(dotCalls.lines(ismember(dotCalls.names,{'MTest.category','TeamCity.category'})));
+                command = obj.FullString{ln};
+                idbegin = min([strfind(command,'TeamCity.category(')+18, strfind(command,'MTest.category(')+15]);
+                idend = max(strfind(command,')'))-1;
+                if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
+                    try
+                        % TODO, Maybe set current test and run entire command?
+                        obj.Category = eval(command(idbegin:idend));
+                    catch me
+                        warning('MTestFactory:UnableToSetCategory',['MTestFactory was not able to set the category.';'The following exeption was thrown when evaluating the input:';me.getReport]);
+                    end
+                end
+            end
         end
         function obj = interpretheader(obj)
             teststr = repmat({''},numel(obj.FullString),1);
@@ -195,49 +225,5 @@ classdef MTestFactory
                 error('MTestFactory:NoTestCode','The MTestFactory could not find code to run.');
             end
         end
-        function obj = findcatagory(obj)
-            mTestFactory = MTestFactory;
-            obj.Category = mTestFactory.Category;
-
-            testCode = obj.FullString(obj.IDTestFunction);
-            idTeamCityCategoryInTestCode = ...
-                ~cellfun(@isempty,strfind(testCode,'TeamCity.category')) &...
-                ~strncmp(testCode,'%',1);
-            idCategory = find(idTeamCityCategoryInTestCode,1,'first');
-            if any(idCategory)
-                command = testCode{idCategory};
-                idbegin = strfind(command,'TeamCity.category(')+18;
-                idend = max(strfind(command,')'))-1;
-                if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
-                    try
-                        obj.Category = eval(command(idbegin:idend));
-                    catch me
-                        warning('MTestFactory:UnableToSetCategory',['MTestFactory was not able to set the category.';'The following exeption was thrown when evaluating the input:';me.getReport]);
-                    end
-                end
-            end
-            
-        end
-        function obj = findname(obj)
-            obj.Name = obj.FileName;
-            
-            testCode = obj.FullString(obj.IDTestFunction);
-            idTeamCityNameInTestCode = ...
-                ~cellfun(@isempty,strfind(testCode,'TeamCity.name')) &...
-                ~strncmp(testCode,'%',1);
-            idName = find(idTeamCityNameInTestCode,1,'first');
-            if any(idName)
-                command = testCode{idName};
-                idbegin = strfind(command,'TeamCity.name(')+14;
-                idend = max(strfind(command,')'))-1;
-                if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
-                    try
-                        obj.Name = eval(command(idbegin:idend));
-                    catch me
-                        warning('MTestFactory:UnableToSetCategory',['MTestFactory was not able to set the category.';'The following exeption was thrown when evaluating the input:';me.getReport]);
-                    end
-                end
-            end
-        end
-    end
+     end
 end

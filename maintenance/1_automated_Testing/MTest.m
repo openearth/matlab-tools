@@ -174,7 +174,7 @@ classdef MTest < handle
             %   See also MTest MTest.MTest MTestFactory MTestRunner
             
             %% Lock this workspace and function code
-            mlock;
+%             mlock;
             teamcity = TeamCity;
             
             %% subtract outputfilename
@@ -325,6 +325,11 @@ classdef MTest < handle
                 if obj.Verbose
                     disp(['     Error occurred: ' me.message]);
                 end
+            end
+            
+            %% return if obj has to be ignored
+            if obj.Ignore && obj.Verbose
+                disp(['     Ignored: ' obj.IgnoreMessage]);
             end
             
             %% Close all remaining open figures from the test

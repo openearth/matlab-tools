@@ -9,18 +9,32 @@
 
 %% Creating tests
 % Like functions OpenEarthTools also contains a function to automatically generate a new test
-% (_oetnewtest_). The help of this function shows you how it can be used.
+% (_oetnewtest_). _oetnewtest_ can be used the following ways:
 %
-% There are several ways to call oetnewtest:
+% *Syntax*
+%
+% * oetnewtest('filename');
+% * oetnewtest('currentfile');
+% * oetnewtest('functionname');
+% * oetnewfun(..., 'PropertyName', PropertyValue,...);
+%
+% *Input*
 % 
-% * Without input arguments: "_oetnewtest;_"
-% * With the name of the test function: "_oetnewtest('newtest_test');_"
-% * with the name of the function that is tested by the new testfunction: "_oetnewtest('newtest');_"
-% * For the file currently edited in the matlab editor: "_oetnewtest('currentfile');_"
-% 
-% The help of oetnewtest provides more information on the options that can be specified for _oetnewtest_.
-
-help oetnewtest
+% * 'filename'    -   name of the test file (this should end with "_test.m" otherwise it is treated
+% as a function name. If the filename is not specified, an Untitled test will be generated.
+% * 'currentfile' -   Looks up the last selected file in the matlab editor and creates a test for that function. 
+% * 'functionname'-   Name of the function for which this file should provide a test.
+%
+% *PropertyNames*
+%
+% * 'h1line'      -   One line description
+% * 'description' -   Detailed description of the test
+%
+% *Examples*
+%
+% * oetnewtest('oetnewtest_test');
+% * oetnewtest('currentfile');
+% * oetnewtest('oetnewtest');
 
 %% Simple test
 % For the sake of simplicity the most simple test is just a function with one line of code. The
@@ -30,9 +44,8 @@ help oetnewtest
 % * The function should be addressed *_without any input parameters_*
 %
 % Such a function could look like this:
-
-% function testname_test()
-% assert(true,'This test does not crash');
+function testname_test()
+assert(true,'This test does not crash');
 
 %% Basic elements of a test
 % A Testdefinition can be divided into two parts:
@@ -51,7 +64,8 @@ help oetnewtest
 %
 % <<prerendered_images/test_helpblock.png>>
 %
-% *Test code*
+
+%% Test code
 %
 % The code body of the test contains code to test a function or functions. If the function does not
 % return a variable it is counted as succeeded whenever there is no error detected. It is also
@@ -61,9 +75,10 @@ help oetnewtest
 % The use of the matlab build-in function "_assert_" can come in handy when testing the result of a
 % function against requirements. For example:
 %
-% a = sum([1, 1]);
-% assert(a==1,'1+1 should be equal to 2');
-%
+a = sum([1, 1]);
+assert(a==1,'1+1 should be equal to 2');
+
+%% Additional functions / methods
 % Furthermore one can use several functions available in the MTest toolbox to ignore tests, or
 % document a test or its result:
 %
@@ -75,11 +90,13 @@ help oetnewtest
 % * MTest.category
 %
 % *TeamCity.running*
+%
 % returns a boolean that is true whenever the TeamCity server is running tests. This function can
 % typically be used to do something that is only needed when running test at the buildserver (for
 % example ignore the result).
 %
 % *TeamCity.ignore*
+%
 % Causes the teamcity server to ignore the current test. The reason to ignore should be included as 
 % a string input into this function. If the TeamCity server is not running this function will do
 % nothing.
@@ -93,6 +110,7 @@ end
 
 %%
 % *TeamCity.publishdescription*
+%
 % This function adds a reference to the documentation of the test. This documentation can be located
 % in a subfunction of the test, or a file outside the testdefinition (as a script or function). When
 % using this function to publish the test description, the code of the specified function is copied
@@ -116,16 +134,19 @@ TeamCity.publishdescription('mte_descriptionhelper',...
 
 %% 
 % *TeamCity.publishresult*
+%
 % Similar to TeamCity.publishdescription, this function adds a reference to publishable code that
 % describes the test result. Useage is also similar to TeamCity.publishdescription.
 %
 % *MTest.name*
+%
 % Can be used to give a test a custome name (by default a tests gets the filename as name).
 
 MTest.name('New name');
 
 %%
 % *MTest.category*
+%
 % This method specifies the Category of the test.
 
 MTest.category('Integration');

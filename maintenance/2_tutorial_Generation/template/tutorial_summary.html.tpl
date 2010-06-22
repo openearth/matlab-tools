@@ -46,7 +46,6 @@
 			{
 			$("document").ajaxStop(finishtutorials());
 			});
-
 		}
 
 	function finishtutorials()
@@ -74,7 +73,7 @@
 		var images = $("img");
 		images.each(function(i)
 			{
-			$(this).attr('src',"html/" + $(this).attr('relsrc'))
+			$(this).attr('src',"html/" + $(this).attr('relsrc'));
 			});
 		var relrefs = $(".relref");
 		relrefs.each(function(i)

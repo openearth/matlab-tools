@@ -29,8 +29,7 @@
 % possibility to publish results (to make it possible to visually inspect the results).
 
 %% TDD (Test Driven Development)
-% The following information is obtained from <a href="http://en.wikipedia.org/wiki/Test-driven_development">wikipedia</a>
-%
+% The following information is obtained from <http://en.wikipedia.org/wiki/Test-driven_development wikipedia> 
 % Test-driven development (TDD) is a software development technique that relies on the repetition of
 % a very short development cycle: first the developer writes a failing automated test case that 
 % defines a desired improvement or new function, then produces code to pass that test and finally 

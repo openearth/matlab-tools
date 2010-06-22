@@ -11,7 +11,7 @@ To make changes, update the M-file and republish this document.
       -->
       <title>2. Creating a test</title>
       <meta name="generator" content="MATLAB 7.10">
-      <meta name="date" content="2010-05-27">
+      <meta name="date" content="2010-06-22">
       <meta name="m-file" content="testdefinitions_tutorial">
       <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
       <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
@@ -50,10 +50,11 @@ To make changes, update the M-file and republish this document.
                <ul>
                   <li><a href="#1">Creating tests</a></li>
                   <li><a href="#2">Simple test</a></li>
-                  <li><a href="#3">Basic elements of a test</a></li>
-                  <li><a href="#4">Formatting the publishable elements of a test</a></li>
-                  <li><a href="#5">Working with testcases</a></li>
-                  <li><a href="#6">Examples</a></li>
+                  <li><a href="#4">Basic elements of a test</a></li>
+                  <li><a href="#5">Test code</a></li>
+                  <li><a href="#6">Additional functions / methods</a></li>
+                  <li><a href="#13">Formatting the publishable elements of a test</a></li>
+                  <li><a href="#14">Examples</a></li>
                </ul>
             </div>
          </div>
@@ -61,83 +62,61 @@ To make changes, update the M-file and republish this document.
             <div>
                <h2><a name="1">Creating tests</a></h2>
                <div>
-                  <p>Like functions OpenEarthTools also contains a function to automatically generate a new test (<i>oetnewtest</i>). The help of this function shows you how it can be used.
+                  <p>Like functions OpenEarthTools also contains a function to automatically generate a new test (<i>oetnewtest</i>). <i>oetnewtest</i> can be used the following ways:
                   </p>
-                  <p>There are several ways to call oetnewtest:</p>
+                  <p><b>Syntax</b></p>
                   <ul>
-                     <li>Without input arguments</li>
-                     <li>With the name of the test function</li>
-                     <li>with the name of the function that is tested by the new testfunction</li>
-                     <li>For the file currently edited in the matlab editor</li>
+                     <li>oetnewtest('filename');</li>
+                     <li>oetnewtest('currentfile');</li>
+                     <li>oetnewtest('functionname');</li>
+                     <li>oetnewfun(..., 'PropertyName', PropertyValue,...);</li>
                   </ul>
-                  <p>The help of oetnewtest provides more information on the options that can be specified for <i>oetnewfun</i>.
-                  </p><pre class="codeinput">help <span class="string">oetnewtest</span>
-</pre><pre class="codeoutput"> OETNEWTEST    Create a new test file given the file or function name
- 
-    Routine to create a new test including Credits and svn keywords.
-    Company, address, email and author are obtained using from the
-    application data with getlocalsettings. If there is already a
-    testdefinition with the same name, the function asks whether to
-    open the existing file, copy the most important code pieces into
-    a new template, or start from scratch with the same name.
- 
-    Syntax:
-        oetnewtest('filename');
-        oetnewtest('currentfile');
-        oetnewtest('functionname');
-        oetnewfun(..., 'PropertyName', PropertyValue,...)
- 
-    Input:
-        'filename'    -   name of the test file (this should end with
-                          "_test.m" otherwise it is treated as a function
-                          name. If the filename is not specified, an Untitled
-                          test will be generated.
-        'currentfile' -   Looks up the last selected file in the matlab editor
-                          and creates a test for that function.
-        'functionname'-   Name of the function for which this file should
-                          provide a test.
- 
-    PropertyNames:
-        'h1line'      -   One line description
-        'description' -   Detailed description of the test
-        'testname'    -   An alternate name for the test
-        'testcases'   -   Cell array of strings with names of the testcases
-                          you want to create.
- 
-    Example:
-        oetnewtest('oetnewtest_test',...
-                'testcases', {'Case 1','Case 2','Case 3'});
-        oetnewtest
- 
-    See also: oetnewfun, getlocalsettings, load_template
-
-</pre></div>
+                  <p><b>Input</b></p>
+                  <ul>
+                     <li>'filename'    -   name of the test file (this should end with "_test.m" otherwise it is treated as a function name. If the
+                        filename is not specified, an Untitled test will be generated.
+                     </li>
+                     <li>'currentfile' -   Looks up the last selected file in the matlab editor and creates a test for that function.</li>
+                     <li>'functionname'-   Name of the function for which this file should provide a test.</li>
+                  </ul>
+                  <p><b>PropertyNames</b></p>
+                  <ul>
+                     <li>'h1line'      -   One line description</li>
+                     <li>'description' -   Detailed description of the test</li>
+                  </ul>
+                  <p><b>Examples</b></p>
+                  <ul>
+                     <li>oetnewtest('oetnewtest_test');</li>
+                     <li>oetnewtest('currentfile');</li>
+                     <li>oetnewtest('oetnewtest');</li>
+                  </ul>
+               </div>
             </div>
             <div>
                <h2><a name="2">Simple test</a></h2>
                <div>
-                  <p>For the sake of simplicity the most simple test is just a function that returns a testresult. The function must obay the following
+                  <p>For the sake of simplicity the most simple test is just a function with one line of code. The function must obay the following
                      rules:
                   </p>
                   <ul>
                      <li>The function name should contain <b><i>"_test"</i></b>.
                      </li>
                      <li>The function should be addressed <b><i>without any input parameters</i></b></li>
-                     <li>The <b><i>first output argument</i></b> of the function should be a <b><i>boolean</i></b> (logical) indicating the result of the test {true | false | NaN}
-                     </li>
                   </ul>
-                  <p>Such a function could look like this:</p><pre class="codeinput"><span class="comment">% function testresult = testname_test()</span>
-<span class="comment">%</span>
-<span class="comment">% testresult = sum([2,3])==5;</span>
+                  <p>Such a function could look like this:</p><pre class="codeinput"><span class="keyword">function</span> testname_test()
 </pre></div>
             </div>
             <div>
-               <h2><a name="3">Basic elements of a test</a></h2>
+               <div><pre class="codeinput">assert(true,<span class="string">'This test does not crash'</span>);
+</pre></div>
+            </div>
+            <div>
+               <h2><a name="4">Basic elements of a test</a></h2>
                <div>
                   <p>A Testdefinition can be divided into two parts:</p>
                   <ol>
                      <li>Function help block</li>
-                     <li>Basic parts of the test definition</li>
+                     <li>the test code itself</li>
                   </ol>
                   <p><b>Function help block</b></p>
                   <p>
@@ -148,100 +127,102 @@ To make changes, update the M-file and republish this document.
                      
                   </p>
                   <p><img vspace="5" hspace="5" src="prerendered_images/test_helpblock.png" relsrc="prerendered_images/test_helpblock.png"> </p>
-                  <p><b>Basic parts of the test definition</b></p>
-                  <p>Secondly (regression) tests are often accompanied by an extensive documentation. Many developers have to cope with the problem
-                     of updating / renewing the tests and at the same time keeping the documentation of these tests up to date. In an attempt to
-                     deal with this problem testdefinitions in OpenEarthTools can contain documentation of the tests and visualization of the results.
-                     This is achieved distinguishing three code blocks:
-                  </p>
-                  <ol>
-                     <li>Description of the test</li>
-                     <li>The actual code that is executed</li>
-                     <li>Documentation / visualization of the results</li>
-                  </ol>
-                  <p><img vspace="5" hspace="5" src="prerendered_images/test_documentation_blocks.png" relsrc="prerendered_images/test_documentation_blocks.png"> </p>
-                  <p><b>Description block</b></p>
-                  <p>The description typically does not depend on the test result. This block can contain publishable code (see next section for
-                     formatting tips) to document the purpose of the test and what can be expected as outcome. This block is preceeded by a cell
-                     divider ("%% ") followed by the keyword $Description:
-                  </p>
-                  <p>%% $Description</p>
-                  <p><b>RunCode block</b></p>
-                  <p>This block of code contains the actual test. The test engine automatically runs this block of code preceeded by the description
-                     code (so that all variables created in the description block are known) and saves the resulting workspace. Any figures created
-                     during the test will be deleted and are not included in the publication (This is no real problem, since we seperate computational
-                     functions from plot functions). During this block of code the first output argument should be created (indicating the testresult
-                     by either a boolean (false / true) or a NaN. The start of the RunCode block is indicated with a cell divider similar to the
-                     one to indicate the Description, but now with the keyword $RunCode:
-                  </p>
-                  <p>%% $RunCode</p>
-                  <p>This cell divider automatically defines the end of the preceeding block of code ($Description or $PublishResult).</p>
-                  <p><b>PublishResult block</b></p>
-                  <p>This block of code (ending at the end of the file in case no testcases are defined, or at the last "end" keyword prior to
-                     a testcase) contains publishable code to visualize the test result. Typically this can contain some plots of the result in
-                     case of a regression test to visually inspect the result. The following section explaines more about the publication blocks.
-                     The start of the PublishResult block is indicated with:
-                  </p>
-                  <p>%% $PublishResult</p>
                </div>
             </div>
             <div>
-               <h2><a name="4">Formatting the publishable elements of a test</a></h2>
+               <h2><a name="5">Test code</a></h2>
                <div>
-                  <p>There are two publishable elements in a test definition (description and publishresult blocks). Publication of these parts
-                     to html is done with the matlab function <b><i>"publish"</i></b>. A lot of information on formatting the output html pages can be found in the matlab documentation.
+                  <p>The code body of the test contains code to test a function or functions. If the function does not return a variable it is
+                     counted as succeeded whenever there is no error detected. It is also possible to include a boolean variable as first output
+                     argument, which indicates whether the test was successfull or not.
                   </p>
-                  <p><b>Block attributes</b></p>
-                  <p>Each publishable block in the testdefinition (see previous section of this document) can contain atributes in its header.
-                     The attributes determine publish options of the specific block, test or testcase. The following table gives an overview of
-                     the possible attributes that can be defined for the $Description and $PublishResult code blocks.
+                  <p>The use of the matlab build-in function "_assert_" can come in handy when testing the result of a function against requirements.
+                     For example:
+                  </p><pre class="codeinput">a = sum([1, 1]);
+assert(a==1,<span class="string">'1+1 should be equal to 2'</span>);
+</pre></div>
+            </div>
+            <div>
+               <h2><a name="6">Additional functions / methods</a></h2>
+               <div>
+                  <p>Furthermore one can use several functions available in the MTest toolbox to ignore tests, or document a test or its result:</p>
+                  <ul>
+                     <li>TeamCity.running</li>
+                     <li>TeamCity.ignore</li>
+                     <li>TeamCity.publishdescription</li>
+                     <li>TeamCity.publishresult</li>
+                     <li>MTest.name</li>
+                     <li>MTest.category</li>
+                  </ul>
+                  <p><b>TeamCity.running</b></p>
+                  <p>returns a boolean that is true whenever the TeamCity server is running tests. This function can typically be used to do something
+                     that is only needed when running test at the buildserver (for example ignore the result).
                   </p>
-                  <p>
-                     <table cellspacing="0" class="body" cellpadding="4" summary="" width="100%" border="2">
-                     <colgroup>
-                     <col width="16%">
-                     <col width="21%">
-                     <col width="63%">
-                     </colgroup>
-                     <thead>
-                     <tr valign="top">
-                     <th bgcolor="#B2B2B2">Attribute Name</th>
-                     <th bgcolor="#B2B2B2"><p>Class</p></th>
-                     <th bgcolor="#B2B2B2"><p>Description</p></th>
-                     </tr>
-                     </thead>
-                     <tbody>
-                     <tr valign="top">
-                     <td bgcolor="#F2F2F2"><tt>Name</tt></td>
-                     <td bgcolor="#F2F2F2"><p><tt>char</tt> Default=<tt>''</tt></p></td>
-                     <td bgcolor="#F2F2F2">
-                     Custom name of the test or testcase.
-                     </td>
-                     </tr>
-                     <tr valign="top">
-                     <td bgcolor="#F2F2F2"><tt>IncludeCode</tt></td>
-                     <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>false</tt></p></td>
-                     <td bgcolor="#F2F2F2">
-                     Determines the publish option showCode for this publishable section.
-                     </td>
-                     </tr>
-                     <tr valign="top">
-                     <td bgcolor="#F2F2F2"><tt>EvaluateCode</tt></td>
-                     <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>true</tt></p></td>
-                     <td bgcolor="#F2F2F2">
-                     Determines the publish option evalCode for this publishable section.
-                     </td>
-                     </tr>
-                     </tbody>
-                     </table>
-                     
+                  <p><b>TeamCity.ignore</b></p>
+                  <p>Causes the teamcity server to ignore the current test. The reason to ignore should be included as a string input into this
+                     function. If the TeamCity server is not running this function will do nothing.
                   </p>
-                  <p>Attributes can be added between brackets after the dedicated keyword that defines the function of the cell in particular:</p>
-                  <p>%% $Description (Name = Tutorial Name)</p>
-                  <p>Attributes can be seperated by the <b><i>"&amp;"</i></b> sign.
+                  <p>An example of using both methods mentioned above to ignore tests:</p><pre class="codeinput"><span class="keyword">if</span> TeamCity.running
+    TeamCity.ignore(<span class="string">'Work In Progress'</span>);
+    <span class="keyword">return</span>;
+<span class="keyword">end</span>
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p><b>TeamCity.publishdescription</b></p>
+                  <p>This function adds a reference to the documentation of the test. This documentation can be located in a subfunction of the
+                     test, or a file outside the testdefinition (as a script or function). When using this function to publish the test description,
+                     the code of the specified function is copied and pasted into a temp file. This temp file gets published. Before and after
+                     publication of the description the active workspace (of the test function) is copied in such a way that the result of the
+                     publishable description is available in the workspace after finishing publication. Som of the publish options can be included
+                     as input parameters. An example of how to use this function is given below:
+                  </p><pre class="codeinput">TeamCity.publishdescription(@mte_descriptionhelper,<span class="keyword">...</span>
+    <span class="string">'EvaluateCode'</span>,true,<span class="keyword">...</span>
+    <span class="string">'IncludeCode'</span>,true,<span class="keyword">...</span>
+    <span class="string">'maxWidht'</span>,400);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>Or:</p><pre class="codeinput">TeamCity.publishdescription(<span class="string">'mte_descriptionhelper'</span>,<span class="keyword">...</span>
+    <span class="string">'EvaluateCode'</span>,true,<span class="keyword">...</span>
+    <span class="string">'IncludeCode'</span>,true,<span class="keyword">...</span>
+    <span class="string">'maxWidht'</span>,400);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p><b>TeamCity.publishresult</b></p>
+                  <p>Similar to TeamCity.publishdescription, this function adds a reference to publishable code that describes the test result.
+                     Useage is also similar to TeamCity.publishdescription.
                   </p>
-                  <p>%% $Description (Name = Tutorial Name &amp; IncludeCode = true)</p>
-                  <p><b>Formatting of cells for publishing</b></p>
+                  <p><b>MTest.name</b></p>
+                  <p>Can be used to give a test a custome name (by default a tests gets the filename as name).</p><pre class="codeinput">MTest.name(<span class="string">'New name'</span>);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p><b>MTest.category</b></p>
+                  <p>This method specifies the Category of the test.</p><pre class="codeinput">MTest.category(<span class="string">'Integration'</span>);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>Or:</p><pre class="codeinput">MTest.category(<span class="string">'Slow'</span>);
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>Or:</p><pre class="codeinput">MTest.category(<span class="string">'UnitTest'</span>);
+</pre></div>
+            </div>
+            <div>
+               <h2><a name="13">Formatting the publishable elements of a test</a></h2>
+               <div>
+                  <p>There are two publishable elements in a test definition (description and result). Publication of these parts to html is done
+                     with the matlab function <b><i>"publish"</i></b>. A lot of information on formatting the output html pages can be found in the matlab documentation.
+                  </p>
                   <p>
                      The
                      <a href="http://www.mathworks.com/access/helpdesk/help/techdoc/index.html?/access/helpdesk/help/techdoc/matlab_env/f6-30186.html&http://www.mathworks.com/cgi-bin/texis/webinator/search_spt?db=MSS&prox=page&rorder=750&rprox=750&rdfreq=500&rwfreq=500&rlead=250&sufs=0&order=r&is_summary_on=1&pr=SPT&cq=1&collection=1&ResultCount=10&query=Formatting+M-Files+Comments+for+publishing&x=8&y=8"
@@ -257,28 +238,7 @@ To make changes, update the M-file and republish this document.
                </div>
             </div>
             <div>
-               <h2><a name="5">Working with testcases</a></h2>
-               <div>
-                  <p>The test definition allows for the use of testcases. One test can contain an unlimited amount of testcases. Typically one
-                     uses testcases to test different functionalities of the same applicaion or engine to avoid including multiple testdefinitions
-                     for one function. A testcase can be defined by including a subfunction that is addressed in the RunCode block. It is important
-                     to know that:
-                  </p>
-                  <ol>
-                     <li>It should be subfunctions, not nested functions (in other words, the main function should be   terminated with an "end" keyword
-                        before declaration of the subfunction / testcase.
-                     </li>
-                     <li>A testcase can have input arguments (generated in the Description or RunCode part of the test)</li>
-                     <li>A testcase can have multiple output arguments.</li>
-                     <li>The first output argument should be of type boolean (logical), indicating whether the testcase   was successfull.</li>
-                     <li>A testcase is also a function and therefore its name cannot interfere with other functionsnames</li>
-                  </ol>
-                  <p>The following image shows an example of a testcase declaration.</p>
-                  <p><img vspace="5" hspace="5" src="prerendered_images/test_testcases.png" relsrc="prerendered_images/test_testcases.png"> </p>
-               </div>
-            </div>
-            <div>
-               <h2><a name="6">Examples</a></h2>
+               <h2><a name="14">Examples</a></h2>
                <div>
                   <p>The following files contain examples of how te use the testdefinition to obtain the desired result:</p>
                   <p>
@@ -294,7 +254,7 @@ To make changes, update the M-file and republish this document.
             </div>
          </div>
          <p class="footer"><br>
-            this tutorial is based on: <a class="matlabhref" href="matlab:edit('testdefinitions_tutorial');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=2623/OpenEarthTools/trunk/matlab/maintenance/1_automated_Testing/testdefinitions_tutorial.m">testdefinitions_tutorial.m (revision: 2623)</a><br>
+            this tutorial is based on: <a class="matlabhref" href="matlab:edit('testdefinitions_tutorial');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=2703/OpenEarthTools/trunk/matlab/maintenance/1_automated_Testing/testdefinitions_tutorial.m">testdefinitions_tutorial.m (revision: 2703)</a><br>
 Published with MATLAB&reg; 7.10<br></p>
       </div>
       <!--
@@ -310,38 +270,49 @@ Published with MATLAB&reg; 7.10<br></p>
 
 %% Creating tests
 % Like functions OpenEarthTools also contains a function to automatically generate a new test
-% (_oetnewtest_). The help of this function shows you how it can be used.
+% (_oetnewtest_). _oetnewtest_ can be used the following ways:
 %
-% There are several ways to call oetnewtest:
+% *Syntax*
+%
+% * oetnewtest('filename');
+% * oetnewtest('currentfile');
+% * oetnewtest('functionname');
+% * oetnewfun(..., 'PropertyName', PropertyValue,...);
+%
+% *Input*
 % 
-% * Without input arguments
-% * With the name of the test function
-% * with the name of the function that is tested by the new testfunction
-% * For the file currently edited in the matlab editor
-% 
-% The help of oetnewtest provides more information on the options that can be specified for _oetnewfun_.
-
-help oetnewtest
+% * 'filename'    -   name of the test file (this should end with "_test.m" otherwise it is treated
+% as a function name. If the filename is not specified, an Untitled test will be generated.
+% * 'currentfile' -   Looks up the last selected file in the matlab editor and creates a test for that function. 
+% * 'functionname'-   Name of the function for which this file should provide a test.
+%
+% *PropertyNames*
+%
+% * 'h1line'      -   One line description
+% * 'description' -   Detailed description of the test
+%
+% *Examples*
+%
+% * oetnewtest('oetnewtest_test');
+% * oetnewtest('currentfile');
+% * oetnewtest('oetnewtest');
 
 %% Simple test
-% For the sake of simplicity the most simple test is just a function that returns a testresult. The
+% For the sake of simplicity the most simple test is just a function with one line of code. The
 % function must obay the following rules:
 %
 % * The function name should contain *_"_test"_*.
 % * The function should be addressed *_without any input parameters_*
-% * The *_first output argument_* of the function should be a *_boolean_* (logical) indicating the result of the test {true | false | NaN}
 %
 % Such a function could look like this:
-
-% function testresult = testname_test()
-%
-% testresult = sum([2,3])==5;
+function testname_test()
+assert(true,'This test does not crash');
 
 %% Basic elements of a test
 % A Testdefinition can be divided into two parts:
 %
 % # Function help block
-% # Basic parts of the test definition
+% # the test code itself
 %
 % *Function help block*
 %
@@ -354,117 +325,107 @@ help oetnewtest
 %
 % <<prerendered_images/test_helpblock.png>>
 %
-% *Basic parts of the test definition*
+
+%% Test code
 %
-% Secondly (regression) tests are often accompanied by an extensive documentation. Many developers
-% have to cope with the problem of updating / renewing the tests and at the same time keeping the
-% documentation of these tests up to date. In an attempt to deal with this problem testdefinitions 
-% in OpenEarthTools can contain documentation of the tests and visualization of the results. This is
-% achieved distinguishing three code blocks:
+% The code body of the test contains code to test a function or functions. If the function does not
+% return a variable it is counted as succeeded whenever there is no error detected. It is also
+% possible to include a boolean variable as first output argument, which indicates whether the test
+% was successfull or not.
 %
-% # Description of the test
-% # The actual code that is executed
-% # Documentation / visualization of the results
-% 
-% <<prerendered_images/test_documentation_blocks.png>>
+% The use of the matlab build-in function "_assert_" can come in handy when testing the result of a
+% function against requirements. For example:
 %
-% *Description block*
-% 
-% The description typically does not depend on the test result. This block can contain publishable
-% code (see next section for formatting tips) to document the purpose of the test and what can be
-% expected as outcome. This block is preceeded by a cell divider ("%% ") followed by the keyword
-% $Description:
+a = sum([1, 1]);
+assert(a==1,'1+1 should be equal to 2');
+
+%% Additional functions / methods
+% Furthermore one can use several functions available in the MTest toolbox to ignore tests, or
+% document a test or its result:
 %
-% %% $Description
+% * TeamCity.running
+% * TeamCity.ignore
+% * TeamCity.publishdescription
+% * TeamCity.publishresult
+% * MTest.name
+% * MTest.category
 %
-% *RunCode block*
+% *TeamCity.running*
 %
-% This block of code contains the actual test. The test engine automatically runs this block of code
-% preceeded by the description code (so that all variables created in the description block are
-% known) and saves the resulting workspace. Any figures created during the test will be deleted and
-% are not included in the publication (This is no real problem, since we seperate computational
-% functions from plot functions). During this block of code the first output argument should be
-% created (indicating the testresult by either a boolean (false / true) or a NaN. The start of the
-% RunCode block is indicated with a cell divider similar to the one to indicate the Description, but
-% now with the keyword $RunCode:
+% returns a boolean that is true whenever the TeamCity server is running tests. This function can
+% typically be used to do something that is only needed when running test at the buildserver (for
+% example ignore the result).
 %
-% %% $RunCode
+% *TeamCity.ignore*
 %
-% This cell divider automatically defines the end of the preceeding block of code ($Description or
-% $PublishResult).
+% Causes the teamcity server to ignore the current test. The reason to ignore should be included as 
+% a string input into this function. If the TeamCity server is not running this function will do
+% nothing.
 %
-% *PublishResult block*
+% An example of using both methods mentioned above to ignore tests:
 %
-% This block of code (ending at the end of the file in case no testcases are defined, or at the last
-% "end" keyword prior to a testcase) contains publishable code to visualize the test result.
-% Typically this can contain some plots of the result in case of a regression test to visually
-% inspect the result. The following section explaines more about the publication blocks. The start
-% of the PublishResult block is indicated with:
+if TeamCity.running
+    TeamCity.ignore('Work In Progress');
+    return;
+end
+
+%%
+% *TeamCity.publishdescription*
 %
-% %% $PublishResult
+% This function adds a reference to the documentation of the test. This documentation can be located
+% in a subfunction of the test, or a file outside the testdefinition (as a script or function). When
+% using this function to publish the test description, the code of the specified function is copied
+% and pasted into a temp file. This temp file gets published. Before and after publication of the
+% description the active workspace (of the test function) is copied in such a way that the result of
+% the publishable description is available in the workspace after finishing publication. Som of the
+% publish options can be included as input parameters. An example of how to use this function is
+% given below:
+TeamCity.publishdescription(@mte_descriptionhelper,...
+    'EvaluateCode',true,...
+    'IncludeCode',true,...
+    'maxWidht',400);
+
+%%
+% Or:
+
+TeamCity.publishdescription('mte_descriptionhelper',...
+    'EvaluateCode',true,...
+    'IncludeCode',true,...
+    'maxWidht',400);
+
+%% 
+% *TeamCity.publishresult*
+%
+% Similar to TeamCity.publishdescription, this function adds a reference to publishable code that
+% describes the test result. Useage is also similar to TeamCity.publishdescription.
+%
+% *MTest.name*
+%
+% Can be used to give a test a custome name (by default a tests gets the filename as name).
+
+MTest.name('New name');
+
+%%
+% *MTest.category*
+%
+% This method specifies the Category of the test.
+
+MTest.category('Integration');
+
+%%
+% Or:
+
+MTest.category('Slow');
+
+%%
+% Or:
+
+MTest.category('UnitTest');
 
 %% Formatting the publishable elements of a test
-% There are two publishable elements in a test definition (description and publishresult blocks).
+% There are two publishable elements in a test definition (description and result).
 % Publication of these parts to html is done with the matlab function *_"publish"_*. A lot of
 % information on formatting the output html pages can be found in the matlab documentation.
-%
-% *Block attributes*
-%
-% Each publishable block in the testdefinition (see previous section of this document) can contain
-% atributes in its header. The attributes determine publish options of the specific block, test or
-% testcase. The following table gives an overview of the possible attributes that can be defined for
-% the $Description and $PublishResult code blocks.
-%
-% <html>
-% <table cellspacing="0" class="body" cellpadding="4" summary="" width="100%" border="2">
-%   <colgroup>
-%       <col width="16%">
-%       <col width="21%">
-%       <col width="63%">
-%   </colgroup>
-%   <thead>
-%       <tr valign="top">
-%           <th bgcolor="#B2B2B2">Attribute Name</th>
-%           <th bgcolor="#B2B2B2"><p>Class</p></th>
-%           <th bgcolor="#B2B2B2"><p>Description</p></th>
-%       </tr>
-%   </thead>
-%   <tbody>
-%       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>Name</tt></td>
-%           <td bgcolor="#F2F2F2"><p><tt>char</tt> Default=<tt>''</tt></p></td>
-%           <td bgcolor="#F2F2F2">
-%               Custom name of the test or testcase.
-%           </td>
-%       </tr>
-%       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>IncludeCode</tt></td>
-%           <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>false</tt></p></td>
-%           <td bgcolor="#F2F2F2">
-%               Determines the publish option showCode for this publishable section.
-%           </td>
-%       </tr>
-%       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>EvaluateCode</tt></td>
-%           <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>true</tt></p></td>
-%           <td bgcolor="#F2F2F2">
-%               Determines the publish option evalCode for this publishable section.
-%           </td>
-%       </tr>
-%   </tbody>
-% </table>
-% </html>
-%
-% Attributes can be added between brackets after the dedicated keyword that defines the function of
-% the cell in particular:
-%
-% %% $Description (Name = Tutorial Name)
-%
-% Attributes can be seperated by the *_"&"_* sign.
-%
-% %% $Description (Name = Tutorial Name & IncludeCode = true)
-%
-% *Formatting of cells for publishing*
 %
 % <html>
 % The 
@@ -477,24 +438,6 @@ help oetnewtest
 % </html>
 %
 % <<prerendered_images/test_cell_menu.png>>
-
-%% Working with testcases
-% The test definition allows for the use of testcases. One test can contain an unlimited amount of
-% testcases. Typically one uses testcases to test different functionalities of the same applicaion
-% or engine to avoid including multiple testdefinitions for one function. A testcase can be defined
-% by including a subfunction that is addressed in the RunCode block. It is important to know that:
-%
-% # It should be subfunctions, not nested functions (in other words, the main function should be 
-%   terminated with an "end" keyword before declaration of the subfunction / testcase.
-% # A testcase can have input arguments (generated in the Description or RunCode part of the test)
-% # A testcase can have multiple output arguments.
-% # The first output argument should be of type boolean (logical), indicating whether the testcase
-%   was successfull.
-% # A testcase is also a function and therefore its name cannot interfere with other functionsnames
-%
-% The following image shows an example of a testcase declaration.
-%
-% <<prerendered_images/test_testcases.png>>
 
 %% Examples
 % The following files contain examples of how te use the testdefinition to obtain the desired

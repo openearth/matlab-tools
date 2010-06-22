@@ -48,19 +48,18 @@ classdef TeamCity < handle
                 ignoreMessage = '';
             end
             
+            %% Retrieve current test
+            currentTest = obj.CurrentTest;
+            
             %% Post ignore message
-            if obj.TeamCityRunning
-                %% Retrieve current test
-                currentTest = obj.CurrentTest;
-                if ~isempty(currentTest)
-                    %% Set test properties
-                    currentTest.Ignore = true;
-                    currentTest.IgnoreMessage = ignoreMessage;
-                    %% Post TeamCity message
-                    TeamCity.postmessage('testIgnored','name',currentTest.Name,'message',currentTest.IgnoreMessage);
-                    if currentTest.Verbose
-                        disp(['     Test Ignored: ' currentTest.IgnoreMessage]);
-                    end
+            if ~isempty(currentTest)
+                %% Set test properties
+                currentTest.Ignore = true;
+                currentTest.IgnoreMessage = ignoreMessage;
+                %% Post TeamCity message
+                TeamCity.postmessage('testIgnored','name',currentTest.Name,'message',currentTest.IgnoreMessage);
+                if currentTest.Verbose
+                    disp(['     Test Ignored: ' currentTest.IgnoreMessage]);
                 end
             else
                 disp(['     Test Ignored: ' ignoreMessage]);
@@ -219,17 +218,14 @@ classdef TeamCity < handle
         function category(category)
             %% Give Category name
             obj = TeamCity;
-            if obj.TeamCityRunning
-                currentTest = obj.CurrentTest;
-                if ~isempty(currentTest)
-                    currentTest.Category = category;
-                end
+            currentTest = obj.CurrentTest;
+            if ~isempty(currentTest)
+                currentTest.Category = category;
             end
         end
         function name(proposedname)
             obj = TeamCity;
             currentTest = obj.CurrentTest;
-            
             if ~isempty(currentTest)
                 if obj.TeamCityRunning
                     %% Set test properties

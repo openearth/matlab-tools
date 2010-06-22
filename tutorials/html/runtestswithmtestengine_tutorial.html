@@ -9,9 +9,9 @@
 This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
       -->
-      <title>4. Automated tesing with the mtest toolbox</title>
+      <title>4. Automated tesing with the MTest toolbox</title>
       <meta name="generator" content="MATLAB 7.10">
-      <meta name="date" content="2010-05-27">
+      <meta name="date" content="2010-06-22">
       <meta name="m-file" content="runtestswithmtestengine_tutorial">
       <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
       <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
@@ -34,10 +34,10 @@ To make changes, update the M-file and republish this document.
    <body LINK="#48339F" VLINK="#48339F" ALINK="#48339F">
       <div class="content">
          <div class="introduction ui-widget ui-widget-content ui-corner-all">
-            <h1>4. Automated tesing with the mtest toolbox</h1>
+            <h1>4. Automated tesing with the MTest toolbox</h1>
             <div>
                <p>
-                  The mtest toolbox is based on object oriented programming as introduced in matlab version 7.6
+                  The MTest toolbox is based on object oriented programming as introduced in matlab version 7.6
                   (2008a). It is able to search a specified maindir (and subdirs) for files that include a
                   predefined string (indicating that it is a test). It can transform the found testdefinition files
                   (written in the format explained in the <a class="relref" href="testdefinitions_tutorial.html"
@@ -56,11 +56,11 @@ To make changes, update the M-file and republish this document.
             <div>
                <ul>
                   <li><a href="#1">Building an mtestengine</a></li>
-                  <li><a href="#5">Properties (fieldnames) of the mtestengine</a></li>
+                  <li><a href="#5">Properties (fieldnames) of the MTestRunner</a></li>
                   <li><a href="#6">Specifying tests to run</a></li>
-                  <li><a href="#13">Run all tests</a></li>
-                  <li><a href="#15">Run all tests and publish documentation and results</a></li>
-                  <li><a href="#16">Publication templates</a></li>
+                  <li><a href="#12">Run all tests</a></li>
+                  <li><a href="#14">Run all tests and publish documentation and results</a></li>
+                  <li><a href="#15">Publication templates</a></li>
                </ul>
             </div>
          </div>
@@ -68,7 +68,7 @@ To make changes, update the M-file and republish this document.
             <div>
                <h2><a name="1">Building an mtestengine</a></h2>
                <div>
-                  <p>Creating an mtestengine is as simple as the following code suggests:</p><pre class="codeinput">mte = mtestengine;
+                  <p>Creating an mtestengine is as simple as the following code suggests:</p><pre class="codeinput">mte = MTestRunner;
 </pre></div>
             </div>
             <div>
@@ -77,20 +77,21 @@ To make changes, update the M-file and republish this document.
 </pre><pre class="codeoutput">
 mte = 
 
-  mtestengine handle
+  MTestRunner handle
 
   Properties:
-          targetdir: 'F:\BuildAgent\temp\buildTmp\tp7ec35eac_cb88_445e_82f4_0d8056cbe0c7'
-            maindir: 'F:\BuildAgent\temp\buildTmp\tp7ec35eac_cb88_445e_82f4_0d8056cbe0c7'
-          recursive: 1
-            verbose: 0
-    includecoverage: 1
-             testid: '_test'
-          exclusion: {'.svn'  '_tutorial'}
-           template: 'default'
-              tests: [1x1 mtest]
-      wrongtestdefs: {}
-       functionsrun: {}
+            MainDir: 'e:\Temp\tp1c071d7c_df0d_4cef_af63_f7023d9bc749'
+          Recursive: 1
+            Publish: 0
+            Verbose: 0
+    IncludeCoverage: 1
+          TargetDir: 'e:\Temp\tp1c071d7c_df0d_4cef_af63_f7023d9bc749'
+             TestID: '_test'
+         Exclusions: {'.svn'  '_tutorial'  '_exclude'}
+           Template: 'default'
+              Tests: [1x1 MTest]
+      WrongTestDefs: {}
+       FunctionsRun: {}
 
 
 </pre></div>
@@ -99,26 +100,26 @@ mte =
                <div>
                   <p>It directly shows the default options for all fields. Of course we would like to set some of the properties. This can be done
                      either when creating the object itself (with property value pairs) or afterwards in the same way as altering fields of a struct:
-                  </p><pre class="codeinput">mte.targetdir = fullfile(tempdir,<span class="string">'htmltest'</span>);
-mte.maindir = fileparts(which(<span class="string">'mtestengine'</span>));
-mte.verbose = true;
-mte.template = <span class="string">'oet'</span>;
+                  </p><pre class="codeinput">mte.TargetDir = fullfile(tempdir,<span class="string">'htmltest'</span>);
+mte.MainDir = fileparts(which(<span class="string">'MTestRunner'</span>));
+mte.Verbose = true;
+mte.Template = <span class="string">'oet'</span>;
 </pre></div>
             </div>
             <div>
                <div>
-                  <p>or:</p><pre class="codeinput">mte = mtestengine(<span class="keyword">...</span>
-    <span class="string">'targetdir'</span>,fullfile(tempdir,<span class="string">'htmltest'</span>),<span class="keyword">...</span>
-    <span class="string">'maindir'</span>,fileparts(which(<span class="string">'mte_simple_test'</span>)),<span class="keyword">...</span>
-    <span class="string">'verbose'</span>,true,<span class="keyword">...</span>
-    <span class="string">'template'</span>,<span class="string">'oet'</span>);
+                  <p>or:</p><pre class="codeinput">mte = MTestRunner(<span class="keyword">...</span>
+    <span class="string">'TargetDir'</span>,fullfile(tempdir,<span class="string">'htmltest'</span>),<span class="keyword">...</span>
+    <span class="string">'MainDir'</span>,fileparts(which(<span class="string">'mte_simple_test'</span>)),<span class="keyword">...</span>
+    <span class="string">'Verbose'</span>,true,<span class="keyword">...</span>
+    <span class="string">'Template'</span>,<span class="string">'oet'</span>);
 </pre></div>
             </div>
             <div>
-               <h2><a name="5">Properties (fieldnames) of the mtestengine</a></h2>
+               <h2><a name="5">Properties (fieldnames) of the MTestRunner</a></h2>
                <div>
-                  <p>The mtestengine has a couple of properties that can be used to define the behaviour of the mtestengine when running and publishing.
-                     The following table lists the properties of an mtestengine object.
+                  <p>The MTestRunner has a couple of properties that can be used to define the behaviour of the MTestRunner when running and publishing.
+                     The following table lists the properties of an MTestRunner object.
                   </p>
                   <p>
                      <table cellspacing="0" class="body" cellpadding="4" summary="" width="100%" border="2">
@@ -136,56 +137,63 @@ mte.template = <span class="string">'oet'</span>;
                      </thead>
                      <tbody>
                      <tr valign="top">
-                     <td bgcolor="#F2F2F2"><tt>targetdir</tt></td>
+                     <td bgcolor="#F2F2F2"><tt>TargetDir</tt></td>
                      <td bgcolor="#F2F2F2"><p><tt>char</tt> Default=<tt>cd</tt></p></td>
                      <td bgcolor="#F2F2F2">
                      Pathname of the directory where output (html) files must be generated.
                      </td>
                      </tr>
                      <tr valign="top">
-                     <td bgcolor="#F2F2F2"><tt>maindir</tt></td>
+                     <td bgcolor="#F2F2F2"><tt>MainDir</tt></td>
                      <td bgcolor="#F2F2F2"><p><tt>char</tt> Default=<tt>cd</tt></p></td>
                      <td bgcolor="#F2F2F2">
                      Root directory of the toolbox that must be analysed and tested.
                      </td>
                      </tr>
                      <tr valign="top">
-                     <td bgcolor="#F2F2F2"><tt>recursive</tt></td>
+                     <td bgcolor="#F2F2F2"><tt>Recursive</tt></td>
                      <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>true</tt></p></td>
                      <td bgcolor="#F2F2F2">
                      Flag to determine whether the mtestengine only lists tests in the maindir or also in all subdirs of the maindir.
                      </td>
                      </tr>
                      <tr valign="top">
-                     <td bgcolor="#F2F2F2"><tt>verbose</tt></td>
+                     <td bgcolor="#F2F2F2"><tt>Publish</tt></td>
+                     <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>false</tt></p></td>
+                     <td bgcolor="#F2F2F2">
+                     Determines whether the publishable parts of a test get published.
+                     </td>
+                     </tr>
+                     <tr valign="top">
+                     <td bgcolor="#F2F2F2"><tt>Verbose</tt></td>
                      <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>false</tt></p></td>
                      <td bgcolor="#F2F2F2">
                      Flag that determines whether intermediate information must be printed in the command window.
                      </td>
                      </tr>
                      <tr valign="top">
-                     <td bgcolor="#F2F2F2"><tt>includecoverage</tt></td>
+                     <td bgcolor="#F2F2F2"><tt>IncludeCoverage</tt></td>
                      <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>true</tt></p></td>
                      <td bgcolor="#F2F2F2">
                      Flag to turn on / off the profile function during execution of the tests to obtain function coverage information.
                      </td>
                      </tr>
                      <tr valign="top">
-                     <td bgcolor="#F2F2F2"><tt>testid</tt></td>
+                     <td bgcolor="#F2F2F2"><tt>TestID</tt></td>
                      <td bgcolor="#F2F2F2"><p><tt>cell</tt> Default=<tt>{'_test'}</tt></p></td>
                      <td bgcolor="#F2F2F2">
                      The character arrays included in this cell determine which functionnames are identified as testdefinition files.
                      </td>
                      </tr>
                      <tr valign="top">
-                     <td bgcolor="#F2F2F2"><tt>exclusion</tt></td>
+                     <td bgcolor="#F2F2F2"><tt>Exclusions</tt></td>
                      <td bgcolor="#F2F2F2"><p><tt>cell</tt> Default=<tt>{'.svn','_tutorial'}</tt></p></td>
                      <td bgcolor="#F2F2F2">
                      Any function or pathname that includes one of the character arrays filling this cell is excluded from the list of testsdefinitions.
                      </td>
                      </tr>
                      <tr valign="top">
-                     <td bgcolor="#F2F2F2"><tt>template</tt></td>
+                     <td bgcolor="#F2F2F2"><tt>Template</tt></td>
                      <td bgcolor="#F2F2F2"><p><tt>char</tt> Default=<tt>default</tt></p></td>
                      <td bgcolor="#F2F2F2">
                      Name of the template that must be used to print the testresults of the toolbox.
@@ -194,14 +202,14 @@ mte.template = <span class="string">'oet'</span>;
                      </td>
                      </tr>
                      <tr valign="top">
-                     <td bgcolor="#F2F2F2"><tt>tests</tt></td>
+                     <td bgcolor="#F2F2F2"><tt>Tests</tt></td>
                      <td bgcolor="#F2F2F2"><p><tt>mtest</tt> Default=<tt>[]</tt></p></td>
                      <td bgcolor="#F2F2F2">
                      mtest object with the loaded testdefinitions. The mtestengine takes this list whenever the run command is given.
                      </td>
                      </tr>
                      <tr valign="top">
-                     <td bgcolor="#F2F2F2"><tt>wrongtestdefs</tt></td>
+                     <td bgcolor="#F2F2F2"><tt>WrongTestDefs</tt></td>
                      <td bgcolor="#F2F2F2"><p><tt>cell</tt> Default=<tt>{}</tt></p></td>
                      <td bgcolor="#F2F2F2">
                      Files identified as tests according to the testid and exclusion keywords, but failed
@@ -210,7 +218,7 @@ mte.template = <span class="string">'oet'</span>;
                      </td>
                      </tr>
                      <tr valign="top">
-                     <td bgcolor="#F2F2F2"><tt>functionsrun</tt></td>
+                     <td bgcolor="#F2F2F2"><tt>FunctionsRun</tt></td>
                      <td bgcolor="#F2F2F2"><p><tt>mtestfunction</tt> Default=<tt>[]</tt></p></td>
                      <td bgcolor="#F2F2F2">
                      Array of mtestfunction objects with information on the functions that were executed during the tests (including coverage information).
@@ -227,45 +235,36 @@ mte.template = <span class="string">'oet'</span>;
                <h2><a name="6">Specifying tests to run</a></h2>
                <div>
                   <p>After creation of an mtestengine we can see that it does not contain any testdefinitions yet. The <b><i>tests</i></b> contains an empty test.
-                  </p><pre class="codeinput">mte.tests
+                  </p><pre class="codeinput">mte.Tests
 </pre><pre class="codeoutput">
 ans = 
 
-  mtest handle
+  MTest handle
 
   Properties:
-                   filename: []
-                   filepath: []
-                     h1line: []
-                description: {}
-                     author: []
-                    seealso: {}
-      descriptionoutputfile: {}
-         coverageoutputfile: {}
-          publishoutputfile: {}
-                  testcases: [1x1 mtestcase]
-                currentcase: []
-                 testresult: 0
-                       time: 0
-                       date: NaN
-                   profinfo: []
-              functioncalls: []
-                     resdir: ''
-                       name: []
-             functionheader: ''
-               functionname: ''
-         functionoutputname: ''
-            descriptioncode: {}
-     descriptionincludecode: 0
-    descriptionevaluatecode: 1
-                    runcode: {}
-                publishcode: {}
-         publishincludecode: 0
-        publishevaluatecode: 1
-                    publish: 1
-                     ignore: 0
-              ignoremessage: ''
-                   category: 'unit'
+              Name: []
+          FileName: []
+          FilePath: []
+    FunctionHeader: ''
+      FunctionName: ''
+            H1Line: []
+       Description: {}
+            Author: []
+           SeeAlso: {}
+           Publish: 1
+          MaxWidth: 600
+         MaxHeight: 600
+        StyleSheet: ''
+            Ignore: 0
+     IgnoreMessage: ''
+          Category: 'Unit'
+        TestResult: 0
+              Time: 0
+              Date: NaN
+      ProfilerInfo: []
+     FunctionCalls: []
+        StackTrace: []
+           Verbose: 1
 
 
 </pre></div>
@@ -273,12 +272,7 @@ ans =
             <div>
                <div>
                   <p><b>manually add tests</b></p>
-                  <p>Specifying tests can be done in two different ways. Of course we can add tests manually to the field:</p><pre class="codeinput">mte.tests(1) = mtest(<span class="string">'mte_simple_test'</span>);
-</pre></div>
-            </div>
-            <div>
-               <div>
-                  <p>When specifying tests in this way we have to tell the engine that it does not have to search for tests itself anymore:</p><pre class="codeinput">mte.testscatalogued = true;
+                  <p>Specifying tests can be done in two different ways. Of course we can add tests manually to the field:</p><pre class="codeinput">mte.Tests(1) = MTest(<span class="string">'mte_simple_test'</span>);
 </pre></div>
             </div>
             <div>
@@ -296,7 +290,7 @@ ans =
                      </ul>
                      
                   </p>
-                  <p>By default testdefinition files include the following string in their filename:</p><pre class="codeinput">mte.testid
+                  <p>By default testdefinition files include the following string in their filename:</p><pre class="codeinput">mte.TestID
 </pre><pre class="codeoutput">
 ans =
 
@@ -306,17 +300,18 @@ _test
             </div>
             <div>
                <div>
-                  <p>but we exclude files with one of these strings in the filename</p><pre class="codeinput">mte.exclusion
+                  <p>but we exclude files with one of these strings in the filename</p><pre class="codeinput">mte.Exclusions
 </pre><pre class="codeoutput">
 ans = 
 
-    '.svn'    '_tutorial'
+    '.svn'    '_tutorial'    '_exclude'
 
 </pre></div>
             </div>
             <div>
                <div>
-                  <p>After automatically searching for testdefinitions and adding them to the testengine ...</p><pre class="codeinput">catalogueTests(mte);
+                  <p>After automatically searching for testdefinitions and adding them to the testengine ...</p><pre class="codeinput">cataloguetests(mte);
+</pre><pre class="codeoutput">Collecting tests
 </pre></div>
             </div>
             <div>
@@ -327,41 +322,73 @@ ans =
 </pre><pre class="codeoutput">
 mte = 
 
-  mtestengine handle
+  MTestRunner handle
 
   Properties:
-          targetdir: 'F:\BuildAgent\temp\buildTmp\htmltest'
-            maindir: 'F:\BuildAgent\work\OpenEarthTools\documentation\maintenance\1_automated_Testing\examples'
-          recursive: 1
-            verbose: 1
-    includecoverage: 1
-             testid: '_test'
-          exclusion: {'.svn'  '_tutorial'}
-           template: 'oet'
-              tests: [1x11 mtest]
-      wrongtestdefs: {[1x117 char]}
-       functionsrun: {}
+            MainDir: 'F:\OpenEarthTools\matlab\maintenance\1_automated_Testing\examples'
+          Recursive: 1
+            Publish: 0
+            Verbose: 1
+    IncludeCoverage: 1
+          TargetDir: 'e:\Temp\htmltest'
+             TestID: '_test'
+         Exclusions: {'.svn'  '_tutorial'  '_exclude'}
+           Template: 'oet'
+              Tests: [1x11 MTest]
+      WrongTestDefs: {'F:\OpenEarthTools\matlab\maintenance\1_automated_Testing\examples\mte_wrongdefinition_test.m'  [1x1 MException]}
+       FunctionsRun: {}
 
 
 </pre></div>
             </div>
             <div>
-               <h2><a name="13">Run all tests</a></h2>
+               <h2><a name="12">Run all tests</a></h2>
                <div>
                   <p>To run all tests specified in the <b><i>tests</i></b> field of the mtestengine object there is a very simple function:
                   </p><pre class="codeinput">run(mte);
-</pre><pre class="codeoutput">Warning: feval on script names will not work, or may work differently,
- in a future version of MATLAB.  To make your code insensitive to any change
- and to suppress this warning message:
- - Either change the script to a function.
- - Or use eval instead of feval.
- The script file in question is mtest_testfunction. 
-</pre></div>
+</pre><pre class="codeoutput">## start running tests ##
+     mte_wrongdefinition_test Could not be interpreted as a valid testdefinition.
+ 1. mt_definitionwithdescription_newstyle_test (mt_definitionwithdescription_newstyle_test)
+     Test started: mt_definitionwithdescription_newstyle_test
+     Test finished: mt_definitionwithdescription_newstyle_test
+ 2. name of the test (mte_concepttest_test)
+     Test started: name of the test
+     Error occurred: 1 is not 2
+     Test finished: name of the test
+ 3. testname (mte_fulldefinition_test)
+     Test started: testname
+     Test finished: testname
+ 4. mte_givecategory_test (mte_givecategory_test)
+     Test started: mte_givecategory_test
+     Test finished: mte_givecategory_test
+ 5. name of the test (mte_givename_test)
+     Test started: name of the test
+     Test finished: name of the test
+ 6. mte_headeronly_test (mte_headeronly_test)
+     Test started: mte_headeronly_test
+     Test finished: mte_headeronly_test
+ 7. Ignore test (mte_ignore_test)
+     Test started: Ignore test
+     Ignored: ignore test example
+     Test finished: Ignore test
+ 8. mte_simple_test (mte_simple_test)
+     Test started: mte_simple_test
+     Test finished: mte_simple_test
+ 9. mte_simplest_test (mte_simplest_test)
+     Test started: mte_simplest_test
+     Test finished: mte_simplest_test
+ 10. mte_testpublish_test (mte_testpublish_test)
+     Test started: mte_testpublish_test
+     Test finished: mte_testpublish_test
+ 11. mte_versiononly_test (mte_versiononly_test)
+     Test started: mte_versiononly_test
+     Test finished: mte_versiononly_test
+</pre><img vspace="5" hspace="5" src="runtestswithmtestengine_tutorial_01.png" relsrc="runtestswithmtestengine_tutorial_01.png"> </div>
             </div>
             <div>
                <div>
                   <p>Each mtest object under the field <b><i>"tests"</i></b> contains a field that stores the testresult:
-                  </p><pre class="codeinput">mte.tests(2).testresult
+                  </p><pre class="codeinput">mte.Tests(2).TestResult
 </pre><pre class="codeoutput">
 ans =
 
@@ -370,63 +397,57 @@ ans =
 </pre></div>
             </div>
             <div>
-               <h2><a name="15">Run all tests and publish documentation and results</a></h2>
+               <h2><a name="14">Run all tests and publish documentation and results</a></h2>
                <div>
-                  <p>The runAndPublish function runs all tests and publishes the description and vizualization of results as specified in the testdefinition
-                     files. It also publishes the coverage of the tests (which percentages (and lines) of which functions did we actually test).
-                     More information on this function can be found in its help documentation:
-                  </p><pre class="codeinput">help <span class="string">mtestengine.runAndPublish</span>
-</pre><pre class="codeoutput"> runAndPublish  runs the mtestengine and publishes all results.
+                  <p>The run function runs all tests and publishes the description and vizualization of results as specified in the testdefinition
+                     files. TODO: It also publishes the coverage of the tests (which percentages (and lines) of which functions did we actually
+                     test). More information on this function can be found in its help documentation:
+                  </p><pre class="codeinput">help <span class="string">MTestRunner.run</span>
+</pre><pre class="codeoutput"> RUN  Runs all tests (that are in the "Test" property)
  
-    This function runs the mtestengine and publishes all results. First the function
-    executest the runAndPublish function of each specified test. Second, the function
-    publishes all results in html according to the specified template.
+    This function executes the run function of all mtest objects in the Tests property.
+ 
+    TODO:
+        - include input argument to specify test numbers (instead of just all tests).
  
     Syntax:
-    runAndPublish(obj);
-    obj.runAndPublish;
-    outobj = obj.runAndPublish
-    runAndPublish(obj,...,'property','value');
+    outobj = obj.run;
+    outobj = run(obj);
  
     Input:
-    obj     -   an mtestengine object.
- 
-    property value pairs:
-    maxwidth    - Maximum widht of the published figures (default = 600 px)
-    maxheight   - Maximum height of the published figures (default = 600 px)
+    obj     -   an MTestRunner object.
  
     Output:
-    outobj  -   The same mtestengine object, but with mtest objects for all tests in the
-                maindir. It is not necessary to have an output, since the mtestengine is
-                of type handle. This automatically adjusts all copies of the object that
-                are in the matlab memory. The one that is in the base workspace is
-                therefore automatically updated and does not need to be output of the
-                function.
+    outobj  -   The same MTestRunner object as the input argument obj. It is not 
+                necessary to have an output, since the MTestRunner is of type handle. 
+                This automatically adjusts all copies of the object that are in the 
+                matlab memory. The one that is in the base workspace is therefore 
+                automatically updated and does not need to be output of the function.
  
-                %   See also mtestengine mtestengine.mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
+    See also MTestRunner MTestRunner.MTestRunner MTestRunner.run MTest MTestFactory TeamCity
 
 </pre></div>
             </div>
             <div>
-               <h2><a name="16">Publication templates</a></h2>
+               <h2><a name="15">Publication templates</a></h2>
                <div>
                   <p>Publication of the mtestengine results is done acoording to a predefined format. This format is determined by the choice for
                      a template. It is of course also possible to write your own template. At this moment there is not yet a tutorial on how to
-                     write such a template. The (sometimes hidden) functions of the mtestengine object give a lot of information already.
+                     write such a template. The (sometimes hidden) functions of the MTestRunner object give a lot of information already.
                   </p>
                </div>
             </div>
          </div>
          <p class="footer"><br>
-            this tutorial is based on: <a class="matlabhref" href="matlab:edit('runtestswithmtestengine_tutorial');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=2623/OpenEarthTools/trunk/matlab/maintenance/1_automated_Testing/runtestswithmtestengine_tutorial.m">runtestswithmtestengine_tutorial.m (revision: 2623)</a><br>
+            this tutorial is based on: <a class="matlabhref" href="matlab:edit('runtestswithmtestengine_tutorial');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=2703/OpenEarthTools/trunk/matlab/maintenance/1_automated_Testing/runtestswithmtestengine_tutorial.m">runtestswithmtestengine_tutorial.m (revision: 2703)</a><br>
 Published with MATLAB&reg; 7.10<br></p>
       </div>
       <!--
 ##### SOURCE BEGIN #####
-%% 4. Automated tesing with the mtest toolbox
+%% 4. Automated tesing with the MTest toolbox
 %
 % <html>
-% The mtest toolbox is based on object oriented programming as introduced in matlab version 7.6 
+% The MTest toolbox is based on object oriented programming as introduced in matlab version 7.6 
 % (2008a). It is able to search a specified maindir (and subdirs) for files that include a
 % predefined string (indicating that it is a test). It can transform the found testdefinition files 
 % (written in the format explained in the <a class="relref" href="testdefinitions_tutorial.html"
@@ -442,7 +463,7 @@ Published with MATLAB&reg; 7.10<br></p>
 %% Building an mtestengine
 % Creating an mtestengine is as simple as the following code suggests:
 
-mte = mtestengine;
+mte = MTestRunner;
 
 %%
 % Similar to a struct we can now visualize the properties of this object:
@@ -454,24 +475,24 @@ mte
 % properties. This can be done either when creating the object itself (with property value pairs) or 
 % afterwards in the same way as altering fields of a struct:
 
-mte.targetdir = fullfile(tempdir,'htmltest');
-mte.maindir = fileparts(which('mtestengine'));
-mte.verbose = true;
-mte.template = 'oet';
+mte.TargetDir = fullfile(tempdir,'htmltest');
+mte.MainDir = fileparts(which('MTestRunner'));
+mte.Verbose = true;
+mte.Template = 'oet';
 
 %%
 % or:
 
-mte = mtestengine(...
-    'targetdir',fullfile(tempdir,'htmltest'),...
-    'maindir',fileparts(which('mte_simple_test')),...
-    'verbose',true,...
-    'template','oet');
+mte = MTestRunner(...
+    'TargetDir',fullfile(tempdir,'htmltest'),...
+    'MainDir',fileparts(which('mte_simple_test')),...
+    'Verbose',true,...
+    'Template','oet');
 
-%% Properties (fieldnames) of the mtestengine
-% The mtestengine has a couple of properties that can be used to define the behaviour of the
-% mtestengine when running and publishing. The following table lists the properties of an
-% mtestengine object.
+%% Properties (fieldnames) of the MTestRunner
+% The MTestRunner has a couple of properties that can be used to define the behaviour of the
+% MTestRunner when running and publishing. The following table lists the properties of an
+% MTestRunner object.
 %
 % <html>
 % <table cellspacing="0" class="body" cellpadding="4" summary="" width="100%" border="2">
@@ -489,56 +510,63 @@ mte = mtestengine(...
 %   </thead>
 %   <tbody>
 %       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>targetdir</tt></td>
+%           <td bgcolor="#F2F2F2"><tt>TargetDir</tt></td>
 %           <td bgcolor="#F2F2F2"><p><tt>char</tt> Default=<tt>cd</tt></p></td>
 %           <td bgcolor="#F2F2F2">
 %               Pathname of the directory where output (html) files must be generated.
 %           </td>
 %       </tr>
 %       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>maindir</tt></td>
+%           <td bgcolor="#F2F2F2"><tt>MainDir</tt></td>
 %           <td bgcolor="#F2F2F2"><p><tt>char</tt> Default=<tt>cd</tt></p></td>
 %           <td bgcolor="#F2F2F2">
 %               Root directory of the toolbox that must be analysed and tested.
 %           </td>
 %       </tr>
 %       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>recursive</tt></td>
+%           <td bgcolor="#F2F2F2"><tt>Recursive</tt></td>
 %           <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>true</tt></p></td>
 %           <td bgcolor="#F2F2F2">
 %               Flag to determine whether the mtestengine only lists tests in the maindir or also in all subdirs of the maindir.
 %           </td>
 %       </tr>
 %       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>verbose</tt></td>
+%           <td bgcolor="#F2F2F2"><tt>Publish</tt></td>
+%           <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>false</tt></p></td>
+%           <td bgcolor="#F2F2F2">
+%               Determines whether the publishable parts of a test get published.
+%           </td>
+%       </tr>
+%       <tr valign="top">
+%           <td bgcolor="#F2F2F2"><tt>Verbose</tt></td>
 %           <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>false</tt></p></td>
 %           <td bgcolor="#F2F2F2">
 %               Flag that determines whether intermediate information must be printed in the command window.
 %           </td>
 %       </tr>
 %       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>includecoverage</tt></td>
+%           <td bgcolor="#F2F2F2"><tt>IncludeCoverage</tt></td>
 %           <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>true</tt></p></td>
 %           <td bgcolor="#F2F2F2">
 %               Flag to turn on / off the profile function during execution of the tests to obtain function coverage information.
 %           </td>
 %       </tr>
 %       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>testid</tt></td>
+%           <td bgcolor="#F2F2F2"><tt>TestID</tt></td>
 %           <td bgcolor="#F2F2F2"><p><tt>cell</tt> Default=<tt>{'_test'}</tt></p></td>
 %           <td bgcolor="#F2F2F2">
 %               The character arrays included in this cell determine which functionnames are identified as testdefinition files.
 %           </td>
 %       </tr>
 %       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>exclusion</tt></td>
+%           <td bgcolor="#F2F2F2"><tt>Exclusions</tt></td>
 %           <td bgcolor="#F2F2F2"><p><tt>cell</tt> Default=<tt>{'.svn','_tutorial'}</tt></p></td>
 %           <td bgcolor="#F2F2F2">
 %               Any function or pathname that includes one of the character arrays filling this cell is excluded from the list of testsdefinitions.
 %           </td>
 %       </tr>
 %       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>template</tt></td>
+%           <td bgcolor="#F2F2F2"><tt>Template</tt></td>
 %           <td bgcolor="#F2F2F2"><p><tt>char</tt> Default=<tt>default</tt></p></td>
 %           <td bgcolor="#F2F2F2">
 %               Name of the template that must be used to print the testresults of the toolbox.
@@ -547,14 +575,14 @@ mte = mtestengine(...
 %           </td>
 %       </tr>
 %       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>tests</tt></td>
+%           <td bgcolor="#F2F2F2"><tt>Tests</tt></td>
 %           <td bgcolor="#F2F2F2"><p><tt>mtest</tt> Default=<tt>[]</tt></p></td>
 %           <td bgcolor="#F2F2F2">
 %               mtest object with the loaded testdefinitions. The mtestengine takes this list whenever the run command is given.
 %           </td>
 %       </tr>
 %       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>wrongtestdefs</tt></td>
+%           <td bgcolor="#F2F2F2"><tt>WrongTestDefs</tt></td>
 %           <td bgcolor="#F2F2F2"><p><tt>cell</tt> Default=<tt>{}</tt></p></td>
 %           <td bgcolor="#F2F2F2">
 %               Files identified as tests according to the testid and exclusion keywords, but failed
@@ -563,7 +591,7 @@ mte = mtestengine(...
 %           </td>
 %       </tr>
 %       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>functionsrun</tt></td>
+%           <td bgcolor="#F2F2F2"><tt>FunctionsRun</tt></td>
 %           <td bgcolor="#F2F2F2"><p><tt>mtestfunction</tt> Default=<tt>[]</tt></p></td>
 %           <td bgcolor="#F2F2F2">
 %               Array of mtestfunction objects with information on the functions that were executed during the tests (including coverage information).
@@ -579,7 +607,7 @@ mte = mtestengine(...
 % After creation of an mtestengine we can see that it does not contain any testdefinitions yet. The
 % *_tests_* contains an empty test.
 
-mte.tests
+mte.Tests
 
 %%
 % *manually add tests*
@@ -587,13 +615,7 @@ mte.tests
 % Specifying tests can be done in two different ways. Of course we can add tests manually to the
 % field:
 
-mte.tests(1) = mtest('mte_simple_test');
-
-%%
-% When specifying tests in this way we have to tell the engine that it does not have to search for
-% tests itself anymore:
-
-mte.testscatalogued = true;
+mte.Tests(1) = MTest('mte_simple_test');
 
 %%
 % *search for tests*
@@ -611,19 +633,16 @@ mte.testscatalogued = true;
 % </html>
 %
 % By default testdefinition files include the following string in their filename:
-
-
-mte.testid
+mte.TestID
 
 %%
 % but we exclude files with one of these strings in the filename
-
-mte.exclusion
+mte.Exclusions
 
 %%
 % After automatically searching for testdefinitions and adding them to the testengine ...
 
-catalogueTests(mte);
+cataloguetests(mte);
 
 %%
 % we can see that the content of the *_tests_* field has changed. This is of course due to the fact 
@@ -640,21 +659,21 @@ run(mte);
 %%
 % Each mtest object under the field *_"tests"_* contains a field that stores the testresult:
 
-mte.tests(2).testresult
+mte.Tests(2).TestResult
 
 %% Run all tests and publish documentation and results
-% The runAndPublish function runs all tests and publishes the description and vizualization of
-% results as specified in the testdefinition files. It also publishes the coverage of the tests
-% (which percentages (and lines) of which functions did we actually test). More information on this 
-% function can be found in its help documentation:
+% The run function runs all tests and publishes the description and vizualization of
+% results as specified in the testdefinition files. 
+% TODO: It also publishes the coverage of the tests (which percentages (and lines) of which functions did we actually test). 
+% More information on this function can be found in its help documentation:
 
-help mtestengine.runAndPublish
+help MTestRunner.run
 
 %% Publication templates
 % Publication of the mtestengine results is done acoording to a predefined format. This format is
 % determined by the choice for a template. It is of course also possible to write your own template.
 % At this moment there is not yet a tutorial on how to write such a template. The (sometimes hidden)
-% functions of the mtestengine object give a lot of information already.
+% functions of the MTestRunner object give a lot of information already.
 
 ##### SOURCE END #####
 -->
