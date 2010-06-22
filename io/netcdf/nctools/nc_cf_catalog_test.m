@@ -1,6 +1,7 @@
+function nc_cf_catalog_test()
 %NC_CF_CATALOG_TEST   test script for 
 %
-%See also: NC_CF_DIRECTORY2CATALOG, NC_CF2CATALOG
+%See also: nc_cf_directory2catalog, nc_cf2catalog
 
 %% Copyright notice
 %   --------------------------------------------------------------------
