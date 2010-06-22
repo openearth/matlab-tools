@@ -52,29 +52,29 @@ disp(['... running test:',mfilename])
 
 %% $RunCode
 try
-[lat,lon] = meshgrid(40:.03:42,-10:.03:-8);
-
-   z = peaks(67)+rand(size(lat));
-   surf(lat,lon,z)
-       
-   FIG = figure('Visible','Off')
-   h               = surf(peaks-.1);
-   shading    interp;
-   material  ([.9 0.08 .07]);
-   lighting   phong
-   axis       off;
-   axis       tight;
-   view      (0,90);
-   lightangle(0,90)
-   clim      ([-50 25]);
-   colormap  (colormap_cpt('bathymetry_vaklodingen',500));
-   
-   KMLfig2pngNew(h,lat,lon,z,...
-             'highestLevel',6,...
-              'lowestLevel',14,...
-       'mergeExistingTiles',true,...
-                  'bgcolor',[255 0 255],...
-                 'fileName',KML_testdir('KMLfig2pngNew.kml'))
+    [lat,lon] = meshgrid(40:.03:42,-10:.03:-8);
+    
+    z = peaks(67)+rand(size(lat));
+        
+    FIG = figure('Visible','Off');
+    h               = surf(peaks-.1);
+    shading    interp;
+    material  ([.9 0.08 .07]);
+    lighting   phong
+    axis       off;
+    axis       tight;
+    view      (2);
+    lightangle(0,90)
+    clim      ([-50 25]);
+    colormap  (colormap_cpt('bathymetry_vaklodingen',500));
+    
+    KMLfig2pngNew(h,lat,lon,z,...
+        'highestLevel',6,...
+        'lowestLevel',11,...
+        'mergeExistingTiles',true,...
+        'bgcolor',[255 0 255],...
+        'fileName','KMLfig2pngNew.kml',...
+        'basePath',KML_testdir)
    
    try;close(FIG);end
 

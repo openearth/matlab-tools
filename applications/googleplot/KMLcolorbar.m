@@ -94,7 +94,7 @@ else
     [OPT, Set, Default] = setproperty(OPT, varargin);
 end
 
-
+colorbarFig = figure('Visible','Off');
 
 %% get filename, gui for filename, if not set yet
 
@@ -259,5 +259,6 @@ else
     fclose(OPT.CBfid);
 end
 
+close(colorbarFig)
 %% EOF
 
