@@ -152,7 +152,7 @@ end
 
 %% publish tutorials (if not already published)
 % target dirs
-TeamCity.postmessage('progressMessage','Start publishing general tutorials');
+TeamCity.postmessage('progressMessage','Start publishing tutorials');
 outputhtmldir = fullfile(outputdir,'html');
 
 % create outputdir
@@ -169,7 +169,6 @@ openfigs = findobj('Type','figure');
 for idr = 1:length(alldirs)
     htmlref{idr} = cell(size(tutorials{idr}));
     for itutorials = 1:length(tutorials{idr})
-        
         %% look for html files with the same name
         [dum tutorialname] = fileparts(tutorials{idr}{itutorials});
         htmlfilesthere     = which([tutorialname '.html'],'-all');
@@ -177,7 +176,7 @@ for idr = 1:length(alldirs)
             htmlfilesthere = which([tutorialname(2:end) '.html'],'-all');
         end
         id = strncmp(htmlfilesthere,outputhtmldir,length(outputhtmldir));
-        TeamCity.postmessage('progressMessage','Started publishing ',tutorialname);
+        TeamCity.postmessage('progressMessage',['Started publishing ',tutorialname]);
         % temp hack to prevent echoing test information where it is not needed.
         TeamCity.running(false);
         if summaryonly
@@ -267,7 +266,7 @@ for idr = 1:length(alldirs)
             end
         end
         TeamCity.running(true);
-        TeamCity.postmessage('progressMessage','Finished publishing ',tutorialname);
+        TeamCity.postmessage('progressMessage',['Finished publishing ',tutorialname]);
     end
 end
 cd(cdtemp);
