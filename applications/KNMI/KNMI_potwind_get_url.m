@@ -1,7 +1,7 @@
-function varargout = KNMI_potwind_get_url(basepath,varargin)
+function varargout = KNMI_potwind_get_url(varargin)
 %KNMI_POTWIND_GET_URL   gets all potwind data from KNMI website
 %
-%   knmi_potwind_get_url(basepath)
+%   knmi_potwind_get_url(<basepath>)
 %
 % downloads all potwind data from KNMI website and stores relative to 'basepath' in:
 %
@@ -51,40 +51,46 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
    if nargin < 1
       error('syntax: KNMI_potwind_get_url(basepath)')
    end
+   
+      basepath = '';
+   if odd(nargin)
+      basepath = varargin{1};
+      varargin = varargin{2:end};
+   end
 
 %% Set <keyword,value> pairs
 % ----------------------
    
-   OPT.debug    = 0; % load local download.html from DIR.cache
-   OPT.download = 1;
-   OPT.unzip    = 1;
-   OPT.nc       = 1;
-   OPT.opendap  = 1; 
+   OPT.debug           = 0; % load local download.html from OPT.directory_cache
+   OPT.download        = 1;
+   OPT.unzip           = 1;
+   OPT.nc              = 1;
+   OPT.opendap         = 1; 
+   OPT.directory_cache = [basepath,filesep,'cache'    ,filesep];
+   OPT.directory_raw   = [basepath,filesep,'raw'      ,filesep];
+   OPT.directory_nc    = [basepath,filesep,'processed',filesep];
+   OPT.url             =  'http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/'; %datafiles/
 
    OPT = setproperty(OPT,varargin{:});
 
 %% Settings
 % ----------------------
 
-   DIR.url      =  'http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/'; %datafiles/
-   DIR.cache    = [basepath,filesep,'cache'    ,filesep];
-   DIR.raw      = [basepath,filesep,'raw'      ,filesep];
-   DIR.nc       = [basepath,filesep,'processed',filesep];
    
-   if ~(exist(DIR.cache)==7)
+   if ~(exist(OPT.directory_cache)==7)
       disp('The following target path ')
-      disp(DIR.cache)
+      disp(OPT.directory_cache)
       disp('does not exist, create? Press <CTRL> + <C> to quit, <enter> to continue.')
       pause
-      mkpath(DIR.cache)
+      mkpath(OPT.directory_cache)
    end   
    
-   if ~(exist(DIR.raw)==7)
+   if ~(exist(OPT.directory_raw)==7)
       disp('The following target path ')
-      disp(DIR.raw)
+      disp(OPT.directory_raw)
       disp('does not exist, create? Press <CTRL> + <C> to quit, <enter> to continue.')
       pause
-      mkpath(DIR.raw)
+      mkpath(OPT.directory_raw)
    end   
 
 %% Load website
@@ -95,9 +101,9 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
 
    
                urlwrite('http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/',...
-                        [DIR.cache,'download.html']);
+                        [OPT.directory_cache,'download.html']);
    else
-   website = urlread(['file:///',DIR.cache,filesep,'download.html'])
+   website = urlread(['file:///',OPT.directory_cache,filesep,'download.html'])
    end
 
 %% Extract names of files to be downloaded from webpage
@@ -127,10 +133,10 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
       
          disp(['Downloading: ',num2str(ifile),'/',num2str(nfile),': ',OPT.files{ifile}]);
          
-         mkpath([DIR.cache,'/',filepathstr(OPT.files{ifile})])
+         mkpath([OPT.directory_cache,'/',filepathstr(OPT.files{ifile})])
          
-         urlwrite([DIR.url  ,'/',OPT.files{ifile}],... % *.zip
-                  [DIR.cache,'/',OPT.files{ifile}]); 
+         urlwrite([OPT.url  ,'/',OPT.files{ifile}],... % *.zip
+                  [OPT.directory_cache,'/',OPT.files{ifile}]); 
          
       end   
    end
@@ -144,8 +150,8 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
       
          disp(['Unzipping: ',num2str(ifile),'/',num2str(nfile),': ',OPT.files{ifile}]);
          
-         unzip   ([DIR.cache,'/',OPT.files{ifile}],... % *.zip
-                  [DIR.raw                       ]);
+         unzip   ([OPT.directory_cache,'/',OPT.files{ifile}],... % *.zip
+                  [OPT.directory_raw]);
          
       end   
    end
@@ -154,8 +160,8 @@ function varargout = KNMI_potwind_get_url(basepath,varargin)
 % ----------------------
 
    if OPT.nc
-      knmi_potwind2nc('directory_raw',DIR.raw,...
-                      'directory_nc' ,DIR.nc)
+      knmi_potwind2nc('directory_raw',OPT.directory_raw,...
+                      'directory_nc' ,OPT.nc)
    end
    
 %% Copy to OPeNDAP server 

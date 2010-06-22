@@ -1,7 +1,7 @@
-function varargout = knmi_etmgeg_get_url(basepath,varargin)
+function varargout = knmi_etmgeg_get_url(varargin)
 %KNMI_ETMGEG_GET_URL   gets all etmgeg data from KNMI website
 %
-%   KNMI_ETMGEG_GET_URL(basepath)
+%   KNMI_ETMGEG_GET_URL(<basepath>)
 %
 % downloads all etmgeg data from KNMI website and stores relative to 'basepath' in:
 %
@@ -136,41 +136,46 @@ function varargout = knmi_etmgeg_get_url(basepath,varargin)
    if nargin < 1
       error('syntax: KNMI_etmgeg_get_url(basepath)')
    end
+   
+      basepath = '';
+   if odd(nargin)
+      basepath = varargin{1};
+      varargin = varargin{2:end};
+   end
 
 %% Set <keyword,value> pairs
 % ----------------------
 
-   OPT.debug    = 0; % load local download.html from DIR.cache
-   OPT.download = 1;
-   OPT.unzip    = 1;
-   OPT.nc       = 1;
-   OPT.opendap  = 1; 
+   OPT.debug           = 0; % load local download.html from DIR.cache
+   OPT.download        = 1;
+   OPT.unzip           = 1;
+   OPT.nc              = 0;
+   OPT.opendap         = 1; 
+   OPT.directory_cache = [basepath,filesep,'cache'    ,filesep];
+   OPT.directory_raw   = [basepath,filesep,'raw'      ,filesep];
+   OPT.directory_nc    = [basepath,filesep,'processed',filesep];
+   OPT.url             = '"./datafiles3/'; % unique string to recognize datafiles in html page
+   OPT.preurl          = 'http://www.knmi.nl/klimatologie//daggegevens/'; % prefix to relative link in OPT.url
 
    OPT = setproperty(OPT,varargin{:});
 
 %% Settings
 % ----------------------
 
-   DIR.url      = '"./datafiles3/'; % unique string to recognize datafiles in html page
-   DIR.preurl   = 'http://www.knmi.nl/klimatologie//daggegevens/'; % rpefix to relative link in DIR.url
-   DIR.cache    = [basepath,filesep,'cache'    ,filesep];
-   DIR.raw      = [basepath,filesep,'raw'      ,filesep];
-   DIR.nc       = [basepath,filesep,'processed',filesep];
-
-   if ~(exist(DIR.cache)==7)
+   if ~(exist(OPT.directory_cache)==7)
       disp('The following target path ')
-      disp(DIR.cache)
+      disp(OPT.directory_cache)
       disp('does not exist, create? Press <CTRL> + <C> to quit, <enter> to continue.')
       pause
-      mkpath(DIR.cache)
+      mkpath(OPT.directory_cache)
    end   
    
-   if ~(exist(DIR.raw)==7)
+   if ~(exist(OPT.directory_raw)==7)
       disp('The following target path ')
-      disp(DIR.raw)
+      disp(OPT.directory_raw)
       disp('does not exist, create? Press <CTRL> + <C> to quit, <enter> to continue.')
       pause
-      mkpath(DIR.raw)
+      mkpath(OPT.directory_raw)
    end   
    
 %% Load website
@@ -179,15 +184,15 @@ function varargout = knmi_etmgeg_get_url(basepath,varargin)
    if ~(OPT.debug)
    website   = urlread ('http://www.knmi.nl/klimatologie/daggegevens/download.html');
                urlwrite('http://www.knmi.nl/klimatologie/daggegevens/download.html',...
-                        [DIR.cache,'download.html']);
+                        [OPT.directory_cache,'download.html']);
    else
-   website = urlread(['file:///',DIR.cache,filesep,'download.html']);
+   website = urlread(['file:///',OPT.directory_cache,filesep,'download.html']);
    end
 
 %% Extract names of files to be downloaded from webpage
 % ----------------------
 
-   indices = strfind(website,DIR.url);
+   indices = strfind(website,OPT.url);
    
    % includes current running year:  jaar.txt
    % includes current running month: maand.txt
@@ -200,7 +205,7 @@ function varargout = knmi_etmgeg_get_url(basepath,varargin)
       nfile  = nfile +1;
       
       %% mind to leave out "" brackets
-      OPT.files{nfile} = [DIR.preurl,website(index+2:index+dindex(2)-1)];
+      OPT.files{nfile} = [OPT.preurl,website(index+2:index+dindex(2)-1)];
    
    end
    nfile = length(OPT.files);
@@ -214,7 +219,7 @@ function varargout = knmi_etmgeg_get_url(basepath,varargin)
          disp(['Downloading: ',num2str(ifile),'/',num2str(nfile),': ',OPT.files{ifile}]);
          
          urlwrite([OPT.files{ifile}],... % *.zip
-                  [DIR.cache,filesep,filenameext(OPT.files{ifile})]); 
+                  [OPT.directory_cache,filesep,filenameext(OPT.files{ifile})]); 
          
       end   
    end
@@ -229,8 +234,8 @@ function varargout = knmi_etmgeg_get_url(basepath,varargin)
          if strcmpi(OPT.files{ifile}(end-2:end),'zip')
          disp(['Unzipping: ',num2str(ifile),'/',num2str(nfile),': ',OPT.files{ifile}]);
          
-         unzip   ([DIR.cache,filesep,filenameext(OPT.files{ifile})],... % *.zip
-                  [DIR.raw                       ]);
+         unzip   ([OPT.directory_cache,filesep,filenameext(OPT.files{ifile})],... % *.zip
+                  [OPT.directory_raw]);
          end
       end   
    end
@@ -239,8 +244,8 @@ function varargout = knmi_etmgeg_get_url(basepath,varargin)
 % ----------------------
 
    if OPT.nc
-      knmi_etmgeg2nc('directory_raw',DIR.raw,...
-                      'directory_nc',DIR.nc)
+      knmi_etmgeg2nc('directory_raw',OPT.directory_raw,...
+                      'directory_nc',OPT.directory_nc)
    end
    
 %% Copy to OPeNDAP server 
