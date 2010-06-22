@@ -1,4 +1,4 @@
-function testresult = KMLcontourf3_test()
+function KMLcontourf3_test()
 % KMLCONTOURF3_TEST  testcase for KMLcontourf3
 %
 % Should give about the same results as KMLtricontourf3_test
@@ -46,25 +46,13 @@ function testresult = KMLcontourf3_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
-% Publishable code that describes the test.
-
-%% $RunCode
-tr(1) = test1;
-tr(2) = test2;
-tr(2) = test3;
-tr(2) = test4;
-% testresult = all(tr);
-
-%% $PublishResult
-% Publishable code that describes the test.
+test1;
+test2;
+test3;
+test4;
 end
 
-function testresult = test1()
-%% $Description
-
-%% $RunCode
-
+function test1()
 [x,y] = meshgrid(11:20,21:30);
 z = peaks(10);
 x = x+sin(y)/10;
@@ -72,16 +60,10 @@ nn = 25;
 KMLcontourf3(x,y,z,'levels',nn,'fileName',KML_testdir('KMLcontourf3 - 1.kmz'),...
     'zScaleFun',@(z) (z+10)*1400,'staggered',false,'debug',0,...
     'colorbar',true,'colorMap', @(m) colormap_cpt('bathymetry_vaklodingen',m),'CBcolorbarlocation',{'NNW','WNW'})
-testresult = true;
-%% $PublishResult
-
+assert(exist(KML_testdir('KMLcontourf3 - 1.kmz'),'file')==2,'File should be created.');
 end
 
-function testresult = test2()
-%% $Description
-
-%% $RunCode
-
+function test2()
 [x,y] = meshgrid(1:10,21:30);
 z = peaks(10);
 x = x+sin(y)/10;
@@ -89,15 +71,9 @@ y = y+sin(x)/10;
 nn=7;
 KMLcontourf3(x,y,z,'levels',nn,'fileName',KML_testdir('KMLcontourf3 - 2.kmz'),...
     'zScaleFun',@(z) (z+20)*4000,'staggered',true,'debug',false,'colorbar',true,'colorMap', @(m) bone(m))
-testresult = true;
-%% $PublishResult
-
 end
 
-function testresult = test3()
-%% $Description
-
-%% $RunCode
+function test3()
 [x,y] = meshgrid(1:100,201:300);
 z = repmat(peaks(25),4,4)+3*peaks(100)+2*repmat(peaks(50),2,2);
 remove = [1:15 85:100];
@@ -114,15 +90,9 @@ nn=30;
 
 KMLcontourf3(x/30,y/30,z,'levels',nn,'fileName',KML_testdir('KMLcontourf3 - 3.kmz'),...
     'zScaleFun',@(z) (z+20)*400,'staggered',false,'colorbar',false,'debug',false)
-testresult = true;
-%% $PublishResult
-
 end
 
-function testresult = test4()
-%% $Description
-
-%% $RunCode
+function test4()
 url = 'http://opendap.deltares.nl:8080/opendap/hyrax/rijkswaterstaat/vaklodingen/vaklodingenKB136_0908.nc';
 x = nc_varget(url,'x');
 y = nc_varget(url,'y');
@@ -168,7 +138,4 @@ z = Z(nn,mm);
 KMLcontourf(lat,lon,z,'levels',levels,'fileName',KML_testdir('KMLcontourf - 4.kmz'),...
     'staggered',false,'debug',0,'colorbar',true,...
     'colorMap',@(m)colormap_cpt('bathymetry_vaklodingen',m),'colorSteps',250,'cLim',[-50 25])
-testresult = true;
-%% $PublishResult
-
 end
