@@ -43,6 +43,11 @@ function nc_cf_catalog_test()
 % $HeadURL$
 % $Keywords: $
 
+if TeamCity.running
+    TeamCity.ignore('Test needs user input');
+    return;
+end
+
 %% get catalog
 
    OPT.baseurl = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/';
