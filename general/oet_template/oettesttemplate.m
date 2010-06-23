@@ -1,4 +1,4 @@
-function testResult = $filename()
+function $filename()
 % $FILENAME  $h1line
 %  
 % $helpblockdescription
@@ -47,7 +47,3 @@ function testResult = $filename()
 % $Keywords: $
 
 $testcategory
-
-$descriptioncode
-$runcode
-$publishcode

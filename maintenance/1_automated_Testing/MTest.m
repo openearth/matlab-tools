@@ -359,10 +359,20 @@ classdef MTest < handle
             munlock;
         end
         function edit(obj,varargin)
-            if nargin > 1
-                opentoline(fullfile(obj.FilePath,[obj.FileName '.m']),varargin{1});
-            else
-                opentoline(fullfile(obj.FilePath,[obj.FileName '.m']),max([1 find(obj.IDTestCode,1,'first')]),1);
+            for iobj = 1:length(obj)
+                filename = fullfile(obj(iobj).FilePath,[obj(iobj).FileName '.m']);
+                if ~exist(filename,'file')
+                    filename = which([obj(iobj).FileName '.m']);
+                    if ~exist(filename,'file')
+                        warning('MTest:NoSuchFile',['Could not find file: ' fullfile(obj(iobj).FilePath,[obj(iobj).FileName '.m'])]);
+                        continue;
+                    end
+                end
+                if nargin > 1
+                    opentoline(filename,varargin{:});
+                else
+                    opentoline(filename,max([1 find(obj(iobj).IDTestFunction,1,'first')]),1);
+                end
             end
         end
     end

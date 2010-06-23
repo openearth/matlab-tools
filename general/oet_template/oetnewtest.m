@@ -129,7 +129,7 @@ if ~isempty(which(cat(2,FunctionName,'.m')))
                 t = MTest(FunctionName);
                 
                 %% Copy test variables to OPT
-                vars   = {'DescriptionCode','H1Line','Description','SeeAlso','RunCode','PublishCode','Category'};
+                vars   = {'H1Line','Description','SeeAlso'};
                 for ivar = 1:length(vars)
                     if ~isempty(t.(vars{ivar}))
                         OPT.(vars{ivar}) = t.(vars{ivar});
@@ -143,8 +143,10 @@ if ~isempty(which(cat(2,FunctionName,'.m')))
                     end
                 end
                 
-                %% No code left
-                OPT.Code = t.FullString(~t.IDTestFunction);
+                %% Paset complete code to new file
+                fid = fopen(cat(2,FunctionName,'.m'));
+                OPT.Code = cat(2,char(10),char(10),'%% Original code of ', FunctionName, '.m', char(10), fread(fid,'*char')');
+                fclose(fid);
             catch me %#ok<NASGU>
                 fid = fopen(cat(2,FunctionName,'.m'));
                 OPT.Code = cat(2,char(10),char(10),'%% Original code of ', FunctionName, '.m', char(10), fread(fid,'*char')');
@@ -198,55 +200,7 @@ str = strrep(str, '$version', version);
 % replace category
 str = strrep(str, '$testcategory', ['TeamCity.category(''' OPT.Category ''');']);
 
-% Include the description code if there is any
-if ~isempty(OPT.DescriptionCode)
-    if iscell(OPT.DescriptionCode)
-        OPT.DescriptionCode = sprintf('%s\n',...
-            '%% $Description',...
-            OPT.DescriptionCode{:});
-    else
-        OPT.DescriptionCode = sprintf('%s\n',...
-            '%% $Description',...
-            OPT.DescriptionCode);
-    end
-    str = strrep(str, '$descriptioncode', OPT.DescriptionCode);
-else
-    str = strrep(str, '$descriptioncode', '');
-end
-
-% Include Runnable code (if there is none, initialize the output variable)
-if ~isempty(OPT.RunCode)
-    if iscell(OPT.RunCode)
-        OPT.RunCode = sprintf('%s\n',...
-            '%% $Run',...
-            OPT.RunCode{:});
-    else
-        OPT.RunCode = sprintf('%s\n',...
-            '%% $Run',...
-            OPT.RunCode);
-    end
-    str = strrep(str, '$runcode', OPT.RunCode);
-else
-    str = strrep(str, '$runcode', 'testResult = false;');
-end
-
-% Include the code to publish results (if there is any)
-if ~isempty(OPT.PublishCode)
-    if iscell(OPT.PublishCode)
-        OPT.PublishCode = sprintf('%s\n',...
-            '%% $Publish',...
-            OPT.PublishCode{:});
-    else
-        OPT.PublishCode = sprintf('%s\n',...
-            '%% $Publish',...
-            OPT.PublishCode);
-    end
-    str = strrep(str, '$publishcode', OPT.PublishCode);
-else
-    str = strrep(str, '$publishcode', '');
-end
-
-%% Append any other code
+%% Append old code
 % If the file was not according to the correct format and mtest couldn't read it, the complete
 % string is pasted behind the normal content.
 if ~isempty(OPT.Code)
