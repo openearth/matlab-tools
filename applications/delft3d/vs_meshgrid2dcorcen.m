@@ -375,6 +375,14 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
 %-------------------------------------
 
    case {'Delft3D-hwgxy'},
+       
+     %if P.latlon & ~any(strfind(G.coordinates,'CARTESIAN'))
+     %   x = 'lon';
+     %   y = 'lat';
+     %else
+        x = 'x';
+        y = 'y';
+     %end       
 
      disp('For hwgxy all co-ordimnates are read, not subset.')
      % NOTE THAT M AND N ARE SWAPPED HRE TO GET SAME M and N AS FLOW GRID !!!

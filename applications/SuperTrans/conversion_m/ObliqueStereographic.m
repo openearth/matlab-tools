@@ -6,7 +6,7 @@ function [x2,y2]=ObliqueStereographic(x1,y1,a,finv,k0,fe,fn,lat0,lon0,iopt)
 % where iopt==1:geo2xy, else: xy2geo
 %
 %See also: CONVERTCOORDINATES
-%
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares for Building with Nature
 %       Maarten van Ormondt

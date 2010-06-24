@@ -1,9 +1,21 @@
-function [X, Y, Z, Ztime] = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, OPT)
+function [X, Y, Z, Ztime] = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, varargin)
 %GRID_ORTH_GETDATAFROMNETCDFGRIDS get data in fixed otrhogonal grid from bundle of netCDF files
 %
 %   [X, Y, Z, Ztime] = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, <keyword,value>)
 %
-% See also: grid_2D_orthogonal
+% extracts data from a series of netCDF files to fill a defined torhogonal grid.
+% Only data at grid intersection lines is read, no min/max/mean is performed.
+%
+% Example: start at @ http://opendap.deltares.nl
+%
+%    url     = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml'
+%    mapurls = opendap_catalog(url);
+%
+%    [X, Y, Z, Ztime] = grid_orth_getDataFromNetCDFGrids(mapurls, 90e3, 100e3, 300e3, 400e3,'dx',200,'dy',200);
+%
+% For additional keywords see: grid_orth_getDataFromNetCDFGrid
+%
+% See also: grid_2D_orthogonal, grid_orth_getDataFromNetCDFGrid
 
 % --------------------------------------------------------------------
 % Copyright (C) 2004-2009 Delft University of Technology
@@ -39,16 +51,35 @@ function [X, Y, Z, Ztime] = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx
 % $Author$
 % $Revision$
 
+
+OPT.cellsize       = [];
+OPT.datathinning   = [];
+OPT.dx             = [];
+OPT.dy             = [];
+OPT.starttime      = now;
+OPT.searchinterval = -12; % months
+OPT.polygon        = [];
+
+OPT = setProperty(OPT,varargin{:});
+
+if isempty(OPT.dx)
+OPT.dx = OPT.cellsize*OPT.datathinning;
+end
+
+if isempty(OPT.dy)
+OPT.dx = OPT.cellsize*OPT.datathinning;
+end
+
 % get cell size
-%urls      = grid_orth_getFixedMapOutlines(OPT.dataset); %#ok<*UNRCH,*USENS>
+%urls      = grid_orth_getFixedMapOutlines(OPT.dataset);
 % x         = nc_varget(mapurls{1}, nc_varfind(mapurls{1}, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate')); OPT.cellsize = mean(diff(x));
 
 % generate x and y vectors spanning the fixed map extents
-x         = minx :  OPT.cellsize*OPT.datathinning : maxx;
+x         = minx : OPT.dx  : maxx;
 x         = roundoff(x,2); maxx =  roundoff(maxx,2);
 if x(end)~= maxx; x = [x maxx];end % make sure maxx is included as a point
 
-y         = maxy : -OPT.cellsize*OPT.datathinning : miny; % thinning runs from the lower left corner upward and right
+y         = maxy : -OPT.dy : miny; % thinning runs from the lower left corner upward and right
 y         = roundoff(y,2); miny =  roundoff(miny,2);
 if y(end)~=miny; y = [y miny];end % make sure miny is included as a point
 
@@ -73,10 +104,10 @@ for i = 1:length(mapurls)
     
     % get data and plot
     [x, y, z, zt] = grid_orth_getDataFromNetCDFGrid('ncfile', mapurls{i},...
-                                           'starttime',OPT.starttime,...
-                                      'searchinterval',OPT.searchinterval,...
-                                             'polygon',OPT.polygon,...
-                                              'stride',[1 1 1]);
+                                                 'starttime',OPT.starttime,...
+                                            'searchinterval',OPT.searchinterval,...
+                                                   'polygon',OPT.polygon,...
+                                                    'stride',[1 1 1]);
 
 % TO DO: do not read full array from netCDF but only data depending on thinning
 % TO DO: use spatial mean, min, max in addition to nearest

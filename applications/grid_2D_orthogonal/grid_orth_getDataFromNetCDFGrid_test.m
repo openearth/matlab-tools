@@ -62,10 +62,13 @@ plot(x, y, 'k', 'linewidth', 2);
 axis equal
 
 % identify arbitrary polygon
-poly = [68321.2 445431
-        67495 446061
-        68754 447753
-        69698.3 447438];
+poly = [  101745 561306
+ 108749 561073
+ 106414 556170
+ 108982 550800
+ 101278 551034
+ 101511 561540
+];
 
 % add polygon used as well
 plot(poly(:,1), poly(:,2), 'r')
@@ -76,8 +79,11 @@ title('Testing getDataFromNetCDFGrid.m on Delflandsekust')
 
 %% $RunCode
 % get data within that polygon from NetCDF file
-url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/vanoordboskalis/delflandsekust/delflandsekust.nc';
-[X, Y, Z, T] = grid_orth_getDataFromNetCDFGrid('ncfile', url, 'starttime', datenum([2009 03 10]), 'searchinterval', -10, 'polygon', poly);
+url = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB121_2120.nc';
+[X, Y, Z, T] = grid_orth_getDataFromNetCDFGrid('ncfile', url,...
+                                            'starttime', datenum([2009 03 10]),...
+                                       'searchinterval', -10,...
+                                              'polygon', poly);
 
 testresult = nan;
 

@@ -71,7 +71,7 @@ function [X, Y, Z, T] = grid_orth_getDataFromNetCDFGrid(varargin)
 OPT = struct(...
     'ncfile', [], ...                               % filename of nc file to use
     'starttime', [], ...                            % this is a datenum of the starting time to search
-    'searchinterval', -30, ...                        % this indicates the search window (nr of days, '-': backward in time, '+': forward in time)
+    'searchinterval', -30, ...                      % this indicates the search window (nr of days, '-': backward in time, '+': forward in time)
     'polygon', [], ...                              % search polygon (default: [] use entire grid)
     'stride', [1 1 1] ...                           % stride vector indicating thinning factor
     );
@@ -114,9 +114,9 @@ if ~isempty(OPT.polygon)
     ylength  = find(Y1<maxy, 1, 'last');
 else
     xstart   = 1;
-    xlength  = size(X,1);
+    xlength  = size(X0,1);
     ystart   = 1;
-    ylength  = size(Y,1);
+    ylength  = size(Y0,1);
 end
 
 if ~isempty(xstart) || isempty(ystart)

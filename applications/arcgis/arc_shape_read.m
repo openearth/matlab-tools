@@ -13,6 +13,8 @@ function [S,M] = arc_shape_read(filename)
 % - Y: NaN-separated polygon, (anti)clockwise for negative areas.
 % - one field per variable in the dbf file.
 %
+% Note: cannot read yet character attributes from dbf file
+%
 % see also: POLYFUN, ARCGISREAD, ARC_INFO_BINARY
 
 
