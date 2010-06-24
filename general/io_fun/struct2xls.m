@@ -46,9 +46,9 @@ function varargout = struct2xls(fname,S,varargin)
 %               columns (default 1), only works for arrays where either 1st or 2nd dimension has lenght 1..
 % * header      cell array of comment lines above column names (see also keyword commentchar)
 % * overwrite   which can be 
-%               'o' = overwrite
+%               'o' = overwrite (1)
 %               'c' = cancel
-%               'p' = prompt (default, after which o/a/c can be chosen)
+%               'p' = prompt (default, after which o/a/c can be chosen) (0)
 % * commentchar character to append to start of comment (header) line (default '#')  
 %
 % [success]   = STRUCT2XLS(...)
@@ -95,7 +95,6 @@ function varargout = struct2xls(fname,S,varargin)
 %% Jan 15 2008: added logicals
 
 %% Keywords
-%------------------------
 
    OPT.coldimchar  = 1;
    OPT.coldimnum   = 2;
@@ -104,26 +103,8 @@ function varargout = struct2xls(fname,S,varargin)
    OPT.header{1}   = ['This file has been created with struct2xls.m and xlswrite.m @ ',datestr(now)];
    OPT.oned        = 1; %reshape 1D matlab rows and columns into excel columns
    OPT.commentchar = '#';
+   OPT.overwrite   = 'p'; % prompt
  
-   %iargin          = 1;
-   %
-   %while iargin<nargin-2,
-   %  if ischar(varargin{iargin}),
-   %    switch lower(varargin{iargin})
-   %    case 'coldimchar';iargin=iargin+1;OPT.coldimchar = varargin{iargin};
-   %    case 'coldimnum' ;iargin=iargin+1;OPT.coldimnum  = varargin{iargin};
-   %    case 'oned'      ;iargin=iargin+1;OPT.oned       = varargin{iargin};
-   %    case 'units'     ;iargin=iargin+1;OPT.units      = varargin{iargin};OPT.addunits  =1;
-   %    case 'header'    ;iargin=iargin+1;OPT.header     = varargin{iargin};
-   %    case 'overwrite' ;iargin=iargin+1;OPT.overwrite  = varargin{iargin};
-   %    case 'overwrite' ;iargin=iargin+1;OPT.overwrite  = varargin{iargin};
-   %    otherwise
-   %       error(['Invalid string argument: ''',varargin{iargin},'''']);
-   %    end
-   %  end;
-   %  iargin=iargin+1;
-   %end; 
-   
    OPT = setproperty(OPT,varargin{:});
    
    if ischar(OPT.header)
@@ -131,12 +112,10 @@ function varargout = struct2xls(fname,S,varargin)
    end
    
 %% Check if file already exists
-%-------------------
 
-   OPT.overwrite  = 'p'; % prompt
    if exist(fname,'file')==2
       
-      if strcmp(OPT.overwrite,'p')
+      if strcmp(OPT.overwrite,'p') | OPT.overwrite==0
          disp(['File ',fname,' alreay exists. '])
          OPT.overwrite = input(['Overwrite/cancel ? (o/c): '],'s');
          % for some reason input in Matlab R14 SP3 removes slashes
@@ -146,7 +125,7 @@ function varargout = struct2xls(fname,S,varargin)
          end
       end
       
-      if strcmp(lower(OPT.overwrite),'o')
+      if strcmp(lower(OPT.overwrite),'o') | OPT.overwrite==1
          disp (['File ',fname,' overwritten as it alreay exists.'])
          delete(fname)
       end      
@@ -167,13 +146,11 @@ function varargout = struct2xls(fname,S,varargin)
 
 %% Transform into cell array
 %  that can contain all 1D arrays
-%-------------------
 
    fldnames  = fieldnames(S);
    nfld      = length(fldnames);
 
 %% Make 1D vectors (rowwise and columnwise) 1D in right dimension for excel columns
-%-------------------
       
    if OPT.oned
       for ifld=1:nfld
@@ -190,7 +167,6 @@ function varargout = struct2xls(fname,S,varargin)
    end
 
 %% Initialize cell array
-%-------------------
 
    maxlength = 0;
    for ifld=1:nfld
@@ -204,14 +180,12 @@ function varargout = struct2xls(fname,S,varargin)
    M       = cell (maxlength + nextra,nfld);
    
 %% Add header and column names
-%-------------------
 
    for iheader=1:nheader
       M{iheader,1} = [OPT.commentchar,' ',OPT.header{iheader}];
    end
          
 %% Fill cell array
-%-------------------
 
    for ifld=1:nfld
    
@@ -259,8 +233,9 @@ function varargout = struct2xls(fname,S,varargin)
 
          if isnumeric(S.(fldname)) | ...
             islogical(S.(fldname))
+
             %% uses xlswrite shipped with matlab 
-            %% ---------------------
+
             if OPT.coldimnum==1
                for irow=1:1:fldsize(OPT.coldimnum)
                M{irow + nextra,ifld} = S.(fldname)(irow,:);
@@ -273,7 +248,7 @@ function varargout = struct2xls(fname,S,varargin)
          elseif ischar(S.(fldname))
 
             %% uses xlswrite shipped with matlab 
-            %% ---------------------
+
             if OPT.coldimchar==1
                for irow=1:1:fldsize(OPT.coldimchar)
                M{irow + nextra,ifld} = S.(fldname)(irow,:);

@@ -18,7 +18,7 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 %   * parameters      netCDF variable name of parameters for which to calculate min, mean, max and std
 %                     (currently only 1)
 %   * standard_names  standard_name of parameters for which to calculate min, mean, max and std
-%                     (only used when parameter is empty) (currently only 1)
+%                     (only used when parameters is empty) (currently only 1)
 %
 %See also: snctools
 
@@ -76,6 +76,7 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    OPT.vc             = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc'; % vector coastline, WVC in future ?
    OPT.standard_names = [];
    OPT.parameters     = [];
+   OPT.overwrite      = 0;
 
 %% Keyword,value
 
@@ -106,12 +107,17 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
 
    OPT.files = dir([OPT.directory_nc,filesep,OPT.mask]);
    OPT.files = OPT.files(~strcmp({OPT.files.name},'catalog.nc')); % exclude catalog.nc
+   
+   if isempty(OPT.files)
+      disp(['no netCDF files found in: ',OPT.directory_nc])
+      return
+   end
 
    for ifile=1:length(OPT.files)
    
       OPT.filename = [OPT.directory_nc, filesep, OPT.files(ifile).name]; % e.g. 'etmgeg_273.txt'
    
-        disp(['  Processing ',num2str(ifile,'%0.4d'),'/',num2str(length(OPT.files),'%0.4d'),': ',filename(OPT.filename),' to xls/png overview']);
+      disp(['  Processing ',num2str(ifile,'%0.4d'),'/',num2str(length(OPT.files),'%0.4d'),': ',filename(OPT.filename),' to xls/png overview']);
       
 %% Get global attributes
 
@@ -152,7 +158,7 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
           OPT.parameters{iname} = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue',OPT.standard_name);
         end
       end
-
+      
 %% extract all statistics
 
       for iname=1:length(OPT.parameters)
@@ -206,13 +212,12 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    units.station_id                         = 'string';
    units.station_name                       = 'string';
    
-   for iname=1:length(OPT.standard_names)
-   OPT.standard_name = OPT.standard_names{iname};
-   OPT.parameter     = nc_varfind(OPT.filename, 'attributename', 'standard_name', 'attributevalue',OPT.standard_name);
-   units.([OPT.parameter,'_min' ])          = nc_attget(OPT.filename,OPT.parameter,'units');
-   units.([OPT.parameter,'_mean'])          = units.([OPT.parameter,'_min' ]);
-   units.([OPT.parameter,'_max' ])          = units.([OPT.parameter,'_min' ]);
-   units.([OPT.parameter,'_std' ])          = units.([OPT.parameter,'_min' ]);
+   for iname=1:length(OPT.parameters)
+    OPT.parameter     = OPT.parameters{iname};
+    units.([OPT.parameter,'_min' ])          = nc_attget(OPT.filename,OPT.parameter,'units');
+    units.([OPT.parameter,'_mean'])          = units.([OPT.parameter,'_min' ]);
+    units.([OPT.parameter,'_max' ])          = units.([OPT.parameter,'_min' ]);
+    units.([OPT.parameter,'_std' ])          = units.([OPT.parameter,'_min' ]);
    end
 
 %% Plot locations
@@ -250,7 +255,11 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
    plot(tmp.lon,tmp.lat,'k');
    end
    
-   print2screensize([OPT.directory_out,filesep,OPT.basename,'.png']);
+   if OPT.overwrite
+   print2screensizeoverwrite([OPT.directory_out,filesep,OPT.basename,'.png']);
+   else
+   print2screensize         ([OPT.directory_out,filesep,OPT.basename,'.png']);
+   end
 
 %% Save all meta-data
 
@@ -260,7 +269,10 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
              ['This file has been created with struct2xls.m > xlswrite.m @ ',datestr(now)],...
              ['This file can be read in matlab with xls2struct.m < xlsread.m']};
    
-   ok = struct2xls([OPT.directory_out,filesep,OPT.basename,'.xls'],A,'units',units,'header',header);
+   ok = struct2xls([OPT.directory_out,filesep,OPT.basename,'.xls'],A,...
+       'units',units,...
+      'header',header,...
+   'overwrite',OPT.overwrite);
    
   % TO DO nc_putall ([OPT.directory_nc,filesep,OPT.basename,'.nc'] ,A,'units',units,'header',header);
   

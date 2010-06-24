@@ -1,23 +1,27 @@
-function strout = mktex(strin);
-%MKTEX   Make char string into valid LaTeX string.
+function strout = mkhtml(strin);
+%MKHTML   Make char string into valid html string.
 %
-% strout = mktex(strin)
+% strout = mkhtml(strin)
 %
-% Replaces following in string strin:
+% Replaces soem special characters with codes '%number'
 %
-% '\'  becomes '\\'
-% '_'  becomes '\_'
-% '^'  becomes '\^'
+% Special HTML symbols are encoded as hex value with ISO 8859-1 Latin alphabet No. 1
+% http://www.ascii.cl/htmlcodes.htm:ISO 8859-1 Latin alphabet No. 1
 %
-% such that strout can be used as a LaTeX name, as in 
-% TITLE of XLABEL for instance, without having to 
-% put the interpeter property to off to avoid interpretation
-% into sub- and supertext.
+% '%'    becomes %25
+% ' '    becomes %20 (space)
+% '|'    becomes %7C
+% '/'    becomes %2F
+% '<'    becomes %3C
+% ','    becomes %2C
+% '('    becomes %28
+% ')'    becomes %29
+% '''    becomes %27
 %
-% See also: ISLETTER, MKVAR, MKHTML
+% See also: ISLETTER, MKVAR, MKTEX
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2008 Delft University of Technology
+%   Copyright (C) 2010 Delft University of Technology
 %       Gerben J. de Boer
 %
 %       g.j.deboer@tudelft.nl
@@ -45,16 +49,15 @@ function strout = mktex(strin);
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   -------------------------------------------------------------------- 
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
-% $Keywords$
+   
+   OPT.symbols  = {'%',' ','|','/','<',',','(',')',''''};  % NOTE do '%' first, as all are replaced by %hex
 
-strout = strin;
-strout = strrep(strout,'\','\\');
-strout = strrep(strout,'_','\_');
-strout = strrep(strout,'^','\^');
-
-%% EOF
+   disp(['mkhtml: processed only following characters: ',char(OPT.symbols)']);
+   
+   strout = strin;
+   for isymbol=1:length(OPT.symbols)
+   symbol = OPT.symbols{isymbol};
+   strout = strrep(strout,symbol,['%',dec2hex(unicode2native(symbol, 'ISO-8859-1'))]);
+   end
+   
+%% EOF   

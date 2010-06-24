@@ -137,7 +137,7 @@ U.zposition = 1e12;
    %% Return arguments
    %% -----------------------------
       release = version('-release');
-      if strcmp(release(1:3),'200') % linestyle property is passed to children of contour property but has no effect.
+      if strcmp(release(1:2),'20') % linestyle property is passed to children of contour property but has no effect.
          if ~isempty(levels.pos )
             [cp,hp]=contour('v6',xcen,ycen,ccen,levels.pos ,'r');
          else

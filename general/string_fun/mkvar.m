@@ -14,7 +14,7 @@ function stringout = mkvar(stringin,varargin);
 %
 % Idea: Howard E. Motteler form http://www.csee.umbc.edu/%7Emotteler/index.html
 %
-% See also: isletter
+% See also: ISLETTER, MKTEX, MKHTML
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004-2006 Delft University of Technology
