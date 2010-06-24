@@ -1,16 +1,16 @@
-function PCRGLOB2KMLClimGrids_annual_test(lat_range, lon_range, model, scenario, var)
+function PCRGLOB2KMLClimGrids_annual(lat_range, lon_range, model, scenario, var)
 %PCRGLOB2KMLClimGrids   climatology grids computed from PCR-GLOBWB climate scenarios
 %
-%   PCRGLOB2KMLClimGrids(lat_range,lon_range,model,scenario,var)
+%   PCRGLOB2KMLClimGrids_annual(lat_range,lon_range,model,scenario,var)
 %
 % General description
 % ==============================
 % This script retrieves climatology grids of a selected variable of
-% interest, as computed from PCR-GLOBWB climate scenarios. The computations
-% are based on a certain climate model and scenarios (or base-line), which the user can
-% specify. This script then provides climatologies of the current climate
-% (1971-1990) or of the future climate (2081-2100)
-% usage:    PCRGLOB2KMLTimeSeriesClim(lat,lon,model,scenario,variable)
+% interest, as computed from PCR-GLOBWB climate scenarios and base-line run. The computations
+% are based on a certain climate model and scenarios, which the user can
+% specify. This script then provides an interpolated time series going from the current climate
+% (1971-1990) with time steps into the future climate (2081-2100)
+% usage:    PCRGLOB2KMLClimGrid_annual_test(lat,lon,model,scenario,variable)
 %
 % Inputs:
 % ==============================
@@ -28,7 +28,7 @@ function PCRGLOB2KMLClimGrids_annual_test(lat_range, lon_range, model, scenario,
 %               'ETP'     : potential evaporation (m/day)
 %               'QC'      : accumulated river discharge (m3/s)
 %
-% MATLAB will not give any outputs to the screen. The result will be 2 
+% MATLAB will not give any outputs to the screen. The result will be 2
 % KML-files located in a new folder, specified by
 % <scenario>_<model>_<period>_<variable>. The 2 files are compilations of
 % maps and animated maps respectively.
@@ -144,7 +144,7 @@ nrofpix = length(loni(:));
 climavg = zeros(nrrows,nrcols,length(nc_file));
 
 for climperiod = 1:length(nc_file)
-for y = 1:nrofyears 
+for y = 1:nrofyears
     rasters = zeros(nrrows,nrcols,12);
     for t = 1:12
         rasters(:,:,t) = nc_varget(nc_file{climperiod},var,[(t-1)+(y-1)*12 startlat-1 startlon-1],[1 nrrows nrcols]);
@@ -162,9 +162,9 @@ nrofsteps = (2090-1980)/interval+1;
 deriv=(((climavg(:,:,2))-(climavg(:,:,1)))/(((2090-1980)/interval)+1));
 
 % % determine minimum value and maximum value to fix plot
-maxval = max(max(max(out_raster)));
-minval = min(min(min(out_raster)));
 out_raster = climavg(:,:,1);
+maxval = max(max(max(climavg)));
+minval = min(min(min(climavg)));
 % Now plot the interpolation in KML
 for t = 1:nrofsteps
     currdir = pwd;
