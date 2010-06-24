@@ -3,7 +3,7 @@ function Substance = rws_waterbase_get_substances_csv(fname)
 %
 %    Substance = getWaterbaseData_substances(<fname.csv>)
 %
-% gets list of all SUBSTANCES available for queries at <a href="http://www.waterbase.nl">www.waterbase.nl</a>
+% gets list of all SUBSTANCES available for queries at <a href="http://live.waterbase.nl">live.waterbase.nl</a>
 % where by default <fname.csv> = 'donar_substances.csv'
 %
 % Substance struct has fields:
@@ -12,7 +12,7 @@ function Substance = rws_waterbase_get_substances_csv(fname)
 % * CodeName, e.g. 22%7CSignificante+golfhoogte+uit+energiespectrum+van+30-500+mhz+in+cm+in+oppervlaktewater"
 % * Code    , e.g. 22
 %
-% See also: DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>, GETWATERBASEDATA, RWS_WATERBASE_GET_LOCATIONS
+% See also: <a href="http://live.waterbase.nl">live.waterbase.nl</a>, rijkswaterstaat
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares

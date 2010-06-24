@@ -429,6 +429,12 @@ for ifile=1:length(fnames)
              if nt==1
              
                 D(nloc).data.location               =         rec(1        :dlm( 1)-1);
+                if isempty(D(nloc).data.location)
+                   fprintf(2,'%s\n',['file empty: ',fname])
+                   fclose(fid);
+                   varargout = {D,-1};
+                   return
+                end
                 D(nloc).data.waarnemingssoort       =         rec(dlm( 1)+1:dlm( 2)-1);
                                                                      % 2
                                                                      % 3

@@ -1,7 +1,7 @@
 function OutputName = rws_waterbase_get_url(varargin);
-%RWS_WATERBASE_GET_URL   load data from <a href="http://www.waterbase.nl">www.waterbase.nl</a>
+%RWS_WATERBASE_GET_URL   load data from <a href="http://live.waterbase.nl">live.waterbase.nl</a>
 %
-% Download data from the <a href="http://www.waterbase.nl">www.waterbase.nl</a> website for one specified
+% Download data from the <a href="http://live.waterbase.nl">live.waterbase.nl</a> website for one specified
 % substance at one or more specified locations during one specified
 % year. All available data are written to a specified ASCII file.
 %
@@ -37,9 +37,7 @@ function OutputName = rws_waterbase_get_url(varargin);
 %
 %    rws_waterbase_get_url(22,'AUKFPFM',datenum([1961 2008],1,1),pwd)
 %
-% See web:  <a href="http://www.waterbase.nl">www.waterbase.nl</a>,
-% See also: DONAR_READ, RWS_WATERBASE_GET_SUBSTANCES, RWS_WATERBASE_GET_LOCATIONS
-%           RWS_WATERBASE_GET_URL_LOOP
+% See also: <a href="http://live.waterbase.nl">live.waterbase.nl</a>, rijkswaterstaat
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
@@ -69,6 +67,7 @@ function OutputName = rws_waterbase_get_url(varargin);
 
    OPT.strmatch = 'exact';
    OPT.version  = 2; % 1 is before summer 2009, 2 is after mid dec 2009
+   OPT.baseurl  = 'http://live.waterbase.nl';
 
 %% Substance names
 
@@ -181,13 +180,13 @@ function OutputName = rws_waterbase_get_url(varargin);
       iLoc = 1;
 
       if OPT.version==1
-      urlName = ['http://www.waterbase.nl/Sites/waterbase/wbGETDATA.xitng?ggt=id' ...
+      urlName = [OPT.baseurl,'/Sites/waterbase/wbGETDATA.xitng?ggt=id' ...
              sprintf('%d', Substance.Code(indSub)) '&site=MIV&lang=nl&a=getData&gaverder=GaVerder&from=' ...
           startdate '&loc=' Station.ID{indLoc(iLoc)} '&to=' enddate '&fmt=text'];
           
       elseif OPT.version==2
 
-      urlName = ['http://www.waterbase.nl/wswaterbase/cgi-bin/wbGETDATA?ggt=id' ...
+      urlName = [OPT.baseurl,'/wswaterbase/cgi-bin/wbGETDATA?ggt=id' ...
              sprintf('%d', Substance.Code(indSub)) '&site=MIV&lang=nl&a=getData&gaverder=GaVerder&from=' ...
           startdate '&loc=' Station.ID{indLoc(iLoc)} '&to=' enddate '&fmt=text'];
 
@@ -198,7 +197,7 @@ function OutputName = rws_waterbase_get_url(varargin);
       [s status] = urlwrite([urlName],OutputName);
 
       if (status == 0)
-        warndlg('www.waterbase.nl may be offline or you are not connected to the internet','Online source not available');
+        warndlg([OPT.baseurl,' may be offline or you are not connected to the internet','Online source not available']);
         close(h);
 
         return;
@@ -213,7 +212,7 @@ function OutputName = rws_waterbase_get_url(varargin);
       fid = fopen(OutputName, 'w+');
       for iLoc = 1:length(indLoc)
 
-            urlName = ['http://www.waterbase.nl/Sites/waterbase/wbGETDATA.xitng?ggt=id' ...
+            urlName = [OPT.baseurl,'/Sites/waterbase/wbGETDATA.xitng?ggt=id' ...
                    sprintf('%d', Substance.Code(indSub)) '&site=MIV&lang=nl&a=getData&gaverder=GaVerder&from=' ...
                 startdate '&loc=' Station.ID{indLoc(iLoc)} '&to=' enddate '&fmt=text'];
 
@@ -221,7 +220,7 @@ function OutputName = rws_waterbase_get_url(varargin);
 
             [s status] = urlread([urlName]);
             if (status == 0)
-              warndlg('www.waterbase.nl may be offline or you are not connected to the internet','Online source not available');
+              warndlg([OPT.baseurl,' may be offline or you are not connected to the internet','Online source not available']);
               close(h);
 
               return;

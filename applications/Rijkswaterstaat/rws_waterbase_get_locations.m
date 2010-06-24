@@ -1,7 +1,7 @@
 function Station = rws_waterbase_get_locations(Code,CodeName,varargin)
 %RWS_WATERBASE_GET_LOCATIONS   reads all avilable location info for 1 DONAR Substance
 %
-%    Station = rws_waterbase_get_locations(Code)
+%    Station = rws_waterbase_get_locations(Code,CodeName)
 %
 % where Code = the Substance code as returned by getWaterbaseData_substances
 % e.g. 22 for the following Substance code as returned by getWaterbaseData_substances
@@ -16,7 +16,7 @@ function Station = rws_waterbase_get_locations(Code,CodeName,varargin)
 % * FullName, e.g. 'Aukfield platform'
 % * ID      , e.g. 'AUKFPFM'
 %
-% See also: DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>, RWS_WATERBASE_GET_URL, RWS_WATERBASE_GET_SUBSTANCES
+% See also: <a href="http://live.waterbase.nl">live.waterbase.nl</a>, rijkswaterstaat
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
@@ -38,24 +38,26 @@ function Station = rws_waterbase_get_locations(Code,CodeName,varargin)
 
 % 2009 jan 27: removed from getWaterbaseData to separate function [Gerben de Boer]
 % 2009 dec 28: adapted to new waterbase.nl html page [Gerben de Boer]
+% 2010 jun 24: inserted new url live.waterbase.nl [Gerben de Boer]
 
    OPT.version  = 2; % 0 = local cache, 1 is before summer 2009, 2 is after mid dec 2009
+   OPT.baseurl  = 'http://live.waterbase.nl';
 
 %% load url
 
    if       OPT.version==0
      url = ['file:///' fileparts(mfilename('fullpath')) filesep 'locations.txt'];
    elseif   OPT.version==1
-     url = ['http://www.waterbase.nl/getGML.cfm?wbwns=' sprintf('%d', Code)];
+     url = [OPT.baseurl,'/getGML.cfm?wbwns=' sprintf('%d', Code)];
    elseif   OPT.version==2
-     url = ['http://www.waterbase.nl/index.cfm?page=start.locaties&whichform=1&wbwns1=' sprintf('%s', CodeName) '&wbthemas=&search='];
+     url = [OPT.baseurl,'/index.cfm?page=start.locaties&whichform=1&wbwns1=' sprintf('%s', CodeName) '&wbthemas=&search='];
    end
 
 %% load locations data file   
 
    [s status] = urlread(url);
    if (status == 0)
-       warndlg('www.waterbase.nl may be offline or you are not connected to the internet','Online source not available');
+       warndlg([OPT.baseurl,' may be offline or you are not connected to the internet','Online source not available']);
        close(h);
        OutputName = [];
        return;
@@ -89,4 +91,4 @@ function Station = rws_waterbase_get_locations(Code,CodeName,varargin)
        end
    end
    
-%% EOF   
+%% EOF

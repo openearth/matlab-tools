@@ -1,17 +1,23 @@
 function D = rws_waterbase_get_substances(varargin)
-%RWS_WATERBASE_GET_SUBSTANCES   list of waterbase substances from www.waterbase.nl
+%RWS_WATERBASE_GET_SUBSTANCES   list of waterbase substances from live.waterbase.nl
 %
-%    Substance = rws_waterbase_get_substances()
+%    S = rws_waterbase_get_substances()
+%    S = rws_waterbase_get_substances(<keyword,value>)
 %
-% gets list of all SUBSTANCES available for queries at <a href="http://www.waterbase.nl">www.waterbase.nl</a>.
+% where keyword is 'FullName','CodeName' or 'Code' resurns only 
+% selected substance, e.g.:
 %
-% Substance struct has fields:
+%    S = rws_waterbase_get_substances('Code',209)
+%
+% gets list of all SUBSTANCES available for queries at <a href="http://live.waterbase.nl">live.waterbase.nl</a>.
+%
+% struct S has fields:
 %
 % * FullName, e.g. "Significante golfhoogte uit energiespectrum van 30-500 mhz in cm in oppervlaktewater"
 % * CodeName, e.g. 22%7CSignificante+golfhoogte+uit+energiespectrum+van+30-500+mhz+in+cm+in+oppervlaktewater"
 % * Code    , e.g. 22
 %
-% See also: DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>, GETWATERBASEDATA, RWS_WATERBASE_GET_LOCATIONS
+% See also: <a href="http://live.waterbase.nl">live.waterbase.nl</a>, rijkswaterstaat
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -53,10 +59,12 @@ function D = rws_waterbase_get_substances(varargin)
 % $HeadURL$
 % $Keywords: $
 
-   OPT.debug   = 0;
+   OPT.debug    = 0;
+   OPT.baseurl  = 'http://live.waterbase.nl';
 
    %% Special HTML symbols to be encodied as hex value with ISO 8859-1 Latin alphabet No. 1
    % http://www.ascii.cl/htmlcodes.htm:ISO 8859-1 Latin alphabet No. 1
+   % %      25
    % ' '    20 space
    % |      7C
    % /      2F
@@ -65,18 +73,25 @@ function D = rws_waterbase_get_substances(varargin)
    % (      28
    % )      29
    % '      27
-   OPT.symbols = {' ','|','/','<',',','(',')',''''}; 
+   OPT.symbols  = {'%',' ','|','/','<',',','(',')',''''};  % NOTE do '%' first, as all are replaced by %hex
+   
+   OPT.FullName = ''; 
+   OPT.CodeName = ''; 
+   OPT.Code     = []; 
+   
+   OPT = setproperty(OPT,varargin{:});
    
    %% Get page
-   [s status]    = urlread('http://www.waterbase.nl/index.cfm?page=start');
+   [s status]    = urlread([OPT.baseurl,'/index.cfm?page=start']);
    if (status == 0)
-      warndlg('www.waterbase.nl may be offline or you are not connected to the internet','Online source not available');
+      warndlg([OPT.baseurl,' may be offline or you are not connected to the internet','Online source not available']);
       close(h);
       OutputName = [];
       return;
    end
 
-   %% Get substances from page
+%% Get substances from page
+   
    ind0 = strfind(s,'<option value="');
    ind1 = strfind(s,'</option>');
    for ii=1:length(ind1)
@@ -100,7 +115,8 @@ function D = rws_waterbase_get_substances(varargin)
       
    end   
    
-   %% check substances from website by comparing with csv file.
+%% check substances from website by comparing with csv file.
+   
    if OPT.debug
       E = rws_waterbase_get_substances_csv;
       for ii=1:length(D.Code)
@@ -114,6 +130,25 @@ function D = rws_waterbase_get_substances(varargin)
             % >713%7CExtinctie+in+%2Fm+in+oppervlaktewater<
          end
       end
+   end
+   
+%% subset (optionally)
+
+   if ~isempty(OPT.Code)
+      indSub = find(D.Code==OPT.Code)
+      D.CodeName = D.CodeName{indSub};
+      D.FullName = D.FullName{indSub};
+      D.Code     = D.Code    (indSub);
+   elseif ~isempty(OPT.CodeName)
+      indSub = strmatch(OPT.CodeName,D.CodeName);
+      D.CodeName = D.CodeName{indSub};
+      D.FullName = D.FullName{indSub};
+      D.Code     = D.Code    (indSub);
+   elseif ~isempty(OPT.FullName)
+      indSub = strmatch(OPT.FullName,D.FullName);
+      D.CodeName = D.CodeName{indSub};
+      D.FullName = D.FullName{indSub};
+      D.Code     = D.Code    (indSub);
    end
 
 %% EOF

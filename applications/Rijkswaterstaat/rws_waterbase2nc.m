@@ -73,7 +73,7 @@ function rws_waterbase2nc(varargin)
    OPT.mask               = 'id*.txt';
    OPT.mask               = 'id*.zip';
    OPT.unzip              = 1; % process only zipped files: unzip them, and delete if afterwards
-   OPT.load               = 1; % load slow *.txt file
+   OPT.load               = 1; % 0=auto, 1=load slow *.txt file
    OPT.method             = 'fgetl';
 %% Keyword,value
 
@@ -108,44 +108,31 @@ for ivar=[OPT.donar_wnsnum]
     
     for ifile=1:length(OPT.files)
 
+        clear D
+
         OPT.filename = fullfile(OPT.directory_raw, OPT.files(ifile).name(1:end-4)); % id1-AMRGBVN-196101010000-200801010000.txt
 
         disp(['  Processing ',num2str(ifile,'%0.4d'),'/',num2str(length(OPT.files),'%0.4d'),': ',filename(OPT.filename),' to netCDF.'])
 
         %% 0 Read raw data
 
-        if exist([OPT.filename,'.mat'],'file')==2
+        if exist([OPT.filename,'.mat'],'file')==2 & OPT.load==0
 
             D = load([OPT.filename,'.mat']);% speeds up considerably
 
         else
+        
             if OPT.unzip
                 OPT.zipname  = [OPT.filename,'.zip'];
                 unzip(OPT.zipname,filepathstr(OPT.filename))
             end
 
-            if OPT.load
-
-                % Load
-                
-                D = rws_waterbase_read([OPT.filename],...% ,'.txt'
-                      'locationcode',1,... 
-                         'fieldname',OPT.name,...
-                    'fieldnamescale',1,...
-                            'method',OPT.method);
-
-                % Unit conversion
-
-                if ~(isempty(OPT.units) | isnan(OPT.units))
-                  if OPT.debug
-                    ['data > goal units = ' D.data.units, ' > ' OPT.units]
-                  end
-                  D.data.(OPT.name) = D.data.(OPT.name).*convert_units(D.data.units,OPT.units);
-                  D.data.units      = OPT.units;
-                end
-                
-            end
-
+            [D] = rws_waterbase_read([OPT.filename],...% ,'.txt'
+                  'locationcode',1,... 
+                     'fieldname',OPT.name,...
+                'fieldnamescale',1,...
+                        'method',OPT.method);
+                        
             if OPT.unzip
                 delete([OPT.filename]);%,'.txt'
             end
@@ -153,9 +140,21 @@ for ivar=[OPT.donar_wnsnum]
             save([OPT.filename,'.mat'],'-struct','D'); % to save time 2nd attempt
 
         end % exist([OPT.filename,'.mat'])
-        
-    if ~(length(D.data.datenum)==1 & isnan(D.data.datenum))
 
+    if ~(all(isnan(D.data.datenum)))
+
+        %% Unit conversion
+        if ~(isempty(OPT.units) | isnan(OPT.units))
+          if OPT.debug
+            ['data > goal units = ' D.data.units, ' > ' OPT.units]
+          end
+          D.data.(OPT.name) = D.data.(OPT.name).*convert_units(D.data.units,OPT.units);
+          D.data.units      = OPT.units;
+        else
+          if OPT.debug
+            ['data units kept = ' D.data.units]
+          end
+        end
         D.version     = '';
 
         %% 0 Create file
@@ -207,8 +206,11 @@ for ivar=[OPT.donar_wnsnum]
         if isfield(D.data,'ogi')
         if  length(D.data.ogi         )==1;nc_attput(outputfile, nc_global, 'ogi'          , D.data.ogi         );end
         end
-        if isfield(D.data,'vat')
-        if  length(D.data.vat         )==1;nc_attput(outputfile, nc_global, 'vat'          , D.data.vat         );end
+        if isfield(D.data,'vat') % cel if varying over stations
+        if  ischar(D.data.vat         )   ;nc_attput(outputfile, nc_global, 'vat'          , D.data.vat         );
+        else
+                                           nc_attput(outputfile, nc_global, 'vat'          , 'varying'          );
+        end
         end
 
 
@@ -297,7 +299,7 @@ for ivar=[OPT.donar_wnsnum]
         ifld = ifld + 1;
         nc(ifld).Name             = 'x';
         nc(ifld).Nctype           = 'float'; % no double needed
-        if length(D.data.lat)==1
+        if length(D.data.x)==1
         nc(ifld).Dimension        = {'locations'};
         else
         nc(ifld).Dimension        = {'locations','time'};
@@ -313,7 +315,7 @@ for ivar=[OPT.donar_wnsnum]
         ifld = ifld + 1;
         nc(ifld).Name             = 'y';
         nc(ifld).Nctype           = 'float'; % no double needed
-        if length(D.data.lat)==1
+        if length(D.data.y)==1
         nc(ifld).Dimension        = {'locations'};
         else
         nc(ifld).Dimension        = {'locations','time'};
@@ -432,7 +434,7 @@ for ivar=[OPT.donar_wnsnum]
         nc(ifld).Nctype           = 'float'; % no double needed
         nc(ifld).Dimension        = {'locations','time'};
         nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name);
-        nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', OPT.units);
+        nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', D.data.units);
         nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
         nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
         nc(ifld).Attribute(end+1) = struct('Name', 'cell_methods'   ,'Value', 'time: point area: point');

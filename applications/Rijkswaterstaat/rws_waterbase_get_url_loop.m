@@ -1,9 +1,7 @@
 function rws_waterbase_get_url_loop(varargin)
 %RWS_WATERBASE_GET_URL_LOOP   download waterbase: 1 parameter, all stations, selected time period 
 %
-% See also: RWS_WATERBASE_GET_URL, DONAR_READ, <a href="http://www.waterbase.nl">www.waterbase.nl</a>,  
-%           GETWATERBASEDATA_SUBSTANCES, GETWATERBASEDATA_LOCATIONS, GETWATERBASE2NC_TIME_DIRECT
-%           DONARNAME2STANDARD_NAME
+% See also: <a href="http://live.waterbase.nl">live.waterbase.nl</a>,  rijkswaterstaat
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
@@ -48,6 +46,7 @@ function rws_waterbase_get_url_loop(varargin)
 %% Initialize
 
    OPT.directory_raw      = 'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';
+   OPT.directory_raw_old  = 'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\old\';
 
    OPT.period             = [datenum(1798, 5,24) floor(now)]; % 24 mei 1798: Oprichting voorloper Rijkswaterstaat in Bataafse Republiek
    OPT.period             = [datenum(1648,10,24) floor(now)]; % 24 okt 1648: Oprichting Staat der Nederlanden, Vrede van Munster
@@ -57,6 +56,7 @@ function rws_waterbase_get_url_loop(varargin)
    OPT.zip                = 1; % zip txt file and delete it
    OPT.nc                 = 0; % not implemented yet
    OPT.opendap            = 0; % not implemented yet
+   OPT.cleanup            = 0;
    
 %% Keyword,value
 
@@ -81,6 +81,21 @@ index = find(DONAR.donar_wnsnum==ivar);
    OPT.code           = DONAR.donar_wnsnum(index);
    OPT.standard_name  = DONAR.cf_standard_name{index};
    
+%% Make destination (clean)
+
+      if ~exist   ([OPT.directory_raw],'dir')
+          disp    (['Created: ',OPT.directory_raw])
+          mkpath  ([OPT.directory_raw])
+      end
+
+      if OPT.cleanup
+         ~exist   ([OPT.directory_raw_old],'dir');
+          disp    (['Created: ',OPT.directory_raw_old]);
+          mkpath  ([OPT.directory_raw_old]);
+          movefile([OPT.directory_raw    filesep '*'],...
+                   [OPT.directory_raw_old filesep]);
+      end
+
 %% Match and check Substance
    
       SUB        = rws_waterbase_get_substances;
@@ -96,12 +111,7 @@ index = find(DONAR.donar_wnsnum==ivar);
    
       LOC = rws_waterbase_get_locations(SUB.Code(OPT.indSub),SUB.CodeName{OPT.indSub});
       
-      if ~exist([OPT.directory_raw],'dir')
-          disp(['Created: ',OPT.directory_raw])
-          mkpath([OPT.directory_raw])
-      end
-   
-      for indLoc=1:10%length(LOC.ID)
+      for indLoc=1:length(LOC.ID)
       
          disp(['----------------------------------------'])
          disp(['indLoc   :',num2str(             indLoc ),' of ',num2str(length(LOC.ID))])
