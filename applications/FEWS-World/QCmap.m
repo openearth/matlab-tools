@@ -1,4 +1,4 @@
-function QCmap = QCmap
+function ndvimap = QCmap
 %JET    Variant of HSV
 %   JET(M), a variant of HSV(M), is an M-by-3 matrix containing
 %   the default colormap used by CONTOUR, SURF and PCOLOR.
