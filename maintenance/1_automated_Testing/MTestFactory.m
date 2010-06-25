@@ -71,6 +71,9 @@ classdef MTestFactory
             %% Apply other input
             newTest = setproperty(newTest,varargin{:});
             
+            if isempty(newTest.Name)
+                newTest.Name = newTest.FileName;
+            end
         end
     end
     methods (Static = true, Hidden = true)
