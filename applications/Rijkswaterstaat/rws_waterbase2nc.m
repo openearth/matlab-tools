@@ -111,6 +111,7 @@ for ivar=[OPT.donar_wnsnum]
         clear D
 
         OPT.filename = fullfile(OPT.directory_raw, OPT.files(ifile).name(1:end-4)); % id1-AMRGBVN-196101010000-200801010000.txt
+        OPT.fileext = fileext(fullfile(OPT.directory_raw, OPT.files(ifile).name));
 
         disp(['  Processing ',num2str(ifile,'%0.4d'),'/',num2str(length(OPT.files),'%0.4d'),': ',filename(OPT.filename),' to netCDF.'])
 
@@ -121,20 +122,25 @@ for ivar=[OPT.donar_wnsnum]
             D = load([OPT.filename,'.mat']);% speeds up considerably
 
         else
-        
             if OPT.unzip
                 OPT.zipname  = [OPT.filename,'.zip'];
-                unzip(OPT.zipname,filepathstr(OPT.filename))
+                OPT.unzippedfilename = char(unzip(OPT.zipname,filepathstr(OPT.filename)));
             end
-
-            [D] = rws_waterbase_read([OPT.filename],...% ,'.txt'
-                  'locationcode',1,... 
-                     'fieldname',OPT.name,...
-                'fieldnamescale',1,...
-                        'method',OPT.method);
-                        
+            if OPT.fileext=='.txt'
+                [D] = rws_waterbase_read([OPT.filename,'.txt'],...
+                    'locationcode',1,...
+                    'fieldname',OPT.name,...
+                    'fieldnamescale',1,...
+                    'method',OPT.method);
+            else
+                [D] = rws_waterbase_read([OPT.unzippedfilename],...
+                    'locationcode',1,...
+                    'fieldname',OPT.name,...
+                    'fieldnamescale',1,...
+                    'method',OPT.method);
+            end
             if OPT.unzip
-                delete([OPT.filename]);%,'.txt'
+                delete([OPT.unzippedfilename]);%,'.txt'
             end
 
             save([OPT.filename,'.mat'],'-struct','D'); % to save time 2nd attempt
