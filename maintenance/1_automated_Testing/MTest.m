@@ -99,6 +99,8 @@ classdef MTest < handle
         StackTrace    = [];                 % Stack trace (diary + error message)
         
         Verbose = true;                     % Determines whether messages are written to the command window whenever the run function gets executed
+        
+        TimeStamp = [];                     % Timestamp of the last time the definition was saved
     end
     properties (Hidden = true)
         FullString = [];                    % Full string of the contents of the test file

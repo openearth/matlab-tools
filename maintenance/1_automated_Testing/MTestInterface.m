@@ -2,7 +2,7 @@ classdef MTestInterface < handle
     properties
         MTestRunner = MTestRunner;
         
-        ViewType = 'Category';
+        ViewType = 'Directory';
                 
         HMainFigure
         
@@ -40,6 +40,10 @@ classdef MTestInterface < handle
         
         JStatusBar
         JProgressBar
+        
+        HContextMenu
+        HContextMenuRun
+        HContextMenuRemove
     end
     properties (Hidden = true)
         PropertyChangedListeners = [];
@@ -92,7 +96,6 @@ classdef MTestInterface < handle
                 'Callback',{@MTestInterface.menusessionremovetest_callback});
             this.MenuSessionclearTest = uimenu(this.MenuSession,...
                 'Label','Clear Session',...
-                'Enable','off',...
                 'Callback',{@MTestInterface.menusessioncleartest_callback});
             
             this.MenuRun = uimenu(this.HMainFigure,...
@@ -127,12 +130,12 @@ classdef MTestInterface < handle
             if ~isempty(jToolbar)
                 choices = {'Show by <directory structure>','Show by <category>'};
                 jCombo = javax.swing.JComboBox(choices);
-                jCombo.setSize(100,20);
                 set(jCombo, 'ActionPerformedCallback', {@MTestInterface.buildtrees},...
                     'UserData',this);
                 jToolbar(1).addSeparator;
                 jToolbar(1).add(jCombo,4);
                 jToolbar(1).addSeparator;
+                jCombo.setSize(0.5,1);
                 jToolbar(1).repaint;
                 jToolbar(1).revalidate;
             end
@@ -168,6 +171,7 @@ classdef MTestInterface < handle
             renderer.setLeafIcon(ImageIcon(which('testicon_16.gif')));
             this.JTree.setCellRenderer(renderer);
             this.JTree.repaint;
+            set(this.JTree,'UserData',this);
 
             %% Create split panel
             split = javax.swing.JSplitPane(0);
@@ -181,6 +185,15 @@ classdef MTestInterface < handle
             set(this.HSplitPanel,'Units','normalized','Position',[0 0 1 1]);
             drawnow;
             this.JSplitPanel.setDividerLocation(0.5);
+            
+            %% Context menu
+            this.HContextMenu = uicontextmenu('Parent',this.HMainFigure);
+            this.HContextMenuRun = uimenu(this.HContextMenu,...
+                'Label','Run',...
+                'Callback','disp(''rennenn!!!!'');');
+            this.HContextMenuRemove = uimenu(this.HContextMenu,...
+                'Label','Remove',...
+                'Callback','disp(''haal weg!!!!'');');
         end
     end
     methods (Hidden = true)
@@ -340,7 +353,7 @@ classdef MTestInterface < handle
             end
             try
                 newTest = MTest(fullfile(pathname, filename));
-            catch
+            catch %#ok<CTCH>
                 return;
             end
             if ~isempty(newTest)
@@ -397,10 +410,20 @@ classdef MTestInterface < handle
             MTestInterface.buildtrees(this);
         end
         function menusessioncleartest_callback(varargin)
-            return;
+            this = guidata(varargin{1});
+            this.MTestRunner.Tests = MTest;
+            this.MTestRunner.Tests(1) = [];
+            
+            MTestInterface.buildtrees(this);
         end
         function mouseclickedontree_callback(varargin)
-            return;
+            if varargin{end}.getButton ~= 3
+                return;
+            end
+            this = get(varargin{1},'UserData');
+            set(this.HContextMenu,...
+                'Position',[0 this.JSplitPanel.getHeight] + [varargin{2}.getX, -varargin{2}.getY],...
+                'Visible','on');
         end
     end
 end

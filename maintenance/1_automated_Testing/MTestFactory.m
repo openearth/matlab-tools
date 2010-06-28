@@ -88,6 +88,9 @@ classdef MTestFactory
             fclose(fid);
             %% #4 Process contents of the input file
             obj.FullString = str;
+            %% #5 Add timestamp
+            infoo = dir(fullfile(obj.FilePath,[obj.FileName '.m']));
+            obj.TimeStamp = infoo.datenum;
         end
         function obj = resetstringids(obj)
             idBase = false(numel(obj.FullString),1);
@@ -122,34 +125,40 @@ classdef MTestFactory
             obj.FunctionName = mainFunction.name;
             
             %% Extract name
-            dotCalls = fcncalls(mainFunctionId).calls.dotCalls;
-            if ~isempty(dotCalls) && any(ismember(dotCalls.names,{'MTest.name','TeamCity.name'}))
-                ln = min(dotCalls.lines(ismember(dotCalls.names,{'MTest.name','TeamCity.name'})));
-                command = obj.FullString{ln};
-                idbegin = min([strfind(command,'TeamCity.name(')+14, strfind(command,'MTest.name(')+11]);
-                idend = max(strfind(command,')'))-1;
-                if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
-                    try
-                        % TODO, Maybe set current test and run entire command?
-                        obj.Name = eval(command(idbegin:idend));
-                    catch me
-                        warning('MTestFactory:UnableToSetCategory',['MTestFactory was not able to set the category.';'The following exeption was thrown when evaluating the input:';me.getReport]);
+            calls = fcncalls(mainFunctionId).calls;
+            if iscell(calls)
+                warning('MTestFactory:UnableToSetCategory','Due to version limitations of your matlab MTest was not able to determin the name and category of your test');
+            else
+                dotCalls = fcncalls(mainFunctionId).calls.dotCalls;
+                if ~isempty(dotCalls) && any(ismember(dotCalls.names,{'MTest.name','TeamCity.name'}))
+                    ln = min(dotCalls.lines(ismember(dotCalls.names,{'MTest.name','TeamCity.name'})));
+                    command = obj.FullString{ln};
+                    idbegin = min([strfind(command,'TeamCity.name(')+14, strfind(command,'MTest.name(')+11]);
+                    idend = max(strfind(command,')'))-1;
+                    if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
+                        try
+                            % TODO, Maybe set current test and run entire command?
+                            obj.Name = eval(command(idbegin:idend));
+                        catch me
+                            warning('MTestFactory:UnableToSetName',['MTestFactory was not able to set the category.';'The following exeption was thrown when evaluating the input:';me.getReport]);
+                        end
                     end
                 end
-            end
-            
-            %% Exctract Category
-            if ~isempty(dotCalls) && any(ismember(dotCalls.names,{'MTest.category','TeamCity.category'}))
-                ln = min(dotCalls.lines(ismember(dotCalls.names,{'MTest.category','TeamCity.category'})));
-                command = obj.FullString{ln};
-                idbegin = min([strfind(command,'TeamCity.category(')+18, strfind(command,'MTest.category(')+15]);
-                idend = max(strfind(command,')'))-1;
-                if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
-                    try
-                        % TODO, Maybe set current test and run entire command?
-                        obj.Category = eval(command(idbegin:idend));
-                    catch me
-                        warning('MTestFactory:UnableToSetCategory',['MTestFactory was not able to set the category.';'The following exeption was thrown when evaluating the input:';me.getReport]);
+
+
+                %% Exctract Category
+                if ~isempty(dotCalls) && any(ismember(dotCalls.names,{'MTest.category','TeamCity.category'}))
+                    ln = min(dotCalls.lines(ismember(dotCalls.names,{'MTest.category','TeamCity.category'})));
+                    command = obj.FullString{ln};
+                    idbegin = min([strfind(command,'TeamCity.category(')+18, strfind(command,'MTest.category(')+15]);
+                    idend = max(strfind(command,')'))-1;
+                    if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
+                        try
+                            % TODO, Maybe set current test and run entire command?
+                            obj.Category = eval(command(idbegin:idend));
+                        catch me
+                            warning('MTestFactory:UnableToSetCategory',['MTestFactory was not able to set the category.';'The following exeption was thrown when evaluating the input:';me.getReport]);
+                        end
                     end
                 end
             end
