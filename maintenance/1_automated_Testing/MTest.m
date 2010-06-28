@@ -86,8 +86,11 @@ classdef MTest < handle
         Ignore = false;                     % If ignore = true, this test is ignored
         IgnoreMessage = '';                 % Optional string to point out why this test(case) was ignored
         Category = 'Unit';                  % Category of the test(case)
-        
+    end
+    properties (SetObservable = true)
         TestResult = false;                 % Boolean indicating whether the test was run successfully
+    end
+    properties
         Time     = 0;                       % Time that was needed to perform the test
         Date     = NaN;                     % Date and time the test was performed
         

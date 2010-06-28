@@ -60,9 +60,12 @@ classdef MTestRunner < handle
         TestID = '_test';               % ID of the test files. all files that include this string in the filename are selected as tests
         Exclusions = {'.svn','_tutorial','_exclude'};% A cell array of strings determining the test definitions that must be skipped
         Template = 'default';           % Overview template of the testengine results (that maybe links to the descriptiontemplate and resulttemplate).
-
+    end
+    properties (SetObservable = true)
         Tests = MTest;                  % Stores all tests found in the maindir (and subdirs if recursive = true)
         WrongTestDefs = {};             % Files identified as testdefinitions, but unreadable.
+    end
+    properties
         FunctionsRun = {};              % Table that contains information about functions that were called during the tests (Cell N x 3, with columns functionname, html reference and coverage percentage).
     end
     properties (Hidden=true)

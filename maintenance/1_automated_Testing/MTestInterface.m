@@ -14,9 +14,10 @@ classdef MTestInterface < handle
         MenuFileClose
         MenuSession
         MenuSessionAddTest
-        MenuSessionRemoveTest
         MenuSessionSearchTestsAdd
         MenuSessionSearchTestsReplace
+        MenuSessionRemoveTest
+        MenuSessionclearTest
         MenuRun
         MenuRunSelected
         MenuRunAll
@@ -40,6 +41,9 @@ classdef MTestInterface < handle
         JStatusBar
         JProgressBar
     end
+    properties (Hidden = true)
+        PropertyChangedListeners = [];
+    end
     
     methods
         function this = MTestInterface(varargin)
@@ -60,6 +64,11 @@ classdef MTestInterface < handle
             tests(1)=[];
             this.MTestRunner.Tests = tests;
             
+            this.PropertyChangedListeners = addlistener(...
+                this.MTestRunner, ...
+                'Tests', ...
+                'PostSet', @this.testschanged);
+            
             %% Create Menu items
             this.MenuFile = uimenu(this.HMainFigure,...
                 'Label','File');
@@ -69,27 +78,27 @@ classdef MTestInterface < handle
             this.MenuSession = uimenu(this.HMainFigure,...
                 'Label','Session');
             this.MenuSessionAddTest = uimenu(this.MenuSession,...
-                'Label','Add Test',...
+                'Label','Add Single Test',...
                 'Callback',{@MTestInterface.menusessionaddtest_callback});
-            this.MenuSessionRemoveTest = uimenu(this.MenuSession,...
-                'Label','Remove Test',...
-                'Enable','off',...
-                'Callback',{@MTestInterface.menusessionremovetest_callback});
             this.MenuSessionSearchTestsAdd = uimenu(this.MenuSession,...
                 'Label','Search tests and add to session',...
-                'Enable','off',...
-                'Separator','on',...
                 'Callback',{@MTestInterface.menusessionsearchtest_callback,'add'});
             this.MenuSessionSearchTestsReplace = uimenu(this.MenuSession,...
                 'Label','Search tests and replace current session',...
-                'Enable','off',...
                 'Callback',{@MTestInterface.menusessionsearchtest_callback,'remove'});
+            this.MenuSessionRemoveTest = uimenu(this.MenuSession,...
+                'Label','Remove Selected Tests',...
+                'Separator','on',...
+                'Callback',{@MTestInterface.menusessionremovetest_callback});
+            this.MenuSessionclearTest = uimenu(this.MenuSession,...
+                'Label','Clear Session',...
+                'Enable','off',...
+                'Callback',{@MTestInterface.menusessioncleartest_callback});
             
             this.MenuRun = uimenu(this.HMainFigure,...
-                'Label','Tests');
+                'Label','Run');
             this.MenuRunSelected = uimenu(this.MenuRun,...
                 'Label','Run selected test',...
-                'Enable','off',...
                 'Callback',{});
             this.MenuRunAll = uimenu(this.MenuRun,...
                 'Label','Run all tests',...
@@ -153,7 +162,12 @@ classdef MTestInterface < handle
             this.JTreeModel = this.JTree.getModel();
             this.JTreeRootNode = DefaultMutableTreeNode('RootNode');
             this.JTreeModel.setRoot(this.JTreeRootNode);
+            this.JTree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
             
+            renderer = this.JTree.getCellRenderer;
+            renderer.setLeafIcon(ImageIcon(which('testicon_16.gif')));
+            this.JTree.setCellRenderer(renderer);
+            this.JTree.repaint;
 
             %% Create split panel
             split = javax.swing.JSplitPane(0);
@@ -169,7 +183,48 @@ classdef MTestInterface < handle
             this.JSplitPanel.setDividerLocation(0.5);
         end
     end
+    methods (Hidden = true)
+        function testschanged(obj,varargin)
+           return; 
+        end
+    end
     methods (Static = true)
+        function run(varargin)
+            this = guidata(varargin{1});
+            
+            selectionId = false(size(this.MTestRunner.Tests));
+            
+            selectedPaths = this.JTree.getSelectionPaths;
+            selectedNodes = [];
+            for ipaths = 1:length(selectedPaths)
+                newSelectedNodes = getLeafNodesRecursive(selectedPaths(ipaths).getLastPathComponent);
+                selectedNodes = cat(1,selectedNodes,newSelectedNodes);
+            end
+            
+            for itests = 1:length(this.JTestNodes)
+                for inode = 1:length(selectedNodes)
+                    if selectedNodes(inode) == this.JTestNodes{itests}
+                        selectionId(itests) = true;
+                        continue;
+                    end
+                end
+            end
+            selectionId = find(selectionId);
+            
+            if isempty(selectionId)
+                return;
+            end
+            
+            this.JProgressBar.setVisible(1);
+            set(this.JProgressBar, 'Maximum',numel(selectionId), 'Value',0);
+            for itests = 1:length(selectionId)
+                this.JProgressBar.setString(['Running: ' this.MTestRunner.Tests(selectionId(itests)).Name ' (' num2str(round(((itests-1)/length(selectionId))*100))  '%)']);
+                this.MTestRunner.Tests(selectionId(itests)).run;
+                set(this.JProgressBar, 'Value',itests);
+            end
+            this.JProgressBar.setString('Idle...');
+            set(this.JProgressBar, 'Value',0);
+        end
         function runall(varargin)
             this = guidata(varargin{1});
             this.JProgressBar.setVisible(1);
@@ -180,6 +235,7 @@ classdef MTestInterface < handle
                 set(this.JProgressBar, 'Value',itests);
             end
             this.JProgressBar.setString('Idle...');
+            set(this.JProgressBar, 'Value',0);
         end
         function gathertests(varargin)
             this = guidata(varargin{1});
@@ -264,8 +320,10 @@ classdef MTestInterface < handle
             this.JTreeRootNode = rootNode;
             this.JTreeModel.setRoot(this.JTreeRootNode);
             
-            for i=0:this.JTree.getRowCount+1
-                this.JTree.expandRow(i);
+            import javax.swing.tree.*
+            for i=1:length(this.JTestNodes)
+                 path = this.JTestNodes{i}.getPath;
+                 this.JTree.scrollPathToVisible(TreePath(path));
             end
         end
     end
@@ -291,9 +349,54 @@ classdef MTestInterface < handle
             MTestInterface.buildtrees(this);
         end
         function menusessionremovetest_callback(varargin)
-            return;
+            this = guidata(varargin{1});
+            selectionId = false(size(this.MTestRunner.Tests));
+            
+            selectedPaths = this.JTree.getSelectionPaths;
+            selectedNodes = [];
+            for ipaths = 1:length(selectedPaths)
+                newSelectedNodes = getLeafNodesRecursive(selectedPaths(ipaths).getLastPathComponent);
+                selectedNodes = cat(1,selectedNodes,newSelectedNodes);
+            end
+            
+            for itests = 1:length(this.JTestNodes)
+                for inode = 1:length(selectedNodes)
+                    if selectedNodes(inode) == this.JTestNodes{itests}
+                        selectionId(itests) = true;
+                        continue;
+                    end
+                end
+            end
+            this.JTestNodes(selectionId) = [];
+            this.MTestRunner.Tests(selectionId) = [];
+            
+            MTestInterface.buildtrees(this);
         end
         function menusessionsearchtest_callback(varargin)
+            this = guidata(varargin{1});
+            
+            %% Ask directory
+            dir = uigetdir(cd,'Select a directory:');
+            if isempty(dir)
+                return;
+            end
+            
+            this.MTestRunner.MainDir = dir;
+            if nargin>2 && strcmp(varargin{3},'add')
+                oldTests = this.MTestRunner.Tests;
+            end
+            
+            this.MTestRunner.Tests = MTest;
+            this.MTestRunner.Tests(1) = [];
+            this.MTestRunner.cataloguetests;
+            
+            if nargin>2 && strcmp(varargin{3},'add')
+                this.MTestRunner.Tests = sort(cat(2,this.MTestRunner.Tests,oldTests));
+            end
+            
+            MTestInterface.buildtrees(this);
+        end
+        function menusessioncleartest_callback(varargin)
             return;
         end
         function mouseclickedontree_callback(varargin)
@@ -313,5 +416,17 @@ for i=1:childCount
         node = child;
         return;
     end
+end
+end
+
+function newSelectedNodes = getLeafNodesRecursive(rootNode)
+newSelectedNodes = [];
+if rootNode.isLeaf
+    newSelectedNodes = rootNode;
+    return;
+end
+for ichild = 0:rootNode.getChildCount-1
+    newNodes = getLeafNodesRecursive(rootNode.getChildAt(ichild));
+    newSelectedNodes = [newSelectedNodes,newNodes]; %#ok<AGROW>
 end
 end
