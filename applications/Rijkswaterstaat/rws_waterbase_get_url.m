@@ -210,10 +210,11 @@ function varargout = rws_waterbase_get_url(varargin);
         return;
       else
       
-        fidurl = fopen(OutputNameUrl, 'w+')
-        fprintf(fidurl,'[intrnetShortcut]')
-        fprintf(fidurl,'URL=%s',urlName)
-        fclose(fidurl)
+        fidurl = fopen(OutputNameUrl, 'w+');
+        fprintf(fidurl,'[InternetShortcut]\n');
+        fprintf(fidurl,'URL=%s',urlName);
+        fclose(fidurl);
+        % TO DO add time of last update
       
       end
 

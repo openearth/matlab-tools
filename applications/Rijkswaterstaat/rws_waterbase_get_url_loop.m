@@ -94,8 +94,10 @@ index = find(DONAR.donar_wnsnum==ivar);
          ~exist   ([OPT.directory_raw_old],'dir');
           disp    (['Created: ',OPT.directory_raw_old]);
           mkpath  ([OPT.directory_raw_old]);
+          try
           movefile([OPT.directory_raw     filesep '*' num2str(OPT.code) '*'],... % so metimes more codes end up in the same directory (1+54, 346+347, 363+364)
                    [OPT.directory_raw_old filesep]);
+          end
       end
 
 %% Match and check Substance

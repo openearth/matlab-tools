@@ -154,8 +154,8 @@ for ivar=[OPT.donar_wnsnum]
             ['data > goal units = ' D.data.units, ' > ' OPT.units]
           end
           if strcmpi(D.data.units,'graad t.o.v. kaartnoorden')
-             if strcmpi(OPT.units,'degrees_true')
-             D.data.units       = 'degrees_true';
+             if strcmpi(OPT.units,'degree_true')
+             D.data.units       = 'degree_true';
              else
              error(['no conversion defined for data units:',D.data.units])
              end

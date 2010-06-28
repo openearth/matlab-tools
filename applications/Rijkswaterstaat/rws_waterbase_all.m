@@ -18,23 +18,15 @@ function rws_waterbase_all
    rawbase = 'F:\checkouts\OpenEarthRawData';   % @ local
     ncbase = 'F:\opendap\thredds\';             % @ local
    
-   OPT.donar_wnsnum = [209];                 % y (solved issue with % in kml, and %25 in url)
-   OPT.donar_wnsnum = [332];                 % y 
-   OPT.donar_wnsnum = [346 347];             % y
-   OPT.donar_wnsnum = [360];                 % .. NO same name > same kml
-   OPT.donar_wnsnum = [363 364];             % .. NO same name > same kml, overwrite xls/png issue
-   OPT.donar_wnsnum = [364 380 491 492 493]; % y  processed without problems
-   OPT.donar_wnsnum = [541];                 % NO despite on file with empty location name/epsg id541-AALDK-164810240000-201006130000.txt epsg code missing
-   OPT.donar_wnsnum = [560 1083];            % y  processed without problems
-   OPT.donar_wnsnum = [410];                 % .. NO id410-BRESKBSD-179805240000-200907100000.txt issue to netCDF: vat: '' to 'emmer'
-   OPT.donar_wnsnum = [1];
+   OPT.donar_wnsnum = [541];                 % empty location name/epsg id541-AALDK-164810240000-201006130000.txt epsg code missing
+   OPT.donar_wnsnum = [410];                 % id410-BRESKBSD-179805240000-200907100000.txt issue to netCDF: vat: '' to 'emmer'
+   OPT.donar_wnsnum = [1];                   % takes VEERY LONG
 
-   OPT.donar_wnsnum = [ 22  23   24 559  44    ...
-                       282  29   54 410 209    ...
-                       332 346  347 360 363    ...
-                       364 380  491 492 493 ...
-                       541 560 1083   1]; % 0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls
-
+   OPT.donar_wnsnum = [ 22   23   24  559   44  ... %
+                       282   29   54  410  209  ... %   
+                       332  346  347  360  363  ... % 
+                       364  380  491  492  493  ... % 
+                       541  560 1083    1      ];   % 0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls
 %% Parameter choice
 
    DONAR = xls2struct([fileparts(mfilename('fullpath')) filesep 'rws_waterbase_name2standard_name.xls']);
@@ -66,10 +58,10 @@ function rws_waterbase_all
       
    %% Download from waterbase.nl
    
-      rws_waterbase_get_url_loop('donar_wnsnum' ,OPT.code,...
-                                 'directory_raw',OPT.directory_raw,...
-                             'directory_raw_old',[OPT.directory_raw filesep 'old'],...
-                                       'cleanup',1);
+%     rws_waterbase_get_url_loop('donar_wnsnum' ,OPT.code,...
+%                                'directory_raw',OPT.directory_raw,...
+%                            'directory_raw_old',[OPT.directory_raw filesep 'old'],...
+%                                      'cleanup',1); % remove date from file name> version control on cached download too ?
                                  
    %% Make netCDF
    
@@ -79,13 +71,15 @@ function rws_waterbase_all
                              'method','fgetl',... % 'fgetl' for water levels or discharges
                            'att_name',{'aquo_lex_code'           ,'donar_wnsnum'           ,'sdn_standard_name'},...
                             'att_val',{DONAR.aquo_lex_code(index),DONAR.donar_wnsnum(index),DONAR.sdn_standard_name(index) },...
-                               'load',1);  % skip mat file
+                               'load',1,...% skip mat file, always load zipped txt file
+                              'debug',0,...% check unit conversion
+                               'mask',['id' num2str(OPT.code) '*.zip']);  % as more ids are in same dir
 
    %% Make overview png and xls of one parameter
    
-      nc_cf_stationtimeseries2meta('directory_nc'  ,[OPT.directory_nc],...
-                                   'parameters'    ,{OPT.name},...
-                                   'overwrite'     ,OPT.overwrite);
+     nc_cf_stationtimeseries2meta('directory_nc'  ,[OPT.directory_nc],...
+                                  'parameters'    ,{OPT.name},...
+                                  'overwrite'     ,OPT.overwrite);
 
 % TO DO: option to overwrite xls and png, just as catalog.nc
 % TO DO: merge nc_cf_stationtimeseries2meta and nc_cf_directory2catalog                             
