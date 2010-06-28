@@ -78,29 +78,6 @@ function multiWaitbar( label, varargin )
 
 persistent figh;
 
-%% check os and matlab version
-if ~islogical(figh)
-    %then continue
-else
-    if isempty(figh)
-        if (ispc||ismac) && datenum(version('-date'))<datenum('1-1-2009')
-            fprintf('WARNING: the function you are using called multiWaitbar, \n         but that function is only available in newer Matlab versions \n')
-            figh = false; %could be anything but a handle
-            % Check for close all and stop early
-            if any( strcmpi( label, {'CLOSEALL','CLOSE ALL'} ) )
-                clear figh;
-            end
-            return
-        end
-    else
-        if any( strcmpi( label, {'CLOSEALL','CLOSE ALL'} ) )
-            clear figh;
-        end
-        return
-    end
-end
-
-
 % Check basic inputs
 error( nargchk( 1, inf, nargin ) );
 if ~ischar( label )
@@ -271,14 +248,14 @@ f = figure( ...
     'NumberTitle', 'off' );
 % Resize
 fobj = handle( f );
-fobj.Position(3:4) = [560 42];
+fobj.Position(3:4) = [600 42];
 setappdata( fobj, 'ProgressEntries', [] );
 % Make sure we have the image
 defbarcolor = [0.8 0.0 0.1];
 barbgcol = uint8( 255*0.5*bgcol );
 setappdata( fobj, 'DefaultProgressBarBackgroundColor', barbgcol );
 setappdata( fobj, 'DefaultProgressBarColor', defbarcolor );
-setappdata( fobj, 'DefaultProgressBarSize', [350 16] );
+setappdata( fobj, 'DefaultProgressBarSize', [590 16] );
 % Setup the resize function after we've finished setting up the figure to
 % avoid excessive redraws
 fobj.ResizeFcn = @iRedraw;

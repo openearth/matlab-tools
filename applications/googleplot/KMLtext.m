@@ -214,7 +214,7 @@ output = [output '<!--############################-->\n'];
 %% openInGoogle?
 
    if OPT.openInGE
-      system(OPT.fileName);
+      system([OPT.fileName ' &']);
    end
 
 %% Output
