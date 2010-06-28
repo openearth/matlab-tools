@@ -15,14 +15,14 @@
 % TO DO  only one kml colorbar L
 
 OPT.pause = 0;
-OPT.plot  = 0;
+OPT.plot  = 1;
 OPT.kml   = 1;
 
 SET(1).vc = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc';
 SET(2).vc = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc';
 
-SET(1).vc = 'F:\checkouts\OpenEarthRawData\deltares\landboundaries\processed\northsea.nc';
-SET(2).vc = 'F:\checkouts\OpenEarthRawData\noaa\gshhs\processed\gshhs_i.nc';
+SET(1).vc = 'F:\opendap\thredds\deltares\landboundaries\northsea.nc';
+SET(2).vc = 'F:\opendap\thredds\noaa\gshhs\gshhs_i.nc';
 
 SET(1).directory = [fileparts(mfilename('fullpath')),filesep,'usergd30d98-data_centre630-270409_result\'];
 SET(1).mask      = 'result_CTDCAST*.txt';
@@ -30,7 +30,7 @@ SET(1).mask      = 'result_CTDCAST*.txt';
 SET(2).directory = [fileparts(mfilename('fullpath')),filesep,'userkc30e50-data_centre632-090210_result\'];
 SET(2).mask      = 'world*.txt';
 
-SET(1).variable  = 'P011::PSSTTS01';
+SET(1).variable  = 'P011::PSALPR02';
 SET(2).variable  = 'P011::PSSTTS01';
 
 SET(1).clim      = [5 25];
@@ -45,14 +45,15 @@ for i=1:length(SET)
    L.lon = nc_varget(SET(i).vc,'lon');
    L.lat = nc_varget(SET(i).vc,'lat');
    
+   clear D
+   
    for ifile=1:length(files);
    
       fname = files(ifile).name;
        
       set(gcf,'name',[num2str(ifile),': ',fname])
        
-      jfile = ifile;% = 1;
-   
+      jfile    = ifile;% = 1;
       D(jfile) = odvread([SET(i).directory,filesep,fname]);
        
       %odvdisp(D)
@@ -62,9 +63,9 @@ for i=1:length(SET)
 
       if OPT.plot
       if D(jfile).cast==1
-      odvplot_cast    (D(jfile),L.lon,L.lat)
+      odvplot_cast    (D(jfile),'lon',L.lon,'lat',L.lat,'variable',SET(i).variable)
       else
-      odvplot_overview(D(jfile),'lon',L.lon,'lat',L.lat);
+      odvplot_overview(D(jfile),'lon',L.lon,'lat',L.lat,'variable',SET(i).variable);
       end
       end
       
@@ -87,13 +88,13 @@ for i=1:length(SET)
    
    if OPT.kml
    fnames{end+1} = [last_subdir(SET(i).directory),'_colorbar.kml'];
-   KMLcolorbar('colorTitle',['water temperature [°C] (',SET(i).variable,')'],...
-      'fileName',fnames{end},...
-          'clim',SET(i).clim,...
-      'colorMap',jet(24));
+   KMLcolorbar('CBcolorTitle',['water temperature [°C] (',SET(i).variable,')'],...
+                 'CBfileName',fnames{end},...
+                     'CBclim',SET(i).clim,...
+                 'CBcolorMap',jet(24));
    
    KMLmerge_files('sourceFiles',fnames,'fileName',[last_subdir(SET(i).directory),'.kml']);
    end
-
+   
 end   
 

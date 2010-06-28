@@ -278,12 +278,11 @@ for ifile=1:length(OPT.files)
    nc_varput(outputfile, 'lat'          , D.data.latitude);
    nc_varput(outputfile, 'bot_depth'    , D.data.bot_depth);
 
-   for ivar=[10:2:length(D.local_name)]
-   
+   for ivar=[10:2:length(D.local_name)] % below 10 is meta-data
    data = str2num(char(D.rawdata{ivar,:}));
    
    if ~isempty(data)
-      nc_varput(outputfile, mkvar(D.local_name{ivar}), data);
+      nc_varput(outputfile, mkvar(D.local_name{ivar}), reshape(data,[1 length(data)]));
    end
    
    end

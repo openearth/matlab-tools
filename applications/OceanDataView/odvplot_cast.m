@@ -2,7 +2,8 @@ function odvplot_cast(D,varargin)
 %ODVPLOT_CAST   plot profile view (parameter,z) of ODV file read by ODVREAD (still test project)
 %
 %   D = odvread(fname)
-%   odvplot_cast(D,<coastline.lon,coastline.lat>)
+%
+%   odvplot_cast(D,<keyword,value>)
 %
 % Example plot function that shows vertical profiles of temperature, salinity, fluorescence.
 %
@@ -10,8 +11,6 @@ function odvplot_cast(D,varargin)
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
 %See also: OceanDataView
-
-error('currently not operational due to updates in odvread')
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
@@ -45,86 +44,84 @@ error('currently not operational due to updates in odvread')
 % $HeadURL
 % $Keywords:
 
-   AX = subplot_meshgrid(4,1,[.04],[.1]);
+   OPT.variable  = '';%'P011::PSALPR02'; % char or numeric: nerc vocab string (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
+   OPT.index.var = 0;
+   OPT.index.z   = 0;
+   OPT.lon       = [];
+   OPT.lat       = [];
+   OPT.clim      = [];
+   
+   if nargin==0
+       varargout = {OPT};
+       return
+   end
+   
+   [OPT, Set, Default] = setproperty(OPT, varargin);
+   
+   for i=1:length(D.sdn_standard_name)
+      if any(strfind(D.sdn_standard_name{i},OPT.variable))
+         OPT.index.var = i;
+         break
+      end
+   end
+   
+   for i=1:length(D.sdn_standard_name)
+      if any(strfind(D.sdn_standard_name{i},'PRESPS01'))
+         OPT.index.z = i;
+         break
+      end
+   end
+   
+   if OPT.index.var==0
+     error([OPT.variable,' not found.'])
+     return
+   end
+
+   nvar = 1;
+   AX = subplot_meshgrid(nvar+1,1,[.04],[.1]);
    
    if D.cast==1
+   
+   for ivar=1:nvar
+    axes(AX(ivar)); cla %subplot(1,4,1)
+       var.x = str2num(char(D.rawdata{OPT.index.var,:}));
+       var.y = str2num(char(D.rawdata{OPT.index.z  ,:}))
+       if ~isempty(var.x)
+       plot  (var.x,var.y,'.-')
+       set   (gca,'ydir','reverse')
+       xlabel([D.local_name{OPT.index.var},' [',D.local_units{OPT.index.var},']'])
+       ylabel([D.local_name{OPT.index.z  },' [',D.local_units{OPT.index.z  },']'])
+       grid on
+       hold on
+       plot(xlim,[D.data.bot_depth D.data.bot_depth],'r')
+       hold off
+       else
+       cla
+       noaxis(AX(2))
+       end
+   
+   end
 
-    axes(AX(1)); cla %subplot(1,4,1)
-       var.x = 'sea_water_temperature';
-       var.y = 'sea_water_pressure';
-       if ~isempty(D.data.(var.x))
-       plot  (D.data.(var.x),D.data.(var.y),'.-')
-       set   (gca,'ydir','reverse')
-       xlabel([D.local_name{D.index.(var.x)},' [',D.local_units{D.index.(var.x)},']'])
-       ylabel([D.local_name{D.index.(var.y)},' [',D.local_units{D.index.(var.y)},']'])
-       grid on
-       hold on
-       plot(xlim,[D.bot_depth D.bot_depth],'r')
-       hold off
-       else
-       cla
-       noaxis(AX(2))
-       end
-    
-    axes(AX(2)); cla %subplot(1,4,2)
-       var.x = 'sea_water_salinity';
-       var.y = 'sea_water_pressure';
-       if ~isempty(D.data.(var.x))
-       plot  (D.data.(var.x),D.data.(var.y),'.-')
-       xlabel([D.local_name{D.index.(var.x)},' [',D.local_units{D.index.(var.x)},']'])
-       xlim ([30.5 35.5])
-       set   (gca,'ydir','reverse')
-       set   (gca,'yticklabel',{})
-       grid on
-       hold on
-       plot(xlim,[D.bot_depth D.bot_depth],'r')
-       hold off
-       else
-       cla
-       noaxis(AX(2))
-       end
-       
-    axes(AX(3)); cla %subplot(1,4,3)
-       var.x = 'sea_water_fluorescence';
-       var.y = 'sea_water_pressure';
-       if ~isempty(D.data.(var.x))
-       plot  (D.data.(var.x),D.data.(var.y),'.-')
-       set   (gca,'ydir','reverse')
-       xlabel([D.local_name{D.index.(var.x)},' [',D.local_units{D.index.(var.x)},']'])
-       set   (gca,'yticklabel',{})
-       grid on
-       hold on
-       plot(xlim,[D.bot_depth D.bot_depth],'r')
-       hold off
-       else
-       cla
-       noaxis(AX(3))
-       end
-       
 end       
        
-    axes(AX(4)); cla %subplot(1,4,4)
+    axes(AX(nvar+1)); cla %subplot(1,4,4)
     
        plot(D.data.longitude,D.data.latitude,'ro')
        hold on
        plot(D.data.longitude,D.data.latitude,'r.')
        axis      tight
        
-       if nargin>1
-       lon = varargin{1};
-       lat = varargin{2};
-       plot(lon,lat,'k')
-       end
+       plot(OPT.lon,OPT.lat,'k')
        axislat   (52)
        grid       on
        tickmap   ('ll','texttype','text')
        box        on
        hold       off
        
-    AX(5) = axes('position',get(AX(1),'position'));
+    AX(nvar+2) = axes('position',get(AX(1),'position'));
 
-    axes(AX(5)); cla %subplot(1,4,4)
-    noaxis(AX(5))
+    axes(AX(nvar+2)); cla %subplot(1,4,4)
+    noaxis(AX(nvar+2))
        % text rather than titles per subplot, because subplots can be empty
        if D.cast
           txt = ['Cruise: ',D.data.cruise{1},...

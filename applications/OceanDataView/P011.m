@@ -23,6 +23,9 @@ function varargout = P011(varargin);
 % http://www.bodc.ac.uk/products/web_services/
 % into the directory >> fileparts(which('p011')).
 %
+% After one call, the P011 + P011 vocabs are saved as persistent
+% variables to boost performance, use munlock p011 to free ~ 10 MB memory.
+%
 % Examples:
 %
 %    L         = P011(  'read'       ,1         )
@@ -69,6 +72,9 @@ function varargout = P011(varargin);
 
 %% input
 
+persistent P011 % cache this as it takes too long to load many times
+persistent P061
+
 L                 = [];
 OPT.listReference = 'P011';
 OPT.disp          = 1;
@@ -96,10 +102,28 @@ if ~isempty(OPT.read) | isempty(L)
    
    if exist(ncfile,'file')==2
    
+      if strcmpi(OPT.listReference,'P011')
+      
+          if isempty(P011)
+          P011 = nc2struct(ncfile);
+          disp([OPT.listReference ': loaded cached ' OPT.listReference '.xml for persistent use.'])
+          end
+          L = P011;
+          
+      elseif strcmpi(OPT.listReference,'P061') 
+      
+          if isempty(P061)
+          P061 = nc2struct(ncfile);
+          disp([OPT.listReference ': loaded cached ' OPT.listReference '.xml for persistent use.'])
+          end
+          L = P061;
+      
+      else
       L = nc2struct(ncfile);
      %L = load     (matfile);
    
       disp([OPT.listReference ': loaded cached ' OPT.listReference '.xml'])
+      end
    
    else
    

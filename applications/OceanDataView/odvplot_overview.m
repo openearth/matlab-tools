@@ -1,12 +1,13 @@
 function odvplot_overview(D,varargin)
 %ODVPLOT_OVERVIEW   plot map view (lon,lat) of ODV file read by ODVREAD (still test project)
 %
-%   D = odvplot_overview(fname)
-%       odvplot_overview(D,<keyword,value>)
+%   D = odvread(fname)
 %
-% Show overview of ODV locations, ue when D.cast=0.
+%   odvplot_overview(D,<keyword,value>)
 %
-% Works when D.cast = 0;
+% Show overview of ODV locations, works when D.cast=0.
+%
+% Works only for trajectory data, i.e. when D.cast = 0;
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
 %See also: OceanDataView
@@ -42,7 +43,8 @@ function odvplot_overview(D,varargin)
 % $Revision$
 % $HeadURL
 
-   OPT.variable = 'P011::PSSTTS01'; % char or numeric: nerc vocab string (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
+   OPT.variable = ''; %'P011::PSSTTS01'; % char or numeric: nerc vocab string (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
+   OPT.index    = 0;
    OPT.lon      = [];
    OPT.lat      = [];
    OPT.clim     = [];
@@ -56,7 +58,7 @@ function odvplot_overview(D,varargin)
    
    for i=1:length(D.sdn_standard_name)
       if any(strfind(D.sdn_standard_name{i},OPT.variable))
-         OPT.variable = i;
+         OPT.index = i;
          break
       end
    end
@@ -65,7 +67,7 @@ function odvplot_overview(D,varargin)
    
     axes(AX(1)); cla %subplot(1,4,4)
     
-       if OPT.variable==0
+       if OPT.index==0
           plot (D.data.longitude,D.data.latitude,'ro')
           hold on
           plot (D.data.longitude,D.data.latitude,'r.')
@@ -73,7 +75,7 @@ function odvplot_overview(D,varargin)
           if ~isempty(OPT.clim)
           clim(OPT.clim)
           end
-          plotc(D.data.longitude,D.data.latitude,str2num(char(D.rawdata{OPT.variable,:})))
+          plotc(D.data.longitude,D.data.latitude,str2num(char(D.rawdata{OPT.index,:})))
           hold on
           colorbarwithtitle('')
        end

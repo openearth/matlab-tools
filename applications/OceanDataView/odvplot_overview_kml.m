@@ -1,12 +1,13 @@
 function odvplot_overview_kml(D,varargin)
 %ODVPLOT_OVERVIEW_KML   plots map view (lon,lat) of ODV file read by ODVREAD (still test project)
 %
-%   D = odvplot_overview_kml(fname)
-%       odvplot_overview_kml(D)
+%   D = odvread(fname)
+%
+%   odvplot_overview_kml(D,<keyword,value>)
 %
 % Show overview of ODV locations, ue when D.cast=0.
 %
-% Works when D.cast = 0;
+% Works only for trajectory data, i.e. when D.cast = 0;
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
 %See also: OceanDataView
@@ -42,11 +43,12 @@ function odvplot_overview_kml(D,varargin)
 % $Revision$
 % $HeadURL
 
-   OPT.variable      = 'P011::PSSTTS01'; % char or numeric: nerc vocab string (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
-   OPT.colorbar      = 1;
-   OPT.colormap      = @(m) jet(m);
-   OPT.fileName      = '';
-   OPT.clim          = [];
+   OPT.variable = 'P011::PSSTTS01'; % char or numeric: nerc vocab string (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
+   OPT.index    = 0;
+   OPT.colorbar = 1;
+   OPT.colormap = @(m) jet(m);
+   OPT.fileName = '';
+   OPT.clim     = [];
    
    if nargin==0
        varargout = {OPT};
@@ -57,12 +59,12 @@ function odvplot_overview_kml(D,varargin)
    
    for i=1:length(D.sdn_standard_name)
       if any(strfind(D.sdn_standard_name{i},OPT.variable))
-         OPT.variable = i;
+         OPT.index = i;
          break
       end
    end
    
-   KMLanimatedIcon(D.data.latitude,D.data.longitude,str2num(char(D.rawdata{OPT.variable,:})),...
+   KMLanimatedIcon(D.data.latitude,D.data.longitude,str2num(char(D.rawdata{OPT.index,:})),...
         'fileName',OPT.fileName,...
           'timeIn',D.data.datenum-1,...
          'timeOut',D.data.datenum+1,...
@@ -70,6 +72,6 @@ function odvplot_overview_kml(D,varargin)
      'description',['cruise: ',D.cruise,', EDMO_code:',num2str(D.EDMO_code)],...
         'colorbar',OPT.colorbar,...
             'cLim',[5 25],...
-   'colorbartitle',[D.local_name{OPT.variable},' (',D.local_units{OPT.variable},')'])
+   'colorbartitle',[D.local_name{OPT.index},' (',D.local_units{OPT.index},')'])
 
 %% EOF
