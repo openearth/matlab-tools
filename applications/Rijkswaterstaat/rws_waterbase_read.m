@@ -98,6 +98,8 @@ function varargout = rws_waterbase_read(fnames,varargin)
 %     adjusted every line. This is SLOW. Idea: to preallocate 
 %     an 11-year 10-minute time series you need: 11*366*24*6 = 579744.
 
+% TO DO perhaps regexp is faster in fgetl approach, ot textscan chunks
+
 % uses: time2datenum
 
 %% Defaults
@@ -384,6 +386,7 @@ for ifile=1:length(fnames)
       D.data.lat             = repmat(nan,[1 nt]); % 6
       D.data.epsg            = repmat(nan,[1 nt]); % 7
       D.data.z               = repmat(nan,[1 nt]); % 7
+      D.data.location        = '';
 
       nt              = 0; % number of time per location
       nloc            = 1;

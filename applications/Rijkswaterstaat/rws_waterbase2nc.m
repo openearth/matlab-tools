@@ -35,11 +35,10 @@ function rws_waterbase2nc(varargin)
 % $HeadURL$
 % $Keywords: $
 
-% TO DO: Add x,y in addition to lat,lon
-% TO DO: save mat and nc files with (i) actual start and end dates or (ii) with no dates at all, but not as currently with the time search window in the filename
-% TO DO: ... or better: remove time extension, onyl include station name
-% TO DO: add search/retrieve/discovery info to global attributes
-% TO DO: add link to site-specific waterbase url as in getWaterbaseData
+% TO DO: add link to site-specific waterbase url as called in getWaterbaseData
+% TO DO: make time dimension unlimited
+% TO DO: use single precision for parameter
+% TO DO: save meta-info properties as int8 with each number explained in an att called legend, see also CF flags
 
 %% Choose parameter
 %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table/
@@ -154,8 +153,30 @@ for ivar=[OPT.donar_wnsnum]
           if OPT.debug
             ['data > goal units = ' D.data.units, ' > ' OPT.units]
           end
-          D.data.(OPT.name) = D.data.(OPT.name).*convert_units(D.data.units,OPT.units);
-          D.data.units      = OPT.units;
+          if strcmpi(D.data.units,'graad t.o.v. kaartnoorden')
+             if strcmpi(OPT.units,'degrees_true')
+             D.data.units       = 'degrees_true';
+             else
+             error(['no conversion defined for data units:',D.data.units])
+             end
+          elseif strcmpi(D.data.units,'graden Celsius')
+             if strcmpi(    OPT.units,'degree_Celsius')
+             D.data.units           = 'degree_Celsius';
+             else
+             error(['no conversion defined for data units:',D.data.units])
+             end
+          elseif strcmpi(D.data.units,'cm t.o.v. NAP')
+             D.data.units           = 'cm';
+             D.data.(OPT.name) = D.data.(OPT.name).*convert_units(D.data.units,OPT.units);
+             D.data.units      = OPT.units;
+          elseif strcmpi(D.data.units,'cm t.o.v. Mean Sea Level')
+             D.data.units           = 'cm';
+             D.data.(OPT.name) = D.data.(OPT.name).*convert_units(D.data.units,OPT.units);
+             D.data.units      = OPT.units;
+          else
+             D.data.(OPT.name) = D.data.(OPT.name).*convert_units(D.data.units,OPT.units);
+             D.data.units      = OPT.units;
+          end
         else
           if OPT.debug
             ['data units kept = ' D.data.units]
@@ -201,7 +222,11 @@ for ivar=[OPT.donar_wnsnum]
         nc_attput(outputfile, nc_global, 'locationcode'    , D.data.locationcode);
 
         nc_attput(outputfile, nc_global, 'waarnemingssoort', D.data.waarnemingssoort);
+        if ischar(D.data.refvlk)
         nc_attput(outputfile, nc_global, 'reference_level' , D.data.refvlk);
+        else
+        nc_attput(outputfile, nc_global, 'reference_level' , str2line({D.data.refvlk},'s',';')');
+        end
         
         if isfield(D.data,'hoedanigheid')
         if  length(D.data.hoedanigheid)==1;nc_attput(outputfile, nc_global, 'hoedanigheid' , D.data.hoedanigheid);end

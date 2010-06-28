@@ -1,4 +1,4 @@
-function rws_waterbase_get_url_loop(varargin)
+function varargout = rws_waterbase_get_url_loop(varargin)
 %RWS_WATERBASE_GET_URL_LOOP   download waterbase: 1 parameter, all stations, selected time period 
 %
 % See also: <a href="http://live.waterbase.nl">live.waterbase.nl</a>,  rijkswaterstaat
@@ -36,6 +36,8 @@ function rws_waterbase_get_url_loop(varargin)
 
 %% TO DO: convert to SI units here
 %% TO DO: add option to loop entire donar_substances.csv
+%% TO DO: remove time from file name: so we can do version control
+%% TO DO: return url as argument used to get data
 
 %% Choose parameter and provide CF standard_names and units.
 %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
@@ -92,7 +94,7 @@ index = find(DONAR.donar_wnsnum==ivar);
          ~exist   ([OPT.directory_raw_old],'dir');
           disp    (['Created: ',OPT.directory_raw_old]);
           mkpath  ([OPT.directory_raw_old]);
-          movefile([OPT.directory_raw    filesep '*'],...
+          movefile([OPT.directory_raw     filesep '*' num2str(OPT.code) '*'],... % so metimes more codes end up in the same directory (1+54, 346+347, 363+364)
                    [OPT.directory_raw_old filesep]);
       end
 
@@ -118,22 +120,28 @@ index = find(DONAR.donar_wnsnum==ivar);
          disp(['FullName :',        LOC.FullName{indLoc} ])
          disp(['ID       :',        LOC.ID{indLoc} ])
          
-         OPT.filename = ...
+        [OPT.filename,url] = ...
          rws_waterbase_get_url(SUB.Code(OPT.indSub),...
                                LOC.ID{indLoc},...
                                OPT.period,...
                               [OPT.directory_raw]);
 
-%% Zip (especially useful for large sea_surface_height series)
+%% Zip (especially useful for the large sea_surface_height series)
    
          if OPT.zip
             zip   (OPT.filename,OPT.filename);
             delete(OPT.filename)
          end
          
+         % save as *.url file ?
+         
       end % for indLoc=1:length(LOC.ID)
       
 %-%end % for ialt
 end % for ivar=1:length(OPT.codes)
+
+% if nargout==1
+% varargout = {urls};
+% end
 
 %% EOF

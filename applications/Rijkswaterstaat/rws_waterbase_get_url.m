@@ -1,4 +1,4 @@
-function OutputName = rws_waterbase_get_url(varargin);
+function varargout = rws_waterbase_get_url(varargin);
 %RWS_WATERBASE_GET_URL   load data from <a href="http://live.waterbase.nl">live.waterbase.nl</a>
 %
 % Download data from the <a href="http://live.waterbase.nl">live.waterbase.nl</a> website for one specified
@@ -62,6 +62,8 @@ function OutputName = rws_waterbase_get_url(varargin);
 % 2009 jan 27: allow for argument input of all chocie, to allow for batch running [Gerben de Boer]
 % 2009 jan 27: use urlwrite for query of one location, as urlwrite often returns status=0 somehow [Gerben de Boer]
 % 2009 apr 01: added 'exact' to strmatch to prevent finding more statiosn with similar subnames (e.g. MOOK and MOOKHVN)
+
+%% TO DO: return url as argument used to get data
 
 %% Substance names
 
@@ -158,7 +160,8 @@ function OutputName = rws_waterbase_get_url(varargin);
       indName  = varargin{4};
       if exist(indName)==7
          FilePath = indName;
-         FileName = ['id',num2str(Substance.Code(indSub)),'-',Station.ID{indLoc(1)},'-',startdate,'-',enddate,'.txt'];
+        %FileName = ['id',num2str(Substance.Code(indSub)),'-',Station.ID{indLoc(1)},'-',startdate,'-',enddate,'.txt'];
+         FileName = ['id',num2str(Substance.Code(indSub)),'-',Station.ID{indLoc(1)},'.txt'];
       else
          [FilePath,FileName,EXT,VERSN] = fileparts(indName);
       end
@@ -171,7 +174,11 @@ function OutputName = rws_waterbase_get_url(varargin);
    
 %% get data = f(Substance.Code, Station.ID, startdate, enddate
 
-   OutputName = fullfile(FilePath,FileName);
+   OutputName    = fullfile(FilePath,FileName);
+   OutputNameUrl = fullfile(FilePath,[filename(FileName),'.url']);
+
+% DONE save *.url file ?
+% DONE remove query datelims from OutputName
 
 %% Directly write file returned for one location
 
@@ -201,6 +208,13 @@ function OutputName = rws_waterbase_get_url(varargin);
         close(h);
 
         return;
+      else
+      
+        fidurl = fopen(OutputNameUrl, 'w+')
+        fprintf(fidurl,'[intrnetShortcut]')
+        fprintf(fidurl,'URL=%s',urlName)
+        fclose(fidurl)
+      
       end
 
    else
@@ -217,7 +231,7 @@ function OutputName = rws_waterbase_get_url(varargin);
                 startdate '&loc=' Station.ID{indLoc(iLoc)} '&to=' enddate '&fmt=text'];
 
             disp(urlName)
-
+            
             [s status] = urlread([urlName]);
             if (status == 0)
               warndlg([OPT.baseurl,' may be offline or you are not connected to the internet','Online source not available']);
@@ -244,6 +258,12 @@ function OutputName = rws_waterbase_get_url(varargin);
          end
          close(h);
 
+   end
+   
+   if nargout==1
+   varargout = {OutputName};
+   else
+   varargout = {OutputName,urlName};
    end
 
 %% EOF
