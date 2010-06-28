@@ -194,12 +194,17 @@ function varargout = nc_cf_stationtimeseries2meta(varargin)
     A.([OPT.parameter,'_std' ]) = [files.([OPT.parameter,'_std' ])];
    end
 
+   if iscell(A.station_id)
    if isnumeric(A.station_id{1})
    A.station_id                             = num2str(cell2mat(A.station_id)');
    else
    A.station_id                             = char   (A.station_id); % cell2  char
    end
+   end
+   
+   if iscell(A.station_name)
    A.station_name                           = char   (A.station_name); % cell2  char
+   end
 
    units.filename                           = 'string';
    units.latitude                           = nc_attget(OPT.filename,OPT.lat ,'units');
