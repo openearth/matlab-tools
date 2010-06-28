@@ -60,7 +60,7 @@ OPT.starttime      = now;
 OPT.searchinterval = -12; % months
 OPT.polygon        = [];
 
-OPT = setProperty(OPT,varargin{:});
+OPT = setproperty(OPT,varargin{:});
 
 if isempty(OPT.dx)
 OPT.dx = OPT.cellsize*OPT.datathinning;

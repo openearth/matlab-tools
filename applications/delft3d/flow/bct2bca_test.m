@@ -1,10 +1,10 @@
-function testresult = bct2bca_test()
-% BCT2BCA_TEST  One line description goes here
+function bct2bca_test()
+% BCT2BCA_TEST  test script for BCT2BCA
 %  
 % More detailed description of the test goes here.
 %
 %
-%   See also 
+%   See also bca2bct bct2bca 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -49,15 +49,6 @@ function testresult = bct2bca_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
-% Publishable code that describes the test.
-
-%% $RunCode
-% Write test code here
-%BCT2BCA_TEST     test script for BCT2BCA
-%
-%See also: BCA2BCT, BCT2BCA 
-
 H.components  = {'K1','O1','P1','Q1','K2','M2','N2','S2'};
 H.latitude    = 52; % eps; %52;
 H.plot        = 0;
@@ -99,8 +90,3 @@ H.A0          = 1;
 bct2bca(['.\bct2bca_test\TMP_cas_prediction_'   ,num2str(H.latitude),'.bct'],...
         ['.\bct2bca_test\bct2bca_of_prediction_',num2str(H.latitude),'.bca'],...
         '.\bct2bca_test\bca.bnd',H);        
-                
-testresult = nan;
-%% $PublishResult
-% Publishable code that describes the test.
-

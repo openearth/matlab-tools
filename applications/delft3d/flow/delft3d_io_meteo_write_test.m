@@ -52,6 +52,22 @@ function delft3d_io_meteo_write_test()
 
 TeamCity.category('UnCategorized');
 
+%% Check wlsettings
+if ~exist('wl_grid','file') || ...
+        ~exist('vs_use','file') ||...
+        ~exist('vs_let','file') ||...
+        ~exist('vs_get','file')
+    try
+        wlsettings;
+    catch
+        if TeamCity.running
+            TeamCity.ignore('This test needs wlsettings (wl_grid, vs_use etc.)');
+            return;
+        end
+        error('This test needs wlsettings to run');
+    end
+end
+    
 %% Options
 
    OPT.tstart    = floor(now);
@@ -113,6 +129,10 @@ TeamCity.category('UnCategorized');
    quiver2(P.x,P.y,P.u,P.v,1e2,'k')
    axis equal
    axis tight
+   if exist([OPT.cd,'delft3d_io_meteo_write_test.png'],'file')
+       % avoid needing user input at build server
+       delete([OPT.cd,'delft3d_io_meteo_write_test.png']);
+   end
    print2a4([OPT.cd,'delft3d_io_meteo_write_test.png'],'v','t')
    
 %% run simulation   

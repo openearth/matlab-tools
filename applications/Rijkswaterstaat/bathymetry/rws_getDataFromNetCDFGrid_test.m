@@ -1,5 +1,4 @@
-function testResult = rws_getDataFromNetCDFGrid_test()
-warning('This function is deprecated in favour of grid_orth_getDataFromNetCDFGrid_test')
+function rws_getDataFromNetCDFGrid_test()
 % RWS_GETDATAFROMNETCDFGRID_TEST  test for rws_getdatafromnetcdfgrid
 %  
 % %See also: rws_getDataFromNetCDFGrid
@@ -50,8 +49,7 @@ warning('This function is deprecated in favour of grid_orth_getDataFromNetCDFGri
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = getDataFromNetCDFGrid)
-% Publishable code that describes the test.
+warning('This function is deprecated in favour of grid_orth_getDataFromNetCDFGrid_test')
 
 % plot landboundary
 figure(10);clf;axis equal;box on;hold on
@@ -74,14 +72,8 @@ xlabel('x-coordinate [m]')
 ylabel('y-coordinate [m]')
 title('Testing getDataFromNetCDFGrid.m on Delflandsekust')
 
-%% $RunCode
 % get data within that polygon from NetCDF file
 url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/vanoordboskalis/delflandsekust/delflandsekust.nc';
 [X, Y, Z, T] = rws_getDataFromNetCDFGrid('ncfile', url, 'starttime', datenum([2009 03 10]), 'searchwindow', -10, 'polygon', poly);
 
-testResult = nan;
-
-%% $PublishResult
-% Publishable code that describes the test.
-% add the data to the previous plot
 surf(X,Y,Z); shading interp;view(2);

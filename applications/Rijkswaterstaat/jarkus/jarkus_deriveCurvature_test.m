@@ -79,6 +79,11 @@ function [curvatures radii relativeAngle distances] = jarkus_deriveCurvature_tes
 % $HeadURL$
 % $Keywords: $
 
+if TeamCity.running
+    TeamCity.ignore('WIP: jarkus_deriveCurvature is deprecated, use jarkus_curvature and jarkus_transects');
+    return;
+end
+
 %% settings
 
 OPT = struct( ...

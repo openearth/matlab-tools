@@ -196,7 +196,7 @@ elseif type == 2
         else
             d.datatypeinfo  = datatype;
         end
-        ind             = find(strcmp(d.datatypeinfo,datatypes.grid.names));
+        ind             = find(strcmpi(d.datatypeinfo,datatypes.grid.names));
         if isempty(ind)
             datatypes.grid.names
             error(['Please use correct name of datatype'])
@@ -222,12 +222,14 @@ else
     errordlg('Select an area first')
 end
 
-if exist('OPT') 
-    d.datatype = OPT.datatype;
-    d.thinning = OPT.thinning;
-    d.timewindow = OPT.timewindow;
-    d.inputyears = OPT.inputyears;
-    d.min_coverage = OPT.min_coverage;
-    d.type = OPT.type;
+if exist('OPT','var') 
+    props = {'datatype','thinning','timewindow','inputyears','min_coverage','type'};
+    for iprop = 1:length(props)
+        try
+            d.(props{iprop}) = OPT.(props{iprop});
+        catch
+            % Forget it.
+        end
+    end
 end
 

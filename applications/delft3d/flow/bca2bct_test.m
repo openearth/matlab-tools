@@ -1,4 +1,4 @@
-function testresult = bca2bct_test()
+function bca2bct_test()
 % BCA2BCT_TEST  test script for bca2bct
 %  
 % %See also: BCA2BCT, BCT2BCA
@@ -49,11 +49,6 @@ function testresult = bca2bct_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = bca2bct)
-% Publishable code that describes the test.
-
-%% $RunCode
-
 H.period      = datenum(1999,05,06,0,[180:60:206040],0);
 H.refdate     = datenum(1999,05,06);
 H.latitude    = 52;
@@ -71,8 +66,3 @@ bca2bct(['.\bct2bca_test\bct2bca_',         num2str(H.latitude),'.bca'],...
 '.\bct2bca_test\bca.bnd',H.period,...
 H.ncomponents,...
 H.refdate,'latitude',H.latitude);
-
-testresult = nan;
-
-%% $PublishResult
-% Publishable code that describes the test.

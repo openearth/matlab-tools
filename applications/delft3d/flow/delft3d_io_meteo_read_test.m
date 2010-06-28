@@ -50,6 +50,22 @@ function delft3d_io_meteo_read_test()
 
 TeamCity.category('UnCategorized');
 
+%% Check wlsettings
+if ~exist('wl_grid','file') || ...
+        ~exist('vs_use','file') ||...
+        ~exist('vs_let','file') ||...
+        ~exist('vs_get','file')
+    try
+        wlsettings;
+    catch
+        if TeamCity.running
+            TeamCity.ignore('This test needs wlsettings (wl_grid, vs_use etc.)');
+            return;
+        end
+        error('This test needs wlsettings to run');
+    end
+end
+
 %% Options
 
    OPT.cd        = [fileparts(mfilename('fullpath')),filesep];

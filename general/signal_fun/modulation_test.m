@@ -77,7 +77,7 @@ hold     on
 plot    (time,M2','g'    ,'displayname','M2');
 plot    (time,S2,'b'     ,'displayname','S2');
 plot    (time,M2 + S2,'k','displayname','M2 + S2');
-timeaxis(datenum(1990,5,1:2:32),[],'dd-mmm');
+timeaxis(datenum(1990,5,1:2:32),'fmt','dd-mmm');
 grid     on
 legend   show
 xlabel  (num2str(unique(year(xlim))))

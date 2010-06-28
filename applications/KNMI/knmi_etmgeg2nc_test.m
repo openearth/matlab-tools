@@ -1,4 +1,4 @@
-function testResult = knmi_etmgeg2nc_test()
+function knmi_etmgeg2nc_test()
 % KNMI_ETMGEG2NC_TEST  viual test for knmi_etmgeg2nc
 %
 %
@@ -47,17 +47,14 @@ function testResult = knmi_etmgeg2nc_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = KNMI_ETMGEG2NC unit test)
-% Publishable code that describes the test.
+TeamCity.ignore('Test requires user input');
 
-%% $RunCode
+locbase = 'http://opendap.deltares.nl/thredds/dodsC/opendap/';
 
-locbase = 'F:\checkouts\';
+OPT.directory_nc                           = [locbase,'knmi/etmgeg/'];
 
-OPT.directory_nc                           = [locbase,'\OpenEarthRawData\KNMI\etmgeg\processed\'];
-
-fname     = [OPT.directory_nc,'\etmgeg_391.nc'];
-fname     = [OPT.directory_nc,'\etmgeg_210.nc'];
+fname     = [OPT.directory_nc,'etmgeg_391.nc'];
+fname     = [OPT.directory_nc,'etmgeg_210.nc'];
 
 D         = nc2struct(fname);
 D.datenum = nc_cf_time(fname);
@@ -83,8 +80,3 @@ for ifld = 1:length(fldnames)
     end
     
 end
-
-testResult = nan;
-
-%% $PublishResult
-% Publishable code that describes the test.
