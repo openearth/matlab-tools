@@ -58,40 +58,41 @@ function varargout = nc_multibeam_from_asc(varargin)
 % $Keywords: $
 
 %%
-OPT.block_size         = 3e6;
-OPT.make               = true;
-OPT.delete_existing    = true;
+OPT.block_size          = 3e6;
+OPT.make                = true;
+OPT.delete_existing     = true;
 
-OPT.raw_path           = [];
-OPT.raw_extension      = '*.asc';
-OPT.netcdf_path        = [];
-OPT.cache_path         = fullfile(tempdir,'nc_asc');
-OPT.zip                = true;          % are the files zipped?
-OPT.zip_extension      = '*.zip';       % are the files zipped?
+OPT.raw_path            = [];
+OPT.raw_extension       = '*.asc';
+OPT.netcdf_path         = [];
+OPT.cache_path          = fullfile(tempdir,'nc_asc');
+OPT.zip                 = true;          % are the files zipped?
+OPT.zip_extension       = '*.zip';       % are the files zipped?
 
-OPT.datatype           = 'multibeam';
-OPT.EPSGcode           = 28992;
+OPT.datatype            = 'multibeam';
+OPT.EPSGcode            = 28992;
+OPT.dateFcn             = @(s) datenum(monthstr_mmm_dutch2eng(s(1:8)),'yyyy mmm'); % how to extract the date from the filename
 
-OPT.mapsizex           = 5000;          % size of fixed map in x-direction
-OPT.mapsizey           = 5000;          % size of fixed map in y-direction
-OPT.gridsizex          = 5;             % x grid resolution
-OPT.gridsizey          = 5;             % y grid resolution
-OPT.xoffset            = 0;             % zero point of x grid
-OPT.yoffset            = 0;             % zero point of y grid
-OPT.zfactor            = 1;             % scale z by this facto
+OPT.mapsizex            = 5000;          % size of fixed map in x-direction
+OPT.mapsizey            = 5000;          % size of fixed map in y-direction
+OPT.gridsizex           = 5;             % x grid resolution
+OPT.gridsizey           = 5;             % y grid resolution
+OPT.xoffset             = 0;             % zero point of x grid
+OPT.yoffset             = 0;             % zero point of y grid
+OPT.zfactor             = 1;             % scale z by this factor 
 
-OPT.Conventions        = 'CF-1.4';
-OPT.CF_featureType     = 'grid';
-OPT.title              = 'Multibeam';
-OPT.institution        = ' ';
-OPT.source             = 'Topography measured with multibeam on project survey vessel';
-OPT.history            = 'Created with: $Id$ $HeadURL$';
-OPT.references         = 'No reference material available';
-OPT.comment            = 'Data surveyed by survey department for ...';
-OPT.email              = 'e@mail.com';
-OPT.version            = 'Trial';
-OPT.terms_for_use      = 'These data is for internal use by ... staff only!';
-OPT.disclaimer         = 'These data are made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
+OPT.Conventions         = 'CF-1.4';
+OPT.CF_featureType      = 'grid';
+OPT.title               = 'Multibeam';
+OPT.institution         = ' ';
+OPT.source              = 'Topography measured with multibeam on project survey vessel';
+OPT.history             = 'Created with: $Id$ $HeadURL$';
+OPT.references          = 'No reference material available';
+OPT.comment             = 'Data surveyed by survey department for ...';
+OPT.email               = 'e@mail.com';
+OPT.version             = 'Trial';
+OPT.terms_for_use       = 'These data is for internal use by ... staff only!';
+OPT.disclaimer          = 'These data are made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
 
 if nargin==0
     varargout = {OPT};
@@ -192,9 +193,7 @@ for jj = 1:length(fns)
         %% read data
         
         % process time
-        timestr = fns_unzipped(ii).name(1:8);
-        timestr = strrep(timestr,'mei','may');
-        time    = datenum(timestr,'yyyy mmm') - datenum(1970,1,1);
+        time    = OPT.OPT.dateFcn(fns_unzipped(ii).name) - datenum(1970,1,1);
         
         if OPT.zip
             fid      = fopen(fullfile(OPT.cache_path,fns_unzipped(ii).name));

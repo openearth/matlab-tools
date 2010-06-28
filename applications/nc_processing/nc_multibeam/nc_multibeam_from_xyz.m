@@ -77,29 +77,30 @@ OPT.yid                 = 2;
 OPT.zid                 = 3;
 OPT.gridFcn             = @(X,Y,Z,XI,YI) griddata_remap(X,Y,Z,XI,YI,'errorCheck',true);
 
-OPT.datatype           = 'multibeam';
-OPT.EPSGcode           = 28992;
+OPT.datatype            = 'multibeam';
+OPT.EPSGcode            = 28992;
+OPT.dateFcn             = @(s) datenum(monthstr_mmm_dutch2eng(s(1:8)),'yyyy-mmm'); % how to extract the date from the filename
 
-OPT.mapsizex           = 5000;          % size of fixed map in x-direction
-OPT.mapsizey           = 5000;          % size of fixed map in y-direction
-OPT.gridsizex          = 5;             % x grid resolution
-OPT.gridsizey          = 5;             % y grid resolution
-OPT.xoffset            = 0;             % zero point of x grid
-OPT.yoffset            = 0;             % zero point of y grid
-OPT.zfactor            = 1;             % scale z by this facto
+OPT.mapsizex            = 5000;          % size of fixed map in x-direction
+OPT.mapsizey            = 5000;          % size of fixed map in y-direction
+OPT.gridsizex           = 5;             % x grid resolution
+OPT.gridsizey           = 5;             % y grid resolution
+OPT.xoffset             = 0;             % zero point of x grid
+OPT.yoffset             = 0;             % zero point of y grid
+OPT.zfactor             = 1;             % scale z by this facto
 
-OPT.Conventions        = 'CF-1.4';
-OPT.CF_featureType     = 'grid';
-OPT.title              = 'Multibeam';
-OPT.institution        = ' ';
-OPT.source             = 'Topography measured with multibeam on project survey vessel';
-OPT.history            = 'Created with: $Id$ $HeadURL$';
-OPT.references         = 'No reference material available';
-OPT.comment            = 'Data surveyed by survey department for ...';
-OPT.email              = 'e@mail.com';
-OPT.version            = 'Trial';
-OPT.terms_for_use      = 'These data is for internal use by ... staff only!';
-OPT.disclaimer         = 'These data are made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
+OPT.Conventions         = 'CF-1.4';
+OPT.CF_featureType      = 'grid';
+OPT.title               = 'Multibeam';
+OPT.institution         = ' ';
+OPT.source              = 'Topography measured with multibeam on project survey vessel';
+OPT.history             = 'Created with: $Id$ $HeadURL$';
+OPT.references          = 'No reference material available';
+OPT.comment             = 'Data surveyed by survey department for ...';
+OPT.email               = 'e@mail.com';
+OPT.version             = 'Trial';
+OPT.terms_for_use       = 'These data is for internal use by ... staff only!';
+OPT.disclaimer          = 'These data are made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
 
 
 if nargin==0
@@ -200,8 +201,8 @@ for jj = 1:length(fns)
         %% read data
         
         % process time
-        timestr = fns_unzipped(ii).name(1:8);
-        time    = datenum(str2double(timestr(1:4)),str2double(timestr(5:6)),str2double(timestr(7:8))) - datenum(1970,1,1);
+        
+        time    = OPT.dateFcn(fns_unzipped(ii).name) - datenum(1970,1,1);
 
         if OPT.zip
             fid      = fopen(fullfile(OPT.cache_path,fns_unzipped(ii).name));
@@ -236,8 +237,8 @@ for jj = 1:length(fns)
             miny    = min(D{OPT.yid});
             maxx    = max(D{OPT.xid});
             maxy    = max(D{OPT.yid});
-            minx    = floor(minx/OPT.mapsizex)*OPT.mapsizex - OPT.xoffset;
-            miny    = floor(miny/OPT.mapsizey)*OPT.mapsizey - OPT.yoffset;
+            minx    = floor(minx/OPT.mapsizex)*OPT.mapsizex + OPT.xoffset;
+            miny    = floor(miny/OPT.mapsizey)*OPT.mapsizey + OPT.yoffset;
             
             %% loop through data
             
@@ -247,36 +248,39 @@ for jj = 1:length(fns)
                     ids =  inpolygon(D{OPT.xid},D{OPT.yid},...
                         [x0 x0+OPT.mapsizex x0+OPT.mapsizex x0 x0],...
                         [y0 y0 y0+OPT.mapsizey y0+OPT.mapsizey y0]);
-                    x   =  D{OPT.xid}(ids);
-                    y   =  D{OPT.yid}(ids);
-                    z   =  D{OPT.zid}(ids);
-                   
-                    % generate X,Y,Z
-                    x_vector = x0:OPT.gridsizex:x0+OPT.mapsizex;
-                    y_vector = y0:OPT.gridsizey:y0+OPT.mapsizey;
-                    [X,Y]    = meshgrid(x_vector,y_vector);
                     
-                    % place xyz data on XY matrices
-                    Z = OPT.gridFcn(x,y,z,X,Y);
-                    
-                    if sum(~isnan(Z(:)))>=3
-                        Z = flipud(Z);
-                        Y = flipud(Y);
-                        % if a non trivial Z matrix is returned write the data
-                        % to a nc file
-                        ncfile = fullfile(OPT.netcdf_path,sprintf('%8.2f_%8.2f_%s_data.nc',x0,y0,OPT.datatype));
-                        if ~exist(ncfile, 'file')
-                            nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
+                    if sum(ids)>0
+                        x   =  D{OPT.xid}(ids);
+                        y   =  D{OPT.yid}(ids);
+                        z   =  D{OPT.zid}(ids)*OPT.zfactor;
+                        
+                        % generate X,Y,Z
+                        x_vector = x0:OPT.gridsizex:x0+OPT.mapsizex;
+                        y_vector = y0:OPT.gridsizey:y0+OPT.mapsizey;
+                        [X,Y]    = meshgrid(x_vector,y_vector);
+                        
+                        % place xyz data on XY matrices
+                        Z = OPT.gridFcn(x,y,z,X,Y);
+                        
+                        if sum(~isnan(Z(:)))>=3
+                            Z = flipud(Z);
+                            Y = flipud(Y);
+                            % if a non trivial Z matrix is returned write the data
+                            % to a nc file
+                            ncfile = fullfile(OPT.netcdf_path,sprintf('%8.2f_%8.2f_%s_data.nc',x0,y0,OPT.datatype));
+                            if ~exist(ncfile, 'file')
+                                nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
+                            end
+                            nc_multibeam_putDataInNCfile(OPT,ncfile,time,Z')
                         end
-                        nc_multibeam_putDataInNCfile(OPT,ncfile,time,Z')
+                        
+                        %  waitbar stuff
+                        WB.numelDone               = length(x);
+                        WB.bytesWritten            = WB.bytesWritten + WB.numelDone/WB.numel*(WB.bytesRead-WB.bytesDoneOfCurrentFile);
+                        multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+WB.bytesRead+WB.bytesWritten)/WB.bytesToDo)
+                        multiWaitbar('nc_writing',WB.bytesWritten/fns_unzipped(ii).bytes,...
+                            'label',sprintf('%8.2f_%8.2f_%s_data.nc',x0,y0,OPT.datatype))
                     end
-                    
-                    %  waitbar stuff
-                    WB.numelDone               = length(x);
-                    WB.bytesWritten            = WB.bytesWritten + WB.numelDone/WB.numel*(WB.bytesRead-WB.bytesDoneOfCurrentFile);
-                    multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+WB.bytesRead+WB.bytesWritten)/WB.bytesToDo)
-                    multiWaitbar('nc_writing',WB.bytesWritten/fns_unzipped(ii).bytes,...
-                        'label',sprintf('%8.2f_%8.2f_%s_data.nc',x0,y0,OPT.datatype))
                 end
             end
             WB.bytesWritten = WB.bytesRead;
