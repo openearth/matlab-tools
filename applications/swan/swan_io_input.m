@@ -194,31 +194,31 @@ end
                   DAT.project.nr     = rec(quotes(3)+1:quotes(4)-1);
                   quotes             = strfind(rec,'''');
                end
-               
+
                %% tackle also cases where lines end with a continuation mark (&_)
                if length(quotes) > 4
                quotes = quotes(5:end);
-               else
-               rec                = fgetlines_no_comment_line(fid);
-               quotes             = strfind(rec,'''');
+               %else
+               %rec                = fgetlines_no_comment_line(fid) % sometimes titles are absent
+               %quotes             = strfind(rec,'''');
                end
                DAT.project.title1 = rec(quotes(1)+1:quotes(2)-1);
                
                %% tackle also cases where lines end with a continuation mark (&_)
                if length(quotes) > 2
                quotes = quotes(3:end);
-               else
-               rec                = fgetlines_no_comment_line(fid);
-               quotes             = strfind(rec,'''');
+               %else
+               %rec                = fgetlines_no_comment_line(fid);
+               %quotes             = strfind(rec,'''');
                end
                DAT.project.title2 = rec(quotes(1)+1:quotes(2)-1);
                
                %% tackle also cases where lines end with a continuation mark (&_)
                if length(quotes) > 2
                quotes = quotes(3:end);
-               else
-               rec                = fgetlines_no_comment_line(fid);
-               quotes             = strfind(rec,'''');
+               %else
+               %rec                = fgetlines_no_comment_line(fid);
+               %quotes             = strfind(rec,'''');
                end
                DAT.project.title3 = rec(quotes(1)+1:quotes(2)-1);
                
