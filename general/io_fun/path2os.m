@@ -19,10 +19,6 @@ function string = path2os(string,input)
 % that might have arisen when merging
 % pathnames like in d:\temp\\foo\\
 %
-% G.J. de Boer, TU Delft, 
-% Environmental FLuid Mechanics
-% Feb. 2005
-%
 %See also: MKDIR,  EXIST, MKPATH,     COPYFILE, CD, LAST_SUBDIR,
 %          DELETE, DIR,   FILEATTRIB, MOVEFILE, RMDIR.
 
@@ -79,7 +75,6 @@ function string = path2os(string,input)
    end
 
 %% Replace all slashes 
-%--------------------------
 
    string = strrep(string,'/',slash);
 
@@ -87,14 +82,13 @@ function string = path2os(string,input)
 
 
 %% Remove redundant fileseps
-%--------------------------
 
    string1 = '';
 
    while ~strcmp(string,string1)
 
-      string1 = strrep(string,[slash, slash],slash);
-      string  = string1;
+      string1 = string;
+      string  = strrep(string,[slash, slash],slash);
 
    end
    
