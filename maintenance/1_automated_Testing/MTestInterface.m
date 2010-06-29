@@ -34,7 +34,9 @@ classdef MTestInterface < handle
         JTreeModel
         JTreeRootNode
         JTestNodes
-        
+        JTreeAllNodes
+        AllNodesExpandedFlag
+                        
         % LowerPanel
         JTextComponent
         
@@ -47,6 +49,7 @@ classdef MTestInterface < handle
     end
     properties (Hidden = true)
         PropertyChangedListeners = [];
+        BuildingTree = false;
     end
     
     methods
@@ -78,34 +81,34 @@ classdef MTestInterface < handle
                 'Label','File');
             this.MenuFileClose = uimenu(this.MenuFile,...
                 'Label','&Close',...
-                'Callback',{@MTestInterface.menufileclose_callback});
+                'Callback',@this.menufileclose_callback);
             this.MenuSession = uimenu(this.HMainFigure,...
                 'Label','Session');
             this.MenuSessionAddTest = uimenu(this.MenuSession,...
                 'Label','Add Single Test',...
-                'Callback',{@MTestInterface.menusessionaddtest_callback});
+                'Callback',@this.menusessionaddtest_callback);
             this.MenuSessionSearchTestsAdd = uimenu(this.MenuSession,...
                 'Label','Search tests and add to session',...
-                'Callback',{@MTestInterface.menusessionsearchtest_callback,'add'});
+                'Callback',{@this.menusessionsearchtest_callback,'add'});
             this.MenuSessionSearchTestsReplace = uimenu(this.MenuSession,...
                 'Label','Search tests and replace current session',...
-                'Callback',{@MTestInterface.menusessionsearchtest_callback,'remove'});
+                'Callback',{@this.menusessionsearchtest_callback,'remove'});
             this.MenuSessionRemoveTest = uimenu(this.MenuSession,...
                 'Label','Remove Selected Tests',...
                 'Separator','on',...
-                'Callback',{@MTestInterface.menusessionremovetest_callback});
+                'Callback',@this.menusessionremovetest_callback);
             this.MenuSessionclearTest = uimenu(this.MenuSession,...
                 'Label','Clear Session',...
-                'Callback',{@MTestInterface.menusessioncleartest_callback});
+                'Callback',@this.menusessioncleartest_callback);
             
             this.MenuRun = uimenu(this.HMainFigure,...
                 'Label','Run');
             this.MenuRunSelected = uimenu(this.MenuRun,...
                 'Label','Run selected test',...
-                'Callback',{});
+                'Callback',{@this.run});
             this.MenuRunAll = uimenu(this.MenuRun,...
                 'Label','Run all tests',...
-                'Callback',{@MTestInterface.runall});
+                'Callback',@this.runall);
             
             %% CReate Toolbar
             this.HToolBar = uitoolbar(this.HMainFigure);
@@ -115,14 +118,14 @@ classdef MTestInterface < handle
             this.HToolBarRun = uipushtool(this.HToolBar,...
                 'CData',icon,...
                 'ToolTip','Run selected test',...
-                'ClickedCallback',{@MTestInterface.run});
+                'ClickedCallback',@this.run);
             [X map] = imread(which('RunAll.gif'));
             icon = ind2rgb(X,map);
             icon(icon==0) = nan;
             this.HToolBarRun = uipushtool(this.HToolBar,...
                 'CData',icon,...
                 'ToolTip','Run all tests',...
-                'ClickedCallback',{@MTestInterface.runall});
+                'ClickedCallback',@this.runall);
             
             %% Create dropdown box in toolbar
             drawnow;
@@ -130,7 +133,7 @@ classdef MTestInterface < handle
             if ~isempty(jToolbar)
                 choices = {'Show by <directory structure>','Show by <category>'};
                 jCombo = javax.swing.JComboBox(choices);
-                set(jCombo, 'ActionPerformedCallback', {@MTestInterface.buildtrees},...
+                set(jCombo, 'ActionPerformedCallback', @this.buildtree,...
                     'UserData',this);
                 jToolbar(1).addSeparator;
                 jToolbar(1).add(jCombo,4);
@@ -158,7 +161,10 @@ classdef MTestInterface < handle
             this.JTreePanel = javax.swing.JPanel;
             this.JTreePanel.setLayout(BorderLayout);
             this.JTree = javax.swing.JTree;
-            set(this.JTree,'MouseClickedCallback',{@MTestInterface.mouseclickedontree_callback});
+            set(this.JTree,...
+                'MouseClickedCallback',@this.mouseclickedontree_callback,...
+                'TreeExpandedCallback',@this.treeexpanded_callback,...
+                'TreeCollapsedCallback',@this.treecollapsed_callback);
             this.JScrollPane = JScrollPane(this.JTree); %#ok<CPROP,PROP>
             this.JTreePanel.add(this.JScrollPane);
             this.JTree.setRootVisible(false);
@@ -196,24 +202,16 @@ classdef MTestInterface < handle
                 'Callback','disp(''haal weg!!!!'');');
         end
     end
-    methods (Hidden = true)
-        function testschanged(obj,varargin)
-           return; 
-        end
-    end
-    methods (Static = true)
-        function run(varargin)
-            this = guidata(varargin{1});
-            
+    methods
+        function run(this,varargin)
             selectionId = false(size(this.MTestRunner.Tests));
             
             selectedPaths = this.JTree.getSelectionPaths;
             selectedNodes = [];
             for ipaths = 1:length(selectedPaths)
-                newSelectedNodes = getLeafNodesRecursive(selectedPaths(ipaths).getLastPathComponent);
+                newSelectedNodes = getleafnodesrecursive(selectedPaths(ipaths).getLastPathComponent);
                 selectedNodes = cat(1,selectedNodes,newSelectedNodes);
             end
-            
             for itests = 1:length(this.JTestNodes)
                 for inode = 1:length(selectedNodes)
                     if selectedNodes(inode) == this.JTestNodes{itests}
@@ -222,63 +220,49 @@ classdef MTestInterface < handle
                     end
                 end
             end
-            selectionId = find(selectionId);
-            
-            if isempty(selectionId)
-                return;
-            end
-            
+            this.runtests(selectionId);
+        end
+        function runall(this,varargin)
+            selectionId = true(size(this.MTestRunner.Tests));
+            this.runtests(selectionId);
+        end
+        function runtests(this,selectionId)
             this.JProgressBar.setVisible(1);
-            set(this.JProgressBar, 'Maximum',numel(selectionId), 'Value',0);
+            set(this.JProgressBar, 'Maximum',sum(selectionId), 'Value',0);
             for itests = 1:length(selectionId)
-                this.JProgressBar.setString(['Running: ' this.MTestRunner.Tests(selectionId(itests)).Name ' (' num2str(round(((itests-1)/length(selectionId))*100))  '%)']);
-                this.MTestRunner.Tests(selectionId(itests)).run;
-                set(this.JProgressBar, 'Value',itests);
-            end
-            this.JProgressBar.setString('Idle...');
-            set(this.JProgressBar, 'Value',0);
-        end
-        function runall(varargin)
-            this = guidata(varargin{1});
-            this.JProgressBar.setVisible(1);
-            set(this.JProgressBar, 'Maximum',length(this.MTestRunner.Tests), 'Value',0);
-            for itests = 1:length(this.MTestRunner.Tests)
-                this.JProgressBar.setString(['Running: ' this.MTestRunner.Tests(itests).Name ' (' num2str(round(((itests-1)/length(this.MTestRunner.Tests))*100))  '%)']);
-                this.MTestRunner.Tests(itests).run;
-                set(this.JProgressBar, 'Value',itests);
-            end
-            this.JProgressBar.setString('Idle...');
-            set(this.JProgressBar, 'Value',0);
-        end
-        function gathertests(varargin)
-            this = guidata(varargin{1});
-            % contruct nodes in loop
-            this.MTestRunner.cataloguetests;
-        end
-        function buildtrees(varargin)
-            if isa(varargin{1},'MTestInterface');
-                this = varargin{1};
-            else
-                this = get(varargin{1},'UserData');
-                if any(strfind(get(varargin{1},'SelectedItem'),'categ'));
-                    this.ViewType = 'Category';
-                else
-                    this.ViewType = 'Directory';
+                if selectionId(itests)
+                    this.JProgressBar.setString(['Running: ' this.MTestRunner.Tests(itests).Name ' (' num2str(round((sum(selectionId(1:itests-1))/sum(selectionId))*100))  '%)']);
+                    this.MTestRunner.Tests(itests).run;
+                    set(this.JProgressBar, 'Value',sum(selectionId(1:itests)));
                 end
             end
+            this.JProgressBar.setString('Idle...');
+            set(this.JProgressBar, 'Value',0);
+        end
+        function buildtree(this,varargin)
+            this.BuildingTree = true;
             
             import javax.swing.tree.*
             import javax.swing.*
             import java.awt.*;
             
+            if nargin > 1 && any(strfind(get(varargin{1},'SelectedItem'),'categ'));
+                this.ViewType = 'Category';
+            else
+                this.ViewType = 'Directory';
+            end
+                
             %% Make root for Category tree
             rootNode = DefaultMutableTreeNode('RootNode');
-
+            
+            oldNodes = this.JTreeAllNodes;
+            this.JTreeAllNodes = {};
             this.JTestNodes = {};
+            
             for itests = 1:length(this.MTestRunner.Tests);
                 %% make treenode for test
                 newNode = DefaultMutableTreeNode(this.MTestRunner.Tests(itests).Name);
-                this.JTestNodes{itests,1} = newNode;
+                this.JTestNodes{itests} = newNode;
                 
                 baseNode = rootNode;
                 switch this.ViewType
@@ -294,33 +278,53 @@ classdef MTestInterface < handle
                                     new = DefaultMutableTreeNode(testPath{ip});
                                     position = baseNode.getChildCount;
                                     this.JTreeModel.insertNodeInto(new,baseNode,position);
+                                    
+                                    this.JTreeAllNodes{end+1,1} = new;
+                                    this.JTreeAllNodes{end,2} = fullfile(testPath{1:ip});
+                                    this.JTreeAllNodes{end,3} = true;
+                                    if ~isempty(oldNodes) && ...
+                                            any(strcmp(oldNodes(:,2),fullfile(testPath{1:ip})))
+                                        this.JTreeAllNodes{end,3} = oldNodes{strcmp(oldNodes(:,2),fullfile(testPath{1:ip})),3};
+                                    end
+                                    
                                     baseNode = new;
                                     continue;
                                 end
                             else
                                 new = DefaultMutableTreeNode(testPath{ip});
                                 baseNode.add(new);
+                                this.JTreeAllNodes{end+1,1} = new;
+                                this.JTreeAllNodes{end,2} = fullfile(testPath{1:ip});
+                                this.JTreeAllNodes{end,3} = true;
+                                if ~isempty(oldNodes) && ...
+                                        any(strcmp(oldNodes(:,2),fullfile(testPath{1:ip})))
+                                    this.JTreeAllNodes{end,3} = oldNodes{strcmp(oldNodes(:,2),fullfile(testPath{1:ip})),3};
+                                end
                                 baseNode = new;
                             end
                         end
                         position = baseNode.getChildCount;
-                        this.JTreeModel.insertNodeInto(newNode,baseNode,position);
-                
                     case 'Category'
                         %% place in category tree
-                        baseNode = rootNode;
                         if isempty(this.MTestRunner.Tests(itests).Category)
                             this.MTestRunner.Tests(itests).Category = 'UnCategorized';
                         end
-                        [tf catNode] = getchild(baseNode,this.MTestRunner.Tests(itests).Category);
+                        [tf baseNode] = getchild(rootNode,this.MTestRunner.Tests(itests).Category);
                         if ~tf
-                            catNode = DefaultMutableTreeNode(this.MTestRunner.Tests(itests).Category);
+                            baseNode = DefaultMutableTreeNode(this.MTestRunner.Tests(itests).Category);
                             position = baseNode.getChildCount;
-                            this.JTreeModel.insertNodeInto(catNode,baseNode,position);
+                            this.JTreeModel.insertNodeInto(baseNode,rootNode,position);
+                            this.JTreeAllNodes{end+1,1} = baseNode;
+                            this.JTreeAllNodes{end,2} = this.MTestRunner.Tests(itests).Category;
+                            this.JTreeAllNodes{end,3} = true;
+                            if ~isempty(oldNodes) && ...
+                                    any(strcmp(oldNodes(:,2),this.MTestRunner.Tests(itests).Category))
+                                this.JTreeAllNodes{end,3} = oldNodes{strcmp(oldNodes(:,2),this.MTestRunner.Tests(itests).Category),3};
+                            end
                         end
-                        position = catNode.getChildCount;
-                        this.JTreeModel.insertNodeInto(newNode,catNode,position);
+                        position = baseNode.getChildCount;
                 end
+                this.JTreeModel.insertNodeInto(newNode,baseNode,position);
             end
             
             %% Repaint tree
@@ -334,19 +338,48 @@ classdef MTestInterface < handle
             this.JTreeModel.setRoot(this.JTreeRootNode);
             
             import javax.swing.tree.*
-            for i=1:length(this.JTestNodes)
-                 path = this.JTestNodes{i}.getPath;
-                 this.JTree.scrollPathToVisible(TreePath(path));
+            if isempty(this.JTreeAllNodes)
+                return;
             end
+            
+            allnodenames = cellfun(@node2str,this.JTreeAllNodes(:,1),'UniformOutput',false);
+            for i=1:size(this.JTreeAllNodes,1)
+                if this.JTreeAllNodes{i,3} && ~this.JTreeAllNodes{i,1}.isLeaf
+                    leaf = this.JTreeAllNodes{i,1};
+                    parentnodes = cellfun(@node2str,getparentsrecursive(leaf),'UniformOutput',false);
+                    if any(~[this.JTreeAllNodes{ismember(allnodenames,parentnodes),3}])
+                        continue;
+                    end
+                    if this.JTreeAllNodes{i,1}.getChildCount > 0
+                        leaf = this.JTreeAllNodes{i,1}.getChildAt(0);
+                    end
+                    path = leaf.getPath;
+                    this.JTree.scrollPathToVisible(TreePath(path));
+                end
+            end
+            this.BuildingTree = false;
         end
     end
-    methods (Hidden = true, Static = true)
-        function menufileclose_callback(varargin)
-            this = guidata(varargin{1});
+    methods (Hidden = true)
+        function treecollapsed_callback(this,varargin)
+            allnodenames = cellfun(@node2str,this.JTreeAllNodes(:,1),'UniformOutput',false);
+            pt = varargin{2}.getPath;
+            node = pt.getLastPathComponent;
+            this.JTreeAllNodes{ismember(allnodenames,node2str(node)),3} = false;
+        end
+        function treeexpanded_callback(this,varargin)
+            if this.BuildingTree
+                return
+            end
+            allnodenames = cellfun(@node2str,this.JTreeAllNodes(:,1),'UniformOutput',false);
+            pt = varargin{2}.getPath;
+            node = pt.getLastPathComponent;
+            this.JTreeAllNodes{ismember(allnodenames,node2str(node)),3} = true;
+        end
+        function menufileclose_callback(this,varargin)
             delete(this.HMainFigure);
         end
-        function menusessionaddtest_callback(varargin)
-            this = guidata(varargin{1});
+        function menusessionaddtest_callback(this,varargin)
             [filename, pathname] = uigetfile('*_test.m', 'Pick a test definition');
             if isequal(filename,0) || isequal(pathname,0)
                return; 
@@ -356,19 +389,23 @@ classdef MTestInterface < handle
             catch %#ok<CTCH>
                 return;
             end
-            if ~isempty(newTest)
-                this.MTestRunner.Tests(end+1) = newTest;
+            if isempty(newTest)
+                return;
             end
-            MTestInterface.buildtrees(this);
+            this.MTestRunner.Tests(end+1) = newTest;
+            
+            [nms uid] = unique({this.MTestRunner.Tests.FileName});
+            this.MTestRunner.Tests = this.MTestRunner.Tests(uid);
+            
+            this.buildtree;
         end
-        function menusessionremovetest_callback(varargin)
-            this = guidata(varargin{1});
+        function menusessionremovetest_callback(this,varargin)
             selectionId = false(size(this.MTestRunner.Tests));
             
             selectedPaths = this.JTree.getSelectionPaths;
             selectedNodes = [];
             for ipaths = 1:length(selectedPaths)
-                newSelectedNodes = getLeafNodesRecursive(selectedPaths(ipaths).getLastPathComponent);
+                newSelectedNodes = getleafnodesrecursive(selectedPaths(ipaths).getLastPathComponent);
                 selectedNodes = cat(1,selectedNodes,newSelectedNodes);
             end
             
@@ -380,17 +417,14 @@ classdef MTestInterface < handle
                     end
                 end
             end
-            this.JTestNodes(selectionId) = [];
             this.MTestRunner.Tests(selectionId) = [];
             
-            MTestInterface.buildtrees(this);
+            this.buildtree;
         end
-        function menusessionsearchtest_callback(varargin)
-            this = guidata(varargin{1});
-            
+        function menusessionsearchtest_callback(this,varargin)
             %% Ask directory
             dir = uigetdir(cd,'Select a directory:');
-            if isempty(dir)
+            if isempty(dir) || ~ischar(dir)
                 return;
             end
             
@@ -404,26 +438,29 @@ classdef MTestInterface < handle
             this.MTestRunner.cataloguetests;
             
             if nargin>2 && strcmp(varargin{3},'add')
-                this.MTestRunner.Tests = sort(cat(2,this.MTestRunner.Tests,oldTests));
+                this.MTestRunner.Tests = cat(2,oldTests,this.MTestRunner.Tests);
             end
+            [nms uid] = unique({this.MTestRunner.Tests.FileName});
+            this.MTestRunner.Tests = this.MTestRunner.Tests(uid);
             
-            MTestInterface.buildtrees(this);
+            this.buildtree;
         end
-        function menusessioncleartest_callback(varargin)
-            this = guidata(varargin{1});
+        function menusessioncleartest_callback(this,varargin)
             this.MTestRunner.Tests = MTest;
             this.MTestRunner.Tests(1) = [];
             
-            MTestInterface.buildtrees(this);
+            this.buildtree;
         end
-        function mouseclickedontree_callback(varargin)
+        function mouseclickedontree_callback(this,varargin)
             if varargin{end}.getButton ~= 3
                 return;
             end
-            this = get(varargin{1},'UserData');
             set(this.HContextMenu,...
                 'Position',[0 this.JSplitPanel.getHeight] + [varargin{2}.getX, -varargin{2}.getY],...
                 'Visible','on');
+        end
+        function testschanged(this,varargin)
+           return; 
         end
     end
 end
@@ -441,15 +478,28 @@ for i=1:childCount
     end
 end
 end
-
-function newSelectedNodes = getLeafNodesRecursive(rootNode)
+function newSelectedNodes = getleafnodesrecursive(rootNode)
 newSelectedNodes = [];
 if rootNode.isLeaf
     newSelectedNodes = rootNode;
     return;
 end
 for ichild = 0:rootNode.getChildCount-1
-    newNodes = getLeafNodesRecursive(rootNode.getChildAt(ichild));
+    newNodes = getleafnodesrecursive(rootNode.getChildAt(ichild));
     newSelectedNodes = [newSelectedNodes,newNodes]; %#ok<AGROW>
+end
+end
+function str = node2str(node)
+if node.isRoot
+    str = char(node.toString);
+else
+    str = [char(node.getParent.toString) '_' char(node.toString)];
+end
+end
+function parentnodes = getparentsrecursive(node)
+parent = node.getParent;
+parentnodes = {};
+if ~isempty(parent)
+    parentnodes = cat(1,{parent},getparentsrecursive(parent));
 end
 end
