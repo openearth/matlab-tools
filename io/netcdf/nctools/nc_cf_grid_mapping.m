@@ -3,12 +3,12 @@ function S = nc_cf_grid_mapping(epsg,varargin)
 %
 %    S = nc_cf_grid_mapping(epsg)
 %
-% where struct S can be used as the set of attributes of the 
-% grid_mapping variable as described in
+% where struct S can be used as the set of attributes 
+% of the grid_mapping variable as described in
 % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#grid-mappings-and-projections
 % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#appendix-grid-mappings
 %
-
+%
 % Example:
 %
 %    S = nc_cf_grid_mapping(23031) % 'ED50 / UTM zone 31N'
@@ -70,7 +70,6 @@ end
 % . stereographic
 % x transverse_mercator
 % . vertical_perspective
-
 
 if ~strcmpi(log.CS1.type,'geographic 2D'); % e.g. ED50 4230, WGS84 4326
 
