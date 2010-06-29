@@ -1,0 +1,65 @@
+netCDF F:\checkouts\OpenEarthTools\matlab\io\netcdf\nctools\nc_cf_stationTimeSeries_write_tutorial.nc { 
+
+dimensions:
+	time = 6 ;
+	string = 16 ;
+	location = 1 ;
+
+
+variables:
+	// Preference 'PRESERVE_FVD':  false,
+	// dimensions consistent with ncBrowse, not with native MATLAB netcdf package.
+	double time(time), shape = [6]
+		time:long_name = "time" 
+		time:units = "days since 1970-01-01 00:00:00 +01:00" 
+		time:standard_name = "time" 
+		time:actual_range = 11323 13149 
+	double lon(location), shape = [1]
+		lon:long_name = "longitude" 
+		lon:units = "degrees_east" 
+		lon:standard_name = "longitude" 
+		lon:actual_range = 4.90889 4.90889 
+		lon:coordinates = "lat lon" 
+		lon:grid_mapping = "wgs84" 
+	double lat(location), shape = [1]
+		lat:long_name = "latitude" 
+		lat:units = "degrees_north" 
+		lat:standard_name = "latitude" 
+		lat:actual_range = 52.3795 52.3795 
+		lat:coordinates = "lat lon" 
+		lat:grid_mapping = "wgs84" 
+	int32 wgs84([]), shape = [1]
+		wgs84:name = "WGS 84" 
+		wgs84:epsg = 4326 
+		wgs84:grid_mapping_name = "latitude_longitude" 
+		wgs84:semi_major_axis = 6.37814e+006 
+		wgs84:semi_minor_axis = 6.35675e+006 
+		wgs84:inverse_flattening = 298.257 
+		wgs84:comment = "value is equal to EPSG code" 
+	char station_id(location,string), shape = [1 16]
+		station_id:long_name = "station identification code" 
+		station_id:standard_name = "station_id" 
+	single windspeed(location,time), shape = [1 6]
+		windspeed:long_name = "wind speed " 
+		windspeed:units = "m/s" 
+		windspeed:_FillValue = NaN 
+		windspeed:actual_range = 1 6 
+		windspeed:coordinates = "lat lon" 
+		windspeed:grid_mapping = "epsg" 
+		windspeed:standard_name = "wind_speed" 
+
+
+//global attributes:
+		:title = "" 
+		:institution = "" 
+		:source = "" 
+		:history = "tranformation to netCDF: $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/io/netcdf/nctools/nc_cf_stationTimeSeries_write_tutorial.m $" 
+		:references = "" 
+		:email = "" 
+		:comment = "" 
+		:version = "" 
+		:Conventions = "CF-1.4" 
+		:CF:featureType = "Grid" 
+		:terms_for_use = "These data can be used freely for research purposes provided that the following source is acknowledged: " 
+		:disclaimer = "This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." 
+}

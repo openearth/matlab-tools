@@ -1,0 +1,82 @@
+netCDF F:\checkouts\OpenEarthTools\matlab\io\netcdf\nctools\nc_cf_grid_write_x_y_orthogonal_tutorial.nc { 
+
+dimensions:
+	x = 3 ;
+	y = 5 ;
+
+
+variables:
+	// Preference 'PRESERVE_FVD':  false,
+	// dimensions consistent with ncBrowse, not with native MATLAB netcdf package.
+	single x(x), shape = [3]
+		x:long_name = "x Rijksdriehoek" 
+		x:units = "m" 
+		x:standard_name = "projection_x_coordinate" 
+		x:actual_range = 400000 600000 
+		x:grid_mapping = "epsg" 
+	single y(y), shape = [5]
+		y:long_name = "y Rijksdriehoek" 
+		y:units = "m" 
+		y:standard_name = "projection_y_coordinate" 
+		y:actual_range = 5.5e+006 5.9e+006 
+		y:grid_mapping = "epsg" 
+	int32 epsg([]), shape = [1]
+		epsg:name = "WGS 84 / UTM zone 31N" 
+		epsg:epsg = 32631 
+		epsg:epsg_name = "Transverse Mercator" 
+		epsg:grid_mapping_name = "transverse_mercator" 
+		epsg:semi_major_axis = 6.37814e+006 
+		epsg:semi_minor_axis = 6.35675e+006 
+		epsg:inverse_flattening = 298.257 
+		epsg:latitude_of_projection_origin = 0 
+		epsg:longitude_of_projection_origin = 3 
+		epsg:false_easting = 500000 
+		epsg:false_northing = 0 
+		epsg:scale_factor_at_projection_origin = 0.9996 
+		epsg:comment = "value is equal to EPSG code" 
+	single lon(x,y), shape = [3 5]
+		lon:long_name = "longitude" 
+		lon:units = "degrees_east" 
+		lon:standard_name = "longitude" 
+		lon:actual_range = 1.50155 4.49845 
+		lon:coordinates = "lat lon" 
+		lon:grid_mapping = "wgs84" 
+	single lat(x,y), shape = [3 5]
+		lat:long_name = "latitude" 
+		lat:units = "degrees_north" 
+		lat:standard_name = "latitude" 
+		lat:actual_range = 49.6443 53.2493 
+		lat:coordinates = "lat lon" 
+		lat:grid_mapping = "wgs84" 
+	int32 wgs84([]), shape = [1]
+		wgs84:name = "WGS 84" 
+		wgs84:epsg = 4326 
+		wgs84:grid_mapping_name = "latitude_longitude" 
+		wgs84:semi_major_axis = 6.37814e+006 
+		wgs84:semi_minor_axis = 6.35675e+006 
+		wgs84:inverse_flattening = 298.257 
+		wgs84:comment = "value is equal to EPSG code" 
+	single depth(x,y), shape = [3 5]
+		depth:long_name = "bottom depth" 
+		depth:units = "m" 
+		depth:_FillValue = NaN 
+		depth:actual_range = 1 15 
+		depth:coordinates = "lat lon" 
+		depth:grid_mapping = "epsg" 
+		depth:standard_name = "sea_floor_depth_below_geoid" 
+
+
+//global attributes:
+		:title = "" 
+		:institution = "" 
+		:source = "" 
+		:history = "tranformation to netCDF: $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/io/netcdf/nctools/nc_cf_grid_write_x_y_orthogonal_tutorial.m $" 
+		:references = "" 
+		:email = "" 
+		:comment = "" 
+		:version = "" 
+		:Conventions = "CF-1.4" 
+		:CF:featureType = "Grid" 
+		:terms_for_use = "These data can be used freely for research purposes provided that the following source is acknowledged: " 
+		:disclaimer = "This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." 
+}

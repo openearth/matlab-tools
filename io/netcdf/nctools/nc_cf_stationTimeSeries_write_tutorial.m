@@ -16,7 +16,7 @@
 
 % This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a> under the <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> license.
 
-%% Define meta-info: global: x,y sticks > lat,lon matrices
+%% Define meta-info: global
 
    OPT.title                  = '';
    OPT.institution            = '';
@@ -35,10 +35,6 @@
    OPT.lat                    = 52.37952805;
    OPT.station_name           = 'Hoek van Holland';
    OPT.wgs84.code             = 4326;
-   OPT.wgs84.name             = 'WGS 84';
-   OPT.wgs84.semi_major_axis  = 6378137.0;
-   OPT.wgs84.semi_minor_axis  = 6356752.314247833;
-   OPT.wgs84.inv_flattening   = 298.2572236;
 
 %% Define variable (define some data)
 
@@ -154,18 +150,8 @@
    nc(ifld).Name         = 'wgs84'; % preferred
    nc(ifld).Nctype       = nc_int;
    nc(ifld).Dimension    = {};
-   nc(ifld).Attribute = struct('Name', ...
-    {'name',...
-     'semi_major_axis', ...
-     'semi_minor_axis', ...
-     'inverse_flattening', ...
-     'comment'}, ...
-     'Value', ...
-     {OPT.wgs84.name,...
-      OPT.wgs84.semi_major_axis, ...
-      OPT.wgs84.semi_minor_axis, ...
-      OPT.wgs84.inv_flattening,  ...
-     'value is equal to EPSG code'});
+   nc(ifld).Attribute    = nc_cf_grid_mapping(OPT.wgs84.code);
+   var2evalstr(nc(ifld).Attribute)
 
 %% 3.e Station number/name/code: proposed on:
 %      https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
@@ -212,6 +198,9 @@
 %% 6   Check file summary
    
    nc_dump(ncfile);
+   fid = fopen(fullfile(fileparts(mfilename('fullpath')),[mfilename,'.cdl']),'w');
+   nc_dump(ncfile,fid);
+   fclose(fid)
 
 %% 7.a Load the data: using the variable names from nc_dump
 
