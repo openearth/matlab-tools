@@ -9,10 +9,12 @@ function str = fprinteol(varargin)
 %
 % where fid is a file indentifier as returned by FOPEN,
 % where OperationSystem is a string with value
-% * 'u<nix>'  (default)
-% * 'l<inux>' (default)
+% * 'u<nix>'
+%   'l<inux>' (default)
 % * 'd<os>'
-% * 'w<indows>'
+%   'w<indows>'
+%   'p<c>'
+% * 'm<ac>'
 %
 %See also: FOPEN, FPRINTF, FCLOSE
 
@@ -20,7 +22,7 @@ function str = fprinteol(varargin)
 %   Copyright (C) 2006 Delft University of Technology
 %       Gerben J. de Boer
 %
-%       g.j.deboer@tudelft.nl	
+%       g.j.deboer@tudelft.nl	 
 %
 %       Fluid Mechanics Section
 %       Faculty of Civil Engineering and Geosciences
@@ -59,21 +61,25 @@ if nargout==1
       OS = varargin{1};
    end
     fid = [];
-       if strcmp(lower(OS(1)),'u');str = sprintf('\n');
-   elseif strcmp(lower(OS(1)),'l');str = sprintf('\n');
-   elseif strcmp(lower(OS(1)),'w');str = sprintf('\r\n');
-   elseif strcmp(lower(OS(1)),'d');str = sprintf('\r\n');
-       end 
+       if strcmpi(OS(1),'u');str = sprintf('\n');
+   elseif strcmpi(OS(1),'l');str = sprintf('\n');
+   elseif strcmpi(OS(1),'w');str = sprintf('\r\n');
+   elseif strcmpi(OS(1),'d');str = sprintf('\r\n');
+   elseif strcmpi(OS(1),'p');str = sprintf('\r\n');
+   elseif strcmpi(OS(1),'m');str = sprintf('\r');
+   end 
 else
     fid = varargin{1};
    if nargin==2
       OS = varargin{2};
    end
-       if strcmp(lower(OS(1)),'u');fprintf(fid,'\n');
-   elseif strcmp(lower(OS(1)),'l');fprintf(fid,'\n');
-   elseif strcmp(lower(OS(1)),'w');fprintf(fid,'\r\n');
-   elseif strcmp(lower(OS(1)),'d');fprintf(fid,'\r\n');
-       end 
+       if strcmpi(OS(1),'u');fprintf(fid,'\n');
+   elseif strcmpi(OS(1),'l');fprintf(fid,'\n');
+   elseif strcmpi(OS(1),'w');fprintf(fid,'\r\n');
+   elseif strcmpi(OS(1),'d');fprintf(fid,'\r\n');
+   elseif strcmpi(OS(1),'p');fprintf(fid,'\r\n');
+   elseif strcmpi(OS(1),'m');fprintf(fid,'\r');
+   end 
 end
 
 %% EOF
