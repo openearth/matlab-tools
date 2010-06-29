@@ -80,7 +80,7 @@ tc = TeamCity;
 tc.WorkDirectory = tempdir;
 tc.TeamCityRunning = false;
 txt = evalc('TeamCity.postmessage(''testTeamCityMessage'',''opt1'',''arg1'')');
-assert(any(strfind(txt,'TeamCity:')),'TeamCity message was not posted to command window');
+assert(isempty(txt),'There should be no message to the command window');
 
 tc.TeamCityRunning = true;
 txt = evalc('TeamCity.postmessage(''testTeamCityMessage'',''opt1'',''arg1'')');
@@ -97,20 +97,19 @@ mt.Name = 'test';
 tc = TeamCity;
 tc.CurrentTest = mt;
 tc.TeamCityRunning = false;
-clear mt tc
+clear tc
 
-[txt out] = evalc('TeamCity.ignore(''test ignore'');');
+txt = evalc('TeamCity.ignore(''test ignore'');');
 
-assert(~isempty(txt),'TeamCity should post ignore message to command window');
-assert(out==false,'Output argument should be false');
+assert(~isempty(txt),'TeamCity should post an ignore message to command window');
+assert(mt.Ignore,'Test should be ignored by teamcity');
 
 tc = TeamCity;
 tc.TeamCityRunning = true;
-[txt out] = evalc('TeamCity.ignore(''test ignore'');');
-assert(isempty(txt),'TeamCity should not post ignore message to command window when running');
+txt = evalc('TeamCity.ignore(''test ignore'');');
+assert(~isempty(txt),'TeamCity should post ignore message to command window when running');
 assert(exist(fullfile(tc.WorkDirectory,'teamcitymessage.matlab'),'file')==2,'Teamcity message file was not created');
 delete(fullfile(tc.WorkDirectory,'teamcitymessage.matlab'));
-assert(out,'Output argument should be true');
 end
 
 function teamcity_category_test()

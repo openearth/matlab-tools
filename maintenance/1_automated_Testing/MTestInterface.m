@@ -212,7 +212,9 @@ classdef MTestInterface < handle
             this.JTextPane.setContentType('text/html');
             this.JTextPane.setEditable(false);
             this.JTextPane.setText('<h1>MTest</h1><p>Add a test and run</p>');
-                        
+            hjTextpane = handle(this.JTextPane,'CallbackProperties');
+            set(hjTextpane,'HyperlinkUpdateCallback',@MTestInterface.textpanelinkfunction);
+            
             jScrollPane = javax.swing.JScrollPane(this.JTextPane);
             
             jTextPanel = javax.swing.JPanel;
@@ -516,27 +518,28 @@ classdef MTestInterface < handle
                     end
                     node2Display = pt.getLastPathComponent.getFirstLeaf;
                     selectionId = get(node2Display,'UserData');
+                    stackTrace = this.MTestRunner.Tests(selectionId).StackTrace;
+                    stackTrace = strrep(stackTrace,[char(10),' '],[char(10),repmat('&nbsp',1,20)]);
                     if this.MTestRunner.Tests(selectionId).TestResult
                         this.JTextPane.setBackground(java.awt.Color(0.8,1,0.8));
                         str = ['<h1>' this.MTestRunner.Tests(selectionId).Name '</h1>',...
-                                'Test went well!'];
+                            '<br />',...
+                            '<code>',...
+                                strrep(stackTrace,char(10),'<br />'),...
+                            '</code>'];
                     else
-                        stackTrace = this.MTestRunner.Tests(selectionId).StackTrace;
                         if isempty(stackTrace)
                             % did not run yet, construct string
                             str = ['<h1>' this.MTestRunner.Tests(selectionId).Name '</h1>',...
                                 'Did not run yet, please run the test first'];
                             this.JTextPane.setBackground(java.awt.Color(0.8, 0.8, 0.8));
                         else
-                            % Remove hyperlinks from messages
-                            id1 = unique(cat(2,strfind(stackTrace,'<a href'),strfind(stackTrace,'</a')));
-                            id2 = strfind(stackTrace,'>');
-                            for ii = length(id1):-1:1
-                                stackTrace(id1(ii):min(id2(id2>id1(ii)))) = [];
-                            end
                             % construct string
                             str = ['<h1>' this.MTestRunner.Tests(selectionId).Name '</h1>',...
-                                strrep(stackTrace,char(10),'<br />')];
+                                '<br />',...
+                                '<code>',...
+                                strrep(stackTrace,char(10),'<br />'),...
+                                '</code>'];
                             this.JTextPane.setBackground(java.awt.Color(1, 0.7, 0.7));
                         end
                     end
@@ -551,6 +554,20 @@ classdef MTestInterface < handle
 %         function testschanged(this,varargin)
 %            return; 
 %         end
+    end
+    methods (Hidden = true , Static = true)
+        function textpanelinkfunction(varargin)
+            eventData = varargin{2};
+            description = char(eventData.getDescription); % URL string
+            switch char(eventData.getEventType)
+                case char(eventData.getEventType.ENTERED)
+                    return;
+                case char(eventData.getEventType.EXITED)
+                    return;
+                case char(eventData.getEventType.ACTIVATED)
+                    eval(description(min(strfind(description,':'))+1:end));
+            end
+        end
     end
 end
 
