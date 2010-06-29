@@ -59,7 +59,7 @@ classdef MTestInterface < handle
         HContextMenuClearSession
     end
     properties (Hidden = true)
-        PropertyChangedListeners = [];
+%         PropertyChangedListeners = [];
         BuildingTree = false;
     end
     
@@ -82,10 +82,10 @@ classdef MTestInterface < handle
             tests(1)=[];
             this.MTestRunner.Tests = tests;
             
-            this.PropertyChangedListeners = addlistener(...
-                this.MTestRunner, ...
-                'Tests', ...
-                'PostSet', @this.testschanged);
+%             this.PropertyChangedListeners = addlistener(...
+%                 this.MTestRunner, ...
+%                 'Tests', ...
+%                 'PostSet', @this.testschanged);
             
             %% Create Menu items
             this.MenuFile = uimenu(this.HMainFigure,...
@@ -517,7 +517,7 @@ classdef MTestInterface < handle
                     node2Display = pt.getLastPathComponent.getFirstLeaf;
                     selectionId = get(node2Display,'UserData');
                     if this.MTestRunner.Tests(selectionId).TestResult
-                        this.JTextPane.setBackground(java.awt.Color.green);
+                        this.JTextPane.setBackground(java.awt.Color(0.8,1,0.8));
                         str = ['<h1>' this.MTestRunner.Tests(selectionId).Name '</h1>',...
                                 'Test went well!'];
                     else
@@ -526,7 +526,7 @@ classdef MTestInterface < handle
                             % did not run yet, construct string
                             str = ['<h1>' this.MTestRunner.Tests(selectionId).Name '</h1>',...
                                 'Did not run yet, please run the test first'];
-                            this.JTextPane.setBackground(java.awt.Color.gray);
+                            this.JTextPane.setBackground(java.awt.Color(0.8, 0.8, 0.8));
                         else
                             % Remove hyperlinks from messages
                             id1 = unique(cat(2,strfind(stackTrace,'<a href'),strfind(stackTrace,'</a')));
@@ -537,7 +537,7 @@ classdef MTestInterface < handle
                             % construct string
                             str = ['<h1>' this.MTestRunner.Tests(selectionId).Name '</h1>',...
                                 strrep(stackTrace,char(10),'<br />')];
-                            this.JTextPane.setBackground(java.awt.Color.red);
+                            this.JTextPane.setBackground(java.awt.Color(1, 0.7, 0.7));
                         end
                     end
                     this.JTextPane.setText(str);
@@ -548,9 +548,9 @@ classdef MTestInterface < handle
                         'Visible','on');
             end
         end
-        function testschanged(this,varargin)
-           return; 
-        end
+%         function testschanged(this,varargin)
+%            return; 
+%         end
     end
 end
 
