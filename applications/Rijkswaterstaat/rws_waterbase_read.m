@@ -22,14 +22,17 @@ function varargout = rws_waterbase_read(fnames,varargin)
 %  * 'xscale','yscale':         real value. x and y fields can optionally be divided by 100 
 %                               so they are  in SI units (meters etc.). (default all scales 1).
 %  * 'method':                  'textread' (default) or 'fgetl'.
-%          'textread':          is used by default, which is perfect for relatively small files
-%                               (up to tens of Mb's). But NOTE that loading a large text file with 
+%          number               default: byte size at which to switch to fgetl method (default 40e6)
+%         'textread':           method perfect for relatively small files (< tens of Mb's). 
+%                               But NOTE that loading a large text file (O 100 Mb) with 
 %                               textread requires an exceptional amount of memory (e.g ~ 1.3 Gb of 
-%                               memory for 150 MB file). With textread all meta-data vectors are read.
-%             'fgetl':          is very fast and uses no more memory then needed. However, with 
+%                               memory for a 150 MB file). With textread all meta-data vectors are read.
+%         'fgetl':              fast that uses no more memory than needed. However, with 
 %                               fgetl only 6 columns are read (datenum,waarde,x,y,epsg,z). With
 %                               fgetl the other meta-data are ONLY read for the first location.
-% LIMITATIONS: with method 'textread' RWS_WATERBASE_READ cannot handle lines with empty values as:
+% LIMITATIONS: 
+% * with method 'fgetl' not all meta-info is read
+% * with method 'textread' RWS_WATERBASE_READ cannot handle lines with empty values as:
 %
 %      Maasmond;Debiet in m3/s in oppervlaktewater;;;;Geen data beschikbaar/No data available;;9;9;9;9;9;9;9;9;9;9;9,9,9
 %
@@ -41,10 +44,10 @@ function varargout = rws_waterbase_read(fnames,varargin)
 %    * 7415 RD    (x  ,y  ) [cm] (East, North) 
 %
 %   See web : <a href="http://www.epsg.org/guides/">www.epsg.org</a>, <a href="http://www.waterbase.nl"    >www.waterbase.nl</a>
-%   See also: LOAD, XLSREAD, getWaterbaseData
+%   See also: LOAD, XLSREAD, rijkswaterstaat
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2006 Delft University of Technology
+%   Copyright (C) 2006-2010 Delft University of Technology
 %       Gerben J. de Boer
 %
 %       g.j.deboer@tudelft.nl	
@@ -81,22 +84,8 @@ function varargout = rws_waterbase_read(fnames,varargin)
 % 2006 Feb    : first version [Gerben J de Boer]
 % 2009 apr 21 : fixed error that swapped [lon,lat] for EPSG codes 4230 and 4326 [Gerben J de Boer]
 % 2009 may 03 : updated commetns to reflect matlab code-cells
-% 2009 may 03 : used setproperty now (for whoch I ahd to delete scale keyword)
-
-%%  Superseded keywords with ntmax=Inf
-%   * 'preallocate' = integer value (only for method = 'fgetl')
-%     The method fgetl is not vectorized, and is therefore exceptionally slow 
-%     for large data sets. But, it requires significantly less memory than 
-%     textread. If you set fgetl to Inf, RWS_WATERBASE_READ, first scrolls the entire 
-%     file to count the number of lines, and then reads the file again with 
-%     just a little bit over-preallocation with the # of header lines (default).
-%   * ntmax, (default Inf for method='fgetl')
-%     preallocate is the maximum number of timesteps per location. Setting 
-%     this equal to or larger than the number of timesteps, considerably 
-%     speeds up. Any excessive number of  allocated times is removed at the 
-%     end. When a too small number is passed, the arrays are dynamically
-%     adjusted every line. This is SLOW. Idea: to preallocate 
-%     an 11-year 10-minute time series you need: 11*366*24*6 = 579744.
+% 2009 may 03 : used setproperty now (for which I ahd to delete scale keyword)
+% 2010 jun 29 : made method automatic based on file size
 
 % TO DO perhaps regexp is faster in fgetl approach, ot textscan chunks
 
@@ -109,7 +98,7 @@ function varargout = rws_waterbase_read(fnames,varargin)
    OPT.fieldnamescale         = 1;
    
    OPT.fieldname              = 'waarde';
-   OPT.method                 = 'textread';
+   OPT.method                 = 40e6; %'textread';
    OPT.preallocate            = Inf; %11*366*24*6; % 11 years every 10 minute for method = 'fgetl'
    OPT.headerlines            = 'auto'; %changed from 4 to 5 after inclusion of EPSG names of coordinates and is 7 on 2007 june 27th
    OPT.start_last_header_line = 'locatie;waarnemingssoort;datum;tijd';
@@ -131,7 +120,26 @@ for ifile=1:length(fnames)
 
    %% Original file info
  
+   %% Automatic load method detection
+
       D = dir(fname);
+      if isnumeric(OPT.method)
+          if D.bytes < OPT.method
+             OPT.method = 'textread';
+          else
+             OPT.method = 'fgetl';
+          end
+      else
+        if    strcmpi(OPT.method,'fgetl')
+          if D.bytes < 50e6
+            warning('for small files method=textread is recommended to obtain all meta-info.');
+          end
+        elseif strcmpi(OPT.method,'textread')
+          if D.bytes > 50e6
+            warning('for large files method=fgetl is recommended to prevent excess memory use.');
+          end
+        end
+      end
       
       if isempty(D)
          error([fname,' not found'])
@@ -386,7 +394,7 @@ for ifile=1:length(fnames)
       D.data.lat             = repmat(nan,[1 nt]); % 6
       D.data.epsg            = repmat(nan,[1 nt]); % 7
       D.data.z               = repmat(nan,[1 nt]); % 7
-      D.data.location        = '';
+      D.data.location        = ''; % needed in case file is empty
 
       nt              = 0; % number of time per location
       nloc            = 1;
