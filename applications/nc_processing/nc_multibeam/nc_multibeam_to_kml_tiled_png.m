@@ -177,7 +177,7 @@ for ii = 1:length(fns);
     url = fullfile(OPT.inputDir,fns(ii).name); %#ok<*ASGLU>
     
     if ~isempty(OPT.referenceDir)
-        url_reference = fullfile(OPT.referenceDir,); %#ok<*ASGLU>
+        url_reference = fullfile(OPT.referenceDir,fns(ii).name); %#ok<*ASGLU>
         if ~exist(url_reference,'file')
             disp([fns(ii).name ' could not be found in directory ' OPT.referenceDir])
         end
@@ -185,14 +185,16 @@ for ii = 1:length(fns);
         
         % check if lat and lon are identical in the source and the
         % reference plane
-        lon1  = nc_varget(url, 'lon',0,-1,25);
-        lat1  = nc_varget(url, 'lat',0,-1,25);
+        lonInfo = nc_getvarinfo(url, 'lon');
         
-        lon2  = nc_varget(url_reference, 'lon',0,-1,25);
-        lat2  = nc_varget(url_reference, 'lat',0,-1,25);
+        
+        lon1  = nc_varget(url          , 'lon',[0 0],[10 10],floor(lonInfo.Size/10));
+        lat1  = nc_varget(url          , 'lat',[0 0],[10 10],floor(lonInfo.Size/10));
+        lon2  = nc_varget(url_reference, 'lon',[0 0],[10 10],floor(lonInfo.Size/10));
+        lat2  = nc_varget(url_reference, 'lat',[0 0],[10 10],floor(lonInfo.Size/10));
         
         if ~(isequalwithequalnans (lon1,lon2) && isequalwithequalnans (lat1,lat2))
-            error('the refrence plane is not equal to the source plane')
+            error('the reference plane is not equal to the source plane')
         end
     else
         z_reference = 0;
