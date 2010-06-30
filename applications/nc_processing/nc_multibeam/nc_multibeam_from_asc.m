@@ -193,7 +193,7 @@ for jj = 1:length(fns)
         %% read data
         
         % process time
-        time    = OPT.OPT.dateFcn(fns_unzipped(ii).name) - datenum(1970,1,1);
+        time    = OPT.dateFcn(fns_unzipped(ii).name) - datenum(1970,1,1);
         
         if OPT.zip
             fid      = fopen(fullfile(OPT.cache_path,fns_unzipped(ii).name));

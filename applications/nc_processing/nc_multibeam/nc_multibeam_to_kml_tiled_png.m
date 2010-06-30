@@ -15,14 +15,14 @@ function varargout = nc_multibeam_to_kml_tiled_png(varargin)
 %   Example
 %   nc_multibeam_to_kml_tiled_png
 %
-%   See also 
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 <COMPANY>
 %       Thijs
 %
-%       <EMAIL>	
+%       <EMAIL>
 %
 %       <ADDRESS>
 %
@@ -41,9 +41,9 @@ function varargout = nc_multibeam_to_kml_tiled_png(varargin)
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -60,6 +60,7 @@ function varargout = nc_multibeam_to_kml_tiled_png(varargin)
 %%
 OPT.inputNc                 = [];
 OPT.inputDir                = [];
+OPT.referenceDir            = [];
 OPT.outputDir               = [];
 OPT.outputKml               = [];
 OPT.deleteExistingOutputDir = false;
@@ -152,7 +153,7 @@ colormap(OPT.colorMap(OPT.colorSteps));clim(OPT.clim*OPT.lightAdjust);
 
 %% create kml directory if it does not yet exist
 if exist(fullfile(OPT.outputDir,OPT.outputKml),'dir')
-    if OPT.deleteExistingOutputDir 
+    if OPT.deleteExistingOutputDir
         rmdir(fullfile(OPT.outputDir,OPT.outputKml), 's')
     else
         error('the output directory is not empy, but ''deleteExistingOutputDir'' is set to false')
@@ -168,12 +169,36 @@ for ii = 1:length(fns)
     WB.bytesToDo = WB.bytesToDo+fns(ii).bytes;
 end
 
-%% pre-allocate    
+%% pre-allocate
 [minlat,minlon,maxlat,maxlon] = deal(nan);
 
-%% MAKE TILES in this loop      
+%% MAKE TILES in this loop
 for ii = 1:length(fns);
     url = fullfile(OPT.inputDir,fns(ii).name); %#ok<*ASGLU>
+    
+    if ~isempty(OPT.referenceDir)
+        url_reference = fullfile(OPT.referenceDir,); %#ok<*ASGLU>
+        if ~exist(url_reference,'file')
+            disp([fns(ii).name ' could not be found in directory ' OPT.referenceDir])
+        end
+        z_reference = nc_varget(url_reference,'z',[ 0, 0, 0],[-1,-1,-1]);
+        
+        % check if lat and lon are identical in the source and the
+        % reference plane
+        lon1  = nc_varget(url, 'lon',0,-1,25);
+        lat1  = nc_varget(url, 'lat',0,-1,25);
+        
+        lon2  = nc_varget(url_reference, 'lon',0,-1,25);
+        lat2  = nc_varget(url_reference, 'lat',0,-1,25);
+        
+        if ~(isequalwithequalnans (lon1,lon2) && isequalwithequalnans (lat1,lat2))
+            error('the refrence plane is not equal to the source plane')
+        end
+    else
+        z_reference = 0;
+    end
+    
+    
     time = nc_varget(url,'time');
     
     multiWaitbar('kml_print_all_tiles'  ,WB.bytesDone/WB.bytesToDo,...
@@ -187,7 +212,7 @@ for ii = 1:length(fns);
     lat = [lat(:,1) + (lat(:,1)-lat(:,2))*.55  lat  lat(:,end) + (lat(:,end)-lat(:,end-1))*.55];
     lon = [lon(1,:) + (lon(1,:)-lon(2,:))*.55; lon; lon(end,:) + (lon(end,:)-lon(end-1,:))*.55];
     lat = [lat(1,:) + (lat(1,:)-lat(2,:))*.55; lat; lat(end,:) + (lat(end,:)-lat(end-1,:))*.55];
-
+    
     % convert time to years
     date          = time+datenum(1970,1,1);
     date(end+1,:) = date(end) + 1;
@@ -196,12 +221,13 @@ for ii = 1:length(fns);
     z_dim_info = nc_getvarinfo(url,'z') ;
     time_dim = strcmp(z_dim_info.Dimension,'time');
     
-
     for jj = size(time,1):-1:1
         % load z data
         z = nc_varget(url,'z',...
             [ 0, 0, 0] + (jj-1)*time_dim,...
             [-1,-1,-1] + 2*time_dim);
+        z = z-z_reference;
+        
         if sum(~isnan(z(:)))>=3
             disp(['data coverage is ' num2str(sum(~isnan(z(:)))/numel(z)*100) '%'])
             z = z([1 1 1:end end end],:); z = z(:,[1 1 1:end end end]); % expand z
@@ -217,7 +243,7 @@ for ii = 1:length(fns);
                 mask(3:end-0,3:end-0);
             mask(~isnan(z(2:end-1,2:end-1)))=0;
             mask = mask>0;
-
+            
             for kk = 2:size(z,1)-1
                 for ll = 2:size(z,2)-1
                     if mask(kk-1,ll-1)
@@ -226,21 +252,21 @@ for ii = 1:length(fns);
                     end
                 end
             end
-
             z = z(2:end-1,2:end-1);
-%% MAKE TILES
+            
+            %% MAKE TILES
             KMLfig2pngNew(h,lat,lon,z*OPT.lightAdjust,'highestLevel',10,'lowestLevel',OPT.lowestLevel,...
                 'timeIn',date(jj),'timeOut',date(jj+1),...
                 'fileName',[datestr(date(jj),29) '.kml'],'timeFormat','yyyy-mm-dd',...
                 'drawOrder',round(date(jj)),'joinTiles',false,...
                 'makeKML',false,'mergeExistingTiles',true,...
                 'basePath',fullfile(OPT.outputDir,OPT.outputKml),'dim',OPT.tiledim);
-
+            
             minlat = min(minlat,min(lat(:)));
             minlon = min(minlon,min(lon(:)));
             maxlat = max(maxlat,max(lat(:)));
             maxlon = max(maxlon,max(lon(:)));
-
+            
         else
             disp(['data coverage is ' num2str(sum(~isnan(z(:)))/numel(z)*100) '%, no file created'])
         end
@@ -249,6 +275,7 @@ for ii = 1:length(fns);
             'label',sprintf('Printing tiles: %s Timestep: %d/%d',fns(ii).name,jj,size(time,1)))
     end
 end
+
 multiWaitbar('fig2png_print_tile','close')
 multiWaitbar('kml_print_all_tiles',1,'label','Printing tiles')
 
@@ -287,7 +314,6 @@ for ii = 1:length(tilefull)
     tilefull2{ii} = tilefull2{ii}(end-40:end);
 end
 
-
 tilefull = findAllFiles('basepath',fullfile(OPT.outputDir,OPT.outputKml),'pattern_incl','*.png');
 
 tiles = cell(size(tilefull));
@@ -302,10 +328,10 @@ for ii = 1:length(tilefull)
 end
 mkdir(fullfile(OPT.outputDir,OPT.outputKml,'KML'));
 
-%% MAKE KML  
+%% MAKE KML
 multiWaitbar('fig2png_write_kml'   ,0,'label','Writing KML...','color',[0.9 0.4 0.1])
 for level = OPT2.highestLevel:OPT2.lowestLevel
-
+    
     WB.a = 0.25.^(OPT.lowestLevel - level)*.25;
     WB.b = 0.25.^(OPT.lowestLevel - level)*.75;
     
@@ -315,14 +341,14 @@ for level = OPT2.highestLevel:OPT2.lowestLevel
             tileCodes(ii,:) = tiles{ii};
         end
     end
-
+    
     tileCodes(any(isnan(tileCodes),2),:) = [];
     tileCodes = char(tileCodes);
     tilesOnLevel = unique(tileCodes(:,1:end),'rows');
     if level == OPT2.highestLevel
         fileID = tilesOnLevel;
     end
-
+    
     tileCodesNextLevel = nan(length(tiles),level+1);
     for ii = 1:length(tiles)
         if length(tiles{ii}) == level+1
@@ -332,21 +358,21 @@ for level = OPT2.highestLevel:OPT2.lowestLevel
     tileCodesNextLevel(any(isnan(tileCodesNextLevel),2),:) = [];
     tileCodesNextLevel = char(tileCodesNextLevel);
     tilesOnNextLevel = unique(tileCodesNextLevel(:,1:end),'rows');
-
+    
     addCode = ['01';'23'];
-
+    
     if level == OPT2.highestLevel
         minLod = OPT2.minLod0;
     else
         minLod = OPT2.minLod;
     end
-
+    
     if level == OPT.lowestLevel
         maxLod = OPT2.maxLod0;
     else
         maxLod = OPT2.maxLod;
     end
-
+    
     for nn = 1:size(tilesOnLevel,1)
         output = '';
         %% networklinks to children files
@@ -373,7 +399,7 @@ for level = OPT2.highestLevel:OPT2.lowestLevel
                 end
             end
         end
-        %% add png icon links to kml 
+        %% add png icon links to kml
         B = KML_fig2pngNew_code2boundary(tilesOnLevel(nn,:));
         for iDate = 1: length(dates)
             pngFile = [dates{iDate} filesep dates{iDate} '_' tilesOnLevel(nn,:) '.png'];
@@ -409,11 +435,11 @@ for level = OPT2.highestLevel:OPT2.lowestLevel
             'name',tilesOnLevel(nn,:),...
             'open',0);
         output = [KML_header(OPT_header) output];
-
+        
         % FOOTER
         output = [output KML_footer]; %#ok<*AGROW>
         fprintf(fid,'%s',output);
-
+        
         % close KML
         fclose(fid);
         
