@@ -100,6 +100,7 @@ classdef MTest < handle
         
         Verbose = true;                     % Determines whether messages are written to the command window whenever the run function gets executed
         
+        AutoRefresh = false;                % If this property is set true, the object gets updated with the newest version of the definition before executing run
         TimeStamp = [];                     % Timestamp of the last time the definition was saved
     end
     properties (Hidden = true)
@@ -179,7 +180,7 @@ classdef MTest < handle
             %   See also MTest MTest.MTest MTestFactory MTestRunner
             
             %% Lock this workspace and function code
-%             mlock;
+            mlock;
             teamcity = TeamCity;
             
             %% subtract outputfilename
@@ -188,6 +189,17 @@ classdef MTest < handle
             %% include testname
             if isempty(obj.Name)
                 obj.Name = obj.FileName;
+            end
+            
+            %% AutoRefresh
+            if obj.AutoRefresh
+                [obj isUpToDate] = MTestFactory.verifytimestamp(obj);
+                if ~isUpToDate
+                    obj = MTestFactory.updatetest(obj);
+                    if obj.Verbose
+                        disp(['     Updated test definition: ' obj.Name]);
+                    end
+                end
             end
             
             %% notify begin of test

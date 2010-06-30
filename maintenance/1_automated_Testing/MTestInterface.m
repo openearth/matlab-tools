@@ -14,6 +14,7 @@ classdef MTestInterface < handle
         HToolBarViewNotRun
         JToolBar
         JCombo
+        HTeamCity
         JToolBarProgress
         HProgressToolbar
         JProgressBar
@@ -33,7 +34,8 @@ classdef MTestInterface < handle
         MenuRun
         MenuRunSelected
         MenuRunAll
-        
+
+        % Splitpanel
         HSplitPanel
         JSplitPanel
         
@@ -142,30 +144,36 @@ classdef MTestInterface < handle
             
             %% CReate Toolbar
             this.HToolBar = uitoolbar(this.HMainFigure);
-            [X map] = imread(which('RunOne.gif'));
-            icon = ind2rgb(X,map);
-            icon(icon==0) = nan;
             this.HToolBarRun = uipushtool(this.HToolBar,...
-                'CData',icon,...
+                'CData',loadicon('RunOne.gif'),...
                 'ToolTip','Run selected test',...
                 'ClickedCallback',@this.run);
-            [X map] = imread(which('RunAll.gif'));
-            icon = ind2rgb(X,map);
-            icon(icon==0) = nan;
             this.HToolBarRun = uipushtool(this.HToolBar,...
-                'CData',icon,...
+                'CData',loadicon('RunAll.gif'),...
                 'ToolTip','Run all tests',...
                 'ClickedCallback',@this.runall);
             this.HToolBarViewNotRun = uitoggletool(this.HToolBar,...
-                'CData',icon,...
+                'CData',loadicon('ViewTestsNotRun.gif'),...
                 'Separator','on',...
+                'State','on',...
+                'ClickedCallback',{@this.buildtree,'refresh'},...
                 'ToolTip','View tests that did not run');
             this.HToolBarViewFailed = uitoggletool(this.HToolBar,...
-                'CData',icon,...
+                'CData',loadicon('ViewFailedTests.gif'),...
+                'State','on',...
+                'ClickedCallback',{@this.buildtree,'refresh'},...
                 'ToolTip','View all failed tests');
             this.HToolBarViewSuccess = uitoggletool(this.HToolBar,...
-                'CData',icon,...
+                'CData',loadicon('ViewPassedTests.gif'),...
+                'State','on',...
+                'ClickedCallback',{@this.buildtree,'refresh'},...
                 'ToolTip','View all successfull tests');
+            this.HTeamCity = uitoggletool(this.HToolBar,...
+                'CData',loadicon('TeamCityIcon.gif'),...
+                'Separator','on',...
+                'ClickedCallback',@this.setteamcity_callback,...
+                'ToolTip','Run as TeamCity');
+            TeamCity.running(false);
             
             %% Create dropdown box in toolbar
             drawnow;
@@ -290,16 +298,25 @@ classdef MTestInterface < handle
         end
         function runtests(this,selectionId)
             this.JProgressBar.setVisible(1);
-            set(this.JProgressBar, 'Maximum',sum(selectionId), 'Value',0);
+            set(this.JProgressBar, ...
+                'Maximum',sum(selectionId), ...
+                'Value',0);
+            this.JProgressBar.setForeground(java.awt.Color(0.3,0.5,0.3))
             for itests = 1:length(selectionId)
                 if selectionId(itests)
+                    this.setteamcity_callback; %In case some test has altered the prop
                     this.JProgressBar.setString(['Running: ' this.MTestRunner.Tests(itests).Name ' (' num2str(round((sum(selectionId(1:itests-1))/sum(selectionId))*100))  '%)']);
+                    this.MTestRunner.Tests(itests).AutoRefresh = true;
+                    this.MTestRunner.Tests(itests).Ignore = false;
                     this.MTestRunner.Tests(itests).run;
+                    if ~this.MTestRunner.Tests(itests).TestResult
+                        this.JProgressBar.setForeground(java.awt.Color(1, 0.3, 0.3));
+                    end
                     set(this.JProgressBar, 'Value',sum(selectionId(1:itests)));
+                    this.mouseclickedontree_callback(itests,'selection');
                 end
             end
             this.JProgressBar.setString('Idle...');
-            set(this.JProgressBar, 'Value',0);
         end
         function buildtree(this,varargin)
             this.BuildingTree = true;
@@ -308,12 +325,19 @@ classdef MTestInterface < handle
             import javax.swing.*
             import java.awt.*;
             
-            if nargin > 1 && any(strfind(get(varargin{1},'SelectedItem'),'categ'));
+            if nargin > 1 &&...
+                    ~ischar(varargin{end}) &&...
+                    any(strfind(get(varargin{1},'SelectedItem'),'categ'));
                 this.ViewType = 'Category';
             else
                 this.ViewType = 'Directory';
             end
                 
+            %% Gather visibility
+            showNotRun = strcmp(get(this.HToolBarViewNotRun,'State'),'on');
+            showSuccess = strcmp(get(this.HToolBarViewSuccess,'State'),'on');
+            showFailed = strcmp(get(this.HToolBarViewFailed,'State'),'on');
+
             %% Make root for Category tree
             rootNode = DefaultMutableTreeNode('RootNode');
             
@@ -322,10 +346,29 @@ classdef MTestInterface < handle
             %this.JTestNodes = {};
             
             for itests = 1:length(this.MTestRunner.Tests);
+                %% Determine whether the test should be visible
+                % determine state
+                testExecutedFlag = ~isnan(this.MTestRunner.Tests(itests).Date);
+                testResult = this.MTestRunner.Tests(itests).TestResult;
+                
+                if ~testExecutedFlag
+                    % test was not run
+                    visible = showNotRun;
+                elseif testResult
+                    % Test was successfull
+                    visible = showSuccess;
+                else
+                    % Test failed
+                    visible = showFailed;
+                end
+                
+                if ~visible
+                    continue;
+                end
+                
                 %% make treenode for test
                 newNode = DefaultMutableTreeNode(this.MTestRunner.Tests(itests).Name);
                 set(newNode,'UserData',itests);
-%                 this.JTestNodes{itests} = newNode;
                 
                 baseNode = rootNode;
                 switch this.ViewType
@@ -518,23 +561,29 @@ classdef MTestInterface < handle
             switch varargin{end}
                 case 'mouse'
                     button = varargin{end-1}.getButton;
+                case 'selection'
+                    button = 1;
+                    selectionId = varargin{end-1};
                 otherwise
                     button = 1;
             end
             switch button
                 case 1
                     %% display message
-                    pt = this.JTree.getSelectionPath;
-                    if isempty(pt)
-                        return;
+                    if ~exist('selectionId','var')
+                        pt = this.JTree.getSelectionPath;
+                        if isempty(pt)
+                            return;
+                        end
+                        node2Display = pt.getLastPathComponent.getFirstLeaf;
+                        selectionId = get(node2Display,'UserData');
                     end
-                    node2Display = pt.getLastPathComponent.getFirstLeaf;
-                    selectionId = get(node2Display,'UserData');
                     stackTrace = this.MTestRunner.Tests(selectionId).StackTrace;
                     stackTrace = strrep(stackTrace,[char(10),' '],[char(10),repmat('&nbsp',1,20)]);
                     if this.MTestRunner.Tests(selectionId).TestResult
                         this.JTextPane.setBackground(java.awt.Color(0.8,1,0.8));
-                        str = ['<h1>' this.MTestRunner.Tests(selectionId).Name '</h1>',...
+                        str = ['<div style="border-style:solid"><h1>' this.MTestRunner.Tests(selectionId).Name '</h1></div>',...
+                            '<hr />',...
                             '<br />',...
                             '<code>',...
                                 strrep(stackTrace,char(10),'<br />'),...
@@ -543,13 +592,15 @@ classdef MTestInterface < handle
                         if isempty(stackTrace)
                             % did not run yet, construct string
                             str = ['<h1>' this.MTestRunner.Tests(selectionId).Name '</h1>',...
+                                '<hr />',...
                                 'Did not run yet, please run the test first'];
                             this.JTextPane.setBackground(java.awt.Color(0.8, 0.8, 0.8));
                         else
                             % construct string
                             str = ['<h1>' this.MTestRunner.Tests(selectionId).Name '</h1>',...
+                                '<hr />',...
                                 '<br />',...
-                                '<code>',...
+                                '<code> ',...
                                 strrep(stackTrace,char(10),'<br />'),...
                                 '</code>'];
                             this.JTextPane.setBackground(java.awt.Color(1, 0.7, 0.7));
@@ -557,11 +608,17 @@ classdef MTestInterface < handle
                     end
                     this.JTextPane.setText(str);
                 otherwise
+                    %% Set selection
+                    row = this.JTree.getClosestRowForLocation(varargin{2}.getX, varargin{2}.getY);  
+                    this.JTree.setSelectionRow(row);
                     %% activate context menu
                     set(this.HContextMenu,...
                         'Position',[0 this.JSplitPanel.getHeight] + [varargin{2}.getX, -varargin{2}.getY],...
                         'Visible','on');
             end
+        end
+        function setteamcity_callback(this,varargin)
+            TeamCity.running(strcmp(get(this.HTeamCity,'State'),'on'));
         end
 %         function testschanged(this,varargin)
 %            return; 
@@ -620,4 +677,9 @@ parentnodes = {};
 if ~isempty(parent)
     parentnodes = cat(1,{parent},getparentsrecursive(parent));
 end
+end
+function icon = loadicon(filename)
+[X map] = imread(which(filename));
+icon = ind2rgb(X,map);
+icon(icon==0) = nan;
 end

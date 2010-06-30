@@ -58,6 +58,10 @@ classdef MTestFactory
             newTest.FileName = fn;
             newTest.FilePath = pt;
             
+            %% Read test definition
+            newTest = MTestFactory.updatetest(newTest,varargin{:});
+        end
+        function newTest = updatetest(newTest,varargin)
             %% Retrieve full definition string
             newTest = MTestFactory.retrievestringfromdefinition(newTest);
             newTest = MTestFactory.resetstringids(newTest);
@@ -74,6 +78,25 @@ classdef MTestFactory
             if isempty(newTest.Name)
                 newTest.Name = newTest.FileName;
             end
+        end
+        function [newTest isUpToDate] = verifytimestamp(newTest)
+            isUpToDate = false;
+
+            fullname = fullfile(newTest.FilePath, [newTest.FileName ,'.m']);
+            if ~exist(fullname,'file')
+                fullname = which(newTest.FileName);
+                if ~exist(fullname,'file')
+                    warning('MTest:DefinitionNotFound',['MTest tried to verify the timestamp of test: "' newTest.FileName '", but failed to do so because of a missing test definition']);
+                    return;
+                end
+                warning('MTest:DefinitionMoved',['MTest could not find a file that exactly matches this test objects definition',char(10),...
+                    '(' fullfile(newTest.FilePath,[newTest.FileName '.m']),char(10),'but for timestamp verification used:',char(10),...
+                    fullname]);
+                newTest.FilePath = fileparts(fullname);
+            end
+            
+            fileinfo = dir(fullname);
+            isUpToDate = newTest.TimeStamp == fileinfo.datenum;
         end
     end
     methods (Static = true, Hidden = true)
