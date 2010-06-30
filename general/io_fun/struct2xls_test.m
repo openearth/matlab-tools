@@ -7,7 +7,7 @@ D.a = [1 2 3]';
 D.b = {'a','b','c'};  % not OK
 D.b = {'a','b','c'}'; % OK
 
-    struct2xls([mfilename('fullpath'),'.xls'],D);
+    struct2xls([mfilename('fullpath'),'.xls'],D,'overwrite',1);
 E = xls2struct([mfilename('fullpath'),'.xls']);
 
 OK = isequal(D,E)

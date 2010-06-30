@@ -22,7 +22,7 @@ try
                 %
                 % If char, change attval to ' '
                 warning('SNCTOOLS:NCATTPUT:emptyAttributeBug', ...
-                    'Changing attribute from empty to single space, please consult the README.');
+                    'Changing attribute from empty to single space, please consult http://www.mathworks.com/support/bugreports/609383.');
                 netcdf.putAtt(ncid,varid,attribute_name,' ');
             otherwise
                 rethrow(me);
