@@ -1,4 +1,4 @@
-classdef MTestInterface < handle
+classdef MTestExplorer < handle
     properties
         MTestRunner = MTestRunner;
         
@@ -71,7 +71,7 @@ classdef MTestInterface < handle
     end
     
     methods
-        function this = MTestInterface(varargin)
+        function this = MTestExplorer(varargin)
             this.HMainFigure = figure(...
                 'NumberTitle','off',...
                 'Name','Unit Test Explorer',...
@@ -233,7 +233,7 @@ classdef MTestInterface < handle
             this.JTextPane.setEditable(false);
             this.JTextPane.setText('<h1>MTest</h1><p>Add a test and run</p>');
             hjTextpane = handle(this.JTextPane,'CallbackProperties');
-            set(hjTextpane,'HyperlinkUpdateCallback',@MTestInterface.textpanelinkfunction);
+            set(hjTextpane,'HyperlinkUpdateCallback',@MTestExplorer.textpanelinkfunction);
             
             jScrollPane = javax.swing.JScrollPane(this.JTextPane);
             
@@ -313,6 +313,7 @@ classdef MTestInterface < handle
                         this.JProgressBar.setForeground(java.awt.Color(1, 0.3, 0.3));
                     end
                     set(this.JProgressBar, 'Value',sum(selectionId(1:itests)));
+                    this.buildtree;
                     this.mouseclickedontree_callback(itests,'selection');
                 end
             end
@@ -325,12 +326,12 @@ classdef MTestInterface < handle
             import javax.swing.*
             import java.awt.*;
             
-            if nargin > 1 &&...
-                    ~ischar(varargin{end}) &&...
-                    any(strfind(get(varargin{1},'SelectedItem'),'categ'));
-                this.ViewType = 'Category';
-            else
-                this.ViewType = 'Directory';
+            if nargin > 1 && ~ischar(varargin{end})
+                if any(strfind(get(varargin{1},'SelectedItem'),'categ'));
+                    this.ViewType = 'Category';
+                else
+                    this.ViewType = 'Directory';
+                end
             end
                 
             %% Gather visibility
@@ -367,7 +368,17 @@ classdef MTestInterface < handle
                 end
                 
                 %% make treenode for test
-                newNode = DefaultMutableTreeNode(this.MTestRunner.Tests(itests).Name);
+                if testExecutedFlag
+                    if this.MTestRunner.Tests(itests).Ignore
+                        newNode = DefaultMutableTreeNode([this.MTestRunner.Tests(itests).Name '  (Ignored)']);
+                    elseif testResult
+                        newNode = DefaultMutableTreeNode([this.MTestRunner.Tests(itests).Name '  (Passed)']);
+                    else
+                        newNode = DefaultMutableTreeNode([this.MTestRunner.Tests(itests).Name '  (Failed)']);
+                    end
+                else
+                    newNode = DefaultMutableTreeNode(this.MTestRunner.Tests(itests).Name);
+                end
                 set(newNode,'UserData',itests);
                 
                 baseNode = rootNode;
