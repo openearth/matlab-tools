@@ -3,6 +3,11 @@ function OK = struct2xls_test
 %
 %See also: struct2xls, xls2struct
 
+if TeamCity.running
+    TeamCity.ignore('This test needs Microsoft Office (Excel) to run.');
+    return;
+end
+
 D.a = [1 2 3]';
 D.b = {'a','b','c'};  % not OK
 D.b = {'a','b','c'}'; % OK
@@ -10,7 +15,7 @@ D.b = {'a','b','c'}'; % OK
     struct2xls([mfilename('fullpath'),'.xls'],D,'overwrite',1);
 E = xls2struct([mfilename('fullpath'),'.xls']);
 
-OK = isequal(D,E)
+OK = isequal(D,E);
 
 %D.a
 %D.b

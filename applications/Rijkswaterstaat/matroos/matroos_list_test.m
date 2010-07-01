@@ -3,6 +3,12 @@ function ok = matroos_list_test
 %
 %See also: MATROOS
 
+TeamCity.category('DataAccess');
+if TeamCity.running
+    TeamCity.ignore('Test requires access to matroos, which the buildserver does not have.');
+    return;
+end
+
 %% from server: 1st time saves cache: 30 seconds
 
    tic;

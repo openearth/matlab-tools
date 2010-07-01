@@ -54,7 +54,8 @@ TeamCity.category('UnCategorized');
 percentage_gaps = 50;
 [x,y]=meshgrid(1:100,1:50);
 
-randomindices = round(rand(round(length(x(:)).*percentage_gaps./100),1).*length(x(:)));
+randomindices = unique(round(rand(round(length(x(:)).*percentage_gaps./100),1).*length(x(:))));
+randomindices(randomindices<1) = [];
 
 x(randomindices) = nan;
 y(randomindices) = nan;

@@ -48,7 +48,7 @@ function delft3d_io_meteo_read_test()
 % $HeadURL$
 % $Keywords: $
 
-TeamCity.category('UnCategorized');
+TeamCity.category('DataAccess');
 
 %% Check wlsettings
 if ~exist('wl_grid','file') || ...

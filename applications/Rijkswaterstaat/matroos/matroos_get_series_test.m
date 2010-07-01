@@ -49,7 +49,11 @@ function matroos_get_series_test()
 % $HeadURL$
 % $Keywords: $
 
-TeamCity.category('UnCategorized');
+TeamCity.category('DataAccess');
+if TeamCity.running
+    TeamCity.ignore('Test requires access to matroos, which the buildserver does not have.');
+    return;
+end
 
 %% get data, save to file
 
