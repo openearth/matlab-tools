@@ -1,6 +1,5 @@
-
-<!-- saved from url=(0047)http://undocumentedmatlab.com/files/javaclass.m -->
-<HTML><BODY><PRE style="word-wrap: break-word; white-space: pre-wrap;">% Return java.lang.Class instance for MatLab type.
+function jclass = javaclass(mtype, ndims)
+% Return java.lang.Class instance for MatLab type.
 %
 % Input arguments:
 % mtype:
@@ -12,18 +11,17 @@
 % See also: class
 
 % Copyright 2009-2010 Levente Hunyadi
-function jclass = javaclass(mtype, ndims)
 
 validateattributes(mtype, {'char'}, {'nonempty','row'});
-if nargin &lt; 2
+if nargin < 2
     ndims = 0;
 else
     validateattributes(ndims, {'numeric'}, {'nonnegative','integer','scalar'});
 end
 
-if ndims == 1 &amp;&amp; strcmp(mtype, 'char');  % a character vector converts into a string
+if ndims == 1 && strcmp(mtype, 'char');  % a character vector converts into a string
     jclassname = 'java.lang.String';
-elseif ndims &gt; 0
+elseif ndims > 0
     jclassname = javaarrayclass(mtype, ndims);
 else
     % The static property .class applied to a Java type returns a string in
@@ -87,4 +85,4 @@ switch mtype
         error('java:javaclass:InvalidArgumentValue', ...
             'MatLab type "%s" is not recognized or supported in Java.', mtype);
 end
-jclassname = [repmat('[',1,ndims), jclassid];</PRE></BODY></HTML>
+jclassname = [repmat('[',1,ndims), jclassid];

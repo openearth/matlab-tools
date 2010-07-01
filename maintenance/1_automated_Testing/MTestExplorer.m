@@ -661,58 +661,69 @@ classdef MTestExplorer < handle
                     com.mathworks.mwswing.MJUtilities.initJIDE;
                     
                     this.JideList.clear;
-                    props = {'Name','FileName','FilePath','FunctionName','HelpBlock','Author','Ignore','IgnoreMessage','Category','TestResult','Time','Date','AutoRefresh','TimeStamp'};
+                    categories = {...
+                        'File Info',...
+                        'Help Block',...
+                        'Other Info',...
+                        'Run'};
+                    props = {...
+                        'Name','Test Name',1;...
+                        'FileName','Filename',1;...
+                        'FilePath','File Location',1;...
+                        'FunctionName','Function Name',1;...
+                        'TimeStamp','Timestamp',1;...
+                        'FunctionHeader','Function Header',2;...
+                        'H1Line','H1 Line',2;...
+                        'Description','Description',2;...
+                        'Author','Last Author',3;...
+                        'Category','Category',3;...
+                        'AutoRefresh','AutoRefresh',3;...
+                        'TestResult','Test Passed',4;...
+                        'Time','Elapsed Time (s)',4;...
+                        'Date','Date',4;...
+                        'Ignore','Ignore',4;...
+                        'IgnoreMessage','Ignore Message',4};
+                    
                     for iprop = 1:length(props)
                         newprop = com.jidesoft.grid.DefaultProperty();
                         newprop.setEditable(false);
-                        if strcmp(props{iprop},'HelpBlock');
-                            helpprop = newprop;
-                        else
-                            newprop.setName(props{iprop});
+                        newprop.setName(props{iprop,2});
+                        newprop.setCategory(categories{props{iprop,3}});
                             
-                            prop = this.MTestRunner.Tests(selectionId).(props{iprop});
-                            switch class(prop)
-                                case 'char'
-                                    newprop.setValue(prop);
-                                case 'logical'
-                                    jclass = java.lang.Class.forName('java.lang.Boolean', true, java.lang.Thread.currentThread().getContextClassLoader());
-                                    newprop.setType(jclass);
-                                    newprop.setValue(prop);
-                                case 'int'
-                                    jclass = java.lang.Class.forName('java.lang.Integer', true, java.lang.Thread.currentThread().getContextClassLoader());
-                                    newprop.setType(jclass);
-                                    newprop.setValue(int32(prop));
-                                case 'double'
-                                    jclass = java.lang.Class.forName('java.lang.Double', true, java.lang.Thread.currentThread().getContextClassLoader());
-                                    newprop.setType(jclass);
-                                    newprop.setValue(prop);
-                                case 'cell'
-                                    jclass = java.lang.Class.forName('java.lang.String', true, java.lang.Thread.currentThread().getContextClassLoader());
-                                    newprop.setType(jclass);
-                                    newprop.setValue(prop);
-                                otherwise
-                                    continue;
+                        prop = this.MTestRunner.Tests(selectionId).(props{iprop,1});
+                        if any(ismember(props{iprop,1},{'TimeStamp','Date'}))
+                            if isnan(prop)
+                                prop = '';
+                            else
+                                prop = datestr(prop);
                             end
-                            this.JideList.add(newprop);
                         end
+                        switch class(prop)
+                            case 'char'
+                                newprop.setType(javaclass('char',1));
+                                newprop.setValue(prop);
+                            case 'logical'
+                                newprop.setType(javaclass('logical'));
+                                newprop.setEditorContext(com.jidesoft.grid.BooleanCheckBoxCellEditor.CONTEXT);
+                                newprop.setValue(prop);
+                            case 'int'
+                                newprop.setType(javaclass('int32'));
+                                newprop.setValue(int32(prop));
+                            case 'double'
+                                newprop.setType(javaclass('double'));
+                                newprop.setValue(prop);
+                            case 'cell'
+                                newprop.setType(javaclass('cellstr'));
+                                newprop.setValue(prop);
+                            otherwise
+                                continue;
+                        end
+                        this.JideList.add(newprop);
                     end
-                    
-                    %                     helpprops = {'FunctionHeader','H1Line','Description'};
-                    %                     for iprop = 1:length(helpprops)
-                    %                         newprop = com.jidesoft.grid.DefaultProperty();
-                    %                         newprop.setEditable(false);
-                    %                         newprop.setName(props{iprop});
-                    %                         newprop.setType(class(this.MTestRunner.Tests(selectionId).(props{iprop})));
-                    %                         newprop.setValue(this.MTestRunner.Tests(selectionId).(props{iprop}));
-                    %                         helpprop.addChild(newprop);
-                    %                     end
-                    
-                    this.JideModel = com.jidesoft.grid.PropertyTableModel(this.JideList);
+                  
                     this.JideModel.expandAll();
-                    this.JideGrid = com.jidesoft.grid.PropertyTable(this.JideModel);
-                    this.JidePane = com.jidesoft.grid.PropertyPane(this.JideGrid);
                     this.JideModel.refresh;
-                    drawnow;
+                    
                 otherwise
                     %% Set selection
                     row = this.JTree.getClosestRowForLocation(varargin{2}.getX, varargin{2}.getY);  
