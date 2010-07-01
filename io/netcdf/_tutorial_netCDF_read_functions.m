@@ -27,6 +27,16 @@ url = 'http://OPeNDAP .deltares.nl:8080/OPeNDAP/rijkswaterstaat/jarkus/profiles/
 
 url = jarkus_url;
 
+%% get a collection of small files
+
+urls = opendap_catalog('http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/sea_surface_height/catalog.xml')
+for i=1:length(urls)
+
+url = urls{i}
+name{i}=nc_varget(url,'station_name');
+
+end
+
 %% Interacting with a netCDF file
 % To let matlab talk with a netCDF file, the snc toolbox has been
 % developed. See what is in there:
@@ -61,7 +71,8 @@ id(1:10)
 
 %% Zero based indexing
 %
-% TODO
+
+id = nc_varget(url,'id',[5-1],1); % get 5th number: nc_varget starts at 0
 
 %% Stride
 %

@@ -15,7 +15,7 @@ function index = atrname2index(ncfile,name,varargin)
 %   index = atrname2index(F.Dataset(1),'standard_name')
 %   F.Dataset(1).Attribute(index)
 %
-%See also: NC_INFO, VARNAME2INDEX, NC_VARFIND
+%See also: NC_INFO, NC_VARNAME2INDEX, NC_VARFIND
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004 Deltares

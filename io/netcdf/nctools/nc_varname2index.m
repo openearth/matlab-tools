@@ -12,7 +12,7 @@ function index = varname2index(ncfile,name,varargin)
 %
 %   F.Dataset(index)
 %
-%See also: NC_INFO, ATRNAME2INDEX, NC_VARFIND
+%See also: NC_INFO, NC_ATRNAME2INDEX, NC_VARFIND
 
 %% Copyright notice
 %   --------------------------------------------------------------------

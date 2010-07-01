@@ -214,6 +214,6 @@
    varname    = nc_varfind(ncfile,'attributename', 'standard_name', 'attributevalue', 'wind_speed')
    Db.var     = nc_varget(ncfile,OPT.varname);
 
-%% 7.c Load the data: using a dedicated function developed for grids
+%% 7.c Load the data: using a dedicated function developed for time series
 
    [Dc,Mc]    = nc_cf_stationTimeSeries(ncfile,OPT.varname,'plot',1);

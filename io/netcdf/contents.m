@@ -15,6 +15,8 @@
 %  nc_cf_grid                             - read CF grid
 %  nc_cf_stationTimeSeries                - read CF time series
 %  opendap_catalog                        - get netCDF file list from OPeNDAP server
+%  nc_cf_grid_tutorial                    - read and subset a grid
+%  nc_cf_stationTimeSeries_tutorial       - read and subset a time series
 %
 % Creating netCDF files (tutorials)
 % 

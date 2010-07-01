@@ -85,6 +85,7 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 %TO DO: document <keyword,value> pairs
 %TO DO: also extract x and y vectors
 %TO DO: make it work when more lat and lon matrices are present
+%TO DO: add keywords lon, lat, dlon, dlat to use for subsetting:  [D,M] = nc_cf_grid(ncfile,varname,<keyword,value>)
 
 %% Keyword,values
 
