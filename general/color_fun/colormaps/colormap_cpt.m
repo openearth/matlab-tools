@@ -82,9 +82,12 @@ end
 %% read color data
 cdata = sscanf(S,'%f');
 S = fgetl(fid);
-while ~isletter(S(1)) && S(1)~=-1;
+while ~isempty(S) && ~isletter(S(1)) && S(1)~=-1;
     cdata = [cdata sscanf(S,'%f')];
     S = fgetl(fid);
+    if isempty(S)
+        break
+    end
 end
 
 %% close cpt file
