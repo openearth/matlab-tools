@@ -23,7 +23,7 @@ function varargout=delft3d_io_bch(cmd,varargin),
 %   Copyright (C) 2004 Delft University of Technology
 %       Gerben J. de Boer
 %
-%       g.j.deboer@citg.tudelft.nl	
+%       g.j.deboer@tudelft.nl	
 %
 %       Fluid Mechanics Section
 %       Faculty of Civil Engineering and Geosciences
