@@ -1,4 +1,4 @@
-function testresult = grid_orth_getDataInPolygon_test()
+function grid_orth_getDataInPolygon_test()
 %GRID_ORTH_GETDATAINPOLYGON_TEST  test for grid_orth_getdatainpolygon
 %  
 % 
@@ -47,30 +47,16 @@ function testresult = grid_orth_getDataInPolygon_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
-% Publishable code that describes the test.
+%%
 % NB1: onderstaande testcases zijn met voorgedefinieerde polygonen. Als je de polygonen niet opgeeft mag je ze zelf selecteren met de crosshair (rechter muisknop om te sluiten)
 % NB2: de routines zijn nog niet 100% robuust. Ook is de data op de OpenDAP server nog niet helemaal goed. Met name dit laatste moet zsm verholpen worden!
 % NB3: enkele onderdelen van dit script zijn nog vrij sloom: bepalen welke grids er zijn en het ophalen van alle kaartbladomtrekken. Hopelijk is dit te fixen middels de Catalog.xml op de OPeNDAP server
 
-%% $RunCode
-
-tr(1) = test1;
-tr(2) = test2;
-
-testresult = all(tr);
-
-
-%% $PublishResult
-% Publishable code that describes the test.
-
+test1;
+test2;
 end
 
-function testresult = test1()
-%% $Description 
-
-%% $RunCode
-% Test 1: work on JARUS grids
+function test1()
 grid_orth_getDataInPolygon(...
     'dataset', 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml', ...
     'starttime', datenum([1997 01 01]), ...
@@ -81,16 +67,9 @@ grid_orth_getDataInPolygon(...
                 70869.9 461001
                 70796.8 438560], ...
     'datathinning', 1); %#ok<*UNRCH>
-testresult = 1;
-%% $PublishResult
-
 end
 
-function testresult = test2()
-%% $Description (Name = Undefined)
-% Test 2: work on VAKLODINGEN grids
-
-%% $RunCode
+function test2()
 grid_orth_getDataInPolygon(...
     'dataset', 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml', ...
     'starttime', datenum([1997 01 01]), ...
@@ -101,7 +80,4 @@ grid_orth_getDataInPolygon(...
                 60129 425398
                 50214.6 425346], ...
     'datathinning', 1);
-testresult = 1;
-%% $PublishResult
-
 end

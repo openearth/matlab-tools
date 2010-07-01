@@ -35,6 +35,13 @@ classdef MTestExplorer < handle
         MenuRunSelected
         MenuRunAll
 
+        JSplitPanelMain
+        
+        JidePane
+        JideGrid
+        JideModel
+        JideList
+        
         % Splitpanel
         HSplitPanel
         JSplitPanel
@@ -241,17 +248,31 @@ classdef MTestExplorer < handle
             jTextPanel.setLayout(BorderLayout);
             jTextPanel.add(jScrollPane);
                         
-            %% Create split panel
-            split = javax.swing.JSplitPane(0);
+            %% Create split panels
+            splitmain = javax.swing.JSplitPane(1);
             
-            split.add(this.JTreePanel,0);
-            split.add(jTextPanel,1);
-
+            this.JSplitPanel = javax.swing.JSplitPane(0);
+            this.JSplitPanel.add(this.JTreePanel,0);
+            this.JSplitPanel.add(jTextPanel,1);
+            
+            
+            % Prepare a properties table containing the list
+            % Initialize JIDE's usage within Matlab
+            com.mathworks.mwswing.MJUtilities.initJIDE;
+            this.JideList = java.util.ArrayList();
+            this.JideModel = com.jidesoft.grid.PropertyTableModel(this.JideList);
+            this.JideModel.expandAll();
+            this.JideGrid = com.jidesoft.grid.PropertyTable(this.JideModel);
+            this.JidePane = com.jidesoft.grid.PropertyPane(this.JideGrid);
+            splitmain.add(this.JSplitPanel,1);
+            splitmain.add(this.JidePane,0);
+            
             % add splitpanel to gui
-            [this.JSplitPanel this.HSplitPanel] = javacomponent(split,getpixelposition(this.HMainFigure).*[0 0 1 1],this.HMainFigure);
+            [this.JSplitPanelMain this.HSplitPanel] = javacomponent(splitmain,getpixelposition(this.HMainFigure).*[0 0 1 1],this.HMainFigure);
             set(this.HSplitPanel,'Units','normalized','Position',[0 0 1 1]);
             drawnow;
             this.JSplitPanel.setDividerLocation(0.5);
+            this.JSplitPanelMain.setDividerLocation(0.8);
             
             %% Context menu
             this.HContextMenu = uicontextmenu('Parent',this.HMainFigure);
@@ -590,7 +611,11 @@ classdef MTestExplorer < handle
                         selectionId = get(node2Display,'UserData');
                     end
                     stackTrace = this.MTestRunner.Tests(selectionId).StackTrace;
-                    stackTrace = strrep(stackTrace,[char(10),' '],[char(10),repmat('&nbsp',1,20)]);
+                    if isempty(stackTrace)
+                        stackTrace = '';
+                    else
+                        stackTrace = strrep(stackTrace,[char(10),' '],[char(10),repmat('&nbsp',1,20)]);
+                    end
                     if isnan(this.MTestRunner.Tests(selectionId).Date)
                         % did not run yet, construct string
                         str = ['<h1>' this.MTestRunner.Tests(selectionId).Name '</h1>',...
@@ -631,6 +656,63 @@ classdef MTestExplorer < handle
                         end
                     end
                     this.JTextPane.setText(str);
+                    %% Show top selection in JIDE
+                    % Initialize JIDE's usage within Matlab
+                    com.mathworks.mwswing.MJUtilities.initJIDE;
+                    
+                    this.JideList.clear;
+                    props = {'Name','FileName','FilePath','FunctionName','HelpBlock','Author','Ignore','IgnoreMessage','Category','TestResult','Time','Date','AutoRefresh','TimeStamp'};
+                    for iprop = 1:length(props)
+                        newprop = com.jidesoft.grid.DefaultProperty();
+                        newprop.setEditable(false);
+                        if strcmp(props{iprop},'HelpBlock');
+                            helpprop = newprop;
+                        else
+                            newprop.setName(props{iprop});
+                            
+                            prop = this.MTestRunner.Tests(selectionId).(props{iprop});
+                            switch class(prop)
+                                case 'char'
+                                    newprop.setValue(prop);
+                                case 'logical'
+                                    jclass = java.lang.Class.forName('java.lang.Boolean', true, java.lang.Thread.currentThread().getContextClassLoader());
+                                    newprop.setType(jclass);
+                                    newprop.setValue(prop);
+                                case 'int'
+                                    jclass = java.lang.Class.forName('java.lang.Integer', true, java.lang.Thread.currentThread().getContextClassLoader());
+                                    newprop.setType(jclass);
+                                    newprop.setValue(int32(prop));
+                                case 'double'
+                                    jclass = java.lang.Class.forName('java.lang.Double', true, java.lang.Thread.currentThread().getContextClassLoader());
+                                    newprop.setType(jclass);
+                                    newprop.setValue(prop);
+                                case 'cell'
+                                    jclass = java.lang.Class.forName('java.lang.String', true, java.lang.Thread.currentThread().getContextClassLoader());
+                                    newprop.setType(jclass);
+                                    newprop.setValue(prop);
+                                otherwise
+                                    continue;
+                            end
+                            this.JideList.add(newprop);
+                        end
+                    end
+                    
+                    %                     helpprops = {'FunctionHeader','H1Line','Description'};
+                    %                     for iprop = 1:length(helpprops)
+                    %                         newprop = com.jidesoft.grid.DefaultProperty();
+                    %                         newprop.setEditable(false);
+                    %                         newprop.setName(props{iprop});
+                    %                         newprop.setType(class(this.MTestRunner.Tests(selectionId).(props{iprop})));
+                    %                         newprop.setValue(this.MTestRunner.Tests(selectionId).(props{iprop}));
+                    %                         helpprop.addChild(newprop);
+                    %                     end
+                    
+                    this.JideModel = com.jidesoft.grid.PropertyTableModel(this.JideList);
+                    this.JideModel.expandAll();
+                    this.JideGrid = com.jidesoft.grid.PropertyTable(this.JideModel);
+                    this.JidePane = com.jidesoft.grid.PropertyPane(this.JideGrid);
+                    this.JideModel.refresh;
+                    drawnow;
                 otherwise
                     %% Set selection
                     row = this.JTree.getClosestRowForLocation(varargin{2}.getX, varargin{2}.getY);  
