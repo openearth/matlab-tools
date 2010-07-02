@@ -1,0 +1,60 @@
+## usage kml:url=url|width|height|lat|lon|tilt|altitude|id
+ 
+#set($body=$body.split('*');)
+ 
+#set ($divwidth=500px)
+#set ($divheight=400px)
+#set ($id=unique
+ 
+#if ($paramwidth)
+  #set ($divwidth=${paramwidth})
+#end
+ 
+#if ($paramheight)
+  #set ($divheight=${paramheight})
+#end
+ 
+#if ($paramurl)
+  #set ($tableHeight="height='${param4}px'")
+#end
+ 
+<div id='$paramid' style="height: $paramheight; width: $paramwidth;">
+</div>
+<script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRSy_gnlezoEvdu0tA7HZgv5qdaupRRCGAytCifAIns0R25EQD_uP7lUDw"> </script>
+<script type="text/javascript">
+  google.load("earth", "1");
+  var ge;
+
+  function initgoogle() 
+  {
+    obj = document.getElementById('$paramid');
+    
+    google.earth.createInstance('$paramid', function initCB(instance) 
+    {
+      ge = instance;
+      ge.getWindow().setVisibility(true);
+      ge.getNavigationControl().setVisibility(ge.VISIBILITY_SHOW);
+      google.earth.fetchKml(ge, $paramurl, function(object)
+        {
+	  if (!object)
+	  {
+	    // wrap alerts in API callbacks and event handlers
+	    // in a setTimeout to prevent deadlock in some browsers
+	    setTimeout(function() {alert('Bad or null KML.');}, 0);
+	    return;
+	  }
+	ge.getFeatures().appendChild(object);
+	var lookat = ge.createLookAt('');
+	lookat.set($paramlon, $paramlat, 0, ge.ALTITUDE_RELATIVE_TO_GROUND, $paramrotation, $paramtilt, $paramaltitude);
+	ge.getView().setAbstractView(lookat);
+        });
+    },
+    failureCB);
+  }
+
+  function failureCB(errorCode)
+  {
+  }
+
+  google.setOnLoadCallback(initgoogle);
+</script>
