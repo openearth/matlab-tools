@@ -37,4 +37,5 @@ function mte_simple_test()
 
 % We are going to test whether 2 + 3 = 5
 vect = [2 3];
-assert(sum(vect)==5,['Sum of ' num2str(vect) ' is not equal to 5']);
+answ = sum(vect);
+assert(answ == 5,['Sum of ' num2str(vect) ' is not equal to 5']);
