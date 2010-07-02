@@ -72,22 +72,16 @@ end
 %% open cpt file
 fid = fopen(cpt);
 
-%% skip the first bit
 S = fgetl(fid);
-while strcmp(S(1),'#')
-    S = fgetl(fid);
-    if isempty(S), S = '#'; end
-end
-
-%% read color data
-cdata = sscanf(S,'%f');
-S = fgetl(fid);
+cdata = [];
 while ~isempty(S) && ~isletter(S(1)) && S(1)~=-1;
+    % skip lines with a hash
+    while strcmp(S(1),'#')
+        S = fgetl(fid);
+        if isempty(S), S = '#'; end
+    end
     cdata = [cdata sscanf(S,'%f')];
     S = fgetl(fid);
-    if isempty(S)
-        break
-    end
 end
 
 %% close cpt file
