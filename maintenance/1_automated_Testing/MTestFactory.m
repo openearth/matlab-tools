@@ -150,7 +150,9 @@ classdef MTestFactory
             %% Extract name
             calls = fcncalls(mainFunctionId).calls;
             if iscell(calls)
-                warning('MTestFactory:UnableToSetCategory','Due to version limitations of your matlab MTest was not able to determin the name and category of your test');
+                warning('MTestFactory:UnableToSetCategory','Due to version limitations of your matlab MTest was not able to determine the name and category of your test');
+                % TODO: read category manually (Look for "MTest.category(" or
+                % "TeamCity.category(" and execute that line (until ");")
             else
                 dotCalls = fcncalls(mainFunctionId).calls.dotCalls;
                 if ~isempty(dotCalls) && any(ismember(dotCalls.names,{'MTest.name','TeamCity.name'}))
