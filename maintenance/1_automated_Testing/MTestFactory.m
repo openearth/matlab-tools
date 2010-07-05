@@ -73,7 +73,7 @@ classdef MTestFactory
             newTest = MTestFactory.interpretheader(newTest);
             
             %% Apply other input
-            newTest = setproperty(newTest,varargin{:});
+            newTest = MTestUtils.setproperty(newTest,varargin{:});
             
             if isempty(newTest.Name)
                 newTest.Name = newTest.FileName;

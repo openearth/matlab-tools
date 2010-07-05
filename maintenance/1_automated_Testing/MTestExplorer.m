@@ -842,20 +842,20 @@ classdef MTestExplorer < handle
                         end
                         switch class(prop)
                             case 'char'
-                                newprop.setType(javaclass('char',1));
+                                newprop.setType(MTestUtils.javaclass('char',1));
                                 newprop.setValue(prop);
                             case 'logical'
-                                newprop.setType(javaclass('logical'));
+                                newprop.setType(MTestUtils.javaclass('logical'));
                                 newprop.setEditorContext(com.jidesoft.grid.BooleanCheckBoxCellEditor.CONTEXT);
                                 newprop.setValue(prop);
                             case 'int'
-                                newprop.setType(javaclass('int32'));
+                                newprop.setType(MTestUtils.javaclass('int32'));
                                 newprop.setValue(int32(prop));
                             case 'double'
-                                newprop.setType(javaclass('double'));
+                                newprop.setType(MTestUtils.javaclass('double'));
                                 newprop.setValue(prop);
                             case 'cell'
-                                newprop.setType(javaclass('cellstr'));
+                                newprop.setType(MTestUtils.javaclass('cellstr'));
                                 newprop.setValue(prop);
                             otherwise
                                 continue;

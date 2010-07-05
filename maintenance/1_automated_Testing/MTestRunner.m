@@ -113,7 +113,7 @@ classdef MTestRunner < handle
             %   See also mtestengine mtestengine.run mtestengine.runAndPublish mtest mtestcase
             
             %% Use the setproperty function to set all properties.
-            setproperty(obj,varargin);
+            MTestUtils.setproperty(obj,varargin);
         end
         function varargout = cataloguetests(obj,varargin)
             %CATALOGUETESTS  Lists all tests in the maindir of the mtestobject and converts them to mtest objects.
@@ -463,7 +463,7 @@ classdef MTestRunner < handle
             if obj.Publish
                 %% Get profiler information
                 if min(size(obj.Tests))>0
-                    obj.ProfileInfo = mergeprofileinfo(obj.Tests(~[obj.Tests.Ignore]).ProfilerInfo);
+                    obj.ProfileInfo = MTestUtils.mergeprofileinfo(obj.Tests(~[obj.Tests.Ignore]).ProfilerInfo);
                 end
                 
                 %% print coverage html pages

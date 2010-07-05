@@ -184,7 +184,7 @@ classdef MTest < handle
             teamcity = TeamCity;
             
             %% subtract outputfilename
-            obj = setproperty(obj,varargin{:});
+            obj = MTestUtils.setproperty(obj,varargin{:});
                        
             %% include testname
             if isempty(obj.Name)
@@ -651,7 +651,7 @@ classdef MTest < handle
                         'profile off',...
                         'TeamCity.storeworkspace;');
                     
-                    evalinemptyworkspace(descrstr);
+                    MTestUtils.evalinemptyworkspace(descrstr);
                 case 'function'
                     fid = fopen(which(functionname),'r');
                     str = textscan(fid,'%s','delimiter','\n','whitespace','','bufSize',10000);
@@ -663,7 +663,7 @@ classdef MTest < handle
                         functioncontent{:},...
                         'profile off',...
                         'TeamCity.storeworkspace;');
-                    evalinemptyworkspace(descrstr);
+                    MTestUtils.evalinemptyworkspace(descrstr);
                 case 'script'
                     descrstr = sprintf('%s\n',...
                         'TeamCity.restoreworkspace;',...
@@ -671,7 +671,7 @@ classdef MTest < handle
                         [functionname ';'],...
                         'profile off',...
                         'TeamCity.storeworkspace;');
-                    evalinemptyworkspace(descrstr);
+                    MTestUtils.evalinemptyworkspace(descrstr);
             end
 
         end
@@ -942,7 +942,7 @@ classdef MTest < handle
             % Now specify the code to evaluate. The string constructed above should be evaluated in
             % an empty workspace. Therefore in the base workspace we only call evalinemptyworkspace,
             % with the string we just constructed as input.
-            publishoptions.codeToEvaluate = ['evalinemptyworkspace(''' string2evaluate ''');'];
+            publishoptions.codeToEvaluate = ['MTestUtils.evalinemptyworkspace(''' string2evaluate ''');'];
             
             %% publish file
             tempcd = cd;
