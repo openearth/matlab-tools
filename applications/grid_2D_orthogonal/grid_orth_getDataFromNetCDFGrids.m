@@ -51,28 +51,47 @@ function [X, Y, Z, Ztime] = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx
 % $Author$
 % $Revision$
 
+OPT.dataset         = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
+OPT.tag             = [];
+OPT.ldburl          = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
+OPT.workdir         = pwd;
+OPT.polygondir      = [];
+OPT.polygon         = [];
+OPT.cellsize        = [];                               % cellsize is assumed to be regular in x and y direction and is determined automatically
+OPT.datathinning    = 1;                                % stride with which to skip through the data
+OPT.inputtimes      = [];                               % starting points (in Matlab epoch time)
+OPT.starttime       = [];
+OPT.searchinterval  = -730;                             % acceptable interval to include data from (in days)
+OPT.min_coverage    = .25;                               % coverage percentage (can be several, e.g. [50 75 90]
+OPT.plotresult      = 1;                                % 0 = off; 1 = on;
+OPT.warning         = 1;                                % 0 = off; 1 = on;
+OPT.postProcessing	= 1;                                % 0 = off; 1 = on;
+OPT.whattodo(1)     = 1;                                % volume plots
+OPT.type            = 1;
+OPT.counter         = 0;
+OPT.urls            = [];
+OPT.x_ranges        = [];
+OPT.y_ranges        = [];
+OPT.x               = [];
+OPT.y               = [];
 
-OPT.cellsize       = [];
-OPT.datathinning   = [];
 OPT.dx             = [];
 OPT.dy             = [];
-OPT.starttime      = now;
-OPT.searchinterval = -12; % months
-OPT.polygon        = [];
 
 OPT = setproperty(OPT,varargin{:});
 
+% get cell size
+%urls      = grid_orth_getFixedMapOutlines(OPT.dataset);
+x         = nc_varget(mapurls{1}, nc_varfind(mapurls{1}, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate')); 
+OPT.cellsize = mean(diff(x));
+
 if isempty(OPT.dx)
-OPT.dx = OPT.cellsize*OPT.datathinning;
+    OPT.dx = OPT.cellsize*OPT.datathinning;
 end
 
 if isempty(OPT.dy)
-OPT.dx = OPT.cellsize*OPT.datathinning;
+    OPT.dy = OPT.cellsize*OPT.datathinning;
 end
-
-% get cell size
-%urls      = grid_orth_getFixedMapOutlines(OPT.dataset);
-% x         = nc_varget(mapurls{1}, nc_varfind(mapurls{1}, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate')); OPT.cellsize = mean(diff(x));
 
 % generate x and y vectors spanning the fixed map extents
 x         = minx : OPT.dx  : maxx;

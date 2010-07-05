@@ -65,7 +65,7 @@ OPT.datathinning    = 1;                                % stride with which to s
 OPT.inputtimes      = [];                               % starting points (in Matlab epoch time)
 OPT.starttime       = [];
 OPT.searchinterval  = -730;                             % acceptable interval to include data from (in days)
-OPT.min_coverage    = 25;                               % coverage percentage (can be several, e.g. [50 75 90]
+OPT.min_coverage    = .25;                               % coverage percentage (can be several, e.g. [50 75 90]
 OPT.plotresult      = 1;                                % 0 = off; 1 = on;
 OPT.warning         = 1;                                % 0 = off; 1 = on;
 OPT.postProcessing	= 1;                                % 0 = off; 1 = on;
