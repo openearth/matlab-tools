@@ -8,27 +8,32 @@
 %% subset > 100 year Rijkswaterstaat time series at Hoek van Holland
 %  The full timeseries (15MB) is a bit slow to handle via OPeNDAP.
 
-   D.url     = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-HOEKVHLD.nc';
+   D.url     = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-TERNZN.nc';
    nc_dump(D.url)
-
-%% get full coordinate sticks 
-
-   D.datenum     = nc_cf_time(D.url,'time');
 
 %% Determine indices of subset based on the the subregion you want 
 
-   OPT.datenum   = datenum(1953,1,25 + [0 14]);
+   OPT.datenum   = datenum(1953,1,30 + [0 5]);% datestr(OPT.datenum)
 
-   ind.datenum   = find(D.datenum > OPT.datenum(1) & D.datenum < OPT.datenum(2));
-   
+%% Because the time series is rather big, getting the full time vector to determine
+%  the indices we want takes rather long.
+%  Get full coordinate sticks 
+%
+%   D.datenum     = nc_cf_time(D.url,'time');
+%   ind.datenum   = find(D.datenum > OPT.datenum(1) & D.datenum < OPT.datenum(2));
+%   D.datenum     = D.datenum(ind.datenum);
+%   
+%  In fact, this approach gets already 50% of the whole file. 
+%  Therefore we made a special query function that downloads
+%  only the times you need without downloading the whole time vector.
+
+  [D.datenum,start,count]  = nc_varget_range(D.url,'time',OPT.datenum);
+
 %% get subset
 %  note: nc_varget is zero-based
 %  note: the 1D timeseries has two dimensions, 1st dimension is dummy
 
-   D.datenum     = D.datenum(ind.datenum);
-   start         = [0 ind.datenum(1)-1];% use -1 to get from 1-based Matlab to 0-based netCDF index !!
-   count         = [1 length(ind.datenum)];
-   D.z           = nc_varget(D.url,'sea_surface_height' ,start,count);
+   D.z           = nc_varget(D.url,'sea_surface_height' ,[0 start],[1 count]);
    M.z.units     = nc_attget(D.url,'sea_surface_height','units');
    M.z.long_name = nc_attget(D.url,'sea_surface_height','long_name');
 
@@ -40,7 +45,7 @@
    ylabel([M.z.long_name,' [',M.z.units,']'])
    print('-dpng',['Hoek_van_Holland_time_',datestr(OPT.datenum(1)),'_',datestr(OPT.datenum(2))])
    
-%% This 15 Mb dataset can also be loaded as a whole at once using a dedicated function
+%% This 15 Mb dataset could also be loaded as a whole at once using a dedicated function
 
    figure
    nc_cf_stationtimeseries(D.url,'sea_surface_height','plot',1);

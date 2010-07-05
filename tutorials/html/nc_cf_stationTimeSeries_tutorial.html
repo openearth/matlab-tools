@@ -11,7 +11,7 @@ To make changes, update the M-file and republish this document.
 -->
 <title>nc_cf_stationTimeSeries_tutorial</title>
 <meta name="generator" content="MATLAB 7.7">
-<meta name="date" content="2010-07-01">
+<meta name="date" content="2010-07-05">
 <meta name="m-file" content="nc_cf_stationTimeSeries_tutorial">
 <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
 <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
@@ -38,11 +38,11 @@ currentGeApiDiv = $(".geapi");
 <ul>
 <li><a href="#1">NC_CF_STATIONTIMESERIES_TUTORIAL  how to read and subset a netCDF time series file</a></li>
 <li><a href="#2">subset &gt; 100 year Rijkswaterstaat time series at Hoek van Holland</a></li>
-<li><a href="#3">get full coordinate sticks</a></li>
-<li><a href="#4">Determine indices of subset based on the the subregion you want</a></li>
+<li><a href="#3">Determine indices of subset based on the the subregion you want</a></li>
+<li><a href="#4">Because the time series is rather big, getting the full time vector to determine</a></li>
 <li><a href="#5">get subset</a></li>
 <li><a href="#6">plot</a></li>
-<li><a href="#7">This 15 Mb dataset can also be loaded as a whole at once using a dedicated function</a></li>
+<li><a href="#7">This 15 Mb dataset could also be loaded as a whole at once using a dedicated function</a></li>
 </ul>
 </div>
 <div class="collapsible">
@@ -55,44 +55,44 @@ currentGeApiDiv = $(".geapi");
 </div>
 <div>
 <h2><a name="2">subset &gt; 100 year Rijkswaterstaat time series at Hoek van Holland</a></h2>
-<div><pre>The full timeseries (15MB) is a bit slow to handle via OPeNDAP.</pre><pre class="codeinput">   D.url     = <span class="string">'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-HOEKVHLD.nc'</span>;
+<div><pre>The full timeseries (15MB) is a bit slow to handle via OPeNDAP.</pre><pre class="codeinput">   D.url     = <span class="string">'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-TERNZN.nc'</span>;
 nc_dump(D.url)
-</pre><pre class="codeoutput">URL http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-HOEKVHLD.nc { 
+</pre><pre class="codeoutput">URL http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-TERNZN.nc { 
 
 dimensions:
 locations = 1 ;
-name_strlen1 = 8 ;
-name_strlen2 = 16 ;
-time = 1483599 ;
+name_strlen1 = 6 ;
+name_strlen2 = 9 ;
+time = 1452014 ;
 
 
 variables:
 // Preference 'PRESERVE_FVD':  false,
 // dimensions consistent with ncBrowse, not with native MATLAB netcdf package.
-char station_id(locations,name_strlen1), shape = [1 8]
+char station_id(locations,name_strlen1), shape = [1 6]
 station_id:long_name = "station identification code" 
 station_id:standard_name = "station_id" 
 ...</pre></div>
 </div>
 <div>
-<h2><a name="3">get full coordinate sticks</a></h2>
-<div><pre class="codeinput">   D.datenum     = nc_cf_time(D.url,<span class="string">'time'</span>);
+<h2><a name="3">Determine indices of subset based on the the subregion you want</a></h2>
+<div><pre class="codeinput">   OPT.datenum   = datenum(1953,1,30 + [0 5]);<span class="comment">% datestr(OPT.datenum)</span>
 </pre></div>
 </div>
 <div>
-<h2><a name="4">Determine indices of subset based on the the subregion you want</a></h2>
-<div><pre class="codeinput">   OPT.datenum   = datenum(1953,1,25 + [0 14]);
-
+<h2><a name="4">Because the time series is rather big, getting the full time vector to determine</a></h2>
+<div><pre>the indices we want takes rather long.
+Get full coordinate sticks</pre><pre> D.datenum     = nc_cf_time(D.url,'time');
 ind.datenum   = find(D.datenum &gt; OPT.datenum(1) &amp; D.datenum &lt; OPT.datenum(2));
+D.datenum     = D.datenum(ind.datenum);</pre><pre>In fact, this approach gets already 50% of the whole file.
+Therefore we made a special query function that downloads
+only the times you need without downloading the whole time vector.</pre><pre class="codeinput">  [D.datenum,start,count]  = nc_varget_range(D.url,<span class="string">'time'</span>,OPT.datenum);
 </pre></div>
 </div>
 <div>
 <h2><a name="5">get subset</a></h2>
 <div><pre>note: nc_varget is zero-based
-note: the 1D timeseries has two dimensions, 1st dimension is dummy</pre><pre class="codeinput">   D.datenum     = D.datenum(ind.datenum);
-start         = [0 ind.datenum(1)-1];<span class="comment">% use -1 to get from 1-based Matlab to 0-based netCDF index !!</span>
-count         = [1 length(ind.datenum)];
-D.z           = nc_varget(D.url,<span class="string">'sea_surface_height'</span> ,start,count);
+note: the 1D timeseries has two dimensions, 1st dimension is dummy</pre><pre class="codeinput">   D.z           = nc_varget(D.url,<span class="string">'sea_surface_height'</span> ,[0 start],[1 count]);
 M.z.units     = nc_attget(D.url,<span class="string">'sea_surface_height'</span>,<span class="string">'units'</span>);
 M.z.long_name = nc_attget(D.url,<span class="string">'sea_surface_height'</span>,<span class="string">'long_name'</span>);
 </pre></div>
@@ -107,9 +107,17 @@ print(<span class="string">'-dpng'</span>,[<span class="string">'Hoek_van_Hollan
 </pre><img vspace="5" hspace="5" src="nc_cf_stationTimeSeries_tutorial_01.png" relsrc="nc_cf_stationTimeSeries_tutorial_01.png"> </div>
 </div>
 <div>
-<h2><a name="7">This 15 Mb dataset can also be loaded as a whole at once using a dedicated function</a></h2>
+<h2><a name="7">This 15 Mb dataset could also be loaded as a whole at once using a dedicated function</a></h2>
 <div><pre class="codeinput">   figure
 nc_cf_stationtimeseries(D.url,<span class="string">'sea_surface_height'</span>,<span class="string">'plot'</span>,1);
+</pre><pre class="codeoutput">Warning: Could not find an exact (case-sensitive) match for 'nc_cf_stationtimeseries'.
+F:\checkouts\OpenEarthTools\matlab\io\netcdf\nctools\nc_cf_stationTimeSeries.m is a
+case-insensitive match and will be used instead.
+You can improve the performance of your code by using exact
+name matches and we therefore recommend that you update your
+usage accordingly. Alternatively, you can disable this warning using
+warning('off','MATLAB:dispatcher:InexactCaseMatch').
+This warning will become an error in future releases. 
 </pre><img vspace="5" hspace="5" src="nc_cf_stationTimeSeries_tutorial_02.png" relsrc="nc_cf_stationTimeSeries_tutorial_02.png"> </div>
 </div>
 </div>
@@ -129,27 +137,32 @@ Published with MATLAB&reg; 7.7<br></p>
 %% subset > 100 year Rijkswaterstaat time series at Hoek van Holland
 %  The full timeseries (15MB) is a bit slow to handle via OPeNDAP.
 
-D.url     = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-HOEKVHLD.nc';
+D.url     = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-TERNZN.nc';
 nc_dump(D.url)
-
-%% get full coordinate sticks 
-
-D.datenum     = nc_cf_time(D.url,'time');
 
 %% Determine indices of subset based on the the subregion you want 
 
-OPT.datenum   = datenum(1953,1,25 + [0 14]);
+OPT.datenum   = datenum(1953,1,30 + [0 5]);% datestr(OPT.datenum)
 
-ind.datenum   = find(D.datenum > OPT.datenum(1) & D.datenum < OPT.datenum(2));
+%% Because the time series is rather big, getting the full time vector to determine
+%  the indices we want takes rather long.
+%  Get full coordinate sticks 
+%
+%   D.datenum     = nc_cf_time(D.url,'time');
+%   ind.datenum   = find(D.datenum > OPT.datenum(1) & D.datenum < OPT.datenum(2));
+%   D.datenum     = D.datenum(ind.datenum);
+%   
+%  In fact, this approach gets already 50% of the whole file. 
+%  Therefore we made a special query function that downloads
+%  only the times you need without downloading the whole time vector.
+
+[D.datenum,start,count]  = nc_varget_range(D.url,'time',OPT.datenum);
 
 %% get subset
 %  note: nc_varget is zero-based
 %  note: the 1D timeseries has two dimensions, 1st dimension is dummy
 
-D.datenum     = D.datenum(ind.datenum);
-start         = [0 ind.datenum(1)-1];% use -1 to get from 1-based Matlab to 0-based netCDF index !!
-count         = [1 length(ind.datenum)];
-D.z           = nc_varget(D.url,'sea_surface_height' ,start,count);
+D.z           = nc_varget(D.url,'sea_surface_height' ,[0 start],[1 count]);
 M.z.units     = nc_attget(D.url,'sea_surface_height','units');
 M.z.long_name = nc_attget(D.url,'sea_surface_height','long_name');
 
@@ -161,7 +174,7 @@ grid on
 ylabel([M.z.long_name,' [',M.z.units,']'])
 print('-dpng',['Hoek_van_Holland_time_',datestr(OPT.datenum(1)),'_',datestr(OPT.datenum(2))])
 
-%% This 15 Mb dataset can also be loaded as a whole at once using a dedicated function
+%% This 15 Mb dataset could also be loaded as a whole at once using a dedicated function
 
 figure
 nc_cf_stationtimeseries(D.url,'sea_surface_height','plot',1);

@@ -6,7 +6,7 @@ function col = colormapbluewhitered(m)
 % current figure's colormap. If no figure exists, MATLAB creates one.
 %
 % Syntax:
-% col = BlueWhiteRed (m)
+% col = colormapbluewhitered(m)
 %
 % Input:
 % m = (Optional)
@@ -15,21 +15,55 @@ function col = colormapbluewhitered(m)
 % col = colormap
 %
 % See also: JET,HSV, HOT, PINK, FLAG, COLORMAP, RGBPLOT.
- 
-%--------------------------------------------------------------------------------
-% Copyright(c) Deltares 2004 - 2007  FOR INTERNAL USE ONLY
-% Version:  Version 1.0, September 2008 (Version 1.0, September 2008)
-% By:      <Thijs Damsma (email:t.damsma@student.tudelft.nl)>
-%--------------------------------------------------------------------------------
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2010 Deltares 2004 - 2007,  September 2008
+%       Gerben de Boer
+%
+%       Thijs Damsma	
+%
+%       <ADDRESS>
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 05 Jul 2010
+% Created with Matlab version: 7.7.0.471 (R2008b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 if nargin < 1
    m = size(get(gcf,'colormap'),1);
 end
 
-n = ceil(m/2)-1;
-col = ones(m,3);
-col(1:n+1,1)=(0:n)/n;
-col(1:n+1,2)=(0:n)/n;
+n               = ceil(m/2)-1;
+col             = ones(m,3);
+col(1:n+1    ,1)=   (0:n)/n;
+col(1:n+1    ,2)=   (0:n)/n;
 col(end-n:end,2)=(n:-1:0)/n;
 col(end-n:end,3)=(n:-1:0)/n;
 
