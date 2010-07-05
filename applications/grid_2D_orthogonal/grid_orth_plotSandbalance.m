@@ -76,7 +76,7 @@ grid_orth_createFixedMapsOnAxes(gca, OPT);
 
 
 % text
-title({['Overview fixed maps, used data and polygon for: ' strrep(results.polyname,'_',' ')]; OPT.dataset});
+title({['Overview fixed maps, used data and polygon for: ' strrep(results.polyname,'_',' ')]; strrep(OPT.dataset,'_','\_')});
 
 % set axis
 set(gca, 'Xlim',[min(OPT.polygon(:,1))- 10000 max(OPT.polygon(:,1)) + 10000]);
@@ -106,7 +106,7 @@ grid
 box on
 
 % set text
-title({['Volume development for ' strrep(results.polyname,'_',' ')]; OPT.dataset},'fontsize',8);
+title({['Volume development for ' strrep(results.polyname,'_',' ')]; strrep(OPT.dataset,'_','\_')},'fontsize',8);
 legend(['Method 1: based on data points covered by target year and reference year (' datestr(OPT.reference_year) ')'],['Method 2: based on data points covered in all years'],'location','SouthOutside');
 
 % set axis

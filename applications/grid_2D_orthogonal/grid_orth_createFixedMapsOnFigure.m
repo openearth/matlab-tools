@@ -1,4 +1,4 @@
-function ah = grid_orth_createFixedMapsOnAxes(ah, urls, varargin)
+function ah = grid_orth_createFixedMapsOnFigure(ah, urls, varargin)
 %GRID_ORTH_CREATEFIXEDMAPSONFIGURE   .
 %
 % See also: grid_2D_orthogonal
@@ -8,8 +8,8 @@ axes(ah);
 
 %% for each available url get the actual_range and creat a patch
 for i = 1:length(urls)
-    x_range = nc_getvarinfo(url, 'x');
-    y_range = nc_getvarinfo(url, 'y');
+    x_range = nc_getvarinfo(urls{i}, 'x');
+    y_range = nc_getvarinfo(urls{i}, 'y');
     
     if any(ismember({y_range.Attribute.Name}, 'actual_range')) && any(ismember({x_range.Attribute.Name}, 'actual_range'))
 

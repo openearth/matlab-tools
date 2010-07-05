@@ -68,7 +68,7 @@ if ~isempty(fns)
     for i = 1:size(batchvar1,1)
         if batchvar1{i,1}==1
             % load polygon from polygon directory
-            load([OPT.workdir filesep 'polygons' filesep fns(i,1).name]);
+            load(fullfile(OPT.workdir, 'polygons', fns(i,1).name));
             
             if ~exist(fullfile(OPT.workdir, 'coverage', ['timewindow = ' num2str(OPT.searchinterval)], [fns(i,1).name(1:end-4) '_coverage.dat']),'file')
                 if isempty(OPT.inputtimes)
