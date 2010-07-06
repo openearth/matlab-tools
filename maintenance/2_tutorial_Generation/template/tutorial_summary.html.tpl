@@ -111,14 +111,14 @@
 
 	<div id="maintree" class="ui-widget ui-widget-content ui-corner-all">
 		<ul id="browser" class="filetree treeview maintree">
-			<li><span class="folder">General</span>
+			<li><span class="folder">&nbsp General</span>
 				<ul>
 				<!-- ##BEGINGENERAL -->
 					<!-- ##BEGINFILEITEM -->
 					<li><a><span class="file" ref="#HTMLREF">#FILENAME</span></a></li>
 					<!-- ##ENDFILEITEM -->
 					<!-- ##BEGINFOLDERITEM -->
-					<li><span class="folder">#FOLDERNAME</span>
+					<li><span class="folder">&nbsp #FOLDERNAME</span>
 						<ul>
 							<!-- ##BEGINFILEITEM -->
 							<li><a><span class="file" ref="#HTMLREF">#FILENAME</span></a></li>
@@ -129,11 +129,11 @@
 				<!-- ##ENDGENERAL -->
 				</ul>
 			</li>
-			<li><span class="folder">Applications</span>
+			<li><span class="folder">&nbsp Applications</span>
 				<ul>
 				<!-- ##BEGINAPPLICATIONS -->
 					<!-- ##BEGINFOLDERITEM -->
-					<li><span class="folder">#FOLDERNAME</span>
+					<li><span class="folder">&nbsp #FOLDERNAME</span>
 						<ul>
 							<!-- ##BEGINFILEITEM -->
 							<li><a><span class="file" ref="#HTMLREF">#FILENAME</span></a></li>
