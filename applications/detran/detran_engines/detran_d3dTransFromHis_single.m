@@ -77,9 +77,13 @@ end
 curDir = pwd;
 
 if isempty(filename)
-    [trimNam,trimPat] = uigetfiles('trih-*.dat', 'Please select trih-file(s)');
+    % [trimNam,trimPat] = uigetfiles('trih-*.dat', 'Please select trih-file(s)');
+    [trimNam,trimPat] = uigetfile('trih-*.dat', 'Please select trih-file(s)','MultiSelect','on');    
     if isempty(trimNam)
         return
+    end
+    if ~iscell(trimNam)
+        trimNam = {trimNam};
     end
 else
     [trimPat, trimNam, filterindex]=fileparts(filename);

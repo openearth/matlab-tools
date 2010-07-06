@@ -35,7 +35,7 @@ function h1 = detran_initiateGUI()
 % Sign up to recieve regular updates of this function, and to contribute 
 % your own tools.
 
-h1 = figure('MenuBar','none','Name','DETRAN V2010a','Position',[100 100 1024 768],'Tag','figure1','numberTitle','off');
+h1 = figure('MenuBar','none','Name','DETRAN v0.90','Position',[100 100 1024 768],'Tag','figure1','numberTitle','off');
 
 h2 = axes('Parent',h1,'Units','normalized','Position',[0.253 0.021 0.675 0.965],'Box','on','DataAspectRatioMode','manual',...
 'FontSize',8,'Layer','top','PlotBoxAspectRatioMode','manual','Tag','axes1');

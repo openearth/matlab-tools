@@ -1,4 +1,4 @@
-function [namtra, xytra, transport, namsed]=avgTransFromHis_mm(type,filename,timeStep);
+function [NAMTRA, XYTRA, transport, namsed]=detran_d3dTransFromHis_mm(type,filename,timeStep)
 %DETRAN_D3DTRANSFROMHIS_MM Read transport through cross-sections from history files of mormerge Delft3D simulation
 %
 % Calculate averaged or instantaneous sediment transport through the cross sections in a history-file
@@ -6,7 +6,7 @@ function [namtra, xytra, transport, namsed]=avgTransFromHis_mm(type,filename,tim
 % is according to the weights in the mormerge-file (*.mm).
 %
 %   Syntax:
-%   [crossName, crossXY, transport, namsed]=avgTransFromHis_mm(type,filename,timeStep);
+%   [crossName, crossXY, transport, namsed]=detran_d3dTransFromHis_mm(type,filename,timeStep);
 %
 %   Input:
 %   type:       'mean' for mean transport or 'instant' for instantaneous transport.
@@ -118,8 +118,8 @@ for ii = 1 : length(condMap)
         if ii==1
             if jj==1
                 MORFT    = vs_let(N,'his-infsed-serie','MORFT','quiet');
-                if nargin<3 | isempty(timeStep)
-                    timeStep=str2num(char(inputdlg('Specify which time-step to use',[num2str(length(MORFT)) ' timesteps found, specify required time step:'],1,cellstr(num2str(length(MORFT)))));
+                if nargin<3 || isempty(timeStep)
+                    timeStep=str2num(char(inputdlg('Specify which time-step to use',[num2str(length(MORFT)) ' timesteps found, specify required time step:'],1,cellstr(num2str(length(MORFT))))));
                 elseif timeStep == 0
                     timeStep = length(MORFT);
                 end

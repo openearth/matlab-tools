@@ -64,20 +64,14 @@ if nargin == 0
 
 	detran_clearAxis;
 	data=detran_createEmptyStructure;
+    
+    [dataFile,inputMode,sType]=detran_selectInputSettings;
 
-	dataFile=questdlg('Select data file type','Load sediment transport data from','Trim-file(s)','Trih-file(s)','Trim-file(s)');
 	if isempty(dataFile)
 	    return
-	end
-
-	inputMode=questdlg('Select input type','Load sediment transport data from','Single file','Multiple files','Mormerge simulation','Single file');
-	if isempty(inputMode)
-	    return
-	end
-
-	sType=questdlg('Select transport type','Load mean or instantaneous transport?','mean','instant','mean');
-
-	dt = [];
+    end
+    
+    dt = [];
 	filename=[];
 	weights=[];
 

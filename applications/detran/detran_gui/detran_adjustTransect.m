@@ -49,13 +49,9 @@ end
 
 ldb=data.transects;
 templdb=[ldb(:,1:2);ldb(:,3:4)];
-p=data.transectHandles{1};
-h1=data.transectHandles{2};
-t1=data.transectHandles{3};
 CS=data.transectData(:,1);
 PlusCS=data.transectData(:,2);
 MinCS=data.transectData(:,3);
-vecSc=str2num(get(findobj(fig,'tag','detran_vecScaling'),'String'));
 
 [xClick, yClick,b]=ginput(1);
 if b~=1
@@ -79,19 +75,12 @@ if b==1
     for ii=1:length(strucNames)
         eval([strucNames{ii} '=edit.' strucNames{ii} ';']);
     end
-    period=detran_getPeriod;
-    pores=detran_getPoreVolume;
-    labelFac=str2num(get(findobj(fig,'tag','detran_transLabelFactor'),'String'));    
-    delete(p(:,id2));
-    delete(h1(:,id2));
-    delete(t1(:,id2));
     templdb(id,:)=[xClick yClick];
     ldb=[templdb(1:size(ldb,1),:) templdb(size(ldb,1)+1:end,:)];
     [xt,yt]=detran_uvData2xyData(yatu,yatv,alfa);
     [CS(id2), PlusCS(id2), MinCS(id2)]=detran_TransArbCSEngine(xcor,ycor,xt,yt,ldb(id2,1:2),ldb(id2,3:4));
-    [p(:,id2),h1(:,id2),t1(:,id2)]=detran_plotTransportThroughTransect(ldb(id2,1:2),ldb(id2,3:4),labelFac.*period.*CS(id2)./(1-pores),vecSc);
     data.transects=ldb;
     data.transectData=[CS PlusCS MinCS];
-    data.transectHandles={p,h1,t1};
 end
 set(fig,'userdata',data);
+detran_plotTransArbCS;

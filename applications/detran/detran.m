@@ -2,10 +2,10 @@ function varargout = detran(varargin)
 %DETRAN  Calculates sediment transport through transects
 %
 %   This tool calculates the cumulative sediment transport through
-%   cross sections on the basis of transport data from Delft3D results. 
+%   cross sections on the basis of transport data from Delft3D results.
 %   Both trim-files and trih-files can be used. In case of trim-files,
 %   Detran calculates transport rates through arbitrarily choosen transects
-%   and in case of trih-files, Detran provides the transport rates through 
+%   and in case of trih-files, Detran provides the transport rates through
 %   the cross sections defined in the Delft3D input file.
 %
 %   Detran can handle single simulations, simulations consisting of
@@ -14,7 +14,7 @@ function varargout = detran(varargin)
 %   it takes into account the individual contribution of each condition on
 %   the basis of the weight of each condition.
 %
-%   Detran can be used as a interactive graphical environment or as a 
+%   Detran can be used as a interactive graphical environment or as a
 %   command line toolbox. The graphical environment provides a
 %   user-friendly interface, various plotting options and the possibilty to
 %   export the results, for example to a muppet-file. For command line use,
@@ -34,28 +34,28 @@ function varargout = detran(varargin)
 %                 conditions (no mormerge!).
 %               - 'mm' for a mormerge transport computation.
 %
-%   d3dOutput   Location of the Delft3D output file(s) (for mm or multi it 
+%   d3dOutput   Location of the Delft3D output file(s) (for mm or multi it
 %               is sufficient to indicate one of the trim-/trih-files).
 %
 %   Keyword / value pairs (optional):
-%   transects   [M x 4] array with start and end points of 
+%   transects   [M x 4] array with start and end points of
 %               transects [X1 Y1 X2 Y2]. Required for trim-input.
-%   weightFile  File location with condition weight (tekal-file) for multi 
+%   weightFile  File location with condition weight (tekal-file) for multi
 %               simulation type.
-%   transType   [1 x 2] cell array, with in the first cell 'bed', 
-%               'suspended' or 'total' and in the second cell 'instant' or 
-%               'mean'. NB: When 'mean' is selected, the mean transport as 
-%               calcated by Delft3D is used, which is by default only 
-%               stored for the last time step of the simulation. (default: 
+%   transType   [1 x 2] cell array, with in the first cell 'bed',
+%               'suspended' or 'total' and in the second cell 'instant' or
+%               'mean'. NB: When 'mean' is selected, the mean transport as
+%               calcated by Delft3D is used, which is by default only
+%               stored for the last time step of the simulation. (default:
 %               {'total','mean'}).
-%   fraction    [1 x 1] double, specify with fraction to use, set to 0 for 
+%   fraction    [1 x 1] double, specify with fraction to use, set to 0 for
 %               the sum of fractions (default: 0).
-%   timeStep    [1 x 1] double, specify the time step to use, set to 0 to 
+%   timeStep    [1 x 1] double, specify the time step to use, set to 0 to
 %               use the last available time step (default: 0).
 %
 %   Output:
 %   t           cumulative nett transport through transects [m3/s]
-%   tPos        cumulative positive part of gross transport through 
+%   tPos        cumulative positive part of gross transport through
 %               transects [m3/s]
 %   tNeg        cumulative negative part of gross transport through
 %               transects [m3/s]
@@ -107,24 +107,25 @@ function varargout = detran(varargin)
 
 % GUI MODE
 if nargin==0 % start GUI
-    if str2double(datestr(datenum(version('-date')),10))<2007
-        msgbox('Please use at least Matlab version 2007a');
-        return
+    if ~isdeployed
+        if str2double(datestr(datenum(version('-date')),10))<2007
+            msgbox('Please use at least Matlab version 2007a');
+            return
+        end
+        
+        if ~exist('vs_use.m','file')
+            wlsettings;
+        end
+        
+        basePath=strrep(which('detran.m'),'detran.m','');
+        
+        addpath(basePath);
+        addpath([basePath 'detran_gui']);
+        addpath([basePath 'detran_engines']);
     end
-    
-    if ~exist('vs_use.m','file')
-        wlsettings;
-    end
-    
-    basePath=strrep(which('detran.m'),'detran.m','');
-    
-    addpath(basePath);
-    addpath([basePath 'detran_gui']);
-    addpath([basePath 'detran_engines']);
-    
     % fig=openfig('detran.fig','reuse');
     fig=detran_initiateGUI;
-    
+
     % COMMAND LINE MODE
 elseif nargin < 2 % more input arguments required
     error('Not enough input arguments specified...');

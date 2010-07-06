@@ -1,4 +1,4 @@
-function [p,h1,t1,varargout]=detran_plotTransportThroughTransect(startPoint,endPoint,transport,vecScaling);
+function [p,h1,t1,varargout]=detran_plotTransportThroughTransect(startPoint,endPoint,transport,vecScaling)
 %DETRAN_PLOTTRANSPORTTHROUGHTRANSECT Plots transport rates as vector through transect or cross sections
 %
 % Plots a specified transport rate through a transect as a vector, 

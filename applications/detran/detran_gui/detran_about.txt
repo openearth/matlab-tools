@@ -1,6 +1,6 @@
 Detran
-Version V2010a
-May 2010
+Version v0.90.xxxx
+July 2010
 
 --------------------------------------------------------------------
 Copyright notice:

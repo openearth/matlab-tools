@@ -127,7 +127,7 @@ for ii = 1 : length(pat)
             if jj==1
                 MORFT    = vs_let(N,'his-infsed-serie','MORFT','quiet');
                 if nargin<4 | isempty(timeStep)
-                    timeStep=str2num(char(inputdlg('Specify which time-step to use',[num2str(length(MORFT)) ' timesteps found, specify required time step:'],1,cellstr(num2str(length(MORFT)))));
+                    timeStep=str2num(char(inputdlg('Specify which time-step to use',[num2str(length(MORFT)) ' timesteps found, specify required time step:'],1,cellstr(num2str(length(MORFT))))));
                 elseif timeStep == 0
                     timeStep = length(MORFT);
                 end

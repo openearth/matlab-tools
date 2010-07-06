@@ -30,13 +30,35 @@ function detran_about
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
-fid=fopen('detran_about.txt');
+% find the path to detran_about.txt
+% detranPath = [fileparts(which('detran.m')) filesep];
+% if isdeployed
+%     detranPath = detranPath(1:end-7);
+% end
+% 
+% aboutPath = [detranPath filesep 'detran_gui' filesep]
+
+aboutPath = ShowPath;
+disp(['Path is: ' ShowPath]);
+
+fid=fopen([aboutPath filesep 'detran_about.txt']);
 aboutText=fread(fid,'char');
 aboutText(aboutText==13)=[];
 
 uiwait(msgbox(char(aboutText'),'About Detran','modal'));
+
+function [thePath] = ShowPath()
+% Show EXE path:
+if isdeployed % Stand-alone mode.
+    [status, result] = system('set PATH');
+    thePath = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
+else % Running from MATLAB.
+    [macroFolder, baseFileName, ext] = fileparts(mfilename('fullpath'));
+    thePath = macroFolder;
+    % thePath = pwd;
+end

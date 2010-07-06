@@ -104,7 +104,11 @@ end
 curDir = pwd;
 
 if isempty(filename)
-    [names, pat] = uigetfiles('trim-*.dat', 'Please select trim-file(s)');
+    % [names, pat] = uigetfiles('trim-*.dat', 'Please select trim-file(s)');
+    [names, pat] = uigetfile('trim-*.dat', 'Please select trim-file(s)','MultiSelect','on');
+    if ~iscell(names)
+        names = {names};
+    end
     if isempty(names)
         return
     end
