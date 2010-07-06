@@ -22,7 +22,7 @@ function config = publishconfigurations(mfilename,publishtemplate,outputhtmldir,
 %   Copyright (C) 2009 Deltares
 %       Pieter van Geer
 %
-%       pieter.vangeer@deltares.nl	
+%       pieter.vangeer@deltares.nl
 %
 %       Rotterdamseweg 185
 %       2629 HD Delft
@@ -44,9 +44,9 @@ function config = publishconfigurations(mfilename,publishtemplate,outputhtmldir,
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -71,7 +71,7 @@ switch mfilename
             '_tutorial_creating_new_functions',...
             'tutorials_publish_configurations_tutorial',...
             'detran_tutorial',...
-            'testdefinitions_tutorial',...
+            'mtest_tutorial_2_creating_tests',...
             'tutorials_include_tutorial'}
         config.evalCode = false;
         config.showCode = true;
@@ -125,7 +125,7 @@ if vs >= datenum(2008,01,01)
     % codeToEvaluate        M-file you are publishing (default), any valid code
     % createThumbnail       true (default), false
     % maxOutputLines        Inf (default), nonnegative integer specifying the maximum number of output lines to publish per M-file cell before truncating the output
-    
+
     config = struct(...
         'maxOutputLines',15,...
         'format','html',...
@@ -147,7 +147,7 @@ else
     % evalCode          true (default), false
     % stopOnError       true (default), false
     % createThumbnail   true (default), false
-    
+
     config = struct(...
         'format','html',...
         'stylesheet',publishtemplate,...

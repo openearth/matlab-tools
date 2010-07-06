@@ -6,7 +6,8 @@ function seawifs_datenum_test
 str = '1998128121603';
 num = ceil(now*24*60)./24/60; % on minutes
 
+answ = seawifs_datenum(seawifs_datenum(num));
 
-assert(num==seawifs_datenum(seawifs_datenum(num)),'num should be returned.');
+assert(num==anws,['answ should be input (' num2str(num) '), but was ' num2str(answ) ' instead.']);
 assert(strcmpi(str,seawifs_datenum(seawifs_datenum(str))),'String should be returned');
 %% EOF

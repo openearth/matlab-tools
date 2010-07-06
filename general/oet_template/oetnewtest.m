@@ -198,7 +198,7 @@ str = strrep(str, '$date(dd mmm yyyy)', datestr(now, 'dd mmm yyyy'));
 str = strrep(str, '$version', version);
 
 % replace category
-str = strrep(str, '$testcategory', ['TeamCity.category(''' OPT.Category ''');']);
+str = strrep(str, '$testcategory', ['MTest.category(''' OPT.Category ''');']);
 
 %% Append old code
 % If the file was not according to the correct format and mtest couldn't read it, the complete
