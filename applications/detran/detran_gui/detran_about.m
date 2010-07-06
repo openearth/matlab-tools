@@ -49,8 +49,20 @@ disp(['Path is: ' ShowPath]);
 fid=fopen([aboutPath filesep 'detran_about.txt']);
 aboutText=fread(fid,'char');
 aboutText(aboutText==13)=[];
+aboutText = char(aboutText');
 
-uiwait(msgbox(char(aboutText'),'About Detran','modal'));
+if ~isdeployed
+    revnumb = '????';
+    [tf str] = system(['svn info ' fileparts(which('detran.m'))]);
+    str = strread(str,'%s','delimiter',char(10));
+    id = strncmp(str,'Revision:',8);
+    if any(id)
+        revnumb = strcat(str{id}(min(strfind(str{id},':'))+1:end));
+    end
+    aboutText = strrep(aboutText,'$revision',revnumb);
+end
+
+uiwait(msgbox(aboutText,'About Detran','modal'));
 
 function [thePath] = ShowPath()
 % Show EXE path:

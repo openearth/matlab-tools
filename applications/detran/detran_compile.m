@@ -19,7 +19,7 @@ for i=1:length(flist)
                 otherwise
                     fprintf(fid,'%s\n',fname);
         end
-end 
+end
 
 % Add gui-routines
 addpath('detran_gui');
@@ -31,10 +31,26 @@ for i=1:length(flist)
                 otherwise
                     fprintf(fid,'%s\n',fname);
         end
-end 
+end
 
 fclose(fid);
 
 mcc -m -d bin detran.m -B complist
 dos(['copy ' which('detran_about.txt') ' bin']);
+revnumb = '????';
+if isappdata(0,'revisionnumber')
+    revnumb = num2str(getappdata(0,'revisionnumber'));
+else
+    try
+        [tf str] = system(['svn info ' fileparts(which('detran.m'))]);
+        str = strread(str,'%s','delimiter',char(10));
+        id = strncmp(str,'Revision:',8);
+        if any(id)
+            revnumb = strcat(str{id}(min(strfind(str{id},':'))+1:end));
+        end
+    catch me
+        % don't mind
+    end
+end
+strfrep(fullfile('bin','detran_about.txt'),'$revision',revnumb);
 delete('complist');
