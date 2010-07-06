@@ -8,6 +8,6 @@ num = ceil(now*24*60)./24/60; % on minutes
 
 answ = seawifs_datenum(seawifs_datenum(num));
 
-assert(num==anws,['answ should be input (' num2str(num) '), but was ' num2str(answ) ' instead.']);
+assert(num==answ,['answ should be input (' num2str(num) '), but was ' num2str(answ) ' instead.']);
 assert(strcmpi(str,seawifs_datenum(seawifs_datenum(str))),'String should be returned');
 %% EOF
