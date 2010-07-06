@@ -11,6 +11,12 @@ OPT.dataset = dataset;
 
 disp('Retrieving map info from dataset ...')
 OPT.urls     = opendap_catalog(OPT.dataset);
+% introduce hack that removes all urls to old versions of the nc file that are not
+% supported
+% TODO: Check this properly when reading the file instead of filtering based on filenames
+OPT.urls(cellfun(@length,cellfun(@strfind,OPT.urls,repmat({'/jarkus'},size(OPT.urls)),'UniformOutput',false))==1)=[];
+OPT.urls(cellfun(@length,cellfun(@strfind,OPT.urls,repmat({'/vaklodingen'},size(OPT.urls)),'UniformOutput',false))==1)=[];
+
 OPT.x_ranges = ones(length(OPT.urls),2)*nan;
 OPT.y_ranges = ones(length(OPT.urls),2)*nan;
 

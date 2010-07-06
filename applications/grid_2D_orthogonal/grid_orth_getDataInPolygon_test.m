@@ -52,6 +52,8 @@ function grid_orth_getDataInPolygon_test()
 % NB2: de routines zijn nog niet 100% robuust. Ook is de data op de OpenDAP server nog niet helemaal goed. Met name dit laatste moet zsm verholpen worden!
 % NB3: enkele onderdelen van dit script zijn nog vrij sloom: bepalen welke grids er zijn en het ophalen van alle kaartbladomtrekken. Hopelijk is dit te fixen middels de Catalog.xml op de OPeNDAP server
 
+MTest.category('DataAccess');
+
 test1;
 test2;
 end
