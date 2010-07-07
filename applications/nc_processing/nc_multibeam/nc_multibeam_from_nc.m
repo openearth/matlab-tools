@@ -65,7 +65,7 @@ OPT.delete_existing     = true;
 OPT.raw_path            = [];
 OPT.raw_extension       = '*.nc';
 OPT.netcdf_path         = [];
-OPT.cache_path          = fullfile(tempdir,'nc_asc');
+OPT.cache_path          = fullfile(tempdir,'nc_nc');
 OPT.zip                 = false;          % are the files zipped?
 OPT.zip_extension       = '*.zip';       % are the files zipped?
 
