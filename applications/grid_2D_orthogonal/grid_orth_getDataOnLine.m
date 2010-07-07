@@ -142,7 +142,7 @@ crossing_d2 =  crossing_d(a);
 [dummy,ind] = sort(crossing_d);
         ind = ind(crossing_x(ind)>min(xi)&crossing_x(ind)<max(xi));
 
-if ~isempty(crossing_x1)
+if ~isempty(crossing_x1) & ~isempty(ind)
     a = (crossing_x(ind(1)) - min(xi))/(crossing_x(ind(1)) - crossing_x1);
     crossing_x1 = crossing_x1*a + crossing_x(ind(1))*(1-a);
     crossing_y1 = crossing_y1*a + crossing_y(ind(1))*(1-a);
@@ -150,7 +150,7 @@ if ~isempty(crossing_x1)
     crossing_d1 = 0;
 end
 
-if ~isempty(crossing_x2)
+if ~isempty(crossing_x2) & ~isempty(ind)
     a = (crossing_x(ind(end)) - max(xi))/(crossing_x(ind(end)) - crossing_x2);
     crossing_x2 = crossing_x2*a + crossing_x(ind(end))*(1-a);
     crossing_y2 = crossing_y2*a + crossing_y(ind(end))*(1-a);
