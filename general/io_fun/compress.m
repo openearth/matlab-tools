@@ -1,11 +1,11 @@
-function OPT = uncompress(fileName, varargin)
+function OPT = compress(fileNameOut,fileNameIn,varargin)
 %UNCOMPRESS  Uncompresses a zip, rar or whatever compressed file using 7zip
 %
 %   Syntax:
 %       OPT = uncompress(fileName, varargin)
 %
 %   Input:
-%       fileName    = file to uncompress
+%       fileNames   = file(s) to compress
 %       $varargin   = keyword/value pairs for additional options where the 
 %       following <keyword,value> pairs have been implemented (values 
 %       indicated are the current default settings):
@@ -75,19 +75,52 @@ function OPT = uncompress(fileName, varargin)
 OPT.outpath     = [];       % output path
 OPT.quiet       = false;    % do not surpress output
 OPT.gui         = false;    % do not show 7zip gui
-OPT.args        = '-y';
+OPT.type        = '-t7z';
+        % Type switch:      -t7z
+        % Format:           [7Z - Wikipedia]
+        % Example filename: archive.7z (default option)
+        % 
+        % Type switch:      -tgzip
+        % Format:           [GZIP - Wikipedia]
+        % Example filename: archive.gzip
+        %                   archive.gz
+        % 
+        % Type switch:      -tzip
+        % Format:           [ZIP - Wikipedia]
+        % Example filename: archive.zip (very compatible)
+        % 
+        % Type switch:      -tbzip2
+        % Format:           [BZIP2 - Wikipedia]
+        % Example filename: archive.bzip2
+        % 
+        % Type switch:      -ttar
+        % Format:           [TAR - Wikipedia]
+        % Example filename: tarball.tar (UNIX and Linux)
+        % 
+        % Type switch:      -tiso
+        % Format:           [ISO - Wikipedia]
+        % Example filename: image.iso
+        % 
+        % Type switch:      -tudf
+        % Format:           [UDF - Wikipedia]
+        % Example filename: disk.udf
+OPT.args        = '-mx9'; % use multithreading = -mmt     
 % overrule default settings by property pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
 
 %%
 % define outpath
-[OPT.fileDir, OPT.fileName, OPT.fileExt] = fileparts(fileName);
+[OPT.fileDir, OPT.fileName, OPT.fileExt] = fileparts(fileNameOut);
 if isempty(OPT.outpath)
     OPT.outpath = OPT.fileDir;
 end
 
+if ~iscellstr(fileNameIn)
+    error('fileNameIn must be an cell array of strings')
+end
+
 if ~OPT.quiet
-    fprintf('unpacking %s ...',fileName);
+    fprintf('packing to %s ...',fileNameOut);
 end
 tic
 
@@ -96,8 +129,11 @@ if OPT.gui
 else
     path7zip      = fullfile(fileparts(mfilename('fullpath')),'private','7z','7z914','7z.exe');
 end
+% 7za a -t7z files.7z *.txt
 
-dosstring     = sprintf('"%s" %s e "%s" -o"%s"',path7zip,OPT.args,fullfile(fileName),OPT.outpath);
+fileNameIn = sprintf('"%s" ',fileNameIn{:});
+
+dosstring     = sprintf('"%s" a %s %s %s %s',path7zip,OPT.type,fullfile(fileNameOut),fileNameIn,OPT.args);
 
 [OPT.status, OPT.info] = system(dosstring);
 
