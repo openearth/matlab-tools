@@ -244,8 +244,13 @@ classdef TeamCity < handle
             obj.CurrentWorkSpace = {};
             for ivarnames = 1:length(varnames)
                 varname = varnames(ivarnames).name;
-                varvalue = evalin('caller',varname);
-                obj.CurrentWorkSpace(ivarnames,1:2) = {varname,varvalue};
+                try
+                    varvalue = evalin('caller',varname);
+                    obj.CurrentWorkSpace(ivarnames,1:2) = {varname,varvalue};
+                catch
+                    % don't mind, this is probably a nested function that has predeclared variables
+                    % that are not defined yet
+                end
             end
         end
         function restoreworkspace()
