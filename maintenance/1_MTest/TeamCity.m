@@ -171,7 +171,7 @@ classdef TeamCity < handle
             profile off
             tc = TeamCity;
             mt = TeamCity.currenttest;
-            if ~isdir(tc.PublishDirectory)
+            if tc.Publish && mt.Publish && ~isdir(tc.PublishDirectory)
                 mkdir(tc.PublishDirectory);
             end
             if nargin < 1
@@ -181,7 +181,7 @@ classdef TeamCity < handle
             varargin{1} = [];
             
             evalin('caller','TeamCity.storeworkspace;');
-            if tc.Publish
+            if tc.Publish && mt.Publish
                 mt.publishdescription(functionname,...
                     'outputdir',tc.PublishDirectory,...
                     varargin{:});
@@ -195,7 +195,7 @@ classdef TeamCity < handle
             profile off
             tc = TeamCity;
             mt = TeamCity.currenttest;
-            if ~isdir(tc.PublishDirectory)
+            if tc.Publish && mt.Publish && ~isdir(tc.PublishDirectory)
                 mkdir(tc.PublishDirectory);
             end
             if nargin < 1
@@ -205,7 +205,7 @@ classdef TeamCity < handle
             varargin{1} = [];
             
             evalin('caller','TeamCity.storeworkspace;');
-            if tc.Publish
+            if tc.Publish && mt.Publish
                 % We assume there is no testcode after publication....?
                 mt.publishresult(functionname,...
                     'outputdir',tc.PublishDirectory,...

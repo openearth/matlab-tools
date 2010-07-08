@@ -392,8 +392,11 @@ classdef MTestExplorer < handle
                     this.JProgressBar.setString(['Running: ' this.MTestRunner.Tests(itests).Name ' (' num2str(round((sum(selectionId(1:itests-1))/sum(selectionId))*100))  '%)']);
                     
                     % reset some test parameters (ignore for example should not remain true)
-                    this.MTestRunner.Tests(itests).AutoRefresh = true;
-                    this.MTestRunner.Tests(itests).Ignore = false;
+                    this.MTestRunner.Tests(itests).Publish = false;     % Never publish from the MTestExplorer
+                    this.MTestRunner.Tests(itests).AutoRefresh = true;  % Auto update to the latest definition
+                    this.MTestRunner.Tests(itests).Ignore = false;      % Should not remain true, whereas it isn't run a next time
+                    
+                    % Run the test
                     this.MTestRunner.Tests(itests).run;
                     
                     % Update the progressbar
@@ -410,6 +413,9 @@ classdef MTestExplorer < handle
                     
                     % Show test information of the test that has just finished
                     this.mouseclickedontree_callback(itests,'selection');
+                    
+                    % delete any teamcity message if there is one
+                    delete(which('teamcitymessage.matlab'));
                 end
             end
             
