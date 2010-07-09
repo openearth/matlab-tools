@@ -133,7 +133,7 @@ end
 
 fileNameIn = sprintf('"%s" ',fileNameIn{:});
 
-dosstring     = sprintf('"%s" a %s %s %s %s',path7zip,OPT.type,fullfile(fileNameOut),fileNameIn,OPT.args);
+dosstring     = sprintf('"%s" a %s "%s" %s %s',path7zip,OPT.type,fullfile(fileNameOut),fileNameIn,OPT.args);
 
 [OPT.status, OPT.info] = system(dosstring);
 
