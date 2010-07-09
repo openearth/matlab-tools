@@ -3,17 +3,12 @@ rem Build script to test OpenEarthTools matlab scripts
 rem with TeamCity Distributed Build Management and Continuous Integration Server
 rem <http://www.jetbrains.com/teamcity/>
 
-rem Map drive with matlab
-rem -----------------------------------
-net use y: /delete
-net use y: \\wlhost\library %openearth_password% /USER:%openearth_user% 
-rem net use y: \\wlhost\library 
-
-rem Call matlab
-rem http://www.mathworks.com/support/solutions/data/1-16B8X.html
+rem Start matlab
 rem -----------------------------------
 
-Y:\app\MATLAB2010a\bin\matlab.exe -nosplash -nodesktop -minimize -r "TeamCity_runtests;" -logfile mlogfile.log -sd "%teamcity.build.workingDir%"
+%map_matlab%
+
+%matlab_path%matlab.exe -nosplash -nodesktop -minimize -r "TeamCity_runtests;" -logfile mlogfile.log -sd "%teamcity.build.workingDir%"
 
 :loopmatlabbusy
 
@@ -25,9 +20,7 @@ if "%ERRORLEVEL%"=="0" goto loopmatlabbusy
 
 echo 'teamcity OK'
 
-rem Remove drive with matlab
-rem -----------------------------------
-net use y: /delete
+%umap_matlab%
 
 goto end
 
