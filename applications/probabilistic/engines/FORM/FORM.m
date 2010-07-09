@@ -61,6 +61,7 @@ OPT = struct(...
     'du', .3,...             % step size for dz/du / Perturbation Value
     'Resistance', 0,...      % Resistance value(s) to be (optionally) used in z-function
     'epsZ', .01,...          % stop criteria for change in z-value
+    'maxdZ', 0.1,...         % second stop criterion for change in z-value
     'epsBeta', .01,...       % stop criteria for change in Beta-value
     'Relaxation', .25,...    % Relaxation value
     'P2xFunction', @P2x,...  % Function to transform P to x
@@ -134,7 +135,9 @@ maxIterReached = false;     % logical to indicate whether maximum number of iter
 Calc = 0;                   % number of calculations so far
 Iter = 0;                   % number of iterations so far
 maxiter = OPT.maxiter;      % maximum number of iterations
-beta = NaN(OPT.maxiter,1);  % preallocate beta
+%beta = NaN(OPT.maxiter,1);  % preallocate beta
+[beta, criteriumZ, criteriumZ2, criteriumBeta] = deal(NaN(OPT.maxiter,1));  % preallocate 
+
 
 %% start FORM iteration procedure
 while NextIter
@@ -157,6 +160,12 @@ while NextIter
         OPT.variables{:});  %#ok<AGROW> % bepaal z(u) uit x(u)
 
     if Converged || maxIterReached
+        
+        % extra check for convergence
+        if Converged &&  abs(z(Calc(end))) > OPT.maxdZ / OPT.Relaxation;
+            Converged = false;
+        end
+
         % exit while loop
         break
     else
@@ -181,12 +190,19 @@ while NextIter
         alpha = A/A_abs;
         beta(Iter) = B/A_abs; %#ok<AGROW>
 
-        % Toetsen op convergentie: is z dicht genoeg bij 0?
-        criteriumZ = abs(z(Calc(end))/A_abs) < OPT.epsZ;
-        criteriumBeta = OPT.epsBeta == Inf ||...
-            (Iter>1 && abs(diff(beta(Iter-1:Iter))) <= OPT.epsBeta);
+%         % Toetsen op convergentie: is z dicht genoeg bij 0?
+%         criteriumZ = abs(z(Calc(end))/A_abs) < OPT.epsZ;
+%         criteriumBeta = OPT.epsBeta == Inf ||...
+%             (Iter>1 && abs(diff(beta(Iter-1:Iter))) <= OPT.epsBeta);
         
-        if criteriumZ && criteriumBeta
+        % Toetsen op convergentie
+        criteriumZ(Iter) = abs(z(Calc(end))/A_abs) < OPT.epsZ;
+        criteriumZ2(Iter) = abs(z(Calc(end))) < OPT.maxdZ;
+        criteriumBeta(Iter) = OPT.epsBeta == Inf ||...
+            (Iter>1 && abs(diff(beta(Iter-1:Iter))) <= OPT.epsBeta);
+
+        if Iter>1 && all([criteriumZ(Iter-1:Iter); criteriumBeta(Iter-1:Iter); criteriumZ2(Iter-1:Iter)])
+        %if criteriumZ && criteriumBeta
             % convergence criteria have been met
             Converged = true;
         elseif Iter >= maxiter
@@ -207,7 +223,9 @@ while NextIter
 end
 
 %% write results to structure
-beta = beta(find(~isnan(beta), 1, 'last'));
+indend = find(~isnan(beta), 1, 'last');
+betas = beta(1:indend);
+beta = beta(indend);
 P_f = 1-norm_cdf(beta, 0, 1); % probability of failure
 result = struct(...
     'settings', OPT,...
@@ -223,6 +241,7 @@ result = struct(...
         'P', P,...
         'x', x,...
         'z', z,...
+        'Betas', betas, ...
         'designpoint', [] ...
     ));
 
