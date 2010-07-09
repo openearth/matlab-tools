@@ -140,7 +140,11 @@ crossing_z2 =  crossing_z(a);
 crossing_d2 =  crossing_d(a);
 
 [dummy,ind] = sort(crossing_d);
-        ind = ind(crossing_x(ind)>min(xi)&crossing_x(ind)<max(xi));
+        ind_temp = ind(crossing_x(ind)>min(xi)&crossing_x(ind)<max(xi));
+        if isempty(ind_temp) % because it is a vertical line (xi(1) = xi(2)), then try with y-coordinates:
+            ind_temp = ind(crossing_y(ind)>min(yi)&crossing_y(ind)<max(yi));
+        end
+        ind = ind_temp;
 
 if ~isempty(crossing_x1) & ~isempty(ind)
     a = (crossing_x(ind(1)) - min(xi))/(crossing_x(ind(1)) - crossing_x1);
@@ -168,3 +172,7 @@ if reverse
     crossing_z = flipud(crossing_z);
     crossing_d = ((crossing_x - xi(2)).^2 + (crossing_y-yi(2)).^2).^.5;
 end
+%% delete nan data
+crossing_z(isnan(crossing_x)) = [];
+crossing_y(isnan(crossing_x)) = [];
+crossing_x(isnan(crossing_x)) = [];
