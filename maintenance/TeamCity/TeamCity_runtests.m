@@ -69,7 +69,19 @@ try %#ok<TRYNC>
 %            rethrow(me);
          exit;
     end
-
+    
+    if nargin > 0
+        try
+            testdatadir = varargin{1};
+            TeamCity.postmessage('progressStart', ['Add test data directory:',char(10),testdatadir]);
+            addpath(genpath(testdatadir));
+            TeamCity.postmessage('progressFinish', 'Finished adding test data');
+        catch me
+            TeamCity.postmessage('message', 'text', 'Matlab was unable to run oetsettings.',...
+                'errorDetails',me.getReport,...
+                'status','ERROR');
+        end
+    end
     try
         TeamCity.running(true);
         TeamCity.postmessage('progressStart','Prepare for running tests.');
