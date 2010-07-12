@@ -59,6 +59,7 @@ try %#ok<TRYNC>
         oetdir = strrep(fileparts(mfilename('fullpath')),'maintenance\TeamCity','');
         addpath(oetdir);
         addpath(genpath(fullfile(oetdir,'maintenance')));
+        TeamCity.running(true);
         TeamCity.postmessage('progressStart','Running oetsettings.');
         oetsettings;
         TeamCity.postmessage('progressFinish','Oetsettings enabled.');
@@ -83,7 +84,6 @@ try %#ok<TRYNC>
         end
     end
     try
-        TeamCity.running(true);
         TeamCity.postmessage('progressStart','Prepare for running tests.');
         %% initiate variables:
         maindir = oetroot;
