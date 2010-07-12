@@ -150,9 +150,8 @@ classdef MTestFactory
             %% Extract name
             calls = fcncalls(mainFunctionId).calls;
             if iscell(calls)
-                warning('MTestFactory:UnableToSetCategory','Due to version limitations of your matlab MTest was not able to determine the name and category of your test');
-                % TODO: read category manually (Look for "MTest.category(" or
-                % "TeamCity.category(" and execute that line (until ");")
+                obj = MTestFactory.findcategory(obj);
+                obj = MTestFactory.findname(obj);
             else
                 dotCalls = fcncalls(mainFunctionId).calls.dotCalls;
                 if ~isempty(dotCalls) && any(ismember(dotCalls.names,{'MTest.name','TeamCity.name'}))
@@ -165,7 +164,7 @@ classdef MTestFactory
                             % TODO, Maybe set current test and run entire command?
                             obj.Name = eval(command(idbegin:idend));
                         catch me
-                            warning('MTestFactory:UnableToSetName',['MTestFactory was not able to set the category.';'The following exeption was thrown when evaluating the input:';me.getReport]);
+                            warning('MTestFactory:UnableToSetName',['MTestFactory was not able to set the name of the test.';'The following exeption was thrown when evaluating the input:';me.getReport]);
                         end
                     end
                 end
@@ -260,6 +259,57 @@ classdef MTestFactory
             else
                 % No runcode
                 error('MTestFactory:NoTestCode','The MTestFactory could not find code to run.');
+            end
+        end
+        function obj = findcategory(obj)
+            testCode = obj.FullString(obj.IDTestFunction);
+            id = find(...
+                ~cellfun(@isempty,strfind(testCode,'TeamCity.category')) | ...
+                ~cellfun(@isempty,strfind(testCode,'MTest.category')) ...
+                ,1,'first');
+            if any(id)
+                command = testCode{id};
+                idbegin = strfind(command,'MTest.category(')+15;
+                if isempty(idbegin)
+                    idbegin = strfind(command,'TeamCity.category(')+18;
+                end
+                idend = max(strfind(command,')'))-1;
+                if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
+                    try
+                        obj.Category = eval(command(idbegin:idend));
+                    catch me
+                        warning('MTestFactory:UnableToSetCategory',['MTestFactory was not able to set the category.';'The following exeption was thrown when evaluating the input:';me.getReport]);
+                    end
+                end
+            end
+            
+            if isempty(obj.Category)
+                mTestFactory = MTestFactory;
+                obj.Category = mTestFactory.Category;
+            end
+        end
+        function obj = findname(obj)
+            obj.Name = obj.FileName;
+            
+            testCode = obj.FullString(obj.IDTestFunction);
+            id = find(...
+                ~cellfun(@isempty,strfind(testCode,'TeamCity.name')) | ...
+                ~cellfun(@isempty,strfind(testCode,'MTest.name')) ...
+                 ,1,'first');
+            if any(id)
+                command = testCode{id};
+                idbegin = strfind(command,'MTest.name(')+11;
+                if isempty(idbegin)
+                    idbegin = strfind(command,'TeamCity.name(')+14;
+                end
+                idend = max(strfind(command,')'))-1;
+                if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
+                    try
+                        obj.Name = eval(command(idbegin:idend));
+                    catch me
+                        warning('MTestFactory:UnableToSetName',['MTestFactory was not able to set the name of the test.';'The following exeption was thrown when evaluating the input:';me.getReport]);
+                    end
+                end
             end
         end
      end
