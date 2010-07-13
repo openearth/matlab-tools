@@ -49,6 +49,8 @@ function bca2bct_test()
 % $HeadURL$
 % $Keywords: $
 
+MTest.category('DataAccess');
+
 H.period      = datenum(1999,05,06,0,[180:60:206040],0);
 H.refdate     = datenum(1999,05,06);
 H.latitude    = 52;

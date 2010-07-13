@@ -50,7 +50,7 @@ function MTestUtils_test()
 % $Keywords: $
 
 MTest.category('Integration');
-MTest.name('MTestUtile integration test');
+MTest.name('MTestUtility integration test');
 
 testsetproperty;
 testjavaclass;

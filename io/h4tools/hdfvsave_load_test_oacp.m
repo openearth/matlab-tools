@@ -49,7 +49,7 @@ function hdfvsave_load_test_oacp()
 % $HeadURL$
 % $Keywords: $
 
-TeamCity.category('UnCategorized');
+TeamCity.category('DataAccess');
 
 clear S0 S1
 

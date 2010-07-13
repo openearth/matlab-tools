@@ -49,6 +49,8 @@ function bct2bca_test()
 % $HeadURL$
 % $Keywords: $
 
+MTest.category('DataAccess');
+
 H.components  = {'K1','O1','P1','Q1','K2','M2','N2','S2'};
 H.latitude    = 52; % eps; %52;
 H.plot        = 0;

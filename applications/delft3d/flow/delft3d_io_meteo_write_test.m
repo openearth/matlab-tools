@@ -50,7 +50,7 @@ function delft3d_io_meteo_write_test()
 % $HeadURL$
 % $Keywords: $
 
-TeamCity.category('UnCategorized');
+MTest.category('DataAccess');
 
 %% Check wlsettings
 if ~exist('wl_grid','file') || ...

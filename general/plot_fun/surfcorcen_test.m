@@ -49,7 +49,7 @@ function surfcorcen_test()
 % $HeadURL$
 % $Keywords: $
 
-TeamCity.category('UnitTest');
+TeamCity.category('Unit');
 
    [xcor,ycor] = meshgrid(1:3,5:8);
    zcor        = xcor + ycor; %rand(size(xcor));
