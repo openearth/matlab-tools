@@ -1,4 +1,4 @@
-function PCRGLOB2KMLClimGrids(lat_range, lon_range, model, scenario, var)
+function PCRGLOB2KMLClimGrids(lat_range, lon_range, model, scenario, var, outFolder)
 %PCRGLOB2KMLClimGrids   climatology grids computed from PCR-GLOBWB climate scenarios
 %
 %   PCRGLOB2KMLClimGrids(lat_range,lon_range,model,scenario,var)
@@ -17,6 +17,21 @@ function PCRGLOB2KMLClimGrids(lat_range, lon_range, model, scenario, var)
 % lat_range:    2-element vector with latitude bounds of interest(range: -90/90)
 % lon_range:    2-element vector with longitude bounds of interest (range: -180/180)
 % model:        Climate model used for computation: can be the following:
+% 
+% BCM2.0        Bjerknes Centre for Climate Research	 Norway	 BCCR
+% CGCM3.1       Canadian Centre for Climate Modelling and Analysis	 Canada	 CCCMA
+% CGCM2.3.2     Meteorological Research Institute	 Japan	 CGCM
+% CSIRO-Mk3.0   Commonwealth Scientific and Industrial Research Organization	 Australia	 CSIRO
+% ECHAM5        Max Planck Institute	 Germany	 ECHAM
+% ECHO-G        Freie Universität Berlin	 Germany	 ECHO
+% GFDL-CM2.1    Geophysical Fluid Dynamics Centre	 USA	 GFDL
+% GISS-ER       Goddard institute for Space Studies	 USA	 GISS
+% IPSL-CM4      Institute Pierre Simon Laplace	 France	 IPSL
+% MIROC3.2med   Center of Climate System Research	 Japan	 MIROC
+% CCSM3         National Center for Atmospheric Research	 USA	 NCAR
+% HADGEM1       Met Office's Hadley Centre for Climate Prediction	 UK	 HADGEM
+
+
 %               'FREDERIEK, KUN JE DIT INVULLEN ZOALS BENEDEN? EERST DE CODERING, DAN
 %               DE BESCHRIJVING?
 %
@@ -27,6 +42,7 @@ function PCRGLOB2KMLClimGrids(lat_range, lon_range, model, scenario, var)
 %               'EACT'    : actual evaporation (m/day)
 %               'ETP'     : potential evaporation (m/day)
 %               'QC'      : accumulated river discharge (m3/s)
+% outLocation:  A local folder where KML output files are to be stored
 %
 % MATLAB will not give any outputs to the screen. The result will be 2 
 % KML-files located in a new folder, specified by
@@ -79,7 +95,31 @@ function PCRGLOB2KMLClimGrids(lat_range, lon_range, model, scenario, var)
 % Fix the location of nc-files. Can be either local or OpenDAP
 % note HCW 22-01-2010: ncLocation will soon be changed to OpenDAP!!
 % (https://....);
-ncLocation = 'f:\python\FEWSWorld';
+ncLocation = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/FEWS-IPCC';
+model_abbrev = {'BCM2.0';'CGCM3.1';'CGCM2.3.2';'CSIRO-Mk3.0';'ECHAM5';...
+    'ECHO-G';'GFDL-CM2.1';'GISS-ER';'IPSL-CM4';'MIROC3.2med';'CCSM3';...
+    'HADGEM1'};
+
+models = {'BCCR-BCM2';'CCCMA-CGCM31';'MRI-CGCM232';'CSIRO-Mk3';'MPI-ECHAM5';'FreieUniBerlin-ECHO-G';...
+    'GFDL-CM21';'GISS-ER';'IPSL-CM4';'CCSR-MIROC32med';'NCAR-CCSM3';'HadleyCentre-HADGEM1'};
+
+idx = strcmp(model_abbrev,model);
+i = find(idx == 1);
+if length(i) == 1
+    disp(['Model abbreviation ''' model ''' found, model ''' models{i} ''' is used.']);
+elseif length(i) > 1
+    disp(['Multiple instances found for model abbreviation ''' model ''', please make description more specific']);
+    disp('exiting...bye bye!');
+    return
+else
+    disp(['No model descriptor found for abbreviation ''' model ''', please spell-check or check ''help PCRGLOB2KMLClimGrids'' for valid abbreviations']);
+end
+model = models{idx};
+if ~(strcmp(scenario,'SRESA1B') | strcmp(scenario,'SRESA2') | strcmp(scenario,'20CM3'))
+    disp(['Scenario ''' scenario ''' seems to be unavailable. Please check ''help PCRGLOB2KMLClimGrids'' for valid scenarios.']);
+    disp('exiting...bye bye!')
+    return
+end    
 % Any value > thres is assumed to be wrong! these values are removed
 thres = 1e7;
 try
@@ -92,11 +132,16 @@ catch
     disp(['Scenario ''' scenario ''' is not available. Exiting....']);
 end
 % Build the filename from all provided information
-nc_file = [ncLocation filesep scenario '_' model '_' period '.nc'];
-kmlFolder = [scenario '_' model '_' period '_' var '_clim'];
+nc_file = [ncLocation '/' scenario '_' model '_' period '.nc'];
+disp(['NetCDF file to be accessed: ' nc_file]);
+kmlFolder = [outFolder filesep scenario '_' model '_' period '_' var '_clim'];
+disp(['KML file plus folder structure will be written in: ' kmlFolder]);
 % if target directory does not exist, create the directory
 if isdir(kmlFolder)==0
+    disp('KML folder non-existent, creating folder...');
     mkdir(kmlFolder)
+else
+    disp('KML folder is available...');
 end
 latmin=max(min(lat_range),-90);
 latmax=min(max(lat_range),90);
@@ -106,9 +151,12 @@ lonmax=min(max(lon_range),180);
 lat_range = [latmin latmax];
 lon_range = [lonmin lonmax];
 
+disp(['Latitude range: ' num2str(latmin) '; ' num2str(latmax)]);
+disp(['Longitude range: ' num2str(lonmin) '; ' num2str(lonmax)]);
+
 %Get data
 info = nc_getvarinfo(nc_file,var);
-units = info.Attribute(1).Value;
+units = info.Attribute(2).Value;
 lat = nc_varget(nc_file,'latitude');
 lon = nc_varget(nc_file,'longitude');
 time = nc_varget(nc_file,'time');
