@@ -132,7 +132,7 @@ try %#ok<TRYNC>
         %% Collect tests that need to be run
         mtr.cataloguetests;
         collectedTestCategories = {mtr.Tests.Category}';
-
+       
         % Check which tests we have to run
         if strcmp(OPT.Category,'all')
             id = true(size(collectedTestCategories));
@@ -152,7 +152,10 @@ try %#ok<TRYNC>
             exit
         end
         
+        TeamCity.postmessage('progressFinish', ['Identified ' num2str(length(obj.Tests)) ' tests within the specified category ("' OPT.Category '")']);
+        
         %% Run tests
+        TeamCity.postmessage('progressStart','Running tests.');
         mtr.run;
         TeamCity.postmessage('progressFinish','Tests finished.');
 
@@ -174,6 +177,7 @@ try %#ok<TRYNC>
             'TeamCity',TeamCity,...
             'OPT',OPT);
         save('OetTestResult.mat','OetTestResult');
+        
     catch me
         try %#ok<TRYNC>
             TeamCity.postmessage('message', 'text', 'Something went wrong while running the tests.',...
