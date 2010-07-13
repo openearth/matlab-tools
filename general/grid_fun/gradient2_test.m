@@ -65,6 +65,10 @@ OPT.discretisations{1} = 'central';  % gradient2
 OPT.discretisations{2} = 'upwind';   % gradient2
 OPT.discretisations{3} = 'gradient'; % gradient
 
+if ~exist('clrmap','file')
+    wlsettings;
+end
+
 for idis=1:length(OPT.discretisations)
     
     OPT.discretisation = OPT.discretisations{idis};
