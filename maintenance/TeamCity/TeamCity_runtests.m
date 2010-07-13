@@ -60,9 +60,10 @@ try %#ok<TRYNC>
         addpath(oetdir);
         addpath(genpath(fullfile(oetdir,'maintenance')));
         TeamCity.running(true);
-        TeamCity.postmessage('progressStart','Running oetsettings.');
+        TeamCity.postmessage('progressStart','Run Oetsettings');
         oetsettings;
-        TeamCity.postmessage('progressFinish','Oetsettings enabled.');
+        TeamCity.postmessage('progressMessage','Oetsettings enabled');
+        TeamCity.postmessage('progressFinish','Run Oetsettings');
     catch me
         TeamCity.postmessage('buildStatus',...
                 'status','FAILED',...
@@ -70,6 +71,7 @@ try %#ok<TRYNC>
         TeamCity.postmessage('message', 'text', 'Matlab was unable to run oetsettings.',...
             'errorDetails',me.getReport,...
             'status','ERROR');
+        TeamCity.postmessage('progressFinish','Run Oetsettings');
 %            rethrow(me);
          exit;
     end
@@ -98,7 +100,7 @@ try %#ok<TRYNC>
         end
     end
     try
-        TeamCity.postmessage('progressStart','Prepare for running tests.');
+        TeamCity.postmessage('progressStart','Prepare MTestRunner');
         %% initiate variables:
         maindir = oetroot;
         targetdir = fullfile(oetroot,'teamcitytesthtml');
@@ -135,7 +137,10 @@ try %#ok<TRYNC>
             'Publish'       ,OPT.Publish,...
             'Template'      ,'oet');
 
+        TeamCity.postmessage('progressFinish','Prepare MTestRunner');
+        
         %% Collect tests that need to be run
+        TeamCity.postmessage('progressStart','Collect Tests');
         mtr.cataloguetests;
         collectedTestCategories = {mtr.Tests.Category}';
        
@@ -153,17 +158,18 @@ try %#ok<TRYNC>
         mtr.Tests(~id)=[];
         if isempty(mtr.Tests)
             % exit because we do not have any test in this category
-            TeamCity.postmessage('message', 'text', 'No tests were found under this category.');
-            TeamCity.postmessage('progressFinish','Tests finished.');
+            TeamCity.postmessage('progressMessage', 'No tests were found under this category.');
+            TeamCity.postmessage('progressFinish','Collect Tests');
             exit
         end
         
-        TeamCity.postmessage('progressFinish', ['Identified ' num2str(length(mtr.Tests)) ' tests within the specified category ("' OPT.Category '")']);
+        TeamCity.postmessage('progressMessage', ['Identified ' num2str(length(mtr.Tests)) ' tests within the specified category ("' OPT.Category '")']);
+        TeamCity.postmessage('progressFinish','Collect Tests');
         
         %% Run tests
-        TeamCity.postmessage('progressStart','Running tests.');
+        TeamCity.postmessage('progressStart','Run Tests');
         mtr.run;
-        TeamCity.postmessage('progressFinish','Tests finished.');
+        TeamCity.postmessage('progressFinish','Run Tests');
 
         %% Remove template files
         delete(fullfile(targetdir,'mxdom2defaulthtml.xsl'));
