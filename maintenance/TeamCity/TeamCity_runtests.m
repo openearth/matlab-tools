@@ -71,12 +71,20 @@ try %#ok<TRYNC>
          exit;
     end
     
+    OPT = struct(...
+        'TestDataMainDir',[],...
+        'Category','all',...
+        'Publish',true,...
+        'RevisionNumber',NaN);
+
     if nargin > 0
         try
-            testdatadir = varargin{1};
-            TeamCity.postmessage('message', 'text', ['Add test data directory:',char(10),testdatadir]);
-            addpath(genpath(testdatadir));
-            TeamCity.postmessage('message', 'text', 'Finished adding test data');
+            OPT = setproperty(OPT,varargin);
+            if ~isempty(OPT.TestDataMainDir)
+                TeamCity.postmessage('message', 'text', ['Add test data directory:',char(10),OPT.TestDataMainDir]);
+                addpath(genpath(OPT.TestDataMainDir));
+                TeamCity.postmessage('message', 'text', 'Finished adding test data');
+            end
         catch me
             TeamCity.postmessage('message', 'text', 'Matlab was unable to run oetsettings.',...
                 'errorDetails',me.getReport,...
@@ -111,34 +119,61 @@ try %#ok<TRYNC>
 
         %% Create testengine
         mtr = MTestRunner(...
-            'MainDir'  ,maindir,...
-            'Recursive',true,...
-            'TargetDir',targetdir,...
-            'Exclusions',exclusions,...
-            'Verbose'  ,true,...
-            'CopyMode' ,'svnkeep',...
+            'MainDir'       ,maindir,...
+            'Recursive'     ,true,...
+            'TargetDir'     ,targetdir,...
+            'Exclusions'    ,exclusions,...
+            'Verbose'       ,true,...
+            'CopyMode'      ,'svnkeep',...
             'IncludeCoverage',false,...
-            'Publish',true,...
-            'Template' ,'oet');
+            'Publish'       ,OPT.Publish,...
+            'Template'      ,'oet');
 
-        %% Run tests and publish results
+        %% Collect tests that need to be run
         mtr.cataloguetests;
+        collectedTestCategories = {mtr.Tests.Category}';
+
+        % Check which tests we have to run
+        if strcmp(OPT.Category,'all')
+            id = true(size(collectedTestCategories));
+        elseif strcmpi(OPT.Category,'Unit')
+            % Category is Unit (all tests that are not assigned to another category)
+            predefinedTestCategories = {'Performance','Integration','Regression','DataAccess','all','Unit'};
+            id = ~ismember(collectedTestCategories,predefinedTestCategories) | strcmpi(collectedTestCategories,'Unit') | strcmpi(collectedTestCategories,'all');
+        else
+            id = strcmpi(collectedTestCategories,OPT.Category);
+        end
+        
+        mtr.Tests(~id)=[];
+        if isempty(mtr.Tests)
+            % exit because we do not have any test in this category
+            TeamCity.postmessage('message', 'text', 'No tests were found under this category.');
+            TeamCity.postmessage('progressFinish','Tests finished.');
+            exit
+        end
+        
+        %% Run tests
         mtr.run;
         TeamCity.postmessage('progressFinish','Tests finished.');
 
         %% Remove template files
         delete(fullfile(targetdir,'mxdom2defaulthtml.xsl'));
 
-        %% zip result
-        delete('testresult.zip');
-        zip('testresult',{fullfile(targetdir,'*.*')});
+        %% zip result and remove target dir
+        if OPT.Publish
+            delete('OetTestResult.zip');
+            zip('OetTestResult',{fullfile(targetdir,'*.*')});
+            rmdir(targetdir,'s');
+        end
 
-        %% save tests
-        save('tests.mat','mtr');
-
-        %% remove targetdir
-        rmdir(targetdir,'s');
-
+        %% save test info
+        OetTestResult = struct(...
+            'Revisionnumber',OPT.RevisionNumber,...
+            'Date',datestr(now),...
+            'TestRunner',mtr,...
+            'TeamCity',TeamCity,...
+            'OPT',OPT);
+        save('OetTestResult.mat','OetTestResult');
     catch me
         try %#ok<TRYNC>
             TeamCity.postmessage('message', 'text', 'Something went wrong while running the tests.',...
