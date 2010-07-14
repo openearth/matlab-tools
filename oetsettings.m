@@ -7,6 +7,11 @@ function oetsettings(varargin)
 % In order to suppress this information, run the function with input argument quiet:
 %	"oetsettings('quiet');" or "oetsettings quiet"
 %
+% By default oetsettings generates a tutorial search database (only if there is no current database 
+% or the current database is outdated). Generation of the tutorial search database can be suppressed 
+% as follows:
+%   "oetsettings(...,'searchdb',false);"
+% 
 % For more information on OpenEarthTools refer to the following sources:
 %
 % * wiki:          <a href="http://OpenEarth.nl">OpenEarth.nl</a>
@@ -22,9 +27,9 @@ function oetsettings(varargin)
 %    help applications
 %    help io
 %
-%See also: ADDPATHFAST, RESTOREDEFAULTPATH,
+%See also: path, restoredefaultpath, addpathfast,
 %          OpenEarthTools: general, applications, io, tutorials
-%          highlights: CONVERTCOORDINATES, GOOGLEPLOT
+%          highlights: convertcoordinates, googleplot
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -67,14 +72,16 @@ function oetsettings(varargin)
 
 %% Retrieve verbose state from input
 % -----------------------
-   OPT.quiet = false;
+   OPT = struct(...
+       'quiet',false,...
+       'searchdb',true);
    nextarg   = 1;
    
    if mod(nargin,2)==1 % odd # arguments
        if strcmp(varargin{1},'quiet')
-       OPT.quiet = true;
+           OPT.quiet = true;
        else
-          error(['unknown argument:',varargin{1}])
+           error(['unknown argument:',varargin{1}])
        end
        nextarg   = 2;
    end
@@ -101,18 +108,35 @@ function oetsettings(varargin)
 
 %% Create tutorial search database
 % ------------------------
- 
-    disp('Creating <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a> search database, please wait ...')
-    try % does not work when using read-only checkout
-        DocumentationExists = exist(fullfile(oetroot,'docs','OpenEarthDocs','oethelpdocs','helptoc.xml'),'file');
-        if DocumentationExists && exist('builddocsearchdb','file')
-            builddocsearchdb(fullfile(oetroot,'docs','OpenEarthDocs','oethelpdocs'));
+    if OPT.searchdb
+        createSearchDb = true;
+        
+        docSearchDir = fullfile(oetroot,'docs','OpenEarthDocs','oethelpdocs');
+        docInfo = dir(fullfile(docSearchDir,'helptoc.xml'));
+        
+        if isdir(fullfile(docSearchDir,'helpsearch')) && ...
+                exist(fullfile(docSearchDir,'searchdbversion.mat'),'file')
+            load(fullfile(docSearchDir,'searchdbversion.mat'));
+            createSearchDb = ~strcmp(searchDbVersion.MatlabVersion,version) ||...
+                searchDbVersion.DocVersion ~= docInfo.datenum; %#ok<NODEF>
         end
-    catch
-        warning('OET:NoSearchDB',['Could not build search database because ',oetroot,' is read-only.', char(10),...
-            'the OpenEarthTools help documentation is still available in the matlab help navigator.']);
+        if createSearchDb
+            disp('Creating <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a> search database, please wait ...')
+            try % does not work when using read-only checkout
+                DocumentationExists = exist(fullfile(docSearchDir,'helptoc.xml'),'file');
+                if DocumentationExists && exist('builddocsearchdb','file')
+                    builddocsearchdb(docSearchDir);
+                    searchDbVersion = struct(...
+                        'DocVersion',docInfo.datenum,...
+                        'MatlabVersion',version); %#ok<NASGU>
+                    save(fullfile(docSearchDir,'searchdbversion.mat'),'searchDbVersion');
+                end
+            catch
+                warning('OET:NoSearchDB',['Could not build search database because ',oetroot,' is read-only.', char(10),...
+                    'the OpenEarthTools help documentation is still available in the matlab help navigator.']);
+            end
+        end
     end
-    
 %% Restore warning and directory state
 % -----------------------
    warning(state.warning)
