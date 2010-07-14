@@ -28,9 +28,6 @@ function G = delft3d_io_dep(varargin)
 %                for center dsta the 1st and last row/col are assumed dummy and absent.
 % * nodatavalue : nodatavalue of data in dep file     (default -999)
 % * missingvalue: nodatavalue of data in the G struct (default NaN)
-% * mfilename:   optional keyword to add the mfilename from which
-%                delft3d_io_dep.m is called to the meta info at the end of
-%                the dep values (default is mfilename unknown)
 %
 %   DELFT3D_IO_DEP('write',filename,G     ,<keyword,value>)
 %   with struct G, where the one keywords are mandatory, there
@@ -41,6 +38,9 @@ function G = delft3d_io_dep(varargin)
 %
 % * location:    location of depth file data ('cen','cor') to be written to file (mandatory)
 % * nodatavalue: nodatavalue written to file (default -999)
+% * mfilename:   optional keyword to add the mfilename from which
+%                delft3d_io_dep.m is called to the meta info at the end of
+%                the dep values (default is mfilename unknown)
 % 
 % Example:
 %       mymatrix = peaks(5);
