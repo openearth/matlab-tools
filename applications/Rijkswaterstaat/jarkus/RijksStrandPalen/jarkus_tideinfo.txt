@@ -1,3 +1,9 @@
+% $id$
+% NOTE: the origin of this file is unknown.
+% When smearing peanut butter on ones bread, it is always good 
+% practise to check the jar for proper date, producer (we only want an A brand), 
+% calories etc. But for some reason we complete fail to do so when 
+% smearing raw data.
     2   100  0.99 -1.24
     2   101  0.99 -1.24
     2   102  0.99 -1.24

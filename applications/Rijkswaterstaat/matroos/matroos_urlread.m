@@ -4,7 +4,7 @@ function s = matroos_urlread(urlChar);
 %    cell = matroos_urlread
 %
 % get content of a matroos url url as a cell array of strings
-% example: data = geturl('http://matroos.deltares.nl........')
+% example: data = geturl('user:password@http://matroos.deltares.nl........')
 %
 % Note that regular urlread cannot handle the required authentication, see:
 % http://www.mathworks.com/support/solutions/en/data/1-4EO8VK/index.html?solution=1-4EO8VK
@@ -62,7 +62,7 @@ function s = matroos_urlread(urlChar);
    ii=findstr('@',urlChar); % in a url all other @ should have been replaced with %40.
    loginPassword='';
    if(length(ii)>0),
-      loginPassword=java.lang.String(urlChar(8:(ii(end)-1)));
+      loginPassword=java.lang.String(urlChar(1:(ii(end)-1)));
       urlChar=['http://',urlChar(ii(end)+1:end)];
    end;
    u=URL(urlChar); %java-object

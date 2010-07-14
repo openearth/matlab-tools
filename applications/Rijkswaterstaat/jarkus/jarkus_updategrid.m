@@ -80,16 +80,16 @@ end
     
     %% Second part: update grid with information from TIDEINFO.txt
     disp(['Extracting info from ' tidefile])
-    tideinfo                      = load(tidefile);
+    tideinfo                      = jarkus_tideinfo(tidefile);
     
 %% create a new transect structure
     
     transect                      = jarkus_createtransectstruct();
-    transect.areaCode             = tideinfo(:,1);
-    transect.alongshoreCoordinate = tideinfo(:,2); 
+    transect.areaCode             = tideinfo.areaCode;
+    transect.alongshoreCoordinate = tideinfo.alongshoreCoordinate;
     transect.id                   = transect.areaCode*1000000 + transect.alongshoreCoordinate;
-    transect.meanHighWater        = tideinfo(:,3);
-    transect.meanLowWater         = tideinfo(:,4);
+    transect.meanHighWater        = tideinfo.MHW;
+    transect.meanLowWater         = tideinfo.LMW;
     % find points in the transect which are also in the grid
     [c, ia, ib] = intersect(grid.id, transect.id);
 
