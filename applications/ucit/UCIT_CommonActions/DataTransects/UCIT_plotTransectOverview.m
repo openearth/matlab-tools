@@ -1,15 +1,11 @@
-function UCIT_displayTransectOutlines
-%PLOTTRANSECTOVERVIEW   this routine displays all transect outlines
+function fh = UCIT_plotTransectOverview(datatype,varargin)
+%UCIT_PLOTTRANSECTOVERVIEW   this routine displays all transect outlines
 %
 % This routine displays all transect outlines.
 %              
-% input:       
-%    function has no input
+%  <figure_handle> = UCIT_plotGridOverview(datatype)
 %
-% output:       
-%    function has no output
-%
-% see also ucit, plotDotsInPolygon 
+% see also ucit_netcdf, UCIT_getInfoFromPopup
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
@@ -38,21 +34,28 @@ function UCIT_displayTransectOutlines
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+OPT.refreshonly = 0;
+OPT = setproperty(OPT,varargin{:});
+
 %% get metadata (either from the console or the database)
-[d] = UCIT_getMetaData(1);
+
+d   = UCIT_getMetaData(1);
 
 %% now plot the transectcontours gathered in d
+
 if ~isempty(d)
     UCIT_plotFilteredTransectContours(d);
 end
 
 %% Adjust axis and labels
+
 axis equal;
 axis([d.axes])
 ylabel('Northing [m]')
 xlabel('Easting [m]')
 
 %% Make figure visible
+
 fh = findobj('tag','mapWindow');
 figure(fh);
 set(fh,'visible','on');

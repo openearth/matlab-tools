@@ -46,6 +46,7 @@ function [datatypes] = UCIT_getDatatypes;
 % add data type
 
 %% Transect data
+%  names are a unique tag, datatype governs the actions
 
    i = 0;
 
@@ -54,12 +55,35 @@ function [datatypes] = UCIT_getDatatypes;
    i = i + 1;
    datatypes.transect.names  {i}  =  'Jarkus Data';
    datatypes.transect.urls   {i}  =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
-   datatypes.transect.areas  {i}  =  '';
+   datatypes.transect.areas  {i}  =  ''; % set by UCIT_loadRelevantInfo2Popup(1,2)
    datatypes.transect.catalog{i}  =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/jarkus/profiles/catalog.xml';
    datatypes.transect.ldbs{i}     =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
    datatypes.transect.axes{i}     =  1E5*[-0.239487 2.901701 2.999500 6.787223];
-   datatypes.transect.datatype{i} =  ''; % for rws_*
+   datatypes.transect.datatype{i} =  'Jarkus Data'; % defines functionality
+
+   %% Jarkus (test)
+
+   i = i + 1;
+   datatypes.transect.names  {i}  =  'Jarkus Data (test/next release)';
+   datatypes.transect.urls   {i}  =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
+   datatypes.transect.areas  {i}  =  ''; % set by UCIT_loadRelevantInfo2Popup(1,2)
+   datatypes.transect.catalog{i}  =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/jarkus/profiles/catalog.xml';
+   datatypes.transect.ldbs{i}     =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
+   datatypes.transect.axes{i}     =  1E5*[-0.239487 2.901701 2.999500 6.787223];
+   datatypes.transect.datatype{i} =  'Jarkus Data'; % defines functionality
    
+   %% Jarkus (local)
+if 0
+   i = i + 1;
+   datatypes.transect.names  {i}  =  'Jarkus Data (local)';
+   datatypes.transect.urls   {i}  =  '';
+   datatypes.transect.areas  {i}  =  ''; % set by UCIT_loadRelevantInfo2Popup(1,2)
+   datatypes.transect.catalog{i}  =  '';
+   datatypes.transect.ldbs{i}     =  '';
+   datatypes.transect.axes{i}     =  1E5*[-0.239487 2.901701 2.999500 6.787223];
+   datatypes.transect.datatype{i} =  'Jarkus Data'; % defines functionality
+end
+
    %% Lidar USA
 
    i = i + 1;
@@ -75,9 +99,10 @@ function [datatypes] = UCIT_getDatatypes;
                                       1E6*[0.36716 0.446396 5.12516 5.370968]};
    datatypes.transect.extra{i}    =  {'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/usgs/landboundaries/refline_OR.nc',...
                                      ''};
-   datatypes.transect.datatype{i} =  ''; % for rws_*
+   datatypes.transect.datatype{i} =  'Lidar Data US'; % defines functionality
 
 %% Grid data
+%  names are a unique tag, datatype governs the actions
 
    i = 0;
 
@@ -114,13 +139,13 @@ function [datatypes] = UCIT_getDatatypes;
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
 
-   %% Vaklodingen
+   %% Vaklodingen (local)
 if 0
    i = i + 1;
    datatypes.grid.names{i}        =  'Vaklodingen (local)';
    datatypes.grid.urls {i}        =  'F:\opendap\thredds\rijkswaterstaat\vaklodingen\';
    datatypes.grid.catalog{i}      =  'F:\opendap\thredds\rijkswaterstaat\vaklodingen\';
-   datatypes.grid.ldbs{i}         =  'F:\opendap\thredds\deltares\holland_fillable.nc';
+   datatypes.grid.ldbs{i}         =  'f:\opendap\thredds\deltares\landboundaries\holland_fillable.nc';
    datatypes.grid.axes{i}         =  1E5*[0.9783    1.2039    5.4272    5.6993];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*

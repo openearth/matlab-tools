@@ -54,31 +54,45 @@ function UCIT_DC_findAvailableActions(type)
 % $Date$
 % $Author$
 % $Revision$
+
+datatypes = UCIT_getDatatypes;
+
 switch  type
+
     case 1
         objTag='TrActions';
         datatype =  {'Jarkus Data' , 'Lidar Data US'};
         DataRootCommon0 = [fileparts(which('ucit_commonactions.dir'))  filesep 'DataTransects' filesep];
         DataRootCommon1 = [fileparts(which('ucit_commonactions.dir'))  filesep 'DataTransects' filesep];
-        DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataTransects' filesep strrep(UCIT_getInfoFromPopup('TransectsDatatype'),' ',''), filesep];
+        name            = UCIT_getInfoFromPopup('TransectsDatatype');
+        index           = strmatch(name,datatypes.transect.names,'exact');
+        type            = strrep(datatypes.transect.datatype{index},' ',''); % TO DO: make diretory name same as datstype in UCIT_getDatatypes
+        
+        DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataTransects' filesep type filesep];
+        
     case 2
         objTag='GrActions';
         datatype = {'Jarkus' 'Vaklodingen'};
         DataRootCommon0 = [fileparts(which('ucit_commonactions.dir'))  filesep 'DataGrids' filesep];
         DataRootCommon1 = [fileparts(which('ucit_commonactions.dir'))  filesep 'DataGrids' filesep];
-        DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataGrids' filesep strrep(UCIT_getInfoFromPopup('GridsDatatype'),' ','') filesep];
-    case 3
-        objTag='LnActions';
-        datatype = DBgetUniqueFields('line','datatype',{'datatypeinfo',UCIT_getInfoFromPopup('LinesDatatype')});
-        DataRootCommon0 = [fileparts(which('ucit_commonactions.dir'))  filesep 'DataLines' filesep];
-        DataRootCommon1 = [fileparts(which('ucit_commonactions.dir'))  filesep 'DataLines' filesep];
-        DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataLines' filesep 'DataType' num2str(datatype{1}) filesep 'code' filesep 'actions' filesep];
-    case 4
-        objTag='PtActions';
-        datatype = DBgetUniqueFields('point','datatype',{'datatypeinfo',UCIT_getInfoFromPopup('PointsDatatype')});
-        DataRootCommon0 = [fileparts(which('ucit_commonactions.dir'))  filesep 'DataPoints' filesep];
-        DataRootCommon1 = [fileparts(which('ucit_commonactions.dir'))  filesep 'DataPoints' filesep];
-        DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataPoints' filesep 'DataType' num2str(datatype{1}) filesep 'code' filesep 'actions' filesep];
+        name            = UCIT_getInfoFromPopup('GridsDatatype');
+        index           = strmatch(name,datatypes.grid.names,'exact');
+        type            = strrep(datatypes.grid.datatype{index},' ',''); % TO DO: make diretory name same as datstype in UCIT_getDatatypes
+
+        DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataGrids' filesep type filesep];
+        
+ %   case 3
+ %       objTag='LnActions';
+ %       datatype = DBgetUniqueFields('line','datatype',{'datatypeinfo',UCIT_getInfoFromPopup('LinesDatatype')});
+ %       DataRootCommon0 = [fileparts(which('ucit_commonactions.dir'))  filesep 'DataLines' filesep];
+ %       DataRootCommon1 = [fileparts(which('ucit_commonactions.dir'))  filesep 'DataLines' filesep];
+ %       DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataLines' filesep 'DataType' num2str(datatype{1}) filesep 'code' filesep 'actions' filesep];
+ %   case 4
+ %       objTag='PtActions';
+ %       datatype = DBgetUniqueFields('point','datatype',{'datatypeinfo',UCIT_getInfoFromPopup('PointsDatatype')});
+ %       DataRootCommon0 = [fileparts(which('ucit_commonactions.dir'))  filesep 'DataPoints' filesep];
+ %       DataRootCommon1 = [fileparts(which('ucit_commonactions.dir'))  filesep 'DataPoints' filesep];
+ %       DataRootActions = [fileparts(which('ucit_actions.dir')) filesep 'DataPoints' filesep 'DataType' num2str(datatype{1}) filesep 'code' filesep 'actions' filesep];
 end
 
 if isnumeric(datatype{1})

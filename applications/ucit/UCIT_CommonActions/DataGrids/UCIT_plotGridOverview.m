@@ -1,17 +1,11 @@
 function fh = UCIT_plotGridOverview(datatype,varargin)
-%PLOTGRIDOVERVIEW   this routine displays all grid outlines
+%UCIT_PLOTGRIDOVERVIEW   this routine displays all grid outlines
 %
-% This routine displays all transect outlines.
+% This routine displays all grid outlines.
 %
 %  <figure_handle> = UCIT_plotGridOverview(datatype)
 %
-% input:
-%    datatype = UCIT_getInfoFromPopup('GridsDatatype');
-%
-% output:
-%    <figure_handle>
-%
-% see also ucit_netcdf
+% see also ucit_netcdf, UCIT_getInfoFromPopup
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
@@ -41,14 +35,14 @@ function fh = UCIT_plotGridOverview(datatype,varargin)
 %   --------------------------------------------------------------------
 
 OPT.refreshonly = 0;
-
 OPT = setproperty(OPT,varargin{:});
 
 %% get metadata (either from the console or the database)
-d    = UCIT_getMetaData(2);
+
+d   = UCIT_getMetaData(2);
 
 if ~isempty(findobj('tag','gridOverview'));
-   h = findobj('tag','gridOverview');
+        h = findobj('tag','gridOverview');
    figure(h)
    OPT.axis = axis;
    close(h);

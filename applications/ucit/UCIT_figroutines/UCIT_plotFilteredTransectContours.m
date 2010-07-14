@@ -50,7 +50,7 @@ if nargin == 2 % remake figure using zoom
     figure(fh);
 else % make figure new
     if ~isempty(findobj('tag','mapWindow'))
-        close(findobj('tag','mapWindow'));
+          close(findobj('tag','mapWindow'));
     end
 
     fh=figure('tag','mapWindow');clf;
@@ -147,13 +147,12 @@ drawnow
 %%
 function [ph, ph2] = displayFilteredTransects(d, id, stepsize)
 
-
 %% get info needed to construct a proper tag
 soundingID   = repmat({datestr(d.year(end)+ datenum(1970,1,1))},size(d.area));
-separator    = repmat({'_'},size(d.area));
+separator    = repmat({'_'}    ,size(d.area));
 colors1      = repmat({'color'},size(d.area));
-colors2      = repmat({'r'},size(d.area));
-tags1        = repmat({'tag'},size(d.area));
+colors2      = repmat({'r'}    ,size(d.area));
+tags1        = repmat({'tag'}  ,size(d.area));
 tags2        = cellfun(@horzcat, d.datatypeinfo,separator,d.area,separator,d.transectID,separator,soundingID,'UniformOutput',false);
 
 [xs, ys, zs] = deal(repmat({[1;1]}, size(d.area)));

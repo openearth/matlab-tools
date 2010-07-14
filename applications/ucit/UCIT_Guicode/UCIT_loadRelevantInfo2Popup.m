@@ -60,13 +60,14 @@ datatypes = UCIT_getDatatypes;
 if type==1&&PopupNR==1
 %% TRANSECTS : 
 
-    % *** set TransectsDatatype
-
+    % *** set TransectsDatatype: get info from local ini file
      
+    names = datatypes.transect.names; % datatype; % allow same dataset to be on different locations: same type, other name
+        
     % manufacture the string for in the popup menu
-    string{length(datatypes.transect.names)+1}=[]; string{1}='Select datatype ...';
-    for i=1:length(datatypes.transect.names)
-        string{i+1}=datatypes.transect.names{i};
+    string{length(names)}=[]; string{1}='Select datatype ...';
+    for i = 1:length(names)
+        string{i+1} = names{i};
     end
     
     % fill the proper popup menu and reset others if required
@@ -79,21 +80,25 @@ elseif type==1&&PopupNR==2
 
     % *** set TransectsArea
 
-    objTag='TransectsDatatype';[popupValue, info]=UCIT_getInfoFromPopup(objTag);
+    objTag='TransectsDatatype';
+    [name, info]=UCIT_getInfoFromPopup(objTag);
     
     if info.value==1
         UCIT_loadRelevantInfo2Popup(1,1);
         return
     end
+    
+    name  = UCIT_getInfoFromPopup(objTag);
+    index = strmatch(name,datatypes.transect.names,'exact');
+    type  = datatypes.transect.datatype{index};
 
     % get info from database  
-    
-    if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Jarkus Data')
+    if strcmp(type,'Jarkus Data')
         % get from single netCDF file
         areanames = nc_varget(datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup(objTag),datatypes.transect.names))}, 'areaname');
         areas     = unique(cellstr(areanames));
     else
-        areas = datatypes.transect.areas{2};
+        areas = datatypes.transect.areas{index};
     end
     
     % manufacture the string for in the popup menu
@@ -113,17 +118,20 @@ elseif type==1&&PopupNR==3
 
     % *** set TransectsTransectID
 
-    objTag='TransectsDatatype';
+    objTag = 'TransectsDatatype';
+    name   = UCIT_getInfoFromPopup(objTag);
+    index  = strmatch(name,datatypes.transect.names,'exact');
+    type   = datatypes.transect.datatype{index};    
     
     % get info from database   
     
-    if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Jarkus Data')
+    if strcmp(type,'Jarkus Data')
         areanames   = nc_varget(datatypes.transect.urls{strcmp(UCIT_getInfoFromPopup(objTag),datatypes.transect.names)}, 'areaname');
         ids         = nc_varget(datatypes.transect.urls{strcmp(UCIT_getInfoFromPopup(objTag),datatypes.transect.names)}, 'id');
         id_match    = cellfun(@(x) (strcmp(x, UCIT_getInfoFromPopup('TransectsArea'))==1), {cellstr(areanames)}, 'UniformOutput',false);
         transectIDs = {ids(id_match{1})- unique(round(ids(id_match{1})/1000000))*1000000}; % convert back from uniqu id
     else
-        areanames = datatypes.transect.areas{2};
+        areanames = datatypes.transect.areas{index};
         urls = datatypes.transect.urls{strcmp(UCIT_getInfoFromPopup(objTag),datatypes.transect.names)};
         try
             transectIDs = {nc_varget(urls{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))}, 'id')};
@@ -145,17 +153,22 @@ elseif type==1&&PopupNR==3
 elseif type==1&&PopupNR==4
 
     % *** set TransectsSoundingID
+    
+    objTag = 'TransectsDatatype';
+    name   = UCIT_getInfoFromPopup(objTag);
+    index  = strmatch(name,datatypes.transect.names,'exact');
+    type   = datatypes.transect.datatype{index};      
 
     % get info from database
-    objTag='TransectsDatatype';
-    if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Jarkus Data')
+
+    if strcmp(type,'Jarkus Data')
         years     = nc_varget(datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup(objTag),datatypes.transect.names))}, 'time');
     else
         urls      = datatypes.transect.urls{strcmp(UCIT_getInfoFromPopup(objTag),datatypes.transect.names)};
-        years     = nc_varget(urls{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))}, 'time');
+        years     = nc_varget(urls{strcmp(datatypes.transect.areas{index},UCIT_getInfoFromPopup('TransectsArea'))}, 'time');
     end
-     years = sort(years,'descend');
-     soundingIDs = {datestr(years+datenum(1970,1,1))};
+     years        = sort(years,'descend');
+     soundingIDs  = {datestr(years+datenum(1970,1,1))};
         
     % manufacture the string for in the popup menu
     string{max(size(soundingIDs))+1}=[]; string{1}='Select date ...';
@@ -169,20 +182,21 @@ elseif type==1&&PopupNR==4
 elseif type==2&&PopupNR==1
 %% GRIDS
 
-    % *** set GridsDataType
-    % get info from database
+    % *** set GridsDataType: get info from local ini file
 
-    datatypes = datatypes.grid.names; % datatype; % allows ame datsset to be on different locations: same type, other name
+    names = datatypes.grid.names; % datatype; % allow same dataset to be on different locations: same type, other name
         
     % manufacture the string for in the popup menu
-    string{length(datatypes)}=[]; string{1}='Select datatype ...';
-    for i = 1:length(datatypes)
-        string{i+1} = datatypes{i};
+    string{length(names)}=[]; string{1}='Select datatype ...';
+    for i = 1:length(names)
+        string{i+1} = names{i};
     end
     
     % fill the proper popup menu and reset others if required
     set(findobj('tag','GridsDatatype'), 'string', string, 'value', 1, 'enable', 'on', 'backgroundcolor', 'w');
     UCIT_resetValuesOnPopup(2,0,1,1,1,1)
+    
+    set(findobj('tag','UCIT_mainWin'),'Userdata',[]); % test    
 
 elseif type==2&&PopupNR==2
     % *** set GridsYear
@@ -194,8 +208,8 @@ elseif type==2&&PopupNR==2
 %     end
 
     % get info from database
-    years = datenum(1965,1,1):datenum(now);
-    years = sort(years,'descend');
+    years  = datenum(1965,1,1):datenum(now);
+    years  = sort(years,'descend');
     string = cellstr(datestr(years,29));
    
     % fill the proper popup menu and reset others if required
