@@ -31,8 +31,8 @@ for i=1:length(flist)
         case{'.','..','.svn'}
         otherwise
             fname=flist(i).name;
-            fprintf(fid,'%s\n',[fname 'Toolbox.m']);
-            fprintf(fid,'%s\n',['Plot' fname '.m']);
+            fprintf(fid,'%s\n',['ddb_' fname 'Toolbox.m']);
+            fprintf(fid,'%s\n',['ddb_Plot' fname '.m']);
             fprintf(fid,'%s\n',['ddb_initialize' fname '.m']);
     end
 end

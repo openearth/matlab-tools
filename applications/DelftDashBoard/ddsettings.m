@@ -28,3 +28,8 @@ addpath(totalPath);
 %Add appropriate V* dir
 verDir=strrep(version,'.','');
 addpath([basePath filesep 'general' filesep 'mex' filesep 'V' verDir(1:2)]);
+
+% SuperTrans
+
+addpath(genpath('..\SuperTrans'));
+addpath(genpath('..\..\io\netcdf\'));

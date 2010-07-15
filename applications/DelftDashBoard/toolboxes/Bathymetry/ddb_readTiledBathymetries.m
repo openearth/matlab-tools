@@ -23,6 +23,12 @@ for i=1:length(txt)
             handles.Bathymetry.Dataset(k).VerticalCoordinateSystem.Name=txt{i+1};
         case{'verticalcoordinatesystemlevel'}
             handles.Bathymetry.Dataset(k).VerticalCoordinateSystem.Level=str2double(txt{i+1});
+        case{'type'}
+            handles.Bathymetry.Dataset(k).Type=txt{i+1};
+        case{'name'}
+            handles.Bathymetry.Dataset(k).Name=txt{i+1};
+        case{'url'}
+            handles.Bathymetry.Dataset(k).URL=txt{i+1};
         case{'zoomlevel'}
             j=j+1;
             handles.Bathymetry.Dataset(k).NrZoomLevels=j;
@@ -59,6 +65,10 @@ for i=1:length(txt)
                 handles.Bathymetry.Dataset(k).XOrigin=str2double(txt{i+1});
         case{'yorigin'}
                 handles.Bathymetry.Dataset(k).YOrigin=str2double(txt{i+1});
+        case{'dx'}
+                handles.Bathymetry.Dataset(k).dX=str2double(txt{i+1});
+        case{'dy'}
+                handles.Bathymetry.Dataset(k).dY=str2double(txt{i+1});
         case{'maxtilesize'}
                 handles.Bathymetry.Dataset(k).MaxTileSize=str2double(txt{i+1});
         case{'nrcells'}

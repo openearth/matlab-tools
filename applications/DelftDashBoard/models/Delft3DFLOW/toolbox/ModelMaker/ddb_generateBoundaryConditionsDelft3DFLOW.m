@@ -51,45 +51,202 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
     xx=[xa xb];
     yy=[ya yb];
     
-    [amp,phase,depth,ConList]=extract_HC([handles.TideDir handles.TideModelData.ActiveTideModelBC],yy,xx,'z');
+    igetwl=0;
+    for i=1:nb
+        if strcmpi(handles.Model(md).Input(id).OpenBoundaries(i).Forcing,'A')
+            switch lower(handles.Model(md).Input(id).OpenBoundaries(i).Type)
+                case{'r','z'}
+                    igetwl=1;
+            end
+        end
+    end
 
-    ampa=amp(:,1:handles.Model(md).Input(id).NrOpenBoundaries);
-    ampb=amp(:,handles.Model(md).Input(id).NrOpenBoundaries+1:end);
-    phasea=phase(:,1:handles.Model(md).Input(id).NrOpenBoundaries);
-    phaseb=phase(:,handles.Model(md).Input(id).NrOpenBoundaries+1:end);
+    if igetwl
+        [ampz,phasez,depth,ConList]=extract_HC([handles.TideDir handles.TideModelData.ActiveTideModelBC],yy,xx,'z');
 
+        ampaz=ampz(:,1:nb);
+        ampbz=ampz(:,nb+1:end);
+        phaseaz=phasez(:,1:nb);
+        phasebz=phasez(:,nb+1:end);
+
+        ampaz(isnan(ampaz))=0.0;
+        ampbz(isnan(ampbz))=0.0;
+        phaseaz(isnan(phaseaz))=0.0;
+        phasebz(isnan(phasebz))=0.0;
+
+    end
+    
+    igetvel=0;
+    for i=1:nb
+        if strcmpi(handles.Model(md).Input(id).OpenBoundaries(i).Forcing,'A')
+            switch lower(handles.Model(md).Input(id).OpenBoundaries(i).Type)
+                case{'r','c'}
+                    igetvel=1;
+            end
+        end
+    end
+    
+    if igetvel
+
+        % Riemann or current boundaries present
+        
+       [ampu,phaseu,depth,ConList]=extract_HC([handles.TideDir handles.TideModelData.ActiveTideModelBC],yy,xx,'u');
+       [ampv,phasev,depth,ConList]=extract_HC([handles.TideDir handles.TideModelData.ActiveTideModelBC],yy,xx,'v');
+    
+       % Units are cm/s
+       ampu=ampu/100;
+       ampv=ampv/100;
+
+        % A
+        ampau=ampu(:,1:nb);
+        ampav=ampv(:,1:nb);
+        % B
+        ampbu=ampu(:,nb+1:end);
+        ampbv=ampv(:,nb+1:end);
+
+        % A
+        phaseau=phaseu(:,1:nb);
+        phaseav=phasev(:,1:nb);
+        % B
+        phasebu=phaseu(:,nb+1:end);
+        phasebv=phasev(:,nb+1:end);
+
+        [semaa,ecca,inca,phaa]=ap2ep(ampau,phaseau,ampav,phaseav);
+        [semab,eccb,incb,phab]=ap2ep(ampbu,phasebu,ampbv,phasebv);
+
+        for n=1:nb
+            bnd=handles.Model(md).Input(id).OpenBoundaries(n);
+            dx=bnd.X(2)-bnd.X(1);
+            dy=bnd.Y(2)-bnd.Y(1);
+            if strcmpi(bnd.Orientation,'negative')
+                dx=dx*-1;
+                dy=dy*-1;
+            end
+
+            alphaa=180*atan2(dy,dx)/pi;
+            alphab=180*atan2(dy,dx)/pi;
+
+            switch lower(handles.Model(md).Input(id).OpenBoundaries(n).Side)
+                case{'left','right'}
+                    % u-point
+                    alphaa=alphaa-90;
+                    alphab=alphab-90;
+                case{'bottom','top'}
+                    % v-point
+                    alphaa=alphaa+90;
+                    alphab=alphab+90;
+            end
+
+            for i=1:size(inca,1)
+                inca(i,n)=inca(i,n)-alphaa;
+                incb(i,n)=incb(i,n)-alphab;
+            end
+        end
+
+        [ampau,phaseau,ampav,phaseav]=ep2ap(semaa,ecca,inca,phaa);
+        [ampbu,phasebu,ampbv,phasebv]=ep2ap(semab,eccb,incb,phab);
+
+        ampau(isnan(ampau))=0.0;
+        ampbu(isnan(ampbu))=0.0;
+        phaseau(isnan(phaseau))=0.0;
+        phasebu(isnan(phasebu))=0.0;
+        ampav(isnan(ampav))=0.0;
+        ampbv(isnan(ampbv))=0.0;
+        phaseav(isnan(phaseav))=0.0;
+        phasebv(isnan(phasebv))=0.0;
+
+    end
+    
     NrCons=size(ConList,1);
     for i=1:NrCons
         Constituents(i).Name=ConList(i,:);
     end
     
     k=0;
-    ampa(isnan(ampa))=0.0;
-    ampb(isnan(ampb))=0.0;
-    phasea(isnan(phasea))=0.0;
-    phaseb(isnan(phaseb))=0.0;
+
     for n=1:nb
         if strcmp(handles.Model(md).Input(id).OpenBoundaries(n).Forcing,'A')
+
             handles.Model(md).Input(id).OpenBoundaries(n).CompA=[handles.Model(md).Input(id).OpenBoundaries(n).Name 'A'];
             handles.Model(md).Input(id).OpenBoundaries(n).CompB=[handles.Model(md).Input(id).OpenBoundaries(n).Name 'B'];
+
             k=k+1;
+            
             handles.Model(md).Input(id).AstronomicComponentSets(k).Name=handles.Model(md).Input(id).OpenBoundaries(n).CompA;
             handles.Model(md).Input(id).AstronomicComponentSets(k).Nr=NrCons;
             for i=1:NrCons
+
                 handles.Model(md).Input(id).AstronomicComponentSets(k).Component{i}=upper(Constituents(i).Name);
-                handles.Model(md).Input(id).AstronomicComponentSets(k).Amplitude(i)=ampa(i,n);
-                handles.Model(md).Input(id).AstronomicComponentSets(k).Phase(i)=phasea(i,n);
+
+                switch lower(handles.Model(md).Input(id).OpenBoundaries(n).Type)
+                    case{'z'}
+                        handles.Model(md).Input(id).AstronomicComponentSets(k).Amplitude(i)=ampaz(i,n);
+                        handles.Model(md).Input(id).AstronomicComponentSets(k).Phase(i)=phaseaz(i,n);
+                    case{'c'}
+                        handles.Model(md).Input(id).AstronomicComponentSets(k).Amplitude(i)=ampau(i,n);
+                        handles.Model(md).Input(id).AstronomicComponentSets(k).Phase(i)=phaseau(i,n);
+                    case{'r'}
+                        a1=ampau(i,n);
+                        phi1=phaseau(i,n);
+                        a2=ampaz(i,n)*sqrt(9.81/-handles.Model(md).Input(id).OpenBoundaries(n).Depth(1));
+                        phi2=phaseaz(i,n);
+                        
+                        phi1=pi*phi1/180;
+                        phi2=pi*phi2/180;
+
+                        switch lower(handles.Model(md).Input(id).OpenBoundaries(n).Side)
+                            case{'left','bottom'}
+                                [a3,phi3]=combinesin(a1,phi1,a2,phi2);
+                            case{'top','right'}
+                                [a3,phi3]=combinesin(a1,phi1,-a2,phi2);
+                        end
+                        
+                        phi3=180*phi3/pi;
+                        
+                        handles.Model(md).Input(id).AstronomicComponentSets(k).Amplitude(i)=a3;
+                        handles.Model(md).Input(id).AstronomicComponentSets(k).Phase(i)=phi3;
+                end
+
                 handles.Model(md).Input(id).AstronomicComponentSets(k).Correction(i)=0;
                 handles.Model(md).Input(id).AstronomicComponentSets(k).AmplitudeCorrection(i)=0;
                 handles.Model(md).Input(id).AstronomicComponentSets(k).PhaseCorrection(i)=0;
             end
+
             k=k+1;
             handles.Model(md).Input(id).AstronomicComponentSets(k).Name=handles.Model(md).Input(id).OpenBoundaries(n).CompB;
             handles.Model(md).Input(id).AstronomicComponentSets(k).Nr=NrCons;
             for i=1:NrCons
                 handles.Model(md).Input(id).AstronomicComponentSets(k).Component{i}=upper(Constituents(i).Name);
-                handles.Model(md).Input(id).AstronomicComponentSets(k).Amplitude(i)=ampb(i,n);
-                handles.Model(md).Input(id).AstronomicComponentSets(k).Phase(i)=phaseb(i,n);
+
+                switch lower(handles.Model(md).Input(id).OpenBoundaries(n).Type)
+                    case{'z'}
+                        handles.Model(md).Input(id).AstronomicComponentSets(k).Amplitude(i)=ampbz(i,n);
+                        handles.Model(md).Input(id).AstronomicComponentSets(k).Phase(i)=phasebz(i,n);
+                    case{'c'}
+                        handles.Model(md).Input(id).AstronomicComponentSets(k).Amplitude(i)=ampbu(i,n);
+                        handles.Model(md).Input(id).AstronomicComponentSets(k).Phase(i)=phasebu(i,n);
+                    case{'r'}
+                        a1=ampbu(i,n);
+                        phi1=phasebu(i,n);
+                        a2=ampbz(i,n)*sqrt(9.81/-handles.Model(md).Input(id).OpenBoundaries(n).Depth(2));
+                        phi2=phasebz(i,n);
+
+                        phi1=pi*phi1/180;
+                        phi2=pi*phi2/180;
+
+                        switch lower(handles.Model(md).Input(id).OpenBoundaries(n).Side)
+                            case{'left','bottom'}
+                                [a3,phi3]=combinesin(a1,phi1,a2,phi2);
+                            case{'top','right'}
+                                [a3,phi3]=combinesin(a1,phi1,-a2,phi2);
+                        end
+                        
+                        phi3=180*phi3/pi;
+
+                        handles.Model(md).Input(id).AstronomicComponentSets(k).Amplitude(i)=a3;
+                        handles.Model(md).Input(id).AstronomicComponentSets(k).Phase(i)=phi3;
+                end
+                
                 handles.Model(md).Input(id).AstronomicComponentSets(k).Correction(i)=0;
                 handles.Model(md).Input(id).AstronomicComponentSets(k).AmplitudeCorrection(i)=0;
                 handles.Model(md).Input(id).AstronomicComponentSets(k).PhaseCorrection(i)=0;

@@ -9,10 +9,12 @@ handles.Model(md).Input(ad).OpenBoundaries(nb).Forcing='A';
 handles.Model(md).Input(ad).OpenBoundaries(nb).Profile='Uniform';
 handles.Model(md).Input(ad).OpenBoundaries(nb).THLag=[0 0];
 
-[xb,yb,zb]=ddb_getBoundaryCoordinates(handles,ad,nb);
+[xb,yb,zb,side,orientation]=ddb_getBoundaryCoordinates(handles,ad,nb);
 handles.Model(md).Input(ad).OpenBoundaries(nb).X=xb;
 handles.Model(md).Input(ad).OpenBoundaries(nb).Y=yb;
 handles.Model(md).Input(ad).OpenBoundaries(nb).Depth=zb;
+handles.Model(md).Input(ad).OpenBoundaries(nb).Side=side;
+handles.Model(md).Input(ad).OpenBoundaries(nb).Orientation=orientation;
 
 % Timeseries
 t0=handles.Model(md).Input(ad).StartTime;

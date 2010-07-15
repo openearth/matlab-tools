@@ -1,5 +1,7 @@
 function [x,y,z,ok]=ddb_getBathy(handles,xl,yl,varargin)
 
+ok=0;
+
 zoomlev=0;
 
 if nargin>3
@@ -20,6 +22,182 @@ tp=handles.Bathymetry.Dataset(iac).Type;
 
 switch lower(tp)
 
+    case{'netcdf'}
+        
+        url=handles.Bathymetry.Dataset(iac).URL;
+        
+%         gridsize=nc_varget(url,'grid_size');
+        gridsize=loaddap([url '?grid_size']);
+        gridsize=gridsize.grid_size;
+               
+        gsmin=(xl(2)-xl(1))/800;
+        
+        igs=find(gridsize<gsmin,1,'last');
+        if isempty(igs)
+            igs=1;
+        end
+        
+        lonstr=['lon' num2str(igs)];
+        latstr=['lat' num2str(igs)];
+        varstr=['depth' num2str(igs)];
+        
+%         lon0=nc_varget(url,lonstr);
+%         lat0=nc_varget(url,latstr);
+        lon0=loaddap([url '?' lonstr]);
+        lon0=lon0.(lonstr);
+        lat0=loaddap([url '?' latstr]);
+        lat0=lat0.(latstr);
+        
+        ilon1=find(lon0<=xl(1),1,'last')-1;
+        if isempty(ilon1)
+            ilon1=1;
+        end
+        ilon1=max(ilon1,1);
+
+        ilon2=find(lon0>=xl(2),1)+1;
+        if isempty(ilon2)
+            ilon2=length(lon0);
+        end
+        ilon2=min(ilon2,length(lon0));
+
+        ilat1=find(lat0<=yl(1),1,'last')-1;
+        if isempty(ilat1)
+            ilat1=1;
+        end
+        ilat1=max(ilat1,1);
+ 
+        ilat2=find(lat0>=yl(2),1)+1;
+        if isempty(ilat2)
+            ilat2=length(lat0);
+        end
+        ilat2=min(ilat2,length(lat0));
+
+        nlon=ilon2-ilon1+1;
+        nlat=ilat2-ilat1+1;
+        
+%         z=nc_varget(url,varstr,[ilat1-1 ilon1-1],[nlat nlon]);
+        z=loaddap([url '?' varstr '[' num2str(ilat1-1) ':1:' num2str(ilat2-1) '][' num2str(ilon1-1) ':1:' num2str(ilon2-1) ']']);
+        z=z.(varstr).(varstr);
+
+        z=double(z);
+        
+        dlon=(lon0(end)-lon0(1))/(length(lon0)-1);
+        dlat=(lat0(end)-lat0(1))/(length(lat0)-1);
+        lon=lon0(1):dlon:lon0(end);
+        lat=lat0(1):dlat:lat0(end);
+        lon=lon(ilon1:ilon2);
+        lat=lat(ilat1:ilat2);
+
+        [x,y]=meshgrid(lon,lat);
+
+        ok=1;
+
+    case{'netcdftiles'}
+        
+        % New tile type
+        ok=1;
+
+        nLevels=handles.Bathymetry.Dataset(iac).NrZoomLevels;
+
+        for i=1:nLevels
+            cellsizex(i)=handles.Bathymetry.Dataset(iac).ZoomLevel(i).dx;
+            cellsizey(i)=handles.Bathymetry.Dataset(iac).ZoomLevel(i).dy;
+        end
+        
+        if zoomlev==0
+            gsmin=(xl(2)-xl(1))/800;
+            ilev=find(cellsizex<gsmin,1,'last');
+            if isempty(ilev)
+                ilev=1;
+            end
+        else
+            ilev=zoomlev;
+        end
+
+        x0=handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).x0;
+        y0=handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).y0;
+        dx=handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).dx;
+        dy=handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).dy;
+        nx=handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).nx;
+        ny=handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).ny;
+        nnx=handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).ntilesx;
+        nny=handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).ntilesy;
+        tilesizex=dx*nx;
+        tilesizey=dy*ny;
+        
+        xx=x0:tilesizex:x0+(nnx-1)*tilesizex;
+        yy=y0:tilesizey:y0+(nny-1)*tilesizey;
+        
+        ix1=find(xx<xl(1),1,'last');
+        if isempty(ix1)
+            ix1=1;
+        end
+        ix2=find(xx>xl(2),1,'first');
+        if isempty(ix2)
+            ix2=length(xx);
+        end
+
+        iy1=find(yy<yl(1),1,'last');
+        if isempty(iy1)
+            iy1=1;
+        end
+        iy2=find(yy>yl(2),1,'first');
+        if isempty(iy2)
+            iy2=length(yy);
+        end
+
+        name=handles.Bathymetry.Dataset(iac).Name;
+        levdir=['zl' num2str(ilev,'%0.2i')];
+
+        iopendap=0;
+        if strcmpi(handles.Bathymetry.Dataset(iac).URL(1:4),'http')
+            % OpenDAP
+            iopendap=1;
+            urlstr=[handles.Bathymetry.Dataset(iac).URL '/' levdir];
+            cachedir=[handles.BathyDir name '\' levdir];
+        else
+            % Local
+            dirstr=[handles.Bathymetry.Dataset(iac).URL '\' levdir '\'];
+            cachedir=dirstr;
+        end
+
+        nnnx=ix2-ix1+1;
+        nnny=iy2-iy1+1;
+        z=nan(nnny*ny,nnnx*nx);  
+        for i=ix1:ix2
+            for j=iy1:iy2
+
+                filename=[name '.zl' num2str(ilev,'%0.2i') '.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
+                
+                % First check if file is available locally
+                fnametile=[cachedir filename];
+                if ~exist(fnametile,'file') && iopendap
+                    % Copy file to cache directory
+                    if ~exist(cachedir,'dir')
+                        mkdir(cachedir);
+                    end
+                    try
+                        copyfile([urlstr filename],cachedir);
+                    end
+                end
+                if exist(fnametile,'file')
+%                    zzz=nc_varget(fnametile, 'depth');
+                    zzz=nc_varget([urlstr filename], 'depth');
+                    zzz=double(zzz);
+                    ok=1;
+                else
+                    zzz=zeros(ny,nx);
+                    zzz(zzz==0)=NaN;
+                end
+                z((j-iy1)*ny+1:(j-iy1+1)*ny,(i-ix1)*nx+1:(i-ix1+1)*nx)=zzz;
+            end
+        end
+        z(z<-15000)=NaN;
+
+        xx=x0+(ix1-1)*tilesizex:dx:x0+ix2*tilesizex-dx;
+        yy=y0+(iy1-1)*tilesizey:dy:y0+iy2*tilesizey-dy;
+        [x,y]=meshgrid(xx,yy);
+        
     case{'tiles'}
 
         if isempty(handles.Bathymetry.Dataset(iac).RefinementFactor)
