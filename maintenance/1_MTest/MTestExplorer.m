@@ -1,4 +1,48 @@
 classdef MTestExplorer < handle
+    % MTESTEXPLORER - Desktop tool to manage and run tests
+    %
+    % See also MTest.MTest MTestRunner MTestFactory
+    %
+    % <a href="matlab:MTestExplorer;">Start MTestExplorer</a>
+    
+    %% Copyright notice
+    %     Copyright (c) 2008  DELTARES.
+    %
+    %       Pieter van Geer
+    %
+    %       Pieter.vanGeer@deltares.nl
+    %
+    %       Rotterdamseweg 185
+    %       2629 HD Delft
+    %       P.O. 177
+    %       2600 MH Delft
+    %
+    %   This library is free software: you can redistribute it and/or
+    %   modify it under the terms of the GNU Lesser General Public
+    %   License as published by the Free Software Foundation, either
+    %   version 2.1 of the License, or (at your option) any later version.
+    %
+    %   This library is distributed in the hope that it will be useful,
+    %   but WITHOUT ANY WARRANTY; without even the implied warranty of
+    %   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    %   Lesser General Public License for more details.
+    %
+    %   You should have received a copy of the GNU Lesser General Public
+    %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+    %   --------------------------------------------------------------------
+    
+    %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+    % Created: 15 Jun 2010
+    % Created with Matlab version: 7.10.0.499 (R2010a)
+    
+    % $Id$
+    % $Date$
+    % $Author$
+    % $Revision$
+    % $HeadURL$
+    % $Keywords: testing test unittest$
+
+
     properties
         MTestRunner = MTestRunner;  % MTEstRunner object that stores and catalogues tests
         
