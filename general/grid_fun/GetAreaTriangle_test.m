@@ -1,7 +1,7 @@
 function testresult = GetAreaTriangle_test()
 % GETAREATRIANGLE_TEST  test for getareacurvilineargrid
 %  
-% %See also: GETAREATRIANGLE
+% See also: GETAREATRIANGLE
 %
 %
 %   See also 

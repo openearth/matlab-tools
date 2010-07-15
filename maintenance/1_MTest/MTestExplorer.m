@@ -424,8 +424,7 @@ classdef MTestExplorer < handle
             set(this.JProgressBar, ...
                 'Maximum',sum(selectionId), ...
                 'Value',0);
-            this.JProgressBar.setForeground(java.awt.Color(0.3,0.5,0.3));
-            
+
             %% Loop tests
             for itests = 1:length(selectionId)
                 if selectionId(itests)
@@ -444,8 +443,14 @@ classdef MTestExplorer < handle
                     this.MTestRunner.Tests(itests).run;
                     
                     % Update the progressbar
-                    if ~this.MTestRunner.Tests(itests).TestResult
+                    testExecutedFlag = ~isnan(this.MTestRunner.Tests(itests).Date);
+                    testResult = [this.MTestRunner.Tests(testExecutedFlag).TestResult];
+                    if any(~testResult)
+                        % Red (one of the tests failed)
                         this.JProgressBar.setForeground(java.awt.Color(1, 0.3, 0.3));
+                    else
+                        % Green (all tests were ok)
+                        this.JProgressBar.setForeground(java.awt.Color(0.3,0.5,0.3));
                     end
                     set(this.JProgressBar, 'Value',sum(selectionId(1:itests)));
                     
@@ -893,22 +898,24 @@ classdef MTestExplorer < handle
                         switch class(prop)
                             case 'char'
                                 newprop.setType(MTestUtils.javaclass('char',1));
-                                newprop.setValue(prop);
                             case 'logical'
                                 newprop.setType(MTestUtils.javaclass('logical'));
                                 newprop.setEditorContext(com.jidesoft.grid.BooleanCheckBoxCellEditor.CONTEXT);
-                                newprop.setValue(prop);
                             case 'int'
                                 newprop.setType(MTestUtils.javaclass('int32'));
-                                newprop.setValue(int32(prop));
+                                prop = int32(prop);
                             case 'double'
                                 newprop.setType(MTestUtils.javaclass('double'));
-                                newprop.setValue(prop);
                             case 'cell'
-                                newprop.setType(MTestUtils.javaclass('cellstr'));
-                                newprop.setValue(prop);
+                                newprop.setType(MTestUtils.javaclass('char',1));
+                                newprop.setEditorContext(com.jidesoft.grid.MultilineStringCellEditor.CONTEXT);
+                                prop = cellfun(@(p) strtrim(p(2:end)),prop,'UniformOutput',false);
+                                prop = sprintf(['%s ' char(10)],prop{:});
                             otherwise
                                 continue;
+                        end
+                        if ~isempty(prop)
+                            newprop.setValue(prop);
                         end
                         this.JideList.add(newprop);
                     end

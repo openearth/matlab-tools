@@ -4,7 +4,7 @@ function testresult = DurosResult_test()
 % More detailed description of the test goes here.
 %
 %
-%   See also 
+%   See also DurosResult
 
 %% Copyright notice
 %   --------------------------------------------------------------------

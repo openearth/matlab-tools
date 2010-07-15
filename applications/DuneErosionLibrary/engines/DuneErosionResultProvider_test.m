@@ -4,7 +4,7 @@ function testResult = DuneErosionResultProvider_test()
 % More detailed description of the test goes here.
 %
 %
-%   See also 
+%   See also DuneErosionResultProvider
 
 %% Copyright notice
 %   --------------------------------------------------------------------
