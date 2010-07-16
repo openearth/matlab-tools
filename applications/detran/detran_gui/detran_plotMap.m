@@ -60,6 +60,17 @@ if get(findobj(fig,'tag','detran_plotMapBox'),'Value')==1
     pores=detran_getPoreVolume;
     vSc=str2num(get(findobj(fig,'tag','detran_vecScalingMap'),'String'));
     vSp=str2num(get(findobj(fig,'tag','detran_vecSpacing'),'String'));
+    if isempty(vSc)
+        vSc = 1;
+    end
+    if isempty(vSp)
+        vSp = 1;
+    end
+    vSc = vSc(1);
+    vSp = vSp(1);
+    set(findobj(fig,'tag','detran_vecScalingMap'),'String',num2str(vSc));
+    set(findobj(fig,'tag','detran_vecSpacing'),'String',num2str(vSp));
+    
     spMode=get(findobj(fig,'tag','detran_spaceMode'),'Value');
     smallTr=1;
     
@@ -86,7 +97,13 @@ if get(findobj(fig,'tag','detran_plotMapBox'),'Value')==1
     end
     cm=detran_makeSedconcColMap;
     colormap(cm);
-    caxis(str2num(get(findobj(fig,'tag','detran_colScale'),'String')));
+    colScale = sort(str2num(get(findobj(fig,'tag','detran_colScale'),'String')));
+    if isempty(colScale) || length(unique(colScale))==1
+        colScale = [0 1];
+    end
+    colScale = colScale(1:2);
+    caxis(colScale);
+    set(findobj(fig,'tag','detran_colScale'),'String',num2str(colScale));    
     set(q,'color',[0.4 0.4 0.4]);
     set([p;q],'tag','mapplot');
 end

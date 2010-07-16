@@ -1,4 +1,4 @@
-function detran_about
+function detran_about(varargin)
 %DETRAN_ABOUT Detran GUI function that displays the about-information
 %
 %   See also detran
@@ -43,8 +43,13 @@ function detran_about
 % 
 % aboutPath = [detranPath filesep 'detran_gui' filesep]
 
+if nargin == 0
+	test = 'no';
+else
+	test = varargin{1};
+end
+
 aboutPath = ShowPath;
-disp(['Path is: ' ShowPath]);
 
 fid=fopen([aboutPath filesep 'detran_about.txt']);
 aboutText=fread(fid,'char');
@@ -62,7 +67,14 @@ if ~isdeployed
     aboutText = strrep(aboutText,'$revision',revnumb);
 end
 
-uiwait(msgbox(aboutText,'About Detran','modal'));
+h = msgbox(aboutText,'About Detran','modal');
+switch test
+    case 'no'
+        uiwait(h);
+    case 'yes'
+        close(h);
+end
+    
 
 function [thePath] = ShowPath()
 % Show EXE path:

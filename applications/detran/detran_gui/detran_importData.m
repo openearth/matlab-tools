@@ -88,26 +88,44 @@ switch inputMode
     case 'Single file'
         switch dataFile
             case 'Trim-file(s)'
-                data.input=detran_d3dTrans_single(sType,filename,dt);
+                data.input = detran_d3dTrans_single(sType,filename,dt);
+                if isempty(data.input)
+                    return
+                end
             case 'Trih-file(s)'
                 %[namtra,data.transects,data.transectData,data.namSed]=detran_d3dTransFromHis_single(sType,filename,dt);
-                [namtra,data.transects,data.input,data.namSed]=detran_d3dTransFromHis_single(sType,filename,dt);                
+                [namtra,data.transects,data.input,data.namSed]=detran_d3dTransFromHis_single(sType,filename,dt);
+                if isempty(data.input)
+                    return
+                end                
                 avgTransData=nan;
         end
     case 'Multiple files'
         switch dataFile
             case 'Trim-file(s)'
                 data.input=detran_d3dTrans_multi(sType,filename,weights,dt);
+                if isempty(data.input)
+                    return
+                end                
             case 'Trih-file(s)'
-            [namtra,data.transects,data.transectData,data.namSed]=detran_d3dTransFromHis_multi(sType,filename,weights,dt);
+            [namtra,data.transects,data.input,data.namSed]=detran_d3dTransFromHis_multi(sType,filename,weights,dt);
                 avgTransData=nan;
+                if isempty(data.input)
+                    return
+                end
         end
     case 'Mormerge simulation'
         switch dataFile
             case 'Trim-file(s)'
                 data.input=detran_d3dTrans_mm(sType,filename,dt);
+                if isempty(data.input)
+                    return
+                end
             case 'Trih-file(s)'
-                [namtra,data.transects,data.transectData,data.namSed]=detran_d3dTransFromHis_mm(sType,filename,dt);
+                [namtra,data.transects,data.input,data.namSed]=detran_d3dTransFromHis_mm(sType,filename,dt);
+                if isempty(data.input)
+                    return
+                end                
                 avgTransData=nan;
         end
 end

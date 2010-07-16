@@ -112,18 +112,25 @@ curDir = pwd;
 if isempty(filename)
     [trimNam,trimPat, filterindex] = uigetfile( {'*.dat;*.def','trim-files (*.dat,*.def)'},'Select (one of the) trim file(s)');
     if trimNam==0
+        d3dTransData = [];
         return
     end
+    fname = fullfile(trimPat,trimNam);
 else
-    [trimPat, trimNam, filterindex]=fileparts(filename);
+    fname=filename;
 end
 
-N1=vs_use([trimPat filesep trimNam],'quiet');
+N1=vs_use(fname,'quiet');
 
-[p1,p2]=fileparts(N1.FileName);
+[p1,p2]=fileparts(fname);
 [p3,p4]=fileparts(p1);
+
 if isempty(filename) % in interactive mode
     dataDirPrefix=char(inputdlg('Specify prefix of subdirs with data files','avgTrans',1,{strtok(p4,'0')}));
+    if isempty(dataDirPrefix)
+        d3dTransData = [];
+        return
+    end
 else % in scripting mode
     dataDirPrefix=strtok(p4,'0');
 end
@@ -133,16 +140,19 @@ pat={pat([pat.isdir]==1).name}';
 if isempty(weights)
     [namW,patW]=uigetfile('*.tek','Select tekal-file with weights');
     if namW==0
+        d3dTransData = [];
         return
     end
 else
-    [patW, namW]=fileparts(weights);
+    [patW, namW, extW]=fileparts(weights);
+    namW = [namW extW];
 end
 
 tek=tekal('read',[patW filesep namW]);
 weightFac=tek.Field.Data(:,2)';
 weightFac = weightFac / sum (weightFac);
 
+cd(p3);
 hW = waitbar(0,'Please wait...');
 
 for ii = 1 : length(pat)
@@ -152,12 +162,15 @@ for ii = 1 : length(pat)
     for jj = 1 : length(trimFile)
         N = vs_use (trimFile(jj).name,'quiet');
         grpDatNr=find(strcmp({N1.GrpDat.Name},series));
-        if ii==1&jj==1
+        if ii==1&&jj==1
             if timeStep == 0;
                 lastTimeStep = N.GrpDat(grpDatNr).SizeDim;
             elseif isempty(timeStep)
                 lastTimeStep=str2num(char(inputdlg('Specify which time-step to use',[num2str(N.GrpDat(grpDatNr).SizeDim) ' timesteps found, specify required time step:'],1,cellstr(num2str(N.GrpDat(grpDatNr).SizeDim)))));
                 if isempty(lastTimeStep)
+                    d3dTransData = [];
+                    close(hW);
+                    cd(curDir);
                     return
                 end
             else
@@ -178,14 +191,14 @@ for ii = 1 : length(pat)
             d3dTransData.tsv    {jj}= 0;
             d3dTransData.tbu    {jj}= 0;
             d3dTransData.tbv    {jj}= 0;
-            d3dTransData.tsuPlus{jj} = zeros(size(d3dTransData.xcor{jj}));
-            d3dTransData.tsuMin {jj} = zeros(size(d3dTransData.xcor{jj}));
-            d3dTransData.tsvPlus{jj} = zeros(size(d3dTransData.xcor{jj}));
-            d3dTransData.tsvMin {jj} = zeros(size(d3dTransData.xcor{jj}));
-            d3dTransData.tbuPlus{jj} = zeros(size(d3dTransData.xcor{jj}));
-            d3dTransData.tbuMin {jj} = zeros(size(d3dTransData.xcor{jj}));
-            d3dTransData.tbvPlus{jj} = zeros(size(d3dTransData.xcor{jj}));
-            d3dTransData.tbvMin {jj} = zeros(size(d3dTransData.xcor{jj}));
+            d3dTransData.tsuPlus{jj} = zeros(size(sbuua));
+            d3dTransData.tsuMin {jj} = zeros(size(sbuua));
+            d3dTransData.tsvPlus{jj} = zeros(size(sbuua));
+            d3dTransData.tsvMin {jj} = zeros(size(sbuua));
+            d3dTransData.tbuPlus{jj} = zeros(size(sbuua));
+            d3dTransData.tbuMin {jj} = zeros(size(sbuua));
+            d3dTransData.tbvPlus{jj} = zeros(size(sbuua));
+            d3dTransData.tbvMin {jj} = zeros(size(sbuua));
         end
         
         d3dTransData.tsu {jj} = d3dTransData.tsu {jj} + ssuua;

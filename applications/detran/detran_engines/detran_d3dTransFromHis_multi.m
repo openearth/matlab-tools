@@ -2,7 +2,7 @@ function [NAMTRA, XYTRA, transport, namsed]=detran_d3dTransFromHis_multi(type,fi
 %DETRAN_D3DTRANSFROMHIS_MULTI Read transport through cross-sections from history files of Delft3D simulation with multiple conditions
 %
 % Calculate averaged or instantaneous sediment transport through the cross sections in a history-file
-% of a Delft3D simulation consisting of multiple conditions (no mormerge!). The contribution of each condition 
+% of a Delft3D simulation consisting of multiple conditions (no mormerge!). The contribution of each condition
 % to the resulting transport is according to the weights in the specified tekal-file.
 %
 %   Syntax:
@@ -58,10 +58,15 @@ function [NAMTRA, XYTRA, transport, namsed]=detran_d3dTransFromHis_multi(type,fi
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
+
+transport = [];
+NAMTRA=[];
+XYTRA=[];
+namsed=[];
 
 % check if wlsettings are available
 wldir = which('vs_use');
@@ -87,15 +92,21 @@ if isempty(filename)
     if trimNam==0
         return
     end
+    fname = fullfile(trimPat,trimNam); 
 else
-    [trimPat, trimNam, filterindex]=fileparts(filename);
+    fname=filename;
 end
 
-N1=vs_use([trimPat filesep trimNam],'quiet');
-[p1,p2]=fileparts(N1.FileName);
+N1=vs_use(fname,'quiet');
+
+[p1,p2]=fileparts(fname);
 [p3,p4]=fileparts(p1);
+
 if isempty(filename) % in interactive mode
     dataDirPrefix=char(inputdlg('Specify prefix of subdirs with data files','Opti - Datagroup Input Processor',1,{strtok(p4,'0')}));
+    if isempty(dataDirPrefix)
+        return
+    end
 else % in scripting mode
     dataDirPrefix=strtok(p4,'0');
 end
@@ -108,13 +119,15 @@ if isempty(weights)
         return
     end
 else
-    [patW, namW]=fileparts(weights);
+    [patW, namW, extW]=fileparts(weights);
+    namW = [namW extW];
 end
 
 tek=tekal('read',[patW filesep namW]);
 weightFac=tek.Field.Data(:,2)';
 weightFac = weightFac / sum (weightFac);
 
+cd(p3);
 hW = waitbar(0,'Please wait...');
 
 for ii = 1 : length(pat)
@@ -128,6 +141,11 @@ for ii = 1 : length(pat)
                 MORFT    = vs_let(N,'his-infsed-serie','MORFT','quiet');
                 if nargin<4 | isempty(timeStep)
                     timeStep=str2num(char(inputdlg('Specify which time-step to use',[num2str(length(MORFT)) ' timesteps found, specify required time step:'],1,cellstr(num2str(length(MORFT))))));
+                    if isempty(timeStep)
+                        close(hW);
+                        cd(curDir);
+                        return
+                    end
                 elseif timeStep == 0
                     timeStep = length(MORFT);
                 end
@@ -136,29 +154,29 @@ for ii = 1 : length(pat)
                 morfStart = min (find(MORFT > 0))-1;
                 namsed    = vs_get(N,'his-const','NAMSED','quiet');
                 MNTRA     = vs_get(N,'his-const','MNTRA','quiet');
-                XYTRA     = vs_get(N,'his-const','XYTRA','quiet');
+                XYTRA     = vs_get(N,'his-const','XYTRA','quiet')';
                 NAMTRA    = vs_get(N,'his-const','NAMTRA','quiet');
                 MNTRA     = vs_get(N,'his-const','MNTRA','quiet');
             end
             transport{jj}.total= 0;
             transport{jj}.bed= 0;
             transport{jj}.suspended= 0;
-
+            
         end
-        if ~isempty(deblank(NAMTRA{jj}))
+        if ~isempty(deblank(NAMTRA))
             switch type
                 case 'mean'
-                    SBTRC     = vs_let(N,'his-sed-series',{timeStep},'SBTRC','quiet') - vs_let(N,'his-sed-series',{morfStart},'SBTRC','quiet');
-                    SSTRC     = vs_let(N,'his-sed-series',{timeStep},'SSTRC','quiet') - vs_let(N,'his-sed-series',{morfStart},'SSTRC','quiet');
-                    transport{jj}.total     = squeeze(transport.total {jj} + weightFac(ii) .* (SSTRC + SBTRC) ./ simLength);
-                    transport{jj}.bed       = squeeze(transport.bed {jj} + weightFac(ii) .* (SBTRC) ./ simLength);
-                    transport{jj}.suspended = squeeze(transport.suspended {jj} + weightFac(ii) .* (SSTRC) ./ simLength);
+                    SBTRC     = squeeze(vs_let(N,'his-sed-series',{timeStep},'SBTRC','quiet') - vs_let(N,'his-sed-series',{morfStart},'SBTRC','quiet'));
+                    SSTRC     = squeeze(vs_let(N,'his-sed-series',{timeStep},'SSTRC','quiet') - vs_let(N,'his-sed-series',{morfStart},'SSTRC','quiet'));
+                    transport{jj}.total     = transport{jj}.total  + weightFac(ii) .* (SSTRC + SBTRC) ./ simLength;
+                    transport{jj}.bed       = transport{jj}.bed  + weightFac(ii) .* (SBTRC) ./ simLength;
+                    transport{jj}.suspended = transport{jj}.suspended + weightFac(ii) .* (SSTRC) ./ simLength;
                 case 'instant'
-                    SBTR     = vs_let(N,'his-sed-series',{timeStep},'SBTR','quiet');
-                    SSTR     = vs_let(N,'his-sed-series',{timeStep},'SSTR','quiet');
-                    transport{jj}.total      = squeeze(transport.total {jj} + weightFac(ii) .* (SSTR + SBTR));
-                    transport{jj}.bed        = squeeze(transport {jj}.bed + weightFac(ii) .* (SBTR));
-                    transport{jj}.suspended  = squeeze(transport {jj}.suspended + weightFac(ii) .* (SSTR));
+                    SBTR     = squeeze(vs_let(N,'his-sed-series',{timeStep},'SBTR','quiet'));
+                    SSTR     = squeeze(vs_let(N,'his-sed-series',{timeStep},'SSTR','quiet'));
+                    transport{jj}.total      = transport{jj}.total + weightFac(ii) .* (SSTR + SBTR);
+                    transport{jj}.bed        = transport{jj}.bed + weightFac(ii) .* (SBTR);
+                    transport{jj}.suspended  = transport{jj}.suspended + weightFac(ii) .* (SSTR);
             end
         end
     end
@@ -175,7 +193,7 @@ NTRA=MNTRA(2:2:end,:);
 signCor=repmat([sign(diff(MTRA))-sign(diff(NTRA))]',1,size(transport{1}.total,2)); % check if m1 > m2 or n2 > n1 for certain transect, than change sign of calculated transport
 
 for jj=1:length(transport)
-    transport{jj}.total=[signCor.*transport{jj}.total]';
-    transport{jj}.bed=[signCor.*transport{jj}.bed]';
-    transport{jj}.suspended=[signCor.*transport{jj}.suspended]';
+    transport{jj}.total=[signCor.*transport{jj}.total];
+    transport{jj}.bed=[signCor.*transport{jj}.bed];
+    transport{jj}.suspended=[signCor.*transport{jj}.suspended];
 end

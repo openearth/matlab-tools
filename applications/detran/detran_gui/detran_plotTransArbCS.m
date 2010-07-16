@@ -58,6 +58,17 @@ if get(findobj(fig,'tag','detran_plotTransectBox'),'Value')==1
     gross=get(findobj(fig,'tag','detran_plotGrossBox'),'Value');
     vecSc=str2num(get(findobj(fig,'tag','detran_vecScaling'),'String'));
     labelFac=str2num(get(findobj(fig,'tag','detran_transLabelFactor'),'String'));
+    if isempty(vecSc)
+        vecSc = 1;
+    end
+    if isempty(labelFac)
+        labelFac = 1;
+    end
+    vecSc = vecSc(1);
+    labelFac = labelFac(1);
+    set(findobj(fig,'tag','detran_vecScaling'),'String',num2str(vecSc));
+    set(findobj(fig,'tag','detran_transLabelFactor'),'String',num2str(labelFac));
+    
     for ii=1:size(ldb,1)
         CS=labelFac.*period.*data.transectData(ii,:)./(1-pores);
         if gross==0

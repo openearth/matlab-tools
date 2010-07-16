@@ -80,6 +80,8 @@ if nargin<4
     save=0;
 end
 
+d3dTransData = [];
+
 % check if wlsettings are available
 wldir = which('vs_use');
 if isempty(wldir)
@@ -107,22 +109,28 @@ switch type
 end
 
 if isempty(filename)
-    curDir = pwd;
-    patName = uigetdir(pwd,'Please select map with simulation results');
+    [dum, patName, filterindex] = uigetfile( {'*.dat;*.def','trim-files (*.dat,*.def)'},'Select (one of the) trim file(s)');
+    if patName==0
+        return
+    end
 else
     [patName]=fileparts(filename);
 end
 
-if patName ==0
-    return
-else
+[dum, patName] = strtok(fliplr(patName),filesep);
+patName = fliplr(patName);
+
+curDir = pwd;
+
+if exist([patName '\merge'],'dir')
     cd([patName '\merge']);
-end
-
-mergeFile = dir('*.mm');
-
-if length(mergeFile) > 1
-    disp('**** ERROR : please verify that only 1 mm-file is present...');
+    mergeFile = dir('*.mm');
+    if length(mergeFile) > 1
+        disp('**** ERROR : please verify that only 1 mm-file is present...');
+        return
+    end
+else
+    disp('**** ERROR : cannot found the ''merge'' directory...');
     return
 end
 
@@ -162,6 +170,8 @@ for ii = 1 : length(condMap)
             elseif isempty(timeStep)
                 lastTimeStep=str2num(char(inputdlg('Specify which time-step to use',[num2str(N.GrpDat(grpDatNr).SizeDim) ' timesteps found, specify required time step:'],1,cellstr(num2str(N.GrpDat(grpDatNr).SizeDim)))));
                 if isempty(lastTimeStep)
+                    close(hW);
+                    cd(curDir);
                     return
                 end
             else
@@ -182,14 +192,14 @@ for ii = 1 : length(condMap)
             d3dTransData.tsv    {jj}= 0;
             d3dTransData.tbu    {jj}= 0;
             d3dTransData.tbv    {jj}= 0;
-            d3dTransData.tsuPlus{jj} = zeros(size(d3dTransData.xcor{jj}));
-            d3dTransData.tsuMin {jj} = zeros(size(d3dTransData.xcor{jj}));
-            d3dTransData.tsvPlus{jj} = zeros(size(d3dTransData.xcor{jj}));
-            d3dTransData.tsvMin {jj} = zeros(size(d3dTransData.xcor{jj}));
-            d3dTransData.tbuPlus{jj} = zeros(size(d3dTransData.xcor{jj}));
-            d3dTransData.tbuMin {jj} = zeros(size(d3dTransData.xcor{jj}));
-            d3dTransData.tbvPlus{jj} = zeros(size(d3dTransData.xcor{jj}));
-            d3dTransData.tbvMin {jj} = zeros(size(d3dTransData.xcor{jj}));
+            d3dTransData.tsuPlus{jj} = zeros(size(sbuua));
+            d3dTransData.tsuMin {jj} = zeros(size(sbuua));
+            d3dTransData.tsvPlus{jj} = zeros(size(sbuua));
+            d3dTransData.tsvMin {jj} = zeros(size(sbuua));
+            d3dTransData.tbuPlus{jj} = zeros(size(sbuua));
+            d3dTransData.tbuMin {jj} = zeros(size(sbuua));
+            d3dTransData.tbvPlus{jj} = zeros(size(sbuua));
+            d3dTransData.tbvMin {jj} = zeros(size(sbuua));
         end
         
         d3dTransData.tsu {jj} = d3dTransData.tsu {jj} + ssuua;

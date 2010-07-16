@@ -57,6 +57,11 @@ function [NAMTRA, XYTRA, transport,namsed]=detran_d3dTransFromHis_single(type,fi
 % Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
+transport = [];
+NAMTRA=[];
+XYTRA=[];
+namsed=[];
+
 % check if wlsettings are available
 wldir = which('vs_use');
 if isempty(wldir)
@@ -79,7 +84,7 @@ curDir = pwd;
 if isempty(filename)
     % [trimNam,trimPat] = uigetfiles('trih-*.dat', 'Please select trih-file(s)');
     [trimNam,trimPat] = uigetfile('trih-*.dat', 'Please select trih-file(s)','MultiSelect','on');    
-    if isempty(trimNam)
+    if trimNam ==0
         return
     end
     if ~iscell(trimNam)
@@ -96,6 +101,9 @@ for jj = 1:length(trimNam)
         MORFT    = vs_let(N,'his-infsed-serie','MORFT','quiet');
         if nargin<3 || isempty(timeStep)
             timeStep=str2num(char(inputdlg('Specify which time-step to use',[num2str(length(MORFT)) ' timesteps found, specify required time step:'],1,cellstr(num2str(length(MORFT))))));
+            if isempty(timeStep)
+                return
+            end
         elseif timeStep == 0
             timeStep = length(MORFT);
         end
@@ -111,19 +119,19 @@ for jj = 1:length(trimNam)
     switch type
         case 'mean'
             if ~isempty(deblank(NAMTRA))
-                SBTRC(1:size(MNTRA,2),:)= vs_let(N,'his-sed-series',{timeStep},'SBTRC','quiet') - vs_let(N,'his-sed-series',{morfStart},'SBTRC','quiet');
-                SSTRC(1:size(MNTRA,2),:)= vs_let(N,'his-sed-series',{timeStep},'SSTRC','quiet') - vs_let(N,'his-sed-series',{morfStart},'SSTRC','quiet');
-                transport{jj}.total     = squeeze((SSTRC + SBTRC) ./ simLength);
-                transport{jj}.bed       = squeeze((SBTRC) ./ simLength);
-                transport{jj}.suspended = squeeze((SSTRC) ./ simLength);
+                SBTRC(1:size(MNTRA,2),:)= squeeze(vs_let(N,'his-sed-series',{timeStep},'SBTRC','quiet') - vs_let(N,'his-sed-series',{morfStart},'SBTRC','quiet'));
+                SSTRC(1:size(MNTRA,2),:)=  squeeze(vs_let(N,'his-sed-series',{timeStep},'SSTRC','quiet') - vs_let(N,'his-sed-series',{morfStart},'SSTRC','quiet'));
+                transport{jj}.total     = (SSTRC + SBTRC) ./ simLength;
+                transport{jj}.bed       = SBTRC ./ simLength;
+                transport{jj}.suspended = SSTRC ./ simLength;
             end
         case 'instant'
             if ~isempty(deblank(NAMTRA))
-                SBTR(1:size(MNTRA,2),:) = vs_let(N,'his-sed-series',{timeStep},'SBTR','quiet');
-                SSTR(1:size(MNTRA,2),:) = vs_let(N,'his-sed-series',{timeStep},'SSTR','quiet');
-                transport{jj}.total     = squeeze((SSTR + SBTR));
-                transport{jj}.bed       = squeeze((SBTR));
-                transport{jj}.suspended = squeeze((SSTR));
+                SBTR(1:size(MNTRA,2),:) = squeeze(vs_let(N,'his-sed-series',{timeStep},'SBTR','quiet'));
+                SSTR(1:size(MNTRA,2),:) = squeeze(vs_let(N,'his-sed-series',{timeStep},'SSTR','quiet'));
+                transport{jj}.total     = SSTR + SBTR;
+                transport{jj}.bed       = SBTR;
+                transport{jj}.suspended = SSTR;
             end
     end
 end

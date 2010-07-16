@@ -106,11 +106,12 @@ curDir = pwd;
 if isempty(filename)
     % [names, pat] = uigetfiles('trim-*.dat', 'Please select trim-file(s)');
     [names, pat] = uigetfile('trim-*.dat', 'Please select trim-file(s)','MultiSelect','on');
+    if names == 0
+        d3dTransData = [];
+        return
+    end
     if ~iscell(names)
         names = {names};
-    end
-    if isempty(names)
-        return
     end
 else
     [pat, names, filterindex]=fileparts(filename);
@@ -127,6 +128,8 @@ for jj = 1 : length(names)
     elseif isempty(timeStep)
         lastTimeStep=str2num(char(inputdlg('Specify which time-step to use',[num2str(N.GrpDat(grpDatNr).SizeDim) ' timesteps found, specify required time step:'],1,cellstr(num2str(N.GrpDat(grpDatNr).SizeDim)))));
         if isempty(lastTimeStep)
+            d3dTransData = [];
+            close(hW);
             return
         end
     else

@@ -8,7 +8,7 @@ function testresult = detran_d3dTrans_single_test()
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
+%   Copyright (C) 2010 Deltares
 %       Arjan Mol
 %
 %       arjan.mol@deltares.nl
@@ -55,7 +55,8 @@ function testresult = detran_d3dTrans_single_test()
 %% $RunCode
 % Write test code here
 try
-    file = which('trim-example.dat');
+    [pat, nam]=fileparts(which('detran'));
+    file = [pat filesep 'testmodel' filesep 'single' filesep 'trim-example.dat'];
     d=detran_d3dTrans_single('mean',file,0);
     testresult = true;
 catch

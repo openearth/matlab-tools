@@ -1,5 +1,5 @@
-function testresult = detran_d3dTransFromHis_single_test()
-% DETRAN_D3DTRANSFROMHIS_SINGLE_TEST  One line description goes here
+function testresult = detran_d3dTransFromHis_multi_test()
+% DETRAN_D3DTRANSFROMHIS_MULTI_TEST  One line description goes here
 %  
 % More detailed description of the test goes here.
 %
@@ -8,7 +8,7 @@ function testresult = detran_d3dTransFromHis_single_test()
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
+%   Copyright (C) 2010 Deltares
 %       Arjan Mol
 %
 %       arjan.mol@deltares.nl
@@ -39,7 +39,7 @@ function testresult = detran_d3dTransFromHis_single_test()
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 19 May 2010
+% Created: 16 Jul 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -48,21 +48,14 @@ function testresult = detran_d3dTransFromHis_single_test()
 % $Revision$
 % $HeadURL$
 % $Keywords: $
-
-%% $Description (Name = detran_d3dTransFromHis_single_test)
-% Publishable code that describes the test.
-
-%% $RunCode
-% Write test code here
 try
     [pat, nam]=fileparts(which('detran'));
-    file = [pat filesep 'testmodel' filesep 'single' filesep 'trih-example.dat'];
-    [crossName, crossXY, transport, namsed]=detran_d3dTransFromHis_single('mean',file,0);
+    file = [pat filesep 'testmodel' filesep 'multi' filesep 'run01' filesep 'trih-example.dat'];
+    weightfile = [pat filesep 'testmodel' filesep 'multi' filesep 'weights.tek'];
+    d=detran_d3dTransFromHis_multi('mean',file,weightfile,0);
     testresult = true;
-	catch
+catch
     testresult = false;
 end
 
-%% $PublishResult
-% Publishable code that describes the test.
-
+TeamCity.category('UnCategorized');

@@ -108,13 +108,9 @@ function varargout = detran(varargin)
 % GUI MODE
 if nargin==0 % start GUI
     if ~isdeployed
-        if str2double(datestr(datenum(version('-date')),10))<2007
-            msgbox('Please use at least Matlab version 2007a');
+        if str2double(datestr(datenum(version('-date')),10))<2009
+            msgbox('Please use at least Matlab version 2009b');
             return
-        end
-        
-        if ~exist('vs_use.m','file')
-            wlsettings;
         end
         
         basePath=strrep(which('detran.m'),'detran.m','');
@@ -122,6 +118,14 @@ if nargin==0 % start GUI
         addpath(basePath);
         addpath([basePath 'detran_gui']);
         addpath([basePath 'detran_engines']);
+
+        if ~exist('vs_use.m','file')
+            wlsettings;
+        end
+        
+        if ~exist('grid_orth_getDataOnLine.m','file')
+            run('p:\mctools\openearthtools\matlab\oetsettings.m');
+        end
     end
     % fig=openfig('detran.fig','reuse');
     fig=detran_initiateGUI;

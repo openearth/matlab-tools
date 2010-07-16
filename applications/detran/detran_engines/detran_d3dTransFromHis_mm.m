@@ -62,6 +62,11 @@ function [NAMTRA, XYTRA, transport, namsed]=detran_d3dTransFromHis_mm(type,filen
 % Sign up to recieve regular updates of this function, and to contribute 
 % your own tools.
 
+transport = [];
+NAMTRA=[];
+XYTRA=[];
+namsed=[];
+                        
 % check if wlsettings are available
 wldir = which('vs_use');
 if isempty(wldir)
@@ -80,21 +85,40 @@ if isempty(wldir)
 end
 
 if isempty(filename)
-    curDir = pwd;
-    patName = uigetdir(pwd,'Please select map with simulation results');
+    [dum, patName, filterindex] = uigetfile( {'*.dat;*.def','trih-files (*.dat,*.def)'},'Select (one of the) trih file(s)');
+    if patName==0
+        return
+    end
 else
     [patName]=fileparts(filename);
 end
 
-cd([patName '\merge']);
-mergeFile = dir('*.mm');
+[dum, patName] = strtok(fliplr(patName),filesep);
+patName = fliplr(patName);
 
-if length(mergeFile) > 1
-    disp('**** ERROR : please verify that only 1 mm-file is present...');
+curDir = pwd;
+
+if exist([patName '\merge'],'dir')
+    cd([patName '\merge']);
+    mergeFile = dir('*.mm');
+    if length(mergeFile) > 1
+        disp('**** ERROR : please verify that only 1 mm-file is present...');
+        return
+    end    
+else
+    disp('**** ERROR : cannot found the ''merge'' directory...');
     return
 end
 
-merge=textread(mergeFile.name,'%s','delimiter','\n','headerlines',9);
+fid=fopen(mergeFile.name);
+merge2=fread(fid,'char');
+lines=find(merge2==10);
+if isempty(lines)
+    lines=find(merge2==13);
+end
+firstLine=findstr(char(merge2'),'condition:');
+headerLines=max(find(firstLine(1)>lines));
+merge=textread(mergeFile.name,'%s','delimiter','\n','headerlines',headerLines);
 
 weightFac = 0;
 
@@ -120,6 +144,11 @@ for ii = 1 : length(condMap)
                 MORFT    = vs_let(N,'his-infsed-serie','MORFT','quiet');
                 if nargin<3 || isempty(timeStep)
                     timeStep=str2num(char(inputdlg('Specify which time-step to use',[num2str(length(MORFT)) ' timesteps found, specify required time step:'],1,cellstr(num2str(length(MORFT))))));
+                    if isempty(timeStep)
+                        close(hW);
+                        cd(curDir);
+                        return
+                    end
                 elseif timeStep == 0
                     timeStep = length(MORFT);
                 end
@@ -128,7 +157,7 @@ for ii = 1 : length(condMap)
                 morfStart = min (find(MORFT > 0))-1;
                 namsed    = vs_get(N,'his-const','NAMSED','quiet');
                 MNTRA     = vs_get(N,'his-const','MNTRA','quiet');
-                XYTRA     = vs_get(N,'his-const','XYTRA','quiet');
+                XYTRA     = vs_get(N,'his-const','XYTRA','quiet')';
                 NAMTRA    = vs_get(N,'his-const','NAMTRA','quiet');
                 MNTRA     = vs_get(N,'his-const','MNTRA','quiet');
             end
@@ -136,20 +165,20 @@ for ii = 1 : length(condMap)
             transport{jj}.bed= 0;
             transport{jj}.suspended= 0;
         end
-        if ~isempty(deblank(NAMTRA{jj}))
+        if ~isempty(deblank(NAMTRA))
             switch type
                 case 'mean'
-                    SBTRC     = vs_let(N,'his-sed-series',{timeStep},'SBTRC','quiet') - vs_let(N,'his-sed-series',{morfStart},'SBTRC','quiet');
-                    SSTRC     = vs_let(N,'his-sed-series',{timeStep},'SSTRC','quiet') - vs_let(N,'his-sed-series',{morfStart},'SSTRC','quiet');
-                    transport{jj}.total     = squeeze(transport.total {jj} + weightFac(ii) .* (SSTRC + SBTRC) ./ simLength);
-                    transport{jj}.bed       = squeeze(transport.bed {jj} + weightFac(ii) .* (SBTRC) ./ simLength);
-                    transport{jj}.suspended = squeeze(transport.suspended {jj} + weightFac(ii) .* (SSTRC) ./ simLength);
+                    SBTRC     = squeeze(vs_let(N,'his-sed-series',{timeStep},'SBTRC','quiet') - vs_let(N,'his-sed-series',{morfStart},'SBTRC','quiet'));
+                    SSTRC     = squeeze(vs_let(N,'his-sed-series',{timeStep},'SSTRC','quiet') - vs_let(N,'his-sed-series',{morfStart},'SSTRC','quiet'));
+                    transport{jj}.total     = transport{jj}.total + weightFac(ii) .* (SSTRC + SBTRC) ./ simLength;
+                    transport{jj}.bed       = transport{jj}.bed + weightFac(ii) .* (SBTRC) ./ simLength;
+                    transport{jj}.suspended = transport{jj}.suspended + weightFac(ii) .* (SSTRC) ./ simLength;
                 case 'instant'
-                    SBTR     = vs_let(N,'his-sed-series',{timeStep},'SBTR','quiet');
-                    SSTR     = vs_let(N,'his-sed-series',{timeStep},'SSTR','quiet');
-                    transport{jj}.total      = squeeze(transport.total {jj} + weightFac(ii) .* (SSTR + SBTR));
-                    transport{jj}.bed        = squeeze(transport {jj}.bed + weightFac(ii) .* (SBTR));
-                    transport{jj}.suspended  = squeeze(transport {jj}.suspended + weightFac(ii) .* (SSTR));
+                    SBTR     = squeeze(vs_let(N,'his-sed-series',{timeStep},'SBTR','quiet'));
+                    SSTR     = squeeze(vs_let(N,'his-sed-series',{timeStep},'SSTR','quiet'));
+                    transport{jj}.total      = transport{jj}.total  + weightFac(ii) .* (SSTR + SBTR);
+                    transport{jj}.bed        = transport{jj}.bed + weightFac(ii) .* (SBTR);
+                    transport{jj}.suspended  = transport{jj}.suspended + weightFac(ii) .* (SSTR);
             end
         end
     end
@@ -165,7 +194,7 @@ NTRA=MNTRA(2:2:end,:);
 signCor=repmat([sign(diff(MTRA))-sign(diff(NTRA))]',1,size(transport{1}.total,2)); % check if m1 > m2 or n2 > n1 for certain transect, than change sign of calculated transport
 
 for jj=1:length(transport)
-    transport{jj}.total=[signCor.*transport{jj}.total]';
-    transport{jj}.bed=[signCor.*transport{jj}.bed]';
-    transport{jj}.suspended=[signCor.*transport{jj}.suspended]';
+    transport{jj}.total=[signCor.*transport{jj}.total];
+    transport{jj}.bed=[signCor.*transport{jj}.bed];
+    transport{jj}.suspended=[signCor.*transport{jj}.suspended];
 end

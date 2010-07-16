@@ -71,8 +71,8 @@ tr = detran('single',trihfile);
 disp(num2str(3600*tr,'%5.0f'));
 
 %%
-% Because nine cross sections have been defined in the Delft3D input, 
-% three transport rates are returned by Detran. Note that the cross 
+% Because five cross sections have been defined in the Delft3D input, 
+% five transport rates are returned by Detran. Note that the cross 
 % sections (and thus the resulting transpor rates) are identical to those 
 % used for the example with trim-input. 
 %
