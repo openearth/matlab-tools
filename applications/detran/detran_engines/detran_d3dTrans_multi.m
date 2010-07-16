@@ -134,7 +134,7 @@ if isempty(filename) % in interactive mode
 else % in scripting mode
     dataDirPrefix=strtok(p4,'0');
 end
-pat=dir([dataDirPrefix '*']);
+pat=dir([p3 filesep dataDirPrefix '*']);
 pat={pat([pat.isdir]==1).name}';
 
 if isempty(weights)
