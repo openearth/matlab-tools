@@ -11,12 +11,12 @@ function varargout=vs_meshgrid3dcorcen(varargin),
 %
 % Implemented optional <'keyword',value> pairs are:
 %  * 'centres',struct with fields 1 or more of the fields
-%      - cor (default 0)
+%      - cor (default 1)
 %      - cen (default 1)
 %      - u   (default 0)
 %      - v   (default 0)
-%    with value 0 indicating to not calulcate them, and 1 to calculate them
-%  * 'intface',same as for keyword 'centres' 
+%     with value 0 indicating to not calulcate them, and 1 to calculate them
+%  * 'intface'  same as for keyword 'centres' 
 %  * 'latlon'   labels x to lon, and y to lat if coordinate system is spherical (default 1)
 %
 % See also: VS_USE, VS_LET, VS_DISP, VS_MESHGRID2DCORCEN, VS_LET_SCALAR

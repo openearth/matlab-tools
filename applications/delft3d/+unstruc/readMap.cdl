@@ -1,0 +1,112 @@
+// For discussion on this netCDF format please refer to:
+// http://public.deltares.nl/display/NETCDF/netCDF
+netCDF runid_map.nc {                                                     // (this column) name in unstruc Matlab toolbox
+
+dimensions:
+	nNetNode = 42984 ;                                                // cor.n
+	nNetLink = 84880 ;
+	nNetLinkPts = 2 ;
+	nBndLink = 2208 ;
+	nNetElem = 41888 ;
+	nNetElemMaxNode = 7 ;
+	nFlowElem = 41888 ;
+	nFlowElemMaxNode = 6 ;
+// TO DO set nFlowElemContourPts automatic to longest contour
+	nFlowElemContourPts = 99 ; 
+	nFlowLink = 82672 ;
+	nFlowLinkPts = 2 ;
+	time = UNLIMITED ; (25 currently)
+
+
+variables:
+	// Preference 'PRESERVE_FVD':  false,
+	// dimensions consistent with ncBrowse, not with native MATLAB netcdf package.
+	double NetNode_x(nNetNode), shape = [42984]                       // cor.x
+		NetNode_x:units = "m" 
+		NetNode_x:standard_name = "projection_x_coordinate" 
+		NetNode_x:long_name = "netnodal x-coordinate" 
+// TO DO        FlowElemContour_x:actual_range = min max
+	double NetNode_y(nNetNode), shape = [42984]                       // cor.y
+		NetNode_y:units = "m" 
+		NetNode_y:standard_name = "projection_y_coordinate" 
+		NetNode_y:long_name = "netnodal y-coordinate" 
+// TO DO        FlowElemContour_x:actual_range = min max
+	double NetNode_z(nNetNode), shape = [42984]                       // cor.z
+// TO DO        NetNode_y:standard_name = "projection_y_coordinate" 
+// TO DO        NetNode_z:units = "m" 
+// TO DO        NetNode_z:standard_name = "sea_floor_depth" 
+// TO DO        NetNode_z:long_name = "netnodal bottom level" 
+	int32 NetLink(nNetLink,nNetLinkPts), shape = [84880 2]            // cor.Link
+		NetLink:standard_name = "netlink" 
+		NetLink:long_name = "link between two netnodes" 
+	int32 NetLinkType(nNetLink), shape = [84880]                      // cor.LinkType
+		NetLinkType:long_name = "type of netlink" 
+		NetLinkType:valid_range = 0 2 d
+		NetLinkType:flag_values = 0 1 2 d
+		NetLinkType:flag_meanings = "closed_link_between_2D_nodes link_between_1D_nodes link_between_2D_nodes" 
+	int32 NetElemNode(nNetElem,nNetElemMaxNode), shape = [41888 7]    // link
+		NetElemNode:long_name = "Mapping from net cell to net nodes." 
+	int32 BndLink(nBndLink), shape = [2208]                           // bnd
+		BndLink:long_name = "Netlinks that compose the net boundary." 
+	double time(time), shape = [25]                                   // datenum
+		time:units = "seconds since 1970-01-01 00:00:00" 
+	double FlowElem_xcc(nFlowElem), shape = [41888]                   // cen.x
+		FlowElem_xcc:units = "m" 
+		FlowElem_xcc:standard_name = "projection_x_coordinate" 
+		FlowElem_xcc:long_name = "Flow element circumcenter x" 
+		FlowElem_xcc:bounds = "FlowElemContour_x" 
+	double FlowElem_ycc(nFlowElem), shape = [41888]                   // cen.y
+		FlowElem_ycc:units = "m" 
+		FlowElem_ycc:standard_name = "projection_y_coordinate" 
+		FlowElem_ycc:long_name = "Flow element circumcenter y" 
+		FlowElem_ycc:bounds = "FlowElemContour_y" 
+	double FlowElemContour_x(nFlowElem,nFlowElemContourPts), shape = [41888 99] //peri.x
+		FlowElemContour_x:units = "m" 
+		FlowElemContour_x:standard_name = "projection_x_coordinate" 
+		FlowElemContour_x:long_name = "List of x-points forming flow element" 
+// TO DO        FlowElemContour_x:fill_value = nan
+	double FlowElemContour_y(nFlowElem,nFlowElemContourPts), shape = [41888 99] //peri.x
+		FlowElemContour_y:units = "m" 
+		FlowElemContour_y:standard_name = "projection_y_coordinate" 
+		FlowElemContour_y:long_name = "List of y-points forming flow element" 
+	double FlowElem_bl(nFlowElem), shape = [41888]                   // cen.z
+		FlowElem_bl:units = "m" 
+		FlowElem_bl:standard_name = "sea_floor_depth" 
+		FlowElem_bl:long_name = "Bottom level at flow element's circumcenter." 
+	int32 FlowLink(nFlowLink,nFlowLinkPts), shape = [82672 2]        // cen.Link
+		FlowLink:long_name = "link/interface between two flow elements" 
+	int32 FlowLinkType(nFlowLink), shape = [82672]                   // cen.LinkType
+		FlowLinkType:long_name = "type of flowlink" 
+		FlowLinkType:valid_range = 1 2 d
+		FlowLinkType:flag_values = 1 2 d
+		FlowLinkType:flag_meanings = "link_between_1D_flow_elements link_between_2D_flow_elements" 
+	double FlowLink_xu(nFlowLink), shape = [82672]                   // face.u
+		FlowLink_xu:long_name = "Center coordinate of net link (velocity point)." 
+		FlowLink_xu:units = "m" 
+		FlowLink_xu:standard_name = "projection_x_coordinate" 
+	double FlowLink_yu(nFlowLink), shape = [82672]                   // face.v
+		FlowLink_yu:long_name = "Center coordinate of net link (velocity point)." 
+		FlowLink_yu:units = "m" 
+		FlowLink_yu:standard_name = "projection_y_coordinate" 
+	double s1(time,nFlowElem), shape = [25 41888]                    // cen.eta
+		s1:coordinates = "FlowElem_xcc FlowElem_ycc" 
+		s1:standard_name = "m" 
+		s1:units = "m" 
+	double ucx(time,nFlowElem), shape = [25 41888]                   // cen.u
+		ucx:coordinates = "FlowElem_xcc FlowElem_ycc" 
+	double ucy(time,nFlowElem), shape = [25 41888]                   // cen.v
+		ucy:coordinates = "FlowElem_xcc FlowElem_ycc" 
+	double unorm(time,nFlowLink), shape = [25 82672]                 // cen.un
+		unorm:standard_name = "normal_velocity" 
+		unorm:units = "m s-1" 
+		unorm:interfaces = "FlowLink" 
+		unorm:coordinates = "FlowLink_xu FlowLink_yu" 
+
+
+//global attributes:
+		:institution = "Deltares" 
+		:references = "http://www.deltares.nl" 
+		:source = "UNSTRUC v1.0.11.11857:1191, model" 
+		:history = "Created on 2010-07-13T17:11:41+0200, UNSTRUC" 
+		:Conventions = "CF-1.4:Deltares-0.1" 
+}

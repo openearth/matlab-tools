@@ -1,0 +1,46 @@
+// For discussion on this netCDF format please refer to:
+// http://public.deltares.nl/display/NETCDF/netCDF
+netCDF runid_net.nc { 
+
+dimensions:
+	nNetNode = 42984 ;
+	nNetLink = 84880 ;
+	nNetLinkPts = 2 ;
+	nBndLink = 2208 ;
+	nNetElem = 41888 ;
+	nNetElemMaxNode = 7 ;
+
+
+variables:
+	// Preference 'PRESERVE_FVD':  false,
+	// dimensions consistent with ncBrowse, not with native MATLAB netcdf package.
+	double NetNode_x(nNetNode), shape = [42984]
+		NetNode_x:units = "m" 
+		NetNode_x:standard_name = "projection_x_coordinate" 
+		NetNode_x:long_name = "netnodal x-coordinate" 
+	double NetNode_y(nNetNode), shape = [42984]
+		NetNode_y:units = "m" 
+		NetNode_y:standard_name = "projection_y_coordinate" 
+		NetNode_y:long_name = "netnodal y-coordinate" 
+	double NetNode_z(nNetNode), shape = [42984]
+	int32 NetLink(nNetLink,nNetLinkPts), shape = [84880 2]
+		NetLink:standard_name = "netlink" 
+		NetLink:long_name = "link between two netnodes" 
+	int32 NetLinkType(nNetLink), shape = [84880]
+		NetLinkType:long_name = "type of netlink" 
+		NetLinkType:valid_range = 0 2 d
+		NetLinkType:flag_values = 0 1 2 d
+		NetLinkType:flag_meanings = "closed_link_between_2D_nodes link_between_1D_nodes link_between_2D_nodes" 
+	int32 NetElemNode(nNetElem,nNetElemMaxNode), shape = [41888 7]
+		NetElemNode:long_name = "Mapping from net cell to net nodes." 
+	int32 BndLink(nBndLink), shape = [2208]
+		BndLink:long_name = "Netlinks that compose the net boundary." 
+
+
+//global attributes:
+		:institution = "Deltares" 
+		:references = "http://www.deltares.nl" 
+		:source = "UNSTRUC v1.0.11.11857:1191, model" 
+		:history = "Created on 2010-07-12T23:48:59+0200, UNSTRUC" 
+		:Conventions = "CF-1.4:Deltares-0.1" 
+}
