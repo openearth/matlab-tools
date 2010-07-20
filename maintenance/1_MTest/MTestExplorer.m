@@ -144,7 +144,9 @@ classdef MTestExplorer < handle
             warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
             jFrame = get(this.HMainFigure,'JavaFrame');
             if datenum(version('-date')) > datenum(2010,1,1)
-                jFrame.setFigureIcon(javax.swing.ImageIcon(which('DeltaresLogoWhiteTransparant.gif')));
+                jFrame.setFigureIcon(javax.swing.ImageIcon(which('DeltaresLogoWhiteTransparantSmaller.gif')));
+            else
+                jFrame.setFigureIcon(javax.swing.ImageIcon(which('DeltaresLogoWhiteTransparantSmall.gif')));
             end
             setFigDockGroup(this.HMainFigure,'MTest');
             
