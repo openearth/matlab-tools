@@ -12,9 +12,10 @@ for i=1:length(txt)
             j=0;
             handles.Bathymetry.NrDatasets=k;
             handles.Bathymetry.Datasets{k}=txt{i+1};
-            handles.Bathymetry.Dataset(k).Name=txt{i+1};
+            handles.Bathymetry.Dataset(k).longName=txt{i+1};
             handles.Bathymetry.Dataset(k).Type='tiles';
             handles.Bathymetry.Dataset(k).Edit=0;
+            handles.Bathymetry.Dataset(k).useCache=1;
         case{'horizontalcoordinatesystemname'}
             handles.Bathymetry.Dataset(k).HorizontalCoordinateSystem.Name=txt{i+1};
         case{'horizontalcoordinatesystemtype'}
@@ -29,6 +30,12 @@ for i=1:length(txt)
             handles.Bathymetry.Dataset(k).Name=txt{i+1};
         case{'url'}
             handles.Bathymetry.Dataset(k).URL=txt{i+1};
+        case{'usecache'}
+            if strcmpi(txt{i+1}(1),'y')
+                handles.Bathymetry.Dataset(k).useCache=1;
+            else
+                handles.Bathymetry.Dataset(k).useCache=0;
+            end
         case{'zoomlevel'}
             j=j+1;
             handles.Bathymetry.Dataset(k).NrZoomLevels=j;

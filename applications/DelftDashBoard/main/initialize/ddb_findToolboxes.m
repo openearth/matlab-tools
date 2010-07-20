@@ -1,11 +1,12 @@
 function handles=ddb_findToolboxes(handles)
 
 if isdeployed
-    dr=[fileparts(which('DelftDashBoard.m')) filesep];
-    dr=[dr(1:end-39) filesep 'bin' filesep 'DelftDashBoard_mcr' filesep 'toolboxes'];
+    dr=[ctfroot filesep 'toolboxes'];
 else
     dr='toolboxes';
 end
+
+handles.Toolbox(1).Name='dummy';
 
 flist=dir(dr);
 
@@ -15,8 +16,14 @@ for i=1:length(flist)
         switch lower(flist(i).name)
             case{'.','..','.svn'}
             otherwise
-                k=k+1;
-                name{k}=flist(i).name;
+                inifcn=str2func(['ddb_initialize' flist(i).name]);
+%                 try
+%                     handles=inifcn(handles,'veryfirst');
+                    k=k+1;
+                    name{k}=flist(i).name;
+%                 catch
+%                     if ~isdeployed
+%                 end
         end
     end
 end

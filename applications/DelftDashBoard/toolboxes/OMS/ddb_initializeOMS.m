@@ -1,9 +1,10 @@
 function handles=ddb_initializeOMS(handles,varargin)
 
 ii=strmatch('OMS',{handles.Toolbox(:).Name},'exact');
-
 if nargin>1
     switch varargin{1}
+        case{'test'}
+            return
         case{'veryfirst'}
             handles.Toolbox(ii).LongName='Operational Model System';
             return

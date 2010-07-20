@@ -150,18 +150,18 @@ x=xx0.*cos(0.5*pi-yy0);
 y=xx0.*sin(0.5*pi-yy0);
 
 cs0.Name='WGS 84';
-cs0.Type='geo';
+cs0.Type='geographic';
 cs1.Name='WGS 84 / UTM zone 16N';
-cs1.Type='xy';
+cs1.Type='projected';
 [x0,y0]=ddb_coordConvert(lon0,lat0,cs0,cs1);
 
 x=x+x0;
 y=y+y0;
 
 cs0.Name='WGS 84 / UTM zone 16N';
-cs0.Type='xy';
+cs0.Type='projected';
 cs1.Name='WGS 84';
-cs1.Type='geo';
+cs1.Type='geographic';
 [x,y]=ddb_coordConvert(x,y,cs0,cs1);
 
 x(ns+1,:)=x(1,:);

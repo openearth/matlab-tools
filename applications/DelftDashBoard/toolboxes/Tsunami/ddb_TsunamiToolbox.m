@@ -1,4 +1,4 @@
-function ddb_tsunamiToolbox
+function ddb_TsunamiToolbox
 
 handles=getHandles;
 
@@ -8,9 +8,9 @@ handles.Toolbox(tb).Input.ToleranceLength=0.1;
 
 h=findall(gca,'Tag','Plates');
 if isempty(h)
-    [x,y]=landboundary('read',[handles.GeoDir '\plates2.ldb']);
-    z=zeros(size(x))+50;
-    h=plot3(x,y,z);
+    load([handles.SettingsDir 'geo\plates.mat']);
+    platesz=zeros(size(platesx))+50;
+    h=plot3(platesx,platesy,platesz);
     set(h,'Color',[1.0 0.5 0.00]);
     set(h,'Tag','Plates');
     set(h,'LineWidth',1.5);

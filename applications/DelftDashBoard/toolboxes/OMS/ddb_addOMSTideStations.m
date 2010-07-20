@@ -21,7 +21,7 @@ for k=1:length(handles.Toolbox(jj).Database)
         cs.Type=s.CoordinateSystemType;
         [x,y]=ddb_coordConvert(x,y,cs,handles.ScreenParameters.CoordinateSystem);
 
-        [m,n,iindex]=ddb_findStations(x,y,xg,yg,zz);
+        [m,n,iindex]=ddb_findStationsOMS(x,y,xg,yg,zz);
 
         nobs=handles.Toolbox(tb).NrStations;
 

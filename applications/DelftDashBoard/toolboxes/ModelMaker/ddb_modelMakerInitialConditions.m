@@ -135,7 +135,7 @@ ival=get(handles.GUIHandles.SelectParameter,'Value');
 switch lower(handles.GUIData.ConstType{ival})
     case{'water level'}
         handles.Model(md).Input(ad).WaterLevel.ICOpt=str{ii};
-        handles.TideModelData.ActiveTideModelIC=str{ii};
+        handles.TideModels.ActiveTideModelIC=handles.TideModels.Name{ii};
     case{'velocity'}
         handles.Model(md).Input(ad).Velocity.ICOpt=str{ii};
     case{'salinity'}
@@ -160,9 +160,8 @@ ival=get(handles.GUIHandles.SelectParameter,'Value');
 
 switch lower(handles.GUIData.ConstType{ival})
     case{'water level'}
-        str=handles.TideModelData.TideModels;
-        ii=strmatch(lower(handles.Model(md).Input(ad).WaterLevel.ICOpt),lower(str),'exact');
-        set(handles.GUIHandles.SelectDataSource,'String',str);
+        set(handles.GUIHandles.SelectDataSource,'String',handles.TideModels.longName);
+        ii=strmatch(lower(handles.Model(md).Input(ad).WaterLevel.ICOpt),lower(handles.TideModels.Name),'exact');
         set(handles.GUIHandles.SelectDataSource,'Value',ii);        
         icpar=handles.Model(md).Input(ad).WaterLevel.ICPar;
         icconst=handles.Model(md).Input(ad).WaterLevel.ICConst;

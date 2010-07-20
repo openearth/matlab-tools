@@ -51,10 +51,10 @@ handles.GUIHandles.SelectBackgroundBathymetry = uicontrol(gcf,'Style','popupmenu
 
 set(handles.GUIHandles.SelectBackgroundBathymetry,'Visible','off');
 
-str=handles.TideModelData.TideModels;
-ii=strmatch(handles.TideModelData.ActiveTideModelBC,str,'exact');
+str=handles.TideModels.longName;
+ii=strmatch(handles.TideModels.ActiveTideModelBC,handles.TideModels.Name,'exact');
 handles.GUIHandles.SelectTideModelBC = uicontrol(gcf,'Style','popupmenu','String',str,'Value',ii,'Position',[560 55 100 20],'BackgroundColor',[1 1 1],'Tag','UIControl');
-ii=strmatch(handles.TideModelData.ActiveTideModelIC,str,'exact');
+ii=strmatch(handles.TideModels.ActiveTideModelIC,handles.TideModels.Name,'exact');
 handles.GUIHandles.SelectTideModelIC = uicontrol(gcf,'Style','popupmenu','String',str,'Value',ii,'Position',[560 30 100 20],'BackgroundColor',[1 1 1],'Tag','UIControl');
 
 set(handles.GUIHandles.Pushddb_drawGridOutline,           'CallBack',{@Pushddb_drawGridOutline_Callback});
@@ -256,7 +256,7 @@ function SelectTideModelBC_Callback(hObject,eventdata)
 handles=getHandles;
 ii=get(hObject,'Value');
 str=get(hObject,'String');
-handles.TideModelData.ActiveTideModelBC=str{ii};
+handles.TideModels.ActiveTideModelBC=handles.TideModels.Name{ii};
 setHandles(handles);
 
 %%
@@ -264,37 +264,42 @@ function SelectTideModelIC_Callback(hObject,eventdata)
 handles=getHandles;
 ii=get(hObject,'Value');
 str=get(hObject,'String');
-handles.TideModelData.ActiveTideModelIC=str{ii};
+handles.TideModels.ActiveTideModelIC=handles.TideModels.Name{ii};
 
 %%
 function PushGenerateGrid_Callback(hObject,eventdata)
 handles=getHandles;
 
-f=str2func(['ddb_generateGrid' handles.Model(md).Name]);
-try
-    handles=feval(f,handles,ad,0,0,'ddb_test');
-catch
-    GiveWarning('text',['Grid generation not supported for ' handles.Model(md).LongName]);
-    return
+if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=2000000
+    f=str2func(['ddb_generateGrid' handles.Model(md).Name]);
+    try
+        handles=feval(f,handles,ad,0,0,'ddb_test');
+    catch
+        GiveWarning('text',['Grid generation not supported for ' handles.Model(md).LongName]);
+        return
+    end
+    
+    wb = waitbox('Generating grid ...');pause(0.1);
+    
+    xori=handles.Toolbox(tb).Input.XOri;
+    nx=handles.Toolbox(tb).Input.nX;
+    dx=handles.Toolbox(tb).Input.dX;
+    yori=handles.Toolbox(tb).Input.YOri;
+    ny=handles.Toolbox(tb).Input.nY;
+    dy=handles.Toolbox(tb).Input.dY;
+    rot=pi*handles.Toolbox(tb).Input.Rotation/180;
+    zmax=handles.Toolbox(tb).Input.ZMax;
+    [x,y]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,handles.GUIData.x,handles.GUIData.y,handles.GUIData.z);
+    
+    close(wb);
+    
+    handles=feval(f,handles,ad,x,y);
+    
+    setHandles(handles);
+    
+else
+    GiveWarning('Warning','Maximum number of grid points (2,000,000) exceeded ! Please reduce grid resolution.');
 end
-
-wb = waitbox('Generating grid ...');pause(0.1);
-
-xori=handles.Toolbox(tb).Input.XOri;
-nx=handles.Toolbox(tb).Input.nX;
-dx=handles.Toolbox(tb).Input.dX;
-yori=handles.Toolbox(tb).Input.YOri;
-ny=handles.Toolbox(tb).Input.nY;
-dy=handles.Toolbox(tb).Input.dY;
-rot=pi*handles.Toolbox(tb).Input.Rotation/180;
-zmax=handles.Toolbox(tb).Input.ZMax;
-[x,y]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,handles.GUIData.x,handles.GUIData.y,handles.GUIData.z);
-
-close(wb);
-
-handles=feval(f,handles,ad,x,y);
-
-setHandles(handles);
 
 %%
 function PushGenerateBathymetry_Callback(hObject,eventdata)

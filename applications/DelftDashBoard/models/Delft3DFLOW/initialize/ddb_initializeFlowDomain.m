@@ -188,7 +188,7 @@ handles.Model(md).Input(id).Hturdm=0.0000000e+000;
 handles.Model(md).Input(id).Hturel=1;
 
 % Initial Condition Options
-handles.Model(md).Input(id).WaterLevel.ICOpt=handles.TideModelData.ActiveTideModelIC;
+handles.Model(md).Input(id).WaterLevel.ICOpt=handles.TideModels.ActiveTideModelIC;
 handles.Model(md).Input(id).WaterLevel.ICConst=0;
 handles.Model(md).Input(id).WaterLevel.ICPar=0;
 handles.Model(md).Input(id).Velocity.ICOpt='Constant';

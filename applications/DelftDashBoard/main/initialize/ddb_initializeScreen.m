@@ -23,10 +23,8 @@ set(handles.GUIHandles.Axis,'xlim',[-180 180],'ylim',[-90 90],'zlim',[-12000 100
 hold on;
 zoom v6 on;
 
-%handles.ScreenParameters.XMaxRange=[-270 270];
-cl=load([handles.SettingsDir '\colormaps\earth2.txt']);
-%handles.GUIData.ColorMaps.Earth=cl(:,1:3);
-handles.GUIData.ColorMaps.Earth=cl;
+load([handles.SettingsDir 'colormaps\earth.mat']);
+handles.GUIData.ColorMaps.Earth=earth;
 
 setHandles(handles);
 
@@ -34,11 +32,12 @@ ddb_updateDataInScreen;
 
 handles=getHandles;
 
-[x,y]=landboundary('read',[handles.GeoDir '\worldcoastline5000000.ldb']);
-handles.GUIData.WorldCoastLine5000000(:,1)=x;
-handles.GUIData.WorldCoastLine5000000(:,2)=y;
+load([handles.SettingsDir 'geo\worldcoastline.mat']);
+handles.GUIData.WorldCoastLine5000000(:,1)=wclx;
+handles.GUIData.WorldCoastLine5000000(:,2)=wcly;
 
-[x,y]=ddb_getWVS([handles.GeoDir 'wvs\l\'],[-180 180],[-90 90],'l');
+res=5;
+[x,y]=ddb_getWVS([handles.LandboundaryDir 'wvs\zl' num2str(res,'%0.2i') '\'],[-180 180],[-90 90],res);
 
 z=zeros(size(x))+500;
 
@@ -47,7 +46,7 @@ set(plt,'HitTest','off');
 set(plt,'Tag','WorldCoastLine');
 setHandles(handles);
 
-c=load([handles.GeoDir '\cities.mat']);
+c=load([handles.SettingsDir 'geo\cities.mat']);
 for i=1:length(c.cities)
     handles.GUIData.cities.Lon(i)=c.cities(i).Lon;
     handles.GUIData.cities.Lat(i)=c.cities(i).Lat;

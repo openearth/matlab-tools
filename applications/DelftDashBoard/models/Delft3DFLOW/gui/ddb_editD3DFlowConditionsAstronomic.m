@@ -5,7 +5,7 @@ h=getHandles;
 handles=h.Model(md).Input(ad);
 handles.GUIData.ActiveOpenBoundary=h.GUIData.ActiveOpenBoundary;
 
-a=load([h.TideDir '\t_constituents.mat']);
+a=load([h.SettingsDir 'tidalconstituents\t_constituents.mat']);
 handles.ComponentNames=cellstr(a.const.name);
 
 if handles.NrAstronomicComponentSets==0

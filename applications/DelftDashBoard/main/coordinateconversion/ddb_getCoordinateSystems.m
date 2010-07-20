@@ -1,6 +1,6 @@
 function handles=ddb_getCoordinateSystems(handles)
 
-handles.EPSG=load([handles.SuperTransDir 'data\EPSG.mat']);
+handles.EPSG=load([handles.SuperTransDir 'EPSG.mat']);
 
 nproj=0;
 ngeo=0;

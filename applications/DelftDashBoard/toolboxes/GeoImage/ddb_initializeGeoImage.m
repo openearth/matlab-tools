@@ -4,6 +4,8 @@ ii=strmatch('GeoImage',{handles.Toolbox(:).Name},'exact');
 
 if nargin>1
     switch varargin{1}
+        case{'test'}
+            return
         case{'veryfirst'}
             handles.Toolbox(ii).LongName='Geo Image';
             return

@@ -5,18 +5,21 @@ yl=get(handles.GUIHandles.Axis,'ylim');
 
 % Bathymetry
 
-BathyCoord.Name='WGS 84';
-BathyCoord.Type='Geographic';
-if strcmpi(handles.ScreenParameters.BackgroundBathymetry,'vaklodingen')
-    BathyCoord.Name='Amersfoort / RD New';
-    BathyCoord.Type='Cartesian';
-end
+% BathyCoord.Name='WGS 84';
+% BathyCoord.Type='Geographic';
+
+iac=strmatch(lower(handles.ScreenParameters.BackgroundBathymetry),lower(handles.Bathymetry.Datasets),'exact');
+BathyCoord.Name=handles.Bathymetry.Dataset(iac).HorizontalCoordinateSystem.Name;
+BathyCoord.Type=handles.Bathymetry.Dataset(iac).HorizontalCoordinateSystem.Type;
+
+% if strcmpi(handles.ScreenParameters.BackgroundBathymetry,'vaklodingen')
+%     BathyCoord.Name='Amersfoort / RD New';
+%     BathyCoord.Type='Cartesian';
+% end
 
 Coord=handles.ScreenParameters.CoordinateSystem;
 
-if strcmpi(Coord.Name,BathyCoord.Name)
-    [xl0,yl0]=ddb_coordConvert(xl,yl,Coord,BathyCoord);
-else
+if ~strcmpi(Coord.Name,BathyCoord.Name) || ~strcmpi(Coord.Type,BathyCoord.Type)
     dx=(xl(2)-xl(1))/100;
     dy=(yl(2)-yl(1))/100;
     [xtmp,ytmp]=meshgrid(xl(1)-dx:dx:xl(2)+dx,yl(1)-dy:dy:yl(2)+dy);
@@ -25,12 +28,16 @@ else
     xl0(2)=max(max(xtmp2));
     yl0(1)=min(min(ytmp2));
     yl0(2)=max(max(ytmp2));
+else
+    xl0=xl;
+    yl0=yl;
+%    [xl0,yl0]=ddb_coordConvert(xl,yl,Coord,BathyCoord);
 end
 
 clear xtmp ytmp xtmp2 ytmp2
 
 pos=get(handles.GUIHandles.Axis,'Position');
-res=(xl0(2)-xl0(1))/(pos(3));
+% res=(xl0(2)-xl0(1))/(pos(3));
 
 % Get bathymetry
 [x0,y0,z,ok]=ddb_getBathy(handles,xl0,yl0);
@@ -39,7 +46,7 @@ if ok
 
     res=(xl(2)-xl(1))/(1.0*pos(3));
 
-    if ~strcmpi(Coord.Name,BathyCoord.Name)
+    if ~strcmpi(Coord.Name,BathyCoord.Name) || ~strcmpi(Coord.Type,BathyCoord.Type)
         % Interpolate on rectangular grid
         [x11,y11]=meshgrid(xl(1):res:xl(2),yl(1):res:yl(2));
         tic

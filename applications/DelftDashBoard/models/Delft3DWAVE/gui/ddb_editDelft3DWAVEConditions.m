@@ -1,14 +1,13 @@
 function ddb_editDelft3DWAVEConditions
 
 handles=getHandles;
-SettingsDir=getINIValue(handles.IniFile,'SettingsDir');
 fig0=gcf;
 
 if handles.Model(md).Input.UniformTemp==1
     
     if handles.Model(md).Input.ParametricTemp==1
     
-    fig1=MakeNewWindow('Uniform boundary conditions',[400 300],[SettingsDir '\icons\deltares.gif']);
+    fig1=MakeNewWindow('Uniform boundary conditions',[400 300],[handles.SettingsDir '\icons\deltares.gif']);
     
     hp = uipanel('Units','pixels','Position',[5 5 390 290],'Tag','UIControl');
         
@@ -48,7 +47,7 @@ if handles.Model(md).Input.UniformTemp==1
     
     else
         
-    fig1=MakeNewWindow('Uniform boundary conditions',[400 200],[SettingsDir '\icons\deltares.gif']);
+    fig1=MakeNewWindow('Uniform boundary conditions',[400 200],[handles.SettingsDir '\icons\deltares.gif']);
     
     hp = uipanel('Units','pixels','Position',[5 5 390 190],'Tag','UIControl');
    
@@ -68,7 +67,7 @@ else
 
     if handles.Model(md).Input.ParametricTemp==1
     
-    fig1=MakeNewWindow('Space-varying boundary conditions',[400 450],[SettingsDir '\icons\deltares.gif']);
+    fig1=MakeNewWindow('Space-varying boundary conditions',[400 450],[handles.SettingsDir '\icons\deltares.gif']);
     
     hp = uipanel('Units','pixels','Position',[5 5 390 440],'Tag','UIControl');
 
@@ -140,7 +139,7 @@ else
     
     else
 
-    fig1=MakeNewWindow('Space-varying boundary conditions',[400 350],[SettingsDir '\icons\deltares.gif']);
+    fig1=MakeNewWindow('Space-varying boundary conditions',[400 350],[handles.SettingsDir '\icons\deltares.gif']);
     
     hp = uipanel('Units','pixels','Position',[5 5 390 340],'Tag','UIControl');
 

@@ -9,7 +9,6 @@ end
 
 wb = waitbox('Generating Initial Conditions ...');%pause(0.1);
 
-
 %% Water Level
 
 xz=handles.Model(md).Input(id).GridXZ;
@@ -38,16 +37,34 @@ if ~strcmpi(handles.Model(md).Input(id).WaterLevel.ICOpt,'constant')
     x00=reshape(xz,mmax*nmax,1);
     y00=reshape(yz,mmax*nmax,1);
 
-    x00(isnan(x00))=0;
-    y00(isnan(y00))=0;
-
-    x00(find(x00<0.125 & x00>0))=360;
-    x00(find(x00<0.250 & x00>0.125))=0.25;
-    x00(find(x00>360))=360;
+    
+    if length(x00)>100000
+        % Limitation in delftPredict.mexw32
+        disp('Too many grid points (>100000)! Cannot continue operation.');
+        close(wb);
+        GiveWarning('Warning','Number of grid points exceeds 100000! Cannot continue this operation.'); 
+        return
+    end
+    
+    x00(x00<0.125 & x00>0)=360;
+    x00(x00<0.250 & x00>0.125)=0.25;
+    x00(x00>360)=360;
 
     t0=handles.Model(md).Input(id).StartTime;
     
-    [h,ConList]=tide_pred([handles.TideDir handles.TideModelData.ActiveTideModelIC],t0,y00,x00,'z');
+    ii=strmatch(handles.TideModels.ActiveTideModelIC,handles.TideModels.Name,'exact');
+    if strcmpi(handles.TideModels.Model(ii).URL(1:4),'http')
+        tidefile=[handles.TideModels.Model(ii).URL '/' handles.TideModels.ActiveTideModelIC '.nc'];
+    else
+        tidefile=[handles.TideModels.Model(ii).URL filesep handles.TideModels.ActiveTideModelIC '.nc'];
+    end
+    [ampz,phasez,depth,conList]=ddb_extractTidalConstituents(tidefile,x00,y00,'z');
+    
+    % TODO this does not work yet for large grids
+    % delftPredict2007 must be updated    
+    
+    [prediction,tdummy]=delftPredict2007(conList,ampz,phasez,t0,t0+2/24,1);
+    h=squeeze(prediction(:,1));
 
     h0=zeros(mmax+1,nmax+1);
     h=reshape(h,mmax,nmax);

@@ -4,6 +4,8 @@ ii=strmatch('NavigationCharts',{handles.Toolbox(:).Name},'exact');
 
 if nargin>1
     switch varargin{1}
+        case{'test'}
+            return
         case{'veryfirst'}
             handles.Toolbox(ii).LongName='Navigation Charts';            
             lst=dir([handles.ToolBoxDir 'NavigationCharts']);

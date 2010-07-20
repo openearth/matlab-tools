@@ -1,18 +1,14 @@
 function handles=ddb_findTideModels(handles)
 
-a=dir([handles.TideDir '\model*']);
+handles=ddb_readTideModels(handles);
 
-for i=1:length(a)
-    handles.TideModelData.TideModels{i}=a(i).name;
-end
-handles.TideModelData.TideModels{i+1}='Constant';
-if strmatch('Model_tpxo62',handles.TideModelData.TideModels,'exact')
-    handles.TideModelData.ActiveTideModelBC='Model_tpxo62';
-    handles.TideModelData.ActiveTideModelIC='Model_tpxo62';
-elseif strmatch('Model_tpxo6.2',handles.TideModelData.TideModels,'exact')
-    handles.TideModelData.ActiveTideModelBC='Model_tpxo6.2';
-    handles.TideModelData.ActiveTideModelIC='Model_tpxo6.2';
-else
-    handles.TideModelData.ActiveTideModelBC=handles.TideModelData.TideModels{1};
-    handles.TideModelData.ActiveTideModelIC=handles.TideModelData.TideModels{1};
-end
+k=handles.TideModels.nrModels+1;
+
+handles.TideModels.nrModels=k;
+
+handles.TideModels.longName{k}='Constant';
+handles.TideModels.Name{k}='constant';
+handles.TideModels.Model(k).Name='constant';
+
+handles.TideModels.ActiveTideModelBC=handles.TideModels.Name{1};
+handles.TideModels.ActiveTideModelIC=handles.TideModels.Name{1};

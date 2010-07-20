@@ -11,6 +11,13 @@ end
 if handles.Model(md).Input(id).NrOpenBoundaries>0
 
     wb = waitbox('Generating Boundary Conditions ...');
+    
+    ii=strmatch(handles.TideModels.ActiveTideModelBC,handles.TideModels.Name,'exact');
+    if strcmpi(handles.TideModels.Model(ii).URL(1:4),'http')
+        tidefile=[handles.TideModels.Model(ii).URL '/' handles.TideModels.ActiveTideModelBC '.nc'];
+    else
+        tidefile=[handles.TideModels.Model(ii).URL filesep handles.TideModels.ActiveTideModelBC '.nc'];
+    end
 
     AttName=get(handles.GUIHandles.EditAttributeName,'String');
     handles.Model(md).Input(id).BcaFile=[AttName '.bca'];
@@ -43,10 +50,10 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
             xb(i)=xb(i)+360;
         end
     end
-    xa(find(xa<0.125 & xa>0))=360;
-    xa(find(xa<0.250 & xa>0.125))=0.25;
-    xb(find(xb<0.125 & xb>0))=360;
-    xb(find(xb<0.250 & xb>0.125))=0.25;
+    xa(xa<0.125 & xa>0)=360;
+    xa(xa<0.250 & xa>0.125)=0.25;
+    xb(xb<0.125 & xb>0)=360;
+    xb(xb<0.250 & xb>0.125)=0.25;
     
     xx=[xa xb];
     yy=[ya yb];
@@ -62,8 +69,9 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
     end
 
     if igetwl
-        [ampz,phasez,depth,ConList]=extract_HC([handles.TideDir handles.TideModelData.ActiveTideModelBC],yy,xx,'z');
-
+%       [ampz,phasez,depth,ConList]=extract_HC([handles.TideDir handles.TideModels.ActiveTideModelBC],yy,xx,'z');
+       [ampz,phasez,depth,conList]=ddb_extractTidalConstituents(tidefile,xx,yy,'z');
+        
         ampaz=ampz(:,1:nb);
         ampbz=ampz(:,nb+1:end);
         phaseaz=phasez(:,1:nb);
@@ -90,8 +98,10 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
 
         % Riemann or current boundaries present
         
-       [ampu,phaseu,depth,ConList]=extract_HC([handles.TideDir handles.TideModelData.ActiveTideModelBC],yy,xx,'u');
-       [ampv,phasev,depth,ConList]=extract_HC([handles.TideDir handles.TideModelData.ActiveTideModelBC],yy,xx,'v');
+%       [ampu,phaseu,depth,ConList]=extract_HC([handles.TideDir handles.TideModels.ActiveTideModelBC],yy,xx,'u');
+%       [ampv,phasev,depth,ConList]=extract_HC([handles.TideDir handles.TideModels.ActiveTideModelBC],yy,xx,'v');
+       [ampu,phaseu,depth,conList]=ddb_extractTidalConstituents(tidefile,xx,yy,'u');
+       [ampv,phasev,depth,conList]=ddb_extractTidalConstituents(tidefile,xx,yy,'v');
     
        % Units are cm/s
        ampu=ampu/100;
@@ -157,9 +167,13 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
 
     end
     
-    NrCons=size(ConList,1);
+%     NrCons=size(ConList,1);
+%     for i=1:NrCons
+%         Constituents(i).Name=ConList(i,:);
+%     end
+    NrCons=length(conList);
     for i=1:NrCons
-        Constituents(i).Name=ConList(i,:);
+        Constituents(i).Name=conList{i};
     end
     
     k=0;

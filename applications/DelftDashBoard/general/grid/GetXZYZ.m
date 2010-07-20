@@ -3,7 +3,7 @@ function [xz,yz]=GetXZYZ(x,y)
 xz=zeros(size(x));
 yz=zeros(size(y));
 xz(xz==0)=NaN;
-yz(xz==0)=NaN;
+yz(yz==0)=NaN;
 
 x1=x(1:end-1,1:end-1);
 x2=x(2:end  ,1:end-1);

@@ -1,10 +1,9 @@
 function EditD3DWAVESpectralSpace
 
 handles=getHandles;
-SettingsDir=getINIValue(handles.IniFile,'SettingsDir');
 fig0=gcf;
 
-fig=MakeNewWindow('Spectral space',[400 320],[SettingsDir '\icons\deltares.gif']);
+fig=MakeNewWindow('Spectral space',[400 320],[handles.SettingsDir '\icons\deltares.gif']);
 
 hp = uipanel('Units','pixels','Position',[5 5 390 310],'Tag','UIControl');
         

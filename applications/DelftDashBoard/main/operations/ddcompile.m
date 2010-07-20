@@ -1,3 +1,18 @@
+function ddcompile(varargin)
+
+exclude={''};
+
+for i=1:length(varargin)
+    switch lower(varargin{i})
+        case{'exclude'}
+            if ~iscell(varargin{i+1})
+                exclude={varargin{i+1}};
+            else
+                exclude=varargin{i+1};
+            end
+    end
+end
+
 delete('exe\*');
 
 fid=fopen('complist','wt');
@@ -11,6 +26,7 @@ flist=dir('models');
 for i=1:length(flist)
     switch flist(i).name
         case{'.','..','.svn'}
+        case exclude
         otherwise
             f=dir(['models\' flist(i).name '\main\*.m']);
             for j=1:length(f)
@@ -29,6 +45,7 @@ flist=dir('toolboxes');
 for i=1:length(flist)
     switch flist(i).name
         case{'.','..','.svn'}
+        case exclude
         otherwise
             fname=flist(i).name;
             fprintf(fid,'%s\n',['ddb_' fname 'Toolbox.m']);
@@ -42,11 +59,13 @@ flist=dir('models');
 for i=1:length(flist)
     switch flist(i).name
         case{'.','..','.svn'}
+        case exclude
         otherwise
             flist2=dir(['models\' flist(i).name '\toolbox\']);
             for ij=1:length(flist2)
                 switch flist2(ij).name
                     case{'.','..','.svn'}
+                    case exclude
                     otherwise
                         f=dir(['models\' flist(i).name '\toolbox\' flist2(ij).name '\*.m']);
                         for j=1:length(f)
@@ -64,6 +83,6 @@ end
 
 fclose(fid);
 
-mcc -m -d exe DelftDashBoard.m -B complist
+mcc -m -d exe DelftDashBoard.m -B complist -a settings
  
 delete('complist');

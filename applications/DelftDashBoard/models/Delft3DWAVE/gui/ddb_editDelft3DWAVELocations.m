@@ -1,10 +1,9 @@
 function ddb_editDelft3DWAVELocations
 
 handles=getHandles;
-SettingsDir=getINIValue(handles.IniFile,'SettingsDir');
 fig0=gcf;
 
-fig1=MakeNewWindow('Output locations',[400 350],[SettingsDir '\icons\deltares.gif']);
+fig1=MakeNewWindow('Output locations',[400 350],[handles.SettingsDir '\icons\deltares.gif']);
 
 hp = uipanel('Units','pixels','Position',[5 5 390 340],'Tag','UIControl');
 

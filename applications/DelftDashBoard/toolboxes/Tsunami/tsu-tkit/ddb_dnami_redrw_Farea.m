@@ -47,7 +47,7 @@ end
 % redefine polygon coordinates and fault area using new distance and bearing (strike dir)
 %
 for i=1:nsg
-   [xf(i+1),yf(i+1)]=ddb_ddb_det_nxtvrtx(xf(i), yf(i), str(i), ufl(i));
+   [xf(i+1),yf(i+1)]=ddb_det_nxtvrtx(xf(i), yf(i), str(i), ufl(i));
 end
 
 %

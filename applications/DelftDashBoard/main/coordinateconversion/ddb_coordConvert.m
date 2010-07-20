@@ -1,24 +1,23 @@
 function [x1,y1]=ddb_coordConvert(x1,y1,OldSys,NewSys)
 
-%x1=x0;
-%y1=y0;
-
 if strcmpi(OldSys.Name,NewSys.Name)
     return
 end
 
 handles=getHandles;
 
-if strcmp(OldSys.Type,'Cartesian')
-    tp0='xy';
-else
-    tp0='geo';
+switch lower(OldSys.Type)
+    case{'cartesian','cart','xy','projection','projected','proj'}
+        tp0='xy';
+    case{'geo','geographic','geographic 2d','geographic 3d','spherical','latlon'}
+        tp0='geo';
 end
 
-if strcmp(NewSys.Type,'Cartesian')
-    tp1='xy';
-else
-    tp1='geo';
+switch lower(NewSys.Type)
+    case{'cartesian','cart','xy','projection','projected','proj'}
+        tp1='xy';
+    case{'geo','geographic','geographic 2d','geographic 3d','spherical','latlon'}
+        tp1='geo';
 end
 
 cs0=OldSys.Name;

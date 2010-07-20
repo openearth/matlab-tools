@@ -1,27 +1,18 @@
 function DelftDashBoard
 
-% Compile with: mcc -m -B sgl DelftDashBoard.m
+% Compile with ddcompile
 
 handles.DelftDashBoardVersion='1.0';
-handles.WorkingDirectory=pwd;
+handles.MatlabVersion=version;
 
-if isdeployed
-    inipath=[fileparts(which('DelftDashBoard.m')) filesep];
-    inipath=inipath(1:end-39);
-else
-    inipath=[fileparts(which('DelftDashBoard.m')) filesep];
-end
-
-% check existence of ini file DelftDashBoard.ini
-if exist([inipath filesep 'DelftDashBoard.ini'],'file')
-    handles.IniFile=[inipath filesep 'DelftDashBoard.ini'];
-else
-    GiveWarning('text','DelftDashBoard.ini not found !');
-    return;
-end
+disp(['Delft DashBoard v' handles.DelftDashBoardVersion]);
+disp(['Matlab v' version]);
 
 disp('Finding directories ...');
-handles=ddb_getDirectories(handles);
+[handles,ok]=ddb_getDirectories(handles);
+if ~ok
+    return
+end
 
 warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
 

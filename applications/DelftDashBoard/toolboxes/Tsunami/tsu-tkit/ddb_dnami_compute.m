@@ -84,16 +84,16 @@ fprintf(fid,'%s %s \n','* (km)   (km)  (deg CW N)  0/1  (km)   (deg)         ', 
 
 utmz = fix( ( faultX(1) / 6 ) + 31);
 for i=1:nseg
-% [x,y] = ddb_ddb_deg2utm(faultX(i),faultY(i),utmz);
+% [x,y] = ddb_deg2utm(faultX(i),faultY(i),utmz);
 %   xvrt(i,1:4)
 %   yvrt(i,1:4)
 %   xl= 0.25*(sum(xvrt(i,1:4)))
 %   yl= 0.25*(sum(yvrt(i,1:4)))
-%   [x,y] = ddb_ddb_deg2utm(xl,yl,utmz)
+%   [x,y] = ddb_deg2utm(xl,yl,utmz)
 
-%   [x,y] = ddb_ddb_deg2utm(xvrt(i,1),yvrt(i,1),utmz);
+%   [x,y] = ddb_deg2utm(xvrt(i,1),yvrt(i,1),utmz);
 %   fd = fdepth(i);
-[x,y] = ddb_ddb_deg2utm(xvrt(i,4),yvrt(i,4),utmz);   
+[x,y] = ddb_deg2utm(xvrt(i,4),yvrt(i,4),utmz);   
 fd = fwidth*sin(dip(i)*degrad) + fdtop;
 
 %x=x/1000-166;

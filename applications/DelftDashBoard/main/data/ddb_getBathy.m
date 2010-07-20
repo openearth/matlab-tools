@@ -22,75 +22,75 @@ tp=handles.Bathymetry.Dataset(iac).Type;
 
 switch lower(tp)
 
-    case{'netcdf'}
-        
-        url=handles.Bathymetry.Dataset(iac).URL;
-        
-%         gridsize=nc_varget(url,'grid_size');
-        gridsize=loaddap([url '?grid_size']);
-        gridsize=gridsize.grid_size;
-               
-        gsmin=(xl(2)-xl(1))/800;
-        
-        igs=find(gridsize<gsmin,1,'last');
-        if isempty(igs)
-            igs=1;
-        end
-        
-        lonstr=['lon' num2str(igs)];
-        latstr=['lat' num2str(igs)];
-        varstr=['depth' num2str(igs)];
-        
-%         lon0=nc_varget(url,lonstr);
-%         lat0=nc_varget(url,latstr);
-        lon0=loaddap([url '?' lonstr]);
-        lon0=lon0.(lonstr);
-        lat0=loaddap([url '?' latstr]);
-        lat0=lat0.(latstr);
-        
-        ilon1=find(lon0<=xl(1),1,'last')-1;
-        if isempty(ilon1)
-            ilon1=1;
-        end
-        ilon1=max(ilon1,1);
-
-        ilon2=find(lon0>=xl(2),1)+1;
-        if isempty(ilon2)
-            ilon2=length(lon0);
-        end
-        ilon2=min(ilon2,length(lon0));
-
-        ilat1=find(lat0<=yl(1),1,'last')-1;
-        if isempty(ilat1)
-            ilat1=1;
-        end
-        ilat1=max(ilat1,1);
- 
-        ilat2=find(lat0>=yl(2),1)+1;
-        if isempty(ilat2)
-            ilat2=length(lat0);
-        end
-        ilat2=min(ilat2,length(lat0));
-
-        nlon=ilon2-ilon1+1;
-        nlat=ilat2-ilat1+1;
-        
-%         z=nc_varget(url,varstr,[ilat1-1 ilon1-1],[nlat nlon]);
-        z=loaddap([url '?' varstr '[' num2str(ilat1-1) ':1:' num2str(ilat2-1) '][' num2str(ilon1-1) ':1:' num2str(ilon2-1) ']']);
-        z=z.(varstr).(varstr);
-
-        z=double(z);
-        
-        dlon=(lon0(end)-lon0(1))/(length(lon0)-1);
-        dlat=(lat0(end)-lat0(1))/(length(lat0)-1);
-        lon=lon0(1):dlon:lon0(end);
-        lat=lat0(1):dlat:lat0(end);
-        lon=lon(ilon1:ilon2);
-        lat=lat(ilat1:ilat2);
-
-        [x,y]=meshgrid(lon,lat);
-
-        ok=1;
+%     case{'netcdf'}
+%         
+%         url=handles.Bathymetry.Dataset(iac).URL;
+%         
+% %         gridsize=nc_varget(url,'grid_size');
+%         gridsize=loaddap([url '?grid_size']);
+%         gridsize=gridsize.grid_size;
+%                
+%         gsmin=(xl(2)-xl(1))/800;
+%         
+%         igs=find(gridsize<gsmin,1,'last');
+%         if isempty(igs)
+%             igs=1;
+%         end
+%         
+%         lonstr=['lon' num2str(igs)];
+%         latstr=['lat' num2str(igs)];
+%         varstr=['depth' num2str(igs)];
+%         
+% %         lon0=nc_varget(url,lonstr);
+% %         lat0=nc_varget(url,latstr);
+%         lon0=loaddap([url '?' lonstr]);
+%         lon0=lon0.(lonstr);
+%         lat0=loaddap([url '?' latstr]);
+%         lat0=lat0.(latstr);
+%         
+%         ilon1=find(lon0<=xl(1),1,'last')-1;
+%         if isempty(ilon1)
+%             ilon1=1;
+%         end
+%         ilon1=max(ilon1,1);
+% 
+%         ilon2=find(lon0>=xl(2),1)+1;
+%         if isempty(ilon2)
+%             ilon2=length(lon0);
+%         end
+%         ilon2=min(ilon2,length(lon0));
+% 
+%         ilat1=find(lat0<=yl(1),1,'last')-1;
+%         if isempty(ilat1)
+%             ilat1=1;
+%         end
+%         ilat1=max(ilat1,1);
+%  
+%         ilat2=find(lat0>=yl(2),1)+1;
+%         if isempty(ilat2)
+%             ilat2=length(lat0);
+%         end
+%         ilat2=min(ilat2,length(lat0));
+% 
+%         nlon=ilon2-ilon1+1;
+%         nlat=ilat2-ilat1+1;
+%         
+% %         z=nc_varget(url,varstr,[ilat1-1 ilon1-1],[nlat nlon]);
+%         z=loaddap([url '?' varstr '[' num2str(ilat1-1) ':1:' num2str(ilat2-1) '][' num2str(ilon1-1) ':1:' num2str(ilon2-1) ']']);
+%         z=z.(varstr).(varstr);
+% 
+%         z=double(z);
+%         
+%         dlon=(lon0(end)-lon0(1))/(length(lon0)-1);
+%         dlat=(lat0(end)-lat0(1))/(length(lat0)-1);
+%         lon=lon0(1):dlon:lon0(end);
+%         lat=lat0(1):dlat:lat0(end);
+%         lon=lon(ilon1:ilon2);
+%         lat=lat(ilat1:ilat2);
+% 
+%         [x,y]=meshgrid(lon,lat);
+% 
+%         ok=1;
 
     case{'netcdftiles'}
         
@@ -153,50 +153,114 @@ switch lower(tp)
         if strcmpi(handles.Bathymetry.Dataset(iac).URL(1:4),'http')
             % OpenDAP
             iopendap=1;
-            urlstr=[handles.Bathymetry.Dataset(iac).URL '/' levdir];
-            cachedir=[handles.BathyDir name '\' levdir];
+            remotedir=[handles.Bathymetry.Dataset(iac).URL '/' levdir '/'];
+            localdir=[handles.BathyDir name '\' levdir '\'];
         else
             % Local
-            dirstr=[handles.Bathymetry.Dataset(iac).URL '\' levdir '\'];
-            cachedir=dirstr;
+            localdir=[handles.Bathymetry.Dataset(iac).URL '\' levdir '\'];
+            remotedir=localdir;
         end
 
         nnnx=ix2-ix1+1;
         nnny=iy2-iy1+1;
-        z=nan(nnny*ny,nnnx*nx);  
+        z=nan(nnny*ny,nnnx*nx);
+
         for i=ix1:ix2
             for j=iy1:iy2
 
-                filename=[name '.zl' num2str(ilev,'%0.2i') '.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
+                zzz=zeros(ny,nx);
+                zzz(zzz==0)=NaN;
                 
-                % First check if file is available locally
-                fnametile=[cachedir filename];
-                if ~exist(fnametile,'file') && iopendap
-                    % Copy file to cache directory
-                    if ~exist(cachedir,'dir')
-                        mkdir(cachedir);
+                % First check whether file exists at at all
+                
+                iav=find(handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).iAvailable==i & handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).jAvailable==j, 1);
+                
+                if ~isempty(iav)
+                    
+                    filename=[name '.zl' num2str(ilev,'%0.2i') '.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
+                    
+                    if iopendap
+                        if handles.Bathymetry.Dataset(iac).useCache
+                            % First check if file is available locally
+                            if ~exist([localdir filename],'file')
+                                if ~exist(localdir,'dir')
+                                    mkdir(localdir);
+                                end
+                                try
+                                    urlwrite([remotedir filename],[localdir filename]);
+                                end
+                            end
+                            ncfile=[localdir filename];
+                        else
+                            ncfile=[remotedir filename];
+                        end
+                    else
+                        ncfile=[localdir filename];
                     end
-                    try
-                        copyfile([urlstr filename],cachedir);
+                    
+                    %                     if ~exist([localdir filename],'file') && iopendap
+                    %                         if handles.Bathymetry.Dataset(iac).useCache
+                    %                             % Copy file to cache directory
+                    %                             if ~exist(localdir,'dir')
+                    %                                 mkdir(localdir);
+                    %                             end
+                    %                             try
+                    %                                 urlwrite([remotedir filename],[localdir filename]);
+                    %                             end
+                    %                         else
+                    %                             ncfile=[remotedir filename];
+                    %
+                    %                         end
+                    %                     end
+                    
+                    if iopendap && ~handles.Bathymetry.Dataset(iac).useCache
+                        try
+                            zzz=nc_varget(ncfile, 'depth');
+                            zzz=double(zzz);
+                            ok=1;
+                        end
+                    else
+                        if exist(ncfile,'file')
+                            zzz=nc_varget(ncfile, 'depth');
+                            zzz=double(zzz);
+                            ok=1;
+                        end
                     end
                 end
-                if exist(fnametile,'file')
-%                    zzz=nc_varget(fnametile, 'depth');
-                    zzz=nc_varget([urlstr filename], 'depth');
-                    zzz=double(zzz);
-                    ok=1;
-                else
-                    zzz=zeros(ny,nx);
-                    zzz(zzz==0)=NaN;
-                end
+                
                 z((j-iy1)*ny+1:(j-iy1+1)*ny,(i-ix1)*nx+1:(i-ix1+1)*nx)=zzz;
+
             end
         end
+        
         z(z<-15000)=NaN;
-
+        
         xx=x0+(ix1-1)*tilesizex:dx:x0+ix2*tilesizex-dx;
         yy=y0+(iy1-1)*tilesizey:dy:y0+iy2*tilesizey-dy;
         [x,y]=meshgrid(xx,yy);
+        
+        ix1=find(xx<xl(1),1,'last');
+        if isempty(ix1)
+            ix1=1;
+        end
+        ix2=find(xx>xl(2),1,'first');
+        if isempty(ix2)
+            ix2=length(xx);
+        end
+
+        iy1=find(yy<yl(1),1,'last');
+        if isempty(iy1)
+            iy1=1;
+        end
+        iy2=find(yy>yl(2),1,'first');
+        if isempty(iy2)
+            iy2=length(yy);
+        end
+
+        % Crop to limits
+        x=x(iy1:iy2,ix1:ix2);
+        y=y(iy1:iy2,ix1:ix2);
+        z=z(iy1:iy2,ix1:ix2);
         
     case{'tiles'}
 

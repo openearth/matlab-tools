@@ -13,7 +13,7 @@ SaveDefaultGrid(handles);
 
 wb = waitbox('Generating spider web ...');
 
-evaltxt=[handles.ToolBoxDir '\hurricane\wes\wes.exe wes.inp'];
+evaltxt=['"' handles.ToolBoxDir '\hurricane\wes\wes.exe" wes.inp'];
 ok=system(evaltxt);
 
 try

@@ -1,8 +1,7 @@
 function handles=ddb_findModels(handles)
 
 if isdeployed
-    dr=[fileparts(which('DelftDashBoard.m')) filesep];
-    dr=[dr(1:end-39) filesep 'bin' filesep 'DelftDashBoard_mcr' filesep 'models'];
+    dr=[ctfroot filesep 'models'];
 else
     dr='models';
 end

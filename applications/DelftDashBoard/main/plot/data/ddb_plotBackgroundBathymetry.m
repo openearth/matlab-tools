@@ -40,8 +40,6 @@ else
     earth=jet;
 end
 
-% earth=earth(1:5:end,:);
-
 if size(earth,2)==3
     earthx=mnz:(mxz-mnz)/(length(earth)-1):mxz;
     earthy=earth(:,1:3);

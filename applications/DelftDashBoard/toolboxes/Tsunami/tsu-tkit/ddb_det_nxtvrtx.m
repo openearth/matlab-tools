@@ -1,9 +1,9 @@
-function [lon2,lat2] = ddb_ddb_det_nxtvrtx(lon1,lat1,bearing1,dist1)
+function [lon2,lat2] = ddb_det_nxtvrtx(lon1,lat1,bearing1,dist1)
 %
 % ------------------------------------------------------------------------------------
 %
 %
-% Function:     ddb_ddb_det_nxtvrtx.m
+% Function:     ddb_det_nxtvrtx.m
 %               determine next geogr. coordinates of a fault vertex given
 %               a starting point coord. , bearing and distance
 %               coorinates and bearing in decimal degrees

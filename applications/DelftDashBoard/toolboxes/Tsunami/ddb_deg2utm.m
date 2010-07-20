@@ -1,6 +1,6 @@
-function  [x,y] = ddb_ddb_deg2utm(Lon,Lat,utmz)
+function  [x,y] = ddb_deg2utm(Lon,Lat,utmz)
 % -------------------------------------------------------------------------
-% [x,y] = ddb_ddb_deg2utm(Lat,Lon,utmz)
+% [x,y] = ddb_deg2utm(Lat,Lon,utmz)
 %
 % Description: Function to convert lat/lon vectors into UTM coordinates (WGS84).
 % Some code has been extracted from UTM.m function by Gabriel Ruiz Martinez.
@@ -15,7 +15,7 @@ function  [x,y] = ddb_ddb_deg2utm(Lon,Lat,utmz)
 % Example 1:
 %    Lat=[40.3154333; 46.283900; 37.577833; 28.645650; 38.855550; 25.061783];
 %    Lon=[-3.4857166; 7.8012333; -119.95525; -17.759533; -94.7990166; 121.640266];
-%    [x,y] = ddb_ddb_deg2utm(Lat,Lon,utmz);
+%    [x,y] = ddb_deg2utm(Lat,Lon,utmz);
 %    fprintf('%7.0f ',x)
 %       458731  407653  239027  230253  343898  362850
 %    fprintf('%7.0f ',y)
@@ -33,7 +33,7 @@ function  [x,y] = ddb_ddb_deg2utm(Lon,Lat,utmz)
 %    LonDMS=[-3 29  8.58;  7 48 4.44];
 %    Lat=dms2deg(mat2dms(LatDMS)); %convert into degrees
 %    Lon=dms2deg(mat2dms(LonDMS)); %convert into degrees
-%    [x,y,utmzone] = ddb_ddb_deg2utm(Lat,Lon)
+%    [x,y,utmzone] = ddb_deg2utm(Lat,Lon)
 %
 % Author:
 %   Rafael Palacios

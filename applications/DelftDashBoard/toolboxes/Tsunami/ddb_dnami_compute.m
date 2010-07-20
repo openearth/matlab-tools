@@ -42,7 +42,7 @@ fprintf(fid,'%s %s \n','* (km)   (km)  (deg CW N)  0/1  (km)   (deg)         ', 
 %
 utmz = fix( ( faultX(1) / 6 ) + 31);
 for i=1:nseg
-    [x,y] = ddb_ddb_deg2utm(xvrt(i,4),yvrt(i,4),utmz);
+    [x,y] = ddb_deg2utm(xvrt(i,4),yvrt(i,4),utmz);
     fd = fwidth*sin(dip(i)*degrad) + fdtop;
     x=x/1000;
     y=y/1000;
@@ -58,7 +58,7 @@ fclose(fid);
 %
 % Write data to file 2; grid input for the OKADA model
 %
-filout=['gridspec.txt'];
+filout='gridspec.txt';
 fid=fopen(filout,'w');
 %
 % First the zone
@@ -86,7 +86,7 @@ pause(2);
 %
 % execute program
 %
-evaltxt=[progdir '\rngchn_init.exe ' workdir '\gridspec.txt ' workdir '\dtt_out.txt ' workdir '\disp.xyz ascii'];
+evaltxt=['"' progdir '\rngchn_init.exe" "' workdir '\gridspec.txt" "' workdir '\dtt_out.txt" "' workdir '\disp.xyz" ascii'];
 system(evaltxt);
 %
 %present result only on the simple grid file
@@ -124,13 +124,15 @@ shading flat;
 grid on;
 hold on;
 
-[xldb,yldb]=landboundary('read',[handles.GeoDir '\worldcoastline5000000.ldb']);
+load([handles.SettingsDir 'geo\worldcoastline.mat']);
+xldb=wclx;
+yldb=wcly;
 z=zeros(size(xldb))+10;
 landb=plot3(xldb,yldb,z,'k');
 
-[xplates,yplates]=landboundary('read',[handles.GeoDir '\plates2.ldb']);
-zplates=zeros(size(xplates))+10;
-h=plot3(xplates,yplates,zplates);
+load([handles.SettingsDir 'geo\plates.mat']);
+platesz=zeros(size(platesx))+10;
+h=plot3(platesx,platesy,platesz);
 set(h,'Color',[1.0 0.5 0.00]);
 set(h,'LineWidth',1.5);
 set(h,'HitTest','off');

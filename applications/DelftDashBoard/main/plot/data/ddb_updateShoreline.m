@@ -30,19 +30,31 @@ end
 
 dx=xl0(2)-xl0(1);
 
+% if dx<5
+%     res='f';
+% elseif dx<12
+%     res='h';
+% elseif dx<40
+%     res='i';
+% elseif dx<100
+%     res='l';
+% else
+%     res='c';
+% end
+
 if dx<5
-    res='f';
+    res=1;
 elseif dx<12
-    res='h';
+    res=2;
 elseif dx<40
-    res='i';
+    res=3;
 elseif dx<100
-    res='l';
+    res=4;
 else
-    res='c';
+    res=5;
 end
 
-[x,y]=ddb_getWVS([handles.GeoDir 'wvs\' res '\'],xl0,yl0,res);
+[x,y]=ddb_getWVS([handles.LandboundaryDir 'wvs\zl' num2str(res,'%0.2i') '\'],xl0,yl0,res);
 
 z=zeros(size(x))+500;
 h=findobj(handles.GUIHandles.MainWindow,'Tag','WorldCoastLine');

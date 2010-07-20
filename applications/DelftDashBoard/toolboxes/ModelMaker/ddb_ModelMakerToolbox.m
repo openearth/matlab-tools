@@ -1,4 +1,4 @@
-function ddb_modelMakerToolbox
+function ddb_ModelMakerToolbox
 
 strings={'Quick Mode','Grid','Bathymetry','Boundary Conditions','Initial Conditions'};
 callbacks={@ddb_modelMakerQuickMode,@ddb_modelMakerGrid,@ddb_modelMakerBathymetry,@ddb_modelMakerBoundaryConditions,@ddb_modelMakerInitialConditions};
