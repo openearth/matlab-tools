@@ -9,7 +9,7 @@
 %% Opening the graphical user interface (GUI-mode)
 % To open the GUI, just type call detran without input arguments.
 detran
-
+% <<prerendered_images/detran_screenshot.png>>
 %%
 % The use of the graphical user interface is illustrated in more detail in 
 % a <http://openearth.nl video tutorial>
