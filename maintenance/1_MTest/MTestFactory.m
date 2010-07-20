@@ -133,7 +133,11 @@ classdef MTestFactory
             %<----------------------------------------------------------------------------------->
             
             if datenum(version('-date')) > datenum(2010,1,1)
+                % 2010a
                 mainFunctionId = cellfun(@(tp) tp == internal.matlab.codetools.reports.matlabType.Function,{fcncalls.type});
+            elseif datenum(version('-date')) > datenum(2009,1,1)
+                % 2009a
+                mainFunctionId = cellfun(@(tp) tp == codetools.reports.matlabType.Function,{fcncalls.type});
             else
                 mainFunctionId = cellfun(@(tp) strcmp(tp,'function'), {fcncalls.type});
             end
