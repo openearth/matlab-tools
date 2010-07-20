@@ -714,7 +714,11 @@ classdef MTestExplorer < handle
         function setprogressbarstatuscolor(this)
             % Update the progressbar
             testExecutedFlag = ~isnan([this.MTestRunner.Tests.Date]);
-            testResult = [this.MTestRunner.Tests(testExecutedFlag).TestResult];
+            if ~any(testExecutedFlag)
+                testResult = true;
+            else
+                testResult = [this.MTestRunner.Tests(testExecutedFlag).TestResult];
+            end
             if any(~testResult)
                 % Red (one of the tests failed)
                 this.JProgressBar.setForeground(java.awt.Color(1, 0.3, 0.3));
@@ -864,7 +868,7 @@ classdef MTestExplorer < handle
                 id = ~ismember({files.name},allTestNames) &...
                     ~cellfun(@isempty,strfind({files.name},this.MTestRunner.TestID)) &...
                     ~cellfun(@findexclusion,{files.name},repmat({this.MTestRunner.Exclusions},1,length(files)));
-                set(this.JProgressBar,'Maximum',length(id));
+                set(this.JProgressBar,'Maximum',sum(id));
                 if any(id)
                     for ifiles = 1:length(files)
                         if ~id(ifiles)

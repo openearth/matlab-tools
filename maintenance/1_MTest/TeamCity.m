@@ -159,11 +159,15 @@ classdef TeamCity < handle
             % This is necessary to prevent TeamCity from echoing before we finished writeing the
             % messagefile
             teamcityString = cat(2,teamcityString,']');
-            dlmwrite(fullfile(obj.WorkDirectory,'teamcitymessage.matlabtemp'),...
-                teamcityString,...
-                'delimiter','','-append');
-            movefile(fullfile(obj.WorkDirectory,'teamcitymessage.matlabtemp'),...
-                fullfile(obj.WorkDirectory,'teamcitymessage.matlab'));
+            try
+                dlmwrite(fullfile(obj.WorkDirectory,'teamcitymessage.matlabtemp'),...
+                    teamcityString,...
+                    'delimiter','','-append');
+                movefile(fullfile(obj.WorkDirectory,'teamcitymessage.matlabtemp'),...
+                    fullfile(obj.WorkDirectory,'teamcitymessage.matlab'));
+            catch %#ok<CTCH>
+                % never mind, we cannot write in this dir
+            end
         end
         function publishdescription(varargin)
             profile off
