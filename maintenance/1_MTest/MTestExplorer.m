@@ -457,7 +457,15 @@ classdef MTestExplorer < handle
                 'Maximum',sum(selectionId), ...
                 'Value',0);
 
+            %% get current dir
+            startdir = cd;
+            
+            %% Make sure the current dir is in the searchpath
+            mtestpath = path;
+            addpath(cd);
+            
             %% Loop tests
+            existingfigs = findobj('Type','figure');
             for itests = 1:length(selectionId)
                 if selectionId(itests)
                     % reset teamcity in case a test has altered the running prop
@@ -472,7 +480,20 @@ classdef MTestExplorer < handle
                     this.MTestRunner.Tests(itests).Ignore = false;      % Should not remain true, whereas it isn't run a next time
                     
                     % Run the test
-                    this.MTestRunner.Tests(itests).run;
+                    try
+                        this.MTestRunner.Tests(itests).run;
+                        path(mtestpath);
+                    catch  %#ok<CTCH>
+                        path(mtestpath);
+                        cd(startdir);
+                        if isdir(this.MTestRunner.Tests(itest).RunDir)
+                            fclose('all');
+                            rmdir(this.MTestRunner.Tests(itest).RunDir,'s');
+                        end
+                    end
+                    
+                    newfigs = findobj('Type','figure');
+                    close(newfigs(~ismember(newfigs,existingfigs)));
                     
                     this.setprogressbarstatuscolor;
                     
@@ -493,6 +514,9 @@ classdef MTestExplorer < handle
                     end
                 end
             end
+            
+             %% Return to initial dir
+            cd(startdir);
             
             %% Finish progress bar
             this.JProgressBar.setString('Idle...');

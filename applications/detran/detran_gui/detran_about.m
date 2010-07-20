@@ -72,7 +72,9 @@ switch test
     case 'no'
         uiwait(h);
     case 'yes'
+        drawnow;
         close(h);
+        drawnow; % Update matlab before it rushes into problems
 end
     
 
