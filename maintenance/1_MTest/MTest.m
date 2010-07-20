@@ -616,6 +616,9 @@ classdef MTest < handle
                 end
                 % read the code of the external file to see if it is a function or a script
                 fcncalls = getcallinfo(which(functionname));
+                % TODO: Known issue, if Matlab 2009b there is a bug in getcallinfo that prevents
+                % generation of callinfo for scripts. THis bug was fixed in 2010a and did not exist
+                % in 2009a whereas R14 up till 2008b use the same version of getcallinfo.
                 if datenum(version('-date')) > datenum(2010,1,1)
                     if fcncalls(1).type == internal.matlab.codetools.reports.matlabType.Function
                         functionType = 'function';

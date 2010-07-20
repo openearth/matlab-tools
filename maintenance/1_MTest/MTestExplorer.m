@@ -135,7 +135,7 @@ classdef MTestExplorer < handle
                 'MenuBar','none',...
                 'Toolbar','none',...
                 'Units','pix',...
-                'Visible','off',...
+                'Visible','on',...
                 'Position',[100 100 1200 300]);
             % Save object to figure so it does not get lost
             guidata(this.HMainFigure,this);
@@ -143,11 +143,10 @@ classdef MTestExplorer < handle
             drawnow;
             warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
             jFrame = get(this.HMainFigure,'JavaFrame');
-            jFrame.setFigureIcon(javax.swing.ImageIcon('DeltaresLogoWhiteTransparant.gif'));
-            
+            if datenum(version('-date')) > datenum(2010,1,1)
+                jFrame.setFigureIcon(javax.swing.ImageIcon(which('DeltaresLogoWhiteTransparant.gif')));
+            end
             setFigDockGroup(this.HMainFigure,'MTest');
-            set(this.HMainFigure,...
-                'Visible','on');
             
             %% Initialize and configure MTestRunner
             this.MTestRunner.Publish = false;
