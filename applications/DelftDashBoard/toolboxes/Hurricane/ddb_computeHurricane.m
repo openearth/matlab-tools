@@ -25,7 +25,7 @@ if ok==0
     delete('wes.spw');
     [filename, pathname, filterindex] = uiputfile('*.spw', 'Select Spiderweb File','');
     if ~isempty(pathname)
-        system(['copy wes.spw.tmp ' pathname filename]);
+        system(['copy wes.spw.tmp "' pathname filename '"']);
         for i=1:handles.GUIData.NrFlowDomains
             handles.Model(md).Input(i).SpwFile=filename;
             handles.Model(md).Input(i).WindType='spiderweb';

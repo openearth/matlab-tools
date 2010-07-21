@@ -57,7 +57,9 @@ handles.GUIHandles.ToolBar.AutoRefreshBathymetry=h;
 
 h = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','Quickplot');
 %set(h,'ClickedCallback','C:\Delft3D\w32\quickplot\bin\win32\d3d_qp.exe openfile "%1"');
-set(h,'ClickedCallback','system(''C:\Delft3D\w32\quickplot\bin\win32\d3d_qp.exe'');');
+d3dpath=[getenv('D3D_HOME')];
+str=['system(''' d3dpath '\w32\quickplot\bin\win32\d3d_qp.exe'');'];
+set(h,'ClickedCallback',str);
 set(h,'Tag','UIStartQuickplot');
 %set(h,'cdata',cpan.icons.refresh);
 set(h,'cdata',c.ico.graph_bar16);
