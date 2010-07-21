@@ -2,9 +2,17 @@ function handles=ddb_initializeScreenParameters(handles)
 
 handles.ScreenParameters.XMaxRange=[-180 180];
 handles.ScreenParameters.YMaxRange=[-90 90];
+
 for i=1:handles.Bathymetry.NrDatasets
     if handles.Bathymetry.Dataset(i).isAvailable
         handles.ScreenParameters.BackgroundBathymetry=handles.Bathymetry.Dataset(i).longName;
+        break
+    end
+end
+
+for i=1:handles.Shorelines.nrShorelines
+    if handles.Shorelines.Shoreline(i).isAvailable
+        handles.ScreenParameters.Shoreline=handles.Shorelines.Shoreline(i).longName;
         break
     end
 end

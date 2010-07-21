@@ -133,16 +133,19 @@ switch lower(tp)
             ix1=1;
         end
         ix2=find(xx>xl(2),1,'first');
-        if isempty(ix2)
+        if ~isempty(ix2)
+            ix2=max(1,ix2-1);
+        else
             ix2=length(xx);
         end
-
         iy1=find(yy<yl(1),1,'last');
         if isempty(iy1)
             iy1=1;
         end
         iy2=find(yy>yl(2),1,'first');
-        if isempty(iy2)
+        if ~isempty(iy2)
+            iy2=max(1,iy2-1);
+        else
             iy2=length(yy);
         end
 
@@ -197,21 +200,6 @@ switch lower(tp)
                     else
                         ncfile=[localdir filename];
                     end
-                    
-                    %                     if ~exist([localdir filename],'file') && iopendap
-                    %                         if handles.Bathymetry.Dataset(iac).useCache
-                    %                             % Copy file to cache directory
-                    %                             if ~exist(localdir,'dir')
-                    %                                 mkdir(localdir);
-                    %                             end
-                    %                             try
-                    %                                 urlwrite([remotedir filename],[localdir filename]);
-                    %                             end
-                    %                         else
-                    %                             ncfile=[remotedir filename];
-                    %
-                    %                         end
-                    %                     end
                     
                     if iopendap && ~handles.Bathymetry.Dataset(iac).useCache
                         try

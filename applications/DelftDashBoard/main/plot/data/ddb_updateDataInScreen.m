@@ -21,7 +21,7 @@ pause(0.01);
 
 handles=ddb_updateBathymetry(handles);
 
-if strcmp(get(handles.GUIHandles.Menu.View.LandBoundaries,'Checked'),'on')
+if strcmp(get(handles.GUIHandles.Menu.View.Shoreline,'Checked'),'on')
     ddb_updateShoreline(handles);
 end
 
@@ -30,4 +30,3 @@ setHandles(handles);
 setptr(gcf,pnt);
 
 set(gcf,'windowbuttonmotionfcn',motfcn);
-

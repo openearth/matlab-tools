@@ -80,7 +80,7 @@ handles.GUIHandles.EditStopTime      = uicontrol(gcf,'Style','edit','String',dat
 handles.GUIHandles.EditTimeStep      = uicontrol(gcf,'Style','edit','String',num2str(handles.Model(md).Input(ad).TimeStep),'Position',[880  40 110 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
 handles.GUIHandles.RunSimulation     = uicontrol(gcf,'Style','pushbutton','String','Run', 'Position',[765 65 50 20],'Tag','UIControl');
 handles.GUIHandles.TextRunid         = uicontrol(gcf,'Style','text','String','Run ID',    'Position',[695 112 65 20],'HorizontalAlignment','right','Tag','UIControl');
-handles.GUIHandles.TextAttribute     = uicontrol(gcf,'Style','text','String','Attribute Files', 'Position',[695 87 65 20],'HorizontalAlignment','right','Tag','UIControl');
+handles.GUIHandles.TextAttribute     = uicontrol(gcf,'Style','text','String','Attribute Files', 'Position',[693 87 70 20],'HorizontalAlignment','right','Tag','UIControl');
 handles.GUIHandles.TextRefTime       = uicontrol(gcf,'Style','text','String','Ref Time', 'Position',[825 112 50 20],'HorizontalAlignment','right','Tag','UIControl');
 handles.GUIHandles.TextTStart        = uicontrol(gcf,'Style','text','String','Start Time', 'Position',[825  87 50 20],'HorizontalAlignment','right','Tag','UIControl');
 handles.GUIHandles.TextTStop         = uicontrol(gcf,'Style','text','String','Stop Time', 'Position', [825  62 50 20],'HorizontalAlignment','right','Tag','UIControl');
@@ -255,7 +255,6 @@ setHandles(handles);
 function SelectTideModelBC_Callback(hObject,eventdata)
 handles=getHandles;
 ii=get(hObject,'Value');
-str=get(hObject,'String');
 handles.TideModels.ActiveTideModelBC=handles.TideModels.Name{ii};
 setHandles(handles);
 
@@ -263,8 +262,8 @@ setHandles(handles);
 function SelectTideModelIC_Callback(hObject,eventdata)
 handles=getHandles;
 ii=get(hObject,'Value');
-str=get(hObject,'String');
 handles.TideModels.ActiveTideModelIC=handles.TideModels.Name{ii};
+setHandles(handles);
 
 %%
 function PushGenerateGrid_Callback(hObject,eventdata)

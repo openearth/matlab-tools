@@ -11,7 +11,7 @@ handles=ddb_addMenuItem(handles,'File','Save As ...',             'Callback',{@d
 handles=ddb_addMenuItem(handles,'File','Save All',                'Callback',{@ddb_menuFile},'Separator','on');
 handles=ddb_addMenuItem(handles,'File','Save All As ...',         'Callback',{@ddb_menuFile});
 handles=ddb_addMenuItem(handles,'File','Save All Domains',        'Callback',{@ddb_menuFile});
-handles=ddb_addMenuItem(handles,'File','Open Landboundary',       'Callback',{@ddb_menuFile},'Separator','on');
+handles=ddb_addMenuItem(handles,'File','Open Shoreline',       'Callback',{@ddb_menuFile},'Separator','on');
 handles=ddb_addMenuItem(handles,'File','Select Working Directory','Callback',{@ddb_menuFile},'Separator','on');
 handles=ddb_addMenuItem(handles,'File','Exit',                    'Callback',{@ddb_menuFile},'Separator','on');
 
@@ -54,10 +54,28 @@ for i=1:handles.Bathymetry.NrDatasets
     end
 end
 
+%% Shoreline
+uimenu('Label','Shoreline','Tag','menuShoreline');
+for i=1:handles.Shorelines.nrShorelines
+    if strcmpi(handles.Shorelines.longName{i},handles.ScreenParameters.Shoreline)
+        if handles.Shorelines.Shoreline(i).isAvailable
+            handles=ddb_addMenuItem(handles,'Shoreline',handles.Shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','on','Enable','on');
+        else
+            handles=ddb_addMenuItem(handles,'Shoreline',handles.Shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','on','Enable','off');
+        end
+    else
+        if handles.Shorelines.Shoreline(i).isAvailable
+            handles=ddb_addMenuItem(handles,'Shoreline',handles.Shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','off','Enable','on');
+        else
+            handles=ddb_addMenuItem(handles,'Shoreline',handles.Shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','off','Enable','off');
+        end
+    end
+end
+
 %% View -> from now model specific items to be filled in by a model select function (for example: ddb_selectDelft3DFLOW.m)
 uimenu('Label','View','Tag','menuView');
 handles=ddb_addMenuItem(handles,'View','Background Bathymetry','Callback',{@ddb_menuView},'Checked','on','longname','Bathymetry');
-handles=ddb_addMenuItem(handles,'View','Land Boundaries',      'Callback',{@ddb_menuView},'Checked','on','longname','World Vector Shoreline');
+handles=ddb_addMenuItem(handles,'View','Shoreline',            'Callback',{@ddb_menuView},'Checked','on','longname','Shoreline');
 handles=ddb_addMenuItem(handles,'View','Cities',               'Callback',{@ddb_menuView});
 handles=ddb_addMenuItem(handles,'View','Model',                'longname','Model specific items','Separator','on');
 handles=ddb_addMenuItem(handles,'View','Settings',             'Callback',{@ddb_menuView},'Separator','on');

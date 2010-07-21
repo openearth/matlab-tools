@@ -1,4 +1,4 @@
-function ddb_exportChartLandboundary(handles)
+function ddb_exportChartShoreline(handles)
 
 iac=handles.Toolbox(tb).ActiveDatabase;
 ii=handles.Toolbox(tb).ActiveChart;

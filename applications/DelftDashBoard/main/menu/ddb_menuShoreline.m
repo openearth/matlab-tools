@@ -1,4 +1,4 @@
-function ddb_menuBathymetry(hObject, eventdata, handles)
+function ddb_menuShoreline(hObject, eventdata, handles)
 
 handles=getHandles;
 
@@ -9,8 +9,8 @@ ch=get(h,'Children');
 set(ch,'Checked','off');
 set(hObject,'Checked','on');
 
-if ~strcmpi(handles.ScreenParameters.BackgroundBathymetry,lbl)
-    handles.ScreenParameters.BackgroundBathymetry=lbl;
+if ~strcmpi(handles.ScreenParameters.Shoreline,lbl)
+    handles.ScreenParameters.Shoreline=lbl;
     setHandles(handles);
     ddb_updateDataInScreen;
 end

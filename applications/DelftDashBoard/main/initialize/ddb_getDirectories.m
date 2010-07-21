@@ -34,4 +34,4 @@ handles.BathyDir=[ddbdir 'bathymetry' filesep];
 handles.SuperTransDir=[ddbdir 'supertrans' filesep];
 handles.TideDir=[ddbdir 'tidemodels' filesep];
 handles.ToolBoxDir=[ddbdir 'toolbox' filesep];
-handles.LandboundaryDir=[ddbdir 'landboundaries' filesep];
+handles.ShorelineDir=[ddbdir 'shorelines' filesep];

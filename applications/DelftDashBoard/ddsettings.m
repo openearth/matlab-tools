@@ -33,3 +33,6 @@ addpath([basePath filesep 'general' filesep 'mex' filesep 'V' verDir(1:2)]);
 
 addpath(genpath('..\SuperTrans'));
 addpath(genpath('..\..\io\netcdf\'));
+addpath(genpath('..\..\..\matlab\'));
+
+netcdf_settings('quiet',false) % in /io/netcdf/

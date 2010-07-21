@@ -6,14 +6,21 @@ switch lower(varargin{1}),
 
         disp('Finding coordinate systems ...');
         handles=ddb_getCoordinateSystems(handles);
+
         disp('Finding tide models ...');
         handles=ddb_findTideModels(handles);
+        
         disp('Finding bathymetry datasets ...');
         handles=ddb_findBathymetryDatabases(handles);
+        
+        disp('Finding shorelines ...');
+        handles=ddb_findShorelines(handles);
+        
         disp('Finding toolboxes ...');
         handles=ddb_findToolboxes(handles);
         handles.activeToolbox.Name='ModelMaker';
         handles.activeToolbox.Nr=1;
+        
         disp('Finding models ...');
         handles=ddb_findModels(handles);
         handles.ActiveModel.Name='Delft3DFLOW';
@@ -32,6 +39,7 @@ switch lower(varargin{1}),
 
         disp('Initializing models ...');
         handles=ddb_initializeModels(handles);
+        
         disp('Initializing toolboxes ...');
         handles=ddb_initializeToolboxes(handles);
 

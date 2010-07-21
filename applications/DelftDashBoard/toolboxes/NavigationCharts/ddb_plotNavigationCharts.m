@@ -20,7 +20,7 @@ switch lower(opt)
         h=findall(gca,'Tag','NavigationChartLayer','UserData','LNDARE');
         if ~isempty(h)
             set(h,'HandleVisibility','on');
-            if handles.Toolbox(ii).ShowLandBoundary
+            if handles.Toolbox(ii).ShowShoreline
                 set(h,'Visible','on');
             else
                 set(h,'Visible','off');

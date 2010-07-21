@@ -25,7 +25,7 @@ if nargin>1
             end
             handles.Toolbox(ii).ActiveDatabase=1;
             handles.Toolbox(ii).ActiveChart=1;
-            handles.Toolbox(ii).ShowLandBoundary=1;
+            handles.Toolbox(ii).ShowShoreline=1;
             handles.Toolbox(ii).ShowSoundings=1;
             handles.Toolbox(ii).ShowContours=1;
             return

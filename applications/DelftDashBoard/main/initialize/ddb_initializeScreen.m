@@ -6,10 +6,6 @@ set(ax,'NextPlot','replace');
 set(ax,'Position',[70 200 870 440]);
 handles.GUIHandles.Axis=ax;
 
-% h=findall(gcf,'Tag','colorbar');
-% axes(h);
-%axes(handles.GUIHandles.Axis);
-
 handles.ScreenParameters.CMin=-10000;
 handles.ScreenParameters.CMax=10000;
 handles.ScreenParameters.AutomaticColorLimits=1;
@@ -28,6 +24,14 @@ handles.GUIData.ColorMaps.Earth=earth;
 
 setHandles(handles);
 
+x=0;
+y=0;
+z=zeros(size(x))+500;
+
+plt=plot3(x,y,z,'k');hold on;
+set(plt,'HitTest','off');
+set(plt,'Tag','WorldCoastLine');
+
 ddb_updateDataInScreen;
 
 handles=getHandles;
@@ -36,14 +40,6 @@ load([handles.SettingsDir 'geo\worldcoastline.mat']);
 handles.GUIData.WorldCoastLine5000000(:,1)=wclx;
 handles.GUIData.WorldCoastLine5000000(:,2)=wcly;
 
-res=5;
-[x,y]=ddb_getWVS([handles.LandboundaryDir 'wvs\zl' num2str(res,'%0.2i') '\'],[-180 180],[-90 90],res);
-
-z=zeros(size(x))+500;
-
-plt=plot3(x,y,z,'k');hold on;
-set(plt,'HitTest','off');
-set(plt,'Tag','WorldCoastLine');
 setHandles(handles);
 
 c=load([handles.SettingsDir 'geo\cities.mat']);
@@ -51,17 +47,5 @@ for i=1:length(c.cities)
     handles.GUIData.cities.Lon(i)=c.cities(i).Lon;
     handles.GUIData.cities.Lat(i)=c.cities(i).Lat;
     handles.GUIData.cities.Name{i}=c.cities(i).Name;
-%     xc(i)=c.cities(i).Lon;
-%     yc(i)=c.cities(i).Lat;
-%     tx=text(xc(i),yc(i),[' ' c.cities(i).Name]);
-%     set(tx,'HorizontalAlignment','left','VerticalAlignment','bottom');
-%     set(tx,'FontSize',7,'Clipping','on');
-%     set(tx,'Tag','WorldCities');
-%     set(tx,'Visible','off');
 end
-% zc=zeros(size(xc))+500;
-% plt=plot3(xc,yc,zc,'o');
-% set(plt,'MarkerSize',4,'MarkerEdgeColor','none','MarkerFaceColor','r');
-% set(plt,'Tag','WorldCities');
-% set(plt,'Visible','off');
 

@@ -18,11 +18,11 @@ handles.PushSelectChart        = uicontrol(gcf,'Style','pushbutton','String','Se
 handles.PushPlotOptions        = uicontrol(gcf,'Style','pushbutton','String','Plot Options','Position',   [220 140 140  20],'Tag','UIControl');
 set(handles.PushPlotOptions,  'Enable','off');
 handles.PushDeleteChart        = uicontrol(gcf,'Style','pushbutton','String','Delete Chart','Position',   [370 140 140  20],'Tag','UIControl');
-handles.PushExportLandboundary = uicontrol(gcf,'Style','pushbutton','String','Export Land Boundary',      'Position',   [60  115 140  20],'Tag','UIControl');
+handles.PushExportShoreline = uicontrol(gcf,'Style','pushbutton','String','Export Land Boundary',      'Position',   [60  115 140  20],'Tag','UIControl');
 handles.PushExportSoundings    = uicontrol(gcf,'Style','pushbutton','String','Export Depth Soundings',    'Position',   [60  90 140  20],'Tag','UIControl');
 handles.PushExportContours     = uicontrol(gcf,'Style','pushbutton','String','Export Depth Contours',     'Position',   [60  65 140  20],'Tag','UIControl');
 
-handles.ToggleLandboundary     = uicontrol(gcf,'Style','checkbox','String','Show Land Boundary','Value',handles.Toolbox(tb).ShowLandBoundary,'Position',   [220 110 150  20],'Tag','UIControl');
+handles.ToggleShoreline     = uicontrol(gcf,'Style','checkbox','String','Show Land Boundary','Value',handles.Toolbox(tb).ShowShoreline,'Position',   [220 110 150  20],'Tag','UIControl');
 handles.ToggleSoundings        = uicontrol(gcf,'Style','checkbox','String','Show Depth Soundings','Value',handles.Toolbox(tb).ShowSoundings,'Position',   [220 85 150  20],'Tag','UIControl');
 handles.ToggleContours         = uicontrol(gcf,'Style','checkbox','String','Show Depth Contours','Value',handles.Toolbox(tb).ShowContours,'Position',   [220 60 150  20],'Tag','UIControl');
 
@@ -32,11 +32,11 @@ handles.TextChartNr     = uicontrol(gcf,'Style','text','String',str,      'Posit
 set(handles.PushSelectChart,  'Callback',{@PushSelectChart_Callback});
 set(handles.PushPlotOptions,  'Callback',{@PushPlotOptions_Callback});
 set(handles.PushDeleteChart,  'Callback',{@PushDeleteChart_Callback});
-set(handles.PushExportLandboundary,       'Callback',{@PushExportLandboundary_Callback});
+set(handles.PushExportShoreline,       'Callback',{@PushExportShoreline_Callback});
 set(handles.PushExportSoundings,       'Callback',{@PushExportSoundings_Callback});
 set(handles.PushExportContours,       'Callback',{@PushExportContours_Callback});
 
-set(handles.ToggleLandboundary,  'Callback',{@ToggleLandboundary_Callback});
+set(handles.ToggleShoreline,  'Callback',{@ToggleShoreline_Callback});
 set(handles.ToggleSoundings,     'Callback',{@ToggleSoundings_Callback});
 set(handles.ToggleContours,      'Callback',{@ToggleContours_Callback});
 
@@ -64,10 +64,10 @@ if ~isempty(h)
 end
 
 %%
-function ToggleLandboundary_Callback(hObject,eventdata)
+function ToggleShoreline_Callback(hObject,eventdata)
 handles=getHandles;
 iplt=get(hObject,'Value');
-handles.Toolbox(tb).ShowLandBoundary=iplt;
+handles.Toolbox(tb).ShowShoreline=iplt;
 h=findall(gca,'Tag','NavigationChartLayer','UserData','LNDARE');
 if ~isempty(h)
     if iplt
@@ -109,9 +109,9 @@ end
 setHandles(handles);
 
 %%
-function PushExportLandboundary_Callback(hObject,eventdata)
+function PushExportShoreline_Callback(hObject,eventdata)
 handles=getHandles;
-ddb_exportChartLandboundary(handles);
+ddb_exportChartShoreline(handles);
 
 %%
 function PushExportSoundings_Callback(hObject,eventdata)
@@ -218,7 +218,7 @@ for i=1:length(fn)
     layer=deblank(fn{i});
     switch lower(layer)
         case{'lndare'}
-            handles.Toolbox(tb).PlotLayer.(layer)=handles.Toolbox(tb).ShowLandBoundary;
+            handles.Toolbox(tb).PlotLayer.(layer)=handles.Toolbox(tb).ShowShoreline;
         case{'depcnt'}
             handles.Toolbox(tb).PlotLayer.(layer)=handles.Toolbox(tb).ShowContours;
         case{'soundg'}

@@ -27,8 +27,8 @@ switch tg,
         handles=feval(handles.Model(ii).SaveFcn,handles,'SaveAllAs');
     case{'menuFileSaveAllDomains'}
         handles=feval(handles.Model(ii).SaveFcn,handles,'SaveAllDomains');
-    case{'menuFileOpenLandboundary'}
-        handles=ddb_menuFileOpenLandboundary(handles);
+    case{'menuFileOpenShoreline'}
+        handles=ddb_menuFileOpenShoreline(handles);
     case{'menuFileSelectWorkingDirectory'}
         handles=SelectWorkingDirectory(handles);
     case{'menuFileExit'}
