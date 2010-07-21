@@ -294,16 +294,17 @@ classdef MTestExplorer < handle
             textLabel.setText('  Search tests: ');
             this.JSearchField = javax.swing.JTextField('Enter search string');
             set(this.JSearchField,...
-                'KeyTypedCallback',@this.searchandaddtest,...
-                'MouseClickedCallback',@this.selecttextfield);
+                'KeyTypedCallback',@this.searchfield_callback,...
+                'MousePressedCallback',@this.selecttextfield);
             this.JToolBar(1).addSeparator;
             this.JToolBar(1).add(textLabel,13);
             this.JToolBar(1).add(this.JSearchField,14);
             this.JSearchField.setMaximumSize(java.awt.Dimension(200,25));
             this.JSearchField.setToolTipText([...
-                '<html>',char(10),...
+                '<html>',...
                 'Enter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= Search tests in the current session','<br>',...
-                'Ctrl + Enter = Search and add tests to the current session'...
+                'Ctrl + Enter = Search and add tests to the current session','<br>',...
+                '&nbsp;&nbsp;&nbsp;&nbsp;<small>(Use <b>"*"</b> as a wildcard and <b>","</b> to seperate search terms)</small>'...
                 ]);
    
             % The progressbar
@@ -776,7 +777,9 @@ classdef MTestExplorer < handle
     end
     methods (Hidden = true)
         function selecttextfield(this,varargin)
-            this.JSearchField.selectAll;
+            if ~this.JSearchField.hasFocus
+                this.JSearchField.selectAll;
+            end
         end
         function selectionId = getselectedtestsid(this)
             selectionId = false(size(this.MTestRunner.Tests));
@@ -870,7 +873,7 @@ classdef MTestExplorer < handle
             
             this.buildtree;
         end
-        function searchandaddtest(this,varargin)
+        function searchfield_callback(this,varargin)
             eventData = varargin{2};
             if ~strcmp(get(eventData,'KeyChar'),char(10))
                 return;
@@ -885,8 +888,18 @@ classdef MTestExplorer < handle
                 set(this.JProgressBar,'Value',0);
                 this.JProgressBar.setForeground(java.awt.Color(0.3,0.5,0.3));
                 this.JProgressBar.setString('Searching tests...');
-                files = MTestUtils.whichx(['*',searchString,'*.m']);
+                if ~isempty(strfind(searchString,','))
+                    searchString = strtrim(strread(searchString,'%s',-1,'delimiter',','));
+                    searchString(cellfun(@isempty,searchString))=[];
+                    files = [];
+                    for istr = 1:length(searchString)
+                        files = cat(1,files,MTestUtils.whichx(['*',searchString{istr},'*.m']));
+                    end
+                else
+                    files = MTestUtils.whichx(['*',searchString,'*.m']);
+                end
                 if isempty(files)
+                    this.JProgressBar.setString('Idle...');
                     return;
                 end
                 allTestNames = strread(sprintf('%s.m;',this.MTestRunner.Tests.FileName),'%s','delimiter',';');
@@ -919,10 +932,25 @@ classdef MTestExplorer < handle
                     return;
                 end
                 
-                id = ~cellfun(@isempty,strfind(lower({this.MTestRunner.Tests.Name}),lower(searchString))) | ...
-                    ~cellfun(@isempty,strfind(lower({this.MTestRunner.Tests.FileName}),lower(searchString))) | ...
-                    ~cellfun(@isempty,strfind(lower({this.MTestRunner.Tests.FilePath}),lower(searchString))) | ...
-                    ~cellfun(@isempty,strfind(lower({this.MTestRunner.Tests.Category}),lower(searchString)));
+                searchString = regexptranslate('wildcard', searchString);
+                if ~isempty(strfind(searchString,','))
+                    searchString = strtrim(strread(searchString,'%s',-1,'delimiter',','));
+                    searchString(cellfun(@isempty,searchString))=[];
+                    id = false(1,length(this.MTestRunner.Tests));
+                    for istr = 1:length(searchString)
+                        id = id | ...
+                            (...
+                            ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.Name},repmat({searchString{istr}},1,length(this.MTestRunner.Tests)),'UniformOutput',false))| ...
+                            ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.FileName},repmat({searchString{istr}},1,length(this.MTestRunner.Tests)),'UniformOutput',false))| ...
+                            ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.FilePath},repmat({searchString{istr}},1,length(this.MTestRunner.Tests)),'UniformOutput',false))| ...
+                            ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.Category},repmat({searchString{istr}},1,length(this.MTestRunner.Tests)),'UniformOutput',false))        );
+                    end
+                else
+                    id =~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.Name},repmat({searchString},1,length(this.MTestRunner.Tests)),'UniformOutput',false))| ...
+                        ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.FileName},repmat({searchString},1,length(this.MTestRunner.Tests)),'UniformOutput',false))| ...
+                        ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.FilePath},repmat({searchString},1,length(this.MTestRunner.Tests)),'UniformOutput',false))| ...
+                        ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.Category},repmat({searchString},1,length(this.MTestRunner.Tests)),'UniformOutput',false));
+                end
                 
                 selectedNodes = cellfun(@node2str,this.JTreeTestNodes(id),'UniformOutput',false)';
                 selId = nan(size(selectedNodes));
@@ -933,7 +961,11 @@ classdef MTestExplorer < handle
                     end
                     node = node.getNextLeaf;
                 end
-                this.JTree.setSelectionRows(selId);
+                if isempty(selId)
+                    this.JTree.setSelectionInterval(0,0);
+                else
+                    this.JTree.setSelectionRows(selId);
+                end
             end
         end
         function mouseclickedontree_callback(this,varargin)
@@ -1119,9 +1151,6 @@ classdef MTestExplorer < handle
                 profview(coverage);
             end
         end
-%         function testschanged(this,varargin)
-%            return; 
-%         end
     end
     methods (Hidden = true , Static = true)
         function textpanelinkfunction(varargin)
@@ -1139,6 +1168,7 @@ classdef MTestExplorer < handle
     end
 end
 
+%% JTree helper functions
 function [tf node] = getchild(baseNode,name)
 tf = false;
 node = [];
@@ -1183,11 +1213,15 @@ if ~isempty(parent)
     parentnodes = cat(1,{parent},getparentsrecursive(parent));
 end
 end
+
+%% Helper function to load icons
 function icon = loadicon(filename)
 [X map] = imread(which(filename));
 icon = ind2rgb(X,map);
 icon(icon==0) = nan;
 end
+
+%% Helper function to find exclusions in a filename
 function tf = findexclusion(name,exclusions)
 tf = any(~cellfun(@isempty,cellfun(@strfind,repmat({name},size(exclusions)),exclusions,'UniformOutput',false)));
 end
