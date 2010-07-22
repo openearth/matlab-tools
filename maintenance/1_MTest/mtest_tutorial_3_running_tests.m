@@ -1,5 +1,5 @@
 %% 3. Running individual tests
-% Once we have generated a testdefinition we would like to run a test. In general there are three 
+% Once we have generated a testdefinition we would like to run a test. In general there are three
 % ways to run a test and optionally publish the documentation. This
 % tutorial describes these three ways.
 %
@@ -60,9 +60,9 @@ t.run;
 % *Disadvantage*
 %
 % * he testdefinition must be converted to an object before it can be run or published. Compared to
-% command line usage this increases the amount of actions that must be undertaken. 
+% command line usage this increases the amount of actions that must be undertaken.
 % * Next to that, the
-% mtest toolbox is programmed with the use of object oriented programming as introduced with Matlab 
+% mtest toolbox is programmed with the use of object oriented programming as introduced with Matlab
 % version 7.4 (2008a). This method cannot be used with matlab versions prior to 2008a.
 
 %% Run a test with the MTestRunner
@@ -82,7 +82,7 @@ help MTestRunner
 %%
 % For automatic running test the engine can look for all tests in a particular maindir:
 
-help MTestRunner.cataloguetests
+help MTestRunner.gathertests
 
 %%
 % We only want to execute one test, so we add this to the tests in the MTestRunner object:

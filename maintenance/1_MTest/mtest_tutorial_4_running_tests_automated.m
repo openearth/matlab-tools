@@ -1,9 +1,9 @@
 %% 4. Automated tesing with the MTest toolbox
 %
 % <html>
-% The MTest toolbox is based on object oriented programming as introduced in matlab version 7.6 
+% The MTest toolbox is based on object oriented programming as introduced in matlab version 7.6
 % (2008a). It is able to search a specified maindir (and subdirs) for files that include a
-% predefined string (indicating that it is a test). It can transform the found testdefinition files 
+% predefined string (indicating that it is a test). It can transform the found testdefinition files
 % (written in the format explained in the <a class="relref" href="testdefinitions_tutorial.html"
 % relhref="tutorial_automatedtesting.html">tutorial on testdefinitions</a> into mtest objects
 % containing all information that is in the testdefinition. Thest mtest objects can be run and
@@ -25,8 +25,8 @@ mte = MTestRunner;
 mte
 
 %%
-% It directly shows the default options for all fields. Of course we would like to set some of the 
-% properties. This can be done either when creating the object itself (with property value pairs) or 
+% It directly shows the default options for all fields. Of course we would like to set some of the
+% properties. This can be done either when creating the object itself (with property value pairs) or
 % afterwards in the same way as altering fields of a struct:
 
 mte.TargetDir = fullfile(tempdir,'htmltest');
@@ -196,10 +196,10 @@ mte.Exclusions
 %%
 % After automatically searching for testdefinitions and adding them to the testengine ...
 
-cataloguetests(mte);
+gathertests(mte);
 
 %%
-% we can see that the content of the *_tests_* field has changed. This is of course due to the fact 
+% we can see that the content of the *_tests_* field has changed. This is of course due to the fact
 % that we just collected all tests that match the description as stated above:
 
 mte
@@ -217,8 +217,8 @@ mte.Tests(2).TestResult
 
 %% Run all tests and publish documentation and results
 % The run function runs all tests and publishes the description and vizualization of
-% results as specified in the testdefinition files. 
-% TODO: It also publishes the coverage of the tests (which percentages (and lines) of which functions did we actually test). 
+% results as specified in the testdefinition files.
+% TODO: It also publishes the coverage of the tests (which percentages (and lines) of which functions did we actually test).
 % More information on this function can be found in its help documentation:
 
 help MTestRunner.run

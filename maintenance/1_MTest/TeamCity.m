@@ -169,52 +169,6 @@ classdef TeamCity < handle
                 % never mind, we cannot write in this dir
             end
         end
-        function publishdescription(varargin)
-            profile off
-            tc = TeamCity;
-            mt = TeamCity.currenttest;
-            if tc.Publish && mt.Publish && ~isdir(tc.PublishDirectory)
-                mkdir(tc.PublishDirectory);
-            end
-            if nargin < 1
-                error('TeamCity:Publish','TeamCity.publishdescription should have the name or handle of a function as first input argument');
-            end
-            functionname = varargin{1};
-            varargin{1} = [];
-            
-            evalin('caller','TeamCity.storeworkspace;');
-            if tc.Publish && mt.Publish
-                mt.publishdescription(functionname,...
-                    'outputdir',tc.PublishDirectory,...
-                    varargin{:});
-            else
-                mt.evaluatedescription(functionname);
-            end
-            evalin('caller','TeamCity.restoreworkspace;');
-            profile on
-        end
-        function publishresult(varargin)
-            profile off
-            tc = TeamCity;
-            mt = TeamCity.currenttest;
-            if tc.Publish && mt.Publish && ~isdir(tc.PublishDirectory)
-                mkdir(tc.PublishDirectory);
-            end
-            if nargin < 1
-                error('TeamCity:Publish','TeamCity.publishdescription should have the name or handle of a function as first input argument');
-            end
-            functionname = varargin{1};
-            varargin{1} = [];
-            
-            evalin('caller','TeamCity.storeworkspace;');
-            if tc.Publish && mt.Publish
-                % We assume there is no testcode after publication....?
-                mt.publishresult(functionname,...
-                    'outputdir',tc.PublishDirectory,...
-                    varargin{:});
-            end
-            profile on
-        end
     end
     methods (Static = true, Hidden = true)
         function category(category)
@@ -267,6 +221,70 @@ classdef TeamCity < handle
             if isappdata(0,'MTestTeamCityObject')
                 rmappdata(0,'MTestTeamCityObject');
             end
+        end
+    end
+
+    %% Publication methods
+    methods (Static = true)
+        function publishdescription(varargin)
+            profile off
+            tc = TeamCity;
+            mt = TeamCity.currenttest;
+            if isempty(mt.MTestPublisher)
+                return;
+            end
+            if isempty(tc.PublishDirectory)
+                tc.PublishDirectory = mt.MTestPublisher.TargetDir;
+            end
+            if tc.Publish && mt.MTestPublisher.Publish && ~isdir(tc.PublishDirectory)
+                mkdir(tc.PublishDirectory);
+                mt.MTestPublisher.OutputDir = tc.PublishDirectory;
+            end
+            if nargin < 1
+                error('TeamCity:Publish','TeamCity.publishdescription should have the name or handle of a function as first input argument');
+            end
+            functionname = varargin{1};
+            varargin{1} = [];
+            
+            evalin('caller','TeamCity.storeworkspace;');
+            if tc.Publish && mt.MTestPublisher.Publish
+                mt.PublishedDescriptionFile = mt.MTestPublisher.publishtestdescription(mt,functionname,...
+                    'outputdir',tc.PublishDirectory,...
+                    varargin{:});
+            else
+                mt.evaluatedescription(functionname);
+            end
+            evalin('caller','TeamCity.restoreworkspace;');
+            profile on
+        end
+        function publishresult(varargin)
+            profile off
+            tc = TeamCity;
+            mt = TeamCity.currenttest;
+            if isempty(mt.MTestPublisher)
+                return;
+            end
+            if isempty(tc.PublishDirectory)
+                tc.PublishDirectory = mt.MTestPublisher.TargetDir;
+            end
+            if tc.Publish && mt.MTestPublisher.Publish && ~isdir(tc.PublishDirectory)
+                mkdir(tc.PublishDirectory);
+                mt.MTestPublisher.OutputDir = tc.PublishDirectory;
+            end
+            if nargin < 1
+                error('TeamCity:Publish','TeamCity.publishdescription should have the name or handle of a function as first input argument');
+            end
+            functionname = varargin{1};
+            varargin{1} = [];
+            
+            evalin('caller','TeamCity.storeworkspace;');
+            if tc.Publish && mt.MTestPublisher.Publish
+                % We assume there is no testcode after publication....?
+                mt.PublishedResultFile = mt.MTestPublisher.publishtestresult(mt,functionname,...
+                    'outputdir',tc.PublishDirectory,...
+                    varargin{:});
+            end
+            profile on
         end
     end
 end

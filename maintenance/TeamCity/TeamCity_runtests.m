@@ -75,7 +75,7 @@ try %#ok<TRYNC>
 %            rethrow(me);
          exit;
     end
-    
+
     OPT = struct(...
         'TestDataMainDir',[],...
         'Category','all',...
@@ -126,24 +126,29 @@ try %#ok<TRYNC>
             };
 
         %% Create testengine
+        mtp = MTestPublisher(...
+            'TargetDir',targetdir,...
+            'CopyMode','svnkeep',...
+            'Template','oet',...
+            'Publish',OPT.Publish,...
+            'MaxWidth',600,...
+            'MaxHeight',600);
+
         mtr = MTestRunner(...
             'MainDir'       ,maindir,...
             'Recursive'     ,true,...
-            'TargetDir'     ,targetdir,...
             'Exclusions'    ,exclusions,...
             'Verbose'       ,true,...
-            'CopyMode'      ,'svnkeep',...
-            'IncludeCoverage',false,...
-            'Publish'       ,OPT.Publish,...
-            'Template'      ,'oet');
+            'MTestPublisher',mtp,...
+            'IncludeCoverage',true);
 
         TeamCity.postmessage('progressFinish','Prepare MTestRunner');
-        
+
         %% Collect tests that need to be run
         TeamCity.postmessage('progressStart','Collect Tests');
-        mtr.cataloguetests;
+        mtr.gathertests;
         collectedTestCategories = {mtr.Tests.Category}';
-       
+
         % Check which tests we have to run
         if strcmp(OPT.Category,'all')
             id = true(size(collectedTestCategories));
@@ -154,30 +159,39 @@ try %#ok<TRYNC>
         else
             id = strcmpi(collectedTestCategories,OPT.Category);
         end
-        
+
         mtr.Tests(~id)=[];
+        mtr.Tests = mtr.Tests(1:20);
         if isempty(mtr.Tests)
             % exit because we do not have any test in this category
             TeamCity.postmessage('progressMessage', 'No tests were found under this category.');
             TeamCity.postmessage('progressFinish','Collect Tests');
             exit
         end
-        
+
         TeamCity.postmessage('progressMessage', ['Identified ' num2str(length(mtr.Tests)) ' tests within the specified category ("' OPT.Category '")']);
         TeamCity.postmessage('progressFinish','Collect Tests');
-        
+
         %% Run tests
         TeamCity.postmessage('progressStart','Run Tests');
         mtr.run;
         TeamCity.postmessage('progressFinish','Run Tests');
 
         %% Remove template files
-        delete(fullfile(targetdir,'mxdom2defaulthtml.xsl'));
+        if exist(fullfile(targetdir,'mxdom2defaulthtml.xsl'),'file')
+            delete(fullfile(targetdir,'mxdom2defaulthtml.xsl'));
+        end
 
         %% zip result and remove target dir
         if OPT.Publish
+            mtr.MTestPublisher.publishcoverage(mtr.ProfileInfo,'TargetDir',fullfile(targetdir,'coverage'));
+            
+            mtr.MTestPublisher.publishtestsoverview(mtr,'TargetDir',fullfile(targetdir,'testoverview'));
+            
             delete('OetTestResult.zip');
-            zip('OetTestResult',{fullfile(targetdir,'*.*')});
+            delete('OetTestCoverage.zip');
+            zip('OetTestResult',{fullfile(targetdir,'testoverview','*.*')});
+            zip('OetTestCoverage',{fullfile(targetdir,'coverage','*.*')});
             rmdir(targetdir,'s');
         end
 
@@ -189,7 +203,7 @@ try %#ok<TRYNC>
             'TeamCity',TeamCity,...
             'OPT',OPT);
         save('OetTestResult.mat','OetTestResult');
-        
+
     catch me
         try %#ok<TRYNC>
             TeamCity.postmessage('buildStatus',...

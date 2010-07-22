@@ -4,7 +4,7 @@ classdef MTestExplorer < handle
     % See also MTest.MTest MTestRunner MTestFactory
     %
     % <a href="matlab:MTestExplorer;">Start MTestExplorer</a>
-    
+
     %% Copyright notice
     %     Copyright (c) 2008  DELTARES.
     %
@@ -30,11 +30,11 @@ classdef MTestExplorer < handle
     %   You should have received a copy of the GNU Lesser General Public
     %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
     %   --------------------------------------------------------------------
-    
+
     %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
     % Created: 15 Jun 2010
     % Created with Matlab version: 7.10.0.499 (R2010a)
-    
+
     % $Id$
     % $Date$
     % $Author$
@@ -45,11 +45,11 @@ classdef MTestExplorer < handle
 
     properties
         MTestRunner = MTestRunner;  % MTEstRunner object that stores and catalogues tests
-        
+
         ViewType = 'Directory';     % View type for treeview (either Directory, Category or Status)
-                
+
         HMainFigure                 % Handle of the main matlab figure
-        
+
         HToolBar                    % Handle of the matlab toolbar (with buttons)
         HToolBarRun                 % Handle of the uipushbutten to run the selected models
         HToolBarRunAll              % Handle of the uipushbutten to run all models
@@ -66,7 +66,7 @@ classdef MTestExplorer < handle
         JStatusBar                  % JAva handle to the status bar at the bottom of the interface
         JStatusText                 % Java handle to the text object in the statusbar
         JStatusProgressBar          % Java handle to the (temp) progress bar in the status bar
-        
+
         MenuFile                    % Handle of uimenu item File
         MenuFileOpen                % Handle of uimenu item Open session
         MenuFileSave                % Handle of uimenu item Save session
@@ -97,16 +97,16 @@ classdef MTestExplorer < handle
         HContextMenuClearSession    % Handle of the uicontextmenu item clear session
 
         JSplitPanelMain             % Java handle for the main split panel (with the vertical split)
-        
+
         JidePane                    % Java handle to the JidePane
         JideGrid                    % Java handle to the JideGrid
         JideModel                   % Java handle to the JideModel
         JideList                    % Java handle to the JideList
-        
+
         % Splitpanel
         HSplitPanel                 % Handle of the horizontal splitpanel
         JSplitPanel                 % Java handle of the horizontal splitpanel
-        
+
         % UpperPanel
         JTreePanel                  % Java handle of the JPane that hosts the JTree
         JScrollPane                 % Java handle of the JScrollPane that hosts the JTree
@@ -116,14 +116,14 @@ classdef MTestExplorer < handle
         JTreeAllNodes               % cell with handles to all tree nodes
         AllNodesExpandedFlag        % logical with the same size as JTreeAllNodes to indicate whether they are expanded
         JTreeTestNodes              % cell with java handles to each test node
-                        
+
         % LowerPanel
         JTextPane                   % Java handle to the JTextPane of the lower panel
     end
     properties (Hidden = true)
         BuildingTree = false;       % boolean indicating whether the MTestExplorer is building the tree
     end
-    
+
     methods
         function this = MTestExplorer(varargin)
             %% Create main figure
@@ -131,11 +131,10 @@ classdef MTestExplorer < handle
                 'NumberTitle','off',...
                 'Name','Unit Test Explorer',...
                 'HandleVisibility','off',...
-                'WindowStyle','docked',...
                 'MenuBar','none',...
                 'Toolbar','none',...
                 'Units','pix',...
-                'Visible','on',...
+                'Visible','off',...
                 'Position',[100 100 1200 300]);
             % Save object to figure so it does not get lost
             guidata(this.HMainFigure,this);
@@ -144,19 +143,23 @@ classdef MTestExplorer < handle
             warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
             jFrame = get(this.HMainFigure,'JavaFrame');
             if datenum(version('-date')) > datenum(2010,1,1)
-                jFrame.setFigureIcon(javax.swing.ImageIcon(which('DeltaresLogoWhiteTransparantSmaller.gif')));
+                jFrame.setFigureIcon(javax.swing.ImageIcon(which('DeltaresLogoWhiteTransparant.gif')));
             else
                 jFrame.setFigureIcon(javax.swing.ImageIcon(which('DeltaresLogoWhiteTransparantSmall.gif')));
             end
             setFigDockGroup(this.HMainFigure,'MTest');
-            
+
+            set(this.HMainFigure,...
+                'WindowStyle','docked',...
+                'Visible','on');
+
             %% Initialize and configure MTestRunner
-            this.MTestRunner.Publish = false;
+            this.MTestRunner.MTestPublisher.Publish = false;
             this.MTestRunner.Verbose = false;
             tests = MTest;
             tests(1)=[];
             this.MTestRunner.Tests = tests;
-            
+
             %% Create Menu items
             this.MenuFile = uimenu(this.HMainFigure,...
                 'Label','&File');
@@ -204,7 +207,7 @@ classdef MTestExplorer < handle
             this.MenuRunAll = uimenu(this.MenuRun,...
                 'Label','Run &all tests',...
                 'Callback',@this.runall);
-            
+
             %% Create Context menu
             this.HContextMenu = uicontextmenu('Parent',this.HMainFigure);
             this.HContextMenuRun = uimenu(this.HContextMenu,...
@@ -306,7 +309,7 @@ classdef MTestExplorer < handle
                 'Ctrl + Enter = Search and add tests to the current session','<br>',...
                 '&nbsp;&nbsp;&nbsp;&nbsp;<small>(Use <b>"*"</b> as a wildcard and <b>","</b> to seperate search terms)</small>'...
                 ]);
-   
+
             % The progressbar
             this.HProgressToolbar = uitoolbar(this.HMainFigure);
             drawnow;
@@ -322,7 +325,7 @@ classdef MTestExplorer < handle
             import javax.swing.tree.*
             import javax.swing.*
             import java.awt.*;
-            
+
             % create a tree
             this.JTree = javax.swing.JTree;
             set(this.JTree,...
@@ -333,7 +336,7 @@ classdef MTestExplorer < handle
             this.JTreeRootNode = DefaultMutableTreeNode('RootNode');
             this.JTreeModel = this.JTree.getModel();
             this.JTreeModel.setRoot(this.JTreeRootNode);
-            
+
             % Configure tree
             this.JTree.setRootVisible(false);
             this.JTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
@@ -350,7 +353,7 @@ classdef MTestExplorer < handle
             this.JTreePanel.setLayout(BorderLayout);
             % add scrollpane to panel
             this.JTreePanel.add(this.JScrollPane);
-            
+
             %% Create text panel
             this.JTextPane = javax.swing.JTextPane;
             this.JTextPane.setBackground(java.awt.Color.LIGHT_GRAY);
@@ -359,13 +362,13 @@ classdef MTestExplorer < handle
             this.JTextPane.setText('<h1>MTest</h1><p>Add a test and run</p>');
             hjTextpane = handle(this.JTextPane,'CallbackProperties');
             set(hjTextpane,'HyperlinkUpdateCallback',@MTestExplorer.textpanelinkfunction);
-            
+
             jScrollPane = javax.swing.JScrollPane(this.JTextPane);
-            
+
             jTextPanel = javax.swing.JPanel;
             jTextPanel.setLayout(BorderLayout);
             jTextPanel.add(jScrollPane);
-            
+
             %% CReate JIDE property manager
             % Prepare a properties table containing the list
             % Initialize JIDE's usage within Matlab
@@ -383,11 +386,11 @@ classdef MTestExplorer < handle
             this.JSplitPanel = javax.swing.JSplitPane(0);
             this.JSplitPanel.add(this.JTreePanel,0);
             this.JSplitPanel.add(jTextPanel,1);
-                        
+
             % vertical splitpanel
             splitmain.add(this.JSplitPanel,1);
             splitmain.add(this.JidePane,0);
-            
+
             %% Add splitpanel to gui
             [this.JSplitPanelMain this.HSplitPanel] = javacomponent(splitmain,getpixelposition(this.HMainFigure).*[0 0 1 1],this.HMainFigure);
             set(this.HSplitPanel,'Units','normalized','Position',[0 0 1 1]);
@@ -410,10 +413,10 @@ classdef MTestExplorer < handle
             %   this  = MTestExplorer object
             %
             %   See also MTestExplorer MTestExplorer.runtests MTestExplorer.runtall MTestExplorer.getselectedtestsid
-            
+
             %% get selection
             selectionId = getselectedtestsid(this);
-            
+
             %% Run tets
             this.runtests(selectionId);
         end
@@ -430,10 +433,10 @@ classdef MTestExplorer < handle
             %   this  = MTestExplorer object
             %
             %   See also MTestExplorer MTestExplorer.runtests MTestExplorer.run MTestExplorer.getselectedtestsid
-            
+
             %% Select all tests
             selectionId = true(size(this.MTestRunner.Tests));
-            
+
             %% Run them
             this.runtests(selectionId);
         end
@@ -452,7 +455,7 @@ classdef MTestExplorer < handle
             %                   must be executed
             %
             %   See also MTestExplorer MTestExplorer.runall MTestExplorer.run
-            
+
             %% Reset progressbar
             this.JProgressBar.setVisible(1);
             set(this.JProgressBar, ...
@@ -461,26 +464,26 @@ classdef MTestExplorer < handle
 
             %% get current dir
             startdir = cd;
-            
+
             %% Make sure the current dir is in the searchpath
             mtestpath = path;
             addpath(cd);
-            
+
             %% Loop tests
             existingfigs = findobj('Type','figure');
             for itests = 1:length(selectionId)
                 if selectionId(itests)
                     % reset teamcity in case a test has altered the running prop
                     this.setteamcity_callback;
-                    
+
                     % prepare progressbar
                     this.JProgressBar.setString(['Running: ' this.MTestRunner.Tests(itests).Name ' (' num2str(round((sum(selectionId(1:itests-1))/sum(selectionId))*100))  '%)']);
-                    
+
                     % reset some test parameters (ignore for example should not remain true)
-                    this.MTestRunner.Tests(itests).Publish = false;     % Never publish from the MTestExplorer
+                    this.MTestRunner.Tests(itests).MTestPublisher = this.MTestRunner.MTestPublisher;
                     this.MTestRunner.Tests(itests).AutoRefresh = true;  % Auto update to the latest definition
                     this.MTestRunner.Tests(itests).Ignore = false;      % Should not remain true, whereas it isn't run a next time
-                    
+
                     % Run the test
                     try
                         this.MTestRunner.Tests(itests).run;
@@ -493,33 +496,33 @@ classdef MTestExplorer < handle
                             rmdir(this.MTestRunner.Tests(itest).RunDir,'s');
                         end
                     end
-                    
+
                     newfigs = findobj('Type','figure');
                     close(newfigs(~ismember(newfigs,existingfigs)));
-                    
+
                     this.setprogressbarstatuscolor;
-                    
+
                     set(this.JProgressBar, 'Value',sum(selectionId(1:itests)));
-                    
+
                     % Rebuild the treeview to show testresult in nodes
                     if strcmp(this.ViewType,'Status')
                         % This has no effect on the other viewtypes, so don't waste time on it...
                         this.buildtree;
                     end
-                    
+
                     % Show test information of the test that has just finished
                     this.mouseclickedontree_callback(itests,'selection');
-                    
+
                     % delete any teamcity message if there is one
                     if exist('teamcitymessage.matlab','file')
                         delete(which('teamcitymessage.matlab'));
                     end
                 end
             end
-            
+
              %% Return to initial dir
             cd(startdir);
-            
+
             %% Finish progress bar
             this.JProgressBar.setString('Idle...');
         end
@@ -541,12 +544,12 @@ classdef MTestExplorer < handle
 
             %% Indicate that we are building the tree
             this.BuildingTree = true;
-            
+
             %% import some java classes that we need
             import javax.swing.tree.*
             import javax.swing.*
             import java.awt.*;
-            
+
             %% Interpret input
             if nargin > 1 && ~ischar(varargin{end})
                 if any(strfind(get(varargin{1},'SelectedItem'),'categ'));
@@ -557,7 +560,7 @@ classdef MTestExplorer < handle
                     this.ViewType = 'Status';
                 end
             end
-                
+
             %% Gather visibility
             showNotRun = true;
             showIgnored = strcmp(get(this.HToolBarViewIgnored,'State'),'on');
@@ -566,18 +569,18 @@ classdef MTestExplorer < handle
 
             %% Make root for treeview
             rootNode = DefaultMutableTreeNode('RootNode');
-            
+
             oldNodes = this.JTreeAllNodes;
             this.JTreeAllNodes = {};
             this.JTreeTestNodes = {};
-            
+
             for itests = 1:length(this.MTestRunner.Tests);
                 %% Determine whether the test should be visible
                 % determine state
                 testExecutedFlag = ~isnan(this.MTestRunner.Tests(itests).Date);
                 testResult = this.MTestRunner.Tests(itests).TestResult;
                 testIgnored = this.MTestRunner.Tests(itests).Ignore;
-                
+
                 if ~testExecutedFlag
                     % test was not run
                     visible = showNotRun; % true
@@ -591,11 +594,11 @@ classdef MTestExplorer < handle
                     % Test failed
                     visible = showFailed;
                 end
-                
+
                 if ~visible
                     continue;
                 end
-                
+
                 %% make treenode for test
                 % TODO: renaming nodes messes up the test ability to find nodes based on their names
                 % (in this.treeexpanded_callback for example). Find a way to deal with this, than we
@@ -618,7 +621,7 @@ classdef MTestExplorer < handle
                     status = 'Not Run';
                 end
                 set(newNode,'UserData',itests);
-                
+
                 %% Determine place in tree structure
                 baseNode = rootNode;
                 switch this.ViewType
@@ -635,7 +638,7 @@ classdef MTestExplorer < handle
                                     new = DefaultMutableTreeNode(testPath{ip});
                                     position = baseNode.getChildCount;
                                     this.JTreeModel.insertNodeInto(new,baseNode,position);
-                                    
+
                                     this.JTreeAllNodes{end+1,1} = new;
                                     this.JTreeAllNodes{end,2} = fullfile(testPath{1:ip});
                                     this.JTreeAllNodes{end,3} = true;
@@ -694,12 +697,12 @@ classdef MTestExplorer < handle
                             end
                         end
                 end
-                
+
                 %% Add node to tree structure
                 this.JTreeModel.insertNodeInto(newNode,baseNode,position);
                 this.JTreeTestNodes(end+1) = newNode;
             end
-            
+
             %% Repaint tree
             if isempty(rootNode)
                 import javax.swing.tree.*
@@ -709,11 +712,11 @@ classdef MTestExplorer < handle
             end
             this.JTreeRootNode = rootNode;
             this.JTreeModel.setRoot(this.JTreeRootNode);
-            
+
             if isempty(this.JTreeAllNodes)
                 return;
             end
-            
+
             %% Collapse nodes that were collapsed earlier
             import javax.swing.tree.*
             allnodenames = cellfun(@node2str,this.JTreeAllNodes(:,1),'UniformOutput',false);
@@ -733,8 +736,8 @@ classdef MTestExplorer < handle
             end
 
             this.setprogressbarstatuscolor;
-            
-            %% Unregister BuildingTree flag 
+
+            %% Unregister BuildingTree flag
             this.BuildingTree = false;
         end
         function setprogressbarstatuscolor(this)
@@ -767,10 +770,10 @@ classdef MTestExplorer < handle
             %   this  = MTestExplorer object
             %
             %   See also MTestExplorer MTestExplorer.getselectedtestsid MTest.edit
-            
+
             %% Gather selected tests
             selectionId = getselectedtestsid(this);
-            
+
             %% edit the tests
             edit(this.MTestRunner.Tests(selectionId));
         end
@@ -783,7 +786,7 @@ classdef MTestExplorer < handle
         end
         function selectionId = getselectedtestsid(this)
             selectionId = false(size(this.MTestRunner.Tests));
-            
+
             selectedPaths = this.JTree.getSelectionPaths;
             selectedNodes = [];
             for ipaths = 1:length(selectedPaths)
@@ -821,7 +824,7 @@ classdef MTestExplorer < handle
         function menusessionaddtest_callback(this,varargin)
             [filename, pathname] = uigetfile('*_test.m', 'Pick a test definition');
             if isequal(filename,0) || isequal(pathname,0)
-               return; 
+               return;
             end
             try
                 newTest = MTest(fullfile(pathname, filename));
@@ -832,10 +835,10 @@ classdef MTestExplorer < handle
                 return;
             end
             this.MTestRunner.Tests(end+1) = newTest;
-            
+
             [nms uid] = unique({this.MTestRunner.Tests.FileName});
             this.MTestRunner.Tests = this.MTestRunner.Tests(uid);
-            
+
             this.buildtree;
         end
         function menusessionremovetest_callback(this,varargin)
@@ -849,28 +852,28 @@ classdef MTestExplorer < handle
             if isempty(dir) || ~ischar(dir)
                 return;
             end
-            
+
             this.MTestRunner.MainDir = dir;
             if nargin>2 && strcmp(varargin{3},'add')
                 oldTests = this.MTestRunner.Tests;
             end
-            
+
             this.MTestRunner.Tests = MTest;
             this.MTestRunner.Tests(1) = [];
-            this.MTestRunner.cataloguetests;
-            
+            this.MTestRunner.gathertests;
+
             if nargin>2 && strcmp(varargin{3},'add')
                 this.MTestRunner.Tests = cat(2,oldTests,this.MTestRunner.Tests);
             end
             [nms uid] = unique({this.MTestRunner.Tests.FileName});
             this.MTestRunner.Tests = this.MTestRunner.Tests(uid);
-            
+
             this.buildtree;
         end
         function menusessioncleartest_callback(this,varargin)
             this.MTestRunner.Tests = MTest;
             this.MTestRunner.Tests(1) = [];
-            
+
             this.buildtree;
         end
         function searchfield_callback(this,varargin)
@@ -883,7 +886,7 @@ classdef MTestExplorer < handle
                 return;
             end
             searchAndAdd = strcmp(get(eventData,'ControlDown'),'on');
-            
+
             if searchAndAdd
                 set(this.JProgressBar,'Value',0);
                 this.JProgressBar.setForeground(java.awt.Color(0.3,0.5,0.3));
@@ -924,14 +927,14 @@ classdef MTestExplorer < handle
                     end
                     this.JProgressBar.setString('Busy (Refreshing tree)');
                     this.buildtree;
-                    set(this.JProgressBar, 'Value',0);
-                    this.JProgressBar.setString('Idle...');
                 end
+                set(this.JProgressBar, 'Value',0);
+                this.JProgressBar.setString('Idle...');
             else
                 if isempty(this.MTestRunner.Tests)
                     return;
                 end
-                
+
                 searchString = regexptranslate('wildcard', searchString);
                 if ~isempty(strfind(searchString,','))
                     searchString = strtrim(strread(searchString,'%s',-1,'delimiter',','));
@@ -951,7 +954,7 @@ classdef MTestExplorer < handle
                         ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.FilePath},repmat({searchString},1,length(this.MTestRunner.Tests)),'UniformOutput',false))| ...
                         ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.Category},repmat({searchString},1,length(this.MTestRunner.Tests)),'UniformOutput',false));
                 end
-                
+
                 selectedNodes = cellfun(@node2str,this.JTreeTestNodes(id),'UniformOutput',false)';
                 selId = nan(size(selectedNodes));
                 node = this.JTreeRootNode.getFirstLeaf;
@@ -1055,7 +1058,7 @@ classdef MTestExplorer < handle
                     %% Show top selection in JIDE
                     % Initialize JIDE's usage within Matlab
                     com.mathworks.mwswing.MJUtilities.initJIDE;
-                    
+
                     this.JideList.clear;
                     categories = {...
                         'File Info',...
@@ -1079,14 +1082,14 @@ classdef MTestExplorer < handle
                         'Date','Date',4,'Date and time of the last test with this test definition (in the current session)';...
                         'Ignore','Ignore',4,'Boolean (logical) that determines whether the result of the test should be ignored';...
                         'IgnoreMessage','Ignore Message',4,'Text message specifying why we should ignore the test result'};
-                    
+
                     for iprop = 1:length(props)
                         newprop = com.jidesoft.grid.DefaultProperty();
                         newprop.setEditable(false);
                         newprop.setName(props{iprop,2});
                         newprop.setCategory(categories{props{iprop,3}});
                         newprop.setDescription(props{iprop,4});
-                            
+
                         prop = this.MTestRunner.Tests(selectionId).(props{iprop,1});
                         if any(ismember(props{iprop,1},{'TimeStamp','Date'}))
                             if isnan(prop)
@@ -1119,13 +1122,13 @@ classdef MTestExplorer < handle
                         end
                         this.JideList.add(newprop);
                     end
-                  
+
                     this.JideModel.expandAll();
                     this.JideModel.refresh;
-                    
+
                 otherwise
                     %% Set selection
-                    rows = this.JTree.getClosestRowForLocation(varargin{2}.getX, varargin{2}.getY);  
+                    rows = this.JTree.getClosestRowForLocation(varargin{2}.getX, varargin{2}.getY);
                     if holdSelection
                         rows = unique(cat(1,rows,this.JTree.getSelectionRows));
                     end
@@ -1146,7 +1149,7 @@ classdef MTestExplorer < handle
         function viewcoverage(this,varargin)
             selectionId = find(getselectedtestsid(this),1,'first');
             coverage = this.MTestRunner.Tests(selectionId).ProfilerInfo;
-            
+
             if ~isempty(coverage)
                 profview(coverage);
             end
