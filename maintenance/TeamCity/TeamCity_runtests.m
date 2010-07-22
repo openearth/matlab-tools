@@ -161,7 +161,6 @@ try %#ok<TRYNC>
         end
 
         mtr.Tests(~id)=[];
-        mtr.Tests = mtr.Tests(1:20);
         if isempty(mtr.Tests)
             % exit because we do not have any test in this category
             TeamCity.postmessage('progressMessage', 'No tests were found under this category.');
@@ -185,9 +184,9 @@ try %#ok<TRYNC>
         %% zip result and remove target dir
         if OPT.Publish
             mtr.MTestPublisher.publishcoverage(mtr.ProfileInfo,'TargetDir',fullfile(targetdir,'coverage'));
-            
+
             mtr.MTestPublisher.publishtestsoverview(mtr,'TargetDir',fullfile(targetdir,'testoverview'));
-            
+
             delete('OetTestResult.zip');
             delete('OetTestCoverage.zip');
             zip('OetTestResult',{fullfile(targetdir,'testoverview','*.*')});
