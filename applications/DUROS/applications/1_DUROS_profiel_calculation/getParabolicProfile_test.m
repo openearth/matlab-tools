@@ -75,7 +75,13 @@ function testresult = getParabolicProfile_test()
 testresult = parabprofilecase1;
 [tr x z] = parabprofilecase2;
 
-%% $PublishResult (IncludeCode = false & EvaluateCode = true)
+TeamCity.publishresult(@getParabolicProfile_test_result,...
+    'IncludeCode',false,...
+    'EvaluateCode',true);
+
+end
+
+function getParabolicProfile_test_result()
 % The following figure illustrates the returned parabolic profile.
 
 disp(['length x = ' num2str(length(x))]);

@@ -4,19 +4,19 @@
 %     'targetdir',fullfile(mctoolsroot,'matlab','applications','DUROS','testbank','temptestresult'),...
 %     'recursive',true);
 
-mte = mtestengine(...
-    'maindir',fullfile(oetroot,'applications','DUROS'),...
-    'template','oet',...
-    'targetdir',fullfile(mctoolsroot,'matlab','applications','DUROS','testbank','temptestresult'),...
-    'recursive',true);
+mtr = MTestRunner(...
+    'MainDir',fullfile(oetroot,'applications','DUROS'),...
+    'Template','oet',...
+    'TargetDir',fullfile(mctoolsroot,'matlab','applications','DUROS','testbank','temptestresult'),...
+    'Recursive',true);
 
-mte.catalogueTests;
+mtr.gathertests;
 
-mte.tests(end+1) = mtest('roundoff_test');
-mte.tests(end+1) = mtest('getCumVolume_test');
-mte.tests(end+1) = mtest('getG_test');
-mte.tests(end+1) = mtest('getBoundaryProfile_test');
-mte.tests(end+1) = mtest('getParabolicProfile_test');
-mte.maindir = 'f:\';
+mtr.Tests(end+1) = MTest('roundoff_test');
+mtr.Tests(end+1) = MTest('getCumVolume_test');
+mtr.Tests(end+1) = MTest('getG_test');
+mtr.Tests(end+1) = MTest('getBoundaryProfile_test');
+mtr.Tests(end+1) = MTest('getParabolicProfile_test');
+mtr.maindir = 'f:\';
 
-mte.runAndPublish;
+mtr.run;
