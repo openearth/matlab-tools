@@ -11,6 +11,10 @@ function filenames = findAllFiles(varargin)
 % * basepath     (default '')
 % * recursive    (default 1)
 %
+% Notice that the pattern_excl paths are filtered with regexp. The syntax
+% is slightly different. Example: '*.svn' versus '.\.svn' see help regexp
+% for more
+%
 % For the <keyword,value> pairs and their defaults call
 %
 %    OPT = findAllFiles()
@@ -69,7 +73,7 @@ function filenames = findAllFiles(varargin)
 %  defaults
 
    OPT = struct(...
-       'pattern_excl', {{[filesep,'.svn']}}, ... % pattern to exclude
+       'pattern_excl', {{'\.svn'}}, ...          % pattern to exclude
        'pattern_incl', {'*'}, ...                % pattern to include
        'basepath', '', ...                       % indicate basedpath to start looking
        'recursive', 1 ...                        % indicate whether or not the request is recursive

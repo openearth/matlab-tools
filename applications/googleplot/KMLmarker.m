@@ -70,8 +70,8 @@ function varargout = KMLmarker(lat,lon,varargin)
    OPT.iconhighlightState  =  '';
    OPT.scalenormalState    =  0.5;
    OPT.scalehighlightState =  1.0;
-   OPT.colornormalState    =  [1 1 0]; % [1 1 0] = yellow
-   OPT.colorhighlightState =  [1 1 0];
+   OPT.colornormalState    =  []; % [1 1 0] = yellow
+   OPT.colorhighlightState =  [];
    OPT.dateStrStyle       = 29; % set to yyyy-mm-ddTHH:MM:SS for detailed times 
    
    if nargin==0
@@ -135,7 +135,7 @@ function varargout = KMLmarker(lat,lon,varargin)
    if isempty(OPT.iconhighlightState)
        iconhighlightState = '';
    else
-       iconhighlightState = [' <Icon><href>'    OPT.iconnormalState '</href></Icon>\n'];
+       iconhighlightState = [' <Icon><href>'    OPT.iconhighlightState '</href></Icon>\n'];
    end
 
 
@@ -154,11 +154,14 @@ function varargout = KMLmarker(lat,lon,varargin)
 output = [output '<!--############################-->\n'];
 
 %% STYLE
-
-    temp                    = dec2hex(round([OPT.markerAlpha OPT.colornormalState].*255),2);
-    OPT.colornormalState    = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
-    temp                    = dec2hex(round([OPT.markerAlpha OPT.colorhighlightState].*255),2);
-    OPT.colorhighlightState = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
+    if ~isempty(OPT.colornormalState)
+        temp                    = dec2hex(round([OPT.markerAlpha OPT.colornormalState].*255),2);
+        OPT.colornormalState    = [' <color>' temp(1,:) temp(4,:) temp(3,:) temp(2,:) '</color>\n'];
+    end
+    if ~isempty(OPT.colorhighlightState)
+        temp                    = dec2hex(round([OPT.markerAlpha OPT.colorhighlightState].*255),2);
+        OPT.colorhighlightState = [' <color>' temp(1,:) temp(4,:) temp(3,:) temp(2,:) '</color>\n'];
+    end
 
     if ~isempty(OPT.html)
     output = [output ...
@@ -168,7 +171,7 @@ output = [output '<!--############################-->\n'];
         '</StyleMap>\n'...
         '<Style id="cmarker_n">\n'...
         ' <IconStyle>\n'...
-        ' <color>' OPT.colornormalState '</color>\n'...
+        OPT.colornormalState ...
         ' <scale>' num2str(OPT.scalenormalState) '</scale>\n'... 
         iconnormalState...
         ' </IconStyle>\n'...
@@ -180,7 +183,7 @@ output = [output '<!--############################-->\n'];
         ' $[description]\n'... % variable per dot
         ' </text></BalloonStyle>\n'...
         ' <IconStyle>\n'...
-        ' <color>' OPT.colorhighlightState '</color>\n'...
+        OPT.colorhighlightState...
         ' <scale>' num2str(OPT.scalehighlightState) '</scale>\n'...  
         iconhighlightState...
         ' </IconStyle>\n'...

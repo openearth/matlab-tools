@@ -1,7 +1,7 @@
 function evalstr = var2evalstr(varargin)
 %VAR2EVALSTR 	routine to create an evaluation string resulting in variable
 %
-%   Routine to create a string which after evaluation result in the
+%   Routine to create a string which after evaluation results in the
 %   original variable. Can be useful for creating a stand alone testfile
 %   with extensive arrays as fixed input.
 %

@@ -81,7 +81,7 @@ end
    OPT.colorbarlocation   = {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
    OPT.colorbartitle      = '';
 
-   OPT.icon               = 'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
+   OPT.icon               = 'http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png';
    OPT.scale              = 1.0;
    OPT.timeIn             = [];
    OPT.timeOut            = [];
