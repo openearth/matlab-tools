@@ -225,8 +225,8 @@ if succes
    % COLORBAR   
    
    if OPT.colorbar
-      clrbarstring = KMLcolorbar('clim',clim,'fileName',OPT.fileName,'colorMap',colormap,...
-          'colorTitle',OPT.colorTitle,'colorTick',OPT.colorTick,'colorTickLabel',OPT.colorTickLabel);
+      clrbarstring = KMLcolorbar('CBcLim',clim,'CBfileName',OPT.fileName,'CBcolorMap',colormap,...
+          'CBcolorTitle',OPT.colorTitle,'CBcolorTick',OPT.colorTick,'CBcolorTickLabel',OPT.colorTickLabel);
       output = [output clrbarstring];
    end   
 
