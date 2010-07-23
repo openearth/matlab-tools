@@ -94,9 +94,12 @@ h1 {
 	position	: absolute;
 	top		: 20px;
 	left		: 540px;
-	height		: 900px;
-	width		: 900px;
+	height		: 100%;
+	width		: 700px;
 }
+
+.FunctionCoverage {
+	overflow-x	: scroll;
 
 .icon_image {
 	border-style	: none;
@@ -105,13 +108,6 @@ h1 {
 </head>
 
 <body>
-
-<div id="header">
-	<a href="http://www.deltares.nl" target="_new">
-		<img id="header_image" src="img/Deltares_logo.jpg"</img>
-	</a>
-</div>
-
 <div id="content">
 	<div id="coveragetable" deltares:mtesttype="testtree">
 		<table id="myTable" class="tablesorter"> 
