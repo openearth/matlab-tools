@@ -96,12 +96,30 @@ classdef MTestPublisher < handle
                     end
                     
                     %% Create mtestfunction object
-                    functionsRun(ifunc).FileName = profileInfo.FunctionTable(ifunc).FileName;
+                    filename = profileInfo.FunctionTable(ifunc).FileName;
+                    if ~exist(filename,'file')
+                        [pt name ext] = fileparts(filename);
+                        filename = which([name,ext]);
+                        if isempty(filename)
+                            continue;
+                        end
+                        profileInfo.FunctionTable(ifunc).CompleteName = strrep(profileInfo.FunctionTable(ifunc).CompleteName,profileInfo.FunctionTable(ifunc).FileName,fileparts(filename));
+                        profileInfo.FunctionTable(ifunc).FileName = filename;
+                    end
+                    
+                    functionsRun(ifunc).FileName = filename;
                     functionsRun(ifunc).FunctionName = profileInfo.FunctionTable(ifunc).FunctionName;
 
                     %% Convert coverage to html
+                    try
                     [functionsRun(ifunc).HTML...
                         functionsRun(ifunc).Coverage] = this.coverage2html(profileInfo,ifunc);
+                    catch 
+                        % Never mind, this could be caused by a licence problem, but also by old
+                        % filedefinitions. ust ignore the file
+                        disp(['error with: ' functionsRun(ifunc).FileName]);
+                        functionsRun(ifunc).FileName = [];
+                    end
                 end
             end
             if this.Verbose
@@ -921,7 +939,7 @@ classdef MTestPublisher < handle
             end
         end
     end
-    methods (Static = true)
+    methods (Static = true, Hidden = true)
         function obj = filltemplate(obj,tplfilename)
             %fillTemplate  Replaces keywords in a template file with information from an mtestengine obj.
             %

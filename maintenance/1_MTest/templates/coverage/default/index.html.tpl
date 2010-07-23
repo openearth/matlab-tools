@@ -95,7 +95,7 @@ h1 {
 	top		: 20px;
 	left		: 540px;
 	height		: 100%;
-	width		: 700px;
+	width		: 650px;
 }
 
 .FunctionCoverage {
