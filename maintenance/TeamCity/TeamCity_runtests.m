@@ -182,20 +182,20 @@ try %#ok<TRYNC>
             delete(fullfile(targetdir,'mxdom2defaulthtml.xsl'));
         end
 
-        if OPT.PublishCoverage
-            mtr.MTestPublisher.publishcoverage(mtr.ProfileInfo,'TargetDir',fullfile(targetdir,'coverage'));
-    	    delete('OetTestCoverage.zip');
-            zip('OetTestCoverage',{fullfile(targetdir,'coverage','*.*')});
-        end
-
-        %% zip result and remove target dir
-        if OPT.Publish
-            mtr.MTestPublisher.publishtestsoverview(mtr,'TargetDir',fullfile(targetdir,'testoverview'));
-            delete('OetTestResult.zip');
-            zip('OetTestResult',{fullfile(targetdir,'testoverview','*.*')});
-        end
-
-        if OPT.Publish || OPT.PublishCoverage
+        if any(~[mtr.Tests.Igrnore]) && (OPT.Publish || OPT.PublishCoverage)
+            if OPT.PublishCoverage
+                mtr.MTestPublisher.publishcoverage(mtr.ProfileInfo,'TargetDir',fullfile(targetdir,'coverage'));
+                delete('OetTestCoverage.zip');
+                zip('OetTestCoverage',{fullfile(targetdir,'coverage','*.*')});
+            end
+            
+            %% zip result and remove target dir
+            if OPT.Publish
+                mtr.MTestPublisher.publishtestsoverview(mtr,'TargetDir',fullfile(targetdir,'testoverview'));
+                delete('OetTestResult.zip');
+                zip('OetTestResult',{fullfile(targetdir,'testoverview','*.*')});
+            end
+            
             rmdir(targetdir,'s');
         end
 
