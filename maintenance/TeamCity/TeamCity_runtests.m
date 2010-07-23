@@ -195,7 +195,7 @@ try %#ok<TRYNC>
             zip('OetTestResult',{fullfile(targetdir,'testoverview','*.*')});
         end
 
-        if OPT.Publish || OPT,PublishCoverage
+        if OPT.Publish || OPT.PublishCoverage
             rmdir(targetdir,'s');
         end
 
