@@ -80,6 +80,7 @@ try %#ok<TRYNC>
         'TestDataMainDir',[],...
         'Category','all',...
         'Publish',true,...
+        'PublishCoverage',true,...
         'RevisionNumber',NaN);
 
     if nargin > 0
@@ -181,16 +182,20 @@ try %#ok<TRYNC>
             delete(fullfile(targetdir,'mxdom2defaulthtml.xsl'));
         end
 
+        if OPT.PublishCoverage
+            mtr.MTestPublisher.publishcoverage(mtr.ProfileInfo,'TargetDir',fullfile(targetdir,'coverage'));
+    	    delete('OetTestCoverage.zip');
+            zip('OetTestCoverage',{fullfile(targetdir,'coverage','*.*')});
+        end
+
         %% zip result and remove target dir
         if OPT.Publish
-            mtr.MTestPublisher.publishcoverage(mtr.ProfileInfo,'TargetDir',fullfile(targetdir,'coverage'));
-
             mtr.MTestPublisher.publishtestsoverview(mtr,'TargetDir',fullfile(targetdir,'testoverview'));
-
             delete('OetTestResult.zip');
-            delete('OetTestCoverage.zip');
             zip('OetTestResult',{fullfile(targetdir,'testoverview','*.*')});
-            zip('OetTestCoverage',{fullfile(targetdir,'coverage','*.*')});
+        end
+
+        if OPT.Publish || OPT,PublishCoverage
             rmdir(targetdir,'s');
         end
 
