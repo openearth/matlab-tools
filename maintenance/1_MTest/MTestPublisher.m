@@ -109,6 +109,7 @@ classdef MTestPublisher < handle
             end
             
             functionsRun(cellfun(@isempty,{functionsRun.FileName}))=[];
+            functionsRun(isnan([functionsRun.Coverage]))=[];
             
             %% Publish coverage (tpl)
             covtplfiles = dir(fullfile(this.TargetDir,'*.tpl'));
@@ -655,7 +656,7 @@ classdef MTestPublisher < handle
                         tempstr = strrep(tempstr,'#COVERAGEHTML',sprintf('%s\n',functionsRun(icall).HTML));
                         
                         % #FUNCTIONCOVERAGE
-                        tempstr = strrep(tempstr,'#COVERAGEPERCENTAGE',num2str(functionsRun(icall).Coverage,'%0.1f'));
+                        tempstr = strrep(tempstr,'#COVERAGEPERCENTAGE',num2str(functionsRun(icall).Coverage,'%0.0f'));
                         
                         %% concatenate teststrings
                         finalstr = cat(2,finalstr,tempstr);
