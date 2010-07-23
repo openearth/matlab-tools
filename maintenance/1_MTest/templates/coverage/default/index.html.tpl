@@ -100,6 +100,7 @@ h1 {
 
 .FunctionCoverage {
 	overflow-x	: scroll;
+}
 
 .icon_image {
 	border-style	: none;
