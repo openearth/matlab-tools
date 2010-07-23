@@ -1,8 +1,15 @@
 delete('bin\*');
-
+mkdir bin;
 %  add wlsettings and oesettings
-wlsettings;
-run('F:\Repositories\OeTools\oetsettings.m');
+if isempty(which('drawgrid'))
+    wlsettings;
+end
+if isempty(which('grid_orth_getDataOnLine'))
+    run('F:\Repositories\OeTools\oetsettings.m');
+end
+
+% remove annoying startup.m in wafo dir from path
+rmpath('F:\Repositories\McTools\mc_applications\mc_wave\wafo\docs\');
 
 % add all detran routines
 addpath('detran_engines');

@@ -12,7 +12,7 @@ detran
 % <<prerendered_images/detran_screenshot.png>>
 %%
 % The use of the graphical user interface is illustrated in more detail in 
-% a <http://openearth.nl video tutorial>
+% a <http://public.deltares.nl/download/attachments/35948858/Detran_v1.00_videoTutorial.swf?version=1&modificationDate=1279716418895>
 %% Command line mode: using trim-files
 % To use Detran in command line mode, you have to specify some input 
 % arguments. If we have for example a single trim-file, and we want to 
