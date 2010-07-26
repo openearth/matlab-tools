@@ -225,7 +225,9 @@ function netcdf_settings(varargin)
    
    end
    
-   fprintf('\n*** netcdf settings enabled! ***\n');
-   fprintf('\n');
+   if ~OPT.quiet
+       fprintf('\n*** netcdf settings enabled! ***\n');
+       fprintf('\n');
+   end
 
 %% EOF   
