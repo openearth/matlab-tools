@@ -114,8 +114,8 @@ h1 {
 				    <td>#COVERAGEPERCENTAGE</td> 
 				    <td><a class="mtestcoverageref" href="##FUNCTIONNAME" mtest:testnameid="#FUNCTIONNAME">#FUNCTIONNAME</a></td> 
 				    <td>
+				    	<a name="#FUNCTIONNAME">
 				    	<div mtestcoverageid="#FUNCTIONNAME" class="ui-widget-content ui-corner-all FunctionCoverage">
-				    	   <a name="#FUNCTIONNAME">
 				    	   <h1>Coverage overview for: #FUNCTIONNAME</h1>
 				    	   #COVERAGEHTML
 					</div>
