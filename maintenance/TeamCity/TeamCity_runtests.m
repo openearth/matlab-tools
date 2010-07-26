@@ -56,6 +56,15 @@ try %#ok<TRYNC>
 
     %% First load oetsettings
     try
+    	if exist('OetTestCoverage.zip','file')
+    	   delete('OetTestCoverage.zip');
+    	end
+    	if exist('OetTestResult.zip','file')
+	   delete('OetTestResult.zip');
+    	end
+    	if exist('OetTestResult.mat','file')
+	   delete('OetTestResult.mat');
+    	end
         oetdir = strrep(fileparts(mfilename('fullpath')),'maintenance\TeamCity','');
         addpath(oetdir);
         addpath(genpath(fullfile(oetdir,'maintenance')));
@@ -182,20 +191,18 @@ try %#ok<TRYNC>
             delete(fullfile(targetdir,'mxdom2defaulthtml.xsl'));
         end
 
-        if any(~[mtr.Tests.Igrnore]) && (OPT.Publish || OPT.PublishCoverage)
+        if any(~[mtr.Tests.Ignore]) && (OPT.Publish || OPT.PublishCoverage)
             if OPT.PublishCoverage
                 mtr.MTestPublisher.publishcoverage(mtr.ProfileInfo,'TargetDir',fullfile(targetdir,'coverage'));
-                delete('OetTestCoverage.zip');
                 zip('OetTestCoverage',{fullfile(targetdir,'coverage','*.*')});
             end
-            
+
             %% zip result and remove target dir
             if OPT.Publish
                 mtr.MTestPublisher.publishtestsoverview(mtr,'TargetDir',fullfile(targetdir,'testoverview'));
-                delete('OetTestResult.zip');
                 zip('OetTestResult',{fullfile(targetdir,'testoverview','*.*')});
             end
-            
+
             rmdir(targetdir,'s');
         end
 
