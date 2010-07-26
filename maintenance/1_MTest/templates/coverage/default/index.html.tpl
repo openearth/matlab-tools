@@ -12,25 +12,36 @@
 	$(document).ready(function ()
 	{
 		// Prepare table
-		$("table").tablesorter(); 
-		
+		$("table").tablesorter();
+
 		$("#StartMessage").show();
-		
-		$(".FunctionCoverage").hide();
-		
+
+		$(".FunctionCoverage").each(function(i) {
+			$(this).css("display","none");
+			$(this).css("padding-top","11px");
+			$(this).css("padding-bottom","11px");
+			$(this).addClass("ui-collapsible-content ui-helper-reset ui-widget-content ui-corner-bottom ui-collapsible-content-active");
+		});
+
 		$(".mtestcoverageref").each(function(i) {
-				$(this).bind('click', {index:i, coveragelinkid:$(this).attr('mtest:testnameid')}, showcoverage);
-			});
+			$(this).bind('click', {index:i, coveragelinkid:$(this).attr('mtest:testnameid')}, showcoverage);
+		});
 	});
 	
 	function showcoverage(event)
 	{
-	// hide all divs
-	$("#StartMessage").hide();
-	$(".FunctionCoverage").hide();
-	
-	// show coverage for selected function
-	$('[mtestcoverageid = ' + event.data.coveragelinkid + ']').show();
+		var d = $('[mtestcoverageid = ' + event.data.coveragelinkid + ']');
+
+		if ($(d).css('display')=="block")
+	    {
+	    	// content is visible --> so hide it
+		    $(d).css('display','none');
+		}
+		else
+		{
+		    // Show the content
+		    $(d).css('display','block');
+		}
 	}
 
 </script>
@@ -60,14 +71,6 @@ h1 {
 	width		: 202px;
 }
 
-#header_image {
-	color           : white;
-	background-color: white;
-	border-style    : none;
-	height		: 100px;
-	margin		: 0 auto;
-}
-
 #content {
 	border-style	: none;
 	position	: relative;
@@ -81,29 +84,11 @@ h1 {
 	position	: absolute;
 	top		: 20px;
 	left		: 20px;
-	width		: 500px;
-}
-
-#coverage_viewer {
-	color           : black;
-	background-color: white;
-	border-style	: none;
-	font-family     : salse,arial,sans-serif;
-	font-size       : 12px;
-	border-width	: thin;
-	position	: absolute;
-	top		: 20px;
-	left		: 540px;
-	height		: 100%;
-	width		: 650px;
+	right		: 20px;
 }
 
 .FunctionCoverage {
 	overflow-x	: scroll;
-}
-
-.icon_image {
-	border-style	: none;
 }
 </style>
 </head>
@@ -114,38 +99,33 @@ h1 {
 		<table id="myTable" class="tablesorter"> 
 			<thead> 
 				<tr> 
-				    <th>Function Name</th> 
 				    <th>Coverage (%)</th> 
+				    <th>Function Name</th> 
+				    <th>Coverage Overview</th>
 				</tr> 
 			</thead> 
 			<tfoot> 
 				<tr> 
-				    <th>Function Name</th> 
 				    <th>Coverage (%)</th> 
+				    <th>Function Name</th> 
+				    <th>Coverage Overview</th>
 				</tr> 
 			</tfoot> 		
 			<tbody> 
 			<!--##BEGINFUNCTIONS-->
 				<tr> 
-				    <td><a class="mtestcoverageref" href="#" mtest:testnameid="#FUNCTIONNAME">#FUNCTIONNAME</a></td> 
 				    <td>#COVERAGEPERCENTAGE</td> 
+				    <td><a class="mtestcoverageref" href="#" mtest:testnameid="#FUNCTIONNAME">#FUNCTIONNAME</a></td> 
+				    <td>
+				    	<div mtestcoverageid="#FUNCTIONNAME" class="ui-widget-content ui-corner-all FunctionCoverage">
+				    	   <h1>Coverage overview for: #FUNCTIONNAME</h1>
+				    	   #COVERAGEHTML
+					</div>
+				    </td>
 				</tr> 
 			<!--##ENDFUNCTIONS-->
 			</tbody> 
 		</table> 
-	</div>
-
-	<div id="coverage_viewer">
-		<div id="StartMessage" class="ui-widget-content ui-corner-all">
-			<h1>Coverage overview</h1>
-			Click one of the functions on the left to show its coverage overview.
-		</div>
-		<!--##BEGINFUNCTIONS-->
-		<div mtestcoverageid="#FUNCTIONNAME" class="ui-widget-content ui-corner-all FunctionCoverage">
-			<h1>Coverage overview for: #FUNCTIONNAME</h1>
-			#COVERAGEHTML
-		</div>
-		<!--##ENDFUNCTIONS-->
 	</div>
 </div>
 </body>
