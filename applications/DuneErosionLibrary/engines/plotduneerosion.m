@@ -372,6 +372,7 @@ try
         'Hs: ', num2str(Result(1).info.input.Hsig_t, '%8.2f'), ' m'; ...
         'Tp: ', num2str(Result(1).info.input.Tp_t, '%8.2f'), ' s'; ...
         'D50: ', num2str(Result(1).info.input.D50*1e6, '%8.2f'), ' \mum'};
+    input2Plot = input2Plot(ismember({'Hs' 'Tp' 'D50'}, OPT.legenditems),:);
 catch %#ok<CTCH>
     input2Plot = {};
 end
