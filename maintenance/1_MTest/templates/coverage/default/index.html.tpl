@@ -87,9 +87,6 @@ h1 {
 	right		: 20px;
 }
 
-.FunctionCoverage {
-	overflow-x	: scroll;
-}
 </style>
 </head>
 
@@ -115,9 +112,10 @@ h1 {
 			<!--##BEGINFUNCTIONS-->
 				<tr> 
 				    <td>#COVERAGEPERCENTAGE</td> 
-				    <td><a class="mtestcoverageref" href="#" mtest:testnameid="#FUNCTIONNAME">#FUNCTIONNAME</a></td> 
+				    <td><a class="mtestcoverageref" href="##FUNCTIONNAME" mtest:testnameid="#FUNCTIONNAME">#FUNCTIONNAME</a></td> 
 				    <td>
 				    	<div mtestcoverageid="#FUNCTIONNAME" class="ui-widget-content ui-corner-all FunctionCoverage">
+				    	   <a name="#FUNCTIONNAME">
 				    	   <h1>Coverage overview for: #FUNCTIONNAME</h1>
 				    	   #COVERAGEHTML
 					</div>
