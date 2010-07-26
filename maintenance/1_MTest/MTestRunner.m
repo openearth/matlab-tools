@@ -333,8 +333,11 @@ classdef MTestRunner < handle
             obj.Tests(wrongtests) = [];
             
             %% Get profiler information
-            if min(size(obj.Tests))>0
+            if min(size(obj.Tests))>0 && ~all([obj.Tests.Ignore])
                 obj.ProfileInfo = MTestUtils.mergeprofileinfo(obj.Tests(~[obj.Tests.Ignore]).ProfilerInfo);
+            else
+                profile('clear');
+                obj.ProfileInfo = profile('info');
             end
             
             %% return to the previous searchpath settings
