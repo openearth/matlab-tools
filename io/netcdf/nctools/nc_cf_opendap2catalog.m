@@ -183,7 +183,7 @@ function ATT = nc_cf_opendap2catalog(varargin)
 
    entry = 0;
    
-   for ifile=OPT.processfiles%1:length(OPT.files)
+   for ifile=1:length(OPT.files)
        OPT.filename = OPT.files{ifile};
        
        entry = entry + 1;
