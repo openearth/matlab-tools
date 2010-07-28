@@ -116,9 +116,16 @@ OPT.h    = h;  % handle to input surf object
 OPT = setproperty(OPT, varargin);
 
 %% initialize waitbars
-multiWaitbar('fig2png_print_tile'  ,0,'label','Printing tiles' ,'color',[0.0 0.4 0.9])
-multiWaitbar('fig2png_merge_tiles' ,0,'label','Merging tiles'  ,'color',[0.6 0.2 0.2])
-multiWaitbar('fig2png_write_kml'   ,0,'label','Writing KML'    ,'color',[0.9 0.4 0.1])
+
+if OPT.printTiles
+    multiWaitbar('fig2png_print_tile'  ,0,'label','Printing tiles' ,'color',[0.0 0.4 0.9])
+end
+if OPT.joinTiles
+   multiWaitbar('fig2png_merge_tiles' ,0,'label','Merging tiles'  ,'color',[0.6 0.2 0.2])
+end
+if OPT.makeKML
+    multiWaitbar('fig2png_write_kml'   ,0,'label','Writing KML'    ,'color',[0.9 0.4 0.1])
+end
 
 %% make sure you always see somehting in GE, even at really low lowestLevel
 if OPT.lowestLevel <= OPT.highestLevel 
@@ -214,21 +221,18 @@ daspect(OPT.ha,'auto') % repair effect of for instance axislat()
 
 %   --------------------------------------------------------------------
 % Generates tiles at most detailed level
-multiWaitbar('fig2png_print_tile'  ,0,'label','Printing tiles' ,'color',[0.0 0.4 0.9])
 if OPT.printTiles
     KML_fig2pngNew_printTile(OPT.basecode,D,OPT)
 end
 
 %   --------------------------------------------------------------------
 % Generates tiles other levels based on already created tiles (merging & resizing)
-multiWaitbar('fig2png_merge_tiles' ,0,'label','Merging tiles'  ,'color',[0.6 0.2 0.2])
 if OPT.joinTiles
    KML_fig2pngNew_joinTiles(OPT)
 end
 
 %   --------------------------------------------------------------------
 % Generates KML based on png file names
-multiWaitbar('fig2png_write_kml'   ,0,'label','Writing KML'    ,'color',[0.9 0.4 0.1])
 if OPT.makeKML
     KML_fig2pngNew_makeKML(OPT)
 end

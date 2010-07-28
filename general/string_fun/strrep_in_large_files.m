@@ -10,7 +10,7 @@ function strrep_in_large_files(fileNames,str1,str2,varargin)
 %
 %   Input:
 %   fileNames = structure of files to search (leave empty for gui)
-%   str1      = string to find find
+%   str1      = string to find
 %   str2      = string to replace it with
 %   varargin  = keyword/value pairs for additional options
 %

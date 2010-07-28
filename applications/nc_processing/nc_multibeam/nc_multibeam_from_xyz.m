@@ -285,6 +285,7 @@ for jj = 1:length(fns)
             end
             WB.bytesWritten = WB.bytesRead;
         end
+        fclose(fid);
         WB.bytesDoneClosedFiles = WB.bytesDoneClosedFiles + fns_unzipped(ii).bytes;
     end
 end

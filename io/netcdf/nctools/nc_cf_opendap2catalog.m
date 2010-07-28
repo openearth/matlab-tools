@@ -87,7 +87,7 @@ function ATT = nc_cf_opendap2catalog(varargin)
    OPT.mask           = '*.nc';
    OPT.pause          = 0;
    OPT.test           = 0;
-   OPT.save           = 1; % save catalog in directory
+   OPT.save           = 0; % save catalog in directory
    OPT.recursive      = 0;
    OPT.processfiles   = 401:600;
    OPT.catalog_dir    = 'd:\checkouts\';
@@ -350,7 +350,7 @@ function ATT = nc_cf_opendap2catalog(varargin)
    for ifld=1:length(OPT.attname)
        fldname = mkvar(OPT.attname{ifld});
        if ischar(ATT.(fldname))
-           ATT.(fldname) = strtrim(ATT.(fldname))
+           ATT.(fldname) = strtrim(ATT.(fldname));
            if isempty(ATT.(fldname))
                ATT.(fldname) = repmat(' ',[entry 1]);
            end
