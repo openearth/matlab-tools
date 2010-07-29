@@ -242,8 +242,8 @@ for jj = 1:length(fns)
         minx    = floor(minx/OPT.mapsizex)*OPT.mapsizex - OPT.xoffset;
         miny    = floor(miny/OPT.mapsizey)*OPT.mapsizey - OPT.yoffset;
         
-        x      =         xllcorner:xllcorner + cellsize*(ncols-1);
-        y      = flipud((yllcorner:yllcorner + cellsize*(nrows-1))');
+        x      =         xllcorner:cellsize:xllcorner + cellsize*(ncols-1);
+        y      = flipud((yllcorner:cellsize:yllcorner + cellsize*(nrows-1))');
         y(:,2) = ceil((1:length(y))'./floor(OPT.block_size/ncols));
         y(:,3) = mod((0:length(y)-1)',floor(OPT.block_size/ncols))+1;
         
@@ -255,19 +255,19 @@ for jj = 1:length(fns)
                 
                 z = nan(length(iy),length(ix));
                 for iD = unique(y(iy,2))'
-                    if~(numel(D{iD}{1})==1&&isnan(D{iD}{1}(1)))
+                    if ~(numel(D{iD}{1})==1&&isnan(D{iD}{1}(1)))
                         z(y(iy,2)==iD,:) = D{iD}{1}(y(iy(y(iy,2)==iD),3),ix)*OPT.zfactor;
                     end
                 end
                 
                 % generate X,Y,Z
-                x_vector = x0:OPT.gridsizex:x0+OPT.mapsizex;
-                y_vector = y0:OPT.gridsizey:y0+OPT.mapsizey;
-                [X,Y]    = meshgrid(x_vector,fliplr(y_vector));
+                x_vector =        x0:OPT.gridsizex:x0+OPT.mapsizex;
+                y_vector = fliplr(y0:OPT.gridsizey:y0+OPT.mapsizey);
+                [X,Y]    = meshgrid(x_vector,y_vector);
                 Z = nan(size(X));
                 Z(...
-                    find(y_vector  >=y(iy(end)),1,'first'):find(y_vector  <=y(iy(1)),1,'last'),...
-                    find(x_vector  >=x(ix(1)),1,'first'):find(x_vector  <=x(ix(end)),1,'last')) = z;
+                    find(y_vector  >=y(iy(end)),1,'last'):-1:find(y_vector  <=y(iy(1)),1,'first'),...
+                    find(x_vector  >=x(ix(1)),1,'first'):find(x_vector  <=x(ix(end)),1,'last')) = flipud(z);
                 
                 if any(~isnan(Z(:)))
                     ncfile = fullfile(OPT.netcdf_path,sprintf('%8.2f_%8.2f_%s_data.nc',x0,y0,OPT.datatype));
