@@ -82,14 +82,14 @@ for i = 1:length(samples.D50)
             'FallVelocity', {@getFallVelocity 'a' 0.476 'b' 2.18 'c' 3.226 'D50'});
         
         % set coastal curvature, if provided
-        if ~isempty(samples.R(i))
+        if ismember('R', fieldnames(samples)) && ~isempty(samples.R(i))
             DuneErosionSettings('set', 'Bend', 180 / (pi * samples.R(i)) * 1000);
         else
             DuneErosionSettings('set', 'Bend', 0);
         end
         
         %% carry out DUROS+ computation
-        result = getDuneErosion(xInitial, zInitial, samples.D50(i), samples.WL_t(i), samples.Hsig_t(i), samples.Tp_t(i));
+        result = DUROS(xInitial, zInitial, samples.D50(i), samples.WL_t(i), samples.Hsig_t(i), samples.Tp_t(i));
         Tp_t(i) = result(1).info.input.Tp_t;
 
         %% Derive z-value
@@ -99,8 +99,8 @@ for i = 1:length(samples.D50)
 
         %%
         if length(result) > 1
-            samples.Duration(i) = -result(2).Volumes.Volume*Duration(i);
-            samples.Accuracy(i) = -result(2).Volumes.Volume*Accuracy(i);
+            samples.Duration(i) = -result(2).Volumes.Volume*samples.Duration(i);
+            samples.Accuracy(i) = -result(2).Volumes.Volume*samples.Accuracy(i);
         end
 %         for var = {'D50' 'WL_t' 'Hsig_t' 'Tp_t' 'Duration' 'Accuracy' 'RD'}
 %             fprintf('%10e ', eval([var{1} '(' num2str(i) ')']))
