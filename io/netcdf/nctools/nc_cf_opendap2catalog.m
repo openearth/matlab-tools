@@ -87,6 +87,7 @@ OPT.char_length    = 256; % pre-allocate for speed-up in addition to length(OPT.
 OPT.mask           = '*.nc';
 OPT.pause          = 0;
 OPT.test           = 0;
+OPT.urlPathFcn     = @(s)(s); % function to run on urlPath, as e.g. strrep
 OPT.save           = 0; % save catalog in directory
 OPT.recursive      = 0;
 OPT.catalog_dir    = [];
@@ -224,7 +225,7 @@ for ifile=1:length(OPT.files)
         end
     end
     
-    urlPath = OPT.filename;
+    urlPath = OPT.urlPathFcn(OPT.filename);
     ATT.urlPath(entry,1:length(urlPath)) = urlPath;
     
     %% get all standard_names (and prevent doubles)

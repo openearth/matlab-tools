@@ -17,7 +17,9 @@ function string = path2os(string,input)
 %
 % Also removes redundant (double) slashes
 % that might have arisen when merging
-% pathnames like in d:\temp\\foo\\
+% pathnames like in d:\temp\\foo\\,
+% except for double slashes at the beginning of a path ,
+% as in //networkdrive/
 %
 %See also: MKDIR,  EXIST, MKPATH,     COPYFILE, CD, LAST_SUBDIR,
 %          DELETE, DIR,   FILEATTRIB, MOVEFILE, RMDIR.
@@ -60,15 +62,15 @@ function string = path2os(string,input)
    if nargin==1
        slash = filesep;
    else
-       if     input(1) == 'u' | ...
+       if     input(1) == 'u' || ...
               input(1) == 'l'
               slash    =  '/';
               
-       elseif input(1) == 'w' | ...
+       elseif input(1) == 'w' || ...
               input(1) == 'd'
               slash    =  '\';
               
-       elseif input(1) == '\' | ...
+       elseif input(1) == '\' || ...
               input(1) == '/'
               slash    =  input(1);
        end
@@ -88,7 +90,7 @@ function string = path2os(string,input)
    while ~strcmp(string,string1)
 
       string1 = string;
-      string  = strrep(string,[slash, slash],slash);
+      string  = [string(1) strrep(string(2:end),[slash, slash],slash)];
 
    end
    

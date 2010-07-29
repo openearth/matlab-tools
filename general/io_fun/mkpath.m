@@ -60,6 +60,13 @@ if ~(exist(directory,'dir')==7)
 
    indices   = strfind(directory,filesep);
    
+   % this expception if for network directories starting with '\\'
+   if numel(indices)>=2
+       if isequal(indices(1:2),[1 2])
+           indices = indices(3:end);
+       end
+   end
+   
    if length(indices)==1
    
       %% Make subdirectory lowest in directory tree
