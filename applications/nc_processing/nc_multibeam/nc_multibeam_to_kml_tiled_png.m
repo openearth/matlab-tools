@@ -80,6 +80,10 @@ OPT.description             = [];
 OPT.lightAdjust             = [];
 OPT.serverURL               = [];
 
+OPT.basepath_local          = [];
+OPT.basepath_network        = [];
+OPT.basepath_www            = [];
+OPT.kmlpath                 = [];
 
 if nargin==0
     varargout = {OPT};
@@ -118,7 +122,11 @@ end
 if isempty(OPT.outputDir)
     OPT.outputDir = OPT.inputDir;
 end
-fns = dir(fullfile(OPT.inputDir,OPT.inputNc));
+
+fns_temp = findAllFiles('basepath',OPT.inputDir,'pattern_incl','*.nc','pattern_excl',{'\.svn','catalog'});
+for ii = 1:length(fns_temp)
+    fns(ii) = dir(fns_temp{ii});
+end
 
 disp('generating kml files... ')
 %% initialize waitbars

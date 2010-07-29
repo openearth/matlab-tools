@@ -61,7 +61,6 @@ function varargout = nc_multibeam_from_asc(varargin)
 OPT.block_size          = 3e6;
 OPT.make                = true;
 OPT.copy2server         = false;
-OPT.delete_existing     = true;
 
 OPT.basepath_local      = '';
 OPT.basepath_network    = '';
@@ -116,22 +115,16 @@ if OPT.make
     if isempty(OPT.netcdf_path)
         error
     end
-    
-    if OPT.delete_existing
-        % delete existing nc_files
-        delete(fullfile(OPT.basepath_local,OPT.netcdf_path, '*.nc'))
-    end
-    
+   
     EPSG             = load('EPSG');
     mkpath(fullfile(OPT.basepath_local,OPT.netcdf_path));
     delete(fullfile(OPT.basepath_local,OPT.netcdf_path,'*.nc'));
     
-    
     if OPT.zip
         mkpath(OPT.cache_path);
-        fns = dir(fullfile(OPT.basepath_local,OPT.raw_path,OPT.zip_extension));
+        fns = dir(fullfile(OPT.raw_path,OPT.zip_extension));
     else
-        fns = dir(fullfile(OPT.basepath_local,OPT.raw_path,OPT.raw_extension));
+        fns = dir(fullfile(OPT.raw_path,OPT.raw_extension));
     end
     
     %% check if files are found
@@ -160,7 +153,7 @@ if OPT.make
             delete(fullfile(OPT.cache_path, '*'));
             
             % uncompress files with a gui for progres indication
-            uncompress(fullfile(OPT.basepath_local,OPT.raw_path,fns(jj).name),...
+            uncompress(fullfile(OPT.raw_path,fns(jj).name),...
                 'outpath',fullfile(OPT.cache_path),'gui',true,'quiet',true);
             
             % read the output of unpacked files
@@ -192,9 +185,9 @@ if OPT.make
             time    = OPT.dateFcn(fns_unzipped(ii).name) - datenum(1970,1,1);
             
             if OPT.zip
-                fid      = fopen(fullfile(                   OPT.cache_path,fns_unzipped(ii).name));
+                fid      = fopen(fullfile(OPT.cache_path,fns_unzipped(ii).name));
             else
-                fid      = fopen(fullfile(OPT.basepath_local,OPT.raw_path  ,fns_unzipped(ii).name));
+                fid      = fopen(fullfile(OPT.raw_path  ,fns_unzipped(ii).name));
             end
             s = fgetl(fid); ncols        = strread(s,       'ncols %d');
             s = fgetl(fid); nrows        = strread(s,       'nrows %d');
