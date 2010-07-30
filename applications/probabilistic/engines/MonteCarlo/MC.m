@@ -1,10 +1,13 @@
-function result = MC(stochast, varargin)
+function result = MC(varargin)
 %MC  perform Monte Carlo simulation
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = MC(varargin)
+%   result = MC(stochast)
+%   result = MC(..
+%       'stochast', stochast,...
+%       'NrSamples', 1000);
 %
 %   Input:
 %   varargin  =
@@ -19,7 +22,7 @@ function result = MC(stochast, varargin)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
-%       C.(Kees) den Heijer
+%       Kees den Heijer
 %
 %       C.denHeijer@TUDelft.nl	
 %
@@ -75,8 +78,20 @@ result = MC(exampleStochastVar,...
 %}
 
 %% settings
+
+% the following few lines are meant for backward compatibility with the
+% situation where the first input argument was always the stochast
+% structure
+first_input_is_stochast = nargin > 0 && isstruct(varargin{1});
+if first_input_is_stochast
+    varargin = [{'stochast'} varargin];
+end
+
 % defaults
 OPT = struct(...
+    'stochast', struct(),... % stochast structure
+    'x2zFunction', @x2z,...  % Function to transform x to z
+    'variables', {{}},...    % aditional variables to use in x2zFunction
     'NrSamples', 1e2,...     % number of samples
     'ISvariable', '',...     % "importance sampling" variable
     'W', 1,...               % "importance sampling" factor
@@ -84,14 +99,28 @@ OPT = struct(...
     'f2', 0,...              % "importance sampling" lower frequency boundary
     'Resistance', 0,...      % Resistance value(s) to be (optionally) used in z-function       
     'P2xFunction', @P2x,...  % Function to transform P to x
-    'x2zFunction', @x2z,...  % Function to transform x to z
-    'variables', {{}},...    % aditional variables to use in x2zFunction
-    'seed', NaN ...          % seed for random generator
+    'seed', NaN,...          % seed for random generator
+    ...
+    'result', struct() ...   % input existing result structure to re-calculate existing samples
     );
 % overrule default settings by propertyName-propertyValue pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
 
-getdefaults('stochast', exampleStochastVar, 0);
+%% check whether result is parsed as input
+result_as_input = ~isempty(fieldnames(OPT.result));
+if result_as_input
+    % put stochast structure into the input field of result
+    OPT.stochast = OPT.result.Input;
+    % overwrite fields of OPT with 
+    for f = fieldnames(OPT.result.settings)'
+        if ~ismember(f, {'stochast' 'result'})
+            OPT.(f{1}) = OPT.result.settings.(f{1});
+        end
+    end
+end
+
+%%
+stochast = OPT.stochast;
 
 Nstoch = length(stochast); % number of stochastic variables
 
@@ -100,80 +129,92 @@ active = ~cellfun(@isempty, {stochast.Distr}) &...
     ~strcmp('deterministic', cellfun(@func2str, {stochast.Distr},...
     'UniformOutput', false));
 
-if OPT.f1 < Inf && OPT.f2 > 0 || OPT.W ~= 1
-    % in case of importance sampling, check whether specified variable is
-    % available
-    idIS = strcmp({stochast.Name}, OPT.ISvariable);
-    if all(~idIS)
-        error([OPT.ISvariable ' not found'])
-    end
-    if any(idIS & ~active)
-        error('Importance Sampling variable should be active')
-    end
-end
 
-% get random samples of P
-if ~isnan(OPT.seed)
-    rand('seed', OPT.seed)
-end
-P = rand(OPT.NrSamples, Nstoch);
-P(:, ~active) = 0.5;
-
-% f2 should be smaller than f2
-if OPT.f1 < OPT.f2
-    [OPT.f1 OPT.f2] = deal(OPT.f2, OPT.f1);
-end
-
-if OPT.f1 < Inf && OPT.f2 > 0
-    
-    Iplus = 1;
-    NaNsinP = true;
-    
-    while NaNsinP
-        Iplus = Iplus + 1;
-        maxpgrid = -log10(OPT.f2) + Iplus;
-        pgrid = (0.01:0.01:maxpgrid)';
-        Ponder = unique([flipud(0.5*(10.^-pgrid)); (0.489:0.001:0.511)';  (1-0.5*10.^-pgrid)]);
-
-        % derive probability distribution and probability density of H as
-        % table
-        % this distribution is needed to derive the correction coefficient
-        % which essential for Importance Sampling
-        cdf = feval(stochast(idIS).Distr, Ponder, stochast(idIS).Params{:});
-
-        [xcentr dPdx] = cdf2pdf(Ponder, cdf(:,end));
-
-        % find boundaries for sampling of the Importance Sampling variable
-        Pgrens = exp(-[OPT.f1 OPT.f2]); % probability of non-exceedance boundaries
-        Hgrens = feval(stochast(idIS).Distr, Pgrens', stochast(idIS).Params{:});% boundaries from CDF
-        Hgrens = [0.9; 1.1].*Hgrens(:,end); % make boundaries a bit wider, because of possibly correlated other variables
-
-        % sample Importance Sampling variable
-        H = Hgrens(1) + P(:,idIS)*(Hgrens(2)-Hgrens(1));
-        
-        P(:,idIS) = interp1(cdf(:,end), Ponder, H);
-
-        if all(~any(isnan(P)))
-            NaNsinP = false;
+if result_as_input
+    P = OPT.result.Output.P;
+    p_correctie = OPT.result.Output.Pcor;
+    Pexc = OPT.result.Output.Pexc;
+    x = OPT.result.Output.x;
+else
+    if OPT.f1 < Inf && OPT.f2 > 0 || OPT.W ~= 1
+        % in case of importance sampling, check whether specified variable is
+        % available
+        idIS = strcmp({stochast.Name}, OPT.ISvariable);
+        if all(~idIS)
+            error([OPT.ISvariable ' not found'])
+        end
+        if any(idIS & ~active)
+            error('Importance Sampling variable should be active')
         end
     end
-    % correction coefficient for bias in Importance Sampling variable
-    p_correctie = interp1(xcentr, dPdx, H);   % PDF Importance Sampling variable
-    p_correctie = repmat((Hgrens(2)-Hgrens(1))*p_correctie, 1, length(OPT.Resistance));
-else
-    p_correctie = 1;
+    
+    % get random samples of P
+    if ~isnan(OPT.seed)
+        rand('seed', OPT.seed)
+    end
+    
+    P = rand(OPT.NrSamples, Nstoch);
+    
+    % f2 should be smaller than f2
+    if OPT.f1 < OPT.f2
+        [OPT.f1 OPT.f2] = deal(OPT.f2, OPT.f1);
+    end
+    
+    if OPT.f1 < Inf && OPT.f2 > 0
+        
+        Iplus = 1;
+        NaNsinP = true;
+        
+        while NaNsinP
+            Iplus = Iplus + 1;
+            maxpgrid = -log10(OPT.f2) + Iplus;
+            pgrid = (0.01:0.01:maxpgrid)';
+            Ponder = unique([flipud(0.5*(10.^-pgrid)); (0.489:0.001:0.511)';  (1-0.5*10.^-pgrid)]);
+            
+            % derive probability distribution and probability density of H as
+            % table
+            % this distribution is needed to derive the correction coefficient
+            % which essential for Importance Sampling
+            cdf = feval(stochast(idIS).Distr, Ponder, stochast(idIS).Params{:});
+            
+            [xcentr dPdx] = cdf2pdf(Ponder, cdf(:,end));
+            
+            % find boundaries for sampling of the Importance Sampling variable
+            Pgrens = exp(-[OPT.f1 OPT.f2]); % probability of non-exceedance boundaries
+            Hgrens = feval(stochast(idIS).Distr, Pgrens', stochast(idIS).Params{:});% boundaries from CDF
+            Hgrens = [0.9; 1.1].*Hgrens(:,end); % make boundaries a bit wider, because of possibly correlated other variables
+            
+            % sample Importance Sampling variable
+            H = Hgrens(1) + P(:,idIS)*(Hgrens(2)-Hgrens(1));
+            
+            P(:,idIS) = interp1(cdf(:,end), Ponder, H);
+            
+            if all(~any(isnan(P)))
+                NaNsinP = false;
+            end
+        end
+        % correction coefficient for bias in Importance Sampling variable
+        p_correctie = interp1(xcentr, dPdx, H);   % PDF Importance Sampling variable
+        p_correctie = repmat((Hgrens(2)-Hgrens(1))*p_correctie, 1, length(OPT.Resistance));
+    else
+        p_correctie = 1;
+    end
+    
+    % set the P-values in the columns of the non-active variables to .5
+    P(:,~active) = .5;
+    
+    if OPT.W ~= 1
+        % change P values of the IS variable to W times as extreme
+        P(:,idIS) = 1-(1-P(:,idIS))/OPT.W;
+    end
+    
+    % transform P to x
+    x = feval(OPT.P2xFunction, stochast, P);
+    
+    % derive the probability of exceedance for each realisation
+    %TODO: check how to do this for importance sampling
+    Pexc = prod(1-P(:,active),2);
 end
-
-% set the P-values in the columns of the non-active variables to .5
-P(:,~active) = deal(.5);
-
-if OPT.W ~= 1
-    % change P values of the IS variable to W times as extreme
-    P(:,idIS) = 1-(1-P(:,idIS))/OPT.W;
-end
-
-% transform P to x
-x = feval(OPT.P2xFunction, stochast, P);
 
 samples = cell2struct(mat2cell(x, size(x,1), ones(size(x,2),1)), {stochast.Name}, 2);
 % derive z based on x
@@ -184,8 +225,10 @@ idFail = z<0;
 P_f = sum(idFail.* p_correctie)/(OPT.NrSamples*OPT.W);
 P_f(P_f == 0) = deal(NaN);
 
-Pexc = prod(1-P(:,active),2);
+% remove fields from OPT structure
+OPT = rmfield(OPT, {'stochast' 'result'});
 
+% prepare result structure
 result = struct(...
     'settings', OPT,...
     'Input', stochast,...
