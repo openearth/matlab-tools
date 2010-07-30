@@ -3,4 +3,4 @@ function OK=path2os_test
 %
 %See also: path2os
 
-OK = isequal(path2os('/\//\\///\\\////\\\\/////\\\\\//////\\\\\\'),filesep)
+OK = isequal(path2os('/\//\\///\\\////\\\\/////\\\\\//////\\\\\\'),'\\');

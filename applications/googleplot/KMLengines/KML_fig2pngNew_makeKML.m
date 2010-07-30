@@ -70,7 +70,7 @@ for level = OPT.highestLevel:OPT.lowestLevel
             '</Region>\n'...
             '<GroundOverlay>\n'...
             '<name>%s</name>\n'...kml_id
-            '<drawOrder>%d</drawOrder>\n'...drawOrder
+            '<drawOrder>%0.0f</drawOrder>\n'...drawOrder
             '%s'...timeSpan
             '<Icon><href>%s_%s.png</href></Icon>\n'...%file_link
             '<LatLonAltBox><north>%3.8f</north><south>%3.8f</south><west>%3.8f</west><east>%3.8f</east></LatLonAltBox>\n' ...N,S,W,E

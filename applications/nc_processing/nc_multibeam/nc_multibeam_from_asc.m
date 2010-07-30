@@ -70,8 +70,7 @@ OPT.raw_extension       = '*.asc';
 OPT.netcdf_path         = [];
 OPT.cache_path          = fullfile(tempdir,'nc_asc');
 OPT.zip                 = true;          % are the files zipped?
-OPT.zip_extension       = '*.zip';       % are the files zipped?
-
+OPT.zip_extension       = '*.zip';       % zip file extension
 
 OPT.datatype            = 'multibeam';
 OPT.EPSGcode            = 28992;
@@ -110,12 +109,13 @@ if OPT.make
     disp('generating nc files... ')
     %% limited input check
     if isempty(OPT.raw_path)
-        error
+        error %#ok<LTARG>
     end
     if isempty(OPT.netcdf_path)
-        error
+        error  %#ok<LTARG>
     end
-   
+
+    %%
     EPSG             = load('EPSG');
     mkpath(fullfile(OPT.basepath_local,OPT.netcdf_path));
     delete(fullfile(OPT.basepath_local,OPT.netcdf_path,'*.nc'));
@@ -205,11 +205,11 @@ if OPT.make
                 multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
                 multiWaitbar('nc_reading',ftell(fid)/fns_unzipped(ii).bytes,'label',sprintf('Reading: %s...', (fns_unzipped(ii).name))) ;
                 kk = kk+1;
-                D{kk}     = textscan(fid,repmat('%f32',1,ncols),floor(OPT.block_size/ncols),'CollectOutput',true);
+                D{kk}     = textscan(fid,repmat('%f32',1,ncols),floor(OPT.block_size/ncols),'CollectOutput',true); %#ok<AGROW>
                 if all(D{kk}{1}(:)==nodata_value)
-                    D{kk}{1} = nan;
+                    D{kk}{1} = nan; %#ok<AGROW>
                 else
-                    D{kk}{1}(D{kk}{1}==nodata_value) = nan;
+                    D{kk}{1}(D{kk}{1}==nodata_value) = nan; %#ok<AGROW>
                 end
             end
             multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
@@ -287,7 +287,7 @@ if OPT.make
         multiWaitbar('raw_unzipping','close')
     end
     
-    multiWaitbar('Raw data to NetCDF',1,'label','Generating catalog.nc...')
+    multiWaitbar('Raw data to NetCDF',1,'label','Generating NC files')
     multiWaitbar('nc_reading','close')
     multiWaitbar('nc_writing','close')
 else
@@ -295,17 +295,25 @@ else
 end
 
 %% generate a catalog
-delete(fullfile(OPT.basepath_local,OPT.netcdf_path,'catalog.nc'));
 if OPT.copy2server
+    if exist(fullfile(OPT.basepath_local,OPT.netcdf_path,'catalog.nc'),'file')
+        delete(fullfile(OPT.basepath_local,OPT.netcdf_path,'catalog.nc'))
+    end
     nc_cf_opendap2catalog('urlPathFcn',@(s) strrep (strrep (s,OPT.basepath_local,OPT.basepath_opendap),filesep,'/'),...
         'base',fullfile(OPT.basepath_local,OPT.netcdf_path),...
         'save',true);
 else
-    nc_cf_opendap2catalog(...
-        'base',fullfile(OPT.basepath_local,OPT.netcdf_path),...
-        'save',true);
+    if OPT.make
+        if exist(fullfile(OPT.basepath_local,OPT.netcdf_path,'catalog.nc'),'file')
+            delete(fullfile(OPT.basepath_local,OPT.netcdf_path,'catalog.nc'))
+        end
+        nc_cf_opendap2catalog(...
+            'base',fullfile(OPT.basepath_local,OPT.netcdf_path),...
+            'save',true);
+        multiWaitbar('Raw data to NetCDF',1,'label','Generating NC files')
+    end
 end
-
+ 
 %% Copy files to server
 if OPT.copy2server
     multiWaitbar('copy nc',1,'color',[0.5 0 0],'label','initializing file copying...');
@@ -330,8 +338,7 @@ if OPT.copy2server
             fullfile(OPT.basepath_network,OPT.netcdf_path,fns(ii).name),'f');
         OPT.WBbytesDone = OPT.WBbytesDone + fns(ii).bytes;
     end
-    multiWaitbar('copy nc','close');
+    multiWaitbar('copy nc',1,'label','Copying of NC files');
 end
 
-multiWaitbar('Raw data to NetCDF',1)
 varargout = {OPT};
