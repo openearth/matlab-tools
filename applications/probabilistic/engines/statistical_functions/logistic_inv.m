@@ -65,7 +65,7 @@ function x = logistic_inv(P, a, b)
 % $Keywords: $
 
 %% check input
-if ~(b <= 0)
+if b <= 0
     error('LOGISTIC_INV:inputchk', 'Distribution parameter b invalid, it should be like: b>0')
 end
 
@@ -76,4 +76,4 @@ end
 
 %%
 
-X = a - b * reallog(1 / P);    % Logistic distributed value(s)
+x = a - b * log(1 / P);    % Logistic distributed value(s)
