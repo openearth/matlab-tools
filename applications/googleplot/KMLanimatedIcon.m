@@ -166,7 +166,7 @@ output = [output '<!--############################-->\n'];
 if OPT.coloredIcon
 
     if OPT.colorbar
-      clrbarstring = KMLcolorbar('clim',OPT.cLim,'fileName',OPT.fileName,'colorMap',colorRGB,'colorTitle',OPT.colorbartitle);
+      clrbarstring = KMLcolorbar('CBcLim',OPT.cLim,'CBfileName',OPT.fileName,'CBcolorMap',colorRGB,'CBcolorTitle',OPT.colorbartitle);
       output = [output clrbarstring];
     end
 
