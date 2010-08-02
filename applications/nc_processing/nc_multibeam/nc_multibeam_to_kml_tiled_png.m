@@ -82,6 +82,7 @@ OPT.description             = [];
 OPT.descriptivename         = [];
 OPT.lightAdjust             = [];
 OPT.serverURL               = [];
+OPT.quiet                   = true;
 
 if nargin==0
     varargout = {OPT};
@@ -206,7 +207,9 @@ if OPT.make
             z = z-z_reference;
             
             if sum(~isnan(z(:)))>=3
+            if ~OPT.quiet
                 disp(['data coverage is ' num2str(sum(~isnan(z(:)))/numel(z)*100) '%'])
+            end
                 z = z([1 1 1:end end end],:); z = z(:,[1 1 1:end end end]); % expand z
                 mask = ~isnan(z);
                 mask = ...

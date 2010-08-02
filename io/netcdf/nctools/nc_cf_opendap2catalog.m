@@ -87,6 +87,7 @@ OPT.char_length    = 256; % pre-allocate for speed-up in addition to length(OPT.
 OPT.mask           = '*.nc';
 OPT.pause          = 0;
 OPT.test           = 0;
+OPT.quiet          = false;
 OPT.urlPathFcn     = @(s)(s); % function to run on urlPath, as e.g. strrep
 OPT.save           = 0; % save catalog in directory
 OPT.recursive      = 0;
@@ -192,9 +193,9 @@ for ifile=1:length(OPT.files)
     OPT.filename = OPT.files{ifile};
     
     entry = entry + 1;
-    
-    disp(['  Processing ',num2str(entry,'%0.4d'),'/',num2str(length(OPT.files),'%0.4d'),': ',filename(OPT.filename)]);
-    
+    if ~OPT.quiet
+        disp(['  Processing ',num2str(entry,'%0.4d'),'/',num2str(length(OPT.files),'%0.4d'),': ',filename(OPT.filename)]);
+    end
     %% Get global attributes (PRE-ALLOCATE)
     
     ATT.geospatialCoverage_northsouth(entry,1:2) = nan;
