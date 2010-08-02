@@ -1,7 +1,24 @@
 function result = MC(varargin)
 %MC  perform Monte Carlo simulation
 %
-%   More detailed description goes here.
+%   This routine executes a Monte Carlo simulation. By default, the crude
+%   Monte Carlo method is chosen. The input is parsed by
+%   propertyname-propertyvalue pairs. At least the 'stochast' and the
+%   'x2zFunction' are required as input. The stochast structure should
+%   contain the fields 'Name', 'Distr' and 'Params'. The x2zFunction should
+%   have the input arguments 'P', 'samples' (structure) and optionally
+%   'Resistance' followed by more optional arguments (varargin).
+%   Apart from the crude Monte Carlo, also two "importance sampling"
+%   methods are available. The simple importance sampling can create more
+%   extreme situations by a multiplication factor W which is applied to one
+%   specific stochastic variable. Please note that with this method the
+%   applicability range of the simulation is moved to the area of smaller
+%   probabilities, implying that the area of large probabilities is less
+%   accurate. The advanced importance sampling method samples for one
+%   stochastic variable uniformly over the x-space, resulting in relatively
+%   many samples in the tails of the distribution. This results in a good
+%   representation of the probabilities over the whole probability range
+%   with a limited number of samples.
 %
 %   Syntax:
 %   result = MC(stochast)
@@ -94,9 +111,9 @@ OPT = struct(...
     'variables', {{}},...    % aditional variables to use in x2zFunction
     'NrSamples', 1e2,...     % number of samples
     'ISvariable', '',...     % "importance sampling" variable
-    'W', 1,...               % "importance sampling" factor
-    'f1', Inf,...            % "importance sampling" upper frequency boundary
-    'f2', 0,...              % "importance sampling" lower frequency boundary
+    'W', 1,...               % "(simple) importance sampling" factor
+    'f1', Inf,...            % "(advanced) importance sampling" upper frequency boundary
+    'f2', 0,...              % "(advanced) importance sampling" lower frequency boundary
     'Resistance', 0,...      % Resistance value(s) to be (optionally) used in z-function       
     'P2xFunction', @P2x,...  % Function to transform P to x
     'seed', NaN,...          % seed for random generator
