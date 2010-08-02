@@ -332,7 +332,7 @@ if OPT.copy2server
     end
     
     for ii = 1:length(fns)
-        multiWaitbar('copy nc',OPT.WBbytesDone/OPT.WBbytesToDo,'label',sprintf('copying %s...',mktex(fns(ii).name)));
+        multiWaitbar('copy nc',OPT.WBbytesDone/OPT.WBbytesToDo,'label',sprintf('copying %s...',fns(ii).name));
         copyfile(...
             fullfile(OPT.basepath_local  ,OPT.netcdf_path,fns(ii).name),...
             fullfile(OPT.basepath_network,OPT.netcdf_path,fns(ii).name),'f');
