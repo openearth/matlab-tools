@@ -1,23 +1,42 @@
-% RESTART2RESTART create rst-files for new grids, based on old rst-files
+function varargout = delft3d_restart2restart(varargin)
+% DELFT3D_RESTART2RESTART create flow restart-files for new grids, based on old restart-files
 % << beta version! >>
 % 
 % Interpolates a restart file based on an old grid onto an adjusted new grid. 
 % The function is also suitable for DD domains where the new domain overlaps 
-% with multiple original domains. In that case, just load the restart 
+% with multiple original domains. In that case, just load the restart- 
 % files for all domains.
 % 
-% required from the original domain(s):   restart file(s) 
-%                                         mdf file(s)
-%                                         grid file(s)
-% required from the new domain(s):        grid file(s)
+% required files for the original domain(s):    restart file(s) 
+%                                               mdf file(s)
+%                                               grid file(s)
+% required file for the new domain(s):          grid file(s)
 % 
-% syntax:
-% simply invoke the function and specify the requested input files through
-% the user interface.
+% --- Syntax ---
+% DELFT3D_RESTART2RESTART
+% simply invoke the function (no input or output arguments required) and 
+% specify the requested input files through the user interface.
 %
+% DELFT3D_RESTART2RESTART('plot')
+% An input argument 'plot' can be specified, in order to let the function 
+% plot the original and the interpolated fields to the screen, to check the 
+% results (press any key after each plot).
+%
+% [Out] = DELFT3D_RESTART2RESTART;
+% Specify one output argument to obtain a structure 'Out' with all field
+% data of the new restart files, for all new domains. The format of
+% Out(domain_nr) resembles the format as obtained by the function
+% delft3d_io_restart.
+%
+% [Out,Orig] = DELFT3D_RESTART2RESTART;
+% Specify two output arguments in order to obtain the abovementioned
+% structures ('Out' and 'Orig') for both the new and the original domains,
+% respectively.
+%
+% --- Additional information ---
 % The interpolation makes use of Delauney triangulation of the original 
-% grid points. In case of multiple grids, the triangulation uses the
-% combined set of all original grids. (used function: TriScatteredInterp)
+% griddata. In case of multiple grids, the triangulation uses the combined 
+% set of all original grids. (used function: TriScatteredInterp)
 %
 % The best results are achieved when the new domain is entirely covered by 
 % the original domain(s) and when the resolution is comparable (or lower). 
@@ -30,7 +49,6 @@
 %
 % see also: delft3d_io_restart
 
-% TO DO: add option to check the generated fields in plots
 % TO DO: don't ask for <overwrite> when delft3d_io_restart is called from
 % within this function (needs to be adjusted in delft3d_io_restart.m)
 
@@ -77,8 +95,18 @@
 % $HeadURL$
 % $Keywords: $
 
-
 %%
+if nargin>0
+    if strcmpi(varargin{1},'plot')
+        makeplots = true;
+    else
+        error('Unknow input argument... Give keyword ''plot'', or simply give no input')
+    end
+else
+    makeplots = false;
+end
+            
+
 if isempty(which('wlgrid.m'))
     wlsettings;
 end
@@ -90,7 +118,7 @@ xOrig   = [];
 yOrig   = [];
 while name~=0
     
-    [name,pat]=uigetfile('tri-rst.*',['Load original restart file for domain' num2str(nOrig+1)]);
+    [name,pat]=uigetfile('tri-rst.*',['Load ORIGINAL restart file for DOMAIN-' num2str(nOrig+1)]);
     if name==0 & nOrig==0
         return
     end
@@ -109,7 +137,7 @@ while name~=0
         
         %%% load mdf file for domain and create restart data-structure
         rstName = [pat name];
-        [name,pat]=uigetfile('*.mdf',['Load original mdf file for domain' num2str(nOrig)]);
+        [name,pat]=uigetfile('*.mdf',['Load ORIGINAL mdf file for DOMAIN-' num2str(nOrig)]);
         if name==0
             disp(['Cannot find the mdf file for "tri-rst.' ID.origDomain{nOrig} '.' ID.dateID '.' ID.timeID '"'])
             disp('... user abort')
@@ -120,7 +148,7 @@ while name~=0
         
         
         %%% load and read grid file for domain
-        [name,pat]=uigetfile('*.grd',['Load original grid file for domain' num2str(nOrig)]);
+        [name,pat]=uigetfile('*.grd',['Load ORIGINAL grid file for DOMAIN-' num2str(nOrig)]);
         if name==0
             disp(['Cannot find the grid file for "tri-rst.' ID.origDomain{nOrig} '.' ID.dateID '.' ID.timeID '"'])
             disp('... user abort')
@@ -128,16 +156,25 @@ while name~=0
         end
         [G(nOrig).X, G(nOrig).Y] = wlgrid('read',[pat name]); 
         
-        
         %%% prepare original grids for interpolation
-        G(nOrig).Xcen   = center2corner(G(nOrig).X);
-        G(nOrig).Ycen   = center2corner(G(nOrig).Y);
-        G(nOrig).Xcen1D = reshape(G(nOrig).Xcen,[],1);
-        G(nOrig).Ycen1D = reshape(G(nOrig).Ycen,[],1);
+        G(nOrig).Xcor   = center2corner(G(nOrig).X);
+        G(nOrig).Ycor   = center2corner(G(nOrig).Y);
         
-        %%% combine grids into one vector for all original domains
-        xOrig = [xOrig; G(nOrig).Xcen1D]; 
-        yOrig = [yOrig; G(nOrig).Ycen1D];
+        %%% exclude cornerpoints of cornered grid: set these to nan
+        mask            = false(size(G(nOrig).Xcor));
+        mask(1,1)       = true; 
+        mask(1,end)     = true; 
+        mask(end,1)     = true; 
+        mask(end,end)   = true;
+        G(nOrig).Xcor(mask) = nan;
+        G(nOrig).Ycor(mask) = nan;
+        clear mask
+        
+        %%% combine grids into one vector for scattered interpolation
+        G(nOrig).Xcor1D = reshape(G(nOrig).Xcor,[],1);
+        G(nOrig).Ycor1D = reshape(G(nOrig).Ycor,[],1);
+        xOrig = [xOrig; G(nOrig).Xcor1D]; 
+        yOrig = [yOrig; G(nOrig).Ycor1D];
         
     end
     clear rstName mdfName
@@ -145,40 +182,53 @@ while name~=0
 end
 clear name pat
 
-%%% remove nans from interpolation coordinates
+%%% exclude nans from interpolation coordinates
 maskOrig    = ~isnan(xOrig);
 xOrig       = xOrig(maskOrig);
 yOrig       = yOrig(maskOrig);
 
 
-%% load grids for NEW domain(s)
-nNew    = 0;
+%% load grids for OUPUT domain(s)
+nOut    = 0;
 name    = 1;
 while name~=0
     
-    [name,pat]=uigetfile('*.grd',['Load grid file for new domain' num2str(nNew+1)]);
-    if name==0 & nNew==0
-        disp('No new domain(s) specified, ... user abort')
+    [name,pat]=uigetfile('*.grd',['Load grid file for OUTPUT DOMAIN-' num2str(nOut+1)]);
+    if name==0 & nOut==0
+        disp('No output domain(s) specified, ... user abort')
         return
     end
      
     if name~=0
-        nNew = nNew+1;
+        nOut = nOut+1;
         
-        [L(nNew).X, L(nNew).Y] = wlgrid('read',[pat name]);
+        [L(nOut).X, L(nOut).Y] = wlgrid('read',[pat name]);
         
-        %%% prepare new grids for interpolation
-        L(nNew).Xcen    = center2corner(L(nNew).X);
-        L(nNew).Ycen    = center2corner(L(nNew).Y);
-        L(nNew).Xcen1D  = reshape(L(nNew).Xcen,[],1);
-        L(nNew).Ycen1D  = reshape(L(nNew).Ycen,[],1);
-        L(nNew).mask    = ~isnan(L(nNew).Xcen1D);
-        L(nNew).Xcen1D  = L(nNew).Xcen1D(L(nNew).mask);
-        L(nNew).Ycen1D  = L(nNew).Ycen1D(L(nNew).mask);
+        %%% prepare output grids for interpolation
+        L(nOut).Xcor    = center2corner(L(nOut).X);
+        L(nOut).Ycor    = center2corner(L(nOut).Y);
+        
+        %%% exclude cornerpoints of cornered grid: set these to nan
+        mask            = false(size(L(nOut).Xcor));
+        mask(1,1)       = true; 
+        mask(1,end)     = true; 
+        mask(end,1)     = true; 
+        mask(end,end)   = true;
+        L(nOut).Xcor(mask) = nan;
+        L(nOut).Ycor(mask) = nan;
+        clear mask
+        
+        %%% reshape into vectors for scattered interpolation
+        L(nOut).Xcor1D  = reshape(L(nOut).Xcor,[],1);
+        L(nOut).Ycor1D  = reshape(L(nOut).Ycor,[],1);
+        L(nOut).mask    = ~isnan(L(nOut).Xcor1D);
+        L(nOut).Xcor1D  = L(nOut).Xcor1D(L(nOut).mask);
+        L(nOut).Ycor1D  = L(nOut).Ycor1D(L(nOut).mask);
+        
         
         %%% store info on file name and location
-        [dum,ID.newDomain{nNew},ext] = fileparts(name); 
-        ID.defaultPath{nNew}         = pat;
+        [dum,ID.outDomain{nOut},ext] = fileparts(name); 
+        ID.defaultPath{nOut}         = pat;
         clear dum ext
     end
 end
@@ -187,14 +237,14 @@ clear name
 
 %% first initiate (empty) new structure for the restart-data
 fields = fieldnames(D(1).data);
-for idomain = 1:nNew
+for idomain = 1:nOut
     for ifield = 1:length(fields)
         N(idomain).data.(fields{ifield}) = [];
     end
 end     
         
         
-%% interpolate restart-data to new grid(s)
+%% interpolate restart-data to output grid(s)
 for ifield = 1:length(fields)
     
     %%% determine the number of layers in the field
@@ -209,6 +259,7 @@ for ifield = 1:length(fields)
     for k = 1:nlayers
         fprintf('Now interpolating field %s, layer %i,...\n',fields{ifield},k);
         fprintf('\t... for domain(s):');
+        
         %%% load data data per layer (from all original domains) into 1 vector
         zOrig   = [];
         for idomain = 1:nOrig
@@ -223,15 +274,15 @@ for ifield = 1:length(fields)
         TriNearest  = TriScatteredInterp(xOrig,yOrig,zOrig,'nearest');
         clear zOrig
         
-        %%% interpolate zOrig onto the new grid(s), 
-        %%% first, determine the linear interpolation for the new grid(s)
+        %%% interpolate zOrig onto the output grid(s), 
+        %%% first, determine the linear interpolation for the output grid(s)
         %%% then, fill up remaining gaps with nearest values
-        for idomain = 1:nNew
-            fprintf('   %s.grd,',ID.newDomain{idomain});
-            Zk = zeros(size(L(idomain).Xcen));
+        for idomain = 1:nOut
+            fprintf('   %s.grd,',ID.outDomain{idomain});
+            Zk = zeros(size(L(idomain).Xcor));
             
-            linint  = TriLinear(L(idomain).Xcen1D,L(idomain).Ycen1D);
-            nearint = TriNearest(L(idomain).Xcen1D,L(idomain).Ycen1D);
+            linint  = TriLinear(L(idomain).Xcor1D,L(idomain).Ycor1D);
+            nearint = TriNearest(L(idomain).Xcor1D,L(idomain).Ycor1D);
             linint(isnan(linint)) = nearint(isnan(linint));
             
             Zk(L(idomain).mask) = linint;
@@ -245,13 +296,66 @@ for ifield = 1:length(fields)
 end
 
 
+
+%% make plots to check results
+if makeplots
+    scrsz = get(0,'ScreenSize');
+    figure('Position',[scrsz(3)/5 scrsz(4)/5 3*scrsz(3)/5 3*scrsz(4)/5])
+    
+    for ifield = 1:length(fields)
+        if length(size(D(1).data.(fields{ifield})))>2
+            nlayers = size(D(1).data.(fields{ifield}),3);
+        else
+            nlayers = 1;
+        end, clear tmp
+        
+        for k = 1:nlayers
+            
+            %%% plot original domain(s)
+            subplot(1,2,1)
+            xlims = [nan nan]; ylims = [nan nan]; zlims = [nan nan];
+            for idomain = 1:nOrig
+                Z = squeeze(D(idomain).data.(fields{ifield})(:,:,k));
+                pcolor(G(idomain).Xcor,G(idomain).Ycor,Z), hold on, axis equal, shading flat
+                xlims = [nanmin([xlims(1),minmin(G(idomain).Xcor)])   nanmax([xlims(2),maxmax(G(idomain).Xcor)])];
+                ylims = [nanmin([ylims(1),minmin(G(idomain).Ycor)])   nanmax([ylims(2),maxmax(G(idomain).Ycor)])];
+                zlims = [nanmin([zlims(1),minmin(Z)])                 nanmax([zlims(2),maxmax(Z)])];
+                clear Z
+            end
+            xlim(xlims), ylim(ylims), caxis(zlims)
+            pos = get(gca,'position'); colorbar('EastOutside'); set(gca,'position',pos); clear pos
+            title({[fields{ifield} ', k = ' num2str(k)];'original domains '})
+            
+            %%% plot output domain(s)
+            subplot(1,2,2)
+            for idomain = 1:nOrig
+                Z = squeeze(N(idomain).data.(fields{ifield})(:,:,k));
+                pcolor(L(idomain).Xcor,L(idomain).Ycor,Z), hold on, axis equal, shading flat
+                clear Z
+            end
+            xlim(xlims), ylim(ylims), caxis(zlims)
+            pos = get(gca,'position'); colorbar('EastOutside'); set(gca,'position',pos); clear pos
+            title({[fields{ifield} ', k = ' num2str(k)];'new domains '})
+            
+            disp('press any key to continue...')
+            pause()
+            clf
+        end % for k = 1:nlayers
+        
+    end % for ifield = 1:length(fields)
+    close(gcf)
+    
+end % if makeplots
+
+
+
 %% write new restart file(s)
 
-for idomain = 1:nNew
+for idomain = 1:nOut
     
-    [name,pat]=uiputfile('tri-rst.*','Save X,Y annotation file',['tri-rst.' ID.newDomain{idomain} '.' ID.date '.' ID.time '.']);
+    [name,pat]=uiputfile('tri-rst.*','Save X,Y annotation file',['tri-rst.' ID.outDomain{idomain} '.' ID.date '.' ID.time '.']);
     if name==0
-        name = ['tri-rst.' ID.newDomain{idomain} '.' ID.date '.' ID.time];
+        name = ['tri-rst.' ID.outDomain{idomain} '.' ID.date '.' ID.time];
         pat  = ID.defaultPath{idomain};
     end
     
@@ -260,9 +364,17 @@ for idomain = 1:nNew
 end
     
     
+%% return output
+
+if nargout==1
+    varargout{1} = N;
+elseif nargout==2
+    varargout{1} = N;
+    varargout{2} = D;
+end
     
     
     
     
-    
+
     
