@@ -10,6 +10,7 @@ function varargout = opendap_catalog(varargin)
 % When url does not start with 'http', the url is assumed
 % to be a local directory, and all netCDF files (*.nc) 
 % in the directory tree below it are returned.
+% Any traling .catalog.html is replaced with catalog.xml.
 %
 %   urlPath = opendap_catalog(url,<keyword,value>)
 %
@@ -132,10 +133,12 @@ if ~strcmpi(OPT.url(1:4),'http')
    
 else
 
-   %% warn
+   %% replace html into xml or warn
 
-   if ~strcmpi(OPT.url(end-3:end),'.xml')
-      fprintf(2,'warning: opendap_catalog: url does not have extension ".xml"')
+   if      strcmpi(OPT.url(end-4:end),'.html')
+      OPT.url = [OPT.url(1:end-5) '.xml'];
+   elseif ~strcmpi(OPT.url(end-3:end),'.xml')
+      fprintf(2,'warning: opendap_catalog: url does not have extension ".xml" or ".html"')
    end
       
    %% pre-allocate
