@@ -85,6 +85,7 @@ OPT.serverURL               = [];
 OPT.quiet                   = true;
 OPT.calculate_latlon_local  = false;
 OPT.EPSGcode                = 28992;
+OPT.dateFcn                 = @(time) (time+datenum(1970,1,1));
 
 if nargin==0
     varargout = {OPT};
@@ -165,7 +166,7 @@ if OPT.make
     [minlat,minlon,maxlat,maxlon] = deal(nan);
     
     %% MAKE TILES in this loop
-    for ii = 1:length(fns);
+    for ii = 5:20:110%:length(fns);
         if OPT.opendap
             url = fns(ii).name; %#ok<*ASGLU>
         else
@@ -194,8 +195,7 @@ if OPT.make
         else
             z_reference = 0;
         end
-        
-        
+             
         time = nc_varget(url,'time');
         
         multiWaitbar('kml_print_all_tiles'  ,WB.bytesDone/WB.bytesToDo,...
@@ -217,7 +217,7 @@ if OPT.make
         lat = [lat(1,:) + (lat(1,:)-lat(2,:))*.55; lat; lat(end,:) + (lat(end,:)-lat(end-1,:))*.55];
         
         % convert time to years
-        date          = time+datenum(1970,1,1);
+        date          = OPT.dateFcn(time);
         date(end+1,:) = date(end) + 1;
         
         % get dimension info of z

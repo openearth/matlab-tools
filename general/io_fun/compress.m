@@ -1,31 +1,66 @@
 function OPT = compress(fileNameOut,fileNameIn,varargin)
 %UNCOMPRESS  Uncompresses a zip, rar or whatever compressed file using 7zip
 %
+% Supports the following formats: 7Z (default), GZIP, BZIP2, TAR, ISO, UDF
+%
 %   Syntax:
-%       OPT = uncompress(fileName, varargin)
+%       OPT = compress(fileNameOut,fileNameIn,varargin)
 %
 %   Input:
-%       fileNames   = file(s) to compress
-%       $varargin   = keyword/value pairs for additional options where the 
+%       fileNameIn   = file(s) to compress
+%       $varargin    = keyword/value pairs for additional options where the 
 %       following <keyword,value> pairs have been implemented (values 
 %       indicated are the current default settings):
 %
 %       'outpath'   , []        : if nothing specified the original
 %                                 filelocation is used
 %       'quiet'     , false     : do not surpress output
+%       'gui'       , false     : view progress with 7z gui
+%       'args'      , '-mx9'    : optional 7z arguments. Specify compresson
+%                                 level with '-mx0' (no compression)
+%                                 through '-mx9' (ultra compression)
+%                                 add '-mmt' for multithreading (example
+%                                 '-mx9 -mmt'
+%       'type'      , '-t7z'    : Format of compressed file
+%                                 Choose from:    
+%                                 Type switch:      '-t7z'
+%                                 Format:           [7Z - Wikipedia]
+%                                 Example filename: archive.7z (default option)
+% 
+%                                 Type switch:      '-tgzip'
+%                                 Format:           [GZIP - Wikipedia]
+%                                 Example filename: archive.gzip
+%                                                   archive.gz
+% 
+%                                 Type switch:      '-tzip'
+%                                 Format:           [ZIP - Wikipedia]
+%                                 Example filename: archive.zip (very compatible)
+% 
+%                                 Type switch:      '-tbzip2'
+%                                 Format:           [BZIP2 - Wikipedia]
+%                                 Example filename: archive.bzip2
+% 
+%                                 Type switch:      '-ttar'
+%                                 Format:           [TAR - Wikipedia]
+%                                 Example filename: tarball.tar (UNIX and Linux)
+% 
+%                                 Type switch:      '-tiso'
+%                                 Format:           [ISO - Wikipedia]
+%                                 Example filename: image.iso
+% 
+%                                 Type switch:      '-tudf'
+%                                 Format:           [UDF - Wikipedia]
+%                                 Example filename: disk.udf
 %
 %   Output:
 %       OPT.status  : 0 if succesful, non-zero when function fails
 %          .result  : contains output message of 3rd party function 7z.exe
 %
 %   Example:
-%       uncompress('file','c:\temp\fik.rar')
-%           uncompresses the contents of .rar file to c:\temp
+%       compress('test.zip',{'c:\Temp\test.doc'},'type','-tzip')
+%           compresses c:\temp\test.doc to test.zip
 %
-%       OPT = uncompress('c:\test.rar','quiet','true','outpath',pwd)
-%           silent uncompress of the .rar file to the working directory
-%
-%   See also unzip system('7z')
+%   See also: uncompress
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -76,35 +111,7 @@ OPT.outpath     = [];       % output path
 OPT.quiet       = false;    % do not surpress output
 OPT.gui         = false;    % do not show 7zip gui
 OPT.type        = '-t7z';
-        % Type switch:      -t7z
-        % Format:           [7Z - Wikipedia]
-        % Example filename: archive.7z (default option)
-        % 
-        % Type switch:      -tgzip
-        % Format:           [GZIP - Wikipedia]
-        % Example filename: archive.gzip
-        %                   archive.gz
-        % 
-        % Type switch:      -tzip
-        % Format:           [ZIP - Wikipedia]
-        % Example filename: archive.zip (very compatible)
-        % 
-        % Type switch:      -tbzip2
-        % Format:           [BZIP2 - Wikipedia]
-        % Example filename: archive.bzip2
-        % 
-        % Type switch:      -ttar
-        % Format:           [TAR - Wikipedia]
-        % Example filename: tarball.tar (UNIX and Linux)
-        % 
-        % Type switch:      -tiso
-        % Format:           [ISO - Wikipedia]
-        % Example filename: image.iso
-        % 
-        % Type switch:      -tudf
-        % Format:           [UDF - Wikipedia]
-        % Example filename: disk.udf
-OPT.args        = '-mx9'; % use multithreading = -mmt     
+OPT.args        = '-mx9'; 
 % overrule default settings by property pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
 
