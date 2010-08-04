@@ -62,7 +62,7 @@ OPT.make                    = true;
 OPT.copy2server             = false;
 
 OPT.ncpath                  = [];
-OPT.ncfile                  = [];
+OPT.ncfile                  = '*.nc';
 OPT.relativepath            = [];
 OPT.referencepath           = [];
 OPT.basepath_local          = [];
@@ -83,6 +83,8 @@ OPT.descriptivename         = [];
 OPT.lightAdjust             = [];
 OPT.serverURL               = [];
 OPT.quiet                   = true;
+OPT.calculate_latlon_local  = false;
+OPT.EPSGcode                = 28992;
 
 if nargin==0
     varargout = {OPT};
@@ -93,7 +95,21 @@ OPT = setproperty(OPT,varargin{:});
 
 if OPT.make
     %% find nc files, and remove catalog.nc from the files if found
-    fns = dir(fullfile(OPT.ncpath,OPT.ncfile));
+    OPT.opendap = strcmpi(OPT.ncpath(1:4),'http')||strcmpi(OPT.ncpath(1:3),'www');
+    if OPT.opendap
+        temp = opendap_catalog([OPT.ncpath '/catalog.xml']);
+        for ii=1:length(temp)
+            fns(ii).name  = temp{ii};
+            fns(ii).bytes = 1000;
+        end
+    else % local path
+        fns = dir(fullfile(OPT.ncpath,OPT.ncfile));
+    end
+    
+    if OPT.calculate_latlon_local
+        EPSG = load('EPSG');
+    end
+    
     jj = false(length(fns),1);
     for ii = 1:length(fns)
         if any(strfind(fns(ii).name,'catalog.nc'));
@@ -150,7 +166,11 @@ if OPT.make
     
     %% MAKE TILES in this loop
     for ii = 1:length(fns);
-        url = fullfile(OPT.ncpath,fns(ii).name); %#ok<*ASGLU>
+        if OPT.opendap
+            url = fns(ii).name; %#ok<*ASGLU>
+        else
+            url = fullfile(OPT.ncpath,fns(ii).name); %#ok<*ASGLU>
+        end
         
         if ~isempty(OPT.referencepath)
             url_reference = fullfile(OPT.referencepath,fns(ii).name); %#ok<*ASGLU>
@@ -162,7 +182,6 @@ if OPT.make
             % check if lat and lon are identical in the source and the
             % reference plane
             lonInfo = nc_getvarinfo(url, 'lon');
-            
             
             lon1  = nc_varget(url          , 'lon',[0 0],[10 10],floor(lonInfo.Size/10));
             lat1  = nc_varget(url          , 'lat',[0 0],[10 10],floor(lonInfo.Size/10));
@@ -181,9 +200,15 @@ if OPT.make
         
         multiWaitbar('kml_print_all_tiles'  ,WB.bytesDone/WB.bytesToDo,...
             'label',sprintf('Printing tiles: %s Timestep: %d/%d',fns(ii).name,1,size(time,1)))
-        
-        lon  = nc_varget(url, 'lon');
-        lat  = nc_varget(url, 'lat');
+        if  OPT.calculate_latlon_local
+            x  = nc_varget(url, 'x');
+            y  = nc_varget(url, 'y');
+            [x,y] = meshgrid(x,y);
+            [lon,lat] = convertCoordinates(x,y,'CS1.code',OPT.EPSGcode,'CS2.code',4326);
+        else
+            lon  = nc_varget(url, 'lon');
+            lat  = nc_varget(url, 'lat');
+        end
         
         % expand lat and lon in each direction to create some overlap
         lon = [lon(:,1) + (lon(:,1)-lon(:,2))*.55  lon  lon(:,end) + (lon(:,end)-lon(:,end-1))*.55];
