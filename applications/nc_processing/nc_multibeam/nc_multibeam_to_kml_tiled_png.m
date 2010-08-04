@@ -166,7 +166,7 @@ if OPT.make
     [minlat,minlon,maxlat,maxlon] = deal(nan);
     
     %% MAKE TILES in this loop
-    for ii = 5:20:110%:length(fns);
+    for ii = 1:length(fns);
         if OPT.opendap
             url = fns(ii).name; %#ok<*ASGLU>
         else
