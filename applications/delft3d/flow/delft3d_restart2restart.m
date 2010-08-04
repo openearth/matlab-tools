@@ -268,11 +268,14 @@ for ifield = 1:length(fields)
         end, clear idomain
         
         %%% remove values outside the grid (determined by nan-values in grid)
-        %%% and determine the (scattered) interpolation structures
+        %%% also make a filter for any remaining -999 values!
         zOrig       = zOrig(maskOrig);
-        TriLinear   = TriScatteredInterp(xOrig,yOrig,zOrig);
-        TriNearest  = TriScatteredInterp(xOrig,yOrig,zOrig,'nearest');
-        clear zOrig
+        mask999     = (zOrig==-999);
+                
+        %%% Determine the (scattered) interpolation structures
+        TriLinear   = TriScatteredInterp(xOrig(~mask999),yOrig(~mask999),zOrig(~mask999));
+        TriNearest  = TriScatteredInterp(xOrig(~mask999),yOrig(~mask999),zOrig(~mask999),'nearest');
+        clear zOrig mask999
         
         %%% interpolate zOrig onto the output grid(s), 
         %%% first, determine the linear interpolation for the output grid(s)
