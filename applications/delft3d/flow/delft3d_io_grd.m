@@ -3,20 +3,19 @@ function varargout = delft3d_io_grd(varargin)
 %
 %   G = delft3d_io_grd('read' ,filename)
 %
-%   where STRUC (G.cor) has fields 'x' and 'y'
-%   representing the corner points without 
-%   dummy rows/columns: 1:nmax-1) x (1:mmax-1)
+% reads coordinates of corner and center points and of
+% center points where the dummy rows are filled by mirroring.
 %
-% reads coordinates of corner and center points
-% and of center points where the dummy rows are filled by 
-% mirroring.
+%   G.cor  represents corner points without dummy row/col:          1:nmax-1 x 1:mmax-1
+%   G.cen  represents center points without dummy row/col:          2:nmax-1 x 2:mmax-1
+%   G.cend represents center points with extrapolted dummy row/col: 1:nmax   x 1:mmax
 %
 % Note that n is the first dimension, to be compatible 
-% with the vs_ functionaility.
+% with the vs_ functionality.
 %
 %   G = delft3d_io_grd('read' ,filename,<keyword,value>)
 %
-% where the following keywords have been implemented:
+% The following keywords have been implemented:
 %
 % * nodatavalue : nodatavalue of data in grid file    (default 0)
 % * missingvalue: nodatavalue of data in the G struct (default NaN)
@@ -83,14 +82,6 @@ end
    G.projection          = '';
    G.ellipsoid           = '';
    
-   G.created_by_company  = '';
-   G.created_by_project  = '';
-   G.created_by_person   = '';
-
-   G.created_for_company = '';
-   G.created_for_project = '';
-   G.created_for_person  = '';
-
    OPT.nodatavalue       = 0;   % of file
    OPT.missingvalue      = NaN; % in struct
    OPT.epsg              = [];
