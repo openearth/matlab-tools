@@ -13,7 +13,7 @@ function test_nc_attput ( ncfile )
 %
 % These are run for both netcdf-3 and netcdf-4
 
-fprintf ( 1, 'NC_ATTGET, NC_ATTPUT:  starting test suite...\n' );
+fprintf ( 1, 'Testing NC_ATTGET, NC_ATTPUT...\n' );
 
 
 if nargin == 0
@@ -23,6 +23,8 @@ end
 test_classic(ncfile);
 test_hdf4('foo.hdf');
 test_netcdf4(ncfile);
+
+fprintf('OK\n');
 return;
 
 
@@ -85,10 +87,14 @@ function test_read_write_empty_att(ncfile )
 % attributes, which are most definitely allowed. 
 %
 % REFERENCE:  http://www.mathworks.com/support/bugreports/609383
+
+
 info = nc_info(ncfile);
 if strcmp(info.Format,'HDF4')
     return
 end
+
+warning('off','SNCTOOLS:NCATTPUT:emptyAttributeBug');
 nc_attput ( ncfile, nc_global, 'emptyAtt', '' );
 x = nc_attget ( ncfile, nc_global, 'emptyAtt' );
 
@@ -116,6 +122,7 @@ otherwise
     end
 end
 
+warning('on','SNCTOOLS:NCATTPUT:emptyAttributeBug');
 return
 
 

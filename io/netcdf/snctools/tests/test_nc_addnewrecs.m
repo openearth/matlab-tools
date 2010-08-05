@@ -22,15 +22,17 @@ function test_nc_addnewrecs ( ncfile )
 % Test 13:  Add a single record.  This is a corner case.
 % Test 14:  Add a single record, trailing singleton dimensions.
 
-fprintf ( 1, 'NC_ADDNEWRECS:  starting test suite...\n' );
+fprintf('Testing NC_ADDNEWRECS ...\n' );
 
 if nargin == 0
 	ncfile = 'foo.nc';
 end
 
-run_hdf4_tests;
 run_tests_nc3(ncfile);
+run_hdf4_tests;
 run_tests_nc4(ncfile);
+
+fprintf('OK\n');
 
 %--------------------------------------------------------------------------
 function run_hdf4_tests()
@@ -101,9 +103,8 @@ if nargin > 1
 else
 
 	switch ( version('-release') )
-	    case { '14', '2006a', '2006', '2007a', '2007b', '2008a' }
-			create_ncfile_mexnc(ncfile,mode);
-			return
+	    case { '14', '2006a', '2006b', '2007a', '2007b', '2008a' }
+			create_ncfile_mexnc(ncfile,nc_clobber_mode);
 		otherwise
 			create_ncfile_tmw(ncfile,nc_clobber_mode);
 	end

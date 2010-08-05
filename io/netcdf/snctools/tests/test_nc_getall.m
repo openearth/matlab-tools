@@ -13,7 +13,7 @@ function test_nc_getall ( ncfile )
 
 
 
-fprintf ( 1, 'NC_GETALL:  starting test suite\n' );
+fprintf('Testing NC_GETALL ... \n' );
 if nargin == 0
 	ncfile = 'foo.nc';
 end

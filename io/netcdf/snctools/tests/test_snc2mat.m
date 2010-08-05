@@ -6,45 +6,27 @@ function test_snc2mat ( ncfile )
 % Test 1:  netcdf file does not exist.
 % Test 2:  try a pretty generic netcdf file
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% $Id$
-% $LastChangedDate$
-% $LastChangedRevision$
-% $LastChangedBy$
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 if nargin == 0
 	ncfile = 'foo.nc';
 end
 
 
-fprintf ( 1, 'SNC2MAT:  starting test suite...\n' );
-test_file_does_not_exist ( ncfile );
+fprintf ('Testing SNC2MAT ...' );
+
 test_generic_file ( ncfile );
+
+v = version('-release');
+switch(v)
+	case{'14','2006a','2006b','2007a'}
+	    fprintf('\tSome negative tests filtered out on version %s.\n', v);
+    otherwise
+		test_snc2mat_neg;
+end
+
+fprintf ('OK\n');
+
 return
 
-
-
-
-
-
-
-
-
-
-%--------------------------------------------------------------------------
-function test_file_does_not_exist ( ncfile )
-
-% netcdf file does not exist.
-matfile_name = [ ncfile '.mat' ];
-try
-	snc2mat ( 'bad.nc', matfile_name );
-catch me %#ok<NASGU>
-    %  'MATLAB:netcdf:open:noSuchFile'
-    return
-end
 
 
 

@@ -498,11 +498,24 @@ return
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function data = handle_fill_value(ncid,varid,data)
 
+[vartype, status] = mexnc('INQ_VARTYPE', ncid, varid);
+if status ~= 0
+    mexnc ( 'close', ncid );
+    ncerr = mexnc('strerror', status);
+    error('SNCTOOLS:nc_varput:mexnc:inqVarTypeFailed', ncerr );
+end
+
 %
 % Handle the fill value.  We do this by changing any NaNs into
 % the _FillValue.  That way the netcdf library will recognize it.
-[dud, dud, status] = mexnc('INQ_ATT', ncid, varid, '_FillValue' ); %#ok<ASGLU>
+[att_type, dud, status] = mexnc('INQ_ATT', ncid, varid, '_FillValue' ); %#ok<ASGLU>
 if ( status == 0 )
+
+    if att_type ~= vartype
+        warning('SNCTOOLS:nc_varget:mexnc:missingValueMismatch', ...
+                'The _FillValue datatype is wrong and will not be honored.');
+        return
+	end
 
     switch ( class(data) )
     case 'double'

@@ -2,10 +2,11 @@ function test_nc_isvar ( )
 
 testroot = fileparts(mfilename('fullpath'));
 
-fprintf ( 1, 'NC_ISVAR:  starting test suite...\n' );
+fprintf('Testing NC_ISVAR ...\n' );
 run_nc3_tests(testroot);
 run_nc4_tests(testroot);
 run_java_tests(testroot);
+fprintf('OK\n');
 
 return
 

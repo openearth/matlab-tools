@@ -38,7 +38,7 @@ return
 
 %--------------------------------------------------------------------------
 function test_grib2_char(gribfile)
-if ~getpref('SNCTOOLS','TEST_GRIB2',true)
+if ~getpref('SNCTOOLS','TEST_GRIB2',false)
     fprintf('GRIB2 testing filtered out where SNCTOOLS preference ');
     fprintf('TEST_GRIB2 is set to false.\n');
     return

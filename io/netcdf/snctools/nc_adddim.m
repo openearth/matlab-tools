@@ -13,8 +13,8 @@ function nc_adddim(ncfile,dimname,dimlen)
 %       nc_adddim('myfile.nc','longitude',180);
 %       nc_adddim('myfile.nc','time',0);
 %
-%   Example:  create an HDF4 file with longitude and latitude coordinate
-%   variables.
+%   Example:  create an HDF4 file with longitude, latitude, and time 
+%   coordinate variables.
 %       nc_create_empty('myfile.hdf','hdf4');
 %       nc_adddim('myfile.hdf','latitude',360);
 %       nc_adddim('myfile.hdf','longitude',180);
@@ -22,6 +22,10 @@ function nc_adddim(ncfile,dimname,dimlen)
 %     
 % See also:  nc_addvar.
 
+if isnumeric(dimlen) && (dimlen < 0)
+    error('SNCTOOLS:adddim:badDimensionLength', ...
+        'Dimension lengths cannot be initialized to be less than zero.');
+end
     
 backend = snc_write_backend(ncfile);
 switch(backend)

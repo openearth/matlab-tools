@@ -27,7 +27,7 @@ function test_nc_isunlimitedvar ( )
 
 testroot = fileparts(mfilename('fullpath'));
 
-fprintf ( 1, 'NC_ISUNLIMITEDVAR:  starting test suite...\n' );
+fprintf('Testing NC_ISUNLIMITEDVAR ...' );
 
 ncfile = fullfile(testroot, 'testdata/full.nc');
 test_no_inputs;
@@ -40,6 +40,7 @@ test_not_unlimited (ncfile);
 test_1D_unlimited (ncfile);
 test_2D_unlimited (ncfile);
 
+fprintf('OK\n');
 
 return
 

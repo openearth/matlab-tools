@@ -1,15 +1,10 @@
 function nc_addrecs(ncfile,new_data)
-%NC_ADDRECS:  add records onto the end of a netcdf file
-%
-%   nc_addrecs ( ncfile, new_data);
+%NC_ADDRECS  Add records onto the end of netcdf file.
+%   nc_addrecs(NCFILE,RECS) appends records along the unlimited 
+%   dimension.  RECS is a structure containing all the variables that
+%   are defined along the unlimited dimension.
 % 
-%   INPUT:
-%     ncfile:  netcdf file
-%     new_data:  Matlab structure.  Each field is a data array
-%        to be written to the netcdf file.  Each array had
-%        better be the same length.  All arrays are written
-%        in the same fashion. 
-%
+%   See also nc_addnewrecs, nc_cat.
 %   AUTHOR: 
 %     john.g.evans.ne@gmail.com
 

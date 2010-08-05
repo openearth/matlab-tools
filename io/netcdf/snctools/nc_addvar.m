@@ -1,20 +1,20 @@
 function nc_addvar(ncfile,varstruct)
 %NC_ADDVAR:  add variable to NetCDF or HDF4 file.
 %
-%   nc_addvar(FILE,VARSTRUCT) adds a variable described by varstruct to a a
+%   nc_addvar(FILE,VARSTRUCT) adds a variable described by varstruct to a 
 %   netcdf or HDF4 file.  VARSTRUCT is a structure with the following
 %   fields:
 %
 %      Name       - name of netcdf variable.
 %      Datatype   - datatype of the variable.  This should be one of
-%                   'double', 'float', 'int', 'short', or 'byte', or 'char'.
-%                   If omitted, this defaults to 'double'.
+%                   'double', 'float', 'int', 'short', or 'byte', or
+%                   'char'. If omitted, this defaults to 'double'.
 %      Dimension  - a cell array of dimension names.
 %      Attribute  - a structure array.  Each element has two fields, 'Name'
 %                   and 'Value'.
 %      Chunking   - defines the chunk size.  This can only be used with 
-%                   netcdf-4 files.  The default value is [], which specifies
-%                   no chunking.
+%                   netcdf-4 files.  The default value is [], which
+%                   specifies no chunking.
 %      Shuffle    - if non-zero, the shuffle filter is turned on.  The
 %                   default value is off.  This can only be used with
 %                   netcdf-4 files.
@@ -36,8 +36,8 @@ function nc_addvar(ncfile,varstruct)
 %      nc_addvar('myfile.nc',varstruct);
 %
 %   Example:  create an HDF file with a dataset called 'earth' that depends
-%   upon two dimensions, 'lat' and 'lon'.  Recall that the HDF form
-%   creates coordinate variables when defining dimensions.
+%   upon two dimensions, 'lat' and 'lon'.  Recall that the HDF form creates
+%   coordinate variables when defining dimensions.
 %      nc_create_empty('myfile.hdf','hdf4');
 %      nc_adddim('myfile.hdf','lon',361);
 %      nc_adddim('myfile.hdf','lat',181);
@@ -210,7 +210,13 @@ end
 % go into define mode
 netcdf.reDef(ncid);
 
-netcdf.defVar(ncid, varstruct.Name, varstruct.Datatype, dimids );
+% Prefer to use Datatype instead of Nctype.
+if isfield(varstruct,'Datatype')
+    netcdf.defVar(ncid, varstruct.Name, varstruct.Datatype, dimids );
+else 
+    % Backwards compatible mode.
+    netcdf.defVar(ncid, varstruct.Name, varstruct.Nctype, dimids );
+end
 
 
 netcdf.endDef(ncid );
@@ -260,7 +266,15 @@ if ( status ~= 0 )
     error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:REDEF', ncerr );
 end
 
-[varid, status] = mexnc ( 'DEF_VAR', ncid, varstruct.Name, varstruct.Datatype, num_dims, dimids );
+% We prefer to use 'Datatype' instead of 'Nctype', but we'll try to be 
+% backwards compatible.
+if isfield(varstruct,'Datatype')
+    [varid, status] = mexnc ( 'DEF_VAR', ncid, varstruct.Name, ...
+        varstruct.Datatype, num_dims, dimids );
+else
+    [varid, status] = mexnc ( 'DEF_VAR', ncid, varstruct.Name, ...
+        varstruct.Nctype, num_dims, dimids );
+end
 if ( status ~= 0 )
     ncerr = mexnc ( 'strerror', status );
     mexnc ( 'endef', ncid );
@@ -337,13 +351,14 @@ end
 
 %
 % Check that required fields are there.
-% Default Nctype is double.
-if ~isfield ( varstruct, 'Datatype' )
-    if isfield(varstruct,'Nctype')
-        varstruct.Datatype = varstruct.Nctype;
-    else
+% Default datatype is double
+if ~isfield(varstruct,'Datatype')
+    if ~isfield ( varstruct, 'Nctype' )
         varstruct.Datatype = 'double';
+    else
+        varstruct.Datatype = varstruct.Nctype;
     end
+
 end
 
 %
@@ -353,8 +368,9 @@ for j = 1:length(fnames)
     fname = fnames{j};
     switch ( fname )
 
-    case { 'Nctype', 'Datatype', 'Name', 'Dimension', 'Attribute', ...
+    case { 'Datatype', 'Nctype', 'Name', 'Dimension', 'Attribute', ...
             'Storage', 'Chunking', 'Shuffle', 'Deflate', 'DeflateLevel' }
+
         %
         % These are used to create the variable.  They are ok.
         
@@ -365,7 +381,8 @@ for j = 1:length(fnames)
         % them either.
 
     otherwise
-        fprintf ( 2, '%s:  unrecognized field name ''%s''.  Ignoring it...\n', mfilename, fname );
+        warning('SNCTOOLS:nc_addvar:unrecognizedFieldName', ...
+            '%s:  unrecognized field name ''%s''.  Ignoring it...\n', mfilename, fname );
     end
 end
 
@@ -380,17 +397,25 @@ end
 
 %
 % Check that the datatype is known.
-switch ( varstruct.Datatype)
-case { 'NC_DOUBLE', 'double', ...
-    'NC_FLOAT', 'float', ...
-    'NC_INT', 'int', ...
-    'NC_SHORT', 'short', ...
-    'NC_BYTE', 'byte', ...
-    'NC_CHAR', 'char'  }
-    %
-    % Do nothing
-otherwise
-    error ( 'SNCTOOLS:NC_ADDVAR:unknownDatatype', 'unknown type ''%s''\n', mfilename, varstruct.Datatype );
+switch ( varstruct.Datatype )
+    case { 'NC_DOUBLE', 'double', ...
+            'NC_FLOAT', 'float', ...
+            'NC_INT', 'int',  ...
+            'NC_SHORT', 'short', ...
+            'NC_BYTE', 'byte', ...
+            'NC_CHAR', 'char'  }
+        % Do nothing
+    case 'single'
+        varstruct.Datatype = 'float';
+    case 'int32'
+        varstruct.Datatype = 'int';
+    case 'int16'
+        varstruct.Datatype = 'short';
+    case { 'int8','uint8' }
+        varstruct.Datatype = 'byte';
+        
+    otherwise
+        error ( 'SNCTOOLS:NC_ADDVAR:unknownDatatype', 'unknown type ''%s''\n', mfilename, varstruct.Datatype );
 end
 
 

@@ -63,16 +63,29 @@ function data = handle_scaling_tmw(ncid,varid,data)
 have_scale_factor = 0;
 have_add_offset = 0;
 
+varname = netcdf.inqVar(ncid,varid);
 try
-    netcdf.inqAtt(ncid, varid, 'scale_factor' );
-    have_scale_factor = 1;
+    att_type = netcdf.inqAtt(ncid, varid, 'scale_factor' );
+    if att_type == netcdf.getConstant('NC_CHAR')
+        warning('SNCTOOLS:nc_varput:scaleFactorShouldNotBeChar', ...
+            'The scale_factor attribute for %s should not be char, it will be ignored.', ...
+            varname);
+    else
+        have_scale_factor = 1;
+    end
 catch %#ok<CTCH>
     
 end
 
 try
-    netcdf.inqAtt(ncid, varid, 'add_offset' );
-    have_add_offset = 1;
+    att_type = netcdf.inqAtt(ncid, varid, 'add_offset' );
+    if att_type == netcdf.getConstant('NC_CHAR')
+        warning('SNCTOOLS:nc_varput:addOffsetShouldNotBeChar', ...
+            'The add_offset attribute for %s should not be char, it will be ignored.', ...
+            varname);
+    else   
+        have_add_offset = 1;
+    end
 catch %#ok<CTCH>
     
 end
@@ -109,7 +122,6 @@ try
     end
 
 catch myException
-    netcdf.close(ncid);
     rethrow(myException);
 end
 
@@ -139,27 +151,38 @@ return
 %--------------------------------------------------------------------------
 function data = handle_fill_value_tmw(ncid,varid,data)
 
+
 % Handle the fill value.  We do this by changing any NaNs into
 % the _FillValue.  That way the netcdf library will recognize it.
 try
+    
+    [varname,xtype] = netcdf.inqVar(ncid,varid);
+    att_type = netcdf.inqAtt(ncid,varid,'_FillValue');
+    if att_type ~= xtype
+        warning('SNCTOOLS:nc_varput:badFillValueType', ...
+            ['The datatype for the "_FillValue" attribute does not match ' ...
+            'the datatype of the "%s" variable.  It will be ignored.'], ...
+            varname);
+        return
+    end
+    
     switch ( class(data) )
-    case 'double'
-        myClass = 'double';
-    case 'single'
-        myClass = 'float';
-    case 'int32'
-        myClass = 'int';
-    case 'int16'
-        myClass = 'short';
-    case 'int8'
-        myClass = 'schar';
-    case 'uint8'
-        myClass = 'uchar';
-    case 'char'
-        myClass = 'text';
-    otherwise
-        netcdf.close(ncid);
-        error ( 'SNCTOOLS:NC_VARPUT:unhandledDatatype', ...
+        case 'double'
+            myClass = 'double';
+        case 'single'
+            myClass = 'float';
+        case 'int32'
+            myClass = 'int';
+        case 'int16'
+            myClass = 'short';
+        case 'int8'
+            myClass = 'schar';
+        case 'uint8'
+            myClass = 'uchar';
+        case 'char'
+            myClass = 'text';
+        otherwise
+            error ( 'SNCTOOLS:NC_VARPUT:unhandledDatatype', ...
                 'Unhandled datatype for fill value, ''%s''.', ...
                 class(data) );
     end

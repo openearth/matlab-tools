@@ -6,7 +6,7 @@ function test_nc_create_empty ( ncfile )
 % Test:  create a netcdf-4 file
 % test_char_mode:  the mode is a string instead of numeric
 
-fprintf ( 1, 'NC_CREATE_EMPTY: starting test suite ... \n' );
+fprintf('Testing NC_CREATE_EMPTY... \n' );
 
 if nargin < 1
 	ncfile = 'foo.nc';
@@ -18,6 +18,8 @@ test_64bit_mode ( ncfile );            % #3
 test_netcdf4_classic ( ncfile );       % #4
 
 test_char_mode ( ncfile );             % #5
+
+fprintf('OK\n');
 return
 
 

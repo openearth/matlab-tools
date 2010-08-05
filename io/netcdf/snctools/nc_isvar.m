@@ -23,6 +23,8 @@ retrieval_method = snc_read_backend(ncfile);
 switch(retrieval_method)
 	case 'tmw'
 		tf = nc_isvar_tmw(ncfile,varname);
+    case 'tmw_hdf4'
+        tf = nc_isvar_hdf4(ncfile,varname);
 	case 'java'
 		tf = nc_isvar_java(ncfile,varname);
 	case 'mexnc'
@@ -37,6 +39,24 @@ end
 
 
 
+%--------------------------------------------------------------------------
+function bool = nc_isvar_hdf4(hfile,varname)
+bool = true;
+sd_id = hdfsd('start',hfile,'read');
+if sd_id < 0
+    error('SNCTOOLS:attget:hdf4:start', 'START failed on %s.', hfile);
+end
+
+
+idx = hdfsd('nametoindex',sd_id,varname);
+if idx < 0
+    bool = false;
+end
+
+hdfsd('end',sd_id);
+
+
+ 
 
 %-----------------------------------------------------------------------
 function bool = nc_isvar_mexnc ( ncfile, varname )

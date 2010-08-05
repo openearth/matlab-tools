@@ -5,14 +5,7 @@ function test_nc_dump ( )
 %
 %
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% $Id$
-% $LastChangedDate$
-% $LastChangedRevision$
-% $LastChangedBy$
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+fprintf('Testing NC_DUMP ...' );
 
 % For now we will run this test preserving the fastest varying dimension.
 oldpref = getpref('SNCTOOLS','PRESERVE_FVD');
@@ -35,7 +28,7 @@ run_java_tests;
 test_opendap_url;
 
 setpref('SNCTOOLS','PRESERVE_FVD',oldpref);
-fprintf ( 1, 'NC_DUMP:  all executed tests succeeded\n' );
+fprintf('OK\n');
 return
 
 

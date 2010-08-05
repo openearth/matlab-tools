@@ -42,16 +42,7 @@ switch ( version('-release') )
         tmw_lt_r2008b = false;
 end
 
-if (isnumeric(mode) && (mode == 4352))  || tmw_lt_r2008b
-    % either the matlab version is lower than R2008b, or 
-    % the mode involved NC_CLASSIC_MODE, implying netcdf-4
-    [ncid, status] = mexnc ( 'CREATE', ncfile, mode );
-    if ( status ~= 0 )
-        ncerr = mexnc ( 'STRERROR', status );
-        error ( 'SNCTOOLS:NC_CREATE_EMPTY:MEXNC:CREATE', ncerr );
-    end
-    mexnc('close',ncid);
-elseif strcmp(mode,'hdf4')
+if strcmp(mode,'hdf4')
     if exist(ncfile,'file')
         delete(ncfile);
     end
@@ -65,6 +56,15 @@ elseif strcmp(mode,'hdf4')
 		error('SNCTOOLS:NC_CREATE_EMPTY:hdf4:end', ...
               'Could not close HDF4 file %s.\n', ncfile);
 	end
+elseif (isnumeric(mode) && (mode == 4352))  || tmw_lt_r2008b
+    % either the matlab version is lower than R2008b, or 
+    % the mode involved NC_CLASSIC_MODE, implying netcdf-4
+    [ncid, status] = mexnc ( 'CREATE', ncfile, mode );
+    if ( status ~= 0 )
+        ncerr = mexnc ( 'STRERROR', status );
+        error ( 'SNCTOOLS:NC_CREATE_EMPTY:MEXNC:CREATE', ncerr );
+    end
+    mexnc('close',ncid);
 else
     ncid = netcdf.create(ncfile, mode );
     netcdf.close(ncid);

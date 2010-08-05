@@ -2,9 +2,10 @@ function test_nc_info ( )
 
 testroot = fileparts(mfilename('fullpath'));
 
-fprintf ( 1, 'NC_INFO:  starting test suite...\n' );
+fprintf('Testing NC_INFO ...\n' );
 run_local_nc3_tests(testroot);
 run_http_tests;
+fprintf('OK\n');
 return
 
 

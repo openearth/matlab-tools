@@ -12,7 +12,9 @@ end
 
 fmt = snc_format(ncfile);
 
-if strcmp(fmt,'netCDF-4')
+if strcmp(fmt,'HDF4')
+    backend = 'tmw_hdf4';
+elseif strcmp(fmt,'netCDF-4')
 	% TMW can't write to netcdf-4 files yet, have to hope that
 	% mexnc can do it.
 	backend = 'mexnc';
@@ -20,8 +22,6 @@ elseif tmw_lt_r2008b
 	% If the version of matlab is less than r2008b, we have n choice but to 
     % use mexnc
 	backend = 'mexnc';
-elseif strcmp(fmt,'HDF4')
-    backend = 'tmw_hdf4';
 else
 	backend = 'tmw';
 end

@@ -1,3 +1,36 @@
+* Mon Jul 12 2010 John Evans <john.g.evans.ne@gmail.com> -r3192
+- Fixed bad nc_varget negative test for opendap.
+- Changed ordering in snc_read_backend to prevent java bug.
+- Added check for negative dimensions.
+
+* Thu Jul 08 2010 John Evans <john.g.evans.ne@gmail.com> -r3184 
+- Added support for int64 and uint64 datatypes for attributes.
+- Added blurb in README and at end of test suite for preferences.
+
+* Tue June 15 2010 John Evans <john.g.evans.ne@gmail.com> -r3168 
+- Reworked test suite so that it can be run on 2007a, 2006b  
+
+* Sat May 29 2010 John Evans <john.g.evans.ne@gmail.com>  -r3135
+- Fixed tmw case where missing value, fill value attribute datatype was
+- wrong.  This would result in nc_varget, nc_varput failing to do 
+- anything useful.  Correct thing to do is to continue to read or write, 
+- but warn the user.  Thanks to Aaron Luttman and Ryan Neely for bringing 
+- this to my attention.
+- Added option to concatenate with NC_CAT by N records at a time.
+
+* Mon May 24 2010 John Evans <john.g.evans.ne@gmail.com>  -r3122
+- Cleaned up help in NC_ADDDIM, NC_ADDVAR
+- Added more testing for NC_CAT.  
+- Automatically determining the name of the record variable in NC_ADDNEWRECS
+
+* Sun May 23 2010 John Evans <john.g.evans.ne@gmail.com> -r3116
+- Added testing for NC_CAT
+- Added HDF4 support for NC_ISVAR
+
+* Sat May 22 2010 John Evans <john.g.evans.ne@gmail.com> -r3112
+- Added NC_CAT, deprecating NC_CAT_A.
+- Some documentation cleanup of NC_ADDRECS and NC_ADDNEWRECS.
+
 * Mon May 17 2010 John Evans <john.g.evans.ne@gmail.com> -r3104
 - Integrated Gerben de Boer's suggested changes.
 - allow nc_dump to file directly 
@@ -5,7 +38,7 @@
 - remember full path in nc_info (so you can pass it on as file handle)
 - Handling empty attribute bug in TMW (609383)
 - Now printing status of PRESERVE_FVD preference.
- 
+
 * Thu May 13 2010 John Evans <john.g.evans.ne@gmail.com> -r3085
 - Removing all but one call to retrieve PRESERVE_FVD setting in NC_ADDRECS.
 - Updated nc_addnewrecs testing for HDF4

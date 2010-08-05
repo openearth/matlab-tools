@@ -49,9 +49,9 @@ function mte_ignore_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.name('Ignore test')
+MTest.name('Ignore test');
 
-if TeamCity.running, 
+if TeamCity.running,
     TeamCity.ignore('ignore test example'); 
     return;
 end

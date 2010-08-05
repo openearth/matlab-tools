@@ -84,15 +84,15 @@ end
 % we replace them with what we need to get the
 % rest of the variable.
 negs = find(count<0);
-count(negs) = the_var_size(negs) - start(negs);
+count(negs) = floor((the_var_size(negs) - start(negs))./stride(negs));
 
 
 
 % Java expects in C-style order.
 preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
 if preserve_fvd
-    start = fliplr(start);
-    count = fliplr(count);
+    start  = fliplr(start);
+    count  = fliplr(count);
     stride = fliplr(stride);
 end
 

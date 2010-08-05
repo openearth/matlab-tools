@@ -2,7 +2,7 @@ function test_nc_varget( )
 
 testroot = fileparts(mfilename('fullpath'));
 
-fprintf ( 1, 'NC_VARGET:  starting test suite...\n' );
+fprintf('Testing NC_VARGET ...\n' );
 
 run_nc3_tests(testroot);
 run_nc4_tests(testroot);
@@ -13,8 +13,36 @@ run_opendap_tests;
 run_http_tests;
 run_hdf4_tests;
 
+v = version('-release');
+switch(v)
+	case{'14','2006a','2006b', '2007a'}
+		fprintf('\tSome negative tests filtered out on version %s.\n', v);
+		return
+	otherwise
+	test_nc_varget_neg;
+end
+
+fprintf('OK\n');
+
 return
 
+%--------------------------------------------------------------------------
+function test_bad_missing_value()
+
+warning('off','SNCTOOLS:nc_varget:tmw:missingValueMismatch');
+warning('off','SNCTOOLS:nc_varget:mexnc:missingValueMismatch');
+nc_varget('testdata/badfillvalue.nc','z');
+warning('on','SNCTOOLS:nc_varget:tmw:missingValueMismatch');
+warning('on','SNCTOOLS:nc_varget:mexnc:missingValueMismatch');
+
+%--------------------------------------------------------------------------
+function test_bad_fill_value()
+
+warning('off','SNCTOOLS:nc_varget:tmw:fillValueMismatch');
+warning('off','SNCTOOLS:nc_varget:mexnc:fillValueMismatch');
+nc_varget('testdata/badfillvalue.nc','y');
+warning('on','SNCTOOLS:nc_varget:tmw:fillValueMismatch');
+warning('on','SNCTOOLS:nc_varget:mexnc:fillValueMismatch');
 
 %--------------------------------------------------------------------------
 function run_hdf4_tests()
@@ -84,9 +112,6 @@ if ~getpref('SNCTOOLS','TEST_REMOTE',false)
 end
 if getpref('SNCTOOLS','TEST_OPENDAP',false)
 	test_readOpendapVariable;
-
-	% Regression
-	test_regressionErrorMsgBadUrl;
 else
 	fprintf('\tOPeNDAP testing filtered out where TEST_OPENDAP ');
     fprintf('preference is set to false.\n');
@@ -153,9 +178,6 @@ function run_nc4_java_tests(testroot)
 	run_local_tests(ncfile);
 
 	ncfile = fullfile(testroot,'testdata/tst_pres_temp_4D_netcdf4.nc');
-	% Partial Retrievals
-	test_readSingleValueFromNc4File(ncfile );
-	test_readFullFloatVariableNc4(ncfile);
     fprintf('  OK\n');
     
 
@@ -189,6 +211,8 @@ regression_NegSize(ncfile);
 test_scaling(ncfile);
 
 test_missing_value(ncfile);
+test_bad_fill_value;
+test_bad_missing_value;
 return
 
 
@@ -196,7 +220,7 @@ return
 %--------------------------------------------------------------------------
 function run_grib2_java_tests(testroot)
 
-if ~getpref('SNCTOOLS','TEST_GRIB2',true)
+if ~getpref('SNCTOOLS','TEST_GRIB2',false)
     fprintf('GRIB2 testing filtered out where SNCTOOLS preference ');
     fprintf('TEST_GRIB2 is set to false.\n');
     return
@@ -216,7 +240,7 @@ return
 %--------------------------------------------------------------------------
 function test_readFullDouble(gribfile)
 actData = nc_varget(gribfile,'lon');
-expData = 10*[0:35]';
+expData = 10*(0:35)';
 if actData ~= expData
     error('failed');
 end
@@ -260,30 +284,6 @@ function test_readHttpVariableGivenJavaNcid ()
         error('failed');
     end
 return
-
-
-
-%==========================================================================
-function test_regressionErrorMsgBadUrl ()
-% Regression test.  If the URL is wrong, then the error message must give 
-% name of the wrong url.   01-04-2007
-% 
-    url = 'http://doesntexits:8080/thredds/dodsC/nexrad/composite/1km/agg';
-    try
-        nc_varget ( url, 'y', 0, 1 );
-    catch me
-        if ~strcmp(me.identifier,'SNCTOOLS:nc_varget_java:fileOpenFailure')
-            error ( 'Error id ''%s'' was not expected.', id );
-        end
-        if ~findstr(msg, url)
-            error ( 'Error message did not contain the incorrect url.');
-        end
-    end
-return
-
-
-
-
 
 
 
@@ -351,71 +351,6 @@ return
 
 
 
-%--------------------------------------------------------------------------
-function test_readSingleValueFromNc4File_backend_neutral ( actData )
-
-expData = 30;
-if ndims(actData) ~= 2
-    error ( 'rank of output data was not correct' );
-end
-if numel(actData) ~= 1
-    error ( 'size of output data was not correct' );
-end
-ddiff = abs(expData(:) - actData(:));
-if any( find(ddiff > eps) )
-    error ( 'input data ~= output data ' );
-end
-
-return
-
-
-
-%--------------------------------------------------------------------
-function test_readSingleValueFromNc4File ( ncfile )
-
-switch ( version('-release') )
-    case { '14', '2006a', '2006b', '2007a', '2007b', '2008a' }
-        try 
-            actData = nc_varget ( ncfile, 'latitude', 1, 1 );
-        catch me
-            
-            switch(me.identifier)
-                case 'MATLAB:Java:GenericException'
-                    fprintf('Could not read a NC4 file with java, you ');
-                    fprintf('need >= version 4.0 of toolsUI installed.\n');
-                    return
-                case 'SNCTOOLS:NC_VARGET:MEXNC:OPEN'
-                    fprintf('\n\n\n' );
-                    fprintf('Could not read a NC4 file with mexnc, you ');
-                    fprintf('would need to compile the netcdf library ');
-                    fprintf('version >= version 4.0 (no, I won''t do ');
-                    fprintf('that for you).\n' );
-                    fprintf('\n\n\n' );
-                    pause(3);
-                    return
-                otherwise
-                    error(eid,emsg);
-            end
-
-
-        end
-    otherwise % assume >= R2008b
-	    actData = test_readSingleValueFromNc4File_tmw(ncfile);
-end
-
-if ~isempty(actData) 
-	test_readSingleValueFromNc4File_backend_neutral(actData);
-end
-    
-return
-
-
-
-
-
-
-
-
 %--------------------------------------------------------------------
 function test_readFullSingletonVariable ( ncfile )
 
@@ -451,62 +386,6 @@ if any( find(ddiff > eps) )
 end
 
 return
-
-
-
-
-%--------------------------------------------------------------------------
-function test_readFullFloatVariable_backend_neutral ( actData )
-
-expData = [25 30 35 40 45 50];
-
-if ndims(actData) ~= 2
-    error ( 'rank of output data was not correct' );
-end
-if numel(actData) ~= 6
-    error ( 'rank of output data was not correct' );
-end
-ddiff = abs(expData(:) - actData(:));
-if any( find(ddiff > eps) )
-    error ( 'input data ~= output data ' );
-end
-
-return
-
-
-
-%--------------------------------------------------------------------------
-function test_readFullFloatVariableNc4 ( ncfile )
-
-if snctools_use_java
-    switch ( version('-release') )
-        case { 'R14', '2006a', '2006b', '2007a', '2007b', '2008a' }
-            try 
-                actData = nc_varget ( ncfile, 'latitude' );
-            catch me
- 
-                if strcmp(me.identifier,'MATLAB:Java:GenericException')
-                    fprintf('\tCould not read an NC4 file, make sure ');
-                    fprintf('you have >= version 4.0 of toolsUI ');
-                    fprintf('installed.' );
-                    return
-                else
-                    rethrow(me);
-                end
-
-
-            end
-        otherwise % assume >= R2008b
-			actData = test_readFullFloatVariableNc4_tmw ( ncfile );
-    end
-    
-    test_readFullFloatVariable_backend_neutral (actData);
-    
-end
-return
-
-
-
 
 
 

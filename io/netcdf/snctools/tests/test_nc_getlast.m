@@ -21,10 +21,10 @@ function test_nc_getlast ( )
 % Test:  Get everything
 
 
-fprintf ( 1, 'NC_GETLAST:  starting test suite...\n' );
-
+fprintf('Testing NC_GETLAST ...\n');
 run_nc3_tests;
 run_nc4_tests;
+fprintf('OK\n');
 
 return
 

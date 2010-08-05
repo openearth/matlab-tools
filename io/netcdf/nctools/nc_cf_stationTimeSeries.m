@@ -168,13 +168,13 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    
    D.station_name = D.station_id(:)'; % default
 
-   idname          = nc_varfind(ncfile, 'attributename', 'long_name', 'attributevalue', 'station name');
-   if ~isempty(idname)
-    D.station_name = nc_varget(ncfile,idname);
+   stname          = nc_varfind(ncfile, 'attributename', 'long_name', 'attributevalue', 'station_name');
+   if ~isempty(stname)
+    D.station_name = nc_varget(ncfile,stname);
    else
     idname         = nc_varfind(ncfile, 'attributename', 'long_name', 'attributevalue', 'station_name');
-    if ~isempty(idname)
-    D.station_name = nc_varget(ncfile,idname);
+    if ~isempty(stname)
+    D.station_name = nc_varget(ncfile,stname);
     end
    end
 
@@ -227,6 +227,9 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
       Name  = mkvar(fileinfo.Dataset(varindex).Attribute(iAttr).Name);
       Value =       fileinfo.Dataset(varindex).Attribute(iAttr).Value;
       M.(OPT.varname).(Name) = Value; % get all  % TO DO
+      end
+      if ~isfield(M,'long_name')
+         M.(OPT.varname).long_name = OPT.varname;
       end
 
 %% Plot

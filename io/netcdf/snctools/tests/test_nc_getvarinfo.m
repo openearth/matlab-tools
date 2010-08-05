@@ -1,6 +1,6 @@
 function test_nc_getvarinfo ( )
 
-fprintf ( 'NC_GETVARINFO:  starting test suite...\n' );
+fprintf('Testing NC_GETVARINFO...\n' );
 run_local_tests;
 run_http_tests;
 return
@@ -11,7 +11,7 @@ function run_local_tests()
 
 testroot = fileparts(mfilename('fullpath'));
 
-fprintf('\tRunning local tests.\n');
+fprintf('\tRunning local tests...\n');
 test_noInputs                                   ;
 test_tooFewInputs                     (testroot);
 test_tooManyInput                     (testroot);
@@ -42,7 +42,7 @@ function run_http_tests()
         fprintf('''TEST_REMOTE'' preference is false.\n');
 		return
 	end
-	fprintf('\tRunning http/java tests.\n');
+	fprintf('\tRunning http/java tests...\n');
 	test_fileIsHttpUrl_varIsChar;
 	test_fileIsJavaNcid_varIsChar;
 return

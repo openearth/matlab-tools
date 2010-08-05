@@ -103,7 +103,9 @@ end
 if getpref('SNCTOOLS','PRESERVE_FVD',false)
 	Dataset.Dimension = fliplr(Dataset.Dimension);
 	Dataset.Size = fliplr(Dataset.Size);
-	Dataset.Chunking = fliplr(Dataset.Chunking);
+	if isfield(Dataset,'Chunking')
+		Dataset.Chunking = fliplr(Dataset.Chunking);
+	end
 end
 
 

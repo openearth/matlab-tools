@@ -16,16 +16,7 @@ function test_nc_datatype_string()
 % test 10:  input is 5 ==> 'NC_FLOAT'
 % test 11:  input is 6 ==> 'NC_DOUBLE'
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% $Id$
-% $LastChangedDate$
-% $LastChangedRevision$
-% $LastChangedBy$
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-fprintf ( 1, 'NC_DATATYPE_STRING: starting test suite ... \n' );
+fprintf('Testing NC_DATATYPE_STRING ...');
 
 test_no_inputs;
 test_too_many_inputs;
@@ -39,6 +30,8 @@ test_short;
 test_int;
 test_float;
 test_double;
+
+fprintf('OK\n');
 
 return
 

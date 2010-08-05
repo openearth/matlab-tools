@@ -1,17 +1,18 @@
 function data = nc_varget(ncfile, varname, varargin )
-%NC_VARGET:  Retrieve data from a netCDF variable.
+%NC_VARGET  Retrieve data from netCDF variable or HDF4 data set.
 %   DATA = NC_VARGET(NCFILE,VARNAME) retrieves all the data from the 
-%   variable VARNAME in the netCDF file NCFILE.
+%   variable VARNAME in the netCDF file NCFILE.  
 %
 %   DATA = NC_VARGET(NCFILE,VARNAME,START,COUNT) retrieves the contiguous
 %   portion of the variable specified by the index vectors START and 
 %   COUNT.  Remember that SNCTOOLS indexing is zero-based, not 
-%   one-based.  Specifying a -1 in COUNT means to retrieve everything 
-%   along that dimension from the START coordinate.
+%   one-based.
 %
 %   DATA = NC_VARGET(NCFILE,VARNAME,START,COUNT,STRIDE) retrieves 
 %   a non-contiguous portion of the dataset.  The amount of
 %   skipping along each dimension is given through the STRIDE vector.
+%   Specifying a -1 in COUNT means to retrieve everything along
+%   that dimension from the START coordinate.
 %
 %   A '_FillValue' attribute is honored by flagging those datums as NaN.
 %   A 'missing_value' attribute is honored by flagging those datums as 
@@ -344,10 +345,24 @@ return
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function values = handle_fill_value_mex ( ncid, varid, var_type, values )
 
+[varname,status] = mexnc('inq_varname',ncid,varid);
+if ( status ~= 0 )
+    mexnc('close',ncid);
+    ncerr = mexnc ( 'strerror', status );
+    error ( 'SNCTOOLS:nc_varget:mexnc:inqVarnameFailed', ncerr );
+end
+
 %
 % Handle the fill value, if any.  Change those values into NaN.
-[dud, dud, status] = mexnc('INQ_ATT', ncid, varid, '_FillValue' ); %#ok<ASGLU>
+[att_type, dud, status] = mexnc('INQ_ATT', ncid, varid, '_FillValue' ); %#ok<ASGLU>
 if ( status == 0 )
+
+	if att_type ~= var_type
+        warning('SNCTOOLS:nc_varget:mexnc:fillValueMismatch', ...
+                'The _FillValue datatype for %s is wrong.  The _FillValue will not be honored.', ...
+                varname);
+		return
+	end
 
     switch ( var_type )
     case nc_char
@@ -385,7 +400,13 @@ function values = handle_mex_missing_value ( ncid, varid, var_type, values )
 % HANDLE_MEX_MISSING_VALUE
 %     If there is a missing value, then replace such values with NaN.
 
-%
+[varname,status] = mexnc('inq_varname',ncid,varid);
+if ( status ~= 0 )
+    mexnc('close',ncid);
+    ncerr = mexnc ( 'strerror', status );
+    error ( 'SNCTOOLS:nc_varget:mexnc:inqVarnameFailed', ncerr );
+end
+
 % If there is a fill value attribute, then that had precedence.  Do nothing.
 [dud, dud, status] = mexnc('INQ_ATT', ncid, varid, '_FillValue' ); %#ok<ASGLU>
 if status == 0
@@ -394,8 +415,15 @@ end
 
 %
 % Handle the missing value, if any.  Change those values into NaN.
-[dud, dud, status] = mexnc('INQ_ATT', ncid, varid, 'missing_value' ); %#ok<ASGLU>
+[att_type, dud, status] = mexnc('INQ_ATT', ncid, varid, 'missing_value' ); %#ok<ASGLU>
 if ( status == 0 )
+
+	if att_type ~= var_type
+        warning('SNCTOOLS:nc_varget:mexnc:missingValueMismatch', ...
+                'The missing_value datatype for %s is wrong.  The missing_value will not be honored.', ...
+                varname);
+		return
+	end
 
     switch ( var_type )
     case nc_char

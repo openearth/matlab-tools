@@ -6,10 +6,10 @@ function test_nc_getdiminfo ( )
 
 testroot = fileparts(mfilename('fullpath'));
 
-fprintf ( 1, 'NC_GETDIMINFO:  starting test suite...\n' );
-
+fprintf('Testing NC_GETDIMINFO ...\n' );
 test_nc3_backend (testroot);
 test_nc4_backend(testroot);
+fprintf('OK\n');
 
 %--------------------------------------------------------------------------
 function test_nc3_backend(testroot)

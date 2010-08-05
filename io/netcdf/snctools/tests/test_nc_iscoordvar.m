@@ -19,7 +19,7 @@ function test_nc_iscoordvar ( )
 
 testroot = fileparts(mfilename('fullpath'));
 
-fprintf ( 1, 'NC_ISCOORDVAR:  starting test suite...\n' );
+fprintf('Testing NC_ISCOORDVAR... ');
 
 ncfile = fullfile(testroot,'testdata/empty.nc');
 test_no_inputs;
@@ -35,6 +35,8 @@ test_var_has_2_dims (ncfile);
 
 test_singleton_variable (ncfile);
 test_coordvar (ncfile);
+
+fprintf('OK\n');
 
 return
 

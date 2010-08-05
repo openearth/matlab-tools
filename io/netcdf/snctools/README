@@ -12,35 +12,35 @@ SNCTOOLS Preferences
 
 USE_JAVA 
     If you have the toolsUI jar file on your javapath, then enabling
-	this preference allows the java backend to work.  You may find this
-	useful in reading OPeNDAP URLs, GRIB2 files, or netCDF-4 files 
+    this preference allows the java backend to work.  You may find this
+    useful in reading OPeNDAP URLs, GRIB2 files, or netCDF-4 files 
     (see below).  
-	
-	    setpref('SNCTOOLS','USE_JAVA',true);
+    
+        setpref('SNCTOOLS','USE_JAVA',true);
 
-	If you wish to use an opendap-enabled version of mexnc, you should
-	set this preference to false.
+    If you wish to use an opendap-enabled version of mexnc, you should
+    set this preference to false.
 
 PRESERVE_FVD
-	Way back in the old days, when mexnc/mexcdf was the only game
-	in town, data was always transposed when reading/writing netCDF
-	data thru MATLAB.  The reason for this was seemingly to make the
-	data look consistent with the way that the netcdf tools such as
-	"ncdump" presented the metadata.  "ncdump" is compiled in C, so
-	it is therefore a row-major-order application, whereas MATLAB 
-	presents data in column-major order.
-	
-	Transposing large datasets can be a costly operation, however, and
-	it really isn't necessary in all cases.  SNCTOOLS can be told to
-	not transpose data by setting the PRESERVE_FVD preference
+    Way back in the old days, when mexnc/mexcdf was the only game
+    in town, data was always transposed when reading/writing netCDF
+    data thru MATLAB.  The reason for this was seemingly to make the
+    data look consistent with the way that the netcdf tools such as
+    "ncdump" presented the metadata.  "ncdump" is compiled in C, so
+    it is therefore a row-major-order application, whereas MATLAB 
+    presents data in column-major order.
+    
+    Transposing large datasets can be a costly operation, however, and
+    it really isn't necessary in all cases.  SNCTOOLS can be told to
+    not transpose data by setting the PRESERVE_FVD preference
 
-	>> setpref('SNCTOOLS','PRESERVE_FVD',true);
+    >> setpref('SNCTOOLS','PRESERVE_FVD',true);
 
-	By default this preference is false.  If you set it to true,
-	you may see a big performance boost for large datasets, but you
-	might also end up breaking existing code that expected the data
-	to be permuted to row-major order, so you need to be careful
-	when using this.
+    By default this preference is false.  If you set it to true,
+    you may see a big performance boost for large datasets, but you
+    might also end up breaking existing code that expected the data
+    to be permuted to row-major order, so you need to be careful
+    when using this.
 
 
 +-----------------------------------------------------------------------
@@ -55,12 +55,12 @@ Go to http://www.unidata.ucar.edu/software/netcdf-java/ and make sure
 you download version 4.1 or higher.  Add the jar file to your MATLAB
 path with 
 
-		>> javaaddpath ( '/path/to/toolsUI-4.1.jar' );
+        >> javaaddpath ( '/path/to/toolsUI-4.1.jar' );
 
 You should then set the needed preference to tell SNCTOOLS to default
 to java for netCDF-4 files
 
-		>> setpref ( 'SNCTOOLS', 'USE_JAVA', true );
+        >> setpref ( 'SNCTOOLS', 'USE_JAVA', true );
 
 
 +-----------------------------------------------------------------------
@@ -100,13 +100,13 @@ BUG Reports You Should Know About
 +-----------------------------------------------------------------------
 Of all the routines in this m-file collection, the most useful (in my
 humble opinion) are as follows
-	
-	1. nc_varget    - reads a netcdf variable
-	2. nc_varput    - writes to a netcdf variable
-	3. nc_attget    - reads a netcdf attribute
-	4. nc_attput    - writes a netcdf attribute
-	5. nc_padheader - pads header section of large netCDF-3 files 
-	6. nc_dump      - prints netcdf metadata
+    
+    1. nc_varget    - reads a netcdf variable
+    2. nc_varput    - writes to a netcdf variable
+    3. nc_attget    - reads a netcdf attribute
+    4. nc_attput    - writes a netcdf attribute
+    5. nc_padheader - pads header section of large netCDF-3 files 
+    6. nc_dump      - prints netcdf metadata
 
 There is a subdirectory called "tests" which has routines that test
 the m-files of SNCTOOLS.  You really don't need to worry about this

@@ -83,21 +83,21 @@ if ~(snctools_use_tmw || snctools_use_mexnc)
 end
 
 test_nc_varput;
-test_nc_add_dimension    ( 'test.nc' );
+test_nc_adddim           ( 'test.nc' );
 test_nc_addhist          ( 'test.nc' );
 test_nc_addvar           ( 'test.nc' );
 test_nc_attput           ( 'test.nc' );
 test_nc_create_empty     ( 'test.nc' );
 test_nc_varrename        ( 'test.nc' );
 test_nc_addnewrecs       ( 'test.nc' );
-test_nc_add_recs         ( 'test.nc' );
+test_nc_addrecs          ( 'test.nc' );
 
 
 test_snc2mat             ( 'test.nc' );
 test_nc_getall           ( 'test.nc' );
-test_nc_diff             ( 'test1.nc', 'test2.nc' );
+evalc('test_nc_diff(''test1.nc'',''test2.nc'');');
 test_nc_cat_a;
-
+test_nc_cat;
 
 
 return

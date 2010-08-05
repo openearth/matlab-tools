@@ -1,9 +1,14 @@
 function test_nc_attget ( )
 
-global ignore_eids;
-ignore_eids = getpref('SNCTOOLS','IGNOREEIDS',true);
+fprintf ('Testing NC_ATTGET...\n' );
 
-fprintf ('NC_ATTGET:  starting test suite...\n' );
+v = version('-release');
+switch(v)
+	case{'14','2006a','2006b','2007a'}
+	    fprintf('\tSome negative tests filtered out on version %s.\n', v);
+    otherwise
+		test_nc_attget_neg;
+end
 
 testroot = fileparts(mfilename('fullpath'));
 
@@ -13,6 +18,7 @@ run_nc4_java_tests(testroot);
 run_java_tests    (testroot);
 
 
+fprintf('OK\n');
 
 
 %--------------------------------------------------------------------------
@@ -38,7 +44,7 @@ return
 
 %--------------------------------------------------------------------------
 function test_grib2_char(gribfile)
-if ~getpref('SNCTOOLS','TEST_GRIB2',true)
+if ~getpref('SNCTOOLS','TEST_GRIB2',false)
     fprintf('GRIB2 testing filtered out where SNCTOOLS preference ');
     fprintf('TEST_GRIB2 is set to false.\n');
     return
@@ -111,8 +117,6 @@ test_writeRetrieveGlobalAttributeMinusOne ( ncfile );
 test_writeRetrieveGlobalAttributeNcGlobal ( ncfile );
 test_writeRetrieveGlobalAttributeGlobalName ( ncfile );
 
-% Tests expected to fail.
-test_retrieveNonExistingAttribute ( ncfile );
 
 return;
 
@@ -362,38 +366,6 @@ warning ( 'on', 'SNCTOOLS:nc_attget:java:doNotUseGlobalString' );
 warning ( 'on', 'SNCTOOLS:nc_attget:doNotUseGlobalString' );
 
 return
-
-
-
-
-
-%--------------------------------------------------------------------------
-function test_retrieveNonExistingAttribute ( ncfile )
-
-global ignore_eids;
-
-try
-	nc_attget ( ncfile, 'z_double', 'test_double_att' );
-catch me
-    if ignore_eids
-        return
-    end
-    switch(me.identifier)
-        case { 'MATLAB:netcdf:inqAtt:attributeNotFound', ...
-                'SNCTOOLS:NC_ATTGET:MEXNC:INQ_ATTTYPE', ...
-                'SNCTOOLS:attget:java:attributeNotFound'}
-            return
-        otherwise
-            rethrow(me);
-    end
-                
-end
-error('failed');
-
-
-
-
-
 
 
 

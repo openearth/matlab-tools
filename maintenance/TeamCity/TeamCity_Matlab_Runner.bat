@@ -26,7 +26,7 @@ goto end
 
 :echo_teamcity_message
 type teamcitymessage.matlab
-del teamcitymessage.matlab
+del  teamcitymessage.matlab
 goto loopmatlabbusy
 
 :end

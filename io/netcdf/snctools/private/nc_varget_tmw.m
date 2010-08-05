@@ -28,7 +28,7 @@ try
     % If the user had set non-positive numbers in "count", then we replace 
     % them with what we need to get the rest of the variable.
     negs = find(count<0);
-    count(negs) = the_var_size(negs) - start(negs);
+    count(negs) = floor((the_var_size(negs) - start(negs))./stride(negs));
 
 
     % If there is a fill value, missing value, scale_factor, or add_offset, 
@@ -38,18 +38,30 @@ try
     use_fill_value = false;
     retrieve_as_double = false;
     try
-        netcdf.inqAtt(ncid, varid, '_FillValue' );
-        use_fill_value = true;
-        retrieve_as_double = true;
+        att_type = netcdf.inqAtt(ncid, varid, '_FillValue' );
+        if ( att_type == var_type )
+            use_fill_value = true;
+            retrieve_as_double = true;
+        else
+            warning('SNCTOOLS:nc_varget:tmw:fillValueMismatch', ...
+                'The _FillValue datatype for %s is wrong.  The _FillValue will not be honored.', ...
+                varname);
+        end
     catch %#ok<CTCH>
     end
     
     try
-        netcdf.inqAtt(ncid, varid, 'missing_value' );
+        att_type = netcdf.inqAtt(ncid, varid, 'missing_value' );
         if ~use_fill_value
-            % fill value trumps missing values
-            use_missing_value = true;
-            retrieve_as_double = true;
+            if (att_type == var_type)
+                % fill value trumps missing values
+                use_missing_value = true;
+                retrieve_as_double = true;
+            else
+                warning('SNCTOOLS:nc_varget:tmw:missingValueMismatch', ...
+                    'The missing_value datatype for %s is wrong.  The missing_value will not be honored.', ...
+                    varname);
+            end
         end
     catch %#ok<CTCH>
     end

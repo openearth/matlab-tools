@@ -28,7 +28,7 @@ function test_nc_getbuffer ( )
 
 testroot = fileparts(mfilename('fullpath'));
 
-fprintf ( 'NC_GETBUFFER:  starting test suite...\n' );
+fprintf('Testing NC_GETBUFFER ... \n');
 ncfile = fullfile(testroot, 'testdata/empty.nc'   );
 
 test_no_inputs;
@@ -49,6 +49,7 @@ test_start_and_count     (ncfile);
 test_negative_start_count(ncfile);
 test_start_negative_count(ncfile);
 test_varlist_start_neg_count (ncfile);
+fprintf('OK\n');
 return
 
 

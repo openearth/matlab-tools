@@ -1,32 +1,31 @@
-function new_data = nc_addnewrecs ( ncfile, input_buffer, record_variable )
+function new_data = nc_addnewrecs(ncfile,input_buffer,record_variable) %#ok<INUSD>
 %NC_ADDNEWRECS:  Append records to netcdf file.
-% new_data = nc_addnewrecs (ncfile,record_struct,record_variable) appends
-% records in record_struct to the end of a netcdf file.  The data for the
-% record variable itself must be monotonically increasing.
-% record_variable defaults to 'ocean_time' if not specified.  Only those
-% records that are actually newer (in the sense of time series) than the
-% last record in the file are returned in the new_data structure.  Any
-% records that are "older" than the last record are ignored.
-% 
-% The difference between this m-file and nc_add_recs is that this 
-% routine assumes that the unlimited dimension has a monotonically
-% increasing coordinate variable, e.g. time series.  This routine
-% actually calls nc_add_recs with suitable arguments.
-%
-% If the length of the record variable data that is to be appended is
-% just one, then a check is made for the rest of the incoming data to
-% make sure that they also have the proper rank.  This addresses the
-% issue of squeezed-out leading singleton dimensions.
-%
-% From this point foreward, assume we are talking about time series.
-% It doesn't have to be that way (the record variable could be 
-% monotonically increasing spatially instead ), but talking about it
-% in terms of time series is just easier.  If a field is present in 
-% the structure, but not in the netcdf file, then that field is 
-% ignored.  
+%   new_data = nc_addnewrecs (ncfile,record_struct) appends
+%   records in record_struct to the end of a netcdf file.  The data for the
+%   record variable itself must be monotonically increasing.   Only those
+%   records that are actually newer (in the sense of time series) than the
+%   last record in the file are returned in the new_data structure.  Any
+%   records that are "older" than the last record are ignored.
+%   
+%   The difference between this m-file and nc_add_recs is that this 
+%   routine assumes that the unlimited dimension has a monotonically
+%   increasing coordinate variable, e.g. time series.  This routine
+%   actually calls nc_add_recs with suitable arguments.
 %  
-% The dimensions of the data should match that of the target netcdf file.  
-% For example, suppose an ncdump of the NetCDF file looks something like
+%   If the length of the record variable data that is to be appended is
+%   just one, then a check is made for the rest of the incoming data to
+%   make sure that they also have the proper rank.  This addresses the
+%   issue of squeezed-out leading singleton dimensions.
+%  
+%   From this point foreward, assume we are talking about time series.
+%   It doesn't have to be that way (the record variable could be 
+%   monotonically increasing spatially instead ), but talking about it
+%   in terms of time series is just easier.  If a field is present in 
+%   the structure, but not in the netcdf file, then that field is 
+%   ignored.  
+%    
+%   The dimensions of the data should match that of the target netcdf file.  
+%   For example, suppose an ncdump of the NetCDF file looks something like
 %
 %       netcdf a_netcdf_file {
 %       dimensions:
@@ -54,30 +53,27 @@ function new_data = nc_addnewrecs ( ncfile, input_buffer, record_variable )
 %           var2: [4-D double]
 %           var3: [3x2 double]
 %
-% The reason for the possible size discrepency here is that matlab will
-% ignore trailing singleton dimensions (but not interior ones, such as
-% that in var2.
-%
-% If a netcdf variable has no corresponding field in the input struct,
-% then the corresponding NetCDF variable will populate with the appropriate
-% _FillValue for each new time step.
-%
-% See also nc_varput.
+%   The reason for the possible size discrepency here is that matlab will
+%   ignore trailing singleton dimensions (but not interior ones, such as
+%   that in var2.
+%  
+%   If a netcdf variable has no corresponding field in the input struct,
+%   then the corresponding NetCDF variable will populate with the
+%   appropriate _FillValue for each new time step.
+%  
+%   See also nc_varput, nc_cat.
 
 
 new_data = [];
-
 error(nargchk(2,3,nargin,'struct'));
 
-if nargin == 2
-    record_variable = 'time';
-end
 
 if isempty ( input_buffer )
     return
 end
 
-%
+record_variable = find_record_variable(ncfile);
+
 % Check that the record variable is present in the input buffer.
 if ~isfield ( input_buffer, record_variable )
     error ( 'SNCTOOLS:NC_ADDNEWRECS:missingRecordVariable', ...
@@ -101,12 +97,7 @@ input_buffer = force_rank_match ( ncfile, input_buffer, record_variable );
 % Retrieve the dimension id of the unlimited dimension upon which
 % all depends.  
 varinfo = nc_getvarinfo ( ncfile, record_variable );
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
-if preserve_fvd
-    unlimited_dimension_name = varinfo.Dimension{end};
-else
-    unlimited_dimension_name = varinfo.Dimension{1};
-end
+
 
 %
 % Get the last time value.   If the record variable is empty, then

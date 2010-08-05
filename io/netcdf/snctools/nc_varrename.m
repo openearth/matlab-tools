@@ -1,8 +1,9 @@
 function nc_varrename ( ncfile, old_variable_name, new_variable_name )
-% NC_VARRENAME:  renames a NetCDF variable.
+%nc_varrename Rename netCDF variable.
+%   nc_varrename(ncfile,oldvarname,newvarname) renames a netCDF variable
+%   from OLDVARNAME to NEWVARNAME.
 %
-% NC_VARRENAME(NCFILE,OLD_VARNAME,NEW_VARNAME) renames a netCDF variable from
-% OLD_VARNAME to NEW_VARNAME.
+%   See also nc_addvar.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %

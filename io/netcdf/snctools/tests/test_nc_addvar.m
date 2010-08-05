@@ -29,7 +29,7 @@ function test_nc_addvar ( ncfile )
 %     deflate
 %     chunking + shuffle + deflate
 
-fprintf ( 1, 'NC_ADDVAR:  starting test suite...\n' );
+fprintf('Testing NC_ADDVAR ...\n');
 
 if nargin == 0
 	ncfile = 'foo.nc';
@@ -39,6 +39,7 @@ run_nc3_tests(ncfile);
 run_hdf4_tests('foo.hdf');
 run_nc4_tests(ncfile);
 
+fprintf('OK\n');
 return
 
 
@@ -786,8 +787,9 @@ error('succeeded when it should have failed');
 
 %--------------------------------------------------------------------------
 function test_illegal_field_name (ncfile,mode)
+% Should produce a warning, which we want to suppress.
 
-
+warning('off','SNCTOOLS:nc_addvar:unrecognizedFieldName');
 nc_create_empty (ncfile,mode);
 nc_adddim ( ncfile, 'x', 5 );
 
@@ -796,6 +798,8 @@ varstruct.Name = 'x';
 varstruct.nnccttyyppee = { 'x' };
 varstruct.Dimension = { 'x' };
 nc_addvar ( ncfile, varstruct );
+
+warning('on','SNCTOOLS:nc_addvar:unrecognizedFieldName');
 
 
 

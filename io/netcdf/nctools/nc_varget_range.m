@@ -4,6 +4,12 @@ function varargout=nc_varget_range(ncfile,var,lim,varargin)
 % NC_VARGET_RANGE find a contigous subset in a coordinate vector
 % based on two limits. This speeds up the request of a subset of a long time series.
 %
+%   D.datenum              = nc_varget_range(ncfile,'varname',var_range);
+%  [D.datenum,ind]         = nc_varget_range(...)
+%  [D.datenum,start,count] = nc_varget_range(...)
+%
+% Example:
+%
 %   D.datenum              = nc_varget_range(ncfile,'time',datenum(1953,1,22 + [0 18]));
 %  [D.datenum,ind]         = nc_varget_range(ncfile,'time',datenum(1953,1,22 + [0 18]));
 %  [D.datenum,start,count] = nc_varget_range(ncfile,'time',datenum(1953,1,22 + [0 18]));
@@ -11,7 +17,7 @@ function varargout=nc_varget_range(ncfile,var,lim,varargin)
 %   D.eta   = nc_varget(ncfile,'eta',[0 ind(1)-1],[1 length(ind)]);
 %   D.eta   = nc_varget(ncfile,'eta',[0 start   ],[1 count      ]);
 %
-% arguments are empty when no data are present in specified window.
+% result is empty when no data are present in specified window.
 %
 %See also: nc_varget
 
@@ -55,7 +61,10 @@ function varargout=nc_varget_range(ncfile,var,lim,varargin)
 % $HeadURL$
 % $Keywords$
 
-OPT.lim       = lim; %[datenum(1950,1,2,2,40,0) datenum(1950,1,2,2,40,0)];
+%TO DO: make it also work for x, y etc 
+
+OPT.offset    = datenum(1970,1,1);
+OPT.lim       = lim - OPT.offset; % [datenum(1950,1,2,2,40,0) datenum(1950,1,2,2,40,0)];
 OPT.var       = var;
 OPT.chunksize = 1000;
 OPT.debug     = 0;
@@ -67,9 +76,9 @@ chunk = [1:di:n1];
 
 while di > 1
    
-   t1      = nc_varget(ncfile,OPT.var,chunk(1)-1,length(chunk),di) + datenum(1970,1,1);
+   t1      = nc_varget(ncfile,OPT.var,chunk(1)-1,length(chunk),di);
    if ~(all(diff(chunk)==di))
-   te      = nc_varget(ncfile,OPT.var,chunk(end)-1,1) + datenum(1970,1,1);
+   te      = nc_varget(ncfile,OPT.var,chunk(end)-1,1);
    t1(end) = te;
    end
    if OPT.debug
@@ -90,7 +99,7 @@ while di > 1
    end
 
    n1    = range(chunk(ind));
-   di    = max(min(floor(n1/OPT.chunksize),di-1),1); % always reduce di, initially n1/OPT.chunksize, finally di-1, but never < 1
+   di    = max(min(floor(n1/OPT.chunksize),di-3),1) % always reduce di, initially n1/OPT.chunksize, finally di-3, but never < 1
    top   = chunk(ind(end));
    chunk = [chunk(ind(1)):di:top];
    if ~(chunk(end)==top)
@@ -103,7 +112,7 @@ while di > 1
    
 end
 
-t = nc_varget(ncfile,OPT.var,chunk(1)-1,length(chunk),di) + datenum(1970,1,1);
+t = nc_varget(ncfile,OPT.var,chunk(1)-1,length(chunk),di);
 
 ind1   = find(t >= OPT.lim(1));
 ind2   = find(t <= OPT.lim(2));

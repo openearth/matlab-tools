@@ -1,6 +1,8 @@
 function nc_dump(file_name, varargin)
-%NC_DUMP:  a Matlab counterpart to the netCDF utility 'ncdump'.
-%   NC_DUMP(NCFILE) prints metadata about the netCDF file NCFILE. 
+%nc_dump  Print netCDF metadata.
+%   NC_DUMP(NCFILE) prints metadata about the netCDF file NCFILE.  NC_DUMP
+%   is a counterpart to the 'ncdump' utility that comes with the netCDF
+%   library.
 %
 %   NC_DUMP(NCFILE,VARNAME) prints metadata about just the one netCDF 
 %   variable named VARNAME.
@@ -207,7 +209,13 @@ switch ( attribute.Datatype )
         att_type = 'd';
     case 'uint32'
         att_val = sprintf ('%i ', attribute.Value );
-        att_type = 'ud';       
+        att_type = 'ud'; 
+     case 'int64'
+        att_val = sprintf ('%i ', attribute.Value );
+        att_type = 'L';
+    case 'uint64'
+        att_val = sprintf ('%i ', attribute.Value );
+        att_type = 'UL';        
     case 'single'
         att_val = sprintf ('%f ', attribute.Value );
         att_type = 'f';
