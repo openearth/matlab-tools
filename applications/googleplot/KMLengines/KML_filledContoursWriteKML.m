@@ -15,14 +15,14 @@ function KML_filledContoursWriteKML(OPT,lat,lon,z,latC,lonC,zC,contour)
 %   Example
 %   KML_filledContoursWriteKML
 %
-%   See also 
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 <COMPANY>
 %       Thijs
 %
-%       <EMAIL>	
+%       <EMAIL>
 %
 %       <ADDRESS>
 %
@@ -41,9 +41,9 @@ function KML_filledContoursWriteKML(OPT,lat,lon,z,latC,lonC,zC,contour)
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -144,8 +144,8 @@ contour.min = nan(size(1,contour.n));
 contour.max = nan(size(1,contour.n));
 z1          = nan(size(1,contour.n));
 for ii = 1:contour.n
-   contour.min(ii) = min(min(zC(:,[D(ii).outerPoly D(ii).innerPoly])));
-   contour.max(ii) = max(max(zC(:,[D(ii).outerPoly D(ii).innerPoly])));
+    contour.min(ii) = min(min(zC(:,[D(ii).outerPoly D(ii).innerPoly])));
+    contour.max(ii) = max(max(zC(:,[D(ii).outerPoly D(ii).innerPoly])));
 end
 
 OPT.levels = [(2*OPT.levels(1) - OPT.levels(2)) OPT.levels];
@@ -155,7 +155,7 @@ for ii = 1:contour.n
         z1(ii) = find(OPT.levels<contour.max(ii),1,'last');
     else
         kk = 0;
- 
+        
         % Find the 5 points nearest to the first point of the polygon
         [dummy,ind] = sort((lat - latC(1,D(ii).outerPoly)).^2+(lon - lonC(1,D(ii).outerPoly)).^2);
         in = inpolygon(lat(ind(1:5)),lon(ind(1:5)),latC(:,D(ii).outerPoly),lonC(:,D(ii).outerPoly));
@@ -170,7 +170,9 @@ for ii = 1:contour.n
         z1(ii) = find(OPT.levels>=contour.max(ii),1,'first')+kk;
     end
 end
-OPT.colorLevels = linspace(OPT.cLim(1),OPT.cLim(2),OPT.colorSteps);
+if ~isfield(OPT,'colorLevels')|isempty(OPT.colorLevels)
+    OPT.colorLevels = linspace(OPT.cLim(1),OPT.cLim(2),OPT.colorSteps);
+end
 [dummy,ind] = min(abs(repmat(OPT.colorLevels,length(OPT.levels),1) - repmat(OPT.levels',1,length(OPT.colorLevels))),[],2); %#ok<ASGLU>
 
 c = ind(z1);
@@ -217,8 +219,8 @@ fprintf(OPT.fid,output);
 OPT_poly = struct(...
     'name','',...
     'styleName',['style' num2str(1)],...
-    'timeIn' ,datestr(OPT.timeIn ,29),...
-    'timeOut',datestr(OPT.timeOut,29),...
+    'timeIn' ,[datestr(OPT.timeIn ,29) 'T' datestr(OPT.timeIn ,13) 'Z'],...
+    'timeOut',[datestr(OPT.timeOut,29) 'T' datestr(OPT.timeOut,13) 'Z'],...
     'visibility',1,...
     'extrude',OPT.extrude);
 

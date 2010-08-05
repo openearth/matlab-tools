@@ -71,6 +71,7 @@ function varargout = KMLcontourf(lat,lon,z,varargin)
    OPT.openInGE       = false;
    OPT.colorMap       = @(m) jet(m);
    OPT.colorSteps     = [];   
+   OPT.colorLevels    = [];   
    OPT.timeIn         = [];
    OPT.timeOut        = [];
    OPT.is3D           = false;
@@ -143,7 +144,7 @@ if ~isempty(tri)
     C = tricontourc(tri,lat,lon,z,OPT.levels);
     E = edges_tri_grid(tri,lat,lon,z);
 else
-    C = contours(lat,lon,z,OPT.levels);
+    [C,DUM] = contours(lat,lon,z,OPT.levels);
     E = edges_structured_grid(lat,lon,z);
 end
 
