@@ -83,7 +83,8 @@ OPT = struct(...
 OPT = setproperty(OPT, varargin{:});
 
 %% check and process input
-% combine both x-vectors
+% combine both x-vectors (use "(:)" to prevent problems with column and row
+% vectors)
 x = unique([OPT.x(:); OPT.x2(:)]);
 if isempty(x)
     % no x-vectors specified
@@ -93,15 +94,15 @@ if isempty(x)
 else
     if ~isempty(OPT.x)
         % interpolate z on the combined x-grid
-        z = interp1(OPT.x, z, x);
+        z = interp1(OPT.x(:), z(:), x);
     end
 
     if ~isempty(OPT.x2)
         % interpolate z2 on the combined x-grid
-        z2 = interp1(OPT.x2, z2, x);
+        z2 = interp1(OPT.x2(:), z2(:), x);
     else
         % interpolate z2 on the combined x-grid
-        z2 = interp1(OPT.x, z2, x);
+        z2 = interp1(OPT.x(:), z2(:), x);
     end
 end
 

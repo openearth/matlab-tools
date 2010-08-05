@@ -1,7 +1,8 @@
 function varargout = params2XB(varargin)
 %PARAMS2XB  create XBeach communication structure out of params-file
 %
-%   More detailed description goes here.
+%   This function reads a Xbeach input file (params.txt) and its related
+%   files to create a "XBeach input structure".
 %
 %   Syntax:
 %   varargout = params2XB(varargin)
@@ -71,54 +72,32 @@ if exist(OPT.filename, 'file')
     fid = fopen(OPT.filename);
     str = fread(fid, '*char')';
     fclose(fid);
-
-    strcell = strread(str, '%s',...
-        'delimiter', char(10));
-    cellstr = cellfun(@(x) strread(x, '%s'), strcell,...
-        'UniformOutput', false);
-
-    Inputargs = {};
-    for i = 1:length(cellstr)
-        % convert text elements to propertyname-propertyvalue pairs as
-        % input for CreateEmptyXBeachVar
-        if any(strcmp(cellstr{i}, '='))
-            Inputargs{end+1} = cellstr{i}{1}; %#ok<AGROW>
-            if ~isnan(str2double(cellstr{i}{3}))
-                cellstr{i}{3} = str2double(cellstr{i}{3});
-            end
-            if strcmp(Inputargs{end}, 'nglobalvar')
-                Inputargs{end} = 'OutVars'; %#ok<AGROW>
-                Inputargs{end+1} = {}; %#ok<AGROW>
-                for j = 1:cellstr{i}{3}
-                    Inputargs{end}{end+1} = cellstr{i+j}{1}; %#ok<AGROW>
-                end
-            else
-                Inputargs{end+1} = cellstr{i}{3}; %#ok<AGROW>
-            end
-        elseif ~isempty(cellstr{i}) && ~isempty(strfind(cellstr{i}{1},'='))
-            % User did not specify any space characters before and after
-            % the = sign
-            id = strfind(cellstr{i}{1},'=');
-            if length(id)>1
-                % multiple =-signs on one line
-                continue
-            end
-            Inputargs{end+1} = cellstr{i}{1}(1:id-1); %#ok<AGROW>
-            cellstr{i}{3} = cellstr{i}{1}(id+1:end);
-            if ~isnan(str2double(cellstr{i}{3}))
-                cellstr{i}{3} = str2double(cellstr{i}{3});
-            end
-            if strcmp(Inputargs{end}, 'nglobalvar')
-                Inputargs{end} = 'OutVars'; %#ok<AGROW>
-                Inputargs{end+1} = {}; %#ok<AGROW>
-                for j = 1:cellstr{i}{3}
-                    Inputargs{end}{end+1} = cellstr{i+j}{1}; %#ok<AGROW>
-                end
-            else
-                Inputargs{end+1} = cellstr{i}{3}; %#ok<AGROW>
-            end
+    
+    % obtain all keywords and values using regular expressions
+    [exprNames endIndex] = regexp(str, '(?<keyword>.*?)\s*=\s*(?<value>.*)', 'names', 'end', 'dotexceptnewline');
+    
+    % derive output variables
+    nglobalvar_index = ismember({exprNames.keyword}, 'nglobalvar');
+    exprNames(nglobalvar_index).keyword = 'OutVars';
+    exprNames(nglobalvar_index).value = strread(str(endIndex(nglobalvar_index)+2:end), '%s',...
+        'delimiter', '\n')';
+    
+    % transform regexp output to cell arrays with keywords and values
+    keywords = {exprNames.keyword};
+    values = {exprNames.value};
+    
+    % distinguish between doubles and strings
+    for ival = 1:length(values)
+        if ~isnan(str2double(values{ival}))
+            values{ival} = str2double(values{ival});
+        else
+            values{ival} = strtrim(values{ival});
         end
     end
+    
+    % create input cell array for CreateEmptyXBeachVar
+    Inputargs = reshape([keywords; values], 1, 2*length(keywords));
+
     % create XB-structure using PropertyName-propertyValue pairs as
     % specified in file
     XB = CreateEmptyXBeachVar(Inputargs{:}, 'empty');
@@ -144,16 +123,18 @@ if exist(OPT.filename, 'file')
     end
     % read bcfile if available
     bcfile = fullfile(pathstr, XB.settings.Waves.bcfile);
-    bcfileExists = exist(bcfile, 'file');
+    bcfileExists = exist(bcfile, 'file') == 2;
     if bcfileExists
         XB = XB_read_bcfile(XB,...
             'path', pathstr);
     end
     % read zs0file if available
-    zs0file = fullfile(pathstr, XB.settings.Flow.zs0file);
-    zs0fileExists = exist(zs0file, 'file');
-    if zs0fileExists
-        XB.settings.Flow.zs0 = load(zs0file);
+    if ~isempty(XB.settings.Flow.zs0file)
+        zs0file = fullfile(pathstr, XB.settings.Flow.zs0file);
+        zs0fileExists = exist(zs0file, 'file');
+        if zs0fileExists
+            XB.settings.Flow.zs0 = load(zs0file);
+        end
     end
     
     varargout = {XB Inputargs};

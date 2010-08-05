@@ -76,6 +76,8 @@ OPT = struct(...
 
 OPT = setproperty(OPT, varargin{:});
 
+[x z] = deal(x(:), z(:));
+
 %% sort x ascending and derive current positive x-direction
 [x IX]  = sort(x); % sort x ascending, get permutation vector
 z       = z(IX);   % rearrange z based on permutation vector
