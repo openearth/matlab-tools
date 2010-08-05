@@ -102,24 +102,13 @@ if exist(OPT.filename, 'file')
     % specified in file
     XB = CreateEmptyXBeachVar(Inputargs{:}, 'empty');
     % read depfile if available
-    depfile = fullfile(pathstr, XB.settings.Grid.depfile);
-    depfileExists = exist(depfile, 'file');
-    if depfileExists
-        XB.Input.zInitial = load(depfile);
-    end
+    XB.Input.zInitial  = read_secundairy_file(pathstr, XB.settings.Grid.depfile);
+    
     if XB.settings.Grid.vardx
         % read depfile if available
-        xfile = fullfile(pathstr, XB.settings.Grid.xfile);
-        xfileExists = exist(xfile, 'file');
-        if xfileExists
-            XB.Input.xInitial = load(xfile);
-        end
+        XB.Input.xInitial  = read_secundairy_file(pathstr, XB.settings.Grid.xfile);
         % read depfile if available
-        yfile = fullfile(pathstr, XB.settings.Grid.yfile);
-        yfileExists = exist(yfile, 'file');
-        if yfileExists
-            XB.Input.yInitial = load(yfile);
-        end
+        XB.Input.yInitial  = read_secundairy_file(pathstr, XB.settings.Grid.yfile);
     end
     % read bcfile if available
     bcfile = fullfile(pathstr, XB.settings.Waves.bcfile);
@@ -129,15 +118,20 @@ if exist(OPT.filename, 'file')
             'path', pathstr);
     end
     % read zs0file if available
-    if ~isempty(XB.settings.Flow.zs0file)
-        zs0file = fullfile(pathstr, XB.settings.Flow.zs0file);
-        zs0fileExists = exist(zs0file, 'file');
-        if zs0fileExists
-            XB.settings.Flow.zs0 = load(zs0file);
-        end
-    end
+    XB.settings.Flow.zs0 = read_secundairy_file(pathstr, XB.settings.Flow.zs0file);
     
     varargout = {XB Inputargs};
 else
     warning('PARAMS2XB:FileNotFound', ['File ' OPT.filename ' not found.'])
+end
+
+function outvar = read_secundairy_file(pathstr, file)
+
+outvar = [];
+
+% read file if available
+file = fullfile(pathstr, file);
+fileExists = exist(file, 'file') == 2;
+if fileExists
+    outvar = load(file);
 end
