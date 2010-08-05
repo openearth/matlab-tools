@@ -210,7 +210,6 @@ function [varargout] = readnoaapc(varargin);
       IMAGE.instrument       = 'AVHRR';
       IMAGE.url              =['http://www.knmi.nl/onderzk/applied/sd/en/AVHRR_archive_KNMI.html';
                                'http://www.knmi.nl/onderzk/applied/sd/en/sd_NOAA_AVHRR_KNMI.html';
-                               'http://www.knmi.nl/product/catalogus/dl-sat-noaa.html           ';
                                'http://www.oso.noaa.gov/poes/                                   ';
                                'http://www.osi-saf.org/                                         '];
       IMAGE.literature       = 'Roozekrans, J.N. and Prangsma, G.J, march 1992. Observatie van het aard-atmosfeersysteem door de NOAA-satellieten (ontvangst, productie, toepassing en gebruik van de NOAA-data). BCSR report,92-02. ISBN 90 5411 034 1 (Dutch)';
