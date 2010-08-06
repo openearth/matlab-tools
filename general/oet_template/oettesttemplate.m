@@ -39,11 +39,11 @@ function $filename()
 % Created: $date(dd mmm yyyy)
 % Created with Matlab version: $version
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
 % $Keywords: $
 
 $testcategory
