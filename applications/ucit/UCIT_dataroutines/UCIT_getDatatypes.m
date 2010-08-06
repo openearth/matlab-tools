@@ -109,7 +109,7 @@ end
    %% Jarkus
 
    i = i + 1;
-   datatypes.grid.names{i}        =  'Jarkus';
+   datatypes.grid.names{i}        =  'Jarkus 20m';
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids/';
    datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml';
    datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
@@ -120,7 +120,7 @@ end
    %% Vaklodingen
 
    i = i + 1;
-   datatypes.grid.names{i}        =  'Vaklodingen';
+   datatypes.grid.names{i}        =  'Vaklodingen 20m';
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/';
    datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
    datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
@@ -131,7 +131,7 @@ end
    %% Vaklodingen (test)
 
    i = i + 1;
-   datatypes.grid.names{i}        =  'Vaklodingen (test/next release)';
+   datatypes.grid.names{i}        =  'Vaklodingen 20m (test/next release)';
    datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/';
    datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
    datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
@@ -142,7 +142,7 @@ end
    %% Vaklodingen (local)
 if 0
    i = i + 1;
-   datatypes.grid.names{i}        =  'Vaklodingen (local)';
+   datatypes.grid.names{i}        =  'Vaklodingen 20m (local)';
    datatypes.grid.urls {i}        =  'F:\opendap\thredds\rijkswaterstaat\vaklodingen\';
    datatypes.grid.catalog{i}      =  'F:\opendap\thredds\rijkswaterstaat\vaklodingen\';
    datatypes.grid.ldbs{i}         =  'f:\opendap\thredds\deltares\landboundaries\holland_fillable.nc';
@@ -150,11 +150,22 @@ if 0
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
 end   
+   
+   %% Kustlidar (test)
+
+   i = i + 1;
+   datatypes.grid.names{i}        =  'AHN Kust 5m (test/next release)';
+   datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/kustlidar/';
+   datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/kustlidar/catalog.xml';
+   datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
+   datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
+   datatypes.grid.cellsize{i}     =  20;
+   datatypes.grid.datatype{i}     =  'kustlidar'; % for rws_*
 
    %% AHN100
 
    i = i + 1;
-   datatypes.grid.names{i}        =  'AHN100';
+   datatypes.grid.names{i}        =  'AHN 100m (beta)';
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/tno/ahn100m/mv100.nc';
    datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/tno/ahn100m/catalog.xml';
    datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
@@ -165,7 +176,7 @@ end
    %% AHN250
 
    i = i + 1;
-   datatypes.grid.names{i}        =  'AHN250'; % note 250 is in 100 directory on server
+   datatypes.grid.names{i}        =  'AHN 250m (beta)'; % note 250 is in 100 directory on server
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/tno/ahn100m/mv250.nc';
    datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/tno/ahn100m/catalog.xml';
    datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
