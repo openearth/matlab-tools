@@ -129,11 +129,8 @@ if ~isempty(xstart) || isempty(ystart)
     
     %% find the data files that lie within the temporal search window
     if ~isempty(nc_index.t)
-        t        = nc_varget(OPT.ncfile, nc_index.t);
+        t        = nc_cf_time(OPT.ncfile, nc_index.t);
         [t,idt]  = sort(t,'descend');
-        
-        [start_idx, end_idx, extents, matches, tokens, names, splits]  = regexp(nc_attget(OPT.ncfile,nc_varfind(OPT.ncfile, 'attributename', 'standard_name', 'attributevalue', 'time'),'units'), '\d+'); %#ok<*NASGU>
-        t        = t + datenum([matches{1:6}], 'yyyymmddHHMMSS');
         
         idt_in   = find(t <= OPT.starttime & ...
             t >= OPT.starttime + OPT.searchinterval);

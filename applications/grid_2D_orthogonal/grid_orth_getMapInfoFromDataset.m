@@ -30,9 +30,11 @@ for i = 1:length(OPT.urls)
     y_range = nc_getvarinfo(OPT.urls{i}, varname_y);
     
     if any(ismember({y_range.Attribute.Name}, 'actual_range')) && ...
-            any(ismember({x_range.Attribute.Name}, 'actual_range'))
-        OPT.x_ranges(i,:) = str2num(x_range.Attribute(ismember({x_range.Attribute.Name}, 'actual_range')).Value); %#ok<*ST2NM>
-        OPT.y_ranges(i,:) = str2num(y_range.Attribute(ismember({y_range.Attribute.Name}, 'actual_range')).Value);
+       any(ismember({x_range.Attribute.Name}, 'actual_range'))
+        xrange = x_range.Attribute(ismember({x_range.Attribute.Name}, 'actual_range')).Value;
+        yrange = y_range.Attribute(ismember({y_range.Attribute.Name}, 'actual_range')).Value;
+        if isstr(xrange);xrange = str2num(xrange);end;OPT.x_ranges(i,:) = xrange;
+        if isstr(yrange);xrange = str2num(yrange);end;OPT.y_ranges(i,:) = yrange;
     else
         info_x            = nc_getvarinfo(OPT.urls{i}, varname_x);
         OPT.x_ranges(i,:) = [...
