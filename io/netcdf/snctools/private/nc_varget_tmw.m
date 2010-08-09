@@ -28,7 +28,11 @@ try
     % If the user had set non-positive numbers in "count", then we replace 
     % them with what we need to get the rest of the variable.
     negs = find(count<0);
+    if ~isempty(stride)
     count(negs) = floor((the_var_size(negs) - start(negs))./stride(negs));
+    else
+    count(negs) =        the_var_size(negs) - start(negs);
+    end
 
 
     % If there is a fill value, missing value, scale_factor, or add_offset, 
