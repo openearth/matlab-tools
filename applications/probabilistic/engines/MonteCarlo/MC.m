@@ -108,12 +108,15 @@ end
 OPT = struct(...
     'stochast', struct(),... % stochast structure
     'x2zFunction', @x2z,...  % Function to transform x to z
+    'method', 'loop',...   % z-function method 'matrix' (default) or 'loop'
     'variables', {{}},...    % aditional variables to use in x2zFunction
     'NrSamples', 1e2,...     % number of samples
     'ISvariable', '',...     % "importance sampling" variable
     'W', 1,...               % "(simple) importance sampling" factor
     'f1', Inf,...            % "(advanced) importance sampling" upper frequency boundary
     'f2', 0,...              % "(advanced) importance sampling" lower frequency boundary
+    'Zmin', 0,...            % minimum z-value for non-failure
+    'Zmax', Inf,...          % maximum z-value for non_failure
     'Resistance', 0,...      % Resistance value(s) to be (optionally) used in z-function       
     'P2xFunction', @P2x,...  % Function to transform P to x
     'seed', NaN,...          % seed for random generator
@@ -122,6 +125,16 @@ OPT = struct(...
     );
 % overrule default settings by propertyName-propertyValue pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
+
+% input check
+if ismember('Resistance', varargin(1:2:end))
+    if ~ismember('Zmin', varargin(1:2:end))
+        OPT.Zmin = -OPT.Resistance;
+        warning('-1 * "Resistance" input used as "Zmin"')
+    else
+        warning('"Resistance" input is ignored, "Zmin" input is used instead')
+    end
+end
 
 %% check whether result is parsed as input
 result_as_input = ~isempty(fieldnames(OPT.result));
@@ -138,6 +151,12 @@ end
 
 %%
 stochast = OPT.stochast;
+
+if ~isfield(stochast, 'propertyName')
+    for istochast = 1:length(stochast)
+        stochast(istochast).propertyName = false;
+    end
+end
 
 Nstoch = length(stochast); % number of stochastic variables
 
@@ -233,12 +252,65 @@ else
     Pexc = prod(1-P(:,active),2);
 end
 
-samples = cell2struct(mat2cell(x, size(x,1), ones(size(x,2),1)), {stochast.Name}, 2);
-% derive z based on x
-z = feval(OPT.x2zFunction, samples, OPT.Resistance,...
-    OPT.variables{:});
-idFail = z<0;
+% check z-function
+z_input = getInputVariables(OPT.x2zFunction);
 
+% derive z based on x
+if strcmp(OPT.method, 'matrix')
+    inputargs = {};
+    if ismember('samples', z_input)
+        % create samples structure
+        samples = x2samples(x, {stochast.Name});
+        inputargs{end+1} = samples;
+    else
+        inputargs = x2inputargs(x, inputargs, stochast);
+    end
+    if ismember('Resistance', z_input)
+        inputargs{end+1} = -OPT.Zmin;
+        OPT.Zmin = 0;
+    end
+    z = feval(OPT.x2zFunction, inputargs{:},...
+        OPT.variables{:});
+elseif strcmp(OPT.method, 'loop')
+    z = [];
+    for isample = 1:OPT.NrSamples
+        inputargs = {};
+        if ismember('samples', z_input)
+            % create samples structure
+            samples = x2samples(x(isample,:), {stochast.Name});
+            inputargs{end+1} = samples;
+        else
+            inputargs = x2inputargs(x(isample,:), inputargs, stochast);
+        end
+        if ismember('Resistance', z_input)
+            inputargs{end+1} = -OPT.Zmin;
+        end
+        z(isample,:) = feval(OPT.x2zFunction, inputargs{:},...
+            OPT.variables{:});
+    end
+    if ismember('Resistance', z_input)
+        OPT.Zmin = 0;
+    end
+end
+
+if ~isequal(size(OPT.Zmin), size(OPT.Zmax))
+    if isscalar(OPT.Zmin)
+        OPT.Zmin = repmat(OPT.Zmin, 1, length(OPT.Zmax));
+    elseif isscalar(OPT.Zmax)
+        OPT.Zmax = repmat(OPT.Zmax, 1, length(OPT.Zmin));
+    else
+        error('"Zmin" and "Zmax" should have the same size')
+    end
+end
+
+if isscalar(OPT.Zmin)
+    idFail = z < OPT.Zmin |...
+        z > OPT.Zmax;
+else
+    z = repmat(z, 1, length(OPT.Zmin));
+    idFail = z < repmat(OPT.Zmin, OPT.NrSamples, 1) |...
+        z > repmat(OPT.Zmax, OPT.NrSamples, 1);
+end
 P_f = sum(idFail.* p_correctie)/(OPT.NrSamples*OPT.W);
 P_f(P_f == 0) = deal(NaN);
 
@@ -260,3 +332,23 @@ result = struct(...
         'x', x,...
         'z', z ...
     ));
+
+%%
+function samples = x2samples(x, variable_names)
+samples = cell2struct(mat2cell(x, size(x,1), ones(size(x,2),1)), variable_names, 2);
+
+function inputargs = x2inputargs(x, inputargs, stochast)
+% create cell array of input arguments in same order as defined in
+% the stochast structure
+for ivar = 1:length(stochast)
+    if ischar(stochast(ivar).propertyName)
+        % specific propertyName is defined in stochast structure
+        inputargs = [inputargs {stochast(ivar).propertyName} {x(:,ivar)}];
+    elseif stochast(ivar).propertyName
+        % propertyName is equal to Name in stochast structure
+        inputargs = [inputargs {stochast(ivar).Name} {x(:,ivar)}];
+    else
+        % no propertyName is defined
+        inputargs = [inputargs {x(:,ivar)}];
+    end
+end
