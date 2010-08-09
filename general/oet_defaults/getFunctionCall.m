@@ -50,6 +50,8 @@ function [str funinfo] = getFunctionCall(fun)
 % $Date$
 % $Author$
 % $Revision$
+% $HeadURL$
+% $Keywords: $
 
 %% check input
 if nargin==0
@@ -69,36 +71,33 @@ if fl
     elseif isempty(funinfo.file)
         str = '';
     else
-        % open the m-file and read lines until start of call is encountered
+        % open the m-file and read text
         fid = fopen(funinfo.file);
-        while ~feof(fid)
-            str = fgetl(fid);
-            if ~ischar(str)
-                str = '';
-                return
-            end
-            str = strtrim(str);
-            id = strfind(str, 'function');
-            idcomment = strfind(str, '%');
-            if ~isempty(id) && isempty(idcomment) || ~isempty(id) && ~isempty(idcomment) && min(idcomment)>min(id)
-                break
-            end
+        str = fread(fid, '*char')';
+        fclose(fid);
+        
+        % remove comments
+        matches = regexp(str, '\%.*', 'match', 'dotexceptnewline');
+        for imatch = 1:length(matches)
+            str = strrep(str, matches{imatch}, '');
         end
-        strcomplete = true;
-        if ~isempty(strfind(str,'(')) && isempty(strfind(str,')'))
-            % the call is not closed yet, search for the end of the call ( ")" )
-            strcomplete = false;
+        
+        % remove line breaks
+        matches = regexp(str, '[\.]{3}.*?\r?\n\s', 'match', 'dotall');
+        for imatch = 1:length(matches)
+            str = strrep(str, matches{imatch}, '');
         end
-        while ~strcomplete
-            commid = strfind(str,'...');
-            str = [str(1:commid-1), strtrim(fgetl(fid))];
-            if ~isempty(strfind(str,')'))
-                strcomplete = true;
-            end
-            fclose(fid);
+        
+        % find function call
+        [matches names] = regexp(str, ['\s*function\s*(?<call>.*?' funinfo.function '.*?$)'], 'match', 'names', 'lineanchors', 'dotexceptnewline');
+
+        str = strtrim(names.call);
+        
+        % remove possible occuring multiple spaces
+        matches = regexp(str, '\s*', 'match');
+        for imatch = 1:length(matches)
+            str = strrep(str, matches{imatch}, ' ');
         end
-        % remove function from call line
-        str = strtrim(strrep(str,'function',''));
     end
     % write call string to output struct
     funinfo.call = str;
