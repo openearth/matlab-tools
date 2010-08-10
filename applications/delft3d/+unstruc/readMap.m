@@ -1,4 +1,4 @@
-function D = readMap(ncfile,varargin)
+function varargout = readMap(ncfile,varargin)
 %readMap   Reads solution data on an unstructured net.
 %
 %     D = unstruc.readMap(ncfile,<it>) 
@@ -43,6 +43,16 @@ function D = readMap(ncfile,varargin)
 
 %% input
 
+   OPT.face      = 0; % whether to load face data 
+   OPT.zwl       = 1; % whether to load data 
+   OPT.sal       = 1; % whether to load data 
+   OPT.vel       = 1; % whether to load data 
+
+   if nargin==0
+      varargout = {OPT};
+      return
+   end
+
    if isstruct(ncfile)
       G      = ncfile;
       ncfile = G.file.name
@@ -59,11 +69,6 @@ function D = readMap(ncfile,varargin)
       it      = varargin{1};
       nextarg = 2;
    end
-
-   OPT.face      = 0; % whether to load face data 
-   OPT.zwl       = 1; % whether to load data 
-   OPT.sal       = 1; % whether to load data 
-   OPT.vel       = 1; % whether to load data 
 
    if nargin==0
       varargout = {OPT};
@@ -106,4 +111,4 @@ function D = readMap(ncfile,varargin)
 %   D.face.un  = nc_varget(ncfile, 'unorm',[it-1 0],[1 face.mask]);
 %   end
 
- end
+varargout = {D};

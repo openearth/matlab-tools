@@ -7,18 +7,21 @@ function varargout = plotMap(varargin)
 %          % or 
 %    <h> = unstruc.plotMap(ncfile,<it>,<keyword,value>);
 %
-%   plots an unstructured map,
-%   optionally the handles h are returned.
+%   plots an unstructured map, optionally the handles h are returned.
+%   For plotting multiple timesteps it is most efficient
+%   to read the unstructrured grid G once, and update D and plotMap.
 %
 %   The following optional <keyword,value> pairs have been implemented:
 %    * axis: only grid inside axis is plotted, use [] for while grid.
 %            for axis to be be a polygon, supply a struct axis.x, axis.y.
+%    * parameter: field in D.cen to plot (default 1st field 'zwl')
 %   Cells with plot() properties, e.g. {'EdgeColor','k'}
 %    * patch
-%    * parameter: field in D.cen to plot
 %   Defaults values can be requested with OPT = unstruc.plotNet().
 %
 %   Note: every flow cell is plotted individually as a patch: slow.
+%
+%   Apply any plot lay-out before plotMap: much fatser.
 %
 %   See also UNSTRUC
 
@@ -58,8 +61,8 @@ function varargout = plotMap(varargin)
 
    OPT.axis      = []; % [x0 x1 y0 y1] or polygon OPT.axis.x, OPT.axis.y
    % arguments to plot(x,y,OPT.keyword{:})
-   OPT.patch     = {'k-'};
-   OPT.parameter = 'zwl';
+   OPT.patch     = {'EdgeColor','none','LineStyle','-'};
+   OPT.parameter = [];
    OPT.quiver    = 1;
 
    if nargin==0
@@ -92,6 +95,15 @@ function varargout = plotMap(varargin)
       
    end
    
+   if isempty(OPT.parameter)
+      flds = fieldnames(D.cen);
+      if length(flds)==0
+         error('D.cen has no fields')
+      else
+        OPT.parameter = flds{1};
+      end
+   end
+   
    if isnumeric(OPT.axis) & ~isempty(OPT.axis) % axis vector 2 polygon
    tmp        = OPT.axis;
    OPT.axis.x = tmp([1 2 2 1]);
@@ -100,7 +112,7 @@ function varargout = plotMap(varargin)
 
 %% plot centres (= flow cells = circumcenters)
 
-   if isfield(G,'peri')
+if isfield(G,'peri')
 
    if isempty(OPT.axis)
       cen.mask = 1:G.cen.n;
@@ -133,13 +145,13 @@ function varargout = plotMap(varargin)
    end
 
   %shading flat; % not needed an slow
+  
+   set(h,OPT.patch{:});
    
-   set(h,OPT.patch{:})
-   
-   end
+end
    
 %% return handles
 
-   if nargout==1
-      varargout = {h};
-   end
+if nargout==1
+   varargout = {h};
+end

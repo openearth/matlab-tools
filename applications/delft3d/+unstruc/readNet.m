@@ -1,4 +1,4 @@
-function G = readNet(varargin)
+function varargout = readNet(varargin)
 %readNet   Reads network data of unstructured net.
 %
 %     G = unstruc.readNet(ncfile) 
@@ -143,5 +143,7 @@ function G = readNet(varargin)
   %G.face.z              = nc_varget(ncfile, 'FlowLink_zu')';
 
    end 
-
+   
 end
+
+varargout = {G};
