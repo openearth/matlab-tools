@@ -18,18 +18,18 @@ function varargout = xls2struct(fname,varargin)
 %
 % Example:
 %
-% +---------------+---------------+---------------+---------------+
-% |# textline 1   |               |               |               |
-% |# textline 2   |               |               |               |
-% |# textline 3   |               |               |               |
-% | columnname_01 | columnname_02 | columnname_03 | columnname_04 |  
-% | units         | units         | units         | units         |
-% | number/string | number/string | number/string | number/string |
-% | number/string | number/string | number/string | number/string |
-% | number/string | number/string | number/string | number/string |
-% | ...           | ...           | ...           | ...           |
-% | number/string | number/string | number/string | number/string |
-% +---------------+---------------+---------------+---------------+
+% +---------------+---------------+---------------+-----------------+-+-----------------+
+% |# textline 1   |               |               |                 | |                 |
+% |# textline 2   |               |               |                 | |                 |
+% |# textline 3   |               |               |                 | |                 |
+% | columnname_01 | columnname_02 | columnname_03 | columnname_04   | |                 |  
+% | units         | units         | units         | units           | |                 |
+% | number/string | number/string | number/string | number/string   |:| number/string   |
+% | number/string | number/string | number/string | number/string   |:| number/string   |
+% | number/string | number/string | number/string | number/string   |:| number/string   |
+% | ...           | ...           | ...           | ...             | | ...             |
+% | number/string | number/string | number/string | number/string   |:| number/string   |
+% +---------------+---------------+---------------+-----------------+-+-----------------+
 %
 % and <keyword,value> pairs are:
 %
@@ -45,6 +45,9 @@ function varargout = xls2struct(fname,varargin)
 % * fillnum     number that replaces fillstr 
 %               (Default NaN)
 % * commentchar characters that define the start of a comment (header) line (default '%*#')  
+% * last2d      inserts all data to the right of the last column name 
+%               into the last variable such that the last variable is a (ragged) 2D array
+%               (default false as otherwise crap cratch notes might end up in your data)
 %
 % Notes:
 % 
@@ -134,6 +137,7 @@ end
    OPT.fillstr     = {};
    OPT.fillnum     = NaN;
    OPT.commentchar = '%*#';
+   OPT.last2d      = 0;
    
    if ~odd(nargin)
       OPT.sheet = varargin{1};
@@ -363,14 +367,16 @@ end
 
       for ifld   = 1:nfld
       
-         % no good idea, as crap without a column name ends up in your last column
-         %if ifld==nfld
-         %   ifld2 = size(tstraw,2);
-         %else
-            ifld2 = ifld;
-         %end
-      
          fldname         = mkvar(char(fldnames{ifld}));
+         
+         if isempty(fldname)
+            break
+         end
+
+         ifld2 = ifld;
+         if OPT.last2d & ifld==nfld;
+         ifld2 = size(tstraw,2);  % sometimes there's crap scratch notes in your last columns, these shoudl not end up in your last column
+         end
          
          if OPT.debug
              disp([num2str(ifld,'%0.3d'),'/',num2str(nfld,'%0.3d'),...
@@ -384,41 +390,40 @@ end
             UNITS.(fldname) = unit;
          end
          
-         if isempty(fldname)
-            break
-         end
-         
          if OPT.units
-            if numeric_columns(ifld)
-               DAT.(fldname)    = tstraw(not_a_comment_line(3:end),ifld:ifld2);
-               DAT.(fldname)    = cell2mat(DAT.(fldname));
+            offset = 1;
+         else
+            offset = 0;
+         end
+            
+         if numeric_columns(ifld)
+            DAT.(fldname)    = tstraw(not_a_comment_line(2+offset:end),ifld:ifld2);
+            DAT.(fldname)    = cell2mat(DAT.(fldname));
+         else
+            if iscell(tsttxt)
+              if OPT.last2d & ifld==nfld;
+                matrix = tstraw(not_a_comment_line(2+offset:end),ifld:ifld2);
+                DAT.(fldname) = cell(size(matrix,1),1);
+                for irow=1:size(matrix,1)
+                  row = {matrix{irow,:}};
+                  try
+                    if ~iscellstr(row)
+                      row = cell2mat(row); % not for chars
+                    end
+                    DAT.(fldname){irow} = row(~isnan(row));
+                  catch
+                    mask = repmat(false,size(row));
+                    for jj=1:length(row)
+                    mask(jj) = all(~isnan(row{jj}));
+                    end
+                    DAT.(fldname){irow} = {row{mask}};
+                  end
+                end
+              else
+                DAT.(fldname) = tstraw(not_a_comment_line(2+offset:end),ifld:ifld2);
+              end
             else
-               %% Leave out empty rows
-               %  Only empty rows in header end of column are OK,
-               %  empty fields in data region are skipped, and lead to
-               %  shifting of data over rows. Onlt when whole row is NaN.
-               %  ------------------------------------------------
-               %  DAT.(fldname)    = tstraw(not_a_comment_line(3:end),ifld:ifld2);
-               %  ------------------------------------------------
-               irow_not_nan = 0;
-               for irow=3:length(not_a_comment_line)
-                 for ifld_per_column=[ifld:ifld2]
-                     irow_not_nan = irow_not_nan + 1;
-                     DAT.(fldname)(irow_not_nan            ,1)    = ...
-                            tstraw(not_a_comment_line(irow),ifld_per_column);
-                 end % ifld_per_column
-               end % irow
-            end % numeric_columns
-        else    
-            if numeric_columns(ifld)
-               DAT.(fldname)    = tstraw(not_a_comment_line(2:end),ifld:ifld2);
-               DAT.(fldname)    = cell2mat(DAT.(fldname));
-            else
-               if iscell(tsttxt)
-                  DAT.(fldname) = tstraw(not_a_comment_line(2:end),ifld:ifld2);
-               else
-                  error('tsttxt not char')
-               end
+               error('tsttxt not char')
             end
          end
    
