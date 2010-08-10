@@ -19,7 +19,11 @@ for i=1:handles.Shorelines.nrShorelines
                         if ~exist(localdir,'dir')
                             mkdir(localdir);
                         end
-                        urlwrite(fname,[localdir handles.Shorelines.Shoreline(i).Name '.nc']);
+                        % Try to copy nc meta file
+                        urlwrite(fname,[localdir 'temp.nc']);
+                        if exist([localdir 'temp.nc'],'file')
+                            movefile([localdir 'temp.nc'],[localdir handles.Shorelines.Shoreline(i).Name '.nc']);
+                        end
                         fname = [handles.ShorelineDir handles.Shorelines.Shoreline(i).Name filesep handles.Shorelines.Shoreline(i).Name '.nc'];
                     catch
                         % If no access to openDAP server possible, check

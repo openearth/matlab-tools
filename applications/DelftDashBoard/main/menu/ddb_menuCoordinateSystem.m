@@ -128,7 +128,8 @@ function menuCoordinateSystemOtherGeographic_Callback(hObject, eventdata, handle
 [ok,iconv]=checkOK;
 if ok
     cs0=get(handles.GUIHandles.Menu.CoordinateSystem.Geographic,'Label');
-    [cs,ok]=ddb_selectCoordinateSystem(handles.CoordinateData.CoordSysGeo,cs0);
+%    [cs,ok]=ddb_selectCoordinateSystem(handles.CoordinateData.CoordSysGeo,cs0);
+    [cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.CoordinateData,handles.EPSG,'default',cs0,'type','geographic');
     if ok
         handles.ConvertModelData=iconv;
         ch=get(get(hObject,'Parent'),'Children');
@@ -147,7 +148,8 @@ function menuCoordinateSystemOtherCartesian_Callback(hObject, eventdata, handles
 [ok,iconv]=checkOK;
 if ok
     cs0=get(handles.GUIHandles.Menu.CoordinateSystem.Cartesian,'Label');
-    [cs,ok]=ddb_selectCoordinateSystem(handles.CoordinateData.CoordSysCart,cs0);
+%    [cs,ok]=ddb_selectCoordinateSystem(handles.CoordinateData.CoordSysCart,cs0);
+    [cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.CoordinateData,handles.EPSG,'default',cs0,'type','projected');
     if ok
         handles.ConvertModelData=iconv;
         ch=get(get(hObject,'Parent'),'Children');

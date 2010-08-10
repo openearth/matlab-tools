@@ -27,11 +27,17 @@ else
     
     handles.SettingsDir=[inipath 'settings' filesep];
     ddbdir=getINIValue(inifile,'DataDir');
-    
+    ddbdir = [cd(cd(ddbdir)) filesep];    
 end
 
 handles.BathyDir=[ddbdir 'bathymetry' filesep];
-handles.SuperTransDir=[ddbdir 'supertrans' filesep];
 handles.TideDir=[ddbdir 'tidemodels' filesep];
 handles.ToolBoxDir=[ddbdir 'toolbox' filesep];
 handles.ShorelineDir=[ddbdir 'shorelines' filesep];
+
+if isdeployed
+    handles.SuperTransDir=[ddbdir 'supertrans' filesep];
+else
+    dr=fileparts(which('EPSG.mat'));
+    handles.SuperTransDir=[dr filesep];
+end

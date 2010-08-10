@@ -7,8 +7,8 @@ globalID = netcdf.getConstant('NC_GLOBAL');
 
 dimSizeX = length(x);
 dimSizeY = length(y);
-switch lower(OPT.coordsystype)
-    case{'geo','geographic','latlon','lonlat','spherical'}
+switch lower(OPT.EPSGtype)
+    case{'geo','geographic','geographic 2d','geographic 3d','latlon','lonlat','spherical'}
         xstr = 'lon';
         ystr = 'lat';
         standardxstr = 'longitude';

@@ -1,27 +1,83 @@
-function [CS,ok]=ddb_selectCoordinateSystem(CoordinateSystems,varargin)
+function [CS,type,nr,ok]=ddb_selectCoordinateSystem(CoordinateSystems,EPSG,varargin)
 
 handles.ok=0;
+iboth=0;
+handles.CoordinateSystems=CoordinateSystems;
+nr=0;
 
-if nargin>1
-   cs0=varargin{1};
-else
-   cs0='Amersfoort / RD New';
+type=[];
+
+handles.CSproj='Amersfoort / RD New';
+handles.CSgeo ='WGS 84';
+
+handles.iproj=strmatch(lower(handles.CSproj),lower(handles.CoordinateSystems.CoordSysCart),'exact');
+handles.igeo=strmatch(lower(handles.CSgeo),lower(handles.CoordinateSystems.CoordSysGeo),'exact');
+
+csdefaulttype='geographic';
+
+for i=1:length(varargin)
+    switch lower(varargin{i})
+        case{'type'}
+            cstype=varargin{i+1};
+            if strcmpi(cstype,'both')
+                iboth=1;
+            end
+        case{'default'}
+            cs0=varargin{i+1};
+        case{'defaulttype'}
+            csdefaulttype=varargin{i+1};
+    end
 end
-handles.CS=cs0;
+
+if iboth
+    cstype=csdefaulttype;
+end
+
+switch lower(cstype)
+    case{'geographic'}
+        CoordinateSystemStrings=handles.CoordinateSystems.CoordSysGeo;
+        handles.CSgeo = cs0;
+        ics = handles.igeo;
+    case{'projected'}
+        CoordinateSystemStrings=handles.CoordinateSystems.CoordSysCart;
+        handles.CSproj= cs0;
+        ics = handles.iproj;
+end
 
 handles.Window=MakeNewWindow('Select Coordinate System',[400 480]);
 
 handles.SelectCS = uicontrol(gcf,'Style','listbox','String','','Position', [ 30 70 340 390],'BackgroundColor',[1 1 1]);
 
-set(handles.SelectCS,'String',CoordinateSystems);
-ii=strmatch(cs0,CoordinateSystems,'exact');
-set(handles.SelectCS,'Value',ii);
+handles.radioGeo  = uicontrol(gcf,'Style','radiobutton','String','Geographic','Position', [ 30 30 80 20]);
+handles.radioProj = uicontrol(gcf,'Style','radiobutton','String','Projected', 'Position', [110 30 80 20]);
+
+if strcmpi(cstype,'geographic')
+    set(handles.radioGeo,'Value',1);
+    set(handles.radioProj,'Value',0);
+else
+    set(handles.radioGeo,'Value',0);
+    set(handles.radioProj,'Value',1);
+end
+
+if ~iboth
+    set(handles.radioGeo,'Enable','off');
+    set(handles.radioProj,'Enable','off');
+end
+
+handles.pushFind  = uicontrol(gcf,'Style','pushbutton','String','Search','Position', [ 190 30 50 20]);
+
+set(handles.SelectCS,'String',CoordinateSystemStrings);
+set(handles.SelectCS,'Value',ics);
 
 handles.PushOK = uicontrol(gcf,'Style','pushbutton','String','OK','Position', [ 320 30 50 20]);
 handles.PushCancel = uicontrol(gcf,'Style','pushbutton','String','Cancel','Position', [ 260 30 50 20]);
 
 set(handles.PushOK,     'CallBack',{@PushOK_CallBack});
 set(handles.PushCancel, 'CallBack',{@PushCancel_CallBack});
+set(handles.pushFind,   'CallBack',{@pushFind_CallBack});
+set(handles.radioGeo,   'CallBack',{@radioGeo_CallBack});
+set(handles.radioProj,  'CallBack',{@radioProj_CallBack});
+set(handles.SelectCS,   'CallBack',{@SelectCS_CallBack});
 
 pause(0.2);
 
@@ -34,9 +90,13 @@ handles=guidata(gcf);
 if handles.ok
     ok=1;
     CS=handles.CS;
+    type=handles.CStype;
+    nr=findEPSGcode(EPSG,CS,type);
 else
     ok=0;
     CS=cs0;
+    type=[];
+    nr=[];
 end    
 close(gcf);
 
@@ -45,9 +105,48 @@ handles=guidata(gcf);
 str=get(handles.SelectCS,'String');
 ii=get(handles.SelectCS,'Value');
 handles.CS=str{ii};
+if get(handles.radioProj,'Value')
+    handles.CStype='projected';
+else
+    handles.CStype='geographic';
+end
 handles.ok=1;
 guidata(gcf,handles);
 uiresume;
 
 function PushCancel_CallBack(hObject,eventdata)
 uiresume;
+
+function pushFind_CallBack(hObject,eventdata)
+handles=guidata(gcf);
+strs=get(handles.SelectCS,'String');
+ifound=findStringUI(strs);
+if ~isempty(ifound)
+    handles.CS=strs{ifound};
+    guidata(gcf,handles);
+    set(handles.SelectCS,'Value',ifound);
+end
+
+function radioGeo_CallBack(hObject,eventdata)
+handles=guidata(gcf);
+set(handles.radioProj,'Value',0);
+set(handles.radioGeo,'Value',1);
+set(handles.SelectCS,'String',handles.CoordinateSystems.CoordSysGeo);
+set(handles.SelectCS,'Value',handles.igeo);
+
+function radioProj_CallBack(hObject,eventdata)
+handles=guidata(gcf);
+set(handles.radioProj,'Value',1);
+set(handles.radioGeo,'Value',0);
+set(handles.SelectCS,'String',handles.CoordinateSystems.CoordSysCart);
+set(handles.SelectCS,'Value',handles.iproj);
+
+function SelectCS_CallBack(hObject,eventdata)
+handles=guidata(gcf);
+if get(handles.radioProj,'Value')
+    handles.iproj=get(hObject,'Value');
+else
+    handles.igeo=get(hObject,'Value');
+end
+guidata(gcf,handles);
+

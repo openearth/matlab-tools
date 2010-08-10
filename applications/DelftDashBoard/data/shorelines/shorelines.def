@@ -1,0 +1,10 @@
+Shoreline "World Vector Shoreline"
+
+    Type "netCDFtiles"
+    Name "wvs"
+
+    URL "http://dtvirt5.deltares.nl:8080/thredds/fileServer/opendap/deltares/DelftDashBoard/shorelines/wvs"
+#    URL "C:\Delft3D\w32\delftdashboard\data\shorelines\wvs"
+    useCache yes
+         
+EndShoreline

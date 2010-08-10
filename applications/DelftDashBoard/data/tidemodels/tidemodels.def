@@ -1,0 +1,29 @@
+TideModel "TPXO 7.2 Global Inverse Tide Model"
+
+    Type "netCDF"
+    Name "tpxo72"
+    URL "http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/DelftDashBoard/tidemodels"
+#    URL "C:\Delft3D\w32\delftdashboard\data\tidemodels"
+    useCache yes
+         
+EndBathymetryDataset
+
+TideModel "TPXO 6.2 Global Inverse Tide Model"
+
+    Type "netCDF"
+    Name "tpxo62"
+    URL "http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/DelftDashBoard/tidemodels"
+#    URL "C:\Delft3D\w32\delftdashboard\data\tidemodels"
+    useCache yes
+         
+EndBathymetryDataset
+
+TideModel "Mediterranean"
+
+    Type "netCDF"
+    Name "med"
+    URL "http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/DelftDashBoard/tidemodels"
+#    URL "C:\Delft3D\w32\delftdashboard\data\tidemodels"
+    useCache yes
+         
+EndBathymetryDataset

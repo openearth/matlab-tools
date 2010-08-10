@@ -1,0 +1,30 @@
+BathymetryDataset "GEBCO"
+
+    Type "netCDFtiles"
+    Name "gebco"
+
+    URL "http://dtvirt5.deltares.nl:8080/thredds/fileServer/opendap/deltares/DelftDashBoard/bathymetry/gebco"
+#   URL "C:\Delft3D\w32\delftdashboard\bathymetry\gebco\"
+    useCache yes
+         
+EndBathymetryDataset
+
+BathymetryDataset "NGDC Coastal Relief Model"
+
+    Type "netCDFtiles"
+    Name "ngdc_crm"
+    URL "http://dtvirt5.deltares.nl:8080/thredds/fileServer/opendap/deltares/DelftDashBoard/bathymetry/ngdc_crm"
+#    URL "C:\Delft3D\w32\delftdashboard\data\bathymetry\ngdc_crm\"
+    useCache yes
+
+EndBathymetryDataset
+
+BathymetryDataset "USGS Southern California"
+
+    Type "netCDFtiles"
+    Name "usgs_socal"
+    URL "http://dtvirt5.deltares.nl:8080/thredds/fileServer/opendap/deltares/DelftDashBoard/bathymetry/usgs_socal"
+#    URL "F:\OperationalModelSystem\vanDan\test\usgs_socal\"
+    useCache yes
+
+EndBathymetryDataset

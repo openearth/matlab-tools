@@ -73,6 +73,10 @@ yv=y(iy1:iy2);
 xx(isnan(xx))=1e9;
 yy(isnan(yy))=1e9;
 
+dpt=nc_varget(fname,'depth',[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
+dpt=dpt';
+depth=interp2(xg,yg,dpt,xx,yy);
+
 if isempty(comp)
 
     % Get all constituents
@@ -82,7 +86,8 @@ if isempty(comp)
     phi=double(phi);
     amp=permute(amp,[2 1 3]);
     phi=permute(phi,[2 1 3]);
-     
+
+    
     for k=1:nrcons
         
         a=squeeze(amp(:,:,k));
@@ -95,7 +100,8 @@ if isempty(comp)
         ampu(k,:,:)=interp2(xg,yg,a,xx,yy);
         phaseu(k,:,:)=interp2(xg,yg,p,xx,yy);
     end
-    
+
+
 else
     
     % Get one constituents
