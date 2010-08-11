@@ -25,7 +25,7 @@ BathymetryDataset "USGS Southern California"
 
 EndBathymetryDataset
 
-BathymetryDataset "Vakloding (testje)"
+BathymetryDataset "Vakloding test"
 
     Type "netCDFtiles"
     Name "vakloding"
