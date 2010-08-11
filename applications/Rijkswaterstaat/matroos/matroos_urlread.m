@@ -70,7 +70,10 @@ function s = matroos_urlread(urlChar);
 
 %% detect password in http url and use this in the connection
 
-   if(length(loginPassword)>0),
+   if(~isempty(loginPassword)),
+      if(  strcmp(loginPassword.substring(0,7),'http://')  ),
+          loginPassword=loginPassword.substring(7);
+      end;
       enc = sun.misc.BASE64Encoder();
       encodedPassword=['Basic ',char(enc.encode(loginPassword.getBytes()))];
       fprintf('Detected > encoded username:password "%s" > "%s" \n',char(loginPassword),encodedPassword);
