@@ -17,7 +17,6 @@ for i=1:handles.Bathymetry.NrDatasets
                         if ~exist(localdir,'dir')
                             mkdir(localdir);
                         end
-%                        urlwrite(fname,[localdir handles.Bathymetry.Dataset(i).Name '.nc']);
                         % Try to copy nc meta file
                         urlwrite(fname,[localdir 'temp.nc']);
                         if exist([localdir 'temp.nc'],'file')
