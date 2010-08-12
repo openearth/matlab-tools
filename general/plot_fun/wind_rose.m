@@ -137,7 +137,7 @@ handles=[];
 % varargin options:
 OPT.dtype       = 'standard';
 OPT.nAngles     = 36;
-OPT.ri          = 1/30;
+OPT.ri          = 1/30; % empty internal radius, relative to size of higher percentage [1/30]
 OPT.quad        = 1;
 OPT.legType     = 2;
 OPT.percBg      = 'w';
@@ -153,7 +153,8 @@ OPT.onAxes      = false;
 OPT.iflip       = 0;
 OPT.inorm       = 0;
 OPT.parent      = 0;
-OPT.IncHiLow    = 1; % include values higher and lower that the limits of OPT.Ag.
+OPT.IncHiLow    = 1; % include values higher and lower than the limits of OPT.Ag.
+OPT.directionLabels = true; % labels North South etc..
 
 OPT = setproperty(OPT, varargin{:});
 
@@ -390,13 +391,15 @@ set(wrAx,'children',ch);
 
 
 % N S E W labels:
-bg='none';
-args={'BackgroundColor',bg,'FontSize',8};
-h(1)=text(-g-OPT.ri, 0,'WEST', 'VerticalAlignment','top',   'HorizontalAlignment','left', args{:});
-h(2)=text( g+OPT.ri, 0,'EAST', 'VerticalAlignment','top',   'HorizontalAlignment','right',args{:});
-h(3)=text( 0,-g-OPT.ri,'SOUTH','VerticalAlignment','bottom','HorizontalAlignment','left', args{:});
-h(4)=text( 0, g+OPT.ri,'NORTH','VerticalAlignment','top',   'HorizontalAlignment','left', args{:});
-handles=[handles h];
+if OPT.directionLabels
+    bg='none';
+    args={'BackgroundColor',bg,'FontSize',8};
+    h(1)=text(-g-OPT.ri, 0,'WEST', 'VerticalAlignment','top',   'HorizontalAlignment','left', args{:});
+    h(2)=text( g+OPT.ri, 0,'EAST', 'VerticalAlignment','top',   'HorizontalAlignment','right',args{:});
+    h(3)=text( 0,-g-OPT.ri,'SOUTH','VerticalAlignment','bottom','HorizontalAlignment','left', args{:});
+    h(4)=text( 0, g+OPT.ri,'NORTH','VerticalAlignment','top',   'HorizontalAlignment','left', args{:});
+    handles=[handles h];
+end
 
 % scale legend:
 L=(g*rl-g-OPT.ri)/7;
@@ -407,7 +410,7 @@ x0=g+OPT.ri+(g*rl-g-OPT.ri)/7;
 x1=x0+L;
 y0=-g-OPT.ri;
 
-if OPT.legType==1 % contimuous.
+if OPT.legType==1 % continuous.
   for j=1:length(OPT.Ag)-1
     lab=num2str(OPT.Ag(j));
     if j==1 && hasL && OPT.IncHiLow
@@ -443,9 +446,11 @@ x=mean([-g*rs,g*rl]);
 y=mean([g+OPT.ri,g*rs]);
 handles(end+1)=text(x,y,OPT.titStr,'HorizontalAlignment','center');
 
-x=x0;
-y=y1+dy;
-handles(end+1)=text(x,y,OPT.legStr,'HorizontalAlignment','left','VerticalAlignment','bottom');
+if ismember(OPT.legType,[1 2])
+    x=x0;
+    y=y1+dy;
+    handles(end+1)=text(x,y,OPT.legStr,'HorizontalAlignment','left','VerticalAlignment','bottom');
+end
 
 if OPT.onAxes
   place_wr(OPT.onAxes,wrAx,OPT.onAxesX,OPT.onAxesY,OPT.onAxesR);
