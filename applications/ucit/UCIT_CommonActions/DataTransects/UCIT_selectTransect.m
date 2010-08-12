@@ -44,16 +44,16 @@ function UCIT_selectTransect(varargin)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-% UCIT_resetUCITDir;                               % reset Current Directory To UCIT directory (just to be on the safe side)
+% UCIT_resetUCITDir;                                % reset Current Directory To UCIT directory (just to be on the safe side)
 
-[check]    = UCIT_focusOn_Window('mapWindow');   % make mapWindow the current figure
+[check]    = UCIT_focusOn_Window('mapWindow');      % make mapWindow the current figure
 if check == 0
     return
 end
 
-rayH       = UCIT_findAllObjectsOnToken('_');    % find all transects
-selection  = UCIT_selectObject(rayH);            % select a transect by mouse click
-[parts]    = UCIT_parseStringOnToken(selection,'_');  % parse the tag of the selected object
+rayH       = UCIT_findAllObjectsOnToken('_');       % find all transects
+selection  = UCIT_selectObject(rayH);               % select a transect by mouse click
+[parts]    = UCIT_parseStringOnToken(selection,'_');% parse the tag of the selected object
 
 % assign parts to proper variables
 DataType   = parts{1};
@@ -69,10 +69,10 @@ else
         case 'startDuinafslag'
             guiH=findobj('tag','UCIT_batchDuinafslagInput');
             set(findobj(guiH,'tag','UCIT_batchInputStartArea'),'string',Area);
-            set(findobj(guiH,'tag','UCIT_batchInputStartRay'),'string',transectID);
+            set(findobj(guiH,'tag','UCIT_batchInputStartRay' ),'string',transectID);
         case 'endDuinafslag'
             guiH=findobj('tag','UCIT_batchDuinafslagInput');
-            set(findobj(guiH,'tag','UCIT_batchInputEndArea'),'string',Area);
-            set(findobj(guiH,'tag','UCIT_batchInputEndRay'),'string',transectID);
+            set(findobj(guiH,'tag','UCIT_batchInputEndArea'  ),'string',Area);
+            set(findobj(guiH,'tag','UCIT_batchInputEndRay'   ),'string',transectID);
     end
 end

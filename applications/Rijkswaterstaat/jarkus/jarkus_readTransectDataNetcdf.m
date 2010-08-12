@@ -146,24 +146,19 @@ global title
 if isempty(title)
     title = nc_attget(filename, nc_global, 'title');
 end
+
 transect.datatypeinfo = title;
-
-transect.datatype = 1;
-
-transect.datatheme = '';
-
-transect.area = areaname{id_index};
-
-transect.areacode = num2str(areacode(id_index));
-
-transect.transectID = num2str(alongshoreCoordinates(id_index), '%05d');
-
-transect.year = round(time(time_index)/365+1970); %'1965'
+transect.datatype     = 1;
+transect.datatheme    = '';
+transect.area         =                      areaname{id_index};
+transect.areacode     = num2str(areacode             (id_index));
+transect.transectID   = num2str(alongshoreCoordinates(id_index), '%05d');
+transect.year         = round(time(time_index)/365+1970); %'1965'
 
 %TODO: store and look up
-% transect.dateTopo = num2str(transect.dateTopo); % '3008'
+% transect.dateTopo = num2str(transect.dateTopo);   % '3008'
 % transect.dateBathy = num2str(transect.dateBathy); % '1708'
-transect.soundingID = num2str(time(time_index)); % '1965'
+transect.soundingID = num2str(time(time_index));    % '1965'
 
 
 global crossShoreCoordinate
@@ -190,17 +185,13 @@ if isempty(angle)
     angle = nc_varget(filename,'angle');
 end
 
-transect.GRAD = angle(id_index); %in degrees
-
-transect.contour = [x(1), y(1); x(end) , y(end)]; %[2x2 double]
-
-transect.contourunit = 'm';
-
+transect.GRAD              = angle(id_index); %in degrees
+transect.contour           = [x(1), y(1); x(end) , y(end)]; %[2x2 double]
+transect.contourunit       = 'm';
 transect.contourprojection = 'Amersfoort / RD New';
+transect.contourreference  = 'origin';
+transect.ls_fielddata      = 'parentSeq';
 
-transect.contourreference = 'origin';
-
-transect.ls_fielddata = 'parentSeq';
 %TODO: Check where these are calculated
 timestamp = 0; %1.1933e+009;?
 %TODO: Check where these are calculated
@@ -219,7 +210,7 @@ end
 transect.MLW = MLW(id_index); 
 
 transect.xi = crossShoreCoordinate; %[1264x1 double]
-height  = nc_varget(filename, 'altitude', [time_index-1, id_index-1, 0], [1, 1, length(crossShoreCoordinate)]);
+height      = nc_varget(filename, 'altitude', [time_index-1, id_index-1, 0], [1, 1, length(crossShoreCoordinate)]);
 transect.zi = height; %[1264x1 double]
 
 %TODO: Check where these are calculated

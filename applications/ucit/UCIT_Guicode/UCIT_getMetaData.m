@@ -57,7 +57,7 @@ if type == 1
     if ~(strcmp(UCIT_getInfoFromPopup('TransectsArea')    ,'Select area ...') && ...
          strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Lidar Data US'  ))
         
-    d = UCIT_getMetaData_transect
+    d = UCIT_getMetaData_transect;
     
     else
         d = [];
@@ -68,7 +68,7 @@ if type == 1
     
 elseif type == 2
     
-   d = UCIT_getMetaData_grid
+   d = UCIT_getMetaData_grid;
 
 else
     d = [];
