@@ -91,7 +91,8 @@ if ~all(all(isnan(Z)))
     set(gcf,'tag','tempTag');
 
     % attach data to figure - userdata
-    d.X = X; d.Y = Y; d.Z = Z; d.Ztime = Ztime; d.datatypeinfo = UCIT_getInfoFromPopup('GridsDatatype');
+    d.X = X; d.Y = Y; d.Z = Z; d.Ztime = Ztime; 
+    d.datatypeinfo = UCIT_getInfoFromPopup('GridsDatatype');
     set(gcf,'userdata',d);
 
     set(gca,'Xlim',[d.X(1,1) d.X(1,end)]);

@@ -37,9 +37,11 @@ function plotMultipleYears(d,years)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-datatypes = UCIT_getDatatypes;
-url = datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
-[d] = UCIT_getMetaData(1);
+datatypes         = UCIT_getDatatypes;
+ind               = strmatch(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names);
+TransectsDatatype = datatypes.transect.datatype{ind};
+url               = datatypes.transect.urls{ind};
+[d] = UCIT_getMetaData(1); % 1 means transect
 
 if nargin<2
     [check]=UCIT_checkPopups(1, 4);
@@ -81,7 +83,6 @@ counter = 1;
 
 for i=1:length(years)
 
-    
     try
         transect = jarkus_readTransectDataNetcdf(url, UCIT_getInfoFromPopup('TransectsArea'),UCIT_getInfoFromPopup('TransectsTransectID'),years(i));
     end
@@ -152,9 +153,8 @@ AvailableYears   = num2str(sort(AvailableYears,'descend'));
 % tmp=DBGetTableEntryRaw('transect','datatypeinfo',UCIT_DC_getInfoFromPopup('TransectsDatatype'),'area',UCIT_DC_getInfoFromPopup('TransectsArea'),'transectID',UCIT_DC_getInfoFromPopup('TransectsTransectID'));
 
 v = listdlg('PromptString','Select years:',...
-    'SelectionMode','multiple',...
-    'ListString',AvailableYears);
+           'SelectionMode','multiple',...
+              'ListString',AvailableYears);
 
 AvailableYears   = str2num(AvailableYears);
-
-years   =   AvailableYears(v);
+years            =         AvailableYears(v);

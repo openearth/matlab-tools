@@ -54,8 +54,14 @@ end
 
 if type == 1
 
-    if ~(strcmp(UCIT_getInfoFromPopup('TransectsArea')    ,'Select area ...') && ...
-         strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Lidar Data US'  ))
+    datatypes         = UCIT_getDatatypes;
+    ind               = strmatch(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names);
+    TransectsDatatype = datatypes.transect.datatype{ind};
+    TransectsArea     = datatypes.transect.areas{ind};
+
+
+    if ~(strcmp(TransectsArea    ,'Select area ...') && ...
+         strcmp(TransectsDatatype,'Lidar Data US'  ))
         
     d = UCIT_getMetaData_transect;
     

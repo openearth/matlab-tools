@@ -1,11 +1,11 @@
-function [popupValue, info] = UCIT_DC_getInfoFromPopup(objTag)
-%UCIT_DC_GETINFOFROMPOPUP   routine gets info from a popup menu on the UCIT gui
+function [popupValue, info] = UCIT_getInfoFromPopup(objTag)
+%UCIT_getInfoFromPopup   routine gets info from a popup menu on the UCIT gui
 % 
-% Routine gets info from a popup menu on the UCIT gui. The variable objTag specifies
-% the popup to look for. 
+% Routine gets info from a popup menu on the UCIT gui. 
+% The variable objTag specifies the popup to look for. 
 %
 % syntax:    
-%    [popupValue, info] = UCIT_DC_getInfoFromPopup(objTag)
+%    [popupValue, info] = UCIT_getInfoFromPopup(objTag)
 %
 % input:
 %    objTag = variable identifying which popup is selected
@@ -15,8 +15,8 @@ function [popupValue, info] = UCIT_DC_getInfoFromPopup(objTag)
 %    info       = returns structure containing info about the popup identified by objTag
 %
 % example:
-%    objTag='GridsDatatype'; [popupValue, info] = UCIT_DC_getInfoFromPopup(objTag)
-%    objTag='GridsDatatype'; [popupValue]       = UCIT_DC_getInfoFromPopup(objTag)
+%    objTag='GridsDatatype'; [popupValue, info] = UCIT_getInfoFromPopup(objTag)
+%    objTag='GridsDatatype'; [popupValue]       = UCIT_getInfoFromPopup(objTag)
 %
 % See also
 

@@ -3,6 +3,10 @@ function d = UCIT_getMetaData_transect
 %
 %See also: UCIT_getMetaData
 
+        datatypes  = UCIT_getDatatypes;
+        ind        = strmatch(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names);
+        TransectsDatatype = datatypes.transect.datatype{ind};
+
         %% get metadata
         
         getDataFromDatabase = false;
@@ -14,15 +18,16 @@ function d = UCIT_getMetaData_transect
         end
         
         % set areaname
-        if strcmp(UCIT_getInfoFromPopup('TransectsArea'),'Oregon'),areaid = 'Oregon';elseif strcmp(UCIT_getInfoFromPopup('TransectsArea'),'Washington');areaid = 'Washington';end
+        if     strcmp(UCIT_getInfoFromPopup('TransectsArea'),'Oregon')    ,areaid = 'Oregon';
+        elseif strcmp(UCIT_getInfoFromPopup('TransectsArea'),'Washington');areaid = 'Washington';end
         
         % if no data was on UCIT console yet (or if it is the wrong data) reload from database
         if ~isempty(d) % Check to see if some data is available in d ...
             
             % ... if the datatype info as well as the soundingID data matches with the
             % values in the gui the data will not have to be collected again
-            if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Jarkus Data') &&  ~strcmp(d.datatypeinfo(1), UCIT_getInfoFromPopup('TransectsDatatype')) || ...
-                    strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Lidar Data US') && (~strcmp(d.datatypeinfo(1), UCIT_getInfoFromPopup('TransectsDatatype')) || ...
+            if strcmp(TransectsDatatype, 'Jarkus Data'  ) &&  ~strcmp(d.datatypeinfo(1), TransectsDatatype) || ...
+               strcmp(TransectsDatatype, 'Lidar Data US') && (~strcmp(d.datatypeinfo(1), TransectsDatatype) || ...
                     ~strcmp(areaid        , UCIT_getInfoFromPopup('TransectsArea')))
                 
                 % ... if there is not a match the data will have to be collected again
@@ -38,14 +43,11 @@ function d = UCIT_getMetaData_transect
         if getDataFromDatabase
             
             d             = [];
-            datatypes     = UCIT_getDatatypes;
-            
-            ind           = find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names));
             url           = datatypes.transect.urls{ind};
             ldb           = datatypes.transect.ldbs{ind};
             axis_settings = datatypes.transect.axes{ind};
             
-            if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Lidar Data US')
+            if strcmp(TransectsDatatype,'Lidar Data US')
                 url   = url{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
                 ldb   = ldb{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
                 axis_settings = axis_settings{strcmp(datatypes.transect.areas{2},UCIT_getInfoFromPopup('TransectsArea'))};
@@ -64,7 +66,7 @@ function d = UCIT_getMetaData_transect
             transectID = cellstr(num2str(ids));
             soundingID = cellstr(num2str(years));
             
-            if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Jarkus Data')
+            if strcmp(TransectsDatatype, 'Jarkus Data')
                 
                 contours(:,1) = nc_varget(url, 'x',[0 0                   ],[length(alongshore) 1]);
                 contours(:,2) = nc_varget(url, 'x',[0 length(crossshore)-1],[length(alongshore) 1]);
@@ -72,7 +74,7 @@ function d = UCIT_getMetaData_transect
                 contours(:,4) = nc_varget(url, 'y',[0 length(crossshore)-1],[length(alongshore) 1]);
                 d.area        = areanames;
                 
-            elseif strcmp(UCIT_getInfoFromPopup('TransectsDatatype'), 'Lidar Data US')
+            elseif strcmp(TransectsDatatype, 'Lidar Data US')
                 
                 contours = nc_varget(url, 'contour'); % if you want all lidar data use UCIT_getLidarMetaData
                 d.area   = repmat({UCIT_getInfoFromPopup('TransectsArea')},length(areanames),1);
