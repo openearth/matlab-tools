@@ -58,6 +58,7 @@ function varargout = nc_multibeam_to_kml_tiled_png(varargin)
 % $Keywords: $
 
 %%
+
 OPT.make                    = true;
 OPT.copy2server             = false;
 
@@ -86,6 +87,9 @@ OPT.quiet                   = true;
 OPT.calculate_latlon_local  = false;
 OPT.EPSGcode                = 28992;
 OPT.dateFcn                 = @(time) (time+datenum(1970,1,1));
+
+% add colorbar defualt options
+OPT                         = mergestructs(OPT,KMLcolorbar);
 
 if nargin==0
     varargout = {OPT};
