@@ -67,13 +67,15 @@ OPT.CBcolorSteps         = [];             %
 OPT.CBcLim               = [];             %
 OPT.CBbgcolor            = [255 253 2];    % background color to be made transparent
 OPT.CBfontrgb            = [0 0 0];        % black
-OPT.CBcolorbarlocation   = {'W'};        %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
+OPT.CBcolorbarlocation   = {'W'};          %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
 OPT.CBcolorTitle         = '';             % The title of the colorbar as it appears in the bar
 OPT.CBcolorTick          = [];             % Ticks on colorbar. If isempty, nothing is changed, see help colorberlegend
 OPT.CBcolorTickLabel     = '';             % Is isempty, nothing is changed
 OPT.CBtitlergb           = [1 1 1];        % black
 OPT.CBframergb           = [255 253 2]/255;        % white
 OPT.CBalpha              = 0.8;            % transparency
+OPT.CBtemplateHor        = 'KML_colorbar_template_horizontal.png';
+OPT.CBtemplateVer        = 'KML_colorbar_template_horizontal.png';
 
 
 if nargin==0

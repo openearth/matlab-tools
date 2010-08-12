@@ -140,11 +140,11 @@ if OPT.make
     %% base figure (properties of which will be adjusted to print tiles)
     
     figure('Visible','Off')
-    x = linspace(0,0.01,100);
-    [x,y] = meshgrid(x,x);
-    z = kron([10 1;5 1],peaks(50))-rand(100);
-    h = surf(x,y,z);
-    hl = light;material([0.7 0.2 0.15 100]);shading interp;lighting phong;axis off;
+    x       = linspace(0,0.01,100);
+    [x,y]   = meshgrid(x,x);
+    z       = kron([10 1;5 1],peaks(50))-rand(100);
+    h       = surf(x,y,z);
+    hl      = light;material([0.7 0.2 0.15 100]);shading interp;lighting phong;axis off;
     axis tight;view(0,90);lightangle(hl,180,65);
     colormap(OPT.colorMap(OPT.colorSteps));clim(OPT.clim*OPT.lightAdjust);
     

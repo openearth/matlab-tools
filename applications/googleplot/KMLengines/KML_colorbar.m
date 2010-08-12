@@ -167,7 +167,7 @@ function KML_colorbar(OPT)
            im   = im((1:100),(1:440)+10,:);
            mask = bsxfun(@eq,im,reshape(OPT.CBbgcolor,1,1,3));
            % load template
-           [template, map, alpha] = imread('KML_colorbar_template_horizontal.png');
+           [template, map, alpha] = imread(OPT.CBtemplateHor);
            % place all non invisible pixels in the template)
            templateColobarArea = template((1:100)+14,(1:440)+140,:);
            templateColobarArea(repmat(any(~mask,3),1,3)) = im(repmat(any(~mask,3),1,3));
@@ -177,7 +177,7 @@ function KML_colorbar(OPT)
            im   = im((1:440)+70,1:100,:);
            mask = bsxfun(@eq,im,reshape(OPT.CBbgcolor,1,1,3));
            % load template
-           [template, map, alpha] = imread('KML_colorbar_template_vertical.png');
+           [template, map, alpha] = imread(OPT.CBtemplateVer);
            % place all non invisible pixels in the template)
            templateColobarArea = template((1:440)+90,(1:100)+18,:);
            templateColobarArea(repmat(any(~mask,3),1,3)) = im(repmat(any(~mask,3),1,3));
