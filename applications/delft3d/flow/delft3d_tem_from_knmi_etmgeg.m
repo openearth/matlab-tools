@@ -1,6 +1,7 @@
-%KNMI_ETMGEG2DELFT3D_TEM_EXAMPLE    script that transforms KNMI etmgeg files to delft3d *.tem file
+function delft3d_tem_from_knmi_etmgeg
+%delft3d_tem_from_knmi_etmgeg    script that transforms KNMI etmgeg files to delft3d *.tem file
 %
-%  KNMI_ETMGEG2DELFT3D_TEM_EXAMPLE(fname,ref_datenum)
+%  delft3d_tem_from_knmi_etmgeg(fname,ref_datenum)
 %
 % writes *.tem file from knmi_etmgeg file valid for ref_datenum in *.mdf file.
 %
@@ -16,9 +17,10 @@
 %          Station 380 Maastricht (Beek)
 %
 %See also: KNMI_ETMGEG, DELFT3D_IO_TEM, KNMI_POTWIND, 
-%          KNMI_POTWIND2DELFT3D_WND_EXAMPLE
+%          delft3d_wnd_from_knmi_potwind, delft3d_wnd_from_nc
 
    OPT.filename     = 'F:\checkouts\OpenEarthRawData\KNMI_etmgeg\raw\etmgeg_240_2001';
+   OPT.dir        = pwd;
    OPT.refdatenum   = datenum(2007,1,1);%!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
    C                = knmi_etmgeg(OPT.filename)
@@ -66,7 +68,7 @@
                        'fontsize',5,...
                           'units','normalized')
    
-   print2screensize([filename(OPT.filename),'_timeseries.png'])
+   print2screensize([OPT.dir,filesep,filename(OPT.filename),'_timeseries.png'])
 
 %% Mind that there are NaN's in the direction
 %% ----------------
@@ -82,7 +84,7 @@
    datetick('x')
    grid on   
 
-   print2screensize([filename(OPT.filename),'_after_refdate_',datestr(OPT.refdatenum,30),'_NaNs.png'])
+   print2screensize([OPT.dir,filesep,filename(OPT.filename),'_after_refdate_',datestr(OPT.refdatenum,30),'_NaNs.png'])
   
 %% Remove NaNs
 %% ---------------------------

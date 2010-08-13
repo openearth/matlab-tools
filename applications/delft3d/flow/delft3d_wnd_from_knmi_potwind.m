@@ -1,12 +1,14 @@
-%KNMI_POTWIND2DELFT3D_WND_EXAMPLE     script that transforms KNMI hydra file to delft3d *.wnd file
+function delft3d_wnd_from_knmi_potwind
+%delft3d_wnd_from_knmi_potwind     script that transforms KNMI hydra file to delft3d *.wnd file
 %
-%  knmi_potwind2delft3d_wnd_example(fname,ref_datenum)
+%  delft3d_wnd_from_knmi_potwind(fname,ref_datenum)
 %
 % writes *.wnd file from knmi_hydra file valied for ref_datenum in mdf file
 %
-%See also: KNMI_POTWIND, DELFT3D_IO_WND, KNMI_ETMGEG2DELFT3D_TEM_EXAMPLE
+%See also: KNMI_POTWIND, DELFT3D_IO_WND, delft3d_tem_from_knmi_etmgeg, delft3d_wnd_from_nc
 
    OPT.filename   = 'potwind_249_2001';
+   OPT.dir        = pwd;
    OPT.refdatenum = datenum(2007,1,1) ; % same as in MDF !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
    W = knmi_potwind(OPT.filename,'calms',0,'variables',0,'pol2cart',1)
@@ -28,7 +30,7 @@
   plot(W.UP(mask))
   ylabel('m/s')
   title('Wind speed when direction is NaN')
-  print2screensize([filename(OPT.filename),'_after_refdate_',datestr(OPT.refdatenum,30),'_NaN_in_direction.png'])
+  print2screensize([OPT.dir,filesep,filename(OPT.filename),'_after_refdate_',datestr(OPT.refdatenum,30),'_NaN_in_direction.png'])
   
 %% Remove nans (of either directory or speed)
 %% no need to be equidistant
@@ -44,4 +46,4 @@
    W.UP       = W.UP     (mask);
    W.DD       = W.DD     (mask);
 
-  delft3d_io_wnd('write',[filename(OPT.filename),'_after_refdate_',datestr(OPT.refdatenum,30),'_nonan.wnd'],W)
+  delft3d_io_wnd('write',[OPT.dir,filesep,filename(OPT.filename),'_after_refdate_',datestr(OPT.refdatenum,30),'_nonan.wnd'],W)
