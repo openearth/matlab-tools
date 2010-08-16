@@ -23,8 +23,12 @@ if (nargin >=4) && any(count<0)
 		[n,dims] = H5S.get_simple_extent_dims(space_id); %#ok<ASGLU>
         dims = fliplr(dims);
         
-		idx = find(count<0);
-		count(idx) = dims(idx) - start(idx);
+		negs = find(count<0);
+		if ~isempty(stride)
+		count(negs) = floor((dims(negs) - start(negs))./stride(negs));
+		else
+		count(negs) =  dims(negs) - start(negs);
+		end
 
 	catch me
 		if exist(space_id,'var')

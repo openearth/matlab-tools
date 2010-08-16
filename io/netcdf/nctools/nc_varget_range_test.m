@@ -1,48 +1,39 @@
 function OK = nc_varget_range_test
-%nc_varget_range_test test for nc_varget_range
+%NC_VARGET_RANGE_TEST   test for nc_varget_range
 %
-%See also: nc_varget_range
+%See also: nc_varget_range, nc_cf_time_range
 
-ncfile = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-DENHDR.nc'; % empty in request range
-ncfile = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-TERNZN.nc';
+%% subset orthogonal Smith & Sandwell worldbathymetric data for DCSM region
+%  The full grid is way too large too handle so we need to subset
 
-OPT.datenum   = datenum(1953,1,30 + [0 5]);% datestr(OPT.datenum)
+   D.url     = 'http://coast-enviro.er.usgs.gov/thredds/dodsC/bathy/smith_sandwell_v11';
 
-%% get full time series: order  5.0 seconds.
+   OPT.lon       = [-4 10];
+   OPT.lat       = [48 58];
 
-   tic
-   D = nc_cf_stationTimeSeries(ncfile,'sea_surface_height','plot',1);
-   hold on
-   S0.datenum   = find(D.datenum > OPT.datenum(1) & D.datenum < OPT.datenum(2));
-   toc
+%% with full coordinate sticks 
 
-%% subset time series: order 0.5 seconds.
+tic
 
-   tic
-   [S.datenum,S.ind] = nc_varget_range(ncfile,'time',OPT.datenum)
-   if ~isempty(S.ind)
-   S.sea_surface_height   = nc_varget(ncfile,'sea_surface_height',[0 S.ind(1)-1],[1 length(S.ind)]);
-   plot(S.datenum,S.sea_surface_height,'r:')
-   end
-   toc
-   hold on
+   D.lon          = nc_varget (D.url,'lon'); % -180 ... 180
+   D.lat          = nc_varget (D.url,'lat'); %   90 ... -90
 
-%% subset time series: order 0.5 seconds.
-
-   tic
-   [S.datenum,start,count] = nc_varget_range(ncfile,'time',OPT.datenum);
-   if ~isempty(start)
-   S.sea_surface_height   = nc_varget(ncfile,'sea_surface_height',[0 start],[1 count]);
-   toc
-   hold on
-   plot(S.datenum,S.sea_surface_height,'g.')
-   end
+   ind1.lon       = find(D.lon > OPT.lon(1) & D.lon < OPT.lon(2) | D.lon > OPT.lon(1)+360 & D.lon < OPT.lon(2)+360);
+   ind1.lat       = find(D.lat > OPT.lat(1) & D.lat < OPT.lat(2));
    
-   xlim(OPT.datenum)
+   D1.lon         = D.lon(ind1.lon);
+   D1.lat         = D.lat(ind1.lat);
+   
+toc % Elapsed time is 2.559636 seconds.
 
-%% assess
+%% with remote subset
 
-   % datestr(S.datenum)
-   % datestr(D.datenum(ind.datenum))
+tic
 
-   OK = isequal(S.datenum,S.datenum);
+  [D2.lon,ind2.lon]      = nc_varget_range(D.url,'lon',OPT.lon,'chunksize',Inf); % chunksize < Inf is actually SLOWER!
+  [D2.lat,ind2.lat]      = nc_varget_range(D.url,'lat',OPT.lat,'chunksize',Inf);
+  
+toc % Elapsed time is 4.307951 seconds.
+
+OK = isequal(ind1.lon(:),ind2.lon(:)) && isequal(ind1.lat(:),ind2.lat(:));
+

@@ -1,25 +1,28 @@
-function varargout=nc_varget_range(ncfile,var,lim,varargin)
-%NC_VARGET_RANGE  get a monotonous subset based on variable value
+function varargout=nc_varget_range(ncfile,varname,lim,varargin)
+%NC_VARGET_RANGE  get a monotonous subset from HUGE vector based on variable value
 %
-% NC_VARGET_RANGE find a contigous subset in a coordinate vector
-% based on two limits. This speeds up the request of a subset of a long time series.
+% NC_VARGET_RANGE finds a contigous subset in a coordinate vector
+% based on two limits. This speeds up for intance the request of a 
+% subset of a long time series.
 %
-%   D.datenum              = nc_varget_range(ncfile,'varname',var_range);
-%  [D.datenum,ind]         = nc_varget_range(...)
-%  [D.datenum,start,count] = nc_varget_range(...)
+%   val              = nc_varget_range(ncfile,'varname',var_range);
+%  [val,ind]         = nc_varget_range(...)
+%  [val,start,count] = nc_varget_range(...)
 %
 % Example:
+%   
+%   ncfile = ''
 %
-%   D.datenum              = nc_varget_range(ncfile,'time',datenum(1953,1,22 + [0 18]));
-%  [D.datenum,ind]         = nc_varget_range(ncfile,'time',datenum(1953,1,22 + [0 18]));
-%  [D.datenum,start,count] = nc_varget_range(ncfile,'time',datenum(1953,1,22 + [0 18]));
+%   D.datenum              = nc_cf_time_range(ncfile,'time',datenum(1953,1,22 + [0 18]));
+%  [D.datenum,ind]         = nc_cf_time_range(ncfile,'time',datenum(1953,1,22 + [0 18]));
+%  [D.datenum,start,count] = nc_cf_time_range(ncfile,'time',datenum(1953,1,22 + [0 18]));
 %
 %   D.eta   = nc_varget(ncfile,'eta',[0 ind(1)-1],[1 length(ind)]);
 %   D.eta   = nc_varget(ncfile,'eta',[0 start   ],[1 count      ]);
 %
 % result is empty when no data are present in specified window.
 %
-%See also: nc_varget
+%See also: nc_varget, nc_cf_time_range
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -47,7 +50,7 @@ function varargout=nc_varget_range(ncfile,var,lim,varargin)
 %   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% This tools is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
 % OpenEarthTools is an online collaboration to share and manage data and 
 % programming tools in an open source, version controlled environment.
 % Sign up to recieve regular updates of this function, and to contribute 
@@ -61,24 +64,28 @@ function varargout=nc_varget_range(ncfile,var,lim,varargin)
 % $HeadURL$
 % $Keywords$
 
-%TO DO: make it also work for x, y etc 
-
-OPT.offset    = datenum(1970,1,1);
-OPT.lim       = lim - OPT.offset; % [datenum(1950,1,2,2,40,0) datenum(1950,1,2,2,40,0)];
-OPT.var       = var;
 OPT.chunksize = 1000;
 OPT.debug     = 0;
+OPT.dstride   = 3; % step with which to reduce stride after every iteratio loop 
 
-meta  = nc_getdiminfo(ncfile,'time'); % nc_getvarinfo
-n1    = meta.Length;
-di    = ceil(n1/OPT.chunksize);
-chunk = [1:di:n1];
+if nargin==0
+    varargout = {OPT};
+    return
+end
+
+OPT = setProperty(OPT,varargin{:});
+
+OPT.lim       = lim; % [datenum(1950,1,2,2,40,0) datenum(1950,1,2,2,40,0)];
+meta          = nc_getdiminfo(ncfile,varname); % nc_getvarinfo
+n1            = meta.Length;
+di            = max(ceil(n1/OPT.chunksize),1); % max is there is isinf(chunksize)
+chunk         = [1:di:n1];
 
 while di > 1
    
-   t1      = nc_varget(ncfile,OPT.var,chunk(1)-1,length(chunk),di);
+   t1      = nc_varget(ncfile,varname,chunk(1)-1,length(chunk),di);
    if ~(all(diff(chunk)==di))
-   te      = nc_varget(ncfile,OPT.var,chunk(end)-1,1);
+   te      = nc_varget(ncfile,varname,chunk(end)-1,1);
    t1(end) = te;
    end
    if OPT.debug
@@ -86,8 +93,18 @@ while di > 1
    end
    ind1   = find(t1 >= OPT.lim(1));
    ind2   = find(t1 <= OPT.lim(2));
+   if isempty(ind1)
+       t=[];start=[];count=[];
+       disp([mfilename,': all data before requested range'])
+       break
+   end
+   if isempty(ind2)
+       t=[];start=[];count=[];
+       disp([mfilename,': all data after requested range'])
+       break
+   end   
    if ind2(end) <= ind1(1)
-      ind = [ind2(end) ind1(1)]; %when lim is between to points
+      ind = [ind2(end) ind1(1)]; %when lim is between two points
    else
       ind = intersect(ind1,ind2);
    end
@@ -99,7 +116,7 @@ while di > 1
    end
 
    n1    = range(chunk(ind));
-   di    = max(min(floor(n1/OPT.chunksize),di-3),1) % always reduce di, initially n1/OPT.chunksize, finally di-3, but never < 1
+   di    = max(min(floor(n1/OPT.chunksize),di-OPT.dstride),1); % always reduce di, initially n1/OPT.chunksize, finally di-3, but never < 1
    top   = chunk(ind(end));
    chunk = [chunk(ind(1)):di:top];
    if ~(chunk(end)==top)
@@ -107,12 +124,12 @@ while di > 1
    end
    
    if any(diff(chunk)<0)
-      error([OPT.var,' is not monotonously increasing.'])
+      error([varname,' is not monotonously increasing.'])
    end
    
 end
 
-t = nc_varget(ncfile,OPT.var,chunk(1)-1,length(chunk),di);
+t = nc_varget(ncfile,varname,chunk(1)-1,length(chunk),di);
 
 ind1   = find(t >= OPT.lim(1));
 ind2   = find(t <= OPT.lim(2));
@@ -129,7 +146,6 @@ else
    start = chunk(1)-1;
    count = length(chunk);
 end
-
 
 if     nargout==1
    varargout = {t};

@@ -113,9 +113,12 @@ function varargout = nc_cf_time(ncfile,varargin)
         [D(ivar).datenum,D(ivar).zone] = udunits2datenum(D.datenum,M.datenum.units);
       end
    else
-         varname = varargin{1};
+         if ischar(varargin{1})
+            varname  = varargin{1};
+            varargin = {varargin{2:end}};
+         end
          M.datenum.units   = nc_attget(fileinfo.Filename,varname,'units');
-         D.datenum         = nc_varget(fileinfo.Filename,varname);
+         D.datenum         = nc_varget(fileinfo.Filename,varname,varargin{:});
         [D.datenum,D.zone] = udunits2datenum(D.datenum,M.datenum.units);
          index           = 1;
    end
