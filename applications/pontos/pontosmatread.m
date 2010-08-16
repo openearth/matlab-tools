@@ -138,6 +138,13 @@ while ischar(tline)
         data.nrofsections = str2double(tmpline);
     end
     
+    if findstr(tline,'specific profiles active');                           % find number of active profile
+        tmpline = tline;
+        tmpline(findstr(tline,'specific profiles active'):end) = [];
+        tmpline(1) = [];
+        data.nrofprofiles = str2double(tmpline);
+    end
+    
     if findstr(tline,'groyne(s) active');                                   % find number of active groynes
         tmpline = tline;
         tmpline(findstr(tline,'groyne(s) active'):end) = [];
@@ -174,7 +181,22 @@ fclose(fid);
 
 FileInfo = tekal('open',matfilename);
 for i = 1:length(FileInfo.Field)
-    if isempty(strfind(FileInfo.Field(i).Name,'CMT')) && isempty(strfind(FileInfo.Field(i).Name,'SB-O')) && isempty(strfind(FileInfo.Field(i).Name,'SB-I'));
+    if ~isempty(strfind(FileInfo.Field(i).Name,'@'))
+        FileInfo.Field(i).Name(strfind(FileInfo.Field(i).Name,'@'))='_';
+    end
+    
+    if ~isempty(strfind(FileInfo.Field(i).Name,'SB-I'))
+        FileInfo.Field(i).Name='SB_I';
+    end
+    
+    if ~isempty(strfind(FileInfo.Field(i).Name,'SB-O'))
+        FileInfo.Field(i).Name='SB_O';
+    end
+    
+    if sum((strfind(FileInfo.Field(i).Name,'_'))==1)>0
+        FileInfo.Field(i).Name(1)='x';
+    end
+    if isempty(strfind(FileInfo.Field(i).Name,'CMT'));
         data.(FileInfo.Field(i).Name) = tekal('read',FileInfo,i);
     end
 end
