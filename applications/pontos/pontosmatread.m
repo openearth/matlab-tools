@@ -107,14 +107,14 @@ function data = pontosmatread(matfilename)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 29 Jul 2009
-% Created with Matlab version: 7.8.0.347 (R2009a)
+% Created: 16 Aug 2010
+% Created with Matlab version: 7.10.0.499 (R2010a)
 
-% $Id: oettemplate.m 688 2009-07-15 11:46:33Z damsma $
-% $Date: 2009-07-15 13:46:33 +0200 (Wed, 15 Jul 2009) $
-% $Author: damsma $
-% $Revision: 688 $
-% $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/general/oet_template/oettemplate.m $
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
 % $Keywords: $
 
 %%
@@ -179,6 +179,30 @@ for i = 1:length(FileInfo.Field)
     end
 end
 
+data.dt = diff(data.years);
 
+cumsumdt = cumsum(data.dt);
 
+j = 1;
+data_fieldnames = fieldnames(data);
+for i = 1:length(data_fieldnames)
+    if findstr(char(data_fieldnames(i)),'NLX')                                % find NLX indexes
+        NLXi(j) = i;
+        j = j+1;
+    end
+end
+
+%% add Longshore distribution of Layer Auto-Nourished Volumes averaged per
+%% time block (in output only available as averaged over total time from 
+%% start of run)
+for i = 1:length(NLXi)
+    NLXstep = char(data_fieldnames(NLXi(i)));
+    if i==1
+        data.(NLXstep)(:,4) = data.(NLXstep)(:,3).*cumsumdt(i);        
+    else
+        NLXprevstep = char(data_fieldnames(NLXi(i-1)));
+        data.(NLXstep)(:,4) = data.(NLXstep)(:,3).*cumsumdt(i)-data.(NLXprevstep)(:,3).*cumsumdt(i-1);
+    end
+    data.(NLXstep)(:,4) = data.(NLXstep)(:,4)./data.dt(i);
+end
 
