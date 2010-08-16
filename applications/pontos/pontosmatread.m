@@ -110,11 +110,11 @@ function data = pontosmatread(matfilename)
 % Created: 16 Aug 2010
 % Created with Matlab version: 7.10.0.499 (R2010a)
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 %%
