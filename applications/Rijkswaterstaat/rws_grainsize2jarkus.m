@@ -14,7 +14,8 @@ function varargout = rws_grainsize2jarkus(varargin)
 %   varargout =
 %
 %   Example
-%   rws_grainsize2jarkus
+%   calcD50 = rws_grainsize2jarkus('output', 'calcD50')
+%   [meanD50 sigmaD50] = rws_grainsize2jarkus('output', {'meanD50' 'sigmaD50'})
 %
 %   See also 
 
@@ -70,6 +71,11 @@ OPT = struct(...
     'extrap', true);
 
 OPT = setproperty(OPT, varargin{:});
+
+if ischar(OPT.output)
+    % convert to cell array if output is specified as string
+    OPT.output = {OPT.output};
+end
 
 %% check whether requested output is available
 info = nc_info(OPT.grainsize_url);
