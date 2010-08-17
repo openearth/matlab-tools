@@ -99,22 +99,23 @@ function varargout = nc_t_tide(t,var,varargin)
       D.phase          = tidestruc.tidecon(:,3);
       D
                  
-%% Save struct to netCDF fi;e
+%% Save struct to netCDF file
       
       nc_create_empty(OPT.ncfile);
       
 % TO DO: add other meta-info from t_tide such as history and stuff from t_tide ASCII file
       
       nc_adddim      (OPT.ncfile,'frequency',size(tidestruc.name,1));
-      nc_adddim      (OPT.ncfile,'strlen0'  ,size(tidestruc.name,2));
-      nc_adddim      (OPT.ncfile,'strlen1'  ,length(OPT.station_id));
-      nc_adddim      (OPT.ncfile,'strlen2'  ,length(OPT.station_name));
+      nc_adddim      (OPT.ncfile,'strlen0'  ,1);
+      nc_adddim      (OPT.ncfile,'strlen1'  ,size(tidestruc.name,2));
+      nc_adddim      (OPT.ncfile,'strlen2'  ,length(OPT.station_id));
+      nc_adddim      (OPT.ncfile,'strlen3'  ,length(OPT.station_name));
       nc_adddim      (OPT.ncfile,'time'     ,1);
       nc_adddim      (OPT.ncfile,'bounds'   ,2);
 
       nc.Name = 'station_id';
       nc.Datatype     = 'char';
-      nc.Dimension    = {'strlen1'};
+      nc.Dimension    = {'strlen0','strlen2'}; % otherwise matlab does not load it correctly
       nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'Rijkswaterstaat DONAR code of station');
       nc.Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id');
       nc_addvar         (OPT.ncfile,nc);
@@ -122,7 +123,7 @@ function varargout = nc_t_tide(t,var,varargin)
 
       nc.Name = 'station_name';
       nc.Datatype     = 'char';
-      nc.Dimension    = {'strlen2'};
+      nc.Dimension    = {'strlen0','strlen3'}; % otherwise matlab does not load it correctly
       nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'name of station');
       nc.Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_name');
       nc_addvar         (OPT.ncfile,nc);
@@ -169,7 +170,7 @@ function varargout = nc_t_tide(t,var,varargin)
 
       nc.Name = 'component_name';
       nc.Datatype     = 'char';
-      nc.Dimension    = {'frequency','strlen0'};
+      nc.Dimension    = {'frequency','strlen1'};
       nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'name of tidal constituent');
       nc_addvar         (OPT.ncfile,nc);
       nc_varput         (OPT.ncfile,nc.Name,D.component_name);clear nc
