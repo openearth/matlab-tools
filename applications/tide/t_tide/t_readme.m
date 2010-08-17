@@ -1,4 +1,4 @@
-% t_readme.m
+% t_readme readme
 %
 %                    Tidal Analysis Toolbox
 %                              by        

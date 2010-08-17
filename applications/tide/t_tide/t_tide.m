@@ -558,7 +558,7 @@ end;
 %-----------------Output results---------------------------------------
 
 if fid>1,
- fprintf(fid,'\n%s\n',['file name: ',filen]);
+ fprintf(fid,'\n%s\n',['file name: ',filenameext(filen)]);
 elseif fid==1,
  fprintf(fid,'-----------------------------------\n');
 end
