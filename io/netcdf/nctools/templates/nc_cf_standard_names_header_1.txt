@@ -1,5 +1,5 @@
 function varargout = nc_cf_standard_names(varargin)
-%NC_CF_STANDARD_NAMES  Routine facilitates adding variables that are part of standard-name glossaries (CF-1.4, OE-1.0, VO-1.0)
+%NC_CF_STANDARD_NAMES  Routine facilitates adding variables that are part of standard-name glossaries
 %
 %   Routine facilitates adding variables that are part of standard-name glossaries (CF-1.4, OE-1.0, VO-1.0).
 %   Works with both the Maltab and SNC netcdf libraries.   

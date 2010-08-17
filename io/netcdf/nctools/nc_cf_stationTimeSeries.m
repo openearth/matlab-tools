@@ -27,6 +27,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 % The following <keyword,value> pairs are implemented:
 % * varname (default []) % can optionally also be supplied as 2nd argument
 % * plot    (default: 1 if varname = [], else 0)  % switches of the plot
+% * period  period from which to get data (> nc_cf_time_range)
 %
 % Examples:
 %
@@ -87,6 +88,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 
    OPT.plot    = 1;
    OPT.varname = [];
+   OPT.period  = [];
    
    if ~odd(nargin)
    OPT.varname = varargin{1};
@@ -101,7 +103,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 
    OPT = setproperty(OPT,varargin{nextarg:end});
 
-   %% Load file info
+%% Load file info
 
    %% get info from ncfile
    
@@ -131,9 +133,15 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 
 %% Get datenum
 
-  [D.datenum,M.datenum.timezone] = nc_cf_time(ncfile);
+   if isempty(OPT.period)
+  [D.datenum,            M.datenum.timezone] = nc_cf_time      (ncfile);
+   start = [];
+   count = [];
+   else
+  [D.datenum,start0,count0,M.datenum.timezone] = nc_cf_time_range(ncfile,'time',OPT.period);
+   end
    
-%% Get location info
+%% Get location coords
 
    lonname         = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'longitude');
    if ~isempty(lonname)
@@ -152,6 +160,8 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    D.lat           = [];
    warning('no latitude specified')
    end
+   
+%% Get location info   
 
    idname          = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'station_id');
    if ~isempty(idname)
@@ -161,6 +171,8 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
     else
     D.station_id   =         D.station_id;
     end
+   elseif nc_isvar(ncfile,'station_id')
+    D.station_id   = nc_varget(ncfile,'station_id');    
    else
     D.station_id = '';
     warning('no unique station id specified')
@@ -171,6 +183,8 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    stname          = nc_varfind(ncfile, 'attributename', 'long_name', 'attributevalue', 'station_name');
    if ~isempty(stname)
     D.station_name = nc_varget(ncfile,stname);
+   elseif nc_isvar(ncfile,'station_name')
+    D.station_name = nc_varget(ncfile,'station_name');  
    else
     idname         = nc_varfind(ncfile, 'attributename', 'long_name', 'attributevalue', 'station_name');
     if ~isempty(stname)
@@ -218,7 +232,21 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    
 %% get data
 
-      D.(OPT.varname) = nc_varget(ncfile,OPT.varname);
+   if ~isempty(OPT.period) % take care of multiple dimensions
+      I         = nc_getvarinfo(ncfile,OPT.varname);
+      start     = zeros(1,length(I.Dimension));
+      count     = ones (1,length(I.Dimension));
+      i         = strmatch('time',I.Dimension);
+      if ~isempty(count0)
+        count(i)  = count0;
+        start(i)  = start0;
+        D.(OPT.varname) = nc_varget(ncfile,OPT.varname,start,count);
+      else
+        D.(OPT.varname) = [];
+      end
+   else
+      D.(OPT.varname) = nc_varget(ncfile,OPT.varname,start,count);
+   end
       
 %% get Attributes
 

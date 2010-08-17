@@ -99,7 +99,7 @@ function varargout = udunits2datenum(varargin)
 %% Output
 % --------------------
 
-   if     nargout==1
+   if     nargout<2
       varargout = {datenumbers};
    elseif nargout==2
       varargout = {datenumbers,strtrim(zone)};
