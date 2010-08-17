@@ -75,7 +75,7 @@ OPT.CBtitlergb           = [1 1 1];        % black
 OPT.CBframergb           = [255 253 2]/255;        % white
 OPT.CBalpha              = 0.8;            % transparency
 OPT.CBtemplateHor        = 'KML_colorbar_template_horizontal.png';
-OPT.CBtemplateVer        = 'KML_colorbar_template_horizontal.png';
+OPT.CBtemplateVer        = 'KML_colorbar_template_vertical.png';
 
 
 if nargin==0

@@ -174,6 +174,14 @@ if OPT.make
             fns_unzipped = fns(jj);
         end
         
+        %% remove catalog nc from selection
+        kk = false(length(fns_unzipped),1);
+        for ii = 1:length(fns_unzipped)
+            if any(strfind(fns_unzipped(ii).name,'catalog.nc'));
+                kk(ii) = true;
+            end
+        end
+        fns_unzipped(kk) = [];
         
         for ii = 1:length(fns_unzipped)
             %% set waitbars to 0 and update label

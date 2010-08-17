@@ -179,22 +179,24 @@ if OPT.make
         
         if ~isempty(OPT.referencepath)
             url_reference = fullfile(OPT.referencepath,fns(ii).name); %#ok<*ASGLU>
-            if ~exist(url_reference,'file')
-                disp([fns(ii).name ' could not be found in directory ' OPT.referenceDir])
-            end
-            z_reference = nc_varget(url_reference,'z',[ 0, 0, 0],[-1,-1,-1]);
-            
-            % check if lat and lon are identical in the source and the
-            % reference plane
-            lonInfo = nc_getvarinfo(url, 'lon');
-            
-            lon1  = nc_varget(url          , 'lon',[0 0],[10 10],floor(lonInfo.Size/10));
-            lat1  = nc_varget(url          , 'lat',[0 0],[10 10],floor(lonInfo.Size/10));
-            lon2  = nc_varget(url_reference, 'lon',[0 0],[10 10],floor(lonInfo.Size/10));
-            lat2  = nc_varget(url_reference, 'lat',[0 0],[10 10],floor(lonInfo.Size/10));
-            
-            if ~(isequalwithequalnans (lon1,lon2) && isequalwithequalnans (lat1,lat2))
-                error('the reference plane coordinates are not equal to the source plane coordinates')
+            if exist(url_reference,'file')
+                z_reference = nc_varget(url_reference,'z',[ 0, 0, 0],[-1,-1,-1]);
+                
+                % check if lat and lon are identical in the source and the
+                % reference plane
+                lonInfo = nc_getvarinfo(url, 'lon');
+                
+                lon1  = nc_varget(url          , 'lon',[0 0],[10 10],floor(lonInfo.Size/10));
+                lat1  = nc_varget(url          , 'lat',[0 0],[10 10],floor(lonInfo.Size/10));
+                lon2  = nc_varget(url_reference, 'lon',[0 0],[10 10],floor(lonInfo.Size/10));
+                lat2  = nc_varget(url_reference, 'lat',[0 0],[10 10],floor(lonInfo.Size/10));
+                
+                if ~(isequalwithequalnans (lon1,lon2) && isequalwithequalnans (lat1,lat2))
+                    error('the reference plane coordinates are not equal to the source plane coordinates')
+                end
+            else
+                disp([fns(ii).name ' could not be found in directory ' OPT.referencepath])
+                z_reference = nan;
             end
         else
             z_reference = 0;
@@ -472,15 +474,37 @@ if OPT.make
         fullfile(fname, 'KML', [fileID '.kml']));
     
     OPT2.fid=fopen(fullfile(OPT.basepath_local,OPT.relativepath, 'doc.kml'),'w');
-    OPT_header = struct(...
-        'name',         OPT.descriptivename,...
-        'open',         0,...
-        'description',  OPT.description,...
-        'lon',          mean([maxlon minlon]),...
-        'lat',          mean([maxlat minlat]),...
-        'z',            1e4,...
-        'timeIn',       min(datenums),...
-        'timeOut',      max(datenums));
+    
+    if length(datenums) == 1
+        OPT_header = struct(...
+            'name',         OPT.descriptivename,...
+            'open',         0,...
+            'description',  OPT.description,...
+            'lon',          mean([maxlon minlon]),...
+            'lat',          mean([maxlat minlat]),...
+            'z',            1e4,...
+            'timeIn',       min(datenums));
+    elseif length(datenums) < 5
+        OPT_header = struct(...
+            'name',         OPT.descriptivename,...
+            'open',         0,...
+            'description',  OPT.description,...
+            'lon',          mean([maxlon minlon]),...
+            'lat',          mean([maxlat minlat]),...
+            'z',            1e4,...
+            'timeIn',       min(datenums),...
+            'timeOut',      max(datenums));
+    else
+        OPT_header = struct(...
+            'name',         OPT.descriptivename,...
+            'open',         0,...
+            'description',  OPT.description,...
+            'lon',          mean([maxlon minlon]),...
+            'lat',          mean([maxlat minlat]),...
+            'z',            1e4,...
+            'timeIn',       min(datenums(end-4:end)),...
+            'timeOut',      max(datenums(end-4:end)));
+    end
     
     output = [KML_header(OPT_header) output];
     
@@ -489,7 +513,9 @@ if OPT.make
     if OPT.colorbar
         clrbarstring = KMLcolorbar('CBcLim',OPT.clim,...
             'CBfileName', fullfile(OPT.basepath_local,OPT.relativepath,'KML','colorbar') ,...
-            'CBcolorMap',OPT.colorMap,'CBcolorSteps',OPT.colorSteps,'CBcolorbarlocation','W');
+            'CBcolorMap',OPT.colorMap,'CBcolorSteps',OPT.colorSteps,'CBcolorbarlocation',OPT.CBcolorbarlocation,...
+            'CBcolorTick',OPT.CBcolorTick,'CBfontrgb',OPT.CBfontrgb,'CBbgcolor',OPT.CBbgcolor,'CBcolorTitle',OPT.CBcolorTitle,...
+            'CBframergb',OPT.CBframergb,'CBalpha',OPT.CBalpha,'CBtemplateHor',OPT.CBtemplateHor,'CBtemplateVer',OPT.CBtemplateVer);
         clrbarstring = strrep(clrbarstring,'<Icon><href>colorbar_',['<Icon><href>' [fname filesep 'KML' filesep 'colorbar'] '_']);
         output = [output clrbarstring];
     end
@@ -530,10 +556,15 @@ if OPT.copy2server
             'label','Copying of KML files','color',[0 0.4 0.2]);
     [path,fname] = fileparts(OPT.relativepath);
     % delete current kml files
-    if exist(fullfile(OPT.basepath_network,OPT.relativepath),'dir')
+    if exist (fullfile(OPT.basepath_network,OPT.relativepath),'dir')
         rmdir(fullfile(OPT.basepath_network,OPT.relativepath), 's')
     end
-    delete(fullfile(OPT.basepath_network,path,[fname '*.*']))
+    if exist  (fullfile(OPT.basepath_network,path,[fname '.kml']),'file')
+        delete(fullfile(OPT.basepath_network,path,[fname '.kml']))
+    end
+    if exist  (fullfile(OPT.basepath_network,path,[fname '_portable.kmz']),'file')
+        delete(fullfile(OPT.basepath_network,path,[fname '_portable.kmz']))
+    end
     
     mkpath(fullfile(OPT.basepath_network,OPT.relativepath));
     
