@@ -1,7 +1,7 @@
 function booleans = strmatcb(varargin)
-%STRMATCHB Find possible matches for string.
+%STRMATCHB   Find possible matches for string.
 %
-%   Same as STRMATCH, but returns boolean matrix instead if indices.
+%   Same as STRMATCH, but returns boolean matrix instead of indices.
 %   This allows for easy combining with numeric selections as:
 %   find(strmatchb('OBAMA',P.names) | P.number==44) where P.number 
 %   and P.names are database entries of the same length.
