@@ -12,19 +12,16 @@ function varargout = nc2struct(ncfile,varargin)
 % because it does the naming of dimensions based on size only
 % and not on the actual meaning of the dimension.
 %
-% Implemented <keyword,value> pairs are:
-% * ...
-%
 % NC2STRUCT can be used to facilitate an experimental development: 
 % loading a catalog.nc for a THREDDS OPeNDAP server as an 
 % alternative to the difficult-to-parse catalog.xml.
 %
 % Example 2:
 %
-%  [D,M] = nc2struct('file_created_with struct2nc.nc');
-%  [D,M] = nc2struct('catalog.nc');
+%  [dat,atr] = nc2struct('file_created_with struct2nc.nc');
+%  [dat,atr] = nc2struct('catalog.nc');
 %
-% NOTE: do not use for VERY BIG! files, as your memory will swamped.
+% NOTE: do not use for VERY BIG! files, as your memory will be swamped.
 %
 %See also: STRUCT2XLS, XLS2STRUCT, SDSAVE_CHAR, SDLOAD_CHAR, STRUCT2NC, NC_GETALL
 
@@ -72,7 +69,9 @@ function varargout = nc2struct(ncfile,varargin)
 
 % Behaviour should be as of nc_getall, but without the data being part of M, but in a separate struct D.
 % However, why does nc_getall currently not work with opendap libaries??
-% And what about globala atts, part of D (NO), or part of M(perhaps), or separate?
+% And what about global atts, part of D (NOOOOOOOOO!), or part of M(perhaps), or part of M.nc_global.?
+
+OPT.global2att = 2; % 0=not at all, 1=as fields, 2=as subfields of nc_global
 
 %% Load file info
 
@@ -105,6 +104,35 @@ function varargout = nc2struct(ncfile,varargin)
       end
    end
    
+if nargout==1
+
    varargout = {D};
+   
+else
+
+   ndat = length(fileinfo.Dataset);
+   if OPT.global2att>0
+   for iatt=1:length(fileinfo.Attribute);
+      attname  = fileinfo.Attribute(iatt).Name;
+      attname  = mkvar(attname); % ??? Invalid field name: 'CF:featureType'.
+      if     OPT.global2att==1;
+      M.(attname) = fileinfo.Attribute(iatt).Value;
+      elseif OPT.global2att==2
+      M.nc_global.(attname) = fileinfo.Attribute(iatt).Value;
+      end
+   end
+   end
+   for idat=1:ndat
+      fldname     = fileinfo.Dataset(idat).Name;
+      for iatt=1:length(fileinfo.Dataset(idat).Attribute);
+                   attname  = fileinfo.Dataset(idat).Attribute(iatt).Name;
+                   attname  = mkvar(attname); % ??? Invalid field name: '_FillValue'.
+      M.(fldname).(attname) = fileinfo.Dataset(idat).Attribute(iatt).Value;
+      end
+   end
+
+   varargout = {D,M};
+
+end
 
 %% EOF
