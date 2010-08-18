@@ -42,6 +42,9 @@
 %   vs_trih_crosssection_index - Read index NEFIS cross-section properties.
 %   vs_trih_station            - Read [x,y,m,n,name] information of history stations (obs point)
 %   vs_trih_station_index      - Read index of history station (obs point)
+%   vs_trim_station            - Read timeseries from one location from map file
+%   vs_trim2kml                - make a Google Earth movie of a scaler variable
+%   vs_trim2netcdf             - Convert part of a Delft3D trim file to netCDF (BETA)
 %
 % Toolboxes
 %   flow                       - tools related to Delft3D-flow
