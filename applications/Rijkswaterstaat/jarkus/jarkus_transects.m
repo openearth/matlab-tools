@@ -224,7 +224,7 @@ for i = datasetOrder'
             end
             
             % retrieve data
-            data = nc_varget(OPT.url, name, start-1, count);
+            data = double(nc_varget(OPT.url, name, start-1, count));
             
             % set precision
             if ~ischar(data)
