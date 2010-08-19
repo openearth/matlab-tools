@@ -105,7 +105,7 @@ year2 = years(v(2));
     'polygon'       , polygon);  % this functionality is also inside grid_orth_getDataInPolygon
 
 %% Subtract years
-dd.Z = -(d1.Z - d2.Z);
+dd.Z = (d1.Z - d2.Z);
 
 %% Plot results
 fh = figure('tag','diffplot');clf;
