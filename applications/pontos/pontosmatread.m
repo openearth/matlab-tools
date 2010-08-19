@@ -205,6 +205,8 @@ data.dt = diff(data.years);
 
 cumsumdt = cumsum(data.dt);
 
+NLXi = [];
+
 j = 1;
 data_fieldnames = fieldnames(data);
 for i = 1:length(data_fieldnames)
