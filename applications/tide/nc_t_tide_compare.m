@@ -112,37 +112,37 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
                tmp  = strmatch(name,OPT.names2label);
          
                subplot(1,2,1)
-               loglog(M.amplitude  (mcomp),...
-                      D.amplitude  (dcomp),'k+')
+               loglog(D.amplitude  (mcomp),...
+                      M.amplitude  (dcomp),'k+')
                hold on
                if ~isempty(tmp)
-               plot(M.amplitude(mcomp),D.amplitude(dcomp),'ko')
+               plot(D.amplitude(mcomp),M.amplitude(dcomp),'ko')
          
                %% draw name at side where not 45 degree line is located
-               loc = sign(M.amplitude(mcomp) - D.amplitude(dcomp));
+               loc = sign(D.amplitude(mcomp) - M.amplitude(dcomp));
                if loc < 0
-               text(M.amplitude(mcomp),D.amplitude(dcomp),...
+               text(D.amplitude(mcomp),M.amplitude(dcomp),...
                     [name,'     '],'rotation',-45,'horizontalalignment','right')
                else
-               text(M.amplitude(mcomp),D.amplitude(dcomp),...
+               text(D.amplitude(mcomp),M.amplitude(dcomp),...
                     ['     ',name],'rotation',-45)
                end
                end
 	       
                subplot(1,2,2)
-               plot(M.phase(mcomp),...
-                    D.phase(dcomp),'k+')
+               plot(D.phase(mcomp),...
+                    M.phase(dcomp),'k+')
                hold on
                if ~isempty(tmp)
-               plot(M.phase(mcomp),D.phase(dcomp),'ko')
+               plot(D.phase(mcomp),M.phase(dcomp),'ko')
          
                %% draw name at side where not 45 degree line is located
-               loc = sign(M.phase(mcomp) - D.phase(dcomp));
+               loc = sign(D.phase(mcomp) - M.phase(dcomp));
                if loc < 0
-               text(M.phase(mcomp),D.phase(dcomp),...
+               text(D.phase(mcomp),M.phase(dcomp),...
                     [name,'     '],'rotation',-45,'horizontalalignment','right')
                else
-               text(M.phase(mcomp),D.phase(dcomp),...
+               text(D.phase(mcomp),M.phase(dcomp),...
                     ['     ',name],'rotation',-45)
                end
                end
@@ -161,8 +161,8 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          
          axis equal
          grid on
-         xlabel('model amplitude [m]')
-         ylabel('data amplitude [m]')
+         xlabel('data amplitude [m]')
+         ylabel('model amplitude [m]')
          xlim(xlims)
          ylim(ylims)
          plot(xlims       ,ylims + 0.01,'-','color',[.5 .5 .5])
@@ -184,8 +184,8 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          end
          axis equal
          grid on
-         xlabel('model phase [deg]')
-         ylabel('data phase [deg]')
+         xlabel('data phase [deg]')
+         ylabel('model phase [deg]')
          xlim(xlims)
          ylim(ylims)
          set(gca,'xtick',[0:90:360]);
@@ -418,9 +418,14 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
 
    if OPT.plot.planview
    
-      if ~isempty(OPT.vc)
+      if ~isempty(OPT.vc);
+         try % if http and you're not connected
          L.lon = nc_varget(OPT.vc,'lon');
          L.lat = nc_varget(OPT.vc,'lat');
+         catch
+         L.lon = [];
+         L.lat = [];
+         end
       end
 
       for icomp=1:length(OPT.names2planview)

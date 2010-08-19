@@ -1,7 +1,7 @@
 function varargout = matroos_get_series(varargin);
 %MATROOS_GET_SERIES  retrieve timeseries from Rijkswaterstaat MATROOS database
 %
-% matlab wraper for matroos url call /direct/get_series.php
+% matlab wrapper for matroos url call /direct/get_series.php
 % on http://matroos.deltares.nl. You need a free password for this.
 %
 %  struct                 = matroos_get_series(<keyword,value>);
@@ -193,7 +193,7 @@ function varargout = matroos_get_series(varargin);
 
    if ~isempty(t)
       for iloc=1:length(t)
-      D(iloc) = matroos_noos_header2meta(h{iloc}); % not official noos, so not in NOOS_READ
+      D(iloc) = matroos_noos_header2meta(h{iloc}); % not official NOOS, so not in NOOS_READ
       end
       
       for iloc=1:length(t)
@@ -203,7 +203,7 @@ function varargout = matroos_get_series(varargin);
       end
    else
       disp('matroos_get_series: *** no data found ***')
-      D = matroos_noos_header2meta(h); % not official noos, so not in NOOS_READ
+      D = matroos_noos_header2meta(h); % not official NOOS, so not in NOOS_READ
       D.datenum    = [];
       D.(OPT.unit) = [];
       D.header     = h;
@@ -216,7 +216,7 @@ function varargout = matroos_get_series(varargin);
    elseif nargout==2
       varargout       = {D.datenum, D.values };
    elseif nargout==3
-      varargout       = {D.datenum, D.alues ,D.meta};
+      varargout       = {D.datenum, D.values ,D.meta};
    end
 
 %% EOF

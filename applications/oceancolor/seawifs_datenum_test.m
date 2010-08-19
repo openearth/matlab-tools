@@ -1,4 +1,4 @@
-function seawifs_datenum_test
+function OK = seawifs_datenum_test
 %SEAWIFS_DATENUM_TEST   unit test for seawifs_datenum
 %
 %See also: seawifs_datenum
@@ -6,8 +6,12 @@ function seawifs_datenum_test
 str = '1998128121603';
 num = ceil(now*24*60)./24/60; % on minutes
 
-answ = seawifs_datenum(seawifs_datenum(num));
+OK(1) = abs(num - seawifs_datenum(seawifs_datenum(num))) < 10.*eps; % floats are never exactly identical
+assert(OK(1),['answ should be input (' num2str(num) '), but was ' num2str(answ) ' instead.']);
 
-assert(num==answ,['answ should be input (' num2str(num) '), but was ' num2str(answ) ' instead.']);
-assert(strcmpi(str,seawifs_datenum(seawifs_datenum(str))),'String should be returned');
+OK(2) = strcmpi(str,seawifs_datenum(seawifs_datenum(str)));
+assert(OK(2),'String should be returned');
+
+OK = all(OK);
+
 %% EOF

@@ -78,7 +78,7 @@ function varargout = nc_t_tide(t,var,varargin)
             error('No equidistant time intervals.')
          end
       end
-   
+      mkdir(fileparts(OPT.ascfile));
       [tidestruc,pout]=t_tide(var,...
                  'latitude'  ,OPT.lat,... % required for nodal corrections
                  'start'     ,t(1),...
@@ -97,7 +97,6 @@ function varargout = nc_t_tide(t,var,varargin)
       D.frequency      = tidestruc.freq;
       D.amplitude      = tidestruc.tidecon(:,1);
       D.phase          = tidestruc.tidecon(:,3);
-      D
                  
 %% Save struct to netCDF file
       
@@ -146,6 +145,8 @@ function varargout = nc_t_tide(t,var,varargin)
       nc.Attribute(3) = struct('Name', 'units'          ,'Value', 'degrees_north');
       nc_addvar         (OPT.ncfile,nc);
       nc_varput         (OPT.ncfile,nc.Name,D.latitude);clear nc
+
+% TO DO: connect time to amp/phase
 
       nc.Name = 'time';
       nc.Datatype     = 'double';

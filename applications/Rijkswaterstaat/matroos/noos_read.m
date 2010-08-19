@@ -4,8 +4,8 @@ function varargout = noos_read(varargin)
 %   [time, values, headerlines] = noos_read(cellstr)
 %
 % where the headerlines can be interpreted with 
-% MATROOS_NOOS_HEADER2META is the NOOS file file originates
-% from matroos. when the file contains multpel data blocks,
+% MATROOS_NOOS_HEADER2META if the NOOS file file originates
+% from matroos. When the file contains multiple data blocks,
 % [time, values, headerlines], are cells. Alternative output:
 %
 %   D = noos_read(cellstr)

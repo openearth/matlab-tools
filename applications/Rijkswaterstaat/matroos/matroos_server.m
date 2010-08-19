@@ -16,9 +16,9 @@ function url = matroos_server(varargin)
    passwd = '???????????????????';
    url    = 'matroos.deltares.nl';
    
-   [user, passwd, url]=matroos_deltares();
+   [user, passwd, url]=matroos_deltares(); % matroos_deltares.m is of course not part of OpenEarthTools.
 
-%% urlread_basicauth & matroos_urlread handle the any special character (like @) in username or password
+%% urlread_basicauth & matroos_urlread handle any special character (like @) in username or password
 
    url      = ['http://',user,':',passwd,'@',url];
    

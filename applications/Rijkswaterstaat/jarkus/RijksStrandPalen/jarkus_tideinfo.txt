@@ -1,4 +1,4 @@
-% $id$
+% $Id$
 % NOTE: the origin of this file is unknown.
 % When smearing peanut butter on ones bread, it is always good 
 % practise to check the jar for proper date, producer (we only want an A brand), 

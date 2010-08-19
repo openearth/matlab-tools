@@ -18,6 +18,7 @@ function rws_waterbase_all
    rawbase = 'F:\checkouts\OpenEarthRawData';   % @ local
     ncbase = 'F:\opendap\thredds\';             % @ local
    
+%% Parameter choice
    OPT.donar_wnsnum = [541];                 % empty location name/epsg id541-AALDK-164810240000-201006130000.txt epsg code missing
    OPT.donar_wnsnum = [410];                 % id410-BRESKBSD-179805240000-200907100000.txt issue to netCDF: vat: '' to 'emmer'
    OPT.donar_wnsnum = [1];                   % takes VEERY LONG
@@ -27,7 +28,6 @@ function rws_waterbase_all
                        332  346  347  360  363  ... % 
                        364  380  491  492  493  ... % 
                        541  560 1083    1      ];   % 0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls
-%% Parameter choice
 
    DONAR = xls2struct([fileparts(mfilename('fullpath')) filesep 'rws_waterbase_name2standard_name.xls']);
 
@@ -65,10 +65,16 @@ function rws_waterbase_all
                                  
    %% Make netCDF
    
+     if any(OPT.code==[1 54 29 22 23 24]) % long time series: waterlevels(1 54), Q(29) or waves(22 23 24)
+        OPT.method='fgetl';
+     else
+        OPT.method='textread';
+     end
+   
      rws_waterbase2nc('donar_wnsnum' ,OPT.code,...
                       'directory_nc' ,OPT.directory_nc,...
                       'directory_raw',OPT.directory_raw,...
-                             'method','fgetl',... % 'fgetl' for water levels or discharges
+                             'method',OPT.method,... % 'fgetl' for water levels or discharges
                            'att_name',{'aquo_lex_code'           ,'donar_wnsnum'           ,'sdn_standard_name'},...
                             'att_val',{DONAR.aquo_lex_code(index),DONAR.donar_wnsnum(index),DONAR.sdn_standard_name(index) },...
                                'load',1,...% skip mat file, always load zipped txt file

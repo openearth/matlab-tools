@@ -127,16 +127,16 @@ for ivar=[OPT.donar_wnsnum]
             end
             if OPT.fileext=='.txt'
                 [D] = rws_waterbase_read([OPT.filename,'.txt'],...
-                    'locationcode',1,...
-                    'fieldname',OPT.name,...
+                      'locationcode',1,...
+                         'fieldname',OPT.name,...
                     'fieldnamescale',1,...
-                    'method',OPT.method);
+                            'method',OPT.method);
             else
                 [D] = rws_waterbase_read([OPT.unzippedfilename],...
-                    'locationcode',1,...
-                    'fieldname',OPT.name,...
+                      'locationcode',1,...
+                         'fieldname',OPT.name,...
                     'fieldnamescale',1,...
-                    'method',OPT.method);
+                            'method',OPT.method);
             end
             if OPT.unzip
                 delete([OPT.unzippedfilename]);%,'.txt'
@@ -221,28 +221,40 @@ for ivar=[OPT.donar_wnsnum]
         nc_attput(outputfile, nc_global, 'donar_code'      , D.data.locationcode);
         nc_attput(outputfile, nc_global, 'locationcode'    , D.data.locationcode);
 
-        nc_attput(outputfile, nc_global, 'waarnemingssoort', D.data.waarnemingssoort);
-        if ischar(D.data.refvlk)
-        nc_attput(outputfile, nc_global, 'reference_level' , D.data.refvlk);
-        else
-        nc_attput(outputfile, nc_global, 'reference_level' , str2line({D.data.refvlk},'s',';')');
-        end
+% MAKE A VARIABLE WITH ATTS flag_values (1:length(unique(val))) AND flag_meanings (unique(val))
+% ATTS TO VAR                                                                  -1----------------                -2---------- -3------------------------------------ -4------- -5---                                              -8---- -9-------------------------------------------------------------------
+% ATTS TO Z                                                                                                                                                                         -1----- -2-----------------                   
+% ATTS TO X,Y                                                                                                                                                                                                   -1--  VARABLE      
+% locatie           ;waarnemingssoort                         ;datum     ;tijd ;bepalingsgrenscode;waarde;eenheid;hoedanigheid;anamet                                ;ogi      ;vat  ;bemhgt;refvlk             ;EPSG;x/lat;y/long;orgaan;biotaxon (cijfercode,biotaxon omschrijving,biotaxon Nederlandse naam)
+% Breskens badstrand;Zwevende stof in mg/l in oppervlaktewater;1988-06-14;07:21;                  ;70    ;mg/l   ;NVT         ;Bepaling van hoeveelheid zwevende stof;Nationaal;Pomp ;  -100;T.o.v. Waterspiegel;7415;28370;380620;NVT   ;NVT,NVT,Niet van toepassing
+% Breskens badstrand;Zwevende stof in mg/l in oppervlaktewater;1995-10-23;08:20;                  ;95    ;mg/l   ;NVT         ;Bepaling van hoeveelheid zwevende stof;Nationaal;Emmer;  -100;T.o.v. Waterspiegel;7415;28370;380620;NVT   ;NVT,NVT,Niet van toepassing
+
+nc_attput(outputfile, nc_global, 'waarnemingssoort', D.data.waarnemingssoort);
+
+if ischar(D.data.refvlk)
+nc_attput(outputfile, nc_global, 'reference_level' , D.data.refvlk);
+else
+nc_attput(outputfile, nc_global, 'reference_level' , str2line({D.data.refvlk},'s',';')');
+end
         
-        if isfield(D.data,'hoedanigheid')
-        if  length(D.data.hoedanigheid)==1;nc_attput(outputfile, nc_global, 'hoedanigheid' , D.data.hoedanigheid);end
-        end
-        if isfield(D.data,'anamet')
-        if  length(D.data.anamet      )==1;nc_attput(outputfile, nc_global, 'anamet'       , D.data.anamet      );end
-        end
-        if isfield(D.data,'ogi')
-        if  length(D.data.ogi         )==1;nc_attput(outputfile, nc_global, 'ogi'          , D.data.ogi         );end
-        end
-        if isfield(D.data,'vat') % cel if varying over stations
-        if  ischar(D.data.vat         )   ;nc_attput(outputfile, nc_global, 'vat'          , D.data.vat         );
-        else
-                                           nc_attput(outputfile, nc_global, 'vat'          , 'varying'          );
-        end
-        end
+if isfield(D.data,'hoedanigheid')
+if  length(D.data.hoedanigheid)==1;nc_attput(outputfile, nc_global, 'hoedanigheid' , D.data.hoedanigheid);end
+end
+
+if isfield(D.data,'anamet')
+if  length(D.data.anamet      )==1;nc_attput(outputfile, nc_global, 'anamet'       , D.data.anamet      );end
+end
+
+if isfield(D.data,'ogi')
+if  length(D.data.ogi         )==1;nc_attput(outputfile, nc_global, 'ogi'          , D.data.ogi         );end
+end
+
+if isfield(D.data,'vat') % cel if varying over stations
+if  ischar(D.data.vat         )   ;nc_attput(outputfile, nc_global, 'vat'          , D.data.vat         );
+else
+                                   nc_attput(outputfile, nc_global, 'vat'          , 'varying'          );
+end
+end
 
 
 %% Add discovery information (test):
@@ -404,12 +416,14 @@ for ivar=[OPT.donar_wnsnum]
       nc(ifld).Dimension    = {};
       nc(ifld).Attribute = struct('Name', ...
        {'name',...
+        'grid_mapping_name',...
         'semi_major_axis', ...
         'semi_minor_axis', ...
         'inverse_flattening', ...
         'comment'}, ...
         'Value', ...
         {log.CS2.name,...
+        'latitude_longitude',...
          log.CS2.ellips.semi_major_axis, ...
          log.CS2.ellips.semi_minor_axis, ...
          log.CS2.ellips.inv_flattening,  ...
@@ -467,7 +481,7 @@ for ivar=[OPT.donar_wnsnum]
         nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name);
         nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', D.data.units);
         nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
-        nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+        nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', single(OPT.fillvalue)); % needs to be same type as data itself (i.e. single)
         nc(ifld).Attribute(end+1) = struct('Name', 'cell_methods'   ,'Value', 'time: point area: point');
         if OPT.stationTimeSeries
         nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');  % QuickPlot error
