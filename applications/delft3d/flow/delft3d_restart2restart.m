@@ -1,4 +1,4 @@
-% function varargout = delft3d_restart2restart(varargin)
+function varargout = delft3d_restart2restart(varargin)
 % DELFT3D_RESTART2RESTART create flow restart-files for new grids, based on old restart-files
 % << beta version! >>
 % 
@@ -96,21 +96,21 @@
 % $Keywords: $
 
 %%
-% if nargin>0
-%     if strcmpi(varargin{1},'plot')
-%         makeplots = true;
-%     else
-%         error('Unknow input argument... Give keyword ''plot'', or simply give no input')
-%     end
-% else
-%     makeplots = false;
-% end
-%             
-% 
-% if isempty(which('wlgrid.m'))
-%     wlsettings;
-% end
-makeplots = false;
+if nargin>0
+    if strcmpi(varargin{1},'plot')
+        makeplots = true;
+    else
+        error('Unknow input argument... Give keyword ''plot'', or simply give no input')
+    end
+else
+    makeplots = false;
+end
+            
+
+if isempty(which('wlgrid.m'))
+    wlsettings;
+end
+
 
 %% load data from restart files for all ORIGINAL domain(s)
 nOrig   = 0;
