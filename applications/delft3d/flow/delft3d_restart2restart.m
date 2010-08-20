@@ -1,4 +1,4 @@
-function varargout = delft3d_restart2restart(varargin)
+% function varargout = delft3d_restart2restart(varargin)
 % DELFT3D_RESTART2RESTART create flow restart-files for new grids, based on old restart-files
 % << beta version! >>
 % 
@@ -96,20 +96,21 @@ function varargout = delft3d_restart2restart(varargin)
 % $Keywords: $
 
 %%
-if nargin>0
-    if strcmpi(varargin{1},'plot')
-        makeplots = true;
-    else
-        error('Unknow input argument... Give keyword ''plot'', or simply give no input')
-    end
-else
-    makeplots = false;
-end
-            
-
-if isempty(which('wlgrid.m'))
-    wlsettings;
-end
+% if nargin>0
+%     if strcmpi(varargin{1},'plot')
+%         makeplots = true;
+%     else
+%         error('Unknow input argument... Give keyword ''plot'', or simply give no input')
+%     end
+% else
+%     makeplots = false;
+% end
+%             
+% 
+% if isempty(which('wlgrid.m'))
+%     wlsettings;
+% end
+makeplots = false;
 
 %% load data from restart files for all ORIGINAL domain(s)
 nOrig   = 0;
@@ -144,6 +145,7 @@ while name~=0
             return
         end
         mdfName = [pat name];
+        mdfOrig = mdfName;
         D(nOrig) = delft3d_io_restart('read',rstName,mdfName);
         
         
@@ -177,6 +179,7 @@ while name~=0
         yOrig = [yOrig; G(nOrig).Ycor1D];
         
     end
+    
     clear rstName mdfName
     
 end
@@ -186,7 +189,7 @@ clear name pat
 maskOrig    = ~isnan(xOrig);
 xOrig       = xOrig(maskOrig);
 yOrig       = yOrig(maskOrig);
-
+fields      = fieldnames(D(1).data);
 
 %% load grids for OUPUT domain(s)
 nOut    = 0;
@@ -231,12 +234,121 @@ while name~=0
         ID.defaultPath{nOut}         = pat;
         clear dum ext
     end
+    
+    
 end
 clear name
 
 
-%% first initiate (empty) new structure for the restart-data
-fields = fieldnames(D(1).data);
+%% Determine vertical layer distribution in original and output domains
+%%% The number of layers of the output domains may differ from the number
+%%% of layers in the original domains. However, all original domains must 
+%%% have the same distribution, the same goes for all output domains.
+
+%%% specify layer distribution from mdf of one of the ORIGINAL domains
+nk          = D(1).kmax;
+contents    = textread(mdfOrig,'%s','delimiter','\n','bufsize',1e6);
+cutoff      = strfind(contents,'Thick');
+iline = 1;
+while isempty(cutoff{iline})
+    iline=iline+1;
+end
+temp = contents(iline:iline+nk-1);
+[temp{1},temp{1}]=strtok(temp{1},'= '); %remove text in first line
+temp{1}=strtok(temp{1},'= ');
+for iline = 1:nk
+    vk(iline,1) = str2double(temp{iline});
+end,
+vk = cumsum(vk); % make vk cumulative towards 100:
+clear contents cutoff temp iline
+
+%%% specify number of layers and distribution for OUTPUT domains
+ans = inputdlg('Specify number of vertical layers in output domains','Vertical layers',1,{num2str(nk,'%i')});
+if isempty(ans{1})
+    nj = nk;
+else
+    nj  = str2double(ans{1});
+end
+
+vj = [];
+while isempty(vj)
+    ans = questdlg('Specify the layer distribution for output domains:','Layer distribution',...
+        'same as original domains','equidistant','load from mdf file','same as original domains');
+    
+    switch ans
+        case 'same as original domains'
+            vj = vk;
+            
+        case 'equidistant'
+            vj      = (100/nj)*[1:nj]';
+            
+        case 'load from mdf file'
+            [name,pat]=uigetfile('*.mdf','Load an mdf file specifying the layer distribution of the output domains');
+            if name==0
+                vj=[];
+            else
+                mdfOut      = [pat name];
+                contents    = textread(mdfOut,'%s','delimiter','\n','bufsize',1e6);
+                cutoff      = strfind(contents,'Thick');
+                iline = 1;
+                while isempty(cutoff{iline})
+                    iline=iline+1;
+                end
+                temp = contents(iline:iline+nj-1);
+                [temp{1},temp{1}] = strtok(temp{1},'= '); %remove text in first line
+                temp{1} = strtok(temp{1},'= ');
+                for iline = 1:nj
+                    vj(iline,1) = str2double(temp{iline});
+                end,
+                vj = cumsum(vj);
+                clear contents cutoff temp iline
+            end
+    end% switch ans
+    clear ans
+end % while isempty(vj)
+
+if length(vj)~=nj
+    error('Layer distribution does not match number of layers')
+end
+
+
+%% In case the number of layers differs for original and output domains:
+%%% first interpolate the original domains to match the number of layers in
+%%% the output domains
+if nk~=nj
+    Dold = D;
+    for idomain = 1:nOrig
+        for ifield = 1:length(fields)
+            if D(idomain).nlayers(ifield)==nk
+                D(idomain).nlayers(ifield) = nj;
+                A = D(idomain).data.(fields{ifield}); % read 3D matrix
+                A = permute(A,[3,2,1]); % put layer-dimension first, needed for interpolation
+                Ai = interp1(vk,A,vj,'linear','extrap');
+                Ai = permute(Ai,[3,2,1]); % restore dimension order
+                D(idomain).data.(fields{ifield}) = Ai;
+                clear A Ai
+            elseif D(idomain).nlayers(ifield)==nk+1 
+                % in that case, add dummy layers at bottom
+                vk2             = [0;vk];
+                vj2             = [0;vj];
+                
+                D(idomain).nlayers(ifield) = nj+1;
+                A = D(idomain).data.(fields{ifield}); % read 3D matrix
+                A   = permute(A,[3,2,1]); % put layer-dimension first, needed for interpolation
+                Ai  = interp1(vk2,A,vj2,'linear','extrap');
+                Ai  = permute(Ai,[3,2,1]); % restore dimension order
+                D(idomain).data.(fields{ifield}) = Ai;
+                clear A Ai vj2 vk2                
+            end
+        end
+    end
+end
+
+
+
+
+%% now initiate empty structure for the restart-data in the output domains
+
 for idomain = 1:nOut
     for ifield = 1:length(fields)
         N(idomain).data.(fields{ifield}) = [];
@@ -248,13 +360,7 @@ end
 for ifield = 1:length(fields)
     
     %%% determine the number of layers in the field
-    tmp     = D(1).data.(fields{ifield});
-    if length(size(tmp))>2
-        nlayers = size(tmp,3);
-    else
-        nlayers = 1;
-    end, clear tmp
-    
+    nlayers = D(1).nlayers(ifield);
     
     for k = 1:nlayers
         fprintf('Now interpolating field %s, layer %i,...\n',fields{ifield},k);
