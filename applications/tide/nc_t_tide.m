@@ -75,7 +75,7 @@ function varargout = nc_t_tide(t,var,varargin)
    
       if length(unique([dt])) > 1
          if (max(dt) - min(dt)) > OPT.ddatenumeps
-            error('No equidistant time intervals.')
+            error(['No equidistant time intervals: range: ',num2str(min(dt)),' - ',num2str(max(dt))])
          end
       end
       mkdir(fileparts(OPT.ascfile));

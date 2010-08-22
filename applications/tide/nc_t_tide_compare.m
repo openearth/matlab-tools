@@ -112,37 +112,37 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
                tmp  = strmatch(name,OPT.names2label);
          
                subplot(1,2,1)
-               loglog(D.amplitude  (mcomp),...
-                      M.amplitude  (dcomp),'k+')
+               loglog(D.amplitude  (dcomp),...
+                      M.amplitude  (mcomp),'k+')
                hold on
                if ~isempty(tmp)
-               plot(D.amplitude(mcomp),M.amplitude(dcomp),'ko')
+               plot(D.amplitude(dcomp),M.amplitude(mcomp),'ko')
          
                %% draw name at side where not 45 degree line is located
-               loc = sign(D.amplitude(mcomp) - M.amplitude(dcomp));
+               loc = sign(D.amplitude(dcomp) - M.amplitude(mcomp));
                if loc < 0
-               text(D.amplitude(mcomp),M.amplitude(dcomp),...
+               text(D.amplitude(dcomp),M.amplitude(mcomp),...
                     [name,'     '],'rotation',-45,'horizontalalignment','right')
                else
-               text(D.amplitude(mcomp),M.amplitude(dcomp),...
+               text(D.amplitude(dcomp),M.amplitude(mcomp),...
                     ['     ',name],'rotation',-45)
                end
                end
 	       
                subplot(1,2,2)
-               plot(D.phase(mcomp),...
-                    M.phase(dcomp),'k+')
+               plot(D.phase(dcomp),...
+                    M.phase(mcomp),'k+')
                hold on
                if ~isempty(tmp)
-               plot(D.phase(mcomp),M.phase(dcomp),'ko')
+               plot(D.phase(dcomp),M.phase(mcomp),'ko')
          
                %% draw name at side where not 45 degree line is located
-               loc = sign(D.phase(mcomp) - M.phase(dcomp));
+               loc = sign(D.phase(dcomp) - M.phase(mcomp));
                if loc < 0
-               text(D.phase(mcomp),M.phase(dcomp),...
+               text(D.phase(dcomp),M.phase(mcomp),...
                     [name,'     '],'rotation',-45,'horizontalalignment','right')
                else
-               text(D.phase(mcomp),M.phase(dcomp),...
+               text(D.phase(dcomp),M.phase(mcomp),...
                     ['     ',name],'rotation',-45)
                end
                end
@@ -260,18 +260,18 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
             %% harmonic (incl. nodal)
 
                plot([M.frequency(mcomp)],...
-                    [ M.amplitude(mcomp)],'k.','markersize',8)
+                    [M.amplitude(mcomp)],'k.','markersize',8)
                hold on
                plot([M.frequency(mcomp)],...
-                    [ D.amplitude(dcomp)],'ko','markersize',6)
+                    [D.amplitude(dcomp)],'ko','markersize',6)
                plot([M.frequency(mcomp) M.frequency(mcomp)],...
-                    [ M.amplitude(mcomp)  D.amplitude(dcomp)],'k-')
+                    [M.amplitude(mcomp) D.amplitude(dcomp)],'k-')
                if leftright
                text([M.frequency(mcomp)],...
-                    [ D.amplitude(dcomp)],[' ',spaces,name])
+                    [D.amplitude(dcomp)],[' ',spaces,name])
                else
                text([M.frequency(mcomp)],...
-                    [ D.amplitude(dcomp)],[name,spaces,' '],'horizontalalignment','right')
+                    [D.amplitude(dcomp)],[name,spaces,' '],'horizontalalignment','right')
                end
                
                xlim([0 0.3]);
@@ -302,8 +302,8 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
                else
                maximum = max([D.phase(dcomp) M.phase(mcomp)]);
                minimum = min([D.phase(dcomp) M.phase(mcomp)]);
-               plot([ M.frequency(mcomp) M.frequency(mcomp)],[0       minimum],'k-')
-               plot([ M.frequency(mcomp) M.frequency(mcomp)],[maximum 360    ],'k-')
+               plot    ([ M.frequency(mcomp) M.frequency(mcomp)],[0       minimum],'k-')
+               plot    ([ M.frequency(mcomp) M.frequency(mcomp)],[maximum 360    ],'k-')
                end
                
                end % index
@@ -370,7 +370,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
                %               data | model
                % amplitude     x    |  x
                % phase         x    |  x
-               %
+               
                plot(D.longitude(1),D.latitude(1),'k.')
                hold on
 
