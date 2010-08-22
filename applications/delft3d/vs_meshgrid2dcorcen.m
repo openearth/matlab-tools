@@ -82,7 +82,8 @@ function varargout=vs_meshgrid2dcorcen(varargin),
 % G.u.guu should be G.u.gu as 2nd letter is direction and first letter is location.
 % G.v.gvv should be G.v.gv as 2nd letter is direction and first letter is location.
 %
-% See also: VS_USE, VS_LET, VS_DISP, VS_MESHGRID3DCORCEN, VS_LET_SCALAR
+% See also: VS_USE, VS_LET, VS_DISP, VS_MESHGRID3DCORCEN, VS_LET_SCALAR,
+% for locations history file: VS_TRIH_STATION
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004-2007 Technische Universiteit Delft, 
@@ -242,8 +243,8 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
      G.sigma_dz    =  vs_let(NFSstruct,'GRID'     ,'THICK'            ,'quiet');   
      G.coordinates =  vs_let(NFSstruct,'GRID'     ,'COORDINATES'      ,'quiet');
      G.layer_model =  vs_let(NFSstruct,'GRID'     ,'LAYER_MODEL'      ,'quiet');
-     G.coordinates =  permute(G.coordinates,[1 3 2]);
-     G.layer_model =  permute(G.layer_model,[1 3 2]);
+     G.coordinates =  strtrim(permute(G.coordinates,[1 3 2]));
+     G.layer_model =  strtrim(permute(G.layer_model,[1 3 2]));
      
      if strmatch('Z-MODEL', G.layer_model)
      G.ZK          =  vs_let(NFSstruct,'GRID'     ,'ZK'               ,'quiet');

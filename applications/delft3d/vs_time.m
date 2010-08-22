@@ -210,10 +210,10 @@ elseif strcmp(NFSstruct.SubType,'Delft3D-hwgxy')
  elseif strcmp(NFSstruct.SubType,'Delft3D-trih')
  %% -------------------------------------------
 
-      T.itdate        = vs_let(NFSstruct,'his-const '     ,'ITDATE',{0});
-      T.dt_simulation = vs_let(NFSstruct,'his-const '     ,'DT'    ,{0});
-      T.tunit         = vs_let(NFSstruct,'his-const '     ,'TUNIT' ,{0});
-      T.t             = vs_let(NFSstruct,'his-info-series',{Tindex},'ITHISC',{0});
+      T.itdate        = vs_let(NFSstruct,'his-const '     ,'ITDATE',{0},'quiet');
+      T.dt_simulation = vs_let(NFSstruct,'his-const '     ,'DT'    ,{0},'quiet');
+      T.tunit         = vs_let(NFSstruct,'his-const '     ,'TUNIT' ,{0},'quiet');
+      T.t             = vs_let(NFSstruct,'his-info-series',{Tindex},'ITHISC',{0},'quiet');
       T.t             = T.t.* T.dt_simulation.* T.tunit;
       T.nt_storage    = vs_get_grp_size(NFSstruct,'his-series'); % ???????????
 
@@ -230,7 +230,7 @@ elseif strcmp(NFSstruct.SubType,'Delft3D-hwgxy')
       if length(Tindex)==1
          if T.nt_storage >1
 
-            tmp.t              = vs_let(NFSstruct,'his-info-series',{1:2},'ITHISC',{0});
+            tmp.t              = vs_let(NFSstruct,'his-info-series',{1:2},'ITHISC',{0},'quiet');
             tmp.t              = tmp.t.* T.dt_simulation.* T.tunit;
 
             T.dt_storage       = diff(tmp.t(1:2));

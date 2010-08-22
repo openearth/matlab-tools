@@ -103,12 +103,12 @@ end
    elseif isempty(station_id) % BEFORE isnumeric because [] is also numeric!!!
    
       ST.index = 1:vs_get_elm_size(trih,OPT.ElmName); % get all stations
-      ST.name  = permute(vs_let(trih,OPT.GrpName,OPT.ElmName,{ST.index}),[2 3 1]);
+      ST.name  = permute(vs_let(trih,OPT.GrpName,OPT.ElmName,{ST.index},'quiet'),[2 3 1]);
       
    elseif isnumeric(station_id)
    
       ST.index = station_id;
-      ST.name  = permute(vs_let(trih,OPT.GrpName,OPT.ElmName,{ST.index}),[2 3 1]);
+      ST.name  = permute(vs_let(trih,OPT.GrpName,OPT.ElmName,{ST.index},'quiet'),[2 3 1]);
       
    end
    
@@ -124,18 +124,22 @@ end
    if iostat==1
    
       if (~(size(ST.index,1)==0) && strcmp(trih.SubType,'Delft3D-trih'))
-         ST.m         = squeeze(vs_let(trih,OPT.GrpName,'MNSTAT',{1,ST.index}));
-         ST.n         = squeeze(vs_let(trih,OPT.GrpName,'MNSTAT',{2,ST.index}));
+         ST.m         = squeeze(vs_let(trih,OPT.GrpName,'MNSTAT',{1,ST.index},'quiet'));
+         ST.n         = squeeze(vs_let(trih,OPT.GrpName,'MNSTAT',{2,ST.index},'quiet'));
       
-         ST.x         = squeeze(vs_let(trih,OPT.GrpName,'XYSTAT',{1,ST.index}));
-         ST.y         = squeeze(vs_let(trih,OPT.GrpName,'XYSTAT',{2,ST.index}));
+         ST.x         = squeeze(vs_let(trih,OPT.GrpName,'XYSTAT',{1,ST.index},'quiet'));
+         ST.y         = squeeze(vs_let(trih,OPT.GrpName,'XYSTAT',{2,ST.index},'quiet'));
          
         %ST.grdang    = squeeze(vs_let(trih,OPT.GrpName,'GRDANG',{1,ST.index}));
-         ST.angle     = squeeze(vs_let(trih,OPT.GrpName,'ALFAS' ,{  ST.index}));
+         ST.angle     = squeeze(vs_let(trih,OPT.GrpName,'ALFAS' ,{  ST.index},'quiet'));
          ST.angle_explanation = 'orientation (deg) ksi-axis (u velocity) w.r.t. pos. x-axis at water level point';
          
-         ST.kmax      = squeeze(vs_let(trih,OPT.GrpName,'KMAX'));
-
+         ST.kmax        =  squeeze(vs_let(trih,OPT.GrpName,'KMAX'));
+         ST.coordinates =  vs_let(trih,'his-const','COORDINATES'      ,'quiet');
+         ST.layer_model =  vs_let(trih,'his-const','LAYER_MODEL'      ,'quiet');
+         ST.coordinates =  strtrim(permute(ST.coordinates,[1 3 2]));
+         ST.layer_model =  strtrim(permute(ST.layer_model,[1 3 2]));
+     
       else
       
          ST.m      = [];

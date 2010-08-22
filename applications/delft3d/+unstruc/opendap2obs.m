@@ -1,7 +1,7 @@
 function varargout = opendap2obs(varargin)
 %OPENDAP2OBS   get list of observation points from netCDF time series collection
 %
-%See also: unstruc
+%See also: unstruc, delft3d_opendap2obs
 
 %% settings
 
@@ -36,6 +36,8 @@ function varargout = opendap2obs(varargin)
   end
   
   [D.x,D.y] = convertCoordinates(D.lon,D.lat,'CS1.code',4326,'CS2.code',OPT.epsg)
+
+%% TO DO: exclude points outside unstruc extende, not really needed as unstruc only use points with associated gridcell
 
 %% save file
 

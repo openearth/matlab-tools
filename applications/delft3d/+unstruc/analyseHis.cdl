@@ -1,0 +1,35 @@
+// For discussion on this netCDF format please refer to:
+// http://public.deltares.nl/display/NETCDF/netCDF
+netCDF runid_his.nc { 
+
+dimensions:
+	time = UNLIMITED ; (21266 currently)
+	station = 21 ;
+	station_name_len = 40 ;
+
+
+variables:
+	// Preference 'PRESERVE_FVD':  false,
+	// dimensions consistent with ncBrowse, not with native MATLAB netcdf package.
+	double station_x_coordinate(station), shape = [21]
+		station_x_coordinate:units = "m" 
+		station_x_coordinate:standard_name = "projection_x_coordinate" 
+	double station_y_coordinate(station), shape = [21]
+		station_y_coordinate:units = "m" 
+		station_y_coordinate:standard_name = "projection_y_coordinate" 
+	char station_name(station,station_name_len), shape = [21 40]
+	double waterlevel(time,station), shape = [21266 21]
+		waterlevel:units = "m" 
+	double velocity(time,station), shape = [21266 21]
+		velocity:units = "m/s" 
+	double time(time), shape = [21266]
+		time:units = "seconds since 1998-01-01 00:00:00" 
+
+
+//global attributes:
+		:institution = "Deltares" 
+		:references = "http://www.deltares.nl" 
+		:source = "UNSTRUC v1.0.11.11857:1191, model" 
+		:history = "Created on 2010-08-17T21:05:57+0200, UNSTRUC" 
+		:Conventions = "CF-1.4:Deltares-0.1" 
+}
