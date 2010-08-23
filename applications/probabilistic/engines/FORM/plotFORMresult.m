@@ -55,7 +55,12 @@ function varargout = plotFORMresult(result, fhandle)
 % $HeadURL$
 
 %%
-Nstoch = length(result.Input);
+stochast = result.Input;   % all variables, including deterministic ones
+active = ~cellfun(@isempty, {stochast.Distr}) &...
+    ~strcmp('deterministic', cellfun(@func2str, {stochast.Distr},...
+    'UniformOutput', false));
+Nstoch = sum(active);   % number of random variables (deterministic ones excuded)
+
 NrFigureColumns = ceil(sqrt(Nstoch));
 if NrFigureColumns*(NrFigureColumns-1) >= Nstoch
     NrFigureRows = NrFigureColumns-1;
@@ -81,7 +86,9 @@ end
 IterIndex = [(Nstoch+1:Nstoch+1:Nx-1) Nx];
 
 % make Nstoch subplots
-for i = 1:Nstoch
+activeInd = find(active);
+for j = 1:Nstoch
+    i = activeInd(j);
     
     subplot(NrFigureRows, NrFigureColumns, i,...
         'Nextplot', 'add',...
