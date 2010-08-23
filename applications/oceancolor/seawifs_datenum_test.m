@@ -6,7 +6,8 @@ function OK = seawifs_datenum_test
 str = '1998128121603';
 num = ceil(now*24*60)./24/60; % on minutes
 
-OK(1) = abs(num - seawifs_datenum(seawifs_datenum(num))) < 10.*eps; % floats are never exactly identical
+answ = seawifs_datenum(seawifs_datenum(num));
+OK(1) = abs(num - answ) < 10.*eps; % floats are never exactly identical
 assert(OK(1),['answ should be input (' num2str(num) '), but was ' num2str(answ) ' instead.']);
 
 OK(2) = strcmpi(str,seawifs_datenum(seawifs_datenum(str)));

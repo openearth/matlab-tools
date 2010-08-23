@@ -104,7 +104,7 @@ function oetsettings(varargin)
 % -----------------------
    basepath = fileparts(mfilename('fullpath'));
    warning off
-   addpathfast(basepath); % excludes *.svn directories!
+   addpathfast(basepath,'append',false); % excludes *.svn directories!
 
 %% Create tutorial search database
 % ------------------------
