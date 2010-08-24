@@ -210,7 +210,7 @@ NLXi = [];
 j = 1;
 data_fieldnames = fieldnames(data);
 for i = 1:length(data_fieldnames)
-    if findstr(char(data_fieldnames(i)),'NLX')                                % find NLX indexes
+    if ~isempty(findstr(char(data_fieldnames(i)),'NLX')) && isempty(findstr(char(data_fieldnames(i)),'xNLX'))  % find NLX indexes
         NLXi(j) = i;
         j = j+1;
     end
