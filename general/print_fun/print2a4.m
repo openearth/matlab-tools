@@ -5,11 +5,13 @@ function print2a4(fname,varargin)
 % print2a4(fname,PaperOrientation)
 % print2a4(fname,PaperOrientation,Tall_Wide)
 % print2a4(fname,PaperOrientation,Tall_Wide,resolution)
+% print2a4(fname,PaperOrientation,Tall_Wide,resolution,OverWriteAppend)
 %
 % PaperOrientation = 'h<orizontal>' = 'L<andscape>' or
 %                    'v<ertical>'   = 'P<ortrait>' (default) 
 % PaperOrientation = 'w<ide>' (default) or
 %                    't<all>'
+% OverWriteAppend  = 'o<verwrite>' or 'c<ancel>' or 'p<rompt>' (default)
 %
 %               +-------+                                        
 %               |    h,t|                                        
@@ -30,6 +32,7 @@ function print2a4(fname,varargin)
 % where print2a4('tst','v','t') matches screen best
 % where print2a4('tst','h','t') matches landscape figure on portrait printer best
 %       print2a4('tst','v','w') matches upright A4 best
+%       ptint2a4('tst','v','w','o') overwrites the image created with the previous line
 %
 %See also: PRINT, PRINT2SCREENSIZE, PRINT2A4OVERWRITE
 
@@ -69,24 +72,22 @@ function print2a4(fname,varargin)
    %% 'a' = append (no recommended as HDF is VERY inefficient 
    %%               due to disk space fragmentation when appending data.)
    %% -------------------------
-
-   overwrite_append  = 'p'; % prompt
-   resolution        = '-r200';
    
+   PaperOrientation = 'Portrait';
    if nargin>1
       PaperOrientation = varargin{1};
-      if     lower(PaperOrientation(1))=='h' | ...
+      if     lower(PaperOrientation(1))=='h' || ...
              lower(PaperOrientation(1))=='l'
          PaperOrientation = 'Landscape';
-      elseif lower(PaperOrientation(1))=='v' | ...
+      elseif lower(PaperOrientation(1))=='v' || ...
              lower(PaperOrientation(1))=='p'
          PaperOrientation = 'Portrait';
       end
-   else
-     %PaperOrientation = 'Landscape';
-      PaperOrientation = 'Portrait';
    end
 
+   % A4 paper
+   Longside    = 20.9; % [cm] Minus
+   Shortside   = 29.7; % [cm]
    if nargin>2
       Tall_Wide = varargin{2};
       if     lower(Tall_Wide(1))=='w'
@@ -100,17 +101,20 @@ function print2a4(fname,varargin)
       else
           error(['''w<ide>'' or ''t<all>'' not ',Tall_Wide])
       end
+   end
    
-      if nargin > 3
-         resolution = varargin{3};
-         resolution = ['-r',num2str(round(resolution))];
+   resolution        = '-r200';
+   if nargin > 3
+       resolution = varargin{3};
+       resolution = ['-r',num2str(round(resolution))];
+   end
+
+   overwrite_append  = 'p'; % prompt
+   if nargin > 3
+       overwrite_append = lower(varargin{4}(1));
+       if ~ismember(overwrite_append,{'o','c','p'})
+          error(['Invalid overwrite property: ' varargin{4}]);
       end
-   
-   else
-   
-       % A4 paper
-      Longside    = 20.9; % [cm] Minus 
-      Shortside   = 29.7; % [cm]
    end
 
    %% Paper settings
@@ -122,11 +126,10 @@ function print2a4(fname,varargin)
        'PaperPosition'   ,[0 0 Longside Shortside],...
        'PaperOrientation',PaperOrientation)
 
-   [fileexist,action]=filecheck(fullfile(filepathstr(fname),[filename(fname),'.png']));
+   [fileexist,action]=filecheck(fullfile(filepathstr(fname),[filename(fname),'.png']),overwrite_append);
    if strcmpi(action,'o')
       mkpath(filepathstr(fname))
       print('-dpng'  ,fname,resolution);
-     %print('-depsc'  ,fname,'-r200');
    end
 
 %% EOF

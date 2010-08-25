@@ -72,9 +72,9 @@ end
 
 %% Read files
 
-   U = delft3d_io_meteo('read',[OPT.cd,'delft3d_io_meteo_write_test.amu']);
-   V = delft3d_io_meteo('read',[OPT.cd,'delft3d_io_meteo_write_test.amv']);
-   P = delft3d_io_meteo('read',[OPT.cd,'delft3d_io_meteo_write_test.amp']);
+   U = delft3d_io_meteo('read',which('delft3d_io_meteo_write_test.amu'));
+   V = delft3d_io_meteo('read',which('delft3d_io_meteo_write_test.amv'));
+   P = delft3d_io_meteo('read',which('delft3d_io_meteo_write_test.amp'));
 
 %% plot
 
@@ -84,4 +84,7 @@ end
    quiver2     (U.data.cen.x,U.data.cen.y,U.data.cen.x_wind,V.data.cen.y_wind,1e2,'k')
    axis equal
    axis tight
-   print2a4([OPT.cd,'delft3d_io_meteo_read_test.png'],'v','t')
+   print2a4([OPT.cd,'delft3d_io_meteo_read_test.png'],'v','t',200,'o');
+   
+   assert(exist([OPT.cd,'delft3d_io_meteo_read_test.png'],'file')==2,'Image was not created.');
+   delete([OPT.cd,'delft3d_io_meteo_read_test.png']);

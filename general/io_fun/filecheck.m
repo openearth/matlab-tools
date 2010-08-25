@@ -74,15 +74,14 @@ function varargout = filecheck(file_name,varargin)
          end
       end
       
-      if strcmp(lower(overwrite),'o')
+      if strcmpi(overwrite,'o')
          disp (['File ',file_name,' overwritten as it alreay exists.'])
       end      
       
-      if strcmp(lower(overwrite),'c')
+      if strcmpi(overwrite,'c')
          if nargout==0
             error(['File ',file_name,' not saved as it alreay exists.'])
          else
-            status = -2;
             disp(['File ',file_name,' not saved as it alreay exists.'])
          end
       end        
