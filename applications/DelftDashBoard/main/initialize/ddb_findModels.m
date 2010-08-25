@@ -3,7 +3,8 @@ function handles=ddb_findModels(handles)
 if isdeployed
     dr=[ctfroot filesep 'models'];
 else
-    dr='models';
+    ddb_root = fileparts(which('DelftDashBoard.ini'));
+    dr=[ddb_root filesep 'models'];
 end
 
 flist=dir(dr);

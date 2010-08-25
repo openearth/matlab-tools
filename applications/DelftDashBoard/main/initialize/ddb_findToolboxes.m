@@ -3,7 +3,8 @@ function handles=ddb_findToolboxes(handles)
 if isdeployed
     dr=[ctfroot filesep 'toolboxes'];
 else
-    dr='toolboxes';
+    ddb_root = fileparts(which('DelftDashBoard.ini'));
+    dr=[ddb_root filesep 'toolboxes'];
 end
 
 handles.Toolbox(1).Name='dummy';
