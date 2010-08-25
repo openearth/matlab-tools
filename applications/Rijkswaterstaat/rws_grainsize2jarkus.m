@@ -96,6 +96,9 @@ areacodes_jk = unique(areacode_jk)';
 alongshore_jk = nc_varget(OPT.jarkus_url, 'alongshore');
 alongshore_gs = nc_varget(OPT.grainsize_url, 'alongshore');
 
+% special case: high transect numbers at Ameland
+alongshore_jk(areacode_jk == 3 & alongshore_jk > 4000) = 100;
+
 % count number of transects
 ntransect = length(areacode_jk);
 
