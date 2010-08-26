@@ -113,7 +113,6 @@ for imatch = 1:length(startids)
     for repstr = unique(match{imatch}(sid))
         replacement{imatch} = strrep(replacement{imatch}, repstr, ''', ''');
     end
-    fprintf('%s\n', replacement{imatch})
 end
 
 %% create the updated file contents
