@@ -116,11 +116,14 @@ OPT.attname = ...
     'datenum_start',...
     'datenum_end',...
     'geospatialCoverage_northsouth',...
-    'geospatialCoverage_eastwest'};
+    'geospatialCoverage_eastwest',...
+    'projectionCoverage_x',...
+    'projectionCoverage_y',...
+    'projectionEPSGcode'};
 %'dataTypes'};
 
-OPT.atttype = ...
-    [ 0   % 'title',...
+OPT.atttype = [...
+    0   % 'title',...
     0   % 'institution',...
     0   % 'source',...
     0   % 'history',...
@@ -139,7 +142,10 @@ OPT.atttype = ...
     1   % 'datenum_start',...
     1   % 'datenum_end',...
     1   % 'geospatialCoverage_northsouth',...
-    1 ];% 'geospatialCoverage_eastwest',...
+    1   % 'geospatialCoverage_eastwest',...
+    1   % 'projectionCoverage_x',...
+    1   % 'projectionCoverage_y',...
+    1 ];% 'projectionEPSGcode'
 
 
 %% File keywords
@@ -196,26 +202,37 @@ for ifile=1:length(OPT.files)
     if ~OPT.quiet
         disp(['  Processing ',num2str(entry,'%0.4d'),'/',num2str(length(OPT.files),'%0.4d'),': ',filename(OPT.filename)]);
     end
-    %% Get global attributes (PRE-ALLOCATE)
+%% Get global attributes (PRE-ALLOCATE)
     
+    ATT.projectionEPSGcode           (entry)     = nan;
     ATT.geospatialCoverage_northsouth(entry,1:2) = nan;
     ATT.geospatialCoverage_eastwest  (entry,1:2) = nan;
+    ATT.projectionCoverage_x         (entry,1:2) = nan;
+    ATT.projectionCoverage_y         (entry,1:2) = nan;
     ATT.timecoverage_start           (entry,:)   = ' ';
     ATT.timecoverage_end             (entry,:)   = ' ';
     ATT.datenum_start                (entry)     = nan;
     ATT.datenum_end                  (entry)     = nan;
     
-    %% get relevant attributes
+%% get EPSG code
+
+%% get relevant attributes
     
     for iatt = 1:length(OPT.attname)
         attname = OPT.attname{iatt};
         fldname = mkvar(attname);
         try
-            att = nc_attget(OPT.filename, nc_global, attname);
-            if isnumeric(ATT.(fldname))
-                ATT.(fldname)(entry)               = att;
-            else
-                ATT.(fldname)(entry,1:length(att)) = att;
+            switch attname
+                case 'projectionEPSGcode'
+                    EPSGcodeStr = regexp(nc_attget(OPT.filename,'crs','spatial_ref'),'PROJECTION.*EPSG","(\d*)','tokens');
+                    ATT.projectionEPSGcode(entry) = str2double(EPSGcodeStr{:}{:});
+                otherwise
+                    att = nc_attget(OPT.filename, nc_global, attname);
+                    if isnumeric(ATT.(fldname))
+                        ATT.(fldname)(entry)               = att;
+                    else
+                        ATT.(fldname)(entry,1:length(att)) = att;
+                    end
             end
         catch
             if isnumeric(ATT.(fldname))
@@ -229,7 +246,7 @@ for ifile=1:length(OPT.files)
     urlPath = OPT.urlPathFcn(OPT.filename);
     ATT.urlPath(entry,1:length(urlPath)) = urlPath;
     
-    %% get all standard_names (and prevent doubles)
+%% get all standard_names (and prevent doubles)
     %  get actual_range attribute instead if present for lat, lon, time
     
     fileinfo       = nc_info(OPT.filename);
@@ -281,7 +298,7 @@ for ifile=1:length(OPT.files)
     
     ATT.standard_names(entry,1:length(standard_names)) = standard_names;
     
-    %% get latitude (actual_range or min() max() full array)
+%% get latitude (actual_range or min() max() full array)
     
     [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'latitude');
     names = cellstr(names);
@@ -308,7 +325,7 @@ for ifile=1:length(OPT.files)
         ATT.geospatialCoverage_northsouth(entry,2) = max(ATT.geospatialCoverage_northsouth(entry,2),max(latitude(:)));
     end % idat
     
-    %% get longitude (actual_range or min() max() full array)
+%% get longitude (actual_range or min() max() full array)
     
     [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'longitude' );
     names = cellstr(names);
@@ -334,7 +351,59 @@ for ifile=1:length(OPT.files)
         ATT.geospatialCoverage_eastwest(entry,1) = min(ATT.geospatialCoverage_eastwest(entry,1),min(longitude(:)));
         ATT.geospatialCoverage_eastwest(entry,2) = max(ATT.geospatialCoverage_eastwest(entry,2),max(longitude(:)));
     end % idat
+    %% get x (actual_range or min() max() full array)
     
+    [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate');
+    names = cellstr(names);
+    
+    % cycle all latitudes
+    
+    for idat=indices
+        x = [];
+        % cycle all attributes
+        natt = length(fileinfo.Dataset(idat).Attribute);
+        for iatt=1:natt
+            Name  = fileinfo.Dataset(idat).Attribute(iatt).Name;
+            %% get standard_names only ...
+            if strcmpi(Name,'actual_range')
+                x = fileinfo.Dataset(idat).Attribute(iatt).Value;
+            end % actual_range
+        end % iatt
+        
+        if isempty(x)
+            x  = nc_varget(OPT.filename, fileinfo.Dataset(idat).Name);
+        end
+        
+        ATT.projectionCoverage_x(entry,1) = min(ATT.projectionCoverage_x(entry,1),min(x(:)));
+        ATT.projectionCoverage_x(entry,2) = max(ATT.projectionCoverage_x(entry,2),max(x(:)));
+    end % idat
+    
+%% get y (actual_range or min() max() full array)
+    
+    [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate');
+    names = cellstr(names);
+    
+    % cycle all latitudes
+    
+    for idat=indices
+        y = [];
+        % cycle all attributes
+        natt = length(fileinfo.Dataset(idat).Attribute);
+        for iatt=1:natt
+            Name  = fileinfo.Dataset(idat).Attribute(iatt).Name;
+            %% get standard_names only ...
+            if strcmpi(Name,'actual_range')
+                y = fileinfo.Dataset(idat).Attribute(iatt).Value;
+            end % actual_range
+        end % iatt
+        
+        if isempty(y)
+            y  = nc_varget(OPT.filename, fileinfo.Dataset(idat).Name);
+        end
+        
+        ATT.projectionCoverage_y(entry,1) = min(ATT.projectionCoverage_y(entry,1),min(y(:)));
+        ATT.projectionCoverage_y(entry,2) = max(ATT.projectionCoverage_y(entry,2),max(y(:)));
+    end % idat
     if OPT.pause
         pausedisp
     end

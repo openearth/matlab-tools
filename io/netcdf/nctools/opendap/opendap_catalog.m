@@ -99,6 +99,7 @@ function varargout = opendap_catalog(varargin)
    OPT.toplevel              = ''; % to solve end catalogs in HYRAX
    OPT.debug                 = 0;  % writes levels to OPT.log
    OPT.log                   = 0;  % log progress, 0 = quiet, 1 = command line, nr is fid passed to fprintf (default 0)
+   OPT.ignoreCatalogNc       = 0;  % filters a file named catalog.nc from the files, if found 
 
    if nargin==0
       varargout = {OPT};
@@ -186,6 +187,14 @@ else
    
 end
 
+%% filter catalog nc
+    if OPT.ignoreCatalogNc
+        isCatalogNc = false(length(urlPath),1);
+        for ii = 1:length(urlPath)
+            isCatalogNc(ii) = strcmpi(urlPath{ii}(end-9:end),'catalog.nc');
+        end
+        urlPath(isCatalogNc) = [];
+    end
 %% output
 
    varargout = {urlPath};
