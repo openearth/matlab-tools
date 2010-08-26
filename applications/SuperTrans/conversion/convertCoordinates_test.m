@@ -17,12 +17,22 @@ D.NB                = 53+25/60+13.2124/3600;
 D.OL                = 05+24/60+02.5391/3600;
 D.h                 = 44.83;
 
-[lon,lat] = convertcoordinates(D.X,D.Y,'CS1.code',28992,'CS2.code', 4326);
-[X  ,Y  ] = convertcoordinates(lon,lat,'CS1.code', 4326,'CS2.code',28992); % and back
+[lon,lat] = convertcoordinates(D.X ,D.Y ,'CS1.code',28992,'CS2.code', 4326);
+[X  ,Y  ] = convertcoordinates(D.OL,D.NB,'CS1.code', 4326,'CS2.code',28992);
+[X2 ,Y2 ] = convertcoordinates(lon ,lat ,'CS1.code', 4326,'CS2.code',28992); % and back
 
 % WGS84 and ETRS89 are not identical. WGS84 is < 1 m accurate
 % The difference in 2004 is say 35 centimeter, see http://www.rdnap.nl/stelsels/stelsels.html
 % So for testing less < 0.5 m error is OK.
 
-OK = abs(X-D.X) < 0.5 & ...
-     abs(Y-D.Y) < 0.5; 
+% num2str(D.OL - lon) check projection onesided
+% num2str(D.NB - lat)
+% 
+% num2str(D.X - X)    check projection onesided
+% num2str(D.Y - Y)
+% 
+% num2str(D.X - X2)   check projection twosided: internal consistensy
+% num2str(D.Y - Y2)
+
+OK = abs(X -D.X) < 0.5 & abs(Y -D.Y) < 0.5 & ...
+     abs(X2-D.X) < 0.5 & abs(Y2-D.Y) < 0.5;
