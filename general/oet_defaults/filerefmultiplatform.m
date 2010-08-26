@@ -65,6 +65,7 @@ function varargout = filerefmultiplatform(filename)
 
 %%
 if exist(filename, 'dir')
+    % in case of a directory, scan all subdirectories for m-files
     [dirs dircont files] = dirlisting(filename, '.svn');
     for ifile = 1:length(files)
         [path, fname, extension] = fileparts(files{ifile});
@@ -72,6 +73,7 @@ if exist(filename, 'dir')
             filerefmultiplatform(files{ifile})
         end
     end
+    return
 end
 
 %%
