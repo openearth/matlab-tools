@@ -1,4 +1,4 @@
-function testResult = boundaryprofilegeometry_test()
+function boundaryprofilegeometry_test()
 % BOUNDARYPROFILEGEOMETRY_TEST  Unit test of boundaryprofilegrometry
 %  
 % This unit test examines the working of boundaryprofilegeometry.
@@ -49,7 +49,43 @@ function testResult = boundaryprofilegeometry_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = boundaryProfileGeometry unit test)
+TeamCity.publishdescription(@boundaryprofilegeometry_test_description,...
+    'EvaluateCode',true,...
+    'IncludeCode',false);
+
+significantWaveHeight = 9;
+peakPeriod = 8+1/3;
+waterLevel = 5;
+
+%% Testcase 1
+% With x0 input parameter
+% This testcase tests the basic functionality with input parameter x0 = 0.
+
+x0Point = -5;
+xExpected = [-12 -6 -3 0]'+x0Point;
+zExpected = [waterLevel waterLevel+3 waterLevel+3 waterLevel]'; 
+
+Result1 = boundaryprofilegeometry(waterLevel, significantWaveHeight, peakPeriod, x0Point);
+assert(all(xExpected==Result1.xActive) & all(zExpected==Result1.z2Active),'X and Z values were not as expected');
+
+%% Testcase 2
+% Without x0 input parameter
+% This testcase tests the basic functionality without input parameter x0. The function should not
+% crash and get the default value of x0 = 0.
+xExpected = [-12 -6 -3 0]';
+zExpected = [waterLevel waterLevel+3 waterLevel+3 waterLevel]'; 
+
+Result2 = boundaryprofilegeometry(waterLevel, significantWaveHeight, peakPeriod);
+assert(all(xExpected==Result2.xActive) & all(zExpected==Result2.z2Active),'X and Z values are not as expected');
+
+%% Publish
+TeamCity.publishresult(@boundaryprofilegeometry_test_result,...
+    'EvaluateCode',true,...
+    'IncludeCode',false);
+end
+
+function boundaryprofilegeometry_test_description()
+%% boundaryProfileGeometry unit test
 % The concept of a boundary profile is descibed in the TRDA (add reference). After a storm the Dutch
 % authorities would like to have a remaining dune profile that complies to the following rules:
 %
@@ -70,41 +106,20 @@ function testResult = boundaryprofilegeometry_test()
 %
 % To check this we use the following input parameters:
 %
-
-significantWaveHeight = 9;
-peakPeriod = 8+1/3;
-waterLevel = 5;
-
-%% $RunCode
-tr(1) = boundaryprofilegeometrywithx0(significantWaveHeight,peakPeriod,waterLevel);
-tr(2) = boundaryprofilegeometrynox0(significantWaveHeight,peakPeriod,waterLevel);
-testResult = all(tr);
 end
 
-%% Testcase 1
-function testResult = boundaryprofilegeometrywithx0(significantWaveHeight,peakPeriod,waterLevel)
-%% $Description (Name = With x0 input parameter)
-% This testcase tests the basic functionality with input parameter x0 = 0.
-x0Point = -5;
-xExpected = [-12 -6 -3 0]'+x0Point;
-zExpected = [waterLevel waterLevel+3 waterLevel+3 waterLevel]'; 
-
-%% $RunCode
-Result = boundaryprofilegeometry(waterLevel, significantWaveHeight, peakPeriod, x0Point);
-testResult = all(xExpected==Result.xActive) & all(zExpected==Result.z2Active);
-
-%% $PublishResult (EvaluateCode = true & IncludeCode = false)
+function boundaryprofilegeometry_test_result()
+%% With x0 input parameter
 % The calculated boundary profile is shown below.
-%
 % 
-disp(['width of the crest = ' num2str(diff(Result.xActive(Result.z2Active==max(Result.z2Active)))) ' [m]']);
-disp(['height crest       = ' num2str(max(Result.z2Active)-waterLevel) ' [m]']);
+disp(['width of the crest = ' num2str(diff(Result1.xActive(Result1.z2Active==max(Result1.z2Active)))) ' [m]']);
+disp(['height crest       = ' num2str(max(Result1.z2Active)-waterLevel) ' [m]']);
     
 figure('Color','w');
 title('BoundaryProfile');
 hold on
 plot(xExpected,zExpected,'Color','r','LineWidth',3,'DisplayName','Expected Boundary profile');
-patch(Result.xActive,Result.z2Active,[0.7 0.7 0.7],'EdgeColor','k','DisplayName','Boundary Profile');
+patch(Result1.xActive,Result1.z2Active,[0.7 0.7 0.7],'EdgeColor','k','DisplayName','Boundary Profile');
 xlim([-20 5]);
 ylim([0 15]);
 patch([xlim fliplr(xlim)],[ones(1,2)*waterLevel zeros(1,2)],[0.5 0.5 1],'EdgeColor',[0.1 0.1 1],'LineWidth',2,'DisplayName','maximum storm surge level');
@@ -112,32 +127,18 @@ legend show
 xlabel('Cross-shore distance [m]');
 ylabel('heigth [m]');
 
-end
-
-%% Testcase 2
-function testResult = boundaryprofilegeometrynox0(significantWaveHeight,peakPeriod,waterLevel)
-%% $Description (Name = Without x0 input parameter)
-% This testcase tests the basic functionality without input parameter x0. The function should not
-% crash and get the default value of x0 = 0.
-xExpected = [-12 -6 -3 0]';
-zExpected = [waterLevel waterLevel+3 waterLevel+3 waterLevel]'; 
-
-%% $RunCode
-Result = boundaryprofilegeometry(waterLevel, significantWaveHeight, peakPeriod);
-testResult = all(xExpected==Result.xActive) & all(zExpected==Result.z2Active);
-
-%% $PublishResult (EvaluateCode = true & IncludeCode = false)
+%% Without x0 input parameter
 % The calculated boundary profile is shown below.
 %
 % 
-disp(['width of the crest = ' num2str(diff(Result.xActive(Result.z2Active==max(Result.z2Active)))) ' [m]']);
-disp(['height crest       = ' num2str(max(Result.z2Active)-waterLevel) ' [m]']);
+disp(['width of the crest = ' num2str(diff(Result2.xActive(Result2.z2Active==max(Result2.z2Active)))) ' [m]']);
+disp(['height crest       = ' num2str(max(Result2.z2Active)-waterLevel) ' [m]']);
     
 figure('Color','w');
 title('BoundaryProfile');
 hold on
 plot(xExpected,zExpected,'Color','r','LineWidth',3,'DisplayName','Expected Boundary profile');
-patch(Result.xActive,Result.z2Active,[0.7 0.7 0.7],'EdgeColor','k','DisplayName','Boundary Profile');
+patch(Result2.xActive,Result2.z2Active,[0.7 0.7 0.7],'EdgeColor','k','DisplayName','Boundary Profile');
 xlim([-20 5]);
 ylim([0 15]);
 patch([xlim fliplr(xlim)],[ones(1,2)*waterLevel zeros(1,2)],[0.5 0.5 1],'EdgeColor',[0.1 0.1 1],'LineWidth',2,'DisplayName','maximum storm surge level');

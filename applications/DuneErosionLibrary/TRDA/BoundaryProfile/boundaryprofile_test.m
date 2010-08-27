@@ -1,4 +1,4 @@
-function testResult = boundaryprofile_test()
+function boundaryprofile_test()
 % BOUNDARYPROFILE_TEST  unit test for boundaryprofile
 %  
 % This function describes a unit test for boundaryprofile.
@@ -49,7 +49,34 @@ function testResult = boundaryprofile_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Boundary profile)
+MTest.category('Integration');
+TeamCity.publishdescription(@boundaryprofile_test_description);
+
+%% Case 1
+% Test with normal boundary profile
+[xInitial zInitial] = referenceprofile;
+waterLevel = 5;
+peakPeriod = 12;
+significantWaveHeight = 9;
+x0Point = -20;
+
+Result1 = boundaryprofile(xInitial, zInitial, waterLevel, significantWaveHeight, peakPeriod, x0Point);
+
+%% Case 2
+% Volumetric boundary test
+[xInitial zInitial] = referenceprofile;
+waterLevel = 5;
+peakPeriod = 12;
+significantWaveHeight = 9;
+x0Point = 0;
+
+Result2 = boundaryprofile(xInitial, zInitial, waterLevel, significantWaveHeight, peakPeriod, x0Point);
+
+TeamCity.publishresult(@boundaryprofile_test_result);
+end
+
+
+function boundaryprofile_test_description()
 % According to Dutch regulations dunes that are eroded during an extreme storm must have a socalled
 % "Grensprofiel". This is a profile shape (or at least the volume that is in that shape) that must
 % remain at some place in the transect above the maximum storm surge level after erosion during that
@@ -69,40 +96,17 @@ function testResult = boundaryprofile_test()
 % * WL = 5 [m]
 % * Tp = 12 [s]
 %
-
-%% $RunCode
-tr(1) = boundaryprofilenormaltest();
-tr(2) = boundaryprofilevolumetrictest();
-testResult = all(tr);
-
 end
 
-%% Case 1
-function testResult = boundaryprofilenormaltest()
-%% $Description(Name = Test with normal boundary profile)
-
-%% $RunCode
-[xInitial zInitial] = referenceprofile;
-waterLevel = 5;
-peakPeriod = 12;
-significantWaveHeight = 9;
-x0Point = -20;
-
-testResult = false;
-try %#ok<TRYNC>
-    Result = boundaryprofile(xInitial, zInitial, waterLevel, significantWaveHeight, peakPeriod, x0Point);
-    testResult = true;
-end
-
-%% $PublishResult
+function boundaryprofile_test_result()
 figure;
 hold on
 grid on
 box on
 set(gca,'Xdir','reverse');
 plot(xInitial,zInitial,'Color','k','DisplayName','Initial Profile');
-patch([Result.xActive; flipud(Result.xActive)],...
-    [Result.z2Active; flipud(Result.zActive)],...
+patch([Result1.xActive; flipud(Result1.xActive)],...
+    [Result1.z2Active; flipud(Result1.zActive)],...
     'g',...
     'DisplayName','Calculated boundary profile');
 h = hline(waterLevel,'b-');
@@ -111,34 +115,14 @@ xlim([-100 300]);
 ylim([-2 16]);
 legend show
 
-end
-
-%% Case 2
-function testResult = boundaryprofilevolumetrictest()
-%% $Description (Name = Volumetric boundary test)
-
-%% $RunCode
-[xInitial zInitial] = referenceprofile;
-waterLevel = 5;
-peakPeriod = 12;
-significantWaveHeight = 9;
-x0Point = 0;
-
-testResult = false;
-try %#ok<TRYNC>
-    Result = boundaryprofile(xInitial, zInitial, waterLevel, significantWaveHeight, peakPeriod, x0Point);
-    testResult = true;
-end
-
-%% $PublishResult
 figure;
 hold on
 grid on
 box on
 set(gca,'Xdir','reverse');
 plot(xInitial,zInitial,'Color','k','DisplayName','Initial Profile');
-patch([Result.xActive; flipud(Result.xActive)],...
-    [Result.z2Active;flipud(Result.zActive)],...
+patch([Result2.xActive; flipud(Result2.xActive)],...
+    [Result2.z2Active;flipud(Result2.zActive)],...
     'g',...
     'DisplayName','Calculated boundary profile');
 h = hline(waterLevel,'b-');

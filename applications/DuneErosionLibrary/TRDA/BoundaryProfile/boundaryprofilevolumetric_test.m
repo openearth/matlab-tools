@@ -1,4 +1,4 @@
-function testresult = boundaryprofilevolumetric_test()
+function boundaryprofilevolumetric_test()
 % BOUNDARYPROFILEVOLUMETRIC_TEST  Unit test of boundaryProfileVolumetric
 %  
 % This function defines a test for boundaryprofilevolumetric.
@@ -49,28 +49,7 @@ function testresult = boundaryprofilevolumetric_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = boundaryProfileVolumetric unit test)
-% According to the Dutch Dune Safety Assessment rules A dune must have a remaining profile after a
-% storm to be safe against flooding. This profile is described in detail in the TRDA (add
-% reference). If the profile cannot be fit into the remaining dune, it is also allowed to have an
-% alternative boundary profile with the same sediment volume above the maximum storm surge level.
-% boundaryProfileVolumetric calculates this volumetric boundary profile.
-
-%% $RunCode
-tr(1) = boundaryprofilevolumetrichydraulicinput;
-tr(2) = boundaryprofilevolumetricvolumeinput;
-tr(3) = boundaryprofilevolumetricexceptions;
-testresult = all(tr);
-
-%% $PublishResult
-% Publishable code that describes the test.
-
-end
-
 %% Case 1
-function testResult = boundaryprofilevolumetrichydraulicinput()
-%% $Description (Name = Hydraulic input)
-
 xProfile = [-100 -5 0 100]';
 zProfile = [10 10 5 5]';
 x0Point = 0;
@@ -78,51 +57,29 @@ significantWaveHeight = 9;
 peakPeriod = 8+1/3;
 waterLevel = 5;
 
-
-%% $RunCode
 Result = boundaryprofilevolumetric(xProfile,zProfile,waterLevel,x0Point,...
     'Hs',significantWaveHeight,...
     'Tp',peakPeriod);
-testResult = Result.info.x0==-7;
-
-%% $PublishResult
-plotduneerosion(Result,figure);
-end
+assert(Result.info.x0 == -7,['X0 should be -7, but was: ', num2str(Result.info.x0)]);
 
 %% Case 2
-function testResult = boundaryprofilevolumetricvolumeinput()
-%% $Description (Name = Volumetric input)
-
 xProfile = [-100 -5 0 100]';
 zProfile = [10 10 5 5]';
 waterLevel = 5;
 x0Point = 0;
 targetVolume = -100;
 
-%% $RunCode
 Result = boundaryprofilevolumetric(xProfile,zProfile,waterLevel,x0Point,...
     'TargetVolume',targetVolume);
-testResult = Result.info.x0 == -22.5;
-
-%% $PublishResult
-plotduneerosion(Result,figure);
-end
+assert(Result.info.x0 == -22.5,['X0 should be -22.5, but was: ', num2str(Result.info.x0)]);
 
 %% Case 3
-function testResult = boundaryprofilevolumetricexceptions()
-%% $Description (Name = exceotions in input)
-
 xProfile = [-100 -25 -20 -15 -10 -5 0 100]';
 zProfile = [10 10 -5 10 -5 10 5 5]';
 waterLevel = 5;
 x0Point = 0;
 targetVolume = -100;
 
-%% $RunCode
 Result = boundaryprofilevolumetric(xProfile,zProfile,waterLevel,x0Point,...
     'TargetVolume',targetVolume);
-testResult = roundoff(Result.Volumes.Volume,1) == -100;
-
-%% $PublishResult
-plotduneerosion(Result,figure);
-end
+assert(roundoff(Result.Volumes.Volume,1) == -100,['Volume of the boundary profile should be -100, but was: ' num2str(roundoff(Result.Volumes.Volume,1))]);
