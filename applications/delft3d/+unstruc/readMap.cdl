@@ -32,7 +32,6 @@ variables:
 		NetNode_y:long_name = "netnodal y-coordinate" 
 // TO DO        FlowElemContour_x:actual_range = min max
 	double NetNode_z(nNetNode), shape = [42984]                       // cor.z
-// TO DO        NetNode_y:standard_name = "projection_y_coordinate" 
 // TO DO        NetNode_z:units = "m" 
 // TO DO        NetNode_z:standard_name = "sea_floor_depth" 
 // TO DO        NetNode_z:long_name = "netnodal bottom level" 

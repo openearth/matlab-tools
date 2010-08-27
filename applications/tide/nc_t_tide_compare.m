@@ -45,7 +45,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
    OPT.plot.scatter        = 1;
    OPT.plot.planview       = 1;
    
-   OPT.color.data          = [0 0 0]
+   OPT.color.data          = [0 0 0];
    OPT.color.model         = [.4 .4 .4];
    OPT.fontsize            = 8;
 
@@ -194,6 +194,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
                  datestr(udunits2datenum(M.period(end),Ma.period.units),0)}])
          
          if OPT.export
+         text(1,0,mktex('Created with t_tide (Pawlowicz et al, 2002) & OpenEarthTools <www.OpenEarth.eu>'),'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
          basename = [OPT.directory,filesep,'scatter',filesep,filename(ncmodel{ifile})];
          print2screensizeoverwrite([basename,'_scatter.png'])
         %print2screensizeeps      ([basename,'_scatter.eps'])
@@ -338,6 +339,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          ylabel(['Phase [',Da.phase.units ,']'],'Interpreter','none')
          
          if OPT.export
+         text(1,0,mktex('Created with t_tide (Pawlowicz et al, 2002) & OpenEarthTools <www.OpenEarth.eu>'),'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
          basename = [OPT.directory,filesep,'spectrum',filesep,filename(ncmodel{ifile})];
          print2screensizeoverwrite([basename,'_spectrum.png'])
         %print2screensizeeps      ([basename,'_spectrum.eps'])
@@ -451,6 +453,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          hold on
          
          if OPT.export
+         text(1,0,mktex('Created with t_tide (Pawlowicz et al, 2002) & OpenEarthTools <www.OpenEarth.eu>'),'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
          basename = [OPT.directory,filesep,'planview',filesep,filename(ncmodel{ifile})];
          print2screensizeoverwrite([basename,'_plan_',OPT.names2planview{icomp},'.png'])
         %print2screensizeeps      ([basename,'_plan_',OPT.names2planview{icomp},'.eps'])

@@ -13,7 +13,7 @@ function varargout = delft3d_opendap2obs(varargin)
 %                         'grd', 'F:\unstruc\run01\wadden4.grd',...
 %                        'plot', 1)
 %
-%See also: unstruc.opendap2obs, delft3d_io_obs
+%See also: unstruc.opendap2obs, delft3d_io_obs, unstruc.analyseHis, vs_trih2netcdf
 
 %% settings
 

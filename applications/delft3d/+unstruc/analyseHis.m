@@ -3,12 +3,44 @@ function varargout = analyseHis(varargin)
 %
 %    unstruc.analyseHis(<keyword,value>)
 %
-% Example: using a local cache of netCDF files
+% * For Delft3D-flow the trih history file can be converted to netCDF
+%   with VS_TRIH2NETCDF such that unstruc.analyseHis also works on it.
+% * For unstruc.analyseHis to be able to detect associated data
+%   automatically, the observation points names have to be 
+%   generated with unstruc.opendap2obs or delft3d_opendap2obs.
 %
-%    unstruc.analyseHis('nc','F:\unstruc\run01\trih-s01.nc',...
-%                     'tlim',datenum(1998,[1 5],[1 28]),...
-%                   'ncbase','F:\opendap\thredds\rijkswaterstaat/waterbase/sea_surface_height',...
-%                       'vc','F:\opendap\thredds\noaa/gshhs/gshhs_i.nc')
+% Example: unstruc, using a local cache of netCDF files
+%
+%    ncbase = 'F:\opendap\thredds\rijkswaterstaat/waterbase/sea_surface_height'
+%    epsg   = 28992
+%
+%    unstruc.delft3d_opendap2obs('ncbase',ncbase,...
+%                          'epsg', epsg,...
+%                          'file',['F:\unstruc\run01\rijkswaterstaat_waterbase_sea_surface_height_',num2str(epsg),'.obs'])
+%    % ~ run model ~
+%         unstruc.analyseHis('nc','F:\unstruc\run01\trih-s01.nc',...
+%                          'tlim',datenum(1998,[1 5],[1 28]),...
+%                        'ncbase',ncbase,...
+%                            'vc','F:\opendap\thredds\noaa/gshhs/gshhs_i.nc')
+%
+% Example: Delft3D-flow, using a local cache of netCDF files
+%
+%    ncbase = 'F:\opendap\thredds\rijkswaterstaat/waterbase/sea_surface_height'
+%    epsg   = 28992
+%
+%    delft3d_opendap2obs('ncbase',ncbase,...
+%                          'epsg', OPT.epsg,...
+%                          'file',['F:\unstruc\run01\rijkswaterstaat_waterbase_sea_surface_height_',num2str(epsg),'.obs'],...
+%                           'grd', 'F:\unstruc\run01\wadden4.grd',...
+%                          'plot', 1)
+%    % ~ run model ~
+%     vs_trih2netcdf(F:\unstruc\run01\trih-s01.dat',...
+%                          'epsg',epsg,...
+%                          'time',5)
+%         unstruc.analyseHis('nc','F:\unstruc\run01\trih-s01.nc',...
+%                          'tlim',datenum(1998,[1 5],[1 28]),...
+%                        'ncbase',ncbase,...
+%                            'vc','F:\opendap\thredds\noaa/gshhs/gshhs_i.nc')
 %
 %See also: UNSTRUC, NC_T_TIDE_COMPARE, NC_T_TIDE, T_TIDE
 
@@ -114,6 +146,7 @@ for ist=1:length(M.name)
     ylim    (OPT.ylim)
     ylabel  (['\eta [',meta.(OPT.varname).units,']']);
     timeaxis(OPT.tlim,'fmt','mmm','tick',-1,'type','text'); %datetick('x')
+    text    (1,0,'Created with OpenEarthTools <www.OpenEarth.eu>','rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
     
     print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,filename(OPT.nc),'_',M.name{ist}]) % ,'v','t'
     
@@ -128,6 +161,7 @@ for ist=1:length(M.name)
     ylim    (OPT.ylim)
     ylabel  (['\eta [',meta.(OPT.varname).units,']']);
     timeaxis(OPT.tlim,'fmt','mmm','tick',-1,'type','text'); %datetick('x')
+    text    (1,0,'Created with OpenEarthTools <www.OpenEarth.eu>','rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
     
     print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,filename(OPT.nc),'_',M.name{ist},'_diff']) % ,'v','t'
 
@@ -166,6 +200,7 @@ for ist=1:length(M.name)
     plot  (xlim+deta,ylim-deta,'k:')
     plot  (xlim-deta,ylim+deta,'k:')
     end
+    text    (1,0,'Created with OpenEarthTools <www.OpenEarth.eu>','rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
     
     print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,filename(OPT.nc),'_',M.name{ist},'_scatter']) % ,'v','t'
     

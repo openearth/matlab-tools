@@ -13,7 +13,7 @@ function varargout = vs_trih2netcdf(vsfile,varargin)
 %
 % nc looks same as nc of unstruc
 %
-%See also: snctools, vs_use, unstruc.analyseHis
+%See also: snctools, vs_use, unstruc.analyseHis, delft3d_io_obs
 
 % TO DO add depth
 % TO DO check consistency with delft3d_to_netcdf.exe of Bert Jagers

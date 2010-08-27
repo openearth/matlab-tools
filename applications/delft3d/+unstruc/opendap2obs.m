@@ -1,11 +1,19 @@
 function varargout = opendap2obs(varargin)
 %OPENDAP2OBS   get list of observation points from netCDF time series collection
 %
-%See also: unstruc, delft3d_opendap2obs
+%    unstruc.opendap2obs(<keyword,value>)
+%
+% Example: 
+%
+%  delft3d_opendap2obs('ncbase','F:\opendap\thredds\rijkswaterstaat/waterbase/sea_surface_height',...
+%                        'epsg', OPT.epsg,...
+%                        'file',['F:\unstruc\run01\rijkswaterstaat_waterbase_sea_surface_height_',num2str(OPT.epsg),'.obs'])
+%
+%See also: delft3d_opendap2obs, unstruc.analyseHis
 
 %% settings
 
-   OPT.url     = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/sea_surface_height/catalog.html';
+   OPT.ncbase  = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/sea_surface_height/catalog.html';
    OPT.epsg    = 28992; % Dutch RD
    OPT.file    = ['rijkswaterstaat_waterbase_sea_surface_height_',num2str(OPT.epsg),'.xyn'];
    
@@ -18,7 +26,7 @@ function varargout = opendap2obs(varargin)
 
 %% query opendap
 
-  list         = opendap_catalog(OPT.url);
+  list         = opendap_catalog(OPT.ncbase);
   list         = sort(list);
   n            = length(list);
 
