@@ -70,7 +70,7 @@ function oetsettings(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% Retrieve verbose state from input
+%% Retrieve verbose state from input 
 % -----------------------
    OPT = struct(...
        'quiet',false,...
