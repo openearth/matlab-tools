@@ -87,7 +87,6 @@ OPT.char_length    = 256; % pre-allocate for speed-up in addition to length(OPT.
 OPT.mask           = '*.nc';
 OPT.pause          = 0;
 OPT.test           = 0;
-OPT.quiet          = false;
 OPT.urlPathFcn     = @(s)(s); % function to run on urlPath, as e.g. strrep
 OPT.save           = 0; % save catalog in directory
 OPT.recursive      = 0;
@@ -170,12 +169,13 @@ if isempty(OPT.catalog_dir)
 end
 
 %% File loop to get meta-data from subdirectories (recursively)
-
+%% initialize waitbar
+    multiWaitbar('nc_cf_opendap2catalog',0,'label','Generating catalog.nc','color',[0.2 0.5 0.2])
 %% File inquiry
 
-if isempty(OPT.files)
-    OPT.files = opendap_catalog(OPT.base);
-end
+    if isempty(OPT.files)
+        OPT.files = opendap_catalog(OPT.base);
+    end
 
 %% pre-allocate catalog (Note: expanding char array lead to 0 as fillvalues)
 
@@ -197,11 +197,10 @@ entry = 0;
 
 for ifile=1:length(OPT.files)
     OPT.filename = OPT.files{ifile};
-    
+    multiWaitbar('nc_cf_opendap2catalog',entry/length(OPT.files),'label',...
+        ['Adding ',filename(OPT.filename) ' to catalog'])
     entry = entry + 1;
-    if ~OPT.quiet
-        disp(['  Processing ',num2str(entry,'%0.4d'),'/',num2str(length(OPT.files),'%0.4d'),': ',filename(OPT.filename)]);
-    end
+
 %% Get global attributes (PRE-ALLOCATE)
     
     ATT.projectionEPSGcode           (entry)     = nan;
@@ -440,6 +439,7 @@ if OPT.save
     %     save      ([OPT.base,filesep,OPT.directory,filesep,OPT.catalog_name,'.mat'],'-struct','ATT');
 end
 
+multiWaitbar('nc_cf_opendap2catalog',1,'label','Generating catalog.nc')
 % load database as check
 
 % if OPT.test
