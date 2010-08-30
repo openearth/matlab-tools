@@ -1,5 +1,5 @@
-function testresult = MC_test()
-% MC_TEST  Test routine for Monte Carlo function
+function testresult = FORM_test()
+% FORM_TEST  One line description goes here
 %  
 % More detailed description of the test goes here.
 %
@@ -39,8 +39,8 @@ function testresult = MC_test()
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 06 Aug 2010
-% Created with Matlab version: 7.10.0.499 (R2010a)
+% Created: 30 Aug 2010
+% Created with Matlab version: 7.7.0.471 (R2008b)
 
 % $Id$
 % $Date$
@@ -70,54 +70,36 @@ stochast = struct(...
 testresult = [];
 
 %% test 1
-resultCMC = MC(...
+resultFORM = FORM(...
     'stochast', stochast,...
-    'x2zFunction', @x2z_testfunction1,...
-    'seed', 0);
+    'x2zFunction', @x2z_testfunction1);
 
 % Probability of failure should be always the same for a fixed seed
-testresult(end+1) = resultCMC.Output.P_f == 0.19;
+testresult(end+1) = roundoff(resultFORM.Output.P_f, 4) == 0.2027;
 
 %% test 2
-resultSISMC = MC(...
+resultFORM_resistance = FORM(...
     'stochast', stochast,...
     'x2zFunction', @x2z_testfunction1,...
-    'ISvariable', 'S',...
-    'W', 10,...
-    'seed', 0);
-% Probability of failure should be always the same for a fixed seed
-testresult(end+1) = resultSISMC.Output.P_f == 0.083;
-
-%% test 3
-resultAISMC = MC(...
-    'stochast', stochast,...
-    'x2zFunction', @x2z_testfunction1,...
-    'ISvariable', 'S',...
-    'f1', 1,...
-    'f2', 1e-6,...
-    'seed', 0);
-% Probability of failure should be always the same for a fixed seed
-testresult(end+1) = roundoff(resultAISMC.Output.P_f, 4) == 0.2089;
-
-%% test 4
-resultCMC_resistance = MC(...
-    'stochast', stochast,...
-    'x2zFunction', @x2z_testfunction1,...
-    'variables', {'Resistance' (0:4)},...
-    'seed', 0);
+    'variables', {'Resistance', 0:4});
 
 % Probability of failure for a vector with resistances
-testresult(end+1) = all(resultCMC_resistance.Output.P_f == [0.19 0.15 0.12 0.05 0.03]);
+for ires = 1:length(resultFORM_resistance)
+    partres(ires) = resultFORM_resistance(ires).Output.P_f;
+end
+testresult(end+1) = all(roundoff(partres, 4) == [0.2027 0.1336 0.0828 0.0480 0.0261]);
 
-%% test 5
+%% test 3
 resultCMC_resistance = MC(...
     'stochast', stochast,...
     'x2zFunction', @x2z_testfunction2,...
-    'variables', {'Resistance' (0:4)},...
-    'seed', 0);
+    'variables', {'Resistance', 0:4});
 
 % Probability of failure for a vector with resistances
-testresult(end+1) = all(resultCMC_resistance.Output.P_f == [0.19 0.15 0.12 0.05 0.03]);
+for ires = 1:length(resultFORM_resistance)
+    partres(ires) = resultFORM_resistance(ires).Output.P_f;
+end
+testresult(end+1) = all(roundoff(partres, 4) == [0.2027 0.1336 0.0828 0.0480 0.0261]);
 
 %% combine all testresults in one boolean
 testresult = all(testresult);

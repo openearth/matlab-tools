@@ -1,13 +1,12 @@
-function result = FORM(stochast, varargin)
+function result = FORM(varargin)
 %FORM  routine for First Order Reliability Method (FORM)
 %
 % Routine to perform the probabilistic First Order Reliability Method
 %   
 % syntax:
-% result = FORM(stochast, varargin)
+% result = FORM(varargin)
 %
 % input:
-% stochast = structure with stochastic variables
 % varargin = series of keyword-value pairs to set properties
 %
 % output:
@@ -53,13 +52,24 @@ function result = FORM(stochast, varargin)
 % $HeadURL$
 
 %% settings
+
+% the following few lines are meant for backward compatibility with the
+% situation where the first input argument was always the stochast
+% structure
+first_input_is_stochast = nargin > 0 && isstruct(varargin{1});
+if first_input_is_stochast
+    varargin = [{'stochast'} varargin];
+end
+
 % defaults
 OPT = struct(...
+    'stochast', struct(),... % stochast structure
     'maxiter', 50,...        % maximum number of iterations
+    'method', 'matrix',...   % z-function method 'matrix' (default) or 'loop'
     'DerivativeSides', 1,... % 1 or 2 sided derivatives
     'startU', 0,...          % start value for elements of u-vector
     'du', .3,...             % step size for dz/du / Perturbation Value
-    'Resistance', 0,...      % Resistance value(s) to be (optionally) used in z-function
+    'Resistance', 0,...      % NOT IN USE ANY MORE Resistance value(s) to be (optionally) used in z-function
     'epsZ', .01,...          % stop criteria for change in z-value
     'maxdZ', 0.1,...         % second stop criterion for change in z-value
     'epsBeta', .01,...       % stop criteria for change in Beta-value
@@ -71,17 +81,28 @@ OPT = struct(...
 % overrule default settings by property pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
 
-getdefaults('stochast', exampleStochastVar, 0);
+% Resistance no longer used as separate propertyName-propertyValue pair
+if ~isequal(OPT.Resistance, 0)
+    error('FORM:Resistance', 'Resistance no longer used as separate propertyName-propertyValue pair; include this in "variables" and modify z-function')
+end
 
 %% series of FORM calculations
+Resistance = [];
+if any(cellfun(@ischar, OPT.variables))
+    Resistance_id = [false cellfun(@ischar, OPT.variables)];
+    Resistance = OPT.variables{Resistance_id};
+end
+
 % in case of multiple Resistance-values
-if ~isscalar(OPT.Resistance)
+if ~isempty(Resistance) && ~isscalar(Resistance)
+    variables_id = find(ismember(varargin(1:2:end), 'variables'))*2;
     % a series of z-criteria
-    if issorted(OPT.Resistance)
+    if issorted(Resistance)
         startU = OPT.startU; % startU for the first FORM run
-        for iFORM = 1:length(OPT.Resistance)
-            result(iFORM) = FORM(stochast, varargin{:},...
-                'Resistance', OPT.Resistance(iFORM),...
+        modified_varargin = varargin;
+        for iFORM = 1:length(Resistance)
+            modified_varargin{variables_id}{Resistance_id} = Resistance(iFORM);
+            result(iFORM) = FORM(modified_varargin{:},...
                 'startU', startU); %#ok<AGROW>
             % base startU for the next FORM run on the latest one
             startU = result(iFORM).Output.u(end,:);
@@ -93,6 +114,7 @@ if ~isscalar(OPT.Resistance)
 end
 
 %%
+stochast = OPT.stochast;
 % input
 Nstoch = length(stochast); % number of stochastic variables
 active = ~cellfun(@isempty, {stochast.Distr}) &...
@@ -153,11 +175,9 @@ while NextIter
     if any(any(~isfinite(x(Calc,:))))
         error('FORM:xBecameNonFinite', 'One or more x-values became Inf or NaN')
     end
-      
-    samples = cell2struct(mat2cell(x(Calc,:), length(Calc), ones(size(x,2),1)), {stochast.Name}, 2);
+    
     % derive z based on x
-    z(Calc,1) = feval(OPT.x2zFunction, samples, OPT.Resistance,...
-        OPT.variables{:});  %#ok<AGROW> % bepaal z(u) uit x(u)
+    [z(Calc,1) OPT] = prob_zfunctioncall(OPT, stochast, x(Calc,:));
 
     if Converged || maxIterReached
         
@@ -169,11 +189,11 @@ while NextIter
         % exit while loop
         break
     else
-        % bepaal de afgeleide van z naar de u-waarden
+        % derive dz/du for each of the active u-values
         dzdu = zeros(1,Nstoch);
         sts = 1:Nstoch;
         for st = sts(active)
-            % bepaal dz/du for the active variables
+            % derive dz/du for the active variables
             dzdu(st) = (z(id_upp(st)) - z(id_low(st)))/(OPT.du);
         end
 
@@ -188,7 +208,7 @@ while NextIter
         % dan als volgt: z_norm(u) = beta + alpha(1)*u(1) + ... + alpha(n)*u(n)
         A_abs = sqrt(A*A');
         alpha = A/A_abs;
-        beta(Iter) = B/A_abs; %#ok<AGROW>
+        beta(Iter) = B/A_abs; 
 
 %         % Toetsen op convergentie: is z dicht genoeg bij 0?
 %         criteriumZ = abs(z(Calc(end))/A_abs) < OPT.epsZ;
