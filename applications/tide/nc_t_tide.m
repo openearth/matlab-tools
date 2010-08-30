@@ -3,10 +3,10 @@ function varargout = nc_t_tide(t,var,varargin)
 %
 %   nc_t_tide(t,var,<keyword,value>)
 %
-% performs a t_tide tidal analysis and saved result as netCDF file.
+% performs a t_tide tidal analysis and saves result as netCDF file.
 % For list of <keyword,value> call nc_t_tide()
 %
-%See also: T_TIDE
+%See also: T_TIDE, NC_T_TIDE_COMPARE
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares

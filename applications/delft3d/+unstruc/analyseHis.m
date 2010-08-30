@@ -120,7 +120,8 @@ for ist=1:length(M.name)
     
 %%  find and load associated observational data
     
-   % replace (i) by more intelligent query based on location, or (ii) full netCDF name as name of observation point for direct retrieval
+   % TODO replace (i) by more intelligent query based on location, or 
+   %             (ii) full netCDF url as name of observation point for direct retrieval
    [bool,ind] = strfindb(dataurls,upper(M.name{ist}));
     dataurl   = dataurls{bool};
    [D,meta]   = nc_cf_stationTimeSeries(dataurl,OPT.varname,'period',OPT.tlim);
@@ -177,15 +178,13 @@ for ist=1:length(M.name)
     rmse =      rms(DM.(OPT.varname) - D.(OPT.varname));
     R    = corrcoef(DM.(OPT.varname)  ,D.(OPT.varname));R = R(2,1); % same as (2,1)
     
-    % TO DO: more extended error statistics, Taulor, histogrmas?
-    
     fmte = '%+1.3f'; %
     txte = {[' R    = ',num2str(R   ,fmte)],...
             [' \epsilon_{rms}  = ',num2str(rmse,fmte)],...
             [' \epsilon_{min}  = ',num2str(mine,fmte)],...
             [' \epsilon_{max}  = ',num2str(maxe,fmte)]};
 
-    plot    (D.(OPT.varname),DM.(OPT.varname),'k.','DisplayName','model vs. data') % model on y-axis: 'model to height' isible as higher results
+    plot    (D.(OPT.varname),DM.(OPT.varname),'k.','DisplayName','model vs. data') % model on y-axis: 'model to high' visible as higher results
     hold on
     title   ([M.name{ist}])
     text    (0,1,txte,'units','normalized','verticalalignment','top','FontName','fixedwidth')

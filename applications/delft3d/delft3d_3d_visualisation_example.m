@@ -12,11 +12,13 @@ function delft3d_3d_visualisation_example(varargin)
    OPT.wscale  = 2e3; % 1 m/s becomes x m
    OPT.axis    = [-50e3 0 0 100e3 -20 2];
    OPT.clim    = [30 35];
-   OPT.dm      =  5; % cross shore
-   OPT.dn      = 25; % along shore
-   OPT.dk      = 3;  % sigma layers
+   
    % plot not all point as matlab is too slow for that,
    % and the human mind too limited
+
+   OPT.dm      =  5; % cross shore stride
+   OPT.dn      = 25; % along shore stride
+   OPT.dk      = 3;  % sigma layer stride
  
 %% settings
 
@@ -24,7 +26,7 @@ function delft3d_3d_visualisation_example(varargin)
    T = vs_time(H);
    G = vs_meshgrid2dcorcen(H);
    
-   G.cen.dep =-20 + 0.*G.cen.x; % error: No sensible depth data on trim file.
+   G.cen.dep =-20 + 0.*G.cen.x; % error: No sensible depth data on trim file for old delft3d versions.
    
    for it=2:T.nt_storage % NOTE: vertical velocity is ALWAYS 0 1st timestep, so we start with step 2
    
@@ -33,7 +35,7 @@ function delft3d_3d_visualisation_example(varargin)
       % grid, incl waterlevel which determines z grid spacing
       G                = vs_meshgrid3dcorcen     (H, it, G);
    
-      % dissolves substances
+      % dissolved substances
       I                = vs_get_constituent_index(H, 'salinity');
       D.cen.salinity   = vs_let_scalar           (H,'map-series',{it}, 'R1'      , {0,0,0,I.index});
    
@@ -95,6 +97,8 @@ function delft3d_3d_visualisation_example(varargin)
       shading interp
       colorbarwithtitle('salinity')
       
+   %% export
+
       if OPT.export
       print2screensize([fileparts(H.DatExt),filesep,'salinity_',num2str(it,'%0.2d')])
       end

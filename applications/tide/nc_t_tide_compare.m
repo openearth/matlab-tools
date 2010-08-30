@@ -60,6 +60,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
    OPT.amp_min             = 0.01; %[0.005];
    OPT.ddatenumeps         = 1e-8;
   %OPT.verticaloffset      = [1 1 1 2 1 1 1 1 1 1 1 1]; % plots the text for the specified station at the #th line (1 = normal 1st line)
+   OPT.eps                 = 10*eps;
    
    OPT = setProperty(OPT,varargin{:});
    
@@ -86,11 +87,11 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
    
    %% LOAD data
 
-     [M,Ma] = nc2struct(ncmodel{ifile});% Load model data
-     [D,Da] = nc2struct(ncdata{ifile});% Load observed data
+     [M,Ma] = nc2struct(ncmodel{ifile});% Load model    data
+     [D,Da] = nc2struct(ncdata{ifile}); % Load observed data
      
-     if abs(M.longitude - D.longitude) > eps;error('lon coordinates of model and data do not match');end
-     if abs(M.latitude  - D.latitude ) > eps;error('lat coordinates of model and data do not match');end
+     if abs(M.longitude - D.longitude) > OPT.eps;error('lon coordinates of model and data do not match');end
+     if abs(M.latitude  - D.latitude ) > OPT.eps;error('lat coordinates of model and data do not match');end
 
    %% SCATTER plot
 
@@ -98,7 +99,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
       
          figure(FIG.scatter);clf
             
-      %% Component loop
+      %% SCATTER component loop
       
          for dcomp = 1:size  (D.amplitude,1);
              mcomp = strmatch(D.component_name(dcomp,:),...
@@ -152,6 +153,8 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          
          end
          
+      %% SCATTER lay-out
+
          subplot(1,2,1)
          xlims = [5e-3 1];
          ylims = [5e-3 1];
@@ -215,7 +218,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          ncomp_plotted{4} = 0;
          ncomp_plotted{6} = 0;
          
-      %% Component loop
+      %% SPECTRUM component loop
          
          for dcomp = 1:size  (D.amplitude,1);
              mcomp = strmatch(D.component_name(dcomp,:),...
@@ -313,6 +316,8 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
             end
          end      
          
+      %% SPECTRUM lay-out
+
          subplot(2,1,1)
          title([char(D.station_name),' (',char(D.station_id),') [',num2str(D.longitude),'\circ E, ',num2str(D.latitude),'\circ N]'])
 
@@ -353,7 +358,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
 
       if OPT.plot.planview
       
-      %% Component loop
+      %% PLANVIEW component loop
 
          for dcomp = 1:size  (D.amplitude,1);
              mcomp = strmatch(D.component_name(dcomp,:),...
@@ -414,9 +419,10 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
       pause
       
       end
-   end
 
-%% PLANVIEW plot lay-out
+   end % Station loop
+
+%% PLANVIEW lay-out (NB after Station loop)
 
    if OPT.plot.planview
    

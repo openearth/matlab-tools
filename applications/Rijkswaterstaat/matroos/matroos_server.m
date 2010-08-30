@@ -16,7 +16,11 @@ function url = matroos_server(varargin)
    passwd = '???????????????????';
    url    = 'matroos.deltares.nl';
    
+   try
    [user, passwd, url]=matroos_deltares(); % matroos_deltares.m is of course not part of OpenEarthTools.
+   catch
+   error(['MATROOS_SERVER: Please request a username/password at matroos.deltares.nl and substitute that in ',mfilename('fullfile')])
+   end
 
 %% urlread_basicauth & matroos_urlread handle any special character (like @) in username or password
 
