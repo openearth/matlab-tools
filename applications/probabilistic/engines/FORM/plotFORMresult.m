@@ -80,10 +80,11 @@ end
 % (1 for each random variable)
 Nx = size(result.Output.x,1);
 xnums = 1:Nx;
-if mod(Nx-1, Nstoch+1) ~=0
+Ndv = result.settings.DerivativeSides; % 1 or 2 sided derivatives
+if mod(Nx-1, Ndv*Nstoch+1) ~=0
     error('length of resultvector x no multiple of number of random variables');
 end
-IterIndex = [(Nstoch+1:Nstoch+1:Nx-1) Nx];
+IterIndex = [(Ndv*Nstoch+1:Ndv*Nstoch+1:Nx-1) Nx];
 
 % make Nstoch subplots
 activeInd = find(active);
