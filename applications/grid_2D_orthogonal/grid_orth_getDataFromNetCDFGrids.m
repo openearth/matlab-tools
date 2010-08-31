@@ -3,7 +3,7 @@ function [X, Y, Z, Ztime] = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx
 %
 %   [X, Y, Z, Ztime] = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, <keyword,value>)
 %
-% extracts data from a series of netCDF files to fill a defined torhogonal grid.
+% extracts data from a series of netCDF files to fill a defined orthogonal grid.
 % Only data at grid intersection lines is read, no min/max/mean is performed.
 %
 % Example: start at @ http://opendap.deltares.nl
@@ -52,6 +52,7 @@ function [X, Y, Z, Ztime] = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx
 % $Revision$
 
 OPT.dataset         = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
+OPT.catalognc       = [];                               % is the catalog nc file if it exists
 OPT.tag             = [];
 OPT.ldburl          = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
 OPT.workdir         = pwd;

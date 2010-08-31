@@ -3,7 +3,7 @@ function [crossing_x,crossing_y,crossing_z,crossing_d] = grid_orth_getDataOnLine
 %
 % X and Y are expected to be created with meshgrid or similar
 %
-% See also: grid_orth_getFixedMapOutlines, grid_orth_createFixedMapsOnAxes, 
+% See also: grid_orth_getFixedMapOutlines, grid_orth_createFixedMapsOnAxes,
 %           grid_orth_identifyWhichMapsAreInPolygon, grid_orth_getDataFromNetCDFGrid
 
 % --------------------------------------------------------------------
@@ -44,13 +44,21 @@ function [crossing_x,crossing_y,crossing_z,crossing_d] = grid_orth_getDataOnLine
 if X(1,1)>X(1,end)
     X = fliplr(X);
     Y = fliplr(Y);
-    Z = fliplr(Z);
+    if length(size(Z))==3
+        Z = Z(:,end:-1:1,:);
+    else
+        Z = fliplr(Z);
+    end
 end
 
 if Y(1,1)>Y(end,1)
     X = flipud(X);
     Y = flipud(Y);
-    Z = flipud(Z);
+    if length(size(Z))==3
+        Z = Z(end:-1:1,:,:);
+    else
+        Z = flipud(Z);
+    end
 end
 
 if xi(1)>xi(2)
@@ -60,10 +68,15 @@ if xi(1)>xi(2)
 else
     reverse = false;
 end
+
+dx = max(diff(X(1,:)));
+dy = max(diff(Y(:,1)));
 %% crop area to search for crossings to line
-temp = X>=min(xi)&X<=max(xi)&Y>=min(yi)&Y<=max(yi);
-mm   = max([1 find(any(temp,2),1,'first')-1]):1:min([size(X,1) find(any(temp,2),1,'last')+1]);
-nn   = max([1 find(any(temp,1),1,'first')-1]):1:min([size(X,2) find(any(temp,1),1,'last')+1]);
+temp = ...
+    X>=min(xi)-dx&X<=max(xi)+dx&...
+    Y>=min(yi)-dy&Y<=max(yi)-dy;
+mm   = max([1 find(any(temp,2),1,'first')-2]):1:min([size(X,1) find(any(temp,2),1,'last')+2]);
+nn   = max([1 find(any(temp,1),1,'first')-2]):1:min([size(X,2) find(any(temp,1),1,'last')+2]);
 
 %% lengthen search line
 
@@ -75,13 +88,13 @@ yi2 = yi + [-dy dy]*3;
 %% pre allocate
 crossing_x = nan(numel(mm)+numel(nn),1);
 crossing_y = nan(numel(mm)+numel(nn),1);
-crossing_z = nan(numel(mm)+numel(nn),1);
+crossing_z = nan(numel(mm)+numel(nn),size(Z,3));
 
 jj = 0;
 
 % find all locations of crossings with rows
 for ii = mm
-    P = InterX([X(ii,:);Y(ii,:)],[xi2;yi2]);
+    P = InterX([X(ii,nn);Y(ii,nn)],[xi2;yi2]);
     if ~isempty(P)
         jj = jj+1;
         crossing_x(jj) = P(1,1);
@@ -93,13 +106,17 @@ for ii = mm
         else
             c = 1;
         end
-        crossing_z(jj) = Z(ii,a) * (1-c) + Z(ii,b) * c;
+        if length(size(Z))==3
+            crossing_z(jj,:) = Z(ii,a,:) * (1-c) + Z(ii,b,:) * c;
+        else
+            crossing_z(jj  ) = Z(ii,a  ) * (1-c) + Z(ii,b  ) * c;
+        end
     end
 end
 
 % find all locations of crossings with columns
 for ii = nn
-    P = InterX([X(:,ii)';Y(:,ii)'],[xi2;yi2]);
+    P = InterX([X(mm,ii)';Y(mm,ii)'],[xi2;yi2]);
     if ~isempty(P)
         jj = jj+1;
         crossing_x(jj) = P(1,1);
@@ -111,68 +128,128 @@ for ii = nn
         else
             c = 1;
         end
-        crossing_z(jj) = Z(a,ii) * (1-c) + Z(b,ii) * c;
+        if length(size(Z))==3
+            crossing_z(jj,:) = Z(a,ii,:) * (1-c) + Z(b,ii,:) * c;
+        else
+            crossing_z(jj  ) = Z(a,ii  ) * (1-c) + Z(b,ii  ) * c;
+        end
+        
     end
 end
 %% delete nan data
-crossing_z(isnan(crossing_x)) = [];
+if length(size(Z))==3
+    crossing_z(isnan(crossing_x),:) = [];
+else
+    crossing_z(isnan(crossing_x)) = [];
+end
 crossing_y(isnan(crossing_x)) = [];
 crossing_x(isnan(crossing_x)) = [];
 
 %% sort
 
- crossing_d = ((crossing_x - xi(1)).^2 + (crossing_y-yi(1)).^2).^.5;
- 
-          a = find(crossing_x<=min(xi));
-[dummy, b]  = min(crossing_d(a));
-          a = a(b);
+crossing_d = ((crossing_x - xi(1)).^2 + (crossing_y-yi(1)).^2).^.5;
+
+if dx>dy
+    a = find(crossing_x<=min(xi));
+    [dummy, b]  = min(crossing_d(a));
+    a = a(b);
+else
+    a = find(crossing_y<=min(yi));
+    [dummy, b]  = min(crossing_d(a));
+    a = a(b);
+end
+
 crossing_x1 =  crossing_x(a);
 crossing_y1 =  crossing_y(a);
-crossing_z1 =  crossing_z(a);
 crossing_d1 = -crossing_d(a);
+if length(size(Z))==3
+    crossing_z1 =  crossing_z(a,:);
+else
+    crossing_z1 =  crossing_z(a);
+end
 
-          a = find(crossing_x>=max(xi));
-[dummy, b]  = min(crossing_d(a));
-          a = a(b);
+if dx>dy
+    a = find(crossing_x>=max(xi));
+    [dummy, b]  = min(crossing_d(a));
+    a = a(b);
+else
+    a = find(crossing_y>=max(yi));
+    [dummy, b]  = min(crossing_d(a));
+    a = a(b);
+end
 crossing_x2 =  crossing_x(a);
 crossing_y2 =  crossing_y(a);
-crossing_z2 =  crossing_z(a);
 crossing_d2 =  crossing_d(a);
+if length(size(Z))==3
+    crossing_z2 =  crossing_z(a,:);
+else
+    crossing_z2 =  crossing_z(a);
+end
 
 [dummy,ind] = sort(crossing_d);
-        ind_temp = ind(crossing_x(ind)>min(xi)&crossing_x(ind)<max(xi));
-        if isempty(ind_temp) % because it is a vertical line (xi(1) = xi(2)), then try with y-coordinates:
-            ind_temp = ind(crossing_y(ind)>min(yi)&crossing_y(ind)<max(yi));
-        end
-        ind = ind_temp;
+ind_temp = ind(crossing_x(ind)>min(xi)&crossing_x(ind)<max(xi));
+if isempty(ind_temp) % because it is a vertical line (xi(1) = xi(2)), then try with y-coordinates:
+    ind_temp = ind(crossing_y(ind)>min(yi)&crossing_y(ind)<max(yi));
+end
+ind = ind_temp;
 
-if ~isempty(crossing_x1) & ~isempty(ind)
-    a = (crossing_x(ind(1)) - min(xi))/(crossing_x(ind(1)) - crossing_x1);
+if ~isempty(crossing_x1) && ~isempty(ind)
+    if dx>dy
+        a = (crossing_x(ind(1)) - min(xi))/(crossing_x(ind(1)) - crossing_x1);
+    else
+        a = (crossing_y(ind(1)) - min(yi))/(crossing_y(ind(1)) - crossing_y1);
+    end
     crossing_x1 = crossing_x1*a + crossing_x(ind(1))*(1-a);
     crossing_y1 = crossing_y1*a + crossing_y(ind(1))*(1-a);
-    crossing_z1 = crossing_z1*a + crossing_z(ind(1))*(1-a);
     crossing_d1 = 0;
+    if length(size(Z))==3
+        crossing_z1 = crossing_z1*a + crossing_z(ind(1),:)*(1-a);
+    else
+        crossing_z1 = crossing_z1*a + crossing_z(ind(1)  )*(1-a);
+    end
 end
 
-if ~isempty(crossing_x2) & ~isempty(ind)
-    a = (crossing_x(ind(end)) - max(xi))/(crossing_x(ind(end)) - crossing_x2);
+
+if ~isempty(crossing_x2) && ~isempty(ind)
+    if dx>dy
+        a = (crossing_x(ind(end)) - max(xi))/(crossing_x(ind(end)) - crossing_x2);
+    else
+        a = (crossing_y(ind(end)) - max(yi))/(crossing_y(ind(end)) - crossing_y2);
+    end
     crossing_x2 = crossing_x2*a + crossing_x(ind(end))*(1-a);
     crossing_y2 = crossing_y2*a + crossing_y(ind(end))*(1-a);
-    crossing_z2 = crossing_z2*a + crossing_z(ind(end))*(1-a);
     crossing_d2 = ((xi(2) - xi(1)).^2 + (yi(2)-yi(1)).^2)^.5;
+    if length(size(Z))==3
+        crossing_z1 = crossing_z1*a + crossing_z(ind(end),:)*(1-a);
+    else
+        crossing_z2 = crossing_z2*a + crossing_z(ind(end)  )*(1-a);
+    end
 end
+
 crossing_x    =[crossing_x1; crossing_x(ind); crossing_x2];
 crossing_y    =[crossing_y1; crossing_y(ind); crossing_y2];
-crossing_z    =[crossing_z1; crossing_z(ind); crossing_z2];
 crossing_d    =[crossing_d1; crossing_d(ind); crossing_d2];
+if length(size(Z))==3
+    crossing_z    =[crossing_z1; crossing_z(ind,:); crossing_z2];
+else
+    crossing_z    =[crossing_z1; crossing_z(ind  ); crossing_z2];
+end
 
-if reverse 
+if reverse
     crossing_x = flipud(crossing_x);
     crossing_y = flipud(crossing_y);
-    crossing_z = flipud(crossing_z);
     crossing_d = ((crossing_x - xi(2)).^2 + (crossing_y-yi(2)).^2).^.5;
+    if length(size(Z))==3
+        crossing_z = crossing_z(end:-1:1,:);
+    else
+        crossing_z = flipud(crossing_z);
+    end
 end
 %% delete nan data
-crossing_z(isnan(crossing_x)) = [];
+if length(size(Z))==3
+    crossing_z(isnan(crossing_x),:) = [];
+else
+    crossing_z(isnan(crossing_x)  ) = [];
+end
 crossing_y(isnan(crossing_x)) = [];
 crossing_x(isnan(crossing_x)) = [];

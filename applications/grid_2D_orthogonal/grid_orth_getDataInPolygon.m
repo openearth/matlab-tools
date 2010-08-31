@@ -105,8 +105,8 @@ function [X, Y, Z, Ztime, OPT] = grid_orth_getDataInPolygon(varargin)
 OPT.dataset         = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml';
 OPT.tag             = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml';
 OPT.ldburl          = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
-OPT.workdir         = 'D:\checkouts\VO-rawdata\projects\151027_maasvlakte_2\scripts\sedbudget\';
-OPT.polygondir      = 'D:\checkouts\VO-rawdata\projects\151027_maasvlakte_2\scripts\sedbudget\polygons\';
+OPT.workdir         = 'sedbudget\';
+OPT.polygondir      = 'sedbudget\polygons\';
 OPT.polygon         = [];
 OPT.cellsize        = [];                               % left empty will be determined automatically
 OPT.datathinning    = 1;                                % stride with which to skip through the data
@@ -134,9 +134,7 @@ if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.tag})) % if an overview
     if ~isempty(OPT.urls)
         urls = OPT.urls;
     else
-        urls = opendap_catalog(OPT.dataset);
         OPT = mergestructs(OPT,grid_orth_getMapInfoFromDataset(OPT.dataset));
-%         OPT.OPT.urls = urls;
     end
     % Step 0.2: create a figure with tagged patches
     figure(10);clf;axis equal;box on;hold on
@@ -222,6 +220,28 @@ if isempty(mapurls) & OPT.warning
     
 else
     
+    % Adjust minx and maxx to limit memory use (generates a smaller Z)
+
+    X1 = [];
+    Y1 = [];
+    for nn = 1:length(mapurls)
+        X1 = [X1 nc_varget(mapurls{nn},'x')];
+        Y1 = [Y1 nc_varget(mapurls{nn},'y')];
+    end
+    
+    X1 = unique(X1);
+    Y1 = unique(Y1);
+    
+    minx = min(OPT.polygon(:,1));
+    maxx = max(OPT.polygon(:,1));
+    miny = min(OPT.polygon(:,2));
+    maxy = max(OPT.polygon(:,2));
+    
+    minx  = X1(find(X1>minx, 1, 'first'));
+    maxx  = X1(find(X1<maxx, 1, 'last'));
+    miny  = Y1(find(Y1>miny, 1, 'first'));
+    maxy  = Y1(find(Y1<maxy, 1, 'last'));
+ 
     %% Step 3: retrieve data and place it on one overall grid
     [X, Y, Z, Ztime]                  = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, OPT);
     

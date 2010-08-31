@@ -39,13 +39,10 @@ function ah = grid_orth_createFixedMapsOnAxes(ah, OPT, varargin)
 % $Revision$
 
 %% make the axes to use the current one
-for i = 1:length(OPT.urls)
-    
-    ph = patch(...
-        [OPT.x_ranges(i,1) OPT.x_ranges(i,2) OPT.x_ranges(i,2) OPT.x_ranges(i,1) OPT.x_ranges(i,1)], ...
-        [OPT.y_ranges(i,1) OPT.y_ranges(i,1) OPT.y_ranges(i,2) OPT.y_ranges(i,2) OPT.y_ranges(i,1)], 'k');
-    set(ph, 'edgecolor', 'r', 'facecolor', 'none');
-    drawnow
-    set(ph,'tag',OPT.urls{i});
+for ii = 1:length(OPT.urls)
+    patch(...
+       'xdata',[OPT.x_ranges(ii,1) OPT.x_ranges(ii,2) OPT.x_ranges(ii,2) OPT.x_ranges(ii,1) OPT.x_ranges(ii,1)], ...
+       'ydata',[OPT.y_ranges(ii,1) OPT.y_ranges(ii,1) OPT.y_ranges(ii,2) OPT.y_ranges(ii,2) OPT.y_ranges(ii,1)], ...
+       'EdgeColor','r','tag',OPT.urls{ii},'FaceColor','none','parent',ah);
 end
 

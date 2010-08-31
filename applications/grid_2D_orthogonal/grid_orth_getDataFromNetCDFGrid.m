@@ -110,8 +110,9 @@ if ~isempty(OPT.polygon)
     % NB: these are indexes, should be reduced with one for netCDF call as nc files start counting at 0
     xstart   = find(X1>minx, 1, 'first');
     xlength  = find(X1<maxx, 1, 'last');
-    ystart   = find(Y1>miny, 1, 'first');
-    ylength  = find(Y1<maxy, 1, 'last');
+    ystart   = find(Y1<maxy, 1, 'first');
+    ylength  = find(Y1>miny, 1, 'last');
+    
 else
     xstart   = 1;
     xlength  = size(X0,1);

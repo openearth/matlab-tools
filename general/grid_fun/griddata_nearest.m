@@ -64,6 +64,7 @@ function ZI = griddata_nearest(X,Y,Z,XI,YI,varargin)
 % TO DO: make space varying Rmax official ?
 OPT.ndisp = 100;
 OPT.Rmax  = Inf; % make this optionally same size as X and Y.
+OPT.quiet = false;
 
 OPT  = setproperty(OPT,varargin{:});
 
@@ -72,10 +73,12 @@ R    = NaN((size(X )));
 npix = length(XI(:));
 
 % print commandline waitbar
-s = arrayfun(@(n) sprintf('|%d%%',n),0:10:100,'UniformOutput',false);
-s{end} = [s{end} '     '];
-fprintf('%s',char(s)');
-fprintf('\n');
+if ~OPT.quiet
+    s = arrayfun(@(n) sprintf('|%d%%',n),0:10:100,'UniformOutput',false);
+    s{end} = [s{end} '     '];
+    fprintf('%s',char(s)');
+    fprintf('\n');
+end
 
 pix.distance = 0;
 for ipix = 1:npix % index in new (orthogonal) grid
@@ -110,15 +113,18 @@ for ipix = 1:npix % index in new (orthogonal) grid
     if (pix.distance < OPT.Rmax)
         ZI(ipix)                 = Z(pix.index);
     end
-     
-    if mod(ipix-1,floor(npix/100))==0
-        if mod(ipix-1,floor(npix/10))==0
-            fprintf('|');
-        else
-            fprintf('.');
+    if ~OPT.quiet 
+        if mod(ipix-1,floor(npix/100))==0
+            if mod(ipix-1,floor(npix/10))==0
+                fprintf('|');
+            else
+                fprintf('.');
+            end
         end
     end
     
 end
-fprintf('\n');
+if ~OPT.quiet
+    fprintf('\n');
+end
 %% EOF
