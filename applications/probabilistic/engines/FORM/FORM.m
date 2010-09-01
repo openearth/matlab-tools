@@ -89,8 +89,11 @@ end
 %% series of FORM calculations
 Resistance = [];
 if any(cellfun(@ischar, OPT.variables))
-    Resistance_id = [false cellfun(@ischar, OPT.variables)];
-    Resistance = OPT.variables{Resistance_id};
+    char_id = find(cellfun(@ischar, OPT.variables));
+    Resistance_id = char_id(ismember(OPT.variables(char_id), 'Resistance')) + 1;
+    if ~isempty(Resistance_id)
+        Resistance = OPT.variables{Resistance_id};
+    end
 end
 
 % in case of multiple Resistance-values
