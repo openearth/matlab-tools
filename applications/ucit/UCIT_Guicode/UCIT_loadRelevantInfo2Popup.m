@@ -208,7 +208,7 @@ elseif type==2&&PopupNR==2
 %     end
 
     % get info from database
-    years  = datenum(1965,1,1):datenum(now);
+    years  = datenum(1927,1,1):datenum(now);
     years  = sort(years,'descend');
     string = cellstr(datestr(years,29));
    
