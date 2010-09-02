@@ -14,7 +14,7 @@ if ~isempty(varargin)
     end
 end
 
-fig=figure;
+fig=figure('Visible','off');
 
 fh = get(fig,'JavaFrame'); % Get Java Frame 
 if exist('iconFile')
@@ -31,3 +31,5 @@ set(fig,'Position',[0 0 sz(1) sz(2)]);
 set(fig,'Name',Name,'NumberTitle','off');
 set(fig,'Tag',Name);
 PutInCentre(fig);
+
+set(fig,'Visible','on');

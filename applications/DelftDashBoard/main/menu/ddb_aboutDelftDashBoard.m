@@ -1,7 +1,7 @@
 function ddb_aboutDelftDashBoard(handles)
 
 MakeNewWindow('About Delft Dashboard',[400 400],'modal',[handles.SettingsDir '\icons\deltares.gif']);
-set(gcf,'ddb_resize','off');
+set(gcf,'Resize','off');
 ax=axes;
 set(ax,'Units','pixels');
 set(ax,'Position',[0 0 400 400]);
