@@ -46,7 +46,7 @@ else
     wbh = waitbar(0,'Please wait ...');
     varname_x = nc_varfind(OPT.urls{1}, 'attributename','standard_name','attributevalue','projection_x_coordinate');
     varname_y = nc_varfind(OPT.urls{1}, 'attributename','standard_name','attributevalue','projection_y_coordinate');
-    for i = 1:3%:length(OPT.urls)
+    for i = 1:length(OPT.urls)
         waitbar(i/length(OPT.urls), wbh, 'Extracting map outlines from nc files ...')
 
         x_range = nc_getvarinfo(OPT.urls{i}, varname_x);
