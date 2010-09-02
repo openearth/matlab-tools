@@ -130,10 +130,6 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
         
         for n=1:nb
             
-            if n==46
-                xxxx=1
-            end
-            
             bnd=handles.Model(md).Input(id).OpenBoundaries(n);
             dx=bnd.X(2)-bnd.X(1);
             dy=bnd.Y(2)-bnd.Y(1);
@@ -197,6 +193,7 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
             k=k+1;
             if igetvel
                 dpcorfac=handles.Model(md).Input(id).OpenBoundaries(n).Depth(1)/deptha(n);
+%                dpcorfac=1;
             end
             handles.Model(md).Input(id).AstronomicComponentSets(k).Name=handles.Model(md).Input(id).OpenBoundaries(n).CompA;
             handles.Model(md).Input(id).AstronomicComponentSets(k).Nr=NrCons;
@@ -228,11 +225,17 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
                         end
                         
                         phi3=180*phi3/pi;
+                        phi3=mod(phi3,360);
                         
                         handles.Model(md).Input(id).AstronomicComponentSets(k).Amplitude(i)=a3;
                         handles.Model(md).Input(id).AstronomicComponentSets(k).Phase(i)=phi3;
                 end
                 
+                if strcmpi(handles.Model(md).Input(id).OpenBoundaries(n).CompA,'North1A') || strcmpi(handles.Model(md).Input(id).OpenBoundaries(n).CompA,'North1B')
+                    if strcmpi(deblank(handles.Model(md).Input(id).AstronomicComponentSets(k).Component{i}),'M2')
+                        shite=1000
+                        end
+                end
                 handles.Model(md).Input(id).AstronomicComponentSets(k).Correction(i)=0;
                 handles.Model(md).Input(id).AstronomicComponentSets(k).AmplitudeCorrection(i)=0;
                 handles.Model(md).Input(id).AstronomicComponentSets(k).PhaseCorrection(i)=0;
@@ -241,6 +244,7 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
             k=k+1;
             if igetvel
                 dpcorfac=handles.Model(md).Input(id).OpenBoundaries(n).Depth(2)/depthb(n);
+%                dpcorfac=1;
             end
             handles.Model(md).Input(id).AstronomicComponentSets(k).Name=handles.Model(md).Input(id).OpenBoundaries(n).CompB;
             handles.Model(md).Input(id).AstronomicComponentSets(k).Nr=NrCons;
@@ -271,6 +275,14 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
                         end
                         
                         phi3=180*phi3/pi;
+                        phi3=mod(phi3,360);
+                        
+                        
+                if strcmpi(handles.Model(md).Input(id).OpenBoundaries(n).CompA,'North1A') || strcmpi(handles.Model(md).Input(id).OpenBoundaries(n).CompA,'North1B')
+                    if strcmpi(deblank(handles.Model(md).Input(id).AstronomicComponentSets(k).Component{i}),'M2')
+                        shite=1000
+                        end
+                end
                         
                         handles.Model(md).Input(id).AstronomicComponentSets(k).Amplitude(i)=a3;
                         handles.Model(md).Input(id).AstronomicComponentSets(k).Phase(i)=phi3;

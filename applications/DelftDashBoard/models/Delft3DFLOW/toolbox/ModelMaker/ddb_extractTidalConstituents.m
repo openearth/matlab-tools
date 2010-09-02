@@ -73,8 +73,12 @@ yv=y(iy1:iy2);
 xx(isnan(xx))=1e9;
 yy(isnan(yy))=1e9;
 
+%fname='F:\DelftDashBoardRawData\tidemodels\scripts\Med\med.nc';
+
 dpt=nc_varget(fname,'depth',[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
 dpt=dpt';
+% figure(999);
+% pcolor(xg,yg,double(dpt));colorbar;
 depth=interp2(xg,yg,dpt,xx,yy);
 
 if isempty(comp)
@@ -87,6 +91,10 @@ if isempty(comp)
     amp=permute(amp,[2 1 3]);
     phi=permute(phi,[2 1 3]);
 
+%     figure(800);
+%     pcolor(amp(:,:,1));colorbar;
+%     figure(900);
+%     pcolor(phi(:,:,1));colorbar;
     
     for k=1:nrcons
         
