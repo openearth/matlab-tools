@@ -83,6 +83,15 @@ end
 
 fclose(fid);
 
-mcc -m -d exe DelftDashBoard.m -B complist -a settings
- 
+try
+    fid=fopen('earthicon.rc','wt');
+    fprintf(fid,'%s\n','ConApp ICON settings\icons\Earth-icon32x32.ico');
+    fclose(fid);
+    system(['"' matlabroot '\sys\lcc\bin\lrc" /i "' pwd '\earthicon.rc"']);
+end
+
+mcc -m -d exe DelftDashBoard.m -B complist -a settings -M earthicon.res
+
 delete('complist');
+delete('earthicon.rc');
+delete('earthicon.res');
