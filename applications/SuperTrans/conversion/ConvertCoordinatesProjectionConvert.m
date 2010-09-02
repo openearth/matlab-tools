@@ -10,7 +10,7 @@ function [y1,x1] = ConvertCoordinatesProjectionConvert(x1,y1,CS,proj_conv,direct
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma
 %
-%       Thijs.Damsma@deltares.nl	
+%       Thijs.Damsma@deltares.nl    
 %
 %       Deltares
 %       P.O. Box 177
@@ -51,6 +51,27 @@ a    = ell.semi_major_axis;
 invf = ell.inv_flattening;
 
 switch method.name
+    case 'Cassini-Soldner'
+        ii = strmatch('False easting'                        ,param.name); fe    = convertUnits(param.value(ii),param.UoM.name{ii},'Clarke''s link',STD);
+        ii = strmatch('False northing'                       ,param.name); fn    = convertUnits(param.value(ii),param.UoM.name{ii},'Clarke''s link',STD);
+        ii = strmatch('Latitude of natural origin'           ,param.name); lat0  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+        ii = strmatch('Longitude of natural origin'          ,param.name); lon0  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+        a = convertUnits(a,'foot','Clarke''s link',STD);
+        
+        [x1,y1]= CassiniSoldner(x1,y1,a,invf,fe,fn,lat0,lon0,iopt);
+    
+    case 'Krovak Oblique Conic Conformal'
+    
+        ii = strmatch('False easting'                             ,param.name); fe    = convertUnits(param.value(ii),param.UoM.name{ii},'metre',STD);
+        ii = strmatch('False northing'                            ,param.name); fn    = convertUnits(param.value(ii),param.UoM.name{ii},'metre',STD);
+        ii = strmatch('Latitude of projection centre'             ,param.name); latpc = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+        ii = strmatch('Azimuth of initial line'                   ,param.name); alphac= convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+        ii = strmatch('Latitude of pseudo standard parallel'      ,param.name); lat1  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+        ii = strmatch('Scale factor on pseudo standard parallel'  ,param.name); sf    = param.value(ii);
+        ii = strmatch('Longitude of origin'                       ,param.name); lon0  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+        
+        [x1,y1]= KrovakObliqueConformalConic(x1,y1,a,invf,fe,fn,latpc,alphac,lat1,sf,lon0,iopt);
+        
     case 'Lambert Conic Conformal (2SP)'
 
         ii = strmatch('Longitude of false origin'            ,param.name); lonf  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
@@ -83,6 +104,16 @@ switch method.name
 
         [x1,y1]= LambertConicConformal1SP(x1,y1,a,invf,lato,lono,fe,fn,ko,iopt);
         
+    case 'Lambert Conic Conformal (West Orientated)'
+
+        ii = strmatch('Latitude of natural origin'           ,param.name); lato  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+        ii = strmatch('Longitude of natural origin'          ,param.name); lono  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+        ii = strmatch('False easting'                        ,param.name); fe    = convertUnits(param.value(ii),param.UoM.name{ii},'metre',STD);
+        ii = strmatch('False northing'                       ,param.name); fn    = convertUnits(param.value(ii),param.UoM.name{ii},'metre',STD);
+        ii = strmatch('Scale factor at natural origin'       ,param.name); ko    = param.value(ii);
+
+        [x1,y1]= LambertConicConformalWO(x1,y1,a,invf,lato,lono,fe,fn,ko,iopt);
+
     case {'Transverse Mercator','Transverse Mercator (South Orientated)'}
 
         ii = strmatch('Scale factor at natural origin'       ,param.name); k0    = param.value(ii);
@@ -128,6 +159,6 @@ switch method.name
         [x1,y1]= HotineObliqueMercator(x1,y1,a,invf,latc,lonc,alphac,gammac,kc,fe,fn,iopt);
 
     otherwise
-        error(['tranformation method ' method.name ' not (yet) supported'])
+        error(['conversion method ' method.name ' not (yet) supported'])
 end
 end
