@@ -8,7 +8,7 @@ if ~isempty(varargin)
         modal=1;
     end
     for ij=1:length(varargin)
-        if exist(varargin{ij},'file')&findstr(varargin{ij},'deltares.gif')
+        if exist(varargin{ij},'file') && findstr(varargin{ij},'deltares.gif')
             iconFile=varargin{ij};
         end
     end
@@ -17,7 +17,7 @@ end
 fig=figure('Visible','off');
 
 fh = get(fig,'JavaFrame'); % Get Java Frame 
-if exist('iconFile')
+if exist('iconFile','var')
     fh.setFigureIcon(javax.swing.ImageIcon(iconFile));
 end    
 
