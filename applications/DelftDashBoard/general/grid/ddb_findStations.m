@@ -1,4 +1,4 @@
-function [m,n,iindex]=ddb_findStationsOMS(x,y,xg,yg,zz)
+function [m,n,iindex]=ddb_findStationsObs(x,y,xg,yg,zz)
 
 posx=[];
 m=[];
