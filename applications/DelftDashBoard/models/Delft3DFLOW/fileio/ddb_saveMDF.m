@@ -59,6 +59,9 @@ if Flow.SecondaryFlow
     MDF.Sub1(4)='I';
 end
 MDF.Sub2='   ';
+if Flow.NrDrogues>0
+    MDF.Sub2(1)='P';
+end
 if Flow.Sediments || Flow.Tracers
     MDF.Sub2(2)='C';
 end
@@ -270,6 +273,10 @@ if Flow.NrCrossSections>0
     MDF.Filcrs=Flow.CrsFile;
     MDF.Fmtcrs='FR';
 end
+if Flow.NrDrogues>0
+    MDF.Filpar=Flow.DroFile;
+    MDF.Fmtpar='FR';
+end
 
 MDF.SMhydr= 'YYYYY';
 MDF.SMderv= 'YYYYYY';
@@ -334,6 +341,14 @@ end
 if met
     MDF.Wndgrd=Flow.Wndgrd;
     MDF.MNmaxw=Flow.MNmaxw;
+end
+
+if Flow.KMax>1
+    if strcmpi(Flow.LayerType,'z')
+        MDF.Zmodel='Y';
+        MDF.Zbot=Flow.ZBot;
+        MDF.Ztop=Flow.ZTop;
+    end
 end
 
 %%

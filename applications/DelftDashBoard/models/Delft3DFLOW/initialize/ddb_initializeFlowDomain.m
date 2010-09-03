@@ -57,6 +57,11 @@ handles.Model(md).Input(id).KMax=1;
 handles.Model(md).Input(id).Depth=[];
 handles.Model(md).Input(id).GridX=[];
 handles.Model(md).Input(id).GridY=[];
+handles.Model(md).Input(id).GridY=[];
+
+handles.Model(md).Input(id).LayerType='sigma';
+handles.Model(md).Input(id).ZBot=0;
+handles.Model(md).Input(id).ZTop=0;
 
 %%
 function handles=ddb_initializeOtherInput(handles,id,runid)

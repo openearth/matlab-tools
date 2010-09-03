@@ -231,11 +231,6 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
                         handles.Model(md).Input(id).AstronomicComponentSets(k).Phase(i)=phi3;
                 end
                 
-                if strcmpi(handles.Model(md).Input(id).OpenBoundaries(n).CompA,'North1A') || strcmpi(handles.Model(md).Input(id).OpenBoundaries(n).CompA,'North1B')
-                    if strcmpi(deblank(handles.Model(md).Input(id).AstronomicComponentSets(k).Component{i}),'M2')
-                        shite=1000
-                        end
-                end
                 handles.Model(md).Input(id).AstronomicComponentSets(k).Correction(i)=0;
                 handles.Model(md).Input(id).AstronomicComponentSets(k).AmplitudeCorrection(i)=0;
                 handles.Model(md).Input(id).AstronomicComponentSets(k).PhaseCorrection(i)=0;
@@ -276,14 +271,7 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
                         
                         phi3=180*phi3/pi;
                         phi3=mod(phi3,360);
-                        
-                        
-                if strcmpi(handles.Model(md).Input(id).OpenBoundaries(n).CompA,'North1A') || strcmpi(handles.Model(md).Input(id).OpenBoundaries(n).CompA,'North1B')
-                    if strcmpi(deblank(handles.Model(md).Input(id).AstronomicComponentSets(k).Component{i}),'M2')
-                        shite=1000
-                        end
-                end
-                        
+                                                
                         handles.Model(md).Input(id).AstronomicComponentSets(k).Amplitude(i)=a3;
                         handles.Model(md).Input(id).AstronomicComponentSets(k).Phase(i)=phi3;
                 end

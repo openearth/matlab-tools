@@ -59,6 +59,9 @@ end
 if ~isempty(handles.Model(md).Input(ad).CrsFile)
     handles=ddb_readCrsFile(handles);
 end
+if ~isempty(handles.Model(md).Input(ad).DroFile)
+    handles=ddb_readDroFile(handles);
+end
 if ~isempty(handles.Model(md).Input(ad).DryFile)
     handles=ddb_readDryFile(handles);
 end

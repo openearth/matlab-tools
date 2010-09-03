@@ -154,7 +154,7 @@ if pathname~=0
     end
     handles.Model(md).Input(ad).DroFile=filename;
     ddb_saveDroFile(handles,ad);
-    set(handles.TextDroFile,'String',['File : ' filename]);
+    set(handles.GUIHandles.TextDroFile,'String',['File : ' filename]);
     handles.GUIData.DeleteSelectedDrogue=0;
     setHandles(handles);
 end
@@ -180,12 +180,14 @@ setHandles(handles);
 %%
 function PushAddDrogue_CallBack(hObject,eventdata)
 ddb_zoomOff;
-h=findobj('Tag','MainWindow');
-handles=guidata(h);
+handles=getHandles;
+% h=findobj('Tag','MainWindow');
+% handles=guidata(h);
 handles.GUIData.DeleteSelectedDrogue=0;
 xg=handles.Model(md).Input(ad).GridX;
 yg=handles.Model(md).Input(ad).GridY;
-guidata(h,handles);
+setHandles(handles);
+% guidata(h,handles);
 ClickPoint('cell','Grid',xg,yg,'Callback',@AddDrogue,'multiple');
 
 %%
@@ -304,8 +306,8 @@ if nr>0
     set(handles.GUIHandles.EditDroName,'String',handles.Model(md).Input(id).Drogues(n).Name);
     set(handles.GUIHandles.EditDroM,'String',handles.Model(md).Input(id).Drogues(n).M);
     set(handles.GUIHandles.EditDroN,'String',handles.Model(md).Input(id).Drogues(n).N);
-    set(handles.GUIHandles.EditRelease, 'String',D3DTimeString(handles.Model(md).Input(id).Drogues(n).ReleaseTime,'yyyy mm dd HH MM SS'));
-    set(handles.GUIHandles.EditRecovery,'String',D3DTimeString(handles.Model(md).Input(id).Drogues(n).RecoveryTime,'yyyy mm dd HH MM SS'));
+    set(handles.GUIHandles.EditRelease, 'String',D3DTimeString(handles.Model(md).Input(id).Drogues(n).ReleaseTime));
+    set(handles.GUIHandles.EditRecovery,'String',D3DTimeString(handles.Model(md).Input(id).Drogues(n).RecoveryTime));
     set(handles.GUIHandles.EditDroName,'Enable','on','BackgroundColor',[1 1 1]);
     set(handles.GUIHandles.EditDroM,'Enable','on','BackgroundColor',[1 1 1]);
     set(handles.GUIHandles.EditDroN,'Enable','on','BackgroundColor',[1 1 1]);

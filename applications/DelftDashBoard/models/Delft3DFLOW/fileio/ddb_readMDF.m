@@ -207,6 +207,7 @@ handles.Model(md).Input(id).TraSol=MDF.Trasol;
 handles.Model(md).Input(id).MomSol=MDF.Momsol;
 handles.Model(md).Input(id).ObsFile=MDF.Filsta;
 handles.Model(md).Input(id).CrsFile=MDF.Filcrs;
+handles.Model(md).Input(id).DroFile=MDF.Filpar;
 % SMhydr= #YYYYY#
 % SMderv= #YYYYYY#
 % SMproc= #YYYYYYYYYY#
@@ -255,6 +256,18 @@ handles.Model(md).Input(id).Filwu=MDF.Filwu;
 handles.Model(md).Input(id).Filwv=MDF.Filwv;
 handles.Model(md).Input(id).Wndgrd=MDF.Wndgrd;
 handles.Model(md).Input(id).MNmaxw=MDF.MNmaxw;
+
+if isfield(MDF,'Zmodel')
+    if strcmpi(MDF.Zmodel,'y')
+        handles.Model(md).Input(id).LayerType='z';
+    end
+end
+if isfield(MDF,'Zbot')
+    handles.Model(md).Input(id).ZBot=MDF.Zbot;
+end
+if isfield(MDF,'Ztop')
+    handles.Model(md).Input(id).ZTop=MDF.Ztop;
+end
 
 % snelli= #no#
 % Cstbnd= #yes#
