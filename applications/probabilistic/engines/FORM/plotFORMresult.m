@@ -86,12 +86,11 @@ if mod(Nx-1, Ndv*Nstoch+1) ~=0
 end
 IterIndex = [(Ndv*Nstoch+1:Ndv*Nstoch+1:Nx-1) Nx];
 
-% make Nstoch subplots
+% make subplots for each active stochast
 activeInd = find(active);
-for j = 1:Nstoch
-    i = activeInd(j);
-    
-    subplot(NrFigureRows, NrFigureColumns, i,...
+for i = activeInd
+    % prepare subplot and add title and axis labels
+    subplot(NrFigureRows, NrFigureColumns, find(activeInd == i),...
         'Nextplot', 'add',...
         'XLim', [0 Nx])
     title(result.Input(i).Name)
@@ -99,13 +98,17 @@ for j = 1:Nstoch
     ylabel(result.Input(i).Name)
         
     xi = result.Output.x(:,i);
-
+    % plot FORM iterations
     plot(xnums(IterIndex), xi(IterIndex),...
-        'DisplayName', result.Input(i).Name, 'LineWidth', 2);
-    hold on;    
-    plot(xnums, xi, 'b:');   
-    legend('FORM iterations', 'all computations', 'location', 'best');
-    
+        'DisplayName', 'FORM iterations',...
+        'LineWidth', 2);
+    % plot individual calculations
+    plot(xnums, xi, 'b:',...
+        'DisplayName', 'all computations');
+    % add legend
+    leg = legend('toggle');
+    set(leg,...
+        'location', 'best');
 end
 
 %%
