@@ -279,5 +279,7 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    if OPT.openInGE
        system(OPT.fileName);
    end
+   
+   varargout = {1};
 
 %% EOF

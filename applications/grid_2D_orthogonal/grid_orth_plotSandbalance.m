@@ -1,9 +1,7 @@
 function grid_orth_plotSandbalance(OPT, results, Volumes, n)
-%UCIT_PLOTSANDBALANCE  plots results of sand balance computation
+%GRID_ORTH_PLOTSANDBALANCE  plots results of sand balance computation
 %
-%       UCIT_plotSandBalance(OPT, results, Volumes)
-%
-%
+%       grid_orth_plotSandbalance(OPT, results, Volumes)
 %
 %
 %   Output: plots in a selected result directory

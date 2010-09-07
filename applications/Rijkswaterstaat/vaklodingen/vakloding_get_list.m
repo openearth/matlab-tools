@@ -51,7 +51,7 @@ function vakloding_get_list(url,varargin)
       disp([num2str(i,'%0.3d'),' ',pad(filename(L{i}),' ',-21),': ',datestr(t0(i),29),' - ',datestr(t1(i),29),' ',num2str(nt(i),'%0.2d')])
    end
 
-%% get all avaibale dates
+%% get all available dates
 
    allt = [];
    for i=1:length(L)

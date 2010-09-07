@@ -1,5 +1,5 @@
 function results = grid_orth_computeGridVolume(reference_year, targetyear, polyname, OPT)
-%UCIT_COMPUTEGRIDVOLUME   this routine computes volumes based on data that is stored in grid format
+%GRID_ORTH_COMPUTEGRIDVOLUME   this routine computes volumes based on data that is stored in grid format
 %
 %   syntax:     results = getSandBalance(reference_year, targetyear, polyname,OPT)
 %

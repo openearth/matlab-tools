@@ -1,13 +1,13 @@
 function varargout = t_tide_compare(ncmodel,ncdata,varargin)
-%T_TIDE_COMPARE   visualize comparison of t_tide results
+%NC_T_TIDE_COMPARE   visualize comparison of nc_t_tide results
 %
-%   t_tide_compare(ncmodel,ncdata,<keyword,value>)
+%   nc_t_tide_compare(ncmodel,ncdata,<keyword,value>)
 %
-% plots the results from a tidal analysis that has performed 
-% by NC_T_TIDE. ncmodel and ncdata are pairwise linked lists 
-% with netCDF files (obtained with e.g. opendap_catalog).
+% plots the results from a tidal analysis performed by
+% NC_T_TIDE. ncmodel and ncdata are pairwise linked lists 
+% of netCDF files (obtained with e.g. OPENDAP_CATALOG).
 %
-% See also: T_TIDE, NC_T_TIDE
+% See also: T_TIDE, NC_T_TIDE, OPENDAP_CATALOG
 
 %% Copyright notice
 %   --------------------------------------------------------------------

@@ -3,9 +3,11 @@ function urlPath = opendap_catalog_dataset(D,OPT)
 %
 %   urlPath = opendap_catalog_dataset(D,OPT)
 %
-% returns all  
+% returns all urls.
 %
-%See also: OPENDAP_CATALOG, XML_READ, XMLREAD
+% subsidiary of OPENDAP_CATALOG.
+%
+%See also: OPENDAP_CATALOG, XML_READ, XMLREAD, SNCTOOLS
 
 %% Copyright notice
 %   --------------------------------------------------------------------

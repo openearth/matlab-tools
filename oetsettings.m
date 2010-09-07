@@ -14,13 +14,13 @@ function oetsettings(varargin)
 % 
 % For more information on OpenEarthTools refer to the following sources:
 %
-% * wiki:          <a href="http://OpenEarth.nl">OpenEarth.nl</a>
-% * data, raw:     <a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/matlab">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/matlab</a>
-% * data, netCDF:  <a href="http://opendap.deltares.nl">http://opendap.deltares.nl</a>
-% * models, input: <a href="https://repos.deltares.nl/repos/OpenEartModels/trunk/matlab">https://repos.deltares.nl/repos/OpenEartModels/trunk/matlab</a>
-% * tools:         <a href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab">https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab</a>
-% * help blocks:   Scroll through the OpenEarthTools directories by clicking 
-%                  to see also links, or typing:
+% * wiki:              <a href="http://OpenEarth.nl">OpenEarth.nl</a>, <a href="http://OpenEarth.nl">OpenEarth.eu</a>
+% * data, raw:         <a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/matlab</a>
+% * data, netCDF:      <a href="http://opendap.deltares.nl">http://opendap.deltares.nl</a>
+% * model input:       <a href="https://repos.deltares.nl/repos/OpenEartModels/trunk/">https://repos.deltares.nl/repos/OpenEartModels/trunk/matlab</a>
+% * tools, model code: <a href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab">https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab</a>
+% * help blocks:       Scroll through the OpenEarthTools directories by clicking 
+%                      to "See also" links, or typing:
 %
 %    help oetsettings
 %    help general
@@ -29,7 +29,7 @@ function oetsettings(varargin)
 %
 %See also: path, restoredefaultpath, addpathfast,
 %          OpenEarthTools: general, applications, io, tutorials
-%          highlights: convertcoordinates, googleplot
+%              highlights: convertcoordinates, googleplot
 
 %% Copyright notice
 %   --------------------------------------------------------------------

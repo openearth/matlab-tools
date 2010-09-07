@@ -183,9 +183,9 @@ function varargout = swan_io_table(varargin)
 
 %% reshape size
       if nargin>2
-         if ~isempty(varargin{1})
-            INP.table.mmax = varargin{1}(1);
-            INP.table.nmax = varargin{1}(2);
+         if ~isempty(varargin{3})
+            INP.table.mmax = varargin{3}(1);
+            INP.table.nmax = varargin{3}(2);
          end
       end
       if nargin>3

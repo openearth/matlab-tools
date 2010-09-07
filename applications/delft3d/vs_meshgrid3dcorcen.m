@@ -124,7 +124,7 @@ TimeStep       = 1;
       G = vs_meshgrid2dcorcen(NFSstruct);
    end
 
-   if P.latlon & ~any(strfind(G.coordinates,'CARTESIAN'))
+   if P.latlon & strmatch(G.coordinates,'SPHERICAL')
       x = 'lon';
       y = 'lat';
    else

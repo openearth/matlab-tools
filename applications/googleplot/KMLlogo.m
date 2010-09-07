@@ -93,7 +93,7 @@ function varargout = KMLlogo(imname,varargin)
    im4alpha = im4alpha./max(im4alpha(:));% scale so lightest pixel is fully white
    
    if isempty(OPT.logoName)
-   OPT.logoName = [fileparts(imname) filesep filename(imname),'4GE.png'];
+   OPT.logoName = fullfile(fileparts(imname),[filename(imname),'4GE.png']);
    end
 
    imwrite(ones(size(im)),OPT.logoName,'Alpha',im4alpha);

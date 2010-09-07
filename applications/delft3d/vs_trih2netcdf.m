@@ -9,7 +9,7 @@ function varargout = vs_trih2netcdf(vsfile,varargin)
 %
 % Example:
 %
-%   vs_trih2netcdf('P:\aproject\trih-n15.dat','epsg',28992,'time',5)
+%   vs_trih2netcdf('P:\aproject\trih-n15.dat','epsg',28992)
 %
 % nc looks same as nc of unstruc
 %

@@ -347,17 +347,18 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
      G.cor.dep_comment = 'positive up; speficied in *.dep input file.';
   end
   else
+    %G.cor.dep     = nan.*cor.CODB;
+    %G.cen.dep     = nan.*cen.CODW;
+     G.cor.dep     = -vs_get(NFSstruct,'map-const','DP0'  ,{ncor,mcor},'quiet');
+     G.cen.dep     = corner2center(G.cor.dep);
      warning('error: No sensible depth data on trim file.')
-     G.cor.dep     = nan.*cor.CODB;
-     G.cen.dep     = nan.*cen.CODW;
   end
      
 %    DP0             REAL    *  4                  [   M   ]        ( 7 6 )
 %        Initial bottom depth (positive down) [NOT extrapolated to corner points as in comfile, but simple copy of *.dep file??]
 %    DPS0            REAL    *  4                  [   M   ]        ( 7 6 )
 %        Initial bottom depth at zeta points (positive down)     
-
-     if P.latlon & ~any(strfind(G.coordinates,'CARTESIAN'))
+     if P.latlon & strmatch(G.coordinates,'SPHERICAL')
         x = 'lon';
         y = 'lat';
      else

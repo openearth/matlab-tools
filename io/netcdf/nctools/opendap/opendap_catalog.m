@@ -3,27 +3,29 @@ function varargout = opendap_catalog(varargin)
 %
 %   urlPath = opendap_catalog(url)
 %
-% loads the urls of all datsets (netCDF files) that reside in under 
-% the OPeNDAP catalog.xml located at the specified url,
-% as well as all catalogs that it links to
+% loads the urls of all datsets (netCDF files) that reside 
+% under the OPeNDAP catalog.xml located at the specified url,
+% as well as all catalogs that it links to.
 %
 % When url does not start with 'http', the url is assumed
 % to be a local directory, and all netCDF files (*.nc) 
 % in the directory tree below it are returned.
-% Any traling .catalog.html is replaced with catalog.xml.
+% Any trailing /catalog.html is replaced with /catalog.xml.
 %
 %   urlPath = opendap_catalog(url,<keyword,value>)
 %
-% The following important <keyword,value> pairs are implemented
+% The following important <keyword,value> pairs are implemented.
 % You can list all keyword by calling OPT = filelist = opendap_catalog().
 %
-%  * maxlevel : specify how deep to crawl linked catalogs (default 1for speed, set to Inf for all levels)
+%  * maxlevel : specify how deep to crawl linked catalogs 
+%               (default 1 for speed, set to Inf for all levels)
 %               Does not work when url is on a local file system.
-%  * leveltype: specify how levels are defined: 'tree' when new level  = extra / in catalog url  (local catalog is not a new level)
-%                                               'link' when new level  = linked (local catalog is a new level)
+%  * leveltype: specify how levels are defined: 
+%               'tree' when new level  = extra '/' in catalog url  (local catalog is not a new level)
+%               'link' when new level  = linked (local catalog is a new level)
 %  * debug    : display debug info (default 0)
 %  * external : whether to include links to external catalogs (default 0)
-%  * log      : log progress, 0 = quiet, 1 = command line, nr is fid passed to fprintf (default 0)
+%  * log      : log progress, 0 = quiet, 1 = command line, nr>1 = fid passed to fprintf (default 0)
 %  * ...
 %
 % Tested succesfully with maxlevel=Inf for:
@@ -42,7 +44,7 @@ function varargout = opendap_catalog(varargin)
 %    nc_dump(files{1})
 %   
 %See web:  http://www.unidata.ucar.edu/Projects/THREDDS/tech/catalog/v1.0.2/Primer.html
-%See also: OPENDAP_CATALOG_DATASET, XML_READ, XMLREAD, FINDALLFILES
+%See also: OPENDAP_CATALOG_DATASET, XML_READ, XMLREAD, FINDALLFILES, SNCTOOLS
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -98,7 +100,7 @@ function varargout = opendap_catalog(varargin)
    OPT.serviceBaseURL        = '';
    OPT.toplevel              = ''; % to solve end catalogs in HYRAX
    OPT.debug                 = 0;  % writes levels to OPT.log
-   OPT.log                   = 0;  % log progress, 0 = quiet, 1 = command line, nr is fid passed to fprintf (default 0)
+   OPT.log                   = 0;  % log progress, 0 = quiet, 1 = command line, nr>1 = fid passed to fprintf (default 0)
    OPT.ignoreCatalogNc       = 0;  % filters a file named catalog.nc from the files, if found 
 
    if nargin==0
@@ -137,7 +139,7 @@ else
    %% replace html into xml or warn
 
    if      strcmpi(OPT.url(end-4:end),'.html')
-      OPT.url = [OPT.url(1:end-5) '.xml'];
+        OPT.url = [OPT.url(1:end-5) '.xml'];
    elseif ~strcmpi(OPT.url(end-3:end),'.xml')
       fprintf(2,'warning: opendap_catalog: url does not have extension ".xml" or ".html"')
    end

@@ -10,8 +10,8 @@ function varargout = nc_varfind(ncfile,varargin)
 %   no match was found, and a cell array when more then 1 variable match description.
 %
 %   ncfile  = name of local file, OPeNDAP address, or result of ncfile = nc_info()
-%   varname = string variable containing 
-%             the variable name where an attribute name and value match should be detected.
+%   varname = string variable containing the variable names 
+%             where an attribute name and value match was be detected.
 %
 %   The following <keyword,value> pairs have been implemented accepted (values indicated are the current default settings):
 %       'attributename' , []       = attributename to search for in netCDF file (e.g. 'standard_name')
@@ -20,7 +20,6 @@ function varargout = nc_varfind(ncfile,varargin)
 %      [varname,index] = nc_varfind(fileinfo,...) 
 %
 %    also returns the incides into the fileinfo = nc_info(ncfile)
-%                                   
 %
 % Examples:
 %

@@ -1,5 +1,5 @@
 function grid_orth_plotDataInPolygon(X, Y, Z, Ztime, varargin)
-%GRID_ORTH_PLOTDATAINPOLYGON
+%GRID_ORTH_PLOTDATAINPOLYGON plots data from netCDF grid collection in polygon
 %
 %   grid_orth_plotDataInPolygon(X, Y, Z, Ztime, <keyword,value>)
 %

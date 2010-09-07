@@ -1,5 +1,5 @@
 function varargout = grid_orth_inspectLargeDataSets(X, Y, Z)
-%UNTITLED  One line description goes here.
+%GRID_ORTH_INSPECTLARGEDATASETS  One line description goes here.
 %
 %   More detailed description goes here.
 %

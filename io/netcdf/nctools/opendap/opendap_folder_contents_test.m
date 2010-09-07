@@ -6,6 +6,8 @@ function varargout = opendap_folder_contents_test
 
 %% HYRAX @ opendap.deltares.nl 
 
+warning('opendap_folder_contents is deprecated, use opendap_catalog instead')
+
    disp(repmat('#',[1 72]))
    disp('HYRAX @ opendap.deltares.nl ')
    disp(repmat('#',[1 72]))

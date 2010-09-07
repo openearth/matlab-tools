@@ -1,7 +1,7 @@
-function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
-% KMLQUIVER Just like quiver
+function [OPT, Set, Default] = KMLquiver(lat,lon,z,u,v,varargin)
+% KMLQUIVER3 Just like quiver3 (except no w yet)
 %
-%    KMLquiver(LAT,lon,u,V,<keyword,value>) % ! NOTE THE ORDER OF LAT/LON vs. V/U !
+%    KMLquiver3(LAT,lon,Z,u,V,<keyword,value>) % ! NOTE THE ORDER OF LAT/LON vs. V/U !
 %
 % Keywords:
 %
@@ -16,16 +16,16 @@ function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 %
 % For the additional <keyword,value> pairs call
 %
-%    OPT = KMLquiver()
+%    OPT = KMLquiver3()
 %
 % Example:
 %
-%     [Lat Lon] = meshgrid(-80:10:80,-170:10:180);
+%     [Lat Lon Z] = meshgrid(-80:10:80,-170:10:180,[3 6 9 12].*1e4);
 %     u = (rand(size(Lat))-.5);
 %     v = (rand(size(Lat))-.5);
 %     cmap = colormap_cpt('temperature');
 %     fillColors = cmap(ceil((u.^2+v.^2)*2*size(cmap,1)),:);
-%     KMLquiver(Lat,Lon,u,v,'arrowScale',5e5,'lineWidth',2,...
+%     KMLquiver3(Lat,Lon,Z,u,v,'arrowScale',5e5,'lineWidth',2,...
 %         'fillColor',fillColors,'fillAlpha',1);
 %
 % Adjust 'W1'..'W4' and 'L1'..'L4' for user defined arrow shapes
@@ -72,7 +72,7 @@ function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 % Note: Notice the difference in how polygons and line are rendered by GE.
 %   Especially take care when plotting large figures near pole's
 %
-% See also: googlePlot, quiver, arrow2, KMLquiver3
+% See also: googlePlot, quiver, arrow2, KMLquiver
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -192,15 +192,17 @@ end
 
 lat         = lat(:)';
 lon         = lon(:)';
+z           =   z(:)';
 u           =   u(:)';
 v           =   v(:)';
 
 % remove nan values
-nans = isnan(lat+lon+u+v);
+nans = isnan(lat+lon+u+v+z);
 lat(nans) = [];
 lon(nans) = [];
-u(nans) = [];
-v(nans) = [];
+z(nans)   = [];
+u(nans)   = [];
+v(nans)   = [];
 
 [angle,scale] = cart2pol(u,v);
 scale = scale/40000000*360*OPT.arrowScale;
@@ -233,11 +235,10 @@ for i=1:length(A.abs)
 end
 
 arrowLat =   repmat(lat,length(A.abs),1)+A.ABS.*cos(A.ANG);
+arrowZ   =   repmat(z  ,length(A.abs),1);
 arrowLon =   repmat(lon,length(A.abs),1)+A.ABS.*sin(A.ANG)...
-    ./repmat(cosd(lat),length(A.abs),1);
-
+     ./repmat(cosd(lat),length(A.abs),1);
 arrowLon = mod(arrowLon+180, 360)-180;
-
 
 %% get filename
 if isempty(OPT.fileName)
@@ -251,10 +252,10 @@ OPT.fid=fopen(OPT.fileName,'w');
 
 %% HEADER
 OPT_header = struct(...
-    'name',OPT.kmlName,...
-    'open',0,...
+           'name',OPT.kmlName,...
+           'open',0,...
     'description',OPT.description,...
-    'visible',OPT.visible);
+        'visible',OPT.visible);
 output = KML_header(OPT_header);
 
 %% LINESTYLE
@@ -316,21 +317,21 @@ fprintf(OPT.fid,output);
 
 %% ARROWS
 OPT_line = struct(...
-    'name','',...
-    'styleName',['arrowline' num2str(1)],...
-    'timeIn',[],...
-    'timeOut',[],...
+          'name','',...
+     'styleName',['arrowline' num2str(1)],...
+        'timeIn',[],...
+       'timeOut',[],...
     'visibility',OPT.visible,...
-    'extrude',0);
+       'extrude',0);
 
 if OPT.arrowFill
     OPT_poly = struct(...
-        'name','',...
-        'styleName',['arrowfill' num2str(1)],...
+          'name','',...
+     'styleName',['arrowfill' num2str(1)],...
         'timeIn',[],...
-        'timeOut',[],...
-        'visibility',1,...
-        'extrude',0);
+       'timeOut',[],...
+    'visibility',1,...
+       'extrude',0);
 end
 
 % preallocate output
@@ -345,7 +346,7 @@ for ii=1:length(lat(1,:))
     if isempty(OPT.timeIn) ,OPT_line.timeIn  = [];else OPT_line.timeIn  = datestr(OPT.timeIn(1) ,OPT.dateStrStyle); end
     if isempty(OPT.timeOut),OPT_line.timeOut = [];else OPT_line.timeOut = datestr(OPT.timeOut(1),OPT.dateStrStyle); end
     
-    newOutput = KML_line(arrowLat(:,ii),arrowLon(:,ii),'clampToGround',OPT_line);
+    newOutput = KML_line(arrowLat(:,ii),arrowLon(:,ii),arrowZ(:,ii),OPT_line);
     
     if OPT.arrowFill
         % assign different styles if needed
@@ -357,7 +358,7 @@ for ii=1:length(lat(1,:))
         if isempty(OPT.timeOut),OPT_poly.timeOut = [];else OPT_poly.timeOut = datestr(OPT.timeOut(1),OPT.dateStrStyle); end
         
         newOutput = [newOutput...
-            KML_poly(arrowLat(:,ii),arrowLon(:,ii),'clampToGround',OPT_poly)];
+            KML_poly(arrowLat(:,ii),arrowLon(:,ii),arrowZ(:,ii),OPT_poly)];
     end
     output(kk:kk+length(newOutput)-1) = newOutput;
     kk = kk+length(newOutput);
