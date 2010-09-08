@@ -69,7 +69,7 @@ OPT = struct(...
     'DerivativeSides', 1,... % 1 or 2 sided derivatives
     'startU', 0,...          % start value for elements of u-vector
     'du', .3,...             % step size for dz/du / Perturbation Value
-    'Resistance', 0,...      % NOT IN USE ANY MORE Resistance value(s) to be (optionally) used in z-function
+...    'Resistance', 0,...      % NOT IN USE ANY MORE Resistance value(s) to be (optionally) used in z-function
     'epsZ', .01,...          % stop criteria for change in z-value
     'maxdZ', 0.1,...         % second stop criterion for change in z-value
     'epsBeta', .01,...       % stop criteria for change in Beta-value
@@ -78,13 +78,14 @@ OPT = struct(...
     'x2zFunction', @x2z,...  % Function to transform x to z
     'variables', {{}} ...    % aditional variables to use in x2zFunction
     );
-% overrule default settings by property pairs, given in varargin
-OPT = setproperty(OPT, varargin{:});
 
 % Resistance no longer used as separate propertyName-propertyValue pair
-if ~isequal(OPT.Resistance, 0)
+if any(strcmp(varargin(1:2:end), 'Resistance'))
     error('FORM:Resistance', 'Resistance no longer used as separate propertyName-propertyValue pair; include this in "variables" and modify z-function')
 end
+
+% overrule default settings by property pairs, given in varargin
+OPT = setproperty(OPT, varargin{:});
 
 %% series of FORM calculations
 Resistance = [];
@@ -219,7 +220,9 @@ while NextIter
 %             (Iter>1 && abs(diff(beta(Iter-1:Iter))) <= OPT.epsBeta);
         
         % Toetsen op convergentie
+        critZ(Iter) = abs(z(Calc(end))/A_abs) - OPT.epsZ;
         criteriumZ(Iter) = abs(z(Calc(end))/A_abs) < OPT.epsZ;
+        critZ2(Iter) = abs(z(Calc(end))) - OPT.maxdZ;
         criteriumZ2(Iter) = abs(z(Calc(end))) < OPT.maxdZ;
         criteriumBeta(Iter) = OPT.epsBeta == Inf ||...
             (Iter>1 && abs(diff(beta(Iter-1:Iter))) <= OPT.epsBeta);

@@ -115,19 +115,20 @@ OPT = struct(...
     'W', 1,...               % "(simple) importance sampling" factor
     'f1', Inf,...            % "(advanced) importance sampling" upper frequency boundary
     'f2', 0,...              % "(advanced) importance sampling" lower frequency boundary
-    'Resistance', 0,...      % NOT IN USE ANY MORE Resistance value(s) to be (optionally) used in z-function       
+...    'Resistance', 0,...      % NOT IN USE ANY MORE Resistance value(s) to be (optionally) used in z-function       
     'P2xFunction', @P2x,...  % Function to transform P to x
     'seed', NaN,...          % seed for random generator
     ...
     'result', struct() ...   % input existing result structure to re-calculate existing samples
     );
-% overrule default settings by propertyName-propertyValue pairs, given in varargin
-OPT = setproperty(OPT, varargin{:});
 
 % Resistance no longer used as separate propertyName-propertyValue pair
-if ~isequal(OPT.Resistance, 0)
+if any(strcmp(varargin(1:2:end), 'Resistance'))
     error('MC:Resistance', 'Resistance no longer used as separate propertyName-propertyValue pair; include this in "variables" and modify z-function')
 end
+
+% overrule default settings by propertyName-propertyValue pairs, given in varargin
+OPT = setproperty(OPT, varargin{:});
 
 %% check whether result is parsed as input
 result_as_input = ~isempty(fieldnames(OPT.result));
