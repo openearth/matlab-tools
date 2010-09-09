@@ -36,7 +36,7 @@ function h1 = detran_initiateGUI()
 % your own tools.
 
 %% Main figure
-h1 = figure('MenuBar','none','Name','DETRAN v1.00','Position',[100 100 1024 768],'Tag','figure1','numberTitle','off');
+h1 = figure('MenuBar','none','Name','DETRAN v1.01','Position',[100 100 1024 768],'Tag','figure1','numberTitle','off');
 
 %% Main axis
 h2 = axes('Parent',h1,'Units','normalized','Position',[0.253 0.021 0.675 0.965],'Box','on','DataAspectRatioMode','manual','FontSize',8,'Layer','top','PlotBoxAspectRatioMode','manual','Tag','axes1');
@@ -101,9 +101,28 @@ h47_3 = uimenu('Parent',h47,'Label','Import data','Callback','detran_importData'
 h47_4 = uimenu('Parent',h47,'Label','Export data to lintfile','Callback','detran_export2lint');
 h47_5 = uimenu('Parent',h47,'Label','Exit','Callback','close(gcf);');
 
+rootPath = ShowPath;
+if isdeployed
+    [a,b]=strtok(fliplr(rootPath),'\');
+    rootPath = fliplr(b);
+end
+
+manualFile      = [rootPath filesep 'manual\detran_manual.htm'];
+tutorialFile    = [rootPath filesep 'tutorial\Detran_videoTutorial.htm'];
+
 h48   = uimenu('Parent',h1,'Label','Help','Tag','detran_helpMenu');
-h48_1 = uimenu('Parent',h48,'Label','Online help','Callback','web(''http://public.deltares.nl/display/OET/Detran'',''-browser'')');
-h48_2 = uimenu('Parent',h48,'Label','About','Callback','detran_about');
+if exist(manualFile,'file');
+    h48_1 = uimenu('Parent',h48,'Label','Manual','Callback',['web(''' manualFile ''',''-browser'')']);
+else
+    h48_1 = uimenu('Parent',h48,'Label','Manual','Callback','warndlg(''Manual not found, please check the online help'')');
+end
+if exist(tutorialFile,'file')
+    h48_2 = uimenu('Parent',h48,'Label','Tutorial','Callback',['web(''' tutorialFile ''',''-browser'')']);
+else
+    h48_1 = uimenu('Parent',h48,'Label','Tutorial','Callback','warndlg(''Tutorial not found, please check the online help'')');
+end
+h48_3 = uimenu('Parent',h48,'Label','Online help','Callback','web(''http://public.deltares.nl/display/OET/Detran'',''-browser'')');
+h48_3 = uimenu('Parent',h48,'Label','About','Callback','detran_about');
 
 data=detran_createEmptyStructure;
 set(h1,'userdata',data);
@@ -121,3 +140,14 @@ delete(findall(h1,'tag','Annotation.InsertColorbar'));
 delete(findall(h1,'tag','Exploration.DataCursor'));
 delete(findall(h1,'tag','Exploration.Rotate'));
 delete(findall(h1,'tag','Standard.EditPlot'));
+
+function [thePath] = ShowPath()
+% Show EXE path:
+if isdeployed % Stand-alone mode.
+    [status, result] = system('set PATH');
+    thePath = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
+else % Running from MATLAB.
+    [macroFolder, baseFileName, ext] = fileparts(which('detran.m'));
+    thePath = macroFolder;
+    % thePath = pwd;
+end
