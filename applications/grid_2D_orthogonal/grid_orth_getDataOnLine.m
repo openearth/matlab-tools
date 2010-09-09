@@ -74,7 +74,7 @@ dy = max(diff(Y(:,1)));
 %% crop area to search for crossings to line
 temp = ...
     X>=min(xi)-dx&X<=max(xi)+dx&...
-    Y>=min(yi)-dy&Y<=max(yi)-dy;
+    Y>=min(yi)-dy&Y<=max(yi)+dy;
 mm   = max([1 find(any(temp,2),1,'first')-2]):1:min([size(X,1) find(any(temp,2),1,'last')+2]);
 nn   = max([1 find(any(temp,1),1,'first')-2]):1:min([size(X,2) find(any(temp,1),1,'last')+2]);
 
