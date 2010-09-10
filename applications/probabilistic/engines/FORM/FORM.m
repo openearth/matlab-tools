@@ -74,7 +74,6 @@ OPT = struct(...
     'maxdZ', 0.1,...         % second stop criterion for change in z-value
     'epsBeta', .01,...       % stop criteria for change in Beta-value
     'Relaxation', .25,...    % Relaxation value
-    'P2xFunction', @P2x,...  % Function to transform P to x
     'x2zFunction', @x2z,...  % Function to transform x to z
     'variables', {{}} ...    % aditional variables to use in x2zFunction
     );
@@ -157,24 +156,27 @@ end
 %% initialise FORM-procedure
 NextIter = true;            % condition to go to next iteration
 Converged = false;          % logical to indicate whether convergence criteria have been reached
-maxIterReached = false;     % logical to indicate whether maximum number of iteration has been reached
 Calc = 0;                   % number of calculations so far
 Iter = 0;                   % number of iterations so far
-maxiter = OPT.maxiter;      % maximum number of iterations
-%beta = NaN(OPT.maxiter,1);  % preallocate beta
-[beta, criteriumZ, criteriumZ2, criteriumBeta] = deal(NaN(OPT.maxiter,1));  % preallocate 
-
+[z, beta, criteriumZ, criteriumZ2, criteriumBeta] = deal(NaN(OPT.maxiter,1));  % preallocate 
+[P x] = deal(NaN(OPT.DerivativeSides*sum(active)*OPT.maxiter+1,Nstoch));
 
 %% start FORM iteration procedure
 while NextIter
     Iter = Iter + 1;
-    Calc = Calc(end)+1:size(u,1); % identifier of series of calculations to perform at once
+    % check whether current iteration is the first one
+    FirstIter = Iter == 1;
+    % check whether current iteration exceeds the maximum number of
+    % iterations
+    maxIterReached = Iter >= OPT.maxiter;
+    % define identifier of series of calculations to perform at once
+    Calc = Calc(end)+1 : size(u,1);
     
     % transform u to P
-    P(Calc,:) = norm_cdf(u(Calc,:), 0, 1); %#ok<AGROW>
+    P(Calc,:) = norm_cdf(u(Calc,:), 0, 1);
     
     % transform P to x
-    x(Calc,:) = feval(OPT.P2xFunction, stochast, P(Calc,:)); %#ok<AGROW>
+    x(Calc,:) = P2x(stochast, P(Calc,:));
     
     if any(any(~isfinite(x(Calc,:))))
         error('FORM:xBecameNonFinite', 'One or more x-values became Inf or NaN')
@@ -182,70 +184,60 @@ while NextIter
     
     % derive z based on x
     [z(Calc,1) OPT] = prob_zfunctioncall(OPT, stochast, x(Calc,:));
-
-    if Converged || maxIterReached
-        
+    
+    if Converged
         % extra check for convergence
-        if Converged &&  abs(z(Calc(end))) > OPT.maxdZ / OPT.Relaxation;
-            Converged = false;
-        end
-
+        Converged = abs(z(Calc(end))) < OPT.maxdZ / OPT.Relaxation;
+        
         % exit while loop
         break
-    else
-        % derive dz/du for each of the active u-values
-        dzdu = zeros(1,Nstoch);
-        sts = 1:Nstoch;
-        for st = sts(active)
-            % derive dz/du for the active variables
-            dzdu(st) = (z(id_upp(st)) - z(id_low(st)))/(OPT.du);
-        end
-
-        % lineariseer de z-functie in u:
-        % z(u) = B + A(1)*u(1) + ... + A(n)*u(n)
-        % neem coefficienten A(i) gelijk aan -dz/du(i)
-        A = dzdu;
-        B = z(Calc(end)) - A*u(Calc(end),:)';
-
-        % normaliseer bovenstaande z-functie door te delen door de wortel uit
-        % de som van de kwadraten van A(i).  De genormaliseerde z-functie is
-        % dan als volgt: z_norm(u) = beta + alpha(1)*u(1) + ... + alpha(n)*u(n)
-        A_abs = sqrt(A*A');
-        alpha = A/A_abs;
-        beta(Iter) = B/A_abs; 
-
-%         % Toetsen op convergentie: is z dicht genoeg bij 0?
-%         criteriumZ = abs(z(Calc(end))/A_abs) < OPT.epsZ;
-%         criteriumBeta = OPT.epsBeta == Inf ||...
-%             (Iter>1 && abs(diff(beta(Iter-1:Iter))) <= OPT.epsBeta);
-        
-        % Toetsen op convergentie
-        critZ(Iter) = abs(z(Calc(end))/A_abs) - OPT.epsZ;
-        criteriumZ(Iter) = abs(z(Calc(end))/A_abs) < OPT.epsZ;
-        critZ2(Iter) = abs(z(Calc(end))) - OPT.maxdZ;
-        criteriumZ2(Iter) = abs(z(Calc(end))) < OPT.maxdZ;
-        criteriumBeta(Iter) = OPT.epsBeta == Inf ||...
-            (Iter>1 && abs(diff(beta(Iter-1:Iter))) <= OPT.epsBeta);
-
-        if Iter>1 && all([criteriumZ(Iter-1:Iter); criteriumBeta(Iter-1:Iter); criteriumZ2(Iter-1:Iter)])
-        %if criteriumZ && criteriumBeta
-            % convergence criteria have been met
-            Converged = true;
-        elseif Iter >= maxiter
-            % maximum number of iteration has been reached
-            maxIterReached = true;
-        end
-        if Converged || maxIterReached
-            % carry out one more calculation using a relaxation value of 1
-            % to make u = -alpha*beta, otherwise the final u solution is
-            % not consistent with alpha and beta
-            tempu = prescribeU(-alpha.*beta(Iter), u, du, 1, rel_ids);
-            u = [u; tempu(end,:)]; %#ok<AGROW>
-        else
-            % derive a new series of u-values for the next iteration
-            [u id_low id_upp] = prescribeU(-alpha.*beta(Iter), u, du, OPT.Relaxation, rel_ids);
-        end
     end
+    
+    % derive dz/du for each of the active u-values
+    dzdu = zeros(1,Nstoch);
+    sts = 1:Nstoch;
+    for st = sts(active)
+        % derive dz/du for the active variables
+        dzdu(st) = (z(id_upp(st)) - z(id_low(st)))/(OPT.du);
+    end
+    
+    % lineariseer de z-functie in u:
+    % z(u) = B + A(1)*u(1) + ... + A(n)*u(n)
+    % neem coefficienten A(i) gelijk aan -dz/du(i)
+    A = dzdu;
+    B = z(Calc(end)) - A*u(Calc(end),:)';
+    
+    % normaliseer bovenstaande z-functie door te delen door de wortel uit
+    % de som van de kwadraten van A(i).  De genormaliseerde z-functie is
+    % dan als volgt: z_norm(u) = beta + alpha(1)*u(1) + ... + alpha(n)*u(n)
+    A_abs = sqrt(A*A');
+    alpha = A/A_abs;
+    beta(Iter) = B/A_abs;
+    
+    % check for convergence
+    criteriumZ(Iter) = abs(z(Calc(end)) / A_abs / OPT.epsZ);
+    criteriumZ2(Iter) = abs(z(Calc(end)) / OPT.maxdZ);
+    if ~FirstIter
+        criteriumBeta(Iter) = abs(diff(beta(Iter-1:Iter)) / OPT.epsBeta);
+    end
+    
+    % check whether convergence criteria have been met
+    Converged = ~FirstIter &&...
+        all([criteriumZ(Iter-1:Iter); criteriumBeta(Iter-1:Iter); criteriumZ2(Iter-1:Iter)] < 1);
+    
+    if maxIterReached && ~Converged
+        break
+    end
+    
+    if Converged
+        % carry out one more calculation using a relaxation value of 1
+        % to make u = -alpha*beta, otherwise the final u solution is
+        % not consistent with alpha and beta
+        du = zeros(size(stochast));
+    end
+    
+    % derive a new series of u-values for the next iteration
+    [u id_low id_upp] = prescribeU(-alpha.*beta(Iter), u, du, OPT.Relaxation, rel_ids);
 end
 
 %% write results to structure
@@ -264,9 +256,9 @@ result = struct(...
         'Iter', Iter,...
         'Calc', size(u,1),...
         'u', u,...
-        'P', P,...
-        'x', x,...
-        'z', z,...
+        'P', P(1:max(Calc),:),...
+        'x', x(1:max(Calc),:),...
+        'z', z(1:max(Calc),:),...
         'Betas', betas, ...
         'designpoint', [] ...
     ));
