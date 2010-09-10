@@ -84,22 +84,49 @@ resultFORM_resistance = FORM(...
     'variables', {'Resistance', 0:4});
 
 % Probability of failure for a vector with resistances
+partres = zeros(size(resultFORM_resistance));
 for ires = 1:length(resultFORM_resistance)
     partres(ires) = resultFORM_resistance(ires).Output.P_f;
 end
 testresult(end+1) = all(roundoff(partres, 4) == [0.2027 0.1336 0.0828 0.0480 0.0261]);
 
 %% test 3
-resultCMC_resistance = MC(...
+resultFORM_resistance = FORM(...
     'stochast', stochast,...
     'x2zFunction', @x2z_testfunction2,...
     'variables', {'Resistance', 0:4});
 
 % Probability of failure for a vector with resistances
+partres = zeros(size(resultFORM_resistance));
 for ires = 1:length(resultFORM_resistance)
     partres(ires) = resultFORM_resistance(ires).Output.P_f;
 end
 testresult(end+1) = all(roundoff(partres, 4) == [0.2027 0.1336 0.0828 0.0480 0.0261]);
+
+%% test 4
+resultFORM_2sided = FORM(...
+    'stochast', stochast,...
+    'DerivativeSides', 2,...
+    'x2zFunction', @x2z_testfunction2,...
+    'variables', {'Resistance', 0:4});
+
+% Probability of failure for a vector with resistances
+partres = zeros(size(resultFORM_2sided));
+for ires = 1:length(resultFORM_2sided)
+    partres(ires) = resultFORM_2sided(ires).Output.P_f;
+end
+testresult(end+1) = all(roundoff(partres, 4) == [0.2027 0.1336 0.0828 0.0480 0.0261]);
+
+%% test 5
+stochast_deter = stochast;
+stochast_deter(1).Distr = @deterministic;
+stochast_deter(1).Params = stochast(1).Params(1);
+resultFORM_deterministic = FORM(...
+    'stochast', stochast_deter,...
+    'x2zFunction', @x2z_testfunction2);
+
+% Probability of failure with only one stochastic variable
+testresult(end+1) = roundoff(resultFORM_deterministic.Output.P_f, 4) == 0.1587;
 
 %% combine all testresults in one boolean
 testresult = all(testresult);

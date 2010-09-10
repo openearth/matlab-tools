@@ -86,6 +86,10 @@ end
 % overrule default settings by property pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
 
+if ~ismember(OPT.DerivativeSides, 1:2)
+    error('"DerivativeSides" should be either 1 or 2')
+end
+
 %% series of FORM calculations
 Resistance = [];
 if any(cellfun(@ischar, OPT.variables))
@@ -118,6 +122,13 @@ end
 
 %%
 stochast = OPT.stochast;
+
+if ~isfield(stochast, 'propertyName')
+    for istochast = 1:length(stochast)
+        stochast(istochast).propertyName = false;
+    end
+end
+
 % input
 Nstoch = length(stochast); % number of stochastic variables
 active = ~cellfun(@isempty, {stochast.Distr}) &...
@@ -126,20 +137,17 @@ active = ~cellfun(@isempty, {stochast.Distr}) &...
 
 % define du
 [id_low id_upp] = deal(NaN(1,Nstoch));
+du = zeros(sum(active)*OPT.DerivativeSides+1, Nstoch);
 if OPT.DerivativeSides == 1
     % one sided derivatives
-    du = [eye(Nstoch)*OPT.du; zeros(1,Nstoch)];
-    du([~active false],:) = [];
+    du(1:sum(active), active) = eye(sum(active)) * OPT.du;
     id_low(active) = deal(size(du,1));
     id_upp(active) = 1:sum(active);
 elseif OPT.DerivativeSides == 2
     % two sided derivatives
-    du = [eye(Nstoch)*-OPT.du/2; eye(Nstoch)*OPT.du/2; zeros(1,Nstoch)];
-    du([~active ~active false],:) = [];
+    du(1:sum(active)*OPT.DerivativeSides, active) = [eye(sum(active)) * -OPT.du/2; eye(sum(active)) * OPT.du/2];
     id_low(active) = 1:sum(active);
     id_upp(active) = sum(active)+(1:sum(active));
-else
-    error('OPT.DerivativeSides should be either 1 or 2')
 end
 rel_ids = {id_low id_upp};
 
