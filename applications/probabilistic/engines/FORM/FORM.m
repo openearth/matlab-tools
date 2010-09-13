@@ -53,13 +53,7 @@ function result = FORM(varargin)
 
 %% settings
 
-% the following few lines are meant for backward compatibility with the
-% situation where the first input argument was always the stochast
-% structure
-first_input_is_stochast = nargin > 0 && isstruct(varargin{1});
-if first_input_is_stochast
-    varargin = [{'stochast'} varargin];
-end
+varargin = prob_checkinput(varargin{:});
 
 % defaults
 OPT = struct(...
@@ -69,19 +63,15 @@ OPT = struct(...
     'DerivativeSides', 1,... % 1 or 2 sided derivatives
     'startU', 0,...          % start value for elements of u-vector
     'du', .3,...             % step size for dz/du / Perturbation Value
-...    'Resistance', 0,...      % NOT IN USE ANY MORE Resistance value(s) to be (optionally) used in z-function
     'epsZ', .01,...          % stop criteria for change in z-value
     'maxdZ', 0.1,...         % second stop criterion for change in z-value
     'epsBeta', .01,...       % stop criteria for change in Beta-value
     'Relaxation', .25,...    % Relaxation value
     'x2zFunction', @x2z,...  % Function to transform x to z
-    'variables', {{}} ...    % aditional variables to use in x2zFunction
+    'variables', {{}},...    % aditional variables to use in x2zFunction
+    'dudistfactor', 0,...    % power factor to apply different du to each variable based on the response
+    'logconvergence', '' ... % optionally specify file here to log convergence status
     );
-
-% Resistance no longer used as separate propertyName-propertyValue pair
-if any(strcmp(varargin(1:2:end), 'Resistance'))
-    error('FORM:Resistance', 'Resistance no longer used as separate propertyName-propertyValue pair; include this in "variables" and modify z-function')
-end
 
 % overrule default settings by property pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
@@ -123,12 +113,6 @@ end
 %%
 stochast = OPT.stochast;
 
-if ~isfield(stochast, 'propertyName')
-    for istochast = 1:length(stochast)
-        stochast(istochast).propertyName = false;
-    end
-end
-
 % input
 Nstoch = length(stochast); % number of stochastic variables
 active = ~cellfun(@isempty, {stochast.Distr}) &...
@@ -166,8 +150,8 @@ NextIter = true;            % condition to go to next iteration
 Converged = false;          % logical to indicate whether convergence criteria have been reached
 Calc = 0;                   % number of calculations so far
 Iter = 0;                   % number of iterations so far
-[z, beta, criteriumZ, criteriumZ2, criteriumBeta] = deal(NaN(OPT.maxiter,1));  % preallocate 
-[P x] = deal(NaN(OPT.DerivativeSides*sum(active)*OPT.maxiter+1,Nstoch));
+[z, betas, criteriumZ, criteriumZ2, criteriumBeta] = deal(NaN(OPT.maxiter,1));  % preallocate 
+[P alphas x] = deal(NaN(OPT.DerivativeSides*sum(active)*OPT.maxiter+1,Nstoch));
 
 %% start FORM iteration procedure
 while NextIter
@@ -219,19 +203,26 @@ while NextIter
     % de som van de kwadraten van A(i).  De genormaliseerde z-functie is
     % dan als volgt: z_norm(u) = beta + alpha(1)*u(1) + ... + alpha(n)*u(n)
     A_abs = sqrt(A*A');
-    alpha = A/A_abs;
-    beta(Iter) = B/A_abs;
+    alphas(Iter,:) = A/A_abs;
+    betas(Iter) = B/A_abs;
     
     % check for convergence
     criteriumZ(Iter) = abs(z(Calc(end)) / A_abs / OPT.epsZ);
     criteriumZ2(Iter) = abs(z(Calc(end)) / OPT.maxdZ);
     if ~FirstIter
-        criteriumBeta(Iter) = abs(diff(beta(Iter-1:Iter)) / OPT.epsBeta);
+        criteriumBeta(Iter) = abs(diff(betas(Iter-1:Iter)) / OPT.epsBeta);
     end
     
     % check whether convergence criteria have been met
     Converged = ~FirstIter &&...
         all([criteriumZ(Iter-1:Iter); criteriumBeta(Iter-1:Iter); criteriumZ2(Iter-1:Iter)] < 1);
+    
+    % optionally log convergence info to file
+    if ~isempty(OPT.logconvergence)
+        fid = fopen(OPT.logconvergence, 'a');
+        fprintf(fid, '%2i %5.3f %5.3f %5.3f\n', criteriumZ(Iter), criteriumZ2(Iter), criteriumBeta(Iter));
+        fclose(fid);
+    end
     
     if maxIterReached && ~Converged
         break
@@ -242,16 +233,46 @@ while NextIter
         % to make u = -alpha*beta, otherwise the final u solution is
         % not consistent with alpha and beta
         du = zeros(size(stochast));
+        Relaxation = 1;
+    else
+        if OPT.dudistfactor == 0
+            Relaxation = OPT.Relaxation;
+        else
+            % optionally create different du and relaxation factors for each
+            % variable based on the response
+            [distr distrinv] = deal(zeros(size(stochast)));
+            distr(active) = (abs(dzdu(active))) .^ OPT.dudistfactor;
+            distr = distr ./ mean(distr(active));
+            distrinv(active) = 1 ./ distr(active);
+            distrinv = distrinv ./ mean(distrinv(active));
+            Relaxation = distr * OPT.Relaxation;
+            du(du~=0) = OPT.du * distrinv(active)';
+        end
     end
     
     % derive a new series of u-values for the next iteration
-    [u id_low id_upp] = prescribeU(-alpha.*beta(Iter), u, du, OPT.Relaxation, rel_ids);
+    [u id_low id_upp] = prescribeU(-alphas(Iter,:).*betas(Iter), u, du, Relaxation, rel_ids);
 end
 
+%%
+P = P(1:max(Calc),:);
+x = x(1:max(Calc),:);
+z = z(1:max(Calc),:);
+
+if Converged
+    indend = Iter - 1;
+else
+    indend = Iter;
+end
+alphas = alphas(1:indend,:);
+alpha = alphas(indend,:);
+betas = betas(1:indend);
+beta = betas(indend);
+criteriumZ = criteriumZ(1:indend);
+criteriumZ2 = criteriumZ2(1:indend);
+criteriumBeta = criteriumBeta(1:indend);
+
 %% write results to structure
-indend = find(~isnan(beta), 1, 'last');
-betas = beta(1:indend);
-beta = beta(indend);
 P_f = 1-norm_cdf(beta, 0, 1); % probability of failure
 result = struct(...
     'settings', OPT,...
@@ -263,17 +284,21 @@ result = struct(...
         'P_f', P_f,...
         'Iter', Iter,...
         'Calc', size(u,1),...
-        'u', u,...
-        'P', P(1:max(Calc),:),...
-        'x', x(1:max(Calc),:),...
-        'z', z(1:max(Calc),:),...
+        'alphas', alphas,...
         'Betas', betas, ...
+        'u', u,...
+        'P', P,...
+        'x', x,...
+        'z', z,...
+        'criteriumZ1', criteriumZ,...
+        'criteriumZ2', criteriumZ2,...
+        'criteriumBeta', criteriumBeta,...
         'designpoint', [] ...
     ));
 
 designpoint = cell(1, 2*size(x,2));
 designpoint(1:2:length(designpoint)) = {stochast.Name};
-designpoint(2:2:length(designpoint)) = mat2cell(x(end,:), 1, ones(1,size(x,2)));
+designpoint(2:2:length(designpoint)) = num2cell(x(end,:));
 result.Output.designpoint = struct(designpoint{:},...
     'finalP', result.Output.P(end,:),...
     'finalU', result.Output.u(end,:));
@@ -282,7 +307,7 @@ result.Output.designpoint = struct(designpoint{:},...
 function [u id_low id_upp] = prescribeU(currentU, u, du, Relaxation, rel_ids)
 Calc = size(u,1); 
 if ~isempty(u)
-    currentU = diff([u(end,:); currentU])*Relaxation + u(end,:);
+    currentU = diff([u(end,:); currentU]) .* Relaxation + u(end,:);
 end
 u = [u; repmat(currentU, size(du,1), 1) + du];
 

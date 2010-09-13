@@ -96,13 +96,7 @@ result = MC(exampleStochastVar,...
 
 %% settings
 
-% the following few lines are meant for backward compatibility with the
-% situation where the first input argument was always the stochast
-% structure
-first_input_is_stochast = nargin > 0 && isstruct(varargin{1});
-if first_input_is_stochast
-    varargin = [{'stochast'} varargin];
-end
+varargin = prob_checkinput(varargin{:});
 
 % defaults
 OPT = struct(...
@@ -115,17 +109,11 @@ OPT = struct(...
     'W', 1,...               % "(simple) importance sampling" factor
     'f1', Inf,...            % "(advanced) importance sampling" upper frequency boundary
     'f2', 0,...              % "(advanced) importance sampling" lower frequency boundary
-...    'Resistance', 0,...      % NOT IN USE ANY MORE Resistance value(s) to be (optionally) used in z-function       
     'P2xFunction', @P2x,...  % Function to transform P to x
     'seed', NaN,...          % seed for random generator
     ...
     'result', struct() ...   % input existing result structure to re-calculate existing samples
     );
-
-% Resistance no longer used as separate propertyName-propertyValue pair
-if any(strcmp(varargin(1:2:end), 'Resistance'))
-    error('MC:Resistance', 'Resistance no longer used as separate propertyName-propertyValue pair; include this in "variables" and modify z-function')
-end
 
 % overrule default settings by propertyName-propertyValue pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
@@ -145,12 +133,6 @@ end
 
 %%
 stochast = OPT.stochast;
-
-if ~isfield(stochast, 'propertyName')
-    for istochast = 1:length(stochast)
-        stochast(istochast).propertyName = false;
-    end
-end
 
 Nstoch = length(stochast); % number of stochastic variables
 
@@ -225,7 +207,7 @@ else
         end
         % correction coefficient for bias in Importance Sampling variable
         p_correctie = interp1(xcentr, dPdx, H);   % PDF Importance Sampling variable
-        p_correctie = repmat((Hgrens(2)-Hgrens(1))*p_correctie, 1, length(OPT.Resistance));
+        p_correctie = (Hgrens(2)-Hgrens(1))*p_correctie;
     else
         p_correctie = 1;
     end
@@ -250,6 +232,10 @@ end
 [z OPT] = prob_zfunctioncall(OPT, stochast, x);
 
 idFail = z < 0;
+
+if ~isequal(p_correctie, 1)
+    p_correctie = repmat(p_correctie, 1, size(z,2));
+end
 
 P_f = sum(idFail.* p_correctie)/(OPT.NrSamples*OPT.W);
 P_f(P_f == 0) = deal(NaN);

@@ -128,6 +128,15 @@ resultFORM_deterministic = FORM(...
 % Probability of failure with only one stochastic variable
 testresult(end+1) = roundoff(resultFORM_deterministic.Output.P_f, 4) == 0.1587;
 
+%% test 6
+resultFORM_dudistfactor = FORM(...
+    'stochast', stochast,...
+    'dudistfactor', 0.25,...
+    'x2zFunction', @x2z_testfunction2);
+
+% Probability of failure with different du per variable
+testresult(end+1) = roundoff(resultFORM_dudistfactor.Output.P_f, 3) == 0.203;
+
 %% combine all testresults in one boolean
 testresult = all(testresult);
 
