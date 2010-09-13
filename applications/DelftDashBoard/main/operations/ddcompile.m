@@ -92,6 +92,26 @@ end
 
 mcc -m -d exe DelftDashBoard.m -B complist -a settings -M earthicon.res
 
+% make about.txt file
+dos(['copy ' which('ddb_aboutDelftDashBoard.txt') ' exe']);
+revnumb = '????';
+if isappdata(0,'revisionnumber')
+    revnumb = num2str(getappdata(0,'revisionnumber'));
+else
+    try
+        [tf str] = system(['svn info ' fileparts(which('detran.m'))]);
+        str = strread(str,'%s','delimiter',char(10));
+        id = strncmp(str,'Revision:',8);
+        if any(id)
+            revnumb = strcat(str{id}(min(strfind(str{id},':'))+1:end));
+        end
+    catch me
+        % don't mind
+    end
+end
+strfrep(fullfile('ddb_aboutDelftDashBoard.txt'),'$revision',revnumb);
+
+
 delete('complist');
 delete('earthicon.rc');
 delete('earthicon.res');

@@ -21,7 +21,7 @@ web http://www.deltares.nl -browser
 %%
 function ddb_menuHelpDelftDashBoardOnline_Callback(hObject, eventdata, handles)
 
-web http://public.deltares.nl/display/MCTDOC/DelftAlmighty -browser
+web http://public.deltares.nl/display/OET/DelftDashboard -browser
 
 %%
 function ddb_menuHelpddb_aboutDelftDashBoard_Callback(hObject, eventdata, handles)
