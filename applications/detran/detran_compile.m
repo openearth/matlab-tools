@@ -42,7 +42,18 @@ end
 
 fclose(fid);
 
-mcc -m -d bin detran.m -B complist
+try
+    fid=fopen('detranicon.rc','wt');
+    fprintf(fid,'%s\n','ConApp ICON detran.ico');
+    fclose(fid);
+    system(['"' matlabroot '\sys\lcc\bin\lrc" /i "' pwd '\detranicon.rc"']);
+end
+ 
+mcc -m -d bin detran.m -B complist -M detranicon.res 
+
+delete('detranicon.rc');
+delete('detranicon.res');
+
 dos(['copy ' which('detran_about.txt') ' bin']);
 revnumb = '????';
 if isappdata(0,'revisionnumber')
