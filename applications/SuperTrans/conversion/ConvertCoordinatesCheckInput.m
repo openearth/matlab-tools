@@ -47,6 +47,9 @@ if ~isempty(CS.type)
 end
 
 if ~isempty(CS.code)
+    if ischar(CS.code)
+        CS.code = str2num(CS.code); % catch ascii EPSG codes
+    end
     ind1              = find(STD.coordinate_reference_system.coord_ref_sys_code == CS.code);
     if isempty(ind1)
        error(['epsg code unknown: ',num2str(CS.code)])

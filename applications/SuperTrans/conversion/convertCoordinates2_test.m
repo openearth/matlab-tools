@@ -1,5 +1,5 @@
 function OK = convertCoordinates2_test
-%CONVERTCOORDINATES_TEST   test convertCoordinates with kadaster data pointy
+%CONVERTCOORDINATES_TEST   test convertCoordinates with kadaster data point
 %
 %See also: CONVERTCOORDINATES
 
