@@ -1,8 +1,5 @@
-function ZI = griddata_remap(X, Y, Z, XI, YI, varargin)
-%GRIDDATA_REMAP places regularly spaced xyz column data onto an X,Y grid returning Z
-%   
-%   Only remaps data from a 1D column to a regularly spaced 2D array, does
-%   not interpolate anything.
+function ZI = griddata_gridfit(X, Y, Z, XI, YI, varargin)
+%GRIDDATA_GRIDFIT uses gridfit to estimate a surface through scattered data
 %
 %   Syntax:
 %   ZI = griddata_remap(X, Y, Z, XI, YI)
@@ -56,15 +53,17 @@ function ZI = griddata_remap(X, Y, Z, XI, YI, varargin)
 % Created: 21 Apr 2010
 % Created with Matlab version: 7.10.0.499 (R2010a)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: griddata_remap.m 2616 2010-05-26 09:06:00Z geer $
+% $Date: 2010-05-26 11:06:00 +0200 (Wed, 26 May 2010) $
+% $Author: geer $
+% $Revision: 2616 $
+% $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/general/grid_fun/griddata_remap.m $
 % $Keywords: $
 %% set properties
 
 OPT.errorCheck = true;
+OPT.smoothness  = 2;
+
 
 % overrule default settings by property pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
@@ -92,8 +91,8 @@ if OPT.errorCheck
     dimy(dimy == 1) = [];
 end
     
-XI = unique(XI);
-YI = unique(YI);
+XI = unique(XI(:));
+YI = unique(YI(:));
     
 if OPT.errorCheck    
     if all(dimx ~= length(XI))||all(dimy ~= length(YI))
@@ -101,28 +100,12 @@ if OPT.errorCheck
             'meshgrid. Also, no duplicate values are allowed in XI or YI'])
     end
 end
-%% remap x and y to rounded gridpoints
+dx = median(diff(XI));
+dy = median(diff(YI));
 
-ZI = nan(length(YI),length(XI));
-for ii = 1:length(x)
-    nn = YI == y(ii);
-    mm = XI == x(ii);
-    if OPT.errorCheck
-        if any(nn)&&any(mm)
-            if isnan(ZI(nn,mm))
-                ZI(nn,mm) = z(ii);
-            else
-                warning('duplicate z value found at point #%d (z = %0.4f and z = %0.4f) at coordinates (x = %0.24f, y = %0.4f)',...
-                    ii,ZI(nn,mm),z(ii),x(ii),y(ii)) %#ok<*WNTAG>
-            end
-        else
-            warning(['point #%d (z = %0.4f) at coordinates (x = %0.4f, y = %0.4f)\n ',...
-                '     could not be mapped to the XI,YI grid, maybe use griddata_average instead.\n',...
-                '     The closest match off by dx = %0.6f, dy = %0.6f'],...
-                ii,z(ii),x(ii),y(ii),min(abs(XI - x(ii))),min(abs(YI - y(ii))));
-        end
-    else % without error check
-        ZI(nn,mm) = z(ii);
-    end
-end
+XI2 = horzcat(XI(  1) - ceil ((XI(  1) - min(X))/dx)*dx:dx:XI(1),XI',XI(end):dx:XI(end) - floor((XI(end) - max(X))/dx)*dx);
+YI2 = horzcat(YI(  1) - ceil ((YI(  1) - min(Y))/dy)*dy:dy:YI(1),YI',YI(end):dy:YI(end) - floor((YI(end) - max(Y))/dy)*dy);
+ZI2 = gridfit(x,y,z,XI2,YI2,'autoscale','off','tilesize',200,'smoothness',OPT.smoothness);
+
+ZI = ZI2(ismember(XI2,XI),ismember(YI2,YI));
 
