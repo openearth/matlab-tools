@@ -102,7 +102,7 @@ function G = delft3d_io_dep(varargin)
 delft3d_io_dep_version = 'beta';
 
 %% Input
-%% ----------------------
+%  ----------------------
 
 if nargin ==1
     error(['At least 2 input arguments required: d3d_io_...(''read''/''write'',filename)']);
@@ -112,7 +112,7 @@ cmd   = varargin{1};
 fname = varargin{2};
 
 %% Read and calculate
-%% ----------------------
+%  ----------------------
 
 if strcmpi(cmd,'read')
     
@@ -135,73 +135,56 @@ if strcmpi(cmd,'read')
     end
     
     %% Keywords
-    %% ----------------------
+    %  ----------------------
     
     OPT.dummy        = 0;
     OPT.nodatavalue  = -999;
     OPT.missingvalue = NaN;
+    OPT.location     = '';
+    OPT.dpsopt       = '';
     
-    iargin = 4;
-    while iargin<=nargin,
-        if ischar(varargin{iargin}),
-            switch lower(varargin{iargin})
-                case 'location'    ;iargin=iargin+1;  G.location     = varargin{iargin};
-                case 'dpsopt'      ;iargin=iargin+1;  G.dpsopt       = varargin{iargin};
-                case 'dummy'       ;iargin=iargin+1;OPT.dummy        = varargin{iargin};
-                case 'nodatavalue' ;iargin=iargin+1;OPT.nodatavalue  = varargin{iargin};
-                case 'missingvalue';iargin=iargin+1;OPT.missingvalue = varargin{iargin};
-                otherwise
-                    error(['Invalid string argument: ',varargin{iargin}]);
-            end
-        end;
-        iargin=iargin+1;
-    end;
+    OPT = setProperty(OPT,varargin{4:end});
+    
+    G.location       = OPT.location;
+    G.dpsopt         = OPT.dpsopt  ;
     
     %% Apply check and fills for inout matrix locations
-    %% ----------------------
+    %  ----------------------
     
-    if isfield(G,'location')
-        if strcmpi(G.location,'cor')
-            if ~isfield(G,'dpsopt')
-                error('keyword dpsopt required to determine depth at centers from corners.')
-            end
-        elseif strcmpi(G.location,'cen')
-            if ~isfield(G,'dpsopt')
-                G.dpsopt = 'dp';
-            end
+    if strcmpi(OPT.location,'cor')
+        if isempty(OPT.dpsopt)
+            warning('keyword dpsopt required to determine depth at centers from corners: made cen.dep = []')
         end
-    elseif ~isfield(G,'dpsopt')
-        error('keyword ''location'' or ''dpsopt'' missing, compulsory for both read (what is defined dep file) + write (choose one to write).')
+    elseif strcmpi(G.location,'cen')
+        if isempty(G.dpsopt)
+            G.dpsopt = 'dp';
+        end
+    elseif isempty(G.location)
+       if isempty(G.dpsopt)
+          error('either location or dpsopt should be suplied')
+       end
     end
     
-    if isfield(G,'dpsopt')
-        if strcmpi(G.dpsopt,'dp')
-            if ~isfield(G,'location')
-                G.location = 'cen';
-            else
-                if isempty(G.location)
-                    G.location = 'cen';
-                end
-                if ~strcmpi(G.location,'cen')
-                    error('When dpsopt = dp, location should be cen');
-                end
-            end
-        else
-            if ~isfield(G,'location')
-                G.location = 'cor';
-            else
-                if isempty(G.location)
-                    G.location = 'cor';
-                end
-                if ~strcmpi(G.location,'cor')
-                    error('When dpsopt <> dp, location should be cor');
-                end
-            end
+    if strcmpi(G.dpsopt,'dp')
+        if isempty(G.location)
+            G.location = 'cen';
+        elseif ~strcmpi(G.location,'cen')
+            error('When dpsopt = dp, location should be cen');
+        end
+    elseif isempty(G.dpsopt)
+       if isempty(G.location)
+          error('either location or dpsopt should be suplied')
+       end
+    else
+        if isempty(G.location)
+            G.location = 'cor';
+        elseif ~strcmpi(G.location,'cor')
+             error('When dpsopt <> dp, location should be cor');
         end
     end
     
     %% Raw data
-    %% ----------------------
+    %  ----------------------
     
     %% Read bare number matrix without additional information
     %  Note SIZE is here [mmax nmax] % m first
@@ -233,10 +216,10 @@ if strcmpi(cmd,'read')
     G.cor.dep_comment = 'positive: down';
     
     %% Depth at other grid locations
-    %% ----------------------
+    %  ----------------------
     
-    %% we don't know where these data points are corners or centers.
-    %% so it has to be specified
+    %  we don't know where these data points are corners or centers.
+    %  so it has to be specified
     
     if strcmpi(G.location,'cor')
         G.cor.dep = D3Dmatrix(1:end-1,1:end-1);
@@ -270,35 +253,21 @@ else strcmpi(cmd,'write');
     warning('Under construction.')
     
     %% Keywords
-    %% ----------------------
+    %  ----------------------
     
+    OPT.location    = '';
     OPT.nodatavalue = -999;
     OPT.name        = 'depth';
     OPT.unit        = '[m]';
     OPT.positive    = 'down';
     OPT.mfilename   = 'unknown mfilename';
     
-    iargin = 4;
-    while iargin<=nargin,
-        if ischar(varargin{iargin}),
-            switch lower(varargin{iargin})
-                case 'location'    ;iargin=iargin+1;OPT.location    = varargin{iargin};
-                case 'nodatavalue' ;iargin=iargin+1;OPT.nodatavalue = varargin{iargin};
-                case 'name'        ;iargin=iargin+1;OPT.name        = varargin{iargin};
-                case 'unit'        ;iargin=iargin+1;OPT.unit        = varargin{iargin};
-                case 'positive'    ;iargin=iargin+1;OPT.positive    = varargin{iargin};
-                case 'mfilename'   ;iargin=iargin+1;OPT.mfilename   = varargin{iargin};
-                otherwise
-                    error(['Invalid keyword: ',varargin{iargin}]);
-            end
-        end;
-        iargin=iargin+1;
-    end;
+    OPT = setProperty(OPT,varargin{4:end});
     
     tmp         = fileparts(fname);
     
     %% Get input data at corners or centers
-    %% ----------------------------------------------
+    %  ----------------------------------------------
     
     if ~isfield(OPT,'location')
         error('keyword ''location'' missing')

@@ -4,7 +4,7 @@ function varargout = analyseHis(varargin)
 %    unstruc.analyseHis(<keyword,value>)
 %
 % * For Delft3D-flow the trih history file can be converted to netCDF
-%   with VS_TRIH2NETCDF such that unstruc.analyseHis also works on it.
+%   with VS_TRIH2NC such that unstruc.analyseHis also works on it.
 % * For unstruc.analyseHis to be able to detect associated data
 %   automatically, the observation points names have to be 
 %   generated with unstruc.opendap2obs or delft3d_opendap2obs.
@@ -34,7 +34,7 @@ function varargout = analyseHis(varargin)
 %                           'grd', 'F:\unstruc\run01\wadden4.grd',...
 %                          'plot', 1)
 %    % ~ run model ~
-%         vs_trih2netcdf(        'F:\unstruc\run01\trih-s01.dat',...
+%         vs_trih2nc(        'F:\unstruc\run01\trih-s01.dat',...
 %                          'epsg',epsg)
 %         unstruc.analyseHis('nc','F:\unstruc\run01\trih-s01.nc',...
 %                          'tlim',datenum(1998,[1 5],[1 28]),...

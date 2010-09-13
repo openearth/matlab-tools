@@ -1,15 +1,15 @@
-function varargout = vs_trih2netcdf(vsfile,varargin)
-%vs_trih2netcdf  Convert part of a Delft3D trih file to netCDF (BETA)
+function varargout = vs_trih2nc(vsfile,varargin)
+%vs_trih2nc  Convert part of a Delft3D trih file to netCDF (BETA)
 %
-%   vs_trih2netcdf(NEFISfile,<'keyword',value>)
-%   vs_trih2netcdf(NEFISfile,<netCDFfile>,<'keyword',value>)
+%   vs_trih2nc(NEFISfile,<'keyword',value>)
+%   vs_trih2nc(NEFISfile,<netCDFfile>,<'keyword',value>)
 %
 % converts Delft3D trih file (NEFIS file) to a netCDF file in 
 % the same directory with extension replaced by nc.
 %
 % Example:
 %
-%   vs_trih2netcdf('P:\aproject\trih-n15.dat','epsg',28992)
+%   vs_trih2nc('P:\aproject\trih-n15.dat','epsg',28992)
 %
 % nc looks same as nc of unstruc
 %

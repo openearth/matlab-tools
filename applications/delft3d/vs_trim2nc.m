@@ -1,17 +1,17 @@
-function varargout = vs_trim2netcdf(vsfile,varargin)
-%VS_TRIM2NETCDF  Convert part of a Delft3D trim file to netCDF (BETA)
+function varargout = vs_trim2nc(vsfile,varargin)
+%VS_TRIM2NC  Convert part of a Delft3D trim file to netCDF (BETA)
 %
-%   vs_trim2netcdf(NEFISfile,<'keyword',value>)
-%   vs_trim2netcdf(NEFISfile,<netCDFfile>,<'keyword',value>)
+%   vs_trim2nc(NEFISfile,<'keyword',value>)
+%   vs_trim2nc(NEFISfile,<netCDFfile>,<'keyword',value>)
 %
 % converts Delft3D trim file (NEFIS file) to a netCDF file in 
 % the same directory with extension replaced by nc.
 %
 % Example:
 %
-%   vs_trim2netcdf('P:\aproject\trim-n15.dat','epsg',28992,'time',5)
+%   vs_trim2nc('P:\aproject\trim-n15.dat','epsg',28992,'time',5)
 %
-%See also: snctools, vs_use
+%See also: snctools, vs_use, delft3d2nc
 
 % TO DO add depth
 % TO DO check consistency with delft3d_to_netcdf.exe of Bert Jagers
@@ -64,10 +64,10 @@ function varargout = vs_trim2netcdf(vsfile,varargin)
       OPT.refdatenum     = datenum(1970,1,1); % lunix  datenumber convention
       OPT.institution    = '';
       OPT.timezone       = timezone_code2iso('GMT');
-      OPT.debug          = 0;
       OPT.time           = 0;
       OPT.epsg           = [];
       OPT.type           = 'float'; %'double'; % the nefis file is by default singl precision
+      OPT.debug          = 1;
       
       if ~odd(nargin)
          ncfile   = varargin{1};
