@@ -225,8 +225,10 @@ else
     X1 = [];
     Y1 = [];
     for nn = 1:length(mapurls)
-        X1 = [X1 nc_varget(mapurls{nn},'x')];
-        Y1 = [Y1 nc_varget(mapurls{nn},'y')];
+        xxx = nc_varget(mapurls{nn},'x'); % make sure that dims [1 n] and [n 1] work
+        yyy = nc_varget(mapurls{nn},'y');
+        X1 = [X1 xxx(:)'];
+        Y1 = [Y1 yyy(:)'];
     end
     
     X1 = unique(X1);
