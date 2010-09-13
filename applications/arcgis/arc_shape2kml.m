@@ -61,13 +61,14 @@ function varargout = arc_shape2kml(shape_filename,varargin)
 
 %% settings
 
-   OPT.directory_out = 'f:\checkouts\GIS_Ankie\kml\';
+   OPT.directory_out = pwd;
    OPT.pause         = 0;
    OPT.plot          = 0;
    OPT.html          = 0;
    OPT.epsg          = 0;
    OPT.cleanup       = 0;
    OPT.color         = [1 1 0]; % yellow
+   OPT.fldname       = ''; % *.dbf fieldname entry to be used for name (default sequence number)
    
    if nargin==0
       varargout = {OPT};
@@ -78,10 +79,6 @@ function varargout = arc_shape2kml(shape_filename,varargin)
    
    OPT = setproperty(OPT,varargin{:});
    
-  %OPT.fname         = 'vogel en habitat\habitat gebieden\habitat.shp';% 'habitat noordzee\habitat.shp'; % OK
-  %OPT.epsg          = 23031; % 'ED50 / UTM zone 31N'
-  %OPT.color         = [0 1 0]; % green
-
 %% read shape file
 
    R      = shaperead(OPT.fname);  %% issues with reading metadata..shp.xlm (matlab mapping toolbox, )
@@ -101,12 +98,12 @@ for i=1:n
    y = R(i).Y;
       
    if isempty(x) % 'zuid holland\waterkeringen\Waterkeringen.shp' no 23
-      warning(['shaoe with length 0: ',OPT.fname,' no ',num2str(i)])
+      warning(['shape with length 0: ',OPT.fname,' no ',num2str(i)])
    else
    
      [lon,lat]           = convertcoordinates(R(i).X,R(i).Y,'CS1.code',OPT.epsg,'CS2.code',4326);
       
-      % for patche-holes remove the NaNs
+      % for patch-holes remove the NaNs
       mask = isnan(R(i).X);
       lonp = lon;
       latp = lat;
@@ -137,26 +134,40 @@ for i=1:n
       edgenames{i} = [OPT.directory_out,filesep,fileparts(OPT.fname),filesep,filename(OPT.fname),num2str(i,'%0.3d'),'_edge.kml'];
       textnames{i} = [OPT.directory_out,filesep,fileparts(OPT.fname),filesep,filename(OPT.fname),num2str(i,'%0.3d'),'_text.kml'];
       
+      %% name
+      if ~isempty(OPT.fldname)
+         try
+          namestr = R(i).(OPT.fldname);
+         catch
+             disp(char(fieldnames(R)))
+             error(['unknown field:',OPT.fldname])
+             break
+         end
+      else
+         namestr = num2str(i);
+      end
+
       %% thin back line
       KMLline (lat,lon,'fileName',edgenames{i},...
-           'kmlName',num2str(i));
+                        'kmlName',namestr);
 
       %% colored fill
       if     strcmpi(R(i).Geometry,'Point')
-      elseif strcmpi(R(i).Geometry,'Line')
+      elseif strcmpi(R(i).Geometry,'Line') 
       KMLline (lat,lon,'fileName',fillnames{i},...
-           'kmlName',num2str(i),...
+           'kmlName',namestr,...
            'lineAlpha',0.6,...
            'lineColor',OPT.color,...
            'lineWidth',5);
-      elseif strcmpi(R(i).Geometry,'Line')
+      elseif strcmpi(R(i).Geometry,'Line')| ...
+             strcmpi(R(i).Geometry,'Polygon')
       KMLpatch(latp'    ,lonp'    ,'fileName',fillnames{i},...
-           'kmlName',num2str(i),...
+           'kmlName',namestr,...
          'lineAlpha',0,...
          'fillColor',OPT.color,...
          'fillAlpha',0.6);
       end
-         
+
       fldnames = setxor(fieldnames(R),{'BoundingBox','X','Y','Geometry'});
          
       html = ['<table border="1"><tr>'];
@@ -169,12 +180,13 @@ for i=1:n
          html = [html '<td>' fldname '=</td><td>' value '</td><tr>'];
       end
       html = [html '</tr>'];
-         
+      
       KMLmarker(lat(1),lon(1),'fileName',textnames{i},...
-           'name',num2str(i),...
-           'html',html,...
-           'colornormalState',OPT.color,...
-           'colorhighlightState',OPT.color);
+                               'kmlName',namestr,...
+                                  'Name',namestr,...
+                                  'html',html,...
+                      'colornormalState',OPT.color,...
+                   'colorhighlightState',OPT.color);
            
    end        
    
@@ -192,22 +204,17 @@ end
 
    edgename = [OPT.directory_out,filesep,fileparts(OPT.fname),filesep,filename(OPT.fname),'_edge.kml'];
    KMLmerge_files('fileName',edgename,'sourceFiles',edgenames,...
-       'kmlName','edge');
+                   'kmlName','edge');
 
    fillname = [OPT.directory_out,filesep,fileparts(OPT.fname),filesep,filename(OPT.fname),'_fill.kml'];
    KMLmerge_files('fileName',fillname,'sourceFiles',fillnames,...
-       'kmlName','fill');
+                   'kmlName','fill');
    
    textname = [OPT.directory_out,filesep,fileparts(OPT.fname),filesep,filename(OPT.fname),'_text.kml'];
    KMLmerge_files('fileName',textname,'sourceFiles',textnames,...
-       'kmlName','text');
+                   'kmlName','text');
        
-   if isempty(M)
-      M.dataset_description                              = struct();
-      M.dataset_description.identification.dataset_title = '';
-      M.dataset_description.overview.summary             = '';
-   end
-   
+   try % the XML meta-data files are generally mess: they change per arcGIS version and per user.
    if ~isfield(M.dataset_description.identification,'dataset_title')
    M.dataset_description.identification.dataset_title = M.dataset_description.identification.alternative_title;
    end
@@ -218,6 +225,11 @@ end
       if ~isfield(M.dataset_description.overview,'summary')
       M.dataset_description.overview.summary = '';
       end
+   end
+   catch
+      M.dataset_description                              = struct();
+      M.dataset_description.identification.dataset_title = '';
+      M.dataset_description.overview.summary             = '';
    end
 
    %if ~isempty(OPT.html)
