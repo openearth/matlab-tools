@@ -16,15 +16,15 @@ for ii=1:numberOfDays
 
     currentDate=startDate+ii-1;
 
-    [s status]=urlread(['http://www.weatherunderground.com/history' stationID D3DTimeString(currentDate,10)...
-        '/' D3DTimeString(currentDate,5) '/' D3DTimeString(currentDate,7) '/DailyHistory.html?req_city=NA&req_state=NA&req_statename=NA&format=1']);
+    [s status]=urlread(['http://www.weatherunderground.com/history' stationID datestr(currentDate,10)...
+        '/' datestr(currentDate,5) '/' datestr(currentDate,7) '/DailyHistory.html?req_city=NA&req_state=NA&req_statename=NA&format=1']);
 
     if status==0
         tic
         g=warndlg({'The connection is lost, trying to reconnect in 30 seconds... ',['times ' num2str(round(toc)) ' seconds']},'Online source not available');
         while status==0&toc<30
-            [s status]=urlread(['http://www.weatherunderground.com/history' stationID D3DTimeString(currentDate,10)...
-                '/' D3DTimeString(currentDate,5) '/' D3DTimeString(currentDate,7) '/DailyHistory.html?req_city=NA&req_state=NA&req_statename=NA&format=1']);
+            [s status]=urlread(['http://www.weatherunderground.com/history' stationID datestr(currentDate,10)...
+                '/' datestr(currentDate,5) '/' datestr(currentDate,7) '/DailyHistory.html?req_city=NA&req_state=NA&req_statename=NA&format=1']);
         end
         close(g)
         if status==0
@@ -126,7 +126,7 @@ for ii=1:numberOfDays
     B(B(:,4)>1500|B(:,4)<500,4)=nan;
 
     B(isnan(B(:,1)),:)=[];
-    dates=strrep(cellstr(D3DTimeString(B(:,1),30)),'T','   ');
+    dates=strrep(cellstr(datestr(B(:,1),30)),'T','   ');
     dates=str2num(strvcat(dates{:}));
 
     fid=fopen(name,'a');

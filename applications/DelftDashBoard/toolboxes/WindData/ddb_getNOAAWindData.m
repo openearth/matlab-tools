@@ -19,7 +19,7 @@ hW = waitbar(0,'Please wait...');
 
 for ii=1:numOfDays
     currentDate=startDate+ii-1;
-    data=ddb_getTableFromWeb(['http://data.nssl.noaa.gov/dataselect/nssl_result.php?datatype=sf&sdate=' D3DTimeString(currentDate,29) '&hour=00&hour2=23&outputtype=list&param_val=SPED;DRCT;PMSL&area=@' stationId],2);
+    data=ddb_getTableFromWeb(['http://data.nssl.noaa.gov/dataselect/nssl_result.php?datatype=sf&sdate=' datestr(currentDate,29) '&hour=00&hour2=23&outputtype=list&param_val=SPED;DRCT;PMSL&area=@' stationId],2);
     if ~isempty(data)&size(data,1)~=1
         speed=str2num(char(data(2:end,3)));
         dirs=str2num(char(data(2:end,4)));
