@@ -49,8 +49,11 @@ function DelftDashBoard
 
 %%
 
+% get revision number
+revnum = '$Revision$';
+eval(strrep(revnum(revnum~='$'),':','='));
 
-handles.DelftDashBoardVersion='1.0';
+handles.DelftDashBoardVersion=['1.00.' num2str(revnum)];
 handles.MatlabVersion=version;
 
 disp(['Delft DashBoard v' handles.DelftDashBoardVersion]);
