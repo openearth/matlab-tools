@@ -99,7 +99,7 @@ if isappdata(0,'revisionnumber')
     revnumb = num2str(getappdata(0,'revisionnumber'));
 else
     try
-        [tf str] = system(['svn info ' fileparts(which('detran.m'))]);
+        [tf str] = system(['svn info ' fileparts(which('DelftDashBoard.m'))]);
         str = strread(str,'%s','delimiter',char(10));
         id = strncmp(str,'Revision:',8);
         if any(id)
@@ -109,7 +109,7 @@ else
         % don't mind
     end
 end
-strfrep(fullfile('ddb_aboutDelftDashBoard.txt'),'$revision',revnumb);
+strfrep(fullfile('exe','ddb_aboutDelftDashBoard.txt'),'$revision',revnumb);
 
 
 delete('complist');
