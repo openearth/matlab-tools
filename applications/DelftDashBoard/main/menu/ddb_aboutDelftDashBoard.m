@@ -14,11 +14,11 @@ tick(gca,'x','none');tick(gca,'y','none');%axis equal;
 font='Arial';
 col=[143 188 143]/255;
 
-tx=text(245,377,['Version ' handles.DelftDashBoardVersion]);
+tx=text(235,377,['Version ' handles.DelftDashBoardVersion]);
 try
-    set(tx,'FontSize',15,'Color',[0 0 0],'HorizontalAlignment','left','FontName',font);
+    set(tx,'FontSize',12,'Color',[0 0 0],'HorizontalAlignment','left','FontName',font);
 catch
-    set(tx,'FontSize',15,'Color',col,'HorizontalAlignment','left','FontName','Times New Roman');
+    set(tx,'FontSize',12,'Color',col,'HorizontalAlignment','left','FontName','Times New Roman');
 end
 
 tx2=text(11,299,'Contact Maarten van Ormondt for more information');
