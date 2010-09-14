@@ -107,7 +107,7 @@ XI2 = horzcat(XI(  1) - ceil ((XI(  1) - min(X))/dx)*dx:dx:XI(1),XI',XI(end):dx:
 YI2 = horzcat(YI(  1) - ceil ((YI(  1) - min(Y))/dy)*dy:dy:YI(1),YI',YI(end):dy:YI(end) - floor((YI(end) - max(Y))/dy)*dy);
 XI2 = unique(XI2(:));
 YI2 = unique(YI2(:));
-ZI2 = gridfit(x,y,z,XI2,YI2,'autoscale','off','tilesize',200,'smoothness',OPT.smoothness);
+ZI2 = gridfit(x,y,z,XI2,YI2,'autoscale','off','tilesize',500,'smoothness',OPT.smoothness);
 
 ZI = ZI2(ismember(YI2,YI),ismember(XI2,XI));
 

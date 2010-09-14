@@ -82,7 +82,7 @@ OPT.zid                 = 3;
 OPT.gridFcn             = @(X,Y,Z,XI,YI) griddata_remap(X,Y,Z,XI,YI,'errorCheck',true);
 
 OPT.datatype            = 'multibeam';
-OPT.EPSGcode            = 28992;
+OPT.EPSGcode            = [];
 OPT.dateFcn             = @(s) datenum(monthstr_mmm_dutch2eng(s(1:8)),'yyyy-mmm'); % how to extract the date from the filename
 
 OPT.mapsizex            = 5000;          % size of fixed map in x-direction
