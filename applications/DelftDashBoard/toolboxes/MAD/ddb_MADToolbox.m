@@ -139,6 +139,8 @@ function handles=getMADModels(handles)
 
 wb = waitbox('Loading Model Application Database ...');
 
+try
+    
 xDoc = xmlread('http://wiki.deltares.nl/download/attachments/4325644/georss.xml');
 
 % Find a deep list of all <listitem> elements.
@@ -177,9 +179,13 @@ for ii=1:nmod
 end
 handles.Toolbox(tb).ActiveMADModel=1;
 
+end
+
 %%
 function ddb_plotMADModels(handles)
 
+try
+    
 h=findall(gca,'Tag','MADModels');
 if ~isempty(h)
     delete(h);
@@ -201,3 +207,5 @@ set(plt,'Tag','MADModels');
 n=handles.Toolbox(tb).ActiveMADModel;
 plt=plot3(handles.Toolbox(tb).xy(n,1),handles.Toolbox(tb).xy(n,2),1000,'p');
 set(plt,'MarkerSize',15,'MarkerEdgeColor','k','MarkerFaceColor','r','Tag','ActiveMADModel');
+
+end
