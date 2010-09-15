@@ -1,17 +1,20 @@
 function ddcompile(varargin)
 
-exclude={''};
+% To exclude models or toolboxes in the compiled program, use:
+% ddcompile('model1','model2','toolbox1') with model1, model2 and toolbox the models/toolboxes to exclude.
 
-for i=1:length(varargin)
-    switch lower(varargin{i})
-        case{'exclude'}
-            if ~iscell(varargin{i+1})
-                exclude={varargin{i+1}};
-            else
-                exclude=varargin{i+1};
-            end
-    end
-end
+% exclude={''};
+% 
+% for i=1:length(varargin)
+%     switch lower(varargin{i})
+%         case{'exclude'}
+%             if ~iscell(varargin{i+1})
+%                 exclude={varargin{i+1}};
+%             else
+%                 exclude=varargin{i+1};
+%             end
+%     end
+% end
 
 delete('exe\*');
 
@@ -20,6 +23,8 @@ fid=fopen('complist','wt');
 fprintf(fid,'%s\n','-a');
 
 fprintf(fid,'%s\n','DelftDashBoard.m');
+
+exclude = varargin;
 
 % Add models
 flist=dir('models');
