@@ -7,7 +7,7 @@
 % the Matlab command window.
 
 %% Topographic data
-load bluff_data;
+load ..\bluff_data;
 x=bluff_data(:,1);
 y=bluff_data(:,2);
 z=bluff_data(:,3);
