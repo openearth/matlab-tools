@@ -1,5 +1,5 @@
 function varargout = delft3d2nc(ncfile,varargin)
-%DELFT3D2NC   saves delft3d inout as netCDF file
+%DELFT3D2NC   saves delft3d input as netCDF file
 %
 %   delft3d2nc(ncfile,<keyword,value>)
 %
@@ -17,6 +17,7 @@ function varargout = delft3d2nc(ncfile,varargin)
 %
 %See also: snctools, delft3d, vs_trim2nc
 
+% TO DO: align with output of Delft3D
 
 %% Define
 
@@ -27,6 +28,8 @@ function varargout = delft3d2nc(ncfile,varargin)
    OPT.epsg           = [];
    OPT.type           = 'float'; %'double'; % even NEFIS file is by default single precision
    OPT.debug          = 0;
+   OPT.location       = 'cor';
+   OPT.dpsopt         = '';
    
    OPT = setProperty(OPT,varargin{:});
    
@@ -38,7 +41,7 @@ function varargout = delft3d2nc(ncfile,varargin)
 %% Load
 
    G = delft3d_io_grd('read',OPT.grd);
-   G = delft3d_io_dep('read',OPT.dep,G,'location','cor');
+   G = delft3d_io_dep('read',OPT.dep,G,'location',OPT.location,'dpsopt',OPT.dpsopt);
    G.coordinates = upper(G.CoordinateSystem); % same as NEFISD file
 
 %% 1a Create file (add all NEFIS 'map-version' group info)
@@ -51,7 +54,7 @@ function varargout = delft3d2nc(ncfile,varargin)
    
       nc_attput(ncfile, nc_global, 'title'         , '');
       nc_attput(ncfile, nc_global, 'institution'   , OPT.institution);
-      nc_attput(ncfile, nc_global, 'source'        , 'Delft3D inoput file');
+      nc_attput(ncfile, nc_global, 'source'        , 'Delft3D input file');
       nc_attput(ncfile, nc_global, 'history'       ,['Original filenames: *.grd:',OPT.grd,'Original filenames: *.dep:',OPT.dep,' '...
                                                      ', tranformation to netCDF: $HeadURL$']);
       nc_attput(ncfile, nc_global, 'references'    , '');
@@ -72,13 +75,11 @@ function varargout = delft3d2nc(ncfile,varargin)
 
       %  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html
    
-      if strcmpi(G.coordinates,'CARTESIAN') & ~isempty(OPT.epsg)
-     [G.cen.lon,G.cen.lat] = convertcoordinates(G.cen.x,G.cen.y,'CS1.code',OPT.epsg,'CS2.code',4326);
-     [G.cor.lon,G.cor.lat] = convertcoordinates(G.cor.x,G.cor.y,'CS1.code',OPT.epsg,'CS2.code',4326);
-      end
-
       if (strcmpi(G.coordinates,'CARTESIAN') & ~isempty(OPT.epsg)) | ...
           strcmpi(G.coordinates,'SPHERICAL')
+     [G.cen.lon,G.cen.lat] = convertcoordinates(G.cen.x,G.cen.y,'CS1.code',OPT.epsg,'CS2.code',4326);
+     [G.cor.lon,G.cor.lat] = convertcoordinates(G.cor.x,G.cor.y,'CS1.code',OPT.epsg,'CS2.code',4326);
+
       nc_attput(ncfile, nc_global, 'geospatial_lat_min'  , min(G.cor.lon(:)));
       nc_attput(ncfile, nc_global, 'geospatial_lat_max'  , max(G.cor.lon(:)));
       nc_attput(ncfile, nc_global, 'geospatial_lon_min'  , min(G.cor.lon(:)));
@@ -193,16 +194,17 @@ function varargout = delft3d2nc(ncfile,varargin)
 
    if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CARTESIAN')))
 
+      if ~isempty(G.cen.dep)
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'longitude');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'longitude of cell centers');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XWAT,XZ');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN('single'));
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN('double'));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.lon(:)) max(G.cen.lon(:))]);
       nc(ifld) = struct('Name', 'longitude', ...
-          'Nctype'   , OPT.type, ...
+          'Nctype'   , 'double', ...
           'Dimension', {{'n', 'm'}}, ...
           'Attribute', attr);
       
@@ -212,12 +214,13 @@ function varargout = delft3d2nc(ncfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_north');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'YWAT,YZ');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN('single'));
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN('double'));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.lat(:)) max(G.cen.lat(:))]);
       nc(ifld) = struct('Name', 'latitude', ...
-          'Nctype'   , OPT.type, ...
+          'Nctype'   , 'double', ...
           'Dimension', {{'n', 'm'}}, ...
           'Attribute', attr);
+      end
 
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'longitude');
@@ -225,10 +228,10 @@ function varargout = delft3d2nc(ncfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XCOR');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN('single'));
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN('double'));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.lon(:)) max(G.cor.lon(:))]);
       nc(ifld) = struct('Name', 'longitude_cor', ...
-          'Nctype'   , OPT.type, ...
+          'Nctype'   , 'double', ...
           'Dimension', {{'n_cor', 'm_cor'}}, ...
           'Attribute', attr);
       
@@ -238,10 +241,10 @@ function varargout = delft3d2nc(ncfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_north');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'YCOR');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN('single'));
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN('double'));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.lat(:)) max(G.cor.lat(:))]);
       nc(ifld) = struct('Name', 'latitude_cor', ...
-          'Nctype'   , OPT.type, ...
+          'Nctype'   , 'double', ...
           'Dimension', {{'n_cor', 'm_cor'}}, ...
           'Attribute', attr);
    end
@@ -306,8 +309,10 @@ function varargout = delft3d2nc(ncfile,varargin)
       nc_varput(ncfile, 'x_cor'        ,    G.cor.x);
       nc_varput(ncfile, 'y_cor'        ,    G.cor.y);
       if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CARTESIAN')))
+      if ~isempty(G.cen.dep)
       nc_varput(ncfile, 'longitude'    ,G.cen.lon);
       nc_varput(ncfile, 'latitude'     ,G.cen.lat);
+      end
       nc_varput(ncfile, 'longitude_cor',G.cor.lon);
       nc_varput(ncfile, 'latitude_cor' ,G.cor.lat);
       end      
