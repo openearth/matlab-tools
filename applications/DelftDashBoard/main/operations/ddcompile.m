@@ -95,6 +95,7 @@ try
     system(['"' matlabroot '\sys\lcc\bin\lrc" /i "' pwd '\earthicon.rc"']);
 end
 
+%mcc -m -d exe DelftDashBoard.m -B complist -a settings -a F:\checkout\OpenEarthTools\trunk\matlab\io\netcdf\netcdfAll-4.1.jar -M earthicon.res
 mcc -m -d exe DelftDashBoard.m -B complist -a settings -M earthicon.res
 
 % make about.txt file
