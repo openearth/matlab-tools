@@ -19,4 +19,4 @@ handles.ActiveModel.Nr=ii;
 setHandles(handles);
 
 ddb_selectModel;
-tabpanel(handles.GUIHandles.MainWindow,'tabpanel','select','Toolbox');
+%tabpanel(handles.GUIHandles.MainWindow,'tabpanel','select','tabname','Toolbox');

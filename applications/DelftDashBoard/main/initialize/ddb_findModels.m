@@ -32,9 +32,10 @@ for i=1:nt
     handles.Model(i).OpenFcn=str2func(['ddb_open' name{i}]);
     handles.Model(i).ClrFcn=str2func(['ddb_clear' name{i}]);
     handles.Model(i).CoordConvertFcn=str2func(['ddb_coordConvert' name{i}]);
+    handles.Model(i).GUI=[];
 end
 
-% Set ModelMaker to be the first toolbox
+% Set Delft3D-FLOW
 ii=strmatch('Delft3DFLOW',{handles.Model.Name},'exact');
 tt=handles.Model;
 handles.Model(1)=tt(ii);
@@ -50,3 +51,6 @@ for i=1:nt
     f=handles.Model(i).IniFcn;
     handles=f(handles,'veryfirst');
 end
+
+% Read xml files
+handles=ddb_readModelXMLs(handles);

@@ -12,39 +12,41 @@ disp('Have fun using DelftDashBoard!');
 disp('Maarten van Ormondt (Maarten.vanOrmondt@deltares.nl)');
 disp(' ');
 
-basePath=fileparts(which('ddsettings.m'));
+% basePath=fileparts(which('ddsettings.m'));
+% 
+% subDirs={...
+%     'general'
+%     'main'
+%     'models'
+%     'toolboxes'
+%     'utils'
+%     };
+% 
+% totalPath=[];
+% 
+% for ii=1:length(subDirs)
+%     pp=genpath([basePath filesep subDirs{ii}]);
+%     pp=strread(strrep(pp,';',char(13)),'%s');
+%     pp(~cellfun('isempty',regexp(pp,'\.svn')))=[];
+%     pp(~cellfun('isempty',regexp(pp,'mex\\V')))=[];
+%     
+%     pp=[pp repmat({';'},size(pp,1),1)];
+%     pp=pp';
+%     totalPath=[totalPath [pp{:}]];
+% end
+% 
+% addpath(totalPath);
+% 
+% %Add appropriate V* dir
+% verDir=strrep(version,'.','');
+% addpath([basePath filesep 'general' filesep 'mex' filesep 'V' verDir(1:2)]);
+% 
+% % SuperTrans
+% 
+% addpath(genpath('..\SuperTrans'));
+% addpath(genpath('..\..\io\netcdf\'));
+% addpath(genpath('..\..\..\matlab\'));
+% 
+% netcdf_settings('quiet',false) % in /io/netcdf/
 
-subDirs={...
-    'general'
-    'main'
-    'models'
-    'toolboxes'
-    'utils'
-    };
-
-totalPath=[];
-
-for ii=1:length(subDirs)
-    pp=genpath([basePath filesep subDirs{ii}]);
-    pp=strread(strrep(pp,';',char(13)),'%s');
-    pp(~cellfun('isempty',regexp(pp,'\.svn')))=[];
-    pp(~cellfun('isempty',regexp(pp,'mex\\V')))=[];
-    
-    pp=[pp repmat({';'},size(pp,1),1)];
-    pp=pp';
-    totalPath=[totalPath [pp{:}]];
-end
-
-addpath(totalPath);
-
-%Add appropriate V* dir
-verDir=strrep(version,'.','');
-addpath([basePath filesep 'general' filesep 'mex' filesep 'V' verDir(1:2)]);
-
-% SuperTrans
-
-addpath(genpath('..\SuperTrans'));
-addpath(genpath('..\..\io\netcdf\'));
-addpath(genpath('..\..\..\matlab\'));
-
-netcdf_settings('quiet',false) % in /io/netcdf/
+run('..\..\oetsettings');

@@ -71,77 +71,94 @@ function ZoomInOut(imagefig, varargins, callback, varargin)
 
 handles=getHandles;
 
-leftmouse=strcmp(get(gcf,'SelectionType'),'normal');
-rightmouse=strcmp(get(gcf,'SelectionType'),'alt');
+ax=handles.GUIHandles.Axis;
+xl=get(ax,'xlim');
+yl=get(ax,'ylim');
 
-hzoomin=handles.GUIHandles.ToolBar.ZoomIn;
+point1 = get(ax,'CurrentPoint');
+point1=point1(1,1:2);
 
-if strcmp(get(hzoomin,'State'),'on')
-    zmin=1;
-else
-    zmin=0;
-end
+% Check if mouse is in current axis
 
-xl=get(gca,'xlim');
-yl=get(gca,'ylim');
-
-if (leftmouse==1 && zmin==1) || (rightmouse==1 && zmin==0)
-    % Zoom Out
-    point1 = get(gca,'CurrentPoint');
-    rect = rbbox;
-    point2 = get(gca,'CurrentPoint');
-    if rect(3)==0
+if point1(1)>=xl(1) && point1(1)<=xl(2) && point1(2)>=yl(1) && point1(2)<=yl(2)
+    
+    leftmouse=strcmp(get(gcf,'SelectionType'),'normal');
+    rightmouse=strcmp(get(gcf,'SelectionType'),'alt');
+    
+    hzoomin=handles.GUIHandles.ToolBar.ZoomIn;
+    
+    if strcmp(get(hzoomin,'State'),'on')
+        zmin=1;
+    else
+        zmin=0;
+    end
+    
+    if (leftmouse==1 && zmin==1) || (rightmouse==1 && zmin==0)
+        % Zoom In
+        point1 = get(ax,'CurrentPoint');
+        rect = rbbox;
+        point2 = get(ax,'CurrentPoint');
+        if rect(3)==0
+            % Click zoom in
+            point1=point1(1,1:2);
+            p1(1)=point1(1)-((xl(2)-xl(1))/4);
+            p1(2)=point1(2)-((yl(2)-yl(1))/4);
+            offset(1)=((xl(2)-xl(1))/2);
+            offset(2)=((yl(2)-yl(1))/2);
+        else
+            % Zoom box
+            point1 = point1(1,1:2);
+            point2 = point2(1,1:2);
+            p1 = min(point1,point2);
+            offset = abs(point1-point2);
+        end
+        if ischar(callback)
+            xl(1)=p1(1);
+            yl(1)=p1(2);
+            xl(2)=p1(1)+offset(1);
+            yl(2)=p1(2)+offset(2);
+        else
+            [xl,yl]=CompXYLim([p1(1) p1(1)+offset(1) ],[p1(2) p1(2)+offset(2)],handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange);
+        end
+    elseif (leftmouse==1 && zmin==0) || (rightmouse==1 && zmin==1)
+        % Zoom Out
+        point1 = get(gca,'CurrentPoint');
         xl=get(gca,'xlim');
         yl=get(gca,'ylim');
         point1=point1(1,1:2);
-        p1(1)=point1(1)-((xl(2)-xl(1))/4);
-        p1(2)=point1(2)-((yl(2)-yl(1))/4);
-        offset(1)=((xl(2)-xl(1))/2);
-        offset(2)=((yl(2)-yl(1))/2);
-    else
-        point1 = point1(1,1:2);
-        point2 = point2(1,1:2);
-        p1 = min(point1,point2);
-        offset = abs(point1-point2);
+        p1(1)=point1(1)-((xl(2)-xl(1)));
+        p1(2)=point1(2)-((yl(2)-yl(1)));
+        offset(1)=2*((xl(2)-xl(1)));
+        offset(2)=2*((yl(2)-yl(1)));
+        if ischar(callback)
+            xl(1)=p1(1);
+            yl(1)=p1(2);
+            xl(2)=p1(1)+offset(1);
+            yl(2)=p1(2)+offset(2);
+        else
+            [xl,yl]=CompXYLim([p1(1) p1(1)+offset(1) ],[p1(2) p1(2)+offset(2)],handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange);
+        end
     end
-    if ischar(callback)
-        xl(1)=p1(1);
-        yl(1)=p1(2);
-        xl(2)=p1(1)+offset(1);
-        yl(2)=p1(2)+offset(2);
+    set(gca,'xlim',xl,'ylim',yl);
+    handles.ScreenParameters.XLim=xl;
+    handles.ScreenParameters.YLim=yl;
+    
+    setHandles(handles);
+    
+    varargin = varargin{:};
+    
+    h=findobj(gcf,'Tag','UIAutomaticallyRefreshBathymetry');
+    if ~isempty(h)
+        if strcmp(get(h,'State'),'on')
+            if isa(callback,'function_handle')
+                if ~isempty(varargin)
+                    feval(callback, varargin{:});
+                else
+                    feval(callback);
+                end
+            end
+        end
     else
-        [xl,yl]=CompXYLim([p1(1) p1(1)+offset(1) ],[p1(2) p1(2)+offset(2)],handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange);
-    end
-elseif (leftmouse==1 && zmin==0) || (rightmouse==1 && zmin==1)
-    % Zoom Out
-    point1 = get(gca,'CurrentPoint');
-    xl=get(gca,'xlim');
-    yl=get(gca,'ylim');
-    point1=point1(1,1:2);
-    p1(1)=point1(1)-((xl(2)-xl(1)));
-    p1(2)=point1(2)-((yl(2)-yl(1)));
-    offset(1)=2*((xl(2)-xl(1)));
-    offset(2)=2*((yl(2)-yl(1)));
-    if ischar(callback)
-        xl(1)=p1(1);
-        yl(1)=p1(2);
-        xl(2)=p1(1)+offset(1);
-        yl(2)=p1(2)+offset(2);
-    else
-        [xl,yl]=CompXYLim([p1(1) p1(1)+offset(1) ],[p1(2) p1(2)+offset(2)],handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange);
-    end
-end
-set(gca,'xlim',xl,'ylim',yl);
-handles.ScreenParameters.XLim=xl;
-handles.ScreenParameters.YLim=yl;
-
-setHandles(handles);
-
-varargin = varargin{:};
-
-h=findobj(gcf,'Tag','UIAutomaticallyRefreshBathymetry');
-if ~isempty(h)
-    if strcmp(get(h,'State'),'on')
         if isa(callback,'function_handle')
             if ~isempty(varargin)
                 feval(callback, varargin{:});
@@ -150,15 +167,9 @@ if ~isempty(h)
             end
         end
     end
-else
-    if isa(callback,'function_handle')
-        if ~isempty(varargin)
-            feval(callback, varargin{:});
-        else
-            feval(callback);
-        end
-    end
+    
 end
+
 
 %%
 function MoveMouse(imagefig, varargins, callback, varargin)
@@ -189,15 +200,18 @@ ddb_updateCoordinateText(pntr);
 %%
 function StartPan(imagefig, varargins, callback, varargin)
 handles=getHandles;
-pos0=get(gca,'CurrentPoint');
-pos0=pos0(1,1:2);
-xl0=get(gca,'XLim');
-yl0=get(gca,'YLim');
-set(gcf, 'windowbuttonmotionfcn', {@PanMove,xl0,yl0,pos0,handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange});
-
-varargin = varargin{:};
-set(gcf, 'windowbuttonupfcn', {@StopPan, callback, varargin});
-setptr(gcf,'closedhand');
+ax=handles.GUIHandles.Axis;
+xl=get(ax,'xlim');
+yl=get(ax,'ylim');
+point = get(ax,'CurrentPoint');
+point = point(1,1:2);
+% Check if mouse is in current axis
+if point(1)>=xl(1) && point(1)<=xl(2) && point(2)>=yl(1) && point(2)<=yl(2)   
+    set(gcf, 'windowbuttonmotionfcn', {@PanMove,xl,yl,point,handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange});
+    varargin = varargin{:};
+    set(gcf, 'windowbuttonupfcn', {@StopPan, callback, varargin});
+    setptr(gcf,'closedhand');
+end
 
 %%
 function PanMove(imagefig, varargins,xl0,yl0,pos0,xrange,yrange)

@@ -24,6 +24,6 @@ set(c,'Checked','on');
 
 setHandles(handles);
 
-tabpanel(handles.GUIHandles.MainWindow,'tabpanel','select','Toolbox');
+tabpanel(handles.GUIHandles.MainWindow,'tabpanel','select','tabname','Toolbox');
 
 handles=getHandles;

@@ -7,6 +7,6 @@ hp = uipanel('Title','Physical Parameters','Units','pixels','Position',[20 20 99
 
 strings={'Constants','Wind','Processes','Various'};
 callbacks={@EditSwanConstants,@EditSwanWind,@EditSwanProcesses,@EditSwanVarious};
-tabpanel(gcf,'tabpanel2','create',[30 30 970 110],strings,callbacks);
+tabpanel(gcf,'tabpanel2','create','position',[30 30 970 110],'strings',strings,'callbacks',callbacks,'width',width);
 
 EditSwanConstants;

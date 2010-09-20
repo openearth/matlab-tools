@@ -17,7 +17,7 @@ bgc=get(fig,'Color');
 % h=findobj(fig,'Tag','UIControl','Style','checkbox');
 % set(h,'BackgroundColor',bgc);
 
-h=findobj(fig,'type','uipanel');
+h=findobj(fig,'type','uipanel','Tag','UIControl');
 set(h,'BackgroundColor',bgc);
 h=findobj(fig,'type','UIControl','Style','text','Tag','UIControl');
 set(h,'BackgroundColor',bgc);

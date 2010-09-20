@@ -7,7 +7,7 @@ strings={'Toolbox','Description','Domain','Time Frame','Phys. Params','Waves','F
 callbacks={@ddb_selectToolbox,@ddb_editXBeachDescription,@ddb_editXBeachDomain,@ddb_editXBeachTimeFrame,@ddb_editXBeachPhysParams, ...
     @ddb_editXBeachWaves,@ddb_editXBeachFlow,@ddb_editXBeachSediment};
 width=[60 70 60 70 80 60 60 60];
-tabpanel(gcf,'tabpanel','create',[10 10 sz(3)-20 sz(4)-40],strings,callbacks,width);
+tabpanel(gcf,'tabpanel','change','position',[10 10 sz(3)-20 sz(4)-40],'strings',strings,'callbacks',callbacks);
 
 handles.ActiveModel.Name='XBeach';
 ii=strmatch(handles.ActiveModel.Name,{handles.Model.Name},'exact');

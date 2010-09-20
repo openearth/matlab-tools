@@ -41,6 +41,6 @@ if handles.Model(md).Input(ad).Roller.Include
     callbacks{k}=@ddb_editD3DFlowRollerModel;
 end
 
-tabpanel(gcf,'tabpanel2','create',[50 20 910 140],strings,callbacks);
+tabpanel(gcf,'tabpanel2','create','position',[50 20 910 140],'strings',strings,'callbacks',callbacks);
 
 ddb_editD3DFlowConstants;

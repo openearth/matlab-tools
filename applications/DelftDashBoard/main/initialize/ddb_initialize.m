@@ -49,7 +49,8 @@ switch lower(varargin{1}),
         setHandles(handles);
         
         ddb_selectModel;
-        ddb_selectToolbox;
+        % Toolbox is selected in ddb_selectModel        
+%        ddb_selectToolbox;
 
         handles=getHandles;
         

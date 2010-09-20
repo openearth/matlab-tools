@@ -2,8 +2,15 @@ function ddb_selectModel
 
 handles=getHandles;
 
-ii=strmatch(handles.ActiveModel.Name,{handles.Model.Name},'exact');
 
-feval(handles.Model(ii).CallFcn);
+if handles.Model(md).useXML
+    % Make tabs
+    ddb_addModelTabs(handles);
+%     % Change menu items (file, domain and view)
+% %    changeModelMenuItems(handles.Model.Name);
+else
+   feval(handles.Model(md).CallFcn);
+end
 
-tabpanel(handles.GUIHandles.MainWindow,'tabpanel','select','Toolbox');
+% Select toolbox
+tabpanel(handles.GUIHandles.MainWindow,'tabpanel','select','tabname','Toolbox');

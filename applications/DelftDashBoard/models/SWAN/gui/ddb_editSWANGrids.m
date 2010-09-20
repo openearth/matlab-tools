@@ -25,22 +25,23 @@ hp = uipanel('Title','Grid data','Units','pixels','Position',[340 25 655 140],'T
 
 strings={'Computational grid','Bathymetry','Spectral resolution','Nesting'};
 callbacks={@EditSwanComputationalgrid,@EditSwanBathymetry,@EditSwanSpectralresolution,@EditSwanNesting};
-tabpanel(gcf,'tabpanel2','create',[350 35 635 90],strings,callbacks);
+tabpanel(gcf,'tabpanel2','create','position',[350 35 635 90],'strings',strings,'callbacks',callbacks,'width',width);
 
 EditSwanComputationalgrid;
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%%
 function EditComputationalGrids_CallBack(hObject,eventdata)
 handles=getHandles;
 handles.SwanInput(handles.ActiveDomain).ComputationalGrids=get(hObject,'String');
 setHandles(handles);
 
+%%
 function PushAdd_CallBack(hObject,eventdata)
 handles=getHandles;
 handles=Add(handles);
 setHandles(handles);
 
+%%
 function PushDelete_CallBack(hObject,eventdata)
 handles=getHandles;
 handles=Delete(handles);

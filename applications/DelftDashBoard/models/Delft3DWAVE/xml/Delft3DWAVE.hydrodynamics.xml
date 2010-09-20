@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <model>Delft3DWAVE</model>
+  <name>hydrodynamics</name>
+  <elements>
+    <element>
+      <style>panel</style>
+      <position>20 20 990 160</position>
+      <title>Hydrodynamics</title>
+    </element>
+    <element>
+      <style>text</style>
+      <position>40 145</position>
+      <text>Select hydrodynamics results from Delft3D-FLOW</text>
+    </element>
+    <element>
+      <tag>checkuseflowbedlevel</tag>
+      <style>checkbox</style>
+      <position>40 120</position>
+      <variable>FlowBedLevel</variable>
+      <vartype>boolean</vartype>
+      <tooltipstring>Use bed level from Delft3D-FLOW (overrides bed level from depth file in Delft3D-WAVE)</tooltipstring>
+      <text>Bathymetry</text>
+      <onchange>ddb_refreshDelft3DWAVEHydrodynamics</onchange>
+    </element>
+    <element>
+      <tag>checkuseflowwaterlevel</tag>
+      <style>checkbox</style>
+      <position>40 100</position>
+      <variable>FlowWaterLevel</variable>
+      <vartype>boolean</vartype>
+      <tooltipstring>Use water level from Delft3D-FLOW (overrides water level specified in MDW file)</tooltipstring>
+      <text>Water level</text>
+      <onchange>ddb_refreshDelft3DWAVEHydrodynamics</onchange>
+    </element>
+    <element>
+      <tag>checkuseflowcurrent</tag>
+      <style>checkbox</style>
+      <position>40 80</position>
+      <variable>FlowVelocity</variable>
+      <vartype>boolean</vartype>
+      <tooltipstring>Use velocities from Delft3D-FLOW (overrides velocity specified in MDW file)</tooltipstring>
+      <text>Current</text>
+      <onchange>ddb_refreshDelft3DWAVEHydrodynamics</onchange>
+    </element>
+    <element>
+      <tag>checkuseflowwind</tag>
+      <style>checkbox</style>
+      <position>40 60</position>
+      <variable>FlowWind</variable>
+      <vartype>boolean</vartype>
+      <tooltipstring>Use wind from Delft3D-FLOW (overrides wind specified in MDW file)</tooltipstring>
+      <text>Wind</text>
+      <onchange>ddb_refreshDelft3DWAVEHydrodynamics</onchange>
+    </element>
+    <element>
+      <tag>pushselectmdffile</tag>
+      <style>pushselectfile</style>
+      <position>40 30 100 20</position>
+      <tooltipstring>Select Delft3D-FLOW mdf file</tooltipstring>
+      <text>Select FLOW file</text>
+      <variable>MDFFile</variable>
+      <vartype>string</vartype>
+      <extension>*.mdf</extension>
+      <selectiontext>Select MDF File</selectiontext>
+      <onchange>ddb_Delft3DWAVE_selectMDFfile</onchange>
+      <dependencies>
+        <dependency>
+          <action>enable</action>
+          <checkfor>any</checkfor>
+          <checks>
+            <check>
+              <variable>FlowBedLevel</variable>
+              <value>1</value>
+              <tag>checkuseflowbedlevel</tag>
+            </check>
+            <check>
+              <variable>FlowWaterLevel</variable>
+              <value>1</value>
+              <tag>checkuseflowwaterlevel</tag>
+            </check>
+            <check>
+              <variable>FlowVelocity</variable>
+              <value>1</value>
+              <tag>checkuseflowcurrent</tag>
+            </check>
+            <check>
+              <variable>FlowWind</variable>
+              <value>1</value>
+              <tag>checkuseflowwind</tag>
+            </check>
+          </checks>
+        </dependency>
+        <dependency>
+          <action>disable</action>
+          <checkfor>all</checkfor>
+          <checks>
+            <check>
+              <variable>FlowBedLevel</variable>
+              <value>1</value>
+              <tag>checkuseflowbedlevel</tag>
+            </check>
+            <check>
+              <variable>FlowWaterLevel</variable>
+              <value>1</value>
+              <tag>checkuseflowwaterlevel</tag>
+            </check>
+            <check>
+              <variable>FlowVelocity</variable>
+              <value>1</value>
+              <tag>checkuseflowcurrent</tag>
+            </check>
+            <check>
+              <variable>FlowWind</variable>
+              <value>1</value>
+              <tag>checkuseflowwind</tag>
+            </check>
+          </checks>
+        </dependency>
+      </dependencies>
+    </element>
+  </elements>
+</root>

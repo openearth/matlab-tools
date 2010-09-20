@@ -10,7 +10,7 @@ function DelftDashBoard
 %   Copyright (C) 2010 <COMPANY>
 %       Maarten van Ormondt
 %
-%       maarten.vanormondt@deltares.nl
+%       Maarten.vanOrmondt@deltares.nl
 %
 %       P.O. Box 177
 %       2600 MH Delft

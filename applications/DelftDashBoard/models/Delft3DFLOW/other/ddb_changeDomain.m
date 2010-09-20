@@ -17,7 +17,7 @@ for i=1:handles.GUIData.NrFlowDomains
 end
 
 if isempty(handles.ScreenParameters.ActiveSecondTab)
-    tabpanel(handles.GUIHandles.MainWindow,'tabpanel','select',handles.ScreenParameters.ActiveTab);
+    tabpanel(handles.GUIHandles.MainWindow,'tabpanel','select','tabname',handles.ScreenParameters.ActiveTab);
 else
-    tabpanel(handles.GUIHandles.MainWindow,'tabpanel2','select',handles.ScreenParameters.ActiveSecondTab);
+    tabpanel(handles.GUIHandles.MainWindow,'tabpanel2','select','tabname',handles.ScreenParameters.ActiveSecondTab);
 end

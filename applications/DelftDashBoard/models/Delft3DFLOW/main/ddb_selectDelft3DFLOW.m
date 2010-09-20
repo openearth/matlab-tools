@@ -9,8 +9,9 @@ strings={'Toolbox','Description','Domain','Time Frame','Processes','Init. Condit
 callbacks={@ddb_selectToolbox,@ddb_editD3DFlowDescription,@ddb_editD3DFlowDomain,@ddb_editD3DFlowTimeFrame,@ddb_editD3DFlowProcesses,@ddb_editD3DFlowInitialConditions, ...
     @ddb_editD3DFlowOpenBoundaries,@ddb_editD3DFlowPhysicalParameters,@ddb_editD3DFlowNumericalParameters,@ddb_editD3DFlowDischarges,@ddb_editD3DFlowMonitoring, ...
     @ddb_editD3DFlowAdditional,@ddb_editD3DFlowOutput};
-width=[60 70 60 70 70 90 70 100 100 70 70 70 60];
-tabpanel(gcf,'tabpanel','create',[10 10 sz(3)-20 sz(4)-40],strings,callbacks,width);
+% width=[60 70 60 70 70 90 70 100 100 70 70 70 60];
+% tabpanel(gcf,'tabpanel','create','position',[10 10 sz(3)-20 sz(4)-40],'strings',strings,'callbacks',callbacks,'width',width);
+tabpanel(gcf,'tabpanel','change','position',[10 10 sz(3)-20 sz(4)-40],'strings',strings,'callbacks',callbacks);
 
 handles.ActiveModel.Name='Delft3DFLOW';
 ii=strmatch(handles.ActiveModel.Name,{handles.Model.Name},'exact');

@@ -19,9 +19,9 @@ set(handles.GUIHandles.Axis,'Position',[60 200 sz(3)-155 sz(4)-265]);
 
 % set(handles.GUIHandles.TextXCoordinate,'Position',[60+sz(3)-155-160 200+sz(4)-265 80 20]);
 % set(handles.GUIHandles.TextYCoordinate,'Position',[60+sz(3)-155-80 200+sz(4)-265 80 20]);
-set(handles.GUIHandles.TextXCoordinate,'Position',[300 200+sz(4)-265 80 20]);
-set(handles.GUIHandles.TextYCoordinate,'Position',[380 200+sz(4)-265 80 20]);
-set(handles.GUIHandles.TextCoordinateSystem,'Position',[100 200+sz(4)-265 200 20]);
+set(handles.GUIHandles.TextXCoordinate,'Position',[300 200+sz(4)-260 80 15]);
+set(handles.GUIHandles.TextYCoordinate,'Position',[380 200+sz(4)-260 80 15]);
+set(handles.GUIHandles.TextCoordinateSystem,'Position',[100 200+sz(4)-260 200 15]);
 
 xl=get(handles.GUIHandles.Axis,'XLim');
 yl=get(handles.GUIHandles.Axis,'YLim');
@@ -38,4 +38,4 @@ h=findall(gcf,'Tag','colorbar');
 if ~isempty(h)
     set(h,'Position',[sz(3)-80 200 30 sz(4)-265]);
 end
-tabpanel(gcf,'tabpanel','resize',[10 10 sz(3)-20 sz(4)-40]);
+tabpanel(gcf,'tabpanel','resize','position',[10 10 sz(3)-20 sz(4)-40]);
