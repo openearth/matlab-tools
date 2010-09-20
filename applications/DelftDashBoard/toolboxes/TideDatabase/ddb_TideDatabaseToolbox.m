@@ -106,7 +106,7 @@ fname=strrep(fname,' ','');
 fname=strrep(fname,',','');
 fname=[fname(1,:) '.tek'];
 
-ExportTEK(prediction(1:end-1)',times(1:end-1)',fname,blname);
+exportTEK(prediction(1:end-1)',times(1:end-1)',fname,blname);
 
 %%
 function ExportAllTimeSeries_Callback(hObject,eventdata)

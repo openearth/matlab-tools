@@ -139,7 +139,7 @@ outputFile=[pwd filesep 'windData_' station '.tek'];
 
 if ~isempty(handles.Toolbox(tb).Input.windData)
     Comments={'* column 1 : Date','* column 2 : Time','* column 3 : Wind Speed [m/s]','* column 4 : Wind Direction [deg N]','* column 5 : Air Pressure [hPa]'};
-    ExportTEK(handles.Toolbox(tb).Input.windData(:,2:4),handles.Toolbox(tb).Input.windData(:,1),outputFile,station,Comments);
+    exportTEK(handles.Toolbox(tb).Input.windData(:,2:4),handles.Toolbox(tb).Input.windData(:,1),outputFile,station,Comments);
 else
     giveWarning([],'No data available for this station and period');
 end

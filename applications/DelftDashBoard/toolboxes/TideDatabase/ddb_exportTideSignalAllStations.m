@@ -61,7 +61,7 @@ if ~isempty(posx)
             fname=blname;
             fname=strrep(fname,' ','');
             fname=[fname '.tek'];
-            ExportTek(prediction(1:end-1)',times(1:end-1)',fname,blname);
+            exportTek(prediction(1:end-1)',times(1:end-1)',fname,blname);
 
         end
     end
