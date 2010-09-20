@@ -11,13 +11,14 @@ function varargout = delft3d2nc(ncfile,varargin)
 %   OPT.description    = 'free text';
 %   OPT.grd            = 'f:\unstruc\run01\wadden4.grd';
 %   OPT.dep            = 'f:\unstruc\run01\wadden.dep';
+%   OPT.location       = 'cor'; % or OPT.dpsopt = 'MEAN' or OPT.mdf = 'run.mdf';
 %   OPT.epsg           = 28992; % Dutch RD
 %
 %   delft3d2nc('f:\unstruc\run01\wadden.nc',OPT)
 %
 %See also: snctools, delft3d, vs_trim2nc
 
-% TO DO: align with output of Delft3D
+% TO DO: align with netCDF-output of Delft3D and vs_trim2nc
 
 %% Define
 
@@ -28,8 +29,9 @@ function varargout = delft3d2nc(ncfile,varargin)
    OPT.epsg           = [];
    OPT.type           = 'float'; %'double'; % even NEFIS file is by default single precision
    OPT.debug          = 0;
-   OPT.location       = 'cor';
+   OPT.location       = 's;
    OPT.dpsopt         = '';
+   OPT.mdf            = '';
    
    OPT = setProperty(OPT,varargin{:});
    
@@ -40,9 +42,14 @@ function varargout = delft3d2nc(ncfile,varargin)
 
 %% Load
 
+   if ~isempty(OPT.mdf)
+      MDF = delft3d_io_mdf('read',OPT.mdf);
+      OPT.dpsopt = MDF.keywords.dpsopt;
+   end
+
    G = delft3d_io_grd('read',OPT.grd);
    G = delft3d_io_dep('read',OPT.dep,G,'location',OPT.location,'dpsopt',OPT.dpsopt);
-   G.coordinates = upper(G.CoordinateSystem); % same as NEFISD file
+   G.coordinates = upper(G.CoordinateSystem); % same as NEFIS file
 
 %% 1a Create file (add all NEFIS 'map-version' group info)
 

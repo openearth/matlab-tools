@@ -93,7 +93,7 @@ else
    error(['Layer thickness do not add up to 1. Difference = ',num2str(1.0-sum(thick))])
 end
 
-    if nargout==1
+    if nargout<2
    varargout = {centres};
 elseif nargout==2
    varargout = {centres,interfaces};
