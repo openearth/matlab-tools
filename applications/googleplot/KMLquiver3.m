@@ -1,7 +1,7 @@
 function [OPT, Set, Default] = KMLquiver(lat,lon,z,u,v,varargin)
 % KMLQUIVER3 Just like quiver3 (except no w yet)
 %
-%    KMLquiver3(LAT,lon,Z,u,V,<keyword,value>) % ! NOTE THE ORDER OF LAT/LON vs. V/U !
+%    KMLquiver3(LAT,lon,Z,V,u,<keyword,value>) % ! NOTE THE ORDER OF LAT/LON vs. V/U !
 %
 % Keywords:
 %
@@ -21,11 +21,11 @@ function [OPT, Set, Default] = KMLquiver(lat,lon,z,u,v,varargin)
 % Example:
 %
 %     [Lat Lon Z] = meshgrid(-80:10:80,-170:10:180,[3 6 9 12].*1e4);
-%     u = (rand(size(Lat))-.5);
 %     v = (rand(size(Lat))-.5);
+%     u = (rand(size(Lat))-.5);
 %     cmap = colormap_cpt('temperature');
 %     fillColors = cmap(ceil((u.^2+v.^2)*2*size(cmap,1)),:);
-%     KMLquiver3(Lat,Lon,Z,u,v,'arrowScale',5e5,'lineWidth',2,...
+%     KMLquiver3(Lat,Lon,Z,v,u,'arrowScale',5e5,'lineWidth',2,...
 %         'fillColor',fillColors,'fillAlpha',1);
 %
 % Adjust 'W1'..'W4' and 'L1'..'L4' for user defined arrow shapes
@@ -140,7 +140,7 @@ OPT2 = struct(...
     'lineAlpha'  ,1,...
     'fillColor'  ,[1 0 0],...
     'fillAlpha'  ,0.75,...
-    'W1'         ,0.12,'W2'       ,0.30,'W3'       ,0.30,'W4'       ,0.15,...
+    'W1'         ,0.12,'W2'       ,0.20,'W3'       ,0.20,'W4'       ,0.15,...
     'L1'         ,0.80,'L2'       ,0.70,'L3'       ,0.70,'L4'       ,0.20);
 
 % OPT2.timeIn  = [];
@@ -237,7 +237,7 @@ end
 arrowLat =   repmat(lat,length(A.abs),1)+A.ABS.*cos(A.ANG);
 arrowZ   =   repmat(z  ,length(A.abs),1);
 arrowLon =   repmat(lon,length(A.abs),1)+A.ABS.*sin(A.ANG)...
-     ./repmat(cosd(lat),length(A.abs),1);
+     ./repmat(cosd(lat),length(A.abs),1); % d_longitudes squeeze to zero as we move latitudeward (i.e. as we near the north pole)
 arrowLon = mod(arrowLon+180, 360)-180;
 
 %% get filename

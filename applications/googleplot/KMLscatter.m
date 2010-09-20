@@ -20,6 +20,7 @@ function varargout = KMLscatter(lat,lon,c,varargin)
 %                                       http://www.visual-case.it/cgi-bin/vc/GMapsIcons.pl
 %                                       http://www.benjaminkeen.com/?p=105
 %                                       http://code.google.com/p/google-maps-icons/
+%                                       http://www.scip.be/index.php?Page=ArticlesGE02&Lang=EN
 %
 % For the <keyword,value> pairs and their defaults call
 %
@@ -64,24 +65,29 @@ function varargout = KMLscatter(lat,lon,c,varargin)
 %% process options
 
    % get colorbar options first
-   OPT                    = KMLcolorbar();
+   OPT                     = KMLcolorbar();
    % rest of the options
-   OPT.fileName           =  '';
-   OPT.kmlName            =  '';
-   OPT.colorMap           =  @(m) jet(m);
-   OPT.colorSteps         =  20;
-   OPT.cLim               =  [];
-   OPT.openInGE           =  0;
-   OPT.markerAlpha        =  0.6;
-   OPT.description        =  '';
-   OPT.colorbar           = 1;
+   OPT.fileName            =  '';
+   OPT.kmlName             =  '';
+   OPT.openInGE            =  0;
+   OPT.markerAlpha         =  0.6;
+   OPT.description         =  '';
+   OPT.timeIn              = [];
+   OPT.timeOut             = [];
+   OPT.html                = [];
+   OPT.name                = [];
 
-   OPT.html               = [];
-   OPT.name               = [];
-   OPT.iconnormalState    =  'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
-   OPT.iconhighlightState =  'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
-   OPT.scalenormalState   =  0.25;
-   OPT.scalehighlightState=  1.0;
+   OPT.iconnormalState     =  'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
+   OPT.iconhighlightState  =  'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
+   OPT.scalenormalState    =  0.25;
+   OPT.scalehighlightState =  1.0;
+
+   OPT.colorMap            =  @(m) jet(m);
+   OPT.colorSteps          =  20;
+   OPT.cLim                =  [];
+   OPT.colorbar            = 1;
+
+   OPT.dateStrStyle        = 29; % set to yyyy-mm-ddTHH:MM:SS for detailed times 
 
    if nargin==0
        varargout = {OPT};
@@ -128,7 +134,7 @@ function varargout = KMLscatter(lat,lon,c,varargin)
    lon    = lon(~isnan(c(:)));
    lat    = lat(~isnan(c(:)));
    c      =   c(~isnan(c(:)));
-
+   
    if isnumeric(OPT.colorMap)
       OPT.colorSteps = size(OPT.colorMap,1);
    end
@@ -148,7 +154,7 @@ function varargout = KMLscatter(lat,lon,c,varargin)
    %% showing number next to scatter point makes iconhighlightState too SLOW, 
    %  so show values only in pop-up.
 
-   if isempty(OPT.html);OPT.html = cellstr(num2str(c(:)));end
+  %if isempty(OPT.html);OPT.html = cellstr(num2str(c(:)));end
    if  ischar(OPT.html);OPT.html = cellstr(OPT.html  );end
   %if isempty(OPT.name);OPT.name = cellstr(num2str(c(:)));end %  makes iconhighlightState too SLOW!
    if  ischar(OPT.name);OPT.name = cellstr(OPT.name  );end
@@ -160,8 +166,8 @@ function varargout = KMLscatter(lat,lon,c,varargin)
 %% HEADER
 
    OPT_header = struct(...
-       'name',OPT.kmlName,...
-       'open',0,...
+              'name',OPT.kmlName,...
+              'open',0,...
        'description',OPT.description);
    output = KML_header(OPT_header);
    
@@ -246,75 +252,108 @@ end
 
    for ii=1:length(lon)
 
-    % convert color values into colorRGB index values
-    cindex = round(((c(ii)-OPT.cLim(1))/(OPT.cLim(2)-OPT.cLim(1))*(OPT.colorSteps-1))+1);
-    cindex = min(cindex,OPT.colorSteps);
-    cindex = max(cindex,1); % style numbering is 1-based
-    
+      %% preprocess timespan
+      if  ~isempty(OPT.timeIn)
+          if length(OPT.timeIn)>1
+              tt = ii;
+          else
+              tt = 1;
+          end
+          if ~isempty(OPT.timeOut)
+              timeSpan = sprintf([...
+                  '<TimeSpan>\n'...
+                  '<begin>%s</begin>\n'...OPT.timeIn
+                  '<end>%s</end>\n'...OPT.timeOut
+                  '</TimeSpan>\n'],...
+                  datestr(OPT.timeIn (tt),OPT.dateStrStyle),...
+                  datestr(OPT.timeOut(tt),OPT.dateStrStyle));
+          else
+              timeSpan = sprintf([...
+                  '<TimeStamp>\n'...
+                  '<when>%s</when>\n'...OPT.timeIn
+                  '</TimeStamp>\n'],...
+                  datestr(OPT.timeIn (tt),OPT.dateStrStyle));
+          end
+      else
+          timeSpan ='';
+      end
 
-    OPT_poly.styleName = ['cmarker_',num2str(cindex,'%0.3d'),'map'];
-    if isempty(OPT.name) & ~isempty(OPT.html)
-    newOutput= sprintf([...
-        '<Placemark>\n'...
-        ' <name></name>\n'...                          % no names so we see just the scatter points
-        ' <visibility>1</visibility>\n'...
-        ' <description><![CDATA['... % start required wrapper for html
-        '%s'...
-        ']]></description>\n'...     % end   required wrapper for html
-        ' <styleUrl>#%s</styleUrl>\n'...               % styleName
-        ' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n'...
-        ' </Placemark>\n'],...
-        str2line(cellstr(OPT.html{ii}),'s',''),... % remove trailing blanks per line (blanks are skipped in html anyway), and reshape 2D array correctly to 1D
-        OPT_poly.styleName,...
-        lon(ii),lat(ii));
-    elseif isempty(OPT.name) & isempty(OPT.html)
-    newOutput= sprintf([...
-        '<Placemark>\n'...
-        ' <name></name>\n'...                          % no names so we see just the scatter points
-        ' <visibility>1</visibility>\n'...
-        ' <styleUrl>#%s</styleUrl>\n'...               % styleName
-        ' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n'...
-        ' </Placemark>\n'],...
-        OPT_poly.styleName,...
-        lon(ii),lat(ii));
-    elseif ~isempty(OPT.name) & isempty(OPT.html)
-    newOutput= sprintf([...
-        '<Placemark>\n'...
-        ' <name>%s</name>\n'...                          % no names so we see just the scatter points
-        ' <visibility>1</visibility>\n'...
-        ' <styleUrl>#%s</styleUrl>\n'...               % styleName
-        ' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n'...
-        ' </Placemark>\n'],...
-        OPT.name{ii},...
-        OPT_poly.styleName,...
-        lon(ii),lat(ii));
-    else
-    newOutput= sprintf([...
-        '<Placemark>\n'...
-        ' <name>%s</name>\n'...                          % no names so we see just the scatter points
-        ' <visibility>1</visibility>\n'...
-        ' <description><![CDATA['... % start required wrapper for html
-        '%s'...
-        ']]></description>\n'...     % end   required wrapper for html
-        ' <styleUrl>#%s</styleUrl>\n'...               % styleName
-        ' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n'...
-        ' </Placemark>\n'],...
-        char(OPT.name{ii}),...
-        str2line(cellstr(OPT.html{ii}),'s',''),... % remove trailing blanks per line (blanks are skipped in html anyway), and reshape 2D array correctly to 1D
-        OPT_poly.styleName,...
-        lon(ii),lat(ii));
-    end
+      % convert color values into colorRGB index values
+      cindex = round(((c(ii)-OPT.cLim(1))/(OPT.cLim(2)-OPT.cLim(1))*(OPT.colorSteps-1))+1);
+      cindex = min(cindex,OPT.colorSteps);
+      cindex = max(cindex,1); % style numbering is 1-based
+      
+      OPT_poly.styleName = ['cmarker_',num2str(cindex,'%0.3d'),'map'];
+      if isempty(OPT.name) & ~isempty(OPT.html)
+      newOutput= sprintf([...
+          '<Placemark>\n'...
+          ' <name></name>\n'...            % no names so we see just the scatter points
+          ' <visibility>1</visibility>\n'...
+          ' <description><![CDATA['...     % start required wrapper for html
+          '%s'...
+          ']]></description>\n'...         % end   required wrapper for html
+          '%s',...                         % timeSpan
+          ' <styleUrl>#%s</styleUrl>\n'... % styleName
+          ' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n'...
+          ' </Placemark>\n'],...
+          str2line(cellstr(OPT.html{ii}),'s',''),... % remove trailing blanks per line (blanks are skipped in html anyway), and reshape 2D array correctly to 1D
+          timeSpan,...
+          OPT_poly.styleName,...
+          lon(ii),lat(ii));
+      elseif isempty(OPT.name) & isempty(OPT.html)
+      newOutput= sprintf([...
+          '<Placemark>\n'...
+          ' <name></name>\n'...            % no names so we see just the scatter points
+          ' <visibility>1</visibility>\n'...
+          '%s',...                         % timeSpan
+          ' <styleUrl>#%s</styleUrl>\n'... % styleName
+          ' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n'...
+          ' </Placemark>\n'],...
+          timeSpan,...
+          OPT_poly.styleName,...
+          lon(ii),lat(ii));
+      elseif ~isempty(OPT.name) & isempty(OPT.html)
+      newOutput= sprintf([...
+          '<Placemark>\n'...
+          ' <name>%s</name>\n'...          % no names so we see just the scatter points
+          ' <visibility>1</visibility>\n'...
+          '%s',...                         % timeSpan
+          ' <styleUrl>#%s</styleUrl>\n'... % styleName
+          ' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n'...
+          ' </Placemark>\n'],...
+          OPT.name{ii},...
+          timeSpan,...
+          OPT_poly.styleName,...
+          lon(ii),lat(ii));
+      else
+      newOutput= sprintf([...
+          '<Placemark>\n'...
+          ' <name>%s</name>\n'...          % no names so we see just the scatter points
+          ' <visibility>1</visibility>\n'...
+          ' <description><![CDATA['...     % start required wrapper for html
+          '%s'...
+          ']]></description>\n'...         % end   required wrapper for html
+          '%s',...                         % timeSpan
+          ' <styleUrl>#%s</styleUrl>\n'... % styleName
+          ' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n'...
+          ' </Placemark>\n'],...
+          char(OPT.name{ii}),...
+          str2line(cellstr(OPT.html{ii}),'s',''),... % remove trailing blanks per line (blanks are skipped in html anyway), and reshape 2D array correctly to 1D
+          timeSpan,...
+          OPT_poly.styleName,...
+          lon(ii),lat(ii));
+      end
 
-    % add newOutput to output
-    output(kk:kk+length(newOutput)-1) = newOutput;
-    kk = kk+length(newOutput);
+      % add newOutput to output
+      output(kk:kk+length(newOutput)-1) = newOutput;
+      kk = kk+length(newOutput);
 
-    % write output to file if output is full, and reset
-    if kk>1e5
-        fprintf(OPT.fid,'%s',output(1:kk-1));
-        kk = 1;
-        output = repmat(char(1),1,1e5);
-    end
+      % write output to file if output is full, and reset
+      if kk>1e5
+          fprintf(OPT.fid,'%s',output(1:kk-1));
+          kk = 1;
+          output = repmat(char(1),1,1e5);
+      end
 
    end
 

@@ -51,6 +51,7 @@ disp(['... running test:',mfilename])
 %% $RunCode
 try
 
+%% case 1
     scale = 5e3;
     [lat,lon] = meshgrid(54:.1:57,2:.1:5);
     z = peaks(31);
@@ -61,6 +62,23 @@ try
     KMLquiver(lat,lon,-scale.*v,scale.*u,'fileName',KML_testdir('KMLquiver_test_arrows.kml'));
     KMLpcolor(lat,lon,                 z,'fileName',KML_testdir('KMLquiver_test_streamfunction.kml'));
     testresult = true;
+    
+%% case 2
+
+   dt = 10; % a litle slow so it looks clocklike
+   t  = 0:dt:360;
+
+   KMLquiver( repmat(52,size(t)),...
+              repmat( 4,size(t)),...
+              sind(t).*10000,... % v
+              cosd(t).*10000,... % u
+            'fileName',KML_testdir('KMLquiver_test_unit_circle.kml'),...
+             'kmlName','unit_circle',...
+          'arrowStyle', 'blackTip',...
+            'openInGE',0,...
+              'timeIn',now + t,...
+             'timeOut',now + t + dt);
+    
 catch
     testresult = false;
 end

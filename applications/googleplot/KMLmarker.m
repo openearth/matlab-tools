@@ -12,6 +12,12 @@ function varargout = KMLmarker(lat,lon,varargin)
 %                             by default empty.
 %  * html                   = cellstr with text per point (shown when highlighted)
 %                             by default equal to value of c
+%  * OPT.iconnormalState    = marker, default 'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png'
+%  * OPT.iconhighlightState = see also, http://www.mymapsplus.com/Markers, 
+%                                       http://www.visual-case.it/cgi-bin/vc/GMapsIcons.pl
+%                                       http://www.benjaminkeen.com/?p=105
+%                                       http://code.google.com/p/google-maps-icons/
+%                                       http://www.scip.be/index.php?Page=ArticlesGE02&Lang=EN
 %
 % For the <keyword,value> pairs and their defaults call
 %
@@ -66,13 +72,15 @@ function varargout = KMLmarker(lat,lon,varargin)
    OPT.timeOut             = [];
    OPT.html                = [];
    OPT.name                = [];
+
    OPT.iconnormalState     =  '';
    OPT.iconhighlightState  =  '';
    OPT.scalenormalState    =  0.5;
    OPT.scalehighlightState =  1.0;
    OPT.colornormalState    =  []; % [1 1 0] = yellow
    OPT.colorhighlightState =  [];
-   OPT.dateStrStyle       = 29; % set to yyyy-mm-ddTHH:MM:SS for detailed times 
+
+   OPT.dateStrStyle        = 29; % set to yyyy-mm-ddTHH:MM:SS for detailed times 
    
    if nargin==0
        varargout = {OPT};
@@ -227,31 +235,32 @@ output = [output '<!--############################-->\n'];
 %% Plot the points
 
    for ii=1:length(lon)
-       %% preprocess timespan
-       if  ~isempty(OPT.timeIn)
-           if length(OPT.timeIn)>1
-               tt = ii;
-           else
-               tt = 1;
-           end
-           if ~isempty(OPT.timeOut)
-               timeSpan = sprintf([...
-                   '<TimeSpan>\n'...
-                   '<begin>%s</begin>\n'...OPT.timeIn
-                   '<end>%s</end>\n'...OPT.timeOut
-                   '</TimeSpan>\n'],...
-                   datestr(OPT.timeIn (tt),OPT.dateStrStyle),...
-                   datestr(OPT.timeOut(tt),OPT.dateStrStyle));
-           else
-               timeSpan = sprintf([...
-                   '<TimeStamp>\n'...
-                   '<when>%s</when>\n'...OPT.timeIn
-                   '</TimeStamp>\n'],...
-                   datestr(OPT.timeIn (tt),OPT.dateStrStyle));
-           end
-       else
-           timeSpan ='';
-       end
+
+      %% preprocess timespan
+      if  ~isempty(OPT.timeIn)
+          if length(OPT.timeIn)>1
+              tt = ii;
+          else
+              tt = 1;
+          end
+          if ~isempty(OPT.timeOut)
+              timeSpan = sprintf([...
+                  '<TimeSpan>\n'...
+                  '<begin>%s</begin>\n'...OPT.timeIn
+                  '<end>%s</end>\n'...OPT.timeOut
+                  '</TimeSpan>\n'],...
+                  datestr(OPT.timeIn (tt),OPT.dateStrStyle),...
+                  datestr(OPT.timeOut(tt),OPT.dateStrStyle));
+          else
+              timeSpan = sprintf([...
+                  '<TimeStamp>\n'...
+                  '<when>%s</when>\n'...OPT.timeIn
+                  '</TimeStamp>\n'],...
+                  datestr(OPT.timeIn (tt),OPT.dateStrStyle));
+          end
+      else
+          timeSpan ='';
+      end
        
     %% preprocess html   
     

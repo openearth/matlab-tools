@@ -1,7 +1,7 @@
 function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 % KMLQUIVER Just like quiver
 %
-%    KMLquiver(LAT,lon,u,V,<keyword,value>) % ! NOTE THE ORDER OF LAT/LON vs. V/U !
+%    KMLquiver(LAT,lon,V,u,<keyword,value>) % ! NOTE THE ORDER OF LAT/LON vs. V/U !
 %
 % Keywords:
 %
@@ -21,11 +21,11 @@ function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 % Example:
 %
 %     [Lat Lon] = meshgrid(-80:10:80,-170:10:180);
-%     u = (rand(size(Lat))-.5);
 %     v = (rand(size(Lat))-.5);
+%     u = (rand(size(Lat))-.5);
 %     cmap = colormap_cpt('temperature');
 %     fillColors = cmap(ceil((u.^2+v.^2)*2*size(cmap,1)),:);
-%     KMLquiver(Lat,Lon,u,v,'arrowScale',5e5,'lineWidth',2,...
+%     KMLquiver(Lat,Lon,v,u,'arrowScale',5e5,'lineWidth',2,...
 %         'fillColor',fillColors,'fillAlpha',1);
 %
 % Adjust 'W1'..'W4' and 'L1'..'L4' for user defined arrow shapes
@@ -120,10 +120,13 @@ OPT = struct(...
     'W1'         ,[],'W2'       ,[],'W3'       ,[],'W4'       ,[],...
     'L1'         ,[],'L2'       ,[],'L3'       ,[],'L4'       ,[]);
 
-OPT.timeIn = [];
+OPT.timeIn  = [];
 OPT.timeOut = [];
 
 [OPT, Set, Default] = setproperty(OPT, varargin);
+if length(OPT.timeIn ) ==1;OPT.timeIn  = repmat(OPT.timeIn ,[1 length(lat(1,:))]);end
+if length(OPT.timeOut) ==1;OPT.timeOut = repmat(OPT.timeOut,[1 length(lat(1,:))]);end
+
 %% pre defined arrow types
 % additional user settings override presets
 
@@ -140,7 +143,7 @@ OPT2 = struct(...
     'lineAlpha'  ,1,...
     'fillColor'  ,[1 0 0],...
     'fillAlpha'  ,0.75,...
-    'W1'         ,0.12,'W2'       ,0.30,'W3'       ,0.30,'W4'       ,0.15,...
+    'W1'         ,0.12,'W2'       ,0.20,'W3'       ,0.20,'W4'       ,0.15,...
     'L1'         ,0.80,'L2'       ,0.70,'L3'       ,0.70,'L4'       ,0.20);
 
 % OPT2.timeIn  = [];
@@ -226,15 +229,15 @@ A.abs(dubblePoints) = [];
 A.ang(end+1) = A.ang(1);
 A.abs(end+1) = A.abs(1);
 
-% Calculate polar coordinates of individual arrwos
+% Calculate polar coordinates of individual arrows
 for i=1:length(A.abs)
     A.ABS(i,:) = scale*A.abs(i);
     A.ANG(i,:) = angle+A.ang(i);
 end
 
-arrowLat =   repmat(lat,length(A.abs),1)+A.ABS.*cos(A.ANG);
-arrowLon =   repmat(lon,length(A.abs),1)+A.ABS.*sin(A.ANG)...
-    ./repmat(cosd(lat),length(A.abs),1);
+arrowLat =   repmat(lat,length(A.abs),1) + A.ABS.*cos(A.ANG);
+arrowLon =   repmat(lon,length(A.abs),1) + A.ABS.*sin(A.ANG)...
+    ./repmat(cosd(lat),length(A.abs),1); % d_longitudes squeeze to zero as we move latitudeward (i.e. as we near the north pole)
 
 arrowLon = mod(arrowLon+180, 360)-180;
 
@@ -251,10 +254,10 @@ OPT.fid=fopen(OPT.fileName,'w');
 
 %% HEADER
 OPT_header = struct(...
-    'name',OPT.kmlName,...
-    'open',0,...
+           'name',OPT.kmlName,...
+           'open',0,...
     'description',OPT.description,...
-    'visible',OPT.visible);
+        'visible',OPT.visible);
 output = KML_header(OPT_header);
 
 %% LINESTYLE
@@ -316,21 +319,21 @@ fprintf(OPT.fid,output);
 
 %% ARROWS
 OPT_line = struct(...
-    'name','',...
-    'styleName',['arrowline' num2str(1)],...
-    'timeIn',[],...
-    'timeOut',[],...
+          'name','',...
+     'styleName',['arrowline' num2str(1)],...
+        'timeIn',[],...
+       'timeOut',[],...
     'visibility',OPT.visible,...
-    'extrude',0);
+       'extrude',0);
 
 if OPT.arrowFill
     OPT_poly = struct(...
-        'name','',...
-        'styleName',['arrowfill' num2str(1)],...
-        'timeIn',[],...
-        'timeOut',[],...
+              'name','',...
+         'styleName',['arrowfill' num2str(1)],...
+            'timeIn',[],...
+           'timeOut',[],...
         'visibility',1,...
-        'extrude',0);
+           'extrude',0);
 end
 
 % preallocate output
@@ -342,8 +345,8 @@ for ii=1:length(lat(1,:))
     if length(OPT.lineColor(:,1))+length(OPT.lineWidth)+length(OPT.lineAlpha)>3
         OPT_line.styleName = ['arrowline' num2str(ii)];
     end
-    if isempty(OPT.timeIn) ,OPT_line.timeIn  = [];else OPT_line.timeIn  = datestr(OPT.timeIn(1) ,OPT.dateStrStyle); end
-    if isempty(OPT.timeOut),OPT_line.timeOut = [];else OPT_line.timeOut = datestr(OPT.timeOut(1),OPT.dateStrStyle); end
+    if isempty(OPT.timeIn) ,OPT_line.timeIn  = [];else OPT_line.timeIn  = datestr(OPT.timeIn(ii) ,OPT.dateStrStyle); end
+    if isempty(OPT.timeOut),OPT_line.timeOut = [];else OPT_line.timeOut = datestr(OPT.timeOut(ii),OPT.dateStrStyle); end
     
     newOutput = KML_line(arrowLat(:,ii),arrowLon(:,ii),'clampToGround',OPT_line);
     
@@ -353,8 +356,8 @@ for ii=1:length(lat(1,:))
             OPT_poly.styleName = ['arrowfill' num2str(ii)];
         end
         
-        if isempty(OPT.timeIn) ,OPT_poly.timeIn  = [];else OPT_poly.timeIn  = datestr(OPT.timeIn(1) ,OPT.dateStrStyle); end
-        if isempty(OPT.timeOut),OPT_poly.timeOut = [];else OPT_poly.timeOut = datestr(OPT.timeOut(1),OPT.dateStrStyle); end
+        if isempty(OPT.timeIn) ,OPT_poly.timeIn  = [];else OPT_poly.timeIn  = datestr(OPT.timeIn(ii) ,OPT.dateStrStyle); end
+        if isempty(OPT.timeOut),OPT_poly.timeOut = [];else OPT_poly.timeOut = datestr(OPT.timeOut(ii),OPT.dateStrStyle); end
         
         newOutput = [newOutput...
             KML_poly(arrowLat(:,ii),arrowLon(:,ii),'clampToGround',OPT_poly)];
