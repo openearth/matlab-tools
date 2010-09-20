@@ -1,4 +1,4 @@
-function ExportTEK(data,times,fname,blname,comments)
+function exportTEK(data,times,fname,blname,comments)
 
 fid=fopen(fname,'w');
 
