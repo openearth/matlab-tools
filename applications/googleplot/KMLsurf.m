@@ -69,9 +69,9 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    OPT.extrude            = false;
    OPT.cLim               = [];
    OPT.zScaleFun          = @(z) (z+20).*5;
+   OPT.colorbar           = 1;
    OPT.timeIn             = [];
    OPT.timeOut            = [];
-   OPT.colorbar           = 1;
    OPT.dateStrStyle       = 'yyyy-mm-ddTHH:MM:SS';
    
    if nargin==0
