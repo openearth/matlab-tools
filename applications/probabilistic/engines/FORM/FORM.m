@@ -220,7 +220,7 @@ while NextIter
     % optionally log convergence info to file
     if ~isempty(OPT.logconvergence)
         fid = fopen(OPT.logconvergence, 'a');
-        fprintf(fid, '%2i %5.3f %5.3f %5.3f\n', criteriumZ(Iter), criteriumZ2(Iter), criteriumBeta(Iter));
+        fprintf(fid, '%2i %5.3f %5.3f %5.3f\n', Iter, criteriumZ(Iter), criteriumZ2(Iter), criteriumBeta(Iter));
         fclose(fid);
     end
     
