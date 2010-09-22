@@ -16,6 +16,9 @@ function ddcompile(varargin)
 %     end
 % end
 
+statspath='Y:\app\MATLAB2009b\toolbox\stats';
+rmpath(statspath);
+
 delete('exe\*');
 
 fid=fopen('complist','wt');
@@ -95,8 +98,7 @@ try
     system(['"' matlabroot '\sys\lcc\bin\lrc" /i "' pwd '\earthicon.rc"']);
 end
 
-%mcc -m -d exe DelftDashBoard.m -B complist -a settings -a F:\checkout\OpenEarthTools\trunk\matlab\io\netcdf\netcdfAll-4.1.jar -M earthicon.res
-mcc -m -d exe DelftDashBoard.m -B complist -a settings -M earthicon.res
+mcc -m -d exe DelftDashBoard.m -B complist -a settings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
 
 % make about.txt file
 Revision = '$Revision$';
