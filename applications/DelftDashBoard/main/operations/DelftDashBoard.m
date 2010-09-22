@@ -73,6 +73,14 @@ handles.MatlabVersion=version;
 %     %    May break previous work though ...
 % end
 
+% Add java paths for snc tools
+if isdeployed
+    pth=[ctfroot filesep 'checkout' filesep 'OpenEarthTools' filesep 'trunk' filesep 'matlab' filesep 'io' filesep 'netcdf' filesep 'toolsUI-4.1.jar'];
+    disp(['SNC jar file is : ' pth]);
+    javaaddpath(pth);
+    setpref ('SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
+    setpref ('SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
+end
 
 disp(['Delft DashBoard v' handles.DelftDashBoardVersion]);
 disp(['Matlab v' version]);
