@@ -1,7 +1,9 @@
 function varargout = KMLtricontourf3(tri,lat,lon,z,varargin)
 %KMLTRICONTOURF3  Wrapper for KMLtricontourf, to make it 3D
 %
-%   See also 
+%     KMLtricontourf3(tri,lat,lon,z,<keyword,value>)
+%
+%See also: GooglePlot
 
 %% Copyright notice
 %   --------------------------------------------------------------------

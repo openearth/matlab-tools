@@ -44,24 +44,25 @@ function [OPT, Set, Default] = KMLpatch3(lat,lon,z,varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% process varargin
-OPT.fileName    = '';
-OPT.kmlName     = '';
-OPT.lineWidth   = 1;
-OPT.lineColor   = [0 0 0];
-OPT.lineAlpha   = 1;
-OPT.fillColor   = [1 1 1];
-OPT.fillAlpha   = 0.3;
-OPT.fileName    = '';
-OPT.polyOutline = 1;
-OPT.polyFill    = 1;
-OPT.openInGE    = false;
-OPT.reversePoly = false;
-OPT.extrude     = 0;
-OPT.text        = '';
-OPT.latText     = [];
-OPT.lonText     = [];
-OPT.precision   = 8;
+    %% process varargin
+    OPT.fileName    = '';
+    OPT.kmlName     = '';
+    OPT.lineWidth   = 1;
+    OPT.lineColor   = [0 0 0];
+    OPT.lineAlpha   = 1;
+    OPT.fillColor   = [1 1 1];
+    OPT.fillAlpha   = 0.3;
+    OPT.fileName    = '';
+    OPT.polyOutline = 1;
+    OPT.polyFill    = 1;
+    OPT.openInGE    = false;
+    OPT.reversePoly = false;
+    OPT.extrude     = 0;
+    OPT.text        = '';
+    OPT.latText     = [];
+    OPT.lonText     = [];
+    OPT.precision   = 8;
+    OPT.zScaleFun          = @(z) (z+20).*5;
 
 if nargin==0
   return
@@ -120,7 +121,7 @@ OPT_poly = struct(...
 'extrude'   ,OPT.extrude,...
 'precision',OPT.precision);
 
-output = [output KML_poly(lat(:),lon(:),z(:),OPT_poly)]; % make sure that lat(:),lon(:) have correct dimension nx1
+output = [output KML_poly(lat(:),lon(:),OPT.zScaleFun(z(:)),OPT_poly)]; % make sure that lat(:),lon(:) have correct dimension nx1
 
 %% text
 

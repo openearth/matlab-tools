@@ -165,9 +165,9 @@ function varargout = nc_cf_grid_write(varargin)
       % a2.lon vector, x matrix: (lon,lat) ,,
       % b .lon matrix          : (col,row) nc_cf_grid_write_lat_lon_curvilinear_tutorial
       % c1.lon matrix, x vector: (x  ,y  ) nc_cf_grid_write_x_y_orthogonal_tutorial
-      % c2.            x vector: error
+      % c2.            x vector: warning
       % d1.lon matrix, x matrix: (col,row) nc_cf_grid_write_x_y_curvilinear_tutorial
-      % d2.            x matrix: error
+      % d2.            x matrix: warning
 
       if     isempty (OPT.x) & isempty (OPT.y)
         if isvector(OPT.lon) & isvector(OPT.lat)
@@ -199,8 +199,8 @@ function varargout = nc_cf_grid_write(varargin)
            error('dimension 1 of matrix should match length(y)')
          end
 % c2
-         if ~isvector(OPT.lon) & ~isvector(OPT.lat)
-         error('lat,lon required')
+         if isempty(OPT.lon) & isempty(OPT.lat)
+            warning('lat,lon required')
          end
       else
          if isvector(OPT.lon) & isvector(OPT.lat)
@@ -256,7 +256,11 @@ function varargout = nc_cf_grid_write(varargin)
       end
       
       clear x y
+      
+   elseif isempty(OPT.epsg) & ~(isempty(OPT.lat & OPT.lon))
 
+       warning('no lat,lon possible: please supply epsg code.');
+       
    end
 
 %% 1a Create file

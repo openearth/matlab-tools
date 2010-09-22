@@ -1,8 +1,8 @@
 function [OPT, Set, Default] = KMLtrisurf(tri,lat,lon,z,varargin)
 % KMLTRISURF   Just like trisurf
 %
-%   [OPT, Set, Default] = KMLtrisurf(lat,lon,z,<keyword,value>)
-%   [OPT, Set, Default] = KMLtrisurf(lat,lon,z,c,<keyword,value>)
+%   [OPT, Set, Default] = KMLtrisurf(tri,lat,lon,z  ,<keyword,value>)
+%   [OPT, Set, Default] = KMLtrisurf(tri,lat,lon,z,c,<keyword,value>)
 %
 % use in combination with delaunay_simplified to make simple grids
 % that google can easily display 
@@ -78,6 +78,10 @@ if all(isnan(z(:)))
     disp('warning: No surface could be constructed, because there was no valid height data provided...') %#ok<WNTAG>
     return
 end
+
+lat = lat(:);
+lon = lon(:);
+z   = z(:);
 
 %% assign c if it is given
 if ~isempty(varargin)
@@ -188,7 +192,9 @@ end
        %                 LON = LON(end:-1:1);
        %                   Z =   Z(end:-1:1);
        %             end
-       newOutput = KML_poly(lat(tri(ii,[1:3 1])'),lon(tri(ii,[1:3 1]))',OPT.zScaleFun(z(tri(ii,[1:3 1]))'),OPT_poly);  % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
+       newOutput = KML_poly(lat(tri(ii,[1:3 1])),...
+                            lon(tri(ii,[1:3 1])),...
+                OPT.zScaleFun(z(tri(ii,[1:3 1]))),OPT_poly);  % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
        output(kk:kk+length(newOutput)-1) = newOutput;
        kk = kk+length(newOutput);
        if kk>1e5

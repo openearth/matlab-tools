@@ -1,16 +1,17 @@
-function E = edges_tri_grid(tri,x,y,z)
+function varargout = edges_tri_grid(tri,x,y,z)
 %EDGES_TRI_GRID finds the edge vertices of a triangluated mesh
 %
-%   More detailed description goes here.
+%      E = edges_tri_grid(tri,x,y,z)
 %
-%   Syntax:
-%   E = trisurf_edges(varargin)
+%   finds the edge vertices of a triangluated mesh
 %
 %   Input:
 %   tri,x,y,z  = just like for trisurf
 %
 %   Output:
 %   E = is a matrix, contains the coordinates of all points, and their connectivity [x,y,z,loop_index]
+%   Alternative syntax:
+%   [x,y,z,polygon_number,smart_something] = edges_tri_grid(tri,x,y,z)
 %
 %   Example
 %   trisurf_edges
@@ -183,7 +184,11 @@ for ii=1:E(end,4)
         E(jj,1),E(jj,2));
 end
 
- 
+if nargout==1
+    varargout = {E};
+else
+    varargout = {E(:,1),E(:,2),E(:,3),E(:,4),E(:,5),};
+end
  
 
 

@@ -1,5 +1,5 @@
 function OUT = filenameext(fullfilename)
-%FILENAMEEXT   Returns [NAME,EXT] from [PATHSTR,NAME,EXT,VERSN] = FILEPARTS(FILE).
+%FILENAMEEXT   Returns [NAME,EXT] from [PATHSTR,NAME,EXT] = FILEPARTS(FILE).
 %
 % Note that FILENAMEEXT is vectorized, whereas FILEPARTS is not.
 %
@@ -15,7 +15,7 @@ function OUT = filenameext(fullfilename)
 
 for iname=1:size(fullfilename,1)
 
-   [PATHSTR{iname},NAME{iname},EXT{iname},VERSN{iname}] = fileparts(fullfilename(iname,:));
+   [PATHSTR{iname},NAME{iname},EXT{iname}] = fileparts(fullfilename(iname,:));
 
 end   
 

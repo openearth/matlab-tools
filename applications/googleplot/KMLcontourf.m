@@ -6,7 +6,8 @@ function varargout = KMLcontourf(lat,lon,z,varargin)
 % Please discuss suggestions for improvements wit me (Thijs), or just put
 % them on the TODO list. 
 %
-%    KMLcontourf(lat,lon,z,<keyword,value>)
+%    KMLcontourf(lat,lon,z,      <keyword,value>)
+%    KMLcontourf(lat,lon,z,<tri>,<keyword,value>)
 % 
 % For the <keyword,value> pairs and their defaults call
 %

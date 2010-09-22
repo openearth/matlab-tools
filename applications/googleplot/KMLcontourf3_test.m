@@ -89,7 +89,7 @@ nn=30;
 % trisurf(tri,y,x,z)
 
 KMLcontourf3(x/30,y/30,z,'levels',nn,'fileName',KML_testdir('KMLcontourf3 - 3.kmz'),...
-    'zScaleFun',@(z) (z+20)*400,'staggered',false,'colorbar',false,'debug',false)
+    'zScaleFun',@(z) (z+20)*400,'staggered',false,'colorbar',false,'debug',false,'extrude',0)
 end
 
 function test4()
