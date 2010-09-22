@@ -190,7 +190,7 @@ while NextIter
     sts = 1:Nstoch;
     for st = sts(active)
         % derive dz/du for the active variables
-        dzdu(st) = (z(id_upp(st)) - z(id_low(st)))/(OPT.du);
+        dzdu(st) = (z(id_upp(st)) - z(id_low(st))) / (u(id_upp(st),st) - u(id_low(st),st));
     end
     
     % lineariseer de z-functie in u:
