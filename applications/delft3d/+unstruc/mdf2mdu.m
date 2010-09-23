@@ -1,4 +1,4 @@
-function varargout = mdf2mdu(varargin)
+%function varargout = mdf2mdu(varargin)
 %MDF2MDU   convert Delft3D-flow model input to UNSTRUC model input
 %
 %See also: unstruc
@@ -10,17 +10,19 @@ function varargout = mdf2mdu(varargin)
 %% specify
 % -------------------------
 
-  OPT.mdf     = 's01.mdf';
-  OPT.ncfile  = 'waddenz_net.nc';
-  OPT.debug   = 0;
-  OPT.extend  = 0.01; % extend pli end-points a bit by fraction of cell size to ensure a crossing with boundary sticks
+  OPT.mdf      = 'dcsm98a.mdf'; % I need enc
+  OPT.bnd      = 'dcsm98_unstruc.bnd'; % overrides *.bnd without pli information in *.mdf
+  OPT.pli_test = 'dcsm98_tst.pli';
+  OPT.ncfile   = '';
+  OPT.debug    = 1;
+  OPT.extend   = 0.01; % extend pli end-points a bit by fraction of cell size to ensure a crossing with boundary sticks
   
-   OPT = setproperty(OPT,varargin);
-   
-   if nargin==0
-      varargout = {OPT};
-      return
-   end
+%   OPT = setproperty(OPT,varargin);
+%   
+%   if nargin==0
+%      varargout = {OPT};
+%      return
+%   end
   
 %% read delft3d-flow input
 % -------------------------
@@ -40,13 +42,13 @@ function varargout = mdf2mdu(varargin)
     end
    OPT.typ  = 'tim'; % 'tim' for time series or 'cmp' for bca
    end
-   BND      = delft3d_io_bnd('read','wadden2005_pli.bnd',GRD); % added reading optional, undocumented pli_name and pli_nr
+   BND      = delft3d_io_bnd('read',OPT.bnd,GRD); % added reading optional, undocumented pli_name and pli_nr
    
    if OPT.debug
-      grid_plot(GRD.cen.x ,GRD.cen.y ,'b-')
-      hold on
       grid_plot(GRD.cor.x ,GRD.cor.y ,'k','linewidth',2)
-      grid_plot(GRD.cend.x,GRD.cend.y,'b:')
+      hold on
+      grid_plot(GRD.cen.x ,GRD.cen.y ,'b-','linewidth',1)
+      grid_plot(GRD.cend.x,GRD.cend.y,'g:')
       plot(BND.x',BND.y','r-*','linewidth',2)
       for i=1:BND.NTables
       text(mean(BND.x(i,:)),mean(BND.y(i,:)),[BND.DATA(i).name])
@@ -56,27 +58,29 @@ function varargout = mdf2mdu(varargin)
    
    P.x = reshape(BND.x',[1 prod(size(BND.x))]);
    P.y = reshape(BND.y',[1 prod(size(BND.y))]);
-   landboundary('write','wadden_tst.pli',P.x,P.y)
+   landboundary('write',OPT.pli_test,P.x,P.y)
    
 %% rewrite dep
 % -------------------------
    
-   N.x = nc_varget (OPT.ncfile,'NetNode_x');
-   N.y = nc_varget (OPT.ncfile,'NetNode_y');
-  %N.z = nc_varget (OPT.ncfile,'NetNode_z');
-   N.z = zeros(size(N.x)) + -999;
-
-   % fill holes with nearest sample (best if original grid was also at corners and this simply unstructured version of the structure grid)
-
-   mask = N.z==-999;
-   N.z(mask)=nan;
-   if OPT.debug;scatter(N.x,N.y,5,N.z,'.');end
-   DEP.cor.mask = ~isnan(DEP.cor.dep);
-   N.z = griddata(DEP.cor.x(DEP.cor.mask),DEP.cor.y(DEP.cor.mask),-DEP.cor.dep(DEP.cor.mask),N.x,N.y,'nearest');
-   hold on
-   if OPT.debug;scatter(N.x,N.y,5,N.z,'o');end
-   copyfile(OPT.ncfile,[filename(OPT.ncfile),'_filled.nc'])
-   nc_varput([filename(OPT.ncfile),'_filled.nc'],'NetNode_z',N.z);
+   if ~isempty(OPT.ncfile)
+      N.x = nc_varget (OPT.ncfile,'NetNode_x');
+      N.y = nc_varget (OPT.ncfile,'NetNode_y');
+  %   N.z = nc_varget (OPT.ncfile,'NetNode_z');
+      N.z = zeros(size(N.x)) + -999;
+      
+      % fill holes with nearest sample (best if original grid was also at corners and this simply unstructured version of the structure grid)
+      
+      mask = N.z==-999;
+      N.z(mask)=nan;
+      if OPT.debug;scatter(N.x,N.y,5,N.z,'.');end
+      DEP.cor.mask = ~isnan(DEP.cor.dep);
+      N.z = griddata(DEP.cor.x(DEP.cor.mask),DEP.cor.y(DEP.cor.mask),-DEP.cor.dep(DEP.cor.mask),N.x,N.y,'nearest');
+      hold on
+      if OPT.debug;scatter(N.x,N.y,5,N.z,'o');end
+      copyfile(OPT.ncfile,[filename(OPT.ncfile),'_filled.nc'])
+      nc_varput([filename(OPT.ncfile),'_filled.nc'],'NetNode_z',N.z);
+   end
 
 %% save unstruc-pli
 %  make lots of separate polygons and link all polygons
@@ -152,8 +156,6 @@ for ipli = 1:length(pli.names)
       for j=1:2
       c   = (i-1)*2+j;
       fil = [filename(pli.names{ipli}),'_',num2str(c,'%0.4d'),'.',OPT.typ];
-      txt = ['''',fil,''''];
-      fprintf(fid,'%f %f %s\n',pli.x{ipli}(i,j),pli.y{ipli}(i,j),txt); % x,y, <yet unused name of associated data file>
       
       if strmatch(OPT.typ,'tim')
       
@@ -175,30 +177,38 @@ for ipli = 1:length(pli.names)
          % 120.   3.0
          % 9999.  3.0   
          
-         save(fil,'-ascii','dat')
+         txt = ['''tim',filesep,fil,''''];
+         mkdir('tim')
+         fprintf(fid,'%f %f %s\n',pli.x{ipli}(i,j),pli.y{ipli}(i,j),txt); % x,y, <yet unused name of associated data file>
+         save(['tim' filesep fil],'-ascii','dat')
          
       elseif strmatch(OPT.typ,'cmp')
       
-         fid = fopen(fil,'w');
+         txt = ['''cmp',filesep,fil,''''];
+         mkdir('cmp')
+         fprintf(fid,'%f %f %s\n',pli.x{ipli}(i,j),pli.y{ipli}(i,j),txt); % x,y, <yet unused name of associated data file>
+         fid(end+1) = fopen(['cmp' filesep fil],'w');
          
-         fprintf(fid,'* Delft3D-FLOW boundary segment name: %s\n' ,BND.DATA(i).name);
+         fprintf(fid(end),'* Delft3D-FLOW boundary segment name: %s\n' ,BND.DATA(i).name);
          if j==1
-         fprintf(fid,'* Delft3D-FLOW boundary segment label: %s\n',BND.DATA(i).labelA);
+         fprintf(fid(end),'* Delft3D-FLOW boundary segment label: %s\n',BND.DATA(i).labelA);
          else
-         fprintf(fid,'* %s\n',BND.DATA(i).labelB);
+         fprintf(fid(end),'* %s\n',BND.DATA(i).labelB);
          end
          
-         fprintf(fid,'%s\n','* COLUMNN=3');
-         fprintf(fid,'%s\n','* COLUMN1=Period (min) or Astronomical Componentname');
-         fprintf(fid,'%s\n','* COLUMN2=Amplitude (m)');
-         fprintf(fid,'%s\n','* COLUMN3=Phase (deg)');
-         fprintf(fid,'%s\n','0.0           0.000         0.0');
-         for icomp=1:length(BND.DATA(i).names{j})
-         fprintf(fid,'%12s %10.3g %10.3g\n',BND.DATA(i).names{j}{icomp},...
-                            BND.DATA(i).amp{j}(icomp),...
-                            BND.DATA(i).phi{j}(icomp));
+         fprintf(fid(end),'%s\n','* COLUMNN=3');
+         fprintf(fid(end),'%s\n','* COLUMN1=Period (min) or Astronomical Componentname');
+         fprintf(fid(end),'%s\n','* COLUMN2=Amplitude (m)');
+         fprintf(fid(end),'%s\n','* COLUMN3=Phase (deg)');
+        %fprintf(fid,'%s\n','0.0           0.000         0.0');
+         for icomp=1:length(BCA.DATA(i).names)
+         fprintf(fid(end),'%12s %10.3g %10.3g\n',...
+                            BCA.DATA(i).names{icomp},...
+                            BCA.DATA(i).amp(icomp),...
+                            BCA.DATA(i).phi(icomp));
          end % icomp
-         fclose(fid);
+         fclose(fid(end));
+         fid(end) = [];
       
       end % typ
       
