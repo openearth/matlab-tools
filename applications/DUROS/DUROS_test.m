@@ -50,9 +50,7 @@ function DUROS_test()
 % $Keywords: $
 
 TeamCity.category('Integration');
-if TeamCity.running, TeamCity.ignore('WIP'); return; end
 
-testResult = nan;
 DuneErosionSettings('default');
 
 %% case 1 Reference profile
@@ -63,7 +61,7 @@ WL_t = 5;
 Hsig_t = 9;
 Tp_t = 12;
 
-[result, messages] = DUROS(xInitial, zInitial,...
+result = DUROS(xInitial, zInitial,...
 'D50',D50,...
 'WL_t',WL_t,...
 'Hsig_t',Hsig_t,...
@@ -78,7 +76,7 @@ WL_t = 5;
 Hsig_t = 9;
 Tp_t = 12;
 
-[result, messages] = DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t);
+result = DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t);
 plotDuneErosion(result,figure);
 
 %% case 3 Reference profile with a dune breach
@@ -92,7 +90,7 @@ Tp_t = 16;
 % temporarily shut down Bondary profile. An error occurs...
 DuneErosionSettings('set','BoundaryProfile',false);
 
-[result, messages] = DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t);
+result = DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t);
 plotDuneErosion(result,figure);
 
 %% case 4 Profile Noord-Holland transect 5475, year 2005
@@ -125,7 +123,7 @@ WL_t = 5;
 Hsig_t = 9;
 Tp_t = 12;
 
-[result, messages] = DUROS(xInitial, zInitial,...
+result = DUROS(xInitial, zInitial,...
 'Hsig_t',Hsig_t,...
 'WL_t',WL_t,...
 'D50',D50,...
@@ -135,6 +133,3 @@ Tp_t = 12;
 plotDuneErosion(result,figure);
 
 DuneErosionSettings('default');
-
-%% $PublishResult
-% Publishable code that describes the test.

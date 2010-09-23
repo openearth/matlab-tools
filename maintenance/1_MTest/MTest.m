@@ -110,6 +110,7 @@ classdef MTest < handle
         PublishedResultFile = [];           % Administrate where we published the result
     end
     
+    %% Methods
     methods
         function obj = MTest(varargin)
             %MTest  Creates an MTest object from a test definition file.
@@ -390,6 +391,8 @@ classdef MTest < handle
             end
         end
     end
+    
+    %% Hidden Methods
     methods (Hidden = true)
         function evaluatedescription(obj,functionname)
             %% Do not publish if the object should be ignored
@@ -475,6 +478,8 @@ classdef MTest < handle
 
         end
     end
+    
+    %% Static methods
     methods (Static = true)
         function name(proposedname)
             currentTest = TeamCity.currenttest;
