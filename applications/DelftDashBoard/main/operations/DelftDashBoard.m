@@ -49,6 +49,9 @@ function DelftDashBoard
 
 %%
 
+curdir = pwd;
+cd(fileparts(which('ddsettings.m')));
+
 % get revision number
 Revision = '$Revision$';
 eval([strrep(Revision(Revision~='$'),':','=') ';']);
@@ -109,3 +112,5 @@ set(handles.GUIHandles.MainWindow,'Visible','on');
 
 % Close Splash Screen
 frame.hide;
+
+cd(curdir);
