@@ -179,7 +179,7 @@ else
 
 
          [S.DATA(i).labelA,rec]  = strtok(rec); %[letter,fscanf(fid,'%11c',1)];
-          S.DATA(i).labelB       = strtok(rec); %[letter,fscanf(fid,'%11c',1)];
+         [S.DATA(i).labelB,rec]  = strtok(rec); %[letter,fscanf(fid,'%11c',1)];
 
       else
       end

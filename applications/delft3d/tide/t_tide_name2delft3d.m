@@ -11,7 +11,7 @@ function delft3d_names = t_tide_name2delft3d(t_tide_names)
 % * vectorized
 %
 % See web:  T_TIDE (http://www.eos.ubc.ca/~rich/) 
-% See also: DELFT3D_NAME2T_TIDE, BCT2BCA, NC_T_TIDE, unstruc.analyseHis
+% See also: DELFT3D_NAME2T_TIDE, BCT2BCA, BCA2BCT, NC_T_TIDE, unstruc.analyseHis
 
 % 2008 Jul 22: added A0/Z0
 
@@ -50,6 +50,7 @@ function delft3d_names = t_tide_name2delft3d(t_tide_names)
 % $Revision$
 % $HeadURL$
 
+   char_output = 0;
    if ischar(t_tide_names)
       t_tide_names = cellstr(t_tide_names);
       char_output  = true;

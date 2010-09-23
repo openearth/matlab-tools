@@ -1,5 +1,8 @@
 function DISout = disunpack(DISin)
-%DISUNPACK        Rewrites BCT_IO indexed table a struct with one field per data type <<beta version!>>
+%DISUNPACK        Rewrites BCT_IO indexed table 2 struct with a field per data type <<beta version!>>
+%
+%    DISout = dispack(DISin,<keyword,value>)
+%    DISout = dispack(DISin,OPT)
 %
 % works presently only for parameters (left) to become fieldname (right)
 %
@@ -10,6 +13,8 @@ function DISout = disunpack(DISin)
 %
 % *.bct
 %
+% 'Water elevation (Z)  End A'  > etaA
+% 'Water elevation (Z)  End B'  > etaB
 % 'flux/discharge rate'         > Q
 % 'Salinity'                    > salinity
 % 'Temperature'                 > temperature
@@ -63,28 +68,28 @@ for itable = 1:DISin.NTables
    %disp(['processing table: ',num2str(itable)])
 
    %% Check for consistent ReferenceTime times
-   %% ---------------------------------------
+   %-----------------------------------------
    
    if ~(ReferenceTimeFirst==DISin.Table(itable).ReferenceTime)
       error('disunpack: ReferenceTime of different tables are different')
    end
 
    %% Extract data from multi-dimensional table into struct field
-   %% ---------------------------------------
+   %-----------------------------------------
    
-   H.parameternames = {'QA',...                         %       *.bct
-                       'QB',...                         %       *.bct
+   H.parameternames = {'QA',...               %       *.bct
+                       'QB',...               %       *.bct
                        'Q'};                  % *.dis
-                   for ipar = 3:length(DISin.Table(1).Parameter)
-                       H.parameternames{ipar+1} = lower(DISin.Table(1).Parameter(ipar).Name);
-                   end
+   for ipar = 3:length(DISin.Table(1).Parameter)
+       H.parameternames{ipar+1} = lower(DISin.Table(1).Parameter(ipar).Name);
+   end
    % units determined from file
-   H.tablenames     = {'total discharge (t)  end A',... %       *.bct
-                       'total discharge (t)  end B',... %       *.bct
+   H.tablenames     = {'total discharge (t)  end A',... % *.bct
+                       'total discharge (t)  end B',... % *.bct
                        'flux/discharge rate'};
-                   for ipar = 3:length(DISin.Table(1).Parameter)
-                       H.tablenames{ipar+1} = DISin.Table(1).Parameter(ipar).Name;
-                   end
+   for ipar = 3:length(DISin.Table(1).Parameter)
+       H.tablenames{ipar+1} = DISin.Table(1).Parameter(ipar).Name;
+   end
                    
 
     DISout.data(itable).datenum  = time2datenum(DISin.Table(itable).ReferenceTime) + ...
@@ -92,7 +97,7 @@ for itable = 1:DISin.NTables
     DISout.data(itable).datenum_units = 'days';
     
    %% Loop over Table names
-   %% ---------------------------------------
+   %-----------------------------------------
 
     for ipar=1:length(H.parameternames)
 
@@ -112,7 +117,7 @@ for itable = 1:DISin.NTables
        end % ifield
        
        %% Calculate cumulative columes from Q
-       %% ---------------------------------------
+       %-----------------------------------------
        
        if strcmpi(parametername,'Q')
 
@@ -137,7 +142,7 @@ for itable = 1:DISin.NTables
     end
     
    %% Copy meta-information
-   %% ---------------------------------------
+   %-----------------------------------------
 
     DISout.data(itable).Name           =         DISin.Table(itable).Name         ;
     DISout.data(itable).Contents       =         DISin.Table(itable).Contents     ;

@@ -150,20 +150,20 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 
 % ----------------------Parse inputs-----------------------------------
 
-ray=1;
-dt=1;
-fid=1;
-stime=[];
-lat=[];
-corr_fs=[0 1e6];
-corr_fac=[1  1];
-secular='mean';
-inf.iname=[];
-inf.irefname=[];
-shallownames=[];
-constitnames=[];
-errcalc='cboot';
-synth=2;
+ray          = 1;
+dt           = 1;
+fid          = 1;
+stime        = [];
+lat          = [];
+corr_fs      = [0 1e6];
+corr_fac     = [1  1];
+secular      = 'mean';
+inf.iname    = [];
+inf.irefname = [];
+shallownames = [];
+constitnames = [];
+errcalc      = 'cboot';
+synth        = 2;
 
 k=1;
 while length(varargin)>0,
@@ -173,33 +173,35 @@ while length(varargin)>0,
         dt=varargin{2};
       case 'sta',
         stime=varargin{2};
-	if length(stime)>1, 
-	  stime=[stime(:)' zeros(1,6-length(stime))]; 
-	  stime=datenum(stime(1),stime(2),stime(3),stime(4),stime(5),stime(6));
-	end;
+	    if length(stime)>1, 
+	      stime=[stime(:)' zeros(1,6-length(stime))]; 
+	      stime=datenum(stime(1),stime(2),stime(3),stime(4),stime(5),stime(6));
+	    end;
       case 'lat',
          lat=varargin{2};
       case 'out',
          filen=varargin{2};
-	 switch filen,
-	   case 'none',
-	     fid=-1;
-	   case 'screen',
-	     fid=1;
-	   otherwise
-	     [fid,mesg]=fopen(filen,'w');
-	     if fid==-1, error(msg); end;
-	  end;
+	     switch filen,
+	       case 'none',
+	         fid=-1;
+	       case 'screen',
+	         fid=1;
+           otherwise
+	         [fid,mesg]=fopen(filen,'w');
+	         if fid==-1, error(msg); end;
+	       end;
       case 'ray',
          if isnumeric(varargin{2}),
            ray=varargin{2};
-	 else
-	   constitnames=varargin{2};
-	   if iscellstr(constitnames), constitnames=char(constitnames); end;
-	 end;
-       case 'pre',
+         else
+	       constitnames=varargin{2};
+	       if iscellstr(constitnames), 
+               constitnames=char(constitnames); 
+           end;
+	     end;
+      case 'pre',
          corr_fs=varargin{2};
-	 corr_fac=varargin{3};
+	     corr_fac=varargin{3};
          varargin(1)=[];
       case 'sec',
          secular=varargin{2};

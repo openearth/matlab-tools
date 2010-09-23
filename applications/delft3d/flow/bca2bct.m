@@ -1,33 +1,31 @@
-function varargout = bca2bct(bcafile,bctfile,bndfile,period,ncomponents,refdate,varargin);
+function varargout = bca2bct(varargin);
 %BCA2BCT          performs tidal prediction to generate *.bct from *.bca <<beta version!>>
 %
-%     bca2bct(bcafile,bctfile,bndfile,period,ncomponents,refdate,<keyword,value>);
-% BCT=bca2bct(bcafile,bctfile,bndfile,period,ncomponents,refdate,<keyword,value>);
+%       bca2bct(<keyword,value>);
+%   BCT=bca2bct(<keyword,value>);
 %
-% Generates a Delft3D FLOW *.bct file (time series boundary condition)
+% generates a Delft3D FLOW *.bct file (time series boundary condition)
 % from a *.bca file (astronomic components boundary conditions).
 % using the *.bnd file (boundary definition file) and using T_TIDE prediction.
-% 
-% *  period is a time array in matlab datenumbers
-%    E.g. a 10-minute ( 10 minutes is 1 day / 24 hours /6) time series:
-%    period = datenum(1999,5,1,3,0,0):1/24/6:datenum(1999,10,1,2,0,0);
+% Thw following <keyword,value> pairs are required.
 %
-% *  bcafile, bndname and bctfile are file names (including directory).
+%    *  'bcafile', 'bndname' and 'bctfile' are file names (including directory).
+%    
+%    *  'period' is a time array in matlab datenumbers
+%       E.g. a 10-minute ( 10 minutes is 1 day / 24 hours /6) time series:
+%       period = datenum(1999,5,1,3,0,0):1/24/6:datenum(1999,10,1,2,0,0);
 %
-% *  ncomponents is the number of astronomical components per boundary
-%    (same for all boundaries) in the *.bca file.
-%
-% *  where refdate is a matlab datenumber or the string as
-%    defined in the *.mdf file: "yyyy-mm-dd"
-%    or "yyyymmdd".
+%    *  'refdate' is a matlab datenumber or the string as
+%       defined in the *.mdf file: "yyyy-mm-dd"
+%       or "yyyymmdd".
 %
 % The following <keyword,value> pairs are implemented (not case sensitive):
 %
-%    * latitude:    [] default (same effect as none in t_tide)
+%    * 'latitude'    [] default (same effect as none in t_tide)
 %
-%                   NOTE THAT ANY LATITUDE IS REQUIRED FOR T_PREDIC TO INCLUDE NODAL FACTORS AT ALL
+%    NOTE THAT ANY LATITUDE IS REQUIRED FOR T_PREDIC TO INCLUDE NODAL FACTORS AT ALL
 %
-%    OPT = bct2bca returns struct with default <keyword,value> pairs
+%    OPT = bct2bca() returns struct with default <keyword,value> pairs
 %
 % Note: t_tide does not generally return an A0 component, determine A0 yourselves.
 %
@@ -79,108 +77,84 @@ function varargout = bca2bct(bcafile,bctfile,bndfile,period,ncomponents,refdate,
 % $Revision$
 % $HeadURL$
 
-   if nargin <6
-       error('syntax: bca2bct(bcafile,bctfile,bndfile,period,ncomponents,refdate,..);')
-   end
-
 %% Defaults
-%% -----------------
 
-   H.latitude   = [];
+   OPT.latitude    = [];
+   OPT.bcafile     = '';
+   OPT.bctfile     = '';
+   OPT.bndfile     = '';
+   OPT.period      = [];
+   OPT.refdate     = [];
    
 %% Return defaults
-%% ----------------------
 
    if nargin==0
-      varargout = {H};
+      varargout = {OPT};
       return
    end   
    
 %% Input
-%% -----------------
 
-   if isstruct(varargin{1})
-      H = mergestructs('overwrite',H,varargin{1});
-   else
-      iargin = 1;
-      %% remaining number of arguments is always even now
-      while iargin<=nargin-6,
-          switch lower ( varargin{iargin})
-          % all keywords lower case
-          
-          case 'latitude'  ;iargin=iargin+1;H.latitude   = varargin{iargin};
+   OPT = setProperty(OPT,varargin{:});
 
-          otherwise
-            error(sprintf('Invalid string argument (caps?): "%s".',varargin{iargin}));
-          end
-          iargin=iargin+1;
-      end
-   end   
-   
 %% Check input
-%% -----------------
 
-   if isempty(H.latitude);warning('No latitude passed, performing simple harmonic analysis, not tidal analysis!');end
-   
-   H
+   if isempty(OPT.latitude);warning('No latitude passed, performing simple harmonic analysis, not tidal analysis!');end
    
 %% Load (ancillary) data
-%% -----------------
    
-   BND = delft3d_io_bnd('read',bndfile);
-   disp(['Boundary definition file read: ',bndfile]);
+   BND = delft3d_io_bnd('read',OPT.bndfile);
+   disp(['Boundary definition file read: ',OPT.bndfile]);
    
-   BCA = delft3d_io_bca('read',bcafile,BND,ncomponents);
-   disp(['Astronomic boundary data file read: ',bcafile]);
+   BCA = delft3d_io_bca('read',OPT.bcafile,BND);
+ %[BCA,BND] = delft3d_io_bca('read',bcafile,BND;
+   disp(['Astronomic boundary data file read: ',OPT.bcafile]);
    
 %% Date / time
-%% ------------------------------
 
-   if ischar(refdate)
-      if length(redate)==8
+   if ischar(OPT.refdate)
+      if length(OPT.redate)==8
       %% "yyyymmdd"
-      %% --------------------
-         ReferenceTime   = str2num(refdate);
-         refdate = datenum(str2num(refdate(1: 4)),...
-                           str2num(refdate(5: 6)),...
-                           str2num(refdate(7: 8)));
+      %  --------------------
+         ReferenceTime       = str2num(OPT.refdate);
+         OPT.refdate = datenum(str2num(OPT.refdate(1: 4)),...
+                               str2num(OPT.refdate(5: 6)),...
+                               str2num(OPT.refdate(7: 8)));
       else
       %% "yyyy-mm-dd"
-      %% --------------------
-         ReferenceTime  = str2num([refdate(1: 4);...
-                                   refdate(6: 7);...
-                                   refdate(9:10)]);
-         refdate = datenum(str2num(refdate(1: 4)),...
-                           str2num(refdate(6: 7)),...
-                           str2num(refdate(9:10)));
+      %  --------------------
+         ReferenceTime       = str2num([OPT.refdate(1: 4);...
+                                        OPT.refdate(6: 7);...
+                                        OPT.refdate(9:10)]);
+         OPT.refdate =  datenum(str2num(OPT.refdate(1: 4)),...
+                                str2num(OPT.refdate(6: 7)),...
+                                str2num(OPT.refdate(9:10)));
       end
    else
       %% datenumber
-      %% --------------------
-      [Y,M,D,HR,MI,SC] = datevec(refdate);
+      %  --------------------
+      [Y,M,D,HR,MI,SC] = datevec(OPT.refdate);
       ReferenceTime  = str2num([num2str(Y,'%0.4d'),...
                                 num2str(M,'%0.2d'),...
                                 num2str(D,'%0.2d')]);
    end   
 
-   minutes_wrt_refdate = (period - refdate).*(24*60);
+   minutes_wrt_refdate = (OPT.period - OPT.refdate).*(24*60);
 
 %% Fill BCT
-%% ------------------------------
    
-   BCT.FileName = bctfile;
+   BCT.FileName = OPT.bctfile;
    BCT.NTables  = BND.NTables;
 
 for ibnd=1:length(BND.DATA)
     
    %% Only for astronomical boundaries
-   %% delft3d_io_bca already checked that the 
-   %% required tables exist
-   %% --------------------------------
+   %  delft3d_io_bca already checked that the 
+   %  required tables exist
    
    if lower(BND.DATA(1).datatype)=='a'
    
-      BCT.Table(ibnd).Name              = ['t_predic @ latitude ',num2str(H.latitude),' from bca file: ',bcafile];
+      BCT.Table(ibnd).Name              = ['t_predic @ latitude ',num2str(OPT.latitude),' from bca file: ',OPT.bcafile];
       BCT.Table(ibnd).Contents          = 'uniform';
       BCT.Table(ibnd).Location          = BND.DATA(ibnd).name;
       BCT.Table(ibnd).TimeFunction      = 'non-equidistant';
@@ -202,9 +176,9 @@ for ibnd=1:length(BND.DATA)
       for isize=1:2
                    
          %% Although delft3d_io_bca above cannot handle a different number 
-         %% of componentsa per boundary yet (ncomponents), 
+         %% of components per boundary yet (ncomponents), 
          %% bca2bct can already (ncomp).
-         %% Should be same for the two boundary end points thgough.
+         %% Should be same for the two boundary end points though.
          
          if     isize==1
          ncomp   = length(BCA.DATA(ibnd,isize).amp);
@@ -214,14 +188,12 @@ for ibnd=1:length(BND.DATA)
             end
          end
          
-         %% Tidal prediction parameters
-         %% ------------------------------
+      %% Tidal prediction parameters
          
          H.names = BCA.DATA(ibnd,isize).names;
          H.names = delft3d_name2t_tide(H.names);
 
-         %% t_predic wants frequecies in cycles /hour
-         %% ------------------------------
+      %% t_predic wants frequecies in cycles /hour
 
         [H.freq,...
          H.names,...
@@ -230,22 +202,16 @@ for ibnd=1:length(BND.DATA)
          H.freq      = H.freq(:);
          H.names     = pad(char(H.names),4,' ');
          
-         
-         if ~(ncomponents==length(H.names))
-            error('ncomponent error')
-         end
-         
-         %% Tidal amp/phase
-         %% ------------------------------
+      %% Tidal amp/phase
       
-         %% tidecon is a matrix with 
-         %% column 1 amplitude
-         %% column 2 amplitude error
-         %% column 3 phase
-         %% column 4 phase error
+         %  tidecon is a matrix with 
+         %  column 1 amplitude
+         %  column 2 amplitude error
+         %  column 3 phase
+         %  column 4 phase error
          
-         %% the 2nd and 4th are set to eps, because when they are zero, 
-         %% t_predic shows a lot of the following warnings:
+         %  the 2nd and 4th are set to eps, because when they are zero, 
+         %  t_predic shows a lot of the following warnings:
          
          %   Warning: Divide by zero.
          %   (Type "warning off MATLAB:divideByZero" to suppress this warning.)
@@ -266,11 +232,11 @@ for ibnd=1:length(BND.DATA)
          %           name: [35x4 char]
          %           freq: [35x1 double]
          %        tidecon: [35x4 double]
-      
-         if isempty(H.latitude)
-            hpredic = t_predic(period,H.names,H.freq,tidecon);
+         
+         if isempty(OPT.latitude)
+            hpredic = t_predic(OPT.period,H.names,H.freq,tidecon);
          else
-            hpredic = t_predic(period,H.names,H.freq,tidecon,'latitude',H.latitude);
+            hpredic = t_predic(OPT.period,H.names,H.freq,tidecon,'latitude',OPT.latitude);
          end
           
          BCT.Table(ibnd).Data(:,isize+1) = hpredic;
@@ -285,9 +251,8 @@ for ibnd=1:length(BND.DATA)
 end
 
 %% Write the BCT file with the time series
-%% ----------------------------
 
-bct_io('write',bctfile,BCT)
+   bct_io('write',OPT.bctfile,BCT)
 
 if nargout==1
    varargout = {BCT};

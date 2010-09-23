@@ -1,8 +1,8 @@
-function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
+function varargout = bct2bca(varargin)
 %BCT2BCA          performs tidal analysis to generate *.bca from *.bct <<beta version!>>
 %
-%       bct2bca(bctfile,bcafile,bndfile,<keyword,value>)
-% BCA = bct2bca(bctfile,bcafile,bndfile,<keyword,value>)
+%       bct2bca(<keyword,value>)
+% BCA = bct2bca(<keyword,value>)
 %
 % Analyses a Delft3D FLOW *.bct file (time series boundary condition)
 % into a  *.bca file (astronomic components boundary conditions).
@@ -14,6 +14,10 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
 % Works for now only for 2D boundaries, not for 3D boundary specifications!
 %
 % The following <keyword,value> pairs are implemented (not case sensitive):
+%
+%    * bctfile:     bct file.
+%    * bcafile:     bca file.
+%    * bndfile:     bnd file.
 %
 %    * timezone:    hours to be SUBTRACTED from to the timeseries to get UTC times.
 %                   E.G. for CET set timeshift to + 1 (default 0).
@@ -156,30 +160,34 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
 %% Defaults
 %% -----------------
 
-   H.timezone   = 0;
-   H.period     = nan;
-   %H.components = {'K1','O1','P1','Q1','K2','M2','N2','S2'};
-   H.method     = 't_tide';
-   H.A0         = 1;
+   OPT.timezone   = 0;
+   OPT.period     = nan;
+   OPT.components = {}; %{'K1','O1','P1','Q1','K2','M2','N2','S2'};
+   OPT.method     = 't_tide';
+   OPT.A0         = 1;
 
-   H.plot       = 1;
-   H.pause      = 1;
-   H.export     = 0;
-   H.output     = 'screen';
-   H.latitude   = [];
+   OPT.plot       = 1;
+   OPT.pause      = 1;
+   OPT.export     = 0;
+   OPT.output     = 'screen';
+   OPT.latitude   = [];
 
-   H.shallow    = '';
-   H.secular    = 'mean';
+   OPT.shallow    = '';
+   OPT.secular    = 'mean';
 
-   H.residue    = [];
-   H.prediction = [];
+   OPT.residue    = [];
+   OPT.prediction = [];
 
-   H.unwrap     = 1;
+   OPT.unwrap     = 1;
 
-   H.infername  = {};
-   H.inferfrom  = {};
-   H.infamp     = [];
-   H.infphase   = [];
+   OPT.infername  = {};
+   OPT.inferfrom  = {};
+   OPT.infamp     = [];
+   OPT.infphase   = [];
+   
+   OPT.bctfile    = '';
+   OPT.bcafile    = '';
+   OPT.bndfile    = '';
 
 %% Return defaults
 %% ----------------------
@@ -190,74 +198,28 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
    end
 
 %% Input
-%% -----------------
 
-   if isstruct(varargin{1})
-      H = mergestructs('overwrite',H,varargin{1});
-   else
-      iargin = 1;
-      %% remaining number of arguments is always even now
-      while iargin<=nargin-3,
-          switch lower ( varargin{iargin})
-          % all keywords lower case
-
-          case 'timezone'  ;iargin=iargin+1;H.timezone   = varargin{iargin};
-          case 'period'    ;iargin=iargin+1;H.period     = varargin{iargin};
-          case 'components';iargin=iargin+1;H.components = varargin{iargin};
-          case 'method'    ;iargin=iargin+1;H.method     = varargin{iargin};
-
-          case 'plot'      ;iargin=iargin+1;H.plot       = varargin{iargin};
-          case 'pause'     ;iargin=iargin+1;H.pause      = varargin{iargin};
-          case 'export'    ;iargin=iargin+1;H.export     = varargin{iargin};
-          case 'output'    ;iargin=iargin+1;H.output     = varargin{iargin};
-          case 'latitude'  ;iargin=iargin+1;H.latitude   = varargin{iargin};
-
-          case 'infername' ;iargin=iargin+1;H.infername  = varargin{iargin};
-          case 'inferfrom' ;iargin=iargin+1;H.inferfrom  = varargin{iargin};
-          case 'infamp'    ;iargin=iargin+1;H.infamp     = varargin{iargin};
-          case 'infphase'  ;iargin=iargin+1;H.infphase   = varargin{iargin};
-
-          case 'shallow'   ;iargin=iargin+1;H.shallow    = varargin{iargin};
-          case 'secular'   ;iargin=iargin+1;H.secular    = varargin{iargin};
-
-          case 'residue'   ;iargin=iargin+1;H.residue    = varargin{iargin};
-          case 'prediction';iargin=iargin+1;H.prediction = varargin{iargin};
-
-          case 'unwrap'    ;iargin=iargin+1;H.unwrap     = varargin{iargin};
-          otherwise
-            error(sprintf('Invalid string argument (caps?): "%s".',varargin{iargin}));
-          end
-          iargin=iargin+1;
-      end
-   end
-
+   OPT = setProperty(OPT,varargin{:});
+   
 %% Put interference in Nx4 format required by t_tide
-%% -----------------
 
-   if ~isempty(H.infername);
-      if iscell(H.infername);H.infername = pad(char(H.infername),' ',4);
+   if ~isempty(OPT.infername);
+      if iscell(OPT.infername);OPT.infername = pad(char(OPT.infername),' ',4);
       end
    end
 
-   if ~isempty(H.inferfrom);
-      if iscell(H.inferfrom);H.inferfrom = pad(char(H.inferfrom),' ',4);
+   if ~isempty(OPT.inferfrom);
+      if iscell(OPT.inferfrom);OPT.inferfrom = pad(char(OPT.inferfrom),' ',4);
       end
    end
 
 %% -----------------
 
-   if  isempty(H.latitude);warning('No latitude passed, performing simple harmonic analysis, not tidal analysis!');end
-
-   H
-
-   OPT.bctfile   = bctfile; clear bctfile
-   OPT.bcafile   = bcafile; clear bcafile
-   OPT.bndfile   = bndfile; clear bndfile
+   if  isempty(OPT.latitude);warning('No latitude passed, performing simple harmonic analysis, not tidal analysis!');end
 
    OPT.directory = filepathstr(OPT.bctfile);
 
 %% Loop over boundary segments
-%% ------------------------------
 
    BND          = delft3d_io_bnd('read',OPT.bndfile);
 
@@ -267,16 +229,17 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
    %% Write residue/prediction to bct file
    %% ----------------------
 
-   if ~isempty(H.residue)
+   if ~isempty(OPT.residue)
       BCTres = BCT;
    end
 
-   if ~isempty(H.prediction)
+   if ~isempty(OPT.prediction)
       BCTprd = BCT;
    end
 
 %% Loop over boundary segments = Tables
-%% ------------------------------
+
+BCA.DATA = [];
 
    for itable = 1:BCT.NTables
 
@@ -286,17 +249,16 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
 
       BCT.Table(itable).datenum = + d3d_days ...
                                   + time2datenum(BCT.Table(itable).ReferenceTime) ...
-                                  - H.timezone/24;
-      if isnan(H.period)
-         H.period = BCT.Table(itable).datenum([1 end]);
+                                  - OPT.timezone/24;
+      if isnan(OPT.period)
+         OPT.period = BCT.Table(itable).datenum([1 end]);
       end
 
       for icol = 2:ncol; % 1st column is date in minutes wrt the refdate
 
          %% !!!!!!!!! actually only for new endpoints, what about 3D data
-
          T.location      = BCT.Table(itable).Location;
-         T.index         = datenum2index(BCT.Table(itable).datenum,H.period      );
+         T.index         = datenum2index(BCT.Table(itable).datenum,OPT.period([1 end]));
          T.datenum       =               BCT.Table(itable).datenum(T.index,1     );
          T.quantity      =               BCT.Table(itable).Data   (T.index,icol  );
          T.quantity_name =               BCT.Table(itable).Parameter(icol).Name;
@@ -304,51 +266,54 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
          T.datenum0      =               BCT.Table(itable).datenum(T.index(1    ));
          T.interval      =          diff(BCT.Table(itable).datenum(T.index([1 2])))*24;
 
-         if strcmpi(H.method(1),'t') % t_tide
+         if strcmpi(OPT.method(1),'t') % t_tide
 
               BASEFILENAME = [filename(BCT.FileName),'.',...
-                              H.method              ,'.',...
+                              OPT.method              ,'.',...
                               T.location            ,'.',...
                        strrep(T.quantity_name,':','')]; % to be used for both t_tide *.txt files and *.png
 
-              if isnumeric(H.output)
+              if isnumeric(OPT.output)
 
 
-                 if isempty(H.latitude)
+                 if isempty(OPT.latitude)
                    [tidestruc,pout]=t_tide(T.quantity,...
                               'start'     ,T.datenum0,...
-                              'inference' ,H.infername,H.inferfrom,H.infamp,H.infphase,...
+                              'rayleigh'  ,OPT.components,...
+                              'inference' ,OPT.infername,OPT.inferfrom,OPT.infamp,OPT.infphase,...
                               'interval'  ,T.interval,...
                               'output'    ,[BASEFILENAME,'.cmp']);
                  else
                    [tidestruc,pout]=t_tide(T.quantity,...
                               'start'     ,T.datenum0,...
-                              'inference' ,H.infername,H.inferfrom,H.infamp,H.infphase,...
+                              'rayleigh'  ,OPT.components,...
+                              'inference' ,OPT.infername,OPT.inferfrom,OPT.infamp,OPT.infphase,...
                               'interval'  ,T.interval,...
-                              'latitude'  ,H.latitude,...
+                              'latitude'  ,OPT.latitude,...
                               'output'    ,[BASEFILENAME,'.cmp']);
                  end
               else
-                 if isempty(H.latitude)
+                 if isempty(OPT.latitude)
                    [tidestruc,pout]=t_tide(T.quantity,...
                               'start'     ,T.datenum0,...
-                              'inference' ,H.infername,H.inferfrom,H.infamp,H.infphase,...
+                              'rayleigh'  ,OPT.components,...
+                              'inference' ,OPT.infername,OPT.inferfrom,OPT.infamp,OPT.infphase,...
                               'interval'  ,T.interval,...
-                              'output'    ,H.output);
+                              'output'    ,OPT.output);
                  else
                    [tidestruc,pout]=t_tide(T.quantity,...
                               'start'     ,T.datenum0,...
-                              'inference' ,H.infername,H.inferfrom,H.infamp,H.infphase,...
+                              'rayleigh'  ,OPT.components,...
+                              'inference' ,OPT.infername,OPT.inferfrom,OPT.infamp,OPT.infphase,...
                               'interval'  ,T.interval,...
-                              'latitude'  ,H.latitude,...
-                              'output'    ,H.output);
+                              'latitude'  ,OPT.latitude,...
+                              'output'    ,OPT.output);
                  end
               end
 
             %% Take care of A0 (in components AND residue)
-            %% ----------------------
 
-              if H.A0
+              if OPT.A0
                  A0 = nanmean(T.quantity);
 
                  tidestruc.name    = strvcat('Z0  ',tidestruc.name);
@@ -361,9 +326,8 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
               end
 
             %% Plot
-            %% ----------------------
 
-            if H.plot
+            if OPT.plot
 
                TMP = figure;
 
@@ -384,12 +348,12 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
                   set(Handles.ylabel,'interpreter','none')
                   grid
 	
-                  if H.pause
+                  if OPT.pause
                      disp('Press key to continue ...')
                      pause
                   end
 
-                  if H.export
+                  if OPT.export
                      print([BASEFILENAME,'.png'],'-dpng')
                   end
 
@@ -400,20 +364,19 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
 
             end
 
-            %% Write residue/prediction to bct file
-            %% ----------------------
+         %% Write residue/prediction to bct file
 
-            if ~isempty(H.residue)
+            if ~isempty(OPT.residue)
                BCTres.Table(itable).Data(T.index,icol  ) = T.quantity - pout;
             end
 
-            if ~isempty(H.prediction)
+            if ~isempty(OPT.prediction)
                BCTprd.Table(itable).Data(T.index,icol  ) = pout;
             end
 
-            %% Rename to delft3d names
-            %% '' when no equivalent is present
-            %% ----------------------
+         %% Rename to delft3d names
+         %% '' when no equivalent is present
+
             tidestruc.name = cellstr(tidestruc.name);
             keep           = ones(size(tidestruc.freq)); % all 1
             for j=1:length(tidestruc.name)
@@ -423,8 +386,8 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
                end
             end
 
-            %% Remove components that are unknown to Delft3D (tidestruc.name='')
-            %% ----------------------
+         %% Remove components that are unknown to Delft3D (tidestruc.name='')
+
             tidestruc0 = tidestruc;
             clear        tidestruc
             kept       = 0;
@@ -437,14 +400,13 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
               end
             end
 
-            %% Use only selected components
-            %% ----------------------
-            %%
+         %% Use only selected components
+
             mask           = 0.*[1:length(length(tidestruc.name))];
             for j=1:length(tidestruc.name)
-               for jj=1:length(H.components)
+               for jj=1:length(OPT.components)
                   if strcmpi(strtrim(char(tidestruc.name{ j})),...
-                             strtrim(char(H.components  (jj))));
+                             strtrim(char(OPT.components  (jj))));
                      mask(j) = 1;
                   end
                end
@@ -461,28 +423,26 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
 %           tidestruc.freq    = tidestruc.freq   (:,:);
 %           tidestruc.tidecon = tidestruc.tidecon(:,:);
 
-            %% Put in *.bca struct
-            %% ----------------------
-
-            BCA.DATA(itable,icol-1).names = tidestruc.name        ;% [n x 2 char]
-            BCA.DATA(itable,icol-1).Label = T.location;            % 'north_001A'
-            BCA.DATA(itable,icol-1).amp   = tidestruc.tidecon(:,1);% [0.0670 0.1085 0.0244 0.0292 0.0172 0.0252 0.0663 0.0723]
-            BCA.DATA(itable,icol-1).phi   = tidestruc.tidecon(:,3);% [168.2587 106.2307 162.9063 81.0589 143.1680 -86.1792 -84.3035 119.0369]
+         %% Put in *.bca struct
+         
+            BCA.DATA(end+1).names = tidestruc.name        ;% [n x 2 char]
+            BCA.DATA(end).Label = T.location;            % 'north_001A'
+            BCA.DATA(end).amp   = tidestruc.tidecon(:,1);% [0.0670 0.1085 0.0244 0.0292 0.0172 0.0252 0.0663 0.0723]
+            BCA.DATA(end).phi   = tidestruc.tidecon(:,3);% [168.2587 106.2307 162.9063 81.0589 143.1680 -86.1792 -84.3035 119.0369]
 
          end
 
          %% Make sure there are no transitions across the 360 boundary inside one boundary segment
-         %% because Delft3D-FLOW interpolates linearly (as a scalar) inside the boundary segment.
-         %%
-         %% This does probably also deal correctly with 3D velocity boundaries
-         %% where also in the vertical some interpolation is required.
-         %% ------------------------------
+         %  because Delft3D-FLOW interpolates linearly (as a scalar) inside the boundary segment.
+         % 
+         %  This does probably also deal correctly with 3D velocity boundaries
+         %  where also in the vertical some interpolation is required.
 
-            if H.unwrap
+            if OPT.unwrap
 
               % all |steps| > 180 are changed
-              % BCH.phases(1:end,itable,ifreq) =  domain2angle(BCH.phases(1:end,itable,ifreq),0,360,180);
-              BCA.DATA(itable,icol-1).phi =  rad2deg(unwrap(deg2rad(BCA.DATA(itable,icol-1).phi)));
+              % BCOPT.phases(1:end,itable,ifreq) =  domain2angle(BCOPT.phases(1:end,itable,ifreq),0,360,180);
+              BCA.DATA(end).phi =  rad2deg(unwrap(deg2rad(BCA.DATA(itable,icol-1).phi)));
 
             end
 
@@ -492,19 +452,17 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
 
    end % for itable = BCT.NTables
 
-   %% Write residue/prediction to bct file
-   %% ----------------------
+%% Write residue/prediction to bct file
 
-   if ~isempty(H.residue)
-      BCT = bct_io('write',H.residue,BCTres);
+   if ~isempty(OPT.residue)
+      BCT = bct_io('write',OPT.residue,BCTres);
    end
 
-   if ~isempty(H.prediction)
-      BCT = bct_io('write',H.prediction,BCTprd);
+   if ~isempty(OPT.prediction)
+      BCT = bct_io('write',OPT.prediction,BCTprd);
    end
 
-   %% Output
-   %% ----------------------
+%% Output
 
    delft3d_io_bca('write',[OPT.bcafile],BCA,BND)
 
@@ -512,7 +470,7 @@ function varargout = bct2bca(bctfile,bcafile,bndfile,varargin)
       varargout = {BCA};
    end
 
-   %%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%
 
    function index = datenum2index(t,tlims)
    %DATENUM2INDEX

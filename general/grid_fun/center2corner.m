@@ -109,7 +109,7 @@ elseif length(dimensions_of_xcen)==2
   %  and do not change them with internal extrapolations
   %  ------------------------
 
-      xcor(2:end-1,2:end-1) = corner2center(xcen);
+      xcor(2:end-1,2:end-1) = corner2centernan(xcen);
    
   %% Orthogonal mirroring (only of still empty values)
   %  ------------------------

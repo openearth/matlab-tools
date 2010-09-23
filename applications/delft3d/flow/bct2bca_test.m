@@ -1,17 +1,16 @@
-function bct2bca_test()
+function OK = bct2bca_test()
 % BCT2BCA_TEST  test script for BCT2BCA
+%
+%  using test data in ..\..\..\..\test\
 %  
-% More detailed description of the test goes here.
-%
-%
-%   See also bca2bct bct2bca 
+% See also: BCA2BCT, BCT2BCA
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
-%       Pieter van Geer
+%       Gerben de Boer + Pieter van Geer
 %
-%       pieter.vangeer@deltares.nl	
+%       Gerben.deboer@deltares.nl + pieter.vangeer@deltares.nl
 %
 %       Rotterdamseweg 185
 %       2629 HD Delft
@@ -51,44 +50,30 @@ function bct2bca_test()
 
 MTest.category('DataAccess');
 
-H.components  = {'K1','O1','P1','Q1','K2','M2','N2','S2'};
-H.latitude    = 52; % eps; %52;
-H.plot        = 0;
-H.pause       = 0;
-H.output      = 'none';
-H.residue     = ['.\bct2bca_test\TMP_cas_residue_'   ,num2str(H.latitude),'noa0.bct'];
-H.prediction  = ['.\bct2bca_test\TMP_cas_prediction_',num2str(H.latitude),'noa0.bct'];
+%% define
 
-%% Analyse raw time series with a strong meteo tide
-%% -------------------------
+   OPT.components  = {'S2','S4'};
 
-H.A0          = 0;
-bct2bca('.\bct2bca_test\TMP_cas.bct',...
-       ['.\bct2bca_test\bct2bca_',num2str(H.latitude),'noa0.bca'],...
-        '.\bct2bca_test\bca.bnd',H);
-
-%% Analyse raw time series with a strong meteo tide
-%% -------------------------
-
-H.A0          = 1;
-bct2bca('.\bct2bca_test\TMP_cas.bct',...
-       ['.\bct2bca_test\bct2bca_',num2str(H.latitude),'.bca'],...
-        '.\bct2bca_test\bca.bnd',H);
+   OPT.bcafile     = ['bct2bca.bca']; % to generate
+   OPT.bctfile     = ['bct2bca.bct']; % generated offline with bca2bct_test and renamed
+   OPT.bndfile     = ['bca2bct.bnd']; % same 
+   OPT.period      = datenum(2010,06,01,0,0:1:24*60,0);
+   OPT.latitude    = nan; % avoid nodal factors for test
 
 
-%% Now analyse predicted water levels and test whether the residual is zero
-%% -------------------------
+   OPT.plot        = 0;
+   OPT.pause       = 1;
+   OPT.output      = 'none';
+   OPT.residue     = ['bct2bca_res.bct'];
+   OPT.prediction  = ['bct2bca_pred.bct'];
 
-H.residue    =['.\bct2bca_test\TMP_cas_residue_of_prediction_'   ,num2str(H.latitude),'.bct'];
-H.prediction =['.\bct2bca_test\TMP_cas_prediction_of_prediction_',num2str(H.latitude),'.bct'];
-        
+%% run
 
-H.A0          = 0;
-bct2bca(['.\bct2bca_test\TMP_cas_prediction_'   ,num2str(H.latitude),'noa0.bct'],...
-        ['.\bct2bca_test\bct2bca_of_prediction_',num2str(H.latitude),'noa0.bca'],...
-        '.\bct2bca_test\bca.bnd',H);        
-        
-H.A0          = 1;
-bct2bca(['.\bct2bca_test\TMP_cas_prediction_'   ,num2str(H.latitude),'.bct'],...
-        ['.\bct2bca_test\bct2bca_of_prediction_',num2str(H.latitude),'.bca'],...
-        '.\bct2bca_test\bca.bnd',H);        
+   BCA = bct2bca(OPT);
+
+%% check
+
+OK = all((BCA.DATA(1).amp - [  1   0]') < 5e-2 & ...
+         (BCA.DATA(2).amp - [  0   1]') < 5e-2 & ...
+         (BCA.DATA(1).phi - [360 Inf]') < 5e-2 & ... % the phi at zero amp means nothing
+         (BCA.DATA(2).phi - [Inf 180]') < 5e-2);     % the phi at zero amp means nothing

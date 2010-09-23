@@ -152,8 +152,8 @@ end
       [G.cor.lon,G.cor.lat,OPT]=convertCoordinates(G.cor.x,G.cor.y,'CS1.code',OPT.epsg,'CS2.code',4326);
       end
 
-      G.cen.x        = corner2center(G.cor.x);
-      G.cen.y        = corner2center(G.cor.y);
+      G.cen.x        = corner2centernan(G.cor.x);
+      G.cen.y        = corner2centernan(G.cor.y);
       G.cen.x_units  = '';
       G.cen.y_units  = '';
        

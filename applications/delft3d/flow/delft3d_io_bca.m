@@ -4,7 +4,7 @@ function varargout = delft3d_io_bca(cmd,varargin)
 %       delft3d_io_bca('write',bcafile,BCA,BND)
 % Ok  = delft3d_io_bca('write',bcafile,BCA,BND)
 %
-% BCA = delft3d_io_bca('read' ,bcafile,BND,ncomponents)
+% BCA = delft3d_io_bca('read' ,bcafile,BND)
 %
 % where the BND struct comes from BND = delft3d_bnd_io(...)
 % and the BCA struct looks like this, with subfields 
@@ -13,12 +13,9 @@ function varargout = delft3d_io_bca(cmd,varargin)
 % BCA.DATA(1 x nboundary_segments,[sideA side_B]).amp      (1:ncomponents)
 % BCA.DATA(1 x nboundary_segments,[sideA side_B]).phi      (1:ncomponents)
 % BCA.DATA(1 x nboundary_segments,[sideA side_B]).names    (1:ncomponents)
-% BCA.DATA(1 x nboundary_segments,[sideA side_B]).Label
+% BCA.DATA(1 x nboundary_segments,[sideA side_B]).label
 %
 % where the indices in DATA are in the order of the *.bnd file.
-%
-% For reading ncomponents has to be passed, which is the exact number 
-% of components in the bcafile. It is the same for all boundaries.
 %
 % NOTE:
 % Currently it is not possible to have a different number of components 
@@ -31,9 +28,7 @@ function varargout = delft3d_io_bca(cmd,varargin)
 % b1) Or we can try to see whether we have a component by looking if
 %     there are any numeric data past character 8 on a line in the *.bca file.
 % c1) we can try to convince DHS to adapt the *.bca file by incorporating one
-%     line with the number of components after the line with the Label....
-%
-% G.J. de Boer, March 8th 2006
+%     line with the number of components after the line with the label....
 %
 % See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
@@ -44,6 +39,10 @@ function varargout = delft3d_io_bca(cmd,varargin)
 
 % 2008 Jul 11: removed error in writing labels (%c instead of %12s to prevent leading blanks) [Anton de Fockert]
 % 2008 Jul 21: more decimals in output for Nuemann boundary [Anton de Fockert]
+% TO DO: make struct with BCA info only
+% TO DO: add correct table to relevant boundary in BND struct
+%         BCA      = delft3d_io_bca('read' ,bcafile)
+%        [BCA,BND] = delft3d_io_bca('read' ,bcafile,BND)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
@@ -87,13 +86,15 @@ end
 switch lower(cmd),
 
 case 'read',
-  STRUCT=Local_read(varargin{:});
+  [BCA,BND]=Local_read(varargin{:});
   if nargout==1
-     varargout = {STRUCT};
-  elseif nargout >1
+     varargout = {BCA};
+  elseif nargout==2
+     varargout = {BCA,BND};
+  elseif nargout >2
     error('too much output paramters: 0 or 1')
   end
-  if STRUCT.iostat<0,
+  if BCA.iostat<0,
      error(['Error opening file: ',varargin{1}])
   end;
 
@@ -113,61 +114,74 @@ end;
 % ------------------------------------
 % ------------------------------------
 
-function BCA=Local_read(bcafile,BND,ncomponents)
+function varargout=Local_read(bcafile,BND)
 
-fid     = fopen(bcafile,'r');
+OPT.debug = 0;
+fid       = fopen(bcafile,'r');
 
 if fid > 0 
 
    BCA.filename = bcafile;
    BCA.phi_unit = 'deg';
    
+%% Load all astronomic component sets
+   
+   iset = 0;
+
+   rec     = fgetl(fid); if OPT.debug;disp(rec);end
+   
    while 1   
    
-      labelAB = fgetl(fid);
-      
-      if ~ischar(labelAB), break, end
-      
-      %% Scroll linearly trough the *.bca file and find associated boundary 
-      %% name(s) in the *.bnd file.
-      %%
-      %% Other way round would also be possible
-      %% I.e. scroll trough *.bnd file and find associated table in *.bca file by 
-      %% reading the *.bca file again for every boundary segment.
-      %% This obviously requires much more file io, which is generally slow..
-      %%
-      %% The idea generally used in numerical models that two neighbouring boundary 
-      %% segments can share one tidal specification point (one Label) is bullshit 
-      %% in Delft3D since in Delft3D two neighbouring boundaries have water level
-      %% points 1dx apart.
-      %% -------------------------------
-   
-      isize = 0;
-      
-      %% For every boundary segment in the bca file, check 3 things
-      %% --------------------------------------------
+      iset    = iset + 1;
+      if ~ischar(rec), break, end % eof
+      rec = pad(rec,' ',12);
+      BCA.DATA(iset).label   = strtrim(rec(1:12));
 
+      rec     = fgetl(fid); if OPT.debug;disp(rec);end
+      C       = textscan(rec,'%8c %f %f',1);
+
+      icomp = 0;
+      while ~isempty(C{3})
+         icomp = icomp + 1;
+         BCA.DATA(iset).names{icomp} = strtrim(C{1});
+         BCA.DATA(iset).amp  (icomp) = C{2};
+         BCA.DATA(iset).phi  (icomp) = C{3};
+         
+         rec     = fgetl(fid); if OPT.debug;disp(rec);end
+         if ~ischar(rec), break, end % eof
+         C       = textscan(rec,'%8c %f %f',1);
+         
+      end% while still amp + phase
+   
+   end % while no eof
+
+%% Assign correct set to each boundary
+
+      %% For every boundary segment in the bca file, check 3 things
+   
+      if nargin > 1
       for ibnd = 1:BND.NTables
          
-         %% 1) whether is defined as astronimical, and if yes
-         %% --------------------------------------------
+         endpoint = 0; % 1,2 or 0=none
 
+      %% 1) whether is defined as astronomical, and if yes
+   
          if ~lower(BND.DATA(ibnd).datatype)=='a'
    
             %% This warning should not appears for every block in the bca file
-            %% as we scroll through the bca file ....
-            %% Check for existance field name "displayed_warning"
-
+            %  as we scroll through the bca file ....
+            %  Check for existance field name "displayed_warning"
+   
             if ~(BND.DATA(ibnd).displayed_warning)
                disp(['Boundary ''',BND.DATA(ibnd).name,''' in *.bnd not defined as astronomical, ignored.'])
                BND.DATA(ibnd).displayed_warning = true;
             end
-            isize = 0;
+            endpoint = 0;
+            disp (['Boundary ''',BND.DATA(ibnd).name,''' with label ',deblank(labelAB),', has no table in *.bca file.'])
             break;
             
-         %% 2) whether is has labels, and if yes
-         %% --------------------------------------------
-
+      %% 2) ... whether is has labels, and if yes
+   
             if ~isfield(BND.DATA(ibnd),'labelA') | ...
                ~isfield(BND.DATA(ibnd),'labelB')
    
@@ -177,61 +191,52 @@ if fid > 0
    
          end
    
-         %% Labels determine whether we are on side 1 or 2
-         %% --------------------------------------------
+      %% 3) ... what is the associated set in the bca file.
          
-         if     strcmp(strtrim(labelAB),strtrim(BND.DATA(ibnd).labelA))
-            isize = 1;
-            break
-         elseif strcmp(strtrim(labelAB),strtrim(BND.DATA(ibnd).labelB))
-            isize = 2;
-            break
-   
-         end
-      
+         for endpoint=1:2
+
+            for iset=1:length(BCA.DATA)
+            
+               if     endpoint==1
+                  if strcmp(strtrim(BND.DATA(ibnd).labelA),BCA.DATA(iset).label)
+                     break
+                  end
+               elseif endpoint==2
+                  if strcmp(strtrim(BND.DATA(ibnd).labelB),BCA.DATA(iset).label)
+                     break
+                  end
+               end
+            
+            end
+	    
+            disp(['Note that every Table (label) in the bca file can be used by 1 boundary, boundaries segment can only share labels when they overlap 1 gridcell ...'])
+            
+            %% Everything is OK, now read the data
+   	    
+               BND.DATA(ibnd).label{endpoint}   = BCA.DATA(iset).label;
+               BND.DATA(ibnd).names{endpoint}   = BCA.DATA(iset).names;
+               BND.DATA(ibnd).amp  {endpoint}   = BCA.DATA(iset).amp;
+               BND.DATA(ibnd).phi  {endpoint}   = BCA.DATA(iset).phi;
+               
+            end
+
+            if ~(length(BND.DATA(ibnd).amp{1})==...
+                 length(BND.DATA(ibnd).amp{2}))
+               error(['2 endpoints require same number of components for boundary segment:"',BND.DATA(ibnd).name,'"'])
+            end
+
       end % for ibnd = 1:BND.NTables
+      end % any BND at all
       
-      %% 3) whether the label has an associated table in the bca file.
-      %% --------------------------------------------
-
-      if isize==0
-
-         disp (['Boundary ''',BND.DATA(ibnd).name,''' with label ',deblank(labelAB),', has no table in *.bca file.'])
-         error(['Note that every Table (Label) in the bca file can be used by 1 bounary, boundaries segment cannot share labels as their end points are 1 gridcell apart...'])
-         
-      else
-      
-      %% Everything is OK, now read the data
-      %% -------------------------------
-
-         BCA.DATA(ibnd,isize).names   = [];
-         BCA.DATA(ibnd,isize).Label   = deblank(labelAB);
-         
-         for icomp                    = 1:ncomponents
-            record                    = fgetl(fid);
-            componentname             = sscanf(record,'%s',1);
-            ASCII_lenght_of_component = length(componentname);
-            amp_phi                   = sscanf(record(ASCII_lenght_of_component+1:end),'%f',2);
-            
-            BCA.DATA(ibnd,isize).amp(icomp) = amp_phi(1);
-            BCA.DATA(ibnd,isize).phi(icomp) = amp_phi(2);
-
-            %% make it a 2D char array
-            %% cell array would also be possible
-            %% FOrtunetely, the *.bca write routine can handle both
-            
-            BCA.DATA(ibnd,isize).names      = strvcat(BCA.DATA(ibnd,isize).names,...
-                                                      deblank(componentname));
-
-         end
-         
-      end
-   
-   end % while 1   
-   
    fclose(fid);
    
    BCA.iostat = 1;
+   
+   if nargout==1 | nargin==1
+      varargout = {BCA,[]};
+   else
+      varargout = {BCA,BND};
+   end
 
 else   
 
@@ -239,11 +244,9 @@ else
 
 end % if fid > 0 
 
-% ------------------------------------
-% ------------------------------------
-% ------------------------------------
+%% ------------------------------------
 
-function varargout = Local_write(bcafile,BCA,BND),
+function varargout = Local_write(bcafile,BCA,BND)
 
 iostat = 0;
 

@@ -1,8 +1,8 @@
 function DISout = dispack(DISin,varargin)
 %DISPACK          rewrites BCT_IO result to have column instead of a struct field per data type <<beta version!>>
 %
-% DISout = dispack(DISin,<keyword,value>)
-% DISout = dispack(DISin,OPT)
+%    DISout = dispack(DISin,<keyword,value>)
+%    DISout = dispack(DISin,OPT)
 %
 % where the following <keyword,value> pairs have been implemented:
 % * ReferenceTimeMask: remove all data before refenrece tiem, 
@@ -61,12 +61,12 @@ function DISout = dispack(DISin,varargin)
 % for block remove last data point, so array sizes determine block or linear
 
    %% Set defaults for keywords
-   %% ----------------------
+   %------------------------
 
    OPT.ReferenceTimeMask = 1;
 
    %% Return defaults
-   %% ----------------------
+   %------------------------
 
    if nargin==0
       varargout = {OPT};
@@ -88,7 +88,7 @@ function DISout = dispack(DISin,varargin)
    end; 
  
    %% Start
-   %% ----------------------
+   %------------------------
  
    ReferenceTimeFirst = DISin.data(1).ReferenceTime;
    
@@ -97,7 +97,7 @@ function DISout = dispack(DISin,varargin)
       %disp(['processing table: ',num2str(itable)])
    
       %% Check for consistent ReferenceTime times
-      %% ---------------------------------------
+      %-----------------------------------------
       
       if isnumeric(ReferenceTimeFirst)
          if ~(ReferenceTimeFirst==DISin.data(itable).ReferenceTime)
@@ -110,7 +110,7 @@ function DISout = dispack(DISin,varargin)
       end
    
       %% Extract data from multi-dimensional table into struct field
-      %% ---------------------------------------
+      %-----------------------------------------
       
       H.parameternames = {'QA',...                         %       *.bct
                           'QB',...                         %       *.bct
@@ -132,7 +132,7 @@ function DISout = dispack(DISin,varargin)
                           };
                           
       %% Check number of substances
-      %% ---------------------------------------
+      %-----------------------------------------
       
       fldnames = fieldnames(DISin.data(itable));
       
@@ -145,7 +145,7 @@ function DISout = dispack(DISin,varargin)
       end
       
       %% Mask
-      %% ---------------------------------------
+      %-----------------------------------------
 
       mask = 1:length(DISin.data(itable).datenum);
       if any(DISin.data(itable).datenum < time2datenum(DISin.data(itable).ReferenceTime))
@@ -160,7 +160,7 @@ function DISout = dispack(DISin,varargin)
       ntimes = length(DISin.data(itable).datenum(mask));
       
       %% Insert time columns
-      %% ---------------------------------------
+      %-----------------------------------------
    
       DISout.Table(itable).Data      = repmat(nan,[ntimes ncolumns]);
    
@@ -174,7 +174,7 @@ function DISout = dispack(DISin,varargin)
                                         
    
       %% Loop over Table names
-      %% ---------------------------------------
+      %-----------------------------------------
    
       column = 1; % start with one for time
          
@@ -205,7 +205,7 @@ function DISout = dispack(DISin,varargin)
       end
        
       %% Copy meta-information
-      %% ---------------------------------------
+      %-----------------------------------------
    
       DISout.Table(itable).Name          =         DISin.data(itable).Name          ;
       DISout.Table(itable).Contents      =         DISin.data(itable).Contents      ;

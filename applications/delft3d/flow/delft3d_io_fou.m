@@ -6,12 +6,7 @@ function varargout=delft3d_io_fou(cmd,varargin),
 %       delft3d_io_fou('write',filename,DATA);
 %       delft3d_io_fou('write',filename,DATA,<keyword,value>);
 %
-% See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
-%           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
-%           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf, 
-%           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src, 
-%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd, 
-%           FOU2HDF
+% See also: delft3d, delft3d_fou2hdf, tekal
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2007 Delft University of Technology
@@ -82,7 +77,6 @@ end;
 function varargout=Local_read(fname,varargin),
 
 %% Input
-%% ------------------------
 
    OPT.case = 'lower';
 
@@ -104,7 +98,6 @@ end
  STRUCT.iostat       = -3;
 
 %% Locate
-%% ------------------------
 
 tmp = dir(fname);
 
@@ -122,7 +115,6 @@ elseif length(tmp)>0
    fid              = fopen(STRUCT.filename,'r');
 
    %% Open
-   %% ------------------------
 
    if fid < 0
       
@@ -133,7 +125,6 @@ elseif length(tmp)>0
    elseif fid > 2
 
    %% Read
-   %% ------------------------
 
    try
 
@@ -141,7 +132,6 @@ elseif length(tmp)>0
       while 1
 
          %% get line
-         %% ------------------------
 
          newline          = fgetl(fid);
          if ~ischar(newline);break, end % -1 when eof
@@ -170,7 +160,6 @@ elseif length(tmp)>0
       end % while
       
       %% Finished succesfully
-      %% --------------------------------------
 
       STRUCT.NTables = iline;
       fclose(fid);
@@ -205,7 +194,6 @@ fid          = fopen(filename,'w');
 OPT.OS       = 'windows'; % or 'unix'
 
 %% Input
-%% ---------
 
    OPT.case = 'lower';
    

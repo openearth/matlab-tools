@@ -1,5 +1,5 @@
 function G = readNet(varargin)
-%UNSTRUC   toolbox for handling Deltares unstruc netCDF files
+%D-Flow   toolbox for handling Deltares unstruc netCDF files
 %
 % D-Flow is the new (1D, 2D, 3D) unstructured hydrodynamic flow 
 % model solver of Deltares, developed within the UNSTRUC project. 
@@ -25,5 +25,6 @@ function G = readNet(varargin)
 % Convert delft3d-flow model to unstruc
 %  unstruc.mdf2mdu          - convert Delft3D-flow model input to UNSTRUC model input
 %  unstruc.opendap2obs      - get list of observation points from netCDF time series collection
+%  unstruc.analyseHis       - validate water levels with OPeNDAP database for time series & t_tide
 %
 % See also: delft3d

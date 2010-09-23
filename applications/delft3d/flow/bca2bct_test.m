@@ -1,17 +1,16 @@
-function bca2bct_test()
+function OK = bca2bct_test()
 % BCA2BCT_TEST  test script for bca2bct
+%
+%  using test data in ..\..\..\..\test\
 %  
-% %See also: BCA2BCT, BCT2BCA
-%
-%
-%   See also 
+% See also: BCA2BCT, BCT2BCA
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
-%       Pieter van Geer
+%       Gerben de Boer + Pieter van Geer
 %
-%       pieter.vangeer@deltares.nl	
+%       Gerben.deboer@deltares.nl + pieter.vangeer@deltares.nl
 %
 %       Rotterdamseweg 185
 %       2629 HD Delft
@@ -49,22 +48,63 @@ function bca2bct_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('DataAccess');
+   MTest.category('DataAccess');
 
-H.period      = datenum(1999,05,06,0,[180:60:206040],0);
-H.refdate     = datenum(1999,05,06);
-H.latitude    = 52;
+%% define
 
-H.ncomponents = 35; % CHECK BCA FILE MANUALLY
-bca2bct(['.\bct2bca_test\bct2bca_',         num2str(H.latitude),'noa0.bca'],...
-['.\bct2bca_test\TMP_cas_t_predic_',num2str(H.latitude),'noa0.bct'],...
-'.\bct2bca_test\bca.bnd',H.period,...
-H.ncomponents,...
-H.refdate,'latitude',H.latitude);
+   OPT.bcafile     = ['bca2bct.bca']; % generated manually
+   OPT.bctfile     = ['bca2bct.bct']; % to generate
+   OPT.bndfile     = ['bca2bct.bnd'];
+   OPT.period      = datenum(2010,06,01,0,0:1:24*60,0);
+   OPT.refdate     = datenum(2010,01,01);
+   OPT.latitude    = nan; % avoid nodal factors for test
+   
+   OPT2.plot = 0;
+   
+   BCT = bca2bct(OPT);
 
-H.ncomponents = 36; % CHECK BCA FILE MANUALLY
-bca2bct(['.\bct2bca_test\bct2bca_',         num2str(H.latitude),'.bca'],...
-['.\bct2bca_test\TMP_cas_t_predic_',num2str(H.latitude),'.bct'],...
-'.\bct2bca_test\bca.bnd',H.period,...
-H.ncomponents,...
-H.refdate,'latitude',H.latitude);
+%% run
+
+  %BCT = bct_io('read','bca2bct.bct');
+   t   = BCT.Table.Data(:,1);
+   T   = [12 6]; % does not work for S1 for some reason.
+   S2  = BCT.Table.Data(:,2);
+   S2r = cos(2*pi*(t-t(1))/60/T(1)); % reference
+   dS2 = S2-S2r;
+   
+   S1  = BCT.Table.Data(:,3);
+   S1r = cos(2*pi*(t-t(1))/60/T(2)-pi); % reference
+   dS1 = S1-S1r;
+
+%% plot
+
+   if OPT2.plot
+   
+      FIG = figure;
+    
+      % S2
+      subplot(2,1,1)
+      plot(t,S2,'b.')
+      hold on
+      plot(t,S2r,'g')
+      subplot(2,1,2)
+      plot(t,dS2,'r')
+      hold on
+      
+      
+      % S1
+      subplot(2,1,1)
+      plot(t,S1,'b.')
+      hold on
+      plot(t,S1r,'g')
+      subplot(2,1,2)
+      plot(t,dS1,'r')
+      
+      pausedisp
+      try;close(FIG);end
+   end
+
+%% check
+
+   OK = all(dS2 < .5e-2) & ...
+        all(dS1 < .5e-2);
