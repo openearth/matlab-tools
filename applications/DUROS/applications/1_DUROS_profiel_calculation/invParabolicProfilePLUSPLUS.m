@@ -63,8 +63,6 @@ Plus                                    = DuneErosionSettings('get','Plus');
 [c_hs, c_tp, c_w]                       = DuneErosionSettings('get','c_hs','c_tp','c_w');
 [cp_hs, cp_tp, cp_w]                    = DuneErosionSettings('get','cp_hs','cp_tp','cp_w');
 [c_1, c_2, c_1plusplus, c_2plusplus]    = DuneErosionSettings('get','c_1','c_2','c_1plusplus','c_2plusplus');
-[dx,waveheightcmpt,waveperiodcmpt,fallvelocitycmpt] = deal([]);
-
 
 %% ----------- DUROS ----------- 
 if strcmp(Plus,'')

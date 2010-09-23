@@ -34,9 +34,7 @@ Plus                                    = DuneErosionSettings('get','Plus');
 [c_1, c_2, c_1plusplus, c_2plusplus]    = DuneErosionSettings('get','c_1','c_2','c_1plusplus','c_2plusplus');
 [xref,xrefplusplus]                     = DuneErosionSettings('get','xref','xrefplusplus');
 [d_t]                                   = DuneErosionSettings('get','d');
-[xmax,y,waveheightcmpt,waveperiodcmpt,fallvelocitycmpt] = deal([]);
 cfdepth = 1;
-
 
 %% ----------- DUROS ----------- 
 if strcmp(Plus,'')
@@ -49,15 +47,16 @@ elseif strcmp(Plus,'-plus')
     two       = c_1*sqrt(c_2);   % by using this expression, the profile will exactly cross (x0,0)
 %% ----------- D++ ----------- 
 elseif strcmp(Plus,'-plusplus')
+    depth     = d_t + WL_t;
     c_1       = c_1plusplus;
     c_2       = c_2plusplus;
     xref      = xrefplusplus;
     two       = c_1*sqrt(c_2);   % by using this expression, the profile will exactly cross (x0,0)
-    HS_d      = (Hsig_t/d_t);
+    HS_d      = (Hsig_t/depth);
     delta     = max(min((HS_d-0.40)/0.06,1),0);
-    cfdepth   = (1-delta) + delta*max((15/d_t+0.11),1);    %overrule cfdepth with D++ values
+    cfdepth   = (1-delta) + delta*max((15/depth+0.11),1);    %overrule cfdepth with D++ values
 else
-    error('Warning: variable "Plus" should be either '''' or ''-plus'' or ''-plusplus''')
+    error('Warning: variable "Plus" should be either '''' or ''-plus'' or ''-plusplus''');
 end
 
 waveheightcmpt   = (c_hs/Hsig_t)^cp_hs;
@@ -72,4 +71,3 @@ y = roundoff(y, 8);
 
 %% translate y to z
 z = WL_t-y;
-
