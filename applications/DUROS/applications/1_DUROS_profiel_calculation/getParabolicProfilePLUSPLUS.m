@@ -48,20 +48,14 @@ if strcmp(Plus,'')
 elseif strcmp(Plus,'-plus')
     two       = c_1*sqrt(c_2);   % by using this expression, the profile will exactly cross (x0,0)
 %% ----------- D++ ----------- 
-elseif strcmp(Plus,'-plusplus') || strcmp(Plus,'-plusplus0') || strcmp(Plus,'-plusplus1') || strcmp(Plus,'-plusplus2')
+elseif strcmp(Plus,'-plusplus')
     c_1       = c_1plusplus;
     c_2       = c_2plusplus;
     xref      = xrefplusplus;
     two       = c_1*sqrt(c_2);   % by using this expression, the profile will exactly cross (x0,0)
     HS_d      = (Hsig_t/d_t);
     delta     = max(min((HS_d-0.40)/0.06,1),0);
-    if strcmp(Plus,'-plusplus')
-        cfdepth   = (1-delta) + delta*max((15/d_t+0.11),1);    %overrule cfdepth with D++ values
-    elseif strcmp(Plus,'-plusplus2')  %DUROS plusplus2 (for testing only)        
-        cfdepth   = max(1,(5500*HS_d-2155)/270);               
-    else                              %DUROS plusplus1 / DUROS plusplus0 (for testing only)
-        cfdepth   = 1;                                         
-    end
+    cfdepth   = (1-delta) + delta*max((15/d_t+0.11),1);    %overrule cfdepth with D++ values
 else
     error('Warning: variable "Plus" should be either '''' or ''-plus'' or ''-plusplus''')
 end
@@ -72,9 +66,6 @@ fallvelocitycmpt = (w/c_w)^cp_w;
 
 y                = (c_1*sqrt(waveheightcmpt*waveperiodcmpt*fallvelocitycmpt*(x-x0)+c_2)-two) / (c_hs/Hsig_t);
 xmax             = x0 + xref * cfdepth * waveheightcmpt^-1 * fallvelocitycmpt^-1;
-if strcmp(Plus,'-plusplus1')
-    xmax         = x0 + xref * cfdepth * fallvelocitycmpt^-1;
-end
 
 % round to 8 decimal digits to prevent rounding problems later on
 y = roundoff(y, 8);
