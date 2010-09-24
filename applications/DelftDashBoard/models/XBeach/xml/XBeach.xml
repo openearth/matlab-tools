@@ -10,74 +10,79 @@
       <position>10 10 900 700</position> 
       <tabs>
         <tab>
+          <tabname>toolbox</tabname>
+          <tabstring>Toolbox</tabstring>
+          <callback>ddb_selectToolbox</callback>
+        </tab>
+        <tab>
           <tabname>description</tabname>
           <tabstring>Description</tabstring>
+          <callback>ddb_editXBeachDescription</callback>
         </tab>
         <tab>
-          <tabname>hydrodynamics</tabname>
-          <tabstring>Hydrodynamics</tabstring>
+          <tabname>domain</tabname>
+          <tabstring>Domain</tabstring>
+          <callback>ddb_editXBeachDomain</callback>
         </tab>
         <tab>
-          <tabname>grids</tabname>
-          <tabstring>Grids</tabstring>
-        </tab>
-        <tab>
-          <tabname>timeframe</tabname>
+          <tabname>Time Frame</tabname>
           <tabstring>Time Frame</tabstring>
-          <callback>ddb_editDelft3DWAVETimeFrame</callback>
-        </tab>
-        <tab>
-          <tabname>boundaries</tabname>
-          <tabstring>Boundaries</tabstring>
-          <callback>ddb_editDelft3DWAVEBoundaries</callback>
-        </tab>
-        <tab>
-          <tabname>obstacles</tabname>
-          <tabstring>Obstacles</tabstring>
-          <callback>ddb_editDelft3DWAVEObstacles</callback>
+          <callback>ddb_editXBeachTimeFrame</callback>
         </tab>
         <tab>
           <tabname>physicalparameters</tabname>
           <tabstring>Physical Parameters</tabstring>
-          <callback>ddb_editDelft3DWAVEPhysicalParameters</callback>
+          <callback>ddb_editXBeachPhysParams</callback>
         </tab>
         <tab>
-          <tabname>numericalparameters</tabname>
-          <tabstring>Numerical Parameters</tabstring>
-          <callback>ddb_editDelft3DWAVENumericalParameters</callback>
+          <tabname>waves</tabname>
+          <tabstring>Waves</tabstring>
+          <callback>ddb_editXBeachWaves</callback>
         </tab>
         <tab>
-          <tabname>outputcurves</tabname>
-          <tabstring>Output Curves</tabstring>
-          <callback>ddb_editDelft3DWAVEOutputCurves</callback>
+          <tabname>flow</tabname>
+          <tabstring>Flow</tabstring>
+          <callback>ddb_editXBeachFlow</callback>
         </tab>
         <tab>
-          <tabname>outputparameters</tabname>
-          <tabstring>Output Parameters</tabstring>
-          <callback>ddb_editDelft3DWAVEOutputParameters</callback>
+          <tabname>sediment</tabname>
+          <tabstring>Sediment</tabstring>
+          <callback>ddb_editXBeachSediment</callback>
         </tab>
       </tabs>
     </element>
   </elements>
   <menu>
-    <menufile>
-      <menuitem>
-        <string>Open mdw</string>
-        <callback>ddb_openDelft3DWAVE</callback>
-        <option>open</option>
-      </menuitem>
-      <menuitem>
-        <string>Save mdw</string>
-        <callback>ddb_saveDelft3DWAVE</callback>
-        <option>save</option>
-      </menuitem>
-      <menuitem>
-        <string>Save mdw as ...</string>
-        <callback>ddb_saveDelft3DWAVE</callback>
-        <option>saveas</option>
-      </menuitem>
-    </menufile>    
-    <menuview>
-    </menuview>
+      <menuopenfile>
+        <menuitem>
+          <string>Open Params File</string>
+          <callback>ddb_openXBeach</callback>
+          <option>open</option>
+        </menuitem>
+      </menuopenfile>
+      <menusavefile>
+        <menuitem>
+          <string>Save Params File</string>
+          <callback>ddb_saveXBeach</callback>
+          <option>save</option>
+        </menuitem>
+        <menuitem>
+          <string>Save Params File As ...</string>
+          <callback>ddb_saveXBeach</callback>
+          <option>saveas</option>
+        </menuitem>
+        <menuitem>
+          <string>Save All</string>
+          <callback>ddb_saveXBeach</callback>
+          <option>saveall</option>
+        </menuitem>
+        <menuitem>
+          <string>Save All As ...</string>
+          <callback>ddb_saveXBeach</callback>
+          <option>saveallas</option>
+        </menuitem>
+      </menusavefile>
+      <menuview>
+      </menuview>
   </menu>
 </root>

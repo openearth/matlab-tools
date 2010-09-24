@@ -54,6 +54,6 @@ end
 
 % Read xml files
 for i=1:nt
-    handles=ddb_readModelElements(handles,i);
+    handles=ddb_readModelXML(handles,i);
 end
 

@@ -66,7 +66,7 @@ switch lower(fcn)
         panel=get(handle,'UserData');
         tabnames=panel.tabNames;
         iac=strmatch(tabname,tabnames,'exact');
-        select(handle,activetabnr,'withcallback');
+        select(handle,iac,'withcallback');
     case{'delete'}
         deleteTabPanel(handle);
     case{'resize'}

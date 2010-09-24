@@ -1,4 +1,6 @@
-function handles=ddb_resetAll(handles)
+function ddb_resetAll
+
+handles=getHandles;
 
 for i=1:length(handles.Model)
     try
@@ -25,5 +27,3 @@ set(c,'Checked','on');
 setHandles(handles);
 
 tabpanel(handles.GUIHandles.MainWindow,'tabpanel','select','tabname','Toolbox');
-
-handles=getHandles;

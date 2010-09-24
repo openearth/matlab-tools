@@ -27,9 +27,10 @@ for i=1:length(varargin)
 end
 
 if isempty(subIndices)
-    subIndices=zeros(length(subFields))+1;
+    for i=1:length(subFields)
+        subIndices{i}=1;
+    end
 end
-
 bgc=get(figh,'Color');
 
 for i=1:length(elements)
@@ -164,9 +165,12 @@ for i=1:length(elements)
                     callbacks{j}=@deleteUIControls;
                 end
             end
+%             if subIndices{1}==2 && ~isempty(strmatch('computationalgrid',tabnames,'exact'))
+%                shite=1
+%             end
             [elements(i).handle tabhandles]=tabpanel('create','figure',figh,'tag',tabname,'position',position,'strings',strings,'callbacks',callbacks,'tabnames',tabnames,'Parent',parent,'activetabnr',1);
             for j=1:length(elements(i).tabs)
-                elements(i).tabs(j).elements=addUIElements(figh,elements(i).tabs(j).elements,'subFields',subFields,'getFcn',getFcn,'setFcn',setFcn,'Parent',tabhandles(j));
+                elements(i).tabs(j).elements=addUIElements(figh,elements(i).tabs(j).elements,'subFields',subFields,'subIndices',subIndices,'getFcn',getFcn,'setFcn',setFcn,'Parent',tabhandles(j));
                 setUIElements(elements(i).tabs(j).elements,getFcn,subFields,subIndices);
                 updateUIDependencies(elements(i).tabs(j).elements,0,getFcn,subFields,subIndices);
             end

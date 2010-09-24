@@ -17,14 +17,17 @@
         <tab>
           <tabname>description</tabname>
           <tabstring>Description</tabstring>
+          <elements>Delft3DWAVE.description.xml</elements>
         </tab>
         <tab>
           <tabname>hydrodynamics</tabname>
           <tabstring>Hydrodynamics</tabstring>
+          <elements>Delft3DWAVE.hydrodynamics.xml</elements>
         </tab>
         <tab>
           <tabname>grids</tabname>
           <tabstring>Grids</tabstring>
+          <elements>Delft3DWAVE.grids.xml</elements>
         </tab>
         <tab>
           <tabname>timeframe</tabname>
@@ -65,26 +68,36 @@
     </element>
   </elements>
   <menu>
-    <menuopenfile>
-      <menuitem>
-        <string>Open mdw</string>
-        <callback>ddb_openDelft3DWAVE</callback>
-        <option>open</option>
-      </menuitem>
-    </menuopenfile>    
-    <menusavefile>    
-      <menuitem>
-        <string>Save mdw</string>
-        <callback>ddb_saveDelft3DWAVE</callback>
-        <option>save</option>
-      </menuitem>
-      <menuitem>
-        <string>Save mdw as ...</string>
-        <callback>ddb_saveDelft3DWAVE</callback>
-        <option>saveas</option>
-      </menuitem>
-    </menusavefile>    
-    <menuview>
-    </menuview>
+      <menuopenfile>
+        <menuitem>
+          <string>Open MDW File</string>
+          <callback>ddb_openDelft3DWAVE</callback>
+          <option>open</option>
+        </menuitem>
+      </menuopenfile>
+      <menusavefile>
+        <menuitem>
+          <string>Save MDW File</string>
+          <callback>ddb_saveDelft3DWAVE</callback>
+          <option>save</option>
+        </menuitem>
+        <menuitem>
+          <string>Save MDW File As ...</string>
+          <callback>ddb_saveDelft3DWAVE</callback>
+          <option>saveas</option>
+        </menuitem>
+        <menuitem>
+          <string>Save All</string>
+          <callback>ddb_saveDelft3DWAVE</callback>
+          <option>saveall</option>
+        </menuitem>
+        <menuitem>
+          <string>Save All As ...</string>
+          <callback>ddb_saveDelft3DWAVE</callback>
+          <option>saveallas</option>
+        </menuitem>
+      </menusavefile>
+      <menuview>
+      </menuview>
   </menu>
 </root>

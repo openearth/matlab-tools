@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
 <!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
-  <model>Delft3DWAVE</model>
-  <name>description</name>
-  <elements>
     <element>
       <style>panel</style>
       <position>20 20 990 160</position>
@@ -40,5 +37,4 @@
       <text>Description (max. 3 lines)</text>
       <textposition>above-left</textposition>
     </element>
-  </elements>
 </root>

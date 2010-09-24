@@ -1,4 +1,6 @@
-function handles=ddb_saveDelft3DWAVE(handles,opt)
+function ddb_saveDelft3DWAVE(opt)
+
+handles=getHandles;
 
 id=handles.ActiveDomain;
 
@@ -35,3 +37,4 @@ switch lower(opt)
         SaveWaveAttributeFiles(handles,id,'saveallas');
 end
 
+setHandles(handles);

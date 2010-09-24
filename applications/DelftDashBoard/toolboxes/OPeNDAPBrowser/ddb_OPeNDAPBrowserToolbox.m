@@ -61,68 +61,73 @@ setHandles(handles);
 
 %% initialise ncfile list
 fns          = dir([fileparts(which(mfilename('fullpath'))) filesep '*.nc']);
-ncfiles      = cellstr([char(repmat({[fileparts(which(mfilename('fullpath'))) filesep]}, size(fns))), char({fns.name}')]);
 
-if length(ncfiles)>1
-    catalog  = nc_cf_merge_catalogs('filenames', ncfiles);
-else
-    catalog  = nc2struct(ncfiles{:});
+if ~isempty(fns)
+    
+    ncfiles      = cellstr([char(repmat({[fileparts(which(mfilename('fullpath'))) filesep]}, size(fns))), char({fns.name}')]);
+    
+    if length(ncfiles)>1
+        catalog  = nc_cf_merge_catalogs('filenames', ncfiles);
+    else
+        catalog  = nc2struct(ncfiles{:});
+    end
+    % struct2nc('WorldWaves_catalog.nc',catalog)
+    
+    ids = abs(catalog.geospatialCoverage_eastwest(:,1))<500;
+    fields       = fieldnames(catalog);
+    for i = 1:length(fields)
+        D.(fields{i}) = catalog.(fields{i})(ids,:);
+    end
+    catalog = D; clear D
+    
+    % put available URL's in listbox
+    set(handles.GUIHandles.ListNcFiles,'string',catalog.urlPath)
+    
+    %% sort catalog entries on size
+    C            = catalog; clear catalog
+    
+    xll          = C.geospatialCoverage_eastwest(:,1);
+    yll          = C.geospatialCoverage_northsouth(:,1);
+    xur          = C.geospatialCoverage_eastwest(:,2);
+    yur          = C.geospatialCoverage_northsouth(:,2);
+    
+    sizes        = sqrt((xur - xll).^2 + (yur - yll).^2);
+    [dummy, ids] = sort(sizes, 'descend');
+    
+    fields       = fieldnames(C);
+    for i = 1:length(fields)
+        D.(fields{i}) = C.(fields{i})(ids,:);
+    end
+    C = D; clear D
+    
+    %% put catalog data in userdata of search button
+    set(handles.GUIHandles.Pushddb_FindDataset,'userdata',C)
+    
+    %% plot data from catalog
+    % plot grids as a rectangle
+    id =   C.geospatialCoverage_eastwest(:,1) ~= C.geospatialCoverage_eastwest(:,2);
+    cntr = 0;
+    for j = find(id)'
+        cntr = cntr + 1;
+        ph(cntr) = patch( ...
+            [C.geospatialCoverage_eastwest(j,1) C.geospatialCoverage_eastwest(j,2) C.geospatialCoverage_eastwest(j,2) C.geospatialCoverage_eastwest(j,1) C.geospatialCoverage_eastwest(j,1)], ...
+            [C.geospatialCoverage_northsouth(j,1) C.geospatialCoverage_northsouth(j,1) C.geospatialCoverage_northsouth(j,2) C.geospatialCoverage_northsouth(j,2) C.geospatialCoverage_northsouth(j,1)], ...
+            'r');
+        set(ph(cntr), 'facecolor','r','edgecolor','k','tag', 'OPeNDAPGrid', 'FaceAlpha', .25)
+        set(ph(cntr),'ButtonDownFcn',{@ddb_OPeNDAPclbkobj},'userdata',C.urlPath(j));
+    end
+    
+    % plot stations as a point
+    id = C.geospatialCoverage_eastwest(:,1) == C.geospatialCoverage_eastwest(:,2);
+    cntr = 0;
+    for j = find(id)'
+        cntr = cntr + 1;
+        ph(cntr) = rectangle('position', [C.geospatialCoverage_eastwest(j,1), C.geospatialCoverage_northsouth(j,1), .1, .1], 'Curvature', [1,1]);
+        set(ph(cntr), 'facecolor','r','edgecolor','k','tag', 'OPeNDAPPoint')
+        set(ph(cntr),'ButtonDownFcn',{@ddb_OPeNDAPclbkobj},'userdata',C.urlPath(j));
+    end
+    
+    
+    ddb_OPeNDAPorderobjects;
+    
 end
-% struct2nc('WorldWaves_catalog.nc',catalog)
-
-ids = abs(catalog.geospatialCoverage_eastwest(:,1))<500;
-fields       = fieldnames(catalog);
-for i = 1:length(fields)
-    D.(fields{i}) = catalog.(fields{i})(ids,:);
-end
-catalog = D; clear D
-
-% put available URL's in listbox
-set(handles.GUIHandles.ListNcFiles,'string',catalog.urlPath)
-
-%% sort catalog entries on size
-C            = catalog; clear catalog
-
-xll          = C.geospatialCoverage_eastwest(:,1);
-yll          = C.geospatialCoverage_northsouth(:,1);
-xur          = C.geospatialCoverage_eastwest(:,2);
-yur          = C.geospatialCoverage_northsouth(:,2);
-
-sizes        = sqrt((xur - xll).^2 + (yur - yll).^2);
-[dummy, ids] = sort(sizes, 'descend');
-
-fields       = fieldnames(C);
-for i = 1:length(fields)
-    D.(fields{i}) = C.(fields{i})(ids,:);
-end
-C = D; clear D
-
-%% put catalog data in userdata of search button
-set(handles.GUIHandles.Pushddb_FindDataset,'userdata',C)
-
-%% plot data from catalog
-% plot grids as a rectangle
-id =   C.geospatialCoverage_eastwest(:,1) ~= C.geospatialCoverage_eastwest(:,2);
-cntr = 0;
-for j = find(id)'
-    cntr = cntr + 1;
-    ph(cntr) = patch( ...
-        [C.geospatialCoverage_eastwest(j,1) C.geospatialCoverage_eastwest(j,2) C.geospatialCoverage_eastwest(j,2) C.geospatialCoverage_eastwest(j,1) C.geospatialCoverage_eastwest(j,1)], ...
-        [C.geospatialCoverage_northsouth(j,1) C.geospatialCoverage_northsouth(j,1) C.geospatialCoverage_northsouth(j,2) C.geospatialCoverage_northsouth(j,2) C.geospatialCoverage_northsouth(j,1)], ...
-        'r');
-    set(ph(cntr), 'facecolor','r','edgecolor','k','tag', 'OPeNDAPGrid', 'FaceAlpha', .25)
-    set(ph(cntr),'ButtonDownFcn',{@ddb_OPeNDAPclbkobj},'userdata',C.urlPath(j));
-end
-
-% plot stations as a point
-id = C.geospatialCoverage_eastwest(:,1) == C.geospatialCoverage_eastwest(:,2);
-cntr = 0;
-for j = find(id)'
-    cntr = cntr + 1;
-    ph(cntr) = rectangle('position', [C.geospatialCoverage_eastwest(j,1), C.geospatialCoverage_northsouth(j,1), .1, .1], 'Curvature', [1,1]);
-    set(ph(cntr), 'facecolor','r','edgecolor','k','tag', 'OPeNDAPPoint')
-    set(ph(cntr),'ButtonDownFcn',{@ddb_OPeNDAPclbkobj},'userdata',C.urlPath(j));
-end
-
-
-ddb_OPeNDAPorderobjects

@@ -3,6 +3,7 @@
 <root>
   <model>Delft3DFLOW</model>
   <longname>Delft3D-FLOW</longname>
+  <multipledomains>yes</multipledomains>
   <elements>
     <element>
       <style>tabpanel</style>
@@ -81,31 +82,41 @@
   <menu>
       <menuopenfile>
         <menuitem>
-          <string>Open mdf</string>
+          <string>Open MDF File</string>
           <callback>ddb_openDelft3DFLOW</callback>
           <option>open</option>
         </menuitem>
         <menuitem>
-          <string>Add domain</string>
+          <string>Add Domain</string>
           <callback>ddb_openDelft3DFLOW</callback>
           <option>adddomain</option>
         </menuitem>
         <menuitem>
-          <string>Open domains</string>
+          <string>Open DD File</string>
           <callback>ddb_openDelft3DFLOW</callback>
-          <option>opendomain</option>
+          <option>opendomains</option>
         </menuitem>
       </menuopenfile>
       <menusavefile>
         <menuitem>
-          <string>Save mdf</string>
+          <string>Save MDF File</string>
           <callback>ddb_saveDelft3DFLOW</callback>
           <option>save</option>
         </menuitem>
         <menuitem>
-          <string>Save mdf as ...</string>
+          <string>Save MDF File As ...</string>
           <callback>ddb_saveDelft3DFLOW</callback>
           <option>saveas</option>
+        </menuitem>
+        <menuitem>
+          <string>Save All</string>
+          <callback>ddb_saveDelft3DFLOW</callback>
+          <option>saveall</option>
+        </menuitem>
+        <menuitem>
+          <string>Save All As ...</string>
+          <callback>ddb_saveDelft3DFLOW</callback>
+          <option>saveallas</option>
         </menuitem>
       </menusavefile>
       <menuview>

@@ -28,7 +28,7 @@ for i=1:length(elements)
             
             % Check box
             val=getSubFieldValue(s,subFields,subIndices,el.varName);
-            set(el.handle,'String',val);
+            set(el.handle,'Value',val);
             
         case{'listbox'}
 

@@ -1,13 +1,13 @@
-function handles=ddb_openXBeach(handles,id)
+function ddb_openXBeach(opt)
 
-ii=strmatch('XBeach',{handles.Model.Name},'exact');
+handles=getHandles;
 
 % DD
    % some day...
 % One Domain
 [filename, pathname, filterindex] = uigetfile('*.txt', 'Select Params file');
 if pathname~=0
-    handles.Model(ii).Input(handles.ActiveDomain).ParamsFile=[pathname filename];
+    handles.Model(md).Input(handles.ActiveDomain).ParamsFile=[pathname filename];
     ddb_plotXBeach(handles,'DeleteAll',0); % make
     handles.Model(handles.ActiveModel.Nr).Input=[];
     handles.GUIData.NrFlowDomains=1;
@@ -18,6 +18,8 @@ if pathname~=0
     handles=ddb_readParams(handles,[pathname filename],1);
     handles=ddb_readAttributeXBeachFiles(handles,pathname); %make
     ddb_plotXBeach(handles,'plot',0); % make
-    handles=Refresh(handles);   
-    %handles=ddb_refreshFlowDomains(handles); %probably not needed
+    % handles=Refresh(handles);   
+    % handles=ddb_refreshFlowDomains(handles); %probably not needed
 end        
+
+setHandles(handles);

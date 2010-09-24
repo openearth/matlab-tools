@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
+<elements>
   <element>
     <style>panel</style>
     <position>20 20 200 130</position>
@@ -253,4 +254,5 @@
       </tab>
     </tabs>
   </element>
+</elements>
 </root>

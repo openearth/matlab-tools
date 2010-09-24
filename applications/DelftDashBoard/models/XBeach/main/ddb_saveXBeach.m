@@ -1,6 +1,6 @@
-function handles=ddb_saveXBeach(handles,opt)
+function handles=ddb_saveXBeach(opt)
 
-ii=strmatch('XBeach',{handles.Model.Name},'exact');
+handles=getHandles;
 
 switch lower(opt)
     case{'save'}
@@ -12,8 +12,8 @@ switch lower(opt)
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            handles.Model(ii).Input(ad).Runid='tst';
-            handles.Model(ii).Input(ad).ParamsFile=filename;
+            handles.Model(md).Input(ad).Runid='tst';
+            handles.Model(md).Input(ad).ParamsFile=filename;
             ddb_saveParams(handles);
         end
     case{'saveall'}
@@ -25,9 +25,11 @@ switch lower(opt)
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            handles.Model(ii).Input(ad).Runid='tst';
-            handles.Model(ii).Input(ad).ParamsFile=filename;
+            handles.Model(md).Input(ad).Runid='tst';
+            handles.Model(md).Input(ad).ParamsFile=filename;
             handles=ddb_saveParams(handles);
         end
 end
+
+setHandles(handles);
 

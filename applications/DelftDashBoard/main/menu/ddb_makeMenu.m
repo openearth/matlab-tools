@@ -1,19 +1,8 @@
 function handles=ddb_makeMenu(handles)
 
 %% File
-uimenu('Label','File','Tag','menuFile');
-handles=ddb_addMenuItem(handles,'File','New',                     'Callback',{@ddb_menuFile});
-handles=ddb_addMenuItem(handles,'File','Open',                    'Callback',{@ddb_menuFile},'Separator','on');
-handles=ddb_addMenuItem(handles,'File','Add Domain',              'Callback',{@ddb_menuFile});
-handles=ddb_addMenuItem(handles,'File','Open Domains',            'Callback',{@ddb_menuFile});
-handles=ddb_addMenuItem(handles,'File','Save',                    'Callback',{@ddb_menuFile},'Separator','on');
-handles=ddb_addMenuItem(handles,'File','Save As ...',             'Callback',{@ddb_menuFile});
-handles=ddb_addMenuItem(handles,'File','Save All',                'Callback',{@ddb_menuFile},'Separator','on');
-handles=ddb_addMenuItem(handles,'File','Save All As ...',         'Callback',{@ddb_menuFile});
-handles=ddb_addMenuItem(handles,'File','Save All Domains',        'Callback',{@ddb_menuFile});
-handles=ddb_addMenuItem(handles,'File','Open Shoreline',       'Callback',{@ddb_menuFile},'Separator','on');
-handles=ddb_addMenuItem(handles,'File','Select Working Directory','Callback',{@ddb_menuFile},'Separator','on');
-handles=ddb_addMenuItem(handles,'File','Exit',                    'Callback',{@ddb_menuFile},'Separator','on');
+handles.GUIHandles.Menu.File.Main=uimenu('Label','File','Tag','menuFile');
+% Items are added in ddb_changeFileMenuItems
 
 %% Toolbox
 uimenu('Label','Toolbox','Tag','menuToolbox');

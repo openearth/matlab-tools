@@ -1,17 +1,19 @@
-function handles=ddb_openDelft3DFLOW(handles,id)
+function ddb_openDelft3DFLOW(opt)
+
+handles=getHandles;
 
 tbnr=strmatch('DD',{handles.Toolbox(:).Name},'exact');
 
-opt='newdomain';
-if id==0
-    opt='ddbound';
-end
-if id>handles.GUIData.NrFlowDomains
-    opt='adddomain';
-end
+% opt='newdomain';
+% if id==0
+%     opt='ddbound';
+% end
+% if id>handles.GUIData.NrFlowDomains
+%     opt='adddomain';
+% end
 
 switch opt
-    case {'ddbound'}
+    case {'opendomains'}
         % DD
         [filename, pathname, filterindex] = uigetfile('ddbound', 'Select ddbound file');
         if pathname~=0
@@ -38,7 +40,7 @@ switch opt
             end
             handles=ddb_refreshFlowDomains(handles);
         end
-    case {'newdomain'}
+    case {'open'}
         % One Domain
         [filename, pathname, filterindex] = uigetfile('*.mdf', 'Select MDF file');
         if pathname~=0
@@ -77,3 +79,5 @@ switch opt
             handles=ddb_refreshFlowDomains(handles);
         end        
 end
+
+setHandles(handles);

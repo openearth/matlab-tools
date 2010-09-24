@@ -39,9 +39,13 @@ switch lower(varargin{1}),
 
         disp('Initializing models ...');
         handles=ddb_initializeModels(handles);
-        
+
+        setHandles(handles);
+
         disp('Initializing toolboxes ...');
         handles=ddb_initializeToolboxes(handles);
+
+        setHandles(handles);
 
         disp('Initializing screen ...');
         handles=ddb_initializeScreen(handles);

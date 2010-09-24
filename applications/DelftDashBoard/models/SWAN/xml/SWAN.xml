@@ -60,24 +60,31 @@
     </element>
   </elements>
   <menu>
-    <menufile>
-      <menuitem>
-        <string>Open mdw</string>
-        <callback>ddb_openDelft3DWAVE</callback>
-        <option>open</option>
-      </menuitem>
-      <menuitem>
-        <string>Save mdw</string>
-        <callback>ddb_saveDelft3DWAVE</callback>
-        <option>save</option>
-      </menuitem>
-      <menuitem>
-        <string>Save mdw as ...</string>
-        <callback>ddb_saveDelft3DWAVE</callback>
-        <option>saveas</option>
-      </menuitem>
-    </menufile>    
-    <menuview>
-    </menuview>
+      <menuopenfile>
+        <menuitem>
+          <string>Open SWAN Input</string>
+          <callback>ddb_openSWAN</callback>
+          <option>open</option>
+        </menuitem>
+      </menuopenfile>
+      <menusavefile>
+        <menuitem>
+          <string>Save SWAN Input</string>
+          <callback>ddb_saveSWAN</callback>
+          <option>save</option>
+        </menuitem>
+        <menuitem>
+          <string>Save All</string>
+          <callback>ddb_saveDelft3DWAVE</callback>
+          <option>saveall</option>
+        </menuitem>
+        <menuitem>
+          <string>Save All As ...</string>
+          <callback>ddb_saveDelft3DWAVE</callback>
+          <option>saveallas</option>
+        </menuitem>
+      </menusavefile>
+      <menuview>
+      </menuview>
   </menu>
 </root>

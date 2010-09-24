@@ -1,4 +1,6 @@
-function handles=SelectWorkingDirectory(handles)
+function ddb_selectWorkingDirectory
+
+handles=getHandles;
 
 directoryname = uigetdir(handles.WorkingDirectory, 'Select working directory');
 
@@ -8,3 +10,5 @@ end
 
 cd(directoryname)
 handles.WorkingDirectory=directoryname;
+
+setHandles(handles);

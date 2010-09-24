@@ -5,12 +5,24 @@ fname=[handles.Model(j).Name '.xml'];
 s.elements=[];
 
 if exist(fname,'file')
+
     handles.Model(j).useXML=1;    
     xml=xml_load(fname);
+    
     handles.Model(j).longName=xml.longname;
+
+    handles.Model(j).supportsMultipleDomains=0;
+    if isfield(xml,'multipledomains')
+        if strcmpi(xml.multipledomains(1),'y')
+            handles.Model(j).supportsMultipleDomains=1;
+        end
+    end
+    
     s=readUIElementsXML(xml);
+
 end
 
+%% Menu File
 handles.Model(j).GUI.elements=s.elements;
 if isfield(xml.menu,'menuopenfile')
 for i=1:length(xml.menu.menuopenfile)

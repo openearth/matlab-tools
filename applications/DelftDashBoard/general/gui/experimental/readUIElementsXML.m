@@ -71,9 +71,9 @@ if isfield(xml,'elements')
                     % Loop through all elements to find
                     % element that control this variable
                     % and set dependees for this variable
-                    for jj=1:length(nrElements)
+                    for jj=1:nrElements
                         if ~isempty(s.elements(jj).varName)
-                            if strcmpi(s.elements(k).dependencies(id).checks(k).varName,s.elements(jj).varName)
+                            if strcmpi(s.elements(k).dependencies(id).checks(ic).varName,s.elements(jj).varName)
                                 
                                 % Element jj controls this checked variable
                                 
@@ -81,8 +81,8 @@ if isfield(xml,'elements')
                                 switch s.elements(jj).varType
                                     case{'string'}
                                     otherwise
-                                        v=s.elements(k).dependencies(id).checks(k).value;
-                                        s.elements(k).dependencies(id).checks(k).value=str2double(v);
+                                        v=s.elements(k).dependencies(id).checks(ic).value;
+                                        s.elements(k).dependencies(id).checks(ic).value=str2double(v);
                                 end
                                 
                                 % Now set the dependees

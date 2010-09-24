@@ -36,7 +36,18 @@ for i=1:length(flist)
         case{'.','..','.svn'}
         case exclude
         otherwise
+            % m files
             f=dir(['models\' flist(i).name '\main\*.m']);
+            for j=1:length(f)
+                fname=f(j).name;
+                switch fname
+                    case{'.','..','.svn'}
+                    otherwise
+                        fprintf(fid,'%s\n',fname);
+                end
+            end
+            % xml files
+            f=dir(['models\' flist(i).name '\xml\*.xml']);
             for j=1:length(f)
                 fname=f(j).name;
                 switch fname

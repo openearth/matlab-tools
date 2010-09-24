@@ -5,6 +5,7 @@ chk='off';
 enab='on';
 longname=[];
 callback=[];
+argin=[];
 
 HandleName=menu2;
 
@@ -24,6 +25,8 @@ for i=1:n
                 enab=varargin{i+1};
             case{'longname'}
                 longname=varargin{i+1};
+            case{'argin'}
+                argin=varargin{i+1};
         end
     end
 end
@@ -37,7 +40,11 @@ else
     lab=longname;
 end
 
-g=uimenu(h,'Label',lab,'Callback',callback,'Separator',sep,'Checked',chk,'Enable',enab);
+if ~isempty(argin)
+    g=uimenu(h,'Label',lab,'Callback',{callback,argin},'Separator',sep,'Checked',chk,'Enable',enab);
+else
+    g=uimenu(h,'Label',lab,'Callback',callback,'Separator',sep,'Checked',chk,'Enable',enab);
+end
 
 menu1=strrep(menu1,' ','');
 menu1=strrep(menu1,'.','');
