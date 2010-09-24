@@ -45,6 +45,12 @@ if strcmp(Plus,'')
 %% ----------- DUROS+ ----------- 
 elseif strcmp(Plus,'-plus')
     two       = c_1*sqrt(c_2);   % by using this expression, the profile will exactly cross (x0,0)
+%% ----------- D++0 ----------- 
+elseif strcmp(Plus,'-plusplus0') % -plusplus0 is only used for testing purposes!
+    c_1       = c_1plusplus;
+    c_2       = c_2plusplus;
+    xref      = xrefplusplus;
+    two       = c_1*sqrt(c_2);   % by using this expression, the profile will exactly cross (x0,0)
 %% ----------- D++ ----------- 
 elseif strcmp(Plus,'-plusplus')
     depth     = d_t + WL_t;
