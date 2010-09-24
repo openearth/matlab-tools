@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <model>SWAN</model>
+  <longname>SWAN</longname>
+  <elements>
+    <element>
+      <style>tabpanel</style>
+      <tag>SWAN</tab>
+      <position>10 10 900 700</position> 
+      <tabs>
+        <tab>
+          <tabname>description</tabname>
+          <tabstring>Description</tabstring>
+        </tab>
+        <tab>
+          <tabname>hydrodynamics</tabname>
+          <tabstring>Hydrodynamics</tabstring>
+        </tab>
+        <tab>
+          <tabname>grids</tabname>
+          <tabstring>Grids</tabstring>
+        </tab>
+        <tab>
+          <tabname>timeframe</tabname>
+          <tabstring>Time Frame</tabstring>
+          <callback>ddb_editDelft3DWAVETimeFrame</callback>
+        </tab>
+        <tab>
+          <tabname>boundaries</tabname>
+          <tabstring>Boundaries</tabstring>
+          <callback>ddb_editDelft3DWAVEBoundaries</callback>
+        </tab>
+        <tab>
+          <tabname>obstacles</tabname>
+          <tabstring>Obstacles</tabstring>
+          <callback>ddb_editDelft3DWAVEObstacles</callback>
+        </tab>
+        <tab>
+          <tabname>physicalparameters</tabname>
+          <tabstring>Physical Parameters</tabstring>
+          <callback>ddb_editDelft3DWAVEPhysicalParameters</callback>
+        </tab>
+        <tab>
+          <tabname>numericalparameters</tabname>
+          <tabstring>Numerical Parameters</tabstring>
+          <callback>ddb_editDelft3DWAVENumericalParameters</callback>
+        </tab>
+        <tab>
+          <tabname>outputcurves</tabname>
+          <tabstring>Output Curves</tabstring>
+          <callback>ddb_editDelft3DWAVEOutputCurves</callback>
+        </tab>
+        <tab>
+          <tabname>outputparameters</tabname>
+          <tabstring>Output Parameters</tabstring>
+          <callback>ddb_editDelft3DWAVEOutputParameters</callback>
+        </tab>
+      </tabs>
+    </element>
+  </elements>
+  <menu>
+      <menuopenfile>
+        <menuitem>
+          <string>Open SWAN Input</string>
+          <callback>ddb_openSWAN</callback>
+          <option>open</option>
+        </menuitem>
+      </menuopenfile>
+      <menusavefile>
+        <menuitem>
+          <string>Save SWAN Input</string>
+          <callback>ddb_saveSWAN</callback>
+          <option>save</option>
+        </menuitem>
+        <menuitem>
+          <string>Save All</string>
+          <callback>ddb_saveDelft3DWAVE</callback>
+          <option>saveall</option>
+        </menuitem>
+        <menuitem>
+          <string>Save All As ...</string>
+          <callback>ddb_saveDelft3DWAVE</callback>
+          <option>saveallas</option>
+        </menuitem>
+      </menusavefile>
+      <menuview>
+      </menuview>
+  </menu>
+</root>
