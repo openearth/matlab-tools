@@ -34,8 +34,11 @@ handles.ScreenParameters.YLim=yl;
 
 setHandles(handles);
 
-h=findall(gcf,'Tag','colorbar');
+h=findobj(gcf,'Tag','colorbar');
 if ~isempty(h)
     set(h,'Position',[sz(3)-80 200 30 sz(4)-265]);
 end
-tabpanel(gcf,'tabpanel','resize','position',[10 10 sz(3)-20 sz(4)-40]);
+
+for i=1:length(handles.Model)
+    tabpanel('resize','tag',handles.Model(i).Name,'resize','position',[10 10 sz(3)-20 sz(4)-40]);
+end

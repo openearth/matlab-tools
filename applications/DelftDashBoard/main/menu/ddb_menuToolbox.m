@@ -16,5 +16,5 @@ handles.activeToolbox.Nr=strmatch(tbname,{handles.Toolbox(:).Name},'exact');
 
 setHandles(handles);
 
-% guidata(hObject, handles);
-tabpanel(handles.GUIHandles.MainWindow,'tabpanel','select','tabname','Toolbox');
+% Select toolbox
+tabpanel('select','tag',handles.Model(md).Name,'tabname','toolbox');

@@ -6,7 +6,7 @@ handles=getHandles;
 
 id=handles.Model(md).Input.ActiveDomain;
 
-hp = uipanel('Title','Grids','Units','pixels','Position',[20 20 990 160],'Tag','UIControl');
+% hp = uipanel('Title','Grids','Units','pixels','Position',[20 20 990 160],'Tag','UIControl');
 
 handles.GUIHandles.TextComputationalGrids = uicontrol(gcf,'Style','text','string','Computational grids :','Position',[40 145 100 15],'HorizontalAlignment','left','Tag','UIControl');
 handles.GUIHandles.EditComputationalGrids = uicontrol(gcf,'Style','listbox','Position',[40 90 200 50],'HorizontalAlignment','left','BackgroundColor',[1 1 1],'Tag','UIControl');
@@ -26,7 +26,7 @@ handles.GUIHandles.TextCoordinateSystem = uicontrol(gcf,'Style','text','string',
 
 setHandles(handles);
 
-hp = uipanel('Title','Grid data','Units','pixels','Position',[340 25 655 140],'Tag','UIControl');
+% hp = uipanel('Title','Grid data','Units','pixels','Position',[340 25 655 140],'Tag','UIControl');
 
 handles.GUIHandles.TextBathymetryGrid     = uicontrol(gcf,'Style','text','String',['Associated bathymetry grid : ' handles.Model(md).Input.Domain(id).GrdFile],'Position',[360 90 310 15],'HorizontalAlignment','left','Tag','UIControl');
 handles.GUIHandles.TextBathymetryDep      = uicontrol(gcf,'Style','text','String',['Associated bathymetry data : ' handles.Model(md).Input.Domain(id).DepFile],'Position',[360 70 310 15],'HorizontalAlignment','left','Tag','UIControl');

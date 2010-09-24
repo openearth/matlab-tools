@@ -5,7 +5,7 @@ handles=getHandles;
 tg=get(hObject,'Tag');
 
 switch tg,
-    case{'menuViewShorelines'}
+    case{'menuViewShoreline'}
         menuViewShorelines_Callback(hObject,eventdata,handles);
     case{'menuViewBackgroundBathymetry'}
         menuViewBackgroundBathymetry_Callback(hObject,eventdata,handles);
@@ -22,13 +22,13 @@ checked=get(hObject,'Checked');
 
 if strcmp(checked,'on')
     set(hObject,'Checked','off');
-    h=findall(gcf,'Tag','WorldCoastLine');
+    h=findobj(gcf,'Tag','WorldCoastLine');
     if ~isempty(h)
         set(h,'Visible','off');
     end        
 else
     set(hObject,'Checked','on');
-    h=findall(gcf,'Tag','WorldCoastLine');
+    h=findobj(gcf,'Tag','WorldCoastLine');
     if ~isempty(h)
         set(h,'Visible','on');
     end        

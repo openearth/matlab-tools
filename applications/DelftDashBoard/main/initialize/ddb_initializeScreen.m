@@ -1,5 +1,18 @@
 function handles=ddb_initializeScreen(handles)
 
+% Model tabs
+for i=1:length(handles.Model)
+    elements=handles.Model(i).GUI.elements;
+    subFields{1}='Model';
+    subFields{2}='Input';
+    subIndices={i,1};
+    if ~isempty(elements)
+        elements=addUIElements(gcf,elements,'subFields',subFields,'getFcn',@getHandles,'setFcn',@setHandles);
+        set(elements(1).handle,'Visible','off');
+        handles.Model(i).GUI.elements=elements;
+    end
+end
+
 ax=axes;
 set(ax,'Units','pixels');
 set(ax,'NextPlot','replace');

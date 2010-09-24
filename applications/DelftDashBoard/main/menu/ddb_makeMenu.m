@@ -3,7 +3,7 @@ function handles=ddb_makeMenu(handles)
 %% File
 uimenu('Label','File','Tag','menuFile');
 handles=ddb_addMenuItem(handles,'File','New',                     'Callback',{@ddb_menuFile});
-handles=ddb_addMenuItem(handles,'File','Open',                    'Callback',{@ddb_menuFile});
+handles=ddb_addMenuItem(handles,'File','Open',                    'Callback',{@ddb_menuFile},'Separator','on');
 handles=ddb_addMenuItem(handles,'File','Add Domain',              'Callback',{@ddb_menuFile});
 handles=ddb_addMenuItem(handles,'File','Open Domains',            'Callback',{@ddb_menuFile});
 handles=ddb_addMenuItem(handles,'File','Save',                    'Callback',{@ddb_menuFile},'Separator','on');

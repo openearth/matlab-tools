@@ -3,7 +3,8 @@ function ddb_refreshScreen(varargin)
 handles=getHandles;
 
 if nargin==1
-    tabpanel(gcf,'tabpanel2','delete');
+%     tabpanel(gcf,'tabpanel2','delete');
+    tabpanel('delete','tag','tabpanel2');
     handles.ScreenParameters.ActiveTab=varargin{1};
     handles.ScreenParameters.ActiveSecondTab='';
 elseif nargin==2
@@ -11,6 +12,7 @@ elseif nargin==2
     handles.ScreenParameters.ActiveSecondTab=varargin{2};
 end
 setHandles(handles);
+
 
 h=findobj(gcf,'Tag','UIControl');
 if ~isempty(h)

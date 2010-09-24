@@ -1,19 +1,14 @@
 <?xml version="1.0"?>
 <!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
-  <model>Delft3DWAVE</model>
-  <longname>Delft3D-WAVE</longname>
+  <model>SWAN</model>
+  <longname>SWAN</longname>
   <elements>
     <element>
       <style>tabpanel</style>
-      <tag>Delft3DWAVE</tab>
+      <tag>SWAN</tab>
       <position>10 10 900 700</position> 
       <tabs>
-        <tab>
-          <tabname>toolbox</tabname>
-          <tabstring>Toolbox</tabstring>
-          <callback>ddb_selectToolbox</callback>
-        </tab>
         <tab>
           <tabname>description</tabname>
           <tabstring>Description</tabstring>
@@ -65,14 +60,12 @@
     </element>
   </elements>
   <menu>
-    <menuopenfile>
+    <menufile>
       <menuitem>
         <string>Open mdw</string>
         <callback>ddb_openDelft3DWAVE</callback>
         <option>open</option>
       </menuitem>
-    </menuopenfile>    
-    <menusavefile>    
       <menuitem>
         <string>Save mdw</string>
         <callback>ddb_saveDelft3DWAVE</callback>
@@ -83,7 +76,7 @@
         <callback>ddb_saveDelft3DWAVE</callback>
         <option>saveas</option>
       </menuitem>
-    </menusavefile>    
+    </menufile>    
     <menuview>
     </menuview>
   </menu>

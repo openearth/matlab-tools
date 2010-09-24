@@ -1,14 +1,25 @@
-function tabpanel(fig,panel,fcn,varargin)
-
-clr=get(fig,'Color');
+function [handle,tabhandles]=tabpanel(fcn,varargin)
 
 tabnames=[];
 inputarguments=[];
 strings=[];
+tabname=[];
+parent=[];
+tag=[];
+handle=[];
+fig=gcf;
+clr=[];
+activetabnr=1;
 
 for i=1:length(varargin)
     if ischar(varargin{i})
         switch lower(varargin{i})
+            case{'figure'}
+                fig=varargin{i+1};
+            case{'tag','name'}
+                tag=varargin{i+1};
+            case{'handle'}
+                handle=varargin{i+1};
             case{'position'}
                 pos=varargin{i+1};
             case{'strings'}
@@ -21,38 +32,56 @@ for i=1:length(varargin)
                 inputarguments=varargin{i+1};
             case{'tabnames'}
                 tabnames=varargin{i+1};
-%             case{'color'}
-%                 color=varargin{i+1};
+            case{'parent'}
+                parent=varargin{i+1};
+            case{'color'}
+                color=varargin{i+1};
+            case{'activetabnr'}
+                activetabnr=varargin{i+1};
         end
     end
+end
+
+if isempty(clr)
+    clr=get(fig,'Color');
 end
 
 if isempty(tabnames) && ~isempty(strings)
     tabnames=strings;
 end
 
+if isempty(handle)
+    handle=findobj(fig,'Tag',tag,'Type','uipanel');
+end
+
 switch lower(fcn)
     case{'create'}
-        createTabPanel(fig,panel,clr,pos);
-        changeTabPanel(fig,panel,strings,callbacks,inputarguments,tabnames);
+        [handle,tabhandles]=createTabPanel(fig,tag,clr,pos,parent);
+        changeTabPanel(handle,strings,callbacks,inputarguments,tabnames);
+        select(handle,activetabnr,'nocallback');
     case{'change'}
-        changeTabPanel(fig,panel,strings,callbacks,inputarguments,tabnames);
+        changeTabPanel(handle,strings,callbacks,inputarguments,tabnames);
+        select(handle,activetabnr,'nocallback');
     case{'select'}
-        select(fig,panel,tabname);
+        panel=get(handle,'UserData');
+        tabnames=panel.tabNames;
+        iac=strmatch(tabname,tabnames,'exact');
+        select(handle,activetabnr,'withcallback');
     case{'delete'}
-        deleteTabPanel(fig,panel);
+        deleteTabPanel(handle);
     case{'resize'}
-        resizeTabPanel(fig,panel,pos);
+        resizeTabPanel(handle,pos);
 end
 
 %%
-function createTabPanel(fig,panelname,clr,panelPosition)
+function [panelHandle,largeTabs]=createTabPanel(fig,panelname,clr,panelPosition,parent)
 
 foregroundColor=clr;
 backgroundColor=clr*0.9;
 
-leftpos=panelPosition(1)+3;
-vertpos=panelPosition(2)+panelPosition(4)-1;
+leftpos(1)=3;
+vertpos=panelPosition(4)-1;
+
 tabHeight=20;
 
 ntabs=20;
@@ -60,24 +89,24 @@ tabs=zeros(ntabs,1);
 tabText=tabs;
 blankText=tabs;
 
+pos=[panelPosition(1)-1 panelPosition(2)-1 panelPosition(3)+2 panelPosition(4)+20];
+
+panelHandle = uipanel(fig,'Parent',parent,'Units','pixels','Position',pos,'BorderType','none','BackgroundColor','none','Tag',panelname);
+
 for i=1:ntabs
     
     position=[leftpos vertpos 30 tabHeight];
     
     % Add tab
-    tabs(i) = uipanel('Parent',fig,'Units','pixels','Position',position,'Tag','dummy','BorderType','beveledout','BackgroundColor',backgroundColor,'Visible','off');
+    tabs(i) = uipanel(fig,'Parent',panelHandle,'Units','pixels','Position',position,'Tag','dummy','BorderType','beveledout','BackgroundColor',backgroundColor,'Visible','on');
     
     % Add text, first use bold
-    tabText(i) = uicontrol(fig,'Style','text','String','dummy','Position',position,'FontWeight','bold','HorizontalAlignment','center','BackgroundColor',backgroundColor,'Visible','off');   
+    tabText(i) = uicontrol(fig,'Units','pixels','Parent',panelHandle,'Style','text','String','dummy','Position',position,'FontWeight','bold','HorizontalAlignment','center','BackgroundColor',backgroundColor,'Visible','off');   
     set(tabText(i),'Enable','inactive');
 
     % Set user data
     usd.nr=i;
-    usd.panel=panelname;
-    usd.figureHandle=fig;
-    usd.textHandle=tabText(i);
-
-    set(tabText(i),'UserData',usd);
+    usd.panelHandle=panelHandle;
     set(tabs(i),'UserData',usd);
     set(tabText(i),'UserData',usd);
 
@@ -87,14 +116,19 @@ for i=1:ntabs
 end
 
 % Create new main panel
-panelHandle = uipanel('Parent',fig,'Units','pixels','Position',panelPosition,'BorderType','beveledout','BackgroundColor',foregroundColor,'Tag',panelname);
+visph = uipanel(fig,'Units','pixels','Parent',panelHandle,'Position',[1 1 panelPosition(3) panelPosition(4)],'BorderType','beveledout','BackgroundColor',foregroundColor);
+
+pos=[1 1 panelPosition(3) panelPosition(4)+20];
+for i=1:ntabs
+    largeTabs(i) = uipanel(fig,'Parent',panelHandle,'Units','pixels','Position',pos,'Tag','largeTab','BorderType','none','BackgroundColor','none','Visible','on','HitTest','off');
+end
 
 % Add blank texts
-leftpos=panelPosition(1)+4;
-vertpos=panelPosition(2)+panelPosition(4)-1;
+leftpos=3;
+vertpos=panelPosition(4)-1;
 for i=1:ntabs
     position=[leftpos vertpos 30 tabHeight];
-    blankText(i) = uicontrol(fig,'Style','text','String','','Position',position,'Visible','off');
+    blankText(i) = uicontrol(fig,'Style','text','String','','Position',position,'Visible','off','Parent',panelHandle);
     leftpos=leftpos+30;
 end
 
@@ -103,19 +137,22 @@ set(blankText,'HandleVisibility','off','HitTest','off');
 
 % Add user data to panel
 panel.nrTabs=ntabs;
+panel.visiblePanel=visph;
 panel.tabHandles=tabs;
+panel.largeTabHandles=largeTabs;
 panel.tabTextHandles=tabText;
 panel.blankTextHandles=blankText;
 panel.handle=panelHandle;
 panel.position=panelPosition;
 panel.foregroundColor=foregroundColor;
 panel.backgroundColor=backgroundColor;
+panel.activeTab=1;
 
 set(panelHandle,'UserData',panel);
 
 
 %%
-function changeTabPanel(fig,panelname,strings,callbacks,inputarguments,tabnames)
+function changeTabPanel(panelHandle,strings,callbacks,inputarguments,tabnames)
 
 ntabs=length(strings);
 
@@ -125,7 +162,6 @@ if isempty(inputarguments)
     end
 end
 
-panelHandle=findobj(fig,'Tag',panelname,'Type','uipanel');
 % Set panel tabs invisible
 panel=get(panelHandle,'UserData');
 tabs=panel.tabHandles;
@@ -144,10 +180,10 @@ backgroundColor=panel.backgroundColor;
 
 panelPosition=panel.position;
 
-leftpos(1)=panelPosition(1)+3;
-vertpos=panelPosition(2)+panelPosition(4)-1;
+leftpos=3;
+vertpos=panelPosition(4)-1;
 leftTextMargin=3;
-bottomTextMargin=2;
+bottomTextMargin=3;
 tabHeight=20;
 textHeight=15;
 
@@ -166,19 +202,16 @@ for i=1:ntabs
     textPosition=[position(1)+leftTextMargin position(2)+bottomTextMargin ext(3) textHeight];
     set(tabText(i),'Position',textPosition);
     
+    position=[leftpos(i)+1 vertpos wdt(i)-3 3];
+    set(blankText(i),'Position',position);
+
     % Add callback   
     set(tabs(i),'ButtonDownFcn',{@clickTab});
     set(tabText(i),'ButtonDownFcn',{@clickTab});
     
     % Set user data
     usd=get(tabs(i),'UserData');
-    usd.callback=callbacks{i};
-    usd.inputArguments=inputarguments{i};
-    usd.textHandle=tabText(i);
-
-    set(tabs(i),'Tag',tabnames{i});
     set(tabs(i),'UserData',usd);
-    set(tabText(i),'Tag',tabnames{i});
     set(tabText(i),'UserData',usd);
 
     % Left position for next tab
@@ -186,27 +219,9 @@ for i=1:ntabs
 
 end
 
-% % Set text positions
-% for i=1:length(strings)
-%     set(tabText(i),'Parent',panelHandle);
-%     newPosition=get(tabText(i),'Position');
-%     newPosition(1)=newPosition(1)-panelPosition(1);
-%     newPosition(2)=newPosition(2)-panelPosition(2);
-%     set(tabText(i),'Position',newPosition);
-% end
-
-% Set blank text positions
-leftpos(1)=panelPosition(1)+4;
-vertpos=panelPosition(2)+panelPosition(4)-1;
-for i=1:length(strings)
-    position=[leftpos(i)+1 vertpos wdt(i)-3 3];
-    set(blankText(i),'Position',position);
-end
-
 % Set values for all tabs
 set(tabs,'BackgroundColor',backgroundColor);
 set(tabText,'BackgroundColor',backgroundColor,'FontWeight','normal');
-% set(tabText,'BackgroundColor',[1 0 0]);
 set(blankText,'Visible','off');
 
 % Give first tab background color and make blank text visible
@@ -217,6 +232,9 @@ set(blankText(1),'Visible','on');
 % Add user data to panel
 panel.nrTabs=ntabs;
 panel.strings=strings;
+panel.tabNames=tabnames;
+panel.callbacks=callbacks;
+panel.inputArguments=inputarguments;
 
 set(panelHandle,'UserData',panel);
 
@@ -224,22 +242,30 @@ set(panelHandle,'UserData',panel);
 function clickTab(hObject,eventdata)
 
 usd=get(hObject,'UserData');
-panel=usd.panel;
-tabname=get(hObject,'Tag');
+h=usd.panelHandle;
+nr=usd.nr;
 
 %profile on
-select(gcf,panel,tabname);
+select(h,nr,'withcallback');
 % profile off
 % profile viewer
 
 %%
-function select(fig,panelname,tabname)
+function select(h,iac,opt)
 
-h=findobj(fig,'Type','uipanel','Tag',panelname);
-tabh=findobj(fig,'Type','uipanel','Tag',tabname);
-tab=get(tabh,'UserData');
-iac=tab.nr;
 panel=get(h,'UserData');
+
+for i=1:length(panel.largeTabHandles)
+    if i~=iac
+        set(panel.largeTabHandles(i),'Visible','off');
+    end
+end
+
+% Set new tab visible
+set(panel.largeTabHandles(iac),'Visible','on');
+
+panel.activeTab=iac;
+set(h,'UserData',panel);
 
 % All tabs
 set(panel.tabHandles,'BackgroundColor',panel.backgroundColor);
@@ -253,47 +279,56 @@ set(panel.tabTextHandles(iac),'BackgroundColor',panel.foregroundColor);
 set(panel.tabTextHandles(iac),'FontWeight','bold');
 set(panel.blankTextHandles(iac),'Visible','on');
 
-if isempty(tab.inputArguments)
-    feval(tab.callback);
-else
-    feval(tab.callback,tab.inputArguments);
+if strcmpi(opt,'withcallback') && ~isempty(panel.callbacks{iac})
+    % Excute callback
+    if isempty(panel.inputArguments{iac})
+        feval(panel.callbacks{iac});
+    else
+        feval(panel.callbacks{iac},panel.inputArguments{iac});
+    end
 end
 
 %%
-function deleteTabPanel(fig,panel)
+function deleteTabPanel(h)
 
-h=findobj(fig,'Tag',panel);
-if ~isempty(h)
-    panel=get(h,'UserData');
-    delete(panel.tabHandles);
-    delete(panel.tabTextHandles);
-    delete(panel.blankTextHandles);
-    delete(panel.handle);
-end
+delete(h);
 
 %%
-function resizeTabPanel(fig,panelname,panelPosition)
+function resizeTabPanel(h,panelPosition)
 
-h=findobj(fig,'Type','uipanel','Tag',panelname);
 panel=get(h,'UserData');
-set(h,'Position',panelPosition);
 
-vertpos=panelPosition(2)+panelPosition(4)-1;
-bottomTextMargin=2;
+posInvisibleTab=[panelPosition(1)-1 panelPosition(2)-1 panelPosition(3)+2 panelPosition(4)+20];
+
+% Outer (invisible) panel
+set(h,'Position',posInvisibleTab);
+
+pvis=panel.visiblePanel;
+
+posVisibleTab=[1 1 panelPosition(3) panelPosition(4)];
+% Outer (invisible) panel
+set(pvis,'Position',posVisibleTab);
+
+bottomTextMargin=3;
+vertPosTabs=panelPosition(4)-1;
+vertPosText=vertPosTabs+bottomTextMargin;
+
+posLargeTabs=[1 1 panelPosition(3) panelPosition(4)+20];
 
 for i=1:panel.nrTabs
 
+    set(panel.largeTabHandles(i),'Position',posLargeTabs);
+
     pos=get(panel.tabHandles(i),'Position');
-    pos(2)=vertpos;
+    pos(2)=vertPosTabs;
     set(panel.tabHandles(i),'Position',pos);
     
     pos=get(panel.blankTextHandles(i),'Position');
-    pos(2)=vertpos;
+    pos(2)=vertPosTabs;
     set(panel.blankTextHandles(i),'Position',pos);
     
     pos=get(panel.tabTextHandles(i),'Position');
-    pos(2)=vertpos+bottomTextMargin;
-%    pos(2)=vertpos;
+    pos(2)=vertPosText;
     set(panel.tabTextHandles(i),'Position',pos);
     
 end

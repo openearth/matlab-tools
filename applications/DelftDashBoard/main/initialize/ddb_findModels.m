@@ -53,4 +53,7 @@ for i=1:nt
 end
 
 % Read xml files
-handles=ddb_readModelXMLs(handles);
+for i=1:nt
+    handles=ddb_readModelElements(handles,i);
+end
+

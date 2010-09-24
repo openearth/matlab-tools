@@ -120,8 +120,6 @@ end
 
 SetUIBackgroundColors;
 
-setHandles(handles);
-
 %%
 function ListOpenBoundaries_CallBack(hObject,eventdata)
 handles=getHandles;

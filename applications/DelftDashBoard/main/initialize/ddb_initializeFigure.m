@@ -29,12 +29,11 @@ set(h,'Tag','MainWindow');
 handles=ddb_makeMenu(handles);
 handles=ddb_makeToolBar(handles);
 
-% Make Dummy Tab Panel
-sz=get(h,'Position');
-strings={'Toolbox','Description'};
-callbacks={[],[]};
-width=[60 60];
-tabpanel(gcf,'tabpanel','create','position',[10 10 sz(3)-20 sz(4)-40],'strings',strings,'callbacks',callbacks,'width',width);
+% % Make Dummy Tab Panel
+% sz=get(h,'Position');
+% strings={'Toolbox','Description'};
+% callbacks={[],[]};
+% tabpanel(gcf,'tabpanel','create','position',[10 10 sz(3)-20 sz(4)-40],'strings',strings,'callbacks',callbacks);
 
 handles.ScreenParameters.ActiveTab='Toolbox';
 handles.activeToolbox.Name='ModelMaker';

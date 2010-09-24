@@ -22,7 +22,6 @@
       <vartype>boolean</vartype>
       <tooltipstring>Use bed level from Delft3D-FLOW (overrides bed level from depth file in Delft3D-WAVE)</tooltipstring>
       <text>Bathymetry</text>
-      <onchange>ddb_refreshDelft3DWAVEHydrodynamics</onchange>
     </element>
     <element>
       <tag>checkuseflowwaterlevel</tag>
@@ -32,7 +31,6 @@
       <vartype>boolean</vartype>
       <tooltipstring>Use water level from Delft3D-FLOW (overrides water level specified in MDW file)</tooltipstring>
       <text>Water level</text>
-      <onchange>ddb_refreshDelft3DWAVEHydrodynamics</onchange>
     </element>
     <element>
       <tag>checkuseflowcurrent</tag>
@@ -42,7 +40,6 @@
       <vartype>boolean</vartype>
       <tooltipstring>Use velocities from Delft3D-FLOW (overrides velocity specified in MDW file)</tooltipstring>
       <text>Current</text>
-      <onchange>ddb_refreshDelft3DWAVEHydrodynamics</onchange>
     </element>
     <element>
       <tag>checkuseflowwind</tag>
@@ -52,7 +49,6 @@
       <vartype>boolean</vartype>
       <tooltipstring>Use wind from Delft3D-FLOW (overrides wind specified in MDW file)</tooltipstring>
       <text>Wind</text>
-      <onchange>ddb_refreshDelft3DWAVEHydrodynamics</onchange>
     </element>
     <element>
       <tag>pushselectmdffile</tag>
