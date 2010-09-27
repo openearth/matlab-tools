@@ -1,5 +1,18 @@
-%function varargout = mdf2mdu(varargin)
+function varargout = mdf2mdu(varargin)
 %MDF2MDU   convert Delft3D-flow model input to UNSTRUC model input
+%
+%   unstruc.mdf2mdu(<keyword,value>)
+%
+% Example:
+%
+%  OPT.mdf      = 'dcsm98a.mdf';
+%  OPT.pli_test = 'dcsm98_tst.pli';
+%  OPT.bnd      = 'dcsm98_unstruc.bnd'; % adapted *.bnd that overrides *.bnd without pli information in *.mdf
+%                                       % 2 extra columns: 
+%                                       % 1) name of *.pli, 
+%                                       % 2) sequence number within segment: make sure ends meets
+%  
+%  unstruc.mdf2mdu(OPT)
 %
 %See also: unstruc
 
@@ -8,24 +21,23 @@
 % TO DO: write mdu too
 
 %% specify
-% -------------------------
 
-  OPT.mdf      = 'dcsm98a.mdf'; % I need enc
-  OPT.bnd      = 'dcsm98_unstruc.bnd'; % overrides *.bnd without pli information in *.mdf
-  OPT.pli_test = 'dcsm98_tst.pli';
+  OPT.mdf      = ''; % *.mdf
+  OPT.bnd      = ''; % *.bnd, overrides *.bnd without pli information in *.mdf
+  OPT.ext      = 'tst.ext';
+  OPT.pli_test = ''; % *.pli
   OPT.ncfile   = '';
   OPT.debug    = 1;
   OPT.extend   = 0.01; % extend pli end-points a bit by fraction of cell size to ensure a crossing with boundary sticks
   
-%   OPT = setproperty(OPT,varargin);
-%   
-%   if nargin==0
-%      varargout = {OPT};
-%      return
-%   end
+   OPT = setproperty(OPT,varargin{:});
+   
+   if nargin==0
+      varargout = {OPT};
+      return
+   end
   
 %% read delft3d-flow input
-% -------------------------
 
    MDF      = delft3d_io_mdf('read',OPT.mdf);
    GRD      = delft3d_io_grd('read',MDF.keywords.filcco);
@@ -61,7 +73,6 @@
    landboundary('write',OPT.pli_test,P.x,P.y)
    
 %% rewrite dep
-% -------------------------
    
    if ~isempty(OPT.ncfile)
       N.x = nc_varget (OPT.ncfile,'NetNode_x');
@@ -84,7 +95,6 @@
 
 %% save unstruc-pli
 %  make lots of separate polygons and link all polygons
-% -------------------------
 
    if OPT.debug
       fid = fopen([filename(OPT.mdf),'_debug.pli'],'w');
@@ -109,7 +119,6 @@
 
 %% make polygon files pli as unsupportedly defined BND
 %  find all items per element
-% -------------------------
 
 pli.names = unique({BND.DATA(:).pli_name});
 
@@ -220,10 +229,9 @@ for ipli = 1:length(pli.names)
 
 end % ipli
 
-%% save unstruc *.ext
-% -------------------------
+%% save test unstruc *.ext
 
-fid = fopen(['tst.ext'],'w');
+fid = fopen([OPT.ext],'w');
 
    fprintf(fid,'%s\n','* kx = Vectormax = Nr of variables specified on the same time/space frame. Eg. Wind magnitude,direction: kx = 2');
    fprintf(fid,'%s\n','* FILETYPE=1  : uniform              kx = 1 value               1 dim array      uni');
