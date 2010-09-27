@@ -41,6 +41,8 @@ for i=1:1000
                         ActiveField=deblank(v0{1});
                         if ~isnan(str2double(v0{2}))
                             MDF.(ActiveField)=str2double(v0{2});
+                        elseif ~isnan(str2num(v0{2}))
+                            MDF.(ActiveField)=str2num(v0{2});
                         else
                             strtmp=strread(v0{2},'%s','delimiter','#','whitespace','');
                             if length(strtmp)>1

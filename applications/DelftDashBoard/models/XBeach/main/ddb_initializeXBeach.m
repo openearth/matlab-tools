@@ -21,4 +21,4 @@ handles.GUIData.NrXBeachOpenBoundaries=1;
 
 handles=ddb_initializeXBeachInput(handles,1,runid);
 
-set(handles.GUIHandles.Menu.Model.XBeach,'Enable','on');
+set(handles.GUIHandles.Menu.Model.XBeach,'Enable','off');

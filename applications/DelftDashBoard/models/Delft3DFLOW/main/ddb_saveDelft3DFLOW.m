@@ -1,4 +1,6 @@
-function handles=ddb_saveDelft3DFLOW(handles,opt)
+function ddb_saveDelft3DFLOW(opt)
+
+handles=getHandles;
 
 switch lower(opt)
     case{'save'}
@@ -37,3 +39,5 @@ switch lower(opt)
             handles=ddb_saveMDF(handles,i);
         end        
 end
+
+setHandles(handles);

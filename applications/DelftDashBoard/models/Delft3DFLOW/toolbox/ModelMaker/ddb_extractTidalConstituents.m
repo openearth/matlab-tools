@@ -74,7 +74,7 @@ xx(isnan(xx))=1e9;
 yy(isnan(yy))=1e9;
 
 %fname='F:\DelftDashBoardRawData\tidemodels\scripts\Med\med.nc';
-nc_dump(fname);
+% nc_dump(fname);
 
 dpt=nc_varget(fname,'depth',[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
 dpt=dpt';

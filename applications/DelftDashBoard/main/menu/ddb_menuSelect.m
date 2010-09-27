@@ -2,6 +2,8 @@ function ddb_menuSelect(hObject, eventdata, varargin)
 
 varargin=varargin{:};
 
+opt=[];
+
 for i=1:length(varargin)
     if ischar(varargin{i})
         switch lower(varargin{i})
