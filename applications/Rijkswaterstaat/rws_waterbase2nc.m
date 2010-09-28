@@ -350,7 +350,6 @@ end
         nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'station x');
         nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
         nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate');
-        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate');
         nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
 
         % y:
@@ -366,7 +365,6 @@ end
         nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'station y');
         nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
         nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate');
-        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate');
         nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
         
    [dummy,dummy,log]=convertCoordinates(nan,nan,'CS1.code',D.data.epsg,'CS2.code',4326);
