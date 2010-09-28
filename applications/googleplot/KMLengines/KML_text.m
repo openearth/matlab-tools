@@ -1,4 +1,4 @@
-function [output] = KML_text(lat,lon,label,varargin)
+function varargout = KML_text(lat,lon,label,varargin)
 %KML_TEXT   low-level routine for creating KML string of text
 %
 %   kmlstring = KML_text(lat,lon,label,<z>)
@@ -40,6 +40,14 @@ function [output] = KML_text(lat,lon,label,varargin)
 
 % TO DO: implement text at an angle/rotation
 
+%% keyword,value
+
+   OPT.timeIn       = [];
+   OPT.timeOut      = [];
+   OPT.dateStrStyle = 29;
+   
+   if nargin==0; varargout = {OPT}; return; end
+
 %% Check if 3d
    if ~isempty(varargin)
        if isnumeric(varargin{1})
@@ -62,39 +70,12 @@ function [output] = KML_text(lat,lon,label,varargin)
    if ~isequal(length(label),length(lat))
       error('label should have same length as coordinates')
    end
- 
-%% keyword,value
 
-   OPT.timeIn      = [];
-   OPT.timeOut     = [];
-   
    OPT = setproperty(OPT,varargin{:});
-   
-   if nargin==0
-      output = OPT;
-      return
-   end
 
 %% preproces timespan
 
-   if  ~isempty(OPT.timeIn)
-       if ~isempty(OPT.timeOut)
-           timeSpan = sprintf([...
-               '<TimeSpan>\n'...
-               '<begin>%s</begin>\n'... % OPT.timeIn
-               '<end>%s</end>\n'...     % OPT.timeOut
-               '</TimeSpan>\n'],...
-               OPT.timeIn,OPT.timeOut);
-       else
-           timeSpan = sprintf([...
-               '<TimeStamp>\n'...
-               '<when>%s</when>\n'...   % OPT.timeIn
-               '</TimeStamp>\n'],...
-               OPT.timeIn);
-       end
-   else
-       timeSpan =' ';
-   end
+   timeSpan = KML_timespan('timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'dateStrStyle',OPT.dateStrStyle);
 
 %% preprocess altitude mode
 
@@ -118,5 +99,7 @@ function [output] = KML_text(lat,lon,label,varargin)
        timeSpan,label{i},altitudeMode,lon(i),lat(i),z(i));
        
    end    
+   
+   varargout = {output};
 
 %% EOF

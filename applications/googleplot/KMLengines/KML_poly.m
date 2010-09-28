@@ -1,4 +1,4 @@
-function [output] = KML_poly(lat,lon,varargin)
+function varargout = KML_poly(lat,lon,varargin)
 %KML_POLY  low-level routine for creating KML string of polygon
 %
 %   kmlstring = KML_poly(lat,lon,<z>,<keyword,value>)
@@ -50,6 +50,19 @@ function [output] = KML_poly(lat,lon,varargin)
 % $HeadURL$
 % $Keywords: $
 
+
+%% keyword,value
+
+   OPT.styleName  = [];
+   OPT.visibility = 1;
+   OPT.extrude    = 0;
+   OPT.timeIn     = [];
+   OPT.timeOut    = [];
+   OPT.name       = 'poly';
+   OPT.precision  = 8;
+   
+if nargin==0; varargout = {OPT}; return; end
+
 if nargin==2
    z       = 'clampToGround';
    nextarg = 1;
@@ -73,132 +86,110 @@ if size(lon,1)==1
    error('lat,lon should be to have size nx1, or nxm, NOT 1xn.')
 end
 
-%% keyword,value
-
-   OPT.styleName  = [];
-   OPT.visibility = 1;
-   OPT.extrude    = 0;
-   OPT.timeIn     = [];
-   OPT.timeOut    = [];
-   OPT.name       = 'poly';
-   OPT.precision  = 8;
-   
    OPT = setproperty(OPT,varargin{nextarg:end});
    
    if nargin==0
-      output = OPT;
+      varargout = {OPT};
       return
    end
 
-if isempty(OPT.styleName)
-   warning('property ''stylename'' required');
-end
+   if isempty(OPT.styleName)
+      warning('property ''stylename'' required');
+   end
 
-%%
+%% check
 
-if all(isnan(z(:)))
-    output = '';
-    return
-end
+   if all(isnan(z(:)))
+      varargout = {''};
+      return
+   end
 
 %% preprocess visibility
-if  ~OPT.visibility
-    visibility = '<visibility>0</visibility>\n';
-else
-    visibility = '';
-end
+
+   if  ~OPT.visibility
+       visibility = '<visibility>0</visibility>\n';
+   else
+       visibility = '';
+   end
+
 %% preprocess extrude
-if  OPT.extrude
-    extrude = '<extrude>1</extrude>\n';
-else
-    extrude = '';
-end
+
+   if  OPT.extrude
+       extrude = '<extrude>1</extrude>\n';
+   else
+       extrude = '';
+   end
+
 %% preproces timespan
-if  ~isempty(OPT.timeIn)
-    if ~isempty(OPT.timeOut)
-        timeSpan = sprintf([...
-            '<TimeSpan>\n'...
-            '<begin>%s</begin>\n'...% OPT.timeIn
-            '<end>%s</end>\n'...    % OPT.timeOut
-            '</TimeSpan>\n'],...
-            OPT.timeIn,OPT.timeOut);
-    else
-        timeSpan = sprintf([...
-            '<TimeStamp>\n'...
-            '<when>%s</when>\n'...  % OPT.timeIn
-            '</TimeStamp>\n'],...
-            OPT.timeIn);
-    end
-else
-    timeSpan ='';
-end
+
+   timeSpan = KML_timespan('timeIn',OPT.timeIn,'timeOut',OPT.timeOut);
+
 %% preproces altitude mode
-if strcmpi(z,'clampToGround')
-    altitudeMode = sprintf([...
-        '<altitudeMode>clampToGround</altitudeMode>\n']);
-    z = zeros(size(lon));
-else
-    altitudeMode = sprintf([...
-        '%s'...extrude
-        '<altitudeMode>absolute</altitudeMode>\n'],...
-        extrude);
-end
+
+   if strcmpi(z,'clampToGround')
+       altitudeMode = sprintf([...
+           '<altitudeMode>clampToGround</altitudeMode>\n']);
+       z = zeros(size(lon));
+   else
+       altitudeMode = sprintf([...
+           '%s'...extrude
+           '<altitudeMode>absolute</altitudeMode>\n'],...
+           extrude);
+   end
+
 %% preproces coordinates
-% outer coordinates
-ii=1;
-nn = ~isnan(lon(:,ii));
-coords=[lon(nn,ii)'; lat(nn,ii)'; z(nn,ii)'];
+%  outer coordinates
 
-coordPrintString = sprintf('%%3.%df,%%3.%df,%%3.3f\\n',OPT.precision,OPT.precision);
+  ii=1;
+  nn = ~isnan(lon(:,ii));
+  coords=[lon(nn,ii)'; lat(nn,ii)'; z(nn,ii)'];
+  
+  coordPrintString = sprintf('%%3.%df,%%3.%df,%%3.3f\\n',OPT.precision,OPT.precision);
+  
+  outerCoords  = sprintf([...
+      '<outerBoundaryIs>\n'...
+      '<LinearRing>\n'...
+      '<coordinates>\n'...
+      '%s'...                        % coordinates
+      '</coordinates>\n'...
+      '</LinearRing>\n'...
+      '</outerBoundaryIs>\n'],...
+      sprintf(...
+         coordPrintString,...       % coords (separated by \n or space)
+      coords));
 
-outerCoords  = sprintf([...
-    '<outerBoundaryIs>\n'...
-    '<LinearRing>\n'...
-    '<coordinates>\n'...
-    '%s'...                        % coordinates
-    '</coordinates>\n'...
-    '</LinearRing>\n'...
-    '</outerBoundaryIs>\n'],...
-    sprintf(...
-       coordPrintString,...       % coords (separated by \n or space)
-    coords));
+%% inner coordinates
 
-
-% inner coordinates
-if size(lat,2)>1 % only add if they are there
-    innerCoords = sprintf([...
-        '<innerBoundaryIs>\n']);
-    for ii = 2:size(lat,2)
-        nn = ~isnan(lon(:,ii));
-        coords=[lon(nn,ii)'; lat(nn,ii)'; z(nn,ii)'];
-        
-        innerCoords  = sprintf([...
-            '%s'...
-            '<LinearRing>\n'...
-            '<coordinates>\n'...
-            '%s'...                        % coordinates
-            '</coordinates>\n'...
-            '</LinearRing>\n'],...
-            innerCoords,...
-            sprintf(...
-            '%3.8f,%3.8f,%3.3f\n',...       % coords (separated by \n or space)
-            coords));
-    end
-    innerCoords = sprintf([...
-        '%s'...
-        '</innerBoundaryIs>\n'],...
-        innerCoords);
-else
-    innerCoords = '';
-end
-
-
-
-
-
+   if size(lat,2)>1 % only add if they are there
+      innerCoords = sprintf([...
+          '<innerBoundaryIs>\n']);
+      for ii = 2:size(lat,2)
+          nn = ~isnan(lon(:,ii));
+          coords=[lon(nn,ii)'; lat(nn,ii)'; z(nn,ii)'];
+          
+          innerCoords  = sprintf([...
+              '%s'...
+              '<LinearRing>\n'...
+              '<coordinates>\n'...
+              '%s'...                        % coordinates
+              '</coordinates>\n'...
+              '</LinearRing>\n'],...
+              innerCoords,...
+              sprintf(...
+              '%3.8f,%3.8f,%3.3f\n',...       % coords (separated by \n or space)
+              coords));
+      end
+      innerCoords = sprintf([...
+          '%s'...
+          '</innerBoundaryIs>\n'],...
+          innerCoords);
+   else
+      innerCoords = '';
+   end
 
 %% generate output
-output = sprintf([...
+
+   output = sprintf([...
     '<Placemark>\n'...
     '%s'...                        % visibility
     '%s'...                        % timeSpan
@@ -211,5 +202,7 @@ output = sprintf([...
      '</Polygon>\n'...
     '</Placemark>\n'],...
     visibility,timeSpan,OPT.name,OPT.styleName,altitudeMode,outerCoords,innerCoords);
+    
+    varargout = {output};
 
 %% EOF

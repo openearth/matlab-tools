@@ -1,4 +1,4 @@
-function [output] = KML_style(varargin)
+function varargout = KML_style(varargin)
 %KML_STYLE low-level routine for creating KML string of line style
 %
 %   kmlstring = KML_style(<keyword,value>)
@@ -52,15 +52,12 @@ OPT.lineColor  = [0 0 0];
 OPT.lineAlpha  = 1;
 OPT.lineWidth  = 1;
 
+if nargin==0; varargout = {OPT}; return; end
+
 OPT = setproperty(OPT,varargin{:});
 
 if isempty(OPT.name)
    warning('property ''name'' required')
-end
-
-if nargin==0
-   output = OPT;
-   return
 end
 
 %% type STYLE
@@ -85,5 +82,7 @@ output = sprintf([...
     '<open>1</open>\n',...
     '</Style>\n'],...
     OPT.name,lineColor,OPT.lineWidth);
+    
+    varargout = {output};
 
 %% EOF

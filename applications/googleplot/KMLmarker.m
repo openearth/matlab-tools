@@ -70,6 +70,7 @@ function varargout = KMLmarker(lat,lon,varargin)
    OPT.description         =  '';
    OPT.timeIn              = [];
    OPT.timeOut             = [];
+   OPT.dateStrStyle        = 'yyyy-mm-ddTHH:MM:SS';
    OPT.html                = [];
    OPT.name                = [];
 
@@ -236,32 +237,10 @@ output = [output '<!--############################-->\n'];
 
    for ii=1:length(lon)
 
-      %% preprocess timespan
-      if  ~isempty(OPT.timeIn)
-          if length(OPT.timeIn)>1
-              tt = ii;
-          else
-              tt = 1;
-          end
-          if ~isempty(OPT.timeOut)
-              timeSpan = sprintf([...
-                  '<TimeSpan>\n'...
-                  '<begin>%s</begin>\n'...OPT.timeIn
-                  '<end>%s</end>\n'...OPT.timeOut
-                  '</TimeSpan>\n'],...
-                  datestr(OPT.timeIn (tt),OPT.dateStrStyle),...
-                  datestr(OPT.timeOut(tt),OPT.dateStrStyle));
-          else
-              timeSpan = sprintf([...
-                  '<TimeStamp>\n'...
-                  '<when>%s</when>\n'...OPT.timeIn
-                  '</TimeStamp>\n'],...
-                  datestr(OPT.timeIn (tt),OPT.dateStrStyle));
-          end
-      else
-          timeSpan ='';
-      end
-       
+    %% preprocess timespan
+
+       timeSpan = KML_timespan(ii,'timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'dateStrStyle',OPT.dateStrStyle);
+
     %% preprocess html   
     
     if ~isempty(OPT.html)

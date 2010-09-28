@@ -14,8 +14,8 @@ function KMLsurf_tiled(lat,lon,z)
 
 
 
-OPT.fileName      = 'test.kml';
-OPT.kmlName       = 'test';
+OPT.fileName      = '';
+OPT.kmlName       = '';
 OPT.lineWidth     = 1;
 OPT.lineColor     = [0 0 0];
 OPT.lineAlpha     = 1;
@@ -26,6 +26,15 @@ OPT.fillAlpha     = 1;
 OPT.polyOutline   = 0;
 OPT.polyFill      = 1;
 OPT.zScaleFun     = @(z) (z+20)*5;
+
+%% get filename, gui for filename, if not set yet
+
+   if isempty(OPT.fileName)
+      [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
+      OPT.fileName = fullfile(filePath,fileName);
+   end
+
+
 %% start KML
 OPT.fid=fopen(OPT.fileName,'w');
 %% HEADER

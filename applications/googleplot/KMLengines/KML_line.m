@@ -1,4 +1,4 @@
-function [output] = KML_line(lat,lon,varargin)
+function varargout = KML_line(lat,lon,varargin)
 %KML_LINE  low-level routine for creating KML string of line
 %
 %   kmlstring = KML_poly(lat,lon,<z>,<keyword,value>)
@@ -64,15 +64,6 @@ function [output] = KML_line(lat,lon,varargin)
 % $HeadURL$
 % $Keywords: $
 
-if  ( odd(nargin) & ~isstruct(varargin{2})) | ...
-    (~odd(nargin) &  isstruct(varargin{2}));
-   z       = varargin{1};
-   nextarg = 2;
-else
-   z       = 'clampToGround';
-   nextarg = 1;
-end
-
 %% keyword,value
 
    OPT.styleName  = [];
@@ -83,17 +74,19 @@ end
    OPT.name       = 'line';
    OPT.tessellate = [];
    
-   OPT = setproperty(OPT,varargin{nextarg:end});
-   
-   if nargin==0
-      output = OPT;
-      return
-   end
+if nargin==0; varargout = {OPT}; return; end
 
-if nargin==0
-   output = OPT;
-   return
+if  ( odd(nargin) & ~isstruct(varargin{2})) | ...
+    (~odd(nargin) &  isstruct(varargin{2}));
+   z       = varargin{1};
+   nextarg = 2;
+else
+   z       = 'clampToGround';
+   nextarg = 1;
 end
+
+   
+   OPT = setproperty(OPT,varargin{nextarg:end});
 
 if isempty(OPT.styleName)
     warning('property ''stylename'' required');
@@ -102,7 +95,7 @@ end
 %%
 
 if all(isnan(z(:)))
-    output = '';
+    varargout = {''};
     return
 end
 
@@ -126,24 +119,9 @@ else
 end
 
 %% preproces timespan
-if  ~isempty(OPT.timeIn)
-    if ~isempty(OPT.timeOut)
-        timeSpan = sprintf([...
-            '<TimeSpan>\n'...
-            '<begin>%s</begin>\n'...% OPT.timeIn
-            '<end>%s</end>\n'...    % OPT.timeOut
-            '</TimeSpan>\n'],...
-            OPT.timeIn,OPT.timeOut);
-    else
-        timeSpan = sprintf([...
-            '<TimeStamp>\n'...
-            '<when>%s</when>\n'...  % OPT.timeIn
-            '</TimeStamp>\n'],...
-            OPT.timeIn);
-    end
-else
-    timeSpan ='';
-end
+
+   timeSpan = KML_timespan('timeIn',OPT.timeIn,'timeOut',OPT.timeOut);
+
 %% preproces altitude mode
 if strcmpi(z,'clampToGround')
     altitudeMode = sprintf([...
@@ -187,5 +165,7 @@ for ii = 1:size(coords_index,1)
         '</Placemark>\n'],...
         visibility,timeSpan,OPT.name,OPT.styleName,extrude,tessellate,altitudeMode,coordinateString)];
 end
+
+varargout = {output};
 
 %% EOF

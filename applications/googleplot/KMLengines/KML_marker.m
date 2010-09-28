@@ -1,4 +1,4 @@
-function [output] = KML_marker(lat,lon,varargin)
+function varargout = KML_marker(lat,lon,varargin)
 %KML_MARKER     low-level routine for creating KML string of marker
 %
 %   kmlstring = KML_marker(lat,lon,<keyword,value>)
@@ -40,38 +40,20 @@ function [output] = KML_marker(lat,lon,varargin)
 
 %% keyword,value
 
-   OPT.description = [];
-   OPT.icon        = 'http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png';
-   OPT.name        = [];
-   OPT.timeIn      = [];
-   OPT.timeOut     = [];
+   OPT.description  = [];
+   OPT.icon         = 'http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png';
+   OPT.name         = [];
+   OPT.timeIn       = [];
+   OPT.timeOut      = [];
+   OPT.dateStrStyle = 29;
+
+   if nargin==0; varargout = {OPT}; return; end
    
    OPT = setproperty(OPT,varargin{:});
-   
-   if nargin==0
-      output = OPT;
-      return
-   end
 
 %% preproces timespan
-if  ~isempty(OPT.timeIn)
-    if ~isempty(OPT.timeOut)
-        timeSpan = sprintf([...
-            '<TimeSpan>\n'...
-            '<begin>%s</begin>\n'... % OPT.timeIn
-            '<end>%s</end>\n'...     % OPT.timeOut
-            '</TimeSpan>\n'],...
-            OPT.timeIn,OPT.timeOut);
-    else
-        timeSpan = sprintf([...
-            '<TimeStamp>\n'...
-            '<when>%s</when>\n'...   % OPT.timeIn
-            '</TimeStamp>\n'],...
-            OPT.timeIn);
-    end
-else
-    timeSpan =' ';
-end
+
+   timeSpan = KML_timespan('timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'dateStrStyle',OPT.dateStrStyle);
 
 %% 
 output = sprintf([...
@@ -83,5 +65,7 @@ output = sprintf([...
  '<Point><coordinates>%3.8f,%3.8f,0</coordinates></Point>'...
  '</Placemark>'],...
  timeSpan,OPT.name,['<![CDATA[',OPT.description,']]>'],OPT.icon,lon,lat);
+ 
+ varargout = {output};
 
 %% EOF

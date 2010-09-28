@@ -66,7 +66,7 @@ function OPT = KMLmerge_files(varargin)
    for ii = 1:length(OPT.sourceFiles)
    if exist(OPT.sourceFiles{ii})
        contents = textread(OPT.sourceFiles{ii},'%s','delimiter','\n','bufsize',1e6);
-       cutoff = strfind(contents,'Document');
+       cutoff   = strfind(contents,'Document');
     
        flag = true;
        for jj = 1:length(contents)
@@ -86,7 +86,7 @@ function OPT = KMLmerge_files(varargin)
        if ~isempty(OPT.foldernames)
        fprintf(fid0,'<name>%s</name>',OPT.foldernames{ii});
        end
-       fprintf(fid0,'   %s\n',contents{:});
+       fprintf(fid0,'%s\n',contents{:}); % for large files do not insert any indentation: '___indentation___%s\n'
        fprintf(fid0,'%s','</Folder>');
    else
       disp(['Does not exist:',OPT.sourceFiles{ii}])

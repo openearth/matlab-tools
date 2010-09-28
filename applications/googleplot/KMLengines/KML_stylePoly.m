@@ -1,4 +1,4 @@
-function [output] = KML_stylePoly(varargin)
+function varargout = KML_stylePoly(varargin)
 %KML_STYLEPOLY low-level routine for creating KML string of polygon style
 %
 %   kmlstring = KML_style(<keyword,value>)
@@ -51,19 +51,16 @@ function [output] = KML_stylePoly(varargin)
 
 %% Properties
 
-OPT.name        = 'black';
-OPT.lineColor   = [0 0 0];
-OPT.lineAlpha   = 1;
-OPT.lineWidth   = 1;
-OPT.fillColor   = [1 0 0];
-OPT.fillAlpha   = 1;
-OPT.polyFill    = 1;
-OPT.polyOutline = 1;
+   OPT.name        = 'black';
+   OPT.lineColor   = [0 0 0];
+   OPT.lineAlpha   = 1;
+   OPT.lineWidth   = 1;
+   OPT.fillColor   = [1 0 0];
+   OPT.fillAlpha   = 1;
+   OPT.polyFill    = 1;
+   OPT.polyOutline = 1;
 
-if nargin==0
-   output = OPT;
-   return
-end
+   if nargin==0; varargout = {OPT}; return; end
 
 OPT = setproperty(OPT,varargin{:});
 
@@ -88,3 +85,5 @@ output = sprintf([...
     '</Style>\n'],...
     OPT.name,lineColor,OPT.lineWidth,...
     fillColor,OPT.polyOutline,OPT.polyFill);
+    
+    varargout ={output};

@@ -65,7 +65,7 @@ try
     
 %% case 2
 
-   dt = 10; % a litle slow so it looks clocklike
+   dt = 30; % a litle slow so it looks clocklike
    t  = 0:dt:360;
 
    KMLquiver( repmat(52,size(t)),...

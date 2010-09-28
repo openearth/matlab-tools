@@ -1,4 +1,4 @@
-function [output] = KML_header(varargin)
+function varargout = KML_header(varargin)
 %KML_HEADER  low-level routine for creating KML string of header
 %
 %   kml = KML_header(<keyword,value>)
@@ -54,39 +54,26 @@ function [output] = KML_header(varargin)
 
 %% Properties
 
-   OPT.open        = [];
-   OPT.name        = '';
-   OPT.description = '';
-   OPT.visible     = 1;
+   OPT.open         = [];
+   OPT.name         = '';
+   OPT.description  = '';
+   OPT.visible      = 1;
 
-   OPT.lon         = [];
-   OPT.lat         = [];
-   OPT.z           = [];
+   OPT.lon          = [];
+   OPT.lat          = [];
+   OPT.z            = [];
    
-   OPT.timeIn      = [];
-   OPT.timeOut     = [];
+   OPT.timeIn       = [];
+   OPT.timeOut      = [];
+   OPT.dateStrStyle = 29;
    
+   if nargin==0; varargout = {OPT}; return; end
+
    OPT = setproperty(OPT,varargin{:});
 
-%% timespan slider
+%% preproces timespan
 
-   if isnumeric(OPT.timeIn)
-      OPT.timeIn = datestr(OPT.timeIn ,'yyyy-mm-ddTHH:MM:SS');
-   end
-   if isnumeric(OPT.timeOut)
-      OPT.timeOut = datestr(OPT.timeOut,'yyyy-mm-ddTHH:MM:SS');
-   end
-
-   if ~(isempty(OPT.timeIn) | isempty(OPT.timeOut))
-      timespan = sprintf([...
-              '	<TimeSpan>\n'...
-              '		<begin>%s</begin>\n'...
-              '		<end>%s</end>\n'...
-              '	</TimeSpan>\n'],...
-              OPT.timeIn,OPT.timeOut);
-   else           
-      timespan = '';
-   end
+   timeSpan = KML_timespan('timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'dateStrStyle',OPT.dateStrStyle);
    
 %% camera
 
@@ -97,7 +84,7 @@ function [output] = KML_header(varargin)
       '	<latitude>%g</latitude>\n'...
       '	<altitude>%g</altitude>\n'...
       '%s'...
-      '</Camera>\n'],OPT.lon,OPT.lat,OPT.z,timespan); % timespan only works when also coordinates are supplied
+      '</Camera>\n'],OPT.lon,OPT.lat,OPT.z,timeSpan); % timespan only works when also coordinates are supplied
    else
       camera = '';
    end
@@ -115,3 +102,5 @@ function [output] = KML_header(varargin)
     '<visibility>%s</visibility>\n'...
     '<open>%d</open>\n' ],...
     camera,OPT.name, OPT.description, num2str(OPT.visible), OPT.open);
+
+   varargout = {output};
