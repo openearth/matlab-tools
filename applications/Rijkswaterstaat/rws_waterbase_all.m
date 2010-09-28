@@ -91,8 +91,8 @@ function rws_waterbase_all
 % TO DO: merge nc_cf_stationtimeseries2meta and nc_cf_directory2catalog                             
    
    %% Make catalog.nc
-   
-      nc_cf_directory2catalog([OPT.directory_nc])
+
+      nc_cf_opendap2catalog([OPT.directory_nc],'save',1)
    
    %% Make KML overview with links to netCDF on opendap.deltares.nl
       

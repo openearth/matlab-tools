@@ -31,6 +31,9 @@ function ATT = nc_cf_opendap2catalog(varargin)
 %              'timecoverage_duration'
 %              'geospatialCoverage_northsouth'
 %              'geospatialCoverage_eastwest'
+%              'projectionCoverage_x'
+%              'projectionCoverage_y'
+%              'projectionEPSGcode' % from x,y
 %              'dataTypes'
 %
 % from all specified netCDF files and stores them into a
@@ -46,30 +49,30 @@ function ATT = nc_cf_opendap2catalog(varargin)
 
 % TO DO: standard_name_vocabulary
 
+%% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2009 Delft University of Technology
-%       Mark van Koningsveld
+%   Copyright (C) 2009 Deltares for Building with Nature
+%       Gerben J. de Boer
 %
-%       m.vankoningsveld@tudelft.nl
+%       gerben.deboer@deltares.nl
 %
-%       Hydraulic Engineering Section
-%       Faculty of Civil Engineering and Geosciences
-%       Stevinweg 1
-%       2628CN Delft
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
 %       The Netherlands
 %
-%   This library is free software: you can redistribute it and/or
-%   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation, either
-%   version 2.1 of the License, or (at your option) any later version.
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-%   Lesser General Public License for more details.
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
 %
-%   You should have received a copy of the GNU Lesser General Public
-%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
 %% netCDF JAVA issues
@@ -92,6 +95,7 @@ OPT.save           = 0; % save catalog in directory
 OPT.recursive      = 0;
 OPT.catalog_dir    = [];
 OPT.catalog_name   = 'catalog.nc'; % exclude from indexing
+OPT.maxlevel       = 1;
 
 %% what information (global attributes) to extract
 
@@ -110,6 +114,7 @@ OPT.attname = ...
     'disclaimer',...
     'urlPath',... %
     'standard_names',...
+    'long_names',...
     'timecoverage_start',...
     'timecoverage_end',...
     'datenum_start',...
@@ -136,6 +141,7 @@ OPT.atttype = [...
     0   % 'disclaimer',...
     0   % 'urlPath',...
     0   % 'standard_names',...
+    0   % 'long_names',...
     0   % 'timecoverage_start',...
     0   % 'timecoverage_end',...
     1   % 'datenum_start',...
@@ -165,16 +171,23 @@ end
 OPT = setproperty(OPT,varargin{nextarg:end});
 
 if isempty(OPT.catalog_dir)
-    OPT.catalog_dir = OPT.base;
+   if ~strcmpi(OPT.base(1:7),'http://')
+      OPT.catalog_dir = OPT.base;
+   end
 end
 
-%% File loop to get meta-data from subdirectories (recursively)
 %% initialize waitbar
     multiWaitbar('nc_cf_opendap2catalog',0,'label','Generating catalog.nc','color',[0.2 0.5 0.2])
+    
+%% File loop to get meta-data from subdirectories (recursively)
+    
+   if OPT.recursive
+   end
+    
 %% File inquiry
 
     if isempty(OPT.files)
-        OPT.files = opendap_catalog(OPT.base);
+        OPT.files = opendap_catalog(OPT.base,'maxlevel',OPT.maxlevel,'ignoreCatalogNc',1);
     end
 
 %% pre-allocate catalog (Note: expanding char array lead to 0 as fillvalues)
@@ -196,6 +209,7 @@ end
 entry = 0;
 
 for ifile=1:length(OPT.files)
+    
     OPT.filename = OPT.files{ifile};
     multiWaitbar('nc_cf_opendap2catalog',entry/length(OPT.files),'label',...
         ['Adding ',filename(OPT.filename) ' to catalog'])
@@ -221,17 +235,11 @@ for ifile=1:length(OPT.files)
         attname = OPT.attname{iatt};
         fldname = mkvar(attname);
         try
-            switch attname
-                case 'projectionEPSGcode'
-                    EPSGcodeStr = regexp(nc_attget(OPT.filename,'crs','spatial_ref'),'PROJECTION.*EPSG","(\d*)','tokens');
-                    ATT.projectionEPSGcode(entry) = str2double(EPSGcodeStr{:}{:});
-                otherwise
-                    att = nc_attget(OPT.filename, nc_global, attname);
-                    if isnumeric(ATT.(fldname))
-                        ATT.(fldname)(entry)               = att;
-                    else
-                        ATT.(fldname)(entry,1:length(att)) = att;
-                    end
+            att = nc_attget(OPT.filename, nc_global, attname);
+            if isnumeric(ATT.(fldname))
+                ATT.(fldname)(entry)               = att;
+            else
+                ATT.(fldname)(entry,1:length(att)) = att;
             end
         catch
             if isnumeric(ATT.(fldname))
@@ -250,6 +258,7 @@ for ifile=1:length(OPT.files)
     
     fileinfo       = nc_info(OPT.filename);
     standard_names = [];
+    long_names     = [];
     
     % cycle all datasets
     
@@ -270,15 +279,15 @@ for ifile=1:length(OPT.files)
                 
                 % get spatial
                 if strcmpi(Value,'latitude')
-                    latitude  = nc_varget(OPT.filename, fileinfo.Dataset(idat).Name);
-                    ATT.geospatialCoverage_northsouth(entry,1) = min(ATT.geospatialCoverage_northsouth(entry,1),min(latitude(:)));
-                    ATT.geospatialCoverage_northsouth(entry,2) = max(ATT.geospatialCoverage_northsouth(entry,2),max(latitude(:)));
+                    latitude  = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
+                    ATT.geospatialCoverage_northsouth(entry,1) = min(ATT.geospatialCoverage_northsouth(entry,1),latitude(1));
+                    ATT.geospatialCoverage_northsouth(entry,2) = max(ATT.geospatialCoverage_northsouth(entry,2),latitude(2));
                 end
                 
                 if strcmpi(Value,'longitude')
-                    longitude = nc_varget(OPT.filename, fileinfo.Dataset(idat).Name);
-                    ATT.geospatialCoverage_eastwest(entry,1)   = min(ATT.geospatialCoverage_eastwest  (entry,1),min(longitude(:)));
-                    ATT.geospatialCoverage_eastwest(entry,2)   = max(ATT.geospatialCoverage_eastwest  (entry,2),max(longitude(:)));
+                    longitude = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
+                    ATT.geospatialCoverage_eastwest(entry,1)   = min(ATT.geospatialCoverage_eastwest  (entry,1),longitude(1));
+                    ATT.geospatialCoverage_eastwest(entry,2)   = max(ATT.geospatialCoverage_eastwest  (entry,2),longitude(2));
                 end
                 
                 % get temporal
@@ -288,14 +297,32 @@ for ifile=1:length(OPT.files)
                     ATT.datenum_end  (entry)   = max(ATT.datenum_end  (entry),max(time(:)));
                 end
             end % standard_names
+            
+            %% get long_names only ...
+            if strcmpi(Name,'long_name')
+                
+                Value = fileinfo.Dataset(idat).Attribute(iatt).Value;
+                
+                % ... once
+                if ~any(strfind(long_names,[' ',Value]))   % remove redudant long_names (can occur with statistics)
+                    long_names = [long_names ';' Value];  % needs to be char, ; separatred
+                end
+
+            end % long_names
+            
+            
         end % iatt
     end % idat
     
     if isempty(standard_names)
         standard_names = ' ';
     end
+    if isempty(long_names)
+        long_names = ' ';
+    end
     
     ATT.standard_names(entry,1:length(standard_names)) = standard_names;
+    ATT.long_names    (entry,1:length(long_names))     = long_names;
     
 %% get latitude (actual_range or min() max() full array)
     
@@ -305,23 +332,12 @@ for ifile=1:length(OPT.files)
     % cycle all latitudes
     
     for idat=indices
-        latitude = [];
-        % cycle all attributes
-        natt = length(fileinfo.Dataset(idat).Attribute);
-        for iatt=1:natt
-            Name  = fileinfo.Dataset(idat).Attribute(iatt).Name;
-            %% get standard_names only ...
-            if strcmpi(Name,'actual_range')
-                latitude = fileinfo.Dataset(idat).Attribute(iatt).Value;
-            end % actual_range
-        end % iatt
+
+        latitude  = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
         
-        if isempty(latitude)
-            latitude  = nc_varget(OPT.filename, fileinfo.Dataset(idat).Name);
-        end
+        ATT.geospatialCoverage_northsouth(entry,1) = min(ATT.geospatialCoverage_northsouth(entry,1),latitude(1));
+        ATT.geospatialCoverage_northsouth(entry,2) = max(ATT.geospatialCoverage_northsouth(entry,2),latitude(2));
         
-        ATT.geospatialCoverage_northsouth(entry,1) = min(ATT.geospatialCoverage_northsouth(entry,1),min(latitude(:)));
-        ATT.geospatialCoverage_northsouth(entry,2) = max(ATT.geospatialCoverage_northsouth(entry,2),max(latitude(:)));
     end % idat
     
 %% get longitude (actual_range or min() max() full array)
@@ -332,49 +348,34 @@ for ifile=1:length(OPT.files)
     % cycle all longitudes
     
     for idat=indices
-        longitude = [];
-        % cycle all attributes
-        natt = length(fileinfo.Dataset(idat).Attribute);
-        for iatt=1:natt
-            Name  = fileinfo.Dataset(idat).Attribute(iatt).Name;
-            %% get standard_names only ...
-            if strcmpi(Name,'actual_range')
-                longitude = fileinfo.Dataset(idat).Attribute(iatt).Value;
-            end % actual_range
-        end % iatt
+
+        longitude = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
         
-        if isempty(longitude)
-            longitude  = nc_varget(OPT.filename, fileinfo.Dataset(idat).Name);
-        end
+        ATT.geospatialCoverage_eastwest(entry,1) = min(ATT.geospatialCoverage_eastwest(entry,1),longitude(1));
+        ATT.geospatialCoverage_eastwest(entry,2) = max(ATT.geospatialCoverage_eastwest(entry,2),longitude(2));
         
-        ATT.geospatialCoverage_eastwest(entry,1) = min(ATT.geospatialCoverage_eastwest(entry,1),min(longitude(:)));
-        ATT.geospatialCoverage_eastwest(entry,2) = max(ATT.geospatialCoverage_eastwest(entry,2),max(longitude(:)));
     end % idat
     %% get x (actual_range or min() max() full array)
     
     [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate');
     names = cellstr(names);
     
-    % cycle all latitudes
+    % cycle all x's
     
     for idat=indices
-        x = [];
-        % cycle all attributes
-        natt = length(fileinfo.Dataset(idat).Attribute);
-        for iatt=1:natt
-            Name  = fileinfo.Dataset(idat).Attribute(iatt).Name;
-            %% get standard_names only ...
-            if strcmpi(Name,'actual_range')
-                x = fileinfo.Dataset(idat).Attribute(iatt).Value;
-            end % actual_range
-        end % iatt
+
+        x = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
         
-        if isempty(x)
-            x  = nc_varget(OPT.filename, fileinfo.Dataset(idat).Name);
+        ATT.projectionCoverage_x(entry,1) = min(ATT.projectionCoverage_x(entry,1),min(x(1)));
+        ATT.projectionCoverage_x(entry,2) = max(ATT.projectionCoverage_x(entry,2),max(x(2)));
+        
+        if nc_isatt(OPT.filename, fileinfo.Dataset(idat).Name,'grid_mapping')
+           grid_mapping = nc_attget(OPT.filename, fileinfo.Dataset(idat).Name,'grid_mapping');
+           if nc_isvar(OPT.filename,grid_mapping)
+             ATT.projectionEPSGcode(entry) = nc_varget(OPT.filename,grid_mapping);
+           end
         end
         
-        ATT.projectionCoverage_x(entry,1) = min(ATT.projectionCoverage_x(entry,1),min(x(:)));
-        ATT.projectionCoverage_x(entry,2) = max(ATT.projectionCoverage_x(entry,2),max(x(:)));
     end % idat
     
 %% get y (actual_range or min() max() full array)
@@ -382,26 +383,26 @@ for ifile=1:length(OPT.files)
     [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate');
     names = cellstr(names);
     
-    % cycle all latitudes
+    % cycle all y's
     
     for idat=indices
-        y = [];
-        % cycle all attributes
-        natt = length(fileinfo.Dataset(idat).Attribute);
-        for iatt=1:natt
-            Name  = fileinfo.Dataset(idat).Attribute(iatt).Name;
-            %% get standard_names only ...
-            if strcmpi(Name,'actual_range')
-                y = fileinfo.Dataset(idat).Attribute(iatt).Value;
-            end % actual_range
-        end % iatt
+
+        y  = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
         
-        if isempty(y)
-            y  = nc_varget(OPT.filename, fileinfo.Dataset(idat).Name);
+        ATT.projectionCoverage_y(entry,1) = min(ATT.projectionCoverage_y(entry,1),min(y(1)));
+        ATT.projectionCoverage_y(entry,2) = max(ATT.projectionCoverage_y(entry,2),max(y(2)));
+        
+        if nc_isatt(OPT.filename, fileinfo.Dataset(idat).Name,'grid_mapping')
+           grid_mapping = nc_attget(OPT.filename, fileinfo.Dataset(idat).Name,'grid_mapping');
+           if nc_isvar(OPT.filename,grid_mapping)
+             ATT.projectionEPSGcode(entry) = nc_varget(OPT.filename,grid_mapping);
+           end
+           
+           %EPSGcodeStr = regexp(nc_attget(OPT.filename,'crs','spatial_ref'),'PROJECTION.*EPSG","(\d*)','tokens');
+           %ATT.projectionEPSGcode(entry) = str2double(EPSGcodeStr{:}{:});
+           
         end
-        
-        ATT.projectionCoverage_y(entry,1) = min(ATT.projectionCoverage_y(entry,1),min(y(:)));
-        ATT.projectionCoverage_y(entry,2) = max(ATT.projectionCoverage_y(entry,2),max(y(:)));
+
     end % idat
     if OPT.pause
         pausedisp

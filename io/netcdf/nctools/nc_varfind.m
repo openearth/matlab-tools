@@ -78,7 +78,7 @@ OPT.attributevalue = [];  % this indicates the search window (nr of days, '-': b
 OPT = setproperty(OPT, varargin{1:end});
 
 % initialise output
-varname  = '';
+varname  = {};
 varindex = [];
 
 %% get info from ncfile
@@ -105,11 +105,11 @@ for i = 1:length(Names)
     if ~isempty(Attributes)
     if any(strcmp({Attributes.Name} , OPT.attributename) & strcmp({Attributes.Value} , OPT.attributevalue))
         if isempty(varname)
-            varname {1} = Names{i};
+            varname{end+1} = Names{i};
             varindex    = i;
         else
             disp('NB: more than one variable fits the description')
-            varname  = {varname  Names(i)};
+            varname{end+1} = Names{i};
             varindex = [varindex i];
         end
     end
