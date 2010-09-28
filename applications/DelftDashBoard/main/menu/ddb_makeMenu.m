@@ -80,10 +80,14 @@ handles=ddb_addMenuItem(handles,'CoordinateSystem','Select UTM Zone ...',  'Call
 
 %% Options
 uimenu('Label','Options','Tag','menuOptions');
-handles=ddb_addMenuItem(handles,'Options','Coordinate Conversion','Callback',{@ddb_menuOptions});
-handles=ddb_addMenuItem(handles,'Options','Quickplot',            'Callback',{@ddb_menuOptions});
-handles=ddb_addMenuItem(handles,'Options','Muppet',               'Callback',{@ddb_menuOptions});
-handles=ddb_addMenuItem(handles,'Options','Ldb Tool',             'Callback',{@ddb_menuOptions});
+handles=ddb_addMenuItem(handles,'Options',               'Coordinate Conversion','Callback',{@ddb_menuOptions});
+handles=ddb_addMenuItem(handles,'Options',               'Quickplot',            'Callback',{@ddb_menuOptions});
+handles=ddb_addMenuItem(handles,'Options',               'Muppet',               'Callback',{@ddb_menuOptions});
+handles=ddb_addMenuItem(handles,'Options',               'Ldb Tool',             'Callback',{@ddb_menuOptions},'Separator','on');
+handles=ddb_addMenuItem(handles,'Options',               'Data management');
+handles=ddb_addMenuItem(handles,'OptionsDatamanagement', 'bathymetry',           'Callback',{@ddb_menuOptions});
+handles=ddb_addMenuItem(handles,'OptionsDatamanagement', 'shorelines',           'Callback',{@ddb_menuOptions});
+handles=ddb_addMenuItem(handles,'OptionsDatamanagement', 'tidemodels',           'Callback',{@ddb_menuOptions});
 
 %% Help
 uimenu('Label','Help','Tag','menuHelp');

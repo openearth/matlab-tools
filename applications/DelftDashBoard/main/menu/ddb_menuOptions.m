@@ -13,6 +13,8 @@ switch tg,
         ddb_menuOptionsQuickplot_Callback(hObject,eventdata,handles);
     case{'menuOptionsLdbTool'}
         ddb_menuOptionsLdbTool_Callback(hObject,eventdata,handles);
+    case{'menuOptionsDatamanagementbathymetry','menuOptionsDatamanagementshorelines','menuOptionsDatamanagementtidemodels'}
+        ddb_menuOptionsDM_Callback(hObject,eventdata,handles);    
 end
 
 %%
@@ -36,3 +38,27 @@ system([d3dpath, '\w32\ldbtool\bin\ldbtool.exe']);
 function ddb_menuOptionsQuickplot_Callback(hObject, eventdata, handles)
 d3dpath=[getenv('D3D_HOME')];
 system([d3dpath, '\w32\quickplot\bin\win32\d3d_qp.exe']);
+
+%%
+function ddb_menuOptionsDM_Callback(hObject,eventdata,handles)
+
+switch get(hObject,'Tag');
+    case 'menuOptionsDatamanagementbathymetry'
+        urls = {handles.Bathymetry.Dataset(:).URL};
+        fileLoc = repmat({'local'},1,length(urls));
+        fileLoc(strncmp('http',urls,4))= {'opendap'};
+        handles = ddb_dmSelector(handles,'Bathymetry',{handles.Bathymetry.Dataset(:).longName},{handles.Bathymetry.Dataset(:).Name},fileLoc);
+        
+    case 'menuOptionsDatamanagementshorelines'
+        urls = {handles.Shorelines.Shoreline(:).URL};
+        fileLoc = repmat({'local'},1,length(urls));
+        fileLoc(strncmp('http',urls,4))= {'opendap'};
+        handles = ddb_dmSelector(handles,'Shorelines',{handles.Shorelines.Shoreline(:).longName},{handles.Shorelines.Shoreline(:).Name},fileLoc);
+
+    case 'menuOptionsDatamanagementtidemodels'
+        urls = {handles.TideModels.Model(:).URL};
+        fileLoc = repmat({'local'},1,length(urls));
+        fileLoc(strncmp('http',urls,4))= {'opendap'};
+        handles = ddb_dmSelector(handles,'Tidemodels',{handles.TideModels.Model(:).longName},{handles.TideModels.Model(:).Name},fileLoc);
+
+end
