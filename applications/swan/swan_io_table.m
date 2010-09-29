@@ -1,25 +1,27 @@
 function varargout = swan_io_table(varargin)
 %SWAN_IO_TABLE            read SWAN ASCII output table        (BETA VERSION).
 %
+%   TAB = swan_io_table(INP.table(i))
+%
 %   TAB = swan_io_table(fname)
 %   TAB = swan_io_table(fname,fieldcolumnnames)
 %   TAB = swan_io_table(fname,fieldcolumnnames,mxyc)
-%   TAB = swan_io_table(INP.table(i))
 %
-% where fname is the table file name (recommended *.crv)
-% where fieldcolumnnames is a cell array or a white space delimited char 
-%    with the field names for each column, which are by default 
-%    the small case SHORT names as defined for SWAN input file code:
-%    Use SWAN_INPUT to get to read these. Use SWAN_QUANTITY to
+% where INP.table is returned by INP = swan_io_input('INPUT.swn')
+%    for multidimensional INP.table loads all tables.
+% where fname is the table file name (e.g. *.crv or *.dat)
+% where fieldcolumnnames is a cell array or white space delimited char 
+%    with the field names for each column. By default these are
+%    the small case SHORT names as used in the SWAN input file syntax.
+%    Use SWAN_INPUT to get these. Use SWAN_QUANTITY to
 %    get info regarding these. All fieldnames are turned into upper case.
-%    If not specified, one raw output matrix is returned.
+%    If no fieldnames specified, a bulk raw output matrix is returned.
 % where mxyc is a 2-element vector with the number of 
-%    SWAN !nodes ! , i.e. 1 more than the number of 
-%    SWAN !meshes! as given in the SWAN input file.
-%    Use swan_input to get to know this (in case of COMPGRID).
-%    If not specified, or empty, 1D vectors are returned.
-% where INP.table is returned by INP = swan_io_input('INPUT')
-%    For multidimensional INP.table loads all tables.
+%    SWAN !nodes! , (mxc+1) i.e. 1 more than the number of 
+%    SWAN !meshes! mxc as given in the SWAN input file.
+%    Use swan_input to get these (in case of COMPGRID).
+%    If not specified, or empty, 1D bulk vectors are returned
+%    that you have to reshape yourselves.
 %
 % Example to load following SWAN table:
 %
@@ -27,11 +29,16 @@ function varargout = swan_io_table(varargin)
 %    TABLE 'COMPGRID' HEADER   'tst.crv'  XP YP DEP HSIGN 
 %    ----------------------------------------------------
 %
+% Example to load SWAN table without loading input file
+%
 %    TAB = swan_io_table('tst.crv','XP YP DEP HSIGN');
 %
 % Example to load SWAN table automatically using INPUT file-info:
 %
 %    INP = swan_io_input('INPUT')
+%    TAB = swan_io_table(INP.table) % also takes xexc into account.
+%
+%    % is same as (below does not apply nodavalue for x,y from input grid)
 %
 %    for itab=1:length(INP.table)
 %       TAB(itab) = swan_io_table(INP.table(itab).fname ,...
@@ -40,14 +47,11 @@ function varargout = swan_io_table(varargin)
 %                                 INP.table(itab).myc+1]);
 %    end
 %
-%    % is same as
-%
-%    TAB = swan_io_table(INP.table)
 %
 % See also: SWAN_IO_SPECTRUM, SWAN_IO_INPUT, SWAN_IO_GRD, SWAN_IO_BOT
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2005 Delft University of Technology
+%   Copyright (C) 2005-2010 Delft University of Technology
 %       Gerben J. de Boer
 %
 %       g.j.deboer@tudelft.nl	
@@ -85,6 +89,8 @@ function varargout = swan_io_table(varargin)
 %              fields when parameter names are specified, changed 
 %              order of input into (...,fieldcolumnnames,<mxyc>). [Gerben de Boer]
 % 2009 mar 19: added loading of fname incl. path (as added to table struct in SWAN_IO_INPUT)
+% 2010 sep 28: apply default nodatavalues
+% TO DO: use user-defined overruling of nodatavalues
 
 %% Input
 
@@ -94,7 +100,8 @@ function varargout = swan_io_table(varargin)
    if isstruct(varargin{1})
       INP.table = varargin{1};
       
-%% Recursively call SWAN_IO_TABLE for multiple tables
+   %% Recursively call SWAN_IO_TABLE for multiple tables
+
       if length(INP.table(:)) > 1
          disp(['swan_io_table: Loading multiple tables.'])
          for itab=1:length(INP.table)      
@@ -104,7 +111,9 @@ function varargout = swan_io_table(varargin)
          TAB = reshape(TAB,size(INP.table)); % for 2D TAB arrays
          varargout = {TAB};
          return
-%% Proceed SWAN_IO_TABLE for single table
+         
+   %% Proceed SWAN_IO_TABLE for single table
+
       else
          INP.table.mmax = INP.table.mxc + 1;
          INP.table.nmax = INP.table.myc + 1;
@@ -114,74 +123,53 @@ function varargout = swan_io_table(varargin)
 
       INP.table.fullfilename = varargin{1};
 
-%% column names
+   %% column names
+
       if nargin>1
    
-          %-% REMOVED DELFTD_WAVE DEFAULT:
-          %-% %% Define default (Delft3D) Column parameter names
-          %-% %-------------------------
-          %-% 
-          %-% INP.table.parameter.nfields     = ones(18,1);
-          %-% INP.table.parameter.nfields( 5) = 2;
-          %-% INP.table.parameter.nfields( 6) = 2;
-          %-% INP.table.parameter.nfields(17) = 2;
-          %-% 
-          %-%                                             %  parameter
-          %-%                                             %     columns
-          %-%                                             %          dimensions (vector vs. scalar)
-          %-%                                             % --------------------------------
-          %-% INP.table.parameter.names  = {'HS     ',... %  1  1    1
-          %-%                               'DIR    ',... %  2  2    1
-          %-%                               'TM01   ',... %  3  3    1
-          %-%                               'DEP    ',... %  4  4    1
-          %-%                               'VEL    ',... %  5  5- 6 2
-          %-%                               'TRA    ',... %  6  7- 8 2
-          %-%                               'DSPR   ',... %  7  9    1
-          %-%                               'DISS   ',... %  8 10    1
-          %-%                               'LEAK   ',... %  9 11    1
-          %-%                               'QB     ',... % 10 12    1
-          %-%                               'XP     ',... % 11 13    1
-          %-%                               'YP     ',... % 12 14    1
-          %-%                               'DIST   ',... % 13 15    1
-          %-%                               'UBOT   ',... % 14 16    1
-          %-%                               'STEEP  ',... % 15 17    1
-          %-%                               'WLEN   ',... % 16 18    1
-          %-%                               'FOR    ',... % 17 19-20 2
-          %-%                               'RTP    ',... % 18 21    1
-          %-%                               'PDIR   '};   % 19 22    1
+          % REMOVED DELFTD_WAVE DEFAULT:
+          %  Define default (Delft3D) Column parameter names
+          % -------------------------
+          % 
+          % INP.table.parameter.nfields     = ones(18,1);
+          % INP.table.parameter.nfields( 5) = 2;
+          % INP.table.parameter.nfields( 6) = 2;
+          % INP.table.parameter.nfields(17) = 2;
+          % 
+          %                                             %  parameter
+          %                                             %     columns
+          %                                             %          dimensions (vector vs. scalar)
+          %                                             % --------------------------------
+          % INP.table.parameter.names  = {'HS     ',... %  1  1    1
+          %                               'DIR    ',... %  2  2    1
+          %                               'TM01   ',... %  3  3    1
+          %                               'DEP    ',... %  4  4    1
+          %                               'VEL    ',... %  5  5- 6 2
+          %                               'TRA    ',... %  6  7- 8 2
+          %                               'DSPR   ',... %  7  9    1
+          %                               'DISS   ',... %  8 10    1
+          %                               'LEAK   ',... %  9 11    1
+          %                               'QB     ',... % 10 12    1
+          %                               'XP     ',... % 11 13    1
+          %                               'YP     ',... % 12 14    1
+          %                               'DIST   ',... % 13 15    1
+          %                               'UBOT   ',... % 14 16    1
+          %                               'STEEP  ',... % 15 17    1
+          %                               'WLEN   ',... % 16 18    1
+          %                               'FOR    ',... % 17 19-20 2
+          %                               'RTP    ',... % 18 21    1
+          %                               'PDIR   '};   % 19 22    1
           
          INP.table.parameter.names  = upper(varargin{2});
          if ~iscell(INP.table.parameter.names)
-            INP.table.parameter.names = strtokens2cell(deblank(INP.table.parameter.names));
+            INP.table.parameter.names = strtokens2cell(strtrim(INP.table.parameter.names));
          end
          INP.table.parameter.nfields = ones(length(INP.table.parameter.names),1);
          
-%% for all vectors define 2 columns
-         
-         for ifield=1:length(INP.table.parameter.nfields)
-            
-            fldname = char(deblank(INP.table.parameter.names{ifield}));
-            
-            if length(fldname) > 5
-               fldname = fldname(1:5);
-            end
-            
-            fldname = deblank(fldname);
-            
-            if strcmp(upper(fldname),'VEL') | ...
-               strcmp(upper(fldname),'TRA') | ...
-               strcmp(upper(fldname),'WIND' ) | ...
-               strcmp(upper(fldname),'FOR')
-      
-                INP.table.parameter.nfields(ifield) = 2;  
-      
-            end
-            
-         end % for ifield=1:length(shape.nfields)
-         
-      end % if  nargin>2 
+      end
 
 %% reshape size
+
       if nargin>2
          if ~isempty(varargin{3})
             INP.table.mmax = varargin{3}(1);
@@ -194,25 +182,74 @@ function varargout = swan_io_table(varargin)
       
    end
    
+%% for all vectors define 2 columns
+
+   if nargin>1 | isstruct(varargin{1})
+      
+      for ifield=1:length(INP.table.parameter.nfields)
+         
+         fldname = char(strtrim(INP.table.parameter.names{ifield}));
+         
+         if length(fldname) > 5
+            fldname = fldname(1:5);
+         end
+         
+         fldname = strtrim(fldname);
+         
+         if strcmp(upper(fldname),'VEL')   | ...
+            strcmp(upper(fldname),'TRA')   | ...
+            strcmp(upper(fldname),'WIND' ) | ...
+            strcmp(upper(fldname),'FOR')
+   
+             INP.table.parameter.nfields(ifield) = 2;  
+   
+         end
+         
+      end % for ifield=1:length(shape.nfields)
+      
+   end % nargin>1 | isstruct(varargin{1})   
+   
 %% Load full raw matrix
 
    dat = load(INP.table.fullfilename); %load(TAB.fname);
    
-%%  split into scalar/vector columns and give names
+%%  split into scalar/vector columns and give names (only possible when INP is supplied ...)
 
-   if isfield(INP.table,'parameter')
+if isfield(INP.table,'parameter')
+
+   %% load table with default nodatavalues
+
+   D = swan_quantity;
+
    for ifield=1:length(INP.table.parameter.nfields)
 
       ndata   = INP.table.parameter.nfields(ifield); % 1 or 2
-      fldname = char(deblank(INP.table.parameter.names{ifield}));
+      fldname = char(strtrim(INP.table.parameter.names{ifield}));
+
+      %  determine nodatavalue that differs per parameter
+      
+      if     strcmp(fldname,'XP') & isfield(INP.table,'xexc')
+         nodatavalue = INP.table.xexc;
+      elseif strcmp(fldname,'YP') & isfield(INP.table,'yexc')
+         nodatavalue = INP.table.yexc;
+      else      
+         nodatavalue = D.(fldname).OVEXCV;
+      end
       
       % ['ifield:',num2str(ifield),' ndata:',num2str(ndata),' fldname:',fldname]
 
       for idata = 1:INP.table.parameter.nfields(ifield)
+
+      %  extract data block one parameters per blokc
+
          columns = sum(INP.table.parameter.nfields(1:ifield-1)) + idata;
          data    = dat(:,columns);
+         
+      %  apply nodatavalue
 
-%%  reshape 1D column to proper 2D matrix (if mxc,myc provided)
+         data(data==nodatavalue)=nan; % apply default nodatavalues
+
+      %  reshape 1D column to proper 2D matrix (if mxc,myc provided)
          
          if ~isempty(INP.table.mmax) & ...
             ~isempty(INP.table.nmax)
@@ -223,9 +260,13 @@ function varargout = swan_io_table(varargin)
       end
 
    end
+   
    varargout = {TAB};
-   else
+
+else
+
    varargout = {dat};
-   end % if isfield(INP.table,'parameter')
+
+end % if isfield(INP.table,'parameter')
 
 %% EOF
