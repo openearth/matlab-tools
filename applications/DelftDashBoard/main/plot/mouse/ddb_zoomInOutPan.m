@@ -71,7 +71,7 @@ function ZoomInOut(imagefig, varargins, callback, varargin)
 
 handles=getHandles;
 
-ax=handles.GUIHandles.Axis;
+ax=handles.GUIHandles.mapAxis;
 xl=get(ax,'xlim');
 yl=get(ax,'ylim');
 
@@ -200,7 +200,7 @@ ddb_updateCoordinateText(pntr);
 %%
 function StartPan(imagefig, varargins, callback, varargin)
 handles=getHandles;
-ax=handles.GUIHandles.Axis;
+ax=handles.GUIHandles.mapAxis;
 xl=get(ax,'xlim');
 yl=get(ax,'ylim');
 point = get(ax,'CurrentPoint');

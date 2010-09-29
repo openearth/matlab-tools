@@ -9,5 +9,5 @@ ch=get(h,'Children');
 set(ch,'Checked','off');
 set(hObject,'Checked','on');
 
-ddb_selectModel(mdl);
+ddb_selectModel(mdl,'toolbox');
 

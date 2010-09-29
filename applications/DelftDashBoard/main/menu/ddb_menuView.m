@@ -1,4 +1,4 @@
-function ddb_menuView(hObject, eventdata, handles)
+function ddb_menuView(hObject, eventdata)
 
 handles=getHandles;
 
@@ -12,7 +12,7 @@ switch tg,
     case{'menuViewCities'}
         menuViewCities_Callback(hObject,eventdata,handles);
     case{'menuViewSettings'}
-        menuViewSettings_Callback(hObject,eventdata,handles);
+        menuViewSettings_Callback(hObject,eventdata);
 end    
 
 %%
@@ -22,17 +22,11 @@ checked=get(hObject,'Checked');
 
 if strcmp(checked,'on')
     set(hObject,'Checked','off');
-    h=findobj(gcf,'Tag','WorldCoastLine');
-    if ~isempty(h)
-        set(h,'Visible','off');
-    end        
+    set(handles.mapHandles.shoreline,'Visible','off');
 else
     set(hObject,'Checked','on');
-    h=findobj(gcf,'Tag','WorldCoastLine');
-    if ~isempty(h)
-        set(h,'Visible','on');
-    end        
-end    
+    set(handles.mapHandles.shoreline,'Visible','on');
+end
 
 %%
 function menuViewBackgroundBathymetry_Callback(hObject, eventdata, handles)
@@ -41,16 +35,10 @@ checked=get(hObject,'Checked');
 
 if strcmp(checked,'on')
     set(hObject,'Checked','off');
-    h=findall(gcf,'Tag','BackgroundBathymetry');
-    if ~isempty(h)
-        set(h,'Visible','off');
-    end
+    set(handles.mapHandles.bathymetry,'Visible','off');
 else
     set(hObject,'Checked','on');
-    h=findall(gcf,'Tag','BackgroundBathymetry');
-    if ~isempty(h)
-        set(h,'Visible','on');
-    end
+    set(handles.mapHandles.bathymetry,'Visible','on');
 end
 
 %%
@@ -58,29 +46,16 @@ function menuViewCities_Callback(hObject, eventdata, handles)
 checked=get(hObject,'Checked');
 if strcmp(checked,'on')
     set(hObject,'Checked','off');
-    h=findobj(gca,'Tag','WorldCities');
-    if ~isempty(h)
-        delete(h);
-    end        
+    set(handles.mapHandles.textCities,'Visible','off');
+    set(handles.mapHandles.cities,'Visible','off');
 else
     set(hObject,'Checked','on');
-    h=findobj(gca,'Tag','WorldCities');
-    for i=1:length(handles.GUIData.cities.Lon)
-        xc(i)=handles.GUIData.cities.Lon(i);
-        yc(i)=handles.GUIData.cities.Lat(i);
-        tx=text(xc(i),yc(i),[' ' handles.GUIData.cities.Name{i}]);
-        set(tx,'HorizontalAlignment','left','VerticalAlignment','bottom');
-        set(tx,'FontSize',7,'Clipping','on');
-        set(tx,'Tag','WorldCities');
-    end
-    zc=zeros(size(xc))+500;
-    plt=plot3(xc,yc,zc,'o');
-    set(plt,'MarkerSize',4,'MarkerEdgeColor','none','MarkerFaceColor','r');
-    set(plt,'Tag','WorldCities');
+    set(handles.mapHandles.textCities,'Visible','on');
+    set(handles.mapHandles.cities,'Visible','on');
 end    
 
 %%
-function menuViewSettings_Callback(hObject, eventdata, handles)
+function menuViewSettings_Callback(hObject, eventdata)
 
 ddb_editViewSettings;
 

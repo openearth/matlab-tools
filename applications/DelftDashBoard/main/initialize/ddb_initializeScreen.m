@@ -1,5 +1,7 @@
 function handles=ddb_initializeScreen(handles)
 
+% Setting some screen parameters
+
 % Model tabs
 for i=1:length(handles.Model)
     elements=handles.Model(i).GUI.elements;
@@ -13,7 +15,17 @@ for i=1:length(handles.Model)
     end
 end
 
+% Map panel
+
+% First make large panel to contain map axis, colorbar etc.
+% The large panel will be a child of the active model gui
+
+handles.GUIHandles.mapPanel=uipanel('Units','pixels','Position',[10 10 870 440],'Parent',handles.Model(i).GUI.elements(1).handle);
+
+% Add map axis
+
 ax=axes;
+set(ax,'Parent',handles.GUIHandles.mapPanel);
 set(ax,'Units','pixels');
 set(ax,'NextPlot','replace');
 set(ax,'Position',[70 200 870 440]);

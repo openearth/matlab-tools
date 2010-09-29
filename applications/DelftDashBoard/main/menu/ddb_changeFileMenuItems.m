@@ -9,6 +9,7 @@ if ~isempty(ch)
 end
 
 % New
+argin=[];
 argin{1}='Callback';
 argin{2}=@ddb_resetAll;
 handles=ddb_addMenuItem(handles,'File','New','Callback',@ddb_menuSelect,'argin',argin);
@@ -18,6 +19,7 @@ for i=1:length(handles.Model(md).GUI.menu.openFile)
     str=handles.Model(md).GUI.menu.openFile(i).string;
     cb=handles.Model(md).GUI.menu.openFile(i).callback;
     opt=handles.Model(md).GUI.menu.openFile(i).option;
+    argin=[];
     argin{1}='Callback';
     argin{2}=cb;
     argin{3}='Options';
@@ -34,6 +36,7 @@ for i=1:length(handles.Model(md).GUI.menu.saveFile)
     str=handles.Model(md).GUI.menu.saveFile(i).string;
     cb=handles.Model(md).GUI.menu.saveFile(i).callback;
     opt=handles.Model(md).GUI.menu.saveFile(i).option;
+    argin=[];
     argin{1}='Callback';
     argin{2}=cb;
     argin{3}='Options';
@@ -46,15 +49,18 @@ for i=1:length(handles.Model(md).GUI.menu.saveFile)
 end
 
 % Shoreline
+argin=[];
 argin{1}='Callback';
 argin{2}=@ddb_menuFileOpenShoreline;
 % handles=ddb_addMenuItem(handles,'File','Open Shoreline',          'Callback',{@ddb_menuSelect},'argin',argin,'Separator','on');
 
 % Working directory
+argin=[];
 argin{1}='Callback';
 argin{2}=@ddb_selectWorkingDirectory;
 handles=ddb_addMenuItem(handles,'File','Select Working Directory','Callback',@ddb_menuSelect,'argin',argin,'Separator','on');
 
+argin=[];
 argin{1}='Callback';
 argin{2}=@ddb_menuExit;
 handles=ddb_addMenuItem(handles,'File','Exit',                    'Callback',@ddb_menuSelect,'argin',argin,'Separator','on');

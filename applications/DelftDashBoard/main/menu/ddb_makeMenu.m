@@ -94,3 +94,8 @@ uimenu('Label','Help','Tag','menuHelp');
 handles=ddb_addMenuItem(handles,'Help','Deltares Online',        'Callback',{@ddb_menuHelp});
 handles=ddb_addMenuItem(handles,'Help','Delft Dashboard Online', 'Callback',{@ddb_menuHelp});
 handles=ddb_addMenuItem(handles,'Help','About Delft Dashboard',  'Callback',{@ddb_menuHelp});
+
+%% Debug
+uimenu('Label','Debug','Tag','menuDebug');
+handles=ddb_addMenuItem(handles,'Debug','Debug Mode','Callback',{@ddb_menuDebug},'Checked','off');
+

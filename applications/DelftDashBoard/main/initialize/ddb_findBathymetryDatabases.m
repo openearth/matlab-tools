@@ -1,4 +1,6 @@
-function handles=ddb_findBathymetryDatabases(handles)
+function ddb_findBathymetryDatabases
+
+handles=getHandles;
 
 handles=ddb_readTiledBathymetries(handles);
 
@@ -106,3 +108,5 @@ for i=1:handles.Bathymetry.NrDatasets
             end     
     end
 end
+
+setHandles(handles);

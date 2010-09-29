@@ -1,4 +1,6 @@
-function handles=ddb_initializeScreenParameters(handles)
+function ddb_initializeScreenParameters
+
+handles=getHandles;
 
 handles.ScreenParameters.XMaxRange=[-180 180];
 handles.ScreenParameters.YMaxRange=[-90 90];
@@ -22,3 +24,17 @@ handles.ScreenParameters.CoordinateSystem.Type='Geographic';
 handles.ScreenParameters.OldCoordinateSystem.Name='WGS 84';
 handles.ScreenParameters.OldCoordinateSystem.Type='Geographic';
 handles.ScreenParameters.UTMZone={31,'U'};
+
+handles.ScreenParameters.CMin=-10000;
+handles.ScreenParameters.CMax=10000;
+handles.ScreenParameters.AutomaticColorLimits=1;
+handles.ScreenParameters.ColorMap='Earth';
+
+handles.ScreenParameters.XLim=[-180 180];
+handles.ScreenParameters.YLim=[-90 90];
+
+handles.ScreenParameters.ActiveTab='Toolbox';
+handles.activeToolbox.Name='ModelMaker';
+handles.activeToolbox.Nr=1;
+
+setHandles(handles);

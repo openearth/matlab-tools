@@ -58,29 +58,13 @@ eval([strrep(Revision(Revision~='$'),':','=') ';']);
 
 handles.DelftDashBoardVersion=['1.00.' num2str(Revision)];
 handles.MatlabVersion=version;
-
-% if isdeployed
-%     jardir=[ctfroot filesep 'checkout' filesep 'OpenEarthTools' filesep 'trunk' filesep 'matlab' filesep 'io' filesep 'netcdf' filesep];
-%     disp([jardir 'netcdfAll-4.1.jar'])
-%     java2add         = path2os([jardir 'netcdfAll-4.1.jar']); % 'netcdfAll-4.1.jar'; % same functionality
-% %     dynjavaclasspath = path2os(javaclasspath);
-% %     indices          = strfind(javaclasspath,java2add);
-% %    javaaddpath (java2add)
-%     javaaddpath (jardir);
-%     setpref ('SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
-%     % keep snctools default
-%     setpref ('SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
-%     % 1: We do not want to transpose matrices because:
-%     %    (i)  we have some LARGE datasets and need a performance boost
-%     %    (ii) some use the netCDF API directly which does not do this.
-%     %    May break previous work though ...
-% end
+handles.debugMode=0;
 
 % Add java paths for snc tools
 if isdeployed
-    pth=[ctfroot filesep 'checkout' filesep 'OpenEarthTools' filesep 'trunk' filesep 'matlab' filesep 'io' filesep 'netcdf' filesep 'toolsUI-4.1.jar'];
-    disp(['SNC jar file is : ' pth]);
-    javaaddpath(pth);
+%     pth=[ctfroot filesep 'checkout' filesep 'OpenEarthTools' filesep 'trunk' filesep 'matlab' filesep 'io' filesep 'netcdf' filesep 'toolsUI-4.1.jar'];
+%     disp(['SNC jar file is : ' pth]);
+%     javaaddpath(pth);
     setpref ('SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
     setpref ('SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
 end
@@ -99,8 +83,11 @@ warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
 % Open Splash Screen
 frame=splash([handles.SettingsDir 'icons' filesep 'DelftDashBoard.jpg'],30);
 
-handles=ddb_initialize(handles,'startup');
 setHandles(handles);
+
+ddb_initialize('startup');
+
+handles=getHandles;
 
 % Maximize Figure
 maximize(handles.GUIHandles.MainWindow);

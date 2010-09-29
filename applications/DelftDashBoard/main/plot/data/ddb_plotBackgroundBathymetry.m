@@ -9,6 +9,12 @@ xmin=handles.ScreenParameters.XLim(1);
 xmax=handles.ScreenParameters.XLim(2);
 ymin=handles.ScreenParameters.YLim(1);
 ymax=handles.ScreenParameters.YLim(2);
+dx=(xmax-xmin)/20;
+dy=(ymax-ymin)/20;
+xmin=xmin-dx;
+xmax=xmax+dx;
+ymin=ymin-dy;
+ymax=ymax+dy;
 
 ilim=find(xx<xmax & xx>xmin);
 jlim=find(yy<ymax & yy>ymin);
@@ -16,7 +22,8 @@ jlim=find(yy<ymax & yy>ymin);
 xx=xx(ilim);
 yy=yy(jlim);
 
-h=findobj(handles.GUIHandles.MainWindow,'Tag','BackgroundBathymetry');
+%h=findobj(handles.GUIHandles.MainWindow,'Tag','BackgroundBathymetry');
+h=handles.mapHandles.bathymetry;
 
 zz=handles.GUIData.z(jlim,ilim);
 
@@ -35,7 +42,7 @@ zz=max(zz,mnz);
 zz(isnan(zz0))=NaN;
 
 if strcmpi(handles.ScreenParameters.ColorMap,'earth')
-    earth=handles.GUIData.ColorMaps.Earth;
+    earth=handles.mapData.colorMaps.earth;
 else
     earth=jet;
 end
@@ -69,12 +76,12 @@ if length(earthx)>1
     cdata=max(cdata,0.001);
 
     tic
-    if ~isempty(h)
+%     if ~isempty(h)
         set(h,'XData',xx,'YData',yy,'CData',cdata);
-    else
-        h=image(xx,yy,cdata);hold on;
-        set(h,'Tag','BackgroundBathymetry');
-    end
+%     else
+%         h=image(xx,yy,cdata);hold on;
+%         set(h,'Tag','BackgroundBathymetry');
+%     end
     set(gca,'YDir','normal');
     
     % if length(h)>0
@@ -99,7 +106,7 @@ if length(earthx)>1
     end
 
     caxis([mnz mxz]);
-    ddb_makeColorBar(earth);
+    ddb_colorBar('update',earth);
 
     set(gca,'CLim',[mnz mxz]);
     disp('Plotting Image ...')

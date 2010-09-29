@@ -1,4 +1,6 @@
-function handles=ddb_findShorelines(handles)
+function ddb_findShorelines
+
+handles=getHandles;
 
 handles=ddb_readShorelines(handles);
 
@@ -98,3 +100,5 @@ for i=1:handles.Shorelines.nrShorelines
             end
     end    
 end
+
+setHandles(handles);

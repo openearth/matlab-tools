@@ -1,58 +1,55 @@
-function handles=ddb_initialize(handles,varargin)
+function ddb_initialize(varargin)
 
 switch lower(varargin{1}),
 
     case{'startup'}
 
         disp('Finding coordinate systems ...');
-        handles=ddb_getCoordinateSystems(handles);
+        ddb_getCoordinateSystems;
 
         disp('Finding tide models ...');
-        handles=ddb_findTideModels(handles);
+        ddb_findTideModels;
         
         disp('Finding bathymetry datasets ...');
-        handles=ddb_findBathymetryDatabases(handles);
+        ddb_findBathymetryDatabases;
         
         disp('Finding shorelines ...');
-        handles=ddb_findShorelines(handles);
+        ddb_findShorelines;
         
         disp('Finding toolboxes ...');
-        handles=ddb_findToolboxes(handles);
-        handles.activeToolbox.Name='ModelMaker';
-        handles.activeToolbox.Nr=1;
+        ddb_findToolboxes;
         
         disp('Finding models ...');
-        handles=ddb_findModels(handles);
-        handles.ActiveModel.Name='Delft3DFLOW';
-        handles.ActiveModel.Nr=1;
+        ddb_findModels;
 
         disp('Initializing screen parameters ...');
-        handles=ddb_initializeScreenParameters(handles);
+        ddb_initializeScreenParameters;
         
         disp('Initializing figure ...');
-        handles=ddb_initializeFigure(handles);
+        ddb_initializeFigure;
 
-        disp('Initializing bathymetry ...');
-        handles=ddb_initializeBathymetry(handles);
-
-        setHandles(handles);
+%         disp('Initializing bathymetry ...');
+%         handles=ddb_initializeBathymetry(handles);
 
         disp('Initializing models ...');
-        handles=ddb_initializeModels(handles);
-
-        setHandles(handles);
+        ddb_initializeModels;
 
         disp('Initializing toolboxes ...');
-        handles=ddb_initializeToolboxes(handles);
+        ddb_initializeToolboxes;
 
-        setHandles(handles);
+        disp('Adding model tabpanels ...');
+        ddb_addModelTabPanels;
+
+        disp('Loading additional map data ...');
+        ddb_loadMapData;
 
         disp('Initializing screen ...');
-        handles=ddb_initializeScreen(handles);
+        ddb_makeMapPanel;
 
-        setHandles(handles);
-        
-        ddb_selectModel('Delft3DFLOW');
+        disp('Updating data in screen ...');
+        ddb_updateDataInScreen;
+                
+        ddb_selectModel('Delft3DFLOW','toolbox');
         % Toolbox is selected in ddb_selectModel        
 
         handles=getHandles;
@@ -66,24 +63,12 @@ switch lower(varargin{1}),
 
         ddb_setWindowButtonUpDownFcn;
         ddb_setWindowButtonMotionFcn;
-
+        
     case{'all'}
-        handles=ddb_initializeModels(handles);
-        handles=ddb_initializeToolboxes(handles);
-        handles=ddb_refreshFlowDomains(handles);
+        ddb_initializeModels;
+        ddb_initializeToolboxes;
+        ddb_refreshFlowDomains;
 
     otherwise
 
-end
-
-function handles=ddb_initializeModels(handles)
-for k=1:length(handles.Model)
-    f=handles.Model(k).IniFcn;
-    handles=f(handles);
-end
-
-function handles=ddb_initializeToolboxes(handles)
-for k=1:length(handles.Toolbox)
-    f=handles.Toolbox(k).IniFcn;
-    handles=f(handles);
 end

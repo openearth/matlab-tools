@@ -46,7 +46,7 @@ end
 
 %% Plot shoreline
 z=zeros(size(x))+500;
-h=findobj(handles.GUIHandles.MainWindow,'Tag','WorldCoastLine');
+h=findobj(handles.GUIHandles.MainWindow,'Tag','shoreline');
 set(h,'XData',x,'YData',y,'ZData',z);
 
 toc

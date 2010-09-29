@@ -1,4 +1,6 @@
-function handles=ddb_findTideModels(handles)
+function ddb_findTideModels
+
+handles=getHandles;
 
 handles=ddb_readTideModels(handles);
 
@@ -12,3 +14,5 @@ handles.TideModels.Model(k).Name='constant';
 
 handles.TideModels.ActiveTideModelBC=handles.TideModels.Name{1};
 handles.TideModels.ActiveTideModelIC=handles.TideModels.Name{1};
+
+setHandles(handles);

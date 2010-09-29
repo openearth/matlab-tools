@@ -67,9 +67,19 @@ set(gca,'XLim',xl,'YLim',yl);
 setHandles(handles);
 
 
-%% Source Bathymetry
+%% Bathymetry and shoreline are taken care of in ddb_updateDataInScreen
 ddb_updateDataInScreen;
+
 handles=getHandles;
+
+% Cities
+geoSystem.Type='geographic';
+geoSystem.Name='WGS 84';
+[xc,yc]=ddb_coordConvert(handles.mapData.cities.lon,handles.mapData.cities.lat,geoSystem,NewSystem);
+for i=1:length(handles.mapData.cities.lon)
+    set(handles.mapHandles.textCities(i),'Position',[xc(i) yc(i) 500]);
+end
+set(handles.mapHandles.cities,'XData',xc,'YData',yc);
 
 % Models
 for i=1:length(handles.Model)

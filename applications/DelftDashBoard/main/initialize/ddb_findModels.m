@@ -1,4 +1,6 @@
-function handles=ddb_findModels(handles)
+function ddb_findModels
+
+handles=getHandles;
 
 if isdeployed
     dr=[ctfroot filesep 'models'];
@@ -57,3 +59,7 @@ for i=1:nt
     handles=ddb_readModelXML(handles,i);
 end
 
+handles.ActiveModel.Name='Delft3DFLOW';
+handles.ActiveModel.Nr=1;
+
+setHandles(handles);

@@ -14,7 +14,10 @@ for i=1:length(handles.Toolbox)
     end
 end
 
-handles=ddb_initialize(handles,'all');
+ddb_initialize('all');
+
+handles=getHandles;
+
 handles.activeToolbox.Name='ModelMaker';
 handles.activeToolbox.Nr=1;
 

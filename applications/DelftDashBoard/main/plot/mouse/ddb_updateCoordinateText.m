@@ -1,7 +1,7 @@
 function ddb_updateCoordinateText(pnt,dummy)
 
 handles=getHandles;
-ax=handles.GUIHandles.Axis;
+ax=handles.GUIHandles.mapAxis;
 
 pos = get(ax, 'CurrentPoint');
 posx=pos(1,1);

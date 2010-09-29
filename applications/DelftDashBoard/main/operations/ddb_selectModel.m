@@ -1,4 +1,15 @@
-function ddb_selectModel(mdl)
+function ddb_selectModel(mdl,tabname,varargin)
+
+icb=1;
+
+for i=1:length(varargin)
+    if ischar(varargin{i})
+        switch lower(varargin{i})
+            case{'runcallback'}
+                icb=varargin{i+1};
+        end
+    end
+end
 
 handles=getHandles;
 
@@ -25,4 +36,6 @@ else
 end
 
 % Select toolbox
-tabpanel('select','tag',handles.Model(md).Name,'tabname','toolbox');
+tabpanel('select','tag',lower(handles.Model(md).Name),'tabname',tabname,'runcallback',icb);
+
+set(handles.GUIHandles.mapPanel,'Parent',handles.Model(md).GUI.elements(1).handle);

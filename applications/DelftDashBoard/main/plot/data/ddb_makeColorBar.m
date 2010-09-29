@@ -1,6 +1,6 @@
 function ddb_makeColorBar(ColorMap)
 
-h=findall(gcf,'Tag','colorbar');
+h=findobj(gcf,'Tag','colorbar');
 
 if ~isempty(h)
     pos=get(h,'Position');
@@ -32,6 +32,9 @@ for i=1:nocol
     set(fl,'FaceColor',col,'LineStyle','none');
 end
 
+handles=getHandles;
+
+set(clrbar,'Parent',handles.GUIHandles.mapPanel);
 set(clrbar,'xlim',[0 1],'ylim',[clim(1) clim(2)]);
 set(clrbar,'Units','pixels');
 set(clrbar,'Position',pos);

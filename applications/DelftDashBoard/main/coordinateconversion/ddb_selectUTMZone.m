@@ -18,8 +18,8 @@ ax=gca;
 set(ax,'Units','pixels');
 set(ax,'Position',[50 100 850 400]);
 
-x=h.GUIData.WorldCoastLine5000000(:,1);
-y=h.GUIData.WorldCoastLine5000000(:,2);
+x=h.mapData.worldCoastLine5000000(:,1);
+y=h.mapData.worldCoastLine5000000(:,2);
 z=zeros(size(x))+5000;
 plt=plot(x,y);hold on;
 set(plt,'Color',[0.3 0.3 0.3]);

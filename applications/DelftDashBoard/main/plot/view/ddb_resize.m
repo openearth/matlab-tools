@@ -15,30 +15,45 @@ if sz(3)<1040 || sz(4)<600
     set(gcf,'Position',sz);
 end
 
-set(handles.GUIHandles.Axis,'Position',[60 200 sz(3)-155 sz(4)-265]);
+% First change size of model tab panels
+for i=1:length(handles.Model)
+    tabpanel('resize','tag',lower(handles.Model(i).Name),'resize','position',[9 6 sz(3)-10 sz(4)-30]);
+end
 
-% set(handles.GUIHandles.TextXCoordinate,'Position',[60+sz(3)-155-160 200+sz(4)-265 80 20]);
-% set(handles.GUIHandles.TextYCoordinate,'Position',[60+sz(3)-155-80 200+sz(4)-265 80 20]);
-set(handles.GUIHandles.TextXCoordinate,'Position',[300 200+sz(4)-260 80 15]);
-set(handles.GUIHandles.TextYCoordinate,'Position',[380 200+sz(4)-260 80 15]);
-set(handles.GUIHandles.TextCoordinateSystem,'Position',[100 200+sz(4)-260 200 15]);
+% Now change size of map panel
+hp=get(handles.GUIHandles.mapPanel,'Parent');
+posp=get(hp,'Position');
+pos=[5 170 posp(3)-10 posp(4)-193];
+set(handles.GUIHandles.mapPanel,'Position',pos);
 
-xl=get(handles.GUIHandles.Axis,'XLim');
-yl=get(handles.GUIHandles.Axis,'YLim');
+% Now change size of map axis panel
+posp=pos;
+pos=[40 20 posp(3)-120 posp(4)-50];
+set(handles.GUIHandles.mapAxisPanel,'Position',pos);
+
+% Now change size of map axis
+set(handles.GUIHandles.mapAxis,'Position',[1 1 pos(3)-5 pos(4)-5]);
+
+% Now change size of colorbar
+pos=[posp(3)-35 20 20 posp(4)-50];
+set(handles.GUIHandles.colorBarPanel,'Position',pos);
+pos=[1 1 16 posp(4)-54];
+set(handles.GUIHandles.colorBar,'Position',pos);
+
+% Now change size of coordinate system text
+set(handles.GUIHandles.TextXCoordinate,'Position',[350 posp(4)-25 80 15]);
+set(handles.GUIHandles.TextYCoordinate,'Position',[440 posp(4)-25 80 15]);
+set(handles.GUIHandles.TextCoordinateSystem,'Position',[90 posp(4)-25 200 15]);
+
+xl=get(handles.GUIHandles.mapAxis,'XLim');
+yl=get(handles.GUIHandles.mapAxis,'YLim');
 
 [xl,yl]=CompXYLim(xl,yl,handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange);
 
-set(handles.GUIHandles.Axis,'XLim',xl,'YLim',yl);
+set(handles.GUIHandles.mapAxis,'XLim',xl,'YLim',yl);
 handles.ScreenParameters.XLim=xl;
 handles.ScreenParameters.YLim=yl;
 
 setHandles(handles);
 
-h=findobj(gcf,'Tag','colorbar');
-if ~isempty(h)
-    set(h,'Position',[sz(3)-80 200 30 sz(4)-265]);
-end
 
-for i=1:length(handles.Model)
-    tabpanel('resize','tag',handles.Model(i).Name,'resize','position',[10 10 sz(3)-20 sz(4)-40]);
-end

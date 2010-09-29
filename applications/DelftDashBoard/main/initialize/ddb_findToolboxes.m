@@ -1,4 +1,6 @@
-function handles=ddb_findToolboxes(handles)
+function ddb_findToolboxes
+
+handles=getHandles;
 
 if isdeployed
     dr=[ctfroot filesep 'toolboxes'];
@@ -55,3 +57,8 @@ for i=1:nt
     f=handles.Toolbox(i).IniFcn;
     handles=f(handles,'veryfirst');
 end
+
+handles.activeToolbox.Name='ModelMaker';
+handles.activeToolbox.Nr=1;
+
+setHandles(handles);
