@@ -2,12 +2,14 @@ function handles=ddb_readModelXML(handles,j)
 
 fname=[handles.SettingsDir 'xml' filesep 'models' filesep handles.Model(j).Name filesep handles.Model(j).Name '.xml'];
 
-s.elements=[];
+%s.elements=[];
+
+xmldir=[handles.SettingsDir filesep 'xml' filesep 'models' filesep handles.Model(j).Name filesep];
 
 if exist(fname,'file')
 
-    handles.Model(j).useXML=1;    
-    xml=xml_load(fname);
+    handles.Model(j).useXML=1;
+    xml=xml_load([xmldir fname]);
     
     handles.Model(j).longName=xml.longname;
 
@@ -18,12 +20,14 @@ if exist(fname,'file')
         end
     end
     
-    s=readUIElementsXML(xml);
+    tag = '';
+    s=readUIElementsXML(xml,xmldir,tag);
 
 end
 
-%% Menu File
 handles.Model(j).GUI.elements=s.elements;
+
+%% Menu File
 if isfield(xml.menu,'menuopenfile')
     for i=1:length(xml.menu.menuopenfile)
         handles.Model(j).GUI.menu.openFile(i).string=xml.menu.menuopenfile(i).menuitem.string;

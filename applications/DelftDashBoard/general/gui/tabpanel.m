@@ -10,6 +10,7 @@ handle=[];
 fig=gcf;
 clr=[];
 activetabnr=1;
+callbackopt='withcallback';
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -38,6 +39,10 @@ for i=1:length(varargin)
                 color=varargin{i+1};
             case{'activetabnr'}
                 activetabnr=varargin{i+1};
+            case{'runcallback'}
+                if ~varargin{i+1}
+                    callbackopt='nocallback';
+                end
         end
     end
 end
@@ -66,7 +71,7 @@ switch lower(fcn)
         panel=get(handle,'UserData');
         tabnames=panel.tabNames;
         iac=strmatch(tabname,tabnames,'exact');
-        select(handle,iac,'withcallback');
+        select(handle,iac,callbackopt);
     case{'delete'}
         deleteTabPanel(handle);
     case{'resize'}
@@ -167,6 +172,7 @@ panel=get(panelHandle,'UserData');
 tabs=panel.tabHandles;
 tabText=panel.tabTextHandles;
 blankText=panel.blankTextHandles;
+largeTabs=panel.largeTabHandles;
 
 set(tabs(1:ntabs),'Visible','on');
 set(tabText(1:ntabs),'Visible','on');
@@ -183,11 +189,13 @@ panelPosition=panel.position;
 leftpos=3;
 vertpos=panelPosition(4)-1;
 leftTextMargin=3;
-bottomTextMargin=3;
+bottomTextMargin=2;
 tabHeight=20;
 textHeight=15;
 
 for i=1:ntabs
+    
+    set(largeTabs(i),'Tag',tabnames{i});
     
     tmppos=get(tabText(i),'Position');
     tmppos(3)=150;
