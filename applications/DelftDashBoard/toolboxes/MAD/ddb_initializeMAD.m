@@ -15,3 +15,5 @@ end
 % set(handles.GUIHandles.Menu.Toolbox.MAD,'Enable','off');
 
 handles.Toolbox(ii).KMLColor='red';
+handles.Toolbox(ii).ActiveMADModel=1;
+handles.Toolbox(tb).Models=[];

@@ -8,6 +8,8 @@ if nargin>1
             return
         case{'veryfirst'}
             handles.Toolbox(ii).LongName='Navigation Charts';
+            handles.Toolbox(ii).Databases=[];
+            handles.Toolbox(ii).Charts=[];
             if isdir([handles.ToolBoxDir 'navigationcharts'])
                 lst=dir([handles.ToolBoxDir 'NavigationCharts']);
                 k=0;
@@ -24,16 +26,16 @@ if nargin>1
                         end
                     end
                 end
-                handles.Toolbox(ii).ActiveDatabase=1;
-                handles.Toolbox(ii).ActiveChart=1;
-                handles.Toolbox(ii).ShowShoreline=1;
-                handles.Toolbox(ii).ShowSoundings=1;
-                handles.Toolbox(ii).ShowContours=1;
             end
+            handles.Toolbox(ii).ActiveDatabase=1;
+            handles.Toolbox(ii).ActiveChart=1;
+            handles.Toolbox(ii).ShowShoreline=1;
+            handles.Toolbox(ii).ShowSoundings=1;
+            handles.Toolbox(ii).ShowContours=1;
             return
     end
 end
 
-if ~isfield(handles.Toolbox(ii),'Databases')
+if isempty(handles.Toolbox(ii).Databases)
     set(handles.GUIHandles.Menu.Toolbox.NavigationCharts,'Enable','off');
 end

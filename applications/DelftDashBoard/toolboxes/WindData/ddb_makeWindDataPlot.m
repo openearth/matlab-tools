@@ -30,5 +30,5 @@ plot(windData(:,1),windData(:,4));
 datetick('x',19,'keepticks','keeplimits');
 ylabel('air pressure [mbar]');
 grid on;
-md_paper('a4p','wl',{strvcat(['Wind data for station: ' stations{ii}],['Source: ' handles.Toolbox(tb).Input.Source]),' ',' ',' ',' ',' '});
+% md_paper('a4p','wl',{strvcat(['Wind data for station: ' stations{ii}],['Source: ' handles.Toolbox(tb).Input.Source]),' ',' ',' ',' ',' '});
 

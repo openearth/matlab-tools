@@ -164,7 +164,7 @@ ClickPoint('xy','Callback',@SelectEpicentre,'single');
 function PushComputeTsunami_CallBack(hObject,eventdata)
 
 handles=getHandles;
-if ~isempty(handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).GrdFile) && ~isempty(handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).DepFile)
+if ~isempty(handles.Model(md).Input(ad).GrdFile) && ~isempty(handles.Model(md).Input(ad).DepFile)
     handles=ddb_dnami_compute(handles);
 else
     GiveWarning('Warning','You must first load or generate a model grid and bathymetry!');

@@ -4,9 +4,12 @@ handles=getHandles;
 
 ddb_plotMAD(handles,'activate');
 
-h=findall(gca,'Tag','MADModels');
+h=findobj(gca,'Tag','MADModels');
 
-if isempty(h)
+if isempty(handles.Toolbox(tb).Models)
+    handles.Toolbox(tb).Models(1).Name=' ';
+    handles.Toolbox(tb).Models(1).Description='No models available';
+    handles.Toolbox(tb).nrModels=0;
     handles=getMADModels(handles);
     ddb_plotMADModels(handles);    
 end
@@ -24,9 +27,8 @@ ii=strmatch(lower(handles.Toolbox(tb).KMLColor),lower(clrs),'exact');
 set(handles.SelectKMLColor,'Value',ii);
 handles.TextDescription   = uicontrol(gcf,'Style','text','String','Description',          'Position',   [290  30 300  50],'HorizontalAlignment','left','Tag','UIControl');
 
-nmod=length(handles.Toolbox(tb).Models);
-
-for ii=1:nmod
+str{1}=' ';
+for ii=1:handles.Toolbox(tb).nrModels
     str{ii}=handles.Toolbox(tb).Models(ii).Name;
 end
 
@@ -50,6 +52,14 @@ RefreshDescription(handles);
 SetUIBackgroundColors;
 
 setHandles(handles);
+
+if handles.Toolbox(tb).nrModels==0
+    set(handles.PushGoToWiki,'Enable','off');
+    set(handles.PushShowGrid,'Enable','off');
+    set(handles.PushGrid2KML,'Enable','off');
+    set(handles.ListMADModels,'Enable','off');
+    set(handles.SelectKMLColor,'Enable','off');
+end
 
 %%
 function PushGoToWiki_CallBack(hObject,eventdata)
@@ -119,7 +129,7 @@ end
 %%
 function ListMADModels_CallBack(hObject,eventdata)
 handles=getHandles;
-
+if handles.Toolbox(tb).nrModels>0
 ii=get(hObject,'Value');
 h0=findall(gcf,'Tag','ActiveMADModel');
 delete(h0);
@@ -128,6 +138,7 @@ set(plt,'MarkerSize',15,'MarkerEdgeColor','k','MarkerFaceColor','r','Tag','Activ
 handles.Toolbox(tb).ActiveMADModel=ii;
 RefreshDescription(handles);
 setHandles(handles);
+end
 
 %%
 function RefreshDescription(handles)
@@ -137,48 +148,55 @@ set(handles.TextDescription,'String',['Description : ' handles.Toolbox(tb).Model
 %%
 function handles=getMADModels(handles)
 
-wb = waitbox('Loading Model Application Database ...');
 
 try
+
+    wb = waitbox('Loading Model Application Database ...');
+
+    xDoc = xmlread('http://wiki.deltares.nl/download/attachments/4325644/georss.xml');
     
-xDoc = xmlread('http://wiki.deltares.nl/download/attachments/4325644/georss.xml');
-
-% Find a deep list of all <listitem> elements.
-allListItems = xDoc.getElementsByTagName('item');
-%Note that the item list index is zero-based.
-for i=0:allListItems.getLength-1
-    thisListItem = allListItems.item(i);
-    lat(i+1)=str2double(thisListItem.getElementsByTagName('geo:lat').item(0).getFirstChild.getData);
-    lon(i+1)=str2double(thisListItem.getElementsByTagName('geo:long').item(0).getFirstChild.getData);
-    tit{i+1}=char(thisListItem.getElementsByTagName('title').item(0).getFirstChild.getData);
-    link{i+1}=char(thisListItem.getElementsByTagName('link').item(0).getFirstChild.getData);
-    try
-        descr{i+1}=char(thisListItem.getElementsByTagName('description').item(0).getFirstChild.getData);
-    catch
-        descr{i+1}='';
+    % Find a deep list of all <listitem> elements.
+    allListItems = xDoc.getElementsByTagName('item');
+    %Note that the item list index is zero-based.
+    for i=0:allListItems.getLength-1
+        thisListItem = allListItems.item(i);
+        lat(i+1)=str2double(thisListItem.getElementsByTagName('geo:lat').item(0).getFirstChild.getData);
+        lon(i+1)=str2double(thisListItem.getElementsByTagName('geo:long').item(0).getFirstChild.getData);
+        tit{i+1}=char(thisListItem.getElementsByTagName('title').item(0).getFirstChild.getData);
+        link{i+1}=char(thisListItem.getElementsByTagName('link').item(0).getFirstChild.getData);
+        try
+            descr{i+1}=char(thisListItem.getElementsByTagName('description').item(0).getFirstChild.getData);
+        catch
+            descr{i+1}='';
+        end
     end
-end
+    
+    close(wb);
+    nmod=length(lon);
+    for ii=1:nmod
+        handles.Toolbox(tb).Models(ii).Longitude=lon(ii);
+        handles.Toolbox(tb).Models(ii).Latitude=lat(ii);
+        handles.Toolbox(tb).Models(ii).Description=descr{ii};
+        handles.Toolbox(tb).Models(ii).Name=tit{ii};
+        handles.Toolbox(tb).Models(ii).Link=link{ii};
+    end
+    
+    handles.Toolbox(tb).nrModels=nmod;
 
-close(wb);
-nmod=length(lon);
-for ii=1:nmod
-    handles.Toolbox(tb).Models(ii).Longitude=lon(ii);
-    handles.Toolbox(tb).Models(ii).Latitude=lat(ii);
-    handles.Toolbox(tb).Models(ii).Description=descr{ii};
-    handles.Toolbox(tb).Models(ii).Name=tit{ii};
-    handles.Toolbox(tb).Models(ii).Link=link{ii};
-end
-
-x=lon;
-y=lat;
-cs.Name='WGS 84';
-cs.Type='Geographic';
-[x,y]=ddb_coordConvert(x,y,cs,handles.ScreenParameters.CoordinateSystem);
-for ii=1:nmod
-    handles.Toolbox(tb).xy=[x;y]';
-end
-handles.Toolbox(tb).ActiveMADModel=1;
-
+    x=lon;
+    y=lat;
+    cs.Name='WGS 84';
+    cs.Type='Geographic';
+    [x,y]=ddb_coordConvert(x,y,cs,handles.ScreenParameters.CoordinateSystem);
+    for ii=1:nmod
+        handles.Toolbox(tb).xy=[x;y]';
+    end
+    handles.Toolbox(tb).ActiveMADModel=1;
+catch
+    try
+        close(wb);
+    end
+    GiveWarning('Warning','Sorry, could not connect to server!');
 end
 
 %%

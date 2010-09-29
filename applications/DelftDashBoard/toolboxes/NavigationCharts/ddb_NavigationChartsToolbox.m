@@ -1,4 +1,4 @@
-function ddb_navigationChartsToolbox
+function ddb_NavigationChartsToolbox
 
 handles=getHandles;
 

@@ -63,9 +63,9 @@ fid=fopen(filout,'w');
 %
 % First the zone
 %
-axes(handles.GUIHandles.Axis);
-xgrdarea=get(gca,'XLim');
-ygrdarea=get(gca,'YLim');
+% axes(handles.GUIHandles.Axis);
+xgrdarea=get(handles.GUIHandles.mapAxis,'XLim');
+ygrdarea=get(handles.GUIHandles.mapAxis,'YLim');
 grdsize=(xgrdarea(2)-xgrdarea(1))/200;
 %grdsize=(xgrdarea(2)-xgrdarea(1))/100;
 
@@ -79,14 +79,15 @@ fprintf(fid,'%s %12.5f %12.5f %12.5f %12.5f %5s %5s\n', 'G ', .....
         xgrdarea(1),ygrdarea(1),grdsize,grdsize,int2str(Mg),int2str(Ng));
 
 ngfile=1;
-fprintf(fid,'%s %s\n', 'S ', [workdir '\' handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).GrdFile]);
-fprintf(fid,'%s %s\n', 'D ', [workdir '\' handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).DepFile]);
+fprintf(fid,'%s %s\n', 'S ', [workdir '\' handles.Model(md).Input(ad).GrdFile]);
+fprintf(fid,'%s %s\n', 'D ', [workdir '\' handles.Model(md).Input(ad).DepFile]);
 fclose(fid);
 pause(2);
 %
 % execute program
 %
-evaltxt=['"' progdir '\rngchn_init.exe" "' workdir '\gridspec.txt" "' workdir '\dtt_out.txt" "' workdir '\disp.xyz" ascii'];
+%evaltxt=['"' progdir '\rngchn_init.exe" "' workdir '\gridspec.txt" "' workdir '\dtt_out.txt" "' workdir '\disp.xyz" ascii'];
+evaltxt=['"' progdir '\rngchn_init.exe" gridspec.txt dtt_out.txt disp.xyz ascii'];
 system(evaltxt);
 %
 %present result only on the simple grid file
@@ -146,21 +147,21 @@ view(2);
 set(gca,'XLim',xgrdarea,'YLim',ygrdarea);
 
 
-if ~isempty(handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).GrdFile)
-    s=handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).GrdFile;
+if ~isempty(handles.Model(md).Input(ad).GrdFile)
+    s=handles.Model(md).Input(ad).GrdFile;
     ii=findstr(s,'.grd');
-    fname=[handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).GrdFile(1:ii-1) '.ini'];
+    fname=[handles.Model(md).Input(ad).GrdFile(1:ii-1) '.ini'];
 else
-    fname=handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).AttName;
+    fname=handles.Model(md).Input(ad).AttName;
 end
 
 [filename, pathname, filterindex] = uiputfile('*.ini', 'Select Initial Conditions File',fname);
 if strcmpi(pathname(1:end-1),pwd)
-    handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).IniFile=filename;
+    handles.Model(md).Input(ad).IniFile=filename;
 else
-    handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).IniFile=[pathname filename];
+    handles.Model(md).Input(ad).IniFile=[pathname filename];
 end
-handles.Model(handles.ActiveModel.Nr).Input(handles.ActiveDomain).InitialConditions='ini';
+handles.Model(md).Input(ad).InitialConditions='ini';
 
 evaltxt=['! move ' fname ' ' filename];
 eval(evaltxt);
@@ -168,15 +169,15 @@ eval(evaltxt);
 ButtonName = questdlg('Reset all boundaries to Riemann?','','No', 'Yes', 'Yes');
 switch ButtonName,
     case 'Yes',
-        id=handles.ActiveDomain;
-        for nb=1:handles.Model(handles.ActiveModel.Nr).Input(id).NrOpenBoundaries
-            handles.Model(handles.ActiveModel.Nr).Input(id).OpenBoundaries(nb).Type='R';
-            handles.Model(handles.ActiveModel.Nr).Input(id).OpenBoundaries(nb).Forcing='T';
-            t0=handles.Model(handles.ActiveModel.Nr).Input(id).StartTime;
-            t1=handles.Model(handles.ActiveModel.Nr).Input(id).StopTime;
-            handles.Model(handles.ActiveModel.Nr).Input(id).OpenBoundaries(nb).TimeSeriesT=[t0 t1];
-            handles.Model(handles.ActiveModel.Nr).Input(id).OpenBoundaries(nb).TimeSeriesA=[0.0 0.0];
-            handles.Model(handles.ActiveModel.Nr).Input(id).OpenBoundaries(nb).TimeSeriesB=[0.0 0.0];
+        id=ad;
+        for nb=1:handles.Model(md).Input(id).NrOpenBoundaries
+            handles.Model(md).Input(id).OpenBoundaries(nb).Type='R';
+            handles.Model(md).Input(id).OpenBoundaries(nb).Forcing='T';
+            t0=handles.Model(md).Input(id).StartTime;
+            t1=handles.Model(md).Input(id).StopTime;
+            handles.Model(md).Input(id).OpenBoundaries(nb).TimeSeriesT=[t0 t1];
+            handles.Model(md).Input(id).OpenBoundaries(nb).TimeSeriesA=[0.0 0.0];
+            handles.Model(md).Input(id).OpenBoundaries(nb).TimeSeriesB=[0.0 0.0];
         end
 end
 

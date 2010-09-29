@@ -74,10 +74,10 @@ if isempty(handles.Toolbox(tb).Input.windData)
     handles=ddb_downloadWindData(handles,startDate,numOfDays);
 end
 
-ddb_makeWindDataPlot(handles);
-
 setHandles(handles);
 RefreshWindData(handles);
+
+ddb_makeWindDataPlot(handles);
 
 %%
 function ListStations_Callback(hObject,eventdata)
@@ -249,9 +249,12 @@ handles.GUIData.ActiveWindDataStation=1;
 %%
 function plotStations(data,activeStation)
 
-h0=findall(findobj('Tag','MainWindow'),'Tag','ActiveWindDataStation'); % delete previous plot
+fig=findobj('Tag','MainWindow');
+figure(fig);
+
+h0=findobj(fig,'Tag','ActiveWindDataStation'); % delete previous plot
 delete(h0);
-h1=findall(findobj('Tag','MainWindow'),'Tag','WindDataStations');
+h1=findobj(fig,'Tag','WindDataStations');
 delete(h1);
 
 x=data.WindDataStations.xy(:,1);
