@@ -46,17 +46,6 @@ for i=1:length(flist)
                         fprintf(fid,'%s\n',fname);
                 end
             end
-%             % xml files
-%             f=dir(['models\' flist(i).name '\xml\*.xml']);
-%             for j=1:length(f)
-%                 fname=f(j).name;
-%                 switch fname
-%                     case{'.','..','.svn'}
-%                     otherwise
-%                         fprintf(fid,'%s\n',fname);
-%                 end
-%             end
-    end
 end
 
 % Add toolboxes
@@ -109,7 +98,7 @@ try
     system(['"' matlabroot '\sys\lcc\bin\lrc" /i "' pwd '\earthicon.rc"']);
 end
 
-mcc -m -d exe DelftDashBoard.m -B complist -a settings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
+mcc -m -v -d exe DelftDashBoard.m -B complist -a settings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
 
 % make about.txt file
 Revision = '$Revision$';
