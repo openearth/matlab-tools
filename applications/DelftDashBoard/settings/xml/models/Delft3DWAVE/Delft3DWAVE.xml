@@ -10,57 +10,57 @@
       <position>10 10 900 700</position> 
       <tabs>
         <tab>
-          <tabname>toolbox</tabname>
+          <tag>toolbox</tag>
           <tabstring>Toolbox</tabstring>
           <callback>ddb_selectToolbox</callback>
         </tab>
         <tab>
-          <tabname>description</tabname>
+          <tag>description</tag>
           <tabstring>Description</tabstring>
           <elements>Delft3DWAVE.description.xml</elements>
         </tab>
         <tab>
-          <tabname>hydrodynamics</tabname>
+          <tag>hydrodynamics</tag>
           <tabstring>Hydrodynamics</tabstring>
           <elements>Delft3DWAVE.hydrodynamics.xml</elements>
         </tab>
         <tab>
-          <tabname>grids</tabname>
+          <tag>grids</tag>
           <tabstring>Grids</tabstring>
           <elements>Delft3DWAVE.grids.xml</elements>
         </tab>
         <tab>
-          <tabname>timeframe</tabname>
+          <tag>timeframe</tag>
           <tabstring>Time Frame</tabstring>
           <callback>ddb_editDelft3DWAVETimeFrame</callback>
         </tab>
         <tab>
-          <tabname>boundaries</tabname>
+          <tag>boundaries</tag>
           <tabstring>Boundaries</tabstring>
           <callback>ddb_editDelft3DWAVEBoundaries</callback>
         </tab>
         <tab>
-          <tabname>obstacles</tabname>
+          <tag>obstacles</tag>
           <tabstring>Obstacles</tabstring>
           <callback>ddb_editDelft3DWAVEObstacles</callback>
         </tab>
         <tab>
-          <tabname>physicalparameters</tabname>
+          <tag>physicalparameters</tag>
           <tabstring>Physical Parameters</tabstring>
           <callback>ddb_editDelft3DWAVEPhysicalParameters</callback>
         </tab>
         <tab>
-          <tabname>numericalparameters</tabname>
+          <tag>numericalparameters</tag>
           <tabstring>Numerical Parameters</tabstring>
           <callback>ddb_editDelft3DWAVENumericalParameters</callback>
         </tab>
         <tab>
-          <tabname>outputcurves</tabname>
+          <tag>outputcurves</tag>
           <tabstring>Output Curves</tabstring>
           <callback>ddb_editDelft3DWAVEOutputCurves</callback>
         </tab>
         <tab>
-          <tabname>outputparameters</tabname>
+          <tag>outputparameters</tag>
           <tabstring>Output Parameters</tabstring>
           <callback>ddb_editDelft3DWAVEOutputParameters</callback>
         </tab>

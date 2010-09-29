@@ -10,42 +10,42 @@
       <position>10 10 900 700</position> 
       <tabs>
         <tab>
-          <tabname>toolbox</tabname>
+          <tag>toolbox</tag>
           <tabstring>Toolbox</tabstring>
           <callback>ddb_selectToolbox</callback>
         </tab>
         <tab>
-          <tabname>description</tabname>
+          <tag>description</tag>
           <tabstring>Description</tabstring>
           <callback>ddb_editXBeachDescription</callback>
         </tab>
         <tab>
-          <tabname>domain</tabname>
+          <tag>domain</tag>
           <tabstring>Domain</tabstring>
           <callback>ddb_editXBeachDomain</callback>
         </tab>
         <tab>
-          <tabname>Time Frame</tabname>
+          <tag>Time Frame</tag>
           <tabstring>Time Frame</tabstring>
           <callback>ddb_editXBeachTimeFrame</callback>
         </tab>
         <tab>
-          <tabname>physicalparameters</tabname>
+          <tag>physicalparameters</tag>
           <tabstring>Physical Parameters</tabstring>
           <callback>ddb_editXBeachPhysParams</callback>
         </tab>
         <tab>
-          <tabname>waves</tabname>
+          <tag>waves</tag>
           <tabstring>Waves</tabstring>
           <callback>ddb_editXBeachWaves</callback>
         </tab>
         <tab>
-          <tabname>flow</tabname>
+          <tag>flow</tag>
           <tabstring>Flow</tabstring>
           <callback>ddb_editXBeachFlow</callback>
         </tab>
         <tab>
-          <tabname>sediment</tabname>
+          <tag>sediment</tag>
           <tabstring>Sediment</tabstring>
           <callback>ddb_editXBeachSediment</callback>
         </tab>

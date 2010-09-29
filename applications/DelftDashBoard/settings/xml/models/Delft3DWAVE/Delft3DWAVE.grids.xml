@@ -4,106 +4,107 @@
   <element>
     <position>10 10 635 140</position>
     <style>tabpanel</style>
-    <tag>Delft3DWAVE.grids</tag>
+    <tag>grids</tag>
+    <subfield1>Domain</subfield1>
     <tabs>
       <tab>
-        <tabname>computationalgrid</tabname>
+        <tag>computationalgrid</tag>
         <tabstring>Computational grid</tabstring>
       </tab>
       <tab>
-        <tabname>spectralresolution</tabname>
+        <tag>spectralresolution</tag>
         <tabstring>Spectral resolution</tabstring>
         <elements>
           <element>
             <tag>textassociatedbathymetrygrid</tag>
-            <style>vartext</style>
+            <style>text</style>
             <prefix>3a</prefix>
             <position>10 110</position>
             <variable>GrdFile</variable>
             <vartype>string</vartype>
-            <tooltipstring> </tooltipstring>
+            <tooltipstring></tooltipstring>
           </element>
           <element>
             <tag>textassociatedbathymetrydata</tag>
-            <style>vartext</style>
+            <style>text</style>
             <prefix>3b</prefix>
             <position>10 90</position>
             <variable>DepFile</variable>
             <vartype>string</vartype>
-            <tooltipstring> </tooltipstring>
+            <tooltipstring></tooltipstring>
           </element>
           <element>
             <tag>textnestedin</tag>
-            <style>vartext</style>
+            <style>text</style>
             <prefix>3c</prefix>
             <position>10 70</position>
             <variable>NstGrid</variable>
             <vartype>string</vartype>
-            <tooltipstring> </tooltipstring>
+            <tooltipstring></tooltipstring>
           </element>
           <element>
             <tag>textgridspecifiactions</tag>
-            <style>vartext</style>
+            <style>text</style>
             <prefix>3d</prefix>
             <position>200 110</position>
             <variable></variable>
             <vartype>string</vartype>
-            <tooltipstring> </tooltipstring>
+            <tooltipstring></tooltipstring>
           </element>
           <element>
             <tag>textgridpointsm</tag>
-            <style>vartext</style>
+            <style>text</style>
             <prefix>3e</prefix>
             <position>200 90</position>
             <variable>MMax</variable>
             <vartype>integer</vartype>
-            <tooltipstring> </tooltipstring>
+            <tooltipstring></tooltipstring>
           </element>
           <element>
             <tag>textgridpointsn</tag>
-            <style>vartext</style>
+            <style>text</style>
             <prefix>3f</prefix>
             <position>200 70</position>
             <variable>NMax</variable>
             <vartype>integer</vartype>
-            <tooltipstring> </tooltipstring>
+            <tooltipstring></tooltipstring>
           </element>
         </elements>
       </tab>
       <tab>
-        <tabname>nesting</tabname>
+        <tag>nesting</tag>
         <tabstring>Nesting</tabstring>
         <elements>
           <element>
             <tag>textassociatedbathymetrygrid</tag>
-            <style>vartext</style>
+            <style>text</style>
             <prefix>4a</prefix>
             <position>10 110</position>
             <variable>GrdFile</variable>
             <vartype>string</vartype>
-            <tooltipstring> </tooltipstring>
+            <tooltipstring></tooltipstring>
           </element>
           <element>
             <tag>textassociatedbathymetrydata</tag>
-            <style>vartext</style>
+            <style>text</style>
             <prefix>4b</prefix>
             <position>10 90</position>
             <variable>DepFile</variable>
             <vartype>string</vartype>
-            <tooltipstring> </tooltipstring>
+            <tooltipstring></tooltipstring>
           </element>
           <element>
             <tag>textnestedin</tag>
-            <style>vartext</style>
+            <style>text</style>
             <prefix>4c</prefix>
             <position>10 70</position>
             <variable>NstGrid</variable>
             <vartype>string</vartype>
-            <tooltipstring> </tooltipstring>
+            <tooltipstring></tooltipstring>
           </element>
           <element>
             <tag>textgridspecifiactions</tag>
-            <style>vartext</style>
+            <style>text</style>
             <prefix>4d</prefix>
             <position>300 110</position>
             <variable></variable>
@@ -112,7 +113,7 @@
           </element>
           <element>
             <tag>textgridpointsm</tag>
-            <style>vartext</style>
+            <style>text</style>
             <prefix>4e</prefix>
             <position>300 90</position>
             <variable>MMax</variable>
@@ -121,7 +122,7 @@
           </element>
           <element>
             <tag>textgridpointsn</tag>
-            <style>vartext</style>
+            <style>text</style>
             <prefix>4f</prefix>
             <position>300 70</position>
             <variable>NMax</variable>

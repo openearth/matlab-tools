@@ -11,68 +11,67 @@
       <position>10 10 900 700</position> 
       <tabs>
         <tab>
-          <tabname>toolbox</tabname>
+          <tag>toolbox</tag>
           <tabstring>Toolbox</tabstring>
           <callback>ddb_selectToolbox</callback>
         </tab>
         <tab>
-          <tabname>description</tabname>
+          <tag>description</tag>
           <tabstring>Description</tabstring>
-          <callback>ddb_editD3DFlowDescription</callback>
+          <elements>Delft3DFLOW.description.xml</elements>
         </tab>
         <tab>
-          <tabname>domain</tabname>
+          <tag>domain</tag>
           <tabstring>Domain</tabstring>
-          <callback>ddb_editD3DFlowDomain</callback>
-          <width>100</width>
+          <elements>Delft3DFLOW.domain.xml</elements>
         </tab>
         <tab>
-          <tabname>timeframe</tabname>
+          <tag>timeframe</tag>
           <tabstring>Time Frame</tabstring>
           <callback>ddb_editD3DFlowTimeFrame</callback>
         </tab>
         <tab>
-          <tabname>processes</tabname>
+          <tag>processes</tag>
           <tabstring>Processes</tabstring>
           <callback>ddb_editD3DFlowProcesses</callback>
         </tab>
         <tab>
-          <tabname>initialconditions</tabname>
+          <tag>initialconditions</tag>
           <tabstring>Initial conditions</tabstring>
           <callback>ddb_editD3DFlowInitialConditions</callback>
         </tab>
         <tab>
-          <tabname>boundaries</tabname>
+          <tag>boundaries</tag>
           <tabstring>Boundaries</tabstring>
           <callback>ddb_editD3DFlowOpenBoundaries</callback>
         </tab>
         <tab>
-          <tabname>physicalparameters</tabname>
+          <tag>physicalparameters</tag>
           <tabstring>Physical Parameters</tabstring>
           <callback>ddb_editD3DFlowPhysicalParameters</callback>
         </tab>
         <tab>
-          <tabname>numericalparamters</tabname>
+          <tag>numericalparamters</tag>
           <tabstring>Numerical Parameters</tabstring>
           <callback>ddb_editD3DFlowNumericalParameters</callback>
         </tab>
         <tab>
-          <tabname>discharges</tabname>
+          <tag>discharges</tag>
           <tabstring>Discharges</tabstring>
           <callback>ddb_editD3DFlowDischarges</callback>
         </tab>
         <tab>
-          <tabname>monitoring</tabname>
+          <tag>monitoring</tag>
           <tabstring>Monitoring</tabstring>
           <callback>ddb_editD3DFlowMonitoring</callback>
         </tab>
         <tab>
-          <tabname>additional</tabname>
+          <tag>additional</tag>
           <tabstring>Additional</tabstring>
           <callback>ddb_editD3DFlowAdditional</callback>
         </tab>
         <tab>
-          <tabname>output</tabname>
+          <tag>output</tag>
           <tabstring>Output</tabstring>
           <callback>ddb_editD3DFlowOutput</callback>
         </tab>
