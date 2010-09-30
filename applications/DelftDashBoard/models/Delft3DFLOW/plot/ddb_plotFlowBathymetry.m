@@ -4,16 +4,16 @@ switch lower(opt)
 
     case{'plot'}
 
-        h=findall(gca,'Tag','FlowBathymetry','UserData',id);
+        h=findobj(gca,'Tag','FlowBathymetry','UserData',id);
         delete(h);
 
-        if size(handles.Model(md).Input(handles.ActiveDomain).Depth,1)>0
+        if size(handles.Model(md).Input(ad).Depth,1)>0
 
             clims=get(gca,'CLim');
             zmin=clims(1);
             zmax=clims(2);
             
-            colormap(ddb_getColors(handles.GUIData.ColorMaps.Earth,64)*255);
+            colormap(ddb_getColors(handles.mapData.colorMaps.earth,64)*255);
             
             caxis([zmin zmax]);
             
@@ -34,17 +34,17 @@ switch lower(opt)
         end
 
     case{'delete'}
-        h=findall(gca,'Tag','FlowBathymetry','UserData',id);
+        h=findobj(gca,'Tag','FlowBathymetry','UserData',id);
         delete(h);
 
     case{'activate'}
-        h=findall(gca,'Tag','Bathymetry','UserData',id);
+        h=findobj(gca,'Tag','Bathymetry','UserData',id);
         if ~isempty(h)
             set(h,'Visible','on');
         end
 
     case{'deactivate'}
-        h=findall(gca,'Tag','Bathymetry','UserData',id);
+        h=findobj(gca,'Tag','Bathymetry','UserData',id);
         if ~isempty(h)
             set(h,'Visible','off');
         end

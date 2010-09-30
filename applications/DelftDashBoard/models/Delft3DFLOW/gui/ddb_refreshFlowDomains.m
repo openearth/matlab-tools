@@ -1,8 +1,8 @@
-function handles=ddb_refreshFlowDomains(handles)
+function ddb_refreshFlowDomains
 
-ii=strmatch('Delft3DFLOW',{handles.Model.Name},'exact');
+handles=getHandles;
 
-h=findall(gcf,'Tag','menuDomain');
+h=findobj(gcf,'Tag','menuDomain');
 
 hc=get(h,'Children');
 delete(hc);

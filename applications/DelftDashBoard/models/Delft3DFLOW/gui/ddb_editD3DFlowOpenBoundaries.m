@@ -219,9 +219,10 @@ function EditBndM1_CallBack(hObject,eventdata)
 handles=getHandles;
 n=get(handles.GUIHandles.ListOpenBoundaries,'Value');
 handles.Model(md).Input(ad).OpenBoundaries(n).M1=str2num(get(hObject,'String'));
-[xb,yb]=ddb_getBoundaryCoordinates(handles,ad,n);
+[xb,yb,zb,side,orientation]=ddb_getBoundaryCoordinates(handles,ad,n);
 handles.Model(md).Input(ad).OpenBoundaries(n).X=xb;
 handles.Model(md).Input(ad).OpenBoundaries(n).Y=yb;
+handles.Model(md).Input(ad).OpenBoundaries(n).Depth=zb;
 handles.DeleteSelectedOpenBoundary=0;
 setHandles(handles);
 ddb_plotFlowAttributes(handles,'OpenBoundaries','plot',ad,n,n);
@@ -231,9 +232,10 @@ function EditBndN1_CallBack(hObject,eventdata)
 handles=getHandles;
 n=get(handles.GUIHandles.ListOpenBoundaries,'Value');
 handles.Model(md).Input(ad).OpenBoundaries(n).N1=str2num(get(hObject,'String'));
-[xb,yb]=ddb_getBoundaryCoordinates(handles,ad,n);
+[xb,yb,zb,side,orientation]=ddb_getBoundaryCoordinates(handles,ad,n);
 handles.Model(md).Input(ad).OpenBoundaries(n).X=xb;
 handles.Model(md).Input(ad).OpenBoundaries(n).Y=yb;
+handles.Model(md).Input(ad).OpenBoundaries(n).Depth=zb;
 handles.DeleteSelectedOpenBoundary=0;
 setHandles(handles);
 ddb_plotFlowAttributes(handles,'OpenBoundaries','plot',ad,n,n);
@@ -243,9 +245,10 @@ function EditBndM2_CallBack(hObject,eventdata)
 handles=getHandles;
 n=get(handles.GUIHandles.ListOpenBoundaries,'Value');
 handles.Model(md).Input(ad).OpenBoundaries(n).M2=str2num(get(hObject,'String'));
-[xb,yb]=ddb_getBoundaryCoordinates(handles,ad,n);
+[xb,yb,zb,side,orientation]=ddb_getBoundaryCoordinates(handles,ad,n);
 handles.Model(md).Input(ad).OpenBoundaries(n).X=xb;
 handles.Model(md).Input(ad).OpenBoundaries(n).Y=yb;
+handles.Model(md).Input(ad).OpenBoundaries(n).Depth=zb;
 handles.DeleteSelectedOpenBoundary=0;
 setHandles(handles);
 ddb_plotFlowAttributes(handles,'OpenBoundaries','plot',ad,n,n);
@@ -255,9 +258,10 @@ function EditBndN2_CallBack(hObject,eventdata)
 handles=getHandles;
 n=get(handles.GUIHandles.ListOpenBoundaries,'Value');
 handles.Model(md).Input(ad).OpenBoundaries(n).N2=str2num(get(hObject,'String'));
-[xb,yb]=ddb_getBoundaryCoordinates(handles,ad,n);
+[xb,yb,zb,side,orientation]=ddb_getBoundaryCoordinates(handles,ad,n);
 handles.Model(md).Input(ad).OpenBoundaries(n).X=xb;
 handles.Model(md).Input(ad).OpenBoundaries(n).Y=yb;
+handles.Model(md).Input(ad).OpenBoundaries(n).Depth=zb;
 handles.DeleteSelectedOpenBoundary=0;
 setHandles(handles);
 ddb_plotFlowAttributes(handles,'OpenBoundaries','plot',ad,n,n);

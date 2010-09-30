@@ -7,7 +7,6 @@ if ~isempty(varargin)
     end
 end
 
-
 if handles.Model(md).Input(id).NrOpenBoundaries>0
 
     wb = waitbox('Generating Boundary Conditions ...');
@@ -19,8 +18,6 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
         tidefile=[handles.TideModels.Model(ii).URL filesep handles.TideModels.ActiveTideModelBC '.nc'];
     end
 
-    AttName=get(handles.GUIHandles.EditAttributeName,'String');
-    handles.Model(md).Input(id).BcaFile=[AttName '.bca'];
 
     x=handles.Model(md).Input(id).GridX;
     y=handles.Model(md).Input(id).GridY;
@@ -43,17 +40,17 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
         yb(i)=handles.Model(md).Input(id).OpenBoundaries(i).Y(end);
         [xa(i),ya(i)]=ddb_coordConvert(xa(i),ya(i),handles.ScreenParameters.CoordinateSystem,cs);
         [xb(i),yb(i)]=ddb_coordConvert(xb(i),yb(i),handles.ScreenParameters.CoordinateSystem,cs);
-        if xa(i)<0
-            xa(i)=xa(i)+360;
-        end
-        if xb(i)<0
-            xb(i)=xb(i)+360;
-        end
+%         if xa(i)<0
+%             xa(i)=xa(i)+360;
+%         end
+%         if xb(i)<0
+%             xb(i)=xb(i)+360;
+%         end
     end
-    xa(xa<0.125 & xa>0)=360;
-    xa(xa<0.250 & xa>0.125)=0.25;
-    xb(xb<0.125 & xb>0)=360;
-    xb(xb<0.250 & xb>0.125)=0.25;
+%     xa(xa<0.125 & xa>0)=360;
+%     xa(xa<0.250 & xa>0.125)=0.25;
+%     xb(xb<0.125 & xb>0)=360;
+%     xb(xb<0.250 & xb>0.125)=0.25;
     
     xx=[xa xb];
     yy=[ya yb];
@@ -70,7 +67,8 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
 
     if igetwl
 %       [ampz,phasez,depth,ConList]=extract_HC([handles.TideDir handles.TideModels.ActiveTideModelBC],yy,xx,'z');
-       [ampz,phasez,depth,conList]=ddb_extractTidalConstituents(tidefile,xx,yy,'z');
+       [ampz,phasez,conList] = readTideModel(tidefile,'type','h','x',xx,'y',yy,'constituent','all');
+%       [ampz,phasez,depth,conList]=ddb_extractTidalConstituents(tidefile,xx,yy,'z');
         
         ampaz=ampz(:,1:nb);
         ampbz=ampz(:,nb+1:end);
@@ -100,8 +98,9 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
         
         %       [ampu,phaseu,depth,ConList]=extract_HC([handles.TideDir handles.TideModels.ActiveTideModelBC],yy,xx,'u');
         %       [ampv,phasev,depth,ConList]=extract_HC([handles.TideDir handles.TideModels.ActiveTideModelBC],yy,xx,'v');
-        [ampu,phaseu,depth,conList]=ddb_extractTidalConstituents(tidefile,xx,yy,'u');
-        [ampv,phasev,depth,conList]=ddb_extractTidalConstituents(tidefile,xx,yy,'v');
+%         [ampu,phaseu,depth,conList]=ddb_extractTidalConstituents(tidefile,xx,yy,'u');
+%         [ampv,phasev,depth,conList]=ddb_extractTidalConstituents(tidefile,xx,yy,'v');
+        [ampu,phaseu,ampv,phasev,depth,conList] = readTideModel(tidefile,'type','vel','x',xx,'y',yy,'constituent','all','includedepth');
         
         % Units are cm/s
         ampu=ampu/100;
@@ -190,10 +189,12 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
             handles.Model(md).Input(id).OpenBoundaries(n).CompA=[handles.Model(md).Input(id).OpenBoundaries(n).Name 'A'];
             handles.Model(md).Input(id).OpenBoundaries(n).CompB=[handles.Model(md).Input(id).OpenBoundaries(n).Name 'B'];
             
+            % Side A
             k=k+1;
             if igetvel
                 dpcorfac=handles.Model(md).Input(id).OpenBoundaries(n).Depth(1)/deptha(n);
-%                dpcorfac=1;
+%                 dpcorfac=max(min(dpcorfac,1.5),0.75);
+%                 dpcorfac=1;
             end
             handles.Model(md).Input(id).AstronomicComponentSets(k).Name=handles.Model(md).Input(id).OpenBoundaries(n).CompA;
             handles.Model(md).Input(id).AstronomicComponentSets(k).Nr=NrCons;
@@ -211,7 +212,8 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
                     case{'r'}
                         a1=ampau(i,n)*dpcorfac;
                         phi1=phaseau(i,n);
-                        a2=ampaz(i,n)*sqrt(9.81/-handles.Model(md).Input(id).OpenBoundaries(n).Depth(1));
+                        % Minimum depth of 1 m !
+                        a2=ampaz(i,n)*sqrt(9.81/max(-handles.Model(md).Input(id).OpenBoundaries(n).Depth(1),1));
                         phi2=phaseaz(i,n);
                         
                         phi1=pi*phi1/180;
@@ -236,10 +238,12 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
                 handles.Model(md).Input(id).AstronomicComponentSets(k).PhaseCorrection(i)=0;
             end
             
+            % Side B
             k=k+1;
             if igetvel
                 dpcorfac=handles.Model(md).Input(id).OpenBoundaries(n).Depth(2)/depthb(n);
-%                dpcorfac=1;
+%                 dpcorfac=max(min(dpcorfac,1.5),0.75);
+%                 dpcorfac=1;
             end
             handles.Model(md).Input(id).AstronomicComponentSets(k).Name=handles.Model(md).Input(id).OpenBoundaries(n).CompB;
             handles.Model(md).Input(id).AstronomicComponentSets(k).Nr=NrCons;
@@ -256,7 +260,8 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
                     case{'r'}
                         a1=ampbu(i,n)*dpcorfac;
                         phi1=phasebu(i,n);
-                        a2=ampbz(i,n)*sqrt(9.81/-handles.Model(md).Input(id).OpenBoundaries(n).Depth(2));
+                        % Minimum depth of 1 m !
+                        a2=ampbz(i,n)*sqrt(9.81/max(-handles.Model(md).Input(id).OpenBoundaries(n).Depth(2),1));
                         phi2=phasebz(i,n);
                         
                         phi1=pi*phi1/180;
@@ -284,6 +289,9 @@ if handles.Model(md).Input(id).NrOpenBoundaries>0
     end
     handles.Model(md).Input(id).NrAstronomicComponentSets=k;
     
+    AttName=get(handles.GUIHandles.EditAttributeName,'String');
+    handles.Model(md).Input(id).BcaFile=[AttName '.bca'];
+
     ddb_saveBcaFile(handles,id);
     ddb_saveBndFile(handles,id);
     

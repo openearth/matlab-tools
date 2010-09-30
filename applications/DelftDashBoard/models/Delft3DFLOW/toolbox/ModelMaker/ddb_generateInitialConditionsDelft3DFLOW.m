@@ -26,13 +26,13 @@ if ~strcmpi(handles.Model(md).Input(id).WaterLevel.ICOpt,'constant')
     cs.Type='Geographic';
     [xz,yz]=ddb_coordConvert(xz,yz,handles.ScreenParameters.CoordinateSystem,cs);
 
-    for i=1:mmax
-        for j=1:nmax
-            if xz(i,j)<0
-                xz(i,j)=xz(i,j)+360;
-            end
-        end
-    end
+%     for i=1:mmax
+%         for j=1:nmax
+%             if xz(i,j)<0
+%                 xz(i,j)=xz(i,j)+360;
+%             end
+%         end
+%     end
 
     x00=reshape(xz,mmax*nmax,1);
     y00=reshape(yz,mmax*nmax,1);
@@ -46,9 +46,9 @@ if ~strcmpi(handles.Model(md).Input(id).WaterLevel.ICOpt,'constant')
         return
     end
     
-    x00(x00<0.125 & x00>0)=360;
-    x00(x00<0.250 & x00>0.125)=0.25;
-    x00(x00>360)=360;
+%     x00(x00<0.125 & x00>0)=360;
+%     x00(x00<0.250 & x00>0.125)=0.25;
+%     x00(x00>360)=360;
 
     t0=handles.Model(md).Input(id).StartTime;
     
@@ -58,8 +58,9 @@ if ~strcmpi(handles.Model(md).Input(id).WaterLevel.ICOpt,'constant')
     else
         tidefile=[handles.TideModels.Model(ii).URL filesep handles.TideModels.ActiveTideModelIC '.nc'];
     end
-    [ampz,phasez,depth,conList]=ddb_extractTidalConstituents(tidefile,x00,y00,'z');
-    
+%    [ampz,phasez,depth,conList]=ddb_extractTidalConstituents(tidefile,x00,y00,'z');
+    [ampz,phasez,conList] = readTideModel(tidefile,'type','h','x',x00,'y',y00,'constituent','all');
+
     % TODO this does not work yet for large grids
     % delftPredict2007 must be updated    
     

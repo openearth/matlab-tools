@@ -53,6 +53,7 @@ handles.Model(md).Input(id).DisFile='';
 
 handles.Model(md).Input(id).MMax=0;
 handles.Model(md).Input(id).NMax=0;
+handles.Model(md).Input(id).lastKMax=1;
 handles.Model(md).Input(id).KMax=1;
 handles.Model(md).Input(id).Depth=[];
 handles.Model(md).Input(id).GridX=[];
@@ -78,6 +79,7 @@ handles.Model(md).Input(id).HarmonicComponents=[0.0 30.0];
 handles.Model(md).Input(id).Description='';
 
 handles.Model(md).Input(id).UniformDepth=10;
+handles.Model(md).Input(id).depthSource='uniform';
 
 handles.Model(md).Input(id).FouFile='';
 handles.Model(md).Input(id).SedFile='';
@@ -91,6 +93,7 @@ handles.Model(md).Input(id).NrConstituents=0;
 handles.Model(md).Input(id).Latitude=0.0;
 handles.Model(md).Input(id).Orientation=0.0;
 handles.Model(md).Input(id).Thick=100;
+handles.Model(md).Input(id).SumLayers=100;
 handles.Model(md).Input(id).InitialConditions='unif';
 handles.Model(md).Input(id).UniformRoughness=1;
 handles.Model(md).Input(id).UniformViscosity=1;

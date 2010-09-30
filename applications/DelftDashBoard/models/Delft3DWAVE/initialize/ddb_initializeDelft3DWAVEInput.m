@@ -25,10 +25,10 @@ handles.Model(ii).Input.AvailableFlowTimes='';
 handles.Model(ii).Input.ComputationalGrids={''};
 handles.Model(ii).Input.Domain(id).PathnameComputationalGrids='';
 handles.Model(ii).Input.Domain(id).Coordsyst='';
-handles.Model(ii).Input.Domain(id).GrdFile='';
+handles.Model(ii).Input.Domain(id).GrdFile='testing';
 handles.Model(ii).Input.Domain(id).EncFile='';
 handles.Model(ii).Input.Domain(id).DepFile='';
-handles.Model(ii).Input.Domain(id).NstFile='';
+handles.Model(ii).Input.Domain(id).NstGrid='';
 handles.Model(ii).Input.Domain(id).MMax='';
 handles.Model(ii).Input.Domain(id).NMax='';
 
