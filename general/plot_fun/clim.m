@@ -44,6 +44,6 @@ else
       set(ax,'climmode',val);
     end
     else
-    set(ax,'clim',val);
+    set(ax,'clim',val([1 end]));
   end
 end

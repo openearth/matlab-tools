@@ -52,7 +52,6 @@ function varargout=polydraw(varargin)
    n    = 0;
 
 %% draw
-%-----------------------
 
    while true
    
@@ -83,10 +82,9 @@ function varargout=polydraw(varargin)
    end
    
    delete(pp0)
-   delete(pp)
+   try;delete(pp);end % not when only 1 point was clicked
 
 %% Output
-%-----------------------
 
    if nargout==0 | nargout==1
        pol.x = x;
