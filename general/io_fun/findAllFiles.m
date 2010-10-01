@@ -1,15 +1,19 @@
-function filenames = findAllFiles(varargin)
+function varargout = findAllFiles(varargin)
 %FINDALLFILES   get list of all files in a directory tree.
 %
-%    files = findAllFiles(basepath,<keyword,value>)
+%    files          = findAllFiles(basepath,<keyword,value>)
+%   [files,folders] = findAllFiles(basepath,<keyword,value>)
 %
-% returns cellstr files with a list of all files in a directory tree.
+% returns cellstr with a list of all files in a directory tree, 
+% and optionally also of all unique folder names.
 % The following <keyword,value> pairs have been implemented.
 %
 % * pattern_excl (default '.svn')
 % * pattern_incl (default '*')
 % * basepath     (default '')
-% * recursive    (default 1)
+% * recursive    (default 1): 
+%   return relative filenames inside basepath only if 0, 
+%   returns absulote filenames if 1
 %
 % Notice that the pattern_excl paths are filtered with regexp. The syntax
 % is slightly different. Example: '*.svn' versus '.\.svn' see help regexp
@@ -47,7 +51,6 @@ function filenames = findAllFiles(varargin)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-% TO DO make basepath first optional argument
 % TO DO rename to something sensible: e.g. dir_files?
 % TO DO add that sensible name to see also line of opendap_catalog
 % TO DO explain regexp for people who work with '*', cause it should be '.'
@@ -72,12 +75,10 @@ function filenames = findAllFiles(varargin)
 %% settings
 %  defaults
 
-   OPT = struct(...
-       'pattern_excl', {{'\.svn'}}, ...          % pattern to exclude
-       'pattern_incl', {'*'}, ...                % pattern to include
-       'basepath', '', ...                       % indicate basedpath to start looking
-       'recursive', 1 ...                        % indicate whether or not the request is recursive
-       );
+   OPT.pattern_excl = {'\.svn'}; % pattern to exclude
+   OPT.pattern_incl = '*';       % pattern to include
+   OPT.basepath     = '';        % indicate basedpath to start looking
+   OPT.recursive    = 1;         % indicate whether or not the request is recursive
        
    if odd(nargin)
       OPT.basepath = varargin{1};
@@ -90,10 +91,7 @@ function filenames = findAllFiles(varargin)
 
    OPT = setproperty(OPT, varargin{nextarg:end});
    
-   if nargin==0
-      filenames = OPT;
-      return
-   end
+   if nargin==0;filenames = OPT;return;end
    
    if ~exist(OPT.basepath)
       error(['directory ''',OPT.basepath,''' does not exist'])
@@ -107,9 +105,16 @@ function filenames = findAllFiles(varargin)
        else
            [a b] = system(['dir /b /a ' '"'    OPT.basepath filesep OPT.pattern_incl '"']);
        end
+       
    else
        disp('Not supported yet for this operating system')
    end
+
+if strcmpi(strtrim(b),'File Not Found') % NB b(end) = char(10)
+
+   s = [];
+   
+else   
 
 %% Exclude the .svn directories from the path
 %  read path as cell
@@ -123,8 +128,26 @@ function filenames = findAllFiles(varargin)
        s = s(cellfun('isempty', regexp(s, [OPT.pattern]))); % keep only paths not containing [filesep '.svn']
    end
 
+end
+
 %% return cell with resulting files (including pathnames)
 
-   filenames = s;
+   filenames   = s;
+   
+   if nargout==1
+      varargout = {filenames};
+   else
+
+      foldernames = filenames; % preallocate
+   
+      for i=1:length(foldernames)
+         if ~isdir(foldernames{i})
+            foldernames{i} = fileparts(foldernames{i});
+         end
+      end
+      foldernames = unique(foldernames);
+
+      varargout = {filenames,foldernames};
+   end
    
 %% EOF   
