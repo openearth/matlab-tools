@@ -1,25 +1,25 @@
-function val=getSubFieldValue(s,sfields,sindices,varname)
+function val=getSubFieldValue(s,v)
 
-nf=length(sfields);
-val=[];
-try
-    switch nf
-        case 1
-            val=s.(sfields{1}).(varname);
-        case 2
-            val=s.(sfields{1})(sindices{1}).(sfields{2}).(varname);
-        case 3
-            val=s.(sfields{1})(sindices{1}).(sfields{2})(sindices{2}).(sfields{3}).(varname);
-        case 4
-            val=s.(sfields{1})(sindices{1}).(sfields{2})(sindices{2}).(sfields{3})(sindices{3}).(sfields{4}).(varname);
-        case 5
-            val=s.(sfields{1})(sindices{1}).(sfields{2})(sindices{2}).(sfields{3})(sindices{3}).(sfields{4})(sindices{4}).(sfields{5}).(varname);
+hh=s;
+
+%try
+for i=1:length(v.subFields)
+    name=v.subFields(i).subField.name;
+    indx=v.subFields(i).subField.index;
+    if isstruct(indx)
+        indx=getSubFieldValue(s,indx);
     end
-catch
-    strs=[];
-    for i=1:nf
-        strs=[strs '.' sfields{i} '(' num2str(sindices{i}) ')'];
-    end
-    strs=strs(2:end);
-    disp(['Error in GUI Toolbox: field ' varname ' in structure ' strs ' does not exist!']);
+%    try
+        if isa(indx,'function_handle')
+            indx=feval(indx);
+        end
+    hh=hh.(name)(indx);
+%    catch
+%        shite=1
+%    end
 end
+%catch
+%    shite=13
+%end
+varname=v.name;
+val=hh.(varname);

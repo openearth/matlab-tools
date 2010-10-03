@@ -10,8 +10,10 @@
       <tag>editprojectname</tag>
       <style>edit</style>
       <position>30 140 200 20</position>
-      <variable>ProjectName</variable>
-      <vartype>string</vartype>
+      <variable>
+        <name>ProjectName</name>
+        <type>string</type>
+      </variable>
       <tooltipstring>Project name (optional)</tooltipstring>
       <text>Project Name</text>
       <textposition>right</textposition>
@@ -20,8 +22,10 @@
       <tag>editprojectnumber</tag>
       <style>edit</style>
       <position>30 110 100 20</position>
-      <variable>ProjectNumber</variable>
-      <vartype>string</vartype>
+      <variable>
+        <name>ProjectNumber</name>
+        <type>string</type>
+      </variable>
       <tooltipstring>Project number (optional)</tooltipstring>
       <text>Project Number</text>
       <textposition>right</textposition>
@@ -30,8 +34,10 @@
       <tag>editdescription</tag>
       <style>edit</style>
       <position>30 30 500 50</position>
-      <variable>Description</variable>
-      <vartype>string</vartype>
+      <variable>
+        <name>Description</name>
+        <type>string</type>
+      </variable>
       <tooltipstring>Project description (optional)</tooltipstring>
       <nrlines>3</nrlines>
       <text>Description (max. 3 lines)</text>

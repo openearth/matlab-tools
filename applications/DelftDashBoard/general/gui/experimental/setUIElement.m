@@ -9,32 +9,33 @@ else
     tag=get(h,'Tag');
 end
 
-p=get(h,'Parent');
+% p=get(h,'Parent');
 
-try
-    getFcn=getappdata(p,'getFcn');
-catch
-    shite=1
-end
-elements=getappdata(p,'elements');
-subFields=getappdata(p,'subFields');
-subIndices=getappdata(p,'subIndices');
+getFcn=getappdata(h,'getFcn');
+
+%elements=getappdata(p,'elements');
 
 %tags={elements.tag};
 
-i=strmatch(tag,{elements.tag},'exact');
+%i=strmatch(tag,{elements.tag},'exact');
 
-el=elements(i);
+el=getappdata(h,'element');
+
+% subFields=getappdata(el.handle,'subFields');
+% subIndices=getappdata(el.handle,'subIndices');
+
+%subFields=getappdata(el.handle,'subFields');
+%subIndices=getappdata(el.handle,'subIndices');
 
 s=feval(getFcn);
 
-switch lower(elements(i).style)
+switch lower(el.style)
     
     %% Standard elements
     
     case{'edit'}
-        val=getSubFieldValue(s,subFields,subIndices,el.varName);
-        switch el.varType
+        val=getSubFieldValue(s,el.variable);
+        switch el.variable.type
             case{'string'}
             otherwise
                 val=num2str(val);
@@ -42,12 +43,12 @@ switch lower(elements(i).style)
         set(el.handle,'String',val);
 
     case{'checkbox'}
-        val=getSubFieldValue(s,subFields,subIndices,el.varName);
+        val=getSubFieldValue(s,el.variable);
         set(el.handle,'Value',val);
 
     case{'radiobutton'}
-        val=getSubFieldValue(s,subFields,subIndices,el.varName);
-        switch lower(el.varType)
+        val=getSubFieldValue(s,el.variable);
+        switch lower(el.variable.type)
             case{'string'}
                 if strcmpi(el.value,val)
                     set(el.handle,'Value',1);
@@ -63,30 +64,49 @@ switch lower(elements(i).style)
         end
 
     case{'listbox'}
+        stringList=getSubFieldValue(s,el.stringList.variable);
+        if isempty(stringList)
+            ii=1;
+        else
+            switch el.variable.type
+                case{'string'}
+                    str=getSubFieldValue(s,el.variable);
+                    ii=strmatch(str,stringList,'exact');
+                otherwise
+                    ii=getSubFieldValue(s,el.variable);
+            end
+        end
+        set(el.handle,'String',stringList);
+        set(el.handle,'Value',ii);
         
     case{'text'}
-        if ~isempty(el.varName)
-            val=getSubFieldValue(s,subFields,subIndices,el.varName);
-            switch el.varType
-                case{'string'}
-                otherwise
-                    val=num2str(val);
+        if isfield(el,'variable')
+            if ~isempty(el.variable)
+                try
+                    val=getSubFieldValue(s,el.variable);
+                catch
+                    shite=15
+                end
+                switch el.variable.type
+                    case{'string'}
+                    otherwise
+                        val=num2str(val);
+                end
+                str=[el.prefix ' ' val ' ' el.suffix];
+                set(el.handle,'String',str);
+                
+                pos=el.position;
+                ext=get(el.handle,'Extent');
+                pos(3)=ext(3);
+                pos(4)=15;
+                set(el.handle,'Position',pos);
             end
-            str=[el.prefix ' ' val ' ' el.suffix];
-            set(el.handle,'String',str);
-            
-            pos=el.position;
-            ext=get(el.handle,'Extent');
-            pos(3)=ext(3);
-            pos(4)=15;
-            set(el.handle,'Position',pos);
-            
         end
         
         %% Custom elements
         
     case{'pushselectfile'}
-        val=getSubFieldValue(s,subFields,subIndices,el.varName);
+        val=getSubFieldValue(s,el.variable);
         set(el.textHandle,'enable','on','String',['File : ' val]);
         pos=get(el.textHandle,'position');
         ext=get(el.textHandle,'Extent');
@@ -97,7 +117,7 @@ switch lower(elements(i).style)
     case{'table'}
         % Determine number of rows in table
         for j=1:length(el.columns)
-            val=getSubFieldValue(s,subFields,subIndices,el.columns(j).varName);
+            val=getSubFieldValue(s,el.columns(j).variable);
             switch lower(el.columns(j).style)
                 case{'editreal','checkbox'}
                     % Reals must be a vector
@@ -111,7 +131,7 @@ switch lower(elements(i).style)
         
         % Now set the data
         for j=1:length(el.columns)
-            val=getSubFieldValue(s,subFields,subIndices,el.columns(j).varName);
+            val=getSubFieldValue(s,el.columns(j).variable);
             for k=1:nrrows
                 switch lower(el.columns(j).style)
                     case{'editreal'}

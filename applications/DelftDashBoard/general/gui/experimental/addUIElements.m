@@ -9,10 +9,6 @@ parent=figh;
 for i=1:length(varargin)
     if ischar(varargin{i})
         switch lower(varargin{i})
-            case{'subfields','subfield'}
-                subFields=varargin{i+1};
-            case{'subindices','subindex'}
-                subIndices=varargin{i+1};
             case{'getfcn','getfunction'}
                 getFcn=varargin{i+1};
             case{'setfcn','setfunction'}
@@ -23,36 +19,14 @@ for i=1:length(varargin)
     end
 end
 
-if isempty(subIndices)
-    for i=1:length(subFields)
-        subIndices{i}=1;
-    end
-end
 bgc=get(figh,'Color');
 
 for i=1:length(elements)
-    
-    % Adding subfields for this element
-    subFields0=subFields;
-    subIndices0=subIndices;
-    ns=length(elements(i).subFields);
-    ns0=length(subFields0);
-    try
-    for j=1:ns
-        if ~isempty(elements(i).subFields{j})
-            subFields0{ns0+1}=elements(i).subFields{j};
-            subIndices0{ns0+1}=1;
-        end
-    end
-    catch
-        shite=1
-    end
-    
+        
     try
         
         elements(i).handle=[];
         elements(i).textHandle=[];
-        
         position=elements(i).position;
         
         switch lower(elements(i).style)
@@ -64,10 +38,10 @@ for i=1:length(elements)
                 % Edit box
                 elements(i).handle=uicontrol(figh,'Parent',parent,'Style','edit','String','','Position',position,'BackgroundColor',[1 1 1]);
                 
-                switch elements(i).varType
+                switch elements(i).variable.type
                     case{'char','string'}
                         horal='left';
-                    case{'int'}
+                    case{'int','integer'}
                         horal='right';
                     case{'real'}
                         horal='right';
@@ -131,6 +105,20 @@ for i=1:length(elements)
                 set(elements(i).handle,'Parent',parent);
                 
             case{'listbox'}
+
+                % Edit box
+                elements(i).handle=uicontrol(figh,'Parent',parent,'Style','listbox','String','','Position',position,'BackgroundColor',[1 1 1]);
+                
+                if ~isempty(elements(i).toolTipString)
+                    set(elements(i).handle,'ToolTipString',elements(i).toolTipString);
+                end
+                
+                % Set text
+                if ~isempty(elements(i).text)
+                    % Text
+                    elements(i).textHandle=uicontrol(figh,'Parent',parent,'Style','text','String',elements(i).text,'Position',position,'BackgroundColor',bgc);
+                    setTextPosition(elements(i).textHandle,position,elements(i).textPosition);
+                end
                 
             case{'text'}
                 
@@ -193,13 +181,10 @@ for i=1:length(elements)
                 [elements(i).handle tabhandles]=tabpanel('create','figure',figh,'tag',panelname,'position',position,'strings',strings,'callbacks',callbacks,'tabnames',tabnames, ...
                     'Parent',parent,'activetabnr',elements(i).activeTabNr);
                 for j=1:length(elements(i).tabs)
-                    elements(i).tabs(j).elements=addUIElements(figh,elements(i).tabs(j).elements,'subFields',subFields0,'subIndices',subIndices0, ...
-                        'getFcn',getFcn,'setFcn',setFcn,'Parent',tabhandles(j));
-
+%                    elements(i).tabs(j).elements=addUIElements(figh,elements(i).tabs(j).elements,'subFields',subFields0,'subIndices',subIndices0, ...
+%                        'getFcn',getFcn,'setFcn',setFcn,'Parent',tabhandles(j));
+                    elements(i).tabs(j).elements=addUIElements(figh,elements(i).tabs(j).elements,'getFcn',getFcn,'setFcn',setFcn,'Parent',tabhandles(j));
                     set(tabhandles(j),'Tag',elements(i).tabs(j).tag);
-
-%                     setUIElements(elements(i).tabs(j).elements,getFcn,subFields,subIndices);
-%                     updateUIDependencies(elements(i).tabs(j).elements,0,getFcn,subFields,subIndices);
                 end
                 
             case{'table'}
@@ -256,36 +241,45 @@ for i=1:length(elements)
     end
     
     set(elements(i).handle,'Tag',elements(i).tag);
-    
+
+%     setappdata(elements(i).handle,'subFields',subFields0);
+%     setappdata(elements(i).handle,'subIndices',subIndices0);
+    setappdata(elements(i).handle,'getFcn',getFcn);
+    setappdata(elements(i).handle,'setFcn',setFcn);
+    setappdata(elements(i).handle,'element',elements(i));
+
 end
 
 setappdata(parent,'elements',elements);
-setappdata(parent,'subFields',subFields);
-setappdata(parent,'subIndices',subIndices);
+% setappdata(parent,'subFields',subFields);
+% setappdata(parent,'subIndices',subIndices);
 setappdata(parent,'getFcn',getFcn);
 setappdata(parent,'setFcn',setFcn);
 
 setUIElements(elements);
-updateUIDependencies(elements,0,getFcn,subFields,subIndices);
+% %updateUIDependencies(elements,0,getFcn,subFields,subIndices);
+% updateUIDependencies(elements,0,getFcn);
 
 % Set callbacks
 for i=1:length(elements)
 
-    % Adding subfields for this element
-    subFields0=subFields;
-    subIndices0=subIndices;
-    ns=length(elements(i).subFields);
-    ns0=length(subFields0);
-    try
-    for j=1:ns
-        if ~isempty(elements(i).subFields{j})
-            subFields0{ns0+1}=elements(i).subFields{j};
-            subIndices0{ns0+1}=1;
-        end
-    end
-    catch
-        shite=1
-    end
+%     % Adding subfields for this element
+%     subFields0=subFields;
+%     subIndices0=subIndices;
+%     ns=length(elements(i).subFields);
+%     ns0=length(subFields0);
+%     try
+%     for j=1:ns
+%         if ~isempty(elements(i).subFields{j})
+%             subFields0{ns0+1}=elements(i).subFields{j};
+%             subIndices0{ns0+1}=1;
+%         end
+%     end
+%     catch
+%         shite=1
+%     end
+%     subFields0=elements(i).subFields;
+%     subIndices0=elements(i).subIndices;
 
     try
         
@@ -297,21 +291,21 @@ for i=1:length(elements)
                 if ~isempty(elements(i).customCallback)
                     set(elements(i).handle,'Callback',{@custom_Callback,elements(i).customCallback});
                 else
-                    set(elements(i).handle,'Callback',{@edit_Callback,getFcn,setFcn,subFields0,subIndices0,elements,i});
+                    set(elements(i).handle,'Callback',{@edit_Callback,getFcn,setFcn,elements,i});
                 end
                 
             case{'checkbox'}
                 if ~isempty(elements(i).customCallback)
                     set(elements(i).handle,'Callback',elements(i).customCallback);
                 else
-                    set(elements(i).handle,'Callback',{@checkbox_Callback,getFcn,setFcn,subFields0,subIndices0,elements,i});
+                    set(elements(i).handle,'Callback',{@checkbox_Callback,getFcn,setFcn,elements,i});
                 end
                 
             case{'radiobutton'}
                 if ~isempty(elements(i).customCallback)
                     set(elements(i).handle,'Callback',elements(i).customCallback);
                 else
-                    set(elements(i).handle,'Callback',{@radiobutton_Callback,getFcn,setFcn,subFields0,subIndices0,elements,i});
+                    set(elements(i).handle,'Callback',{@radiobutton_Callback,getFcn,setFcn,elements,i});
                 end
                 
             case{'pushbutton'}
@@ -326,14 +320,19 @@ for i=1:length(elements)
                         if ~isempty(elements(i).columns(j).callback)
                             callback=elements(i).column(j).callback;
                         else
-                            callback={@table_Callback,getFcn,setFcn,subFields0,subIndices0,elements,i,elements(i).onChangeCallback};
+                            callback={@table_Callback,getFcn,setFcn,elements,i,elements(i).onChangeCallback};
                         end
                         setappdata(tbh(k,j),'callback',callback);
                     end
                 end
                 
             case{'listbox'}
-                
+                if ~isempty(elements(i).customCallback)
+                    set(elements(i).handle,'Callback',elements(i).customCallback);
+                else
+                    set(elements(i).handle,'Callback',{@listbox_Callback,getFcn,setFcn,elements,i});
+                end
+
             case{'text'}
                 
                 
@@ -343,7 +342,7 @@ for i=1:length(elements)
                 if ~isempty(elements(i).customCallback)
                     set(elements(i).handle,'Callback',elements(i).customCallback);
                 else
-                    set(elements(i).handle,'Callback',{@pushSelectFile_Callback,getFcn,setFcn,subFields0,subIndices0,elements,i});
+                    set(elements(i).handle,'Callback',{@pushSelectFile_Callback,getFcn,setFcn,elements,i});
                 end
                 
         end
@@ -361,7 +360,7 @@ for i=1:length(elements)
 end
 
 %%
-function edit_Callback(hObject,eventdata,getFcn,setFcn,subFields,subIndices,elements,i)
+function edit_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
 
 s=feval(getFcn);
 
@@ -388,7 +387,7 @@ if ~isempty(el.onChangeCallback)
 end
 
 %%
-function checkbox_Callback(hObject,eventdata,getFcn,setFcn,subFields,subIndices,elements,i)
+function checkbox_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
 
 s=feval(getFcn);
 
@@ -409,7 +408,7 @@ if ~isempty(el.onChangeCallback)
 end
 
 %%
-function radiobutton_Callback(hObject,eventdata,getFcn,setFcn,subFields,subIndices,elements,i)
+function radiobutton_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
 
 s=feval(getFcn);
 
@@ -423,7 +422,7 @@ if ~ion
 else
     
     v=el.value;
-    switch lower(el.varType)
+    switch lower(el.variable.type)
         case{'real','integer'}
             v=str2double(v);
     end
@@ -444,7 +443,40 @@ else
 end
 
 %%
-function pushSelectFile_Callback(hObject,eventdata,getFcn,setFcn,subFields,subIndices,elements,i)
+function listbox_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
+
+str=get(hObject,'String');
+% Check if listbox is not empty
+if ~isempty(str{1})
+    
+    s=feval(getFcn);
+    
+    el=elements(i);
+    
+    ii=get(hObject,'Value');
+    switch el.varType
+        case{'string'}
+            v=str{ii};
+        otherwise
+            v=ii;
+    end
+    s=setSubFieldValue(s,subFields,subIndices,el.varName,v);
+    
+    feval(setFcn,s);
+    
+    % Check for dependencies
+    if ~isempty(elements(i).dependees)
+        updateUIDependencies(elements,i,getFcn,subFields,subIndices);
+    end
+    
+    if ~isempty(el.onChangeCallback)
+        % Execute on-change callback
+        feval(el.onChangeCallback);
+    end
+end
+
+%%
+function pushSelectFile_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
 
 s=feval(getFcn);
 
@@ -478,7 +510,7 @@ if pathname~=0
 end
 
 %%
-function table_Callback(getFcn,setFcn,subFields,subIndices,elements,i)
+function table_Callback(getFcn,setFcn,elements,i)
 
 s=feval(getFcn);
 

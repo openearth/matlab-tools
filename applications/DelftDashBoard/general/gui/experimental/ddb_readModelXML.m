@@ -1,6 +1,7 @@
 function handles=ddb_readModelXML(handles,j)
 
-fname=[handles.SettingsDir 'xml' filesep 'models' filesep handles.Model(j).Name filesep handles.Model(j).Name '.xml'];
+%fname=[handles.SettingsDir 'xml' filesep 'models' filesep handles.Model(j).Name filesep handles.Model(j).Name '.xml'];
+fname=[handles.Model(j).Name '.xml'];
 
 %s.elements=[];
 
@@ -21,7 +22,10 @@ if exist(fname,'file')
     end
     
     tag = '';
-    s=readUIElementsXML(xml,xmldir,tag);
+    subFields={'Model','Input'};
+%    subIndices={j,'ad'};
+    subIndices={j,@ad};
+    s=readUIElementsXML(xml,xmldir,tag,subFields,subIndices);
 
 end
 

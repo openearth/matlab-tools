@@ -1,4 +1,4 @@
-function updateUIDependencies(elements,iac,getFcn,subFields,subIndices)
+function updateUIDependencies(elements,iac,getFcn)
 
 s=feval(getFcn);
 
@@ -25,7 +25,8 @@ for iac=ii1:ii2
             case{'any'}
                 ok=0;
                 for k=1:length(dependency.checks)
-                    val=getSubFieldValue(s,subFields,subIndices,dependency.checks(k).varName);
+                    
+                    val=getSubFieldValue(s,dependency.checks(k).variable);
                     if ischar(val)
                         if strcmpi(val,dependency.checks(k).value)
                             ok=1;
@@ -59,7 +60,8 @@ for iac=ii1:ii2
             case{'all'}
                 ok=1;
                 for k=1:length(dependency.checks)
-                    val=getSubFieldValue(s,subFields,subIndices,dependency.checks(k).varName);
+
+                    val=getSubFieldValue(s,dependency.checks(k).variable);
                     if ischar(val)
                         if ~strcmpi(val,dependency.checks(k).value)
                             ok=0;
@@ -93,7 +95,8 @@ for iac=ii1:ii2
             case{'none'}
                 ok=1;
                 for k=1:length(dependency.checks)
-                    val=getSubFieldValue(s,subFields,subIndices,dependency.checks(k).varName);
+ 
+                    val=getSubFieldValue(s,dependency.checks(k).variable);
                     if ischar(val)
                         if strcmpi(val,dependency.checks(k).value)
                             ok=0;

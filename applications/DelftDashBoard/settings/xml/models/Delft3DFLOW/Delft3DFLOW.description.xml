@@ -5,8 +5,10 @@
     <tag>editdescription</tag>
     <style>edit</style>
     <position>45 10 500 140</position>
-    <variable>Description</variable>
-    <vartype>string</vartype>
+    <variable>
+      <name>Description</name>
+      <type>string</type>
+    </variable>
     <tooltipstring>Project description (optional)</tooltipstring>
     <nrlines>10</nrlines>
     <text>Description (max. 10 lines)</text>
