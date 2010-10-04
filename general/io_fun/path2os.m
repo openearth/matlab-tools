@@ -8,12 +8,14 @@ function string = path2os(string,input)
 %
 % Options are:
 %
-% string = path2os(string,'/')
 % string = path2os(string,'\')
-% string = path2os(string,'d<os>')
-% string = path2os(string,'u<nix>')
-% string = path2os(string,'l<inux>')
-% string = path2os(string,'w<indows>')
+% string = path2os(string,'d<os>')    : \
+% string = path2os(string,'w<indows>'): \
+%
+% string = path2os(string,'/')
+% string = path2os(string,'h<ttp>')   : / retains http://
+% string = path2os(string,'l<inux>')  : /
+% string = path2os(string,'u<nix>')   : /
 %
 % Also removes redundant (double) slashes
 % that might have arisen when merging
@@ -63,7 +65,8 @@ function string = path2os(string,input)
        slash = filesep;
    else
        if     input(1) == 'u' || ...
-              input(1) == 'l'
+              input(1) == 'l' || ...
+              input(1) == 'h'
               slash    =  '/';
               
        elseif input(1) == 'w' || ...
@@ -76,22 +79,38 @@ function string = path2os(string,input)
        end
    end
 
+%% Lock special combis
+   prefix = '';
+   if     length(string) > 6  
+      if strcmpi(string(1:7),'http://');prefix = 'http://';string = string(8:end);
+       if nargin==1
+        slash = '/';
+       else
+        if strcmpi(slash,'\');warning('for http:// forward slash is recommened');end
+       end
+      end
+   end
+   if length(string) > 1     
+      if strcmpi(string(1:2),'\\'     );prefix = '\'      ;string = string(2:end);
+      end
+   end
+
 %% Replace all slashes 
 
    string = strrep(string,'/',slash);
-
    string = strrep(string,'\',slash);
 
-
 %% Remove redundant fileseps
-
+   
    string1 = '';
 
    while ~strcmp(string,string1)
 
       string1 = string;
-      string  = [string(1) strrep(string(2:end),[slash, slash],slash)];
+      string  = strrep(string,[slash, slash],slash);
 
    end
+   
+   string = [prefix string];
    
 %% EOF   
