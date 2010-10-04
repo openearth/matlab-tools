@@ -3,7 +3,14 @@ function ATT = nc_cf_opendap2catalog(varargin)
 %
 %   ATT = nc_cf_opendap2catalog(<baseurl>,<keyword,value>)
 %
-% For <keyword,value> pairs see:
+% Extracts meta-data from all netCDF files in baseurl, which can either be an
+% opendap catalog or a local directory. When you query a local directory,
+% and you want the catalog to work on a server, use keyword 'urlPathFcn'
+% to replace the local root with the opendap root, e.g.:
+%
+% 'urlPathFcn'= @(s) strrep(s,OPT.root_nc,['http://opendap.deltares.nl/thredds/dodsC/opendap/',OPT.path]))
+%
+% For other <keyword,value> pairs see:
 %
 %    OPT = nc_cf_opendap2catalog()
 %
@@ -23,7 +30,8 @@ function ATT = nc_cf_opendap2catalog(varargin)
 %
 %          (ii) THREDDS meta-data keywords
 %              'urlPath'
-%              'standard_names'
+%              'standard_names'      % white space separated
+%              'long_names'          % OPT.separator=';' space separated as they may contain spaces
 %              'timecoverage_start'
 %              'timecoverage_end'
 %              'datenum_start'
@@ -45,7 +53,12 @@ function ATT = nc_cf_opendap2catalog(varargin)
 %  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html#dataType
 % (http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html)
 %
-%See also: STRUCT2NC, NC2STRUCT
+% A catalog can be used as follows:
+%
+%   catalog = nc2struct('catalog.nc')
+%   Element = structfun(@(x) (x(1)),catalog,'UniformOutput',0)
+%
+%See also: STRUCT2NC, NC2STRUCT, opendap_catalog, snctools, nc_cf_opendap2catalog_loop
 
 % TO DO: standard_name_vocabulary
 
@@ -96,6 +109,7 @@ OPT.recursive      = 0;
 OPT.catalog_dir    = [];
 OPT.catalog_name   = 'catalog.nc'; % exclude from indexing
 OPT.maxlevel       = 1;
+OPT.separator      = ';'; % for long names
 
 %% what information (global attributes) to extract
 
@@ -124,7 +138,8 @@ OPT.attname = ...
     'projectionCoverage_x',...
     'projectionCoverage_y',...
     'projectionEPSGcode'};
-%'dataTypes'};
+
+%% atttype: 0=char, 1= numeric
 
 OPT.atttype = [...
     0   % 'title',...
@@ -155,11 +170,7 @@ OPT.atttype = [...
 
 %% File keywords
 
-if nargin==0
-    varargout = {OPT};
-    OPT
-    return
-end
+if nargin==0;varargout = {OPT};OPT;return;end
 
 varargout = {OPT};
 nextarg = 1;
@@ -177,6 +188,7 @@ if isempty(OPT.catalog_dir)
 end
 
 %% initialize waitbar
+
     multiWaitbar('nc_cf_opendap2catalog',0,'label','Generating catalog.nc','color',[0.2 0.5 0.2])
     
 %% File loop to get meta-data from subdirectories (recursively)
@@ -227,8 +239,6 @@ for ifile=1:length(OPT.files)
     ATT.datenum_start                (entry)     = nan;
     ATT.datenum_end                  (entry)     = nan;
     
-%% get EPSG code
-
 %% get relevant attributes
     
     for iatt = 1:length(OPT.attname)
@@ -249,13 +259,13 @@ for ifile=1:length(OPT.files)
             end
         end
     end
-    
+
     urlPath = OPT.urlPathFcn(OPT.filename);
     ATT.urlPath(entry,1:length(urlPath)) = urlPath;
     
 %% get all standard_names (and prevent doubles)
     %  get actual_range attribute instead if present for lat, lon, time
-    
+
     fileinfo       = nc_info(OPT.filename);
     standard_names = [];
     long_names     = [];
@@ -305,7 +315,10 @@ for ifile=1:length(OPT.files)
                 
                 % ... once
                 if ~any(strfind(long_names,[' ',Value]))   % remove redudant long_names (can occur with statistics)
-                    long_names = [long_names ';' Value];  % needs to be char, ; separatred
+                if isempty(long_names)
+                    long_names = Value;
+                else
+                    long_names = [long_names OPT.separator Value];  % needs to be char, ; separatred
                 end
 
             end % long_names
@@ -324,7 +337,7 @@ for ifile=1:length(OPT.files)
     ATT.standard_names(entry,1:length(standard_names)) = standard_names;
     ATT.long_names    (entry,1:length(long_names))     = long_names;
     
-%% get latitude (actual_range or min() max() full array)
+%% get latitude actual_range
     
     [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'latitude');
     names = cellstr(names);
@@ -340,7 +353,7 @@ for ifile=1:length(OPT.files)
         
     end % idat
     
-%% get longitude (actual_range or min() max() full array)
+%% get longitude actual_range
     
     [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'longitude' );
     names = cellstr(names);
@@ -355,7 +368,8 @@ for ifile=1:length(OPT.files)
         ATT.geospatialCoverage_eastwest(entry,2) = max(ATT.geospatialCoverage_eastwest(entry,2),longitude(2));
         
     end % idat
-    %% get x (actual_range or min() max() full array)
+    
+%% get x actual_range and epsg
     
     [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate');
     names = cellstr(names);
@@ -378,7 +392,7 @@ for ifile=1:length(OPT.files)
         
     end % idat
     
-%% get y (actual_range or min() max() full array)
+%% get y actual_range and epsg
     
     [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate');
     names = cellstr(names);
@@ -441,6 +455,7 @@ if OPT.save
 end
 
 multiWaitbar('nc_cf_opendap2catalog',1,'label','Generating catalog.nc')
+
 % load database as check
 
 % if OPT.test

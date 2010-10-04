@@ -92,8 +92,10 @@ function rws_waterbase_all
    
    %% Make catalog.nc
 
-      nc_cf_opendap2catalog([OPT.directory_nc],'save',1)
-   
+      nc_cf_opendap2catalog([OPT.directory_nc],...
+                            'save',1,...
+                      'urlPathFcn',@(s) strrep(s,OPT.directory_nc,[OPT.linm_nc,'dodsC/opendap/',OPT.path]))
+
    %% Make KML overview with links to netCDF on opendap.deltares.nl
       
       OPT2.fileName           = [OPT.directory_nc,'.kml'];

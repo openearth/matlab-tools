@@ -45,4 +45,4 @@
    axislat   
    caxis([-100 100])
    colorbarwithvtext([M.z.long_name,' [',M.z.units,']'])
-   print('-dpng',['smith_sandwell_v11_lat_',nums2str(OPT.lat(:)'),'_lon_',nums2str(OPT.lon(:)')])
+%   print('-dpng',['smith_sandwell_v11_lat_',nums2str(OPT.lat(:)'),'_lon_',nums2str(OPT.lon(:)')])

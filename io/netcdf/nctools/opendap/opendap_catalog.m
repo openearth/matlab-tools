@@ -1,7 +1,7 @@
 function varargout = opendap_catalog(varargin)
 %OPENDAP_CATALOG   get urls of all datasets in an OPeNDAP catalog.xml url
 %
-%   urlPath = opendap_catalog(url)
+%   nc_file_list = opendap_catalog(url)
 %
 % loads the urls of all datsets (netCDF files) that reside 
 % under the OPeNDAP catalog.xml located at the specified url,
@@ -12,14 +12,15 @@ function varargout = opendap_catalog(varargin)
 % in the directory tree below it are returned.
 % Any trailing /catalog.html is replaced with /catalog.xml.
 %
-%   urlPath = opendap_catalog(url,<keyword,value>)
+%   nc_file_list = opendap_catalog(url,<keyword,value>)
 %
 % The following important <keyword,value> pairs are implemented.
 % You can list all keyword by calling OPT = filelist = opendap_catalog().
 %
 %  * maxlevel : specify how deep to crawl linked catalogs 
 %               (default 1 for speed, set to Inf for all levels)
-%               Does not work when url is on a local file system.
+%               Does not work when url is on a local file system:
+%               for maxlevel=1 one folder is crawled, for maxlevel > 1 the entire tree is crawled.
 %  * leveltype: specify how levels are defined: 
 %               'tree' when new level  = extra '/' in catalog url  (local catalog is not a new level)
 %               'link' when new level  = linked (local catalog is a new level)
@@ -101,7 +102,7 @@ function varargout = opendap_catalog(varargin)
    OPT.toplevel              = ''; % to solve end catalogs in HYRAX
    OPT.debug                 = 0;  % writes levels to OPT.log
    OPT.log                   = 0;  % log progress, 0 = quiet, 1 = command line, nr>1 = fid passed to fprintf (default 0)
-   OPT.ignoreCatalogNc       = 0;  % filters a file named catalog.nc from the files, if found 
+   OPT.ignoreCatalogNc       = 1;  % filters a file named catalog.nc from the files, if found 
    OPT.onlyCatalogNc         = 0;  % filter only files named catalog.nc
    
    if nargin==0
@@ -127,27 +128,34 @@ function varargout = opendap_catalog(varargin)
    
 %% remote vs. local url
 
-if ~strcmpi(OPT.url(1:4),'http') 
+if ~strcmpi(OPT.url(1:4),'http') & ~strcmpi(OPT.url(end-10:end),'catalog.xml')
 
    if OPT.maxlevel > 1
       fprintf(2,'opendap_catalog: maxlevel ignored because request concerns local file system.\n')
    end
    
-   urlPath = findAllFiles(OPT.url,'pattern_incl','*.nc');
+   [nc_file_list,nc_folder_list] = findAllFiles(OPT.url,'pattern_incl','*.nc','recursive',OPT.maxlevel>1);
    
+   % make sure we always return the full path
+   if OPT.maxlevel<2
+      nc_file_list   = cellstr(addrowcol(char(nc_file_list),0,-1,fliplr(OPT.url))); % left-padd path
+      nc_folder_list = OPT.url;
+   end
+
 else
 
    %% replace html into xml or warn
 
    if      strcmpi(OPT.url(end-4:end),'.html')
-        OPT.url = [OPT.url(1:end-5) '.xml'];
+        OPT.url = [OPT.url(1:end-5)   '.xml'];
    elseif ~strcmpi(OPT.url(end-3:end),'.xml')
       fprintf(2,'warning: opendap_catalog: url does not have extension ".xml" or ".html"')
    end
       
    %% pre-allocate
 
-   urlPath     = {}; % we cannot pre-allocate as some datasets may be a container with lots of urlPaths inside it
+   nc_file_list     = {}; % we cannot pre-allocate as some datasets may be a container with lots of nc_file_lists inside it
+   nc_folder_list   = {}; % we cannot pre-allocate as some datasets may be a container with lots of nc_file_lists inside it
 
    %% check
 
@@ -179,8 +187,8 @@ else
       end
    
    %% DATASET and CATALOGREF
-      
-      urlPath = opendap_catalog_dataset(D,OPT);
+      nc_file_list   = opendap_catalog_dataset(D,OPT)
+      nc_folder_list = []; % TO DO
 
    catch
       dprintf(OPT.log,['Skipped erronous ',                         '   catalog: ',OPT.url,'\n'])
@@ -191,25 +199,31 @@ else
 end
 
 %% filter catalog nc
+
     if OPT.ignoreCatalogNc
-        isCatalogNc = false(length(urlPath),1);
-        for ii = 1:length(urlPath)
-            isCatalogNc(ii) = strcmpi(urlPath{ii}(end-9:end),'catalog.nc');
+        isCatalogNc = false(length(nc_file_list),1);
+        for ii = 1:length(nc_file_list)
+            isCatalogNc(ii) = strcmpi(nc_file_list{ii}(end-9:end),'catalog.nc');
         end
-        urlPath(isCatalogNc) = [];
+        nc_file_list(isCatalogNc) = [];
     end
     
 %% filter catalog nc
+
     if OPT.onlyCatalogNc
-        isCatalogNc = false(length(urlPath),1);
-        for ii = 1:length(urlPath)
-            isCatalogNc(ii) = strcmpi(urlPath{ii}(end-9:end),'catalog.nc');
+        isCatalogNc = false(length(nc_file_list),1);
+        for ii = 1:length(nc_file_list)
+            isCatalogNc(ii) = strcmpi(nc_file_list{ii}(end-9:end),'catalog.nc');
         end
-        urlPath(~isCatalogNc) = [];
+        nc_file_list(~isCatalogNc) = [];
     end
     
 %% output
 
-   varargout = {urlPath};
+   if nargout==1
+   varargout = {nc_file_list};
+   else
+   varargout = {nc_file_list,nc_folder_list};
+   end
   
    %% EOF

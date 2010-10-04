@@ -108,7 +108,7 @@ for i = 1:length(Names)
             varname{end+1} = Names{i};
             varindex    = i;
         else
-            disp('NB: more than one variable fits the description')
+            % disp('NB: more than one variable fits the description')
             varname{end+1} = Names{i};
             varindex = [varindex i];
         end

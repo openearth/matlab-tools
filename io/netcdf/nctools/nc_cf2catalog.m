@@ -1,38 +1,7 @@
-function ATT = nc_cf2catalog(varargin)
-%NC_CF2CATALOG   test for creating catalogs of set of directories (BETA)
+function nc_cf_opendap2catalog_loop(varargin)
+%NC_CF2CATALOG_loop   loop for creating catalogs in a set of directories (BETA)
 %
-% Extracts  (i) netCDF CF meta-data keywords 
-%               'title'
-%               'institution'
-%               'source'
-%               'history'
-%               'references'
-%               'email'
-%               'comment'
-%               'version'
-%               'Conventions'
-%               'CF:featureType'
-%               'terms_for_use'
-%               'disclaimer'
-%
-%          (ii) THREDDS meta-data keywords 
-%              'urlPath'
-%              'standard_names'
-%              'timecoverage_start'
-%              'timecoverage_end'
-%              'timecoverage_duration'
-%              'geospatialCoverage_northsouth'
-%              'geospatialCoverage_eastwest'
-%              'dataTypes'
-%
-% from all specified netCDF files and stores them into a 
-% struct for storage in netCDF file (now still mat file)
-%
-%  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html
-%  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html#geospatialCoverageType
-%  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html#timeCoverageType
-%  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html#dataType
-% (http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html)
+% wrapper for nc_cf_opendap2catalog.
 %
 %See also: STRUCT2NC, NC2STRUCT
 
@@ -64,41 +33,45 @@ function ATT = nc_cf2catalog(varargin)
 %   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-disp('WARNING: BETA FUNCTION')
-
 %% which directories to scan
 
-   OPT.base           = 'P:\mcdata\opendap\';
-   
-   OPT.directories    = {'rijkswaterstaat\waterbase\concentration_of_chlorophyll_in_sea_water',...
-                         'rijkswaterstaat\waterbase\concentration_of_suspended_matter_in_sea_water',...
-                         'rijkswaterstaat\waterbase\sea_surface_height',...
-                         'rijkswaterstaat\waterbase\sea_surface_salinity',...
-                         'rijkswaterstaat\waterbase\sea_surface_temperature',...
-                         'rijkswaterstaat\waterbase\sea_surface_wave_from_direction',...
-                         'rijkswaterstaat\waterbase\sea_surface_wave_significant_height',...
-                         'rijkswaterstaat\waterbase\sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment',...
-                         'knmi\etmgeg',...
-                         'knmi\potwind',...
-                         'knmi\NOAA\mom\1990_mom\5\'};
-   
-   OPT.pause          = 0;
+   OPT.load_nc        = 'http://opendap.deltares.nl/thredds/opendap/rijkswaterstaat/';
+   OPT.load_nc        = 'F:\opendap\thredds\rijkswaterstaat\';
 
+   OPT.base_nc        = 'F:\opendap\thredds\';
+   OPT.serviceBaseURL = 'http://opendap.deltares.nl/thredds/';
+   OPT.serviceBase    = 'dodsC/opendap/'; % @ opendap.deltares.nl for THREDDS, not for HYRAX
+
+   OPT.pause          = 0;
+   OPT.directories    = [];
+   
+%% get files   
+   
+   if isempty(OPT.directories)
+   [files,OPT.directories]=findallfiles(OPT.load_nc);
+   end
+   
 %% Directory loop
 
-for idir = 3 % 1:length(OPT.directories)
+for idir = 1:length(OPT.directories)
 
-   OPT.directory = [OPT.directories{idir}];
-
-   disp(['Processing   ',num2str(idir,'%0.4d'),'/',num2str(length(OPT.directories),'%0.4d'),': ',OPT.directory,filesep]);
+   directory_nc = [OPT.directories{idir} filesep];
    
-   nc_cf_directory2catalog([OPT.base,filesep,OPT.directory])
+   OPT.path = directory_nc(length(OPT.base_nc)+1:end);
+   
+  %disp([directory_nc,'=',OPT.base_nc,'+',OPT.path)
+
+   disp(['Processing   ',num2str(idir,'%0.4d'),'/',num2str(length(OPT.directories),'%0.4d'),': ',directory_nc,filesep]);
+   
+   nc_cf_opendap2catalog(directory_nc,...
+         'save',1,...
+     'maxlevel',1,... % this script already handles the directory levels
+   'urlPathFcn',@(s) path2os(strrep(s,OPT.base_nc,[OPT.serviceBaseURL,OPT.serviceBase]),'http'));
    
    if OPT.pause
       pausedisp
    end
    
 end   
-
 
 %% EOF

@@ -1,4 +1,4 @@
-function urlPath = opendap_catalog_dataset(D,OPT)
+function varargout = opendap_catalog_dataset(D,OPT)
 %OPENDAP_CATALOG_DATASET   get urls of all datasets in an OPeNDAP catalog.xml read by xml_read
 %
 %   urlPath = opendap_catalog_dataset(D,OPT)
@@ -92,9 +92,15 @@ function urlPath = opendap_catalog_dataset(D,OPT)
       
    end % isfield(D,'service')
    
+   if strcmpi(OPT.url(1:7),'http://')
    ind                = strfind(OPT.url,'/');
    OPT.serviceBaseURL = [OPT.url(1:ind(3)-1) OPT.serviceBase];
-
+   else
+   ind                = strfind(OPT.url,'catalog.xml');
+   OPT.serviceBaseURL = [OPT.url(1:ind-1)];
+   end
+   urlFolder   = OPT.serviceBaseURL;
+   
 %% pre-allocate
 
    urlPath     = {}; % for current level we cannot pre-allocate as some datasets may be a container with lots of urlPaths inside it
@@ -218,8 +224,8 @@ function urlPath = opendap_catalog_dataset(D,OPT)
 
          if OPT.debug
             dprintf(OPT.log,'opendap_catalog: xml.dataset.catalogRef. \n')
-            dprintf(OPT.log,[char(fieldnames(D.catalogRef(i))),'\n'])
-            dprintf(OPT.log,[char(fieldnames(D.catalogRef(i).ATTRIBUTE)),'\n'])
+            dprintf(OPT.log,[str2line(fieldnames(D.catalogRef(i))          ,','),'\n'])
+            dprintf(OPT.log,[str2line(fieldnames(D.catalogRef(i).ATTRIBUTE),','),'\n'])
          end
          
          %  note that serviceBaseURL is different for catalogRef than for a dataset
@@ -302,5 +308,11 @@ function urlPath = opendap_catalog_dataset(D,OPT)
    end % if isfield(D,'catalogRef')
    
   %whos urlPath
+  
+% TO DO   if nargout==1
+             varargout = {urlPath};
+% TO DO   else
+% TO DO      varargout = {urlPath,urlFolder};
+% TO DO   end
   
    %% EOF

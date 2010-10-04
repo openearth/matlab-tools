@@ -73,6 +73,7 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    OPT.timeIn             = [];
    OPT.timeOut            = [];
    OPT.dateStrStyle       = 'yyyy-mm-ddTHH:MM:SS';
+   OPT.disp               = 1;
    
    if nargin==0
       varargout = {OPT};
@@ -233,6 +234,9 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    disp(['creating surf with ' num2str(sum(sum(not_nan))) ' elements...'])
    
    for ii=1:length(lat(:,1))-1
+      if OPT.disp
+         disp(['progress ',num2str(ii),'/',num2str(length(lat(:,1))-1)])
+      end
        for jj=1:length(lon(1,:))-1
            if not_nan(ii,jj)
                LAT = [lat(ii+1,jj) lat(ii+1,jj+1) lat(ii,jj+1) lat(ii,jj) lat(ii+1,jj)];
