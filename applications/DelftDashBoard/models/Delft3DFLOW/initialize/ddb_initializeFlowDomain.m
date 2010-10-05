@@ -24,10 +24,10 @@ handles.Model(md).Input(id).NrDrogues=0;
 
 handles.Model(md).Input(id).dryPointNames={''};
 handles.Model(md).Input(id).activeDryPoint=1;
-handles.Model(md).Input(id).DryPoints(1).M1=1;
-handles.Model(md).Input(id).DryPoints(1).M2=2;
-handles.Model(md).Input(id).DryPoints(1).N1=3;
-handles.Model(md).Input(id).DryPoints(1).N2=4;
+handles.Model(md).Input(id).DryPoints(1).M1=[];
+handles.Model(md).Input(id).DryPoints(1).M2=[];
+handles.Model(md).Input(id).DryPoints(1).N1=[];
+handles.Model(md).Input(id).DryPoints(1).N2=[];
 
 handles.Model(md).Input(id).NrAstro=0;
 handles.Model(md).Input(id).NrHarmo=0;

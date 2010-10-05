@@ -414,6 +414,7 @@
       <tab>
         <tag>drypoints</tag>
         <tabstring>Dry Points</tabstring>
+        <callback>ddb_Delft3DFLOW_dryPoints</callback>
         <elements>
           <element>
             <tag>selectdrypoint</tag>
@@ -435,6 +436,11 @@
             <onchange>ddb_Delft3DFLOW_selectDryPoints</onchange>
 	  </element>
           <element>
+            <tag>paneldrypoints</tag>
+            <style>panel</style>
+            <position>170 10 170 70</position>
+          </element>
+          <element>
             <tag>editdrym1</tag>
             <style>edit</style>
             <position>200 50 50 20</position>
@@ -454,6 +460,33 @@
                 </variable>
               </subfield3>
             </variable>
+            <dependencies>
+              <dependency>
+                <action>enable</action>
+                <tags>
+                  <tag>pushdeletedrypoint</tag>
+                  <tag>pushadddrypoint</tag>
+                  <tag>pushopendrypointsfile</tag>
+                </tags>
+                <checkfor>all</checkfor>
+                <checks>
+                  <check>
+                    <variable>
+                      <name>NrDryPoints</name>
+                      <type>integer</type>
+                    </variable>
+                    <value>0</value>
+                    <operator>gt</operator>
+                  </check>
+                </checks>
+              </dependency>
+              <dependency>
+                <action>update</action>
+                <tags>
+                  <tag>selectdrypoint</tag>
+                </tags>
+              </dependency>
+            </dependencies>
             <tooltipstring>Edit dry point index M1</tooltipstring>
           </element>
           <element>
@@ -476,6 +509,33 @@
                 </variable>
               </subfield3>
             </variable>
+            <dependencies>
+              <dependency>
+                <action>enable</action>
+                <tags>
+                  <tag>pushdeletedrypoint</tag>
+                  <tag>pushadddrypoint</tag>
+                  <tag>pushopendrypointsfile</tag>
+                </tags>
+                <checkfor>all</checkfor>
+                <checks>
+                  <check>
+                    <variable>
+                      <name>NrDryPoints</name>
+                      <type>integer</type>
+                    </variable>
+                    <value>0</value>
+                    <operator>gt</operator>
+                  </check>
+                </checks>
+              </dependency>
+              <dependency>
+                <action>update</action>
+                <tags>
+                  <tag>selectdrypoint</tag>
+                </tags>
+              </dependency>
+            </dependencies>
             <tooltipstring>Edit dry point index N1</tooltipstring>
           </element>
           <element>
@@ -498,6 +558,33 @@
                 </variable>
               </subfield3>
             </variable>
+            <dependencies>
+              <dependency>
+                <action>enable</action>
+                <tags>
+                  <tag>pushdeletedrypoint</tag>
+                  <tag>pushadddrypoint</tag>
+                  <tag>pushopendrypointsfile</tag>
+                </tags>
+                <checkfor>all</checkfor>
+                <checks>
+                  <check>
+                    <variable>
+                      <name>NrDryPoints</name>
+                      <type>integer</type>
+                    </variable>
+                    <value>0</value>
+                    <operator>gt</operator>
+                  </check>
+                </checks>
+              </dependency>
+              <dependency>
+                <action>update</action>
+                <tags>
+                  <tag>selectdrypoint</tag>
+                </tags>
+              </dependency>
+            </dependencies>
             <tooltipstring>Edit dry point index M2</tooltipstring>
           </element>
           <element>
@@ -520,7 +607,95 @@
                 </variable>
               </subfield3>
             </variable>
+            <dependencies>
+              <dependency>
+                <action>enable</action>
+                <tags>
+                  <tag>pushdeletedrypoint</tag>
+                  <tag>pushadddrypoint</tag>
+                  <tag>pushopendrypointsfile</tag>
+                </tags>
+                <checkfor>all</checkfor>
+                <checks>
+                  <check>
+                    <variable>
+                      <name>NrDryPoints</name>
+                      <type>integer</type>
+                    </variable>
+                    <value>0</value>
+                    <operator>gt</operator>
+                  </check>
+                </checks>
+              </dependency>
+              <dependency>
+                <action>update</action>
+                <tags>
+                  <tag>selectdrypoint</tag>
+                </tags>
+              </dependency>
+            </dependencies>
             <tooltipstring>Edit dry point index N2</tooltipstring>
+          </element>
+          <element>
+            <tag>pushadddrypoint</tag>
+            <style>pushbutton</style>
+            <position>360 85 70 20</position>
+            <text>Add</text>
+            <tooltipstring>Add dry point</tooltipstring>
+            <callback>ddb_Delft3DFLOW_dryPoints</callback>
+            <inputargument>add</inputargument>
+          </element>
+          <element>
+            <tag>pushdeletedrypoint</tag>
+            <style>pushbutton</style>
+            <position>360 60 70 20</position>
+            <text>Delete</text>
+            <tooltipstring>Delete dry point</tooltipstring>
+            <callback>ddb_Delft3DFLOW_pushDeleteDryPoint</callback>
+          </element>
+          <element>
+            <tag>pushselectdrypoint</tag>
+            <style>pushbutton</style>
+            <position>360 35 70 20</position>
+            <text>Select</text>
+            <tooltipstring>Select dry point</tooltipstring>
+            <callback>ddb_Delft3DFLOW_pushSelectDryPoint</callback>
+          </element>
+          <element>
+            <tag>pushchangedrypoint</tag>
+            <style>pushbutton</style>
+            <position>360 10 70 20</position>
+            <text>Change</text>
+            <tooltipstring>Change dry point</tooltipstring>
+            <callback>ddb_Delft3DFLOW_pushChangeDryPoint</callback>
+          </element>
+          <element>
+            <tag>pushopendrypoints</tag>
+            <style>pushselectfile</style>
+            <position>450 60 70 20</position>
+            <tooltipstring>Open dry points file</tooltipstring>
+            <text>Open</text>
+            <variable>
+              <name>DryFile</name>
+              <type>string</type>
+            </variable>
+            <extension>*.dry</extension>
+            <selectiontext>Select dry points File</selectiontext>
+            <onchange>ddb_Delft3DFLOW_openDryPointsFile</onchange>
+          </element>
+          <element>
+            <tag>pushsavedrypoints</tag>
+            <style>pushselectfile</style>
+            <position>450 35 70 20</position>
+            <tooltipstring>Save dry points file</tooltipstring>
+            <text>Save</text>
+            <variable>
+              <name>DryFile</name>
+              <type>string</type>
+            </variable>
+            <extension>*.dry</extension>
+            <selectiontext>Select dry points File</selectiontext>
+            <onchange>ddb_Delft3DFLOW_saveDryPointsFile</onchange>
           </element>
         </elements>
       </tab>

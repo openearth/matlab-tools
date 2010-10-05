@@ -181,8 +181,6 @@ for i=1:length(elements)
                 [elements(i).handle tabhandles]=tabpanel('create','figure',figh,'tag',panelname,'position',position,'strings',strings,'callbacks',callbacks,'tabnames',tabnames, ...
                     'Parent',parent,'activetabnr',elements(i).activeTabNr);
                 for j=1:length(elements(i).tabs)
-%                    elements(i).tabs(j).elements=addUIElements(figh,elements(i).tabs(j).elements,'subFields',subFields0,'subIndices',subIndices0, ...
-%                        'getFcn',getFcn,'setFcn',setFcn,'Parent',tabhandles(j));
                     elements(i).tabs(j).elements=addUIElements(figh,elements(i).tabs(j).elements,'getFcn',getFcn,'setFcn',setFcn,'Parent',tabhandles(j));
                     set(tabhandles(j),'Tag',elements(i).tabs(j).tag);
                 end
@@ -242,8 +240,6 @@ for i=1:length(elements)
     
     set(elements(i).handle,'Tag',elements(i).tag);
 
-%     setappdata(elements(i).handle,'subFields',subFields0);
-%     setappdata(elements(i).handle,'subIndices',subIndices0);
     setappdata(elements(i).handle,'getFcn',getFcn);
     setappdata(elements(i).handle,'setFcn',setFcn);
     setappdata(elements(i).handle,'element',elements(i));
@@ -251,35 +247,15 @@ for i=1:length(elements)
 end
 
 setappdata(parent,'elements',elements);
-% setappdata(parent,'subFields',subFields);
-% setappdata(parent,'subIndices',subIndices);
 setappdata(parent,'getFcn',getFcn);
 setappdata(parent,'setFcn',setFcn);
 
 setUIElements(elements);
-% %updateUIDependencies(elements,0,getFcn,subFields,subIndices);
-% updateUIDependencies(elements,0,getFcn);
+
+updateUIDependencies(elements,getFcn);
 
 % Set callbacks
 for i=1:length(elements)
-
-%     % Adding subfields for this element
-%     subFields0=subFields;
-%     subIndices0=subIndices;
-%     ns=length(elements(i).subFields);
-%     ns0=length(subFields0);
-%     try
-%     for j=1:ns
-%         if ~isempty(elements(i).subFields{j})
-%             subFields0{ns0+1}=elements(i).subFields{j};
-%             subIndices0{ns0+1}=1;
-%         end
-%     end
-%     catch
-%         shite=1
-%     end
-%     subFields0=elements(i).subFields;
-%     subIndices0=elements(i).subIndices;
 
     try
         
@@ -367,19 +343,17 @@ s=feval(getFcn);
 el=elements(i);
 
 v=get(hObject,'String');
-switch el.varType
+switch el.variable.type
     case{'string'}
     otherwise
         v=str2double(v);
 end
-s=setSubFieldValue(s,subFields,subIndices,el.varName,v);
+s=setSubFieldValue(s,el.variable,v);
 
 feval(setFcn,s);
 
-% Check for dependencies
-if ~isempty(elements(i).dependees)
-    updateUIDependencies(elements,i,getFcn,subFields,subIndices);
-end
+% Update dependees
+updateUIDependees(elements,i,getFcn)
 
 if ~isempty(el.onChangeCallback)
     % Execute on-change callback
@@ -394,13 +368,11 @@ s=feval(getFcn);
 el=elements(i);
 
 v=get(hObject,'Value');
-s=setSubFieldValue(s,subFields,subIndices,el.varName,v);
+s=setSubFieldValue(s,el.variable,v);
 feval(setFcn,s);
 
-% Check for dependencies
-if ~isempty(elements(i).dependees)
-    updateUIDependencies(elements,i,getFcn,subFields,subIndices);
-end
+% Update dependees
+updateUIDependees(elements,i,getFcn)
 
 if ~isempty(el.onChangeCallback)
     % Execute on-change callback
@@ -427,13 +399,11 @@ else
             v=str2double(v);
     end
                         
-    s=setSubFieldValue(s,subFields,subIndices,el.varName,v);
+    s=setSubFieldValue(s,el.variable,v);
     feval(setFcn,s);
     
-    % Check for dependencies
-    if ~isempty(elements(i).dependees)
-        updateUIDependencies(elements,i,getFcn,subFields,subIndices);
-    end
+    % Update dependees
+    updateUIDependees(elements,i,getFcn)
     
     if ~isempty(el.onChangeCallback)
         % Execute on-change callback
@@ -454,20 +424,18 @@ if ~isempty(str{1})
     el=elements(i);
     
     ii=get(hObject,'Value');
-    switch el.varType
+    switch el.variable.type
         case{'string'}
             v=str{ii};
         otherwise
             v=ii;
     end
-    s=setSubFieldValue(s,subFields,subIndices,el.varName,v);
+    s=setSubFieldValue(s,el.variable,v);
     
     feval(setFcn,s);
     
-    % Check for dependencies
-    if ~isempty(elements(i).dependees)
-        updateUIDependencies(elements,i,getFcn,subFields,subIndices);
-    end
+    % Update dependees
+    updateUIDependees(elements,i,getFcn)
     
     if ~isempty(el.onChangeCallback)
         % Execute on-change callback
@@ -491,7 +459,7 @@ if pathname~=0
         filename=[pathname filename];
     end
     v=filename;
-    s=setSubFieldValue(s,subFields,subIndices,el.varName,v);
+    s=setSubFieldValue(s,el.variable,v);
     set(el.textHandle,'enable','on','String',['File : ' v]);
     
     pos=get(el.textHandle,'Position');
@@ -533,15 +501,13 @@ for j=1:length(el.columns)
                 v(k)=data{k,j};
         end
     end
-    s=setSubFieldValue(s,subFields,subIndices,el.columns(j).varName,v);
+    s=setSubFieldValue(s,el.columns(j).variable,v);
 end
 
 feval(setFcn,s);
 
-% Check for dependencies
-if ~isempty(elements(i).dependees)
-    updateUIDependencies(elements,i,getFcn,subFields,subIndices);
-end
+% Update dependees
+updateUIDependees(elements,i,getFcn)
 
 if ~isempty(el.onChangeCallback)
     % Execute on-change callback

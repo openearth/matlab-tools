@@ -288,7 +288,7 @@ set(panel.tabTextHandles(iac),'FontWeight','bold');
 set(panel.blankTextHandles(iac),'Visible','on');
 
 if strcmpi(opt,'withcallback') && ~isempty(panel.callbacks{iac})
-    % Excute callback
+    % Execute callback
     if isempty(panel.inputArguments{iac})
         feval(panel.callbacks{iac});
     else

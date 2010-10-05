@@ -17,15 +17,9 @@ nans(nans==0)=NaN;
 handles.Model(md).Input(ad).Depth=nans;
 handles.Model(md).Input(ad).DepthZ=nans;
 
-% set(handles.GUIHandles.TextMMax,'String',['Grid points in M direction : ' num2str(handles.Model(md).Input(ad).MMax)]);
-% set(handles.GUIHandles.TextNMax,'String',['Grid points in N direction : ' num2str(handles.Model(md).Input(ad).NMax)]);
-% set(handles.GUIHandles.TextGridFile,'String',['File : ' filename]);
-
 setHandles(handles);
 
 setUIElement('delft3dflow.domain.domainpanel.grid.textgridm');
 setUIElement('delft3dflow.domain.domainpanel.grid.textgridn');
 
 ddb_plotGrid(x,y,ad,'FlowGrid','plot');
-
-

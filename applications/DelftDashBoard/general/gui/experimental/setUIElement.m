@@ -3,29 +3,13 @@ function setUIElement(th)
 % Check whether input is handle or tag
 if ischar(th)
     h=findobj(gcf,'Tag',th);
-    tag=th;
 else
     h=th;
-    tag=get(h,'Tag');
 end
-
-% p=get(h,'Parent');
 
 getFcn=getappdata(h,'getFcn');
 
-%elements=getappdata(p,'elements');
-
-%tags={elements.tag};
-
-%i=strmatch(tag,{elements.tag},'exact');
-
 el=getappdata(h,'element');
-
-% subFields=getappdata(el.handle,'subFields');
-% subIndices=getappdata(el.handle,'subIndices');
-
-%subFields=getappdata(el.handle,'subFields');
-%subIndices=getappdata(el.handle,'subIndices');
 
 s=feval(getFcn);
 

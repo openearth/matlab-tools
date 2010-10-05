@@ -64,8 +64,6 @@ if isfield(xml,'elements')
                 s.elements(k).callback       = getnodeval(elxml(k).element,'callback',[],'function');
                 for j=1:length(elxml(k).element.columns)
                     s.elements(k).columns(j).style     = getnodeval(elxml(k).element.columns(j).column,'style',[],'string');
-%                     s.elements(k).columns(j).varName   = getnodeval(elxml(k).element.columns(j).column,'variable',[],'string');
-%                     s.elements(k).columns(j).varType   = getnodeval(elxml(k).element.columns(j).column,'vartype',[],'string');
                     s.elements(k).columns(j).width     = getnodeval(elxml(k).element.columns(j).column,'width',[],'integer');
                     s.elements(k).columns(j).callback  = getnodeval(elxml(k).element.columns(j).column,'callback',[],'function');
                     s.elements(k).columns(j).text      = getnodeval(elxml(k).element.columns(j).column,'text',[],'string');
@@ -74,7 +72,6 @@ if isfield(xml,'elements')
                     s.elements(k).columns(j).format    = getnodeval(elxml(k).element.columns(j).column,'format',[],'string');
                     % Variable
                     if isfield(elxml(k).element.columns(j).column,'variable')
-                        %            s.elements(k).variable=readvariable(elxml(k).element,subFields,subIndices);
                         s.elements(k).columns(j).variable=readVariableXML(elxml(k).element.columns(j).column.variable,subFields,subIndices);
                     end
                 end
@@ -86,8 +83,6 @@ if isfield(xml,'elements')
                 s.elements(k).suffix           = getnodeval(elxml(k).element,'suffix',[],'string');
                 s.elements(k).title            = getnodeval(elxml(k).element,'title',[],'string');
                 s.elements(k).textPosition     = getnodeval(elxml(k).element,'textposition','left','string');
-%                 s.elements(k).varName          = getnodeval(elxml(k).element,'variable',[],'string');
-%                 s.elements(k).varType          = getnodeval(elxml(k).element,'vartype',[],'string');
                 s.elements(k).nrLines          = getnodeval(elxml(k).element,'nrlines',1,'int');
                 s.elements(k).toolTipString    = getnodeval(elxml(k).element,'tooltipstring',[],'string');
                 s.elements(k).fileExtension    = getnodeval(elxml(k).element,'extension',[],'string');
@@ -111,75 +106,45 @@ if isfield(xml,'elements')
             for id=1:length(elxml(k).element.dependencies)
                 
                 s.elements(k).dependencies(id).action=elxml(k).element.dependencies(id).dependency.action;
-                s.elements(k).dependencies(id).checkFor=elxml(k).element.dependencies(id).dependency.checkfor;
-
+                
                 ntgs=length(elxml(k).element.dependencies(id).dependency.tags);
                 for ii=1:ntgs
                     s.elements(k).dependencies(id).tags{ii}=elxml(k).element.dependencies(id).dependency.tags(ii).tag;
-
+                    
                     % Loop through all elements to find
                     % element that control this variable
                     % and set dependees for this variable
                     for jj=1:nrElements
-%                        if ~isempty(s.elements(jj).varName)
                         if ~isempty(s.elements(jj).variable)
                             if strcmpi(s.elements(k).dependencies(id).tags{ii},tmptag{jj})
                                 ndep=length(s.elements(jj).dependees);
                                 ndep=ndep+1;
                                 s.elements(jj).dependees(ndep).tag=s.elements(k).tag;
                                 s.elements(jj).dependees(ndep).dependeeNr=k;
-                                s.elements(jj).dependees(ndep).dependencyNr=id;                                
+                                s.elements(jj).dependees(ndep).dependencyNr=id;
                             end
                         end
                     end
                 end
-                                
+                
                 dep=elxml(k).element.dependencies(id).dependency;
                 
-                for ic=1:length(dep.checks)
+                if isfield(elxml(k).element.dependencies(id).dependency,'checkfor')
+                    s.elements(k).dependencies(id).checkFor=elxml(k).element.dependencies(id).dependency.checkfor;
                     
-                    s.elements(k).dependencies(id).checks(ic).variable=readVariableXML(dep.checks(ic).check.variable,subFields,subIndices);
-%                    s.elements(k).dependencies(id).checks(ic).varName=dep.checks(ic).check.variable;
-                    % Only works now for elements in same subfield!!!
-%                    s.elements(k).dependencies(id).checks(ic).subFields=s.elements(k).subFields;
-%                    s.elements(k).dependencies(id).checks(ic).subIndices=s.elements(k).subIndices;
-                    s.elements(k).dependencies(id).checks(ic).value=dep.checks(ic).check.value;
-%                    s.elements(k).dependencies(id).checks(ic).varType=dep.checks(ic).check.vartype;
-                    s.elements(k).dependencies(id).checks(ic).operator=dep.checks(ic).check.operator;
-
-                    switch lower(dep.checks(ic).check.variable.type)
-                        case{'string'}
-                        otherwise
-                            v=s.elements(k).dependencies(id).checks(ic).value;
-                            s.elements(k).dependencies(id).checks(ic).value=str2double(v);
+                    for ic=1:length(dep.checks)
+                        
+                        s.elements(k).dependencies(id).checks(ic).variable=readVariableXML(dep.checks(ic).check.variable,subFields,subIndices);
+                        s.elements(k).dependencies(id).checks(ic).value=dep.checks(ic).check.value;
+                        s.elements(k).dependencies(id).checks(ic).operator=dep.checks(ic).check.operator;
+                        
+                        switch lower(dep.checks(ic).check.variable.type)
+                            case{'string'}
+                            otherwise
+                                v=s.elements(k).dependencies(id).checks(ic).value;
+                                s.elements(k).dependencies(id).checks(ic).value=str2double(v);
+                        end
                     end
-
-%                     % Set correct variable type (string or numeric) for this check
-%                     for jj=1:nrElements
-%                         if ~isempty(s.elements(jj).varName)
-%                             if strcmpi(s.elements(k).dependencies(id).checks(ic).varName,s.elements(jj).varName)
-%                                 
-%                                 % Element jj controls this checked variable
-%                                 
-%                                 % Change type if necessary
-%                                 switch s.elements(jj).varType
-%                                     case{'string'}
-%                                     otherwise
-%                                         v=s.elements(k).dependencies(id).checks(ic).value;
-%                                         s.elements(k).dependencies(id).checks(ic).value=str2double(v);
-%                                 end
-%                                 
-%                                 % Now set the dependees
-%                                 
-%                                 ndep=length(s.elements(jj).dependees);
-%                                 ndep=ndep+1;
-%                                 s.elements(jj).dependees(ndep).tag=s.elements(k).tag;
-%                                 s.elements(jj).dependees(ndep).dependeeNr=k;
-%                                 s.elements(jj).dependees(ndep).dependencyNr=id;
-%                                 
-%                             end
-%                         end
-%                     end
                 end
             end
         end

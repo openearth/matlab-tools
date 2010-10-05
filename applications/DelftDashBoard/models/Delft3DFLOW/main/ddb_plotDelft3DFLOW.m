@@ -2,8 +2,6 @@ function ddb_plotDelft3DFLOW(handles,opt0,varargin)
 
 imd=strmatch('Delft3DFLOW',{handles.Model(:).Name},'exact');
 
-id=1;
-
 if isempty(varargin)
     n1=1;
     n2=handles.GUIData.NrFlowDomains;

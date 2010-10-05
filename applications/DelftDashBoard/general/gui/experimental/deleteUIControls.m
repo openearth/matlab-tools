@@ -8,7 +8,7 @@ end
 handles=getHandles;
 
 if handles.debugMode
-        
+
     panel=get(handles.Model(md).GUI.elements(1).handle,'UserData');
     
     oldelements=handles.Model(md).GUI.elements;
@@ -42,11 +42,8 @@ if handles.debugMode
     handles.Model(md).GUI.elements=newelements;
     handles.Model(md).GUI.elements(1).position=panel.position;
     elements=handles.Model(md).GUI.elements;
-    subFields{1}='Model';
-    subFields{2}='Input';
-    subIndices={md,1};
     if ~isempty(elements)
-        elements=addUIElements(gcf,elements,'subFields',subFields,'subIndices',subIndices,'getFcn',@getHandles,'setFcn',@setHandles);
+        elements=addUIElements(gcf,elements,'getFcn',@getHandles,'setFcn',@setHandles);
         set(elements(1).handle,'Visible','off');
         handles.Model(md).GUI.elements=elements;
     end
