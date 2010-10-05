@@ -315,10 +315,11 @@ for ifile=1:length(OPT.files)
                 
                 % ... once
                 if ~any(strfind(long_names,[' ',Value]))   % remove redudant long_names (can occur with statistics)
-                if isempty(long_names)
+                  if isempty(long_names)
                     long_names = Value;
-                else
+                  else
                     long_names = [long_names OPT.separator Value];  % needs to be char, ; separatred
+                  end
                 end
 
             end % long_names
