@@ -71,13 +71,9 @@ plot(J,dZM*S/1e6,'.-','displayname','Volumes')
 hold on
 for i=1:length(period)-1
     f=polyval(TREND(i,1:2),period(i):period(i+1));
-    plot(period(i):period(i+1),f,'color',c(i),...
-         'displayname',['Trend ' num2str(period(i)) '-' num2str(period(i+1))...
-         ' = ' T])
-    plot(period(i):period(i+1),f+1.96*TREND(i,3),'color',c(i),'linestyle','--',...
-         'displayname','Trend + 1.96*SE')
-    plot(period(i):period(i+1),f-1.96*TREND(i,3),'color',c(i),'linestyle','--',...
-         'displayname','Trend - 1.96*SE')
+    plot(period(i):period(i+1),f,'color',c(i))
+    plot(period(i):period(i+1),f+1.96*TREND(i,3),'color',c(i),'linestyle','--')
+    plot(period(i):period(i+1),f-1.96*TREND(i,3),'color',c(i),'linestyle','--')
 end
 YL=ylim;
 Y=YL(1)+(YL(2)-YL(1))*0.9;

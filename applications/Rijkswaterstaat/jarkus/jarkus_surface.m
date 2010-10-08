@@ -15,7 +15,7 @@ function S = jarkus_surface(b,e,depth1,depth2,j,varargin)
 %     varargin = if a 6th argument (e.g. '') is given a plot is made
 %
 %   Output:
-%     S        = surface of defined area in km2
+%     S        = surface of defined area in m2
 %
 %   Example: 
 %     S = jarkus_surface(7000150,9011850,-3,-8,1990);
@@ -82,9 +82,6 @@ Y=Y(id);
 areacode=AC(id);
 
 %convert to RD coordinates and calculate surface
-size(Y)
-size([areacode areacode])
-size(X)
 [xRD,yRD] = jarkus_rsp2xy(Y,[areacode areacode],X);
 
 S=polyarea(xRD,yRD);

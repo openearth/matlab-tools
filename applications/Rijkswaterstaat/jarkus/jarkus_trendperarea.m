@@ -9,7 +9,8 @@ function TREND = jarkus_trendperarea(dZM,S,J,period)
 %
 %   Output:
 %     TRENDS   = vector containing: 
-%              1: steepness of trendline (A in Ax+B)
+%              1: steepness of trendline (A in Ax+B) (positive:
+%              sedimentation/increase in bed level)
 %              2: offset of trendline (B in Ax+B)
 %              3: standar error
 %              4: correlation coefficient
