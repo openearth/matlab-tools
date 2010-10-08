@@ -128,7 +128,7 @@ function varargout = opendap_catalog(varargin)
    
 %% remote vs. local url
 
-if ~strcmpi(OPT.url(1:4),'http') & ~strcmpi(OPT.url(end-10:end),'catalog.xml')
+if ~strcmpi(OPT.url(1:4),'http') && ~strcmpi(OPT.url(end-10:end),'catalog.xml')
 
    if OPT.maxlevel > 1
       fprintf(2,'opendap_catalog: maxlevel ignored because request concerns local file system.\n')
@@ -136,6 +136,12 @@ if ~strcmpi(OPT.url(1:4),'http') & ~strcmpi(OPT.url(end-10:end),'catalog.xml')
    
    [nc_file_list,nc_folder_list] = findAllFiles(OPT.url,'pattern_incl','*.nc','recursive',OPT.maxlevel>1);
    
+   % make sure thwere is a file separator at the end of the url field 
+   if strcmp(filesep,OPT.url(end))
+        %do nothing
+   else
+       OPT.url(end+1) = filesep;
+   end
    % make sure we always return the full path
    if OPT.maxlevel<2
       nc_file_list   = cellstr(addrowcol(char(nc_file_list),0,-1,fliplr(OPT.url))); % left-padd path

@@ -231,13 +231,13 @@ if OPT.make
         
         % extend last time interval for visibility period in Google Earth
         date4GE        = date;
-        date4GE(end+1) = date(end);
+        date4GE(end+1) = date(end)+1;
         
         % get dimension info of z
         z_dim_info = nc_getvarinfo(url,'z') ;
         time_dim = strcmp(z_dim_info.Dimension,'time');
         
-        for jj = size(date,1)-1:-1:1
+        for jj = size(date4GE,1)-1:-1:1
             % load z data
             z = nc_varget(url,'z',...
                 [ 0, 0, 0] + (jj-1)*time_dim,...
