@@ -1,7 +1,7 @@
 function varargout = analyseHis(varargin)
 %unstruc.analyseHis   analyse waterlevel time series against OPeNDAP data in time and frequency domain
 %
-%    unstruc.analyseHis(<keyword,value>)
+%    unstruc.analyseHis(<ncfile>,<keyword,value>)
 %
 % * For Delft3D-flow the trih history file can be converted to netCDF
 %   with VS_TRIH2NC such that unstruc.analyseHis also works on it.
@@ -14,32 +14,36 @@ function varargout = analyseHis(varargin)
 %    ncbase = 'F:\opendap\thredds\rijkswaterstaat/waterbase/sea_surface_height'
 %    epsg   = 28992
 %
-%    unstruc.delft3d_opendap2obs('ncbase',ncbase,...
+%    unstruc.delft3d_opendap2obs(ncbase,...
 %                          'epsg', epsg,...
 %                          'file',['F:\unstruc\run01\rijkswaterstaat_waterbase_sea_surface_height_',num2str(epsg),'.obs'])
 %    % ~ run model ~
 %         unstruc.analyseHis('nc','F:\unstruc\run01\trih-s01.nc',...
-%                          'tlim',datenum(1998,[1 5],[1 28]),...
+%                       'datelim',datenum(1998,[1 5],[1 28]),...
 %                        'ncbase',ncbase,...
 %                            'vc','F:\opendap\thredds\noaa/gshhs/gshhs_i.nc')
 %
-% Example: Delft3D-flow, using a local cache of netCDF files
+% Example: Delft3D-flow, using a local cache of netCDF files, making monthly plots
 %
 %    ncbase = 'F:\opendap\thredds\rijkswaterstaat/waterbase/sea_surface_height'
 %    epsg   = 28992
 %
-%    delft3d_opendap2obs('ncbase',ncbase,...
+%    delft3d_opendap2obs(ncbase,...
 %                          'epsg', epsg,...
 %                          'file',['F:\unstruc\run01\rijkswaterstaat_waterbase_sea_surface_height_',num2str(epsg),'.obs'],...
 %                           'grd', 'F:\unstruc\run01\wadden4.grd',...
 %                          'plot', 1)
 %    % ~ run model ~
-%         vs_trih2nc(        'F:\unstruc\run01\trih-s01.dat',...
+%         vs_trih2nc('F:\unstruc\run01\trih-s01.dat',...
 %                          'epsg',epsg)
-%         unstruc.analyseHis('nc','F:\unstruc\run01\trih-s01.nc',...
-%                          'tlim',datenum(1998,[1 5],[1 28]),...
+%         for m=1:12
+%         unstruc.analyseHis('F:\unstruc\run01\trih-s01.nc,...
+%                       'datelim',datenum(1998,[m m+1],1),...
+%                       'datestr','mmm-dd',...
 %                        'ncbase',ncbase,...
-%                            'vc','F:\opendap\thredds\noaa/gshhs/gshhs_i.nc')
+%                            'vc','F:\opendap\thredds\noaa/gshhs/gshhs_i.nc',...
+%                        't_tide',0)
+%         end
 %
 %See also: UNSTRUC, NC_T_TIDE_COMPARE, NC_T_TIDE, T_TIDE
 
@@ -77,7 +81,9 @@ function varargout = analyseHis(varargin)
 
    OPT.nc      = '';
    OPT.ncbase  = 'http://opendap.deltares.nl/thredds/dodsC/opendap\rijkswaterstaat/waterbase/sea_surface_height';
-   OPT.tlim    = [];
+   OPT.datelim = [];
+   OPT.datestr = 'mmm'; % for timeaxis
+   OPT.datefmt = 'yyyy-mm-dd_'; %  make empty if you do not want date in filename
    OPT.t_tide  = 1;
 
    OPT.pause   = 0;
@@ -89,12 +95,23 @@ function varargout = analyseHis(varargin)
    OPT.axis    = [4.6000    6.4000   52.7000   53.6000];
    OPT.vc      = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
    OPT.vc      = 'http://opendap.deltares.nl/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc';
-
-   OPT = setProperty(OPT,varargin{:});
    
    if nargin==0
       varargout = {OPT};
       return
+   end
+   
+   if odd(nargin)
+      OPT.nc   = varargin{1};
+      varargin = {varargin{2:end}};
+   end
+
+   OPT = setProperty(OPT,varargin{:});
+   
+%% add full path to be able to save in its ssubfolders
+
+   if isempty(fileparts(OPT.nc))
+      OPT.nc = fullfile(pwd,OPT.nc)
    end
 
 %% load model data
@@ -123,7 +140,7 @@ for ist=1:length(M.name)
    %             (ii) full netCDF url as name of observation point for direct retrieval
    [bool,ind] = strfindb(dataurls,upper(M.name{ist}));
     dataurl   = dataurls{bool};
-   [D,meta]   = nc_cf_stationTimeSeries(dataurl,OPT.varname,'period',OPT.tlim);
+   [D,meta]   = nc_cf_stationTimeSeries(dataurl,OPT.varname,'period',OPT.datelim([1 end]));
    
 %%  process only if observational data present
    
@@ -135,6 +152,8 @@ for ist=1:length(M.name)
     
 %% plot time series
 
+    OPT.ext = [datestr(OPT.datelim(1),OPT.datefmt),datestr(OPT.datelim(end),OPT.datefmt)];
+
     figure(FIG(1));clf
     
     plot    (M.datenum,M.(OPT.varname)(:,ist),'b','DisplayName','model')
@@ -145,10 +164,10 @@ for ist=1:length(M.name)
     grid on
     ylim    (OPT.ylim)
     ylabel  (['\eta [',meta.(OPT.varname).units,']']);
-    timeaxis(OPT.tlim,'fmt','mmm','tick',-1,'type','text'); %datetick('x')
+    timeaxis(OPT.datelim,'fmt',OPT.datestr,'tick',-1,'type','text'); %datetick('x')
     text    (1,0,'Created with OpenEarthTools <www.OpenEarth.eu>','rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
     
-    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,filename(OPT.nc),'_',M.name{ist}]) % ,'v','t'
+    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,filename(OPT.nc),'_',OPT.ext,M.name{ist}]) % ,'v','t'
     
     %% plot timeseries difference
 
@@ -160,10 +179,10 @@ for ist=1:length(M.name)
     grid on
     ylim    (OPT.ylim)
     ylabel  (['\eta [',meta.(OPT.varname).units,']']);
-    timeaxis(OPT.tlim,'fmt','mmm','tick',-1,'type','text'); %datetick('x')
+    timeaxis(OPT.datelim,'fmt',OPT.datestr,'tick',-1,'type','text'); %datetick('x')
     text    (1,0,'Created with OpenEarthTools <www.OpenEarth.eu>','rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
     
-    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,filename(OPT.nc),'_',M.name{ist},'_diff']) % ,'v','t'
+    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,filename(OPT.nc),'_',OPT.ext,M.name{ist},'_diff']) % ,'v','t'
 
 %% plot time series scatter
 
@@ -200,7 +219,7 @@ for ist=1:length(M.name)
     end
     text    (1,0,'Created with OpenEarthTools <www.OpenEarth.eu>','rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
     
-    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,filename(OPT.nc),'_',M.name{ist},'_scatter']) % ,'v','t'
+    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,filename(OPT.nc),'_',OPT.ext,M.name{ist},'_scatter']) % ,'v','t'
     
 %%  perform tidal analysis
 
