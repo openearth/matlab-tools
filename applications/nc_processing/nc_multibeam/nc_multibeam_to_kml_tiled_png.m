@@ -230,8 +230,8 @@ if OPT.make
         lat = [lat(1,:) + (lat(1,:)-lat(2,:))*.55; lat; lat(end,:) + (lat(end,:)-lat(end-1,:))*.55];
         
         % extend last time interval for visibility period in Google Earth
-        date4GE        = date;
-        date4GE(end+1) = date(end)+1;
+        date4GE          = date;
+        date4GE(end+1,1) = date(end)+1;
         
         % get dimension info of z
         z_dim_info = nc_getvarinfo(url,'z') ;
