@@ -120,8 +120,9 @@ OPT = struct(...
     'W1'         ,[],'W2'       ,[],'W3'       ,[],'W4'       ,[],...
     'L1'         ,[],'L2'       ,[],'L3'       ,[],'L4'       ,[]);
 
-OPT.timeIn = [];
-OPT.timeOut = [];
+   OPT.timeIn    = [];
+   OPT.timeOut   = [];
+   OPT.zScaleFun = @(z) (z+20).*5;
 
 [OPT, Set, Default] = setproperty(OPT, varargin);
 %% pre defined arrow types
@@ -146,7 +147,7 @@ OPT2 = struct(...
 % OPT2.timeIn  = [];
 % OPT2.timeOut = [];
 OPT2.dateStrStyle = 'yyyy-mm-ddTHH:MM:SS';
-
+OPT2.zScaleFun = OPT.zScaleFun;
 
 switch lower(OPT.arrowStyle)
     case 'default'
@@ -192,7 +193,7 @@ end
 
 lat         = lat(:)';
 lon         = lon(:)';
-z           =   z(:)';
+z           = OPT.zScaleFun(z(:)');
 u           =   u(:)';
 v           =   v(:)';
 

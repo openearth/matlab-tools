@@ -1,5 +1,5 @@
 function delft3d_io_meteo_read_test()
-%DELFT3D_IO_METEO_TEST   Test script for delft3d_io_meteo
+%DELFT3D_IO_METEO_READ_TEST   Test script for delft3d_io_meteo
 %
 %   reads test files created by delft3d_io_meteo_write_test
 %

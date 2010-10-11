@@ -1,5 +1,5 @@
 function varargout = delft3d_io_adm(cmd,varargin)
-% READADM  reads Delft3D nest *.adm file with BETA neumann extension (BETA)
+% DELFT3D_IO_ADM  reads Delft3D nest *.adm file with BETA neumann extension (BETA)
 %
 % [bnd1,bnd2] = delft3d_io_adm('read',filename)
 % [bnd1     ] = delft3d_io_adm('read',filename,1)

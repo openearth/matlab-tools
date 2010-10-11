@@ -4,21 +4,15 @@
 %
 %    addpath('C:\Delft3D\w32\matlab\')
 %
-% Note that any useful functions in C:\Delft3D\w32\matlab\private\ only
-% work when you copy them to one directory level up.
+% Note functions in C:\Delft3D\w32\matlab\private\ only work when you copy them one level up.
 %
 % Files
-%   d3d_sigma                  - Calculates the relative vertical sigma positions in %
-%   d3d_z                      - Calculates the absolute z-layer positions in m
-%   delft3d_grd2kml            - Save grid (and depth) file as kml feed for Google Earth
-%   delft3d_grid_image         - Show ASCII image of Delft3D grid matrix
-%   delft3d_io_ann             - Read annotation files in a nan-separated list struct (*.ann)  (BETA VERSION)
+%   d3d_sigma           - Calculates the relative vertical sigma positions in %
+%   d3d_z               - Calculates the absolute z-layer positions in m
+%   delft3d_grid_image  - Show ASCII image of Delft3D grid matrix
+%   delft3d_io_ann      - Read annotation files in a nan-separated list struct (*.ann)  (BETA VERSION)
 %
 % NEFIS file format related
-%
-%   vs_trim2netcdf                   - Convert part of a Delft3D trim file to netCDF (BETA)
-%   delft3d_3d_visualisation_example - Example to make 3D graphics from delft3d trim file
-%
 %   vs_area                    - read INCORRECT cell areas from com-file.
 %   vs_get_constituent_index   - Read index information required to read constituents by name.
 %   vs_get_elm_def             - Read NEFIS Element data
@@ -44,13 +38,17 @@
 %   vs_trih_station_index      - Read index of history station (obs point)
 %   vs_trim_station            - Read timeseries from one location from map file
 %   vs_trim2kml                - make a Google Earth movie of a scaler variable
-%   vs_trim2netcdf             - Convert part of a Delft3D trim file to netCDF (BETA)
+%   vs_trim2nc                 - Convert part of a Delft3D trim file to netCDF (BETA)
+%
+%   delft3d_grd2kml                      - Save grid (and depth) file as kml feed for Google Earth
+%   delft3d_3d_visualisation_example     - Example to make 3D graphics image
+%   delft3d_3d2kml_visualisation_example - Example to make 3D graphics for Google Earth
 %
 % Toolboxes
-%   flow                       - tools related to Delft3D-flow
-%   part                       - tools related to Delft3D-part
-%   tide                       - tools related to Delft3D-tide
-%   waq                        - tools related to Delft3D-waq
+%   flow  - tools related to Delft3D-flow
+%   part  - tools related to Delft3D-part
+%   tide  - tools related to Delft3D-tide
+%   waq   - tools related to Delft3D-waq
 %
 %See also: 
 
