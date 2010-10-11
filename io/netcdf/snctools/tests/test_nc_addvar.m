@@ -28,6 +28,7 @@ function test_nc_addvar ( ncfile )
 %     shuffle
 %     deflate
 %     chunking + shuffle + deflate
+%     uint type
 
 fprintf('Testing NC_ADDVAR ...\n');
 
@@ -39,7 +40,6 @@ run_nc3_tests(ncfile);
 run_hdf4_tests('foo.hdf');
 run_nc4_tests(ncfile);
 
-fprintf('OK\n');
 return
 
 
@@ -112,6 +112,12 @@ test_with_attributes ( ncfile, create_mode );
 test_numeric_nctype ( ncfile, create_mode );
 test_var_already_there ( ncfile, create_mode );
 test_illegal_field_name ( ncfile, create_mode );
+%test_illegal_type(ncfile,'uint8',create_mode);
+test_illegal_type(ncfile,'uint16',create_mode);
+test_illegal_type(ncfile,'uint32',create_mode);
+test_illegal_type(ncfile,'int64',create_mode);
+test_illegal_type(ncfile,'uint64',create_mode);
+
 
 test_1d_no_chunking(ncfile);
 test_1d_chunking(ncfile);
@@ -120,6 +126,7 @@ test_2d_bad_chunking(ncfile);
 test_2d_shuffle(ncfile);
 test_2d_deflate(ncfile);
 test_2d_chunking_shuffle_deflate(ncfile);
+test_nc4_fill_value(ncfile);
 fprintf('OK\n');
 return
 
@@ -336,7 +343,6 @@ end
 
 
 
-
 %--------------------------------------------------------------------------
 function test_2d_chunking_shuffle_deflate (ncfile)
 
@@ -369,6 +375,32 @@ end
 if v.Deflate ~= 9
 	error('2D deflate test failed');
 end
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_nc4_fill_value (ncfile)
+
+
+nc_create_empty (ncfile,nc_netcdf4_classic);
+nc_adddim ( ncfile, 'x', 500 );
+nc_adddim ( ncfile, 'y', 100 );
+
+clear varstruct;
+varstruct.Name = 'z';
+varstruct.Datatype = 'double';
+varstruct.Dimension = { 'y', 'x' };
+varstruct.Attribute.Name = '_FillValue';
+varstruct.Attribute.Value = -999;
+nc_addvar ( ncfile, varstruct );
+fv = nc_attget(ncfile,'z','_FillValue');
+if (fv ~= -999)
+    error('failed');
+end
+
 
 
 
@@ -762,7 +794,6 @@ return
 
 
 
-
 %--------------------------------------------------------------------------
 function test_var_already_there (ncfile,mode)
 
@@ -775,6 +806,26 @@ varstruct.Name = 'x';
 varstruct.Datatype = 'double';
 varstruct.Dimension = { 'x' };
 nc_addvar ( ncfile, varstruct );
+try
+    nc_addvar ( ncfile, varstruct );
+catch %#ok<CTCH>
+    return
+end
+error('succeeded when it should have failed');
+
+
+
+%--------------------------------------------------------------------------
+function test_illegal_type(ncfile,dtype,mode)
+
+nc_create_empty (ncfile,mode);
+nc_adddim ( ncfile, 'x', 5 );
+
+clear varstruct;
+varstruct.Name = 'x';
+varstruct.Datatype = dtype;
+varstruct.Dimension = { 'x' };
+
 try
     nc_addvar ( ncfile, varstruct );
 catch %#ok<CTCH>

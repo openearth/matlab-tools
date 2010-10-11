@@ -86,7 +86,7 @@ else
     end
 end
 
-if getpref('SNCTOOLS','PRESERVE_FVD')
+if getpref('SNCTOOLS','PRESERVE_FVD',false)
     vinfo.Dimension = fliplr(vinfo.Dimension);
     vinfo.Size = fliplr(vinfo.Size);
 end

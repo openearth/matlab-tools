@@ -20,13 +20,14 @@ elseif isa(ncfile,'ucar.nc2.dods.DODSNetcdfFile')
 	jncid = ncfile;
 	close_it = false;
 elseif exist(ncfile,'file')
+    % non-opendap HTTP?
 	jncid = NetcdfFile.open(ncfile);
 else
 	try 
 		jncid = NetcdfFile.open ( ncfile );
 	catch %#ok<CTCH>
 		try
-			jncid = DODSNetcdfFile(ncfile);
+            jncid = snc_opendap_open(ncfile);
 		catch %#ok<CTCH>
 			error ( 'SNCTOOLS:nc_varget_java:fileOpenFailure', ...
 				'Could not open ''%s'' with java backend.' , ncfile);
@@ -85,9 +86,9 @@ end
 % rest of the variable.
 negs = find(count<0);
 if ~isempty(stride)
-count(negs) = floor((the_var_size(negs) - start(negs))./stride(negs));
+    count(negs) = floor((the_var_size(negs) - start(negs))./stride(negs));
 else
-count(negs) =        the_var_size(negs) - start(negs);
+    count(negs) =        the_var_size(negs) - start(negs);
 end
 
 
@@ -95,8 +96,8 @@ end
 % Java expects in C-style order.
 preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
 if preserve_fvd
-    start  = fliplr(start);
-    count  = fliplr(count);
+    start = fliplr(start);
+    count = fliplr(count);
     stride = fliplr(stride);
 end
 

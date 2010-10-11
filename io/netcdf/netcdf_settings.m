@@ -100,6 +100,9 @@ function netcdf_settings(varargin)
                                               %    (i)  we have some LARGE datasets and need a performance boost
                                               %    (ii) some use the netCDF API directly which does not do this. 
                                               %    May break previous work though ...
+                                              
+       %% add basic authentication class
+       javaaddpath('F:\checkouts\OpenEarthTools\matlab\io\netcdf\snctools\classes\')                                              
    
        if ~(OPT.quiet)
            disp(['  netCDF: JAVA library for OPeNDAP support added: ',filename(java2add)]);

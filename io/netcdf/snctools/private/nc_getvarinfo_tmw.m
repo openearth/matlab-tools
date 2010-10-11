@@ -10,7 +10,7 @@ if ischar(arg1) && ischar(arg2)
 
     ncid=netcdf.open(ncfile,nc_nowrite_mode);
     try
-        varid = netcdf.inqVarid(ncid, varname);
+        varid = netcdf.inqVarID(ncid, varname);
         Dataset = get_varinfo_tmw ( ncid,  varid );
     catch me
         netcdf.close(ncid);

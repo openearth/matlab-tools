@@ -43,7 +43,7 @@ try
     retrieve_as_double = false;
     try
         att_type = netcdf.inqAtt(ncid, varid, '_FillValue' );
-        if ( att_type == var_type )
+        if ( att_type == var_type ) | isnan(netcdf.getAtt(ncid, varid, '_FillValue' ))
             use_fill_value = true;
             retrieve_as_double = true;
         else
@@ -57,7 +57,7 @@ try
     try
         att_type = netcdf.inqAtt(ncid, varid, 'missing_value' );
         if ~use_fill_value
-            if (att_type == var_type)
+            if (att_type == var_type) | isnan(netcdf.getAtt(ncid, varid, 'missing_value' ))
                 % fill value trumps missing values
                 use_missing_value = true;
                 retrieve_as_double = true;

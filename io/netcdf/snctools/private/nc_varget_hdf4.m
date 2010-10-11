@@ -45,6 +45,13 @@ elseif isempty(stride)
     stride = ones(1,numel(v.Size));
 end
 
+negs = find(edge<0);
+if ~isempty(stride)
+    edge(negs) = floor((v.Size(negs) - start(negs))./stride(negs));
+else
+    edge(negs) =        v.Size(negs) - start(negs);
+end
+
 if preserve_fvd
     start = fliplr(start);
     edge = fliplr(edge);

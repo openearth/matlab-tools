@@ -7,7 +7,7 @@ if isa(arg1,'char') && isa(arg2,'char')
 	if exist(arg1,'file')
 		jncid = NetcdfFile.open(arg1);
 	else
-		jncid = DODSNetcdfFile(arg1);
+        jncid = snc_opendap_open(ncfile);
 	end
 	dim = jncid.findDimension(arg2);
 elseif isa(arg1,'ucar.nc2.NetcdfFile') ...

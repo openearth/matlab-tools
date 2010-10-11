@@ -20,7 +20,11 @@ end
 [signature,count] = fread(afid,8,'uint8=>uint8');
 fclose(afid);
 
-if (strcmp(char(signature(1:4))', 'GRIB')) && (signature(8) == 1)
+if count < 4
+    error('SNCTOOLS:snc_format:truncatedFile', ...
+        '''%s'' is less than four bytes long, so it must have been truncated.', ...
+        theFile)
+elseif (strcmp(char(signature(1:4))', 'GRIB')) && (signature(8) == 1)
     % GRIB : bytes 1-4 are 'GRIB', and byte 8 is 1.
 	fmt = 'GRIB';
 	return

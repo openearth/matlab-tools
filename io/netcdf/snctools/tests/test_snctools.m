@@ -39,6 +39,17 @@ warning('on', 'SNCTOOLS:nc_diff:deprecated' );
 warning('on', 'SNCTOOLS:nc_getall:deprecated' );
 warning('on', 'SNCTOOLS:snc2mat:deprecated' );
         
+fprintf('If this is the first time you have run SNCTOOLS, then you should\n');
+fprintf('know that several preferences have been set.\n');
+
+getpref('SNCTOOLS')
+
+fprintf('Only the ''USE_JAVA'' and ''PRESERVE_FVD'' preferences are important\n');
+fprintf('for daily use of SNCTOOLS.  ''USE_STD_HDF4_SCALING'' need only be\n');
+fprintf('used when dealing with HDF4 data (and even then almost never).\n');
+fprintf('Check the top-level README for details.  The other preferences are \n');
+fprintf('useful only for testing purposes.\n');
+
 return
 
 
@@ -57,7 +68,7 @@ test_nc_attget;
 test_nc_datatype_string;
 test_nc_iscoordvar;
 test_nc_isunlimitedvar;
-test_nc_dump;
+%test_nc_dump;
 test_nc_getlast;
 test_nc_isvar;
 test_nc_varsize;

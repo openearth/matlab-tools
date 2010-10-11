@@ -105,10 +105,18 @@ end
 
 
 v = version('-release');
+mv = mexnc('inq_libvers');
 switch(v)
 case { '2008b','2009a','2009b'}
-    if ( numel(x) ~= 1 )
-        error ( 'retrieved attribute was not one char in length' );
+    if mv(1) == '4'
+        % netcdf-4 capable mex-file
+        if numel(x) ~= 0
+            error('failed');
+        end
+    else
+        if( numel(x) ~= 1 )
+            error ( 'retrieved attribute was not one char in length' );
+        end
     end
     %%% If you have applied the fix for bug #609383, then
     %%% comment out the code above and uncomment the
@@ -194,9 +202,14 @@ function test_read_write_uint8_att ( ncfile )
 nc_attput ( ncfile, nc_global, 'new_att5', uint8(0) );
 x = nc_attget ( ncfile, nc_global, 'new_att5' );
 
+        
 info = nc_info(ncfile);
 if strcmp(info.Format,'HDF4')
     if ~strcmp(class(x), 'uint8' )
+        error('class of retrieved attribute was not uint8.' );
+    end
+elseif strfind(info.Format,'NetCDF-4')
+    if ~isa(x,'uint8')
         error('class of retrieved attribute was not uint8.' );
     end
 elseif  ~strcmp(class(x), 'int8' )

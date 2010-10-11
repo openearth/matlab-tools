@@ -1,6 +1,43 @@
-function values = nc_attget_tmw(ncfile, varname, attribute_name )
+function values = nc_attget_tmw(ncfile,varname,attrname)
 
-ncid = netcdf.open(ncfile,nc_nowrite_mode);
+ncid=netcdf.open(ncfile,'NOWRITE');
+
+% Assume that the location is in the root group until we know
+% otherwise.  
+gid = ncid;
+
+
+% If the library is > 4 and the format is unrestricted netcdf-4, then we
+% may need to drill down thru the groups.
+lv = netcdf.inqLibVers;
+if lv(1) == '4'
+    fmt = netcdf.inqFormat(ncid);
+    if strcmp(fmt,'FORMAT_NETCDF4') && (numel(strfind(varname,'/')) > 0)
+        varpath = regexp(varname,'/','split');
+        for k = 2:numel(varpath)-1
+            gid = netcdf.inqNcid(gid,varpath{k});
+        end
+        
+        % Is it a group or a variable?
+        try
+            gid_last = netcdf.inqNcid(gid,varpath{end});
+            % It's a group.
+            loc_id = gid_last;
+            varid = -1;
+        catch me
+            loc_id = gid;
+            varid = netcdf.inqVarID(loc_id,varpath{end});
+        end
+        values = netcdf.getAtt(loc_id,varid,attrname);
+        netcdf.close(ncid);
+            
+        return
+    end
+end
+
+
+
+% Backwards compat mode.
 try
 
     switch class(varname)
@@ -16,7 +53,7 @@ try
 
     end
 
-    values = netcdf.getAtt(ncid,varid,attribute_name);
+    values = netcdf.getAtt(ncid,varid,attrname);
 	netcdf.close(ncid);
 	return
 
@@ -49,7 +86,7 @@ end
 
 if ( strcmpi(varname,'global') )
     try 
-        varid = netcdf.inqVarid(ncid,varname);
+        varid = netcdf.inqVarID(ncid,varname);
         return
     catch %#ok<CTCH>
         %
@@ -61,7 +98,7 @@ if ( strcmpi(varname,'global') )
         return;
     end
 else
-    varid = netcdf.inqVarId(ncid,varname);
+    varid = netcdf.inqVarID(ncid,varname);
 end
 
 

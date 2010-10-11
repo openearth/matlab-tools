@@ -1,25 +1,18 @@
 function nc_padheader ( ncfile, num_bytes )
-% NC_PADHEADER:  pads the metadata header of a netcdf file
+%NC_PADHEADER  pad header of netCDF-3 file.
+%   nc_padheader(NCFILE,NUM_BYTES) pads the header of a netCDF-3 file
+%   NCFILE with NUM_BYTES bytes.
+% 
+%   When a netCDF file gets very large, adding new attributes can become
+%   a time-consuming process.  This can be mitigated by padding the 
+%   netCDF header with additional bytes.  Subsequent new attributes will
+%   not result in long time delays unless the length of the new 
+%   attribute exceeds that of the header.
 %
-% When a netCDF file gets very large, adding new attributes can become
-% a time-consuming process.  This can be mitigated by padding the 
-% netCDF header with additional bytes.  Subsequent new attributes will
-% not result in long time delays unless the length of the new 
-% attribute exceeds that of the header.
+%   This routine should not be used with a netCDF-4 file.
 %
-% USAGE:  nc_padheader ( ncfile, num_bytes );
-%
-% In case of an error, an exception is thrown.
-%
+%   See also:  nc_create_empty.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% $Id$
-% $LastChangedDate$
-% $LastChangedRevision$
-% $LastChangedBy$
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 error(nargchk(2,2,nargin,'struct'));
 

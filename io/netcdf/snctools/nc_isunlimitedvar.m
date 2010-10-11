@@ -1,35 +1,41 @@
-function bool = nc_isunlimitedvar ( ncfile, varname )
-% NC_ISUNLIMITEDVAR:  determines if a variable has an unlimited dimension
+function tf = nc_isunlimitedvar ( ncfile, varname )
+%NC_ISUNLIMITEDVAR determine if variable has unlimited dimension.
 %
-% BOOL = NC_ISUNLIMITEDVAR ( NCFILE, VARNAME ) returns TRUE if the netCDF
-% variable VARNAME in the netCDF file NCFILE has an unlimited dimension, 
-% and FALSE otherwise.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   TF = NC_ISUNLIMITEDVAR(NCFILE,VARNAME) returns true if the netCDF
+%   variable VARNAME in the netCDF file NCFILE has an unlimited dimension,
+%   and false otherwise.
 %
-% $Id$
-% $LastChangedDate$
-% $LastChangedRevision$
-% $LastChangedBy$
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   See also:  nc_info
 
 
+v = version('-release');
+switch(v)
+    case { '14', '2006a', '2006b', '2007a' }
+        tf = snc_is_unlimitedvar_lt_2007b(ncfile,varname);
+     
+    otherwise
+        tf = snc_is_unlimitedvar(ncfile,varname);
+        
+end
+
+
+
+
+%--------------------------------------------------------------------------
+function tf = snc_is_unlimitedvar_lt_2007b(ncfile,varname)
 try
     DataSet = nc_getvarinfo ( ncfile, varname );
 catch %#ok<CTCH>
     e = lasterror; %#ok<LERR>
     switch ( e.identifier )
         case { 'SNCTOOLS:NC_GETVARINFO:badVariableName', ...
-               'SNCTOOLS:NC_VARGET:MEXNC:INQ_VARID', ...
-	       'MATLAB:netcdf:inqVarID:variableNotFound' }
-            bool = false;
+                'SNCTOOLS:NC_VARGET:MEXNC:INQ_VARID', ...
+                'MATLAB:netcdf:inqVarID:variableNotFound' }
+            tf = false;
             return
         otherwise
             error('SNCTOOLS:NC_ISUNLIMITEDVAR:unhandledCondition', e.message );
     end
 end
 
-bool = DataSet.Unlimited;
-
-return;
+tf = DataSet.Unlimited;

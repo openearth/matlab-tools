@@ -11,7 +11,7 @@ function nc_addvar(ncfile,varstruct)
 %                   'char'. If omitted, this defaults to 'double'.
 %      Dimension  - a cell array of dimension names.
 %      Attribute  - a structure array.  Each element has two fields, 'Name'
-%                   and 'Value'.
+%                   and 'Value'.   
 %      Chunking   - defines the chunk size.  This can only be used with 
 %                   netcdf-4 files.  The default value is [], which
 %                   specifies no chunking.
@@ -30,21 +30,26 @@ function nc_addvar(ncfile,varstruct)
 %      nc_create_empty('myfile.nc');
 %      nc_adddim('myfile.nc','lon',361);
 %      nc_adddim('myfile.nc','lat',181);
-%      varstruct.Name = 'earth';
-%      varstruct.Datatype = 'double';
-%      varstruct.Dimension = { 'lat','lon' };
-%      nc_addvar('myfile.nc',varstruct);
+%      v1.Name = 'earth';
+%      v1.Datatype = 'double';
+%      v1.Dimension = { 'lat','lon' };
+%      nc_addvar('myfile.nc',v1);
+%      nc_dump('myfile.nc');
 %
-%   Example:  create an HDF file with a dataset called 'earth' that depends
-%   upon two dimensions, 'lat' and 'lon'.  Recall that the HDF form creates
-%   coordinate variables when defining dimensions.
-%      nc_create_empty('myfile.hdf','hdf4');
-%      nc_adddim('myfile.hdf','lon',361);
-%      nc_adddim('myfile.hdf','lat',181);
-%      v.Name = 'earth';
-%      v.Datatype = 'double';
-%      v.Dimension = { 'lat','lon' };
-%      nc_addvar('myfile.hdf',v);
+%   Example:  create a variable called 'mars' in a netCDF-4 classic file
+%   that has two dimensions, 'lat' and 'lon'.  Use 10x10 chunking scheme
+%   and turn on full deflate compression.
+%      nc_create_empty('myfile.nc', nc_netcdf4_classic);
+%      nc_adddim('myfile.nc','lon',361);
+%      nc_adddim('myfile.nc','lat',181);
+%      v2.Name = 'mars';
+%      v2.Datatype = 'double';
+%      v2.FillValue = -999;
+%      v2.Dimension = { 'lat','lon' };
+%      v2.Chunking = [10 10];
+%      v2.Deflate = 9;
+%      nc_addvar('myfile.nc',v2);
+%      nc_dump('myfile.nc');
 %
 %   See also nc_adddim.
 
@@ -189,47 +194,6 @@ return
 
 
 %--------------------------------------------------------------------------
-function nc_addvar_tmw(ncfile,varstruct)
-
-ncid = netcdf.open(ncfile, nc_write_mode );
-
-%
-% determine the dimids of the named dimensions
-num_dims = length(varstruct.Dimension);
-dimids = zeros(1,num_dims);
-for j = 1:num_dims
-    dimids(1,j) = netcdf.inqDimID(ncid, varstruct.Dimension{j} );
-end
-
-% If we are old school, we need to flip the dimensions.
-if ~getpref('SNCTOOLS','PRESERVE_FVD',false)
-    dimids = fliplr(dimids);
-end
-
-%
-% go into define mode
-netcdf.reDef(ncid);
-
-% Prefer to use Datatype instead of Nctype.
-if isfield(varstruct,'Datatype')
-    netcdf.defVar(ncid, varstruct.Name, varstruct.Datatype, dimids );
-else 
-    % Backwards compatible mode.
-    netcdf.defVar(ncid, varstruct.Name, varstruct.Nctype, dimids );
-end
-
-
-netcdf.endDef(ncid );
-netcdf.close(ncid );
-
-
-
-
-
-
-
-    
-%--------------------------------------------------------------------------
 function nc_addvar_mexnc(ncfile,varstruct)
 
 [ncid, status] = mexnc ( 'open', ncfile, nc_write_mode );
@@ -338,7 +302,7 @@ return
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%--------------------------------------------------------------------------
 function varstruct = validate_varstruct ( varstruct )
 
 %
@@ -349,7 +313,7 @@ if ~isfield ( varstruct, 'Name' )
 	        'structure argument must have at least the ''Name'' field.' );
 end
 
-%
+
 % Check that required fields are there.
 % Default datatype is double
 if ~isfield(varstruct,'Datatype')
@@ -361,7 +325,7 @@ if ~isfield(varstruct,'Datatype')
 
 end
 
-%
+
 % Are there any unrecognized fields?
 fnames = fieldnames ( varstruct );
 for j = 1:length(fnames)
@@ -371,11 +335,10 @@ for j = 1:length(fnames)
     case { 'Datatype', 'Nctype', 'Name', 'Dimension', 'Attribute', ...
             'Storage', 'Chunking', 'Shuffle', 'Deflate', 'DeflateLevel' }
 
-        %
         % These are used to create the variable.  They are ok.
         
     case { 'Unlimited', 'Size', 'Rank' }
-        %
+       
         % These come from the output of nc_getvarinfo.  We don't 
         % use them, but let's not give the user a warning about
         % them either.
@@ -413,6 +376,11 @@ switch ( varstruct.Datatype )
         varstruct.Datatype = 'short';
     case { 'int8','uint8' }
         varstruct.Datatype = 'byte';
+    
+    case { 'uint16', 'uint32', 'int64', 'uint64' }
+        error('SNCTOOLS:NC_ADDVAR:notClassicDatatype', ...
+            'Datatype ''%s'' is not a classic model datatype.', ...
+            varstruct.Datatype);
         
     otherwise
         error ( 'SNCTOOLS:NC_ADDVAR:unknownDatatype', 'unknown type ''%s''\n', mfilename, varstruct.Datatype );

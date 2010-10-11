@@ -16,13 +16,6 @@ function nc_attput(ncfile,varname,attname,attval)
 %       nc_attput('myfile.nc',nc_global,'history',attval);
 %       nc_dump('myfile.nc');
 %
-%   Example:  write a global attribute to an HDF4 file.
-%       srcfile = fullfile(matlabroot,'toolbox','matlab','demos','example.hdf')
-%       copyfile(srcfile,'myfile.hdf');
-%       fileattrib('myfile.hdf','+w');
-%       nc_attput('myfile.hdf',nc_global,'timestamp',datestr(now));
-%       nc_dump('myfile.hdf');
-%
 %   See also nc_attget.
 %
 

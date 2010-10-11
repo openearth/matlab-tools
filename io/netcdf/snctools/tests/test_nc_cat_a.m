@@ -15,11 +15,13 @@ function test_nc_cat_a ( )
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fprintf ( 1, 'NC_CAT_A: starting test suite ... \n' );
+fprintf('Testing NC_CAT_A ... \n' );
 
 test_cat_empty_files;
 test_wrong_number_of_inputs;
 test_simple;
+
+fprintf('OK\n');
 
 return;
 

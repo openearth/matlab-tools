@@ -76,6 +76,7 @@ catch me
     end
     switch(me.identifier)
         case {'MATLAB:netcdf:renameVar:nameIsAlreadyInUse', ...
+                'MATLAB:netcdf:renameVar:enameinuse:nameIsAlreadyInUse', ...
                 'SNCTOOLS:NC_VARGET:MEXNC:RENAME_VAR' }
             return
         otherwise
@@ -107,6 +108,7 @@ catch me
     end
     switch(me.identifier)
         case {'MATLAB:netcdf:inqVarID:variableNotFound', ...
+                'MATLAB:netcdf:inqVarID:enotvar:variableNotFound', ...
                 'SNCTOOLS:NC_VARGET:MEXNC:INQ_VARID' }
             return
         otherwise
@@ -143,6 +145,7 @@ catch me
     end
     switch(me.identifier)
         case {'MATLAB:netcdf:inqVarID:variableNotFound', ...
+                'MATLAB:netcdf:inqVarID:enotvar:variableNotFound', ...
                 'SNCTOOLS:NC_VARGET:MEXNC:INQ_VARID' }
             return
         otherwise
@@ -183,6 +186,7 @@ catch me
     end
     switch(me.identifier)
         case {'MATLAB:netcdf:inqVarID:variableNotFound', ...
+                'MATLAB:netcdf:inqVarID:enotvar:variableNotFound', ...
                 'SNCTOOLS:NC_VARGET:MEXNC:INQ_VARID' }
             return
         otherwise

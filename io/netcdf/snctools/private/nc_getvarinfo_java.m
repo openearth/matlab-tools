@@ -23,7 +23,7 @@ else
 		jncid = NetcdfFile.open ( ncfile );
 	catch %#ok<CTCH>
 		try
-			jncid = DODSNetcdfFile(ncfile);
+            jncid = snc_opendap_open(ncfile);
 		catch %#ok<CTCH>
 			error ( 'SNCTOOLS:nc_varget_java:fileOpenFailure', ...
 				'Could not open ''%s'' with java backend.' , ncfile);

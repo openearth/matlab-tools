@@ -1,15 +1,15 @@
 function nc_dump(file_name, varargin)
 %nc_dump  Print netCDF metadata.
-%   NC_DUMP(NCFILE) prints metadata about the netCDF file NCFILE.  NC_DUMP
+%   NC_DUMP(NCFILE) displays metadata about the netCDF file NCFILE.  NC_DUMP
 %   is a counterpart to the 'ncdump' utility that comes with the netCDF
 %   library.
 %
-%   NC_DUMP(NCFILE,VARNAME) prints metadata about just the one netCDF 
-%   variable named VARNAME.
+%   NC_DUMP(NCFILE,LOCATION) displays metadata for LOCATION, which may be
+%   either a variable in the root group or a netcdf-4 group.
 %
-%   NC_DUMP(NCFILE,<VARNAME>,fid) prints output to file opened 
+%   NC_DUMP(NCFILE,<LOCATION>,fid) prints output to file opened 
 %   with fid = fopen(...) instead of to screen (default fid=1: screen).
-%   NC_DUMP(NCFILE,VARNAME,<'fname'>) prints output to new file 'fname'.
+%   NC_DUMP(NCFILE,LOCATION,<'fname'>) prints output to new file 'fname'.
 %
 %   If the preference 'USE_JAVA' is set to true and netcdf-java is on the
 %   javaclasspath, NC_DUMP can also display metadata for GRIB2 files and 
@@ -29,24 +29,20 @@ function nc_dump(file_name, varargin)
 %
 %   See also nc_info.
 
-if nargin == 2
-if ischar(varargin{1})
-    do_restricted_variable = true;
-    restricted_variable    = varargin{1};
-    if nargin==3
-        fid                    = varargin{2};
-    else
-        fid                    = 1;
-    end
-elseif isnumeric(varargin{1})
-    do_restricted_variable = false;    
-    restricted_variable    = [];
-    fid                    = varargin{1};
-end
-else
-    do_restricted_variable = false;    
-    restricted_variable    = [];
-    fid                    = 1;
+location = ''; 
+fid = 1;
+switch(nargin)
+    case 2
+        if ischar(varargin{1})
+            location = varargin{1};
+        else
+            fid = varargin{1};
+        end
+        
+    case 3
+        location = varargin{1};
+        fid = varargin{2};
+
 end
 
 if ischar(fid)
@@ -56,14 +52,14 @@ else
     close_fid = 0;    
 end
 
-metadata = nc_info ( file_name );
+info = nc_info ( file_name );
 
+fprintf (fid, '%s %s {\n', info.Format, info.Filename );
 
-fprintf (fid, '%s %s { \n\n', metadata.Format, metadata.Filename );
-dump_dimension_metadata( metadata, fid );
-dump_variable_metadata ( metadata, restricted_variable, fid);
-if ( do_restricted_variable == false )
-    dump_global_attributes ( metadata , fid );
+if strcmp(info.Format,'NetCDF-4')
+    dump_group(info,true,location,fid);
+else
+    dump_group(info,false,location,fid);
 end
 
 if close_fid
@@ -72,25 +68,60 @@ end
 
 return;
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function dump_dimension_metadata ( metadata, fid )
+%--------------------------------------------------------------------------
+function dump_group(group,dump_group_name,restricted_variable,fid)
 
-if isfield ( metadata, 'Dimension' )
-    num_dims = length(metadata.Dimension);
+if dump_group_name
+    fprintf('\nGroup ''%s'' {\n', group.Name);
+end
+
+dump_dimension_metadata(group, fid );
+dump_variables(group.Dataset,restricted_variable,fid);
+if isempty(restricted_variable)
+    if isfield(group,'Name') && strcmp(group.Name,'/')
+        dump_group_attributes(group,fid,true);
+    else
+        dump_group_attributes(group,fid,false);
+    end
+end
+
+
+if isfield(group,'Group') && numel(group.Group) > 0 
+    for j = 1:numel(group.Group)
+        dump_group(group.Group(j),dump_group_name,restricted_variable,fid);
+    end
+end
+
+if dump_group_name
+    fprintf(fid,'} End Group ''%s''\n', group.Name);
+else
+    fprintf('}\n');
+end
+fprintf('\n');
+
+
+return
+
+
+%--------------------------------------------------------------------------
+function dump_dimension_metadata(info,fid)
+
+if isfield(info,'Dimension' )
+    num_dims = numel(info.Dimension);
 else
     num_dims = 0;
 end
 
-fprintf (fid, 'dimensions:\n' );
+fprintf(fid,'\ndimensions:\n');
 for j = 1:num_dims
-    if metadata.Dimension(j).Unlimited
-        fprintf(fid, '\t%s = UNLIMITED ; (%i currently)\n', ...
-                 deblank(metadata.Dimension(j).Name), metadata.Dimension(j).Length );
+    if info.Dimension(j).Unlimited
+        fprintf(fid,'\t%s = UNLIMITED ; (%i currently)\n', ...
+                 deblank(info.Dimension(j).Name), info.Dimension(j).Length );
     else
-        fprintf(fid, '\t%s = %i ;\n', metadata.Dimension(j).Name, metadata.Dimension(j).Length );
+        fprintf(fid, '\t%s = %i ;\n', info.Dimension(j).Name,info.Dimension(j).Length );
     end
 end
-fprintf(fid,'\n\n');
+fprintf(fid,'\n');
 
 return
 
@@ -100,16 +131,11 @@ return
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function dump_variable_metadata ( metadata, restricted_variable , fid)
-
-if isfield ( metadata, 'Dataset' )
-    num_vars = length(metadata.Dataset);
-else
-    num_vars = 0;
-end
+%--------------------------------------------------------------------------
+function dump_variables(Dataset,restricted_variable,fid)
 
 fprintf (fid,'variables:\n' );
+
 pfvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
 if pfvd == 0;
    fprintf (fid,'\t// Preference ''PRESERVE_FVD'':  false,\n' );
@@ -119,25 +145,26 @@ else
    fprintf (fid,'\t// dimensions consistent with native MATLAB netcdf package, not with ncBrowse.\n' );
 end
 
-for j = 1:num_vars
+
+for j = 1:numel(Dataset)
 
     if ~isempty(restricted_variable)
-        if ~strcmp ( restricted_variable, metadata.Dataset(j).Name )
+        if ~strcmp(restricted_variable,Dataset(j).Name)
             continue
         end
     end
 
-    dump_single_variable ( metadata.Dataset(j) , fid );
+    dump_single_variable(Dataset(j),fid);
 
 end
-fprintf (fid,'\n\n' );
-return
+
+fprintf (fid,'\n' );
 
 
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%--------------------------------------------------------------------------
 function dump_single_variable ( var_metadata , fid )
 
 fprintf(fid,'\t%s ', var_metadata.Datatype);
@@ -167,17 +194,31 @@ end
 
 fprintf (fid,'\n');
 
-%
+if isfield(var_metadata, 'Chunking')
+    if ~isempty(var_metadata.Chunking)
+        fprintf(fid,'\t\tChunking: [ ' );
+        fprintf(fid,'%d ', var_metadata.Chunking(1));
+        for j = 2:numel(var_metadata.Chunking)
+            fprintf(fid,'%d ', var_metadata.Chunking(j));
+        end
+        fprintf(fid,']\n');
+    end
+end
+
+if isfield(var_metadata,'DeflateLevel') && ~isempty(var_metadata.DeflateLevel)
+    fprintf(fid,'\t\tDeflate Level:  %d\n', var_metadata.DeflateLevel);
+end
+
 % Now do all attributes for each variable.
 num_atts = length(var_metadata.Attribute);
 for k = 1:num_atts
-    dump_single_attribute ( var_metadata.Attribute(k), var_metadata.Name , fid );
+    dump_single_attribute(var_metadata.Attribute(k),var_metadata.Name,fid);
 end
 
 return
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%--------------------------------------------------------------------------
 function dump_single_attribute ( attribute, varname , fid )
 
 if isnumeric(varname)
@@ -236,25 +277,29 @@ end
 
 return
     
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function dump_global_attributes ( metadata , fid )
+%--------------------------------------------------------------------------
+function dump_group_attributes(group,fid,is_global)
 
 
-if isfield ( metadata, 'Attribute' )
-    num_atts = length(metadata.Attribute);
+if isfield(group,'Attribute')
+    num_atts = numel(group.Attribute);
 else
     num_atts = 0;
 end
 
 if num_atts > 0
-    fprintf (fid, '//global attributes:\n' );
+    if is_global
+        fprintf (fid, '//global Attributes:\n' );
+    else 
+        fprintf(fid,'//group Attributes:\n');
+    end
 end
 
 for k = 1:num_atts
-   dump_single_attribute ( metadata.Attribute(k) , fid );
+   dump_single_attribute(group.Attribute(k),fid);
 end
 
 
-fprintf (fid, '}\n' );
+fprintf (fid, '\n' );
 
 return

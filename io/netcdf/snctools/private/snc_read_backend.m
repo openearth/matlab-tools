@@ -1,6 +1,7 @@
 function [retrieval_method,fmt] = snc_read_backend(ncfile)
 
 tmw_gt_r2008a = false;
+tmw_gt_r2010a = false;
 
 use_java = getpref('SNCTOOLS','USE_JAVA',false);
 
@@ -22,26 +23,28 @@ switch ( mv )
 		nv = mexnc('inq_libvers'); 
         
     case { '2008b', '2009a', '2009b', '2010a' }
-		nv = netcdf.inqLibVers;
+        nv = mexnc('inq_libvers');
         tmw_gt_r2008a = true;
 
     otherwise
-		% Assume 10a or beyond.
+		% Assume 10b or beyond.
 		nv = netcdf.inqLibVers;
         tmw_gt_r2008a = true;
+        tmw_gt_r2010a = true;
 
 end
 
 
 
-
-    
 if tmw_gt_r2008a && strcmp(fmt,'netCDF')
     % Use TMW for all local NC3 files when the version >= R2008b
     retrieval_method = 'tmw';
-elseif strcmp(fmt,'netCDF')
+elseif strcmp(fmt,'netCDF') && ~tmw_gt_r2008a
     % Local NC3 files should rely on mexnc when the version <= R2008a
     retrieval_method = 'mexnc';
+elseif strcmp(fmt,'netCDF-4') && tmw_gt_r2010a
+    % If netcdf-4 and 10b or higher, use the native package again.
+    retrieval_method = 'tmw';
 elseif strcmp(fmt,'netCDF-4') && (nv(1) == '4')
     % If mexnc says we are at version 4 of the library, use mexnc
     retrieval_method = 'mexnc';

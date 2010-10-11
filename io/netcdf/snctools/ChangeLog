@@ -1,3 +1,26 @@
+* Thu Oct 07 2010 John Evans <john.g.evans.ne@gmail.com> -r3244
+- Added opendap authentication.
+
+* Tue Sep 28 2010 John Evans <john.g.evans.ne@gmail.com> -r3238
+- Modified new netcdf-4 datatype descriptions.
+- Added a better error message for invalid classic model datatypes.
+
+* Mon Sep 13 2010 John Evans <john.g.evans.ne@gmail.com> -r3237
+- Fixed tests such that no shipping test file is modified.
+- Improved wording upon completion of testing.
+
+* Fri Sep 10 2010 John Evans <john.g.evans.ne@gmail.com> -r3234
+- Fixed some negative tests for error IDs when not using IGNOREEIDS
+
+* Sun Sep 05 2010 John Evans <john.g.evans.ne@gmail.com> -r3230
+- Updated for R2010b and native netCDF-4 support!
+
+* Sat Aug 13 2010 John Evans <john.g.evans.ne@gmail.com> -r3205
+- Added examples directory.  Added Gerben de Boer's curvilinear tutorial.
+
+* Sat Aug 13 2010 John Evans <john.g.evans.ne@gmail.com> -r3197
+- Fixed NC_VARGET such that strides work with negative count.
+
 * Mon Jul 12 2010 John Evans <john.g.evans.ne@gmail.com> -r3192
 - Fixed bad nc_varget negative test for opendap.
 - Changed ordering in snc_read_backend to prevent java bug.

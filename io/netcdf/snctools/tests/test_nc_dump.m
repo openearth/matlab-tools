@@ -50,11 +50,24 @@ load(matfile);
 
 act_data = evalc('nc_dump(''example.hdf'');');
 i1 = strfind(act_data,'{');
-i2 = strfind(d.hdf4.example,'{');
 
-if ~strcmp(d.hdf4.example(i2:end), act_data(i1:end))
-    error('failed');
+v = version('-release');
+switch(v)
+    case { '14', '2006a', '2006b', '2007a', '2007b', '2008a', '2008b', '2009a', '2009b', '2010a' }
+        
+        i2 = strfind(d.hdf4.lt_r2010b.example,'{');
+        if ~strcmp(d.hdf4.lt_r2010b.example(i2:end), act_data(i1:end))
+            error('failed');
+        end
+        
+    otherwise
+        i2 = strfind(d.hdf4.ge_r2010b.example,'{');
+        if ~strcmp(d.hdf4.ge_r2010b.example(i2:end), act_data(i1:end))
+            error('failed');
+        end
 end
+
+
 %--------------------------------------------------------------------------
 function dump_hdf4_tp()
 % dumps my temperature pressure file
@@ -62,13 +75,26 @@ testroot = fileparts(mfilename('fullpath'));
 matfile = fullfile(testroot,'testdata','nc_dump.mat');
 load(matfile);
 hdffile = fullfile(testroot,'testdata','temppres.hdf'); %#ok<NASGU>
-
 act_data = evalc('nc_dump(hdffile);');
 i1 = strfind(act_data,'{');
-i2 = strfind(d.hdf4.temppres,'{');
-if ~strcmp(d.hdf4.temppres(i2:end), act_data(i1:end))
-    error('failed');
+
+v = version('-release');
+switch(v)
+    case { '14', '2006a', '2006b', '2007a', '2007b', '2008a', '2008b', '2009a', '2009b' }
+        
+        i2 = strfind(d.hdf4.lt_r2010b.temppres,'{');
+        if ~strcmp(d.hdf4.lt_r2010b.temppres(i2:end), act_data(i1:end))
+            error('failed');
+        end
+        
+    otherwise
+        i2 = strfind(d.hdf4.ge_r2010b.temppres,'{');
+        if ~strcmp(d.hdf4.ge_r2010b.temppres(i2:end), act_data(i1:end))
+            error('failed');
+        end
 end
+
+
 
 %-------------------------------------------------------------------------
 function run_java_tests()

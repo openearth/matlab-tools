@@ -42,28 +42,42 @@ switch(att_datatype)
         attribute.Datatype = '';
     case nc_byte
         attribute.Datatype = 'int8';
+    case nc_ubyte
+        attribute.Datatype = 'uint8';
     case nc_char
         attribute.Datatype = 'char';
     case nc_short
         attribute.Datatype = 'int16';
+    case nc_ushort
+        attribute.Datatype = 'uint16';
     case nc_int
         attribute.Datatype = 'int32';
+    case nc_uint
+        attribute.Datatype = 'uint32';
+    case nc_int64
+        attribute.Datatype = 'int64';
+    case nc_uint64
+        attribute.Datatype = 'uint64';
     case nc_float
         attribute.Datatype = 'single';
     case nc_double
         attribute.Datatype = 'double';
+    otherwise
+        attribute.Datatype = '';
 end
 
 switch att_datatype
 case 0
 	attval = NaN;
-case nc_char
+case { nc_char, nc_int64, nc_uint64 }
 	attval=netcdf.getAtt(cdfid,varid,attname);
-case { nc_double, nc_float, nc_int, nc_short, nc_byte }
+case { nc_double, nc_float, nc_int, nc_short, nc_byte, nc_ubyte, nc_ushort, nc_uint }
 	attval=netcdf.getAtt(cdfid,varid,attname,'double');
 otherwise
-	error ( 'SNCTOOLS:nc_getatt:tmw:unhandledDatatype', ...
-        'Unhandled attribute datatype, %d.', att_datatype );
+	warning ( 'SNCTOOLS:nc_getatt:tmw:unhandledDatatype', ...
+        'The datatype for attribute ''%s'' (%d) is not currently handled by SNCTOOLS.', ...
+        attname, att_datatype );
+    attval = [];
 end
 
 %

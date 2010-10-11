@@ -12,10 +12,11 @@ end
 
 testroot = fileparts(mfilename('fullpath'));
 
-run_nc3_tests     (testroot);
-run_nc4_tests     (testroot);
-run_nc4_java_tests(testroot);
-run_java_tests    (testroot);
+run_nc3_tests      (testroot);
+run_nc4_tests_mexnc(testroot);
+run_nc4_tests_tmw  (testroot);
+run_nc4_java_tests (testroot);
+run_java_tests     (testroot);
 
 
 fprintf('OK\n');
@@ -64,22 +65,58 @@ function run_nc3_tests(testroot)
 return
 
 %--------------------------------------------------------------------------
-function run_nc4_tests(testroot)
-	if getpref('SNCTOOLS','USE_JAVA',false)
-		fprintf('\tmexnc (netcdf-4) backend testing filtered out on ');
-        fprintf('configurations where SNCTOOLS ''USE_JAVA'' ');
-        fprintf('prefererence is true.\n');
-		return
-	end
-	if ~netcdf4_capable
-		fprintf('\tmexnc (netcdf-4) backend testing filtered out on ');
-        fprintf('configurations where the library version < 4.\n');
-		return
-	end
-	fprintf('\tRunning local netcdf-4 tests.\n');
-	ncfile = fullfile(testroot,'testdata/attget-4.nc');
-	run_local_tests(ncfile);
+function run_nc4_tests_tmw(testroot)
+
+v = version('-release');
+switch(v)
+    case { '14', '2006a', '2006b', '2007a', '2007b', '2008a', '2008b', ...
+            '2009a', '2009b', '2010a' }
+        fprintf('\tnetcdf-4 tmw backend testing filtered out on ');
+        fprintf('configurations where the matlab version < 2010b.\n');
+        return
+        
+end
+fprintf('\tRunning local netcdf4/tmw tests.\n');
+run_nc4_nonjava_tests(testroot);
+
+
+%--------------------------------------------------------------------------
+function run_nc4_nonjava_tests(testroot)
+
+ncfile = fullfile(testroot,'testdata/attget-4.nc');
+run_local_tests(ncfile);
+
+ncfile = fullfile(testroot,'testdata/tst_group_data.nc');
+test_nc4_group_char_att(ncfile)
+test_nc4_group_var_char_att(ncfile);
+
 return
+
+%--------------------------------------------------------------------------
+function run_nc4_tests_mexnc(testroot)
+
+v = version('-release');
+switch(v)
+    case { '14', '2006a', '2006b', '2007a', '2007b', '2008a', '2008b', ...
+            '2009a', '2009b', '2010a' }
+        if ~netcdf4_capable
+            fprintf('\tnetcdf4/mexnc testing filtered out on ');
+            fprintf('configurations where the old community ');
+            fprintf('mex-file is not netcdf-4 capable.\n');
+        end
+        return
+        
+    otherwise
+        fprintf('\tnetcdf4/mexnc testing filtered out on ');
+        fprintf('configurations where the matlab version >= 2010b.\n');
+        return
+        
+end
+
+run_nc4_nonjava_tests(testroot);
+
+return
+
 
 %--------------------------------------------------------------------------
 function run_nc4_java_tests(testroot)
@@ -413,5 +450,26 @@ if ( abs(double(attvalue) - 3.14159) > 1e-6 )
 end
 
 return
+
+%--------------------------------------------------------------------------
+function test_nc4_group_char_att(ncfile)
+
+expData = 'in first group';
+actData = nc_attget(ncfile,'/g1','title');
+
+if ~strcmp(expData,actData)
+    error('failed');
+end
+
+%--------------------------------------------------------------------------
+function test_nc4_group_var_char_att(ncfile)
+
+expData = 'km/hour';
+actData = nc_attget(ncfile,'/g1/var','units');
+
+if ~strcmp(expData,actData)
+    error('failed');
+end
+
 
 

@@ -11,15 +11,15 @@ run_nc4_java_tests(testroot);
 run_grib2_java_tests(testroot);
 run_opendap_tests;
 run_http_tests;
-run_hdf4_tests;
+run_hdf4_tests(testroot);
 
 v = version('-release');
 switch(v)
-	case{'14','2006a','2006b', '2007a'}
-		fprintf('\tSome negative tests filtered out on version %s.\n', v);
-		return
-	otherwise
-	test_nc_varget_neg;
+    case{'14','2006a','2006b', '2007a'}
+        fprintf('\tSome negative tests filtered out on version %s.\n', v);
+        return
+    otherwise
+        test_nc_varget_neg;
 end
 
 fprintf('OK\n');
@@ -45,10 +45,13 @@ warning('on','SNCTOOLS:nc_varget:tmw:fillValueMismatch');
 warning('on','SNCTOOLS:nc_varget:mexnc:fillValueMismatch');
 
 %--------------------------------------------------------------------------
-function run_hdf4_tests()
+function run_hdf4_tests(testroot)
 fprintf('\tRunning HDF4 tests ...');
 test_hdf4_example;
 test_hdf4_scaling;
+
+hfile = fullfile(testroot,'testdata/varget.hdf');
+test_stride_with_negative_count(hfile);
 fprintf('  OK\n');
 
 
@@ -111,9 +114,9 @@ if ~getpref('SNCTOOLS','TEST_REMOTE',false)
     return
 end
 if getpref('SNCTOOLS','TEST_OPENDAP',false)
-	test_readOpendapVariable;
+    test_readOpendapVariable;
 else
-	fprintf('\tOPeNDAP testing filtered out where TEST_OPENDAP ');
+    fprintf('\tOPeNDAP testing filtered out where TEST_OPENDAP ');
     fprintf('preference is set to false.\n');
 end
 
@@ -121,78 +124,94 @@ return
 
 %--------------------------------------------------------------------------
 function run_http_tests()
-	if getpref('SNCTOOLS','USE_JAVA',false) ...
+    if getpref('SNCTOOLS','USE_JAVA',false) ...
             && getpref('SNCTOOLS','TEST_REMOTE',false)
-		fprintf('\tRunning http/java tests...\n' );
-		test_readHttpVariable;
-		test_readHttpVariableGivenJavaNcid;
-	else
-		fprintf('\tHTTP testing filtered out where USE_JAVA and ' );
+        fprintf('\tRunning http/java tests...\n' );
+        test_readHttpVariable;
+        test_readHttpVariableGivenJavaNcid;
+    else
+        fprintf('\tHTTP testing filtered out where USE_JAVA and ' );
         fprintf('TEST_REMOTE preferences not both set.\n');
-	end
+    end
 return
 
 %--------------------------------------------------------------------------
 function run_nc3_tests(testroot)
-	fprintf('\tRunning local netcdf-3 tests...' );
-	ncfile = fullfile(testroot,'testdata/varget.nc');
-	run_local_tests(ncfile);
+    fprintf('\tRunning local netcdf-3 tests...' );
+    ncfile = fullfile(testroot,'testdata/varget.nc');
+    run_local_tests(ncfile);
     fprintf('  OK\n');
 return
 
 %--------------------------------------------------------------------------
 function run_nc3_java_tests(testroot)
-	switch version('-release') 
-		case {'2008a', '2007b', '2007a', '2006b', '2006a', ...
+    switch version('-release') 
+        case {'2008a', '2007b', '2007a', '2006b', '2006a', ...
                 '14', '13', '12' }
-			
-		otherwise
-			fprintf ( '\tnc3 java backend testing filtered out where ');
+            
+        otherwise
+            fprintf ( '\tnc3 java backend testing filtered out where ');
             fprintf ( 'the release is 2008b or higher.\n' );
-			return
-	end
+            return
+    end
 
-	if ~getpref('SNCTOOLS','USE_JAVA',false)
-		fprintf ( '\tnc3 java backend testing filtered out on ');
+    if ~getpref('SNCTOOLS','USE_JAVA',false)
+        fprintf ( '\tnc3 java backend testing filtered out on ');
         fprintf ( 'configurations where SNCTOOLS ''USE_JAVA'' ');
         fprintf ( 'prefererence is false.\n' );
-		return
-	end
-	fprintf('\tRunning local netcdf-3 tests with java...' );
-	ncfile = fullfile(testroot,'testdata/varget.nc');
-	run_local_tests(ncfile);
+        return
+    end
+    fprintf('\tRunning local netcdf-3 tests with java...' );
+    ncfile = fullfile(testroot,'testdata/varget.nc');
+    run_local_tests(ncfile);
     fprintf('  OK\n');
 return
 
 %--------------------------------------------------------------------------
 function run_nc4_java_tests(testroot)
 
-	if ~getpref('SNCTOOLS','USE_JAVA',false)
-		fprintf ( '\tjava backend testing filtered out on ');
-        fprintf ( 'configurations where SNCTOOLS ''USE_JAVA'' ');
-        fprintf ( 'prefererence is false.\n' );
-		return
-	end
-	fprintf('\tRunning local netcdf-4 tests with java...' );
-	ncfile = fullfile(testroot,'testdata/varget4.nc');
-	run_local_tests(ncfile);
+if ~getpref('SNCTOOLS','USE_JAVA',false)
+    fprintf ( '\tjava backend testing filtered out on ');
+    fprintf ( 'configurations where SNCTOOLS ''USE_JAVA'' ');
+    fprintf ( 'prefererence is false.\n' );
+    return
+end
+fprintf('\tRunning local netcdf-4 tests with java...' );
+ncfile = fullfile(testroot,'testdata/varget4.nc');
+run_local_tests(ncfile);
 
-	ncfile = fullfile(testroot,'testdata/tst_pres_temp_4D_netcdf4.nc');
-    fprintf('  OK\n');
-    
+
+
+fprintf('  OK\n');
+
 
 return
 
 %--------------------------------------------------------------------------
 function run_nc4_tests(testroot)
-	if ~netcdf4_capable
-		fprintf('\tmexnc (netcdf-4) backend testing filtered out on ');
-        fprintf('configurations where the library version < 4.\n');
-		return
-	end
-	fprintf('\tRunning local netcdf-4 tests backend...\n' );
-	ncfile = fullfile(testroot,'testdata/varget4.nc');
-	run_local_tests(ncfile);
+
+if ~netcdf4_capable
+    fprintf('\tmexnc (netcdf-4) backend testing filtered out on ');
+    fprintf('configurations where the library version < 4.\n');
+    return
+end
+fprintf('\tRunning local netcdf-4 tests backend...\n' );
+ncfile = fullfile(testroot,'testdata/varget4.nc');
+run_local_tests(ncfile);
+
+ncfile = fullfile(testroot,'testdata/tst_group_data.nc');
+
+% This test will not work for classic netcdf-4 mex-file
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b','2007a','2007b','2008a','2008b',...
+            '2009a','2009b','2010a' }
+    fprintf('\tsome mexnc (netcdf-4) backend testing filtered out on ');
+    fprintf('configurations where release < 2010b.\n');
+    return
+end
+        
+test_nc4_group_float_var(ncfile);
 return
 
 
@@ -202,6 +221,7 @@ function run_local_tests(ncfile)
 test_readSingleValueFrom1dVariable ( ncfile );
 test_readSingleValueFrom2dVariable ( ncfile );
 test_read2x2hyperslabFrom2dVariable ( ncfile );
+test_stride_with_negative_count ( ncfile );
 
 test_readFullSingletonVariable ( ncfile );
 test_readFullDoublePrecisionVariable ( ncfile );
@@ -272,11 +292,11 @@ return
 
 %--------------------------------------------------------------------------
 function test_readHttpVariableGivenJavaNcid ()
-	import ucar.nc2.dods.*     
-	import ucar.nc2.*          
+    import ucar.nc2.dods.*     
+    import ucar.nc2.*          
                            
     url = 'http://coast-enviro.er.usgs.gov/models/share/balop.nc';
-	jncid = NetcdfFile.open(url);
+    jncid = NetcdfFile.open(url);
     actData = nc_varget ( url, 'visc2' );
     close(jncid);
     expData = 20;
@@ -337,6 +357,34 @@ if ndims(actData) ~= 2
 end
 if numel(actData) ~= 4
     error ( 'rank of output data was not correct' );
+end
+ddiff = abs(expData(:) - actData(:));
+if any( find(ddiff > eps) )
+    error ( 'input data ~= output data ' );
+end
+
+return
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_stride_with_negative_count ( ncfile )
+
+expData = [0.1 1.3; 0.3 1.5; 0.5 1.7];
+
+if getpref('SNCTOOLS','PRESERVE_FVD',false)
+    expData = expData';
+end
+actData = nc_varget(ncfile,'test_2D',[0 0],[-1 -1],[2 2] );
+
+if ndims(actData) ~= 2
+    error ( 'rank of output data was not correct' );
+end
+if numel(actData) ~= 6
+    error ( 'count of output data was not correct' );
 end
 ddiff = abs(expData(:) - actData(:));
 if any( find(ddiff > eps) )
@@ -422,7 +470,7 @@ sz = size(expData);
 sz(2) = -1;
 if getpref('SNCTOOLS','PRESERVE_FVD',false)
     expData = expData';
-	sz = fliplr(sz);
+    sz = fliplr(sz);
 end
 
 actData = nc_varget ( ncfile, 'test_2D', [0 0], sz );
@@ -473,4 +521,18 @@ end
 
 return
 
+
+%--------------------------------------------------------------------------
+function test_nc4_group_float_var(ncfile)
+
+expData = single([1 2]');
+actData = nc_varget(ncfile,'/g2/var');
+
+if ~isa(actData,'single')
+    error('failed');
+end
+ddiff = abs(expData - actData);
+if any( find(ddiff > eps) )
+    error ( 'input data ~= output data.\n'  );
+end
 

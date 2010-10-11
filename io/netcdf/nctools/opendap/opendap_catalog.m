@@ -144,7 +144,7 @@ if ~strcmpi(OPT.url(1:4),'http') && ~strcmpi(OPT.url(end-10:end),'catalog.xml')
    end
    % make sure we always return the full path
    if OPT.maxlevel<2
-      nc_file_list   = cellstr(addrowcol(char(nc_file_list),0,-1,fliplr(OPT.url))); % left-padd path
+      nc_file_list   = path2os(cellstr(addrowcol(char(nc_file_list),0,-1,fliplr([OPT.url,filesep])))); % left-padd path
       nc_folder_list = OPT.url;
    end
 

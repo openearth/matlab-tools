@@ -6,13 +6,12 @@ function data = nc_varget(ncfile, varname, varargin )
 %   DATA = NC_VARGET(NCFILE,VARNAME,START,COUNT) retrieves the contiguous
 %   portion of the variable specified by the index vectors START and 
 %   COUNT.  Remember that SNCTOOLS indexing is zero-based, not 
-%   one-based.
+%   one-based.  Specifying a -1 in COUNT means to retrieve everything 
+%   along that dimension from the START coordinate.
 %
 %   DATA = NC_VARGET(NCFILE,VARNAME,START,COUNT,STRIDE) retrieves 
 %   a non-contiguous portion of the dataset.  The amount of
 %   skipping along each dimension is given through the STRIDE vector.
-%   Specifying a -1 in COUNT means to retrieve everything along
-%   that dimension from the START coordinate.
 %
 %   A '_FillValue' attribute is honored by flagging those datums as NaN.
 %   A 'missing_value' attribute is honored by flagging those datums as 
@@ -133,11 +132,15 @@ validate_index_vectors(start,count,stride,nvdims);
 
 the_var_size = determine_varsize_mex ( ncid, dimids, nvdims );
 
-%
+if isempty(stride)
+    stride = ones(1,numel(start));
+end
+
 % If the user had set non-positive numbers in "count", then we replace them
 % with what we need to get the rest of the variable.
 negs = find(count<0);
-count(negs) = the_var_size(negs) - start(negs);
+
+count(negs) = (the_var_size(negs) - start(negs)) ./ stride(negs);
 
 
 

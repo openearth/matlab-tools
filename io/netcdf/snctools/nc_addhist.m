@@ -1,9 +1,9 @@
 function nc_addhist ( ncfile, attval )
-% NC_ADDHIST:  adds text to a global history attribute
+%NC_ADDHIST  Add text to global history attribute.
 %
-% NC_ADDHIST(NCFILE,TEXT) adds the TEXT string to the standard convention
-% "history" global attribute of the netCDF file NCFILE.  The string is 
-% prepended, rather than appended.
+%   NC_ADDHIST(NCFILE,TEXT) adds the TEXT string to the standard convention
+%   "history" global attribute of the netCDF file NCFILE.  The string is 
+%   prepended, rather than appended.
 
 
 if ~exist(ncfile,'file')

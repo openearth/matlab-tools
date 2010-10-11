@@ -22,6 +22,21 @@ switch(datatype)
         Dataset.Datatype = 'single';
     case nc_double
         Dataset.Datatype = 'double';
+    case nc_ubyte
+        Dataset.Datatype = 'uint8';
+    case nc_ushort
+        Dataset.Datatype = 'uint16';
+    case nc_uint
+        Dataset.Datatype = 'uint32';
+    case nc_uint64
+        Dataset.Datatype = 'uint64';
+    case nc_int64
+        Dataset.Datatype = 'int64';
+    otherwise
+        warning('SNCTOOLS:sncGetVarInfoTmw:unhandledDataType', ...
+            'The datatype for variable ''%s'' (%d) is not one that is handled by SNCTOOLS.', ...
+            varname, datatype);
+        Dataset.Datatype = '';
 end
 
 %
@@ -58,10 +73,36 @@ else
 end
 
 
+v = netcdf.inqLibVers;
+
+if v(1) == '4' 
+	fmt = netcdf.inqFormat(ncid);
+	if (strcmp(fmt,'FORMAT_NETCDF4') || strcmp(fmt,'FORMAT_NETCDF4_CLASSIC'))
+		% Get the chunksize
+		[storage,chunking] = netcdf.inqVarChunking(ncid,varid);
+		Dataset.Chunking = chunking;
+		
+		% Get the compression parameters
+		[shuffle,deflate,deflate_level] = netcdf.inqVarDeflate(ncid,varid); 
+		Dataset.Shuffle = shuffle;
+		Dataset.Deflate = deflate_level;
+	end
+end
+
+
 if ~getpref('SNCTOOLS','PRESERVE_FVD',false)
 	Dataset.Dimension = fliplr(Dataset.Dimension);
 	Dataset.Size = fliplr(Dataset.Size);
+	if isfield(Dataset,'Chunking')
+		Dataset.Chunking = fliplr(Dataset.Chunking);
+	end
 end
+
+
+
+
+
+
 
 
 

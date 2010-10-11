@@ -2,8 +2,7 @@ function nc_adddim(ncfile,dimname,dimlen)
 %nc_adddim:  adds a dimension to an existing netcdf file
 %   nc_adddim(FILE,dimname,dimlen) adds a dimension with a particular
 %   length to the file.  If dimlen is zero, the dimension will be 
-%   unlimited.  If FILE is an HDF4 file, a coordinate variable will be
-%   created as well.
+%   unlimited.  
 %
 %   Example:  create a netcdf file with a longitude dimension with length 
 %   360, a latitude dimension with length 180, and an unlimited time 
@@ -13,14 +12,7 @@ function nc_adddim(ncfile,dimname,dimlen)
 %       nc_adddim('myfile.nc','longitude',180);
 %       nc_adddim('myfile.nc','time',0);
 %
-%   Example:  create an HDF4 file with longitude, latitude, and time 
-%   coordinate variables.
-%       nc_create_empty('myfile.hdf','hdf4');
-%       nc_adddim('myfile.hdf','latitude',360);
-%       nc_adddim('myfile.hdf','longitude',180);
-%       nc_adddim('myfile.hdf','time',0);
-%     
-% See also:  nc_addvar.
+%   See also:  nc_addvar.
 
 if isnumeric(dimlen) && (dimlen < 0)
     error('SNCTOOLS:adddim:badDimensionLength', ...

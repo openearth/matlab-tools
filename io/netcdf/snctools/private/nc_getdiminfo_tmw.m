@@ -39,10 +39,8 @@ netcdf.close(ncid);
 %--------------------------------------------------------------------------
 function dinfo = handle_numeric_nc_getdiminfo_tmw ( ncid, dimid )
 
-
 [dud,dud,dud,unlimdim] = netcdf.inq(ncid ); %#ok<ASGLU>
 [dimname, dimlength] = netcdf.inqDim(ncid, dimid);
-
 
 dinfo.Name = dimname;
 dinfo.Length = dimlength;

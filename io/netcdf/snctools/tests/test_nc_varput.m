@@ -81,7 +81,6 @@ testroot = fileparts(mfilename('fullpath'));
 ncfile = fullfile(testroot,'testdata/varput.nc');
 run_generic_tests(ncfile);
 run_singleton_tests(ncfile);
-test_write_1D_one_element ( ncfile );
 
 % This doesn't work for nc4 or hdf4
 test_bad_fill_value;
@@ -119,7 +118,6 @@ testroot = fileparts(mfilename('fullpath'));
 ncfile = fullfile(testroot,'testdata/varput4.nc');
 run_generic_tests(ncfile);
 run_singleton_tests(ncfile);
-test_write_1D_one_element ( ncfile );
 
 run_scaling_tests(nc_netcdf4_classic);
 fprintf('OK\n');
@@ -150,6 +148,7 @@ test_write_1D_good_count ( ncfile );
 test_write_1D_good_stride ( ncfile );
 
 test_1D_strided ( ncfile );
+test_write_1D_one_element ( ncfile );
 
 test_write_2D_all ( ncfile );
 test_write_2D_contiguous_chunk ( ncfile );
