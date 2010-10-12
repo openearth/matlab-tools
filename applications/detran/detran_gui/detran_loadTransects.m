@@ -49,7 +49,7 @@ if nam==0
 end
 
 ldb=landboundary('read',[pat nam]);
-[ldbCell, ldbBegin, ldbEnd, ldbIn]=disassembleLdb(ldb);
+[ldbCell, ldbBegin, ldbEnd, ldbIn]=detran_disassembleLdb(ldb);
 ldb=[ldbBegin ldbEnd];
 edit=data.edit;
 strucNames=fieldnames(edit);
