@@ -103,7 +103,7 @@ function netcdf_settings(varargin)
                                               
        %% add basic authentication class
        
-       javaaddpath([fileparts(mfilename('fullpath')),'\snctools\classes\'])
+       javaaddpath(fullfile(fileparts(mfilename('fullpath')), 'snctools', 'classes'))
    
        if ~(OPT.quiet)
            disp(['  netCDF: JAVA library for OPeNDAP support added: ',filename(java2add)]);
