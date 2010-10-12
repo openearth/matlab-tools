@@ -42,6 +42,9 @@
 % NC_CF_GRID_WRITE_LAT_LON_ORTHOGONAL_TUTORIAL, albeit with
 % different axes annotations (col/row instead of lat/lon).
 %
+% This tutorial has slightly modified also been published as part 
+% of snctools: http://mexcdf.sourceforge.net/tutorial/ch13.html.
+%
 %See also: SNCTOOLS, NC_CF_GRID, NC_CF_GRID_WRITE,
 %          NC_CF_GRID_WRITE_LAT_LON_ORTHOGONAL_TUTORIAL, 
 %          NC_CF_GRID_WRITE_X_Y_ORTHOGONAL_TUTORIAL,
@@ -202,7 +205,7 @@
    nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue    );
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.val(:)) max(OPT.val(:))]);
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
-   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
+   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
    if ~isempty(OPT.standard_name)
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
    end
