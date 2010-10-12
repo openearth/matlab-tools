@@ -4,7 +4,7 @@ ncid=netcdf.open(ncfile,'NOWRITE');
 
 try
     
-    varid=netcdf.inqVarid(ncid,varname);
+    varid=netcdf.inqVarID(ncid,varname);
     [dud,var_type,dimids]=netcdf.inqVar(ncid,varid); %#ok<ASGLU>
     nvdims = numel(dimids);
 
