@@ -102,7 +102,8 @@ function netcdf_settings(varargin)
                                               %    May break previous work though ...
                                               
        %% add basic authentication class
-       javaaddpath('F:\checkouts\OpenEarthTools\matlab\io\netcdf\snctools\classes\')                                              
+       
+       javaaddpath([fileparts(mfilename('fullpath')),'\snctools\classes\'])
    
        if ~(OPT.quiet)
            disp(['  netCDF: JAVA library for OPeNDAP support added: ',filename(java2add)]);
