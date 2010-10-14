@@ -93,10 +93,6 @@ for i=1:handles.Bathymetry.NrDatasets
                 end
 
                 handles.Bathymetry.Dataset(i).RefinementFactor=round(dx(2)/dx(1));
-                tileMax=handles.Bathymetry.Dataset(ii).MaxTileSize;
-                nLevels=handles.Bathymetry.Dataset(ii).NrZoomLevels;
-                nRef=handles.Bathymetry.Dataset(ii).RefinementFactor;
-                nCell=handles.Bathymetry.Dataset(ii).NrCells;
 
                 handles.Bathymetry.Dataset(i).NrZoomLevels=length(x0);
                 for k=1:handles.Bathymetry.Dataset(i).NrZoomLevels
