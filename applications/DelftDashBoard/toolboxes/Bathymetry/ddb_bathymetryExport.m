@@ -225,6 +225,7 @@ set(handles.SelectZoomLevel,'Value',jj);
 set(handles.SelectZoomLevel,'String',zstr);
 
 if isempty(handles.Bathymetry.Dataset(ii).RefinementFactor)
+
     dg=handles.Bathymetry.Dataset(ii).ZoomLevel(jj).GridCellSize(1);
     mn=handles.Bathymetry.Dataset(ii).ZoomLevel(jj).GridCellSize(2);
     sc=handles.Bathymetry.Dataset(ii).ZoomLevel(jj).GridCellSize(3);
@@ -237,18 +238,19 @@ if isempty(handles.Bathymetry.Dataset(ii).RefinementFactor)
     set(handles.TextCellSize,'String',str);
 else
 
-    tileMax=handles.Bathymetry.Dataset(ii).MaxTileSize;
-    nLevels=handles.Bathymetry.Dataset(ii).NrZoomLevels;
-    nRef=handles.Bathymetry.Dataset(ii).RefinementFactor;
-    nCell=handles.Bathymetry.Dataset(ii).NrCells;
-
-    tileSizes(1)=tileMax;
-    for i=2:nLevels
-        tileSizes(i)=tileSizes(i-1)/nRef;
-    end
-    cellSizes=tileSizes/nCell;
-    cellSize=cellSizes(jj);
+%     tileMax=handles.Bathymetry.Dataset(ii).MaxTileSize;
+%     nLevels=handles.Bathymetry.Dataset(ii).NrZoomLevels;
+%     nRef=handles.Bathymetry.Dataset(ii).RefinementFactor;
+%     nCell=handles.Bathymetry.Dataset(ii).NrCells;
+% 
+%     tileSizes(1)=tileMax;
+%     for i=2:nLevels
+%         tileSizes(i)=tileSizes(i-1)/nRef;
+%     end
+%     cellSizes=tileSizes/nCell;
+%     cellSize=cellSizes(jj);
     
+    cellSize=handles.Bathymetry.Dataset(ii).ZoomLevel(jj).dx;
 %     ym=mean(handles.Toolbox(tb).PolygonY);
     if strcmpi(handles.Bathymetry.Dataset(ii).HorizontalCoordinateSystem.Type,'geographic')
         cellSize=cellSize*100000;

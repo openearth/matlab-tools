@@ -91,7 +91,9 @@ for i=1:handles.Bathymetry.NrDatasets
                 catch
                     handles.Bathymetry.Dataset(i).VerticalCoordinateSystem.Level=0;
                 end
-                
+
+                handles.Bathymetry.Dataset(i).RefinementFactor=round(dx(2)/dx(1));
+
                 handles.Bathymetry.Dataset(i).NrZoomLevels=length(x0);
                 for k=1:handles.Bathymetry.Dataset(i).NrZoomLevels
                     handles.Bathymetry.Dataset(i).ZoomLevel(k).x0=double(x0(k));
