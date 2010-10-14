@@ -145,7 +145,7 @@ if     strcmp(cmd,'read') | ...
          %% ------------------------------
           
           rec = fgetl(fid); % read last part of previous line eol character)
-          if ~strcmp(lower(deblank2(rec)),'y-coordinates')
+          if ~strcmp(lower(strtrim(rec)),'y-coordinates')
           rec = fgetl(fid);
           end
           

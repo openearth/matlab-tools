@@ -60,7 +60,7 @@ function varargout = swan_io_input(varargin)
 % 2008 Jul 01: add number of meshes for all table types to quick & allow uniform calls of SWAN_TABLE
 % 2008 Jul 10: interpret BOUND SHAPE line into struct
 % 2008 Oct 20: add default value for set.pwtail and update according to GEN keywords
-% 2009 Feb 05: replaced deblank2 with strtrim, use only 2 letter of keyword FRICtion, allow both presence and absence of continuation char (&) in PROJ keyword span.
+% 2009 Feb 05: use strtrim, use only 2 letter of keyword FRICtion, allow both presence and absence of continuation char (&) in PROJ keyword span.
 % 2009 jul 20: in fgetlines_no_comment_line: make sure comment is treated as all data on a SWAN line (_& continuation) in between $ or after last (odd) $
 
 %% Defaults
