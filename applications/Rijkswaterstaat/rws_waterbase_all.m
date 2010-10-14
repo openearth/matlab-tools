@@ -6,8 +6,9 @@ function rws_waterbase_all
 
 %% Initialize
 
-   OPT.overwrite = 1;  % xls, png
-   OPT.baseurl   = 'http://live.waterbase.nl';
+   OPT.make_nc        = 0;
+   OPT.overwrite      = 1;  % xls, png
+   OPT.baseurl        = 'http://live.waterbase.nl';
 
   %urlbase = 'p:\mcdata\opendap\';              % @ deltares internally
   %urlbase = 'http://dtvirt5.deltares.nl:8080'; % test server
@@ -17,7 +18,7 @@ function rws_waterbase_all
   % ncbase = 'P:\mcdata';                       % @ deltares internally
    rawbase = 'F:\checkouts\OpenEarthRawData';   % @ local
     ncbase = 'F:\opendap\thredds\';             % @ local
-   
+
 %% Parameter choice
    OPT.donar_wnsnum = [541];                 % empty location name/epsg id541-AALDK-164810240000-201006130000.txt epsg code missing
    OPT.donar_wnsnum = [410];                 % id410-BRESKBSD-179805240000-200907100000.txt issue to netCDF: vat: '' to 'emmer'
@@ -53,37 +54,41 @@ function rws_waterbase_all
       OPT.sdn_standard_name = DONAR.sdn_standard_name{index};
 
       subdir             = OPT.name;
-      OPT.directory_nc   = [ ncbase,'\rijkswaterstaat\waterbase\'      ,filesep,subdir];
-      OPT.directory_raw  = [rawbase,'\rijkswaterstaat\waterbase\cache\',filesep,subdir];
+      OPT.directory_nc   = [ ncbase,'\rijkswaterstaat\waterbase\'      ,filesep,subdir,filesep];
+      OPT.directory_raw  = [rawbase,'\rijkswaterstaat\waterbase\cache\',filesep,subdir,filesep];
       
    %% Download from waterbase.nl
    
-%     rws_waterbase_get_url_loop('donar_wnsnum' ,OPT.code,...
-%                                'directory_raw',OPT.directory_raw,...
-%                            'directory_raw_old',[OPT.directory_raw filesep 'old'],...
-%                                      'cleanup',1); % remove date from file name> version control on cached download too ?
+      rws_waterbase_get_url_loop('donar_wnsnum' ,OPT.code,...
+                    'directory_raw',OPT.directory_raw,...
+                'directory_raw_old',[OPT.directory_raw filesep 'old'],...
+                          'cleanup',1); % remove date from file name> version control on cached download too ?
                                  
    %% Make netCDF
    
-     if any(OPT.code==[1 54 29 22 23 24]) % long time series: waterlevels(1 54), Q(29) or waves(22 23 24)
-        OPT.method='fgetl';
-     else
-        OPT.method='textread';
-     end
+   if OPT.make_nc
    
-     rws_waterbase2nc('donar_wnsnum' ,OPT.code,...
-                      'directory_nc' ,OPT.directory_nc,...
-                      'directory_raw',OPT.directory_raw,...
-                             'method',OPT.method,... % 'fgetl' for water levels or discharges
-                           'att_name',{'aquo_lex_code'           ,'donar_wnsnum'           ,'sdn_standard_name'},...
-                            'att_val',{DONAR.aquo_lex_code(index),DONAR.donar_wnsnum(index),DONAR.sdn_standard_name(index) },...
-                               'load',1,...% skip mat file, always load zipped txt file
-                              'debug',0,...% check unit conversion
-                               'mask',['id' num2str(OPT.code) '*.zip']);  % as more ids are in same dir
+      if any(OPT.code==[1 54 29 22 23 24]) % long time series: waterlevels(1 54), Q(29) or waves(22 23 24)
+         OPT.method='fgetl';
+      else
+         OPT.method='textread';
+      end
+   
+      rws_waterbase2nc('donar_wnsnum' ,OPT.code,...
+                       'directory_nc' ,OPT.directory_nc,...
+                       'directory_raw',OPT.directory_raw,...
+                              'method',OPT.method,... % 'fgetl' for water levels or discharges
+                            'att_name',{'aquo_lex_code'           ,'donar_wnsnum'           ,'sdn_standard_name'},...
+                             'att_val',{DONAR.aquo_lex_code(index),DONAR.donar_wnsnum(index),DONAR.sdn_standard_name(index) },...
+                                'load',1,...% skip mat file, always load zipped txt file
+                               'debug',0,...% check unit conversion
+                                'mask',['id' num2str(OPT.code) '*.zip']);  % as more ids are in same dir
+   end
 
    %% Make overview png and xls of one parameter
    
-     nc_cf_stationtimeseries2meta('directory_nc'  ,[OPT.directory_nc],...
+     
+nc_cf_stationtimeseries2meta('directory_nc'  ,[OPT.directory_nc],...
                                   'parameters'    ,{OPT.name},...
                                   'overwrite'     ,OPT.overwrite);
 
@@ -94,7 +99,7 @@ function rws_waterbase_all
 
       nc_cf_opendap2catalog([OPT.directory_nc],...
                             'save',1,...
-                      'urlPathFcn',@(s) strrep(s,OPT.directory_nc,[OPT.linm_nc,'dodsC/opendap/',OPT.path]))
+                      'urlPathFcn',@(s) path2os(strrep(s,ncbase,['http://opendap.deltares.nl/thredds/dodsC/opendap/']),'h'))
 
    %% Make KML overview with links to netCDF on opendap.deltares.nl
       

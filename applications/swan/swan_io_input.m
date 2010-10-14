@@ -233,7 +233,6 @@ end
             end
             
 %% Read SET (optional)
-	    
             if strcmp(strtok(upper(rec)),'SET')
             
                [keyword,rest_of_rec] = strtok(strtrim(rec));
@@ -250,25 +249,29 @@ end
                    ind = length(rest_of_rec)+1;
                end
 
-              %% keywords before CART/NAUT
-               OUT = expressionsfromstring(lower(rest_of_rec(1:ind-1)),...
-                                {'level' ,'nor'   ,'depmin','maxmes',...
-                                 'maxerr','grav'  ,'rho'   ,'inrhog',...
-                                 'hsrerr',         'pwtail','froudmax',...
-                                 'printf','prtest'                    },'empty',0);
-               if ~isempty(OUT)
-               DAT.set      = mergestructs('overwrite',DAT.set,OUT);
-               end
-               
-              %% keywords after CART/NAUT
-              [nautcart,rest_of_rec] = strtok(rest_of_rec(ind:end));
-               OUT = expressionsfromstring(lower(rest_of_rec),...
-                                {'level' ,'nor'   ,'depmin'  ,'maxmes',...
-                                 'maxerr','grav'  ,'rho'     ,'inrhog',...
-                                 'hsrerr','pwtail','froudmax','printf',...
-                                 'prtest'},'empty',0);
-               if ~isempty(OUT)
-               DAT.set      = mergestructs('overwrite',DAT.set,OUT);
+               %% keywords before CART/NAUT
+               try
+                   OUT = expressionsfromstring(lower(rest_of_rec),...
+                                    {'level' ,'nor'   ,'depmin'  ,'maxmes',...
+                                     'maxerr','grav'  ,'rho'     ,'inrhog',...
+                                     'hsrerr','pwtail','froudmax','printf',...
+                                     'prtest'},'empty',0);
+                   if ~isempty(OUT)
+                   DAT.set      = mergestructs('overwrite',DAT.set,OUT);
+                   end
+
+                  %% keywords after CART/NAUT
+                  [nautcart,rest_of_rec] = strtok(rest_of_rec(ind:end));
+                   OUT = expressionsfromstring(lower(rest_of_rec),...
+                                    {'level' ,'nor'   ,'depmin'  ,'maxmes',...
+                                     'maxerr','grav'  ,'rho'     ,'inrhog',...
+                                     'hsrerr','pwtail','froudmax','printf',...
+                                     'prtest'},'empty',0);
+                   if ~isempty(OUT)
+                   DAT.set      = mergestructs('overwrite',DAT.set,OUT);
+                   end
+               catch
+                   DAT.set      = rest_of_rec;
                end
 
                rec          = fgetlines_no_comment_line(fid);
@@ -1160,6 +1163,7 @@ end
                keyword1         = ' ';
                end
                keyword1         = upper(pad(keyword1,4,' '));
+               
             if strfind(keyword1(1:4),'SPEC')==1
                if OPT.debug
                   disp('SPEC')
@@ -1219,8 +1223,11 @@ end
                keyword1         = ' ';
                end
                keyword1         = upper(pad(keyword1,4,' '));
+               
             if strfind(keyword1(1:4),'NEST')==1
                DAT.nest = rec;
+               rec             = fgetlines_no_comment_line(fid);
+               foundkeyword    = true;
             end
 
 %% Read TEST

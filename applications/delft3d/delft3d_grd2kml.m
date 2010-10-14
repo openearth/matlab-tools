@@ -77,7 +77,7 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
    else
       G.cen.dep     = 0.*G.cen.x;
       G.cor.dep     = 0.*G.cor.x;
-      OPT.fillAlpha = 0;
+      OPT.fillAlpha = 1;
    end
    
    % OPT.ddep = max(abs(max(G.cen.dep(:))),0);

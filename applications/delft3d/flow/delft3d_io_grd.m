@@ -76,8 +76,7 @@ end
    cmd   = varargin{1};
    fname = varargin{2};
    
-   %% Add file info
-   %% ----------------------
+%% Add file info
 
    G.projection          = '';
    G.ellipsoid           = '';
@@ -86,24 +85,11 @@ end
    OPT.missingvalue      = NaN; % in struct
    OPT.epsg              = [];
 
-   %% Keywords
-   %% ----------------------
+%% Keywords
    
-      iargin = 3;
-      while iargin<=nargin,
-        if ischar(varargin{iargin}),
-          switch lower(varargin{iargin})
-          case 'nodatavalue' ;iargin=iargin+1;OPT.nodatavalue  = varargin{iargin};
-          case 'missingvalue';iargin=iargin+1;OPT.missingvalue = varargin{iargin};
-          otherwise
-             error(['Invalid string argument: %s.',varargin{i}]);
-          end
-        end;
-        iargin=iargin+1;
-      end;    
+   OPT = setproperty(OPT,varargin{3:end});
       
-   %% Read
-   %% ----------------------
+%% Read
 
    if strcmp(cmd,'read')
 
@@ -135,7 +121,6 @@ end
       TMP.Y(TMP.Y==TMP.MissingValue) = G.nodatavalue;
 
    %% Calculate
-   %% ----------------------
 
       G.mmax         = size(TMP.X,1)+1;% GJ de Boer, swapped 2009 apr 22, swapped back 2010 mar 16 for use with $Id$
       G.nmax         = size(TMP.X,2)+1;% GJ de Boer, swapped 2009 apr 22, swapped back 2010 mar 16 for use with $Id$
@@ -178,9 +163,9 @@ end
       G.dpsopt          = '';
       G.location        = '';
       
-%-%disp('NOTE')
-%-%disp('still to be implemented: nan seperated external and internal enxclosures')
-%-%disp('seperation when both m and n index differ between successive elements')
+%-% disp('NOTE')
+%-% disp('still to be implemented: nan seperated external and internal enxclosures')
+%-% disp('seperation when both m and n index differ between successive elements')
 %-%      
 %-%      G.encm = G.Enclosure(:,1);
 %-%      G.encn = G.Enclosure(:,2);
@@ -216,7 +201,6 @@ end
       OK   = wlgrid(cmd,fname,G.cor.x,G.cor.y);
 
   %    %% Read and write again to write also enclosure
-  %    %% ---------------------
   %    
   %    
   %    Gtmp = wlgrid('read' ,filename);

@@ -1,4 +1,4 @@
-function varargin = KMLmesh(lat,lon,varargin)
+function varargout = KMLmesh(lat,lon,varargin)
 % KMLMESH Just like mesh
 %
 %    KMLmesh(lat,lon,z,<keyword,value>)
