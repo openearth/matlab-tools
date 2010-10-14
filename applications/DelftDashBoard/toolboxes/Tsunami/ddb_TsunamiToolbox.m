@@ -236,18 +236,18 @@ for i=1:nseg
 end
 %handles = ddb_computeMw(handles);
 
-tbl=table(gcf,'table','find');
+tbl=table2(gcf,'table','find');
 if ~isempty(tbl)
-    table(gcf,'table','change','data',data);
+    table2(gcf,'table','change','data',data);
 else
-    table(gcf,'table','create','position',[386 40],'nrrows',4,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'format',fmt,'enable',enab,'includenumbers');
+    table2(gcf,'table','create','position',[386 40],'nrrows',4,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'format',fmt,'enable',enab,'includenumbers');
 end
 
 %%
 function UpdateFaultAreaData
 
 handles=getHandles;
-data=table(gcf,'table','getdata');
+data=table2(gcf,'table','getdata');
 handles.Toolbox(tb).Input.FaultLength=[];
 handles.Toolbox(tb).Input.Strike=[];
 handles.Toolbox(tb).Input.Dip=[];

@@ -331,11 +331,11 @@ for i=1:npoi
     data{i,6}=handles.Toolbox(tb).Input.Par2(i);
 end
 
-tbl=table(gcf,'table','find');
+tbl=table2(gcf,'table','find');
 if ~isempty(tbl)
-    table(gcf,'table','change','data',data);
+    table2(gcf,'table','change','data',data);
 else
-    table(gcf,'table','create','position',[200 40],'nrrows',4,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'format',fmt,'enable',enab,'includenumbers');
+    table2(gcf,'table','create','position',[200 40],'nrrows',4,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'format',fmt,'enable',enab,'includenumbers');
 end
 DrawHurricaneTrack(handles);
 
@@ -344,7 +344,7 @@ function UpdateTrack
 
 handles=getHandles;
 
-data=table(gcf,'table','getdata');
+data=table2(gcf,'table','getdata');
 
 handles.Toolbox(tb).Input.Date=[];
 handles.Toolbox(tb).Input.Time=[];

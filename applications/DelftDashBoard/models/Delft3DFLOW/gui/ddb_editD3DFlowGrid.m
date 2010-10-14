@@ -27,7 +27,7 @@ end
 Callbacks{1}=@ChangeLayers;
 coltp{1}='editreal';
 %table(gcf,'table','create','position',[610 45],'nrrows',5,'columntypes',coltp,'width',50,'data',data,'Callbacks',Callbacks,'includenumbers');
-table(gcf,'create','position',[610 45],'nrrows',5,'columntypes',coltp,'width',50,'data',data,'Callbacks',Callbacks,'includenumbers',1,'Tag','layertable');
+table2(gcf,'create','position',[610 45],'nrrows',5,'columntypes',coltp,'width',50,'data',data,'Callbacks',Callbacks,'includenumbers',1,'Tag','layertable');
 handles.GUIHandles.TextTotal = uicontrol(gcf,'Style','text','String',['Sum : %'],'Position',[625  25  70 15],'HorizontalAlignment','right','BackgroundColor',bgc,'Tag','UIControl');
 
 handles.GUIHandles.PushGenerateLayers = uicontrol(gcf,'Style','pushbutton','String','Generate Layers','Position',[485 90 100 20],'Tag','UIControl');
@@ -239,7 +239,7 @@ handles=getHandles;
 kmax=handles.Model(md).Input(ad).KMax;
 for i=1:kmax
     data{i,1}=handles.Model(md).Input(ad).Thick(i);
-    table(gcf,'table','change','data',data);
+    table2(gcf,'table','change','data',data);
 end
 
 %%
@@ -258,7 +258,7 @@ end
 function ChangeLayers
 
 handles=getHandles;
-data=table(gcf,'table','getdata');
+data=table2(gcf,'table','getdata');
 for i=1:handles.Model(md).Input(ad).KMax
     handles.Model(md).Input(ad).Thick(i)=data{i,1};
 end

@@ -216,7 +216,7 @@ str=get(handles.GUIHandles.SelectDataSource,'String');
 ii=get(handles.GUIHandles.SelectDataSource,'Value');
 tp=str{ii};
 
-table(gcf,'bctable','delete');
+table2(gcf,'bctable','delete');
 set(handles.GUIHandles.EditBCConst,'Visible','off');
 set(handles.GUIHandles.TextBCConst,'Visible','off');
 set(handles.GUIHandles.TextValue,'Visible','off');
@@ -234,7 +234,7 @@ switch lower(tp)
         end
         callbacks={@ChangeBCTable,@ChangeBCTable};
         coltp={'editreal','editreal'};
-        table(gcf,'bctable','create','position',[370 30],'nrrows',5,'columntypes',coltp,'width',[70 70],'data',data,'callbacks',callbacks,'includenumbers','includebuttons');
+        table2(gcf,'bctable','create','position',[370 30],'nrrows',5,'columntypes',coltp,'width',[70 70],'data',data,'callbacks',callbacks,'includenumbers','includebuttons');
         set(handles.GUIHandles.TextValue,'Visible','on');
         set(handles.GUIHandles.TextDepth,'Visible','on');
     case{'per layer'}
@@ -251,7 +251,7 @@ switch lower(tp)
         end
         callbacks={@ChangeBCTable};
         coltp={'editreal'};
-        table(gcf,'bctable','create','position',[440 30],'nrrows',5,'columntypes',coltp,'width',70,'data',data,'callbacks',callbacks,'includenumbers');
+        table2(gcf,'bctable','create','position',[440 30],'nrrows',5,'columntypes',coltp,'width',70,'data',data,'callbacks',callbacks,'includenumbers');
         set(handles.GUIHandles.TextValue,'Visible','on');
     otherwise
 end
@@ -260,7 +260,7 @@ end
 function ChangeBCTable
 
 handles=getHandles;
-data=table(gcf,'bctable','getdata');
+data=table2(gcf,'bctable','getdata');
 bcpar=[];
 for i=1:size(data,1)
     for j=1:size(data,2)

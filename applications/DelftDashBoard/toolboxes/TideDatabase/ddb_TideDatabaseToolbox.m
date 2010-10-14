@@ -232,10 +232,10 @@ for i=1:nr
     data{i,3}=handles.Toolbox(tb).TideStations.ComponentSet(ii).Phase(i);
 end
 
-tbl=table(gcf,'table','find');
+tbl=table2(gcf,'table','find');
 if ~isempty(tbl)
-    table(gcf,'table','change','data',data);
+    table2(gcf,'table','change','data',data);
 else
-    table(gcf,'table','create','position',[670 30],'nrrows',6,'columntypes',cltp,'width',wdt,'data',data,'Callbacks',Callbacks);
+    table2(gcf,'table','create','position',[670 30],'nrrows',6,'columntypes',cltp,'width',wdt,'data',data,'Callbacks',Callbacks);
 end
 

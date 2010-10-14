@@ -98,7 +98,7 @@ for i=2:k
     callbacks{i}=[];
 end
 
-table(gcf,'table','create','position',[30 70],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons');
+table2(gcf,'table','create','position',[30 70],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons');
 
 hok=uicontrol(gcf,'Style','pushbutton','String','OK',    'Position',[k*80+100 30 70 20]);
 hca=uicontrol(gcf,'Style','pushbutton','String','Cancel','Position',[k*80+20 30 70 20]);
@@ -111,7 +111,7 @@ SetUIBackgroundColors;
 %%
 function PushOK_Callback(hObject,eventdata)
 handles=getHandles;
-data=table(gcf,'table','getdata');
+data=table2(gcf,'table','getdata');
 
 nr=size(data,1);
 id=ad;

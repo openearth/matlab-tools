@@ -21,7 +21,7 @@ for i=1:handles.NrHarmonicComponents
 end
 data{1,1}='Mean';
 callbacks={'',@RefreshPeriod,'','','',''};
-table(gcf,'table','create','position',[50 120],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons');
+table2(gcf,'table','create','position',[50 120],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons');
 RefreshPeriod;
 
 switch handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).Type,
@@ -83,7 +83,7 @@ guidata(gcf,handles);
 function PushOK_CallBack(hObject,eventdata)
 
 handles=getHandles;
-data=table(gcf,'table','getdata');
+data=table2(gcf,'table','getdata');
 handles.Model(md).Input(ad).HarmonicComponents=[];
 % handles.GUIData.ActiveOpenBoundary.HarmonicAmpA=[];
 % handles.GUIData.ActiveOpenBoundary.HarmonicPhaseA=[];
@@ -129,7 +129,7 @@ closereq;
 %%
 function RefreshPeriod
 
-data=table(gcf,'table','getdata');
+data=table2(gcf,'table','getdata');
 nr=size(data,1);
 for i=2:min(nr,8)
     frq=data{i,2};
@@ -144,4 +144,4 @@ for i=2:min(nr,8)
         data{i,1}='';
     end
 end
-table(gcf,'table','change','data',data);
+table2(gcf,'table','change','data',data);

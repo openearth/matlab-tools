@@ -52,7 +52,7 @@ for i=1:2
     data{i,4}=0;
     data{i,5}=0;
 end
-table(gcf,'table','create','position',[50 90],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons');
+table2(gcf,'table','create','position',[50 90],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons');
 
 handles.GUIHandles.TextTime                = uicontrol(gcf,'Style','text','String','Time','Position',[50 265 120 15],'HorizontalAlignment','center');
 handles.GUIHandles.Textyyyy                = uicontrol(gcf,'Style','text','String','yyyy mm dd HH MM SS','Position',[50 250 120 15],'HorizontalAlignment','center');
@@ -192,7 +192,7 @@ function EditTable
 handles=guidata(gcf);
 k=get(handles.GUIHandles.SelectLayer,'Value');
 ic=handles.ActiveConstituent;
-data=table(gcf,'table','getdata');
+data=table2(gcf,'table','getdata');
 nr=size(data,1);
 for i=1:nr
     switch lower(handles.Constituent(ic).Profile)
@@ -298,4 +298,4 @@ switch lower(handles.Constituent(ic).Profile)
         end
         enab(:,end-1:end)=0;
 end
-table(gcf,'table','change','data',data,'enable',enab);
+table2(gcf,'table','change','data',data,'enable',enab);

@@ -79,7 +79,7 @@ RefreshWind(handles);
 %%
 function AdjustData_CallBack(hObject,eventdata)
 handles=getHandles;
-data=table(findobj('Tag','MainWindow'),'table','getdata');
+data=table2(findobj('Tag','MainWindow'),'table','getdata');
 handles.Model(handles.ActiveModel.Nr).Input(ad).WindData=cell2mat(data);
 setHandles(handles);
 %%
@@ -124,7 +124,7 @@ Interpolation = handles.Model(md).Input(id).WndInt;
 data=num2cell(handles.Model(md).Input(id).WindData);
 
 try
-    table(findobj('Tag','MainWindow'),'table','delete');
+    table2(findobj('Tag','MainWindow'),'table','delete');
     delete(handles.GUIHandles.TextSpeed);
     delete(handles.GUIHandles.TextDirection);
 end
@@ -143,7 +143,7 @@ switch windType
         wdt=[110 80 80];
         handles.GUIHandles.TextSpeed = uicontrol(gcf,'Style','text','String','Speed [m/s]','Position',[410 130 80 15],'HorizontalAlignment','center','Tag','UIControl');
         handles.GUIHandles.TextDirection = uicontrol(gcf,'Style','text','String','Direction [deg]','Position',[490 130 80 15],'HorizontalAlignment','center','Tag','UIControl');
-        table(findobj('Tag','MainWindow'),'table','create','position',[300 30],'nrrows',5,'columntypes',cltp,'width',wdt,'data',data,'callbacks',{@AdjustData_CallBack,@AdjustData_CallBack,@AdjustData_CallBack},'includebuttons');
+        table2(findobj('Tag','MainWindow'),'table','create','position',[300 30],'nrrows',5,'columntypes',cltp,'width',wdt,'data',data,'callbacks',{@AdjustData_CallBack,@AdjustData_CallBack,@AdjustData_CallBack},'includebuttons');
     otherwise
         set(handles.GUIHandles.ToggleUniform,'Value',0);
         set(handles.GUIHandles.ToggleSpaceVarying,'Value',1);

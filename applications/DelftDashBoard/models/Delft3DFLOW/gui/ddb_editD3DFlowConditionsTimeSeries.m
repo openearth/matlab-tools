@@ -23,7 +23,7 @@ for i=1:handles.Bnd.NrTimeSeries
     data{i,2}=handles.Bnd.TimeSeriesA(i,1);
     data{i,3}=handles.Bnd.TimeSeriesB(i,1);
 end
-table(gcf,'table','create','position',[50 90],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons');
+table2(gcf,'table','create','position',[50 90],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons');
 
 switch handles.Bnd.Type,
     case{'Z'}
@@ -110,7 +110,7 @@ function PushImport_CallBack(hObject,eventdata)
 
 [data,ok]=ImportFromXLS;
 if ok
-    table(gcf,'table','change','data',data);
+    table2(gcf,'table','change','data',data);
 else
     GiveWarning('Warning','Error importing xls file');
 end
@@ -125,7 +125,7 @@ try
         data{i,2}=str2double(char(a{2}(i)));
         data{i,3}=str2double(char(a{3}(i)));
     end
-    table(gcf,'table','change','data',data);
+    table2(gcf,'table','change','data',data);
 catch
     GiveWarning('Warning','Could not copy selection');
 end
@@ -139,13 +139,13 @@ for i=1:handles.Bnd.NrTimeSeries
     data{i,2}=handles.Bnd.TimeSeriesA(i,k);
     data{i,3}=handles.Bnd.TimeSeriesB(i,k);
 end
-table(gcf,'table','change','data',data);
+table2(gcf,'table','change','data',data);
 
 %%
 function EditTable
 handles=guidata(gcf);
 k=get(handles.GUIHandles.SelectLayer,'Value');
-data=table(gcf,'table','getdata');
+data=table2(gcf,'table','getdata');
 nr=size(data,1);
 for i=1:nr
     handles.Bnd.TimeSeriesT(i)=data{i,1};

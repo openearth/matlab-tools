@@ -229,7 +229,7 @@ str=get(handles.GUIHandles.SelectDataSource,'String');
 ii=get(handles.GUIHandles.SelectDataSource,'Value');
 tp=str{ii};
 
-table(gcf,'ictable','delete');
+table2(gcf,'ictable','delete');
 set(handles.GUIHandles.EditICConst,'Visible','off');
 set(handles.GUIHandles.TextICConst,'Visible','off');
 set(handles.GUIHandles.TextValue,'Visible','off');
@@ -247,7 +247,7 @@ switch lower(tp)
         end
         callbacks={@ChangeICTable,@ChangeICTable};
         coltp={'editreal','editreal'};
-        table(gcf,'ictable','create','position',[370 30],'nrrows',5,'columntypes',coltp,'width',[70 70],'data',data,'callbacks',callbacks,'includenumbers','includebuttons');
+        table2(gcf,'ictable','create','position',[370 30],'nrrows',5,'columntypes',coltp,'width',[70 70],'data',data,'callbacks',callbacks,'includenumbers','includebuttons');
         set(handles.GUIHandles.TextValue,'Visible','on');
         set(handles.GUIHandles.TextDepth,'Visible','on');
     case{'per layer'}
@@ -273,7 +273,7 @@ end
 function ChangeICTable
 
 handles=getHandles;
-data=table(gcf,'ictable','getdata');
+data=table2(gcf,'ictable','getdata');
 icpar=[];
 for i=1:size(data,1)
     for j=1:size(data,2)

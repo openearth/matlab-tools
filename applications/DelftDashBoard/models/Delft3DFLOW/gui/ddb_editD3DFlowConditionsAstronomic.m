@@ -285,11 +285,11 @@ for i=1:length(handles.ComponentNames)
     ppm{i,3}='';
 end
 
-tb=table(gcf,'table','find');
+tb=table2(gcf,'table','find');
 if ~isempty(tb)
-    table(gcf,'table','change','data',data);
+    table2(gcf,'table','change','data',data);
 else
-    table(gcf,'table','create','position',[50 110],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'popuptext',ppm,'callbacks',callbacks,'includebuttons');
+    table2(gcf,'table','create','position',[50 110],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'popuptext',ppm,'callbacks',callbacks,'includebuttons');
 end
 
 %%
@@ -315,20 +315,20 @@ for i=1:handles.AstronomicComponentSets(ii).Nr
     end
 end
 if k>0
-    tb=table(gcf,'correctiontable','find');
+    tb=table2(gcf,'correctiontable','find');
     if ~isempty(tb)
-        table(gcf,'correctiontable','change','data',data);
+        table2(gcf,'correctiontable','change','data',data);
     else
-        table(gcf,'correctiontable','create','position',[460 110],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'enable',enab);
+        table2(gcf,'correctiontable','create','position',[460 110],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'enable',enab);
     end
 else
-    table(gcf,'correctiontable','delete');
+    table2(gcf,'correctiontable','delete');
 end
 
 %%
 function [handles,ok]=ChangeData(handles)
 ok=1;
-data=table(gcf,'table','getdata');
+data=table2(gcf,'table','getdata');
 for i=1:size(data,1)
     for j=i:size(data,1)
         if strcmp(data{i,1},data{j,1}) && i~=j
@@ -350,7 +350,7 @@ for i=1:handles.AstronomicComponentSets(ii).Nr
     handles.AstronomicComponentSets(ii).Phase(i)=data{i,3};
     handles.AstronomicComponentSets(ii).Correction(i)=data{i,4};
     if handles.AstronomicComponentSets(ii).Correction(i)
-        data2=table(gcf,'correctiontable','getdata');
+        data2=table2(gcf,'correctiontable','getdata');
         for j=1:size(data2,1)
             if strcmp(data2{j,1},handles.AstronomicComponentSets(ii).Component{i})
                 handles.AstronomicComponentSets(ii).AmplitudeCorrection(i)=data2{j,2};
