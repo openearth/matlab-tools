@@ -40,9 +40,7 @@ else
         handles.Model(md).Input(id).Runid=str;
         handles=ddb_initializeFlowDomain(handles,'all',id,handles.Model(md).Input(id).Runid);
         setHandles(handles);
-        handles=ddb_refreshFlowDomains(handles);
-        setHandles(handles);
+        ddb_refreshFlowDomains;
         ddb_changeDomain;
     end
 end
-

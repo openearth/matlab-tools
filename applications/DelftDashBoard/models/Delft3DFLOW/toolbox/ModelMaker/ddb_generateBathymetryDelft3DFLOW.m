@@ -41,7 +41,7 @@ if ~isempty(handles.Model(md).Input(id).GrdFile)
     dpsopt=handles.Model(md).Input(id).DpsOpt;
 
     switch lower(dpsopt)
-        case{'DP'}
+        case{'dp'}
             x=handles.Model(md).Input(id).GridXZ;
             y=handles.Model(md).Input(id).GridYZ;
         otherwise
@@ -61,6 +61,8 @@ if ~isempty(handles.Model(md).Input(id).GrdFile)
             handles.Model(md).Input(id).Depth(isnan(handles.Model(md).Input(id).Depth))=z(isnan(handles.Model(md).Input(id).Depth));
     end
 
+    z=handles.Model(md).Input(id).Depth;
+    
     handles.Model(md).Input(id).DepthZ=GetDepthZ(z,dpsopt);
 
     ddb_wldep('write',[AttName '.dep'],z);

@@ -23,7 +23,7 @@ switch opt
             handles=ddb_readDDBoundFile(handles,[filename]);
             for i=1:handles.GUIData.NrFlowDomains
                 handles.ActiveDomain=i;
-                runid=handles.Toolbox(tbnr).Input.Domains{i};
+                runid=handles.Model(md).Input.Domains{i};
                 handles=ddb_initializeFlowDomain(handles,'all',i,runid);
                 filename=[runid '.mdf'];
                 handles=ddb_readMDF(handles,filename,i);

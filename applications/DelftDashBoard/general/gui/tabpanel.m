@@ -56,7 +56,7 @@ if isempty(tabnames) && ~isempty(strings)
 end
 
 if isempty(handle)
-    handle=findobj(fig,'Tag',tag,'Type','uipanel');
+    handle=findobj(fig,'Tag',lower(tag),'Type','uipanel');
 end
 
 switch lower(fcn)
