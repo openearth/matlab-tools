@@ -426,11 +426,58 @@ end
                keyword1         = upper(pad(keyword1,3,' '));
             while strfind(keyword1(1:3),'INP')==1
                j               = j+1;
+              [keyword1,rec1]   = strtok(rec)
+               
+               
+               
+               
+               
                DAT.inpgrid{j}  = rec1;
                rec             = fgetlines_no_comment_line(fid);
+              [keyword1,rec1]   = strtok(rec);
+               keyword1         = upper(pad(keyword1,3,' '));
                
                if strfind(strtok(upper(rec)),'READ')==1
-                   DAT.readinp{j} = rec1;
+                 [DAT.readinp{j}.parameter,rec1]   = strtok(rec1);
+                 [DAT.readinp{j}.fac      ,rec1]   = strtok(rec1);
+                 [val1                    ,rec1]   = strtok(rec1);
+                 if strcmpi(val1(1:4),'SERI')
+                 [val1                    ,rec1]   = strtok(rec1);
+                 DAT.readinp{j}.fname2 = val1(2:end-1); % remove '
+                 else
+                 DAT.readinp{j}.fname1 = val1(2:end-1); % remove '
+                 end
+                 [val1                    ,rec1]   = strtok(rec1);
+                 DAT.readinp{j}.idla  = str2num(val1);
+                 [val1                    ,rec1]   = strtok(rec1);
+                 DAT.readinp{j}.nhedf = str2num(val1);
+
+                 [val1                    ,rec1]   = strtok(rec1);
+                 if     strcmpi(val1(1:3),'FRE')
+                 DAT.readinp{j}.format  = val1;
+                 elseif strcmpi(val1(1:3),'FOR')
+                 DAT.readinp{j}.format  = val1;
+                 elseif strcmpi(val1(1:3),'UNF')
+                 DAT.readinp{j}.format  = val1;
+                 else
+                 DAT.readinp{j}.nhedt   = str2num(val1);
+                    [val1                    ,rec1]   = strtok(rec1);
+		    if     strcmpi(val1(1:3),'FRE')
+		    DAT.readinp{j}.format  = val1;
+		    elseif strcmpi(val1(1:3),'FOR')
+		    DAT.readinp{j}.format  = val1;
+   		    elseif strcmpi(val1(1:3),'UNF')
+		    DAT.readinp{j}.format  = val1;
+		    else
+		    DAT.readinp{j}.nhedvec = str2num(val1);
+		    [val1                    ,rec1]   = strtok(rec1);
+		    DAT.readinp{j}.format  = val1;
+		    end
+                 end
+                 if strcmpi(DAT.readinp{j}.format(1:3),'FOR')
+                 warning('READinp ... FORmat not fully implemented')
+                 end
+
                else
                   if OPT.dispwarnings
                      disp('Warning: keyword READ required for every INPGRID')
