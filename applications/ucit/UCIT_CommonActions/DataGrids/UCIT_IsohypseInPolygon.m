@@ -115,7 +115,7 @@ for xx = 1 : length(years)
     try delete(findobj('tag','selectionpoly'));  end %#ok<*TRYNC> delete any remaining poly
     
     %% compute area under certain depth
-    dh = 1; teller3 = 0;
+    dh = 0.25; teller3 = 0;
     for n = -50 : dh : 50
         teller3 = teller3 +1;
         height(teller3) = n;
