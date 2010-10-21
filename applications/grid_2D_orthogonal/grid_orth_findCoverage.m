@@ -66,6 +66,7 @@ if ~isempty(fns)
     
     % get coverage
     for i = 1:size(batchvar1,1)
+        multiWaitbar('Processing polygons ...',i/size(batchvar1,1), [1.0 0.4 0.0])
         if batchvar1{i,1}==1
             % load polygon from polygon directory
             load(fullfile(OPT.workdir, 'polygons', fns(i,1).name));
@@ -77,6 +78,7 @@ if ~isempty(fns)
                 end
     
                 for j = 1:length(OPT.inputtimes)
+                    multiWaitbar('Processing timesteps ...',i/length(OPT.inputtimes), [0.1 0.5 0.8])
                     
                     if exist(fullfile(OPT.workdir, 'datafiles', ['timewindow = ' num2str(OPT.searchinterval)], [fns(i,1).name(1:end-4) '_' datestr(OPT.inputtimes(j)) '.mat']),'file')
                         load(fullfile(OPT.workdir, 'datafiles', ['timewindow = ' num2str(OPT.searchinterval)], [fns(i,1).name(1:end-4) '_' datestr(OPT.inputtimes(j)) '.mat']));
