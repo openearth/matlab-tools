@@ -41,7 +41,7 @@ function varargout = KML_marker(lat,lon,varargin)
 %% keyword,value
 
    OPT.description  = [];
-   OPT.icon         = 'http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png';
+   OPT.icon         = [];
    OPT.name         = [];
    OPT.timeIn       = [];
    OPT.timeOut      = [];
@@ -55,15 +55,18 @@ function varargout = KML_marker(lat,lon,varargin)
 
    timeSpan = KML_timespan('timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'dateStrStyle',OPT.dateStrStyle);
 
+   if ~isempty(OPT.icon)
+       OPT.icon = sprintf('<Style><IconStyle><Icon>%s</Icon></IconStyle></Style>',OPT.icon);
+   end
 %% 
 output = sprintf([...
  '<Placemark>'...
  '%s'...                                                   % timeSpan
  '<name>%s</name>'...                                      % name
  '<description>%s</description>'...                        % description
- '<Style><IconStyle><Icon>%s</Icon></IconStyle></Style>'...% icon
+ '%s'...% icon
  '<Point><coordinates>%3.8f,%3.8f,0</coordinates></Point>'...
- '</Placemark>'],...
+ '</Placemark>\n'],...
  timeSpan,OPT.name,['<![CDATA[',OPT.description,']]>'],OPT.icon,lon,lat);
  
  varargout = {output};
