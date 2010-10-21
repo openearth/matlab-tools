@@ -11,7 +11,7 @@ function varargout = edges_tri_grid(tri,x,y,z)
 %   Output:
 %   E = is a matrix, contains the coordinates of all points, and their connectivity [x,y,z,loop_index]
 %   Alternative syntax:
-%   [x,y,z,polygon_number,smart_something] = edges_tri_grid(tri,x,y,z)
+%   [x,y,z,polygon_number,isNotHoleInAnotherPoly] = edges_tri_grid(tri,x,y,z)
 %
 %   Example
 %   trisurf_edges
@@ -64,6 +64,11 @@ function varargout = edges_tri_grid(tri,x,y,z)
 %%
 % determine all the unique vertices in the triangluated mesh
 tri = int32(tri);
+
+% make sure triangles are unique (no duplicates)
+tri = unique(sort(tri(:,1:3),2),'rows');
+tri = tri(:,[1 2 3 1]);
+
 vertices         = [tri(:,[1 2]);tri(:,[2 3]);tri(:,[3 1])];
 vertices         = sort(vertices,2);
 
@@ -87,11 +92,22 @@ previousEdgeIndex = 0;
 ii = 1;
 jj = 10; % identifier for connecting edges ring
 while any(edgeIndices(:,4)==0)
-    % first try to find connectingLine form the first row of coordinates
+    % first try to find connectingLine from the first row of coordinates
     connectingLines = find(edgeIndices(ii,2)==edgeIndices(:,1)|...
         edgeIndices(ii,2)==edgeIndices(:,2));
     connectingLines(connectingLines==ii)=[];
-    
+    if numel(connectingLines)==0
+        figure
+        trisurf(tri,x,y,z,1)
+        hold on
+        connectingLines = find(edgeIndices(ii,2)==edgeIndices(:,1)|...
+            edgeIndices(ii,2)==edgeIndices(:,2));
+        trisurf(tri(edgeTriIndex(connectingLines),:),x,y,z+1,10)
+        view(2)
+        xlim(mean(mean(x(tri(edgeTriIndex(connectingLines),:))))+[-200 200])
+        ylim(mean(mean(y(tri(edgeTriIndex(connectingLines),:))))+[-200 200])
+        error('i give up... the mesh is to complicated, holes and edges may not connect, or maybe triangles overlap')
+    end
     if numel(connectingLines)~=1
         % find the connecting line which is on the same triangle.
         possibleConnectingLines = connectingLines(edgeTriIndex(connectingLines)==edgeTriIndex(ii));
@@ -109,15 +125,18 @@ while any(edgeIndices(:,4)==0)
                         connectedTriangles = unique(vertex_tri_index(any(ismember(vertex_tri_index,connectedTriangles),2),:));
                         possibleConnectingLines = connectingLines(ismember(edgeTriIndex(connectingLines),connectedTriangles));
                         if numel(possibleConnectingLines)~=1
-                            %    trisurf(tri,x,y,z,1)
-                            %    hold on
-                            %    trisurf(tri(edgeTriIndex(connectingLines),:),x,y,z,10)
-                            error('i give up... the mesh is to complicated, holes and edges may not connect.')
+                            figure
+                            trisurf(tri,x,y,z,1)
+                            hold on
+                            trisurf(tri(edgeTriIndex(connectingLines),:),x,y,z+1,10)
+                            view(2)
+                            xlim(mean(mean(x(tri(edgeTriIndex(connectingLines),:))))+[-200 200])
+                            ylim(mean(mean(y(tri(edgeTriIndex(connectingLines),:))))+[-200 200])
+                            error('i give up... the mesh is to complicated, holes and edges may not connect, or maybe triangles overlap')
                         end
                     end
                 end
             end
-            
         end
         connectingLines = possibleConnectingLines;
     end
@@ -132,7 +151,7 @@ while any(edgeIndices(:,4)==0)
         edgeIndices(ii,5) = jj;
         previousEdgeIndex = ii;
         ii = connectingLines;
-    else % start a new loop 
+    else % start a new loop
         edgeIndices(ii,4) = connectingLines;
         edgeIndices(ii,5) = jj;
         % find the triangle with which the old loop has ended and store it
@@ -149,7 +168,7 @@ edgeIndices(ii,6) = edgeTriIndex(ii);
 
 while any(edgeIndices(:,3)==0)
     ii = find(edgeIndices(:,3)==0,1);
-    edgeIndices(ii,3) = find(edgeIndices(:,4)==ii);
+    edgeIndices(ii,3) = find(edgeIndices(:,4)==ii,1);
 end
 
 [dummy,dummy,edgeIndices(:,5)] = unique(edgeIndices(:,5));
@@ -187,7 +206,7 @@ end
 if nargout==1
     varargout = {E};
 else
-    varargout = {E(:,1),E(:,2),E(:,3),E(:,4),E(:,5),};
+    varargout = {E(:,1),E(:,2),E(:,3),E(:,4),E(:,5)};
 end
  
 

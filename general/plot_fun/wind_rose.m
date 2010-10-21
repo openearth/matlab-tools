@@ -138,7 +138,7 @@ handles=[];
 OPT.dtype       = 'standard';
 OPT.nAngles     = 36;
 OPT.ri          = 1/30; % empty internal radius, relative to size of higher percentage [1/30]
-OPT.quad        = 1;
+OPT.quad        = 'auto';
 OPT.legType     = 2;
 OPT.percBg      = 'w';
 OPT.titStr      = '';
@@ -165,6 +165,23 @@ if OPT.onAxes
       OPT.onAxes  = OPT.onAxes(1);
 end
 
+
+%% process auto quad function
+
+if ischar(OPT.quad)
+    if strcmpi(OPT.quad,'auto')
+      tmp = histc(mod(D,360),[0 90 180 270 360]);
+      [tmp,OPT.quad] = min(tmp(1:4));
+      if OPT.quad == 3;
+          OPT.quad = 1;
+      elseif OPT.quad == 1;
+          OPT.quad = 3;
+      end
+    else
+        error('OPT.quad must be auto if it is a string')
+    end
+end
+    
 % vin=varargin;
 % for i=1:length(vin)
 %   if isequal(vin{i},'dtype')
