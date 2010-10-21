@@ -193,7 +193,7 @@ else
       end
    
    %% DATASET and CATALOGREF
-      nc_file_list   = opendap_catalog_dataset(D,OPT)
+      nc_file_list   = opendap_catalog_dataset(D,OPT);
       nc_folder_list = []; % TO DO
 
    catch
