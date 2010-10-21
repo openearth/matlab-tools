@@ -250,29 +250,39 @@ end
                end
 
                %% keywords before CART/NAUT
-               try
-                   OUT = expressionsfromstring(lower(rest_of_rec),...
+               %try
+                   %if any(findstr(rest_of_rec,'='))
+                   %OUT = expressionsfromstring(lower(rest_of_rec),...
+                   %                 {'level' ,'nor'   ,'depmin'  ,'maxmes',...
+                   %                  'maxerr','grav'  ,'rho'     ,'inrhog',...
+                   %                  'hsrerr'},'empty',0);                   
+                   %else
+                   OUT = swan_keyword(lower(rest_of_rec),...
                                     {'level' ,'nor'   ,'depmin'  ,'maxmes',...
                                      'maxerr','grav'  ,'rho'     ,'inrhog',...
-                                     'hsrerr','pwtail','froudmax','printf',...
-                                     'prtest'},'empty',0);
+                                     'hsrerr'},DAT.set); % TO DO make numeric
+                   %end
                    if ~isempty(OUT)
                    DAT.set      = mergestructs('overwrite',DAT.set,OUT);
                    end
 
                   %% keywords after CART/NAUT
                   [nautcart,rest_of_rec] = strtok(rest_of_rec(ind:end));
-                   OUT = expressionsfromstring(lower(rest_of_rec),...
-                                    {'level' ,'nor'   ,'depmin'  ,'maxmes',...
-                                     'maxerr','grav'  ,'rho'     ,'inrhog',...
-                                     'hsrerr','pwtail','froudmax','printf',...
-                                     'prtest'},'empty',0);
+                   %if any(findstr(rest_of_rec,'='))
+                   %OUT = expressionsfromstring(lower(rest_of_rec),...
+                   %                 {'pwtail','froudmax','printf',...
+                   %                  'prtest'},'empty',0);                   
+                   %else
+                   OUT = swan_keyword(lower(rest_of_rec),...
+                                    {'pwtail','froudmax','printf',...
+                                     'prtest'},DAT.set); % TO DO make numeric
+                   %end
                    if ~isempty(OUT)
                    DAT.set      = mergestructs('overwrite',DAT.set,OUT);
                    end
-               catch
-                   DAT.set      = rest_of_rec;
-               end
+               %catch
+               %    DAT.set      = rest_of_rec;
+               %end
 
                rec          = fgetlines_no_comment_line(fid);
                foundkeyword = true;
@@ -420,62 +430,109 @@ end
                end              
             end
             
-            j = 0;
 %% Read INPgrid (required)
+            j = 0;
               [keyword1,rec1]   = strtok(rec);
                keyword1         = upper(pad(keyword1,3,' '));
-            while strfind(keyword1(1:3),'INP')==1
+            while strfind(keyword1(1:3),'INP')==1 % read all input grids
                j               = j+1;
-              [keyword1,rec1]   = strtok(rec)
                
+% TO DO absence of quantity: indeitcla grid for all quantities
                
+              [quantity,rec1]   = strtok(rec1);
+               keyword1         = strtok(rec1);
+               keyword1 = pad(keyword1,6,' ');
+               if     strcmpi(keyword1(1:3),'REG')
+               gridtype = 'REG';
+              [keyword1,rec1]   = strtok(rec1);
+               elseif strcmpi(keyword1(1:4),'CURV')
+               gridtype = 'CURV';
+              [keyword1,rec1]   = strtok(rec1);
+               elseif strcmpi(keyword1(1:6),'UNSTRUC')
+               gridtype = 'UNSTRUC';
+              [keyword1,rec1]   = strtok(rec1);
+               else
+               gridtype = 'REG';
+               end
+
+               if strcmpi(gridtype,'REG')
+              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.xpinp  = str2num(keyword1);
+              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.ypinp  = str2num(keyword1);
+              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.alpinp = str2num(keyword1);
+              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.mxinp  = str2num(keyword1);
+              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.myinp  = str2num(keyword1);
+              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.dxinp  = str2num(keyword1);
+              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.dyinp  = str2num(keyword1);
+               elseif strcmpi(gridtype,'CURV')
+              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.stagrx  = str2num(keyword1);
+              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.stagry  = str2num(keyword1);
+              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.mxinp   = str2num(keyword1);
+              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.myinp   = str2num(keyword1);
+               end
                
-               
-               
-               DAT.inpgrid{j}  = rec1;
+              [keyword1,rec1]   = strtok(rec1);
+              if strcmpi(keyword1(1:3),'EXC')
+              [keyword1,rec1]   = strtok(rec1);DAT.inpgrid{j}.exception = str2num(keyword1);
+              end
+              
+              [keyword1,rec1]   = strtok(rec1);
+               if isempty(keyword1)
+               DAT.inpgrid{j}.nonstationary  = 0;
+               elseif strcmpi(keyword1(1:7),'NONSTAT')
+               DAT.inpgrid{j}.nonstationary  = rec1;
+% TO DO parse non-stationary
+               end
+
+%% Read READinp (required)
                rec             = fgetlines_no_comment_line(fid);
               [keyword1,rec1]   = strtok(rec);
                keyword1         = upper(pad(keyword1,3,' '));
                
                if strfind(strtok(upper(rec)),'READ')==1
-                 [DAT.readinp{j}.parameter,rec1]   = strtok(rec1);
-                 [DAT.readinp{j}.fac      ,rec1]   = strtok(rec1);
+                 [DAT.inpgrid{j}.quantity,rec1]   = strtok(rec1);
+                  if ~strcmpi(DAT.inpgrid{j}.quantity,quantity)
+                    error('READinp parameter mismatch')
+                  end
+                  DAT.inpgrid{j}.quantity = quantity;
+                  DAT.inpgrid{j}.gridtype = gridtype;
+                 
+                 [DAT.inpgrid{j}.fac      ,rec1]   = strtok(rec1);
                  [val1                    ,rec1]   = strtok(rec1);
                  if strcmpi(val1(1:4),'SERI')
                  [val1                    ,rec1]   = strtok(rec1);
-                 DAT.readinp{j}.fname2 = val1(2:end-1); % remove '
+                 DAT.inpgrid{j}.fname2 = val1(2:end-1); % remove '
                  else
-                 DAT.readinp{j}.fname1 = val1(2:end-1); % remove '
+                 DAT.inpgrid{j}.fname1 = val1(2:end-1); % remove '
                  end
                  [val1                    ,rec1]   = strtok(rec1);
-                 DAT.readinp{j}.idla  = str2num(val1);
+                 DAT.inpgrid{j}.idla  = str2num(val1);
                  [val1                    ,rec1]   = strtok(rec1);
-                 DAT.readinp{j}.nhedf = str2num(val1);
+                 DAT.inpgrid{j}.nhedf = str2num(val1);
 
                  [val1                    ,rec1]   = strtok(rec1);
                  if     strcmpi(val1(1:3),'FRE')
-                 DAT.readinp{j}.format  = val1;
+                 DAT.inpgrid{j}.format  = val1;
                  elseif strcmpi(val1(1:3),'FOR')
-                 DAT.readinp{j}.format  = val1;
+                 DAT.inpgrid{j}.format  = val1;
                  elseif strcmpi(val1(1:3),'UNF')
-                 DAT.readinp{j}.format  = val1;
+                 DAT.inpgrid{j}.format  = val1;
                  else
-                 DAT.readinp{j}.nhedt   = str2num(val1);
+                 DAT.inpgrid{j}.nhedt   = str2num(val1);
                     [val1                    ,rec1]   = strtok(rec1);
 		    if     strcmpi(val1(1:3),'FRE')
-		    DAT.readinp{j}.format  = val1;
+		    DAT.inpgrid{j}.format  = val1;
 		    elseif strcmpi(val1(1:3),'FOR')
-		    DAT.readinp{j}.format  = val1;
+		    DAT.inpgrid{j}.format  = val1;
    		    elseif strcmpi(val1(1:3),'UNF')
-		    DAT.readinp{j}.format  = val1;
+		    DAT.inpgrid{j}.format  = val1;
 		    else
-		    DAT.readinp{j}.nhedvec = str2num(val1);
+		    DAT.inpgrid{j}.nhedvec = str2num(val1);
 		    [val1                    ,rec1]   = strtok(rec1);
-		    DAT.readinp{j}.format  = val1;
+		    DAT.inpgrid{j}.format  = val1;
 		    end
                  end
-                 if strcmpi(DAT.readinp{j}.format(1:3),'FOR')
-                 warning('READinp ... FORmat not fully implemented')
+                 if strcmpi(DAT.inpgrid{j}.format(1:3),'FOR')
+                 warning('READinp ... format not fully implemented')
                  end
 
                else
@@ -705,8 +762,24 @@ end
                end
                keyword1         = upper(pad(keyword1,8,' '));
             if strfind(keyword1(1:4),'FRIC')==1
+            
+               DAT.friction.expression  = 'JONSWAP';
+               DAT.friction.coefficient = 'CONSTANT';
+
                keyword         = lower(strtok(upper(rec)));
-               DAT.friction    = rec;
+              [val,rec] = strtok(rec);
+              [val,rec] = strtok(rec);
+               DAT.friction.expression = val;
+               if     strcmpi(val(1:3),'JON')
+                [DAT.friction.cfjon      ,rec] = strtok(rec);
+                 DAT.friction.cfjon            = str2num(DAT.friction.cfjon);
+                [DAT.friction.coefficient,rec] = strtok(rec);
+               elseif strcmpi(val(1:3),'COL')
+                 DAT.friction.cfw   = str2num(strtok(rec));
+               elseif strcmpi(val(1:3),'MAD')
+                 DAT.friction.kn    = str2num(strtok(rec));
+               else
+               end
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end     
@@ -789,9 +862,9 @@ end
                DAT.mud.disperi = 0;
                DAT.mud.source  = 0;
                DAT.mud.cg      = 0;
-               
-               DAT.mud         = expressionsfromstring(rec,...
-                                {'rhom','nu','layer','alpha','disperr','disperi','source','cg'});
+               [~,rec] = strtok(rec);
+               DAT.mud         = swan_keyword(rec,... % expressionsfromstring
+                                {'alpha','rhom','rho0','nu','layer','disperr','disperi','source','cg','power'});
                rec             = fgetlines_no_comment_line(fid);
             %else
             %   %% make emtpy matrices

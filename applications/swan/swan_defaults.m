@@ -10,7 +10,7 @@ function DAT = swan_defaults
 %  DAT.set.grav     = 9.81;
 %  DAT.set.rho      = 1025;
 %  DAT.set.inrhog   = 0;
-%  DAT.set.hserr    = 0.10;
+%  DAT.set.hsrerr   = 0.10;
 %
 %  DAT.set.pwtail   = 4; % GEN 3 KOMEN + rest / 5 for = GEN1 + GEN2 + GEN3 JANSEN
 %  DAT.set.froudmax = 0.80;
@@ -60,7 +60,7 @@ function DAT = swan_defaults
    DAT.set.grav     = 9.81;
    DAT.set.rho      = 1025;
    DAT.set.inrhog   = 0;
-   DAT.set.hserr    = 0.10;
+   DAT.set.hsrerr   = 0.10;
   %NAUTical/CARTesian
    DAT.set.pwtail   = 4; % GEN 3 KOMEN + rest / 5 for = GEN1 + GEN2 + GEN3 JANSEN
    DAT.set.froudmax = 0.80;

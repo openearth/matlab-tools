@@ -58,28 +58,20 @@ function DAT = expressionsfromstring(string,var_names,varargin)
 % var_names = {'rhom','nu','layer','alpha'};
 % string    = 'MUD alpha=1. rhom=1300. nu=0.01 layer=0.01';
 
-   %% Handle keyword/value pairs
-   %% --------------------------
+%% Handle keyword/value pairs
    
-   return_empty_defaults = true;
+   OPT.empty = true;
    
-   i = 1;
-   while i<=nargin-2,
-     if ischar(varargin{i}),
-       switch lower(varargin{i})
-       case 'empty' ;i=i+1 ;return_empty_defaults     = varargin{i};
-       otherwise
-          error(sprintf('Invalid string argument: %s.',varargin{i}));
-       end
-     end;
-     i=i+1;
-   end;
+   OPT = setProperty(OPT,varargin{:});
 
    equalsigns     = findstr(string,'=');
    
    if isempty(string)
        DAT = [];
    else
+   
+%% option: only assign values to requested var_names, that can appear in any order in var_names
+   
    for ivar=1:length(var_names)
    
       var_name       = var_names{ivar};
@@ -97,7 +89,7 @@ function DAT = expressionsfromstring(string,var_names,varargin)
       end
       
       if isempty(var_name_index)
-         if return_empty_defaults
+         if OPT.empty
             DAT.(var_name) = [];
          end
       else
@@ -108,6 +100,7 @@ function DAT = expressionsfromstring(string,var_names,varargin)
          DAT.(var_name) = var_value;
       end
    end
+   
    end
 
 %% EOF
