@@ -16,7 +16,7 @@ if strcmpi(OPT.dataset(end-9:end),'catalog.nc')
     OPT.catalognc = OPT.dataset;
     OPT.urls = cellstr(nc_varget(OPT.dataset,'urlPath'));
 else
-    OPT.urls     = opendap_catalog(OPT.dataset);
+    OPT.urls     = opendap_catalog(OPT.dataset,'ignoreCatalogNc',0);
     isCatalogNc = false(length(OPT.urls),1);
     for ii = 1:length(OPT.urls)
         isCatalogNc(ii) = strcmpi(OPT.urls{ii}(end-9:end),'catalog.nc');
