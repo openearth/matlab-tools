@@ -67,8 +67,9 @@ if ~isempty(fns)
     
     % get coverage
     for i = 1:size(batchvar1,1)
-        multiWaitbar('Processing polygons ...',i/size(batchvar1,1), 'Color', [1.0 0.4 0.0])
         if batchvar1{i,1}==1
+            multiWaitbar('Gathering coverage info (per polygon) ...',i/size(batchvar1,1), 'Color', [1.0 0.4 0.0])
+
             % load polygon from polygon directory
             load(fullfile(OPT.workdir, 'polygons', fns(i,1).name));
             
@@ -79,12 +80,12 @@ if ~isempty(fns)
                 end
     
                 for j = 1:length(OPT.inputtimes)
-                    multiWaitbar('Processing timesteps ...',i/length(OPT.inputtimes), 'Color', [0.1 0.5 0.8])
                     
                     if exist(fullfile(OPT.workdir, 'datafiles', ['timewindow = ' num2str(OPT.searchinterval)], [fns(i,1).name(1:end-4) '_' datestr(OPT.inputtimes(j)) '.mat']),'file')
+                        multiWaitbar('Collecting data (each timestep per polygon) ...',j/length(OPT.inputtimes), 'Color', [0.1 0.5 0.8], 'Label', 'Collecting data (from cached results) ...')
                         load(fullfile(OPT.workdir, 'datafiles', ['timewindow = ' num2str(OPT.searchinterval)], [fns(i,1).name(1:end-4) '_' datestr(OPT.inputtimes(j)) '.mat']));
                     else
-                        
+                        multiWaitbar('Collecting data (each timestep per polygon) ...',j/length(OPT.inputtimes), 'Color', [0.1 0.5 0.8], 'Label', 'Collecting data (from OpenDap server) ...')
                         [X, Y, Z, Ztime] = grid_orth_getDataInPolygon(...
                             'dataset'       , OPT.dataset, ...
                             'starttime'     , OPT.inputtimes(j), ...
@@ -126,7 +127,10 @@ if ~isempty(fns)
                 fclose(fid);
                 
             else
+                % step waitbar quickly because here all timesteps are gathered at once from a cached file
+                multiWaitbar('Collecting data (each timestep per polygon) ...', 0.5, 'Color', [0.1 0.5 0.8], 'Label', 'Collecting data (from cached results) ...')
                 [results(:,1),results(:,2)] = textread(fullfile(OPT.workdir, 'coverage', ['timewindow = ' num2str(OPT.searchinterval)], [num2str(fns(i,1).name(1:end-4)) '_coverage.dat']),'%f%f','headerlines',1);
+                multiWaitbar('Collecting data (each timestep per polygon) ...', 1.0, 'Color', [0.1 0.5 0.8], 'Label', 'Collecting data (from cached results) ...')
             end
             
             %% generate best years

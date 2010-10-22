@@ -22,11 +22,11 @@ function OPT = grid_orth_getSandBalance(varargin)
 %   See also UCIT_findCoverage, batchViewResults
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2009 Deltares
+%   Copyright (C) 2009 Deltares, TUDelft
 %   Mark van Koningsveld
 %   Ben de Sonneville
 %
-%       M.vankoningsveld@tudelft.nl
+%       M.vanKoningsveld@tudelft.nl
 %       Ben.deSonneville@Deltares.nl
 %
 %       Deltares
@@ -48,8 +48,8 @@ function OPT = grid_orth_getSandBalance(varargin)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-% TODO: make the search process more efficient by inventorying the
-% available years.
+% TODO: make the search process more efficient by inventorying the available years.
+% TODO: a number of input variable in the OPT struct are obsolete (such as OPT.cellsize ... check and remove)
 
 warningstate = warning;
 warning off %#ok<WNOFF>
@@ -94,6 +94,7 @@ for n = 1:size(OPT.min_coverage,2)
     
     if ~isempty(batchvar)
         for i = 1:size(batchvar,1)
+            multiWaitbar('Processing end results (per polygon) ...',i/size(batchvar,1), 'Color', [0.2 0.9 0.3])
             if batchvar{i,1}==1
                 disp(' ')
                 disp(['*** Processing ' batchvar{i,3} ' - coverage percentage: ' num2str(OPT.min_coverage(n)) '% with timewindow: ',num2str(OPT.searchinterval),' days'])
@@ -116,6 +117,7 @@ for n = 1:size(OPT.min_coverage,2)
                     
                     % find ids that are present in all years (for method 2 JdR)
                     for j = 1:length(OPT.inputtimes)
+                       
                         load([OPT.workdir filesep 'datafiles' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep fns(i,1).name(1:end-4) '_' datestr(OPT.inputtimes(j)) '.mat']);
                         id_of_year  = ~isnan(d.Z);
                         if j == 1
