@@ -5,7 +5,6 @@ function mask = meris_mask(l2_flags,bits,varargin),
 %
 % where l2_flags  is a double array, 
 %       bits      are the bit numbers to be REMOVED from the image and
-%       bits      are the bit numbers to be REMOVED from the image 
 %                 defined in MERIS_FLAGS
 %       mask      is a double array meant for multiplication with the data:
 %                 1   where pixels should be KEPT
