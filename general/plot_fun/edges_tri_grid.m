@@ -62,8 +62,25 @@ function varargout = edges_tri_grid(tri,x,y,z)
 % $HeadURL$
 % $Keywords: $
 %%
+
+% if triangles overlap, this function fails.
+%  duplicate triangles
+%  one point in polygon defined by other
+% 
+
+% TODO 
+% make triangle grid fixer a seperate function
+
+
+
 % determine all the unique vertices in the triangluated mesh
 tri = int32(tri);
+
+%  remove zero-area triangles
+tri(tri(:,1) == tri(:,2) | tri(:,1) == tri(:,3) | tri(:,2) == tri(:,3),:) = [];
+
+%  remove other very small 
+tri(polyarea(x(tri),y(tri),2)<0.000001,:) = [];
 
 % make sure triangles are unique (no duplicates)
 tri = unique(sort(tri(:,1:3),2),'rows');
@@ -71,6 +88,49 @@ tri = tri(:,[1 2 3 1]);
 
 vertices         = [tri(:,[1 2]);tri(:,[2 3]);tri(:,[3 1])];
 vertices         = sort(vertices,2);
+
+%% determine if there are intersecting triangles in the grid
+figure
+plot(x(vertices)',y(vertices)','k:')
+hold on
+intersectingVertices = false(size(vertices,1),1);
+for ii = 1:length(vertices)
+    x1 = x(vertices(ii,1));
+    x2 = x(vertices(ii,2));
+    y1 = y(vertices(ii,1));
+    y2 = y(vertices(ii,2));
+    
+    nn = ii+1:length(vertices);
+    n1 = find(max(x(vertices(nn            )),[],2)>=min(x1,x2));
+    n2 = find(min(x(vertices(nn(n1        ))),[],2)<=max(x1,x2));
+    n3 = find(max(y(vertices(nn(n1(n2    )))),[],2)>=min(y1,y2));
+    n4 = find(min(y(vertices(nn(n1(n2(n3))))),[],2)<=max(y1,y2));
+    n5 = ~any(ismember(vertices(nn(n1(n2(n3(n4)))),:),vertices(ii,:)),2);
+    if any(nn(n1(n2(n3(n4(n5))))))
+        for jj = nn(n1(n2(n3(n4(n5)))))
+            x3 = x(vertices(jj,1));
+            x4 = x(vertices(jj,2));
+            y3 = y(vertices(jj,1));
+            y4 = y(vertices(jj,2));
+            if det([1,1,1;x1,x2,x3;y1,y2,y3])*det([1,1,1;x1,x2,x4;y1,y2,y4]) <= 0
+                if det([1,1,1;x1,x3,x4;y1,y3,y4])*det([1,1,1;x2,x3,x4;y2,y3,y4]) <= 0
+                    plot([x1 x2],[y1 y2],'r');
+                    plot([x3 x4],[y3 y4],'g');
+                    intersectingVertices([ii jj]) = true;
+                end
+            end
+        end
+    end
+end
+a = tri(any(ismember(tri,unique(vertices(intersectingVertices,:))),2),:);% = [];
+
+trisurf(a(:,1:3),x,y,z-1);
+
+tri(any(ismember(tri,unique(vertices(intersectingVertices,:))),2),:) = [];
+vertices         = [tri(:,[1 2]);tri(:,[2 3]);tri(:,[3 1])];
+vertices         = sort(vertices,2);
+% vertices(intersectingVertices) = [];
+
 
 % also find the triangles of which each vertex is a boundary
 vertex_tri_index = repmat((1:size(tri,1))',3,1);
@@ -125,13 +185,18 @@ while any(edgeIndices(:,4)==0)
                         connectedTriangles = unique(vertex_tri_index(any(ismember(vertex_tri_index,connectedTriangles),2),:));
                         possibleConnectingLines = connectingLines(ismember(edgeTriIndex(connectingLines),connectedTriangles));
                         if numel(possibleConnectingLines)~=1
+                            
+                            xm = mean(mean(x(tri(edgeTriIndex(connectingLines),:))));
+                            ym = mean(mean(y(tri(edgeTriIndex(connectingLines),:))));
                             figure
-                            trisurf(tri,x,y,z,1)
+                            trisurf(tri,x-xm,y-ym,z,1)
                             hold on
-                            trisurf(tri(edgeTriIndex(connectingLines),:),x,y,z+1,10)
+                            trisurf(tri(edgeTriIndex(connectingLines),:),x-xm,y-ym,z+1,10)
                             view(2)
-                            xlim(mean(mean(x(tri(edgeTriIndex(connectingLines),:))))+[-200 200])
-                            ylim(mean(mean(y(tri(edgeTriIndex(connectingLines),:))))+[-200 200])
+                            xlim([-200 200])
+                            ylim([-200 200])
+                           plot(x(edgeIndices(connectingLines,[1 2]))-xm,...
+                               y(edgeIndices(connectingLines,[1 2]))-ym,'.')
                             error('i give up... the mesh is to complicated, holes and edges may not connect, or maybe triangles overlap')
                         end
                     end
