@@ -30,6 +30,8 @@ for s = 1:length(codes)
             [lon2,lat2] = convertcoordinates(lon ,lat ,'CS1.code',codes(s),'CS2.code', 4326);
             [lon3,lat3] = convertcoordinates(lon2 ,lat2 ,'CS1.code', 4326,'CS2.code',codes(s));
             testresult(s) = abs(lon - lon3) < 0.0001 & abs(lat -lat3) < 0.0001;
+            fprintf(fid,'%s\n',['Converting using system ' coordinate_reference_system.coord_ref_sys_name{s} ', with code ' num2str(codes(s)) ':']);
+            fprintf(fid,'%s\n\n','Ok!');
         catch
             testresult(s) = nan;
             fprintf(fid,'%s\n',['Error using system ' coordinate_reference_system.coord_ref_sys_name{s} ', with code ' num2str(codes(s)) ':']);
@@ -40,9 +42,11 @@ for s = 1:length(codes)
             [lon2,lat2] = convertcoordinates(x ,y ,'CS1.code',codes(s),'CS2.code', 4326);
             [x3,y3]     = convertcoordinates(lon2 ,lat2 ,'CS1.code', 4326,'CS2.code',codes(s));
             testresult(s) = abs(x - x3) < 10 & abs(y -y3) < 10;
+            fprintf(fid,'%s\n',['Converting using system ' coordinate_reference_system.coord_ref_sys_name{s} ', with code ' num2str(codes(s)) ':']);
+            fprintf(fid,'%s\n\n','Ok!');
         catch
             testresult(s) = nan;
-            fprintf(fid,'%s\n',['Error using system' coordinate_reference_system.coord_ref_sys_name{s} ', with code ' num2str(codes(s)) ':']);
+            fprintf(fid,'%s\n',['Error using system ' coordinate_reference_system.coord_ref_sys_name{s} ', with code ' num2str(codes(s)) ':']);
             fprintf(fid,'%s\n\n',lasterr);
         end
     end
