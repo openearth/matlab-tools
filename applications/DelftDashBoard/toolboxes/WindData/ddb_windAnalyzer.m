@@ -66,7 +66,7 @@ end
 ylabel('wind speed [m/s]');
 
 subplot(2,1,2)
-[q1,q2,q3]=freeBoxPlot(Dir);
+[q1,q2,q3]=freeBoxPlot(Dir,1,1,1);
 hD=[q1; q2; q3];
 if strcmp(h,'Daily')==1
     set(gca,'XTick',[1:24],'XTickLabel',num2str([0:23]'));
@@ -76,5 +76,6 @@ else
 end
 ylim([0 360]);
 ylabel('wind direction [degr. N]');
+set(gca,'ytick',[0:60:360]);
 
 % md_paper('a4p','wl',{strvcat(['Analysis of wind data (' char(h) ' basis)'],['Period data: ' datestr(windData(1,1),1) ' - ' datestr(windData(end,1),1)],['Source: www.wunderground.com, stationID:']),'','','','',''})
