@@ -22,7 +22,7 @@ function delft3d_3d_visualisation_example(varargin)
  
 %% settings
 
-   H = vs_use (OPT.fname);
+   H = vs_use(OPT.fname);
    T = vs_time(H);
    G = vs_meshgrid2dcorcen(H);
    
