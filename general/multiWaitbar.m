@@ -9,7 +9,7 @@ function multiWaitbar( label, varargin )
 %
 %   multiWaitbar(LABEL,COMMAND,VALUE,...) passes one or more command/value
 %   pairs for changing the named waitbar entry. Possible commands include:
-%   'LABEL'     Define an alternative label. Thie first argument is still
+%   'LABEL'     Define an alternative label. The first argument is still
 %               the identifier
 %   'VALUE'     Set the value of the named waitbar entry. The corresponding
 %               value must be a number between 0 and 1.

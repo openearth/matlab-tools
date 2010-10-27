@@ -15,7 +15,7 @@ else
         end
         nc_cf_opendap2catalog(...
             'base',fullfile(OPT.basepath_local,OPT.netcdf_path),...
-            'save',true,'quiet',true);
+            'save',true);
         multiWaitbar('Raw data to NetCDF',1,'label','Generating NC files')
     end
 end

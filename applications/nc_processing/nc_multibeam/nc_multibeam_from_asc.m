@@ -1,3 +1,4 @@
+%%
 function varargout = nc_multibeam_from_asc(varargin)
 %NC_MULTIBEAM_FROM_ASC  One line description goes here.
 %
@@ -202,6 +203,7 @@ if OPT.make
             
             kk = 0;
             while ~feof(fid)
+                % read the file
                 multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
                 multiWaitbar('nc_reading',ftell(fid)/fns_unzipped(ii).bytes,'label',sprintf('Reading: %s...', (fns_unzipped(ii).name))) ;
                 kk = kk+1;

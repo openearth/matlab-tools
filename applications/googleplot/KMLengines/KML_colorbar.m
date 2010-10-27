@@ -124,32 +124,32 @@ function KML_colorbar(OPT)
         end
 %  h.t = get(h.c,'Title');    
 %  set   (h.t,'color'        ,OPT.CBfontrgb)
-   set   (h.c,'xcolor'       ,OPT.CBfontrgb)
-   set   (h.c,'ycolor'       ,OPT.CBfontrgb)
-   set   (h.c,'XAxisLocation',OPT.CBXAxisLocation);
-   set   (h.c,'YAxisLocation',OPT.CBYAxisLocation);
-   % set the tick marks if they have been provided
-   if isfield(OPT,'colorTick')
-       if ~isempty(OPT.CBcolorTick)
-        if  strcmpi(OPT.CBorientation      ,'vertical');
-         set(h.c,'YTick',OPT.CBcolorTick);
-        elseif strcmpi(OPT.CBorientation      ,'horizontal')
-         set(h.c,'XTick',OPT.CBcolorTick);
+    set   (h.c,'xcolor'       ,OPT.CBfontrgb)
+    set   (h.c,'ycolor'       ,OPT.CBfontrgb)
+    set   (h.c,'XAxisLocation',OPT.CBXAxisLocation);
+    set   (h.c,'YAxisLocation',OPT.CBYAxisLocation);
+    % set the tick marks if they have been provided
+    if isfield(OPT,'CBcolorTick')
+        if ~isempty(OPT.CBcolorTick)
+            if  strcmpi(OPT.CBorientation      ,'vertical');
+                set(h.c,'YTick',OPT.CBcolorTick);
+            elseif strcmpi(OPT.CBorientation      ,'horizontal')
+                set(h.c,'XTick',OPT.CBcolorTick);
+            end
         end
-       end
-   end
-   % set the ticklabels if they have been provided
-   if isfield(OPT,'colorTickLabel')
-       if ~isempty(OPT.CBcolorTickLabel)
-        if     strcmpi(OPT.CBorientation      ,'vertical');
-         set(h.c,'YTickLabel',OPT.CBcolorTickLabel);
-        elseif strcmpi(OPT.CBorientation      ,'horizontal')
-         set(h.c,'XTickLabel',OPT.CBcolorTickLabel);
+    end
+    % set the ticklabels if they have been provided
+    if isfield(OPT,'CBcolorTickLabel')
+        if ~isempty(OPT.CBcolorTickLabel)
+            if     strcmpi(OPT.CBorientation      ,'vertical');
+                set(h.c,'YTickLabel',OPT.CBcolorTickLabel);
+            elseif strcmpi(OPT.CBorientation      ,'horizontal')
+                set(h.c,'XTickLabel',OPT.CBcolorTickLabel);
+            end
         end
-       end
-   end
-   delete(h.ax)
-   box on
+    end
+    delete(h.ax)
+    box on
    
    % copy axes and set box color seperately
    c_axes = copyobj(gca,h.fig);
