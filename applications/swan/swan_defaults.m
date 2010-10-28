@@ -1,21 +1,25 @@
-function DAT = swan_defaults
+function set = swan_defaults
 %SWAN_DEFAULTS            returns SWAN default SET settings
 %
-%  DAT.set.level    = 0;
-%  DAT.set.nor      = 90;
-%  DAT.set.depmin   = 0.05;
-%  DAT.set.maxmes   = 200;
-%  DAT.set.maxerr   = 1;
-%  DAT.set.naut     = false; % means default cartesian
-%  DAT.set.grav     = 9.81;
-%  DAT.set.rho      = 1025;
-%  DAT.set.inrhog   = 0;
-%  DAT.set.hsrerr   = 0.10;
+%    set = swan_defaults()
 %
-%  DAT.set.pwtail   = 4; % GEN 3 KOMEN + rest / 5 for = GEN1 + GEN2 + GEN3 JANSEN
-%  DAT.set.froudmax = 0.80;
-%  DAT.set.printf   = 4;
-%  DAT.set.prtest   = 4;
+% returns
+%
+%   set.level    = 0;
+%   set.nor      = 90;
+%   set.depmin   = 0.05;
+%   set.maxmes   = 200;
+%   set.maxerr   = 1;
+%   set.naut     = false; % means default cartesian
+%   set.grav     = 9.81;
+%   set.rho      = 1025;
+%   set.inrhog   = 0;
+%   set.hsrerr   = 0.10;
+%
+%   set.pwtail   = 4; % GEN 3 KOMEN + rest / 5 for = GEN1 + GEN2 + GEN3 JANSEN
+%   set.froudmax = 0.80;
+%   set.printf   = 4;
+%   set.prtest   = 4;
 %
 %See also: SWAN_IO_SPECTRUM, SWAN_IO_INPUT, SWAN_IO_TABLE, SWAN_IO_GRD, SWAN_IO_BOT, 
 %          SWAN_SHORTNAME2KEYWORD, SWAN_QUANTITY
@@ -51,20 +55,20 @@ function DAT = swan_defaults
 % $Revision$
 % $HeadURL$
 
-   DAT.set.level    = 0;
-   DAT.set.nor      = 90;
-   DAT.set.depmin   = 0.05;
-   DAT.set.maxmes   = 200;
-   DAT.set.maxerr   = 1;
-   DAT.set.naut     = false; % means default cartesian
-   DAT.set.grav     = 9.81;
-   DAT.set.rho      = 1025;
-   DAT.set.inrhog   = 0;
-   DAT.set.hsrerr   = 0.10;
+   set.level    = 0;
+   set.nor      = 90;
+   set.depmin   = 0.05;
+   set.maxmes   = 200;
+   set.maxerr   = 1;
+   set.naut     = false; % means default cartesian
+   set.grav     = 9.81;
+   set.rho      = 1025;
+   set.inrhog   = 0;
+   set.hsrerr   = 0.10;
   %NAUTical/CARTesian
-   DAT.set.pwtail   = 4; % GEN 3 KOMEN + rest / 5 for = GEN1 + GEN2 + GEN3 JANSEN
-   DAT.set.froudmax = 0.80;
-   DAT.set.printf   = 4;
-   DAT.set.prtest   = 5;
+   set.pwtail   = 4; % GEN 3 KOMEN + rest / 5 for = GEN1 + GEN2 + GEN3 JANSEN
+   set.froudmax = 0.80;
+   set.printf   = 4;
+   set.prtest   = 5;
    
 %% EOF   

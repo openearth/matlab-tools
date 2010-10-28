@@ -1,13 +1,17 @@
-function varargout = swan_io_bot(cmd,fname,varargin)
+function varargout = swan_io_bot(cmd,varargin)
 %SWAN_IO_BOT              read/write SWAN ASCII bottom file   (BETA VERSION)
 %
-% dep = swan_io_bot('read' ,fname,[mcx myc],<IDLA>)
-% dep = swan_io_bot('read' ,fname,struct   ,<IDLA>)
+%   dep = swan_io_bot('write',S)
 %
-% dep = swan_io_bot('load' ,fname,[mcx myc],<IDLA>)
-% dep = swan_io_bot('load' ,fname,struct   ,<IDLA>)
+% where S is the field table{i} from swan_io_input or
 %
-% dep = swan_io_bot('write',fname,dep      ,<IDLA>)
+%   dep = swan_io_bot('read' ,fname,[mcx myc],<IDLA>)
+%   dep = swan_io_bot('read' ,fname,struct   ,<IDLA>)
+%
+%   dep = swan_io_bot('load' ,fname,[mcx myc],<IDLA>)
+%   dep = swan_io_bot('load' ,fname,struct   ,<IDLA>)
+%
+%   dep = swan_io_bot('write',fname,dep      ,<IDLA>)
 %
 %    where struc has fields 'mcx','myc'
 %    which can be obtained by reading the associated *.swn input 
@@ -73,13 +77,33 @@ function varargout = swan_io_bot(cmd,fname,varargin)
 
    nodatavalue = -.999000E+03;
    IDLA        = 4;
+   nhedf       = 0;
+   vector      = 0;
    
 if     strcmp(cmd,'read') | ...
        strcmp(cmd,'load')
        
    %% Input
-   %% ------------------------------
 
+   if isstruct(varargin{1})
+   
+      S = varargin{1};
+   
+      fname  = S.fname1;
+      mxc    = S.mxinp;
+      myc    = S.myinp;
+      idla   = S.idla;
+      nhedf  = S.nhedf;
+
+      
+      if strcmpi(S.quantity,'CURRENT') | ...
+         strcmpi(S.quantity,'WIND')
+         vector=1;
+      end
+   
+   elseif ischar(varargin{1})
+   fname = varargin{1};
+   varargin = {varargin{2:end}}
    if isstruct(varargin{1})
       cgrid = varargin{1};
       mxc   = cgrid.mxc ;
@@ -94,6 +118,7 @@ if     strcmp(cmd,'read') | ...
        IDLA = varargin{2};
       end
    end
+   end
 
    mmax = mxc + 1; % mxc is number of meshes, we want number of nodes mmax
    nmax = myc + 1; % mxc is number of meshes, we want number of nodes nmax
@@ -106,10 +131,16 @@ if     strcmp(cmd,'read') | ...
    %% ------------------
    
    fid = fopen(fname);
-   dat = fscanf(fid,'%g',mmax*nmax);
+   
+   % skip header lines
+   for i=1:nhedf
+      header{i} = fgetl(fid);
+   end
+   
+   dat = fscanf(fid,'%g',mmax*nmax.*(vector+1));
    fclose(fid); %dat = load(fname); % does not work when not all lines have same number of elements
    dat(dat ==nodatavalue)=nan;
-   dep = reshape(dat',[mmax nmax]);
+   dep = reshape(dat',[mmax nmax (vector+1)]);
    
    varargout = {dep};
 
