@@ -44,7 +44,7 @@ warningstate = warning;
 warning off
 
 %% identify which polygons are availabel in the polygon directory
-fns = dir([OPT.polygondir filesep '*.mat']);
+fns = dir(fullfile(OPT.polygondir, '*.mat'));
 if isempty(fns)
     warning on
     warning('grid_orth_findCoverage:noPolygonsAvailable', ...

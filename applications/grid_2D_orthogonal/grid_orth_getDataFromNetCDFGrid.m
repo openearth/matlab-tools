@@ -147,6 +147,9 @@ if ~isempty(xstart) || isempty(ystart)
                Z_next    = nc_varget(OPT.ncfile, nc_index.z, [id_t                ystart-1                                  xstart-1], ...
                                                              [1   floor((ylength-(ystart-1))/OPT.stride(2)) floor((xlength-(xstart-1))/OPT.stride(3))], ...
                                                               OPT.stride);
+               if floor((xlength-(xstart-1))/OPT.stride(3)) == 1 && floor((ylength-(ystart-1))/OPT.stride(2)) ~=1
+                    Z_next = transpose(Z_next); % wonder if this is needed or only occurs when n cols == 1
+               end
                elseif getpref('SNCTOOLS','PRESERVE_FVD')==1
                Z_next    = nc_varget(OPT.ncfile, nc_index.z, [                xstart-1                                  ystart-1                  id_t], ...
                                                              [floor((xlength-(xstart-1))/OPT.stride(3)) floor((ylength-(ystart-1))/OPT.stride(2)) 1], ...
@@ -156,7 +159,13 @@ if ~isempty(xstart) || isempty(ystart)
                
                if sum(sum(~isnan(Z_next))) ~=0
                     disp(['... adding data from: ' datestr(t(idt(id_t+1)))])
+                    try
                     ids2add = ~isnan(Z_next) & isnan(Z);    % helpul to be in a variable as the nature of Z changes in the next two lines
+                    catch
+                    xx=0    
+                    end
+                        
+                        
                     Z(ids2add) = Z_next(ids2add);           % add Z values from Z_next grid to Z grid at places where there is data in Z_next and no data in Z yet
                     T(ids2add) = t(idt(id_t+1));            % add time information to T at those places where Z data was added
                end
