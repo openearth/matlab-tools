@@ -1,5 +1,5 @@
-function [xgrid ygrid] = worldcoordinates2xbeachgrid(xw,yw,alfa,xori,yori)
-%WORLDCOORDINATES2XBEACHGRID  replaced by "xb_worldcoordinates2modelgrid"
+function [xgrid ygrid] = xb_worldcoordinates2modelgrid(xw,yw,alfa,xori,yori)
+%XB_WORLDCOORDINATES2MODELGRID  Convert world coordinates to XBeach grid.
 %
 %   Convert x and y world coordinates to values on the XBeach calculation 
 %   grid (using the same alfa, xori and yori as defined in params.txt).
@@ -12,7 +12,7 @@ function [xgrid ygrid] = worldcoordinates2xbeachgrid(xw,yw,alfa,xori,yori)
 %   c = [xworld; yworld]
 %
 %   Syntax:
-%   [xgrid ygrid] = worldcoordinates2xbeachgrid(xw,yw,alfa,xori,yori)
+%   [xgrid ygrid] = xb_worldcoordinates2modelgrid(xw,yw,alfa,xori,yori)
 %
 %   Input:
 %   xw     = scalar, vector or array with x world coordinates
@@ -27,7 +27,7 @@ function [xgrid ygrid] = worldcoordinates2xbeachgrid(xw,yw,alfa,xori,yori)
 %
 %   Example
 %
-%   See also XBEACHGRID2WORLDCOORDINATES, CONVERTCOORDINATES
+%   See also XB_MODELGRID2WORLDCOORDINATES, CONVERTCOORDINATES
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -61,7 +61,23 @@ function [xgrid ygrid] = worldcoordinates2xbeachgrid(xw,yw,alfa,xori,yori)
 % $HeadURL$
 % $Keywords: $
 
-%%
-warning(['"' mfilename '" is replaced by "xb_worldcoordinates2modelgrid" and will be deleted.'])
+%% Main function
+% Convert alfa to radians
+alpha = (alfa*pi)/180;
 
-[xgrid ygrid] = xb_worldcoordinates2modelgrid(xw,yw,alfa,xori,yori);
+% Compose A
+A  = [cos(alpha) sin(alpha); -sin(alpha) cos(alpha)];
+
+% substract xori and yori to get relative coordinates
+xw = xw - xori;
+yw = yw - yori;
+
+c(1,:) = reshape(xw,1,numel(xw));
+c(2,:) = reshape(yw,1,numel(yw));
+
+% Compute xgrid and ygrid for every point (and every timestep)
+b=A\c;
+
+% Reshape array b to ug and vg, which have the same size as u and v
+xgrid = reshape(b(1,:),size(xw));
+ygrid = reshape(b(2,:),size(yw));

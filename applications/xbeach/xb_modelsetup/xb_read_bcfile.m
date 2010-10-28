@@ -1,11 +1,11 @@
-function XB = XB_read_bcfile(XB, varargin)
+function XB = xb_read_bcfile(XB, varargin)
 %XB_READ_BCFILE  read XBeach wave boundary conditions input file
 %
 %   Routine to read wave boundary conditions file for XBeach and provide
 %   the info in the XB structure
 %
 %   Syntax:
-%   varargout = XB_read_bcfile(varargin)
+%   varargout = xb_read_bcfile(varargin)
 %
 %   Input:
 %   XB        = XBeach communication structure
@@ -16,7 +16,7 @@ function XB = XB_read_bcfile(XB, varargin)
 %   XB        = XBeach communication structure
 %
 %   Example
-%   XB_read_bcfile
+%   xb_read_bcfile
 %
 %   See also CreateEmptyXBeachVar
 

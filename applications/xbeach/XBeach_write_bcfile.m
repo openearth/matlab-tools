@@ -1,5 +1,5 @@
 function varargout = XBeach_write_bcfile(varargin)
-%XBEACH_WRITE_BCFILE  One line description goes here.
+%XBEACH_WRITE_BCFILE  replaced by "xb_write_bcfile"
 %
 %   More detailed description goes here.
 %
@@ -53,24 +53,6 @@ function varargout = XBeach_write_bcfile(varargin)
 % $Keywords:
 
 %%
-OPT = struct(...
-    'bcfile', '',...
-    'rt', [],... % duration
-    'dtbf', [],... % time step
-    'filenames', {{}},...
-    'ext', '.inp');
+warning(['"' mfilename '" is replaced by "xb_write_bcfile" and will be deleted.'])
 
-OPT = setproperty(OPT, varargin{:});
-
-%%
-fid = fopen(OPT.bcfile, 'w');
-fprintf(fid, 'FILELIST\n');
-maxspaces1 = length(num2str(max(OPT.rt)))+3;
-maxspaces2 = length(num2str(max(OPT.dtbf)))+3;
-for i = 1:length(OPT.rt)
-    rt_str = num2str(OPT.rt(i), '%g');
-    dtbf_str =  num2str(OPT.dtbf(i), '%g');
-    spaces = [maxspaces1-length(rt_str) maxspaces2-length(dtbf_str)];
-    fprintf(fid, '%s%s%s%s%s%s\n', rt_str, blanks(spaces(1)), dtbf_str, blanks(spaces(2)), OPT.filenames{i}, OPT.ext);
-end
-fclose(fid);
+varargout = xb_write_bcfile(varargin{:});

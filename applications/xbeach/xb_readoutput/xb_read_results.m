@@ -1,15 +1,15 @@
-function XB = XB_Read_Results(resdir, XB, varargin)
+function XB = xb_read_results(resdir, XB, varargin)
 %XB_READ_RESULTS  reads outputfiles
 %
 % Routine reads output files and stores the results in the XBeach
 % communication variable XB.
 %
 % Syntax:
-%   XB = XB_Read_Results(resdir, XB, 'outparam1', 'outparam2')
-%   XB = XB_Read_Results(resdir, XB,'all')
-%   XB = XB_Read_Results(resdir, XB)
-%   XB = XB_Read_Results(...,'nodisp')
-%   XB = XB_Read_Results(...,'quiet')
+%   XB = xb_read_results(resdir, XB, 'outparam1', 'outparam2')
+%   XB = xb_read_results(resdir, XB,'all')
+%   XB = xb_read_results(resdir, XB)
+%   XB = xb_read_results(...,'nodisp')
+%   XB = xb_read_results(...,'quiet')
 %
 % Input:
 %   resdir  = dir in which result can be found

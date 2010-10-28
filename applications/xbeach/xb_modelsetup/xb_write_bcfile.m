@@ -1,10 +1,10 @@
-function varargout = XBeach_write_jonswap(varargin)
-%XBEACH_WRITE_JONSWAP  replaced by "xb_write_jonswap"
+function varargout = xb_write_bcfile(varargin)
+%XB_WRITE_BCFILE  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = XBeach_write_jonswap(varargin)
+%   varargout = xb_write_bcfile(varargin)
 %
 %   Input:
 %   varargin  =
@@ -13,7 +13,7 @@ function varargout = XBeach_write_jonswap(varargin)
 %   varargout =
 %
 %   Example
-%   XBeach_write_jonswap
+%   xb_write_bcfile
 %
 %   See also 
 
@@ -53,6 +53,24 @@ function varargout = XBeach_write_jonswap(varargin)
 % $Keywords:
 
 %%
-warning(['"' mfilename '" is replaced by "xb_write_jonswap" and will be deleted.'])
+OPT = struct(...
+    'bcfile', '',...
+    'rt', [],... % duration
+    'dtbf', [],... % time step
+    'filenames', {{}},...
+    'ext', '.inp');
 
-varargout = xb_write_jonswap(varargin{:});
+OPT = setproperty(OPT, varargin{:});
+
+%%
+fid = fopen(OPT.bcfile, 'w');
+fprintf(fid, 'FILELIST\n');
+maxspaces1 = length(num2str(max(OPT.rt)))+3;
+maxspaces2 = length(num2str(max(OPT.dtbf)))+3;
+for i = 1:length(OPT.rt)
+    rt_str = num2str(OPT.rt(i), '%g');
+    dtbf_str =  num2str(OPT.dtbf(i), '%g');
+    spaces = [maxspaces1-length(rt_str) maxspaces2-length(dtbf_str)];
+    fprintf(fid, '%s%s%s%s%s%s\n', rt_str, blanks(spaces(1)), dtbf_str, blanks(spaces(2)), OPT.filenames{i}, OPT.ext);
+end
+fclose(fid);

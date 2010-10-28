@@ -1,5 +1,5 @@
-function [xworld yworld] = xbeachgrid2worldcoordinates(x,y,alfa,xori,yori)
-%XBEACHGRID2WORLDCOORDINATES  replaced by "xb_modelgrid2worldcoordinates"
+function [xworld yworld] = xb_modelgrid2worldcoordinates(x,y,alfa,xori,yori)
+%XB_MODELGRID2WORLDCOORDINATES  Convert XBeach grid to world coordinates.
 %
 %   Convert x and y values on the XBeach calculation grid to world
 %   coordinates (using the same alfa, xori and yori as defined in
@@ -13,7 +13,7 @@ function [xworld yworld] = xbeachgrid2worldcoordinates(x,y,alfa,xori,yori)
 %   c = [xworld; yworld]
 %
 %   Syntax:
-%   [xworld yworld] = xbeachgrid2worldcoordinates(x,y,alfa,xori,yori)
+%   [xworld yworld] = xb_modelgrid2worldcoordinates(x,y,alfa,xori,yori)
 %
 %   Input:
 %   x      = scalar, vector or array with XBeach x coordinates
@@ -31,7 +31,7 @@ function [xworld yworld] = xbeachgrid2worldcoordinates(x,y,alfa,xori,yori)
 %   x = repmat(x,length(y),1); y = repmat(y,1,length(x));
 %   alfa = 10;
 %   xori = 1000; yori = 1000;
-%   [xw,yw] = xbeachgrid2worldcoordinates(x,y,alfa,xori,yori);
+%   [xw,yw] = xb_modelgrid2worldcoordinates(x,y,alfa,xori,yori);
 %
 %   See also WORLDCOORDINATES2XBEACHGRID, CONVERTCOORDINATES
 
@@ -67,7 +67,21 @@ function [xworld yworld] = xbeachgrid2worldcoordinates(x,y,alfa,xori,yori)
 % $HeadURL$
 % $Keywords: $
 
-%%
-warning(['"' mfilename '" is replaced by "xb_modelgrid2worldcoordinates" and will be deleted.'])
+%% Main function
+% Convert alfa to radians
+alpha = (alfa*pi)/180;
 
-[xworld yworld] = xb_modelgrid2worldcoordinates(x,y,alfa,xori,yori);
+% Compose A
+A  = [cos(alpha) sin(alpha); -sin(alpha) cos(alpha)];
+
+% Create vectors of size (1,x) from x and y data
+b(1,:) = reshape(x,1,numel(x));
+b(2,:) = reshape(y,1,numel(y));
+
+% Compute x and y coordinates for every gridpoint (and every timestep)
+c =A*b;
+
+% Reshape array b to xworld and yworld, which have the same size as x and y
+% add xori and yori to get real world coordinates
+xworld = reshape(c(1,:),size(x)) + xori;
+yworld = reshape(c(2,:),size(y)) + yori;

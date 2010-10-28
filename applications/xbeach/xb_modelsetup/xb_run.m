@@ -1,4 +1,4 @@
-function [runflag runtime msg] = XB_run(varargin)
+function [runflag runtime msg] = xb_run(varargin)
 %XB_RUN  runs xbeach calculation
 %
 % Routine calls "xbeach.exe" (by default; another exefile can be specified
