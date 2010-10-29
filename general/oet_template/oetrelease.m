@@ -22,7 +22,7 @@ function [zipfilename files targetdir] = oetrelease(varargin)
 %   Example: make a release of a specific folder:
 %      oetrelease('f:\checkouts\mymtools\atoolbox')
 %
-%   See also 
+%   See also: getCalls, oetroot
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -82,61 +82,69 @@ else
    OPT = setproperty(OPT, varargin);
 end
 
-%% gather all files of the selected folders
-if ischar(OPT.folders)
-    OPT.folders = {OPT.folders};
-end
+%% gather all files of the selected (sub) folders
 
-files = {};
-for i = 1:length(OPT.folders)
-    [dirs dircont tempfiles] = dirlisting(OPT.folders{i}, 'svn');
-    files(end+1:end+length(tempfiles)) = tempfiles;
-end
+   if ischar(OPT.folders)
+       OPT.folders = {OPT.folders};
+   end
+   
+   files = {};
+   for i = 1:length(OPT.folders)
+       [dirs dircont tempfiles] = dirlisting(OPT.folders{i}, 'svn');
+       files(end+1:end+length(tempfiles)) = tempfiles;
+   end
 
 %% gather all other selected files
-if ischar(OPT.files)
-    OPT.files = {OPT.files};
-end
 
-for i = 1:length(OPT.files)
-    if ~ismember(which(OPT.files{i}), files)
-        files{end+1} = which(OPT.files{i});
-    end
-end
+   if ischar(OPT.files)
+       OPT.files = {OPT.files};
+   end
+   
+   for i = 1:length(OPT.files)
+       if ~ismember(which(OPT.files{i}), files)
+           files{end+1} = which(OPT.files{i});
+       end
+   end
+   
+%% gather all related files (dependecies in entire active path)
 
-%% gather all related files
-i = 0;
-while i < length(files)
-    i = i + 1;
-    [pathstr filename fileext] = fileparts(files{i});
-    if strcmp(fileext, '.m')
-        tempfiles = getCalls(files{i}, oetroot, 'quiet');
-        tempid = ~ismember(tempfiles, files);
-        files(end+1:end+sum(tempid)) = tempfiles(tempid);
-    end
-end
+   i = 0;
+   while i < length(files)
+       i = i + 1;
+       [pathstr filename fileext] = fileparts(files{i});
+       if strcmp(fileext, '.m')
+           tempfiles = getCalls(files{i}, oetroot, 'quiet');
+           tempid = ~ismember(tempfiles, files);
+           files(end+1:end+sum(tempid)) = tempfiles(tempid);
+       end
+   end
 
 %% filter for omit-extensions
-if ischar(OPT.omitextensions)
-    OPT.omitextensions = {OPT.omitextensions};
-end
-for i = 1:length(OPT.omitextensions)
-    omitid = ~cellfun(@isempty, strfind(files, OPT.omitextensions{i}));
-    files(omitid) = [];
-end
+
+   if ischar(OPT.omitextensions)
+       OPT.omitextensions = {OPT.omitextensions};
+   end
+   for i = 1:length(OPT.omitextensions)
+       omitid = ~cellfun(@isempty, strfind(files, OPT.omitextensions{i}));
+       files(omitid) = [];
+   end
 
 %% copy all selected files to separate folder
-for i = 1:length(files)
-    mkpath(fileparts(files{i}))
-    destinationfile = strrep(files{i}, oetroot, [OPT.targetdir filesep]);
-    mkpath(fileparts(destinationfile))
-    if ~exist(destinationfile, 'file')
-        copyfile(files{i}, destinationfile)
-    end
-end
+
+   for i = 1:length(files)
+       mkpath(fileparts(files{i}))
+       destinationfile = strrep(files{i}, oetroot, [OPT.targetdir filesep]);
+       mkpath(fileparts(destinationfile))
+       if ~exist(destinationfile, 'file')
+           copyfile(files{i}, destinationfile)
+       end
+   end
 
 %% create zipfile of newly created folder
-zip(OPT.zipfilename, OPT.targetdir, oetroot)
+
+   mkdir(OPT.targetdir)
+   zip(OPT.zipfilename, OPT.targetdir, oetroot)
 
 %% prepare output
-[zipfilename targetdir] = deal(OPT.zipfilename, OPT.targetdir);
+
+   [zipfilename targetdir] = deal(OPT.zipfilename, OPT.targetdir);

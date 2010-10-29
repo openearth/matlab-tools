@@ -95,7 +95,7 @@ end
 if dump_group_name
     fprintf(fid,'} End Group ''%s''\n', group.Name);
 else
-    fprintf('}\n');
+    fprintf(fid,'}\n');
 end
 fprintf('\n');
 

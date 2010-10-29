@@ -1,3 +1,4 @@
+
 function varargout = plotNet(varargin)
 %plotNet  Plot an unstructured grid.
 %
@@ -71,7 +72,7 @@ function varargout = plotNet(varargin)
    else
       if ischar(varargin{1})
       ncfile   = varargin{1};
-      G        = unstruc.readNet(ncfile)
+      G        = unstruc.readNet(ncfile);
       else
       G        = varargin{1};
       end

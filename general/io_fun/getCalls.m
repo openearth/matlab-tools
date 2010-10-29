@@ -15,9 +15,10 @@ function IsCalls = getCalls(fun, directory, varargin)
 %
 %   example:
 %       IsCalls = getCalls('getDuneErosion_VTV2006', fileparts(which('getDuneErosion_VTV2006')))
+%       IsCalls = getCalls('oetsettings', oetroot);
 %
 %
-%   See also depfun, getIsCalledBy
+%   See also depfun, getIsCalledBy, oetrelease
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Delft University of Technology
@@ -78,11 +79,12 @@ if ~isempty(FileDir)
 end    
 
 list = depfun(FunName,'-quiet','-toponly');
-id = ~cellfun(@isempty,(strfind(list, directory)));
+id = ~cellfun(@isempty,(strfind(lower(list), lower(directory))));
 
 IsCalls = list(id);
 
 %% display results
+
 if ~quiet
     if ~isempty(IsCalls) % any results
         fprintf('\nfunction %s calls:\n',fun)

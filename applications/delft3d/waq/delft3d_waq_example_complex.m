@@ -14,7 +14,6 @@
 % >> addpath(genpath('C:\Delft3D\w32\matlab\'))
 
 %% Initialize
-%----------------------------------------
 
    OPT.pause          = 1;
    OPT.export         = 0;
@@ -33,14 +32,12 @@
 
 
 %% Loops over time and substances
-%----------------------------------------
 
 for iRUNID = 1:length(OPT.waq.RUNIDs)
 
    OPT.waq.RUNID     = OPT.waq.RUNIDs{iRUNID};
    
    %% Open files
-   %---------------------------------
 
    GRID              = delwaq_meshgrid2dcorcen([OPT.flow.directory,filesep,OPT.flow.RUNID,'.lga']); % needs also *.cco
    
@@ -64,12 +61,10 @@ for iRUNID = 1:length(OPT.waq.RUNIDs)
            % ---   ------------->   
   
       %% Get index of substance names
-      %----------------------------------------
 
       read.subs_index = delwaq_subsname2index(WAQ.file.SubsName,read.subs_names,'exact');
    
       %% Loops over time and substances
-      %----------------------------------------
 
       for it=1:length(TIME.datenum)
       
@@ -78,25 +73,21 @@ for iRUNID = 1:length(OPT.waq.RUNIDs)
             subs_name = read.subs_names{isub};
             
             %% Read 1D WAQ vector
-            %----------------------------------------
 
            [WAQ.datenum,...
             WAQ.(subs_name)] = delwaq('read',WAQ.file,read.subs_index(isub),0,it);
             
             %% Put 1D WAQ vector back into full FLOW array
-            %----------------------------------------
             
             FLOW.(subs_name)    = waq2flow3d(WAQ.(subs_name),GRID.Index,'center');
 
             %% plot FLOW array
-            %----------------------------------------
 
             pcolorcorcen(GRID.cor.x,GRID.cor.y,FLOW.(subs_name)(:,:,OPT.layer));
            
             hold on
 
             %% lay-out
-            %----------------------------------------
             title([datestr(WAQ.datenum,0),'   layer:',num2str(OPT.layer)])
 
             caxis             (read.subs_scales{isub});
@@ -108,7 +99,6 @@ for iRUNID = 1:length(OPT.waq.RUNIDs)
             tickmap('xy')
             
             %% Export
-            %----------------------------------------
 	    
             if OPT.export
                fpath = [OPT.directory,RUNID,'_',read.subs_names{isub}];
@@ -120,7 +110,6 @@ for iRUNID = 1:length(OPT.waq.RUNIDs)
          end
 
          %% Pause
-         %% --------------------------------------
 
          if OPT.pause
          disp('press key to continue')

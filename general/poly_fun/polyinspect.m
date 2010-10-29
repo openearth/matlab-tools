@@ -43,7 +43,6 @@ function varargout = polyinspect(X,Y,varargin)
 %   --------------------------------------------------------------------
 
 %% Kewords
-%-----------------------
 
    OPT.color    = 'r';
    OPT.getnames = 0;
@@ -62,12 +61,10 @@ function varargout = polyinspect(X,Y,varargin)
    OPT = SetProperty(OPT,varargin{nextarg:end});
    
 %% Split
-%-----------------------
 
    [D.loncells,D.latcells]=polysplit(X,Y);
    
 %% Plot
-%-----------------------
 
    plot(X,Y,'color',[.5 .5 .5]);hold on
    
@@ -77,22 +74,25 @@ function varargout = polyinspect(X,Y,varargin)
    for iline = 1:nline
    
       P1 = plot(D.loncells {iline},...
-                D.latcells {iline},'color',OPT.color);
+                D.latcells {iline},'.-','color',OPT.color);
+     % T1 = text(double(D.loncells {iline}),...
+     %           double(D.latcells {iline}),...
+     %           num2str([1:length(D.latcells{iline})]'),'color',OPT.color);
       hold on
       axis equal
       if ~isempty(D.loncells {iline})
       P2 = plot(D.loncells {iline}([1 end]),...
-                D.latcells {iline}([1 end]),'.','color',OPT.color);
+                D.latcells {iline}([1 end]),'o','color',OPT.color);
       end
       try;delete(t);end
       if ~(OPT.getnames)
          if isfield(D,'namecells')
          if ~(first)
-            delete(T1)
+            delete(T2)
          end
-          T1 = text(D.loncells {iline}(1),...
-                   D.latcells {iline}(1),...
-                   D.namecells{iline},'color','r');
+          T2 = text(double(D.loncells {iline}(1)),...
+                    double(D.latcells {iline}(1)),...
+                    D.namecells{iline},'color','r');
          end
       end
       if OPT.getnames
@@ -112,13 +112,13 @@ function varargout = polyinspect(X,Y,varargin)
    
       set(P1,'color','k');
       set(P2,'color','k');
+           % delete(T1)
    
       first = 0;
 
    end
    
 %% Out
-%-----------------------
 
    if nargout==1
       varargout = {char(D.namecells)};

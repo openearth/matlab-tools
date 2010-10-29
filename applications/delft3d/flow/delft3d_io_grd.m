@@ -85,14 +85,12 @@ end
    OPT.missingvalue      = NaN; % in struct
    OPT.epsg              = [];
 
-%% Keywords
-   
-   OPT = setproperty(OPT,varargin{3:end});
-      
 %% Read
 
    if strcmp(cmd,'read')
 
+      OPT = setproperty(OPT,varargin{3:end});
+       
       tmp               = dir(fname);
          if length(tmp)==0
             error(['Grid file ''',fname,''' does not exist.'])
@@ -183,6 +181,12 @@ end
       OK = 1;
 
    else strcmp(cmd,'write');
+       
+      if  isnumeric(varargin{3}) & isnumeric(varargin{4})
+      OPT = setproperty(OPT,varargin{5:end});
+      else
+      OPT = setproperty(OPT,varargin{3:end});
+      end
    
    disp('!!!!! write function under construction')
    

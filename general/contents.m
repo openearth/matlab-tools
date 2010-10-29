@@ -23,6 +23,8 @@
 %   plot_fun            - plot related
 %   poly_fun            - polygon related
 %   print_fun           - print related
+%   signal_fun          - signal processing related
+%   stat_fun            - statistics related
 %   string_fun          - string related
 %   struct_fun          - struct related
 %   time_fun            - time related

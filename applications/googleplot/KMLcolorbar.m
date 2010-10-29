@@ -77,12 +77,18 @@ OPT.CBalpha              = 0.8;            % transparency
 OPT.CBtemplateHor        = 'KML_colorbar_template_horizontal.png';
 OPT.CBtemplateVer        = 'KML_colorbar_template_vertical.png';
 
+OPT.CBtipmargin          = [];
+OPT.CBalignmargin        = [];
+OPT.CBthickness          = [];
+
+OPT.CBorientation        = [];
+OPT.CBverticalalignment  = [];
+OPT.CBhorizonalalignment = [];
 
 if nargin==0
     varargout = {OPT};
     return
 end
-
 
 if nargin == 1 % don't set prperties if an OPT struct was already given
     OPT = varargin{1};
@@ -127,13 +133,14 @@ end
 if ischar(OPT.CBcolorbarlocation)
     OPT.CBcolorbarlocation = {OPT.CBcolorbarlocation};
 end
+OPT2 = OPT; % copy before overwriting margins & thickness
 for ii = 1:length(OPT.CBcolorbarlocation)
     switch OPT.CBcolorbarlocation{ii}
         case {'NNW','N','NNE','SSE','S','SSW'}
             OPT.CBorientation        = 'horizontal';
-            OPT.CBtipmargin          = 0.05; % prevent overlap between S and E colorbars
-            OPT.CBalignmargin        = 0.08;
-            OPT.CBthickness          = 0.026;%0.013;
+            OPT2.CBtipmargin          = 0.05; % prevent overlap between S and E colorbars
+            OPT2.CBalignmargin        = 0.08;
+            OPT2.CBthickness          = 0.026;%0.013;
             switch OPT.CBcolorbarlocation{ii}
                 case {'NNW','N','NNE'}
                     OPT.CBverticalalignment  = 'top';
@@ -142,11 +149,11 @@ for ii = 1:length(OPT.CBcolorbarlocation)
                     OPT.CBverticalalignment  = 'bottom';
                     OPT.CBfileName           = [fullfile(PATHSTR,NAME),'_hor_bot'];
             end
-        case {'ENE','E','ESE','WSW','W','WNW'}
+        case {'ENE','E','ESE','WSW','W','WNW'} % OPT.CBcolorbarlocation ] 'W'
             OPT.CBorientation        = 'vertical';
-            OPT.CBtipmargin          = 0.15; % prevent overlap with time ruler, google logo and N-rose
-            OPT.CBalignmargin        = 0.10;
-            OPT.CBthickness          = 0.02;%0.01;
+            OPT2.CBtipmargin          = 0.15; % prevent overlap with time ruler, google logo and N-rose
+            OPT2.CBalignmargin        = 0.10;
+            OPT2.CBthickness          = 0.02;%0.01;
             switch OPT.CBcolorbarlocation{ii}
                 case {'ENE','E','ESE'}
                     OPT.CBhorizonalalignment = 'right';
@@ -158,7 +165,11 @@ for ii = 1:length(OPT.CBcolorbarlocation)
         otherwise
             error('unknown OPT.CBcolorbarlocation location, ''%s''', OPT.CBcolorbarlocation{ii});
     end
-    KML_colorbar(OPT)
+    
+    if isempty(OPT.CBtipmargin         ); OPT.CBtipmargin         = OPT2.CBtipmargin         ;end
+    if isempty(OPT.CBalignmargin       ); OPT.CBalignmargin       = OPT2.CBalignmargin       ;end
+    if isempty(OPT.CBthickness         ); OPT.CBthickness         = OPT2.CBthickness         ;end
+    KML_colorbar(OPT);
 end
 
 

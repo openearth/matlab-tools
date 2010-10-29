@@ -24,7 +24,7 @@ function [dirs dircont files] = dirlisting(maindir, exc)
 %                       output structure of the command "dir").
 %   files           -   All filenames that are listed in the subdirs
 %
-% See also dir
+% See also DIR, FINDALLFILES
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares

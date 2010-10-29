@@ -1,5 +1,5 @@
 function varargout = KMLcontourf3(lat,lon,z,varargin)
-%KMLTRICONTOURF3  Wrapper for KMLtricontourf, to make it 3D
+%KMLcontourf3  Wrapper for KMLtricontourf, to make it 3D
 %
 %     KMLcontourf3(lat,lon,z,<keyword,value>)
 %

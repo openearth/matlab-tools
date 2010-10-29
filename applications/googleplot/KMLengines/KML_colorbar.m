@@ -43,19 +43,26 @@ function KML_colorbar(OPT)
 % $HeadURL$
 % $Keywords: $
 
+   OPT.template  = ~isempty(OPT.CBtemplateHor) | ~isempty(OPT.CBtemplateVer);
+   OPT.halo      = 1; % when OPT.template
+%   if ~OPT.template & OPT.halo
+%   OPT.CBbgcolor = [255 255 255]; % halo should be white
+%   end
+
    h.fig = figure('Visible','off');
    if isnumeric(OPT.CBcolorMap)
        colormap(OPT.CBcolorMap);
    else
        colormap(  OPT.CBcolorMap(OPT.CBcolorSteps));
    end
+
+   
    set(h.fig,'color',OPT.CBbgcolor./255,'InvertHardcopy','off')
    
    
    %% !!!!! temporary set all locations to right
    OPT.CBhorizonalalignment = 'left';
    OPT.CBverticalalignment  = 'top';
-   
    
    %% locations
    %
@@ -71,7 +78,7 @@ function KML_colorbar(OPT)
                            OPT.CBXAxisLocation = 'bottom';
                            OPT.CBYAxisLocation = 'left'; % dummy
    %  +---+
-   %  |   |
+   %  |   | % ERROR WITHOUT OPT.template
    %  +###+
    elseif          strcmpi(OPT.CBorientation      ,'horizontal') & ...
                    strcmpi(OPT.CBverticalalignment,'bottom')
@@ -82,7 +89,7 @@ function KML_colorbar(OPT)
                            OPT.CBXAxisLocation = 'top';
                            OPT.CBYAxisLocation = 'left'; % dummy
    %  +---+
-   %  |   #
+   %  |   # % ERROR WITHOUT OPT.template
    %  +---+
    elseif          strcmpi(OPT.CBorientation       ,'vertical') & ...
                    strcmpi(OPT.CBhorizonalalignment,'right')
@@ -93,7 +100,7 @@ function KML_colorbar(OPT)
                            OPT.CBXAxisLocation = 'bottom'; % dummy
                            OPT.CBYAxisLocation = 'left';
    %  +---+
-   %  #   |
+   %  #   | default
    %  +---+
    elseif          strcmpi(OPT.CBorientation       ,'vertical') & ...
                    strcmpi(OPT.CBhorizonalalignment,'left')
@@ -113,43 +120,51 @@ function KML_colorbar(OPT)
    h.c  = colorbarlegend(gca,[0 1],[0 1],OPT.CBcLim,...
             'ontop',0,...
         'reference','gca',...
-      'orientation',OPT.CBorientation);%,...
-           %'title',OPT.CBcolorTitle,...
-%   'titleposition',[OPT.CBorientation(1),'text'],...
-%      'titlecolor',OPT.CBfontrgb);
+      'orientation',OPT.CBorientation);
+
+   if OPT.template
         if     strcmpi(OPT.CBorientation      ,'vertical') 
-           text(-2.1,0,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation',90,'verticalalignment','top');
+           text(-2.1,0.1,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation',90,'verticalalignment','middle');
         elseif strcmpi(OPT.CBorientation      ,'horizontal')
-           text(   0,2,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation', 0,'verticalalignment','bottom');
+           text( 0.0,2.0,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation', 0,'verticalalignment','bottom');
+        end        
+   else
+      if     strcmpi(OPT.CBorientation      ,'vertical') 
+         text(0.5,0.0,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation',90,'verticalalignment','middle');
+      elseif strcmpi(OPT.CBorientation      ,'horizontal')
+         text(0.0,0.5,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation', 0,'verticalalignment','middle');
+      end
+   set   (h.c,'FontWeight'   ,'bold'); % we need bold for both halo and normal irregular background
+   end
+
+   set   (h.c,'xcolor'       ,OPT.CBfontrgb)
+   set   (h.c,'ycolor'       ,OPT.CBfontrgb)
+   set   (h.c,'XAxisLocation',OPT.CBXAxisLocation);
+   set   (h.c,'YAxisLocation',OPT.CBYAxisLocation);
+   
+   % set the tick marks if they have been provided
+   if isfield(OPT,'CBcolorTick')
+     if ~isempty(OPT.CBcolorTick)
+        if  strcmpi(OPT.CBorientation   ,'vertical');
+         set(h.c,'YTick',OPT.CBcolorTick);
+        elseif strcmpi(OPT.CBorientation,'horizontal')
+         set(h.c,'XTick',OPT.CBcolorTick);
         end
-%  h.t = get(h.c,'Title');    
-%  set   (h.t,'color'        ,OPT.CBfontrgb)
-    set   (h.c,'xcolor'       ,OPT.CBfontrgb)
-    set   (h.c,'ycolor'       ,OPT.CBfontrgb)
-    set   (h.c,'XAxisLocation',OPT.CBXAxisLocation);
-    set   (h.c,'YAxisLocation',OPT.CBYAxisLocation);
-    % set the tick marks if they have been provided
-    if isfield(OPT,'CBcolorTick')
-        if ~isempty(OPT.CBcolorTick)
-            if  strcmpi(OPT.CBorientation      ,'vertical');
-                set(h.c,'YTick',OPT.CBcolorTick);
-            elseif strcmpi(OPT.CBorientation      ,'horizontal')
-                set(h.c,'XTick',OPT.CBcolorTick);
-            end
+     end
+   end
+   
+   % set the ticklabels if they have been provided
+   if isfield(OPT,'CBcolorTickLabel')
+     if ~isempty(OPT.CBcolorTickLabel)
+        if     strcmpi(OPT.CBorientation,'vertical');
+         set(h.c,'YTickLabel',OPT.CBcolorTickLabel);
+        elseif strcmpi(OPT.CBorientation,'horizontal')
+         set(h.c,'XTickLabel',OPT.CBcolorTickLabel);
         end
-    end
-    % set the ticklabels if they have been provided
-    if isfield(OPT,'CBcolorTickLabel')
-        if ~isempty(OPT.CBcolorTickLabel)
-            if     strcmpi(OPT.CBorientation      ,'vertical');
-                set(h.c,'YTickLabel',OPT.CBcolorTickLabel);
-            elseif strcmpi(OPT.CBorientation      ,'horizontal')
-                set(h.c,'XTickLabel',OPT.CBcolorTickLabel);
-            end
-        end
-    end
-    delete(h.ax)
-    box on
+     end
+   end
+   delete(h.ax)
+   box on
    
    % copy axes and set box color seperately
    c_axes = copyobj(gca,h.fig);
@@ -159,32 +174,58 @@ function KML_colorbar(OPT)
    set  (h.fig,'PaperSize',[4.6 5.8])
    set  (h.fig,'PaperPosition',[0 0 4.6 5.8])
    print(h.fig,[OPT.CBfileName,'.png'],'-r100','-dpng'); % explicitly refer to h.fig, otherwise another figure (e.g. UCIT GUI) is printed.
-   im   = imread([OPT.CBfileName,'.png']);
+   im = imread([OPT.CBfileName,'.png']);
    
-   switch OPT.CBorientation
-       case 'horizontal'
-           % crop image to 100 by 440
-           im   = im((1:100),(1:440)+10,:);
-           mask = bsxfun(@eq,im,reshape(OPT.CBbgcolor,1,1,3));
-           % load template
-           [template, map, alpha] = imread(OPT.CBtemplateHor);
-           % place all non invisible pixels in the template)
-           templateColobarArea = template((1:100)+14,(1:440)+140,:);
-           templateColobarArea(repmat(any(~mask,3),1,3)) = im(repmat(any(~mask,3),1,3));
-           template((1:100)+14,(1:440)+140,:) = templateColobarArea;
-       case 'vertical'
-           % crop image to 100 by 440
-           im   = im((1:440)+70,1:100,:);
-           mask = bsxfun(@eq,im,reshape(OPT.CBbgcolor,1,1,3));
-           % load template
-           [template, map, alpha] = imread(OPT.CBtemplateVer);
-           % place all non invisible pixels in the template)
-           templateColobarArea = template((1:440)+90,(1:100)+18,:);
-           templateColobarArea(repmat(any(~mask,3),1,3)) = im(repmat(any(~mask,3),1,3));
-           template((1:440)+90,(1:100)+18,:) = templateColobarArea;
+   if OPT.template
+      switch OPT.CBorientation
+          case 'horizontal'
+              % crop image to 100 by 440
+              im   = im((1:100),(1:440)+10,:);
+              mask = bsxfun(@eq,im,reshape(OPT.CBbgcolor,1,1,3));
+              % load template
+              [template, map, alpha] = imread(OPT.CBtemplateHor);
+              % place all non invisible pixels in the template)
+              templateColobarArea = template((1:100)+14,(1:440)+140,:);
+              templateColobarArea(repmat(any(~mask,3),1,3)) = im(repmat(any(~mask,3),1,3));
+              template((1:100)+14,(1:440)+140,:) = templateColobarArea;
+          case 'vertical'
+              % crop image to 440 by 100
+              im   = im((1:440)+70,1:100,:);
+              mask = bsxfun(@eq,im,reshape(OPT.CBbgcolor,1,1,3));
+              % load template
+              [template, map, alpha] = imread(OPT.CBtemplateVer);
+              % place all non invisible pixels in the template)
+              templateColobarArea = template((1:440)+90,(1:100)+18,:);
+              templateColobarArea(repmat(any(~mask,3),1,3)) = im(repmat(any(~mask,3),1,3));
+              template((1:440)+90,(1:100)+18,:) = templateColobarArea;
+      end
+      imwrite(template,[OPT.CBfileName,'.png'],'Alpha',alpha*OPT.CBalpha);
+   else
+      % do not use any default
+      mask  = bsxfun(@eq,im,reshape(OPT.CBbgcolor,1,1,3));
+
+      %% now let alpha gradually decrease from 0 inside to 1 outside
+
+      if OPT.halo
+      s1 = all(mask,3);
+      s2 = ~ceil((~s1([1 1:end-1],[1 1:end-1]) + ...
+                  ~s1([2:end end],[1 1:end-1]) + ...
+                  ~s1([1 1:end-1],[2:end end]) + ...
+                  ~s1([2:end end],[2:end end]))/4); % move letters 1 pixel around
+      s3 = ~ceil((~s2([1 1:end-1],[1 1:end-1]) + ...
+                  ~s2([2:end end],[1 1:end-1]) + ...
+                  ~s2([1 1:end-1],[2:end end]) + ...
+                  ~s2([2:end end],[2:end end]))/4); % move letters 1other pixel around
+
+      blend = zeros(size(s1)); % alpha value to add ONLY to pixels adjacent to letters and colorbar
+      blend(logical(s1-s3))= 0.5;
+      blend(logical(s1-s2))= 1.0;
+      imwrite(im,[OPT.CBfileName,'.png'],'Alpha',ones(size(mask(:,:,1))).*(1-double(all(mask,3)) + blend)*OPT.CBalpha);
+      else
+      imwrite(im,[OPT.CBfileName,'.png'],'Alpha',ones(size(mask(:,:,1))).*(1-double(all(mask,3)))*OPT.CBalpha);
+      end
+
    end
- 
-   imwrite(template,[OPT.CBfileName,'.png'],'Alpha',alpha*OPT.CBalpha);
    
    try close(h.fig);end
 

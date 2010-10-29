@@ -1,7 +1,7 @@
 function varargout= gade1958(sigma,g,H0,h0,rhow,rhom,nuw,num)
 %GADE1958  complex wave number in dispersion relation Gade(1958) for 2-layer system.
 %
-% k      = gade1958(hw,hm,rhow,rhom,nuw,num,g,period)
+% k      = gade1958(sigma,g,H0,h0,rhow,rhom,nuw,num)
 % [k,k2] = gade1958(...) % returns both roots.
 %
 % from:
@@ -12,6 +12,7 @@ function varargout= gade1958(sigma,g,H0,h0,rhow,rhom,nuw,num)
 % where:
 %
 %    k      = complex wave number         [rad/m]
+%
 %    sigma  = angular frequency           [rad/s]
 %    g      = gravity (9.81)              [m/s2]
 %    hw (H0)= depth of top water layer    [m]
@@ -49,7 +50,7 @@ function varargout= gade1958(sigma,g,H0,h0,rhow,rhom,nuw,num)
 %% Rest
 
    gamma     = 1- (rhow./rhom);
-   sigma     = 2.*pi./period;
+  %sigma     = 2.*pi./period;
    m         = (1 - 1i).*sqrt(sigma./2./num);
    GAMMA     = 1-(tanh(m.*h0)./(m.*h0));
   

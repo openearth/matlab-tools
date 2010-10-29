@@ -1,5 +1,5 @@
 function [OPT, Set, Default] = KMLpatch3(lat,lon,z,varargin)
-%KMLPATCH Just like patch
+%KMLPATCH3 Just like patch
 %
 %    KMLpatch(lat,lon,<keyword,value>)
 % 
