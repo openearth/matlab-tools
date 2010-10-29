@@ -45,7 +45,7 @@ ell2        = OPT.(OPT.(datum_trans).ellips2).ellips;
 switch method_name
     case {'Geocentric translations','Position Vector 7-param. transformation',...
             'Coordinate Frame rotation','Coordinate Frame Rotation (geog2D domain)',...
-            'Molodensky-Badekas 10-parameter transformation'}
+            'Molodensky-Badekas 10-parameter transformation','NADCON'}
         % convert geographic 2D coordinates to geographic 3D, by assuming
         % height is 0
         h    = zeros(size(lat1));
