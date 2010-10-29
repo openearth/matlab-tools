@@ -1,5 +1,5 @@
 function OPT = compress(fileNameOut,fileNameIn,varargin)
-%UNCOMPRESS  Uncompresses a zip, rar or whatever compressed file using 7zip
+%COMPRESS  compresses files to a zip, 7z, iso etc, using 7zip
 %
 % Supports the following formats: 7Z (default), GZIP, BZIP2, TAR, ISO, UDF
 %

@@ -51,7 +51,7 @@ function end_of_PATHSTR = last_subdir(fullfilename,varargin)
    end
    
    %% Remove any trailing file names 
-   [PATHSTR,NAME,EXT,VERSN] = fileparts(fullfilename);
+   PATHSTR                  = fileparts(fullfilename);
    PATHSTR                  = path2os(PATHSTR);
    
    slash_positions          = findstr(PATHSTR,filesep);

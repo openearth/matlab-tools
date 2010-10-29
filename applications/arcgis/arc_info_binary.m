@@ -145,10 +145,19 @@ function varargout = arc_info_binary(varargin)
                    %  realmax('single'); = 3.402823e+038
                    %  realmin('single'); = 1.175494e-038
                    
-      nextarg = 1;
-   if odd(nargin)                
-      OPT.base = varargin{1};
-      nextarg = 2;
+   nextarg = 1;
+   if nargin==0
+       varargout = {OPT};
+       return
+   end
+   
+   if odd(nargin)
+       if ischar(varargin{1})
+           OPT.base = varargin{1};
+           nextarg = 2;
+       else
+           % this exception is when varargin{1} is OPT
+       end
    end
                    
    OPT = setproperty(OPT,varargin{nextarg:end});
