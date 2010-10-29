@@ -1,6 +1,19 @@
 function CS = ConvertCoordinatesFindDatum(CS,STD)
-%CONVERTCOORDINATESFINDDATUM .
-
+%CONVERTCOORDINATESFINDDATUM Find datum for coordinate system
+%
+%   Looks for the datum of the specified coordinate system.
+%
+%   Syntax:
+%   CS = ConvertCoordinatesFindDatum(CS,STD)
+%
+%   Input:
+%   CS  = coordinate system structure
+%   STD = structure with all EPSG codes
+%
+%   Output:
+%   CS = coordinate system structure
+%
+%   See also CONVERTCOORDINATES
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma

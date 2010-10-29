@@ -1,5 +1,72 @@
 function [x2,y2]=oblmerc(x1,y1,a,finv,latc,lonc,alphac,gammac,kc,ec,nc,iopt)
+% OBLMERC   One line description (oblique mercator?)
+%
+%   More detailed description
+%
+%   Syntax:
+%   [x2,y2]=oblmerc(x1,y1,a,finv,latc,lonc,alphac,gammac,kc,ec,nc,iopt)
+%
+%   Input:
+%   x1
+%   y1
+%   a
+%   finv
+%   latc
+%   lonc
+%   alphac
+%   gammac
+%   kc
+%   ec
+%   nc
+%   iopt    = set to 1 for geo2xy, else: xy2geo
+% 
+%   Ouput:
+%   x2
+%   y2
+% 
+%See also CONVERTCOORDINATES
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2010 <COMPANY>
+%       <NAME>
+%
+%       <EMAIL>	
+%
+%       <ADDRESS>
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Oct 2010
+% Created with Matlab version: 7.9.0.529 (R2009b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 n1=length(x1);
 
 ee = 2.718281828;
@@ -52,39 +119,39 @@ for i=1:n1
         lon = x1(i);
         lat = y1(i);
 
-        t = tan(pi/4 - lat/2) / ((1.0 - e * sin(lat)) / (1 + e * sin (lat)))^(e/2)
-        Q = H / t^B
-        S = (Q - 1/Q) / 2
-        TT = (Q + 1/Q) / 2
-        VV = sin(B * (lon - lon0))
-        UU = (- VV * cos(gamma0) + S * sin(gamma0)) / TT
-        v = AA * log((1 - UU) / (1 + UU)) / (2 * B)
-        u = (AA * atan((S * cos(gamma0) + VV * sin(gamma0)) / cos(B * (lon - lon0 ))) / B) - abs(uc)*sign(latc)
+        t = tan(pi/4 - lat/2) / ((1.0 - e * sin(lat)) / (1 + e * sin (lat)))^(e/2);
+        Q = H / t^B;
+        S = (Q - 1/Q) / 2;
+        TT = (Q + 1/Q) / 2;
+        VV = sin(B * (lon - lon0));
+        UU = (- VV * cos(gamma0) + S * sin(gamma0)) / TT;
+        v = AA * log((1 - UU) / (1 + UU)) / (2 * B);
+        u = (AA * atan((S * cos(gamma0) + VV * sin(gamma0)) / cos(B * (lon - lon0 ))) / B) - abs(uc)*sign(latc);
 
-        x2(i) = v *cos(gammac) + u *sin(gammac) + ec
-        y2(i) = u *cos(gammac) - v *sin(gammac) + nc
+        x2(i) = v *cos(gammac) + u *sin(gammac) + ec;
+        y2(i) = u *cos(gammac) - v *sin(gammac) + nc;
 
     else
         %           xy2geo
         east=x1(i);
         north=y1(i);
 
-        v = (east - ec) * cos(gammac) - (north - nc)*sin(gammac)
-        u = (north - nc)*cos(gammac) + (east - ec)*sin(gammac) +  abs(uc)*sign(latc)
+        v = (east - ec) * cos(gammac) - (north - nc)*sin(gammac);
+        u = (north - nc)*cos(gammac) + (east - ec)*sin(gammac) +  abs(uc)*sign(latc);
 
-        Q = ee^( - (B * v / AA))
-        S = (Q - 1 / Q) / 2
-        TT = (Q + 1 / Q) / 2
-        VV = sin (B* u / AA)
-        UU = (VV * cos(gammac) + S * sin(gammac)) / TT
-        t = (H / ((1 + UU) / (1 - UU))^0.5)^(1 / B)
+        Q = ee^( - (B * v / AA));
+        S = (Q - 1 / Q) / 2;
+        TT = (Q + 1 / Q) / 2;
+        VV = sin (B* u / AA);
+        UU = (VV * cos(gammac) + S * sin(gammac)) / TT;
+        t = (H / ((1 + UU) / (1 - UU))^0.5)^(1 / B);
 
-        chi = pi / 2 - 2 * atan(t)
+        chi = pi / 2 - 2 * atan(t);
 
-        lat = chi + sin(2*chi)*( e2 / 2 + 5*e4 / 24 + e6 / 12 +  13*e8/360) +  sin(4*chi)*( 7*e4 /48 + 29*e6 / 240 +  811*e8 / 11520) +  sin(6*chi)*( 7*e6 / 120 + 81*e8 / 1120) + sin(8*chi)*(4279*e8 / 161280)
-        lon = lon0  - atan ((S* cos(gamma0) - VV* sin(gamma0)) / cos(B*u / AA)) / B
+        lat = chi + sin(2*chi)*( e2 / 2 + 5*e4 / 24 + e6 / 12 +  13*e8/360) +  sin(4*chi)*( 7*e4 /48 + 29*e6 / 240 +  811*e8 / 11520) +  sin(6*chi)*( 7*e6 / 120 + 81*e8 / 1120) + sin(8*chi)*(4279*e8 / 161280);
+        lon = lon0  - atan ((S* cos(gamma0) - VV* sin(gamma0)) / cos(B*u / AA)) / B;
 
-        x2(i) = lon
-        y2(i) = lat
+        x2(i) = lon;
+        y2(i) = lat;
     end
 end

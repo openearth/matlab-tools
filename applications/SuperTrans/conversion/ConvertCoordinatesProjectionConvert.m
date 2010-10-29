@@ -1,11 +1,28 @@
 function [y1,x1] = ConvertCoordinatesProjectionConvert(x1,y1,CS,proj_conv,direction,STD)
-% CONVERTCOORDINATESPROJECTIONCONVERT 
+% CONVERTCOORDINATESPROJECTIONCONVERT Performs a projection conversion
 %
-% [y1,x1] = ...
-% ConvertCoordinatesProjectionConvert(x1,y1,CS,proj_conv,direction,STD)
+%   This routine performs the conversion of the projection, thus from 
+%   projected to geographic or vice versa.
+%
+%   Syntax:
+%   [y1,x1] = ...
+%   ConvertCoordinatesProjectionConvert(x1,y1,CS,proj_conv,direction,STD)
 % 
-% watch the order: lon-lat / x-y (NOT lat-lon !)
-
+%   Input (watch the order: lon-lat / x-y (NOT lat-lon !):
+%   x1          = input coordinate (x or lon)
+%   y1          = input coordinate (y or lat)
+%   CS          = coordinate system structure
+%   proj_conv   = Structure with conversion parameters (code, name, method
+%                 and param)
+%   direction   = 'xy2geo' for projected to geographic, 
+%                 'geo2xy' for geographic to projected
+%   STD         = structure with all EPSG codes
+%
+%   Output:
+%   y1          = output coordinate (y or lat)
+%   x1          = output coordinate (x or lon)
+%
+%   See also CONVERTCOORDINATES
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma

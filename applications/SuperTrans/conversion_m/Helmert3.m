@@ -1,10 +1,27 @@
 function [x1,y1,z1]=Helmert3(x0,y0,z0,dx,dy,dz)
 %HELMERT3  Helmert 3-parameter transformation
 %
-%  [x2,y2]= [x1,y1,z1]=Helmert3(x0,y0,z0,dx,dy,dz)
+%   This function performs a Helmert 3-parameter transformation
 %
-%See also: CONVERTCOORDINATES
+%   Syntax:
+%   [x1,y1,z1]=Helmert3(x0,y0,z0,dx,dy,dz)
+%
+%   Input:
+%   x0 \
+%   y0  > input coordinates
+%   z0 /
+%   dx \
+%   dy  > transformation
+%   dz /
+%
+%   Output:
+%   x1 \
+%   y1  > output coordinates
+%   z1 /
+%
+%See also: CONVERTCOORDINATES, HELMERT7
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares for Building with Nature
 %       Maarten van Ormondt
@@ -29,7 +46,20 @@ function [x1,y1,z1]=Helmert3(x0,y0,z0,dx,dy,dz)
 %   You should have received a copy of the GNU General Public License
 %   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
-      
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Oct 2010
+% Created with Matlab version: 7.9.0.529 (R2009b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
+
 x1 = x0 + dx;
 y1 = y0 + dy;
 z1 = z0 + dz;

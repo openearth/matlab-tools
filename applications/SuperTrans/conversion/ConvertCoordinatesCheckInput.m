@@ -1,11 +1,25 @@
 function CS = ConvertCoordinatesCheckInput(CS,STD)
-%ConvertCoordinatesCheckInput .
-
+%CONVERTCOORDINATESCHECKINPUT Performs checks on specified system
+%
+%   Performs checks on specified coordinate system. It will return error
+%   messages if coordinate types or epsg codes are unknown.
+%
+%   Syntax:
+%   CS = ConvertCoordinatesCheckInput(CS,STD)
+%
+%   Input:
+%   CS  = coordinate system structure
+%   STD = structure with all EPSG codes
+%
+%   Output:
+%   CS = coordinate system structure
+%
+%   See also CONVERTCOORDINATES
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma
 %
-%       Thijs.Damsma@deltares.nl	
+%       Thijs.Damsma@deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -40,7 +54,7 @@ if ~isempty(CS.type)
         case {'projected','xy','proj','cartesian','cart'}
             CS.type = 'projected';
         case {'engineering', 'geographic 3D', 'vertical', 'geocentric',  'compound'}
-            error(['input ''CType = ' CS.type ''' is not (yet) supported']); 
+            error(['input ''CType = ' CS.type ''' is not (yet) supported']);
         otherwise
             error(['coordinate type ''' CS.type ''' is not supported']);
     end
@@ -52,27 +66,27 @@ if ~isempty(CS.code)
     end
     ind1              = find(STD.coordinate_reference_system.coord_ref_sys_code == CS.code);
     if isempty(ind1)
-       error(['epsg code unknown: ',num2str(CS.code)])
+        error(['epsg code unknown: ',num2str(CS.code)])
     else
-
-    switch STD.coordinate_reference_system.coord_ref_sys_kind{ind1}
-
-        case {'geographic 2D','projected'}
-            % ok
-
-        case {'compound'}
-            CS.code = STD.coordinate_reference_system.cmpd_horizcrs_code(ind1); %#ok<FNDSB>
-            disp(sprintf([...
-                'coordinate system: ''%s'' is of type compound (3D coordinates system);\n'...
-                'Only the 2D component is used in conversion;\n'...
-                'conversion is performed for coordinate system %d'],...
-                STD.coordinate_reference_system.coord_ref_sys_name{ind1},CS.code));
-        otherwise
-             error(['coordinate type '''...
-                 STD.coordinate_reference_system.coord_ref_sys_kind{ind1}...
-                 ''' is not supported']);
-    end
+        
+        switch STD.coordinate_reference_system.coord_ref_sys_kind{ind1}
+            
+            case {'geographic 2D','projected'}
+                % ok
+                
+            case {'compound'}
+                CS.code = STD.coordinate_reference_system.cmpd_horizcrs_code(ind1); %#ok<FNDSB>
+                disp(sprintf([...
+                    'coordinate system: ''%s'' is of type compound (3D coordinates system);\n'...
+                    'Only the 2D component is used in conversion;\n'...
+                    'conversion is performed for coordinate system %d'],...
+                    STD.coordinate_reference_system.coord_ref_sys_name{ind1},CS.code));
+            otherwise
+                error(['coordinate type '''...
+                    STD.coordinate_reference_system.coord_ref_sys_kind{ind1}...
+                    ''' is not supported']);
+        end
     end
 end
-    
+
 

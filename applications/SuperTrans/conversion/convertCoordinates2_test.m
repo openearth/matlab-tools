@@ -1,7 +1,7 @@
 function OK = convertCoordinates2_test
-%CONVERTCOORDINATES_TEST   test convertCoordinates with kadaster data point
+%CONVERTCOORDINATES2_TEST   test convertCoordinates with kadaster data point
 %
-%See also: CONVERTCOORDINATES
+%See also: CONVERTCOORDINATES, CONVERTCOORDINATES_TEST
 
 % load coordinate systems
 load('EPSG.mat');

@@ -1,12 +1,24 @@
 function CS = ConvertCoordinatesFindUoM(CS,STD)
-%CONVERTCOORDINATESGETUNITOFMEASURE Summary of this function goes here
-%   Detailed explanation goes here
-
+%CONVERTCOORDINATESGETUNITOFMEASURE Finds unit of measurement
+%
+%   Finds for a specific coordinate system the unit of measurement
+%
+%   Syntax:
+%   CS = ConvertCoordinatesFindUoM(CS,STD)
+%
+%   Input:
+%   CS  = coordinate system structure
+%   STD = structure with all EPSG codes
+%
+%   Output:
+%   CS = coordinate system structure
+%
+%   See also CONVERTCOORDINATES
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma
 %
-%       Thijs.Damsma@deltares.nl	
+%       Thijs.Damsma@deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -38,12 +50,14 @@ function CS = ConvertCoordinatesFindUoM(CS,STD)
 ind1 = find(STD.coordinate_axis.coord_sys_code == CS.coordSys.code);
 UoM.code = STD.coordinate_axis.uom_code(ind1(1));
 
-if ~isempty(CS.UoM.code), UoM.code = CS.UoM.code; end
+if ~isempty(CS.UoM.code)
+    UoM.code = CS.UoM.code; 
+end
 
 ind2 = find(STD.unit_of_measure.uom_code == UoM.code);
 UoM.name = STD.unit_of_measure.unit_of_meas_name{ind2}; %#ok<FNDSB>
 
-if ~isempty(CS.UoM.name), 
+if ~isempty(CS.UoM.name),
     ind3 = find(strcmpi(STD.unit_of_measure.unit_of_meas_name, CS.UoM.name));
     CS.UoM.code = STD.unit_of_measure.uom_code(ind3);
     CS.UoM.name = STD.unit_of_measure.unit_of_meas_name{ind3};

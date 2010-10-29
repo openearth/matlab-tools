@@ -1,6 +1,21 @@
 function CS = ConvertCoordinatesFindCoordSys(CS,STD)
-%CONVERTCOORDINATESFINDCOORDSYS .
-
+%CONVERTCOORDINATESFINDCOORDSYS Finds coordinate system name and code
+%
+%   This routine searches in the EPSG database for the name and code of the
+%   input coordinate system.
+%
+%   Syntax:
+%   CS = ConvertCoordinatesFindCoordSys(CS,STD)
+%
+%   Input:
+%   CS  = input coordinate system structure
+%   STD = structure with all EPSG codes
+%
+%   Output:
+%   CS = output coordinate system structure, containing extra field
+%       'coordSys' with coordinate system information
+%
+%   See also CONVERTCOORDINATES
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma

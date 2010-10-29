@@ -1,6 +1,20 @@
 function CS = ConvertCoordinatesFindGeoRefSys(CS,STD)
-%ConvertCoordinatesFindGeoRefSys .
-
+%ConvertCoordinatesFindGeoRefSys Find geographic coordinate reference system
+%
+%   Finds for a projected coordinate system the corresponding geographic
+%   reference system.
+%
+%   Syntax:
+%   CS = ConvertCoordinatesFindGeoRefSys(CS,STD)
+%
+%   Input:
+%   CS  = coordinate system structure
+%   STD = structure with all EPSG codes
+%
+%   Output:
+%   CS = coordinate system structure
+%
+%   See also CONVERTCOORDINATES
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma

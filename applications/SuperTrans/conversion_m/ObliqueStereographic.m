@@ -1,12 +1,31 @@
 function [x2,y2]=ObliqueStereographic(x1,y1,a,finv,k0,fe,fn,lat0,lon0,iopt)
 %OBLIQUESTEREOGRAPHIC   convert between (lon,lat) and (x,y) in oblique stereographic projection
 %
-%  [x2,y2]= ObliqueStereographic(x1,y1,a,finv,k0,fe,fn,lat0,lon0,iopt)
+%   This function converts between (lon,lat) and (x,y) in oblique 
+%   stereographic projection
+% 
+%   Syntax:
+%   [x2,y2]= ObliqueStereographic(x1,y1,a,finv,k0,fe,fn,lat0,lon0,iopt)
 %
-% where iopt==1:geo2xy, else: xy2geo
+%   Input:
+%   x1
+%   y1
+%   a
+%   finv
+%   k0
+%   fe
+%   fn
+%   lat0
+%   lon0
+%   iopt    = set to 1 for geo2xy, else: xy2geo
+% 
+%   Output:
+%   x2
+%   y2
 %
-%See also: CONVERTCOORDINATES
+%See also CONVERTCOORDINATES
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares for Building with Nature
 %       Maarten van Ormondt
@@ -31,6 +50,17 @@ function [x2,y2]=ObliqueStereographic(x1,y1,a,finv,k0,fe,fn,lat0,lon0,iopt)
 %   You should have received a copy of the GNU General Public License
 %   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Oct 2010
+% Created with Matlab version: 7.9.0.529 (R2009b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 %% Reshape to column vector
 

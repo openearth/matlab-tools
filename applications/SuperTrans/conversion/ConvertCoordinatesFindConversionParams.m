@@ -1,11 +1,26 @@
 function proj_conv = ConvertCoordinatesFindConversionParams(CS,STD)
-%CONVERTCOORDINATESFINDCONVERSIONPARAMS .
-
+%CONVERTCOORDINATESFINDCONVERSIONPARAMS Find conversion parameters
+%
+%   Finds the conversion parameters for the specified coordinate system by
+%   looking in the EPSG database.
+%
+%   Syntax:
+%   proj_conv = ConvertCoordinatesFindConversionParams(CS,STD)
+%
+%   Input:
+%   CS  = coordinate system structure
+%   STD = structure with all EPSG codes
+%
+%   Output:
+%   proj_conv = Structure with conversion parameters (code, name, method
+%               and param)
+%
+%   See also CONVERTCOORDINATES
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma
 %
-%       Thijs.Damsma@deltares.nl	
+%       Thijs.Damsma@deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -38,7 +53,7 @@ ind1 = find(STD.coordinate_reference_system.coord_ref_sys_code == CS.code);
 proj_conv.code =      STD.coordinate_reference_system.projection_conv_code(ind1); %#ok<FNDSB>
 
 % Conversion method
-ind5             = find(STD.coordinate_operation.coord_op_code == proj_conv.code); 
+ind5             = find(STD.coordinate_operation.coord_op_code == proj_conv.code);
 proj_conv.name        =      STD.coordinate_operation.coord_op_name(ind5);
 proj_conv.method.code =      STD.coordinate_operation.coord_op_method_code(ind5);
 ind6             = find(STD.coordinate_operation_method.coord_op_method_code == proj_conv.method.code);

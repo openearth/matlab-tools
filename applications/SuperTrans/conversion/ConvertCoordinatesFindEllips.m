@@ -1,6 +1,19 @@
 function CS = ConvertCoordinatesFindEllips(CS,STD)
-%CONVERTCOORDINATESFINDELLIPS .
-
+%CONVERTCOORDINATESFINDELLIPS Find ellipsoid for coordinate system
+%
+%   Find for the specified coordinate system the corrsesponding ellipsoid
+%
+%   Syntax:
+%   CS = ConvertCoordinatesFindEllips(CS,STD)
+%
+%   Input:
+%   CS  = coordinate system structure
+%   STD = structure with all EPSG codes
+%
+%   Output:
+%   CS = coordinate system structure
+%
+%   See also CONVERTCOORDINATES
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma

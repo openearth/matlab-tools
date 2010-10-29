@@ -1,6 +1,20 @@
 function CS = ConvertCoordinatesFindCoordRefSys(CS,STD)
-%CONVERTCOORDINATESFINDCOORDREFSYS .
-
+%CONVERTCOORDINATESFINDCOORDREFSYS Fills coordinate system information
+%
+%   Finds corresponding code, type and name when only code or name has been
+%   specified in the coorinate system information structure.
+%
+%   Syntax:
+%   CS = ConvertCoordinatesFindCoordRefSys(CS,STD)
+%
+%   Input:
+%   CS  = coordinate system structure with only name or code defined
+%   STD = structure with all EPSG codes
+%
+%   Output:
+%   CS = complete coordinate system structure
+%
+%   See also CONVERTCOORDINATES
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma

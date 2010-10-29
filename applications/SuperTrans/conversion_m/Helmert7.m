@@ -1,11 +1,30 @@
 function [x1,y1,z1]=Helmert7(x0,y0,z0,dx,dy,dz,rx,ry,rz,ds)
 %HELMERT7  Helmert 7-parameter transformation
 %
-%  [x2,y2]= [x1,y1,z1]=Helmert7(x0,y0,z0,dx,dy,dz,rx,ry,rz,ds)
+%  
 %
-%See also: CONVERTCOORDINATES
+%   Syntax:
+%   [x1,y1,z1]=Helmert7(x0,y0,z0,dx,dy,dz,rx,ry,rz,ds)
+%
+%   Input:
+%   x0 \
+%   y0  > input coordinates
+%   z0 /
+%   dx \
+%   dy  > transformation
+%   dz /
+%   rx \
+%   ry  > rotation
+%   rz /
+%   ds  scale factor
+%
+%   Output:
+%   x1 \
+%   y1  > output coordinates
+%   z1 /
+%See also: CONVERTCOORDINATES, HELMERT3
    
-%
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares for Building with Nature
 %       Maarten van Ormondt
@@ -30,6 +49,19 @@ function [x1,y1,z1]=Helmert7(x0,y0,z0,dx,dy,dz,rx,ry,rz,ds)
 %   You should have received a copy of the GNU General Public License
 %   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Oct 2010
+% Created with Matlab version: 7.9.0.529 (R2009b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 
 m=1.0 + ds*0.000001;
       

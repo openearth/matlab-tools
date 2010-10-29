@@ -1,18 +1,41 @@
 function [lat,lon,h]=xyz2ell(X,Y,Z,a,e2)
-% XYZ2ELL  Converts cartesian coordinates to ellipsoidal.
-%   Uses iterative alogithm.  Vectorized.  See also XYZ2ELL2,
-%   XYZ2ELL3.
-% Version: 25 Oct 96
-% Useage:  [lat,lon,h]=xyz2ell(X,Y,Z,a,e2)
-% Input:   X \
-%          Y  > vectors of cartesian coordinates in CT system (m)
-%          Z /
-%          a   - ref. ellipsoid major semi-axis (m)
-%          e2  - ref. ellipsoid eccentricity squared
-% Output:  lat - vector of ellipsoidal latitudes (radians)
-%          lon - vector of ellipsoidal longitudes (radians)
-%          h   - vector of ellipsoidal heights (m)
-% Borrowed from the Geodetic Toolbox by Mike Craymer 
+% XYZ2ELL  Converts cartesian coordinates to ellipsoidal. 
+%
+%   Converts cartesian coordinates to ellipsoidal. Uses iterative alogithm.
+%   Vectorized.
+%   Version: 25 Oct 96
+%
+%   Syntax:
+%   [lat,lon,h]=xyz2ell(X,Y,Z,a,e2)
+%
+%   Input:   
+%   x \
+%   y  > vectors of cartesian coordinates in CT system (m)
+%   z /
+%   a   = ref. ellipsoid major semi-axis (m)
+%   e2  = ref. ellipsoid eccentricity squared
+% 
+%   Output:  
+%   lat = vector of ellipsoidal latitudes (radians)
+%   lon = vector of ellipsoidal E longitudes (radians)
+%   h   = vector of ellipsoidal heights (m)
+%
+% See also CONVERTCOORDINATES, XYZ2ELL2, XYZ2ELL3.
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Borrowed from the Geodetic Toolbox by Mike Craymer 
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Oct 2010
+% Created with Matlab version: 7.9.0.529 (R2009b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 %% Reshape to column vector
 

@@ -1,6 +1,28 @@
 function [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,datum_trans,STD)
-%CONVERTCOORDINATESDATUMTRANSFORM .
-
+%CONVERTCOORDINATESDATUMTRANSFORM Datum transformation
+%
+%   Performs the specified datum transformation for a set of coordinates
+%
+%   Syntax:
+%  [lat2,lon2] =
+%  ConvertCoordinatesDatumTransform(lat1,lon1,OPT,datum_trans,STD)
+%
+%   Input:
+%   lat1        = input latitude
+%   lon1        = input longitude
+%   OPT         = structure with input and output coordinate system and 
+%                 tranformation information.
+%   datum_trans = string specifying if the transformation goes via WGS84:
+%                 'datum_trans' : direct transformation
+%                 'datum_trans_to_WGS84' : transformation to WGS84
+%                 'datum_trans_from_WGS84' : transformation from WGS84
+%   STD         = structure with all EPSG codes
+%
+%   Output:
+%   lat2        = output latitude
+%   lon2        = output longitude
+%
+%   See also CONVERTCOORDINATES
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma

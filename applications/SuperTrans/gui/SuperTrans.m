@@ -1,13 +1,20 @@
 function SuperTrans(varargin)
-%SUPERTRANS   transformation between coordinate systems
+%SUPERTRANS   GUI for transformation between coordinate systems
 %
-%See also: SuperTrans = GetCoordinateSystems > SelectCoordinateSystem > ConvertCoordinates
+%   With this program, you can perform coordinate transformations between
+%   various coordinate systems. 
+%
+%   Syntax:
+%   SuperTrans
+%
+%   See also: CONVERTCOORDINATES
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
 %       Maarten van Ormondt
 %
-%       Maarten.vanOrmondt@deltares.nl	
+%       Maarten.vanOrmondt@deltares.nl  
 %
 %       Deltares
 %       P.O. Box 177
@@ -28,12 +35,24 @@ function SuperTrans(varargin)
 %   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-% curdir=fileparts(which('SuperTrans'));
-% addpath(genpath([curdir '\conversion']));
-% addpath(genpath([curdir '\conversion_dlls']));
-% addpath(genpath([curdir '\data']));
-% addpath(genpath([curdir '\general']));
+% This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
 
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 27 Oct 2010
+% Created with Matlab version: 7.9.0.529 (R2009b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 curdir=pwd;
 
 handles.EPSG = load('EPSG.mat');
@@ -61,7 +80,7 @@ end
 
 handles.OPT=[];
 
-handles.MainWindow      = MakeNewWindow_st('SuperTrans',[760 550]);
+handles.MainWindow      = MakeNewWindow('SuperTrans',[760 550],'resize','off');
 handles.BackgroundColor = get(gcf,'Color');
 bgc                     = handles.BackgroundColor;
 handles.FilterIndex     = 1;
@@ -168,7 +187,7 @@ handles.EditX(1)      = uicontrol(gcf,'Style','edit','String','200000.0','Positi
 handles.EditY(1)      = uicontrol(gcf,'Style','edit','String','500000.0','Position',[155 20 80 20],'BackgroundColor',[1 1 1],'HorizontalAlignment','right','Tag','UIControl');
 handles.EditX(2)      = uicontrol(gcf,'Style','edit','String','0.0','Position',[540 20 80 20],'BackgroundColor',[1 1 1],'HorizontalAlignment','right','Tag','UIControl');
 handles.EditY(2)      = uicontrol(gcf,'Style','edit','String','0.0','Position',[660 20 80 20],'BackgroundColor',[1 1 1],'HorizontalAlignment','right','Tag','UIControl');
-		        
+                
 handles.TextX(1)      = uicontrol(gcf,'Style','text','String','x','Position',[  0 16 30 20],'HorizontalAlignment','right','BackgroundColor',bgc,'Tag','UIControl');
 handles.TextY(1)      = uicontrol(gcf,'Style','text','String','y','Position',[120 16 30 20],'HorizontalAlignment','right','BackgroundColor',bgc,'Tag','UIControl');
 handles.TextX(2)      = uicontrol(gcf,'Style','text','String','lon','Position',[505 16 30 20],'HorizontalAlignment','right','BackgroundColor',bgc,'Tag','UIControl');

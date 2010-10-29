@@ -1,6 +1,19 @@
-function [ OPT ] = ConvertCoordinatesFindDatumTransOpt(OPT,STD)
-%CONVERTCOORDINATESFINDDATUMTRANSOPT .
-
+function OPT = ConvertCoordinatesFindDatumTransOpt(OPT,STD)
+%CONVERTCOORDINATESFINDDATUMTRANSOPT Find datum transformation options
+%
+%   This routine finds the options of the datum transformation
+%
+%   Syntax:
+%   OPT = ConvertCoordinatesFindDatumTransOpt(OPT,STD)
+%
+%   Input:
+%   OPT = input options structure
+%   STD = structure with all EPSG codes
+%
+%   Output:
+%   OPTS = output options structure
+%
+%   See also CONVERTCOORDINATES
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma

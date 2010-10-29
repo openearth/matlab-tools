@@ -1,6 +1,20 @@
 function param = ConvertCoordinatesFindDatumTransParams(coord_op_code,STD)
-%CONVERTCOORDINATESFINDDATUMTRANSPARAMS .
-
+%CONVERTCOORDINATESFINDDATUMTRANSPARAMS Finds datum transformation
+%parameters
+%
+%   Finds the datum transformation parameters in the EPSG database.
+%
+%   Syntax:
+%   param = ConvertCoordinatesFindDatumTransParams(coord_op_code,STD)
+%
+%   Input:
+%   coord_op_code   = code
+%   STD             = structure with all EPSG codes
+%
+%   Output:
+%   param = datum transformation parameters
+%
+%   See also CONVERTCOORDINATES
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma
