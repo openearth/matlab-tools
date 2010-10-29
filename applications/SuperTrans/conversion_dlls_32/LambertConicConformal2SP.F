@@ -231,8 +231,11 @@ c           xy2geo
             tac = (rac/(a*F))**(1/n)
             thetaac = atan((east - fe)/(rf - (north - fn)))
 
-            y2(i) = pi/2.0 - 2.0*atan(tac*((1.0 - e*sin(lat))/                  &
-     &              (1.0 + e*sin(lat)))**(e/2.0))
+            y2(i) = 0.5*pi-2*atan(tac)
+            do k  = 1,4
+               y2(i) = pi/2.0 - 2.0*atan(tac*((1.0 - e*sin(y2(i)))/            &
+     &            (1.0 + e*sin(y2(i))))**(e/2.0))
+            enddo
             x2(i) = thetaac/n + lonf
 
          endif
