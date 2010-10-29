@@ -4,7 +4,7 @@ function OK = convertCoordinates2_test
 %See also: CONVERTCOORDINATES, CONVERTCOORDINATES_TEST
 
 % load coordinate systems
-load('EPSG.mat');
+load('EPSG_v7_5');
 codes = coordinate_reference_system.coord_ref_sys_code;
 kinds = coordinate_reference_system.coord_ref_sys_kind;
 
@@ -20,6 +20,9 @@ y = 100000;
 
 % create file for printing error messages
 fid = fopen('convertCoordinate_errorMessages.txt','w');
+
+% preacclocate testresult
+testresult = nan(size(codes));
 
 % start loop over all systems
 for s = 1:length(codes)
