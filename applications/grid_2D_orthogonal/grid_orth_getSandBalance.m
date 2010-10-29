@@ -55,28 +55,33 @@ warningstate = warning;
 warning off %#ok<WNOFF>
 
 %% set defaults
-OPT.dataset         = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
-OPT.ldburl          = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
-OPT.workdir         = pwd;
-OPT.polygondir      = [];
-OPT.polygon         = [];
-OPT.cellsize        = [];                               % cellsize is assumed to be regular in x and y direction and is determined automatically
-OPT.datathinning    = 1;                                % stride with which to skip through the data
-OPT.inputtimes      = [];                               % starting points (in Matlab epoch time)
-OPT.starttime       = [];
-OPT.searchinterval  = -730;                             % acceptable interval to include data from (in days)
-OPT.min_coverage    = .25;                               % coverage percentage (can be several, e.g. [50 75 90]
-OPT.plotresult      = 1;                                % 0 = off; 1 = on;
-OPT.warning         = 1;                                % 0 = off; 1 = on;
-OPT.postProcessing	= 1;                                % 0 = off; 1 = on;
-OPT.whattodo(1)     = 1;                                % volume plots
-OPT.type            = 1;
-OPT.counter         = 0;
-OPT.urls            = [];
-OPT.x_ranges        = [];
-OPT.y_ranges        = [];
+OPT.dataset                 = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
+OPT.ldburl                  = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
+OPT.workdir                 = pwd;
+OPT.polygondir              = [];
+OPT.polygon                 = [];
+OPT.cellsize                = [];                               % cellsize is assumed to be regular in x and y direction and is determined automatically
+OPT.datathinning            = 1;                                % stride with which to skip through the data
+OPT.inputtimes              = [];                               % starting points (in Matlab epoch time)
+OPT.starttime               = [];
+OPT.searchinterval          = -730;                             % acceptable interval to include data from (in days)
+OPT.min_coverage            = .25;                               % coverage percentage (can be several, e.g. [50 75 90]
+OPT.plotresult              = 1;                                % 0 = off; 1 = on;
+OPT.warning                 = 1;                                % 0 = off; 1 = on;
+OPT.postProcessing          = 1;                                % 0 = off; 1 = on;
+OPT.postProcessingFcn       = @(OPT, results, Volumes, n) grid_orth_plotSandbalance(OPT, results, Volumes, n);
+OPT.whattodo(1)             = 1;                                % volume plots
+OPT.type                    = 1;
+OPT.counter                 = 0;
+OPT.urls                    = [];
+OPT.x_ranges                = [];
+OPT.y_ranges                = [];
+OPT.intervals               = []; % entry needed for adding dredging and dumping data
+OPT.polynames               = []; % entry needed for adding dredging and dumping data
+OPT.data                    = []; % entry needed for adding dredging and dumping data
 
 OPT = setproperty(OPT, varargin{:});
+
 
 %% generate sediment budget information
 for n = 1:size(OPT.min_coverage,2)
@@ -151,7 +156,7 @@ for n = 1:size(OPT.min_coverage,2)
                     
                     % make volume plots
                     if OPT.postProcessing && OPT.whattodo(1)
-                        grid_orth_plotSandbalance(OPT, results, Volumes, n);
+                        OPT.postProcessingFcn(OPT, results, Volumes, n);
                     end
                     disp(['Data written to: ' OPT.workdir '\results']);
                 else

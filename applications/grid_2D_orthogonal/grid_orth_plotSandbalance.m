@@ -1,5 +1,5 @@
 function grid_orth_plotSandbalance(OPT, results, Volumes, n)
-%GRID_ORTH_PLOTSANDBALANCE  plots results of sand balance computation
+%GRID_ORTH_PLOTSANDBALANCE  plots results of sandbalance computation
 %
 %       grid_orth_plotSandbalance(OPT, results, Volumes)
 %
@@ -42,13 +42,14 @@ warningstate = warning;
 warning off
 
 %% Polygon overview plot
+% initialise figure
 fh = figure('tag','sbPlot'); clf; 
 
 nameInfo = 'OpenEarth - Overview fixed maps, used data and polygon';
 set(fh,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
 set(fh,'renderer','zbuffer');
 
-% plot landboundary
+% get and plot landboundary
 OPT.x = nc_varget(OPT.ldburl, nc_varfind(OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate'));
 OPT.y = nc_varget(OPT.ldburl, nc_varfind(OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate'));
 plot(OPT.x, OPT.y, 'k', 'linewidth', 2);
@@ -63,15 +64,6 @@ plot(OPT.polygon(:,1), OPT.polygon(:,2),'color','g','tag','polygon','linewidth',
 
 % plot fixed maps
 grid_orth_createFixedMapsOnAxes(gca, OPT);
-
-% plot used data
-% load([OPT.workdir filesep 'datafiles' filesep 'timewindow = ' num2str(OPT.searchinterval) filesep results.polyname '_' num2str(OPT.inputtimes(1),'%04i') '_1231.mat']);
-% d.id              = OPT.id*-1;
-% d.id((OPT.id==0)) = nan;
-% 
-% surf(d.X,d.Y,d.id);view(2);shading interp;
-% caxis([-1 0]);
-
 
 % text
 title({['Overview fixed maps, used data and polygon for: ' strrep(results.polyname,'_',' ')]; strrep(OPT.dataset,'_','\_')});
@@ -89,15 +81,15 @@ close(fh)
 %% Volume development plot
 fh = figure('tag','VolPlot'); clf;
 
-nameInfo=['OpenEarth - Volume development plot'];
+nameInfo='OpenEarth - Volume development plot';
 set(fh,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
 hold on
 
 % plot results method 1 (as line)
-ph = plot(Volumes{1}(:,1), Volumes{1}(:,2) - Volumes{1}(1,2),'color','b','linewidth',2,'marker','o','MarkerFaceColor','b');
+plot(Volumes{1}(:,1), Volumes{1}(:,2) - Volumes{1}(1,2),'color','b','linewidth',2,'marker','o','MarkerFaceColor','b');
 
 % plot results method 2 (as  stippelline)
-ph = plot(Volumes{2}(:,1), Volumes{2}(:,2) - Volumes{2}(1,2),'color','b','linewidth',2,'marker','o','MarkerFaceColor','w','linestyle','--');
+plot(Volumes{2}(:,1), Volumes{2}(:,2) - Volumes{2}(1,2),'color','b','linewidth',2,'marker','o','MarkerFaceColor','w','linestyle','--');
 
 datetick
 grid
@@ -105,7 +97,7 @@ box on
 
 % set text
 title({['Volume development for ' strrep(results.polyname,'_',' ')]; strrep(OPT.dataset,'_','\_')},'fontsize',8);
-legend(['Method 1: based on data points covered by target year and reference year (' datestr(OPT.reference_year) ')'],['Method 2: based on data points covered in all years'],'location','SouthOutside');
+legend(['Method 1: based on data points covered by target year and reference year (' datestr(OPT.reference_year) ')'],'Method 2: based on data points covered in all years','location','SouthOutside');
 
 % set axis
 xlabel('Time [years]','fontsize',8);ylabel('Volume [m^3]','fontsize',8);
