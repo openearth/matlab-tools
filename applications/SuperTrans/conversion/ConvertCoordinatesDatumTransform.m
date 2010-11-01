@@ -66,8 +66,10 @@ ell2        = OPT.(OPT.(datum_trans).ellips2).ellips;
 
 switch method_name
     case {'Geocentric translations','Position Vector 7-param. transformation',...
+            'Position Vector transformation (geog2D domain)',...
             'Coordinate Frame rotation','Coordinate Frame Rotation (geog2D domain)',...
-            'Molodensky-Badekas 10-parameter transformation','NADCON'}
+            'Molodensky-Badekas 10-parameter transformation',...
+            'Molodensky-Badekas (geog2D domain)','NADCON'}
         % convert geographic 2D coordinates to geographic 3D, by assuming
         % height is 0
         h    = zeros(size(lat1));
@@ -88,7 +90,8 @@ switch method_name
                 dz = inv*getParamValue(param,'Z-axis translation','metre',STD);
                 [x,y,z]=Helmert3(x,y,z,dx,dy,dz);
 
-            case {'Position Vector 7-param. transformation','Coordinate Frame rotation','Coordinate Frame Rotation (geog2D domain)'}
+            case {'Position Vector 7-param. transformation','Position Vector transformation (geog2D domain)',...
+                    'Coordinate Frame rotation','Coordinate Frame Rotation (geog2D domain)'}
 
                 dx = inv*getParamValue(param,'X-axis translation','metre',STD);
                 dy = inv*getParamValue(param,'Y-axis translation','metre',STD);
@@ -104,7 +107,7 @@ switch method_name
                 end
                 [x,y,z]=Helmert7(x,y,z,dx,dy,dz,rx,ry,rz,ds);
 
-            case {'Molodensky-Badekas 10-parameter transformation'} 
+            case {'Molodensky-Badekas 10-parameter transformation','Molodensky-Badekas (geog2D domain)'} 
 
                 dx = inv*getParamValue(param,'X-axis translation','metre',STD);
                 dy = inv*getParamValue(param,'Y-axis translation','metre',STD);

@@ -57,7 +57,7 @@ function [OPT, Set, Default] = KMLpatch3(lat,lon,z,varargin)
    OPT.polyOutline        = 1;
    OPT.polyFill           = 1;
    OPT.openInGE           = false;
-   OPT.reversePoly        = false;
+   OPT.reversePoly        = [];
    OPT.extrude            = 0;
    OPT.text               = '';
    OPT.latText            = [];
@@ -67,15 +67,32 @@ function [OPT, Set, Default] = KMLpatch3(lat,lon,z,varargin)
    OPT.timeIn             = [];
    OPT.timeOut            = [];
    OPT.dateStrStyle       = 'yyyy-mm-ddTHH:MM:SS';
+   
+   if nargin==0
+       return
+   else
+       OPT.latText     = lat(1);
+       OPT.lonText     = lon(1);
+   end
 
-if nargin==0
-  return
-else
-OPT.latText     = lat(1);
-OPT.lonText     = lon(1);
-end
-
-[OPT, Set, Default] = setproperty(OPT, varargin);
+[OPT, Set, Default] = setproperty(OPT, varargin{:});
+%% limited error check
+    if ~isequal(size(lat),size(lon))
+        error('lat and lon must be same size')
+    end
+    if ischar(z)
+        if ~strcmp(z,'clampToGround')
+            error('z and lon must be same size, or z must be a single level, or z must be clampToGround')
+        end
+    else
+        if ~isequal(size(z),size(lat));
+            if numel(z) == 1
+                z = zeros(size(lat))+z;
+            else
+                error('z and lon must be same size, or z must be a single level, or z must be clampToGround')
+            end
+        end
+    end
 
 %% get filename, gui for filename, if not set yet
 
