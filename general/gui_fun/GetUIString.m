@@ -1,4 +1,5 @@
 function strout=GetUIString(strin,varargin)
+%GETUISTRING No description
 
 ico=[];
 

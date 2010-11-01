@@ -1,4 +1,5 @@
 function tabpanel(fig,panel,fcn,varargin)
+%TABPANEL No description
 
 clr=get(gcf,'Color');
 

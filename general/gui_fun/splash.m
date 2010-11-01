@@ -1,7 +1,3 @@
-% function splashdemo
-% splash('ngc6543a.jpg',20) 
-
-
 function varargout = splash(fname, time, pos, siz) 
 %SPLASH create a splash screen 
 % 

@@ -1,4 +1,5 @@
 function data=table(fig,hobj,action,varargin)
+%TABLE No description
 
 position=[0 0];
 nrrows=0;

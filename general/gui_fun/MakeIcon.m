@@ -1,4 +1,5 @@
 function Icon=MakeIcon(file,sz,nanval)
+%MAKEICON No description
 
 a=imread(file);
 [r,c,d] = size(a);

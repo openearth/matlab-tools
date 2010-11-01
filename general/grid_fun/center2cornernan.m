@@ -1,7 +1,7 @@
 function xcor = center2cornernan(xcen)
-%CENTER2CORNER
+%CENTER2CORNERNAN
 %
-% matrixcor = center2corner(matrixcen)
+% matrixcor = center2cornernan(matrixcen)
 %
 % Inter and extrapolates a 2D array linearly to obtain corner value
 % from center values. The corner array is none bigger on both dimensions.
@@ -11,7 +11,7 @@ function xcor = center2cornernan(xcen)
 %   Copyright (C) 2005 Delft University of Technology
 %       Gerben J. de Boer
 %
-%       g.j.deboer@citg.tudelft.nl	
+%       g.j.deboer@citg.tudelft.nl  
 %
 %       Fluid Mechanics Section
 %       Faculty of Civil Engineering and Geosciences
@@ -123,21 +123,21 @@ function xcor = mirror_in_1st_dimension(xcen,xcor)
 %%%
 %%%        x(1,1) + x(1,2)   x(m,n) + x(m,n+1) 
 %%% x_s = ---------------- = ----------------
-%%%              2		  2
+%%%              2        2
 %%%
 %%%        x(1,1) + x(1,2) + x(2,1) + x(2,2)     x(m,n) + x(m,n+1) + x(m+1,n) + x(m+1,n+1)
 %%% x_m = ----------------------------------- = ----------------------------------- 
-%%%             4				            4		
+%%%             4                           4       
 %%%
 %%% For mirroring backwards:
 %%%                                                  3*x(1,1) + 3*x(1,2) -  x(2,1) -  x(2,2) 
 %%% xcor(1,2)  = xcor(m  ,n+1) = x_s + (x_s - x_m) = --------------------------------------
-%%%			                                        4				  
+%%%                                                 4                 
 %%%
 %%% For mirroring forwards:
 %%%                                                  -  x(1,1) -  x(1,2) +3*x(2,1) +3*x(2,2) 
 %%% xcor(1,3)  = xcor(m+2,n+1) = x_s + (x_s - x_m) = --------------------------------------
-%%%			                                        4				  
+%%%                                                 4                 
 %%%
 
 %%% Of course this is only done for grid points that have not yet been calculated.

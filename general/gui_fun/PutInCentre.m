@@ -1,5 +1,5 @@
 function PutInCentre(f)
-%Put box in centre
+%PUTINCENTRE Put box in centre
 
 ScreenSize=get(0,'ScreenSize');
 PosOri=get(f,'Position');

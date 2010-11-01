@@ -1,4 +1,5 @@
 function SetUIBackgroundColors(varargin)
+%SETUIBACKGROUNDCOLORS No description
 
 if ~isempty(varargin)
     fig=varargin{1};

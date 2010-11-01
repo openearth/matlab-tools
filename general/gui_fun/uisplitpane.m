@@ -1,5 +1,5 @@
 function [h1,h2,hDivider] = uisplitpane(varargin)
-% uisplitpane Split a container (figure/frame/uipanel) into two resizable sub-containers
+%UISPLITPANE Split a container (figure/frame/uipanel) into two resizable sub-containers
 %
 % Syntax:
 %    [h1,h2,hDivider] = uisplitpane(hParent, 'propName',propVal,...)

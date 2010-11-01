@@ -1,7 +1,9 @@
 function fig=MakeNewWindow(Name,sz,varargin)
+%MAKENEWWINDOW No description
 
 modal=0;
 ico=[];
+resize = 'on';
 
 if ~isempty(varargin)
     % Modal or not
@@ -14,6 +16,11 @@ if ~isempty(varargin)
     if ~isempty(ii)
         ico=varargin{ii+1};
     end
+    % Resize
+    ii=strmatch('resize',lower(varargin),'exact');
+    if ~isempty(ii)
+        resize=varargin{ii+1};
+    end    
 end
 
 fig=figure;
@@ -32,4 +39,5 @@ set(fig,'Units','pixels');
 set(fig,'Position',[0 0 sz(1) sz(2)]);
 set(fig,'Name',Name,'NumberTitle','off');
 set(fig,'Tag',Name);
+set(fig,'Resize',resize);
 PutInCentre(fig);
