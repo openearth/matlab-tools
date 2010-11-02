@@ -97,7 +97,7 @@ ETRS89toRDNAP = [
     ];
 
 
-%% from RD to ETRS 89
+%% from ETRS 89 to RD
 
 for iEPSG = [1 2];
     [RDx,RDy,OPT] = convertcoordinates(ETRS89toRDNAP(:,2),ETRS89toRDNAP(:,1),EPSG{iEPSG},...
@@ -117,7 +117,7 @@ for iEPSG = [1 2];
     end
     fprintf('ETRS89 to RD default: % 29s\n\n',OPT.datum_trans.name{1})
 end
-%% from RD to WGS 84
+%% from WGS 84 to RD
 for iEPSG = [1 2];
     [RDx,RDy,OPT] = convertcoordinates(ETRS89toRDNAP(:,2),ETRS89toRDNAP(:,1),EPSG{iEPSG},...
         'CS1.name', 'WGS 84','CS1.type','geographic 2D','CS2.code',28992);

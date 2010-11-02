@@ -53,9 +53,15 @@ function SuperTrans(varargin)
 % $Keywords: $
 
 %%
+if isempty(which('MakeNewWindow'))
+    error('First run oetsettings!');
+    return
+end
+
 curdir=pwd;
 
 handles.EPSG = load('EPSG.mat');
+
 
 if exist('EPSG_ud.mat','file')
     sud=load('EPSG_ud.mat');
@@ -120,6 +126,9 @@ f = uimenu('Label','File Convert');
 f = uimenu('Label','Manage');
     uimenu(f,'Label','Datums','Callback',{@ManageDatums_CallBack},'Enable','off');
     uimenu(f,'Label','Coordinate Systems','Callback',{@ManageCoordinateSystems_CallBack},'Enable','off');
+f = uimenu('Label','Help');
+    uimenu(f,'Label','Online help','Callback','web(''http://public.deltares.nl/display/OET/Supertrans'',''-browser'')');
+    uimenu(f,'Label','About','Callback',{@About_CallBack},'Enable','on');
     
 % buttons
 
@@ -392,8 +401,8 @@ if ~ischar(handles.OPT.datum_trans) || strcmpi(handles.OPT.datum_trans,'no direc
              handles.Trans2=handles.Trans2(1);
          else
              if isfield(handles.OPT.datum_trans_to_WGS84,'name') && isfield(handles.OPT.datum_trans_from_WGS84,'name')
-                 handles.Trans1=strmatch(handles.OPT.datum_trans_to_WGS84.name{1},handles.OPT.datum_trans_to_WGS84.alt_name,'exact');
-                 handles.Trans2=strmatch(handles.OPT.datum_trans_from_WGS84.name{1},handles.OPT.datum_trans_from_WGS84.alt_name,'exact');
+                 handles.Trans1=strmatch(handles.OPT.datum_trans_to_WGS84.name,handles.OPT.datum_trans_to_WGS84.alt_name,'exact');
+                 handles.Trans2=strmatch(handles.OPT.datum_trans_from_WGS84.name,handles.OPT.datum_trans_from_WGS84.alt_name,'exact');
                  handles.Trans1=handles.Trans1(1);
                  handles.Trans2=handles.Trans2(1);
              end
@@ -450,8 +459,9 @@ if get(hObject,'Value')
     set(handles.ToggleGeo(ii),'Value',0);
     set(handles.TextX(ii),'String','x');
     set(handles.TextY(ii),'String','y');
-    handles=RefreshInput(handles,ii);
-    handles=RefreshDatumTransformation(handles);
+    handles=SelectCS(handles,i,ii);
+%     handles=RefreshInput(handles,ii);
+%     handles=RefreshDatumTransformation(handles);
     guidata(gcf,handles);
 else
     set(hObject,'Value',1);
@@ -468,8 +478,9 @@ if get(hObject,'Value')
     set(handles.ToggleXY(ii),'Value',0);
     set(handles.TextX(ii),'String','lon');
     set(handles.TextY(ii),'String','lat');
-    handles=RefreshInput(handles,ii);
-    handles=RefreshDatumTransformation(handles);
+    handles=SelectCS(handles,i,ii);
+%     handles=RefreshInput(handles,ii);
+%     handles=RefreshDatumTransformation(handles);
     guidata(gcf,handles);
 else
     set(hObject,'Value',1);
@@ -500,7 +511,12 @@ cs2=strs{k};
 tp2=handles.CSType{i2};
 
 if ~isempty(x1) && ~isempty(y1)
-    [x2,y2]=convertCoordinates(x1,y1,handles.EPSG,'CS1.name',cs1,'CS1.type',tp1,'CS2.name',cs2,'CS2.type',tp2);
+    if ~isfield(handles.OPT,'datum_trans_from_WGS84')
+        [x2,y2]=convertCoordinates(x1,y1,handles.EPSG,'CS1.name',cs1,'CS1.type',tp1,'CS2.name',cs2,'CS2.type',tp2,'datum_trans.code',handles.OPT.datum_trans.code);
+    else
+        [x2,y2]=convertCoordinates(x1,y1,handles.EPSG,'CS1.name',cs1,'CS1.type',tp1,'CS2.name',cs2,'CS2.type',tp2,...
+            'datum_trans_from_WGS84.code',handles.OPT.datum_trans_from_WGS84.code,'datum_trans_to_WGS84.code',handles.OPT.datum_trans_to_WGS84.code);
+    end
     set(handles.EditX(i2),'String',num2str(x2,'%0.9g'));
     set(handles.EditY(i2),'String',num2str(y2,'%0.9g'));
 end
@@ -674,14 +690,14 @@ handles=guidata(gcf);
 ii=get(hObject,'Value');
     
 if handles.ActiveTransformationMethod==1
-    if ~isfield(handles.OPT,'datum_trans_from_WGS84')
+    if ~isfield(handles.OPT,'datum_trans_to_WGS84')
         datum_trans='datum_trans';       
     else
-        datum_trans='datum_trans_from_WGS84';       
+        datum_trans='datum_trans_to_WGS84';       
     end
     handles.Trans1=ii;
 else
-    datum_trans='datum_trans_to_WGS84';       
+    datum_trans='datum_trans_from_WGS84';       
     handles.Trans2=ii;
 end
 
@@ -693,7 +709,7 @@ handles=RefreshDatumTransformationParameters(handles);
 if handles.ConversionOK==1 && handles.TransformationOK==1
     EnableConversion(handles);
 else
-    DiableConversion(handles);
+    DisableConversion(handles);
 end
 
 guidata(gcf,handles);
@@ -732,3 +748,39 @@ function MenuInput_CallBack(hObject,eventdata)
 function MenuOutput_CallBack(hObject,eventdata)
 function ManageDatums_CallBack(hObject,eventdata)
 function ManageCoordinateSystems_CallBack(hObject,eventdata)
+
+%%
+function About_CallBack(hObject,eventdata);
+
+aboutPath = ShowPath;
+
+fid=fopen([aboutPath filesep 'supertrans_about.txt']);
+aboutText=fread(fid,'char');
+aboutText(aboutText==13)=[];
+aboutText = char(aboutText');
+
+if ~isdeployed
+    revnumb = '????';
+    [tf str] = system(['svn info ' fileparts(which('SuperTrans.m'))]);
+    str = strread(str,'%s','delimiter',char(10));
+    id = strncmp(str,'Revision:',8);
+    if any(id)
+        revnumb = strcat(str{id}(min(strfind(str{id},':'))+1:end));
+    end
+    aboutText = regexprep(aboutText,{'\$revision','\$year','\$month'},{revnumb,datestr(now,'mmmm'),datestr(now,'yyyy')});
+end
+
+h = msgbox(aboutText,'About SuperTrans','modal');
+uiwait(h);
+  
+
+function [thePath] = ShowPath()
+% Show EXE path:
+if isdeployed % Stand-alone mode.
+    [status, result] = system('set PATH');
+    thePath = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
+else % Running from MATLAB.
+    [macroFolder, baseFileName, ext] = fileparts(mfilename('fullpath'));
+    thePath = macroFolder;
+    % thePath = pwd;
+end
