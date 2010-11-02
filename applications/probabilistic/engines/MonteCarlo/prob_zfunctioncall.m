@@ -84,7 +84,7 @@ if strcmp(OPT.method, 'matrix')
         OPT.variables{:});
 elseif strcmp(OPT.method, 'loop')
     z = [];
-    for isample = 1:OPT.NrSamples
+    for isample = 1:size(x,1)
         inputargs = {};
         if ismember('samples', z_input)
             % create samples structure
