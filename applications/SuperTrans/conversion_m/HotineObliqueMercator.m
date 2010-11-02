@@ -1,10 +1,10 @@
-function [x2,y2]=oblmerc(x1,y1,a,finv,latc,lonc,alphac,gammac,kc,ec,nc,iopt)
-% OBLMERC   One line description (oblique mercator?)
+function [x2,y2]=HotineObliqueMercator(x1,y1,a,finv,latc,lonc,alphac,gammac,kc,fe,fn,iopt)
+% HOTINEOBLIQUEMERCATOR   One line description (hotine oblique mercator)
 %
 %   More detailed description
 %
 %   Syntax:
-%   [x2,y2]=oblmerc(x1,y1,a,finv,latc,lonc,alphac,gammac,kc,ec,nc,iopt)
+%   [x2,y2]=ObliqueMercator(x1,y1,a,finv,latc,lonc,alphac,gammac,kc,fe,fn,iopt)
 %
 %   Input:
 %   x1
@@ -31,7 +31,7 @@ function [x2,y2]=oblmerc(x1,y1,a,finv,latc,lonc,alphac,gammac,kc,ec,nc,iopt)
 %   Copyright (C) 2010 <COMPANY>
 %       <NAME>
 %
-%       <EMAIL>	
+%       <EMAIL> 
 %
 %       <ADDRESS>
 %
@@ -99,17 +99,6 @@ H = FF*t0^B;
 G = (FF - 1/FF) / 2;
 gamma0 = asin(sin(alphac) / D);
 lon0 = lonc - (asin(G*tan(gamma0))) / B;
-vc = 0.0;
-
-if latc>=0
-    uc = (AA / B) * atan((D2 - 1.0)^0.5 / cos (alphac) );
-else
-    uc = -(AA / B) * atan((D2 - 1.0)^0.5 / cos (alphac) );
-end
-
-if alphac==90.0
-    uc = AA*(lonc - lon0);
-end
 
 for i=1:n1
 
@@ -126,18 +115,18 @@ for i=1:n1
         VV = sin(B * (lon - lon0));
         UU = (- VV * cos(gamma0) + S * sin(gamma0)) / TT;
         v = AA * log((1 - UU) / (1 + UU)) / (2 * B);
-        u = (AA * atan((S * cos(gamma0) + VV * sin(gamma0)) / cos(B * (lon - lon0 ))) / B) - abs(uc)*sign(latc);
+        u = (AA * atan((S * cos(gamma0) + VV * sin(gamma0)) / cos(B * (lon - lon0 ))) / B);
 
-        x2(i) = v *cos(gammac) + u *sin(gammac) + ec;
-        y2(i) = u *cos(gammac) - v *sin(gammac) + nc;
+        x2(i) = v *cos(gammac) + u *sin(gammac) + fe;
+        y2(i) = u *cos(gammac) - v *sin(gammac) + fn;
 
     else
         %           xy2geo
         east=x1(i);
         north=y1(i);
 
-        v = (east - ec) * cos(gammac) - (north - nc)*sin(gammac);
-        u = (north - nc)*cos(gammac) + (east - ec)*sin(gammac) +  abs(uc)*sign(latc);
+        v = (east - fe) * cos(gammac) - (north - fn)*sin(gammac);
+        u = (north - fn)*cos(gammac) + (east - fe)*sin(gammac);
 
         Q = ee^( - (B * v / AA));
         S = (Q - 1 / Q) / 2;

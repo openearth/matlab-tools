@@ -1,10 +1,10 @@
-function oblmerc_test()
-% OBLMERC_TEST  Test routine for oblmerc
+function ObliqueMercator_test()
+% OBLIQUEMERCATOR_TEST  Test routine for ObliqueMercator
 %  
 % More detailed description of the test goes here.
 %
 %
-%   See also OBLMERC
+%   See also OBLIQUEMERCATOR
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -54,6 +54,6 @@ OK = 0;
 
 % we use just some random numbers to test if the routine runs and generates
 % output:
-[x2,y2]=oblmerc(5,45,1,0.1,40,1,1,0,0,0,0,1);
+[x2,y2]=ObliqueMercator(5,45,1,0.1,40,1,1,0,0,0,0,1);
 
 OK = (isnumeric(x2)&isnumeric(y2));
