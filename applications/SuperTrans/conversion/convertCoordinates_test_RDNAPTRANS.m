@@ -100,7 +100,7 @@ ETRS89toRDNAP = [
 %% from ETRS 89 to RD
 
 for iEPSG = [1 2];
-    [RDx,RDy,OPT] = convertcoordinates(ETRS89toRDNAP(:,2),ETRS89toRDNAP(:,1),EPSG{iEPSG},...
+    [RDx,RDy,OPT] = convertcoordinates(ETRS89toRDNAP(1,2),ETRS89toRDNAP(1,1),EPSG{iEPSG},...
         'CS1.name', 'ETRS89','CS1.type','geographic 2D','CS2.code',28992);
     % from the OPT, several alternative methods for the datum transformation
     % can be retrieved. Try them all
@@ -112,14 +112,14 @@ for iEPSG = [1 2];
         max_error  =  max(((RDx - ETRS89toRDNAP(:,4)).^2+(RDy - ETRS89toRDNAP(:,5)).^2).^.5);
         mean_error = mean(((RDx - ETRS89toRDNAP(:,4)).^2+(RDy - ETRS89toRDNAP(:,5)).^2).^.5);
         
-        fprintf(1,'ETRS89 to RD using method % 25s, max error =% 7.3f m, mean error =% 7.3f m. Deprecated = %s\n',...
+        fprintf(1,'ETRS89 to RD using method % 25s, max error =% 8.4f m, mean error =% 8.4f m. Deprecated = %s\n',...
             OPT.datum_trans.alt_name{ii},max_error,mean_error,OPT.datum_trans.alt_deprecated{ii});
     end
     fprintf('ETRS89 to RD default: % 29s\n\n',OPT.datum_trans.name{1})
 end
 %% from WGS 84 to RD
 for iEPSG = [1 2];
-    [RDx,RDy,OPT] = convertcoordinates(ETRS89toRDNAP(:,2),ETRS89toRDNAP(:,1),EPSG{iEPSG},...
+    [RDx,RDy,OPT] = convertcoordinates(ETRS89toRDNAP(1,2),ETRS89toRDNAP(1,1),EPSG{iEPSG},...
         'CS1.name', 'WGS 84','CS1.type','geographic 2D','CS2.code',28992);
     % from the OPT, several alternative methods for the datum transformation
     % can be retrieved. Try them all
@@ -131,10 +131,10 @@ for iEPSG = [1 2];
         max_error  =  max(((RDx - ETRS89toRDNAP(:,4)).^2+(RDy - ETRS89toRDNAP(:,5)).^2).^.5);
         mean_error = mean(((RDx - ETRS89toRDNAP(:,4)).^2+(RDy - ETRS89toRDNAP(:,5)).^2).^.5);
         
-        fprintf(1,'WGS 84 to RD using method % 25s, max error =% 7.3f m, mean error =% 7.3f m. Deprecated = %s\n',...
+        fprintf(1,'WGS 84 to RD using method % 25s, max error =% 8.4f m, mean error =% 8.4f m. Deprecated = %s\n',...
             OPT.datum_trans.alt_name{ii},max_error,mean_error,OPT.datum_trans.alt_deprecated{ii});
     end
-    fprintf('ETRS89 to RD default: % 29s\n\n',OPT.datum_trans.name{1})
+    fprintf('WGS 84 to RD default: % 29s\n\n',OPT.datum_trans.name{1})
 end
 
 %% From RD/NAP to ETRS89
@@ -176,7 +176,7 @@ RDNAPtoETRS89 = [
 
  %% from RD to ETRS89
  for iEPSG = [1 2];
-     [lon,lat,OPT] = convertcoordinates(RDNAPtoETRS89(:,1),RDNAPtoETRS89(:,2),EPSG{iEPSG},...
+     [lon,lat,OPT] = convertcoordinates(RDNAPtoETRS89(1,1),RDNAPtoETRS89(1,2),EPSG{iEPSG},...
          'CS2.name', 'ETRS89','CS2.type','geographic 2D','CS1.code',28992);
      % from the OPT, several alternative methods for the datum transformation
      % can be retrieved. Try them all
@@ -195,7 +195,7 @@ RDNAPtoETRS89 = [
  end
  %% from RD to WGS 84
  for iEPSG = [1 2];
-     [lon,lat,OPT] = convertcoordinates(RDNAPtoETRS89(:,1),RDNAPtoETRS89(:,2),EPSG{iEPSG},...
+     [lon,lat,OPT] = convertcoordinates(RDNAPtoETRS89(1,1),RDNAPtoETRS89(1,2),EPSG{iEPSG},...
          'CS2.name', 'WGS 84','CS2.type','geographic 2D','CS1.code',28992);
      % from the OPT, several alternative methods for the datum transformation
      % can be retrieved. Try them all

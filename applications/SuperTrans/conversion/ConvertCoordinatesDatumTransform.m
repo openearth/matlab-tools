@@ -116,9 +116,10 @@ switch method_name
                 ry = inv*getParamValue(param,'Y-axis rotation','radian',STD);
                 rz = inv*getParamValue(param,'Z-axis rotation','radian',STD);
                 ds = inv*getParamValue(param,'Scale difference','',STD);
-                xp = getParamValue(param,'Ordinate 1 of evaluation point','',STD);
-                yp = getParamValue(param,'Ordinate 2 of evaluation point','',STD);
-                zp = getParamValue(param,'Ordinate 3 of evaluation point','',STD);
+                xp =     getParamValue(param,'Ordinate 1 of evaluation point','',STD);
+                yp =     getParamValue(param,'Ordinate 2 of evaluation point','',STD);
+                zp =     getParamValue(param,'Ordinate 3 of evaluation point','',STD);
+
                 [x,y,z]=MolodenskyBadekas(x,y,z,dx,dy,dz,rx,ry,rz,xp,yp,zp,ds);
 
             case 'NADCON'
