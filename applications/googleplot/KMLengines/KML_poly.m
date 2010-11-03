@@ -11,7 +11,7 @@ function varargout = KML_poly(lat,lon,varargin)
 %
 %   OPT = KML_line()
 %
-% Note that Google Earth shows a a KML_poly unsharp at small view 
+% Note that Google Earth shows a KML_poly unsharp at small view 
 % angles, whereas a KML_line is shown sharp at all view angles. 
 % A recommendation is therefore to plot edges with KML_line too.
 %
@@ -59,6 +59,7 @@ function varargout = KML_poly(lat,lon,varargin)
    OPT.timeIn     = [];
    OPT.timeOut    = [];
    OPT.name       = 'poly';
+   OPT.tessellate = 0;
    OPT.precision  = 8;
    
 if nargin==0; varargout = {OPT}; return; end
@@ -69,8 +70,8 @@ if nargin==2
 elseif nargin==3
    z       = varargin{1};
 else
-   if  ( odd(nargin) & ~isstruct(varargin{2})) | ...
-       (~odd(nargin) &  isstruct(varargin{2}));
+   if  ( odd(nargin) && ~isstruct(varargin{2})) || ...
+       (~odd(nargin) &&  isstruct(varargin{2}));
       z       = varargin{1};
       nextarg = 2;
    else
@@ -120,6 +121,15 @@ end
        extrude = '';
    end
 
+%% preprocess tessellate
+
+if  OPT.tessellate
+    tessellate = '<tessellate>1</tessellate>\n';
+else
+    tessellate = '';
+end
+
+   
 %% preproces timespan
 
    timeSpan = KML_timespan('timeIn',OPT.timeIn,'timeOut',OPT.timeOut);
@@ -141,7 +151,12 @@ end
 %  outer coordinates
 
   ii=1;
-  nn = ~isnan(lon(:,ii));
+  nn = find(~isnan(lon(:,ii)));
+  
+  % always make polygons counter clockwise
+  if poly_isclockwise(lon(nn,ii),lat(nn,ii))
+      nn = flipud(nn);
+  end
   coords=[lon(nn,ii)'; lat(nn,ii)'; z(nn,ii)'];
   
   coordPrintString = sprintf('%%3.%df,%%3.%df,%%3.3f\\n',OPT.precision,OPT.precision);
@@ -149,11 +164,13 @@ end
   outerCoords  = sprintf([...
       '<outerBoundaryIs>\n'...
       '<LinearRing>\n'...
+      '%s'...                        % tessellate
       '<coordinates>\n'...
       '%s'...                        % coordinates
       '</coordinates>\n'...
       '</LinearRing>\n'...
       '</outerBoundaryIs>\n'],...
+      tessellate,...
       sprintf(...
          coordPrintString,...       % coords (separated by \n or space)
       coords));
@@ -164,19 +181,26 @@ end
       innerCoords = sprintf([...
           '<innerBoundaryIs>\n']);
       for ii = 2:size(lat,2)
-          nn = ~isnan(lon(:,ii));
+          nn = find(~isnan(lon(:,ii)));
+          
+          % always make polygons counter clockwise
+          if poly_isclockwise(lon(nn,ii),lat(nn,ii))
+              nn = flipud(nn);
+          end
           coords=[lon(nn,ii)'; lat(nn,ii)'; z(nn,ii)'];
           
           innerCoords  = sprintf([...
               '%s'...
               '<LinearRing>\n'...
+              '%s'...                        % tessellate
               '<coordinates>\n'...
               '%s'...                        % coordinates
               '</coordinates>\n'...
               '</LinearRing>\n'],...
               innerCoords,...
+              tessellate,...
               sprintf(...
-              '%3.8f,%3.8f,%3.3f\n',...       % coords (separated by \n or space)
+              coordPrintString,...       % coords (separated by \n or space)
               coords));
       end
       innerCoords = sprintf([...

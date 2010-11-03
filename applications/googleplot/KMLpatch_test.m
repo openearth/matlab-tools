@@ -50,10 +50,10 @@ disp(['... running test:',mfilename])
 
 %% $RunCode
 try
-    KMLpatch([50 50 51 51] ,[0 1 1 0] ,'fileName',KML_testdir('KMLpatch_test1a.kml'),'fillColor',[1 0 0]);
-    KMLpatch([51 51 50 50] ,[0 1 1 0] ,'fileName',KML_testdir('KMLpatch_test2a.kml'),'fillColor',[1 0 0]);
-    KMLpatch([50 50 51 51]',[0 1 1 0]','fileName',KML_testdir('KMLpatch_test1b.kml'),'fillColor',[1 0 0]);
-    KMLpatch([51 51 50 50]',[0 1 1 0]','fileName',KML_testdir('KMLpatch_test2b.kml'),'fillColor',[1 0 0]);
+    KMLpatch([50   50   50.9 50.9 50  ]'-4,[1.1 2   2   1.1 1.1]'+8,'fileName',KML_testdir('KMLpatch_test1a.kml'),'fillColor',[1 0 0],'polyOutline',false,'lineOutline',true );
+    KMLpatch([50.9 50.9 50   50   50.9]'-4,[0   0.9 0.9 0   0  ]'+8,'fileName',KML_testdir('KMLpatch_test2a.kml'),'fillColor',[0 1 0],'polyOutline',false,'lineOutline',false);
+    KMLpatch([52   52   51.1 51.1 52  ]'-4,[1.1 2   2   1.1 1.1]'+8,'fileName',KML_testdir('KMLpatch_test1b.kml'),'fillColor',[0 0 1],'polyOutline',true ,'lineOutline',false);
+    KMLpatch([51.1 51.1 52   52   51.1]'-4,[0   0.9 0.9 0   0  ]'+8,'fileName',KML_testdir('KMLpatch_test2b.kml'),'fillColor',[1 1 1],'polyOutline',true ,'lineOutline',true );
     testresult = true;
 catch
     testresult = false;

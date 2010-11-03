@@ -276,7 +276,7 @@ output = '';
        'styleName',['line_style' num2str(OPT.line_nr(1))],...
        'tessellate',OPT.tessellate,...
        'visibility',OPT.visible);
-   if isempty(OPT.timeIn) , OPT_line.timeIn = [];else  OPT_line.timeIn = datestr( OPT.timeIn(1),OPT.dateStrStyle); end
+   if isempty(OPT.timeIn) ,OPT_line.timeIn  = [];else  OPT_line.timeIn = datestr( OPT.timeIn(1),OPT.dateStrStyle); end
    if isempty(OPT.timeOut),OPT_line.timeOut = [];else OPT_line.timeOut = datestr(OPT.timeOut(1),OPT.dateStrStyle); end
    
    if OPT.is3D&&OPT.fill

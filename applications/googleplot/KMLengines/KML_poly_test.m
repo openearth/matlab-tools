@@ -1,4 +1,4 @@
-function KML_poly_test
+function testresult = KML_poly_test
 %KML_line_test  test for KML_poly
 %
 % Please compare results of KML_line and KML_poly at a lagre zoom level.

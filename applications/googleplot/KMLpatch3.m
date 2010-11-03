@@ -5,8 +5,11 @@ function [OPT, Set, Default] = KMLpatch3(lat,lon,z,varargin)
 % 
 % only works for a singe patch (filled polygon)
 % see the keyword/value pair defaults for additional options. 
-% For the <keyword,value> pairs call. Toe orientation of 
-% lat,lon doe snot matter.
+% For the <keyword,value> pairs call. 
+%
+% Lat and lon and z must be vectors. Each column of lat, lon and z after
+% the first is interpreted as an ineer boundary (hole) of the first
+% polygon.
 %
 %    OPT = KMLpatch()
 %
@@ -54,11 +57,13 @@ function [OPT, Set, Default] = KMLpatch3(lat,lon,z,varargin)
    OPT.fillColor          = [1 1 1];
    OPT.fillAlpha          = 0.3;
    OPT.fileName           = '';
-   OPT.polyOutline        = 1;
+   OPT.lineOutline        = true; % draws a separate line element around the polygon. Outlines the polygon, excluding extruded edge
+   OPT.polyOutline        = false; % outlines the polygon, including extruded edges
    OPT.polyFill           = 1;
    OPT.openInGE           = false;
    OPT.reversePoly        = [];
-   OPT.extrude            = 0;
+   OPT.tessellate         = false;
+   OPT.extrude            = true;
    OPT.text               = '';
    OPT.latText            = [];
    OPT.lonText            = [];
@@ -84,6 +89,7 @@ function [OPT, Set, Default] = KMLpatch3(lat,lon,z,varargin)
         if ~strcmp(z,'clampToGround')
             error('z and lon must be same size, or z must be a single level, or z must be clampToGround')
         end
+        OPT.zScaleFun = @(z) z;
     else
         if ~isequal(size(z),size(lat));
             if numel(z) == 1
@@ -119,30 +125,49 @@ OPT_header = struct(...
 output = KML_header(OPT_header);
 
 %% STYLE
-
 OPT_stylePoly = struct(...
-    'name',['style' num2str(1)],...
+    'name'       ,'style',...
     'fillColor'  ,OPT.fillColor,...
     'lineColor'  ,OPT.lineColor ,...
     'lineAlpha'  ,OPT.lineAlpha,...
     'lineWidth'  ,OPT.lineWidth,...
     'fillAlpha'  ,OPT.fillAlpha,...
     'polyFill'   ,OPT.polyFill,...
-    'polyOutline',OPT.polyOutline); 
-    output = [output KML_stylePoly(OPT_stylePoly)];
+    'polyOutline',OPT.polyOutline);
+output = [output KML_stylePoly(OPT_stylePoly)];
 
 %% POLYGON
 
 OPT_poly = struct(...
    'name'      ,'',...
-   'styleName' ,['style' num2str(1)],...
+   'styleName' ,'style',...
    'timeIn'    ,datestr(OPT.timeIn ,OPT.dateStrStyle),...
    'timeOut'   ,datestr(OPT.timeOut,OPT.dateStrStyle),...
    'visibility',1,...
    'extrude'   ,OPT.extrude,...
-   'precision',OPT.precision);
+   'tessellate',OPT.tessellate,...
+   'precision' ,OPT.precision);
 
-output = [output KML_poly(lat(:),lon(:),OPT.zScaleFun(z(:)),OPT_poly)]; % make sure that lat(:),lon(:) have correct dimension nx1
+output = [output KML_poly(lat,lon,OPT.zScaleFun(z),OPT_poly)]; % make sure that lat(:),lon(:) have correct dimension nx1
+
+if OPT.lineOutline
+    OPT_line = struct(...
+   'name'      ,'',...
+   'styleName' ,'style',...
+   'timeIn'    ,datestr(OPT.timeIn ,OPT.dateStrStyle),...
+   'timeOut'   ,datestr(OPT.timeOut,OPT.dateStrStyle),...
+   'visibility',1,...
+   'tessellate',OPT.tessellate,...   
+   'precision' ,OPT.precision);
+    
+    lat(end+1,:) = nan;
+    lon(end+1,:) = nan;
+    if ~ischar(z)
+        z  (end+1,:) = nan;
+    end
+    output = [output KML_line(lat,lon,OPT.zScaleFun(z),OPT_line)];
+end
+
 
 %% text
 

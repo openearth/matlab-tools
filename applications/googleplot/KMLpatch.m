@@ -5,8 +5,7 @@ function [OPT, Set, Default] = KMLpatch(lat,lon,varargin)
 % 
 % only works for a singe patch (filled polygon)
 % see the keyword/value pair defaults for additional options. 
-% For the <keyword,value> pairs call. Toe orientation of 
-% lat,lon doe snot matter.
+% For the <keyword,value> pairs call.
 %
 %    OPT = KMLpatch()
 %
@@ -48,6 +47,9 @@ function [OPT, Set, Default] = KMLpatch(lat,lon,varargin)
 z = 'clampToGround';
 
 OPT = KMLpatch3;
+
+OPT.extrude            = false;
+OPT.tessellate         = true;
 
 if nargin==0
     return

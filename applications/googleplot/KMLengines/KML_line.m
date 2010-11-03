@@ -73,11 +73,12 @@ function varargout = KML_line(lat,lon,varargin)
    OPT.timeOut    = [];
    OPT.name       = 'line';
    OPT.tessellate = [];
+   OPT.precision  = 8;
    
 if nargin==0; varargout = {OPT}; return; end
 
-if  ( odd(nargin) & ~isstruct(varargin{2})) | ...
-    (~odd(nargin) &  isstruct(varargin{2}));
+if  ( odd(nargin) && ~isstruct(varargin{2})) || ...
+    (~odd(nargin) &&  isstruct(varargin{2}));
    z       = varargin{1};
    nextarg = 2;
 else
@@ -141,10 +142,13 @@ else
         notnanindex([~(notnanindex(2:end)-notnanindex(1:end-1)==1) true])'];
 end
 output = [];
+
+coordPrintString = sprintf('%%3.%df,%%3.%df,%%3.3f\\n',OPT.precision,OPT.precision);
+
 for ii = 1:size(coords_index,1)
     % coordinateString
     coordinateString  = sprintf(...
-        '%3.8f,%3.8f,%3.3f ',...coords);
+        coordPrintString,...coords);
         coordinates(:,coords_index(ii,1):coords_index(ii,2)));
         
     % generate output
