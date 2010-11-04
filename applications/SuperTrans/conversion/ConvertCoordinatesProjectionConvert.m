@@ -170,8 +170,8 @@ switch method.name
         ii = strmatch('Azimuth of initial line'              ,param.name); alphac  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
         ii = strmatch('Angle from Rectified to Skew Grid'    ,param.name); gammac  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);                                      
         ii = strmatch('Scale factor on initial line'         ,param.name); kc      = param.value(ii);      
-        ii = strmatch('False easting'         ,param.name); fe      = param.value(ii); 
-        ii = strmatch('False northing'        ,param.name); fn      = param.value(ii); 
+        ii = strmatch('False easting'                        ,param.name); fe      = param.value(ii); 
+        ii = strmatch('False northing'                       ,param.name); fn      = param.value(ii); 
 
         [x1,y1]= HotineObliqueMercator(x1,y1,a,invf,latc,lonc,alphac,gammac,kc,fe,fn,iopt);
 

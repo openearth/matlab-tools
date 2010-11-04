@@ -94,7 +94,7 @@ C     Create matrix for the return argument.
       gammac_pr = mxGetPr(prhs(8))
       kc_pr     = mxGetPr(prhs(9))
       fe_pr     = mxGetPr(prhs(10))
-      fnpr      = mxGetPr(prhs(11))
+      fn_pr     = mxGetPr(prhs(11))
       iopt_pr   = mxGetPr(prhs(12))
 
       x2_pr    = mxGetPr(plhs(1))
