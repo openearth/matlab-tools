@@ -512,11 +512,7 @@ tp2=handles.CSType{i2};
 
 if ~isempty(x1) && ~isempty(y1)
     if ~isfield(handles.OPT,'datum_trans_from_WGS84')
-        if isfield(handles.OPT.datum_trans,'code')
-            [x2,y2]=convertCoordinates(x1,y1,handles.EPSG,'CS1.name',cs1,'CS1.type',tp1,'CS2.name',cs2,'CS2.type',tp2,'datum_trans.code',handles.OPT.datum_trans.code);
-        else
-            [x2,y2]=convertCoordinates(x1,y1,handles.EPSG,'CS1.name',cs1,'CS1.type',tp1,'CS2.name',cs2,'CS2.type',tp2);
-        end
+        [x2,y2]=convertCoordinates(x1,y1,handles.EPSG,'CS1.name',cs1,'CS1.type',tp1,'CS2.name',cs2,'CS2.type',tp2,'datum_trans',handles.OPT.datum_trans);
     else
         [x2,y2]=convertCoordinates(x1,y1,handles.EPSG,'CS1.name',cs1,'CS1.type',tp1,'CS2.name',cs2,'CS2.type',tp2,...
             'datum_trans_from_WGS84.code',handles.OPT.datum_trans_from_WGS84.code,'datum_trans_to_WGS84.code',handles.OPT.datum_trans_to_WGS84.code);
