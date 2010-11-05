@@ -1,4 +1,4 @@
-function theta = poly_bisect(x, y)
+function theta = poly_bisect(x, y, varargin)
 %POLY_THETA  Finds the bisects of a polygon
 %
 %   Bisects at end and start points of a polygon are not strictly spoken
@@ -81,6 +81,11 @@ function theta = poly_bisect(x, y)
 % $Keywords: $
 
 %%
+OPT.isclosed = x(1)==x(end)&&y(1)==y(end);
+
+OPT          = setproperty(OPT,varargin{:});
+
+%%
 dx           = diff(x(:));
 dy           = diff(y(:));
 
@@ -89,9 +94,15 @@ distance     = (dx.^2+dy.^2).^.5;
 dx           = dx./distance;
 dy           = dy./distance;
 
-% average dx and dy
-dx           = nanmean([dx([1 1:end]) dx([1:end end])],2);
-dy           = nanmean([dy([1 1:end]) dy([1:end end])],2);
+if OPT.isclosed
+    % average dx and dy
+    dx           = nanmean([dx([end 1:end]) dx([1:end 1])],2);
+    dy           = nanmean([dy([end 1:end]) dy([1:end 1])],2);
+else
+    % average dx and dy
+    dx           = nanmean([dx([1 1:end]) dx([1:end end])],2);
+    dy           = nanmean([dy([1 1:end]) dy([1:end end])],2);
+end
 
 % calculate angles
 theta        = atan(dy./dx);

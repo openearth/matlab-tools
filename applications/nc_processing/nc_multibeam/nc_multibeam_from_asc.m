@@ -1,4 +1,3 @@
-%%
 function varargout = nc_multibeam_from_asc(varargin)
 %NC_MULTIBEAM_FROM_ASC  One line description goes here.
 %
@@ -84,6 +83,8 @@ OPT.gridsizey           = 5;             % y grid resolution
 OPT.xoffset             = 0;             % zero point of x grid
 OPT.yoffset             = 0;             % zero point of y grid
 OPT.zfactor             = 1;             % scale z by this factor
+OPT.shiftHalfCell       = true;          % set to true is the ASC grid files defines values at cell centers, not cell corners. (should be true see to http://en.wikipedia.org/wiki/ESRI_grid)
+OPT.default_nodata_val  = 9999;
 
 OPT.Conventions         = 'CF-1.4';
 OPT.CF_featureType      = 'grid';
@@ -190,16 +191,35 @@ if OPT.make
             else
                 fid      = fopen(fullfile(OPT.raw_path  ,fns_unzipped(ii).name));
             end
-            s = fgetl(fid); ncols        = strread(s,       'ncols %d');
-            s = fgetl(fid); nrows        = strread(s,       'nrows %d');
-            s = fgetl(fid); xllcorner    = strread(s,   'xllcorner %f');
-            s = fgetl(fid); yllcorner    = strread(s,   'yllcorner %f');
-            s = fgetl(fid); cellsize     = strread(s,    'cellsize %f');
-            s = fgetl(fid);
             
-            try             nodata_value = strread(s,'nodata_value %f');
-            catch;          nodata_value = strread(s,'NODATA_value %f'); %#ok<CTCH>
+            % read the first six lines of the file
+            s = textscan(fid,'%s %f',6);
+            
+            ncols        = s{2}(strcmpi(s{1},'ncols'        ));
+            nrows        = s{2}(strcmpi(s{1},'nrows'        ));
+            xllcorner    = s{2}(strcmpi(s{1},'xllcorner'    ));
+            yllcorner    = s{2}(strcmpi(s{1},'yllcorner'    ));
+            cellsize     = s{2}(strcmpi(s{1},'cellsize'     ));
+            if isempty(ncols)||isempty(nrows)||isempty(xllcorner)||isempty(yllcorner)||isempty(cellsize)
+                error('reading asc file')
             end
+            
+            nodata_value = s{2}(strcmpi(s{1},'nodata_value' ));            
+            if isempty(nodata_value)
+                % apparently nodatavalue is not defined.
+                % set it to defaul value
+                nodata_value = OPT.default_nodata_val;
+                % then rewind the file 
+                fseek(fid,0,-1);
+                % and skip the first five lines
+                s = textscan(fid,'%s %f',5);
+            end
+                
+            if OPT.shiftHalfCell
+                xllcorner = xllcorner+cellsize/2;
+                yllcorner = yllcorner+cellsize/2;
+            end
+
             
             kk = 0;
             while ~feof(fid)
