@@ -19,7 +19,7 @@ function oetnewfun(varargin)
 % oetnewfun('filename',...
 %     'description', 'This is an example of a new function.')
 %
-% See also: newfun, getlocalsettings, load_template
+% See also: newfun, oetnewtest, oetnewclass, getlocalsettings, load_template
 %
 % <a href="matlab:oetnewfun;">Click here to create a new function</a>
 

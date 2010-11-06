@@ -33,7 +33,7 @@ function oetnewtest(varargin)
 %       oetnewtest('oetnewtest_test');
 %       oetnewtest('currentfile');
 %
-%   See also: oetnewfun, getlocalsettings, load_template
+%   See also: oetnewfun, oetnewclass, getlocalsettings, load_template
 %
 %   <a href="matlab:oetnewtest;">Click here and create a new test</a>
 %
