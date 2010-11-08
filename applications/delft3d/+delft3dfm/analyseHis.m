@@ -10,6 +10,7 @@ function varargout = analyseHis(varargin)
 %   generated with delft3dfm.opendap2obs or delft3d_opendap2obs.
 %
 % Example: delft3dfm, using a local cache of netCDF files
+%          You can create such a local cache with opendap_get_cache
 %
 %    ncbase = 'F:\opendap\thredds\rijkswaterstaat/waterbase/sea_surface_height'
 %    epsg   = 28992
@@ -45,7 +46,7 @@ function varargout = analyseHis(varargin)
 %                        't_tide',0)
 %         end
 %
-%See also: delft3dfm, NC_T_TIDE_COMPARE, NC_T_TIDE, T_TIDE, delft3d
+%See also: delft3dfm, NC_T_TIDE_COMPARE, NC_T_TIDE, T_TIDE, delft3d, OPENDAP_GET_CACHE
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
