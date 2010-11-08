@@ -1,22 +1,22 @@
 function varargout = mdf2mdu(varargin)
-%MDF2MDU   convert Delft3D-flow model input to UNSTRUC model input
+%MDF2MDU   convert Delft3D-flow model input to delft3dfm model input
 %
-%   unstruc.mdf2mdu(<keyword,value>)
+%   delft3dfm.mdf2mdu(<keyword,value>)
 %
 % Example:
 %
 %  OPT.mdf      = 'dcsm98a.mdf';
 %  OPT.pli_test = 'dcsm98_tst.pli';
-%  OPT.bnd      = 'dcsm98_unstruc.bnd'; % adapted *.bnd that overrides *.bnd without pli information in *.mdf
+%  OPT.bnd      = 'dcsm98_delft3dfm.bnd'; % adapted *.bnd that overrides *.bnd without pli information in *.mdf
 %                                       % 2 extra columns: 
 %                                       % 1) name of *.pli, 
 %                                       % 2) sequence number within segment: make sure ends meets
 %  
-%  unstruc.mdf2mdu(OPT)
+%  delft3dfm.mdf2mdu(OPT)
 %
-%See also: unstruc
+%See also: delft3dfm, delft3d
 
-% TO DO: allow for both bca (astro) and bct (setup), FLOW can already handle that, UNSTRUC not yet
+% TO DO: allow for both bca (astro) and bct (setup), FLOW can already handle that, delft3dfm not yet
 % TO DO: rewrite grd as netCDF
 % TO DO: write mdu too
 
@@ -93,7 +93,7 @@ function varargout = mdf2mdu(varargin)
       nc_varput([filename(OPT.ncfile),'_filled.nc'],'NetNode_z',N.z);
    end
 
-%% save unstruc-pli
+%% save delft3dfm-pli
 %  make lots of separate polygons and link all polygons
 
    if OPT.debug
@@ -229,7 +229,7 @@ for ipli = 1:length(pli.names)
 
 end % ipli
 
-%% save test unstruc *.ext
+%% save test delft3dfm *.ext
 
 fid = fopen([OPT.ext],'w');
 

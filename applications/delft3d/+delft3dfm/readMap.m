@@ -1,15 +1,15 @@
 function varargout = readMap(ncfile,varargin)
-%readMap   Reads solution data on an unstructured net.
+%readMap   Reads solution data on an delft3dfmtured net.
 %
-%     D = unstruc.readMap(ncfile,<it>) 
-%     D = unstruc.readMap(G     ,<it>) 
+%     D = delft3dfm.readMap(ncfile,<it>) 
+%     D = delft3dfm.readMap(G     ,<it>) 
 %
-%   reads flow circumcenter(cen) data from an unstruct netCDF file. 
+%   reads flow circumcenter(cen) data from an delft3dfmt netCDF file. 
 %   By default is the LAST timestep is read (it=last).
 %
-%   For plotting also use G = unstruc.readNet(ncfile)
+%   For plotting also use G = delft3dfm.readNet(ncfile)
 %
-% See also: unstruc
+% See also: delft3dfm, delft3d
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
@@ -57,7 +57,7 @@ function varargout = readMap(ncfile,varargin)
       G      = ncfile;
       ncfile = G.file.name
    else
-      G      = unstruc.readNet(ncfile);
+      G      = delft3dfm.readNet(ncfile);
    end
    
    if odd(nargin)

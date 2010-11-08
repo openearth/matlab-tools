@@ -1,13 +1,12 @@
-
 function varargout = plotNet(varargin)
-%plotNet  Plot an unstructured grid.
+%plotNet  Plot an delft3dfmtured grid.
 %
-%     G  = unstruc.readNet(ncfile) 
-%    <h> = unstruc.plotNet(G     ,<keyword,value>) 
+%     G  = delft3dfm.readNet(ncfile) 
+%    <h> = delft3dfm.plotNet(G     ,<keyword,value>) 
 %          % or 
-%    <h> = unstruc.plotNet(ncfile,<keyword,value>) 
+%    <h> = delft3dfm.plotNet(ncfile,<keyword,value>) 
 %
-%   plots an unstructured net (centers, corners, contours),
+%   plots an delft3dfm unstructured net (centers, corners, contours),
 %   optionally the handles h are returned.
 %
 %   The following optional <keyword,value> pairs have been implemented:
@@ -17,11 +16,11 @@ function varargout = plotNet(varargin)
 %    * cor
 %    * cen
 %    * peri
-%   Defaults values can be requested with OPT = unstruc.plotNet().
+%   Defaults values can be requested with OPT = delft3dfm.plotNet().
 %
 %   Note: all flow cells are plotted as one NaN-separated line: fast.
 %
-%   See also UNSTRUC
+%   See also delft3dfm, delft3d
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
@@ -72,7 +71,7 @@ function varargout = plotNet(varargin)
    else
       if ischar(varargin{1})
       ncfile   = varargin{1};
-      G        = unstruc.readNet(ncfile);
+      G        = delft3dfm.readNet(ncfile);
       else
       G        = varargin{1};
       end
@@ -128,7 +127,7 @@ function varargout = plotNet(varargin)
    peri.mask  = find(cen.mask(G.cen.LinkType(cen.mask)~=1)); % i.e. 0=closed or 2=between 2D elements
    
    if ~iscell(G.peri.x) % can also be done in readNet
-     [x,y] = unstruc.peri2cell(G.peri.x(:,peri.mask),G.peri.y(:,peri.mask));
+     [x,y] = delft3dfm.peri2cell(G.peri.x(:,peri.mask),G.peri.y(:,peri.mask));
       x    = poly_join(x);
       y    = poly_join(y);
    else

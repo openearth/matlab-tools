@@ -1,15 +1,15 @@
 function varargout = plotMap(varargin)
 %plotMap Plot an unstructured map.
 %
-%     G  = unstruc.readNet(ncfile) 
-%     D  = unstruc.readMap(ncfile,<it>) 
-%    <h> = unstruc.plotMap(G,D,<keyword,value>) 
+%     G  = delft3dfm.readNet(ncfile) 
+%     D  = delft3dfm.readMap(ncfile,<it>) 
+%    <h> = delft3dfm.plotMap(G,D,<keyword,value>) 
 %          % or 
-%    <h> = unstruc.plotMap(ncfile,<it>,<keyword,value>);
+%    <h> = delft3dfm.plotMap(ncfile,<it>,<keyword,value>);
 %
-%   plots an unstructured map, optionally the handles h are returned.
+%   plots an delft3dfmtured map, optionally the handles h are returned.
 %   For plotting multiple timesteps it is most efficient
-%   to read the unstructrured grid G once, and update D and plotMap.
+%   to read the delft3dfmtrured grid G once, and update D and plotMap.
 %
 %   The following optional <keyword,value> pairs have been implemented:
 %    * axis: only grid inside axis is plotted, use [] for while grid.
@@ -17,13 +17,13 @@ function varargout = plotMap(varargin)
 %    * parameter: field in D.cen to plot (default 1st field 'zwl')
 %   Cells with plot() properties, e.g. {'EdgeColor','k'}
 %    * patch
-%   Defaults values can be requested with OPT = unstruc.plotNet().
+%   Defaults values can be requested with OPT = delft3dfm.plotNet().
 %
 %   Note: every flow cell is plotted individually as a patch: slow.
 %
 %   Apply any plot lay-out before plotMap: much fatser.
 %
-%   See also UNSTRUC
+%   See also delft3dfm, delft3d
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
@@ -71,7 +71,7 @@ function varargout = plotMap(varargin)
    else
       if ischar(varargin{1})
       ncfile   = varargin{1};
-      G        = unstruc.readNet(ncfile);
+      G        = delft3dfm.readNet(ncfile);
       else
       G        = varargin{1};
       end
@@ -80,14 +80,14 @@ function varargout = plotMap(varargin)
       if ~odd(nargin)
         if isnumeric(varargin{2}) & ischar(varargin{1}) % only output file, not input file
           it      = varargin{2};
-          D       = unstruc.readMap(ncfile,it);
+          D       = delft3dfm.readMap(ncfile,it);
         elseif isstruct(varargin{2})
           D       = varargin{2};
         else
           error('when timestep is supplied the first argument should be ''ncfile''.')
         end
       else
-        D       = unstruc.readMap(ncfile); % readMap gets last it
+        D       = delft3dfm.readMap(ncfile); % readMap gets last it
         nextarg = 2;
       end
       
@@ -124,7 +124,7 @@ if isfield(G,'peri')
    peri.mask  = find(cen.mask(G.cen.LinkType(cen.mask)~=1)); % i.e. 0=closed or 2=between 2D elements
    
    if ~iscell(G.peri.x) % can also be done in readNet
-     [x,y] = unstruc.peri2cell(G.peri.x(:,peri.mask),G.peri.y(:,peri.mask));
+     [x,y] = delft3dfm.peri2cell(G.peri.x(:,peri.mask),G.peri.y(:,peri.mask));
    else
       x = G.peri.x;
       y = G.peri.y;

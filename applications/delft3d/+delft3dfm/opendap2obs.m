@@ -1,15 +1,15 @@
 function varargout = opendap2obs(varargin)
 %OPENDAP2OBS   get list of observation points from netCDF time series collection
 %
-%    unstruc.opendap2obs(<keyword,value>)
+%    delft3dfm.opendap2obs(<keyword,value>)
 %
 % Example: 
 %
 %  delft3d_opendap2obs('ncbase','F:\opendap\thredds\rijkswaterstaat/waterbase/sea_surface_height',...
 %                        'epsg', OPT.epsg,...
-%                        'file',['F:\unstruc\run01\rijkswaterstaat_waterbase_sea_surface_height_',num2str(OPT.epsg),'.obs'])
+%                        'file',['F:\delft3dfm\run01\rijkswaterstaat_waterbase_sea_surface_height_',num2str(OPT.epsg),'.obs'])
 %
-%See also: delft3d_opendap2obs, unstruc.analyseHis
+%See also: delft3d_opendap2obs, delft3dfm.analyseHis, delft3d
 
 %% settings
 
@@ -45,7 +45,8 @@ function varargout = opendap2obs(varargin)
   
   [D.x,D.y] = convertCoordinates(D.lon,D.lat,'CS1.code',4326,'CS2.code',OPT.epsg)
 
-%% TO DO: exclude points outside unstruc extende, not really needed as unstruc only use points with associated gridcell
+%% TO DO: exclude points outside delft3dfm extent,
+%  not really needed as delft3dfm already uses only points within set of associated gridcell
 
 %% save file
 

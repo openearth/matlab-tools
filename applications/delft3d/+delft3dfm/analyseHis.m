@@ -1,24 +1,24 @@
 function varargout = analyseHis(varargin)
-%unstruc.analyseHis   analyse waterlevel time series against OPeNDAP data in time and frequency domain
+%delft3dfm.analyseHis   analyse waterlevel time series against OPeNDAP data in time and frequency domain
 %
-%    unstruc.analyseHis(<ncfile>,<keyword,value>)
+%    delft3dfm.analyseHis(<ncfile>,<keyword,value>)
 %
 % * For Delft3D-flow the trih history file can be converted to netCDF
-%   with VS_TRIH2NC such that unstruc.analyseHis also works on it.
-% * For unstruc.analyseHis to be able to detect associated data
+%   with VS_TRIH2NC such that delft3dfm.analyseHis also works on it.
+% * For delft3dfm.analyseHis to be able to detect associated data
 %   automatically, the observation points names have to be 
-%   generated with unstruc.opendap2obs or delft3d_opendap2obs.
+%   generated with delft3dfm.opendap2obs or delft3d_opendap2obs.
 %
-% Example: unstruc, using a local cache of netCDF files
+% Example: delft3dfm, using a local cache of netCDF files
 %
 %    ncbase = 'F:\opendap\thredds\rijkswaterstaat/waterbase/sea_surface_height'
 %    epsg   = 28992
 %
-%    unstruc.delft3d_opendap2obs(ncbase,...
+%    delft3dfm.delft3d_opendap2obs(ncbase,...
 %                          'epsg', epsg,...
-%                          'file',['F:\unstruc\run01\rijkswaterstaat_waterbase_sea_surface_height_',num2str(epsg),'.obs'])
+%                          'file',['F:\delft3dfm\run01\rijkswaterstaat_waterbase_sea_surface_height_',num2str(epsg),'.obs'])
 %    % ~ run model ~
-%         unstruc.analyseHis('nc','F:\unstruc\run01\trih-s01.nc',...
+%         delft3dfm.analyseHis('nc','F:\delft3dfm\run01\trih-s01.nc',...
 %                       'datelim',datenum(1998,[1 5],[1 28]),...
 %                        'ncbase',ncbase,...
 %                            'vc','F:\opendap\thredds\noaa/gshhs/gshhs_i.nc')
@@ -30,14 +30,14 @@ function varargout = analyseHis(varargin)
 %
 %    delft3d_opendap2obs(ncbase,...
 %                          'epsg', epsg,...
-%                          'file',['F:\unstruc\run01\rijkswaterstaat_waterbase_sea_surface_height_',num2str(epsg),'.obs'],...
-%                           'grd', 'F:\unstruc\run01\wadden4.grd',...
+%                          'file',['F:\delft3dfm\run01\rijkswaterstaat_waterbase_sea_surface_height_',num2str(epsg),'.obs'],...
+%                           'grd', 'F:\delft3dfm\run01\wadden4.grd',...
 %                          'plot', 1)
 %    % ~ run model ~
-%         vs_trih2nc('F:\unstruc\run01\trih-s01.dat',...
+%         vs_trih2nc('F:\delft3dfm\run01\trih-s01.dat',...
 %                          'epsg',epsg)
 %         for m=1:12
-%         unstruc.analyseHis('F:\unstruc\run01\trih-s01.nc,...
+%         delft3dfm.analyseHis('F:\delft3dfm\run01\trih-s01.nc,...
 %                       'datelim',datenum(1998,[m m+1],1),...
 %                       'datestr','mmm-dd',...
 %                        'ncbase',ncbase,...
@@ -45,7 +45,7 @@ function varargout = analyseHis(varargin)
 %                        't_tide',0)
 %         end
 %
-%See also: UNSTRUC, NC_T_TIDE_COMPARE, NC_T_TIDE, T_TIDE
+%See also: delft3dfm, NC_T_TIDE_COMPARE, NC_T_TIDE, T_TIDE, delft3d
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
@@ -217,7 +217,7 @@ for ist=1:length(M.name)
     plot  (xlim+deta,ylim-deta,'k:')
     plot  (xlim-deta,ylim+deta,'k:')
     end
-    text    (1,0,'Created with OpenEarthTools <www.OpenEarth.eu>','rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
+    text    (1,0,['Created with OpenEarthTools <www.OpenEarth.eu>, ',OPT.ext],'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
     
     print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,filename(OPT.nc),'_',OPT.ext,M.name{ist},'_scatter']) % ,'v','t'
     

@@ -1,7 +1,7 @@
 function nan = plotNet_test(varargin)
-%plotNet_test   test unstruc.readNet/unstruc.plotNet
+%plotNet_test   test delft3dfm.readNet/delft3dfm.plotNet
 %
-%See also: unstruc
+%See also: delft3dfm, delft3d
 
    OPT.axis = [];
   %OPT.axis = [100000      250000      500000      680000];
@@ -10,11 +10,11 @@ function nan = plotNet_test(varargin)
    ncfile   = 'waddenz_net.nc';
    ncfile   = 'run01_map.nc';
    tic
-   G = unstruc.readNet(ncfile,'peri2cell',1);
+   G = delft3dfm.readNet(ncfile,'peri2cell',1);
    toc % Elapsed time is 2.321945 seconds.
 
    tic
-   h = unstruc.plotNet(G,'axis',OPT.axis,...
+   h = delft3dfm.plotNet(G,'axis',OPT.axis,...
                         'peri',{'k-','linewidth' ,0.5},...
                          'cen',{'b.','markersize',2.0},...
                          'cor',{'y.','markersize',20.}); % 2.371573 seconds.

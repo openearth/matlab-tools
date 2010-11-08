@@ -1,8 +1,8 @@
 function varargout = nc_cf_time(ncfile,varargin)
 %NC_CF_TIME   reads time variables from a netCDF file into Matlab datenumber
 %
-%  [datenumbers,<zone>] = nc_cf_time(ncfile,<varname>);
 %  [datenumbers,<zone>] = nc_cf_time(ncfile);
+%  [datenumbers,<zone>] = nc_cf_time(ncfile,<varname>,<start,count,stride>);
 %
 % extract all time vectors from netCDF file ncfile as Matlab datenumbers.
 % ncfile  = name of local file, OPeNDAP address, or result of ncfile = nc_info()
@@ -13,8 +13,8 @@ function varargout = nc_cf_time(ncfile,varargin)
 % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
 % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/ch04s04.html
 %
-% When there is only one time variable, an array is returned,
-% otherwise a warning is thrown.
+% When there is only one time variable, an array is returned, otherwise
+% a warning is thrown. All arguments beyond the 2nd are passed to nc_varget.
 %
 % Example:
 %

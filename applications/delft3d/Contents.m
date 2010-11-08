@@ -45,10 +45,11 @@
 %   delft3d_3d2kml_visualisation_example - Example to make 3D graphics for Google Earth
 %
 % Toolboxes
-%   flow  - tools related to Delft3D-flow
-%   part  - tools related to Delft3D-part
-%   tide  - tools related to Delft3D-tide
-%   waq   - tools related to Delft3D-waq
+%   part      - tools related to Delft3D-PART
+%   tide      - tools related to Delft3D-TIDE
+%   waq       - tools related to Delft3D-WAQ
+%   flow      - tools related to Delft3D-FLOW
+%   delft3dfm - tools related to Delft3D-FM (Flexible Mesh); flow for unstructured grid
 %
 %See also: 
 
