@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <position>45 10 900 140</position>
+    <style>tabpanel</style>
+    <tag>domainpanel</tag>
+    <tabs>
+      <tab>
+        <tag>wave</tag>
+        <tabstring>Wave Information</tabstring>
+        <elements>
+          <element>
+            <tag>pushselectlocation</tag>
+            <style>pushselectfile</style>
+            <position>10 110 130 20</position>
+            <tooltipstring>Select location</tooltipstring>
+            <text>Select location</text>
+            <variable>
+              <name>ProFile</name>
+              <type>string</type>
+            </variable>
+            <extension>*.pro</extension>
+            <selectiontext>Select pro File</selectiontext>
+            <onchange>ddb_UnibestCL_selectproFile</onchange>
+          </element>
+          <element>
+            <tag>pushloadwavm</tag>
+            <style>pushselectfile</style>
+            <position>10 85 130 20</position>
+            <tooltipstring>Select wavm file</tooltipstring>
+            <text>Open wavm file</text>
+            <variable>
+              <name>EncFile</name>
+              <type>string</type>
+            </variable>
+            <extension>*.def</extension>
+            <selectiontext>Select wavm File</selectiontext>
+            <onchange>ddb_UnibestCL_selectwavmFile</onchange>
+          </element>
+	  <element>
+            <tag>pushloadsco</tag>
+            <style>pushselectfile</style>
+            <position>10 60 130 20</position>
+            <tooltipstring>Select sco file</tooltipstring>
+            <text>Open sco file</text>
+            <variable>
+              <name>EncFile</name>
+              <type>string</type>
+            </variable>
+            <extension>*.sco</extension>
+            <selectiontext>Select sco File</selectiontext>
+            <onchange>ddb_UnibestCL_selectscoFile</onchange>
+          </element>
+	  <element>
+            <tag>pusheditwave</tag>
+            <style>pushbutton</style>
+            <position>10 35 130 20</position>
+            <text>Edit sco file</text>
+            <callback>ddb_UnibestCL_editscoFile</callback>
+          </element>
+	  <element>
+            <tag>pushsavewave</tag>
+            <style>pushbutton</style>
+            <position>10 10 130 20</position>
+            <text>Save sco file</text>
+            <onchange>ddb_UnibestCL_savescoFile</onchange>
+          </element>
+	  <element>
+            <tag>editlatitude</tag>
+            <style>edit</style>
+            <position>350 110 50 20</position>
+            <variable>
+              <name>Latitude</name>
+              <type>real</type>
+            </variable>
+            <text>Latitude (deg)</text>
+          </element>
+	  <element>
+            <tag>editlatitude</tag>
+            <style>edit</style>
+            <position>350 85 50 20</position>
+            <variable>
+              <name>Latitude</name>
+              <type>real</type>
+            </variable>
+            <text>Latitude (deg)</text>
+          </element>          
+        </elements>
+      </tab>
+      <tab>
+        <tag>current</tag>
+        <tabstring>Current Information</tabstring>
+      </tab>
+    </tabs>
+  </element>
+</root>

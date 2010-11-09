@@ -1,0 +1,375 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <position>45 10 900 140</position>
+    <style>tabpanel</style>
+    <tag>profilepanel</tag>
+    <tabs> 
+      <tab>
+        <tag>bathymetry</tag>
+        <tabstring>Bathymetry</tabstring>
+        <elements>
+          <element>
+            <tag>radioxyzfile</tag>
+            <style>radiobutton</style>
+            <position>20 100</position>
+            <text>File</text>
+            <variable>
+              <name>depthSource</name>
+              <type>string</type>
+            </variable>
+            <dependencies>
+              <dependency>
+                <action>on</action>
+                <tags>
+                  <tag>radioxyzuniform</tag>
+                </tags>
+                <checkfor>all</checkfor>
+                <checks>
+                  <check>
+                    <variable>
+                      <name>depthSource</name>
+                      <type>string</type>
+                    </variable>
+                    <value>file</value>
+                    <operator>eq</operator>
+                  </check>
+                </checks>
+              </dependency>
+            </dependencies>
+          </element>
+          <element>
+            <tag>radioxyzuniform</tag>
+            <style>radiobutton</style>
+            <position>20 75</position>
+            <text>Uniform</text>
+            <variable>
+              <name>depthSource</name>
+              <type>string</type>
+            </variable>
+            <value>uniform</value>
+            <dependencies>
+              <dependency>
+                <action>on</action>
+                <tags>
+                  <tag>radioxyzfile</tag>
+                </tags>
+                <checkfor>all</checkfor>
+                <checks>
+                  <check>
+                    <variable>
+                      <name>depthSource</name>
+                      <type>string</type>
+                    </variable>
+                    <value>uniform</value>
+                    <operator>eq</operator>
+                  </check>
+                </checks>
+              </dependency>
+            </dependencies>
+          </element>
+          <element>
+            <tag>pushselectxyzfile</tag>
+            <style>pushselectfile</style>
+            <position>90 100 130 20</position>
+            <text>Open XYZ File</text>
+            <variable>
+              <name>XYZfile</name>
+              <type>string</type>
+            </variable>
+            <extension>*.xyz</extension>
+            <selectiontext>Select XYZ File</selectiontext>
+            <onchange>ddb_UnibestCL_selectXyzFile</onchange>
+            <tooltipstring>Select XYZ file</tooltipstring>
+            <dependencies>
+              <dependency>
+                <action>enable</action>
+                <tags>
+                  <tag>radioxyzuniform</tag>
+                  <tag>radioxyzfile</tag>
+                </tags>
+                <checkfor>all</checkfor>
+                <checks>
+                  <check>
+                    <variable>
+                      <name>depthSource</name>
+                      <type>string</type>
+                    </variable>
+                    <value>file</value>
+                    <operator>eq</operator>
+                  </check>
+                </checks>
+              </dependency>
+            </dependencies>
+          </element>
+          <element>
+            <tag>edituniformdepth</tag>
+            <style>edit</style>
+            <position>90 75 50 20</position>
+            <text>m below reference level</text>
+            <textposition>right</textposition>
+            <variable>
+              <name>UniformDepth</name>
+              <type>real</type>
+            </variable>
+            <tooltipstring>Enter uniform depth value</tooltipstring>
+            <dependencies>
+              <dependency>
+                <action>enable</action>
+                <tags>
+                  <tag>radioxyzuniform</tag>
+                  <tag>radioxyzfile</tag>
+                </tags>
+                <checkfor>all</checkfor>
+                <checks>
+                  <check>
+                    <variable>
+                      <name>depthSource</name>
+                      <type>string</type>
+                    </variable>
+                    <value>uniform</value>
+                    <operator>eq</operator>
+                  </check>
+                </checks>
+              </dependency>
+            </dependencies>
+          </element>
+        </elements>
+      </tab>
+      <tab>
+        <tag>rays</tag>
+        <tabstring>Rays</tabstring>
+        <elements>  
+	  <element>
+            <tag>radioraylocfile</tag>
+            <style>radiobutton</style>
+            <position>10 110</position>
+            <text>File</text>
+            <variable>
+              <name>RAYlocsource</name>
+              <type>string</type>
+            </variable>
+            <value>file</value>
+            <onchange>ddb_UnibestCL_pushRadioFileRayLocs</onchange>
+            <dependencies>
+              <dependency>
+                <action>on</action>
+                <tags>
+                  <tag>radiorayloccreate</tag>
+                </tags>
+                <checkfor>all</checkfor>
+                <checks>
+                  <check>
+                    <variable>
+                      <name>RAYlocsource</name>
+                      <type>string</type>
+                    </variable>
+                    <value>file</value>
+                    <operator>eq</operator>
+                  </check>
+                </checks>
+              </dependency>
+            </dependencies>
+          </element>
+          <element>
+            <tag>radiorayloccreate</tag>
+            <style>radiobutton</style>
+            <position>10 60</position>
+            <text>Create</text>
+            <variable>
+              <name>RAYlocsource</name>
+              <type>string</type>
+            </variable>
+            <value>create</value>
+            <onchange>ddb_UnibestCL_pushRadioCreateRayLocs</onchange>           
+            <dependencies>
+              <dependency>
+                <action>on</action>
+                <tags>
+                  <tag>radioraylocfile</tag>
+                </tags>
+                <checkfor>all</checkfor>
+                <checks>
+                  <check>
+                    <variable>
+                      <name>RAYlocsource</name>
+                      <type>string</type>
+                    </variable>
+                    <value>create</value>
+                    <operator>eq</operator>
+                  </check>
+                </checks>
+              </dependency>
+            </dependencies>
+          </element>	  
+	  <element>
+            <tag>pushselectraylocfile</tag>
+            <style>pushselectfile</style>
+            <position>90 110 130 20</position>
+            <text>Open pol File</text>
+            <variable>
+              <name>RAYlocfile</name>
+              <type>string</type>
+            </variable>
+            <extension>*.pol</extension>
+            <selectiontext>Select pol File</selectiontext>
+            <onchange>ddb_UnibestCL_selectRayLocFile</onchange>
+            <tooltipstring>Select pol file</tooltipstring>
+	    <dependencies>
+	       <dependency>
+                <action>enable</action>
+                <tags>
+                  <tag>radioraylocfile</tag>
+                  <tag>radiorayloccreate</tag>
+                </tags>
+                <checkfor>all</checkfor>
+                <checks>
+                  <check>
+                    <variable>
+                      <name>RAYlocsource</name>
+                      <type>string</type>
+                    </variable>
+                    <value>file</value>
+                    <operator>eq</operator>
+                  </check>
+                </checks>
+              </dependency>            
+            </dependencies>            
+          </element>          
+	  <element>
+            <tag>pusheditraylocs</tag>
+            <style>pushbutton</style>
+            <position>90 85 130 20</position>
+	    <text>Edit Ray Locations</text>	    
+            <callback>ddb_UnibestCL_pushEditRayLocations</callback>	    
+	    <dependencies>	    
+              <dependency>
+                <action>enable</action>
+                <tags>
+                  <tag>radioraylocfile</tag>
+                  <tag>radiorayloccreate</tag>
+                </tags>
+                <checkfor>all</checkfor>
+                <checks>
+                  <check>
+                    <variable>
+                      <name>RAYlocsource</name>
+                      <type>string</type>
+                    </variable>
+                    <value>file</value>
+                    <operator>eq</operator>
+                  </check>
+                </checks>
+              </dependency>           
+            </dependencies>            
+	  </element>          
+          <element>
+            <tag>editnumberrays</tag>
+            <style>edit</style>
+            <position>180 60 40 20</position>
+            <text>Number of rays:</text>
+            <textposition>left</textposition>
+            <variable>
+              <name>numberrays</name>
+              <type>real</type>
+            </variable>
+            <tooltipstring>Enter number of rays</tooltipstring>
+	    <dependencies>
+              <dependency>
+                <action>enable</action>
+                <tags>
+                  <tag>radioraylocfile</tag>
+                  <tag>radiorayloccreate</tag>
+                </tags>
+                <checkfor>all</checkfor>
+                <checks>
+                  <check>
+                    <variable>
+                      <name>RAYlocsource</name>
+                      <type>string</type>
+                    </variable>
+                    <value>create</value>
+                    <operator>eq</operator>
+                  </check>
+                </checks>
+              </dependency>
+            </dependencies>            
+	  </element>        
+	  <element>
+            <tag>pushenterraylocs</tag>
+            <style>pushbutton</style>
+            <position>90 35 130 20</position>
+	    <text>Enter Ray Locations</text>	    
+            <callback>ddb_UnibestCL_pushEnterRayLocations</callback>    
+	    <dependencies>
+              <dependency>
+                <action>enable</action>
+                <tags>
+                  <tag>radioraylocfile</tag>
+                  <tag>radiorayloccreate</tag>
+                </tags>
+                <checkfor>all</checkfor>
+                <checks>
+                  <check>
+                    <variable>
+                      <name>RAYlocsource</name>
+                      <type>string</type>
+                    </variable>
+                    <value>create</value>
+                    <operator>eq</operator>
+                  </check>
+                </checks>
+              </dependency>
+            </dependencies>            
+	  </element>
+	  <element>
+      	    <tag>pushsaveraylocsas</tag>
+      	    <style>pushbutton</style>
+      	    <position>90 10 130 20</position>
+      	    <text>Save Ray Locations As</text>
+      	    <callback>ddb_UnibestCL_pushSaveRayLocationsAs</callback>        
+          </element>
+        </elements>	
+      </tab>
+      <tab>
+        <tag>profiles</tag>
+        <tabstring>Cross Shore Profiles</tabstring>  
+	<elements>
+ 	  <element>
+	    <tag>textlocationfile</tag>
+  	    <style>text</style>
+  	    <position>10 110</position>
+  	    <prefix>Selected pol file : </text>
+ 	    <variable>
+              <name>RAYlocfile</name>
+              <type>string</type>
+            </variable>            
+            <extension>*.pol</extension>                       
+          </element>
+	  <element>
+  	    <tag>pushgenerateprofiles</tag>
+            <style>pushbutton</style>
+            <position>10 85 130 20</position>
+   	    <text>Generate profiles</text>
+            <callback>ddb_UnibestCL_pushgenerateprofiles</callback>
+          </element>
+	  <element>
+	    <tag>pushviewprofile</tag>
+	    <style>pushbutton</style>
+	    <position>10 60 130 20</position>
+	    <text>View profile</text>
+	    <callback>ddb_UnibestCL_pushviewprofile</callback>
+          </element>           
+          <element>
+	    <tag>pushsavePROfileas</tag>
+	    <style>pushbutton</style>
+	    <position>10 35 130 20</position>
+	    <text>Save PRO File As</text>
+	    <callback>ddb_UnibestCL_pushSavePROfileAs</callback>
+          </element>          
+        </elements>
+      </tab>
+    </tabs>
+  </element>
+</root>  
