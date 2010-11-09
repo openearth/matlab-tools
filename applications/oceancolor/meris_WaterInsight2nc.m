@@ -1,5 +1,5 @@
-function varargout = meris__WaterInsight2nc(year,ncdir)
-%MERIS_WATERINSIGHT2NC(year,ncdir)  rewrite bundle of processed MERIS files as defined by WaterInsight into NetCDF files
+function varargout = meris__WaterInsight2nc(rawdir,ncdir)
+%MERIS_WATERINSIGHT2NC(rawdir,ncdir)  rewrite bundle of processed MERIS files as defined by WaterInsight into NetCDF files
 %
 %
 %See also: MERIS_MASK, MERIS_FLAGS, MERIS_NAME2META,MERIS_WaterInsight_LOAD
@@ -60,25 +60,15 @@ function varargout = meris__WaterInsight2nc(year,ncdir)
 
 %% File loop
 
-   OPT.directory.raw  = [pwd,filesep,num2str(year)];
-   OPT.subdirectory   = dir([OPT.directory.raw filesep num2str(year) '*']);
+   OPT.directory.raw  = rawdir;
    OPT.directory.nc   = ncdir;
-%  OPT.directory.nc   = [pwd,filesep,'nc'];
-%  OPT.directory.nc   ='\\pmr-ncv.deltares.nl\rawdata\MERIS\nc\';
 
-   
    mkpath(OPT.directory.nc)
-   for idir=1:length(OPT.subdirectory) %!NB all other fields are only nonempty under OPT(1) (index idir only for debugging)
-   OPT.subdirectory(idir).files         = dir([OPT.directory.raw, filesep, OPT.subdirectory(idir).name filesep 'MER*.mat']);
-   [IMAGE_names,extensions] = meris_directory([OPT.directory.raw, filesep, OPT.subdirectory(idir).name]);
-   
-   %OPT.subdirectory(idir).files(ifile)
-%%
-
+  [IMAGE_names,extensions] = meris_directory([OPT.directory.raw]);
 
    for ifile=1:length(IMAGE_names)  
    
-      OPT.filename = ([OPT.directory.raw, filesep, OPT.subdirectory(idir).name, filesep, IMAGE_names{ifile}]); 
+      OPT.filename = ([OPT.directory.raw, filesep, IMAGE_names{ifile}]); 
       % MER_RR__2CNACR20090502_102643_000022462078_00366_37494_0000
    
       disp(['Processing ',num2str(ifile),'/',num2str(length(IMAGE_names)),': ',filename(OPT.filename)])
@@ -114,6 +104,5 @@ function varargout = meris__WaterInsight2nc(year,ncdir)
       end
       
    end %for ifile=1:length(IMAGE_names)  %1 if subdirs made by Steef
-   end %for idir
 
 %% EOF

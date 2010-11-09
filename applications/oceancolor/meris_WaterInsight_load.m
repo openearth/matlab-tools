@@ -81,6 +81,11 @@ function D = meris_WaterInsight_load(fname)
   if(exist(tmp_fnam))
     D = mergestructs(D,load(tmp_fnam));
   end
+  
+  tmp_fnam=[filepathstr(D.filename),filesep,D.basename,'_wind.mat']; % note onyl wspeed is on image raster
+  if(exist(tmp_fnam))
+    D = mergestructs(D,load(tmp_fnam));
+  end
 
   tmp_fnam=[filepathstr(D.filename),filesep,D.basename,'_SD.mat'];
   if(exist(tmp_fnam))   

@@ -42,7 +42,7 @@ function flags = meris_flags(varargin),
 % Note that the bits are ZERO_based, so the bit is not the index in 
 % the table, because matlab is 1-based!
 %
-%See also: BITAND, MERIS_NAME2META, MERIS_MASK
+%See also: BITAND, MERIS_NAME2META, MERIS_MASK, MODIS_FLAGS, SEAWIFS_FLAGS
  
 %% Copyright notice
 %   --------------------------------------------------------------------

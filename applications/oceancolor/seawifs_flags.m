@@ -1,54 +1,56 @@
-function flags = meris_flags(varargin),
+function flags = seawifs_flags(varargin),
 %SEAWIFS_FLAGS  select from table with SeaWiFS flag bits and descriptions
 %
-% T = SEAWIFS_FLAGS(<bit>)
+%    T = seawifs_flags(<bit>)
 %
-% when no bit is supplied, all bits are returned.
+% when no bit is supplied, all bits are returned (modis_flags = seawifs_flags).
 %
 % returns a struct T with the bit #s, names and properties fo all 24 MERIS flags.
 %
 % Table 3 from SeaWiFS Ocean_Level-2_Data_Products.pdf <http://oceancolor.gsfc.nasa.gov/VALIDATION/flags.html>
 % <http://oceancolor.gsfc.nasa.gov/DOCS/>
+% <http://modis-atmos.gsfc.nasa.gov/tools_bit_interpretation.html>
 % 
-% +----------------------------------------------------------------------------------+
-% |bit algorithm name    condition indicated                                         |
-% | #                                                                                |
-% +----------------------------------------------------------------------------------+
-% | 1  ATM_FAIL          atmospheric correction failure from invalid inputs          |
-% | 2  LAND              land                                                        |
-% | 3  BADANC            missing ancillary data                                      |
-% | 4  HIGLINT           severe Sun glint                                            |
-% | 5  HILT              total radiance above knee in any band                       |
-% | 6  HISATZEN          satellite zenith angle above limit                          |
-% | 7  COASTZ            shallow water                                               |
-% | 8  NEGLW             negative water leaving radiance                             |
-% | 9  STRAYLIGHT        stray light contamination                                   |
-% |10  CLDICE            clouds and/or ice                                           |
-% |11  COCCOLITH         coccolothophore                                             |
-% |12  TURBIDW           turbid, case 2 water                                        |
-% |13  HISOLZEN          solar zenith angle above limit                              |
-% |14  HITAU             high aearosol concentration                                 |
-% |15  LOWLW             low water leaving radiance at 555 nm                        |
-% |16  CHLFAIL           chlorophyll not calculable                                  |
-% |17  NAVWARN           questionable navigation (e.g. tilt angle)                   |
-% |18  ABSAER            absorbing aerosol index above treshold                      |
-% |19  TRICHO            trichodesmium                                               |
-% |20  MAXAERITER        maximum iterations of NIR algoritm                          |
-% |21  MODGLINT          moderate Sun glint                                          |
-% |22  CHLWARN           chlorophyll out of range                                    |
-% |23  ATMWARN           epsilon out of range                                        |
-% |24  DARKPIXEL         dark pixel(Lt - Lt < 0) for any band                        |
-% |25  SEAICE            sea ice in pixel (based on climatology)                     |
-% |26  NAVFAIL           navigation failure condition indicated in nav flags         |
-% |27  FILTER            insufficient valid neighbouring pixles for epsilon filtering|
-% |28  SSTWARN           sea surface temperature warning flag (MODIS only)           |
-% |29  STTFAIL           sea surface temperature failure flag (MODIS only)           |
-% |30  SPARE             spare flag                                                  |
-% |31  ,,                spare flag                                                  |
-% |32  OCEAN             clear ocean data (no clouds, land or ice)                   |
-% +----------------------------------------------------------------------------------+
+% +---------------------------------------------------------------------------------- 
+% |bit algorithm name    condition indicated
+% | #                 3 are masked at Level 3 - ocean color processing, * = spare
+% +---------------------------------------------------------------------------------- 
+% | 1  ATM_FAIL       3  Atmospheric correction failure
+% | 2  LAND           3  Pixel is over land
+% | 3  PRODWARN          One or more product warnings
+% | 4  HIGLINT           High sun glint
+% | 5  HILT           3  Observed radiance very high or saturated
+% | 6  HISATZEN       3  High sensor view zenith angle
+% | 7  COASTZ            Pixel is in shallow water
+% | 8  NEGLW           * negative water leaving radiance
+% | 9  STRAYLIGHT     3  Straylight contamination is likely
+% |10  CLDICE         3  Probable cloud or ice contamination
+% |11  COCCOLITH      3  Coccolithofores detected
+% |12  TURBIDW           Turbid water detected
+% |13  HISOLZEN       3  High solar zenith
+% |14  HITAU           * high aearosol concentration
+% |15  LOWLW          3  Very low water-leaving radiance (cloud shadow)
+% |16  CHLFAIL        3  Derived product algorithm failure
+% |17  NAVWARN        3  Navigation quality is reduced
+% |18  ABSAER            possible absorbing aerosol (disabled)
+% |19  TRICHO            trichodesmium
+% |20  MAXAERITER     3* Aerosol iterations exceeded max
+% |21  MODGLINT          Moderate sun glint contamination
+% |22  CHLWARN        3  Derived product quality is reduced
+% |23  ATMWARN        3  Atmospheric correction is suspect
+% |24  DARKPIXEL       * dark pixel(Lt - Lt < 0) for any band
+% |25  SEAICE            Possible sea ice contamination
+% |26  NAVFAIL        3  Bad navigation
+% |27  FILTER         3  Pixel rejected by user-defined filter
+% |28  SSTWARN           SST quality is reduced
+% |29  STTFAIL           SST quality is bad
+% |30  HIPOL             High degree of polarization
+% |31  PRODFAIL          Derived product failure
+% |32  OCEAN           * clear ocean data (no clouds, land or ice)
+% +---------------------------------------------------------------------------------- 
+% Table indicates flags used in Fourth SeaWiFS Data Reprocessing.
 %
-%See also: BITAND, SEAWIFS_MASK, SEAWIFS_L2_READ, MERIS_FLAGS
+%See also: BITAND, SEAWIFS_MASK, SEAWIFS_L2_READ, MERIS_FLAGS, MODIS_FLAGS
  
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -95,13 +97,13 @@ function flags = meris_flags(varargin),
    flags.name = ...
                 {'ATM_FAIL',...    %  1
                  'LAND',...        %  2
-                 'BADANC',...      %  3
+                 'PRODWARN',...    %  3
                  'HIGLINT',...     %  4
                  'HILT',...        %  5
-                 'HISATZEN',...    %  6
+                 'HISATZEN ',...   %  6
                  'COASTZ',...      %  7
                  'NEGLW',...       %  8
-                 'STRAYLIGH',...   %  9
+                 'STRAYLIGHT',...  %  9
                  'CLDICE',...      % 10
                  'COCCOLITH',...   % 11
                  'TURBIDW',...     % 12
@@ -112,7 +114,7 @@ function flags = meris_flags(varargin),
                  'NAVWARN',...     % 17
                  'ABSAER',...      % 18
                  'TRICHO',...      % 19
-                 'MAXAERITE',...   % 20
+                 'MAXAERITER',...  % 20
                  'MODGLINT',...    % 21
                  'CHLWARN',...     % 22
                  'ATMWARN',...     % 23
@@ -122,46 +124,46 @@ function flags = meris_flags(varargin),
                  'FILTER',...      % 27
                  'SSTWARN',...     % 28
                  'STTFAIL',...     % 29
-                 'SPARE',...       % 30
-                 'SPARE',...       % 31
+                 'HIPOL',...       % 30
+                 'PRODFAIL',...    % 31
                  'OCEAN'};         % 32
  
     flags.description = ...
-                {'atmospheric correction failure from invalid inputs',...          %  1
-                 'land',...                                                        %  2
-                 'missing ancillary data',...                                      %  3
-                 'severe Sun glint',...                                            %  4
-                 'total radiance above knee in any band',...                       %  5
-                 'satellite zenith angle above limit',...                          %  6
-                 'shallow water',...                                               %  7
-                 'negative water leaving radiance',...                             %  8
-                 'stray light contamination',...                                   %  9
-                 'clouds and/or ice',...                                           % 10
-                 'coccolothophore',...                                             % 11
-                 'turbid, case 2 water',...                                        % 12
-                 'solar zenith angle above limit',...                              % 13
-                 'high aearosol concentration',...                                 % 14
-                 'low water leaving radiance at 555 nm',...                        % 15
-                 'chlorophyll not calculable',...                                  % 16
-                 'questionable navigation (e.g. tilt angle)',...                   % 17
-                 'absorbing aerosol index above treshold',...                      % 18
-                 'trichodesmium',...                                               % 19
-                 'maximum iterations of NIR algoritm',...                          % 20
-                 'moderate Sun glint',...                                          % 21
-                 'chlorophyll out of range',...                                    % 22
-                 'epsilon out of range',...                                        % 23
-                 'dark pixel(Lt - Lt < 0) for any band',...                        % 24
-                 'sea ice in pixel (based on climatology)',...                     % 25
-                 'navigation failure condition indicated in nav flags',...         % 26
-                 'insufficient valid neighbouring pixles for epsilon filtering',...% 27
-                 'sea surface temperature warning flag (MODIS only)',...           % 28
-                 'sea surface temperature failure flag (MODIS only)',...           % 29
-                 'spare flag',...                                                  % 30
-                 'spare flag',...                                                  % 31
-                 'clear ocean data (no clouds, land or ice)'};                     % 32   
-   %% Extract one bit if requested
-   %% -----------------------------
-   
+                {'Atmospheric correction failure',... %  1
+                 'Pixel is over land',... %  2
+                 'One or more product warnings',... %  3
+                 'High sun glint',... %  4
+                 'Observed radiance very high or saturated',... %  5
+                 'High sensor view zenith angle',... %  6
+                 'Pixel is in shallow water',... %  7
+                 'negative water leaving radiance',... %  8
+                 'Straylight contamination is likely',... %  9
+                 'Probable cloud or ice contamination',... % 10
+                 'Coccolithofores detected',... % 11
+                 'Turbid water detected',... % 12
+                 'High solar zenith',... % 13
+                 'high aearosol concentration',... % 14
+                 'Very low water-leaving radiance (cloud shadow)',... % 15
+                 'Derived product algorithm failure',... % 16
+                 'Navigation quality is reduced',... % 17
+                 'possible absorbing aerosol (disabled)',... % 18
+                 'trichodesmium',... % 19
+                 'Aerosol iterations exceeded max',... % 20
+                 'Moderate sun glint contamination',... % 21
+                 'Derived product quality is reduced',... % 22
+                 'Atmospheric correction is suspect',... % 23
+                 'dark pixel(Lt - Lt < 0) for any band',... % 24
+                 'Possible sea ice contamination',... % 25
+                 'Bad navigation',... % 26
+                 'Pixel rejected by user-defined filter',... % 27
+                 'SST quality is reduced',... % 28
+                 'SST quality is bad',... % 29
+                 'High degree of polarization',... % 30
+                 'Derived product failure',... % 31
+                 'clear ocean data (no clouds, land or ice)'};   % 32  
+                 
+%% Extract one bit if requested
+
    if nargin==1
       bit   = varargin{1};
       index = find(flags.bit==bit);
