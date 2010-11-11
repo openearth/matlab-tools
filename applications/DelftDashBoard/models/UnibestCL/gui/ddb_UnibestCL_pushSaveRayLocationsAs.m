@@ -11,16 +11,23 @@ if pathname~=0
     if ~strcmpi(curdir,pathname)
         filename=[pathname filename];
     end
-    ii=findstr(filename,'.pol');
-%             handles.Model(md).Input(ad).Runid=filename(1:ii-1);
     handles.Model(md).Input.RAYlocfile=filename;
     RAYlocfile = handles.Model(md).Input.RAYlocfile;
     writeRAYloc(RAYlocfile,RAYlocdata);
 end
 setHandles(handles);
 
-for jj = 1:length(handles.Model(md).GUI.elements.tabs(3).elements.tabs)
-    setUIElements(handles.Model(md).GUI.elements.tabs(3).elements.tabs(jj).elements)
+%GUI updates
+setUIElements(handles.Model(md).GUI.elements.tabs(3).elements.tabs(3).elements)
+handles.Model(md).Input.RAYlocfileselected=1;
+if  handles.Model(md).Input.XYZfileselected==1 && handles.Model(md).Input.RAYlocfileselected==1
+    elements = handles.Model(md).GUI.elements.tabs(3).elements.tabs(3).elements;    
+    for ii = 1:length(elements)
+        A(ii) = strcmp(elements(ii).tag,'unibestcl.profiles.profilepanel.profiles.pushgenerateprofiles');
+    end
+    AA = find(A==1); 
+    set(handles.Model(md).GUI.elements.tabs(3).elements.tabs(3).elements(AA).handle,'Enable','on');
 end
 
+setHandles(handles);
 

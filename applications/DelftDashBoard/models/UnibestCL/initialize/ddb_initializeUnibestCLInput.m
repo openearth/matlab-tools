@@ -13,8 +13,11 @@ handles.Model(md).Input.SCOfile='';
 handles.Model(md).Input.RAYfile='';
 handles.Model(md).Input.MDAfile='';
 handles.Model(md).Input.XYZfile='';
+handles.Model(md).Input.XYZfileselected=0;
 handles.Model(md).Input.GKLfile='';
+handles.Model(md).Input.PROfile='';
 handles.Model(md).Input.RAYlocfile='';
+handles.Model(md).Input.RAYlocfileselected=0;
 handles.Model(md).Input.ORKSTdata='';
 handles.Model(md).Input.PROFHdata='';
 handles.Model(md).Input.PROdata='';
@@ -26,17 +29,21 @@ handles.Model(md).Input.MDAdata='';
 handles.Model(md).Input.XYZdata='';
 handles.Model(md).Input.GKLdata='';
 % handles.Model(md).Input.RAYlocdata='';
-
 handles.Model(md).Input.RAYlocdata.X1=[0,0,0,0];
 handles.Model(md).Input.RAYlocdata.Y1=[0,0,0,0];
 handles.Model(md).Input.RAYlocdata.X2=[0,0,0,0];
 handles.Model(md).Input.RAYlocdata.Y2=[0,0,0,0];
 handles.Model(md).Input.RAYlocdata.Ray={' ',' ',' ',' '};
-handles.Model(md).Input.UniformDepth=10;
-handles.Model(md).Input.depthSource='uniform';
 handles.Model(md).Input.numberrays=6;
 handles.Model(md).Input.RAYlocsource='create';
 handles.Model(md).Input.selectedrayloc='';
+handles.Model(md).Input.PROdata.hdynbound=8;
+handles.Model(md).Input.PROdata.zmin='';
+handles.Model(md).Input.PROdata.zmax='';
+handles.Model(md).Input.PROdata.waterlevel=0;
+handles.Model(md).Input.activePROfile=0;
+handles.Model(md).Input.profilesgenerated=0;
+
 
 
 

@@ -1,0 +1,226 @@
+function ddb_UnibestCL_pushEditProfile(hObject,eventdata)
+
+handles=getHandles;
+
+pr = handles.Model(md).Input.activePROfile;
+if  pr>0
+    PROdata = handles.Model(md).Input.PROdata(pr);
+else
+    fprintf('Error : No file selected.\n')
+    return
+end
+x = PROdata.x;
+z = PROdata.h * (-1) - PROdata.waterlevel; %convert water depth to bed-level
+ProHandles.Input.x{1} =x;
+ProHandles.Input.z{1} =z;
+
+ProHandles.GUI.figure = MakeNewWindow(['Edit Profile ',PROdata.filename],[1000,500]);
+pos = get(gcf,'Position');
+hp = uipanel('Units','pixels','Position',[5 5 100 pos(4)-10],'Tag','UIControl');
+
+pixelsxlabel=45;
+pixelsylabel=35;
+
+xrel1 = (105+pixelsxlabel)/pos(3);
+xrel2 = (pos(3)-105-pixelsxlabel*1.5)/pos(3);
+yrel1 = (pixelsylabel)/pos(4);
+yrel2 = (pos(4)-pixelsylabel*1.5)/pos(4);
+ProHandles.Axes.ha = axes('Position',[xrel1,yrel1,xrel2,yrel2],'FontSize',8);
+%plot(ProHandles.Input.x{1},ProHandles.Input.z{1},'k.-');hold on;
+setProHandles(ProHandles);
+plotprofile;
+
+%% SELECTION
+%listfield
+ProHandles.Input.Smoothtype={'Thinning','Interpolation'};
+ProHandles.GUI.TextGeneration   = uicontrol(gcf,'Style','text','String','Action :','Position',[10 pos(4)-25 90 15],'HorizontalAlignment','left','Tag','UIControl');
+ProHandles.GUI.Smoothtype       = uicontrol(gcf,'Style','popupmenu','String',' ','Position',[10 pos(4)-45 90 20],'HorizontalAlignment','left','BackgroundColor',[1 1 1],'Tag','UIControl');
+set(ProHandles.GUI.Smoothtype,'Max',1);
+set(ProHandles.GUI.Smoothtype,'String',ProHandles.Input.Smoothtype);
+set(ProHandles.GUI.Smoothtype,'CallBack',{@Smoothtype_CallBack});
+
+%% THINNING
+% field thinning
+ProHandles.Input.Thinfactor = 1;
+ProHandles.GUI.TextThinning        = uicontrol(gcf,'Style','text','String','-----Thinning-----','Position',[10 pos(4)-75 90 15],'HorizontalAlignment','left','Tag','UIControl');
+ProHandles.GUI.TextThinfactor      = uicontrol(gcf,'Style','text','String','Thin factor :','Position',[10 pos(4)-90 90 15],'HorizontalAlignment','left','Tag','UIControl');
+ProHandles.GUI.EditThinfactor      = uicontrol(gcf,'Style','edit', 'Position',[10 pos(4)-110 90 20],'HorizontalAlignment','left','BackgroundColor',[1 1 1],'Tag','UIControl');
+set(ProHandles.GUI.EditThinfactor,'Max',1);
+set(ProHandles.GUI.EditThinfactor,'String',ProHandles.Input.Thinfactor);
+set(ProHandles.GUI.EditThinfactor,'CallBack',{@EditThinfactor_CallBack});
+
+%% INTERPOLATION
+% field interpolation
+ProHandles.Input.Interpdx = 1;
+ProHandles.GUI.TextInterp        = uicontrol(gcf,'Style','text','String','---Interpolation---','Position',[10 pos(4)-145 90 15],'HorizontalAlignment','left','Tag','UIControl');
+ProHandles.GUI.TextInterpdx      = uicontrol(gcf,'Style','text','String','Interp. dx :','Position',[10 pos(4)-160 90 15],'HorizontalAlignment','left','Tag','UIControl');
+ProHandles.GUI.EditInterpdx      = uicontrol(gcf,'Style','edit', 'Position',[10 pos(4)-180 90 20],'HorizontalAlignment','left','BackgroundColor',[1 1 1],'Tag','UIControl','Enable','off');
+set(ProHandles.GUI.EditInterpdx,'Max',1);
+set(ProHandles.GUI.EditInterpdx,'String',ProHandles.Input.Interpdx);
+set(ProHandles.GUI.EditInterpdx,'CallBack',{@EditInterpdx_CallBack});
+% listfield interpolation
+ProHandles.Input.Interptype={'linear','cubic','spline'};
+ProHandles.GUI.TextGeneration2   = uicontrol(gcf,'Style','text','String','Interp. method :','Position',[10 pos(4)-200 90 15],'HorizontalAlignment','left','Tag','UIControl');
+ProHandles.GUI.Interptype        = uicontrol(gcf,'Style','popupmenu','String',' ','Position',[10 pos(4)-220 90 20],'HorizontalAlignment','left','BackgroundColor',[1 1 1],'Tag','UIControl','Enable','off');
+set(ProHandles.GUI.Interptype,'Max',1);
+set(ProHandles.GUI.Interptype,'String',ProHandles.Input.Interptype);
+set(ProHandles.GUI.Interptype,'CallBack',{@Interptype_CallBack});
+
+%% ACTIONS
+% push button
+setProHandles(ProHandles);
+ProHandles.GUI.Textaction        = uicontrol(gcf,'Style','text','String','------Actions------','Position',[10 pos(4)-255 90 15],'HorizontalAlignment','left','Tag','UIControl');
+ProHandles.GUI.Editprofile       = uicontrol(gcf,'Style','pushbutton','String','Perform action','Position',[10 pos(4)-280 90 20],'Tag','UIControl');
+set(ProHandles.GUI.Editprofile,'CallBack',{@Editprofile_CallBack});
+% push button
+setProHandles(ProHandles);
+ProHandles.GUI.Undo          = uicontrol(gcf,'Style','pushbutton',  'String','Undo 1 step','Position',[10 pos(4)-310 90 20],'Tag','UIControl');
+set(ProHandles.GUI.Undo,'CallBack',{@Undo_CallBack});
+
+%% QUIT
+ProHandles.GUI.Textquit          = uicontrol(gcf,'Style','text','String','-------------------','Position',[10 pos(4)-355 90 15],'HorizontalAlignment','left','Tag','UIControl');
+ProHandles.GUI.Menuquit          = uicontrol(gcf,'Style','pushbutton','String','OK (quit+save)','Position',[10 pos(4)-380 90 20],'Tag','UIControl');
+ProHandles.GUI.Menucancel        = uicontrol(gcf,'Style','pushbutton','String','Cancel','Position',[10 pos(4)-410 90 20],'Tag','UIControl');
+set(ProHandles.GUI.Menuquit,'CallBack',{@Menuquit_CallBack});
+set(ProHandles.GUI.Menucancel,'CallBack',{@Menucancel_CallBack});
+
+function plotprofile
+ProHandles=getProHandles;
+axis(ProHandles.Axes.ha);
+cla(ProHandles.Axes.ha);
+legtxt={};
+if length(ProHandles.Input.x)>1
+    x0 = ProHandles.Input.x{1};
+    z0 = ProHandles.Input.z{1};
+    plot(x0,z0,'Color',[0.5 0.5 0.5],'LineStyle',':');hold on;
+    legtxt{1}='initial cross-shore profile';
+end
+if length(ProHandles.Input.x)>2
+    x1 = ProHandles.Input.x{length(ProHandles.Input.x)-1};
+    z1 = ProHandles.Input.z{length(ProHandles.Input.z)-1};
+    plot(x1,z1,'Color',[0 0 0.5],'LineStyle','--');hold on;
+    legtxt{length(legtxt)+1}='previous iteration';
+end
+x2 = ProHandles.Input.x{length(ProHandles.Input.x)};
+z2 = ProHandles.Input.z{length(ProHandles.Input.z)};
+plot(x2,z2,'Color',[1 0 0],'LineStyle','-');hold on;plot(x2,z2,'Color',[1 0 0],'LineStyle','.');
+if length(ProHandles.Input.x)>1
+    legtxt{length(legtxt)+1}='current profile';
+else 
+    legtxt={'initial cross-shore profile'};
+end
+legend(legtxt,'Location','NorthWest');
+xlabel('Cross-shore position');
+ylabel('Bed level [m w.r.t reference level]');
+setProHandles(ProHandles);
+
+function EditThinfactor_CallBack(hObject,eventdata)
+ProHandles=getProHandles;
+ProHandles.Input.Thinfactor=get(hObject,'String');
+setProHandles(ProHandles);
+
+function EditInterpdx_CallBack(hObject,eventdata)
+ProHandles=getProHandles;
+ProHandles.Input.Interpdx=get(hObject,'String');
+setProHandles(ProHandles);
+
+function Smoothtype_CallBack(hObject,eventdata)
+ProHandles=getProHandles;
+Smoothtypeval=get(hObject,'value');
+set(ProHandles.GUI.Smoothtype,'Value',Smoothtypeval);
+if Smoothtypeval==1
+    set(ProHandles.GUI.Interptype,'Enable','off');
+    set(ProHandles.GUI.EditInterpdx,'Enable','off');
+    set(ProHandles.GUI.EditThinfactor,'Enable','on');
+elseif Smoothtypeval==2
+    set(ProHandles.GUI.EditThinfactor,'Enable','off');
+    set(ProHandles.GUI.Interptype,'Enable','on');
+    set(ProHandles.GUI.EditInterpdx,'Enable','on');
+end
+setProHandles(ProHandles);
+
+function Interptype_CallBack(hObject,eventdata)
+ProHandles=getProHandles;
+Interptypeval=get(hObject,'value');
+set(ProHandles.GUI.Interptype,'Value',Interptypeval);
+setProHandles(ProHandles);
+
+function Undo_CallBack(hObject,eventdata)
+ProHandles=getProHandles;
+nrsteps = length(ProHandles.Input.x);
+if nrsteps>=2
+    ProHandles.Input.x = ProHandles.Input.x(1:nrsteps-1);
+    ProHandles.Input.z = ProHandles.Input.z(1:nrsteps-1);
+    setProHandles(ProHandles);
+    plotprofile;
+end
+
+function Editprofile_CallBack(hObject,eventdata)
+ProHandles=getProHandles;
+Smoothtype = get(ProHandles.GUI.Smoothtype,'Value');
+Thinfactor = ProHandles.Input.Thinfactor;
+Interptype = get(ProHandles.GUI.Interptype,'Value');
+Interpdx   = ProHandles.Input.Interpdx;
+
+x0 = ProHandles.Input.x{1};
+z0 = ProHandles.Input.z{1};
+x1 = ProHandles.Input.x{length(ProHandles.Input.x)};
+z1 = ProHandles.Input.z{length(ProHandles.Input.z)};
+x2 = x1;
+z2 = z1;
+if Smoothtype==1
+    if ~isnumeric(Thinfactor)
+        Thinfactor = str2num(ProHandles.Input.Thinfactor);
+        if isempty(Thinfactor)
+            fprintf('Warning : Thinfactor is not a number!')
+            Thinfactor = 1;
+        end
+    end
+    x2=unique([x1(1);x1(1:Thinfactor:end);x1(end)]);
+    z2=unique([z1(1);z1(1:Thinfactor:end);z1(end)]); 
+elseif Smoothtype==2
+    if ~isnumeric(Interpdx)
+        Interpdx = str2num(ProHandles.Input.Interpdx);
+        if isempty(Interpdx)
+            fprintf('Warning : Interpdx is not a number!')
+            Interpdx = 1;
+        end
+    end
+    x2=unique([min(x1(1),x1(end)),min(x1(1),x1(end)):Interpdx:max(x1(1),x1(end)),max(x1(1),x1(end))])';
+    if length(x2)==1;x2=[x1(1);x1(end)];end
+    z2=interp1(x1,z1,x2,ProHandles.Input.Interptype{Interptype});
+end
+ProHandles.Input.x{length(ProHandles.Input.x)+1}=x2;
+ProHandles.Input.z{length(ProHandles.Input.z)+1}=z2;
+setProHandles(ProHandles);
+plotprofile;
+
+function Menuquit_CallBack(hObject,eventdata)
+ProHandles=getProHandles;
+%% save data
+handles = getHandles;
+pr =handles.Model(md).Input.activePROfile; 
+handles.Model(md).Input.PROdata(pr).x = ProHandles.Input.x{length(ProHandles.Input.x)};
+handles.Model(md).Input.PROdata(pr).z = ProHandles.Input.z{length(ProHandles.Input.z)};
+setHandles(handles);
+
+rmfield(ProHandles.GUI,'figure');
+close(ProHandles.GUI.figure);
+setProHandles(ProHandles);
+
+
+
+
+function Menucancel_CallBack(hObject,eventdata)
+ProHandles=getProHandles;
+rmfield(ProHandles.GUI,'figure');
+close(ProHandles.GUI.figure);
+setProHandles(ProHandles);
+
+function h=getProHandles
+global ProProHandles
+h=ProProHandles;
+
+function setProHandles(h)
+global ProProHandles
+ProProHandles=h;

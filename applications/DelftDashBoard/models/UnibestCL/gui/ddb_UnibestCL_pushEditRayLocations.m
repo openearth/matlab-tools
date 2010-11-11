@@ -43,7 +43,7 @@ if ~isempty(data)
     handles.Model(md).GUI.elements.tabs(3).elements.tabs(2).elements(end).tag = {'filerayloctable'};
 end
 setHandles(handles);
-setUIElements(handles.Model(md).GUI.elements.tabs(3).elements.tabs(2).elements);
+% setUIElements(handles.Model(md).GUI.elements.tabs(3).elements.tabs(2).elements);
 
 function editRAYloctable(hObject,eventdata)
 handles=getHandles;
@@ -56,5 +56,11 @@ data.Y1 = dat(:,2);
 data.X2 = dat(:,3);
 data.Y2 = dat(:,4);
 data.Ray = dat(:,5);
-handles.Model(md).Input.RAYlocdata = data;
+for jj = 1:length(data.X1);
+    handles.Model(md).Input.RAYlocdata.X1(jj) = data.X1{jj};
+    handles.Model(md).Input.RAYlocdata.Y1(jj) = data.Y1{jj};
+    handles.Model(md).Input.RAYlocdata.X2(jj) = data.X2{jj};
+    handles.Model(md).Input.RAYlocdata.Y2(jj) = data.Y2{jj};
+end
+handles.Model(md).Input.RAYlocdata.Ray = data.Ray;
 setHandles(handles);
