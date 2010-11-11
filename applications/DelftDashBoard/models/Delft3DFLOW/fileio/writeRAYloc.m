@@ -75,6 +75,6 @@ X2 = RAYlocdata.X2;
 Y2 = RAYlocdata.Y2;
 Ray = RAYlocdata.Ray;
 for ii=1:length(X1)
-    fprintf(fid,'%13.2f %13.2f %13.2f %13.2f ''%s''\n',X1{ii},Y1{ii},X2{ii},Y2{ii},Ray{ii});
+    fprintf(fid,'%13.2f %13.2f %13.2f %13.2f ''%s''\n',X1(ii),Y1(ii),X2(ii),Y2(ii),Ray{ii});
 end
 fclose(fid);

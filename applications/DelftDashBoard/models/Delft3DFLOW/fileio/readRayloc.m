@@ -80,7 +80,7 @@ nn = 0;
 
 while ~isempty(tline) & length(tline)>1
     nn = nn+1;
-    [RAYlocdata.X1{nn,1},RAYlocdata.Y1{nn,1},RAYlocdata.X2{nn,1},RAYlocdata.Y2{nn,1},RAYlocdata.Ray(nn,1)] = strread(tline,'  %f  %f  %f  %f  %s','delimiter',' ');
+    [RAYlocdata.X1(nn,1),RAYlocdata.Y1(nn,1),RAYlocdata.X2(nn,1),RAYlocdata.Y2(nn,1),RAYlocdata.Ray(nn,1)] = strread(tline,'  %f  %f  %f  %f  %s','delimiter',' ');
     %Remove quotes
     dummy = RAYlocdata.Ray{nn,1};
     idquote = findstr(dummy,'''');
