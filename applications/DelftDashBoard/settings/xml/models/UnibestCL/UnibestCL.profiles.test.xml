@@ -2,7 +2,7 @@
 <!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
-    <position>45 10 900 140</position>
+    <position>45 10 1000 140</position>
     <style>tabpanel</style>
     <tag>profilepanel</tag>
     <tabs> 
@@ -11,68 +11,9 @@
         <tabstring>Bathymetry</tabstring>
         <elements>
           <element>
-            <tag>radioxyzfile</tag>
-            <style>radiobutton</style>
-            <position>20 100</position>
-            <text>File</text>
-            <variable>
-              <name>depthSource</name>
-              <type>string</type>
-            </variable>
-            <dependencies>
-              <dependency>
-                <action>on</action>
-                <tags>
-                  <tag>radioxyzuniform</tag>
-                </tags>
-                <checkfor>all</checkfor>
-                <checks>
-                  <check>
-                    <variable>
-                      <name>depthSource</name>
-                      <type>string</type>
-                    </variable>
-                    <value>file</value>
-                    <operator>eq</operator>
-                  </check>
-                </checks>
-              </dependency>
-            </dependencies>
-          </element>
-          <element>
-            <tag>radioxyzuniform</tag>
-            <style>radiobutton</style>
-            <position>20 75</position>
-            <text>Uniform</text>
-            <variable>
-              <name>depthSource</name>
-              <type>string</type>
-            </variable>
-            <value>uniform</value>
-            <dependencies>
-              <dependency>
-                <action>on</action>
-                <tags>
-                  <tag>radioxyzfile</tag>
-                </tags>
-                <checkfor>all</checkfor>
-                <checks>
-                  <check>
-                    <variable>
-                      <name>depthSource</name>
-                      <type>string</type>
-                    </variable>
-                    <value>uniform</value>
-                    <operator>eq</operator>
-                  </check>
-                </checks>
-              </dependency>
-            </dependencies>
-          </element>
-          <element>
             <tag>pushselectxyzfile</tag>
             <style>pushselectfile</style>
-            <position>90 100 130 20</position>
+            <position>10 110 130 20</position>
             <text>Open XYZ File</text>
             <variable>
               <name>XYZfile</name>
@@ -82,58 +23,6 @@
             <selectiontext>Select XYZ File</selectiontext>
             <onchange>ddb_UnibestCL_selectXyzFile</onchange>
             <tooltipstring>Select XYZ file</tooltipstring>
-            <dependencies>
-              <dependency>
-                <action>enable</action>
-                <tags>
-                  <tag>radioxyzuniform</tag>
-                  <tag>radioxyzfile</tag>
-                </tags>
-                <checkfor>all</checkfor>
-                <checks>
-                  <check>
-                    <variable>
-                      <name>depthSource</name>
-                      <type>string</type>
-                    </variable>
-                    <value>file</value>
-                    <operator>eq</operator>
-                  </check>
-                </checks>
-              </dependency>
-            </dependencies>
-          </element>
-          <element>
-            <tag>edituniformdepth</tag>
-            <style>edit</style>
-            <position>90 75 50 20</position>
-            <text>m below reference level</text>
-            <textposition>right</textposition>
-            <variable>
-              <name>UniformDepth</name>
-              <type>real</type>
-            </variable>
-            <tooltipstring>Enter uniform depth value</tooltipstring>
-            <dependencies>
-              <dependency>
-                <action>enable</action>
-                <tags>
-                  <tag>radioxyzuniform</tag>
-                  <tag>radioxyzfile</tag>
-                </tags>
-                <checkfor>all</checkfor>
-                <checks>
-                  <check>
-                    <variable>
-                      <name>depthSource</name>
-                      <type>string</type>
-                    </variable>
-                    <value>uniform</value>
-                    <operator>eq</operator>
-                  </check>
-                </checks>
-              </dependency>
-            </dependencies>
           </element>
         </elements>
       </tab>
@@ -234,7 +123,7 @@
                     <operator>eq</operator>
                   </check>
                 </checks>
-              </dependency>            
+              </dependency>              
             </dependencies>            
           </element>          
 	  <element>
@@ -336,38 +225,197 @@
         <tag>profiles</tag>
         <tabstring>Cross Shore Profiles</tabstring>  
 	<elements>
- 	  <element>
+	  <element>
+            <tag>panelinputpro</tag>
+            <style>panel</style>
+            <title>Settings:</title>
+            <position>5 5 400 125</position>
+          </element>
+	  <element>
+	    <tag>textxyzfile</tag>
+  	    <style>text</style>
+  	    <position>10 90</position>
+  	    <prefix>Selected xyz file : </text>
+ 	    <variable>
+              <name>XYZfile</name>
+              <type>string</type>
+            </variable>            
+            <extension>*.xyz</extension>                       
+          </element>  	  
+	  <element>
 	    <tag>textlocationfile</tag>
   	    <style>text</style>
-  	    <position>10 110</position>
+  	    <position>10 65</position>
   	    <prefix>Selected pol file : </text>
  	    <variable>
               <name>RAYlocfile</name>
               <type>string</type>
             </variable>            
             <extension>*.pol</extension>                       
-          </element>
+          </element>            
+	  <element>
+            <tag>editdynbound</tag>
+            <style>edit</style>
+            <position>350 90 40 20</position>
+            <text>Depth dynamic boundary (m):</text>
+            <textposition>left</textposition>
+	    <variable>
+              <name>hdynbound</name>
+              <type>real</type>	    
+	      <subfield3>
+	        <variable>
+                  <name>PROdata</name>            
+            	</variable>
+              </subfield3>
+	    </variable>              
+            <tooltipstring>Enter depth dynamic boundary</tooltipstring>          
+	  </element>	  
+	  <element>
+            <tag>editwaterlevel</tag>
+            <style>edit</style>
+            <position>350 65 40 20</position>
+            <text>Water level w.r.t. reference (m):</text>
+            <textposition>left</textposition>
+	    <variable>
+              <name>waterlevel</name>
+              <type>real</type>	    
+	      <subfield3>
+	        <variable>
+                  <name>PROdata</name>            
+            	</variable>
+              </subfield3>
+	    </variable>           
+            <tooltipstring>Enter water level</tooltipstring>          
+	  </element>	  
+	  <element>
+            <tag>editzmin</tag>
+            <style>edit</style>
+            <position>350 40 40 20</position>
+            <text>Zmin (m):</text>
+            <textposition>left</textposition>
+	    <variable>
+              <name>zmin</name>
+              <type>real</type>	    
+	      <subfield3>
+	        <variable>
+                  <name>PROdata</name>            
+            	</variable>
+              </subfield3>
+	    </variable>            
+            <tooltipstring>Enter zmin</tooltipstring>          
+	  </element>
+	  <element>
+            <tag>editzmax</tag>
+            <style>edit</style>
+            <position>350 15 40 20</position>
+            <text>Zmax (m):</text>
+            <textposition>left</textposition>
+	    <variable>
+              <name>zmax</name>
+              <type>real</type>	    
+	      <subfield3>
+	        <variable>
+                  <name>PROdata</name>            
+            	</variable>
+              </subfield3>
+	    </variable>            
+            <tooltipstring>Enter zmax</tooltipstring>          
+	  </element>	          
 	  <element>
   	    <tag>pushgenerateprofiles</tag>
             <style>pushbutton</style>
-            <position>10 85 130 20</position>
+            <position>410 90 130 20</position>
    	    <text>Generate profiles</text>
             <callback>ddb_UnibestCL_pushgenerateprofiles</callback>
+	    <dependencies>
+              <dependency>
+                <action>enable</action>
+                <tags>
+                  <tag>pushselectxyzfile</tag>
+                  <tag>pushselectprofile</tag>
+                  <tag>pushsaveraylocsas</tag>
+                </tags>
+                <checkfor>any</checkfor>
+                <checks>
+                  <check>
+                    <variable>
+                      <name>XYZfileselected</name>
+                      <type>integer</type>
+                    </variable>
+                    <value>0</value>
+                    <operator>gt</operator>
+                  </check>
+		  <check>
+                    <variable>
+                      <name>RAYlocfileselected</name>
+                      <type>integer</type>
+                    </variable>
+                    <value>0</value>
+                    <operator>gt</operator>
+                  </check>                  
+                </checks>
+              </dependency>
+            </dependencies>            
           </element>
+	  <element>  
+	    <tag>pushselectprofile</tag>
+            <style>pushselectfile</style>
+            <position>410 65 130 20</position>
+            <text>Select PRO file</text>
+	    <variable>
+              <name>PROfile</name>
+              <type>string</type>	    
+	    </variable>             
+            <extension>*.pro</extension>
+            <selectiontext>Select PRO file</selectiontext>
+            <onchange>ddb_UnibestCL_pushselectprofile</onchange>
+            <tooltipstring>Select PRO file</tooltipstring>
+	    <dependencies>
+              <dependency>
+                <action>enable</action>
+                <tags>
+                  <tag>pushgenerateprofiles</tag>
+                </tags>
+                <checkfor>all</checkfor>
+                <checks>
+                  <check>
+                    <variable>
+                      <name>profilesgenerated</name>
+                      <type>integer</type>
+                    </variable>
+                    <value>0</value>
+                    <operator>gt</operator>
+                  </check>                 
+                </checks>
+              </dependency>
+            </dependencies>             
+      	  </element>
 	  <element>
-	    <tag>pushviewprofile</tag>
+	    <tag>pusheditprofile</tag>
 	    <style>pushbutton</style>
-	    <position>10 60 130 20</position>
-	    <text>View profile</text>
-	    <callback>ddb_UnibestCL_pushviewprofile</callback>
-          </element>           
-          <element>
-	    <tag>pushsavePROfileas</tag>
-	    <style>pushbutton</style>
-	    <position>10 35 130 20</position>
-	    <text>Save PRO File As</text>
-	    <callback>ddb_UnibestCL_pushSavePROfileAs</callback>
-          </element>          
+	    <position>410 40 130 20</position>
+	    <text>Edit profile</text>
+	    <callback>ddb_UnibestCL_pushEditProfile</callback>  
+	    <dependencies>
+              <dependency>
+                <action>enable</action>
+                <tags>
+                  <tag>pushselectprofile</tag>
+                </tags>
+                <checkfor>all</checkfor>
+                <checks>
+                  <check>
+                    <variable>
+                      <name>activePROfile</name>
+                      <type>integer</type>
+                    </variable>
+                    <value>0</value>
+                    <operator>gt</operator>
+                  </check>
+                </checks>
+              </dependency>
+            </dependencies>	    
+          </element>                     
         </elements>
       </tab>
     </tabs>
