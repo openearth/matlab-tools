@@ -99,7 +99,7 @@ end
 fclose(fid);
 
 %% Interpolate reference line
-dist = distXY(MDAdata.X,MDAdata.Y);
+dist = pathdistance(MDAdata.X,MDAdata.Y);
 dist2=[];
 for ii=2:length(MDAdata.nrgridcells)
     igr = MDAdata.nrgridcells(ii);

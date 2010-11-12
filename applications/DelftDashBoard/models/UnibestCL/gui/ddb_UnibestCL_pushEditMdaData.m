@@ -54,3 +54,4 @@ data.nrgridcells = dat(:,5);
 data.nr = dat(:,6);
 handles.Model(md).Input.MDAdata = data;
 setHandles(handles);
+ddb_plotMDA(handles,'plot',1);

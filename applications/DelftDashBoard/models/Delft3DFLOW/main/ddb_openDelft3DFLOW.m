@@ -38,7 +38,7 @@ switch opt
                     ddb_plotDelft3DFLOW(handles,'deactivate',i);
                 end
             end
-            handles=ddb_refreshFlowDomains(handles);
+            ddb_refreshFlowDomains;
         end
     case {'open'}
         % One Domain
@@ -57,7 +57,7 @@ switch opt
             handles=ddb_readMDF(handles,[filename],1);
             handles=ddb_readAttributeFiles(handles);
             ddb_plotDelft3DFLOW(handles,'plot',1);
-            handles=ddb_refreshFlowDomains(handles);
+            ddb_refreshFlowDomains;
         end        
     case {'adddomain'}
         % One Domain
@@ -76,7 +76,7 @@ switch opt
                 ddb_plotDelft3DFLOW(handles,'deactivate',i);
             end
             ddb_plotDelft3DFLOW(handles,'plot',id);
-            handles=ddb_refreshFlowDomains(handles);
+            ddb_refreshFlowDomains;
         end        
 end
 

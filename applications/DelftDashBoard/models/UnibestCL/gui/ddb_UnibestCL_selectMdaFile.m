@@ -14,9 +14,9 @@ filename=handles.Model(md).Input.MDAfile;
 handles.Model(md).Input.MDAfile = filename;
 handles.Model(md).Input.MDAdata = MDAdata;
 
-
 setHandles(handles);
 
+ddb_plotMDA(handles,'plot',1);
 %%
 
 %{

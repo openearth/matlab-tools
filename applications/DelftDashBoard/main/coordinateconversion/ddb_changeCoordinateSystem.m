@@ -53,8 +53,8 @@ switch nsys,
             xl1(2)=xutm2;
         end
     otherwise
-        handles.ScreenParameters.XMaxRange=[-2000000 2000000];
-        handles.ScreenParameters.YMaxRange=[0 2000000];
+        handles.ScreenParameters.XMaxRange=[-5000000 5000000];
+        handles.ScreenParameters.YMaxRange=[0 5000000];
 end
 
 [xl,yl]=CompXYLim(xl1,yl1,handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange);
