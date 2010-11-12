@@ -213,8 +213,8 @@ for ray_no = 1 : length(X1)
         if ~exist(path_out.png,'dir')
             mkdir(path_out.png);
         end
-        print(hgraph,'-dpng','-r150','-zbuffer',[path_out.png,Rayname{ray_no},'.png']);
-        close
+        %print(hgraph,'-dpng','-r150','-zbuffer',[path_out.png,Rayname{ray_no},'.png']);
+        close(hgraph)
         %-----------------save cross-section------------------
         %-----------------------------------------------------
         if ~isempty(ray.Z3B{ray_no})
@@ -241,7 +241,7 @@ for ray_no = 1 : length(X1)
             PROdata(ray_no).zdynbound = z_dynbound(ray_no);
             PROdata(ray_no).xdynbound = x_dynbound;
             PROdata(ray_no).xtrunctransp = x_dynbound;
-            PROdata(ray_no).filename = [Rayname{ray_no},'.pro'];
+            PROdata(ray_no).filename = filename;
             PROdata(ray_no).Rayname = Rayname{ray_no};        
         end
         

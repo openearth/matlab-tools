@@ -1,6 +1,7 @@
 function ddb_UnibestCL_pushEditProfile(hObject,eventdata)
 
 handles=getHandles;
+setUIElements(handles.Model(md).GUI.elements.tabs(3).elements.tabs(3).elements)
 
 pr = handles.Model(md).Input.activePROfile;
 if  pr>0
@@ -14,7 +15,7 @@ z = PROdata.h * (-1) - PROdata.waterlevel; %convert water depth to bed-level
 ProHandles.Input.x{1} =x;
 ProHandles.Input.z{1} =z;
 
-ProHandles.GUI.figure = MakeNewWindow(['Edit Profile ',PROdata.filename],[1000,500]);
+ProHandles.GUI.figure = MakeNewWindow(['Edit Profile ',PROdata.Rayname,'.pro'],[1000,500]);
 pos = get(gcf,'Position');
 hp = uipanel('Units','pixels','Position',[5 5 100 pos(4)-10],'Tag','UIControl');
 
@@ -201,7 +202,20 @@ ProHandles=getProHandles;
 handles = getHandles;
 pr =handles.Model(md).Input.activePROfile; 
 handles.Model(md).Input.PROdata(pr).x = ProHandles.Input.x{length(ProHandles.Input.x)};
-handles.Model(md).Input.PROdata(pr).z = ProHandles.Input.z{length(ProHandles.Input.z)};
+handles.Model(md).Input.PROdata(pr).h = ProHandles.Input.z{length(ProHandles.Input.z)}*(-1)+handles.Model(md).Input.PROdata(pr).waterlevel;%Convert bed level to water depth
+x1          = handles.Model(md).Input.PROdata(pr).x;
+h1          = handles.Model(md).Input.PROdata(pr).h;
+Xid1        = handles.Model(md).Input.PROdata(pr).X1;
+Yid1        = handles.Model(md).Input.PROdata(pr).Y1;
+Xid2        = handles.Model(md).Input.PROdata(pr).X2;
+Yid2        = handles.Model(md).Input.PROdata(pr).Y2;
+h_dynbound  = handles.Model(md).Input.PROdata(pr).zdynbound*(-1)+handles.Model(md).Input.PROdata(pr).waterlevel;%Convert bed level to water depth;
+water_level = handles.Model(md).Input.PROdata(pr).waterlevel;
+filename    = handles.Model(md).Input.PROdata(pr).filename;
+[err_message] = writePRO(x1,h1,h_dynbound,Xid1,Yid1,Xid2,Yid2,filename,water_level);
+if ~isempty(err_message)
+    fprintf(fid2,'%s\n',err_message);
+end
 setHandles(handles);
 
 rmfield(ProHandles.GUI,'figure');
