@@ -111,4 +111,6 @@ for i=1:handles.Bathymetry.NrDatasets
     end
 end
 
+disp([num2str(handles.Bathymetry.NrDatasets) ' bathymetry datasets found!']);
+
 setHandles(handles);

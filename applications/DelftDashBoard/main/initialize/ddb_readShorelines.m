@@ -1,6 +1,10 @@
 function handles=ddb_readShorelines(handles)
 
-txt=ReadTextFile([handles.ShorelineDir '\Shorelines.def']);
+if exist([handles.ShorelineDir '\Shorelines.def'])==2
+    txt=ReadTextFile([handles.ShorelineDir '\Shorelines.def']);
+else
+    error(['Shorelines defintion file ''' [handles.ShorelineDir '\Shorelines.def'] ''' not found!']);
+end
 
 k=0;
 

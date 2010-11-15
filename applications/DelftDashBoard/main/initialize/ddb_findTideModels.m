@@ -15,4 +15,6 @@ handles.TideModels.Model(k).Name='constant';
 handles.TideModels.ActiveTideModelBC=handles.TideModels.Name{1};
 handles.TideModels.ActiveTideModelIC=handles.TideModels.Name{1};
 
+disp([num2str(handles.TideModels.nrModels) ' tide models found!']);
+
 setHandles(handles);

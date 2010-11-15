@@ -27,7 +27,13 @@ else
     
     handles.SettingsDir=[inipath 'settings' filesep];
     ddbdir=getINIValue(inifile,'DataDir');
-    ddbdir = [cd(cd(ddbdir)) filesep];    
+    if exist(ddbdir)==7 % absolute path
+        ddbdir = [cd(cd(ddbdir)) filesep];
+    elseif exist([fileparts(inifile) filesep ddbdir])==7 % relative path
+        ddbdir = [cd(cd([fileparts(inifile) filesep ddbdir])) filesep];
+    else
+        error(['Local data directory ''' ddbdir ''' not found, check reference in ini-file!']);
+    end
 end
 
 handles.BathyDir=[ddbdir 'bathymetry' filesep];

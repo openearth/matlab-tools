@@ -1,6 +1,10 @@
 function handles=ddb_readTiledBathymetries(handles)
 
-txt=ReadTextFile([handles.BathyDir '\tiledbathymetries.def']);
+if exist([handles.BathyDir '\tiledbathymetries.def'])==2
+    txt=ReadTextFile([handles.BathyDir '\tiledbathymetries.def']);
+else
+    error(['Bathymetry defintion file ''' [handles.BathyDir '\tiledbathymetries.def'] ''' not found!']);
+end
 
 k=0;
 j=0;

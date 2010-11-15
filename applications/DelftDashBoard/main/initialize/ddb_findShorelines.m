@@ -101,4 +101,6 @@ for i=1:handles.Shorelines.nrShorelines
     end    
 end
 
+disp([num2str(handles.Shorelines.nrShorelines) ' shoreline found!']);
+
 setHandles(handles);

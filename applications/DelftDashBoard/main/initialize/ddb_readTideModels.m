@@ -1,6 +1,10 @@
 function handles=ddb_readTideModels(handles)
 
-txt=ReadTextFile([handles.TideDir '\tidemodels.def']);
+if exist([handles.TideDir '\tidemodels.def'])==2
+    txt=ReadTextFile([handles.TideDir '\tidemodels.def']);
+else
+    error(['Tidemodel defintion file ''' [handles.TideDir '\tidemodels.def'] ''' not found!']);
+end
 
 k=0;
 
