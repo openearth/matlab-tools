@@ -503,6 +503,7 @@ x1=str2double(get(handles.EditX(i1),'String'));
 y1=str2double(get(handles.EditY(i1),'String'));
 strs=get(handles.SelectCS(i1),'String');
 k=get(handles.SelectCS(i1),'Value');
+cscodes=handles.CSCode;
 cs1=strs{k};
 tp1=handles.CSType{i1};
 strs=get(handles.SelectCS(i2),'String');
@@ -512,9 +513,12 @@ tp2=handles.CSType{i2};
 
 if ~isempty(x1) && ~isempty(y1)
     if ~isfield(handles.OPT,'datum_trans_from_WGS84')
-        [x2,y2]=convertCoordinates(x1,y1,handles.EPSG,'CS1.name',cs1,'CS1.type',tp1,'CS2.name',cs2,'CS2.type',tp2,'datum_trans',handles.OPT.datum_trans);
+%         [x2,y2]=convertCoordinates(x1,y1,handles.EPSG,'CS1.name',cs1,'CS1.type',tp1,'CS2.name',cs2,'CS2.type',tp2,'datum_trans',handles.OPT.datum_trans);
+        [x2,y2]=convertCoordinates(x1,y1,handles.EPSG,'CS1.code',cscodes(1),'CS2.code',cscodes(2),'datum_trans',handles.OPT.datum_trans);
     else
-        [x2,y2]=convertCoordinates(x1,y1,handles.EPSG,'CS1.name',cs1,'CS1.type',tp1,'CS2.name',cs2,'CS2.type',tp2,...
+%         [x2,y2]=convertCoordinates(x1,y1,handles.EPSG,'CS1.name',cs1,'CS1.type',tp1,'CS2.name',cs2,'CS2.type',tp2,...
+%             'datum_trans_from_WGS84.code',handles.OPT.datum_trans_from_WGS84.code,'datum_trans_to_WGS84.code',handles.OPT.datum_trans_to_WGS84.code);
+        [x2,y2]=convertCoordinates(x1,y1,handles.EPSG,'CS1.code',cscodes(1),'CS2.code',cscodes(2),...
             'datum_trans_from_WGS84.code',handles.OPT.datum_trans_from_WGS84.code,'datum_trans_to_WGS84.code',handles.OPT.datum_trans_to_WGS84.code);
     end
     set(handles.EditX(i2),'String',num2str(x2,'%0.9g'));
