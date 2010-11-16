@@ -1,5 +1,8 @@
 function OK = convertCoordinates2_test
-%CONVERTCOORDINATES2_TEST   test convertCoordinates with kadaster data point
+%CONVERTCOORDINATES2_TEST   test convertCoordinates
+%
+% This test converts from all systems to GEO-WGS84 and back and it checks than if the output compares well with the input coordinates.
+% Results are printed to output file convertCoordinate_errorMessages.txt
 %
 %See also: CONVERTCOORDINATES, CONVERTCOORDINATES_TEST
 
@@ -19,7 +22,8 @@ x = 100000;
 y = 100000;
 
 % create file for printing error messages
-fid = fopen('convertCoordinate_errorMessages.txt','w');
+pat = fileparts(which('convertCoordinates2_test'))
+fid = fopen([pat filesep 'convertCoordinate_errorMessages.txt'],'w');
 
 % preacclocate testresult
 testresult = nan(size(codes));
@@ -34,7 +38,11 @@ for s = 1:length(codes)
             [lon3,lat3] = convertcoordinates(lon2 ,lat2 ,'CS1.code', 4326,'CS2.code',codes(s));
             testresult(s) = abs(lon - lon3) < 0.0001 & abs(lat -lat3) < 0.0001;
             fprintf(fid,'%s\n',['Converting using system ' coordinate_reference_system.coord_ref_sys_name{s} ', with code ' num2str(codes(s)) ':']);
-            fprintf(fid,'%s\n\n','Ok!');
+            if testresult(s)
+                fprintf(fid,'%s\n\n','Test result is OK!');
+            else
+                fprintf(fid,'%s\n\n',['Test result is not OK: diff(lon) = ' num2str(abs(lon-lon3)) ' deg and diff(lat) = ' num2str(abs(lat-lat3)) ' deg']);
+            end
         catch
             testresult(s) = nan;
             fprintf(fid,'%s\n',['Error using system ' coordinate_reference_system.coord_ref_sys_name{s} ', with code ' num2str(codes(s)) ':']);
@@ -46,7 +54,12 @@ for s = 1:length(codes)
             [x3,y3]     = convertcoordinates(lon2 ,lat2 ,'CS1.code', 4326,'CS2.code',codes(s));
             testresult(s) = abs(x - x3) < 10 & abs(y -y3) < 10;
             fprintf(fid,'%s\n',['Converting using system ' coordinate_reference_system.coord_ref_sys_name{s} ', with code ' num2str(codes(s)) ':']);
-            fprintf(fid,'%s\n\n','Ok!');
+            if testresult(s)
+                fprintf(fid,'%s\n\n','Test result is OK!');
+            else
+                fprintf(fid,'%s\n\n',['Test result is not OK: diff(x) = ' num2str(abs(x-x3)) ' m and diff(y) = ' num2str(abs(y-y3)) ' m']);
+            end
+
         catch
             testresult(s) = nan;
             fprintf(fid,'%s\n',['Error using system ' coordinate_reference_system.coord_ref_sys_name{s} ', with code ' num2str(codes(s)) ':']);
