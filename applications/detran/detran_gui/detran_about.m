@@ -44,9 +44,9 @@ function detran_about(varargin)
 % aboutPath = [detranPath filesep 'detran_gui' filesep]
 
 if nargin == 0
-	test = 'no';
+    test = 'no';
 else
-	test = varargin{1};
+    test = varargin{1};
 end
 
 aboutPath = ShowPath;
@@ -64,7 +64,7 @@ if ~isdeployed
     if any(id)
         revnumb = strcat(str{id}(min(strfind(str{id},':'))+1:end));
     end
-    aboutText = strrep(aboutText,'$revision',revnumb);
+    aboutText = regexprep(aboutText,{'\$revision','\$year','\$month'},{revnumb,datestr(now,'mmmm'),datestr(now,'yyyy')});
 end
 
 h = msgbox(aboutText,'About Detran','modal');

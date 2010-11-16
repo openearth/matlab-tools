@@ -70,5 +70,5 @@ else
         % don't mind
     end
 end
-strfrep(fullfile('bin','detran_about.txt'),'$revision',revnumb);
+strfrep(fullfile('bin','detran_about.txt'),{'\$revision','\$year','\$month'},{revnumb,datestr(now,'mmmm'),datestr(now,'yyyy')});
 delete('complist');
