@@ -10,12 +10,17 @@ else
     fprintf('Error : No file selected.\n')
     return
 end
-x = PROdata.x;
-z = PROdata.h * (-1) - PROdata.waterlevel; %convert water depth to bed-level
-ProHandles.Input.x{1} =x;
-ProHandles.Input.z{1} =z;
+pro = handles.Model(md).Input.PROdata;
+nrpro = length(pro);
+for ii=1:nrpro
+    ProHandles.Input.x{ii} = {pro(ii).x};
+    ProHandles.Input.z{ii} = {pro(ii).z};
+end
+ProHandles.Input.pr=pr;
+ProHandles.Input.nrpro=nrpro;
+ProHandles.Input.pro=pro;
 
-ProHandles.GUI.figure = MakeNewWindow(['Edit Profile ',PROdata.Rayname,'.pro'],[1000,500]);
+ProHandles.GUI.figure = MakeNewWindow('Edit Profiles',[1000,500]);
 pos = get(gcf,'Position');
 hp = uipanel('Units','pixels','Position',[5 5 100 pos(4)-10],'Tag','UIControl');
 
@@ -26,8 +31,9 @@ xrel1 = (105+pixelsxlabel)/pos(3);
 xrel2 = (pos(3)-105-pixelsxlabel*1.5)/pos(3);
 yrel1 = (pixelsylabel)/pos(4);
 yrel2 = (pos(4)-pixelsylabel*1.5)/pos(4);
+
 ProHandles.Axes.ha = axes('Position',[xrel1,yrel1,xrel2,yrel2],'FontSize',8);
-%plot(ProHandles.Input.x{1},ProHandles.Input.z{1},'k.-');hold on;
+%plot(ProHandles.Input.x{pr}{1},ProHandles.Input.z{pr}{1},'k.-');hold on;
 setProHandles(ProHandles);
 plotprofile;
 
@@ -85,27 +91,35 @@ ProHandles.GUI.Menucancel        = uicontrol(gcf,'Style','pushbutton','String','
 set(ProHandles.GUI.Menuquit,'CallBack',{@Menuquit_CallBack});
 set(ProHandles.GUI.Menucancel,'CallBack',{@Menucancel_CallBack});
 
+%% SCROLL BUTTONS
+% push buttons
+setProHandles(ProHandles);
+ProHandles.GUI.Textscroll        = uicontrol(gcf,'Style','text','String','-------Scroll-------','Position',[10 pos(4)-455 90 15],'HorizontalAlignment','left','Tag','UIControl');
+ProHandles.GUI.PrevPRO       = uicontrol(gcf,'Style','pushbutton','String','<Prev','Position',[10 pos(4)-480 40 20],'Tag','UIControl');
+ProHandles.GUI.NextPRO       = uicontrol(gcf,'Style','pushbutton',  'String','Next>','Position',[60 pos(4)-480 40 20],'Tag','UIControl');
+set(ProHandles.GUI.PrevPRO,'CallBack',{@PrevPRO_CallBack}); set(ProHandles.GUI.NextPRO,'CallBack',{@NextPRO_CallBack});
+
 function plotprofile
-ProHandles=getProHandles;
+ProHandles=getProHandles;pr=ProHandles.Input.pr;
 axis(ProHandles.Axes.ha);
 cla(ProHandles.Axes.ha);
 legtxt={};
-if length(ProHandles.Input.x)>1
-    x0 = ProHandles.Input.x{1};
-    z0 = ProHandles.Input.z{1};
+if length(ProHandles.Input.x{pr})>1
+    x0 = ProHandles.Input.x{pr}{1};
+    z0 = ProHandles.Input.z{pr}{1};
     plot(x0,z0,'Color',[0.5 0.5 0.5],'LineStyle',':');hold on;
     legtxt{1}='initial cross-shore profile';
 end
-if length(ProHandles.Input.x)>2
-    x1 = ProHandles.Input.x{length(ProHandles.Input.x)-1};
-    z1 = ProHandles.Input.z{length(ProHandles.Input.z)-1};
+if length(ProHandles.Input.x{pr})>2
+    x1 = ProHandles.Input.x{pr}{length(ProHandles.Input.x{pr})-1};
+    z1 = ProHandles.Input.z{pr}{length(ProHandles.Input.z{pr})-1};
     plot(x1,z1,'Color',[0 0 0.5],'LineStyle','--');hold on;
     legtxt{length(legtxt)+1}='previous iteration';
 end
-x2 = ProHandles.Input.x{length(ProHandles.Input.x)};
-z2 = ProHandles.Input.z{length(ProHandles.Input.z)};
+x2 = ProHandles.Input.x{pr}{length(ProHandles.Input.x{pr})};
+z2 = ProHandles.Input.z{pr}{length(ProHandles.Input.z{pr})};
 plot(x2,z2,'Color',[1 0 0],'LineStyle','-');hold on;plot(x2,z2,'Color',[1 0 0],'LineStyle','.');
-if length(ProHandles.Input.x)>1
+if length(ProHandles.Input.x{pr})>1
     legtxt{length(legtxt)+1}='current profile';
 else 
     legtxt={'initial cross-shore profile'};
@@ -113,6 +127,7 @@ end
 legend(legtxt,'Location','NorthWest');
 xlabel('Cross-shore position');
 ylabel('Bed level [m w.r.t reference level]');
+title([ProHandles.Input.pro(pr).Rayname,'.pro']);
 setProHandles(ProHandles);
 
 function EditThinfactor_CallBack(hObject,eventdata)
@@ -147,26 +162,26 @@ set(ProHandles.GUI.Interptype,'Value',Interptypeval);
 setProHandles(ProHandles);
 
 function Undo_CallBack(hObject,eventdata)
-ProHandles=getProHandles;
-nrsteps = length(ProHandles.Input.x);
+ProHandles=getProHandles;pr=ProHandles.Input.pr;
+nrsteps = length(ProHandles.Input.x{pr});
 if nrsteps>=2
-    ProHandles.Input.x = ProHandles.Input.x(1:nrsteps-1);
-    ProHandles.Input.z = ProHandles.Input.z(1:nrsteps-1);
+    ProHandles.Input.x{pr} = ProHandles.Input.x{pr}(1:nrsteps-1);
+    ProHandles.Input.z{pr} = ProHandles.Input.z{pr}(1:nrsteps-1);
     setProHandles(ProHandles);
     plotprofile;
 end
 
 function Editprofile_CallBack(hObject,eventdata)
-ProHandles=getProHandles;
+ProHandles=getProHandles;pr=ProHandles.Input.pr;
 Smoothtype = get(ProHandles.GUI.Smoothtype,'Value');
 Thinfactor = ProHandles.Input.Thinfactor;
 Interptype = get(ProHandles.GUI.Interptype,'Value');
 Interpdx   = ProHandles.Input.Interpdx;
 
-x0 = ProHandles.Input.x{1};
-z0 = ProHandles.Input.z{1};
-x1 = ProHandles.Input.x{length(ProHandles.Input.x)};
-z1 = ProHandles.Input.z{length(ProHandles.Input.z)};
+x0 = ProHandles.Input.x{pr}{1};
+z0 = ProHandles.Input.z{pr}{1};
+x1 = ProHandles.Input.x{pr}{length(ProHandles.Input.x{pr})};
+z1 = ProHandles.Input.z{pr}{length(ProHandles.Input.z{pr})};
 x2 = x1;
 z2 = z1;
 if Smoothtype==1
@@ -191,18 +206,18 @@ elseif Smoothtype==2
     if length(x2)==1;x2=[x1(1);x1(end)];end
     z2=interp1(x1,z1,x2,ProHandles.Input.Interptype{Interptype});
 end
-ProHandles.Input.x{length(ProHandles.Input.x)+1}=x2;
-ProHandles.Input.z{length(ProHandles.Input.z)+1}=z2;
+ProHandles.Input.x{pr}{length(ProHandles.Input.x{pr})+1}=x2;
+ProHandles.Input.z{pr}{length(ProHandles.Input.z{pr})+1}=z2;
 setProHandles(ProHandles);
 plotprofile;
 
 function Menuquit_CallBack(hObject,eventdata)
-ProHandles=getProHandles;
+ProHandles=getProHandles;pr=ProHandles.Input.pr;
 %% save data
 handles = getHandles;
 pr =handles.Model(md).Input.activePROfile; 
-handles.Model(md).Input.PROdata(pr).x = ProHandles.Input.x{length(ProHandles.Input.x)};
-handles.Model(md).Input.PROdata(pr).h = ProHandles.Input.z{length(ProHandles.Input.z)}*(-1)+handles.Model(md).Input.PROdata(pr).waterlevel;%Convert bed level to water depth
+handles.Model(md).Input.PROdata(pr).x = ProHandles.Input.x{pr}{length(ProHandles.Input.x{pr})};
+handles.Model(md).Input.PROdata(pr).h = ProHandles.Input.z{pr}{length(ProHandles.Input.z{pr})}*(-1)+handles.Model(md).Input.PROdata(pr).waterlevel;%Convert bed level to water depth
 x1          = handles.Model(md).Input.PROdata(pr).x;
 h1          = handles.Model(md).Input.PROdata(pr).h;
 Xid1        = handles.Model(md).Input.PROdata(pr).X1;
@@ -222,8 +237,27 @@ rmfield(ProHandles.GUI,'figure');
 close(ProHandles.GUI.figure);
 setProHandles(ProHandles);
 
+function PrevPRO_CallBack(hObject,eventdata)
+ProHandles = getProHandles;
+pr=ProHandles.Input.pr;
+nrpro=ProHandles.Input.nrpro; 
+if  nrpro>1 && pr>1
+    pr = pr-1;
+    ProHandles.Input.pr=pr;
+    setProHandles(ProHandles);
+    plotprofile;
+end
 
-
+function NextPRO_CallBack(hObject,eventdata)
+ProHandles = getProHandles;
+pr=ProHandles.Input.pr;
+nrpro=ProHandles.Input.nrpro; 
+if  nrpro>1 && pr<nrpro
+    pr = pr+1;
+    ProHandles.Input.pr=pr;
+    setProHandles(ProHandles);
+    plotprofile;
+end
 
 function Menucancel_CallBack(hObject,eventdata)
 ProHandles=getProHandles;

@@ -160,7 +160,7 @@ for ray_no = 1 : length(X1)
         xdata  = ray.distcross2{ray_no}(id_sorted(1):id_sorted(2));
         zdata  = ray.Z2{ray_no}(id_sorted(1):id_sorted(2));
 
-        if ~isempty(z_limits) & length(xdata)>minimum_no_points_truncation
+        if ~isempty(z_limits) && length(xdata)>minimum_no_points_truncation
             id_truncate = find(zdata < -z_limits(1) & zdata > -z_limits(2));
             xdata = xdata(id_truncate);
             zdata = zdata(id_truncate);
@@ -184,48 +184,51 @@ for ray_no = 1 : length(X1)
         zdata                      = ray.Z3{ray_no};
         ray.Z3B{ray_no}            = interp1(xdata,zdata,xnew,'cubic'); 
         ray.distcross3B{ray_no}    = xnew;
+        
+        
     
         %-----------------plot cross-section------------------
         %-----------------------------------------------------
-        hgraph = figure;
-        plot(ray.distcross1{ray_no},ray.Z1{ray_no},'k.');hold on;
-        plot(ray.distcross2{ray_no},ray.Z2{ray_no},'b-');
-        plot(ray.distcross3{ray_no},ray.Z3{ray_no},'r-.');
-        plot(ray.distcross3B{ray_no},ray.Z3B{ray_no},'g--');   
-        
-        %Plot reference lvl and dyn boundary
-        x_dynbound = find0crossing(ray.distcross3B{ray_no},ray.Z3B{ray_no},z_dynbound(ray_no));
-        xlimits = xlim;
-        zlimits = ylim;
-        plot([xlimits(1) xlimits(2)],[water_level water_level],'b--');
-        plot([x_dynbound x_dynbound],[zlimits(1) zlimits(2)],'r--');
-
-        
-        h_title = title(['xyz file: ',XYZfile,', ray: ',Rayname{ray_no}]);
-        set(h_title,'interpreter','none');
-        h_leg = legend(legendtext{1:length(get(gca,'Children'))});
-        set(h_leg,'FontSize',7,'Location','NorthWest');
-        h_xlabel = xlabel('cross-shore distance (m)');
-        set(h_xlabel,'FontSize',10);
-        h_ylabel = ylabel('z (m) w.r.t. ref level');
-        set(h_xlabel,'FontSize',10);
-        
-        if ~exist(path_out.png,'dir')
-            mkdir(path_out.png);
-        end
-        %print(hgraph,'-dpng','-r150','-zbuffer',[path_out.png,Rayname{ray_no},'.png']);
-        close(hgraph)
+%         hgraph = figure;
+%         plot(ray.distcross1{ray_no},ray.Z1{ray_no},'k.');hold on;
+%         plot(ray.distcross2{ray_no},ray.Z2{ray_no},'b-');
+%         plot(ray.distcross3{ray_no},ray.Z3{ray_no},'r-.');
+%         plot(ray.distcross3B{ray_no},ray.Z3B{ray_no},'g--');   
+%         
+%         %Plot reference lvl and dyn boundary
+%         x_dynbound = find0crossing(ray.distcross3B{ray_no},ray.Z3B{ray_no},z_dynbound(ray_no));
+%         xlimits = xlim;
+%         zlimits = ylim;
+%         plot([xlimits(1) xlimits(2)],[water_level water_level],'b--');
+%         plot([x_dynbound x_dynbound],[zlimits(1) zlimits(2)],'r--');
+% 
+%         
+%         h_title = title(['xyz file: ',XYZfile,', ray: ',Rayname{ray_no}]);
+%         set(h_title,'interpreter','none');
+%         h_leg = legend(legendtext{1:length(get(gca,'Children'))});
+%         set(h_leg,'FontSize',7,'Location','NorthWest');
+%         h_xlabel = xlabel('cross-shore distance (m)');
+%         set(h_xlabel,'FontSize',10);
+%         h_ylabel = ylabel('z (m) w.r.t. ref level');
+%         set(h_xlabel,'FontSize',10);
+%         
+%         if ~exist(path_out.png,'dir')
+%             mkdir(path_out.png);
+%         end
+%         print(hgraph,'-dpng','-r150','-zbuffer',[path_out.png,Rayname{ray_no},'.png']);
+%         close(hgraph)
         %-----------------save cross-section------------------
         %-----------------------------------------------------
         if ~isempty(ray.Z3B{ray_no})
             x1          = ray.distcross3B{ray_no};
-            h1          = ray.Z3B{ray_no}.*(-1)+water_level;    %Convert bed level to water depth
+            z1          = ray.Z3B{ray_no};
+            h1          = z1.*(-1)+water_level;    %Convert bed level to water depth
             Xid1        = X1(ray_no);
             Yid1        = Y1(ray_no);
             Xid2        = X2(ray_no);
             Yid2        = Y2(ray_no);
             filename    = [path_out.pro,Rayname{ray_no},'.pro'];
-            [err_message,x1,h1,x_dynbound] = writePRO(x1,h1,h_dynbound,Xid1,Yid1,Xid2,Yid2,filename,water_level);
+            [err_message,x1,z1,h1,x_dynbound] = writePRO(x1,h1,h_dynbound,Xid1,Yid1,Xid2,Yid2,filename,water_level);
             if ~isempty(err_message)
                 fprintf(fid2,'%s\n',err_message);
             end
@@ -235,6 +238,7 @@ for ray_no = 1 : length(X1)
             PROdata(ray_no).Y2 = Yid2;
             PROdata(ray_no).x = x1;
             PROdata(ray_no).h = h1;
+            PROdata(ray_no).z = z1;
             PROdata(ray_no).waterlevel = water_level;
             PROdata(ray_no).zmin = z_min;
             PROdata(ray_no).zmax = z_max;
