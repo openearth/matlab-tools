@@ -300,7 +300,7 @@ end
 
 %% create params-file
 % get precision
-[dummy Precision]=CreateEmptyXBeachVar;
+[dummy Precision] = xb_create_var;
 
 fid = fopen(fullfile(OPT.calcdir, OPT.paramsfile), 'w');
 fprintf(fid,'%s\n\n',['Automatic generated XBeach parameter settings input file (created: ' datestr(now) ')']);
