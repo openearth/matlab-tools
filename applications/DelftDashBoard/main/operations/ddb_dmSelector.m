@@ -22,9 +22,11 @@ function handles = ddb_dmSelector(handles,figTitle,data,names,locs)
 %   Copyright (C) 2010 <COMPANY>
 %       Arjan Mol
 %
-%       <EMAIL>
+%       arjan.mol@deltares.nl
 %
-%       <ADDRESS>
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -72,9 +74,16 @@ locTxt = uicontrol('Parent',dmFig,'Units','normalized','Style','text','Tag','ddb
 
 applyBut = uicontrol('Parent',dmFig','Units','normalized','Style','pushbutton','String','Apply','position',[0.6 0.05 0.18 0.05],'Callback',{@dmApply});
 cancelBut = uicontrol('Parent',dmFig','Units','normalized','Style','pushbutton','String','Cancel','position',[0.8 0.05 0.18 0.05],'Callback',{@dmCancel});
+if ~strcmp(figTitle,'Tidemodels')
+    cacheBut = uicontrol('Parent',dmFig','Units','normalized','Style','pushbutton','String','Clear cache','position',[0.02 0.05 0.18 0.05],'Callback',{@dmDeleteCache});
+end
 
 % dynamic items
-vertPos = [0.2:0.6/(length(data)-1):0.8];
+if length(data)>1
+    vertPos = [0.2:0.6/(length(data)-1):0.8];
+else
+    vertPos = [0.8];
+end
 
 for ii = 1:length(data)
     hData(ii) = uicontrol('Parent',dmFig,'Units','normalized','Style','text','Tag',['ddb_dmData_' num2str(ii)],'String',data{ii},...
@@ -93,115 +102,134 @@ handles=getHandles;
 dmFig = get(hObject,'Parent');
 datatype = lower(get(dmFig,'Tag'));
 dataDir = handles.BathyDir(1:findstr(handles.BathyDir,'bathymetry')-1);
-ddb_opendap_fileS = 'http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/';
-ddb_opendap_dodsC = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/delftdashboard/';
+ddb_opendap_fileS   = 'http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/';
+ddb_opendap_dodsC   = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/delftdashboard/';
+ddb_opendap_catalog = 'http://opendap.deltares.nl/thredds/catalog/opendap/deltares/delftdashboard/';
+cache = 'yes';
 
 switch datatype
     case 'bathymetry'
+        defFile = [handles.BathyDir '\tiledbathymetries.def'];
+        
+        % make backup
+        copyfile(defFile,[defFile '.bu']);
+        
+        % create new def file
+        fid = fopen(defFile,'w');
+        
         for ii = 1:length(handles.Bathymetry.NrDatasets)
-            fname  = handles.Bathymetry.Dataset(ii).Name;
-            locURL = [dataDir 'bathymetry' filesep fname filesep]; % url if file is stored locally
-            odURL  = [ddb_opendap_fileS 'bathymetry/' fname '/']; % url for file on opendap server
-            
-            if get(findobj(dmFig,'tag',['ddb_dmOd_' num2str(ii)]),'Value') && isempty(strfind(handles.Bathymetry.Dataset(ii).URL,'opendap'))
-                % then data is now local and is requested to use data on opendap
-                
-                % ask if local data file must be deleted
-                ans=questdlg(['Do you want to delete the local file ' locURL filesep fname '.nc ?'],'Question','Yes','No','Yes');
-                if strcmp(ans,'Yes')
-                    delete([locURL filesep fname '.nc']);
+            name = handles.Bathymetry.Dataset(ii).Name;
+            fprintf(fid,'%s\n\n',['BathymetryDataset "' handles.Bathymetry.Dataset(ii).longName '"']);
+            fprintf(fid,'%s\n',['    Type "' handles.Bathymetry.Dataset(ii).Type '"']);
+            fprintf(fid,'%s\n',['    Name "' name '"']);
+            if get(findobj(dmFig,'tag',['ddb_dmOd_' num2str(ii)]),'Value') % use opendap data
+                fprintf(fid,'%s\n',['    URL "' ddb_opendap_fileS 'bathymetry/' name]);
+                handles.Bathymetry.Dataset(ii).URL = [ddb_opendap_fileS 'bathymetry/' name];
+            elseif get(findobj(dmFig,'tag',['ddb_dmLoc_' num2str(ii)]),'Value') % use local data
+                fprintf(fid,'%s\n',['    URL "' dataDir 'bathymetry' filesep name]);
+                handles.Bathymetry.Dataset(ii).URL = [dataDir 'bathymetry' filesep name];
+                % copy files to local datadir
+                if ~exist(handles.Bathymetry.Dataset(ii).URL,'dir')
+                    mkdir(handles.Bathymetry.Dataset(ii).URL);
                 end
-                %(TODO: delete tiles!)
-                
-                % change URL in def-file and in handles structure
-                strfrep([handles.BathyDir '\tiledbathymetries.def'],locURL,odURL);
-                handles.Bathymetry.Dataset(ii).URL = odURL;
-                
-            elseif get(findobj(dmFig,'tag',['ddb_dmLoc_' num2str(ii)]),'Value') && isempty(strfind(handles.Bathymetry.Dataset(ii).URL,'local'))
-                % then data is now on opendap and it is required to use local data (check if it exists on local drive, otherwise make a copy)
-                
-                % copy file to local data dir
-                if ~exist(locURL,'dir')
-                    mkdir(locURL);
+                urlwrite([ddb_opendap_fileS 'bathymetry/' name '/' name '.nc'],[handles.Bathymetry.Dataset(ii).URL filesep name '.nc']);
+                % copy tiles
+                hW  = waitbar(0,'Please wait while downloading tiles...');
+                tiles = opendap_catalog([ddb_opendap_catalog 'bathymetry/' name '/catalog.html'],'maxlevel',Inf);
+                tiles = strrep(tiles,'dodsC','fileServer');
+                for t = 1:length(tiles)
+                    tname = fliplr(strtok(fliplr(tiles{t}),'/'));
+                    dir = strrep(strrep(tiles{t},[ddb_opendap_fileS 'bathymetry/' name '/'],''),tname,'');
+                    if ~isempty(dir)
+                        mkdir([dataDir 'bathymetry' filesep name],dir);
+                    end
+                    urlwrite(tiles{t},[dataDir 'bathymetry' filesep name filesep dir filesep tname]);
+                    waitbar(t/length(tiles),hW);
                 end
-                urlwrite([odURL '/' fname '.nc'],[locURL filesep fname '.nc']);
-                %(TODO: copy tiles!)
-                
-                % change URL in def-file and in handles structure
-                strfrep([handles.BathyDir '\tiledbathymetries.def'],odURL,locURL);
-                handles.Bathymetry.Dataset(ii).URL = locURL;
+                close(hW);
             end
+            fprintf(fid,'%s\n\n',['    useCache ' cache]);
+            fprintf(fid,'%s\n\n','EndShoreline');
         end
+        fclose(fid);
     case 'tidemodels'
+        defFile = [handles.TideDir '\tidemodels.def'];
+        
+        % make backup
+        copyfile(defFile,[defFile '.bu']);
+        
+        % create new def file
+        fid = fopen(defFile,'w');
+        
         for ii = 1:length(handles.TideModels.nrModels)
-            fname  = handles.TideModels.Model(ii).Name;
-            locURL = [dataDir 'tidemodels' filesep]; % url if file is stored locally
-            odURL  = [ddb_opendap_dodsC 'tidemodels/']; % url for file on opendap server
-            
-            if get(findobj(dmFig,'tag',['ddb_dmOd_' num2str(ii)]),'Value') && isempty(strfind(handles.TideModels.Model(ii).URL,'opendap'))
-                % then data is now local and is requested to use data on opendap
-                
-                % ask if local data file must be deleted
-                ans=questdlg(['Do you want to delete the local file ' locURL filesep fname '.nc ?'],'Question','Yes','No','Yes');
-                if strcmp(ans,'Yes')
-                    delete([locURL filesep fname '.nc']);
+            name = handles.TideModels.Model(ii).Name;
+            fprintf(fid,'%s\n\n',['TideModel "' handles.TideModels.Model(ii).longName '"']);
+            fprintf(fid,'%s\n',['    Type "' handles.TideModels.Model(ii).Type '"']);
+            fprintf(fid,'%s\n',['    Name "' name '"']);
+            if get(findobj(dmFig,'tag',['ddb_dmOd_' num2str(ii)]),'Value') % use opendap data
+                fprintf(fid,'%s\n',['    URL "' ddb_opendap_dodsC 'tidemodels']);
+                handles.TideModels.Model(ii).URL = [ddb_opendap_dodsC 'tidemodels'];
+            elseif get(findobj(dmFig,'tag',['ddb_dmLoc_' num2str(ii)]),'Value') % use local data
+                fprintf(fid,'%s\n',['    URL "' dataDir 'tidemodels']);
+                handles.TideModels.Model(ii).URL = [dataDir 'tidemodels'];
+                % copy files to local datadir
+                if ~exist(handles.TideModels.Model(ii).URL,'dir')
+                    mkdir(handles.TideModels.Model(ii).URL);
                 end
-                
-                % change URL in def-file and in handles structure
-                strfrep([handles.TideDir '\tiledbathymetries.def'],locURL,odURL);
-                handles.TideModels.Model(ii).URL = odURL;
-                
-            elseif get(findobj(dmFig,'tag',['ddb_dmLoc_' num2str(ii)]),'Value') && isempty(strfind(handles.TideModels.Model(ii).URL,'local'))
-                % then data is now on opendap and it is required to use local data (check if it exists on local drive, otherwise make a copy)
-                
-                % copy file to local data dir
-                urlwrite([odURL '/' fname '.nc'],[locURL filesep fname '.nc']);
-                
-                % change URL in def-file and in handles structure
-                strfrep([handles.TideDir '\tidemodels.def'],odURL,locURL);
-                handles.TideModels.Model(ii).URL = locURL;
+                urlwrite([ddb_opendap_fileS 'tidemodels/' name '.nc'],[handles.TideModels.Model(ii).URL filesep name '.nc']);
+                % copy tiles (no tiles for tidemodels!
             end
-        end        
-    case 'shorelines'
-        for ii = 1:length(handles.Shorelines.NrDatasets)
-            fname  = handles.Shorelines.Dataset(ii).Name;
-            locURL = [dataDir 'shorelines' filesep fname filesep]; % url if file is stored locally
-            odURL  = [ddb_opendap_fileS 'shorelines/' fname '/']; % url for file on opendap server
-            
-            if get(findobj(dmFig,'tag',['ddb_dmOd_' num2str(ii)]),'Value') && isempty(strfind(handles.Shorelines.Dataset(ii).URL,'opendap'))
-                % then data is now local and is requested to use data on opendap
-                
-                % ask if local data file must be deleted
-                ans=questdlg(['Do you want to delete the local file ' locURL filesep fname '.nc ?'],'Question','Yes','No','Yes');
-                if strcmp(ans,'Yes')
-                    delete([locURL filesep fname '.nc']);
-                end
-                %(TODO: delete tiles!)
-                
-                % change URL in def-file and in handles structure
-                strfrep([handles.ShorelineDir '\shorelines.def'],locURL,odURL);
-                handles.Shorelines.Dataset(ii).URL = odURL;
-                
-            elseif get(findobj(dmFig,'tag',['ddb_dmLoc_' num2str(ii)]),'Value') && isempty(strfind(handles.Shorelines.Dataset(ii).URL,'local'))
-                % then data is now on opendap and it is required to use local data (check if it exists on local drive, otherwise make a copy)
-                
-                % copy file to local data dir
-                % copy file to local data dir
-                if ~exist(locURL,'dir')
-                    mkdir(locURL);
-                end
-                urlwrite([odURL '/' fname '.nc'],[locURL filesep fname '.nc']);
-                %(TODO: copy tiles!)
-                
-                % change URL in def-file and in handles structure
-                strfrep([handles.ShorelineDir '\shorelines.def'],odURL,locURL);
-                handles.Shorelines.Dataset(ii).URL = locURL;
-            end
+            fprintf(fid,'%s\n\n',['    useCache ' cache]);
+            fprintf(fid,'%s\n\n','EndTideModels');
         end
+        fclose(fid);
+    case 'shorelines'
+        defFile = [handles.ShorelineDir '\shorelines.def'];
+        
+        % make backup
+        copyfile(defFile,[defFile '.bu']);
+        
+        % create new def file
+        fid = fopen(defFile,'w');
+        
+        for ii = 1:length(handles.Shorelines.nrShorelines)
+            name = handles.Shorelines.Shoreline(ii).Name;
+            fprintf(fid,'%s\n\n',['Shoreline "' handles.Shorelines.Shoreline(ii).longName '"']);
+            fprintf(fid,'%s\n',['    Type "' handles.Shorelines.Shoreline(ii).Type '"']);
+            fprintf(fid,'%s\n',['    Name "' name '"']);
+            if get(findobj(dmFig,'tag',['ddb_dmOd_' num2str(ii)]),'Value') % use opendap data
+                fprintf(fid,'%s\n',['    URL "' ddb_opendap_fileS 'shorelines/' name]);
+                handles.Shorelines.Shoreline(ii).URL = [ddb_opendap_fileS 'shorelines/' name];
+            elseif get(findobj(dmFig,'tag',['ddb_dmLoc_' num2str(ii)]),'Value') % use local data
+                fprintf(fid,'%s\n',['    URL "' dataDir 'shorelines' filesep name]);
+                handles.Shorelines.Shoreline(ii).URL = [dataDir 'shorelines' filesep name];
+                % copy files to local datadir
+                if ~exist(handles.Shorelines.Shoreline(ii).URL,'dir')
+                    mkdir(handles.Shorelines.Shoreline(ii).URL);
+                end
+                urlwrite([ddb_opendap_fileS 'shorelines/' name '/' name '.nc'],[handles.Shorelines.Shoreline(ii).URL filesep name '.nc']);
+                % copy tiles
+                hW  = waitbar(0,'Please wait while downloading tiles...');
+                tiles = opendap_catalog([ddb_opendap_catalog 'shorelines/' name '/catalog.html'],'maxlevel',Inf);
+                tiles = strrep(tiles,'dodsC','fileServer');
+                for t = 1:length(tiles)
+                    tname = fliplr(strtok(fliplr(tiles{t}),'/'));
+                    dir = strrep(strrep(tiles{t},[ddb_opendap_fileS 'shorelines/' name '/'],''),tname,'');
+                    if ~isempty(dir)
+                        mkdir([dataDir 'shorelines' filesep name],dir);
+                    end
+                    urlwrite(tiles{t},[dataDir 'shorelines' filesep name filesep dir filesep tname]);
+                    waitbar(t/length(tiles),hW);
+                end
+                close(hW);
+            end
+            fprintf(fid,'%s\n\n',['    useCache ' cache]);
+            fprintf(fid,'%s\n\n','EndShoreline');
+        end
+        fclose(fid);
 end
 
 setHandles(handles);
-close(dmFig);
 %%
 function dmCancel(hObject,eventdata)
 close(get(hObject,'Parent'));
@@ -212,4 +240,34 @@ if ~isempty(findstr(get(hObject,'tag'),'Loc'))
     set(findobj(get(hObject,'Parent'),'tag',strrep(get(hObject,'tag'),'Loc','Od')),'Value',0);
 elseif ~isempty(findstr(get(hObject,'tag'),'Od'))
     set(findobj(get(hObject,'Parent'),'tag',strrep(get(hObject,'tag'),'Od','Loc')),'Value',0);
+end
+
+%%
+function dmDeleteCache(hObject,eventdata)
+handles=getHandles;
+dmFig = get(hObject,'Parent');
+datatype = lower(get(dmFig,'Tag'));
+dataDir = handles.BathyDir(1:findstr(handles.BathyDir,'bathymetry')-1);
+
+clearData = questdlg(['You are about to clear all cached ' datatype 'data!'], 'Clear cache', 'Ok', 'Cancel','Ok');
+
+if strcmp(clearData,'Ok')
+    dirs = dir([dataDir filesep datatype]);
+    dirs = dirs([dirs.isdir] & ~strcmp('..',{dirs.name})&~strcmp('.',{dirs.name}));
+    
+    for d = 1:length(dirs)
+        rmdir([dataDir filesep datatype filesep dirs(d).name],'s');
+    end
+    
+    hOd  = findobj(dmFig,'-regexp','tag','ddb_dmOd_.*');
+    hLoc = findobj(dmFig,'-regexp','tag','ddb_dmLoc_.*');
+    for ii = 1:length(hOd)
+        set(hOd(ii),'Value',1);
+        set(hLoc(ii),'Value',0);
+    end
+    dmApply(hObject,eventdata);
+    
+    msgbox('Cached data cleared!');
+else
+    msgbox('Cached data not cleared!');
 end

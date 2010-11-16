@@ -9,3 +9,5 @@ else
     opt=opt0;
 end
 
+ddb_plotMDA(handles,opt,1);
+
