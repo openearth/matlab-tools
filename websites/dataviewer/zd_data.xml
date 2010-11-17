@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<zd_data>
+  <data>
+    <title>Westerschelde bathymetry</title>
+    <category>bathymetry</category>
+    <type>2dmap</type>
+    <kml>http://dtvirt5.deltares.nl/kml/Westerschelde/bathymetry.kml</kml>
+    <source>http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/kustlidar/catalog.nc</source>
+  </data>
+  <data>
+    <title>Westerschelde grid</title>
+    <category>grid</category>
+    <type>2dmap</type>
+    <kml>http://dtvirt5.deltares.nl/kml/Westerschelde/grid_hor.kml</kml>
+    <source></source>
+  </data>
+  <data>
+    <title>Westerschelde velocities</title>
+    <category>currents</category>
+    <type>2dmap</type>
+    <kml>http://dtvirt5.deltares.nl/kml/Westerschelde/westerschelde_arrows.kmz</kml>
+    <source></source>
+  </data>
+  <data>
+    <title>Zeeuws Vlaanderen Jarkus</title>
+    <category>bathymetry</category>
+    <type>2dmap</type>
+    <kml>http://dtvirt5.deltares.nl/kml/jarkus2/heel_nederland_per_regio/Zeeuws-Vlaanderen.kmz</kml>
+    <source></source>
+  </data>
+</zd_data>

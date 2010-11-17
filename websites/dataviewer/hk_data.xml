@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<hk_data>
+  <data>
+    <title>Vaklodingen_grids</title>
+    <category>bathymetry</category>
+    <type>2dmap</type>
+    <kml>http://dtvirt5.deltares.nl/kml/rijkswaterstaat/Vaklodingen.kml</kml>
+    <source>http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB138_0706.nc</source>
+  </data>
+  <data>
+    <title>Kustlidar_grids</title>
+    <category>bathymetry</category>
+    <type>2dmap</type>
+    <kml>http://dtvirt5.deltares.nl/kml/rijkswaterstaat/kustlidar.kml</kml>
+    <source>http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/kustlidar/catalog.nc</source>
+  </data>
+  <data>
+    <title>Suppleties</title>
+    <category>bathymetry</category>
+    <type>2dmap</type>
+    <kml>http://dtvirt5.deltares.nl/kml/suppleties/rws_suppletiedatabase.kml</kml>
+    <source></source>
+  </data>
+  <data>
+    <title>Sea surface height</title>
+    <category>waves</category>
+    <type>station</type>
+    <kml>http://dtvirt5.deltares.nl/kml/rijkswaterstaat/waterbase/sea_surface_height.kml</kml>
+    <source></source>
+  </data>
+</hk_data>

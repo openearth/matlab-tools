@@ -1,0 +1,170 @@
+<html>
+
+<head>
+
+	<script src="http://www.google.com/jsapi?key=ABQIAAAAJOL4Dbu6i1iFFND9tVK1SxThY3VCF3DWZTssv14dh1f1x3GsOxSnEXoyp-XsxHEvonBPiUuHJ5FHDA"></Script>
+	<script type="text/javascript" src="loadxmldoc.js"></script>
+	<script type="text/javascript" src="polydraw.js"></Script>
+	<script type="text/javascript" src="soapclient.js"></Script>
+	<script type="text/javascript">
+		var ge = null;
+		var pm = null;
+		var kml = null;
+
+		google.load("earth", "1", {'other_params': 'sensor=false' });
+
+		// Initialize called on HTML body load
+		function init()
+		{
+			google.earth.createInstance("map3d", initCB, failureCB);
+		}
+
+		// Initialization for Google Earth
+		function initCB(instance)
+		{
+			ge = instance;
+			// Google Earth Plugin Window Properties
+			ge.getWindow().setVisibility(true);
+			ge.getOptions().setStatusBarVisibility(true);
+			// Google Earth Navigation Control Properties
+			var navControl = ge.getNavigationControl();
+			navControl.setVisibility(ge.VISIBILITY_SHOW);
+			// Set starting position : The Netherlands
+			var la = ge.createLookAt('');
+			la.set(52.05249, 4.58105, 750000, ge.ALTITUDE_RELATIVE_TO_GROUND, 0, 0, 99.99);
+			ge.getView().setAbstractView(la);
+			// Polygon used for drawing the shape in Google Earth
+			pm = new Polygon(0,0,0,0,document.getElementById('polygonselect').value);
+			// Load the desired KML on start
+			loadKML('http://dtvirt13/test/ahn100.kmz');
+		}
+
+		// Initialize KMLs to be shown in Google Earth (needed for export to MathLab)
+		function loadKML(kmlLocation)
+		{
+			// If a previous KML has been loaded, unload it.
+			if (kml != null)
+			{
+				ge.getFeatures().removeChild(kml);
+			}
+			// Load the KML from location
+			google.earth.fetchKml(ge, kmlLocation,  function(kmlObject)
+													{
+														if (kmlObject)
+														{
+															kml = kmlObject;
+															ge.getFeatures().appendChild(kmlObject);
+														}
+													}
+			);
+		}
+
+		function loadWMS(wmsLocation)
+		{
+			var groundOverlay = ge.createGroundOverlay('');
+			groundOverlay.setIcon(ge.createIcon(''));
+			groundOverlay.getIcon().setHref(wmsLocation);
+			groundOverlay.setLatLonBox(ge.createLatLonBox(''));
+			var center = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
+			var north = center.getLatitude() + .75;
+			var south = center.getLatitude() - .75;
+			var east = center.getLongitude() + 1.00;
+			var west = center.getLongitude() - 1.00;
+			var rotation = 0;
+			var latLonBox = groundOverlay.getLatLonBox();
+			latLonBox.setBox(north, south, east, west, rotation);
+			ge.getFeatures().appendChild(groundOverlay);
+		}
+
+		// Call the MatLab SOAP interface, url: SOAP address, method: name
+		function CallMatLabSoap(url, method)
+		{
+			document.getElementById("inter_image").src = "no_image.gif";
+			try
+			{
+				var pl = new SOAPClientParameters();
+				// Add variables from document
+				pl.add("kmlFile", kml);
+				pl.add("centreLatitude", pm.cent.lat.toDeg());
+				pl.add("centreLongitude", pm.cent.lon.toDeg());
+				pl.add("vertexLatitude", pm.rad.lat.toDeg());
+				pl.add("vertexLongitude", pm.rad.lon.toDeg());
+				SOAPClient.invoke(url, method, pl, true, CallMatLabSoapCallBack);
+			}
+			catch(exception)
+			{
+				alert(exception);
+			}
+		}
+
+		// CallBack routine of the SOAP function
+		function CallMatLabSoapCallBack(result)
+		{
+			if(result != null)
+			{
+				document.getElementById("inter_image").src = "http://dtvirt13/ZMMatLab/output.png";
+			}
+		}
+
+		// If Google Earth fails to load this function captures the Error Code
+		function failureCB(errorCode){}
+
+		// Fill in the listbox with datasources on the basis of the selected case
+		function getDataOutOfCase(value)
+		{
+		// check if value > 0, else quit this function
+		if (value=="0")
+		{
+		    return true
+		}
+
+		// first remove all what is in the listbox
+		while(my_listbox.options.length!=0)
+		  my_listbox.options.remove(0);
+
+		// now load the requested xml-file
+		xmlDoc=loadXMLDoc(value);
+		numOfData=xmlDoc.getElementsByTagName("kml").length;
+
+		for (i=0;i<numOfData;i=i+1)
+		{
+		var oOption = document.createElement("OPTION");
+		oOption.text=xmlDoc.getElementsByTagName("title")[i].childNodes[0].nodeValue;
+		oOption.value=xmlDoc.getElementsByTagName("kml")[i].childNodes[0].nodeValue;
+		my_listbox.options.add(oOption)
+		}
+		return true;
+		}
+	</script>
+</head>
+
+<body onload='init()' id='body'>
+
+<form name="kmlShape" action='javascript:void(0);'>
+
+		<p>
+		<h3>Select case</h3>
+		<select name="case" id="caseSelect" onchange="getDataOutOfCase(this.value)" class="s">
+		<option value="0" class="vs">Select case</option>
+		<option value="hk_data.xml" class="vs">Hollandse Kust</option>
+		<option value="zd_data.xml" class="vs">Zuidwestelijke Delta</option>
+		<option value="my_data.xml" class="vs">Markermeer/IJselmeer</option>
+		<option value="si_data.xml" class="vs">Singapore</option>
+		</select></p>
+
+		<p>
+		<h3>Select data</h3>
+		<select name="kmlSelect" onchange='loadKML(this.value)' class="s">
+		<option value="" class="vs">Select case first</option>
+		<script type="text/javascript">my_listbox=document.kmlShape.kmlSelect</script>
+		</select></p>
+</form>
+
+<div id='map3d_container' style='border: 1px solid silver; height: 550px; margin-left:250px;'>
+	<div id='map3d' style='height: 100%;'></div>
+</div>
+
+
+</body>
+
+</html>
