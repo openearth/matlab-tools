@@ -78,6 +78,7 @@ xparab = xparab - xparab(1); % reset x0 to zero
 ParabZminUnderLowestPointProfile = min(zparab) < min(zInitial);
 
 if ~ParabZminUnderLowestPointProfile
+    % TODO: Why do we do this, it seems useless?
     toe  = [-1/12.5 (xparab(end)+x0max_wl)/12.5+zparab(end)];
     invtoe = [1/toe(1) -toe(2)/toe(1)]; % x = f(z)
     [xtoe, ztoe] = deal([xparab(end)+x0max_wl; polyval(invtoe,min(zInitial))], [zparab(end); min(zInitial)]);

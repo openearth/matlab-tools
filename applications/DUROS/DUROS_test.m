@@ -54,6 +54,8 @@ TeamCity.category('Integration');
 DuneErosionSettings('default');
 
 %% case 1 Reference profile
+disp('Case 1: Reference profile');
+
 xInitial = [-250;-24.375;5.625;55.725;230.625;2780.625];
 zInitial = [15;15;3;0;-3;-20];
 D50 = 0.000225;
@@ -68,7 +70,15 @@ result = DUROS(xInitial, zInitial,...
 'Tp_t',Tp_t);
 plotDuneErosion(result,figure);
 
+disp(' ');
+disp(['  Xr     = ' num2str(result(1).VTVinfo.Xr)]);
+disp(['  Xp     = ' num2str(result(1).VTVinfo.Xp)]);
+disp(['  Volume = ' num2str(result(1).Volumes.Volume)]);
+disp(' ');
+
 %% case 2 Reference profile with a valley in the dune)
+disp('Case 2: Reference profile with a valley in the dune');
+
 xInitial = [-250;-110;-100;-65;-45;-24.375;5.625;55.725;230.625;2780.625];
 zInitial = [15;15;2;2;15;15;3;0;-3;-20];
 D50 = 0.000225;
@@ -79,7 +89,14 @@ Tp_t = 12;
 result = DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t);
 plotDuneErosion(result,figure);
 
+disp(' ');
+disp(['  Xr     = ' num2str(result(1).VTVinfo.Xr)]);
+disp(['  Xp     = ' num2str(result(1).VTVinfo.Xp)]);
+disp(['  Volume = ' num2str(result(1).Volumes.Volume)]);
+disp(' ');
 %% case 3 Reference profile with a dune breach
+disp('Case 3: Reference profile with a dune breach');
+
 xInitial = [-250;-110;-100;-65;-45;-24.375;5.625;55.725;230.625;2780.625];
 zInitial = [15;15;2;2;15;15;3;0;-3;-20];
 D50 = 0.000225;
@@ -93,7 +110,14 @@ DuneErosionSettings('set','BoundaryProfile',false);
 result = DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t);
 plotDuneErosion(result,figure);
 
+disp(' ');
+disp(['  Xr     = ' num2str(result(1).VTVinfo.Xr)]);
+disp(['  Xp     = ' num2str(result(1).VTVinfo.Xp)]);
+disp(['  Volume = ' num2str(result(1).Volumes.Volume)]);
+disp(' ');
 %% case 4 Profile Noord-Holland transect 5475, year 2005
+disp('Case 4: Profile Noord-Holland transect 5475, year 2005');
+
 % profile with low dune rows in front of the main dune.
 % In total there are 4 valleys (wrt the water level)
 % In the DUROS computation, 2 dune rows breach. Because of the positive
@@ -115,6 +139,12 @@ DuneErosionSettings('set',...
 result = DUROS(xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t);
 plotDuneErosion(result, figure);
 
+disp(' ');
+disp(['  Xr     = ' num2str(result(1).VTVinfo.Xr)]);
+disp(['  Xp     = ' num2str(result(1).VTVinfo.Xp)]);
+disp(['  Volume = ' num2str(result(1).Volumes.Volume)]);
+disp(' ');
+
 %% case 5 Test settings as input as well
 xInitial = [-250;-24.375;5.625;55.725;230.625;2780.625];
 zInitial = [15;15;3;0;-3;-20];
@@ -131,5 +161,33 @@ result = DUROS(xInitial, zInitial,...
 'BoundaryProfile',false,...
 'AdditionalErosion',false);
 plotDuneErosion(result,figure);
+
+DuneErosionSettings('default');
+
+%% Case 6 Channel in Reference profile
+disp('Case 6: Channel in Reference profile');
+
+xInitial = [-250;-24.375;5.625;55.725;230.625;250; 2780.625];
+zInitial = [15;15;3;0;-3;-20; -20];
+D50 = 0.000225;
+WL_t = 5;
+Hsig_t = 9;
+Tp_t = 16;
+
+result = DUROS(xInitial, zInitial,...
+'Hsig_t',Hsig_t,...
+'WL_t',WL_t,...
+'D50',D50,...
+'Tp_t',Tp_t,...
+'BoundaryProfile',false,...
+'AdditionalErosion',false);
+plotDuneErosion(result,figure);
+
+disp(' ');
+disp(['  Xr     = ' num2str(result(1).VTVinfo.Xr)]);
+disp(['  Xp     = ' num2str(result(1).VTVinfo.Xp)]);
+disp(['  Volume = ' num2str(result(1).Volumes.Volume)]);
+disp(['  NIter  = ' num2str(result(1).info.iter)]);
+disp(' ');
 
 DuneErosionSettings('default');

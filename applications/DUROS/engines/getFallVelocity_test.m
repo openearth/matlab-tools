@@ -1,4 +1,4 @@
-function testresult = getFallVelocity_test()
+function getFallVelocity_test()
 % GETFALLVELOCITY_TEST  Unit test for getFallVelocity
 %  
 % This test definition function describes a unit test for getFallVelocity.
@@ -67,13 +67,11 @@ function testresult = getFallVelocity_test()
 % fourth digit) with an input grain size diameter D50 = 200e-6 and coefficients a = 0.476, b = 2.18,
 % c = 3.226.
 
-%% $RunCode
-
 D50range = (50e-6:10e-6:450e-6)';
 
 % calculate unit test:
 w = getFallVelocity('D50',200e-6,'a',0.476,'b',2.18,'c',3.226);
-testresult = roundoff(w,4)==0.0211;
+assert(roundoff(w,4)==0.0211);
 
 % First calculate with default settings
 wdef = getFallVelocity(D50range);

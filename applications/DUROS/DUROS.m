@@ -153,6 +153,7 @@ if dbstate
     dbPlotDuneErosion('new');
 end
 
+%% Step 1 / 2
 if DuneErosionSettings('get', 'DUROS')
     %% STEP 1: get DUROS erosion
     % In this step the DUROS(+) profile is constructed and iterated. After
