@@ -156,12 +156,12 @@
 		<form name="caseSelect" action='javascript:void(0);'>
 		<p>
 		<h3>Select case</h3>
-		<select name="case" id="caseSelect" onchange="getDataOutOfCase(this.value)" class="s">
+		<select name="case" id="caseSelect" onchange="location.href=this.options[this.selectedIndex].value" class="s">
 		<option value="0" class="vs">Select case</option>
-		<option value="hk_data.xml" class="vs">Hollandse Kust</option>
-		<option value="zd_data.xml" class="vs">Zuidwestelijke Delta</option>
-		<option value="my_data.xml" class="vs">Markermeer/IJselmeer</option>
-		<option value="si_data.xml" class="vs">Singapore</option>
+		<option value="http://dtvirt13/bwn/optie_compiled/test.html/hk/map" class="vs">Hollandse Kust</option>
+		<option value="http://dtvirt13/bwn/optie_compiled/test.html/zd/map" class="vs">Zuidwestelijke Delta</option>
+		<option value="http://dtvirt13/bwn/optie_compiled/test.html/my/map" class="vs">Markermeer/IJselmeer</option>
+		<option value="http://dtvirt13/bwn/optie_compiled/test.html/si/map" class="vs">Singapore</option>
 		</select>
 		</p>
 		</form>
