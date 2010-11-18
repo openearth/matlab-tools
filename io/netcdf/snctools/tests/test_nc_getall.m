@@ -1,7 +1,5 @@
-function test_nc_getall ( ncfile )
+function test_nc_getall()
 % TEST_NC_GETALL:  runs series of tests for nc_getall.m
-%
-% Relies upon nc_add_dimension, nc_addvar, nc_attput
 %
 % Test 1:  no input arguments, should fail
 % Test 3:  dump an empty file
@@ -13,10 +11,21 @@ function test_nc_getall ( ncfile )
 
 
 
-fprintf('Testing NC_GETALL ... \n' );
-if nargin == 0
-	ncfile = 'foo.nc';
-end
+fprintf('Testing NC_GETALL...  ' );
+
+run_negative_tests;
+run_positive_tests;
+fprintf('OK\n');
+
+%--------------------------------------------------------------------------
+function run_negative_tests()
+test_no_inputs;
+return
+
+%--------------------------------------------------------------------------
+function run_positive_tests()
+
+ncfile = 'foo.nc';
 
 test_underscore_attr ( ncfile );
 test_no_inputs;
@@ -25,6 +34,7 @@ test_one_dimension ( ncfile );
 test_one_fixed_size_variable ( ncfile );
 test_global_attributes ( ncfile );
 test_two_vars_with_atts ( ncfile );
+
 
 return
 
@@ -53,7 +63,7 @@ error('nc_getall succeeded when it should have failed.');
 %--------------------------------------------------------------------------
 function test_empty ( ncfile )
 
-create_test_file ( ncfile );
+nc_create_empty(ncfile);
 nb = nc_getall ( ncfile );
 if ~isstruct ( nb )
 	error ( 'result should have been a structure');
@@ -73,7 +83,7 @@ return
 %--------------------------------------------------------------------------
 function test_one_dimension ( ncfile )
 
-create_test_file ( ncfile );
+nc_create_empty(ncfile);
 nc_add_dimension ( ncfile, 'x', 6 );
 nb = nc_getall ( ncfile );
 if ~isstruct ( nb )
@@ -99,7 +109,7 @@ function test_one_fixed_size_variable ( ncfile )
 % Test 5:  one fixed size variable
 % nb should have one field, 'x'.
 % 'x' should have one field, 'data'.
-create_test_file ( ncfile );
+nc_create_empty(ncfile);
 nc_add_dimension ( ncfile, 'x', 6 );
 
 clear varstruct;
@@ -128,10 +138,9 @@ return
 %--------------------------------------------------------------------------
 function test_global_attributes( ncfile )
 
-%
 % Test 6:  add some global attributes
 % Same as Test 5, but with 6 global attributes.
-create_test_file ( ncfile );
+nc_create_empty(ncfile);
 nc_add_dimension ( ncfile, 'x', 6 );
 
 clear varstruct;
@@ -171,7 +180,7 @@ return
 %--------------------------------------------------------------------------
 function test_two_vars_with_atts ( ncfile )
 
-create_test_file ( ncfile );
+nc_create_empty(ncfile);
 nc_add_dimension ( ncfile, 'x', 6 );
 
 clear varstruct;
@@ -243,7 +252,7 @@ return
 %--------------------------------------------------------------------------
 function test_underscore_attr ( ncfile )
 
-create_test_file ( ncfile );
+nc_create_empty(ncfile);
 nc_add_dimension ( ncfile, 'x', 6 );
 
 clear varstruct;
@@ -267,30 +276,4 @@ return
 
 
 
-
-
-
-%--------------------------------------------------------------------------
-function create_test_file(ncfile)
-
-if snctools_use_tmw
-	ncid_1 = netcdf.create(ncfile, nc_clobber_mode );
-	netcdf.close(ncid_1);
-else
-	%
-	% ok, first create the first file
-	[ncid_1, status] = mexnc ( 'create', ncfile, nc_clobber_mode );
-	if ( status ~= 0 )
-		ncerr_msg = mexnc ( 'strerror', status );
-        error(ncerr_msg);
-	end
-	
-	%
-	% CLOSE
-	status = mexnc ( 'close', ncid_1 );
-	if ( status ~= 0 )
-		error ( 'CLOSE failed' );
-	end
-end
-return
 

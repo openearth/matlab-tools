@@ -6,14 +6,13 @@ fprintf('Testing NC_ISVAR ...\n' );
 run_nc3_tests(testroot);
 run_nc4_tests(testroot);
 run_java_tests(testroot);
-fprintf('OK\n');
 
 return
 
 
 %--------------------------------------------------------------------------
 function run_nc3_tests(testroot)
-	fprintf('\tRunning nc3 tests...\n' );
+	fprintf('\tRunning nc3 tests...' );
 	ncfile = fullfile(testroot,'testdata/empty.nc');
 	test_noArgs;
 	test_oneArg             ( ncfile );
@@ -26,6 +25,7 @@ function run_nc3_tests(testroot)
 	ncfile = fullfile(testroot,'testdata/full.nc');
 	test_variableNotPresent ( ncfile );
 	test_variablePresent    ( ncfile );
+    fprintf('OK\n');
 return
 
 
@@ -36,7 +36,7 @@ function run_nc4_tests(testroot)
         fprintf('configurations where the library version < 4.\n');
 		return
 	end
-	fprintf('\tRunning nc4 tests...\n' );
+	fprintf('\tRunning nc4 tests...  ' );
 	ncfile = fullfile(testroot,'testdata/empty-4.nc');
 	test_noArgs;
 	test_oneArg             ( ncfile );
@@ -49,6 +49,7 @@ function run_nc4_tests(testroot)
 	ncfile = fullfile(testroot,'testdata/full-4.nc');
 	test_variableNotPresent ( ncfile );
 	test_variablePresent    ( ncfile );
+    fprintf('OK\n');
 return
 
 
@@ -66,8 +67,9 @@ function run_java_tests(testroot) %#ok<INUSD>
         fprintf ('prefererence is false.\n' );
 		return
 	end    
-	fprintf('\tRunning java http tests...\n' );
+	fprintf('\tRunning java http tests...  ' );
 	test_javaNcidHttp ;
+    fprintf('OK\n');
 return
 
 

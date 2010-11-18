@@ -208,16 +208,25 @@ function values = nc_var_get_java ( jvarid, theDataTypeString )
 % NC_VAR_GET_JAVA:  reads the entire variable
 
 values = jvarid.read();
+values = copyToNDJavaArray(values);
 switch ( theDataTypeString )
     case 'char'
-        values = copyToNDJavaArray(values);
-    case { 'double', 'float', 'int', 'short', 'byte' }
-        values = copyToNDJavaArray(values);
+        %
+    case 'double'
         values = double(values);
+    case 'float'
+        values = single(values);
+    case 'int'
+        values = int32(values);
+    case 'short'
+        values = int16(values);
+    case 'byte'
+        values = int8(values);
+        
     otherwise
         error ( 'SNCTOOLS:nc_varget:var:java:unhandledDatatype', ...
             'unhandled datatype ''%s''', theDataTypeString );
-    
+        
 end
 return
 
@@ -336,6 +345,13 @@ function values = handle_fill_value_java ( jvarid, var_type, values )
 % Handle the fill value, if any.  Change those values into NaN.
 fillvalue_att = jvarid.findAttribute ( '_FillValue' );
 if ~isempty(fillvalue_att)
+	att_dtype = fillvalue_att.getDataType();
+	if ~strcmp(char(att_dtype.toString()), char(var_type.toString()))
+		warning('SNCTOOLS:nc_varget:java:fillValueMismatch', ...
+		    'The _FillValue attribute datatype is incorrect.  The _FillValue attribute will not be honored.');
+        return
+    end
+    
     switch ( char ( var_type.toString() ) )
     case 'char'
         %
@@ -345,6 +361,7 @@ if ~isempty(fillvalue_att)
 
     case { 'double', 'float', 'long', 'short', 'byte' }
         fill_value = fillvalue_att.getNumericValue().doubleValue();
+        values = double(values);
         values(values==fill_value) = NaN;
 
     end
@@ -372,6 +389,14 @@ end
 % Handle the missing value, if any.  Change those values into NaN.
 missing_value_att = jvarid.findAttribute ( 'missing_value' );
 if ~isempty(missing_value_att)
+	att_dtype = missing_value_att.getDataType();
+	if ~strcmp(char(att_dtype.toString()), char(theDataType.toString()))
+		warning('SNCTOOLS:nc_varget:java:missingValueMismatch', ...
+		    'The missing_value attribute datatype is incorrect.  The missing_value attribute will not be honored.');
+        return
+    end
+    
+    values = double(values);
     switch ( char ( theDataType.toString() ) )
     case 'char'
 

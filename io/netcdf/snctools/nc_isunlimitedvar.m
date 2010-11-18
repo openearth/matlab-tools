@@ -5,7 +5,11 @@ function tf = nc_isunlimitedvar ( ncfile, varname )
 %   variable VARNAME in the netCDF file NCFILE has an unlimited dimension,
 %   and false otherwise.
 %
-%   See also:  nc_info
+%   Example (requires 2008b or higher):
+%       nc_dump('example.nc');
+%       tf = nc_isunlimitedvar('example.nc','time_series')
+%
+%   See also NC_ISCOORDVAR, NC_DUMP.
 
 
 v = version('-release');

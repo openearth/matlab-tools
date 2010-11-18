@@ -8,9 +8,10 @@ function nc_adddim(ncfile,dimname,dimlen)
 %   360, a latitude dimension with length 180, and an unlimited time 
 %   dimension.
 %       nc_create_empty('myfile.nc');
-%       nc_adddim('myfile.nc','latitude',360);
-%       nc_adddim('myfile.nc','longitude',180);
+%       nc_adddim('myfile.nc','latitude',180);
+%       nc_adddim('myfile.nc','longitude',360);
 %       nc_adddim('myfile.nc','time',0);
+%       nc_dump('myfile.nc');
 %
 %   See also:  nc_addvar.
 
@@ -49,7 +50,6 @@ if sd_id < 0
         'START failed on %s.\n', hfile);
 end
 
-
 % Is there already a dataset with this name?
 idx = hdfsd('nametoindex',sd_id,dimname);
 if idx >=0
@@ -59,9 +59,7 @@ if idx >=0
 end
 
 % is it unlimited?  Netcdf conventions make this -1.
-unlimited = false;
 if (dimlen == -1) || (dimlen == 0) || isinf(dimlen)
-    unlimited = true;
     create_arg = inf;
 else
     create_arg = dimlen;
@@ -72,7 +70,6 @@ if sds_id < 0
     error('SNCTOOLS:addVar:hdf4:startFailed', ...
         'CREATE failed on %s.\n', hfile);
 end
-
 
 % ok, now make it a dimension as well
 dimid = hdfsd('getdimid',sds_id,0);
@@ -90,7 +87,6 @@ if status < 0
     error('SNCTOOLS:addDim:hdf4:setdimnameFailed', ...
         'SETDIMNAME failed on %s.\n', hfile);
 end
-
 
 status = hdfsd('endaccess',sds_id);
 if status < 0
@@ -139,15 +135,12 @@ if status
     error ( error_id, ncerr );
 end
 
-
 status = mexnc ( 'close', ncid );
 if status 
     ncerr = mexnc ( 'strerror', status );
     error_id = 'SNCTOOLS:nc_adddim:closeFailed';
     error ( error_id, ncerr );
 end
-
-
 
 return
 

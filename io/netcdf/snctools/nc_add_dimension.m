@@ -1,5 +1,5 @@
 function nc_add_dimension ( ncfile, dimension_name, dimension_length )
-% This function is deprecated, please use nc_adddim instead.
+% This function is deprecated, use nc_adddim instead.
 
 % NC_ADD_DIMENSION:  adds a dimension to an existing netcdf file
 %

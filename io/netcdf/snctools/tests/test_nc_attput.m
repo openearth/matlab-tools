@@ -1,4 +1,4 @@
-function test_nc_attput ( ncfile )
+function test_nc_attput()
 % TEST_NC_ATTPUT
 %
 % Tests run include
@@ -15,30 +15,67 @@ function test_nc_attput ( ncfile )
 
 fprintf ( 1, 'Testing NC_ATTGET, NC_ATTPUT...\n' );
 
+test_mexnc_backend;
+test_tmw_backend;
 
-if nargin == 0
-	ncfile = 'foo.nc';
-end
 
-test_classic(ncfile);
-test_hdf4('foo.hdf');
-test_netcdf4(ncfile);
-
-fprintf('OK\n');
 return;
 
 
 %--------------------------------------------------------------------------
-function test_classic(ncfile)
-fprintf('\tRunning netcdf-3 tests...  ');
+function test_mexnc_backend()
+
+fprintf('\tTesting mexnc backend ...\n');
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b','2007a','2007b','2008a'}
+        run_nc3_tests;
+        
+    otherwise
+        fprintf('\t\tmexnc testing filtered out on release %s.\n', v);
+        return
+end
+
+
+return
+%--------------------------------------------------------------------------
+function test_tmw_backend()
+
+fprintf('\tTesting tmw backend ...\n');
+
+run_hdf4_tests;
+
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b','2007a','2007b','2008a'}
+        fprintf('\t\ttmw testing filtered out on release %s... ', v);
+        return;
+        
+    case { '2008b','2009a','2009b','2010a'}
+        run_nc3_tests;
+        
+    otherwise
+        run_nc3_tests;
+        run_nc4_tests;
+end
+
+
+return
+
+
+%--------------------------------------------------------------------------
+function run_nc3_tests(ncfile)
+fprintf('\t\tRunning netcdf-3 tests...  ');
+ncfile = 'foo.nc';
 nc_create_empty(ncfile);
 run_tests(ncfile);
 fprintf('OK\n');
 return
 
 %--------------------------------------------------------------------------
-function test_hdf4(ncfile)
-fprintf('\tRunning hdf4 tests...  ');
+function run_hdf4_tests()
+fprintf('\t\tRunning hdf4 tests...  ');
+ncfile = 'foo.hdf';
 nc_create_empty(ncfile,'hdf4');
 run_tests(ncfile);
 
@@ -49,14 +86,12 @@ test_hdf4_fillvalue;
 fprintf('OK\n');
 return
 %--------------------------------------------------------------------------
-function test_netcdf4(ncfile)
-if ~netcdf4_capable
-	fprintf('\tmexnc (netcdf-4) backend testing filtered out on ');
-    fprintf('configurations where the library version < 4.\n');
-	return
-end
+function run_nc4_tests()
 
-fprintf('\tRunning netcdf-4 tests...  ');
+
+ncfile = 'foo4.nc';
+
+fprintf('\t\tRunning netcdf-4 tests...  ');
 nc_create_empty(ncfile,nc_netcdf4_classic);
 run_tests(ncfile);
 verify_netcdf4(ncfile);

@@ -1,26 +1,16 @@
 function data = nc_getall ( ncfile )
-% NCDATA = NC_GETALL(NCFILE) reads the entire contents of the netCDF file 
-% NCFILE into the structure NCDATA.  This function is deprecated and may be
-% dropped in a future release of SNCTOOLS.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% $Id$
-% $LastChangedDate$
-% $LastChangedRevision$
-% $LastChangedBy$
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%NC_GETALL Read entire contents of netCDF file.
+%   This function is deprecated and is no longer supported.
+% 
+%   NCDATA = NC_GETALL(NCFILE) reads the entire contents of the netCDF 
+%   file NCFILE into the structure NCDATA.  
 
 
 warning ( 'SNCTOOLS:nc_getall:deprecated', ...
           'NC_GETALL is deprecated and may be removed in a future version of SNCTOOLS.');
 
 
-
 % Show usage if too few arguments.
-%
 if nargin~=1 
     error ( 'must have one input argument.\n' );
 end
@@ -37,15 +27,11 @@ end
 %-----------------------------------------------------------------------
 function data = nc_getall_mex ( ncfile )
 data = [];
-%
-% Open netCDF file
-%
+
 [cdfid,status ]=mexnc('open',ncfile,'NOWRITE');
 if status ~= 0
     error ( mexnc('strerror', status) );
 end
-
-
 
 [nvars, status] = mexnc('INQ_NVARS', cdfid);
 if status < 0
@@ -68,8 +54,6 @@ for varid=0:nvars-1
         error ( mexnc('strerror', status) );
     end
 
-
-    %
     % If ndims is zero, then it must be a singleton variable.  Don't bother trying
     % to retrieve the data, there is none.
     if ( ndims == 0 )
@@ -79,9 +63,6 @@ for varid=0:nvars-1
         varstruct.data = values;
     end
 
-
-
-    %
     % get all the attributes
     for attnum = 0:natts-1
 
@@ -100,7 +81,6 @@ for varid=0:nvars-1
                 attnum, lasterr); %#ok<LERR>
         end
         
-        %
         % Matlab structures don't like the leading '_'
         if strcmp(attname,'_FillValue' )
             attname = 'FillValue';
@@ -110,7 +90,6 @@ for varid=0:nvars-1
         sanitized_attname = matlab_sanitize_attname ( attname );
 
 
-        %
         % this puts the attribute into the variable structure
         varstruct.(sanitized_attname) = attval;
 
@@ -118,17 +97,13 @@ for varid=0:nvars-1
     end
 
 
-    %
     % Add this variable to the entire file structure
     data.(varname) = varstruct;
 
 end
 
 
-%
 % Do the same for the global attributes
-%
-% get all the attributes
 global_atts = [];
 for attnum = 0:ngatts-1
 
@@ -149,12 +124,8 @@ for attnum = 0:ngatts-1
     
     sanitized_attname = matlab_sanitize_attname ( attname );
 
-
-    %
     % this puts the attribute into the variable structure
     global_atts.(sanitized_attname) = attval;
-
-
 
 end
 

@@ -1,7 +1,7 @@
 function bool = nc_isvar_tmw ( ncfile, varname )
 % TMW backend for NC_ISVAR.
 
-ncid = netcdf.open(ncfile, nc_nowrite_mode );
+ncid = netcdf.open(ncfile,'NOWRITE');
 try
 	netcdf.inqVarID(ncid,varname);
 	bool = true;

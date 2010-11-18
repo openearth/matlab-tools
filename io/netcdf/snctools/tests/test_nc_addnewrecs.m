@@ -1,4 +1,4 @@
-function test_nc_addnewrecs ( ncfile )
+function test_nc_addnewrecs()
 % TEST_NC_ADDNEWRECS
 %
 % Relies on nc_addvar, nc_getvarinfo
@@ -24,37 +24,50 @@ function test_nc_addnewrecs ( ncfile )
 
 fprintf('Testing NC_ADDNEWRECS ...\n' );
 
-if nargin == 0
-	ncfile = 'foo.nc';
+run_hdf4_tests;
+run_nc3_tests;
+
+
+
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b','2007a','2007b','2008a','2008b','2009a','2009b','2010a'}
+        fprintf(['\tnetcdf-4 tests filtered out where the MATLAB ' ...
+            'version is less than 2010b\n']);
+        
+    otherwise
+        run_nc4_tests;
 end
 
-run_tests_nc3(ncfile);
-run_hdf4_tests;
-run_tests_nc4(ncfile);
 
-fprintf('OK\n');
+return
+
+
+
+
 
 %--------------------------------------------------------------------------
 function run_hdf4_tests()
 hfile = 'foo.hdf';
+fprintf('\tTesting HDF4 ... ');
 create_ncfile(hfile,'hdf4');
 run_all_tests(hfile,'hdf4');
+fprintf('OK\n');
 
 %-------------------------------------------------------------------------------
-function run_tests_nc3 ( ncfile)
+function run_nc3_tests()
 fprintf('\tTesting netcdf-3...  ');
+ncfile = 'foo.nc';
 create_ncfile ( ncfile )
 run_all_tests(ncfile,nc_clobber_mode);
 fprintf('OK\n');
 
 %-------------------------------------------------------------------------------
-function run_tests_nc4 ( ncfile)
-if ~netcdf4_capable
-	fprintf('\tmexnc (netcdf-4) backend testing filtered out on configurations where the library version < 4.\n');
-	return
-end
+function run_nc4_tests()
+
 
 fprintf('\tTesting netcdf-4...  ');
+ncfile = 'foo4.nc';
 create_ncfile ( ncfile, nc_netcdf4_classic )
 run_all_tests(ncfile,nc_netcdf4_classic);
 fprintf('OK\n');
@@ -834,6 +847,34 @@ return
 
 
 
+
+
+%--------------------------------------------------------------------------
+function test_014(ncfile,mode)
+% Add a single record, trailing singleton dimensions.
+create_014_testfile(ncfile,mode);
+
+b.time = 0;
+b.t1 = 0;
+
+nc_addnewrecs ( ncfile, b, 'time' );
+
+clear b
+b.time = 1;
+b.t1 = 1;
+nc_addnewrecs ( ncfile, b, 'time' );
+
+
+%
+% Now read them back.  
+t1 = nc_varget ( ncfile, 't1' );
+if (t1(1) ~= 0) && (t1(2) ~= 1)
+    error('values are wrong');
+end
+
+
+return
+
 %--------------------------------------------------------------------------
 function create_014_testfile(ncfile,mode)
 
@@ -863,29 +904,3 @@ else
     varstruct.Dimension = { 'time', 'y', 'x' };
 end
 nc_addvar ( ncfile, varstruct );
-
-%---------------------------------------------------------------------------
-function test_014(ncfile,mode)
-
-create_014_testfile(ncfile,mode);
-
-b.time = 0;
-b.t1 = 0;
-
-nc_addnewrecs ( ncfile, b, 'time' );
-
-clear b
-b.time = 1;
-b.t1 = 1;
-nc_addnewrecs ( ncfile, b, 'time' );
-
-
-%
-% Now read them back.  
-t1 = nc_varget ( ncfile, 't1' );
-if (t1(1) ~= 0) && (t1(2) ~= 1)
-    error('values are wrong');
-end
-
-
-return

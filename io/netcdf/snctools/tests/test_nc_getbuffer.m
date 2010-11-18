@@ -26,10 +26,52 @@ function test_nc_getbuffer ( )
 %           should be everything from start to "end - count"
 % test 14:  4 inputs.  Otherwise the same as test 11.
 
-testroot = fileparts(mfilename('fullpath'));
+fprintf('Testing NC_GETBUFFER ...\n');
 
-fprintf('Testing NC_GETBUFFER ... \n');
+run_netcdf3_tests;
+run_netcdf4_tests;
+
+%--------------------------------------------------------------------------
+function run_netcdf3_tests()
+
+fprintf('\tTesting netcdf-3 ...  ');
+testroot = fileparts(mfilename('fullpath'));
 ncfile = fullfile(testroot, 'testdata/empty.nc'   );
+run_negative_tests(ncfile);
+
+testroot = fileparts(mfilename('fullpath'));
+ncfile = fullfile(testroot, 'testdata/getlast.nc' );
+run_positive_tests(ncfile);
+
+fprintf('OK\n');
+
+
+%--------------------------------------------------------------------------
+function run_netcdf4_tests()
+
+fprintf('\tTesting netcdf-4 ...  ');
+v = version('-release');
+switch(v)
+    case {'14','2006a','2006b','2007a','2007b','2008a','2008b','2009a','2009b','2010a'}
+        if ~getpref('SNCTOOLS','USE_JAVA',false)
+            fprintf(['\n\t\tFiltering out netcdf-4 testing on release %s '...
+                'when SNCTOOLS preference USE_JAVA is set to false.'], v);
+            return;
+        end
+end
+
+testroot = fileparts(mfilename('fullpath'));
+ncfile = fullfile(testroot, 'testdata/empty-4.nc'   );
+run_negative_tests(ncfile);
+
+testroot = fileparts(mfilename('fullpath'));
+ncfile = fullfile(testroot, 'testdata/getlast-4.nc' );
+run_positive_tests(ncfile);
+
+fprintf('OK\n');
+
+%--------------------------------------------------------------------------
+function run_negative_tests(ncfile)
 
 test_no_inputs;
 test_2nd_input_not_cell_array(ncfile);
@@ -41,15 +83,20 @@ test_1_input_not_a_file;
 test_too_many_inputs(ncfile);
 test_1_input_no_record_variable(ncfile);
 
-% positive tests
-ncfile = fullfile(testroot, 'testdata/getlast.nc' );
+return;
+
+%--------------------------------------------------------------------------
+function run_positive_tests(ncfile)
+
+
+
 test_5_record_variables  (ncfile);
 test_restrict_to_2_vars  (ncfile);
 test_start_and_count     (ncfile);
 test_negative_start_count(ncfile);
 test_start_negative_count(ncfile);
 test_varlist_start_neg_count (ncfile);
-fprintf('OK\n');
+
 return
 
 

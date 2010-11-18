@@ -17,10 +17,16 @@ switch ( version('-release') )
 end
 
 fmt = snc_format(ncfile);
-nl = mexnc('inq_libvers');
+
+try
+nv = mexnc('inq_libvers'); 
+catch
+disp('no valid mexnc found: writing of netCDF files not possible! Please upgrade Matlab or fix mexnc (see README).')
+end
+
 if strcmp(fmt,'HDF4')
     backend = 'tmw_hdf4';
-elseif (nl(1) == '4') && tmw_lt_r2010b
+elseif (nv(1) == '4') && tmw_lt_r2010b
     % netcdf-4 enabled mex-file
     backend = 'mexnc';
 elseif strcmp(fmt,'netCDF-4') && tmw_lt_r2010b

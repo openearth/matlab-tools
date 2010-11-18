@@ -22,7 +22,6 @@ switch(v)
         test_nc_varget_neg;
 end
 
-fprintf('OK\n');
 
 return
 
@@ -31,18 +30,22 @@ function test_bad_missing_value()
 
 warning('off','SNCTOOLS:nc_varget:tmw:missingValueMismatch');
 warning('off','SNCTOOLS:nc_varget:mexnc:missingValueMismatch');
+warning('off','SNCTOOLS:nc_varget:java:missingValueMismatch');
 nc_varget('testdata/badfillvalue.nc','z');
 warning('on','SNCTOOLS:nc_varget:tmw:missingValueMismatch');
 warning('on','SNCTOOLS:nc_varget:mexnc:missingValueMismatch');
+warning('on','SNCTOOLS:nc_varget:java:missingValueMismatch');
 
 %--------------------------------------------------------------------------
 function test_bad_fill_value()
 
 warning('off','SNCTOOLS:nc_varget:tmw:fillValueMismatch');
 warning('off','SNCTOOLS:nc_varget:mexnc:fillValueMismatch');
+warning('off','SNCTOOLS:nc_varget:java:fillValueMismatch');
 nc_varget('testdata/badfillvalue.nc','y');
 warning('on','SNCTOOLS:nc_varget:tmw:fillValueMismatch');
 warning('on','SNCTOOLS:nc_varget:mexnc:fillValueMismatch');
+warning('on','SNCTOOLS:nc_varget:java:fillValueMismatch');
 
 %--------------------------------------------------------------------------
 function run_hdf4_tests(testroot)
@@ -241,12 +244,12 @@ return
 function run_grib2_java_tests(testroot)
 
 if ~getpref('SNCTOOLS','TEST_GRIB2',false)
-    fprintf('GRIB2 testing filtered out where SNCTOOLS preference ');
+    fprintf('\tGRIB2 testing filtered out where SNCTOOLS preference ');
     fprintf('TEST_GRIB2 is set to false.\n');
     return
 end
 if ~getpref('SNCTOOLS','USE_JAVA',false)
-    fprintf('GRIB2 testing filtered out where SNCTOOLS preference ');
+    fprintf('\tGRIB2 testing filtered out where SNCTOOLS preference ');
     fprintf('USE_JAVA is set to false.\n');
     return
 end
@@ -272,7 +275,7 @@ function test_readOpendapVariable ()
     % use data of today as the server has a clean up policy
     today = datestr(floor(now),'yyyymmdd');
     url = ['http://motherlode.ucar.edu:8080/thredds/dodsC/satellite/CTP/SUPER-NATIONAL_1km/current/SUPER-NATIONAL_1km_CTP_',today,'_0000.gini'];
-    fprintf ( 1, 'Testing remote URL access %s...\n', url );
+    fprintf ( '\tTesting remote URL access %s...\n', url );
     
     % I have no control over what this value is, so we'll just assume it
     % is correct.

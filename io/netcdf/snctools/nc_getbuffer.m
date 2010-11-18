@@ -1,51 +1,24 @@
 function theBuffer = nc_getbuffer ( ncfile, varargin )
-% NC_GETBUFFER:  read unlimited variables into structure
+%NC_GETBUFFER  Read unlimited variables into structure.
 %
-% USAGE:  theBuffer = nc_getbuffer ( ncfile );
-% USAGE:  theBuffer = nc_getbuffer ( ncfile, varlist );
-% USAGE:  theBuffer = nc_getbuffer ( ncfile, start, count );
-% USAGE:  theBuffer = nc_getbuffer ( ncfile, varlist, start, count );
+%   theBuffer = NC_GETBUFFER(NCFILE) reads all unlimited variables into a
+%   structure.
 %
-% PARAMETERS:
-% INPUT:
-%     ncfile:  
-%        Input netcdf file name.
-%     varlist:
-%        cell array of named variables.  Only data for these variables 
-%        will be retrieved from the file
-%     start, count:
-%        starting index and number of records to retrieve.  This is 
-%        optional.  If not provided, all of the record variables will
-%        be retrieved.
-%        
-%        If start is negative, then the last few records (total of
-%        "count") are retrieved.
+%   theBuffer = NC_GETBUFFER(NCFILE,VARLIST) reads variables listed in the
+%   cell array VARLIST into a structure.
 %
-%        If count is negative, then everything beginning at "start" 
-%        and going all the way to the end is retrieved.
-% 
-% OUTPUT:
-%     theBuffer:
-%        Structure with fields corresponding to each netcdf record variable.  
-%        Each such field contains the data for that variable.
+%   theBuffer = NC_GETBUFFER(NCFILE,START,COUNT) reads all unlimited
+%   variables into a structure.  I/O starts at zero-indexed record number
+%   START and encompasses COUNT records.  IF COUNT is negative, then all
+%   records starting at COUNT to the end of the file are retrieved.
 %
-% Setting the preference 'PRESERVE_FVD' to true will compel MATLAB to 
-% display the dimensions in the opposite order from what the C utility 
-% ncdump displays.  
-% 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   theBuffer = NC_GETBUFFER(NCFILE,VARLIST,START,COUNT) reads variables
+%   listed in the cell array VARLIST into a structure.  I/O starts at
+%   zero-indexed record number START and encompasses COUNT records.
 %
-% $Id$
-% $LastChangedDate$
-% $LastChangedRevision$
-% $LastChangedBy$
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   See also NC_VARGET.
 
 
-
-%
 % assume failure until success is known
 theBuffer = [];
 

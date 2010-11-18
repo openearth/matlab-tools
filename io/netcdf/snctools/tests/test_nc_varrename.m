@@ -22,7 +22,7 @@ function test_nc_varrename ( ncfile )
 global ignore_eids;
 ignore_eids = getpref('SNCTOOLS','IGNOREEIDS',true);
 
-fprintf ( 1, 'Testing NC_VARRENAME... \n' );
+fprintf ( 1, 'Testing NC_VARRENAME...  ' );
 if nargin == 0
 	ncfile = 'foo.nc';
 end

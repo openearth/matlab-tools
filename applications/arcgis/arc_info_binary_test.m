@@ -1,8 +1,7 @@
-function arc_info_binary_test()
+function OK = arc_info_binary_test()
 % ARC_INFO_BINARY_TEST   test for arc_info_binary_test
 %  
-% More detailed description of the test goes here.
-%
+% test arc_info_binary_test with sets from OpenEarthRawData
 %
 %   See also arc_info_binary, arcgisread
 
@@ -55,16 +54,13 @@ if TeamCity.running
     return;
 end
 
-clc;
-clear;
-fclose all;
-
 %% Test data 
 % All data files in
 %    F:\checkouts\OpenEarthRawData\
 % are a Subversion checkout from:
 %    http:repos.deltares.nl/repos/OpenEarthRawData/trunk/
 
+%% binary grids to be read with arc_info_binary_test
 maps = {'F:\checkouts\OpenEarthRawData\tno\ncp\raw\dz10_juli2007',... % 1 floats, OK
         'F:\checkouts\OpenEarthRawData\tno\ncp\raw\dz50_juli2007',... % 2
         'F:\checkouts\OpenEarthRawData\tno\ncp\raw\dz90_juli2007',... % 3
@@ -89,6 +85,7 @@ maps = {'F:\checkouts\OpenEarthRawData\tno\ncp\raw\dz10_juli2007',... % 1 floats
         'F:\checkouts\OpenEarthRawData\rijkswaterstaat\Oosterschelde\Galgeplaat\rasters\g_os2007\',...              % 2
         'F:\checkouts\OpenEarthRawData\rijkswaterstaat\Oosterschelde\Galgeplaat\rasters\laser_07_galg\'};           % 3
 
+%% ascii dumps mae with arcgis, can be used for regression analysis
 ascii= {'F:\checkouts\OpenEarthRawData\tno\ncp\raw\dz10_juli2007\rastert_dz10_ju.txt',... % 1 floats, OK
         'F:\checkouts\OpenEarthRawData\tno\ncp\raw\dz50_juli2007\rastert_dz50_ju1.txt',... % 2
         'F:\checkouts\OpenEarthRawData\tno\ncp\raw\dz90_juli2007\rastert_dz90_ju1.txt',... % 3
@@ -113,6 +110,7 @@ ascii= {'F:\checkouts\OpenEarthRawData\tno\ncp\raw\dz10_juli2007\rastert_dz10_ju
         'F:\checkouts\OpenEarthRawData\rijkswaterstaat\Oosterschelde\Galgeplaat\rasters\g_os2007\',...              % 2
         'F:\checkouts\OpenEarthRawData\rijkswaterstaat\Oosterschelde\Galgeplaat\rasters\laser_07_galg\'};           % 3
 
+%% we cannot read *prj file yet, but often there isn't even one
 epsg = [32631 % 'WGS 84 / UTM zone 31N'
         32631
         32631
@@ -139,7 +137,7 @@ epsg = [32631 % 'WGS 84 / UTM zone 31N'
 
 for im= 1:length(maps)
 
-close all
+   close all
 
    try
    [X,Y,D,M] = arc_info_binary([maps{im},'\'],...
@@ -160,4 +158,4 @@ close all
 
 end
 
-% succes = 1     1     1     1     1     1     0     0     0     1     1     0     1     0     0 ...
+OK = all(succes);

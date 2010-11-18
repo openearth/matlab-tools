@@ -1,19 +1,12 @@
 function return_status = nc_diff ( nc1, nc2, varargin )
-% NC_DIFF:  determines if two NetCDF files contain the same data.  
+%NC_DIFF  Determine if two NetCDF files contain the same data.  
+%   This function is not recommended and is no longer supported.
 %
-% USAGE:  status = nc_diff ( ncfile1, ncfile2 );
-% USAGE:  status = nc_diff ( ncfile1, ncfile2, '-attributes' );
+%   STATUS = NC_DIFF(NCFILE1,NCFILE2) compares the data in two
+%   netCDF files.  STATUS will be zero if the files are the same.
 %
-% PARAMETERS:
-% Input:
-%    ncfile1, ncfile2:  two netcdf files
-% Output:
-%    status:  
-%         0 is returned if both files are the same, -1 if they are 
-%         not the same.
-%
-% An exception is thrown in case an error condition arises.
-%
+%   STATUS = NC_DIFF(NCFILE1,NCFILE2,'-attributes') compares 
+%   data and attributes in two netCDF files.
 %
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

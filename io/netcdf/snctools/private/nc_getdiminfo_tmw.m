@@ -21,7 +21,7 @@ return
 %--------------------------------------------------------------------------
 function dinfo = handle_char_nc_getdiminfo_tmw ( ncfile, dimname )
 
-ncid=netcdf.open(ncfile,nc_nowrite_mode);
+ncid=netcdf.open(ncfile,'NOWRITE');
 try
     dimid = netcdf.inqDimID(ncid, dimname);
     dinfo = handle_numeric_nc_getdiminfo_tmw(ncid,dimid);

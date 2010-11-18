@@ -1,7 +1,6 @@
 function nc_cat_a ( input_ncfiles, output_ncfile, abscissa_var )
 %NC_CAT_A  Concatentates a set of netcdf files into ascending order.
-%
-%   This function is deprecated.  Please use nc_cat instead.
+%   This function is not recommended.  Use nc_cat instead.
 %
 %   The concatenation is done only along unlimited variable, which by
 %   definition have an unlimited dimension.  Variables which do NOT have

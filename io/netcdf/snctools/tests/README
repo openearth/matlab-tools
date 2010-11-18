@@ -2,7 +2,6 @@ Please run "test_snctools.m".  These produce a lot of very verbose
 output.  Don't be fooled by any of it, if any tests fail, you will
 know.
 
-
 In order to test java functionality with OPeNDAP, you should set
 both of these preferences.
 
@@ -21,4 +20,10 @@ are not enabled by default.  To run them, set the following preference
 
     >> setpref('SNCTOOLS','TEST_GRIB2',true);
 
+In order to test local read-only support if your platform is PCWIN64
+and you are stuck with R2008a or earlier, you must set the following
+preferences:
+
+    >> setpref('SNCTOOLS','USE_JAVA',true);
+    >> setpref('SNCTOOLS','TEST_JAVA_READ_ONLY',true);
 

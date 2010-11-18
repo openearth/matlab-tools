@@ -1,41 +1,86 @@
-function test_nc_create_empty ( ncfile )
-%
-% Test:  Supply no arguments.
+function test_nc_create_empty()
 % Test:  No mode given
 % Test:  64-bit mode
 % Test:  create a netcdf-4 file
 % test_char_mode:  the mode is a string instead of numeric
 
-fprintf('Testing NC_CREATE_EMPTY... \n' );
+fprintf('Testing NC_CREATE_EMPTY...  ' );
 
-if nargin < 1
-	ncfile = 'foo.nc';
-end
+negative_testing;
 
-test_no_args;                          % #1
-test_no_mode_given ( ncfile );         % #2
-test_64bit_mode ( ncfile );            % #3
-test_netcdf4_classic ( ncfile );       % #4
+test_mexnc_backend;
+test_tmw_backend;
 
-test_char_mode ( ncfile );             % #5
-
-fprintf('OK\n');
 return
 
 
+%--------------------------------------------------------------------------
+function run_nc3_tests()
+fprintf('\t\tTesting netcdf-3 ...  ');
 
+ncfile = 'foo.nc';
+test_no_mode_given(ncfile);
+test_64bit_mode(ncfile);
+test_char_mode(ncfile);
+
+fprintf('OK\n');
+
+%--------------------------------------------------------------------------
+function run_nc4_tests()
+fprintf('\t\tTesting netcdf-4 ...  ');
+
+ncfile = 'foo4.nc';
+test_netcdf4_classic(ncfile);
+
+fprintf('OK\n');
+
+%--------------------------------------------------------------------------
+function test_mexnc_backend()
+
+fprintf('\tTesting mexnc backend ...\n');
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b','2007a','2007b','2008a'}
+        run_nc3_tests;
+        
+    otherwise
+        fprintf('\t\tmexnc testing filtered out on release %s.\n', v);
+        return
+end
+
+
+return
 
 
 %--------------------------------------------------------------------------
-function test_hdf4(hfile)
+function test_tmw_backend()
 
-nc_create_empty(hfile,'hdf4');
-sd_id = hdfsd('start',hfile,0);
-if sd_id < 0
-    error('failed');
-else
-	hdfsd('end',sd_id);
+fprintf('\tTesting tmw backend ...\n');
+
+
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b','2007a','2007b','2008a'}
+        fprintf('\t\ttmw testing filtered out on release %s... ', v);
+        return;
+        
+    case { '2008b','2009a','2009b','2010a'}
+        run_nc3_tests;
+        
+    otherwise
+        run_nc3_tests;
+        run_nc4_tests;
 end
+
+
+return
+
+
+%--------------------------------------------------------------------------
+function negative_testing()
+
+test_no_args;
+
 
 %--------------------------------------------------------------------------
 function test_netcdf4_classic ( ncfile )

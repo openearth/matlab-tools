@@ -1,13 +1,12 @@
 function str = nc_datatype_string ( datatype_id )
-% NC_DATATYPE_STRING:  constructs string representation of a netcdf type id
+%NC_DATATYPE_STRING Construct string representation of netcdf type id.
+%   This function is not recommended.
 %
-% DSTRING = NC_DATATYPE_STRING(TYPE_ID) takes a numeric type TYPE_ID and 
-% returns a string equivalent, DSTRING.  
+%   DSTRING = NC_DATATYPE_STRING(TYPE_ID) takes a numeric type TYPE_ID and 
+%   returns a string equivalent, DSTRING.  
 %
-% This function is deprecated and may not be supported in future releases of
-% SNCTOOLS.
 %
-% The type conversions are as follows:
+%   The type conversions are as follows:
 %
 %          0 ==> 'NC_NAT'.
 %          1 ==> 'NC_BYTE'.
@@ -32,8 +31,6 @@ warning ( 'SNCTOOLS:nc_datatype_string:deprecated', ...
     '%s is deprecated and may be removed in a future version of SNCTOOLS.', ...
     upper(mfilename)  );
 
-error(nargchk(1,1,nargin));
-error(nargoutchk(1,1,nargout));
 
 if ~isnumeric ( datatype_id )
 	error ( 'SNCTOOLS:NC_DATATYPE_STRING:badInput', 'datatype ID must be numeric' );

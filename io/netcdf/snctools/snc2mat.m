@@ -1,9 +1,9 @@
 function snc2mat ( ncfile, matfile ) %#ok<INUSD>
-% SNC2MAT:  saves netcdf file to *.mat format.  
+%SNC2MAT  Save netcdf file to *.mat format
+%   This function is not recommended and is no longer supported.
 %
-% SNC2MAT(NCFILE,MATFILE) will save the netCDF file NCFILE to the mat-file 
-% MATFILE.  This function is deprecated and may disappear in a future release
-% of SNCTOOLS.
+%   SNC2MAT(NCFILE,MATFILE) will save the netCDF file NCFILE to the 
+%   mat-file MATFILE.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %

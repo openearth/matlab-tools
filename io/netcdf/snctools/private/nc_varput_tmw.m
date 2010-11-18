@@ -1,5 +1,5 @@
 function nc_varput_tmw( ncfile, varname, data, start,count,stride )
-ncid = netcdf.open(ncfile, nc_write_mode);
+ncid = netcdf.open(ncfile,'WRITE');
 try
     varid = netcdf.inqVarID(ncid, varname );
     [dud,var_type,var_dim]=netcdf.inqVar(ncid,varid); %#ok<ASGLU>

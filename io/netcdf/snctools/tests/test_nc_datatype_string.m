@@ -16,12 +16,23 @@ function test_nc_datatype_string()
 % test 10:  input is 5 ==> 'NC_FLOAT'
 % test 11:  input is 6 ==> 'NC_DOUBLE'
 
-fprintf('Testing NC_DATATYPE_STRING ...');
+fprintf('Testing NC_DATATYPE_STRING ...  ');
 
+run_negative_tests;
+run_positive_tests;
+
+fprintf('OK\n');
+
+%--------------------------------------------------------------------------
+function run_negative_tests()
 test_no_inputs;
 test_too_many_inputs;
 test_input_not_numeric;
 test_input_out_of_range;
+return
+
+%--------------------------------------------------------------------------
+function run_positive_tests()
 
 test_nat;
 test_byte;
@@ -30,8 +41,6 @@ test_short;
 test_int;
 test_float;
 test_double;
-
-fprintf('OK\n');
 
 return
 

@@ -11,25 +11,20 @@ if nargin == 0
 end
 
 
-fprintf ('Testing SNC2MAT ...' );
+fprintf ('Testing SNC2MAT...  ' );
 
 test_generic_file ( ncfile );
 
 v = version('-release');
 switch(v)
 	case{'14','2006a','2006b','2007a'}
-	    fprintf('\tSome negative tests filtered out on version %s.\n', v);
+	    fprintf('\n\tSome negative tests filtered out on version %s...  ', v);
     otherwise
 		test_snc2mat_neg;
 end
 
-fprintf ('OK\n');
-
+fprintf('OK\n');
 return
-
-
-
-
 
 
 

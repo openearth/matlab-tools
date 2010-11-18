@@ -6,8 +6,8 @@
 % A list of operational OPeNDAP servers for marine and coastal data is:
 % * Delft: <a href="http://opendap.deltares.nl/">http://opendap.deltares.nl/</a> (THREDDS + HYRAX)
 % * Delft: <a href="http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/">http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/</a> (THREDDS test)
-% * Rijkwsaterstaat: <a href="http://matroos.deltares.nl:8080/thredds/">http://matroos.deltares.nl:8080/thredds/</a> (THREDDS + password)
-% * Rijkwsaterstaat: <a href="http://matroos.deltares.nl/direct/opendap.html">http://matroos.deltares.nl/direct/opendap.html</a> (HYRAX + password)
+% * Rijkswaterstaat: <a href="http://matroos.deltares.nl:8080/thredds/">http://matroos.deltares.nl:8080/thredds/</a> (THREDDS + password)
+% * Rijkswaterstaat: <a href="http://matroos.deltares.nl/direct/opendap.html">http://matroos.deltares.nl/direct/opendap.html</a> (HYRAX + password)
 % * USGS: <a href="http://coast-enviro.er.usgs.gov/thredds/">http://coast-enviro.er.usgs.gov/thredds/</a> (THREDDS)
 % * NOAA: <a href="http://data.nodc.noaa.gov/opendap">http://data.nodc.noaa.gov/opendap</a> (HYRAX)
 % * NOAA: <a href="http://dods.ndbc.noaa.gov/thredds/catalog/data/catalog.html">http://dods.ndbc.noaa.gov/thredds/catalog/data/catalog.html</a> (THREDDS)

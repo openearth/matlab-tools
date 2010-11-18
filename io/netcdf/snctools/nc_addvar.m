@@ -1,9 +1,8 @@
 function nc_addvar(ncfile,varstruct)
-%NC_ADDVAR:  add variable to NetCDF or HDF4 file.
+%NC_ADDVAR  Add variable to NetCDF file.
 %
 %   nc_addvar(FILE,VARSTRUCT) adds a variable described by varstruct to a 
-%   netcdf or HDF4 file.  VARSTRUCT is a structure with the following
-%   fields:
+%   netcdf file.  VARSTRUCT is a structure with the following fields:
 %
 %      Name       - name of netcdf variable.
 %      Datatype   - datatype of the variable.  This should be one of
@@ -21,9 +20,6 @@ function nc_addvar(ncfile,varstruct)
 %      Deflate    - specifies the deflate level and should be between 0 and
 %                   9.  Defaults to 0, which turns the deflate filter off.
 %                   This can only be used with netcdf-4 files.
-%
-%   Note that if FILE is an HDF4 file, and if you wish to create a
-%   coordinate variable, then NC_ADDDIM has already done this for you.
 %
 %   Example:  create a variable called 'earth' that depends upon two 
 %   dimensions, 'lat' and 'lon'.
@@ -44,7 +40,8 @@ function nc_addvar(ncfile,varstruct)
 %      nc_adddim('myfile.nc','lat',181);
 %      v2.Name = 'mars';
 %      v2.Datatype = 'double';
-%      v2.FillValue = -999;
+%      v2.Attribute.Name = '_FillValue';
+%      v2.Attribute.Value = -999;
 %      v2.Dimension = { 'lat','lon' };
 %      v2.Chunking = [10 10];
 %      v2.Deflate = 9;
@@ -63,9 +60,7 @@ if ( ~isstruct(varstruct) )
     error ( 'SNCTOOLS:NC_ADDVAR:badInput', '2nd argument must be a structure' );
 end
 
-
 varstruct = validate_varstruct ( varstruct );
-
 
 backend = snc_write_backend(ncfile);
 switch ( backend )
@@ -81,7 +76,7 @@ end
 for j = 1:length(varstruct.Attribute)
     attname = varstruct.Attribute(j).Name;
     attval = varstruct.Attribute(j).Value;
-    nc_attput ( ncfile, varstruct.Name, attname, attval );
+    nc_attput(ncfile,varstruct.Name,attname,attval);
 end
 
 
@@ -141,9 +136,6 @@ for j = 1:num_dims
 
 end
 
-
-
-
 sds_id = hdfsd('create',sd_id,varstruct.Name,varstruct.Datatype,num_dims,dim_sizes);
 if sds_id < 0
     hdfsd('end',sd_id);
@@ -171,8 +163,6 @@ for j = 1:num_dims
     end
 end
 
-
-
 status = hdfsd('endaccess',sds_id);
 if status < 0
     error('SNCTOOLS:addVar:hdf4:endaccessFailed', ...
@@ -187,12 +177,6 @@ end
 return
 
 
-
-
-
-
-
-
 %--------------------------------------------------------------------------
 function nc_addvar_mexnc(ncfile,varstruct)
 
@@ -203,7 +187,6 @@ if ( status ~= 0 )
         'OPEN failed on %s, ''%s''', ncfile, ncerr);
 end
 
-%
 % determine the dimids of the named dimensions
 num_dims = length(varstruct.Dimension);
 dimids = zeros(num_dims,1);
@@ -221,7 +204,6 @@ end
 if getpref('SNCTOOLS','PRESERVE_FVD',false)
 	dimids = flipud(dimids);
 end
-
 
 status = mexnc ( 'redef', ncid );
 if ( status ~= 0 )
@@ -246,13 +228,15 @@ if ( status ~= 0 )
     error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:DEF_VAR', ncerr );
 end
 
+
 if ~isempty(varstruct.Chunking)
 
-	if getpref('SNCTOOLS','PRESERVE_FVD',false)
-		chunking = fliplr(varstruct.Chunking);
-	else
-		chunking = varstruct.Chunking;
-	end
+    if getpref('SNCTOOLS','PRESERVE_FVD',false)
+        chunking = fliplr(varstruct.Chunking);
+    else
+        chunking = varstruct.Chunking;
+    end
+    
 	if ( numel(chunking) ~= num_dims) 
     	mexnc ( 'endef', ncid );
 	    mexnc ( 'close', ncid );
@@ -293,10 +277,6 @@ if ( status ~= 0 )
     error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:CLOSE', ncerr );
 end
 
-
-
-
-
 return
 
 
@@ -305,14 +285,12 @@ return
 %--------------------------------------------------------------------------
 function varstruct = validate_varstruct ( varstruct )
 
-%
 % Check that required fields are there.
 % Must at least have a name.
 if ~isfield ( varstruct, 'Name' )
     error ( 'SNCTOOLS:NC_ADDVAR:badInput', ...
 	        'structure argument must have at least the ''Name'' field.' );
 end
-
 
 % Check that required fields are there.
 % Default datatype is double
@@ -324,7 +302,6 @@ if ~isfield(varstruct,'Datatype')
     end
 
 end
-
 
 % Are there any unrecognized fields?
 fnames = fieldnames ( varstruct );
@@ -358,7 +335,6 @@ if ( isa(varstruct.Datatype, 'double') && varstruct.Datatype < 7 )
 end
 
 
-%
 % Check that the datatype is known.
 switch ( varstruct.Datatype )
     case { 'NC_DOUBLE', 'double', ...
@@ -386,16 +362,11 @@ switch ( varstruct.Datatype )
         error ( 'SNCTOOLS:NC_ADDVAR:unknownDatatype', 'unknown type ''%s''\n', mfilename, varstruct.Datatype );
 end
 
-
-%
-% Check that required fields are there.
 % Default Dimension is none.  Singleton scalar.
 if ~isfield ( varstruct, 'Dimension' )
     varstruct.Dimension = [];
 end
 
-%
-% Check that required fields are there.
 % Default Attributes are none
 if ~isfield ( varstruct, 'Attribute' )
     varstruct.Attribute = [];

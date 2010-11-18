@@ -1,4 +1,6 @@
 function [retrieval_method,fmt] = snc_read_backend(ncfile)
+% SNC_READ_BACKEND:  figure out which backend to use: mexnc, java or 
+% tmw or tmw_hdf4 (native matlab netcdf/hdf4 package)
 
 tmw_gt_r2008a = false;
 tmw_gt_r2010a = false;
@@ -20,7 +22,27 @@ switch ( mv )
 		error('Not supported on releases below R13.');
 
     case { '13', '14', '2006a', '2006b', '2007a', '2007b', '2008a' }
-		nv = mexnc('inq_libvers'); 
+        p = computer;
+        if strcmp(p,'PCWIN64')
+            if strcmp(fmt,'HDF4')
+                retrieval_method = 'tmw_hdf4';
+            else
+                retrieval_method = 'java';
+            end
+            return
+        end
+	try
+	nv = mexnc('inq_libvers'); 
+	catch
+	disp('no valid mexnc, we''ll try java instead:...')
+	if use_java
+	   retrieval_method = 'java';
+	   disp('... and java is enabled: java backend used for reading local netCDF files.')
+	   return
+	else
+	   error('...and no valid java bacnekd found either: please enable jave, see README')
+	end
+	end
         
     case { '2008b', '2009a', '2009b', '2010a' }
         nv = mexnc('inq_libvers');

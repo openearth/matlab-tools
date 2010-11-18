@@ -1,4 +1,4 @@
-function test_nc_diff ( ncfile_1, ncfile_2 )
+function test_nc_diff()
 % TEST_NC_DIFF
 %
 % Relies upon nc_addnewrecs, nc_addvar
@@ -18,12 +18,11 @@ function test_nc_diff ( ncfile_1, ncfile_2 )
 % 10.  Test files and attributes, one attribute has different value
 % 11.  Test files and global attributes, one attribute has different value
 
-if nargin < 2 
-	ncfile_1 = 'foo1.nc';
-	ncfile_2 = 'foo2.nc';
-end
+ncfile_1 = 'foo1.nc';
+ncfile_2 = 'foo2.nc';
 
-fprintf ( 'NC_DIFF:  starting test suite...\n' );
+
+fprintf('NC_DIFF ...  ' );
 
 test_empty_files                      ( ncfile_1, ncfile_2 );
 test_different_unlimited_coord_var    ( ncfile_1, ncfile_2 );
@@ -36,6 +35,8 @@ test_one_attr_with_different_class    ( ncfile_1, ncfile_2 );
 test_one_attr_with_different_length   ( ncfile_1, ncfile_2 );
 test_one_attr_with_different_value    ( ncfile_1, ncfile_2 );
 test_one_gattr_with_different_value   ( ncfile_1, ncfile_2 );
+
+fprintf('OK\n');
 return
 
 

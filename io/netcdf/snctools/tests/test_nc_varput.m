@@ -68,7 +68,6 @@ test_netcdf3;
 test_hdf4;
 test_netcdf4;
 
-fprintf('OK\n');
 return
 
 

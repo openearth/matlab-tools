@@ -2,8 +2,11 @@ function tf = nc_isvar(ncfile,varname)
 %NC_ISVAR  Determine if variable is present in file.
 %
 %   BOOL = NC_ISVAR(NCFILE,VARNAME) returns true if the variable VARNAME is 
-%   present in the file NCFILE.  Otherwise false is returned.
+%   present in the file NCFILE and false if it is not.
 %
+%   Example (requires R2008b):
+%       bool = nc_isvar('example.nc','temperature')
+%       
 %   See also nc_isatt.
 
 % Both inputs must be character

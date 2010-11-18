@@ -26,13 +26,13 @@ else
 	try 
 		jncid = NetcdfFile.open ( ncfile );
     catch  %#ok<CTCH>
-%		try
+		try
             jncid = snc_opendap_open(ncfile);
- %       catch  %#ok<CTCH>
-%			error ( 'SNCTOOLS:nc_varget_java:fileOpenFailure', ...
- %               'Could not open ''%s'' as either a local file, a regular URL, or as a DODS URL.', ...
-  %              ncfile );
-	%	end
+        catch  %#ok<CTCH>
+			error ( 'SNCTOOLS:nc_varget_java:fileOpenFailure', ...
+                'Could not open ''%s'' as either a local file, a regular URL, or as a DODS URL.', ...
+                ncfile );
+		end
 	end
 end
 

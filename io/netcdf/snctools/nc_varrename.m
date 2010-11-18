@@ -3,16 +3,19 @@ function nc_varrename ( ncfile, old_variable_name, new_variable_name )
 %   nc_varrename(ncfile,oldvarname,newvarname) renames a netCDF variable
 %   from OLDVARNAME to NEWVARNAME.
 %
+%   Example:
+%      nc_create_empty('myfile.nc');
+%      nc_adddim('myfile.nc','x',10);
+%      v.Name = 'y';
+%      v.Datatype = 'double';
+%      v.Dimension = { 'x' };
+%      nc_addvar('myfile.nc',v);
+%      nc_dump('myfile.nc');
+%      nc_varrename('myfile.nc','y','z');
+%      nc_dump('myfile.nc');
+%
 %   See also nc_addvar.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% $Id$
-% $LastChangedDate$
-% $LastChangedRevision$
-% $LastChangedBy$
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 backend = snc_write_backend(ncfile);

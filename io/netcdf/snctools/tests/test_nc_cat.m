@@ -1,18 +1,19 @@
 function test_nc_cat (  )
 % TEST_NC_CAT:
-%
 
 % For now we will run this test preserving the fastest varying dimension.
 oldpref = getpref('SNCTOOLS','PRESERVE_FVD');
 setpref('SNCTOOLS','PRESERVE_FVD',true);
 
 global ignore_eids;
-fprintf ( 1, 'Testing NC_CAT...\n' );
 
 ignore_eids = getpref('SNCTOOLS','IGNOREEIDS',true);
 
-test_netcdf3;
+fprintf('Testing NC_CAT...\n');
 test_hdf4;
+test_netcdf3;
+test_netcdf4;
+
 
 setpref('SNCTOOLS','PRESERVE_FVD',oldpref);
 return
@@ -21,11 +22,23 @@ return
 
 %--------------------------------------------------------------------------
 function test_netcdf3()
-fprintf('\tRunning netcdf-3 tests...\n' );
+fprintf('\tRunning netcdf-3 tests...  ' );
 
 test_normal_usage;
 test_recvar_not_time;
+fprintf('OK\n');
 
+
+
+
+%--------------------------------------------------------------------------
+function test_netcdf4()
+fprintf('\tRunning netcdf-4 tests...  ' );
+
+mode = nc_netcdf4_classic;
+test_normal_usage(mode);
+test_recvar_not_time(mode);
+fprintf('OK\n');
 
 
 %--------------------------------------------------------------------------
@@ -119,10 +132,11 @@ nc_addnewrecs(file2,v);
 
 %--------------------------------------------------------------------------
 function test_hdf4()
-fprintf('\tRunning hdf4 tests... \n ' );
+fprintf('\tRunning hdf4 tests...  ' );
 
 test_normal_usage('hdf4');
 test_recvar_not_time('hdf4');
+fprintf('OK\n');
 
 
 return

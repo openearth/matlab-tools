@@ -1,11 +1,7 @@
 function varsize = nc_varsize(ncfile, varname)
-%This function is deprecated.  Please use NC_GETVARINFO instead.
+%NC_VARSIZE Return size of netCDF variable.
+%   This function is deprecated, use NC_GETVARINFO instead.
 
-%NC_VARSIZE  Return size of requested netCDF variable.
-%
-%   VARSIZE = NC_VARSIZE(NCFILE,NCVAR) returns the size of the netCDF 
-%   variable NCVAR in the netCDF file NCFILE.
-%
 
 if ~ischar(ncfile)
 	error ( 'SNCTOOLS:NC_VARSIZE:badInputType', 'The input filename must be a string.' );

@@ -15,7 +15,7 @@ function test_nc_cat_a ( )
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fprintf('Testing NC_CAT_A ... \n' );
+fprintf('Testing NC_CAT_A...  ' );
 
 test_cat_empty_files;
 test_wrong_number_of_inputs;

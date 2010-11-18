@@ -10,12 +10,6 @@
 %   netCDF4, GRIB2, OPeNDAP:  can read datasets via netcdf-java.  For GRIB2
 %   please check the README.
 %
-% Note that by default, SNCTOOLS will transpose data ordering and 
-% dimensions for the sake of backwards compatibility.  This behavior can
-% be controlled with the PRESERVE_FVD preference.
-%  
-% -------------------------------------------------------------------------
-%
 % NC_ADDHIST        -  Either appends or constructs a history attribute.
 % NC_ADDDIM         -  Adds a dimension to an existing netcdf file
 % NC_ADDRECS        -  Adds records to unlimited-dimension file.
@@ -41,3 +35,25 @@
 % NC_VARPUT         -  Write data into a NetCDF file.
 % NC_VARRENAME      -  Renames a NetCDF variable.
 % SNC2MAT           -  Saves netcdf file to *.mat format
+%
+% Note that by default, SNCTOOLS will transpose data ordering and 
+% dimensions for the sake of backwards compatibility.  This behavior can
+% be controlled with the PRESERVE_FVD preference.
+%  
+% Preferences
+% -----------
+%   PRESERVE_FVD - Setting the preference 'PRESERVE_FVD' to true will
+%                  compel NC_VARGET to preserve the fastest varying
+%                  dimension, i.e. NC_VARGET will not transpose the data.
+%                  This flips the order of the dimension IDs from what one
+%                  would see by using the ncdump C utility.  This may
+%                  result in a performance boost when working with large
+%                  data.
+%
+%   USE_STD_HDF4_SCALING
+%                - The CF conventions differ from HDF4 in how scale
+%                  factors are to be applied; check their respective
+%                  references for details.  By default, HDF4 datasets are
+%                  scaled according to CF conventions, but setting this
+%                  preference to true forces NC_VARGET to use standard HDF4
+%                  conventions.

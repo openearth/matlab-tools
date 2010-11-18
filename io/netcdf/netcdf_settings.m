@@ -125,7 +125,7 @@ function netcdf_settings(varargin)
    if     strcmpi(version('-release'),'14')    | ... % Undefined command/function 'vanilla_mexnc'.
           strcmpi(version('-release'),'2006a')
           
-          error('snctools not supported for R14 or 2006a')
+          fprintf(2,'snctools not fully supported for R14(SP3) or 2006a: WRITING NEVER POSSIBLE, READING IN SOME CASES.')
           
    elseif strcmpi(version('-release'),'2006b') | ... % OK, despite "Exception in thread "Thread-12" java.lang.ArrayIndexOutOfBoundsException: -1"
           strcmpi(version('-release'),'2007a') | ... % OK

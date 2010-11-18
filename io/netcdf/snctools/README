@@ -123,7 +123,6 @@ humble opinion) are as follows
     2. nc_varput    - writes to a netcdf variable
     3. nc_attget    - reads a netcdf attribute
     4. nc_attput    - writes a netcdf attribute
-    5. nc_padheader - pads header section of large netCDF-3 files 
     6. nc_dump      - prints netcdf metadata
 
 There is a subdirectory called "tests" which has routines that test

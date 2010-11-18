@@ -99,7 +99,6 @@ else
 end
 fprintf('\n');
 
-
 return
 
 
@@ -124,11 +123,6 @@ end
 fprintf(fid,'\n');
 
 return
-
-
-
-
-
 
 
 %--------------------------------------------------------------------------
@@ -159,9 +153,6 @@ for j = 1:numel(Dataset)
 end
 
 fprintf (fid,'\n' );
-
-
-
 
 
 %--------------------------------------------------------------------------
@@ -205,8 +196,8 @@ if isfield(var_metadata, 'Chunking')
     end
 end
 
-if isfield(var_metadata,'DeflateLevel') && ~isempty(var_metadata.DeflateLevel)
-    fprintf(fid,'\t\tDeflate Level:  %d\n', var_metadata.DeflateLevel);
+if isfield(var_metadata,'Deflate') && ~isempty(var_metadata.Deflate)
+    fprintf(fid,'\t\tDeflate Level:  %d\n', var_metadata.Deflate);
 end
 
 % Now do all attributes for each variable.

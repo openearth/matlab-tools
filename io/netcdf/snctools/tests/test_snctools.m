@@ -1,16 +1,5 @@
 function test_snctools()
-% TEST_SNCTOOLS
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% $Id$
-% $LastChangedDate$
-% $LastChangedRevision$
-% $LastChangedBy$
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%
 % switch off some warnings
 mver = version('-release');
 switch mver
@@ -63,12 +52,11 @@ return
 
 %----------------------------------------------------------------------
 function run_backend_neutral_tests()
-
 test_nc_attget;
 test_nc_datatype_string;
 test_nc_iscoordvar;
 test_nc_isunlimitedvar;
-%test_nc_dump;
+test_nc_dump;
 test_nc_getlast;
 test_nc_isvar;
 test_nc_varsize;
@@ -77,7 +65,6 @@ test_nc_info;
 test_nc_getbuffer;
 test_nc_varget;
 test_nc_getdiminfo;
-
 
 return
 
@@ -93,20 +80,25 @@ if ~(snctools_use_tmw || snctools_use_mexnc)
 	return
 end
 
+if getpref('SNCTOOLS','TEST_JAVA_READ_ONLY',false);
+    fprintf('Write testing disabled when SNCTOOLS preference TEST_JAVA_READ_ONLY set to true.');
+    return
+end
+
 test_nc_varput;
-test_nc_adddim           ( 'test.nc' );
-test_nc_addhist          ( 'test.nc' );
+test_nc_adddim;
+test_nc_addhist;
 test_nc_addvar           ( 'test.nc' );
-test_nc_attput           ( 'test.nc' );
-test_nc_create_empty     ( 'test.nc' );
+test_nc_attput;
+test_nc_create_empty;
 test_nc_varrename        ( 'test.nc' );
-test_nc_addnewrecs       ( 'test.nc' );
-test_nc_addrecs          ( 'test.nc' );
+test_nc_addnewrecs;
+test_nc_addrecs;
 
 
 test_snc2mat             ( 'test.nc' );
-test_nc_getall           ( 'test.nc' );
-evalc('test_nc_diff(''test1.nc'',''test2.nc'');');
+test_nc_getall;
+evalc('test_nc_diff;');
 test_nc_cat_a;
 test_nc_cat;
 

@@ -1,4 +1,7 @@
 function jncid = snc_opendap_open(ncfile)
+% SNC_OPENDAP_OPEN Open a connection to an OPeNDAP URL.  If the URL is
+% password-protected, we will have to coerce netcdf-java to supply the
+% credentials.
 
 import ucar.nc2.dods.*  
 
@@ -9,6 +12,7 @@ if numel(parts) == 0
     jncid = DODSNetcdfFile(ncfile);
 else
     
+    % SncCreds is a custom java class supplied with SNCTOOLS.
     credentials = SncCreds(parts.username,parts.password);
     client = ucar.nc2.util.net.HttpClientManager.init(credentials,'snctools');
     opendap.dap.DConnect2.setHttpClient(client);

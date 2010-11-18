@@ -1,7 +1,85 @@
-function test_nc_attget ( )
+function test_nc_attget()
 
 fprintf ('Testing NC_ATTGET...\n' );
 
+run_negative_tests;
+
+test_mexnc_backend;
+test_tmw_backend;
+test_java_backend;
+
+
+
+%--------------------------------------------------------------------------
+function test_java_backend()
+fprintf('\tTesting java backend ...\n');
+
+if ~getpref('SNCTOOLS','USE_JAVA',false)
+    fprintf('\t\tjava backend testing filtered out on ');
+    fprintf('configurations where SNCTOOLS ''USE_JAVA'' ');
+    fprintf('prefererence is false.\n');
+    return
+end
+
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b','2007a','2007b','2008a'}
+        % Only test if on win64
+        c = computer;
+        if strcmp(c,'PCWIN64')
+            run_nc3_tests;
+            run_nc4_tests;
+        end
+        
+    case { '2008b', '2009a', '2009b', '2010a' }
+        run_nc4_tests;
+        
+    otherwise
+        fprintf('\t\tjava backend testing with local files filtered out on release %s\n', v);
+end
+
+run_http_tests;
+run_grib2_tests;
+
+%--------------------------------------------------------------------------
+function test_mexnc_backend()
+
+fprintf('\tTesting mexnc backend ...\n');
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b','2007a','2007b','2008a'}
+        run_nc3_tests;
+        
+    otherwise
+        fprintf('\t\tmexnc testing filtered out on release %s.\n', v);
+        return
+end
+
+
+return
+%--------------------------------------------------------------------------
+function test_tmw_backend()
+
+fprintf('\tTesting tmw backend ...\n');
+
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b','2007a','2007b','2008a'}
+        fprintf('\t\ttmw testing filtered out on release %s... ', v);
+        return;
+        
+    case { '2008b','2009a','2009b','2010a'}
+        run_nc3_tests;
+        
+    otherwise
+        run_nc3_tests;
+        run_nc4_tests;
+end
+
+
+return
+%--------------------------------------------------------------------------
+function run_negative_tests()
 v = version('-release');
 switch(v)
 	case{'14','2006a','2006b','2007a'}
@@ -10,46 +88,28 @@ switch(v)
 		test_nc_attget_neg;
 end
 
-testroot = fileparts(mfilename('fullpath'));
-
-run_nc3_tests      (testroot);
-run_nc4_tests_mexnc(testroot);
-run_nc4_tests_tmw  (testroot);
-run_nc4_java_tests (testroot);
-run_java_tests     (testroot);
-
-
-fprintf('OK\n');
 
 
 %--------------------------------------------------------------------------
-function run_java_tests(testroot)
-if ~getpref('SNCTOOLS','USE_JAVA',false)
-    fprintf('\tjava backend testing filtered out on ');
-    fprintf('configurations where SNCTOOLS ''USE_JAVA'' ');
-    fprintf('prefererence is false.\n');
+function run_grib2_tests()
+
+if ~getpref('SNCTOOLS','TEST_GRIB2',false)
+    fprintf('\tGRIB2 testing filtered out where SNCTOOLS preference ');
+    fprintf('TEST_GRIB2 is set to false.\n');
     return
 end
-run_http_tests;
-run_grib2_tests(testroot);
-return
 
-
-%--------------------------------------------------------------------------
-function run_grib2_tests(testroot)
-fprintf('\tRunning grib2 tests...\n');
+fprintf('\t\tRunning grib2 tests...  ');
+testroot = fileparts(mfilename('fullpath'));
 gribfile = fullfile(testroot,'testdata',...
     'ecmf_20070122_pf_regular_ll_pt_320_pv_grid_simple.grib2');
 test_grib2_char(gribfile);
+fprintf('OK\n');
 return
 
 %--------------------------------------------------------------------------
 function test_grib2_char(gribfile)
-if ~getpref('SNCTOOLS','TEST_GRIB2',false)
-    fprintf('GRIB2 testing filtered out where SNCTOOLS preference ');
-    fprintf('TEST_GRIB2 is set to false.\n');
-    return
-end
+
 act_data = nc_attget(gribfile,-1,'creator_name');
 exp_data = 'ECMWF, RSMC subcenter = 0';
 if ~strcmp(act_data,exp_data)
@@ -58,78 +118,34 @@ end
 return
 
 %--------------------------------------------------------------------------
-function run_nc3_tests(testroot)
-	fprintf('\tRunning local netcdf-3 tests.\n');
-	ncfile = fullfile(testroot,'testdata/attget.nc');
-	run_local_tests(ncfile);
+function run_nc3_tests()
+fprintf('\t\tRunning netcdf-3 tests...  ');
+
+testroot = fileparts(mfilename('fullpath'));
+ncfile = fullfile(testroot,'testdata/attget.nc');
+
+run_local_tests(ncfile);
+fprintf('OK\n');
 return
 
-%--------------------------------------------------------------------------
-function run_nc4_tests_tmw(testroot)
-
-v = version('-release');
-switch(v)
-    case { '14', '2006a', '2006b', '2007a', '2007b', '2008a', '2008b', ...
-            '2009a', '2009b', '2010a' }
-        fprintf('\tnetcdf-4 tmw backend testing filtered out on ');
-        fprintf('configurations where the matlab version < 2010b.\n');
-        return
-        
-end
-fprintf('\tRunning local netcdf4/tmw tests.\n');
-run_nc4_nonjava_tests(testroot);
 
 
 %--------------------------------------------------------------------------
-function run_nc4_nonjava_tests(testroot)
+function run_nc4_tests()
 
+fprintf('\t\tRunning netcdf4 tests...  ');
+testroot = fileparts(mfilename('fullpath'));
 ncfile = fullfile(testroot,'testdata/attget-4.nc');
-run_local_tests(ncfile);
 
+run_local_tests(ncfile);
 ncfile = fullfile(testroot,'testdata/tst_group_data.nc');
 test_nc4_group_char_att(ncfile)
 test_nc4_group_var_char_att(ncfile);
 
-return
-
-%--------------------------------------------------------------------------
-function run_nc4_tests_mexnc(testroot)
-
-v = version('-release');
-switch(v)
-    case { '14', '2006a', '2006b', '2007a', '2007b', '2008a', '2008b', ...
-            '2009a', '2009b', '2010a' }
-        if ~netcdf4_capable
-            fprintf('\tnetcdf4/mexnc testing filtered out on ');
-            fprintf('configurations where the old community ');
-            fprintf('mex-file is not netcdf-4 capable.\n');
-        end
-        return
-        
-    otherwise
-        fprintf('\tnetcdf4/mexnc testing filtered out on ');
-        fprintf('configurations where the matlab version >= 2010b.\n');
-        return
-        
-end
-
-run_nc4_nonjava_tests(testroot);
-
+fprintf('OK\n');
 return
 
 
-%--------------------------------------------------------------------------
-function run_nc4_java_tests(testroot)
-	if ~getpref('SNCTOOLS','USE_JAVA',false)
-		fprintf('\tjava nc4 backend testing filtered out on ');
-        fprintf('configurations where SNCTOOLS ''USE_JAVA'' ');
-        fprintf('prefererence is false.\n');
-		return
-	end
-	fprintf('\tRunning local netcdf4/java tests.\n');
-	ncfile = fullfile(testroot,'testdata/attget-4.nc');
-	run_local_tests(ncfile);
-return
 
 
 
@@ -160,20 +176,16 @@ return;
 
 %--------------------------------------------------------------------------
 function run_http_tests()
-	% These tests are regular URLs, not OPeNDAP URLs.
-	if ~ ( getpref ( 'SNCTOOLS', 'USE_JAVA', false ) )
-		fprintf('\tjava http backend testing filtered out when SNCTOOLS ');
-        fprintf('''USE_JAVA'' preference is false.\n');
-		return
-	end
-	if ~ ( getpref ( 'SNCTOOLS', 'TEST_REMOTE', false ) )
-		fprintf('\tjava http backend testing filtered out when SNCTOOLS ');
-        fprintf('''TEST_REMOTE'' preference is false.\n');
-		return
-	end
-	fprintf('\tRunning http/java tests.\n');
-	test_retrieveAttribute_HTTP;
-	test_retrieveAttribute_http_jncid;
+% These tests are regular URLs, not OPeNDAP URLs.
+if ~ ( getpref ( 'SNCTOOLS', 'TEST_REMOTE', false ) )
+    fprintf('\t\tjava http testing filtered out when SNCTOOLS ');
+    fprintf('''TEST_REMOTE'' preference is false.\n');
+    return
+end
+fprintf('\t\tRunning http tests...  ');
+test_retrieveAttribute_HTTP;
+test_retrieveAttribute_http_jncid;
+fprintf('OK\n');
 return
 
 
@@ -370,7 +382,8 @@ return
 %--------------------------------------------------------------------------
 function test_writeRetrieveGlobalAttributeNcGlobal ( ncfile )
 
-attvalue = nc_attget ( ncfile, nc_global, 'test_double_att' );
+varid = netcdf.getConstant('NC_GLOBAL');
+attvalue = nc_attget ( ncfile, varid, 'test_double_att' );
 if ( ~strcmp(class(attvalue), 'double' ) )
 	error('class of retrieved attribute was not double.');
 end

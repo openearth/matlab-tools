@@ -3,10 +3,11 @@ function nc_addrecs(ncfile,new_data)
 %   nc_addrecs(NCFILE,RECS) appends records along the unlimited 
 %   dimension.  RECS is a structure containing all the variables that
 %   are defined along the unlimited dimension.
-% 
+%
+%   This function differs from NC_ADDNEWRECS in that it does not require
+%   the unlimited coordinate variable to be monotonically increasing.
+%
 %   See also nc_addnewrecs, nc_cat.
-%   AUTHOR: 
-%     john.g.evans.ne@gmail.com
 
 ncinfo = nc_info(ncfile);
 preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
@@ -96,7 +97,8 @@ all_names = {ncinfo.Dataset.Name};
 data_names = fieldnames(new_data);
 num_vars = numel(data_names);
 for j = 1:num_vars
-    idx = strmatch(data_names{j},all_names,'exact');
+    tf = strcmp(data_names{j},all_names);
+    idx = find(tf);
     varsize.(ncinfo.Dataset(idx).Name) = ncinfo.Dataset(idx).Size;
 end
 

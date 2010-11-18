@@ -1,27 +1,31 @@
-function test_nc_iscoordvar ( )
-% TEST_NC_ISCOORDVAR:
-%
-% Depends upon nc_add_dimension, nc_addvar
-%
-% 1st set of tests should fail
-% test 1:  no input arguments
-% test 2:  1 input
-% test 3:  too many inputs
-% test 5:  not a netcdf file
-% test 6:  empty netcdf file
-% test 8:  given variable is not present  
-% test 9:  given variable's dimension is not of the same name
-% test 10:  given variable has more than one dimension
-%
-% test 11:  netcdf file has singleton variable, but no dimensions.
-% test 12:  given variable has one dimension of the same name
+function test_nc_iscoordvar()
 
+fprintf('Testing NC_ISCOORDVAR...\n');
+
+run_negative_tests;
+
+test_mexnc_backend;
+test_tmw_backend;
+test_java_backend;
+
+
+
+%--------------------------------------------------------------------------
+function test_coordvar_java ()
+
+url = 'http://rocky.umeoce.maine.edu/GoMPOM/cdfs/gomoos.20070723.cdf';
+
+bool = nc_iscoordvar(url,'xpos');
+if ~bool
+	error ( 'failed' );
+end
+return
+%--------------------------------------------------------------------------
+function run_negative_tests()
 
 testroot = fileparts(mfilename('fullpath'));
-
-fprintf('Testing NC_ISCOORDVAR... ');
-
 ncfile = fullfile(testroot,'testdata/empty.nc');
+
 test_no_inputs;
 test_only_one_input (ncfile);
 test_too_many_inputs(ncfile);
@@ -32,13 +36,108 @@ ncfile = fullfile(testroot,'testdata/iscoordvar.nc');
 test_variable_not_present (ncfile);
 test_not_a_coordvar (ncfile);
 test_var_has_2_dims (ncfile);
-
 test_singleton_variable (ncfile);
-test_coordvar (ncfile);
 
+%--------------------------------------------------------------------------
+function test_java_backend()
+
+fprintf('\tTesting java backend ...  ');
+
+if ~getpref('SNCTOOLS','USE_JAVA',false)
+
+    fprintf('\t\tjava backend testing filtered out on ');
+    fprintf('configurations where SNCTOOLS ''USE_JAVA'' ');
+    fprintf('prefererence is false.\n');
+    return
+end
+
+
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b','2007a','2007b','2008a'}
+        % Only test if on win64
+        c = computer;
+        if strcmp(c,'PCWIN64')
+            run_nc3_tests;
+            run_nc4_tests;
+        end
+        
+    case { '2008b', '2009a', '2009b', '2010a' }
+        run_nc4_tests;
+        
+end
+
+test_coordvar_java;
+fprintf('OK\n');
+
+%--------------------------------------------------------------------------
+function test_mexnc_backend()
+
+fprintf('\tTesting mexnc backend ...\n');
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b','2007a','2007b','2008a'}
+        run_nc3_tests;
+        
+    otherwise
+        fprintf('\t\tmexnc testing filtered out on release %s.\n', v);
+        return
+end
+
+
+return
+%--------------------------------------------------------------------------
+function test_tmw_backend()
+
+fprintf('\tTesting tmw backend ...\n');
+
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b','2007a','2007b','2008a'}
+        fprintf('\t\ttmw testing filtered out on release %s... ', v);
+        return;
+        
+    case { '2008b','2009a','2009b','2010a'}
+        run_nc3_tests;
+        
+    otherwise
+        run_nc3_tests;
+        run_nc4_tests;
+end
+
+
+
+return
+
+
+
+%--------------------------------------------------------------------------
+function run_nc3_tests()
+
+fprintf('\t\tRunning local netcdf-3 tests...');
+testroot = fileparts(mfilename('fullpath'));
+ncfile = fullfile(testroot,'testdata/iscoordvar.nc');
+test_coordvar(ncfile);
 fprintf('OK\n');
 
 return
+
+
+
+
+%--------------------------------------------------------------------------
+function run_nc4_tests()
+
+fprintf('\t\tRunning local netcdf-3 tests...');
+testroot = fileparts(mfilename('fullpath'));
+ncfile = fullfile(testroot,'testdata/iscoordvar-4.nc');
+test_coordvar(ncfile);
+fprintf('OK\n');
+
+return
+
+
+
 
 
 

@@ -1,3 +1,19 @@
+* Fri Nov 12 2010 John Evans <john.g.evans.ne@gmail.com> -r3302
+- Fixed bad example in NC_ADDVAR.
+- Fixed bug in NC_DUMP where deflate level wasn't being printed.
+
+* Fri Oct 30 2010 John Evans <john.g.evans.ne@gmail.com> -r3297
+- Abstracted out some backend handlers for NC_VARGET, NC_VARPUT,
+- NC_ATTGET, NC_ATTPUT into private directory.  Some code cleanup.
+- Improved deprecation language in unrecommended functions.
+- Fixed NC_ATTPUT, NC_ADDDIM examples.  
+- Added some examples to some less prominent functions.
+- Some readability improvements to various functions.
+- Some readability changes to testsuite output.
+
+* Mon Oct 25 2010 John Evans <john.g.evans.ne@gmail.com> -r3256
+- Added netcdf-java as read-only configuration.
+
 * Thu Oct 07 2010 John Evans <john.g.evans.ne@gmail.com> -r3244
 - Added opendap authentication.
 

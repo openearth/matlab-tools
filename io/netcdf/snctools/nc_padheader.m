@@ -4,17 +4,49 @@ function nc_padheader ( ncfile, num_bytes )
 %   NCFILE with NUM_BYTES bytes.
 % 
 %   When a netCDF file gets very large, adding new attributes can become
-%   a time-consuming process.  This can be mitigated by padding the 
-%   netCDF header with additional bytes.  Subsequent new attributes will
-%   not result in long time delays unless the length of the new 
-%   attribute exceeds that of the header.
+%   a time-consuming process due to the architecture of netCDF-3 files.  
+%   This can be mitigated by padding the netCDF header with additional 
+%   bytes.  Subsequent new attributes will not result in long time delays 
+%   unless the length of the new attribute exceeds that of the header.
 %
-%   This routine should not be used with a netCDF-4 file.
+%   This routine does not ever need to be used with a netCDF-4 file.
+%
+%   Example:
+%       nc_create_empty('nc3.nc');
+%       d = dir('nc3.nc')
+%       nc_padheader('nc3.nc',20000);
+%       d = dir('nc3.nc')
 %
 %   See also:  nc_create_empty.
 
+backend = snc_write_backend(ncfile);
+switch(backend)
+	case 'tmw'
+		nc_padheader_tmw(ncfile,num_bytes);
+	case 'mexnc'
+		nc_padheader_mexnc(ncfile,num_bytes);
+end
 
-error(nargchk(2,2,nargin,'struct'));
+
+%--------------------------------------------------------------------------
+function nc_padheader_tmw(ncfile,num_bytes)
+
+ncid = netcdf.open(ncfile,'WRITE');
+
+try
+    netcdf.reDef(ncid);
+    netcdf.endDef(ncid,num_bytes,4,0,4);
+catch me
+    netcdf.close(ncid);
+    rethrow(me);
+end
+
+netcdf.close(ncid);
+
+
+
+%--------------------------------------------------------------------------
+function nc_padheader_mexnc(ncfile,num_bytes)
 
 [ncid,status] = mexnc ( 'open', ncfile, nc_write_mode );
 if ( status ~= 0 )
@@ -36,7 +68,7 @@ status = mexnc ( '_enddef', ncid, num_bytes, 4, 0, 4 );
 if ( status ~= 0 )
 	mexnc ( 'close', ncid );
 	ncerr = mexnc ( 'strerror', status );
-	error ( 'SNCTOOLS:NC_PADHEADER:MEXNC:_ENDDEF', ncerr );
+	error ( 'SNCTOOLS:NC_PADHEADER:MEXNC:PENDDEF', ncerr );
 end
 
 status = mexnc ( 'close', ncid );

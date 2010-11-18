@@ -1,5 +1,6 @@
 function nc_add_recs(ncfile,new_data,unlimited_dimension)
-%nc_add_recs is deprecated.  Use nc_addrecs instead.
+%NC_ADD_RECS  Add records to end of netCDF file.
+%   This function is not recommended.  Use nc_addrecs instead.
 
 %NC_ADD_RECS:  add records onto the end of a netcdf file
 %
