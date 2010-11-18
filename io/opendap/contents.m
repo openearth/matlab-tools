@@ -10,6 +10,7 @@
 % * Rijkwsaterstaat: <a href="http://matroos.deltares.nl/direct/opendap.html">http://matroos.deltares.nl/direct/opendap.html</a> (HYRAX + password)
 % * USGS: <a href="http://coast-enviro.er.usgs.gov/thredds/">http://coast-enviro.er.usgs.gov/thredds/</a> (THREDDS)
 % * NOAA: <a href="http://data.nodc.noaa.gov/opendap">http://data.nodc.noaa.gov/opendap</a> (HYRAX)
+% * NOAA: <a href="http://dods.ndbc.noaa.gov/thredds/catalog/data/catalog.html">http://dods.ndbc.noaa.gov/thredds/catalog/data/catalog.html</a> (THREDDS)
 % * EUMETSAT: <a href="http://gsics.eumetsat.int/thredds/catalog.html">http://gsics.eumetsat.int/thredds/catalog.html</a>
 % * Great Lakes: <a href="http://michigan.glin.net/thredds/catalog.html">http://michigan.glin.net/thredds/catalog.html</a>
 % * UCAR: <a href="http://motherlode.ucar.edu/thredds/catalog.html">http://motherlode.ucar.edu/thredds/catalog.html</a>
