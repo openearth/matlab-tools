@@ -144,11 +144,11 @@
 			lat = parseFloat(caseDoc.getElementsByTagName("lat")[value].childNodes[0].nodeValue);
 			alt = parseFloat(caseDoc.getElementsByTagName("height")[value].childNodes[0].nodeValue);
 
-  			var lookAt = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
-  			lookAt.setLatitude(lat);
-  			lookAt.setLongitude(lon);
-  			lookAt.setAltitude(alt);
-  			ge.getView().setAbstractView(lookAt);
+  			var camera = ge.getView().copyAsCamera(ge.ALTITUDE_RELATIVE_TO_GROUND);
+  			camera.setLatitude(lat);
+  			camera.setLongitude(lon);
+  			camera.setAltitude(alt);
+  			ge.getView().setAbstractView(camera);
   		}
 
 		// Fill in the listbox with datasources on the basis of the selected case

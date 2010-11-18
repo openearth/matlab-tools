@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<cases>
+  <case>
+    <title>Hollandse Kust</title>
+    <datafile>hk_data.xml</datafile>
+    <zoom>
+      <lat>52.05249</lat>
+      <lon>4.58105</lon>
+      <height>750000</height>
+    </zoom>
+  </case>
+  <case>
+    <title>Zuidwestelijke Delta</title>
+    <datafile>zd_data.xml</datafile>
+    <zoom>
+      <lat>51.550461</lat>
+      <lon>4.0029556</lon>
+      <height>200000</height>
+    </zoom>
+  </case>
+  <case>
+    <title>Markermeer/IJselmeer</title>
+    <datafile>my_data.xml</datafile>
+    <zoom>
+      <lat>52.764275</lat>
+      <lon>5.4230000</lon>
+      <height>200000</height>
+    </zoom>
+  </case>
+  <case>
+    <title>Singapore</title>
+    <datafile>si_data.xml</datafile>
+    <zoom>
+      <lat>1.2904917</lat>
+      <lon>103.85143</lon>
+      <height>200000</height>
+    </zoom>
+  </case>
+</cases>
