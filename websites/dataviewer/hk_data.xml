@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <hk_data>
   <data>
+    <title>Algemene hoogtekaart NL</title>
+    <category>bathymetry</category>
+    <type>2dmap</type>
+    <kml>http://dtvirt13/test/ahn100.kmz</kml>
+    <source></source>
+  </data>
+  <data>
     <title>Vaklodingen_grids</title>
     <category>bathymetry</category>
     <type>2dmap</type>

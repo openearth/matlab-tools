@@ -2,7 +2,7 @@
 
 <head>
 
-	<script src="http://www.google.com/jsapi?key=ABQIAAAAJOL4Dbu6i1iFFND9tVK1SxThY3VCF3DWZTssv14dh1f1x3GsOxSnEXoyp-XsxHEvonBPiUuHJ5FHDA"></Script>
+	<script src="http://www.google.com/jsapi?key=ABQIAAAAJOL4Dbu6i1iFFND9tVK1SxSAhoPlMsemz_zPU0HAErPwAMQQehTyXZ5JZhQJusZ8p76o368XUHo9LQ"></Script>
 	<script type="text/javascript" src="loadxmldoc.js"></script>
 	<script type="text/javascript" src="polydraw.js"></Script>
 	<script type="text/javascript" src="soapclient.js"></Script>
@@ -17,7 +17,30 @@
 		function init()
 		{
 			google.earth.createInstance("map3d", initCB, failureCB);
+			fillCaseListbox("cases.xml");
 		}
+
+		// Fill case-selection listbox with available cases
+		function fillCaseListbox(xmlFile)
+		{
+			// first remove all what is in the listbox
+			while(case_listbox.options.length!=0)
+			case_listbox.options.remove(0);
+
+			caseDoc=loadXMLDoc(xmlFile);
+			numOfData=caseDoc.getElementsByTagName("title").length;
+
+			for (i=0;i<numOfData;i=i+1)
+			{
+			var oOption = document.createElement("OPTION");
+			oOption.text=caseDoc.getElementsByTagName("title")[i].childNodes[0].nodeValue;
+			oOption.value=i;
+			oOption.class="vs";
+			case_listbox.options.add(oOption)
+			}
+			return true;
+		}
+
 
 		// Initialization for Google Earth
 		function initCB(instance)
@@ -109,33 +132,46 @@
 		// If Google Earth fails to load this function captures the Error Code
 		function failureCB(errorCode){}
 
+		// Load selected case
+		function loadCase(value)
+		{
+			// fill kmldata listbox
+			datafile = caseDoc.getElementsByTagName("datafile")[value].childNodes[0].nodeValue;
+			getDataOutOfCase(datafile);
+
+			// zoom to case specific coordinates
+			lon = parseFloat(caseDoc.getElementsByTagName("lon")[value].childNodes[0].nodeValue);
+			lat = parseFloat(caseDoc.getElementsByTagName("lat")[value].childNodes[0].nodeValue);
+			alt = parseFloat(caseDoc.getElementsByTagName("height")[value].childNodes[0].nodeValue);
+
+  			var lookAt = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
+  			lookAt.setLatitude(lat);
+  			lookAt.setLongitude(lon);
+  			lookAt.setAltitude(alt);
+  			ge.getView().setAbstractView(lookAt);
+  		}
+
 		// Fill in the listbox with datasources on the basis of the selected case
-		function getDataOutOfCase(value)
+		function getDataOutOfCase(xmlfile)
 		{
-		// check if value > 0, else quit this function
-		if (value=="0")
-		{
-		    return true
-		}
 
-		// first remove all what is in the listbox
-		while(my_listbox.options.length!=0)
-		  my_listbox.options.remove(0);
+			// first remove all what is in the listbox
+			while(kml_listbox.options.length!=0)
+			  kml_listbox.options.remove(0);
 
-		// now load the requested xml-file
-		xmlDoc=loadXMLDoc(value);
-		page=
-		numOfData=xmlDoc.getElementsByTagName("kml").length;
+			// now load the requested xml-file
+			xmlDoc=loadXMLDoc(xmlfile);
+			numOfData=xmlDoc.getElementsByTagName("kml").length;
 
-		for (i=0;i<numOfData;i=i+1)
-		{
-		var oOption = document.createElement("OPTION");
-		oOption.text=xmlDoc.getElementsByTagName("title")[i].childNodes[0].nodeValue;
-		oOption.value=xmlDoc.getElementsByTagName("kml")[i].childNodes[0].nodeValue;
-		oOption.class="vs";
-		my_listbox.options.add(oOption)
-		}
-		return true;
+			for (i=0;i<numOfData;i=i+1)
+			{
+			var oOption = document.createElement("OPTION");
+			oOption.text=xmlDoc.getElementsByTagName("title")[i].childNodes[0].nodeValue;
+			oOption.value=xmlDoc.getElementsByTagName("kml")[i].childNodes[0].nodeValue;
+			oOption.class="vs";
+			kml_listbox.options.add(oOption)
+			}
+			return true;
 		}
 	</script>
 
@@ -156,12 +192,9 @@
 		<form name="caseSelect" action='javascript:void(0);'>
 		<p>
 		<h3>Select case</h3>
-		<select name="case" id="caseSelect" onchange="getDataOutOfCase(this.value)" class="s">
-		<option value="0" class="vs">Select case</option>
-		<option value="hk_data.xml" class="vs">Hollandse Kust</option>
-		<option value="zd_data.xml" class="vs">Zuidwestelijke Delta</option>
-		<option value="my_data.xml" class="vs">Markermeer/IJselmeer</option>
-		<option value="si_data.xml" class="vs">Singapore</option>
+		<select name="case" id="caseSelect" onchange="loadCase(this.value)" class="s">
+		  <option value="0" class="vs">Select case</option>
+		<script type="text/javascript">case_listbox=document.caseSelect.caseSelect</script>
 		</select>
 		</p>
 		</form>
@@ -174,8 +207,8 @@
 		<p>
 		<h3>Select data</h3>
 		<select name="kmlSelect" onchange='loadKML(this.value)' class="s">
-		<option value="" class="vs">Select case first</option>
-		<script type="text/javascript">my_listbox=document.kmlSelect.kmlSelect</script>
+		  <option value="" class="vs">Select case first</option>
+		<script type="text/javascript">kml_listbox=document.kmlSelect.kmlSelect</script>
 		</select>
 		</p>
 		</form>
@@ -188,22 +221,30 @@
 		<p>
 		<h3>Actions</h3>
 		<select name="polygon" id="polygonselect" onchange='pm.numsides = this.value; pm.drawPolygon()' class="s">
-						<option value="2" class="vs">Line</option>
-						<option value="3" class="vs">Triangle</option>
-						<option value="4" class="vs">Square</option>
-						<option value="5" class="vs">Pentagon</option>
-						<option value="6" class="vs">Hexagon</option>
-						<option value="7" class="vs">Heptagon</option>
-						<option value="8" class="vs">Octagon</option>
-						<option value="9" class="vs">Nonagon</option>
-						<option value="10" class="vs">Decagon</option>
-						<option value="11" class="vs">Hendecagon</option>
-						<option value="12" class="vs">Dodecagon</option>
-						<option value="25" class="vs">Circle</option>
-					</select></p>
-			</form>
+			<option value="2" class="vs">Line</option>
+			<option value="3" class="vs">Triangle</option>
+			<option value="4" class="vs">Square</option>
+			<option value="5" class="vs">Pentagon</option>
+			<option value="6" class="vs">Hexagon</option>
+			<option value="7" class="vs">Heptagon</option>
+			<option value="8" class="vs">Octagon</option>
+			<option value="9" class="vs">Nonagon</option>
+			<option value="10" class="vs">Decagon</option>
+			<option value="11" class="vs">Hendecagon</option>
+			<option value="12" class="vs">Dodecagon</option>
+			<option value="25" class="vs">Circle</option>
+		</select></p>
+		</form>
 		</td>
 	</tr>
+
+	<tr><td>Centre: </td><td><span id='centre'></span></td></tr>
+	<tr><td>Vertex: </td><td><span id='outer'></span></td></tr>
+	<tr><td>Radius: </td><td><span id='rad'></span></td></tr>
+	<tr><td>Bearing: </td><td><span id='bear'></span></td></tr>
+	<tr><td>perimeter: </td><td><span id='per'></span></td></tr>
+	<tr><td>Area: </td><td><span id='are'></span></td></tr>
+
 	<tr>
 		<td>
 			<form id="interpoleButton" action='javascript:void(0);'>
