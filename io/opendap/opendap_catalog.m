@@ -1,16 +1,18 @@
 function varargout = opendap_catalog(varargin)
-%OPENDAP_CATALOG   get urls of all datasets in an OPeNDAP catalog.xml url
+%OPENDAP_CATALOG   get urls of all datasets in an OPeNDAP THREDDS/HYRAX catalog.xml url
 %
 %   nc_file_list = opendap_catalog(url)
 %
 % loads the urls of all datsets (netCDF files) that reside 
 % under the OPeNDAP catalog.xml located at the specified url,
-% as well as all catalogs that it links to.
+% as well as all catalogs that it links to. Onyl works for THREDDS, and 
+% sometimes for HYRAX. doe snot work for GrADS.
 %
 % When url does not start with 'http', the url is assumed
 % to be a local directory, and all netCDF files (*.nc) 
 % in the directory tree below it are returned.
-% Any trailing /catalog.html is replaced with /catalog.xml.
+% Any trailing /catalog.html is replaced with /catalog.xml (THREDDS).
+% Any trailing /contents.html is replaced with /catalog.xml (HYRAX).
 %
 %   nc_file_list = opendap_catalog(url,<keyword,value>)
 %
@@ -152,7 +154,9 @@ else
 
    %% replace html into xml or warn
 
-   if      strcmpi(OPT.url(end-4:end),'.html')
+   if      strcmpi(OPT.url(end-12:end),'contents.html') % HYRAX
+        OPT.url = [OPT.url(1:end-13)   'catalog.xml'];
+   elseif  strcmpi(OPT.url(end-4:end),'.html')          % THREDDS
         OPT.url = [OPT.url(1:end-5)   '.xml'];
    elseif ~strcmpi(OPT.url(end-3:end),'.xml')
       fprintf(2,'warning: opendap_catalog: url does not have extension ".xml" or ".html"')
