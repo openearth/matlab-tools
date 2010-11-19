@@ -52,6 +52,10 @@ function UCIT_next(direction,objTag)
 
 % find the soundingID of focus
 id=find(strcmp(info.string,popupValue));
+
+% switch direction in case walking through the years (because years are sorted recent-old) 
+if strcmp(objTag,'TransectsSoundingID'), direction = -direction; end
+
 switch direction
     case 1
         if id==max(size(info.string))

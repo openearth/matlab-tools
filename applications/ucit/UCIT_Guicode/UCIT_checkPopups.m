@@ -93,6 +93,6 @@ switch prescription
 end
 
 if check == 0
-    errordlg('Not a proper data selection for this action!','Check popups!');
+    errordlg('Please select an Area, Transect ID and Date first','Check pulldown boxes');
     return
 end

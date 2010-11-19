@@ -54,7 +54,7 @@ BKL = tBKL(find(tBKL(:,2)==raaiNummer),7);
 
 %% If not determined for that transect interpolate between surrounding transects
 if isempty(BKL)
-    BKL = interp1(tBKL(:,2),tBKL(:,7),raaiNummer,'linear','extrap');
+    BKL = interp1(tBKL(:,2),tBKL(:,7),double(raaiNummer),'linear','extrap');
 end
 
 function BKLfile = load_BKL

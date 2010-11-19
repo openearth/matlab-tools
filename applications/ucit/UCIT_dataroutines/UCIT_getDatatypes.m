@@ -85,7 +85,7 @@ if 0
 end
 
    %% Lidar USA
-
+if 0 % link to Netcdf file is not working anymore
    i = i + 1;
    datatypes.transect.names{i}    =  'Lidar Data US';
    datatypes.transect.urls {i}    = {'http://gam.whoi.edu:8081/thredds/dodsC/usgs/afarris/oregon_7.nc',...
@@ -100,7 +100,7 @@ end
    datatypes.transect.extra{i}    =  {'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/usgs/landboundaries/refline_OR.nc',...
                                      ''};
    datatypes.transect.datatype{i} =  'Lidar Data US'; % defines functionality
-
+end
 %% Grid data
 %  names are a unique tag, datatype governs the actions
 
