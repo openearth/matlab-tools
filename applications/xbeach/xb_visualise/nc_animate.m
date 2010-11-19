@@ -1,6 +1,5 @@
 function nc_animate(url,vars,ti)
 
-nc_check;
 
 if ~iscell(vars); vars = {vars}; end;
 
