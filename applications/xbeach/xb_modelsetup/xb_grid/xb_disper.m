@@ -1,19 +1,61 @@
-function k = disper(w, h, g);
+function k = xb_disper(w, h, g)
+%XB_DISPER  Linear dispersion relation.
+%
+%   absolute error in k*h < 5.0e-16 for all k*h
+%
+%   Syntax:
+%   k = xb_disper(w, h, g)
+%
+%   Input:
+%   w = 2*pi/T, were T is wave period
+%   h = water depth
+%   g = gravity constant
+%
+%   Output:
+%   k = wave number
+%
+%   Example
+%   k = xb_disper(2*pi/5,5,9.81);
+%
+%   See also 
 
-% DISPER   Linear dispersion relation
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2010 <COMPANY>
+%       G. Klopman, Delft Hydraulics, 6 Dec 1994
 %
-% usage:   k  = disper(w,h,g)     or
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
 %
-%          k  = wave number             (2 * pi / wave length)
-%          w  = wave angular frequency  (2 * pi / wave period)
-%          h  = water depth
-%          g  = gravitational acceleration constant, optional (DEFAULT 9.81)
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
 %
-%          absolute error in k*h < 5.0e-16 for all k*h
-%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
 
-%          programmer: G. Klopman, Delft Hydraulics, 6 Dec 1994
+% This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
 
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 19 Nov 2010
+% Created with Matlab version: 7.4.0.287 (R2007a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 if nargin < 3,
   g = 9.81;
 end;

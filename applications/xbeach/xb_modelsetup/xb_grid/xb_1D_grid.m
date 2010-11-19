@@ -88,6 +88,14 @@ OPT = struct(...
 % overrule default settings by propertyName-propertyValue pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
 
+if OPT.vardx == 0
+
+%% constant dx
+xgr=[xin(1):OPT.dxmin:xin(end)];
+zgr =interp1(xin,zin,xgr);
+zgr(1) = zgr(2);
+    
+elseif OPT.vardx == 1
 %% prepare
 k       = xb_disper(2*pi/OPT.Tm, -zin(1), OPT.g);
 Llong   = 7*2*pi/k;
@@ -134,9 +142,16 @@ end
 
 zgr(:,1) = zgr(:,2);
 
+else
+    
+    error('Nop, this is not going to work; vardx = [0 1]');
+
+end
+
 ygr = [0:OPT.dy:2*OPT.dy]';
 nx = length(xgr);
 ny = length(ygr);
+
 ygr = repmat(ygr,1,nx);
 xgr = repmat(xgr,ny,1);
 zgr = repmat(zgr,ny,1);
