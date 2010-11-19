@@ -99,7 +99,7 @@ OPT = struct(...
     'step',1,...
     'dtbc',2);
 
-setProperty(OPT,varargin{:});
+setproperty(OPT,varargin{:});
 
 % Check file length
 fid=fopen(fname,'r');
