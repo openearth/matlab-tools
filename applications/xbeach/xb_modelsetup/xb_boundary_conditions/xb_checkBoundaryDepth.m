@@ -73,7 +73,7 @@ function [pass info] = xb_checkBoundaryDepth(Hm0,Tp,h)
 %%
 % Set criteria
 nmax = 0.85;
-gammamax = 0.5;
+gammamax = 0.4;
 
 % Initial values
 pass = false;
