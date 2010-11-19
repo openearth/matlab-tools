@@ -52,7 +52,6 @@ MTest.category('UnCategorized');
 
 outputdir = fullfile('temp_calculation')
 outputfile = fullfile(outputdir, 'xboutput.nc')
-outputfile = '/Users/fedorbaart/Documents/checkouts/XBeach/testbed/input/2DH_Santa_Rosa_Island/xboutput.nc'
 
 % Does the function still run
 % Does the function output xw by default
