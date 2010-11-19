@@ -1,4 +1,4 @@
-function varargout = xb_read_params(varargin)
+function varargout = xb_read_params(filename)
 %XB_READ_PARAMS  One line description goes here.
 %
 %   More detailed description goes here.
@@ -58,3 +58,13 @@ function varargout = xb_read_params(varargin)
 % $Keywords: $
 
 %%
+if ~exist(filename, 'file')
+    error(['"' filename '" does not exist'])
+end
+
+fid = fopen(filename);
+txt = fread(fid, '*char')';
+fclose(fid);
+
+%%
+% regexp(txt, '=(.*?)\n', 'tokens')
