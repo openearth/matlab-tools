@@ -49,15 +49,19 @@ function xb_read_dat_test()
 MTest.category('UnCategorized');
 % Create a sample structure
 
-outputdir = fullfile(['..' 'temp_calculation'])
-outputfile = fullfile([outputdir, 'xboutput.nc'])
+outputdir = fullfile('temp_calculation')
+outputfile = fullfile(outputdir, 'xboutput.nc')
 variables = struct('name', ['xw', 'yw'], 'values',{[1 1;2 2],[1 2;1 2]});
 save('samplestruct', 'variables')
 % Does the function still run
 variables = xb_read_dat(outputdir);
 % Does the function output xw by default
 variables = xb_read_dat(outputdir)
-assert(ismember({variables.name},  'xw'));
+assert(ismember('zs', {variables.name}));
+% Do we have some values?
+assert(isnumeric(variables(1).values));
+
 % Does the function not output xw if we don't want it to.
-variables = xb_read_dat(outputdir, 'variables', {'yw','zs'}, 'timestepindex', 100)
-assert(~ismember({variables.name},  'xw'));
+% TODO: this doesn't work yet.....
+variables = xb_read_dat(outputdir, 'variables', {'zb'}, 'timestepindex', 100)
+assert(~ismember('zs', {variables.name}));

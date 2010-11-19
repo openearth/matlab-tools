@@ -1,21 +1,22 @@
-function varargout = xb_read_dat(fname, varargin)
+function variables = xb_read_dat(fname, varargin)
 %XB_READ_DAT  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = xb_read_dat(varargin)
+%   variables = xb_read_dat(fname, varargin)
+%   fname = directory name that contains the dat files.
 %
 %   Input:
 %   varargin  = variables, timestepindex
 %
 %   Output:
-%   varargout = 
+%   variables = structure containing variables
 %
 %   Example
 %   variables = xb_read_output('outputdir')
 %   assert(ismember({variables.name},  'xw'})
-%   variables = xb_read_output('outputdir', variables, {'yw','zs'},
+%   variables = xb_read_output('outputdir', 'variables', {'yw','zs'},
 %   timestepindex, 100}
 %   assert(~ismember({variables.name},  'xw'})
 %
@@ -69,7 +70,7 @@ variables = struct()
 
 options=[' 3Dwave';' 3Dsed ';' 3Dbed ';' 4Dbed '];
 
-XBdims = xb_read_dims();
+XBdims = xb_read_dims(fname);
 
 % Determine output time series length in dims.dat
 if (length(fname)>9 && strcmp(fname(end-8:end), '_mean.dat'))
@@ -84,111 +85,120 @@ else
     nt=XBdims.nt;
 end
 
-% First open file
-fid=fopen(fname,'r');
-temp=fread(fid,'double');
-fclose(fid);
-sz=length(temp)/(XBdims.nx+1)/(XBdims.ny+1)/nt;
-
-% In case file does not match dims.dat 
-if sz>max(XBdims.ntheta,XBdims.nd*XBdims.ngd)
-    display('File length is longer than suggested in dims.dat');
-    if exist('dims','var')
-        display('- data file may be corrupt, or contain data of a previous simulation');
-    else
-        display('- if simulation is running, retry and specify dims type');
-        display('- if simulation is complete, data file may be corrupt, or contain data of a previous simulation');
-        display('  please try again with specified dims type');
-        display(' ');
-        display(' Valid dims types are:');
-        display(options(1:end,:));
-        display(' ');
-    end
+names=dir([fname filesep '*.dat']);
+for (i=1:length(names))
+    variables(i).name = names(i).name(1:length(names(i).name)-4);
 end
 
-% User knows what to specify
-if exist('dims','var')
-    if strcmpi(dims,'2D')
-        [Var info]=read2Dout(fname,XBdims);
-    elseif strcmpi(dims,'3Dwave')
-        [Var info]=readwaves(fname,XBdims);
-    elseif strcmpi(dims,'3Dbed')
-        [Var info]=readbedlayers(fname,XBdims);
-    elseif strcmpi(dims,'3Dsed')
-        [Var info]=readsediment(fname,XBdims);
-    elseif strcmpi(dims,'4Dbed')
-        [Var info]=readgraindist(fname,XBdims);
-    else
-        error(['Unknown dims type: ',dims]);
-    end
-else
-    % user does not know dims type
+
+for (i=1:length(names))
+% First open file
+    filename = [variables(1).name '.dat'];
+    fullfilename = fullfile(fname, filename)
+    fid=fopen(fullfile(fname, filename),'r');
+    temp=fread(fid,'double');
+    fclose(fid);
+    sz=length(temp)/(XBdims.nx+1)/(XBdims.ny+1)/nt;
+
+    % In case file does not match dims.dat 
     if sz>max(XBdims.ntheta,XBdims.nd*XBdims.ngd)
-        warning('Function will return values as though 2D array, but could not determine dims type with certainty');
-        Var=read2Dout(fname,XBdims);
-    else
-        % Probably 2D array
-        if sz==1
-            display('Assuming array is 2D');
-            [Var info]=read2Dout(fname,XBdims);
+        display('File length is longer than suggested in dims.dat');
+        if exist('dims','var')
+            display('- data file may be corrupt, or contain data of a previous simulation');
         else
-            % more complicated, could be ntheta, or nd or ngd or nd*ngd
-            check=zeros(4,1);
-            if sz==XBdims.ntheta
-                check(1)=1;
-            end
-            if sz==XBdims.nd
-                check(2)=1;
-            end
-            if sz==XBdims.ngd
-                check(3)=1;
-            end
-            if sz==XBdims.nd*XBdims.ngd
-                check(4)=1;
-            end
-            % Complies with nothing
-            if sum(check)==0
-                warning('File cannot be read, unknown size. Returning unprocessed values');
-                Var=temp;
-                info=['unknown'];
-            elseif sum(check)==1
-                ty=find(check==1);
-                switch ty
-                    case 1
-                        display('Assuming array is 3Dwave');
-                        [Var info]=readwaves(fname,XBdims);
-                    case 2
-                        display('Assuming array is 3Dbed');
-                        [Var info]=readbedlayers(fname,XBdims);
-                    case 3
-                        display('Assuming array is 3Dsed');
-                        [Var info]=readsediment(fname,XBdims);
-                    case 4
-                        display('Assuming array is 4Dbed');
-                        [Var info]=readgraindist(fname,XBdims);
-                end
+            display('- if simulation is running, retry and specify dims type');
+            display('- if simulation is complete, data file may be corrupt, or contain data of a previous simulation');
+            display('  please try again with specified dims type');
+            display(' ');
+            display(' Valid dims types are:');
+            display(options(1:end,:));
+            display(' ');
+        end
+    end
+
+    % User knows what to specify
+    if exist('dims','var')
+        if strcmpi(dims,'2D')
+            [Var info]=read2Dout(fullfilename,XBdims);
+        elseif strcmpi(dims,'3Dwave')
+            [Var info]=readwaves(fullfilename,XBdims);
+        elseif strcmpi(dims,'3Dbed')
+            [Var info]=readbedlayers(fullfilename,XBdims);
+        elseif strcmpi(dims,'3Dsed')
+            [Var info]=readsediment(fullfilename,XBdims);
+        elseif strcmpi(dims,'4Dbed')
+            [Var info]=readgraindist(fullfilename,XBdims);
+        else
+            error(['Unknown dims type: ',dims]);
+        end
+    else
+        % user does not know dims type
+        if sz>max(XBdims.ntheta,XBdims.nd*XBdims.ngd)
+            warning('Function will return values as though 2D array, but could not determine dims type with certainty');
+            Var=read2Dout(fullfilename,XBdims);
+        else
+            % Probably 2D array
+            if sz==1
+                display('Assuming array is 2D');
+                [Var info]=read2Dout(fullfilename,XBdims);
             else
-                display('Variable read is ambiguous');
-                display('Please try one of the following dims:')
-                display(options(check==1,:));
+                % more complicated, could be ntheta, or nd or ngd or nd*ngd
+                check=zeros(4,1);
+                if sz==XBdims.ntheta
+                    check(1)=1;
+                end
+                if sz==XBdims.nd
+                    check(2)=1;
+                end
+                if sz==XBdims.ngd
+                    check(3)=1;
+                end
+                if sz==XBdims.nd*XBdims.ngd
+                    check(4)=1;
+                end
+                % Complies with nothing
+                if sum(check)==0
+                    warning('File cannot be read, unknown size. Returning unprocessed values');
+                    Var=temp;
+                    info=['unknown'];
+                elseif sum(check)==1
+                    ty=find(check==1);
+                    switch ty
+                        case 1
+                            display('Assuming array is 3Dwave');
+                            [Var info]=readwaves(fullfilename,XBdims);
+                        case 2
+                            display('Assuming array is 3Dbed');
+                            [Var info]=readbedlayers(fullfilename,XBdims);
+                        case 3
+                            display('Assuming array is 3Dsed');
+                            [Var info]=readsediment(fullfilename,XBdims);
+                        case 4
+                            display('Assuming array is 4Dbed');
+                            [Var info]=readgraindist(fullfilename,XBdims);
+                    end
+                else
+                    display('Variable read is ambiguous');
+                    display('Please try one of the following dims:')
+                    display(options(check==1,:));
+                end
             end
         end
     end
+
+    variables(i).values = Var;
 end
-
-varargout = variables;
-
 %%
-function [Var info]=read2Dout(fname,XBdims)
-% Var=readvar(fname,XBdims,nodims) or
-% [Var info]=readvar(fname,XBdims,nodims)
+function [Var info]=read2Dout(fullfilename,XBdims)
+% Var=readvar(fullfilename,XBdims,nodims) or
+% [Var info]=readvar(fullfilename,XBdims,nodims)
 %
 % Output Var is XBeach output 3D array
 % Output info is character array describing the dimensions of Var, i.e.
 % info = ['x' 'y' 't'], where the first dimension in Var is the x-coordinate,
 % the second dimension in Var is the y-coordinate and the third dimension in
 % Var is the time coordinate (XBdims.nt or XBdims.ntm)
-% Input - fname : name of data file to open, e.g. 'zb.dat' or 'u_mean.dat'
+% Input - fullfilename : name of data file to open, e.g. 'zb.dat' or 'u_mean.dat'
 %       - XBdims: dimension data provided by getdimensions function
 %       - nodims: rank of the variable matrix being read (default = 2)
 %
@@ -200,16 +210,16 @@ function [Var info]=read2Dout(fname,XBdims)
 
 nodims=2;
 
-if (length(fname)>9 && strcmp(fname(end-8:end), '_mean.dat'))
+if (length(fullfilename)>9 && strcmp(fullfilename(end-8:end), '_mean.dat'))
     nt=XBdims.ntm;
     nameend=9;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_max.dat'))
+elseif (length(fullfilename)>8 && strcmp(fullfilename(end-7:end), '_max.dat'))
     nt=XBdims.ntm;
     nameend=8;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_min.dat'))
+elseif (length(fullfilename)>8 && strcmp(fullfilename(end-7:end), '_min.dat'))
     nt=XBdims.ntm;
     nameend=8;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_var.dat'))
+elseif (length(fullfilename)>8 && strcmp(fullfilename(end-7:end), '_var.dat'))
     nt=XBdims.ntm;
     nameend=8;
 else
@@ -224,13 +234,13 @@ integernames={'wetz';
               'nd';
               'respstruct'};
 
-if any(strcmpi(fname(1:end-nameend),integernames))
+if any(strcmpi(fullfilename(1:end-nameend),integernames))
     type='integer';
 else
     type='double';
 end
           
-fid=fopen(fname,'r');
+fid=fopen(fullfilename,'r');
 switch type
     case'double'
         switch nodims
@@ -279,15 +289,15 @@ end
 fclose(fid);
 
 %%
-function [bedlayers info]=readbedlayers(fname,XBdims)
-% Var=readbedlayers(fname,XBdims) or
-% [Var info]=readbedlayers(fname,XBdims)
+function [bedlayers info]=readbedlayers(fullfilename,XBdims)
+% Var=readbedlayers(fullfilename,XBdims) or
+% [Var info]=readbedlayers(fullfilename,XBdims)
 %
 % Output Var is XBeach output 4D array with bed layer data
 % Output info is character array describing the dimensions of Var, i.e.
 % info = ['x' 'y' 'nd' 't'], where the first dimension in Var is the x-coordinate,
 % etc.
-% Input - fname : name of data file to open, e.g. 'dzbed.dat'
+% Input - fullfilename : name of data file to open, e.g. 'dzbed.dat'
 %       - XBdims: dimension data provided by getdimensions function
 %
 % Created 24-11-2009 : XBeach-group Delft
@@ -295,13 +305,13 @@ function [bedlayers info]=readbedlayers(fname,XBdims)
 % See also getdimensions, readvar, readpoint, readgraindist, readsediment,
 %          readwaves
 
-if (length(fname)>9 && strcmp(fname(end-8:end), '_mean.dat'))
+if (length(fullfilename)>9 && strcmp(fullfilename(end-8:end), '_mean.dat'))
     nt=XBdims.ntm;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_max.dat'))
+elseif (length(fullfilename)>8 && strcmp(fullfilename(end-7:end), '_max.dat'))
     nt=XBdims.ntm;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_min.dat'))
+elseif (length(fullfilename)>8 && strcmp(fullfilename(end-7:end), '_min.dat'))
     nt=XBdims.ntm;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_var.dat'))
+elseif (length(fullfilename)>8 && strcmp(fullfilename(end-7:end), '_var.dat'))
     nt=XBdims.ntm;
 else
     nt=XBdims.nt;
@@ -310,7 +320,7 @@ end
 bedlayers=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.nd,nt);
 info=['x  ' 'y  ' 'nd ' 't  '];
 
-fid=fopen(fname,'r');
+fid=fopen(fullfilename,'r');
 
 for i=1:nt
     for jj=1:XBdims.nd
@@ -322,15 +332,15 @@ fclose(fid);
 
 
 %%
-function [graindis info]=readgraindist(fname,XBdims)
-% Var=readgraindis(fname,XBdims) or
-% [Var info]=readgraindist(fname,XBdims)
+function [graindis info]=readgraindist(fullfilename,XBdims)
+% Var=readgraindis(fullfilename,XBdims) or
+% [Var info]=readgraindist(fullfilename,XBdims)
 %
 % Output Var is XBeach output 5D array with bed composition data
 % Output info is character array describing the dimensions of Var, i.e.
 % info = ['x' 'y' 'nd' 'ngd' 't'], where the first dimension in Var is the x-coordinate,
 % etc.
-% Input - fname : name of data file to open, e.g. 'pbbed.dat'
+% Input - fullfilename : name of data file to open, e.g. 'pbbed.dat'
 %       - XBdims: dimension data provided by getdimensions function
 %
 % Created 24-11-2009 : XBeach-group Delft
@@ -338,13 +348,13 @@ function [graindis info]=readgraindist(fname,XBdims)
 % See also getdimensions, readvar, readpoint, readbedlayers, readsediment,
 %          readwaves
 
-if (length(fname)>9 && strcmp(fname(end-8:end), '_mean.dat'))
+if (length(fullfilename)>9 && strcmp(fullfilename(end-8:end), '_mean.dat'))
     nt=XBdims.ntm;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_max.dat'))
+elseif (length(fullfilename)>8 && strcmp(fullfilename(end-7:end), '_max.dat'))
     nt=XBdims.ntm;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_min.dat'))
+elseif (length(fullfilename)>8 && strcmp(fullfilename(end-7:end), '_min.dat'))
     nt=XBdims.ntm;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_var.dat'))
+elseif (length(fullfilename)>8 && strcmp(fullfilename(end-7:end), '_var.dat'))
     nt=XBdims.ntm;
 else
     nt=XBdims.nt;
@@ -353,7 +363,7 @@ end
 graindis=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.nd,XBdims.ngd,nt);
 info=['x  ' 'y  ' 'nd ' 'ngd' '  t'];
 
-fid=fopen(fname,'r');
+fid=fopen(fullfilename,'r');
 
 for i=1:nt
     for ii=1:XBdims.ngd
@@ -367,14 +377,14 @@ fclose(fid);
 
 
 %%
-function Pointdata=readpoint(fname,XBdims,nvar)
-% Pointdata=readpoint(fname,XBdims,nvar)
+function Pointdata=readpoint(fullfilename,XBdims,nvar)
+% Pointdata=readpoint(fullfilename,XBdims,nvar)
 %
 % Output Point is [ntp,nvar+1] array, where ntp is XBdims.ntp
 %                 First column of Pointdata is time
 %                 Second and further columns of Pointdata are values of
 %                 variables
-% Input - fname : name of data file to open, e.g. 'point001.dat' or 'rugau001.dat'
+% Input - fullfilename : name of data file to open, e.g. 'point001.dat' or 'rugau001.dat'
 %       - XBdims: dimension data provided by getdimensions function
 %       - nvar  : number of variables output at this point location
 %
@@ -384,22 +394,22 @@ function Pointdata=readpoint(fname,XBdims,nvar)
 %          readsediment, readwaves
 
 Pointdata=zeros(XBdims.ntp,nvar+1);
-fid=fopen(fname,'r');
+fid=fopen(fullfilename,'r');
 for i=1:XBdims.ntp
     Pointdata(i,:)=fread(fid,nvar+1,'double');
 end
 fclose(fid);
 
 %%
-function [sed info]=readsediment(fname,XBdims)
-% Var=readsediment(fname,XBdims) or
-% [Var info]=readsediment(fname,XBdims)
+function [sed info]=readsediment(fullfilename,XBdims)
+% Var=readsediment(fullfilename,XBdims) or
+% [Var info]=readsediment(fullfilename,XBdims)
 %
 % Output Var is XBeach output 4D array with sediment concentrations and transport data
 % Output info is character array describing the dimensions of Var, i.e.
 % info = ['x' 'y' 'ngd' 't'], where the first dimension in Var is the x-coordinate,
 % etc.
-% Input - fname : name of data file to open, e.g. 'Subg.dat'
+% Input - fullfilename : name of data file to open, e.g. 'Subg.dat'
 %       - XBdims: dimension data provided by getdimensions function
 %
 % Created 24-11-2009 : XBeach-group Delft
@@ -408,13 +418,13 @@ function [sed info]=readsediment(fname,XBdims)
 %          readwaves
 
 
-if (length(fname)>9 && strcmp(fname(end-8:end), '_mean.dat'))
+if (length(fullfilename)>9 && strcmp(fullfilename(end-8:end), '_mean.dat'))
     nt=XBdims.ntm;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_max.dat'))
+elseif (length(fullfilename)>8 && strcmp(fullfilename(end-7:end), '_max.dat'))
     nt=XBdims.ntm;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_min.dat'))
+elseif (length(fullfilename)>8 && strcmp(fullfilename(end-7:end), '_min.dat'))
     nt=XBdims.ntm;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_var.dat'))
+elseif (length(fullfilename)>8 && strcmp(fullfilename(end-7:end), '_var.dat'))
     nt=XBdims.ntm;
 else
     nt=XBdims.nt;
@@ -423,7 +433,7 @@ end
 sed=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.ngd,nt);
 info=['x  ' 'y  ' 'ngd ' 't  '];
 
-fid=fopen(fname,'r');
+fid=fopen(fullfilename,'r');
 
 for i=1:nt
     for ii=1:XBdims.ngd
@@ -434,15 +444,15 @@ end
 fclose(fid);
 
 %%
-function [var info]=readwaves(fname,XBdims)
-% Var=readwaves(fname,XBdims) or
-% [Var info]=readwaves(fname,XBdims)
+function [var info]=readwaves(fullfilename,XBdims)
+% Var=readwaves(fullfilename,XBdims) or
+% [Var info]=readwaves(fullfilename,XBdims)
 %
 % Output Var is XBeach output 4D array with wave data per wave bin
 % Output info is character array describing the dimensions of Var, i.e.
 % info = ['x' 'y' 'ntheta' 't'], where the first dimension in Var is the x-coordinate,
 % etc.
-% Input - fname : name of data file to open, e.g. 'Subg.dat'
+% Input - fullfilename : name of data file to open, e.g. 'Subg.dat'
 %       - XBdims: dimension data provided by getdimensions function
 %
 % Created 24-11-2009 : XBeach-group Delft
@@ -451,13 +461,13 @@ function [var info]=readwaves(fname,XBdims)
 %          readsediment
 
 
-if (length(fname)>9 && strcmp(fname(end-8:end), '_mean.dat'))
+if (length(fullfilename)>9 && strcmp(fullfilename(end-8:end), '_mean.dat'))
     nt=XBdims.ntm;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_max.dat'))
+elseif (length(fullfilename)>8 && strcmp(fullfilename(end-7:end), '_max.dat'))
     nt=XBdims.ntm;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_min.dat'))
+elseif (length(fullfilename)>8 && strcmp(fullfilename(end-7:end), '_min.dat'))
     nt=XBdims.ntm;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_var.dat'))
+elseif (length(fullfilename)>8 && strcmp(fullfilename(end-7:end), '_var.dat'))
     nt=XBdims.ntm;
 else
     nt=XBdims.nt;
@@ -466,7 +476,7 @@ end
 var=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.ngd,nt);
 info=['x  ' 'y  ' 'ntheta ' 't  '];
 
-fid=fopen(fname,'r');
+fid=fopen(fullfilename,'r');
 
 for i=1:nt
     for ii=1:XBdims.ntheta
