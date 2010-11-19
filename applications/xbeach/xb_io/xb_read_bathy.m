@@ -1,16 +1,22 @@
-function varargout = xb_read_bathy(varargin)
-%XB_READ_BATHY  One line description goes here.
+function [x y z ne] = xb_read_bathy(xfile, yfile, depfile, nefile)
+%XB_READ_BATHY  read xbeach bathymetry files
 %
-%   More detailed description goes here.
+%   Routine to read xbeach bathymetry files.
 %
 %   Syntax:
-%   varargout = xb_read_bathy(varargin)
+%   [x y z ne] = xb_read_bathy(xfile, yfile, depfile, nefile)
 %
 %   Input:
-%   varargin  =
+%   xfile   = file name of x-coordinates file (cross-shore)
+%   yfile   = file name of y-coordinates file (alongshore)
+%   depfile = file name of bathymetry file
+%   nefile  = file name of non erodible layer file
 %
 %   Output:
-%   varargout =
+%   x       = x-coordinates
+%   y       = y-coordinates
+%   z       = bathymetry
+%   ne      = non-erodible layer
 %
 %   Example
 %   xb_read_bathy
@@ -19,12 +25,15 @@ function varargout = xb_read_bathy(varargin)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
-%       Cursus Laptop
+%   Copyright (C) 2010 Deltares
+%       Kees den Heijer
 %
-%       <EMAIL>	
+%       Kees.denHeijer@Deltares.nl
 %
-%       <ADDRESS>
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -58,3 +67,22 @@ function varargout = xb_read_bathy(varargin)
 % $Keywords: $
 
 %%
+if nargin > 0 && exist(xfile, 'file')
+    % read file with x-coordinates (cross-shore)
+    x = load(xfile);
+end
+
+if nargin > 1 && exist(yfile, 'file')
+    % read file with y-coordinates (alongshore)
+    y = load(yfile);
+end
+
+if nargin > 2 && exist(depfile, 'file')
+    % read bathymetry file
+    z = load(depfile);
+end
+
+if nargin > 3 && exist(nefile, 'file')
+    % read non-erodible layer file
+    ne = load(nefile);
+end
