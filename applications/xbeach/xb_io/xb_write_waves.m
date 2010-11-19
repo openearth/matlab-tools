@@ -11,15 +11,32 @@ function filename = xb_write_waves(varargin)
 %   filename = xb_write_waves(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = type:           type of wave file (jonswap/vardens)
+%               Hm0:            significant wave height of jonswap spectrum
+%               Tp:             peak wave period of jonswap spectrum
+%               dir:            direction of waves in nautical convention
+%               gamma:          peak-enhancement factor of jonswap spectrum
+%               s:              directional spreading factor of jonswap
+%                               spectrum
+%               fnyq:           Nyquist frquency of jonswap spectrum
+%               freqs:          frequencies of variance density spectrum
+%               dirs:           directions of variance density spectrum
+%               vardens:        variance density matrix (freq,dir,time)
+%               duration:       duration for individual wave files
+%               timestep:       timestep for individual wave files
+%               filelist_file:  name of filelist file without extension
+%               jonswap_file:   name of jonswap file without extension
+%               vardens_file:   name of vardens file without extension
+%               omit_filelist:  flag to omit filelist generation in case of
+%                               jonswap spectrum
 %
 %   Output:
-%   varargout =
+%   filename = filename to be refered in params.txt
 %
 %   Example
-%   xb_write_waves
+%   filename = xb_write_waves()
 %
-%   See also 
+%   See also xb_read_waves
 
 %% Copyright notice
 %   --------------------------------------------------------------------
