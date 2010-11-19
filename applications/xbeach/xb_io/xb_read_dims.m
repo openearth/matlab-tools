@@ -124,5 +124,5 @@ elseif strcmpi(extension, '.dat')
     XBdims.yc = fread(fidxy, [XBdims.nx XBdims.ny] + 1, 'double');
     fclose(fidxy);
 else
-    error(['extension "' extension '" not valid'])
+    error(['directory or file "' filename '" does not exist'])
 end
