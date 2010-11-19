@@ -75,20 +75,20 @@ function varargout = arc_info_binary(varargin)
 %             [i,j]=ind2sub([D.HTilesPerRow D.HTilesPerColumn],t);
 %             dim1 = (j -1)*D.HTileYSize+1:j*D.HTileYSize;
 %             dim2 = (i -1)*D.HTileXSize+1:i*D.HTileXSize;
-% 
+%
 %             dim1(dim1>length(y)) = [];
 %             dim2(dim2>length(x)) = [];
-% 
+%
 %             [X,Y] = meshgrid(x(dim2),y(dim1));
-% 
+%
 %             % remove empty (nan) values
 %             nn = ~isnan(Z{t});
 %             nn = nn(:);
-% 
+%
 %             if ~isequal(size(Z{t}),size(X))
 %                 error('Something went terribly wrong...')
 %             end
-% 
+%
 %             pointsInTile = [X(nn),Y(nn),Z{t}(nn)];
 %         end
 %     end
@@ -172,8 +172,8 @@ OPT.epsg        = 32631; % TO DO: get this from *.prj file, if any
 OPT.clim        = [];
 OPT.data        = 1; % 0 means to get only meta-data and pointers
 OPT.nodatavalue = -realmax('single'); %-3.4028234663852885e+038; % value in arc gis file
-OPT.collectoutput = true; % if set to false, this greatly reduces the memory requirements of this routine.
-OPT.waitbar       = true; % adds a waitbar  
+OPT.output_mode = 'auto'; % can be 'normal, 'nansparse' or 'struct'. if set to false, this greatly reduces the memory requirements of this routine.
+OPT.waitbar       = true; % adds a waitbar
 
 %  realmax('single'); = 3.402823e+038
 %  realmin('single'); = 1.175494e-038
@@ -336,17 +336,6 @@ D.nTiles      = t;
 
 fclose(fid);
 
-%% pre allocate  output data
-if OPT.waitbar
-    multiWaitbar('arc_info_binary',0,'label',sprintf('Reading %s: Preallocating Output...',OPT.base))
-end
-
-if OPT.collectoutput
-    Data    = NaN([D.nRowsTile D.nColumnsTile]); % reduce to [D.nRows D.nColumns] after reading all tiles
-else
-    Data(1:D.HTilesPerRow,1:D.HTilesPerColumn) =  {NaN};%NaN(D.HTileYSize,D.HTileXSize)
-end
-
 %% w001001.adf: This is the file containing the actual raster data.
 
 fid            = fopen([OPT.base,'w001001.adf'],'r','ieee-be'); % MSB > 'ieee-be'
@@ -364,7 +353,40 @@ end
 %   D
 %end
 
+
+
 if OPT.data
+    %% pre allocate  output data
+    if OPT.waitbar
+        multiWaitbar('arc_info_binary',0,'label',sprintf('Reading %s: Preallocating Output...',OPT.base))
+    end
+    
+    max_coverage = sum(D.TileSize/2)/(D.nRowsTile*D.nColumnsTile);
+    
+    if strcmpi(OPT.output_mode,'auto')
+        if max_coverage<.25 || ...
+                (D.nRowsTile*D.nColumnsTile) > 5e6
+            %Put data in nansparse double matrix
+            OPT.output_mode = 'nansparse';
+        else
+            %Put data in normal double matrix
+            OPT.output_mode = 'normal';
+        end
+    end
+    
+    switch OPT.output_mode
+        case 'normal'
+            Data    = NaN([D.nRowsTile D.nColumnsTile]); % reduce to [D.nRows D.nColumns] after reading all tiles
+        case {'struct','nansparse'}
+            % even if the output mode is nansparse, the internal function uses
+            % a structure. This structure is later converted to a nansparse,
+            % because incremental writing of coordinates to a nansparse uses
+            % progressivly more overhead for large arrays 
+            Data(1:D.HTilesPerRow,1:D.HTilesPerColumn) =  {NaN};
+    end
+    
+    
+    
     
     %% RTileType/RTileData
     %
@@ -393,7 +415,7 @@ if OPT.data
         fseek(fid,D.TileOffset(t)*2,'bof'   ); % TileOffset is in 2 byte short, fseeks wants it in bytes
         D.RTileSize(t) = fread(fid,                1,'uint16'); % RTileSize is defined in 2 byte words, which is exactly the uint16 we have here
         
-        [i,j]=ind2sub([D.HTilesPerRow D.HTilesPerColumn],t);
+        [i,j]=ind2sub_q([D.HTilesPerRow D.HTilesPerColumn],t);
         dim1 = (j -1)*D.HTileYSize+1:j*D.HTileYSize;
         dim2 = (i -1)*D.HTileXSize+1:i*D.HTileXSize;
         
@@ -469,7 +491,7 @@ if OPT.data
                 %    * Marker > 127: The marker indicates that 256-Marker pixels of no data pixels should be
                 %                    put into the output stream. No data (other than the next marker) follows this marker.
                 
-            elseif D.RTileType(t)==hex2dec('CF') | ...
+            elseif D.RTileType(t)==hex2dec('CF') || ...
                     D.RTileType(t)==hex2dec('D7')
                 
                 if  D.RTileType(t)==hex2dec('CF')
@@ -599,14 +621,15 @@ if OPT.data
                 fprintf(2,['error: arc_info_binary: integer data type ''',dec2hex(D.RTileType(t)),''' not yet implemented, inserted Inf.\n'])
                 
             end
-            if OPT.collectoutput
-                Data(dim1,dim2) = RTileData';
-            else
-                if all(all(isnan(RTileData)))
-                    Data{i,j} = NaN;
-                else
-                    Data{i,j} = RTileData';
-                end
+            switch OPT.output_mode
+                case 'normal'
+                    Data(dim1,dim2)             = RTileData';
+                case {'struct','nansparse'}
+                    if all(all(isnan(RTileData)))
+                        Data{i,j}               = NaN;
+                    else
+                        Data{i,j}               = RTileData';
+                    end
             end
         else
             
@@ -617,19 +640,20 @@ if OPT.data
             if ~(D.TileSize(t)==0)
                 RTileData      = fread(fid,D.TileSize(t)/2,'float' ); % TileSize in 2 byte words / 2 =  TileSize in 4 byte words
                 RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]);
-                RTileData(RTileData==OPT.nodatavalue)=nan;
+                RTileData(RTileData==OPT.nodatavalue) = nan;
             else
                 RTileData      = nan([D.HTileXSize D.HTileYSize]);
             end
             
-            if OPT.collectoutput
-                Data(dim1,dim2) = RTileData';
-            else
-                if all(all(isnan(RTileData)))
-                    Data{i,j} = NaN;
-                else
-                    Data{i,j} = RTileData';
-                end
+            switch OPT.output_mode
+                case 'normal'
+                    Data(dim1,dim2)             = RTileData';
+                case {'struct','nansparse'}
+                    if all(all(isnan(RTileData)))
+                        Data{i,j}               = NaN;
+                    else
+                        Data{i,j}               = RTileData';
+                    end
             end
         end
         
@@ -638,34 +662,64 @@ if OPT.data
     fclose(fid);
     
     %% remove redundant matrix space occupied by surplus of tiles
-    if OPT.collectoutput
-        Data = Data(1:D.nRows,1:D.nColumns);
-    else
-        if D.nRows<D.nRowsTile
-            nn = floor(D.nRows/D.HTileYSize);
-            for ii = 1:size(Data,1)
-                if numel(Data{ii,nn+1})>1
-                    Data{ii,nn+1} = Data{ii,nn+1}(1:D.nRows - (D.HTileYSize*(nn)),:);
+    
+    switch OPT.output_mode
+        case 'normal'
+            Data = Data(1:D.nRows,1:D.nColumns);
+        case 'nansparse'
+            nValues = 0;
+            for t = 1:D.nTiles
+                if numel(Data{t})>1
+                    nValues = nValues + sum(sum(~isnan(Data{t})));
                 end
             end
-        end
-        if D.nColumns<D.nColumnsTile
-            nn = floor(D.nColumns/D.HTileXSize);
-            for ii = 1:size(Data,2)
-                if numel(Data{nn+1,ii})>1
-                    Data{nn+1,ii} = Data{nn+1,ii}(:,1:D.nColumns - (D.HTileXSize*(nn)));
+            % preallocate xyz
+            xyz = nan(nValues,3);
+            
+            nValues = 0;
+            for t = 1:D.nTiles
+                if numel(Data{t})>1
+                    % calculate x y coordinates of points
+                    [i,j] = ind2sub([D.HTilesPerRow D.HTilesPerColumn],t);
+                    dim1  = (j - 1)*D.HTileYSize+1:j*D.HTileYSize;
+                    dim2  = (i - 1)*D.HTileXSize+1:i*D.HTileXSize;
+                    [X,Y] = meshgrid(dim2,dim1);
+                    
+                    % remove empty (nan) values
+                    nn = ~isnan(Data{t});
+
+                    xyz(nValues+1:nValues+sum(sum(nn)),:) = [X(nn),Y(nn),Data{t}(nn)];
+                    nValues = nValues+sum(sum(nn));
                 end
             end
-        end
+            Data = nansparse(xyz(:,1),xyz(:,2),xyz(:,3),D.nColumns,D.nRows)';
+        case 'struct'
+            if D.nRows<D.nRowsTile
+                nn = floor(D.nRows/D.HTileYSize);
+                for ii = 1:size(Data,1)
+                    if numel(Data{ii,nn+1})>1
+                        Data{ii,nn+1} = Data{ii,nn+1}(1:D.nRows - (D.HTileYSize*(nn)),:);
+                    end
+                end
+            end
+            if D.nColumns<D.nColumnsTile
+                nn = floor(D.nColumns/D.HTileXSize);
+                for ii = 1:size(Data,2)
+                    if numel(Data{nn+1,ii})>1
+                        Data{nn+1,ii} = Data{nn+1,ii}(:,1:D.nColumns - (D.HTileXSize*(nn)));
+                    end
+                end
+            end
     end
-   
+    
     if OPT.waitbar
         multiWaitbar('arc_info_binary',t/D.nTiles,'label',sprintf('Reading %s: completed, preparing output',OPT.base))
     end
     %% plot
     
     if OPT.plot
-        pcolorcorcen(D.X,D.Y,Data);
+        figure
+        pcolorcorcen(D.X,D.Y,full(Data));
         axis equal;
         caxis([D.SMin D.SMax]);
         colorbarwithtitle([mktex(OPT.long_name),' [',OPT.units,']'])
@@ -694,7 +748,6 @@ if OPT.data
             end
         end
     end
-    
 end
 
 %% metadata
@@ -723,4 +776,9 @@ end
 if OPT.waitbar
     multiWaitbar('arc_info_binary','close')
 end
+
+function [i,j] = ind2sub_q(siz,ind)
+% simpliefied ind2sub with no overhead
+j = ceil(ind/siz(1));
+i = ind - (j-1).*siz(1);
 %% EOF
