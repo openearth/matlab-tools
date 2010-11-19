@@ -1,4 +1,4 @@
-function varargout = xb_read_output(fname, varargin)
+function variables = xb_read_output(fname, varargin)
 %XB_READ_OUTPUT  One line description goes here.
 %
 %   More detailed description goes here.
@@ -66,9 +66,9 @@ function varargout = xb_read_output(fname, varargin)
 % $Keywords: $
 
 if isdir(fname) 
-  varargout = xb_read_dat(fname, varargin)
+  variables = xb_read_dat(fname, varargin)
 else 
-  varargout = xb_read_netcdf(fname, varargin)
+  variables = xb_read_netcdf(fname, varargin)
 end
 
 

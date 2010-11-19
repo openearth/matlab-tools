@@ -1,13 +1,13 @@
-function varargout = xb_read_netcdf(varargin)
+function variables = xb_read_netcdf(fname, varargin)
 %XB_READ_NETCDF  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = xb_read_netcdf(varargin)
+%   varargout = xb_read_netcdf(fname, varargin)
 %
 %   Input:
-%   varargin  =
+%   fname  = netcdf file
 %
 %   Output:
 %   varargout =
@@ -19,12 +19,12 @@ function varargout = xb_read_netcdf(varargin)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
-%       Cursus Laptop
+%   Copyright (C) 2010 <Deltares>
+%       OSX
 %
-%       <EMAIL>	
+%       <fedor.baart@deltares.nl>	
 %
-%       <ADDRESS>
+%       <Delft>
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -57,4 +57,15 @@ function varargout = xb_read_netcdf(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+
+%% 
+variables = struct
+
+info = nc_info(fname);
+% Read all variables
+for (i=1:length({info.Dataset.Name}))
+    variables(i).name = info.Dataset(i).Name
+    variables(i).values = nc_varget(fname, info.Dataset(i).Name);
+end
+
+
