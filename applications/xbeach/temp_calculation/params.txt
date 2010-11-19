@@ -1,0 +1,97 @@
+grid input
+
+nx       = 135
+ny       = 2
+vardx    = 1
+depfile  = z.dep
+xfile    = x.grd
+yfile    = y.grd
+xori     = 0
+yori     = 0
+alfa     = 0
+posdwn   = -1
+scheme   = 2
+
+wave input
+
+break    = 3
+hmin     = 0.20 
+gamma    = 0.50
+alpha    = 1.
+delta    = 0.0
+n        = 10
+rho      = 1000
+g        = 9.81
+thetamin = -180
+thetamax = 180
+dtheta   = 360
+wci      = 0
+instat   = 4
+bcfile   = boundarylist_T1.lst
+nuh      = 0.0
+nuhfac   = 0
+roller   = 1
+beta     = 0.1
+swtable  = RF_table.txt
+rfb      = 1
+gammax   = 5
+delta    = 0.5
+
+flow input
+zs0      = 0.0
+tideloc  = 0
+C        = 65.
+eps      = 0.01
+umin     = 0.0
+tstart   = 0
+tint     = 10
+tstop    = 35200
+CFL      = 0.9
+left     = 1
+right    = 1
+
+sed input
+
+struct   = 1
+ne_layer = dz.dep
+D50      = 0.000225 
+D90      = 0.000338
+sedcal   = 1.0
+rhos     = 2650
+morfac   = 10
+morstart = 0
+por      = 0.4
+dryslp   = 1.0
+wetslp   = 0.10
+hswitch  = 0.10
+form     = 1
+facua    = 0.10
+dzmax    = 0.0036
+turb     = 2
+lws      = 0
+smag     = 1
+sourcesink = 0
+waveform   = vanthiel
+
+
+output
+
+nglobalvar = 18
+zs
+zb
+H
+hh
+u
+ue
+urms
+ccg
+dzav
+Susg
+Subg
+ceqbg
+ceqsg
+dzbed
+pbbed
+Dp
+D
+Df
