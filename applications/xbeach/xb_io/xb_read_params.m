@@ -1,16 +1,19 @@
-function varargout = xb_read_params(filename)
-%XB_READ_PARAMS  One line description goes here.
+function xbSettings = xb_read_params(filename)
+%XB_READ_PARAMS  read xbeach params.txt file
 %
-%   More detailed description goes here.
+%   Routine to read the xbeach settings from the params.txt file. The
+%   settings are stored in a structure array with fields 'name' and
+%   'value'.
 %
 %   Syntax:
-%   varargout = xb_read_params(varargin)
+%   xbSettings = xb_read_params(filename)
 %
 %   Input:
-%   varargin  =
+%   filename   = params.txt file name
 %
 %   Output:
-%   varargout =
+%   xbSettings = structure array with fields 'name' and 'value' containing
+%                all settings of the params.txt file
 %
 %   Example
 %   xb_read_params
@@ -19,12 +22,15 @@ function varargout = xb_read_params(filename)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
-%       Cursus Laptop
+%   Copyright (C) 2010 Deltares
+%       Kees den Heijer
 %
-%       <EMAIL>	
+%       Kees.denHeijer@Deltares.nl
 %
-%       <ADDRESS>
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -67,4 +73,27 @@ txt = fread(fid, '*char')';
 fclose(fid);
 
 %%
-% regexp(txt, '=(.*?)\n', 'tokens')
+% obtain all keywords and values using regular expressions
+[exprNames endIndex] = regexp(txt, '(?<name>.*?)\s*=\s*(?<value>.*)', 'names', 'end', 'dotexceptnewline');
+
+% derive output variables
+nglobalvar_index = ismember({exprNames.name}, 'nglobalvar');
+exprNames(nglobalvar_index).name = 'OutVars';
+exprNames(nglobalvar_index).value = strread(txt(endIndex(nglobalvar_index)+2:end), '%s',...
+    'delimiter', '\n')';
+
+% transform regexp output to cell arrays with keywords and values
+names = {exprNames.name};
+values = {exprNames.value};
+
+% distinguish between doubles and strings
+for ival = 1:length(values)
+    if ~isnan(str2double(values{ival}))
+        values{ival} = str2double(values{ival});
+    else
+        values{ival} = strtrim(values{ival});
+    end
+end
+
+%
+xbSettings = cell2struct([names; values]', {'name' 'value'}, 2);
