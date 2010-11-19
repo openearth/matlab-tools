@@ -7,15 +7,19 @@ function varargout = xb_read_dat(fname, varargin)
 %   varargout = xb_read_dat(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = variables, timestepindex
 %
 %   Output:
-%   varargout =
+%   varargout = 
 %
 %   Example
-%   xb_read_dat
+%   variables = xb_read_output('outputdir')
+%   assert(ismember({variables.name},  'xw'})
+%   variables = xb_read_output('outputdir', variables, {'yw','zs'},
+%   timestepindex, 100}
+%   assert(~ismember({variables.name},  'xw'})
 %
-%   See also 
+%   See also xb_read_output, xb_read_nc
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -60,7 +64,12 @@ function varargout = xb_read_dat(fname, varargin)
 
 
 %%
+
+variables = struct()
+
 options=[' 3Dwave';' 3Dsed ';' 3Dbed ';' 4Dbed '];
+
+XBdims = xb_read_dims();
 
 % Determine output time series length in dims.dat
 if (length(fname)>9 && strcmp(fname(end-8:end), '_mean.dat'))
@@ -166,6 +175,8 @@ else
         end
     end
 end
+
+varargout = variables;
 
 %%
 function [Var info]=read2Dout(fname,XBdims)

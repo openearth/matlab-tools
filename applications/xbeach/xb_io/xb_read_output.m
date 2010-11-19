@@ -23,7 +23,7 @@ function varargout = xb_read_output(fname, varargin)
 %   TODO implement: strides={{':',':'},{1:1:3, 10:1:20, ':'}}, strides 
 %
 %
-%   See also 
+%   See also xb_read_input, xb_write_input
 
 %% Copyright notice
 %   --------------------------------------------------------------------
