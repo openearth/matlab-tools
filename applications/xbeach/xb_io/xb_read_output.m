@@ -1,30 +1,38 @@
-function varargout = xb_read_output(varargin)
+function varargout = xb_read_output(fname, varargin)
 %XB_READ_OUTPUT  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = xb_read_output(varargin)
+%   varargout = xb_read_output(fname, varargin)
 %
 %   Input:
-%   varargin  =
-%
+%   varargin  = variables, timestepindex
 %   Output:
-%   varargout =
+%   varargout = variables
 %
 %   Example
-%   xb_read_output
+%   variables = xb_read_output('xboutput.nc')
+%   assert(ismember({variables.name},  'xw'))
+%   variables = xb_read_output('outputdir')
+%   assert(ismember({variables.name},  'xw'})
+%   variables = xb_read_output('outputdir', variables, {'yw','zs'},
+%   timestepindex, 100}
+%   assert(~ismember({variables.name},  'xw'})
+%   
+%   TODO implement: strides={{':',':'},{1:1:3, 10:1:20, ':'}}, strides 
+%
 %
 %   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
-%       Cursus Laptop
+%   Copyright (C) 2010 <Deltares>
+%       OSX
 %
-%       <EMAIL>	
+%       <fedor.baart@deltares.nl>	
 %
-%       <ADDRESS>
+%       <Delft>
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -56,5 +64,12 @@ function varargout = xb_read_output(varargin)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
+
+if isdir(fname) 
+  varargout = xb_read_dat(fname, varargin)
+else 
+  varargout = xb_read_netcdf(fname, varargin)
+end
+
 
 %%
