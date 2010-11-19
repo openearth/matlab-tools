@@ -1,5 +1,5 @@
 function varargout = params2XB(varargin)
-%PARAMS2XB  create XBeach communication structure out of params-file
+%PARAMS2XB  replaced by "xb_params2var"
 %
 %   This function reads a Xbeach input file (params.txt) and its related
 %   files to create a "XBeach input structure".
