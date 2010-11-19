@@ -1,7 +1,5 @@
 function [XBdims XBdims_nc] = nc_getdimensions(url)
 
-nc_check;
-    
 info=nc_info(url);
 
 XBdims = struct();
