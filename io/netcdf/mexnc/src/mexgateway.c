@@ -152,6 +152,14 @@ void mexFunction ( int nlhs, mxArray *plhs[],
             handle_nc_def_var ( nlhs, plhs, nrhs, prhs, nc_op );
             break;
 
+        case DEF_VAR_CHUNKING:
+            handle_nc_def_var_chunking ( nlhs, plhs, nrhs, prhs, nc_op );
+            break;
+
+        case DEF_VAR_DEFLATE:
+            handle_nc_def_var_deflate ( nlhs, plhs, nrhs, prhs, nc_op );
+            break;
+
         case DEL_ATT:
             handle_nc_del_att ( nlhs, plhs, nrhs, prhs, nc_op );
             break;
@@ -278,6 +286,14 @@ void mexFunction ( int nlhs, mxArray *plhs[],
 
         case INQ_VAR:
             handle_nc_inq_var ( nlhs, plhs, nrhs, prhs, nc_op );
+            break;
+
+        case INQ_VAR_CHUNKING:
+            handle_nc_inq_var_chunking ( nlhs, plhs, nrhs, prhs, nc_op );
+            break;
+
+        case INQ_VAR_DEFLATE:
+            handle_nc_inq_var_deflate ( nlhs, plhs, nrhs, prhs, nc_op );
             break;
 
         case INQ_VARNAME:
@@ -490,6 +506,8 @@ op *opname2opcode ( const char *opname, int nlhs, int nrhs ) {
 		{ CREATE,           "create",           2, 2 }, 
 		{ DEF_DIM,          "def_dim",          4, 2 }, 
 		{ DEF_VAR,          "def_var",          6, 2 }, 
+		{ DEF_VAR_CHUNKING, "def_var_chunking", 5, 1 }, 
+		{ DEF_VAR_DEFLATE,  "def_var_deflate",  6, 1 }, 
 		{ DEL_ATT,          "del_att",          4, 1 }, 
 		{ _ENDDEF,          "_enddef",          5, 1 }, 
 		{ END_DEF,          "end_def",          1, 1 }, 
@@ -554,6 +572,8 @@ op *opname2opcode ( const char *opname, int nlhs, int nrhs ) {
 		{ INQ_UNLIMDIM,     "inq_unlimdim",     1, 2 }, 
 		{ INQ_VARID,        "inq_varid",        3, 2 }, 
 		{ INQ_VAR,          "inq_var",          3, 6 }, 
+		{ INQ_VAR_CHUNKING, "inq_var_chunking", 3, 3 }, 
+		{ INQ_VAR_DEFLATE,  "inq_var_deflate",  3, 4 }, 
 		{ INQ_VARNAME,      "inq_varname",      3, 2 }, 
 		{ INQ_VARTYPE,      "inq_vartype",      3, 2 }, 
 		{ INQ_VARNDIMS,     "inq_varndims",     3, 2 }, 
@@ -845,6 +865,10 @@ void check_other_args_for_empty_set
             }
 
             if ( ( nc_op->opcode == VARDEF ) && ( i == 5 ) ) {
+                not_ok = 0;
+            }
+
+            if ( ( nc_op->opcode == DEF_VAR_CHUNKING ) && ( i == 4 ) ) {
                 not_ok = 0;
             }
 

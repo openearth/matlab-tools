@@ -7,13 +7,14 @@ function [varargout] = mexnc ( varargin )
 %
 %    R2008b and Beyond
 %    -----------------
-%    Starting with R2008b, MATLAB comes with native netCDF support.  Mexnc
-%    should just pick up on this automatically.
+%    Starting with R2008b, MATLAB comes with native netCDF support.  If 
+%    your version of MATLAB is earlier than R2008b, mexnc will use it's own
+%    mex-file.  If MATLAB is R2008b or higher, mexnc will use MATLAB's 
+%    native package by default.  You may tell mexnc to go back to using
+%    it's own mex-file again by setting a preference, i.e.
 %
-%    The general syntax for MEXNC is mexnc(funcstr,param1,param2,...). 
-%    There is a one-to-one correspondence between functions in the netCDF 
-%    library and valid values for funcstr.  For example, 
-%    MEXNC('close',ncid) corresponds to the C library call nc_close(ncid).
+%        >> setpref('MEXNC','USE_TMW',false);
+%
 %
 %    OPeNDAP
 %    -------
@@ -21,6 +22,11 @@ function [varargout] = mexnc ( varargin )
 %
 %    Syntax conventions
 %    ------------------ 
+%    The general syntax for MEXNC is mexnc(funcstr,param1,param2,...). 
+%    There is a one-to-one correspondence between functions in the netCDF 
+%    library and valid values for funcstr.  For example, 
+%    MEXNC('close',ncid) corresponds to the C library call nc_close(ncid).
+%
 %    The funcstr argument can be either upper or lower case.
 %
 %    NetCDF has several datatypes to choose from.  
@@ -70,6 +76,7 @@ function [varargout] = mexnc ( varargin )
 %              nc_noclobber_mode
 %              nc_share_mode
 %              nc_64bit_offset_mode (new in netCDF 3.6)
+%              nc_netcdf4_classic 
 %          
 %          These correspond to named constants in the <netcdf.h> header file.  
 %          Check the netCDF User's Guide for more information.  You may also 
@@ -80,7 +87,7 @@ function [varargout] = mexnc ( varargin )
 %          The mode is optional, defaulting to nc_noclobber_mode.
 %
 %          See NC_CLOBBER_MODE, NC_NOCLOBBER_MODE, NC_SHARE_MODE, 
-%          NC_64BIT_OFFSET_MODE.
+%          NC_64BIT_OFFSET_MODE, NC_NETCDF4_CLASSIC.
 %
 %      [chunksz_out,ncid,status] = mexnc ('_CREATE',filename,mode,initialsize,chunksz_in);
 %          More advanced version of 'create'.  The 'initialsize' parameter sets 
@@ -213,10 +220,25 @@ function [varargout] = mexnc ( varargin )
 %          order to define a singleton variable (a variable with one 
 %          element but no defined dimensions, set dimids = [].
 % 
+%      status = mexnc('DEF_VAR_CHUNKING',ncid,varid,storage,chunksize);
+%          Specifies the variable chunking.  Storage can be either 'chunked'
+%          or 'contiguous'.
+%
+%      status = mexnc('DEF_VAR_DEFLATE',ncid,varid,shuffle,deflate,deflate_level);
+%          Sets the deflate parameters for a variable ina netCDF-4 file.
+%          shuffle should be non-zero to turn on the shuffle filter.  deflate
+%          should be non-zero to turn on the deflate filter.  If the deflate
+%          filter is on, the level is specified by a number between 0 and 9 in
+%          deflate_level.
+%
+%      [storage,chunksize,status] = mexnc('inq_var_chunking',ncid,varid);
+%          Inquires as to a variable's chunking setup.
+%
+%      [shuffle,deflate,deflate_level,status] = mexnc('INQ_VAR_DEFLATE',ncid,varid);
+%          Returns the deflate settings for a variable in a netCDF-4 file.
 %
 %      [varid,status] = mexnc('INQ_VARID',ncid,varname);
 %          Returns the ID of a netCDF variable, given its name.
-% 
 %
 %      [varname,xtype,ndims,dimids,natts,status] = mexnc('INQ_VAR',ncid,varid);
 %          Returns other information about a netCDF variable given its ID.
@@ -245,7 +267,6 @@ function [varargout] = mexnc ( varargin )
 %      status = mexnc('RENAME_VAR',ncid,varid,new_varname);
 %          Changes  the  name  of  a  netCDF  variable.
 % 
-%
 %   Variable I/O functions
 %   ----------------------
 %     These routines are specialized for the various netCDF datatypes.  

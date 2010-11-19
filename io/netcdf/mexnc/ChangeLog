@@ -1,3 +1,53 @@
+* Mon Aug 23 2010 John Evans <john.g.evans.ne@gmail.com> -r3211
+- Cleanup up some netcdf-2 test routines.
+
+* Thu Aug 19 2010 John Evans <john.g.evans.ne@gmail.com> -r3206
+- Fixed empty set for dimids error in old VARDEF code.
+
+* Thu May 03 2010 John Evans <john.g.evans.ne@gmail.com> 
+- Fixed lower case / upper case issue. 
+
+* Tue Mar 23 2010 John Evans <john.g.evans.ne@gmail.com> -r2950
+- Fixing readability issues, mlint issues in mexnc_tmw.
+
+* Sun Mar 15 2010 John Evans <john.g.evans.ne@gmail.com> -r2939
+- Fixing readability issues, mlint issues in mexnc_tmw.
+
+* Sun Mar 15 2010 John Evans <john.g.evans.ne@gmail.com>  
+- Fixing readability issues, mlint issues in mexnc_tmw.
+
+* Wed Feb 10 2010 John Evans <john.g.evans.ne@gmail.com>  -r2868
+- Assured that 1D variables are returned as rows by VARGET
+
+* Wed Feb 10 2010 John Evans <john.g.evans.ne@gmail.com>  
+- Fixed mlint issues in test_vargetg
+- Added test for writing with negative counts in test_varput.m
+- More fixes for negative counts in netcdf-2 writing functions.
+
+* Thu Jan 28 2010 John Evans <john.g.evans.ne@gmail.com>  
+- Hopefully fixed VARGET case for 1D vectors.
+
+* Wed Jan 27 2010 John Evans <john.g.evans.ne@gmail.com>  
+- Added support for DIMINQ char argument for TMW case.
+- Fixed VARGET case where count argument is negative
+- Fixed VARGETG case where count argument is negative
+
+* Sat Jan 16 2010 John Evans <john.g.evans.ne@gmail.com>  -r2838
+- Some additional cleanup to get all working sans mexnc's mex-file
+
+* Fri Jan 15 2010 John Evans <john.g.evans.ne@gmail.com>  -r2833
+- Upgraded capabilites to netcdf-4 classic mode
+
+* Fri Jan 08 2010 John Evans <john.g.evans.ne@gmail.com> -r2820 
+- Reinstated transposing of 1D vectors on output for netcdf-2
+
+* Thu Jan 07 2010 John Evans <john.g.evans.ne@gmail.com> -r2818 
+- Fixed test suite "test_create" case of unhandled matlab exception
+- 1D variables retrieved via 'varget' operation shouldn't be transposed
+
+* Wed Dec 23 2009 John Evans <john.g.evans.ne@gmail.com>  
+- Added bat file for R14sp1
+
 * Tue Sep 01 2009 John Evans <john.g.evans.ne@gmail.com>  -2790
 - Needed to make sure that autoscale flag was peeled off of varget1 input
 - arguments.

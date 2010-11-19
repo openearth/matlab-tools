@@ -12,173 +12,180 @@ function test_create ( ncfile )
 % Test 10:  mode argument not supplied
 % Test 11:  mode argument is 'clobber'.  Deprecated, please don't use this.
 % Test 12:  mode argument is 'noclobber'.  Deprecated, please don't use this.
+% Test 13:  mode argument is nc_netcdf4_classic
+% Test 14:  mode argument is 4096, which is for enhanced netcdf-4
 %
 
 if nargin == 0
 	ncfile = 'foo.nc';
 end
 
-error_condition = 0;
 
-%
-% Test 1:   nc_clobber_mode
-testid = 'Test 1';
-[ncid, status] = mexnc ( 'create', ncfile, nc_clobber_mode );
-if ( status ~= 0 )
-	ncerr = mexnc ( 'strerror', status );
-	err_msg = sprintf ( '%s:  %s:  ''%s''\n', mfilename, testid, ncerr );
-	error ( err_msg );
-end
-status = mexnc ( 'close', ncid );
-if ( status ~= 0 )
-	error ( 'CLOSE failed with nc_clobber_mode' );
-end
-
-
-
-
-
-%
-% Test 2:   nc_noclobber_mode | nc_share_mode
-testid = 'Test 2';
-mode = bitor ( nc_clobber_mode, nc_share_mode );
-[ncid, status] = mexnc ( 'create', ncfile, mode );
-if ( status ~= 0 )
-	ncerr = mexnc ( 'strerror', status );
-	err_msg = sprintf ( '%s:  %s:  ''%s''\n', mfilename, testid, ncerr );
-	error ( err_msg );
-end
-status = mexnc ( 'close', ncid );
-if ( status < 0 )
-	error ( 'CLOSE failed with nc_clobber_mode | nc_share_mode' );
-end
-
-
-
-
-%
-% Test 3:   clobber and share and 64 bit offset
-testid = 'Test 3';
-mode = bitor ( nc_clobber_mode, nc_share_mode );
-mode = bitor ( mode, nc_64bit_offset_mode );
-[ncid, status] = mexnc ( 'create', ncfile, mode );
-if ( status ~= 0 )
-	ncerr = mexnc ( 'strerror', status );
-	err_msg = sprintf ( '%s:  %s:  ''%s''\n', mfilename, testid, ncerr );
-	error ( err_msg );
-end
-status = mexnc ( 'close', ncid );
-if ( status < 0 )
-	error ( 'CLOSE failed with nc_clobber_mode | nc_share_mode | nc_64bit_offset_mode' );
-end
-
-
-%
-% Test 4:  share mode.  Should also clobber it.
-testid = 'Test 4';
-[ncid, status] = mexnc ( 'create', ncfile, nc_share_mode );
-if ( status ~= 0 )
-	ncerr = mexnc ( 'strerror', status );
-	err_msg = sprintf ( '%s:  %s:  ''%s''\n', mfilename, testid, ncerr );
-	error ( err_msg );
-end
-status = mexnc ( 'close', ncid );
-if ( status < 0 )
-	error ( 'CLOSE failed with nc_share_mode' );
-end
-
-
-%
-% Test 5:  share | 64bit_offset
-testid = 'Test 5';
-mode = bitor ( nc_share_mode, nc_64bit_offset_mode );
-[ncid, status] = mexnc ( 'create', ncfile, mode );
-if ( status ~= 0 )
-	ncerr = mexnc ( 'strerror', status );
-	err_msg = sprintf ( '%s:  %s:  ''%s''\n', mfilename, testid, ncerr );
-	error ( err_msg );
-end
-status = mexnc ( 'close', ncid );
-if ( status < 0 )
-	error ( 'CLOSE failed with nc_share_mode | nc_64bit_offset_mode' );
-end
-
-
-
-%
-% Test 6:  64 bit offset.  Should also clobber it.
-testid = 'Test 6';
-[ncid, status] = mexnc ( 'create', ncfile, nc_64bit_offset_mode );
-if ( status ~= 0 )
-	ncerr = mexnc ( 'strerror', status );
-	err_msg = sprintf ( '%s:  %s:  ''%s''\n', mfilename, testid, ncerr );
-	error ( err_msg );
-end
-status = mexnc ( 'close', ncid );
-if ( status < 0 )
-	error ( 'CLOSE failed with nc_64bit_offset_mode' );
-end
-
-
-%
-% Test 7:  noclobber mode.  Should not succeed.
-[ncid, status] = mexnc ( 'create', ncfile, nc_noclobber_mode );
-if ( status == 0 )
-	msg = sprintf ( '%s:  ''create'' succeeded on nc_noclobber_mode, should have failed\n', mfilename );
-	error ( msg );
-end
-
-
-%
-% Test 8:  only one input, should not succeed.  Throws an exception, 
-%          because there are way too few arguments.
-testid = 'Test 8';
-try
-	[ncid, status] = mexnc ( 'create' );
-	msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid );
-	error ( msg );
-catch	
-	;
-end
-
-
-
-
-
-%
-% Test 9:  Filename is empty
-testid = 'Test 9';
-try
-	[ncid, status] = mexnc ( 'create', '', nc_clobber_mode );
-	msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid );
-	error ( msg );
-end
-
-
-%
-% Test 10:  Only two arguments.
-testid = 'Test 10';
-[ncid, status] = mexnc ( 'create', 'foo2.nc' );
-if ( status ~= 0 )
-	msg = sprintf ( '%s:  %s:  ''%s''\n', mfilename, testid, mexnc ( 'strerror', status ) );
-	error ( msg );
-end
-status = mexnc ( 'close', ncid );
-if status, error ( mexnc ( 'strerror', status ) ), end
-
+test_clobber_mode(ncfile);                   % #1
+test_noclobber_and_share_mode(ncfile);       % #2
+test_clobber_and_share_and_64bit(ncfile);    % #3
+test_share_mode(ncfile);                     % #4        
+test_share_and_64bit_mode(ncfile);           % #5
+test_64bit_mode(ncfile);                     % #6
+test_noclobber_mode(ncfile);                 % #7
+test_only_one_input(ncfile);                 % #8
+test_empty_filename(ncfile);                 % #9
+test_no_mode(ncfile);                       % #10
+%test_char_clobber(ncfile);                  % #11
+%test_char_noclobber(ncfile);                % #12
+test_netcdf4_classic(ncfile);                % #13
+test_netcdf4_enhanced(ncfile);               % #13
 
 fprintf ( 'CREATE succeeded.\n' );
-
-
-
-test_11 ( ncfile );
-test_12 ( ncfile );
-
 
 return
 
 
-function test_11 ( ncfile )
+%--------------------------------------------------------------------------
+function test_clobber_mode(ncfile)
+
+[ncid, status] = mexnc ( 'create', ncfile, nc_clobber_mode );
+if status, error(mexnc('strerror',status)), end;
+
+status = mexnc ( 'close', ncid );
+if status, error(mexnc('strerror',status)), end;
+
+return
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_noclobber_and_share_mode(ncfile)
+% Test 2:   nc_noclobber_mode | nc_share_mode
+mode = bitor ( nc_clobber_mode, nc_share_mode );
+[ncid, status] = mexnc ( 'create', ncfile, mode );
+if status, error(mexnc('strerror',status)), end;
+status = mexnc ( 'close', ncid );
+if status, error(mexnc('strerror',status)), end;
+return
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_clobber_and_share_and_64bit(ncfile)
+% Test 3:   clobber and share and 64 bit offset
+mode = bitor ( nc_clobber_mode, nc_share_mode );
+mode = bitor ( mode, nc_64bit_offset_mode );
+[ncid, status] = mexnc ( 'create', ncfile, mode );
+if status, error(mexnc('strerror',status)), end;
+status = mexnc ( 'close', ncid );
+if status, error(mexnc('strerror',status)), end;
+
+return
+
+
+
+
+%--------------------------------------------------------------------------
+function test_share_mode(ncfile)
+% Test 4:  share mode.  Should also clobber it.
+[ncid, status] = mexnc ( 'create', ncfile, nc_share_mode );
+if status, error(mexnc('strerror',status)), end;
+status = mexnc ( 'close', ncid );
+if status, error(mexnc('strerror',status)), end;
+return
+
+
+%--------------------------------------------------------------------------
+function test_share_and_64bit_mode(ncfile)
+% Test 5:  share | 64bit_offset
+mode = bitor ( nc_share_mode, nc_64bit_offset_mode );
+[ncid, status] = mexnc ( 'create', ncfile, mode );
+if status, error(mexnc('strerror',status)), end;
+status = mexnc ( 'close', ncid );
+if status, error(mexnc('strerror',status)), end;
+return
+
+
+%--------------------------------------------------------------------------
+function test_64bit_mode(ncfile)
+% 64 bit offset.  Should also clobber it.
+[ncid, status] = mexnc ( 'create', ncfile, nc_64bit_offset_mode );
+if status, error(mexnc('strerror',status)), end;
+status = mexnc ( 'close', ncid );
+if status, error(mexnc('strerror',status)), end;
+return
+
+
+%--------------------------------------------------------------------------
+function test_noclobber_mode(ncfile)
+%
+% Test 7:  noclobber mode.  Should not succeed, because the file already
+% exists.
+[ncid, status] = mexnc ( 'create', ncfile, nc_noclobber_mode ); %#ok<ASGLU>
+if ( status == 0 )
+	error ( '''create'' succeeded on nc_noclobber_mode, should have failed' );
+end
+
+return
+
+
+
+%--------------------------------------------------------------------------
+function test_only_one_input(ncfile)
+%
+% Test 8:  only one input, should not succeed.  Throws an exception, 
+%          because there are way too few arguments.
+try
+	mexnc ( 'create' );
+	error('succeeded when it should have failed');
+catch	 %#ok<CTCH>
+	
+end
+
+return
+
+
+
+
+%--------------------------------------------------------------------------
+function test_empty_filename(ncfile)
+%
+% Test 9:  Filename is empty
+try %#ok<TRYNC>
+	mexnc ( 'create', '', nc_clobber_mode );
+	error ( 'succeeded when it should have failed' );
+end
+
+return
+
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_no_mode(ncfile)
+
+if exist('foo2.nc','file')
+	delete('foo2.nc');
+end
+
+% Test 10:  Only two arguments.  Mode should default to no clobber
+[ncid, status] = mexnc ( 'create', 'foo2.nc' );
+if status, error(mexnc('strerror',status)), end;
+status = mexnc ( 'close', ncid );
+if status, error ( mexnc ( 'strerror', status ) ), end
+
+return
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_char_clobber ( ncfile )
 
 [ncid, status] = mexnc ( 'create', ncfile, 'clobber' );
 if ( status ~= 0 ), error ( mexnc ( 'strerror', status ) ), end
@@ -193,7 +200,8 @@ return
 
 
 
-function test_12 ( ncfile )
+%--------------------------------------------------------------------------
+function test_char_noclobber ( ncfile )
 
 delete ( ncfile );
 
@@ -208,18 +216,36 @@ return
 
 
 
+%--------------------------------------------------------------------------
+function test_netcdf4_classic(ncfile)
 
+delete(ncfile);
 
-%
-% Test 11:  3rd argument is not a valid mode
-testid = 'Test 11';
-[ncid, status] = mexnc ( 'create', ncfile, -5 );
-if ( status == 0 )
-	msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid );
-	error ( msg );
-end
-
-
+[ncid, status] = mexnc ( 'create', ncfile, nc_netcdf4_classic );
+if status, error(mexnc('strerror',status)), end;
+status = mexnc ( 'close', ncid );
+if status, error(mexnc('strerror',status)), end;
 
 
 return
+
+
+
+
+%--------------------------------------------------------------------------
+function test_netcdf4_enhanced(ncfile)
+
+delete(ncfile);
+try
+	[ncid, status] = mexnc ( 'create', ncfile, 'netcdf4' );
+catch
+	return
+end
+error ( 'Should not have succeeded in creating a file in enhanced mode');
+
+
+return
+
+
+
+

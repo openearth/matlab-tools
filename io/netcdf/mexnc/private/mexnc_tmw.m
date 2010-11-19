@@ -1,5 +1,6 @@
 function [varargout] = mexnc_tmw(varargin)
-% MEXNC_TMW:  use the mathworks netcdf package
+% MEXNC_TMW:  this translation layer channels mexnc calls into the 
+% mathworks netcdf package
 varargout = cell(1,nargout);
 op = lower(varargin{1});
 
@@ -8,13 +9,17 @@ if (numel(op) > 3) && strcmp(op(1:3),'nc_')
     op = op(4:end);
 end
 
-% If the leading three chars are 'nc', and the 3rd char is NOT '_', then strip the first
-% two chars.
+% If the leading three chars are 'nc', and the 3rd char is NOT '_', then 
+% strip the first two chars.
 if (numel(op) > 3) && strcmp(op(1:2),'nc') && (op(3) ~= '_')
     op = op(3:end);
 end
 
 switch op
+	case { 'def_var_deflate', 'def_var_chunking', 'inq_var_deflate', 'inq_var_chunking' }
+        error ('MEXNC:netcdf4:notSupported', ...
+            '%s is not supported by the netCDF package.', op );
+
     case { 'close', 'copy_att', 'create', '_create', 'def_dim', 'def_var', 'del_att'}
         handler = eval ( ['@handle_' op] );
 
@@ -114,8 +119,8 @@ else
 end
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_parameter ( varargin ) 
+%--------------------------------------------------------------------------
+function varargout = handle_parameter ( varargin )  %#ok<DEFNU>
 %      status = mexnc('PARAMETER', name);
 
 
@@ -141,12 +146,12 @@ end
 
 
 %------------------------------------------------------------------------------------------
-function varargout = handle_inq_libvers ( varargin ) 
-%      status = mexnc('CLOSE',ncid);
+function varargout = handle_inq_libvers ( varargin )  %#ok<DEFNU>
+%  status = mexnc('CLOSE',ncid);
 
 
 varargout = cell(1,nargout);
-output = netcdf.inqLibvers();
+output = netcdf.inqLibVers();
 if nargout > 0
     varargout{1} = output;
 end
@@ -154,13 +159,35 @@ end
 
 
 %------------------------------------------------------------------------------------------
-function varargout = handle_close ( varargin ) %#ok<*DEFNU>
-%      status = mexnc('CLOSE',ncid);
+function varargout = handle_close(op,ncid) %#ok<DEFNU,INUSL>
+% status = mexnc('CLOSE',ncid);
 
 varargout = cell(1,nargout);
 
 try
-    netcdf.close(varargin{2:end});
+    netcdf.close(ncid);
+    status = 0;
+catch myException
+    status = exception2status(myException);
+end
+
+switch nargout
+    case 1
+        varargout{1} = status;
+        
+end
+
+
+
+
+%--------------------------------------------------------------------------
+function varargout = handle_copy_att(op,ncid_in,varid_in,attname,ncid_out,varid_out) %#ok<INUSL>
+% status = mexnc('COPY_ATT',ncid_in,varid_in,attname,ncid_out,varid_out);
+
+varargout = cell(1,nargout);
+
+try
+    netcdf.copyAtt(ncid_in,varid_in,attname,ncid_out,varid_out);
     status = 0;
 catch myException
     status = exception2status(myException);
@@ -176,42 +203,20 @@ end
 
 
 %------------------------------------------------------------------------------------------
-function varargout = handle_copy_att ( varargin )
-%     status = mexnc('COPY_ATT',ncid_in,varid_in,attname,ncid_out,varid_out);
-
-varargout = cell(1,nargout);
-
-try
-    netcdf.copyAtt(varargin{2:end});
-    status = 0;
-catch myException
-    status = exception2status(myException);
-end
-
-switch nargout
-    case 1
-        varargout{1} = status;
-        
-end
-
-
-
-
-%------------------------------------------------------------------------------------------
-function varargout = handle_create ( varargin )
-%      [ncid,status] = mexnc ('CREATE',filename,access_mode );
-%      [ncid,status] = mexnc ('CREATE',filename);
+function varargout = handle_create(op,filename,mode) %#ok<DEFNU,INUSL>
+% [ncid,status] = mexnc ('CREATE',filename,access_mode );
+% [ncid,status] = mexnc ('CREATE',filename);
 
 varargout = cell(1,nargout);
 
 % Sometimes this is called with just two inputs arguments.
 % In that case, the default for the 3rd parameter is 'NC_NOWRITE'
 if nargin == 2
-    varargin{3} = 'NC_NOWRITE';
+    mode = 'NC_NOWRITE';
 end
 
 try
-    ncid = netcdf.create(varargin{2:end});
+    ncid = netcdf.create(filename,mode);
     status = 0;
 catch myException
     ncid = -1;
@@ -233,24 +238,20 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle__create ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle__create(op,filename,mode,initsize,chunksize) %#ok<INUSL,DEFNU>
 % [chunksz_out,ncid,status] = mexnc ('_CREATE',filename,mode,initialsize,chunksz_in);
 
 varargout = cell(1,nargout);
-% 
+
 % There is a bug in mexnc where chunksize is an optional argument.
-filename = varargin{2};
-mode = varargin{3};
-initialsize = varargin{4};
-if nargin == 5
-    chunksize_in = varargin{5};
-else
-    chunksize_in = 0;
+
+if nargin < 5
+    chunksize = 0;
 end
 
 try
-    [czout,ncid] = netcdf.create(filename,mode,initialsize,chunksize_in);
+    [czout,ncid] = netcdf.create(filename,mode,initsize,chunksize);
     status = 0;
 catch myException
     czout = -1;
@@ -275,22 +276,21 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_def_dim ( varargin )
-%      [dimid,status] = mexnc('DEF_DIM',ncid,name,length);
-%      [dimid,status] = mexnc('DEF_DIM',ncid,name,'NC_UNLIMITED');
+%--------------------------------------------------------------------------
+function varargout = handle_def_dim(op,ncid,name,dimlen) %#ok<INUSL>
+% [dimid,status] = mexnc('DEF_DIM',ncid,name,length);
+% [dimid,status] = mexnc('DEF_DIM',ncid,name,'NC_UNLIMITED');
 
-error(nargchk(4,4,nargin,'struct'));
 
 % If 'NC_UNLIMITED' was passed, turn it into char
-if ischar(varargin{4})
-	varargin{4} = netcdf.getConstant(varargin{4});
+if ischar(dimlen)
+	dimlen = netcdf.getConstant(dimlen);
 end
 
 varargout = cell(1,nargout);
 
 try
-    dimid = netcdf.defDim(varargin{2:end});
+    dimid = netcdf.defDim(ncid,name,dimlen);
     status = 0;
 catch myException
     dimid = -1;
@@ -310,20 +310,22 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_def_var ( varargin )
-%      [varid,status] = mexnc('DEF_VAR',ncid,name,xtype,dimids);
-%      [varid,status] = mexnc('DEF_VAR',ncid,name,xtype,ndims,dimids);
+%--------------------------------------------------------------------------
+function varargout = handle_def_var(op,ncid,name,xtype,arg1,arg2) %#ok<INUSL>
+% [varid,status] = mexnc('DEF_VAR',ncid,name,xtype,dimids);
+% [varid,status] = mexnc('DEF_VAR',ncid,name,xtype,ndims,dimids);
 
-error(nargchk(5,6,nargin,'struct'));
 varargout = cell(1,nargout);
 
-if (nargin == 6) && (varargin{5} ~= numel(varargin{6}))
+if nargin == 5
+    dimids = arg1;
+elseif (nargin == 6) && (arg1 ~= numel(arg2))
     error('MEXNC:handle_def_var', ...
           'Mismatch between number of dimensions and length of dimension list.');
+else
+    dimids = arg2;
 end
-dimids = varargin{end};
-varargin = varargin(1:4);
+
 
 % Mexnc and the netcdf package differ wrt the ordering of the 
 % dimensions.
@@ -335,7 +337,7 @@ end
 
 
 try
-    varid = netcdf.defVar(varargin{2:end},dimids);
+    varid = netcdf.defVar(ncid,name,xtype,dimids);
     status = 0;
 catch myException
     varid = -1;
@@ -520,14 +522,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_dimlen ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_dimlen(op,ncid,dimid) %#ok<INUSL,DEFNU>
 %      [dimlength,status] = mexnc('INQ_DIMLEN',ncid,dimid);
 
 varargout = cell(1,nargout);
 
 try
-    [dud,dimlen] = netcdf.inqDim(varargin{2:end}); %#ok<ASGLU>
+    [dud,dimlen] = netcdf.inqDim(ncid,dimid); %#ok<ASGLU>
     status = 0;
 catch myException
     dimlen = -1;
@@ -544,14 +546,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_dimname ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_dimname(op,ncid,dimid) %#ok<INUSL,DEFNU>
 %      [dimname,status] = mexnc('INQ_DIMNAME',ncid,dimid);
 
 varargout = cell(1,nargout);
 
 try
-    name = netcdf.inqDim(varargin{2:end});
+    name = netcdf.inqDim(ncid,dimid);
     status = 0;
 catch myException
     name = '';
@@ -568,14 +570,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_ndims ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_ndims(op,ncid) %#ok<INUSL,DEFNU>
 %      [ndims,status] = mexnc('INQ_NDIMS',ncid);
 
 varargout = cell(1,nargout);
 
 try
-    ndims = netcdf.inq(varargin{2:end});
+    ndims = netcdf.inq(ncid);
     status = 0;
 catch myException
     ndims = -1;
@@ -592,14 +594,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_nvars ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_nvars(op,ncid) %#ok<INUSL,DEFNU>
 %      [nvars,status] = mexnc('INQ_NVARS',ncid);
 
 varargout = cell(1,nargout);
 
 try
-    [dud,nvars] = netcdf.inq(varargin{2:end}); %#ok<ASGLU>
+    [dud,nvars] = netcdf.inq(ncid); %#ok<ASGLU>
     status = 0;
 catch myException
     nvars = -1;
@@ -616,14 +618,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_natts ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_natts(op,ncid) %#ok<INUSL,DEFNU>
 %      [natts,status] = mexnc('INQ_NATTS',ncid);
 
 varargout = cell(1,nargout);
 
 try
-    [dud,dud,natts] = netcdf.inq(varargin{2:end}); %#ok<ASGLU>
+    [dud,dud,natts] = netcdf.inq(ncid); %#ok<ASGLU>
     status = 0;
 catch myException
     natts = -1;
@@ -640,14 +642,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_dimid ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_dimid(op,ncid,name) %#ok<INUSL>
 % [dimid,status] = mexnc('INQ_DIMID',ncid,name);
 
 varargout = cell(1,nargout);
 
 try
-    dimid = netcdf.inqDimID(varargin{2:end});
+    dimid = netcdf.inqDimID(ncid,name);
     status = 0;
 catch myException
     dimid = -1;
@@ -665,14 +667,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_attid ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_attid(op,ncid,varid,attname) %#ok<INUSL,DEFNU>
 %     [attid,status] = mexnc('INQ_ATTID',ncid,varid,attname);
 
 varargout = cell(1,nargout);
 
 try
-    attId = netcdf.inqAttID(varargin{2:end});
+    attId = netcdf.inqAttID(ncid,varid,attname);
     status = 0;
 catch myException
     attId = -1;
@@ -690,14 +692,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_var ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_var(op,ncid,varid) %#ok<INUSL>
 % [varname,xtype,ndims,dimids,natts,status] = mexnc('INQ_VAR',ncid,varid);
 
 varargout = cell(1,nargout);
 
 try
-    [varname,xtype,dimids,natts] = netcdf.inqVar(varargin{2:end});
+    [varname,xtype,dimids,natts] = netcdf.inqVar(ncid,varid);
     ndims = numel(dimids);
     status = 0;
 catch myException
@@ -741,14 +743,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_varname ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_varname(op,ncid,varid) %#ok<INUSL,DEFNU>
 %      [varname,status] = mexnc('INQ_VARNAME',ncid,varid);
 
 varargout = cell(1,nargout);
 
 try
-    varname = netcdf.inqVar(varargin{2:end});
+    varname = netcdf.inqVar(ncid,varid);
     status = 0;
 catch myException
     varname = '';
@@ -765,14 +767,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_vartype ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_vartype(op,ncid,varid) %#ok<INUSL,DEFNU>
 %      [vartype,status] = mexnc('INQ_VARTYPE',ncid,varid);
 
 varargout = cell(1,nargout);
 
 try
-    [dud,xtype] = netcdf.inqVar(varargin{2:end}); %#ok<ASGLU>
+    [dud,xtype] = netcdf.inqVar(ncid,varid); %#ok<ASGLU>
     status = 0;
 catch myException
     xtype = -1;
@@ -789,14 +791,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_varndims ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_varndims(op,ncid,varid) %#ok<INUSL,DEFNU>
 %      [varndims,status] = mexnc('INQ_VARNDIMS',ncid,varid);
 
 varargout = cell(1,nargout);
 
 try
-    [dud,dud,dimids] = netcdf.inqVar(varargin{2:end}); %#ok<ASGLU>
+    [dud,dud,dimids] = netcdf.inqVar(ncid,varid); %#ok<ASGLU>
     ndims = numel(dimids);
     status = 0;
 catch myException
@@ -813,15 +815,15 @@ switch nargout
 end
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_vardimid ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_vardimid(op,ncid,varid) %#ok<INUSL,DEFNU>
 %      [dimids,status] = mexnc('INQ_VARDIMID',ncid,varid);
 
 varargout = cell(1,nargout);
 
 try
 
-    [dud,dud,dimids] = netcdf.inqVar(varargin{2:end}); %#ok<ASGLU>
+    [dud,dud,dimids] = netcdf.inqVar(ncid,varid); %#ok<ASGLU>
 
     % Flip the dimids for mexnc.   The netcdf package
     % uses fortran-style ordering of dimensions.
@@ -843,15 +845,15 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_varnatts ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_varnatts(op,ncid,varid) %#ok<INUSL,DEFNU>
 % [varnatts,status] = mexnc('INQ_VARNATTS',ncid,varid);
 % [varname,xtype,ndims,dimids,natts,status] = mexnc('INQ_VAR',ncid,varid);
 
 varargout = cell(1,nargout);
 
 try
-    [dud,dud,dud,natts] = netcdf.inqVar(varargin{2:end}); %#ok<ASGLU>
+    [dud,dud,dud,natts] = netcdf.inqVar(ncid,varid); %#ok<ASGLU>
     status = 0;
 catch myException
     natts = -1;
@@ -867,14 +869,14 @@ switch nargout
 end
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_varid ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_varid(op,ncid,varid) %#ok<INUSL>
 % [varid,status] = mexnc('INQ_VARID',ncid,varname);
 
 varargout = cell(1,nargout);
 
 try
-    varid = netcdf.inqVarID(varargin{2:end});
+    varid = netcdf.inqVarID(ncid,varid);
     status = 0;
 catch myException
     varid = -1;
@@ -890,14 +892,14 @@ switch nargout
 end
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_att ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_att(op,ncid,varid,attname) %#ok<INUSL>
 %     [datatype,attlen,status] = mexnc('INQ_ATT',ncid,varid,attname);
 
 varargout = cell(1,nargout);
 
 try
-    [xtype,len] = netcdf.inqAtt(varargin{2:end});
+    [xtype,len] = netcdf.inqAtt(ncid,varid,attname);
     status = 0;
 catch myException
     xtype = -1;
@@ -918,15 +920,15 @@ switch nargout
 end
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_atttype ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_atttype(op,ncid,varid,attname) %#ok<INUSL,DEFNU>
 %     [datatype,attlen,status] = mexnc('INQ_ATT',ncid,varid,attname);
 %     [att_type,status] = mexnc('INQ_ATTTYPE',ncid,varid,attname);
 
 varargout = cell(1,nargout);
 
 try
-    xtype = netcdf.inqAtt(varargin{2:end});
+    xtype = netcdf.inqAtt(ncid,varid,attname);
     status = 0;
 catch myException
     xtype = -1;
@@ -942,15 +944,15 @@ switch nargout
 end
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_attlen ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_attlen(op,ncid,varid,attname) %#ok<INUSL,DEFNU>
 %     [datatype,attlen,status] = mexnc('INQ_ATT',ncid,varid,attname);
 %     [att_len,status] = mexnc('INQ_ATTLEN',ncid,varid,attname);
 
 varargout = cell(1,nargout);
 
 try
-    [dud,len] = netcdf.inqAtt(varargin{2:end}); %#ok<ASGLU>
+    [dud,len] = netcdf.inqAtt(ncid,varid,attname); %#ok<ASGLU>
     status = 0;
 catch myException
     len = -1;
@@ -966,14 +968,14 @@ switch nargout
 end
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_attname ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_attname(op,ncid,varid,attid) %#ok<INUSL>
 %     [attname,status] = mexnc('INQ_ATTNAME',ncid,varid,attid);
 
 varargout = cell(1,nargout);
 
 try
-    attname = netcdf.inqAttName(varargin{2:end});
+    attname = netcdf.inqAttName(ncid,varid,attid);
     status = 0;
 catch myException
     attname = '';
@@ -989,15 +991,15 @@ switch nargout
 end
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_inq_unlimdim ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_inq_unlimdim(op,ncid) %#ok<INUSL,DEFNU>
 %      [ndims,nvars, ngatts, unlimdim, status] = mexnc('INQ',ncid);
 %      [unlimdim,status] = mexnc ('INQ_UNLIMDIM',ncid);
 
 varargout = cell(1,nargout);
 
 try
-    [dud,dud,dud,unlimdim] = netcdf.inq(varargin{2:end}); %#ok<ASGLU>
+    [dud,dud,dud,unlimdim] = netcdf.inq(ncid); %#ok<ASGLU>
     status = 0;
 catch myException
     unlimdim = -1;
@@ -1014,18 +1016,14 @@ end
 
 
 %------------------------------------------------------------------------------------------
-function varargout = handle_open ( varargin )
+function varargout = handle_open(op,filename,mode) %#ok<INUSL,DEFNU>
 %  [ncid,status] = mexnc('OPEN',filename,access_mode);
 
 varargout = cell(1,nargout);
 
 % Mexnc allowed for a default NOWRITE mode.
 if nargin == 2
-    filename = varargin{2};
     mode = netcdf.getConstant('NC_NOWRITE');
-else
-    filename = varargin{2};
-    mode = varargin{end};
 end
 try
     ncid = netcdf.open(filename,mode);
@@ -1046,15 +1044,15 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle__open ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle__open(op,filename,mode,czin) %#ok<INUSL,DEFNU>
 %  [ncid,chunksizehint,status] 
 %      = mexnc('_OPEN',filename,access_mode,chunksizehint);
 
 varargout = cell(1,nargout);
 
 try
-    [ncid,czout] = netcdf.open(varargin{2:end});
+    [ncid,czout] = netcdf.open(filename,mode,czin);
     status = 0;
 catch myException
     ncid = -1;
@@ -1228,6 +1226,9 @@ varargin{5} = fliplr(varargin{5}(:)');
 %varargin{4} = varargin{4}(:)';
 %varargin{5} = varargin{5}(:)';
 
+%[varname,xtype,dimids] = netcdf.inqVar(varargin{2}, varargin{3}); %#ok<ASGLU>
+
+
 % If the variable is a singleton, just use get_var instead.
 
 try
@@ -1380,9 +1381,21 @@ function varargout = handle_put_vara ( varargin )
 
 varargout = cell(1,nargout);
 
-% Must switch the order of the start index.
-varargin{4} = fliplr((varargin{4}(:))');
-varargin{5} = fliplr((varargin{5}(:))');
+% Must switch the order of the indices.
+start = fliplr((varargin{4}(:))');
+count = fliplr((varargin{5}(:))');
+if any(count<0)
+    idx = find(count<0);
+    ncid = varargin{2};
+    varid = varargin{3};
+    [varname,xtype,dimids] = netcdf.inqVar(ncid,varid); %#ok<ASGLU>
+    for j = 1:numel(idx)
+        [dud,len] = netcdf.inqDim(ncid,dimids(idx(j))); %#ok<ASGLU>
+        count(idx(j)) = len;
+    end
+end
+varargin{4} = start;
+varargin{5} = count;
 
 try
     netcdf.putVar(varargin{2:end})
@@ -1431,14 +1444,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_redef ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_redef(op,ncid) %#ok<INUSL,DEFNU>
 %      status = mexnc('REDEF',ncid);
 
 varargout = cell(1,nargout);
 
 try
-    netcdf.redef(varargin{2:end});
+    netcdf.redef(ncid);
     status = 0;
 catch myException
     status = exception2status(myException);
@@ -1455,14 +1468,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_rename_att ( varargin )
-%      status = mexnc('RENAME_ATT',ncid,dimid,name);
+%--------------------------------------------------------------------------
+function varargout = handle_rename_att(op,ncid,dimid,oldName,newName) %#ok<INUSL>
+%      status = mexnc('RENAME_ATT',ncid,dimid,oldName,newName);
 
 varargout = cell(1,nargout);
 
 try
-    netcdf.renameAtt(varargin{2:end});
+    netcdf.renameAtt(ncid,dimid,oldName,newName);
     status = 0;
 catch myException
     status = exception2status(myException);
@@ -1479,14 +1492,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_rename_dim ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_rename_dim(op,ncid,dimid,name) %#ok<INUSL>
 %      status = mexnc('RENAME_DIM',ncid,dimid,name);
 
 varargout = cell(1,nargout);
 
 try
-    netcdf.renameDim(varargin{2:end});
+    netcdf.renameDim(ncid,dimid,name);
     status = 0;
 catch myException
     status = exception2status(myException);
@@ -1503,14 +1516,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_rename_var ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_rename_var(op,ncid,varid,newname) %#ok<INUSL>
 %      status = mexnc('RENAME_VAR',ncid,varid,new_varname);
 
 varargout = cell(1,nargout);
 
 try
-    netcdf.renameVar(varargin{2:end});
+    netcdf.renameVar(ncid,varid,newname);
     status = 0;
 catch myException
     status = exception2status(myException);
@@ -1527,14 +1540,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_set_fill ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_set_fill(op,ncid,mode) %#ok<INUSL,DEFNU>
 %      [old_fill_mode,status] = mexnc('SET_FILL',ncid,new_fill_mode)
 
 varargout = cell(1,nargout);
 
 try
-    old_fill_mode = netcdf.setFill(varargin{2:end});
+    old_fill_mode = netcdf.setFill(ncid,mode);
     status = 0;
 catch myException
     old_fill_mode = [];
@@ -1554,8 +1567,8 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_setopts ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_setopts(op,ncopts) %#ok<INUSD,DEFNU>
 %      old_ncopts = mexnc('SETOPTS', ncopts)
 %
 % This is now a no-op.
@@ -1570,16 +1583,17 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_strerror ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_strerror(op,error_code) %#ok<INUSL,DEFNU>
 %      error_message = mexnc('STRERROR',error_code);
 
 varargout = cell(1,nargout);
 
-if ~isnumeric(varargin{2})
-    error ( 'MEXNC:strerror:inputMustBeNumeric', 'Input to strerror must be numeric.');
+if ~isnumeric(error_code)
+    error ( 'MEXNC:strerror:inputMustBeNumeric', ...
+        'Input to strerror must be numeric.');
 end
-switch ( varargin{2} )
+switch ( error_code )
     case 0 
         msg = 'No Error';
     case -1 
@@ -1661,14 +1675,14 @@ varargout{1} = msg;
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_sync ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_sync(op,ncid) %#ok<INUSL,DEFNU>
 %      status = mexnc('SYNC',ncid );
 
 varargout = cell(1,nargout);
 
 try
-    netcdf.sync(varargin{2:end});
+    netcdf.sync(ncid);
     status = 0;
 catch myException
     status = exception2status(myException);
@@ -1683,24 +1697,23 @@ end
 
 
 %------------------------------------------------------------------------------------------
-function varargout = handle_varget ( varargin )
+function varargout = handle_varget(op,ncid,varid,start,count,autoscale) %#ok<DEFNU,INUSL>
 %      [value, status] = mexnc('VARGET', cdfid, varid, start, count, autoscale)
 
-error(nargchk(5,6,nargin,'struct'));
 
 % Unless it's a char variable, we wish to return the data in double precision.
-if ischar(varargin{3})
+if ischar(varid)
 	try
-    	varargin{3} = netcdf.inqVarId(varargin{2},varargin{3});
+    	varid = netcdf.inqVarId(ncid,varid);
 	catch me %#ok<NASGU>
     	varargout{1} = NaN;
 	    varargout{2} = -1;
 		return;
 	end
 end
-tmw_args = varargin;
+
 try
-	[varname,xtype] = netcdf.inqVar(tmw_args{2:3}); %#ok<ASGLU>
+	[varname,xtype,dimids] = netcdf.inqVar(ncid,varid); %#ok<ASGLU>
 catch me %#ok<NASGU>
    	varargout{1} = NaN;
     varargout{2} = -1;
@@ -1708,22 +1721,30 @@ catch me %#ok<NASGU>
 end
 
 if ( xtype ~= netcdf.getConstant('NC_CHAR'))
-    tmw_args{6} = 'double';
+    outputDatatype = 'double';
 else
-    tmw_args{6} = 'char';
+    outputDatatype = 'char';
 end
 
 % Must flip the start and count arguments.
 if (nargin >= 4)
-    tmw_args{4} = fliplr(tmw_args{4}(:)');
-    tmw_args{5} = fliplr(tmw_args{5}(:)');
-    %tmw_args{4} = tmw_args{4}(:)';
-    %tmw_args{5} = tmw_args{5}(:)';
+    start = fliplr(start(:)');
+    count = fliplr(count(:)');
+end
+
+idx = find(count<0);
+if any(idx)
+    for j = 1:numel(idx)
+        bad_dimid = dimids(idx(j));
+        [dimname,dimlen] = netcdf.inqDim(ncid,bad_dimid); %#ok<ASGLU>
+        count(idx(j)) = dimlen - start(idx(j));
+    end
 end
 
 
+
 try
-    data = netcdf.getVar(tmw_args{2:end});
+    data = netcdf.getVar(ncid,varid,start,count,outputDatatype);
     status = 0;
 catch me %#ok<NASGU>
     varargout{1} = NaN;
@@ -1731,15 +1752,15 @@ catch me %#ok<NASGU>
 	return;
 end
 
-if (nargin == 6) && (varargin{6} == 1)
-    data = handle_nc2_output_scaling ( varargin{2}, varargin{3}, data );
+
+
+if (nargin == 6) && (autoscale == 1)
+    data = handle_nc2_output_scaling(ncid,varid,data);
 end
 
-% Permute col vectors into rows.  Why?  Well, that's just the way that it was done.
-if (ndims(data) == 2) && (size(data,2) == 1)
-    data = data';   
+if numel(dimids) == 1
+    data = data';
 end
-
 switch nargout
     case 1
         varargout{1} = data;
@@ -1749,18 +1770,18 @@ switch nargout
 end
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_varputg ( varargin )
-%      status = mexnc('VARPUTG', cdfid, varid, start, count, stride, [], value, autoscale)
+%--------------------------------------------------------------------------
+function varargout = handle_varputg(op,ncid,varid,start,count,stride,imap,value,autoscale) %#ok<DEFNU,INUSL>
+% status = mexnc('VARPUTG', cdfid, varid, start, count, stride, [], value, autoscale)
 
 error(nargchk(8,9,nargin,'struct'));
 
-if ischar(varargin{3})
-    varargin{3} = netcdf.inqVarId(varargin{2},varargin{3});
+if ischar(varid)
+    varid = netcdf.inqVarId(ncid,varid);
 end
 
 
-switch(class(varargin{8}))
+switch(class(value))
     case { 'double', 'char' }
         
     otherwise
@@ -1771,25 +1792,25 @@ end
 
 
 % Scale the input if necessary.
-if (nargin == 9) && (varargin{9} == 1)
-    varargin{8} = handle_nc2_input_scaling ( varargin{2}, varargin{3}, varargin{8} );
+if (nargin == 9) && (autoscale == 1)
+    value = handle_nc2_input_scaling(ncid,varid,value);
 end
 
 % Must flip the start and count arguments.
 if (nargin >= 4)
-    varargin{4} = fliplr((varargin{4}(:))');
-    varargin{5} = fliplr((varargin{5}(:))');
-    varargin{6} = fliplr((varargin{6}(:))');
+    start = fliplr((start(:))');
+    count = fliplr((count(:))');
+    stride = fliplr((stride(:))');
 end
 
 % Skip over that empty argument.  Would have been the imap thingie.
-varargin = varargin([2:6 8]);
+
 
 try
-    netcdf.putVar(varargin{:});
+    netcdf.putVar(ncid,varid,start,count,stride,value);
     status = 0;
 catch %#ok<CTCH>
-    status = 1;
+    status = -1;
 end
 
 switch nargout
@@ -1800,45 +1821,58 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_vargetg ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_vargetg (op,ncid,varid,start,count,stride,imap,autoscale) %#ok<DEFNU,INUSL>
 %      [value, status] = mexnc('VARGETG', cdfid, varid, start, count, stride, [], autoscale)
 
-error(nargchk(6,8,nargin,'struct'));
-
-if ischar(varargin{3})
-    varargin{3} = netcdf.inqVarId(varargin{2},varargin{3});
-end
-
-% Unless it's a char variable, we wish to return the data in double precision.
-tmw_args = varargin(2:6);
-[varname,xtype] = netcdf.inqVar(varargin{2:3}); %#ok<ASGLU>
-if ( xtype ~= netcdf.getConstant('NC_CHAR'))
-    tmw_args{6} = 'double';
-end
-
-% Must flip the start and count arguments.
-if (nargin >= 4)
-    tmw_args{3} = fliplr(tmw_args{3}(:)');
-    tmw_args{4} = fliplr(tmw_args{4}(:)');
-    tmw_args{5} = fliplr(tmw_args{5}(:)');
-end
-
 try
-    data = netcdf.getVar(tmw_args{:});
+    
+    if ischar(varid)
+        varid = netcdf.inqVarId(ncid,varid);
+    end
+
+    % Unless it's a char variable, we wish to return the data in double precision.
+    [varname,xtype,dimids] = netcdf.inqVar(ncid,varid); %#ok<ASGLU>
+
+    % Must flip the start and count arguments.
+    if (nargin >= 4)
+        start = fliplr(start(:)');
+        count = fliplr(count(:)');
+        stride = fliplr(stride(:)');
+    end
+
+    % If any count arguments are negative, replace them by the appropriate
+    % value.
+    idx = find(count<0);
+    if any(idx)
+        for j = 1:numel(idx)
+            bad_dimid = dimids(idx(j));
+            [dimname,dimlen] = netcdf.inqDim(ncid,bad_dimid); %#ok<ASGLU>
+            count(idx(j)) = ceil((dimlen-start(idx(j)))/stride(idx(j)));
+        end
+    end
+
+
+    if ( xtype ~= netcdf.getConstant('NC_CHAR'))
+        data = netcdf.getVar(ncid,varid,start,count,stride,'double');
+    else
+        data = netcdf.getVar(ncid,varid,start,count,stride);
+    end
     status = 0;
+
+    if (nargin == 8) && (autoscale == 1)
+        data = handle_nc2_output_scaling ( ncid, varid, data );
+    end
+
+    % Permute col vectors into rows.  Why?  Well, that's just the way that 
+    % it was done.
+    if (ndims(data) == 2) && (size(data,2) == 1)
+        data = data';   
+    end
+
 catch %#ok<CTCH>
     data = NaN;
     status = -1;
-end
-
-if (nargin == 8) && (varargin{8} == 1)
-    data = handle_nc2_output_scaling ( varargin{2}, varargin{3}, data );
-end
-
-% Permute col vectors into rows.  Why?  Well, that's just the way that it was done.
-if (ndims(data) == 2) && (size(data,2) == 1)
-    data = data';   
 end
 
 switch nargout
@@ -1849,7 +1883,7 @@ switch nargout
         varargout{2} = status;
 end
 
-%------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------
 function status = exception2status ( myException )
 % Translate an exception to an error status.
 % The netcdf package issues exceptions when there is an error condition, but mexnc expects
@@ -1894,6 +1928,7 @@ switch ( myException.identifier )
           'MATLAB:netcdf:unpackDimids:badDimidsType', ...
           'MATLAB:netcdf:unpackIntSingleton:argumentIsEmptySet', ...
           'MATLAB:netcdf:unrecognizedCharParameter', ...
+          'MATLAB:inputArgUndefined', ...
           'MATLAB:unassignedOutputs'}
         rethrow ( myException );
 
@@ -1999,7 +2034,8 @@ if ~isempty(regexp(myException.identifier,'MATLAB:netcdf:abort:', 'once'))
 end
 
 % 
-% If we get this far, then we know that something has not been properly handled.
+% If we get this far, then we know that something has not been properly 
+% handled.
 myException %#ok<NOPRT>
 myException.stack(1)
 myException.stack(end)
@@ -2008,11 +2044,11 @@ error('Encountered an unhandled exception.');
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function data = handle_nc2_input_scaling(ncid,varid,data)
 % HANDLE_NC2_INPUT_SCALING
-%     If there is a scale factor and/or  add_offset attribute, convert the data
-%     to double precision and apply the scaling.
+%     If there is a scale factor and/or  add_offset attribute, convert the 
+%     data to double precision and apply the scaling.
 %
 
 try
@@ -2035,13 +2071,13 @@ return
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % HANDLE_NC2_OUTPUT_SCALING
-%     If there is a scale factor and/or  add_offset attribute, convert the data
-%     to double precision and apply the scaling.
+%     If there is a scale factor and/or  add_offset attribute, convert the 
+%     data to double precision and apply the scaling.
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function values = handle_nc2_output_scaling ( ncid, varid, values )
 
 try
@@ -2059,18 +2095,18 @@ values = double(values) * scale_factor + add_offset;
 
 
 
-%------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------
 % NetCDF-2 functions.
-%------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_attcopy ( varargin )
-%     status = mexnc('COPY_ATT',ncid_in,varid_in,attname,ncid_out,varid_out);
-%      status = mexnc('ATTCOPY', incdf, invar, 'name', outcdf, outvar)
+%--------------------------------------------------------------------------
+function varargout = handle_attcopy(op,ncid_in,varid_in,attname,ncid_out,varid_out) %#ok<DEFNU>
+% status = mexnc('COPY_ATT',ncid_in,varid_in,attname,ncid_out,varid_out);
+% status = mexnc('ATTCOPY', incdf, invar, 'name', outcdf, outvar)
 
 varargout = cell(1,nargout);
 
-status = handle_copy_att(varargin{:});
+status = handle_copy_att(op,ncid_in,varid_in,attname,ncid_out,varid_out);
 if status ~= 0
     status = -1;
 end
@@ -2083,14 +2119,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_attdel ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_attdel(op,ncid,varid,attname) %#ok<DEFNU>
 %      status = mexnc('ATTDEL', cdfid, varid, 'name')
 %     status = mexnc('DEL_ATT',ncid,varid,attname);
 
 varargout = cell(1,nargout);
 
-status = handle_del_att(varargin{:});
+status = handle_del_att(op,ncid,varid,attname);
 if status ~= 0
     status = -1;
 end
@@ -2103,8 +2139,8 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_attget ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_attget(op,ncid,varid,attname) %#ok<INUSL,DEFNU>
 %     [att_value,status] = mexnc('GET_ATT_DOUBLE',ncid,varid,attname);
 %     [att_value,status] = mexnc('GET_ATT_FLOAT', ncid,varid,attname);
 %     [att_value,status] = mexnc('GET_ATT_INT',   ncid,varid,attname);
@@ -2114,14 +2150,13 @@ function varargout = handle_attget ( varargin )
 %     [att_value,status] = mexnc('GET_ATT_TEXT',  ncid,varid,attname);
 %      [value, status] = mexnc('ATTGET', cdfid, varid, 'name')
 
-error(nargchk(4,4,nargin,'struct'));
 
-if ischar(varargin{3})
-	if strcmpi(varargin{3},'global')
+if ischar(varid)
+	if strcmpi(varid,'global')
 		% needed for backwards compatibility.
-		varargin{3} = -1;
+		varid = -1;
 	else
-    	varargin{3} = netcdf.inqVarId(varargin{2},varargin{3});
+    	varid = netcdf.inqVarId(ncid,varid);
 	end
 end
 
@@ -2129,15 +2164,15 @@ end
 varargout = cell(1,nargout);
 
 % NETCDF-2 only returned double precision or char attributes.
-xtype = netcdf.inqAtt(varargin{2:end});
+xtype = netcdf.inqAtt(ncid,varid,attname);
 if ( xtype == netcdf.getConstant('NC_CHAR') )
     op = 'GET_ATT_TEXT';
 else
     op = 'GET_ATT_DOUBLE';
 end
-varargin{1} = op;
 
-[varargout{:}] = handle_get_att(varargin{:});
+
+[varargout{:}] = handle_get_att(op,ncid,varid,attname);
 if (nargout == 2) && (varargout{2} ~= 0)
     varargout{2} = -1;
 end
@@ -2145,14 +2180,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_attinq ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_attinq(op,ncid,varid,attname) %#ok<DEFNU>
 %      [datatype, len, status] = mexnc('ATTINQ', cdfid, varid, 'name')
 %     [datatype,attlen,status] = mexnc('INQ_ATT',ncid,varid,attname);
 
 varargout = cell(1,nargout);
 
-[xtype,attlen,status] = handle_inq_att(varargin{:});
+[xtype,attlen,status] = handle_inq_att(op,ncid,varid,attname);
 if status ~= 0
     status = -1;
 end
@@ -2172,14 +2207,14 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_attname ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_attname(op,ncid,varid,attid) %#ok<DEFNU>
 %     [attname,status] = mexnc('INQ_ATTNAME',ncid,varid,attid);
 %      [name, status] = mexnc('ATTNAME', cdfid, varid, attnum)
 
 varargout = cell(1,nargout);
 
-[attname,status] = handle_inq_attname(varargin{:});
+[attname,status] = handle_inq_attname(op,ncid,varid,attid);
 if status ~= 0
     status = -1;
 end
@@ -2195,63 +2230,64 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_attput ( varargin )
-%      status = mexnc('ATTPUT', cdfid, varid, 'name', datatype, value) 
-%      status = mexnc('ATTPUT', cdfid, varid, 'name', datatype, len, value) 
-%      status = mexnc('ATTPUT', cdfid, 'global', 'name', datatype, len, value) 
+%--------------------------------------------------------------------------
+function varargout = handle_attput(op,ncid,varid,attname,xtype,len,value) %#ok<DEFNU>
+% status = mexnc('ATTPUT', cdfid, varid, 'name', datatype, value) 
+% status = mexnc('ATTPUT', cdfid, varid, 'name', datatype, len, value) 
+% status = mexnc('ATTPUT', cdfid, 'global', 'name', datatype, len, value) 
 
-error(nargchk(6,7,nargin,'struct'));
+if nargin < 7
+    value = len;
+    len = numel(value); %#ok<NASGU>
+end
 
-if ischar(varargin{3})
-	if strcmpi(varargin{3},'global')
+if ischar(varid)
+	if strcmpi(varid,'global')
 		% needed for backwards compatibility.
-		varargin{3} = -1;
+		varid = -1;
 	else
-    	varargin{3} = netcdf.inqVarId(varargin{2},varargin{3});
+    	varid = netcdf.inqVarId(ncid,varid);
 	end
 end
 
 % Don't need the length.
 varargout = cell(1,nargout);
-if ( nargin == 7 )
-    varargin = varargin([1:5 7]);
-end
 
-if ischar(varargin{5})
-    xtype = lower(varargin{5});
+
+if ischar(xtype)
+    xtype = lower(xtype);
     switch xtype
         case 'byte'
-            varargin{5} = nc_byte;
+            xtype = nc_byte;
         case 'char'
-            varargin{5} = nc_char;
+            xtype = nc_char;
         case 'short'
-            varargin{5} = nc_short;
+            xtype = nc_short;
         case {'int', 'long'}
-            varargin{5} = nc_int;
+            xtype = nc_int;
         case 'float'
-            varargin{5} = nc_float;
+            xtype = nc_float;
         case 'double'
-            varargin{5} = nc_double;
+            xtype = nc_double;
         otherwise
             error('MEXNC:handle_attput:unhandledDatatype', ...
                   '%s is not a recognized datatype.', xtype );
     end
 end
 % Must cast the data to the intended datatype.
-if (( varargin{5} == 1 ) && ~(isa(varargin{6},'uint8') || isa(varargin{6},'int8')))
-    varargin{6} = int8(varargin{6});
-elseif ( varargin{5} == 3 ) && ~isa(varargin{6},'int16')
-    varargin{6} = int16(varargin{6});
-elseif ( varargin{5} == 4 ) && ~isa(varargin{6},'int32')
-    varargin{6} = int32(varargin{6});
-elseif ( varargin{5} == 5 ) && ~isa(varargin{6},'single')
-    varargin{6} = single(varargin{6});
-elseif ( varargin{5} == 6 ) && ~isa(varargin{6},'double')
-    varargin{6} = double(varargin{6});
+if (( xtype == 1 ) && ~(isa(value,'uint8') || isa(value,'int8')))
+    value = int8(value);
+elseif ( xtype == 3 ) && ~isa(value,'int16')
+    value = int16(value);
+elseif ( xtype == 4 ) && ~isa(value,'int32')
+    value = int32(value);
+elseif ( xtype == 5 ) && ~isa(value,'single')
+    value = single(value);
+elseif ( xtype == 6 ) && ~isa(value,'double')
+    value = double(value);
 end
 
-status = handle_put_att(varargin{:});
+status = handle_put_att(op,ncid,varid,attname,xtype,value);
 if status ~= 0
     status = -1;
 end
@@ -2264,12 +2300,12 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_attrename ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_attrename(op,ncid,varid,oldname,newname) %#ok<DEFNU>
 %      status = mexnc('ATTRENAME', cdfid, varid, 'name', 'newname')
 %     status = mexnc('RENAME_ATT',ncid,varid,old_attname,new_attname);
 
-status = handle_rename_att(varargin{:});
+status = handle_rename_att(op,ncid,varid,oldname,newname);
 if status ~= 0
     status = -1;
 end
@@ -2281,12 +2317,12 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_dimdef ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_dimdef(op,ncid,name,dimlen) %#ok<DEFNU>
 %      status = mexnc('DIMDEF', cdfid, 'name', length)
 %      [dimid,status] = mexnc('DEF_DIM',ncid,name,length);
 
-[dimid,status] = handle_def_dim(varargin{:});
+[dimid,status] = handle_def_dim(op,ncid,name,dimlen);
 if status ~= 0
     status = -1;
 end
@@ -2301,12 +2337,12 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_dimid ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_dimid(op,ncid,name) %#ok<DEFNU>
 %      [dimid,status] = mexnc('INQ_DIMID',ncid,name);
 %      [dimid, rcode] = mexnc('DIMID', cdfid, 'name')
 
-[dimid,status] = handle_inq_dimid(varargin{:});
+[dimid,status] = handle_inq_dimid(op,ncid,name);
 if status ~= 0
     status = -1;
 end
@@ -2321,12 +2357,16 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_diminq ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_diminq(op,ncid,dimid) %#ok<DEFNU>
 %      [name, length, status] = mexnc('DIMINQ', cdfid, dimid)
 %      [name, length,status] = mexnc('INQ_DIM',ncid,dimid);
 
-[name,dimlen,status] = handle_inq_dim(varargin{:});
+% Turn a character dimid into the real dimid
+if ischar(dimid)
+	dimid = mexnc('inq_dimid',ncid,dimid);
+end
+[name,dimlen,status] = handle_inq_dim(op,ncid,dimid);
 if status ~= 0
     status = -1;
 end
@@ -2346,12 +2386,12 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_dimrename ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_dimrename(op,ncid,dimid,name) %#ok<DEFNU>
 %      status = mexnc('DIMRENAME', cdfid, 'name')
 %      status = mexnc('RENAME_DIM',ncid,dimid,name);
 
-status = handle_rename_dim(varargin{:});
+status = handle_rename_dim(op,ncid,dimid,name);
 if status ~= 0
     status = -1;
 end
@@ -2362,12 +2402,12 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_endef ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_endef(op,ncid) %#ok<DEFNU>
 %      status = mexnc('ENDEF', cdfid)
 %      status = mexnc('ENDDEF',ncid);
 
-status = handle_enddef(varargin{:});
+status = handle_enddef(op,ncid);
 if status ~= 0
     status = -1;
 end
@@ -2380,10 +2420,10 @@ end
 
 
 %----------------------------------------------------------------
-function varargout = handle_typelen(varargin)
+function varargout = handle_typelen(op,datatype) %#ok<INUSL,DEFNU>
 %      len = mexnc('TYPELEN', datatype)
 
-switch ( varargin{2} )
+switch ( datatype )
     case 0
         len = -1;
         status = 1;
@@ -2424,7 +2464,7 @@ end
 
 
 %----------------------------------------------------------------
-function varargout = handle_inquire(varargin)
+function varargout = handle_inquire(op,ncid) %#ok<DEFNU>
 %      [ndims, nvars, natts, recdim, status] = mexnc('INQUIRE', cdfid)
 %      [ndims,nvars, ngatts, unlimdim, status] = mexnc('INQ',ncid);
 
@@ -2432,9 +2472,9 @@ global use_tmw;
 
 % Get all five outputs.
 if use_tmw
-    [ndims,nvars,ngatts,unlimdim,status] = handle_inq(varargin{:});
+    [ndims,nvars,ngatts,unlimdim,status] = handle_inq(op,ncid);
 else
-    [ndims,nvars,ngatts,unlimdim,status] = mexnc('INQ',varargin{2:end});
+    [ndims,nvars,ngatts,unlimdim,status] = mexnc('INQ',ncid);
 end
 
 switch nargout
@@ -2475,32 +2515,36 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_vardef ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_vardef(op,ncid,name,xtype,ndims,dimids) %#ok<DEFNU>
 %      [varid,status] = mexnc('DEF_VAR',ncid,name,xtype,dimids);
 %      [varid,status] = mexnc('DEF_VAR',ncid,name,xtype,ndims,dimids);
 %      status = mexnc('VARDEF', cdfid, 'name', datatype, ndims, [dim])
 
+
+if (nargin < 6)
+    dimids = ndims;
+    ndims = numel(dimids);
+end
+
 % Don't pass ndims, but tell the user if they are wrong!
 % Stupid netcdf toolbox let users pass -1 as the length.
 % if ndims is 0, don't bother checking it against the number of elements.
-nc2args = varargin(1:4);
-if (varargin{5} == 0)
+if (ndims == 0) && ~isempty(dimids)
     % Stupid user.  They are saying that the number of dimensions is zero, yet they
     % give a list of dimension IDS.  We assume they really meant zero dimensions.
-    nc2args{5} = [];
-elseif (varargin{5} == -1)
+    dimids = [];
+    ndims = 0;
+elseif (ndims == -1)
     % Stupid user.  -1 is their way of saying to compute the number of dimensions
     % for me.  TMW already does this automatically
-    nc2args{5} = varargin{6};
-elseif (varargin{5} ~= numel(varargin{6})) 
+    ndims = numel(dimids);
+elseif (ndims ~= numel(dimids)) 
     error('MEXNC:handle_def_var:numDimsMismatch', ...
           'The given number of dimensions was not the same as the length of the dimids.');
-else
-    nc2args{5} = varargin{6};
 end
 
-[varid,status] = handle_def_var(nc2args{:});
+[varid,status] = handle_def_var(op,ncid,name,xtype,ndims,dimids);
 if status ~= 0
     status = -1;
 end
@@ -2515,12 +2559,12 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_varid ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_varid(op,ncid,varname) %#ok<DEFNU>
 %      [varid,status] = mexnc('INQ_VARID',ncid,varname);
 %      [varid, rcode] = mexnc('VARID', cdfid, 'name')
 
-[varid,status] = handle_inq_varid(varargin{:});
+[varid,status] = handle_inq_varid(op,ncid,varname);
 if status ~= 0
     status = -1;
 end
@@ -2535,12 +2579,12 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_varinq ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_varinq(op,ncid,varid) %#ok<DEFNU>
 % [name, datatype, ndims, dimids, natts, status] = mexnc('VARINQ', cdfid, varid)
 % [varname,xtype,  ndims, dimids, natts, status] = mexnc('INQ_VAR',ncid,varid);
 
-[varname,xtype,ndims,dimids,natts,status] = handle_inq_var(varargin{:});
+[varname,xtype,ndims,dimids,natts,status] = handle_inq_var(op,ncid,varid);
 if status ~= 0
     status = -1;
 end
@@ -2577,12 +2621,12 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_varrename ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_varrename(op,ncid,varid,newname) %#ok<DEFNU>
 %      status = mexnc('VARRENAME', cdfid, varid, 'name')
 %      status = mexnc('RENAME_VAR',ncid,varid,new_varname);
 
-status = handle_rename_var(varargin{:});
+status = handle_rename_var(op,ncid,varid,newname);
 if status ~= 0
     status = -1;
 end
@@ -2594,8 +2638,8 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_varput1 ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_varput1(op,ncid,varid,start,data,autoscale) %#ok<INUSL,DEFNU>
 %     status = mexnc('VARPUT1',        ncid,varid,start,value, autoscale)
 %
 %     status = mexnc('PUT_VAR1_DOUBLE',ncid,varid,start,data);
@@ -2608,11 +2652,11 @@ function varargout = handle_varput1 ( varargin )
 
 error(nargchk(5,6,nargin,'struct'));
 
-if ischar(varargin{3})
-    varargin{3} = netcdf.inqVarId(varargin{2},varargin{3});
+if ischar(varid)
+    varid = netcdf.inqVarId(ncid,varid);
 end
 
-switch(class(varargin{5}))
+switch(class(data))
     case { 'double', 'char' }
         
     otherwise
@@ -2621,7 +2665,7 @@ switch(class(varargin{5}))
 end
 
 try
-    [varname,xtype,dimids] = netcdf.inqVar(varargin{2}, varargin{3}); %#ok<ASGLU>
+    [varname,xtype,dimids] = netcdf.inqVar(ncid,varid); %#ok<ASGLU>
 catch %#ok<CTCH>
     varargout{1} = 1;
     return
@@ -2629,22 +2673,21 @@ end
 
 
 % Scale the input if necessary.
-if (nargin == 6) && (varargin{6} == 1)
-    varargin{5} = handle_nc2_input_scaling ( varargin{2}, varargin{3}, varargin{5} );
-    varargin = varargin(1:5);
+if (nargin == 6) && (autoscale == 1)
+    data = handle_nc2_input_scaling(ncid,varid,data);
 end
 
 % Must flip the start and count arguments.
 if (nargin >= 4)
-    varargin{4} = fliplr((varargin{4}(:))');
+    start = fliplr((start(:))');
 end
 
 try
     if isempty(dimids)
         % Singleton case, write ALL the data.
-        netcdf.putVar(varargin{[2:3 5]});
+        netcdf.putVar(ncid,varid,data);
     else
-        netcdf.putVar(varargin{2:5});
+        netcdf.putVar(ncid,varid,start,data);
     end
     status = 0;
 catch %#ok<CTCH>
@@ -2659,8 +2702,8 @@ end
 
 
 
-%------------------------------------------------------------------------------------------
-function varargout = handle_varget1 ( varargin )
+%--------------------------------------------------------------------------
+function varargout = handle_varget1(op,ncid,varid,start,autoscale) %#ok<INUSL,DEFNU>
 %      [value, status] = mexnc('VARGET1', cdfid, varid, coords, autoscale)
 %     [data,status] = mexnc('GET_VAR1_DOUBLE',ncid,varid,start);
 %     [data,status] = mexnc('GET_VAR1_FLOAT', ncid,varid,start);
@@ -2672,18 +2715,14 @@ function varargout = handle_varget1 ( varargin )
 
 error(nargchk(4,5,nargin,'struct'));
 
-tmw_args = varargin;
-if ischar(tmw_args{3})
-    tmw_args{3} = netcdf.inqVarId(tmw_args{2},tmw_args{3});
+if ischar(varid)
+    varid = netcdf.inqVarId(ncid,varid);
 end
 
 % If there was an autoscale argument, we need to get rid of it before
 % passing it into the netcdf package.
-if ( numel(tmw_args) == 5 )
-    tmw_args = tmw_args(1:4);
-end
 try
-    [varname,xtype,dimids] = netcdf.inqVar(tmw_args{2}, tmw_args{3}); %#ok<ASGLU>
+    [varname,xtype,dimids] = netcdf.inqVar(ncid,varid); %#ok<ASGLU>
 catch %#ok<CTCH>
     varargout{2} = 1;
     return
@@ -2705,16 +2744,16 @@ end
 
 % Must flip the start arguments.
 if (nargin >= 4)
-    tmw_args{4} = fliplr(tmw_args{4});
+    start = fliplr(start);
 end
 
 
 try
     if isempty(dimids)
         % singleton case, don't supply the index.
-        data = netcdf.getVar(tmw_args{2:3},output_type);
+        data = netcdf.getVar(ncid,varid,output_type);
     else
-        data = netcdf.getVar(tmw_args{2:4},output_type);
+        data = netcdf.getVar(ncid,varid,start,output_type);
     end
     status = 0;
 catch %#ok<CTCH>
@@ -2725,8 +2764,8 @@ end
 
 
 
-if (nargin == 5) && (varargin{5} == 1)
-    data = handle_nc2_output_scaling ( tmw_args{2}, tmw_args{3}, data );
+if (nargin == 5) && (autoscale == 1)
+    data = handle_nc2_output_scaling(ncid,varid,data);
 end
 
 switch nargout
@@ -2738,23 +2777,16 @@ switch nargout
 end
 
 %------------------------------------------------------------------------------------------
-function varargout = handle_varput ( varargin )
+function varargout = handle_varput(op,ncid,varid,start,count,data,autoscale) %#ok<DEFNU,INUSL>
 %      status = mexnc('VARPUT', cdfid, varid, start, count, value, autoscale)
-%     status = mexnc('PUT_VARA_DOUBLE',ncid,varid,start,count,data);
-%     status = mexnc('PUT_VARA_FLOAT', ncid,varid,start,count,data);
-%     status = mexnc('PUT_VARA_INT',   ncid,varid,start,count,data);
-%     status = mexnc('PUT_VARA_SHORT', ncid,varid,start,count,data);
-%     status = mexnc('PUT_VARA_SCHAR', ncid,varid,start,count,data);
-%     status = mexnc('PUT_VARA_UCHAR', ncid,varid,start,count,data);
-%     status = mexnc('PUT_VARA_TEXT',  ncid,varid,start,count,data);
 
-error(nargchk(6,7,nargin,'struct'));
 
-if ischar(varargin{3})
-    varargin{3} = netcdf.inqVarId(varargin{2},varargin{3});
+
+if ischar(varid)
+    varid = netcdf.inqVarId(ncid,varid);
 end
 
-switch(class(varargin{6}))
+switch(class(data))
     case { 'double', 'char' }
         
     otherwise
@@ -2763,19 +2795,29 @@ switch(class(varargin{6}))
 end
 
 % Scale the input if necessary.
-if (nargin == 7) && (varargin{7} == 1)
-    varargin{6} = handle_nc2_input_scaling ( varargin{2}, varargin{3}, varargin{6} );
+if (nargin == 7) && (autoscale == 1)
+    data = handle_nc2_input_scaling(ncid,varid,data);
 end
 
 
 % Must flip the start and count arguments.
 if (nargin >= 4)
-    varargin{4} = fliplr((varargin{4}(:))');
-    varargin{5} = fliplr((varargin{5}(:))');
+    start = fliplr((start(:))');
+    count = fliplr((count(:))');
+end
+
+% account for any negative counts.
+if any(count<0)
+    idx = find(count<0);
+    [varname,xtype,dimids] = netcdf.inqVar(ncid,varid);  %#ok<ASGLU>
+    for j = 1:numel(idx)
+        [dud,dimlen] = netcdf.inqDim(ncid,dimids(idx(j))); %#ok<ASGLU>
+        count(idx(j)) = dimlen - start(idx(j));
+    end
 end
 
 try
-    netcdf.putVar(varargin{2:6});
+    netcdf.putVar(ncid,varid,start,count,data);
     status = 0;
 catch %#ok<CTCH>
     status = 1;

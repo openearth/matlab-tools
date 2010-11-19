@@ -20,11 +20,12 @@ test_neg_dimLengthIsEmptySet ( ncfile );
 test_neg_dimLengthIsNegative ( ncfile );
 test_neg_dimLengthIsNonNumeric ( ncfile );
 
-fprintf ( 1, 'DEF_DIM succeeded.\n' );
+fprintf('DEF_DIM succeeded.\n');
 
 
 
 
+%--------------------------------------------------------------------------
 function create_ncfile ( ncfile )
 
 [ncid, status] = mexnc ( 'create', ncfile, nc_clobber_mode );
@@ -41,6 +42,7 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function test_define ( ncfile )
 % Define a dimension.
 %
@@ -81,9 +83,12 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function test_dimLengthIsUnlimitedCharCase ( ncfile )
 %
 % Use 'NC_UNLIMITED'
+
+v = version('-release');
 
 create_ncfile ( ncfile );
 
@@ -93,7 +98,15 @@ if ( status ~= 0 ), error(mexnc('strerror',status)), end
 status = mexnc ( 'redef', ncid );
 if ( status ~= 0 ), error(mexnc('strerror',status)), end
 
-[xdimid, status] = mexnc ( 'def_dim', ncid, 'x', 'NC_UNLIMITED' );
+% mexnc pre 2008b def_dim never implemented support for 'NC_UNLIMITED'
+% It is implemented for 2008b+, though.
+switch(v)
+	case { '2008a', '2007b', '2007a', '2006b', '2006a', '14' }
+		[xdimid, status] = mexnc ( 'dimdef', ncid, 'x', 'NC_UNLIMITED' );
+	otherwise
+		[xdimid, status] = mexnc ( 'def_dim', ncid, 'x', 'NC_UNLIMITED' );
+end
+
 if ( status ~= 0 ), error(mexnc('strerror',status)), end
 
 status = mexnc ( 'close', ncid );
@@ -125,6 +138,7 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function test_neg_badNcid ( ncfile )
 % Call DEF_DIM with a bad ncid.
 %
@@ -149,6 +163,7 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function test_neg_emptyNcid ( ncfile )
 % Call DEF_DIM with a bad ncid of [].
 %
@@ -177,6 +192,7 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function test_neg_ncidIsNonNumeric ( ncfile )
 % Call DEF_DIM with non-numeric ncid
 %
@@ -206,6 +222,7 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function test_neg_dimAlreadyExists ( ncfile )
 % Try to define a dimension that already exists.
 %
@@ -247,6 +264,7 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function test_neg_dimNameIsEmptyString ( ncfile )
 % Negative test:  dimname is ''
 %
@@ -275,6 +293,7 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function test_neg_dimNameIsEmptySet ( ncfile )
 % Negative test:  dimname is []
 %
@@ -304,6 +323,7 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function test_neg_dimNameIsNonChar ( ncfile )
 % Negative test:  dimname is non-character
 %
@@ -332,6 +352,7 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function test_neg_dimLengthIsEmptySet ( ncfile )
 % Negative test:  dimlength is []
 %
@@ -361,6 +382,7 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function test_neg_dimLengthIsNegative ( ncfile )
 % Negative test:  dimlength is negative
 %
@@ -390,6 +412,7 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function test_neg_dimLengthIsNonNumeric ( ncfile )
 % Negative test:  dimlength is non-numeric
 %

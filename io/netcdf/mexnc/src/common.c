@@ -419,6 +419,8 @@ int interpret_char_parameter ( const mxArray *mx )
 		{ NC_SHARE,                   "SHARE"                   }, 
 		{ NC_WRITE,                   "WRITE"                   }, 
 		{ NC_64BIT_OFFSET,            "64BIT_OFFSET"            }, 
+		{ NC_NETCDF4,                 "NETCDF4"                 }, 
+		{ NC_CLASSIC_MODEL,           "CLASSIC_MODEL"           }, 
 
 		/*
 		 * Format modes.
@@ -484,6 +486,12 @@ int interpret_char_parameter ( const mxArray *mx )
 		{ NC_UNLIMITED,               "UNLIMITED"               }, 
 		{ NC_SIZEHINT_DEFAULT,        "SIZEHINT_DEFAULT"        }, 
 		{ NC_VERBOSE,                 "VERBOSE"                 }, 
+
+		/*
+		 * Chunking.
+		 * */
+		{ NC_CONTIGUOUS,              "CONTIGUOUS"              }, 
+		{ NC_CHUNKED,                 "CHUNKED"                 }, 
 
 
 		{ 0,                          "NONE"                    }

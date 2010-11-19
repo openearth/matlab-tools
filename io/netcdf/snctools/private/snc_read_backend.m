@@ -40,7 +40,7 @@ switch ( mv )
 	   disp('... and java is enabled: java backend used for reading local netCDF files.')
 	   return
 	else
-	   error('...and no valid java bacnekd found either: please enable jave, see README')
+	   error('...and no valid java backend found either: please enable java, see README')
 	end
 	end
         

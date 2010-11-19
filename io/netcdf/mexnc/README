@@ -1,8 +1,11 @@
 The Short And Sweet Of It...
 ============================
 Add this directory to your MATLAB path, and you are now setup to use
-mexnc.  Check the READMEs for SNCTOOLS and the NetCDF Toolbox for 
-further instructions.
+mexnc.  Check the READMEs for SNCTOOLS for further instructions.  
+
+Please note that mexnc is NOT the same as the "NetCDF Toolbox",
+which is something that I did not write and therefore cannot support.
+I strongly recommend that you not use the NetCDF Toolbox.
 
 Some Efficiency Considerations
 ==============================
@@ -11,23 +14,23 @@ netcdf data, the old mexnc mex-file, and the new MATLAB netcdf package.
 Choosing between them may be determined by as simple a factor as what
 version of MATLAB you have, or by more complex criterion such as access
 to password-protected opendap datasets.  If you have 2008a or earlier,
-you must use the original mexnc mex-file.  If you have 2008b or later,
+you must use the mexnc mex-file.  If you have 2008b or later,
 you have the choice of using the original mex-file (which may be
 opendap-enabled) or using MathWork's netcdf package (the netcdf package
 is the default).  Mexnc determines all this by looking at your MATLAB
 version and a preference called USE_TMW.  If you wish mexnc to >>NOT USE<<
-MATLAB's native netcdf package (this would only makes sense in 2008b
-or later), you may force the issue with
+MATLAB's native netcdf package (this might make sense if you have netcdf-4
+files) you may force the issue with
 
     >> setpref('MEXNC','USE_TMW',false);
 
 So mexnc is pretty flexible about things, but all this flexibility comes
 at a cost of performance.  If If you know for certain that you want to
 ONLY one backend or the other, then you may wish to examine the source
-code for mexnc.m starting at line 525.  Therein lies an explanation of
+code for mexnc.m starting at line 546.  Therein lies an explanation of
 a way to speed up the execution of mexnc IF YOU KNOW EXACTLY WHAT YOU
 ARE DOING.  Specifically, you would be hardcoding the backend by which
-mexnc accesses your netcdf data.  Anyway, just go look at line 525 and
+mexnc accesses your netcdf data.  Anyway, just go look at line 546 and
 make your own decision.
 
 Just keep in mind that if you do this, you may not be able to easily
@@ -86,7 +89,6 @@ system path).  Something like either
     [matlabroot '/bin'] or [matlabroot '/bin/win32']
 
 would be good choices.  You might have to reboot.
-Another option that works is to put it in the same directory as the compiled mex files.
 
 SUPPORT
 =======================================================================

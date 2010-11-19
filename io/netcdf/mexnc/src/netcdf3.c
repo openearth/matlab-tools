@@ -8,7 +8,7 @@
  *********************************************************************/
 
 /*
- * $Id: netcdf3.c 2469 2008-03-25 13:24:05Z johnevans007 $
+ * $Id: netcdf3.c 2828 2010-01-15 14:48:55Z johnevans007 $
  * */
 
 # include <ctype.h>
@@ -695,6 +695,17 @@ void handle_nc_create
         cmode = NC_NOCLOBBER;
     }
 
+	/*
+	 * Do not allow enhanced mode.
+	 * */
+	if ( cmode & NC_NETCDF4 ) {
+		if ( cmode == NC_NETCDF4 ) {
+	            sprintf ( error_message, 
+	                "operation \"%s\":  if creating a netcdf-4 file, the file creation mode create mode must be a bitwise-or with NC_CLASSIC_MODE, line %d file \"%s\"\n", 
+	                nc_op->opname, __LINE__, __FILE__ );
+	            mexErrMsgTxt ( error_message );
+		}
+	}
 
 
 
@@ -802,14 +813,19 @@ void handle_nc_def_dim
      * */
     check_numeric_argument_type ( prhs, nc_op->opname, 1 );
     check_char_argument_type ( prhs, nc_op->opname, 2 );
-    check_numeric_argument_type ( prhs, nc_op->opname, 3 );
+	if ( mxIsChar(prhs[3])) {
+		dim_length = interpret_char_parameter(prhs[3]);
+	} else {
+		check_numeric_argument_type ( prhs, nc_op->opname, 3 );
+		pr = mxGetData ( prhs[3] );
+	    dim_length = (size_t)(pr[0]);
+	}
     
     
     pr = mxGetData ( prhs[1] );
     ncid = (int)(pr[0]);
     dimension_name = unpackString(prhs[2]);
-    pr = mxGetData ( prhs[3] );
-    dim_length = (size_t)(pr[0]);
+
     status = nc_def_dim ( ncid, dimension_name, dim_length, &dimid );
     plhs[0] = mexncCreateDoubleScalar ( dimid );
     plhs[1] = mexncCreateDoubleScalar ( status );

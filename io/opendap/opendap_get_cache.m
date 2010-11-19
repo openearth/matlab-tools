@@ -1,5 +1,5 @@
 function varargout = opendap_get_cache(varargin)
-%opendap_get_cache download all netcdf files from opendap server
+%OPENDAP_GET_CACHE  download all netcdf files from one opendap server directory
 %
 %    opendap_get_cache(<keyword,value>)
 %
@@ -9,12 +9,12 @@ function varargout = opendap_get_cache(varargin)
 %                  'dataset','/rijkswaterstaat/grainsize/',...
 %                    'local','e:\opendap\');
 %
-% Creates a cache of all netCDf files in:
+% Creates a cache of all netCDF files in:
 %   http://opendap.deltares.nl/thredds/fileServer/opendap/rijkswaterstaat/grainsize/
-% into 
+% into :
 %   E:\opendap\rijkswaterstaat\grainsize\
 %
-%See also: opendap_catalog, snctools
+%See also: OPENDAP_CATALOG, SNCTOOLS
 
 %% specify
 

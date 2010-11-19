@@ -10,6 +10,7 @@ mexnc ( 'setopts', 0 );
 
 create_testfile ( ncfile );
 
+
 test_read_col_inds            ( ncfile );
 test_double_precision         ( ncfile );
 test_scaling                  ( ncfile );
@@ -17,7 +18,9 @@ test_scaling_flag_set_to_zero ( ncfile );
 test_2D                       ( ncfile );
 test_read_single              ( ncfile );
 test_read_short               ( ncfile );
-%test_2D_nonzero_start         ( ncfile );
+test_2D_nonzero_start         ( ncfile );
+test_1D_row                   ( ncfile );
+test_1D_vector                ( ncfile );
 
 test_neg_float_input          ( ncfile );
 test_neg_short_input          ( ncfile );
@@ -29,6 +32,10 @@ test_neg_varput_with_bad_varid ( ncfile );
 regression_charVarId            (ncfile);
 regression_scalingCharWithVarId ( ncfile );
 
+test_minus_one_count ( ncfile );
+create_testfile(ncfile);
+test_minus_write ( ncfile );
+
 fprintf ( 1, 'VARPUT succeeded\n' );
 fprintf ( 1, 'VARGET succeeded\n' );
 
@@ -37,6 +44,7 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function create_testfile ( ncfile )
 
 
@@ -58,16 +66,16 @@ if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 
-[z_double_varid, status] = mexnc ( 'def_var', ncid, 'z_double', nc_double, 1, [xdimid] );
+[z_double_varid, status] = mexnc ( 'def_var', ncid, 'z_double', nc_double, 1, xdimid ); %#ok<ASGLU>
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 
-[z_float_varid, status] = mexnc ( 'def_var', ncid, 'z_float', nc_float, 1, [xdimid] );
+[z_float_varid, status] = mexnc ( 'def_var', ncid, 'z_float', nc_float, 1, xdimid ); %#ok<ASGLU>
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 
 
-[z_short_varid, status] = mexnc ( 'def_var', ncid, 'z_short', nc_short, 1, [xdimid] );
+[z_short_varid, status] = mexnc ( 'def_var', ncid, 'z_short', nc_short, 1, xdimid );
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 [twod_varid, status] = mexnc ( 'def_var', ncid, 'twoD', nc_double, 2, [ydimid xdimid] );
@@ -110,30 +118,65 @@ return
 
 
 
-function test_double_precision ( ncfile );
+%--------------------------------------------------------------------------
+function test_minus_one_count ( ncfile )
+% Notes sent from Simon Spagnol
+%
+% theta1 = ncmex('varget',cdfid,'thetau1',[0 0],[-1 -1],0) ;
+%
+% Now for some reason putting what I assume was some sort of default 
+% [-1 -1] causes my matlab implentation to fail with a memory error 
+% (only have to one installation so can't test on others)
 
 
 [ncid, status] = mexnc ( 'open', ncfile, nc_write_mode );
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
+xdimid = mexnc('INQ_DIMID',ncid,'x');
+[name,xlen] = mexnc('DIMINQ',ncid,xdimid); %#ok<ASGLU>
+
+ydimid = mexnc('INQ_DIMID',ncid,'y');
+[name,ylen] = mexnc('DIMINQ',ncid,ydimid); %#ok<ASGLU>
+
+% 1D case
 [z_double_varid, status] = mexnc('INQ_VARID', ncid, 'z_double');
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
-input_data = rand(50,1);
-status = mexnc ( 'VARPUT', ncid, z_double_varid, [1], [50], input_data );
+input_data = rand(xlen,1);
+status = mexnc ( 'VARPUT', ncid, z_double_varid, 0, xlen, input_data );
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 mexnc('sync',ncid);
 
-[output_data, status] = mexnc ( 'VARGET', ncid, z_double_varid, [1], [50] );
+[output_data, status] = mexnc ( 'VARGET', ncid, z_double_varid, 1, -1 );
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 output_data = output_data(:);
 
-d = max(abs(output_data-input_data))';
+d = max(abs(output_data-input_data(2:100)))';
 if (any(d))
 	error ( 'values written by VARGET do not match what was retrieved by VARPUT\n'  );
-	error ( msg );
+end
+
+
+% 2D case
+[varid, status] = mexnc('INQ_VARID', ncid, 'twoD');
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+input_data = rand(ylen,xlen);
+status = mexnc ( 'VARPUT', ncid, varid, [0 0], [ylen xlen], input_data' );
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+mexnc('sync',ncid);
+
+[output_data, status] = mexnc ( 'VARGET', ncid, varid, [5 5], [-1 -1] );
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+output_data = output_data';
+input_data = input_data(6:end,6:end);
+d = max(abs(output_data(:) - input_data(:)));
+if (any(d))
+	error ( 'values written by VARGET do not match what was retrieved by VARPUT\n'  );
 end
 
 status = mexnc ( 'close', ncid );
@@ -147,7 +190,114 @@ return
 
 
 
-function test_read_single ( ncfile );
+%--------------------------------------------------------------------------
+function test_minus_write ( ncfile )
+% test negative count argument when writing
+
+
+[ncid, status] = mexnc ( 'open', ncfile, nc_write_mode );
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+xdimid = mexnc('INQ_DIMID',ncid,'x');
+[name,xlen] = mexnc('DIMINQ',ncid,xdimid); %#ok<ASGLU>
+
+ydimid = mexnc('INQ_DIMID',ncid,'y');
+[name,ylen] = mexnc('DIMINQ',ncid,ydimid); %#ok<ASGLU>
+
+[varid, status] = mexnc('INQ_VARID', ncid, 'twoD');
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+input_data = rand(150,50);
+start = [50 50]; count = [-1 -1]; 
+status = mexnc('VARPUT',ncid, varid, start, count, input_data' );
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+mexnc('sync',ncid);
+
+[output_data, status] = mexnc ( 'VARGET', ncid, varid, start, count );
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+output_data = output_data';
+
+if (size(output_data,1) ~= 150) || (size(output_data,2) ~= 50)
+    error('output data size did not match input data size');
+end
+
+d = max(abs(output_data(:)-input_data(:)))';
+if (any(d))
+	error ( 'values written by VARGET do not match what was retrieved by VARPUT\n'  );
+end
+
+
+% 2D case
+[varid, status] = mexnc('INQ_VARID', ncid, 'twoD');
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+input_data = rand(ylen,xlen);
+status = mexnc ( 'VARPUT', ncid, varid, [0 0], [ylen xlen], input_data' );
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+mexnc('sync',ncid);
+
+[output_data, status] = mexnc ( 'VARGET', ncid, varid, [5 5], [-1 -1] );
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+output_data = output_data';
+input_data = input_data(6:end,6:end);
+d = max(abs(output_data(:) - input_data(:)));
+if (any(d))
+	error ( 'values written by VARGET do not match what was retrieved by VARPUT\n'  );
+end
+
+status = mexnc ( 'close', ncid );
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+return
+
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_double_precision ( ncfile )
+
+
+[ncid, status] = mexnc ( 'open', ncfile, nc_write_mode );
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+[z_double_varid, status] = mexnc('INQ_VARID', ncid, 'z_double');
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+input_data = rand(50,1);
+status = mexnc ( 'VARPUT', ncid, z_double_varid, 1, 50, input_data );
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+mexnc('sync',ncid);
+
+[output_data, status] = mexnc ( 'VARGET', ncid, z_double_varid, 1, 50 );
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+output_data = output_data(:);
+
+d = max(abs(output_data-input_data))';
+if (any(d))
+	error ( 'values written by VARGET do not match what was retrieved by VARPUT\n'  );
+end
+
+status = mexnc ( 'close', ncid );
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+return
+
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_read_single ( ncfile )
 % Make sure that the data is read back as double precision
 
 
@@ -158,12 +308,12 @@ if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 input_data = rand(50,1);
-status = mexnc ( 'VARPUT', ncid, z_varid, [1], [50], input_data );
+status = mexnc ( 'VARPUT', ncid, z_varid, 1, 50, input_data );
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 mexnc('sync',ncid);
 
-[output_data, status] = mexnc ( 'VARGET', ncid, z_varid, [1], [50] );
+[output_data, status] = mexnc ( 'VARGET', ncid, z_varid, 1, 50 );
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 if ~strcmp(class(output_data),'double')
@@ -174,7 +324,6 @@ output_data = output_data(:);
 d = max(abs(output_data-double(single(input_data))))';
 if (any(d))
 	error ( 'values written by VARGET are not as expected\n'  );
-	error ( msg );
 end
 
 status = mexnc ( 'close', ncid );
@@ -189,7 +338,8 @@ return
 
 
 
-function test_read_short ( ncfile );
+%--------------------------------------------------------------------------
+function test_read_short ( ncfile )
 % Make sure that the data is read back as double precision
 
 
@@ -199,13 +349,13 @@ if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 [varid, status] = mexnc('INQ_VARID', ncid, 'z_short');
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
-input_data = [1:50];
-status = mexnc ( 'VARPUT', ncid, varid, [1], [50], input_data );
+input_data = 1:50;
+status = mexnc ( 'VARPUT', ncid, varid, 1, 50, input_data );
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 mexnc('sync',ncid);
 
-[output_data, status] = mexnc ( 'VARGET', ncid, varid, [1], [50] );
+[output_data, status] = mexnc ( 'VARGET', ncid, varid, 1, 50 );
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 if ~strcmp(class(output_data),'double')
@@ -215,7 +365,6 @@ end
 d = max(abs(output_data(:)-input_data(:)));
 if (any(d))
 	error ( 'values written by VARGET are not as expected\n'  );
-	error ( msg );
 end
 
 status = mexnc ( 'close', ncid );
@@ -229,6 +378,7 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function test_read_col_inds ( ncfile )
 % Make sure that we can read data if the indices are columns.
 
@@ -271,7 +421,8 @@ return
 
 
 
-function test_neg_float_input ( ncfile );
+%--------------------------------------------------------------------------
+function test_neg_float_input ( ncfile )
 
 [ncid, status] = mexnc ( 'open', ncfile, nc_write_mode );
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
@@ -281,8 +432,8 @@ if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 input_data = single(rand(50,1));
 fail = false;
-try
-	status = mexnc ( 'VARPUT', ncid, varid, [1], [50], input_data );
+try %#ok<TRYNC>
+	mexnc ( 'VARPUT', ncid, varid, 1, 50, input_data );
 	fail = true;
 end
 if fail
@@ -302,7 +453,8 @@ return
 
 
 
-function test_neg_short_input ( ncfile );
+%--------------------------------------------------------------------------
+function test_neg_short_input ( ncfile )
 
 
 [ncid, status] = mexnc ( 'open', ncfile, nc_write_mode );
@@ -313,8 +465,8 @@ if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 input_data = int16(rand(50,1)*100);
 fail = false;
-try
-	status = mexnc ( 'VARPUT', ncid, varid, [1], [50], input_data );
+try %#ok<TRYNC>
+	status = mexnc ( 'VARPUT', ncid, varid, 1, 50, input_data ); %#ok<NASGU>
 	fail = true;
 end
 if fail
@@ -335,6 +487,7 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function test_neg_varput_bad_ncid ( ncfile )
 
 [ncid, status] = mexnc ( 'open', ncfile, nc_write_mode );
@@ -344,8 +497,7 @@ if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 input_data = rand(50,1);
-fail = false;
-status = mexnc ( 'VARPUT', -100, z_double_varid, [1], [50], input_data );
+status = mexnc ( 'VARPUT', -100, z_double_varid, 1, 50, input_data );
 if ( status == 0 )
 	error ( 'VARPUT succeeded with a bad ncid' );
 end
@@ -361,6 +513,7 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function test_neg_varget_with_bad_ncid ( ncfile )
 
 [ncid, status] = mexnc ( 'open', ncfile, nc_write_mode );
@@ -369,7 +522,7 @@ if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 [z_double_varid, status] = mexnc('INQ_VARID', ncid, 'z_double');
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
-[output_data, status] = mexnc ( 'VARGET', -100, z_double_varid, [1], [50] );
+[output_data, status] = mexnc ( 'VARGET', -100, z_double_varid, 1, 50 ); %#ok<ASGLU>
 if ( status == 0 )
 	error ( 'VARGET succeeded with a bad ncid' );
 end
@@ -386,17 +539,17 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function test_neg_varput_with_bad_varid ( ncfile )
 
 [ncid, status] = mexnc ( 'open', ncfile, nc_write_mode );
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
-[z_double_varid, status] = mexnc('INQ_VARID', ncid, 'z_double');
+[z_double_varid, status] = mexnc('INQ_VARID', ncid, 'z_double'); %#ok<ASGLU>
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 input_data = rand(50,1);
-fail = false;
-status = mexnc ( 'VARPUT', ncid, -500, [1], [50], input_data );
+status = mexnc ( 'VARPUT', ncid, -500, 1, 50, input_data );
 if ( status == 0 )
 	error ( 'VARPUT succeeded with a bad varid' );
 end
@@ -409,6 +562,7 @@ return
 
 
 
+%--------------------------------------------------------------------------
 function test_scaling ( ncfile )
 
 [ncid, status] = mexnc ( 'open', ncfile, nc_write_mode );
@@ -428,35 +582,32 @@ if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 
 input_data = rand(len_x,1);
-status = mexnc ( 'VARPUT', ncid, z_short_varid, [0], [len_x], input_data', 1 );
+status = mexnc ( 'VARPUT', ncid, z_short_varid, 0, len_x, input_data', 1 );
 if ( status ~= 0 )
 	ncerr_msg = mexnc ( 'strerror', status );
-	msg = sprintf ( '%s:  VARPUT failed, (%s)\n', mfilename, ncerr_msg );
-	error ( msg );
+	error ( '%s:  VARPUT failed, (%s)\n', mfilename, ncerr_msg );
 end
 
 
-[output_data, status] = mexnc ( 'VARGET', ncid, z_short_varid, [0], [len_x], 1 );
+[output_data, status] = mexnc ( 'VARGET', ncid, z_short_varid, 0, len_x, 1 );
 if ( status ~= 0 )
-	msg = sprintf ( '%s:  VARGET failed, msg ''%s''\n', mfilename, mexnc ( 'strerror', status ) );
-	error ( msg );
+	error ( '%s:  VARGET failed, msg ''%s''\n', mfilename, mexnc ( 'strerror', status ) );
 end
+
+output_data = output_data';
 
 status = mexnc ( 'close', ncid );
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
-output_data = output_data';
 
 if (~strcmp(class(output_data),'double'))
-	msg = sprintf ( 'data was not double precision' );
-	error ( msg );
+	error ( 'data was not double precision' );
 end
 
-d = max(abs(output_data-input_data))';
+d = max(abs(output_data(:)-input_data(:)))';
 ind = find ( d > abs(scale_factor)/2 );
 if (any(ind))
-	msg = sprintf ( 'values written by VARPUT do not match what was retrieved by VARGET' );
-	error ( msg );
+	error ( 'values written by VARPUT do not match what was retrieved by VARGET' );
 end
 
 
@@ -464,6 +615,7 @@ end
 
 
 
+%--------------------------------------------------------------------------
 function regression_scalingCharWithVarId ( ncfile )
 
 [ncid, status] = mexnc ( 'open', ncfile, nc_write_mode );
@@ -480,35 +632,32 @@ if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 
 input_data = rand(len_x,1);
-status = mexnc ( 'VARPUT', ncid, 'z_short', [0], [len_x], input_data', 1 );
+status = mexnc ( 'VARPUT', ncid, 'z_short', 0, len_x, input_data', 1 );
 if ( status ~= 0 )
-	ncerr_msg = mexnc ( 'strerror', status );
-	msg = sprintf ( '%s:  VARPUT failed, (%s)\n', mfilename, ncerr_msg );
-	error ( msg );
+	ncerr_msg = mexnc('strerror',status);
+	error( ncerr_msg );
 end
 
 
-[output_data, status] = mexnc ( 'VARGET', ncid, 'z_short', [0], [len_x], 1 );
+[output_data, status] = mexnc ( 'VARGET', ncid, 'z_short', 0, len_x, 1 );
 if ( status ~= 0 )
-	msg = sprintf ( '%s:  VARGET failed, msg ''%s''\n', mfilename, mexnc ( 'strerror', status ) );
-	error ( msg );
+	error ( '%s:  VARGET failed, msg ''%s''\n', mfilename, mexnc ( 'strerror', status ) );
 end
+
+output_data = output_data';
 
 status = mexnc ( 'close', ncid );
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
-output_data = output_data';
 
 if (~strcmp(class(output_data),'double'))
-	msg = sprintf ( 'data was not double precision' );
-	error ( msg );
+	error ( 'data was not double precision' );
 end
 
-d = max(abs(output_data-input_data))';
+d = max(abs(output_data(:)-input_data(:)))';
 ind = find ( d > abs(scale_factor)/2 );
 if (any(ind))
-	msg = sprintf ( 'values written by VARPUT do not match what was retrieved by VARGET' );
-	error ( msg );
+	error ( 'values written by VARPUT do not match what was retrieved by VARGET' );
 end
 
 
@@ -517,6 +666,7 @@ end
 
 
 
+%--------------------------------------------------------------------------
 function test_scaling_flag_set_to_zero ( ncfile )
 % test with scaling flag set to zero.
 
@@ -535,39 +685,37 @@ if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 input_data = int16(rand(len_x,1)*100);
 input_data = double(input_data);
 
-status = mexnc ( 'VARPUT', ncid, z_short_varid, [0], [len_x], input_data', 0 );
+status = mexnc ( 'VARPUT', ncid, z_short_varid, 0, len_x, input_data', 0 );
 if ( status ~= 0 )
 	ncerr_msg = mexnc ( 'strerror', status );
-	msg = sprintf ( '%s:  VARPUT failed, (%s)\n', mfilename, ncerr_msg );
-	error ( msg );
+	error ( '%s:  VARPUT failed, (%s)\n', mfilename, ncerr_msg );
 end
 
 
-[output_data, status] = mexnc ( 'VARGET', ncid, z_short_varid, [0], [len_x], 0 );
+[output_data, status] = mexnc ( 'VARGET', ncid, z_short_varid, 0, len_x, 0 );
 if ( status ~= 0 )
-	msg = sprintf ( '%s:  VARGET failed, msg ''%s''\n', mfilename, mexnc ( 'strerror', status ) );
-	error ( msg );
+	error ( '%s:  VARGET failed, msg ''%s''\n', mfilename, mexnc ( 'strerror', status ) );
 end
+
+output_data = output_data';
 
 status = mexnc ( 'close', ncid );
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
-output_data = output_data';
 
 if (~strcmp(class(output_data),'double'))
-	msg = sprintf ( 'data was not double precision' );
-	error ( msg );
+	error ( 'data was not double precision' );
 end
 
-d = max(abs(output_data-input_data))';
+d = max(abs(output_data(:)-input_data(:)))';
 ind = find ( d > 0 );
 if (any(ind))
-	msg = sprintf ( 'values written by VARPUT do not match what was retrieved by VARGET' );
-	error ( msg );
+	error ( 'values written by VARPUT do not match what was retrieved by VARGET' );
 end
 
 
 
+%--------------------------------------------------------------------------
 function test_2D ( ncfile )
 
 [ncid, status] = mexnc ( 'open', ncfile, nc_write_mode );
@@ -594,15 +742,13 @@ input_data = reshape(input_data,[len_y len_x]);
 status = mexnc ( 'VARPUT', ncid, varid, [0 0], [len_y len_x], input_data' );
 if ( status ~= 0 )
 	ncerr_msg = mexnc ( 'strerror', status );
-	msg = sprintf ( '%s:  VARPUT failed, (%s)\n', mfilename, ncerr_msg );
-	error ( msg );
+	error( ncerr_msg );
 end
 
 
 [output_data, status] = mexnc ( 'VARGET', ncid, varid, [0 0], [len_y len_x] );
 if ( status ~= 0 )
-	msg = sprintf ( '%s:  VARGET failed, msg ''%s''\n', mfilename, mexnc ( 'strerror', status ) );
-	error ( msg );
+	error ( mexnc ( 'strerror', status ) );
 end
 
 status = mexnc ( 'close', ncid );
@@ -611,19 +757,124 @@ if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 output_data = output_data';
 
 if (~strcmp(class(output_data),'double'))
-	msg = sprintf ( 'data was not double precision' );
-	error ( msg );
+	error ( 'data was not double precision' );
 end
 
 d = max(abs(output_data-input_data))';
 ind = find ( d > 0 );
 if (any(ind))
-	msg = sprintf ( 'values written by VARPUT do not match what was retrieved by VARGET' );
-	error ( msg );
+    error ( 'values written by VARPUT do not match what was retrieved by VARGET' );
 end
 
 
 
+%--------------------------------------------------------------------------
+function test_1D_vector ( ncfile )
+% Make sure that reading a 1D dataset works the same as it did in R2008a
+
+[ncid, status] = mexnc ( 'open', ncfile, nc_write_mode );
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+[varid, status] = mexnc('INQ_VARID', ncid, 'z_double');
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+
+[xdimid, status] = mexnc('INQ_DIMID', ncid, 'x');
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+[len_x, status] = mexnc('INQ_DIMLEN', ncid, xdimid);
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+start = 0;
+count = len_x;
+
+[output_data,status] = mexnc ( 'VARGET', ncid, varid, start, count );
+if ( status ~= 0 )
+	ncerr_msg = mexnc ( 'strerror', status );
+	error ( 'VARGET failed, (%s)\n', ncerr_msg );
+end
+
+% We do the transpose as usual here.  
+output_data = output_data';
+
+if size(output_data,2) ~= 1
+	error('output data was not a column');
+end
+
+
+status = mexnc ( 'close', ncid );
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+
+
+
+%--------------------------------------------------------------------------
+function test_1D_row ( ncfile )
+% Make sure that reading a row or a column acts as it did in 2008a
+
+[ncid, status] = mexnc ( 'open', ncfile, nc_write_mode );
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+[varid, status] = mexnc('INQ_VARID', ncid, 'twoD');
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+[xdimid, status] = mexnc('INQ_DIMID', ncid, 'x');
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+[ydimid, status] = mexnc('INQ_DIMID', ncid, 'y');
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+[len_x, status] = mexnc('INQ_DIMLEN', ncid, xdimid);
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+[len_y, status] = mexnc('INQ_DIMLEN', ncid, ydimid);
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+start = [0 0];
+count = [1 len_x];
+
+[output_data,status] = mexnc ( 'VARGET', ncid, varid, start, count );
+if ( status ~= 0 )
+	ncerr_msg = mexnc ( 'strerror', status );
+	error ( 'VARPUT failed, (%s)\n', ncerr_msg );
+end
+
+% We do the transpose as usual here.  
+output_data = output_data';
+
+if size(output_data,1) ~= 1
+	error('output data was not a row');
+end
+
+
+
+% Now try the same reading a column
+start = [0 0];
+count = [len_y 1];
+
+[output_data,status] = mexnc ( 'VARGET', ncid, varid, start, count );
+if ( status ~= 0 )
+	ncerr_msg = mexnc ( 'strerror', status );
+	error ( 'VARPUT failed, (%s)\n', ncerr_msg );
+end
+
+% We do the transpose as usual here.  But VARGET makes it a row!!!
+output_data = output_data';
+
+if size(output_data,2) ~= 1
+	error('output data was not a column');
+end
+
+
+
+
+status = mexnc ( 'close', ncid );
+if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
+
+
+
+
+%--------------------------------------------------------------------------
 function test_2D_nonzero_start ( ncfile )
 
 [ncid, status] = mexnc ( 'open', ncfile, nc_write_mode );
@@ -644,22 +895,22 @@ if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 [len_y, status] = mexnc('INQ_DIMLEN', ncid, ydimid);
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
-input_data = [1:len_y*len_x];
+input_data = 1:len_y*len_x;
 input_data = reshape(input_data,[len_y len_x]);
-input_data = input_data(end-8:end,end-6:end);
+input_data = input_data(end-7:end,end-5:end);
+start = [len_y-8 (len_x-6)];
+count = [8 6];
 
-status = mexnc ( 'VARPUT', ncid, varid, [len_y-8 len_x-6], [8 6], input_data' );
+status = mexnc ( 'VARPUT', ncid, varid, start, count, input_data' );
 if ( status ~= 0 )
 	ncerr_msg = mexnc ( 'strerror', status );
-	msg = sprintf ( '%s:  VARPUT failed, (%s)\n', mfilename, ncerr_msg );
-	error ( msg );
+	error ( 'VARPUT failed, (%s)\n', ncerr_msg );
 end
 
 
-[output_data, status] = mexnc ( 'VARGET', ncid, varid, [len_y-8 len_x-6], [8 8] );
+[output_data, status] = mexnc ( 'VARGET', ncid, varid, start, count );
 if ( status ~= 0 )
-	msg = sprintf ( '%s:  VARGET failed, msg ''%s''\n', mfilename, mexnc ( 'strerror', status ) );
-	error ( msg );
+	error( mexnc ( 'strerror', status ) );
 end
 
 status = mexnc ( 'close', ncid );
@@ -668,32 +919,31 @@ if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 output_data = output_data';
 
 if (~strcmp(class(output_data),'double'))
-	msg = sprintf ( 'data was not double precision' );
-	error ( msg );
+	error ( 'data was not double precision' );
 end
 
 d = max(abs(output_data-input_data))';
 ind = find ( d > 0 );
 if (any(ind))
-	msg = sprintf ( 'values written by VARPUT do not match what was retrieved by VARGET' );
-	error ( msg );
+	error ( 'values written by VARPUT do not match what was retrieved by VARGET' );
 end
 
 
 
-function regression_charVarId ( ncfile );
+%--------------------------------------------------------------------------
+function regression_charVarId ( ncfile )
 
 
 [ncid, status] = mexnc ( 'open', ncfile, nc_write_mode );
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 input_data = rand(50,1);
-status = mexnc ( 'VARPUT', ncid, 'z_double', [1], [50], input_data );
+status = mexnc ( 'VARPUT', ncid, 'z_double', 1, 50, input_data );
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 mexnc('sync',ncid);
 
-[output_data, status] = mexnc ( 'VARGET', ncid, 'z_double', [1], [50] );
+[output_data, status] = mexnc ( 'VARGET', ncid, 'z_double', 1, 50 );
 if ( status ~= 0 ), error ( mexnc('strerror',status) ), end
 
 output_data = output_data(:);

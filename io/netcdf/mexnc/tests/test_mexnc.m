@@ -78,6 +78,8 @@ test_sync ( 'foo_sync.nc' );
 
 test_lfs ( 'foo_lfs_64.nc' );
 
+test_chunking('foo_chunking.nc');
+test_deflate('foo_deflate.nc');
 
 
 
