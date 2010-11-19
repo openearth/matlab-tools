@@ -1,13 +1,18 @@
-function varargout = xb_write_params(varargin)
-%XB_WRITE_PARAMS  One line description goes here.
+function varargout = xb_write_params(filename, xbSettings, varargin)
+%XB_WRITE_PARAMS  write xbeach settings to params.txt file
 %
-%   More detailed description goes here.
+%   Routine to create a xbeach settings file. The settings in "xbSettings"
+%   are written to "filename". Optionally an alternative header line can be
+%   defined.
 %
 %   Syntax:
-%   varargout = xb_write_params(varargin)
+%   varargout = xb_write_params(filename, xbSettings, varargin)
 %
 %   Input:
-%   varargin  =
+%   filename   = file name of params file
+%   xbSettings = structure with fields 'name' and 'value' containing the
+%                xbeach settings
+%   varargin   = 'header'  - option to parse an alternative header string
 %
 %   Output:
 %   varargout =
@@ -15,14 +20,14 @@ function varargout = xb_write_params(varargin)
 %   Example
 %   xb_write_params
 %
-%   See also 
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 <COMPANY>
 %       Cursus Laptop
 %
-%       <EMAIL>	
+%       <EMAIL>
 %
 %       <ADDRESS>
 %
@@ -41,9 +46,9 @@ function varargout = xb_write_params(varargin)
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -58,3 +63,52 @@ function varargout = xb_write_params(varargin)
 % $Keywords: $
 
 %%
+OPT = struct(...
+    'header', ['Automatic generated XBeach parameter settings input file (created: ' datestr(now) ')']);
+
+if nargin > 2
+    OPT = setproperty(OPT, varargin{:});
+end
+
+%%
+%TODO: create input categories
+
+% derive maximum stringsize of all variable names
+maxStringLength = max(cellfun(@length, {xbSettings.name}));
+
+% open file
+fid = fopen(filename, 'w');
+
+% write header
+fprintf(fid, '%s %s\n\n', '%', OPT.header);
+
+for ivar = 1:length(xbSettings)
+    if iscell(xbSettings(ivar).value)
+        % create line indicating the number items in the cell
+        fprintf(fid, '%s\n', var2params(xbSettings(ivar).name, length(xbSettings(ivar).value), maxStringLength));
+        % write output variables on separate lines
+        for ioutvar = 1:length(xbSettings(ivar).value)
+            fprintf(fid, '%s\n', xbSettings(ivar).value{ioutvar});
+        end
+    else
+        % create line
+        fprintf(fid, '%s\n', var2params(xbSettings(ivar).name, xbSettings(ivar).value, maxStringLength));
+    end
+end
+
+fclose(fid);
+
+%%
+function str = var2params(varname, value, maxStringLength)
+%VAR2PARAMS  create string from name and value
+
+% derive number of blanks to line out the '=' signs
+nrBlanks = maxStringLength - length(varname);
+% create first part of line
+str = sprintf('%s%s = ', varname, blanks(nrBlanks));
+% create last part of line, taking the type into account
+if ischar(value)
+    str = sprintf('%s', str, value);
+else
+    str = sprintf('%s%g', str, value);
+end
