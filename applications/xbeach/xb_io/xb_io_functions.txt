@@ -4,6 +4,7 @@ xb_readoutput
 xb_read_output
 	xb_read_dat (point, 2d, rugauges, meanvars)
 	xb_read_netcdf
+	xb_read_dims
 
 xb_read_input
 	xb_read_params
@@ -16,7 +17,6 @@ xb_read_input
 	xb_read_groundwater
 	xb_read_timeseries
 	xb_read_drifters
-	xb_read_dims
 
 xb_write_input
 	xb_write_params
