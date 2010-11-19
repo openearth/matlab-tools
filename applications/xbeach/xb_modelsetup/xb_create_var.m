@@ -1,23 +1,34 @@
 function [XB Precision] = xb_create_var(varargin)
-%XB_CREATE_VAR  creates communication variable for XBeach in- and output
+%XB_CREATE_VAR  Creates communication variable for XBeach settings, input and output.
 %
-% The variable contains three main fields:
-%   - settings :    In which calculation settings as well as output
-%               settings can be specified.
+%   The variable contains three main fields:
+%   - Settings :    In which calculation settings as well as output
+%                   settings can be specified.
 %   - Input :       This contains input like the initial profile, Hs, Tp,
-%               grid specification, start and stop times etc.
+%                   grid specification, start and stop times etc.
 %   - Output :      In which calculation results can be stored.
+%
 %   By use of PropertyName-PropertyValue pairs, the various elements of
 %   settings and Input can be set.
 %
+%   Syntax:
+%   [XB Precision] = xb_create_var(varargin)
+%
+%   Input:
+%   varargin  = See below in structure definition
+%
+%   Output:
+%   XB        = Structure with Settings, Input, Output
+%   Precision = Write precision Input files 
+%
 %   Example
-%   xb_create_var
+%   XB = xb_create_var
 %
 %   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2009 Deltares
+%   Copyright (C) 2010 <COMPANY>
 %       Pieter van Geer / Kees den Heijer
 %
 %       Pieter.vanGeer@deltares.nl	
@@ -48,8 +59,8 @@ function [XB Precision] = xb_create_var(varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 28 Oct 2010
-% Created with Matlab version: 7.7.0.471 (R2008b)
+% Created: 19 Nov 2010
+% Created with Matlab version: 7.4.0.287 (R2007a)
 
 % $Id$
 % $Date$
@@ -58,7 +69,7 @@ function [XB Precision] = xb_create_var(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% main structure
+%%%% main structure
 XB = struct(...
     'settings', [],...
     'Input', [],...

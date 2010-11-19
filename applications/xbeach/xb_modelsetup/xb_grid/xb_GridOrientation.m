@@ -1,4 +1,4 @@
-function [X Y Z alfa propertyVar] = XBeach_GridOrientation(xw, yw, Zbathy, varargin)
+function [X Y Z alfa propertyVar] = xb_GridOrientation(xw, yw, Zbathy, varargin)
 %XBEACH_GRIDORIENTATION  One line description goes here.
 %
 %   More detailed description goes here.
