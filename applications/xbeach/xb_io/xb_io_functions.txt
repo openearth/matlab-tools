@@ -1,0 +1,29 @@
+xb_readoutput
+-------------
+
+xb_read_output
+	xb_read_dat (point, 2d, rugauges, meanvars)
+	xb_read_netcdf
+
+xb_read_input
+	xb_read_params
+	xb_read_waves
+	xb_read_tide
+	xb_read_bathy (x,y,z,ne)
+	xb_read_discarge
+	xb_read_wind
+	xb_read_aquifer
+	xb_read_groundwater
+	xb_read_timeseries
+	xb_read_drifters
+	xb_read_dims
+
+xb_write_input
+	xb_write_params
+	xb_write_*
+
+
+xb_analysis
+-----------
+
+xb_read_coastline
