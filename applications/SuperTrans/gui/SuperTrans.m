@@ -128,6 +128,7 @@ f = uimenu('Label','Manage');
     uimenu(f,'Label','Coordinate Systems','Callback',{@ManageCoordinateSystems_CallBack},'Enable','off');
 f = uimenu('Label','Help');
     uimenu(f,'Label','Online help','Callback','web(''http://public.deltares.nl/display/OET/Supertrans'',''-browser'')');
+    uimenu(f,'Label','EPSG Geodetic Parameter Registry','Callback','web(''http://www.epsg-registry.org/'',''-browser'')');
     uimenu(f,'Label','About','Callback',{@About_CallBack},'Enable','on');
     
 % buttons
