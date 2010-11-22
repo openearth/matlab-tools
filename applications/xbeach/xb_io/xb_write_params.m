@@ -25,11 +25,14 @@ function varargout = xb_write_params(filename, xbSettings, varargin)
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 <COMPANY>
-%       Cursus Laptop
+%       Kees den Heijer
 %
-%       <EMAIL>
+%       Kees.denHeijer@Deltares.nl
 %
-%       <ADDRESS>
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -64,7 +67,7 @@ function varargout = xb_write_params(filename, xbSettings, varargin)
 
 %%
 OPT = struct(...
-    'header', ['Automatic generated XBeach parameter settings input file (created: ' datestr(now) ')']);
+    'header', ['XBeach parameter settings input file automatically created by OpenEarthTools function XB_WRITE_PARAMS (date: ' datestr(now) ')']);
 
 if nargin > 2
     OPT = setproperty(OPT, varargin{:});

@@ -1,4 +1,4 @@
-function xbSettings = xb_read_params(filename)
+function xbSettings = xb_read_params(filename, varargin)
 %XB_READ_PARAMS  read xbeach params.txt file
 %
 %   Routine to read the xbeach settings from the params.txt file. The
@@ -10,6 +10,12 @@ function xbSettings = xb_read_params(filename)
 %
 %   Input:
 %   filename   = params.txt file name
+%   varargin   = include_paths:     flag to determine whether relative
+%                                   paths should be included in filenames
+%                read_paths:        flag to determine whether relative
+%                                   paths should be read and included in
+%                                   the result structure. read_path implies
+%                                   include_paths.
 %
 %   Output:
 %   xbSettings = structure array with fields 'name' and 'value' containing
@@ -63,7 +69,17 @@ function xbSettings = xb_read_params(filename)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% read options
+
+OPT = struct( ...
+    'include_paths', true, ...
+    'read_paths', true ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+%% read params file
+
 if ~exist(filename, 'file')
     error(['"' filename '" does not exist'])
 end
@@ -72,28 +88,46 @@ fid = fopen(filename);
 txt = fread(fid, '*char')';
 fclose(fid);
 
-%%
+[fdir fname dext] = fileparts(filename);
+
+%% read params
+
 % obtain all keywords and values using regular expressions
-[exprNames endIndex] = regexp(txt, '(?<name>.*?)\s*=\s*(?<value>.*)', 'names', 'end', 'dotexceptnewline');
+[exprNames endIndex] = regexp(txt, ...
+    '\s*(?<name>.*?)\s*=\s*(?<value>.*?)\s*\n', 'names', 'end', 'dotexceptnewline');
 
-% derive output variables
-nglobalvar_index = ismember({exprNames.name}, 'nglobalvar');
-exprNames(nglobalvar_index).name = 'OutVars';
-exprNames(nglobalvar_index).value = strread(txt(endIndex(nglobalvar_index)+2:end), '%s',...
-    'delimiter', '\n')';
-
-% transform regexp output to cell arrays with keywords and values
 names = {exprNames.name};
 values = {exprNames.value};
 
-% distinguish between doubles and strings
-for ival = 1:length(values)
-    if ~isnan(str2double(values{ival}))
-        values{ival} = str2double(values{ival});
+% distinguish between output variable definitions, doubles, strings and
+% filenames
+for i = 1:length(values)
+    if regexp(names{i}, '^n.*var$')
+        names{i} = [names{i}(2:end) 's'];
+        values{i} = strread(txt(endIndex(i):end), '%s', str2double(values{i}));
+    elseif ~isnan(str2double(values{i}))
+        values{i} = str2double(values{i});
     else
-        values{ival} = strtrim(values{ival});
+        value = strtrim(values{i});
+        
+        % distinguish between filenames and ordinary strings
+        if (OPT.read_paths || OPT.include_paths) && exist(fullfile(fdir, value), 'file')
+            fpath = fullfile(fdir, value);
+            
+            if OPT.read_paths
+                values{i} = fpath;          %%% TODO
+            else
+                values{i} = fpath;
+            end
+        else
+            values{i} = value;
+        end
     end
 end
 
-%
+% remove doubles
+[names idx] = unique(names, 'last');
+values = values(idx);
+
+% convert parameter cells to xbeach setting structure
 xbSettings = cell2struct([names; values]', {'name' 'value'}, 2);
