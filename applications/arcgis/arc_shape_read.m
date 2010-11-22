@@ -1,8 +1,8 @@
 function [S,M] = arc_shape_read(filename)
-%ARC_SHP_READ   Read vector features and attributes from shapefile
+%ARC_SHAPE_READ   Read vector features and attributes from shapefile
 %
-%    R    = arc_shp_read(filename)
-%   [R,M] = arc_shp_read(filename)
+%    R    = arc_shape_read(filename)
+%   [R,M] = arc_shape_read(filename)
 %
 % returns the data in struct R, and the meta-data in struct M,
 % where filename is an arcview file name without the extension.
@@ -13,10 +13,11 @@ function [S,M] = arc_shape_read(filename)
 % - Y: NaN-separated polygon, (anti)clockwise for negative areas.
 % - one field per variable in the dbf file.
 %
-% Note: cannot read yet character attributes from dbf file
+% Note 1: cannot read yet character attributes from dbf file, 
+%         these are read erronously as numbers.
+% Note 2: *.prj file is not interpreted yet, please specify epsg code manually.
 %
-% see also: POLYFUN, ARCGISREAD, ARC_INFO_BINARY
-
+% see also: POLYFUN, ARCGISREAD, ARC_INFO_BINARY, SHAPEREAD (in optional mapping toolbox)
 
 %% Copyright
 %  written by: James P. LeSage 12/2003
@@ -119,6 +120,7 @@ try
       end
       
 catch
+
       warning(['Error reading: ',filename])
   
 end

@@ -61,14 +61,15 @@ function varargout = arc_shape2kml(shape_filename,varargin)
 
 %% settings
 
-   OPT.directory_out = pwd;
-   OPT.pause         = 0;
-   OPT.plot          = 0;
-   OPT.html          = 0;
-   OPT.epsg          = 0;
-   OPT.cleanup       = 0;
-   OPT.color         = [1 1 0]; % yellow
-   OPT.fldname       = ''; % *.dbf fieldname entry to be used for name (default sequence number)
+   OPT.directory_out     = pwd;
+   OPT.pause             = 0;
+   OPT.plot              = 0;
+   OPT.html              = 0;
+   OPT.epsg              = 0;
+   OPT.cleanup           = 0;
+   OPT.color             = [1 1 0]; % yellow
+   OPT.fldname           = ''; % *.dbf fieldname entry to be used for name (default sequence number)
+   OPT.deleteSourceFiles = 1;
    
    if nargin==0
       varargout = {OPT};
@@ -204,15 +205,18 @@ end
 
    edgename = [OPT.directory_out,filesep,fileparts(OPT.fname),filesep,filename(OPT.fname),'_edge.kml'];
    KMLmerge_files('fileName',edgename,'sourceFiles',edgenames,...
-                   'kmlName','edge');
+                   'kmlName','edge',...
+         'deleteSourceFiles',OPT.deleteSourceFiles);
 
    fillname = [OPT.directory_out,filesep,fileparts(OPT.fname),filesep,filename(OPT.fname),'_fill.kml'];
    KMLmerge_files('fileName',fillname,'sourceFiles',fillnames,...
-                   'kmlName','fill');
+                   'kmlName','fill',...
+         'deleteSourceFiles',OPT.deleteSourceFiles);
    
    textname = [OPT.directory_out,filesep,fileparts(OPT.fname),filesep,filename(OPT.fname),'_text.kml'];
    KMLmerge_files('fileName',textname,'sourceFiles',textnames,...
-                   'kmlName','text');
+                   'kmlName','text',...
+         'deleteSourceFiles',OPT.deleteSourceFiles);
        
    try % the XML meta-data files are generally mess: they change per arcGIS version and per user.
    if ~isfield(M.dataset_description.identification,'dataset_title')
@@ -242,7 +246,8 @@ end
                   'sourceFiles',{fillname edgename textname},...
                   'foldernames',{'areas','edges','texts'},...
        'kmlName',M.dataset_description.identification.dataset_title,...
-   'description',M.dataset_description.overview.summary);
+   'description',M.dataset_description.overview.summary,...
+   'deleteSourceFiles',OPT.deleteSourceFiles);
    
 %% clean-up   
    
