@@ -82,8 +82,8 @@ function varargout = arc_shape2kml(shape_filename,varargin)
    
 %% read shape file
 
-   R      = shaperead(OPT.fname);  %% issues with reading metadata..shp.xlm (matlab mapping toolbox, )
-  [R0,M]  = arc_shape_read(OPT.fname); %% still issues with reading chars (OpenEarth)
+  %R0    = shaperead(OPT.fname);  %% issues with reading metadata..shp.xlm (matlab mapping toolbox, )
+  [R,M]  = arc_shape_read(OPT.fname); %% still issues with reading chars (OpenEarth)
       n  = length(R);
 
 %% plot whole polygons
