@@ -1,11 +1,24 @@
 function filename = xb_write_waves(varargin)
 %XB_WRITE_WAVES  Writes wave definition files for XBeach input
 %
-%   Writes JONSWAP or variance density files for XBeach input. In case of
-%   conditions changing in time, a file list file is created refering to
-%   multiple wave definition files. In case of a JONSWAP spectrum, the file
-%   list file can be omitted and a single matrix formatted file is created.
-%   Returns the filename of the file to be refered in the params.txt file.
+%   Writes JONSWAP or variance density spectrum files for XBeach input. In 
+%   case of conditions changing in time, a file list file is created
+%   refering to multiple wave definition files. In case of a JONSWAP
+%   spectrum, the file list file can be omitted and a single matrix 
+%   formatted file is created. Returns the filename of the file to be
+%   refered in the params.txt file.
+%
+%   In order to generate time varying wave conditions, simply add an extra
+%   dimension to the input arguments specifying the spectrum. The
+%   single-valued parameters Hm0, Tp, dir, gamma, s fnyq, duration and
+%   timestep then become one-dimensional. The one- and two-dimensional
+%   parameters freqs, dirs and vardens then become two- and
+%   three-dimensional respectively. It is not necessary to provide
+%   time-varying values for all parameters. In case a specific parameter is
+%   constant, simply provide the constant value. The value is reused in
+%   each period of time. However, it is not possible to provide for one
+%   parameter more than one value and for another too, while the number of
+%   values are not the same.
 %
 %   Syntax:
 %   filename = xb_write_waves(varargin)
@@ -35,15 +48,20 @@ function filename = xb_write_waves(varargin)
 %
 %   Example
 %   filename = xb_write_waves()
+%   filename = xb_write_waves('type','vardens','freqs',freqs,'dirs',dirs,'vardens',vardens)
+%   filename = xb_write_waves('Hm0',[2.5:1:5.5 4.5:-1:2.5],'Tp',[12:1:15 14:-1:12],'omit_filelist',true)
 %
-%   See also xb_read_waves
+%   See also xb_write_input, xb_read_waves
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <Deltares>
+%   Copyright (C) 2010 Deltares
 %       Bas Hoonhout
 %
-%       <bas.hoonhout@deltares.nl>
+%       bas.hoonhout@deltares.nl	
+%
+%       Rotterdamseweg 185
+%       2629HD Delft
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -89,7 +107,7 @@ function filename = xb_write_waves(varargin)
         'freqs', [], ...
         'dirs', [], ...
         'vardens', [], ...
-        'duration', [], ...
+        'duration', 3600, ...
         'timestep', 1, ...
         'filelist_file', 'filelist', ...
         'jonswap_file', 'jonswap', ...
@@ -108,12 +126,14 @@ function filename = xb_write_waves(varargin)
 
             fname = OPT.jonswap_file;
 
+            % determine length of time series
             tlength = get_time_length(OPT, vars);
         case 'vardens'
             vars = {'duration' 'timestep'};
 
             fname = OPT.vardens_file;
 
+            % determine length of time series
             tlength = get_time_length(OPT, vars);
 
             if length(OPT.freqs) ~= size(OPT.vardens, 1) || ...
@@ -122,12 +142,17 @@ function filename = xb_write_waves(varargin)
             end
 
             if tlength ~= size(OPT.vardens, 3)
-                error('Time dimension of variance density matrix does not match');
+                if tlength == 1
+                    tlength = size(OPT.vardens, 3);
+                else
+                    error('Time dimension of variance density matrix does not match');
+                end
             end
         otherwise
             error(['Unknown wave definition type [' OPT.type ']']);
     end
 
+    % extend constant parameters to length of time series
     for i = 1:length(vars)
         switch length(OPT.(vars{i}))
             case 0
@@ -141,6 +166,7 @@ function filename = xb_write_waves(varargin)
 
 %% create file list
 
+    % create file list file, if necessary
     if length(OPT.duration) > 1 && ~(strcmpi(OPT.type, 'jonswap') && OPT.omit_filelist)
         filename = [OPT.filelist_file '.txt'];
         fid = fopen(filename, 'w');
@@ -153,10 +179,13 @@ function filename = xb_write_waves(varargin)
 
 %% create wave files
 
+    % determine whether single matrix formatted jonswap file should be
+    % created, otherwise write single or multiple wave files
     if length(OPT.duration) > 1 && strcmpi(OPT.type, 'jonswap') && OPT.omit_filelist
         filename = [fname '.txt'];
         write_jonswap_multiple_file(filename, tlength, OPT)
     else
+        % loop through time series and write wave files
         for i = 1:length(OPT.duration)
             if length(OPT.duration) == 1
                 filename = [fname '.txt'];
@@ -177,6 +206,7 @@ end
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% determine length of time series
 function t = get_time_length(OPT, vars)
     t = 1;
     for i = 1:length(vars)
@@ -188,6 +218,7 @@ function t = get_time_length(OPT, vars)
     end
 end
     
+% write single jonswap wave file
 function write_jonswap_single_file(fname, idx, OPT)
     vars = {'Hm0' 'fp' 'dir' 'gamma' 's' 'fnyq'};
     
@@ -198,6 +229,7 @@ function write_jonswap_single_file(fname, idx, OPT)
     fclose(fid);
 end
     
+% write matrix formatted jonswap wave file
 function write_jonswap_multiple_file(fname, tlength, OPT)
     vars = {'Hm0' 'Tp' 'dir' 'gamma' 's' 'duration' 'timestep'};
     
@@ -211,6 +243,7 @@ function write_jonswap_multiple_file(fname, tlength, OPT)
     fclose(fid);
 end
     
+% write single variance density spectrum file
 function write_vardens_file(fname, idx, OPT)
     fid = fopen(fname, 'w');
     fprintf(fid, '%10.4f\n', length(OPT.freqs));
