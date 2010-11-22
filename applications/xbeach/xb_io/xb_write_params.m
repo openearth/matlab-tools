@@ -24,7 +24,7 @@ function varargout = xb_write_params(filename, xbSettings, varargin)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
+%   Copyright (C) 2010 Deltares
 %       Kees den Heijer
 %
 %       Kees.denHeijer@Deltares.nl
@@ -75,6 +75,10 @@ end
 
 %%
 %TODO: create input categories
+XBdir = fullfile(fileparts(which(mfilename)), '..', '..', '..', '..', 'fortran', 'XBeach'); 
+[XBparams XBparams_array]=XB_updateParams(XBdir);
+name = {XBparams_array.name};
+partype = {XBparams_array.partype};
 
 % derive maximum stringsize of all variable names
 maxStringLength = max(cellfun(@length, {xbSettings.name}));
