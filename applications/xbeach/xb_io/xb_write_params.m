@@ -86,9 +86,9 @@ fid = fopen(filename, 'w');
 fprintf(fid, '%s %s\n\n', '%', OPT.header);
 
 for ivar = 1:length(xbSettings)
-    if iscell(xbSettings(ivar).value)
+    if regexp(xbSettings(ivar).name, '.*vars$')
         % create line indicating the number items in the cell
-        fprintf(fid, '%s\n', var2params(xbSettings(ivar).name, length(xbSettings(ivar).value), maxStringLength));
+        fprintf(fid, '%s\n', var2params(['n' xbSettings(ivar).name(1:end-1)], length(xbSettings(ivar).value), maxStringLength));
         % write output variables on separate lines
         for ioutvar = 1:length(xbSettings(ivar).value)
             fprintf(fid, '%s\n', xbSettings(ivar).value{ioutvar});
