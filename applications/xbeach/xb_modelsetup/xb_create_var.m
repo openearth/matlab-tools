@@ -28,7 +28,7 @@ function [XB Precision] = xb_create_var(varargin)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
+%   Copyright (C) 2010 Deltares
 %       Pieter van Geer / Kees den Heijer
 %
 %       Pieter.vanGeer@deltares.nl	
