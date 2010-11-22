@@ -103,11 +103,14 @@ values = {exprNames.value};
 % filenames
 for i = 1:length(values)
     if regexp(names{i}, '^n.*var$')
+        % output variable definition
         names{i} = [names{i}(2:end) 's'];
         values{i} = strread(txt(endIndex(i):end), '%s', str2double(values{i}));
     elseif ~isnan(str2double(values{i}))
+        % numeric value
         values{i} = str2double(values{i});
     else
+        % string value
         value = strtrim(values{i});
         
         % distinguish between filenames and ordinary strings
