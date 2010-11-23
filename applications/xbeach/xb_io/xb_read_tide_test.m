@@ -1,26 +1,7 @@
-function xb_write_tide(filename, time, tide)
-%XB_WRITE_TIDE  Writes tide definition file for XBeach input
-%
-%   Writes a tide definition file containing a nx3 matrix of which the
-%   first column is the time definition and the second and third column the
-%   waterlevel definition at respectively the seaward and landward boundary
-%   of the model.
-%
-%   Syntax:
-%   xb_write_tide(filename, time, tide)
-%
-%   Input:
-%   filename  = filename of tide definition file
-%   time      = n vector containing time data
-%   tide      = nx2 matrix containing tide data
-%
-%   Output:
-%   none
-%
-%   Example
-%   xb_read_tide(filename, time, tide)
-%
-%   See also xb_read_params, xb_read_tide
+function xb_read_tide_test()
+% XB_READ_TIDE_TEST  Test function for xb_read_tide
+%  
+%   See also xb_read_tide
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -46,15 +27,15 @@ function xb_write_tide(filename, time, tide)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-% This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
 % OpenEarthTools is an online collaboration to share and manage data and 
 % programming tools in an open source, version controlled environment.
 % Sign up to recieve regular updates of this function, and to contribute 
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 19 Nov 2010
-% Created with Matlab version: 7.4.0.287 (R2007a)
+% Created: 23 Nov 2010
+% Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
 % $Date$
@@ -63,12 +44,17 @@ function xb_write_tide(filename, time, tide)
 % $HeadURL$
 % $Keywords: $
 
-%% write file
+MTest.category('UnCategorized');
 
-try
-    A = [time tide];
-    save(filename, '-ascii', 'A');
-catch
-    error(['Could not create tide definition file [' filename ']']);
-end
+% write dummy file
+delete('tide.txt');
+fid = fopen('tide.txt','w');
+fprintf(fid, '%10.4f%10.4f%10.4f%10.4f%10.4f%10.4f%10.4f%10.4f%10.4f%10.4f\n', magic(10));
+fclose(fid);
 
+%% test 1: read dummy
+
+[time tide] = xb_read_tide('tide.txt');
+
+assert(length(time)==10, 'Time data not correct');
+assert(size(tide,1)==10&&size(tide,2)==9, 'Tide data not correct');

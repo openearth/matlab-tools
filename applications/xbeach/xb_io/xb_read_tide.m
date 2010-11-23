@@ -1,30 +1,35 @@
-function varargout = xb_read_tide(varargin)
-%XB_READ_TIDE  One line description goes here.
+function [time tide] = xb_read_tide(filename)
+%XB_READ_TIDE  Reads tide definition file for XBeach input
 %
-%   More detailed description goes here.
+%   Reads a tide definition file containing a nx3 matrix of which the first
+%   column is the time definition and the second and third column the water
+%   level definition at respectively the seaward and landward boundary of
+%   the model.
 %
 %   Syntax:
-%   varargout = xb_read_tide(varargin)
+%   [time tide] = xb_read_tide(filename)
 %
 %   Input:
-%   varargin  =
+%   filename  = filename of tide definition file
 %
 %   Output:
-%   varargout =
+%   time      = n vector containing time data
+%   tide      = nx2 matrix containing tide data
 %
 %   Example
-%   xb_read_tide
+%   [time tide] = xb_read_tide(filename)
 %
-%   See also 
+%   See also xb_read_params, xb_write_tide
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
-%       Cursus Laptop
+%   Copyright (C) 2010 Deltares
+%       Bas Hoonhout
 %
-%       <EMAIL>	
+%       bas.hoonhout@deltares.nl	
 %
-%       <ADDRESS>
+%       Rotterdamseweg 185
+%       2629HD Delft
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -57,4 +62,17 @@ function varargout = xb_read_tide(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% read file
+
+time = [];
+tide = [];
+
+if exist(filename, 'file')
+    try
+        A = load(filename);
+        time = A(:,1);
+        tide = A(:,2:end);
+    catch
+        error(['Tide definition file incorrectly formatted [' filename ']']);
+    end
+end

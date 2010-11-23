@@ -1,26 +1,7 @@
-function xb_write_tide(filename, time, tide)
-%XB_WRITE_TIDE  Writes tide definition file for XBeach input
-%
-%   Writes a tide definition file containing a nx3 matrix of which the
-%   first column is the time definition and the second and third column the
-%   waterlevel definition at respectively the seaward and landward boundary
-%   of the model.
-%
-%   Syntax:
-%   xb_write_tide(filename, time, tide)
-%
-%   Input:
-%   filename  = filename of tide definition file
-%   time      = n vector containing time data
-%   tide      = nx2 matrix containing tide data
-%
-%   Output:
-%   none
-%
-%   Example
-%   xb_read_tide(filename, time, tide)
-%
-%   See also xb_read_params, xb_read_tide
+function xb_write_tide_test()
+% XB_WRITE_TIDE_TEST  Test function for xb_write_tide
+%  
+%   See also xb_write_tide
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -46,15 +27,15 @@ function xb_write_tide(filename, time, tide)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-% This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
 % OpenEarthTools is an online collaboration to share and manage data and 
 % programming tools in an open source, version controlled environment.
 % Sign up to recieve regular updates of this function, and to contribute 
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 19 Nov 2010
-% Created with Matlab version: 7.4.0.287 (R2007a)
+% Created: 23 Nov 2010
+% Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
 % $Date$
@@ -63,12 +44,15 @@ function xb_write_tide(filename, time, tide)
 % $HeadURL$
 % $Keywords: $
 
-%% write file
+MTest.category('UnCategorized');
 
-try
-    A = [time tide];
-    save(filename, '-ascii', 'A');
-catch
-    error(['Could not create tide definition file [' filename ']']);
-end
+time = [1:100]';
+tide = magic(100);
 
+delete('tide.txt');
+xb_write_tide('tide.txt', time, tide);
+assert(exist('tide.txt','file')==2,'Tide definition file not created');
+
+d = dir('tide.txt');
+assert(d.bytes>0, 'Tide definition file is empty');
+assert(d.bytes==161800, 'Tide definition file is not the right size');

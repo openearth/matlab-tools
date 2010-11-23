@@ -118,7 +118,38 @@ for i = 1:length(values)
             fpath = fullfile(fdir, value);
             
             if OPT.read_paths
-                values{i} = fpath;          %%% TODO
+                values{i} = struct();
+                
+                switch names{i}
+                    case {'bcfile'}
+                        % read waves
+                        values{i}.name = 'type_';
+                        values{i}.value = 'waves';
+                    case {'zs0file'}
+                        % read tide
+                        values{i}(1).name = 'type_';
+                        values{i}(1).value = 'tide';
+
+                        [time tide] = xb_read_tide(fpath);
+                        
+                        values{i}(2).name = 'time';
+                        values{i}(2).value = time;
+                        
+                        values{i}(3).name = 'data';
+                        values{i}(3).value = tide;
+                    otherwise
+                        % assume file to be a grid and try reading it
+                        try
+                            values{i}(1).name = 'type_';
+                            values{i}(1).value = 'grid';
+
+                            values{i}(2).name = 'data';
+                            values{i}(2).value = load(fpath);
+                        catch
+                            % cannot read file, save filename only
+                            values{i} = fpath;
+                        end
+                end
             else
                 values{i} = fpath;
             end
@@ -131,6 +162,10 @@ end
 % remove doubles
 [names idx] = unique(names, 'last');
 values = values(idx);
+
+% add meta data
+names = [{'file_' 'date_' 'function_'} names];
+values = [{fullfile(filename) datestr(now) mfilename} values];
 
 % convert parameter cells to xbeach setting structure
 xbSettings = cell2struct([names; values]', {'name' 'value'}, 2);
