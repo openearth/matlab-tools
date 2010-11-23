@@ -1,9 +1,9 @@
-function [OPT, Set, Default] = KMLpatch(lat,lon,varargin)
+function varargout = KMLpatch(lat,lon,varargin)
 %KMLPATCH Just like patch
 %
-%    KMLpatch(lat,lon,<keyword,value>)
+%    KMLpatch(lat,lon,<c>,<keyword,value>)
 % 
-% only works for a singe patch (filled polygon)
+% only works for a single patch (filled polygon)
 % see the keyword/value pair defaults for additional options. 
 % For the <keyword,value> pairs call.
 %
@@ -46,15 +46,25 @@ function [OPT, Set, Default] = KMLpatch(lat,lon,varargin)
 %% process varargin
 z = 'clampToGround';
 
-OPT = KMLpatch3;
+OPT = KMLpatch3();
 
 OPT.extrude            = false;
 OPT.tessellate         = true;
 
 if nargin==0
-    return
+   varargout = {OPT};
+   return
 end
 
-[OPT, Set, Default] = setproperty(OPT, varargin{:});
     
-OPT = KMLpatch3(lat,lon,z,OPT);
+if odd(nargin)
+   c = varargin{1};
+   [OPT, Set, Default] = setproperty(OPT, varargin{2:end});
+   KMLpatch3(lat,lon,z,c,OPT);
+else
+   [OPT, Set, Default] = setproperty(OPT, varargin{:});
+   KMLpatch3(lat,lon,z,OPT);
+end
+
+
+varargout = {};

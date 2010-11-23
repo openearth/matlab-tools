@@ -1,7 +1,7 @@
-function testresult = KMLpatch_test()
-% KMLPATCH_TEST  test for KMLpatch
+function testresult = KMLpatch3_test()
+% KMLPATCH3_TEST  test for KMLpatch3
 %  
-% See also : googlPlot, KMLpatch3, patch
+% See also : googlPlot, KMLpatch, patch
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -53,17 +53,17 @@ try
 
 % manually picked rgb color
 
-    KMLpatch([50   50   50.9 50.9 50  ]'-4,[1.1 2   2   1.1 1.1]'+8,'fileName',KML_testdir('KMLpatch_test1a.kml'),'fillColor',[1 0 0],'polyOutline',false,'lineOutline',true );
-    KMLpatch([50.9 50.9 50   50   50.9]'-4,[0   0.9 0.9 0   0  ]'+8,'fileName',KML_testdir('KMLpatch_test2a.kml'),'fillColor',[0 1 0],'polyOutline',false,'lineOutline',false);
-    KMLpatch([52   52   51.1 51.1 52  ]'-4,[1.1 2   2   1.1 1.1]'+8,'fileName',KML_testdir('KMLpatch_test1b.kml'),'fillColor',[0 0 1],'polyOutline',true ,'lineOutline',false);
-    KMLpatch([51.1 51.1 52   52   51.1]'-4,[0   0.9 0.9 0   0  ]'+8,'fileName',KML_testdir('KMLpatch_test2b.kml'),'fillColor',[1 1 1],'polyOutline',true ,'lineOutline',true );
+    KMLpatch3([50   50   50.9 50.9 50  ]'-4,[1.1 2   2   1.1 1.1]'+8,[0 1 2 3 0]'.*1E3,'fileName',KML_testdir('KMLpatch3_test1a.kml'),'fillColor',[1 0 0],'polyOutline',false,'lineOutline',true );
+    KMLpatch3([50.9 50.9 50   50   50.9]'-4,[0   0.9 0.9 0   0  ]'+8,[0 1 2 3 0]'.*1E3,'fileName',KML_testdir('KMLpatch3_test2a.kml'),'fillColor',[0 1 0],'polyOutline',false,'lineOutline',false);
+    KMLpatch3([52   52   51.1 51.1 52  ]'-4,[1.1 2   2   1.1 1.1]'+8,[0 1 2 3 0]'.*1E3,'fileName',KML_testdir('KMLpatch3_test1b.kml'),'fillColor',[0 0 1],'polyOutline',true ,'lineOutline',false);
+    KMLpatch3([51.1 51.1 52   52   51.1]'-4,[0   0.9 0.9 0   0  ]'+8,[0 1 2 3 0]'.*1E3,'fileName',KML_testdir('KMLpatch3_test2b.kml'),'fillColor',[1 1 1],'polyOutline',true ,'lineOutline',true );
 
 % interpolated colors from colormap
 
-    KMLpatch([50   50   50.9 50.9 50  ]'-4,[1.1 2   2   1.1 1.1]'+8,0,'fileName',KML_testdir('KMLpatch_test3a.kml'),'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20);
-    KMLpatch([50.9 50.9 50   50   50.9]'-4,[0   0.9 0.9 0   0  ]'+8,1,'fileName',KML_testdir('KMLpatch_test3b.kml'),'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20);
-    KMLpatch([52   52   51.1 51.1 52  ]'-4,[1.1 2   2   1.1 1.1]'+8,2,'fileName',KML_testdir('KMLpatch_test3d.kml'),'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20);
-    KMLpatch([51.1 51.1 52   52   51.1]'-4,[0   0.9 0.9 0   0  ]'+8,3,'fileName',KML_testdir('KMLpatch_test3c.kml'),'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20);
+    KMLpatch3([50   50   50.9 50.9 50  ]'-4,[1.1 2   2   1.1 1.1]'+8,[0 1 2 3 0]'.*1E3,0,'fileName',KML_testdir('KMLpatch3_test3a.kml'),'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20);
+    KMLpatch3([50.9 50.9 50   50   50.9]'-4,[0   0.9 0.9 0   0  ]'+8,[0 1 2 3 0]'.*1E3,1,'fileName',KML_testdir('KMLpatch3_test3b.kml'),'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20);
+    KMLpatch3([52   52   51.1 51.1 52  ]'-4,[1.1 2   2   1.1 1.1]'+8,[0 1 2 3 0]'.*1E3,2,'fileName',KML_testdir('KMLpatch3_test3d.kml'),'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20);
+    KMLpatch3([51.1 51.1 52   52   51.1]'-4,[0   0.9 0.9 0   0  ]'+8,[0 1 2 3 0]'.*1E3,3,'fileName',KML_testdir('KMLpatch3_test3c.kml'),'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20);
 
     testresult = true;
 catch
