@@ -54,7 +54,11 @@ function varargout = getlocalsettings
 
 %%
 % define config path
-configpath = fullfile(getenv('APPDATA'), 'OET');
+if ispc
+    configpath = fullfile(getenv('APPDATA'), 'OET');
+else
+    configpath = fullfile(getenv('HOME'), '.OET');
+end
 
 % make path if necessary
 mkpath(configpath)
