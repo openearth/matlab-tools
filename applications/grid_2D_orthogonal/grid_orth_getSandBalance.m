@@ -86,7 +86,7 @@ OPT = setproperty(OPT, varargin{:});
 %% generate sediment budget information
 for n = 1:size(OPT.min_coverage,2)
     % make dirs for output
-    mkpath([OPT.workdir filesep 'polygons']);
+    mkpath(OPT.polygondir);
     mkpath([OPT.workdir filesep 'datafiles' filesep 'timewindow = ',num2str(OPT.searchinterval)]);
     mkpath([OPT.workdir filesep 'coverage'  filesep 'timewindow = ' num2str(OPT.searchinterval)]);
     mkpath([OPT.workdir filesep 'results'   filesep 'timewindow = ' num2str(OPT.searchinterval) filesep 'ref=' num2str(OPT.min_coverage(n)) ])
@@ -95,7 +95,7 @@ for n = 1:size(OPT.min_coverage,2)
     [batchvar, OPT] = grid_orth_findCoverage(OPT, n);
     
     % find polygons directory
-    fns = dir([OPT.workdir filesep 'polygons' filesep '*.mat']);
+    fns = dir(fullfile(OPT.polygondir,'*.mat'));
     
     if ~isempty(batchvar)
         for i = 1:size(batchvar,1)
@@ -104,7 +104,7 @@ for n = 1:size(OPT.min_coverage,2)
                 disp(' ')
                 disp(['*** Processing ' batchvar{i,3} ' - coverage percentage: ' num2str(OPT.min_coverage(n)) '% with timewindow: ',num2str(OPT.searchinterval),' days'])
                 
-                load(fullfile(OPT.workdir, 'polygons', fns(i,1).name));
+                load(fullfile(OPT.polygondir, fns(i,1).name));
                 OPT.polygon = polygon;
                 
                 % load coverage

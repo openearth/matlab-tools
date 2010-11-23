@@ -71,7 +71,7 @@ if ~isempty(fns)
             multiWaitbar('Gathering coverage info (per polygon) ...',i/size(batchvar1,1), 'Color', [1.0 0.4 0.0])
 
             % load polygon from polygon directory
-            load(fullfile(OPT.workdir, 'polygons', fns(i,1).name));
+            load(fullfile(OPT.polygondir, fns(i,1).name));
             
             if ~exist(fullfile(OPT.workdir, 'coverage', ['timewindow = ' num2str(OPT.searchinterval)], [fns(i,1).name(1:end-4) '_coverage.dat']),'file')
                 if isempty(OPT.inputtimes)
