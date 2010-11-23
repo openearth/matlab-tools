@@ -142,7 +142,7 @@ classdef tbtoolbox
                 if mergemaindirs
                     indirid = cellfun(@isempty,pathcell(:,1));
                     if isempty(dirstruct)
-                        dirstruct(1).fulldirname = maindir(end);
+                        dirstruct(1).fulldirname = maindir{end};
                     else
                         dirstruct.fulldirname = strrep([dirstruct.fulldirname{:}, ' ', maindir{end}],' ','_');
                     end

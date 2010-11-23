@@ -642,13 +642,14 @@ classdef tbdocumentation
             tplstr = fread(fid,'*char')';
             fclose(fid);
 
+            % set target dir and name
+            trgdir = mfileobj.targetdir;
+            trgname = mfileobj.filename;
+
             % determine whether graph has to be produced
             graphasked = any(strfind(tplstr,'#GRAPH'));
             if graphasked
                 if includegraph
-                    trgdir = mfileobj.targetdir;
-                    trgname = mfileobj.filename;
-
                     calls = mfileobj.functioncalls(mfileobj.functioncallsinhtml);
                     called = mfileobj.functioncalledby(mfileobj.functioncalledinhtml);
                     names = unique(cat(1,calls,called,mfileobj.filename));
@@ -955,7 +956,7 @@ classdef tbdocumentation
             if false %options.verbose
                 disp(['Creating dependency graph ' mdotfile '...']);
             end
-            mdot({href2,references,names,options},fullfile(targetdir,mdotfile));
+            mdot({href2,references,options,names},fullfile(targetdir,mdotfile));
             noproblem = true;
             try
                 %- see <http://www.research.att.com/sw/tools/graphviz/>

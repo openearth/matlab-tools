@@ -133,9 +133,9 @@ classdef tbmfile
                     % subfunctions are recognozed and stored in
                     % callind(2:n). We could do something with this....
                     % make another object and return for example....
-                    id = cellfun(@exist,callinf(1).calls)==5;
-                    obj(iargs).builtincalls = callinf(1).calls(id)';
-                    obj(iargs).functioncalls = callinf(1).calls(~id)';
+                    id = cellfun(@exist,callinf(1).calls.fcnCalls.names)==5;
+                    obj(iargs).builtincalls = callinf(1).calls.fcnCalls.names(id)';
+                    obj(iargs).functioncalls = callinf(1).calls.fcnCalls.names(~id)';
                     obj(iargs).functioncallsinhtml = false(size(obj(iargs).functioncalls));
                     obj(iargs).functioncalledinhtml = false(size(obj(iargs).functioncalledby));
                 end
