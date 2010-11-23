@@ -66,9 +66,9 @@ function variables = xb_read_output(fname, varargin)
 % $Keywords: $
 
 if isdir(fname) 
-  variables = xb_read_dat(fname, varargin)
+  variables = xb_read_dat(fname, varargin);
 else 
-  variables = xb_read_netcdf(fname, varargin)
+  variables = xb_read_netcdf(fname, varargin);
 end
 
 

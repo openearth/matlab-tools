@@ -66,7 +66,7 @@ function variables = xb_read_dat(fname, varargin)
 
 %%
 
-variables = struct()
+variables = struct();
 
 options=[' 3Dwave';' 3Dsed ';' 3Dbed ';' 4Dbed '];
 
@@ -94,7 +94,7 @@ end
 for (i=1:length(names))
 % First open file
     filename = [variables(1).name '.dat'];
-    fullfilename = fullfile(fname, filename)
+    fullfilename = fullfile(fname, filename);
     fid=fopen(fullfile(fname, filename),'r');
     temp=fread(fid,'double');
     fclose(fid);
@@ -139,7 +139,7 @@ for (i=1:length(names))
         else
             % Probably 2D array
             if sz==1
-                display('Assuming array is 2D');
+                %display('Assuming array is 2D');
                 [Var info]=read2Dout(fullfilename,XBdims);
             else
                 % more complicated, could be ntheta, or nd or ngd or nd*ngd
@@ -186,7 +186,7 @@ for (i=1:length(names))
         end
     end
 
-    variables(i).values = Var;
+    variables(i).value = Var;
 end
 %%
 function [Var info]=read2Dout(fullfilename,XBdims)
