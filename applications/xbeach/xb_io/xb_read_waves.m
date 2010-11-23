@@ -1,10 +1,10 @@
-function varargout = xb_read_waves(varargin)
-%XB_READ_WAVES  One line description goes here.
+function xbSettings = xb_read_waves(filename, varargin)
+%XB_READ_WAVES  Reads wave definition files for XBeach input
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = xb_read_waves(varargin)
+%   xbSettings = xb_read_waves(filename, varargin)
 %
 %   Input:
 %   varargin  =
@@ -15,16 +15,17 @@ function varargout = xb_read_waves(varargin)
 %   Example
 %   xb_read_waves
 %
-%   See also 
+%   See also xb_read_params, xb_write_waves
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
-%       Cursus Laptop
+%   Copyright (C) 2010 Deltares
+%       Bas Hoonhout
 %
-%       <EMAIL>	
+%       bas.hoonhout@deltares.nl	
 %
-%       <ADDRESS>
+%       Rotterdamseweg 185
+%       2629HD Delft
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -57,4 +58,117 @@ function varargout = xb_read_waves(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% read options
+
+OPT = struct( ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+%% determine filetype
+
+if ~exist(filename, 'file')
+    error(['File does not exist [' filename ']'])
+end
+
+filetype = xb_get_wavefiletype(filename);
+
+switch filetype
+    case 'filelist'
+        xbSettings = read_filelist(filename);
+    case 'jonswap'
+        xbSettings = read_jonswap(filename);
+    case 'jonswap_mtx'
+        xbSettings = read_jonswapmtx(filename);
+    case 'vardens'
+        xbSettings = read_vardens(filename);
+    otherwise
+        % unsupported wave definition file, simply dump contents
+        xbSettings = read_unknown(filename);
+end
+
+%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function xbSettings = read_filelist(filename)
+
+tlength = 1;
+xbSettings = struct('name',{'type_' 'duration' 'timestep'},'value',[]);
+
+[fdir fname dext] = fileparts(filename);
+
+fid = fopen(filename); fgetl(fid);
+while ~feof(fid)
+    [duration timestep fname] = strread(fgetl(fid), '%f%f%s', 'delimiter', ' ');
+
+    xbSettings(2).value(tlength) = duration;
+    xbSettings(3).value(tlength) = timestep;
+    fname = fullfile(fdir, [fname{:}]);
+
+    if exist(fname, 'file')
+        filetype = xb_get_wavefiletype(fname);
+        
+        switch filetype
+            case 'jonswap'
+                xb = read_jonswap(fname);
+            case 'jonswap_mtx'
+            case 'vardens'
+            otherwise
+                % unsupported wave definition file, simply dump contents
+                xb = read_unknown(fname);
+        end
+        
+        xbSettings = add_setting(xbSettings, xb, tlength);
+    end
+
+    tlength = tlength + 1;
+end
+
+% consolidate xbeach settings
+for i = 1:length(xbSettings)
+    if length(unique(xbSettings(i).value)) == 1
+        if iscell(xbSettings(i).value)
+            xbSettings(i).value = xbSettings(i).value{1};
+        else
+            xbSettings(i).value = xbSettings(i).value(1);
+        end
+    end
+end
+
+function xbSettings = read_jonswap(filename)
+
+xbSettings = struct('name',{'type_'},'value',{'jonswap'});
+
+fid = fopen(filename);
+txt = fread(fid, '*char')';
+fclose(fid);
+
+matches = regexp(txt, '\s*(?<name>.*?)\s*=\s*(?<value>.*?)\s*\n', 'names', 'dotexceptnewline');
+
+xbSettings = add_setting(xbSettings, struct('name',{matches.name},'value',num2cell(str2double({matches.value}))));
+
+function xbSettings = read_unknown(filename)
+
+xbSettings = struct('name',{'type_' 'contents'},'value',{'unknown',''});
+
+fid = fopen(filename);
+xbSettings(2).value = fread(fid, '*char')';
+fclose(fid);
+
+function xbSettings = add_setting(xbSettings, setting, t)
+
+if ~exist('t', 'var'); t = 1; end;
+
+for i = 1:length(setting)
+    idx = strcmpi(setting(i).name, {xbSettings.name});
+    
+    if ~any(idx)
+        idx = length(xbSettings)+1;
+        xbSettings(idx).name = setting(i).name;
+    end
+    
+    if ischar(setting(i).value)
+        xbSettings(idx).value{t} = setting(i).value;
+    else
+        xbSettings(idx).value(t) = setting(i).value;
+    end
+end

@@ -72,7 +72,7 @@ function xbSettings = xb_read_params(filename, varargin)
 %% read options
 
 OPT = struct( ...
-    'include_paths', true, ...
+    'include_paths', false, ...
     'read_paths', true ...
 );
 
@@ -114,9 +114,8 @@ for i = 1:length(values)
         value = strtrim(values{i});
         
         % distinguish between filenames and ordinary strings
-        if (OPT.read_paths || OPT.include_paths) && exist(fullfile(fdir, value), 'file')
-            fpath = fullfile(fdir, value);
-            
+        fpath = fullfile(fdir, value);
+        if (OPT.read_paths || OPT.include_paths) && exist(fpath, 'file')
             if OPT.read_paths
                 values{i} = struct();
                 
@@ -150,8 +149,10 @@ for i = 1:length(values)
                             values{i} = fpath;
                         end
                 end
-            else
+            elseif OPT.include_paths
                 values{i} = fpath;
+            else
+                values{i} = value;
             end
         else
             values{i} = value;
