@@ -1,5 +1,5 @@
 function xbSettings = xb_read_params(filename, varargin)
-%XB_READ_PARAMS  read xbeach params.txt file
+%XB_READ_PARAMS  read XBeach params.txt file
 %
 %   Routine to read the xbeach settings from the params.txt file. The
 %   settings are stored in a structure array with fields 'name' and
@@ -10,12 +10,7 @@ function xbSettings = xb_read_params(filename, varargin)
 %
 %   Input:
 %   filename   = params.txt file name
-%   varargin   = include_paths:     flag to determine whether relative
-%                                   paths should be included in filenames
-%                read_paths:        flag to determine whether relative
-%                                   paths should be read and included in
-%                                   the result structure. read_path implies
-%                                   include_paths.
+%   varargin   = none
 %
 %   Output:
 %   xbSettings = structure array with fields 'name' and 'value' containing
@@ -24,7 +19,7 @@ function xbSettings = xb_read_params(filename, varargin)
 %   Example
 %   xb_read_params
 %
-%   See also 
+%   See also xb_read_input, xb_read_waves
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -72,8 +67,6 @@ function xbSettings = xb_read_params(filename, varargin)
 %% read options
 
 OPT = struct( ...
-    'include_paths', false, ...
-    'read_paths', true ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -87,8 +80,6 @@ end
 fid = fopen(filename);
 txt = fread(fid, '*char')';
 fclose(fid);
-
-[fdir fname dext] = fileparts(filename);
 
 %% read params
 
@@ -111,62 +102,13 @@ for i = 1:length(values)
         values{i} = str2double(values{i});
     else
         % string value
-        value = strtrim(values{i});
-        
-        % distinguish between filenames and ordinary strings
-        fpath = fullfile(fdir, value);
-        if (OPT.read_paths || OPT.include_paths) && exist(fpath, 'file')
-            if OPT.read_paths
-                values{i} = struct();
-                
-                switch names{i}
-                    case {'bcfile'}
-                        % read waves
-                        values{i}.name = 'type_';
-                        values{i}.value = 'waves';
-                    case {'zs0file'}
-                        % read tide
-                        values{i}(1).name = 'type_';
-                        values{i}(1).value = 'tide';
-
-                        [time tide] = xb_read_tide(fpath);
-                        
-                        values{i}(2).name = 'time';
-                        values{i}(2).value = time;
-                        
-                        values{i}(3).name = 'data';
-                        values{i}(3).value = tide;
-                    otherwise
-                        % assume file to be a grid and try reading it
-                        try
-                            values{i}(1).name = 'type_';
-                            values{i}(1).value = 'grid';
-
-                            values{i}(2).name = 'data';
-                            values{i}(2).value = load(fpath);
-                        catch
-                            % cannot read file, save filename only
-                            values{i} = fpath;
-                        end
-                end
-            elseif OPT.include_paths
-                values{i} = fpath;
-            else
-                values{i} = value;
-            end
-        else
-            values{i} = value;
-        end
+        values{i} = strtrim(values{i});
     end
 end
 
 % remove doubles
 [names idx] = unique(names, 'last');
 values = values(idx);
-
-% add meta data
-names = [{'file_' 'date_' 'function_'} names];
-values = [{fullfile(filename) datestr(now) mfilename} values];
 
 % convert parameter cells to xbeach setting structure
 xbSettings = cell2struct([names; values]', {'name' 'value'}, 2);

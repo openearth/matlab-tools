@@ -1,32 +1,36 @@
-function XB = xb_write_input(calcdir, XB, varargin)
-%XB_WRITE_INPUT  One line description goes here.
+function xb_write_input(filename, xbSettings, varargin)
+%XB_WRITE_INPUT  Write XBeach params.txt file and all files referred in it
 %
-%   More detailed description goes here.
+%   Writes the XBeach settings from a structure array with name/value
+%   fields in a parameter file. Also the files that are referred to in the
+%   parameter file are written, like grid and wave definition files.
 %
 %   Syntax:
-%   XB = xb_write_input(calcdir, XB, varargin)
+%   xb_write_input(filename, xbSettings, varargin)
 %
 %   Input:
-%   calcdir  =
-%   XB       =
-%   varargin =
+%   filename    = filename of parameter file
+%   xbSettings  = XBeach settings struct (name/value)
+%   varargin    = write_paths:  flag to determine whether definition files
+%                               should be written or just referred
 %
 %   Output:
-%   XB       =
+%   none
 %
 %   Example
-%   xb_write_input
+%   xb_write_input(filename, xbSettings)
 %
-%   See also 
+%   See also xb_read_input, xb_write_params
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
-%       Cursus Laptop
+%   Copyright (C) 2010 Deltares
+%       Bas Hoonhout
 %
-%       <EMAIL>	
+%       bas.hoonhout@deltares.nl	
 %
-%       <ADDRESS>
+%       Rotterdamseweg 185
+%       2629HD Delft
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -59,4 +63,46 @@ function XB = xb_write_input(calcdir, XB, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% read options
+
+OPT = struct( ...
+    'write_paths', true ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+%% write referred files
+
+if OPT.write_paths
+    
+    [fdir fname dext] = fileparts(filename);
+
+    for i = 1:length(xbSettings)
+        if isstruct(xbSettings(i).value)
+            xb = xbSettings(i).value;
+            
+            switch xbSettings(i).name
+                case {'bcfile'}
+                    % write waves
+                    xbSettings(i).value = xb_write_waves(xb);
+                case {'zs0file'}
+                    % write tide
+                    xbSettings(i).value = xb_write_tide(xb);
+                otherwise
+                    % assume file to be a grid and try writing it
+                    try
+                        xbSettings(i).value = fullfile(fdir, [xbSettings(i).name '.txt']);
+                        data = xb(strcmpi('data',{xb.name})).value;
+                        save(xbSettings(i).value, '-ascii', 'data');
+                    catch
+                        % cannot write file, ignore
+                        xbSettings(i).value = '';
+                    end
+            end
+        end
+    end
+end
+
+%% write params.txt file
+
+xb_write_params(filename, xbSettings)

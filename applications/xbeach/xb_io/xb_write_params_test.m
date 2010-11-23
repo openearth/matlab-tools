@@ -1,10 +1,7 @@
 function testresult = xb_write_params_test()
-% XB_WRITE_PARAMS_TEST  test of xb_write_params function
-%  
-% More detailed description of the test goes here.
+% XB_WRITE_PARAMS_TEST  Test function for xb_write_params
 %
-%
-%   See also 
+%   See also xb_write_params
 
 %% Copyright notice
 %   --------------------------------------------------------------------

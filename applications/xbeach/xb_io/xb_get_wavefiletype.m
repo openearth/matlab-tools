@@ -77,6 +77,7 @@ if exist(filename, 'file')
     fid = fopen(filename, 'r');
     while ~feof(fid)
         fline = fgetl(fid);
+        if isempty(fline); continue; end;
         
         c = counts;
         

@@ -1,30 +1,38 @@
-function varargout = xb_read_input(varargin)
-%XB_READ_INPUT  One line description goes here.
+function xbSettings = xb_read_input(filename, varargin)
+%XB_READ_INPUT  Read XBeach parameter file and all files referred in it
 %
-%   More detailed description goes here.
+%   Reads the XBeach settings from the params.txt file and all files that
+%   are mentioned in the settings, like grid and wave definition files. The
+%   settings are stored in a structure array with fields 'name' and
+%   'value'. The referred files are stored in a similar sub-structure.
 %
 %   Syntax:
-%   varargout = xb_read_input(varargin)
+%   xbSettings = xb_read_input(filename)
 %
 %   Input:
-%   varargin  =
+%   filename   = params.txt file name
+%   varargin   = read_paths:        flag to determine whether relative
+%                                   paths should be read and included in
+%                                   the result structure
 %
 %   Output:
-%   varargout =
+%   xbSettings = structure array with fields 'name' and 'value' containing
+%                all settings of the params.txt file
 %
 %   Example
-%   xb_read_input
+%   xbSettings = xb_read_input(filename)
 %
-%   See also 
+%   See also xb_read_params, xb_read_waves
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
-%       Cursus Laptop
+%   Copyright (C) 2010 Deltares
+%       Bas Hoonhout
 %
-%       <EMAIL>	
+%       bas.hoonhout@deltares.nl	
 %
-%       <ADDRESS>
+%       Rotterdamseweg 185
+%       2629HD Delft
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -57,4 +65,48 @@ function varargout = xb_read_input(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% read options
+
+OPT = struct( ...
+    'read_paths', true ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+%% read params.txt
+
+xbSettings = xb_read_params(filename);
+
+%% read referred files
+
+if OPT.read_paths
+    
+    [fdir fname dext] = fileparts(filename);
+
+    for i = 1:length(xbSettings)
+        if ischar(xbSettings(i).value)
+            fpath = fullfile(fdir, xbSettings(i).value);
+
+            if exist(fpath, 'file')
+                switch xbSettings(i).name
+                    case {'bcfile'}
+                        % read waves
+                        value = xb_read_waves(fpath);
+                    case {'zs0file'}
+                        % read tide
+                        value = xb_read_tide(fpath);
+                    otherwise
+                        % assume file to be a grid and try reading it
+                        try
+                            value = struct('name',{'data'},'value',{load(fpath)});
+                        catch
+                            % cannot read file, save filename only
+                            value = fpath;
+                        end
+                end
+                
+                xbSettings(i).value = value;
+            end
+        end
+    end
+end

@@ -10,7 +10,7 @@ function filename = xb_write_waves(varargin)
 %
 %   In order to generate time varying wave conditions, simply add an extra
 %   dimension to the input arguments specifying the spectrum. The
-%   single-valued parameters Hm0, Tp, dir, gamma, s fnyq, duration and
+%   single-valued parameters Hm0, Tp, dir, gammajsp, s fnyq, duration and
 %   timestep then become one-dimensional. The one- and two-dimensional
 %   parameters freqs, dirs and vardens then become two- and
 %   three-dimensional respectively. It is not necessary to provide
@@ -43,14 +43,17 @@ function filename = xb_write_waves(varargin)
 %                 vardens:          variance density matrix (freq,dir,time)
 %                 duration:         duration for individual wave files
 %                 timestep:         timestep for individual wave files
+%                 contents:         plain contents of unknown wave files
 %                 filelist_file:    name of filelist file without extension
 %                 jonswap_file:     name of jonswap file without extension
 %                 vardens_file:     name of vardens file without extension
+%                 unknown_file:     name of unknown wave file without
+%                                   extension
 %                 omit_filelist:    flag to omit filelist generation in
 %                                   case of jonswap spectrum
 %
 %   Output:
-%   filename = filename to be referred in params.txt
+%   filename = filename to be referred in parameter file
 %
 %   Example
 %   filename = xb_write_waves()
@@ -110,11 +113,11 @@ if ~isempty(varargin) && isstruct(varargin{1})
 end
 
 OPT = struct( ...
-    'type', 'jonswap', ...
+    'type_', 'jonswap', ...
     'Hm0', 7.6, ...
     'Tp', 12, ...
     'dir', 270, ...
-    'gamma', 3.3, ...
+    'gammajsp', 3.3, ...
     's', 20, ...
     'fnyq', 1, ...
     'freqs', [0], ...
@@ -122,9 +125,11 @@ OPT = struct( ...
     'vardens', [0], ...
     'duration', 3600, ...
     'timestep', 1, ...
+    'contents', [], ...
     'filelist_file', 'filelist', ...
     'jonswap_file', 'jonswap', ...
     'vardens_file', 'vardens', ...
+    'unknown_file', 'wave', ...
     'omit_filelist', false ...
 );
 
@@ -134,12 +139,17 @@ if exist('xbSettings','var')
     OPT = mergestructs('overwrite', OPT, struct_flip(xbSettings, 'name', 'value'));
 end
 
+if strcmpi(OPT.type_, 'jonswap_mtx')
+    OPT.type_ = 'jonswap';
+    OPT.omit_filelist = true;
+end
+
 %% check input
 
 % check parameter dimensions
-switch OPT.type
+switch OPT.type_
     case 'jonswap'
-        vars = {'Hm0' 'Tp' 'dir' 'gamma' 's' 'fnyq' 'duration' 'timestep'};
+        vars = {'Hm0' 'Tp' 'dir' 'gammajsp' 's' 'fnyq' 'duration' 'timestep'};
 
         fname = OPT.jonswap_file;
 
@@ -165,12 +175,21 @@ switch OPT.type
                 error('Time dimension of variance density matrix does not match');
             end
         end
+    case 'unknown'
+        vars = {'contents' 'duration' 'timestep'};
+        
+        fname = OPT.unknown_file;
+        
+        % determine length of time series
+        tlength = get_time_length(OPT, vars);
     otherwise
-        error(['Unknown wave definition type [' OPT.type ']']);
+        error(['Unknown wave definition type [' OPT.type_ ']']);
 end
 
 % extend constant parameters to length of time series
 for i = 1:length(vars)
+    if strcmpi(vars{i}, 'contents'); continue; end;
+    
     switch length(OPT.(vars{i}))
         case 0
             OPT.(vars{i}) = nan*ones(1,tlength);
@@ -184,7 +203,7 @@ OPT.fp = 1./OPT.Tp;
 %% create file list
 
 % create file list file, if necessary
-if length(OPT.duration) > 1 && ~(strcmpi(OPT.type, 'jonswap') && OPT.omit_filelist)
+if length(OPT.duration) > 1 && ~(strcmpi(OPT.type_, 'jonswap') && OPT.omit_filelist)
     filename = [OPT.filelist_file '.txt'];
     fid = fopen(filename, 'w');
     fprintf(fid, 'FILELIST\n');
@@ -198,7 +217,7 @@ end
 
 % determine whether single matrix formatted jonswap file should be
 % created, otherwise write single or multiple wave files
-if length(OPT.duration) > 1 && strcmpi(OPT.type, 'jonswap') && OPT.omit_filelist
+if length(OPT.duration) > 1 && strcmpi(OPT.type_, 'jonswap') && OPT.omit_filelist
     filename = [fname '.txt'];
     write_jonswap_multiple_file(filename, tlength, OPT)
 else
@@ -211,11 +230,13 @@ else
             fname_i = [fname '_' num2str(i) '.txt'];
         end
 
-        switch OPT.type
+        switch OPT.type_
             case 'jonswap'
                 write_jonswap_single_file(fname_i, i, OPT)
             case 'vardens'
                 write_vardens_file(fname_i, i, OPT)
+            case 'unknown'
+                write_unknown_file(fname_i, i, OPT)
         end
     end
 end
@@ -235,7 +256,7 @@ end
     
 % write single jonswap wave file
 function write_jonswap_single_file(fname, idx, OPT)
-vars = {'Hm0' 'fp' 'dir' 'gamma' 's' 'fnyq'};
+vars = {'Hm0' 'fp' 'dir' 'gammajsp' 's' 'fnyq'};
 
 fid = fopen(fname, 'w');
 for i = 1:length(vars)
@@ -245,7 +266,7 @@ fclose(fid);
     
 % write matrix formatted jonswap wave file
 function write_jonswap_multiple_file(fname, tlength, OPT)
-vars = {'Hm0' 'Tp' 'dir' 'gamma' 's' 'duration' 'timestep'};
+vars = {'Hm0' 'Tp' 'dir' 'gammajsp' 's' 'duration' 'timestep'};
 
 fid = fopen(fname, 'w');
 for i = 1:tlength
@@ -272,5 +293,16 @@ for i = 1:length(OPT.dirs)
         fprintf(fid, '%10.4f', OPT.vardens(j,i,idx));
     end
     fprintf(fid, '\n');
+end
+fclose(fid);
+
+% write unknown formatted wave file
+function write_unknown_file(fname, tlength, OPT)
+
+fid = fopen(fname, 'w');
+if iscell(OPT.contents)
+    fprintf(fid, '%s', OPT.contents{tlength});
+else
+    fprintf(fid, '%s', OPT.contents);
 end
 fclose(fid);

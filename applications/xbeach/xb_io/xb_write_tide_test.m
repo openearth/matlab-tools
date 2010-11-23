@@ -46,13 +46,13 @@ function xb_write_tide_test()
 
 MTest.category('UnCategorized');
 
-time = [1:100]';
-tide = magic(100);
+xbSettings = struct('name',{'time' 'tide'},'value',{[1:100]' magic(100)});
 
-delete('tide.txt');
-xb_write_tide('tide.txt', time, tide);
-assert(exist('tide.txt','file')==2,'Tide definition file not created');
+fname = 'tide.txt';
+delete(fname);
+xb_write_tide(xbSettings, 'filename', fname);
+assert(exist(fname,'file')==2,'Tide definition file not created');
 
-d = dir('tide.txt');
+d = dir(fname);
 assert(d.bytes>0, 'Tide definition file is empty');
 assert(d.bytes==161800, 'Tide definition file is not the right size');

@@ -1,4 +1,4 @@
-function [time tide] = xb_read_tide(filename)
+function xbSettings = xb_read_tide(filename, varargin)
 %XB_READ_TIDE  Reads tide definition file for XBeach input
 %
 %   Reads a tide definition file containing a nx3 matrix of which the first
@@ -7,17 +7,18 @@ function [time tide] = xb_read_tide(filename)
 %   the model.
 %
 %   Syntax:
-%   [time tide] = xb_read_tide(filename)
+%   xbSettings  = xb_read_tide(filename)
 %
 %   Input:
-%   filename  = filename of tide definition file
+%   filename    = filename of tide definition file
+%   varargin    = none
 %
 %   Output:
-%   time      = n vector containing time data
-%   tide      = nx2 matrix containing tide data
+%   xbSettings  = structure array with fields 'name' and 'value' containing
+%                 all settings of the params.txt file
 %
 %   Example
-%   [time tide] = xb_read_tide(filename)
+%   xbSettings  = xb_read_tide(filename)
 %
 %   See also xb_read_params, xb_write_tide
 
@@ -62,16 +63,22 @@ function [time tide] = xb_read_tide(filename)
 % $HeadURL$
 % $Keywords: $
 
+%% read options
+
+OPT = struct( ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
 %% read file
 
-time = [];
-tide = [];
+xbSettings = struct('name',{'time' 'tide'},'value',[]);
 
 if exist(filename, 'file')
     try
         A = load(filename);
-        time = A(:,1);
-        tide = A(:,2:end);
+        xbSettings(1).value = A(:,1);
+        xbSettings(2).value = A(:,2:end);
     catch
         error(['Tide definition file incorrectly formatted [' filename ']']);
     end

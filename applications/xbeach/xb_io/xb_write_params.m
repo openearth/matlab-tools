@@ -1,4 +1,4 @@
-function varargout = xb_write_params(filename, xbSettings, varargin)
+function xb_write_params(filename, xbSettings, varargin)
 %XB_WRITE_PARAMS  write xbeach settings to params.txt file
 %
 %   Routine to create a xbeach settings file. The settings in "xbSettings"
@@ -12,15 +12,15 @@ function varargout = xb_write_params(filename, xbSettings, varargin)
 %   filename   = file name of params file
 %   xbSettings = structure with fields 'name' and 'value' containing the
 %                xbeach settings
-%   varargin   = 'header'  - option to parse an alternative header string
+%   varargin   = header:    option to parse an alternative header string
 %
 %   Output:
-%   varargout =
+%   none
 %
 %   Example
-%   xb_write_params
+%   xb_write_params(filename, xbSettings)
 %
-%   See also
+%   See also xb_write_input, xb_read_params
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -67,18 +67,21 @@ function varargout = xb_write_params(filename, xbSettings, varargin)
 
 %%
 OPT = struct(...
-    'header', ['XBeach parameter settings input file automatically created by OpenEarthTools function XB_WRITE_PARAMS (date: ' datestr(now) ')']);
+    'header', {{'XBeach parameter settings input file' '' ['date:     ' datestr(now)] ['function: ' mfilename]}});
 
 if nargin > 2
     OPT = setproperty(OPT, varargin{:});
 end
 
-%%
-%TODO: create input categories
+if ~iscell(OPT.header); OPT.header = {OPT.header}; end;
+
+%% write parameter file
+
 XBdir = fullfile(fileparts(which(mfilename)), '..', '..', '..', '..', 'fortran', 'XBeach'); 
 [XBparams XBparams_array]=XB_updateParams(XBdir);
-name = {XBparams_array.name};
+parname = {XBparams_array.name};
 partype = {XBparams_array.partype};
+upartype = unique(partype);
 
 % derive maximum stringsize of all variable names
 maxStringLength = max(cellfun(@length, {xbSettings.name}));
@@ -87,21 +90,46 @@ maxStringLength = max(cellfun(@length, {xbSettings.name}));
 fid = fopen(filename, 'w');
 
 % write header
-fprintf(fid, '%s %s\n\n', '%', OPT.header);
+fprintf(fid, '%s\n', repmat('%', 1, 80));
+for i = 1:length(OPT.header)
+    fprintf(fid, '%s %-72s %s\n', '%%%', OPT.header{i}, '%%%');
+end
+fprintf(fid, '%s\n', repmat('%', 1, 80));
 
-for ivar = 1:length(xbSettings)
-    if regexp(xbSettings(ivar).name, '.*vars$')
-        % create line indicating the number items in the cell
-        fprintf(fid, '%s\n', var2params(['n' xbSettings(ivar).name(1:end-1)], length(xbSettings(ivar).value), maxStringLength));
-        % write output variables on separate lines
-        for ioutvar = 1:length(xbSettings(ivar).value)
-            fprintf(fid, '%s\n', xbSettings(ivar).value{ioutvar});
+outputvars = '';
+for i = 1:length(upartype)
+    pars = parname(strcmpi(upartype{i}, partype));
+    
+    % create type header
+    if any(ismember(pars, {xbSettings.name}))
+        fprintf(fid, '\n%s %s %s\n\n', '%%%', upartype{i}, repmat('%',1,75-length(upartype{i})));
+    end
+    
+    for j = 1:length(pars)
+        ivar = strcmpi(pars{j}, {xbSettings.name});
+        
+        if any(ivar)
+            if regexp(xbSettings(ivar).name, '.*vars$')
+
+                % create line indicating the number items in the cell
+                outputvars = [outputvars sprintf('%s\n', var2params(['n' xbSettings(ivar).name(1:end-1)], length(xbSettings(ivar).value), maxStringLength))];
+
+                % write output variables on separate lines
+                for ioutvar = 1:length(xbSettings(ivar).value)
+                    outputvars = [outputvars sprintf('%s\n', xbSettings(ivar).value{ioutvar})];
+                end
+            else
+                % create ordinary parameter line
+                fprintf(fid, '%s\n', var2params(xbSettings(ivar).name, xbSettings(ivar).value, maxStringLength));
+            end
         end
-    else
-        % create line
-        fprintf(fid, '%s\n', var2params(xbSettings(ivar).name, xbSettings(ivar).value, maxStringLength));
     end
 end
+
+% write output variables separately
+header = 'Output variables';
+fprintf(fid, '\n%s %s %s\n\n', '%%%', header, repmat('%',1,75-length(header)));
+fprintf(fid, '%s', outputvars);
 
 fclose(fid);
 

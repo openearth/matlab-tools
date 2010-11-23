@@ -1,24 +1,23 @@
-function xb_write_tide(filename, time, tide)
+function filename = xb_write_tide(xbSettings, varargin)
 %XB_WRITE_TIDE  Writes tide definition file for XBeach input
 %
 %   Writes a tide definition file containing a nx3 matrix of which the
 %   first column is the time definition and the second and third column the
 %   waterlevel definition at respectively the seaward and landward boundary
-%   of the model.
+%   of the model. Returns the filename of teh tide file.
 %
 %   Syntax:
-%   xb_write_tide(filename, time, tide)
+%   filename = xb_write_tide(xbSettings)
 %
 %   Input:
-%   filename  = filename of tide definition file
-%   time      = n vector containing time data
-%   tide      = nx2 matrix containing tide data
+%   xbSettings  = XBeach settings struct (name/value)
+%   varargin    = filename: filename of tide definition file
 %
 %   Output:
-%   none
+%   filename    = filename to be referred in parameter file
 %
 %   Example
-%   xb_read_tide(filename, time, tide)
+%   filename = xb_read_tide(xbSettings)
 %
 %   See also xb_read_params, xb_read_tide
 
@@ -63,10 +62,24 @@ function xb_write_tide(filename, time, tide)
 % $HeadURL$
 % $Keywords: $
 
+%% read options
+
+OPT = struct( ...
+    'filename', 'tide.txt' ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
 %% write file
 
+filename = OPT.filename;
+
 try
+    time = xbSettings(strcmpi('time',{xbSettings.name})).value;
+    tide = xbSettings(strcmpi('tide',{xbSettings.name})).value;
+    
     A = [time tide];
+    
     save(filename, '-ascii', 'A');
 catch
     error(['Could not create tide definition file [' filename ']']);
