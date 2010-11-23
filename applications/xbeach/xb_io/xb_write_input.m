@@ -88,6 +88,11 @@ if OPT.write_paths
                 case {'zs0file'}
                     % write tide
                     xbSettings(i).value = xb_write_tide(xb);
+                case {'xfile' 'yfile' 'depfile' 'ne_layer'}
+                    % write bathymetry
+                    xb(strcmpi('data',{xb.name})).name = xbSettings(i).name;
+                    [xfile yfile depfile ne_layer] = xb_write_bathy(xb);
+                    xbSettings(i).value = eval(xbSettings(i).name);
                 otherwise
                     % assume file to be a grid and try writing it
                     try

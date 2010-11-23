@@ -95,6 +95,8 @@ if OPT.read_paths
                     case {'zs0file'}
                         % read tide
                         value = xb_read_tide(fpath);
+                    %case {'xfile' 'yfile' 'depfile' 'ne_layer'}
+                        % read bathymetry
                     otherwise
                         % assume file to be a grid and try reading it
                         try

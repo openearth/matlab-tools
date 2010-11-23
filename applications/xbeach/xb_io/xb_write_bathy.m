@@ -1,30 +1,40 @@
-function varargout = xb_write_bathy(varargin)
-%XB_WRITE_BATHY  One line description goes here.
+function [xfile yfile depfile ne_layer] = xb_write_bathy(xbSettings, varargin)
+%XB_WRITE_BATHY  Writes XBeach bathymetry files from XBeach settings struct
 %
-%   More detailed description goes here.
+%   Writes XBeach bathymetry files x, y, depth and non-erodable layers
+%   based on a name/value formatted XBeach settings struct.
 %
 %   Syntax:
-%   varargout = xb_write_bathy(varargin)
+%   [xfile yfile depfile ne_layer] = xb_write_bathy(xbSettings, varargin)
 %
 %   Input:
-%   varargin  =
+%   xbSettings  = XBeach settings struct (name/value)
+%   varargin    = x_file:       filename of x definition file
+%                 y_file:       filename of y definition file
+%                 dep_file:     filename of depth definition file
+%                 nelayer_file: filename of non-erodable layer definition
+%                               file
 %
 %   Output:
-%   varargout =
+%   xfile       = filename of x definition file, if used
+%   yfile       = filename of y definition file, if used
+%   depfile     = filename of depth definition file, if used
+%   ne_layer    = filename of non-erodable layer definition file, if used
 %
 %   Example
-%   xb_write_bathy
+%   [xfile yfile depfile ne_layer] = xb_write_bathy(xbSettings)
 %
-%   See also 
+%   See also xb_read_bathy, xb_write_input
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
-%       Cursus Laptop
+%   Copyright (C) 2010 Deltares
+%       Bas Hoonhout
 %
-%       <EMAIL>	
+%       bas.hoonhout@deltares.nl	
 %
-%       <ADDRESS>
+%       Rotterdamseweg 185
+%       2629HD Delft
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -57,4 +67,48 @@ function varargout = xb_write_bathy(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% read options
+
+OPT = struct( ...
+    'x_file', 'x.grd', ...
+    'y_file', 'y.grd', ...
+    'dep_file', 'bed.dep', ...
+    'nelayer_file', 'nebed.dep' ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+%% write bathymetry files
+
+xfile = '';
+yfile = '';
+depfile = '';
+ne_layer = '';
+
+idx = strcmpi('x', {xbSettings.name})|strcmpi('xfile', {xbSettings.name});
+if any(idx)
+    xfile = OPT.x_file;
+    data = xbSettings(idx).value;
+    save(xfile, '-ascii', 'data');
+end
+
+idx = strcmpi('y', {xbSettings.name})|strcmpi('yfile', {xbSettings.name});
+if any(idx)
+    yfile = OPT.y_file;
+    data = xbSettings(idx).value;
+    save(yfile, '-ascii', 'data');
+end
+
+idx = strcmpi('z', {xbSettings.name})|strcmpi('depfile', {xbSettings.name});
+if any(idx)
+    depfile = OPT.dep_file;
+    data = xbSettings(idx).value;
+    save(depfile, '-ascii', 'data');
+end
+
+idx = strcmpi('ne', {xbSettings.name})|strcmpi('ne_layer', {xbSettings.name});
+if any(idx)
+    ne_layer = OPT.nelayer_file;
+    data = xbSettings(idx).value;
+    save(ne_layer, '-ascii', 'data');
+end
