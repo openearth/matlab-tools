@@ -30,6 +30,7 @@ function varargout=inivalue(fileName,varargin)
 % if the sectionName is empty, the entire file is returned as struct.
 %
 % Note that a *.url file is has the *.ini file format.
+% Optionally a struct with field 'commentchar' can be passed to skip comment lines.
 %
 %See also: textread, setProperty, xml_read, xml_load
 
@@ -38,12 +39,36 @@ function varargout=inivalue(fileName,varargin)
 % Created On: June 9, 2004
 % Created For: IAS Inc.
 
+OPT.commentchar = '';
+
 fid = 0;
 
 sectionName = [];
 keyName     = [];
-if nargin > 1; sectionName = varargin{1};end
-if nargin > 2; keyName     = varargin{2};end
+
+if nargin > 1; 
+if isstruct(varargin{1})
+   OPT = setproperty(OPT,varargin{1});
+else
+  sectionName = varargin{1};
+end
+end
+
+if nargin > 2; 
+if isstruct(varargin{2})
+   OPT = setproperty(OPT,varargin{2});
+else
+  keyName = varargin{2};
+end
+end
+
+if nargin > 3; 
+if isstruct(varargin{3})
+   OPT = setproperty(OPT,varargin{3});
+else
+  error('');
+end
+end
 
 if exist(fileName) ~= 2 
     error(['file finding file: ', fileName]);
@@ -57,12 +82,12 @@ end;
    
    sectionString = ['[' sectionName ']'];
    sectionFound  = 0;
-   rec           = fgetl(fid);
+   rec           = fgetl_no_comment_line(fid,OPT.commentchar);
    
    while sectionFound~=1
    
       if isempty(rec)
-         rec = fgetl(fid);
+         rec = fgetl_no_comment_line(fid,OPT.commentchar);
          continue;
       elseif rec==-1
          break;
@@ -82,12 +107,12 @@ end;
           
           sectionFound = 1;
           keyFound     = 0;
-          rec          = fgetl(fid);
+          rec          = fgetl_no_comment_line(fid,OPT.commentchar);
           
           while keyFound==0
 
              if isempty(rec)==1
-                  rec = fgetl(fid);
+                  rec = fgetl_no_comment_line(fid,OPT.commentchar);
                   continue;
               end;
               if rec==-1 % EOF
@@ -117,7 +142,7 @@ end;
                              break;
                           else
                              if isempty(sectionName)
-                             out.(section).(key) = keyValue;
+                             out.(mkvar(section)).(key) = keyValue; % in case section name has spaces etc. use mkvar()
                              else
                              out.(key) = keyValue;
                              end
@@ -127,13 +152,14 @@ end;
                   end;               
               end;
               
-              rec = fgetl(fid);
+              rec = fgetl_no_comment_line(fid,OPT.commentchar);
               if rec==-1
                   break
               end
               
               rec = strtrim(sscanf(rec, '%c')); % keep all whitespaces except leading and trailing
 
+	      if ~isempty(rec)
 	      if rec(1)=='[' % next section                   
 
                  if isempty(sectionName)
@@ -144,14 +170,17 @@ end;
                     section = sectionName;
                  end
 
-                 rec = fgetl(fid);
+                 rec = fgetl_no_comment_line(fid,OPT.commentchar);
 
+	      end
+	      else
+	         break
 	      end
 	      
           end; % keyFound
           break;
       end; % sectionString
-      rec = fgetl(fid);
+      rec = fgetl_no_comment_line(fid,OPT.commentchar);
    end; % sectionFound
    fclose(fid);
    varargout = {out};
