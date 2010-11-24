@@ -56,7 +56,7 @@ function DelftDashBoard
 Revision = '$Revision$';
 eval([strrep(Revision(Revision~='$'),':','=') ';']);
 
-handles.DelftDashBoardVersion=['1.00.' num2str(Revision)];
+handles.DelftDashBoardVersion=['1.01.' num2str(Revision)];
 handles.MatlabVersion=version;
 handles.debugMode=0;
 

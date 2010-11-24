@@ -4,7 +4,7 @@ function ddcompile(varargin)
 % ddcompile('model1','model2','toolbox1') with model1, model2 and toolbox the models/toolboxes to exclude.
 
 % exclude={''};
-% 
+%
 % for i=1:length(varargin)
 %     switch lower(varargin{i})
 %         case{'exclude'}
@@ -46,8 +46,8 @@ for i=1:length(flist)
                         fprintf(fid,'%s\n',fname);
                 end
             end
+    end
 end
-
 % Add toolboxes
 flist=dir('toolboxes');
 for i=1:length(flist)
