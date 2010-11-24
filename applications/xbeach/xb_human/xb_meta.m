@@ -66,6 +66,24 @@ if ~xb_check(xbSettings); error('Invalid XBeach settings structure'); end;
 
 xbSettings.date = datestr(now);
 
-if exist('func', 'var'); xbSettings.function = func; end;
-if exist('type', 'var'); xbSettings.type = type; end;
-if exist('file', 'var'); xbSettings.file = abspath(file); end;
+if exist('func', 'var')
+    xbSettings.function = func;
+end
+
+if exist('type', 'var')
+    xbSettings.type = type;
+end
+
+if exist('file', 'var')
+    if iscell(file)
+        for i = 1:length(file)
+            file{i} = abspath(file{i});
+        end
+        file = sprintf('%s\n', file{:});
+        file = file(1:end-1);
+    else
+        file = abspath(file);
+    end
+    
+    xbSettings.file = file;
+end

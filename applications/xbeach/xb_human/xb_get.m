@@ -73,9 +73,11 @@ end
 
 %% read variables
 
-varargout = {};
+varargout = num2cell(nan(size(vars)));
 
 for i = 1:length(vars)
     idx = strcmpi(vars{i}, {xbSettings.data.name});
-    varargout{i} = xbSettings.data(idx).value;
+    if any(idx)
+        varargout{i} = xbSettings.data(idx).value;
+    end
 end

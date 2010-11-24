@@ -1,27 +1,25 @@
-function [x y z ne] = xb_read_bathy(xfile, yfile, depfile, nefile)
+function xbSettings = xb_read_bathy(varargin)
 %XB_READ_BATHY  read xbeach bathymetry files
 %
 %   Routine to read xbeach bathymetry files.
 %
 %   Syntax:
-%   [x y z ne] = xb_read_bathy(xfile, yfile, depfile, nefile)
+%   xbSettings = xb_read_bathy(xfile, yfile, depfile, nefile)
 %
 %   Input:
-%   xfile   = file name of x-coordinates file (cross-shore)
-%   yfile   = file name of y-coordinates file (alongshore)
-%   depfile = file name of bathymetry file
-%   nefile  = file name of non erodible layer file
+%   varargin    = xfile:    file name of x-coordinates file (cross-shore)
+%                 yfile:    file name of y-coordinates file (alongshore)
+%                 depfile:  file name of bathymetry file
+%                 ne_layer: file name of non erodible layer file
 %
 %   Output:
-%   x       = x-coordinates
-%   y       = y-coordinates
-%   z       = bathymetry
-%   ne      = non-erodible layer
+%   xbSettings  = XBeach settings structure array with fields 'name' and 
+%                 'value'
 %
 %   Example
-%   xb_read_bathy
+%   xbSettings = xb_read_bathy('xfile', xfile, 'yfile', yfile)
 %
-%   See also 
+%   See also xb_write_bathy, xb_read_input
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -66,23 +64,46 @@ function [x y z ne] = xb_read_bathy(xfile, yfile, depfile, nefile)
 % $HeadURL$
 % $Keywords: $
 
-%%
-if nargin > 0 && exist(xfile, 'file')
+%% read options
+
+OPT = struct( ...
+    'xfile', '', ...
+    'yfile', '', ...
+    'depfile', '', ...
+    'ne_layer', '' ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+%% create xbeach settings struct
+
+xbSettings = xb_empty();
+
+files = {};
+
+if exist(OPT.xfile, 'file')
     % read file with x-coordinates (cross-shore)
-    x = load(xfile);
+    xbSettings = xb_set(xbSettings, 'xfile', load(OPT.xfile));
+    files = [files {OPT.xfile}];
 end
 
-if nargin > 1 && exist(yfile, 'file')
+if exist(OPT.yfile, 'file')
     % read file with y-coordinates (alongshore)
-    y = load(yfile);
+    xbSettings = xb_set(xbSettings, 'yfile', load(OPT.yfile));
+    files = [files {OPT.yfile}];
 end
 
-if nargin > 2 && exist(depfile, 'file')
+if exist(OPT.depfile, 'file')
     % read bathymetry file
-    z = load(depfile);
+    xbSettings = xb_set(xbSettings, 'depfile', load(OPT.depfile));
+    files = [files {OPT.depfile}];
 end
 
-if nargin > 3 && exist(nefile, 'file')
+if exist(OPT.ne_layer, 'file')
     % read non-erodible layer file
-    ne = load(nefile);
+    xbSettings = xb_set(xbSettings, 'ne_layer', load(OPT.ne_layer));
+    files = [files {OPT.ne_layer}];
 end
+
+% set meta data
+xbSettings = xb_meta(xbSettings, mfilename, 'bathymetry', files);

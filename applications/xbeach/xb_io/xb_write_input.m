@@ -93,8 +93,7 @@ if OPT.write_paths
                 case {'xfile' 'yfile' 'depfile' 'ne_layer'}
                     % write bathymetry
                     xb = xb_set(xb, xbSettings.data(i).name, xb_get(xb, 'data'));
-                    [xfile yfile depfile ne_layer] = xb_write_bathy(xb);
-                    xbSettings.data(i).value = eval(xbSettings.data(i).name);
+                    xbSettings.data(i).value = xb_write_bathy(xb);
                 otherwise
                     % assume file to be a grid and try writing it
                     try
