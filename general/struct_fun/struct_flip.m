@@ -112,5 +112,9 @@ end
 keys = {s.(key)};
 vals = {s.(value)};
 
-s = cell2struct(vals, keys, 2);
+if ~isempty(keys)
+    s = cell2struct(vals, keys, 2);
+else
+    s = struct();
+end
 
