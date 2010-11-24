@@ -98,7 +98,7 @@ xbSettings = xb_empty();
 xbSettings = xb_set(xbSettings, 'time', {bcendtime 's'}, 'duration', {rt 's'}, ...
     'timestep', {dt 's'}, 'Trep', {trep 's'}, 'main_angle', {mainang 'degrees'}, ...
     'data', {data 'J/m^2'});
-xbSettings = xb_meta(xbSettings, mfilename, 'boundaryconditions');
+xbSettings = xb_meta(xbSettings, mfilename, 'boundaryconditions', filename);
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

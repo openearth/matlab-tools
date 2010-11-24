@@ -1,4 +1,4 @@
-function xbSettings = xb_meta(xbSettings, func, type)
+function xbSettings = xb_meta(xbSettings, func, type, file)
 %XB_META  Sets meta data of XBeach settings structure
 %
 %   Sets meta data of XBeach settings structure.
@@ -68,3 +68,4 @@ xbSettings.date = datestr(now);
 
 if exist('func', 'var'); xbSettings.function = func; end;
 if exist('type', 'var'); xbSettings.type = type; end;
+if exist('file', 'var'); xbSettings.file = abspath(file); end;

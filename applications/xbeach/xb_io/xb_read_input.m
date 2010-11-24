@@ -116,4 +116,4 @@ if OPT.read_paths
 end
 
 % set meta data
-xbSettings = xb_meta(xbSettings, mfilename, 'input');
+xbSettings = xb_meta(xbSettings, mfilename, 'input', filename);

@@ -112,5 +112,9 @@ values = values(idx);
 
 % convert parameter cells to xbeach setting structure
 xbSettings = xb_empty();
-xbSettings = xb_meta(xbSettings, mfilename, 'params');
-xbSettings.data = cell2struct([names; values]', {'name' 'value'}, 2);
+
+for i = 1:length(names)
+    xbSettings = xb_set(xbSettings, names{i}, values{i});
+end
+
+xbSettings = xb_meta(xbSettings, mfilename, 'params', filename);

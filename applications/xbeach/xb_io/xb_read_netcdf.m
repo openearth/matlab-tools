@@ -59,13 +59,15 @@ function variables = xb_read_netcdf(fname, varargin)
 
 
 %% 
-variables = struct();
+variables = xb_empty();
 
 info = nc_info(fname);
 % Read all variables
 for (i=1:length({info.Dataset.Name}))
-    variables(i).name = info.Dataset(i).Name;
-    variables(i).value = nc_varget(fname, info.Dataset(i).Name);
+    variables.data(i).name = info.Dataset(i).Name;
+    variables.data(i).value = nc_varget(fname, info.Dataset(i).Name);
 end
 
+% set meta data
+variables = xb_meta(variables, mfilename, 'output', fname);
 

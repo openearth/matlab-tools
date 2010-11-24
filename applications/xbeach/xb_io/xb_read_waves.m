@@ -95,7 +95,7 @@ switch filetype
 end
 
 % set meta data
-xbSettings = xb_meta(xbSettings, mfilename, 'waves');
+xbSettings = xb_meta(xbSettings, mfilename, 'waves', filename);
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

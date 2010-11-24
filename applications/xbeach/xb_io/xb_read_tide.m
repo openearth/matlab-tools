@@ -86,4 +86,4 @@ if exist(filename, 'file')
 end
 
 % set meta data
-xbSettings = xb_meta(xbSettings, mfilename, 'tide');
+xbSettings = xb_meta(xbSettings, mfilename, 'tide', filename);

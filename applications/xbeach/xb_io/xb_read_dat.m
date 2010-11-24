@@ -66,7 +66,7 @@ function variables = xb_read_dat(fname, varargin)
 
 %%
 
-variables = struct();
+variables = xb_empty();
 
 options=[' 3Dwave';' 3Dsed ';' 3Dbed ';' 4Dbed '];
 
@@ -86,14 +86,15 @@ else
 end
 
 names=dir([fname filesep '*.dat']);
-for (i=1:length(names))
-    variables(i).name = names(i).name(1:length(names(i).name)-4);
-end
+% for (i=1:length(names))
+%    variables.data(i).name = names(i).name(1:length(names(i).name)-4);
+% end
 
 
 for (i=1:length(names))
-% First open file
-    filename = [variables(1).name '.dat'];
+    % First open file
+    varname = names(i).name(1:length(names(i).name)-4);
+    filename = [varname '.dat'];
     fullfilename = fullfile(fname, filename);
     fid=fopen(fullfile(fname, filename),'r');
     temp=fread(fid,'double');
@@ -186,8 +187,13 @@ for (i=1:length(names))
         end
     end
 
-    variables(i).value = Var;
+    %variables.data(i).value = Var;
+    variables = xb_set(variables, varname, Var);
 end
+
+% set meta data
+variables = xb_meta(variables, mfilename, 'output', fname);
+
 %%
 function [Var info]=read2Dout(fullfilename,XBdims)
 % Var=readvar(fullfilename,XBdims,nodims) or

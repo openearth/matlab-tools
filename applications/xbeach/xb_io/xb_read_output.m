@@ -71,5 +71,7 @@ else
   variables = xb_read_netcdf(fname, varargin);
 end
 
+% set meta data
+variables = xb_meta(variables, mfilename, 'output', fname);
 
 %%
