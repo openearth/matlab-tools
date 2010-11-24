@@ -80,29 +80,42 @@ xbSettings = xb_empty();
 
 filetype = xb_get_wavefiletype(filename);
 
+xbSettings = xb_set(xbSettings, 'type_', filetype);
+
 switch filetype
     case 'filelist'
-        xbSettings.data = read_filelist(filename);
+        [names values] = read_filelist(filename);
     case 'jonswap'
-        xbSettings.data = read_jonswap(filename);
+        [names values] = read_jonswap(filename);
     case 'jonswap_mtx'
-        xbSettings.data = read_jonswap_mtx(filename);
+        [names values] = read_jonswap_mtx(filename);
     case 'vardens'
-        xbSettings.data = read_vardens(filename);
+        [names values] = read_vardens(filename);
     otherwise
         % unsupported wave definition file, simply dump contents
-        xbSettings.data = read_unknown(filename);
+        [names values] = read_unknown(filename);
 end
+
+for i = 1:length(names)
+    xbSettings = xb_set(xbSettings, names{i}, values{i});
+end
+
+xbSettings = consolidate_settings(xbSettings);
 
 % set meta data
 xbSettings = xb_meta(xbSettings, mfilename, 'waves', filename);
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function xbSettings = read_filelist(filename)
+function [names values] = read_filelist(filename)
 
 tlength = 1;
-xbSettings = struct('name',{'type_' 'duration' 'timestep'},'value',[]);
+
+names = [];
+values = [];
+
+duration = [];
+timestep = [];
 
 fdir = fileparts(filename);
 
@@ -112,10 +125,8 @@ while ~feof(fid)
     
     if isempty(fline); continue; end;
     
-    [duration timestep fname] = strread(fline, '%f%f%s', 'delimiter', ' ');
+    [duration(tlength) timestep(tlength) fname] = strread(fline, '%f%f%s', 'delimiter', ' ');
 
-    xbSettings(2).value(tlength) = duration;
-    xbSettings(3).value(tlength) = timestep;
     fname = fullfile(fdir, [fname{:}]);
 
     if exist(fname, 'file')
@@ -123,25 +134,44 @@ while ~feof(fid)
         
         switch filetype
             case 'jonswap'
-                xb = read_jonswap(fname);
+                [n v] = read_jonswap(fname);
             case 'vardens'
-                xb = read_vardens(fname);
+                [n v] = read_vardens(fname);
             otherwise
                 % unsupported wave definition file, simply dump contents
-                xb = read_unknown(fname);
+                [n v] = read_unknown(fname);
         end
         
-        xbSettings = add_setting(xbSettings, xb, tlength);
+        for i = 1:length(n)
+            idx = strcmpi(n{i}, names);
+            if ~any(idx)
+                idx = length(names)+1;
+                names = [names {n{i}}];
+            end
+            if ischar(v{i})
+                tmp = values{idx};
+                tmp{tlength} = v{i};
+                values{idx} = tmp;
+            else
+                switch sum(size(v{i})>1)
+                    case 0
+                        values{idx}(tlength) = v{i};
+                    case 1
+                        values{idx}(:,tlength) = v{i};
+                    case 2
+                        values{idx}(:,:,tlength) = v{i};
+                end
+            end
+        end
     end
 
     tlength = tlength + 1;
 end
 
-xbSettings = consolidate_settings(xbSettings);
+names = [names {'duration' 'timestep'}];
+values = [values {duration timestep}];
 
-function xbSettings = read_jonswap(filename)
-
-xbSettings = struct('name','type_','value','jonswap');
+function [names values] = read_jonswap(filename)
 
 fid = fopen(filename);
 txt = fread(fid, '*char')';
@@ -152,45 +182,41 @@ matches = regexp(txt, '\s*(?<name>.*?)\s*=\s*(?<value>.*?)\s*\n', 'names', 'dote
 names = {matches.name};
 values = num2cell(str2double({matches.value}));
 
-% convert frequency to period
 idx = strcmpi('fp', names);
 if any(idx)
     names = [names {'Tp'}];
     values = [values {1/values{idx}}];
 end
 
-xbSettings = add_setting(xbSettings, struct('name',names,'value',values));
-
-function xbSettings = read_jonswap_mtx(filename)
+function [names values] = read_jonswap_mtx(filename)
 
 tlength = 1;
-xbSettings = struct('name','type_','value','jonswap_mtx');
+xbSettings = xb_empty();
 
 names = {'Hm0' 'Tp' 'dir' 'gammajsp' 's' 'duration' 'timestep'};
-values = [];
+values = {};
 
 fid = fopen(filename);
 while ~feof(fid)
     fline = fgetl(fid);
     if isempty(fline); continue; end;
     
-    values = num2cell(strread(fline, '%f', length(names), 'delimiter', ' '))';
-    xbSettings = add_setting(xbSettings, struct('name',names,'value',values), tlength);
+    vals = strread(fline, '%f', length(names), 'delimiter', ' ')';
+    
+    for i = 1:length(names)
+        values{i}(tlength) = vals(i);
+    end
+    
     tlength = tlength+1;
 end
 fclose(fid);
 
-xbSettings = consolidate_settings(xbSettings);
-
-function xbSettings = read_vardens(filename)
-
-xbSettings = struct('name','type_','value','vardens');
+function [names values] = read_vardens(filename)
 
 dims = [Inf Inf];
 
-freqs = [];
-dirs = [];
-vardens = [];
+names = {'freqs' 'dirs' 'vardens'};
+values = cell(size(names));
 
 lcount = 1;
 fid = fopen(filename);
@@ -201,75 +227,45 @@ while ~feof(fid)
     if lcount == 1
         dims(1) = str2double(fline);
     elseif lcount <= dims(1)+1
-        freqs(lcount-1) = str2double(fline);
+        values{1}(lcount-1) = str2double(fline);
     elseif lcount == dims(1)+2
         dims(2) = str2double(fline);
     elseif lcount <= sum(dims)+2
-        dirs(lcount-dims(1)-2) = str2double(fline);
+        values{2}(lcount-dims(1)-2) = str2double(fline);
     else
-        vardens(lcount-sum(dims)-2,:) = strread(fline, '%f', dims(1), 'delimiter', ' ')';
+        values{3}(lcount-sum(dims)-2,:) = strread(fline, '%f', dims(1), 'delimiter', ' ')';
     end
     
     lcount = lcount+1;
 end
 fclose(fid);
 
-names = {'freqs' 'dirs' 'vardens'};
-values = {freqs dirs vardens};
+function [names values] = read_unknown(filename)
 
-xbSettings = add_setting(xbSettings, struct('name',names,'value',values));
-
-function xbSettings = read_unknown(filename)
-
-xbSettings = struct('name',{'type_' 'contents'},'value',{'unknown',''});
+names = {'contents'};
 
 fid = fopen(filename);
-xbSettings(2).value = fread(fid, '*char')';
+values = {fread(fid, '*char')'};
 fclose(fid);
-
-function xbSettings = add_setting(xbSettings, setting, t)
-
-if ~exist('t', 'var'); t = 1; end;
-
-for i = 1:length(setting)
-    idx = strcmpi(setting(i).name, {xbSettings.name});
-    
-    if ~any(idx)
-        idx = length(xbSettings)+1;
-        xbSettings(idx).name = setting(i).name;
-    end
-    
-    if ischar(setting(i).value)
-        xbSettings(idx).value{t} = setting(i).value;
-    else
-        switch sum(size(setting(i).value)>1)
-            case 0
-                xbSettings(idx).value(t) = setting(i).value;
-            case 1
-                xbSettings(idx).value(:,t) = setting(i).value;
-            case 2
-                xbSettings(idx).value(:,:,t) = setting(i).value;
-        end
-    end
-end
 
 function xbSettings = consolidate_settings(xbSettings)
 
-for i = 1:length(xbSettings)
-    ndo = sum(size(xbSettings(i).value)>1);
-    ndu = sum(size(unique(xbSettings(i).value))>1);
+for i = 1:length(xbSettings.data)
+    A = xbSettings.data(i).value;
+    S = ones(size(size(A))); S(end) = size(A,ndims(A));
     
-    if ndo - ndu == 1 || ndo == 0
-        if iscell(xbSettings(i).value)
-            xbSettings(i).value = xbSettings(i).value{1};
+    % determine if last dimension is constant
+    if sum(sum(sum(abs(A-repmat(sum(A,ndims(A))/S(end),S)))))<1e-10
+        if iscell(A)
+            xbSettings.data(i).value = A{1};
         else
-            switch ndo
+            switch sum(size(A)>1)
                 case 1
-                    xbSettings(i).value = xbSettings(i).value(1);
+                    xbSettings.data(i).value = A(1);
                 case 2
-                    xbSettings(i).value = xbSettings(i).value(:,1);
+                    xbSettings.data(i).value = A(:,1);
                 case 3
-                    xbSettings(i).value = xbSettings(i).value(:,:,1);
+                    xbSettings.data(i).value = A(:,:,1);
             end
         end
     end
