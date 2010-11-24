@@ -45,8 +45,8 @@ function varargout = readMap(ncfile,varargin)
 
    OPT.face      = 0; % whether to load face data 
    OPT.zwl       = 1; % whether to load data 
-   OPT.sal       = 1; % whether to load data 
-   OPT.vel       = 1; % whether to load data 
+   OPT.sal       = 0; % whether to load data 
+   OPT.vel       = 0; % whether to load data 
 
    if nargin==0
       varargout = {OPT};

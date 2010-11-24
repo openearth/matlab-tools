@@ -13,18 +13,20 @@ function G = readNet(varargin)
 % The Delft3D-FM netCDF output specification has been published at
 % the Deltares wiki: http://public.deltares.nl/display/NETCDF/netCDF.
 %
-% Read/plot grid
+% Read/plot grid (no time)
 %  delft3dfm.readNet          - Reads network data of unstructured net.
 %  delft3dfm.plotNet          - Plot an unstructured grid.
+%  delft3dfm.plotNetkml       - Plot an unstructured grid as Google Earth kml file (beta).
 %  delft3dfm.peri2cell        - turn perimeter matrix into cell
 %
-% Read/plot map (timestep)
+% Read/plot map (per timestep)
 %  delft3dfm.readMap          - Reads solution data on an unstructured net.
 %  delft3dfm.plotMap          - Plot an unstructured map.
+%  delft3dfm.plotMapkml       - Plot an unstructured map as Google Earth kml file (beta).
 %
 % Convert delft3d-flow model to  Delft3D-FM
 %  delft3dfm.mdf2mdu          - convert Delft3D-flow model input to delft3dfm model input
-%  delft3dfm.opendap2obs      - get list of observation points from netCDF time series collection
-%  delft3dfm.analyseHis       - validate water levels with OPeNDAP database for time series & t_tide
+%  delft3dfm.opendap2obs      - get list of observation points from netCDF (OPeNDAP) time series collection
+%  delft3dfm.analyseHis       - validate water levels with netCDF (OPeNDAP) time series collection for time series & t_tide
 %
 % See also: delft3d

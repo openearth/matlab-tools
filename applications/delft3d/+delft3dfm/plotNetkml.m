@@ -1,21 +1,21 @@
 function varargout = plotNet(varargin)
-%plotNet  Plot an delft3dfmtured grid.
+%plotNetkml  Plot an delft3dfmtured grid in Google Earth
 %
-%     G  = delft3dfm.readNet(ncfile) 
-%    <h> = delft3dfm.plotNet(G     ,<keyword,value>) 
+%     G  = delft3dfm.readNetkml(ncfile) 
+%    <h> = delft3dfm.plotNetkml(G     ,<keyword,value>) 
 %          % or 
-%    <h> = delft3dfm.plotNet(ncfile,<keyword,value>) 
+%    <h> = delft3dfm.plotNetkml(ncfile,<keyword,value>) 
 %
 %   plots an delft3dfm unstructured net (centers, corners, contours),
-%   optionally the handles h are returned.
+%   as kml file.
 %
 %   The following optional <keyword,value> pairs have been implemented:
 %    * axis: only grid inside axis is plotted, use [] for while grid.
 %            for axis to be be a polygon, supply a struct axis.x, axis.y.
-%   Cells with plot() properties, e.g. {'r*'}, if [] corners are not plotted.
-%    * cor
-%    * cen
-%    * peri
+%   Struct with KML properties, if [] they are not plotted.
+%    * cor: a struct with KMLmarker properties for corners
+%    * cen: a struct with KMLmarker properties for centers (bug still: cor overrules cen in Google Earth)
+%    * peri: a struct with KMLline properties for connection line
 %   Defaults values can be requested with OPT = delft3dfm.plotNet().
 %
 %   Note: all flow cells are plotted as one NaN-separated line: fast.
@@ -24,9 +24,9 @@ function varargout = plotNet(varargin)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
-%       Arthur van Dam & Gerben de Boer
+%       Gerben de Boer
 %
-%       <Arthur.vanDam@deltares.nl>; <g.j.deboer@deltares.nl>
+%       <g.j.deboer@deltares.nl>
 %
 %       Deltares
 %       P.O. Box 177
@@ -61,9 +61,19 @@ function varargout = plotNet(varargin)
 
    OPT.axis = []; % [x0 x1 y0 y1] or polygon OPT.axis.x, OPT.axis.y
    % arguments to plot(x,y,OPT.keyword{:})
-   OPT.cen  = {'b.'};
-   OPT.cor  = {'y.','markersize',20};
-   OPT.peri = {'k-'};
+   OPT.fileName = [];
+   OPT.cen = struct(... % KMLpatch3()
+         'iconnormalState','circle-white.png',...
+        'colornormalState',[0 0 1],... % blue
+        'scalenormalState',.1,...
+     'scalehighlightState',0); % no mouse-over
+   OPT.cor  = struct(... % KMLpatch3()
+         'iconnormalState','circle-white.png',...
+        'colornormalState',[1 1 0],... % yellow
+        'scalenormalState',.1,...
+     'scalehighlightState',0); % no mouse-over
+   OPT.peri = struct('lineWidth',1); % KMLline
+   OPT.epsg = 28992;
    
    if nargin==0
       varargout = {OPT};
@@ -74,19 +84,25 @@ function varargout = plotNet(varargin)
       G        = delft3dfm.readNet(ncfile);
       else
       G        = varargin{1};
+      ncfile   = G.file.name;
       end
       OPT = setProperty(OPT,varargin{2:end});
    end
-   
+
    if isnumeric(OPT.axis) & ~isempty(OPT.axis) % axis vector 2 polygon
    tmp        = OPT.axis;
    OPT.axis.x = tmp([1 2 2 1]);
    OPT.axis.y = tmp([3 3 4 4]);clear tmp
    end
+   
+   sourceFiles = {};
 
 %% plot corners ([= nodes)
 
    if isfield(G,'cor') & ~isempty(OPT.cor)
+   
+     % TO DO check whether x and y are not already spherical 
+    [cor.lon,cor.lat] = convertCoordinates(G.cor.x,G.cor.y,'CS1.code',OPT.epsg,'CS2.code',4326);
    
      if isempty(OPT.axis)
         cor.mask = 1:G.cor.n;
@@ -94,23 +110,34 @@ function varargout = plotNet(varargin)
         cor.mask = inpolygon(G.cor.x,G.cor.y,OPT.axis.x,OPT.axis.y);
      end
      
-     h.cor  = plot(G.cor.x(cor.mask),G.cor.y(cor.mask),OPT.cor{:});
-     hold on
+     sourceFiles{end+1} = [tempname(fileparts(ncfile)),'_cor.kml'];
+     OPT.cor.fileName = sourceFiles{end};
+     KMLmarker(cor.lat(cor.mask),cor.lon(cor.mask),OPT.cor);
 
    end
 
 %% plot centres (= flow cells = circumcenters)
 
-   if isfield(G,'cen') & ~isempty(OPT.cen)
+   if (isfield(G,'cen')  & ~isempty(OPT.cen) ) | ...
+      (isfield(G,'peri') & ~isempty(OPT.peri))
    
+     % TO DO check whether x and y are not already spherical 
+    [cen.lon,cen.lat] = convertCoordinates(G.cen.x,G.cen.y,'CS1.code',OPT.epsg,'CS2.code',4326);
      if isempty(OPT.axis)
         cen.mask = 1:G.cen.n;
      else
         cen.mask = inpolygon(G.cen.x,G.cen.y,OPT.axis.x,OPT.axis.y);
      end
      
-     h.cen = plot(G.cen.x(cen.mask),G.cen.y(cen.mask),OPT.cen{:});
-     hold on
+    %cen.mask = cen.mask(1:1e4);
+     
+   end
+   
+   if isfield(G,'cen') & ~isempty(OPT.cen)
+       
+     sourceFiles{end+1} = [tempname(fileparts(ncfile)),'_cen.kml'];
+     OPT.cen.fileName = sourceFiles{end};
+     KMLmarker(cen.lat(cen.mask),cen.lon(cen.mask),OPT.cen);
    
    end
 
@@ -122,7 +149,7 @@ function varargout = plotNet(varargin)
 %  After plotting this is faster than patches (only one figure child handle).
 
    if isfield(G,'peri') & ~isempty(OPT.peri)
-
+       
      peri.mask1 = find(cen.mask(G.cen.LinkType(cen.mask)==1));
      peri.mask  = find(cen.mask(G.cen.LinkType(cen.mask)~=1)); % i.e. 0=closed or 2=between 2D elements
      
@@ -135,19 +162,14 @@ function varargout = plotNet(varargin)
         y    = poly_join({G.peri.y{peri.mask}});
      end
      
-     plot(x,y,OPT.peri{:});   
-     hold on
+    % TO DO check whether x and y are not already spherical 
+    [cor.lon,cor.lat] = convertCoordinates(x,y,'CS1.code',OPT.epsg,'CS2.code',4326);
+     
+     sourceFiles{end+1} = [tempname(fileparts(ncfile)),'_peri.kml'];
+     OPT.peri.fileName = sourceFiles{end};
+     disp('plotting KMLline segments, please wait ...')
+     h = KMLline(cor.lat,cor.lon,OPT.peri);   
    
    end
    
-%% lay out
-
-   hold on
-   axis equal
-   grid on
-   
-%% return handles
-
-   if nargout==1
-      varargout = {h};
-   end
+   KMLmerge_files('fileName',OPT.fileName,'sourceFiles',sourceFiles,'deleteSourceFiles',0)

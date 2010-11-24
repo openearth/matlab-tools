@@ -84,7 +84,7 @@ function varargout = analyseHis(varargin)
    OPT.ncbase  = 'http://opendap.deltares.nl/thredds/dodsC/opendap\rijkswaterstaat/waterbase/sea_surface_height';
    OPT.datelim = [];
    OPT.datestr = 'mmm'; % for timeaxis
-   OPT.datefmt = 'yyyy-mm-dd_'; %  make empty if you do not want date in filename
+   OPT.datefmt = 'yyyy-mm-dd'; %  make empty if you do not want date in filename
    OPT.t_tide  = 1;
 
    OPT.pause   = 0;
@@ -153,7 +153,12 @@ for ist=1:length(M.name)
     
 %% plot time series
 
-    OPT.ext = [datestr(OPT.datelim(1),OPT.datefmt),datestr(OPT.datelim(end),OPT.datefmt)];
+    OPT.ext = [datestr(OPT.datelim(1),OPT.datefmt),'_',datestr(OPT.datelim(end),OPT.datefmt)];
+    if length(OPT.ext)>1
+       OPT.ext = [OPT.ext,'_']
+    else
+       OPT.ext = '';
+    end
 
     figure(FIG(1));clf
     
@@ -168,7 +173,7 @@ for ist=1:length(M.name)
     timeaxis(OPT.datelim,'fmt',OPT.datestr,'tick',-1,'type','text'); %datetick('x')
     text    (1,0,'Created with OpenEarthTools <www.OpenEarth.eu>','rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
     
-    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,filename(OPT.nc),'_',OPT.ext,M.name{ist}]) % ,'v','t'
+    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,OPT.ext,filesep,filename(OPT.nc),'_',OPT.ext,M.name{ist}]) % ,'v','t'
     
     %% plot timeseries difference
 
@@ -183,7 +188,7 @@ for ist=1:length(M.name)
     timeaxis(OPT.datelim,'fmt',OPT.datestr,'tick',-1,'type','text'); %datetick('x')
     text    (1,0,'Created with OpenEarthTools <www.OpenEarth.eu>','rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
     
-    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,filename(OPT.nc),'_',OPT.ext,M.name{ist},'_diff']) % ,'v','t'
+    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,OPT.ext,filesep,filename(OPT.nc),'_',OPT.ext,M.name{ist},'_diff']) % ,'v','t'
 
 %% plot time series scatter
 
@@ -220,7 +225,7 @@ for ist=1:length(M.name)
     end
     text    (1,0,['Created with OpenEarthTools <www.OpenEarth.eu>, ',OPT.ext],'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
     
-    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,filename(OPT.nc),'_',OPT.ext,M.name{ist},'_scatter']) % ,'v','t'
+    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,OPT.ext,filesep,filename(OPT.nc),'_',OPT.ext,M.name{ist},'_scatter']) % ,'v','t'
     
 %%  perform tidal analysis
 

@@ -1,36 +1,32 @@
-function varargout = plotMap(varargin)
-%plotMap Plot an unstructured map.
+function varargout = plotMapKML(varargin)
+%plotMapkml Plot an unstructured map.
 %
-%     G  = delft3dfm.readNet(ncfile) 
-%     D  = delft3dfm.readMap(ncfile,<it>) 
-%    <h> = delft3dfm.plotMap(G,D,<keyword,value>) 
+%     G  = delft3dfm.readNet   (ncfile) 
+%     D  = delft3dfm.readMap   (ncfile,<it>) 
+%    <h> = delft3dfm.plotMapkml(G,D,<keyword,value>) 
 %          % or 
-%    <h> = delft3dfm.plotMap(ncfile,<it>,<keyword,value>);
+%    <h> = delft3dfm.plotMapkml(ncfile,<it>,<keyword,value>);
 %
 %   plots an delft3dfmtured map, optionally the handles h are returned.
 %   For plotting multiple timesteps it is most efficient
-%   to read the unstructured grid G once, and update D and plotMap.
+%   to read the unstructured grid G once, and update D and plotMapkml.
 %
 %   The following optional <keyword,value> pairs have been implemented:
 %    * axis: only grid inside axis is plotted, use [] for while grid.
 %            for axis to be be a polygon, supply a struct axis.x, axis.y.
 %    * parameter: field in D.cen to plot (default 1st field 'zwl')
 %   For user-defined paramter: simply add them to D before calling plotMapkml.
-%   Cells with plot() properties, e.g. {'EdgeColor','k'}
-%    * patch
-%   Defaults values can be requested with OPT = delft3dfm.plotNet().
+%   Defaults values can be requested with OPT = delft3dfm.plotMapKML().
 %
 %   Note: every flow cell is plotted individually as a patch: slow.
-%
-%   Apply any plot lay-out before plotMap: much fatser.
 %
 %   See also delft3dfm, delft3d
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
-%       Arthur van Dam & Gerben de Boer
+%       Gerben de Boer
 %
-%       <Arthur.vanDam@deltares.nl>; <g.j.deboer@deltares.nl>
+%       <g.j.deboer@deltares.nl>
 %
 %       Deltares
 %       P.O. Box 177
@@ -60,11 +56,18 @@ function varargout = plotMap(varargin)
 
 %% input
 
-   OPT.axis      = []; % [x0 x1 y0 y1] or polygon OPT.axis.x, OPT.axis.y
+   OPT.axis         = []; % [x0 x1 y0 y1] or polygon OPT.axis.x, OPT.axis.y
    % arguments to plot(x,y,OPT.keyword{:})
-   OPT.patch     = {'EdgeColor','none','LineStyle','-'};
-   OPT.parameter = [];
-   OPT.quiver    = 1;
+   OPT.patch        = {'EdgeColor','none','LineStyle','-'};
+   OPT.parameter    = [];
+   OPT.quiver       = 1;
+   OPT.fileName     = '';
+   % good value for plotting z (depth)
+   OPT.colorMap     = @(m)colormap_cpt('bathymetry_vaklodingen',m);
+   OPT.colorSteps   = 500;
+   OPT.CBcolorTitle = 'depth [m]';
+   OPT.cLim         = [-50 25];
+   OPT.epsg         = 28992;
 
    if nargin==0
       varargout = {OPT};
@@ -75,6 +78,7 @@ function varargout = plotMap(varargin)
       G        = delft3dfm.readNet(ncfile);
       else
       G        = varargin{1};
+      ncfile   = G.file.name;
       end
       
       nextarg = 3;
@@ -124,35 +128,39 @@ if isfield(G,'peri')
    peri.mask1 = find(cen.mask(G.cen.LinkType(cen.mask)==1));
    peri.mask  = find(cen.mask(G.cen.LinkType(cen.mask)~=1)); % i.e. 0=closed or 2=between 2D elements
    
+  % TO DO check whether x and y are not already spherical 
+  [G.peri.lon,G.peri.lat] = convertCoordinates(G.peri.x,G.peri.y,'CS1.code',OPT.epsg,'CS2.code',4326);
+   
    if ~iscell(G.peri.x) % can also be done in readNet
-     [x,y] = delft3dfm.peri2cell(G.peri.x(:,peri.mask),G.peri.y(:,peri.mask));
+     [lon,lat] = delft3dfm.peri2cell(G.peri.lon(:,peri.mask),G.peri.lat(:,peri.mask));
    else
-      x = G.peri.x;
-      y = G.peri.y;
+      lon = G.peri.lon;
+      lat = G.peri.lat;
    end
-
-%% lay out !!!! before plotting patches: much faster !!!
-
-   hold on
-   axis equal
-   grid on
-   title(D.datestr)
 
 %% plot
 
-   h = repmat(0,[1 length(x)]);
-   for icen=1:length(x)
-      h(icen) = patch(x{icen},y{icen},D.cen.(OPT.parameter)(peri.mask(icen)));
-   end
-
-  %shading flat; % not needed an slow
-  
-   set(h,OPT.patch{:});
+   nn=length(lon);
    
+   c = D.cen.(OPT.parameter)(peri.mask);
+   
+   clf
+   plot(c)
+   
+   % TO DO adapt KMLpatch3 to accept constant z (value of 'clamptoground')
+   
+   KMLpatch3({lat{1:nn}},{lon{1:nn}},{lon{1:nn}},c(1:nn),...
+      'fileName',OPT.fileName,...
+      'colorMap',OPT.colorMap,...
+    'colorSteps',OPT.colorSteps,...
+  'CBcolorTitle',OPT.CBcolorTitle,...
+     'fillAlpha',1,...
+          'cLim',OPT.cLim,...
+       'extrude',0);
 end
    
 %% return handles
 
 if nargout==1
-   varargout = {h};
+   varargout = {[]};
 end
