@@ -49,8 +49,8 @@ function testresult = detran_d3dTransFromHis_multi_test()
 % $HeadURL$
 % $Keywords: $
 try
-    [pat, nam]=fileparts(which('detran'));
-    file = [pat filesep 'testmodel' filesep 'multi' filesep 'run01' filesep 'trih-example.dat'];
+    [pat, nam]=fileparts(which('detran_test_dir'));
+    file = [pat filesep 'testmodel_testmodel' filesep 'multi' filesep 'run01' filesep 'trih-example.dat'];
     weightfile = [pat filesep 'testmodel' filesep 'multi' filesep 'weights.tek'];
     d=detran_d3dTransFromHis_multi('mean',file,weightfile,0);
     testresult = true;

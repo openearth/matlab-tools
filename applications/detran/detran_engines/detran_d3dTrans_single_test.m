@@ -55,8 +55,8 @@ function testresult = detran_d3dTrans_single_test()
 %% $RunCode
 % Write test code here
 try
-    [pat, nam]=fileparts(which('detran'));
-    file = [pat filesep 'testmodel' filesep 'single' filesep 'trim-example.dat'];
+    [pat, nam]=fileparts(which('detran_test_dir'));
+    file = [pat filesep 'detran_testmodel' filesep 'single' filesep 'trim-example.dat'];
     d=detran_d3dTrans_single('mean',file,0);
     testresult = true;
 catch

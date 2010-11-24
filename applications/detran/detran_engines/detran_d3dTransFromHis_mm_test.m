@@ -50,8 +50,8 @@ function testresult = detran_d3dTransFromHis_mm_test()
 % $Keywords: $
 
 try
-    [pat, nam]=fileparts(which('detran'));
-    file = [pat filesep 'testmodel' filesep 'mm' filesep 'run01' filesep 'trih-example.dat'];
+    [pat, nam]=fileparts(which('detran_test_dir'));
+    file = [pat filesep 'detran_testmodel' filesep 'mm' filesep 'run01' filesep 'trih-example.dat'];
     [crossName, crossXY, transport, namsed]=detran_d3dTransFromHis_mm('mean',file,0);
     testresult = true;
 catch
