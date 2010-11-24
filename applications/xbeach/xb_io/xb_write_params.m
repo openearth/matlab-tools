@@ -65,7 +65,10 @@ function xb_write_params(filename, xbSettings, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% read options
+
+if ~xb_check(xbSettings); error('Invalid XBeach settings structure'); end;
+
 OPT = struct(...
     'header', {{'XBeach parameter settings input file' '' ['date:     ' datestr(now)] ['function: ' mfilename]}});
 
@@ -84,7 +87,7 @@ partype = {XBparams_array.partype};
 upartype = unique(partype);
 
 % derive maximum stringsize of all variable names
-maxStringLength = max(cellfun(@length, {xbSettings.name}));
+maxStringLength = max(cellfun(@length, {xbSettings.data.name}));
 
 % open file
 fid = fopen(filename, 'w');
@@ -101,26 +104,26 @@ for i = 1:length(upartype)
     pars = parname(strcmpi(upartype{i}, partype));
     
     % create type header
-    if any(ismember(pars, {xbSettings.name}))
+    if any(ismember(pars, {xbSettings.data.name}))
         fprintf(fid, '\n%s %s %s\n\n', '%%%', upartype{i}, repmat('%',1,75-length(upartype{i})));
     end
     
     for j = 1:length(pars)
-        ivar = strcmpi(pars{j}, {xbSettings.name});
+        ivar = strcmpi(pars{j}, {xbSettings.data.name});
         
         if any(ivar)
-            if regexp(xbSettings(ivar).name, '.*vars$')
+            if regexp(xbSettings.data(ivar).name, '.*vars$')
 
                 % create line indicating the number items in the cell
-                outputvars = [outputvars sprintf('%s\n', var2params(['n' xbSettings(ivar).name(1:end-1)], length(xbSettings(ivar).value), maxStringLength))];
+                outputvars = [outputvars sprintf('%s\n', var2params(['n' xbSettings.data(ivar).name(1:end-1)], length(xbSettings.data(ivar).value), maxStringLength))];
 
                 % write output variables on separate lines
-                for ioutvar = 1:length(xbSettings(ivar).value)
-                    outputvars = [outputvars sprintf('%s\n', xbSettings(ivar).value{ioutvar})];
+                for ioutvar = 1:length(xbSettings.data(ivar).value)
+                    outputvars = [outputvars sprintf('%s\n', xbSettings.data(ivar).value{ioutvar})];
                 end
             else
                 % create ordinary parameter line
-                fprintf(fid, '%s\n', var2params(xbSettings(ivar).name, xbSettings(ivar).value, maxStringLength));
+                fprintf(fid, '%s\n', var2params(xbSettings.data(ivar).name, xbSettings.data(ivar).value, maxStringLength));
             end
         end
     end

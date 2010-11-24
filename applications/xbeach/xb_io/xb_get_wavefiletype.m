@@ -4,7 +4,7 @@ function type = xb_get_wavefiletype(filename)
 %   Analyzes the contents of a wave definition file for XBeach input and
 %   returns a string specifying the type of wave definition files.
 %   Currently, the following types can be returned: unknown, filelist,
-%   jonswap, jonswap_mtx, vardens
+%   jonswap, jonswap_mtx, vardens, bcflist
 %
 %   Syntax:
 %   type = xb_get_wavefiletype(filename)
@@ -63,7 +63,7 @@ function type = xb_get_wavefiletype(filename)
 
 %% set file types
 
-types = {'unknown' 'filelist' 'jonswap' 'jonswap_mtx' 'vardens'};
+types = {'unknown' 'filelist' 'jonswap' 'jonswap_mtx' 'vardens' 'bcflist'};
 counts = zeros(1,length(types));
 
 %% determine filetype
@@ -79,17 +79,26 @@ if exist(filename, 'file')
         fline = fgetl(fid);
         if isempty(fline); continue; end;
         
-        c = counts;
+        cnt = counts;
         
         % test for filelist
         try
             if strcmpi(fline, 'FILELIST') && lcount == 1
                 counts = increase_count(types, counts, 'filelist');
             else
-                data = strread(fline, '%f', 'delimiter', ' ');
-                if length(data) == 3 && lcount > 1
+                [a b c] = strread(fline, '%f %f %s\n');
+                if ~isempty(a) && ~isempty(b) && ~isempty(c) && lcount > 1
                     counts = increase_count(types, counts, 'filelist');
                 end
+            end
+        end
+        
+        % test for bcflist
+        try
+            [a b c d e f] = strread(fline, '%f %f %f %f %f %s\n');
+            if ~isempty(a) && ~isempty(b) && ~isempty(c) && ...
+                    ~isempty(d) && ~isempty(e) && ~isempty(f) 
+                counts = increase_count(types, counts, 'bcflist');
             end
         end
         
@@ -133,7 +142,7 @@ if exist(filename, 'file')
         end
         
         % if no match found, increase unknown
-        if sum(c) == sum(counts)
+        if sum(cnt) == sum(counts)
             counts = increase_count(types, counts, 'unknown');
         end
         
@@ -149,7 +158,7 @@ type = types{i};
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function counts = increase_count(types, counts, type)
-    idx = strcmpi(type, types);
-    if counts(idx) >= sum(counts(~idx))
-        counts(idx) = counts(idx)+1;
-    end
+idx = strcmpi(type, types);
+if counts(idx) >= sum(counts(~idx))
+    counts(idx) = counts(idx)+1;
+end

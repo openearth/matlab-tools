@@ -1,25 +1,26 @@
-function filename = xb_write_tide(xbSettings, varargin)
-%XB_WRITE_TIDE  Writes tide definition file for XBeach input
+function xbSettings = xb_set(xbSettings, varargin)
+%XB_SET  Sets variables in XBeach settings structure
 %
-%   Writes a tide definition file containing a nx3 matrix of which the
-%   first column is the time definition and the second and third column the
-%   waterlevel definition at respectively the seaward and landward boundary
-%   of the model. Returns the filename of teh tide file.
+%   Sets one or more variables in name/value formatted XBeach
+%   settings structure. If a variable doesn't exist yet, it is created.
+%   Units can be added by providing a cell array containing the variable
+%   itself and a string containing the units, thus {data, units}.
 %
 %   Syntax:
-%   filename = xb_write_tide(xbSettings)
+%   xbSettings   = xb_set(xbSettings, varargin)
 %
 %   Input:
 %   xbSettings  = XBeach settings struct (name/value)
-%   varargin    = filename: filename of tide definition file
+%   varargin    = Name/value pairs of variables to be set
 %
 %   Output:
-%   filename    = filename to be referred in parameter file
+%   xbSettings  = Updated XBeach settings struct
 %
 %   Example
-%   filename = xb_read_tide(xbSettings)
+%   xbSettings  = xb_set(xbSettings, 'zb', zb, 'zs', zs)
+%   xbSettings  = xb_set(xbSettings, 'zb', {zb 'm+NAP'}, 'zs', {zs 'm+NAP'})
 %
-%   See also xb_read_params, xb_read_tide
+%   See also xb_get, xb_show
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -52,8 +53,8 @@ function filename = xb_write_tide(xbSettings, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 19 Nov 2010
-% Created with Matlab version: 7.4.0.287 (R2007a)
+% Created: 24 Nov 2010
+% Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
 % $Date$
@@ -62,28 +63,35 @@ function filename = xb_write_tide(xbSettings, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% read options
+%% read request
 
-if ~xb_check(xbSettings); error('Invalid XBeach settings structure'); end;
+if ~xb_check(xbSettings); xbSettings = xb_empty(); end;
 
-OPT = struct( ...
-    'filename', 'tide.txt' ...
-);
-
-OPT = setproperty(OPT, varargin{:});
-
-%% write file
-
-filename = OPT.filename;
-
-try
-    time = xb_get(xbSettings, 'time');
-    tide = xb_get(xbSettings, 'tide');
-    
-    A = [time tide];
-    
-    save(filename, '-ascii', 'A');
-catch
-    error(['Could not create tide definition file [' filename ']']);
+if isempty(varargin)
+    names = {};
+    values = {};
+else
+    l = length(varargin)-mod(length(varargin),2);
+    names = varargin(1:2:l-1);
+    values = varargin(2:2:l);
 end
 
+%% read variables
+
+for i = 1:length(names)
+    idx = strcmpi(names{i}, {xbSettings.data.name});
+    if ~any(idx)
+        idx = length(xbSettings.data)+1;
+        xbSettings.data(idx).name = names{i};
+    end
+    if iscell(values{i})
+        val = values{i};
+        xbSettings.data(idx).value = val{1};
+        xbSettings.data(idx).units = val{2};
+    else
+        xbSettings.data(idx).value = values{i};
+    end
+end
+
+% set meta data
+xbSettings = xb_meta(xbSettings, mfilename);

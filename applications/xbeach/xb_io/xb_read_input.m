@@ -81,14 +81,14 @@ xbSettings = xb_read_params(filename);
 
 if OPT.read_paths
     
-    [fdir fname dext] = fileparts(filename);
+    fdir = fileparts(filename);
 
-    for i = 1:length(xbSettings)
-        if ischar(xbSettings(i).value)
-            fpath = fullfile(fdir, xbSettings(i).value);
+    for i = 1:length(xbSettings.data)
+        if ischar(xbSettings.data(i).value)
+            fpath = fullfile(fdir, xbSettings.data(i).value);
 
             if exist(fpath, 'file')
-                switch xbSettings(i).name
+                switch xbSettings.data(i).name
                     case {'bcfile'}
                         % read waves
                         value = xb_read_waves(fpath);
@@ -100,15 +100,20 @@ if OPT.read_paths
                     otherwise
                         % assume file to be a grid and try reading it
                         try
-                            value = struct('name',{'data'},'value',{load(fpath)});
+                            value = xb_empty();
+                            value = xb_set(value, 'data', load(fpath));
+                            value = xb_meta(value, mfilename, 'grid');
                         catch
                             % cannot read file, save filename only
                             value = fpath;
                         end
                 end
                 
-                xbSettings(i).value = value;
+                xbSettings.data(i).value = value;
             end
         end
     end
 end
+
+% set meta data
+xbSettings = xb_meta(xbSettings, mfilename, 'input');

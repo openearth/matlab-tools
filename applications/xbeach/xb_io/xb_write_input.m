@@ -65,6 +65,8 @@ function xb_write_input(filename, xbSettings, varargin)
 
 %% read options
 
+if ~xb_check(xbSettings); error('Invalid XBeach settings structure'); end;
+
 OPT = struct( ...
     'write_paths', true ...
 );
@@ -77,31 +79,31 @@ if OPT.write_paths
     
     [fdir fname dext] = fileparts(filename);
 
-    for i = 1:length(xbSettings)
-        if isstruct(xbSettings(i).value)
-            xb = xbSettings(i).value;
+    for i = 1:length(xbSettings.data)
+        if isstruct(xbSettings.data(i).value)
+            xb = xbSettings.data(i).value;
             
-            switch xbSettings(i).name
+            switch xbSettings.data(i).name
                 case {'bcfile'}
                     % write waves
-                    xbSettings(i).value = xb_write_waves(xb);
+                    xbSettings.data(i).value = xb_write_waves(xb);
                 case {'zs0file'}
                     % write tide
-                    xbSettings(i).value = xb_write_tide(xb);
+                    xbSettings.data(i).value = xb_write_tide(xb);
                 case {'xfile' 'yfile' 'depfile' 'ne_layer'}
                     % write bathymetry
-                    xb(strcmpi('data',{xb.name})).name = xbSettings(i).name;
+                    xb = xb_set(xb, xbSettings.data(i).name, xb_get(xb, 'data'));
                     [xfile yfile depfile ne_layer] = xb_write_bathy(xb);
-                    xbSettings(i).value = eval(xbSettings(i).name);
+                    xbSettings.data(i).value = eval(xbSettings.data(i).name);
                 otherwise
                     % assume file to be a grid and try writing it
                     try
-                        xbSettings(i).value = fullfile(fdir, [xbSettings(i).name '.txt']);
-                        data = xb(strcmpi('data',{xb.name})).value;
-                        save(xbSettings(i).value, '-ascii', 'data');
+                        xbSettings.data(i).value = fullfile(fdir, [xbSettings.data(i).name '.txt']);
+                        data = xb_get(xb, 'data');
+                        save(xbSettings.data(i).value, '-ascii', 'data');
                     catch
                         % cannot write file, ignore
-                        xbSettings(i).value = '';
+                        xbSettings.data(i).value = '';
                     end
             end
         end

@@ -76,21 +76,26 @@ if ~exist(filename, 'file')
     error(['File does not exist [' filename ']'])
 end
 
+xbSettings = xb_empty();
+
 filetype = xb_get_wavefiletype(filename);
 
 switch filetype
     case 'filelist'
-        xbSettings = read_filelist(filename);
+        xbSettings.data = read_filelist(filename);
     case 'jonswap'
-        xbSettings = read_jonswap(filename);
+        xbSettings.data = read_jonswap(filename);
     case 'jonswap_mtx'
-        xbSettings = read_jonswap_mtx(filename);
+        xbSettings.data = read_jonswap_mtx(filename);
     case 'vardens'
-        xbSettings = read_vardens(filename);
+        xbSettings.data = read_vardens(filename);
     otherwise
         % unsupported wave definition file, simply dump contents
-        xbSettings = read_unknown(filename);
+        xbSettings.data = read_unknown(filename);
 end
+
+% set meta data
+xbSettings = xb_meta(xbSettings, mfilename, 'waves');
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -99,7 +104,7 @@ function xbSettings = read_filelist(filename)
 tlength = 1;
 xbSettings = struct('name',{'type_' 'duration' 'timestep'},'value',[]);
 
-[fdir fname dext] = fileparts(filename);
+fdir = fileparts(filename);
 
 fid = fopen(filename); fgetl(fid);
 while ~feof(fid)

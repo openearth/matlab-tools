@@ -69,6 +69,8 @@ function [xfile yfile depfile ne_layer] = xb_write_bathy(xbSettings, varargin)
 
 %% read options
 
+if ~xb_check(xbSettings); error('Invalid XBeach settings structure'); end;
+
 OPT = struct( ...
     'x_file', 'x.grd', ...
     'y_file', 'y.grd', ...
@@ -85,30 +87,30 @@ yfile = '';
 depfile = '';
 ne_layer = '';
 
-idx = strcmpi('x', {xbSettings.name})|strcmpi('xfile', {xbSettings.name});
+idx = strcmpi('x', {xbSettings.data.name})|strcmpi('xfile', {xbSettings.data.name});
 if any(idx)
     xfile = OPT.x_file;
-    data = xbSettings(idx).value;
+    data = xbSettings.data(idx).value;
     save(xfile, '-ascii', 'data');
 end
 
-idx = strcmpi('y', {xbSettings.name})|strcmpi('yfile', {xbSettings.name});
+idx = strcmpi('y', {xbSettings.data.name})|strcmpi('yfile', {xbSettings.data.name});
 if any(idx)
     yfile = OPT.y_file;
-    data = xbSettings(idx).value;
+    data = xbSettings.data(idx).value;
     save(yfile, '-ascii', 'data');
 end
 
-idx = strcmpi('z', {xbSettings.name})|strcmpi('depfile', {xbSettings.name});
+idx = strcmpi('z', {xbSettings.data.name})|strcmpi('depfile', {xbSettings.data.name});
 if any(idx)
     depfile = OPT.dep_file;
-    data = xbSettings(idx).value;
+    data = xbSettings.data(idx).value;
     save(depfile, '-ascii', 'data');
 end
 
-idx = strcmpi('ne', {xbSettings.name})|strcmpi('ne_layer', {xbSettings.name});
+idx = strcmpi('ne', {xbSettings.data.name})|strcmpi('ne_layer', {xbSettings.data.name});
 if any(idx)
     ne_layer = OPT.nelayer_file;
-    data = xbSettings(idx).value;
+    data = xbSettings.data(idx).value;
     save(ne_layer, '-ascii', 'data');
 end

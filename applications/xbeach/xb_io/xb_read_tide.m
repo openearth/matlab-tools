@@ -72,14 +72,18 @@ OPT = setproperty(OPT, varargin{:});
 
 %% read file
 
-xbSettings = struct('name',{'time' 'tide'},'value',[]);
+xbSettings = xb_empty();
+xbSettings = xb_set(xbSettings, 'time', [], 'tide', []);
 
 if exist(filename, 'file')
     try
         A = load(filename);
-        xbSettings(1).value = A(:,1);
-        xbSettings(2).value = A(:,2:end);
+        xbSettings = xb_set(xbSettings, 'time', {A(:,1) 's'});
+        xbSettings = xb_set(xbSettings, 'tide', {A(:,2:end) 'm'});
     catch
         error(['Tide definition file incorrectly formatted [' filename ']']);
     end
 end
+
+% set meta data
+xbSettings = xb_meta(xbSettings, mfilename, 'tide');

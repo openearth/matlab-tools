@@ -110,6 +110,8 @@ function filename = xb_write_waves(varargin)
 if ~isempty(varargin) && isstruct(varargin{1})
     xbSettings = varargin{1};
     varargin = varargin(2:end);
+    
+    if ~xb_check(xbSettings); error('Invalid XBeach settings structure'); end;
 end
 
 OPT = struct( ...
@@ -136,7 +138,7 @@ OPT = struct( ...
 OPT = setproperty(OPT, varargin{:});
 
 if exist('xbSettings','var')
-    OPT = mergestructs('overwrite', OPT, struct_flip(xbSettings, 'name', 'value'));
+    OPT = mergestructs('overwrite', OPT, struct_flip(xbSettings.data, 'name', 'value'));
 end
 
 if strcmpi(OPT.type_, 'jonswap_mtx')

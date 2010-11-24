@@ -1,25 +1,22 @@
-function filename = xb_write_tide(xbSettings, varargin)
-%XB_WRITE_TIDE  Writes tide definition file for XBeach input
+function valid = xb_check(xbSettings)
+%XB_CHECK  Checks whether a variable is a valid XBeach settings struct
 %
-%   Writes a tide definition file containing a nx3 matrix of which the
-%   first column is the time definition and the second and third column the
-%   waterlevel definition at respectively the seaward and landward boundary
-%   of the model. Returns the filename of teh tide file.
+%   Checks whether a variable is a valid XBeach settings struct by checking
+%   if the name/value pair is present.
 %
 %   Syntax:
-%   filename = xb_write_tide(xbSettings)
+%   valid = xb_check(xbSettings)
 %
 %   Input:
 %   xbSettings  = XBeach settings struct (name/value)
-%   varargin    = filename: filename of tide definition file
 %
 %   Output:
-%   filename    = filename to be referred in parameter file
+%   valid       = Boolean value for validity of structure
 %
 %   Example
-%   filename = xb_read_tide(xbSettings)
+%   valid = xb_check(xbSettings)
 %
-%   See also xb_read_params, xb_read_tide
+%   See also xb_get, xb_set, xb_show
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -52,8 +49,8 @@ function filename = xb_write_tide(xbSettings, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 19 Nov 2010
-% Created with Matlab version: 7.4.0.287 (R2007a)
+% Created: 24 Nov 2010
+% Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
 % $Date$
@@ -62,28 +59,14 @@ function filename = xb_write_tide(xbSettings, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% read options
+%% check structure
 
-if ~xb_check(xbSettings); error('Invalid XBeach settings structure'); end;
+valid = true;
 
-OPT = struct( ...
-    'filename', 'tide.txt' ...
-);
-
-OPT = setproperty(OPT, varargin{:});
-
-%% write file
-
-filename = OPT.filename;
-
-try
-    time = xb_get(xbSettings, 'time');
-    tide = xb_get(xbSettings, 'tide');
-    
-    A = [time tide];
-    
-    save(filename, '-ascii', 'A');
-catch
-    error(['Could not create tide definition file [' filename ']']);
+if ~isstruct(xbSettings)
+    valid = false;
+elseif ~all(ismember({'data'}, fieldnames(xbSettings)))
+    valid = false;
+elseif ~all(ismember({'name', 'value', 'units'}, fieldnames(xbSettings.data)))
+    valid = false;
 end
-

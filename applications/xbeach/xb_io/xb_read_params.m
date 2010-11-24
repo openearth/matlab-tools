@@ -85,7 +85,7 @@ fclose(fid);
 
 % obtain all keywords and values using regular expressions
 [exprNames endIndex] = regexp(txt, ...
-    '\s*(?<name>.*?)\s*=\s*(?<value>.*?)\s*\n', 'names', 'end', 'dotexceptnewline');
+    '\s*(?<name>[^%]*?)\s*=\s*(?<value>[^%]*?)\s*\n', 'names', 'end', 'dotexceptnewline');
 
 names = {exprNames.name};
 values = {exprNames.value};
@@ -111,4 +111,6 @@ end
 values = values(idx);
 
 % convert parameter cells to xbeach setting structure
-xbSettings = cell2struct([names; values]', {'name' 'value'}, 2);
+xbSettings = xb_empty();
+xbSettings = xb_meta(xbSettings, mfilename, 'params');
+xbSettings.data = cell2struct([names; values]', {'name' 'value'}, 2);

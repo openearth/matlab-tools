@@ -1,25 +1,24 @@
-function filename = xb_write_tide(xbSettings, varargin)
-%XB_WRITE_TIDE  Writes tide definition file for XBeach input
+function varargout = xb_get(xbSettings, varargin)
+%XB_GET  Retrieves variables from XBeach settings structure
 %
-%   Writes a tide definition file containing a nx3 matrix of which the
-%   first column is the time definition and the second and third column the
-%   waterlevel definition at respectively the seaward and landward boundary
-%   of the model. Returns the filename of teh tide file.
+%   Retrieves one or more variables from name/value formatted XBeach
+%   settings structure.
 %
 %   Syntax:
-%   filename = xb_write_tide(xbSettings)
+%   varargout   = xb_get(xbSettings, varargin)
 %
 %   Input:
 %   xbSettings  = XBeach settings struct (name/value)
-%   varargin    = filename: filename of tide definition file
+%   varargin    = Names of variables to be retrieved. If omitted, all
+%                 variables are returned
 %
 %   Output:
-%   filename    = filename to be referred in parameter file
+%   varargout   = Values of requested variables.
 %
 %   Example
-%   filename = xb_read_tide(xbSettings)
+%   [zb zs] = xb_get(xbSettings, 'zb', 'zs')
 %
-%   See also xb_read_params, xb_read_tide
+%   See also xb_set, xb_show
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -52,8 +51,8 @@ function filename = xb_write_tide(xbSettings, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 19 Nov 2010
-% Created with Matlab version: 7.4.0.287 (R2007a)
+% Created: 24 Nov 2010
+% Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
 % $Date$
@@ -62,28 +61,21 @@ function filename = xb_write_tide(xbSettings, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% read options
+%% read request
 
 if ~xb_check(xbSettings); error('Invalid XBeach settings structure'); end;
 
-OPT = struct( ...
-    'filename', 'tide.txt' ...
-);
-
-OPT = setproperty(OPT, varargin{:});
-
-%% write file
-
-filename = OPT.filename;
-
-try
-    time = xb_get(xbSettings, 'time');
-    tide = xb_get(xbSettings, 'tide');
-    
-    A = [time tide];
-    
-    save(filename, '-ascii', 'A');
-catch
-    error(['Could not create tide definition file [' filename ']']);
+if isempty(varargin)
+    vars = {xbSettings.data.name};
+else
+    vars = varargin;
 end
 
+%% read variables
+
+varargout = {};
+
+for i = 1:length(vars)
+    idx = strcmpi(vars{i}, {xbSettings.data.name});
+    varargout{i} = xbSettings.data(idx).value;
+end

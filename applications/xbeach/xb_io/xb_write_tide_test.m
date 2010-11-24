@@ -46,7 +46,7 @@ function xb_write_tide_test()
 
 MTest.category('UnCategorized');
 
-xbSettings = struct('name',{'time' 'tide'},'value',{[1:100]' magic(100)});
+xbSettings = struct('data', struct('name',{'time' 'tide'},'value',{[1:100]' magic(100)}));
 
 fname = 'tide.txt';
 delete(fname);
