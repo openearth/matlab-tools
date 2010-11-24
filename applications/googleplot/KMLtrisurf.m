@@ -58,11 +58,13 @@ function [OPT, Set, Default] = KMLtrisurf(tri,lat,lon,z,varargin)
    OPT.colorMap           = @(m) jet(m);
    OPT.colorSteps         = 16;
    OPT.fillAlpha          = 0.6;
-   OPT.polyOutline        = false;
+
+   OPT.polyOutline        = false; % outlines the polygon, including extruded edges
    OPT.polyFill           = true;
    OPT.openInGE           = false;
    OPT.reversePoly        = false;
    OPT.extrude            = false;
+
    OPT.cLim               = [];
    OPT.zScaleFun          = @(z) (z+20).*5;
    OPT.timeIn             = [];
@@ -70,31 +72,39 @@ function [OPT, Set, Default] = KMLtrisurf(tri,lat,lon,z,varargin)
    OPT.dateStrStyle       = 'yyyy-mm-ddTHH:MM:SS';
    OPT.colorbar           = 1;
 
+   OPT.precision          = 8;
+   OPT.tessellate         = false;
+
 if nargin==0
   return
 end
 
-%% error check
-if all(isnan(z(:)))
-    disp('warning: No surface could be constructed, because there was no valid height data provided...') %#ok<WNTAG>
-    return
-end
+%% limited error check
 
-lat = lat(:);
-lon = lon(:);
-z   = z(:);
+   if ~isequal(size(lat),size(lon))
+       error('lat and lon must be same size')
+   end
+   if all(isnan(z(:)))
+       disp('warning: No surface could be constructed, because there was no valid height data provided...') %#ok<WNTAG>
+       return
+   end
+   
+   lat = lat(:);
+   lon = lon(:);
+   z   = z(:);
 
 %% assign c if it is given
-if ~isempty(varargin)
-    if ~ischar(varargin{1})&&~isstruct(varargin{1});
-        c = varargin{1};
-        varargin = varargin(2:length(varargin));
-    else
-        c =  mean(z(tri),2);
-    end
-else
-    c =  mean(z(tri),2);
-end
+
+   if ~isempty(varargin)
+       if ~ischar(varargin{1})&&~isstruct(varargin{1});
+           c = varargin{1};
+           varargin = varargin(2:length(varargin));
+       else
+           c =  mean(z(tri),2);
+       end
+   else
+       c =  mean(z(tri),2);
+   end
 
 %% set properties
 [OPT, Set, Default] = setproperty(OPT, varargin{:});
@@ -163,17 +173,19 @@ end
    % print and clear output
    
    output = [output '<!--############################-->' fprinteol];
-   fprintf(OPT.fid,output); 
+   fprintf(OPT.fid,output);output = '';
    
 %% POLYGON
 
    OPT_poly = struct(...
-   'name','',...
-   'styleName',['style' num2str(1)],...
-   'timeIn' ,datestr(OPT.timeIn ,OPT.dateStrStyle),...
-   'timeOut',datestr(OPT.timeOut,OPT.dateStrStyle),...
-   'visibility',1,...
-   'extrude',OPT.extrude);
+            'name','',...
+       'styleName',['style' num2str(1)],...
+          'timeIn',datestr(OPT.timeIn ,OPT.dateStrStyle),...
+         'timeOut',datestr(OPT.timeOut,OPT.dateStrStyle),...
+      'visibility',1,...
+         'extrude',OPT.extrude,...
+      'tessellate',OPT.tessellate,...
+      'precision' ,OPT.precision);
    
    % preallocate output
    
@@ -206,6 +218,7 @@ end
        end
    end
    fprintf(OPT.fid,output(1:kk-1)); % print output
+   output = '';
 
 %% close KML
 
@@ -223,6 +236,7 @@ end
    end
 
 %% openInGoogle?
+
    if OPT.openInGE
        system(OPT.fileName);
    end

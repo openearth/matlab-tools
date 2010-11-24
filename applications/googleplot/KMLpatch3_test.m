@@ -51,19 +51,52 @@ disp(['... running test:',mfilename])
 %% $RunCode
 try
 
-% manually picked rgb color
+lat = {[50   50   50.9 50.9 50  ]'-4,...
+       [50.9 50.9 50   50   50.9]'-4,...
+       [52   52   51.1 51.1 52  ]'-4,...
+       [51.1 51.1 52   52   51.1]'-4};
 
-    KMLpatch3([50   50   50.9 50.9 50  ]'-4,[1.1 2   2   1.1 1.1]'+8,[0 1 2 3 0]'.*1E3,'fileName',KML_testdir('KMLpatch3_test1a.kml'),'fillColor',[1 0 0],'polyOutline',false,'lineOutline',true );
-    KMLpatch3([50.9 50.9 50   50   50.9]'-4,[0   0.9 0.9 0   0  ]'+8,[0 1 2 3 0]'.*1E3,'fileName',KML_testdir('KMLpatch3_test2a.kml'),'fillColor',[0 1 0],'polyOutline',false,'lineOutline',false);
-    KMLpatch3([52   52   51.1 51.1 52  ]'-4,[1.1 2   2   1.1 1.1]'+8,[0 1 2 3 0]'.*1E3,'fileName',KML_testdir('KMLpatch3_test1b.kml'),'fillColor',[0 0 1],'polyOutline',true ,'lineOutline',false);
-    KMLpatch3([51.1 51.1 52   52   51.1]'-4,[0   0.9 0.9 0   0  ]'+8,[0 1 2 3 0]'.*1E3,'fileName',KML_testdir('KMLpatch3_test2b.kml'),'fillColor',[1 1 1],'polyOutline',true ,'lineOutline',true );
+lon = {[1.1 2   2   1.1 1.1]'+8,...
+       [0   0.9 0.9 0   0  ]'+8,...
+       [1.1 2   2   1.1 1.1]'+8,...
+       [0   0.9 0.9 0   0  ]'+8};
+       
+z   = {[0 1 2 3 0]'.*1E3,...
+       [0 1 2 3 0]'.*1E3,...
+       [0 1 2 3 0]'.*1E3,...
+       [0 1 2 3 0]'.*1E3};
 
-% interpolated colors from colormap
+c   = [0 1 2 3];
 
-    KMLpatch3([50   50   50.9 50.9 50  ]'-4,[1.1 2   2   1.1 1.1]'+8,[0 1 2 3 0]'.*1E3,0,'fileName',KML_testdir('KMLpatch3_test3a.kml'),'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20);
-    KMLpatch3([50.9 50.9 50   50   50.9]'-4,[0   0.9 0.9 0   0  ]'+8,[0 1 2 3 0]'.*1E3,1,'fileName',KML_testdir('KMLpatch3_test3b.kml'),'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20);
-    KMLpatch3([52   52   51.1 51.1 52  ]'-4,[1.1 2   2   1.1 1.1]'+8,[0 1 2 3 0]'.*1E3,2,'fileName',KML_testdir('KMLpatch3_test3d.kml'),'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20);
-    KMLpatch3([51.1 51.1 52   52   51.1]'-4,[0   0.9 0.9 0   0  ]'+8,[0 1 2 3 0]'.*1E3,3,'fileName',KML_testdir('KMLpatch3_test3c.kml'),'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20);
+f   = {[1 0 0],[0 1 0],[0 0 1],[1 1 1]};
+	
+% one patch: manually picked rgb color
+
+    KMLpatch3(lat{1},lon{1},z{1},'fileName',KML_testdir('KMLpatch3_test1a.kml'),'fillColor',f{1},'polyOutline',false,'lineOutline',true );
+    KMLpatch3(lat{2},lon{2},z{2},'fileName',KML_testdir('KMLpatch3_test2a.kml'),'fillColor',f{2},'polyOutline',false,'lineOutline',false);
+    KMLpatch3(lat{3},lon{3},z{3},'fileName',KML_testdir('KMLpatch3_test1b.kml'),'fillColor',f{3},'polyOutline',true ,'lineOutline',false);
+    KMLpatch3(lat{4},lon{4},z{4},'fileName',KML_testdir('KMLpatch3_test2b.kml'),'fillColor',f{4},'polyOutline',true ,'lineOutline',true );
+
+% one patch: interpolated colors from colormap
+
+    KMLpatch3(lat{1},lon{1},z{1},c(1),'fileName',KML_testdir('KMLpatch3_test3a.kml'),'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20);
+    KMLpatch3(lat{2},lon{2},z{2},c(2),'fileName',KML_testdir('KMLpatch3_test3b.kml'),'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20);
+    KMLpatch3(lat{3},lon{3},z{3},c(3),'fileName',KML_testdir('KMLpatch3_test3c.kml'),'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20);
+    KMLpatch3(lat{4},lon{4},z{4},c(4),'fileName',KML_testdir('KMLpatch3_test3d.kml'),'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20);
+    
+% multi-patch: ONE manually picked rgb color
+    
+    KMLpatch3(lat,lon,z,'fileName',KML_testdir('KMLpatch3_testflat.kml'),'fillColor',[1 1 0]);
+   %KMLpatch3(lat,lon,z,'fileName',KML_testdir('KMLpatch3_test12ab.kml'),'fillColor',f); % not implemented (yet)
+
+% multi-patch: interpolated colors from colormap
+    
+    KMLpatch3(lat,lon,z,2,'fileName',KML_testdir('KMLpatch3_test3flat.kml'),...
+    'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20,'lineOutline',0);
+
+    KMLpatch3(lat,lon,z,c,'fileName',KML_testdir('KMLpatch3_test3abcd.kml'),...
+    'cLim',[0 3],'colorMap',@(m) jet(m),'colorSteps',20,'lineOutline',0);
+    
 
     testresult = true;
 catch

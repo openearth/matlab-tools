@@ -9,7 +9,7 @@ function varargout = KMLpatch(lat,lon,varargin)
 %
 %    OPT = KMLpatch()
 %
-% See also: googlePlot, patch
+% See also: googlePlot, KMLpatch3, KMLtrisurf, KML_poly, patch
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -44,7 +44,7 @@ function varargout = KMLpatch(lat,lon,varargin)
 % $Keywords: $
 
 %% process varargin
-z = 'clampToGround';
+z   = 'clampToGround';
 
 OPT = KMLpatch3();
 
@@ -55,14 +55,13 @@ if nargin==0
    varargout = {OPT};
    return
 end
-
     
 if odd(nargin)
    c = varargin{1};
-   [OPT, Set, Default] = setproperty(OPT, varargin{2:end});
-   KMLpatch3(lat,lon,z,c,OPT);
+  [OPT, Set, Default] = setproperty(OPT, varargin{2:end});
+   KMLpatch3(lat,lon,z,c,OPT); % TO DO does not work yet.
 else
-   [OPT, Set, Default] = setproperty(OPT, varargin{:});
+  [OPT, Set, Default] = setproperty(OPT, varargin{:});
    KMLpatch3(lat,lon,z,OPT);
 end
 

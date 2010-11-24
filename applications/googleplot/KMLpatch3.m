@@ -1,27 +1,36 @@
 function varargout = KMLpatch3(lat,lon,z,varargin)
 %KMLPATCH3 Just like patch
 %
-%    KMLpatch3(lat,lon,z,<c>,<keyword,value>)
+%    KMLpatch3(lat,lon,z,<C>,<keyword,value>)
 % 
-% only works for a single patch (filled polygon)
-% see the keyword/value pair defaults for additional options. 
-% For the <keyword,value> pairs call:
+% adds the "patch" or filled 2-D polygon defined by
+% vectors lat and lon.
+%
+% lat and lon and z must be vectors. Each column of lat, lon and 
+% z after the first is interpreted as an inner boundary (hole) of 
+% the first polygon (see KML_poly).
+%
+% Color C of the faces ("flat" coloring) be specified on two 
+% ways, coloring of the vertices ("interpolated" coloring) is not 
+% possible in contrast to Matlab's PATCH.
+% * An RGB triplet can be specified by leaving out the optional argument
+%   C and setting the fillColor property to an RGB triplet [0..1].
+% * If C is a scalar it is interpretered as the color of the face(s) 
+%   by indexing into the colormap property specified with 'colormap',
+%   'colorSteps' and 'cLim'.
+%
+% KMLpatch3 works for 
+% * single patches: lat, lon and z must be vectors, c a scalar, and
+%   fillColor a single rgb triplet.
+% * a set of patches: lat, lon and z must be cell arrays, c must be
+%   a regular array with the same length as the cells or a scalar.
+%   NB If your patches are only triangles you might better use KMLtrisurf.
+%
+% For other the <keyword,value> pairs and their defaults call:
 %
 %    OPT = KMLpatch()
 %
-% Lat and lon and z must be vectors. Each column of lat, lon and z after
-% the first is interpreted as an ineer boundary (hole) of the first
-% polygon.
-%
-% See also: googlePlot, patch
-
-% TO DO
-% KMLpatch3 works for 
-% * one patch: lat, lon and z must be vectors, c a scalar. Each column of 
-%   lat, lon and z after the first is interpreted as an inner boundary (hole) 
-%   of the first polygon.
-% * a set of patches: lat, lon and z must be cell arrays, c must be an array.
-
+% See also: googlePlot, KMLpatch, KMLtrisurf, KML_poly, patch
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -58,6 +67,8 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
 %% process varargin
 
    % deal with colorbar options first
+   OPT                    = KMLcolorbar();
+   % rest of the options
    OPT.fileName           = '';
    OPT.kmlName            = '';
    OPT.lineWidth          = 1;
@@ -77,7 +88,7 @@ OPT.cLim               = [];
    OPT.timeIn             = [];
    OPT.timeOut            = [];
    OPT.dateStrStyle       = 'yyyy-mm-ddTHH:MM:SS';
-OPT.colorbar           = 1;
+OPT.colorbar           = 0;
       OPT.fillColor          = [];
 
    OPT.text               = '';
@@ -97,18 +108,22 @@ OPT.colorbar           = 1;
 
    if ~odd(nargin) % x,y,z,c
       if isstruct(varargin{1})
+      c = [];
       [OPT, Set, Default] = setproperty(OPT, varargin{:});
       else
-      c = varargin{1};
+      c            = varargin{1};
+      OPT.colorbar = 1;
       [OPT, Set, Default] = setproperty(OPT, varargin{2:end});
       end
    else % x,y,z
-       if isstruct(varargin{2})
-       c = varargin{1};
-      [OPT, Set, Default] = setproperty(OPT, varargin{2});
-       else
-      [OPT, Set, Default] = setproperty(OPT, varargin{:});
-       end
+      if isstruct(varargin{2})
+      c            = varargin{1};
+      OPT.colorbar = 1;
+     [OPT, Set, Default] = setproperty(OPT, varargin{2});
+      else
+      c = [];
+     [OPT, Set, Default] = setproperty(OPT, varargin{:});
+      end
    end
    
 %% limited error check
@@ -177,9 +192,14 @@ OPT.colorbar           = 1;
    OPT.fid=fopen(OPT.fileName,'w');
 
    OPT_header = struct(...
-       'name'     ,OPT.kmlName,...
-       'open'     ,0);
+       'name',OPT.kmlName,...
+       'open',0);
    output = KML_header(OPT_header);
+
+   if OPT.colorbar
+      clrbarstring = KMLcolorbar(OPT);
+      output = [output clrbarstring];
+   end
 
 %% STYLE
    OPT_stylePoly = struct(...
@@ -214,10 +234,58 @@ OPT.colorbar           = 1;
       'tessellate',OPT.tessellate,...
       'precision' ,OPT.precision);
    
+   if iscell(lat) & iscell(lon)
+       
+       if length(c)==1 % c can be constant for all patches
+          csize = 1;
+       else
+          csize = length(c);
+       end
+       
+       if length(z)==1 % z can be constant for all patches: a value but not yet 'clampToGround'
+          zsize = 1;
+       else
+          zsize = length(z);
+       end
+
+      % preallocate output
+
+       output = repmat(char(1),1,1e5);
+       kk = 1;
+
+       disp(['creating patch with ' num2str(length(lat)) ' elements...'])
+      
+       for ii=1:length(lat)
+       iic = min(ii,csize); % for constant c and z
+       iiz = min(ii,zsize); % for constant c and z
+       OPT_poly.styleName = sprintf('style%d',c(iic));
+       %             if OPT.reversePoly
+       %                 LAT = LAT(end:-1:1);
+       %                 LON = LON(end:-1:1);
+       %                   Z =   Z(end:-1:1);
+       %             end
+% TO DO : deal with constant z, constant per patch or 'clampToGround';
+       newOutput = KML_poly(lat{ii},...
+                            lon{ii},... 
+                OPT.zScaleFun(z{iiz}),OPT_poly);  % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
+      
+       output(kk:kk+length(newOutput)-1) = newOutput;
+       kk = kk+length(newOutput);
+       if kk>1e5
+           %then print and reset
+           fprintf(OPT.fid,output(1:kk-1));
+           kk = 1;
+           output = repmat(char(1),1,1e5);
+       end
+       end
+       fprintf(OPT.fid,output(1:kk-1)); % print output
+       output = '';
+   else
        OPT_poly.styleName = sprintf('style%d',c);
        output = [output KML_poly(lat,lon,OPT.zScaleFun(z),OPT_poly)]; % make sure that lat(:),lon(:) have correct dimension nx1
+   end
    
-   if OPT.lineOutline
+   if OPT.lineOutline                          & isempty(c)
        OPT_line = struct(...
             'name','',...
        'styleName','style',...

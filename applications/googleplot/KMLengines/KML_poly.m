@@ -3,15 +3,17 @@ function varargout = KML_poly(lat,lon,varargin)
 %
 %   kmlstring = KML_poly(lat,lon,<z>,<keyword,value>)
 %
-% where z can be 'clampToGround'.
+% lat and lon and z must be vectors. Each column of lat, lon and 
+% z after the first is interpreted as an inner boundary (hole) of 
+% the first polygon (see KML_poly).
 %
-% If lat and lon have multiple rows, these rows are seen as  separate polygons.
+% z can be an arry too, or 'clampToGround'.
 %
 % The implemented <keyword,value> pairs and their defaults are given by
 %
 %   OPT = KML_line()
 %
-% Note that Google Earth shows a KML_poly unsharp at small view 
+% Note that Google Earth shows an KML_poly object unsharp at small view 
 % angles, whereas a KML_line is shown sharp at all view angles. 
 % A recommendation is therefore to plot edges with KML_line too.
 %
