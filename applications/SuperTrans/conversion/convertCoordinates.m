@@ -31,20 +31,21 @@ function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
 %    (from) 'Coordinate System 1' (CS1)
 %    (to)   'Coordinate System 2' (CS2).
 %
-% Any combination of name, type and code that indetifies a unique
-% coordinate system will do, e.g.:
+% Any combination of name, type and code that identifies a unique
+% coordinate system will do.
 %
 %    CS1.name = coordinate system name
 %    CS1.code = coordinate system reference code
 %    CS1.type = projection type
 %
-% When insufficient combinations are specified, remaining choices are suggested.
+% When multiple coordinate systems fit the criteria, an error message is
+% returende that lists these options.
 %
 % Projection types supported     : projected and geographic 2D
 % Projection not (yet) supported : engineering, geographic 3D, vertical, geocentric,  compound
 %
-% Allowed synonyms for 'projected'    : 'xy','proj','cartesian','cart'
-% Allowed synonyms for 'geographic 2D': 'geo','latlon','lat lon','geographic','geographic2d'
+% Supported synonyms for 'projected'    : 'xy','proj','cartesian','cart'
+% Supported synonyms for 'geographic 2D': 'geo','latlon','lat lon','geographic','geographic2d'
 %
 % Example 1: 4 different notations of 1 single transformation case:
 %

@@ -57,17 +57,26 @@ else
         OPT.datum_trans.code          = STD.coordinate_operation.coord_op_code(ind);
         OPT.datum_trans.name          = STD.coordinate_operation.coord_op_name(ind);
         OPT.datum_trans.direction     = direction;
-%        if length(ind_alt)>1 % also include alternative tranformations
-            OPT.datum_trans.alt_code       = STD.coordinate_operation.coord_op_code(ind_alt);
-            OPT.datum_trans.alt_name       = STD.coordinate_operation.coord_op_name(ind_alt);
-            OPT.datum_trans.alt_direction  = dir_alt;
-            OPT.datum_trans.alt_deprecated = dep_alt;
-%        end
+        OPT.datum_trans.deprecated    = STD.coordinate_operation.deprecated(ind);
+        OPT.datum_trans.scope         = STD.coordinate_operation.coord_op_scope(ind);
+        OPT.datum_trans.accuray       = STD.coordinate_operation.coord_op_accuracy(ind);
         OPT.datum_trans.params        = ConvertCoordinatesFindDatumTransParams(STD.coordinate_operation.coord_op_code(ind),STD);
         OPT.datum_trans.method_code   = STD.coordinate_operation.coord_op_method_code(ind);
         OPT.datum_trans.method_name   = STD.coordinate_operation_method.coord_op_method_name{STD.coordinate_operation_method.coord_op_method_code == OPT.datum_trans.method_code};
         OPT.datum_trans.ellips1       = 'CS1';
         OPT.datum_trans.ellips2       = 'CS2';
+        %        if length(ind_alt)>1 % also include alternative tranformations
+        OPT.datum_trans.alt_code       = STD.coordinate_operation.coord_op_code(ind_alt);
+        OPT.datum_trans.alt_name       = STD.coordinate_operation.coord_op_name(ind_alt);
+        OPT.datum_trans.alt_direction  = dir_alt;
+        OPT.datum_trans.alt_deprecated = dep_alt;
+        OPT.datum_trans.alt_scope      = STD.coordinate_operation.coord_op_scope(ind_alt);
+        OPT.datum_trans.alt_accuray    = STD.coordinate_operation.coord_op_accuracy(ind_alt);
+        OPT.datum_trans.alt_method_code= STD.coordinate_operation.coord_op_method_code(ind_alt);
+        for ii = 1:length(OPT.datum_trans.alt_method_code)
+            OPT.datum_trans.alt_method_name{ii}   = STD.coordinate_operation_method.coord_op_method_name{STD.coordinate_operation_method.coord_op_method_code == OPT.datum_trans.alt_method_code(ii)};
+        end
+        %        end
     else
         % no direct transformation available, try via WGS 84
         OPT.datum_trans = 'no direct transformation available';
