@@ -67,6 +67,6 @@ if ~isstruct(xbSettings)
     valid = false;
 elseif ~all(ismember({'data'}, fieldnames(xbSettings)))
     valid = false;
-elseif ~all(ismember({'name', 'value', 'units'}, fieldnames(xbSettings.data)))
+elseif ~all(ismember({'name', 'value'}, fieldnames(xbSettings.data)))
     valid = false;
 end
