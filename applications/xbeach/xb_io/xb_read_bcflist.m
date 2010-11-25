@@ -80,6 +80,7 @@ tlength = 1;
 fdir = fileparts(filename);
 
 [bcendtime rt dt trep mainang data] = deal([]);
+filenames = {};
 
 fid = fopen(filename);
 while ~feof(fid)
@@ -89,8 +90,11 @@ while ~feof(fid)
     [bcendtime(tlength) rt(tlength) dt(tlength) trep(tlength) mainang(tlength) fname] = ...
         strread(fline, '%f%f%f%f%f%s\n', 'delimiter', ' ');
 
-    data(:,:,:,tlength) = read_bcf(fullfile(fdir, [fname{:}]));
-
+    fname = fullfile(fdir, [fname{:}]);
+    filenames = [filenames {fname}];
+    
+    data(:,:,:,tlength) = read_bcf(fname);
+    
     tlength = tlength+1;
 end
 fclose(fid);
@@ -101,7 +105,7 @@ xbSettings = xb_empty();
 xbSettings = xb_set(xbSettings, '-units', 'time', {bcendtime 's'}, 'duration', {rt 's'}, ...
     'timestep', {dt 's'}, 'Trep', {trep 's'}, 'main_angle', {mainang 'degrees'}, ...
     'data', {data 'J/m^2'});
-xbSettings = xb_meta(xbSettings, mfilename, 'boundaryconditions', filename);
+xbSettings = xb_meta(xbSettings, mfilename, 'boundaryconditions', [{filename} filenames]);
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

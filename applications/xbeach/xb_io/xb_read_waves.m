@@ -83,7 +83,7 @@ xbSettings = xb_set(xbSettings, 'type_', filetype);
 
 switch filetype
     case 'filelist'
-        [names values] = read_filelist(filename);
+        [names values filenames] = read_filelist(filename);
     case 'jonswap'
         [names values] = read_jonswap(filename);
     case 'jonswap_mtx'
@@ -102,16 +102,17 @@ end
 xbSettings = consolidate_settings(xbSettings);
 
 % set meta data
-xbSettings = xb_meta(xbSettings, mfilename, 'waves', filename);
+xbSettings = xb_meta(xbSettings, mfilename, 'waves', [{filename} filenames]);
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [names values] = read_filelist(filename)
+function [names values filenames] = read_filelist(filename)
 
 tlength = 1;
 
 names = {};
 values = {};
+filenames = {};
 
 duration = [];
 timestep = [];
@@ -127,6 +128,7 @@ while ~feof(fid)
     [duration(tlength) timestep(tlength) fname] = strread(fline, '%f%f%s', 'delimiter', ' ');
 
     fname = fullfile(fdir, [fname{:}]);
+    filenames = [filenames {fname}];
 
     if exist(fname, 'file')
         filetype = xb_get_wavefiletype(fname);
