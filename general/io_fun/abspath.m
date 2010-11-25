@@ -1,15 +1,16 @@
 function fpath = abspath(fpath)
-%ABSPATH  Converts relative path from current working directory to an absolute path
+%ABSPATH  Converts path to an absolute path
 %
 %   Converts a relative path from the current working directory to an
 %   absolute path by glueing the pwd and the relative path together and
-%   eliminating relative references like . and ..
+%   eliminating relative references like '.' and '..'. If the provided path
+%   is already absolute, only the references like '.' and '..' are removed.
 %
 %   Syntax:
 %   fpath = abspath(fpath)
 %
 %   Input:
-%   fpath   = relative path to be converted
+%   fpath   = path to be converted
 %
 %   Output:
 %   fpath   = absolute path
@@ -65,26 +66,29 @@ function fpath = abspath(fpath)
 % make sure fileseperators are right
 fpath = fullfile(fpath);
 
-% check if path is indeed relative
+% check if path is relative
 if (ispc() && fpath(2) ~= ':') || (isunix() && fpath(1) ~= filesep)
-    
-    % it is a relative path, explode by filesep
     p = regexp(fullfile(pwd, fpath), filesep, 'split');
-    
-    % replace relative references
-    idx = true(size(p));
-    for i = 1:length(p)
-        switch p{i}
-            case '.'
-                idx(i) = false;
-            case '..'
-                idx(i-1:i) = false;
-        end
-    end
-    
-    % glue path together
-    fpath = sprintf(['\' filesep '%s'], p{idx});
-    
-    % help windows users
-    if ispc(); fpath = fpath(2:end); end;
+else
+    p = regexp(fpath, filesep, 'split');
 end
+    
+% replace relative references
+i = 1;
+while i <= length(p)
+    switch p{i}
+        case '.'
+            p(i) = [];
+            i = i-1;
+        case '..'
+            p(i-1:i) = [];
+            i = i-2;
+    end
+    i = i+1;
+end
+
+% glue path together
+fpath = sprintf(['\' filesep '%s'], p{:});
+
+% help windows users
+if ispc(); fpath = fpath(2:end); end;

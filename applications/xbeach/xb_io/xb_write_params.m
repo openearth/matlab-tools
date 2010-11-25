@@ -80,12 +80,12 @@ if ~iscell(OPT.header); OPT.header = {OPT.header}; end;
 
 %% write parameter file
 
-xbdir = fullfile(fileparts(which(mfilename)), '..', '..', '..', '..', 'fortran', 'XBeach'); 
+xbdir = abspath(fullfile(fileparts(which(mfilename)), '..', '..', '.', '..', '..', 'fortran', '.', 'XBeach'));
 
 if exist(xbdir, 'file')
-    [XBparams XBparams_array]=XB_updateParams(xbdir);
-    parname = {XBparams_array.name};
-    partype = {XBparams_array.partype};
+    [params params_array] = xb_get_params(xbdir);
+    parname = {params_array.name};
+    partype = {params_array.partype};
     upartype = unique(partype);
 else
     warning('No XBeach parameter category definition found, skipping headers');

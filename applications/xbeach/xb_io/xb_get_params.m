@@ -1,33 +1,74 @@
-function [XBparams XBparams_array]=XB_updateParams(XBdir)
+function [params params_array] = xb_get_params(fpath)
+%XB_GET_PARAMS  Reads XBeach parameter types and defaults from XBeach source code
 %
-% Function to read XBeach params types and defaults from XBeach source
-% code (params.F90). Useful to link to latest trunk update.
+%   Function to read XBeach params types and defaults from XBeach source
+%   code (params.F90). Useful to link to latest trunk update.
 %
-% Syntax: [XBparams XBparams_array]=XB_updateParams(XBdir)
+%   Syntax:
+%   [params params_array] = xb_get_params(xbdir)
 %
-% Input:  XBdir    = directory in which XBeach source code can be found
-% Result: XBparams = structure array with listing of every parameter in
-%                    XBeach, including type, name, units, comment,
-%                    parameter type, default, minimum recommended and
-%                    maximum recommended values data.
-%         XBparams_array = array-version of XBparams
+%   Input:
+%   xbdir           = directory in which XBeach source code can be found
 %
-% Created 15-03-2010 : XBeach-group Delft
+%   Output:
+%   params          = structure array with listing of every parameter in
+%                     XBeach, including type, name, units, comment,
+%                     parameter type, default, minimum recommended and
+%                     maximum recommended values data.
+%   params_array    = array-version of params
 %
-% See also XB_readpars
+%   Example
+%   [params params_array] = xb_get_params(xbdir)
+%
+%   See also xb_read_params, xb_write_params
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2010 Deltares
+%       Robert McCall
+%
+%       robert.mccall@deltares.nl	
+%
+%       Rotterdamseweg 185
+%       2629HD Delft
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
 
+% This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
 
-% XBdir='D:\mccall\XBeach\XBeach_repository\trunk\';
-% XBdir='https://repos.deltares.nl/repos/XBeach/trunk/';
-XBparamfile='params.F90';
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 25 Nov 2010
+% Created with Matlab version: 7.9.0.529 (R2009b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% read params.f90
+
+paramfile='params.F90';
 Typename='parameters';
 
-if XBdir(end)~=filesep
-    XBdir(end+1)=filesep;
-end
-
-paramsfname=[XBdir XBparamfile];
+paramsfname=fullfile(fpath, paramfile);
 fid=fopen(paramsfname);
 
 parread=0;
@@ -64,17 +105,17 @@ while ~feof(fid)
         t7=findstr(']',line);  if length(t7)>1; t7=t7(t7>t3c);t7=t7(1); end;
         if (~isempty(t3) && ~isempty(t4) && t5~=1)
             parcount=parcount+1;
-            XBparams_array(parcount).type = strtrim(line(1:t3-1));
-            XBparams_array(parcount).name = strtrim(line(t3+2:t4-1));
-            XBparams_array(parcount).noinstances = 0;
+            params_array(parcount).type = strtrim(line(1:t3-1));
+            params_array(parcount).name = strtrim(line(t3+2:t4-1));
+            params_array(parcount).noinstances = 0;
             if isempty(t6)
-                XBparams_array(parcount).units = 'unknown';
-                XBparams_array(parcount).comment = strtrim(line(t5+1:end));
-                XBparams_array(parcount).partype = strtrim(parametertype);
+                params_array(parcount).units = 'unknown';
+                params_array(parcount).comment = strtrim(line(t5+1:end));
+                params_array(parcount).partype = strtrim(parametertype);
             else
-                XBparams_array(parcount).units = strtrim(line(t6+1:t7-1));
-                XBparams_array(parcount).comment = strtrim(line(t7+1:end));
-                XBparams_array(parcount).partype = strtrim(parametertype);
+                params_array(parcount).units = strtrim(line(t6+1:t7-1));
+                params_array(parcount).comment = strtrim(line(t7+1:end));
+                params_array(parcount).partype = strtrim(parametertype);
             end
         elseif t5==1   % Last line om comment is probably parameter type decription
             parametertype=strtrim(line(2:end));
@@ -180,15 +221,15 @@ while ~feof(fid)
             else
                 temprequired = false;
             end
-            for ivar=1:length(XBparams_array)
-                if strcmpi(strtrim(XBparams_array(ivar).name),tempname)
-                    XBparams_array(ivar).noinstances=XBparams_array(ivar).noinstances+1;
-                    XBparams_array(ivar).default{XBparams_array(ivar).noinstances}=tempdef;
-                    XBparams_array(ivar).minval{XBparams_array(ivar).noinstances}=tempmin;
-                    XBparams_array(ivar).maxval{XBparams_array(ivar).noinstances}=tempmax;
-                    XBparams_array(ivar).required{XBparams_array(ivar).noinstances}=temprequired;
-                    XBparams_array(ivar).allowed{XBparams_array(ivar).noinstances}=tempallowed;
-                    XBparams_array(ivar).condition{XBparams_array(ivar).noinstances}=tempcondition;
+            for ivar=1:length(params_array)
+                if strcmpi(strtrim(params_array(ivar).name),tempname)
+                    params_array(ivar).noinstances=params_array(ivar).noinstances+1;
+                    params_array(ivar).default{params_array(ivar).noinstances}=tempdef;
+                    params_array(ivar).minval{params_array(ivar).noinstances}=tempmin;
+                    params_array(ivar).maxval{params_array(ivar).noinstances}=tempmax;
+                    params_array(ivar).required{params_array(ivar).noinstances}=temprequired;
+                    params_array(ivar).allowed{params_array(ivar).noinstances}=tempallowed;
+                    params_array(ivar).condition{params_array(ivar).noinstances}=tempcondition;
                     break
                 end
             end
@@ -250,13 +291,13 @@ while ~feof(fid)
     end
 end
 
-XBparams={};
+params={};
 
-for i=1:length(XBparams_array)
-    names = fieldnames(XBparams_array(i));
+for i=1:length(params_array)
+    names = fieldnames(params_array(i));
     for ii=1:length(names)
         if ~strcmp(names{ii},'name')
-            eval(['XBparams.' XBparams_array(i).name '.' names{ii} '= XBparams_array(i).' names{ii} ';']);
+            eval(['params.' params_array(i).name '.' names{ii} '= params_array(i).' names{ii} ';']);
         end
     end
 end
