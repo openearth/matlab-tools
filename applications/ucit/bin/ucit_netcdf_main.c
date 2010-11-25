@@ -1,8 +1,41 @@
 /*
  * MATLAB Compiler: 4.11 (R2009b)
- * Date: Thu Nov 25 14:32:13 2010
+ * Date: Thu Nov 25 14:52:53 2010
  * Arguments: "-B" "macro_default" "-m" "-W" "main" "-T" "link:exe" "-v" "-d"
- * "bin" "ucit_netcdf.m" "-a" "..\..\io\netcdf\toolsUI-4.1.jar" 
+ * "bin" "ucit_netcdf.m" "-B" "complist" "-a" "betacdf.m" "betainv.m"
+ * "betapdf.m" "distchck.m" "polyconf.m" "tinv.m" "UCIT_IsohypseInPolygon.m"
+ * "UCIT_getCrossSection.m" "UCIT_plotDataInGoogleEarth.m"
+ * "UCIT_plotDataInPolygon.m" "UCIT_plotDifferenceMap.m"
+ * "UCIT_plotGridOverview.m" "UCIT_sandBalanceInPolygon.m"
+ * "UCIT_exportTransects2GoogleEarth.m" "UCIT_plotTransectOverview.m"
+ * "UCIT_selectTransect.m" "UCIT_showTransectOnOverview.m"
+ * "UCIT_analyseTransectVolume.m" "UCIT_calculateMKL.m" "UCIT_calculateTKL.m"
+ * "UCIT_plotMultipleYears.m" "UCIT_plotTransect.m" "UCIT_plotAlongshore.m"
+ * "UCIT_plotDots.m" "UCIT_plotDotsInPolygon.m" "UCIT_plotLidarTransect.m"
+ * "UCIT_plotMultipleTransects.m" "UCIT_SelectTransectsUS.m" "UCIT_cdots_amy.m"
+ * "UCIT_clbPlotUSGS.m" "UCIT_exportSelectedTransects2GoogleEarth.m"
+ * "UCIT_fncResizeUSGS.m" "UCIT_getLidarMetaData.m" "UCIT_plotDots.m"
+ * "UCIT_plotDotsAmy.m" "UCIT_saveDataUS.m" "UCIT_toggleCheckBoxes.m"
+ * "UCIT_DC_selectTransects.m" "UCIT_DC_setValuesOnPopup.m" "UCIT_Help.m"
+ * "UCIT_Options.m" "UCIT_batchCommand.m" "UCIT_checkPopups.m"
+ * "UCIT_findAvailableActions.m" "UCIT_getInfoFromPopup.m" "UCIT_getObjTags.m"
+ * "UCIT_loadRelevantInfo2Popup.m" "UCIT_makeUCITConsole.m" "UCIT_next.m"
+ * "UCIT_preparePlot.m" "UCIT_print.m" "UCIT_quit.m" "UCIT_resetUCITDir.m"
+ * "UCIT_resetValuesOnPopup.m" "UCIT_restoreWindowsPositions.m"
+ * "UCIT_selectFile.m" "UCIT_selectRay.m" "UCIT_selectRayPoly.m"
+ * "UCIT_selectUser.m" "UCIT_setIniDir.m" "UCIT_setValues2Popup.m"
+ * "UCIT_showRay.m" "UCIT_takeAction.m" "addUCIT.m" "doNothing.m"
+ * "ucit_about.m" "UCIT_computeGridVolume.m" "UCIT_findCoverage.m"
+ * "UCIT_getDatatypes.m" "UCIT_getMetaData.m" "UCIT_getMetaData_grid.m"
+ * "UCIT_getMetaData_transect.m" "UCIT_getSandBalance.m"
+ * "UCIT_getSandBalance_test_exclude.m" "UCIT_plotSandbalance.m"
+ * "readLidarDataNetcdf.m" "UCIT_CompXYLim.m" "UCIT_WS_getCrossSection.m"
+ * "UCIT_WS_polydraw.m" "UCIT_ZoomInOutPan.m" "UCIT_findAllObjectsOnToken.m"
+ * "UCIT_focusOn_Window.m" "UCIT_getPlot.m" "UCIT_getPlotPosition.m"
+ * "UCIT_parseStringOnToken.m" "UCIT_plotFilteredTransectContours.m"
+ * "UCIT_plotGrid.m" "UCIT_plotLandboundary.m" "UCIT_plotTransectContours.m"
+ * "UCIT_prepareFigureN.m" "UCIT_selectGridPoly.m" "UCIT_selectObject.m"
+ * "Im2Ico.m" "-a" "..\..\io\netcdf\toolsUI-4.1.jar" 
  */
 #include <stdio.h>
 #include "mclmcrrt.h"
@@ -67,7 +100,7 @@ bool MW_CALL_CONV ucit_netcdfInitializeWithHandlers(
                                                      &__MCC_ucit_netcdf_component_data, 
                                                      true, NoObjectType, ExeTarget, 
                                                      error_handler, print_handler, 
-                                                     19393544, NULL))
+                                                     19858929, NULL))
     return false;
   return true;
 }
