@@ -75,6 +75,10 @@ OPT = setproperty(OPT, varargin{:});
 
 %% read params.txt
 
+if ~exist(filename, 'file')
+    error(['File does not exist [' filename ']'])
+end
+
 xbSettings = xb_read_params(filename);
 
 %% read referred files

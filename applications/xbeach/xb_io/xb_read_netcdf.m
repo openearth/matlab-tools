@@ -58,7 +58,12 @@ function variables = xb_read_netcdf(fname, varargin)
 % $Keywords: $
 
 
-%% 
+%%
+
+if ~exist(fname, 'file')
+    error(['File does not exist [' fname ']'])
+end
+
 variables = xb_empty();
 
 info = nc_info(fname);

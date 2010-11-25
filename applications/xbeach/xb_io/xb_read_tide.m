@@ -72,17 +72,18 @@ OPT = setproperty(OPT, varargin{:});
 
 %% read file
 
+if ~exist(filename, 'file')
+    error(['File does not exist [' filename ']'])
+end
+
 xbSettings = xb_empty();
 xbSettings = xb_set(xbSettings, 'time', [], 'tide', []);
 
-if exist(filename, 'file')
-    try
-        A = load(filename);
-        xbSettings = xb_set(xbSettings, 'time', {A(:,1) 's'});
-        xbSettings = xb_set(xbSettings, 'tide', {A(:,2:end) 'm'});
-    catch
-        error(['Tide definition file incorrectly formatted [' filename ']']);
-    end
+try
+    A = load(filename);
+    xbSettings = xb_set(xbSettings, '-units', 'time', {A(:,1) 's'}, 'tide', {A(:,2:end) 'm'});
+catch
+    error(['Tide definition file incorrectly formatted [' filename ']']);
 end
 
 % set meta data

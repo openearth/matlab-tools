@@ -80,11 +80,20 @@ if ~iscell(OPT.header); OPT.header = {OPT.header}; end;
 
 %% write parameter file
 
-XBdir = fullfile(fileparts(which(mfilename)), '..', '..', '..', '..', 'fortran', 'XBeach'); 
-[XBparams XBparams_array]=XB_updateParams(XBdir);
-parname = {XBparams_array.name};
-partype = {XBparams_array.partype};
-upartype = unique(partype);
+xbdir = fullfile(fileparts(which(mfilename)), '..', '..', '..', '..', 'fortran', 'XBeach'); 
+
+if exist(xbdir, 'file')
+    [XBparams XBparams_array]=XB_updateParams(xbdir);
+    parname = {XBparams_array.name};
+    partype = {XBparams_array.partype};
+    upartype = unique(partype);
+else
+    warning('No XBeach parameter category definition found, skipping headers');
+    parname = {xbSettings.data.name};
+    upartype = {'General'};
+    partype = cell(size(parname));
+    [partype{:}] = deal(upartype{1});
+end
 
 % derive maximum stringsize of all variable names
 maxStringLength = max(cellfun(@length, {xbSettings.data.name}));

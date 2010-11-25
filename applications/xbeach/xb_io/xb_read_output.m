@@ -65,6 +65,10 @@ function variables = xb_read_output(fname, varargin)
 % $HeadURL$
 % $Keywords: $
 
+if ~exist(fname, 'file')
+    error(['File does not exist [' fname ']'])
+end
+
 if isdir(fname) 
   variables = xb_read_dat(fname, varargin);
 else 

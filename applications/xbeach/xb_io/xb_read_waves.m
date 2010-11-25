@@ -111,8 +111,8 @@ function [names values] = read_filelist(filename)
 
 tlength = 1;
 
-names = [];
-values = [];
+names = {};
+values = {};
 
 duration = [];
 timestep = [];
@@ -147,6 +147,7 @@ while ~feof(fid)
             if ~any(idx)
                 idx = length(names)+1;
                 names = [names {n{i}}];
+                values = [values {[]}];
             end
             if ischar(v{i})
                 tmp = values{idx};
@@ -253,6 +254,8 @@ function xbSettings = consolidate_settings(xbSettings)
 for i = 1:length(xbSettings.data)
     A = xbSettings.data(i).value;
     S = ones(size(size(A))); S(end) = size(A,ndims(A));
+    
+    if iscell(A); continue; end;
     
     % determine if last dimension is constant
     if sum(sum(sum(abs(A-repmat(sum(A,ndims(A))/S(end),S)))))<1e-10

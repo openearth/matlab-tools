@@ -74,7 +74,7 @@ OPT = setproperty(OPT, varargin{:});
 %% read params file
 
 if ~exist(filename, 'file')
-    error(['"' filename '" does not exist'])
+    error(['File does not exist [' filename ']'])
 end
 
 fid = fopen(filename);
@@ -85,7 +85,7 @@ fclose(fid);
 
 % obtain all keywords and values using regular expressions
 [exprNames endIndex] = regexp(txt, ...
-    '\s*(?<name>[^%]*?)\s*=\s*(?<value>[^%]*?)\s*\n', 'names', 'end', 'dotexceptnewline');
+    '\s*(?<name>.*?)\s*=\s*(?<value>.*?)\s*\n', 'names', 'end', 'dotexceptnewline');
 
 names = {exprNames.name};
 values = {exprNames.value};
@@ -114,7 +114,10 @@ values = values(idx);
 xbSettings = xb_empty();
 
 for i = 1:length(names)
-    xbSettings = xb_set(xbSettings, names{i}, values{i});
+    if ~ismember(names{i}(1), {'%' '#' '$'})
+        xbSettings = xb_set(xbSettings, names{i}, values{i});
+    end
 end
 
+% set meta data
 xbSettings = xb_meta(xbSettings, mfilename, 'params', filename);

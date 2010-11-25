@@ -72,30 +72,34 @@ OPT = setproperty(OPT, varargin{:});
 
 %% read bcf list
 
+if ~exist(filename, 'file')
+    error(['File does not exist [' filename ']'])
+end
+
 tlength = 1;
 
 fdir = fileparts(filename);
 
-if exist(filename, 'file')
-    fid = fopen(filename);
-    while ~feof(fid)
-        fline = fgetl(fid);
-        if isempty(fline); continue; end;
-        
-        [bcendtime(tlength) rt(tlength) dt(tlength) trep(tlength) mainang(tlength) fname] = ...
-            strread(fline, '%f%f%f%f%f%s\n', 'delimiter', ' ');
-        
-        data(:,:,:,tlength) = read_bcf(fullfile(fdir, [fname{:}]));
-        
-        tlength = tlength+1;
-    end
-    fclose(fid);
+[bcendtime rt dt trep mainang data] = deal([]);
+
+fid = fopen(filename);
+while ~feof(fid)
+    fline = fgetl(fid);
+    if isempty(fline); continue; end;
+
+    [bcendtime(tlength) rt(tlength) dt(tlength) trep(tlength) mainang(tlength) fname] = ...
+        strread(fline, '%f%f%f%f%f%s\n', 'delimiter', ' ');
+
+    data(:,:,:,tlength) = read_bcf(fullfile(fdir, [fname{:}]));
+
+    tlength = tlength+1;
 end
+fclose(fid);
 
 %% create xbeach settings struct
 
 xbSettings = xb_empty();
-xbSettings = xb_set(xbSettings, 'time', {bcendtime 's'}, 'duration', {rt 's'}, ...
+xbSettings = xb_set(xbSettings, '-units', 'time', {bcendtime 's'}, 'duration', {rt 's'}, ...
     'timestep', {dt 's'}, 'Trep', {trep 's'}, 'main_angle', {mainang 'degrees'}, ...
     'data', {data 'J/m^2'});
 xbSettings = xb_meta(xbSettings, mfilename, 'boundaryconditions', filename);

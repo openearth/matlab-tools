@@ -66,6 +66,10 @@ function variables = xb_read_dat(fname, varargin)
 
 %%
 
+if ~exist(fname, 'file')
+    error(['File does not exist [' fname ']'])
+end
+
 variables = xb_empty();
 
 options=[' 3Dwave';' 3Dsed ';' 3Dbed ';' 4Dbed '];

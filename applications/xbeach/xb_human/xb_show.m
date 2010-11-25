@@ -132,7 +132,7 @@ if ~isempty(vars)
         end
 
         units = '';
-        if isfield('units', xbSettings.data(i))
+        if isfield(xbSettings.data(i), 'units')
             units = xbSettings.data(i).units;
         end
 

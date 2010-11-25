@@ -4,7 +4,9 @@ function xbSettings = xb_set(xbSettings, varargin)
 %   Sets one or more variables in name/value formatted XBeach
 %   settings structure. If a variable doesn't exist yet, it is created.
 %   Units can be added by providing a cell array containing the variable
-%   itself and a string containing the units, thus {data, units}.
+%   itself and a string containing the units, thus {data, units}. Please
+%   add a flag '-units' to the varagin, if done so to ensure proper
+%   parsing.
 %
 %   Syntax:
 %   xbSettings   = xb_set(xbSettings, varargin)
@@ -18,7 +20,7 @@ function xbSettings = xb_set(xbSettings, varargin)
 %
 %   Example
 %   xbSettings  = xb_set(xbSettings, 'zb', zb, 'zs', zs)
-%   xbSettings  = xb_set(xbSettings, 'zb', {zb 'm+NAP'}, 'zs', {zs 'm+NAP'})
+%   xbSettings  = xb_set(xbSettings, '-units', 'zb', {zb 'm+NAP'}, 'zs', {zs 'm+NAP'})
 %
 %   See also xb_get, xb_show
 
@@ -67,6 +69,14 @@ function xbSettings = xb_set(xbSettings, varargin)
 
 if ~xb_check(xbSettings); xbSettings = xb_empty(); end;
 
+% determin if units are provided
+has_units = false;
+idx = strcmpi('-units', varargin);
+if any(idx)
+    has_units = true;
+    varargin = varargin(~idx);
+end
+
 if isempty(varargin)
     names = {};
     values = {};
@@ -84,10 +94,14 @@ for i = 1:length(names)
         idx = length(xbSettings.data)+1;
         xbSettings.data(idx).name = names{i};
     end
-    if iscell(values{i})
+    if iscell(values{i}) && length(values{i}) == 2 && has_units
         val = values{i};
-        xbSettings.data(idx).value = val{1};
-        xbSettings.data(idx).units = val{2};
+        if ischar(val{2})
+            xbSettings.data(idx).value = val{1};
+            xbSettings.data(idx).units = val{2};
+        else
+            xbSettings.data(idx).value = values{i};
+        end
     else
         xbSettings.data(idx).value = values{i};
     end

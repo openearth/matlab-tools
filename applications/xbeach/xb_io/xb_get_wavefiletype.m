@@ -68,88 +68,90 @@ counts = zeros(1,length(types));
 
 %% determine filetype
 
+if ~exist(filename, 'file')
+    error(['File does not exist [' filename ']'])
+end
+
 vardens_dim = [Inf Inf];
 
 lcount = 1;
-if exist(filename, 'file')
     
-    % read lines of file
-    fid = fopen(filename, 'r');
-    while ~feof(fid)
-        fline = fgetl(fid);
-        if isempty(fline); continue; end;
-        
-        cnt = counts;
-        
-        % test for filelist
-        try
-            if strcmpi(fline, 'FILELIST') && lcount == 1
+% read lines of file
+fid = fopen(filename, 'r');
+while ~feof(fid)
+    fline = fgetl(fid);
+    if isempty(fline); continue; end;
+
+    cnt = counts;
+
+    % test for filelist
+    try
+        if strcmpi(fline, 'FILELIST') && lcount == 1
+            counts = increase_count(types, counts, 'filelist');
+        else
+            [a b c] = strread(fline, '%f %f %s\n');
+            if ~isempty(a) && ~isempty(b) && ~isempty(c) && lcount > 1
                 counts = increase_count(types, counts, 'filelist');
-            else
-                [a b c] = strread(fline, '%f %f %s\n');
-                if ~isempty(a) && ~isempty(b) && ~isempty(c) && lcount > 1
-                    counts = increase_count(types, counts, 'filelist');
-                end
             end
         end
-        
-        % test for bcflist
-        try
-            [a b c d e f] = strread(fline, '%f %f %f %f %f %s\n');
-            if ~isempty(a) && ~isempty(b) && ~isempty(c) && ...
-                    ~isempty(d) && ~isempty(e) && ~isempty(f) 
-                counts = increase_count(types, counts, 'bcflist');
-            end
-        end
-        
-        % test for single jonswap
-        try
-            [key value] = strtok(fline, '=');
-            if ~isempty(value) && ismember(key, {'Hm0' 'fp' 'dir' 'gamma' 's' 'fnyq'})
-                counts = increase_count(types, counts, 'jonswap');
-            end
-        end
-        
-        % test for jonswap matrix
-        try
-            data = strread(fline, '%f', 'delimiter', ' ');
-            if length(data) == 7
-                counts = increase_count(types, counts, 'jonswap_mtx');
-            end
-        end
-        
-        % test for vardens
-        try
-            data = strread(fline, '%f', 'delimiter', ' ');
-            switch length(data)
-                case 1
-                    if lcount == 1
-                        vardens_dim(1) = data(1);
-                        counts = increase_count(types, counts, 'vardens');
-                    elseif lcount <= vardens_dim(1)+1
-                        counts = increase_count(types, counts, 'vardens');
-                    elseif lcount == vardens_dim(1)+2
-                        vardens_dim(2) = data(1);
-                        counts = increase_count(types, counts, 'vardens');
-                    elseif lcount <= sum(vardens_dim)+2
-                        counts = increase_count(types, counts, 'vardens');
-                    end
-                case vardens_dim(1)
-                    if lcount > sum(vardens_dim)+2
-                        counts = increase_count(types, counts, 'jonswap_mtx');
-                    end
-            end
-        end
-        
-        % if no match found, increase unknown
-        if sum(cnt) == sum(counts)
-            counts = increase_count(types, counts, 'unknown');
-        end
-        
-        lcount = lcount + 1;
     end
-    fclose(fid);
+
+    % test for bcflist
+    try
+        [a b c d e f] = strread(fline, '%f %f %f %f %f %s\n');
+        if ~isempty(a) && ~isempty(b) && ~isempty(c) && ...
+                ~isempty(d) && ~isempty(e) && ~isempty(f) 
+            counts = increase_count(types, counts, 'bcflist');
+        end
+    end
+
+    % test for single jonswap
+    try
+        [key value] = strtok(fline, '=');
+        if ~isempty(value) && ismember(key, {'Hm0' 'fp' 'dir' 'gamma' 's' 'fnyq'})
+            counts = increase_count(types, counts, 'jonswap');
+        end
+    end
+
+    % test for jonswap matrix
+    try
+        data = strread(fline, '%f', 'delimiter', ' ');
+        if length(data) == 7
+            counts = increase_count(types, counts, 'jonswap_mtx');
+        end
+    end
+
+    % test for vardens
+    try
+        data = strread(fline, '%f', 'delimiter', ' ');
+        switch length(data)
+            case 1
+                if lcount == 1
+                    vardens_dim(1) = data(1);
+                    counts = increase_count(types, counts, 'vardens');
+                elseif lcount <= vardens_dim(1)+1
+                    counts = increase_count(types, counts, 'vardens');
+                elseif lcount == vardens_dim(1)+2
+                    vardens_dim(2) = data(1);
+                    counts = increase_count(types, counts, 'vardens');
+                elseif lcount <= sum(vardens_dim)+2
+                    counts = increase_count(types, counts, 'vardens');
+                end
+            case vardens_dim(1)
+                if lcount > sum(vardens_dim)+2
+                    counts = increase_count(types, counts, 'jonswap_mtx');
+                end
+        end
+    end
+
+    % if no match found, increase unknown
+    if sum(cnt) == sum(counts)
+        counts = increase_count(types, counts, 'unknown');
+    end
+
+    lcount = lcount + 1;
 end
+fclose(fid);
 
 % determine filetype with largest match score
 [m i] = max(counts);
