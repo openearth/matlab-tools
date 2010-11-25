@@ -1,15 +1,20 @@
 function variables = xb_read_output(fname, varargin)
-%XB_READ_OUTPUT  One line description goes here.
+%XB_READ_OUTPUT  Reads output files from XBeach
 %
-%   More detailed description goes here.
+%   Reads output files from XBeach. The actual work is done by either the
+%   xb_read_dat or xb_read_netcdf function. This function only determines
+%   which one to use. Specific variables can be requested in the varargin.
 %
 %   Syntax:
 %   varargout = xb_read_output(fname, varargin)
 %
 %   Input:
-%   varargin  = variables, timestepindex
+%   fname       = path to the directory containing the dat files or the
+%                 netcdf file to be read
+%   varargin    = variables, timestepindex
+%
 %   Output:
-%   varargout = variables
+%   varargout = XBeach structure array
 %
 %   Example
 %   variables = xb_read_output('xboutput.nc')
@@ -22,17 +27,17 @@ function variables = xb_read_output(fname, varargin)
 %   
 %   TODO implement: strides={{':',':'},{1:1:3, 10:1:20, ':'}}, strides 
 %
-%
-%   See also xb_read_input, xb_write_input
+%   See also xb_read_input, xb_write_input, xb_read_dat, xb_read_netcdf
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <Deltares>
-%       OSX
+%   Copyright (C) 2010 Deltares
+%       Fedor Baart
 %
-%       <fedor.baart@deltares.nl>	
+%       fedor.baart@deltares.nl	
 %
-%       <Delft>
+%       Rotterdamseweg 185
+%       2629HD Delft
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -65,6 +70,8 @@ function variables = xb_read_output(fname, varargin)
 % $HeadURL$
 % $Keywords: $
 
+%%
+
 if ~exist(fname, 'file')
     error(['File does not exist [' fname ']'])
 end
@@ -78,4 +85,3 @@ end
 % set meta data
 variables = xb_meta(variables, mfilename, 'output', fname);
 
-%%

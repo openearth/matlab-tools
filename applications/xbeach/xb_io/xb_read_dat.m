@@ -1,17 +1,18 @@
 function variables = xb_read_dat(fname, varargin)
-%XB_READ_DAT  One line description goes here.
+%XB_READ_DAT  Reads DAT formatted output files from XBeach
 %
-%   More detailed description goes here.
+%   Reads DAT formatted output files from XBeach in the form of an XBeach
+%   structure. Specific variables can be requested in the varargin.
 %
 %   Syntax:
 %   variables = xb_read_dat(fname, varargin)
-%   fname = directory name that contains the dat files.
 %
 %   Input:
-%   varargin  = variables, timestepindex
+%   fname       = directory name that contains the dat files.
+%   varargin    = variables, timestepindex
 %
 %   Output:
-%   variables = structure containing variables
+%   variables   = XBeach structure array
 %
 %   Example
 %   variables = xb_read_output('outputdir')
@@ -20,16 +21,17 @@ function variables = xb_read_dat(fname, varargin)
 %   timestepindex, 100}
 %   assert(~ismember({variables.name},  'xw'})
 %
-%   See also xb_read_output, xb_read_nc
+%   See also xb_read_output, xb_read_netcdf
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
-%       Cursus Laptop
+%   Copyright (C) 2010 Deltares
+%       Bas Hoonhout
 %
-%       <EMAIL>	
+%       bas.hoonhout@deltares.nl	
 %
-%       <ADDRESS>
+%       Rotterdamseweg 185
+%       2629HD Delft
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -62,9 +64,7 @@ function variables = xb_read_dat(fname, varargin)
 % $HeadURL$
 % $Keywords: $
 
-
-
-%%
+%% read dat files
 
 if ~exist(fname, 'file')
     error(['File does not exist [' fname ']'])

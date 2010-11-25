@@ -1,5 +1,5 @@
 function xbSettings = xb_read_bathy(varargin)
-%XB_READ_BATHY  read xbeach bathymetry files
+%XB_READ_BATHY  Read xbeach bathymetry files
 %
 %   Routine to read xbeach bathymetry files.
 %
@@ -13,8 +13,7 @@ function xbSettings = xb_read_bathy(varargin)
 %                 ne_layer: file name of non erodible layer file
 %
 %   Output:
-%   xbSettings  = XBeach settings structure array with fields 'name' and 
-%                 'value'
+%   xbSettings  = XBeach structure array
 %
 %   Example
 %   xbSettings = xb_read_bathy('xfile', xfile, 'yfile', yfile)
@@ -75,7 +74,7 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
-%% create xbeach settings struct
+%% create xbeach struct
 
 xbSettings = xb_empty();
 

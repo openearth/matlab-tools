@@ -24,7 +24,7 @@ function filename = xb_write_waves(varargin)
 %   filename = xb_write_waves(xbSettings, varargin)
 %
 %   Input:
-%   xbSettings  = XBeach settings struct (name/value) that overwrites the
+%   xbSettings  = XBeach structure array that overwrites the
 %                 default varargin options (optional)
 %   varargin    = type:             type of wave file (jonswap/vardens)
 %                 Hm0:              significant wave height of jonswap
@@ -111,7 +111,7 @@ if ~isempty(varargin) && isstruct(varargin{1})
     xbSettings = varargin{1};
     varargin = varargin(2:end);
     
-    if ~xb_check(xbSettings); error('Invalid XBeach settings structure'); end;
+    if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
 end
 
 OPT = struct( ...

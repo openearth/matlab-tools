@@ -1,17 +1,16 @@
 function xb_write_params(filename, xbSettings, varargin)
-%XB_WRITE_PARAMS  write xbeach settings to params.txt file
+%XB_WRITE_PARAMS  Write XBeach settings to params.txt file
 %
-%   Routine to create a xbeach settings file. The settings in "xbSettings"
-%   are written to "filename". Optionally an alternative header line can be
-%   defined.
+%   Routine to create a XBeach settings file. The settings in the XBeach
+%   structure are written to "filename". Optionally an alternative header
+%   line can be defined.
 %
 %   Syntax:
 %   varargout = xb_write_params(filename, xbSettings, varargin)
 %
 %   Input:
 %   filename   = file name of params file
-%   xbSettings = structure with fields 'name' and 'value' containing the
-%                xbeach settings
+%   xbSettings = XBeach structure array
 %   varargin   = header:    option to parse an alternative header string
 %
 %   Output:
@@ -67,7 +66,7 @@ function xb_write_params(filename, xbSettings, varargin)
 
 %% read options
 
-if ~xb_check(xbSettings); error('Invalid XBeach settings structure'); end;
+if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
 
 OPT = struct(...
     'header', {{'XBeach parameter settings input file' '' ['date:     ' datestr(now)] ['function: ' mfilename]}});

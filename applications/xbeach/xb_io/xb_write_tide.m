@@ -4,13 +4,13 @@ function filename = xb_write_tide(xbSettings, varargin)
 %   Writes a tide definition file containing a nx3 matrix of which the
 %   first column is the time definition and the second and third column the
 %   waterlevel definition at respectively the seaward and landward boundary
-%   of the model. Returns the filename of teh tide file.
+%   of the model. Returns the filename of the tide file.
 %
 %   Syntax:
 %   filename = xb_write_tide(xbSettings)
 %
 %   Input:
-%   xbSettings  = XBeach settings struct (name/value)
+%   xbSettings  = XBeach structure array
 %   varargin    = filename: filename of tide definition file
 %
 %   Output:
@@ -64,7 +64,7 @@ function filename = xb_write_tide(xbSettings, varargin)
 
 %% read options
 
-if ~xb_check(xbSettings); error('Invalid XBeach settings structure'); end;
+if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'filename', 'tide.txt' ...

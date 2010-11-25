@@ -1,18 +1,18 @@
 function xbSettings = xb_meta(xbSettings, func, type, file)
-%XB_META  Sets meta data of XBeach settings structure
+%XB_META  Sets meta data of XBeach structure
 %
-%   Sets meta data of XBeach settings structure.
+%   Sets meta data of XBeach structure.
 %
 %   Syntax:
 %   xbSettings = xb_meta(xbSettings, func, type)
 %
 %   Input:
-%   xbSettings  = XBeach settings struct (name/value)
+%   xbSettings  = XBeach structure array
 %   func        = Name of function that sets the meta data (mfilename)
 %   type        = Type of data in structure (params, waves, etc)
 %
 %   Output:
-%   xbSettings  = Updated XBeach settings struct
+%   xbSettings  = Updated XBeach structure array
 %
 %   Example
 %   xbSettings = xb_meta(xbSettings, 'xb_set', 'waves')
@@ -62,7 +62,7 @@ function xbSettings = xb_meta(xbSettings, func, type, file)
 
 %% set meta data
 
-if ~xb_check(xbSettings); error('Invalid XBeach settings structure'); end;
+if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
 
 xbSettings.date = datestr(now);
 

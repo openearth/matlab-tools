@@ -3,8 +3,8 @@ function xbSettings = xb_read_input(filename, varargin)
 %
 %   Reads the XBeach settings from the params.txt file and all files that
 %   are mentioned in the settings, like grid and wave definition files. The
-%   settings are stored in a structure array with fields 'name' and
-%   'value'. The referred files are stored in a similar sub-structure.
+%   settings are stored in a XBeach structure. The referred files are
+%   stored in a similar sub-structure.
 %
 %   Syntax:
 %   xbSettings = xb_read_input(filename)
@@ -16,8 +16,7 @@ function xbSettings = xb_read_input(filename, varargin)
 %                                   the result structure
 %
 %   Output:
-%   xbSettings = structure array with fields 'name' and 'value' containing
-%                all settings of the params.txt file
+%   xbSettings = XBeach structure array
 %
 %   Example
 %   xbSettings = xb_read_input(filename)

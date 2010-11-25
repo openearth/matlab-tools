@@ -1,14 +1,14 @@
 function varargout = xb_write_bathy(xbSettings, varargin)
-%XB_WRITE_BATHY  Writes XBeach bathymetry files from XBeach settings struct
+%XB_WRITE_BATHY  Writes XBeach bathymetry files from XBeach structure
 %
 %   Writes XBeach bathymetry files x, y, depth and non-erodable layers
-%   based on a name/value formatted XBeach settings struct.
+%   based on a XBeach structure.
 %
 %   Syntax:
 %   [xfile yfile depfile ne_layer] = xb_write_bathy(xbSettings, varargin)
 %
 %   Input:
-%   xbSettings  = XBeach settings struct (name/value)
+%   xbSettings  = XBeach structure array
 %   varargin    = xfile:        filename of x definition file
 %                 yfile:        filename of y definition file
 %                 depfile:      filename of depth definition file
@@ -66,7 +66,7 @@ function varargout = xb_write_bathy(xbSettings, varargin)
 
 %% read options
 
-if ~xb_check(xbSettings); error('Invalid XBeach settings structure'); end;
+if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'xfile', 'x.grd', ...

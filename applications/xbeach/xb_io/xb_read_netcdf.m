@@ -1,30 +1,37 @@
 function variables = xb_read_netcdf(fname, varargin)
-%XB_READ_NETCDF  One line description goes here.
+%XB_READ_NETCDF  Reads NetCDF formatted output files from XBeach
 %
-%   More detailed description goes here.
+%   Reads NetCDF formatted output file from XBeach in the form of an
+%   XBeach structure.
 %
 %   Syntax:
-%   varargout = xb_read_netcdf(fname, varargin)
+%   variables = xb_read_netcdf(fname, varargin)
 %
 %   Input:
-%   fname  = netcdf file
+%   fname       = filename of the netcdf file
+%   varargin    = none
 %
 %   Output:
-%   varargout =
+%   variables   = XBeach structure array
 %
 %   Example
-%   xb_read_netcdf
+%   variables = xb_read_output('outputdir')
+%   assert(ismember({variables.name},  'xw'})
+%   variables = xb_read_output('outputdir', 'variables', {'yw','zs'},
+%   timestepindex, 100}
+%   assert(~ismember({variables.name},  'xw'})
 %
-%   See also 
+%   See also xb_read_output, xb_read_dat
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <Deltares>
-%       OSX
+%   Copyright (C) 2010 Deltares
+%       Fedor Baart
 %
-%       <fedor.baart@deltares.nl>	
+%       fedor.baart@deltares.nl	
 %
-%       <Delft>
+%       Rotterdamseweg 185
+%       2629HD Delft
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public

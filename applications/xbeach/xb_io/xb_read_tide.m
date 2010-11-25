@@ -14,8 +14,7 @@ function xbSettings = xb_read_tide(filename, varargin)
 %   varargin    = none
 %
 %   Output:
-%   xbSettings  = structure array with fields 'name' and 'value' containing
-%                 all settings of the params.txt file
+%   xbSettings  = XBeach structure array
 %
 %   Example
 %   xbSettings  = xb_read_tide(filename)

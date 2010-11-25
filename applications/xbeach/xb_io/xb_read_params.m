@@ -2,8 +2,7 @@ function xbSettings = xb_read_params(filename, varargin)
 %XB_READ_PARAMS  read XBeach params.txt file
 %
 %   Routine to read the xbeach settings from the params.txt file. The
-%   settings are stored in a structure array with fields 'name' and
-%   'value'.
+%   settings are stored in a XBeach structure.
 %
 %   Syntax:
 %   xbSettings = xb_read_params(filename)
@@ -13,8 +12,7 @@ function xbSettings = xb_read_params(filename, varargin)
 %   varargin   = none
 %
 %   Output:
-%   xbSettings = structure array with fields 'name' and 'value' containing
-%                all settings of the params.txt file
+%   xbSettings = XBeach structure array
 %
 %   Example
 %   xb_read_params

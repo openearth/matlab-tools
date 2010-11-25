@@ -1,14 +1,13 @@
 function valid = xb_check(xbSettings)
-%XB_CHECK  Checks whether a variable is a valid XBeach settings struct
+%XB_CHECK  Checks whether a variable is a valid XBeach structure
 %
-%   Checks whether a variable is a valid XBeach settings struct by checking
-%   if the name/value pair is present.
+%   Checks whether a variable is a valid XBeach structure.
 %
 %   Syntax:
 %   valid = xb_check(xbSettings)
 %
 %   Input:
-%   xbSettings  = XBeach settings struct (name/value)
+%   xbSettings  = XBeach structure array
 %
 %   Output:
 %   valid       = Boolean value for validity of structure

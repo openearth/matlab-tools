@@ -1,10 +1,10 @@
 function xbSettings = xb_read_waves(filename, varargin)
 %XB_READ_WAVES  Reads wave definition files for XBeach input
 %
-%   Determines the type of wave definition file and reads it into a
-%   name/value struct. If a filelist is given, also the underlying files
-%   are read and stored. The resulting struct can be inserted into the
-%   generic XBeach settings struct.
+%   Determines the type of wave definition file and reads it into a XBeach
+%   structure. If a filelist is given, also the underlying files are read
+%   and stored. The resulting struct can be inserted into the generic
+%   XBeach structure.
 %
 %   Syntax:
 %   xbSettings  = xb_read_waves(filename, varargin)
@@ -14,8 +14,7 @@ function xbSettings = xb_read_waves(filename, varargin)
 %   varargin    = none
 %
 %   Output:
-%   xbSettings  = structure array with fields 'name' and 'value' containing
-%                 all settings of the params.txt file
+%   xbSettings  = XBeach structure array
 %
 %   Example
 %   xbSettings  = xb_read_waves(filename)

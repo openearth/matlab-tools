@@ -1,14 +1,13 @@
 function varargout = xb_get(xbSettings, varargin)
-%XB_GET  Retrieves variables from XBeach settings structure
+%XB_GET  Retrieves variables from XBeach structure
 %
-%   Retrieves one or more variables from name/value formatted XBeach
-%   settings structure.
+%   Retrieves one or more variables from XBeach structure.
 %
 %   Syntax:
 %   varargout   = xb_get(xbSettings, varargin)
 %
 %   Input:
-%   xbSettings  = XBeach settings struct (name/value)
+%   xbSettings  = XBeach structure array
 %   varargin    = Names of variables to be retrieved. If omitted, all
 %                 variables are returned
 %
@@ -63,7 +62,7 @@ function varargout = xb_get(xbSettings, varargin)
 
 %% read request
 
-if ~xb_check(xbSettings); error('Invalid XBeach settings structure'); end;
+if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
 
 if isempty(varargin)
     vars = {xbSettings.data.name};

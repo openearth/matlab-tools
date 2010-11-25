@@ -1,22 +1,21 @@
 function xbSettings = xb_set(xbSettings, varargin)
-%XB_SET  Sets variables in XBeach settings structure
+%XB_SET  Sets variables in XBeach structure
 %
-%   Sets one or more variables in name/value formatted XBeach
-%   settings structure. If a variable doesn't exist yet, it is created.
-%   Units can be added by providing a cell array containing the variable
-%   itself and a string containing the units, thus {data, units}. Please
-%   add a flag '-units' to the varagin, if done so to ensure proper
-%   parsing.
+%   Sets one or more variables in a XBeach structure. If a variable doesn't
+%   exist yet, it is created. Units can be added by providing a cell array
+%   containing the variable itself and a string containing the units, thus
+%   {data, units}. Please add a flag '-units' to the varagin, if done so to
+%   ensure proper parsing.
 %
 %   Syntax:
 %   xbSettings   = xb_set(xbSettings, varargin)
 %
 %   Input:
-%   xbSettings  = XBeach settings struct (name/value)
+%   xbSettings  = XBeach structure array
 %   varargin    = Name/value pairs of variables to be set
 %
 %   Output:
-%   xbSettings  = Updated XBeach settings struct
+%   xbSettings  = Updated XBeach structure array
 %
 %   Example
 %   xbSettings  = xb_set(xbSettings, 'zb', zb, 'zs', zs)

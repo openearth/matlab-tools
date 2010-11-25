@@ -1,9 +1,6 @@
 function testresult = xb_read_params_test()
 % XB_READ_PARAMS_TEST  test of xb_read_params function
-%  
-% More detailed description of the test goes here.
-%
-%
+% 
 %   See also 
 
 %% Copyright notice

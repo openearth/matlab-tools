@@ -1,15 +1,15 @@
 function xb_show(xbSettings, varargin)
-%XB_SHOW  Shows contents of a XBeach settings struct
+%XB_SHOW  Shows contents of a XBeach structure
 %
-%   WHOS-like display of the contents of a XBeach settings struct
+%   WHOS-like display of the contents of a XBeach structure
 %
 %   Syntax:
 %   xb_show(xbSettings)
 %
 %   Input:
-%   xbSettings  = XBeach settings struct (name/value)
+%   xbSettings  = XBeach structure array
 %   varargin    = Variables to be included, by default all variables are
-%                 included. If a nested XBeach settings struct is
+%                 included. If a nested XBeach structure array is
 %                 specifically requested, an extra xb_show is fired showing
 %                 the contents of the nested struct.
 %
@@ -64,7 +64,7 @@ function xb_show(xbSettings, varargin)
 
 %% show structure contents
 
-if ~xb_check(xbSettings); error('Invalid XBeach settings structure'); end;
+if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
 
 if nargin > 1
     vars = {}; c = 1;

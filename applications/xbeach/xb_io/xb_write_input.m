@@ -1,16 +1,16 @@
 function xb_write_input(filename, xbSettings, varargin)
 %XB_WRITE_INPUT  Write XBeach params.txt file and all files referred in it
 %
-%   Writes the XBeach settings from a structure array with name/value
-%   fields in a parameter file. Also the files that are referred to in the
-%   parameter file are written, like grid and wave definition files.
+%   Writes the XBeach settings from a XBeach structure in a parameter file.
+%   Also the files that are referred to in the parameter file are written,
+%   like grid and wave definition files.
 %
 %   Syntax:
 %   xb_write_input(filename, xbSettings, varargin)
 %
 %   Input:
 %   filename    = filename of parameter file
-%   xbSettings  = XBeach settings struct (name/value)
+%   xbSettings  = XBeach structure array
 %   varargin    = write_paths:  flag to determine whether definition files
 %                               should be written or just referred
 %
@@ -65,7 +65,7 @@ function xb_write_input(filename, xbSettings, varargin)
 
 %% read options
 
-if ~xb_check(xbSettings); error('Invalid XBeach settings structure'); end;
+if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'write_paths', true ...

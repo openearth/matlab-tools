@@ -1,7 +1,7 @@
 function xbSettings = xb_empty()
-%XB_EMPTY  Creates an empty XBeach settings structure
+%XB_EMPTY  Creates an empty XBeach structure
 %
-%   Creates an empty XBeach settings structure with name/value pair
+%   Creates an empty XBeach structure
 %
 %   Syntax:
 %   xbSettings = xb_empty()
@@ -10,7 +10,7 @@ function xbSettings = xb_empty()
 %   none
 %
 %   Output:
-%   xbSettings  = XBeach settings struct (name/value)
+%   xbSettings  = XBeach structure array
 %
 %   Example
 %   xbSettings = xb_empty()
