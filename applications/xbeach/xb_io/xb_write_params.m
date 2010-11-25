@@ -12,6 +12,7 @@ function xb_write_params(filename, xbSettings, varargin)
 %   filename   = file name of params file
 %   xbSettings = XBeach structure array
 %   varargin   = header:    option to parse an alternative header string
+%                xbdir :    option to parse an alternative xbeach code directory
 %
 %   Output:
 %   none
@@ -69,7 +70,8 @@ function xb_write_params(filename, xbSettings, varargin)
 if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
 
 OPT = struct(...
-    'header', {{'XBeach parameter settings input file' '' ['date:     ' datestr(now)] ['function: ' mfilename]}});
+    'header', {{'XBeach parameter settings input file' '' ['date:     ' datestr(now)] ['function: ' mfilename]}},...
+    'xbdir', abspath(fullfile(fileparts(which(mfilename)), '..', '..', '.', '..', '..', 'fortran', '.', 'XBeach')));
 
 if nargin > 2
     OPT = setproperty(OPT, varargin{:});
@@ -78,11 +80,8 @@ end
 if ~iscell(OPT.header); OPT.header = {OPT.header}; end;
 
 %% write parameter file
-
-xbdir = abspath(fullfile(fileparts(which(mfilename)), '..', '..', '.', '..', '..', 'fortran', '.', 'XBeach'));
-
-if exist(xbdir, 'file')
-    [params params_array] = xb_get_params(xbdir);
+if exist(OPT.xbdir, 'file')
+    [params params_array] = xb_get_params(OPT.xbdir);
     parname = {params_array.name};
     partype = {params_array.partype};
     upartype = unique(partype);
