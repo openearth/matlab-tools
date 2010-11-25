@@ -111,7 +111,8 @@ for i = 1:length(upartype)
     pars = parname(strcmpi(upartype{i}, partype));
     
     % create type header
-    if any(ismember(pars, {xbSettings.data.name}))
+    if any(ismember(pars, {xbSettings.data.name})) && ...
+            ~strcmp(upartype{i}, 'Output variables') % collect output variables for printing at the end of the file
         fprintf(fid, '\n%s %s %s\n\n', '%%%', upartype{i}, repmat('%',1,75-length(upartype{i})));
     end
     
@@ -128,6 +129,10 @@ for i = 1:length(upartype)
                 for ioutvar = 1:length(xbSettings.data(ivar).value)
                     outputvars = [outputvars sprintf('%s\n', xbSettings.data(ivar).value{ioutvar})];
                 end
+            elseif strcmp(upartype{i}, 'Output variables')
+                % collect output variables for printing at the end of the
+                % file
+                outputvars = [sprintf('%s\n', var2params(xbSettings.data(ivar).name, xbSettings.data(ivar).value, maxStringLength)) outputvars];
             else
                 % create ordinary parameter line
                 fprintf(fid, '%s\n', var2params(xbSettings.data(ivar).name, xbSettings.data(ivar).value, maxStringLength));
