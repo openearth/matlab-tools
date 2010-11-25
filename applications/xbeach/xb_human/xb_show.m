@@ -9,8 +9,10 @@ function xb_show(xbSettings, varargin)
 %   Input:
 %   xbSettings  = XBeach structure array
 %   varargin    = Variables to be included, by default all variables are
-%                 included. If a nested XBeach structure array is
-%                 specifically requested, an extra xb_show is fired showing
+%                 included. Regular expressions can be used in the variable
+%                 names to filter multiple variables at once. If a nested
+%                 XBeach structure array is specifically requested (not by
+%                 regular expression), an extra xb_show is fired showing 
 %                 the contents of the nested struct.
 %
 %   Output:
@@ -66,6 +68,8 @@ function xb_show(xbSettings, varargin)
 
 if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
 
+% determine variables to be showed, show xb_show for specifically requested
+% XBeach sub-structures
 if nargin > 1
     vars = {}; c = 1;
     for i = 1:length(varargin)
@@ -103,7 +107,7 @@ if ~isempty(vars)
     format = '%-15s %-10s %-10s %-10s %-10s %-30s\n';
     fprintf(format, 'variable', 'size', 'bytes', 'class', 'units', 'value');
     for i = 1:length(xbSettings.data)
-        if ~ismember(xbSettings.data(i).name, vars); continue; end;
+        if all(cellfun('isempty', regexp(xbSettings.data(i).name,vars,'start'))); continue; end;
 
         var = xb_get(xbSettings, xbSettings.data(i).name);
         info = whos('var');
@@ -131,6 +135,7 @@ if ~isempty(vars)
             value = [value(1:(maxl/2-2)) ' .. ' value(end-(maxl/2-3):end)];
         end
 
+        % determine units
         units = '';
         if isfield(xbSettings.data(i), 'units')
             units = xbSettings.data(i).units;
