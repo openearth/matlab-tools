@@ -48,8 +48,6 @@ function OK = CassiniSoldner_test
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
-
 OK = 0;
 
 % we use just some random numbers to test if the routine runs and generates

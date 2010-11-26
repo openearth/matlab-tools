@@ -48,8 +48,6 @@ function OK = Helmert3_test
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
-
 x0 = 0;
 y0 = 0;
 z0 = 0;

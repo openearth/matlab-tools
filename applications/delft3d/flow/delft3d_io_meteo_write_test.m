@@ -50,7 +50,7 @@ function delft3d_io_meteo_write_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('DataAccess');
+Category(TestCategory.DataAccess);
 
 %% Check wlsettings
 if ~exist('wl_grid','file') || ...

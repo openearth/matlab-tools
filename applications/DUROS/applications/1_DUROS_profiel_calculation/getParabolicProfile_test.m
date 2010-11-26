@@ -48,8 +48,7 @@ function testresult = getParabolicProfile_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = parabolic profile)
-% getParabolic profile returns the parabolic profile as described in the dutch safety assessment
+%% getParabolic profile returns the parabolic profile as described in the dutch safety assessment
 % rules for dune safety during extreme storm surges. According to these rules a dune erodes and
 % forms a parabolic profile according to:
 %
@@ -71,17 +70,9 @@ function testresult = getParabolicProfile_test()
 % This test passes whenever the function does not crash and returns an xmax = 250 [m] when default 
 % values are entered (Hs = 7.6, Tp = 12, w = 0.268).
 
-%% $RunCode
 testresult = parabprofilecase1;
 [tr x z] = parabprofilecase2;
 
-TeamCity.publishresult(@getParabolicProfile_test_result,...
-    'IncludeCode',false,...
-    'EvaluateCode',true);
-
-end
-
-function getParabolicProfile_test_result()
 % The following figure illustrates the returned parabolic profile.
 
 disp(['length x = ' num2str(length(x))]);

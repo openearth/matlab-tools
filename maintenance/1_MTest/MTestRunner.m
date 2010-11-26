@@ -66,7 +66,7 @@ classdef MTestRunner < handle
         TestsCatalogued = false;
         ProfileInfo = [];
         
-        MTestPublisher = MTestPublisher;
+%         MTestPublisher = MTestPublisher;
     end
     
     %% Methods
@@ -252,23 +252,19 @@ classdef MTestRunner < handle
                 return
             end
             
-            %% Configure MTestPublisher (if it is there)
-            if ~isempty(obj.MTestPublisher)
-                obj.MTestPublisher.OutputDir = fullfile(obj.MTestPublisher.TargetDir,'html');
-                TeamCity.publish(obj.MTestPublisher.Publish);
+            %% Check profiler
+            if obj.IncludeCoverage
+                profstate = profile('status');
+                BeginProfile = ~strcmp(profstate.ProfilerStatus,'on');
+                if ~BeginProfile
+                    if obj.Verbose
+                        warning('MTestRunner:ProfilerRunning','Profiler is already running. the obtained coverage information maybe incorrect');
+                    end
+                end
+                profile off
+                profile clear
             end
             
-            %% Check profiler
-            profstate = profile('status');
-            BeginProfile = ~strcmp(profstate.ProfilerStatus,'on');
-            if ~BeginProfile
-                if obj.Verbose
-                    warning('MTestRunner:ProfilerRunning','Profiler is already running. the obtained coverage information maybe incorrect');
-                end
-            end
-            profile off
-            profile clear
-
             %% Make sure the current dir is in the searchpath
             mtestpath = path;
             addpath(cd);
@@ -315,15 +311,9 @@ classdef MTestRunner < handle
                 end
                 %% Run test
                 try
-                    %% Disable publication and run
-                    obj.Tests(itest).MTestPublisher = obj.MTestPublisher;
                     obj.Tests(itest).run;
                 catch me
                     cd(startdir);
-                    if isdir(obj.Tests(itest).RunDir)
-                        fclose('all');
-                        rmdir(obj.Tests(itest).RunDir,'s');
-                    end
                     wrongtests(itest)=true;
                     obj.WrongTestDefs{end+1} = fullfile(obj.Tests(itest).FilePath,[obj.Tests(itest).FileName '.m']);
                 end
@@ -333,11 +323,13 @@ classdef MTestRunner < handle
             obj.Tests(wrongtests) = [];
             
             %% Get profiler information
-            if min(size(obj.Tests))>0 && ~all([obj.Tests.Ignore])
-                obj.ProfileInfo = MTestUtils.mergeprofileinfo(obj.Tests(~[obj.Tests.Ignore]).ProfilerInfo);
-            else
-                profile('clear');
-                obj.ProfileInfo = profile('info');
+            if obj.IncludeCoverage
+                if min(size(obj.Tests))>0 && ~all([obj.Tests.Ignore])
+                    obj.ProfileInfo = MTestUtils.mergeprofileinfo(obj.Tests(~[obj.Tests.Ignore]).ProfilerInfo);
+                else
+                    profile('clear');
+                    obj.ProfileInfo = profile('info');
+                end
             end
             
             %% return to the previous searchpath settings

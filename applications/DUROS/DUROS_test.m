@@ -49,7 +49,7 @@ function DUROS_test()
 % $HeadURL$
 % $Keywords: $
 
-TeamCity.category('Integration');
+Category(TestCategory.Intergration);
 
 DuneErosionSettings('default');
 

@@ -60,4 +60,4 @@ if ishandle(h)
     close(h);
 end
 
-TeamCity.category('UnCategorized');
+Category(TestCategory.Intergration);

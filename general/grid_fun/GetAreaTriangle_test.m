@@ -49,9 +49,6 @@ function testresult = GetAreaTriangle_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = getAreaTriangle)
-% Calculate area of following.
-
 X = [ 0  2; 1 3];
 Y = [-1 -2; 0 1];
 
@@ -63,7 +60,6 @@ grid on
 set(gca,'xtick',-10:1:10);
 set(gca,'ytick',-10:1:10);
 
-%% $RunCode
 AreaA(:,:) = GetAreaTriangle(X(1:end-1,1:end-1),Y(1:end-1,1:end-1),...
 X(2:end  ,1:end-1),Y(2:end  ,1:end-1),...
 X(2:end  ,2:end  ),Y(2:end  ,2:end  ));
@@ -106,6 +102,3 @@ disp(num2str(AreaB))
 disp(num2str(Area ))
 
 testresult = nan;
-
-%% $PublishResult
-% Publishable code that describes the test.

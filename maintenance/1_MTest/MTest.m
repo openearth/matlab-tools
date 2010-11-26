@@ -96,18 +96,11 @@ classdef MTest < handle
         ProfilerInfo = [];                  % Profile info structure
         FunctionCalls = [];                 % Called functions
         StackTrace    = [];                 % Stack trace (diary + error message)
-        
-        MTestPublisher = [];
+        IncludeCoverage = false;
     end
     properties (Hidden = true)
         FullString = [];                    % Full string of the contents of the test file
-        IDTestFunction = [];                % boolean the size of FullStrin with true for the lines that are part of the main test
         IDOetHeaderString = [];             % boolean the size of FullStrin with true for the lines that are part of the oet function header
-        SubFunctions = [];                  % Struct with output of getcallinfo for all subfunctions
-        RunDir = [];                        % This dir is used to run the test (if it needs to be run in a different dir)
-        
-        PublishedDescriptionFile = [];      % Administrate where we published the description
-        PublishedResultFile = [];           % Administrate where we published the result
     end
     
     %% Methods
@@ -177,9 +170,6 @@ classdef MTest < handle
             %% Lock this workspace and function code
             mlock;
             teamcity = TeamCity;
-            
-            obj.PublishedDescriptionFile = [];
-            obj.PublishedResultFile = [];
             
             %% subtract outputfilename
             obj = MTestUtils.setproperty(obj,varargin{:});
@@ -264,10 +254,14 @@ classdef MTest < handle
                 try
                     % Try to perform test with output argument (testResult)
                     tic;
-                    profile clear
-                    profile on
+                    if obj.IncludeCoverage
+                        profile clear
+                        profile on
+                    end
                     [commandWindowString obj.TestResult] = evalc([obj.FunctionName ';']);
-                    profile off
+                    if obj.IncludeCoverage
+                        profile off
+                    end
                     runTime = toc;
                     if ~islogical(obj.TestResult)
                         obj.TestResult = true;
@@ -280,24 +274,32 @@ classdef MTest < handle
                         clear me
                         try
                             tic;
-                            profile clear
-                            profile on
+                            if obj.IncludeCoverage
+                                profile clear
+                                profile on
+                            end
                             commandWindowString = evalc([obj.FunctionName ';']);
-                            profile off
+                            if obj.IncludeCoverage
+                                profile off
+                            end
                             runTime = toc;
                             obj.TestResult = true;
                         catch me
                             % Test failed, report failure
                             path(pt);
                             obj.TestResult = false;
-                            profile off
+                            if obj.IncludeCoverage
+                                profile off
+                            end
                             runTime = toc;
                             errorReport = me.getReport;
                             errorMessage = me.message;
                         end
                     else
                         % Another error occurred, Report failure of the test
-                        profile off
+                        if obj.IncludeCoverage
+                            profile off
+                        end
                         runTime = toc;
                         obj.TestResult = false;
                         errorReport = me.getReport;
@@ -306,13 +308,10 @@ classdef MTest < handle
                 end
                 
                 %% Save stacktrace information
-                if ~isempty(obj.RunDir) && ~isempty(obj.FilePath)
-                    stacktrace = strrep(sprintf('%s\n',commandWindowString,errorReport),obj.RunDir,obj.FilePath);
-                else
-                    stacktrace = sprintf('%s\n',commandWindowString,errorReport);
+                obj.StackTrace = sprintf('%s\n',commandWindowString,errorReport);
+                if obj.IncludeCoverage
+                    obj.ProfilerInfo = profile('info');
                 end
-                obj.StackTrace = stacktrace;
-                obj.ProfilerInfo = profile('info');
                 obj.Time = runTime;
                 
                 if ~obj.TestResult
@@ -339,6 +338,9 @@ classdef MTest < handle
                     'details',me.getReport);
                 if obj.Verbose
                     disp(['     Error occurred: ' me.message]);
+                end
+                if obj.IncludeCoverage
+                    profile off
                 end
             end
             
@@ -386,99 +388,14 @@ classdef MTest < handle
                 if nargin > 1
                     opentoline(filename,varargin{:});
                 else
-                    opentoline(filename,max([1 find(obj(iobj).IDTestFunction,1,'first')]),1);
+                    TODO('Search for first code line');
+                    firstCodeLine = 1;
+                    opentoline(filename,max([1 firstCodeLine]),1);
                 end
             end
         end
     end
-    
-    %% Hidden Methods
-    methods (Hidden = true)
-        function evaluatedescription(obj,functionname)
-            %% Do not publish if the object should be ignored
-            if obj.Ignore
-                return;
-            end
-
-            %% Determine whether the publish code is a subfunction, function or script
-            functionType = 'subfunction';
-            if isa(functionname,'function_handle')
-                functionname = func2str(functionname);
-            end
-            idfunction = strcmp({obj.SubFunctions.name},functionname);
-
-            if all(~idfunction)
-                % function is not a subfunction
-                if ~exist(which(functionname),'file')
-                    % There is no external file with this name
-                    error('TeamCity:Publish','TeamCity.publishdescription should have the name or handle of a function or script as first input argument');
-                end
-                % read the code of the external file to see if it is a function or a script
-                fcncalls = getcallinfo(which(functionname));
-                % TODO: Known issue, if Matlab 2009b there is a bug in getcallinfo that prevents
-                % generation of callinfo for scripts. THis bug was fixed in 2010a and did not exist
-                % in 2009a whereas R14 up till 2008b use the same version of getcallinfo.
-                if datenum(version('-date')) > datenum(2010,1,1)
-                    if fcncalls(1).type == internal.matlab.codetools.reports.matlabType.Function
-                        functionType = 'function';
-                    else
-                        functionType = 'script';
-                    end
-                else
-                    if strcmp(fcncalls(1).type,'function')
-                        functionType = 'function';
-                    else
-                        functionType = 'script';
-                    end
-                end
-            end
-
-            switch functionType
-                case 'subfunction'
-                    idPublishString = obj.SubFunctions(idfunction).linemask;
-                    if strncmp(obj.FullString(obj.SubFunctions(idfunction).firstline),'function ',9)
-                        idPublishString(obj.SubFunctions(idfunction).firstline) = false;
-                    end
-            
-                    % ==> This can lead to errors if someone somehow does not end the subfunction with end end
-                    % also begins the last line with end....
-                    if strncmp(obj.FullString(obj.SubFunctions(idfunction).lastline),'end',3)
-                        idPublishString(obj.SubFunctions(idfunction).lastline) = false;
-                    end
-                    
-                    descrstr = sprintf('%s\n',...
-                        'TeamCity.restoreworkspace;',...
-                        'profile on',...
-                        obj.FullString{idPublishString},...
-                        'profile off',...
-                        'TeamCity.storeworkspace;');
-                    
-                    MTestUtils.evalinemptyworkspace(descrstr);
-                case 'function'
-                    fid = fopen(which(functionname),'r');
-                    str = textscan(fid,'%s','delimiter','\n','whitespace','','bufSize',10000);
-                    functioncontent = str{1};
-                    fclose(fid);
-                    descrstr = sprintf('%s\n',...
-                        'TeamCity.restoreworkspace;',...
-                        'profile on',...
-                        functioncontent{:},...
-                        'profile off',...
-                        'TeamCity.storeworkspace;');
-                    MTestUtils.evalinemptyworkspace(descrstr);
-                case 'script'
-                    descrstr = sprintf('%s\n',...
-                        'TeamCity.restoreworkspace;',...
-                        'profile on',...
-                        [functionname ';'],...
-                        'profile off',...
-                        'TeamCity.storeworkspace;');
-                    MTestUtils.evalinemptyworkspace(descrstr);
-            end
-
-        end
-    end
-    
+   
     %% Static methods
     methods (Static = true)
         function name(proposedname)

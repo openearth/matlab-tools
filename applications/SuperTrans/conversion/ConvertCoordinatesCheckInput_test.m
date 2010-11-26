@@ -49,7 +49,6 @@ function OK = ConvertCoordinatesCheckInput_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
 CS.type = 'geo';
 CS.code = 4326;
 STD = load('EPSG');

@@ -48,8 +48,6 @@ function OK = convertUnits_test
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
-
 x1 = 1;
 sourceUoM = 'metre';
 targetUoM = 'foot';

@@ -1,12 +1,13 @@
 function unit = mte_concepttest_test()
-unit = 0;
+unit = false;
 
 MTest.name('name of the test');
-MTest.category('TestCategory'); %'integration','performace', 'KML','DUROS', etc...
+Category(TestCategory.Intergration);
 if TeamCity.running 
     TeamCity.ignore('wip');
     return; 
 end
 
-assert(1==2,'1 is not 2')
+assert(1==2,'1 is not 2') 
+% or: "unit = 1==2;"
    

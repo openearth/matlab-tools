@@ -49,7 +49,7 @@ function trisurfcorcen_test()
 % $HeadURL$
 % $Keywords: $
 
-TeamCity.category('UnCategorized');
+Category(TestCategory.Intergration);
 
    el = 30;
    nx = 3;

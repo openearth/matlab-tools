@@ -49,8 +49,6 @@ function OK = ConvertCoordinatesFindCoordSys_test
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
-
 CS.code = 28992;
 STD = load('EPSG');
 

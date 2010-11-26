@@ -64,4 +64,4 @@ catch
     end
 end
 
-TeamCity.category('UnCategorized');
+Category(TestCategory.Intergration);

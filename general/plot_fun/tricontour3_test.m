@@ -46,11 +46,6 @@ function testresult = tricontour3_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
-% Publishable code that describes the test.
-
-%% $RunCode
-% Write test code here
 try
     [x,y] = meshgrid(1.1:10.1,1.1:10.1);
     z = peaks(10);
@@ -68,6 +63,4 @@ try
 catch
     testresult = false;
 end
-%% $PublishResult
-% Publishable code that describes the test.
 

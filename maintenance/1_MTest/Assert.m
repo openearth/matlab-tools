@@ -1,27 +1,40 @@
 classdef Assert
     methods (Static = true)
-        function areequal(expectedVariable, actualVariable)
-            Assert.typesareequal(expectedVariable,actualVariable);
-            Assert.variablesizeisequal(expectedVariable,actualVariable);
-            Assert.variablecontentisequal(expectedVariable,actualVariable)
+        function areequal(expected, realization)
+            try
+                Assert.typesareequal(expected,realization);
+                Assert.variablesizeisequal(expected,realization);
+                Assert.variablecontentisequal(expected,realization)
+            catch me
+                rethrow(me);
+            end
         end
-        function arenotequal(expectedVariable, actualVariable)
-            Assert.typesareequal(expectedVariable,actualVariable);
-            % TODO
+        function arenotequal(expected, realization)
+                if Assert.typesarenotequal(expected,realization)
+                    TODO('Implement');
+                end
         end
         function greaterthan()
-            Assert.typesareequal(expectedVariable,actualVariable);
-            Assert.variablesizeisequal(expetedVariable,actualVariable);
-            % TODO
+            try
+                Assert.typesareequal(expectedVariable,actualVariable);
+                Assert.variablesizeisequal(expetedVariable,actualVariable);
+                TODO('Implement');
+            catch me
+                rethrow(me);
+            end
         end
         function smallerthan()
-            Assert.typesareequal(expectedVariable,actualVariable);
-            Assert.variablesizeisequal(expetedVariable,actualVariable);
-            % TODO
+            try
+                Assert.typesareequal(expectedVariable,actualVariable);
+                Assert.variablesizeisequal(expetedVariable,actualVariable);
+                TODO('Implement');
+            catch me
+                rethrow(me);
+            end
         end
-        function typesareequal(expectedVariable,actualVariable)
-            actualClass = class(actualVariable);
-            expectedClass = class(expectedVariable);
+        function typesareequal(expected,realization)
+            actualClass = class(realization);
+            expectedClass = class(expected);
             if ~strcmp(expectedClass,actualClass)
                 error('AssertionFailure:UnEqualVarTypes',['Assertion failure:', char(10),...
                     'Expected and Actual value are of different type', char(10),...
@@ -51,7 +64,7 @@ classdef Assert
             switch class(actualVariable)
                 case {'double', 'int', 'int32', 'logical'}
                     if ~isequalwithequalnans(expectedVariable,actualVariable);
-                        [location, indices] = findwronglocationindex(expectedVariable,actualVariable);
+                        [location, indices] = Assert.findwronglocationindex(expectedVariable,actualVariable);
                         error('AssertionFailure:ExpectedDiffersFromActual',['Assertion failure:',char(10),...
                             'Expected and actual vallue differ at location (', num2str(indices), ')' ,char(10),...
                             'Expected: ' num2str(expectedVariable(location)),char(10),...
@@ -84,7 +97,7 @@ classdef Assert
             location = find(expectedVariable~=actualVariable,1,'first');
             if nargout > 1
                 variableSize = size(actualVariable);
-                indices = findindicesoflocation(location, variableSize);
+                indices = Assert.findindicesoflocation(location, variableSize);
             end
         end
         function [location, indices] = findcorrectlocationindex(expectedVariable,actualVariable)
@@ -105,6 +118,11 @@ classdef Assert
                 str = cat(2,str,'] = ind2sub(variableSize,location);');
                 eval(str);
             end
+        end
+        function tf = typesarenotequal(expected,realization)
+            actualClass = class(realization);
+            expectedClass = class(expected);
+            tf = strcmp(expectedClass,actualClass);
         end
     end
 end

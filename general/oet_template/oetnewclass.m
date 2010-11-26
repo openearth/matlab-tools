@@ -115,4 +115,4 @@ if ~isempty(OPT.code)
 end
 
 %% open new file in editor
-com.mathworks.mlservices.MLEditorServices.newDocument(str)
+createneweditordocument(str);

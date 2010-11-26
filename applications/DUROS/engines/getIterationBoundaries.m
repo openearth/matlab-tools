@@ -196,6 +196,8 @@ end
 x0min = [];
 if ~isempty(xdum) % profile reaches below level parabolic part
     x0min = max([min(xInitial) min(xdum)-max(xparab)]); % first 'guess': end of parabolic part just crosses the initial profile
+    % TODO: This leads to problems when one of the valleys reached below
+    % zParabMin
     z(x>min(xdum)) = []; % leave out the part profile of the crossing
     x(x>min(xdum)) = []; % leave out the part profile of the crossing
     if x0min == min(xInitial)

@@ -154,7 +154,7 @@ classdef MTestExplorer < handle
                 'Visible','on');
 
             %% Initialize and configure MTestRunner
-            this.MTestRunner.MTestPublisher.Publish = false;
+%             this.MTestRunner.MTestPublisher.Publish = false;
             this.MTestRunner.Verbose = false;
             tests = MTest;
             tests(1)=[];
@@ -480,7 +480,7 @@ classdef MTestExplorer < handle
                     this.JProgressBar.setString(['Running: ' this.MTestRunner.Tests(itests).Name ' (' num2str(round((sum(selectionId(1:itests-1))/sum(selectionId))*100))  '%)']);
 
                     % reset some test parameters (ignore for example should not remain true)
-                    this.MTestRunner.Tests(itests).MTestPublisher = this.MTestRunner.MTestPublisher;
+%                     this.MTestRunner.Tests(itests).MTestPublisher = this.MTestRunner.MTestPublisher;
                     this.MTestRunner.Tests(itests).AutoRefresh = true;  % Auto update to the latest definition
                     this.MTestRunner.Tests(itests).Ignore = false;      % Should not remain true, whereas it isn't run a next time
 
@@ -607,17 +607,13 @@ classdef MTestExplorer < handle
                 newNode = DefaultMutableTreeNode(this.MTestRunner.Tests(itests).Name);
                 if testExecutedFlag
                     if this.MTestRunner.Tests(itests).Ignore
-%                         newNode = DefaultMutableTreeNode([this.MTestRunner.Tests(itests).Name '  (Ignored)']);
                         status = 'Ignored';
                     elseif testResult
-%                         newNode = DefaultMutableTreeNode([this.MTestRunner.Tests(itests).Name '  (Passed)']);
                         status = 'Passed';
                     else
-%                         newNode = DefaultMutableTreeNode([this.MTestRunner.Tests(itests).Name '  (Failed)']);
                         status = 'Failed';
                     end
                 else
-%                     newNode = DefaultMutableTreeNode(this.MTestRunner.Tests(itests).Name);
                     status = 'Not Run';
                 end
                 set(newNode,'UserData',itests);
@@ -668,17 +664,17 @@ classdef MTestExplorer < handle
                         if isempty(this.MTestRunner.Tests(itests).Category)
                             this.MTestRunner.Tests(itests).Category = 'UnCategorized';
                         end
-                        [tf baseNode] = getchild(rootNode,this.MTestRunner.Tests(itests).Category);
+                        [tf baseNode] = getchild(rootNode,TestCategory.toString(this.MTestRunner.Tests(itests).Category));
                         if ~tf
-                            baseNode = DefaultMutableTreeNode(this.MTestRunner.Tests(itests).Category);
+                            baseNode = DefaultMutableTreeNode(TestCategory.toString(this.MTestRunner.Tests(itests).Category));
                             position = baseNode.getChildCount;
                             this.JTreeModel.insertNodeInto(baseNode,rootNode,position);
                             this.JTreeAllNodes{end+1,1} = baseNode;
-                            this.JTreeAllNodes{end,2} = this.MTestRunner.Tests(itests).Category;
+                            this.JTreeAllNodes{end,2} = TestCategory.toString(this.MTestRunner.Tests(itests).Category);
                             this.JTreeAllNodes{end,3} = true;
                             if ~isempty(oldNodes) && ...
-                                    any(strcmp(oldNodes(:,2),this.MTestRunner.Tests(itests).Category))
-                                this.JTreeAllNodes{end,3} = oldNodes{strcmp(oldNodes(:,2),this.MTestRunner.Tests(itests).Category),3};
+                                    any(strcmp(oldNodes(:,2),TestCategory.toString(this.MTestRunner.Tests(itests).Category)))
+                                this.JTreeAllNodes{end,3} = oldNodes{strcmp(oldNodes(:,2),TestCategory.toString(this.MTestRunner.Tests(itests).Category)),3};
                             end
                         end
                         position = baseNode.getChildCount;
@@ -946,13 +942,13 @@ classdef MTestExplorer < handle
                             ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.Name},repmat({searchString{istr}},1,length(this.MTestRunner.Tests)),'UniformOutput',false))| ...
                             ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.FileName},repmat({searchString{istr}},1,length(this.MTestRunner.Tests)),'UniformOutput',false))| ...
                             ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.FilePath},repmat({searchString{istr}},1,length(this.MTestRunner.Tests)),'UniformOutput',false))| ...
-                            ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.Category},repmat({searchString{istr}},1,length(this.MTestRunner.Tests)),'UniformOutput',false))        );
+                            ~cellfun(@isempty,cellfun(@regexpi,{TestCategory.toString(this.MTestRunner.Tests.Category)},repmat({searchString{istr}},1,length(this.MTestRunner.Tests)),'UniformOutput',false))        );
                     end
                 else
                     id =~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.Name},repmat({searchString},1,length(this.MTestRunner.Tests)),'UniformOutput',false))| ...
                         ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.FileName},repmat({searchString},1,length(this.MTestRunner.Tests)),'UniformOutput',false))| ...
                         ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.FilePath},repmat({searchString},1,length(this.MTestRunner.Tests)),'UniformOutput',false))| ...
-                        ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.Category},repmat({searchString},1,length(this.MTestRunner.Tests)),'UniformOutput',false));
+                        ~cellfun(@isempty,cellfun(@regexpi,{TestCategory.toString(this.MTestRunner.Tests.Category)},repmat({searchString},1,length(this.MTestRunner.Tests)),'UniformOutput',false));
                 end
 
                 selectedNodes = cellfun(@node2str,this.JTreeTestNodes(id),'UniformOutput',false)';

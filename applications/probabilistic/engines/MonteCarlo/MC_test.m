@@ -49,7 +49,7 @@ function testresult = MC_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
+Category(TestCategory.Intergration);
 
 %% define stochastic variables
 % stochast in the new style, including "propertyName" field

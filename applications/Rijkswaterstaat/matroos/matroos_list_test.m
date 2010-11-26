@@ -3,7 +3,7 @@ function ok = matroos_list_test
 %
 %See also: MATROOS
 
-TeamCity.category('DataAccess');
+Category(TestCategory.DataAccess);
 if TeamCity.running
     TeamCity.ignore('Test requires access to matroos, which the buildserver does not have.');
     return;

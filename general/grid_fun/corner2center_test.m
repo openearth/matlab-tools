@@ -20,7 +20,7 @@ function testresult = corner2center_test()
 % $Keywords: $
 
 
-%% #Description (Name = Corner2Center Unit test & IncludeCode = false & EvaluateCode = true)
+%% Description (Name = Corner2Center Unit test & IncludeCode = false & EvaluateCode = true)
 % First we create two 3x3 matrix:
  
 x1 = [1 2 3;4 5 6;7 8 9];
@@ -34,7 +34,6 @@ x2 = [1 2 3;4 5 6;7 8 9];
 % * Both function contain the same mistake
 %
 
-%% #RunCode
 testresult = false;
 try
 %CORNER2CENTER_TEST   regular grid test for center2corner & corner2center

@@ -49,8 +49,6 @@ function OK = ConvertCoordinatesFindUoM_test
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
-
 CS.coordSys.code=4499;
 CS.UoM.code=[];
 CS.UoM.name='';

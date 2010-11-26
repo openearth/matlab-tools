@@ -48,8 +48,6 @@ function ConvertCoordinatesFindConversionParams_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
-
 OK = 0;
 STD = load('EPSG');
 CS.code = 28992;

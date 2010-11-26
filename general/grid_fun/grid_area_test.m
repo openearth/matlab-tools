@@ -47,9 +47,8 @@ function testresult = grid_area_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = grid_area)
+MTest.name('grid_area');
 
-%% $RunCode
 Xcorner  = [-3  0  2  3;-1   0 2  3     ;-1 0 2 4;];
 Ycorner  = [-1 -1 -2 -2;-0.5 0 1 -2+1e-6; 1 1 2 2;];
 
@@ -57,7 +56,6 @@ Ycorner  = [-1 -1 -2 -2;-0.5 0 1 -2+1e-6; 1 1 2 2;];
 [tr(2) Area2] = testcase2(Xcorner,Ycorner);
 testresult = all(tr);
 
-%% $PublishResult
 figure
 
 
@@ -102,15 +100,11 @@ end
 end
 
 function [testresult Area] = testcase1(Xcorner,Ycorner)
-%% $Description (Name = OK)
-%% $RunCode
 Area = grid_area(Xcorner,Ycorner);
 testresult = nan;
 end
 
 function [testresult Area] = testcase2(Xcorner,Ycorner)
-%% $Description (Name = Wrong)
-%% $RunCode
 Area = grid_area(Xcorner,Ycorner,'convex',1);
 testresult = nan;
 end

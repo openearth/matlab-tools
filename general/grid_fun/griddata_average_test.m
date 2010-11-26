@@ -46,11 +46,6 @@ function testresult = griddata_average_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
-% Publishable code that describes the test.
-
-%% $RunCode
-% Write test code here
 try
     close gcf
     figure
@@ -98,7 +93,3 @@ try
 catch
     testresult = false;    
 end
-
-%% $PublishResult
-% Publishable code that describes the test.
-

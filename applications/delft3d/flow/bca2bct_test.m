@@ -48,7 +48,7 @@ function OK = bca2bct_test()
 % $HeadURL$
 % $Keywords: $
 
-   MTest.category('DataAccess');
+   Category(TestCategory.DataAccess);
 
 %% define
 

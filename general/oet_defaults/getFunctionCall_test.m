@@ -49,7 +49,7 @@ function testresult = getFunctionCall_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
+Category(TestCategory.Unit);
 
 testresult = [];
 

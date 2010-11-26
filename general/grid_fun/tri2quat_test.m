@@ -49,7 +49,7 @@ function tri2quat_test()
 % $HeadURL$
 % $Keywords: $
 
-TeamCity.category('Unit');
+Category(TestCategory.Unit);
 
 [cor.x,cor.y] = meshgrid(1:3,1:4);
 
@@ -88,5 +88,5 @@ tm = trimesh(tri,cor.x,cor.y,'Color','r');
 text(xctri,yctri,num2str([1:ntri]'),'color','r')
 axis equal
 
-% TODO: add assert or publish result (in last case it is a regression test)
+% TODO: add assert
 

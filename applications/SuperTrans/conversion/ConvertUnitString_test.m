@@ -48,7 +48,6 @@ function OK = ConvertUnitString_test
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
 
 unit_long = 'metre';
 unit_short = ConvertUnitString(unit_long);

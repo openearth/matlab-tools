@@ -61,4 +61,4 @@ if ~isfield(data,'input')
     testresult = false;
 end
 
-TeamCity.category('UnCategorized');
+Category(TestCategory.Unit);

@@ -48,8 +48,6 @@ function OK = d2dms_test;
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
-
 lonDeg = 53;
 lonMin = 25;
 lonSec = 13.2124;

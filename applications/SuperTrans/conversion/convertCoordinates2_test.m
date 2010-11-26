@@ -6,6 +6,8 @@ function OK = convertCoordinates2_test
 %
 %See also: CONVERTCOORDINATES, CONVERTCOORDINATES_TEST
 
+Category(TestCategory.DataAccess);
+
 % load coordinate systems
 load('EPSG_v7_5');
 codes = coordinate_reference_system.coord_ref_sys_code;

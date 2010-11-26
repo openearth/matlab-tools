@@ -47,7 +47,7 @@ function center2corner_test()
 % $HeadURL$
 % $Keywords: $
 
-TeamCity.category('UnCategorized');
+Category(TestCategory.Unit);
 
 %% ----------------------
 

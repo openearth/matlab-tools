@@ -49,8 +49,6 @@ function xy2mn_test()
 % $HeadURL$
 % $Keywords: $
 
-TeamCity.category('UnCategorized');
-
 percentage_gaps = 50;
 [x,y]=meshgrid(1:100,1:50);
 

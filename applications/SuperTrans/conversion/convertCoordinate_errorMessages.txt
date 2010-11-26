@@ -120,3 +120,353 @@ Error using system NAD27(CGQ77) / Quebec Lambert, with code 2138:
 Error using ==> ConvertCoordinatesDatumTransform at 138
 Warning: Datum transformation method 'NTv2' not yet supported!
 
+Converting using system NAD83(CSRS98) / SCoPQ zone 2, with code 2139:
+Test result is OK!
+
+Converting using system NAD83(CSRS98) / MTM zone 3, with code 2140:
+Test result is OK!
+
+Converting using system NAD83(CSRS98) / MTM zone 4, with code 2141:
+Test result is OK!
+
+Converting using system NAD83(CSRS98) / MTM zone 5, with code 2142:
+Test result is OK!
+
+Converting using system NAD83(CSRS98) / MTM zone 6, with code 2143:
+Test result is OK!
+
+Converting using system NAD83(CSRS98) / MTM zone 7, with code 2144:
+Test result is OK!
+
+Converting using system NAD83(CSRS98) / MTM zone 8, with code 2145:
+Test result is OK!
+
+Converting using system NAD83(CSRS98) / MTM zone 9, with code 2146:
+Test result is OK!
+
+Converting using system NAD83(CSRS98) / MTM zone 10, with code 2147:
+Test result is OK!
+
+Converting using system NAD83(CSRS98) / UTM zone 21N, with code 2148:
+Test result is OK!
+
+Converting using system NAD83(CSRS98) / UTM zone 18N, with code 2149:
+Test result is OK!
+
+Converting using system NAD83(CSRS98) / UTM zone 17N, with code 2150:
+Test result is OK!
+
+Converting using system NAD83(CSRS98) / UTM zone 13N, with code 2151:
+Test result is OK!
+
+Converting using system NAD83(CSRS98) / UTM zone 12N, with code 2152:
+Test result is OK!
+
+Converting using system NAD83(CSRS98) / UTM zone 11N, with code 2153:
+Test result is OK!
+
+Converting using system RGF93 / Lambert-93, with code 2154:
+Test result is OK!
+
+Converting using system American Samoa 1962 / American Samoa Lambert, with code 2155:
+Test result is not OK: diff(x) = 69526.0585 m and diff(y) = 66578.3247 m
+
+Converting using system NAD83(HARN) / UTM zone 59S, with code 2156:
+Test result is not OK: diff(x) = 81567483.4123 m and diff(y) = 368573288.1914 m
+
+Converting using system IRENET95 / Irish Transverse Mercator, with code 2157:
+Test result is OK!
+
+Converting using system IRENET95 / UTM zone 29N, with code 2158:
+Test result is OK!
+
+Error using system Sierra Leone 1924 / New Colony Grid, with code 2159:
+Error using ==> convertCoordinates at 166
+No transformation methods available ...
+
+Error using system Sierra Leone 1924 / New War Office Grid, with code 2160:
+Error using ==> convertCoordinates at 166
+No transformation methods available ...
+
+Converting using system Sierra Leone 1968 / UTM zone 28N, with code 2161:
+Test result is OK!
+
+Converting using system Sierra Leone 1968 / UTM zone 29N, with code 2162:
+Test result is OK!
+
+Error using system US National Atlas Equal Area, with code 2163:
+Error using ==> ConvertCoordinatesProjectionConvert at 179
+conversion method Lambert Azimuthal Equal Area (Spherical) not (yet) supported
+
+Converting using system Locodjo 1965 / TM 5 NW, with code 2164:
+Test result is OK!
+
+Converting using system Abidjan 1987 / TM 5 NW, with code 2165:
+Test result is OK!
+
+Converting using system Pulkovo 1942(83) / Gauss Kruger zone 3, with code 2166:
+Test result is not OK: diff(x) = 229.6256 m and diff(y) = 31.8277 m
+
+Converting using system Pulkovo 1942(83) / Gauss Kruger zone 4, with code 2167:
+Test result is not OK: diff(x) = 2209.5246 m and diff(y) = 228.3227 m
+
+Converting using system Pulkovo 1942(83) / Gauss Kruger zone 5, with code 2168:
+Test result is not OK: diff(x) = 12750.2659 m and diff(y) = 1084.0578 m
+
+Converting using system Luxembourg 1930 / Gauss, with code 2169:
+Test result is OK!
+
+Converting using system MGI / Slovenia Grid, with code 2170:
+Test result is OK!
+
+Converting using system Pulkovo 1942(58) / Poland zone I, with code 2171:
+Test result is OK!
+
+Converting using system Pulkovo 1942(58) / Poland zone II, with code 2172:
+Test result is OK!
+
+Converting using system Pulkovo 1942(58) / Poland zone III, with code 2173:
+Test result is OK!
+
+Converting using system Pulkovo 1942(58) / Poland zone IV, with code 2174:
+Test result is OK!
+
+Converting using system Pulkovo 1942(58) / Poland zone V, with code 2175:
+Test result is OK!
+
+Error using system Anguilla 1957 / British West Indies Grid, with code 2000:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'Geographic2D offsets' not yet supported!
+
+Converting using system Antigua 1943 / British West Indies Grid, with code 2001:
+Test result is OK!
+
+Converting using system Dominica 1945 / British West Indies Grid, with code 2002:
+Test result is OK!
+
+Converting using system Grenada 1953 / British West Indies Grid, with code 2003:
+Test result is OK!
+
+Converting using system Montserrat 1958 / British West Indies Grid, with code 2004:
+Test result is OK!
+
+Converting using system St. Kitts 1955 / British West Indies Grid, with code 2005:
+Test result is not OK: diff(x) = 0.79423 m and diff(y) = 10.4373 m
+
+Converting using system St. Lucia 1955 / British West Indies Grid, with code 2006:
+Test result is OK!
+
+Converting using system St. Vincent 45 / British West Indies Grid, with code 2007:
+Test result is OK!
+
+Error using system NAD27(CGQ77) / SCoPQ zone 2, with code 2008:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(CGQ77) / SCoPQ zone 3, with code 2009:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(CGQ77) / SCoPQ zone 4, with code 2010:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(CGQ77) / SCoPQ zone 5, with code 2011:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(CGQ77) / SCoPQ zone 6, with code 2012:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(CGQ77) / SCoPQ zone 7, with code 2013:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(CGQ77) / SCoPQ zone 8, with code 2014:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(CGQ77) / SCoPQ zone 9, with code 2015:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(CGQ77) / SCoPQ zone 10, with code 2016:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(76) / MTM zone 8, with code 2017:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(76) / MTM zone 9, with code 2018:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(76) / MTM zone 10, with code 2019:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(76) / MTM zone 11, with code 2020:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(76) / MTM zone 12, with code 2021:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(76) / MTM zone 13, with code 2022:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(76) / MTM zone 14, with code 2023:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(76) / MTM zone 15, with code 2024:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(76) / MTM zone 16, with code 2025:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(76) / MTM zone 17, with code 2026:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(76) / UTM zone 15N, with code 2027:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(76) / UTM zone 16N, with code 2028:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(76) / UTM zone 17N, with code 2029:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(76) / UTM zone 18N, with code 2030:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(CGQ77) / UTM zone 17N, with code 2031:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(CGQ77) / UTM zone 18N, with code 2032:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(CGQ77) / UTM zone 19N, with code 2033:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(CGQ77) / UTM zone 20N, with code 2034:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Error using system NAD27(CGQ77) / UTM zone 21N, with code 2035:
+Error using ==> ConvertCoordinatesDatumTransform at 138
+Warning: Datum transformation method 'NTv2' not yet supported!
+
+Converting using system NAD83(CSRS98) / New Brunswick Stereo, with code 2036:
+Test result is OK!
+
+Converting using system NAD83(CSRS98) / UTM zone 19N, with code 2037:
+Test result is OK!
+
+Converting using system NAD83(CSRS98) / UTM zone 20N, with code 2038:
+Test result is OK!
+
+Converting using system Israel / Israeli TM Grid, with code 2039:
+Test result is OK!
+
+Converting using system Locodjo 1965 / UTM zone 30N, with code 2040:
+Test result is OK!
+
+Converting using system Abidjan 1987 / UTM zone 30N, with code 2041:
+Test result is OK!
+
+Converting using system Locodjo 1965 / UTM zone 29N, with code 2042:
+Test result is OK!
+
+Converting using system Abidjan 1987 / UTM zone 29N, with code 2043:
+Test result is OK!
+
+Converting using system Hanoi 1972 / Gauss-Kruger zone 18, with code 2044:
+Test result is not OK: diff(x) = 13023932.8302 m and diff(y) = 5735815.128 m
+
+Converting using system Hanoi 1972 / Gauss-Kruger zone 19, with code 2045:
+Test result is not OK: diff(x) = 35667871.9585 m and diff(y) = 29857741.6027 m
+
+Converting using system Hartebeesthoek94 / Lo15, with code 2046:
+Test result is OK!
+
+Converting using system Hartebeesthoek94 / Lo17, with code 2047:
+Test result is OK!
+
+Converting using system Hartebeesthoek94 / Lo19, with code 2048:
+Test result is OK!
+
+Converting using system Hartebeesthoek94 / Lo21, with code 2049:
+Test result is OK!
+
+Converting using system Hartebeesthoek94 / Lo23, with code 2050:
+Test result is OK!
+
+Converting using system Hartebeesthoek94 / Lo25, with code 2051:
+Test result is OK!
+
+Converting using system Hartebeesthoek94 / Lo27, with code 2052:
+Test result is OK!
+
+Converting using system Hartebeesthoek94 / Lo29, with code 2053:
+Test result is OK!
+
+Converting using system Hartebeesthoek94 / Lo31, with code 2054:
+Test result is OK!
+
+Converting using system Hartebeesthoek94 / Lo33, with code 2055:
+Test result is OK!
+
+Converting using system CH1903+ / LV95, with code 2056:
+Test result is not OK: diff(x) = 2281203.5509 m and diff(y) = 5242644.4238 m
+
+Converting using system Rassadiran / Nakhl e Taqi, with code 2057:
+Test result is not OK: diff(x) = 1.4816 m and diff(y) = 594.1686 m
+
+Converting using system ED50(ED77) / UTM zone 38N, with code 2058:
+Test result is OK!
+
+Converting using system ED50(ED77) / UTM zone 39N, with code 2059:
+Test result is OK!
+
+Converting using system ED50(ED77) / UTM zone 40N, with code 2060:
+Test result is OK!
+
+Converting using system ED50(ED77) / UTM zone 41N, with code 2061:
+Test result is OK!
+
+Error using system Madrid 1870 (Madrid) / Spain, with code 2062:
+Error using ==> convertCoordinates at 166
+No transformation methods available ...
+
+Converting using system Dabola 1981 / UTM zone 28N, with code 2063:
+Test result is OK!
+
+Converting using system Dabola 1981 / UTM zone 29N, with code 2064:
+Test result is OK!
+
+Error using system S-JTSK (Ferro) / Krovak, with code 2065:
+Error using ==> convertCoordinates at 166
+No transformation methods available ...
+
+Error using system Mount Dillon / Tobago Grid, with code 2066:
+Error using ==> convertCoordinates at 166
+No transformation methods available ...
+
+Converting using system Naparima 1955 / UTM zone 20N, with code 2067:
+Test result is OK!
+

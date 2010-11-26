@@ -49,11 +49,8 @@ function testresult = xy2degN_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
-% Publishable code that describes the test.
+Category(TestCategory.Unit);
 
-%% $RunCode
-% Write test code here
 testresult = false;
 
 x0 = zeros(1,8);
@@ -64,7 +61,4 @@ y1 = [1 1 0 -1 -1 -1 0 1];
 degN = xy2degN(x0, y0, x1, y1);
 
 testresult = all(degN == 0:45:315);
-
-%% $PublishResult
-% Publishable code that describes the test.
 

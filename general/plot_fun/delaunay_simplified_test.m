@@ -49,11 +49,8 @@ function testresult = delaunay_simplified_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = delaunay_simplified)
-% Publishable code that describes the test.
+MTest.name('delaunay_simplified');
 
-%% $RunCode
-% Write test code here
 try
     % some input
     [lat,lon] = meshgrid(54:.1:57,2:.1:5);

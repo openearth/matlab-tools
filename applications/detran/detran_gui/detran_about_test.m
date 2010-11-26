@@ -49,7 +49,7 @@ function testresult = detran_about_test()
 % $HeadURL$
 % $Keywords: $
 
-TeamCity.category('UnCategorized');
+Category(TestCategory.Intergration);
 
 testresult = true;
 try

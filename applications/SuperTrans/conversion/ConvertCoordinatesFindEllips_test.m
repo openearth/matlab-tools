@@ -49,8 +49,6 @@ function OK = ConvertCoordinatesFindEllips_test
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
-
 CS.datum.code = 6289;
 STD = load('EPSG');
 

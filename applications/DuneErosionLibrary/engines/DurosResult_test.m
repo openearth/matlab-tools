@@ -49,13 +49,4 @@ function testresult = DurosResult_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Test DurosResult object (not finished))
-% Publishable code that describes the test.
-
-%% $RunCode
-% Write test code here
 testresult = true;
-
-%% $PublishResult
-% Publishable code that describes the test.
-

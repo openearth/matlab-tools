@@ -62,6 +62,4 @@ catch
     testresult = false;
 end
 
-%% $PublishResult
-% Publishable code that describes the test.
-
+Category(TestCategory.DataAccess);

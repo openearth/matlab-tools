@@ -3,10 +3,7 @@ classdef TeamCity < handle
         CurrentTest
         TeamCityRunning = false;
         WorkDirectory = cd;
-        Publish = false;
-        PublishDirectory = fullfile(cd,'TeamcityPublish');
         Timer
-        CurrentWorkSpace
     end
     methods
         function obj = TeamCity()
@@ -19,13 +16,6 @@ classdef TeamCity < handle
         end
     end
     methods (Static = true)
-        function value = publish(varargin)
-            tc = TeamCity;
-            if nargin > 0
-                tc.Publish = varargin{1};
-            end
-            value = tc.Publish;
-        end
         function answer = running(varargin)
             tc = TeamCity;
             if nargin > 0
@@ -171,14 +161,14 @@ classdef TeamCity < handle
         end
     end
     methods (Static = true, Hidden = true)
-        function category(category)
-            %% Give Category name
-            obj = TeamCity;
-            currentTest = obj.CurrentTest;
-            if ~isempty(currentTest)
-                currentTest.Category = category;
-            end
-        end
+%         function category(category)
+%             %% Give Category name
+%             obj = TeamCity;
+%             currentTest = obj.CurrentTest;
+%             if ~isempty(currentTest)
+%                 currentTest.Category = category;
+%             end
+%         end
         function name(proposedname)
             obj = TeamCity;
             currentTest = obj.CurrentTest;
@@ -194,97 +184,11 @@ classdef TeamCity < handle
                 end
             end
         end
-        function storeworkspace()
-            varnames = evalin('caller','whos;');
-            obj = TeamCity;
-            obj.CurrentWorkSpace = {};
-            for ivarnames = 1:length(varnames)
-                varname = varnames(ivarnames).name;
-                try
-                    varvalue = evalin('caller',varname);
-                    obj.CurrentWorkSpace(ivarnames,1:2) = {varname,varvalue};
-                catch
-                    % don't mind, this is probably a nested function that has predeclared variables
-                    % that are not defined yet
-                end
-            end
-        end
-        function restoreworkspace()
-            tc = TeamCity;
-            evalin('caller','clear;');
-            for ivars = 1:size(tc.CurrentWorkSpace,1)
-                assignin('caller',tc.CurrentWorkSpace{ivars,1},tc.CurrentWorkSpace{ivars,2});
-            end
-        end
         function destroy()
             % DESTROY deletes the stored object and therefore all stored information
             if isappdata(0,'MTestTeamCityObject')
                 rmappdata(0,'MTestTeamCityObject');
             end
-        end
-    end
-
-    %% Publication methods
-    methods (Static = true)
-        function publishdescription(varargin)
-            profile off
-            tc = TeamCity;
-            mt = TeamCity.currenttest;
-            if isempty(mt.MTestPublisher)
-                return;
-            end
-            if isempty(tc.PublishDirectory)
-                tc.PublishDirectory = mt.MTestPublisher.TargetDir;
-            end
-            if tc.Publish && mt.MTestPublisher.Publish && ~isdir(tc.PublishDirectory)
-                mkdir(tc.PublishDirectory);
-                mt.MTestPublisher.OutputDir = tc.PublishDirectory;
-            end
-            if nargin < 1
-                error('TeamCity:Publish','TeamCity.publishdescription should have the name or handle of a function as first input argument');
-            end
-            functionname = varargin{1};
-            varargin{1} = [];
-            
-            evalin('caller','TeamCity.storeworkspace;');
-            if tc.Publish && mt.MTestPublisher.Publish
-                mt.PublishedDescriptionFile = mt.MTestPublisher.publishtestdescription(mt,functionname,...
-                    'outputdir',tc.PublishDirectory,...
-                    varargin{:});
-            else
-                mt.evaluatedescription(functionname);
-            end
-            evalin('caller','TeamCity.restoreworkspace;');
-            profile on
-        end
-        function publishresult(varargin)
-            profile off
-            tc = TeamCity;
-            mt = TeamCity.currenttest;
-            if isempty(mt.MTestPublisher)
-                return;
-            end
-            if isempty(tc.PublishDirectory)
-                tc.PublishDirectory = mt.MTestPublisher.TargetDir;
-            end
-            if tc.Publish && mt.MTestPublisher.Publish && ~isdir(tc.PublishDirectory)
-                mkdir(tc.PublishDirectory);
-                mt.MTestPublisher.OutputDir = tc.PublishDirectory;
-            end
-            if nargin < 1
-                error('TeamCity:Publish','TeamCity.publishdescription should have the name or handle of a function as first input argument');
-            end
-            functionname = varargin{1};
-            varargin{1} = [];
-            
-            evalin('caller','TeamCity.storeworkspace;');
-            if tc.Publish && mt.MTestPublisher.Publish
-                % We assume there is no testcode after publication....?
-                mt.PublishedResultFile = mt.MTestPublisher.publishtestresult(mt,functionname,...
-                    'outputdir',tc.PublishDirectory,...
-                    varargin{:});
-            end
-            profile on
         end
     end
 end

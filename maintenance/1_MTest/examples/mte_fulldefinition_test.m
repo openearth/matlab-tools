@@ -1,4 +1,4 @@
-function testResult = mte_fulldefinition_test()
+function mte_fulldefinition_test()
 % MTE_FULLDEFINITION_TEST  test h1line
 %  
 % test description.
@@ -49,37 +49,16 @@ function testResult = mte_fulldefinition_test()
 % $HeadURL$
 % $Keywords: $
 
-%% Initialize optional output
-testResult = true;
-
-%% Publish a description of the test
-TeamCity.publishdescription(@description_publishcode);
 MTest.name('testname');
+Category(TestCategory.Intergration);
 
 %% Run the actual test (partly in a subfunction that can be called for example in a loop.
 tr = subfunction1(1,2);
 
 %% Assert the result of the test
-% When asserting before the publication, nothing will get published....
 assert(tr==true,'subfuncion did not return true');
-
-%% Publish the result
-TeamCity.publishresult('result_publishcode');
 end
 
 function testResult = subfunction1(arg1,arg2)
 testResult = arg1+arg2 == 3;
-end
-
-function description_publishcode()
-%% This is a description (Title)
-% test description code
-end
-
-function result_publishcode()
-%% This is a publication of the result (Title)
-
-%% Chapter 1
-% test publish code
-
 end

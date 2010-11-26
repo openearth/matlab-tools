@@ -49,8 +49,7 @@ function boundaryprofile_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('Integration');
-TeamCity.publishdescription(@boundaryprofile_test_description);
+Category(TestCategory.Intergration);
 
 %% Case 1
 % Test with normal boundary profile
@@ -72,33 +71,7 @@ x0Point = 0;
 
 Result2 = boundaryprofile(xInitial, zInitial, waterLevel, significantWaveHeight, peakPeriod, x0Point);
 
-TeamCity.publishresult(@boundaryprofile_test_result);
-end
-
-
-function boundaryprofile_test_description()
-% According to Dutch regulations dunes that are eroded during an extreme storm must have a socalled
-% "Grensprofiel". This is a profile shape (or at least the volume that is in that shape) that must
-% remain at some place in the transect above the maximum storm surge level after erosion during that
-% storm. The boundary profile should match the following requirements:
-%
-% * minimal height of 2.5 [m above storm surge level]
-% * minimal height of :
-% $$h_0  = WL + 0.12T_p \sqrt {H_{0s} }$
-% , but at least 2.5 [m] above storm surge level.
-% * minimal width of 3 meters (at the top)
-% * steepness of the inner slope of minimal 1:2
-% * minimal steepness of the outerslope (facing seaward) of 1:1
-%
-% This test checks whether the function does not crash with an input of:
-%
-% * H0s = 9 [m]
-% * WL = 5 [m]
-% * Tp = 12 [s]
-%
-end
-
-function boundaryprofile_test_result()
+%% Plot figures
 figure;
 hold on
 grid on

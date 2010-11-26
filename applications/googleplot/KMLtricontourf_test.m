@@ -45,33 +45,21 @@ function testresult = KMLtricontourf_test()
 
 disp(['... running test:',mfilename])
 
-%% $Description (Name = Name of the test goes here)
-% Publishable code that describes the test.
+%test 1
+[x,y] = meshgrid(1:10,21:30);
+z = peaks(10);
+tri = delaunay(x,y);
+tri(60:74,:)=[];
+KMLtricontourf(tri,x,y-10,z,'levels',100,'fileName',KML_testdir('KMLtricontourf - 1.kml'),'colorbartitle','KMLtricontourf - 1');
+%test 2
 
-%% $RunCode
-% Write test code here
-%try
-    
-    %test 1
-    [x,y] = meshgrid(1:10,21:30);
-    z = peaks(10);
-    tri = delaunay(x,y);
-    tri(60:74,:)=[];
-    KMLtricontourf(tri,x,y-10,z,'levels',100,'fileName',KML_testdir('KMLtricontourf - 1.kml'),'colorbartitle','KMLtricontourf - 1');
-    %test 2
-    
-    [x,y] = meshgrid(1.1:.5:100.1,201.2:.5:300.2);
-    x = (x+sin(y).^3);
-    y = (y+sin(x));
-    z = repmat(peaks(100),2,2)+2*cos(peaks(200))+3*sin(peaks(200))+3*peaks(200);
-    tri = delaunay(x,y);
-    tri(any((((x(tri)-50).^2 + (y(tri)-250).^2).^.5)>44,2),:)=[];
-    x = x/10+10;y = y/10+10;
-    KMLtricontourf(tri,x,y-10,z,'levels',40,'fileName',KML_testdir('KMLtricontourf - 2.kml'),'colorbartitle','KMLtricontourf - 2');
-    testresult = true;
-%catch
-%    testresult = false;
-%end
-%% $PublishResult
-% Publishable code that describes the test.
+[x,y] = meshgrid(1.1:.5:100.1,201.2:.5:300.2);
+x = (x+sin(y).^3);
+y = (y+sin(x));
+z = repmat(peaks(100),2,2)+2*cos(peaks(200))+3*sin(peaks(200))+3*peaks(200);
+tri = delaunay(x,y);
+tri(any((((x(tri)-50).^2 + (y(tri)-250).^2).^.5)>44,2),:)=[];
+x = x/10+10;y = y/10+10;
+KMLtricontourf(tri,x,y-10,z,'levels',40,'fileName',KML_testdir('KMLtricontourf - 2.kml'),'colorbartitle','KMLtricontourf - 2');
+testresult = true;
 

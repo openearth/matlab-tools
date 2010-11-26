@@ -49,7 +49,6 @@ function ConvertCoordinatesDatumTransform_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
 lat1=100000;
 lon1=100000;
 OPT.CS1.code = 28992;

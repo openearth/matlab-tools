@@ -49,7 +49,6 @@ function testResult = jarkus_identify_first_dunerow_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
 
 testresult = [];
 

@@ -49,8 +49,6 @@ function OK = ConvertCoordinatesFindGeoRefSys_test
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
-
 CS.name = 'Amersfoort / RD New';
 CS.type = 'projected';
 CS.code = 28992;

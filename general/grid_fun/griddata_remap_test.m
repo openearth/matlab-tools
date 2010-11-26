@@ -46,12 +46,6 @@ function testresult = griddata_remap_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
-% Publishable code that describes the test.
-
-%% $RunCode
-% Write test code here
-
 [XI,YI]     = meshgrid(1:100,201:400);
 ZI          = repmat(peaks(100),2,1);
 ZI(4:6,2:7) = nan;
@@ -61,8 +55,3 @@ z           = ZI(:);
 ZI          = griddata_remap(x,y,z,XI,YI);
 
 testresult  = all(ZI(~isnan(ZI)) == z(~isnan(z)));
-
-
-%% $PublishResult
-% Publishable code that describes the test.
-

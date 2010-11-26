@@ -312,6 +312,12 @@ classdef MTestUtils
             % $HeadURL$
             % $Keywords: $
             
+            %% First try out variant
+            if exist('oetsettings.m','file')
+                [OPT, Set, Default] = setproperty(OPT, varargin{:});
+                return;
+            end
+            
             %% input
             PropertyNames = fieldnames(OPT); % read PropertyNames from structure fieldnames
             

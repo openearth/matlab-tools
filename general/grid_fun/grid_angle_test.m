@@ -45,14 +45,13 @@ function testresult = grid_angle_test(varargin)
    OPT.TH  = 30;
    OPT.THs = deg2rad(OPT.TH+[0 90 180 270 360]);
 
-%% $Description (Name = grid_angle)
+%% Description (Name = grid_angle)
 % This test has two testcases.
 %
 % * The first testcase is a rotation test
 % * The second testcase is a deformation test.
 %
 
-%% $RunCode
 tr(1) = rotationtest();
 tr(2) = deformationtest();
 testresult = all(tr);
@@ -60,11 +59,11 @@ testresult = all(tr);
 end
 
 function testresult = rotationtest()
-%% $Description (Name = rotation)
+
    OPT.TH  = 30;
    OPT.THs = deg2rad(OPT.TH+[0 90 180 270 360]);
 
-%% $RunCode
+
 clear cen cor
 
    %% 0 degree
@@ -87,8 +86,7 @@ clear cen cor
        cen(j).y       = sin(OPT.TH)*cen(1).x + cos(OPT.TH)*cen(1).y;
    end
    testresult = nan;
-   
-   %% $PublishResult
+
    corr = cor;
    cenn = cen;
    for j=1:length(corr)
@@ -113,9 +111,7 @@ clear cen cor
 end
 
 function testresult = deformationtest()
-%% $Description (Name = deformation)
 
-%% $RunCode
    %% deformed block (south -45)
    
    j = 1;
@@ -149,7 +145,7 @@ function testresult = deformationtest()
    cen(j).y = corner2center(cor(j).y);
 
    testresult = nan;
-%% $PublishResult
+
    %% loop cases
    corr = cor;
    cenn = cen;

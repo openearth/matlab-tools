@@ -49,8 +49,6 @@ function OK = ConvertCoordinatesFindDatumTransOpt_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
-
 OPT.CS1.geoRefSys.code = 4289;
 OPT.CS2.geoRefSys.code = 4326;
 

@@ -3,6 +3,8 @@ function OK = inivalue_test
 %
 %See also: inivalue
 
+Category(TestCategory.DataAccess);
+
 url = 'https://repos.deltares.nl/repos/OpenEarthTools/trunk/';
 
 % a url file is has *.ini format

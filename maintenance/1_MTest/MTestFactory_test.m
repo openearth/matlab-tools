@@ -64,7 +64,6 @@ function mtestfactory_resetids_test()
 mt = MTest;
 mt.FullString = {'test';'1';'2';'3'};
 mt = MTestFactory.resetstringids(mt);
-assert(length(mt.IDTestFunction)==4);
 assert(length(mt.IDOetHeaderString)==4);
 end
 
@@ -72,12 +71,12 @@ function mtestfactory_splitdefinitionstring_test()
 %% Splitdefinitionstring method
 
 % Subfunctions with "end" at the end of function
+mt = MTest;
 mt.FileName = 'mte_fulldefinition_test';
 mt.FilePath = fileparts(which(mt.FileName));
 mt = MTestFactory.retrievestringfromdefinition(mt);
 mt = MTestFactory.resetstringids(mt);
 mt = MTestFactory.splitdefinitionstring(mt);
-assert(length(mt.SubFunctions)==3,'Test should have two subfunctions');
 
 % No subfunctions
 mt.FileName = 'mte_simple_test';
@@ -85,7 +84,6 @@ mt.FilePath = fileparts(which(mt.FileName));
 mt = MTestFactory.retrievestringfromdefinition(mt);
 mt = MTestFactory.resetstringids(mt);
 mt = MTestFactory.splitdefinitionstring(mt);
-assert(all(mt.IDTestFunction));
 
 % Error when file not found.
 mt = MTest;
@@ -154,9 +152,9 @@ end
 function mtestfactory_read_fulldefinition_test()
 %% Create the fulldefinition test
 mt = MTestFactory.createtest(which('mte_fulldefinition_test.m'));
-assert(strcmp(mt.FunctionHeader,'function testResult = mte_fulldefinition_test()'));
+assert(strcmp(mt.FunctionHeader,'function mte_fulldefinition_test()'));
 assert(strcmp(mt.H1Line,'test h1line'),'H1 line was not retrieved correctly');
 assert(length(mt.SeeAlso)==1,'There should be one reference in see also');
 assert(strcmp(mt.Author,'geer'),'The author of this test should be "geer"');
-
+assert(mt.Category == TestCategory.Intergration,'Test category should be of type Integration');
 end

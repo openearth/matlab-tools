@@ -59,4 +59,4 @@ catch
     testresult = false;
 end
 
-TeamCity.category('UnCategorized');
+Category(TestCategory.DataAccess);

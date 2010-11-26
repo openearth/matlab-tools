@@ -49,7 +49,7 @@ function testresult = roundoff_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = roundoff unit test)
+%% Description (Name = roundoff unit test)
 % The roundoff unittest tests three ways to use roundoff:
 %
 % * normal
@@ -57,8 +57,6 @@ function testresult = roundoff_test()
 % * floor
 %
 % Each testcase contains several calls to roundoff trying to roundoff pi().
-
-%% $RunCode
 
 tr(1) = roundoffnormaltest;
 tr(2) = roundofffloortest;

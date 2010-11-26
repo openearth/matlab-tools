@@ -48,7 +48,7 @@ function OK = xyz2ell_test
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
+Category(TestCategory.Unit);
 
 OK = 0;
 

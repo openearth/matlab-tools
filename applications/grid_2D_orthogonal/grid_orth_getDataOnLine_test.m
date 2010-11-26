@@ -51,13 +51,11 @@ function testresult = grid_orth_getDataOnLine_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
+%% Description (Name = Name of the test goes here)
 % Publishable code that describes the test.
 % NB1: onderstaande testcases zijn met voorgedefinieerde polygonen. Als je de polygonen niet opgeeft mag je ze zelf selecteren met de crosshair (rechter muisknop om te sluiten)
 % NB2: de routines zijn nog niet 100% robuust. Ook is de data op de OpenDAP server nog niet helemaal goed. Met name dit laatste moet zsm verholpen worden!
 % NB3: enkele onderdelen van dit script zijn nog vrij sloom: bepalen welke grids er zijn en het ophalen van alle kaartbladomtrekken. Hopelijk is dit te fixen middels de Catalog.xml op de OPeNDAP server
-
-%% $RunCode
 
 % test 1 and 2 are examples
 tr(1) = test3;
@@ -65,10 +63,6 @@ tr(2) = test4;
 tr(3) = test5;
 
 testresult = all(tr);
-
-
-%% $PublishResult
-% Publishable code that describes the test.
 
 end
 

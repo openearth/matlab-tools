@@ -183,9 +183,5 @@ if ~isempty(OPT.code)
 end
 
 %% open new file in editor
-if verLessThan('matlab', '7.11')
-    com.mathworks.mlservices.MLEditorServices.newDocument(str)
-else
-    disp(strrep(str,char(10),''));
-end
+createneweditordocument(str);
 

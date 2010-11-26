@@ -49,7 +49,7 @@ function colorbardiscrete_test()
 % $HeadURL$
 % $Keywords: $
 
-TeamCity.category('Unit');
+Category(TestCategory.Unit);
 
 %% Original code of colorbardiscrete_test.m
 clear;

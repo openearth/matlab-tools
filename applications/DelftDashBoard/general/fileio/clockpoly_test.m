@@ -41,11 +41,10 @@ function OK = clockpoly_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
+Category(TestCategory.Unit);
 
 %%
 % define clockwise polygon
-OK = 0;
 
 x = [0 0.5 1 0.5 0 -0.5 -1 -0.5];
 y = [1 0.5 0 -0.5 -1 -0.5 0 0.5];
@@ -54,6 +53,7 @@ try
     rot=clockpoly(x,y);
 catch
     OK = 0;
+    return;
 end
 
 OK = (rot == 1);

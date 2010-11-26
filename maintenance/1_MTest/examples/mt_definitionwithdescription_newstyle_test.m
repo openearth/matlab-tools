@@ -50,34 +50,9 @@ function mt_definitionwithdescription_newstyle_test()
 % $Keywords: $
 
 %% Give this test a category
-MTest.category('UnCategorized');
+Category(TestCategory.WorkInProgress);
 
-%% Publish a description
-TeamCity.publishdescription(@test_testdescription,...
-    'IncludeCode',true,...
-    'EvaluateCode',true);
-
+a = 1;
 b = a.*5;
 
-%% Publish a result
-TeamCity.publishresult(@test_publishresult,...
-    'IncludeCode',true,...
-    'EvaluateCode',true);
-
-end
-
-function test_testdescription()
-%% Publishable Description code Test Title
-a = [1, 2, 3];
-plot(a);
-end
-
-function test_publishresult()
-%% Titel bovenaan de pagina
-% Dit is een test
-
-%% Eerste hoofdstuk, plot a nog een keertje (zou in het geheugen moeten staan)
-disp('Dit is een test');
-plot(b);
-disp('Nog een keertje');
-end
+Assert.areequal(4,b);

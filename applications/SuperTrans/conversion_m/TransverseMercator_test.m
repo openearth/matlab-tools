@@ -48,7 +48,7 @@ function OK = TransverseMercator_test
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
+Category(TestCategory.Unit);
 
 OK = 0;
 

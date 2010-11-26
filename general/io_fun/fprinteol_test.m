@@ -3,6 +3,8 @@ function OK = fprinteol_test
 %
 %See also: fprinteol
 
+Category(TestCategory.DataAccess);
+
 fid = fopen([mfilename('fullpath'),'.txt'],'w');
 fprinteol(fid,'u')
 fprinteol(fid,'l')

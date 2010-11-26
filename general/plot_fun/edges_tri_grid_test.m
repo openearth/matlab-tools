@@ -46,10 +46,6 @@ function testresult = edges_tri_grid_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
-% Publishable code that describes the test.
-
-%% $RunCode
 try
     [x,y] = meshgrid(1.1:100.1,201.2:300.2);
     x = x+sin(y).^3;
@@ -90,7 +86,7 @@ try
 catch
     testresult = false;
 end
-%% $PublishResult
+
 % If all is well, a complicated triangulated mesh is drawn. The outer edges
 % are in shades of red, the inner edges (holes in the mesh) are colored in
 % blues.

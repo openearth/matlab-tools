@@ -47,10 +47,7 @@ function testResult = nerc_verify_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
-% Publishable code that describes the test.
-
-%% $RunCode
+Category(TestCategory.DataAccess);
 
 try
 a1 = nerc_verify('http://vocab.ndg.nerc.ac.uk/term/P061/current/UPBB');
@@ -64,6 +61,3 @@ a2 = nerc_verify('P061::UPBB');
 b2 = nerc_verify('P011::PRESPS01');
 
 testResult = isequal(a1,a2) && isequal(b1,b2);
-
-%% $PublishResult
-% Publishable code that describes the test.
