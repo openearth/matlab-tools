@@ -81,9 +81,11 @@ filetype = xb_get_wavefiletype(filename);
 
 xbSettings = xb_set(xbSettings, 'type_', filetype);
 
+filenames = filename;
 switch filetype
     case 'filelist'
-        [names values filenames] = read_filelist(filename);
+        [names values fnames] = read_filelist(filename);
+        filenames = [{filenames} fnames];
     case 'jonswap'
         [names values] = read_jonswap(filename);
     case 'jonswap_mtx'
@@ -99,10 +101,10 @@ for i = 1:length(names)
     xbSettings = xb_set(xbSettings, names{i}, values{i});
 end
 
-xbSettings = consolidate_settings(xbSettings);
+xbSettings = xb_consolidate(xbSettings);
 
 % set meta data
-xbSettings = xb_meta(xbSettings, mfilename, 'waves', [{filename} filenames]);
+xbSettings = xb_meta(xbSettings, mfilename, 'waves', filenames);
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -249,28 +251,3 @@ names = {'contents'};
 fid = fopen(filename);
 values = {fread(fid, '*char')'};
 fclose(fid);
-
-function xbSettings = consolidate_settings(xbSettings)
-
-for i = 1:length(xbSettings.data)
-    A = xbSettings.data(i).value;
-    S = ones(size(size(A))); S(end) = size(A,ndims(A));
-    
-    if iscell(A); continue; end;
-    
-    % determine if last dimension is constant
-    if sum(sum(sum(abs(A-repmat(sum(A,ndims(A))/S(end),S)))))<1e-10
-        if iscell(A)
-            xbSettings.data(i).value = A{1};
-        else
-            switch sum(size(A)>1)
-                case 1
-                    xbSettings.data(i).value = A(1);
-                case 2
-                    xbSettings.data(i).value = A(:,1);
-                case 3
-                    xbSettings.data(i).value = A(:,:,1);
-            end
-        end
-    end
-end
