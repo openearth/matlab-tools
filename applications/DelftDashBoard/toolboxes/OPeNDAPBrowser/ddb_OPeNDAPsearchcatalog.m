@@ -58,9 +58,17 @@ obj2              = findobj(gca, 'type', 'rectangle'); obj2userdata  = get(obj2,
 obj12             = [obj1; obj2];                      obj12userdata = get(obj12,'userdata');
 
 clrid12           = ismember( vertcat(obj12userdata{:}), C.urlPath(index) ); 
-clrid1            = ismember( vertcat(obj1userdata{:}),  C.urlPath(index) ); % selected patches
-clrid2            = ismember( vertcat(obj2userdata{:}),  C.urlPath(index) ); % selected rectangles
+if ~isempty(obj1userdata)
+    clrid1            = ismember( vertcat(obj1userdata{:}),  C.urlPath(index) ); % selected patches
+else
+    clrid1 = [];
+end
 
+if ~isempty(obj2userdata)
+    clrid2            = ismember( vertcat(obj2userdata{:}),  C.urlPath(index) ); % selected rectangles
+else
+    clrid2 = [];
+end
 % first set all shapes to their unselected form
 try set(obj1,         'facecolor', [1 0 0], 'FaceAlpha', .25); end           % not selected - red (patch)
 try set(obj2,         'facecolor', [1 0 0] );                  end           % not selected - red (rectangle)
