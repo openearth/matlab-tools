@@ -3,7 +3,7 @@ function OK = inivalue_test
 %
 %See also: inivalue
 
-Category(TestCategory.DataAccess);
+MTestCategory.DataAccess;
 
 url = 'https://repos.deltares.nl/repos/OpenEarthTools/trunk/';
 

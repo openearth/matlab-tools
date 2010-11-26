@@ -49,6 +49,8 @@ function OK = ConvertCoordinatesFindDatum_test
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Unit;
+
 CS.geoRefSys.code = 4289;
 STD = load('EPSG');
 

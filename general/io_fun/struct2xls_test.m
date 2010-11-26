@@ -3,6 +3,8 @@ function OK = struct2xls_test
 %
 %See also: struct2xls, xls2struct
 
+MTestCategory.DataAccess;
+
 if TeamCity.running
     TeamCity.ignore('This test needs Microsoft Office (Excel) to run.');
     return;

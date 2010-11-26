@@ -49,6 +49,8 @@ function boundaryprofilevolumetric_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Integration;
+
 %% Case 1
 xProfile = [-100 -5 0 100]';
 zProfile = [10 10 5 5]';

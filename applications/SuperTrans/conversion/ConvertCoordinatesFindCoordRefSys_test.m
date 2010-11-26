@@ -49,6 +49,8 @@ function OK = ConvertCoordinatesFindCoordRefSys_test
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Unit;
+
 STD = load('EPSG');
 CS.code = 28992;
 CS.name = '';

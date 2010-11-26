@@ -44,7 +44,7 @@ function xb_write_tide_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
+MTestCategory.DataAccess;
 
 xbSettings = struct('data', struct('name',{'time' 'tide'},'value',{[1:100]' magic(100)}));
 

@@ -49,7 +49,7 @@ function sdn_verify_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.DataAccess);
+MTestCategory.DataAccess;
 if TeamCity.running
     TeamCity.ignore('Test takes too long');
     return;

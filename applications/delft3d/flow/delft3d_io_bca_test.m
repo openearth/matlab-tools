@@ -49,7 +49,7 @@ function delft3d_io_bca_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.DataAccess);
+MTestCategory.DataAccess;
 
 BND = delft3d_io_bnd('read',which('bca.bnd'));
 BCA = delft3d_io_bca('read',which('tst.bca'),BND,8);

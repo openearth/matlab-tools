@@ -49,7 +49,7 @@ function DUROS_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.Intergration);
+MTestCategory.Integration;
 
 DuneErosionSettings('default');
 

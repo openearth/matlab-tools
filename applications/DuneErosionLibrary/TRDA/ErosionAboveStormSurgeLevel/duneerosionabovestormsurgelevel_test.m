@@ -49,6 +49,8 @@ function duneerosionabovestormsurgelevel_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Integration;
+
 %% basic test
 % This testcase describes a basic test of the principle of the function
 % duneerosionabovestormsurgelevel.

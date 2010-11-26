@@ -43,6 +43,7 @@ function testresult = KMLfig2pngNew_test(varargin)
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.DataAccess;
 if TeamCity.running
     TeamCity.ignore('Test takes too long'); 
     return; 

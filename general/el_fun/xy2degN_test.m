@@ -49,7 +49,7 @@ function testresult = xy2degN_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.Unit);
+MTestCategory.Unit;
 
 testresult = false;
 

@@ -49,6 +49,8 @@ function testresult = roundoff_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Unit;
+
 %% Description (Name = roundoff unit test)
 % The roundoff unittest tests three ways to use roundoff:
 %

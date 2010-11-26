@@ -49,4 +49,6 @@ function testresult = DurosResult_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.WorkInProgress;
+
 testresult = true;

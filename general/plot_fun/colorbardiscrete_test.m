@@ -49,7 +49,7 @@ function colorbardiscrete_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.Unit);
+MTestCategory.Unit;
 
 %% Original code of colorbardiscrete_test.m
 clear;

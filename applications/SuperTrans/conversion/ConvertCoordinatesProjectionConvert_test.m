@@ -49,6 +49,8 @@ function OK = ConvertCoordinatesProjectionConvert_test
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Unit;
+
 CS.name = 'Amersfoort / RD New';
 CS.type = 'projected';
 CS.code = 28992;

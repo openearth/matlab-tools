@@ -48,6 +48,8 @@ function testresult = getParabolicProfile_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Integration;
+
 %% getParabolic profile returns the parabolic profile as described in the dutch safety assessment
 % rules for dune safety during extreme storm surges. According to these rules a dune erodes and
 % forms a parabolic profile according to:

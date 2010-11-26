@@ -49,6 +49,8 @@ function testresult = getG_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Integration;
+
 %% $Description (Name = getG unit test)
 % getG calculates the amount of sediment loss that has to be taken into account when calculating
 % dune erosion at the location of a bend in the coastline according to:

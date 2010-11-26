@@ -44,7 +44,7 @@ function xb_read_tide_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
+MTestCategory.DataAccess;
 
 % write dummy file
 delete('tide.txt');

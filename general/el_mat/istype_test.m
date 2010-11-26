@@ -49,7 +49,7 @@ function testresult = istype_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.Unit);
+MTestCategory.Unit;
 
 testresult = all(istype([gca gca],'axes')) &&...
     all(istype([gcf gcf],'axes')==[false false]) &&...

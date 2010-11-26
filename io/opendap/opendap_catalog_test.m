@@ -3,6 +3,8 @@ function OK = opendap_catalog_test
 %
 %See also: OPENDAP_CATALOG, OPENDAP_CATALOG_DATASET
 
+MTestCategory.DataAccess;
+
 OK = true;
 if TeamCity.running
     TeamCity.ignore('Test takes too long');

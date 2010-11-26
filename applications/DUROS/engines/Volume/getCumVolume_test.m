@@ -49,6 +49,8 @@ function testresult = getCumVolume_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Integration;
+
 %% $Description (Name = getCumVolume unit test & IncludeCode = false & EvaluateCode = true)
 % getCumVolum only calculates the cumulative volumes between two lines (based on their x-grid.
 %

@@ -57,4 +57,4 @@ catch
     testresult = false;
 end
 
-Category(TestCategory.Intergration);
+MTestCategory.Integration;

@@ -49,6 +49,8 @@ function OK = ConvertCoordinatesFindUoM_test
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Unit;
+
 CS.coordSys.code=4499;
 CS.UoM.code=[];
 CS.UoM.name='';

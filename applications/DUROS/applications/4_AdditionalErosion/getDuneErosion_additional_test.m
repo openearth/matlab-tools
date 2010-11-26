@@ -49,10 +49,9 @@ function testresult = getDuneErosion_additional_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = Name of the test goes here)
-% Publishable code that describes the test.
 
-%% $RunCode
+MTestCategory.Integration;
+
 
 testresult = true;
 

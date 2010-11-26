@@ -49,6 +49,8 @@ function getFallVelocity_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Unit;
+
 %% $Description (Name = getFallVelocity unit test)
 % The function getFallVelocity calculates the fall velocity of sediment in water according to (v. Rijn
 % et. al., 1993):

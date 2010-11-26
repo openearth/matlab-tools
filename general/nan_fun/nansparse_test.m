@@ -49,7 +49,7 @@ function testresult = nansparse_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.Unit);
+MTestCategory.Unit;
 
 % create test data
 data = rand(100,1000);

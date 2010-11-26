@@ -3,6 +3,8 @@ function swan_io_spectrum_write_test
 %
 %See also: swan_io_spectrum_write
 
+MTestCategory.DataAccess;
+
 %% load
 
    D.frequency      = [0.001 0.06 0.07 0.08 0.1 0.11 0.13 0.14 0.15 0.19 0.21 0.23 0.25 0.3];

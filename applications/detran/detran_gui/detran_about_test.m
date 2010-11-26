@@ -49,7 +49,7 @@ function testresult = detran_about_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.Intergration);
+MTestCategory.Integration;
 
 testresult = true;
 try

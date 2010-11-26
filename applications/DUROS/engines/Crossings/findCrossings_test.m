@@ -49,6 +49,8 @@ function testresult = findCrossings_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Unit;
+
 %% $Description (Name = findCrossings unit test)
 % The testcases for findcrossings contain:
 %

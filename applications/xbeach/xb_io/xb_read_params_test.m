@@ -46,7 +46,7 @@ function testresult = xb_read_params_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
+MTestCategory.DataAccess;
 
 outputdir = fullfile(fileparts(which(mfilename)), '..', 'temp_calculation');
 filename = fullfile(outputdir, 'params.txt');

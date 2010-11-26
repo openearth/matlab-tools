@@ -47,7 +47,7 @@ function testResult = nerc_verify_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.DataAccess);
+MTestCategory.DataAccess;
 
 try
 a1 = nerc_verify('http://vocab.ndg.nerc.ac.uk/term/P061/current/UPBB');

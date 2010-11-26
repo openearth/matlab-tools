@@ -1,3 +1,4 @@
+function griddata_plus_test()
 % %%
 % % x = (rand(100)-.5).*8;
 % % y = (rand(100)-.5).*8;

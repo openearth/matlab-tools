@@ -44,7 +44,7 @@ function xb_write_waves_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
+MTestCategory.DataAccess;
 
 %% test 1: default jonswap
 delete('test1*.txt');

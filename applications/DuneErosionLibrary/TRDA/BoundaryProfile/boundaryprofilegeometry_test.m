@@ -49,6 +49,8 @@ function boundaryprofilegeometry_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Integration;
+
 significantWaveHeight = 9;
 peakPeriod = 8+1/3;
 waterLevel = 5;

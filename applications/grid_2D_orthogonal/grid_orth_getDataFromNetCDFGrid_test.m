@@ -46,8 +46,7 @@ function testresult = grid_orth_getDataFromNetCDFGrid_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = getDataFromNetCDFGrid)
-% Publishable code that describes the test.
+MTestCategory.DataAccess;
 
 % plot landboundary
 figure(10);clf;axis equal;box on;hold on

@@ -49,6 +49,8 @@ function testResult = DuneErosionResultProvider_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.WorkInProgress;
+
 %% $Description (Name = Name of the test goes here)
 % Publishable code that describes the test.
 

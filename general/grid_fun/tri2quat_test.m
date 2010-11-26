@@ -49,7 +49,7 @@ function tri2quat_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.Unit);
+MTestCategory.Unit;
 
 [cor.x,cor.y] = meshgrid(1:3,1:4);
 

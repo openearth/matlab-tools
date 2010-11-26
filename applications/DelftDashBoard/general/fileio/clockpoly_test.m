@@ -41,7 +41,7 @@ function OK = clockpoly_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.Unit);
+MTestCategory.Unit;
 
 %%
 % define clockwise polygon

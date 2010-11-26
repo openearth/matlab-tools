@@ -48,7 +48,7 @@ function OK = arc_info_binary_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.DataAccess);
+MTestCategory.DataAccess;
 if TeamCity.running
     TeamCity.ignore('Data unavailable at agent');
     return;

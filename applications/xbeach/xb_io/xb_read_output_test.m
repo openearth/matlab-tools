@@ -46,7 +46,7 @@ function xb_read_output_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
+MTestCategory.DataAccess;
 
 
 outputdir = fullfile('temp_calculation')

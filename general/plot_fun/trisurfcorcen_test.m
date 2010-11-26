@@ -49,7 +49,7 @@ function trisurfcorcen_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.Intergration);
+MTestCategory.Integration;
 
    el = 30;
    nx = 3;

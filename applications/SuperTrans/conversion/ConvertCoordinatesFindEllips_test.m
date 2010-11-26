@@ -49,6 +49,8 @@ function OK = ConvertCoordinatesFindEllips_test
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Unit;
+
 CS.datum.code = 6289;
 STD = load('EPSG');
 

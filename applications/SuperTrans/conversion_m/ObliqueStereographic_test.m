@@ -48,7 +48,7 @@ function OK = ObliqueStereographic_test
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.Unit);
+MTestCategory.Unit;
 
 OK = 0;
 

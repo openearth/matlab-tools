@@ -6,7 +6,7 @@ function matroos_get_series_test()
 %
 %See also: MATROOS
 
-Category(TestCategory.DataAccess);
+MTestCategory.DataAccess;
 if TeamCity.running
     TeamCity.ignore('Test requires access to matroos, which the buildserver does not have.');
     return;

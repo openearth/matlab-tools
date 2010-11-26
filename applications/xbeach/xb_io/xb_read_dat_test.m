@@ -46,7 +46,9 @@ function xb_read_dat_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
+
+MTestCategory.DataAccess;
+
 % Create a sample structure
 
 outputdir = fullfile('temp_calculation')

@@ -6,7 +6,7 @@ function OK = convertCoordinates2_test
 %
 %See also: CONVERTCOORDINATES, CONVERTCOORDINATES_TEST
 
-Category(TestCategory.DataAccess);
+MTestCategory.DataAccess;
 
 % load coordinate systems
 load('EPSG_v7_5');

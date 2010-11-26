@@ -48,7 +48,7 @@ function OK = TransverseMercator_test
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.Unit);
+MTestCategory.Unit;
 
 OK = 0;
 

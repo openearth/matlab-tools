@@ -3,6 +3,8 @@ function OK = seawifs_datenum_test
 %
 %See also: seawifs_datenum
 
+MTestCategory.Unit;
+
 str = '1998128121603';
 num = ceil(now*24*60)./24/60; % on minutes
 

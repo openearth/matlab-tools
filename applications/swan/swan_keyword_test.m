@@ -3,6 +3,8 @@ function OK = swan_keyword_test
 %
 %See also: swan_keyword
 
+MTestCategory.DataAccess;
+
 keys = {'a','b','c'};
 
 % val

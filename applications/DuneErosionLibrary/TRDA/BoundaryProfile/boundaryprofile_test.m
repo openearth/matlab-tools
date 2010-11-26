@@ -49,7 +49,7 @@ function boundaryprofile_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.Intergration);
+MTestCategory.Integration;
 
 %% Case 1
 % Test with normal boundary profile

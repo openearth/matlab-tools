@@ -50,6 +50,8 @@ function testresult = getIterationBoundaries_test()
 %
 % For more information see the documentation of the testcases individually
 
+MTestCategory.Integration;
+
 %% $RunCode
 testresult(1) = SimpleProfile();
 testresult(2) = ProfileBelowWl();

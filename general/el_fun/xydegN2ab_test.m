@@ -49,7 +49,7 @@ function testresult = xydegN2ab_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.Unit);
+MTestCategory.Unit;
 
 [x y] = deal(0); % arbitrary (x,y) point
 degNs = 0:45:360; % 9 angles all around the circle

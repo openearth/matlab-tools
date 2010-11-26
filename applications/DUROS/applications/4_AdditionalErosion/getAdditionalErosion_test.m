@@ -49,6 +49,8 @@ function testresult = getAdditionalErosion_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Integration;
+
 %% $Description (Name = getAdditionalErosion)
 % This test chacks the basic functionalities of getAdditionalErosion.
 %

@@ -50,6 +50,8 @@ warning('This function is deprecated in favour of grid_orth_getDataInPolygon_tes
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.DataAccess;
+
 testresult = [];
 if TeamCity.running, TeamCity.ignore('Test requires user input'); return; end
 

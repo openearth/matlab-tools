@@ -3,7 +3,7 @@ function OK = findAllFiles_test
 %
 %See also: findAllFiles, opendap_catalog, dir, ls
 
-Category(TestCategory.Unit);
+MTestCategory.Unit;
 
 directory = fileparts(mfilename('fullpath'));
 [files, directories] = findallfiles(directory);

@@ -52,7 +52,7 @@ function testresult = addXvaluesExactCrossings_test()
 %% $Description (Name = addXvaluesExactCrossings test)
 % addXvaluesExactCrossings calculates the exact x-values of crossings between two lines. The basic
 % functionality is tested with four cases. See case descriptions for more information.
-
+MTestCategory.Unit;
 %% $RunCode
 tr(1) = crosscase1;
 tr(2) = crosscase2;

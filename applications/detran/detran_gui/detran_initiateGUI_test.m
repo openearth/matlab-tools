@@ -60,4 +60,4 @@ if ishandle(h)
     close(h);
 end
 
-Category(TestCategory.Intergration);
+MTestCategory.Integration;

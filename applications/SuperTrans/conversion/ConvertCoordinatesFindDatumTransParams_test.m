@@ -49,6 +49,8 @@ function OK = ConvertCoordinatesFindDatumTransParams_test
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Unit;
+
 STD = load('EPSG');
 coord_op_code = 15934;
 

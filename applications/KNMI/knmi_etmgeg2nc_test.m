@@ -47,6 +47,8 @@ function knmi_etmgeg2nc_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.DataAccess;
+
 if TeamCity.running
     TeamCity.ignore('Test requires user input');
     return;

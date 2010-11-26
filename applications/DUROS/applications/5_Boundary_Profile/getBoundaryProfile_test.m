@@ -48,6 +48,8 @@ function testresult = getBoundaryProfile_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Integration;
+
 %% $Description (Name = Boundary profile)
 % According to Dutch regulations dunes that are eroded during an extreme storm must have a socalled
 % "Grensprofiel". This is a profile shape (or at least the volume that is in that shape) that must

@@ -48,6 +48,7 @@ function OK = ConvertUnitString_test
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Unit;
 
 unit_long = 'metre';
 unit_short = ConvertUnitString(unit_long);

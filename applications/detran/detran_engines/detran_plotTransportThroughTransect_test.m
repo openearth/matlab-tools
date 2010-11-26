@@ -64,4 +64,4 @@ catch
     end
 end
 
-Category(TestCategory.Intergration);
+MTestCategory.Integration;

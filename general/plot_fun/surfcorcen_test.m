@@ -49,7 +49,7 @@ function surfcorcen_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.Unit);
+MTestCategory.Unit;
 
    [xcor,ycor] = meshgrid(1:3,5:8);
    zcor        = xcor + ycor; %rand(size(xcor));

@@ -49,7 +49,7 @@ function testresult = MC_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.Intergration);
+MTestCategory.Integration;
 
 %% define stochastic variables
 % stochast in the new style, including "propertyName" field

@@ -13,6 +13,8 @@ function D = rws_waterbase_read_test(varargin)
 % $Revision$
 % $HeadURL$
 
+MTestCategory.DataAccess;
+
    OPT.baseurl  = 'http://live.waterbase.nl';
 
 D = [];

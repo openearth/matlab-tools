@@ -49,6 +49,8 @@ function testresult = valleypoints_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Integration;
+
 %% $Description (Name = valleypoints unit test)
 % Unit test for valleypoints.
 

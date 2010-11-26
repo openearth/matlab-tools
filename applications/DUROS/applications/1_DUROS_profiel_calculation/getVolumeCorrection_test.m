@@ -48,6 +48,8 @@ function getVolumeCorrection_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Integration;
+
 volcorrcase1;
 volcorrcase2;
 volcorrcase3;

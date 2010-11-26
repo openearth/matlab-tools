@@ -1,3 +1,4 @@
+function swan_io_input_test()
 %SWAN_IO_INPUT_TEST   read as test 3 test cases from SWAN.tudelft.nl
 %
 %  refraction test (a11refr)
@@ -7,6 +8,8 @@
 % The SWAN test files reside in in https://repos.deltares.nl/repos/OpenEarthTools/test/matlab/
 %
 %See also: swan
+
+MTestCategory.DataAccess;
 
  clear all
  I    = swan_io_input('a11refr.swn');

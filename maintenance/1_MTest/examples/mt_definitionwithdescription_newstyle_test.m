@@ -50,7 +50,7 @@ function mt_definitionwithdescription_newstyle_test()
 % $Keywords: $
 
 %% Give this test a category
-Category(TestCategory.WorkInProgress);
+MTestCategory.WorkInProgress;
 
 a = 1;
 b = a.*5;

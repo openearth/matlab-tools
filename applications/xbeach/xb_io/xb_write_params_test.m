@@ -46,7 +46,7 @@ function testresult = xb_write_params_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
+MTestCategory.DataAccess;
 
 % define filename
 filename = fullfile(tempdir, 'params.txt');

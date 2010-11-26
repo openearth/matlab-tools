@@ -49,6 +49,8 @@ function ConvertCoordinatesDatumTransform_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Unit;
+
 lat1=100000;
 lon1=100000;
 OPT.CS1.code = 28992;

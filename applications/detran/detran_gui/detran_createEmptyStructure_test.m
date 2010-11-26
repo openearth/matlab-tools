@@ -61,4 +61,4 @@ if ~isfield(data,'input')
     testresult = false;
 end
 
-Category(TestCategory.Unit);
+MTestCategory.Unit;

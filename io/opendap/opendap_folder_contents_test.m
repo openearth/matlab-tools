@@ -6,6 +6,8 @@ function varargout = opendap_folder_contents_test
 
 %% HYRAX @ opendap.deltares.nl 
 
+MTestCategory.DataAccess;
+
 warning('opendap_folder_contents is deprecated, use opendap_catalog instead')
 
    disp(repmat('#',[1 72]))

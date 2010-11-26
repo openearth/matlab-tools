@@ -168,8 +168,8 @@ classdef MTestFactory
 
 
                 %% Exctract Category
-                if ~isempty(dotCalls) && any(~cellfun(@isempty,strfind(dotCalls.names,'TestCategory.')))
-                    ln = min(dotCalls.lines(~cellfun(@isempty,strfind(dotCalls.names,'TestCategory.'))));
+                if ~isempty(dotCalls) && any(~cellfun(@isempty,strfind(dotCalls.names,'MTestCategory.')))
+                    ln = min(dotCalls.lines(~cellfun(@isempty,strfind(dotCalls.names,'MTestCategory.'))));
                     obj = MTestFactory.subtractcategoryfromcommand(obj,obj.FullString{ln});
                 end
             end
@@ -257,8 +257,8 @@ classdef MTestFactory
             end
         end
         function obj = findcategory(obj)
-            testCode = obj.FullString(obj.IDTestFunction);
-            id = find(~cellfun(@isempty,strfind(testCode,'Category(')),1,'first');
+            testCode = obj.FullString(~obj.IDOetHeaderString);
+            id = find(~cellfun(@isempty,strfind(testCode,'MTestCategory.')),1,'first');
             if any(id)
                 obj = MTestFactory.subtractcategoryfromcommand(obj,testCode{id});
             end
@@ -269,8 +269,8 @@ classdef MTestFactory
             end
         end
         function obj = subtractcategoryfromcommand(obj,command)
-            idbegin = strfind(command,'Category(')+9;
-            idend = max(strfind(command,')'))-1;
+            idbegin = strfind(command,'MTestCategory.');
+            idend = max([strfind(command,';'), length(command)]);
             if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
                 try
                     obj.Category = eval(command(idbegin:idend));
@@ -282,7 +282,7 @@ classdef MTestFactory
         function obj = findname(obj)
             obj.Name = obj.FileName;
             
-            testCode = obj.FullString(obj.IDTestFunction);
+            testCode = obj.FullString(~obj.IDOetHeaderString);
             id = find(...
                 ~cellfun(@isempty,strfind(testCode,'TeamCity.name')) | ...
                 ~cellfun(@isempty,strfind(testCode,'MTest.name')) ...

@@ -49,7 +49,7 @@ function testresult = getFunctionCall_test()
 % $HeadURL$
 % $Keywords: $
 
-Category(TestCategory.Unit);
+MTestCategory.Unit;
 
 testresult = [];
 

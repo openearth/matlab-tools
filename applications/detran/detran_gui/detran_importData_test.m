@@ -62,4 +62,4 @@ catch
     testresult = false;
 end
 
-Category(TestCategory.DataAccess);
+MTestCategory.DataAccess;
