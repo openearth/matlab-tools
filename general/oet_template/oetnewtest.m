@@ -90,7 +90,7 @@ OPT.DescriptionCode     = [];
 OPT.RunCode             = [];
 OPT.PublishCode         = [];
 OPT.SeeAlso             = '';
-OPT.Category            = 'UnCategorized';
+OPT.Category            = 'MTestCategory.WorkInProgress';
 
 OPT.Code                = '';
 
@@ -145,6 +145,8 @@ if ~isempty(which(cat(2,FunctionName,'.m')))
                         OPT.Description{1} = strtrim(OPT.Description{1}(2:end));
                     end
                 end
+                
+                OPT.Category = mtestcategory2string(t.Category);
                 
                 %% Paset complete code to new file
                 fid = fopen(cat(2,FunctionName,'.m'));
@@ -201,7 +203,7 @@ str = strrep(str, '$date(dd mmm yyyy)', datestr(now, 'dd mmm yyyy'));
 str = strrep(str, '$version', version);
 
 % replace category
-str = strrep(str, '$testcategory', ['MTest.category(''' OPT.Category ''');']);
+str = strrep(str, '$testcategory', [OPT.Category , ';']);
 
 %% Append old code
 % If the file was not according to the correct format and mtest couldn't read it, the complete
@@ -218,4 +220,14 @@ end
 %% open new file in editor
 createneweditordocument(str);
 
+end
+
+function str = mtestcategory2string(category)
+methodNames = methods(MTestCategory);
+str = 'MTestCagetory.WorkInProgress';
+for i = 1:length(methodNames)
+   if  (category == MTestCategory.(methodNames{i}))
+       str = ['MTestCategory.' methodNames{i}];
+   end
+end
 end
