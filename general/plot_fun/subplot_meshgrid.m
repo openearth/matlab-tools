@@ -2,7 +2,7 @@ function varargout = subplot_meshgrid(nx,ny,dx1,dy1,varargin)
 %SUBPLOT_MESHGRID  create non-equidistant mesh of subplots
 %
 % subplot_meshgrid(nx,ny,dx1,dy1)
-% subplot_meshgrid(nx,ny,dx1,dy1,dx2,dy2)
+% subplot_meshgrid(nx,ny,dx1,dy1,<dx2,dy2>)
 %
 % subplotgrid sets up an orthogonal array of subplots using the 
 % dx/dy array specified as the width of the seperation borders to 
@@ -17,7 +17,7 @@ function varargout = subplot_meshgrid(nx,ny,dx1,dy1,varargin)
 % Border arrays dx1,dy1 need to be 1 bigger than the subplot arrays dx2,dy2.
 % They contain sizes in relative dimensions.
 %
-% -----------------------------------> direftion of x array
+% -----------------------------------> direction of x array
 %
 %     dx1       dx1         dx1                                                    
 %    |  |  dx2 |  |   dx2  |  |       |                                    
@@ -34,10 +34,21 @@ function varargout = subplot_meshgrid(nx,ny,dx1,dy1,varargin)
 %   -+--+------+--+-~------+--+-                                          
 %    |  |      |  |        |  |                                           
 %                                                                        
-%  S      = subplot_meshgrid(...) returns handle struct
-% [S,OUT] = subplot_meshgrid(...) returns also struct OUT with fields
+%  AX     = subplot_meshgrid(...) returns handle struct
+% [AX,OUT] = subplot_meshgrid(...) returns also struct OUT with fields
 %
-%See also: SUBPLOT
+% You start plotting in one of the axes with axes(AX(i))
+%
+% Example: 
+% create two subplots: big on top (e.g. 4 map), thin below (e.g. 4 timeseries)
+%
+%    AX = subplot_meshgrid(2,2,.05,.05,[nan .02],[nan .15])
+%    axes    (AX(1,1));surf(peaks)
+%    axes    (AX(1,2));plot(peaks)
+%    colorbar(AX(2,1))
+%    delete  (AX(2,2))
+%
+%See also: SUBPLOT, AXES
 
 % Version 1.00 Oct 2005 G.J. de Boer
 
