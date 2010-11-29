@@ -1,17 +1,18 @@
 /*
  * MATLAB Compiler: 4.11 (R2009b)
- * Date: Thu Nov 25 14:52:53 2010
+ * Date: Thu Nov 25 16:36:01 2010
  * Arguments: "-B" "macro_default" "-m" "-W" "main" "-T" "link:exe" "-v" "-d"
- * "bin" "ucit_netcdf.m" "-B" "complist" "-a" "betacdf.m" "betainv.m"
- * "betapdf.m" "distchck.m" "polyconf.m" "tinv.m" "UCIT_IsohypseInPolygon.m"
- * "UCIT_getCrossSection.m" "UCIT_plotDataInGoogleEarth.m"
- * "UCIT_plotDataInPolygon.m" "UCIT_plotDifferenceMap.m"
- * "UCIT_plotGridOverview.m" "UCIT_sandBalanceInPolygon.m"
- * "UCIT_exportTransects2GoogleEarth.m" "UCIT_plotTransectOverview.m"
- * "UCIT_selectTransect.m" "UCIT_showTransectOnOverview.m"
- * "UCIT_analyseTransectVolume.m" "UCIT_calculateMKL.m" "UCIT_calculateTKL.m"
- * "UCIT_plotMultipleYears.m" "UCIT_plotTransect.m" "UCIT_plotAlongshore.m"
- * "UCIT_plotDots.m" "UCIT_plotDotsInPolygon.m" "UCIT_plotLidarTransect.m"
+ * "bin" "ucit_netcdf.m" "-B" "complist" "-a" "ucit_netcdf.m" "betacdf.m"
+ * "betainv.m" "betapdf.m" "distchck.m" "polyconf.m" "tinv.m"
+ * "UCIT_IsohypseInPolygon.m" "UCIT_getCrossSection.m"
+ * "UCIT_plotDataInGoogleEarth.m" "UCIT_plotDataInPolygon.m"
+ * "UCIT_plotDifferenceMap.m" "UCIT_plotGridOverview.m"
+ * "UCIT_sandBalanceInPolygon.m" "UCIT_exportTransects2GoogleEarth.m"
+ * "UCIT_plotTransectOverview.m" "UCIT_selectTransect.m"
+ * "UCIT_showTransectOnOverview.m" "UCIT_analyseTransectVolume.m"
+ * "UCIT_calculateMKL.m" "UCIT_calculateTKL.m" "UCIT_plotMultipleYears.m"
+ * "UCIT_plotTransect.m" "UCIT_plotAlongshore.m" "UCIT_plotDots.m"
+ * "UCIT_plotDotsInPolygon.m" "UCIT_plotLidarTransect.m"
  * "UCIT_plotMultipleTransects.m" "UCIT_SelectTransectsUS.m" "UCIT_cdots_amy.m"
  * "UCIT_clbPlotUSGS.m" "UCIT_exportSelectedTransects2GoogleEarth.m"
  * "UCIT_fncResizeUSGS.m" "UCIT_getLidarMetaData.m" "UCIT_plotDots.m"
@@ -44,24 +45,24 @@
 extern "C" {
 #endif
 const unsigned char __MCC_ucit_netcdf_session_key[] = {
-    '5', 'F', '2', 'C', 'D', '4', 'B', '6', '6', '3', 'C', '4', 'C', '2', '7',
-    '2', 'D', '6', 'F', 'A', 'D', 'C', 'D', '3', '4', '1', 'A', '5', '5', '8',
-    '2', 'F', 'C', '3', '4', '2', '8', '5', '1', '6', '5', '8', '7', 'C', 'D',
-    'E', '8', 'A', '6', '3', '2', '0', '6', '5', '6', 'E', '3', '5', '1', 'F',
-    'B', 'F', '6', '5', '1', '2', '5', 'C', '5', '5', '4', 'D', '5', '7', '3',
-    '5', '6', 'A', '8', '2', 'C', 'C', '0', '5', '7', 'F', '1', '3', '6', '1',
-    'D', '7', '7', '6', '2', 'A', '5', '4', '9', '1', '5', 'F', 'A', 'E', '5',
-    '7', 'F', '3', 'E', '0', '6', 'A', 'D', 'E', '2', '3', '2', '1', '9', '3',
-    'B', '2', '4', 'B', '5', 'F', 'C', 'D', '9', 'A', 'D', 'D', 'F', '9', '9',
-    '9', 'E', '6', '9', '1', 'F', '9', '3', '9', 'D', '6', '7', '8', '4', '4',
-    '4', '0', '1', '4', '9', '8', '7', '1', 'F', '6', 'C', 'E', 'F', '9', '3',
-    'E', '1', '2', '9', '5', 'A', '6', '4', '3', 'F', '5', '5', 'E', '3', '8',
-    'D', 'B', '4', '3', '5', 'E', 'A', '7', 'D', '3', '7', '2', '7', '0', 'C',
-    '9', '7', '7', '0', '4', '7', 'D', '9', 'C', 'E', 'B', '7', 'A', '0', '3',
-    '9', '2', '6', 'E', 'F', '6', 'D', '3', 'A', '3', '9', '4', 'C', 'A', '8',
-    '6', 'E', '6', 'E', '1', '1', '2', '1', '1', '5', '7', '6', '1', '8', 'A',
-    'B', '0', 'D', 'E', '5', 'F', '7', '5', 'E', '2', '6', '4', '2', 'B', '5',
-    '7', '\0'};
+    '0', '0', '8', 'F', 'A', '3', '8', '1', '0', 'E', '9', '0', '3', '5', '9',
+    '3', '2', '6', '8', 'C', '1', '1', '4', '1', '4', '3', '8', '3', 'E', '1',
+    '9', '3', '5', '6', '0', 'E', 'E', 'B', 'E', '8', '3', 'D', 'E', 'C', 'C',
+    '2', 'B', '7', '4', 'E', '5', 'E', '5', 'D', '0', 'A', '2', '1', 'F', 'C',
+    'B', '6', '2', 'B', '4', '2', '0', 'C', 'E', '3', 'E', '9', '0', 'D', '4',
+    '9', '3', '2', 'B', '8', 'D', '6', 'E', '3', '4', '0', 'F', 'A', 'B', '1',
+    'E', 'B', '9', 'B', '0', '8', '6', 'A', '6', '7', '9', '5', 'B', 'E', '9',
+    '9', '5', 'C', '8', 'A', '2', '0', '6', '8', 'F', '2', '7', 'D', 'A', 'E',
+    '3', '7', '8', '5', '9', '5', '9', '1', '7', '8', 'C', '0', '4', 'D', 'D',
+    '8', '2', '2', '4', 'E', '1', 'C', 'B', '5', 'A', '9', 'B', 'F', '0', '4',
+    '5', 'C', 'F', 'C', '3', 'E', '0', '1', '3', 'A', 'C', '8', '2', 'B', '2',
+    '6', '7', '9', 'E', '1', 'D', '3', 'C', '9', '5', 'C', '7', '7', 'C', 'C',
+    '7', '9', '3', 'D', '6', '2', '4', '1', '2', 'C', 'F', 'E', '3', 'C', 'E',
+    '7', '4', '0', '5', 'B', '1', 'E', '2', 'C', 'D', '4', 'A', 'D', 'A', 'C',
+    'E', 'A', '9', 'C', 'D', 'F', '5', 'B', '6', '3', 'F', '0', '9', 'E', '5',
+    '9', 'C', '8', 'F', '4', '7', 'C', '3', 'E', '0', '0', 'E', '0', '4', '8',
+    '2', '5', '2', '9', '7', '0', '2', 'F', '4', '6', '4', '1', '6', '7', 'D',
+    '1', '\0'};
 
 const unsigned char __MCC_ucit_netcdf_public_key[] = {
     '3', '0', '8', '1', '9', 'D', '3', '0', '0', 'D', '0', '6', '0', '9', '2',
@@ -88,7 +89,7 @@ const unsigned char __MCC_ucit_netcdf_public_key[] = {
     '2', '0', '1', '1', '1', '\0'};
 
 static const char * MCC_ucit_netcdf_matlabpath_data[] = 
-  { "ucit_netcdf/", "$TOOLBOXDEPLOYDIR/",
+  { "ucit_netcdf/", "$TOOLBOXDEPLOYDIR/", "OpenEarthTools/matlab/io/netcdf/",
     "gui/actions/UCIT_CommonActions/DataGrids/",
     "gui/actions/UCIT_CommonActions/DataTransects/",
     "gui/actions/UCIT_SpecificActions/DataTransects/JarkusData/",
@@ -99,57 +100,59 @@ static const char * MCC_ucit_netcdf_matlabpath_data[] =
     "app/matlab/toolbox/wl_ideas/", "app/matlab/toolbox/wl_mexnc/",
     "app/matlab/toolbox/wl_ncutility/", "app/matlab/toolbox/wl_oldtools/",
     "app/matlab/toolbox/wl_quickplot/", "app/matlab/toolbox/wl_snctools/",
-    "app/matlab/toolbox/wl_tools/", "Repositories/OeTools/",
-    "Repositories/OeTools/applications/DUROS/engines/",
-    "Repositories/OeTools/applications/DUROS/engines/Crossings/",
-    "Repositories/OeTools/applications/DelftDashBoard/general/misc/",
-    "Repositories/OeTools/applications/Rijkswaterstaat/jarkus/",
-    "Repositories/OeTools/applications/SuperTrans/conversion/",
-    "Repositories/OeTools/applications/SuperTrans/conversion_dlls_32/",
-    "Repositories/OeTools/applications/SuperTrans/conversion_m/",
-    "Repositories/OeTools/applications/SuperTrans/general/",
-    "Repositories/OeTools/applications/SuperTrans/gui/",
-    "Repositories/OeTools/applications/googleplot/",
-    "Repositories/OeTools/applications/googleplot/KMLengines/",
-    "Repositories/OeTools/applications/grid_2D_orthogonal/",
-    "Repositories/OeTools/general/",
-    "Repositories/OeTools/general/color_fun/colormaps/",
-    "Repositories/OeTools/general/debug_fun/",
-    "Repositories/OeTools/general/el_fun/",
-    "Repositories/OeTools/general/el_mat/",
-    "Repositories/OeTools/general/gui_fun/",
-    "Repositories/OeTools/general/io_fun/",
-    "Repositories/OeTools/general/oet_defaults/",
-    "Repositories/OeTools/general/phys_fun/",
-    "Repositories/OeTools/general/plot_fun/",
-    "Repositories/OeTools/general/poly_fun/",
-    "Repositories/OeTools/general/string_fun/",
-    "Repositories/OeTools/general/struct_fun/",
-    "Repositories/OeTools/general/time_fun/",
-    "Repositories/OeTools/io/opendap/",
-    "Repositories/OeTools/maintenance/1_MTest/", "$TOOLBOXMATLABDIR/general/",
-    "$TOOLBOXMATLABDIR/ops/", "$TOOLBOXMATLABDIR/lang/",
-    "$TOOLBOXMATLABDIR/elmat/", "$TOOLBOXMATLABDIR/randfun/",
-    "$TOOLBOXMATLABDIR/elfun/", "$TOOLBOXMATLABDIR/specfun/",
-    "$TOOLBOXMATLABDIR/matfun/", "$TOOLBOXMATLABDIR/datafun/",
-    "$TOOLBOXMATLABDIR/polyfun/", "$TOOLBOXMATLABDIR/funfun/",
-    "$TOOLBOXMATLABDIR/sparfun/", "$TOOLBOXMATLABDIR/scribe/",
-    "$TOOLBOXMATLABDIR/graph2d/", "$TOOLBOXMATLABDIR/graph3d/",
-    "$TOOLBOXMATLABDIR/specgraph/", "$TOOLBOXMATLABDIR/graphics/",
-    "$TOOLBOXMATLABDIR/uitools/", "$TOOLBOXMATLABDIR/strfun/",
-    "$TOOLBOXMATLABDIR/imagesci/", "$TOOLBOXMATLABDIR/iofun/",
-    "$TOOLBOXMATLABDIR/audiovideo/", "$TOOLBOXMATLABDIR/timefun/",
-    "$TOOLBOXMATLABDIR/datatypes/", "$TOOLBOXMATLABDIR/verctrl/",
-    "$TOOLBOXMATLABDIR/codetools/", "$TOOLBOXMATLABDIR/helptools/",
-    "$TOOLBOXMATLABDIR/winfun/", "$TOOLBOXMATLABDIR/winfun/NET/",
-    "$TOOLBOXMATLABDIR/demos/", "$TOOLBOXMATLABDIR/timeseries/",
-    "$TOOLBOXMATLABDIR/hds/", "$TOOLBOXMATLABDIR/guide/",
-    "$TOOLBOXMATLABDIR/plottools/", "toolbox/local/",
-    "toolbox/shared/dastudio/", "$TOOLBOXMATLABDIR/datamanager/",
-    "toolbox/compiler/", "Repositories/OeTools/io/netcdf/nctools/" };
+    "app/matlab/toolbox/wl_tools/", "OpenEarthTools/matlab/",
+    "OpenEarthTools/matlab/applications/DUROS/engines/",
+    "OpenEarthTools/matlab/applications/DUROS/engines/Crossings/",
+    "OpenEarthTools/matlab/applications/DelftDashBoard/general/misc/",
+    "OpenEarthTools/matlab/applications/Rijkswaterstaat/jarkus/",
+    "OpenEarthTools/matlab/applications/SuperTrans/conversion/",
+    "OpenEarthTools/matlab/applications/SuperTrans/conversion_dlls_32/",
+    "OpenEarthTools/matlab/applications/SuperTrans/conversion_m/",
+    "OpenEarthTools/matlab/applications/SuperTrans/general/",
+    "OpenEarthTools/matlab/applications/SuperTrans/gui/",
+    "OpenEarthTools/matlab/applications/googleplot/",
+    "OpenEarthTools/matlab/applications/googleplot/KMLengines/",
+    "OpenEarthTools/matlab/applications/grid_2D_orthogonal/",
+    "OpenEarthTools/matlab/general/",
+    "OpenEarthTools/matlab/general/color_fun/colormaps/",
+    "OpenEarthTools/matlab/general/config_FUN/",
+    "OpenEarthTools/matlab/general/debug_fun/",
+    "OpenEarthTools/matlab/general/el_fun/",
+    "OpenEarthTools/matlab/general/el_mat/",
+    "OpenEarthTools/matlab/general/gui_fun/",
+    "OpenEarthTools/matlab/general/io_fun/",
+    "OpenEarthTools/matlab/general/oet_defaults/",
+    "OpenEarthTools/matlab/general/phys_fun/",
+    "OpenEarthTools/matlab/general/plot_fun/",
+    "OpenEarthTools/matlab/general/poly_fun/",
+    "OpenEarthTools/matlab/general/string_fun/",
+    "OpenEarthTools/matlab/general/struct_fun/",
+    "OpenEarthTools/matlab/general/time_fun/",
+    "OpenEarthTools/matlab/io/opendap/",
+    "OpenEarthTools/matlab/maintenance/1_MTest/", "Matlab/",
+    "$TOOLBOXMATLABDIR/general/", "$TOOLBOXMATLABDIR/ops/",
+    "$TOOLBOXMATLABDIR/lang/", "$TOOLBOXMATLABDIR/elmat/",
+    "$TOOLBOXMATLABDIR/randfun/", "$TOOLBOXMATLABDIR/elfun/",
+    "$TOOLBOXMATLABDIR/specfun/", "$TOOLBOXMATLABDIR/matfun/",
+    "$TOOLBOXMATLABDIR/datafun/", "$TOOLBOXMATLABDIR/polyfun/",
+    "$TOOLBOXMATLABDIR/funfun/", "$TOOLBOXMATLABDIR/sparfun/",
+    "$TOOLBOXMATLABDIR/scribe/", "$TOOLBOXMATLABDIR/graph2d/",
+    "$TOOLBOXMATLABDIR/graph3d/", "$TOOLBOXMATLABDIR/specgraph/",
+    "$TOOLBOXMATLABDIR/graphics/", "$TOOLBOXMATLABDIR/uitools/",
+    "$TOOLBOXMATLABDIR/strfun/", "$TOOLBOXMATLABDIR/imagesci/",
+    "$TOOLBOXMATLABDIR/iofun/", "$TOOLBOXMATLABDIR/audiovideo/",
+    "$TOOLBOXMATLABDIR/timefun/", "$TOOLBOXMATLABDIR/datatypes/",
+    "$TOOLBOXMATLABDIR/verctrl/", "$TOOLBOXMATLABDIR/codetools/",
+    "$TOOLBOXMATLABDIR/helptools/", "$TOOLBOXMATLABDIR/winfun/",
+    "$TOOLBOXMATLABDIR/winfun/NET/", "$TOOLBOXMATLABDIR/demos/",
+    "$TOOLBOXMATLABDIR/timeseries/", "$TOOLBOXMATLABDIR/hds/",
+    "$TOOLBOXMATLABDIR/guide/", "$TOOLBOXMATLABDIR/plottools/",
+    "toolbox/local/", "toolbox/shared/dastudio/",
+    "$TOOLBOXMATLABDIR/datamanager/", "toolbox/compiler/",
+    "OpenEarthTools/matlab/io/netcdf/nctools/" };
 
 static const char * MCC_ucit_netcdf_classpath_data[] = 
-  { "Repositories/OeTools/io/netcdf/toolsUI-4.1.jar" };
+  { "OpenEarthTools/matlab/io/netcdf/toolsUI-4.1.jar" };
 
 static const char * MCC_ucit_netcdf_libpath_data[] = 
   { "" };
@@ -182,7 +185,7 @@ mclComponentData __MCC_ucit_netcdf_component_data = {
   MCC_ucit_netcdf_matlabpath_data,
 
   /* Number of directories in the MATLAB Path */
-  89,
+  92,
 
   /* Component's Java class path */
   MCC_ucit_netcdf_classpath_data,
@@ -205,7 +208,7 @@ mclComponentData __MCC_ucit_netcdf_component_data = {
   0,
   
   /* Component preferences directory */
-  "ucit_netcdf_537A64970B715D56ECD47124A851B786",
+  "ucit_netcdf_DCCA4B7FF1D3B9B8CDFFCC117D7435A7",
 
   /* MCR warning status data */
   MCC_ucit_netcdf_warning_state_data,

@@ -1,17 +1,18 @@
 /*
  * MATLAB Compiler: 4.11 (R2009b)
- * Date: Thu Nov 25 14:52:53 2010
+ * Date: Thu Nov 25 16:36:01 2010
  * Arguments: "-B" "macro_default" "-m" "-W" "main" "-T" "link:exe" "-v" "-d"
- * "bin" "ucit_netcdf.m" "-B" "complist" "-a" "betacdf.m" "betainv.m"
- * "betapdf.m" "distchck.m" "polyconf.m" "tinv.m" "UCIT_IsohypseInPolygon.m"
- * "UCIT_getCrossSection.m" "UCIT_plotDataInGoogleEarth.m"
- * "UCIT_plotDataInPolygon.m" "UCIT_plotDifferenceMap.m"
- * "UCIT_plotGridOverview.m" "UCIT_sandBalanceInPolygon.m"
- * "UCIT_exportTransects2GoogleEarth.m" "UCIT_plotTransectOverview.m"
- * "UCIT_selectTransect.m" "UCIT_showTransectOnOverview.m"
- * "UCIT_analyseTransectVolume.m" "UCIT_calculateMKL.m" "UCIT_calculateTKL.m"
- * "UCIT_plotMultipleYears.m" "UCIT_plotTransect.m" "UCIT_plotAlongshore.m"
- * "UCIT_plotDots.m" "UCIT_plotDotsInPolygon.m" "UCIT_plotLidarTransect.m"
+ * "bin" "ucit_netcdf.m" "-B" "complist" "-a" "ucit_netcdf.m" "betacdf.m"
+ * "betainv.m" "betapdf.m" "distchck.m" "polyconf.m" "tinv.m"
+ * "UCIT_IsohypseInPolygon.m" "UCIT_getCrossSection.m"
+ * "UCIT_plotDataInGoogleEarth.m" "UCIT_plotDataInPolygon.m"
+ * "UCIT_plotDifferenceMap.m" "UCIT_plotGridOverview.m"
+ * "UCIT_sandBalanceInPolygon.m" "UCIT_exportTransects2GoogleEarth.m"
+ * "UCIT_plotTransectOverview.m" "UCIT_selectTransect.m"
+ * "UCIT_showTransectOnOverview.m" "UCIT_analyseTransectVolume.m"
+ * "UCIT_calculateMKL.m" "UCIT_calculateTKL.m" "UCIT_plotMultipleYears.m"
+ * "UCIT_plotTransect.m" "UCIT_plotAlongshore.m" "UCIT_plotDots.m"
+ * "UCIT_plotDotsInPolygon.m" "UCIT_plotLidarTransect.m"
  * "UCIT_plotMultipleTransects.m" "UCIT_SelectTransectsUS.m" "UCIT_cdots_amy.m"
  * "UCIT_clbPlotUSGS.m" "UCIT_exportSelectedTransects2GoogleEarth.m"
  * "UCIT_fncResizeUSGS.m" "UCIT_getLidarMetaData.m" "UCIT_plotDots.m"
@@ -100,7 +101,7 @@ bool MW_CALL_CONV ucit_netcdfInitializeWithHandlers(
                                                      &__MCC_ucit_netcdf_component_data, 
                                                      true, NoObjectType, ExeTarget, 
                                                      error_handler, print_handler, 
-                                                     19858929, NULL))
+                                                     19858148, NULL))
     return false;
   return true;
 }

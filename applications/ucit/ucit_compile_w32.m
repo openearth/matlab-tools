@@ -72,10 +72,9 @@ try
     system(['"' matlabroot '\sys\lcc\bin\lrc" /i "' pwd 'Deltares_icon.rc"']);
 end
  
-mcc -m -v -d bin ucit_netcdf.m -B complist -a ..\..\io\netcdf\toolsUI-4.1.jar -M Deltares_icon.res 
+mcc -m -v -d bin ucit_netcdf.m -B complist -a ..\..\io\netcdf\toolsUI-4.1.jar 
 
-mcc -m -v -d bin ucit_netcdf.m -a ..\..\io\netcdf\toolsUI-4.1.jar
-
+% mcc -m -v -d bin ucit_netcdf.m -B complist -a ..\..\io\netcdf\toolsUI-4.1.jar -M Deltares_icon.res 
 % mcc -m -v -d exe DelftDashBoard.m -B complist -a settings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
  
 delete('Deltares_icon.rc');
