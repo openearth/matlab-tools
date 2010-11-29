@@ -147,7 +147,7 @@ if pathname~=0
     y1=y;
 
     if ~isempty(x1) && ~isempty(y1)
-        [x2,y2]=ConvertCoordinates(x1,y1,handles.EPSG,'CS1.name',cs1,'CS1.type',tp1,'CS2.name',cs2,'CS2.type',tp2);
+        [x2,y2]=convertCoordinates(x1,y1,handles.EPSG,'CS1.name',cs1,'CS1.type',tp1,'CS2.name',cs2,'CS2.type',tp2);
     end
 
 %     if ~isempty(x1) && ~isempty(y1)
