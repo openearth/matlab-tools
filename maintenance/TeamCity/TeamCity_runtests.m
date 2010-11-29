@@ -88,8 +88,7 @@ try %#ok<TRYNC>
     OPT = struct(...
         'TestDataMainDir',[],...
         'Category','all',...
-        'Publish',true,...
-        'PublishCoverage',true,...
+        'PublishCoverage',false,...
         'RevisionNumber',NaN);
 
     if nargin > 0
@@ -136,21 +135,12 @@ try %#ok<TRYNC>
             };
 
         %% Create testengine
-        mtp = MTestPublisher(...
-            'TargetDir',targetdir,...
-            'CopyMode','svnkeep',...
-            'Template','oet',...
-            'Publish',OPT.Publish,...
-            'MaxWidth',600,...
-            'MaxHeight',600);
-
         mtr = MTestRunner(...
             'MainDir'       ,maindir,...
             'Recursive'     ,true,...
             'Exclusions'    ,exclusions,...
             'Verbose'       ,true,...
-            ...'MTestPublisher',mtp,...
-            'IncludeCoverage',true);
+            'IncludeCoverage',OPT.PublishCoverage);
 
         TeamCity.postmessage('progressFinish','Prepare MTestRunner');
 
@@ -162,12 +152,8 @@ try %#ok<TRYNC>
         % Check which tests we have to run
         if strcmp(OPT.Category,'all')
             id = true(size(collectedTestCategories));
-        elseif strcmpi(OPT.Category,'Unit')
-            % Category is Unit (all tests that are not assigned to another category)
-            predefinedTestCategories = {'Performance','Integration','Regression','DataAccess','all','Unit'};
-            id = ~ismember(collectedTestCategories,predefinedTestCategories) | strcmpi(collectedTestCategories,'Unit') | strcmpi(collectedTestCategories,'all');
         else
-            id = strcmpi(collectedTestCategories,OPT.Category);
+            id = collectedTestCategories  == OPT.Category;
         end
 
         mtr.Tests(~id)=[];
@@ -196,13 +182,6 @@ try %#ok<TRYNC>
                 mtr.MTestPublisher.publishcoverage(mtr.ProfileInfo,'TargetDir',fullfile(targetdir,'coverage'));
                 zip('OetTestCoverage',{fullfile(targetdir,'coverage','*.*')});
             end
-
-            %% zip result and remove target dir
-            if OPT.Publish
-                mtr.MTestPublisher.publishtestsoverview(mtr,'TargetDir',fullfile(targetdir,'testoverview'));
-                zip('OetTestResult',{fullfile(targetdir,'testoverview','*.*')});
-            end
-
             rmdir(targetdir,'s');
         end
 

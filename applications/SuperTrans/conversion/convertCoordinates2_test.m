@@ -7,6 +7,10 @@ function OK = convertCoordinates2_test
 %See also: CONVERTCOORDINATES, CONVERTCOORDINATES_TEST
 
 MTestCategory.DataAccess;
+if TeamCity.running
+    TeamCity.ignore('Test takes very long');
+    return;
+end
 
 % load coordinate systems
 load('EPSG_v7_5');

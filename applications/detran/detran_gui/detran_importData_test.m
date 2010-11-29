@@ -49,11 +49,8 @@ function testresult = detran_importData_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = detran_importData_test)
-% Publishable code that describes the test.
+MTestCategory.UserInput;
 
-%% $RunCode
-% Write test code here
 try
     file = which('trim-example.dat');
     detranData = detran_importData (file, nan, 'Trim-file(s)', 'Single file', 'mean', 0);
@@ -61,5 +58,3 @@ try
 catch
     testresult = false;
 end
-
-MTestCategory.DataAccess;

@@ -81,7 +81,7 @@ classdef MTest < handle
         
         Ignore = false;                     % If ignore = true, this test is ignored
         IgnoreMessage = '';                 % Optional string to point out why this test(case) was ignored
-        Category = 'Unit';                  % Category of the test(case)
+        Category = MTestCategory.Unit;      % Category of the test(case)
 
         Verbose = true;                     % Determines whether messages are written to the command window whenever the run function gets executed
         AutoRefresh = false;                % If this property is set true, the object gets updated with the newest version of the definition before executing run

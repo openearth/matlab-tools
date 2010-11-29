@@ -43,6 +43,12 @@ function testresult = KMLtricontourf_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.DataAccess;
+if TeamCity.running
+    TeamCity.ignore('This test takes very long');
+    return;
+end
+
 disp(['... running test:',mfilename])
 
 %test 1

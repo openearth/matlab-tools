@@ -135,6 +135,7 @@ classdef MTestExplorer < handle
                 'Toolbar','none',...
                 'Units','pix',...
                 'Visible','off',...
+                'WindowKeyPressFcn',{@this.mouseclickedontree_callback,'keypress'},...
                 'Position',[100 100 1200 300]);
             % Save object to figure so it does not get lost
             guidata(this.HMainFigure,this);
@@ -978,6 +979,12 @@ classdef MTestExplorer < handle
                 case 'keypress'
                     if ismember(get(varargin{end-1},'KeyCode'),[17, 16]) % Ctrl, Shift
                         return;
+                    end
+                    if get(varargin{end-1},'keyCode') == 127
+                        this.menusessionremovetest_callback;
+                    end
+                    if get(varargin{end-1},'keyCode') == 116
+                        this.run;
                     end
                     button = 1;
                     holdSelection = false;
