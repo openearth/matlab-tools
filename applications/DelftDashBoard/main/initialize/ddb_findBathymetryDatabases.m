@@ -29,6 +29,16 @@ for i=1:handles.Bathymetry.NrDatasets
                         % If no access to openDAP server possible, check
                         % whether meta data file is already available in
                         % cache
+                        err=lasterror;
+                        disp(err.message);
+                        disp(err.identifier);
+                        ns=length(err.stack);
+                        for ie=1:ns
+                            disp(['file : ' err.stack(ie).file]);
+                            disp(['name : ' err.stack(ie).name]);
+                            disp(['line : ' num2str(err.stack(ie).line)]);
+                        end
+                        
                         disp(['Connection to OpenDAP server could not be made for bathymetry dataset ' handles.Bathymetry.Dataset(i).longName ' - try using cached data instead']);
                         fname = [handles.BathyDir handles.Bathymetry.Dataset(i).Name filesep handles.Bathymetry.Dataset(i).Name '.nc'];
                         if exist(fname,'file')
