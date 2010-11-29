@@ -46,9 +46,10 @@ function testresult = griddata_remap_test()
 % $HeadURL$
 % $Keywords: $
 
-[XI,YI]     = meshgrid(1:100,201:400);
-ZI          = repmat(peaks(100),2,1);
-ZI(4:6,2:7) = nan;
+[XI,YI]         = meshgrid(1:100,201:400);
+ZI              = repmat(peaks(100),2,1);
+ZI(40:60,20:70) = nan;
+
 x           = XI(:);
 y           = YI(:);
 z           = ZI(:);

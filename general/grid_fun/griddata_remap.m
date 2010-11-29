@@ -5,7 +5,7 @@ function ZI = griddata_remap(X, Y, Z, XI, YI, varargin)
 %   not interpolate anything.
 %
 %   Syntax:
-%   ZI = griddata_remap(X, Y, Z, XI, YI)
+%   ZI = griddata_remap(X, Y, Z, XI, YI,<keyword,value>)
 %
 %   Input:
 %   X  = 1D vectore with coordinates
@@ -13,6 +13,7 @@ function ZI = griddata_remap(X, Y, Z, XI, YI, varargin)
 %   Z  = 1D vectore with coordinates
 %   XI = XI must be either a 1D vector, or a 2D array made with meshgrid
 %   YI = YI must be either a 1D vector, or a 2D array made with meshgrid
+%   for floats set keyword 'tolerance'
 %
 %   Output:
 %   ZI = 2D array
@@ -65,6 +66,7 @@ function ZI = griddata_remap(X, Y, Z, XI, YI, varargin)
 %% set properties
 
 OPT.errorCheck = true;
+OPT.tolerance  = eps;
 
 % overrule default settings by property pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
@@ -98,15 +100,16 @@ YI = unique(YI);
 if OPT.errorCheck    
     if all(dimx ~= length(XI))||all(dimy ~= length(YI))
         error(['XI and YI must be either 1D vectors, or 2D vectors made with'...
-            'meshgrid. Also, no duplicate values are allowed in XI or YI'])
+               'meshgrid. Also, no duplicate values are allowed in XI or YI'])
     end
 end
+
 %% remap x and y to rounded gridpoints
 
 ZI = nan(length(YI),length(XI));
 for ii = 1:length(x)
-    nn = YI == y(ii);
-    mm = XI == x(ii);
+    nn = find(abs(YI - y(ii)) < OPT.tolerance);
+    mm = find(abs(XI - x(ii)) < OPT.tolerance);
     if OPT.errorCheck
         if any(nn)&&any(mm)
             if isnan(ZI(nn,mm))
