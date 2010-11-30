@@ -4,7 +4,7 @@ function xbSettings = xb_read_bathy(varargin)
 %   Routine to read xbeach bathymetry files.
 %
 %   Syntax:
-%   xbSettings = xb_read_bathy(xfile, yfile, depfile, nefile)
+%   xbSettings = xb_read_bathy('xfile', <filename>, yfile, <filename>, depfile, <filename>, nefile, <filename>)
 %
 %   Input:
 %   varargin    = xfile:    file name of x-coordinates file (cross-shore)
@@ -63,45 +63,27 @@ function xbSettings = xb_read_bathy(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% read options
-
-OPT = struct( ...
-    'xfile', '', ...
-    'yfile', '', ...
-    'depfile', '', ...
-    'ne_layer', '' ...
-);
-
-OPT = setproperty(OPT, varargin{:});
-
 %% create xbeach struct
 
 xbSettings = xb_empty();
 
-files = {};
+% odd elements should be variable names
+vars = varargin(1:2:end);
+% even elements should be filenames
+files = varargin(2:2:end);
 
-if exist(OPT.xfile, 'file')
-    % read file with x-coordinates (cross-shore)
-    xbSettings = xb_set(xbSettings, 'xfile', load(OPT.xfile));
-    files = [files {OPT.xfile}];
-end
-
-if exist(OPT.yfile, 'file')
-    % read file with y-coordinates (alongshore)
-    xbSettings = xb_set(xbSettings, 'yfile', load(OPT.yfile));
-    files = [files {OPT.yfile}];
-end
-
-if exist(OPT.depfile, 'file')
-    % read bathymetry file
-    xbSettings = xb_set(xbSettings, 'depfile', load(OPT.depfile));
-    files = [files {OPT.depfile}];
-end
-
-if exist(OPT.ne_layer, 'file')
-    % read non-erodible layer file
-    xbSettings = xb_set(xbSettings, 'ne_layer', load(OPT.ne_layer));
-    files = [files {OPT.ne_layer}];
+for ivar = 1:length(vars)
+    if exist(files{ivar}, 'file')
+        xbSettings = xb_set(xbSettings, vars{ivar}, []);
+        try
+            A = load(files{ivar});
+            xbSettings = xb_set(xbSettings, '-units', vars{ivar}, {A 'm'});
+        catch
+            error(['Bathymetry definition file incorrectly formatted [' files{ivar} ']']);
+        end
+    else
+        error(['Bathymetry definition file does not exist [' files{ivar} ']'])
+    end
 end
 
 % set meta data

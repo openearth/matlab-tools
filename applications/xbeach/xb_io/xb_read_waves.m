@@ -86,6 +86,7 @@ switch filetype
     case 'filelist'
         [names values fnames] = read_filelist(filename);
         filenames = [{filenames} fnames];
+        xbSettings = xb_set(xbSettings, 'type_', xb_get_wavefiletype(fnames{1}));
     case 'jonswap'
         [names values] = read_jonswap(filename);
     case 'jonswap_mtx'
