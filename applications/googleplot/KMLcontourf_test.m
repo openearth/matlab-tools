@@ -43,7 +43,7 @@ function KMLcontourf_test()
 % $HeadURL$
 % $Keywords: $
 
-if TeamCity.running, TeamCity.ignore('Test takes too long'); return; end
+MTestCategory.DataAccess;
 
 disp(['... running test:',mfilename])
 

@@ -36,32 +36,16 @@ function KMLmesh_test()
 % $HeadURL$
 % $Keywords: $
 
-if TeamCity.running, TeamCity.ignore('Test requires user input'); return; end
+MTestCategory.DataAccess;
 
 disp(['... running test:',mfilename])
 
-%% $Description (Name = KMLmesh)
-% Publishable code that describes the test.
+[lat,lon] = meshgrid(-90:1:90,[-180:1:180]+30);
 
-%% $RunCode
-% Write test code here
-%try
+a = 5e5;
+b = 5e5;
 
-   [lat,lon] = meshgrid(-90:1:90,[-180:1:180]+30);
+z = a.*sin(5*(2*pi).*lon./180) + b.*sin(8.*(2*pi).*lon./360) + max(abs(a),abs(b));
 
-   a = 5e5;
-   b = 5e5;
-
-   z = a.*sin(5*(2*pi).*lon./180) + b.*sin(8.*(2*pi).*lon./360) + max(abs(a),abs(b));
-
-   KMLmesh(lat ,lon ,  'fileName',KML_testdir('KMLmesh_test2d.kml'),'lineColor',hsv);
-   KMLmesh(lat ,lon ,z,'fileName',KML_testdir('KMLmesh_test3d.kml'),'lineColor',hsv);
-    testresult = true;
-%catch
-%    testresult = false;
-%end
-
-%% $PublishResult
-% Publishable code that describes the test.
-
-
+KMLmesh(lat ,lon ,  'fileName',KML_testdir('KMLmesh_test2d.kml'),'lineColor',hsv);
+KMLmesh(lat ,lon ,z,'fileName',KML_testdir('KMLmesh_test3d.kml'),'lineColor',hsv);
