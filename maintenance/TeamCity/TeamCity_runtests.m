@@ -177,7 +177,7 @@ try %#ok<TRYNC>
             delete(fullfile(targetdir,'mxdom2defaulthtml.xsl'));
         end
 
-        if any(~[mtr.Tests.Ignore]) && (OPT.Publish || OPT.PublishCoverage)
+        if any(~[mtr.Tests.Ignore]) && OPT.PublishCoverage
             if OPT.PublishCoverage
                 mtr.MTestPublisher.publishcoverage(mtr.ProfileInfo,'TargetDir',fullfile(targetdir,'coverage'));
                 zip('OetTestCoverage',{fullfile(targetdir,'coverage','*.*')});
