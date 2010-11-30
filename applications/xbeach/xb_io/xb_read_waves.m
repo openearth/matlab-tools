@@ -79,14 +79,11 @@ xbSettings = xb_empty();
 
 filetype = xb_get_wavefiletype(filename);
 
-xbSettings = xb_set(xbSettings, 'type_', filetype);
-
 filenames = filename;
 switch filetype
     case 'filelist'
-        [names values fnames] = read_filelist(filename);
+        [names values fnames filetype] = read_filelist(filename);
         filenames = [{filenames} fnames];
-        xbSettings = xb_set(xbSettings, 'type_', xb_get_wavefiletype(fnames{1}));
     case 'jonswap'
         [names values] = read_jonswap(filename);
     case 'jonswap_mtx'
@@ -97,6 +94,8 @@ switch filetype
         % unsupported wave definition file, simply dump contents
         [names values] = read_unknown(filename);
 end
+
+xbSettings = xb_set(xbSettings, 'type_', filetype);
 
 for i = 1:length(names)
     xbSettings = xb_set(xbSettings, names{i}, values{i});
@@ -109,13 +108,14 @@ xbSettings = xb_meta(xbSettings, mfilename, 'waves', filenames);
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [names values filenames] = read_filelist(filename)
+function [names values filenames filetype] = read_filelist(filename)
 
 tlength = 1;
 
 names = {};
 values = {};
 filenames = {};
+filetype = '';
 
 duration = [];
 timestep = [];
