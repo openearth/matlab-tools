@@ -49,11 +49,8 @@ function testresult = detran_d3dTrans_single_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = detran_d3dTrans_single_test)
-% Publishable code that describes the test.
+MTestCategory.DataAccess;
 
-%% $RunCode
-% Write test code here
 try
     [pat, nam]=fileparts(which('detran_test_dir'));
     file = [pat filesep 'detran_testmodel' filesep 'single' filesep 'trim-example.dat'];
@@ -62,7 +59,3 @@ try
 catch
     testresult = false;
 end
-
-%% $PublishResult
-% Publishable code that describes the test.
-
