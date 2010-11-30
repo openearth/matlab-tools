@@ -46,6 +46,8 @@ function KMLcontourf3_test()
 % $HeadURL$
 % $Keywords: $
 
+MTestCategory.Integration;
+
 test1;
 test2;
 test3;
@@ -93,7 +95,7 @@ KMLcontourf3(x/30,y/30,z,'levels',nn,'fileName',KML_testdir('KMLcontourf3 - 3.km
 end
 
 function test4()
-url = 'http://opendap.deltares.nl:8080/opendap/hyrax/rijkswaterstaat/vaklodingen/vaklodingenKB136_0908.nc';
+url = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB136_0908.nc';
 x = nc_varget(url,'x');
 y = nc_varget(url,'y');
 [X,Y] = meshgrid(x,y);

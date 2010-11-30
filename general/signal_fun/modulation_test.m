@@ -49,7 +49,7 @@ function modulation_test()
 % $HeadURL$
 % $Keywords: $
 
-TeamCity.category('UnCategorized');
+MTestCategory.Integration;
 
 %% settings
 time       = datenum(1990,5,linspace(0,31,5000)); % [days]
