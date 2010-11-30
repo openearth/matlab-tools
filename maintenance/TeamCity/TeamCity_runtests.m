@@ -153,7 +153,7 @@ try %#ok<TRYNC>
         if strcmp(OPT.Category,'all')
             id = true(size(collectedTestCategories));
         else
-            id = collectedTestCategories  == OPT.Category;
+            id = collectedTestCategories  == str2category(OPT.Category);
         end
 
         mtr.Tests(~id)=[];
@@ -209,3 +209,21 @@ try %#ok<TRYNC>
     end
 end
 exit;
+end
+
+function cat = str2category(str)
+switch str
+    case 'Integration'
+        cat = MTestCategory.Integration;
+    case 'DataAccess'
+        cat = MTestCategory.DataAccess;
+    case 'Performance'
+        cat = MTestCategory.Performance;
+    case 'Unit'
+        cat = MTestCategory.Unit;
+    case 'UserInput'
+        cat = MTestCategory.UserInput;
+    case 'WorkInProgress'
+        cat = MTestCategory.WorkInProgress;
+end
+end
