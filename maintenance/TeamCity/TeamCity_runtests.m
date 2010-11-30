@@ -147,7 +147,7 @@ try %#ok<TRYNC>
         %% Collect tests that need to be run
         TeamCity.postmessage('progressStart','Collect Tests');
         mtr.gathertests;
-        collectedTestCategories = {mtr.Tests.Category}';
+        collectedTestCategories = [mtr.Tests.Category]';
 
         % Check which tests we have to run
         if strcmp(OPT.Category,'all')
