@@ -60,10 +60,10 @@ try %#ok<TRYNC>
     	   delete('OetTestCoverage.zip');
     	end
     	if exist('OetTestResult.zip','file')
-	   delete('OetTestResult.zip');
+            delete('OetTestResult.zip');
     	end
     	if exist('OetTestResult.mat','file')
-	   delete('OetTestResult.mat');
+            delete('OetTestResult.mat');
     	end
         oetdir = strrep(fileparts(mfilename('fullpath')),'maintenance\TeamCity','');
         addpath(oetdir);
@@ -72,6 +72,13 @@ try %#ok<TRYNC>
         TeamCity.postmessage('progressStart','Run Oetsettings');
         oetsettings;
         TeamCity.postmessage('progressMessage','Oetsettings enabled');
+        TeamCity.postmessage('progressStart','Run wlsettings');
+        try
+            wlsettings;
+            TeamCity.postmessage('progressMessage','wlsettings enabled');
+        catch
+            TeamCity.postmessage('progressMessage','Could not load wlsettings');
+        end
         TeamCity.postmessage('progressFinish','Run Oetsettings');
     catch me
         TeamCity.postmessage('message', 'text', 'Matlab was unable to run oetsettings.',...
