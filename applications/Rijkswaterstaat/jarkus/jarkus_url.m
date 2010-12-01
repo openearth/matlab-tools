@@ -1,14 +1,26 @@
-function url = jarkus_url
-% JARKUS_URL returns the link to the jarkus netCDF. 
+function url = jarkus_url(varargin)
+% JARKUS_URL returns the link to the jarkus transect netCDF file.
 %
-% Returns the link to the Jarkus netCDF file. If the JarKus netCDT is 
-% available locally on the Deltares network, this is returned, otherwise 
+% Returns the link to the Jarkus netCDF file. If the JarKus netCDF is
+% available locally on the Deltares network, this is returned, otherwise
 % the internet link is returned.
 %
-% Example:
+%   Syntax:
+%   url = jarkus_url(varargin)
 %
-%   nc_dump(jarkus_url)
-% 
+%   Input:
+%   varargin  = propertyname-propertyvalue-pairs:
+%       localpath : path to local main data directory (e.g. for Deltares:
+%       p:\mcdata)
+%       protocol  : OPeNDAP protocol being either 'THREDDS' (default) or 'HYRAX'
+%       verbose   : boolean to indicate verbosity
+%
+%   Output:
+%   url = url or file (including path) to JARKUS transect netcdf file
+%
+%   Example:
+%     nc_dump(jarkus_url)
+%
 % See also: NC_DUMP, NC_VARGET, jarkus
 
 %% Copyright notice
@@ -16,7 +28,7 @@ function url = jarkus_url
 %   Copyright (C) 2009 <Deltares>
 %       Thijs Damsma
 %
-%       <Thijs.Damsma@Deltares.nl>	
+%       <Thijs.Damsma@Deltares.nl>
 %
 %       Deltares
 %       P.O. Box 177
@@ -38,9 +50,9 @@ function url = jarkus_url
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -54,21 +66,19 @@ function url = jarkus_url
 % $HeadURL$
 % $Keywords: $
 
-local = 'p:\mcdata\opendap\rijkswaterstaat\jarkus\profiles\transect.nc';
+%%
+OPT = struct(...
+    'localpath', 'p:\mcdata',...
+    'protocol', 'THREDDS',...
+    'verbose', true);
 
-if exist(local)
-
-   url = local;
-
-else
-
-   % OPeNDAP HYRAX
-   
-   url = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
-   
-   % OPeNDAP THREDDS
-   
-   url = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
-
+if nargin > 1
+    % update OPT structure with input from varargin
+    OPT = setproperty(OPT, varargin{:});
 end
 
+%%
+url = opendap_url('rijkswaterstaat/jarkus/profiles/transect.nc',...
+    'localpath', OPT.localpath,...
+    'protocol', OPT.protocol,...
+    'verbose', OPT.verbose);
