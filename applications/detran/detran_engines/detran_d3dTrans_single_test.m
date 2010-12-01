@@ -1,4 +1,4 @@
-function testresult = detran_d3dTrans_single_test()
+function detran_d3dTrans_single_test()
 % DETRAN_D3DTRANS_SINGLE_TEST  One line description goes here
 %  
 % More detailed description of the test goes here.
@@ -51,11 +51,6 @@ function testresult = detran_d3dTrans_single_test()
 
 MTestCategory.DataAccess;
 
-try
-    [pat, nam]=fileparts(which('detran_test_dir'));
-    file = [pat filesep 'detran_testmodel' filesep 'single' filesep 'trim-example.dat'];
-    d=detran_d3dTrans_single('mean',file,0);
-    testresult = true;
-catch
-    testresult = false;
-end
+[pat, nam]=fileparts(which('detran_test_dir'));
+file = [pat filesep 'detran_testmodel' filesep 'single' filesep 'trim-example.dat'];
+d=detran_d3dTrans_single('mean',file,0);

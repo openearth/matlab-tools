@@ -47,10 +47,9 @@ function xb_read_output_test()
 % $Keywords: $
 
 MTestCategory.DataAccess;
+% TODO: Locate example file in trunk and use which to obtain xboutput.nc
 
-
-outputdir = fullfile('temp_calculation')
-outputfile = fullfile(outputdir, 'xboutput.nc')
+outputfile = which('xboutput.nc')
 
 % Does the function still run
 % Does the function output zs by default

@@ -1,4 +1,4 @@
-function testresult = detran_d3dTransFromHis_single_test()
+function detran_d3dTransFromHis_single_test()
 % DETRAN_D3DTRANSFROMHIS_SINGLE_TEST  One line description goes here
 %  
 % More detailed description of the test goes here.
@@ -49,19 +49,8 @@ function testresult = detran_d3dTransFromHis_single_test()
 % $HeadURL$
 % $Keywords: $
 
-%% $Description (Name = detran_d3dTransFromHis_single_test)
-% Publishable code that describes the test.
-
-%% $RunCode
-% Write test code here
-try
-    [pat, nam]=fileparts(which('detran_test_dir'));
-    file = [pat filesep 'detran_testmodel' filesep 'single' filesep 'trih-example.dat'];
-    [crossName, crossXY, transport, namsed]=detran_d3dTransFromHis_single('mean',file,0);
-    testresult = true;
-    catch
-    testresult = false;
-end
-
 MTestCategory.DataAccess;
 
+[pat, nam]=fileparts(which('detran_test_dir'));
+file = [pat filesep 'detran_testmodel' filesep 'single' filesep 'trih-example.dat'];
+[crossName, crossXY, transport, namsed]=detran_d3dTransFromHis_single('mean',file,0);

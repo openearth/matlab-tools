@@ -1,10 +1,10 @@
 function testresult = detran_d3dTransFromHis_multi_test()
 % DETRAN_D3DTRANSFROMHIS_MULTI_TEST  One line description goes here
-%  
+%
 % More detailed description of the test goes here.
 %
 %
-%   See also 
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -33,9 +33,9 @@ function testresult = detran_d3dTransFromHis_multi_test()
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -48,14 +48,12 @@ function testresult = detran_d3dTransFromHis_multi_test()
 % $Revision$
 % $HeadURL$
 % $Keywords: $
-try
-    [pat, nam]=fileparts(which('detran_test_dir'));
-    file = [pat filesep 'testmodel_testmodel' filesep 'multi' filesep 'run01' filesep 'trih-example.dat'];
-    weightfile = [pat filesep 'testmodel' filesep 'multi' filesep 'weights.tek'];
-    d=detran_d3dTransFromHis_multi('mean',file,weightfile,0);
-    testresult = true;
-catch
-    testresult = false;
-end
 
 MTestCategory.DataAccess;
+
+[pat, nam]=fileparts(which('detran_test_dir'));
+file = [pat filesep 'testmodel_testmodel' filesep 'multi' filesep 'run01' filesep 'trih-example.dat'];
+weightfile = [pat filesep 'testmodel' filesep 'multi' filesep 'weights.tek'];
+d=detran_d3dTransFromHis_multi('mean',file,weightfile,0);
+testresult = true;
+

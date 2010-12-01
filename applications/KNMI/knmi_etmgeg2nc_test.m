@@ -47,12 +47,7 @@ function knmi_etmgeg2nc_test()
 % $HeadURL$
 % $Keywords: $
 
-MTestCategory.DataAccess;
-
-if TeamCity.running
-    TeamCity.ignore('Test requires user input');
-    return;
-end
+MTestCategory.UserInput;
 
 locbase = 'http://opendap.deltares.nl/thredds/dodsC/opendap/';
 

@@ -13,12 +13,11 @@ function D = rws_waterbase_read_test(varargin)
 % $Revision$
 % $HeadURL$
 
-MTestCategory.DataAccess;
+MTestCategory.UserInput;
 
    OPT.baseurl  = 'http://live.waterbase.nl';
 
 D = [];
-if TeamCity.running, TeamCity.ignore('Test requires user input'); return; end
 
 %% get filename
 if nargin==0

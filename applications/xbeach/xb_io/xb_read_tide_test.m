@@ -56,8 +56,8 @@ fclose(fid);
 
 xbSettings = xb_read_tide('tide.txt');
 
-time = xbSettings.data(strcmpi('time',{xbSettings.name})).value;
-tide = xbSettings.data(strcmpi('tide',{xbSettings.name})).value;
+time = xbSettings.data(strcmpi('time',{xbSettings.data.name})).value;
+tide = xbSettings.data(strcmpi('tide',{xbSettings.data.name})).value;
 
 assert(length(time)==10, 'Time data not correct');
 assert(size(tide,1)==10&&size(tide,2)==9, 'Tide data not correct');

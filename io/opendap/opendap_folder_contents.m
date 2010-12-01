@@ -100,7 +100,7 @@ switch url(1:39)
         end
         
         string     = urlread([url]);
-        startPos   = strfind(string, '.nc"><tt>');
+        startPos   = cat(2,strfind(string, '.nc"><tt>'),strfind(string, '.nc''><tt>'),strfind(string, '.nc><tt>'));
         endPos     = strfind(string, '.nc</tt></a></td>');
         for ii = 1 :length(endPos)-2
            contents{ii} = [url '/'   string(startPos(ii)+09:endPos(ii)+2)];

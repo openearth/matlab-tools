@@ -4,6 +4,12 @@ function OK = inivalue_test
 %See also: inivalue
 
 MTestCategory.DataAccess;
+if TeamCity.running
+    TeamCity.ignore('Only matlab folder is checked out at the build agent. Therefore searching for OET R.url will not work.');
+    return;
+end
+% TODO: Add a test data file to the repos
+% (https://repos.deltares.nl/repos/OpenEarthTools/test)
 
 url = 'https://repos.deltares.nl/repos/OpenEarthTools/trunk/';
 

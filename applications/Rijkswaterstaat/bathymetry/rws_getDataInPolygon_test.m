@@ -50,35 +50,19 @@ warning('This function is deprecated in favour of grid_orth_getDataInPolygon_tes
 % $HeadURL$
 % $Keywords: $
 
-MTestCategory.DataAccess;
+MTestCategory.UserInput;
 
-testresult = [];
-if TeamCity.running, TeamCity.ignore('Test requires user input'); return; end
-
-%% $Description (Name = Name of the test goes here)
-% Publishable code that describes the test.
+%% Description
 % NB1: onderstaande testcases zijn met voorgedefinieerde polygonen. Als je de polygonen niet opgeeft mag je ze zelf selecteren met de crosshair (rechter muisknop om te sluiten)
 % NB2: de routines zijn nog niet 100% robuust. Ook is de data op de OpenDAP server nog niet helemaal goed. Met name dit laatste moet zsm verholpen worden!
 % NB3: enkele onderdelen van dit script zijn nog vrij sloom: bepalen welke grids er zijn en het ophalen van alle kaartbladomtrekken. Hopelijk is dit te fixen middels de Catalog.xml op de OPeNDAP server
 
-%% $RunCode
-
-tr(1) = test1;
-tr(2) = test2;
-tr(3) = test3;
-
-testresult = all(tr);
-
-
-%% $PublishResult
-% Publishable code that describes the test.
-
+test1;
+test2;
+test3;
 end
 
-function testresult = test1()
-%% $Description 
-
-%% $RunCode
+function test1()
 % Test 1: work on JARUS grids
 rws_getDataInPolygon(...
     'datatype', 'jarkus', ...
@@ -90,16 +74,10 @@ rws_getDataInPolygon(...
     70869.9 461001
     70796.8 438560], ...
     'datathinning', 1); %#ok<*UNRCH>
-testresult = nan;
-%% $PublishResult
-
 end
 
-function testresult = test2()
-%% $Description (Name = Undefined)
+function test2()
 % Test 2: work on VAKLODINGEN grids
-
-%% $RunCode
 rws_getDataInPolygon(...
     'datatype', 'vaklodingen', ...
     'starttime', datenum([1997 01 01]), ...
@@ -110,22 +88,14 @@ rws_getDataInPolygon(...
     60129 425398
     50214.6 425346], ...
     'datathinning', 1);
-testresult = nan;
-%% $PublishResult
-
 end
 
-function testresult = test3()
-%% $Description (Name = Undefined)
+function test3()
 % Test 1: work on VAKLODINGEN grids
-
-%% $RunCode
 [X, Y, Z, Ztime] = rws_getDataInPolygon(...
     'datatype', 'vaklodingen', ...
     'starttime', datenum([2009 01 01]), ...
     'searchwindow', -20*365, ...
     'datathinning', 1);
-testresult = nan;
-%% $PublishResult
-
+assert(~isempty(X),'X should not be empty');
 end

@@ -1,4 +1,4 @@
-function testresult = detran_d3dTrans_multi_test()
+function detran_d3dTrans_multi_test()
 % DETRAN_D3DTRANS_MULTI_TEST  One line description goes here
 %  
 % More detailed description of the test goes here.
@@ -49,14 +49,11 @@ function testresult = detran_d3dTrans_multi_test()
 % $HeadURL$
 % $Keywords: $
 
-try
-    [pat, nam]=fileparts(which('detran_test_dir'));
-    file = [pat filesep 'detran_testmodel' filesep 'multi' filesep 'run01' filesep 'trim-example.dat'];
-    weightfile = [pat filesep 'detran_testmodel' filesep 'multi' filesep 'weights.tek'];
-    d=detran_d3dTrans_multi('mean',file,weightfile,0);
-    testresult = true;
-catch
-    testresult = false;
-end
-
 MTestCategory.DataAccess;
+
+[pat, nam]=fileparts(which('detran_test_dir'));
+file = [pat filesep 'detran_testmodel' filesep 'multi' filesep 'run01' filesep 'trim-example.dat'];
+weightfile = [pat filesep 'detran_testmodel' filesep 'multi' filesep 'weights.tek'];
+d=detran_d3dTrans_multi('mean',file,weightfile,0);
+
+% TODO: add assert

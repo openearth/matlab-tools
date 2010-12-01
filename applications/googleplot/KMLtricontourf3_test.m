@@ -9,7 +9,7 @@ function KMLtricontourf3_test()
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 <COMPANY>
-%       Thijs
+%       Thijs Damsma
 %
 %       <EMAIL>
 %

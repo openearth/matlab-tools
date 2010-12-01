@@ -51,19 +51,19 @@ MTestCategory.DataAccess;
 
 % Create a sample structure
 
-outputdir = fullfile('temp_calculation')
-outputfile = fullfile(outputdir, 'xboutput.nc')
+outputfile = which('xboutput.nc')
+outputdir = fileparts(outputfile);
 variables = struct('name', ['xw', 'yw'], 'values',{[1 1;2 2],[1 2;1 2]});
 save('samplestruct', 'variables')
 % Does the function still run
 variables = xb_read_dat(outputdir);
 % Does the function output xw by default
 variables = xb_read_dat(outputdir)
-assert(ismember('zs', {variables.name}));
+assert(ismember('zs', {variables.data.name}));
 % Do we have some values?
-assert(isnumeric(variables(1).values));
+assert(isnumeric(variables.data(1).value));
 
 % Does the function not output xw if we don't want it to.
 % TODO: this doesn't work yet.....
 variables = xb_read_dat(outputdir, 'variables', {'zb'}, 'timestepindex', 100)
-assert(~ismember('zs', {variables.name}));
+assert(~ismember('zs', {variables.data.name}),'zs should not be read');
