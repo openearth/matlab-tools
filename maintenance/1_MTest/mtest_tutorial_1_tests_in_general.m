@@ -1,6 +1,6 @@
 %% 1. General information on testing
 % This tutorial will introduce you into the basics of software testing. Testing is becoming
-% common practce in software development. This also holds for the software that is being developed
+% common practice in software development. This also holds for the software that is being developed
 % in the OpenEarthTools repository. This document describes a general background on software
 % testing and how we use the MTest tool to test our software in OpenEarthTools.
 %
@@ -28,6 +28,9 @@
 % function or toolbox with earlier results (a bench-mark). This type of testing requires the
 % possibility to publish results (to make it possible to visually inspect the results).
 
+%% Acceptance tests
+% TODO
+
 %% TDD (Test Driven Development)
 % The following information is obtained from <http://en.wikipedia.org/wiki/Test-driven_development wikipedia> 
 % Test-driven development (TDD) is a software development technique that relies on the repetition of
@@ -54,7 +57,9 @@
 % regression tests.
 
 %% How we use tests in OpenEarthTools
-% The developers of OpenEarthTools are exoected to want to perform a wide range of tests. Some of
+% The developers of OpenEarthTools are expected to want to perform a wide range of tests. Some of
 % the tools are developed using TDD (requiring the MTest toolbox to be able to run Unit and
-% Integration tests), others are used to running regression tests. Due to the possibility of
-% publishing test descriptions and results this is also possible with the MTest toolbox.
+% Integration tests), others are used to running regression tests. Preferrably all code that is in 
+% the general directory is tested by unit tests. Applications are expected to at least have integration, 
+% regression and / or acceptance tests. In this way it becomes clear to other  developments whether 
+% functionality was broken by their latest commit by looking at the test results.

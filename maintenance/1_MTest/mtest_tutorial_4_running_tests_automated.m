@@ -6,8 +6,8 @@
 % predefined string (indicating that it is a test). It can transform the found testdefinition files
 % (written in the format explained in the <a class="relref" href="testdefinitions_tutorial.html"
 % relhref="tutorial_automatedtesting.html">tutorial on testdefinitions</a> into mtest objects
-% containing all information that is in the testdefinition. Thest mtest objects can be run and
-% published with the mtestengine. The following sections will show how.
+% containing all information that is in the testdefinition. These mtest objects can be run individually
+% or with the help of the MTestRunner. The following sections will show how.
 % </html>
 %
 % <html>
@@ -15,7 +15,7 @@
 % </html>
 
 %% Building an mtestengine
-% Creating an mtestengine is as simple as the following code suggests:
+% Creating an MTestRunner is as simple as the following code suggests:
 
 mte = MTestRunner;
 
@@ -29,24 +29,23 @@ mte
 % properties. This can be done either when creating the object itself (with property value pairs) or
 % afterwards in the same way as altering fields of a struct:
 
-mte.TargetDir = fullfile(tempdir,'htmltest');
 mte.MainDir = fileparts(which('MTestRunner'));
 mte.Verbose = true;
-mte.Template = 'oet';
+mte.Recursive = true;
+mte.IncludeCoverage = false;
 
 %%
 % or:
 
 mte = MTestRunner(...
-    'TargetDir',fullfile(tempdir,'htmltest'),...
     'MainDir',fileparts(which('mte_simple_test')),...
     'Verbose',true,...
-    'Template','oet');
+    'Recursive',true,...
+    'IncludeCoverage',false);
 
 %% Properties (fieldnames) of the MTestRunner
-% The MTestRunner has a couple of properties that can be used to define the behaviour of the
-% MTestRunner when running and publishing. The following table lists the properties of an
-% MTestRunner object.
+% The MTestRunner has a couple of properties that can be used to define its behaviour while running tests. 
+% The following table lists the properties of an MTestRunner object.
 %
 % <html>
 % <table cellspacing="0" class="body" cellpadding="4" summary="" width="100%" border="2">
@@ -64,13 +63,6 @@ mte = MTestRunner(...
 %   </thead>
 %   <tbody>
 %       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>TargetDir</tt></td>
-%           <td bgcolor="#F2F2F2"><p><tt>char</tt> Default=<tt>cd</tt></p></td>
-%           <td bgcolor="#F2F2F2">
-%               Pathname of the directory where output (html) files must be generated.
-%           </td>
-%       </tr>
-%       <tr valign="top">
 %           <td bgcolor="#F2F2F2"><tt>MainDir</tt></td>
 %           <td bgcolor="#F2F2F2"><p><tt>char</tt> Default=<tt>cd</tt></p></td>
 %           <td bgcolor="#F2F2F2">
@@ -82,13 +74,6 @@ mte = MTestRunner(...
 %           <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>true</tt></p></td>
 %           <td bgcolor="#F2F2F2">
 %               Flag to determine whether the mtestengine only lists tests in the maindir or also in all subdirs of the maindir.
-%           </td>
-%       </tr>
-%       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>Publish</tt></td>
-%           <td bgcolor="#F2F2F2"><p><tt>logical</tt> Default=<tt>false</tt></p></td>
-%           <td bgcolor="#F2F2F2">
-%               Determines whether the publishable parts of a test get published.
 %           </td>
 %       </tr>
 %       <tr valign="top">
@@ -120,15 +105,6 @@ mte = MTestRunner(...
 %           </td>
 %       </tr>
 %       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>Template</tt></td>
-%           <td bgcolor="#F2F2F2"><p><tt>char</tt> Default=<tt>default</tt></p></td>
-%           <td bgcolor="#F2F2F2">
-%               Name of the template that must be used to print the testresults of the toolbox.
-%               (OpenEarthTools has its own template named: "oet". Use this template when publising
-%               tests from OpenEarthTools).
-%           </td>
-%       </tr>
-%       <tr valign="top">
 %           <td bgcolor="#F2F2F2"><tt>Tests</tt></td>
 %           <td bgcolor="#F2F2F2"><p><tt>mtest</tt> Default=<tt>[]</tt></p></td>
 %           <td bgcolor="#F2F2F2">
@@ -142,13 +118,6 @@ mte = MTestRunner(...
 %               Files identified as tests according to the testid and exclusion keywords, but failed
 %               to load in an mtest object. This is probably due to a testdefinition that is not
 %               according to the convention used for the mtest toolbox.
-%           </td>
-%       </tr>
-%       <tr valign="top">
-%           <td bgcolor="#F2F2F2"><tt>FunctionsRun</tt></td>
-%           <td bgcolor="#F2F2F2"><p><tt>mtestfunction</tt> Default=<tt>[]</tt></p></td>
-%           <td bgcolor="#F2F2F2">
-%               Array of mtestfunction objects with information on the functions that were executed during the tests (including coverage information).
 %           </td>
 %       </tr>
 %   </tbody>
@@ -222,9 +191,3 @@ mte.Tests(2).TestResult
 % More information on this function can be found in its help documentation:
 
 help MTestRunner.run
-
-%% Publication templates
-% Publication of the mtestengine results is done acoording to a predefined format. This format is
-% determined by the choice for a template. It is of course also possible to write your own template.
-% At this moment there is not yet a tutorial on how to write such a template. The (sometimes hidden)
-% functions of the MTestRunner object give a lot of information already.

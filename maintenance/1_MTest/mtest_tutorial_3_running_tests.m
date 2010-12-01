@@ -1,7 +1,6 @@
 %% 3. Running individual tests
 % Once we have generated a testdefinition we would like to run a test. In general there are three
-% ways to run a test and optionally publish the documentation. This
-% tutorial describes these three ways.
+% ways to run a test. This tutorial describes these three ways.
 %
 % <html>
 % <a class="relref" href="tutorial_automatedtesting.html" relhref="tutorial_automatedtesting.html">Read more about automated testing</a>
@@ -46,12 +45,6 @@ run(t);
 t.TestResult
 
 %%
-% With the same object it is also possible to publish the description and result (if specified in the test definition):
-
-t.Publish = true;
-t.run;
-
-%%
 % *Advantage*
 %
 % * With this method additional to running the test, the documentation can also be generated. It
@@ -90,7 +83,7 @@ help MTestRunner.gathertests
 mtr.Tests(1) = MTest('mte_simple_test');
 
 %%
-% Now we can use the run command to run the test and publish the result.
+% Now we can use the run command to run the test.
 
 help MTestRunner.run
 

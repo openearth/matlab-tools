@@ -76,16 +76,13 @@ assert(true,'This test does not crash');
 % function against requirements. For example:
 %
 a = sum([1, 1]);
-assert(a==1,'1+1 should be equal to 2');
+assert(a==2,'1+1 should be equal to 2');
 
 %% Additional functions / methods
-% Furthermore one can use several functions available in the MTest toolbox to ignore tests, or
-% document a test or its result:
+% Furthermore one can use several functions available in the MTest toolbox for example to ignore tests:
 %
 % * TeamCity.running
 % * TeamCity.ignore
-% * TeamCity.publishdescription
-% * TeamCity.publishresult
 % * MTest.name
 % * MTest.category
 %
@@ -109,84 +106,26 @@ if TeamCity.running
 end
 
 %%
-% *TeamCity.publishdescription*
-%
-% This function adds a reference to the documentation of the test. This documentation can be located
-% in a subfunction of the test, or a file outside the testdefinition (as a script or function). When
-% using this function to publish the test description, the code of the specified function is copied
-% and pasted into a temp file. This temp file gets published. Before and after publication of the
-% description the active workspace (of the test function) is copied in such a way that the result of
-% the publishable description is available in the workspace after finishing publication. Som of the
-% publish options can be included as input parameters. An example of how to use this function is
-% given below:
-TeamCity.publishdescription(@mte_descriptionhelper,...
-    'EvaluateCode',true,...
-    'IncludeCode',true,...
-    'maxWidht',400);
-
-%%
-% Or:
-
-TeamCity.publishdescription('mte_descriptionhelper',...
-    'EvaluateCode',true,...
-    'IncludeCode',true,...
-    'maxWidht',400);
-
-%% 
-% *TeamCity.publishresult*
-%
-% Similar to TeamCity.publishdescription, this function adds a reference to publishable code that
-% describes the test result. Useage is also similar to TeamCity.publishdescription.
-%
 % *MTest.name*
 %
 % Can be used to give a test a custome name (by default a tests gets the filename as name).
 
 MTest.name('New name');
 
-%%
-% *MTest.category*
+%% Setting test category
+% Furthermore it is possible to set the category of a test. This requires
+% only one line in your code:
 %
-% This method specifies the Category of the test.
-
-MTest.category('Integration');
-
-%%
-% Or:
-
-MTest.category('Slow');
-
-%%
-% Or:
-
-MTest.category('UnitTest');
-
-%% Formatting the publishable elements of a test
-% There are two publishable elements in a test definition (description and result).
-% Publication of these parts to html is done with the matlab function *_"publish"_*. A lot of
-% information on formatting the output html pages can be found in the matlab documentation.
+% MTestCategory.(categoryname)
 %
-% <html>
-% The 
-% <a href="http://www.mathworks.com/access/helpdesk/help/techdoc/index.html?/access/helpdesk/help/techdoc/matlab_env/f6-30186.html&http://www.mathworks.com/cgi-bin/texis/webinator/search_spt?db=MSS&prox=page&rorder=750&rprox=750&rdfreq=500&rwfreq=500&rlead=250&sufs=0&order=r&is_summary_on=1&pr=SPT&cq=1&collection=1&ResultCount=10&query=Formatting+M-Files+Comments+for+publishing&x=8&y=8" target="new">
-% matlab help documentation
-% </a>
-% contains a lot of information on formatting comments or code for publishing with the publish
-% function. It is for example possible to include equations, force a snapshot or include a
-% prerendered image. The matlab editor also contains a menu item with all of these functionalities:
-% </html>
-%
-% <<prerendered_images/test_cell_menu.png>>
+% in which categoryname is one of the predefined categories that can be
+% obtained by pressing the tab key while holding the caret position at the
+% right of the dot in the above statement. As an example:
 
-%% Examples
-% The following files contain examples of how te use the testdefinition to obtain the desired
-% result:
-%
-% <html>
-%   <ul>
-%       <li><a href="http://crucible.delftgeosystems.nl/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/automatedTesting/examples/mte_simple_test.m" target="new">Basic test</a></li>
-%       <li><a href="http://crucible.delftgeosystems.nl/browse/~raw,r=trunk/OpenEarthTools/trunk/matlab/maintenance/automatedTesting/examples/mte_dummy_test.m" target="new">Use of testcases</a></li>
-%   </ul>
-% </html>
-%
+MTestCategory.DataAccess
+MTestCategory.Integration
+MTestCategory.Performance
+MTestCategory.Unit
+MTestCategory.UserInput
+MTestCategory.WorkInProgress
 
