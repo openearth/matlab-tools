@@ -87,7 +87,7 @@ OPT.global2att = 2; % 0=not at all, 1=as fields, 2=as subfields of nc_global
    if     isfield(fileinfo,'Dataset'); % new
      fileinfo.DataSet = fileinfo.Dataset;
    elseif isfield(fileinfo,'DataSet'); % old
-     fileinfo.Dataset = fldname.DataSet;
+     fileinfo.Dataset = fileinfo.DataSet;
      disp(['warning: please use newer version of snctools (e.g. ',which('matlab\io\snctools\nc_info'),') instead of (',which('nc_info'),')'])
    else
       error('neither field ''Dataset'' nor ''DataSet'' returned by nc_info')

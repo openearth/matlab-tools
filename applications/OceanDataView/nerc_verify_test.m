@@ -1,4 +1,4 @@
-function testResult = nerc_verify_test()
+function nerc_verify_test()
 % NERC_VERIFY_TEST  test for nerc_verify
 %  
 %
@@ -60,4 +60,4 @@ end
 a2 = nerc_verify('P061::UPBB');
 b2 = nerc_verify('P011::PRESPS01');
 
-testResult = isequal(a1,a2) && isequal(b1,b2);
+assert(isequal(a1,a2) && isequal(b1,b2));
