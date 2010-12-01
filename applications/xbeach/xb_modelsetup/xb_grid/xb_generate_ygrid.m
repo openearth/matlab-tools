@@ -31,7 +31,7 @@ function ygr = xb_generate_ygrid(yin, varargin)
 %   Example
 %   ygr = xb_generate_ygrid(yin)
 %
-%   See also xb_generate_xgrid
+%   See also xb_generate_grid, xb_generate_xgrid
 
 %% Copyright notice
 %   --------------------------------------------------------------------

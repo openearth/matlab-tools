@@ -37,7 +37,7 @@ function [xgr zgr] = xb_generate_xgrid(xin, zin, varargin)
 %   Example
 %   [xgr zgr] = xb_generate_xgrid([0:1:200], 0.1*[0:1:200]-15);
 %
-%   See also xb_generate_ygrid
+%   See also xb_generate_grid, xb_generate_ygrid
 
 %% Copyright notice
 %   --------------------------------------------------------------------

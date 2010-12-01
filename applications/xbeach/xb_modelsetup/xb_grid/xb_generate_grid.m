@@ -1,10 +1,12 @@
-function xb = xb_generate_model(varargin)
-%XB_GENERATE_MODEL  One line description goes here.
+function [xgrid ygrid zgrid] = xb_generate_grid(xin, yin, zin, varargin)
+%XB_GENERATE_GRID  Creates a model grid based on a given bathymetry
 %
-%   More detailed description goes here.
+%   Creates a model grid in either one or two dimensions based on a given
+%   bathymetry. The result is three matrices of equal size containing a
+%   rectilinear grid in x, y and z coordinated.
 %
 %   Syntax:
-%   varargout = xb_generate_model(varargin)
+%   [xgrid ygrid zgrid] = xb_generate_grid(xin, yin, zin, varargin)
 %
 %   Input:
 %   varargin  =
@@ -13,9 +15,9 @@ function xb = xb_generate_model(varargin)
 %   varargout =
 %
 %   Example
-%   xb_generate_model
+%   [xgrid ygrid zgrid] = xb_generate_grid(xin, yin, zin)
 %
-%   See also 
+%   See also xb_generate_xgrid, xb_generate_ygrid
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -61,34 +63,24 @@ function xb = xb_generate_model(varargin)
 %% read options
 
 OPT = struct( ...
-    'bathy_x', linspace(0,100,100), ...
-    'bathy_y', [], ...
-    'bathy_z', linspace(-20,15,100) ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
-% create xbeach structure
-xb = xb_empty();
+%% generate grid
 
-%% create grid
+[x z] = xb_generate_xgrid(xin, zin);
+[y] = xb_generate_ygrid(yin);
 
-[xgrid ygrid zgrid] = xb_generate_grid(OPT.bathy_x, OPT.bathy_y, OPT.bathy_z);
+[xgrid ygrid] = meshgrid(x, y);
 
-%% create model
-
-xb = xb_set(xb, ...
-    'nx', size(zgrid, 1), ...
-    'ny', size(zgrid, 2), ...
-    'vardx', 1, ...
-    'xfile', xb_set([], 'xfile', xgrid), ...
-    'yfile', xb_set([], 'yfile', ygrid), ...
-    'depfile', xb_set([], 'depfile', zgrid) ...
-);
-
-xb = xb_meta(xb, mfilename, 'input');
-
-%% write model
-
-xb_write_input('params.txt', xb);
-
+% interpolate bathymetry on grid, if necessary
+if isvector(zin)
+    
+    % 1D grid
+    zgrid = repmat(z, length(y), 1);
+else
+    
+    % 2D grid
+    zgrid = interp2(xin, yin, zin, xgrid, ygrid);
+end
