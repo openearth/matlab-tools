@@ -1,21 +1,11 @@
 function varargout = nc_multibeam_from_xyz(varargin)
 %NC_MULTIBEAM_FROM_XYZ  One line description goes here.
 %
-%   More detailed description goes here.
+%      NC_MULTIBEAM_FROM_XYZ
 %
-%   Syntax:
-%   varargout = nc_multibeam_from_asc(varargin)
+%   <OPT> = nc_multibeam_from_asc(<keyword,value>)
 %
-%   Input:
-%   varargin  =
-%
-%   Output:
-%   varargout =
-%
-%   Example
-%   nc_multibeam_from_asc
-%
-%   See also
+%See also: nc_multibeam
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -209,14 +199,16 @@ if OPT.make
                 multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+WB.bytesRead+WB.bytesWritten)/WB.bytesToDo)
                 multiWaitbar('nc_reading',ftell(fid)/fns_unzipped(ii).bytes,'label',sprintf('Reading: %s...', (fns_unzipped(ii).name))) ;
                 WB.bytesDoneOfCurrentFile = ftell(fid);
-                D     = textscan(fid,OPT.format,OPT.block_size,'delimiter',OPT.delimiter,...
-                    'headerlines',headerlines,'MultipleDelimsAsOne',OPT.MultipleDelimsAsOne);
+                D     = textscan(fid,OPT.format,OPT.block_size,...
+                              'delimiter',OPT.delimiter,...
+                            'headerlines',headerlines,...
+                    'MultipleDelimsAsOne',OPT.MultipleDelimsAsOne);
                 headerlines     = 0; % only skip headerlines on first read
                 
                 % waitbar stuff
                 WB.bytesRead = ftell(fid);
                 multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ WB.bytesRead+WB.bytesWritten)/WB.bytesToDo)
-                multiWaitbar('nc_reading'        ,WB.bytesRead/fns_unzipped(ii).bytes,...
+                multiWaitbar('nc_reading'        , WB.bytesRead/fns_unzipped(ii).bytes,...
                     'label',sprintf('Reading: %s', (fns_unzipped(ii).name))) ;
                 WB.numel        = length(D{OPT.xid});
                 

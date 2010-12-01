@@ -1,4 +1,11 @@
 function nc_multibeam_putDataInNCfile(OPT,ncfile,time,Z)
+%NC_MULTIBEAM_PUTDATAINNCFILE
+%
+%   nc_multibeam_putdatainncfile(OPT,ncfile,time,Z)
+%
+% adds variable to a netcdf file (incl time) using matlabs native (2008b+) netcdf
+%
+%See also: nc_multibeam
 
 dimSizeX = (OPT.mapsizex/OPT.gridsizex)+1;
 dimSizeY = (OPT.mapsizey/OPT.gridsizex)+1;

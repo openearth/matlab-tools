@@ -129,8 +129,10 @@ function varargout = opendap_catalog(varargin)
    OPT = setproperty(OPT,varargin{nextarg:end});
    
 %% remote vs. local url
-
-if ~strcmpi(OPT.url(1:4),'http') && ~strcmpi(OPT.url(end-10:end),'catalog.xml')
+if length(OPT.url) < 11
+    nc_file_list   = {};
+    nc_folder_list = {};
+elseif ~strcmpi(OPT.url(1:4),'http') && ~strcmpi(OPT.url(end-10:end),'catalog.xml')
 
    if OPT.maxlevel > 1
       fprintf(2,'opendap_catalog: maxlevel ignored because request concerns local file system.\n')
