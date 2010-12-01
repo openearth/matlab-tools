@@ -17,7 +17,7 @@
 % Click on the link to the file and extract the direct link to the JarKus
 % netCDF data file. 
 
-url = 'http://OPeNDAP .deltares.nl:8080/OPeNDAP/rijkswaterstaat/jarkus/profiles/transect.nc';
+url = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
 
 %%
 % For some frequently used filetypes a dedicated funtion exists. This has 
@@ -32,8 +32,8 @@ url = jarkus_url;
 urls = opendap_catalog('http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/sea_surface_height/catalog.xml')
 for i=1:length(urls)
 
-url = urls{i}
-name{i}=nc_varget(url,'station_name');
+url2 = urls{i}
+name{i}=nc_varget(url2,'station_name');
 
 end
 
