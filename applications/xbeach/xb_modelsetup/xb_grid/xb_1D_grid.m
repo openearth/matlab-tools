@@ -9,12 +9,25 @@ function [xgr ygr zgr] = xb_1D_grid(zin, xin, varargin)
 % optimal grid size given these constraints.
 %
 %   Syntax:
-%   [xgr ygr zgr] = xb_1D_grid(zin, xin, dy, Tm, dxmin)
+%   [xgr ygr zgr] = xb_1D_grid(zin, xin, varargin)
 %
 %   Input:
 %   zin   = vector with bed levels; positive up
 %   xin   = vector with cross-shoe coordinates; increasing from zero
 %   towards shore
+% 
+%   Optional input in keyword,value pairs
+%     - Tm       :: [s] incident short wave period (used for maximum grid size at offshore boundary) 
+%                       if you impose time series of wave conditions use the min(Tm) as input (default = 5)
+%     - dxmin    :: [m] minimum required cross shore grid size (usually over land) (default = 1)
+%     - vardx    :: [-] 0 = constant dx, 1 = varying dx (default = 1)
+%     - g        :: [ms^-2] gravity constant (default = 9.81)
+%     - CFL      :: [-] Courant number in grid generator (default = 0.9)
+%     - dtref    :: [-] Ref value for dt in computing dx from CFL (default = 4)
+%     - maxfac   :: [-] Maximum allowed grid size ratio between adjacent cells (default = 1.15)
+%     - dy, 5    :: [m] dy (default = 5)
+%     - wl,0     :: [m] water level elevation relative to bathymetry used to estimate water depth (default = 0)
+%     - depthfac :: [-] Maximum gridsize to water depth ratio (default = 2)
 %
 %   Output:
 %   xgr   = x-grid coordinates [3,nx+1]
@@ -79,7 +92,7 @@ OPT = struct(...
     'g', 9.81,...          % gravity constant
     'CFL', 0.9,...         % Courant number
     'dtref', 4,...         % Ref value for dt in computing dx from CFL
-    'maxfac', 1.5,...      % Maximum allowed grid size ratio
+    'maxfac', 1.15,...     % Maximum allowed grid size ratio
     'dy', 5,...            % dy
     'wl',0,...             % Water level elevation used to estimate water depth
     'depthfac', 2 ...      % Maximum gridsize to depth ratio
