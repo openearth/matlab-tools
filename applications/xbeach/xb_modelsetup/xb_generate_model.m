@@ -1,4 +1,4 @@
-function varargout = xb_generate_model(varargin)
+function xb = xb_generate_model(varargin)
 %XB_GENERATE_MODEL  One line description goes here.
 %
 %   More detailed description goes here.
@@ -58,4 +58,48 @@ function varargout = xb_generate_model(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% read options
+
+OPT = struct( ...
+    'bathy_x', [], ...
+    'bathy_y', [], ...
+    'bathy_z', [] ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+% create xbeach structure
+xb = xb_new();
+
+%% create grid
+
+% generate grid
+[x z] = xb_generate_xgrid(OPT.bathy_x, OPT.bath_z);
+[y] = xb_generate_ygrid(OPT.bathy_y);
+
+[xgrid ygrid] = meshgrid(y, x);
+
+% interpolate bathymetry on grid, if necessary
+if isvector(OPT.bathy_z)
+    
+    % 1D grid
+    zgrid = repmat(z, length(z), length(y));
+else
+    
+    % 2D grid
+    zgrid = interp2(OPT.bathy_x, OPT.bathy_y, OPT.bath_z, xgrid, ygrid);
+end
+
+%% create model
+
+xb = xb_set(xb, ...
+    'nx', size(zgrid, 1), ...
+    'ny', size(zgrid, 2), ...
+    'vardx', 1, ...
+    'xfile', xb_set([], 'xfile', xgrid), ...
+    'yfile', xb_set([], 'yfile', ygrid), ...
+    'depfile', xb_set([], 'depfile', zgrid) ...
+);
+
+xb = xb_meta(xb, mfilename, 'input');
+

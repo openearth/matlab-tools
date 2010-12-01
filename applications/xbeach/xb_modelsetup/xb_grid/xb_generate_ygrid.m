@@ -1,21 +1,37 @@
-function varargout = xb_generate_ygrid(varargin)
-%XB_GENERATE_YGRID  One line description goes here.
+function ygr = xb_generate_ygrid(yin, varargin)
+%XB_GENERATE_YGRID  Creates a model grid in y-direction based on minimum and maximum cell size and area of interest
 %
-%   More detailed description goes here.
+%   Generates a model grid in y-direction using two grid cellsizes. The
+%   minimum grid cellsize is used for the area of interest. The maximum is
+%   used near the lateral borders. A gradual transition between the grid
+%   cellsizes over a specified distance is automatically generated. The
+%   area of interest can be defined in several manners. By default, this is
+%   a distance of 100m in the center of the model.
 %
 %   Syntax:
-%   varargout = xb_generate_ygrid(varargin)
+%   ygr = xb_generate_ygrid(yin, varargin)
 %
 %   Input:
-%   varargin  =
+%   yin       = range of y-coordinates to be included in the grid
+%   varargin  = dymin:                  minimum grid cellsize
+%               dymax:                  maximum grid cellsize
+%               area_type:              type of definition of the area of
+%                                       interest (center/range)
+%               area_size:              size of the area of interest
+%                                       (length in case of area_type
+%                                       center, from/to range in case of
+%                                       area_type range)
+%               transition_distance:    distance over which the grid
+%                                       cellsize is gradually changed from
+%                                       mimumum to maximum
 %
 %   Output:
-%   varargout =
+%   ygr       = generated grid in y_direction
 %
 %   Example
-%   xb_generate_ygrid
+%   ygr = xb_generate_ygrid(yin)
 %
-%   See also 
+%   See also xb_generate_xgrid
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -58,4 +74,44 @@ function varargout = xb_generate_ygrid(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% read options
+
+OPT = struct( ...
+    'dymin', 5, ...
+    'dymax', 20, ...
+    'area_type', 'center', ...
+    'area_size', 100, ...
+    'transition_distance', 100 ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+%% make grid
+
+if length(yin) <= 1
+    % one-dimensional model
+    ygr = [0:2]*OPT.dymin;
+else
+    if OPT.dymin == OPT.dymax
+        % equidistant grid
+        ygr = min(yin):OPT.dymin:max(yin);
+    else
+        % variable, two-dimensional grid
+        switch OPT.area_type
+            case 'center'
+                ygr = mean(yin)-OPT.area_size/2:OPT.dymin:mean(yin)+OPT.area_size/2;
+            case 'range'
+                ygr = OPT.area_size(1):OPT.dymin:OPT.area_size(2);
+            otherwise
+                % default center with length one
+                ygr = mean(yin)+[-1 1]*OPT.dymin/2;
+        end
+        
+        % grid transition
+        [ff nf gridf] = grid_transition(OPT.dymin, OPT.dymax, OPT.transition_distance);
+        ygr = [ygr(1)-fliplr(gridf) ygr ygr(end)+gridf];
+        
+        % extend till borders
+        ygr = [fliplr(ygr(1)-OPT.dymax:-OPT.dymax:min(yin)) ygr ygr(end)+OPT.dymax:OPT.dymax:max(yin)];
+    end
+end

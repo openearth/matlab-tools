@@ -90,7 +90,7 @@ assert(d.bytes==213,'TEST3: JONSWAP spectrum file is not the right size');
 delete('test4*.txt');
 
 xbSettings = struct('data', struct('name',{'freqs' 'dirs' 'vardens'},'value',{[1:10] [1:5] [magic(5);magic(5)]}));
-filename = xb_write_waves(xbSettings,'vardens_file','test4','type_','vardens');
+filename = xb_write_waves(xbSettings,'vardens_file','test4','type','vardens');
 assert(exist(filename,'file')==2,'TEST4: Variance density spectrum file not created');
 
 d = dir(filename);
@@ -106,7 +106,7 @@ vardens(:,:,2) = [magic(5);magic(5)];
 vardens(:,:,3) = [magic(5);magic(5)];
 
 xbSettings = struct('data', struct('name',{'freqs' 'dirs' 'vardens'},'value',{[1:10] [1:5] vardens}));
-filename = xb_write_waves(xbSettings,'vardens_file','test5','filelist_file','test5_filelist','type_','vardens');
+filename = xb_write_waves(xbSettings,'vardens_file','test5','filelist_file','test5_filelist','type','vardens');
 assert(exist(filename,'file')==2,'TEST5: Filelist file not created');
 
 d = dir(filename);

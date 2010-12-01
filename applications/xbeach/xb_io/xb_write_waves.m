@@ -115,7 +115,7 @@ if ~isempty(varargin) && isstruct(varargin{1})
 end
 
 OPT = struct( ...
-    'type_', 'jonswap', ...
+    'type', 'jonswap', ...
     'Hm0', 7.6, ...
     'Tp', 12, ...
     'dir', 270, ...
@@ -141,15 +141,15 @@ if exist('xbSettings','var')
     OPT = mergestructs('overwrite', OPT, struct_flip(xbSettings.data, 'name', 'value'));
 end
 
-if strcmpi(OPT.type_, 'jonswap_mtx')
-    OPT.type_ = 'jonswap';
+if strcmpi(OPT.type, 'jonswap_mtx')
+    OPT.type = 'jonswap';
     OPT.omit_filelist = true;
 end
 
 %% check input
 
 % check parameter dimensions
-switch OPT.type_
+switch OPT.type
     case 'jonswap'
         vars = {'Hm0' 'Tp' 'dir' 'gammajsp' 's' 'fnyq' 'duration' 'timestep'};
 
@@ -185,7 +185,7 @@ switch OPT.type_
         % determine length of time series
         tlength = get_time_length(OPT, vars);
     otherwise
-        error(['Unknown wave definition type [' OPT.type_ ']']);
+        error(['Unknown wave definition type [' OPT.type ']']);
 end
 
 % extend constant parameters to length of time series
@@ -205,7 +205,7 @@ OPT.fp = 1./OPT.Tp;
 %% create file list
 
 % create file list file, if necessary
-if length(OPT.duration) > 1 && ~(strcmpi(OPT.type_, 'jonswap') && OPT.omit_filelist)
+if length(OPT.duration) > 1 && ~(strcmpi(OPT.type, 'jonswap') && OPT.omit_filelist)
     filename = [OPT.filelist_file '.txt'];
     fid = fopen(filename, 'w');
     fprintf(fid, 'FILELIST\n');
@@ -219,7 +219,7 @@ end
 
 % determine whether single matrix formatted jonswap file should be
 % created, otherwise write single or multiple wave files
-if length(OPT.duration) > 1 && strcmpi(OPT.type_, 'jonswap') && OPT.omit_filelist
+if length(OPT.duration) > 1 && strcmpi(OPT.type, 'jonswap') && OPT.omit_filelist
     filename = [fname '.txt'];
     write_jonswap_multiple_file(filename, tlength, OPT)
 else
@@ -232,7 +232,7 @@ else
             fname_i = [fname '_' num2str(i) '.txt'];
         end
 
-        switch OPT.type_
+        switch OPT.type
             case 'jonswap'
                 write_jonswap_single_file(fname_i, i, OPT)
             case 'vardens'

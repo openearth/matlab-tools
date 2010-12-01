@@ -95,7 +95,7 @@ switch filetype
         [names values] = read_unknown(filename);
 end
 
-xbSettings = xb_set(xbSettings, 'type_', filetype);
+xbSettings = xb_set(xbSettings, 'type', filetype);
 
 for i = 1:length(names)
     xbSettings = xb_set(xbSettings, names{i}, values{i});

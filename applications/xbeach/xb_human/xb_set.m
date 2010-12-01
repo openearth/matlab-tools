@@ -5,7 +5,8 @@ function xbSettings = xb_set(xbSettings, varargin)
 %   exist yet, it is created. Units can be added by providing a cell array
 %   containing the variable itself and a string containing the units, thus
 %   {data, units}. Please add a flag '-units' to the varagin, if done so to
-%   ensure proper parsing.
+%   ensure proper parsing. Substructures can be editted by preceding the
+%   field name with the structure name and a dot, for example: bcfile.Tp
 %
 %   Syntax:
 %   xbSettings   = xb_set(xbSettings, varargin)
@@ -20,6 +21,7 @@ function xbSettings = xb_set(xbSettings, varargin)
 %   Example
 %   xbSettings  = xb_set(xbSettings, 'zb', zb, 'zs', zs)
 %   xbSettings  = xb_set(xbSettings, '-units', 'zb', {zb 'm+NAP'}, 'zs', {zs 'm+NAP'})
+%   xbSettings  = xb_set(xbSettings, 'bcfile.Tp', 12)
 %
 %   See also xb_get, xb_show
 
@@ -89,19 +91,35 @@ end
 
 for i = 1:length(names)
     idx = strcmpi(names{i}, {xbSettings.data.name});
+    
     if ~any(idx)
-        idx = length(xbSettings.data)+1;
-        xbSettings.data(idx).name = names{i};
+        re = regexp(names{i},'^(?<sub>.+?)\.(?<field>.+)$','names');
+        if ~isempty(re)
+            % perform operation on substruct
+            sub = xb_get(xbSettings, re.sub);
+            if xb_check(sub)
+                xbSettings = xb_set(xbSettings, re.sub, xb_set(sub, re.field, values{i}));
+                continue;
+            end
+        else
+            % field doesn't exist, create it
+            idx = length(xbSettings.data)+1;
+            xbSettings.data(idx).name = names{i};
+        end
     end
+    
     if iscell(values{i}) && length(values{i}) == 2 && has_units
         val = values{i};
         if ischar(val{2})
+            % fill field with units
             xbSettings.data(idx).value = val{1};
             xbSettings.data(idx).units = val{2};
         else
+            % fill field without units
             xbSettings.data(idx).value = values{i};
         end
     else
+        % fill field without units
         xbSettings.data(idx).value = values{i};
     end
 end

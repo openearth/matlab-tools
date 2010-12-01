@@ -1,28 +1,50 @@
-function varargout = xb_generate_xgrid(varargin)
-%XB_GENERATE_XGRID  One line description goes here.
+function [xgr zgr] = xb_generate_xgrid(xin, zin, varargin)
+%XB_GENERATE_XGRID  Creates a model grid in x-direction based on bathymetry
 %
-%   More detailed description goes here.
+%   Function to interpolate (no extrapolation) profile measurements to
+%   cross shore consant or varying grid for an XBeach profile model. Cross
+%   shore grid size is limited by user-defined minimum grid size in shallow
+%   water and land, long wave resolution on offshore boundary, depth to
+%   grid size ratio and grid size smoothness constraints. The function uses
+%   the Courant condition to find the optimal grid size given these
+%   constraints.
 %
 %   Syntax:
-%   varargout = xb_generate_xgrid(varargin)
+%   [xgr zgr] = xb_generate_xgrid(xin, zin, varargin)
 %
 %   Input:
-%   varargin  =
+%   xin   = vector with cross-shore coordinates; increasing from zero
+%   towards shore
+%   zin   = vector with bed levels; positive up
+% 
+%   Optional input in keyword,value pairs
+%     - Tm       :: [s] incident short wave period (used for maximum grid size at offshore boundary) 
+%                       if you impose time series of wave conditions use the min(Tm) as input (default = 5)
+%     - dxmin    :: [m] minimum required cross shore grid size (usually over land) (default = 1)
+%     - vardx    :: [-] 0 = constant dx, 1 = varying dx (default = 1)
+%     - g        :: [ms^-2] gravity constant (default = 9.81)
+%     - CFL      :: [-] Courant number in grid generator (default = 0.9)
+%     - dtref    :: [-] Ref value for dt in computing dx from CFL (default = 4)
+%     - maxfac   :: [-] Maximum allowed grid size ratio between adjacent cells (default = 1.15)
+%     - dy, 5    :: [m] dy (default = 5)
+%     - wl,0     :: [m] water level elevation relative to bathymetry used to estimate water depth (default = 0)
+%     - depthfac :: [-] Maximum gridsize to water depth ratio (default = 2)
 %
 %   Output:
-%   varargout =
+%   xgr   = x-grid coordinates
+%   zgr   = bed elevations
 %
 %   Example
-%   xb_generate_xgrid
+%   [xgr zgr] = xb_generate_xgrid([0:1:200], 0.1*[0:1:200]-15);
 %
-%   See also 
+%   See also xb_generate_ygrid
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
-%       Bas Hoonhout
+%       Robert McCall / Jaap van Thiel de Vries
 %
-%       bas.hoonhout@deltares.nl	
+%       robert.mccall@deltares.nl	
 %
 %       Rotterdamseweg 185
 %       2629HD Delft
@@ -58,4 +80,78 @@ function varargout = xb_generate_xgrid(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% settings
+
+% defaults
+OPT = struct(...
+    'Tm',5,...             % incident short wave period (used for maximum grid size at offshore boundary) if you impose time series of wave conditions use the min(Tm) as input
+    'dxmin',1,...          % minimum required cross shore grid size (usually over land)
+    'vardx',1,...          % 0 = constant dx, 1 = varying dx
+    'g', 9.81,...          % gravity constant
+    'CFL', 0.9,...         % Courant number
+    'dtref', 4,...         % Ref value for dt in computing dx from CFL
+    'maxfac', 1.15,...     % Maximum allowed grid size ratio
+    'wl',0,...             % Water level elevation used to estimate water depth
+    'depthfac', 2 ...      % Maximum gridsize to depth ratio
+    );
+
+% overrule default settings by propertyName-propertyValue pairs, given in varargin
+OPT = setproperty(OPT, varargin{:});
+
+%% make grid
+
+if OPT.vardx == 0
+    
+    % constant dx
+    xgr = (xin(1):OPT.dxmin:xin(end));
+    zgr = interp1(xin, zin, xgr);
+    
+elseif OPT.vardx == 1
+    
+    % prepare
+    k       = xb_disper(2*pi/OPT.Tm, -zin(1), OPT.g);
+    Llong   = 7*2*pi/k;
+    x       = xin;
+    hin     = max(OPT.wl-zin,0.01);
+    
+    % set boundaries
+    xend    = x(end);
+    xstart  = x(1);
+    xlast   = xstart;
+    
+    % grid settings
+    ii = 1;
+    xgr(ii) = xstart;
+    zgr(ii) = zin(1);
+    hgr(ii) = hin(1);
+    while xlast < xend
+        
+        % compute dx; minimum value dx (on dry land) = dxmin
+        dxmax = Llong/12;
+        % dxmax = sqrt(g*hgr(min(ii)))*Tlong_min/12;
+        dx(ii) = sqrt(OPT.g*hgr(ii))*OPT.dtref/OPT.CFL;
+        dx(ii) = min(dx(ii),OPT.depthfac*hgr(ii));
+        dx(ii) = max(dx(ii),OPT.dxmin);
+        if dxmax > OPT.dxmin
+            dx(ii) = min(dx(ii),dxmax);
+        end
+        
+        % make sure that dx(ii)<= maxfac*dx(ii-1) or dx(ii)>= 1/maxfac*dx(ii-1)
+        if ii>1
+            if dx(ii) >= OPT.maxfac*dx(ii-1); dx(ii) = OPT.maxfac*dx(ii-1); end;
+            if dx(ii) <= 1./OPT.maxfac*dx(ii-1); dx(ii) = 1./OPT.maxfac*dx(ii-1); end;
+        end
+        
+        % compute x(ii+1)...
+        ii = ii+1;
+        xgr(ii) = xgr(ii-1)+dx(ii-1);
+        xtemp   = min(xgr(ii),xend);
+        hgr(ii) = interp1(xin,hin,xtemp);
+        zgr(ii) = interp1(xin,zin,xtemp);
+        xlast=xgr(ii);
+    end
+else
+    error('Nop, this is not going to work; vardx = [0 1]');
+end
+
+%zgr(1) = zgr(2);

@@ -1,7 +1,9 @@
 function varargout = xb_get(xbSettings, varargin)
 %XB_GET  Retrieves variables from XBeach structure
 %
-%   Retrieves one or more variables from XBeach structure.
+%   Retrieves one or more variables from XBeach structure. Data from
+%   substructures can be requested by preceding the field name with the
+%   structure name and a dot, for example: bcfile.Tp
 %
 %   Syntax:
 %   varargout   = xb_get(xbSettings, varargin)
@@ -16,6 +18,7 @@ function varargout = xb_get(xbSettings, varargin)
 %
 %   Example
 %   [zb zs] = xb_get(xbSettings, 'zb', 'zs')
+%   Tp = xb_get(xbSettings, 'bcfile.Tp')
 %
 %   See also xb_set, xb_show
 
@@ -78,5 +81,13 @@ for i = 1:length(vars)
     idx = strcmpi(vars{i}, {xbSettings.data.name});
     if any(idx)
         varargout{i} = xbSettings.data(idx).value;
+    else
+        re = regexp(vars{i},'^(?<sub>.+?)\.(?<field>.+)$','names');
+        if ~isempty(re)
+            sub = xb_get(xbSettings, re.sub);
+            if xb_check(sub)
+                varargout{i} = xb_get(sub, re.field);
+            end
+        end
     end
 end
