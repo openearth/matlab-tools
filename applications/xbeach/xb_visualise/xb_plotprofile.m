@@ -12,10 +12,12 @@ function xb_plotprofile(varargin)
 %
 %   Input:
 %   Keyword,value pairs:
+%     - dir    ::  directory from which to read variables. Default current
+%                  directory
 %     - vars   ::  cell of names of variable to be plotted 
 %                  (default {'zb' 'zs' 'H'})
 %     - starttime :: index of timestep to start animation (default 0)
-%     - stoptime  :: index of timestep to stop animation (default Inf)
+%     - stoptime  :: index of timestep to stop animation (default xb.nt)
 %     - colors ::  array of line colors for plotting each variable 
 %                  (default ['k','r','g','b','m',...])                
 %     - lineweights :: array of line weights for plotting each variable
@@ -26,8 +28,13 @@ function xb_plotprofile(varargin)
 %     - rownumber :: number of the cross shore row to be plotted (default 2)
 %     - stride :: number of time steps to stride during animation (default 1)
 %     - pauselength :: period between subsequent frames (default 0.1s)
-%     - output :: option to save as pictures ('png') or movie ('avi') or
-%                 neither ('none'). Deafult 'none'.
+%     - output :: option to save as pictures ('png','.jpg',etc.) or movie ('avi') or
+%                 neither ('none'). Default 'none'.
+%     - outputfilename :: file name base for output (i.e.
+%                         outputfilename.avi, outputfilename001.png). 
+%                         Default 'plotprofile'
+%     - avifileoptions :: cell of keyword, value options for avi output.
+%                         Default {'fps',4,'quality',85}
 %
 %   Example
 %   xb_plotprofile('vars',{'zs' 'u' 'ccg'},'factor',[1 1 2650])
@@ -77,9 +84,11 @@ function xb_plotprofile(varargin)
 % $Keywords: $
 
 %%
+
 OPT = struct(...
+    'dir',pwd,...
     'vars',{'zb' 'zs' 'H'},...
-    'starttime',0,...
+    'starttime',1,...
     'stoptime',Inf,...
     'colors',['k','r','g','b','m'],...
     'lineweights',1,...
@@ -88,32 +97,39 @@ OPT = struct(...
     'rownumber',2,...
     'stride',1,...
     'pauselength',0.1,...
-    'output','none');
+    'output','none',...
+    'outputfilename','plotprofile',...
+    'avifileoptions', {'fps',4,'quality',85});
 
 setproperty(OPT,varargin{:});
 
-for i=1:length(OPT.vars)
-    eval(['fid',num2str(i),'=fopen(''',OPT.vars{i},'.dat'',''r'');']);
-    eval(['if fid',num2str(i),'<0;error(''cannot find ',OPT.vars{i},'.dat'');end']);
-end
-
-XBdims=xb_getdimensions;
+XBdims=xb_read_dims(OPT.dir);
 nt=XBdims.nt;
 x=XBdims.x;
 y=XBdims.y;
 
+for i=1:length(OPT.vars)
+    eval(['fid',num2str(i),'=fopen(''',fullfile(OPT.dir,OPT.vars{i}),'.dat'',''r'');']);
+    eval(['if fid',num2str(i),'<0;error(''cannot find ',fullfile(OPT.dir,OPT.vars{i}),'.dat'');end']);
+end
+
 % original profile
-fidzb0=fopen('zb.dat','r');
-zb0=fread(fidzb0,size(x),'double');
-fclose(fidzb0);
+try
+    fidzb0=fopen('zb.dat','r');
+    zb0=fread(fidzb0,size(x),'double');
+    fclose(fidzb0);
+catch
+    warning ('No zb output file found to plot')
+    zb0=NaN(size(x));
+end
 
 if strcmpi(OPT.output,'avi');
-    mov = avifile('plotprofile.avi','fps',4,'quality',85);
+    mov = avifile([OPT.outputfilename '.avi'],OPT.avifileoptions);
 end
 
 f1=figure;
 
-h0=plot(x(:,row),zb0(:,row),'color','k','linewidth',2,'linestyle','-.');
+h0=plot(x(:,OPT.rownumber),zb0(:,OPT.rownumber),'color','k','linewidth',2,'linestyle','-.');
 
 if ~strcmpi(OPT.ylimit,'none')
     ylim(ylimit);
@@ -126,37 +142,38 @@ end
 
 hold on;
 for ii=1:length(OPT.vars)
-    eval(['var',num2str(ii),'=fac(ii).*fread(fid',num2str(ii),',size(x),''double'');']);
-    eval(['h',num2str(ii),'=plot(x(:,row),var',num2str(ii),'(:,row),''color'',''',OPTcolors(ii,:),''',''linewidth'',lw(ii));']);
+    eval(['var',num2str(ii),'=OPT.fac(ii).*fread(fid',num2str(ii),',size(x),''double'');']);
+    eval(['h',num2str(ii),'=plot(x(:,OPT.rownumber),var',num2str(ii),'(:,OPT.rownumber),''color'',''',OPT.colors(ii,:),''',''linewidth'',OPT.lineweights(ii));']);
 end
 legtext{1}='zb0';
 for i=1:length(OPT.vars)
-    if fac(i)==1
+    if OPT.fac(i)==1
         legtext{i+1}=OPT.vars{i};
     else
-        legtext{i+1}=[OPT.vars{i} ' (x ' num2str(fac(i)) ')'];
+        legtext{i+1}=[OPT.vars{i} ' (x ' num2str(OPT.fac(i)) ')'];
     end
 end
 l=legend(legtext,'location','eastoutside');
 if start>2
-    progressbar(0);
+    hwait = waitbar(0,'Loading files');
 end
 grid on
 title('Start');
 pause
-times = [start:stride:stop];
+times = [OPT.starttime:OPT.stride:min(OPT.stoptime,nt)];
 
 for i=2:stop
     for ii=1:length(OPT.vars)
-        eval(['var',num2str(ii),'=fac(ii).*fread(fid',num2str(ii),',size(x),''double'');']);
+        eval(['var',num2str(ii),'=OPT.fac(ii).*fread(fid',num2str(ii),',size(x),''double'');']);
     end
     
     
     if any(times==i) %i>=start
-        if isempty(pausel)
+        delete(hwait);
+        if isempty(OPT.pauselength)
             show=true;
         else
-            if or(pausel>0,i==stop)
+            if or(OPT.pauselength>0,i==OPT.stoptime)
                 show=true;
             else
                 show=false;
@@ -164,25 +181,30 @@ for i=2:stop
         end
         if show
             for ii=1:length(OPT.vars)
-                eval(['set(h',num2str(ii),',''YData'',var',num2str(ii),'(:,row));']);
+                eval(['set(h',num2str(ii),',''YData'',var',num2str(ii),'(:,OPT.rownumber));']);
             end
             title(num2str(i));
-            if movie
+            if strcmpi(OPT.output,'avi');
                 F=getframe(f1);
                 mov = addframe(mov,F);
+            elseif strcmpi(OPT.output,'none');
+                % do nothing
+            else
+                try
+                    saveas(gcf,[
             end
-            if isempty(pausel)
+            if isempty(OPT.pauselength)
                 pause
             else
-                pause (pausel);
+                pause (OPT.pauselength);
             end
         end
-    elseif i<start
-        progressbar(i/(start-1));
+    elseif i<OPT.starttime
+        waitbar(i/(start-1),hwait);
     end
 end
 
-if movie
+if strcmpi(OPT.output,'avi');
     mov=close(mov);
 end
 
