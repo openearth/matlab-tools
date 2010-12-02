@@ -1,10 +1,10 @@
-function xb = xb_generate_model(varargin)
-%XB_GENERATE_MODEL  Generates a minimal model setup based on bathymetry and boundary conditions
+function xb = xb_bathy2input(xb, varargin)
+%XB_BATHY2INPUT  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = xb_generate_model(varargin)
+%   varargout = xb_bathy2input(varargin)
 %
 %   Input:
 %   varargin  =
@@ -13,7 +13,7 @@ function xb = xb_generate_model(varargin)
 %   varargout =
 %
 %   Example
-%   xb_generate_model
+%   xb_bathy2input
 %
 %   See also 
 
@@ -48,7 +48,7 @@ function xb = xb_generate_model(varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 01 Dec 2010
+% Created: 02 Dec 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -58,57 +58,26 @@ function xb = xb_generate_model(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% read options
+%% convert bathy to input
 
-OPT = struct( ...
-    'bathy', {{}}, ...
-    'waves', {{}}, ...
-    'tide', {{}}, ...
-    'settings', {{}} ...
-);
+if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
-OPT = setproperty(OPT, varargin{:});
+[xfile yfile depfile nelayer] = xb_split(xb, 'xfile', 'yfile', 'depfile', 'ne_layer');
 
-% create xbeach structure
 xb = xb_empty();
 
-%% create settings
+if ~isempty(xfile.data)
+    xb = xb_set(xb, 'xfile', xfile);
+end
 
-settings = xb_generate_settings(OPT.settings{:});
+if ~isempty(yfile.data)
+    xb = xb_set(xb, 'yfile', yfile);
+end
 
-%% create boundary conditions
+if ~isempty(depfile.data)
+    xb = xb_set(xb, 'depfile', depfile);
+end
 
-[waves instat swtable] = xb_generate_waves(OPT.waves{:});
-tide = xb_generate_tide(OPT.tide{:});
-
-%% create grid
-
-[bathy nx ny] = xb_generate_grid(OPT.bathy{:});
-bathy = xb_bathy2input(bathy);
-
-%% create model
-
-xb = xb_set(xb, ...
-    'nx', nx, ...
-    'ny', ny, ...
-    'vardx', 1, ...
-    'instat', instat, ...
-    'bcfile', waves, ...
-    'zs0file', tide ...
-);
-
-if ~isempty(swtable.data); xb = xb_set(xb, 'swtable', swtable); end;
-
-% add bathymetry
-xb = xb_join(xb, bathy);
-
-% add settings
-xb = xb_join(xb, settings);
-
-% add meta data
-xb = xb_meta(xb, mfilename, 'input');
-
-%% write model
-
-xb_write_input('params.txt', xb);
-
+if ~isempty(nelayer.data)
+    xb = xb_set(xb, 'ne_layer', nelayer);
+end

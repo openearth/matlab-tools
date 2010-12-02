@@ -1,10 +1,10 @@
-function xb = xb_generate_model(varargin)
-%XB_GENERATE_MODEL  Generates a minimal model setup based on bathymetry and boundary conditions
+function xb = xb_input2bathy(xb, varargin)
+%XB_INPUT2BATHY  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = xb_generate_model(varargin)
+%   varargout = xb_input2bathy(varargin)
 %
 %   Input:
 %   varargin  =
@@ -13,7 +13,7 @@ function xb = xb_generate_model(varargin)
 %   varargout =
 %
 %   Example
-%   xb_generate_model
+%   xb_input2bathy
 %
 %   See also 
 
@@ -48,7 +48,7 @@ function xb = xb_generate_model(varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 01 Dec 2010
+% Created: 02 Dec 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -58,57 +58,13 @@ function xb = xb_generate_model(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% read options
+%% convert input to bathy
 
-OPT = struct( ...
-    'bathy', {{}}, ...
-    'waves', {{}}, ...
-    'tide', {{}}, ...
-    'settings', {{}} ...
+if ~xb_check(xb); error('Invalid XBeach structure'); end;
+
+xb = xb_join( ...
+    xb_get(xb, 'xfile'), ...
+    xb_get(xb, 'yfile'), ...
+    xb_get(xb, 'depfile'), ...
+    xb_get(xb, 'ne_layer') ...
 );
-
-OPT = setproperty(OPT, varargin{:});
-
-% create xbeach structure
-xb = xb_empty();
-
-%% create settings
-
-settings = xb_generate_settings(OPT.settings{:});
-
-%% create boundary conditions
-
-[waves instat swtable] = xb_generate_waves(OPT.waves{:});
-tide = xb_generate_tide(OPT.tide{:});
-
-%% create grid
-
-[bathy nx ny] = xb_generate_grid(OPT.bathy{:});
-bathy = xb_bathy2input(bathy);
-
-%% create model
-
-xb = xb_set(xb, ...
-    'nx', nx, ...
-    'ny', ny, ...
-    'vardx', 1, ...
-    'instat', instat, ...
-    'bcfile', waves, ...
-    'zs0file', tide ...
-);
-
-if ~isempty(swtable.data); xb = xb_set(xb, 'swtable', swtable); end;
-
-% add bathymetry
-xb = xb_join(xb, bathy);
-
-% add settings
-xb = xb_join(xb, settings);
-
-% add meta data
-xb = xb_meta(xb, mfilename, 'input');
-
-%% write model
-
-xb_write_input('params.txt', xb);
-
