@@ -1,10 +1,10 @@
-function xb = xb_generate_model(varargin)
-%XB_GENERATE_MODEL  Generates a minimal model setup based on bathymetry and boundary conditions
+function xb = xb_generate_settings(varargin)
+%XB_GENERATE_SETTINGS  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = xb_generate_model(varargin)
+%   varargout = xb_generate_settings(varargin)
 %
 %   Input:
 %   varargin  =
@@ -13,7 +13,7 @@ function xb = xb_generate_model(varargin)
 %   varargout =
 %
 %   Example
-%   xb_generate_model
+%   xb_generate_settings
 %
 %   See also 
 
@@ -48,7 +48,7 @@ function xb = xb_generate_model(varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 01 Dec 2010
+% Created: 02 Dec 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -61,54 +61,21 @@ function xb = xb_generate_model(varargin)
 %% read options
 
 OPT = struct( ...
-    'bathy', {{}}, ...
-    'waves', {{}}, ...
-    'tide', {{}}, ...
-    'settings', {{}} ...
+    'thetamin', -37.5, ...
+    'thetamax', 37.5, ...
+    'dtheta', 15, ...
+    'tstop', 3600 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
-% create xbeach structure
+%% generate settings
+
 xb = xb_empty();
 
-%% create settings
-
-settings = xb_generate_settings(OPT.settings{:});
-
-%% create boundary conditions
-
-[waves instat swtable] = xb_generate_waves(OPT.waves{:});
-tide = xb_generate_tide(OPT.tide{:});
-
-%% create grid
-
-[bathy nx ny] = xb_generate_grid(OPT.bathy{:});
-[xfile yfile depfile nelayer] = xb_split(bathy, 'xfile', 'yfile', 'depfile', 'ne_layer');
-
-%% create model
-
-xb = xb_set(xb, ...
-    'nx', nx, ...
-    'ny', ny, ...
-    'vardx', 1, ...
-    'instat', instat, ...
-    'bcfile', waves, ...
-    'zs0file', tide, ...
-    'xfile', xfile, ...
-    'yfile', yfile, ...
-    'depfile', depfile ...
-);
-
-if ~isempty(swtable.data); xb = xb_set(xb, 'swtable', swtable); end;
-if ~isempty(nelayer.data); xb = xb_set(xb, 'nelayer', nelayer); end;
-
-% add settings
-xb = xb_join(xb, settings);
+f = fieldnames(OPT);
+for i = 1:length(f)
+    xb = xb_set(xb, f{i}, OPT.(f{i}));
+end
 
 xb = xb_meta(xb, mfilename, 'input');
-
-%% write model
-
-xb_write_input('params.txt', xb);
-

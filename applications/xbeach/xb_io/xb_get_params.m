@@ -65,6 +65,10 @@ function [params params_array] = xb_get_params(fpath)
 
 %% read params.f90
 
+if ~exist('fpath', 'dir')
+    fpath = abspath(fullfile(fileparts(which(mfilename)), '..', '..', '..', '..', 'fortran', 'XBeach'));
+end
+
 paramfile='params.F90';
 Typename='parameters';
 

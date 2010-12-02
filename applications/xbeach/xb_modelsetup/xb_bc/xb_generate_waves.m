@@ -106,6 +106,7 @@ for i = 1:length(f)
     xb = xb_set(xb, f{i}, OPT.(f{i}));
 end
 
+% include swtable, if necessary
 swtable = xb_empty();
 swtable = xb_meta(swtable, mfilename, 'swtable');
 if instat == 4

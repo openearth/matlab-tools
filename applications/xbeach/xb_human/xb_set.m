@@ -110,7 +110,7 @@ for i = 1:length(names)
     
     if iscell(values{i}) && length(values{i}) == 2 && has_units
         val = values{i};
-        if ischar(val{2})
+        if ischar(val{2}) || isempty(val{2})
             % fill field with units
             xbSettings.data(idx).value = val{1};
             xbSettings.data(idx).units = val{2};

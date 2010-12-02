@@ -70,8 +70,8 @@ function xb_write_params(filename, xbSettings, varargin)
 if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
 
 OPT = struct(...
-    'header', {{'XBeach parameter settings input file' '' ['date:     ' datestr(now)] ['function: ' mfilename]}},...
-    'xbdir', abspath(fullfile(fileparts(which(mfilename)), '..', '..', '.', '..', '..', 'fortran', '.', 'XBeach')));
+    'header', {{'XBeach parameter settings input file' '' ['date:     ' datestr(now)] ['function: ' mfilename]}}, ...
+    'xbdir', abspath(fullfile(fileparts(which(mfilename)), '..', '..', '..', '..', 'fortran', 'XBeach')));
 
 if nargin > 2
     OPT = setproperty(OPT, varargin{:});
