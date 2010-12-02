@@ -1,15 +1,15 @@
-function D = nc_cf_gridset_tutorial(varargin)
+function D = nc_cf_gridset_example(varargin)
 %NC_CF_GRIDSET_TUTORIAL  how to acces a set of netCDF tiles
 %
-%  D = nc_cf_gridset_tutorial(<keyword,value>)
+%  D = nc_cf_gridset_example(<keyword,value>)
 %
 % returns a struct D where every D(i) is a datasets
 % with data in the box defined by keywords x and y.
 %
 % See also: snctools, opendap_catalog, grid_2D_orthogonal
 
-catalog_url = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/kustlidar/catalog.html';
 catalog_url = 'f:\opendap\thredds\rijkswaterstaat\kustlidar\';
+catalog_url = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/kustlidar/catalog.html';
 
 %% get list of netCDF grid files from which to obtain data
 
