@@ -1,10 +1,10 @@
-function xb = xb_generate_model(varargin)
-%XB_GENERATE_MODEL  Generates a minimal model setup based on bathymetry and boundary conditions
+function xb_plot_bathy(xb, varargin)
+%XB_PLOT_BATHY  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = xb_generate_model(varargin)
+%   varargout = xb_plot_bathy(varargin)
 %
 %   Input:
 %   varargin  =
@@ -13,7 +13,7 @@ function xb = xb_generate_model(varargin)
 %   varargout =
 %
 %   Example
-%   xb_generate_model
+%   xb_plot_bathy
 %
 %   See also 
 
@@ -48,7 +48,7 @@ function xb = xb_generate_model(varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 01 Dec 2010
+% Created: 02 Dec 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -61,57 +61,63 @@ function xb = xb_generate_model(varargin)
 %% read options
 
 OPT = struct( ...
-    'bathy', {{}}, ...
-    'waves', {{}}, ...
-    'tide', {{}}, ...
-    'settings', {{}}, ...
-    'write', true ...
+    't', 1, ...
+    'colormap', 'jet', ...
+    'surf', false ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
-% create xbeach structure
-xb = xb_empty();
+%% check, convert and read bathymetry
 
-%% create settings
+if xb_exist(xb, 'xfile', 'yfile', 'depfile')
+    
+    % input bathymetry
+    bathy = xb_input2bathy(xb);
 
-settings = xb_generate_settings(OPT.settings{:});
+    % check if conversion was necessary
+    if isempty(bathy)
+        bathy = xb;
+    end
 
-%% create boundary conditions
-
-[waves instat swtable] = xb_generate_waves(OPT.waves{:});
-tide = xb_generate_tide(OPT.tide{:});
-
-%% create grid
-
-[bathy nx ny] = xb_generate_grid(OPT.bathy{:});
-bathy = xb_bathy2input(bathy);
-
-%% create model
-
-xb = xb_set(xb, ...
-    'nx', nx, ...
-    'ny', ny, ...
-    'vardx', 1, ...
-    'instat', instat, ...
-    'bcfile', waves, ...
-    'zs0file', tide ...
-);
-
-if ~isempty(swtable.data); xb = xb_set(xb, 'swtable', swtable); end;
-
-% add bathymetry
-xb = xb_join(xb, bathy);
-
-% add settings
-xb = xb_join(xb, settings);
-
-% add meta data
-xb = xb_meta(xb, mfilename, 'input');
-
-%% write model
-
-if OPT.write
-    xb_write_input('params.txt', xb);
+    x = xb_get(bathy, 'xfile');
+    y = xb_get(bathy, 'yfile');
+    z = xb_get(bathy, 'depfile');
+elseif xb_exist(xb, 'x', 'y', 'zb')
+    
+    x = xb_get(bathy, 'x');
+    y = xb_get(bathy, 'y');
+    z = xb_get(bathy, 'zb');
+elseif xb_exist(xb, 'xw', 'yw', 'zb')
+    
+    x = xb_get(bathy, 'xw');
+    y = xb_get(bathy, 'yw');
+    z = xb_get(bathy, 'zb');
+else
+    error('No bathymetry found in XBeach structure');
 end
 
+%% plot bathymetry
+
+figure;
+
+colormap(OPT.colormap);
+
+if size(z, 1) <= 3 && all(min(z, [], 1)==max(z, [], 1))
+
+    % 1D grid
+    plot(x(1,:), z(1,:,:));
+    xlabel('x'); ylabel('z');
+else
+
+    % 2D grid
+    if OPT.surf
+        surf(x, y, z(:,:,OPT.t));
+        xlabel('x'); ylabel('y'); zlabel('z');
+        shading flat;
+    else
+        pcolor(x, y, z(:,:,OPT.t));
+        xlabel('x'); ylabel('y'); colorbar;
+        shading flat; axis equal;
+    end
+end
