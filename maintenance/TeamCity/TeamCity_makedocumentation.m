@@ -103,6 +103,17 @@ try
     %% remove targetdir
     rmdir(fullfile(oetroot,'tutorials'),'s');
     rmdir(fullfile(oetroot,'docs'),'s');
+    
+    %% Publish documentation
+    htmlDir = publish_OET_documentation;
+    docDir = 'Z:\OpenEarthHtmlDocs\';
+    if isdir(docDir)
+        rmdir(docDir,'s');
+        mkdir(docDir);
+        copyfile(htmlDir,docDir);
+    end
+    rmdir(htmlDir,'s');
+    
 catch me
     TeamCity.postmessage('message', 'text', 'Something went wrong while making documentation.',...
         'errorDetails',me.getReport,...
