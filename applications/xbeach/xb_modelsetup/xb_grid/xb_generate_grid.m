@@ -1,4 +1,4 @@
-function [xb nx ny] = xb_generate_grid(xin, yin, zin, varargin)
+function [xb nx ny] = xb_generate_grid(varargin)
 %XB_GENERATE_GRID  Creates a model grid based on a given bathymetry
 %
 %   Creates a model grid in either one or two dimensions based on a given
@@ -6,13 +6,12 @@ function [xb nx ny] = xb_generate_grid(xin, yin, zin, varargin)
 %   of equal size containing a rectilinear grid in x, y and z coordinates.
 %
 %   Syntax:
-%   xb = xb_generate_grid(xin, yin, zin, varargin)
+%   xb = xb_generate_grid(varargin)
 %
 %   Input:
-%   xin       = x-coordinates of bathymetry
-%   yin       = y-coordinates of bathymetry
-%   zin       = z-coordinates of bathymetry
-%   varargin  = none
+%   varargin  = x: x-coordinates of bathymetry
+%               y: y-coordinates of bathymetry
+%               z: z-coordinates of bathymetry
 %
 %   Output:
 %   xb        = XBeach structure array
@@ -20,7 +19,7 @@ function [xb nx ny] = xb_generate_grid(xin, yin, zin, varargin)
 %   ny        = Number of cells in y-direction
 %
 %   Example
-%   xb = xb_generate_grid(xin, yin, zin)
+%   xb = xb_generate_grid('x', x, 'y', y, 'z', z)
 %
 %   See also xb_generate_xgrid, xb_generate_ygrid
 
@@ -68,26 +67,29 @@ function [xb nx ny] = xb_generate_grid(xin, yin, zin, varargin)
 %% read options
 
 OPT = struct( ...
+    'x', [0 2550 2724.9 2775 2805 3030.6], ...
+    'y', [], ...
+    'z', [-20 -3 0 3 15 15] ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
 %% generate grid
 
-[x z] = xb_generate_xgrid(xin, zin);
-[y] = xb_generate_ygrid(yin);
+[x z] = xb_generate_xgrid(OPT.x, OPT.z);
+[y] = xb_generate_ygrid(OPT.y);
 
 [xgrid ygrid] = meshgrid(x, y);
 
 % interpolate bathymetry on grid, if necessary
-if isvector(zin)
+if isvector(OPT.z)
     
     % 1D grid
     zgrid = repmat(z, length(y), 1);
 else
     
     % 2D grid
-    zgrid = interp2(xin, yin, zin, xgrid, ygrid);
+    zgrid = interp2(OPT.x, OPT.y, OPT.z, xgrid, ygrid);
 end
 
 nx = size(zgrid, 2)-1;
