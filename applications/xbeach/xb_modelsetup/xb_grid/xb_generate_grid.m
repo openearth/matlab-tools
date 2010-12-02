@@ -76,7 +76,7 @@ OPT = setproperty(OPT, varargin{:});
 
 %% generate grid
 
-[x z] = xb_generate_xgrid(OPT.x, OPT.z);
+[x z] = xb_generate_xgrid(OPT.x, min(OPT.z, [], 1));
 [y] = xb_generate_ygrid(OPT.y);
 
 [xgrid ygrid] = meshgrid(x, y);

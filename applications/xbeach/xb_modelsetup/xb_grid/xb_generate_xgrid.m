@@ -154,4 +154,8 @@ else
     error('Nop, this is not going to work; vardx = [0 1]');
 end
 
-%zgr(1) = zgr(2);
+% chop off last grid cell, if limit is exceeded
+if xlast > xend
+    xgr = xgr(1:end-1);
+    zgr = zgr(1:end-1);
+end

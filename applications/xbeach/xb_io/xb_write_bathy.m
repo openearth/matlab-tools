@@ -85,9 +85,9 @@ varargout = {};
 
 c = 1;
 for i = 1:length(f)
-    data = xb_get(xbSettings, f{i});
-    if ~isnan(data)
+    if xb_exist(xbSettings, f{i})
         varargout{c} = OPT.(f{i});
+        data = xb_get(xbSettings, f{i});
         save(OPT.(f{i}), '-ascii', 'data');
         c = c+1;
     end
