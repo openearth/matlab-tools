@@ -1,5 +1,5 @@
-function varargout = xb_generate_tide(varargin)
-%XB_GENERATE_TIDE  One line description goes here.
+function xb = xb_generate_tide(varargin)
+%XB_GENERATE_TIDE  Generates XBeach structure with tide data
 %
 %   More detailed description goes here.
 %
@@ -58,4 +58,29 @@ function varargout = xb_generate_tide(varargin)
 % $HeadURL: $
 % $Keywords: $
 
-%%
+%% read options
+
+OPT = struct( ...
+    'time', 0, ...
+    'front', 5, ...
+    'back', 0 ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+%% generate tide
+
+xb = xb_empty();
+
+l = max([length(OPT.time) length(OPT.front) length(OPT.back)]);
+
+time = zeros(l,1);
+tide = zeros(l,2);
+
+time(1:length(OPT.time)) = OPT.time;
+tide(1:length(OPT.front),1) = OPT.front;
+tide(1:length(OPT.back),2) = OPT.back;
+
+xb = xb_set(xb, 'time', time, 'tide', tide);
+
+xb = xb_meta(xb, mfilename, 'tide');

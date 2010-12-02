@@ -1,21 +1,25 @@
-function xb = xb_generate_model(varargin)
-%XB_GENERATE_MODEL  Generates a minimal model setup based on bathymetry and boundary conditions
+function varargout = xb_split(xb, varargin)
+%XB_SPLIT  Splits a XBeach structure in multiple XBeach structures
 %
-%   More detailed description goes here.
+%   Splits a XBeach structure in multiple XBeach structures by moving
+%   several fields to one XBeach structure and others to another.
 %
 %   Syntax:
-%   varargout = xb_generate_model(varargin)
+%   varargout = xb_split(xb, varargin)
 %
 %   Input:
-%   varargin  =
+%   xb        = XBeach structure array
+%   varargin  = List of fields to be stored in one XBeach structure. To
+%               store multiple fields in a XBeach structure, use a cell
+%               array of field names as item in the list.
 %
 %   Output:
-%   varargout =
+%   varargout = List of XBeach structure arrays.
 %
 %   Example
-%   xb_generate_model
+%   [xb1 xb2 xb3] = xb_split(xb, {'nx' 'ny'}, 'bcfile', {'xfile', 'yfile'})
 %
-%   See also 
+%   See also xb_join, xb_empty, xb_set, xb_get
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -48,7 +52,7 @@ function xb = xb_generate_model(varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 01 Dec 2010
+% Created: 02 Dec 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -58,54 +62,19 @@ function xb = xb_generate_model(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% read options
+%% split structures
 
-OPT = struct( ...
-    'bathy_x', linspace(0,100,100), ...
-    'bathy_y', [], ...
-    'bathy_z', linspace(-20,15,100) ...
-);
+varargout = {};
 
-OPT = setproperty(OPT, varargin{:});
-
-% create xbeach structure
-xb = xb_empty();
-
-%% create boundary conditions
-
-[waves instat swtable] = xb_generate_waves();
-tide = xb_generate_tide();
-
-%% create grid
-
-[bathy nx ny] = xb_generate_grid(OPT.bathy_x, OPT.bathy_y, OPT.bathy_z);
-[xfile yfile depfile nelayer] = xb_split(bathy, 'xfile', 'yfile', 'depfile', 'ne_layer');
-
-%% create model
-
-xb = xb_set(xb, ...
-    'nx', nx, ...
-    'ny', ny, ...
-    'vardx', 1, ...
-    'instat', instat, ...
-    'bcfile', waves, ...
-    'zs0file', tide, ...
-    'xfile', xfile, ...
-    'yfile', yfile, ...
-    'depfile', depfile, ...
-    ...
-    'thetamin', -37.5, ...
-    'thetamax', 37.5, ...
-    'dtheta', 15, ...
-    'tstop', 3600 ...
-);
-
-if ~isempty(swtable.data); xb = xb_set(xb, 'swtable', swtable); end;
-if ~isempty(nelayer.data); xb = xb_set(xb, 'nelayer', nelayer); end;
-
-xb = xb_meta(xb, mfilename, 'input');
-
-%% write model
-
-xb_write_input('params.txt', xb);
-
+for i = 1:length(varargin)
+    f = varargin{i};
+    
+    if ~iscell(f)
+        f = {f};
+    end
+    
+    idx = ismember({xb.data.name}, f);
+    
+    varargout{i} = xb;
+    varargout{i}.data = xb.data(idx);
+end

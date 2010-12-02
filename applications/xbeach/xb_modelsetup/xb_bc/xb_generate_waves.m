@@ -1,4 +1,4 @@
-function varargout = xb_generate_waves(varargin)
+function [xb instat swtable] = xb_generate_waves(varargin)
 %XB_GENERATE_WAVES  One line description goes here.
 %
 %   More detailed description goes here.
@@ -58,4 +58,62 @@ function varargout = xb_generate_waves(varargin)
 % $HeadURL: $
 % $Keywords: $
 
-%%
+%% read options
+
+type = 'jonswap';
+
+idx = strcmpi('type', varargin(1:2:end));
+if any(idx)
+    type = varargin{find(idx)+1};
+end
+
+switch type
+    case 'jonswap'
+        OPT = struct( ...
+            'type', type, ...
+            'Hm0', 7.6, ...
+            'Tp', 12, ...
+            'dir', 270, ...
+            'gamma', 3.3, ...
+            's', 20, ...
+            'fnyq', 1 ...
+        );
+    
+        instat = 4;
+    case 'vardens'
+        OPT = struct( ...
+            'type', type, ...
+            'freqs', [], ...
+            'dirs', [], ...
+            'vardens', [] ...
+        );
+    
+        instat = 41;
+end
+
+OPT.type = type;
+OPT.duration = 3600;
+OPT.timestep = 1;
+
+OPT = setproperty(OPT, varargin{:});
+
+%% generate waves
+
+xb = xb_empty();
+
+f = fieldnames(OPT);
+for i = 1:length(f)
+    xb = xb_set(xb, f{i}, OPT.(f{i}));
+end
+
+swtable = xb_empty();
+swtable = xb_meta(swtable, mfilename, 'swtable');
+if instat == 4
+    fpath = fullfile(fileparts(which(mfilename)), 'RF_table.txt');
+    if exist(fpath, 'file')
+        swtable = xb_set(swtable, 'data', load(fpath));
+        swtable = xb_meta(swtable, mfilename, 'swtable', fpath);
+    end
+end
+
+xb = xb_meta(xb, mfilename, 'waves');

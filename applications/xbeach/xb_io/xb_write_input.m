@@ -1,4 +1,4 @@
-function xb_write_input(filename, xbSettings, varargin)
+function xb_write_input(filename, xb, varargin)
 %XB_WRITE_INPUT  Write XBeach params.txt file and all files referred in it
 %
 %   Writes the XBeach settings from a XBeach structure in a parameter file.
@@ -6,19 +6,19 @@ function xb_write_input(filename, xbSettings, varargin)
 %   like grid and wave definition files.
 %
 %   Syntax:
-%   xb_write_input(filename, xbSettings, varargin)
+%   xb_write_input(filename, xb, varargin)
 %
 %   Input:
-%   filename    = filename of parameter file
-%   xbSettings  = XBeach structure array
-%   varargin    = write_paths:  flag to determine whether definition files
-%                               should be written or just referred
+%   filename  = filename of parameter file
+%   xb        = XBeach structure array
+%   varargin  = write_paths:  flag to determine whether definition files
+%                             should be written or just referred
 %
 %   Output:
 %   none
 %
 %   Example
-%   xb_write_input(filename, xbSettings)
+%   xb_write_input(filename, xb)
 %
 %   See also xb_read_input, xb_write_params
 
@@ -65,7 +65,7 @@ function xb_write_input(filename, xbSettings, varargin)
 
 %% read options
 
-if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
+if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'write_paths', true ...
@@ -79,29 +79,29 @@ if OPT.write_paths
     
     [fdir fname dext] = fileparts(filename);
 
-    for i = 1:length(xbSettings.data)
-        if isstruct(xbSettings.data(i).value)
-            xb = xbSettings.data(i).value;
+    for i = 1:length(xb.data)
+        if isstruct(xb.data(i).value)
+            sub = xb.data(i).value;
             
-            switch xbSettings.data(i).name
+            switch xb.data(i).name
                 case {'bcfile'}
                     % write waves
-                    xbSettings.data(i).value = xb_write_waves(xb);
+                    xb.data(i).value = xb_write_waves(sub);
                 case {'zs0file'}
                     % write tide
-                    xbSettings.data(i).value = xb_write_tide(xb);
+                    xb.data(i).value = xb_write_tide(sub);
                 case {'xfile' 'yfile' 'depfile' 'ne_layer'}
-                    % write bathymetry
-                    xbSettings.data(i).value = xb_write_bathy(xb);
+                    % write bathymetry file by file
+                    xb.data(i).value = xb_write_bathy(sub);
                 otherwise
                     % assume file to be a grid and try writing it
                     try
-                        xbSettings.data(i).value = fullfile(fdir, [xbSettings.data(i).name '.txt']);
-                        data = xb_get(xb, 'data');
-                        save(xbSettings.data(i).value, '-ascii', 'data');
+                        xb.data(i).value = fullfile(fdir, [xb.data(i).name '.txt']);
+                        data = xb_get(sub, 'data');
+                        save(xb.data(i).value, '-ascii', 'data');
                     catch
                         % cannot write file, ignore
-                        xbSettings.data(i).value = '';
+                        xb = xb_del(xb, xb.data(i).name);
                     end
             end
         end
@@ -110,4 +110,4 @@ end
 
 %% write params.txt file
 
-xb_write_params(filename, xbSettings)
+xb_write_params(filename, xb)

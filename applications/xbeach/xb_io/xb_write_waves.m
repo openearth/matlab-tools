@@ -32,7 +32,7 @@ function filename = xb_write_waves(varargin)
 %                 Tp:               peak wave period of jonswap spectrum
 %                 dir:              direction of waves in nautical
 %                                   convention
-%                 gamma:            peak-enhancement factor of jonswap
+%                 gammajsp:         peak-enhancement factor of jonswap
 %                                   spectrum
 %                 s:                directional spreading factor of jonswap
 %                                   spectrum

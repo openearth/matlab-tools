@@ -1,21 +1,23 @@
-function xb = xb_generate_model(varargin)
-%XB_GENERATE_MODEL  Generates a minimal model setup based on bathymetry and boundary conditions
+function xb = xb_join(varargin)
+%XB_JOIN  Joins multiple XBeach structures into a single XBeach structure
 %
-%   More detailed description goes here.
+%   Adding from left to right the data fields of all provided XBeach
+%   structures. The meta-information from the first XBeach structure is
+%   used.
 %
 %   Syntax:
-%   varargout = xb_generate_model(varargin)
+%   xb = xb_join(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = Collection of XBeach structures
 %
 %   Output:
-%   varargout =
+%   xb        = Joined XBeach structure
 %
 %   Example
-%   xb_generate_model
+%   xb = xb_join(xb1, xb2, xb3, xb4, ... )
 %
-%   See also 
+%   See also xb_split, xb_empty, xb_set, xb_get
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -48,7 +50,7 @@ function xb = xb_generate_model(varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 01 Dec 2010
+% Created: 02 Dec 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -58,54 +60,24 @@ function xb = xb_generate_model(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% read options
+%% join structures
 
-OPT = struct( ...
-    'bathy_x', linspace(0,100,100), ...
-    'bathy_y', [], ...
-    'bathy_z', linspace(-20,15,100) ...
-);
+xb = [];
 
-OPT = setproperty(OPT, varargin{:});
-
-% create xbeach structure
-xb = xb_empty();
-
-%% create boundary conditions
-
-[waves instat swtable] = xb_generate_waves();
-tide = xb_generate_tide();
-
-%% create grid
-
-[bathy nx ny] = xb_generate_grid(OPT.bathy_x, OPT.bathy_y, OPT.bathy_z);
-[xfile yfile depfile nelayer] = xb_split(bathy, 'xfile', 'yfile', 'depfile', 'ne_layer');
-
-%% create model
-
-xb = xb_set(xb, ...
-    'nx', nx, ...
-    'ny', ny, ...
-    'vardx', 1, ...
-    'instat', instat, ...
-    'bcfile', waves, ...
-    'zs0file', tide, ...
-    'xfile', xfile, ...
-    'yfile', yfile, ...
-    'depfile', depfile, ...
-    ...
-    'thetamin', -37.5, ...
-    'thetamax', 37.5, ...
-    'dtheta', 15, ...
-    'tstop', 3600 ...
-);
-
-if ~isempty(swtable.data); xb = xb_set(xb, 'swtable', swtable); end;
-if ~isempty(nelayer.data); xb = xb_set(xb, 'nelayer', nelayer); end;
-
-xb = xb_meta(xb, mfilename, 'input');
-
-%% write model
-
-xb_write_input('params.txt', xb);
-
+for i = 1:length(varargin)
+    if xb_check(varargin{i})
+        if isempty(xb)
+            xb = varargin{i};
+        else
+            for j = 1:length(varargin{i}.data)
+                if isfield(varargin{i}.data, 'units')
+                    xb = xb_set(xb, '-units', ...
+                        varargin{i}.data(j).name, {varargin{i}.data(j).value varargin{i}.data(j).units});
+                else
+                    xb = xb_set(xb, ...
+                        varargin{i}.data(j).name, varargin{i}.data(j).value);
+                end
+            end
+        end
+    end
+end
