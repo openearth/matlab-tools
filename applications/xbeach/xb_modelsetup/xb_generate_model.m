@@ -1,5 +1,5 @@
 function xb = xb_generate_model(varargin)
-%XB_GENERATE_MODEL  One line description goes here.
+%XB_GENERATE_MODEL  Generates a minimal model setup based on bathymetry and boundary conditions
 %
 %   More detailed description goes here.
 %

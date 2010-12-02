@@ -10,12 +10,14 @@ function xbSettings = xb_meta(xbSettings, func, type, file)
 %   xbSettings  = XBeach structure array
 %   func        = Name of function that sets the meta data (mfilename)
 %   type        = Type of data in structure (params, waves, etc)
+%   file        = File (string) or files (cell) containing filenames of 
+%                 original data files
 %
 %   Output:
 %   xbSettings  = Updated XBeach structure array
 %
 %   Example
-%   xbSettings = xb_meta(xbSettings, 'xb_set', 'waves')
+%   xbSettings = xb_meta(xbSettings, mfilename, 'waves', files)
 %
 %   See also xb_set, xb_show
 
