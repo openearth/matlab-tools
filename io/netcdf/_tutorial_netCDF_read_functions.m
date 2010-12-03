@@ -29,13 +29,12 @@ url = jarkus_url;
 
 %% get a collection of small files
 
-urls = opendap_catalog('http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/sea_surface_height/catalog.xml')
-for i=1:length(urls)
-
-url2 = urls{i}
-name{i}=nc_varget(url2,'station_name');
-
+urls = opendap_catalog('http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/sea_surface_height/catalog.xml');
+name = cell(5,1);
+for i=1:5
+    name{i,1}=nc_varget(urls{i},'station_name');
 end
+disp(name);
 
 %% Interacting with a netCDF file
 % To let matlab talk with a netCDF file, the snc toolbox has been
