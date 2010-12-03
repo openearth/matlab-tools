@@ -64,18 +64,17 @@ try
         rmdir(fullfile(matlabdir,'docs'),'s');
     end
     
-    %% load oetsettings
-    addpath(matlabdir);
-    addpath(genpath(fullfile(matlabdir,'maintenance')));
-    TeamCity.running(true);
-    TeamCity.postmessage('progressStart','Running oetsettings.');
-    oetsettings;
-    TeamCity.postmessage('progressFinish','Oetsettings enabled.');
+    TeamCity_initialize;
+    
 catch me
-    TeamCity.running(true);
-    TeamCity.postmessage('message', 'text', 'Matlab was unable to run oetsettings.',...
-        'errorDetails',me.message,...
+    TeamCity.postmessage('message', 'text', 'Matlab was unable to initialize.',...
+        'errorDetails',me.getReport,...
         'status','ERROR');
+    TeamCity.postmessage('progressFinish','Run Oetsettings');
+    TeamCity.postmessage('buildStatus',...
+        'status','FAILURE',...
+        'text', 'FAILURE: Matlab was unable to run oetsettings.');
+    %            rethrow(me);
     exit;
 end
 
@@ -83,14 +82,18 @@ try
     TeamCity.running(true);
     
     %% start documenting
+    TeamCity.postmessage('progressStart','Create tutorials');
     tutorials2html(varargin{:},'teamcity');
+    TeamCity.postmessage('progressFinish','Create tutorials');
     
     %% zip result
+    TeamCity.postmessage('progressStart','Package tutorials');
+    TeamCity.postmessage('progressMessage','Packaging tutorial html files');
     delete(fullfile(teamCityDir,'htmldocumentation.zip'));
+    TeamCity.postmessage('progressMessage','Packaging matlab toc files');
     delete(fullfile(teamCityDir,'matlabtocfiles.zip'));
     
-    % zip(fullfile(teamCityDir,'htmldocumentation'),{fullfile(oetroot,'tutorials','*.*')});
-    
+    TeamCity.postmessage('progressMessage','Copying tutorials to server');
     tutorialDir = 'Z:\OpenEarthHtmlTutorials\';
     if isdir(tutorialDir)
         rmdir(tutorialDir,'s');
@@ -98,14 +101,22 @@ try
         copyfile(fullfile(oetroot,'tutorials','*.*'),tutorialDir);
     end
     
+    TeamCity.postmessage('progressMessage','Zipping matlab toc files');
     zip(fullfile(teamCityDir,'matlabtocfiles'),{fullfile(oetroot,'docs','OpenEarthDocs','*.*')});
+    TeamCity.postmessage('progressFinish','Package tutorials');
     
     %% remove targetdir
+    TeamCity.postmessage('progressStart','Cleanup tutorials');
     rmdir(fullfile(oetroot,'tutorials'),'s');
     rmdir(fullfile(oetroot,'docs'),'s');
+    TeamCity.postmessage('progressFinish','Cleanup tutorials');
     
     %% Publish documentation
+    TeamCity.postmessage('progressStart','Generate OET documentation');
     htmlDir = publish_OET_documentation;
+    TeamCity.postmessage('progressFinish','Generate OET documentation');
+    
+    TeamCity.postmessage('progressMessage','Copy documentation to server');
     docDir = 'Z:\OpenEarthHtmlDocs\';
     if isdir(docDir)
         rmdir(docDir,'s');
