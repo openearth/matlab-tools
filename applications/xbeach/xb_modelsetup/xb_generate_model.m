@@ -1,21 +1,39 @@
 function xb = xb_generate_model(varargin)
-%XB_GENERATE_MODEL  Generates a minimal model setup based on bathymetry and boundary conditions
+%XB_GENERATE_MODEL  Generates a XBeach structure with a full model setup
 %
-%   More detailed description goes here.
+%   Generates a XBeach structure with a full model setup. By default this
+%   is a minimal setup with default bathymetry, boundary conditions and
+%   settings. The defaults can be overwritten by supplying cell arrays with
+%   settings for either the bathymetry, waves, tide or model settings. The
+%   result is a XBeach structure, which can be written to disk easily.
 %
 %   Syntax:
 %   varargout = xb_generate_model(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = bathy:      cell array of name/value pairs of bathymetry
+%                           settings supplied to xb_generate_grid
+%               waves:      cell array of name/value pairs of waves
+%                           settings supplied to xb_generate_waves
+%               tide:       cell array of name/value pairs of tide
+%                           settings supplied to xb_generate_tide
+%               settings:   cell array of name/value pairs of model
+%                           settings supplied to xb_generate_settings
+%               write:      boolean that indicates whether model setup
+%                           whould be written to disk (default: true)
+%               path:       destination directory of model setup, if
+%                           written to disk
 %
 %   Output:
-%   varargout =
+%   xb        = XBeach structure array
 %
 %   Example
-%   xb_generate_model
+%   xb = xb_generate_model();
+%   xb = xb_generate_model('write', false);
+%   xb = xb_generate_model('bathy', {'x', [ ... ], 'z', [ ... ]}, 'waves', {'Hm0', 9, 'Tp', 18});
 %
-%   See also 
+%   See also xb_generate_settings, xb_generate_grid, xb_generate_waves,
+%   xb_generate_tide, xb_write_input
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -65,7 +83,8 @@ OPT = struct( ...
     'waves', {{}}, ...
     'tide', {{}}, ...
     'settings', {{}}, ...
-    'write', true ...
+    'write', true, ...
+    'path', '' ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -112,6 +131,7 @@ xb = xb_meta(xb, mfilename, 'input');
 %% write model
 
 if OPT.write
-    xb_write_input('params.txt', xb);
+    fpath = fullfile(OPT.path, 'params.txt');
+    xb_write_input(fpath, xb);
 end
 

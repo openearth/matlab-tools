@@ -1,21 +1,27 @@
 function xb = xb_generate_tide(varargin)
 %XB_GENERATE_TIDE  Generates XBeach structure with tide data
 %
-%   More detailed description goes here.
+%   Generates a XBeach structure with tide settings. A minimal set of
+%   default settings is used, unless otherwise provided. Settings can be
+%   provided by a varargin list of name/value pairs.
 %
 %   Syntax:
-%   varargout = xb_generate_tide(varargin)
+%   xb = xb_generate_tide(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = time:   array of starttimes of tide period in seconds
+%               front:  array of waterlevels at seaward model border
+%               back:   array of waterlevels at landward model border
 %
 %   Output:
-%   varargout =
+%   xb        = XBeach structure array
 %
 %   Example
-%   xb_generate_tide
+%   xb = xb_generate_tide()
+%   xb = xb_generate_tide('front', 10, 'back', 5)
+%   xb = xb_generate_tide('time', [0 1800 3600], 'front', [5 10 5], 'back', [5 5 5])
 %
-%   See also 
+%   See also xb_generate_model
 
 %% Copyright notice
 %   --------------------------------------------------------------------

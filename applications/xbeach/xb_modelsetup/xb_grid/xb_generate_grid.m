@@ -21,7 +21,7 @@ function [xb nx ny] = xb_generate_grid(varargin)
 %   Example
 %   xb = xb_generate_grid('x', x, 'y', y, 'z', z)
 %
-%   See also xb_generate_xgrid, xb_generate_ygrid
+%   See also xb_generate_xgrid, xb_generate_ygrid, xb_generate_model
 
 %% Copyright notice
 %   --------------------------------------------------------------------

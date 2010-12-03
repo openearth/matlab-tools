@@ -1,21 +1,24 @@
 function xb = xb_generate_settings(varargin)
-%XB_GENERATE_SETTINGS  One line description goes here.
+%XB_GENERATE_SETTINGS  Generates a XBeach structure with model settings
 %
-%   More detailed description goes here.
+%   Generates a XBeach structure with model settings. A minimal set of
+%   default settings is used, unless otherwise provided. Settings can be
+%   provided by a varargin list of name/value pairs.
 %
 %   Syntax:
-%   varargout = xb_generate_settings(varargin)
+%   xb = xb_generate_settings(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = Name/value pairs of model settings (e.g. 'nx',100,'ny',200)
 %
 %   Output:
-%   varargout =
+%   xb        = XBeach structure array
 %
 %   Example
-%   xb_generate_settings
+%   xb = xb_generate_settings()
+%   xb = xb_generate_settings('nx', 100, 'ny', 200)
 %
-%   See also 
+%   See also xb_generate_model
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -67,7 +70,12 @@ OPT = struct( ...
     'tstop', 2000 ...
 );
 
-OPT = setproperty(OPT, varargin{:});
+names = varargin(1:2:end);
+values = varargin(2:2:end);
+
+for i = 1:length(values)
+	OPT.(names{i}) = values{i};
+end
 
 %% generate settings
 

@@ -8,4 +8,4 @@
 %   xb_human           - make xbeach result structure accessible
 %   xb_modelsetup      - facilitate model set-up
 %   xb_visualise       - facilitate model visualisation
-%   xb_lid             - general functions
+%   xb_lib             - general functions

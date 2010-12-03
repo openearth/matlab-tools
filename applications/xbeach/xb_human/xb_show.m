@@ -155,6 +155,4 @@ if ~isempty(vars)
     end
     
     fprintf('\n');
-else
-    warning('XBeach structure is empty!');
 end

@@ -76,7 +76,7 @@ Typename='parameters';
 
 paramsfname=fullfile(fpath, paramfile);
 
-if ~exist('paramsfname', 'dir')
+if ~exist(paramsfname, 'file')
     error(['File does not exist [' paramsfname ']']);
 end
     

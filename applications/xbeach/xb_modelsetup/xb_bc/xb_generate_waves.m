@@ -1,21 +1,45 @@
 function [xb instat swtable] = xb_generate_waves(varargin)
-%XB_GENERATE_WAVES  One line description goes here.
+%XB_GENERATE_WAVES  Generates XBeach structure with waves data
 %
-%   More detailed description goes here.
+%   Generates a XBeach structure with waves settings. A minimal set of
+%   default settings is used, unless otherwise provided. Settings can be
+%   provided by a varargin list of name/value pairs. The settings depend on
+%   the type of waves genarated (jonswap or vardens), which is indicated by
+%   the type parameter. The result is a XBeach structure, an instat number
+%   and, if necessary another XBeach structure containing the swtable.
 %
 %   Syntax:
-%   varargout = xb_generate_waves(varargin)
+%   [xb instat swtable] = xb_generate_waves(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = type:       type of waves to be generated (jonswap/vardens)
+%               duration:   array with durations in seconds
+%               timestep:   array with timesteps in seconds
+%
+%               options for jonswap:
+%               Hm0:        significant wave height (default: 7.6)
+%               Tp:         peak wave period (default: 12)
+%               dir:        main wave direction (default: 270)
+%               gammajsp:   peak-enhancement factor (default: 3.3)
+%               s:          power in cosinus wave spreading (default: 20)
+%               fnyq:       Nyquist frequency (default: 1)
+%
+%               options for vardens:
+%               freqs:      array of frequencies
+%               dirs:       array of directions
+%               vardens:    matrix of the size [length(dirs) length(freqs)]
+%                           containing variance densities
 %
 %   Output:
-%   varargout =
+%   xb        = XBeach structure array
 %
 %   Example
-%   xb_generate_waves
+%   xb = xb_generate_waves()
+%   xb = xb_generate_waves('Hm0', 9, 'Tp', 18)
+%   xb = xb_generate_waves('Hm0', [7 9 7], 'Tp', [12 18 12], 'duration', [1800 3600 1800])
+%   xb = xb_generate_waves('type', 'vardens', 'freqs', [ ... ], 'dirs', [ ... ])
 %
-%   See also 
+%   See also xb_generate_model
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -74,7 +98,7 @@ switch type
             'Hm0', 7.6, ...
             'Tp', 12, ...
             'dir', 270, ...
-            'gamma', 3.3, ...
+            'gammajsp', 3.3, ...
             's', 20, ...
             'fnyq', 1 ...
         );
