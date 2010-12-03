@@ -107,6 +107,10 @@ try %#ok<TRYNC>
         TeamCity.postmessage('progressStart','Prepare MTestRunner');
         %% initiate variables:
         maindir = oetroot;
+        targetdir = fullfile(oetroot,'teamcitytesthtml');
+        if isdir(targetdir)
+            rmdir(targetdir,'s');
+        end
 
         exclusions = {...
             '.svn',...
