@@ -107,7 +107,7 @@ if ~isempty(vars)
     format = '%-15s %-10s %-10s %-10s %-10s %-30s\n';
     fprintf(format, 'variable', 'size', 'bytes', 'class', 'units', 'value');
     for i = 1:length(xbSettings.data)
-        if all(cellfun('isempty', regexp(xbSettings.data(i).name,vars,'start'))); continue; end;
+        if all(cellfun('isempty', regexpi(xbSettings.data(i).name,vars,'start'))); continue; end;
 
         var = xb_get(xbSettings, xbSettings.data(i).name);
         info = whos('var');
@@ -150,4 +150,6 @@ if ~isempty(vars)
     end
     
     fprintf('\n');
+else
+    warning('XBeach structure is empty!');
 end

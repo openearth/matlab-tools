@@ -76,33 +76,41 @@ options=[' 3Dwave';' 3Dsed ';' 3Dbed ';' 4Dbed '];
 
 XBdims = xb_read_dims(fname);
 
-% Determine output time series length in dims.dat
-if (length(fname)>9 && strcmp(fname(end-8:end), '_mean.dat'))
-    nt=XBdims.ntm;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_max.dat'))
-    nt=XBdims.ntm;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_min.dat'))
-    nt=XBdims.ntm;
-elseif (length(fname)>8 && strcmp(fname(end-7:end), '_var.dat'))
-    nt=XBdims.ntm;
+% get filelist
+if length(fname) > 3 && strcmpi(fname(end-3:end), '.dat')
+    names = dir(fname);
+    fdir = fileparts(fname);
 else
-    nt=XBdims.nt;
+    names = dir([fname filesep '*.dat']);
+    fdir = fname;
 end
 
-names=dir([fname filesep '*.dat']);
-% for (i=1:length(names))
-%    variables.data(i).name = names(i).name(1:length(names(i).name)-4);
-% end
-
-
-for (i=1:length(names))
-    % First open file
+for i = 1:length(names)
     varname = names(i).name(1:length(names(i).name)-4);
+    
+    % Skip, if not requested
+    if ~isempty([varargin{:}]) && all(cellfun('isempty', regexpi(varname,varargin{:},'start'))); continue; end;
+    
+    % Open file
     filename = [varname '.dat'];
-    fullfilename = fullfile(fname, filename);
-    fid=fopen(fullfile(fname, filename),'r');
+    fullfilename = fullfile(fdir, filename);
+    fid=fopen(fullfile(fdir, filename),'r');
     temp=fread(fid,'double');
     fclose(fid);
+    
+    % Determine output time series length in dims.dat
+    if (length(filename)>9 && strcmp(filename(end-8:end), '_mean.dat'))
+        nt=XBdims.ntm;
+    elseif (length(filename)>8 && strcmp(filename(end-7:end), '_max.dat'))
+        nt=XBdims.ntm;
+    elseif (length(filename)>8 && strcmp(filename(end-7:end), '_min.dat'))
+        nt=XBdims.ntm;
+    elseif (length(filename)>8 && strcmp(filename(end-7:end), '_var.dat'))
+        nt=XBdims.ntm;
+    else
+        nt=XBdims.nt;
+    end
+    
     sz=length(temp)/(XBdims.nx+1)/(XBdims.ny+1)/nt;
 
     % In case file does not match dims.dat 

@@ -1,34 +1,28 @@
-function variables = xb_read_netcdf(fname, varargin)
-%XB_READ_NETCDF  Reads NetCDF formatted output files from XBeach
+function xb = xb_rename(xb, varargin)
+%XB_RENAME  One line description goes here.
 %
-%   Reads NetCDF formatted output file from XBeach in the form of an
-%   XBeach structure.
+%   More detailed description goes here.
 %
 %   Syntax:
-%   variables = xb_read_netcdf(fname, varargin)
+%   varargout = xb_rename(varargin)
 %
 %   Input:
-%   fname       = filename of the netcdf file
-%   varargin    = none
+%   varargin  =
 %
 %   Output:
-%   variables   = XBeach structure array
+%   varargout =
 %
 %   Example
-%   variables = xb_read_output('outputdir')
-%   assert(ismember({variables.name},  'xw'})
-%   variables = xb_read_output('outputdir', 'variables', {'yw','zs'},
-%   timestepindex, 100}
-%   assert(~ismember({variables.name},  'xw'})
+%   xb_rename
 %
-%   See also xb_read_output, xb_read_dat
+%   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
-%       Fedor Baart
+%       Bas Hoonhout
 %
-%       fedor.baart@deltares.nl	
+%       bas.hoonhout@deltares.nl	
 %
 %       Rotterdamseweg 185
 %       2629HD Delft
@@ -54,8 +48,8 @@ function variables = xb_read_netcdf(fname, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 19 Nov 2010
-% Created with Matlab version: 7.4.0.287 (R2007a)
+% Created: 03 Dec 2010
+% Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
 % $Date$
@@ -64,28 +58,16 @@ function variables = xb_read_netcdf(fname, varargin)
 % $HeadURL$
 % $Keywords: $
 
+%% rename fields
 
-%% read netcdf file
+if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
-if ~exist(fname, 'file')
-    error(['File does not exist [' fname ']'])
-end
-
-variables = xb_empty();
-
-info = nc_info(fname);
-
-% Read all variables
-c = 1;
-for i = 1:length({info.Dataset.Name})
-    if ~isempty([varargin{:}]) && all(cellfun('isempty', regexpi(info.Dataset(i).Name,varargin{:},'start'))); continue; end;
+if ~isempty([varargin{:}])
+    old = varargin(1:2:end);
+    new = varargin(2:2:end);
     
-    variables.data(c).name = info.Dataset(i).Name;
-    variables.data(c).value = nc_varget(fname, info.Dataset(i).Name);
-    
-    c = c+1;
+    for i = 1:length(new)
+        idx = strcmpi(old{i}, {xb.data.name});
+        xb.data(idx).name = new{i};
+    end
 end
-
-% set meta data
-variables = xb_meta(variables, mfilename, 'output', fname);
-

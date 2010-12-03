@@ -61,8 +61,9 @@ function xb_plot_bathy(xb, varargin)
 %% read options
 
 OPT = struct( ...
-    't', 1, ...
+    't', -1, ...
     'colormap', 'jet', ...
+    'diff', false, ...
     'surf', false ...
 );
 
@@ -85,14 +86,14 @@ if xb_exist(xb, 'xfile', 'yfile', 'depfile')
     z = xb_get(bathy, 'depfile');
 elseif xb_exist(xb, 'x', 'y', 'zb')
     
-    x = xb_get(bathy, 'x');
-    y = xb_get(bathy, 'y');
-    z = xb_get(bathy, 'zb');
+    x = xb_get(xb, 'x');
+    y = xb_get(xb, 'y');
+    z = xb_get(xb, 'zb');
 elseif xb_exist(xb, 'xw', 'yw', 'zb')
     
-    x = xb_get(bathy, 'xw');
-    y = xb_get(bathy, 'yw');
-    z = xb_get(bathy, 'zb');
+    x = xb_get(xb, 'xw');
+    y = xb_get(xb, 'yw');
+    z = xb_get(xb, 'zb');
 else
     error('No bathymetry found in XBeach structure');
 end
@@ -103,20 +104,43 @@ figure;
 
 colormap(OPT.colormap);
 
-if size(z, 1) <= 3 && all(min(z, [], 1)==max(z, [], 1))
+if size(x, 1) > size(x, 2)
+    x = x';
+    y = y';
+end
 
+if size(z, 1) <= 3 && all(min(z(:,:,1), [], 1)==max(z(:,:,1), [], 1))
     % 1D grid
-    plot(x(1,:), z(1,:,:));
+    x = x(1,:);
+    i = ceil(size(z, 1)/2);
+    z = squeeze(z(i,:,:));
+    
+    plot(x, z);
     xlabel('x'); ylabel('z');
+    set(gca, 'XLim', [min(x) max(x)]);
 else
-
     % 2D grid
+    if OPT.diff
+        if OPT.t < 1
+            OPT.t = {1 'end'};
+        end
+        
+        if iscell(OPT.t)
+            data = diff(z(:,:,OPT.t{:}), 3);
+        else
+            data = diff(z(:,:,OPT.t), 3);
+        end
+    else
+        OPT.t = max(1, OPT.t);
+        data = z(:,:,OPT.t);
+    end
+    
     if OPT.surf
-        surf(x, y, z(:,:,OPT.t));
+        surf(x, y, data);
         xlabel('x'); ylabel('y'); zlabel('z');
         shading flat;
     else
-        pcolor(x, y, z(:,:,OPT.t));
+        pcolor(x, y, data);
         xlabel('x'); ylabel('y'); colorbar;
         shading flat; axis equal;
     end

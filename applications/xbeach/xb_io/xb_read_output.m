@@ -70,16 +70,18 @@ function variables = xb_read_output(fname, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% read output
 
 if ~exist(fname, 'file')
     error(['File does not exist [' fname ']'])
 end
 
-if isdir(fname) 
+if isdir(fname) || strcmpi(fname(end-3:end), '.dat')
   variables = xb_read_dat(fname, varargin);
-else 
+elseif strcmpi(fname(end-2:end), '.nc')
   variables = xb_read_netcdf(fname, varargin);
+else
+    error(['Output type not recognised [' fname ']']);
 end
 
 % set meta data
