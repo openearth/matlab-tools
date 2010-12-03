@@ -32,7 +32,7 @@ function [x z current_Xdir z0 Shift] = checkCrossShoreProfile(x, z, varargin)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
-%       C.(Kees) den Heijer
+%       Kees den Heijer
 %
 %       Kees.denHeijer@Deltares.nl	
 %
@@ -77,6 +77,10 @@ OPT = struct(...
 OPT = setproperty(OPT, varargin{:});
 
 [x z] = deal(x(:), z(:));
+
+% remove NaNs
+nonnanid = ~isnan(z);
+[x z] = deal(x(nonnanid), z(nonnanid));
 
 %% sort x ascending and derive current positive x-direction
 [x IX]  = sort(x); % sort x ascending, get permutation vector
