@@ -2,14 +2,16 @@
 
 <head>
 
-	<script src="http://www.google.com/jsapi?key=ABQIAAAAJOL4Dbu6i1iFFND9tVK1SxSAhoPlMsemz_zPU0HAErPwAMQQehTyXZ5JZhQJusZ8p76o368XUHo9LQ"></Script>
-	<script type="text/javascript" src="loadxmldoc.js"></script>
-	<script type="text/javascript" src="polydraw.js"></Script>
-	<script type="text/javascript" src="soapclient.js"></Script>
+	<link href="style.css" rel="stylesheets/stylesheet" type="text/css">
+	<script src="http://www.google.com/jsapi?key=ABQIAAAAJOL4Dbu6i1iFFND9tVK1SxQHoHevx5I6K4zDbyPuyuDTxIU2BBSC_Q4vihWvqWvnnV3Qbrdn-3QeAQ"></Script>
+	<script type="text/javascript" src="scripts/js/loadxmldoc.js"></script>
+	<script type="text/javascript" src="scripts/js/polydraw.js"></Script>
+	<script type="text/javascript" src="scripts/js/soapclient.js"></Script>
 	<script type="text/javascript">
 		var ge = null;
 		var pm = null;
 		var kml = null;
+		var currentKmlObjects = {'':null};
 
 		google.load("earth", "1", {'other_params': 'sensor=false' });
 
@@ -27,7 +29,7 @@
 			while(case_listbox.options.length!=0)
 			case_listbox.options.remove(0);
 
-			caseDoc=loadXMLDoc(xmlFile);
+			caseDoc=loadXMLDoc("xml/" + xmlFile);
 			numOfData=caseDoc.getElementsByTagName("title").length;
 
 			for (i=0;i<numOfData;i=i+1)
@@ -58,29 +60,54 @@
 			ge.getView().setAbstractView(la);
 			// Polygon used for drawing the shape in Google Earth
 			pm = new Polygon(0,0,0,0,document.getElementById('polygonselect').value);
-			// Load the desired KML on start
-			loadKML('http://dtvirt13/test/ahn100.kmz');
+			// Load the default case (HK)
+			loadCase(0)
 		}
 
 		// Initialize KMLs to be shown in Google Earth (needed for export to MathLab)
-		function loadKML(kmlLocation)
+		function toggleKml(kml_cb)
 		{
-			// If a previous KML has been loaded, unload it.
-			if (kml != null)
-			{
-				ge.getFeatures().removeChild(kml);
-			}
-			// Load the KML from location
-			google.earth.fetchKml(ge, kmlLocation,  function(kmlObject)
-													{
-														if (kmlObject)
-														{
-															kml = kmlObject;
-															ge.getFeatures().appendChild(kmlObject);
-														}
-													}
-			);
+			file = kml_cb.id;
+
+		    if (currentKmlObjects[file])
+		    {
+     	      ge.getFeatures().removeChild(currentKmlObjects[file]);
+		      currentKmlObject = null;
+		    }
+
+			// Load the KML from location if checkbox is checked
+			if (kml_cb.value == "on")
+			  {
+			    loadKml(file)
+			  }
 		}
+
+		function loadKml(file)
+		{
+		    // fetch the KML
+		    google.earth.fetchKml(ge, file, function(kmlObject)
+		       {
+			     if (kmlObject)
+			     {
+			         // show it on Earth
+			         currentKmlObjects[file] = kmlObject;
+			         ge.getFeatures().appendChild(kmlObject);
+
+			     }
+			     else
+			     {
+			         // bad KML
+			         currentKmlObjects[file] = null;
+
+			         // wrap alerts in API callbacks and event handlers in a setTimeout to prevent deadlock in some browsers
+			         setTimeout(function()
+			         {
+			           alert('Bad or null KML.');
+			         }, 0);
+		         }
+		       });
+		}
+
 
 		function loadWMS(wmsLocation)
 		{
@@ -102,12 +129,11 @@
 		// Call the MatLab SOAP interface, url: SOAP address, method: name
 		function CallMatLabSoap(url, method)
 		{
-			document.getElementById("inter_image").src = "no_image.gif";
 			try
 			{
 				var pl = new SOAPClientParameters();
 				// Add variables from document
-				pl.add("kmlFile", kml);
+				pl.add("kmlFile", "http://dtvirt13/test/ahn100.kmz");
 				pl.add("centreLatitude", pm.cent.lat.toDeg());
 				pl.add("centreLongitude", pm.cent.lon.toDeg());
 				pl.add("vertexLatitude", pm.rad.lat.toDeg());
@@ -125,7 +151,11 @@
 		{
 			if(result != null)
 			{
-				document.getElementById("inter_image").src = "http://dtvirt13/ZMMatLab/output.png";
+			  var balloon = ge.createHtmlStringBalloon('');
+			  balloon.setFeature(pm.cent.placemark); // optional
+			  balloon.setContentString("<img src='http://dtvirt13/ZMMatLab/output.png'>");
+
+			  ge.setBalloon(balloon);
 			}
 		}
 
@@ -140,86 +170,92 @@
 			getDataOutOfCase(datafile);
 
 			// zoom to case specific coordinates
-			lon = parseFloat(caseDoc.getElementsByTagName("lon")[value].childNodes[0].nodeValue);
-			lat = parseFloat(caseDoc.getElementsByTagName("lat")[value].childNodes[0].nodeValue);
-			alt = parseFloat(caseDoc.getElementsByTagName("height")[value].childNodes[0].nodeValue);
+			lon_cam = parseFloat(caseDoc.getElementsByTagName("lon")[value].childNodes[0].nodeValue);
+			lat_cam = parseFloat(caseDoc.getElementsByTagName("lat")[value].childNodes[0].nodeValue);
+			alt_cam = parseFloat(caseDoc.getElementsByTagName("height")[value].childNodes[0].nodeValue);
 
   			var camera = ge.getView().copyAsCamera(ge.ALTITUDE_RELATIVE_TO_GROUND);
-  			camera.setLatitude(lat);
-  			camera.setLongitude(lon);
-  			camera.setAltitude(alt);
+  			camera.setLatitude(lat_cam);
+  			camera.setLongitude(lon_cam);
+  			camera.setAltitude(alt_cam);
   			ge.getView().setAbstractView(camera);
   		}
 
 		// Fill in the listbox with datasources on the basis of the selected case
 		function getDataOutOfCase(xmlfile)
 		{
+			// remove all existing kml objects
+			features = ge.getFeatures().getChildNodes()
+			for(var i = 0; i < features.getLength(); i++)
+			{
+			var feat = features.item(i);
+			ge.getFeatures().removeChild(feat);
+			}
 
-			// first remove all what is in the listbox
-			while(kml_listbox.options.length!=0)
-			  kml_listbox.options.remove(0);
+			// set initial polygon
+			pm = new Polygon(0,0,0,0,document.getElementById('polygonselect').value);
 
-			// now load the requested xml-file
-			xmlDoc=loadXMLDoc(xmlfile);
+			// load case-specific xml file
+			xmlDoc=loadXMLDoc("xml/" + xmlfile);
 			numOfData=xmlDoc.getElementsByTagName("kml").length;
+
+			var dataSelectText = [];
 
 			for (i=0;i<numOfData;i=i+1)
 			{
-			var oOption = document.createElement("OPTION");
-			oOption.text=xmlDoc.getElementsByTagName("title")[i].childNodes[0].nodeValue;
-			oOption.value=xmlDoc.getElementsByTagName("kml")[i].childNodes[0].nodeValue;
-			oOption.class="vs";
-			kml_listbox.options.add(oOption)
+			dataSelectText = dataSelectText + "<input type='checkbox' class='s' id='" +
+			                    xmlDoc.getElementsByTagName("kml")[i].childNodes[0].nodeValue +
+			                    "' onclick='toggleKml(this)'>" +
+			                    xmlDoc.getElementsByTagName("title")[i].childNodes[0].nodeValue + "<br>"
+
+			file = xmlDoc.getElementsByTagName("kml")[i].childNodes[0].nodeValue;
+			currentKmlObjects[file] = null;
 			}
-			return true;
+
+			document.getElementById("kml_sources").innerHTML =dataSelectText;
 		}
+
 	</script>
-
-	<style type="text/css">
-		select.s {font-size: 10px;}
-		input.vs {font-size: 8px;}
-		input.s {font-size: 9px;}
-	</style>
-
 </head>
 
 <body onload='init()' id='body'>
-
-<div style='float:left; width:250px; height:550px; overflow:auto'>
+<h1>OpenEarth Data Viewer</h1>
+<hr/>
+<div style='float:left; width:350px; height:650px; overflow:auto'>
   <table style='font-size:small'>
 	<tr>
-		<td>
+		<td colspan="2">
 		<form name="caseSelect" action='javascript:void(0);'>
-		<p>
 		<h3>Select case</h3>
+		<p>
 		<select name="case" id="caseSelect" onchange="loadCase(this.value)" class="s">
 		  <option value="0" class="vs">Select case</option>
 		<script type="text/javascript">case_listbox=document.caseSelect.caseSelect</script>
-		</select>
+		</select><a href="editXml.html"> Add data to case</a>
 		</p>
 		</form>
+		<hr />
 		</td>
 	</tr>
 
 	<tr>
-		<td>
-        <form name="kmlSelect" action='javascript:void(0);'>
-		<p>
-		<h3>Select data</h3>
-		<select name="kmlSelect" onchange='loadKML(this.value)' class="s">
-		  <option value="" class="vs">Select case first</option>
-		<script type="text/javascript">kml_listbox=document.kmlSelect.kmlSelect</script>
-		</select>
-		</p>
-		</form>
-		</td>
+	    <td colspan="2">
+	    <form name="dataSelect" action='javascript:void(0);'>
+	    <h3>Available data</h3>
+	    <p>
+	    <div id="kml_sources"></div>
+	    </p>
+	    </form>
+	    <hr />
+	    </td>
 	</tr>
-
-    <tr>
-		<td>
+	<tr>
+		<td colspan="2">
 		<form id="polyShape" action='javascript:void(0);'>
+		<h3>Drawing</h3>
 		<p>
-		<h3>Actions</h3>
+		Use ctrl + mouse click to draw an object<br />
+		<br />
 		<select name="polygon" id="polygonselect" onchange='pm.numsides = this.value; pm.drawPolygon()' class="s">
 			<option value="2" class="vs">Line</option>
 			<option value="3" class="vs">Triangle</option>
@@ -233,41 +269,38 @@
 			<option value="11" class="vs">Hendecagon</option>
 			<option value="12" class="vs">Dodecagon</option>
 			<option value="25" class="vs">Circle</option>
-		</select></p>
+		</select>
+		</p>
 		</form>
 		</td>
 	</tr>
-
-	<tr><td>Centre: </td><td><span id='centre'></span></td></tr>
+	<tr><td>Centre: </td	><td><span id='centre'></span></td></tr>
 	<tr><td>Vertex: </td><td><span id='outer'></span></td></tr>
 	<tr><td>Radius: </td><td><span id='rad'></span></td></tr>
 	<tr><td>Bearing: </td><td><span id='bear'></span></td></tr>
 	<tr><td>perimeter: </td><td><span id='per'></span></td></tr>
 	<tr><td>Area: </td><td><span id='are'></span></td></tr>
+	<tr><td colspan="2"><hr /></td></tr>
 
 	<tr>
-		<td>
-			<form id="interpoleButton" action='javascript:void(0);'>
-				<input type="submit" name="Interpoleer" value="Interpoleer" onClick="javascript:CallMatLabSoap('http://dtvirt13/ZMMatLab/Interpolate.asmx', 'InterpolateToLine');">
-			</form>
-		</td>
+		<td colspan="2">
+		<h3>Actions</h3>
+		<p>
+ 			<button style="width:120;height:25" name="Interpoleer" value="Interpoleer" onClick="javascript:CallMatLabSoap('http://dtvirt13/ZMMatLab/Interpolate.asmx', 'InterpolateToLine');">Interpolate</button>
+ 		</p>
+ 		<p>
+			<button style="width:120;height:25" name="Plot timeseries" value="Plot timeseries" onClick="javascript:CallMatLabSoap('http://dtvirt13/ZMMatLab/PlotTimeSeries.asmx', 'PlotTimeSeries');">Plot timeseries</button>
+  		</p>
+ 		</td>
 	</tr>
 </table>
-<hr/>
-  Drag pushpins to size, locate and rotate,<br><br>
-  Crtl + mouse, moves the polygon to a new location.
 </div>
-
-<div id='map3d_container' style='border: 1px solid silver; height: 550px; margin-left:250px;'>
+<div id='map3d_container' style='border: 1px solid silver; height: 650px; margin-left:350px;'>
 	<div id='map3d' style='height: 100%;'></div>
 </div>
-
-<div id='interpolate_container' style='border: 1px solid silver; height: 350px; margin-left:250px;'>
-	<div id='interpolate' style='height: 100%;'>
-		<center><img id="inter_image" src="no_image.gif"></center>
-	</div>
-</div>
-
+<hr/>
+    This tool is provided by: <br />
+    <a href="http://openearth.eu" target="_blank"><img src="https://public.deltares.nl/download/attachments/16876019/OET?version=1" align="left" width="100"/></a>
 </body>
 
 </html>
