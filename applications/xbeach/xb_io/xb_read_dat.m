@@ -89,7 +89,7 @@ for i = 1:length(names)
     varname = names(i).name(1:length(names(i).name)-4);
     
     % Skip, if not requested
-    if ~isempty([varargin{:}]) && all(cellfun('isempty', regexpi(varname,varargin{:},'start'))); continue; end;
+    if ~any(xb_filter(varname, varargin{:})); continue; end;
     
     % Open file
     filename = [varname '.dat'];

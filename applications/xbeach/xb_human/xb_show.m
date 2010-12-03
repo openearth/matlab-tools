@@ -107,7 +107,7 @@ if ~isempty(vars)
     format = '%-15s %-10s %-10s %-10s %-10s %-30s\n';
     fprintf(format, 'variable', 'size', 'bytes', 'class', 'units', 'value');
     for i = 1:length(xbSettings.data)
-        if all(cellfun('isempty', regexpi(xbSettings.data(i).name,vars,'start'))); continue; end;
+        if ~any(xb_filter(xbSettings.data(i).name, vars)); continue; end;
 
         var = xb_get(xbSettings, xbSettings.data(i).name);
         info = whos('var');
