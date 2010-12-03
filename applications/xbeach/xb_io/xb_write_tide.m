@@ -1,4 +1,4 @@
-function filename = xb_write_tide(xbSettings, varargin)
+function filename = xb_write_tide(xb, varargin)
 %XB_WRITE_TIDE  Writes tide definition file for XBeach input
 %
 %   Writes a tide definition file containing a nx3 matrix of which the
@@ -7,17 +7,17 @@ function filename = xb_write_tide(xbSettings, varargin)
 %   of the model. Returns the filename of the tide file.
 %
 %   Syntax:
-%   filename = xb_write_tide(xbSettings)
+%   filename = xb_write_tide(xb)
 %
 %   Input:
-%   xbSettings  = XBeach structure array
+%   xb          = XBeach structure array
 %   varargin    = filename: filename of tide definition file
 %
 %   Output:
 %   filename    = filename to be referred in parameter file
 %
 %   Example
-%   filename = xb_read_tide(xbSettings)
+%   filename = xb_read_tide(xb)
 %
 %   See also xb_read_params, xb_read_tide
 
@@ -64,7 +64,7 @@ function filename = xb_write_tide(xbSettings, varargin)
 
 %% read options
 
-if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
+if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'filename', 'tide.txt' ...
@@ -77,8 +77,8 @@ OPT = setproperty(OPT, varargin{:});
 filename = OPT.filename;
 
 try
-    time = xb_get(xbSettings, 'time');
-    tide = xb_get(xbSettings, 'tide');
+    time = xb_get(xb, 'time');
+    tide = xb_get(xb, 'tide');
     
     A = [time tide];
     

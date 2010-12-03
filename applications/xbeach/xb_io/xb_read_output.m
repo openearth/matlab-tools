@@ -3,29 +3,26 @@ function variables = xb_read_output(fname, varargin)
 %
 %   Reads output files from XBeach. The actual work is done by either the
 %   xb_read_dat or xb_read_netcdf function. This function only determines
-%   which one to use. Specific variables can be requested in the varargin.
+%   which one to use. Specific variables can be requested in the varargin
+%   by means of an exact match, dos-like filtering or regular expressions
+%   (see xb_filter)
 %
 %   Syntax:
 %   varargout = xb_read_output(fname, varargin)
 %
 %   Input:
-%   fname       = path to the directory containing the dat files or the
-%                 netcdf file to be read
-%   varargin    = variables, timestepindex
+%   fname       = path to the directory containing the dat files, a dat
+%                 file or the netcdf file to be read
+%   varargin    = variable filters
 %
 %   Output:
 %   varargout = XBeach structure array
 %
 %   Example
-%   variables = xb_read_output('xboutput.nc')
-%   assert(ismember({variables.name},  'xw'))
-%   variables = xb_read_output('outputdir')
-%   assert(ismember({variables.name},  'xw'})
-%   variables = xb_read_output('outputdir', variables, {'yw','zs'},
-%   timestepindex, 100}
-%   assert(~ismember({variables.name},  'xw'})
-%   
-%   TODO implement: strides={{':',':'},{1:1:3, 10:1:20, ':'}}, strides 
+%   xb = xb_read_output('path_to_model/')
+%   xb = xb_read_output('path_to_model/H.dat')
+%   xb = xb_read_output('path_to_model/', 'H', 'u*', '/_mean$')
+%   xb = xb_read_output('xboutput.nc')
 %
 %   See also xb_read_input, xb_write_input, xb_read_dat, xb_read_netcdf
 

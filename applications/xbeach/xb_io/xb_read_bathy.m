@@ -1,10 +1,10 @@
-function xbSettings = xb_read_bathy(varargin)
+function xb = xb_read_bathy(varargin)
 %XB_READ_BATHY  Read xbeach bathymetry files
 %
 %   Routine to read xbeach bathymetry files.
 %
 %   Syntax:
-%   xbSettings = xb_read_bathy('xfile', <filename>, yfile, <filename>, depfile, <filename>, nefile, <filename>)
+%   xb = xb_read_bathy('xfile', <filename>, yfile, <filename>, depfile, <filename>, nefile, <filename>)
 %
 %   Input:
 %   varargin    = xfile:    file name of x-coordinates file (cross-shore)
@@ -13,10 +13,10 @@ function xbSettings = xb_read_bathy(varargin)
 %                 ne_layer: file name of non erodible layer file
 %
 %   Output:
-%   xbSettings  = XBeach structure array
+%   xb          = XBeach structure array
 %
 %   Example
-%   xbSettings = xb_read_bathy('xfile', xfile, 'yfile', yfile)
+%   xb = xb_read_bathy('xfile', xfile, 'yfile', yfile)
 %
 %   See also xb_write_bathy, xb_read_input
 
@@ -65,7 +65,7 @@ function xbSettings = xb_read_bathy(varargin)
 
 %% create xbeach struct
 
-xbSettings = xb_empty();
+xb = xb_empty();
 
 % odd elements should be variable names
 vars = varargin(1:2:end);
@@ -74,10 +74,10 @@ files = varargin(2:2:end);
 
 for ivar = 1:length(vars)
     if exist(files{ivar}, 'file')
-        xbSettings = xb_set(xbSettings, vars{ivar}, []);
+        xb = xb_set(xb, vars{ivar}, []);
         try
             A = load(files{ivar});
-            xbSettings = xb_set(xbSettings, '-units', vars{ivar}, {A 'm'});
+            xb = xb_set(xb, '-units', vars{ivar}, {A 'm'});
         catch
             error(['Bathymetry definition file incorrectly formatted [' files{ivar} ']']);
         end
@@ -87,4 +87,4 @@ for ivar = 1:length(vars)
 end
 
 % set meta data
-xbSettings = xb_meta(xbSettings, mfilename, 'bathymetry', files);
+xb = xb_meta(xb, mfilename, 'bathymetry', files);

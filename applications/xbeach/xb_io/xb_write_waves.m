@@ -21,10 +21,10 @@ function filename = xb_write_waves(varargin)
 %   values are not the same.
 %
 %   Syntax:
-%   filename = xb_write_waves(xbSettings, varargin)
+%   filename = xb_write_waves(xb, varargin)
 %
 %   Input:
-%   xbSettings  = XBeach structure array that overwrites the
+%   xb          = XBeach structure array that overwrites the
 %                 default varargin options (optional)
 %   varargin    = type:             type of wave file (jonswap/vardens)
 %                 Hm0:              significant wave height of jonswap
@@ -57,8 +57,8 @@ function filename = xb_write_waves(varargin)
 %
 %   Example
 %   filename = xb_write_waves()
-%   filename = xb_write_waves(xbSettings)
-%   filename = xb_write_waves(xbSettings,'type','vardens')
+%   filename = xb_write_waves(xb)
+%   filename = xb_write_waves(xb,'type','vardens')
 %   filename = xb_write_waves('type','vardens','freqs',freqs,'dirs',dirs,'vardens',vardens)
 %   filename = xb_write_waves('Hm0',[2.5:1:5.5 4.5:-1:2.5],'Tp',[12:1:15 14:-1:12],'omit_filelist',true)
 %
@@ -108,10 +108,10 @@ function filename = xb_write_waves(varargin)
 %% read options
 
 if ~isempty(varargin) && isstruct(varargin{1})
-    xbSettings = varargin{1};
+    xb = varargin{1};
     varargin = varargin(2:end);
     
-    if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
+    if ~xb_check(xb); error('Invalid XBeach structure'); end;
 end
 
 OPT = struct( ...
@@ -137,8 +137,8 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
-if exist('xbSettings','var')
-    OPT = mergestructs('overwrite', OPT, struct_flip(xbSettings.data, 'name', 'value'));
+if exist('xb','var')
+    OPT = mergestructs('overwrite', OPT, struct_flip(xb.data, 'name', 'value'));
 end
 
 if strcmpi(OPT.type, 'jonswap_mtx')

@@ -1,18 +1,18 @@
-function xbSettings = xb_read_params(filename, varargin)
+function xb = xb_read_params(filename, varargin)
 %XB_READ_PARAMS  read XBeach params.txt file
 %
 %   Routine to read the xbeach settings from the params.txt file. The
 %   settings are stored in a XBeach structure.
 %
 %   Syntax:
-%   xbSettings = xb_read_params(filename)
+%   xb = xb_read_params(filename)
 %
 %   Input:
 %   filename   = params.txt file name
 %   varargin   = none
 %
 %   Output:
-%   xbSettings = XBeach structure array
+%   xb         = XBeach structure array
 %
 %   Example
 %   xb_read_params
@@ -109,13 +109,13 @@ end
 values = values(idx);
 
 % convert parameter cells to xbeach setting structure
-xbSettings = xb_empty();
+xb = xb_empty();
 
 for i = 1:length(names)
     if ~ismember(names{i}(1), {'%' '#' '$'})
-        xbSettings = xb_set(xbSettings, names{i}, values{i});
+        xb = xb_set(xb, names{i}, values{i});
     end
 end
 
 % set meta data
-xbSettings = xb_meta(xbSettings, mfilename, 'params', filename);
+xb = xb_meta(xb, mfilename, 'params', filename);

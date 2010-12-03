@@ -1,4 +1,4 @@
-function xbSettings = xb_read_waves(filename, varargin)
+function xb = xb_read_waves(filename, varargin)
 %XB_READ_WAVES  Reads wave definition files for XBeach input
 %
 %   Determines the type of wave definition file and reads it into a XBeach
@@ -7,17 +7,17 @@ function xbSettings = xb_read_waves(filename, varargin)
 %   XBeach structure.
 %
 %   Syntax:
-%   xbSettings  = xb_read_waves(filename, varargin)
+%   xb  = xb_read_waves(filename, varargin)
 %
 %   Input:
 %   filename    = filename of wave definition file
 %   varargin    = none
 %
 %   Output:
-%   xbSettings  = XBeach structure array
+%   xb          = XBeach structure array
 %
 %   Example
-%   xbSettings  = xb_read_waves(filename)
+%   xb  = xb_read_waves(filename)
 %
 %   See also xb_read_params, xb_write_waves
 
@@ -75,7 +75,7 @@ if ~exist(filename, 'file')
     error(['File does not exist [' filename ']'])
 end
 
-xbSettings = xb_empty();
+xb = xb_empty();
 
 filetype = xb_get_wavefiletype(filename);
 
@@ -95,16 +95,16 @@ switch filetype
         [names values] = read_unknown(filename);
 end
 
-xbSettings = xb_set(xbSettings, 'type', filetype);
+xb = xb_set(xb, 'type', filetype);
 
 for i = 1:length(names)
-    xbSettings = xb_set(xbSettings, names{i}, values{i});
+    xb = xb_set(xb, names{i}, values{i});
 end
 
-xbSettings = xb_consolidate(xbSettings);
+xb = xb_consolidate(xb);
 
 % set meta data
-xbSettings = xb_meta(xbSettings, mfilename, 'waves', filenames);
+xb = xb_meta(xb, mfilename, 'waves', filenames);
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -196,7 +196,6 @@ end
 function [names values] = read_jonswap_mtx(filename)
 
 tlength = 1;
-xbSettings = xb_empty();
 
 names = {'Hm0' 'Tp' 'dir' 'gammajsp' 's' 'duration' 'timestep'};
 values = {};

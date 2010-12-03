@@ -1,4 +1,4 @@
-function xbSettings = xb_read_tide(filename, varargin)
+function xb = xb_read_tide(filename, varargin)
 %XB_READ_TIDE  Reads tide definition file for XBeach input
 %
 %   Reads a tide definition file containing a nx3 matrix of which the first
@@ -7,17 +7,17 @@ function xbSettings = xb_read_tide(filename, varargin)
 %   the model.
 %
 %   Syntax:
-%   xbSettings  = xb_read_tide(filename)
+%   xb  = xb_read_tide(filename)
 %
 %   Input:
 %   filename    = filename of tide definition file
 %   varargin    = none
 %
 %   Output:
-%   xbSettings  = XBeach structure array
+%   xb          = XBeach structure array
 %
 %   Example
-%   xbSettings  = xb_read_tide(filename)
+%   xb  = xb_read_tide(filename)
 %
 %   See also xb_read_params, xb_write_tide
 
@@ -75,15 +75,15 @@ if ~exist(filename, 'file')
     error(['File does not exist [' filename ']'])
 end
 
-xbSettings = xb_empty();
-xbSettings = xb_set(xbSettings, 'time', [], 'tide', []);
+xb = xb_empty();
+xb = xb_set(xb, 'time', [], 'tide', []);
 
 try
     A = load(filename);
-    xbSettings = xb_set(xbSettings, '-units', 'time', {A(:,1) 's'}, 'tide', {A(:,2:end) 'm'});
+    xb = xb_set(xb, '-units', 'time', {A(:,1) 's'}, 'tide', {A(:,2:end) 'm'});
 catch
     error(['Tide definition file incorrectly formatted [' filename ']']);
 end
 
 % set meta data
-xbSettings = xb_meta(xbSettings, mfilename, 'tide', filename);
+xb = xb_meta(xb, mfilename, 'tide', filename);
