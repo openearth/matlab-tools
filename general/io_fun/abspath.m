@@ -66,29 +66,34 @@ function fpath = abspath(fpath)
 % make sure fileseperators are right
 fpath = fullfile(fpath);
 
+
 % check if path is relative
-if (ispc() && fpath(2) ~= ':') || (isunix() && fpath(1) ~= filesep)
+if isempty(fpath) ...
+        || (ispc() && fpath(2) ~= ':') ...
+        || (isunix() && ~any(strcmp(fpath(1), {filesep '~'})))
     p = regexp(fullfile(pwd, fpath), filesep, 'split');
 else
     p = regexp(fpath, filesep, 'split');
 end
-    
+
+% remove '.' elements
+p = p(~strcmp(p, '.'));
+
 % replace relative references
 i = 1;
 while i <= length(p)
-    switch p{i}
-        case '.'
-            p(i) = [];
-            i = i-1;
-        case '..'
-            p(i-1:i) = [];
-            i = i-2;
+    if strcmp(p{i}, '..')
+        p(i-1:i) = [];
+        i = i-2;
     end
     i = i+1;
 end
 
 % glue path together
-fpath = sprintf(['\' filesep '%s'], p{:});
+fpath = fullfile(p{:});
 
-% help windows users
-if ispc(); fpath = fpath(2:end); end;
+% help unix users
+if isunix && ...
+        isempty(fpath) || ~strcmp(fpath(1), '~')
+    fpath = [filesep fpath];
+end
