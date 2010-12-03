@@ -1,21 +1,31 @@
 function matches = xb_filter(vars, filters)
-%XB_FILTER  One line description goes here.
+%XB_FILTER  Find matches between strings and different kind of filters
 %
-%   More detailed description goes here.
+%   Find matches between strings and different kind of filters. A string or
+%   cell array of strings is compared to a filterstring or cell array of
+%   filterstrings. The result is a logical array which indicates for each
+%   provided string if a match is found with one of the provided
+%   filterstrings. A filter string can be a regular string which needs an
+%   exact match, a dos-like filter using asterix (which is internally
+%   translated to a regexp) or a regexp. Regexp filters should start with
+%   an / and may end with the same character.
 %
 %   Syntax:
-%   varargout = xb_filter(varargin)
+%   matches = xb_filter(vars, filters)
 %
 %   Input:
-%   varargin  =
+%   vars    = string or cell array with strings
+%   filters = filterstring or cell array with filterstrings
 %
 %   Output:
-%   varargout =
+%   matches = logical array of the size of vars indicating for each for if
+%             a match is found
 %
 %   Example
-%   xb_filter
+%   matches = xb_filter(vars, filters)
+%   if ~any(xb_filter(vars, filters)); continue; end;
 %
-%   See also 
+%   See also xb_show, xb_read_output
 
 %% Copyright notice
 %   --------------------------------------------------------------------

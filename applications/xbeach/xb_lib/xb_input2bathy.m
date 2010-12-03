@@ -1,21 +1,26 @@
 function xb = xb_input2bathy(xb, varargin)
-%XB_INPUT2BATHY  One line description goes here.
+%XB_INPUT2BATHY  Converts XBeach input structure to XBeach bathymetry structure
 %
-%   More detailed description goes here.
+%   Converts XBeach input structure to XBeach bathymetry structure. Both
+%   structures are XBeach structures containing fields like xfile, yfile
+%   and depfile. The fields in the bathymetry structure are filled with
+%   bathymetry matrices. The fields in the input structure are filled with
+%   bathymetry structures. If an input structure is given, the result is
+%   empty.
 %
 %   Syntax:
-%   varargout = xb_input2bathy(varargin)
+%   xb = xb_input2bathy(xb)
 %
 %   Input:
-%   varargin  =
+%   xb  = XBeach input structure array
 %
 %   Output:
-%   varargout =
+%   xb  = XBeach bathymetry structure array
 %
 %   Example
-%   xb_input2bathy
+%   xb = xb_input2bathy(xb)
 %
-%   See also 
+%   See also xb_bathy2input, xb_read_bathy, xb_read_input
 
 %% Copyright notice
 %   --------------------------------------------------------------------
