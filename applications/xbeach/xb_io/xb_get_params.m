@@ -8,7 +8,9 @@ function [params params_array] = xb_get_params(fpath)
 %   [params params_array] = xb_get_params(xbdir)
 %
 %   Input:
-%   xbdir           = directory in which XBeach source code can be found
+%   xbdir           = Directory in which XBeach source code can be found.
+%                     If not given, an attempt is made to use a default
+%                     path.
 %
 %   Output:
 %   params          = structure array with listing of every parameter in
@@ -73,6 +75,11 @@ paramfile='params.F90';
 Typename='parameters';
 
 paramsfname=fullfile(fpath, paramfile);
+
+if ~exist('paramsfname', 'dir')
+    error(['File does not exist [' paramsfname ']']);
+end
+    
 fid=fopen(paramsfname);
 
 parread=0;

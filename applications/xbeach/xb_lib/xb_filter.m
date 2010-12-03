@@ -60,24 +60,31 @@ function matches = xb_filter(vars, filters)
 
 %% check input
 
+if ~exist('vars', 'var'); filters = {}; end;
+if ~exist('filters', 'var'); filters = {}; end;
+
 if ~iscell(vars); vars = {vars}; end;
 if ~iscell(filters); filters = {filters}; end;
 
 %% search matches
 
-matches = false(size(vars));
+if isempty(filters)
+    matches = true(size(vars));
+else
+    matches = false(size(vars));
 
-for i = 1:length(filters)
-    if filters{i}(1) == '/'
-        % regexp filter
-        f = regexp(filters{i}, '^/(.*?)/{0,1}$', 'tokens'); f = f{1};
-        matches(~cellfun('isempty', regexpi(vars, f, 'start'))) = true;
-    elseif ismember('*', filters{i})
-        % dos filter
-        f = ['^' strrep(filters{i}, '*', '.*') '$'];
-        matches(~cellfun('isempty', regexpi(vars, f, 'start'))) = true;
-    else
-        % exact match
-        matches(strcmpi(filters{i}, vars)) = true;
+    for i = 1:length(filters)
+        if filters{i}(1) == '/'
+            % regexp filter
+            f = regexp(filters{i}, '^/(.*?)/{0,1}$', 'tokens'); f = f{1};
+            matches(~cellfun('isempty', regexpi(vars, f, 'start'))) = true;
+        elseif ismember('*', filters{i})
+            % dos filter
+            f = ['^' strrep(filters{i}, '*', '.*') '$'];
+            matches(~cellfun('isempty', regexpi(vars, f, 'start'))) = true;
+        else
+            % exact match
+            matches(strcmpi(filters{i}, vars)) = true;
+        end
     end
 end

@@ -2,26 +2,28 @@ function variables = xb_read_netcdf(fname, varargin)
 %XB_READ_NETCDF  Reads NetCDF formatted output files from XBeach
 %
 %   Reads NetCDF formatted output file from XBeach in the form of an
-%   XBeach structure.
+%   XBeach structure. Specific variables can be requested in the varargin
+%   by means of an exact match, dos-like filtering or regular expressions
+%   (see xb_filter)
 %
 %   Syntax:
 %   variables = xb_read_netcdf(fname, varargin)
 %
 %   Input:
 %   fname       = filename of the netcdf file
-%   varargin    = none
+%   varargin    = variable filters
 %
 %   Output:
 %   variables   = XBeach structure array
 %
 %   Example
-%   variables = xb_read_output('outputdir')
-%   assert(ismember({variables.name},  'xw'})
-%   variables = xb_read_output('outputdir', 'variables', {'yw','zs'},
-%   timestepindex, 100}
-%   assert(~ismember({variables.name},  'xw'})
+%   xb = xb_read_netcdf('xboutput.nc')
+%   xb = xb_read_netcdf('xboutput.nc', 'H')
+%   xb = xb_read_netcdf('xboutput.nc', 'H*')
+%   xb = xb_read_netcdf('xboutput.nc', '/_mean$')
+%   xb = xb_read_netcdf('path_to_model/xboutput.nc', 'H', 'u*', '/_min$')
 %
-%   See also xb_read_output, xb_read_dat
+%   See also xb_read_output, xb_read_dat, xb_filter
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -64,7 +66,6 @@ function variables = xb_read_netcdf(fname, varargin)
 % $HeadURL$
 % $Keywords: $
 
-
 %% read netcdf file
 
 if ~exist(fname, 'file')
@@ -75,7 +76,7 @@ variables = xb_empty();
 
 info = nc_info(fname);
 
-% Read all variables
+% read all variables that match filters
 c = 1;
 for i = 1:length({info.Dataset.Name})
     if ~any(xb_filter(info.Dataset(i).Name, varargin{:})); continue; end;

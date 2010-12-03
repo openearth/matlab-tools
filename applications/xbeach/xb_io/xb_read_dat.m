@@ -2,26 +2,31 @@ function variables = xb_read_dat(fname, varargin)
 %XB_READ_DAT  Reads DAT formatted output files from XBeach
 %
 %   Reads DAT formatted output files from XBeach in the form of an XBeach
-%   structure. Specific variables can be requested in the varargin.
+%   structure. Specific variables can be requested in the varargin by means
+%   of an exact match, dos-like filtering or regular expressions (see
+%   xb_filter)
 %
 %   Syntax:
 %   variables = xb_read_dat(fname, varargin)
 %
 %   Input:
 %   fname       = directory name that contains the dat files.
-%   varargin    = variables, timestepindex
+%   varargin    = variable filters
 %
 %   Output:
 %   variables   = XBeach structure array
 %
 %   Example
-%   variables = xb_read_output('outputdir')
-%   assert(ismember({variables.name},  'xw'})
-%   variables = xb_read_output('outputdir', 'variables', {'yw','zs'},
-%   timestepindex, 100}
-%   assert(~ismember({variables.name},  'xw'})
+%   xb = xb_read_dat('.')
+%   xb = xb_read_dat('H.dat')
+%   xb = xb_read_dat('path_to_model/')
+%   xb = xb_read_dat('path_to_model/H.dat')
+%   xb = xb_read_dat('.', 'H')
+%   xb = xb_read_dat('.', 'H*')
+%   xb = xb_read_dat('.', '/_mean$')
+%   xb = xb_read_dat('path_to_model/', 'H', 'u*', '/_min$')
 %
-%   See also xb_read_output, xb_read_netcdf
+%   See also xb_read_output, xb_read_netcdf, xb_filter
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -74,8 +79,6 @@ variables = xb_empty();
 
 options=[' 3Dwave';' 3Dsed ';' 3Dbed ';' 4Dbed '];
 
-XBdims = xb_read_dims(fname);
-
 % get filelist
 if length(fname) > 3 && strcmpi(fname(end-3:end), '.dat')
     names = dir(fname);
@@ -84,6 +87,8 @@ else
     names = dir([fname filesep '*.dat']);
     fdir = fname;
 end
+
+XBdims = xb_read_dims(fdir);
 
 for i = 1:length(names)
     varname = names(i).name(1:length(names(i).name)-4);
@@ -94,7 +99,7 @@ for i = 1:length(names)
     % Open file
     filename = [varname '.dat'];
     fullfilename = fullfile(fdir, filename);
-    fid=fopen(fullfile(fdir, filename),'r');
+    fid=fopen(fullfilename,'r');
     temp=fread(fid,'double');
     fclose(fid);
     
