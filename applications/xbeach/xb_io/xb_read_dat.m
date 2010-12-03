@@ -88,6 +88,8 @@ else
     fdir = fname;
 end
 
+if isempty(fdir); fdir = fullfile('.'); end;
+
 XBdims = xb_read_dims(fdir);
 
 % store dims in xbeach struct
@@ -103,12 +105,8 @@ for i = 1:length(names)
     if ~any(xb_filter(varname, varargin{:})); continue; end;
     if any(strcmpi(varname, {'xy', 'dims'})); continue; end;
     
-    % Open file
     filename = [varname '.dat'];
     fullfilename = fullfile(fdir, filename);
-    fid=fopen(fullfilename,'r');
-    temp=fread(fid,'double');
-    fclose(fid);
     
     % Determine output time series length in dims.dat
     if (length(filename)>9 && strcmp(filename(end-8:end), '_mean.dat'))
@@ -123,7 +121,11 @@ for i = 1:length(names)
         nt=XBdims.nt;
     end
     
-    sz=length(temp)/(XBdims.nx+1)/(XBdims.ny+1)/nt;
+    % Determine dimensions
+    %fid=fopen(fullfilename,'r');
+    %temp=fread(fid,'double');
+    %fclose(fid);
+    sz=names(i).bytes/(XBdims.nx+1)/(XBdims.ny+1)/nt/8;
 
     % In case file does not match dims.dat 
     if sz>max(XBdims.ntheta,XBdims.nd*XBdims.ngd)
