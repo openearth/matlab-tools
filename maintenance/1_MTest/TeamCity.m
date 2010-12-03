@@ -161,29 +161,6 @@ classdef TeamCity < handle
         end
     end
     methods (Static = true, Hidden = true)
-%         function category(category)
-%             %% Give Category name
-%             obj = TeamCity;
-%             currentTest = obj.CurrentTest;
-%             if ~isempty(currentTest)
-%                 currentTest.Category = category;
-%             end
-%         end
-        function name(proposedname)
-            obj = TeamCity;
-            currentTest = obj.CurrentTest;
-            if ~isempty(currentTest)
-                if obj.TeamCityRunning
-                    %% Set test properties
-                    if ~strcmp(currentTest.Name,proposedname)
-                        return;
-                        % TODO give warning
-                    end
-                else
-                    currentTest.Name = proposedname;
-                end
-            end
-        end
         function destroy()
             % DESTROY deletes the stored object and therefore all stored information
             if isappdata(0,'MTestTeamCityObject')

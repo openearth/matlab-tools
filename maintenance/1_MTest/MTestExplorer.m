@@ -977,7 +977,7 @@ classdef MTestExplorer < handle
                     selectionId = varargin{end-1};
                     holdSelection = false;
                 case 'keypress'
-                    if ismember(get(varargin{end-1},'KeyCode'),[17, 16]) % Ctrl, Shift
+                    if isstruct(varargin{end-1}) || ismember(get(varargin{end-1},'KeyCode'),[17, 16]) % Ctrl, Shift
                         return;
                     end
                     if get(varargin{end-1},'keyCode') == 127
