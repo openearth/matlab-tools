@@ -94,6 +94,6 @@ fpath = fullfile(p{:});
 
 % help unix users
 if isunix && ...
-        isempty(fpath) || ~strcmp(fpath(1), '~')
+        (isempty(fpath) || ~strcmp(fpath(1), '~'))
     fpath = [filesep fpath];
 end
