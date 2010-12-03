@@ -1,4 +1,4 @@
-function xbSettings = xb_read_input(filename, varargin)
+function xb = xb_read_input(filename, varargin)
 %XB_READ_INPUT  Read XBeach parameter file and all files referred in it
 %
 %   Reads the XBeach settings from the params.txt file and all files that
@@ -7,7 +7,7 @@ function xbSettings = xb_read_input(filename, varargin)
 %   stored in a similar sub-structure.
 %
 %   Syntax:
-%   xbSettings = xb_read_input(filename)
+%   xb = xb_read_input(filename)
 %
 %   Input:
 %   filename   = params.txt file name
@@ -16,10 +16,10 @@ function xbSettings = xb_read_input(filename, varargin)
 %                                   the result structure
 %
 %   Output:
-%   xbSettings = XBeach structure array
+%   xb         = XBeach structure array
 %
 %   Example
-%   xbSettings = xb_read_input(filename)
+%   xb = xb_read_input(filename)
 %
 %   See also xb_read_params, xb_read_waves
 
@@ -78,7 +78,7 @@ if ~exist(filename, 'file')
     error(['File does not exist [' filename ']'])
 end
 
-xbSettings = xb_read_params(filename);
+xb = xb_read_params(filename);
 
 %% read referred files
 
@@ -86,12 +86,12 @@ if OPT.read_paths
     
     fdir = fileparts(filename);
 
-    for i = 1:length(xbSettings.data)
-        if ischar(xbSettings.data(i).value)
-            fpath = fullfile(fdir, xbSettings.data(i).value);
+    for i = 1:length(xb.data)
+        if ischar(xb.data(i).value)
+            fpath = fullfile(fdir, xb.data(i).value);
 
             if exist(fpath, 'file')
-                switch xbSettings.data(i).name
+                switch xb.data(i).name
                     case {'bcfile'}
                         % read waves
                         value = xb_read_waves(fpath);
@@ -100,7 +100,7 @@ if OPT.read_paths
                         value = xb_read_tide(fpath);
                     case {'xfile' 'yfile' 'depfile' 'ne_layer'}
                         % read bathymetry
-                        value = xb_read_bathy(xbSettings.data(i).name, fpath);
+                        value = xb_read_bathy(xb.data(i).name, fpath);
                     otherwise
                         % assume file to be a grid and try reading it
                         try
@@ -113,11 +113,11 @@ if OPT.read_paths
                         end
                 end
                 
-                xbSettings.data(i).value = value;
+                xb.data(i).value = value;
             end
         end
     end
 end
 
 % set meta data
-xbSettings = xb_meta(xbSettings, mfilename, 'input', filename);
+xb = xb_meta(xb, mfilename, 'input', filename);
