@@ -81,29 +81,39 @@ end
 try
     TeamCity.running(true);
     
-    %% start documenting
     TeamCity.postmessage('progressStart','Create tutorials');
-    tutorials2html(varargin{:},'teamcity');
-    TeamCity.postmessage('progressFinish','Create tutorials');
-    
-    %% zip result
-    TeamCity.postmessage('progressStart','Package tutorials');
-    TeamCity.postmessage('progressMessage','Packaging tutorial html files');
-    delete(fullfile(teamCityDir,'htmldocumentation.zip'));
-    TeamCity.postmessage('progressMessage','Packaging matlab toc files');
-    delete(fullfile(teamCityDir,'matlabtocfiles.zip'));
-    
-    TeamCity.postmessage('progressMessage','Copying tutorials to server');
-    tutorialDir = 'Z:\OpenEarthHtmlTutorials\';
-    if isdir(tutorialDir)
-        rmdir(tutorialDir,'s');
-        mkdir(tutorialDir);
-        copyfile(fullfile(oetroot,'tutorials','*.*'),tutorialDir);
+    try
+        %% start documenting
+        tutorials2html(varargin{:},'teamcity');
+        
+        %% zip result
+        TeamCity.postmessage('progressStart','Package tutorials');
+        TeamCity.postmessage('progressMessage','Packaging tutorial html files');
+        delete(fullfile(teamCityDir,'htmldocumentation.zip'));
+        TeamCity.postmessage('progressMessage','Packaging matlab toc files');
+        delete(fullfile(teamCityDir,'matlabtocfiles.zip'));
+        
+        TeamCity.postmessage('progressMessage','Copying tutorials to server');
+        tutorialDir = 'Z:\OpenEarthHtmlTutorials\';
+        if isdir(tutorialDir)
+            rmdir(tutorialDir,'s');
+            mkdir(tutorialDir);
+            copyfile(fullfile(oetroot,'tutorials','*.*'),tutorialDir);
+        end
+        
+        TeamCity.postmessage('progressMessage','Zipping matlab toc files');
+        zip(fullfile(teamCityDir,'matlabtocfiles'),{fullfile(oetroot,'docs','OpenEarthDocs','*.*')});
+        TeamCity.postmessage('progressFinish','Package tutorials');
+    catch me
+        TeamCity.running(true);
+        TeamCity.postmessage('message', 'text', 'Matlab was unable to publish the tutorials.',...
+            'errorDetails',me.getReport,...
+            'status','ERROR');
+        TeamCity.postmessage('buildStatus',...
+            'status','FAILURE',...
+            'text', 'FAILURE: Matlab was unable to publish the tutorials.');
     end
-    
-    TeamCity.postmessage('progressMessage','Zipping matlab toc files');
-    zip(fullfile(teamCityDir,'matlabtocfiles'),{fullfile(oetroot,'docs','OpenEarthDocs','*.*')});
-    TeamCity.postmessage('progressFinish','Package tutorials');
+    TeamCity.postmessage('progressFinish','Create tutorials');
     
     %% remove targetdir
     TeamCity.postmessage('progressStart','Cleanup tutorials');
@@ -111,21 +121,31 @@ try
     rmdir(fullfile(oetroot,'docs'),'s');
     TeamCity.postmessage('progressFinish','Cleanup tutorials');
     
-    %% Publish documentation
-    TeamCity.postmessage('progressStart','Generate OET documentation');
-    htmlDir = publish_OET_documentation;
-    TeamCity.postmessage('progressFinish','Generate OET documentation');
-    
-    TeamCity.postmessage('progressMessage','Copy documentation to server');
-    docDir = 'Z:\OpenEarthHtmlDocs\';
-    if isdir(docDir)
-        rmdir(docDir,'s');
-        mkdir(docDir);
-        copyfile(htmlDir,docDir);
+    try
+        %% Publish documentation
+        TeamCity.postmessage('progressStart','Generate OET documentation');
+        htmlDir = publish_OET_documentation;
+        TeamCity.postmessage('progressFinish','Generate OET documentation');
+        
+        TeamCity.postmessage('progressMessage','Copy documentation to server');
+        docDir = 'Z:\OpenEarthHtmlDocs\';
+        if isdir(docDir)
+            rmdir(docDir,'s');
+            mkdir(docDir);
+            copyfile(htmlDir,docDir);
+        end
+        rmdir(htmlDir,'s');
+    catch me
+        TeamCity.running(true);
+        TeamCity.postmessage('message', 'text', 'Matlab was unable to publish the documentation.',...
+            'errorDetails',me.getReport,...
+            'status','ERROR');
+        TeamCity.postmessage('buildStatus',...
+            'status','FAILURE',...
+            'text', 'FAILURE: Matlab was unable to publish the documentation.');
     end
-    rmdir(htmlDir,'s');
-    
 catch me
+    TeamCity.running(true);
     TeamCity.postmessage('message', 'text', 'Something went wrong while making documentation.',...
         'errorDetails',me.getReport,...
         'status','ERROR');
