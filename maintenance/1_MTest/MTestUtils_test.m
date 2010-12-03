@@ -49,7 +49,7 @@ function MTestUtils_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('Integration');
+MTestCategory.Unit;
 MTest.name('MTestUtility integration test');
 
 testsetproperty;
@@ -92,7 +92,7 @@ end
 prof2 = profile('info');
 
 profcombined = MTestUtils.mergeprofileinfo(prof1,prof2);
-assert(length(profcombined.FunctionTable) > length(prof1.FunctionTable),...
+assert(length(profcombined.FunctionTable) == length(prof1.FunctionTable),...
     'prof2 added new functions to the functionTable');
 end
 

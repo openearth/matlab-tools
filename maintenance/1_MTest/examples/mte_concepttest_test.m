@@ -2,7 +2,7 @@ function unit = mte_concepttest_test()
 unit = false;
 
 MTest.name('name of the test');
-MTestCategory.Intergration;
+MTestCategory.Integration;
 if TeamCity.running 
     TeamCity.ignore('wip');
     return; 

@@ -156,5 +156,5 @@ assert(strcmp(mt.FunctionHeader,'function mte_fulldefinition_test()'));
 assert(strcmp(mt.H1Line,'test h1line'),'H1 line was not retrieved correctly');
 assert(length(mt.SeeAlso)==1,'There should be one reference in see also');
 assert(strcmp(mt.Author,'geer'),'The author of this test should be "geer"');
-assert(mt.Category == TestCategory.Intergration,'Test category should be of type Integration');
+assert(mt.Category == MTestCategory.Integration,'Test category should be of type Integration');
 end

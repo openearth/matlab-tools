@@ -50,7 +50,7 @@ function mte_fulldefinition_test()
 % $Keywords: $
 
 MTest.name('testname');
-MTestCategory.Intergration;
+MTestCategory.Integration;
 
 %% Run the actual test (partly in a subfunction that can be called for example in a loop.
 tr = subfunction1(1,2);

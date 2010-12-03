@@ -50,7 +50,7 @@ function MTestPublisher_test()
 % $Keywords: $
 
 %% Set Category and TeamCity preferences
-MTest.category('DataAccess');
+MTestCategory.DataAccess;
 if TeamCity.running
     TeamCity.ignore('Because');
     return;
@@ -72,24 +72,6 @@ t.run
 mtp.publishcoverage(t.ProfilerInfo);
 assert(exist(fullfile(mtp.TargetDir,'index.html'),'file')==2,'index should be created');
 assert(isdir(mtp.TargetDir),'TargetDir should be created');
-rmdir(mtp.TargetDir,'s');
-
-%% publish test description and result
-t = MTest(which('mte_testpublish_test'));
-t.MTestPublisher = mtp;
-t.MTestPublisher.Publish = true;
-TeamCity.publish(true);
-t.run;
-
-assert(~isempty(t.PublishedDescriptionFile),...
-    'Description should be published');
-assert(strncmp(fileparts(t.PublishedDescriptionFile),mtp.TargetDir,length(mtp.TargetDir)),...
-    'File should be published in the correct location');
-assert(~isempty(t.PublishedResultFile),...
-    'Result should be published');
-assert(strncmp(fileparts(t.PublishedResultFile),mtp.TargetDir,length(mtp.TargetDir)),...
-    'File should be published in the correct location');
-
 rmdir(mtp.TargetDir,'s');
 
 %% Publish test overview

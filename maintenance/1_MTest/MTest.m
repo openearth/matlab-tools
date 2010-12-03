@@ -1,38 +1,16 @@
-classdef MTest < handle
-    % MTEST - Object to handle tests written in MTest format
+classdef MTest < MFunctionFile & handle
+    %MTESTFILE  One line description goes here.
     %
-    % This objects stores the information written in an mtest format test definition file. The test
-    % files consist of three parts divided by a cell break (%%). The three cells represent:
+    %   More detailed description goes here.
     %
-    %   1.  Description of the testcase (%% $Description)
-    %   2.  The actual test code (%% $Run)
-    %   3.  Publishable code that describes the results (%% $Publish)
-    %
-    % 1. The Description is seen purely as documentation of the test (in other words: what do we test, 
-    % how do we test it and what outcome do we expect).
-    %
-    % 2. The Run section contains code that must be executed in order to test the function (Any
-    % code that was already used in the Description gets executed prior to running this section. 
-    % Preferrably the test code should issue an error when the test fails. This gives the most
-    % information on what went wrong. It is advised to use the assert function:
-    %
-    % assert(1==2, 'One should be equal to two');
-    %
-    % 3. The Publish section includes code that can be used to publish the results of the test. It
-    % is published to html with the Matlab publish function. Any variables created in the first two
-    % sections of a test (description and run) can be used in this section. For more information on 
-    % producing publishable code, see the Matlab documentation on cell formatting:
-    %
-    % docsearch('Formatting M-File Code for Publishing');
-    %
-    % See also MTest.MTest MTestRunner MTestFactory
+    %   See also MTestFile.MTestFile
     
     %% Copyright notice
-    %     Copyright (c) 2008  DELTARES.
-    %
+    %   --------------------------------------------------------------------
+    %   Copyright (C) 2010 Deltares
     %       Pieter van Geer
     %
-    %       Pieter.vanGeer@deltares.nl
+    %       pieter.vangeer@deltares.nl
     %
     %       Rotterdamseweg 185
     %       2629 HD Delft
@@ -53,31 +31,26 @@ classdef MTest < handle
     %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
     %   --------------------------------------------------------------------
     
+    % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+    % OpenEarthTools is an online collaboration to share and manage data and
+    % programming tools in an open source, version controlled environment.
+    % Sign up to recieve regular updates of this function, and to contribute
+    % your own tools.
+    
     %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-    % Created: 15 Jun 2010
-    % Created with Matlab version: 7.10.0.499 (R2010a)
+    % Created: 30 Nov 2010
+    % Created with Matlab version: 7.11.0.584 (R2010b)
     
     % $Id$
     % $Date$
     % $Author$
     % $Revision$
     % $HeadURL$
-    % $Keywords: testing test unittest$
-
+    % $Keywords: $
+    
     %% Properties
     properties
         Name = [];                          % Name of the test
-        
-        FileName = [];                      % Original name of the testfile
-        FilePath = [];                      % Path of the "_test.m" file
-        TimeStamp = [];                     % Timestamp of the last time the definition was saved
-        FunctionHeader = '';                % Header of the test(case) function (first line)
-        FunctionName = '';                  % Name of the test(case) function
-        
-        H1Line   = [];                      % A one line description of the test (h1 line)
-        Description = {};                   % Detailed description of the test that appears in the help block
-        Author   = [];                      % Last author of the test (obtained from svn keywords)
-        SeeAlso  = {};                      % see also references
         
         Ignore = false;                     % If ignore = true, this test is ignored
         IgnoreMessage = '';                 % Optional string to point out why this test(case) was ignored
@@ -98,14 +71,10 @@ classdef MTest < handle
         StackTrace    = [];                 % Stack trace (diary + error message)
         IncludeCoverage = false;
     end
-    properties (Hidden = true)
-        FullString = [];                    % Full string of the contents of the test file
-        IDOetHeaderString = [];             % boolean the size of FullStrin with true for the lines that are part of the oet function header
-    end
     
     %% Methods
     methods
-        function obj = MTest(varargin)
+        function this = MTest(varargin)
             %MTest  Creates an MTest object from a test definition file.
             %
             %   This function reads the contents of an MTest definition file and creates an
@@ -137,7 +106,7 @@ classdef MTest < handle
             end
             
             %% Create shortcut to MtestFactory to create a test
-            obj = MTestFactory.createtest(varargin{:});
+            this = MTestFactory.createtest(varargin{:});
         end
         function run(obj,varargin)
             %RUN  Runs the test and publishes the descriptions and results.
@@ -375,13 +344,24 @@ classdef MTest < handle
             %% Unlock the workspace
             munlock;
         end
-        function edit(obj,varargin)
-            for iobj = 1:length(obj)
-                filename = fullfile(obj(iobj).FilePath,[obj(iobj).FileName '.m']);
+        function edit(this,varargin)
+            %EDIT  opens the test definition file in the editor.
+            %
+            %   More detailed description goes here.
+            %
+            %   Syntax:
+            %   edit(this)
+            %
+            %   Input:
+            %   this  = Instance of an MTest object
+            %
+            %   See also MTest MTest.run edit opentoline 
+            for iobj = 1:length(this)
+                filename = fullfile(this(iobj).FilePath,[this(iobj).FileName '.m']);
                 if ~exist(filename,'file')
-                    filename = which([obj(iobj).FileName '.m']);
+                    filename = which([this(iobj).FileName '.m']);
                     if ~exist(filename,'file')
-                        warning('MTest:NoSuchFile',['Could not find file: ' fullfile(obj(iobj).FilePath,[obj(iobj).FileName '.m'])]);
+                        warning('MTest:NoSuchFile',['Could not find file: ' fullfile(this(iobj).FilePath,[this(iobj).FileName '.m'])]);
                         continue;
                     end
                 end
@@ -395,7 +375,7 @@ classdef MTest < handle
             end
         end
     end
-   
+    
     %% Static methods
     methods (Static = true)
         function name(proposedname)
@@ -409,15 +389,6 @@ classdef MTest < handle
                     end
                 else
                     currentTest.Name = proposedname;
-                end
-            end
-        end
-        function category(newcategory)
-            %% Give Category name
-            if TeamCity.running
-                currentTest = TeamCity.currenttest;
-                if ~isempty(currentTest)
-                    currentTest.Category = newcategory;
                 end
             end
         end
