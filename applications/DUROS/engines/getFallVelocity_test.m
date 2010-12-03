@@ -74,25 +74,14 @@ D50range = (50e-6:10e-6:450e-6)';
 % calculate unit test:
 w = getFallVelocity('D50',200e-6,'a',0.476,'b',2.18,'c',3.226);
 assert(roundoff(w,4)==0.0211);
+disp(num2str(w,'%0.4f'));
 
+if TeamCity.running
+    return;
+end
 % First calculate with default settings
 wdef = getFallVelocity(D50range);
 w1 = getFallVelocity('D50',D50range,'a',0.476,'b',2.18,'c',3.19);
-
-%% $PublishResult (EvalueateCode = true & IncludeCode = false)
-% The testresult consists of two parts:
-%
-% # Outcome of the unit test with default values
-% # Results of getFallVelocity with various values for the D50, a, b and c
-%
-
-%% Rersult unit test
-% The result of the unit test was:
-
-disp(num2str(w,'%0.4f'));
-
-%% Regression test
-% The following figure shows the outcome of getFallVelocity with various input parameters:
 
 figure('Color','w');
 hold on

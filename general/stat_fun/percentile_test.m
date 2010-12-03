@@ -46,7 +46,7 @@ function testresult = percentile_test()
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
+MTestCategory.Unit;
 
 x    = (0.5:99.5)';
 pct  = (0:0.1:100)';

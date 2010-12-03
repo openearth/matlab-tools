@@ -1,4 +1,4 @@
-function testResult = poly_simplify_test
+function poly_simplify_test
 % POLY_SIMPLIFY_TEST  One line description goes here
 %
 % More detailed description of the test goes here.
@@ -49,7 +49,7 @@ function testResult = poly_simplify_test
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
+MTestCategory.Integration;
 
 %% Original code of poly_simplify_test.m
 x1 = [0.2518    0.2904    0.6171    0.2653    0.8244    0.9827    0.7302    0.3439    0.5841    0.1078];
@@ -70,7 +70,6 @@ max_error_polygon.x = [x-tolerance*sin(theta); flipud(x)+tolerance*sin(flipud(th
 max_error_polygon.y = [y+tolerance*cos(theta); flipud(y)-tolerance*cos(flipud(theta)); y(1)+tolerance*cos(theta(1));];
 
 method = {'slow';'fast'};
-testResult = false(size(method));
 for ii=1:length(method)
     [x1 y1] = poly_simplify(x,y,tolerance,'method',method{ii});
     
@@ -88,7 +87,5 @@ for ii=1:length(method)
     %     max_error_polygon.x,max_error_polygon.y)
     % daspect([1 1 1]);
 
-    testResult(ii) = all(in);
+    assert(all(in));
 end
-
-testResult = all(testResult);

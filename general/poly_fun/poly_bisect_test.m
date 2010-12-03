@@ -1,4 +1,4 @@
-function testResult = poly_bisect_test
+function poly_bisect_test
 % POLY_BISECT_TEST  One line description goes here
 %  
 % More detailed description of the test goes here.
@@ -46,18 +46,12 @@ function testResult = poly_bisect_test
 % $HeadURL$
 % $Keywords: $
 
-MTest.category('UnCategorized');
+MTestCategory.Unit;
 
 x           = [0 1 2 3 4   5 6 7 nan 9];
 y           = [0 1 1 0 1 nan 1 1   0 0];
 theta       = poly_bisect(x,y);
 theta_check = [1/4 1/8 -1/8 0 1/4 nan 0 0 nan nan]*pi;
 
-testResult = false;
-if isequal(isnan(theta),isnan(theta_check));
-    if max(theta(~isnan(theta))-theta_check(~isnan(theta_check)))<eps(10)
-        testResult = true;
-    end
-end
-
-
+assert(isequal(isnan(theta),isnan(theta_check)) || ...
+    max(theta(~isnan(theta))-theta_check(~isnan(theta_check)))<eps(10));

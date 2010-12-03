@@ -87,13 +87,17 @@ try
         TeamCity.postmessage('progressMessage','Generate documentation html files');
         htmlDir = publish_OET_documentation;
 
-        TeamCity.postmessage('progressMessage','Copy documentation to server');
-        docDir = 'Z:\OpenEarthHtmlDocs\';
+        TeamCity.postmessage('progressMessage','remove copy of documentation to server');
+        docDir = 'Z:\OpenEarthHtmlDocs\3frames';
         if isdir(docDir)
             rmdir(docDir,'s');
-            mkdir(docDir);
-            copyfile(htmlDir,docDir);
         end
+        
+        TeamCity.postmessage('progressMessage','Copy documentation to server');
+        mkdir(docDir);
+        copyfile(htmlDir,docDir);
+        
+        TeamCity.postmessage('progressMessage','Remove local copy of documentation');
         rmdir(htmlDir,'s');
     catch me
         TeamCity.running(true);

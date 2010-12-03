@@ -190,6 +190,10 @@ for idr = 1:length(alldirs)
         else
             if all(id)
                 %% publish file, it is not published yet
+                %% show progress
+                if ~quiet
+                    disp([ 'Started publishing ' title{idr}{itutorials} ' (' htmlref{idr}{itutorials} ')']);
+                end
                 
                 %% get options
                 publishopts = publishconfigurations(tutorialname,publishtemplate,outputhtmldir,quiet);
