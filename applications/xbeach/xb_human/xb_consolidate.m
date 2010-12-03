@@ -1,4 +1,4 @@
-function xbSettings = xb_consolidate(xbSettings, varargin)
+function xb = xb_consolidate(xb, varargin)
 %XB_CONSOLIDATE  Consolidates parameters in XBeach structure in the last dimension of its value
 %
 %   Checks whether values in a XBeach structure are constant along the last
@@ -7,17 +7,17 @@ function xbSettings = xb_consolidate(xbSettings, varargin)
 %   consolidated. Returns the consolidated XBeach structure.
 %
 %   Syntax:
-%   xbSettings = xb_consolidate(xbSettings, varargin)
+%   xb = xb_consolidate(xb, varargin)
 %
 %   Input:
-%   xbSettings  = XBeach structure array
+%   xb          = XBeach structure array
 %   varargin    = none
 %
 %   Output:
-%   xbSettings  = XBeach structure array
+%   xb  = XBeach structure array
 %
 %   Example
-%   xbSettings = xb_consolidate(xbSettings)
+%   xb = xb_consolidate(xb)
 %
 %   See also xb_empty, xb_show
 
@@ -64,7 +64,7 @@ function xbSettings = xb_consolidate(xbSettings, varargin)
 
 %% read options
 
-if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
+if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
 );
@@ -73,8 +73,8 @@ OPT = setproperty(OPT, varargin{:});
 
 %% consolidate structure
 
-for i = 1:length(xbSettings.data)
-    A = xbSettings.data(i).value;
+for i = 1:length(xb.data)
+    A = xb.data(i).value;
     S = ones(size(size(A))); S(end) = size(A,ndims(A));
     
     if iscell(A); continue; end;
@@ -83,7 +83,7 @@ for i = 1:length(xbSettings.data)
     if sum(sum(sum(abs(A-repmat(sum(A,ndims(A))/S(end),S))))) < 1e-10
         if sum(size(A)>1) > 0
             idx = num2cell(repmat(':', 1, sum(size(A)>1))); idx{end} = 1;
-            xbSettings.data(i).value = A(idx{:});
+            xb.data(i).value = A(idx{:});
         end
     end
 end

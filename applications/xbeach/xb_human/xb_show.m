@@ -1,27 +1,32 @@
-function xb_show(xbSettings, varargin)
+function xb_show(xb, varargin)
 %XB_SHOW  Shows contents of a XBeach structure
 %
 %   WHOS-like display of the contents of a XBeach structure
 %
 %   Syntax:
-%   xb_show(xbSettings)
+%   xb_show(xb)
 %
 %   Input:
-%   xbSettings  = XBeach structure array
+%   xb          = XBeach structure array
 %   varargin    = Variables to be included, by default all variables are
-%                 included. Regular expressions can be used in the variable
-%                 names to filter multiple variables at once. If a nested
-%                 XBeach structure array is specifically requested (not by
-%                 regular expression), an extra xb_show is fired showing 
-%                 the contents of the nested struct.
+%                 included. Filters can be used select multiple variables
+%                 at once (exact match, dos-like, regexp, see xb_filter).
+%                 If a nested XBeach structure array is specifically
+%                 requested (exact match), an extra xb_show is fired
+%                 showing the contents of the nested struct.
 %
 %   Output:
 %   none
 %
 %   Example
-%   xb_show(xbSettings)
+%   xb_show(xb)
+%   xb_show(xb, 'zb', 'zs')
+%   xb_show(xb, 'z*')
+%   xb_show(xb, '/^z')
+%   xb_show(xb, 'bcfile')
+%   xb_show(xb, 'bcfile', 'zs')
 %
-%   See also xb_set, xb_get, xb_empty
+%   See also xb_set, xb_get, xb_empty, xb_filter
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -66,14 +71,14 @@ function xb_show(xbSettings, varargin)
 
 %% show structure contents
 
-if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
+if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 % determine variables to be showed, show xb_show for specifically requested
 % XBeach sub-structures
 if nargin > 1
     vars = {}; c = 1;
     for i = 1:length(varargin)
-        val = xb_get(xbSettings, varargin{i});
+        val = xb_get(xb, varargin{i});
         if xb_check(val)
             xb_show(val);
         else
@@ -82,13 +87,13 @@ if nargin > 1
         end
     end
 else
-    vars = {xbSettings.data.name};
+    vars = {xb.data.name};
 end
 
 if ~isempty(vars)
     
     % identify data
-    f = fieldnames(xbSettings);
+    f = fieldnames(xb);
     idx = strcmpi('data',f);
 
     % determine max fieldname length
@@ -97,7 +102,7 @@ if ~isempty(vars)
     % show meta data
     for i = find(~idx)'
         nr_blanks = max_length - length(f{i});
-        value = regexprep(xbSettings.(f{i}), '\n', ['\n' blanks(max_length+3)]);
+        value = regexprep(xb.(f{i}), '\n', ['\n' blanks(max_length+3)]);
         fprintf('%s%s : %s\n', f{i}, blanks(nr_blanks), value);
     end
 
@@ -106,10 +111,10 @@ if ~isempty(vars)
     % show data
     format = '%-15s %-10s %-10s %-10s %-10s %-30s\n';
     fprintf(format, 'variable', 'size', 'bytes', 'class', 'units', 'value');
-    for i = 1:length(xbSettings.data)
-        if ~any(xb_filter(xbSettings.data(i).name, vars)); continue; end;
+    for i = 1:length(xb.data)
+        if ~any(xb_filter(xb.data(i).name, vars)); continue; end;
 
-        var = xb_get(xbSettings, xbSettings.data(i).name);
+        var = xb_get(xb, xb.data(i).name);
         info = whos('var');
 
         % determine display of value
@@ -137,11 +142,11 @@ if ~isempty(vars)
 
         % determine units
         units = '';
-        if isfield(xbSettings.data(i), 'units')
-            units = xbSettings.data(i).units;
+        if isfield(xb.data(i), 'units')
+            units = xb.data(i).units;
         end
 
-        fprintf(format, xbSettings.data(i).name, ...
+        fprintf(format, xb.data(i).name, ...
             regexprep(num2str(info.size),'\s+','x'), ...
             num2str(info.bytes), ...
             info.class, ...

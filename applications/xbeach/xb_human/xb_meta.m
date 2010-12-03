@@ -1,23 +1,23 @@
-function xbSettings = xb_meta(xbSettings, func, type, file)
+function xb = xb_meta(xb, func, type, file)
 %XB_META  Sets meta data of XBeach structure
 %
 %   Sets meta data of XBeach structure.
 %
 %   Syntax:
-%   xbSettings = xb_meta(xbSettings, func, type)
+%   xb = xb_meta(xb, func, type)
 %
 %   Input:
-%   xbSettings  = XBeach structure array
+%   xb          = XBeach structure array
 %   func        = Name of function that sets the meta data (mfilename)
 %   type        = Type of data in structure (params, waves, etc)
 %   file        = File (string) or files (cell) containing filenames of 
 %                 original data files
 %
 %   Output:
-%   xbSettings  = Updated XBeach structure array
+%   xb  = Updated XBeach structure array
 %
 %   Example
-%   xbSettings = xb_meta(xbSettings, mfilename, 'waves', files)
+%   xb = xb_meta(xb, mfilename, 'waves', files)
 %
 %   See also xb_set, xb_show
 
@@ -64,16 +64,16 @@ function xbSettings = xb_meta(xbSettings, func, type, file)
 
 %% set meta data
 
-if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
+if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
-xbSettings.date = datestr(now);
+xb.date = datestr(now);
 
 if exist('func', 'var')
-    xbSettings.function = func;
+    xb.function = func;
 end
 
 if exist('type', 'var')
-    xbSettings.type = type;
+    xb.type = type;
 end
 
 if exist('file', 'var')
@@ -87,5 +87,5 @@ if exist('file', 'var')
         file = abspath(file);
     end
     
-    xbSettings.file = file;
+    xb.file = file;
 end

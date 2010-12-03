@@ -1,21 +1,24 @@
 function xb = xb_rename(xb, varargin)
-%XB_RENAME  One line description goes here.
+%XB_RENAME  Renames one or more fields in XBeach structure
 %
-%   More detailed description goes here.
+%   Renames one or more fields in XBeach structure and returns the
+%   resulting structure.
 %
 %   Syntax:
-%   varargout = xb_rename(varargin)
+%   xb = xb_rename(xb, varargin)
 %
 %   Input:
-%   varargin  =
+%   xb        = XBeach structure array
+%   varargin  = List of pairs of old and new fieldnames (e.g.
+%               'old1','new1','old2','new2',...)
 %
 %   Output:
-%   varargout =
+%   xb        = XBeach structure array
 %
 %   Example
-%   xb_rename
+%   xb = xb_rename(xb, 'globalx', 'x', 'globaly', 'y')
 %
-%   See also 
+%   See also xb_empty, xb_get, xb_set, xb_del
 
 %% Copyright notice
 %   --------------------------------------------------------------------

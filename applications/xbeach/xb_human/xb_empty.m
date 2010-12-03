@@ -1,19 +1,19 @@
-function xbSettings = xb_empty()
+function xb = xb_empty()
 %XB_EMPTY  Creates an empty XBeach structure
 %
 %   Creates an empty XBeach structure
 %
 %   Syntax:
-%   xbSettings = xb_empty()
+%   xb = xb_empty()
 %
 %   Input:
 %   none
 %
 %   Output:
-%   xbSettings  = XBeach structure array
+%   xb  = XBeach structure array
 %
 %   Example
-%   xbSettings = xb_empty()
+%   xb = xb_empty()
 %
 %   See also xb_check, xb_set, xb_get, xb_show
 
@@ -60,7 +60,7 @@ function xbSettings = xb_empty()
 
 %% create structure
 
-xbSettings = struct( ...
+xb = struct( ...
     'date', datestr(now), ...
     'function', mfilename, ...
     'type', '', ...

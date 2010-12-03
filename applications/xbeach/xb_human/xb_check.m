@@ -1,19 +1,19 @@
-function valid = xb_check(xbSettings)
+function valid = xb_check(xb)
 %XB_CHECK  Checks whether a variable is a valid XBeach structure
 %
 %   Checks whether a variable is a valid XBeach structure.
 %
 %   Syntax:
-%   valid = xb_check(xbSettings)
+%   valid = xb_check(xb)
 %
 %   Input:
-%   xbSettings  = XBeach structure array
+%   xb          = XBeach structure array
 %
 %   Output:
 %   valid       = Boolean value for validity of structure
 %
 %   Example
-%   valid = xb_check(xbSettings)
+%   valid = xb_check(xb)
 %
 %   See also xb_get, xb_set, xb_show
 
@@ -62,10 +62,10 @@ function valid = xb_check(xbSettings)
 
 valid = true;
 
-if ~isstruct(xbSettings)
+if ~isstruct(xb)
     valid = false;
-elseif ~all(ismember({'data'}, fieldnames(xbSettings)))
+elseif ~all(ismember({'data'}, fieldnames(xb)))
     valid = false;
-elseif ~all(ismember({'name', 'value'}, fieldnames(xbSettings.data)))
+elseif ~all(ismember({'name', 'value'}, fieldnames(xb.data)))
     valid = false;
 end

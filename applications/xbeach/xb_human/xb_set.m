@@ -1,4 +1,4 @@
-function xbSettings = xb_set(xbSettings, varargin)
+function xb = xb_set(xb, varargin)
 %XB_SET  Sets variables in XBeach structure
 %
 %   Sets one or more variables in a XBeach structure. If a variable doesn't
@@ -9,19 +9,19 @@ function xbSettings = xb_set(xbSettings, varargin)
 %   field name with the structure name and a dot, for example: bcfile.Tp
 %
 %   Syntax:
-%   xbSettings   = xb_set(xbSettings, varargin)
+%   xb   = xb_set(xb, varargin)
 %
 %   Input:
-%   xbSettings  = XBeach structure array
+%   xb          = XBeach structure array
 %   varargin    = Name/value pairs of variables to be set
 %
 %   Output:
-%   xbSettings  = Updated XBeach structure array
+%   xb          = Updated XBeach structure array
 %
 %   Example
-%   xbSettings  = xb_set(xbSettings, 'zb', zb, 'zs', zs)
-%   xbSettings  = xb_set(xbSettings, '-units', 'zb', {zb 'm+NAP'}, 'zs', {zs 'm+NAP'})
-%   xbSettings  = xb_set(xbSettings, 'bcfile.Tp', 12)
+%   xb  = xb_set(xb, 'zb', zb, 'zs', zs)
+%   xb  = xb_set(xb, '-units', 'zb', {zb 'm+NAP'}, 'zs', {zs 'm+NAP'})
+%   xb  = xb_set(xb, 'bcfile.Tp', 12)
 %
 %   See also xb_get, xb_show
 
@@ -68,7 +68,7 @@ function xbSettings = xb_set(xbSettings, varargin)
 
 %% read request
 
-if ~xb_check(xbSettings); xbSettings = xb_empty(); end;
+if ~xb_check(xb); xb = xb_empty(); end;
 
 % determin if units are provided
 has_units = false;
@@ -90,21 +90,21 @@ end
 %% read variables
 
 for i = 1:length(names)
-    idx = strcmpi(names{i}, {xbSettings.data.name});
+    idx = strcmpi(names{i}, {xb.data.name});
     
     if ~any(idx)
         re = regexp(names{i},'^(?<sub>.+?)\.(?<field>.+)$','names');
         if ~isempty(re)
             % perform operation on substruct
-            sub = xb_get(xbSettings, re.sub);
+            sub = xb_get(xb, re.sub);
             if xb_check(sub)
-                xbSettings = xb_set(xbSettings, re.sub, xb_set(sub, re.field, values{i}));
+                xb = xb_set(xb, re.sub, xb_set(sub, re.field, values{i}));
                 continue;
             end
         else
             % field doesn't exist, create it
-            idx = length(xbSettings.data)+1;
-            xbSettings.data(idx).name = names{i};
+            idx = length(xb.data)+1;
+            xb.data(idx).name = names{i};
         end
     end
     
@@ -112,17 +112,17 @@ for i = 1:length(names)
         val = values{i};
         if ischar(val{2}) || isempty(val{2})
             % fill field with units
-            xbSettings.data(idx).value = val{1};
-            xbSettings.data(idx).units = val{2};
+            xb.data(idx).value = val{1};
+            xb.data(idx).units = val{2};
         else
             % fill field without units
-            xbSettings.data(idx).value = values{i};
+            xb.data(idx).value = values{i};
         end
     else
         % fill field without units
-        xbSettings.data(idx).value = values{i};
+        xb.data(idx).value = values{i};
     end
 end
 
 % set meta data
-xbSettings = xb_meta(xbSettings, mfilename);
+xb = xb_meta(xb, mfilename);

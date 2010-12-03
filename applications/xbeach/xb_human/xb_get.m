@@ -1,4 +1,4 @@
-function varargout = xb_get(xbSettings, varargin)
+function varargout = xb_get(xb, varargin)
 %XB_GET  Retrieves variables from XBeach structure
 %
 %   Retrieves one or more variables from XBeach structure. Data from
@@ -6,10 +6,10 @@ function varargout = xb_get(xbSettings, varargin)
 %   structure name and a dot, for example: bcfile.Tp
 %
 %   Syntax:
-%   varargout   = xb_get(xbSettings, varargin)
+%   varargout   = xb_get(xb, varargin)
 %
 %   Input:
-%   xbSettings  = XBeach structure array
+%   xb          = XBeach structure array
 %   varargin    = Names of variables to be retrieved. If omitted, all
 %                 variables are returned
 %
@@ -17,8 +17,8 @@ function varargout = xb_get(xbSettings, varargin)
 %   varargout   = Values of requested variables.
 %
 %   Example
-%   [zb zs] = xb_get(xbSettings, 'zb', 'zs')
-%   Tp = xb_get(xbSettings, 'bcfile.Tp')
+%   [zb zs] = xb_get(xb, 'zb', 'zs')
+%   Tp = xb_get(xb, 'bcfile.Tp')
 %
 %   See also xb_set, xb_show
 
@@ -65,10 +65,10 @@ function varargout = xb_get(xbSettings, varargin)
 
 %% read request
 
-if ~xb_check(xbSettings); error('Invalid XBeach structure'); end;
+if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 if isempty(varargin)
-    vars = {xbSettings.data.name};
+    vars = {xb.data.name};
 else
     vars = varargin;
 end
@@ -78,13 +78,13 @@ end
 varargout = num2cell(nan(size(vars)));
 
 for i = 1:length(vars)
-    idx = strcmpi(vars{i}, {xbSettings.data.name});
+    idx = strcmpi(vars{i}, {xb.data.name});
     if any(idx)
-        varargout{i} = xbSettings.data(idx).value;
+        varargout{i} = xb.data(idx).value;
     else
         re = regexp(vars{i},'^(?<sub>.+?)\.(?<field>.+)$','names');
         if ~isempty(re)
-            sub = xb_get(xbSettings, re.sub);
+            sub = xb_get(xb, re.sub);
             if xb_check(sub)
                 varargout{i} = xb_get(sub, re.field);
             end
