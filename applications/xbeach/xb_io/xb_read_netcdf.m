@@ -89,13 +89,16 @@ info = nc_info(fname);
 XBdims = xb_read_dims(fname);
 
 % store dims in xbeach struct
+xb = xb_empty();
 f = fieldnames(XBdims);
 for i = 1:length(f)
-    variables = xb_set(variables, f{i}, XBdims.(f{i}));
+    xb = xb_set(xb, f{i}, XBdims.(f{i}));
 end
+xb = xb_meta(xb, mfilename, 'dimensions', fname);
+variables = xb_set(variables, 'DIMS', xb);
 
 % read all variables that match filters
-c = 1;
+c = 2;
 for i = 1:length({info.Dataset.Name})
     if ~any(xb_filter(info.Dataset(i).Name, OPT.vars)); continue; end;
     

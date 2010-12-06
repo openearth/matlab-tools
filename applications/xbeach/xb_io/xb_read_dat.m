@@ -103,10 +103,13 @@ if isempty(fdir); fdir = fullfile('.'); end;
 XBdims = xb_read_dims(fdir);
 
 % store dims in xbeach struct
+xb = xb_empty();
 f = fieldnames(XBdims);
 for i = 1:length(f)
-    variables = xb_set(variables, f{i}, XBdims.(f{i}));
+    xb = xb_set(xb, f{i}, XBdims.(f{i}));
 end
+xb = xb_meta(xb, mfilename, 'dimensions', fdir);
+variables = xb_set(variables, 'DIMS', xb);
 
 for i = 1:length(names)
     varname = names(i).name(1:length(names(i).name)-4);
