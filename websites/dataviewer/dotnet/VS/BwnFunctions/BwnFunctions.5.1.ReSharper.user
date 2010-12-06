@@ -1,0 +1,114 @@
+<Configuration>
+  <SettingsComponent>
+    <string />
+    <integer />
+    <boolean>
+      <setting name="SolutionAnalysisEnabled">False</setting>
+    </boolean>
+  </SettingsComponent>
+  <RecentFiles>
+    <RecentFiles>
+      <File id="963650AA-6BF0-4470-84D8-176E3800F6C1/f:BwnFunctions.asmx" caret="99" fromTop="0" />
+      <File id="963650AA-6BF0-4470-84D8-176E3800F6C1/f:Web.config" caret="0" fromTop="0" />
+      <File id="963650AA-6BF0-4470-84D8-176E3800F6C1/f:BwnFunctions.asmx.cs" caret="1756" fromTop="40" />
+    </RecentFiles>
+    <RecentEdits>
+      <File id="963650AA-6BF0-4470-84D8-176E3800F6C1/f:BwnFunctions.asmx.cs" caret="550" fromTop="12" />
+      <File id="963650AA-6BF0-4470-84D8-176E3800F6C1/f:BwnFunctions.asmx.cs" caret="2142" fromTop="39" />
+      <File id="963650AA-6BF0-4470-84D8-176E3800F6C1/f:BwnFunctions.asmx.cs" caret="1967" fromTop="39" />
+      <File id="963650AA-6BF0-4470-84D8-176E3800F6C1/f:BwnFunctions.asmx" caret="99" fromTop="0" />
+      <File id="963650AA-6BF0-4470-84D8-176E3800F6C1/f:Web.config" caret="0" fromTop="0" />
+      <File id="963650AA-6BF0-4470-84D8-176E3800F6C1/f:BwnFunctions.asmx.cs" caret="1139" fromTop="23" />
+      <File id="963650AA-6BF0-4470-84D8-176E3800F6C1/f:BwnFunctions.asmx.cs" caret="1067" fromTop="25" />
+      <File id="963650AA-6BF0-4470-84D8-176E3800F6C1/f:BwnFunctions.asmx.cs" caret="900" fromTop="21" />
+      <File id="963650AA-6BF0-4470-84D8-176E3800F6C1/f:BwnFunctions.asmx.cs" caret="1597" fromTop="35" />
+      <File id="963650AA-6BF0-4470-84D8-176E3800F6C1/f:BwnFunctions.asmx.cs" caret="1920" fromTop="34" />
+      <File id="963650AA-6BF0-4470-84D8-176E3800F6C1/f:BwnFunctions.asmx.cs" caret="746" fromTop="18" />
+      <File id="963650AA-6BF0-4470-84D8-176E3800F6C1/f:BwnFunctions.asmx.cs" caret="0" fromTop="0" />
+    </RecentEdits>
+  </RecentFiles>
+  <NAntValidationSettings>
+    <NAntPath value="" />
+  </NAntValidationSettings>
+  <UnitTestRunner>
+    <Providers />
+  </UnitTestRunner>
+  <UnitTestRunnerNUnit>
+    <NUnitInstallDir IsNull="False">
+    </NUnitInstallDir>
+    <UseAddins>Never</UseAddins>
+  </UnitTestRunnerNUnit>
+  <CompletionStatisticsManager>
+    <ItemStatistics item="Default">
+      <Item value="public" priority="2" />
+      <Item value="string" priority="3" />
+      <Item value="double" priority="3" />
+      <Item value="using" priority="1" />
+      <Item value="BwnFunctions`0" priority="4" />
+      <Item value="var" priority="4" />
+      <Item value="new" priority="4" />
+      <Item value="BwnFunctions" priority="1" />
+      <Item value="ladeeda" priority="0" />
+      <Item value="override" priority="0" />
+      <Item value="ImageFormatConverter`0" priority="1" />
+      <Item value="if" priority="1" />
+      <Item value="disposing" priority="0" />
+      <Item value="libraryInitializor" priority="1" />
+      <Item value="ncFilePath" priority="0" />
+      <Item value="centreLatitude" priority="0" />
+      <Item value="centreLongitude" priority="0" />
+      <Item value="vertexLatitude" priority="0" />
+      <Item value="vertexLongitude" priority="0" />
+      <Item value="MWArray" priority="0" />
+      <Item value="MWNumericArray`0" priority="2" />
+      <Item value="MWCharArray`0" priority="0" />
+      <Item value="return" priority="3" />
+      <Item value="Bitmap`0" priority="0" />
+      <Item value="pngPath" priority="0" />
+      <Item value="ncVariableName" priority="0" />
+      <Item value="Bwn" priority="0" />
+      <Item value="BwnFunctionsWrapperSoapClient`0" priority="0" />
+      <Item value="soapClient" priority="1" />
+      <Item value="BwnFunctionsWrapperSoapClient" priority="0" />
+      <Item value="ncFile" priority="0" />
+      <Item value="ncVariable" priority="0" />
+      <Item value="centre" priority="1" />
+      <Item value="vertex" priority="1" />
+      <Item value="pictureBox1" priority="0" />
+      <Item value="image" priority="0" />
+      <Item value="Image" priority="0" />
+      <Item value="localCopy" priority="0" />
+      <Item value="Server" priority="0" />
+      <Item value="outputPath" priority="5" />
+      <Item value="Directory`0" priority="0" />
+      <Item value="fullFilePath" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:BwnFunctions.BwnFunctions">
+      <Item value="Initialize`0" priority="0" />
+      <Item value="Dispose`0" priority="0" />
+      <Item value="InterpolateToLine`0" priority="0" />
+      <Item value="PlotTimeSeries`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Drawing.Bitmap">
+      <Item value="FromFile`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:MathWorks.MATLAB.NET.Arrays.MWArray">
+      <Item value="ToString`0" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:BwnMatLabTest.Bwn.BwnFunctionsWrapperSoapClient">
+      <Item value="InterpolateToLine`0" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.PictureBox">
+      <Item value="Image" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Web.HttpServerUtility">
+      <Item value="MapPath`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.IO.Directory">
+      <Item value="CreateDirectory`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.IO.Path">
+      <Item value="GetFileName`0" priority="0" />
+    </ItemStatistics>
+  </CompletionStatisticsManager>
+</Configuration>

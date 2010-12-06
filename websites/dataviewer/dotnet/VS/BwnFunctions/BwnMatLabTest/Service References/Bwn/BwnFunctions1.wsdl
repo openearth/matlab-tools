@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="InterpolateToLine">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ncFilePath" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ncVariableName" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="centreLatitude" type="s:double" />
+            <s:element minOccurs="1" maxOccurs="1" name="centreLongitude" type="s:double" />
+            <s:element minOccurs="1" maxOccurs="1" name="vertexLatitude" type="s:double" />
+            <s:element minOccurs="1" maxOccurs="1" name="vertexLongitude" type="s:double" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="InterpolateToLineResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="InterpolateToLineResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PlotTimeSeries">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ncFilePath" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ncVariableName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PlotTimeSeriesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="PlotTimeSeriesResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="InterpolateToLineSoapIn">
+    <wsdl:part name="parameters" element="tns:InterpolateToLine" />
+  </wsdl:message>
+  <wsdl:message name="InterpolateToLineSoapOut">
+    <wsdl:part name="parameters" element="tns:InterpolateToLineResponse" />
+  </wsdl:message>
+  <wsdl:message name="PlotTimeSeriesSoapIn">
+    <wsdl:part name="parameters" element="tns:PlotTimeSeries" />
+  </wsdl:message>
+  <wsdl:message name="PlotTimeSeriesSoapOut">
+    <wsdl:part name="parameters" element="tns:PlotTimeSeriesResponse" />
+  </wsdl:message>
+  <wsdl:portType name="BwnFunctionsWrapperSoap">
+    <wsdl:operation name="InterpolateToLine">
+      <wsdl:input message="tns:InterpolateToLineSoapIn" />
+      <wsdl:output message="tns:InterpolateToLineSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PlotTimeSeries">
+      <wsdl:input message="tns:PlotTimeSeriesSoapIn" />
+      <wsdl:output message="tns:PlotTimeSeriesSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BwnFunctionsWrapperSoap" type="tns:BwnFunctionsWrapperSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="InterpolateToLine">
+      <soap:operation soapAction="http://tempuri.org/InterpolateToLine" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PlotTimeSeries">
+      <soap:operation soapAction="http://tempuri.org/PlotTimeSeries" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="BwnFunctionsWrapperSoap12" type="tns:BwnFunctionsWrapperSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="InterpolateToLine">
+      <soap12:operation soapAction="http://tempuri.org/InterpolateToLine" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PlotTimeSeries">
+      <soap12:operation soapAction="http://tempuri.org/PlotTimeSeries" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="BwnFunctionsWrapper">
+    <wsdl:port name="BwnFunctionsWrapperSoap" binding="tns:BwnFunctionsWrapperSoap">
+      <soap:address location="http://localhost:9566/BwnFunctions.asmx" />
+    </wsdl:port>
+    <wsdl:port name="BwnFunctionsWrapperSoap12" binding="tns:BwnFunctionsWrapperSoap12">
+      <soap12:address location="http://localhost:9566/BwnFunctions.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

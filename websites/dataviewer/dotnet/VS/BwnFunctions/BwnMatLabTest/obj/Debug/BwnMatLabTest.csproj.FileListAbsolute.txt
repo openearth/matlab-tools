@@ -1,0 +1,9 @@
+D:\Projects\1002637 - Building with Nature\dotNet OET\VS\BwnFunctions\BwnMatLabTest\bin\Debug\BwnMatLabTest.exe
+D:\Projects\1002637 - Building with Nature\dotNet OET\VS\BwnFunctions\BwnMatLabTest\bin\Debug\BwnMatLabTest.pdb
+D:\Projects\1002637 - Building with Nature\dotNet OET\VS\BwnFunctions\BwnMatLabTest\obj\Debug\ResolveAssemblyReference.cache
+D:\Projects\1002637 - Building with Nature\dotNet OET\VS\BwnFunctions\BwnMatLabTest\obj\Debug\BwnMatLabTest.Properties.Resources.resources
+D:\Projects\1002637 - Building with Nature\dotNet OET\VS\BwnFunctions\BwnMatLabTest\obj\Debug\BwnMatLabTest.csproj.GenerateResource.Cache
+D:\Projects\1002637 - Building with Nature\dotNet OET\VS\BwnFunctions\BwnMatLabTest\obj\Debug\BwnMatLabTest.exe
+D:\Projects\1002637 - Building with Nature\dotNet OET\VS\BwnFunctions\BwnMatLabTest\obj\Debug\BwnMatLabTest.pdb
+D:\Projects\1002637 - Building with Nature\dotNet OET\VS\BwnFunctions\BwnMatLabTest\obj\Debug\BwnMatLabTest.Form1.resources
+D:\Projects\1002637 - Building with Nature\dotNet OET\VS\BwnFunctions\BwnMatLabTest\bin\Debug\BwnMatLabTest.exe.config
