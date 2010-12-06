@@ -187,9 +187,12 @@ gridf = cumsum(cell1*ff.^[1:nf]);
 
 % plot transition, if requested
 if OPT.plot
-    plot(diff([0 cell1 cell1+gridf cell1+gridf(end)+cell2]));
+    figure;
+    subplot(1,2,1);plot([0 cell1 cell1+gridf cell1+gridf(end)+cell2],'-xb');
     title({'Grid transition' ...
         ['from ' num2str(cell1) ' to ' num2str(cell2) ' over distance ' num2str(distance)] ...
         ['using ' num2str(nf) ' cells and factor ' num2str(ff) ' with relative error ' num2str(error)]});
+    xlabel('cell number'); ylabel('location');
+    subplot(1,2,2);plot(diff([0 cell1 cell1+gridf cell1+gridf(end)+cell2]),'-xr');
     xlabel('cell number'); ylabel('grid size');
 end
