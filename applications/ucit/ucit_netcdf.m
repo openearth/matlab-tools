@@ -45,6 +45,15 @@ function varargout = ucit_netcdf(varargin)
 % TO DO: add lines  of timeseries from opendap.deltares.nl
 % TO DO: compile into stand-alone release version
 
+%% Add java paths for snc tools
+if isdeployed
+%     pth=[ctfroot filesep 'checkout' filesep 'OpenEarthTools' filesep 'trunk' filesep 'matlab' filesep 'io' filesep 'netcdf' filesep 'toolsUI-4.1.jar'];
+%     disp(['SNC jar file is : ' pth]);
+%     javaaddpath(pth);
+    setpref ('SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
+    setpref ('SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
+end
+
 %% Open the UCIT console
 
    fig = UCIT_makeUCITConsole; set(fig,'visible','off')

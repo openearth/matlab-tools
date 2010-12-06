@@ -4,16 +4,12 @@ mkdir bin;
 if isempty(which('drawgrid'))
     wlsettings;
 end
-if isempty(which('grid_orth_getDataOnLine'))
-    run('F:\Repositories\OeTools\oetsettings.m');
-end
+
 
 % remove annoying startup.m in wafo dir from path
 rmpath('D:\McTools\matlab\applications\wave\wafo\docs\');
-
-statspath='Y:\app\MATLAB2009b\toolbox\stats';
-rmpath(statspath);
-
+rmpath('d:\Matlab\');
+rmpath('Y:\app\MATLAB2009b\toolbox\stats');
 
 % add all detran routines
 addpath(genpath('engines'));
@@ -77,8 +73,8 @@ mcc -m -v -d bin ucit_netcdf.m -B complist -a ..\..\io\netcdf\toolsUI-4.1.jar
 % mcc -m -v -d bin ucit_netcdf.m -B complist -a ..\..\io\netcdf\toolsUI-4.1.jar -M Deltares_icon.res 
 % mcc -m -v -d exe DelftDashBoard.m -B complist -a settings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
  
-delete('Deltares_icon.rc');
-delete('Deltares_icon.res');
+% delete('Deltares_icon.rc');
+% delete('Deltares_icon.res');
 
 dos(['copy ' which('ucit_about.txt') ' bin']);
 revnumb = '????';

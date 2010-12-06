@@ -1,6 +1,6 @@
 /*
  * MATLAB Compiler: 4.11 (R2009b)
- * Date: Thu Nov 25 16:36:01 2010
+ * Date: Mon Dec 06 15:49:54 2010
  * Arguments: "-B" "macro_default" "-m" "-W" "main" "-T" "link:exe" "-v" "-d"
  * "bin" "ucit_netcdf.m" "-B" "complist" "-a" "ucit_netcdf.m" "betacdf.m"
  * "betainv.m" "betapdf.m" "distchck.m" "polyconf.m" "tinv.m"
@@ -45,24 +45,24 @@
 extern "C" {
 #endif
 const unsigned char __MCC_ucit_netcdf_session_key[] = {
-    '0', '0', '8', 'F', 'A', '3', '8', '1', '0', 'E', '9', '0', '3', '5', '9',
-    '3', '2', '6', '8', 'C', '1', '1', '4', '1', '4', '3', '8', '3', 'E', '1',
-    '9', '3', '5', '6', '0', 'E', 'E', 'B', 'E', '8', '3', 'D', 'E', 'C', 'C',
-    '2', 'B', '7', '4', 'E', '5', 'E', '5', 'D', '0', 'A', '2', '1', 'F', 'C',
-    'B', '6', '2', 'B', '4', '2', '0', 'C', 'E', '3', 'E', '9', '0', 'D', '4',
-    '9', '3', '2', 'B', '8', 'D', '6', 'E', '3', '4', '0', 'F', 'A', 'B', '1',
-    'E', 'B', '9', 'B', '0', '8', '6', 'A', '6', '7', '9', '5', 'B', 'E', '9',
-    '9', '5', 'C', '8', 'A', '2', '0', '6', '8', 'F', '2', '7', 'D', 'A', 'E',
-    '3', '7', '8', '5', '9', '5', '9', '1', '7', '8', 'C', '0', '4', 'D', 'D',
-    '8', '2', '2', '4', 'E', '1', 'C', 'B', '5', 'A', '9', 'B', 'F', '0', '4',
-    '5', 'C', 'F', 'C', '3', 'E', '0', '1', '3', 'A', 'C', '8', '2', 'B', '2',
-    '6', '7', '9', 'E', '1', 'D', '3', 'C', '9', '5', 'C', '7', '7', 'C', 'C',
-    '7', '9', '3', 'D', '6', '2', '4', '1', '2', 'C', 'F', 'E', '3', 'C', 'E',
-    '7', '4', '0', '5', 'B', '1', 'E', '2', 'C', 'D', '4', 'A', 'D', 'A', 'C',
-    'E', 'A', '9', 'C', 'D', 'F', '5', 'B', '6', '3', 'F', '0', '9', 'E', '5',
-    '9', 'C', '8', 'F', '4', '7', 'C', '3', 'E', '0', '0', 'E', '0', '4', '8',
-    '2', '5', '2', '9', '7', '0', '2', 'F', '4', '6', '4', '1', '6', '7', 'D',
-    '1', '\0'};
+    '9', '7', '0', 'D', 'D', '6', 'A', '6', 'B', '5', '3', '5', '9', '9', '7',
+    'B', '8', 'C', 'C', 'D', '1', '0', '0', '6', 'C', '3', 'A', '4', '4', '2',
+    'C', '9', '0', '6', '5', 'C', 'A', 'D', '9', '0', '5', '5', 'B', '5', 'E',
+    '1', '6', 'C', '4', '9', '1', '8', '0', 'A', 'B', 'F', 'C', '3', '8', '4',
+    'D', '0', 'A', 'C', '9', 'A', 'C', '0', 'C', 'D', 'B', '1', '2', '4', '5',
+    '8', '4', 'C', 'B', '4', 'F', 'F', 'B', '2', 'F', '7', 'F', 'B', '3', 'E',
+    'B', '9', '6', 'E', '3', '6', '5', 'B', '5', 'E', '9', '3', '3', '4', '3',
+    '6', 'D', 'B', 'A', '3', 'C', 'D', 'A', '5', '8', '5', 'E', '7', 'E', 'C',
+    'A', '0', '8', 'E', '4', 'D', 'D', '0', '1', '3', '8', '3', 'D', '9', '4',
+    'C', 'D', '8', '4', '2', '7', '9', 'D', 'A', '1', '6', '8', '3', '1', '1',
+    '0', '0', '2', '7', '0', '3', '0', '1', '8', '3', '0', 'D', '3', 'B', '7',
+    'D', '0', 'F', 'C', '7', '3', '1', '5', 'B', '7', 'F', 'F', 'D', 'E', '7',
+    '3', 'A', 'E', '6', '7', '6', 'E', '1', '9', '5', 'F', '7', '4', '6', 'B',
+    'C', 'A', '1', '2', '5', '4', '0', '0', '1', 'E', '8', 'D', '6', 'A', '2',
+    '9', 'F', '1', 'A', '0', '3', 'F', 'B', 'C', '1', 'B', 'E', '3', '4', '1',
+    '5', '5', '6', '8', 'C', 'B', 'F', '1', 'F', '8', '6', '2', 'F', 'F', '6',
+    '3', 'E', '7', '3', '7', '4', '1', '4', '4', 'E', '3', 'F', '5', '2', 'F',
+    'B', '\0'};
 
 const unsigned char __MCC_ucit_netcdf_public_key[] = {
     '3', '0', '8', '1', '9', 'D', '3', '0', '0', 'D', '0', '6', '0', '9', '2',
@@ -89,7 +89,7 @@ const unsigned char __MCC_ucit_netcdf_public_key[] = {
     '2', '0', '1', '1', '1', '\0'};
 
 static const char * MCC_ucit_netcdf_matlabpath_data[] = 
-  { "ucit_netcdf/", "$TOOLBOXDEPLOYDIR/", "OpenEarthTools/matlab/io/netcdf/",
+  { "ucit_netcdf/", "$TOOLBOXDEPLOYDIR/",
     "gui/actions/UCIT_CommonActions/DataGrids/",
     "gui/actions/UCIT_CommonActions/DataTransects/",
     "gui/actions/UCIT_SpecificActions/DataTransects/JarkusData/",
@@ -115,7 +115,6 @@ static const char * MCC_ucit_netcdf_matlabpath_data[] =
     "OpenEarthTools/matlab/applications/grid_2D_orthogonal/",
     "OpenEarthTools/matlab/general/",
     "OpenEarthTools/matlab/general/color_fun/colormaps/",
-    "OpenEarthTools/matlab/general/config_FUN/",
     "OpenEarthTools/matlab/general/debug_fun/",
     "OpenEarthTools/matlab/general/el_fun/",
     "OpenEarthTools/matlab/general/el_mat/",
@@ -129,27 +128,26 @@ static const char * MCC_ucit_netcdf_matlabpath_data[] =
     "OpenEarthTools/matlab/general/struct_fun/",
     "OpenEarthTools/matlab/general/time_fun/",
     "OpenEarthTools/matlab/io/opendap/",
-    "OpenEarthTools/matlab/maintenance/1_MTest/", "Matlab/",
-    "$TOOLBOXMATLABDIR/general/", "$TOOLBOXMATLABDIR/ops/",
-    "$TOOLBOXMATLABDIR/lang/", "$TOOLBOXMATLABDIR/elmat/",
-    "$TOOLBOXMATLABDIR/randfun/", "$TOOLBOXMATLABDIR/elfun/",
-    "$TOOLBOXMATLABDIR/specfun/", "$TOOLBOXMATLABDIR/matfun/",
-    "$TOOLBOXMATLABDIR/datafun/", "$TOOLBOXMATLABDIR/polyfun/",
-    "$TOOLBOXMATLABDIR/funfun/", "$TOOLBOXMATLABDIR/sparfun/",
-    "$TOOLBOXMATLABDIR/scribe/", "$TOOLBOXMATLABDIR/graph2d/",
-    "$TOOLBOXMATLABDIR/graph3d/", "$TOOLBOXMATLABDIR/specgraph/",
-    "$TOOLBOXMATLABDIR/graphics/", "$TOOLBOXMATLABDIR/uitools/",
-    "$TOOLBOXMATLABDIR/strfun/", "$TOOLBOXMATLABDIR/imagesci/",
-    "$TOOLBOXMATLABDIR/iofun/", "$TOOLBOXMATLABDIR/audiovideo/",
-    "$TOOLBOXMATLABDIR/timefun/", "$TOOLBOXMATLABDIR/datatypes/",
-    "$TOOLBOXMATLABDIR/verctrl/", "$TOOLBOXMATLABDIR/codetools/",
-    "$TOOLBOXMATLABDIR/helptools/", "$TOOLBOXMATLABDIR/winfun/",
-    "$TOOLBOXMATLABDIR/winfun/NET/", "$TOOLBOXMATLABDIR/demos/",
-    "$TOOLBOXMATLABDIR/timeseries/", "$TOOLBOXMATLABDIR/hds/",
-    "$TOOLBOXMATLABDIR/guide/", "$TOOLBOXMATLABDIR/plottools/",
-    "toolbox/local/", "toolbox/shared/dastudio/",
-    "$TOOLBOXMATLABDIR/datamanager/", "toolbox/compiler/",
-    "OpenEarthTools/matlab/io/netcdf/nctools/" };
+    "OpenEarthTools/matlab/maintenance/1_MTest/", "$TOOLBOXMATLABDIR/general/",
+    "$TOOLBOXMATLABDIR/ops/", "$TOOLBOXMATLABDIR/lang/",
+    "$TOOLBOXMATLABDIR/elmat/", "$TOOLBOXMATLABDIR/randfun/",
+    "$TOOLBOXMATLABDIR/elfun/", "$TOOLBOXMATLABDIR/specfun/",
+    "$TOOLBOXMATLABDIR/matfun/", "$TOOLBOXMATLABDIR/datafun/",
+    "$TOOLBOXMATLABDIR/polyfun/", "$TOOLBOXMATLABDIR/funfun/",
+    "$TOOLBOXMATLABDIR/sparfun/", "$TOOLBOXMATLABDIR/scribe/",
+    "$TOOLBOXMATLABDIR/graph2d/", "$TOOLBOXMATLABDIR/graph3d/",
+    "$TOOLBOXMATLABDIR/specgraph/", "$TOOLBOXMATLABDIR/graphics/",
+    "$TOOLBOXMATLABDIR/uitools/", "$TOOLBOXMATLABDIR/strfun/",
+    "$TOOLBOXMATLABDIR/imagesci/", "$TOOLBOXMATLABDIR/iofun/",
+    "$TOOLBOXMATLABDIR/audiovideo/", "$TOOLBOXMATLABDIR/timefun/",
+    "$TOOLBOXMATLABDIR/datatypes/", "$TOOLBOXMATLABDIR/verctrl/",
+    "$TOOLBOXMATLABDIR/codetools/", "$TOOLBOXMATLABDIR/helptools/",
+    "$TOOLBOXMATLABDIR/winfun/", "$TOOLBOXMATLABDIR/winfun/NET/",
+    "$TOOLBOXMATLABDIR/demos/", "$TOOLBOXMATLABDIR/timeseries/",
+    "$TOOLBOXMATLABDIR/hds/", "$TOOLBOXMATLABDIR/guide/",
+    "$TOOLBOXMATLABDIR/plottools/", "toolbox/local/",
+    "toolbox/shared/dastudio/", "$TOOLBOXMATLABDIR/datamanager/",
+    "toolbox/compiler/", "OpenEarthTools/matlab/io/netcdf/nctools/" };
 
 static const char * MCC_ucit_netcdf_classpath_data[] = 
   { "OpenEarthTools/matlab/io/netcdf/toolsUI-4.1.jar" };
@@ -185,7 +183,7 @@ mclComponentData __MCC_ucit_netcdf_component_data = {
   MCC_ucit_netcdf_matlabpath_data,
 
   /* Number of directories in the MATLAB Path */
-  92,
+  89,
 
   /* Component's Java class path */
   MCC_ucit_netcdf_classpath_data,
@@ -208,7 +206,7 @@ mclComponentData __MCC_ucit_netcdf_component_data = {
   0,
   
   /* Component preferences directory */
-  "ucit_netcdf_DCCA4B7FF1D3B9B8CDFFCC117D7435A7",
+  "ucit_netcdf_4DAD5C503399FDAE21D04DEB19560ABB",
 
   /* MCR warning status data */
   MCC_ucit_netcdf_warning_state_data,

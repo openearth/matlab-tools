@@ -586,7 +586,6 @@
     <Directory>$(MATLABROOT)\help\techdoc\creating_plots\examples</Directory>
     <Directory>D:\McTools\matlab</Directory>
     <Directory>Y:\app\matlab\toolbox</Directory>
-    <Directory>d:\Matlab</Directory>
     <Directory>C:\Documents and Settings\sonnevi\My Documents\MATLAB</Directory>
     <Directory>$(MATLABROOT)\toolbox\matlab\general</Directory>
     <Directory>$(MATLABROOT)\toolbox\matlab\ops</Directory>
