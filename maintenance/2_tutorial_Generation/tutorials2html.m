@@ -190,10 +190,6 @@ for idr = 1:length(alldirs)
         else
             if all(id)
                 %% publish file, it is not published yet
-                %% show progress
-                if ~quiet
-                    disp([ 'Started publishing ' title{idr}{itutorials} ' (' htmlref{idr}{itutorials} ')']);
-                end
                 
                 %% get options
                 publishopts = publishconfigurations(tutorialname,publishtemplate,outputhtmldir,quiet);
@@ -229,6 +225,11 @@ for idr = 1:length(alldirs)
                     publishopts.codeToEvaluate = ['evalinemptyworkspace(''' tutorialname ';'');'];
                 end
 
+                %% show progress
+                if ~quiet
+                    disp([ 'Started publishing ' title{idr}{itutorials} ' (' fullfile(publishopts.outputDir,[tutorialname '.html']) ')']);
+                end
+                
                 %% save reference and publish
                 htmlref{idr}{itutorials} = publish(tutorialname,publishopts);
                 
