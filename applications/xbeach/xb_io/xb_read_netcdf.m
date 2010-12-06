@@ -11,17 +11,17 @@ function variables = xb_read_netcdf(fname, varargin)
 %
 %   Input:
 %   fname       = filename of the netcdf file
-%   varargin    = variable filters
+%   varargin    = vars:     variable filters
 %
 %   Output:
 %   variables   = XBeach structure array
 %
 %   Example
 %   xb = xb_read_netcdf('xboutput.nc')
-%   xb = xb_read_netcdf('xboutput.nc', 'H')
-%   xb = xb_read_netcdf('xboutput.nc', 'H*')
-%   xb = xb_read_netcdf('xboutput.nc', '/_mean$')
-%   xb = xb_read_netcdf('path_to_model/xboutput.nc', 'H', 'u*', '/_min$')
+%   xb = xb_read_netcdf('xboutput.nc', 'vars', 'H')
+%   xb = xb_read_netcdf('xboutput.nc', 'vars', 'H*')
+%   xb = xb_read_netcdf('xboutput.nc', 'vars', '/_mean$')
+%   xb = xb_read_netcdf('path_to_model/xboutput.nc', 'vars', {'H', 'u*', '/_min$'})
 %
 %   See also xb_read_output, xb_read_dat, xb_filter
 
@@ -66,6 +66,16 @@ function variables = xb_read_netcdf(fname, varargin)
 % $HeadURL$
 % $Keywords: $
 
+%% read options
+
+OPT = struct( ...
+    'vars', {{}} ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+if ~iscell(OPT.vars); OPT.vars = {OPT.vars}; end;
+
 %% read netcdf file
 
 if ~exist(fname, 'file')
@@ -76,10 +86,18 @@ variables = xb_empty();
 
 info = nc_info(fname);
 
+XBdims = xb_read_dims(fname);
+
+% store dims in xbeach struct
+f = fieldnames(XBdims);
+for i = 1:length(f)
+    variables = xb_set(variables, f{i}, XBdims.(f{i}));
+end
+
 % read all variables that match filters
 c = 1;
 for i = 1:length({info.Dataset.Name})
-    if ~any(xb_filter(info.Dataset(i).Name, varargin{:})); continue; end;
+    if ~any(xb_filter(info.Dataset(i).Name, OPT.vars)); continue; end;
     
     variables.data(c).name = info.Dataset(i).Name;
     variables.data(c).value = nc_varget(fname, info.Dataset(i).Name);

@@ -86,7 +86,7 @@ end
 
 if strcmpi(extension, '.nc')
     % obtain info from netcdf file
-    info = nc_info(url);
+    info = nc_info(filename);
     
     % pre-allocate XBdims
     XBdims = struct();

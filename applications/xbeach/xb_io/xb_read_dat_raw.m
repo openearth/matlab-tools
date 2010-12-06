@@ -1,4 +1,4 @@
-function variables = xb_read_dat(readname, varargin)
+function variables = xb_read_dat_raw(readname, varargin)
 %XB_READ_DAT  Reads DAT formatted output files from XBeach
 %
 %   Reads DAT formatted output files from XBeach in the form of an XBeach

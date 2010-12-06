@@ -11,7 +11,7 @@ function variables = xb_read_dat(fname, varargin)
 %
 %   Input:
 %   fname       = directory name that contains the dat files.
-%   varargin    = variable filters
+%   varargin    = vars:     variable filters
 %
 %   Output:
 %   variables   = XBeach structure array
@@ -21,10 +21,10 @@ function variables = xb_read_dat(fname, varargin)
 %   xb = xb_read_dat('H.dat')
 %   xb = xb_read_dat('path_to_model/')
 %   xb = xb_read_dat('path_to_model/H.dat')
-%   xb = xb_read_dat('.', 'H')
-%   xb = xb_read_dat('.', 'H*')
-%   xb = xb_read_dat('.', '/_mean$')
-%   xb = xb_read_dat('path_to_model/', 'H', 'u*', '/_min$')
+%   xb = xb_read_dat('.', 'vars', 'H')
+%   xb = xb_read_dat('.', 'vars', 'H*')
+%   xb = xb_read_dat('.', 'vars', '/_mean$')
+%   xb = xb_read_dat('path_to_model/', 'vars', {'H', 'u*', '/_min$'})
 %
 %   See also xb_read_output, xb_read_netcdf, xb_filter
 
@@ -69,6 +69,16 @@ function variables = xb_read_dat(fname, varargin)
 % $HeadURL$
 % $Keywords: $
 
+%% read options
+
+OPT = struct( ...
+    'vars', {{}} ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+if ~iscell(OPT.vars); OPT.vars = {OPT.vars}; end;
+
 %% read dat files
 
 if ~exist(fname, 'file')
@@ -102,7 +112,7 @@ for i = 1:length(names)
     varname = names(i).name(1:length(names(i).name)-4);
     
     % Skip, if not requested
-    if ~any(xb_filter(varname, varargin{:})); continue; end;
+    if ~isempty(OPT.vars) && ~any(xb_filter(varname, OPT.vars)); continue; end;
     if any(strcmpi(varname, {'xy', 'dims'})); continue; end;
     
     filename = [varname '.dat'];

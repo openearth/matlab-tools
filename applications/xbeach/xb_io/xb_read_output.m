@@ -13,7 +13,7 @@ function variables = xb_read_output(fname, varargin)
 %   Input:
 %   fname       = path to the directory containing the dat files, a dat
 %                 file or the netcdf file to be read
-%   varargin    = variable filters
+%   varargin    = vars:         variable filters
 %
 %   Output:
 %   varargout = XBeach structure array
@@ -21,7 +21,7 @@ function variables = xb_read_output(fname, varargin)
 %   Example
 %   xb = xb_read_output('path_to_model/')
 %   xb = xb_read_output('path_to_model/H.dat')
-%   xb = xb_read_output('path_to_model/', 'H', 'u*', '/_mean$')
+%   xb = xb_read_output('path_to_model/', 'vars', {'H', 'u*', '/_mean$'})
 %   xb = xb_read_output('xboutput.nc')
 %
 %   See also xb_read_input, xb_write_input, xb_read_dat, xb_read_netcdf
@@ -74,9 +74,9 @@ if ~exist(fname, 'file')
 end
 
 if isdir(fname) || strcmpi(fname(end-3:end), '.dat')
-  variables = xb_read_dat(fname, varargin);
+  variables = xb_read_dat(fname, varargin{:});
 elseif strcmpi(fname(end-2:end), '.nc')
-  variables = xb_read_netcdf(fname, varargin);
+  variables = xb_read_netcdf(fname, varargin{:});
 else
     error(['Output type not recognised [' fname ']']);
 end
