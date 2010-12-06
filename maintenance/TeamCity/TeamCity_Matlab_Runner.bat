@@ -7,6 +7,7 @@ rem Start matlab
 rem -----------------------------------
 
 %map_matlab%
+%map_network_drive%
 
 %matlab_path%matlab.exe -nosplash -nodesktop -minimize -r "%matlab_command%" -logfile mlogfile.log -sd "%teamcity.build.workingDir%"
 
@@ -20,7 +21,8 @@ if "%ERRORLEVEL%"=="0" goto loopmatlabbusy
 
 echo 'teamcity OK'
 
-%umap_matlab%
+%unmap_matlab%
+%unmap_network_drive%
 
 goto end
 
