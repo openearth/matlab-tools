@@ -25,7 +25,7 @@ for addCode = ['0','1','2','3']
         
         if length(code) == OPT.lowestLevel
             % update waitbar
-            multiWaitbar('fig2png_print_tile','increment',sum(sum(~isnan(D.z(R2))))/OPT.WBtodo,'label',sprintf('Printing tile %s',code))
+            multiWaitbar('fig2png_print_tile','increment',sum(sum(~isnan(D.z(R2(1:end-1,1:end-1)))))/OPT.WBtodo,'label',sprintf('Printing tile %s',code));  % D.z(R2(1:end-1,1:end-1) should be D.z(corner2center(R2))
         end
         
         % stop if no data is present in tile
