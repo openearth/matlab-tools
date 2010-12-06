@@ -1,4 +1,4 @@
-function [dist, zl, outputPng] = InterpolateToLine(ncfile,Centre,Vertex)
+function output = InterpolateToLine(ncfile,parameter,Centre,Vertex)
 
 %% Add java shit
 % Add java paths for snc tools
@@ -13,7 +13,7 @@ if ~exist(pth,'file')
 end
 
 if ~any(ismember(javaclasspath,pth))
-   javaaddpath(pth);
+    javaaddpath(pth);
 end
 
 if ~any(ismember(javaclasspath,pth))
@@ -25,16 +25,48 @@ end
 setpref ('SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
 setpref ('SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
 
+%% specify possible parameter names for longitude, latitude
+par_lon = {'longitude','lon','longitude_cen','x','X'};
+par_lat = {'latitude','lat','latitude_cen','y','Y'};
+
 %% Load netcdf data
-% Specify the resolution of the output data (in m)
-resolution = 100;
+resolution = 100; % Specify the resolution of the output data (in m)
 
 try
-    % Here comes the piece of code that searches for the corresponding nc-file (on the basis of the kml-file)
-    ncfile = 'http://opendap.deltares.nl/thredds/dodsC/opendap/tno/ahn100m/mv250.nc';
-    lon = nc_varget(ncfile,'longitude_cen');
-    lat = nc_varget(ncfile,'latitude_cen');
-    z = nc_varget(ncfile,'AHN250');
+    % try loading longitude
+    lon = [];
+    ii = 1;
+    while isempty(lon)
+        try
+            if ii <= length(par_lon)
+                lon = nc_varget(ncfile,par_lon{ii});
+            else
+                lon = nan;
+                return;
+            end
+        catch
+            ii = ii + 1;
+        end
+    end
+    
+    % try loading latitude
+    lat = [];
+    ii = 1;
+    while isempty(lat)
+        try
+            if ii <= length(par_lat)
+                lat = nc_varget(ncfile,par_lat{ii});
+            else
+                lat = nan;
+                return;
+            end
+        catch
+            ii = ii + 1;
+        end
+    end
+    
+    % try loading z
+    z = nc_varget(ncfile,parameter);
 catch me
     error(['Could not read opendap file: ', me.getReport]);
 end
@@ -68,12 +100,19 @@ ylim = [ylim(1)-0.05*diff(ylim) ylim(2)+0.05*diff(ylim)];
 id = find(x>min(xlim)&x<max(xlim)&y>min(ylim)&y<max(ylim));
 zl = griddata(x(id),y(id),z(id),xl,yl);
 
-% make figure and plot result
-outputPng = fullfile(cd,'output.png');
+%% Plot time series
 f=figure('visible','off');
 plot(dist,zl,'k');
 ylabel('z [m NAP]');
 xlabel('distance [m]');
 grid on;
+
+%% Print to file
+outputPng = [tempname '.png'];
 print(f,'-dpng','-r120',outputPng);
 close(f);
+
+%% Generate output
+ouput.dist = dist;
+output.zl = zl;
+outputpng = outputPng;

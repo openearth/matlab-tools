@@ -46,7 +46,7 @@ catch me
 end
 
 %% Print to file
-outputPng = fullfile(cd,'output.png');
+outputPng = [tempname '.png'];
 print(f,'-dpng','-r120',outputPng);
 close(f);
 
