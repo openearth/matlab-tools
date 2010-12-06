@@ -68,16 +68,16 @@ function xb_write_input(filename, xb, varargin)
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
-    'write_paths', true ...
+    'write_files', true ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
 %% write referred files
+[fdir fname dext] = fileparts(filename);
 
-if OPT.write_paths
+if OPT.write_files
     
-    [fdir fname dext] = fileparts(filename);
 
     for i = 1:length(xb.data)
         if isstruct(xb.data(i).value)
@@ -96,7 +96,7 @@ if OPT.write_paths
                 otherwise
                     % assume file to be a grid and try writing it
                     try
-                        xb.data(i).value = fullfile(fdir, [xb.data(i).name '.txt']);
+                        xb.data(i).value = [xb.data(i).name '.txt'];
                         data = xb_get(sub, 'data');
                         save(xb.data(i).value, '-ascii', 'data');
                     catch
@@ -110,4 +110,4 @@ end
 
 %% write params.txt file
 
-xb_write_params(filename, xb)
+xb_write_params([fname dext], xb)
