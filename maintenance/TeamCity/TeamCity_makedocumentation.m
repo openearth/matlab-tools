@@ -85,15 +85,8 @@ try
     try
         %% Publish documentation
         TeamCity.postmessage('progressMessage','Generate documentation html files');
-        % htmlDir = publish_OET_documentation;
-        htmlDir = generateTempHtml();
-        if ~isdir('Z:\')
-            system('net use z: \\kml\kml\');
-        end
-        if ~isdir('Z:\OpenEarthHtmlDocs\')
-            disp('Z:\OpenEarthHtmlDocs\ is not known');
-        end
-        
+        htmlDir = publish_OET_documentation;
+                        
         TeamCity.postmessage('progressMessage','remove copy of documentation to server');
         docDir = 'Z:\OpenEarthHtmlDocs\3frames';
         if isdir(docDir)
