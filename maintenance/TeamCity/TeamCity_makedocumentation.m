@@ -94,6 +94,12 @@ try
         end
         
         TeamCity.postmessage('progressMessage','Copy documentation to server');
+        if ~isdir('Z:\')
+            disp('Z is not mapped');
+        end
+        if ~isdir('Z:\OpenEarthHtmlDocs\')
+            disp('Z:\OpenEarthHtmlDocs\ is not known');
+        end
         mkdir(docDir);
         copyfile(htmlDir,docDir);
         
