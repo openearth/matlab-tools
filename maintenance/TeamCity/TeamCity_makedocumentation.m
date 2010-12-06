@@ -85,8 +85,15 @@ try
     try
         %% Publish documentation
         TeamCity.postmessage('progressMessage','Generate documentation html files');
-        htmlDir = publish_OET_documentation;
-
+        % htmlDir = publish_OET_documentation;
+        htmlDir = generateTempHtml();
+        if ~isdir('Z:\')
+            system('net use z: \\kml\kml\');
+        end
+        if ~isdir('Z:\OpenEarthHtmlDocs\')
+            disp('Z:\OpenEarthHtmlDocs\ is not known');
+        end
+        
         TeamCity.postmessage('progressMessage','remove copy of documentation to server');
         docDir = 'Z:\OpenEarthHtmlDocs\3frames';
         if isdir(docDir)
@@ -94,12 +101,6 @@ try
         end
         
         TeamCity.postmessage('progressMessage','Copy documentation to server');
-        if ~isdir('Z:\')
-            disp('Z is not mapped');
-        end
-        if ~isdir('Z:\OpenEarthHtmlDocs\')
-            disp('Z:\OpenEarthHtmlDocs\ is not known');
-        end
         mkdir(docDir);
         copyfile(htmlDir,docDir);
         
@@ -164,3 +165,14 @@ catch me
     exit;
 end
 exit;
+
+end
+
+function htmlDir = generateTempHtml()
+htmlDir = [oetroot 'docs' filesep 'OpenEarthHtmlDocs' filesep '3frames' filesep];
+        if isdir(htmlDir)
+            rmdir(htmlDir);
+        end
+        mkdir(htmlDir);
+        dlmwrite(fullfile(htmlDir,'test.html'),peaks);
+end
