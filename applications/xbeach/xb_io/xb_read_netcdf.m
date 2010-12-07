@@ -69,7 +69,10 @@ function variables = xb_read_netcdf(fname, varargin)
 %% read options
 
 OPT = struct( ...
-    'vars', {{}} ...
+    'vars', {{}}, ...
+    'start', [], ...
+    'length', [], ...
+    'stride', [] ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -100,10 +103,13 @@ variables = xb_set(variables, 'DIMS', xb);
 % read all variables that match filters
 c = 2;
 for i = 1:length({info.Dataset.Name})
-    if ~any(xb_filter(info.Dataset(i).Name, OPT.vars)); continue; end;
+    if ~isempty(OPT.vars) && ~any(xb_filter(info.Dataset(i).Name, OPT.vars)); continue; end;
+    
+    [start len stride] = xb_index(info.Dataset(i).Size, OPT.start, OPT.length, OPT.stride);
     
     variables.data(c).name = info.Dataset(i).Name;
-    variables.data(c).value = nc_varget(fname, info.Dataset(i).Name);
+    variables.data(c).value = nc_varget(fname, info.Dataset(i).Name, ...
+        start, len, stride);
     
     c = c+1;
 end

@@ -91,19 +91,8 @@ OPT = setproperty(OPT, varargin{:});
 %% check options
 
 dat = [];
-if isempty(dims); return; end;
 
-if isempty(OPT.start); OPT.start = zeros(size(dims)); end;
-if isempty(OPT.length); OPT.length = -ones(size(dims)); end;
-if isempty(OPT.stride); OPT.stride = ones(size(dims)); end;
-
-OPT.start(length(OPT.start)+1:length(dims)) = 0;
-OPT.length(length(OPT.length)+1:length(dims)) = -1;
-OPT.stride(length(OPT.stride)+1:length(dims)) = 1;
-
-OPT.start(OPT.start<0) = 0;
-OPT.length(OPT.length<0) = max(1, dims(OPT.length<0)-OPT.start(OPT.length<0));
-OPT.stride(OPT.stride<1) = 1;
+[OPT.start OPT.length OPT.stride] = xb_index(dims, OPT.start, OPT.length, OPT.stride);
 
 % determine size of read matrix
 sz = [1 1];
