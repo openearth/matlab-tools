@@ -5,6 +5,7 @@ function OK = inivalue_test
 
 MTestCategory.DataAccess;
 if TeamCity.running
+    OK = true;
     TeamCity.ignore('Only matlab folder is checked out at the build agent. Therefore searching for OET R.url will not work.');
     return;
 end

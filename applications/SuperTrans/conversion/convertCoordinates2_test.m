@@ -9,6 +9,7 @@ function OK = convertCoordinates2_test
 MTestCategory.DataAccess;
 if TeamCity.running
     TeamCity.ignore('Test takes very long');
+    OK = 1;
     return;
 end
 

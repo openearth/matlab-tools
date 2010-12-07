@@ -50,7 +50,9 @@ function OK = arc_info_binary_test()
 
 MTestCategory.DataAccess;
 if TeamCity.running
+    TODO('Use test dataset instead');
     TeamCity.ignore('Data unavailable at agent');
+    OK = 1;
     return;
 end
 

@@ -1,4 +1,4 @@
-function testresult = KMLtricontourf_test()
+function KMLtricontourf_test()
 % KMLTRICONTOURF_TEST  unit test for KMLtricontourf
 %
 % See also: googleplot, KMLcontourf_test
@@ -56,9 +56,12 @@ disp(['... running test:',mfilename])
 z = peaks(10);
 tri = delaunay(x,y);
 tri(60:74,:)=[];
-KMLtricontourf(tri,x,y-10,z,'levels',100,'fileName',KML_testdir('KMLtricontourf - 1.kml'),'colorbartitle','KMLtricontourf - 1');
-%test 2
+fileName = KML_testdir('KMLtricontourf - 1.kml');
+KMLtricontourf(tri,x,y-10,z,'levels',100,'fileName',fileName,'colorbartitle','KMLtricontourf - 1');
+assert(exist(fileName,'file')==2);
+delete(fileName);
 
+%test 2
 [x,y] = meshgrid(1.1:.5:100.1,201.2:.5:300.2);
 x = (x+sin(y).^3);
 y = (y+sin(x));
@@ -66,6 +69,7 @@ z = repmat(peaks(100),2,2)+2*cos(peaks(200))+3*sin(peaks(200))+3*peaks(200);
 tri = delaunay(x,y);
 tri(any((((x(tri)-50).^2 + (y(tri)-250).^2).^.5)>44,2),:)=[];
 x = x/10+10;y = y/10+10;
-KMLtricontourf(tri,x,y-10,z,'levels',40,'fileName',KML_testdir('KMLtricontourf - 2.kml'),'colorbartitle','KMLtricontourf - 2');
-testresult = true;
-
+fileName = KML_testdir('KMLtricontourf - 2.kml');
+KMLtricontourf(tri,x,y-10,z,'levels',40,'fileName',fileName,'colorbartitle','KMLtricontourf - 2');
+assert(exist(fileName,'file')==2);
+delete(fileName);
