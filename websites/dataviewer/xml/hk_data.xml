@@ -14,7 +14,8 @@
     <category>geo</category>
     <type>2dmap</type>
     <kml>http://dtvirt13/test/ahn100.kmz</kml>
-    <source>http://opendap.deltares.nl/thredds/dodsC/opendap/tno/ahn100m/mv100.nc</source>
+    <source>http://opendap.deltares.nl/thredds/dodsC/opendap/tno/ahn100m/mv250.nc</source>
+    <varname>AHN250</varname>
   </data>
   <data>
     <title>Vaklodingen_grids</title>
@@ -22,6 +23,7 @@
     <type>2dmap</type>
     <kml>http://dtvirt5.deltares.nl/kml/rijkswaterstaat/Vaklodingen.kml</kml>
     <source>http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB138_0706.nc</source>
+    <varname></varname>
   </data>
   <data>
     <title>Kustlidar_grids</title>
@@ -29,6 +31,7 @@
     <type>2dmap</type>
     <kml>http://dtvirt5.deltares.nl/kml/rijkswaterstaat/kustlidar.kml</kml>
     <source>http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/kustlidar/catalog.nc</source>
+    <varname></varname>
   </data>
   <data>
     <title>Suppleties</title>
@@ -71,6 +74,7 @@
     <type>2dmap</type>
     <kml>http://dtvirt5.deltares.nl/kml/tno/ncp/dz50_juli2007.kml</kml>
     <source>http://opendap.deltares.nl/thredds/dodsC/opendap/tno/ncp/dz50_juli2007.nc</source>
+    <varname></varname>
   </data>
   <data>
     <title>Habitat gebieden</title>

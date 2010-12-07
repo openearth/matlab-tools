@@ -42,10 +42,33 @@
 </head>
 
 <body onload='fillCaseListbox("cases.xml")' id='body'>
-<h3>Add new entry to XML</h3>
-
+<h3>Request form for adding data to case</h3>
+<p>
+On request, data can be added to a case. Fill in the form below and submit it to post your request to the responsible case administrator.
 <table>
   <form name="editXML" method="post" action="handleRequest.asp">
+    <tr>
+    <td colspan="2">
+    Sender information:
+    </td>
+    <tr>
+
+    <tr>
+    <td>Name:</td>
+    <td><input type="text" name="name" value="" /></td>
+    </tr>
+
+    <tr>
+    <td>Email:</td>
+    <td><input type="text" name="email" value="" /></td>
+    </tr>
+
+    <tr>
+    <td colspan="2">
+    Data information:
+    </td>
+    <tr>
+
     <tr>
     <td>Select case</td>
     <td>
@@ -57,7 +80,6 @@
 	<script type="text/javascript">case_listbox=document.editXML.caseSelect</script>
 	</td>
 	</tr>
-
 
 	<tr>
 	<td>Title:</td>
@@ -82,6 +104,11 @@
     <tr>
     <td>Type:</td>
     <td><input type="text" name="type" value="" /> (i.e. 2dmap, station, etc.)</td>
+    </tr>
+
+    <tr>
+    <td>Variable name:</td>
+    <td><input type="text" name="varname" value="" /> (Optinal, this is the name of the variable in the netcdf-file which is presented by the kml)</td>
     </tr>
 
     <tr>
