@@ -72,6 +72,50 @@ function varargout = noos_read(varargin)
 
 %% detect blocks and headers
 %  Mind that data sections can be missing altogether!: so header blocks are concatenated
+%  The NOOS format is as follows, where multiple blocks can occur, seperated by headers
+
+% #------------------------------------------------------
+% # Timeseries retrieved from the MATROOS maps1d database
+% # Created at Tue Oct 28 20:33:51 CET 2008
+% #------------------------------------------------------
+% # Location    : MAMO001_0
+% # Position    : (64040,444970)
+% # Source      : sobek_hmr
+% # Unit        : waterlevel
+% # Analyse time: 200709020100
+% # Timezone    : MET
+% #------------------------------------------------------
+% 200709010000   -0.387653201818466
+% 200709010010   -0.395031750202179
+% 200709010020   -0.407451331615448
+% 200709010030   -0.414252400398254
+% 200709010040   -0.425763547420502
+% 200709010050   -0.43956795334816
+% 200709010100   -0.309808939695358
+% 200709010110   -0.297703713178635
+% 200709010120   -0.289261430501938
+% 200709010130   -0.256232291460037
+% #------------------------------------------------------
+% # Timeseries retrieved from the MATROOS maps1d database
+% # Created at Tue Oct 28 20:33:51 CET 2008
+% #------------------------------------------------------
+% # Location    : MAMO001_0
+% # Position    : (64040,444970)
+% # Source      : sobek_hmr
+% # Unit        : waterlevel
+% # Analyse time: 200709020100
+% # Timezone    : MET
+% #------------------------------------------------------
+% 200709010000   -0.387653201818466
+% 200709010010   -0.395031750202179
+% 200709010020   -0.407451331615448
+% 200709010030   -0.414252400398254
+% 200709010040   -0.425763547420502
+% 200709010050   -0.43956795334816
+% 200709010100   -0.309808939695358
+% 200709010110   -0.297703713178635
+% 200709010120   -0.289261430501938
+% 200709010130   -0.256232291460037
 
    ind   = strmatch('# Timeseries retrieved from the MATROOS series database',allLines);
    nloc  = length(ind);

@@ -9,6 +9,7 @@ function varargout = matroos_get_series(varargin);
 % [ t, values , metainfo] = matroos_get_series(<keyword,value>);
 %
 % where the following <keyword,value> are defined:
+% (NB matroos_get_series() returns all <keyword,value> pairs)
 % REQUIRED matroos url keywords:
 % - loc       : The location as known by Matroos (see MATROOS_LIST).
 %               note: several locations can be a ; separated list of locations.
@@ -26,7 +27,7 @@ function varargout = matroos_get_series(varargin);
 % * file      : filename for saving data (optionally, default '' means that no file will be saved)
 %
 % Example:
-% [t,wl]=get_series('units','waterlevel',...
+% [t,wl]=get_series( 'unit','waterlevel',...
 %                  'source','observed',...
 %                     'loc','hoekvanholland',...
 %                  'tstart',datestr(now)-7,... % 7 days history
@@ -123,7 +124,12 @@ function varargout = matroos_get_series(varargin);
 
    OPT.check      = 'server'; 
    OPT.debug      = 0;   
-   OPT.file       = '';   
+   OPT.file       = '';  
+   
+   if nargin==0
+      varargout = {OPT};
+      return
+   end
    
    OPT = setproperty(OPT,varargin{:});
    
