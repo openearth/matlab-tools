@@ -1,15 +1,14 @@
 function dat = xb_dat_read(fname, dims, varargin)
-%XB_DAT_READ  Bitwise reading of XBeach DAT files using strides
+%XB_DAT_READ  Bytewise reading of XBeach DAT files using strides
 %
-%   Reading of XBeach DAT files without the necessity to read the entire
-%   file into memory. Based on given dimensions, start positions, length of
-%   dimensions and strides, the exact numbers necessary are read from the
-%   DAT file.
-%
-%   TODO: implement matrix read in case strides of first two dimensions are
-%         equal to unity. Also implement threshold where reading the entire
-%         file and disposing the part not reuqested is faster (factor
-%         option)
+%   Reading of XBeach DAT files. Two read methods are available: minimal
+%   reads and minimal memory. The former minimizes the number of fread
+%   calls, while the latter minimizes the amount of data read into memory.
+%   In case the number of reads is for both methods equal, the memory
+%   method is used. This method is also used if the average number of reads
+%   per item is less than with the read method. The method used can also be
+%   forced. The results is a matrix of the size dims containing the
+%   requested data.
 %
 %   Syntax:
 %   dat = xb_dat_read(fname, dims, varargin)
@@ -22,8 +21,7 @@ function dat = xb_dat_read(fname, dims, varargin)
 %                 length:   Number of data items to be read in each
 %                           dimension, negative is unlimited
 %                 stride:   Stride to be used in each dimension
-%                 factor:   Factor in threshold calculation to determine
-%                           read method
+%                 force:    Force read method (read/memory)
 %
 %   Output:
 %   dat         = Matrix with dimensions defined in dims containing
@@ -79,16 +77,21 @@ function dat = xb_dat_read(fname, dims, varargin)
 
 %% read options
 
+if ndims(dims) < 2; error(['DAT file should be at least 2D [' num2str(ndims(dims)) ']']); end;
+
 OPT = struct( ...
     'start', [], ...
     'length', [], ...
     'stride', [], ...
-    'factor', 0.5 ...
+    'force', '' ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
 %% check options
+
+dat = [];
+if isempty(dims); return; end;
 
 if isempty(OPT.start); OPT.start = zeros(size(dims)); end;
 if isempty(OPT.length); OPT.length = -ones(size(dims)); end;
@@ -102,16 +105,37 @@ OPT.start(OPT.start<0) = 0;
 OPT.length(OPT.length<0) = max(1, dims(OPT.length<0)-OPT.start(OPT.length<0));
 OPT.stride(OPT.stride<1) = 1;
 
+% determine size of read matrix
+sz = [1 1];
+if OPT.stride(1) == 1; sz(1) = OPT.length(1); end;
+if OPT.stride(2) == 1; sz(2) = OPT.length(2); end;
+
+%% determine read method
+
+nitems = prod(OPT.length./OPT.stride);
+nreads = nitems/prod(sz);
+
+if isempty(OPT.force)
+    if (OPT.stride(1) == 1 && OPT.stride(2) == 1 && ~all(OPT.stride == 1)) || ...
+        (nreads/nitems < prod(dims(3:end))/prod(dims))
+        method = 'memory';
+    else
+        method = 'read';
+    end
+else
+    method = OPT.force;
+end
+
 %% read dat
 
 fname = fullfile(fname);
 
-dat = [];
 if exist(fname, 'file')
     f = dir(fname);
-
-    byt = f.bytes/prod(dims);
     
+    % determine filetype
+    byt = f.bytes/prod(dims);
+
     switch byt
         case 4
             ftype = 'single';
@@ -120,25 +144,69 @@ if exist(fname, 'file')
         otherwise
             error(['Dimensions incorrect [' num2str(dims) ']']);
     end
-    
+
     fid = fopen(fname, 'r');
     
-    ranges = {}; dimensions = [];
-    for i = 1:length(OPT.start)
-        ranges{i} = OPT.start(i)+[0:OPT.stride(i):OPT.length(i)-1];
-        dimensions = [dimensions length(ranges{i})];
-    end
+    switch method
+        case 'read'
+            % METHOD: minimal reads
 
-    dat = nan(dimensions);
+            dat = nan(dims);
 
-    for i = 1:prod(dimensions)
-        coords = numel2coord(dimensions, i);
-        item = 0;
-        for j = 1:length(coords)
-            item = item + ranges{j}(coords(j))*prod(dims(1:j-1));
-        end
-        fseek(fid, item*byt, 'bof');
-        dat(i) = fread(fid, 1, ftype);
+            % read entire file
+            for i = 1:prod(dims(3:end))
+                dat(:,:,i) = fread(fid, dims(1:2), ftype);
+            end
+
+            % dispose data out of range
+            for i = 1:length(dims)
+                if OPT.length(i) < dims(i)
+                    idx = num2cell(repmat(':',1,length(dims)));
+                    idx{i} = 1+OPT.start(i)+[0:OPT.stride(i):OPT.length(i)-1];
+                    dat = dat(idx{:});
+                end
+            end
+        case 'memory'
+            % METHOD: minimal memory
+            
+            dat = nan(OPT.length);
+
+            % determine dimensions to remove from loop and read at once
+            % (maximum first two)
+            nn = OPT.length(1);
+            if sz(1) > 1; nn = 1; end;
+            
+            mm = OPT.length(2);
+            if sz(2) > 1; mm = 1; end;
+
+            % build output index
+            idx = [num2cell(repmat(':',1,2)) {1}];
+            
+            % loop through data arrays
+            for i = 1:prod(OPT.length(3:end))
+                
+                % select starting point of current data array
+                ii = (i-1)*prod(dims(1:2));
+                
+                idx{3} = i;
+
+                % loop through current data array
+                for n = 1:nn
+                    for m = 1:mm
+
+                        if sz(1) == 1; idx{1} = n; end;
+                        if sz(2) == 1; idx{2} = m; end;
+                        
+                        ii = ii + (m-1)*dims(1) + n;
+                        
+                        % set pointer to data point to be read and read
+                        fseek(fid, ii*byt, 'bof');
+                        dat(idx{:}) = fread(fid, sz, ftype);
+                    end
+                end
+            end
+        otherwise
+            error(['Unknown read method [' method ']']);
     end
     
     fclose(fid);
