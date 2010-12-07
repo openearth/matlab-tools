@@ -27,6 +27,9 @@ classdef MTestFactory
             %% Interpret Header
             newTest = MTestFactory.interpretheader(newTest);
             
+            %% find category
+            newTest = MTestFactory.findcategory(newTest);
+            
             %% Apply other input
             newTest = MTestUtils.setproperty(newTest,varargin{:});
             

@@ -74,14 +74,14 @@ function mtestfactory_splitdefinitionstring_test()
 mt = MTest;
 mt.FileName = 'mte_fulldefinition_test';
 mt.FilePath = fileparts(which(mt.FileName));
-mt = MTestFactory.retrievestringfromdefinition(mt);
+mt = MFileFactory.retrievestringfromdefinition(mt);
 mt = MTestFactory.resetstringids(mt);
 mt = MTestFactory.splitdefinitionstring(mt);
 
 % No subfunctions
 mt.FileName = 'mte_simple_test';
 mt.FilePath = fileparts(which(mt.FileName));
-mt = MTestFactory.retrievestringfromdefinition(mt);
+mt = MFileFactory.retrievestringfromdefinition(mt);
 mt = MTestFactory.resetstringids(mt);
 mt = MTestFactory.splitdefinitionstring(mt);
 
@@ -98,7 +98,7 @@ end
 % No function declaration
 mt.FileName = 'mte_wrongdefinition_test';
 mt.FilePath = fileparts(which(mt.FileName));
-mt = MTestFactory.retrievestringfromdefinition(mt);
+mt = MFileFactory.retrievestringfromdefinition(mt);
 mt = MTestFactory.resetstringids(mt);
 try
     MTestFactory.splitdefinitionstring(mt);
@@ -113,7 +113,7 @@ function mtestfactory_interpretheader_test()
 mt = MTest;
 mt.FileName = 'mte_headeronly_test';
 mt.FilePath = fileparts(which(mt.FileName));
-mt = MTestFactory.retrievestringfromdefinition(mt);
+mt = MFileFactory.retrievestringfromdefinition(mt);
 mt = MTestFactory.resetstringids(mt);
 mt = MTestFactory.splitdefinitionstring(mt);
 mt = MTestFactory.interpretheader(mt);
@@ -124,7 +124,7 @@ assert(length(mt.SeeAlso)==1);
 mt = MTest;
 mt.FileName = 'mte_versiononly_test';
 mt.FilePath = fileparts(which(mt.FileName));
-mt = MTestFactory.retrievestringfromdefinition(mt);
+mt = MFileFactory.retrievestringfromdefinition(mt);
 mt = MTestFactory.resetstringids(mt);
 mt = MTestFactory.splitdefinitionstring(mt);
 mt = MTestFactory.interpretheader(mt);
@@ -133,7 +133,7 @@ assert(strcmp(mt.Author,'geer'));
 mt = MTest;
 mt.FileName = 'mte_fulldefinition_test';
 mt.FilePath = fileparts(which(mt.FileName));
-mt = MTestFactory.retrievestringfromdefinition(mt);
+mt = MFileFactory.retrievestringfromdefinition(mt);
 mt = MTestFactory.resetstringids(mt);
 mt = MTestFactory.splitdefinitionstring(mt);
 mt = MTestFactory.interpretheader(mt);
