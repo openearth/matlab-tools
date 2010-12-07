@@ -74,76 +74,95 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
-%% determine dimensions
-
-t = xb_get(xb,'DIMS.tsglobal');
-nt = xb_get(xb,'DIMS.nt');
-
-% get variable list
-vars = {xb.data.name};
-idx = strcmpi(vars, {'DIMS'});
-vars = vars(~idx);
-varlist = sprintf('|%s', vars{:});
-varlist = varlist(2:end);
-
 %% create gui
 
 winsize = [800 600];
 
-fig = figure('Position', [100 100 winsize]);
+fig = figure('Position', [100 100 winsize], ...
+    'ResizeFcn', @ui_resize);
 
 axes('Position', [.1 .2 .7 .7], 'Tag', 'Axes');
 
-% sliders
-uicontrol(fig, 'Style', 'slider', 'Tag', 'Slider1', ...
-    'Min', 1, 'Max', nt, 'Value', 1, ...
-    'Position', [[.1 .125].*winsize [.7 .025].*winsize], ...
-    'Enable', 'off', ...
-    'Callback', {@ui_loaddata, xb});
-
-uicontrol(fig, 'Style', 'slider', 'Tag', 'Slider2', ...
-    'Min', 1, 'Max', nt, 'Value', nt, ...
-    'Position', [[.1 .075].*winsize [.7 .025].*winsize], ...
-    'Callback', {@ui_loaddata, xb});
-
-uicontrol(fig, 'Style', 'text', 'Tag', 'TextSlider1', ...
-    'String', num2str(t(1)), 'HorizontalAlignment', 'left', ...
-    'Position', [[.1 .025].*winsize [.3 .025].*winsize]);
-
-uicontrol(fig, 'Style', 'text', 'Tag', 'TextSlider2', ...
-    'String', num2str(t(end)), 'HorizontalAlignment', 'right', ...
-    'Position', [[.5 .025].*winsize [.3 .025].*winsize]);
-
-% variable selector
-uicontrol(fig, 'Style', 'listbox', 'Tag', 'SelectVar', ...
-    'String', varlist, 'Min', 1, 'Max', length(vars), ...
-    'Position', [[.85 .65].*winsize [.1 .25].*winsize], ...
-    'Callback', {@ui_loaddata, xb});
-
-% options
-uicontrol(fig, 'Style', 'checkbox', 'Tag', 'ToggleDiff', ...
-    'String', 'diff', ...
-    'Position', [[.85 .6].*winsize [.1 .05].*winsize], ...
-    'Callback', {@ui_togglediff, xb});
-
-uicontrol(fig, 'Style', 'checkbox', 'Tag', 'ToggleSurf', ...
-    'String', 'surf', ...
-    'Position', [[.85 .55].*winsize [.1 .05].*winsize], ...
-    'Enable', 'off', ...
-    'Callback', {@ui_togglesurf, xb});
-
-% animate button
-uicontrol(fig, 'Style', 'togglebutton', 'Tag', 'ToggleAnimate', ...
-    'String', 'Animate', ...
-    'Position', [[.85 .07].*winsize [.1 .035].*winsize], ...
-    'Callback', {@ui_animate, xb});
-
-set(findobj(fig, 'Type', 'uicontrol'), 'BackgroundColor', [.8 .8 .8]);
+ui_build(fig, [], xb);
 
 % show data
 ui_loaddata(findobj(fig, 'Tag', 'SelectVar'), [], xb);
 
+%% privat functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function info = get_info(xb)
+
+info = struct();
+
+info.t = xb_get(xb,'DIMS.tsglobal');
+info.nt = xb_get(xb,'DIMS.nt');
+
+% get variable list
+vars = {xb.data.name};
+idx = strcmpi(vars, {'DIMS'});
+info.vars = vars(~idx);
+varlist = sprintf('|%s', info.vars{:});
+info.varlist = varlist(2:end);
+
 %% uicontrol functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function ui_build(hObj, event, xb)
+
+info = get_info(xb);
+
+% sliders
+uicontrol(hObj, 'Style', 'slider', 'Tag', 'Slider1', ...
+    'Min', 1, 'Max', info.nt, 'Value', 1, ...
+    'Enable', 'off', ...
+    'Callback', {@ui_loaddata, xb});
+
+uicontrol(hObj, 'Style', 'slider', 'Tag', 'Slider2', ...
+    'Min', 1, 'Max', info.nt, 'Value', info.nt, ...
+    'Callback', {@ui_loaddata, xb});
+
+uicontrol(hObj, 'Style', 'text', 'Tag', 'TextSlider1', ...
+    'String', num2str(info.t(1)), 'HorizontalAlignment', 'left');
+
+uicontrol(hObj, 'Style', 'text', 'Tag', 'TextSlider2', ...
+    'String', num2str(info.t(end)), 'HorizontalAlignment', 'right');
+
+% variable selector
+uicontrol(hObj, 'Style', 'listbox', 'Tag', 'SelectVar', ...
+    'String', info.varlist, 'Min', 1, 'Max', length(info.vars), ...
+    'Callback', {@ui_loaddata, xb});
+
+% options
+uicontrol(hObj, 'Style', 'checkbox', 'Tag', 'ToggleDiff', ...
+    'String', 'diff', ...
+    'Callback', {@ui_togglediff, xb});
+
+uicontrol(hObj, 'Style', 'checkbox', 'Tag', 'ToggleSurf', ...
+    'String', 'surf', ...
+    'Enable', 'off', ...
+    'Callback', {@ui_togglesurf, xb});
+
+% animate button
+uicontrol(hObj, 'Style', 'togglebutton', 'Tag', 'ToggleAnimate', ...
+    'String', 'Animate', ...
+    'Callback', {@ui_animate, xb});
+
+ui_resize(hObj, event);
+
+set(findobj(hObj, 'Type', 'uicontrol'), 'BackgroundColor', [.8 .8 .8]);
+
+function ui_resize(hObj, event)
+
+pos = get(hObj, 'Position');
+winsize = pos(3:4);
+
+set(findobj(hObj, 'Tag', 'Slider1'), 'Position', [[.1 .125].*winsize [.7 .025].*winsize]);
+set(findobj(hObj, 'Tag', 'Slider2'), 'Position', [[.1 .075].*winsize [.7 .025].*winsize]);
+set(findobj(hObj, 'Tag', 'TextSlider1'), 'Position', [[.1 .025].*winsize [.3 .025].*winsize]);
+set(findobj(hObj, 'Tag', 'TextSlider2'), 'Position', [[.5 .025].*winsize [.3 .025].*winsize]);
+set(findobj(hObj, 'Tag', 'SelectVar'), 'Position', [[.85 .65].*winsize [.1 .25].*winsize]);
+set(findobj(hObj, 'Tag', 'ToggleDiff'), 'Position', [[.85 .6].*winsize [.1 .05].*winsize]);
+set(findobj(hObj, 'Tag', 'ToggleSurf'), 'Position', [[.85 .55].*winsize [.1 .05].*winsize]);
+set(findobj(hObj, 'Tag', 'ToggleAnimate'), 'Position', [[.85 .07].*winsize [.1 .035].*winsize]);
 
 function ui_togglediff(hObj, event, xb)
 
