@@ -11,7 +11,8 @@ function filename = xb_write_tide(xb, varargin)
 %
 %   Input:
 %   xb          = XBeach structure array
-%   varargin    = filename: filename of tide definition file
+%   varargin    = path:     path to output directory
+%                 filename: filename of tide definition file
 %
 %   Output:
 %   filename    = filename to be referred in parameter file
@@ -67,6 +68,7 @@ function filename = xb_write_tide(xb, varargin)
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
+    'path', pwd, ...
     'filename', 'tide.txt' ...
 );
 
@@ -82,7 +84,7 @@ try
     
     A = [time tide];
     
-    save(filename, '-ascii', 'A');
+    save(fullfile(OPT.path, filename), '-ascii', 'A');
 catch
     error(['Could not create tide definition file [' filename ']']);
 end

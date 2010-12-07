@@ -9,7 +9,8 @@ function varargout = xb_write_bathy(xb, varargin)
 %
 %   Input:
 %   xb          = XBeach structure array
-%   varargin    = xfile:        filename of x definition file
+%   varargin    = path:         path to output directory
+%                 xfile:        filename of x definition file
 %                 yfile:        filename of y definition file
 %                 depfile:      filename of depth definition file
 %                 ne_layerfile: filename of non-erodable layer definition
@@ -69,6 +70,7 @@ function varargout = xb_write_bathy(xb, varargin)
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
+    'path', pwd, ...
     'xfile', 'x.grd', ...
     'yfile', 'y.grd', ...
     'depfile', 'bed.dep', ...
@@ -88,7 +90,7 @@ for i = 1:length(f)
     if xb_exist(xb, f{i})
         varargout{c} = OPT.(f{i});
         data = xb_get(xb, f{i});
-        save(OPT.(f{i}), '-ascii', 'data');
+        save(fullfile(OPT.path, OPT.(f{i})), '-ascii', 'data');
         c = c+1;
     end
 end

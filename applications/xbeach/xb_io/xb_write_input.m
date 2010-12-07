@@ -74,11 +74,11 @@ OPT = struct( ...
 OPT = setproperty(OPT, varargin{:});
 
 %% write referred files
-[fdir fname dext] = fileparts(filename);
+
+fdir = fileparts(filename);
 
 if OPT.write_files
     
-
     for i = 1:length(xb.data)
         if isstruct(xb.data(i).value)
             sub = xb.data(i).value;
@@ -86,19 +86,19 @@ if OPT.write_files
             switch xb.data(i).name
                 case {'bcfile'}
                     % write waves
-                    xb.data(i).value = xb_write_waves(sub);
+                    xb.data(i).value = xb_write_waves(sub, 'path', fdir);
                 case {'zs0file'}
                     % write tide
-                    xb.data(i).value = xb_write_tide(sub);
+                    xb.data(i).value = xb_write_tide(sub, 'path', fdir);
                 case {'xfile' 'yfile' 'depfile' 'ne_layer'}
                     % write bathymetry file by file
-                    xb.data(i).value = xb_write_bathy(sub);
+                    xb.data(i).value = xb_write_bathy(sub, 'path', fdir);
                 otherwise
                     % assume file to be a grid and try writing it
                     try
                         xb.data(i).value = [xb.data(i).name '.txt'];
                         data = xb_get(sub, 'data');
-                        save(xb.data(i).value, '-ascii', 'data');
+                        save(fullfile(fdir, xb.data(i).value), '-ascii', 'data');
                     catch
                         % cannot write file, ignore
                         xb = xb_del(xb, xb.data(i).name);
@@ -110,4 +110,4 @@ end
 
 %% write params.txt file
 
-xb_write_params([fname dext], xb)
+xb_write_params(filename, xb)
