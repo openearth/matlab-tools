@@ -102,7 +102,7 @@ for i=1:n
       warning(['shape with length 0: ',OPT.fname,' no ',num2str(i)])
    else
    
-     [lon,lat]           = convertcoordinates(R(i).X,R(i).Y,'CS1.code',OPT.epsg,'CS2.code',4326);
+     [lon,lat]           = convertCoordinates(R(i).X,R(i).Y,'CS1.code',OPT.epsg,'CS2.code',4326);
       
       % for patch-holes remove the NaNs
       mask = isnan(R(i).X);
