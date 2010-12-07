@@ -88,19 +88,28 @@ ui_build(fig, [], xb);
 % show data
 ui_loaddata(findobj(fig, 'Tag', 'SelectVar'), [], xb);
 
-%% privat functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function info = get_info(xb)
 
 info = struct();
 
-info.t = xb_get(xb,'DIMS.tsglobal');
-info.nt = xb_get(xb,'DIMS.nt');
+% get time
+if xb_exist(xb, 'DIMS')
+    info.t = xb_get(xb,'DIMS.tsglobal');
+else
+    info.t = [0 1];
+end
 
 % get variable list
-vars = {xb.data.name};
-idx = strcmpi(vars, {'DIMS'});
-info.vars = vars(~idx);
+vars = {};
+for i = 1:length(xb.data)
+    if isnumeric(xb.data(i).value) && ndims(xb.data(i).value) >= 2
+        vars = [vars {xb.data(i).name}];
+    end
+end
+info.vars = vars;
+
 varlist = sprintf('|%s', info.vars{:});
 info.varlist = varlist(2:end);
 
@@ -112,12 +121,12 @@ info = get_info(xb);
 
 % sliders
 uicontrol(hObj, 'Style', 'slider', 'Tag', 'Slider1', ...
-    'Min', 1, 'Max', info.nt, 'Value', 1, ...
+    'Min', 1, 'Max', length(info.t), 'Value', 1, ...
     'Enable', 'off', ...
     'Callback', {@ui_loaddata, xb});
 
 uicontrol(hObj, 'Style', 'slider', 'Tag', 'Slider2', ...
-    'Min', 1, 'Max', info.nt, 'Value', info.nt, ...
+    'Min', 1, 'Max', length(info.t), 'Value', length(info.t), ...
     'Callback', {@ui_loaddata, xb});
 
 uicontrol(hObj, 'Style', 'text', 'Tag', 'TextSlider1', ...
@@ -202,18 +211,26 @@ hold off;
 for i = 1:size(vars,1)
     var = strtrim(vars(i,:));
     data = xb_get(xb, var);
-
+    
     if ~isnan(data)
 
-        idx = num2cell(ones(1, ndims(data))); idx(1:2) = {':' ':'};
+        idx1 = num2cell(ones(1, ndims(data))); idx1(1:2) = {':' ':'};
+        idx2 = idx1;
 
         % get time
         t1 = round(get(findobj(pObj, 'Tag', 'Slider1'), 'Value'));
         t2 = round(get(findobj(pObj, 'Tag', 'Slider2'), 'Value'));
 
         % determine indices
-        idx1 = [idx{1:end-1} {t1}];
-        idx2 = [idx{1:end-1} {t2}];
+        if ndims(data) > 2
+            idx1 = [idx1{1:end-1} {t1}];
+            idx2 = [idx1{1:end-1} {t2}];
+        else
+            set(findobj(pObj, 'Tag', 'Slider1'), 'Enable', 'off');
+            set(findobj(pObj, 'Tag', 'Slider2'), 'Enable', 'off');
+            set(findobj(pObj, 'Tag', 'ToggleDiff'), 'Enable', 'off');
+            set(findobj(pObj, 'Tag', 'ToggleAnimate'), 'Enable', 'off');
+        end
 
         % get 2D array
         if get(findobj(pObj, 'Tag', 'ToggleDiff'), 'Value')
@@ -227,20 +244,28 @@ for i = 1:size(vars,1)
         % get grid
         x = xb_get(xb, 'DIMS.x');
         y = xb_get(xb, 'DIMS.y');
+        
+        if isnan(x); x = xb_get(xb, 'xfile'); end;
+        if isnan(y); y = xb_get(xb, 'yfile'); end;
 
         % plot data
         if min(size(data)) <= 3
             set(findobj(pObj, 'Tag', 'ToggleSurf'), 'Enable', 'off')
+            
+            [m mi] = min(size(data));
+            idx = num2cell(repmat(':', 1, ndims(data)));
+            idx{mi} = 1;
+            data = data(idx{:});
 
             % 1D data
             sObj = findobj(findobj(pObj, 'Type', 'Axes'), 'Type', 'line');
             if length(sObj) >= i
-                set(sObj(i), 'YData', data(:,1));
+                set(sObj(i), 'YData', data, 'Color', colors(mod(i-1,length(colors))+1));
             else
                 if ~isnan(x)
-                    plot(x, data(:,1), ['-' colors(mod(i-1,length(colors))+1)]);
+                    plot(x(idx{:}), data, ['-' colors(mod(i-1,length(colors))+1)]);
                 else
-                    plot(data(:,1), ['-' colors(mod(i-1,length(colors))+1)]);
+                    plot(data, ['-' colors(mod(i-1,length(colors))+1)]);
                 end
             end
         else
