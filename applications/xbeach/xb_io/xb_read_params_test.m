@@ -1,4 +1,4 @@
-function testresult = xb_read_params_test()
+function xb_read_params_test()
 % XB_READ_PARAMS_TEST  test of xb_read_params function
 % 
 %   See also 
@@ -48,8 +48,9 @@ function testresult = xb_read_params_test()
 
 MTestCategory.DataAccess;
 
-outputdir = fullfile(fileparts(which(mfilename)), '..', 'temp_calculation');
-filename = fullfile(outputdir, 'params.txt');
+% xbeachtestdatadir is located at https://repos.deltares.nl/repos/OpenEarthTools/test/matlab/applications/xbeach
+% as is the test data
+filename = fullfile(xbeachtestdatadir, 'params.txt');
 
 % check whether params.txt file is available
 if ~exist(filename, 'file')
@@ -60,4 +61,4 @@ end
 xbSettings = xb_read_params(filename);
 
 % does the function give a struct as output
-testresult = isstruct(xbSettings);
+assert(isstruct(xbSettings));

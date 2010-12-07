@@ -948,8 +948,7 @@ classdef MTestExplorer < handle
                 else
                     id =~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.Name},repmat({searchString},1,length(this.MTestRunner.Tests)),'UniformOutput',false))| ...
                         ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.FileName},repmat({searchString},1,length(this.MTestRunner.Tests)),'UniformOutput',false))| ...
-                        ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.FilePath},repmat({searchString},1,length(this.MTestRunner.Tests)),'UniformOutput',false))| ...
-                        ~cellfun(@isempty,cellfun(@regexpi,{MTestCategory.toString(this.MTestRunner.Tests.Category)},repmat({searchString},1,length(this.MTestRunner.Tests)),'UniformOutput',false));
+                        ~cellfun(@isempty,cellfun(@regexpi,{this.MTestRunner.Tests.FilePath},repmat({searchString},1,length(this.MTestRunner.Tests)),'UniformOutput',false));
                 end
 
                 selectedNodes = cellfun(@node2str,this.JTreeTestNodes(id),'UniformOutput',false)';

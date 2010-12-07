@@ -1,4 +1,4 @@
-function testresult = detran_d3dTrans_mm_test()
+function detran_d3dTrans_mm_test()
 % DETRAN_D3DTRANS_MM_TEST  One line description goes here
 %  
 % More detailed description of the test goes here.
@@ -49,13 +49,9 @@ function testresult = detran_d3dTrans_mm_test()
 % $HeadURL$
 % $Keywords: $
 
-try
-    [pat, nam]=fileparts(which('detran_test_dir'));
-    file = [pat filesep 'detan_testmodel' filesep 'mm' filesep 'run01' filesep 'trim-example.dat'];
-    d=detran_d3dTrans_mm('mean',file,0);
-    testresult = true;
-catch
-    testresult = false;
-end
-
 MTestCategory.DataAccess;
+
+[pat, nam]=fileparts(which('detran_test_dir.tst'));
+file = [pat filesep 'detan_testmodel' filesep 'mm' filesep 'run01' filesep 'trim-example.dat'];
+d=detran_d3dTrans_mm('mean',file,0);
+

@@ -1,4 +1,4 @@
-function testresult = detran_d3dTransFromHis_multi_test()
+function detran_d3dTransFromHis_multi_test()
 % DETRAN_D3DTRANSFROMHIS_MULTI_TEST  One line description goes here
 %
 % More detailed description of the test goes here.
@@ -51,9 +51,7 @@ function testresult = detran_d3dTransFromHis_multi_test()
 
 MTestCategory.DataAccess;
 
-[pat, nam]=fileparts(which('detran_test_dir'));
-file = [pat filesep 'testmodel_testmodel' filesep 'multi' filesep 'run01' filesep 'trih-example.dat'];
-weightfile = [pat filesep 'testmodel' filesep 'multi' filesep 'weights.tek'];
+[pat, nam]=fileparts(which('detran_test_dir.tst'));
+file = [pat filesep 'detran_testmodel' filesep 'multi' filesep 'run01' filesep 'trih-example.dat'];
+weightfile = [pat filesep 'detran_testmodel' filesep 'multi' filesep 'weights.tek'];
 d=detran_d3dTransFromHis_multi('mean',file,weightfile,0);
-testresult = true;
-

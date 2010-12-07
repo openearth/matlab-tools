@@ -51,6 +51,7 @@ function detran_d3dTransFromHis_single_test()
 
 MTestCategory.DataAccess;
 
-[pat, nam]=fileparts(which('detran_test_dir'));
+[pat, nam]=fileparts(which('detran_test_dir.tst'));
 file = [pat filesep 'detran_testmodel' filesep 'single' filesep 'trih-example.dat'];
 [crossName, crossXY, transport, namsed]=detran_d3dTransFromHis_single('mean',file,0);
+assert(~isempty(namsed));

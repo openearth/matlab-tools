@@ -61,7 +61,7 @@ variables = xb_read_dat(outputdir);
 variables = xb_read_dat(outputdir)
 assert(ismember('zs', {variables.data.name}));
 % Do we have some values?
-assert(isnumeric(variables.data(1).value));
+assert(~isempty(variables.data(1).value));
 
 % Does the function not output xw if we don't want it to.
 % TODO: this doesn't work yet.....

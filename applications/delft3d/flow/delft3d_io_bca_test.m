@@ -51,5 +51,5 @@ function delft3d_io_bca_test()
 
 MTestCategory.DataAccess;
 
-BND = delft3d_io_bnd('read',which('bca.bnd'));
-BCA = delft3d_io_bca('read',which('tst.bca'),BND,8);
+BND = delft3d_io_bnd('read',which('bca2bct.bnd'));
+BCA = delft3d_io_bca('read',which('bca2bct.bca'),BND);

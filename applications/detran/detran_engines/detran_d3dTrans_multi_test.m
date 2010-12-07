@@ -51,7 +51,7 @@ function detran_d3dTrans_multi_test()
 
 MTestCategory.DataAccess;
 
-[pat, nam]=fileparts(which('detran_test_dir'));
+[pat, nam]=fileparts(which('detran_test_dir.tst'));
 file = [pat filesep 'detran_testmodel' filesep 'multi' filesep 'run01' filesep 'trim-example.dat'];
 weightfile = [pat filesep 'detran_testmodel' filesep 'multi' filesep 'weights.tek'];
 d=detran_d3dTrans_multi('mean',file,weightfile,0);
