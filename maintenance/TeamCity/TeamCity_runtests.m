@@ -146,7 +146,9 @@ try %#ok<TRYNC>
 
         % Check which tests we have to run
         if strcmp(OPT.Category,'all')
-            id = true(size(collectedTestCategories));
+            id = true(size(collectedTestCategories)) & ...
+            collectedTestCategories ~= MTestCategory.UserInput &...
+            collectedTestCategories ~= MTestCategory.WorkInProgress;
         else
             id = collectedTestCategories  == str2category(OPT.Category);
         end
