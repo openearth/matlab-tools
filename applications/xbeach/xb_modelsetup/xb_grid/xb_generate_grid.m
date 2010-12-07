@@ -1,9 +1,10 @@
-function [xb nx ny] = xb_generate_grid(varargin)
+function xb = xb_generate_grid(varargin)
 %XB_GENERATE_GRID  Creates a model grid based on a given bathymetry
 %
 %   Creates a model grid in either one or two dimensions based on a given
-%   bathymetry. The result is a XBeach structure containing three matrices
-%   of equal size containing a rectilinear grid in x, y and z coordinates.
+%   bathymetry. The result is a XBeach input structure containing three
+%   matrices of equal size containing a rectilinear grid in x, y and z
+%   coordinates.
 %
 %   Syntax:
 %   xb = xb_generate_grid(varargin)
@@ -15,8 +16,6 @@ function [xb nx ny] = xb_generate_grid(varargin)
 %
 %   Output:
 %   xb        = XBeach structure array
-%   nx        = Number of cells in x-direction
-%   ny        = Number of cells in y-direction
 %
 %   Example
 %   xb = xb_generate_grid('x', x, 'y', y, 'z', z)
@@ -95,8 +94,12 @@ end
 nx = size(zgrid, 2)-1;
 ny = size(zgrid, 1)-1;
 
-%% create xbeach structure
+%% create xbeach structures
+
+bathy = xb_empty();
+bathy = xb_set(bathy, 'xfile', xgrid, 'yfile', ygrid, 'depfile', zgrid);
+bathy = xb_meta(bathy, mfilename, 'bathymetry');
 
 xb = xb_empty();
-xb = xb_set(xb, 'xfile', xgrid, 'yfile', ygrid, 'depfile', zgrid);
-xb = xb_meta(xb, mfilename, 'bathymetry');
+xb = xb_set(xb, 'nx', nx, 'ny', ny, 'vardx', 1);
+xb = xb_join(xb, xb_bathy2input(bathy));

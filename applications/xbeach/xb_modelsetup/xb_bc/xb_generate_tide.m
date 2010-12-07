@@ -1,7 +1,7 @@
 function xb = xb_generate_tide(varargin)
 %XB_GENERATE_TIDE  Generates XBeach structure with tide data
 %
-%   Generates a XBeach structure with tide settings. A minimal set of
+%   Generates a XBeach input structure with tide settings. A minimal set of
 %   default settings is used, unless otherwise provided. Settings can be
 %   provided by a varargin list of name/value pairs.
 %
@@ -69,24 +69,94 @@ function xb = xb_generate_tide(varargin)
 OPT = struct( ...
     'time', 0, ...
     'front', 5, ...
-    'back', 0 ...
+    'back', [] ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
+%% determine tide type
+
+type = -1;
+
+if isscalar(OPT.front)
+    if isempty(OPT.back) || OPT.front == OPT.back
+        % constant water level
+        type = 0;
+    elseif isscalar(OPT.back)
+        % constant water level, but different in front and back
+        type = 1;
+    else
+        warning('Invalid tide definition, using front water level in back');
+        OPT.back = OPT.front;
+        type = 0;
+    end
+elseif isvector(OPT.front)
+    if isscalar(OPT.back)
+        % varying water level in front, constant in back
+        type = 1;
+    elseif isvector(OPT.back)
+        % varying water level in front and back
+        type = 2;
+    else
+        warning('Invalid tide definition, using front water level in back');
+        OPT.back = OPT.front;
+        type = 2;
+    end
+elseif ndims(OPT.front) == 2 && ndims(OPT.back) == 2 && ...
+        size(OPT.front, 2) == 2 && size(OPT.back, 2) == 2
+    % varying water level in four corners
+    type = 4;
+else
+    error('Invalid tide definition');
+end
+
 %% generate tide
+
+l = max([2 length(OPT.time) size(OPT.front, 1) size(OPT.back, 1)]);
+
+zs0file = get_tide_file(OPT.time, OPT.front, OPT.back, type);
 
 xb = xb_empty();
 
-l = max([length(OPT.time) length(OPT.front) length(OPT.back)]);
+switch type
+    case 0
+        xb = xb_set(xb, 'zs0', OPT.front);
+    case 1
+        xb = xb_set(xb, 'zs0', OPT.back, 'zs0file', zs0file, ...
+            'tideloc', 1, 'tidelen', l);
+    case 2
+        xb = xb_set(xb, 'zs0file', zs0file, ...
+            'tideloc', 2, 'tidelen', l);
+    case 4
+        xb = xb_set(xb, 'zs0file', zs0file, ...
+            'tideloc', 4, 'tidelen', l);
+end
+
+xb = xb_meta(xb, mfilename, 'input');
+
+%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function xb = get_tide_file(t, front, back, type)
+
+xb = xb_empty();
+
+l = max([2 length(t) size(front, 1) size(back, 1)]);
 
 time = zeros(l,1);
-tide = zeros(l,2);
+tide = zeros(l,type);
 
-time(1:length(OPT.time)) = OPT.time;
-tide(1:length(OPT.front),1) = OPT.front;
-tide(1:length(OPT.back),2) = OPT.back;
+time(1:length(t)) = t;
+
+switch type
+    case 1
+        tide(1:length(front),1) = front;
+    case 2
+        tide(1:length(front),1) = front;
+        tide(1:length(back),2) = back;
+    case 4
+        tide(1:length(front),1:2) = front;
+        tide(1:length(back),3:4) = back;
+end
 
 xb = xb_set(xb, 'time', time, 'tide', tide);
-
 xb = xb_meta(xb, mfilename, 'tide');

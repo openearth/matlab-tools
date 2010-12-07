@@ -12,6 +12,14 @@ function xb = xb_read_dat(fname, varargin)
 %   Input:
 %   fname       = directory name that contains the dat files.
 %   varargin    = vars:     variable filters
+%                 start:    Start positions for reading in each dimension,
+%                           first item is zero
+%                 length:   Number of data items to be read in each
+%                           dimension, negative is unlimited
+%                 stride:   Stride to be used in each dimension
+%                 dims:     Force the use of certain dimensions in
+%                           xb_dat_read. These dimensions are used for all
+%                           requested variables!
 %
 %   Output:
 %   xb          = XBeach structure array
@@ -75,7 +83,8 @@ OPT = struct( ...
     'vars', {{}}, ...
     'start', [], ...
     'length', [], ...
-    'stride', [] ...
+    'stride', [], ...
+    'dims', [] ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -123,8 +132,14 @@ for i = 1:length(names)
     filename = [varname '.dat'];
     fpath = fullfile(fdir, filename);
     
+    % determine dimensions
+    if ~isempty(OPT.dims)
+        d = OPT.dims;
+    else
+        d = xb_dat_dims(fpath);
+    end
+    
     % read dat file
-    d = xb_dat_dims(fpath);
     dat = xb_dat_read(fpath, d, ...
         'start', OPT.start, 'length', OPT.length, 'stride', OPT.stride);
 

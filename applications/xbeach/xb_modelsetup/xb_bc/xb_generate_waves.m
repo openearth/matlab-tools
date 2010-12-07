@@ -1,8 +1,8 @@
-function [xb instat swtable] = xb_generate_waves(varargin)
+function xb = xb_generate_waves(varargin)
 %XB_GENERATE_WAVES  Generates XBeach structure with waves data
 %
-%   Generates a XBeach structure with waves settings. A minimal set of
-%   default settings is used, unless otherwise provided. Settings can be
+%   Generates a XBeach input structure with waves settings. A minimal set
+%   of default settings is used, unless otherwise provided. Settings can be
 %   provided by a varargin list of name/value pairs. The settings depend on
 %   the type of waves genarated (jonswap or vardens), which is indicated by
 %   the type parameter. The result is a XBeach structure, an instat number
@@ -125,20 +125,26 @@ OPT = setproperty(OPT, varargin{:});
 
 xb = xb_empty();
 
+% create waves file
+waves = xb_empty();
 f = fieldnames(OPT);
 for i = 1:length(f)
-    xb = xb_set(xb, f{i}, OPT.(f{i}));
+    waves = xb_set(waves, f{i}, OPT.(f{i}));
 end
+waves = xb_meta(waves, mfilename, 'waves');
+
+xb = xb_set(xb, 'instat', instat, 'bcfile', waves);
 
 % include swtable, if necessary
-swtable = xb_empty();
-swtable = xb_meta(swtable, mfilename, 'swtable');
 if instat == 4
+    swtable = xb_empty();
     fpath = fullfile(fileparts(which(mfilename)), 'RF_table.txt');
     if exist(fpath, 'file')
         swtable = xb_set(swtable, 'data', load(fpath));
         swtable = xb_meta(swtable, mfilename, 'swtable', fpath);
     end
+    
+    xb = xb_set(xb, 'swtable', swtable);
 end
 
-xb = xb_meta(xb, mfilename, 'waves');
+xb = xb_meta(xb, mfilename, 'input');

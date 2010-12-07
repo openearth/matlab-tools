@@ -73,6 +73,7 @@ OPT = struct( ...
 OPT = setproperty(OPT, varargin{:});
 
 bytes = struct( ...
+    'integer', 1, ...
     'single', 4, ...
     'double', 8 ...
 );
@@ -129,17 +130,32 @@ else
         dims = [nx ny nt];
     elseif f.bytes > prod(dims)*byt
         % larger than minimal dimensions, search alternatives
+        
+        ads = [d.ntheta d.nd d.ngd d.nd*d.ngd];
+        
+        cat = { {'cgx' 'cgy' 'cx' 'cy' 'ctheta' 'ee' 'thet' 'costhet' 'sinthet' 'sigt' 'rr'} ...
+                {'dzbed'} ...
+                {'ccg' 'ccbg' 'Tsg' 'Susg' 'Svsg' 'Subg' 'Svbg' 'ceqbg' 'ceqsg' 'ero' 'depo_im' 'depo_ex'} ...
+                {'pbbed'} ...
+        };
+    
+        i = ismember(ads, f.bytes/byt/prod(dims));
 
-        i = ismember([d.ntheta d.nd d.ngd d.nd*d.ngd], f.bytes/byt/prod(dims));
-
+        if sum(i) == 0
+            % no match, use filename and adjust time
+            for j = 1:length(cat)
+                if any(strcmpi(fname, cat{j}))
+                    i(:) = false;
+                    i(j) = true;
+                    break;
+                end
+            end
+            
+            nt = floor(f.bytes/byt/nx/ny/ads(i));
+        end
+        
         if sum(i) > 1
             % multiple matches, use filename
-            cat = { {'cgx' 'cgy' 'cx' 'cy' 'ctheta' 'ee' 'thet' 'costhet' 'sinthet' 'sigt' 'rr'} ...
-                    {'dzbed'} ...
-                    {'ccg' 'ccbg' 'Tsg' 'Susg' 'Svsg' 'Subg' 'Svbg' 'ceqbg' 'ceqsg' 'ero' 'depo_im' 'depo_ex'} ...
-                    {'pbbed'} ...
-            };
-
             for j = find(i)
                 if j > length(cat); continue; end;
                 if any(strcmpi(fname, cat{j}))
@@ -173,7 +189,7 @@ else
                     dims = [nx ny d.nd d.ngd nt];
                     names = {'x' 'y' 'd' 'gd' 't'};
                     type = 'bedlayers';
-                case 5
+                otherwise
                     % huh?!
                     dims = [];
             end

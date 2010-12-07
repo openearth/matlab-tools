@@ -12,6 +12,11 @@ function variables = xb_read_netcdf(fname, varargin)
 %   Input:
 %   fname       = filename of the netcdf file
 %   varargin    = vars:     variable filters
+%                 start:    Start positions for reading in each dimension,
+%                           first item is zero
+%                 length:   Number of data items to be read in each
+%                           dimension, negative is unlimited
+%                 stride:   Stride to be used in each dimension
 %
 %   Output:
 %   variables   = XBeach structure array

@@ -89,41 +89,26 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
-% create xbeach structure
-xb = xb_empty();
-
 %% create settings
 
 settings = xb_generate_settings(OPT.settings{:});
 
 %% create boundary conditions
 
-[waves instat swtable] = xb_generate_waves(OPT.waves{:});
+waves = xb_generate_waves(OPT.waves{:});
 tide = xb_generate_tide(OPT.tide{:});
 
 %% create grid
 
-[bathy nx ny] = xb_generate_grid(OPT.bathy{:});
-bathy = xb_bathy2input(bathy);
+bathy = xb_generate_grid(OPT.bathy{:});
 
 %% create model
 
-xb = xb_set(xb, ...
-    'nx', nx, ...
-    'ny', ny, ...
-    'vardx', 1, ...
-    'instat', instat, ...
-    'bcfile', waves, ...
-    'zs0file', tide ...
-);
+% create xbeach structure
+xb = xb_empty();
 
-if ~isempty(swtable.data); xb = xb_set(xb, 'swtable', swtable); end;
-
-% add bathymetry
-xb = xb_join(xb, bathy);
-
-% add settings
-xb = xb_join(xb, settings);
+% add data
+xb = xb_join(xb, bathy, waves, tide, settings);
 
 % add meta data
 xb = xb_meta(xb, mfilename, 'input');
