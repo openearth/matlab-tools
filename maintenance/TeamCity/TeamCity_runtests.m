@@ -176,7 +176,12 @@ try %#ok<TRYNC>
 
         if any(~[mtr.Tests.Ignore]) && OPT.PublishCoverage
             if OPT.PublishCoverage
-                mtr.MTestPublisher.publishcoverage(mtr.ProfileInfo,'TargetDir',fullfile(targetdir,'coverage'));
+                mtp = MTestPublisher(...
+                    'Publish',true,...
+                    'Verbose',true,...
+                    'TargetDir',fullfile(targetdir,'coverage'),...
+                    'OutputDir',targetdir);
+                mtp.publishcoverage(mtr.ProfileInfo);
                 zip('OetTestCoverage',{fullfile(targetdir,'coverage','*.*')});
             end
             rmdir(targetdir,'s');
