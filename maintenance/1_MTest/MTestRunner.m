@@ -65,8 +65,6 @@ classdef MTestRunner < handle
     properties
         TestsCatalogued = false;
         ProfileInfo = [];
-        
-%         MTestPublisher = MTestPublisher;
     end
     
     %% Methods
@@ -311,6 +309,7 @@ classdef MTestRunner < handle
                 end
                 %% Run test
                 try
+                    obj.Tests(itest).IncludeCoverage = obj.IncludeCoverage;
                     obj.Tests(itest).run;
                 catch me
                     cd(startdir);
@@ -342,6 +341,12 @@ classdef MTestRunner < handle
             
             %% Return to initial dir
             cd(startdir);
+        end
+    end
+    methods
+        function delete(this)
+            this.Tests = [];
+            TeamCity.destroy;
         end
     end
 end

@@ -60,6 +60,7 @@ classdef MTestExplorer < handle
         JCombo                      % Java handle for the JCombobox that determines the ViewType
         JSearchField                % Java handle for the search field
         HTeamCity                   % Handle of the uitogglebutton to switch TeamCity.running mode
+        HCoverage                   % Handle of the uitogglebutton to swutch MTestRunner.IncludeCoverage mode
         JToolBarProgress            % Java handle for the progress toolbar
         HProgressToolbar            % Handle of the progress toolbar
         JProgressBar                % Java handle for the progress bar
@@ -155,7 +156,7 @@ classdef MTestExplorer < handle
                 'Visible','on');
 
             %% Initialize and configure MTestRunner
-%             this.MTestRunner.MTestPublisher.Publish = false;
+            this.MTestRunner.IncludeCoverage = false;
             this.MTestRunner.Verbose = false;
             tests = MTest;
             tests(1)=[];
@@ -277,6 +278,10 @@ classdef MTestExplorer < handle
                 'Separator','on',...
                 'ClickedCallback',@this.setteamcity_callback,...
                 'ToolTip','Run as TeamCity');
+            this.HCoverage = uitoggletool(this.HToolBar,...
+                'CData',loadicon('coverage.gif'),...
+                'ClickedCallback',@this.setcoverage_callback,...
+                'ToolTip','Enable/Disable Coverage');
             TeamCity.running(false);
 
             % The viewtype selection box
@@ -288,8 +293,8 @@ classdef MTestExplorer < handle
             this.JCombo = javax.swing.JComboBox(choices);
             set(this.JCombo, 'ActionPerformedCallback', @this.buildtree);
             this.JToolBar(1).addSeparator;
-            this.JToolBar(1).add(textLabel,10);
-            this.JToolBar(1).add(this.JCombo,11);
+            this.JToolBar(1).add(textLabel,11);
+            this.JToolBar(1).add(this.JCombo,12);
             this.JCombo.setMaximumSize(java.awt.Dimension(200,25));
 
             % The text search field
@@ -301,8 +306,8 @@ classdef MTestExplorer < handle
                 'KeyTypedCallback',@this.searchfield_callback,...
                 'MousePressedCallback',@this.selecttextfield);
             this.JToolBar(1).addSeparator;
-            this.JToolBar(1).add(textLabel,13);
-            this.JToolBar(1).add(this.JSearchField,14);
+            this.JToolBar(1).add(textLabel,14);
+            this.JToolBar(1).add(this.JSearchField,15);
             this.JSearchField.setMaximumSize(java.awt.Dimension(200,25));
             this.JSearchField.setToolTipText([...
                 '<html>',...
@@ -1144,6 +1149,9 @@ classdef MTestExplorer < handle
         function setteamcity_callback(this,varargin)
             TeamCity.running(strcmp(get(this.HTeamCity,'State'),'on'));
         end
+        function setcoverage_callback(this,varargin)
+            this.MTestRunner.IncludeCoverage = strcmp(get(this.HCoverage,'State'),'on');
+        end
         function viewcoverage(this,varargin)
             selectionId = find(getselectedtestsid(this),1,'first');
             coverage = this.MTestRunner.Tests(selectionId).ProfilerInfo;
@@ -1165,6 +1173,12 @@ classdef MTestExplorer < handle
                 case char(eventData.getEventType.ACTIVATED)
                     eval(description(min(strfind(description,':'))+1:end));
             end
+        end
+    end
+    methods
+        function delete(this)
+            this.MTestRunner = [];
+            TeamCity.destroy;
         end
     end
 end

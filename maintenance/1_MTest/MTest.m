@@ -150,7 +150,7 @@ classdef MTest < MFunctionFile & handle
             
             %% AutoRefresh
             if obj.AutoRefresh
-                [obj isUpToDate] = MTestFactory.verifytimestamp(obj);
+                isUpToDate = obj.verifytimestamp;
                 if ~isUpToDate
                     obj = MTestFactory.updatetest(obj);
                     if obj.Verbose

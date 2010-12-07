@@ -59,4 +59,25 @@ classdef MFile < handle
        FullString = [];                    % Full string of the contents of the test file
     end
     
+    methods 
+        function isUpToDate = verifytimestamp(this)
+            isUpToDate = false;
+
+            fullname = fullfile(this.FilePath, [this.FileName ,'.m']);
+            if ~exist(fullname,'file')
+                fullname = which(this.FileName);
+                if ~exist(fullname,'file')
+                    warning('MTest:DefinitionNotFound',['MFile tried to verify the timestamp of test: "' this.FileName '", but failed to do so because of a missing test definition']);
+                    return;
+                end
+                warning('MTest:DefinitionMoved',['MTest could not find a file that exactly matches this test objects definition',char(10),...
+                    '(' fullfile(this.FilePath,[this.FileName '.m']),char(10),'but for timestamp verification used:',char(10),...
+                    fullname]);
+                this.FilePath = fileparts(fullname);
+            end
+            
+            fileinfo = dir(fullname);
+            isUpToDate = this.TimeStamp == fileinfo.datenum;
+        end
+    end
 end

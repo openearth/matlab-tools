@@ -1,38 +1,88 @@
-classdef MTestFactory
-    properties
-        Category = TestCategory.Unit;
-    end
+classdef MFunctionFileFactory
+    %MFUNCTIONFILEFACTORY  One line description goes here.
+    %
+    %   More detailed description goes here.
+    %
+    %   See also MFunctionFileFactory.MFunctionFileFactory
     
-    methods (Static = true)
-        function newTest = createtest(varargin)
-            newTest = MTest;
-            %% Check whether there is any input
-            if nargin == 0
-                % give warning
-                return
-            end
+    %% Copyright notice
+    %   --------------------------------------------------------------------
+    %   Copyright (C) 2010 Deltares
+    %       Pieter van Geer
+    %
+    %       pieter.vangeer@deltares.nl
+    %
+    %       Rotterdamseweg 185
+    %       2629 HD Delft
+    %       P.O. 177
+    %       2600 MH Delft
+    %
+    %   This library is free software: you can redistribute it and/or
+    %   modify it under the terms of the GNU Lesser General Public
+    %   License as published by the Free Software Foundation, either
+    %   version 2.1 of the License, or (at your option) any later version.
+    %
+    %   This library is distributed in the hope that it will be useful,
+    %   but WITHOUT ANY WARRANTY; without even the implied warranty of
+    %   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    %   Lesser General Public License for more details.
+    %
+    %   You should have received a copy of the GNU Lesser General Public
+    %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+    %   --------------------------------------------------------------------
+    
+    % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+    % OpenEarthTools is an online collaboration to share and manage data and
+    % programming tools in an open source, version controlled environment.
+    % Sign up to recieve regular updates of this function, and to contribute
+    % your own tools.
+    
+    %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+    % Created: 03 Dec 2010
+    % Created with Matlab version: 7.11.0.584 (R2010b)
+    
+    % $Id$
+    % $Date$
+    % $Author$
+    % $Revision$
+    % $HeadURL$
+    % $Keywords: $
+    
+    %% Methods
+    methods (Static)
+        function argsOut = readfunctionfile(mFunctionFile,varargin)
+            %MFUNCTIONFILEFACTORY  One line description goes here.
+            %
+            %   More detailed description goes here.
+            %
+            %   Syntax:
+            %   this = MFunctionFileFactory(varargin)
+            %
+            %   Input:
+            %   varargin  =
+            %
+            %   Output:
+            %   this       = Object of class "MFunctionFileFactory"
+            %
+            %   Example
+            %   MFunctionFileFactory
+            %
+            %   See also MFunctionFileFactory
             
-            varargin = MFileFactory.readmfile(newTest,varargin{:});
+            argsOut = MFileFactory.readmfile(mFunctionFile,varargin{:});
             
-            %% Read test definition
-            newTest = MTestFactory.updatetest(newTest,varargin{:});
+            MFunctionFileFactory.updatefunction(mFunctionFile);
         end
-        function newTest = updatetest(newTest,varargin)
+        function updatefunction(mFunctionFile)
             %% Retrieve full definition string
-            newTest = MTestFactory.resetstringids(newTest);
+            MTestFactory.resetstringids(mFunctionFile);
             
             %% Split definition string
-            newTest = MTestFactory.splitdefinitionstring(newTest);
+            MTestFactory.splitdefinitionstring(mFunctionFile);
             
             %% Interpret Header
-            newTest = MTestFactory.interpretheader(newTest);
+            MTestFactory.interpretheader(mFunctionFile);
             
-            %% Apply other input
-            newTest = MTestUtils.setproperty(newTest,varargin{:});
-            
-            if isempty(newTest.Name)
-                newTest.Name = newTest.FileName;
-            end
         end
     end
     methods (Static = true, Hidden = true)
@@ -67,6 +117,36 @@ classdef MTestFactory
                 error('MTestFactory:NoFunction','This test definition file has no function declaration. definition could not be read.');
             end
             obj.FunctionName = mainFunction.name;
+            
+            %% Extract name
+            calls = fcncalls(mainFunctionId).calls;
+            if iscell(calls)
+                obj = MTestFactory.findcategory(obj);
+                obj = MTestFactory.findname(obj);
+            else
+                dotCalls = fcncalls(mainFunctionId).calls.dotCalls;
+                if ~isempty(dotCalls) && any(ismember(dotCalls.names,{'MTest.name(','TeamCity.name('}))
+                    ln = min(dotCalls.lines(ismember(dotCalls.names,{'MTest.name(','TeamCity.name('})));
+                    command = obj.FullString{ln};
+                    idbegin = min([strfind(command,'TeamCity.name(')+14, strfind(command,'MTest.name(')+11]);
+                    idend = max(strfind(command,')'))-1;
+                    if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
+                        try
+                            % TODO, Maybe set current test and run entire command?
+                            obj.Name = eval(command(idbegin:idend));
+                        catch me
+                            warning('MTestFactory:UnableToSetName',['MTestFactory was not able to set the name of the test.';'The following exeption was thrown when evaluating the input:';me.getReport]);
+                        end
+                    end
+                end
+                
+                
+                %% Exctract Category
+                if ~isempty(dotCalls) && any(~cellfun(@isempty,strfind(dotCalls.names,'MTestCategory.')))
+                    ln = min(dotCalls.lines(~cellfun(@isempty,strfind(dotCalls.names,'MTestCategory.'))));
+                    obj = MTestFactory.subtractcategoryfromcommand(obj,obj.FullString{ln});
+                end
+            end
         end
         function obj = interpretheader(obj)
             teststr = repmat({''},numel(obj.FullString),1);
@@ -75,7 +155,7 @@ classdef MTestFactory
                 comments = strncmp(teststr,'%',1);
                 empties = cellfun(@isempty,teststr);
                 codelines = ~(comments | empties);
-                                
+                
                 %% header
                 id = strncmp(teststr{1},'function',8);
                 if isempty(id)
@@ -150,52 +230,5 @@ classdef MTestFactory
                 error('MTestFactory:NoTestCode','The MTestFactory could not find code to run.');
             end
         end
-        function obj = findcategory(obj)
-            testCode = obj.FullString(~obj.IDOetHeaderString);
-            id = find(~cellfun(@isempty,strfind(testCode,'MTestCategory.')),1,'first');
-            if any(id)
-                obj = MTestFactory.subtractcategoryfromcommand(obj,testCode{id});
-            end
-            
-            if isempty(obj.Category)
-                mTestFactory = MTestFactory;
-                obj.Category = mTestFactory.Category;
-            end
-        end
-        function obj = subtractcategoryfromcommand(obj,command)
-            idbegin = strfind(command,'MTestCategory.');
-            idend = max([strfind(command,';'), length(command)]);
-            if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
-                try
-                    obj.Category = eval(command(idbegin:idend));
-                catch me
-                    warning('MTestFactory:UnableToSetCategory',['MTestFactory was not able to set the category.';'The following exeption was thrown when evaluating the input:';me.getReport]);
-                end
-            end
-        end
-        function obj = findname(obj)
-            obj.Name = obj.FileName;
-            
-            testCode = obj.FullString(~obj.IDOetHeaderString);
-            id = find(...
-                ~cellfun(@isempty,strfind(testCode,'TeamCity.name')) | ...
-                ~cellfun(@isempty,strfind(testCode,'MTest.name')) ...
-                 ,1,'first');
-            if any(id)
-                command = testCode{id};
-                idbegin = strfind(command,'MTest.name(')+11;
-                if isempty(idbegin)
-                    idbegin = strfind(command,'TeamCity.name(')+14;
-                end
-                idend = max(strfind(command,')'))-1;
-                if ~isempty(idbegin) && ~isempty(idend) && idend > idbegin
-                    try
-                        obj.Name = eval(command(idbegin:idend));
-                    catch me
-                        warning('MTestFactory:UnableToSetName',['MTestFactory was not able to set the name of the test.';'The following exeption was thrown when evaluating the input:';me.getReport]);
-                    end
-                end
-            end
-        end
-     end
+    end
 end
