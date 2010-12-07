@@ -67,7 +67,7 @@ function [params params_array] = xb_get_params(fpath)
 
 %% read params.f90
 
-if ~exist('fpath', 'dir')
+if ~exist(fpath, 'dir')
     fpath = abspath(fullfile(fileparts(which(mfilename)), '..', '..', '..', '..', 'fortran', 'XBeach'));
 end
 
@@ -112,6 +112,7 @@ while ~feof(fid)
         t3=findstr('::',line); if length(t3)>1; t3=t3(1); end; if~isempty(t3);t3c=t3;end;
         t4=findstr('=',line);  if length(t4)>1; t4=t4(t4>t3c);t4=t4(1); end;
         t5=findstr('!',line);  if length(t5)>1; t5=t5(1); end;
+        t5a=findstr('[Section]',line);  if length(t5a)>1; t5a=t5a(1); end;
         t6=findstr('[',line);  if length(t6)>1; t6=t6(t6>t3c);t6=t6(1); end;
         t7=findstr(']',line);  if length(t7)>1; t7=t7(t7>t3c);t7=t7(1); end;
         if (~isempty(t3) && ~isempty(t4) && t5~=1)
@@ -128,8 +129,8 @@ while ~feof(fid)
                 params_array(parcount).comment = strtrim(line(t7+1:end));
                 params_array(parcount).partype = strtrim(parametertype);
             end
-        elseif t5==1   % Last line om comment is probably parameter type decription
-            parametertype=strtrim(line(2:end));
+        elseif t5==1 & ~isempty(t5a) % Last line of comment is probably parameter type decription
+            parametertype=strtrim(line(t5a+9:end));
         end
         
     elseif parread==2   % finding default, min and max
