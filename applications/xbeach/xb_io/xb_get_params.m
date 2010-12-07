@@ -66,9 +66,12 @@ function [params params_array] = xb_get_params(fpath)
 % $Keywords: $
 
 %% read params.f90
-
-if ~exist(fpath, 'dir')
+if ~exist('fpath','var')
     fpath = abspath(fullfile(fileparts(which(mfilename)), '..', '..', '..', '..', 'fortran', 'XBeach'));
+else
+    if ~exist(fpath, 'dir')
+        fpath = abspath(fullfile(fileparts(which(mfilename)), '..', '..', '..', '..', 'fortran', 'XBeach'));
+    end
 end
 
 paramfile='params.F90';
@@ -88,6 +91,7 @@ parcount=0;
 nowifcondition={};
 storeifcondition={};
 iflevel=0;
+parametertype='unknown';
 
 while ~feof(fid)
     if parread==0
