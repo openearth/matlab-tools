@@ -31,9 +31,12 @@ namespace BwnMatLab
         [WebMethod]
         public string InterpolateToLine(string ncFilePath, string ncVariableName, double centreLatitude, double centreLongitude, double vertexLatitude, double vertexLongitude)
         {
-            var fullFilePath = libraryInitializor.InterpolateToLine(ncFilePath, ncVariableName,
-                new MWNumericArray(centreLatitude, centreLongitude),  
-                new MWNumericArray(vertexLatitude, vertexLongitude), outputPath).ToString();
+            var fullFilePath = libraryInitializor.InterpolateToLine(
+                ncFilePath, ncVariableName, 
+                new MWNumericArray(new[] {centreLatitude, centreLongitude}),
+                new MWNumericArray(new[] {vertexLatitude, vertexLongitude}),
+                outputPath).ToString();
+
             return OutputDir + Path.GetFileName(fullFilePath);
         }
 

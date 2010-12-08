@@ -1,5 +1,0 @@
-<Modules>
-  <Module PersistentId="0A11C7BF-AC94-4EB9-804F-7E48182DE9A0" ModuleId="BwnFunctions" />
-  <Module PersistentId="963650AA-6BF0-4470-84D8-176E3800F6C1" ModuleId="BwnMatLab" />
-  <Module PersistentId="DE03C76C-C47A-4D73-BB34-078CFC696CAF" ModuleId="BwnMatLabTest" />
-</Modules>
