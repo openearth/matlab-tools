@@ -172,22 +172,27 @@ try %#ok<TRYNC>
         end
 
         if any(~[mtr.Tests.Ignore]) && OPT.PublishCoverage
+            TeamCity.postmessage('progressStart','Publish coverage');
+            
+            TeamCity.postmessage('progressMessage', 'Remove target dir.');
             targetDir = fullfile(targetdir,'OetTestCoverage');
             if isdir(targetDir)
-	        rmdir(targetDir);
-	    end
-
-            if OPT.PublishCoverage
-                mtp = MTestPublisher(...
-                    'Publish',true,...
-                    'Verbose',true,...
-                    'TargetDir',targetDir,...
-                    'OutputDir',targetDir);
-                mtp.publishcoverage(mtr.ProfileInfo);
+                rmdir(targetDir);
             end
+            
+            TeamCity.postmessage('progressMessage', 'Calculate and publish coverage.');
+            mtp = MTestPublisher(...
+                'Publish',true,...
+                'Verbose',true,...
+                'TargetDir',targetDir,...
+                'OutputDir',targetDir);
+            mtp.publishcoverage(mtr.ProfileInfo);
+            
+            TeamCity.postmessage('progressStart','Publish coverage');
         end
 
         %% save test info
+        TeamCity.postmessage('progressMessage', 'Save result.');
         OetTestResult = struct(...
             'Revisionnumber',OPT.RevisionNumber,...
             'Date',datestr(now),...
