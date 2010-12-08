@@ -146,7 +146,7 @@ switch type
         % determine length of time series
         tlength = get_time_length(xb, vars);
     otherwise
-        error(['Unknown wave definition type [' OPT.type ']']);
+        error(['Unknown wave definition type [' type ']']);
 end
 
 % set variable alternatives
