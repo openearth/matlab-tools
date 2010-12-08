@@ -105,14 +105,19 @@
 		}
 
 		// Call the MatLab SOAP interface, url: SOAP address, method: name
-		function CallMatLabSoap(url, method, source)
+		function CallMatLabSoap(url, method, inputs)
 		{
 
 			try
 			{
 				var pl = new SOAPClientParameters();
+
+				// get inputs
+				inputs2 = inputs.split("%");
+
 				// Add variables from document
-				pl.add("kmlFile", source);
+				pl.add("ncFilePath", inputs2[0]);
+				pl.add("ncVariableName", inputs2[1]);
 				pl.add("centreLatitude", pm.cent.lat.toDeg());
 				pl.add("centreLongitude", pm.cent.lon.toDeg());
 				pl.add("vertexLatitude", pm.rad.lat.toDeg());
@@ -225,11 +230,11 @@
 					{
 					var oOption = document.createElement("OPTION");
 					oOption.text=xmlDoc.getElementsByTagName("title")[i].childNodes[0].nodeValue;
-					oOption.value=xmlDoc.getElementsByTagName("source")[i].childNodes[0].nodeValue;
+					oOption.value=xmlDoc.getElementsByTagName("source")[i].childNodes[0].nodeValue + "%" + xmlDoc.getElementsByTagName("varname")[i].childNodes[0].nodeValue;
 					oOption.class="vs";
 					kmlForInterpolation.options.add(oOption)
 					}
-				if (xmlDoc.getElementsByTagName("type")[i].childNodes[0].nodeValue == "station") // required for interpolate routine
+				if (xmlDoc.getElementsByTagName("type")[i].childNodes[0].nodeValue == "station") // required for plottimeseries routine
 					{
 					var oOption = document.createElement("OPTION");
 					oOption.text=xmlDoc.getElementsByTagName("title")[i].childNodes[0].nodeValue;
@@ -366,7 +371,7 @@
 	</tr>
     <tr>
       <td>
- 		<button style="width:120;height:25" name="Interpoleer" value="Interpoleer" onClick="javascript:CallMatLabSoap('http://dtvirt13/ZMMatLab/Interpolate.asmx', 'InterpolateToLine', kmlForInterpolation.value);">Interpolate</button>
+ 		<button style="width:120;height:25" name="Interpoleer" value="Interpoleer" onClick="javascript:CallMatLabSoap('http://dtvirt13/BwnMatLab/BwnFunctions.asmx', 'InterpolateToLine', kmlForInterpolation.value);">Interpolate</button>
  	  </td>
  	  <td>
  	    <select name="kmlForInterpolation" id="kmlForInterpolation" class="s" style="width: 170px">
@@ -376,7 +381,7 @@
 	</tr>
 	<tr>
 	  <td>
-     	<button style="width:120;height:25" name="Plot timeseries" value="Plot timeseries" onClick="javascript:CallMatLabSoap('http://dtvirt13/ZMMatLab/PlotTimeSeries.asmx', 'PlotTimeSeries', kmlForTimeseries.value);">Plot timeseries</button>
+     	<button style="width:120;height:25" name="Plot timeseries" value="Plot timeseries" onClick="javascript:CallMatLabSoap('http://dtvirt13/BwnMatLab/BwnFunctions.asmx', 'PlotTimeSeries', kmlForTimeseries.value);">Plot timeseries</button>
       </td>
       <td>
  	    <select name="kmlForTimeseries" id="kmlForTimeseries" class="s" style="width: 170px">

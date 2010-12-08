@@ -23,7 +23,7 @@
     <type>2dmap</type>
     <kml>http://dtvirt5.deltares.nl/kml/rijkswaterstaat/Vaklodingen.kml</kml>
     <source>http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB138_0706.nc</source>
-    <varname></varname>
+    <varname>z</varname>
   </data>
   <data>
     <title>Kustlidar_grids</title>
@@ -31,7 +31,7 @@
     <type>2dmap</type>
     <kml>http://dtvirt5.deltares.nl/kml/rijkswaterstaat/kustlidar.kml</kml>
     <source>http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/kustlidar/catalog.nc</source>
-    <varname></varname>
+    <varname>z</varname>
   </data>
   <data>
     <title>Suppleties</title>
@@ -39,6 +39,7 @@
     <type>info</type>
     <kml>http://dtvirt5.deltares.nl/kml/suppleties/rws_suppletiedatabase.kml</kml>
     <source>unknown</source>
+    <varname>unknown</varname>
   </data>
   <data>
     <title>Sea surface height</title>
@@ -46,6 +47,7 @@
     <type>station</type>
     <kml>http://dtvirt5.deltares.nl/kml/rijkswaterstaat/waterbase/sea_surface_height.kml</kml>
     <source>unknown</source>
+    <varname>unknown</varname>
   </data>
   <data>
     <title>Matroos database</title>
@@ -53,6 +55,7 @@
     <type>station</type>
     <kml>http://matroos.deltares.nl/google_maps/get_kmz.php?setID=noos_bma</kml>
     <source>unknown</source>
+    <varname>unknown</varname>
   </data>
   <data>
     <title>KNMI wind data</title>
@@ -60,6 +63,7 @@
     <type>station</type>
     <kml>http://dtvirt5.deltares.nl/kml/knmi/potwind.kml</kml>
     <source>http://opendap.deltares.nl/thredds/dodsC/opendap/knmi/potwind/catalog.nc</source>
+    <varname>unknown</varname>
   </data>
   <data>
     <title>KNMI meteo</title>
@@ -67,6 +71,7 @@
     <type>station</type>
     <kml>http://dtvirt5.deltares.nl/kml/knmi/etmgeg.kml</kml>
     <source>http://opendap.deltares.nl/thredds/dodsC/opendap/knmi/etmgeg/catalog.nc</source>
+    <varname>unknown</varname>
   </data>
   <data>
     <title>TNO D50 grain size</title>
@@ -74,7 +79,7 @@
     <type>2dmap</type>
     <kml>http://dtvirt5.deltares.nl/kml/tno/ncp/dz50_juli2007.kml</kml>
     <source>http://opendap.deltares.nl/thredds/dodsC/opendap/tno/ncp/dz50_juli2007.nc</source>
-    <varname></varname>
+    <varname>D50</varname>
   </data>
   <data>
     <title>Habitat gebieden</title>
@@ -82,6 +87,7 @@
     <type>info</type>   
     <kml>http://dtvirt5.deltares.nl/kml/overheid/habitat%20gebieden.kmz</kml>
     <source>unknown</source>
+    <varname>unknown</varname>
   </data>
   <data>
     <title>Vogel gebieden</title>
@@ -89,5 +95,6 @@
     <type>info</type>
     <kml>http://dtvirt5.deltares.nl/kml/overheid/vogel%20gebieden.kmz</kml>
     <source>unknown</source>
+    <varname>unknown</varname>
   </data>
 </hk_data>
