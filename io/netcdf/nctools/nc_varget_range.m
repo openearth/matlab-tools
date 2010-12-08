@@ -3,7 +3,8 @@ function varargout=nc_varget_range(ncfile,varname,lim,varargin)
 %
 % NC_VARGET_RANGE finds a contigous subset in a coordinate vector
 % based on two limits. This speeds up for intance the request of a 
-% subset of a long time series.
+% subset of a long time series. For time variables make sure var_range
+% has units of datenum.
 %
 %   val              = nc_varget_range(ncfile,'varname',var_range);
 %  [val,ind]         = nc_varget_range(...)
@@ -67,6 +68,7 @@ function varargout=nc_varget_range(ncfile,varname,lim,varargin)
 OPT.chunksize = 1000;
 OPT.debug     = 0;
 OPT.dstride   = 3; % step with which to reduce stride after every iteratio loop 
+OPT.time      = []; % overruled by standard_name time if empty
 
 if nargin==0
     varargout = {OPT};
@@ -81,15 +83,38 @@ n1            = meta.Length;
 di            = max(ceil(n1/OPT.chunksize),1); % max is there is isinf(chunksize)
 chunk         = [1:di:n1];
 
+try
+   standard_name = nc_attget(ncfile,varname,'standard_name');
+catch
+   standard_name = '';
+end
+
+if isempty(OPT.time)
+if strcmpi(standard_name,'time')
+   OPT.time = 1;
+else   
+   OPT.time = 0;
+end
+end
+
 while di > 1
    
-   t1      = nc_varget(ncfile,varname,chunk(1)-1,length(chunk),di);
+   if OPT.time
+   t1      = nc_cf_time(ncfile,varname,chunk(1)-1,length(chunk),di);
+   else
+   t1      = nc_varget (ncfile,varname,chunk(1)-1,length(chunk),di);
+   end
    if ~(all(diff(chunk)==di))
-   te      = nc_varget(ncfile,varname,chunk(end)-1,1);
+   if OPT.time
+   te      = nc_cf_time(ncfile,varname,chunk(end)-1,1);
+   else
+   te      = nc_varget (ncfile,varname,chunk(end)-1,1);
+   end
    t1(end) = te;
    end
    if OPT.debug
-   [num2str([1:length(t1)]','%0.2d.') datestr(t1)]
+      disp([num2str([1 length(t1)]','%0.2d.') datestr(t1([1 end]))]);
+      disp('-----------')
    end
    ind1   = find(t1 >= OPT.lim(1));
    ind2   = find(t1 <= OPT.lim(2));
@@ -129,7 +154,11 @@ while di > 1
    
 end
 
-t = nc_varget(ncfile,varname,chunk(1)-1,length(chunk),di);
+if OPT.time
+t = nc_cf_time(ncfile,varname,chunk(1)-1,length(chunk),di);
+else
+t = nc_varget (ncfile,varname,chunk(1)-1,length(chunk),di);
+end
 
 ind1   = find(t >= OPT.lim(1));
 ind2   = find(t <= OPT.lim(2));

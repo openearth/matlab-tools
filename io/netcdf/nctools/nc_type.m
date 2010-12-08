@@ -81,7 +81,6 @@ switch mtype
       
   case 'logical', nctype = 'int';
 
-      
   otherwise
     error(sprintf('nctype(): can''t match type %s\n', mtype));
 end
