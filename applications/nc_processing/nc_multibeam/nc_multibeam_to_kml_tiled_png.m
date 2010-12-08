@@ -77,6 +77,8 @@ OPT.tiledim                 = 256;
 OPT.clim                    = [-50 25];
 OPT.colorMap                = @(m) colormap_cpt('bathymetry_vaklodingen',m);
 OPT.colorSteps              = 500;
+OPT.templateVer             = 'KML_colorbar_template_horizontal.png';
+OPT.templateHor             = 'KML_colorbar_template_vertical.png';
 OPT.colorbar                = true;
 OPT.datatype                = 'multibeam';
 OPT.description             = [];
@@ -535,7 +537,7 @@ if OPT.make
             'CBfileName', fullfile(OPT.basepath_local,OPT.relativepath,'KML','colorbar') ,...
             'CBcolorMap',OPT.colorMap,'CBcolorSteps',OPT.colorSteps,'CBcolorbarlocation',OPT.CBcolorbarlocation,...
             'CBcolorTick',OPT.CBcolorTick,'CBfontrgb',OPT.CBfontrgb,'CBbgcolor',OPT.CBbgcolor,'CBcolorTitle',OPT.CBcolorTitle,...
-            'CBframergb',OPT.CBframergb,'CBalpha',OPT.CBalpha,'CBtemplateHor',OPT.CBtemplateHor,'CBtemplateVer',OPT.CBtemplateVer);
+            'CBframergb',OPT.CBframergb,'CBalpha',OPT.CBalpha,'CBtemplateHor',OPT.templateHor,'CBtemplateVer',OPT.templateVer);
         clrbarstring = strrep(clrbarstring,'<Icon><href>colorbar_',['<Icon><href>' [fname filesep 'KML' filesep 'colorbar'] '_']);
         output = [output clrbarstring];
     end
