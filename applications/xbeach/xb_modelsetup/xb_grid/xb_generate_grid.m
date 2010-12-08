@@ -94,6 +94,15 @@ end
 nx = size(zgrid, 2)-1;
 ny = size(zgrid, 1)-1;
 
+%% derive posdwn value
+% generally ussume posdwn to be -1
+posdwn = -1;
+if z(1) > mean(z(:))
+    % when the z at the seaward boundary is larger then the mean z of the
+    % profile, the posdwn is assumed to be 1
+    posdwn = 1;
+end
+
 %% create xbeach structures
 
 bathy = xb_empty();
@@ -101,5 +110,5 @@ bathy = xb_set(bathy, 'xfile', xgrid, 'yfile', ygrid, 'depfile', zgrid);
 bathy = xb_meta(bathy, mfilename, 'bathymetry');
 
 xb = xb_empty();
-xb = xb_set(xb, 'nx', nx, 'ny', ny, 'vardx', 1);
+xb = xb_set(xb, 'nx', nx, 'ny', ny, 'vardx', 1, 'posdwn', posdwn);
 xb = xb_join(xb, xb_bathy2input(bathy));
