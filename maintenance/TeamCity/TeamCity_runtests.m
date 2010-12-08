@@ -81,6 +81,7 @@ try %#ok<TRYNC>
         'TestDataMainDir',[],...
         'Category','all',...
         'PublishCoverage',false,...
+        'RunDir',cd,...
         'RevisionNumber',NaN);
 
     if nargin > 0
@@ -175,7 +176,7 @@ try %#ok<TRYNC>
             TeamCity.postmessage('progressStart','Publish coverage');
             
             TeamCity.postmessage('progressMessage', 'Remove target dir.');
-            targetDir = fullfile(targetdir,'OetTestCoverage');
+            targetDir = fullfile(OPT.RunDir,'OetTestCoverage');
             if isdir(targetDir)
                 rmdir(targetDir);
             end
@@ -187,8 +188,8 @@ try %#ok<TRYNC>
                 'TargetDir',targetDir,...
                 'OutputDir',targetDir);
             mtp.publishcoverage(mtr.ProfileInfo);
-            
-            TeamCity.postmessage('progressStart','Publish coverage');
+                        
+            TeamCity.postmessage('progressFinish','Publish coverage');
         end
 
         %% save test info
