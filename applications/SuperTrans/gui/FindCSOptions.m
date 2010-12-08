@@ -56,9 +56,9 @@ OPT.CS1.type                    = []; % projection type
                                       % projection not (yet) supported:
                                       % engineering, geographic 3D, vertical, geocentric,  compound
                                       %
-                                      % allowed synonyms for 'projected'
+                                      % allowed synonyms for 'projected'are:
                                       % 'xy','proj','cartesian','cart'
-                                      % allowed sysnonyms for 'geographic 2D'
+                                      % allowed sysnonyms for 'geographic '2D' are:
                                       % 'geo','geographic2d','latlon','lat lon','geographic'
                                       
 OPT.CS1.geoRefSys.name          = []; % associated geographic reference system name

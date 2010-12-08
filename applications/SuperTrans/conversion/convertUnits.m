@@ -66,7 +66,8 @@ else
 
     % check if both are both same type:
     if ~strcmp(STD.unit_of_measure.unit_of_meas_type(ind1),STD.unit_of_measure.unit_of_meas_type(ind2))
-        error('different types')
+        error('The type of unit specified (%s) does not match the type that is expected (%s).',...
+            STD.unit_of_measure.unit_of_meas_type{ind1},STD.unit_of_measure.unit_of_meas_type{ind2})
     end
 
     %convert source to SI

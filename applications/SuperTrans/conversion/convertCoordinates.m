@@ -141,8 +141,8 @@ OPT = FindCSOptions(OPT,STD,varargin);
 
 switch OPT.CS1.type
     case 'projected' % convert projection to geographic radians
-        %x1 = convertUnits(x1,OPT.CS1.UoM.name,'metre',STD);
-        %y1 = convertUnits(y1,OPT.CS1.UoM.name,'metre',STD);
+         x1 = convertUnits(x1,OPT.CS1.UoM.name,'metre',STD);
+         y1 = convertUnits(y1,OPT.CS1.UoM.name,'metre',STD);
         [lat1,lon1] = ConvertCoordinatesProjectionConvert(x1,y1,OPT.CS1,OPT.proj_conv1,'xy2geo',STD);
     case 'geographic 2D' % do nothing, except for a unit conversion
         lon1 = convertUnits(x1,OPT.CS1.UoM.name,'radian',STD);
@@ -182,8 +182,8 @@ end
 switch OPT.CS2.type
     case 'projected' % convert projection to geographic radians
         [y2,x2] = ConvertCoordinatesProjectionConvert(lon2,lat2,OPT.CS2,OPT.proj_conv2,'geo2xy',STD);
-        x2 = convertUnits(x2,OPT.CS2.UoM.name,'metre',STD);
-        y2 = convertUnits(y2,OPT.CS2.UoM.name,'metre',STD);
+        x2 = convertUnits(x2,'metre',OPT.CS2.UoM.name,STD);
+        y2 = convertUnits(y2,'metre',OPT.CS2.UoM.name,STD);
     case 'geographic 2D'
         x2 = convertUnits(lon2,'radian',OPT.CS2.UoM.name,STD);
         y2 = convertUnits(lat2,'radian',OPT.CS2.UoM.name,STD);
