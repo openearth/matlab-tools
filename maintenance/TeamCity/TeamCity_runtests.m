@@ -56,9 +56,6 @@ try %#ok<TRYNC>
 
     %% First load oetsettings
     try
-        if exist('OetTestCoverage.zip','file')
-            delete('OetTestCoverage.zip');
-        end
         if exist('OetTestResult.zip','file')
             delete('OetTestResult.zip');
         end
@@ -67,7 +64,7 @@ try %#ok<TRYNC>
         end
 
         TeamCity_initialize;
-        
+
     catch me
         TeamCity.postmessage('message', 'text', 'Matlab was unable to run oetsettings.',...
             'errorDetails',me.getReport,...
@@ -175,16 +172,19 @@ try %#ok<TRYNC>
         end
 
         if any(~[mtr.Tests.Ignore]) && OPT.PublishCoverage
+            targetDir = fullfile(targetdir,'OetTestCoverage');
+            if isdir(targetDir)
+	        rmdir(targetDir);
+	    end
+
             if OPT.PublishCoverage
                 mtp = MTestPublisher(...
                     'Publish',true,...
                     'Verbose',true,...
-                    'TargetDir',fullfile(targetdir,'coverage'),...
-                    'OutputDir',targetdir);
+                    'TargetDir',targetDir,...
+                    'OutputDir',targetDir);
                 mtp.publishcoverage(mtr.ProfileInfo);
-                zip('OetTestCoverage',{fullfile(targetdir,'coverage','*.*')});
             end
-            rmdir(targetdir,'s');
         end
 
         %% save test info
