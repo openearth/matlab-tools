@@ -90,7 +90,7 @@ if nargin==0
     return
 end
 
-if nargin == 1 % don't set prperties if an OPT struct was already given
+if nargin == 1 % don't set properties if an OPT struct was already given
     OPT = varargin{1};
     if isempty(OPT.CBfileName  ), OPT.CBfileName   = OPT.fileName  ; end
     if isempty(OPT.CBkmlName   ), OPT.CBkmlName    = OPT.kmlName   ; end
