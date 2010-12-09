@@ -20,6 +20,9 @@ function [fpath job_id job_name messages] = xb_run_remote(xb, varargin)
 %               ssh_pass:   Password for remote computer
 %               path_local: Local path to the XBeach model
 %               path_remote:Path to XBeach model seen from remote computer
+%               warn:       Display a message when the job finished
+%               warn_delay: Delay in seconds to check whether the job has
+%                           finished
 %
 %   Output:
 %   fpath     = Location where model runs
@@ -85,7 +88,9 @@ OPT = struct( ...
     'ssh_user', '', ...
     'ssh_pass', '', ...
     'path_local', 'u:\', ...
-    'path_remote', '~/' ...
+    'path_remote', '~/', ...
+    'warn', false, ...
+    'warn_delay', 60 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -183,8 +188,36 @@ end
 if retcode == 0
     s = regexp(messages, 'Your job (?<id>\d+) \("(?<name>.+)"\) has been submitted', 'names');
 
-    job_id = s.id;
+    job_id = str2num(s.id);
     job_name = s.name;
 else
     error(['Submitting remote job failed [' cmd ']']);
+end
+
+%% start timer
+
+if OPT.warn
+     t = timer( ...
+         'TimerFcn', {@checkJob,job_id,OPT}, ...
+         'ExecutionMode', 'fixedDelay', ...
+         'Period', OPT.warn_delay ...
+     );
+ 
+    start(t);
+end
+
+%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function checkJob(obj, event, id, OPT)
+
+exe_path = fullfile(fileparts(which(mfilename)), 'plink.exe');
+
+cmd = sprintf('%s %s@%s -pw %s ". /opt/sge/InitSGE && qstat -u %s"', ...
+        exe_path, OPT.ssh_user, OPT.ssh_host, OPT.ssh_pass, OPT.ssh_user);
+    
+[retcode messages] = system(cmd);
+
+if isempty(regexp(messages, ['(^|\n)\s*' num2str(id) '\s'], 'once'))
+    stop(obj); delete(obj);
+    disp([upper(mfilename) ': Job ' OPT.name ' (' num2str(id) ') finished']);
 end
