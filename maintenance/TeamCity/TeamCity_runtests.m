@@ -175,10 +175,10 @@ try %#ok<TRYNC>
         if any(~[mtr.Tests.Ignore]) && OPT.PublishCoverage
             TeamCity.postmessage('progressStart','Publish coverage');
             
-            TeamCity.postmessage('progressMessage', 'Remove target dir.');
+            TeamCity.postmessage('progressMessage', 'Remove coverage target dir.');
             targetDir = fullfile(OPT.RunDir,'OetTestCoverage');
             if isdir(targetDir)
-                rmdir(targetDir);
+                rmdir(targetDir,'s');
             end
             
             TeamCity.postmessage('progressMessage', 'Calculate and publish coverage.');
