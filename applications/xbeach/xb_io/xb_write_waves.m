@@ -111,7 +111,7 @@ end
 % check parameter dimensions
 switch type
     case 'jonswap'
-        vars = {'Hm0' 'Tp' 'fp' 'mainang' 'dir' 'gammajsp' 's' 'fnyq' 'duration' 'timestep'};
+        vars = {'Hm0' 'Tp' 'fp' 'mainang' 'gammajsp' 's' 'fnyq' 'duration' 'timestep'};
 
         fname = OPT.jonswap_file;
 
@@ -156,14 +156,6 @@ end
 
 if xb_exist(xb, 'fp') && ~xb_exist(xb, 'Tp')
     xb = xb_set(xb, 'Tp', 1./xb_get(xb, 'fp'));
-end
-
-if xb_exist(xb, 'mainang') && ~xb_exist(xb, 'dir')
-    xb = xb_set(xb, 'dir', xb_get(xb, 'mainang'));
-end
-
-if xb_exist(xb, 'dir') && ~xb_exist(xb, 'mainang')
-    xb = xb_set(xb, 'mainang', xb_get(xb, 'dir'));
 end
 
 % extend constant parameters to length of time series
@@ -239,7 +231,7 @@ end
     
 % write single jonswap wave file
 function write_jonswap_file(fname, idx, xb)
-vars = {'Hm0' 'fp' 'dir' 'gammajsp' 's' 'fnyq'};
+vars = {'Hm0' 'fp' 'mainang' 'gammajsp' 's' 'fnyq'};
 
 fid = fopen(fname, 'w');
 for i = 1:length(vars)
@@ -250,7 +242,7 @@ fclose(fid);
     
 % write matrix formatted jonswap wave file
 function write_jonswap_mtx_file(fname, tlength, xb)
-vars = {'Hm0' 'Tp' 'dir' 'gammajsp' 's' 'duration' 'timestep'};
+vars = {'Hm0' 'Tp' 'mainang' 'gammajsp' 's' 'duration' 'timestep'};
 
 fid = fopen(fname, 'w');
 for i = 1:tlength

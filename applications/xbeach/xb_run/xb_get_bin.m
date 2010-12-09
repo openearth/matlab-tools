@@ -141,7 +141,7 @@ if strcmpi(fext, '.zip')
         fpath = fullfile(fpath, 'exe');
     end
     
-    % return filename if only one file unzipped
+    % return filename if only one file or xbeach* file unzipped
     if length(dir(fpath)) == 3
         d = dir(fpath);
         fpath = fullfile(fpath, d(3).name);
