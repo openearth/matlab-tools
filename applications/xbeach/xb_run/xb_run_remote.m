@@ -1,4 +1,4 @@
-function [fpath job_id job_name] = xb_run_remote(xb, varargin)
+function [fpath job_id job_name messages] = xb_run_remote(xb, varargin)
 %XB_RUN_REMOTE  Runs a XBeach model remote on the H4 cluster
 %
 %   Writes a XBeach structure to disk, retrieves a XBeach binary file and
@@ -25,6 +25,7 @@ function [fpath job_id job_name] = xb_run_remote(xb, varargin)
 %   fpath     = Location where model runs
 %   job_id    = ID of remote job
 %   job_name  = Name of remote job
+%   messages  = Standard output of remote job
 %
 %   Example
 %   xb_run_remote(xb)
@@ -184,4 +185,6 @@ if retcode == 0
 
     job_id = s.id;
     job_name = s.name;
+else
+    error(['Submitting remote job failed [' cmd ']']);
 end
