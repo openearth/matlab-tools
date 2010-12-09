@@ -53,7 +53,7 @@ zl = griddata(x(id),y(id),z(id),xl,yl);
 %% Plot time series
 f=figure('visible','off');
 plot(dist,zl,'k');
-ylabel('z [m NAP]');
+ylabel(ncVariable);
 xlabel('distance [m]');
 grid on;
 

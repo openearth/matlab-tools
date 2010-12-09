@@ -46,8 +46,8 @@ Polygon.prototype.setBearDist = function()
 {
 	this.bear = bearing(this.cent.lat,this.cent.lon, this.rad.lat, this.rad.lon);
 	this.dist = distance(this.cent.lat,this.cent.lon, this.rad.lat, this.rad.lon);
-	document.getElementById('rad').innerHTML = this.dist.toPrecision(6).toString()+' km';
-	document.getElementById('bear').innerHTML = this.bear.toDeg().toPrecision(5).toString()+' deg';
+	// document.getElementById('rad').innerHTML = this.dist.toPrecision(6).toString()+' km';
+	// document.getElementById('bear').innerHTML = this.bear.toDeg().toPrecision(5).toString()+' deg';
 }
 
 Polygon.prototype.setRad = function() 
@@ -102,7 +102,7 @@ PM.prototype.setLoc = function(lat,lon)
 	this.lat = lat.toRad();
 	this.lon = lon.toRad();
 	this.point.setLatLng(lat,lon.fixLon());
-	document.getElementById(this.name).innerHTML = lat.toPrecision(7).toString()+' , '+lon.toPrecision(7).toString();
+	// document.getElementById(this.name).innerHTML = lat.toPrecision(7).toString()+' , '+lon.toPrecision(7).toString();
 }
 
 Polygon.prototype.movePMLoc = function(kmlEvent) 
@@ -175,8 +175,8 @@ Polygon.prototype.areaCircum = function()
 		area = ((this.numsides*ang)-(this.numsides-2)*pi)*6371*6371;
 		circum = this.numsides*distance(latlon[0],latlon[1],latlon2[0],latlon2[1]);
 	}
-	document.getElementById('per').innerHTML = circum.toPrecision(6).toString()+' km';
-	document.getElementById('are').innerHTML = area.toPrecision(8).toString()+' km<sup>2</sup>';
+	// document.getElementById('per').innerHTML = circum.toPrecision(6).toString()+' km';
+	// document.getElementById('are').innerHTML = area.toPrecision(8).toString()+' km<sup>2</sup>';
 }
 
 Number.prototype.toRad = function() 

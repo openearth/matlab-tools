@@ -113,7 +113,7 @@
 				var pl = new SOAPClientParameters();
 
 				// get inputs
-				inputs2 = inputs.split("%");
+				inputs2 = inputs.split("&");
 
 				// Add variables from document
 				pl.add("ncFilePath", inputs2[0]);
@@ -135,9 +135,15 @@
 		{
 			if(result != null)
 			{
-			  var balloon = ge.createHtmlStringBalloon('');
+			  // var balloon = ge.createHtmlStringBalloon('');
+			  // balloon.setFeature(pm.cent.placemark); // optional
+			  // balloon.setContentString("<img src='http://dtvirt13/bwnmatlab/" + result + "'>");
+
+			  var balloon = ge.createHtmlDivBalloon('');
 			  balloon.setFeature(pm.cent.placemark); // optional
-			  balloon.setContentString("<img src='http://dtvirt13/ZMMatLab/output.png'>");
+			  var div = document.createElement('DIV');
+			  div.innerHTML = "<a href='http://dtvirt13/bwnmatlab/" + result + "' TARGET='_blank'><img src='http://dtvirt13/bwnmatlab/" + result + "' width=200 height=200></a>";
+			  balloon.setContentDiv(div);
 
 			  ge.setBalloon(balloon);
 			}
@@ -172,7 +178,7 @@
 		{
 			// fill kmldata listbox
 			datafile = caseDoc.getElementsByTagName("datafile")[value].childNodes[0].nodeValue;
-			getDataOutOfCase(datafile);
+			getDataOutOfCase(datafile,"data");
 
 			// zoom to case specific coordinates
 			lon_cam = parseFloat(caseDoc.getElementsByTagName("lon")[value].childNodes[0].nodeValue);
@@ -186,8 +192,8 @@
   			ge.getView().setAbstractView(camera);
   		}
 
-		// Fill in the listbox with datasources on the basis of the selected case
-		function getDataOutOfCase(xmlfile)
+		// Fill up the data source area with datasources on the basis of the selected case
+		function getDataOutOfCase(xmlfile,mode)
 		{
 			// remove all existing kml objects
 			features = ge.getFeatures().getChildNodes()
@@ -198,9 +204,6 @@
 			}
 
 			// empty select lists
-			while(kmlForTimeseries.options.length!=0)
-			kmlForTimeseries.options.remove(0);
-
 			while(kmlForInterpolation.options.length!=0)
 			kmlForInterpolation.options.remove(0);
 
@@ -209,7 +212,7 @@
 
 			// load case-specific xml file
 			xmlDoc=loadXMLDoc("xml/" + xmlfile);
-			numOfData=xmlDoc.getElementsByTagName("kml").length;
+			numOfData=xmlDoc.getElementsByTagName(mode).length;
 
 			// create html-code of checkboxes for each kml found in the case xml and fill up the select lists
 			var dataSelectText = [];
@@ -218,29 +221,22 @@
 			{
 				// checkboxes
 				dataSelectText = dataSelectText + "<input type='checkbox' class='s' id='" +
-									xmlDoc.getElementsByTagName("kml")[i].childNodes[0].nodeValue +
+									xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("kml")[0].textContent +
 									"' onclick='toggleKml(this)'>" +
-									xmlDoc.getElementsByTagName("title")[i].childNodes[0].nodeValue + "<br>"
+									xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("title")[0].textContent + "<br>"
 
-				file = xmlDoc.getElementsByTagName("kml")[i].childNodes[0].nodeValue;
+				file = xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("kml")[0].textContent;
 				currentKmlObjects[file] = null;
 
-				// select lists
-				if (xmlDoc.getElementsByTagName("type")[i].childNodes[0].nodeValue == "2dmap") // required for interpolate routine
+				// select lists for interpolatetoline function
+				if (xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("interpolatetoline").length == 1)
 					{
 					var oOption = document.createElement("OPTION");
-					oOption.text=xmlDoc.getElementsByTagName("title")[i].childNodes[0].nodeValue;
-					oOption.value=xmlDoc.getElementsByTagName("source")[i].childNodes[0].nodeValue + "%" + xmlDoc.getElementsByTagName("varname")[i].childNodes[0].nodeValue;
-					oOption.class="vs";
+					oOption.text  = xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("title")[0].textContent;
+					oOption.value = xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("interpolatetoline")[0].getElementsByTagName("source")[0].textContent + "&" +
+								    xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("interpolatetoline")[0].getElementsByTagName("varname")[0].textContent;
+					oOption.class = "vs";
 					kmlForInterpolation.options.add(oOption)
-					}
-				if (xmlDoc.getElementsByTagName("type")[i].childNodes[0].nodeValue == "station") // required for plottimeseries routine
-					{
-					var oOption = document.createElement("OPTION");
-					oOption.text=xmlDoc.getElementsByTagName("title")[i].childNodes[0].nodeValue;
-					oOption.value=xmlDoc.getElementsByTagName("source")[i].childNodes[0].nodeValue;
-					oOption.class="vs";
-					kmlForTimeseries.options.add(oOption)
 					}
 			}
 
@@ -255,16 +251,21 @@
 					oOption.class="vs";
 					kmlForInterpolation.options.add(oOption)
 				}
-
-			if (kmlForTimeseries.options.length==0)
-				{
-					var oOption = document.createElement("OPTION");
-					oOption.text="no suitable data";
-					oOption.value=0;
-					oOption.class="vs";
-					kmlForTimeseries.options.add(oOption)
-				}
 		}
+
+		// Change mode
+		function changeMode()
+		{
+		datafile = caseDoc.getElementsByTagName("datafile")[caseSelect.value].childNodes[0].nodeValue;
+
+		for (i=0; i<modeSelect.mode.length; i=i+1)
+			{
+			if (modeSelect.mode[i].checked == true)
+				getDataOutOfCase(datafile,modeSelect.mode[i].value);
+			}
+		}
+
+
 
 	</script>
 </head>
@@ -295,30 +296,21 @@
 		<h3>Select mode</h3>
 		</td>
 	</tr>
-	<form id="modeSelect" action='javascript:void(0);'>
+	<form id="modeSelect" action='javascript:changeMode(this.value);'>
 		<tr>
 			<td colspan="2">
-			<input type="radio" name="mode" value="data" />Data
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2">
-			<input type="radio" name="mode" value="models" />Models
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2">
-			<input type="radio" name="mode" value="tools" />Tools
+			<input type="radio" name="mode" value="data" checked onClick=changeMode() />Data <br />
+			<input type="radio" name="mode" value="model" onClick=changeMode() />Models <br />
+			<input type="radio" name="mode" value="tool" onClick=changeMode() />Tools <br />
 			<hr />
 			</td>
 		</tr>
 	</form>
-	<hr />
 
 <!-- DATA SELECTION -->
 	<tr>
 	    <td colspan="2">
-	    <h3>Available data</h3>
+	    <h3>Available itmes</h3>
 	    <p>
 	    <div id="kml_sources"></div>
 	    </p>
@@ -355,12 +347,6 @@
 		Use ctrl + mouse click to draw
 		</td>
 	</tr>
-	<tr><td>Centre: </td	><td><span id='centre'></span></td></tr>
-	<tr><td>Vertex: </td><td><span id='outer'></span></td></tr>
-	<tr><td>Radius: </td><td><span id='rad'></span></td></tr>
-	<tr><td>Bearing: </td><td><span id='bear'></span></td></tr>
-	<tr><td>perimeter: </td><td><span id='per'></span></td></tr>
-	<tr><td>Area: </td><td><span id='are'></span></td></tr>
 	<tr><td colspan="2"><hr /></td></tr>
 
 <!-- ACTION SELECTION -->
@@ -379,16 +365,13 @@
 		</select>
 	  </td>
 	</tr>
+
+<!-- SPACE RESERVED FOR TOOLBOXES -->
 	<tr>
-	  <td>
-     	<button style="width:120;height:25" name="Plot timeseries" value="Plot timeseries" onClick="javascript:CallMatLabSoap('http://dtvirt13/BwnMatLab/BwnFunctions.asmx', 'PlotTimeSeries', kmlForTimeseries.value);">Plot timeseries</button>
-      </td>
-      <td>
- 	    <select name="kmlForTimeseries" id="kmlForTimeseries" class="s" style="width: 170px">
- 	    	<option value="0" class="vs">Select case</option>
-		</select>
- 	  </td>
-	</tr>
+	  <td colspan="2">
+		  <div id="toolbox"></div>
+	  </td>
+    </tr>
 </table>
 </div>
 <div id='map3d_container' style='border: 1px solid silver; height: 750px; margin-left:350px;'>
