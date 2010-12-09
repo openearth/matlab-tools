@@ -1,21 +1,25 @@
-function varargout = xb_run(varargin)
-%XB_RUN  Writes an XBeach model struct to disk and runs it
+function xb_run(xb, varargin)
+%XB_RUN  Runs a XBeach model locally
 %
-%   More detailed description goes here.
+%   Writes a XBeach structure to disk, retrieves a XBeach binary file and
+%   runs it at a certain location. Supports the use of MPI using MPICH2.
 %
 %   Syntax:
-%   varargout = xb_run(varargin)
+%   xb_run()
 %
 %   Input:
-%   varargin  =
+%   varargin  = binary:     XBeach binary to use
+%               nodes:      Number of nodes to use in MPI mode (1 = no mpi)
+%               path:       Path to the XBeach model
 %
 %   Output:
-%   varargout =
+%   none
 %
 %   Example
-%   xb_run
+%   xb_run()
+%   xb_run('path', 'path_to_model/')
 %
-%   See also 
+%   See also xb_run, xb_get_bin
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -58,4 +62,20 @@ function varargout = xb_run(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% read options
+
+OPT = struct( ...
+    'binary', xb_get_binary('type', 'win32'), ...
+    'nodes', 1, ...
+    'path', '.' ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+%% write model
+
+fpath = fullfile(OPT.path, 'params.txt');
+
+xb_write_input(fpath, xb);
+
+%% run model

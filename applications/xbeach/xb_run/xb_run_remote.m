@@ -1,21 +1,30 @@
-function varargout = xb_run_remote(varargin)
+function xb_run_remote(varargin)
 %XB_RUN_REMOTE  Runs a XBeach model remote on the H4 cluster
 %
-%   More detailed description goes here.
+%   Writes a XBeach structure to disk, retrieves a XBeach binary file and
+%   runs it at a remote location accessed by SSH (by default, H4 cluster).
+%   Supports the use of MPI.
 %
 %   Syntax:
-%   varargout = xb_run_remote(varargin)
+%   xb_run_remote()
 %
 %   Input:
-%   varargin  =
+%   varargin  = binary:     XBeach binary to use
+%               nodes:      Number of nodes to use in MPI mode (1 = no mpi)
+%               ssh_host:   Host name of remote computer
+%               ssh_user:   Username for remote computer
+%               ssh_pass:   Password for remote computer
+%               path_local: Local path to the XBeach model
+%               path_remote:Path to XBeach model seen from remote computer
 %
 %   Output:
-%   varargout =
+%   none
 %
 %   Example
-%   xb_run_remote
+%   xb_run_remote()
+%   xb_run_remote('path_local', 'u:\', 'path_remote', '~/')
 %
-%   See also 
+%   See also xb_run, xb_get_bin
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -58,4 +67,24 @@ function varargout = xb_run_remote(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% read options
+
+OPT = struct( ...
+    'binary', xb_get_binary('type', 'unix'), ...
+    'nodes', 1, ...
+    'ssh_host', 'h4', ...
+    'ssh_user', '', ...
+    'ssh_pass', '', ...
+    'path_local', '.', ...
+    'path_remote', '~' ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+%% write model
+
+fpath = fullfile(OPT.path_local, 'params.txt');
+
+xb_write_input(fpath, xb);
+
+%% run model
