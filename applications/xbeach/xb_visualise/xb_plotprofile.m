@@ -171,6 +171,8 @@ end
 l=legend(legtext,'location','eastoutside');
 if OPT.starttime>2
     hwait = waitbar(0,'Loading files');
+else
+    hwait = 'dummy';
 end
 grid on
 title('Start');
