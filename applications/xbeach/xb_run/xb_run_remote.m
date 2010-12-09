@@ -168,20 +168,20 @@ fclose(fid);
 %% run model
 
 if isunix()
-    disp('Unix support not yet implemented, sorry!');
+    error('Unix support not yet implemented, sorry!'); % TODO
 else
     exe_path = fullfile(fileparts(which(mfilename)), 'plink.exe');
     
     cmd = sprintf('%s %s@%s -pw %s "dos2unix %s/xbeach.sh && %s/xbeach.sh"', ...
         exe_path, OPT.ssh_user, OPT.ssh_host, OPT.ssh_pass, rpath, rpath);
-    
-    [retcode messages] = system(cmd);
-    
-    % extract job number and name
-    if retcode == 0
-        s = regexp(messages, 'Your job (?<id>\d+) \("(?<name>.+)"\) has been submitted', 'names');
+end
 
-        job_id = s.id;
-        job_name = s.name;
-    end
+[retcode messages] = system(cmd);
+
+% extract job number and name
+if retcode == 0
+    s = regexp(messages, 'Your job (?<id>\d+) \("(?<name>.+)"\) has been submitted', 'names');
+
+    job_id = s.id;
+    job_name = s.name;
 end

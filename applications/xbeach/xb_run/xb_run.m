@@ -107,13 +107,13 @@ end
 
 if isunix()
     if OPT.nodes > 1
-        disp('MPI support is not yet implemented, sorry!'); % TODO
+        error('MPI support is not yet implemented, sorry!'); % TODO
     else
         system(['cd ' OPT.path ' && ' OPT.binary]);
     end
 else
     if OPT.nodes > 1
-        disp('MPI support is not yet implemented, sorry!'); % TODO
+        error('MPI support is not yet implemented, sorry!'); % TODO
     else
         system(['cd ' OPT.path ' && start ' OPT.binary]);
     end
