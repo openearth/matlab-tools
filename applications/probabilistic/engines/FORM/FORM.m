@@ -193,6 +193,14 @@ while NextIter
         dzdu(st) = (z(id_upp(st)) - z(id_low(st))) / (u(id_upp(st),st) - u(id_low(st),st));
     end
     
+    if any(imag(dzdu))
+        % complex dzdu will cause problems in the next iteration
+        % warn user in error message which variable(s) cause the problems
+        varnames = {stochast.Name};
+        complexvars = varnames(imag(dzdu) == 1);
+        error(['FORM: derivative dz/du becomes complex for variable(s):' sprintf(' "%s"', complexvars{:})])
+    end
+    
     % lineariseer de z-functie in u:
     % z(u) = B + A(1)*u(1) + ... + A(n)*u(n)
     % neem coefficienten A(i) gelijk aan -dz/du(i)
