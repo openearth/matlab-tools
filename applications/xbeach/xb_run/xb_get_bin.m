@@ -7,8 +7,8 @@ function fpath = xb_get_bin(varargin)
 %   custom host can be provided as well. Returns the location where the
 %   downloaded binary can be found.
 %
-%   WARNING: DOESN'T WORK YET SINCE AUTHENTICATION SCHEME TEAMCITY IS
-%   UNCLEAR
+%   WARNING: SOME BINARY TYPES ARE STILL MISSING, SINCE NOT AVAILABLE IN
+%   TEAMCITY YET
 %
 %   Syntax:
 %   fpath = xb_get_bin(varargin)
@@ -26,6 +26,11 @@ function fpath = xb_get_bin(varargin)
 %
 %   Example
 %   fpath = xb_get_bin()
+%   fpath = xb_get_bin('type', 'win32 mpi')
+%   fpath = xb_get_bin('type', 'win32 netcdf')
+%   fpath = xb_get_bin('type', 'win32 netcdf mpi')
+%   fpath = xb_get_bin('type', 'unix netcdf mpi')
+%   fpath = xb_get_bin('type', 'custom', 'host', ' ... ')
 %
 %   See also xb_run
 
@@ -79,13 +84,15 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
+OPT.type = regexp(OPT.type, '\s+', 'split');
+
 %% define default hosts
 
 hosts = struct( ...
-    'win32', 'https://build.deltares.nl/repository/download/bt147/.lastSuccessful/exe/artifacts.zip', ...
-    'win32_mpi', 'https://build.deltares.nl/repository/download/bt155/.lastSuccessful/exe/artifacts.zip', ...
+    'win32', 'https://build.deltares.nl/guestAuth/repository/downloadAll/bt147/.lastSuccessful/exe/artifacts.zip', ...
+    'win32_mpi', 'https://build.deltares.nl/guestAuth/repository/downloadAll/bt155/.lastSuccessful/exe/artifacts.zip', ...
     'win32_mpi_netcdf', '', ...
-    'win32_netcdf', 'http://build.deltares.nl/repository/downloadAll/bt204/.lastSuccessful/artifacts.zip', ...
+    'win32_netcdf', 'https://build.deltares.nl/guestAuth/repository/downloadAll/bt204/.lastSuccessful/artifacts.zip', ...
     'unix', '', ...
     'unix_mpi', '', ...
     'unix_mpi_netcdf', '', ...
@@ -95,13 +102,13 @@ hosts = struct( ...
 %% determine host
 
 host = '';
-if strcmpi(OPT.type, 'custom')
+if ismember('custom', OPT.type)
     host = OPT.host;
 else
     fnames = fieldnames(hosts);
     types = regexp(fnames, '_', 'split');
     for i = 1:length(types)
-        if all(ismember(regexp(OPT.type, '\s+', 'split'), types{i}))
+        if all(ismember(OPT.type, types{i}))
             if ~isempty(hosts.(fnames{i}))
                 host = hosts.(fnames{i});
                 break;
@@ -111,7 +118,7 @@ else
 end
 
 if isempty(host)
-    error(['No valid host found [' OPT.type ']']);
+    error(['No valid host found [' sprintf(' %s', OPT.type{:}) ' ]']);
 end
 
 %% retrieve data
@@ -124,14 +131,24 @@ urlwrite(host, fpath);
 
 % unzip, if zipped
 if strcmpi(fext, '.zip')
-    mkdir(tmpfile);
-    unzip([tmpfile fext], tmpfile);
+    fpath = tmpfile;
     
-    % return filename, if only one file unzipped, otherwise dirname
-    if length(dir(tmpfile)) == 3
-        d = dir(tmpfile);
-        fpath = fullfile(tmpfile, d(3).name);
+    mkdir(fpath);
+    unzip([fpath fext], fpath);
+    
+    % return exe dir, if it exists
+    if exist(fullfile(fpath, 'exe'), 'dir')
+        fpath = fullfile(fpath, 'exe');
+    end
+    
+    % return filename if only one file unzipped
+    if length(dir(fpath)) == 3
+        d = dir(fpath);
+        fpath = fullfile(fpath, d(3).name);
     else
-        fpath = tmpfile;
+        d = dir(fullfile(fpath, 'xbeach*'));
+        if ~isempty(d)
+            fpath = fullfile(fpath, d(1).name);
+        end
     end
 end
