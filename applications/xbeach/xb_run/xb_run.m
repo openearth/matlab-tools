@@ -7,9 +7,10 @@ function xb_run(xb, varargin)
 %   TODO: MPI support
 % 
 %   Syntax:
-%   xb_run()
+%   xb_run(xb)
 %
 %   Input:
+%   xb        = XBeach input structure
 %   varargin  = binary:     XBeach binary to use
 %               nodes:      Number of nodes to use in MPI mode (1 = no mpi)
 %               netcdf:     Flag to use netCDF output (default: false)
@@ -19,8 +20,8 @@ function xb_run(xb, varargin)
 %   none
 %
 %   Example
-%   xb_run()
-%   xb_run('path', 'path_to_model/')
+%   xb_run(xb)
+%   xb_run(xb, 'path', 'path_to_model/')
 %
 %   See also xb_run, xb_get_bin
 
@@ -106,13 +107,13 @@ end
 
 if isunix()
     if OPT.nodes > 1
-        system(['cd ' OPT.path ' && ' OPT.binary]); % TODO
+        disp('MPI support is not yet implemented, sorry!'); % TODO
     else
         system(['cd ' OPT.path ' && ' OPT.binary]);
     end
 else
     if OPT.nodes > 1
-        system(['cd ' OPT.path ' && start ' OPT.binary]); % TODO
+        disp('MPI support is not yet implemented, sorry!'); % TODO
     else
         system(['cd ' OPT.path ' && start ' OPT.binary]);
     end

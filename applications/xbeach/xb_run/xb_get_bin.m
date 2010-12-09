@@ -93,8 +93,8 @@ hosts = struct( ...
     'win32_mpi', 'https://build.deltares.nl/guestAuth/repository/downloadAll/bt155/.lastSuccessful/exe/artifacts.zip', ...
     'win32_mpi_netcdf', '', ...
     'win32_netcdf', 'https://build.deltares.nl/guestAuth/repository/downloadAll/bt204/.lastSuccessful/artifacts.zip', ...
-    'unix', '', ...
-    'unix_mpi', '', ...
+    'unix', 'https://build.deltares.nl/guestAuth/repository/download/bt145/.lastSuccessful/executable/trunk/nompi/xbeach', ...
+    'unix_mpi', 'https://build.deltares.nl/guestAuth/repository/download/bt146/.lastSuccessful/executable/trunk/mpi/xbeach', ...
     'unix_mpi_netcdf', '', ...
     'unix_netcdf', '' ...
 );
@@ -126,15 +126,15 @@ end
 [fhost fname fext] = fileparts(host);
 
 tmpfile = tempname;
-fpath = [tmpfile fext];
-urlwrite(host, fpath);
+mkdir(tmpfile);
 
 % unzip, if zipped
 if strcmpi(fext, '.zip')
     fpath = tmpfile;
     
-    mkdir(fpath);
+    urlwrite(host, [fpath fext]);
     unzip([fpath fext], fpath);
+    delete([fpath fext]);
     
     % return exe dir, if it exists
     if exist(fullfile(fpath, 'exe'), 'dir')
@@ -151,4 +151,7 @@ if strcmpi(fext, '.zip')
             fpath = fullfile(fpath, d(1).name);
         end
     end
+else
+    fpath = fullfile(tmpfile, [fname fext]);
+    urlwrite(host, fpath);
 end

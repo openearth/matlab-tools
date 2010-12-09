@@ -1,15 +1,18 @@
-function xb_run_remote(varargin)
+function [fpath job_id job_name] = xb_run_remote(xb, varargin)
 %XB_RUN_REMOTE  Runs a XBeach model remote on the H4 cluster
 %
 %   Writes a XBeach structure to disk, retrieves a XBeach binary file and
 %   runs it at a remote location accessed by SSH (by default, H4 cluster).
 %   Supports the use of MPI.
 %
+%   TODO: UNIX SUPPORT
+%
 %   Syntax:
-%   xb_run_remote()
+%   xb_run_remote(xb)
 %
 %   Input:
-%   varargin  = binary:     XBeach binary to use
+%   varargin  = name:       Name of the model run
+%               binary:     XBeach binary to use
 %               nodes:      Number of nodes to use in MPI mode (1 = no mpi)
 %               netcdf:     Flag to use netCDF output (default: false)
 %               ssh_host:   Host name of remote computer
@@ -19,11 +22,13 @@ function xb_run_remote(varargin)
 %               path_remote:Path to XBeach model seen from remote computer
 %
 %   Output:
-%   none
+%   fpath     = Location where model runs
+%   job_id    = ID of remote job
+%   job_name  = Name of remote job
 %
 %   Example
-%   xb_run_remote()
-%   xb_run_remote('path_local', 'u:\', 'path_remote', '~/')
+%   xb_run_remote(xb)
+%   xb_run_remote(xb, 'path_local', 'u:\', 'path_remote', '~/')
 %
 %   See also xb_run, xb_get_bin
 
@@ -71,23 +76,30 @@ function xb_run_remote(varargin)
 %% read options
 
 OPT = struct( ...
+    'name', ['xb_' datestr(now, 'YYYYmmddHHMMSS')], ...
     'binary', '', ...
     'nodes', 1, ...
     'netcdf', false, ...
     'ssh_host', 'h4', ...
     'ssh_user', '', ...
     'ssh_pass', '', ...
-    'path_local', '.', ...
-    'path_remote', '~' ...
+    'path_local', 'u:\', ...
+    'path_remote', '~/' ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
 %% write model
 
-fpath = fullfile(OPT.path_local, 'params.txt');
+% make model directory
+fpath = fullfile(OPT.path_local, OPT.name);
 
-xb_write_input(fpath, xb);
+mkdir(fpath);
+mkdir(fullfile(fpath, 'bin'));
+
+xb_write_input(fullfile(fpath, 'params.txt'), xb);
+
+rpath = [OPT.path_remote '/' OPT.name];
 
 %% retrieve binary
 
@@ -105,6 +117,71 @@ if isempty(OPT.binary)
     OPT.binary = xb_get_bin('type', bin_type);
 end
 
+% move downloaded binary to destination directory
+if exist(OPT.binary, 'dir') == 7
+    movefile(fullfile(OPT.binary, '*'), fullfile(fpath, 'bin'));
+else
+    movefile(OPT.binary, fullfile(fpath, 'bin'));
+end
+
 %% write run scripts
 
+% write start script
+fid = fopen(fullfile(fpath, 'xbeach.sh'), 'wt');
+
+fprintf(fid,'#!/bin/sh\n');
+fprintf(fid,'cd %s\n', rpath);
+fprintf(fid,'. /opt/sge/InitSGE\n');
+fprintf(fid,'. /opt/intel/fc/10/bin/ifortvars.sh\n');
+fprintf(fid,'dos2unix mpi.sh\n');
+fprintf(fid,'qsub -V -N %s mpi.sh\n', OPT.name);
+
+fprintf(fid,'exit\n');
+
+fclose(fid);
+
+% write mpi script
+fid = fopen(fullfile(fpath, 'mpi.sh'), 'wt');
+
+fprintf(fid,'#!/bin/bash\n');
+fprintf(fid,'#$ -cwd\n');
+fprintf(fid,'#$ -N %s\n', OPT.name);
+fprintf(fid,'#$ -pe distrib %d\n', OPT.nodes);
+
+fprintf(fid,'. /opt/sge/InitSGE\n');
+fprintf(fid,'export LD_LIBRARY_PATH=/opt/intel/Compiler/11.0/081/lib/ia32:/opt/netcdf-4.1.1/lib:/opt/hdf5-1.8.5/lib\n');
+
+if OPT.nodes > 1
+    fprintf(fid,'export PATH="/opt/mpich2/bin:${PATH}"\n');
+    fprintf(fid,'export NSLOTS=`expr $NSLOTS \* 2`\n');
+    fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
+    fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE >> $(pwd)/machinefile\n');
+    fprintf(fid,'mpdboot -n $NHOSTS --rsh=/usr/bin/rsh -f $(pwd)/machinefile\n');
+    fprintf(fid,'mpirun -np $NSLOTS $(pwd)/bin/xbeach >> xbeach.log 2>&1\n');
+    fprintf(fid,'mpdallexit\n');
+else
+    fprintf(fid,'$(pwd)/bin/xbeach >> xbeach.log 2>&1\n');
+end
+
+fclose(fid);
+
 %% run model
+
+if isunix()
+    disp('Unix support not yet implemented, sorry!');
+else
+    exe_path = fullfile(fileparts(which(mfilename)), 'plink.exe');
+    
+    cmd = sprintf('%s %s@%s -pw %s "dos2unix %s/xbeach.sh && %s/xbeach.sh"', ...
+        exe_path, OPT.ssh_user, OPT.ssh_host, OPT.ssh_pass, rpath, rpath);
+    
+    [retcode messages] = system(cmd);
+    
+    % extract job number and name
+    if retcode == 0
+        s = regexp(messages, 'Your job (?<id>\d+) \("(?<name>.+)"\) has been submitted', 'names');
+
+        job_id = s.id;
+        job_name = s.name;
+    end
+end
