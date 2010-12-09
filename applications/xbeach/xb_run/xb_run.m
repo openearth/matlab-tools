@@ -10,6 +10,7 @@ function xb_run(xb, varargin)
 %   Input:
 %   varargin  = binary:     XBeach binary to use
 %               nodes:      Number of nodes to use in MPI mode (1 = no mpi)
+%               netcdf:     Flag to use netCDF output (default: false)
 %               path:       Path to the XBeach model
 %
 %   Output:
@@ -65,8 +66,9 @@ function xb_run(xb, varargin)
 %% read options
 
 OPT = struct( ...
-    'binary', xb_get_binary('type', 'win32'), ...
+    'binary', '', ...
     'nodes', 1, ...
+    'netcdf', false, ...
     'path', '.' ...
 );
 
@@ -78,4 +80,30 @@ fpath = fullfile(OPT.path, 'params.txt');
 
 xb_write_input(fpath, xb);
 
+%% retrieve binary
+
+if isempty(OPT.binary)
+    if isunix()
+        bin_type = 'unix';
+    else
+        bin_type = 'win32';
+    end
+
+    if OPT.nodes > 1
+        bin_type = [bin_type ' mpi'];
+    end
+
+    if OPT.netcdf
+        bin_type = [bin_type ' netcdf'];
+    end
+    
+    OPT.binary = xb_get_bin('type', bin_type);
+end
+
 %% run model
+
+if isunix()
+    system(['cd ' OPT.path ' && ' OPT.binary]);
+else
+    system(['cd ' OPT.path ' && start ' OPT.binary]);
+end

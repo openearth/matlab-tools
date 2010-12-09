@@ -11,6 +11,7 @@ function xb_run_remote(varargin)
 %   Input:
 %   varargin  = binary:     XBeach binary to use
 %               nodes:      Number of nodes to use in MPI mode (1 = no mpi)
+%               netcdf:     Flag to use netCDF output (default: false)
 %               ssh_host:   Host name of remote computer
 %               ssh_user:   Username for remote computer
 %               ssh_pass:   Password for remote computer
@@ -70,8 +71,9 @@ function xb_run_remote(varargin)
 %% read options
 
 OPT = struct( ...
-    'binary', xb_get_binary('type', 'unix'), ...
+    'binary', '', ...
     'nodes', 1, ...
+    'netcdf', false, ...
     'ssh_host', 'h4', ...
     'ssh_user', '', ...
     'ssh_pass', '', ...
@@ -86,5 +88,23 @@ OPT = setproperty(OPT, varargin{:});
 fpath = fullfile(OPT.path_local, 'params.txt');
 
 xb_write_input(fpath, xb);
+
+%% retrieve binary
+
+if isempty(OPT.binary)
+    bin_type = 'unix';
+
+    if OPT.nodes > 1
+        bin_type = [bin_type ' mpi'];
+    end
+
+    if OPT.netcdf
+        bin_type = [bin_type ' netcdf'];
+    end
+    
+    OPT.binary = xb_get_bin('type', bin_type);
+end
+
+%% write run scripts
 
 %% run model
