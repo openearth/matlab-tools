@@ -4,6 +4,8 @@ function xb_run(xb, varargin)
 %   Writes a XBeach structure to disk, retrieves a XBeach binary file and
 %   runs it at a certain location. Supports the use of MPI using MPICH2.
 %
+%   TODO: MPI support
+% 
 %   Syntax:
 %   xb_run()
 %
@@ -103,7 +105,15 @@ end
 %% run model
 
 if isunix()
-    system(['cd ' OPT.path ' && ' OPT.binary]);
+    if OPT.nodes > 1
+        system(['cd ' OPT.path ' && ' OPT.binary]); % TODO
+    else
+        system(['cd ' OPT.path ' && ' OPT.binary]);
+    end
 else
-    system(['cd ' OPT.path ' && start ' OPT.binary]);
+    if OPT.nodes > 1
+        system(['cd ' OPT.path ' && start ' OPT.binary]); % TODO
+    else
+        system(['cd ' OPT.path ' && start ' OPT.binary]);
+    end
 end
