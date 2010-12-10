@@ -11,7 +11,7 @@ if ischar(arg1) && ischar(arg2)
     ncid=netcdf.open(ncfile,'NOWRITE');
     try
         varid = netcdf.inqVarID(ncid, varname);
-        Dataset = get_varinfo_tmw ( ncid,  varid );
+        Dataset = nc_getvarinfo_tmw ( ncid,  varid );
     catch me
         netcdf.close(ncid);
         rethrow(me);
@@ -25,7 +25,7 @@ elseif isnumeric ( arg1 ) && isnumeric ( arg2 )
     ncid = arg1;
     varid = arg2;
 
-    Dataset = get_varinfo_tmw ( ncid,  varid );
+    Dataset = nc_getvarinfo_tmw ( ncid,  varid );
 
 else
     error ( 'SNCTOOLS:NC_GETVARINFO:tmw:badTypes', ...
