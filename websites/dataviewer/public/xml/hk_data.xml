@@ -99,22 +99,4 @@
     <kml>http://dtvirt5.deltares.nl/kml/overheid/vogel%20gebieden.kmz</kml>
     <actions></actions>
   </data>
-  <model>
-    <title>Westerschelde grid</title>
-    <category>hydro</category>
-    <type>2dmap</type>
-    <kml>http://dtvirt5.deltares.nl/kml/Westerschelde/grid_hor.kml</kml>
-    <actions></actions>
-  </model>
-  <tool>
-    <title>Anton's tool</title>
-    <category>hydro</category>
-    <type>2dmap</type>
-    <kml>http://dtvirt13/bwn/optie_compiled/outline_model.kml</kml>
-    <actions>
-        <antontool>
-            <templatefile>http://dtvirt13/bwn/optie_compiled/templates/anton.tpl</templatefile>
-        </antontool>
-    </actions>
-  </tool>
 </hk_data>

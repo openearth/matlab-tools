@@ -253,20 +253,6 @@
 				}
 		}
 
-		// Change mode
-		function changeMode()
-		{
-		datafile = caseDoc.getElementsByTagName("datafile")[caseSelect.value].childNodes[0].nodeValue;
-
-		for (i=0; i<modeSelect.mode.length; i=i+1)
-			{
-			if (modeSelect.mode[i].checked == true)
-				getDataOutOfCase(datafile,modeSelect.mode[i].value);
-			}
-		}
-
-
-
 	</script>
 </head>
 
@@ -289,23 +275,6 @@
 		<hr />
 		</td>
 	</tr>
-
-<!-- MODE SELECTION (DATA, MODEL or TOOLS) -->
-	<tr>
-		<td colspan="2">
-		<h3>Select mode</h3>
-		</td>
-	</tr>
-	<form id="modeSelect" action='javascript:changeMode(this.value);'>
-		<tr>
-			<td colspan="2">
-			<input type="radio" name="mode" value="data" checked onClick=changeMode() />Data <br />
-			<input type="radio" name="mode" value="model" onClick=changeMode() />Models <br />
-			<input type="radio" name="mode" value="tool" onClick=changeMode() />Tools <br />
-			<hr />
-			</td>
-		</tr>
-	</form>
 
 <!-- DATA SELECTION -->
 	<tr>
@@ -366,12 +335,6 @@
 	  </td>
 	</tr>
 
-<!-- SPACE RESERVED FOR TOOLBOXES -->
-	<tr>
-	  <td colspan="2">
-		  <div id="toolbox"></div>
-	  </td>
-    </tr>
 </table>
 </div>
 <div id='map3d_container' style='border: 1px solid silver; height: 750px; margin-left:350px;'>
