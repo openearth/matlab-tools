@@ -11,8 +11,9 @@ function variables = xb_read_output(fname, varargin)
 %   varargout = xb_read_output(fname, varargin)
 %
 %   Input:
-%   fname       = path to the directory containing the dat files, a dat
-%                 file or the netcdf file to be read
+%   fname       = Path to the directory containing the dat files, a dat
+%                 file or the netcdf file to be read. This can also be a
+%                 XBeach run structure, which is translated to a path.
 %   varargin    = vars:         variable filters
 %
 %   Output:
@@ -69,10 +70,20 @@ function variables = xb_read_output(fname, varargin)
 
 %% read output
 
+% extract path, if xbeach structure is supplied
+if xb_check(fname)
+    if ischar(fname.file)
+        fname = fname.file;
+    else
+        fname = xb_get(fname, 'path');
+    end
+end
+
 if ~exist(fname, 'file')
     error(['File does not exist [' fname ']'])
 end
 
+% determine data type (dat/netcdf)
 if isdir(fname) || strcmpi(fname(end-3:end), '.dat')
   variables = xb_read_dat(fname, varargin{:});
 elseif strcmpi(fname(end-2:end), '.nc')
