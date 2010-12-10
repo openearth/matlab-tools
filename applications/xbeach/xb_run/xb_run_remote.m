@@ -1,4 +1,4 @@
-function [fpath job_id job_name messages] = xb_run_remote(xb, varargin)
+function xb = xb_run_remote(xb, varargin)
 %XB_RUN_REMOTE  Runs a XBeach model remote on the H4 cluster
 %
 %   Writes a XBeach structure to disk, retrieves a XBeach binary file and
@@ -20,15 +20,9 @@ function [fpath job_id job_name messages] = xb_run_remote(xb, varargin)
 %               ssh_pass:   Password for remote computer
 %               path_local: Local path to the XBeach model
 %               path_remote:Path to XBeach model seen from remote computer
-%               warn:       Display a message when the job finished
-%               warn_delay: Delay in seconds to check whether the job has
-%                           finished
 %
 %   Output:
-%   fpath     = Location where model runs
-%   job_id    = ID of remote job
-%   job_name  = Name of remote job
-%   messages  = Standard output of remote job
+%   xb        = XBeach structure array
 %
 %   Example
 %   xb_run_remote(xb)
@@ -88,9 +82,7 @@ OPT = struct( ...
     'ssh_user', '', ...
     'ssh_pass', '', ...
     'path_local', 'u:\', ...
-    'path_remote', '~/', ...
-    'warn', false, ...
-    'warn_delay', 60 ...
+    'path_remote', '~/' ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -194,30 +186,20 @@ else
     error(['Submitting remote job failed [' cmd ']']);
 end
 
-%% start timer
+%% create xbeach structure
 
-if OPT.warn
-     t = timer( ...
-         'TimerFcn', {@checkJob,job_id,OPT}, ...
-         'ExecutionMode', 'fixedDelay', ...
-         'Period', OPT.warn_delay ...
-     );
- 
-    start(t);
-end
+sub = xb_empty();
+sub = xb_set(sub, 'host', OPT.ssh_host, 'user', OPT.ssh_user, 'pass', OPT.ssh_pass);
+sub = xb_meta(sub, mfilename, 'host');
 
-%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-function checkJob(obj, event, id, OPT)
-
-exe_path = fullfile(fileparts(which(mfilename)), 'plink.exe');
-
-cmd = sprintf('%s %s@%s -pw %s ". /opt/sge/InitSGE && qstat -u %s"', ...
-        exe_path, OPT.ssh_user, OPT.ssh_host, OPT.ssh_pass, OPT.ssh_user);
-    
-[retcode messages] = system(cmd);
-
-if isempty(regexp(messages, ['(^|\n)\s*' num2str(id) '\s'], 'once'))
-    stop(obj); delete(obj);
-    disp([upper(mfilename) ': Job ' OPT.name ' (' num2str(id) ') finished']);
-end
+xb = xb_empty();
+xb = xb_set(xb, ...
+    'path', fpath, ...
+    'id', job_id, ...
+    'name', job_name, ...
+    'nodes', OPT.nodes, ...
+    'binary', OPT.binary, ...
+    'netcdf', OPT.netcdf, ...
+    'ssh', sub, ...
+    'messages', messages);
+xb = xb_meta(xb, mfilename, 'run', fpath);

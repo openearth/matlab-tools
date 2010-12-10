@@ -122,7 +122,7 @@ if ~isempty(vars)
             if size(var,1) > size(var,2)
                 var = var';
             end
-            if isnumeric(var)
+            if isnumeric(var) || islogical(var)
                 value = num2str(var);
             else
                 value = var;

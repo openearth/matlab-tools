@@ -1,4 +1,4 @@
-function xb_run(xb, varargin)
+function xb = xb_run(xb, varargin)
 %XB_RUN  Runs a XBeach model locally
 %
 %   Writes a XBeach structure to disk, retrieves a XBeach binary file and
@@ -17,7 +17,7 @@ function xb_run(xb, varargin)
 %               path:       Path to the XBeach model
 %
 %   Output:
-%   none
+%   xb        = XBeach structure array
 %
 %   Example
 %   xb_run(xb)
@@ -109,12 +109,25 @@ if isunix()
     if OPT.nodes > 1
         error('MPI support is not yet implemented, sorry!'); % TODO
     else
-        system(['cd ' OPT.path ' && ' OPT.binary]);
+        [retcode messages] = system(['cd ' OPT.path ' && ' OPT.binary]);
     end
 else
     if OPT.nodes > 1
         error('MPI support is not yet implemented, sorry!'); % TODO
     else
-        system(['cd ' OPT.path ' && start ' OPT.binary]);
+        [retcode messages] = system(['cd ' OPT.path ' && start ' OPT.binary]);
     end
 end
+
+%% create xbeach structure
+
+xb = xb_empty();
+xb = xb_set(xb, ...
+    'path', fpath, ...
+    'id', 0, ...
+    'name', '', ...
+    'nodes', OPT.nodes, ...
+    'binary', OPT.binary, ...
+    'netcdf', OPT.netcdf, ...
+    'messages', messages);
+xb = xb_meta(xb, mfilename, 'run', OPT.path);
