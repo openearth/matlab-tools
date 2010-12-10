@@ -1,4 +1,4 @@
-function OPT = KMLfig2pngNew (h,lat,lon,z,varargin)
+function varargout = KMLfig2pngNew (h,lat,lon,z,varargin)
 % KMLFIG2PNGnew   makes a tiled png figure for google earth
 %
 %   h = surf(lon,lat,z)
@@ -91,6 +91,8 @@ OPT.basecode           = '';
 OPT.highestLevel       = [];
 OPT.lowestLevel        = [];
 OPT.debug              = 0;  % display some progress info
+OPT.open               = 0; % KML_header 
+OPT.visible            = 1; % KML_header
 
 if nargin==0
   return
@@ -218,6 +220,7 @@ daspect(OPT.ha,'auto') % repair effect of for instance axislat()
           'color',OPT.bgcolor/255,'InvertHardcopy','off');
 
 %% run scripts (These are the core functions)
+%  some more background info: http://www.realityprima.comn/articles/how-google-earth-really-works
 
 %   --------------------------------------------------------------------
 % Generates tiles at most detailed level
@@ -256,16 +259,18 @@ if OPT.makeKML
     
     output = sprintf([...
         '<NetworkLink>'...
-        '<name>network-linked-tiled-pngs</name>'... % name
+        '<name>network-linked-tiled-pngs</name>'...
+        '<visibility>%d</visibility>'...
         '%s'...              % timespan                                                                                                          % time
         '<Link><href>%s</href><viewRefreshMode>onRegion</viewRefreshMode></Link>'... % link
         '</NetworkLink>'],...
-        OPT.timeSpan,href.kml);
+        OPT.visible,OPT.timeSpan,href.kml);
     file.kml = [OPT.basePath, filesep,OPT.fileName];
     OPT.fid=fopen(file.kml,'w');
     OPT_header = struct(...
-        'name',OPT.kmlName,...
-        'open',0,...
+               'name',OPT.kmlName,...
+               'open',OPT.open,...
+            'visible',OPT.visible,...
         'description',OPT.description);
         
  %% LOGO
@@ -294,7 +299,6 @@ if OPT.makeKML
  %% COLORBAR
  %  add png to directory of tiles (split png and href in KMLcolorbar)
 
-
     if OPT.colorbar
 
        % add to one level deeper
@@ -313,7 +317,9 @@ if OPT.makeKML
                                'CBkmlName','colorbar',...
                               'CBcolorMap',colormap(OPT.ha),...
                             'CBcolorTitle',OPT.CBcolorbartitle,...
-                      'CBcolorbarlocation',OPT.CBcolorbarlocation);
+                      'CBcolorbarlocation',OPT.CBcolorbarlocation,...
+                               'CBvisible',OPT.visible);
+                      
         
         % refer to one level deeper,  KMLcolorbar chops directory in <href>
         clrbarstring = strrep(clrbarstring,['<Icon><href>' filename(file.CB)],...
@@ -338,3 +344,10 @@ if OPT.makeKML
 
     set(OPT.ha,'DataAspectRatio',daspect); % restore
 end
+
+if nargout==1
+   varargout = {OPT};
+end
+
+%% EOF   
+

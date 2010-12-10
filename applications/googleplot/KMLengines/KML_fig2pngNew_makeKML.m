@@ -6,18 +6,19 @@ function KML_fig2pngNew_makeKML(OPT)
 OPT.timeSpan = '';
 
 for level = OPT.highestLevel:OPT.lowestLevel
-    tiles = dir(fullfile(OPT.Path,OPT.Name,[OPT.Name '_*.png']));
+    tiles     = dir(fullfile(OPT.Path,OPT.Name,[OPT.Name '_*.png']));
     tileCodes = nan(length(tiles),level);
     for ii = 1:length(tiles)
-        begin =  findstr(tiles(ii).name,'_');
+        begin =  findstr(tiles(ii).name,OPT.Name) + length(OPT.Name); % mind colormap png being in same directory
+       %begin =  findstr(tiles(ii).name,'_');
         if length(tiles(ii).name)-4-begin(end) == level
             tileCodes(ii,:) = tiles(ii).name(begin(end)+1:end-4);
         end
     end
     tileCodes(any(isnan(tileCodes),2),:) = [];
     tileCodes = char(tileCodes);
-    tiles = unique(tileCodes(:,1:end),'rows');
-    addCode = ['01';'23'];
+    tiles     = unique(tileCodes(:,1:end),'rows');
+    addCode   = ['01';'23'];
     
     if level == OPT.highestLevel
         minLod = OPT.minLod0;
@@ -40,16 +41,16 @@ for level = OPT.highestLevel:OPT.lowestLevel
                     code = [tiles(nn,:) addCode(ii,jj)];
                     B = KML_fig2pngNew_code2boundary(code);
                     PNGfileName = fullfile(OPT.Path,OPT.Name,[OPT.Name '_' code '.png']);
-                    if exist(PNGfileName,'file')
+                    if exist(PNGfileName,'file') & ~isempty(B)
                         output = [output sprintf([...
                             '<NetworkLink>\n'...
-                            '<name>%s</name>\n'...name
-                            '%s'...time
+                            '<name>%s</name>\n'...% name
+                            '%s'...% time
                             '<Region>\n'...
-                            '<Lod><minLodPixels>%d</minLodPixels><maxLodPixels>%d</maxLodPixels></Lod>\n'...minLod,maxLod
-                            '<LatLonAltBox><north>%3.8f</north><south>%3.8f</south><west>%3.8f</west><east>%3.8f</east></LatLonAltBox>\n' ...N,S,W,E
+                            '<Lod><minLodPixels>%d</minLodPixels><maxLodPixels>%d</maxLodPixels></Lod>\n'...% minLod,maxLod
+                            '<LatLonAltBox><north>%3.8f</north><south>%3.8f</south><west>%3.8f</west><east>%3.8f</east></LatLonAltBox>\n' ...% N,S,W,E
                             '</Region>\n'...
-                            '<Link><href>%s_%s.kml</href><viewRefreshMode>onRegion</viewRefreshMode></Link>\n'...kmlname
+                            '<Link><href>%s_%s.kml</href><viewRefreshMode>onRegion</viewRefreshMode></Link>\n'...% kmlname
                             '</NetworkLink>\n'],...
                             code,...
                             OPT.timeSpan,...
@@ -65,15 +66,15 @@ for level = OPT.highestLevel:OPT.lowestLevel
         B = KML_fig2pngNew_code2boundary(tiles(nn,:));
         output = [output sprintf([...
             '<Region>\n'...
-            '<Lod><minLodPixels>%d</minLodPixels><maxLodPixels>%d</maxLodPixels></Lod>\n'...minLod,maxLod
-            '<LatLonAltBox><north>%3.8f</north><south>%3.8f</south><west>%3.8f</west><east>%3.8f</east></LatLonAltBox>\n' ...N,S,W,E
+            '<Lod><minLodPixels>%d</minLodPixels><maxLodPixels>%d</maxLodPixels></Lod>\n'... % minLod,maxLod
+            '<LatLonAltBox><north>%3.8f</north><south>%3.8f</south><west>%3.8f</west><east>%3.8f</east></LatLonAltBox>\n' ... % N,S,W,E
             '</Region>\n'...
             '<GroundOverlay>\n'...
-            '<name>%s</name>\n'...kml_id
-            '<drawOrder>%0.0f</drawOrder>\n'...drawOrder
-            '%s'...timeSpan
-            '<Icon><href>%s_%s.png</href></Icon>\n'...%file_link
-            '<LatLonAltBox><north>%3.8f</north><south>%3.8f</south><west>%3.8f</west><east>%3.8f</east></LatLonAltBox>\n' ...N,S,W,E
+            '<name>%s</name>\n'... % kml_id
+            '<drawOrder>%0.0f</drawOrder>\n'... % drawOrder
+            '%s'... % timeSpan
+            '<Icon><href>%s_%s.png</href></Icon>\n'... % file_link
+            '<LatLonAltBox><north>%3.8f</north><south>%3.8f</south><west>%3.8f</west><east>%3.8f</east></LatLonAltBox>\n' ... % N,S,W,E
             '</GroundOverlay>\n'],...
             minLod,maxLod,B.N,B.S,B.W,B.E,...
             tiles(nn,:),...
@@ -83,8 +84,11 @@ for level = OPT.highestLevel:OPT.lowestLevel
         
         fid=fopen(fullfile(OPT.Path,OPT.Name,[OPT.Name '_' tiles(nn,:) '.kml']),'w');
         OPT_header = struct(...
-            'name',tiles(nn,:),...
-            'open',0);
+               'name',tiles(nn,:),...
+               'open',OPT.open,...
+            'visible',OPT.visible,...
+        'description',OPT.description);
+
         output = [KML_header(OPT_header) output];
         
         % FOOTER

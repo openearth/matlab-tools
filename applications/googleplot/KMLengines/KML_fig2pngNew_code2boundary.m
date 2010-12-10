@@ -30,7 +30,10 @@ for ii = 2:bnd.level+1
             bnd.N = bnd.N + (bnd.S-bnd.N)/2;
             bnd.W = bnd.W + (bnd.E-bnd.W)/2;
         otherwise
-            error('wrong element in code, must consist of 0123')
+            disp(['warning: ignored wrong element in code, must consist of 0123, but contains:''',code(ii),''''])% probably colorbar
+            bnd.N = [];
+            bnd.W = [];
+            break
     end
 end
 

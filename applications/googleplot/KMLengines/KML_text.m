@@ -45,6 +45,7 @@ function varargout = KML_text(lat,lon,label,varargin)
    OPT.timeIn       = [];
    OPT.timeOut      = [];
    OPT.dateStrStyle = 29;
+   OPT.visible      = 0;
    
    if nargin==0; varargout = {OPT}; return; end
 
@@ -90,13 +91,14 @@ function varargout = KML_text(lat,lon,label,varargin)
    output = sprintf([...
     '<Placemark>\n'...
     '%s'...                % timeSpan
+    '<visibility>%d</visibility>\n'... % visible
     '<name>%s</name>\n'... % label
     '<Style><IconStyle><Icon></Icon></IconStyle></Style>\n'... % this gives no icon at all, whereas leaving this ...
     '<Point>'...                                               % ... line out gives the default yellow pushpin
     '%s'...                % altitude mode
     '<coordinates>%3.8f,%3.8f,%3.3f </coordinates></Point>\n'...
     '</Placemark>\n'],...
-       timeSpan,label{i},altitudeMode,lon(i),lat(i),z(i));
+       timeSpan,OPT.visible,label{i},altitudeMode,lon(i),lat(i),z(i));
        
    end    
    

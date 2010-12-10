@@ -85,6 +85,10 @@ OPT.CBorientation        = [];
 OPT.CBverticalalignment  = [];
 OPT.CBhorizonalalignment = [];
 
+OPT.CBopen               = 0; % KML_header 
+OPT.CBvisible            = 1; % KML_header
+OPT.CBdescription        = ''; % KML_header
+
 if nargin==0
     varargout = {OPT};
     return
@@ -128,7 +132,11 @@ end
 
 %% make colorbar pngs as separate files
 
-[PATHSTR,NAME] = fileparts(OPT.CBfileName);
+[PATHSTR,NAME,EXT] = fileparts(OPT.CBfileName);
+% % allow for '.' in middle of file name
+% if ~isempty(EXT)
+%    NAME  =[NAME,'.',EXT];
+% end
 
 if ischar(OPT.CBcolorbarlocation)
     OPT.CBcolorbarlocation = {OPT.CBcolorbarlocation};
@@ -235,7 +243,7 @@ for ii = 1:length(OPT.CBcolorbarlocation)
             pngName     = '_ver_lft';
     end
     
-    bool = ii == 1;
+    bool = (ii == 1) & OPT.CBvisible;
     colorbarstring = [colorbarstring sprintf([...
         '  <Folder>\n'...
         '  <name>%s</name>\n'...
@@ -265,8 +273,10 @@ if nargout==1
 else
     OPT.CBfid    = fopen([OPT.CBfileName,'.kml'],'w');
     OPT_header = struct(...
-        'name',OPT.CBkmlName,...
-        'open',0);
+               'name',OPT.CBkmlName,...
+               'open',OPT.CBopen,...
+            'visible',OPT.CBvisible,...
+        'description',OPT.CBdescription);
     output = [KML_header(OPT_header) colorbarstring KML_footer];
     fprintf(OPT.CBfid,'%s',output);
     fclose(OPT.CBfid);

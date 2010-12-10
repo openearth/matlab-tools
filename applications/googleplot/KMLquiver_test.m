@@ -61,7 +61,6 @@ try
 
     KMLquiver(lat,lon,-scale.*v,scale.*u,'fileName',KML_testdir('KMLquiver_test_arrows.kml'));
     KMLpcolor(lat,lon,                 z,'fileName',KML_testdir('KMLquiver_test_streamfunction.kml'));
-    testresult = true;
     
 %% case 2
 
@@ -79,6 +78,7 @@ try
               'timeIn',now + t,...
              'timeOut',now + t + dt);
     
+    testresult = true;
 catch
     testresult = false;
 end

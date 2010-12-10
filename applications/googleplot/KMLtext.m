@@ -60,6 +60,7 @@ function varargout = KMLtext(lat,lon,label,varargin)
    OPT.openInGE            = false;
    OPT.markerAlpha         =  0.6;
    OPT.description         =  '';
+   OPT.open                = 0;
    OPT.visible             =  1;
    OPT.timeIn              = [];
    OPT.timeOut             = [];
@@ -133,10 +134,10 @@ function varargout = KMLtext(lat,lon,label,varargin)
 %% HEADER
 
    OPT_header = struct(...
-       'name',OPT.kmlName,...
-       'open',0,...
+          'name',OPT.kmlName,...
+          'open',OPT.open,...
        'visible',OPT.visible,...
-       'description',OPT.description);
+   'description',OPT.description);
    output = KML_header(OPT_header);
 
 output = [output '<!--############################-->\n'];
@@ -149,7 +150,7 @@ output = [output '<!--############################-->\n'];
    fprintf(OPT.fid,output);output = [];
    fprintf(OPT.fid,'<Folder>');
    fprintf(OPT.fid,'  <name>placeholders</name>');
-   fprintf(OPT.fid,'  <open>0</open>');
+   fprintf(OPT.fid,['  <open>'   ,num2str(OPT.open)   ,'</open>']);
    output = repmat(char(1),1,1e5);
    kk = 1;
 
@@ -164,6 +165,8 @@ output = [output '<!--############################-->\n'];
    else
       OPT_text.timeOut = datestr(OPT.timeOut(1),29); 
    end
+   
+   OPT_text.visible = OPT.visible;
 
 % loop through number of lines
 

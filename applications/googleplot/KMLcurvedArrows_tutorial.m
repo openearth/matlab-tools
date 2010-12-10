@@ -16,7 +16,6 @@
 % For this demo, there is alrady some data in OpenEarthTools
 
 load westerscheldeDemoData
-whos
 
 %%  Make the arrows
 % Use KMLcurvedArrows to generate the arrows. 'time' contains the begin and

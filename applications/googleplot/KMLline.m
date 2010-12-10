@@ -99,6 +99,7 @@ function varargout = KMLline(lat,lon,varargin)
 
    OPT.fileName      = ''; % header/footer are skipped when is a fid = fopen(OPT.fileName,'w')
    OPT.description   = '';
+   OPT.open          = 0;
    OPT.kmlName       = [];
    OPT.lineWidth     = 1;
    OPT.lineColor     = [0 0 0];

@@ -1,4 +1,4 @@
-function OPT = KMLmerge_files(varargin)
+function varargout = KMLmerge_files(varargin)
 %KMLMERGE_FILES   merges all KML files in a certain directory
 %
 %   KMLmerge_files(<keyword,value>)
@@ -13,11 +13,14 @@ function OPT = KMLmerge_files(varargin)
 %% set properties
 
    OPT.fileName          = '';
-   OPT.kmlName           = '';
    OPT.sourceFiles       = {};
    OPT.foldernames       = {}; % TO DO check for existing folder names
-   OPT.description       = '';
    OPT.deleteSourceFiles = false;
+
+   OPT.kmlName           = '';
+   OPT.open              = '';
+   OPT.description       = '';
+   OPT.visible           = 1;
 
    [OPT, Set, Default] = setproperty(OPT, varargin{:});
    
@@ -60,7 +63,9 @@ function OPT = KMLmerge_files(varargin)
    fid0=fopen(OPT.fileName,'w');
    OPT_header = struct(...
           'name',OPT.kmlName,...
-   'description',OPT.description);
+   'description',OPT.description,...
+       'visible',OPT.visible,...
+          'open',OPT.open);
    fprintf(fid0,'%s',KML_header(OPT_header));
    
    for ii = 1:length(OPT.sourceFiles)
@@ -113,5 +118,9 @@ function OPT = KMLmerge_files(varargin)
        delete  ([OPT.fileName(1:end-3) 'kml'])
    end
    
+if nargout==1
+   varargout = {OPT};
+end
+
 %% EOF   
 

@@ -63,6 +63,8 @@ OPT.flow_steps 	 = 4;                % (max is 21)
 OPT.colorScale 	 = .015;
 OPT.lineScale  	 = .02;
 OPT.interp_steps = 1;                % interpolate in time between consecutive arrows
+OPT.open               = 0; % KML_header 
+OPT.visible            = 1; % KML_header
 
 if nargin==0
   return
@@ -92,10 +94,19 @@ cmap = OPT.colorMap(OPT.colorSteps);
 EPSG = load('EPSG');
 
 %% make arrows
+
+if isempty(OPT.time)
+   OPT.time = [nan nan];
+end    
+
 % get first data
-u2 = u0{1};
-v2 = v0{1};
-u1 = u2;v1 = v2;
+if isnumeric(u0)
+   u2 = u0;u1 = u0; clear u0; u0{1} = u1;u0{2} = u1;
+   v2 = v0;v1 = v0; clear v0; v0{1} = v1;v0{2} = v1;
+elseif iscell(u0)
+   u2 = u0{1};u1 = u2;
+   v2 = v0{1};v1 = v2;
+end
 
 %% make initial seed of arrows
 x_nonan 	= x(~isnan(x));
@@ -113,10 +124,10 @@ if numel(time)>1
 else
     time(end+1) = time(end);
 end
-
-
-
+%%
 for ii = 1:OPT.interp_steps*(length(u0)-1)+1;
+
+    if OPT.interp_steps > 0
     if rem((ii-1),OPT.interp_steps)==0 %only update when needed
         u1 = u2;v1 = v2;
     end
@@ -125,22 +136,26 @@ for ii = 1:OPT.interp_steps*(length(u0)-1)+1;
         u2 = u0{(ii-2)/OPT.interp_steps+2}; 
         v2 = v0{(ii-2)/OPT.interp_steps+2};
     end
-    
     a = rem((ii-1),OPT.interp_steps)/OPT.interp_steps;
     b = 1-a;
     u = a*u2+b*u1;
     v = a*v2+b*v1;
+    else
+    u = u1;
+    v = v1;
+    end
 
     % make arrows
     [xp,yp,xax,yax]=KML_curvedArrows(x0,y0,x,y,u,v,OPT.dt,OPT.nt,OPT.hdthck,OPT.arthck,OPT.relwdt);
-    
+
     % pre-proces xp and yp
-    xp(xp<1000.0 & xp>999.998)=NaN;  yp(yp<1000.0 & yp>999.998)=NaN;
+    xax(xax<1000.0 & xax>999.998)=NaN; yax(yax<1000.0 & yax>999.998)=NaN;
+    xp ( xp<1000.0 &  xp>999.998)=NaN; yp ( yp<1000.0 &  yp>999.998)=NaN;
     xp = reshape(xp,35,[]);          yp = reshape(yp,35,[]);
     xp(end,:) = [];                  yp(end,:) = [];
 
     % convert coordinates
-    [lon,lat] = OPT.coordConvFun(xp,yp,EPSG); 
+    [lon,lat]  = OPT.coordConvFun(xp,yp,EPSG); 
     
     arrowSizes = sqrt(polyarea(xp,yp));
     lineColors = round(arrowSizes*OPT.colorScale)+1;
@@ -148,6 +163,14 @@ for ii = 1:OPT.interp_steps*(length(u0)-1)+1;
     lineColors = cmap(lineColors,:);
     lineWidths = min(round(arrowSizes*OPT.lineScale)+2,10)/5;
     
+    if any(isnan(time))
+    KMLline(lat(:,arrowSizes ~= 0),lon(:,arrowSizes ~= 0),...
+           'fileName',fullfile(tempPath,sprintf('arrows%03d.kml',ii)),...
+            'visible',OPT.visible,...
+            'kmlName',sprintf('arrows%03d',ii),...
+          'lineWidth',lineWidths(arrowSizes ~= 0),...
+          'lineColor',lineColors(arrowSizes ~= 0,:));
+    else
     lineAlphas = ones(size(x0));
     lineAlphas(t==9|t==OPT.lifespan-8) = 0.9;
     lineAlphas(t==8|t==OPT.lifespan-7) = 0.8;
@@ -157,12 +180,19 @@ for ii = 1:OPT.interp_steps*(length(u0)-1)+1;
     lineAlphas(t==4|t==OPT.lifespan-3) = 0.4;
     lineAlphas(t==3|t==OPT.lifespan-2) = 0.3;
     lineAlphas(t==2|t==OPT.lifespan-1) = 0.2;
-    lineAlphas(t==1|t==OPT.lifespan) = 0.1;
-    
-    KMLline(lat(:,arrowSizes ~= 0),lon(:,arrowSizes ~= 0),'timeIn',time(ii),'timeOut',time(ii+1),...
-        'fileName',fullfile(tempPath,sprintf('arrows%03d.kml',ii)),'kmlName',sprintf('arrows%03d',ii),...
-        'lineWidth',lineWidths(arrowSizes ~= 0),'lineColor',lineColors(arrowSizes ~= 0,:),...
-        'dateStrStyle',OPT.dateStrStyle,'lineAlpha',lineAlphas(arrowSizes ~= 0));
+    lineAlphas(t==1|t==OPT.lifespan-0) = 0.1;       
+    KMLline(lat(:,arrowSizes ~= 0),lon(:,arrowSizes ~= 0),...
+               'open',OPT.open,...
+            'visible',OPT.visible,...
+             'timeIn',time(ii),...
+             'timeOut',time(ii+1),...
+            'fileName',fullfile(tempPath,sprintf('arrows%03d.kml',ii)),...
+             'kmlName',sprintf('arrows%03d',ii),...
+           'lineWidth',lineWidths(arrowSizes ~= 0),...
+           'lineColor',lineColors(arrowSizes ~= 0,:),...
+        'dateStrStyle',OPT.dateStrStyle,...
+           'lineAlpha',lineAlphas(arrowSizes ~= 0));
+    end
     disp(sprintf('arrows%03d done',ii));
     
     pause(0.01) % allows for better 'ctrl+c'-ing
@@ -185,7 +215,7 @@ for ii = 1:OPT.interp_steps*(length(u0)-1)+1;
         new_arrows = OPT.n_arrows-length(x0);
         
         % pick new arrows. Use a bias so that arrows with small velocities
-        % are more likelie to be chosen.
+        % are more likely to be chosen.
         x_nonan = x(~isnan(x));
         y_nonan = y(~isnan(y));
         s_nonan = sqrt(u(~isnan(u)).^2+v(~isnan(v)).^2);
@@ -200,15 +230,20 @@ for ii = 1:OPT.interp_steps*(length(u0)-1)+1;
     
         [ignore,ind] = sort(s_nonan);
         seedPoints   = ind(end-new_arrows+1:end);
+        if seedPoints < length(x_nonan)
         x0 = [x0;x_nonan(seedPoints)];
         y0 = [y0;y_nonan(seedPoints)];
         t  = [t;50*ones(new_arrows,1)];
+        end
     end 
 end
 filesCreated = dir([tempPath filesep '*.kml']);
 for ii = 1:length(filesCreated)
     sourceFiles{ii} = fullfile(tempPath,filesCreated(ii).name); %#ok<AGROW>
 end
-KMLmerge_files('fileName',OPT.fileName,'kmlName',...
-    OPT.kmlName,'sourceFiles',sourceFiles,'deleteSourceFiles',true)
+KMLmerge_files('fileName',OPT.fileName,...
+                'kmlName',OPT.kmlName,...
+                'visible',OPT.visible,...
+            'sourceFiles',sourceFiles,...
+      'deleteSourceFiles',true);
 rmdir(tempPath,'s')
