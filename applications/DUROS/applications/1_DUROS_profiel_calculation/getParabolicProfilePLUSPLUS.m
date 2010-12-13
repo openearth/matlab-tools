@@ -34,6 +34,7 @@ Plus                                    = DuneErosionSettings('get','Plus');
 [c_1, c_2, c_1plusplus, c_2plusplus]    = DuneErosionSettings('get','c_1','c_2','c_1plusplus','c_2plusplus');
 [xref,xrefplusplus]                     = DuneErosionSettings('get','xref','xrefplusplus');
 [d_t]                                   = DuneErosionSettings('get','d');
+[gammaplusplus,thetaplusplus]           = DuneErosionSettings('get','gammaplusplus','thetaplusplus');
 cfdepth = 1;
 
 %% ----------- DUROS ----------- 
@@ -59,7 +60,7 @@ elseif strcmp(Plus,'-plusplus')
     xref      = xrefplusplus;
     two       = c_1*sqrt(c_2);   % by using this expression, the profile will exactly cross (x0,0)
     HS_d      = (Hsig_t/depth);
-    delta     = max(min((HS_d-0.40)/0.06,1),0);
+    delta     = max(min((HS_d-gammaplusplus)/thetaplusplus,1),0);
     cfdepth   = (1-delta) + delta*max((15/depth+0.11),1);    %overrule cfdepth with D++ values
 else
     error('Warning: variable "Plus" should be either '''' or ''-plus'' or ''-plusplus''');
