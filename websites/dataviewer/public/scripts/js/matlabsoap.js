@@ -21,7 +21,7 @@ function CallMatLabSoap(url, method, inputs)
 		var balloon = ge.createHtmlDivBalloon('');
 		balloon.setFeature(pm.cent.placemark);
 		var div = document.createElement('DIV');
-		div.innerHTML = "<img src='http://dtvirt13/bwn/optie_compiled/images/wait.gif>";
+		div.innerHTML = "<img src='http://dtvirt13/bwn/optie_compiled/images/wait.gif'>";
 		balloon.setContentDiv(div);
 		ge.setBalloon(balloon);
 

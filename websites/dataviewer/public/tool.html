@@ -40,8 +40,8 @@
 			// Polygon used for drawing the shape in Google Earth
 			pm = new Polygon(0,0,0,0,document.getElementById('polygonselect').value);
 
-			// Load requested case
-			loadCase(getQuerystring('datacase'));
+			// Load requested tool
+			loadTool(getQuerystring('tool'));
 
 		}
 
@@ -111,17 +111,17 @@
 		function failureCB(errorCode){}
 
 		// Load selected case
-		function loadCase(value)
+		function loadTool(value)
 		{
-			// fill kmldata listbox
-			var caseDoc = caseDoc=loadXMLDoc("xml/cases.xml");
-			datafile = caseDoc.getElementsByTagName("datafile")[value].childNodes[0].nodeValue;
-			getDataOutOfCase(datafile,"data");
+			// write tool-specific html
+			var toolDoc = loadXMLDoc("xml/tools.xml");
+			datafile = toolDoc.getElementsByTagName("template")[value].childNodes[0].nodeValue;
+			document.getElementById('tool_space').innerHTML = "<iframe frameborder='no' src='http://dtvirt13/bwn/optie_compiled/templates/" + datafile +  "'></iframe>";
 
 			// zoom to case specific coordinates
-			lon_cam = parseFloat(caseDoc.getElementsByTagName("lon")[value].childNodes[0].nodeValue);
-			lat_cam = parseFloat(caseDoc.getElementsByTagName("lat")[value].childNodes[0].nodeValue);
-			alt_cam = parseFloat(caseDoc.getElementsByTagName("height")[value].childNodes[0].nodeValue);
+			lon_cam = parseFloat(toolDoc.getElementsByTagName("lon")[value].childNodes[0].nodeValue);
+			lat_cam = parseFloat(toolDoc.getElementsByTagName("lat")[value].childNodes[0].nodeValue);
+			alt_cam = parseFloat(toolDoc.getElementsByTagName("height")[value].childNodes[0].nodeValue);
 
   			var camera = ge.getView().copyAsCamera(ge.ALTITUDE_RELATIVE_TO_GROUND);
   			camera.setLatitude(lat_cam);
@@ -130,83 +130,19 @@
   			ge.getView().setAbstractView(camera);
   		}
 
-		// Fill up the data source area with datasources on the basis of the selected case
-		function getDataOutOfCase(xmlfile,mode)
-		{
-			// remove all existing kml objects
-			features = ge.getFeatures().getChildNodes()
-			for(var i = 0; i < features.getLength(); i++)
-			{
-			var feat = features.item(i);
-			ge.getFeatures().removeChild(feat);
-			}
-
-			// empty select lists
-			while(kmlForInterpolation.options.length!=0)
-			kmlForInterpolation.options.remove(0);
-
-			// set initial polygon
-			pm = new Polygon(0,0,0,0,document.getElementById('polygonselect').value);
-
-			// load case-specific xml file
-			xmlDoc=loadXMLDoc("xml/" + xmlfile);
-			numOfData=xmlDoc.getElementsByTagName(mode).length;
-
-			// create html-code of checkboxes for each kml found in the case xml and fill up the select lists
-			var dataSelectText = [];
-
-			for (i=0;i<numOfData;i=i+1)
-			{
-				// checkboxes
-				dataSelectText = dataSelectText + "<input type='checkbox' class='s' id='" +
-									xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("kml")[0].textContent +
-									"' onclick='toggleKml(this)'>" +
-									xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("title")[0].textContent + "<br>"
-
-				file = xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("kml")[0].textContent;
-				currentKmlObjects[file] = null;
-
-				// select lists for interpolatetoline function
-				if (xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("interpolatetoline").length == 1)
-					{
-					var oOption = document.createElement("OPTION");
-					oOption.text  = xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("title")[0].textContent;
-					oOption.value = xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("interpolatetoline")[0].getElementsByTagName("source")[0].textContent + "&" +
-								    xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("interpolatetoline")[0].getElementsByTagName("varname")[0].textContent;
-					oOption.class = "vs";
-					kmlForInterpolation.options.add(oOption)
-					}
-			}
-
-			document.getElementById("kml_sources").innerHTML =dataSelectText;
-
-			// check if select lists are empty
-			if (kmlForInterpolation.options.length==0)
-				{
-					var oOption = document.createElement("OPTION");
-					oOption.text="no suitable data";
-					oOption.value=0;
-					oOption.class="vs";
-					kmlForInterpolation.options.add(oOption)
-				}
-		}
-
 	</script>
 </head>
 
 <body onload='init()' id='body'>
-<h1>OpenEarth Data Viewer</h1>
+<h1>OpenEarth Online Tools</h1>
 <hr/>
 <div style='float:left; width:350px; height:750px; overflow:auto'>
   <table style='font-size:small'>
 
-<!-- DATA SELECTION -->
+<!-- TOOL SPACE -->
 	<tr>
 	    <td colspan="2">
-	    <h3>Available itmes</h3>
-	    <p>
-	    <div id="kml_sources"></div>
-	    </p>
+	    <div id="tool_space"></div>
 	    <hr />
 	    </td>
 	</tr>
@@ -221,6 +157,7 @@
 		<td>
 			<form id="polyShape" action='javascript:void(0);'>
 			<select name="polygon" id="polygonselect" onchange='pm.numsides = this.value; pm.drawPolygon()' class="s">
+				<option value="1" class="vs">Point</option>
 				<option value="2" class="vs">Line</option>
 				<option value="3" class="vs">Triangle</option>
 				<option value="4" class="vs">Square</option>
@@ -241,23 +178,6 @@
 		</td>
 	</tr>
 	<tr><td colspan="2"><hr /></td></tr>
-
-<!-- ACTION SELECTION -->
-	<tr>
-	  <td colspan="2">
-		<h3>Actions</h3>
-	  </td>
-	</tr>
-    <tr>
-      <td>
- 		<button style="width:120;height:25" name="Interpoleer" value="Interpoleer" onClick="javascript:CallMatLabSoap('http://dtvirt13/BwnMatLab/BwnFunctions.asmx', 'InterpolateToLine', kmlForInterpolation.value);">Interpolate</button>
- 	  </td>
- 	  <td>
- 	    <select name="kmlForInterpolation" id="kmlForInterpolation" class="s" style="width: 170px">
- 	    	<option value="0" class="vs">Select case</option>
-		</select>
-	  </td>
-	</tr>
 
 </table>
 </div>
