@@ -208,7 +208,7 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'concentration_of_chlorophyll_in_sea_water'); % standard name
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
       nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
-      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units undocumented, asssumed');
+      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units asssumed');
   
         ifld = ifld + 1;
       nc(ifld).Name         = 'Chla_std_err';
@@ -219,7 +219,7 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_error_of_concentration_of_chlorophyll_in_sea_water'); % quasi standard name
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
       nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
-      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units undocumented, asssumed');
+      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units asssumed');
      %nc(ifld).Attribute(7) = struct('Name', 'cell_methods'   ,'Value', 'area: standard_deviation'); % STD in space, time, or none? NOT IN MAT FILES
       end
       
@@ -252,22 +252,22 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Nctype       = 'float';
       nc(ifld).Dimension    = {'dim1','dim2','time'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'colored dissolved organic matter');
-      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'g m-3'); % ASSUMED, NOT IN MAT FILES
-      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'concentration_of_dissolved_organic_matter_in_sea_water'); % quasi standard name
+      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm-1'); % ASSUMED, NOT IN MAT FILES
+      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'attenuation_of_radiative_flux_due_to_dissolved_organic_matter_in_sea_water'); % quasi standard name
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
       nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
-      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units undocumented, asssumed');
+      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units by Steef Peters');
 
         ifld = ifld + 1;
       nc(ifld).Name         = 'CDOM_std_err';
       nc(ifld).Nctype       = 'float';
       nc(ifld).Dimension    = {'dim1','dim2','time'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'colored dissolved organic matter standard error');% check: ASSUMED, NOT IN MAT FILES: standard error? 
-      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'g m-3'); % ASSUMED, NOT IN MAT FILES
-      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_error_of_concentration_of_suspended_matter_in_sea_water'); % quasi standard name
+      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm-1'); % ASSUMED, NOT IN MAT FILES
+      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_error_of_attenuation_of_radiative_flux_due_to_dissolved_organic_matter_in_sea_water'); % quasi standard name
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
       nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
-      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units undocumented, asssumed');
+      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units by Steef Peters');
      %nc(ifld).Attribute(7) = struct('Name', 'cell_methods'   ,'Value', 'area: standard_deviation'); % STD in space, time, or none? NOT IN MAT FILES
       end
   
@@ -307,7 +307,7 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Name         = 'chisq';
       nc(ifld).Nctype       = 'float';
       nc(ifld).Dimension    = {'dim1','dim2','time'};
-      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'Chi^2');
+      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'Hydropt Chi^2, sum((observed - predicted differential reflectance spectrum)^2/instrument_error^2)');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'none'); 
       nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
       
@@ -315,7 +315,7 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Name         = 'P';
       nc(ifld).Nctype       = 'float';
       nc(ifld).Dimension    = {'dim1','dim2','time'};
-      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'cumulative probability of Chi^2');
+      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', '-10log(cumulative probability of Chi^2)');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'none'); 
       nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
 
