@@ -105,7 +105,6 @@ if nargin ==1
 end
 
 %% Switch read/write
-%% ------------------
 
 switch lower(cmd)
 
@@ -160,15 +159,13 @@ D.refdatenum     = [];
 H.parameternames = {'speed','direction'};
 H.units          = {'m/s'  ,'°'        };
 
-   %% Options
-   %% ------------------------
+%% Options
 
    if nargin>1
       
       if     ischar   (varargin{1})
 
          %% Use mdf filename
-         %% ------------------------
         
          mdffilename = varargin{1};
         
@@ -190,7 +187,6 @@ H.units          = {'m/s'  ,'°'        };
       elseif isstruct(varargin{1})
       
          %% Use mdf filename data directly
-         %% ------------------------
 
          MDF.keywords    = varargin{1};
          D.refdatenum    = time2datenum(MDF.keywords.itdate);
@@ -198,7 +194,6 @@ H.units          = {'m/s'  ,'°'        };
       elseif iscell(varargin{1})
       
          %% User specified meta data
-         %% ------------------------
 
          D.refdatenum   = varargin{1};
       
@@ -211,8 +206,7 @@ H.units          = {'m/s'  ,'°'        };
    D.refdatestr    = datestr(D.refdatenum,1);
    D.ReferenceTime = datestr(D.refdatenum,'yyyymmdd');
    
-   %% Keywords
-   %% -----------------
+%% Keywords
    
    H.pol2cart = 0;
 
@@ -235,8 +229,7 @@ H.units          = {'m/s'  ,'°'        };
       end  
    end
    
-   %% Locate
-   %% ------------------------
+%% Locate
    
    tmp = dir(fname);
    
@@ -251,8 +244,7 @@ H.units          = {'m/s'  ,'°'        };
       D.filedate  = tmp.date;
       D.filebytes = tmp.bytes;
    
-      %% Read
-      %% ------------------------
+   %% Read
          
       %try
       
@@ -274,8 +266,7 @@ H.units          = {'m/s'  ,'°'        };
             D.data.(parameternameunits) = H.units{ipar};
          end
 
-         %% Finished succesfully
-         %% --------------------------------------
+      %% Finished succesfully
    
          D.iostat    = 1;
          D.read_by   = 'delft3d_io_wnd.m';
@@ -283,8 +274,8 @@ H.units          = {'m/s'  ,'°'        };
          D.directional_convention = 'nautical';
          D.comment                = '0° = from North, 90° = from the East ,...';
          
-         %% Add u,v
-         %% --------------------------------------
+      %% Add u,v
+
          if H.pol2cart
            [D.data.u,...
             D.data.v] = pol2cart(deg2rad(degn2deguc(D.data.direction)),...
@@ -320,15 +311,13 @@ function iostat=Local_write(fname,DAT,varargin),
    D.refdatenum = [];
    iostat       = 0;
    
-   %% Options
-   %% ------------------------
+%% Options
    
    if odd(nargin)
 
       if     ischar   (varargin{1})
 
          %% Use mdf filename
-         %% ------------------------
         
          mdffilename = varargin{1};
         
@@ -350,7 +339,6 @@ function iostat=Local_write(fname,DAT,varargin),
       elseif isstruct(varargin{1})
       
          %% Use mdf filename data directly
-         %% ------------------------
 
          MDF.keywords    = varargin{1};
          D.refdatenum    = time2datenum(MDF.keywords.itdate);
@@ -358,14 +346,12 @@ function iostat=Local_write(fname,DAT,varargin),
       elseif iscell(varargin{1})
       
          %% User specified meta data
-         %% ------------------------
 
          D.refdatenum    = varargin{1};
       
       elseif isstruct(varargin{1})
       
          %% Use already read mdf data
-         %% ------------------------
 
          error('Struct input of mdf not implemented yet.')
       
@@ -373,31 +359,15 @@ function iostat=Local_write(fname,DAT,varargin),
       
    end % if odd(nargin)
 
-   %% Keywords
-   %% -----------------
+%% Keywords
 
       H.userfieldnames = false;
-
+      
       if nargin>2
-         if isstruct(varargin{2})
-            H = mergestructs(H,varargin{2});
-         else
-            iargin = 2;
-            %% remaining number of arguments is always even now
-            while iargin<=nargin-1,
-                switch lower ( varargin{iargin})
-                % all keywords lower case
-                case 'userfieldnames';iargin=iargin+1;H.parameternames = varargin{iargin};
-                otherwise
-                  error(sprintf('Invalid string argument (caps?): "%s".',varargin{iargin}));
-                end
-                iargin=iargin+1;
-            end
-         end  
+         D = setproperty(D,varargin{:})
       end
 
-   %% Locate
-   %% ------------------------
+%% Locate
    
    tmp       = dir(fname);
    writefile = [];
@@ -424,28 +394,23 @@ function iostat=Local_write(fname,DAT,varargin),
    if writefile
 
      %% Open
-     %% ------------------------
 
          %try
          
             %% Write
-            %% ------------------------
 	    
             if H.userfieldnames
             
                fldnames = fieldnames(DAT);
 
                %% find number of columns for pre alocation
-               %% ----------------------------------------
                ncol     = length(fldnames);
                
                %% preallocate
-               %% ----------------------------------------
                rawdata = nan.*zeros(length(DAT.datenum,ncol));
 
                %% Insert data
-               %% this gives always the correct column order
-               %% ----------------------------------------
+               %  this gives always the correct column order
                for ifld=1:length(fldnames)
                   fldname = char(fldnames{ifild});
                   rawdata(:,ifld) = DAT.(fldname);
@@ -454,16 +419,13 @@ function iostat=Local_write(fname,DAT,varargin),
             else
             
                %% find number of columns for pre alocation
-               %% ----------------------------------------
                ncol = 3; % minutes, speed, direction
                
                %% preallocate
-               %% ----------------------------------------
                rawdata = nan.*zeros(length(DAT.datenum),ncol);
                
                %% Insert data
-               %% this gives always the correct column order
-               %% ----------------------------------------
+               %  this gives always the correct column order
                
                if isempty(D.refdatenum)
                   if     isfield(DAT,'datenum')
@@ -472,6 +434,7 @@ function iostat=Local_write(fname,DAT,varargin),
                end
                
                if     isfield(DAT,'datenum')
+               'a'
                   rawdata(:,1) = (DAT.datenum-D.refdatenum).*24.*60 ;
                elseif isfield(DAT,'minutes')
                   rawdata(:,1) = (DAT.minutes);

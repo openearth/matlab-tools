@@ -54,4 +54,4 @@ function delft3d_wnd_from_nc(varargin)
    W.UP       = W.UP     (mask);
    W.DD       = W.DD     (mask);
    
-   delft3d_io_wnd('write',[OPT.dir,filesep,filename(OPT.nc),'_after_refdate_',datestr(OPT.refdatenum,30),'_nonan.wnd'],W)
+   delft3d_io_wnd('write',[OPT.dir,filesep,filename(OPT.nc),'_after_refdate_',datestr(OPT.refdatenum,30),'_nonan.wnd'],W,'refdatenum',OPT.refdatenum)
