@@ -80,6 +80,8 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
+if isempty(OPT.y); OPT.y = 0; end;
+
 %% prepare grid
 
 x_w = OPT.x;
@@ -116,21 +118,27 @@ if OPT.rotate && ~isvector(z_w)
     end
 end
 
-%% create dummy grid
-
-x_d = min(min(x_r)):OPT.dd:max(max(x_r));
-y_d = min(min(y_r)):OPT.dd:max(max(y_r));
-
-% rotate dummy grid to world coordinates
-[x_d_w y_d_w] = xb_grid_rotate(x_d, y_d, alpha);
-x_d_w = xori + x_d_w; y_d_w = yori + y_d_w;
-
-% interpolate elevation data to dummy grid
-z_d = interp2(x_w, y_w, z_w, x_d_w, y_d_w);
-
 %% determine representative cross-section
 
-z_d_cs = max(z_d, [], 1);
+if isvector(z_w)
+    % create dummy grid
+    x_d = x_r;
+    y_d = [];
+    z_d_cs = z_w;
+else
+    % create dummy grid
+    x_d = min(min(x_r)):OPT.dd:max(max(x_r));
+    y_d = min(min(y_r)):OPT.dd:max(max(y_r));
+
+    % rotate dummy grid to world coordinates
+    [x_d_w y_d_w] = xb_grid_xb2world(x_d, y_d, xori, yori, alpha);
+
+    % interpolate elevation data to dummy grid
+    z_d = interp2(x_w, y_w, z_w, x_d_w, y_d_w);
+
+    % determine representative cross-section
+    z_d_cs = max(z_d, [], 1);
+end
 
 % remove nan's
 notnan = ~isnan(z_d_cs);
@@ -152,8 +160,7 @@ else
     % 2D grid
     
     % rotate xbeach grid to world coordinates
-    [x_xb_w y_xb_w] = xb_grid_rotate(x_xb, y_xb, alpha);
-    x_xb_w = xori + x_xb_w; y_xb_w = yori + y_xb_w;
+    [x_xb_w y_xb_w] = xb_grid_xb2world(x_xb, y_xb, xori, yori, alpha);
     
     % interpolate elevation data to xbeach grid
     zgrid = interp2(x_w, y_w, z_w, x_xb_w, y_xb_w);
