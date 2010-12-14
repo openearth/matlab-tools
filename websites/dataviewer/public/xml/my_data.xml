@@ -6,14 +6,14 @@
 <!-- Categories: hydro, meteo, geo, eco                         -->
 <!-- Type: data type: 2dmap, 3dmap, station, info               -->
 <!-- Kml: link to kml-file                                      -->
-<!-- Source: link to netcdf-file which is source for kml        -->
+<!-- Actions: Define possible actions for this data         -->
 
 <si_data>
   <data>
     <title>IJselmeer stuff</title>
     <category>unknown</category>
     <type>2dmap</type>
-    <kml>http://stephansmap.org/CIA_World_Factbook_2005_Singapore.kml</kml>
-    <source>unknown</source>
+    <kml>http://kml.deltares.nl/kml/deltares/q4408-mkm/stationair2/Markermeer.kml </kml>
+    <actions></actions>   
   </data>
 </si_data>

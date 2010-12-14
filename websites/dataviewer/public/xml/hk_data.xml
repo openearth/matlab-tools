@@ -6,7 +6,7 @@
 <!-- Categories: hydro, meteo, geo, eco                     -->
 <!-- Type: data type: 2dmap, 3dmap, station, info           -->
 <!-- Kml: link to kml-file                                  -->
-<!-- Source: link to netcdf-file which is source for kml    -->
+<!-- Actions: Define possible actions for this data         -->
 
 <hk_data>
   <data>

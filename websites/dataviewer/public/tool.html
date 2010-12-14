@@ -5,6 +5,7 @@
 	<link href="stylesheets/style.css" rel="stylesheet" type="text/css">
 	<script src="http://www.google.com/jsapi?key=ABQIAAAAJOL4Dbu6i1iFFND9tVK1SxQHoHevx5I6K4zDbyPuyuDTxIU2BBSC_Q4vihWvqWvnnV3Qbrdn-3QeAQ"></Script>
 	<script type="text/javascript" src="scripts/js/loadxmldoc.js"></script>
+	<script type="text/javascript" src="scripts/js/loadHtmlToDiv.js"></script>
 	<script type="text/javascript" src="scripts/js/polydraw.js"></Script>
 	<script type="text/javascript" src="scripts/js/soapclient.js"></Script>
 	<script type="text/javascript" src="scripts/js/matlabsoap.js"></Script>
@@ -116,7 +117,7 @@
 			// write tool-specific html
 			var toolDoc = loadXMLDoc("xml/tools.xml");
 			datafile = toolDoc.getElementsByTagName("template")[value].childNodes[0].nodeValue;
-			document.getElementById('tool_space').innerHTML = "<iframe frameborder='no' src='http://dtvirt13/bwn/optie_compiled/templates/" + datafile +  "'></iframe>";
+			loadHtmlToDiv("http://dtvirt13/bwn/optie_compiled/templates/" + datafile,"tool_space");
 
 			// zoom to case specific coordinates
 			lon_cam = parseFloat(toolDoc.getElementsByTagName("lon")[value].childNodes[0].nodeValue);

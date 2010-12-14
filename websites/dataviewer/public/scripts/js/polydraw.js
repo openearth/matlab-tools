@@ -23,19 +23,16 @@ function Polygon(lat,lon,lata,lona,sides)
 	var me = this;
 	me.numsides = sides;
 	me.cent = new PM(lat,lon,'centre','ff00ffff');
-	if (sides > 1)
-	{
-		me.rad = new PM(lata,lona,'outer','ff8080ff');
-		me.setBearDist();
-		var lineStringPlacemark = ge.createPlacemark('');
-		me.lineString = ge.createLineString('');
-		lineStringPlacemark.setGeometry(me.lineString);
-		me.lineString.setTessellate(true);
-		me.drawPolygon();
-		ge.getFeatures().appendChild(lineStringPlacemark);
-		lineStringPlacemark.setStyleSelector(ge.createStyle(''));
-		me.lineStyle = lineStringPlacemark.getStyleSelector().getLineStyle();
-	}
+	me.rad = new PM(lata,lona,'outer','ff8080ff');
+	me.setBearDist();
+	var lineStringPlacemark = ge.createPlacemark('');
+	me.lineString = ge.createLineString('');
+	lineStringPlacemark.setGeometry(me.lineString);
+	me.lineString.setTessellate(true);
+	me.drawPolygon();
+	ge.getFeatures().appendChild(lineStringPlacemark);
+	lineStringPlacemark.setStyleSelector(ge.createStyle(''));
+	me.lineStyle = lineStringPlacemark.getStyleSelector().getLineStyle();
 
 	google.earth.addEventListener(ge.getGlobe(), "mousemove", function(event) { me.movePMLoc(event); });
 	google.earth.addEventListener(ge.getGlobe(), "mousedown", function(event) { me.completelyNewLoc(event); });

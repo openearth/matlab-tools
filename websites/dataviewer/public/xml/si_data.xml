@@ -6,14 +6,28 @@
 <!-- Categories: hydro, meteo, geo, eco                     -->
 <!-- Type: data type: 2dmap, 3dmap, station, info           -->
 <!-- Kml: link to kml-file                                  -->
-<!-- Source: link to netcdf-file which is source for kml    -->
+<!-- Actions: Define possible actions for this data         -->
 
 <si_data>
   <data>
-    <title>Iets in Singapore...</title>
-    <category>unknown</category>
+    <title>Johor Estuary bathy survey</title>
+    <category>geo</category>
     <type>2dmap</type>
-    <kml>http://stephansmap.org/CIA_World_Factbook_2005_Singapore.kml</kml>
-    <source>unknown</source>
+    <kml>http://dtvirt13/bwn/optie_compiled/xml/kml_si/Johor Estuary bathy survey region.kml</kml>
+    <actions></actions>   
+  </data>
+  <data>
+    <title>New Southern Islands Survey</title>
+    <category>geo</category>
+    <type>2dmap</type>
+    <kml>http://dtvirt13/bwn/optie_compiled/xml/kml_si/New Southern Islands Survey region.kml</kml>
+    <actions></actions>   
+  </data>
+  <data>
+    <title>New Tekong Bathymetry</title>
+    <category>geo</category>
+    <type>2dmap</type>
+    <kml>http://dtvirt13/bwn/optie_compiled/xml/kml_si/New Tekong Bathymetry.kml</kml>
+    <actions></actions>   
   </data>
 </si_data>
