@@ -1,36 +1,27 @@
-function [xc yc idx] = xb_get_coastline(x, y, z, varargin)
-%XB_GET_COASTLINE  Determines coastline from 2D grid
+function [alpha a b] = xb_grid_rotation(x, y, z, varargin)
+%XB_GRID_ROTATION  Determines rotation of a 2D grid based on the coastline
 %
-%   Determines coastline based on 2D grid by first determining the
-%   orientation of the grid and than finding the first grid cell that
-%   exceeds a certain elevation (default 0).
-%
-%   TODO: add interpolation option
+%   Determines the location of a 2D grid based on the coastline by
+%   detecting the coastline and determining the angle of the coastline.
 %
 %   Syntax:
-
-%   varargout = xb_get_coastline(varargin)
+%   [alpha a b] = xb_grid_rotation(x, y, z, varargin)
 %
 %   Input:
 %   x           = x-coordinates of bathymetric grid
 %   y           = y-coordinates of bathymetric grid
 %   z           = elevations in bathymetric grid
-%   varargin    = level:        Level that needs to be exceeded
-%                 interpolate:  Boolean flag to determine whether result
-%                               should be interpolated to obtain a better
-%                               apporximation
+%   varargin    = units:    output units (degrees/radians)
 %
 %   Output:
-%   xc          = x-coordinates of coastline
-%   yc          = y-coordinates of coastline
-%   idx         = logical matrix of the size of z indicating whether a cell
-%                 is on the coastline or not (xc = x(idx) and yc = y(idx)
-%                 if x and y are matrices of size of z)
+%   alpha       = rotation of grid
+%   a           = linear regression parameter of coastline (y=a+b*x)
+%   b           = linear regression parameter of coastline (y=a+b*x)
 %
 %   Example
-%   xb_get_coastline
+%   alpha = xb_grid_rotation(x, y, z)
 %
-%   See also xb_grid_orientation
+%   See also xb_grid_rotate
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -63,7 +54,7 @@ function [xc yc idx] = xb_get_coastline(x, y, z, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 13 Dec 2010
+% Created: 14 Dec 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -78,38 +69,31 @@ function [xc yc idx] = xb_get_coastline(x, y, z, varargin)
 if ndims(z) ~= 2; error(['Dimensions of elevation matrix incorrect [' num2str(ndims(z)) ']']); end;
 
 OPT = struct( ...
-    'level', 0, ...
-    'interpolate', false ...
+    'units', 'degrees' ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
 if isempty(y); y = 0; end;
 
-%% determine orientation
-
-% convert from fector to matrix
-if isvector(x) && isvector(y)
-    [x y] = meshgrid(x, y);
-end
-
-[dim dir] = xb_grid_orientation(x, y, z);
-
 %% determine coastline
+[xc yc] = xb_get_coastline(x, y, z);
 
-if dir < 0
-    match = 'last';
-else
-    match = 'first';
+% get linear regression line from coastline
+[a b] = xb_linreg(xc, yc);
+
+%% determine rotation
+
+alpha = 0;
+if ~isnan(b)
+    alpha = pi/2-atan(b);
+
+    [xr yr] = xb_grid_rotate(x, y, -alpha, 'units', 'radians');
+    [dim dir] = xb_grid_orientation(xr, yr, z);
+    if dir < 1; alpha = alpha+pi; end;
+
+    % convert units
+    if strcmpi(OPT.units, 'degrees')
+        alpha = alpha/pi*180;
+    end
 end
-
-j = 1+mod(dim,2);
-idx = false(size(z));
-for i = 1:size(z, j)
-    ii = {':' ':'}; ii{j} = i;
-    ii{dim} = find(z(ii{:}) >= OPT.level, 1, match);
-    idx(ii{:}) = true;
-end
-
-xc = x(idx);
-yc = y(idx);

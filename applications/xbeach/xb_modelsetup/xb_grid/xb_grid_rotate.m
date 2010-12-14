@@ -1,36 +1,25 @@
-function [xc yc idx] = xb_get_coastline(x, y, z, varargin)
-%XB_GET_COASTLINE  Determines coastline from 2D grid
+function [xr yr] = xb_grid_rotate(x, y, alpha, varargin)
+%XB_GRID_ROTATE  Rotates a grid around an origin
 %
-%   Determines coastline based on 2D grid by first determining the
-%   orientation of the grid and than finding the first grid cell that
-%   exceeds a certain elevation (default 0).
-%
-%   TODO: add interpolation option
+%   Rotates a grid around an origin. The origin can be specified.
 %
 %   Syntax:
-
-%   varargout = xb_get_coastline(varargin)
+%   [xr yr] = xb_grid_rotate(x, y, alpha, varargin)
 %
 %   Input:
 %   x           = x-coordinates of bathymetric grid
 %   y           = y-coordinates of bathymetric grid
-%   z           = elevations in bathymetric grid
-%   varargin    = level:        Level that needs to be exceeded
-%                 interpolate:  Boolean flag to determine whether result
-%                               should be interpolated to obtain a better
-%                               apporximation
+%   alpha       = rotation angle
+%   varargin    = units:    input units (degrees/radians)
 %
 %   Output:
-%   xc          = x-coordinates of coastline
-%   yc          = y-coordinates of coastline
-%   idx         = logical matrix of the size of z indicating whether a cell
-%                 is on the coastline or not (xc = x(idx) and yc = y(idx)
-%                 if x and y are matrices of size of z)
+%   xr          = x-coordinates of rotated grid
+%   yr          = y-coordinates of rotated grid
 %
 %   Example
-%   xb_get_coastline
+%   [xr yr] = xb_grid_rotate(x, y, alpha)
 %
-%   See also xb_grid_orientation
+%   See also xb_grid_rotation
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -73,43 +62,29 @@ function [xc yc idx] = xb_get_coastline(x, y, z, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% read options
-
-if ndims(z) ~= 2; error(['Dimensions of elevation matrix incorrect [' num2str(ndims(z)) ']']); end;
+%% read settings
 
 OPT = struct( ...
-    'level', 0, ...
-    'interpolate', false ...
+    'origin', [mean(mean(x)) mean(mean(y))], ...
+    'units', 'degrees' ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
 if isempty(y); y = 0; end;
 
-%% determine orientation
+%% rotate grid
 
 % convert from fector to matrix
 if isvector(x) && isvector(y)
     [x y] = meshgrid(x, y);
 end
 
-[dim dir] = xb_grid_orientation(x, y, z);
-
-%% determine coastline
-
-if dir < 0
-    match = 'last';
-else
-    match = 'first';
+% convert units
+if strcmpi(OPT.units, 'degrees')
+    alpha = alpha/180*pi;
 end
 
-j = 1+mod(dim,2);
-idx = false(size(z));
-for i = 1:size(z, j)
-    ii = {':' ':'}; ii{j} = i;
-    ii{dim} = find(z(ii{:}) >= OPT.level, 1, match);
-    idx(ii{:}) = true;
-end
-
-xc = x(idx);
-yc = y(idx);
+R = [cos(alpha) sin(alpha); -sin(alpha) cos(alpha)];
+xr = OPT.origin(1)+R(1,1)*(x-OPT.origin(1))+R(1,2)*(y-OPT.origin(2));
+yr = OPT.origin(2)+R(2,1)*(x-OPT.origin(1))+R(2,2)*(y-OPT.origin(2));

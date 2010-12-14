@@ -1,36 +1,30 @@
-function [xc yc idx] = xb_get_coastline(x, y, z, varargin)
-%XB_GET_COASTLINE  Determines coastline from 2D grid
+function [dim dir] = xb_grid_orientation(x, y, z, varargin)
+%XB_GRID_ORIENTATION  Determines the orientation of a 2D bathymetric grid
 %
-%   Determines coastline based on 2D grid by first determining the
-%   orientation of the grid and than finding the first grid cell that
-%   exceeds a certain elevation (default 0).
-%
-%   TODO: add interpolation option
+%   Determines the dimension and direction which runs from sea landward in
+%   a 2D bathymetric grid. Based on the maximum mean minimum slope, the
+%   dimension which runs cross-shore is chosen. Subsequently, the direction
+%   is determined. If the grid runs from sea landward in negative
+%   direction, the direction is negative, otherwise positive.
 %
 %   Syntax:
-
-%   varargout = xb_get_coastline(varargin)
+%   [dim dir] = xb_grid_orientation(x, y, z, varargin)
 %
 %   Input:
 %   x           = x-coordinates of bathymetric grid
 %   y           = y-coordinates of bathymetric grid
 %   z           = elevations in bathymetric grid
-%   varargin    = level:        Level that needs to be exceeded
-%                 interpolate:  Boolean flag to determine whether result
-%                               should be interpolated to obtain a better
-%                               apporximation
+%   varargin    = none
 %
 %   Output:
-%   xc          = x-coordinates of coastline
-%   yc          = y-coordinates of coastline
-%   idx         = logical matrix of the size of z indicating whether a cell
-%                 is on the coastline or not (xc = x(idx) and yc = y(idx)
-%                 if x and y are matrices of size of z)
+%   dim         = corss-shore dimension in bathymetric grid (1/2)
+%   dir         = direction in bathymetric grid that runs from sea landward
+%                 (1/-1)
 %
 %   Example
-%   xb_get_coastline
+%   [dim dir] = xb_grid_orientation(x, y, z)
 %
-%   See also xb_grid_orientation
+%   See also xb_generate_grid
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -78,8 +72,6 @@ function [xc yc idx] = xb_get_coastline(x, y, z, varargin)
 if ndims(z) ~= 2; error(['Dimensions of elevation matrix incorrect [' num2str(ndims(z)) ']']); end;
 
 OPT = struct( ...
-    'level', 0, ...
-    'interpolate', false ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -93,23 +85,19 @@ if isvector(x) && isvector(y)
     [x y] = meshgrid(x, y);
 end
 
-[dim dir] = xb_grid_orientation(x, y, z);
-
-%% determine coastline
-
-if dir < 0
-    match = 'last';
-else
-    match = 'first';
+dz = zeros(1,2);
+for i = 1:size(z, 1)
+    i1 = find(~isnan(z(i, :)), 1, 'first');
+    i2 = find(~isnan(z(i, :)), 1, 'last');
+    dz(2) = dz(2) + diff(z(i,[i1 i2]))/diff(x(i,[i1 i2]))/size(z, 1);
 end
 
-j = 1+mod(dim,2);
-idx = false(size(z));
-for i = 1:size(z, j)
-    ii = {':' ':'}; ii{j} = i;
-    ii{dim} = find(z(ii{:}) >= OPT.level, 1, match);
-    idx(ii{:}) = true;
+for i = 1:size(z, 2)
+    i1 = find(~isnan(z(:, i)), 1, 'first');
+    i2 = find(~isnan(z(:, i)), 1, 'last');
+    dz(1) = dz(1) + diff(z([i1 i2],i)')/diff(y([i1 i2],i))/size(z, 2);
 end
 
-xc = x(idx);
-yc = y(idx);
+% determine axis and direction
+[mx dim] = max(abs(dz));
+dir = sign(dz(dim));
