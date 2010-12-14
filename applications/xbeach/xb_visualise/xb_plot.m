@@ -69,6 +69,11 @@ function xb_plot(xb, varargin)
 
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
+if ~xb_exist(xb, 'DIMS')
+    % input struct
+    xb = xb_input2bathy(xb);
+end
+
 OPT = struct( ...
 );
 
@@ -98,6 +103,7 @@ info = struct();
 if xb_exist(xb, 'DIMS')
     info.t = xb_get(xb,'DIMS.tsglobal');
 else
+    % input struct
     info.t = [0 1];
 end
 
@@ -212,7 +218,7 @@ for i = 1:size(vars,1)
     var = strtrim(vars(i,:));
     data = xb_get(xb, var);
     
-    if ~isnan(data)
+    if numel(data) > 1 || ~isnan(data)
 
         idx1 = num2cell(ones(1, ndims(data))); idx1(1:2) = {':' ':'};
         idx2 = idx1;
