@@ -75,86 +75,88 @@ OPT = struct( ...
     'z', [-20 -3 0 3 15 15], ...
     'rotate', true, ...
     'posdwn', false, ...
-    'dx', 5 ...
+    'dd', 5 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
 %% prepare grid
 
-x = OPT.x;
-y = OPT.y;
-z = OPT.z;
+x_w = OPT.x;
+y_w = OPT.y;
+z_w = OPT.z;
 
-if OPT.posdwn
-    z = -OPT.z;
+% make sure coordinates are matrices
+if isvector(x_w) && isvector(y_w)
+    [x_w y_w] = meshgrid(x_w, y_w);
 end
+
+% set vertical positive direction
+if OPT.posdwn
+    z_w = -z_w;
+end
+
+%% convert from world to xbeach coordinates
 
 % determine origin
-xori = min(min(x));
-yori = min(min(y));
-
-x = x - xori;
-y = y - yori;
-
-%% rotate grid
+xori = min(min(x_w));
+yori = min(min(y_w));
 
 alpha = 0;
+x_r = x_w - xori;
+y_r = y_w - yori;
+z_r = z_w;
 
-xr = x;
-yr = y;
-
-if OPT.rotate && ~isvector(z)
-    alpha = xb_grid_rotation(x, y, z);
+% rotate grid and determine alpha
+if OPT.rotate && ~isvector(z_w)
+    alpha = xb_grid_rotation(x_r, y_r, z_w);
     
     if alpha ~= 0
-        [xr yr] = xb_grid_rotate(x, y, -alpha);
+        [x_r y_r] = xb_grid_rotate(x_r, y_r, -alpha);
     end
 end
+
+%% create dummy grid
+
+x_d = min(min(x_r)):OPT.dd:max(max(x_r));
+y_d = min(min(y_r)):OPT.dd:max(max(y_r));
+
+% rotate dummy grid to world coordinates
+[x_d_w y_d_w] = xb_grid_rotate(x_d, y_d, alpha);
+x_d_w = xori + x_d_w; y_d_w = yori + y_d_w;
+
+% interpolate elevation data to dummy grid
+z_d = interp2(x_w, y_w, z_w, x_d_w, y_d_w);
 
 %% determine representative cross-section
 
-xt = xr;
-yt = yr;
-zt = z;
+z_d_cs = max(z_d, [], 1);
 
-if ~isvector(z)
-    if (size(x,1)>1 && ~any(diff(x,[],1))) || (size(x,2)>1 && ~any(diff(x,[],2)))
-        % orthogonal grid
-        xt = xt(1,:);
-        yt = yt(:,1);
-        zt = max(zt, [], 1);
-    else
-        % rotated grid (TODO: coudld be better ?!)
-        xt = min(min(xr)):OPT.dx:max(max(xr));
-        yt = min(min(yr)):max(max(yr));
-        zt = size(xt);
+% remove nan's
+notnan = ~isnan(z_d_cs);
+x_d = x_d(notnan);
+z_d_cs = z_d_cs(notnan);
 
-        for i = 1:length(xt)
-            zt(i) = max(z(xr>=xt(i)-OPT.dx/2&xr<xt(i)+OPT.dx/2));
-        end
+%% create xbeach grid
 
-        xt = xt(~isnan(zt));
-        zt = zt(~isnan(zt));
-    end
-end
+[x_xb z_xb] = xb_generate_xgrid(x_d, z_d_cs);
+[y_xb] = xb_generate_ygrid(y_d);
 
-%% generate grid
-
-[xg zg] = xb_generate_xgrid(xt, zt);
-[yg] = xb_generate_ygrid(yt);
-
-[xgrid ygrid] = meshgrid(xg, yg);
+[xgrid ygrid] = meshgrid(x_xb, y_xb);
 
 % interpolate bathymetry on grid, if necessary
-if isvector(z)
-    
+if isvector(z_w)
     % 1D grid
-    zgrid = repmat(zg, length(yg), 1);
+    zgrid = repmat(z_xb, length(y_xb), 1);
 else
-    
     % 2D grid
-    zgrid = griddata(xr, yr, z, xgrid, ygrid);
+    
+    % rotate xbeach grid to world coordinates
+    [x_xb_w y_xb_w] = xb_grid_rotate(x_xb, y_xb, alpha);
+    x_xb_w = xori + x_xb_w; y_xb_w = yori + y_xb_w;
+    
+    % interpolate elevation data to xbeach grid
+    zgrid = interp2(x_w, y_w, z_w, x_xb_w, y_xb_w);
 end
 
 % determine size

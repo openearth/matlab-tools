@@ -1,21 +1,23 @@
 function [a, b, r2, r, k2] = xb_linreg(x, y)
-%XB_LINREG  One line description goes here.
+%XB_LINREG  Calculates linear regression through a series of points
 %
-%   More detailed description goes here.
+%   Calculates linear regression through a series of points
 %
 %   Syntax:
-%   varargout = xb_linreg(varargin)
+%   [a, b, r2, r, k2] = xb_linreg(x, y)
 %
 %   Input:
-%   varargin  =
+%   x           = x-coordinates
+%   y           = y-coordinates
 %
 %   Output:
-%   varargout =
+%   a           = linear regression parameter of coastline (y=a+b*x)
+%   b           = linear regression parameter of coastline (y=a+b*x)
 %
 %   Example
-%   xb_linreg
+%   [a b] = xb_linreg(x, y)
 %
-%   See also 
+%   See also xb_get_coastline
 
 %% Copyright notice
 %   --------------------------------------------------------------------
