@@ -59,8 +59,8 @@ function ddb_xbeachsource2XML
 % $HeadURL$
 % $Keywords: $
 
-%%
-
+%% Options
+XMLmat='off';
 
 %% Read XBeach source code
 % normal input
@@ -89,27 +89,27 @@ Par.Additional.longname='Additional options';
 for i=1:length(params_array)
     ptype=params_array(i).partype;
     ptypevar=genvarname(ptype,{'ptype','ptypevar','Par','params_array','i'});
-    if regexpi(ptype,'physical')
+    if ~isempty(regexpi(ptype,'physical'))
         chapter='Physics';
-    elseif regexpi(ptype,'(grid|initial)')
+    elseif ~isempty(regexpi(ptype,'(grid|initial)'))
         chapter='Domain';
-    elseif regexpi(ptype,'time')
+    elseif ~isempty(regexpi(ptype,'time'))
         chapter='Time';    
-    elseif regexpi(ptype,'(wave|roller)')
+    elseif ~isempty(regexpi(ptype,'(wave|roller)'))
         chapter='Waves';
-    elseif regexpi(ptype,'(flow|coriolis|wind|tide|discharge)')
+    elseif ~isempty(regexpi(ptype,'(flow|coriolis|wind|tide|discharge)'))
         chapter='Flow';
-    elseif regexpi(ptype,'sediment')
+    elseif ~isempty(regexpi(ptype,'sediment')) && isempty(regexpi(ptype,'q3d'))
         chapter='Sediment';
-    elseif regexpi(ptype,'(morphology|bed\s)')
+    elseif ~isempty(regexpi(ptype,'(morphology|bed\s)'))
         chapter='Morphology';
-    elseif regexpi(ptype,'(output|drifter)')
+    elseif ~isempty(regexpi(ptype,'(output|drifter)'))
         chapter='Output';    
     else
         chapter='Additional';
     end 
     if ~isfield(Par.(chapter),ptypevar);
-        temp=struct('fullname',ptype,'variables',struct());
+        temp=struct('longname',ptype,'variables',struct());
         Par.(chapter).(ptypevar)=temp;
     end
     vname = genvarname(params_array(i).name,{'vname','ptypevar','Par','params_array','i','chapter'});
@@ -119,13 +119,13 @@ end
 % remove useless information from Par
 fields=fieldnames(Par.Additional);
 for i=1:length(fields)
-    if isfield(Par.Additional.(fields{i}),'fullname') & ...
-                 regexpi(Par.Additional.(fields{i}).fullname,'not read in params.txt')
+    if isfield(Par.Additional.(fields{i}),'longname') & ...
+                 regexpi(Par.Additional.(fields{i}).longname,'not read in params.txt')
         Par.Additional=rmfield(Par.Additional,fields{i});
     end
 end
 
-%% write XML sections file
+%% write XML master file
 
 HS = struct;
 HS.model='XBeach';
@@ -138,12 +138,13 @@ HS.elements.element.tabs(1).tab.tabstring='Toolbox';
 HS.elements.element.tabs(1).tab.callback='ddb_selectToolbox';
 HS.elements.element.tabs(2).tab.tag='Description';
 HS.elements.element.tabs(2).tab.tabstring='Description';
-HS.elements.element.tabs(2).tab.callback='ddb_editXBeachDescription';
+% HS.elements.element.tabs(2).tab.callback='ddb_editXBeachDescription';
+HS.elements.element.tabs(2).tab.elements='XBeach.description.xml';
 fields=fieldnames(Par);
 for i=1:length(fields)
     HS.elements.element.tabs(i+2).tab.tag=Par.(fields{i}).longname;
     HS.elements.element.tabs(i+2).tab.tabstring=Par.(fields{i}).longname;
-    HS.elements.element.tabs(i+2).tab.callback='ddb_editXBeachDescription';
+    HS.elements.element.tabs(i+2).tab.elements=['XBeach.' fields{i} '.xml'];
 end
 HS.menu.menuopenfile.menuitem.string='Open Params File';
 HS.menu.menuopenfile.menuitem.callback='ddb_editXBeachDescription';
@@ -162,5 +163,136 @@ HS.menu.menusavefile(4).menuitem.callback='ddb_editXBeachDescription';
 HS.menu.menusavefile(4).menuitem.option='save';
 
 % save to file
-xml_save('XBeach.xml',HS,'off');
+xml_save('XBeach.xml',HS,XMLmat);
+
+%% Write XML Toolbox file
+
+
+%% Write XML description file
+DES=struct;
+DES.element.tag='editdescription';
+DES.element.style='edit';
+DES.element.position=[45 10 500 140];
+DES.element.variable.name='Description';
+DES.element.variable.type='string';
+DES.element.tooltipstring='Project description (optional)';
+DES.element.nrlines=10;
+DES.element.text='Description (max. 10 lines)';
+DES.element.textposition='above-left';
+
+xml_save('XBeach.description.xml',DES,XMLmat);
+
+%% Write XML Physics etc. files
+index=fieldnames(Par);
+for i=1:length(index)
+    S=struct;
+    S.longname=Par.(index{i}).longname;
+    S.element.style='tabpanel';
+    S.element.tag=Par.(index{i}).longname;
+    S.element.position=[10 10 1200 140];
+    POS = {[100  113 100 20];
+           [100  88  100 20];
+           [100  63  100 20];
+           [100  38  100 20];
+           [100  13  100 20];
+           [400 113 100 20];
+           [400 88  100 20];
+           [400 63  100 20];
+           [400 38  100 20];
+           [400 13  100 20];
+           [700 113 100 20];
+           [700 88  100 20];
+           [700 63  100 20];
+           [700 38  100 20];
+           [700 13  100 20];
+           [1000 113 100 20];
+           [1000 88  100 20];
+           [1000 63  100 20];
+           [1000 38  100 20];
+           [1000 13  100 20];};
+    index2=fieldnames(Par.(index{i}));count=0;
+    for ii=1:length(index2)
+        if ~strcmpi(index2{ii},'longname')
+%             Make tabs in upper layer
+            count=count+1;
+            S.element.tabs(count).tab.tag=Par.(index{i}).(index2{ii}).longname;
+            S.element.tabs(count).tab.tabstring=Par.(index{i}).(index2{ii}).longname;
+            % make internal for this part
+            index3=fieldnames(Par.(index{i}).(index2{ii}).variables);
+            count2=0;
+            Sub=struct;
+            Sub(1).element.tag='test';% fill with bogus
+            Sub(1).element.style='text';
+            Sub(1).element.text='empty';
+            Sub(1).element.position=POS{1}(1:2);
+            for iii=1:length(index3)
+                % is this an advanced and is it read in XBeach?
+                if Par.(index{i}).(index2{ii}).variables.(index3{iii}).advanced==0 && ...
+                   Par.(index{i}).(index2{ii}).variables.(index3{iii}).noinstances>0
+                    % element number
+                    count2=count2+1;
+                    % element tag
+                    Sub(count2).element.tag=index3{iii};
+                    % element type
+                    switch Par.(index{i}).(index2{ii}).variables.(index3{iii}).type(1:4)
+                        case 'real'
+                            % easy: always an edit field
+                             Sub(count2).element.style='edit';
+                             Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                             Sub(count2).element.position=POS{count2};
+                             Sub(count2).element.variable.name=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                             Sub(count2).element.variable.type='real';
+                        case 'inte'
+                            % is this an on/off switch, or an integer
+                            % number?
+                            minval=Par.(index{i}).(index2{ii}).variables.(index3{iii}).minval{1};
+                            maxval=Par.(index{i}).(index2{ii}).variables.(index3{iii}).maxval{1};
+                            if minval==0 && maxval==1
+                                Sub(count2).element.style='checkbox';
+                                Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                                Sub(count2).element.position=POS{count2}(1:2);
+                            else
+                                Sub(count2).element.style='edit';
+                                Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                                Sub(count2).element.position=POS{count2};
+                            end
+                            Sub(count2).element.variable.name=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                            Sub(count2).element.variable.type='integer';
+                        case 'char'
+                            % is this a file select option, or a listbox
+                            % option?
+                            if isempty(Par.(index{i}).(index2{ii}).variables.(index3{iii}).allowed{1})
+                                % file
+                                Sub(count2).element.style='pushselectfile';
+                                Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                                Sub(count2).element.position=POS{count2};
+                                Sub(count2).element.variable.name=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                                Sub(count2).element.variable.type='character';
+                            else
+                                % option
+                                Sub(count2).element.style='edit';
+                                Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                                Sub(count2).element.position=POS{count2};
+                                Sub(count2).element.variable.name=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                                Sub(count2).element.variable.type='character';
+                            end
+                            
+                        otherwise
+                           Sub(count2).element.style='text';
+                           Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                           Sub(count2).element.position=POS{count2}(1:2);
+                    end
+%                     
+                    
+                end
+            end
+            S.element.tabs(count).tab.elements=['XBeach.' index{i} '.' index2{ii} '.xml'];
+            xml_save(['XBeach.' index{i} '.' index2{ii} '.xml'],Sub,XMLmat);                    
+        end
+    end
+    xml_save(['XBeach.' index{i} '.xml'],S,XMLmat);
+end
+%             Sub=struct;
+%             Sub.longname=Par.(index{i}).(index2{ii}).longname;
+            
 
