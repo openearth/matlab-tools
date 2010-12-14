@@ -80,6 +80,8 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
+%% prepare grid
+
 x = OPT.x;
 y = OPT.y;
 z = OPT.z;
@@ -87,6 +89,13 @@ z = OPT.z;
 if OPT.posdwn
     z = -OPT.z;
 end
+
+% determine origin
+xori = min(min(x));
+yori = min(min(y));
+
+x = x - xori;
+y = y - yori;
 
 %% rotate grid
 
@@ -110,7 +119,7 @@ yt = yr;
 zt = z;
 
 if ~isvector(z)
-    if ~any(diff(x,1)) || ~any(diff(x,2))
+    if (size(x,1)>1 && ~any(diff(x,[],1))) || (size(x,2)>1 && ~any(diff(x,[],2)))
         % orthogonal grid
         xt = xt(1,:);
         yt = yt(:,1);
@@ -148,14 +157,9 @@ else
     zgrid = griddata(xr, yr, z, xgrid, ygrid);
 end
 
-% determine size and origin
+% determine size
 nx = size(zgrid, 2)-1;
 ny = size(zgrid, 1)-1;
-
-xori = min(min(xgrid));
-yori = min(min(ygrid));
-xgrid = xgrid - xori;
-ygrid = ygrid - yori;
 
 if OPT.posdwn
     zgrid = -zgrid;
