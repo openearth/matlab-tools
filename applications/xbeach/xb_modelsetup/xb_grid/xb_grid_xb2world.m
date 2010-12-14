@@ -1,4 +1,4 @@
-function [x y] = xb_grid_xb2world(x, y, xori, yori, alpha)
+function [x y] = xb_grid_xb2world(x, y, xori, yori, alpha, varargin)
 %XB_GRID_XB2WORLD  Rotates a grid in XBeach coordinates to world coordinates
 %
 %   Rotates a grid in XBeach coordinates to world coordinates
@@ -63,9 +63,17 @@ function [x y] = xb_grid_xb2world(x, y, xori, yori, alpha)
 % $HeadURL$
 % $Keywords: $
 
+%% read settings
+
+OPT = struct( ...
+    'units', 'degrees' ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
 %% rotate grid
 
-[x y] = xb_grid_rotate(x, y, alpha);
+[x y] = xb_grid_rotate(x, y, alpha, 'units', OPT.units);
 
 x = xori + x;
 y = yori + y;
