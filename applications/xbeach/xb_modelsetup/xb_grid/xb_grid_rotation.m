@@ -77,6 +77,7 @@ OPT = setproperty(OPT, varargin{:});
 if isempty(y); y = 0; end;
 
 %% determine coastline
+
 [xc yc] = xb_get_coastline(x, y, z);
 
 % get linear regression line from coastline
@@ -88,6 +89,7 @@ alpha = 0;
 if ~isnan(b)
     alpha = pi/2-atan(b);
 
+    % check and correct rotation (TODO: could be better?!?!)
     [xr yr] = xb_grid_rotate(x, y, -alpha, 'units', 'radians');
     [dim dir] = xb_grid_orientation(xr, yr, z);
     if dir < 1; alpha = alpha+pi; end;

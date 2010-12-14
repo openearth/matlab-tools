@@ -10,9 +10,13 @@ function xb = xb_generate_grid(varargin)
 %   xb = xb_generate_grid(varargin)
 %
 %   Input:
-%   varargin  = x: x-coordinates of bathymetry
-%               y: y-coordinates of bathymetry
-%               z: z-coordinates of bathymetry
+%   varargin  = x:          x-coordinates of bathymetry
+%               y:          y-coordinates of bathymetry
+%               z:          z-coordinates of bathymetry
+%               rotate:     boolean flag that determines whether the
+%                           coastline is located in line with y-axis
+%               posdwn:     boolean flag that determines whether positive
+%                           z-direction is down
 %
 %   Output:
 %   xb        = XBeach structure array
@@ -68,39 +72,93 @@ function xb = xb_generate_grid(varargin)
 OPT = struct( ...
     'x', [0 2550 2724.9 2775 2805 3030.6], ...
     'y', [], ...
-    'z', [-20 -3 0 3 15 15] ...
+    'z', [-20 -3 0 3 15 15], ...
+    'rotate', true, ...
+    'posdwn', false, ...
+    'dx', 5 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
+x = OPT.x;
+y = OPT.y;
+z = OPT.z;
+
+if OPT.posdwn
+    z = -OPT.z;
+end
+
+%% rotate grid
+
+alpha = 0;
+
+xr = x;
+yr = y;
+
+if OPT.rotate && ~isvector(z)
+    alpha = xb_grid_rotation(x, y, z);
+    
+    if alpha ~= 0
+        [xr yr] = xb_grid_rotate(x, y, -alpha);
+    end
+end
+
+%% determine representative cross-section
+
+xt = xr;
+yt = yr;
+zt = z;
+
+if ~isvector(z)
+    if ~any(diff(x,1)) || ~any(diff(x,2))
+        % orthogonal grid
+        xt = xt(1,:);
+        yt = yt(:,1);
+        zt = max(zt, [], 1);
+    else
+        % rotated grid (TODO: coudld be better ?!)
+        xt = min(min(xr)):OPT.dx:max(max(xr));
+        yt = min(min(yr)):max(max(yr));
+        zt = size(xt);
+
+        for i = 1:length(xt)
+            zt(i) = max(z(xr>=xt(i)-OPT.dx/2&xr<xt(i)+OPT.dx/2));
+        end
+
+        xt = xt(~isnan(zt));
+        zt = zt(~isnan(zt));
+    end
+end
+
 %% generate grid
 
-[x z] = xb_generate_xgrid(OPT.x, min(OPT.z, [], 1));
-[y] = xb_generate_ygrid(OPT.y);
+[xg zg] = xb_generate_xgrid(xt, zt);
+[yg] = xb_generate_ygrid(yt);
 
-[xgrid ygrid] = meshgrid(x, y);
+[xgrid ygrid] = meshgrid(xg, yg);
 
 % interpolate bathymetry on grid, if necessary
-if isvector(OPT.z)
+if isvector(z)
     
     % 1D grid
-    zgrid = repmat(z, length(y), 1);
+    zgrid = repmat(zg, length(yg), 1);
 else
     
     % 2D grid
-    zgrid = interp2(OPT.x, OPT.y, OPT.z, xgrid, ygrid);
+    zgrid = griddata(xr, yr, z, xgrid, ygrid);
 end
 
+% determine size and origin
 nx = size(zgrid, 2)-1;
 ny = size(zgrid, 1)-1;
 
-%% derive posdwn value
-% generally ussume posdwn to be -1
-posdwn = -1;
-if z(1) > mean(z(:))
-    % when the z at the seaward boundary is larger then the mean z of the
-    % profile, the posdwn is assumed to be 1
-    posdwn = 1;
+xori = min(min(xgrid));
+yori = min(min(ygrid));
+xgrid = xgrid - xori;
+ygrid = ygrid - yori;
+
+if OPT.posdwn
+    zgrid = -zgrid;
 end
 
 %% create xbeach structures
@@ -110,5 +168,8 @@ bathy = xb_set(bathy, 'xfile', xgrid, 'yfile', ygrid, 'depfile', zgrid);
 bathy = xb_meta(bathy, mfilename, 'bathymetry');
 
 xb = xb_empty();
-xb = xb_set(xb, 'nx', nx, 'ny', ny, 'vardx', 1, 'posdwn', posdwn);
+xb = xb_set(xb, 'nx', nx, 'ny', ny, 'xori', xori, 'yori', yori, ...
+    'alpha', alpha, 'vardx', 1, 'posdwn', OPT.posdwn);
+
 xb = xb_join(xb, xb_bathy2input(bathy));
+xb = xb_meta(xb, mfilename, 'input');
