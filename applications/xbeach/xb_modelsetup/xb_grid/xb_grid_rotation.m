@@ -91,10 +91,7 @@ if ~isnan(b)
     alpha = pi/2-atan(b);
     
     % check and correct rotation
-    [dim dir] = xb_grid_orientation(x, y, z);
-    [dim dir]
-    if (dim == 1 && dir < 0) || ...
-        (dim == 2 && ((dir < 0 && alpha > pi/2 && alpha < pi) || (dir > 0 && alpha > 0 && alpha < pi/2)))
+    if ~isnan(a) && sign(a) == 1
         alpha = alpha + pi;
     end
     
