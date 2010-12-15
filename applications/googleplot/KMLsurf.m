@@ -169,7 +169,7 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    output = KML_header(OPT_header);
 
    if OPT.colorbar
-      clrbarstring = KMLcolorbar(OPT);
+     [clrbarstring,pngNames] = KMLcolorbar(OPT);
       output = [output clrbarstring];
    end
    
@@ -271,6 +271,7 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    fclose(OPT.fid);
 
 %% compress to kmz?
+% TO DO: add pngNames of colorbar
 
    if strcmpi  ( OPT.fileName(end-2:end),'kmz')
        movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
@@ -285,6 +286,10 @@ function varargout = KMLsurf(lat,lon,z,varargin)
        system(OPT.fileName);
    end
    
-   varargout = {1};
+if nargout==1
+   varargout = {OPT};
+elseif nargout==2
+   varargout = {OPT,pngNames};
+end
 
 %% EOF

@@ -1,4 +1,4 @@
-function varargout = KMLlogo(imname,varargin)
+function varargout = KMLlogo(varargin)
 %KMLlogo   make a white logo *.png with transparent background of an image
 %
 %    <kmlcode> = KMLlogo(imagename,<keyword,value>)
@@ -14,6 +14,8 @@ function varargout = KMLlogo(imname,varargin)
 %                   and optional <kmlcode> is returned without KML_header/KML_footer.)
 %
 % See also: googlePlot, imread
+
+% http://code.google.com/intl/nl/apis/kml/documentation/kmlreference.html#screenoverlay
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -52,16 +54,32 @@ function varargout = KMLlogo(imname,varargin)
  
    OPT.fileName         = ''; % header/footer are skipped when is a fid = 0 or fopen(OPT.fileName,'w')
    OPT.logoName         = '';
+   OPT.imName           = '';
    OPT.kmlName          = '';
    OPT.description      = '';
    OPT.invertblackwhite = 0; % invert black/white
+   
+   OPT.overlayXY        = [0 0];       % mapping a point in the image specified by <overlayXY> ...
+   OPT.screenXY         = [0.02 0.05]; % ...  to a point on the screen specified by <screenXY>
+   OPT.size             = [-1 -1];     % -1  = automatic
+   
+   OPT.overlayXYunits   = 'fraction';
+   OPT.screenXYunits    = 'fraction';
+   OPT.sizeunits        = 'fraction';
 
    if nargin==0
       varargout = {OPT};
       return
    end
+   
+   if nargin==1
+       imname             = varargin{1};
+      [OPT, Set, Default] = setproperty(OPT, varargin{2:end});
+   else
+      [OPT, Set, Default] = setproperty(OPT, varargin{:});
+       imname             = OPT.imName;
+   end
 
-   [OPT, Set, Default] = setproperty(OPT, varargin);
 
 %% get filename, gui for filename, if not set yet
 
@@ -127,9 +145,9 @@ function varargout = KMLlogo(imname,varargin)
        '<name>logo</name>' ...
        '<Folder><ScreenOverlay>' ...
        '	<Icon><href>' filenameext(OPT.logoName) '</href></Icon>\n' ... % only relative path
-       '	<overlayXY  x="0"      y="0.00"  xunits="fraction" yunits="fraction"/>\n' ...
-       '	<screenXY   x="0.02"   y="0.05"  xunits="fraction" yunits="fraction"/>\n' ...
-       '	<size       x="-1"     y="-1"    xunits="fraction" yunits="fraction"/>\n' ...
+       '	<overlayXY  x="',num2str(OPT.overlayXY(1)),'" y="',num2str(OPT.overlayXY(2)),'" xunits="',OPT.overlayXYunits,'" yunits="fraction"/>\n' ...
+       '	<screenXY   x="',num2str(OPT.screenXY (1)),'" y="',num2str(OPT.screenXY(2) ),'" xunits="',OPT.screenXYunits ,'" yunits="fraction"/>\n' ...
+       '	<size       x="',num2str(OPT.size (1)    ),'" y="',num2str(OPT.size (2)    ),'" xunits="',OPT.sizeunits     ,'" yunits="fraction"/>\n' ...
        '</ScreenOverlay></Folder>' ];
 
    if OPT.fid > 0

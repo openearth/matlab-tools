@@ -1,4 +1,4 @@
-function KML_colorbar(OPT)
+function varargout = KML_colorbar(OPT)
 %KML_COLORBAR   make KML colorbar png
 %
 %   kmlstring = kml_colorbar(<keyword,value>)
@@ -228,5 +228,9 @@ function KML_colorbar(OPT)
    end
    
    try close(h.fig);end
+   
+   if nargout==1
+      varargout = {[OPT.CBfileName,'.png']};
+   end
 
 %% EOF

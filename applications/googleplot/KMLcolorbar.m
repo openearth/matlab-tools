@@ -3,6 +3,7 @@ function varargout = KMLcolorbar(varargin)
 %
 %   kmlstring = kmlcolorbar(<keyword,value>) returns kml formatted string
 %               kmlcolorbar(<keyword,value>) saves to kml file
+%   [kmlstring,pngnames] = kmlcolorbar(...) alsoe returns names of png files for overlay
 %
 % For the <keyword,value> pairs and their defaults call
 %
@@ -17,6 +18,8 @@ function varargout = KMLcolorbar(varargin)
 % cLim (if that is defined)
 %
 %See also: GOOGLEPLOT
+
+% http://code.google.com/intl/nl/apis/kml/documentation/kmlreference.html#screenoverlay
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -141,7 +144,8 @@ end
 if ischar(OPT.CBcolorbarlocation)
     OPT.CBcolorbarlocation = {OPT.CBcolorbarlocation};
 end
-OPT2 = OPT; % copy before overwriting margins & thickness
+OPT2     = OPT; % copy before overwriting margins & thickness
+pngNames = {};
 for ii = 1:length(OPT.CBcolorbarlocation)
     switch OPT.CBcolorbarlocation{ii}
         case {'NNW','N','NNE','SSE','S','SSW'}
@@ -177,7 +181,7 @@ for ii = 1:length(OPT.CBcolorbarlocation)
     if isempty(OPT.CBtipmargin         ); OPT.CBtipmargin         = OPT2.CBtipmargin         ;end
     if isempty(OPT.CBalignmargin       ); OPT.CBalignmargin       = OPT2.CBalignmargin       ;end
     if isempty(OPT.CBthickness         ); OPT.CBthickness         = OPT2.CBthickness         ;end
-    KML_colorbar(OPT);
+    pngNames{end+1} = KML_colorbar(OPT);
 end
 
 
@@ -190,7 +194,7 @@ colorbarstring = sprintf([...
     ' <name>%s</name>\n'...
     ' <open>1</open>\n'],...
     OPT.CBkmlName);
-
+    
 for ii = 1:length(OPT.CBcolorbarlocation)
     switch OPT.CBcolorbarlocation{ii}
         case 'NNW'
@@ -259,7 +263,7 @@ for ii = 1:length(OPT.CBcolorbarlocation)
         OPT.CBcolorbarlocation{ii},...
         bool,bool,...
         [NAME,pngName],...
-        overlayXY,screenXY)];  
+        overlayXY,screenXY)];
 end
         
 colorbarstring = [colorbarstring sprintf([...
@@ -270,6 +274,8 @@ colorbarstring = [colorbarstring sprintf([...
 
 if nargout==1
     varargout = {colorbarstring};
+elseif nargout==2
+    varargout = {colorbarstring,pngNames};
 else
     OPT.CBfid    = fopen([OPT.CBfileName,'.kml'],'w');
     OPT_header = struct(...

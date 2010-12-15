@@ -173,7 +173,7 @@ function varargout = KMLscatter(lat,lon,c,varargin)
    output = KML_header(OPT_header);
    
    if OPT.colorbar
-      clrbarstring = KMLcolorbar(OPT);
+      [clrbarstring,pngNames] = KMLcolorbar(OPT);
       output = [output clrbarstring];
    end
 
@@ -362,7 +362,7 @@ end
 %% Output
 
    if nargout==1
-    varargout = {handles};
+      varargout = {pngNames};
    end
 
 %% EOF

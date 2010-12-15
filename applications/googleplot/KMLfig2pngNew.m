@@ -311,8 +311,7 @@ if OPT.makeKML
           href.CB = fullfile(OPT.baseUrl, OPT.subPath, OPT.Name, [OPT.Name]);
        end
        
-
-       clrbarstring = KMLcolorbar('CBcLim',clim(OPT.ha),...
+       [clrbarstring,pngNames] = KMLcolorbar('CBcLim',clim(OPT.ha),...
                               'CBfileName',file.CB,...
                                'CBkmlName','colorbar',...
                               'CBcolorMap',colormap(OPT.ha),...
@@ -347,6 +346,8 @@ end
 
 if nargout==1
    varargout = {OPT};
+elseif nargout==2
+   varargout = {OPT,pngNames};
 end
 
 %% EOF   
