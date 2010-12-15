@@ -89,13 +89,13 @@ dz = zeros(1,2);
 for i = 1:size(z, 1)
     i1 = find(~isnan(z(i, :)), 1, 'first');
     i2 = find(~isnan(z(i, :)), 1, 'last');
-    dz(2) = dz(2) + diff(z(i,[i1 i2]))/diff(x(i,[i1 i2]))/size(z, 1);
+    dz(2) = dz(2) + diff(z(i,[i1 i2]))/abs(diff(x(i,[i1 i2])))/size(z, 1);
 end
 
 for i = 1:size(z, 2)
     i1 = find(~isnan(z(:, i)), 1, 'first');
     i2 = find(~isnan(z(:, i)), 1, 'last');
-    dz(1) = dz(1) + diff(z([i1 i2],i)')/diff(y([i1 i2],i))/size(z, 2);
+    dz(1) = dz(1) + diff(z([i1 i2],i)')/abs(diff(y([i1 i2],i)))/size(z, 2);
 end
 
 % determine axis and direction

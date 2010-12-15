@@ -90,10 +90,18 @@ if ~isnan(b)
     
     alpha = pi/2-atan(b);
     
+    % check and correct rotation
+    [dim dir] = xb_grid_orientation(x, y, z);
+    [dim dir]
+    if (dim == 1 && dir < 0) || ...
+        (dim == 2 && ((dir < 0 && alpha > pi/2 && alpha < pi) || (dir > 0 && alpha > 0 && alpha < pi/2)))
+        alpha = alpha + pi;
+    end
+    
 	% check and correct rotation (TODO: could be better?!?!)
-	[xr yr] = xb_grid_rotate(x, y, -alpha, 'units', 'radians');
-	[dim dir] = xb_grid_orientation(xr, yr, z);
-	if dir < 1; alpha = alpha+pi; end;
+% 	[xr yr] = xb_grid_rotate(x, y, -alpha, 'units', 'radians');
+% 	[dim dir] = xb_grid_orientation(xr, yr, z);
+% 	if dir < 1; alpha = alpha+pi; end;
 
     % convert units
     if strcmpi(OPT.units, 'degrees')

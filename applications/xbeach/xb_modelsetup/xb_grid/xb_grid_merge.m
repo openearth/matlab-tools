@@ -1,21 +1,32 @@
 function [x y z] = xb_grid_merge(varargin)
-%XB_GRID_MERGE  Merges one or more 2D grids together
+%XB_GRID_MERGE  Merges two or more 2D grids together
 %
-%   Merges one or more 2D grids together
+%   Merges two or more 2D grids together by defining an output rectangular,
+%   orthogonal and equidistant output grid based on the smallest grid size
+%   in the input grids. The input grids are then interpolated on the output
+%   grid. The first grid will end up below the others, the last grid will
+%   end up on top of the others.
 %
 %   Syntax:
-%   varargout = xb_grid_merge(varargin)
+%   [x y z] = xb_grid_merge(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = x:          cell array with x-coordinate vectors or
+%                           matrices of input grids
+%               y:          cell array with y-coordinate vectors or
+%                           matrices of input grids
+%               z:          cell array with elevation matrices of input
+%                           grids
 %
 %   Output:
-%   varargout =
+%   x           = x-coordinates of merged grid
+%   y           = y-coordinates of merged grid
+%   z           = elevations in merged grid
 %
 %   Example
-%   xb_grid_merge
+%   [x y z] = xb_grid_merge('x',{x1 x2 x3},'y',{y1 y2 y3},'z',{z1 z2 z3})
 %
-%   See also 
+%   See also xb_grid_rotate
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -63,9 +74,7 @@ function [x y z] = xb_grid_merge(varargin)
 OPT = struct( ...
     'x', {{}}, ...
     'y', {{}}, ...
-    'z', {{}}, ...
-    'dd', 5, ...
-    'precision', 1e5 ...
+    'z', {{}} ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -83,6 +92,7 @@ n = min([length(OPT.x) length(OPT.y) length(OPT.z)]);
 xmin = Inf; xmax = -Inf;
 ymin = Inf; ymax = -Inf;
 
+dd = Inf;
 for i = 1:n
     if isvector(OPT.x{i}) && isvector(OPT.y{i})
         [OPT.x{i} OPT.y{i}] = meshgrid(OPT.x{i}, OPT.y{i});
@@ -92,34 +102,17 @@ for i = 1:n
     xmax = max(xmax, max(max(OPT.x{i})));
     ymin = min(ymin, min(min(OPT.y{i})));
     ymax = max(ymax, max(max(OPT.y{i})));
+    
+    dd = min(dd, min(min(sqrt(diff(OPT.x{i}).^2+diff(OPT.y{i}).^2))));
 end
 
 % create output grid
-[x y] = meshgrid(xmin:OPT.dd:xmax, ymin:OPT.dd:ymax);
+[x y] = meshgrid(xmin:dd:xmax, ymin:dd:ymax);
 z = nan(size(x));
 
 %% interpolate grids to output grid
 
 for i = 1:n
-    angle = atan(diff(OPT.y{i}([1 end],1))/diff(OPT.x{i}([1 end],1)))/pi*180-90;
-    
-    if angle == 0
-        % orthogonal grid
-        zi = interp2(OPT.x{i}, OPT.y{i}, OPT.z{i}, x, y);
-        z(~isnan(zi)) = zi(~isnan(zi));
-    else
-        % rotated grid
-        [xr1 yr1] = xb_grid_world2xb(OPT.x{i}, OPT.y{i}, xmin, ymin, -angle);
-        [xr2 yr2] = xb_grid_world2xb(x, y, xmin, ymin, -angle);
-        
-        % round off
-        xr1 = round(xr1*OPT.precision)/OPT.precision;
-        yr1 = round(yr1*OPT.precision)/OPT.precision;
-        xr2 = round(xr2*OPT.precision)/OPT.precision;
-        yr2 = round(yr2*OPT.precision)/OPT.precision;
-        
-        % interpolate
-        zi = interp2(xr1, yr1, OPT.z{i}, xr2, yr2);
-        z(~isnan(zi)) = zi(~isnan(zi));
-    end
+    zi = xb_grid_interpolate(OPT.x{i}, OPT.y{i}, OPT.z{i}, x, y);
+    z(~isnan(zi)) = zi(~isnan(zi));
 end
