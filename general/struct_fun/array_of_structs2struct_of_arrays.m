@@ -21,6 +21,10 @@ function S1 = array_of_structs2struct_of_arrays(S2,varargin)
 %     a: {1x6 cell}
 %     b: [6x1x3]
 %     c: [6x1x2]
+%
+% If field b would have an odd size (or be []) in one element s2(i), this is 
+% considered an error. To continue with all fieldnames that are OK (a & c in this case)
+% use array_of_structs2struct_of_arrays(s2,'IgnoreErrors',1);
 %   
 %See also: STRUCT_OF_ARRAYS2ARRAY_OF_STRUCTS, CELL2STRUCT, STRUCT2CELL, PERMUTE
 
@@ -62,6 +66,9 @@ function S1 = array_of_structs2struct_of_arrays(S2,varargin)
 % $HeadURL$
 % $Keywords: $
 
+OPT.IgnoreErrors = 0;
+OPT = setproperty(OPT,varargin{:});
+
 fldnames = fieldnames(S2);
 n        = length(S2);
 
@@ -70,24 +77,31 @@ C = struct2cell(S2);
 for ifld = 1 : length(fldnames)  % loop on fields
 
    fldname = fldnames{ifld};
-
    str = ischar(S2(1).(fldname)) | iscellstr(S2(1).(fldname));
+   ignore = 0;
    
    if str
       % check for identical type
       for i = 1 : n
          if ~(ischar(S2(i).(fldname)) |iscellstr(S2(i).(fldname)))
-         error(['Field ''',fldname,''' in struct(',num2str(i),') is not a char while in struct(1) it is.'])
+         if OPT.IgnoreErrors
+         warning(['Field ''',fldname,''' in struct(',num2str(i),') is not a char while in struct(1) it is.'])
+         ignore = 1;
+         else
+         error (['Field ''',fldname,''' in struct(',num2str(i),') is not a char while in struct(1) it is.'])
+         end
          end
       end
       % merge data      
-      for i = 1 : n
-         if ischar(S2(i).(fldname))
-         S1.(fldname){i} = S2(i).(fldname);
-         else
-         S1.(fldname){i} = char(S2(i).(fldname));
-         end
-      end      
+      if ~ignore
+          for i = 1 : n
+             if ischar(S2(i).(fldname))
+             S1.(fldname){i} = S2(i).(fldname);
+             else
+             S1.(fldname){i} = char(S2(i).(fldname));
+             end
+          end      
+      end
    else
       sz = size(S2(1).(fldname));
       % check for identical type
@@ -99,13 +113,20 @@ for ifld = 1 : length(fldnames)  % loop on fields
       % check for identical size
       for i = 1 : n
          if ~isequal(size(S2(i).(fldname)),sz)
-         error(['Size of field ''',fldname,''' in struct(',num2str(i),') doe snot have same size as in struct(1).'])
+         if OPT.IgnoreErrors
+         warning(['Size of field ''',fldname,''' in struct(',num2str(i),') does not have same size as in struct(1).'])
+         ignore = 1;
+         else
+         error (['Size of field ''',fldname,''' in struct(',num2str(i),') does not have same size as in struct(1).'])
+         end
          end
       end    
       % merge data
-      S1.(fldname) = repmat(nan,[n sz(:)']);
-      for i = 1 : n
-         S1.(fldname)(i,:) = S2(i).(fldname)(:);
+      if ~ignore
+          S1.(fldname) = repmat(nan,[n sz(:)']);
+          for i = 1 : n
+             S1.(fldname)(i,:) = S2(i).(fldname)(:);
+          end
       end
    end
 
