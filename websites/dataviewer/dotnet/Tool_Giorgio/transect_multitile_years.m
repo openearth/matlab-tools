@@ -1,4 +1,4 @@
-function filename = transect_multitile_years(Vertex,Centre)
+function kml = transect_multitile_years(Vertex,Centre)
 % TRANSECT_MULTITILE_YEARS just a kml line for the vaklodingen 
 %
 % transect_multitile_years(lat1,lon1,lat2,lon2,<keyword,value>)
@@ -145,8 +145,8 @@ lon_0 = repmat(lon_0, size(z_KML,1), 1);
 KMLline(lat_0', lon_0', z_KML','timeIn',timeIn,'timeOut',timeOut,...
     'fileName', OPT.fileName, 'lineColor',jet(size(z_KML,1)),'lineWidth',2,...
     'fillColor',jet(size(z_KML,1)),'zScaleFun', @(z_KML)(z_KML+60)*10);
-filename = OPT.fileName;
-clear z_KML
+kml = fopen(OPT.fileName);
+%clear z_KML
 %varargout = {};
 
 %% EOF
