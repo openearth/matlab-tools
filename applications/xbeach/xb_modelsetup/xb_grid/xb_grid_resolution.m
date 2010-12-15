@@ -1,10 +1,10 @@
-function [xmin xmax ymin ymax cellsize] = xb_grid_extent(x, y, varargin)
-%XB_GRID_EXTENT  One line description goes here.
+function [cellsize xmin xmax ymin ymax] = xb_grid_resolution(x, y, varargin)
+%XB_GRID_RESOLUTION  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = xb_grid_extent(varargin)
+%   varargout = xb_grid_resolution(varargin)
 %
 %   Input:
 %   varargin  =
@@ -13,7 +13,7 @@ function [xmin xmax ymin ymax cellsize] = xb_grid_extent(x, y, varargin)
 %   varargout =
 %
 %   Example
-%   xb_grid_extent
+%   xb_grid_resolution
 %
 %   See also 
 
@@ -61,19 +61,15 @@ function [xmin xmax ymin ymax cellsize] = xb_grid_extent(x, y, varargin)
 %% read options
 
 OPT = struct( ...
+    'maxsize', 10*1024^2 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
-%% determine grid extent and minimum grid size
+%% determine extent
 
-if isvector(x) && isvector(y)
-    [x y] = meshgrid(x, y);
-end
-    
-xmin = min(min(x));
-xmax = max(max(x));
-ymin = min(min(y));
-ymax = max(max(y));
+[xmin xmax ymin ymax cellsize] = xb_grid_extent(x, y);
 
-cellsize = min(min(sqrt(diff(x).^2+diff(y).^2)));
+%% maximize resolution
+
+cellsize = max(cellsize, sqrt((xmax-xmin)*(ymax-ymin)/OPT.maxsize*8));

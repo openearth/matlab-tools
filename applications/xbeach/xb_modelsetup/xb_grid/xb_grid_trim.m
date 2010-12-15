@@ -1,10 +1,10 @@
-function [xmin xmax ymin ymax cellsize] = xb_grid_extent(x, y, varargin)
-%XB_GRID_EXTENT  One line description goes here.
+function [x y z] = xb_grid_trim(x, y, z, varargin)
+%XB_GRID_TRIM  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = xb_grid_extent(varargin)
+%   varargout = xb_grid_trim(varargin)
 %
 %   Input:
 %   varargin  =
@@ -13,7 +13,7 @@ function [xmin xmax ymin ymax cellsize] = xb_grid_extent(x, y, varargin)
 %   varargout =
 %
 %   Example
-%   xb_grid_extent
+%   xb_grid_trim
 %
 %   See also 
 
@@ -60,20 +60,32 @@ function [xmin xmax ymin ymax cellsize] = xb_grid_extent(x, y, varargin)
 
 %% read options
 
+if ndims(z) ~= 2; error(['Dimensions of elevation matrix incorrect [' num2str(ndims(z)) ']']); end;
+
 OPT = struct( ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
-%% determine grid extent and minimum grid size
+%% trim grid
 
-if isvector(x) && isvector(y)
-    [x y] = meshgrid(x, y);
-end
+% remove nan's in two dimensions
+for n = 1:2
     
-xmin = min(min(x));
-xmax = max(max(x));
-ymin = min(min(y));
-ymax = max(max(y));
-
-cellsize = min(min(sqrt(diff(x).^2+diff(y).^2)));
+    % index cells
+    idx = {':' ':'};
+    idxs = {':' ':'};
+    idxs{n} = [];
+    
+    for i = 1:size(z,n)
+        idx{n} = i;
+        if all(isnan(z(idx{:})))
+            idxs{n} = [idxs{n} i];
+        end
+    end
+    
+    % remove nan columns/rows
+    x(idxs{:}) = [];
+    y(idxs{:}) = [];
+    z(idxs{:}) = [];
+end

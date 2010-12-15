@@ -126,9 +126,12 @@ if isvector(z_w)
     y_d = [];
     z_d_cs = z_w;
 else
+    % determine resolution and extent
+    [cellsize xmin xmax ymin ymax] = xb_grid_resolution(x_r, y_r);
+    
     % create dummy grid
-    x_d = min(min(x_r)):OPT.dd:max(max(x_r));
-    y_d = min(min(y_r)):OPT.dd:max(max(y_r));
+    x_d = xmin:cellsize:xmax;
+    y_d = ymin:cellsize:ymax;
 
     % rotate dummy grid to world coordinates
     [x_d_w y_d_w] = xb_grid_xb2world(x_d, y_d, xori, yori, alpha);

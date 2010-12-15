@@ -90,6 +90,8 @@ for i = 1:size(z, 1)
     i1 = find(~isnan(z(i, :)), 1, 'first');
     i2 = find(~isnan(z(i, :)), 1, 'last');
     
+    if isempty(i1) || isempty(i2); continue; end;
+    
     dx = abs(diff(x(i,[i1 i2])));
     if dx == 0
         dx = abs(diff(y(i,[i1 i2])));
@@ -100,6 +102,8 @@ end
 for i = 1:size(z, 2)
     i1 = find(~isnan(z(:, i)), 1, 'first');
     i2 = find(~isnan(z(:, i)), 1, 'last');
+    
+    if isempty(i1) || isempty(i2); continue; end;
     
     dy = abs(diff(y([i1 i2],i)));
     if dy == 0

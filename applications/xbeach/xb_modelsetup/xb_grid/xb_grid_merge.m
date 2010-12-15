@@ -108,8 +108,8 @@ for i = 1:n
     dd = min(dd, cellsize);
 end
 
-% maximize output grid size
-dd = max(dd, sqrt((xmax-xmin)*(ymax-ymin)/OPT.maxsize*8));
+% maximize grid size
+dd = xb_grid_resolution(xmin:dd:xmax, ymin:dd:ymax);
 
 % create output grid
 [x y] = meshgrid(xmin:dd:xmax, ymin:dd:ymax);
@@ -121,3 +121,7 @@ for i = 1:n
     zi = xb_grid_interpolate(OPT.x{i}, OPT.y{i}, OPT.z{i}, x, y);
     z(~isnan(zi)) = zi(~isnan(zi));
 end
+
+%% clean up
+
+[x y z] = xb_grid_trim(x, y, z);
