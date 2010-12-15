@@ -94,11 +94,6 @@ if ~isnan(b)
     if ~isnan(a) && sign(a) == 1
         alpha = alpha + pi;
     end
-    
-	% check and correct rotation (TODO: could be better?!?!)
-% 	[xr yr] = xb_grid_rotate(x, y, -alpha, 'units', 'radians');
-% 	[dim dir] = xb_grid_orientation(xr, yr, z);
-% 	if dir < 1; alpha = alpha+pi; end;
 
     % convert units
     if strcmpi(OPT.units, 'degrees')

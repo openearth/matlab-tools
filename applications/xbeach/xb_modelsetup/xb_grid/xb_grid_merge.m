@@ -74,7 +74,8 @@ function [x y z] = xb_grid_merge(varargin)
 OPT = struct( ...
     'x', {{}}, ...
     'y', {{}}, ...
-    'z', {{}} ...
+    'z', {{}}, ...
+    'maxsize', 10*1024^2 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -105,6 +106,9 @@ for i = 1:n
     
     dd = min(dd, min(min(sqrt(diff(OPT.x{i}).^2+diff(OPT.y{i}).^2))));
 end
+
+% maximize output grid size
+dd = max(dd, sqrt((xmax-xmin)*(ymax-ymin)/OPT.maxsize*8));
 
 % create output grid
 [x y] = meshgrid(xmin:dd:xmax, ymin:dd:ymax);
