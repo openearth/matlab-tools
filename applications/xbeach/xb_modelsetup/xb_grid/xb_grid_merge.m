@@ -99,12 +99,13 @@ for i = 1:n
         [OPT.x{i} OPT.y{i}] = meshgrid(OPT.x{i}, OPT.y{i});
     end
     
-    xmin = min(xmin, min(min(OPT.x{i})));
-    xmax = max(xmax, max(max(OPT.x{i})));
-    ymin = min(ymin, min(min(OPT.y{i})));
-    ymax = max(ymax, max(max(OPT.y{i})));
+    [x1 x2 y1 y2 cellsize] = xb_grid_extent(OPT.x{i}, OPT.y{i});
     
-    dd = min(dd, min(min(sqrt(diff(OPT.x{i}).^2+diff(OPT.y{i}).^2))));
+    xmin = min(xmin, x1);
+    xmax = max(xmax, x2);
+    ymin = min(ymin, y1);
+    ymax = max(ymax, y2);
+    dd = min(dd, cellsize);
 end
 
 % maximize output grid size
