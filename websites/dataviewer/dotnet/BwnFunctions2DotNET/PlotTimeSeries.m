@@ -1,22 +1,18 @@
-function outputPng = PlotTimeSeries(ncfile,ncVariable, varargin)
+function outputPng = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
 % function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
 %
 % with startTime and stopTime optional time strings:
 % (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
 %
 
-outputPng = generateoutputpngname(varargin{:});
+outputPng = generateoutputpngname;
 
 %% Plot time series
 try
     f = figure();
-    if nargin == 4
-        startTime = datenum(varargin{1},'yyyymmddTHHMMSS');
-        stopTime = datenum(varargin{2},'yyyymmddTHHMMSS');
-        nc_cf_stationTimeSeries(ncfile,'varname',ncVariable,'period',[startTime stopTime]);
-    else
-        nc_cf_stationTimeSeries(ncfile,'varname',ncVariable);
-    end
+    startTime = datenum(startTime,'yyyymmddTHHMMSS');
+    stopTime = datenum(stopTime,'yyyymmddTHHMMSS');
+    nc_cf_stationTimeSeries(ncfile,'varname',ncVariable,'period',[startTime stopTime]);
 catch me
     error(['Could not read opendap file: ', me.getReport]);
 end

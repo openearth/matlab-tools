@@ -53,7 +53,9 @@ MTestCategory.DataAccess;
 
 ncFile = 'http://opendap.deltares.nl/thredds/dodsC/opendap/knmi/etmgeg/etmgeg_344.nc';
 ncVariable = 'wind_speed_mean';
+startTime = '20100101T000000';
+stopTime = '20100201T000000';
 
-outputPng = PlotTimeSeries(ncFile,ncVariable);
+outputPng = PlotTimeSeries(ncFile,ncVariable,startTime,stopTime);
 
 assert(exist(outputPng,'file')==2);
