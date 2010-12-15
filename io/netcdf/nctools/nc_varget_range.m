@@ -155,7 +155,7 @@ while di > 1
 end
 
 if OPT.time
-t = nc_cf_time(ncfile,varname,chunk(1)-1,length(chunk),di);
+[t, zone] = nc_cf_time(ncfile,varname,chunk(1)-1,length(chunk),di);
 else
 t = nc_varget (ncfile,varname,chunk(1)-1,length(chunk),di);
 end
@@ -182,4 +182,6 @@ elseif nargout==2
    varargout = {t,chunk};
 elseif nargout==3
    varargout = {t,start,count};
+elseif nargout==4
+    varargout = {t,start,count,zone};
 end

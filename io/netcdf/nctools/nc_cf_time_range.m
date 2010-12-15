@@ -64,7 +64,7 @@ function varargout = nc_cf_time_range(ncfile,varname,lim,varargin)
 % $HeadURL$
 % $Keywords: $
 
-[t,start,count] = nc_varget_range(ncfile,varname,lim,'time',1,varargin{:}); % nc_varget_range now handles time offset internally, but here we force it
+[t,start,count,zone] = nc_varget_range(ncfile,varname,lim,'time',1,varargin{:}); % nc_varget_range now handles time offset internally, but here we force it
     
 if     nargout==1
    varargout = {t};
