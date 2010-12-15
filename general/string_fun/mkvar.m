@@ -12,10 +12,12 @@ function stringout = mkvar(stringin,varargin);
 % stringout = mkvar(stringin,letter,'add'/'replace') replaces / adds first
 % character, default 'add'.
 %
-% Idea: Howard E. Motteler form http://www.csee.umbc.edu/%7Emotteler/index.html
+% GENVARNAME does the same but insert nasty hex codes, whereas MKVAR inserts a '_'.
 %
-% See also: ISLETTER, MKTEX, MKHTML
+% See also: ISLETTER, MKTEX, MKHTML, GENVARNAME
 
+%   --------------------------------------------------------------------
+%   Idea: Howard E. Motteler form http://www.csee.umbc.edu/%7Emotteler/index.html
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004-2006 Delft University of Technology
 %       Gerben J. de Boer
@@ -52,34 +54,35 @@ function stringout = mkvar(stringin,varargin);
 % $HeadURL$
 % $Keywords$
 
-whattodo1st = 'add';
-
-firstletter = 'x';
-if nargin==2
-   firstletter = varargin{1}';
-end
-
-keep             = isletter(stringin) | ('0' <= stringin & stringin <= '9');
-stringout        = stringin;
-stringout(~keep) = '_';
-
-if stringout(1)  == '_'
-   stringout(1)  = firstletter;
-end
+   OPT.whattodo1st = 'add';
+   OPT.excludes    = char([181 223 228]); % [µ ß ä], special problemetic chars that are a true letter nevertheless
+   OPT.firstletter = 'x';
+   
+   if nargin==2
+      OPT.firstletter = varargin{1}';
+   end
+   
+   keep             = (isletter(stringin) | ('0' <= stringin & stringin <= '9')) & ~ismember(stringin,OPT.excludes);
+   stringout        = stringin;
+   stringout(~keep) = '_';
+   
+   if stringout(1)  == '_'
+      stringout(1)  = OPT.firstletter;
+   end
 
 %% First character can not be a number
-%% either replace or pad.
-%% -----------------------------------
-keep1  = isletter(stringin(1));
-if ~keep1
-if nargin==3
-    whattodo1st = varargin{2};
-end    
-    
-if strcmpi(whattodo1st(1),'a');
-   stringout    = [firstletter,stringout];
-elseif strcmpi(whattodo1st(1),'r');
-   stringout(1) = firstletter;
-end
-end
+%  either replace or pad.
+
+   keep1  = isletter(stringin(1));
+   if ~keep1
+   if nargin==3
+       OPT.whattodo1st = varargin{2};
+   end    
+       
+   if strcmpi(OPT.whattodo1st(1),'a');
+      stringout    = [OPT.firstletter,stringout];
+   elseif strcmpi(OPT.whattodo1st(1),'r');
+      stringout(1) = OPT.firstletter;
+   end
+   end
 
