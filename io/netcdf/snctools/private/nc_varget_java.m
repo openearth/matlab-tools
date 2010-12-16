@@ -346,9 +346,9 @@ function values = handle_fill_value_java ( jvarid, var_type, values )
 fillvalue_att = jvarid.findAttribute ( '_FillValue' );
 if ~isempty(fillvalue_att)
 	att_dtype = fillvalue_att.getDataType();
-	if ~strcmp(char(att_dtype.toString()), char(var_type.toString()))
-		warning('SNCTOOLS:nc_varget:java:fillValueMismatch', ...
-		    'The _FillValue attribute datatype is incorrect.  The _FillValue attribute will not be honored.');
+    if ~strcmp(char(att_dtype.toString()), char(var_type.toString()))
+        warning('SNCTOOLS:nc_varget:java:fillValueMismatch', ...
+            'The _FillValue attribute datatype is incorrect.  The _FillValue attribute will not be honored.');
         return
     end
     

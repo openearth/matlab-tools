@@ -75,7 +75,7 @@ if nargin==0
     return
 end
 
-OPT = setProperty(OPT,varargin{:});
+OPT = setproperty(OPT,varargin{:});
 
 OPT.lim       = lim; % [datenum(1950,1,2,2,40,0) datenum(1950,1,2,2,40,0)];
 meta          = nc_getdiminfo(ncfile,varname); % nc_getvarinfo
