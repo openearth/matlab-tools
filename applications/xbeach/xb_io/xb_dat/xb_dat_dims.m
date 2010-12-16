@@ -151,7 +151,9 @@ else
                 end
             end
             
-            nt = floor(f.bytes/byt/nx/ny/ads(i));
+            if any(i)
+                nt = floor(f.bytes/byt/nx/ny/ads(i));
+            end
         end
         
         if sum(i) > 1
