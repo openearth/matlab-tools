@@ -41,7 +41,7 @@
 			pm = new Polygon(0,0,0,0,document.getElementById('polygonselect').value);
 
 			// Load requested case
-			loadCase(getQuerystring('datacase'));
+			loadCase(getQuerystring('case'));
 
 		}
 
@@ -60,8 +60,21 @@
 			if (kml_cb.value == "on")
 			  {
 			    loadKml(file)
+			   // setTimeSlider(); doen we nog maar ff niet, werkt nog niet lekker....
+
 			  }
+
 		}
+
+		function setTimeSlider()
+		{
+			// set timeslider to last time step
+			var extents = ge.getTime().getControl().getExtents();
+			var gts = ge.createTimeStamp('');
+			gts.getWhen().set(extents.getEnd().get());
+			ge.getTime().setTimePrimitive(gts);
+		}
+
 
 		function loadKml(file)
 		{
@@ -114,7 +127,8 @@
 		function loadCase(value)
 		{
 			// fill kmldata listbox
-			var caseDoc = caseDoc=loadXMLDoc("xml/cases.xml");
+			var caseDoc = loadXMLDoc("xml/cases.xml");
+			document.getElementById("case_title").innerHTML = "<h3>" + caseDoc.getElementsByTagName("title")[value].childNodes[0].nodeValue + " Data</h3>";
 			datafile = caseDoc.getElementsByTagName("datafile")[value].childNodes[0].nodeValue;
 			getDataOutOfCase(datafile,"data");
 
@@ -196,6 +210,22 @@
 
 <body onload='init()' id='body'>
 <h1>OpenEarth Data Viewer</h1>
+<table width="350" class="links">
+	<tr>
+		<td>Data</td>
+		<td>
+		<script type="text/javascript">
+		document.write("<a href=models.html?case=" + getQuerystring('datacase') + ">Models</a>");
+		</script>
+		</td>
+		<td>
+		<script type="text/javascript">
+		document.write("<a href=tool.html?case=" + getQuerystring('datacase') + ">Tools</a>");
+		</script>
+		</td>
+	</tr>
+</table>
+
 <hr/>
 <div style='float:left; width:350px; height:750px; overflow:auto'>
   <table style='font-size:small'>
@@ -203,7 +233,7 @@
 <!-- DATA SELECTION -->
 	<tr>
 	    <td colspan="2">
-	    <h3>Available itmes</h3>
+	    <div id="case_title"></div>
 	    <p>
 	    <div id="kml_sources"></div>
 	    </p>

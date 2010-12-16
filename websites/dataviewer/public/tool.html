@@ -3,13 +3,14 @@
 <head>
 
 	<link href="stylesheets/style.css" rel="stylesheet" type="text/css">
-	<script src="http://www.google.com/jsapi?key=ABQIAAAAJOL4Dbu6i1iFFND9tVK1SxQHoHevx5I6K4zDbyPuyuDTxIU2BBSC_Q4vihWvqWvnnV3Qbrdn-3QeAQ"></Script>
+	<script src="http://www.google.com/jsapi?key=ABQIAAAAJOL4Dbu6i1iFFND9tVK1SxQHoHevx5I6K4zDbyPuyuDTxIU2BBSC_Q4vihWvqWvnnV3Qbrdn-3QeAQ"></script>
 	<script type="text/javascript" src="scripts/js/loadxmldoc.js"></script>
 	<script type="text/javascript" src="scripts/js/loadHtmlToDiv.js"></script>
-	<script type="text/javascript" src="scripts/js/polydraw.js"></Script>
-	<script type="text/javascript" src="scripts/js/soapclient.js"></Script>
-	<script type="text/javascript" src="scripts/js/matlabsoap.js"></Script>
-	<script type="text/javascript" src="scripts/js/getQueryString.js"></Script>
+	<script type="text/javascript" src="scripts/js/polydraw.js"></script>
+	<script type="text/javascript" src="scripts/js/soapclient.js"></script>
+	<script type="text/javascript" src="scripts/js/matlabsoap.js"></script>
+	<script type="text/javascript" src="scripts/js/getQueryString.js"></script>
+	<script type="text/javaScript" src="scripts/js/CalendarPopup.js"></script>
 	<script type="text/javascript">
 		var ge = null;
 		var pm = null;
@@ -42,7 +43,8 @@
 			pm = new Polygon(0,0,0,0,document.getElementById('polygonselect').value);
 
 			// Load requested tool
-			loadTool(getQuerystring('tool'));
+			fillToolLinks(getQuerystring('case'));
+			loadTool(0);
 
 		}
 
@@ -111,6 +113,31 @@
 	// If Google Earth fails to load this function captures the Error Code
 		function failureCB(errorCode){}
 
+		// Fill tools checbox area
+		function fillToolLinks(xmlFile)
+		{
+			var caseDoc = caseDoc=loadXMLDoc("xml/cases.xml");
+			document.getElementById("case_title").innerHTML = "<h3>" + caseDoc.getElementsByTagName("title")[value].childNodes[0].nodeValue + " Tools</h3>";
+			toolfile = caseDoc.getElementsByTagName("toolfile")[value].childNodes[0].nodeValue;
+
+			// load case-specific xml file
+			toolDoc=loadXMLDoc("xml/" + toolfile);
+			numOfData=toolDoc.getElementsByTagName("tool").length;
+
+			// find tools from the tool xml and fill up the select lists
+			var toolSelectText = [];
+
+			for (i=0;i<numOfData;i=i+1)
+			{
+			var oOption = document.createElement("OPTION");
+			oOption.text=toolDoc.getElementsByTagName("tool")[i].getElementsByTagName("title").childNodes[0].nodeValue; //textContent
+			oOption.value=i;
+			oOption.class="vs";
+			dataCaseSelect.options.add(oOption)
+			}
+			return true;
+		}
+
 		// Load selected case
 		function loadTool(value)
 		{
@@ -139,6 +166,22 @@
 <hr/>
 <div style='float:left; width:350px; height:750px; overflow:auto'>
   <table style='font-size:small'>
+
+<!-- TOOL SELECTION -->
+	<tr>
+		<td colspan="2">
+			<div id="case_title"></div>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+		<form name="toolsel" action='javascript:void(0);'>
+			<select name="datacase" id="dataCaseSelect" class="s" onchange='loadTool(value)'>
+				<option value="0" class="vs">Select case</option>
+			</select>
+		</form>
+</td>
+</tr>
 
 <!-- TOOL SPACE -->
 	<tr>

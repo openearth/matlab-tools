@@ -4,6 +4,8 @@
     <title>Hollandse Kust</title>
     <admin>arjen.luijendijk@deltares.nl</admin>
     <datafile>hk_data.xml</datafile>
+    <modelfile>hk_model.xml</modelfile>
+    <toolfile>hk_tools.xml</toolfile>
     <zoom>
       <lat>52.05249</lat>
       <lon>4.58105</lon>
@@ -13,6 +15,8 @@
   <case>
     <title>Zuidwestelijke Delta</title>
     <datafile>zd_data.xml</datafile>
+    <modelfile>zd_model.xml</modelfile>
+    <toolfile>zd_tools.xml</toolfile>
     <admin>arjan.mol@deltares.nl</admin>
     <zoom>
       <lat>51.550461</lat>
@@ -24,6 +28,8 @@
     <title>Markermeer/IJselmeer</title>
     <admin>gerben.deboer@deltares.nl</admin>
     <datafile>my_data.xml</datafile>
+    <modelfile>my_model.xml</modelfile>
+    <toolfile>my_tools.xml</toolfile>    
     <zoom>
       <lat>52.764275</lat>
       <lon>5.4230000</lon>
@@ -34,6 +40,8 @@
     <title>Singapore</title>
     <admin>Wiebe.deBoer@deltares.nl</admin>
     <datafile>si_data.xml</datafile>
+    <modelfile>si_model.xml</modelfile>
+    <toolfile>si_tools.xml</toolfile>
     <zoom>
       <lat>1.2904917</lat>
       <lon>103.85143</lon>
