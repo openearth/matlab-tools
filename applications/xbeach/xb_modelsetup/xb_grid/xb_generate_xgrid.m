@@ -85,7 +85,7 @@ function [xgr zgr] = xb_generate_xgrid(xin, zin, varargin)
 % defaults
 OPT = struct(...
     'Tm',5,...             % incident short wave period (used for maximum grid size at offshore boundary) if you impose time series of wave conditions use the min(Tm) as input
-    'dxmin',1,...          % minimum required cross shore grid size (usually over land)
+    'dxmin',5,...          % minimum required cross shore grid size (usually over land)
     'vardx',1,...          % 0 = constant dx, 1 = varying dx
     'g', 9.81,...          % gravity constant
     'CFL', 0.9,...         % Courant number

@@ -15,6 +15,9 @@ function xb = xb_generate_grid(varargin)
 %               z:          z-coordinates of bathymetry
 %               rotate:     boolean flag that determines whether the
 %                           coastline is located in line with y-axis
+%               crop:       either a boolean indicating if grid should be
+%                           cropped to obtain a rectangle or a [x y w h]
+%                           array indicating how the grid should be cropped
 %               posdwn:     boolean flag that determines whether positive
 %                           z-direction is down
 %
@@ -74,8 +77,8 @@ OPT = struct( ...
     'y', [], ...
     'z', [-20 -3 0 3 15 15], ...
     'rotate', true, ...
-    'posdwn', false, ...
-    'dd', 5 ...
+    'crop', true, ...
+    'posdwn', false ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -107,7 +110,6 @@ yori = min(min(y_w));
 alpha = 0;
 x_r = x_w - xori;
 y_r = y_w - yori;
-z_r = z_w;
 
 % rotate grid and determine alpha
 if OPT.rotate && ~isvector(z_w)
@@ -117,6 +119,18 @@ if OPT.rotate && ~isvector(z_w)
         [x_r y_r] = xb_grid_rotate(x_r, y_r, -alpha);
     end
 end
+
+%% rectangalize grid
+
+% crop grid
+if ~islogical(OPT.crop) && isvector(OPT.crop)
+    [x_r y_r z_w] = xb_grid_crop(x_r, y_r, z_w, 'crop', OPT.crop);
+elseif OPT.crop
+    [x_r y_r z_w] = xb_grid_crop(x_r, y_r, z_w);
+end
+
+% interpolate nan's
+%z_w(isnan(z_w)) = xb_grid_interpolate(x_r, y_r, z_w, x_r(isnan(z_w)), y_r(isnan(z_w)));
 
 %% determine representative cross-section
 
