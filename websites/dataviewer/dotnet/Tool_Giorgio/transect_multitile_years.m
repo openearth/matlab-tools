@@ -145,7 +145,7 @@ lon_0 = repmat(lon_0, size(z_KML,1), 1);
 KMLline(lat_0', lon_0', z_KML','timeIn',timeIn,'timeOut',timeOut,...
     'fileName', OPT.fileName, 'lineColor',jet(size(z_KML,1)),'lineWidth',2,...
     'fillColor',jet(size(z_KML,1)),'zScaleFun', @(z_KML)(z_KML+60)*10);
-kml = fopen(OPT.fileName);
+kml = fileread(OPT.fileName);
 %clear z_KML
 %varargout = {};
 
