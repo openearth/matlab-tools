@@ -6,12 +6,14 @@ select.s {font-size: 12px;}
 input.vs {font-size: 12px;}
 input.s  {font-size: 12px;}
 table.links {
-	border-width: 1px;
-	border-spacing: ;
-	border-style: outset;
-	border-color: white;
+	border-width: 2px;
+	border-spacing: 2px;
+	bordercolor: white;
 	border-collapse: separate;
 	background-color: #336699;
 	color: #FFFFFF;
-	text-decoration:none
+	font-weight: bold;
 	}
+table.links a {color: #FFFFFF;	font-weight: bold; }
+table.links a:link, table.links a:visited {text-decoration: none; color: #424242; font-weight: bold;}
+table.links a:hover {color: #D8D8D8;}

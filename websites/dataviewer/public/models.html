@@ -129,8 +129,8 @@
 			// fill kmldata listbox
 			var caseDoc = loadXMLDoc("xml/cases.xml");
 			document.getElementById("case_title").innerHTML = caseDoc.getElementsByTagName("title")[value].childNodes[0].nodeValue;
-			datafile = caseDoc.getElementsByTagName("datafile")[value].childNodes[0].nodeValue;
-			getDataOutOfCase(datafile,"data");
+			modelfile = caseDoc.getElementsByTagName("modelfile")[value].childNodes[0].nodeValue;
+			getDataOutOfCase(modelfile,"model");
 
 			// zoom to case specific coordinates
 			lon_cam = parseFloat(caseDoc.getElementsByTagName("lon")[value].childNodes[0].nodeValue);
@@ -209,21 +209,20 @@
 </head>
 
 <body onload='init()' id='body'>
-<h1>OpenEarth Data Viewer</h1>
+<h1>OpenEarth Model Viewer</h1>
 <table width="350" class="links">
 	<tr>
 		<td colspan="3" STYLE="font-size: 16pt; text-transform: uppercase;">
 		<div id="case_title"></div>
 		</td>
 	</tr>
-
 	<tr>
-		<td>Data</td>
 		<td>
 		<script type="text/javascript">
-		document.write("<a href=models.html?case=" + getQuerystring('case') + ">Models</a>");
+		document.write("<a href=data.html?case=" + getQuerystring('case') + ">Data</a>");
 		</script>
 		</td>
+		<td>Models</td>
 		<td>
 		<script type="text/javascript">
 		document.write("<a href=tools.html?case=" + getQuerystring('case') + ">Tools</a>");

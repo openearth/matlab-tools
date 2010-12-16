@@ -114,15 +114,19 @@
 		function failureCB(errorCode){}
 
 		// Fill tools checbox area
-		function fillToolLinks(xmlFile)
+		function fillToolLinks(caseNr)
 		{
 			var caseDoc = caseDoc=loadXMLDoc("xml/cases.xml");
-			document.getElementById("case_title").innerHTML = "<h3>" + caseDoc.getElementsByTagName("title")[value].childNodes[0].nodeValue + " Tools</h3>";
-			toolfile = caseDoc.getElementsByTagName("toolfile")[value].childNodes[0].nodeValue;
+			document.getElementById("case_title").innerHTML = caseDoc.getElementsByTagName("title")[caseNr].childNodes[0].nodeValue;
+			toolfile = caseDoc.getElementsByTagName("toolfile")[caseNr].childNodes[0].nodeValue;
 
 			// load case-specific xml file
 			toolDoc=loadXMLDoc("xml/" + toolfile);
 			numOfData=toolDoc.getElementsByTagName("tool").length;
+
+			// first remove all what is in the listbox
+			while(toolSelect.options.length!=0)
+			toolSelect.options.remove(0);
 
 			// find tools from the tool xml and fill up the select lists
 			var toolSelectText = [];
@@ -130,10 +134,10 @@
 			for (i=0;i<numOfData;i=i+1)
 			{
 			var oOption = document.createElement("OPTION");
-			oOption.text=toolDoc.getElementsByTagName("tool")[i].getElementsByTagName("title").childNodes[0].nodeValue; //textContent
+			oOption.text=toolDoc.getElementsByTagName("tool")[i].getElementsByTagName("title")[0].textContent;
 			oOption.value=i;
 			oOption.class="vs";
-			dataCaseSelect.options.add(oOption)
+			toolSelect.options.add(oOption)
 			}
 			return true;
 		}
@@ -163,6 +167,27 @@
 
 <body onload='init()' id='body'>
 <h1>OpenEarth Online Tools</h1>
+<table width="350" class="links">
+	<tr>
+		<td colspan="3" STYLE="font-size: 16pt; text-transform: uppercase;">
+		<div id="case_title"></div>
+		</td>
+	</tr>
+	<tr>
+		<td>
+		<script type="text/javascript">
+		document.write("<a href=data.html?case=" + getQuerystring('case') + ">Data</a>");
+		</script>
+		</td>
+		<td>
+		<script type="text/javascript">
+		document.write("<a href=models.html?case=" + getQuerystring('case') + ">Models</a>");
+		</script>
+		</td>
+		<td>Tools</td>
+	</tr>
+</table>
+
 <hr/>
 <div style='float:left; width:350px; height:750px; overflow:auto'>
   <table style='font-size:small'>
@@ -170,16 +195,18 @@
 <!-- TOOL SELECTION -->
 	<tr>
 		<td colspan="2">
-			<div id="case_title"></div>
+	    <h3>Available tools</h3>
 		</td>
 	</tr>
 	<tr>
 		<td colspan="2">
 		<form name="toolsel" action='javascript:void(0);'>
-			<select name="datacase" id="dataCaseSelect" class="s" onchange='loadTool(value)'>
+			<select name="toolsel" id="toolSelect" class="s" onchange='loadTool(value)'>
 				<option value="0" class="vs">Select case</option>
 			</select>
 		</form>
+		Do you want to add sources? Submit your request to the case manager!
+	    <hr />
 </td>
 </tr>
 
