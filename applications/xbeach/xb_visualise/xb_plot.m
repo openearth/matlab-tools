@@ -71,7 +71,11 @@ if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 if ~xb_exist(xb, 'DIMS')
     % input struct
-    xb = xb_input2bathy(xb);
+    for i = 1:length(xb.data)
+        if xb_check(xb.data(i).value)
+            xb = xb_join(xb, xb.data(i).value);
+        end
+    end
 end
 
 OPT = struct( ...
@@ -110,7 +114,7 @@ end
 % get variable list
 vars = {};
 for i = 1:length(xb.data)
-    if isnumeric(xb.data(i).value) && ndims(xb.data(i).value) >= 2
+    if isnumeric(xb.data(i).value) && ~isscalar(xb.data(i).value)
         vars = [vars {xb.data(i).name}];
     end
 end
@@ -253,6 +257,17 @@ for i = 1:size(vars,1)
         
         if isnan(x); x = xb_get(xb, 'xfile'); end;
         if isnan(y); y = xb_get(xb, 'yfile'); end;
+        
+        has_grid = false;
+        if size(x,1) == size(data,1) && size(x,2) == size(data,2) && ...
+            size(y,1) == size(data,1) && size(y,2) == size(data,2) && ...
+            ~(isscalar(x) && isnan(x)) && ~(isscalar(y) && ~isnan(y))
+            has_grid = true;
+        end
+        
+        if strcmpi(var, 'xfile') || strcmpi(var, 'yfile')
+            has_grid = false;
+        end
 
         % plot data
         if min(size(data)) <= 3
@@ -268,7 +283,7 @@ for i = 1:size(vars,1)
             if length(sObj) >= i
                 set(sObj(i), 'YData', data, 'Color', colors(mod(i-1,length(colors))+1));
             else
-                if ~isnan(x)
+                if has_grid
                     plot(x(idx{:}), data, ['-' colors(mod(i-1,length(colors))+1)]);
                 else
                     plot(data, ['-' colors(mod(i-1,length(colors))+1)]);
@@ -280,10 +295,12 @@ for i = 1:size(vars,1)
             % 2D data
             if get(findobj(pObj, 'Tag', 'ToggleSurf'), 'Value')
                 sObj = findobj(findobj(pObj, 'Type', 'Axes'), 'Type', 'surface');
+                sObj = [];
+                
                 if length(sObj) >= i
-                    set(sObj(i), 'ZData', data);
+                    set(sObj(i), 'ZData', data, 'CData', data);
                 else
-                    if ~isnan(x) & ~isnan(y)
+                    if has_grid
                         surf(x, y, data);
                     else
                         surf(data);
@@ -291,10 +308,12 @@ for i = 1:size(vars,1)
                 end
             else
                 sObj = findobj(findobj(pObj, 'Type', 'Axes'), 'Type', 'surface');
+                sObj = [];
+                
                 if length(sObj) >= i
-                    set(sObj(i), 'CData', data);
+                    set(sObj(i), 'ZData', data, 'CData', data);
                 else
-                    if ~isnan(x) & ~isnan(y)
+                    if has_grid
                         pcolor(x, y, data);
                     else
                         pcolor(data);
