@@ -65,6 +65,7 @@ function varargout = plotMap(varargin)
    OPT.patch     = {'EdgeColor','none','LineStyle','-'};
    OPT.parameter = [];
    OPT.quiver    = 1;
+   OPT.layout    = 0;
 
    if nargin==0
       varargout = {OPT};
@@ -116,7 +117,7 @@ function varargout = plotMap(varargin)
 if isfield(G,'peri')
 
    if isempty(OPT.axis)
-      cen.mask = 1:G.cen.n;
+      cen.mask = 1:G.cen.n; % TO DO: chekc whether all surrounding corners are outside, instead of centers
    else
       cen.mask = inpolygon(G.cen.x,G.cen.y,OPT.axis.x,OPT.axis.y);
    end
@@ -133,10 +134,12 @@ if isfield(G,'peri')
 
 %% lay out !!!! before plotting patches: much faster !!!
 
-   hold on
-   axis equal
-   grid on
-   title(D.datestr)
+   if OPT.layout
+      hold on
+      axis equal
+      grid on
+      title(D.datestr)
+   end
 
 %% plot
 

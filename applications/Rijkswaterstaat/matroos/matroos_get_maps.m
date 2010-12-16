@@ -1,105 +1,138 @@
-function varargout = matroos_get_maps(input);
-%Download MATROOS data (December 2010)
-%Bram van Prooijen, Joris Vanlede, Gerben de Boer
+function [ lgrid,x,y,values ] = matroos_get_maps(unit,source,xmin,xmax,ymin,ymax,coordsys,currentTime);
+%MATROOS_GET_MAPS   TEST version
 %
-%MATROOS_GET_MAPS  retrieve maps from Rijkswaterstaat MATROOS database
+%   [ x,y,values ] = get_maps(unit,source,xmin,xmax,ymin,ymax,coordsys,currentTime);
 %
-% matlab wrapper for matroos url call /direct/get_series.php
-% on http://matroos.deltares.nl. You need a free password for this.
+% Example. waterlevel for entire dcsm domain
 %
-%note: in the present version, we use:
-%serverurl='http://matroos.deltares.nl:80//matroos/scripts/matroos.pl?';
-%this implies, that you are logged in already...
+% [x,y,wl]=get_maps('sep','csm8',-12.0,13.0,48.0.62.0,'wgs84','200802190000');
 %
-%  struct                 = matroos_get_series(<keyword,value>);
+% See also: matroos
+
+serverurl = matroos_server;
+
+%% available units, sources and locations 
+%  !!!! at 20080219 may change in the future, TODO read this data from the
+%  server
+
+sources =    {'csm8','zuno','kustfijn','zeedelta','ymo','waddenzee_atlas_oost', ...
+            'knmi_dcsm_maps', 'knmi_hirlam_maps', 'knmi_ukmo_maps'};
+
+%- unit    : A unit as known by Matroos.
+%            Examples: SEP (=waterlevel), VELU (=water velocity in x-direction),
+%            VELV (=water velocity in y-direction), RP (=salt), 
+%            VELUV_abs (=absolute waterspeed).
+%            For knmi_hirlam_maps: p, wind_u, wind_v and wind_uv_abs.
+%            For knmi_ukmo_maps  : p_msl, u_sfc, v_sfc and uv_sfc_abs.
 %
-% where the following <keyword,value> are defined:
-% REQUIRED matroos url keywords:
-% - source    : The source as known by Matroos (see MATROOS_LIST).
-% - xmin,xmax,ymin,ymax  : the corners of the area 
-% - coords    : coordinate system, e.g. 'RD'
-% - tstart    : First time for the timeseries in format YYYYMMDDHHMM.
-%               Any '-', <space>, or ':' will be ignored, so a format like 
-%               YYYY-MM-DD HH:MM will be accepted as well
-% - tstop     : Last time for the timeseries in the same format as tstart.
-% - field     : the required variables: 'H' for waterdepth, 'sep' for water
-% level, 'VELUV_abs' for absolute velocity.
-% 
-% see http://matroos.deltares.nl/maps/start/ for further options
+%coordsyss : The coordinate system in which x and y are given.
+%            Default: the same coordinate system as the model specified by 'source'.
+%            Examples: RD (='Rijksdriehoek'), ED50, MN (=m,n co-ordinates).
+%            or any epsg-code as epsg:<code>
+
 %
+%check input
 %
-% example input file:
-% source = 'kustfijn_astro';
-% xmin   = 130000;
-% xmax   = 170000;
-% ymin   = 570000;
-% ymax   = 600000;
-% coords = 'RD';
-% tstart = '200906300000'; %format YYYYMMDDHHMM
-% tstop  = '200907010000';
-% field  = {'H','sep','VELUV_abs'};
+isource = strmatch(source,sources);
+if(length(isource)==0), error('could not find source');end;
+source=strrep(source,' ','%20'); % %20=<space>
+
+fprintf('unit=%s\n',unit);
+fprintf('source=%s\n',source);
+fprintf('location=( x %f-%f, y %f-%f)\n',xmin,xmax,ymin,ymax);
+fprintf('coordinate system =%s\n',coordsys);
+fprintf('first time=%s\n',currentTime);
+
+%% get data from matroos
+
+urlChar = sprintf('%sunit=m,n,%s&source=%s&xmin=%f&xmax=%f&ymin=%f&ymax=%f&coordsys=%s&tstart=%s&tstop=%s', ...
+    serverurl,unit,source,xmin,xmax,ymin,ymax,coordsys,currentTime,currentTime);
+disp(urlChar);
+%eg
+%http://matroos.deltares.nl/direct/get_subgrid_ascii.php?source=csm8&unit=m,n,SEP&tstart=200802180000&tstop=200802180000&xmin=-12&xmax=13&ymin=48&ymax=62&coordsys=wgs84
+allLines = geturl(urlChar);
+
+%% parse 
+
+%skip header
+i=0;done=0;
+while((done==0)&(i<length(allLines))),
+    i=i+1;
+    done=(length(findstr(allLines{i},'#'))==0);
+end;
+
+%read allLines
+done=0;
+m(1) = 1;
+n(1) = 1;
+x(1) = NaN;
+y(1) = NaN;
+values(1) = NaN;
+pointIndex=2;
+while(i<length(allLines)),
+    line = allLines{i};
+    data = sscanf(line,'%f');
+    x(pointIndex) = data(1);
+    y(pointIndex) = data(2);
+    m(pointIndex) = data(3);
+    n(pointIndex) = data(4);
+    values(pointIndex) = data(5);
+    i=i+1;
+    pointIndex=pointIndex+1;
+end;
+
+% build matrices from vectors
+mmax=max(m);
+mmin=min(m);
+nmax=max(n);
+nmin=min(n);
+m = m - mmin + 1;
+n = n - nmin + 1;
+lgrid = ones(mmax-mmin+1,nmax-nmin+1);
+for i=2:length(m),
+    lgrid(m(i),n(i)) = i;
+end;
+values(values>900) = NaN;
+
+%% EOF
+
+%% 2010 feb 16
+http://matroos.deltares.nl:80//matroos/scripts/matroos.pl?
+source=csm8&
+anal=000000000000&
+z=0&
+xmin=-12.000000&
+xmax=13.000000&
+ymin=47.999180&
+ymax=62.332320&
+coords=WGS84&
+xmin_abs=&
+xmax_abs=13.0&
+ymin_abs=47.99918&
+ymax_abs=62.33232&
+color=H,SEP,VELU,VELUV_abs,VELV,XDEP,YDEP&
+
+interpolate=count&
+,
+
+interpolate=size&
+celly=&
+cellx=&
 
 
-%% ini
-serverurl='http://matroos.deltares.nl:80//matroos/scripts/matroos.pl?';
-formaat = 'nc';
-%% MATROOS URL's
+now=201002160000&
+to=200809070330&
+from=200809070330&
+outputformat=nc&
+stridetime=1&
 
-eval(input)
+stridex=&
+stridey=&
+xn=201&
+yn=173&
 
-%Samenstellen URL's
-for f=1:length(field)
-URL{f}=[serverurl ...
-        'source='        source ...
-        '&xmin='         num2str(xmin) ...
-        '&xmax='         num2str(xmax) ...
-        '&ymin='         num2str(ymin) ...
-        '&ymax='         num2str(ymax) ...
-        '&coords='       coords ...
-        '&color='        field{f} ...
-        '&interpolate=count' ...
-        '&from='         tstart ...
-        '&to='           tstop ...
-        '&outputformat=' formaat...
-        '&xn='           ...
-        '&yn='           ...
-        '&celly=&cellx=' ...
-        '&fieldoutput='  field{f} ...
-        '&format='       formaat];
-end
+fieldoutput=H,SEP,VELU,VELUV_abs,VELV,XDEP,YDEP&
 
-%% Retrieve Data
-disp('*** Start Data Retrieval')
-for f=1:length(field)
-    %filename
-    datafile{f}=['VLIE_' field{f} '_' num2str(tstart) '_' num2str(tstop) '_' coords '.nc'];
-    
-    %retrieve data
-    urlwrite(URL{f},datafile{f});
-    
-    %verbose
-    disp(['*** Retrieved dataset ' datafile{f}])
-end
-disp('*** End Data Retrieval')
-
-%% Make one datastructure
-FLOW.x=nc_varget(datafile{1},'x');
-FLOW.y=nc_varget(datafile{1},'y');
-
-for f=1:length(field)
-    switch field{f}
-        case 'H'
-            FLOW.H=nc_varget(datafile{f},'H');
-            FLOW.comment{f}='H is the depth in [m]';
-        case 'sep'
-            FLOW.sep=nc_varget(datafile{f},'sep');
-            FLOW.time_sep=double(nc_varget(datafile{f},'time'))/1440+datenum('01-Jan-1970 00:00:00');
-            FLOW.comment{f}='sep is the waterlevel in [m]';
-        case 'VELUV_abs'
-            FLOW.VELUV_abs=nc_varget(datafile{3},'VELUV_abs');
-            FLOW.time_VELUV_abs=double(nc_varget(datafile{f},'time'))/1440+datenum('01-Jan-1970 00:00:00');
-            FLOW.comment{f}='VELUV_abs is the absolute velocity in [m/s]';
-    end
-end
-
-varargout       = {FLOW};
+format=nc
+,
+format=txt % will give ndump

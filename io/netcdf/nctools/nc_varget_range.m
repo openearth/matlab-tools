@@ -3,12 +3,14 @@ function varargout=nc_varget_range(ncfile,varname,lim,varargin)
 %
 % NC_VARGET_RANGE finds a contigous subset in a coordinate vector
 % based on two limits. This speeds up for intance the request of a 
-% subset of a long time series. For time variables make sure var_range
-% has units of datenum.
+% subset of a long time series (for small vectors it is slower). For 
+% time variables make sure var_range has units of datenum, as time 
+% variables are automatically converted to datenums (keyword default time=[]).
 %
-%   val              = nc_varget_range(ncfile,'varname',var_range);
-%  [val,ind]         = nc_varget_range(...)
-%  [val,start,count] = nc_varget_range(...)
+%   val                   = nc_varget_range(ncfile,'varname',var_range,<keyword,value>);
+%  [val,ind]              = nc_varget_range(...)
+%  [val,start,count]      = nc_varget_range(...)
+%  [val,start,count,zone] = nc_varget_range(...) % when variable is a time
 %
 % Example:
 %   
@@ -67,7 +69,7 @@ function varargout=nc_varget_range(ncfile,varname,lim,varargin)
 
 OPT.chunksize = 1000;
 OPT.debug     = 0;
-OPT.dstride   = 3; % step with which to reduce stride after every iteratio loop 
+OPT.dstride   = 3; % step with which to reduce stride after every iteration loop 
 OPT.time      = []; % overruled by standard_name time if empty
 
 if nargin==0
@@ -80,7 +82,7 @@ OPT = setproperty(OPT,varargin{:});
 OPT.lim       = lim; % [datenum(1950,1,2,2,40,0) datenum(1950,1,2,2,40,0)];
 meta          = nc_getdiminfo(ncfile,varname); % nc_getvarinfo
 n1            = meta.Length;
-di            = max(ceil(n1/OPT.chunksize),1); % max is there is isinf(chunksize)
+di            = max(ceil(n1/OPT.chunksize),1); % max as there is isinf(chunksize)
 chunk         = [1:di:n1];
 
 try
@@ -183,5 +185,5 @@ elseif nargout==2
 elseif nargout==3
    varargout = {t,start,count};
 elseif nargout==4
-    varargout = {t,start,count,zone};
+   varargout = {t,start,count,zone};
 end

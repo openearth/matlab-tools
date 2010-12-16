@@ -11,6 +11,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 % M       = the metadata struct (attributes)
 % varname = the variable name to be extracted (must have dimension time)
 %           When varname is not supplied, a dialog box is offered.
+%           when 'standard_name'==time, it is converted to datenum
 %
 % A stationTimeSeries netCDF file is defined in
 %   <a href="https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions">https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions</a>
