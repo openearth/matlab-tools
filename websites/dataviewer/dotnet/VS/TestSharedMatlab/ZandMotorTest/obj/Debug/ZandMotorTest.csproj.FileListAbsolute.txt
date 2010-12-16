@@ -1,9 +1,0 @@
-D:\Projects\1002637 - Building with Nature\dotNet OET\VS\TestSharedMatlab\ZandMotorTest\bin\Debug\ZandMotorTest.exe
-D:\Projects\1002637 - Building with Nature\dotNet OET\VS\TestSharedMatlab\ZandMotorTest\bin\Debug\ZandMotorTest.pdb
-D:\Projects\1002637 - Building with Nature\dotNet OET\VS\TestSharedMatlab\ZandMotorTest\bin\Debug\ZandMotor.dll
-D:\Projects\1002637 - Building with Nature\dotNet OET\VS\TestSharedMatlab\ZandMotorTest\obj\Debug\ResolveAssemblyReference.cache
-D:\Projects\1002637 - Building with Nature\dotNet OET\VS\TestSharedMatlab\ZandMotorTest\obj\Debug\ZandMotorTest.Form1.resources
-D:\Projects\1002637 - Building with Nature\dotNet OET\VS\TestSharedMatlab\ZandMotorTest\obj\Debug\ZandMotorTest.Properties.Resources.resources
-D:\Projects\1002637 - Building with Nature\dotNet OET\VS\TestSharedMatlab\ZandMotorTest\obj\Debug\ZandMotorTest.csproj.GenerateResource.Cache
-D:\Projects\1002637 - Building with Nature\dotNet OET\VS\TestSharedMatlab\ZandMotorTest\obj\Debug\ZandMotorTest.exe
-D:\Projects\1002637 - Building with Nature\dotNet OET\VS\TestSharedMatlab\ZandMotorTest\obj\Debug\ZandMotorTest.pdb
