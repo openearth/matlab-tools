@@ -120,18 +120,6 @@ if OPT.rotate && ~isvector(z_w)
     end
 end
 
-%% rectangalize grid
-
-% crop grid
-if ~islogical(OPT.crop) && isvector(OPT.crop)
-    [x_r y_r z_w] = xb_grid_crop(x_r, y_r, z_w, 'crop', OPT.crop);
-elseif OPT.crop
-    [x_r y_r z_w] = xb_grid_crop(x_r, y_r, z_w);
-end
-
-% interpolate nan's
-%z_w(isnan(z_w)) = xb_grid_interpolate(x_r, y_r, z_w, x_r(isnan(z_w)), y_r(isnan(z_w)));
-
 %% determine representative cross-section
 
 if isvector(z_w)
@@ -143,6 +131,13 @@ else
     % determine resolution and extent
     [cellsize xmin xmax ymin ymax] = xb_grid_resolution(x_r, y_r);
     
+    % crop grid
+    if ~islogical(OPT.crop) && isvector(OPT.crop)
+        [xmin xmax ymin ymax] = xb_grid_crop(x_r, y_r, z_w, 'crop', OPT.crop);
+    elseif OPT.crop
+        [xmin xmax ymin ymax] = xb_grid_crop(x_r, y_r, z_w);
+    end
+
     % create dummy grid
     x_d = xmin:cellsize:xmax;
     y_d = ymin:cellsize:ymax;
@@ -181,6 +176,18 @@ else
     
     % interpolate elevation data to xbeach grid
     zgrid = interp2(x_w, y_w, z_w, x_xb_w, y_xb_w);
+end
+
+% interpolate nan's
+for i = 1:size(zgrid, 1)
+    notnan = ~isnan(zgrid(i,:));
+    zgrid(i,~notnan) = interp1(xgrid(i,notnan), zgrid(i,notnan), xgrid(i,~notnan));
+    
+    j = find(~isnan(zgrid(i,:)), 1, 'first');
+    if j > 1; zgrid(i,1:j-1) = zgrid(i,j); end;
+    
+    j = find(~isnan(zgrid(i,:)), 1, 'last');
+    if j < size(zgrid, 2); zgrid(i,j+1:end) = zgrid(i,j); end;
 end
 
 % determine size

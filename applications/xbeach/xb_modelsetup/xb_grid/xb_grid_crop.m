@@ -1,4 +1,4 @@
-function [x y z] = xb_grid_crop(x, y, z, varargin)
+function [xmin xmax ymin ymax] = xb_grid_crop(x, y, z, varargin)
 %XB_GRID_CROP  One line description goes here.
 %
 %   More detailed description goes here.
@@ -69,23 +69,47 @@ OPT = setproperty(OPT, varargin{:});
 %% determine crop position
 
 if isempty(OPT.crop)
-    % TODO: auto crop
+    OPT.crop = [0 0 Inf Inf];
     
     n = ~isnan(z);
     
-    OPT.crop = [0 0 Inf Inf];
+    [cellsize xmin xmax] = xb_grid_resolution(x, y, 'maxsize', 100*1024);
+    
+    S_max = 0;
+    for x1 = xmin:cellsize:xmax
+        i = x>=x1&x<x1+cellsize&n;
+        
+        if ~any(any(i)); continue; end;
+        
+        y1 = min(y(i));
+        y2 = max(y(i));
+        
+        j1 = y>=y1&y<y1+cellsize&n;
+        j2 = y>=y2&y<y2+cellsize&n;
+        
+        if ~any(any(j1)) || ~any(any(j2)); continue; end;
+        
+        x2 = min([max(x(j1)) max(x(j2))]);
+        
+        x0 = min([x1 x2]);
+        y0 = min([y1 y2]);
+        w = abs(diff([x1 x2]));
+        h = abs(diff([y1 y2]));
+        
+        % calculate number of non-nan's in selection
+        S = sum(sum(x>=x0&x<x0+w&y>=y0&y<=y0+h&n));
+        
+        if S > S_max
+            S_max = S;
+            OPT.crop = [x0 y0 w h];
+        end
+    end
 end
 
 %% crop grid
 
-x0 = OPT.crop(1);
-y0 = OPT.crop(2);
-w = OPT.crop(3);
-h = OPT.crop(4);
+xmin = OPT.crop(1);
+ymin = OPT.crop(2);
+xmax = OPT.crop(1)+OPT.crop(3);
+ymax = OPT.crop(2)+OPT.crop(4);
 
-i = any(y>=y0&y<=y0+h, 2);
-j = any(x>=x0&x<=x0+w, 1);
-
-x = x(i,j);
-y = y(i,j);
-z = z(i,j);
