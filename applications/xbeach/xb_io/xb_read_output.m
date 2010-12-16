@@ -72,11 +72,7 @@ function variables = xb_read_output(fname, varargin)
 
 % extract path, if xbeach structure is supplied
 if xb_check(fname)
-    if ischar(fname.file)
-        fname = fname.file;
-    else
-        fname = xb_get(fname, 'path');
-    end
+    fname = fileparts(xb_get(fname, 'path'));
 end
 
 if ~exist(fname, 'file')
