@@ -106,8 +106,9 @@ info = struct();
 % get time
 if xb_exist(xb, 'DIMS')
     info.t = xb_get(xb,'DIMS.tsglobal');
-else
-    % input struct
+end
+
+if ~isfield(info, 't') || info.t(1) >= info.t(end)
     info.t = [0 1];
 end
 
