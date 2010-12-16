@@ -21,7 +21,7 @@ switch ( mv )
     case { '11', '12' };
 		error('Not supported on releases below R13.');
 
-    case { '13', '14', '2006a', '2006b', '2007a', '2007b', '2008a' }
+    case { '13', '14', '2006a', '2006b', '2007a', '2007b', '2008a', '2008b', '2009a', '2009b', '2010a'}
         p = computer;
         if strcmp(p,'PCWIN64')
             if strcmp(fmt,'HDF4')
