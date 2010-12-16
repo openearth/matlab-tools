@@ -9,11 +9,13 @@
             The BwnFunctions class provides a CLS compliant, MWArray interface to the
             M-functions contained in the files:
             <newpara></newpara>
-            D:\Projects\1002637 - Building with Nature\TempCompile\Initialize.m
+            F:\OpenEarthTools\matlab\websites\dataviewer\dotnet\BwnFunctions2DotNET\Initialize.m
             <newpara></newpara>
-            D:\Projects\1002637 - Building with Nature\TempCompile\InterpolateToLine.m
+            F:\OpenEarthTools\matlab\websites\dataviewer\dotnet\BwnFunctions2DotNET\InterpolateT
+            oLine.m
             <newpara></newpara>
-            D:\Projects\1002637 - Building with Nature\TempCompile\PlotTimeSeries.m
+            F:\OpenEarthTools\matlab\websites\dataviewer\dotnet\BwnFunctions2DotNET\PlotTimeSeri
+            es.m
             <newpara></newpara>
             deployprint.m
             <newpara></newpara>
@@ -303,7 +305,8 @@
              </summary>
              <remarks>
              M-Documentation:
-             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+             outputDir)
              with startTime and stopTime optional time strings:
              (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
              </remarks>
@@ -317,7 +320,8 @@
              </summary>
              <remarks>
              M-Documentation:
-             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+             outputDir)
              with startTime and stopTime optional time strings:
              (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
              </remarks>
@@ -332,7 +336,8 @@
              </summary>
              <remarks>
              M-Documentation:
-             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+             outputDir)
              with startTime and stopTime optional time strings:
              (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
              </remarks>
@@ -341,21 +346,61 @@
              <returns>An MWArray containing the first output argument.</returns>
             
         </member>
-        <member name="M:BwnFunctions.BwnFunctions.PlotTimeSeries(MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray[])">
+        <member name="M:BwnFunctions.BwnFunctions.PlotTimeSeries(MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
              <summary>
              Provides a single output, 3-input MWArrayinterface to the PlotTimeSeries
              M-function.
              </summary>
              <remarks>
              M-Documentation:
-             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+             outputDir)
              with startTime and stopTime optional time strings:
              (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
              </remarks>
              <param name="ncfile">Input argument #1</param>
              <param name="ncVariable">Input argument #2</param>
-             <param name="varargin">Array of MWArrays representing the input arguments 3
-             through varargin.length+2</param>
+             <param name="startTime">Input argument #3</param>
+             <returns>An MWArray containing the first output argument.</returns>
+            
+        </member>
+        <member name="M:BwnFunctions.BwnFunctions.PlotTimeSeries(MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
+             <summary>
+             Provides a single output, 4-input MWArrayinterface to the PlotTimeSeries
+             M-function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+             outputDir)
+             with startTime and stopTime optional time strings:
+             (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
+             </remarks>
+             <param name="ncfile">Input argument #1</param>
+             <param name="ncVariable">Input argument #2</param>
+             <param name="startTime">Input argument #3</param>
+             <param name="stopTime">Input argument #4</param>
+             <returns>An MWArray containing the first output argument.</returns>
+            
+        </member>
+        <member name="M:BwnFunctions.BwnFunctions.PlotTimeSeries(MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray[])">
+             <summary>
+             Provides a single output, 5-input MWArrayinterface to the PlotTimeSeries
+             M-function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+             outputDir)
+             with startTime and stopTime optional time strings:
+             (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
+             </remarks>
+             <param name="ncfile">Input argument #1</param>
+             <param name="ncVariable">Input argument #2</param>
+             <param name="startTime">Input argument #3</param>
+             <param name="stopTime">Input argument #4</param>
+             <param name="varargin">Array of MWArrays representing the input arguments 5
+             through varargin.length+4</param>
              <returns>An MWArray containing the first output argument.</returns>
             
         </member>
@@ -365,7 +410,8 @@
              </summary>
              <remarks>
              M-Documentation:
-             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+             outputDir)
              with startTime and stopTime optional time strings:
              (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
              </remarks>
@@ -380,7 +426,8 @@
              </summary>
              <remarks>
              M-Documentation:
-             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+             outputDir)
              with startTime and stopTime optional time strings:
              (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
              </remarks>
@@ -396,7 +443,8 @@
              </summary>
              <remarks>
              M-Documentation:
-             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+             outputDir)
              with startTime and stopTime optional time strings:
              (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
              </remarks>
@@ -407,21 +455,63 @@
              arguments.</returns>
             
         </member>
-        <member name="M:BwnFunctions.BwnFunctions.PlotTimeSeries(System.Int32,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray[])">
+        <member name="M:BwnFunctions.BwnFunctions.PlotTimeSeries(System.Int32,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
              <summary>
              Provides the standard 3-input MWArray interface to the PlotTimeSeries M-function.
              </summary>
              <remarks>
              M-Documentation:
-             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+             outputDir)
              with startTime and stopTime optional time strings:
              (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
              </remarks>
              <param name="numArgsOut">The number of output arguments to return.</param>
              <param name="ncfile">Input argument #1</param>
              <param name="ncVariable">Input argument #2</param>
-             <param name="varargin">Array of MWArrays representing the input arguments 3
-             through varargin.length+2</param>
+             <param name="startTime">Input argument #3</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:BwnFunctions.BwnFunctions.PlotTimeSeries(System.Int32,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray)">
+             <summary>
+             Provides the standard 4-input MWArray interface to the PlotTimeSeries M-function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+             outputDir)
+             with startTime and stopTime optional time strings:
+             (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <param name="ncfile">Input argument #1</param>
+             <param name="ncVariable">Input argument #2</param>
+             <param name="startTime">Input argument #3</param>
+             <param name="stopTime">Input argument #4</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:BwnFunctions.BwnFunctions.PlotTimeSeries(System.Int32,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray,MathWorks.MATLAB.NET.Arrays.MWArray[])">
+             <summary>
+             Provides the standard 5-input MWArray interface to the PlotTimeSeries M-function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+             outputDir)
+             with startTime and stopTime optional time strings:
+             (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <param name="ncfile">Input argument #1</param>
+             <param name="ncVariable">Input argument #2</param>
+             <param name="startTime">Input argument #3</param>
+             <param name="stopTime">Input argument #4</param>
+             <param name="varargin">Array of MWArrays representing the input arguments 5
+             through varargin.length+4</param>
              <returns>An Array of length "numArgsOut" containing the output
              arguments.</returns>
             
@@ -436,7 +526,8 @@
              This method will allocate and return by reference the output argument
              array.<newpara></newpara>
              M-Documentation:
-             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+             function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+             outputDir)
              with startTime and stopTime optional time strings:
              (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
              </remarks>

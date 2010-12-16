@@ -1,11 +1,11 @@
-function outputPng = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
-% function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+function outputPng = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,varargin)
+% function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime, outputDir)
 %
 % with startTime and stopTime optional time strings:
 % (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
 %
 
-outputPng = generateoutputpngname;
+outputPng = generateoutputpngname(varargin{:});
 
 %% Plot time series
 try

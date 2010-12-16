@@ -1,16 +1,17 @@
 /*
 * MATLAB Compiler: 4.14 (R2010b)
-* Date: Mon Dec 06 15:51:15 2010
+* Date: Thu Dec 16 10:45:11 2010
 * Arguments: "-B" "macro_default" "-W"
-* "dotnet:BwnFunctions,BwnFunctions,2.0,D:\Projects\1002637 - Building with
-* Nature\TempCompile\Interpolate.snk" "-T" "link:lib" "-d" "D:\Projects\1002637 -
-* Building with Nature\TempCompile\BwnFunctions\src" "-N" "-w"
-* "enable:specified_file_mismatch" "-w" "enable:repeated_file" "-w"
+* "dotnet:BwnFunctions,BwnFunctions,2.0,F:\OpenEarthTools\matlab\websites\dataviewer\dotne
+* t\BwnFunctions2DotNET\Interpolate.snk" "-T" "link:lib" "-d"
+* "F:\OpenEarthTools\matlab\websites\dataviewer\dotnet\BwnFunctions2DotNET\BwnFunctions\sr
+* c" "-N" "-w" "enable:specified_file_mismatch" "-w" "enable:repeated_file" "-w"
 * "enable:switch_ignored" "-w" "enable:missing_lib_sentinel" "-w" "enable:demo_license"
-* "-v" "class{BwnFunctions:D:\Projects\1002637 - Building with
-* Nature\TempCompile\Initialize.m,D:\Projects\1002637 - Building with
-* Nature\TempCompile\InterpolateToLine.m,D:\Projects\1002637 - Building with
-* Nature\TempCompile\PlotTimeSeries.m}" "-a"
+* "-v"
+* "class{BwnFunctions:F:\OpenEarthTools\matlab\websites\dataviewer\dotnet\BwnFunctions2Dot
+* NET\Initialize.m,F:\OpenEarthTools\matlab\websites\dataviewer\dotnet\BwnFunctions2DotNET
+* \InterpolateToLine.m,F:\OpenEarthTools\matlab\websites\dataviewer\dotnet\BwnFunctions2Do
+* tNET\PlotTimeSeries.m}" "-a"
 * "F:\OpenEarthTools\matlab\applications\SuperTrans\data\EPSG.mat" 
 */
 using System;
@@ -20,7 +21,7 @@ using MathWorks.MATLAB.NET.Arrays;
 using MathWorks.MATLAB.NET.Utility;
 
 #if SHARED
-[assembly: System.Reflection.AssemblyKeyFile(@"D:\Projects\1002637 - Building with Nature\TempCompile\Interpolate.snk")]
+[assembly: System.Reflection.AssemblyKeyFile(@"F:\OpenEarthTools\matlab\websites\dataviewer\dotnet\BwnFunctions2DotNET\Interpolate.snk")]
 #endif
 
 namespace BwnFunctionsNative
@@ -29,11 +30,13 @@ namespace BwnFunctionsNative
   /// The BwnFunctions class provides a CLS compliant, Object (native) interface to the
   /// M-functions contained in the files:
   /// <newpara></newpara>
-  /// D:\Projects\1002637 - Building with Nature\TempCompile\Initialize.m
+  /// F:\OpenEarthTools\matlab\websites\dataviewer\dotnet\BwnFunctions2DotNET\Initialize.m
   /// <newpara></newpara>
-  /// D:\Projects\1002637 - Building with Nature\TempCompile\InterpolateToLine.m
+  /// F:\OpenEarthTools\matlab\websites\dataviewer\dotnet\BwnFunctions2DotNET\InterpolateT
+  /// oLine.m
   /// <newpara></newpara>
-  /// D:\Projects\1002637 - Building with Nature\TempCompile\PlotTimeSeries.m
+  /// F:\OpenEarthTools\matlab\websites\dataviewer\dotnet\BwnFunctions2DotNET\PlotTimeSeri
+  /// es.m
   /// <newpara></newpara>
   /// deployprint.m
   /// <newpara></newpara>
@@ -450,7 +453,8 @@ namespace BwnFunctionsNative
     /// </summary>
     /// <remarks>
     /// M-Documentation:
-    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+    /// outputDir)
     /// with startTime and stopTime optional time strings:
     /// (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
     /// </remarks>
@@ -468,7 +472,8 @@ namespace BwnFunctionsNative
     /// </summary>
     /// <remarks>
     /// M-Documentation:
-    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+    /// outputDir)
     /// with startTime and stopTime optional time strings:
     /// (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
     /// </remarks>
@@ -487,7 +492,8 @@ namespace BwnFunctionsNative
     /// </summary>
     /// <remarks>
     /// M-Documentation:
-    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+    /// outputDir)
     /// with startTime and stopTime optional time strings:
     /// (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
     /// </remarks>
@@ -507,20 +513,69 @@ namespace BwnFunctionsNative
     /// </summary>
     /// <remarks>
     /// M-Documentation:
-    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+    /// outputDir)
     /// with startTime and stopTime optional time strings:
     /// (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
     /// </remarks>
     /// <param name="ncfile">Input argument #1</param>
     /// <param name="ncVariable">Input argument #2</param>
-    /// <param name="varargin">Array of Objects representing the input arguments 3
-    /// through varargin.length+2</param>
+    /// <param name="startTime">Input argument #3</param>
     /// <returns>An Object containing the first output argument.</returns>
     ///
-    public Object PlotTimeSeries(Object ncfile, Object ncVariable, params Object[] 
-                           varargin)
+    public Object PlotTimeSeries(Object ncfile, Object ncVariable, Object startTime)
     {
-      Object[] argsIn= {ncfile, ncVariable, varargin};
+      return mcr.EvaluateFunction("PlotTimeSeries", ncfile, ncVariable, startTime);
+    }
+
+
+    /// <summary>
+    /// Provides a single output, 4-input Objectinterface to the PlotTimeSeries
+    /// M-function.
+    /// </summary>
+    /// <remarks>
+    /// M-Documentation:
+    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+    /// outputDir)
+    /// with startTime and stopTime optional time strings:
+    /// (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
+    /// </remarks>
+    /// <param name="ncfile">Input argument #1</param>
+    /// <param name="ncVariable">Input argument #2</param>
+    /// <param name="startTime">Input argument #3</param>
+    /// <param name="stopTime">Input argument #4</param>
+    /// <returns>An Object containing the first output argument.</returns>
+    ///
+    public Object PlotTimeSeries(Object ncfile, Object ncVariable, Object startTime, 
+                           Object stopTime)
+    {
+      return mcr.EvaluateFunction("PlotTimeSeries", ncfile, ncVariable, startTime, stopTime);
+    }
+
+
+    /// <summary>
+    /// Provides a single output, 5-input Objectinterface to the PlotTimeSeries
+    /// M-function.
+    /// </summary>
+    /// <remarks>
+    /// M-Documentation:
+    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+    /// outputDir)
+    /// with startTime and stopTime optional time strings:
+    /// (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
+    /// </remarks>
+    /// <param name="ncfile">Input argument #1</param>
+    /// <param name="ncVariable">Input argument #2</param>
+    /// <param name="startTime">Input argument #3</param>
+    /// <param name="stopTime">Input argument #4</param>
+    /// <param name="varargin">Array of Objects representing the input arguments 5
+    /// through varargin.length+4</param>
+    /// <returns>An Object containing the first output argument.</returns>
+    ///
+    public Object PlotTimeSeries(Object ncfile, Object ncVariable, Object startTime, 
+                           Object stopTime, params Object[] varargin)
+    {
+      Object[] argsIn= {ncfile, ncVariable, startTime, stopTime, varargin};
 
       return mcr.EvaluateFunction("PlotTimeSeries", argsIn);
     }
@@ -531,7 +586,8 @@ namespace BwnFunctionsNative
     /// </summary>
     /// <remarks>
     /// M-Documentation:
-    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+    /// outputDir)
     /// with startTime and stopTime optional time strings:
     /// (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
     /// </remarks>
@@ -550,7 +606,8 @@ namespace BwnFunctionsNative
     /// </summary>
     /// <remarks>
     /// M-Documentation:
-    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+    /// outputDir)
     /// with startTime and stopTime optional time strings:
     /// (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
     /// </remarks>
@@ -570,7 +627,8 @@ namespace BwnFunctionsNative
     /// </summary>
     /// <remarks>
     /// M-Documentation:
-    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+    /// outputDir)
     /// with startTime and stopTime optional time strings:
     /// (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
     /// </remarks>
@@ -591,22 +649,74 @@ namespace BwnFunctionsNative
     /// </summary>
     /// <remarks>
     /// M-Documentation:
-    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime)
+    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+    /// outputDir)
     /// with startTime and stopTime optional time strings:
     /// (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
     /// </remarks>
     /// <param name="numArgsOut">The number of output arguments to return.</param>
     /// <param name="ncfile">Input argument #1</param>
     /// <param name="ncVariable">Input argument #2</param>
-    /// <param name="varargin">Array of Objects representing the input arguments 3
-    /// through varargin.length+2</param>
+    /// <param name="startTime">Input argument #3</param>
     /// <returns>An Array of length "numArgsOut" containing the output
     /// arguments.</returns>
     ///
     public Object[] PlotTimeSeries(int numArgsOut, Object ncfile, Object ncVariable, 
-                             params Object[] varargin)
+                             Object startTime)
     {
-      Object[] argsIn= {ncfile, ncVariable, varargin};
+      return mcr.EvaluateFunction(numArgsOut, "PlotTimeSeries", ncfile, ncVariable, startTime);
+    }
+
+
+    /// <summary>
+    /// Provides the standard 4-input Object interface to the PlotTimeSeries M-function.
+    /// </summary>
+    /// <remarks>
+    /// M-Documentation:
+    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+    /// outputDir)
+    /// with startTime and stopTime optional time strings:
+    /// (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
+    /// </remarks>
+    /// <param name="numArgsOut">The number of output arguments to return.</param>
+    /// <param name="ncfile">Input argument #1</param>
+    /// <param name="ncVariable">Input argument #2</param>
+    /// <param name="startTime">Input argument #3</param>
+    /// <param name="stopTime">Input argument #4</param>
+    /// <returns>An Array of length "numArgsOut" containing the output
+    /// arguments.</returns>
+    ///
+    public Object[] PlotTimeSeries(int numArgsOut, Object ncfile, Object ncVariable, 
+                             Object startTime, Object stopTime)
+    {
+      return mcr.EvaluateFunction(numArgsOut, "PlotTimeSeries", ncfile, ncVariable, startTime, stopTime);
+    }
+
+
+    /// <summary>
+    /// Provides the standard 5-input Object interface to the PlotTimeSeries M-function.
+    /// </summary>
+    /// <remarks>
+    /// M-Documentation:
+    /// function [output] = PlotTimeSeries(ncfile,ncVariable, startTime, stopTime,
+    /// outputDir)
+    /// with startTime and stopTime optional time strings:
+    /// (ISO 8601)  'yyyymmddTHHMMSS'        20000301T154517
+    /// </remarks>
+    /// <param name="numArgsOut">The number of output arguments to return.</param>
+    /// <param name="ncfile">Input argument #1</param>
+    /// <param name="ncVariable">Input argument #2</param>
+    /// <param name="startTime">Input argument #3</param>
+    /// <param name="stopTime">Input argument #4</param>
+    /// <param name="varargin">Array of Objects representing the input arguments 5
+    /// through varargin.length+4</param>
+    /// <returns>An Array of length "numArgsOut" containing the output
+    /// arguments.</returns>
+    ///
+    public Object[] PlotTimeSeries(int numArgsOut, Object ncfile, Object ncVariable, 
+                             Object startTime, Object stopTime, params Object[] varargin)
+    {
+      Object[] argsIn= {ncfile, ncVariable, startTime, stopTime, varargin};
 
       return mcr.EvaluateFunction(numArgsOut, "PlotTimeSeries", argsIn);
     }

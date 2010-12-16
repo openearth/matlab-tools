@@ -55,7 +55,9 @@ ncFile = 'http://opendap.deltares.nl/thredds/dodsC/opendap/knmi/etmgeg/etmgeg_34
 ncVariable = 'wind_speed_mean';
 startTime = '20100101T000000';
 stopTime = '20100201T000000';
-
-outputPng = PlotTimeSeries(ncFile,ncVariable,startTime,stopTime);
-
+outputdir = cd;
+outputPng = PlotTimeSeries(ncFile,ncVariable,startTime,stopTime,outputdir);
+assert(strcmp(fileparts(outputPng),strrep(outputdir,'/',filesep)));
 assert(exist(outputPng,'file')==2);
+
+delete(outputPng);

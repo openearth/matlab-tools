@@ -57,9 +57,14 @@ function outputPng = generateoutputpngname(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% Construct name at correct output location
 [outPath name] = fileparts(tempname);
 if nargin > 0
     outPath = varargin{1};
 end
 outputPng = fullfile(outPath,[name '.png']);
+
+%% Delete any existing file with the same temp name
+if exist(outputPng,'file')
+    delete(outputPng);
+end
