@@ -32,7 +32,7 @@
   <ItemGroup>
     <Reference Include="BwnFunctions, Version=0.0.0.0, Culture=neutral, PublicKeyToken=16db7225d56ea59f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\TempCompile\BwnFunctions\distrib\BwnFunctions.dll</HintPath>
+      <HintPath>..\..\..\BwnFunctions2DotNET\BwnFunctions\distrib\BwnFunctions.dll</HintPath>
     </Reference>
     <Reference Include="MWArray, Version=2.10.1.0, Culture=neutral, PublicKeyToken=e1d84a0da19db86f, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>

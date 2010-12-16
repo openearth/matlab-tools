@@ -41,10 +41,11 @@ namespace BwnMatLab
         }
 
         [WebMethod]
-        public string PlotTimeSeries(string ncFilePath, string ncVariableName)
+        public string PlotTimeSeries(string ncFilePath, string ncVariableName, string startTime, string stopTime)
         {
-            var fullFilePath =libraryInitializor.PlotTimeSeries(ncFilePath,ncVariableName, 
-                outputPath).ToString();
+            var fullFilePath =libraryInitializor.PlotTimeSeries(
+                ncFilePath,ncVariableName,startTime,stopTime,outputPath)
+                .ToString();
             return OutputDir + Path.GetFileName(fullFilePath);
         }
 
@@ -54,6 +55,8 @@ namespace BwnMatLab
             {
                 libraryInitializor.Dispose();
             }
+            // todo: remove all temp files in output dir
+            
             base.Dispose(disposing);
         }
     }

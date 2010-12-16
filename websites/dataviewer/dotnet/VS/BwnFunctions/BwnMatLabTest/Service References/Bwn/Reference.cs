@@ -135,12 +135,20 @@ namespace BwnMatLabTest.Bwn {
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
         public string ncVariableName;
         
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=2)]
+        public string startTime;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=3)]
+        public string stopTime;
+        
         public PlotTimeSeriesRequestBody() {
         }
         
-        public PlotTimeSeriesRequestBody(string ncFilePath, string ncVariableName) {
+        public PlotTimeSeriesRequestBody(string ncFilePath, string ncVariableName, string startTime, string stopTime) {
             this.ncFilePath = ncFilePath;
             this.ncVariableName = ncVariableName;
+            this.startTime = startTime;
+            this.stopTime = stopTime;
         }
     }
     
@@ -226,11 +234,13 @@ namespace BwnMatLabTest.Bwn {
             return base.Channel.PlotTimeSeries(request);
         }
         
-        public string PlotTimeSeries(string ncFilePath, string ncVariableName) {
+        public string PlotTimeSeries(string ncFilePath, string ncVariableName, string startTime, string stopTime) {
             BwnMatLabTest.Bwn.PlotTimeSeriesRequest inValue = new BwnMatLabTest.Bwn.PlotTimeSeriesRequest();
             inValue.Body = new BwnMatLabTest.Bwn.PlotTimeSeriesRequestBody();
             inValue.Body.ncFilePath = ncFilePath;
             inValue.Body.ncVariableName = ncVariableName;
+            inValue.Body.startTime = startTime;
+            inValue.Body.stopTime = stopTime;
             BwnMatLabTest.Bwn.PlotTimeSeriesResponse retVal = ((BwnMatLabTest.Bwn.BwnFunctionsWrapperSoap)(this)).PlotTimeSeries(inValue);
             return retVal.Body.PlotTimeSeriesResult;
         }

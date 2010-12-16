@@ -36,8 +36,10 @@ namespace BwnMatLabTest
         {
             var ncFile = "http://opendap.deltares.nl/thredds/dodsC/opendap/knmi/etmgeg/etmgeg_344.nc";
             var ncVariable = "wind_speed_mean";
+            var startTime = "20100101T000000";
+            var stopTime = "20100201T000000";
             var soapClient = new BwnFunctionsWrapperSoapClient();
-            var imageName = soapClient.PlotTimeSeries(ncFile, ncVariable);
+            var imageName = soapClient.PlotTimeSeries(ncFile, ncVariable,startTime,stopTime);
             pictureBox1.Image = LoadPicture("http://" + soapClient.Endpoint.Address.Uri.Authority + imageName);
         }
 
