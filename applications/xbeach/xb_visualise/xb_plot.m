@@ -266,7 +266,7 @@ for i = 1:size(vars,1)
             has_grid = true;
         end
         
-        if strcmpi(var, 'xfile') || strcmpi(var, 'yfile')
+        if any(strcmpi(var, {'x', 'y', 'xfile', 'yfile'}))
             has_grid = false;
         end
 
@@ -281,8 +281,15 @@ for i = 1:size(vars,1)
 
             % 1D data
             sObj = findobj(findobj(pObj, 'Type', 'Axes'), 'Type', 'line');
+            
             if length(sObj) >= i
-                set(sObj(i), 'YData', data, 'Color', colors(mod(i-1,length(colors))+1));
+                if has_grid
+                    xdata = x(idx{:});
+                else
+                    xdata = 1:length(data);
+                end
+                
+                set(sObj(i), 'XData', xdata, 'YData', data, 'Color', colors(mod(i-1,length(colors))+1));
             else
                 if has_grid
                     plot(x(idx{:}), data, ['-' colors(mod(i-1,length(colors))+1)]);
@@ -292,14 +299,20 @@ for i = 1:size(vars,1)
             end
         else
             set(findobj(pObj, 'Tag', 'ToggleSurf'), 'Enable', 'on')
+            
+            if has_grid
+                xdata = x;
+                ydata = y;
+            else
+                [xdata ydata] = meshgrid(1:size(data, 2), 1:size(data, 1));
+            end
 
             % 2D data
             if get(findobj(pObj, 'Tag', 'ToggleSurf'), 'Value')
                 sObj = findobj(findobj(pObj, 'Type', 'Axes'), 'Type', 'surface');
-                sObj = [];
                 
                 if length(sObj) >= i
-                    set(sObj(i), 'ZData', data, 'CData', data);
+                    set(sObj(i), 'XData', xdata, 'YData', ydata, 'ZData', data, 'CData', data);
                 else
                     if has_grid
                         surf(x, y, data);
@@ -309,10 +322,9 @@ for i = 1:size(vars,1)
                 end
             else
                 sObj = findobj(findobj(pObj, 'Type', 'Axes'), 'Type', 'surface');
-                sObj = [];
                 
                 if length(sObj) >= i
-                    set(sObj(i), 'ZData', data, 'CData', data);
+                    set(sObj(i), 'XData', xdata, 'YData', ydata, 'ZData', data, 'CData', data);
                 else
                     if has_grid
                         pcolor(x, y, data);
