@@ -104,6 +104,7 @@ while ~feof(fid)
         end
     elseif parread==1
         line=fgetl(fid);
+        t0 = findstr('!',line);  if length(t0)>1; t0=t0(1); end;  % we need this later to determine if this is likely continuation of comment
         line=strtrim(line);
         % is this the end of type parameters?
         t11=findstr('end',line);
@@ -119,6 +120,8 @@ while ~feof(fid)
         t5a=findstr('[Section]',line);  if length(t5a)>1; t5a=t5a(1); end;
         t6=findstr('[',line);  if length(t6)>1; t6=t6(t6>t3c);t6=t6(1); end;
         t7=findstr(']',line);  if length(t7)>1; t7=t7(t7>t3c);t7=t7(1); end;
+        t8=findstr('(advanced)',line);
+        t9=findstr('(deprecated)',line);
         if (~isempty(t3) && ~isempty(t4) && t5~=1)
             parcount=parcount+1;
             params_array(parcount).type = strtrim(line(1:t3-1));
@@ -126,15 +129,46 @@ while ~feof(fid)
             params_array(parcount).noinstances = 0;
             if isempty(t6)
                 params_array(parcount).units = 'unknown';
-                params_array(parcount).comment = strtrim(line(t5+1:end));
+                if ~isempty(t8)
+                    params_array(parcount).comment = strtrim(line(t8+10:end));
+                    params_array(parcount).advanced = 1;
+                    params_array(parcount).deprecated = 0;
+                else
+                    if ~isempty(t9)
+                        params_array(parcount).comment = strtrim(line(t9+12:end));
+                        params_array(parcount).advanced = 0;
+                        params_array(parcount).deprecated = 0;
+                    else
+                        params_array(parcount).comment = strtrim(line(t5+1:end));
+                        params_array(parcount).advanced = 0;
+                        params_array(parcount).deprecated = 0;
+                    end
+                end
                 params_array(parcount).partype = strtrim(parametertype);
             else
                 params_array(parcount).units = strtrim(line(t6+1:t7-1));
-                params_array(parcount).comment = strtrim(line(t7+1:end));
+                if ~isempty(t8)
+                    params_array(parcount).comment = strtrim(line(t8+10:end));
+                    params_array(parcount).advanced = 1;
+                    params_array(parcount).deprecated = 0;
+                else
+                    if ~isempty(t9)
+                        params_array(parcount).comment = strtrim(line(t9+12:end));
+                        params_array(parcount).advanced = 0;
+                        params_array(parcount).deprecated = 1;
+                    else
+                        params_array(parcount).comment = strtrim(line(t7+1:end));
+                        params_array(parcount).advanced = 0;
+                        params_array(parcount).deprecated = 0;
+                    end
+                end
                 params_array(parcount).partype = strtrim(parametertype);
             end
         elseif t5==1 & ~isempty(t5a) % Last line of comment is probably parameter type decription
             parametertype=strtrim(line(t5a+9:end));
+        elseif t5==1 & t0>50  % probably continuation of comment of the last read variable
+            commentcont = strtrim(line(2:end));
+            params_array(parcount).comment = [params_array(parcount).comment commentcont];
         end
         
     elseif parread==2   % finding default, min and max
@@ -203,10 +237,11 @@ while ~feof(fid)
             else
                 tempdef = [];
             end
-                        
+                       
             if (~isempty(t22r) || ~isempty(t22i))
                 if ~isempty(findstr(tempdef,'par%'))
                     tempdef=strtrim(tempdef);
+                    tempdef = regexprep(tempdef,'par%','par.');
                 else
                     tempdef=str2num(tempdef);
                 end
@@ -221,6 +256,7 @@ while ~feof(fid)
                 tempname = strtrim(line(t24+4:t21-1));
                 tempdef  = line(t25(2)+1:t25(3)-1);
                 tempdef(tempdef=='''')=[];
+                tempdef = regexprep(tempdef,'par%','par.');
                 tempallowed = allowed;
                 
                 % do something with strings
@@ -228,7 +264,11 @@ while ~feof(fid)
                 % do something with names
             end
             if ~isempty(t22req)
-                temprequired = line(t22req+9:t26(1)-1);
+                if strcmp(line(t22req+9),'(') 
+                    temprequired = line(t22req+9:t26(1));
+                else
+                    temprequired = line(t22req+9:t26(1)-1);
+                end
                 if strcmpi(strtrim(temprequired),'.true.');
                     temprequired=true;
                 elseif strcmpi(strtrim(temprequired),'.false.');
