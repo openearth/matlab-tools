@@ -1,21 +1,26 @@
 function [x y z] = xb_grid_trim(x, y, z, varargin)
-%XB_GRID_TRIM  One line description goes here.
+%XB_GRID_TRIM  Removes all empty rows and columns from a 2D grid
 %
-%   More detailed description goes here.
+%   Removes all rows and columns in a 2D grid containing NaN's only.
 %
 %   Syntax:
-%   varargout = xb_grid_trim(varargin)
+%   [x y z] = xb_grid_trim(x, y, z, varargin)
 %
 %   Input:
-%   varargin  =
+%   x           = x-coordinates of grid to be trimmed
+%   y           = y-coordinates of grid to be trimmed
+%   z           = elevations of grid to be trimmed
+%   varargin    = none
 %
 %   Output:
-%   varargout =
+%   x           = x-coordinates of trimmed grid
+%   y           = y-coordinates of trimmed grid
+%   z           = elevations of trimmed grid
 %
 %   Example
-%   xb_grid_trim
+%   [x y z] = xb_grid_trim(x, y, z)
 %
-%   See also 
+%   See also xb_grid_extent
 
 %% Copyright notice
 %   --------------------------------------------------------------------

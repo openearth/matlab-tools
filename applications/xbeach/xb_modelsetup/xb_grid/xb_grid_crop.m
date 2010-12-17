@@ -1,21 +1,34 @@
 function [xmin xmax ymin ymax] = xb_grid_crop(x, y, z, varargin)
-%XB_GRID_CROP  One line description goes here.
+%XB_GRID_CROP  Automatically crops grid minimzing the number of NaN's and specifies extent of cropped area
 %
-%   More detailed description goes here.
+%   Returns the extent of a cropped grid within a supplied grid. The
+%   cropped area can be supplied by a vector indicating the origin, width
+%   and height of the area. If no area is supplied, the largest area with a
+%   minimum of NaN's (approximately) is used.
+%
+%   TODO: optimize the auto-crop algorithm
 %
 %   Syntax:
-%   varargout = xb_grid_crop(varargin)
+%   [xmin xmax ymin ymax] = xb_grid_crop(x, y, z, varargin)
 %
 %   Input:
-%   varargin  =
+%   x           = x-coordinates of grid to be cropped
+%   y           = y-coordinates of grid to be cropped
+%   z           = elevations of grid to be cropped
+%   varargin    = crop:     vector like [x y w h] containing the origin,
+%                           width and height of the cropped area
 %
 %   Output:
-%   varargout =
+%   xmin        = minimum x-coordinate of cropped area
+%   xmax        = maximum x-coordinate of cropped area
+%   ymin        = minimum y-coordinate of cropped area
+%   xmax        = maximum y-coordinate of cropped area
 %
 %   Example
-%   xb_grid_crop
+%   [xmin xmax ymin ymax] = xb_grid_crop(x, y, z)
+%   [xmin xmax ymin ymax] = xb_grid_crop(x, y, z, 'crop', [x0 y0 w h])
 %
-%   See also 
+%   See also xb_generate_grid, xb_grid_extent
 
 %% Copyright notice
 %   --------------------------------------------------------------------

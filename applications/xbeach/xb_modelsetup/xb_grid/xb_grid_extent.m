@@ -1,21 +1,28 @@
 function [xmin xmax ymin ymax cellsize] = xb_grid_extent(x, y, varargin)
-%XB_GRID_EXTENT  One line description goes here.
+%XB_GRID_EXTENT  Determines the extent and minimum cellsize of a specified grid
 %
-%   More detailed description goes here.
+%   Determines the minimum and maximum values of the x and y coordinates of
+%   a specified grid and the minimum cell size as well.
 %
 %   Syntax:
-%   varargout = xb_grid_extent(varargin)
+%   [xmin xmax ymin ymax cellsize] = xb_grid_extent(x, y, varargin)
 %
 %   Input:
-%   varargin  =
+%   x           = x-coordinates of grid to be cropped
+%   y           = y-coordinates of grid to be cropped
+%   varargin    = none
 %
 %   Output:
-%   varargout =
+%   xmin        = minimum x-coordinate of grid
+%   xmax        = maximum x-coordinate of grid
+%   ymin        = minimum y-coordinate of grid
+%   xmax        = maximum y-coordinate of grid
+%   cellsize    = minimum cellsize in grid
 %
 %   Example
-%   xb_grid_extent
+%   [xmin xmax ymin ymax cellsize] = xb_grid_extent(x, y)
 %
-%   See also 
+%   See also xb_grid_resolution
 
 %% Copyright notice
 %   --------------------------------------------------------------------

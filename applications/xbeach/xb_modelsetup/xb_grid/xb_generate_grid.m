@@ -18,6 +18,10 @@ function xb = xb_generate_grid(varargin)
 %               crop:       either a boolean indicating if grid should be
 %                           cropped to obtain a rectangle or a [x y w h]
 %                           array indicating how the grid should be cropped
+%               finalise:   either a boolean indicating if grid should be
+%                           finalised using default settings or a cell
+%                           array indicating the finalisation actions to
+%                           perform
 %               posdwn:     boolean flag that determines whether positive
 %                           z-direction is down
 %
@@ -78,6 +82,7 @@ OPT = struct( ...
     'z', [-20 -3 0 3 15 15], ...
     'rotate', true, ...
     'crop', true, ...
+    'finalise', true, ...
     'posdwn', false ...
 );
 
@@ -188,6 +193,13 @@ for i = 1:size(zgrid, 1)
     
     j = find(~isnan(zgrid(i,:)), 1, 'last');
     if j < size(zgrid, 2); zgrid(i,j+1:end) = zgrid(i,j); end;
+end
+
+% finalise grid
+if ~islogical(OPT.finalise) && iscell(OPT.finalise)
+    [xgrid, ygrid, zgrid] = xb_grid_finalise(xgrid, ygrid, zgrid, 'actions', OPT.finalise);
+elseif OPT.finalise
+    [xgrid, ygrid, zgrid] = xb_grid_finalise(xgrid, ygrid, zgrid);
 end
 
 % determine size

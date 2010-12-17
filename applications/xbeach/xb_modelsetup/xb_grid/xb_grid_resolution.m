@@ -1,21 +1,30 @@
 function [cellsize xmin xmax ymin ymax] = xb_grid_resolution(x, y, varargin)
-%XB_GRID_RESOLUTION  One line description goes here.
+%XB_GRID_RESOLUTION  Determines the maximum cellsize of a regular grid of a certain size fitting the extent of the specified grid
 %
-%   More detailed description goes here.
+%   Determines the extent of the specified grid and the maximum cellsize to
+%   generate a regular grid spanning this extent without exceeding a
+%   certain size (bytes).
 %
 %   Syntax:
-%   varargout = xb_grid_resolution(varargin)
+%   [cellsize xmin xmax ymin ymax] = xb_grid_resolution(x, y, varargin)
 %
 %   Input:
-%   varargin  =
+%   x           = x-coordinates of grid to be cropped
+%   y           = y-coordinates of grid to be cropped
+%   varargin    = maxsize:  maximum grid size in bytes (default 10MB)
 %
 %   Output:
-%   varargout =
+%   cellsize    = maximum cellsize in regular grid
+%   xmin        = minimum x-coordinate of regular grid
+%   xmax        = maximum x-coordinate of regular grid
+%   ymin        = minimum y-coordinate of regular grid
+%   xmax        = maximum y-coordinate of regular grid
 %
 %   Example
-%   xb_grid_resolution
+%   [cellsize xmin xmax ymin ymax] = xb_grid_resolution(x, y)
+%   [cellsize xmin xmax ymin ymax] = xb_grid_resolution(x, y, 'maxsize', 1024^3)
 %
-%   See also 
+%   See also xb_grid_extent
 
 %% Copyright notice
 %   --------------------------------------------------------------------
