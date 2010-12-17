@@ -115,13 +115,17 @@ OPT.bathy = xb_set_optval('xgrid', xgrid, OPT.bathy);
 
 bathy = xb_generate_grid(OPT.bathy{:});
 
+%% create wavedir grid
+
+wavedirgrid = xb_generate_wavedirgrid(waves);
+
 %% create model
 
 % create xbeach structure
 xb = xb_empty();
 
 % add data
-xb = xb_join(xb, bathy, waves, tide, settings);
+xb = xb_join(xb, bathy, wavedirgrid, waves, tide, settings);
 
 % add meta data
 xb = xb_meta(xb, mfilename, 'input');
