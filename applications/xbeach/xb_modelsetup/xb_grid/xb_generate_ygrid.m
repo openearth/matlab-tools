@@ -18,9 +18,9 @@ function ygr = xb_generate_ygrid(yin, varargin)
 %               area_type:              type of definition of the area of
 %                                       interest (center/range)
 %               area_size:              size of the area of interest
-%                                       (length in case of area_type
-%                                       center, from/to range in case of
-%                                       area_type range)
+%                                       (length or fraction in case of
+%                                       area_type center, from/to range in
+%                                       case of area_type range)
 %               transition_distance:    distance over which the grid
 %                                       cellsize is gradually changed from
 %                                       mimumum to maximum
@@ -80,8 +80,8 @@ OPT = struct( ...
     'dymin', 5, ...
     'dymax', 20, ...
     'area_type', 'center', ...
-    'area_size', 100, ...
-    'transition_distance', 100 ...
+    'area_size', .4, ...
+    'transition_distance', .1 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -97,10 +97,24 @@ else
         ygr = min(yin):OPT.dymin:max(yin);
     else
         % variable, two-dimensional grid
+        
+        dy = max(yin)-min(yin);
+        if all(OPT.transition_distance < 1)
+            OPT.transition_distance = OPT.transition_distance*dy;
+        end
+        
         switch OPT.area_type
             case 'center'
+                if all(OPT.area_size < 1)
+                    OPT.area_size = OPT.area_size*dy;
+                end
+                
                 ygr = mean(yin)-OPT.area_size/2:OPT.dymin:mean(yin)+OPT.area_size/2;
             case 'range'
+                if all(OPT.area_size < 1)
+                    OPT.area_size = min(ymin)+OPT.area_size*dy;
+                end
+                
                 ygr = OPT.area_size(1):OPT.dymin:OPT.area_size(2);
             otherwise
                 % default center with length one

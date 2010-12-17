@@ -122,7 +122,7 @@ function [x y z] = lateral_extend(x, y, z, n)
     z = [ones(n,1)*z(1,:) ; z ; ones(n,1)*z(end,:)];
 
 function [x y z] = lateral_sandwalls(x, y, z, n)
-    z0 = 1;
+    z0 = 5;
     z1 = 0; z2 = 0;
     for i = 1:size(z,2)
         if z(1,i) > z0 || z1 > 0
