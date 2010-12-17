@@ -78,7 +78,7 @@ Par=struct('Physics',struct,...
     'Advanced',struct);
 Par.Physics.longname='Model physics';
 Par.Domain.longname='Model domain';
-Par.Time.longname='Model time parameters';
+Par.Time.longname='Time input';
 Par.Waves.longname='Wave input';
 Par.Flow.longname='Flow input';
 Par.Sediment.longname='Sediment input';
@@ -191,14 +191,14 @@ for i=1:length(index)
         S.element.style='tabpanel';
         S.element.tag=Par.(index{i}).longname;
         S.element.position=[10 10 1200 140];
-        pospanel = [2 2 S.element.position(3)-2 S.element.position(4)-10];
+%         pospanel = [2 2 S.element.position(3)-2 S.element.position(4)-10];
         % generate positions for elements
         % height and free space height factor
         he=20;hefac=1.2;
         % width and free space width factor
         we=80;wefac=2.0;
         % space around the edge of the tab
-        xedge=60;yedge=10;
+        xedge=60;yedge=15;
         % available height and width
 %         ah = pospanel(4);
 %         aw = pospanel(3);
@@ -246,10 +246,6 @@ for i=1:length(index)
                         %
                     end
                 end
-%                 Sub(count2+1).element.tag=[index2{ii} '_panel'];
-%                 Sub(count2+1).element.style='panel';
-%                 Sub(count2+1).element.position=pospanel;
-%                 Sub(count2+1).element.text=Par.(index{i}).(index2{ii}).longname;
                 if ~strcmpi(Sub(1).element.tag,'bogus')
                     % save xml subtab
                     xml_save(['XBeach.' index{i} '.' index2{ii} '.xml'],Sub,XMLmat);
@@ -268,45 +264,51 @@ for i=1:length(index)
                 end
             end
         end
-        % Now we make the "advanced" tab
-        
-        % make internal for this part
-        count2=0;
-        Sub=struct;
-        Sub(1).element.tag='bogus';% fill with bogus
-        Sub(1).element.style='text';
-        Sub(1).element.text='empty';
-        Sub(1).element.position=POS{1}(1:2);
+        % Now we make one or more "advanced" tabs
+        % how many advanced parameters are there?
+        advanceparams={};
         for ii=1:length(index2)
             if ~strcmpi(index2{ii},'longname')
                 index3=fieldnames(Par.(index{i}).(index2{ii}).variables);
                 for iii=1:length(index3)
                     % is this an advanced and used?
                     if Par.(index{i}).(index2{ii}).variables.(index3{iii}).advanced==1 && ...
-                            Par.(index{i}).(index2{ii}).variables.(index3{iii}).noinstances>0
-                        % element number
-                        count2=count2+1;
-                        % element tag
-                        Sub(count2).element.tag=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
-                        % element tooltip
-                        Sub(count2).element.tooltipstring=[Par.(index{i}).(index2{ii}).variables.(index3{iii}).comment ' [' ...
-                            Par.(index{i}).(index2{ii}).variables.(index3{iii}).units ']'];
-                        % element type
-                        makeElementType;
+                        Par.(index{i}).(index2{ii}).variables.(index3{iii}).noinstances>0
+                            advanceparams{end+1}=[i ii iii];
                     end
                 end
             end
         end
-%         Sub(count2+1).element.tag=[index2{1} '_advanced_panel'];
-%         Sub(count2+1).element.style='panel';
-%         Sub(count2+1).element.position=pospanel;
-%         Sub(count2+1).element.text=[index{i} ' advanced options'];
-        if ~strcmpi(Sub(1).element.tag,'bogus')
+        nrtabs=ceil(length(advanceparams)/length(POS));
+        pstart=1;
+        for itabs=1:nrtabs
+            % make internal for this part
+            count2=0;
+            Sub=struct;
+            Sub(1).element.tag='bogus';% fill with bogus
+            Sub(1).element.style='text';
+            Sub(1).element.text='empty';
+            Sub(1).element.position=POS{1}(1:2);
+            count2=0;
+            for ip=pstart:min(pstart+length(POS)-1,length(advanceparams))
+                ii=advanceparams{ip}(2);
+                index3=fieldnames(Par.(index{i}).(index2{ii}).variables);
+                iii=advanceparams{ip}(3);
+                % element number
+                count2=count2+1;
+                % element tag
+                Sub(count2).element.tag=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                % element tooltip
+                Sub(count2).element.tooltipstring=[Par.(index{i}).(index2{ii}).variables.(index3{iii}).comment ' [' ...
+                                                   Par.(index{i}).(index2{ii}).variables.(index3{iii}).units ']'];
+                % element type
+                makeElementType;
+            end
             % save advanced tab
-            xml_save(['XBeach.' index{i} '.Advanced.xml'],Sub,XMLmat);
+            xml_save(['XBeach.' index{i} '.Advanced_' num2str(itabs) '.xml'],Sub,XMLmat);
             % Make tabs in supertab
             count=count+1;
-            S.element.tabs(count).tab.tag=[index{i} ' advanced options'];
+            S.element.tabs(count).tab.tag=[index{i} '_advanced_options' num2str(itabs)];
             tstring = [index{i} ' advanced options'];
             if length(tstring)>23
                 tabstring=[tstring(1:20) '...'];
@@ -315,7 +317,8 @@ for i=1:length(index)
             end
             S.element.tabs(count).tab.tabstring=tabstring;
             S.element.tabs(count).tab.tooltipstring=tstring;
-            S.element.tabs(count).tab.elements=['XBeach.' index{i} '.Advanced.xml'];
+            S.element.tabs(count).tab.elements=['XBeach.' index{i} '.Advanced_' num2str(itabs) '.xml'];
+            pstart=pstart+length(POS);
         end
         % save process tab
         xml_save(['XBeach.' index{i} '.xml'],S,XMLmat);
@@ -330,24 +333,6 @@ for i=1:length(index)
         S.element.style='tabpanel';
         S.element.tag=Par.(index{i}).longname;
         S.element.position=[10 10 1200 140];
-        % generate positions for elements
-        % height and free space height factor
-        he=20;hefac=1.2;
-        % width and free space width factor
-        we=80;wefac=2.0;
-        % space around the edge of the tab
-        xedge=60;yedge=10;
-        nr=floor((S.element.position(4)-2*yedge)/(he*hefac));
-        nc=floor((S.element.position(3)-2*xedge)/(we*wefac));
-        POS=cell(nr*nc,1);
-        for ic=1:nc
-            for ir=1:nr
-                POS{(ic-1)*nr+ir}=[S.element.position(1)+xedge+(ic-1)*(we*wefac) ...
-                    S.element.position(2)+S.element.position(4)-yedge-ir*(he*hefac) ...
-                    we ...
-                    he];
-            end
-        end
         index2=fieldnames(Par.(index{i}));count=0;
         for ii=1:length(index2)
             if ~strcmpi(index2{ii},'longname')
@@ -375,10 +360,6 @@ for i=1:length(index)
                         %
                     end
                 end
-%                 Sub(count2+1).element.tag=[index2{ii} '_panel'];
-%                 Sub(count2+1).element.style='panel';
-%                 Sub(count2+1).element.position=pospanel;
-%                 Sub(count2+1).element.text=Par.(index{i}).(index2{ii}).longname;
                 if ~strcmpi(Sub(1).element.tag,'bogus')
                     % save xml subtab
                     xml_save(['XBeach.' index{i} '.' index2{ii} '.xml'],Sub,XMLmat);
