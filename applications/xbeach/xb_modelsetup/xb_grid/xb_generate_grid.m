@@ -207,7 +207,7 @@ end
 
 % finalise grid
 if ~islogical(OPT.finalise) && iscell(OPT.finalise)
-    [xgrid, ygrid, zgrid] = xb_grid_finalise(xgrid, ygrid, zgrid, 'actions', OPT.finalise);
+    [xgrid, ygrid, zgrid] = xb_grid_finalise(xgrid, ygrid, zgrid, OPT.finalise);
 elseif OPT.finalise
     [xgrid, ygrid, zgrid] = xb_grid_finalise(xgrid, ygrid, zgrid);
 end
