@@ -97,19 +97,15 @@ for i = 1:length(OPT.actions)
         case 'lateral_extend'
             if min(size(z)) > 3
                 [x y z] = lateral_extend(x, y, z, OPT.cells);
-                [size(x) size(y) size(z)]
             end
         case 'lateral_sandwalls'
             if min(size(z)) > 3
                 [x y z] = lateral_sandwalls(x, y, z, OPT.cells);
-                [size(x) size(y) size(z)]
             end
         case 'seaward_flatten'
             [x y z] = seaward_flatten(x, y, z, OPT.cells);
-            [size(x) size(y) size(z)]
         case 'landward_polder'
             [x y z] = landward_polder(x, y, z, OPT.cells);
-            [size(x) size(y) size(z)]
         otherwise
             warning(['Ignoring non-existing grid finalisation option [' action ']']);
     end
@@ -122,7 +118,7 @@ function [x y z] = lateral_extend(x, y, z, n)
     dy2 = y(end,1)-y(end-1,1);
     
     x = [ones(n,1)*x(1,:) ; x ; ones(n,1)*x(end,:)];
-    y = [(y(1,1)-[n*dy1:-dy1:dy1])'*ones(1,size(y,2)) ; y ; (y(1,end)+[dy2:dy2:n*dy2])'*ones(1,size(y,2))];
+    y = [(y(1,1)-[n*dy1:-dy1:dy1])'*ones(1,size(y,2)) ; y ; (y(end,1)+[dy2:dy2:n*dy2])'*ones(1,size(y,2))];
     z = [ones(n,1)*z(1,:) ; z ; ones(n,1)*z(end,:)];
 
 function [x y z] = lateral_sandwalls(x, y, z, n)

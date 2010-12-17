@@ -116,12 +116,16 @@ alpha = 0;
 x_r = x_w - xori;
 y_r = y_w - yori;
 
+OPT.crop(1) = OPT.crop(1)-xori;
+OPT.crop(2) = OPT.crop(2)-yori;
+
 % rotate grid and determine alpha
 if OPT.rotate && ~isvector(z_w)
     alpha = xb_grid_rotation(x_r, y_r, z_w);
     
     if alpha ~= 0
         [x_r y_r] = xb_grid_rotate(x_r, y_r, -alpha);
+        [OPT.crop(1) OPT.crop(2)] = xb_grid_rotate(OPT.crop(1), OPT.crop(2), -alpha);
     end
 end
 
