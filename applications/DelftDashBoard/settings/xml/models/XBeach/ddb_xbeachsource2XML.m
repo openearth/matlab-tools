@@ -15,14 +15,14 @@ function ddb_xbeachsource2XML
 %   Example
 %   ddb_xbeachsource2XML
 %
-%   See also 
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
 %       Robert McCall
 %
-%       robert.mccall@deltares.nl	
+%       robert.mccall@deltares.nl
 %
 %       Rotterdamseweg 185
 %       Delft
@@ -43,9 +43,9 @@ function ddb_xbeachsource2XML
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -68,14 +68,14 @@ XMLmat='off';
 
 % rearrange to format for DDB
 Par=struct('Physics',struct,...
-           'Domain',struct',...
-           'Time',struct,...
-           'Waves',struct,...
-           'Flow',struct,...
-           'Sediment',struct,...
-           'Morphology',struct,...
-           'Output',struct,...
-           'Advanced',struct);
+    'Domain',struct',...
+    'Time',struct,...
+    'Waves',struct,...
+    'Flow',struct,...
+    'Sediment',struct,...
+    'Morphology',struct,...
+    'Output',struct,...
+    'Advanced',struct);
 Par.Physics.longname='Model physics';
 Par.Domain.longname='Model domain';
 Par.Time.longname='Model time parameters';
@@ -94,7 +94,7 @@ for i=1:length(params_array)
     elseif ~isempty(regexpi(ptype,'(grid|initial)'))
         chapter='Domain';
     elseif ~isempty(regexpi(ptype,'time'))
-        chapter='Time';    
+        chapter='Time';
     elseif ~isempty(regexpi(ptype,'(wave|roller)'))
         chapter='Waves';
     elseif ~isempty(regexpi(ptype,'(flow|coriolis|wind|tide|discharge)'))
@@ -104,10 +104,10 @@ for i=1:length(params_array)
     elseif ~isempty(regexpi(ptype,'(morphology|bed\s)'))
         chapter='Morphology';
     elseif ~isempty(regexpi(ptype,'(output|drifter)'))
-        chapter='Output';    
+        chapter='Output';
     else
         chapter='Advanced';
-    end 
+    end
     if ~isfield(Par.(chapter),ptypevar);
         temp=struct('longname',ptype,'variables',struct());
         Par.(chapter).(ptypevar)=temp;
@@ -120,7 +120,7 @@ end
 fields=fieldnames(Par.Advanced);
 for i=1:length(fields)
     if isfield(Par.Advanced.(fields{i}),'longname') & ...
-                 regexpi(Par.Advanced.(fields{i}).longname,'not read in params.txt')
+            regexpi(Par.Advanced.(fields{i}).longname,'not read in params.txt')
         Par.Advanced=rmfield(Par.Advanced,fields{i});
     end
 end
@@ -185,7 +185,146 @@ xml_save('XBeach.description.xml',DES,XMLmat);
 %% Write XML Physics etc. files (all but advanced)
 index=fieldnames(Par);
 for i=1:length(index)
-    if ~strcmpi(index{i},'Advancedxxx')
+    if ~strcmpi(index{i},'Advanced')
+        S=struct;
+        S.longname=Par.(index{i}).longname;
+        S.element.style='tabpanel';
+        S.element.tag=Par.(index{i}).longname;
+        S.element.position=[10 10 1200 140];
+        pospanel = [2 2 S.element.position(3)-2 S.element.position(4)-10];
+        % generate positions for elements
+        % height and free space height factor
+        he=20;hefac=1.2;
+        % width and free space width factor
+        we=80;wefac=2.0;
+        % space around the edge of the tab
+        xedge=60;yedge=10;
+        % available height and width
+%         ah = pospanel(4);
+%         aw = pospanel(3);
+        ah = S.element.position(4);
+        aw = S.element.position(3);
+%         nr=floor((S.element.position(4)-2*yedge)/(he*hefac));
+%         nc=floor((S.element.position(3)-2*xedge)/(we*wefac));
+        nr=floor((ah-2*yedge)/(he*hefac));
+        nc=floor((aw-2*xedge)/(we*wefac));
+        hefac=(ah-2*yedge)/nr/he;
+        POS=cell(nr*nc,1);
+        for ic=1:nc
+            for ir=1:nr
+                POS{(ic-1)*nr+ir}=[S.element.position(1)+xedge+(ic-1)*(we*wefac) ...
+                    S.element.position(2)+S.element.position(4)-yedge-ir*(he*hefac) ...
+                    we ...
+                    he];
+            end
+        end
+        index2=fieldnames(Par.(index{i}));count=0;
+        for ii=1:length(index2)
+            if ~strcmpi(index2{ii},'longname')
+                % make internal for this part
+                index3=fieldnames(Par.(index{i}).(index2{ii}).variables);
+                count2=0;
+                Sub=struct;
+                Sub(1).element.tag='bogus';% fill with bogus
+                Sub(1).element.style='text';
+                Sub(1).element.text='empty';
+                Sub(1).element.position=POS{1}(1:2);
+                for iii=1:length(index3)
+                    % is this not an advanced and is it read in XBeach and is it not deprecated?
+                    if (Par.(index{i}).(index2{ii}).variables.(index3{iii}).advanced==0 && ...
+                            Par.(index{i}).(index2{ii}).variables.(index3{iii}).noinstances>0) && ...
+                            Par.(index{i}).(index2{ii}).variables.(index3{iii}).deprecated==0
+                        % element number
+                        count2=count2+1;
+                        % element tag
+                        Sub(count2).element.tag=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                        % element tooltip
+                        Sub(count2).element.tooltipstring=[Par.(index{i}).(index2{ii}).variables.(index3{iii}).comment ' [' ...
+                            Par.(index{i}).(index2{ii}).variables.(index3{iii}).units ']'];
+                        % element type
+                        makeElementType;  % nested subfunction
+                        %
+                    end
+                end
+%                 Sub(count2+1).element.tag=[index2{ii} '_panel'];
+%                 Sub(count2+1).element.style='panel';
+%                 Sub(count2+1).element.position=pospanel;
+%                 Sub(count2+1).element.text=Par.(index{i}).(index2{ii}).longname;
+                if ~strcmpi(Sub(1).element.tag,'bogus')
+                    % save xml subtab
+                    xml_save(['XBeach.' index{i} '.' index2{ii} '.xml'],Sub,XMLmat);
+                    % Make tabs in supertab
+                    count=count+1;
+                    S.element.tabs(count).tab.tag=Par.(index{i}).(index2{ii}).longname;
+                    tstring = Par.(index{i}).(index2{ii}).longname;
+                    if length(tstring)>23
+                        tabstring=[tstring(1:20) '...'];
+                    else
+                        tabstring=tstring;
+                    end
+                    S.element.tabs(count).tab.tabstring=tabstring;
+                    S.element.tabs(count).tab.tooltipstring=tstring;
+                    S.element.tabs(count).tab.elements=['XBeach.' index{i} '.' index2{ii} '.xml'];
+                end
+            end
+        end
+        % Now we make the "advanced" tab
+        
+        % make internal for this part
+        count2=0;
+        Sub=struct;
+        Sub(1).element.tag='bogus';% fill with bogus
+        Sub(1).element.style='text';
+        Sub(1).element.text='empty';
+        Sub(1).element.position=POS{1}(1:2);
+        for ii=1:length(index2)
+            if ~strcmpi(index2{ii},'longname')
+                index3=fieldnames(Par.(index{i}).(index2{ii}).variables);
+                for iii=1:length(index3)
+                    % is this an advanced and used?
+                    if Par.(index{i}).(index2{ii}).variables.(index3{iii}).advanced==1 && ...
+                            Par.(index{i}).(index2{ii}).variables.(index3{iii}).noinstances>0
+                        % element number
+                        count2=count2+1;
+                        % element tag
+                        Sub(count2).element.tag=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                        % element tooltip
+                        Sub(count2).element.tooltipstring=[Par.(index{i}).(index2{ii}).variables.(index3{iii}).comment ' [' ...
+                            Par.(index{i}).(index2{ii}).variables.(index3{iii}).units ']'];
+                        % element type
+                        makeElementType;
+                    end
+                end
+            end
+        end
+%         Sub(count2+1).element.tag=[index2{1} '_advanced_panel'];
+%         Sub(count2+1).element.style='panel';
+%         Sub(count2+1).element.position=pospanel;
+%         Sub(count2+1).element.text=[index{i} ' advanced options'];
+        if ~strcmpi(Sub(1).element.tag,'bogus')
+            % save advanced tab
+            xml_save(['XBeach.' index{i} '.Advanced.xml'],Sub,XMLmat);
+            % Make tabs in supertab
+            count=count+1;
+            S.element.tabs(count).tab.tag=[index{i} ' advanced options'];
+            tstring = [index{i} ' advanced options'];
+            if length(tstring)>23
+                tabstring=[tstring(1:20) '...'];
+            else
+                tabstring=tstring;
+            end
+            S.element.tabs(count).tab.tabstring=tabstring;
+            S.element.tabs(count).tab.tooltipstring=tstring;
+            S.element.tabs(count).tab.elements=['XBeach.' index{i} '.Advanced.xml'];
+        end
+        % save process tab
+        xml_save(['XBeach.' index{i} '.xml'],S,XMLmat);
+    end
+end
+
+%% Generate advanced tab
+for i=1:length(index)
+    if strcmpi(index{i},'Advanced')
         S=struct;
         S.longname=Par.(index{i}).longname;
         S.element.style='tabpanel';
@@ -221,9 +360,8 @@ for i=1:length(index)
                 Sub(1).element.text='empty';
                 Sub(1).element.position=POS{1}(1:2);
                 for iii=1:length(index3)
-                    % is this not an advanced and is it read in XBeach and is it not deprecated?
-                    if (Par.(index{i}).(index2{ii}).variables.(index3{iii}).advanced==0 && ...
-                            Par.(index{i}).(index2{ii}).variables.(index3{iii}).noinstances>0) && ...
+                    % is this read in XBeach and is it not deprecated?
+                    if  Par.(index{i}).(index2{ii}).variables.(index3{iii}).noinstances>0 && ...
                             Par.(index{i}).(index2{ii}).variables.(index3{iii}).deprecated==0
                         % element number
                         count2=count2+1;
@@ -233,66 +371,36 @@ for i=1:length(index)
                         Sub(count2).element.tooltipstring=[Par.(index{i}).(index2{ii}).variables.(index3{iii}).comment ' [' ...
                             Par.(index{i}).(index2{ii}).variables.(index3{iii}).units ']'];
                         % element type
-                        makeElementType;  % nested subfunction 
+                        makeElementType;  % nested subfunction
                         %
                     end
                 end
+%                 Sub(count2+1).element.tag=[index2{ii} '_panel'];
+%                 Sub(count2+1).element.style='panel';
+%                 Sub(count2+1).element.position=pospanel;
+%                 Sub(count2+1).element.text=Par.(index{i}).(index2{ii}).longname;
                 if ~strcmpi(Sub(1).element.tag,'bogus')
                     % save xml subtab
                     xml_save(['XBeach.' index{i} '.' index2{ii} '.xml'],Sub,XMLmat);
                     % Make tabs in supertab
                     count=count+1;
                     S.element.tabs(count).tab.tag=Par.(index{i}).(index2{ii}).longname;
-                    S.element.tabs(count).tab.tabstring=Par.(index{i}).(index2{ii}).longname;
+                    tstring = Par.(index{i}).(index2{ii}).longname;
+                    if length(tstring)>23
+                        tabstring=[tstring(1:20) '...'];
+                    else
+                        tabstring=tstring;
+                    end
+                    S.element.tabs(count).tab.tabstring=tabstring;
+                    S.element.tabs(count).tab.tooltipstring=tstring;
                     S.element.tabs(count).tab.elements=['XBeach.' index{i} '.' index2{ii} '.xml'];
                 end
             end
         end
-        % Now we make the "advanced" tab
-        
-        % make internal for this part
-        count2=0;
-        Sub=struct;
-        Sub(1).element.tag='bogus';% fill with bogus
-        Sub(1).element.style='text';
-        Sub(1).element.text='empty';
-        Sub(1).element.position=POS{1}(1:2);
-        for ii=1:length(index2)
-            if ~strcmpi(index2{ii},'longname')
-                index3=fieldnames(Par.(index{i}).(index2{ii}).variables);
-                for iii=1:length(index3)
-                    % is this an advanced and used?
-                    if Par.(index{i}).(index2{ii}).variables.(index3{iii}).advanced==1 && ...
-                       Par.(index{i}).(index2{ii}).variables.(index3{iii}).noinstances>0    
-                        % element number
-                        count2=count2+1;
-                        % element tag
-                        Sub(count2).element.tag=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
-                        % element tooltip
-                        Sub(count2).element.tooltipstring=[Par.(index{i}).(index2{ii}).variables.(index3{iii}).comment ' [' ...
-                            Par.(index{i}).(index2{ii}).variables.(index3{iii}).units ']'];
-                        % element type
-                        makeElementType; 
-                    end
-                end
-            end
-        end
-        if ~strcmpi(Sub(1).element.tag,'bogus')
-            % save advanced tab
-            xml_save(['XBeach.' index{i} '.Advanced.xml'],Sub,XMLmat);
-            % Make tabs in supertab
-            count=count+1;
-            S.element.tabs(count).tab.tag=[index{i} ' advanced options'];
-            S.element.tabs(count).tab.tabstring=[index{i} ' advanced options'];
-            S.element.tabs(count).tab.elements=['XBeach.' index{i} '.Advanced.xml'];
-             % save process tab
-            xml_save(['XBeach.' index{i} '.xml'],S,XMLmat);
-        end
+        % save process tab
+        xml_save(['XBeach.' index{i} '.xml'],S,XMLmat);
     end
 end
-
-%% Generate advanced tab
-
 
 
 %% Generate initialization function for DDB-XBeach
