@@ -74,12 +74,6 @@ if xb_exist(xb, 'bcfile')
             
             Tp = 1/freqs(i);
     end
-    if xb_exist(bcfile, 'Tp')
-        Tp = xb_get(bcfile, 'Tp');
-    elseif xb_exist(bcfile, 'vardens')
-    else
-        
-    end
 elseif xb_exist(xb, 'Tp')
     Tp = xb_get(xb, 'Tp');
 end
