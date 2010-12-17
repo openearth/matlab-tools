@@ -28,13 +28,12 @@ run_grib2_tests;
 
 v = version('-release');
 switch(v)
-    case { '14','2006a','2006b','2007a','2007b','2008a'}
-        % Only test if on win64
-        c = computer;
-        if strcmp(c,'PCWIN64')
-            run_nc3_tests;
-            run_nc4_tests;
-        end
+    case '14'
+        run_nc3_tests;
+        
+    case { '2006a','2006b','2007a','2007b','2008a'}
+        run_nc3_tests;
+        run_nc4_tests;
         
     case { '2008b', '2009a', '2009b', '2010a' }
         run_nc4_tests;
@@ -49,6 +48,10 @@ fprintf('\tTesting mexnc backend ...\n');
 v = version('-release');
 switch(v)
     case { '14','2006a','2006b','2007a','2007b','2008a'}
+		if ~getpref('SNCTOOLS','USE_MEXNC',false)
+		    fprintf('\t\tmexnc testing filtered out where preference USE_MEXNC set to false.\n');
+		        return
+		end
         run_nc3_tests;
         
     otherwise

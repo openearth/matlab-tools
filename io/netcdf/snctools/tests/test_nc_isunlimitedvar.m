@@ -1,8 +1,69 @@
-function test_nc_isunlimitedvar ( )
-% TEST_NC_ISUNLIMITEDVAR:
-%
-% Depends upon nc_add_dimension, nc_addvar
-%
+function test_nc_isunlimitedvar(mode)
+
+if nargin < 1
+	mode = 'netcdf-3';
+end
+
+fprintf('\t\tTesting NC_ISUNLIMITEDVAR ...' );
+
+testroot = fileparts(mfilename('fullpath'));
+
+switch(mode)
+	case 'netcdf-3'
+		ncfile = fullfile(testroot, 'testdata/full.nc');
+		run_all_tests(ncfile);
+		run_negative_tests(ncfile);
+	case 'hdf4'
+		ncfile = fullfile(testroot, 'testdata/full.hdf');
+		run_all_tests(ncfile);
+		run_negative_tests(ncfile);
+	case 'netcdf4-classic'
+		ncfile = fullfile(testroot, 'testdata/full-4.nc');
+		run_negative_tests(ncfile);
+end
+
+fprintf('OK\n');
+
+return
+
+
+
+
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function run_all_tests ( ncfile )
+test_not_unlimited (ncfile);
+test_1D_unlimited (ncfile);
+test_2D_unlimited (ncfile);
+
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_2D_unlimited ( ncfile )
+
+b = nc_isunlimitedvar ( ncfile, 't3' );
+if ( ~b  )
+	error('incorrect result.');
+end
+
+return
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function run_negative_tests(ncfile)
 % 1st set of tests, routine should fail
 % test 1:  no input arguments
 % test 2:  1 input
@@ -16,26 +77,120 @@ function test_nc_isunlimitedvar ( )
 % test 10:  given 1D variable is an unlimited variable
 % test 11:  given 2D variable is an unlimited variable
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% $Id$
-% $LastChangedDate$
-% $LastChangedRevision$
-% $LastChangedBy$
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-testroot = fileparts(mfilename('fullpath'));
-
-fprintf('Testing NC_ISUNLIMITEDVAR ...' );
-
-ncfile = fullfile(testroot, 'testdata/full.nc');
 test_no_inputs;
 test_only_one_input (ncfile);
 test_too_many_inputs (ncfile);
 test_2nd_input_not_char (ncfile);
 test_not_netcdf;
 test_no_such_var (ncfile);
+
+
+%--------------------------------------------------------------------------
+function test_java_backend()
+
+fprintf('\tTesting java backend ...\n');
+
+if ~getpref('SNCTOOLS','USE_JAVA',false)
+
+    fprintf('\t\tjava backend testing filtered out on ');
+    fprintf('configurations where SNCTOOLS ''USE_JAVA'' ');
+    fprintf('prefererence is false.\n');
+    return
+end
+
+
+v = version('-release');
+switch(v)
+    case '14'
+        run_nc3_tests;
+        
+    case { '2006a','2006b','2007a','2007b','2008a'}
+        run_nc3_tests;
+        run_nc4_tests;
+        
+    case { '2008b', '2009a', '2009b', '2010a' }
+        run_nc4_tests;
+        
+end
+
+
+%--------------------------------------------------------------------------
+function test_mexnc_backend()
+
+fprintf('\tTesting mexnc backend ...\n');
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b','2007a','2007b','2008a'}
+		if ~getpref('SNCTOOLS','USE_MEXNC',false)
+		    fprintf('\t\tmexnc testing filtered out where preference USE_MEXNC set to false.\n');
+		        return
+		end
+        run_nc3_tests;
+        
+    otherwise
+        fprintf('\t\tmexnc testing filtered out on release %s.\n', v);
+        return
+end
+
+
+return
+%--------------------------------------------------------------------------
+function test_tmw_backend()
+
+fprintf('\tTesting tmw backend ...\n');
+
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b','2007a','2007b','2008a'}
+        fprintf('\t\ttmw testing filtered out on release %s...\n', v);
+        return;
+        
+    case { '2008b','2009a','2009b','2010a'}
+        run_nc3_tests;
+        
+    otherwise
+        run_nc3_tests;
+        run_nc4_tests;
+end
+
+
+
+return
+
+
+
+
+%--------------------------------------------------------------------------
+function run_nc4_tests()
+
+fprintf('\t\tRunning netcdf-4 tests...  ');
+testroot = fileparts(mfilename('fullpath'));
+ncfile = fullfile(testroot, 'testdata/full-4.nc');
+
+test_not_unlimited (ncfile);
+test_1D_unlimited (ncfile);
+test_2D_unlimited (ncfile);
+
+fprintf('OK\n');
+
+return
+
+
+
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function run_nc3_tests()
+
+fprintf('\t\tRunning netcdf-3 tests...  ');
+testroot = fileparts(mfilename('fullpath'));
+ncfile = fullfile(testroot, 'testdata/full.nc');
+
 test_not_unlimited (ncfile);
 test_1D_unlimited (ncfile);
 test_2D_unlimited (ncfile);
@@ -197,18 +352,6 @@ return
 
 
 
-
-
-
-%--------------------------------------------------------------------------
-function test_2D_unlimited ( ncfile )
-
-b = nc_isunlimitedvar ( ncfile, 't3' );
-if ( ~b  )
-	error('incorrect result.');
-end
-
-return
 
 
 

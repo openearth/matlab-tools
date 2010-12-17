@@ -17,14 +17,6 @@ function str = nc_datatype_string ( datatype_id )
 %          6 ==> 'NC_DOUBLE'.
 %
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% $Id$
-% $LastChangedDate$
-% $LastChangedRevision$
-% $LastChangedBy$
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 warning ( 'SNCTOOLS:nc_datatype_string:deprecated', ...

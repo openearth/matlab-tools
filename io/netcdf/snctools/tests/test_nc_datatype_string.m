@@ -16,7 +16,7 @@ function test_nc_datatype_string()
 % test 10:  input is 5 ==> 'NC_FLOAT'
 % test 11:  input is 6 ==> 'NC_DOUBLE'
 
-fprintf('Testing NC_DATATYPE_STRING ...  ');
+fprintf('\t\tTesting NC_DATATYPE_STRING ...  ');
 
 run_negative_tests;
 run_positive_tests;

@@ -1,4 +1,4 @@
-function test_nc_addnewrecs()
+function test_nc_addnewrecs(mode)
 % TEST_NC_ADDNEWRECS
 %
 % Relies on nc_addvar, nc_getvarinfo
@@ -22,60 +22,27 @@ function test_nc_addnewrecs()
 % Test 13:  Add a single record.  This is a corner case.
 % Test 14:  Add a single record, trailing singleton dimensions.
 
-fprintf('Testing NC_ADDNEWRECS ...\n' );
-
-run_hdf4_tests;
-run_nc3_tests;
-
-
-
-v = version('-release');
-switch(v)
-    case { '14','2006a','2006b','2007a','2007b','2008a','2008b','2009a','2009b','2010a'}
-        fprintf(['\tnetcdf-4 tests filtered out where the MATLAB ' ...
-            'version is less than 2010b\n']);
-        
-    otherwise
-        run_nc4_tests;
+fprintf('\t\tTesting NC_ADDNEWRECS ...  ' );
+if nargin < 1
+    ncfile = 'foo.nc';
+    mode = nc_clobber_mode;
+else
+    ncfile = 'foo4.nc';
 end
 
-
+run_all_tests(ncfile,mode);
+fprintf('OK\n');
 return
 
 
 
-
-
 %--------------------------------------------------------------------------
-function run_hdf4_tests()
-hfile = 'foo.hdf';
-fprintf('\tTesting HDF4 ... ');
-create_ncfile(hfile,'hdf4');
-run_all_tests(hfile,'hdf4');
-fprintf('OK\n');
-
-%-------------------------------------------------------------------------------
-function run_nc3_tests()
-fprintf('\tTesting netcdf-3...  ');
-ncfile = 'foo.nc';
-create_ncfile ( ncfile )
-run_all_tests(ncfile,nc_clobber_mode);
-fprintf('OK\n');
-
-%-------------------------------------------------------------------------------
-function run_nc4_tests()
-
-
-fprintf('\tTesting netcdf-4...  ');
-ncfile = 'foo4.nc';
-create_ncfile ( ncfile, nc_netcdf4_classic )
-run_all_tests(ncfile,nc_netcdf4_classic);
-fprintf('OK\n');
-
-%-------------------------------------------------------------------------------
 function run_all_tests(ncfile,mode)
 
 test_no_inputs;
+
+create_ncfile(ncfile,mode);
+
 test_only_one_input ( ncfile );
 test_003 ( ncfile );
 test_004 ( ncfile );
@@ -107,21 +74,15 @@ return
 %-------------------------------------------------------------------------------
 function create_ncfile ( ncfile, mode )
 
-if nargin > 1
-    if ischar(mode) && strcmp(mode,'hdf4')
-        create_ncfile_hdf4(ncfile);
-    else
-        create_ncfile_mexnc(ncfile,mode);
-    end
-else
-
-	switch ( version('-release') )
-	    case { '14', '2006a', '2006b', '2007a', '2007b', '2008a' }
-			create_ncfile_mexnc(ncfile,nc_clobber_mode);
-		otherwise
-			create_ncfile_tmw(ncfile,nc_clobber_mode);
-	end
+if exist(ncfile,'file')
+    delete(ncfile);
 end
+
+nc_create_empty(ncfile,mode);
+nc_adddim(ncfile,'x',4);
+nc_adddim(ncfile,'y',1);
+nc_adddim(ncfile,'z',1);
+nc_adddim(ncfile,'time',0);
 
 
 % Add a variable along the time dimension
@@ -178,88 +139,6 @@ return
 
 
 
-
-
-
-
-
-
-%--------------------------------------------------------------------------
-function create_ncfile_mexnc(ncfile, mode )
-    %
-    % ok, first create this baby.
-    [ncid, status] = mexnc ( 'create', ncfile, mode );
-    if ( status ~= 0 )
-        ncerr_msg = mexnc ( 'strerror', status );
-        error ( ncerr_msg );
-    end
-    
-    
-    %
-    % Create a fixed dimension.  
-    len_x = 4;
-    [dud, status] = mexnc ( 'def_dim', ncid, 'x', len_x ); %#ok<ASGLU>
-    if ( status ~= 0 )
-        error ( mexnc('strerror',status) );
-    end
-    
-    %
-    % Create two singleton dimensions.
-    [ydimid, status] = mexnc ( 'def_dim', ncid, 'y', 1 ); %#ok<ASGLU>
-    if ( status ~= 0 )
-        error ( mexnc('strerror',status) );
-    end
-    
-    [zdimid, status] = mexnc ( 'def_dim', ncid, 'z', 1 ); %#ok<ASGLU>
-    if ( status ~= 0 )
-        error ( mexnc('strerror',status) );
-    end
-    
-    
-    
-    len_t = 0;
-    [tdimid, status] = mexnc ( 'def_dim', ncid, 'time', len_t ); %#ok<ASGLU>
-    if ( status ~= 0 )
-        error ( mexnc('strerror',status) );
-    end
-    
-    %
-    % CLOSE
-    status = mexnc ( 'close', ncid );
-    if ( status ~= 0 )
-        error ( 'CLOSE failed' );
-    end
-    
-%--------------------------------------------------------------------------
-function create_ncfile_hdf4(hfile)
-    
-nc_create_empty(hfile,'hdf4');
-nc_adddim(hfile,'x',4);
-nc_adddim(hfile,'y',1);
-nc_adddim(hfile,'z',1);
-nc_adddim(hfile,'time',0);
-
-
-
-%-------------------------------------------------------------------------------
-function create_ncfile_tmw(ncfile, mode )
-    ncid= netcdf.create(ncfile, mode );
-    
-    %
-    % Create a fixed dimension.  
-    len_x = 4;
-    netcdf.defDim ( ncid, 'x', len_x );
-    
-    %
-    % Create two singleton dimensions.
-    netcdf.defDim(ncid, 'y', 1 );
-    netcdf.defDim(ncid, 'z', 1 );
-    
-    
-    len_t = 0;
-    netcdf.defDim(ncid, 'time', len_t );
-    
-    netcdf.close( ncid );
 
 
 %---------------------------------------------------------------------------
@@ -451,43 +330,8 @@ error('nc_addnewrecs succeeded on writing to a fixed size variable, should have 
 function test_009(ncfile,mode)
 
 
-if strcmp(mode,'hdf4')
-
-	nc_create_empty(ncfile,'hdf4');
-	nc_adddim(ncfile,'x',4);
-
-elseif snctools_use_tmw
-    ncid = netcdf.create(ncfile, nc_clobber_mode );
-    len_x = 4;
-    netcdf.defDim(ncid, 'x', len_x );
-    netcdf.close(ncid );
-else
-    %
-    % ok, first create this baby.
-    [ncid, status] = mexnc ( 'create', ncfile, nc_clobber_mode );
-    if ( status ~= 0 )
-        ncerr_msg = mexnc ( 'strerror', status );
-        error(ncerr_msg);
-    end
-    
-    
-    %
-    % Create a fixed dimension.  
-    len_x = 4;
-    [xdimid, status] = mexnc ( 'def_dim', ncid, 'x', len_x ); %#ok<ASGLU>
-    if ( status ~= 0 )
-        ncerr_msg = mexnc ( 'strerror', status );
-        error(ncerr_msg);
-    end
-    
-    
-    %
-    % CLOSE
-    status = mexnc ( 'close', ncid );
-    if ( status ~= 0 )
-        error ( 'CLOSE failed' );
-    end
-end
+nc_create_empty(ncfile,'hdf4');
+nc_adddim(ncfile,'x',4);
 
 clear varstruct;
 varstruct.Name = 'test_var3';
@@ -520,50 +364,9 @@ error('nc_addnewrecs passed when writing to a file with no unlimited dimension')
 %---------------------------------------------------------------------------
 function test_010(ncfile,mode)
 
-if ischar(mode) && strcmp(mode,'hdf4')
-	nc_create_empty(ncfile,'hdf4');
-	nc_adddim(ncfile,'x',4);
-	nc_adddim(ncfile,'time',0);
-elseif snctools_use_tmw
-    ncid = netcdf.create(ncfile, nc_clobber_mode );
-    len_x = 4;
-    netcdf.defDim(ncid, 'x', len_x );
-    netcdf.defDim(ncid, 'time', 0 );
-    netcdf.close(ncid );
-
-	clear varstruct;
-	varstruct.Name = 'time';
-	varstruct.Nctype = 'double';
-	varstruct.Dimension = { 'time' };
-	nc_addvar ( ncfile, varstruct );
-
-else
-    %
-    % ok, first create this baby.
-    [ncid, status] = mexnc ( 'create', ncfile, nc_clobber_mode );
-    if ( status ~= 0 )
-        ncerr_msg = mexnc ( 'strerror', status );
-        error(ncerr_msg);
-    end
-    
-    
-    %
-    % Create a fixed dimension.  
-    len_x = 4;
-    mexnc ( 'def_dim', ncid, 'x', len_x );
-    mexnc ( 'def_dim', ncid, 'time', 0 );
-    status = mexnc ( 'close', ncid );
-    if ( status ~= 0 )
-        error ( 'CLOSE failed' );
-    end
-
-	clear varstruct;
-	varstruct.Name = 'time';
-	varstruct.Nctype = 'double';
-	varstruct.Dimension = { 'time' };
-	nc_addvar ( ncfile, varstruct );
-
-end
+nc_create_empty(ncfile,'hdf4');
+nc_adddim(ncfile,'x',4);
+nc_adddim(ncfile,'time',0);
 
 
 
@@ -596,34 +399,9 @@ return
 %---------------------------------------------------------------------------
 function test_011 ( ncfile )
 
-if snctools_use_tmw
-    ncid = netcdf.create(ncfile, nc_clobber_mode );
-    len_x = 4;
-    netcdf.defDim(ncid, 'x', len_x );
-    netcdf.defDim(ncid, 'time', 0 );
-    netcdf.close(ncid );
-else
-    
-    %
-    % ok, first create this baby.
-    ncid = mexnc ( 'create', ncfile, nc_clobber_mode );
-
-    
-    
-    %
-    % Create a fixed dimension.  
-    len_x = 4;
-    mexnc ( 'def_dim', ncid, 'x', len_x );
-
-    
-    
-    len_t = 0;
-    mexnc ( 'def_dim', ncid, 'time', len_t );
-    status = mexnc ( 'close', ncid );
-    if ( status ~= 0 )
-        error ( 'CLOSE failed' );
-    end
-end
+nc_create_empty(ncfile,nc_clobber_mode);
+nc_adddim(ncfile,'x',4);
+nc_adddim(ncfile,'time',0);
 
 clear varstruct;
 varstruct.Name = 'time';
@@ -759,7 +537,7 @@ nc_addvar ( ncfile, varstruct );
 clear varstruct;
 varstruct.Name = 't2';
 varstruct.Nctype = 'double';
-if getpref('SNCTOOLS','PRESERVE_FVD')
+if getpref('SNCTOOLS','PRESERVE_FVD',false)
     varstruct.Dimension = { 'x','y', 'time' };
 else
     varstruct.Dimension = { 'time', 'y', 'x' };
@@ -770,7 +548,7 @@ nc_addvar ( ncfile, varstruct );
 clear varstruct;
 varstruct.Name = 't3';
 varstruct.Nctype = 'double';
-if getpref('SNCTOOLS','PRESERVE_FVD')
+if getpref('SNCTOOLS','PRESERVE_FVD',false)
     varstruct.Dimension = { 'y', 'time' };
 else
     varstruct.Dimension = { 'time', 'y'};
@@ -781,7 +559,7 @@ nc_addvar ( ncfile, varstruct );
 clear varstruct;
 varstruct.Name = 't4';
 varstruct.Nctype = 'double';
-if getpref('SNCTOOLS','PRESERVE_FVD')
+if getpref('SNCTOOLS','PRESERVE_FVD',false)
     varstruct.Dimension = { 'x', 'y', 'z', 'time' };
 else
     varstruct.Dimension = { 'time', 'z', 'y', 'x'};
@@ -795,7 +573,7 @@ function test_013(ncfile,mode)
 create_013_testfile(ncfile,mode);
 
 
-if getpref('SNCTOOLS','PRESERVE_FVD')
+if getpref('SNCTOOLS','PRESERVE_FVD',false)
     b.time = 0;
     b.t1 = 0;
     b.t2 = zeros(10,10);
@@ -812,7 +590,7 @@ end
 nc_addnewrecs ( ncfile, b, 'time' );
 
 clear b
-if getpref('SNCTOOLS','PRESERVE_FVD')
+if getpref('SNCTOOLS','PRESERVE_FVD',false)
     b.time = 1;
     b.t1 = 1;
     b.t2 = ones(10,10);
@@ -898,7 +676,7 @@ end
 clear varstruct;
 varstruct.Name = 't1';
 varstruct.Nctype = 'double';
-if getpref('SNCTOOLS','PRESERVE_FVD')
+if getpref('SNCTOOLS','PRESERVE_FVD',false)
     varstruct.Dimension = { 'x', 'y', 'time' };
 else
     varstruct.Dimension = { 'time', 'y', 'x' };

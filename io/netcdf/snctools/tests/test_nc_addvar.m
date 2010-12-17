@@ -1,57 +1,28 @@
-function test_nc_addvar ( ncfile )
-% TEST_NC_ADDVAR
-%
-% Relies upon nc_getvarinfo.
+function test_nc_addvar(create_mode)
 
-% Test: no inputs
-% test:  too many inputs
-% test:  2nd input not character
-% test:  3rd input not numeric
-% test:  Add a double variable, no dimensions
-% test:  Add a float variable
-% test:  Add a int32 variable
-% test:  Add a int16 variable
-% test:  Add a byte variable
-% test:  Add a char variable
-% test:  Add a variable with a named fixed dimension.
-% test:  Add a variable with a named unlimited dimension.
-% test:  Add a variable with a named unlimited dimension and named fixed dimension.
-% test:  Add a variable with attribute structures.
-% test:  Add a variable with a numeric Datatype
-% test:  Try to add a variable that is already there.
-% test 19:  Have an illegal field.
+fprintf('\t\tTesting NC_ADDVAR ...  ');
 
-% netcdf-4 tests
-%     1D no chunking
-%     1D chunking
-%     2D chunking
-%     shuffle
-%     deflate
-%     chunking + shuffle + deflate
-%     uint type
-
-fprintf('Testing NC_ADDVAR ...\n');
-
-if nargin == 0
-	ncfile = 'foo.nc';
+switch(create_mode)
+    case 'hdf4'
+        run_local_tests(create_mode);
+        
+    case nc_clobber_mode
+        run_local_tests(create_mode);
+        
+    case 'netcdf4-classic'
+        run_local_tests(create_mode);
+        run_nc4_specific_tests(create_mode);
 end
 
-run_nc3_tests(ncfile);
-run_hdf4_tests('foo.hdf');
-run_nc4_tests(ncfile);
-
-return
-
+fprintf('OK\n');
 
 %--------------------------------------------------------------------------
-function run_nc3_tests(ncfile)
+function run_local_tests(create_mode)
 
-fprintf('\tRunning netcdf-3 tests...  ' );
-create_mode = nc_clobber_mode;
+ncfile = 'foo.nc';
 
 test_no_inputs;
-test_too_many_inputs ( ncfile, create_mode );
-test_2nd_input_not_char ( ncfile, create_mode );
+test_2nd_input_not_struct ( ncfile, create_mode );
 test_empty_struct ( ncfile, create_mode );
 test_singletons ( ncfile, create_mode );
 test_fixed_dimension ( ncfile, create_mode );
@@ -61,25 +32,6 @@ test_with_attributes ( ncfile, create_mode );
 test_numeric_nctype ( ncfile, create_mode );
 test_var_already_there ( ncfile, create_mode );
 test_illegal_field_name ( ncfile, create_mode );
-fprintf('OK\n');
-
-return
-
-
-
-
-
-
-%--------------------------------------------------------------------------
-function run_hdf4_tests(ncfile)
-
-fprintf('\tRunning HDF4 tests...  ' );
-create_mode = 'hdf4';
-
-test_unlimited ( ncfile, create_mode );
-test_unlimited_plus_fixed ( ncfile, create_mode );
-test_with_attributes ( ncfile, create_mode );
-fprintf('OK\n');
 
 return
 
@@ -90,28 +42,10 @@ return
 
 
 %--------------------------------------------------------------------------
-function run_nc4_tests(ncfile)
+function run_nc4_specific_tests(create_mode)
 
-if ~netcdf4_capable
-	fprintf('\tmexnc (netcdf-4) backend testing filtered out on configurations where the library version < 4.\n');
-	return
-end
+ncfile = 'foo4.nc';
 
-fprintf('\tRunning netcdf-4 tests...  ' );
-create_mode = nc_netcdf4_classic;
-
-test_no_inputs;
-test_too_many_inputs ( ncfile, create_mode );
-test_2nd_input_not_char ( ncfile, create_mode );
-test_empty_struct ( ncfile, create_mode );
-test_singletons ( ncfile, create_mode );
-test_fixed_dimension ( ncfile, create_mode );
-test_unlimited ( ncfile, create_mode );
-test_unlimited_plus_fixed ( ncfile, create_mode );
-test_with_attributes ( ncfile, create_mode );
-test_numeric_nctype ( ncfile, create_mode );
-test_var_already_there ( ncfile, create_mode );
-test_illegal_field_name ( ncfile, create_mode );
 %test_illegal_type(ncfile,'uint8',create_mode);
 test_illegal_type(ncfile,'uint16',create_mode);
 test_illegal_type(ncfile,'uint32',create_mode);
@@ -127,13 +61,14 @@ test_2d_shuffle(ncfile);
 test_2d_deflate(ncfile);
 test_2d_chunking_shuffle_deflate(ncfile);
 test_nc4_fill_value(ncfile);
-fprintf('OK\n');
+
 return
 
 
 
 %--------------------------------------------------------------------------
 function test_1d_no_chunking (ncfile)
+% Create a 1D variable without chunking. 
 
 
 nc_create_empty (ncfile,nc_netcdf4_classic);
@@ -169,6 +104,7 @@ end
 
 %--------------------------------------------------------------------------
 function test_1d_chunking (ncfile)
+% Create a 1D variable with chunking. 
 
 
 nc_create_empty (ncfile,nc_netcdf4_classic);
@@ -200,6 +136,7 @@ end
 
 %--------------------------------------------------------------------------
 function test_2d_chunking (ncfile)
+% Create a 2D variable with chunking.
 
 
 nc_create_empty (ncfile,nc_netcdf4_classic);
@@ -225,6 +162,7 @@ end
 
 %--------------------------------------------------------------------------
 function test_2d_bad_chunking (ncfile)
+% Negative test:  bad chunk size.
 
 
 nc_create_empty (ncfile,nc_netcdf4_classic);
@@ -249,6 +187,7 @@ error('test succeeded when it should have failed');
 
 %--------------------------------------------------------------------------
 function test_2d_shuffle (ncfile)
+% Create a 2D variable with shuffle filter turned on.
 
 
 nc_create_empty (ncfile,nc_netcdf4_classic);
@@ -289,6 +228,7 @@ end
 
 %--------------------------------------------------------------------------
 function test_2d_deflate (ncfile)
+% Create a 2D variable with deflate filter turned on.
 
 
 nc_create_empty (ncfile,nc_netcdf4_classic);
@@ -345,6 +285,7 @@ end
 
 %--------------------------------------------------------------------------
 function test_2d_chunking_shuffle_deflate (ncfile)
+% Create a 2D variable with shuffle and deflate filters turned on.
 
 
 nc_create_empty (ncfile,nc_netcdf4_classic);
@@ -383,6 +324,7 @@ end
 
 %--------------------------------------------------------------------------
 function test_nc4_fill_value (ncfile)
+% Create a 2D variable with a fill value.
 
 
 nc_create_empty (ncfile,nc_netcdf4_classic);
@@ -419,6 +361,7 @@ end
 
 %--------------------------------------------------------------------------
 function test_no_inputs()
+% Negative test, should error if no inputs.
 
 try
     nc_addvar;
@@ -438,37 +381,12 @@ error ( '%s:  succeeded when it should have failed.\n', mfilename );
 
 
 
-%--------------------------------------------------------------------------
-function test_too_many_inputs (ncfile,mode)
-
-nc_create_empty (ncfile,mode);
-clear varstruct;
-varstruct.Name = 'test_var';
-try
-    nc_addvar ( ncfile, varstruct, 5 );
-catch %#ok<CTCH>
-	return
-end
-error ( '%s:  succeeded when it should have failed.\n', mfilename );
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
 %--------------------------------------------------------------------------
-function test_2nd_input_not_char (ncfile,mode)
-% test 4:  2nd input not character
+function test_2nd_input_not_struct (ncfile,mode)
+% Negative test, the 2nd parameter must be a struct.
 nc_create_empty (ncfile,mode);
 
 try
@@ -492,7 +410,7 @@ error ( 'succeeded when it should have failed.');
 
 %--------------------------------------------------------------------------
 function test_empty_struct (ncfile,mode)
-% test 5:  No name provided in varstruct
+% Negative test, the struct has no Name field.
 nc_create_empty (ncfile,mode);
 clear varstruct;
 varstruct = struct([]);
@@ -514,6 +432,7 @@ error ( 'succeeded when it should have failed.' );
 
 %--------------------------------------------------------------------------
 function test_singletons (ncfile,mode)
+% Create singletons of different datatypes.
 
 nc_create_empty (ncfile,mode);
 clear varstruct;
@@ -592,14 +511,11 @@ return
 
 %--------------------------------------------------------------------------
 function test_fixed_dimension (ncfile,mode)
+% Create a variable with a fixed length dimension.
 
-% test 12:  Add a variable with a named fixed dimension.
 nc_create_empty (ncfile,mode);
-if strcmp(mode,'hdf4')
-    nc_adddim(ncfile,'x',5);
-else
-    nc_adddim ( ncfile, 'x', 5 );
-end
+nc_adddim(ncfile,'x',5);
+
 clear varstruct;
 varstruct.Name = 'y';
 varstruct.Datatype = 'double';
@@ -633,8 +549,8 @@ return
 
 %--------------------------------------------------------------------------
 function test_unlimited(ncfile,mode)
+% Create an unlimited variable.
 
-% test 13:  Add a variable with a named unlimited dimension.
 nc_create_empty (ncfile,mode);
 nc_adddim ( ncfile, 'x', 0 );
 clear varstruct;
@@ -669,7 +585,7 @@ return
 
 %--------------------------------------------------------------------------
 function test_unlimited_plus_fixed (ncfile,mode)
-% test 14:  Add a variable with a named unlimited dimension and named fixed dimension.
+% Create a variable with both an unlimited and limited dimension.
 nc_create_empty (ncfile,mode);
 nc_adddim ( ncfile, 'x', 0 );
 nc_adddim(ncfile,'y',5);
@@ -717,7 +633,7 @@ return
 
 %--------------------------------------------------------------------------
 function test_with_attributes (ncfile,mode)
-% test 15:  Add a variable with attribute structures.
+% Create a variable and attributes.
 nc_create_empty (ncfile,mode);
 nc_adddim ( ncfile, 'x', 0 );
 nc_adddim(ncfile,'y',5);
@@ -755,17 +671,17 @@ return
 
 %--------------------------------------------------------------------------
 function test_numeric_nctype (ncfile,mode)
+% Create a variable where the datatype is given as numeric.
 
-% test 17:  Add a variable with a numeric Datatype
 nc_create_empty (ncfile,mode);
 nc_adddim ( ncfile, 'x', 5 );
 clear varstruct;
-varstruct.Name = 'x';
+varstruct.Name = 'y';
 varstruct.Datatype = 'double';
 varstruct.Dimension = { 'x' };
 nc_addvar ( ncfile, varstruct );
 
-v = nc_getvarinfo ( ncfile, 'x' );
+v = nc_getvarinfo ( ncfile, 'y' );
 if ~strcmp(v.Datatype,'double')
     error ( 'failed')
 end
@@ -796,13 +712,14 @@ return
 
 %--------------------------------------------------------------------------
 function test_var_already_there (ncfile,mode)
+% Negative test, the specified variable already exists.
 
 
 nc_create_empty (ncfile,mode);
 nc_adddim ( ncfile, 'x', 5 );
 
 clear varstruct;
-varstruct.Name = 'x';
+varstruct.Name = 'y';
 varstruct.Datatype = 'double';
 varstruct.Dimension = { 'x' };
 nc_addvar ( ncfile, varstruct );
@@ -817,6 +734,7 @@ error('succeeded when it should have failed');
 
 %--------------------------------------------------------------------------
 function test_illegal_type(ncfile,dtype,mode)
+% Negative test, the datatype is not legal.
 
 nc_create_empty (ncfile,mode);
 nc_adddim ( ncfile, 'x', 5 );
@@ -838,14 +756,15 @@ error('succeeded when it should have failed');
 
 %--------------------------------------------------------------------------
 function test_illegal_field_name (ncfile,mode)
-% Should produce a warning, which we want to suppress.
+% Should produce a warning, which we want to suppress.  The varstruct
+% has an unrecognized field.
 
 warning('off','SNCTOOLS:nc_addvar:unrecognizedFieldName');
 nc_create_empty (ncfile,mode);
 nc_adddim ( ncfile, 'x', 5 );
 
 clear varstruct;
-varstruct.Name = 'x';
+varstruct.Name = 'y';
 varstruct.nnccttyyppee = { 'x' };
 varstruct.Dimension = { 'x' };
 nc_addvar ( ncfile, varstruct );

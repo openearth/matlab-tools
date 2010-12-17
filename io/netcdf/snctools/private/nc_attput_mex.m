@@ -26,6 +26,31 @@ else
     end
 end
 
+% If the attribute is '_FillValue', then force the value to have the
+% correct dataype.
+if strcmp(attribute_name,'_FillValue')
+    [xtype,status] = mexnc('INQ_VARTYPE',ncid,varid);
+    if ( status ~= 0 )
+        mexnc ( 'close', ncid );
+        ncerr = mexnc ( 'strerror', status );
+        error ( 'SNCTOOLS:NC_ATTGET:MEXNC:INQ_VARTYPE', ncerr );
+    end
+    
+    switch(xtype)
+        case nc_double
+            attval = double(attval);
+        case nc_float
+            attval = single(attval);
+        case nc_int
+            attval = int32(attval);
+        case nc_short
+            attval = int16(attval);
+        case nc_byte
+            attval = int8(attval);
+        case nc_char
+            attval = char(attval);
+    end
+end
 % Figure out which mexnc operation to perform.
 switch class(attval)
 

@@ -22,7 +22,16 @@ ncfile_1 = 'foo1.nc';
 ncfile_2 = 'foo2.nc';
 
 
-fprintf('NC_DIFF ...  ' );
+use_mexnc = getpref('SNCTOOLS','USE_MEXNC',false);
+v = version('-release');
+switch(v)
+	case { '14', '2006a', '2006b', '2007a', '2007b', '2008a'}
+		if ~use_mexnc
+			fprintf('\tNo testing yet on java read-only configuration.\n');
+			return
+		end
+end
+
 
 test_empty_files                      ( ncfile_1, ncfile_2 );
 test_different_unlimited_coord_var    ( ncfile_1, ncfile_2 );
@@ -307,72 +316,11 @@ return
 %--------------------------------------------------------------------------
 function create_test_file ( ncfile)
 
-if snctools_use_tmw
-	ncid_1 = netcdf.create(ncfile, nc_clobber_mode );
-	
-	%
-	% Create a fixed dimension.  
-	len_x = 4;
-	netcdf.defDim(ncid_1, 'x', len_x );
-	
-	%
-	% Create a fixed dimension.  
-	len_y = 5;
-	netcdf.defDim(ncid_1, 'y', len_y );
-	
-    len_t = 0;
-	netcdf.defDim(ncid_1, 'time', len_t );
-	
-	netcdf.close( ncid_1 );
-else
-	%
-	% ok, first create the first file
-	[ncid_1, status] = mexnc ( 'create', ncfile, nc_clobber_mode );
-	if ( status ~= 0 )
-		ncerr_msg = mexnc ( 'strerror', status );
-        error(ncerr_msg);
-	end
-	
-	
-	%
-	% Create a fixed dimension.  
-	len_x = 4;
-	[xdimid, status] = mexnc ( 'def_dim', ncid_1, 'x', len_x ); %#ok<ASGLU>
-	if ( status ~= 0 )
-		ncerr_msg = mexnc ( 'strerror', status );
-        error(ncerr_msg);
-	end
-	
-	%
-	% Create a fixed dimension.  
-	len_y = 5;
-	[ydimid, status] = mexnc ( 'def_dim', ncid_1, 'y', len_y ); %#ok<ASGLU>
-	if ( status ~= 0 )
-		ncerr_msg = mexnc ( 'strerror', status );
-        error(ncerr_msg);
-	end
-	
-	
-	len_t = 0;
-	[ydimid, status] = mexnc ( 'def_dim', ncid_1, 'time', len_t ); %#ok<ASGLU>
-	if ( status ~= 0 )
-		ncerr_msg = mexnc ( 'strerror', status );
-        error(ncerr_msg);
-	end
-	
-	
-	
-	
-	
-	%
-	% CLOSE
-	status = mexnc ( 'close', ncid_1 );
-	if ( status ~= 0 )
-		error ( 'CLOSE failed' );
-	end
-end
+nc_create_empty(ncfile,nc_clobber_mode);
+nc_adddim(ncfile,'x',4);
+nc_adddim(ncfile,'y',5);
+nc_adddim(ncfile,'time',0);
 
-%
 % Add a variable along the time dimension
 varstruct.Name = 'test_var';
 varstruct.Nctype = 'float';

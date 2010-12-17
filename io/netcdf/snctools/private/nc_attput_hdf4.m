@@ -151,6 +151,35 @@ switch(attname)
         end
         
     case '_FillValue'
+        [name,rank,dimsizes,data_type,nattrs,status] = hdfsd('getinfo',obj_id); %#ok<ASGLU>
+        if ( status < 0 )
+            if varname == -1
+                hdfsd('endaccess',obj_id);
+            end
+            hdfsd('end',sd_id);
+            error('SNCTOOLS:hdf4:getInfoFailed', ...
+                'Unable to get information about dataset.' );
+        end
+        switch(data_type)
+            case 'double'
+                attval = double(attval);
+            case 'single'
+                attval = single(attval);
+            case 'int32'
+                attval = int32(attval);
+            case 'uint32'
+                attval = uint32(attval);
+            case 'int16'
+                attval = int16(attval);
+            case 'uint16'
+                attval = uint16(attval);
+            case 'int8'
+                attval = int8(attval);
+            case 'uint8'
+                attval = uint8(attval);
+            case 'char'
+                attval = char(attval);
+        end
         status = hdfsd('setfillvalue',obj_id,attval);
         
     otherwise

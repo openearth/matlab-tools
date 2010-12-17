@@ -1,8 +1,46 @@
-function test_nc_attput()
-% TEST_NC_ATTPUT
-%
-% Tests run include
-%
+function test_nc_attput(mode)
+
+if nargin < 1
+	mode = nc_clobber_mode;
+end
+
+fprintf ('\t\tTesting NC_ATTPUT...  ' );
+
+ncfile = 'foo.nc';
+if exist(ncfile,'file')
+    delete(ncfile);
+end
+nc_create_empty(ncfile,mode);
+
+switch(mode)
+	case nc_clobber_mode
+		% netcdf-3
+		run_common_tests(ncfile);
+
+	case 'netcdf4-classic'
+		run_common_tests(ncfile);
+		verify_netcdf4(ncfile);
+
+	case 'hdf4'
+		run_common_tests(ncfile);
+		run_hdf4_tests;
+end
+fprintf('OK\n');
+return
+
+
+
+
+%--------------------------------------------------------------------------
+function run_hdf4_tests()
+% HDF4 specific tests
+test_hdf4_datastrs;
+test_hdf4_cal;
+test_hdf4_fillvalue;
+return
+
+%--------------------------------------------------------------------------
+function run_common_tests(ncfile)
 % write/retrieve a new double attribute
 % write/retrieve a new float attribute
 % write/retrieve a new int attribute
@@ -10,97 +48,9 @@ function test_nc_attput()
 % write/retrieve a new uint8 attribute
 % write/retrieve a new int8 attribute
 % write/retrieve a new text attribute
-%
-% These are run for both netcdf-3 and netcdf-4
-
-fprintf ( 1, 'Testing NC_ATTGET, NC_ATTPUT...\n' );
-
-test_mexnc_backend;
-test_tmw_backend;
-
-
-return;
-
-
-%--------------------------------------------------------------------------
-function test_mexnc_backend()
-
-fprintf('\tTesting mexnc backend ...\n');
-v = version('-release');
-switch(v)
-    case { '14','2006a','2006b','2007a','2007b','2008a'}
-        run_nc3_tests;
-        
-    otherwise
-        fprintf('\t\tmexnc testing filtered out on release %s.\n', v);
-        return
-end
-
-
-return
-%--------------------------------------------------------------------------
-function test_tmw_backend()
-
-fprintf('\tTesting tmw backend ...\n');
-
-run_hdf4_tests;
-
-v = version('-release');
-switch(v)
-    case { '14','2006a','2006b','2007a','2007b','2008a'}
-        fprintf('\t\ttmw testing filtered out on release %s... ', v);
-        return;
-        
-    case { '2008b','2009a','2009b','2010a'}
-        run_nc3_tests;
-        
-    otherwise
-        run_nc3_tests;
-        run_nc4_tests;
-end
-
-
-return
-
-
-%--------------------------------------------------------------------------
-function run_nc3_tests(ncfile)
-fprintf('\t\tRunning netcdf-3 tests...  ');
-ncfile = 'foo.nc';
-nc_create_empty(ncfile);
-run_tests(ncfile);
-fprintf('OK\n');
-return
-
-%--------------------------------------------------------------------------
-function run_hdf4_tests()
-fprintf('\t\tRunning hdf4 tests...  ');
-ncfile = 'foo.hdf';
-nc_create_empty(ncfile,'hdf4');
-run_tests(ncfile);
-
-% HDF4 specific tests
-test_hdf4_datastrs;
-test_hdf4_cal;
-test_hdf4_fillvalue;
-fprintf('OK\n');
-return
-%--------------------------------------------------------------------------
-function run_nc4_tests()
-
-
-ncfile = 'foo4.nc';
-
-fprintf('\t\tRunning netcdf-4 tests...  ');
-nc_create_empty(ncfile,nc_netcdf4_classic);
-run_tests(ncfile);
-verify_netcdf4(ncfile);
-fprintf('OK\n');
-return
-
-
-%--------------------------------------------------------------------------
-function run_tests(ncfile)
+% write/read an empty attribute
+% Verify that fill value attributes match the datatype of their dataset.
+verify_fill_value_correctness(ncfile);
 
 test_read_write_double_att ( ncfile );
 test_read_write_float_att ( ncfile );
@@ -115,6 +65,23 @@ return
 
 
 
+%--------------------------------------------------------------------------
+function verify_fill_value_correctness(ncfile)
+% It was possible to write fill values with the wrong datatype on netcdf-3
+% and not know what you did wrong until trying to read or write something.
+% This test verifies that the _FillValue datatype is now correct.
+
+nc_adddim(ncfile,'xx',5);
+v.Name = 'yy';
+v.Attribute.Name = '_FillValue';
+v.Dimension = {'xx'};
+v.Attribute.Value = single(-99);
+nc_addvar(ncfile,v);
+
+info = nc_getvarinfo(ncfile,'yy');
+if ~strcmp(info.Attribute.Datatype,'double')
+    error('failed');
+end
 
 %--------------------------------------------------------------------------
 function test_read_write_empty_att(ncfile )
@@ -172,6 +139,7 @@ return
 
 %--------------------------------------------------------------------------
 function test_read_write_double_att ( ncfile )
+% Verify that we can read/write double precision attributes.
 
 nc_attput ( ncfile, nc_global, 'new_att', 0 );
 x = nc_attget ( ncfile, nc_global, 'new_att' );
@@ -285,6 +253,9 @@ end
 
 
 return
+
+
+
 
 
 %--------------------------------------------------------------------------

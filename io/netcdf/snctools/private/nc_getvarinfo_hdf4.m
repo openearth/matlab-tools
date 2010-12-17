@@ -48,7 +48,15 @@ if status < 0
 end
 
 vinfo.Name = name;
-vinfo.Datatype = data_type;
+switch(data_type)
+	case 'float'
+		vinfo.Datatype = 'single';
+    case 'char8'
+        vinfo.Datatype = 'char';
+	otherwise
+		vinfo.Datatype = data_type;
+end
+
 
 if hdfsd('isrecord',sds_id)
     vinfo.Unlimited = true;

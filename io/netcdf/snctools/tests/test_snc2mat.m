@@ -1,28 +1,8 @@
-function test_snc2mat ( ncfile )
-% TEST_SNC2MAT
-% Relies upon nc_varput, nc_add_dimension, nc_addvar
-%
-% Tests
-% Test 1:  netcdf file does not exist.
-% Test 2:  try a pretty generic netcdf file
+function test_snc2mat()
+fprintf ('\t\tTesting SNC2MAT...  ' );
+run_negative_tests;
 
-if nargin == 0
-	ncfile = 'foo.nc';
-end
-
-
-fprintf ('Testing SNC2MAT...  ' );
-
-test_generic_file ( ncfile );
-
-v = version('-release');
-switch(v)
-	case{'14','2006a','2006b','2007a'}
-	    fprintf('\n\tSome negative tests filtered out on version %s...  ', v);
-    otherwise
-		test_snc2mat_neg;
-end
-
+test_generic_file;
 fprintf('OK\n');
 return
 
@@ -30,13 +10,44 @@ return
 
 
 
+%--------------------------------------------------------------------------
+function run_negative_tests()
+v = version('-release');
+switch(v)
+	case{'14','2006a','2006b','2007a'}
+	    fprintf('Some negative tests filtered out on version %s...  ', v);
+    otherwise
+		test_file_does_not_exist;
+end
+
 
 %--------------------------------------------------------------------------
-function test_generic_file( ncfile )
+function test_file_does_not_exist ( ncfile )
 
-create_empty_file ( ncfile );
+% netcdf file does not exist.
+try
+	snc2mat ( 'bad.nc', 'bad.mat' );
+catch %#ok<NASGU>
+    %  'MATLAB:netcdf:open:noSuchFile'
+    return
+end
+
+%--------------------------------------------------------------------------
+function test_generic_file()
+
+use_mexnc = getpref('SNCTOOLS','USE_MEXNC',false);
+v = version('-release');
+switch(v)
+	case { '14', '2006a', '2006b', '2007a', '2007b', '2008a'}
+		if ~use_mexnc
+			fprintf('\tNo testing on java read-only configuration.\n');
+			return
+        end
+end
+ncfile= 'foo.nc';
+nc_create_empty(ncfile,nc_clobber_mode);
 len_x = 4; len_y = 6;
-nc_add_dimension ( ncfile, 'x', len_x );
+nc_adddim( ncfile, 'x', len_x );
 nc_add_dimension ( ncfile, 'y', len_y );
 
 clear varstruct;

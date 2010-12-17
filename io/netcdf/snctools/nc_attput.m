@@ -7,7 +7,12 @@ function nc_attput(ncfile,varname,attname,attval)
 %
 %   The attribute datatype will match that of the class of ATTVAL.  So if
 %   if you want to have a 16-bit short integer attribute, make the class of
-%   ATTVAL to be INT16.
+%   ATTVAL to be INT16.  Fill value attributes, however, will be cast to 
+%   the correct type.
+%
+%   Note:  Be aware that using NC_ATTPUT with the _FillValue attribute is
+%   dangerous with netCDF-4 files.  If the variable is not empty, all its
+%   data will be lost.
 %
 %   Example:  create an empty netcdf file and then write a global
 %   attribute.

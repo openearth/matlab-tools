@@ -1,141 +1,56 @@
-function test_nc_iscoordvar()
+function test_nc_iscoordvar(mode)
 
-fprintf('Testing NC_ISCOORDVAR...\n');
-
-run_negative_tests;
-
-test_mexnc_backend;
-test_tmw_backend;
-test_java_backend;
-
-
-
-%--------------------------------------------------------------------------
-function test_coordvar_java ()
-
-url = 'http://rocky.umeoce.maine.edu/GoMPOM/cdfs/gomoos.20070723.cdf';
-
-bool = nc_iscoordvar(url,'xpos');
-if ~bool
-	error ( 'failed' );
+if nargin < 1
+    mode = 'nc-3';
 end
-return
+
+fprintf('\t\tTesting NC_ISCOORDVAR...  ');
+
+switch(mode)
+	case 'nc-3'
+		testroot = fileparts(mfilename('fullpath'));
+		ncfile = fullfile(testroot,'testdata/iscoordvar.nc');
+		run_local_tests(ncfile);
+
+	case 'hdf'
+		testroot = fileparts(mfilename('fullpath'));
+		ncfile = fullfile(testroot,'testdata/iscoordvar.hdf');
+		run_local_tests(ncfile);
+
+	case 'netcdf4-classic'
+		testroot = fileparts(mfilename('fullpath'));
+		ncfile = fullfile(testroot,'testdata/iscoordvar-4.nc');
+		run_local_tests(ncfile);
+
+	case 'http'
+		test_coordvar_http;
+
+end
+
+run_backend_neutral_negative_tests;
+
+fprintf('OK\n');
+
+
+
 %--------------------------------------------------------------------------
-function run_negative_tests()
-
-testroot = fileparts(mfilename('fullpath'));
-ncfile = fullfile(testroot,'testdata/empty.nc');
-
-test_no_inputs;
-test_only_one_input (ncfile);
-test_too_many_inputs(ncfile);
-test_not_netcdf_file;
-test_empty_ncfile (ncfile);
-
-ncfile = fullfile(testroot,'testdata/iscoordvar.nc');
+function run_local_tests(ncfile)
+test_coordvar(ncfile);
 test_variable_not_present (ncfile);
 test_not_a_coordvar (ncfile);
 test_var_has_2_dims (ncfile);
 test_singleton_variable (ncfile);
 
 %--------------------------------------------------------------------------
-function test_java_backend()
+function run_backend_neutral_negative_tests()
 
-fprintf('\tTesting java backend ...  ');
-
-if ~getpref('SNCTOOLS','USE_JAVA',false)
-
-    fprintf('\t\tjava backend testing filtered out on ');
-    fprintf('configurations where SNCTOOLS ''USE_JAVA'' ');
-    fprintf('prefererence is false.\n');
-    return
-end
-
-
-v = version('-release');
-switch(v)
-    case { '14','2006a','2006b','2007a','2007b','2008a'}
-        % Only test if on win64
-        c = computer;
-        if strcmp(c,'PCWIN64')
-            run_nc3_tests;
-            run_nc4_tests;
-        end
-        
-    case { '2008b', '2009a', '2009b', '2010a' }
-        run_nc4_tests;
-        
-end
-
-test_coordvar_java;
-fprintf('OK\n');
-
-%--------------------------------------------------------------------------
-function test_mexnc_backend()
-
-fprintf('\tTesting mexnc backend ...\n');
-v = version('-release');
-switch(v)
-    case { '14','2006a','2006b','2007a','2007b','2008a'}
-        run_nc3_tests;
-        
-    otherwise
-        fprintf('\t\tmexnc testing filtered out on release %s.\n', v);
-        return
-end
-
-
-return
-%--------------------------------------------------------------------------
-function test_tmw_backend()
-
-fprintf('\tTesting tmw backend ...\n');
-
-v = version('-release');
-switch(v)
-    case { '14','2006a','2006b','2007a','2007b','2008a'}
-        fprintf('\t\ttmw testing filtered out on release %s... ', v);
-        return;
-        
-    case { '2008b','2009a','2009b','2010a'}
-        run_nc3_tests;
-        
-    otherwise
-        run_nc3_tests;
-        run_nc4_tests;
-end
-
-
-
-return
-
-
-
-%--------------------------------------------------------------------------
-function run_nc3_tests()
-
-fprintf('\t\tRunning local netcdf-3 tests...');
 testroot = fileparts(mfilename('fullpath'));
-ncfile = fullfile(testroot,'testdata/iscoordvar.nc');
-test_coordvar(ncfile);
-fprintf('OK\n');
+ncfile = fullfile(testroot,'testdata/empty.nc');
 
-return
-
-
-
-
-%--------------------------------------------------------------------------
-function run_nc4_tests()
-
-fprintf('\t\tRunning local netcdf-3 tests...');
-testroot = fileparts(mfilename('fullpath'));
-ncfile = fullfile(testroot,'testdata/iscoordvar-4.nc');
-test_coordvar(ncfile);
-fprintf('OK\n');
-
-return
-
+test_no_inputs;
+test_only_one_input (ncfile);
+test_not_netcdf_file;
+test_empty_ncfile (ncfile);
 
 
 
@@ -149,6 +64,7 @@ return
 
 %--------------------------------------------------------------------------
 function test_no_inputs()
+% Should error if no inputs.
 try
 	nc_iscoordvar;
 catch %#ok<CTCH>
@@ -162,6 +78,7 @@ error('failed');
 
 %--------------------------------------------------------------------------
 function test_only_one_input ( ncfile )
+% Need at least two inputs.
 
 try
 	nc_iscoordvar ( ncfile );
@@ -176,21 +93,6 @@ error('failed');
 
 
 
-%--------------------------------------------------------------------------
-function test_too_many_inputs( ncfile )
-
-try
-	nc_iscoordvar ( ncfile, 'blah', 'blah2' );
-catch %#ok<CTCH>
-    return
-end
-error('failed');
-
-
-
-
-
-
 
 
 
@@ -199,6 +101,7 @@ error('failed');
 
 %--------------------------------------------------------------------------
 function test_not_netcdf_file (  )
+% Must have a netCDF/HDF4 file, obviously.
 
 try
 	nc_iscoordvar ( 'test_iscoordvar.m', 't' );
@@ -216,7 +119,7 @@ error('failed');
 
 %--------------------------------------------------------------------------
 function test_empty_ncfile ( ncfile )
-
+% Should error if the variable doesn't exist.
 try
 	nc_iscoordvar ( ncfile, 't' );
 catch %#ok<CTCH>
@@ -237,6 +140,7 @@ error('failed');
 
 %--------------------------------------------------------------------------
 function test_variable_not_present( ncfile )
+% Should error if the variable doesn't exist.
 
 try
 	nc_iscoordvar ( ncfile, 'y' );
@@ -256,9 +160,8 @@ error('failed');
 
 %--------------------------------------------------------------------------
 function test_not_a_coordvar ( ncfile )
-
-% 2nd set of tests should succeed
-% test 9:  given variable's dimension is not of the same name
+% Should return false if the variable's dimension doesn't have the same
+% name.
 
 b = nc_iscoordvar ( ncfile, 'u' );
 if ( b ~= 0 )
@@ -273,9 +176,11 @@ return
 
 %--------------------------------------------------------------------------
 function test_var_has_2_dims ( ncfile )
+% By definition, a coordinate variable has just one dimension by the same
+% name.
 
 b = nc_iscoordvar ( ncfile, 's' );
-if ( ~b )
+if ( b )
 	error ( 'incorrect result.\n' );
 end
 return
@@ -288,8 +193,10 @@ return
 
 %--------------------------------------------------------------------------
 function test_singleton_variable ( ncfile )
+% By definition, a coordinate variable has one dimension by the same
+% name.
 
-yn = nc_iscoordvar ( ncfile, 't' );
+yn = nc_iscoordvar ( ncfile, 'z' );
 if ( yn )
 	error ( 'incorrect result.\n'  );
 end
@@ -303,9 +210,10 @@ return
 
 %--------------------------------------------------------------------------
 function test_coordvar ( ncfile )
+% Positive test.
 
 b = nc_iscoordvar ( ncfile, 's' );
-if ~b
+if b % singletons are not coordinates
 	error ( 'incorrect result.\n'  );
 end
 
@@ -317,5 +225,18 @@ return
 
 
 
+
+
+%--------------------------------------------------------------------------
+function test_coordvar_http ()
+% Positive test.
+
+url = 'http://rocky.umeoce.maine.edu/GoMPOM/cdfs/gomoos.20070723.cdf';
+
+bool = nc_iscoordvar(url,'xpos');
+if ~bool
+	error ( 'failed' );
+end
+return
 
 

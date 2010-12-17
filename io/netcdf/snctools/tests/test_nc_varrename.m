@@ -1,66 +1,34 @@
-function test_nc_varrename ( ncfile )
-% TEST_NC_ISVAR:
-%
-% Depends upon nc_add_dimension, nc_addvar
-%
-% 1st set of tests, routine should fail
-% test no input arguments
-% test only 1 input
-% test only 2 inputs
-% test too many inputs
-% test inputs are not all character
-% test empty netcdf file
-% test given variable is not present
-%
-% 2nd set of tests, routine should succeed
-% test given variable is present
+function test_nc_varrename(mode)
 
-%
-% 3rd set should fail
-% test given variable is present, but another exists with the same name
-
-global ignore_eids;
-ignore_eids = getpref('SNCTOOLS','IGNOREEIDS',true);
-
-fprintf ( 1, 'Testing NC_VARRENAME...  ' );
-if nargin == 0
-	ncfile = 'foo.nc';
+if nargin < 1
+	mode = nc_clobber_mode;  % netcdf-3
 end
 
+fprintf ('\t\tTesting NC_VARRENAME...  ' );
+
+switch(mode)
+	case nc_clobber_mode
+		ncfile = 'foo.nc';
+		test_variable_is_present ( ncfile,mode );
+
+	case 'netcdf4-classic' 
+		ncfile = 'foo-4.nc';
+		test_variable_is_present ( ncfile,mode );
+
+end
+
+% Only test on 7b or higher
 v = version('-release');
 switch(v)
-	case{'14','2006a','2006b','2007a'}
-	    fprintf('\tSome negative tests filtered out on version %s.\n', v);
-    otherwise
-		test_nc_varrename_neg;
+	case {'14','2006a','2006b','2007a'}
+	    %
+	otherwise
+		test_nc_varrename_neg(mode);
 end
 
-run_nc3_tests(ncfile);
-run_nc4_tests(ncfile);
 fprintf('OK\n');
 return
 
-
-%--------------------------------------------------------------------------
-function run_nc3_tests(ncfile)
-
-mode = nc_clobber_mode;
-test_variable_is_present ( ncfile,mode );
-return
-
-
-%--------------------------------------------------------------------------
-function run_nc4_tests(ncfile)
-
-if ~netcdf4_capable
-	fprintf('\tmexnc (netcdf-4) backend testing filtered out on configurations where the library version < 4.\n');
-	return
-end
-
-mode = bitor(nc_clobber_mode,nc_netcdf4_classic);
-test_variable_is_present ( ncfile,mode );
-
-return
 
 
 
@@ -85,7 +53,7 @@ return
 function test_variable_is_present ( ncfile,mode )
 
 
-create_empty_file ( ncfile,mode );
+nc_create_empty ( ncfile,mode );
 nc_add_dimension ( ncfile, 's', 5 );
 nc_add_dimension ( ncfile, 't', 0 );
 clear varstruct;

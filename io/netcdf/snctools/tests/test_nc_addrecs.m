@@ -1,93 +1,39 @@
-function test_nc_addrecs()
-% TEST_NC_ADD_RECS
-%
-% Relies upon nc_getvarino, nc_addvar
-%
-% Test run include
-%    No inputs, should fail.
-%    One inputs, should fail.
-%    Two inputs, 2nd is not a structure, should fail.
-%    Two inputs, 2nd is an empty structure, should fail.
-%    Two inputs, 2nd is a structure with bad variable names, should fail.
-%    Three inputs, 3rd is non existant unlimited dimension.
-%    Two inputs, write to two variables, should succeed.
-%    Two inputs, write to two variables, one of them not unlimited, should fail.
-%    Try to write to a file with no unlimited dimension.
-%    Do two successive writes.
+function test_nc_addrecs(mode)
 
 
-fprintf ('Testing NC_ADDRECS... \n' );
+% netcdf foo {
+% dimensions:
+%     x = 4 ;
+%     time = UNLIMITED ; // (0 currently)
+% variables:
+%     float test_var(time) ;
+%         test_var:long_name = "This is a test" ;
+%         test_var:short_val = 5s ;
+%     double test_var2(time) ;
+%     double test_var3(x) ;
+% }
 
-run_negative_tests;
-run_positive_tests;
-
-return
-
-
-
-
-
-
-
-
-
-
-%--------------------------------------------------------------------------
-function run_positive_tests()
-
-run_nc3_tests;
-
-v = version('-release');
-switch(v)
-    case { '14','2006a','2006b','2007a','2007b','2008a','2008b','2009a','2009b','2010a'}
-        fprintf(['\ttmw netcdf-4 tests filtered out where the MATLAB ' ...
-            'version is less than 2010b\n']);
-        
-    otherwise
-        run_nc4_tests;
+fprintf ('\t\tTesting NC_ADDRECS...  ' );
+if nargin < 1
+	mode = nc_clobber_mode;
 end
 
-
-return
-
-%--------------------------------------------------------------------------
-function run_nc3_tests()
-fprintf('\tRunning netcdf-3 tests...  ');
 ncfile = 'foo.nc';
-create_ncfile(ncfile);
-test_2_inputs_2_vars ( ncfile );
-test_2_successive_writes( ncfile );
-fprintf('OK\n');
-
-%--------------------------------------------------------------------------
-function run_nc4_tests()
-
-fprintf('\tRunning netcdf-4 tests...  ');
-ncfile = 'foo.nc';
-create_ncfile(ncfile,true);
-test_2_inputs_2_vars ( ncfile );
-test_2_successive_writes( ncfile );
+create_ncfile(ncfile,mode);
+test_2_inputs_2_vars(ncfile);
+test_2_successive_writes(ncfile);
+run_negative_tests(mode);
 fprintf('OK\n');
 
 
-%--------------------------------------------------------------------------
-function run_negative_tests()
-% Negative testing?
-v = version('-release');
-switch(v)
-	case { '14', '2006a', '2006b'}
-		fprintf('version %s, no negative testing ...',v);
-	otherwise
-		test_nc_addrecs_neg;
-end
+
+
 
 
 %--------------------------------------------------------------------------
 function test_2_inputs_2_vars ( ncfile )
+% Add records to two variables.
 
-
-
-% Try a good test.
 before = nc_getvarinfo ( ncfile, 'test_var2' );
 
 input_buffer.test_var = single([3 4 5]');
@@ -109,70 +55,14 @@ return
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+%--------------------------------------------------------------------------
 function test_2_successive_writes ( ncfile )
+% Run it twice.
 
-if snctools_use_tmw
-    ncid = netcdf.create(ncfile, nc_clobber_mode );
-    %
-    % Create a fixed dimension.  
-    len_x = 4;
-    netcdf.defDim(ncid, 'x', len_x );
+nc_create_empty(ncfile,nc_clobber_mode);
+nc_adddim(ncfile,'x',4);
+nc_adddim(ncfile,'time',0);
 
-    len_t = 0;
-    netcdf.defDim(ncid, 'time', len_t );
-
-    netcdf.close(ncid);
-else
-    %
-    % ok, first create this baby.
-    [ncid, status] = mexnc ( 'create', ncfile, nc_clobber_mode );
-    if ( status ~= 0 )
-        ncerr_msg = mexnc ( 'strerror', status );
-        error ( ncerr_msg );
-    end
-    
-    
-    %
-    % Create a fixed dimension.  
-    len_x = 4;
-    [xdimid, status] = mexnc ( 'def_dim', ncid, 'x', len_x ); %#ok<ASGLU>
-    if ( status ~= 0 )
-        ncerr_msg = mexnc ( 'strerror', status );
-        error ( ncerr_msg );
-    end
-    
-    
-    len_t = 0;
-    [ydimid, status] = mexnc ( 'def_dim', ncid, 'time', len_t ); %#ok<ASGLU>
-    if ( status ~= 0 )
-        ncerr_msg = mexnc ( 'strerror', status );
-        error ( ncerr_msg );
-    end
-    
-    
-    
-    
-    
-    %
-    % CLOSE
-    status = mexnc ( 'close', ncid );
-    if ( status ~= 0 )
-        error ( 'CLOSE failed' );
-    end
-end
-%
 % Add a variable along the time dimension
 varstruct.Name = 'test_var';
 varstruct.Nctype = 'float';
@@ -225,53 +115,12 @@ return
 
 
 %--------------------------------------------------------------------------
-function create_ncfile(ncfile,use_nc4)
+function create_ncfile(ncfile,mode)
 
-if (nargin > 1) && use_nc4
-    mode = bitor(netcdf.getConstant('CLASSIC_MODEL'),netcdf.getConstant('NETCDF4'));
-    ncid = netcdf.create(ncfile,mode);
-    %
-    % Create a fixed dimension.  
-    len_x = 4;
-    netcdf.defDim(ncid, 'x', len_x );
+nc_create_empty(ncfile,mode)
+nc_adddim(ncfile,'x',4);
+nc_adddim(ncfile,'time',0);
 
-    len_t = 0;
-    netcdf.defDim(ncid, 'time', len_t );
-
-    netcdf.close(ncid);
-else
-    %
-    % ok, first create this baby.
-    [ncid, status] = mexnc ( 'create', ncfile, nc_clobber_mode );
-    if ( status ~= 0 )
-        error ( mexnc ( 'strerror', status ) );
-    end
-    
-    
-    %
-    % Create a fixed dimension.  
-    len_x = 4;
-    [xdimid, status] = mexnc ( 'def_dim', ncid, 'x', len_x ); %#ok<ASGLU>
-    if ( status ~= 0 )
-        error( mexnc ( 'strerror', status ) );
-    end
-    
-    
-    len_t = 0;
-    [ydimid, status] = mexnc ( 'def_dim', ncid, 'time', len_t ); %#ok<ASGLU>
-    if ( status ~= 0 )
-        error( mexnc ( 'strerror', status ) );
-    end
-    
-    
-    status = mexnc ( 'close', ncid );
-    if ( status ~= 0 )
-        error ( 'CLOSE failed' );
-    end
-end
-
-
-%
 % Add a variable along the time dimension
 varstruct.Name = 'test_var';
 varstruct.Nctype = 'float';
@@ -301,6 +150,178 @@ nc_addvar ( ncfile, varstruct );
 
 return
 
+
+
+
+
+%--------------------------------------------------------------------------
+function run_negative_tests(mode)
+% Don't bother on 2006b or below
+v = version('-release');
+switch(v)
+    case {'14','2006a','2006b'}
+        return
+end
+
+ncfile = 'foo.nc';
+create_ncfile(ncfile,mode)
+		
+test_no_inputs;
+test_only_one_input ( ncfile );
+test_2nd_input_not_structure ( ncfile );
+test_2nd_input_is_empty_structure ( ncfile );
+test_2nd_input_has_bad_fieldnames ( ncfile );
+test_one_field_not_unlimited ( ncfile );
+test_no_unlimited_dimension ( ncfile );
+
+return
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_no_inputs (  )
+
+% Try no inputs
+try
+    nc_addrecs;
+catch %#ok<CTCH>
+    return
+end
+error ( 'succeeded on no inputs, should have failed' );
+
+
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_only_one_input ( ncfile )
+%
+% Try one input, should fail
+try
+    nc_addrecs ( ncfile );
+catch %#ok<CTCH>
+    return
+end
+error ( 'nc_addrecs succeeded on one input, should have failed');
+
+
+
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_2nd_input_not_structure ( ncfile )
+
+
+% Try with 2nd input that isn't a structure.
+try
+    nc_addrecs ( ncfile, [] );
+catch %#ok<CTCH>
+    return
+end
+error ( 'nc_addrecs succeeded on one input, should have failed');
+
+
+
+
+
+
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_2nd_input_is_empty_structure ( ncfile )
+
+%
+% Try with 2nd input that is an empty structure.
+try
+    nc_addrecs ( ncfile, struct([]) );
+catch %#ok<CTCH>
+    return
+end
+error ( 'nc_addrecs succeeded on empty structure, should have failed');
+
+
+
+
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_2nd_input_has_bad_fieldnames ( ncfile )
+
+%
+% Try a structure with bad names
+input_data.a = [3 4];
+input_data.b = [5 6];
+try
+    nc_addrecs ( ncfile, input_data );
+catch %#ok<CTCH>
+    return
+end
+error ( 'nc_addrecs succeeded on a structure with bad names, should have failed');
+
+
+
+
+%--------------------------------------------------------------------------
+function test_one_field_not_unlimited ( ncfile )
+
+% Try writing to a fixed size variable
+
+input_buffer.test_var = single([3 4 5]');
+input_buffer.test_var2 = [3 4 5]';
+input_buffer.test_var3 = [3 4 5]';
+
+try
+    nc_addrecs ( ncfile, input_buffer );
+catch %#ok<CTCH>
+    return
+end
+error ( 'nc_addrecs succeeded on writing to a fixed size variable, should have failed.');
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_no_unlimited_dimension ( ncfile )
+
+
+nc_create_empty(ncfile,nc_clobber_mode);
+nc_adddim(ncfile,'x',4);
+
+clear varstruct;
+varstruct.Name = 'test_var3';
+varstruct.Nctype = 'double';
+varstruct.Dimension = { 'x' };
+
+nc_addvar ( ncfile, varstruct );
+
+
+input_buffer.time = [1 2 3]';
+try
+    nc_addrecs ( ncfile, input_buffer );
+catch %#ok<CTCH>
+    return
+end
+error ( 'nc_addrecs passed when writing to a file with no unlimited dimension');
 
 
 

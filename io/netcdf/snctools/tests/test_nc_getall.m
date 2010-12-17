@@ -11,7 +11,7 @@ function test_nc_getall()
 
 
 
-fprintf('Testing NC_GETALL...  ' );
+fprintf('\t\tTesting NC_GETALL...  ' );
 
 run_negative_tests;
 run_positive_tests;
@@ -26,6 +26,15 @@ return
 function run_positive_tests()
 
 ncfile = 'foo.nc';
+use_mexnc = getpref('SNCTOOLS','USE_MEXNC',false);
+v = version('-release');
+switch(v)
+	case { '14', '2006a', '2006b', '2007a', '2007b', '2008a'}
+		if ~use_mexnc
+			fprintf('\tNo testing yet on java read-only configuration.\n');
+			return
+		end
+end
 
 test_underscore_attr ( ncfile );
 test_no_inputs;

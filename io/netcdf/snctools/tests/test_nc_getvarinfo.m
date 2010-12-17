@@ -1,83 +1,42 @@
-function test_nc_getvarinfo()
+function test_nc_getvarinfo(mode)
 
-fprintf('Testing NC_GETVARINFO...\n' );
+if nargin < 1
+	mode = 'nc-3';
+end
 
-run_negative_tests;
+fprintf('\t\tTesting NC_GETVARINFO...  ' );
 
-test_mexnc_backend;
-test_tmw_backend;
-test_java_backend;
+switch(mode)
+	case 'nc-3'
+        testroot = fileparts(mfilename('fullpath'));
+		ncfile = fullfile(testroot,'testdata/getlast.nc');
+		run_nc_tests(ncfile);
+		run_negative_tests;
+
+	case 'nc-4'
+        testroot = fileparts(mfilename('fullpath'));
+		ncfile = fullfile(testroot,'testdata/getlast-4.nc');
+		run_nc_tests(ncfile);
+
+	case 'http'
+		run_http_tests;
+
+end
+fprintf('OK\n');
+
+
+
+%--------------------------------------------------------------------------
+function run_nc_tests(ncfile)
+
+test_limitedVariable(ncfile);
+test_unlimitedVariable(ncfile);
+test_unlimitedVariableWithOneAttribute(ncfile);
 
 return
 
 
-%--------------------------------------------------------------------------
-function test_java_backend()
-fprintf('\tTesting java backend ...\n');
 
-if ~getpref('SNCTOOLS','USE_JAVA',false)
-    fprintf('\t\tjava backend testing filtered out on ');
-    fprintf('configurations where SNCTOOLS ''USE_JAVA'' ');
-    fprintf('prefererence is false.\n');
-    return
-end
-
-run_http_tests;
-
-v = version('-release');
-switch(v)
-    case { '14','2006a','2006b','2007a','2007b','2008a'}
-        % Only test if on win64
-        c = computer;
-        if strcmp(c,'PCWIN64')
-            run_nc3_tests;
-            run_nc4_tests;
-        end
-        
-    case { '2008b', '2009a', '2009b', '2010a' }
-        run_nc4_tests;
-        
-end
-
-
-%--------------------------------------------------------------------------
-function test_mexnc_backend()
-
-fprintf('\tTesting mexnc backend ...\n');
-v = version('-release');
-switch(v)
-    case { '14','2006a','2006b','2007a','2007b','2008a'}
-        run_nc3_tests;
-        
-    otherwise
-        fprintf('\t\tmexnc testing filtered out on release %s.\n', v);
-        return
-end
-
-
-return
-%--------------------------------------------------------------------------
-function test_tmw_backend()
-
-fprintf('\tTesting tmw backend ...\n');
-
-v = version('-release');
-switch(v)
-    case { '14','2006a','2006b','2007a','2007b','2008a'}
-        fprintf('\t\ttmw testing filtered out on release %s... ', v);
-        return;
-        
-    case { '2008b','2009a','2009b','2010a'}
-        run_nc3_tests;
-        
-    otherwise
-        run_nc3_tests;
-        run_nc4_tests;
-end
-
-
-
-return
 
 
 %--------------------------------------------------------------------------
@@ -89,59 +48,6 @@ test_fileIsNotNetcdfFile;
 test_varIsNotNetcdfVariable;
 test_fileIsNumeric_varIsChar;
 test_fileIsChar_varIsNumeric;
-
-%--------------------------------------------------------------------------
-function run_nc3_tests()
-
-testroot = fileparts(mfilename('fullpath'));
-
-fprintf('\t\tRunning netcdf-3 tests...  ');	 
-
-ncfile = [testroot '/testdata/getlast.nc'];
-test_limitedVariable(ncfile);
-test_unlimitedVariable(ncfile);
-test_unlimitedVariableWithOneAttribute(ncfile);
-fprintf('OK\n');
-
-return
-
-
-
-%--------------------------------------------------------------------------
-function run_nc4_tests()
-
-testroot = fileparts(mfilename('fullpath'));
-
-fprintf('\t\tRunning netcdf-4 tests...  ');	 
-
-ncfile = [testroot '/testdata/getlast-4.nc'];
-test_limitedVariable(ncfile);
-test_unlimitedVariable(ncfile);
-test_unlimitedVariableWithOneAttribute(ncfile);
-fprintf('OK\n');
-
-return
-
-
-
-%--------------------------------------------------------------------------
-function run_http_tests()
-% These tests are regular URLs, not OPeNDAP URLs.
-
-if ~ ( getpref ( 'SNCTOOLS', 'TEST_REMOTE', false ) )
-    fprintf('\t\tjava http backend testing filtered out when SNCTOOLS ');
-    fprintf('''TEST_REMOTE'' preference is false.\n');
-    return
-end
-
-fprintf('\t\tRunning http tests...  ');
-test_fileIsHttpUrl_varIsChar;
-test_fileIsJavaNcid_varIsChar;
-fprintf('OK\n');
-return
-
-
-
 
 
 
@@ -262,42 +168,6 @@ error('failed');
 
 
 %--------------------------------------------------------------------------
-function test_fileIsJavaNcid_varIsChar ( )
-
-import ucar.nc2.dods.*     
-import ucar.nc2.*          
-
-url = 'http://rocky.umeoce.maine.edu/GoMPOM/cdfs/gomoos.20070723.cdf';
-jncid = NetcdfFile.open(url);
-
-try
-	nc_getvarinfo ( jncid, 'w' );
-catch %#ok<CTCH>
-    error('failed');
-end
-
-
-
-
-
-%--------------------------------------------------------------------------
-function test_fileIsHttpUrl_varIsChar ( )
-
-import ucar.nc2.dods.*     
-import ucar.nc2.*          
-
-url = 'http://rocky.umeoce.maine.edu/GoMPOM/cdfs/gomoos.20070723.cdf';
-
-try
-	nc_getvarinfo ( url, 'w' );
-catch %#ok<CTCH>
-    error('failed');
-end
-
-
-
-
-%--------------------------------------------------------------------------
 function test_fileIsChar_varIsNumeric()
 
 testroot = fileparts(mfilename('fullpath'));
@@ -410,4 +280,54 @@ if (length(v.Attribute)~=1 )
 end
 
 return
+
+
+
+
+%--------------------------------------------------------------------------
+function run_http_tests()
+% These tests are regular URLs, not OPeNDAP URLs.
+
+test_fileIsHttpUrl_varIsChar;
+test_fileIsJavaNcid_varIsChar;
+return
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_fileIsJavaNcid_varIsChar ( )
+
+import ucar.nc2.dods.*     
+import ucar.nc2.*          
+
+url = 'http://rocky.umeoce.maine.edu/GoMPOM/cdfs/gomoos.20070723.cdf';
+jncid = NetcdfFile.open(url);
+
+try
+	nc_getvarinfo ( jncid, 'w' );
+catch %#ok<CTCH>
+    error('failed');
+end
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_fileIsHttpUrl_varIsChar ( )
+
+import ucar.nc2.dods.*     
+import ucar.nc2.*          
+
+url = 'http://rocky.umeoce.maine.edu/GoMPOM/cdfs/gomoos.20070723.cdf';
+
+try
+	nc_getvarinfo ( url, 'w' );
+catch %#ok<CTCH>
+    error('failed');
+end
+
 

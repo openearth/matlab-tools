@@ -10,17 +10,63 @@ MATLAB versions below R14.
 
 
 +-----------------------------------------------------------------------
-SNCTOOLS Preferences
+BASIC USAGE
+
+R2010b
+    With R2010b, you have native read/write support for netCDF-3 files
+    and classic-model netCDF-4 files.  You can also read enhanced model
+    netCDF-4 files, but in order to write to such files, you should drop
+    down to MATLAB's native netcdf package interface.
+
+    You should also download netcdf-java from Unidata at
+    http://www.unidata.ucar.edu/software/netcdf-java/ as this will
+    allow you to read OPeNDAP URLs and GRIB files.  See the USE_JAVA
+    section below.
+
+R2008b, R2009a, R2009b, R2010a
+    With these releases, you have native read/write support
+    for netCDF-3 files.  If you wish to have netCDF-4 read
+    support, you will need to download netcdf-java from Unidata at
+    http://www.unidata.ucar.edu/software/netcdf-java/ as well.  You get
+    more than just netCDF-4 read support with this, you also get read
+    support for OPeNDAP URLs and GRIB files.  See the USE_JAVA section
+    below.
+
+R2006a, R2006b, R2007a, R2007b, R2008a
+    MATLAB has no native netCDF support for these releases.  If you only
+    need to read netCDF files, you may do so by retrieving netcdf-java
+    from Unidata and enabling the java backend as described below.
+    If you require write support, you will instead need to download the
+    attending mexnc mex-file for your particular release.  You should
+    then enable the mexnc backend with
+    
+        >> setpref('SNCTOOLS','USE_MEXNC',true);
+
+R14
+    MATLAB has no native netCDF support for these releases.  If you only
+    need to read netCDF files, you may do so by retrieving netcdf-java
+    from Unidata at http://www.unidata.ucar.edu/software/netcdf-java/,
+    but you will be restricted to the 2.2.20 release, which is rather old.
+    It will not allow you to read netCDF-4 files.
+
+    If you require write support, you will instead need to download the
+    attending R14 mexnc mex-file for your particular release.  You 
+    should then enable the mexnc backend with
+    
+        >> setpref('SNCTOOLS','USE_MEXNC',true);
+
++-----------------------------------------------------------------------
+SNCTOOLS PREFERENCES
 
 USE_JAVA 
     If you wish to enable the netcdf-java backend (useful
     for reading OPeNDAP URLs, GRIB2 files, netCDF-4 files, and
     others), then this preference must be turned on.  First, go to
     http://www.unidata.ucar.edu/software/netcdf-java/ and make sure you
-    download version 4.2 or higher.  Add the jar file to your MATLAB
-    path with
+    download version 4.2 or higher (on R14, you must use version 2.2.20).
+    Add the jar file to your MATLAB path with
 
-        >> javaaddpath ( '/path/to/netcdfAll-4.1.jar' );
+        >> javaaddpath ( '/path/to/netcdfAll-4.2.jar' );
 
     You should then turn on the preference.
     
@@ -59,34 +105,6 @@ USE_STD_HDF4_SCALING
     but setting this preference to true forces NC_VARGET to use
     standard HDF4 conventions.  This preference is only useful when
 	reading HDF4 data (obviously), it has no effect upon netCDF I/O.
-
-+-----------------------------------------------------------------------
-SNCTOOLS and NetCDF-4
-
-SNCTOOLS supports netCDF-4 files under certain conditions...
-
-    You have MATLAB version R2010b or better.  If this is the case,
-    then you don't need to do anything, you are already set to go.
-
-    If you have R2010a or earlier versions of MATLAB, then netCDF-4
-    support falls into one of two cases.  If you just need to read
-    netCDF-4 files, you can do that by enabling the java backend.
-    Go to http://www.unidata.ucar.edu/software/netcdf-java/ and make
-    sure you download version 4.2 or higher.  Add the jar file to
-    your MATLAB path with
-
-        >> javaaddpath ( '/path/to/netcdfAll-4.2.jar' );
-
-    You should then set the needed preference to tell SNCTOOLS to
-    enable the java backend with
-
-        >> setpref ( 'SNCTOOLS', 'USE_JAVA', true );
-
-    This also gives you read access to opendap data, so it's a good idea
-    whether you need netCDF-4 support or not.
-
-    And the last option is to compile a netcdf4-enabled mexnc mex-file.
-    If you do this, SNCTOOLS will automatically use it.  
 
 +-----------------------------------------------------------------------
 BUG Reports You Should Know About

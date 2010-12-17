@@ -1,52 +1,39 @@
-function test_nc_cat (  )
-% TEST_NC_CAT:
+function test_nc_cat(mode)
+
+if nargin < 1
+	mode = nc_clobber_mode;
+end
 
 % For now we will run this test preserving the fastest varying dimension.
-oldpref = getpref('SNCTOOLS','PRESERVE_FVD');
+oldpref = getpref('SNCTOOLS','PRESERVE_FVD',false);
 setpref('SNCTOOLS','PRESERVE_FVD',true);
 
-global ignore_eids;
 
-ignore_eids = getpref('SNCTOOLS','IGNOREEIDS',true);
-
-fprintf('Testing NC_CAT...\n');
-test_hdf4;
-test_netcdf3;
-test_netcdf4;
-
-
+fprintf('\t\tTesting NC_CAT...  ');
+run_all_tests(mode);
+fprintf('OK\n');
 setpref('SNCTOOLS','PRESERVE_FVD',oldpref);
 return
 
 
 
-%--------------------------------------------------------------------------
-function test_netcdf3()
-fprintf('\tRunning netcdf-3 tests...  ' );
-
-test_normal_usage;
-test_recvar_not_time;
-fprintf('OK\n');
-
-
-
 
 %--------------------------------------------------------------------------
-function test_netcdf4()
-fprintf('\tRunning netcdf-4 tests...  ' );
+function run_all_tests(mode)
 
-mode = nc_netcdf4_classic;
+
 test_normal_usage(mode);
 test_recvar_not_time(mode);
-fprintf('OK\n');
+
+
+
+
+
 
 
 %--------------------------------------------------------------------------
 function test_normal_usage(mode)
 
-if nargin == 0
-    mode = nc_clobber_mode;
-end
 
 ncfile1 = 'ts1.nc';
 ncfile2 = 'ts2.nc';
@@ -68,9 +55,6 @@ return
 %--------------------------------------------------------------------------
 function test_recvar_not_time(mode)
 
-if nargin == 0
-    mode = nc_clobber_mode;
-end
 
 ncfile1 = 'ts1.nc';
 ncfile2 = 'ts2.nc';
@@ -130,33 +114,20 @@ end
 
 nc_addnewrecs(file2,v);
 
-%--------------------------------------------------------------------------
-function test_hdf4()
-fprintf('\tRunning hdf4 tests...  ' );
-
-test_normal_usage('hdf4');
-test_recvar_not_time('hdf4');
-fprintf('OK\n');
-
-
-return
 
 %--------------------------------------------------------------------------
 function create_test_file_not_time(filename,mode)
-if isnumeric(mode)
-    nc_create_empty(filename,mode);
-    nc_adddim(filename,'time2',0);
-    nc_adddim(filename,'lon',360);
-    nc_adddim(filename,'lat',180);
-    v.Name = 'time2';
-    v.Dimension = {'time2'};
-    nc_addvar(filename,v);
-else
-    nc_create_empty(filename,mode);
-    nc_adddim(filename,'time2',0);
-    nc_adddim(filename,'lon',360);
-    nc_adddim(filename,'lat',180);   
+
+nc_create_empty(filename,mode);
+nc_adddim(filename,'time2',0);
+nc_adddim(filename,'lon',360);
+nc_adddim(filename,'lat',180);
+if ~(ischar(mode) && strcmp(mode,'hdf4'))
+	v.Name = 'time2';
+	v.Dimension = {'time2'};
+	nc_addvar(filename,v);
 end
+
 
 v.Dimension = {'lat','lon','time2'};
 v.Name = 'heat';
@@ -167,20 +138,20 @@ nc_attput(filename,nc_global,'creation_date',datestr(now));
 
 %--------------------------------------------------------------------------
 function create_test_file(filename,mode)
-if isnumeric(mode)
-    nc_create_empty(filename,mode);
-    nc_adddim(filename,'time',0);
-    nc_adddim(filename,'lon',360);
-    nc_adddim(filename,'lat',180);
-    v.Name = 'time';
-    v.Dimension = {'time'};
-    nc_addvar(filename,v);
-else
-    nc_create_empty(filename,mode);
-    nc_adddim(filename,'time',0);
-    nc_adddim(filename,'lon',360);
-    nc_adddim(filename,'lat',180);   
+if exist(filename,'file')
+    delete(filename);
 end
+
+nc_create_empty(filename,mode);
+nc_adddim(filename,'time',0);
+nc_adddim(filename,'lon',360);
+nc_adddim(filename,'lat',180);
+if ~(ischar(mode) && strcmp(mode,'hdf4'))
+	v.Name = 'time';
+	v.Dimension = {'time'};
+	nc_addvar(filename,v);
+end
+
 
 v.Dimension = {'lat','lon','time'};
 v.Name = 'heat';

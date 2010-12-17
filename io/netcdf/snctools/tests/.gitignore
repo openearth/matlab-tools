@@ -1,0 +1,9 @@
+/snctools_use_java.m
+/snctools_use_mexnc.m
+/snctools_use_tmw.m
+/test_nc_adddim_neg.m
+/test_nc_addhist_neg.m
+/test_nc_addrecs_neg.m
+/test_nc_varget_neg.m
+/test_nc_varsize_neg.m
+/test_snc2mat_neg.m

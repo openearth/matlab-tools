@@ -1,75 +1,48 @@
-function test_nc_isvar ( )
+function test_nc_isvar(mode)
+
+if nargin < 1
+	mode = 'netcdf-3';
+end
+
+fprintf('\t\tTesting NC_ISVAR ...' );
 
 testroot = fileparts(mfilename('fullpath'));
 
-fprintf('Testing NC_ISVAR ...\n' );
-run_nc3_tests(testroot);
-run_nc4_tests(testroot);
-run_java_tests(testroot);
+switch(mode)
+	case 'netcdf-3'
+		ncfile1 = fullfile(testroot,'testdata/empty.nc');
+		ncfile2 = fullfile(testroot,'testdata/full.nc');
+		run_all_tests(ncfile1,ncfile2);
 
-return
+	case 'netcdf4-classic'
+		ncfile1 = fullfile(testroot,'testdata/empty-4.nc');
+		ncfile2 = fullfile(testroot,'testdata/full-4.nc');
+		run_all_tests(ncfile1,ncfile2);
+
+	case 'http'
+		run_http_tests;
+
+end
+fprintf('OK\n');
 
 
-%--------------------------------------------------------------------------
-function run_nc3_tests(testroot)
-	fprintf('\tRunning nc3 tests...' );
-	ncfile = fullfile(testroot,'testdata/empty.nc');
-	test_noArgs;
-	test_oneArg             ( ncfile );
-	test_tooManyArgs        ( ncfile );
-	test_varnameNotChar ;
-	test_notNetcdfFile;
-	test_emptyFile          ( ncfile );
-	test_dimsButNoVars      ( ncfile );
-
-	ncfile = fullfile(testroot,'testdata/full.nc');
-	test_variableNotPresent ( ncfile );
-	test_variablePresent    ( ncfile );
-    fprintf('OK\n');
-return
 
 
 %--------------------------------------------------------------------------
-function run_nc4_tests(testroot)
-	if ~netcdf4_capable
-		fprintf('\tmexnc (netcdf-4) backend testing filtered out on ');
-        fprintf('configurations where the library version < 4.\n');
-		return
-	end
-	fprintf('\tRunning nc4 tests...  ' );
-	ncfile = fullfile(testroot,'testdata/empty-4.nc');
-	test_noArgs;
-	test_oneArg             ( ncfile );
-	test_tooManyArgs        ( ncfile );
-	test_varnameNotChar ;
-	test_notNetcdfFile;
-	test_emptyFile          ( ncfile );
-	test_dimsButNoVars      ( ncfile );
+function run_all_tests(emptyfile,regfile);
+ncfile = emptyfile;
+test_noArgs;
+test_oneArg             ( ncfile );
+test_tooManyArgs        ( ncfile );
+test_varnameNotChar ;
+test_notNetcdfFile;
+test_emptyFile          ( ncfile );
+test_dimsButNoVars      ( ncfile );
 
-	ncfile = fullfile(testroot,'testdata/full-4.nc');
-	test_variableNotPresent ( ncfile );
-	test_variablePresent    ( ncfile );
-    fprintf('OK\n');
-return
+ncfile = regfile;
+test_variableNotPresent ( ncfile );
+test_variablePresent    ( ncfile );
 
-
-%--------------------------------------------------------------------------
-function run_java_tests(testroot) %#ok<INUSD>
-    if ~getpref('SNCTOOLS','USE_JAVA',false)
-        fprintf ( '\tjava backend testing filtered out on ');
-        fprintf ( 'configurations where SNCTOOLS ''USE_JAVA'' ');
-        fprintf ( 'prefererence is false.\n' );
-        return;
-    end
-	if ~getpref('SNCTOOLS','TEST_REMOTE',false)
-		fprintf ( '\tjava remote testing filtered out on ');
-        fprintf ('configurations where SNCTOOLS ''TEST_REMOTE'' ');
-        fprintf ('prefererence is false.\n' );
-		return
-	end    
-	fprintf('\tRunning java http tests...  ' );
-	test_javaNcidHttp ;
-    fprintf('OK\n');
 return
 
 
@@ -241,10 +214,18 @@ function test_variablePresent ( ncfile )
 
 
 
-b = nc_isvar ( ncfile, 't' );
+b = nc_isvar ( ncfile, 's' );
 if ( b ~= 1 )
 	error('incorrect result.');
 end
+return
+
+
+
+%--------------------------------------------------------------------------
+function run_http_tests(testroot) %#ok<INUSD>
+
+test_javaNcidHttp ;
 return
 
 

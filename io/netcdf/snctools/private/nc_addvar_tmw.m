@@ -1,6 +1,6 @@
 function nc_addvar_tmw(ncfile,varstruct)
+% TMW backend for NC_ADDVAR.
 
-libv = netcdf.inqLibVers;
 ncid = netcdf.open(ncfile, nc_write_mode );
 
 try

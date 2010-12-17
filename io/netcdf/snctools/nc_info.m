@@ -104,6 +104,7 @@ end
 
 dim_count = 0;
 dataset_count = 0;
+
 for idx = 0:ndatasets-1
     
     sds_id = hdfsd('select',sd_id,idx);
@@ -167,6 +168,10 @@ for idx = 0:ndatasets-1
         error('SNCTOOLS:nc_info:hdf4:endaccessFailed', ...
             'endaccess failed on dataset with index %d\n', idx);
     end
+end
+
+if ndatasets == 0
+    fileinfo.Dataset = [];
 end
 
 fileinfo.Attribute = get_hdf4_attributes(sd_id,nglobal_attr);

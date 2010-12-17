@@ -1,3 +1,36 @@
+* Thu Dec 16 2010 John Evans <john.g.evans.ne@gmail.com> -r3409
+- Updated grib2 testing for netcdfAll-4.2.jar
+
+* Wed Dec 15 2010 John Evans <john.g.evans.ne@gmail.com> -r3407
+- Fixed bug in backend selection for writing.
+
+* Tue Dec 08 2010 John Evans <john.g.evans.ne@gmail.com> -r3396
+- More test suite cleanup.
+
+* Tue Nov 30 2010 John Evans <john.g.evans.ne@gmail.com> -r3368
+- Fixed preference bug in test suite.
+
+* Mon Nov 29 2010 John Evans <john.g.evans.ne@gmail.com> -r3367
+- Merged backend_testing branch into trunk, new test strategy.
+- Qualified on 9b, 10b, 9b with USE_MEXNC=true
+- Fixed bug in NC_DUMP where deflate information printed out
+-     on netcdf-3 files.
+- Updated README for new pre-R2008b instructions.
+
+* Wed Nov 24 2010 John Evans <john.g.evans.ne@gmail.com> -r3347
+- Qualified java read-only testing on R14.
+- Fixed on test file that was masquerading with wrong format.
+
+* Sun Nov 21 2010 John Evans <john.g.evans.ne@gmail.com> -r3344
+- Fixed HDF4 bug in NC_INFO where file had no datasets.
+- Forcing fill values to be the correct type when writing.  This
+-     is really only a problem with netcdf-3.
+- Removed testing for NC_CAT_A as it is seriously deprecated.
+- Tests updated for java read-only configuration on 6a, 7a, 8a.
+
+* Sat Nov 20 2010 John Evans <john.g.evans.ne@gmail.com> -r3328
+- Reorganized testing around backends.
+
 * Fri Nov 12 2010 John Evans <john.g.evans.ne@gmail.com> -r3302
 - Fixed bad example in NC_ADDVAR.
 - Fixed bug in NC_DUMP where deflate level wasn't being printed.

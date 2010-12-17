@@ -1,45 +1,11 @@
-function test_nc_attget_neg()
+function test_nc_attget_neg(ncfile)
 
-global ignore_eids;
-ignore_eids = getpref('SNCTOOLS','IGNOREEIDS',true);
-
-testroot = fileparts(mfilename('fullpath'));
-
-run_nc3_tests     (testroot);
-run_nc4_tests     (testroot);
-run_nc4_java_tests(testroot);
-
-%--------------------------------------------------------------------------
-function run_nc3_tests(testroot)
-	ncfile = fullfile(testroot,'testdata/attget.nc');
-	run_local_tests(ncfile);
-return
-
-%--------------------------------------------------------------------------
-function run_nc4_tests(testroot)
-	if getpref('SNCTOOLS','USE_JAVA',false)
-		return
-	end
-	if ~netcdf4_capable
-		return
-	end
-	ncfile = fullfile(testroot,'testdata/attget-4.nc');
-	run_local_tests(ncfile);
-return
-
-%--------------------------------------------------------------------------
-function run_nc4_java_tests(testroot)
-	if ~getpref('SNCTOOLS','USE_JAVA',false)
-		return
-	end
-	ncfile = fullfile(testroot,'testdata/attget-4.nc');
-	run_local_tests(ncfile);
-return
-
-
-%--------------------------------------------------------------------------
-function run_local_tests(ncfile)
-
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b'}
+        fprintf('No negative tests run on %s...  ',v);
+        return
+end
 test_retrieveNonExistingAttribute ( ncfile );
 
 return;
@@ -65,6 +31,7 @@ catch me
         case { 'MATLAB:netcdf:inqAtt:attributeNotFound', ...
                 'MATLAB:netcdf:inqAtt:enotatt:attributeNotFound', ...
                 'SNCTOOLS:NC_ATTGET:MEXNC:INQ_ATTTYPE', ...
+                'SNCTOOLS:attget:hdf4:findattr', ...
                 'SNCTOOLS:attget:java:attributeNotFound'}
             return
         otherwise

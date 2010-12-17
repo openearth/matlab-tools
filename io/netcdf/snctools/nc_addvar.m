@@ -91,6 +91,14 @@ if sd_id < 0
         'START failed on %s.\n', hfile);
 end
 
+% Is the variable already present?
+idx = hdfsd('nametoindex',sd_id,varstruct.Name);
+if idx >= 0
+    hdfsd('end',sd_id);
+    error('SNCTOOLS:nc_addvar:hdf4:variableAlreadyPresent', ...
+        '%s is already present.\n', varstruct.Name);
+end
+    
 % determine the lengths of the named dimensions
 num_dims = length(varstruct.Dimension);
 dim_sizes = zeros(1,num_dims);
@@ -136,7 +144,17 @@ for j = 1:num_dims
 
 end
 
-sds_id = hdfsd('create',sd_id,varstruct.Name,varstruct.Datatype,num_dims,dim_sizes);
+switch(varstruct.Datatype)
+	case 'byte'
+		dtype = 'int8';
+	case 'short'
+		dtype = 'int16';
+	case 'int'
+		dtype = 'int32';
+	otherwise
+		dtype = varstruct.Datatype;
+end
+sds_id = hdfsd('create',sd_id,varstruct.Name,dtype,num_dims,dim_sizes);
 if sds_id < 0
     hdfsd('end',sd_id);
     error('SNCTOOLS:addVar:hdf4:createFailed', ...

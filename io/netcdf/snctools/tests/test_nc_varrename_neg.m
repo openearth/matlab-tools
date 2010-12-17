@@ -1,24 +1,29 @@
-function test_nc_varrename_neg()
+function test_nc_varrename_neg(mode)
 
-if nargin == 0
-	ncfile = 'foo.nc';
+test_backend_neutral;
+
+switch(mode)
+	case nc_clobber_mode
+		run_nc3_tests;
+
+	case 'netcdf4-classic' 
+		run_nc4_tests;
+
 end
 
+%--------------------------------------------------------------------------
+function test_backend_neutral()
 
+ncfile = 'foo.nc';
 test_no_arguments;
 test_only_one_input ( ncfile );
 test_only_two_inputs ( ncfile );
 test_too_many_inputs ( ncfile );
 
-% specific to format
-run_nc3_tests(ncfile);
-run_nc4_tests(ncfile);
-
-return
-
 %--------------------------------------------------------------------------
-function run_nc3_tests(ncfile)
+function run_nc3_tests()
 
+ncfile = 'foo.nc';
 mode = nc_clobber_mode;
 test_inputs_not_all_char ( ncfile, mode );
 test_empty_file ( ncfile,mode );
@@ -28,13 +33,9 @@ return
 
 
 %--------------------------------------------------------------------------
-function run_nc4_tests(ncfile)
+function run_nc4_tests()
 
-if ~netcdf4_capable
-	fprintf('\tmexnc (netcdf-4) backend testing filtered out on configurations where the library version < 4.\n');
-	return
-end
-
+ncfile = 'foo4.nc';
 mode = bitor(nc_clobber_mode,nc_netcdf4_classic);
 test_inputs_not_all_char ( ncfile, mode );
 test_empty_file ( ncfile,mode );
@@ -55,7 +56,7 @@ function test_variable_with_same_name ( ncfile,mode )
 
 global ignore_eids;
 
-create_empty_file ( ncfile,mode );
+nc_create_empty ( ncfile,mode );
 nc_add_dimension ( ncfile, 't', 0 );
 clear varstruct;
 varstruct.Name = 't';
@@ -99,7 +100,7 @@ return
 function test_empty_file ( ncfile,mode )
 global ignore_eids;
 
-create_empty_file ( ncfile,mode );
+nc_create_empty ( ncfile,mode );
 try
 	nc_varrename ( ncfile, 'x', 'y' );
 catch me
@@ -129,7 +130,7 @@ function test_variable_not_present ( ncfile,mode )
 
 global ignore_eids;
 
-create_empty_file ( ncfile,mode );
+nc_create_empty ( ncfile,mode );
 nc_add_dimension ( ncfile, 't', 0 );
 clear varstruct;
 varstruct.Name = 't';
@@ -169,7 +170,7 @@ function test_inputs_not_all_char(ncfile,mode)
 global ignore_eids;
 
 % Ok, now we'll create the test file
-create_empty_file ( ncfile,mode );
+nc_create_empty ( ncfile,mode );
 nc_add_dimension ( ncfile, 't', 0 );
 clear varstruct;
 varstruct.Name = 't';

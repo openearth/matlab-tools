@@ -37,13 +37,13 @@ else
 end
 
 
-[p,name,ext] = fileparts(ncfile);
 fileinfo.Filename = ncfile; %[name ext];
 
 
 root_group = jncid.getRootGroup();
 fileinfo.Dimension = get_dimensions_j ( root_group );
 fileinfo.Dataset = get_variables_j ( root_group );
+fileinfo.Name = '/';
 
 % Get the global attributes and variable attributes
 j_att_list = root_group.getAttributes();

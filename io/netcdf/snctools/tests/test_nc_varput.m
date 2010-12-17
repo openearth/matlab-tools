@@ -1,4 +1,4 @@
-function test_nc_varput (  )
+function test_nc_varput(mode)
 % TEST_NC_VARPUT:
 %
 %
@@ -51,77 +51,46 @@ function test_nc_varput (  )
 % test reading with missing_value
 % test reading with floating point scale factor
 % test with _FillValue and missing_value
-%
-% 
 
-fprintf('Testing NC_VARGET, NC_VARPUT...\n' );
-
-v = version('-release');
-switch(v)
-	case{'14','2006a','2006b', '2007a'}
-	    fprintf('\tSome negative tests filtered out on version %s.\n', v);
-    otherwise
-		test_nc_varput_neg;
+if nargin < 1
+	mode = nc_clobber_mode;
 end
 
-test_netcdf3;
-test_hdf4;
-test_netcdf4;
-
-return
-
-
-
-%--------------------------------------------------------------------------
-function test_netcdf3()
-fprintf('\tRunning netcdf-3 tests...  ' );
+fprintf('\t\tTesting NC_VARPUT...  ' );
 testroot = fileparts(mfilename('fullpath'));
 
-ncfile = fullfile(testroot,'testdata/varput.nc');
-run_generic_tests(ncfile);
-run_singleton_tests(ncfile);
+switch(mode)
+	case nc_clobber_mode
+		ncfile = fullfile(testroot,'testdata/varput.nc');
+		run_local_tests(ncfile,mode);
 
-% This doesn't work for nc4 or hdf4
-test_bad_fill_value;
+		% This doesn't work for nc4 or hdf4
+		test_bad_fill_value;
 
-run_scaling_tests(nc_clobber_mode);
-fprintf('OK\n');
-return
+	case 'hdf4'
+		run_hdf4_tests;
 
-%--------------------------------------------------------------------------
-function test_hdf4()
-fprintf('\tRunning hdf4 tests...  ' );
-testroot = fileparts(mfilename('fullpath'));
-
-ncfile = fullfile(testroot,'testdata/varput.hdf');
-run_generic_tests(ncfile);
-
-run_scaling_tests('hdf4');
-fprintf('OK\n');
-return
+	case 'netcdf4-classic'
+		ncfile = fullfile(testroot,'testdata/varput4.nc');
+		run_local_tests(ncfile,mode);
 
 
-%--------------------------------------------------------------------------
-function test_netcdf4()
-
-if ~netcdf4_capable
-    fprintf('\tmexnc (netcdf-4) backend testing filtered out on ');
-    fprintf('configurations where the library version < 4.\n');
-    return
 end
 
-fprintf('\tRunning netcdf-4 tests...' );
-testroot = fileparts(mfilename('fullpath'));
+test_nc_varput_neg;
 
-
-ncfile = fullfile(testroot,'testdata/varput4.nc');
-run_generic_tests(ncfile);
-run_singleton_tests(ncfile);
-
-run_scaling_tests(nc_netcdf4_classic);
 fprintf('OK\n');
 return
 
+
+
+
+
+%--------------------------------------------------------------------------
+function run_local_tests(ncfile,mode)
+run_generic_tests(ncfile);
+run_singleton_tests(ncfile);
+run_scaling_tests(mode);
 
 %--------------------------------------------------------------------------
 function run_singleton_tests(input_ncfile)
@@ -668,70 +637,10 @@ warning('on','SNCTOOLS:nc_varget:mexnc:missingValueMismatch');
 function create_test_file ( ncfile, mode )
 
 
+nc_create_empty(ncfile,mode);
+nc_adddim(ncfile,'x', 4 );
+nc_adddim(ncfile,'y', 6 );
 
-if ischar(mode) && strcmp(mode,'hdf4')
-
-	nc_create_empty(ncfile,mode);
-	nc_adddim(ncfile,'x', 4 );
-	nc_adddim(ncfile,'y', 6 );
-
-elseif snctools_use_tmw
-    %
-    % ok, first create the first file
-    ncid_1 = netcdf.create(ncfile, mode );
-    
-    
-    %
-    % Create a fixed dimension.  
-    len_x = 4;
-    netcdf.defDim(ncid_1, 'x', len_x );
-    
-    %
-    % Create a fixed dimension.  
-    len_y = 6;
-    netcdf.defDim(ncid_1, 'y', len_y );
-    
-    netcdf.close(ncid_1);
-elseif snctools_use_mexnc
-    %
-    % ok, first create the first file
-    [ncid_1, status] = mexnc ( 'create', ncfile, mode );
-    if ( status ~= 0 )
-        ncerr_msg = mexnc ( 'strerror', status );
-        error(ncerr_msg);
-    end
-    
-    
-    %
-    % Create a fixed dimension.  
-    len_x = 4;
-    [xdimid, status] = mexnc ( 'def_dim', ncid_1, 'x', len_x ); %#ok<ASGLU>
-    if ( status ~= 0 )
-        ncerr_msg = mexnc ( 'strerror', status );
-        error(ncerr_msg);
-    end
-    
-    %
-    % Create a fixed dimension.  
-    len_y = 6;
-    [ydimid, status] = mexnc ( 'def_dim', ncid_1, 'y', len_y ); %#ok<ASGLU>
-    if ( status ~= 0 )
-        ncerr_msg = mexnc ( 'strerror', status );
-        error(ncerr_msg);
-    end
-    
-    
-    %
-    % CLOSE
-    status = mexnc ( 'close', ncid_1 );
-    if ( status ~= 0 )
-        error ( 'CLOSE failed' );
-    end
-else
-	error('No mexnc or native matlab support, this test cannot be run.');
-end
-
-%
 % Add a singleton
 varstruct.Name = 'test_singleton';
 varstruct.Datatype = 'double';
@@ -786,6 +695,19 @@ return
 
 
 
+
+
+
+
+%--------------------------------------------------------------------------
+function run_hdf4_tests()
+testroot = fileparts(mfilename('fullpath'));
+
+ncfile = fullfile(testroot,'testdata/varput.hdf');
+run_generic_tests(ncfile);
+
+run_scaling_tests('hdf4');
+return
 
 
 

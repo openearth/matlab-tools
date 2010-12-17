@@ -34,17 +34,17 @@ elseif (strcmp(char(signature(1:4))', 'GRIB')) && (signature(8) == 2)
 	return
 elseif (strcmp(char(signature(1:3))', 'CDF')) && (signature(4) == 1)
     % netcdf classic : bytes 1-3 are 'CDF', and byte 4 is 1.
-	fmt = 'netCDF';
+	fmt = 'NetCDF';
 	return
 elseif (strcmp(char(signature(1:3))', 'CDF')) && (signature(4) == 2)
     % netcdf 64bit offset : bytes 1-3 are 'CDF', and byte 4 is 2.
-	fmt = 'netCDF';
+	fmt = 'NetCDF';
 	return
 elseif (strcmp(char(signature(2:4))', 'HDF'))
     % netcdf-4 : bytes 2-4 are 'HDF'.  We just assume that it's netcdf-4.
 	% We really can't determine the difference betweeen netcdf-4 and 
 	% regular HDF5 this way.
-	fmt = 'netCDF-4';
+	fmt = 'NetCDF-4';
 	return
 end
 

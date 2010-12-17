@@ -1,4 +1,4 @@
-function test_nc_getbuffer ( )
+function test_nc_getbuffer(mode)
 % TEST_NC_GETBUFFER
 %
 % Relies upon nc_addvar, nc_addnewrecs, nc_add_dimension
@@ -26,49 +26,31 @@ function test_nc_getbuffer ( )
 %           should be everything from start to "end - count"
 % test 14:  4 inputs.  Otherwise the same as test 11.
 
-fprintf('Testing NC_GETBUFFER ...\n');
-
-run_netcdf3_tests;
-run_netcdf4_tests;
-
-%--------------------------------------------------------------------------
-function run_netcdf3_tests()
-
-fprintf('\tTesting netcdf-3 ...  ');
-testroot = fileparts(mfilename('fullpath'));
-ncfile = fullfile(testroot, 'testdata/empty.nc'   );
-run_negative_tests(ncfile);
-
-testroot = fileparts(mfilename('fullpath'));
-ncfile = fullfile(testroot, 'testdata/getlast.nc' );
-run_positive_tests(ncfile);
-
-fprintf('OK\n');
-
-
-%--------------------------------------------------------------------------
-function run_netcdf4_tests()
-
-fprintf('\tTesting netcdf-4 ...  ');
-v = version('-release');
-switch(v)
-    case {'14','2006a','2006b','2007a','2007b','2008a','2008b','2009a','2009b','2010a'}
-        if ~getpref('SNCTOOLS','USE_JAVA',false)
-            fprintf(['\n\t\tFiltering out netcdf-4 testing on release %s '...
-                'when SNCTOOLS preference USE_JAVA is set to false.'], v);
-            return;
-        end
+if nargin < 1
+	mode = 'netcdf-3';
 end
 
-testroot = fileparts(mfilename('fullpath'));
-ncfile = fullfile(testroot, 'testdata/empty-4.nc'   );
-run_negative_tests(ncfile);
+fprintf('\t\tTesting NC_GETBUFFER ...  ');
 
 testroot = fileparts(mfilename('fullpath'));
-ncfile = fullfile(testroot, 'testdata/getlast-4.nc' );
-run_positive_tests(ncfile);
+switch(mode)
+	case 'netcdf-3'
+		emptyfile = fullfile(testroot,'testdata/empty.nc');
+		regfile = fullfile(testroot,'testdata/getlast.nc');
+		run_negative_tests(emptyfile);
+		run_positive_tests(regfile);
+	case 'netcdf4-classic'
+		emptyfile = fullfile(testroot,'testdata/empty-4.nc');
+		regfile = fullfile(testroot,'testdata/getlast-4.nc');
+		run_negative_tests(emptyfile);
+		run_positive_tests(regfile);
+end
+
 
 fprintf('OK\n');
+
+
+
 
 %--------------------------------------------------------------------------
 function run_negative_tests(ncfile)
@@ -230,9 +212,10 @@ n = length(f);
 if n ~= 5
     error('failed');
 end
+
+one_d_flds = { 'ocean_time','t1','t2','t3' };
 for j = 1:4
-    fname = f{j};
-    d = nb.(fname);
+    d = nb.(one_d_flds{j});
     if ( size(d,1) ~= 10 )
         error ( 'length of field %s in the output buffer was not 10.');
     end

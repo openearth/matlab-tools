@@ -24,12 +24,12 @@ function new_data = nc_addnewrecs(ncfile,input_buffer,record_variable) %#ok<INUS
 %       % Add some records.
 %       buf.time = [0 1 2];
 %       buf.money = [0 1000 2000];
-%       nc_addrecs('myfile.nc',buf);
+%       nc_addnewrecs('myfile.nc',buf);
 %
 %       % Add another record.
 %       buf.time = 3;
 %       buf.money = 3000;
-%       nc_addrecs('myfile.nc',buf);
+%       nc_addnewrecs('myfile.nc',buf);
 %       nc_dump('myfile.nc');   
 %  
 %   See also nc_varput, nc_cat.

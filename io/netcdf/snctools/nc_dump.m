@@ -72,16 +72,16 @@ return;
 function dump_group(group,dump_group_name,restricted_variable,fid)
 
 if dump_group_name
-    fprintf('\nGroup ''%s'' {\n', group.Name);
+    fprintf(fid,'\nGroup ''%s'' {\n', group.Name);
 end
 
 dump_dimension_metadata(group, fid );
 dump_variables(group.Dataset,restricted_variable,fid);
 if isempty(restricted_variable)
-    if isfield(group,'Name') && strcmp(group.Name,'/')
-        dump_group_attributes(group,fid,true);
-    else
+    if isfield(group,'Name') && ~strcmp(group.Name,'/')
         dump_group_attributes(group,fid,false);
+    else
+        dump_group_attributes(group,fid,true);
     end
 end
 
@@ -196,7 +196,8 @@ if isfield(var_metadata, 'Chunking')
     end
 end
 
-if isfield(var_metadata,'Deflate') && ~isempty(var_metadata.Deflate)
+if isfield(var_metadata,'Deflate') && ~isempty(var_metadata.Deflate) ...
+        && isfield(var_metadata, 'Chunking') && ~isempty(var_metadata.Chunking)
     fprintf(fid,'\t\tDeflate Level:  %d\n', var_metadata.Deflate);
 end
 

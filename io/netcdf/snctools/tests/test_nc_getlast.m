@@ -1,111 +1,7 @@
-function test_nc_getlast()
+function test_nc_getlast(mode)
 
-fprintf('Testing NC_GETLAST...\n');
+fprintf('\t\tTesting NC_GETLAST...  ');
 
-test_mexnc_backend;
-test_tmw_backend;
-test_java_backend;
-
-return
-
-
-%--------------------------------------------------------------------------
-function test_java_backend()
-fprintf('\tTesting java backend ...\n');
-
-if ~getpref('SNCTOOLS','USE_JAVA',false)
-    fprintf('\t\tjava backend testing filtered out on ');
-    fprintf('configurations where SNCTOOLS ''USE_JAVA'' ');
-    fprintf('prefererence is false.\n');
-    return
-end
-
-v = version('-release');
-switch(v)
-    case { '14','2006a','2006b','2007a','2007b','2008a'}
-        % Only test if on win64
-        c = computer;
-        if strcmp(c,'PCWIN64')
-            run_nc3_tests;
-            run_nc4_tests;
-        end
-        
-    case { '2008b', '2009a', '2009b', '2010a' }
-        run_nc4_tests;
-        
-    otherwise
-        fprintf('\t\tjava backend testing with local files filtered out on release %s\n', v);
-end
-
-
-%--------------------------------------------------------------------------
-function test_mexnc_backend()
-
-fprintf('\tTesting mexnc backend ...\n');
-v = version('-release');
-switch(v)
-    case { '14','2006a','2006b','2007a','2007b','2008a'}
-        run_nc3_tests;
-        
-    otherwise
-        fprintf('\t\tmexnc testing filtered out on release %s.\n', v);
-        return
-end
-
-
-return
-%--------------------------------------------------------------------------
-function test_tmw_backend()
-
-fprintf('\tTesting tmw backend ...\n');
-
-v = version('-release');
-switch(v)
-    case { '14','2006a','2006b','2007a','2007b','2008a'}
-        fprintf('\t\ttmw testing filtered out on release %s... ', v);
-        return;
-        
-    case { '2008b','2009a','2009b','2010a'}
-        run_nc3_tests;
-        
-    otherwise
-        run_nc3_tests;
-        run_nc4_tests;
-end
-
-
-
-return
-
-
-
-
-
-%--------------------------------------------------------------------------
-function run_nc3_tests()
-fprintf('\t\tRunning netcdf-3 tests...  ');
-testroot = fileparts(mfilename('fullpath'));
-emptyfile = fullfile(testroot,'testdata/empty.nc');
-regfile = fullfile(testroot,'testdata/getlast.nc');
-run_all_tests(emptyfile,regfile);
-fprintf('OK\n');
-return
-
-%--------------------------------------------------------------------------
-function run_nc4_tests()
-
-fprintf('\t\tRunning netcdf-4 tests...  ');
-testroot = fileparts(mfilename('fullpath'));
-emptyfile = fullfile(testroot,'testdata/empty-4.nc');
-regfile = fullfile(testroot,'testdata/getlast-4.nc');
-run_all_tests(emptyfile,regfile);
-fprintf('OK\n');
-return
-
-
-
-%--------------------------------------------------------------------------
-function run_all_tests(emptyfile,regfile)
 % This first set of tests should all fail.
 % Test:  No inputs.
 % Test:  Too few inputs (one).
@@ -125,6 +21,26 @@ function run_all_tests(emptyfile,regfile)
 % Test:  Three valid inputs.
 % Test:  Get everything
 
+if nargin < 1
+	mode = 'netcdf-3';
+end
+
+testroot = fileparts(mfilename('fullpath'));
+switch(mode)
+	case 'netcdf-3'
+		emptyfile = fullfile(testroot,'testdata/empty.nc');
+		regfile = fullfile(testroot,'testdata/getlast.nc');
+		run_all_tests(emptyfile,regfile);
+	case 'netcdf4-classic'
+		emptyfile = fullfile(testroot,'testdata/empty-4.nc');
+		regfile = fullfile(testroot,'testdata/getlast-4.nc');
+		run_all_tests(emptyfile,regfile);
+end
+
+
+
+%--------------------------------------------------------------------------
+function run_all_tests(emptyfile,regfile)
 test_no_inputs;
 test_too_few_inputs(emptyfile);
 test_too_many_inputs(emptyfile);
@@ -141,6 +57,7 @@ test_last_record(regfile);
 test_last_few_records(regfile);
 test_get_everything(regfile);
 
+fprintf('OK\n');
 return
 
 

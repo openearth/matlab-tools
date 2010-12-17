@@ -3,19 +3,20 @@ function netcdf_settings(varargin)
 %
 % Tested for the following releases (using NC_CF_GRID_TEST):
 %
-% * 2006b mexnc_legacy added
-% * 2007a mexnc_legacy added
-% * 2007b mexnc_legacy added
-% * 2008a mexnc_legacy added
+% * 2006b mexnc_legacy added, default java for read-only (no write possible)
+% * 2007a mexnc_legacy added, default java for read-only (no write possible)
+% * 2007b mexnc_legacy added, default java for read-only (no write possible)
+% * 2008a mexnc_legacy added, default java for read-only (no write possible)
 % * 2008b add yourselves http://www.mathworks.com/support/bugreports/609383
 % * 2009a add yourselves http://www.mathworks.com/support/bugreports/609383
 % * 2009b add yourselves http://www.mathworks.com/support/bugreports/609383
+% * 2010a OK
 % * 2010b OK
 %
-%See also: OETSETTINGS, NC_CF_GRID_TEST
+%See also: OETSETTINGS, NC_CF_GRID_TEST, NETCDF_TEST
 
 %% Retrieve verbose state from input
-% -----------------------
+
    OPT.quiet = false;
    nextarg   = 1;
    
@@ -31,7 +32,7 @@ function netcdf_settings(varargin)
    OPT = setproperty(OPT,varargin{nextarg:end});
 
 %% remove any netcdf paths already added by oetsettings
-% -----------------------
+
 
    S      = [fileparts(which('oetsettings'))  filesep];
    ncroot = [fileparts(mfilename('fullpath')) filesep];
@@ -61,7 +62,7 @@ function netcdf_settings(varargin)
    end
 
 %% Add nctools and snctools
-% -----------------------
+
 %  these paths are updated occasionally to the appropriate mexcdf version
 %  available at: http://mexcdf.sourceforge.net/
 %                http://sourceforge.net/projects/mexcdf/
@@ -116,9 +117,6 @@ function netcdf_settings(varargin)
        end
        
    end
-
-%% Fix legacies/bugs
-% -----------------------
 
 %% Fix legacies
 

@@ -12,6 +12,26 @@ try
         varid = netcdf.inqVarID(ncid, varname );
     end
     
+    % If we are dealing with the fill value, then force the type to be
+    % correct.
+    if strcmp(attribute_name,'_FillValue')
+        [name,xtype] = netcdf.inqVar(ncid,varid); %#ok<ASGLU>
+        switch(xtype)
+            case nc_double
+                attval = double(attval);
+            case nc_float
+                attval = single(attval);
+            case nc_int
+                attval = int32(attval);
+            case nc_short
+                attval = int16(attval);
+            case nc_byte
+                attval = int8(attval);
+            case nc_char
+                attval = char(attval);
+        end
+    end
+    
     try
         netcdf.putAtt(ncid,varid,attribute_name,attval);
     catch me
