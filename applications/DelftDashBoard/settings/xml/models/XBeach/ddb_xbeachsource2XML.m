@@ -75,7 +75,7 @@ Par=struct('Physics',struct,...
            'Sediment',struct,...
            'Morphology',struct,...
            'Output',struct,...
-           'Additional',struct);
+           'Advanced',struct);
 Par.Physics.longname='Model physics';
 Par.Domain.longname='Model domain';
 Par.Time.longname='Model time parameters';
@@ -84,7 +84,7 @@ Par.Flow.longname='Flow input';
 Par.Sediment.longname='Sediment input';
 Par.Morphology.longname='Morphology input';
 Par.Output.longname='Output options';
-Par.Additional.longname='Additional options';
+Par.Advanced.longname='Advanced options';
 
 for i=1:length(params_array)
     ptype=params_array(i).partype;
@@ -106,7 +106,7 @@ for i=1:length(params_array)
     elseif ~isempty(regexpi(ptype,'(output|drifter)'))
         chapter='Output';    
     else
-        chapter='Additional';
+        chapter='Advanced';
     end 
     if ~isfield(Par.(chapter),ptypevar);
         temp=struct('longname',ptype,'variables',struct());
@@ -117,11 +117,11 @@ for i=1:length(params_array)
 end
 
 % remove useless information from Par
-fields=fieldnames(Par.Additional);
+fields=fieldnames(Par.Advanced);
 for i=1:length(fields)
-    if isfield(Par.Additional.(fields{i}),'longname') & ...
-                 regexpi(Par.Additional.(fields{i}).longname,'not read in params.txt')
-        Par.Additional=rmfield(Par.Additional,fields{i});
+    if isfield(Par.Advanced.(fields{i}),'longname') & ...
+                 regexpi(Par.Advanced.(fields{i}).longname,'not read in params.txt')
+        Par.Advanced=rmfield(Par.Advanced,fields{i});
     end
 end
 
@@ -132,7 +132,7 @@ HS.model='XBeach';
 HS.longname='XBeach';
 HS.elements.element.style='tabpanel';
 HS.elements.element.tag='XBeach';
-HS.elements.element.position=[10 10 900 700];
+HS.elements.element.position=[10 10 1200 700];
 HS.elements.element.tabs(1).tab.tag='Toolbox';
 HS.elements.element.tabs(1).tab.tabstring='Toolbox';
 HS.elements.element.tabs(1).tab.callback='ddb_selectToolbox';
@@ -182,117 +182,265 @@ DES.element.textposition='above-left';
 
 xml_save('XBeach.description.xml',DES,XMLmat);
 
-%% Write XML Physics etc. files
+%% Write XML Physics etc. files (all but advanced)
 index=fieldnames(Par);
 for i=1:length(index)
-    S=struct;
-    S.longname=Par.(index{i}).longname;
-    S.element.style='tabpanel';
-    S.element.tag=Par.(index{i}).longname;
-    S.element.position=[10 10 1200 140];
-    POS = {[100  113 100 20];
-           [100  88  100 20];
-           [100  63  100 20];
-           [100  38  100 20];
-           [100  13  100 20];
-           [400 113 100 20];
-           [400 88  100 20];
-           [400 63  100 20];
-           [400 38  100 20];
-           [400 13  100 20];
-           [700 113 100 20];
-           [700 88  100 20];
-           [700 63  100 20];
-           [700 38  100 20];
-           [700 13  100 20];
-           [1000 113 100 20];
-           [1000 88  100 20];
-           [1000 63  100 20];
-           [1000 38  100 20];
-           [1000 13  100 20];};
-    index2=fieldnames(Par.(index{i}));count=0;
-    for ii=1:length(index2)
-        if ~strcmpi(index2{ii},'longname')
-%             Make tabs in upper layer
-            count=count+1;
-            S.element.tabs(count).tab.tag=Par.(index{i}).(index2{ii}).longname;
-            S.element.tabs(count).tab.tabstring=Par.(index{i}).(index2{ii}).longname;
-            % make internal for this part
-            index3=fieldnames(Par.(index{i}).(index2{ii}).variables);
-            count2=0;
-            Sub=struct;
-            Sub(1).element.tag='test';% fill with bogus
-            Sub(1).element.style='text';
-            Sub(1).element.text='empty';
-            Sub(1).element.position=POS{1}(1:2);
-            for iii=1:length(index3)
-                % is this an advanced and is it read in XBeach?
-                if Par.(index{i}).(index2{ii}).variables.(index3{iii}).advanced==0 && ...
-                   Par.(index{i}).(index2{ii}).variables.(index3{iii}).noinstances>0
-                    % element number
-                    count2=count2+1;
-                    % element tag
-                    Sub(count2).element.tag=index3{iii};
-                    % element type
-                    switch Par.(index{i}).(index2{ii}).variables.(index3{iii}).type(1:4)
-                        case 'real'
-                            % easy: always an edit field
-                             Sub(count2).element.style='edit';
-                             Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
-                             Sub(count2).element.position=POS{count2};
-                             Sub(count2).element.variable.name=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
-                             Sub(count2).element.variable.type='real';
-                        case 'inte'
-                            % is this an on/off switch, or an integer
-                            % number?
-                            minval=Par.(index{i}).(index2{ii}).variables.(index3{iii}).minval{1};
-                            maxval=Par.(index{i}).(index2{ii}).variables.(index3{iii}).maxval{1};
-                            if minval==0 && maxval==1
-                                Sub(count2).element.style='checkbox';
-                                Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
-                                Sub(count2).element.position=POS{count2}(1:2);
-                            else
-                                Sub(count2).element.style='edit';
-                                Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
-                                Sub(count2).element.position=POS{count2};
-                            end
-                            Sub(count2).element.variable.name=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
-                            Sub(count2).element.variable.type='integer';
-                        case 'char'
-                            % is this a file select option, or a listbox
-                            % option?
-                            if isempty(Par.(index{i}).(index2{ii}).variables.(index3{iii}).allowed{1})
-                                % file
-                                Sub(count2).element.style='pushselectfile';
-                                Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
-                                Sub(count2).element.position=POS{count2};
-                                Sub(count2).element.variable.name=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
-                                Sub(count2).element.variable.type='character';
-                            else
-                                % option
-                                Sub(count2).element.style='edit';
-                                Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
-                                Sub(count2).element.position=POS{count2};
-                                Sub(count2).element.variable.name=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
-                                Sub(count2).element.variable.type='character';
-                            end
-                            
-                        otherwise
-                           Sub(count2).element.style='text';
-                           Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
-                           Sub(count2).element.position=POS{count2}(1:2);
+    if ~strcmpi(index{i},'Advancedxxx')
+        S=struct;
+        S.longname=Par.(index{i}).longname;
+        S.element.style='tabpanel';
+        S.element.tag=Par.(index{i}).longname;
+        S.element.position=[10 10 1200 140];
+        % generate positions for elements
+        % height and free space height factor
+        he=20;hefac=1.2;
+        % width and free space width factor
+        we=80;wefac=2.0;
+        % space around the edge of the tab
+        xedge=60;yedge=10;
+        nr=floor((S.element.position(4)-2*yedge)/(he*hefac));
+        nc=floor((S.element.position(3)-2*xedge)/(we*wefac));
+        POS=cell(nr*nc,1);
+        for ic=1:nc
+            for ir=1:nr
+                POS{(ic-1)*nr+ir}=[S.element.position(1)+xedge+(ic-1)*(we*wefac) ...
+                    S.element.position(2)+S.element.position(4)-yedge-ir*(he*hefac) ...
+                    we ...
+                    he];
+            end
+        end
+        index2=fieldnames(Par.(index{i}));count=0;
+        for ii=1:length(index2)
+            if ~strcmpi(index2{ii},'longname')
+                % make internal for this part
+                index3=fieldnames(Par.(index{i}).(index2{ii}).variables);
+                count2=0;
+                Sub=struct;
+                Sub(1).element.tag='bogus';% fill with bogus
+                Sub(1).element.style='text';
+                Sub(1).element.text='empty';
+                Sub(1).element.position=POS{1}(1:2);
+                for iii=1:length(index3)
+                    % is this not an advanced and is it read in XBeach and is it not deprecated?
+                    if (Par.(index{i}).(index2{ii}).variables.(index3{iii}).advanced==0 && ...
+                            Par.(index{i}).(index2{ii}).variables.(index3{iii}).noinstances>0) && ...
+                            Par.(index{i}).(index2{ii}).variables.(index3{iii}).deprecated==0
+                        % element number
+                        count2=count2+1;
+                        % element tag
+                        Sub(count2).element.tag=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                        % element tooltip
+                        Sub(count2).element.tooltipstring=[Par.(index{i}).(index2{ii}).variables.(index3{iii}).comment ' [' ...
+                            Par.(index{i}).(index2{ii}).variables.(index3{iii}).units ']'];
+                        % element type
+                        makeElementType;  % nested subfunction 
+                        %
                     end
-%                     
-                    
+                end
+                if ~strcmpi(Sub(1).element.tag,'bogus')
+                    % save xml subtab
+                    xml_save(['XBeach.' index{i} '.' index2{ii} '.xml'],Sub,XMLmat);
+                    % Make tabs in supertab
+                    count=count+1;
+                    S.element.tabs(count).tab.tag=Par.(index{i}).(index2{ii}).longname;
+                    S.element.tabs(count).tab.tabstring=Par.(index{i}).(index2{ii}).longname;
+                    S.element.tabs(count).tab.elements=['XBeach.' index{i} '.' index2{ii} '.xml'];
                 end
             end
-            S.element.tabs(count).tab.elements=['XBeach.' index{i} '.' index2{ii} '.xml'];
-            xml_save(['XBeach.' index{i} '.' index2{ii} '.xml'],Sub,XMLmat);                    
+        end
+        % Now we make the "advanced" tab
+        
+        % make internal for this part
+        count2=0;
+        Sub=struct;
+        Sub(1).element.tag='bogus';% fill with bogus
+        Sub(1).element.style='text';
+        Sub(1).element.text='empty';
+        Sub(1).element.position=POS{1}(1:2);
+        for ii=1:length(index2)
+            if ~strcmpi(index2{ii},'longname')
+                index3=fieldnames(Par.(index{i}).(index2{ii}).variables);
+                for iii=1:length(index3)
+                    % is this an advanced and used?
+                    if Par.(index{i}).(index2{ii}).variables.(index3{iii}).advanced==1 && ...
+                       Par.(index{i}).(index2{ii}).variables.(index3{iii}).noinstances>0    
+                        % element number
+                        count2=count2+1;
+                        % element tag
+                        Sub(count2).element.tag=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                        % element tooltip
+                        Sub(count2).element.tooltipstring=[Par.(index{i}).(index2{ii}).variables.(index3{iii}).comment ' [' ...
+                            Par.(index{i}).(index2{ii}).variables.(index3{iii}).units ']'];
+                        % element type
+                        makeElementType; 
+                    end
+                end
+            end
+        end
+        if ~strcmpi(Sub(1).element.tag,'bogus')
+            % save advanced tab
+            xml_save(['XBeach.' index{i} '.Advanced.xml'],Sub,XMLmat);
+            % Make tabs in supertab
+            count=count+1;
+            S.element.tabs(count).tab.tag=[index{i} ' advanced options'];
+            S.element.tabs(count).tab.tabstring=[index{i} ' advanced options'];
+            S.element.tabs(count).tab.elements=['XBeach.' index{i} '.Advanced.xml'];
+             % save process tab
+            xml_save(['XBeach.' index{i} '.xml'],S,XMLmat);
         end
     end
-    xml_save(['XBeach.' index{i} '.xml'],S,XMLmat);
 end
-%             Sub=struct;
-%             Sub.longname=Par.(index{i}).(index2{ii}).longname;
-            
+
+%% Generate advanced tab
+
+
+
+%% Generate initialization function for DDB-XBeach
+
+fname = which('ddb_initializeXBeachInput.m');
+if isempty(fname)
+    fname = [oetroot fileparts('applications\DelftDashBoard\models\XBeach\initialize\') 'ddb_initializeXBeachInput.m'];
+end
+
+fid = fopen (fname,'w');
+% add non-variable information:
+% function name
+fprintf(fid,'%s\n','function handles=ddb_initializeXBeachInput(handles,id,runid,varargin)');
+% H1 line and help comments
+fprintf(fid,'%s\n','% Initialization function for DelftDashboard-XBeach');
+fprintf(fid,'%s\n',['% This function is generated automatically by ' mfilename]);
+fprintf(fid,'%s\n',['% Last update was on ' datestr(now)]);
+fprintf(fid,'%s\n','% Do not edit this file manually !');
+fprintf(fid,'%s\n',['% Change generation in ' mfilename]);
+% Fix some default parameters requires callback to subfunction (made
+% further on in this script
+fprintf(fid,'%s\n','');
+fprintf(fid,'%s\n','% pick up defaults from autogen subfunction');
+fprintf(fid,'%s\n','par=getdefaultpars;');
+fprintf(fid,'%s\n','');
+% Initial commands (are all these necessary?)
+fprintf(fid,'%s\n','ii=strmatch(''XBeach'',{handles.Model.Name},''exact'');');
+fprintf(fid,'%s\n','handles.Model(ii).Input(id).Description={''''};');
+fprintf(fid,'%s\n','handles.Model(ii).Input(id).Runid=runid;');
+fprintf(fid,'%s\n','handles.Model(ii).Input(id).AttName=handles.Model(ii).Input(id).Runid;');
+fprintf(fid,'%s\n','handles.Model(ii).Input(id).ItDate=floor(now);');
+fprintf(fid,'%s\n','handles.Model(ii).Input(id).StartTime=floor(now);');
+fprintf(fid,'%s\n','handles.Model(ii).Input(id).StopTime=floor(now)+2;');
+fprintf(fid,'%s\n','handles.Model(ii).Input(id).TimeStep=1;');
+fprintf(fid,'%s\n','handles.Model(ii).Input(id).ParamsFile=[lower(cd) ''\\''];');
+% now we go through all the parameters we have in XBeach params.F90 file
+defaultsneeded={};
+for i=1:length(params_array)
+    if params_array(i).noinstances>0
+        def = params_array(i).default{1};
+        if isempty(def)
+            def = 'file';
+        end
+        if ~isnumeric(def)
+            % Check if the default reference is to variable of par, rather
+            % than fixed value:
+            match  = regexp(def,'par\.\w*','match');
+            if ~isempty(match)
+                for j=1:length(match)
+                    defaultsneeded{end+1}=match{j};
+                end
+                fprintf(fid,'%s\n',['handles.Model(ii).Input(id).' params_array(i).name '= ' def ';']);
+            else
+                fprintf(fid,'%s\n',['handles.Model(ii).Input(id).' params_array(i).name '= ''' def ''';']);
+            end
+        else
+            fprintf(fid,'%s\n',['handles.Model(ii).Input(id).' params_array(i).name '=' num2str(def) ';']);
+        end
+    end
+end
+% generate subfunction
+fprintf(fid,'%s\n','');
+fprintf(fid,'%s\n','');
+fprintf(fid,'%s\n','function par=getdefaultpars');
+fprintf(fid,'%s\n','% Pick up defaults of base variables, used for defaults of other variables');
+fprintf(fid,'%s\n','% Some variables may occur more than once');
+fprintf(fid,'%s\n',['% This function is generated automatically by ' mfilename]);
+fprintf(fid,'%s\n',['% Last update was on ' datestr(now)]);
+fprintf(fid,'%s\n','% Do not edit this file manually !');
+fprintf(fid,'%s\n',['% Change generation in ' mfilename]);
+fprintf(fid,'%s\n','');
+for j=1:length(defaultsneeded);
+    eval(['def = ' defaultsneeded{j} '.default{1};']);
+    if isnumeric(def)
+        fprintf(fid,'%s\n',[defaultsneeded{j} '=' num2str(def) ';']);
+    else
+        fprintf(fid,'%s\n',[defaultsneeded{j} '=''' def ''';']);
+    end
+end
+
+
+fclose(fid);
+
+
+
+%% subfunctions, but all nested, so share variables
+
+    function makeElementType
+        switch Par.(index{i}).(index2{ii}).variables.(index3{iii}).type(1:4)
+            case 'real'
+                % easy: always an edit field
+                Sub(count2).element.style='edit';
+                Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                Sub(count2).element.position=POS{count2};
+                Sub(count2).element.variable.name=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                Sub(count2).element.variable.type='real';
+            case 'inte'
+                % is this an on/off switch, or an integer
+                % number?
+                minval=Par.(index{i}).(index2{ii}).variables.(index3{iii}).minval{1};
+                maxval=Par.(index{i}).(index2{ii}).variables.(index3{iii}).maxval{1};
+                if minval==0 && maxval==1
+                    Sub(count2).element.style='checkbox';
+                    Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                    Sub(count2).element.position=POS{count2}(1:2);
+                else
+                    Sub(count2).element.style='edit';
+                    Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                    Sub(count2).element.position=POS{count2};
+                end
+                Sub(count2).element.variable.name=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                Sub(count2).element.variable.type='integer';
+            case 'char'
+                % is this a file select option, or a popupbar
+                % option?
+                if isempty(Par.(index{i}).(index2{ii}).variables.(index3{iii}).allowed{1})
+                    % file
+                    Sub(count2).element.style='pushselectfile';
+                    Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                    Sub(count2).element.position=POS{count2};
+                    Sub(count2).element.variable.name=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                    Sub(count2).element.variable.type='character';
+                    Sub(count2).element.extension='*.*';
+                    Sub(count2).element.selectiontext='Select file';
+                else
+                    % popupbar option
+                    Sub(count2).element.style='popupmenu';
+                    Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                    Sub(count2).element.position=POS{count2};
+                    Sub(count2).element.variable.name=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                    Sub(count2).element.variable.type='character';
+                    Sub(count2).element.list=Par.(index{i}).(index2{ii}).variables.(index3{iii}).allowed{1};
+                end
+                
+            otherwise
+                Sub(count2).element.style='text';
+                Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
+                Sub(count2).element.position=POS{count2}(1:2);
+        end
+    end
+
+
+end
+
+
+
+
+
+
+
 
