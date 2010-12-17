@@ -186,13 +186,15 @@ end
 % interpolate nan's
 for i = 1:size(zgrid, 1)
     notnan = ~isnan(zgrid(i,:));
-    zgrid(i,~notnan) = interp1(xgrid(i,notnan), zgrid(i,notnan), xgrid(i,~notnan));
+    if any(~notnan) && sum(notnan) > 1
+        zgrid(i,~notnan) = interp1(xgrid(i,notnan), zgrid(i,notnan), xgrid(i,~notnan));
+    end
     
     j = find(~isnan(zgrid(i,:)), 1, 'first');
-    if j > 1; zgrid(i,1:j-1) = zgrid(i,j); end;
+    if ~isempty(j) && j > 1; zgrid(i,1:j-1) = zgrid(i,j); end;
     
     j = find(~isnan(zgrid(i,:)), 1, 'last');
-    if j < size(zgrid, 2); zgrid(i,j+1:end) = zgrid(i,j); end;
+    if ~isempty(j) && j < size(zgrid, 2); zgrid(i,j+1:end) = zgrid(i,j); end;
 end
 
 % finalise grid
