@@ -100,6 +100,19 @@ tide = xb_generate_tide(OPT.tide{:});
 
 %% create grid
 
+% couble hydraulics and bathymetry
+tp = xb_bc_extracttp(waves);
+wl = xb_bc_extractwl(tide);
+
+xgrid = xb_get_optval('xgrid', OPT.bathy);
+if isempty(xb_get_optval('Tm', xgrid))
+    xgrid = xb_set_optval('Tm', tp, xgrid);
+end
+if isempty(xb_get_optval('wl', xgrid))
+    xgrid = xb_set_optval('wl', wl, xgrid);
+end
+OPT.bathy = xb_set_optval('xgrid', xgrid, OPT.bathy);
+
 bathy = xb_generate_grid(OPT.bathy{:});
 
 %% create model
