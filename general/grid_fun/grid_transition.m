@@ -24,6 +24,8 @@ function [ff nf gridf error] = grid_transition(cell1, cell2, distance, varargin)
 %                 precision     = precision of fitting (default: 1e-10)
 %                 maxLoop       = maximum number of fitting attempts
 %                                 (default: 1e5)
+%                 maxfac        = maximum grid transition factor to use
+%                                 (default: .15)
 %                 plot          = flag to plot the calculated grid size
 %                                 development along the transition
 %                                 (default: false)
@@ -87,6 +89,7 @@ function [ff nf gridf error] = grid_transition(cell1, cell2, distance, varargin)
 OPT = struct( ...
     'precision', 1e-10, ...
     'maxLoop', 1e5, ...
+    'maxfac', 1.15, ...
     'plot', false ...
 );
 
@@ -170,6 +173,11 @@ for ni = n
     % store fitted factor for current number of cells for later use
     f(i) = mean(fj);
     
+    if f(i) > OPT.maxfac
+        % factor too large, discard
+        f(i) = nan;
+    end
+    
     i = i + 1;
     
 end
@@ -180,19 +188,24 @@ errors = abs(cell1*f.^(n+1)-cell2);
 
 % find the combination with the minimal error and prepare output variables
 i = find(errors == min(errors));
-nf = n(i);
-ff = f(i);
-error = errors(i)/cell2;
-gridf = cumsum(cell1*ff.^[1:nf]);
 
-% plot transition, if requested
-if OPT.plot
-    figure;
-    subplot(1,2,1);plot([0 cell1 cell1+gridf cell1+gridf(end)+cell2],'-xb');
-    title({'Grid transition' ...
-        ['from ' num2str(cell1) ' to ' num2str(cell2) ' over distance ' num2str(distance)] ...
-        ['using ' num2str(nf) ' cells and factor ' num2str(ff) ' with relative error ' num2str(error)]});
-    xlabel('cell number'); ylabel('location');
-    subplot(1,2,2);plot(diff([0 cell1 cell1+gridf cell1+gridf(end)+cell2]),'-xr');
-    xlabel('cell number'); ylabel('grid size');
+if ~isempty(i)
+    nf = n(i);
+    ff = f(i);
+    error = errors(i)/cell2;
+    gridf = cumsum(cell1*ff.^[1:nf]);
+
+    % plot transition, if requested
+    if OPT.plot
+        figure;
+        subplot(1,2,1);plot([0 cell1 cell1+gridf cell1+gridf(end)+cell2],'-xb');
+        title({'Grid transition' ...
+            ['from ' num2str(cell1) ' to ' num2str(cell2) ' over distance ' num2str(distance)] ...
+            ['using ' num2str(nf) ' cells and factor ' num2str(ff) ' with relative error ' num2str(error)]});
+        xlabel('cell number'); ylabel('location');
+        subplot(1,2,2);plot(diff([0 cell1 cell1+gridf cell1+gridf(end)+cell2]),'-xr');
+        xlabel('cell number'); ylabel('grid size');
+    end
+else
+    error('No transition found');
 end
