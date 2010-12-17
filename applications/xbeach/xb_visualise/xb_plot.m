@@ -324,7 +324,10 @@ for i = 1:size(vars,1)
                 sObj = findobj(findobj(pObj, 'Type', 'Axes'), 'Type', 'surface');
                 
                 if length(sObj) >= i
-                    set(sObj(i), 'XData', xdata, 'YData', ydata, 'ZData', data, 'CData', data);
+                    set(sObj(i), 'XData', xdata, 'YData', ydata, 'ZData', 0*data, 'CData', data);
+                    set(findobj(pObj, 'Type', 'Axes'), ...
+                        'XLim', [min(min(xdata)) max(max(xdata))], ...
+                        'YLim', [min(min(ydata)) max(max(ydata))]);
                 else
                     if has_grid
                         pcolor(x, y, data);
@@ -334,7 +337,7 @@ for i = 1:size(vars,1)
                 end
             end
 
-            shading flat;
+            shading interp;
         end
     end
     
