@@ -19,11 +19,11 @@ function xb = xb_generate_wavedirgrid(xb,varargin)
 %   waves = xb_generate_waves
 %   xb = xb_join(xb, waves);
 %   exmaple 1
-%   xb = xb_empty(); xb = xb_set(xb,'alfa',0,'dir',[270],'s',[5]); xb = xb_generate_wavedirgrid(xb);
+%   xb = xb_empty(); xb = xb_set(xb,'alpha',0,'dir',[270],'s',[5]); xb = xb_generate_wavedirgrid(xb);
 %   example 2
-%   xb = xb_empty(); xb = xb_set(xb,'alfa',-33,'dir',[273],'s',[5]); xb = xb_generate_wavedirgrid(xb);
+%   xb = xb_empty(); xb = xb_set(xb,'alpha',-33,'dir',[273],'s',[5]); xb = xb_generate_wavedirgrid(xb);
 %   example 3
-%   xb = xb_empty(); xb = xb_set(xb,'alfa',-33,'dir',[231 241 258 273],'s',[2 10 2 5]); xb = xb_generate_wavedirgrid(xb);
+%   xb = xb_empty(); xb = xb_set(xb,'alpha',-33,'dir',[231 241 258 273],'s',[2 10 2 5]); xb = xb_generate_wavedirgrid(xb);
 %
 %   See also 
 
@@ -83,12 +83,12 @@ OPT = setproperty(OPT, varargin{:});
 
 % find mean wave direction, minimum wave direction and maximum wave
 % direction in wave bc time series
-alfa = xb_get(xb,'alfa');   % get coastline / grid orientation alfa
-phi0t = xb_get(xb,'dir');   % get wave directions (nautical)
-phi0 = mean(phi0t);         % compute mean wave direction
+alpha = xb_get(xb,'alpha');             % get coastline / grid orientation alpha
+phi0t = xb_get(xb,'bcfile.mainang');    % get wave directions (nautical)
+phi0 = mean(phi0t);                     % compute mean wave direction
 theta_min = phi0;           
 theta_max = phi0;
-st = xb_get(xb,'s');        % use max s to setup wavedir grid
+st = xb_get(xb,'bcfile.s');             % use max s to setup wavedir grid
 
 % make directional distribution as proposed by Longuet_Higgins et al.
 % (1963)
@@ -116,16 +116,16 @@ end
 
 % only include bins that propagate wave action with a component
 % towards the shore
-theta_min = max(theta_min,270-alfa-90);
-theta_max = min(theta_max,270-alfa+90);
+theta_min = max(theta_min,270-alpha-90);
+theta_max = min(theta_max,270-alpha+90);
 
 % make shoe there is wavebin normal to the shore
 safety = 15; % degrees
-thata_min = min(theta_min, 270-alfa-safety);
-thata_max = max(theta_max, 270-alfa+safety);
+thata_min = min(theta_min, 270-alpha-safety);
+thata_max = max(theta_max, 270-alpha+safety);
 
 plot([theta_min theta_min; theta_max theta_max]',[0 1; 0 1;]','r--o','LineWidth',1.5,'MarkerSize',8);
-plot([270-alfa 270-alfa],[0 1],'g--o','LineWidth',1.5,'MarkerSize',8); grid on;
+plot([270-alpha 270-alpha],[0 1],'g--o','LineWidth',1.5,'MarkerSize',8); grid on;
 
 % combine range p> OPT.varthr and directional range from wave bc time series
 dthetasum = theta_max-theta_min;
@@ -140,7 +140,7 @@ theta_max = phim+dtheta*0.5*OPT.nbins;
 thetagr = [theta_min:dtheta:theta_max];
 
 % get what we need as output
-xb = xb_set(xb,'thetamin',theta_min,'thetamax',theta_max','dtheta',dtheta);
+xb = xb_set(xb,'thetamin',theta_min,'thetamax',theta_max','dtheta',dtheta,'thetanaut',1);
 
 plot(thetagr,zeros(1,length(thetagr)),'g-s'); grid on;
 
