@@ -16,8 +16,13 @@ switch nargin
     case 1
         h = varargin{1};
         axes(h);
+    case 3
+        fh = figure;
+        pcolor(varargin{1},varargin{2},varargin{3});
+        shading flat; axis equal;
+        h = gca;
     otherwise
-        disp('Too many input arguments.');
+        disp('Invalid number of input arguments.');
 end
 
 %% set axis properties
@@ -77,8 +82,14 @@ yi       = [udata.p1(2)];
 w        = sqrt(sum((p3-p2).^2));
 h        = sqrt(sum((p2-p1).^2));
 
+if nargout <= 1
+    xi = struct('xi',xi,'yi',yi,'w',w,'h',h);
+end
+
 %% reset UserData and delete linehandle lh
 set(gcf,'UserData',cudata,'WindowButtonMotionFcn','','DoubleBuffer','off'); 
 delete(lh);
 
 clear udata
+
+if nargin == 3; close(fh); end;
