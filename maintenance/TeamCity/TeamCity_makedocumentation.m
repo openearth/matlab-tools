@@ -111,6 +111,9 @@ try
     TeamCity.postmessage('progressFinish','Generate OET documentation');
 
     TeamCity.postmessage('progressStart','Create tutorials');
+    
+    %{ 
+    % NetCDF tutorials throw errors..... So don't publish at this moment
     try
         %% start documenting
         tutorials2html(varargin{:},'teamcity');
@@ -142,6 +145,7 @@ try
             'status','FAILURE',...
             'text', 'FAILURE: Matlab was unable to publish the tutorials.');
     end
+    %}
     TeamCity.postmessage('progressFinish','Create tutorials');
 
     %% remove targetdir
