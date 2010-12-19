@@ -145,7 +145,7 @@ try
             'status','FAILURE',...
             'text', 'FAILURE: Matlab was unable to publish the tutorials.');
     end
-    %}
+    
     TeamCity.postmessage('progressFinish','Create tutorials');
 
     %% remove targetdir
@@ -153,7 +153,7 @@ try
     rmdir(fullfile(oetroot,'tutorials'),'s');
     rmdir(fullfile(oetroot,'docs'),'s');
     TeamCity.postmessage('progressFinish','Cleanup tutorials');
-
+    %}
 catch me
     TeamCity.running(true);
     TeamCity.postmessage('message', 'text', 'Something went wrong while making documentation.',...
