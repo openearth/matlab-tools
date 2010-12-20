@@ -92,8 +92,8 @@ OPT = setproperty(OPT, varargin{:});
 % make model directory
 fpath = fullfile(OPT.path_local, OPT.name);
 
-mkdir(fpath);
-mkdir(fullfile(fpath, 'bin'));
+if ~exist(fpath,'dir'); mkdir(fpath); end;
+if ~exist(fullfile(fpath, 'bin'),'dir'); mkdir(fullfile(fpath, 'bin')); end;
 
 xb_write_input(fullfile(fpath, 'params.txt'), xb);
 
@@ -150,8 +150,9 @@ fprintf(fid,'. /opt/sge/InitSGE\n');
 fprintf(fid,'export LD_LIBRARY_PATH=/opt/intel/Compiler/11.0/081/lib/ia32:/opt/netcdf-4.1.1/lib:/opt/hdf5-1.8.5/lib\n');
 
 if OPT.nodes > 1
-    fprintf(fid,'export PATH="/opt/mpich2/bin:${PATH}"\n');
-    fprintf(fid,'export NSLOTS=`expr $NSLOTS \* 2`\n');
+    fprintf(fid,'export LD_LIBRARY_PATH="/opt/openmpi-1.4.3-gcc/lib/:${LD_LIBRARY_PATH}"\n');
+    fprintf(fid,'export PATH="/opt/mpich2/bin/:${PATH}"\n');
+    fprintf(fid,'export NSLOTS=`expr $NSLOTS \\* 2`\n');
     fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
     fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE >> $(pwd)/machinefile\n');
     fprintf(fid,'mpdboot -n $NHOSTS --rsh=/usr/bin/rsh -f $(pwd)/machinefile\n');

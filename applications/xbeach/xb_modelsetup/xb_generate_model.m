@@ -17,6 +17,8 @@ function xb = xb_generate_model(varargin)
 %                           settings supplied to xb_generate_waves
 %               tide:       cell array of name/value pairs of tide
 %                           settings supplied to xb_generate_tide
+%               wavegrid:   cell array of name/value pairs of tide
+%                           settings supplied to xb_generate_wavedirgrid
 %               settings:   cell array of name/value pairs of model
 %                           settings supplied to xb_generate_settings
 %               write:      boolean that indicates whether model setup

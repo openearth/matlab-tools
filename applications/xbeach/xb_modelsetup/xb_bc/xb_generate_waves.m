@@ -116,10 +116,23 @@ switch type
 end
 
 OPT.type = type;
-OPT.duration = 3600;
+OPT.duration = 1800;
 OPT.timestep = 1;
 
 OPT = setproperty(OPT, varargin{:});
+
+% determine timesteps
+l = 1;
+f = fieldnames(OPT);
+for i = 1:length(f)
+    if strcmpi(f{i}, 'type'); continue; end;
+    
+    if strcmpi(type, 'vardens') && ismatrix(OPT.(f{i}))
+        l = max(l, size(OPT.(f{i}),3));
+    elseif strcmpi(type, 'jonswap') && isvector(OPT.(f{i}))
+        l = max(l, length(OPT.(f{i})));
+    end
+end
 
 %% generate waves
 
@@ -134,6 +147,11 @@ end
 waves = xb_meta(waves, mfilename, 'waves');
 
 xb = xb_set(xb, 'instat', instat, 'bcfile', waves);
+
+% put timestep info in params.txt if no filelist is generated
+if l == 1
+    xb = xb_set('rt', OPT.duration, 'dtbc', OPT.timestep);
+end
 
 % include swtable, if necessary
 if instat == 4
