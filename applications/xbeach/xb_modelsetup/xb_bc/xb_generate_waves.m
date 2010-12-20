@@ -150,7 +150,7 @@ xb = xb_set(xb, 'instat', instat, 'bcfile', waves);
 
 % put timestep info in params.txt if no filelist is generated
 if l == 1
-    xb = xb_set('rt', OPT.duration, 'dtbc', OPT.timestep);
+    xb = xb_set(xb, 'rt', OPT.duration, 'dtbc', OPT.timestep);
 end
 
 % include swtable, if necessary
