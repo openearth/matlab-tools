@@ -79,6 +79,10 @@ function varargout = KMLsurf(lat,lon,z,varargin)
       varargout = {OPT};
       return
    end
+%% 
+   if isvector(lat) & isvector(lon)
+      [lat,lon] = meshgrid(lat,lon);
+   end
 
 %% assign c if it is given
 
