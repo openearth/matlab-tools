@@ -7,6 +7,7 @@ classdef MTestPublisher < handle
         CopyMode = 'svnkeep';
         MaxWidth  = 600;                    % Maximum width of the published figures (in pixels). By default the maximum width is set to 600 pixels.
         MaxHeight = 600;                    % Maximum height of the published figures (in pixels). By default the maximum height is set to 600 pixels.
+        Exclude = {'_test'};
     end
     properties % Test Overview properties
         Template = 'default';
@@ -75,7 +76,10 @@ classdef MTestPublisher < handle
             
             %% publish coverage files
             fnames = {profileInfo.FunctionTable.FileName}';
-            mainfnames = fnames(cellfun(@(in) ~isempty(in)&&in==2,regexpi(fnames,':')));
+            mainfnames = fnames(...
+                cellfun(@(in) ~isempty(in)&&in==2,regexpi(fnames,':')) &...
+                ~cellfun(@excludefilename,fnames,repmat({this.Exclude},size(fnames)))...
+                );
             
             functionsRun = struct(...
                 'FileName',[],...
@@ -88,8 +92,7 @@ classdef MTestPublisher < handle
             for ifunc = 1:length(profileInfo.FunctionTable)
                 if ismember(profileInfo.FunctionTable(ifunc).FileName,mainfnames) &&...
                         ismember(profileInfo.FunctionTable(ifunc).Type,{'M-subfunction','M-function'}) &&...
-                        ~strncmp(profileInfo.FunctionTable(ifunc).FileName,matlabroot,length(matlabroot))    % Exclude all matlab functions
-                    
+                        ~strncmp(profileInfo.FunctionTable(ifunc).FileName,matlabroot,length(matlabroot)) % Exclude all matlab functions
                     if this.Verbose
                         waitbar(ifunc/length(profileInfo.FunctionTable),h,...
                             ['Processing coverage (function ' num2str(ifunc) ' of' num2str(length(profileInfo.FunctionTable)) ,')'])
@@ -276,4 +279,12 @@ classdef MTestPublisher < handle
             end
         end
     end
+end
+
+function tf = excludefilename(fname,exclusions)
+tf = any(...
+        ~cellfun(@isempty,...
+                cellfun(@strfind,repmat({fname},size(exclusions)),exclusions,'UniformOutput',false)...
+                )...
+        );
 end
