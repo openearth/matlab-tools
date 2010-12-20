@@ -1,4 +1,4 @@
-%function vakloding_get_list(url,varargin)
+function UCIT_getDatatypes_test()
 %UCIT_GETDATATYPES_TEST  make list of gridded datasets defined for UCIT
 %
 %
