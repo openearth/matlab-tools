@@ -13,21 +13,21 @@
     <title>Johor Estuary bathy survey</title>
     <category>geo</category>
     <type>2dmap</type>
-    <kml>http://dtvirt13/bwn/kml/Johor_Estuary_bathy_survey_region.kml</kml>
+    <kml>http://kml.deltares.nl/kml/test_arjan/si_data/Johor_Estuary_bathy_survey_region.kml</kml>
     <actions></actions>   
   </data>
   <data>
     <title>New Southern Islands Survey</title>
     <category>geo</category>
     <type>2dmap</type>
-    <kml>http://dtvirt13/bwn/kml/New_Southern_Islands_Survey_region.kml</kml>
+    <kml>http://kml.deltares.nl/kml/test_arjan/si_data/New_Southern_Islands_Survey_region.kml</kml>
     <actions></actions>   
   </data>
   <data>
     <title>New Tekong Bathymetry</title>
     <category>geo</category>
     <type>2dmap</type>
-    <kml>http://dtvirt13/bwn/kml/New_Tekong_Bathymetry.kml</kml>
+    <kml>http://kml.deltares.nl/kml/test_arjan/si_data/New_Tekong_Bathymetry.kml</kml>
     <actions></actions>   
   </data>
 </si_data>

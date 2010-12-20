@@ -13,7 +13,7 @@
     <title>Kustlijn posities 1965-2005 berekend met Unibest</title>
     <category>geo</category>
     <type>2dmap</type>
-    <kml>http://dtvirt13/bwn/kml/HollandCoast_1965_2005.kml</kml>
+    <kml>http://kml.deltares.nl/kml/test_arjan/hk_models/HollandCoast_1965_2005.kml</kml>
     <actions></actions>
   </model>
 </hk_model>

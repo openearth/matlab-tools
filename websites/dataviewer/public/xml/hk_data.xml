@@ -51,10 +51,31 @@
     <title>Sea surface height</title>
     <category>hydro</category>
     <type>station</type>
-    <kml>http://dtvirt5.deltares.nl/kml/rijkswaterstaat/waterbase/sea_surface_height.kml</kml>
+    <kml>http://kml.deltares.nl/kml/test_arjan/hk_data/rijkswaterstaat/waterbase/sea_surface_height.kml</kml>
     <actions></actions>  
   </data>
   <data>
+      <title>Mass concentration of oxygen</title>
+      <category>hydro</category>
+      <type>station</type>
+      <kml>http://kml.deltares.nl/kml/test_arjan/hk_data/rijkswaterstaat/waterbase/mass_concentration_of_oxygen_in_sea_water.kml</kml>
+      <actions></actions>  
+  </data>
+  <data>
+      <title>Sea surface temperature</title>
+      <category>hydro</category>
+      <type>station</type>
+      <kml>http://kml.deltares.nl/kml/test_arjan/hk_data/rijkswaterstaat/waterbase/sea_surface_temperature.kml</kml>
+      <actions></actions>
+ </data>
+ <data>
+      <title>Sea surface salinity</title>
+      <category>hydro</category>
+      <type>station</type>
+      <kml>http://kml.deltares.nl/kml/test_arjan/hk_data/rijkswaterstaat/waterbase/sea_surface_salinity.kml</kml>
+      <actions></actions>
+ </data>
+ <data>
     <title>Matroos database</title>
     <category>hydro</category>
     <type>station</type>
