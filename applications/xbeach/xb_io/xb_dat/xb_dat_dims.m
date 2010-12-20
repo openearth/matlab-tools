@@ -86,6 +86,8 @@ end
 
 [fdir fname fext] = fileparts(filename);
 
+if isempty(fdir); fdir = '.'; end;
+
 d = xb_read_dims(fdir);
 f = dir(fullfile(filename));
 
