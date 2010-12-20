@@ -72,12 +72,12 @@ function xb = xb_generate_wavedirgrid(xb,varargin)
 OPT = struct( ...
             'varthr', 0.05, ...
             'nbins', 7, ...
-            'plot', 1 ...
+            'plot', false ...
             );
 
-if OPT.plot == 1
-    close(figure(33))
-end
+% if OPT.plot == 1
+%     close(figure(33))
+% end
         
 OPT = setproperty(OPT, varargin{:});
 
@@ -92,7 +92,7 @@ st = xb_get(xb,'bcfile.s');             % use max s to setup wavedir grid
 
 % make directional distribution as proposed by Longuet_Higgins et al.
 % (1963)
-figure(33);
+% figure(33);
 for i = 1:length(st)
     m = 2*st(i);
     phi = phi0t(i)-180:1:phi0t(i)+180;
@@ -106,11 +106,11 @@ for i = 1:length(st)
     theta_max = max(theta_max,phi(indmax));
     
     % directional spreading as defined by Kuik et al, 1988
-    sig(i) = sqrt(2/(st(i)+1))/2/pi*360
+    sig(i) = sqrt(2/(st(i)+1))/2/pi*360;
      
-    plot(phi,p,'b'); hold on;
-    plot(phi(indmin),p(indmin),'r*');
-    plot(phi(indmax),p(indmax),'r*');
+%     plot(phi,p,'b'); hold on;
+%     plot(phi(indmin),p(indmin),'r*');
+%     plot(phi(indmax),p(indmax),'r*');
     
 end
 
@@ -124,8 +124,8 @@ safety = 15; % degrees
 thata_min = min(theta_min, 270-alpha-safety);
 thata_max = max(theta_max, 270-alpha+safety);
 
-plot([theta_min theta_min; theta_max theta_max]',[0 1; 0 1;]','r--o','LineWidth',1.5,'MarkerSize',8);
-plot([270-alpha 270-alpha],[0 1],'g--o','LineWidth',1.5,'MarkerSize',8); grid on;
+% plot([theta_min theta_min; theta_max theta_max]',[0 1; 0 1;]','r--o','LineWidth',1.5,'MarkerSize',8);
+% plot([270-alpha 270-alpha],[0 1],'g--o','LineWidth',1.5,'MarkerSize',8); grid on;
 
 % combine range p> OPT.varthr and directional range from wave bc time series
 dthetasum = theta_max-theta_min;
@@ -142,7 +142,7 @@ thetagr = [theta_min:dtheta:theta_max];
 % get what we need as output
 xb = xb_set(xb,'thetamin',theta_min,'thetamax',theta_max','dtheta',dtheta,'thetanaut',1);
 
-plot(thetagr,zeros(1,length(thetagr)),'g-s'); grid on;
+% plot(thetagr,zeros(1,length(thetagr)),'g-s'); grid on;
 
 
 %
