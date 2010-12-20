@@ -198,7 +198,11 @@ else
                     dims = [];
             end
         else
-            dims = [];
+            % no name match, no size match, assume it is a normal x,y,t dat
+            % file that is too long
+            dims = [nx ny nt];
+            names = {'x' 'y' 't'};
+            type = '2d';
         end
     end
 end
