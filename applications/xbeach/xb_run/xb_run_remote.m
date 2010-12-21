@@ -81,6 +81,7 @@ OPT = struct( ...
     'ssh_host', 'h4', ...
     'ssh_user', '', ...
     'ssh_pass', '', ...
+    'ssh_pass_prompt', true, ...
     'path_local', 'u:\', ...
     'path_remote', '~/' ...
 );
@@ -164,6 +165,15 @@ end
 
 fclose(fid);
 
+%% check password
+
+if ispc() && ...
+    ~isempty(OPT.ssh_user) && isempty(OPT.ssh_pass) && ...
+    OPT.ssh_pass_prompt
+
+    OPT.ssh_pass = xb_password;
+end
+
 %% run model
 
 if isunix()
@@ -175,7 +185,7 @@ else
         exe_path, OPT.ssh_user, OPT.ssh_host, OPT.ssh_pass, rpath, rpath);
 end
 
-[retcode messages] = system(cmd);
+% [retcode messages] = system(cmd);
 
 % extract job number and name
 if retcode == 0
