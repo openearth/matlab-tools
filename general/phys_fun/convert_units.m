@@ -123,6 +123,9 @@ function Factor=convert_units(InUnits,OutUnits);
    secs            = s;                       % seconds
    second          = s;                       % seconds
    seconds         = s;                       % seconds
+   S               = s;                       % seconds datenum
+   SC              = s;                       % seconds
+   SEC             = s;                       % seconds SWAN
    
    ms              = 0.001*s;                 % milliseconds
    millisecs       = ms;                      % milliseconds
@@ -134,8 +137,15 @@ function Factor=convert_units(InUnits,OutUnits);
    mins            = min;                     % minutes
    minute          = min;                     % minutes
    minutes         = min;                     % minutes
+   MN              = min;                     % minutes
+   MI              = min;                     % minutes datenum
+   MIN             = min;                     % minutes SWAN
    
    h               = 3600*s;                  % hours
+   hh              = h;                       % hours
+   H               = h;                       % hours datenum
+   HH              = h;                       % hours
+   HR              = h;                       % hours SWAN
    hr              = h;                       % hours
    hrs             = h;                       % hours
    hour            = h;                       % hours
@@ -147,6 +157,8 @@ function Factor=convert_units(InUnits,OutUnits);
    d               = 86400*s;                 % days
    day             = d;                       % days
    days            = d;                       % days
+   DAY             = d;                       % days SWAN
+   DAYS            = d;                       % days
    
    week            = 7.*day;                  % weeks
    weeks           = week;                    % weeks

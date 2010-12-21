@@ -298,16 +298,29 @@ end
             
 %% Read MODE (optional)
             if strcmp(strtok(upper(rec)),'MODE')
-	    
-               DAT.mode     = rec;
+               DAT.mode.stationary = 1;
+               DAT.mode.dim        = 2;
+              [keyword,rec] = strtok(rec);
+              [keyword,rec] = strtok(rec);
+               if     strcmp(keyword(1:4),'STAT')
+               DAT.mode.stationary = 1;
+               elseif strcmp(keyword(1:5),'NONST')
+               DAT.mode.stationary = 0;
+               end
+              [keyword,rec] = strtok(rec);
+               if ~isempty(keyword)
+                if     strcmp(keyword(1:4),'ONED')
+                DAT.mode.dim        = 2;
+                elseif strcmp(keyword(1:4),'TWOD')
+                DAT.mode.dim        = 2;
+                end
+               end
                rec          = fgetlines_no_comment_line(fid);
                foundkeyword = true;
-            else
-               DAT.mode     = [];
             end
             
-            %% Read COORDinates (optional ? )
-            %% ------------------------------------------
+            %  Read COORDinates (optional ? )
+            %  ------------------------------------------
               [keyword1,rec1]   = strtok(rec);
                keyword1         = upper(pad(keyword1,5,' '));
             if    strfind(keyword1(1:5),'COORD')==1
@@ -327,7 +340,7 @@ end
               [keyword,rec]      = strtok(rec); % cgrid
 
                %% REGular or CURVilinear
-               %% ------------------------------------------
+               %  ------------------------------------------
 
               [keyword1,rec1] = strtok(rec);
                keyword1      = upper(pad(keyword1,6,' '));
@@ -341,8 +354,8 @@ end
                
                rec = rec1;
 
-               %% CURVilinear (REGular)
-               %% ------------------------------------------
+               %  CURVilinear (REGular)
+               %  ------------------------------------------
                
                   DAT.cgrid.type       = 'curvilinear';
                   
@@ -367,8 +380,8 @@ end
                
                elseif strcmp(keyword1(1:3),'REG') % sub-keyword REGular or no sub-keyword
                   
-               %% REGular (CURVilinear)
-               %% ------------------------------------------
+               %  REGular (CURVilinear)
+               %  ------------------------------------------
 
                   DAT.cgrid.type       = 'regular';
 
@@ -383,23 +396,42 @@ end
                  [DAT.cgrid.ylenc,rec] = strtok(rec);  DAT.cgrid.ylenc = str2num(DAT.cgrid.ylenc);
                  [DAT.cgrid.mxc  ,rec] = strtok(rec);  DAT.cgrid.mxc   = str2num(DAT.cgrid.mxc  );
                  [DAT.cgrid.myc  ,rec] = strtok(rec);  DAT.cgrid.myc   = str2num(DAT.cgrid.myc  );
-               
+                 
+                  DAT.cgrid.x = linspace(DAT.cgrid.xpc,DAT.cgrid.xpc+DAT.cgrid.xlenc,DAT.cgrid.mxc+1);
+                  DAT.cgrid.y = linspace(DAT.cgrid.ypc,DAT.cgrid.ypc+DAT.cgrid.ylenc,DAT.cgrid.myc+1);
+                  
+               % Calculate full grid if rotated
+
+                  if ~(DAT.cgrid.alcp==0)
+                     [DAT.cgrid.x,DAT.cgrid.y] = meshgrid(DAT.cgrid.x,DAT.cgrid.y);
+                      DAT.cgrid.X = DAT.cgrid.x.*cosd(DAT.cgrid.alcp) - DAT.cgrid.x.*sind(DAT.cgrid.alcp);
+                      DAT.cgrid.Y = DAT.cgrid.y.*sind(DAT.cgrid.alcp) + DAT.cgrid.y.*cosd(DAT.cgrid.alcp);
+                      DAT.cgrid.x = linspace(DAT.cgrid.xpc,DAT.cgrid.xpc+DAT.cgrid.xlenc,DAT.cgrid.mxc+1);
+                      DAT.cgrid.y = linspace(DAT.cgrid.ypc,DAT.cgrid.ypc+DAT.cgrid.ylenc,DAT.cgrid.myc+1);
+                      % pcolorcorcen(SWN.cgrid.x,SWN.cgrid.y,SWN.cgrid.X)
+                      % pcolorcorcen(SWN.cgrid.x,SWN.cgrid.y,SWN.cgrid.Y)                      
+                  end
+
                elseif strcmp(keyword1(1:7),'UNSTRUC') % sub-keyword REGular or no sub-keyword
                   DAT.cgrid.type       = 'unstructured';
                   DAT.cgrid.rest = rec;
                   warning('Parsing of unstructured grid parameters not implemented yet.')
                end
                
-               %% CIRCle or SECTtor
-               %% ------------------------------------------
+               %  CIRCle or SECTtor
+               %  ------------------------------------------
 
                keyword = strtok(rec); % extract CIRC
                if     strcmp(strtok(keyword(1:3)),'CIR')
                   [keyword,rec]      = strtok(rec); % remove CIRC
                   DAT.cgrid.circle   = 1;
+                  DAT.cgrid.sector   = 0;
                   keyword            = 'circle';
+                  DAT.cgrid.dir1     = 0;
+                  DAT.cgrid.dir2     = 360;
                elseif  strcmp(strtok(keyword(1:3)),'SEC')
                   [keyword,rec]      = strtok(rec); % SECT
+                  DAT.cgrid.circle   = 0;
                   DAT.cgrid.sector   = 1;
                   keyword            = 'sector';
                  %[DAT.cgrid.sector.dir1,rec] = strtok(rec);  DAT.cgrid.sector.dir1  = str2num(DAT.cgrid.sector.dir1);
@@ -593,8 +625,8 @@ end
                foundkeyword    = true;
             end              
 
-            %% Read BOUNDary (required ?)
-            %% ------------------------------------------
+            %  Read BOUNDary (required ?)
+            %  ------------------------------------------
             
             j = 0;
             %keyword = strtok(upper(rec));
@@ -615,7 +647,7 @@ end
               [keyword,rec] = strtok(rec); % remove BOUN
               [keyword,rec] = strtok(rec); % get next one
 
-              %% SHAPe
+              %  SHAPe
               %  NOTE: can be reused
               %  ------------------------------------------
                if strcmp(keyword(1:4),'SHAP')
@@ -653,8 +685,8 @@ end
 
                  SHAPESPEC.directional_distribution = lower(keyword); % POWER or DEGRees
                  
-              %% SIDE vs SEGMent
-              %% ------------------------------------------
+              %  SIDE vs SEGMent
+              %  ------------------------------------------
                elseif     strcmp(keyword(1:4),'SIDE')
                   j                              = j+1;
                   if j==1
@@ -690,8 +722,8 @@ end
                   
                end
                
-               %% CONstant vs VARiable
-               %% ------------------------------------------
+               %  CONstant vs VARiable
+               %  ------------------------------------------
                if     strcmp(keyword(1:4),'SIDE') | ...
                       strcmp(keyword(1:4),'SEGM')
                   [keyword,rec] = strtok(rec);
@@ -1224,8 +1256,8 @@ end
                DAT.table(N.tables).output     = rec(output:end);
                end
                
-               %% Expand table parameter info
-               %% ------------------------------------------
+               %  Expand table parameter info
+               %  ------------------------------------------
 
                DAT.table(N.tables).parameterlist   = DAT.table(N.tables).parameters;
                DAT.table(N.tables).parameter.names = strtokens2cell(DAT.table(N.tables).parameters);
@@ -1233,8 +1265,8 @@ end
                %%  Use keyword (OVKEYW), not short name (OVSNAM) to match quantity properties in SWAN_QUANTITY
                DAT.table(N.tables).parameter.names = swan_shortname2keyword(DAT.table(N.tables).parameter.names);
                
-               %% Get vector yes(2)/no(1)
-               %% -----------------------
+               %  Get vector yes(2)/no(1)
+               %  -----------------------
                nfields = length(DAT.table(N.tables).parameter.names);
                for ifield=1:nfields
                   
@@ -1259,8 +1291,8 @@ end
                   
                end % for ifield=1:length(shape.nfields)               
                
-               %% Add grid info
-               %% ------------------------------------------
+               %  Add grid info
+               %  ------------------------------------------
                
                found = 0;
                
@@ -1456,8 +1488,8 @@ end
 
                   [keyword,rec]   = strtok(rec); % IJ, XY ?
                
-                  %% Read the list with test points
-                  %% ------------------------------
+                  %  Read the list with test points
+                  %  ------------------------------
                   
                   if strcmpi(keyword,'ij')
                      partype = 'ij';
@@ -1487,8 +1519,8 @@ end
                
                end % points
 
-               %% Read the test file names
-               %% ------------------------------    
+               %  Read the test file names
+               %  ------------------------------    
                
                if strcmpi(keyword,'PAR')
                  [keyword,rec]       = strtok(rec);
@@ -1517,13 +1549,43 @@ end
             end % test            
 	  
 %% Read COMPUTE
+
+               timeformat = 'yyyymmdd.HHMMSS';
+
               [keyword1,rec1]   = strtok(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
                keyword1         = upper(pad(keyword1,4,' '));
             if strfind(keyword1(1:4),'COMP')==1
-               DAT.compute     = rec;
+               if DAT.mode.stationary
+                [keyword,rec] = strtok(rec);
+                 if ~isempty(rec);
+                    error('STATionary simiulations shouldn''t have any arguments after COMPUTE');
+                 end
+                 DAT.compute.time    = [];
+                 DAT.compute.datenum = [];
+               else
+                [keyword,rec] = strtok(rec);
+                [keyword,rec] = strtok(rec);
+                 if     strcmp(keyword(1:4),'STAT')
+                 [keyword,rec] = strtok(rec);
+                  DAT.compute.time    = keyword;
+                  DAT.compute.datenum = datenum(keyword,timeformat);
+                 elseif strcmp(keyword(1:5),'NONST')
+                 [tbegc,rec] = strtok(rec);tbegc = datenum(tbegc,timeformat);
+                 [deltc,rec] = strtok(rec);deltc = str2num(deltc);
+                 [units,rec] = strtok(rec);deltc = deltc*convert_units(units,'day');
+                 [tendc,rec] = strtok(rec);tendc = datenum(tendc,timeformat);
+                 
+                  DAT.compute.tbegc = tbegc;
+                  DAT.compute.deltc = deltc;
+                  DAT.compute.units = units;
+                  DAT.compute.tendc = tendc;
+                  DAT.compute.datenum = DAT.compute.tbegc:DAT.compute.deltc:DAT.compute.tendc;
+                 end
+               end
+               
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword = true;
             end  

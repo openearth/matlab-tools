@@ -19,6 +19,8 @@ function kml = transect_multitile_years(Vertex,Centre)
 % The function convertCoordinates is called to change coordinate 
 % system.
 %
+% See also: KMLline, convertCoordinates, googlePlot
+
 % --------------------------------------------------------------------
 % Copyright (C) 2010 Deltares
 %       Giorgio Santinelli
@@ -30,8 +32,8 @@ function kml = transect_multitile_years(Vertex,Centre)
 %       2600 MH Delft
 %       The Netherlands
 %
-% See also: KMLline, convertCoordinates, googlePlot
 % --------------------------------------------------------------------
+
 %% settings
 if exist('d:\Repositories\oetools\python\applications\openearthtest\openearthtest\public\test.kml')
    delete('d:\Repositories\oetools\python\applications\openearthtest\openearthtest\public\test.kml');
