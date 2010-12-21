@@ -18,6 +18,8 @@ function xb = xb_run_remote(xb, varargin)
 %               ssh_host:   Host name of remote computer
 %               ssh_user:   Username for remote computer
 %               ssh_pass:   Password for remote computer
+%               ssh_prompt: Boolean indicating if password prompt should be
+%                           used
 %               path_local: Local path to the XBeach model
 %               path_remote:Path to XBeach model seen from remote computer
 %
