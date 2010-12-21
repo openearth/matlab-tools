@@ -360,7 +360,7 @@ tmax = get(findobj(pObj, 'Tag', 'Slider2'), 'Max');
 t = round(get(findobj(pObj, 'Tag', 'Slider2'), 'Value'));
 
 % update time
-t = min(tmax, t+(tmax-tmin)/100);
+t = min(tmax, ceil(t+(tmax-tmin)/100));
 set(findobj(pObj, 'Tag', 'Slider2'), 'Value', t);
 
 % reload data
