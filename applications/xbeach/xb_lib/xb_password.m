@@ -1,19 +1,20 @@
-function password = xb_password()
-%XB_PASSWORD  Prompts for a password using a dialog
+function [username password] = xb_login()
+%XB_PASSWORD  Prompts for a username and password using a dialog
 %
-%   Prompts for a password and returns password string
+%   Prompts for a username and password and returns password string
 %
 %   Syntax:
-%   password = xb_password()
+%   [username password] = xb_password()
 %
 %   Input:
 %   none
 %
 %   Output:
+%   username    = username string
 %   password    = password string
 %
 %   Example
-%   password = xb_password;
+%   [username password] = xb_password;
 %
 %   See also xb_run_remote
 
@@ -63,29 +64,36 @@ function password = xb_password()
 if ~ispc(); error('This function only works for Windows systems'); end;
     
 s = get(0,'ScreenSize');
-w = 300; h = 70;
+w = 300; h = 100;
 pos = [(s(3)-w)/2 (s(4)-h)/2 w h];
 
 dlg = dialog('Name', 'Login', 'pos', pos);
 
 uicontrol(dlg, 'style', 'text', 'units', 'pixels', ...
-    'pos',[20 50 260 15], 'Horiz', 'Left', ...
-    'string','Enter password:');
+    'pos',[20 50 60 15], 'Horiz', 'Left', ...
+    'string','Username:');
 
-txt = actxcontrol('Forms.TextBox.1', [20 20 200 20], dlg);
+uicontrol(dlg, 'style', 'text', 'units', 'pixels', ...
+    'pos',[20 20 60 15], 'Horiz', 'Left', ...
+    'string','Password:');
+
+user = actxcontrol('Forms.TextBox.1', [100 50 120 20], dlg);
+pass = actxcontrol('Forms.TextBox.1', [100 20 120 20], dlg);
 
 uicontrol(dlg, 'style', 'PushButton', ...
     'pos', [240 20 40 20], 'string', 'OK', ...
     'callback', 'uiresume');
 
-set(txt, 'PasswordChar', '*');
+set(pass, 'PasswordChar', '*');
 set(dlg, 'UserData', 0);
 
 uiwait(dlg);
 
-if ishandle(txt)
-    password = deblank(get(txt, 'Text'));
+if ishandle(user) && ishandle(pass)
+    username = deblank(get(user, 'Text'));
+    password = deblank(get(pass, 'Text'));
 else
+    username = '';
     password = '';
 end
 
