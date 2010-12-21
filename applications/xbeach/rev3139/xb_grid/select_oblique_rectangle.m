@@ -1,4 +1,4 @@
-function [xi,yi]=select_oblique_rectangle(varargin)
+function [xi,yi,w,h]=select_oblique_rectangle(varargin)
 %function to draw a rubberband line and return the start and end points
 %Usage: [xi,yi] = select_oblique_rectangle;     uses current axes
 % or    [xi,yi] = select_oblique_rectangle(h);  uses axes refered to by handle, h
@@ -64,11 +64,18 @@ waitforbuttonpress;
 % extract information from first button click, plot location and store click location in udata 
 p3       = get(h,'Currentpoint');       %get end point
 p3       = p3(1,1:2);                   %extract x and y
+udata.p3 = p3;                          % add info to udata
+
+%% compute fourth location
+p4       = (p3-p2)+p1;
+udata.p4 = p4;  
 
 %% take care of function output
 % udata    = get(gcf,'Userdata');
-xi       = udata.xi;
-yi       = udata.yi;
+xi       = [udata.p1(1)];
+yi       = [udata.p1(2)];
+w        = sqrt(sum((p3-p2).^2));
+h        = sqrt(sum((p2-p1).^2));
 
 %% reset UserData and delete linehandle lh
 set(gcf,'UserData',cudata,'WindowButtonMotionFcn','','DoubleBuffer','off'); 
