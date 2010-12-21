@@ -120,7 +120,7 @@ for i = 1:length(upartype)
         ivar = strcmpi(pars{j}, {xb.data.name});
         
         if any(ivar)
-            if regexp(xb.data(ivar).name, '.*vars$')
+            if regexp(pars{j}, '^.*vars$')
 
                 % create line indicating the number items in the cell
                 outputvars = [outputvars sprintf('%s\n', var2params(['n' xb.data(ivar).name(1:end-1)], length(xb.data(ivar).value), maxStringLength))];

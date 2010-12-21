@@ -23,7 +23,7 @@ function xb = xb_run(xb, varargin)
 %   xb_run(xb)
 %   xb_run(xb, 'path', 'path_to_model/')
 %
-%   See also xb_run, xb_get_bin
+%   See also xb_run_remote, xb_get_bin
 
 %% Copyright notice
 %   --------------------------------------------------------------------

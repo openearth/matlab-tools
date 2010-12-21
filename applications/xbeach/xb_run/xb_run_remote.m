@@ -117,9 +117,9 @@ end
 
 % move downloaded binary to destination directory
 if exist(OPT.binary, 'dir') == 7
-    movefile(fullfile(OPT.binary, '*'), fullfile(fpath, 'bin'));
+    copyfile(fullfile(OPT.binary, '*'), fullfile(fpath, 'bin'));
 else
-    movefile(OPT.binary, fullfile(fpath, 'bin'));
+    copyfile(OPT.binary, fullfile(fpath, 'bin'));
 end
 
 %% write run scripts
