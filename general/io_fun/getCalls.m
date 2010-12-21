@@ -70,15 +70,24 @@ else
     quiet = false;
 end
 
-
-[FileDir FunName] = fileparts(fun);
+% quick and dirty fix for duplicate functions: just take the first one
+fullfunname = which(fun, '-all');
+[FileDir FunName] = fileparts(fullfunname{1});
+if ~isscalar(fullfunname)
+    fprintf(2, 'Duplicate(s) of "%s" are ommitted\n', fun)
+end
 
 if ~isempty(FileDir)
     tempdir=cd;
     cd(FileDir);
 end    
 
-list = depfun(FunName,'-quiet','-toponly');
+try
+    list = depfun(FunName, '-quiet', '-toponly');
+catch
+    fprintf(2, 'Error in getCalls(%s); related calls are ommitted.\n', fun);
+    list = {};
+end
 id = ~cellfun(@isempty,(strfind(lower(list), lower(directory))));
 
 IsCalls = list(id);
