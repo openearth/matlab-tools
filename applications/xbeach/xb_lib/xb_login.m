@@ -64,7 +64,7 @@ function [username password] = xb_login()
 if ~ispc(); error('This function only works for Windows systems'); end;
     
 s = get(0,'ScreenSize');
-w = 300; h = 100;
+w = 300; h = 90;
 pos = [(s(3)-w)/2 (s(4)-h)/2 w h];
 
 dlg = dialog('Name', 'Login', 'pos', pos);

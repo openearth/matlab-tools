@@ -165,10 +165,10 @@ end
 
 fclose(fid);
 
-%% check password
+%% prompt for password
 
 if OPT.ssh_prompt
-    [OPT.ssh_user OPT.ssh_pass] = xb_password;
+    [OPT.ssh_user OPT.ssh_pass] = xb_login;
 end
 
 %% run model
