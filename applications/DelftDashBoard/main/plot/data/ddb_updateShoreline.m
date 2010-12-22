@@ -29,7 +29,7 @@ end
 
 %% Find require scale
 dx=xl0(2)-xl0(1);
-switch lower(Coord.Type)
+switch lower(ldbCoord.Type)
     case{'geo','geographic','geographic 2d','geographic 3d','spherical','latlon'}
         dx=dx*100000*cos(pi*0.5*(yl0(1)+yl0(2))/180);
 end
