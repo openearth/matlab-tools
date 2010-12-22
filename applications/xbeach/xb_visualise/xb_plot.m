@@ -29,7 +29,7 @@ function xb_plot(xb, varargin)
 %   Copyright (C) 2010 Deltares
 %       Bas Hoonhout
 %
-%       bas.hoonhout@deltares.nl	
+%       bas.hoonhout@deltares.nl
 %
 %       Rotterdamseweg 185
 %       2629HD Delft
@@ -49,9 +49,9 @@ function xb_plot(xb, varargin)
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -79,15 +79,18 @@ if ~xb_exist(xb, 'DIMS')
 end
 
 OPT = struct( ...
-);
+    'width',800,...
+    'height',600 ...
+    );
 
 OPT = setproperty(OPT, varargin{:});
 
 %% create gui
 
-winsize = [800 600];
+winsize = [OPT.width OPT.height];
 
 fig = figure('Position', [100 100 winsize], ...
+    'Toolbar','figure',...
     'ResizeFcn', @ui_resize);
 
 axes('Position', [.1 .2 .7 .7], 'Tag', 'Axes');
@@ -97,6 +100,7 @@ ui_build(fig, [], xb);
 % show data
 ui_loaddata(findobj(fig, 'Tag', 'SelectVar'), [], xb);
 
+end
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function info = get_info(xb)
@@ -124,20 +128,24 @@ info.vars = vars;
 varlist = sprintf('|%s', info.vars{:});
 info.varlist = varlist(2:end);
 
+end
 %% uicontrol functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function ui_build(hObj, event, xb)
 
 info = get_info(xb);
 
+ax = findobj(hObj,'Tag','Axes');
+title(ax,['t = ' num2str(info.t(1)) ' (s)']);
+
 % sliders
 uicontrol(hObj, 'Style', 'slider', 'Tag', 'Slider1', ...
-    'Min', 1, 'Max', length(info.t), 'Value', 1, ...
+    'Min', 1, 'Max', length(info.t), 'Value', 1, 'SliderStep',[1 max([1 floor(length(info.t)/10)])]/(length(info.t)-1), ...
     'Enable', 'off', ...
     'Callback', {@ui_loaddata, xb});
 
 uicontrol(hObj, 'Style', 'slider', 'Tag', 'Slider2', ...
-    'Min', 1, 'Max', length(info.t), 'Value', length(info.t), ...
+    'Min', 1, 'Max', length(info.t), 'Value', length(info.t), 'SliderStep',[1 max([1 floor(length(info.t)/10)])]/(length(info.t)-1), ...
     'Callback', {@ui_loaddata, xb});
 
 uicontrol(hObj, 'Style', 'text', 'Tag', 'TextSlider1', ...
@@ -169,6 +177,7 @@ uicontrol(hObj, 'Style', 'togglebutton', 'Tag', 'ToggleAnimate', ...
 ui_resize(hObj, event);
 
 set(findobj(hObj, 'Type', 'uicontrol'), 'BackgroundColor', [.8 .8 .8]);
+end
 
 function ui_resize(hObj, event)
 
@@ -184,6 +193,8 @@ set(findobj(hObj, 'Tag', 'ToggleDiff'), 'Position', [[.85 .6].*winsize [.1 .05].
 set(findobj(hObj, 'Tag', 'ToggleSurf'), 'Position', [[.85 .55].*winsize [.1 .05].*winsize]);
 set(findobj(hObj, 'Tag', 'ToggleAnimate'), 'Position', [[.85 .07].*winsize [.1 .035].*winsize]);
 
+end
+
 function ui_togglediff(hObj, event, xb)
 
 pObj = get(hObj, 'Parent');
@@ -197,16 +208,18 @@ end
 
 % reload data
 ui_loaddata(hObj, event, xb)
+end
 
 function ui_togglesurf(hObj, event, xb)
 
 pObj = get(hObj, 'Parent');
 
-% clear current axes
-cla(findobj(pObj, 'Type', 'Axes'));
+% clear plot axes
+cla(findobj(pObj, 'Tag', 'Axes'));
 
 % reload data
 ui_loaddata(hObj, event, xb)
+end
 
 function ui_loaddata(hObj, event, xb)
 
@@ -218,20 +231,20 @@ vars = vars(get(findobj(pObj, 'Tag', 'SelectVar'), 'Value'),:);
 
 colors = 'rgbcymk';
 
-hold off;
+% get time
+t1 = round(get(findobj(pObj, 'Tag', 'Slider1'), 'Value'));
+t2 = round(get(findobj(pObj, 'Tag', 'Slider2'), 'Value'));
+
+set(findobj(pObj,'Tag','Axes'),'NextPlot','replacechildren');
 for i = 1:size(vars,1)
     var = strtrim(vars(i,:));
     data = xb_get(xb, var);
     
     if numel(data) > 1 || ~isnan(data)
-
+        
         idx1 = num2cell(ones(1, ndims(data))); idx1(1:2) = {':' ':'};
         idx2 = idx1;
-
-        % get time
-        t1 = round(get(findobj(pObj, 'Tag', 'Slider1'), 'Value'));
-        t2 = round(get(findobj(pObj, 'Tag', 'Slider2'), 'Value'));
-
+        
         % determine indices
         if ndims(data) > 2
             idx1 = [idx1{1:end-1} {t1}];
@@ -242,16 +255,16 @@ for i = 1:size(vars,1)
             set(findobj(pObj, 'Tag', 'ToggleDiff'), 'Enable', 'off');
             set(findobj(pObj, 'Tag', 'ToggleAnimate'), 'Enable', 'off');
         end
-
+        
         % get 2D array
         if get(findobj(pObj, 'Tag', 'ToggleDiff'), 'Value')
             data = data(idx2{:})-data(idx1{:});
         else
             data = data(idx2{:});
         end
-
+        
         data = squeeze(data);
-
+        
         % get grid
         x = xb_get(xb, 'DIMS.x');
         y = xb_get(xb, 'DIMS.y');
@@ -261,15 +274,15 @@ for i = 1:size(vars,1)
         
         has_grid = false;
         if size(x,1) == size(data,1) && size(x,2) == size(data,2) && ...
-            size(y,1) == size(data,1) && size(y,2) == size(data,2) && ...
-            ~(isscalar(x) && isnan(x)) && ~(isscalar(y) && ~isnan(y))
+                size(y,1) == size(data,1) && size(y,2) == size(data,2) && ...
+                ~(isscalar(x) && isnan(x)) && ~(isscalar(y) && ~isnan(y))
             has_grid = true;
         end
         
         if any(strcmpi(var, {'x', 'y', 'xfile', 'yfile'}))
             has_grid = false;
         end
-
+        
         % plot data
         if min(size(data)) <= 3
             set(findobj(pObj, 'Tag', 'ToggleSurf'), 'Enable', 'off')
@@ -278,9 +291,9 @@ for i = 1:size(vars,1)
             idx = num2cell(repmat(':', 1, ndims(data)));
             idx{mi} = 1;
             data = data(idx{:});
-
+            
             % 1D data
-            sObj = findobj(findobj(pObj, 'Type', 'Axes'), 'Type', 'line');
+            sObj = findobj(findobj(pObj, 'Tag', 'Axes'), 'Type', 'line');
             
             if length(sObj) >= i
                 if has_grid
@@ -289,12 +302,12 @@ for i = 1:size(vars,1)
                     xdata = 1:length(data);
                 end
                 
-                set(sObj(i), 'XData', xdata, 'YData', data, 'Color', colors(mod(i-1,length(colors))+1));
+                set(sObj(i), 'XData', xdata, 'YData', data, 'Color', colors(mod(i-1,length(colors))+1),'DisplayName',var);
             else
                 if has_grid
-                    plot(x(idx{:}), data, ['-' colors(mod(i-1,length(colors))+1)]);
+                    plot(x(idx{:}), data, ['-' colors(mod(i-1,length(colors))+1)],'DisplayName',var);
                 else
-                    plot(data, ['-' colors(mod(i-1,length(colors))+1)]);
+                    plot(data, ['-' colors(mod(i-1,length(colors))+1)],'DisplayName',var);
                 end
             end
         else
@@ -306,37 +319,38 @@ for i = 1:size(vars,1)
             else
                 [xdata ydata] = meshgrid(1:size(data, 2), 1:size(data, 1));
             end
-
+            
             % 2D data
             if get(findobj(pObj, 'Tag', 'ToggleSurf'), 'Value')
-                sObj = findobj(findobj(pObj, 'Type', 'Axes'), 'Type', 'surface');
+                sObj = findobj(findobj(pObj, 'Tag', 'Axes'), 'Type', 'surface');
                 
                 if length(sObj) >= i
-                    set(sObj(i), 'XData', xdata, 'YData', ydata, 'ZData', data, 'CData', data);
+                    set(sObj(i), 'XData', xdata, 'YData', ydata, 'ZData', data, 'CData', data,'DisplayName',var);
                 else
                     if has_grid
-                        surf(x, y, data);
+                        surf(x, y, data,'DisplayName',var);
                     else
-                        surf(data);
+                        surf(data,'DisplayName',var);
                     end
                 end
             else
-                sObj = findobj(findobj(pObj, 'Type', 'Axes'), 'Type', 'surface');
+                sObj = findobj(findobj(pObj, 'Tag', 'Axes'), 'Type', 'surface');
                 
                 if length(sObj) >= i
-                    set(sObj(i), 'XData', xdata, 'YData', ydata, 'ZData', 0*data, 'CData', data);
-                    set(findobj(pObj, 'Type', 'Axes'), ...
+                    set(sObj(i), 'XData', xdata, 'YData', ydata, 'ZData', 0*data, 'CData', data,'DisplayName',var);
+                    set(findobj(pObj, 'Tag', 'Axes'), ...
                         'XLim', [min(min(xdata)) max(max(xdata))], ...
                         'YLim', [min(min(ydata)) max(max(ydata))]);
                 else
                     if has_grid
-                        pcolor(x, y, data);
+                        htemp = pcolor(x, y, data);
                     else
-                        pcolor(data);
+                        htemp = pcolor(data);
                     end
+                    set(htemp,'DisplayName',var);
                 end
             end
-
+            
             shading interp;
         end
     end
@@ -344,10 +358,15 @@ for i = 1:size(vars,1)
     hold on;
 end
 
+ax = findobj(pObj, 'Tag', 'Axes');
+info = get_info(xb);
+title(ax,['t = ' num2str(info.t(t2)) ' (s)']);
+
 % clear items without use
-sObj = get(findobj(pObj, 'Type', 'Axes'), 'Children');
+sObj = get(ax, 'Children');
 for i = size(vars,1)+1:length(sObj)
     delete(sObj(i));
+end
 end
 
 function ui_animate(hObj, event, xb)
@@ -368,7 +387,7 @@ ui_loaddata(hObj, event, xb)
 
 if t < tmax
     pause(.1);
-
+    
     % start new loop if maximum is not reached
     if get(findobj(pObj, 'Tag', 'ToggleAnimate'), 'Value')
         ui_animate(hObj, event, xb)
@@ -377,4 +396,5 @@ else
     
     % stop animation if maximum is reached
     set(findobj(pObj, 'Tag', 'ToggleAnimate'), 'Value', 0);
+end
 end
