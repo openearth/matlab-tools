@@ -131,7 +131,7 @@ function [x y z] = lateral_sandwalls(x, y, z, OPT)
     for i = 1:size(z,2)
         if z(1,i) > z0 || z1 > 0
             z1 = max(z1,z(1,i));
-            z(1:n,i) = interp1(y([1 OPT.n+1],i),[z1 z(OPT.n+1,i)],y(1:OPT.n,i));
+            z(1:OPT.n,i) = interp1(y([1 OPT.n+1],i),[z1 z(OPT.n+1,i)],y(1:OPT.n,i));
         end
         if z(end,i) > z0 || z2 > 0
             z2 = max(z2,z(end,i));
@@ -146,7 +146,15 @@ function [x y z] = seaward_flatten(x, y, z, OPT)
     for i = 1:size(z,1)
         z(i,2:OPT.n) = interp1(x(i,[1 OPT.n+1]),[z0 z(i,OPT.n+1)],x(i,2:OPT.n));
     end
+
+function [x y z] = landward_polder(x, y, z, OPT)
+    z0 = -5;
     
+    for i = 1:size(z,1)
+        z(i,end-OPT.n:end) = interp1(x(i,[end-OPT.n end]),[z0 z(i,end)],x(i,end-OPT.n:end));
+        z(i,end-2*OPT.n-1:end-OPT.n-1) = interp1(x(i,[end-2*OPT.n-1 end-OPT.n-1]),[z(i,end-2*OPT.n-1) z0],x(i,end-2*OPT.n-1:end-OPT.n-1));
+    end
+
 function [xn yn zn] = seaward_extend(x, y, z, OPT)
 
 z0 = max(z(:,1));
