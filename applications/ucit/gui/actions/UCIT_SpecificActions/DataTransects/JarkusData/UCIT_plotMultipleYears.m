@@ -74,12 +74,9 @@ hold on;
 
 % Add cross-sections of selected years
 
-if length(years)>10
-    warning('Maximum number of selected years is 10')
-    years=years(1:10);
-end
-
+col     = jet(length(years)); % use color codes of Claire
 counter = 1;
+years     = sort(years); % old years are blue, recent years are red
 
 for i=1:length(years)
 
@@ -92,8 +89,11 @@ for i=1:length(years)
             plotLine(transect);hold on;
             a=findobj('tag',['ph' num2str(transect.year)]);
             b=findobj('tag',['ph' num2str(transect.year)]);
-            set(a,'color',colors{counter});
-            set(b,'color',colors{counter}); clear a b;
+%             set(a,'color',colors{counter});
+%             set(b,'color',colors{counter}); 
+            set(a,'color',col(counter,:));
+            set(b,'color',col(counter,:));
+            clear a b;
             legendtext{counter} = num2str(transect.year);
             counter = counter + 1;
             clear transect

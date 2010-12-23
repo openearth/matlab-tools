@@ -95,6 +95,9 @@ d    = UCIT_getMetaData(2);
 OPT2 = grid_orth_getMapInfoFromDataset(d.catalog);
 
 teller = 0; teller2 = 0;emptyyears = [];
+
+
+
 for xx = 1:length(years)
 
     figure(fh);
@@ -119,19 +122,28 @@ for xx = 1:length(years)
     lengthc=sqrt(dx^2+dy^2);
     stepsize=lengthc/size(xi,2);
     xl=[0:stepsize:(size(xi,2)-1)*stepsize];
-    zl=interp2(X,Y,Z,xi,yi);
+    zl(:,xx)=interp2(X,Y,Z,xi,yi);
+    if all(isnan(zl(:,xx)))
+        id(xx) = 0;
+    else
+        id(xx) = 1;
+    end
+end
 
+years_with_data = years(id==1);
+years_with_data = sort(years_with_data); % old years are blue, recent years are red
+col     = jet(length(years_with_data)); % use color codes of Claire
+
+for xx = 1:length(years)
+    
     %% plot data or warn that no data is available
     figure(fn);
-    if sum(~isnan(zl))>0
+    if sum(~isnan(zl(:,xx)))>0
         teller=teller+1;
-        try
-            figure(fn);set(fn,'visible','on');
-            plot(xl,zl,'color',colors{teller},'linewidth',2);hold on;
-            legendtext{teller}=([num2str(years(xx))]);
-        catch
-            error(['Too many years!']);
-        end
+        figure(fn);set(fn,'visible','on');
+        plot(xl,zl(:,xx),'color',col(teller,:),'linewidth',2);hold on;
+        legendtext{teller}=([num2str(years(xx))]);
+
     else
         teller2=teller2+1;
         emptyyears{teller2}=num2str(years(xx));
