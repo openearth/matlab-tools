@@ -51,10 +51,10 @@ function PlotTimeSeries_test()
 
 MTestCategory.DataAccess;
 
-ncFile = 'http://opendap.deltares.nl/thredds/dodsC/opendap/knmi/etmgeg/etmgeg_344.nc';
-ncVariable = 'wind_speed_mean';
+ncFile = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-KATVR.nc';
+ncVariable = 'sea_surface_height';
 startTime = '20100101T000000';
-stopTime = '20100201T000000';
+stopTime = '20100108T000000';
 outputdir = cd;
 outputPng = PlotTimeSeries(ncFile,ncVariable,startTime,stopTime,outputdir);
 assert(strcmp(fileparts(outputPng),strrep(outputdir,'/',filesep)));

@@ -12,7 +12,22 @@ try
     f = figure();
     startTime = datenum(startTime,'yyyymmddTHHMMSS');
     stopTime = datenum(stopTime,'yyyymmddTHHMMSS');
-    nc_cf_stationTimeSeries(ncfile,'varname',ncVariable,'period',[startTime stopTime]);
+    %% OPTION 1: 
+%         nc_cf_stationTimeSeries(ncfile,'varname',ncVariable,'period',[startTime stopTime]);
+    
+    %% OPTION 2 (because OPTION 1 is much slower!)
+    [D.datenum,start0,count0,M.datenum.timezone] = nc_cf_time_range(ncfile,'time',[startTime stopTime]);
+    I         = nc_getvarinfo(ncfile,ncVariable);
+    start     = zeros(1,length(I.Dimension));
+    count     = ones (1,length(I.Dimension));
+    i         = strmatch('time',I.Dimension);
+    count(i)  = count0;
+    start(i)  = start0;
+    D.var = nc_varget(ncfile,ncVariable,start,count);
+    plot(D.datenum,D.var);
+    ylabel([I.Attribute(1).Value ' [' I.Attribute(2).Value ']']);
+    datetick('x',24,'keeplimits');
+    grid on;
 catch me
     error(['Could not read opendap file: ', me.getReport]);
 end

@@ -11,9 +11,16 @@
 <hk_model>
   <model>
     <title>Kustlijn posities 1965-2005 berekend met Unibest</title>
-    <category>geo</category>
+    <category>hydro</category>
     <type>2dmap</type>
     <kml>http://kml.deltares.nl/kml/test_arjan/hk_models/HollandCoast_1965_2005.kml</kml>
+    <actions></actions>
+  </model>
+  <model>
+    <title>Zandmotor model</title>
+    <category>geo</category>
+    <type>2dmap</type>
+    <kml>http://kml.deltares.nl/kml/test_arjan/hk_models/g02.kmz</kml>
     <actions></actions>
   </model>
 </hk_model>
