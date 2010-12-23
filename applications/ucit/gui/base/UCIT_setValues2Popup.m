@@ -63,7 +63,7 @@ switch type
 
         [popupValue3,info3]=UCIT_getInfoFromPopup('TransectsTransectID');
         
-        if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Jarkus Data');
+        if strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Jarkus Data')||strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),'Jarkus Data (test/next release)');
             ValuePopup3 = num2str(str2double(ValuePopup3) - round(str2double(ValuePopup3)/1000000)*1000000);
         end
         

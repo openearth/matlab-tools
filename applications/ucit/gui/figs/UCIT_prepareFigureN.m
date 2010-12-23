@@ -40,8 +40,7 @@ try
 delete(findall(fh,'Type','uimenu'));
 end
 
-c=load('icons_muppet.mat');
-cpan=load('icons.mat');
+c=load('ucit_icons.mat');
 
 switch type
     
@@ -65,12 +64,12 @@ switch type
         h = uitoggletool(tbh,'Separator','off','HandleVisibility','on','ToolTipString','Pan');
         set(h,'ClickedCallback',{@UCIT_ZoomInOutPan,3,callback1, varargin1, callback2, varargin2}');
         set(h,'Tag','UIToggleToolPan');
-        set(h,'cdata',cpan.icons.pan);
+        set(h,'cdata',c.icons.pan);
         
         h = uitoggletool(tbh,'Separator','off','HandleVisibility','on','ToolTipString','Zoom reset');
         set(h,'ClickedCallback',{@UCIT_ZoomInOutPan,6,callback1, varargin1, callback2, varargin2}');
         set(h,'Tag','UIToggleToolRefresh');
-        set(h,'cdata',cpan.icons.refresh);
+        set(h,'cdata',c.icons.refresh);
 
     case 2
         

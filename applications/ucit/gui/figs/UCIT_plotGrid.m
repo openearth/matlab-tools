@@ -77,7 +77,9 @@ switch  scheme
         thinning = 1;
 %         sh = pcolor(X(1:thinning:end,1:thinning:end),Y(1:thinning:end,1:thinning:end),Z(1:thinning:end,1:thinning:end)); axis equal; shading interp; view(2)
         sh = surf(X(1:thinning:end,1:thinning:end),Y(1:thinning:end,1:thinning:end),Z(1:thinning:end,1:thinning:end));
-        axis equal; shading interp; view(2);colorbar;axis equal;colormap(colormap_cpt('bathymetry_vaklodingen',200));clim([-50 25]);
+        axis equal; shading interp; view(2);colorbar;axis equal;
+%         colormap(colormap_cpt('bathymetry_vaklodingen',200));
+        clim([-50 25]);
         lightangle(-180,60);material([.7 .3 0.2]);lighting phong
        
 

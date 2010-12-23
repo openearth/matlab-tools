@@ -113,7 +113,7 @@ end
    
 %% change icon  (dll will not work in future versions of matlab)
    
-   %try
-   %    figure(fig);icon(101, get(fig,'name'), which('Deltares_logo_32x32.ico'));
-   %end
+   try
+      figure(fig);icon(101, get(fig,'name'), which('Deltares_logo_32x32.ico'));
+   end
    

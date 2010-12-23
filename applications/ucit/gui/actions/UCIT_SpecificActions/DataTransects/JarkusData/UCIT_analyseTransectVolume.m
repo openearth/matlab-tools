@@ -43,6 +43,8 @@ if check == 0
     return
 end
 
+c=load('ucit_icons.mat');
+
 %% load relavant data
 datatypes = UCIT_getDatatypes;
 url = datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
@@ -87,16 +89,16 @@ ah=axes;
 %% Add additional buttons
 tbh = findall(fh,'Type','uitoolbar');
 
-objTag = 'TransectsSoundingID';
-adj = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','Year before');
-set(adj,'ClickedCallback','UCIT_next(-1,''TransectsSoundingID'')');
-set(adj,'Tag','SeawardBoundary');
-set(adj,'cdata',makeIcon([which('left-32x322.bmp')],20,1));
-
-adj = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','Next year');
-set(adj,'ClickedCallback','UCIT_next(1,''TransectsSoundingID'')');
-set(adj,'Tag','LandwardBoundary');
-set(adj,'cdata',makeIcon([which('right-32x322.bmp')],20,1));
+% objTag = 'TransectsSoundingID';
+% adj = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','Year before');
+% set(adj,'ClickedCallback','UCIT_next(-1,''TransectsSoundingID'')');
+% set(adj,'Tag','SeawardBoundary');
+% set(adj,'cdata',c.ico.arrowleft_green16);
+% 
+% adj = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','Next year');
+% set(adj,'ClickedCallback','UCIT_next(1,''TransectsSoundingID'')');
+% set(adj,'Tag','LandwardBoundary');
+% set(adj,'cdata',c.ico.arrowright_green16);
 
 % set(gca,'xdir','reverse');
 

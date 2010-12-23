@@ -43,6 +43,8 @@ function UCIT_plotDifferenceMap(datatype1,year1,targetmonth1,datatype2,year2,tar
 warningstate = warning;
 warning off
 
+OPT.polygon         = [];
+
 datatype = UCIT_getInfoFromPopup('GridsDatatype');
 
 mapW = findobj('tag','gridPlot');
@@ -58,8 +60,53 @@ end
 
 d    = UCIT_getMetaData(2);
 
-%% draw polygon
-[xv,yv] = polydraw;polygon=[xv' yv'];
+%% select or load polygon
+try delete(findobj(ah,'tag','selectionpoly'));  end %#ok<*TRYNC> delete any remaining poly
+try delete(findobj(fh,'tag','isohypse_polygon'));  end
+
+% if no polygon is available yet draw one
+if isempty(OPT.polygon)
+    % make sure the proper axes is current
+    try axes(ah); end
+    
+    jjj = menu({'Zoom to your place of interest first.',...
+        'Next select one of the following options.',...
+        'Finish clicking of a polygon with the <right mouse> button.'},...
+        '1. click a polygon',...
+        '2. click a polygon and save to file',...
+        '3. load a polygon from file');
+    
+    if jjj<3
+        % draw a polygon using polydraw making sure it is tagged properly
+        disp('Please click a polygon from which to select data ...')
+        [x,y] = polydraw('g','linewidth',2,'tag','selectionpoly');
+        
+    elseif jjj==3
+        % load and plot a polygon
+        [fileName, filePath] = uigetfile({'*.ldb','Delft3D landboundary file (*.ldb)'},'Pick a landboundary file');
+        [x,y]=landboundary_da('read',fullfile(filePath,fileName));
+        x = x';
+        y = y';
+    end
+    
+    % save polygon
+    if jjj==2
+        [fileName, filePath] = uiputfile({'*.ldb','Delft3D landboundary file (*.ldb)'},'Specifiy a landboundary file',...
+            ['polygon_',datestr(now)]);
+        landboundary_da('write',fullfile(filePath,fileName),x,y);
+    end
+    
+    % combine x and y in the variable polygon and close it
+    OPT.polygon = [x' y'];
+    OPT.polygon = [OPT.polygon; OPT.polygon(1,:)];
+    
+else
+    
+    x = OPT.polygon(:,1);
+    y = OPT.polygon(:,2);
+    
+end
+
 
 %% select years
 years = [1926:str2double(datestr(now,10))];
@@ -88,7 +135,7 @@ year2 = years(v(2));
     'datathinning'  , str2double(UCIT_getInfoFromPopup('GridsSoundingID')),...
     'cellsize'      , d.cellsize,...
     'plotresult'    , 0,...
-    'polygon'       , polygon);  % this functionality is also inside grid_orth_getDataInPolygon
+    'polygon'       , OPT.polygon);  % this functionality is also inside grid_orth_getDataInPolygon
 
 %% get data of second year
 [d.X, d.Y, d2.Z, d1.Ztime] = grid_orth_getDataInPolygon(...
@@ -102,7 +149,7 @@ year2 = years(v(2));
     'cellsize'      , d.cellsize,...
     'datathinning'  , str2double(UCIT_getInfoFromPopup('GridsSoundingID')),...
     'plotresult'    , 0,...
-    'polygon'       , polygon);  % this functionality is also inside grid_orth_getDataInPolygon
+    'polygon'       , OPT.polygon);  % this functionality is also inside grid_orth_getDataInPolygon
 
 %% Subtract years
 dd.Z = (d1.Z - d2.Z);
@@ -112,12 +159,16 @@ fh = figure('tag','diffplot');clf;
 ah = axes;
 [fh,ah] = UCIT_prepareFigureN(0, fh, 'UR', ah);
 UCIT_plotlandBoundary(d.ldb,'none'); % plot land boundary
+
 surf(d.X,d.Y,dd.Z);shading interp;view(2);hold on;
 cm = colormap(['erosed']);
 caxis([-3 3]);
 c  = colorbar('vert');
 axis   equal;
 box    on
+% thr=-20:0.5:20; 
+thr = [-50 -40 -30 -20 -10 -5 0 5];
+[c,h]=contour(d.X,d.Y,d1.Z,[thr],'k');
 set   (fh,'Units','normalized');
 set   (fh,'Position',UCIT_getPlotPosition('UR',1))
 set   (fh,'Name','UCIT - Difference Map','NumberTitle','Off','Units','characters','visible','on');

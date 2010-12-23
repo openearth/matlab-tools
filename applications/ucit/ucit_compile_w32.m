@@ -1,9 +1,9 @@
 delete('bin\*');
 mkdir bin;
 %  add wlsettings and oesettings
-if isempty(which('drawgrid'))
-    wlsettings;
-end
+% if isempty(which('drawgrid'))
+%     wlsettings;
+% end
 
 
 % remove annoying startup.m in wafo dir from path
@@ -11,7 +11,7 @@ rmpath('D:\McTools\matlab\applications\wave\wafo\docs\');
 rmpath('d:\Matlab\');
 rmpath('Y:\app\MATLAB2009b\toolbox\stats');
 
-% add all detran routines
+%% Add all routines
 addpath(genpath('engines'));
 fid=fopen('complist','wt');
 fprintf(fid,'%s\n','-a');
@@ -56,6 +56,10 @@ while proceed == 1
     if i == length(ids)-1
         proceed = 0;
     end
+    
+    % add additional functions (based on debugging)
+    fprintf(fid,'%s\n','inspect.m');
+    fprintf(fid,'%s\n','erosed.m');
 
 end
 
@@ -77,7 +81,10 @@ mcc -m -v -d bin ucit_netcdf.m -B complist -a ..\..\io\netcdf\toolsUI-4.1.jar
 % delete('Deltares_icon.res');
 
 dos(['copy ' which('ucit_about.txt') ' bin']);
+dos(['copy ' which('ucit_icons.mat') ' bin']);
+dos(['copy ' which('EPSG.mat') ' bin']);
 revnumb = '????';
+
 if isappdata(0,'revisionnumber')
     revnumb = num2str(getappdata(0,'revisionnumber'));
 else
