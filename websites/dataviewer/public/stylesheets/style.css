@@ -6,5 +6,5 @@ select.s {font-size: 12px;}
 input.vs {font-size: 12px;}
 input.s  {font-size: 12px;}
 tr.links a {color: #000000; }
-tr.links a:link, table.links a:visited {text-decoration: none; color: #000000;}
+tr.links a:link, a:visited {text-decoration: none; color: #000000;}
 tr.links a:hover {color: #000000; font-weight: bold;}
