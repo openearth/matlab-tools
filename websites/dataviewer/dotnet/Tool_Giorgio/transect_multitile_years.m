@@ -51,7 +51,7 @@ lat2 = lat1 + 2 * (Centre(1) - Vertex(1));
 
 %% Read the path from the opendap
 ncpath = 'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/DienstZeeland/catalog.html'; % DienstZeeland data
-% ncpath = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.html'; % Rijkswaterstaat data
+ncpath = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.html'; % Rijkswaterstaat data
 fns = opendap_catalog(ncpath);
 
 %% 1D Resolution of transect
@@ -77,11 +77,13 @@ i_KB = 1;
 date_KB = [];
 for i = 1:length(fns)
     url = fns{i};
-    lon = nc_varget(url, 'lon');
-    lat = nc_varget(url, 'lat');   
-
-    if ismember(true, ((min(lon1,lon2)<lon)&(max(lon1,lon2)>lon))) &&...
-            ismember(true, ((min(lat1,lat2)<lat)&(max(lat1,lat2)>lat)));
+    xx = nc_getvarinfo(url,'x');
+    yy = nc_getvarinfo(url,'y');
+    xLim = str2num(xx.Attribute(findstrinstruct(xx.Attribute,'Name','actual_range')).Value);
+    yLim = str2num(yy.Attribute(findstrinstruct(yy.Attribute,'Name','actual_range')).Value);
+    [xT, yT] = polyintersect([xLim fliplr(xLim) xLim(1)],[yLim(1) yLim fliplr(yLim)],[x1 x2],[y1 y2]);
+    
+    if ~isempty(xT)    
         urlcross{i_KB} = url;
         date{i_KB} = nc_cf_time(url, 'time');
         date_i = date{i_KB};

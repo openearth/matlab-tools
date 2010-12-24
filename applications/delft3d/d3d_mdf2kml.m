@@ -102,10 +102,10 @@ if OPT.epsg ~= 4326
     [xg,yg]=convertCoordinates(xg,yg,'CS1.code',OPT.epsg,'CS2.code',4326);
 end
 
-kml1 = 'grid.kml';
+kmlFiles{1} = 'grid.kml';
 
 KMLmesh(yg,xg,z,...
-    'fileName',kml1,...
+    'fileName',kmlFiles{1},...
     'kmlName','grid',...
     'lineColor',OPT.grdColor,...
     'lineAlpha',.6,...
@@ -113,19 +113,23 @@ KMLmesh(yg,xg,z,...
 
 %% Convert bathymetry
 if isfield(MDF.keywords,'fildep')
-    OPT2 = delft3d_grd2kml(MDF.keywords.filcco,'epsg',OPT.epsg,'mdf',mdf,'dep',MDF.keywords.fildep,'clim',OPT.clim,'ddep',1);
+    OPT2 = delft3d_grd2kml(MDF.keywords.filcco,'epsg',OPT.epsg,'mdf',mdf,'dep',MDF.keywords.fildep,'clim',OPT.clim,'ddep',OPT.ddep);
 else
     OPT2 = delft3d_grd2kml(MDF.keywords.filcco,'epsg',OPT.epsg,'mdf',mdf);
 end
 
-kml2 = [filename(MDF.keywords.filcco),'_2D.kml'];
-delete([filename(MDF.keywords.filcco),'_3D.kml']);
-delete([filename(MDF.keywords.filcco),'_3D_ver_lft.png']);
+kmlFiles{end+1} = [filename(MDF.keywords.filcco),'_3D.kml'];
+% delete([filename(MDF.keywords.filcco),'_3D.kml']);
+% delete([filename(MDF.keywords.filcco),'_3D_ver_lft.png']);
 
 %% Process dry points
 if OPT.dry
-    D = delft3d_io_dry('read' ,MDF.keywords.fildry);
-    nr = length(D.m);
+    try
+        D = delft3d_io_dry('read' ,MDF.keywords.fildry);
+        nr = length(D.m);
+    catch
+        error('No dry points found...')
+    end
     
     for i = 1:nr
         m1=min(D.m0(i),D.m1(i));
@@ -147,13 +151,17 @@ if OPT.dry
     [m,n]=size([xDry{:}]);
     z = mat2cell(repmat(OPT.ddep+1, size([xDry{:}])),m,repmat(1,n,1));
     
-    kml3 = 'drypoints.kml';
-    KMLpatch3(yDry,xDry,z,'fileName',kml3,'fillColor',OPT.dryColor,'fillAlpha',0.8,'kmlName','drypoints');
+    kmlFiles{end+1} = 'drypoints.kml';
+    KMLpatch3(yDry,xDry,z,'fileName',kmlFiles{end},'fillColor',OPT.dryColor,'fillAlpha',0.8,'kmlName','drypoints');
 end
 %% Process thin dams
 if OPT.thd
-    T = delft3d_io_thd('read' ,MDF.keywords.filtd);
-    nr = length(T.m);
+    try
+        T = delft3d_io_thd('read' ,MDF.keywords.filtd);
+        nr = length(T.m);
+    catch
+        error('No thin dams found');
+    end
     xThd = [];
     yThd = [];
     
@@ -181,16 +189,15 @@ if OPT.thd
     
     z = repmat(OPT.ddep+2, size(xThd));
     
-    kml4 = 'thindams.kml';
-    KMLline(yThd',xThd',z','lineWidth',OPT.thdWidth,'lineColor',OPT.thdColor,'fileName',kml4,'kmlName','thindams');
+    kmlFiles{end+1} = 'thindams.kml';
+    KMLline(yThd',xThd',z','lineWidth',OPT.thdWidth,'lineColor',OPT.thdColor,'fileName',kmlFiles{end},'kmlName','thindams');
 end
 %% Merge kml-files to one
-KMLmerge_files('sourceFiles',{kml1,kml2,kml3,kml4},'fileName',[name,'.kml']);
+KMLmerge_files('sourceFiles',kmlFiles,'fileName',[name,'.kml']);
 
-delete(kml1);
-delete(kml2);
-delete(kml3);
-delete(kml4);
+try
+    delete(kmlFiles{:});
+end
 
 if OPT.kmz
     ge_makekmz([name,'.kmz'],'sources',{[name,'.kml'],[filename(MDF.keywords.filcco),'_2D_ver_lft.png']})

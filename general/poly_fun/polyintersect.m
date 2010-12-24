@@ -185,25 +185,28 @@ function  varargout = polyintersect(varargin)
 	    
                if  isinf(line(1).cen.a(imesh1)) & ...
                    isinf(line(2).cen.a(imesh2))
-	    
+               
+                        if OPT.disp==1
                        disp(['2 parallel vertical lines encountered, any overlap dismissed.'])
+                        end
                        local.x = NaN;
                        local.y = NaN;    
                
             %% Deal with two horizontal lines that do not yield a crossing (both they don't overlap and when they don't overlap)
             %% ---------------------
                elseif  line(1).cen.a(imesh1)==line(2).cen.a(imesh2)
-	    
+                        if OPT.disp==1
                        disp(['2 parallel lines encountered, any overlap dismissed.'])
+                        end
                        local.x = NaN;
                        local.y = NaN;      
                        
             %% Deal with one vertical line
             %% ---------------------
                elseif  isinf(line(1).cen.a(imesh1))
-	    
+	    if OPT.disp==1
                        disp(['vertical lines encountered polygon 1.'])
-	    
+        end
                        local.x = line(1).cor.x(imesh1);              % get x from vertical line
                        local.y = line(2).cen.a(imesh2)*local.x + ... % get y from slope other line
                                  line(2).cen.b(imesh2);
@@ -211,9 +214,9 @@ function  varargout = polyintersect(varargin)
             %% Deal with other vertical line
             %% ---------------------
                elseif isinf(line(2).cen.a(imesh2))
-	    
+	    if OPT.disp==1
                        disp(['vertical lines encountered polygon 2.'])
-	    
+        end
                        local.x = line(2).cor.x(imesh2);              % get x from vertical line
                        local.y = line(1).cen.a(imesh1)*local.x + ... % get y from slope other line
                                  line(1).cen.b(imesh1);

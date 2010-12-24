@@ -77,11 +77,18 @@ if nargin==0
     return
 end
 
+%% get info from ncfile
+if isstruct(ncfile)
+   fileinfo = ncfile;
+   ncfile = ncfile.Filename;
+else
+   fileinfo = nc_info(ncfile);
+end
+
 OPT = setproperty(OPT,varargin{:});
 
 OPT.lim       = lim; % [datenum(1950,1,2,2,40,0) datenum(1950,1,2,2,40,0)];
-meta          = nc_getdiminfo(ncfile,varname); % nc_getvarinfo
-n1            = meta.Length;
+n1            = fileinfo.Dimension(findstrinstruct(fileinfo.Dimension,'Name','time')).Length;
 di            = max(ceil(n1/OPT.chunksize),1); % max as there is isinf(chunksize)
 chunk         = [1:di:n1];
 
@@ -99,16 +106,23 @@ else
 end
 end
 
+% try
+%     fileinfo = nc_info(ncfile);
+% catch
+%     fileinfo = ncfile;
+% end
+        
+
 while di > 1
    
    if OPT.time
-   t1      = nc_cf_time(ncfile,varname,chunk(1)-1,length(chunk),di);
+   t1      = nc_cf_time(fileinfo,varname,chunk(1)-1,length(chunk),di);
    else
    t1      = nc_varget (ncfile,varname,chunk(1)-1,length(chunk),di);
    end
    if ~(all(diff(chunk)==di))
    if OPT.time
-   te      = nc_cf_time(ncfile,varname,chunk(end)-1,1);
+   te      = nc_cf_time(fileinfo,varname,chunk(end)-1,1);
    else
    te      = nc_varget (ncfile,varname,chunk(end)-1,1);
    end
@@ -157,7 +171,7 @@ while di > 1
 end
 
 if OPT.time
-[t, zone] = nc_cf_time(ncfile,varname,chunk(1)-1,length(chunk),di);
+[t, zone] = nc_cf_time(fileinfo,varname,chunk(1)-1,length(chunk),di);
 else
 t = nc_varget (ncfile,varname,chunk(1)-1,length(chunk),di);
 end

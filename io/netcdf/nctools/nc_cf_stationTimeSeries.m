@@ -139,12 +139,12 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    start = [];
    count = [];
    else
-  [D.datenum,start0,count0,M.datenum.timezone] = nc_cf_time_range(ncfile,'time',OPT.period);
+  [D.datenum,start0,count0,M.datenum.timezone] = nc_cf_time_range(fileinfo,'time',OPT.period);
    end
    
 %% Get location coords
 
-   lonname         = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'longitude');
+   lonname         = nc_varfind(fileinfo, 'attributename', 'standard_name', 'attributevalue', 'longitude');
    if ~isempty(lonname)
    M.lon.units     = nc_attget(ncfile,lonname,'units');
    D.lon           = nc_varget(ncfile,lonname);
@@ -153,7 +153,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    warning('no longitude specified')
    end
 
-   latname         = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'latitude');
+   latname         = nc_varfind(fileinfo, 'attributename', 'standard_name', 'attributevalue', 'latitude');
    if ~isempty(latname)
    M.lat.units     = nc_attget(ncfile,latname,'units');
    D.lat           = nc_varget(ncfile,latname);
@@ -164,7 +164,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    
 %% Get location info   
 
-   idname          = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'station_id');
+   idname          = nc_varfind(fileinfo, 'attributename', 'standard_name', 'attributevalue', 'station_id');
    if ~isempty(idname)
     D.station_id   = nc_varget(ncfile,idname);
     if isnumeric(D.station_id)
@@ -181,13 +181,13 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    
    D.station_name = D.station_id(:)'; % default
 
-   stname          = nc_varfind(ncfile, 'attributename', 'long_name', 'attributevalue', 'station_name');
+   stname          = nc_varfind(fileinfo, 'attributename', 'long_name', 'attributevalue', 'station_name');
    if ~isempty(stname)
     D.station_name = nc_varget(ncfile,stname);
    elseif nc_isvar(ncfile,'station_name')
     D.station_name = nc_varget(ncfile,'station_name');  
    else
-    idname         = nc_varfind(ncfile, 'attributename', 'long_name', 'attributevalue', 'station_name');
+    idname         = nc_varfind(fileinfo, 'attributename', 'long_name', 'attributevalue', 'station_name');
     if ~isempty(stname)
     D.station_name = nc_varget(ncfile,stname);
     end
