@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- Specify model sources for case Hollandse Kust (HK)     -->
+<!-- ****************************************************** -->
+<!-- Title: Short description of dataset                    -->
+<!-- Categories: hydro, meteo, geo, eco                     -->
+<!-- Type: data type: 2dmap, 3dmap, station, info           -->
+<!-- Kml: link to kml-file                                  -->
+<!-- Actions: Define possible actions for this data         -->
+
+<zd_model>
+  <model>
+    <title>Southwest Delta model</title>
+    <category>hydro</category>
+    <type>2dmap</type>
+    <kml>http://kml.deltares.nl/kml/test_arjan/zd_models/KZ_f_w.kmz</kml>
+    <actions></actions>
+  </model>
+</zd_model>

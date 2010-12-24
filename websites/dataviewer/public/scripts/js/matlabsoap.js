@@ -46,7 +46,7 @@ function CallMatLabSoapCallBack(result)
 	  var balloon = ge.createHtmlDivBalloon('');
 	  balloon.setFeature(pm.cent.placemark); // optional
 	  var div = document.createElement('DIV');
-	  div.innerHTML = "<a href='http://dtvirt13/bwnmatlab/" + result + "' TARGET='_blank'><img src='http://dtvirt13/bwnmatlab/" + result + "' width=200 height=200></a>";
+	  div.innerHTML = "<a href='http://dtvirt13/bwnmatlab/" + result + "' TARGET='_blank'><img src='http://dtvirt13/bwnmatlab/" + result + "' width=200 height=200 border=0></a>";
 	  balloon.setContentDiv(div);
 
 	  ge.setBalloon(balloon);

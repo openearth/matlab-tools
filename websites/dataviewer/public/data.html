@@ -3,12 +3,15 @@
 <head>
 
 	<link href="stylesheets/style.css" rel="stylesheet" type="text/css">
-	<script src="http://www.google.com/jsapi?key=ABQIAAAAJOL4Dbu6i1iFFND9tVK1SxQHoHevx5I6K4zDbyPuyuDTxIU2BBSC_Q4vihWvqWvnnV3Qbrdn-3QeAQ"></Script>
+	<script src="http://www.google.com/jsapi?key=ABQIAAAAJOL4Dbu6i1iFFND9tVK1SxQHoHevx5I6K4zDbyPuyuDTxIU2BBSC_Q4vihWvqWvnnV3Qbrdn-3QeAQ"></script>
 	<script type="text/javascript" src="scripts/js/loadxmldoc.js"></script>
-	<script type="text/javascript" src="scripts/js/polydraw.js"></Script>
-	<script type="text/javascript" src="scripts/js/soapclient.js"></Script>
-	<script type="text/javascript" src="scripts/js/matlabsoap.js"></Script>
-	<script type="text/javascript" src="scripts/js/getQueryString.js"></Script>
+	<script type="text/javascript" src="scripts/js/polydraw.js"></script>
+	<script type="text/javascript" src="scripts/js/soapclient.js"></script>
+	<script type="text/javascript" src="scripts/js/matlabsoap.js"></script>
+	<script type="text/javascript" src="scripts/js/getQueryString.js"></script>
+	<script type="text/javascript" src="scripts/js/caseLoading.js"></script>
+	<script type="text/javascript" src="scripts/js/kmlFunctions.js"></script>
+	<script type="text/javascript" src="scripts/js/wmsFunctions.js"></script>
 	<script type="text/javascript">
 		var ge = null;
 		var pm = null;
@@ -41,204 +44,53 @@
 			pm = new Polygon(0,0,0,0,document.getElementById('polygonselect').value);
 
 			// Load requested case
-			loadCase(getQuerystring('case'));
+			loadCase(getQuerystring('case'),'data');
 
 		}
 
-		// Initialize KMLs to be shown in Google Earth (needed for export to MathLab)
-		function toggleKml(kml_cb)
-		{
-			file = kml_cb.id;
-
-		    if (currentKmlObjects[file])
-		    {
-     	      ge.getFeatures().removeChild(currentKmlObjects[file]);
-		      currentKmlObject = null;
-		    }
-
-			// Load the KML from location if checkbox is checked
-			if (kml_cb.value == "on")
-			  {
-			    loadKml(file)
-			   // setTimeSlider(); doen we nog maar ff niet, werkt nog niet lekker....
-
-			  }
-
-		}
-
-		function setTimeSlider()
-		{
-			// set timeslider to last time step
-			var extents = ge.getTime().getControl().getExtents();
-			var gts = ge.createTimeStamp('');
-			gts.getWhen().set(extents.getEnd().get());
-			ge.getTime().setTimePrimitive(gts);
-		}
 
 
-		function loadKml(file)
-		{
-		    // fetch the KML
-		    google.earth.fetchKml(ge, file, function(kmlObject)
-		       {
-			     if (kmlObject)
-			     {
-			         // show it on Earth
-			         currentKmlObjects[file] = kmlObject;
-			         ge.getFeatures().appendChild(kmlObject);
-
-			     }
-			     else
-			     {
-			         // bad KML
-			         currentKmlObjects[file] = null;
-
-			         // wrap alerts in API callbacks and event handlers in a setTimeout to prevent deadlock in some browsers
-			         setTimeout(function()
-			         {
-			           alert('Bad or null KML.');
-			         }, 0);
-		         }
-		       });
-		}
-
-
-		function loadWMS(wmsLocation)
-		{
-			var groundOverlay = ge.createGroundOverlay('');
-			groundOverlay.setIcon(ge.createIcon(''));
-			groundOverlay.getIcon().setHref(wmsLocation);
-			groundOverlay.setLatLonBox(ge.createLatLonBox(''));
-			var center = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
-			var north = center.getLatitude() + .75;
-			var south = center.getLatitude() - .75;
-			var east = center.getLongitude() + 1.00;
-			var west = center.getLongitude() - 1.00;
-			var rotation = 0;
-			var latLonBox = groundOverlay.getLatLonBox();
-			latLonBox.setBox(north, south, east, west, rotation);
-			ge.getFeatures().appendChild(groundOverlay);
-		}
-
-	// If Google Earth fails to load this function captures the Error Code
+	    // If Google Earth fails to load this function captures the Error Code
 		function failureCB(errorCode){}
-
-		// Load selected case
-		function loadCase(value)
-		{
-			// fill kmldata listbox
-			var caseDoc = loadXMLDoc("xml/cases.xml");
-			document.getElementById("case_title").innerHTML = caseDoc.getElementsByTagName("title")[value].childNodes[0].nodeValue;
-			datafile = caseDoc.getElementsByTagName("datafile")[value].childNodes[0].nodeValue;
-			getDataOutOfCase(datafile,"data");
-
-			// zoom to case specific coordinates
-			lon_cam = parseFloat(caseDoc.getElementsByTagName("lon")[value].childNodes[0].nodeValue);
-			lat_cam = parseFloat(caseDoc.getElementsByTagName("lat")[value].childNodes[0].nodeValue);
-			alt_cam = parseFloat(caseDoc.getElementsByTagName("height")[value].childNodes[0].nodeValue);
-
-  			var camera = ge.getView().copyAsCamera(ge.ALTITUDE_RELATIVE_TO_GROUND);
-  			camera.setLatitude(lat_cam);
-  			camera.setLongitude(lon_cam);
-  			camera.setAltitude(alt_cam);
-  			ge.getView().setAbstractView(camera);
-  		}
-
-		// Fill up the data source area with datasources on the basis of the selected case
-		function getDataOutOfCase(xmlfile,mode)
-		{
-			// remove all existing kml objects
-			features = ge.getFeatures().getChildNodes()
-			for(var i = 0; i < features.getLength(); i++)
-			{
-			var feat = features.item(i);
-			ge.getFeatures().removeChild(feat);
-			}
-
-			// empty select lists
-			while(kmlForInterpolation.options.length!=0)
-			kmlForInterpolation.options.remove(0);
-
-			// set initial polygon
-			pm = new Polygon(0,0,0,0,document.getElementById('polygonselect').value);
-
-			// load case-specific xml file
-			xmlDoc=loadXMLDoc("xml/" + xmlfile);
-			numOfData=xmlDoc.getElementsByTagName(mode).length;
-
-			// create html-code of checkboxes for each kml found in the case xml and fill up the select lists
-			var dataSelectText = [];
-
-			for (i=0;i<numOfData;i=i+1)
-			{
-				// checkboxes
-				dataSelectText = dataSelectText + "<input type='checkbox' class='s' id='" +
-									xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("kml")[0].textContent +
-									"' onclick='toggleKml(this)'>" +
-									xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("title")[0].textContent + "<br>"
-
-				file = xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("kml")[0].textContent;
-				currentKmlObjects[file] = null;
-
-				// select lists for interpolatetoline function
-				if (xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("interpolatetoline").length == 1)
-					{
-					var oOption = document.createElement("OPTION");
-					oOption.text  = xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("title")[0].textContent;
-					oOption.value = xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("interpolatetoline")[0].getElementsByTagName("source")[0].textContent + "&" +
-								    xmlDoc.getElementsByTagName(mode)[i].getElementsByTagName("interpolatetoline")[0].getElementsByTagName("varname")[0].textContent;
-					oOption.class = "vs";
-					kmlForInterpolation.options.add(oOption)
-					}
-			}
-
-			document.getElementById("kml_sources").innerHTML =dataSelectText;
-
-			// check if select lists are empty
-			if (kmlForInterpolation.options.length==0)
-				{
-					var oOption = document.createElement("OPTION");
-					oOption.text="no suitable data";
-					oOption.value=0;
-					oOption.class="vs";
-					kmlForInterpolation.options.add(oOption)
-				}
-		}
 
 	</script>
 </head>
 
 <body onload='init()' id='body'>
-<h1>OpenEarth Data Viewer</h1>
-<table width="350" class="links">
-	<tr>
-		<td colspan="3" STYLE="font-size: 16pt; text-transform: uppercase;">
-		<div id="case_title"></div>
-		</td>
-	</tr>
+<h1>OpenEarth Viewer</h1>
 
-	<tr>
-		<td>Data</td>
-		<td>
+<div style='float:left; width:350px; height:700px; overflow:auto'>
+<a href="index.html">back to portal</a>
+  <table style='font-size:small'>
+
+<!-- CASE HEADER -->
+<tr><td colspan="3"><hr /><hr /></td></tr>
+    <tr>
+        <td colspan="3" style="font-size: 14pt; text-transform: uppercase; color: #336699; font-weight: bold">
+        <div id="case_title"></div>
+        </td>
+    </tr>
+
+<!-- HYPERLINKS -->
+    <tr class="links">
+        <td style="font-weight: bold;" width="116">Data</td>
+		<td width="117">
 		<script type="text/javascript">
 		document.write("<a href=models.html?case=" + getQuerystring('case') + ">Models</a>");
 		</script>
 		</td>
-		<td>
+		<td width="117">
 		<script type="text/javascript">
 		document.write("<a href=tools.html?case=" + getQuerystring('case') + ">Tools</a>");
 		</script>
 		</td>
-	</tr>
-</table>
+   	</tr>
 
-<hr/>
-<div style='float:left; width:350px; height:750px; overflow:auto'>
-  <table style='font-size:small'>
+<tr><td colspan="3"><hr /><hr /></td></tr>
 
 <!-- DATA SELECTION -->
 	<tr>
-	    <td colspan="2">
+	    <td colspan="3">
 	    <h3>Available sources</h3>
 	    <p>
 	    <div id="kml_sources"></div>
@@ -250,7 +102,7 @@
 
 <!-- DRAWING TOOLS -->
 	<tr>
-		<td colspan="2">
+		<td colspan="3">
 			<h3>Drawing</h3>
 		</td>
 	</tr>
@@ -273,15 +125,15 @@
 			</select>
 			</form>
 		</td>
-		<td>
+		<td colspan="2">
 		Use ctrl + mouse click to draw
 		</td>
 	</tr>
-	<tr><td colspan="2"><hr /></td></tr>
+	<tr><td colspan="3"><hr /></td></tr>
 
 <!-- ACTION SELECTION -->
 	<tr>
-	  <td colspan="2">
+	  <td colspan="3">
 		<h3>Actions</h3>
 	  </td>
 	</tr>
@@ -289,7 +141,7 @@
       <td>
  		<button style="width:120;height:25" name="Interpoleer" value="Interpoleer" onClick="javascript:CallMatLabSoap('http://dtvirt13/BwnMatLab/BwnFunctions.asmx', 'InterpolateToLine', kmlForInterpolation.value);">Interpolate</button>
  	  </td>
- 	  <td>
+ 	  <td colspan="2">
  	    <select name="kmlForInterpolation" id="kmlForInterpolation" class="s" style="width: 170px">
  	    	<option value="0" class="vs">Select case</option>
 		</select>
@@ -298,12 +150,12 @@
 
 </table>
 </div>
-<div id='map3d_container' style='border: 1px solid silver; height: 750px; margin-left:350px;'>
+<div id='map3d_container' style='border: 1px solid silver; height: 700px; margin-left:350px;'>
 	<div id='map3d' style='height: 100%;'></div>
 </div>
 <hr/>
     This tool is provided by: <br />
-    <a href="http://openearth.eu" target="_blank"><img src="https://public.deltares.nl/download/attachments/16876019/OET?version=1" align="left" width="100"/></a>
+	<a href="http://openearth.eu" target="_blank"><img src="images/oet.png" align="left" width="100" border="0"/></a>
 </body>
 
 </html>

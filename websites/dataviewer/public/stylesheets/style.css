@@ -5,15 +5,6 @@ p        {font-family: Arial, Helvetica, sans-serif; font-size: 12px;}
 select.s {font-size: 12px;}
 input.vs {font-size: 12px;}
 input.s  {font-size: 12px;}
-table.links {
-	border-width: 2px;
-	border-spacing: 2px;
-	bordercolor: white;
-	border-collapse: separate;
-	background-color: #336699;
-	color: #FFFFFF;
-	font-weight: bold;
-	}
-table.links a {color: #FFFFFF;	font-weight: bold; }
-table.links a:link, table.links a:visited {text-decoration: none; color: #424242; font-weight: bold;}
-table.links a:hover {color: #D8D8D8;}
+tr.links a {color: #000000; }
+tr.links a:link, table.links a:visited {text-decoration: none; color: #000000;}
+tr.links a:hover {color: #000000; font-weight: bold;}

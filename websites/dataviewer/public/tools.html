@@ -11,6 +11,8 @@
 	<script type="text/javascript" src="scripts/js/matlabsoap.js"></script>
 	<script type="text/javascript" src="scripts/js/getQueryString.js"></script>
 	<script type="text/javaScript" src="scripts/js/CalendarPopup.js"></script>
+	<script type="text/javascript" src="scripts/js/kmlFunctions.js"></script>
+	<script type="text/javascript" src="scripts/js/wmsFunctions.js"></script>
 	<script type="text/javascript">
 		var ge = null;
 		var pm = null;
@@ -45,72 +47,9 @@
 			// Load requested tool
 			fillToolLinks(getQuerystring('case'));
 			loadTool(0);
-
 		}
 
-		// Initialize KMLs to be shown in Google Earth (needed for export to MathLab)
-		function toggleKml(kml_cb)
-		{
-			file = kml_cb.id;
-
-		    if (currentKmlObjects[file])
-		    {
-     	      ge.getFeatures().removeChild(currentKmlObjects[file]);
-		      currentKmlObject = null;
-		    }
-
-			// Load the KML from location if checkbox is checked
-			if (kml_cb.value == "on")
-			  {
-			    loadKml(file)
-			  }
-		}
-
-		function loadKml(file)
-		{
-		    // fetch the KML
-		    google.earth.fetchKml(ge, file, function(kmlObject)
-		       {
-			     if (kmlObject)
-			     {
-			         // show it on Earth
-			         currentKmlObjects[file] = kmlObject;
-			         ge.getFeatures().appendChild(kmlObject);
-
-			     }
-			     else
-			     {
-			         // bad KML
-			         currentKmlObjects[file] = null;
-
-			         // wrap alerts in API callbacks and event handlers in a setTimeout to prevent deadlock in some browsers
-			         setTimeout(function()
-			         {
-			           alert('Bad or null KML.');
-			         }, 0);
-		         }
-		       });
-		}
-
-
-		function loadWMS(wmsLocation)
-		{
-			var groundOverlay = ge.createGroundOverlay('');
-			groundOverlay.setIcon(ge.createIcon(''));
-			groundOverlay.getIcon().setHref(wmsLocation);
-			groundOverlay.setLatLonBox(ge.createLatLonBox(''));
-			var center = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
-			var north = center.getLatitude() + .75;
-			var south = center.getLatitude() - .75;
-			var east = center.getLongitude() + 1.00;
-			var west = center.getLongitude() - 1.00;
-			var rotation = 0;
-			var latLonBox = groundOverlay.getLatLonBox();
-			latLonBox.setBox(north, south, east, west, rotation);
-			ge.getFeatures().appendChild(groundOverlay);
-		}
-
-	// If Google Earth fails to load this function captures the Error Code
+		// If Google Earth fails to load this function captures the Error Code
 		function failureCB(errorCode){}
 
 		// Fill tools checbox area
@@ -125,8 +64,8 @@
 			numOfData=toolDoc.getElementsByTagName("tool").length;
 
 			// first remove all what is in the listbox
-			while(toolSelect.options.length!=0)
-			toolSelect.options.remove(0);
+			while(document.getElementById("toolSelect").options.length!=0)
+			document.getElementById("toolSelect").remove(0);
 
 			// find tools from the tool xml and fill up the select lists
 			var toolSelectText = [];
@@ -134,10 +73,9 @@
 			for (i=0;i<numOfData;i=i+1)
 			{
 			var oOption = document.createElement("OPTION");
-			oOption.text=toolDoc.getElementsByTagName("tool")[i].getElementsByTagName("title")[0].textContent;
+			oOption.text=toolDoc.getElementsByTagName("tool")[i].getElementsByTagName("title")[0].childNodes[0].nodeValue;
 			oOption.value=i;
-			oOption.class="vs";
-			toolSelect.options.add(oOption)
+			document.getElementById("toolSelect").options.add(oOption)
 			}
 			return true;
 		}
@@ -166,40 +104,45 @@
 </head>
 
 <body onload='init()' id='body'>
-<h1>OpenEarth Online Tools</h1>
-<table width="350" class="links">
-	<tr>
-		<td colspan="3" STYLE="font-size: 16pt; text-transform: uppercase;">
-		<div id="case_title"></div>
-		</td>
-	</tr>
-	<tr>
-		<td>
+<h1>OpenEarth Viewer</h1>
+
+<div style='float:left; width:350px; height:700px; overflow:auto'>
+<a href="index.html">back to portal</a>
+  <table style='font-size:small'>
+
+<!-- CASE HEADER -->
+<tr><td colspan="3"><hr /><hr /></td></tr>
+    <tr>
+        <td colspan="3" style="font-size: 14pt; text-transform: uppercase; color: #336699; font-weight: bold">
+        <div id="case_title"></div>
+        </td>
+    </tr>
+
+<!-- HYPERLINKS -->
+    <tr class="links">
+		<td width="117">
 		<script type="text/javascript">
 		document.write("<a href=data.html?case=" + getQuerystring('case') + ">Data</a>");
 		</script>
 		</td>
-		<td>
+		<td width="117">
 		<script type="text/javascript">
 		document.write("<a href=models.html?case=" + getQuerystring('case') + ">Models</a>");
 		</script>
 		</td>
-		<td>Tools</td>
-	</tr>
-</table>
+        <td style="font-weight: bold;" width="116">Tools</td>
+   	</tr>
 
-<hr/>
-<div style='float:left; width:350px; height:750px; overflow:auto'>
-  <table style='font-size:small'>
+<tr><td colspan="3"><hr /><hr /></td></tr>
 
 <!-- TOOL SELECTION -->
 	<tr>
-		<td colspan="2">
+		<td colspan="3">
 	    <h3>Available tools</h3>
 		</td>
 	</tr>
 	<tr>
-		<td colspan="2">
+		<td colspan="3">
 		<form name="toolsel" action='javascript:void(0);'>
 			<select name="toolsel" id="toolSelect" class="s" onchange='loadTool(value)'>
 				<option value="0" class="vs">Select case</option>
@@ -212,7 +155,7 @@
 
 <!-- TOOL SPACE -->
 	<tr>
-	    <td colspan="2">
+	    <td colspan="3">
 	    <div id="tool_space"></div>
 	    <hr />
 	    </td>
@@ -220,7 +163,7 @@
 
 <!-- DRAWING TOOLS -->
 	<tr>
-		<td colspan="2">
+		<td colspan="3">
 			<h3>Drawing</h3>
 		</td>
 	</tr>
@@ -244,20 +187,20 @@
 			</select>
 			</form>
 		</td>
-		<td>
+		<td colspan="2">
 		Use ctrl + mouse click to draw
 		</td>
 	</tr>
-	<tr><td colspan="2"><hr /></td></tr>
+	<tr><td colspan="3"><hr /></td></tr>
 
 </table>
 </div>
-<div id='map3d_container' style='border: 1px solid silver; height: 750px; margin-left:350px;'>
+<div id='map3d_container' style='border: 1px solid silver; height: 700px; margin-left:350px;'>
 	<div id='map3d' style='height: 100%;'></div>
 </div>
 <hr/>
     This tool is provided by: <br />
-    <a href="http://openearth.eu" target="_blank"><img src="https://public.deltares.nl/download/attachments/16876019/OET?version=1" align="left" width="100"/></a>
+    <a href="http://openearth.eu" target="_blank"><img src="images/oet.png" align="left" width="100" border="0"/></a>
 </body>
 
 </html>

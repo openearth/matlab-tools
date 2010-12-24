@@ -9,16 +9,14 @@
 		function init()
 		{
 			fillCaseListbox("cases.xml");
-
-			fillToolLinks("tools.xml");
 		}
 
 		// Fill case-selection listbox with available cases
 		function fillCaseListbox(xmlFile)
 		{
 			// first remove all what is in the listbox
-			while(dataCaseSelect.options.length!=0)
-			dataCaseSelect.options.remove(0);
+			while(document.getElementById("dataCaseSelect").options.length!=0)
+			document.getElementById("dataCaseSelect").remove(0);
 
 			caseDoc=loadXMLDoc("xml/" + xmlFile);
 			numOfData=caseDoc.getElementsByTagName("title").length;
@@ -28,42 +26,22 @@
 			var oOption = document.createElement("OPTION");
 			oOption.text=caseDoc.getElementsByTagName("title")[i].childNodes[0].nodeValue;
 			oOption.value=i;
-			oOption.class="vs";
-			dataCaseSelect.options.add(oOption)
+			document.getElementById("dataCaseSelect").options.add(oOption)
 			}
 			return true;
-		}
-
-		// Fill tools checbox area
-		function fillToolLinks(xmlFile)
-		{
-			// load case-specific xml file
-			toolDoc=loadXMLDoc("xml/" + xmlFile);
-			numOfData=toolDoc.getElementsByTagName("tool").length;
-
-			// create html-code of checkboxes for each tool found in the tool xml and fill up the select lists
-			var toolSelectText = [];
-
-			for (i=0;i<numOfData;i=i+1)
-			{
-				toolSelectText = toolSelectText + "<a href='tool.html?tool=" + i + "'>" +
-									toolDoc.getElementsByTagName("tool")[i].getElementsByTagName("title")[0].textContent +
-									"</a><br/>";
-			}
-			document.getElementById("tool_sources").innerHTML =toolSelectText;
 		}
 
 	</script>
 
 </head>
 
-<body onload='init()' id='body'>
+<body onload="init()" id='body'>
 <h1>OpenEarth Viewer</h1>
 <hr/>
 <div style='border: 1px solid silver; width:600px; height:200px'>
-<h3>Open Earth Data and Model Viewer</h3>
+<h3>Open Earth Data, Model and Tool Viewer</h3>
 <p>
-Using the OpenEarth viewer, you can easily view data and models in a Google Earth interface. Select a case below and click on 'Launch viewer' to open the application.
+Using the OpenEarth viewer, you can easily view data, models and tools in a Google Earth interface. Select a case below and click on 'Launch viewer' to open the application.
 </p>
 <p>Select case:</p>
 <form name="dataviewer" action="data.html" method="get">
@@ -76,7 +54,7 @@ Using the OpenEarth viewer, you can easily view data and models in a Google Eart
 
 <br />
 This tool is provided by: <br />
-<a href="http://openearth.eu" target="_blank"><img src="https://public.deltares.nl/download/attachments/16876019/OET?version=1" align="left" width="100"/></a>
+<a href="http://openearth.eu" target="_blank"><img src="images/oet.png" align="left" width="100" border="0"/></a>
 </body>
 
 </html>
