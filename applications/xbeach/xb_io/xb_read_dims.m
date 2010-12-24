@@ -96,33 +96,71 @@ if strcmpi(extension, '.nc')
         XBdims.(info.Dimension(ivar).Name) = info.Dimension(ivar).Length;
     end
     
+    % read dimension data from structure
+    for i = 1:length(info.Dataset)
+        if length(info.Dataset(i).Dimension) < 3
+            XBdims.([info.Dataset(i).Name '_DATA']) = nc_varget(filename, info.Dataset(i).Name);
+        end
+    end
+    
 elseif strcmpi(extension, '.dat')
+    
+    dims = struct();
+    
     % read dimensions from dims.dat file
     fid = fopen(filename, 'r');
-    XBdims.nt = fread(fid, 1, 'double');
-    XBdims.nx = fread(fid, 1, 'double');
-    XBdims.ny = fread(fid, 1, 'double');
-    XBdims.ntheta = fread(fid, 1, 'double');
-    XBdims.kmax = fread(fid, 1, 'double');
-    XBdims.ngd = fread(fid, 1, 'double');
-    XBdims.nd = fread(fid, 1, 'double');
-    XBdims.ntp = fread(fid, 1, 'double');
-    XBdims.ntc = fread(fid, 1, 'double');
-    XBdims.ntm = fread(fid, 1, 'double');
-    XBdims.tsglobal = fread(fid, [XBdims.nt], 'double');
-    XBdims.tspoints = fread(fid, [XBdims.ntp], 'double');
-    XBdims.tscross = fread(fid, [XBdims.ntc], 'double');
-    XBdims.tsmean = fread(fid, [XBdims.ntm], 'double');
+    dims.nt = fread(fid, 1, 'double');
+    dims.nx = fread(fid, 1, 'double');
+    dims.ny = fread(fid, 1, 'double');
+    dims.ntheta = fread(fid, 1, 'double');
+    dims.kmax = fread(fid, 1, 'double');
+    dims.ngd = fread(fid, 1, 'double');
+    dims.nd = fread(fid, 1, 'double');
+    dims.ntp = fread(fid, 1, 'double');
+    dims.ntc = fread(fid, 1, 'double');
+    dims.ntm = fread(fid, 1, 'double');
+    dims.tsglobal = fread(fid, [dims.nt], 'double');
+    dims.tspoints = fread(fid, [dims.ntp], 'double');
+    dims.tscross = fread(fid, [dims.ntc], 'double');
+    dims.tsmean = fread(fid, [dims.ntm], 'double');
     fclose(fid);
     
     % read dimensions from xy.dat file
     xyfile = fullfile(fpath,'xy.dat');
     fidxy = fopen(xyfile ,'r');
-    XBdims.x = fread(fidxy, [XBdims.nx XBdims.ny] + 1, 'double');
-    XBdims.y = fread(fidxy, [XBdims.nx XBdims.ny] + 1, 'double');
-    XBdims.xc = fread(fidxy, [XBdims.nx XBdims.ny] + 1, 'double');
-    XBdims.yc = fread(fidxy, [XBdims.nx XBdims.ny] + 1, 'double');
+    dims.x = fread(fidxy, [dims.nx dims.ny] + 1, 'double');
+    dims.y = fread(fidxy, [dims.nx dims.ny] + 1, 'double');
+    dims.xc = fread(fidxy, [dims.nx dims.ny] + 1, 'double');
+    dims.yc = fread(fidxy, [dims.nx dims.ny] + 1, 'double');
     fclose(fidxy);
+    
+    XBdims = struct();
+    
+    % convert to netcdf-like dimension struct
+    XBdims.globalx = dims.nx;
+    XBdims.globaly = dims.ny;
+    XBdims.globaltime = dims.nt;
+    XBdims.sediment_classes = dims.nd;
+    XBdims.wave_angle = dims.ntheta;
+    XBdims.bed_layers = dims.ngd;
+    XBdims.inout = nan;                 % TODO: find out what this is, see ncoutput.f90
+    XBdims.points = nan;
+    XBdims.pointtime = dims.ntp;
+    XBdims.meantime = dims.ntm;
+    XBdims.tidetime = nan;
+    XBdims.tidecorners = nan;
+    XBdims.windtime = nan;
+    
+    XBdims.globalx_DATA = squeeze(dims.x(:,1));
+    XBdims.globaly_DATA = squeeze(dims.y(1,:));
+    XBdims.globaltime_DATA = dims.tsglobal;
+    XBdims.meantime_DATA = dims.tsmean;
+    XBdims.pointtime_DATA = dims.tspoints;
+    XBdims.pointx_DATA = nan;
+    XBdims.pointy_DATA = nan;
+    XBdims.xpointindex_DATA = nan;
+    XBdims.pointtypes_DATA = nan;
+    
 else
     error(['directory or file "' filename '" does not exist'])
 end

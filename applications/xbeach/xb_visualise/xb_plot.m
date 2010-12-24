@@ -5,10 +5,6 @@ function xb_plot(xb, varargin)
 %   structure. The function is meant to be basic and provide first
 %   visualisations of model results.
 %
-%   WARNING: THIS FUNCTION ONLY WORKS WITH A XBEACH STRUCTURE OBTAINED
-%   USING THE XB_READ_DAT FUNCTION, SINCE XB_READ_NETCDF HAS A DIFFERENT
-%   DIMENSION ORDER.
-%
 %   Syntax:
 %   varargout = xb_plot(xb, varargin)
 %
@@ -81,7 +77,7 @@ end
 OPT = struct( ...
     'width',800,...
     'height',600 ...
-    );
+);
 
 OPT = setproperty(OPT, varargin{:});
 
@@ -109,7 +105,7 @@ info = struct();
 
 % get time
 if xb_exist(xb, 'DIMS')
-    info.t = xb_get(xb,'DIMS.tsglobal');
+    info.t = xb_get(xb,'DIMS.globaltime_DATA');
 end
 
 if ~isfield(info, 't') || info.t(1) >= info.t(end)
@@ -135,7 +131,7 @@ function ui_build(hObj, event, xb)
 
 info = get_info(xb);
 
-ax = findobj(hObj,'Tag','Axes');
+ax = findobj(hObj, 'Type','Axes');
 title(ax,['t = ' num2str(info.t(1)) ' (s)']);
 
 % sliders
@@ -215,7 +211,7 @@ function ui_togglesurf(hObj, event, xb)
 pObj = get(hObj, 'Parent');
 
 % clear plot axes
-cla(findobj(pObj, 'Tag', 'Axes'));
+cla(findobj(pObj, 'Type', 'Axes'));
 
 % reload data
 ui_loaddata(hObj, event, xb)
@@ -235,25 +231,31 @@ colors = 'rgbcymk';
 t1 = round(get(findobj(pObj, 'Tag', 'Slider1'), 'Value'));
 t2 = round(get(findobj(pObj, 'Tag', 'Slider2'), 'Value'));
 
-set(findobj(pObj,'Tag','Axes'),'NextPlot','replacechildren');
+hold off;
+
 for i = 1:size(vars,1)
     var = strtrim(vars(i,:));
     data = xb_get(xb, var);
     
     if numel(data) > 1 || ~isnan(data)
         
-        idx1 = num2cell(ones(1, ndims(data))); idx1(1:2) = {':' ':'};
+        idx1 = num2cell(ones(1, 5)); idx1(2:3) = {':' ':'};
         idx2 = idx1;
         
         % determine indices
         if ndims(data) > 2
-            idx1 = [idx1{1:end-1} {t1}];
-            idx2 = [idx1{1:end-1} {t2}];
+            idx1 = [{t1} idx1{2:end}];
+            idx2 = [{t2} idx2{2:end}];
+            has_time = true;
         else
             set(findobj(pObj, 'Tag', 'Slider1'), 'Enable', 'off');
             set(findobj(pObj, 'Tag', 'Slider2'), 'Enable', 'off');
             set(findobj(pObj, 'Tag', 'ToggleDiff'), 'Enable', 'off');
             set(findobj(pObj, 'Tag', 'ToggleAnimate'), 'Enable', 'off');
+            
+            idx1 = idx1(2:end);
+            idx2 = idx2(2:end);
+            has_time = false;
         end
         
         % get 2D array
@@ -265,9 +267,14 @@ for i = 1:size(vars,1)
         
         data = squeeze(data);
         
+        if has_time
+            data = data';
+        end
+        
         % get grid
-        x = xb_get(xb, 'DIMS.x');
-        y = xb_get(xb, 'DIMS.y');
+        x = xb_get(xb, 'DIMS.globalx_DATA');
+        y = xb_get(xb, 'DIMS.globaly_DATA');
+        [y x] = meshgrid(y, x);
         
         if isnan(x); x = xb_get(xb, 'xfile'); end;
         if isnan(y); y = xb_get(xb, 'yfile'); end;
@@ -293,7 +300,7 @@ for i = 1:size(vars,1)
             data = data(idx{:});
             
             % 1D data
-            sObj = findobj(findobj(pObj, 'Tag', 'Axes'), 'Type', 'line');
+            sObj = findobj(findobj(pObj, 'Type', 'Axes'), 'Type', 'line');
             
             if length(sObj) >= i
                 if has_grid
@@ -302,7 +309,8 @@ for i = 1:size(vars,1)
                     xdata = 1:length(data);
                 end
                 
-                set(sObj(i), 'XData', xdata, 'YData', data, 'Color', colors(mod(i-1,length(colors))+1),'DisplayName',var);
+                set(sObj(i), 'XData', xdata, 'YData', data, ...
+                    'Color', colors(mod(i-1,length(colors))+1),'DisplayName',var);
             else
                 if has_grid
                     plot(x(idx{:}), data, ['-' colors(mod(i-1,length(colors))+1)],'DisplayName',var);
@@ -322,32 +330,32 @@ for i = 1:size(vars,1)
             
             % 2D data
             if get(findobj(pObj, 'Tag', 'ToggleSurf'), 'Value')
-                sObj = findobj(findobj(pObj, 'Tag', 'Axes'), 'Type', 'surface');
+                sObj = findobj(findobj(pObj, 'Type', 'Axes'), 'Type', 'surface');
                 
                 if length(sObj) >= i
-                    set(sObj(i), 'XData', xdata, 'YData', ydata, 'ZData', data, 'CData', data,'DisplayName',var);
+                    set(sObj(i), 'XData', xdata, 'YData', ydata, 'ZData', data, ...
+                        'CData', data, 'DisplayName',var);
                 else
                     if has_grid
-                        surf(x, y, data,'DisplayName',var);
+                        h = surf(x, y, data,'DisplayName',var);
                     else
-                        surf(data,'DisplayName',var);
+                        h = surf(data,'DisplayName',var);
                     end
+                    set(h, 'DisplayName', var);
                 end
             else
-                sObj = findobj(findobj(pObj, 'Tag', 'Axes'), 'Type', 'surface');
+                sObj = findobj(findobj(pObj, 'Type', 'Axes'), 'Type', 'surface');
                 
                 if length(sObj) >= i
-                    set(sObj(i), 'XData', xdata, 'YData', ydata, 'ZData', 0*data, 'CData', data,'DisplayName',var);
-                    set(findobj(pObj, 'Tag', 'Axes'), ...
-                        'XLim', [min(min(xdata)) max(max(xdata))], ...
-                        'YLim', [min(min(ydata)) max(max(ydata))]);
+                    set(sObj(i), 'XData', xdata, 'YData', ydata, 'ZData', 0*data, ...
+                        'CData', data, 'DisplayName',var);
                 else
                     if has_grid
-                        htemp = pcolor(x, y, data);
+                        h = pcolor(x, y, data);
                     else
-                        htemp = pcolor(data);
+                        h = pcolor(data);
                     end
-                    set(htemp,'DisplayName',var);
+                    set(h, 'DisplayName', var);
                 end
             end
             
@@ -358,9 +366,17 @@ for i = 1:size(vars,1)
     hold on;
 end
 
-ax = findobj(pObj, 'Tag', 'Axes');
-info = get_info(xb);
-title(ax,['t = ' num2str(info.t(t2)) ' (s)']);
+ax = findobj(pObj, 'Type', 'Axes');
+
+% set time in title
+if strcmpi(get(findobj(pObj, 'Tag', 'Slider2'), 'Enable'), 'on')
+    info = get_info(xb);
+    if  t2 <= length(info.t)
+        title(ax, ['t = ' num2str(info.t(t2)) ' (s)']);
+    end
+else
+    title('');
+end
 
 % clear items without use
 sObj = get(ax, 'Children');

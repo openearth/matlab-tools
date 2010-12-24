@@ -120,10 +120,10 @@ dims = xb_read_dims(fdir);
 % read file
 fid = fopen(filename, 'r');
 
-data = nan([dims.ny+1 dims.ntheta dims.nt+4]);
+data = nan([dims.globaly+1 dims.wave_angle dims.globaltime+4]);
 
-for i = 1:dims.nt+4
-    data(:,:,i) = fread(fid, [dims.ny+1 dims.ntheta], 'double');
+for i = 1:dims.globaltime+4
+    data(:,:,i) = fread(fid, [dims.globaly+1 dims.wave_angle], 'double');
 end
 
 fclose(fid);

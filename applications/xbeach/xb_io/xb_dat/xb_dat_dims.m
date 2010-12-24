@@ -91,7 +91,7 @@ if isempty(fdir); fdir = '.'; end;
 d = xb_read_dims(fdir);
 f = dir(fullfile(filename));
 
-if ~isfield(d, 'nx') || ~isfield(d, 'ny') || ~isfield(d, 'nt')
+if ~isfield(d, 'globalx') || ~isfield(d, 'globaly') || ~isfield(d, 'globaltime')
     error('Primary dimensions x, y and/or t unknown');
 end
 
@@ -102,21 +102,21 @@ byt = bytes.(OPT.ftype);
 if regexp(fname, '^(point|rugau)\d+$')
     
     % point data
-    nvars = floor(f.bytes/byt/d.ntp)-1;
-    dims = [d.ntp nvars+1];
+    nvars = floor(f.bytes/byt/d.pointtime)-1;
+    dims = [d.pointtime nvars+1];
     names = {'t' 'variables'};
     type = 'point';
 else
 
     % determine space dimensions
-    nx = d.nx+1;
-    ny = d.ny+1;
+    nx = d.globalx+1;
+    ny = d.globaly+1;
 
     % determine time dimension
     if regexp(fname, '_(mean|max|min|var)$')
-        nt = d.ntm;
+        nt = d.meantime;
     else
-        nt = d.nt;
+        nt = d.globaltime;
     end
 
     % set minimal dimensions
@@ -133,7 +133,7 @@ else
     elseif f.bytes > prod(dims)*byt
         % larger than minimal dimensions, search alternatives
         
-        ads = [d.ntheta d.nd d.ngd d.nd*d.ngd];
+        ads = [d.wave_angle d.sediment_classes d.bed_layers d.sediment_classes*d.bed_layers];
         
         cat = { {'cgx' 'cgy' 'cx' 'cy' 'ctheta' 'ee' 'thet' 'costhet' 'sinthet' 'sigt' 'rr'} ...
                 {'dzbed'} ...
@@ -175,22 +175,22 @@ else
             switch find(i)
                 case 1
                     % waves
-                    dims = [nx ny d.ntheta nt];
+                    dims = [nx ny d.wave_angle nt];
                     names = {'x' 'y' 'theta' 't'};
                     type = 'wave';
                 case 2
                     % sediments
-                    dims = [nx ny d.nd nt];
+                    dims = [nx ny d.sediment_classes nt];
                     names = {'x' 'y' 'd' 't'};
                     type = 'sediment';
                 case 3
                     % grain distribution
-                    dims = [nx ny d.ngd nt];
+                    dims = [nx ny d.bed_layers nt];
                     names = {'x' 'y' 'gd' 't'};
                     type = 'graindist';
                 case 4
                     % bed layers
-                    dims = [nx ny d.nd d.ngd nt];
+                    dims = [nx ny d.sediment_classes d.bed_layers nt];
                     names = {'x' 'y' 'd' 'gd' 't'};
                     type = 'bedlayers';
                 otherwise

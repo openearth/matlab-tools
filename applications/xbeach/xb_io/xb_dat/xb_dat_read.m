@@ -7,7 +7,12 @@ function dat = xb_dat_read(fname, dims, varargin)
 %   In case the number of reads is for both methods equal, the memory
 %   method is used. This method is also used if the average number of reads
 %   per item is less than with the read method. The method used can also be
-%   forced. The results is a matrix of the size dims containing the
+%   forced. The requested data can be determined using start and end
+%   indices for each dimension and strides. This approach is similar to the
+%   netCDF toolbox. The dimensions of the DAT file provided are in general
+%   in the order x,y,t. The dimension order of the output is t,y,x to match
+%   the netCDF conventions. The start and end indices and strides should be
+%   provided in t,y,x order. The result is a matrix containing the
 %   requested data.
 %
 %   Syntax:
@@ -30,7 +35,7 @@ function dat = xb_dat_read(fname, dims, varargin)
 %   Example
 %   dat = xb_dat_read(fname, [100 3 20]);
 %   dat = xb_dat_read(fname, [100 3 20], 'start', 10, 'length', 90, 'stride', 2);
-%   dat = xb_dat_read(fname, [100 3 20], 'start', [1 1 10], 'length', [-1 -1 20], 'stride', [2 2 2]);
+%   dat = xb_dat_read(fname, [100 3 20], 'start', [10 1 1], 'length', [20 -1 -1], 'stride', [2 2 2]);
 %
 %   See also xb_read_dat, xb_read_output, xb_dat_dims, xb_dat_type
 
@@ -92,11 +97,18 @@ OPT = setproperty(OPT, varargin{:});
 
 dat = [];
 
-[OPT.start OPT.length OPT.stride] = xb_index(dims, OPT.start, OPT.length, OPT.stride);
+% convert dat dimensions to output dimensions
+if length(dims) == 3
+    dims_out = dims([end 2 1]);
+else
+    dims_out = dims([end 2 1 3:end-1]);
+end
+
+[OPT.start OPT.length OPT.stride] = xb_index(dims_out, OPT.start, OPT.length, OPT.stride);
 
 % determine size of read matrix
 sz = [1 1];
-if OPT.stride(1) == 1; sz(1) = OPT.length(1); end;
+if OPT.stride(3) == 1; sz(1) = OPT.length(3); end;
 if OPT.stride(2) == 1; sz(2) = OPT.length(2); end;
 
 %% determine read method
@@ -105,8 +117,8 @@ nitems = prod(OPT.length./OPT.stride);
 nreads = nitems/prod(sz);
 
 if isempty(OPT.force)
-    if (OPT.stride(1) == 1 && OPT.stride(2) == 1 && ~all(OPT.stride == 1)) || ...
-        (nreads/nitems < prod(dims(3:end))/prod(dims))
+    if (OPT.stride(3) == 1 && OPT.stride(2) == 1 && ~all(OPT.stride == 1)) || ...
+        (nreads/nitems < prod(dims([1 4:end]))/prod(dims))
         method = 'memory';
     else
         method = 'read';
@@ -139,18 +151,20 @@ if exist(fname, 'file')
     switch method
         case 'read'
             % METHOD: minimal reads
-
-            dat = nan(dims);
+            
+            dat = nan(dims_out);
 
             % read entire file
-            for i = 1:prod(dims(3:end))
-                dat(:,:,i) = fread(fid, dims(1:2), ftype);
+            for i = 1:dims_out(1)
+                for j = 1:prod(dims_out(4:end))
+                    dat(i,:,:,j) = fread(fid, dims(1:2), ftype)';
+                end
             end
 
             % dispose data out of range
-            for i = 1:length(dims)
-                if OPT.length(i) < dims(i)
-                    idx = num2cell(repmat(':',1,length(dims)));
+            for i = 1:length(dims_out)
+                if OPT.start(i) > 0 || OPT.length(i) < dims_out(i) || OPT.stride(i) > 1
+                    idx = num2cell(repmat(':',1,length(dims_out)));
                     idx{i} = 1+OPT.start(i)+[0:OPT.stride(i):OPT.length(i)-1];
                     dat = dat(idx{:});
                 end
@@ -158,39 +172,48 @@ if exist(fname, 'file')
         case 'memory'
             % METHOD: minimal memory
             
-            dat = nan(OPT.length);
+            dat = nan(OPT.length./OPT.stride);
+            
+            % build loop index
+            loops = num2cell(repmat(1,1,5));
+            for i = 1:length(dims)
+                loops{i} = 1+OPT.start(i)+[0:OPT.stride(i):OPT.length(i)-1];
+            end
 
             % determine dimensions to remove from loop and read at once
-            % (maximum first two)
-            nn = OPT.length(1);
-            if sz(1) > 1; nn = 1; end;
-            
-            mm = OPT.length(2);
-            if sz(2) > 1; mm = 1; end;
+            % (maximum x and y)
+            if sz(1) > 1; loops{3} = 1+OPT.start(3); end;
+            if sz(2) > 1; loops{2} = 1+OPT.start(2); end;
 
             % build output index
-            idx = [num2cell(repmat(':',1,2)) {1}];
+            idx = [{1} num2cell(repmat(':',1,2)) {1}];
             
             % loop through data arrays
-            for i = 1:prod(OPT.length(3:end))
+            for i = 1:length(loops{1})
+                for j = 1:length(loops{4})
+                    for k = 1:length(loops{5})
                 
-                % select starting point of current data array
-                ii = (i-1)*prod(dims(1:2));
-                
-                idx{3} = i;
+                        % select starting point of current data array
+                        ii = (loops{1}(i)*loops{4}(j)*loops{5}(k)-1)*prod(dims(1:2));
 
-                % loop through current data array
-                for n = 1:nn
-                    for m = 1:mm
+                        idx{1} = i;
+                        idx{4} = j;
+                        idx{5} = k;
 
-                        if sz(1) == 1; idx{1} = n; end;
-                        if sz(2) == 1; idx{2} = m; end;
-                        
-                        ii = ii + (m-1)*dims(1) + n;
-                        
-                        % set pointer to data point to be read and read
-                        fseek(fid, ii*byt, 'bof');
-                        dat(idx{:}) = fread(fid, sz, ftype);
+                        % loop through current data array
+                        for n = 1:length(loops{3})
+                            for m = 1:length(loops{2})
+
+                                if sz(1) == 1; idx{3} = n; end;
+                                if sz(2) == 1; idx{2} = m; end;
+
+                                iii = ii + (loops{2}(m)-1)*dims(1) + (loops{3}(n)-1);
+
+                                % set pointer to data point to be read and read
+                                fseek(fid, iii*byt, 'bof');
+                                dat(idx{:}) = fread(fid, sz, ftype)';
+                            end
+                        end
                     end
                 end
             end
