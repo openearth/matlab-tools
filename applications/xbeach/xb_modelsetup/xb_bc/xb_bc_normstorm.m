@@ -2,14 +2,22 @@ function [h Hs Tp] = xb_bc_normstorm(varargin)
 %XB_BC_NORMSTORM  Returns normative storm conditions for the Dutch coast (WL|Delft Hydraulics, 2007, project H4357, product 3)
 %
 %   Returns normative storm conditions for the Dutch coast (WL|Delft
-%   Hydraulics, 2007, project H4357, product 3)
+%   Hydraulics, 2007, project H4357, product 3) given a certain frequency
+%   of occurrence and a location. Locations can be provided by an RD
+%   coordinate or WGS84 coordinate. Strings are interpreted as location
+%   names and translated to coordinates using Google Maps. Data is
+%   interpolated over the lines connecting the points with known data. The
+%   point on the line nearest to the requested point is used. If no
+%   location is provided, results for all known point is given.
 %
 %   Syntax:
 %   [h Hs Tp] = xb_bc_normstorm(varargin)
 %
 %   Input:
 %   varargin  = freq:   Normative frequency of occurrence
-%               loc:    Location along Dutch coast
+%               loc:    Location along Dutch coast (RD/WGS84 coordinates or
+%                       location name)
+%               loc_type:   Type of coordinates to use (RD/WGS84)
 %
 %   Output:
 %   h         = Normative surge level above MSL
@@ -18,8 +26,13 @@ function [h Hs Tp] = xb_bc_normstorm(varargin)
 %
 %   Example
 %   [h Hs Tp] = xb_bc_normstorm()
+%   [h Hs Tp] = xb_bc_normstorm('freq', 1/4000)
+%   [h Hs Tp] = xb_bc_normstorm('loc', [68780 443840])
+%   [h Hs Tp] = xb_bc_normstorm('loc', [4.1323 51.9763], 'loc_type', 'WGS84')
+%   [h Hs Tp] = xb_bc_normstorm('loc', 'Hoek van Holland')
+%   [h Hs Tp] = xb_bc_normstorm('loc', 'Den Hoorn, Terschelling', 'freq', 1/4000)
 %
-%   See also xb_bc_stormsurge
+%   See also xb_bc_stormsurge, xb_name2coord, interp2line
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -66,46 +79,69 @@ function [h Hs Tp] = xb_bc_normstorm(varargin)
 
 OPT = struct( ...
     'freq', 1e-4, ...
-    'loc', 0 ...
+    'loc_type', 'RD', ...
+    'loc', [] ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
 %% maximum surge level
 
-%       omega   rho     alpha   sigma
+            % HvH       % IJ        % DH        % Eierland  % Borkum       
+x       = [ 4.120131    4.555134    4.745326    4.798470    6.745590    ];
+y       = [ 51.978539   52.463348   52.965441	53.190799   53.548319   ];
 
-A1 = [  1.95    7.237   0.57    0.0158      % Hoek van Holland
-        1.85    5.341   0.63    0.0358      % IJmuiden
-        1.60    3.254   1.60    0.9001      % Den Helder
-        2.25    0.500   1.86    1.0995      % Eierland
-        1.85    5.781   1.27    0.5350  ];  % Borkum
+omega   = [ 1.95        1.85        1.60        2.25        1.85        ];
+rho     = [ 7.237       5.341       3.254       0.500       5.781       ];
+alpha   = [ 0.57        0.63        1.60        1.86        1.27        ];
+sigma   = [ 0.0158      0.0358      0.9001      1.0995      0.5350      ];
 
-Fe = OPT.freq'*ones(size(A1,1),1);
+Fe = OPT.freq*ones(1,length(omega));
 
-h = A1(:,4).*((A1(:,1)./A1(:,4)).^A1(:,3)-log(Fe./A1(:,2))).^(1./A1(:,3));
+h = sigma.*((omega./sigma).^alpha-log(Fe./rho)).^(1./alpha);
 
-if any(h < A1(:,1))
+if any(h < omega)
     warning('Maximum surge level is outside validity range of probabilitic formulation');
 end
 
 %% maximum wave height
-
-%       a       b       c       d   e
-
-A2 = [  4.35    0.6     0.008   7   4.67
-        5.88    0.6     0.0254  7   2.77
-        9.43    0.6     0.68    7   1.26
-        12.19   0.6     1.23    7   1.14
-        10.13   0.6     0.57    7   1.58    ];
     
-Hs = A2(:,1)+A2(:,2).*h-A2(:,3).*max(0, A2(:,4)-h).^A2(:,5);
+a       = [ 4.35        5.88        9.43        12.19       10.13       ];
+b       = [ 0.6         0.6         0.6         0.6         0.6         ];
+c       = [ 0.008       0.0254      0.68        1.23        0.57        ];
+d       = [ 7           7           7           7           7           ];
+e       = [ 4.67        2.77        1.26        1.14        1.58        ];
+    
+Hs = a+b.*h-c.*max(0, d-h).^e;
 
 %% maximum wave period
 
-%       alpha   beta
-
-A3 = [  3.86    1.09            % Hoek van Holland
-        4.67    1.12    ];      % Den Helder
+            % HvH       % DH
+alpha   = [ 3.86        4.67    ];
+beta    = [ 1.09        1.12    ];
     
-Tp = A3(:,1)+A3(:,2).*Hs([1 3]);
+Tp = alpha+beta.*Hs([1 3]);
+
+%% interpolate to specific location
+
+if ischar(OPT.loc)
+    OPT.loc = xb_name2coord(OPT.loc);
+end
+
+if ~isempty(OPT.loc) && length(OPT.loc) == 2
+    
+    % convert coordinates
+    switch OPT.loc_type
+        case 'RD'
+            [x y] = convertCoordinates(x,y,'CS1.code',4326,'CS2.code',28992);
+        case 'WGS84'
+            % do nothing
+        otherwise
+            warning(['Coordinate type unknown, using WGS84 [' OPT.loc_type ']']);
+    end
+    
+    % interpolate data
+    h = interp2line(x, y, h, OPT.loc(1), OPT.loc(2));
+    Hs = interp2line(x, y, Hs, OPT.loc(1), OPT.loc(2));
+    Tp = interp2line(x([1 3]), y([1 3]), Tp, OPT.loc(1), OPT.loc(2));
+end
