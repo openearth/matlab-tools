@@ -172,23 +172,3 @@ elseif nargout==3
 elseif nargout==4
     varargout = {t1,t2,start,count};
 end
-
-function ind = getGridpointsNearPolygon(x,y,polygon)
-for ii = 1:size(polygon,1)
-    dists=sqrt( (x(:)-polygon(ii,1)).^2 + (y(:)-polygon(ii,2)).^2 );
-    [dum,closestID(ii)]=min(dists);
-end
-closestID=unique(closestID);
-[m,n] = ind2sub(size(x),closestID);
-m = [m m   m   m-1 m-1 m-1 m+1 m+1 m+1];
-n = [n n-1 n+1 n-1 n   n+1 n-1 n   n+1];
-
-% Check if m,n indices are not beyond grid size
-m = min(m, repmat(size(x,1),1,length(m)));
-m = max(m, repmat(1,1,length(m)));
-n = min(n, repmat(size(x,2),1,length(n)));
-n = max(n, repmat(1,1,length(n)));
-
-ind = unique(sub2ind(size(x),m(:),n(:)));
-ind2 = convhull(x(ind),y(ind));
-ind = find(inpolygon(x,y,x(ind(ind2)),y(ind(ind2))));
