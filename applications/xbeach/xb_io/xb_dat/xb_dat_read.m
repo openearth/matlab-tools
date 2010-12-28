@@ -138,6 +138,8 @@ if exist(fname, 'file')
     byt = f.bytes/prod(dims);
 
     switch byt
+        case 1
+            ftype = 'int';
         case 4
             ftype = 'single';
         case 8

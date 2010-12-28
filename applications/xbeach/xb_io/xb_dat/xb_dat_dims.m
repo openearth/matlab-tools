@@ -73,10 +73,14 @@ OPT = struct( ...
 OPT = setproperty(OPT, varargin{:});
 
 bytes = struct( ...
-    'integer', 1, ...
+    'integer', 4, ...
     'single', 4, ...
     'double', 8 ...
 );
+
+%% read output info
+
+xbout = xb_get_output;
 
 %% read file and model info
 
@@ -95,7 +99,23 @@ if ~isfield(d, 'globalx') || ~isfield(d, 'globaly') || ~isfield(d, 'globaltime')
     error('Primary dimensions x, y and/or t unknown');
 end
 
-byt = bytes.(OPT.ftype);
+% modify data type, if output info is available
+if ~isempty(xbout)
+    ftype = xbout(strcmpi(fname, {xbout.name})).type;
+    if ~isfield(bytes, ftype)
+        switch ftype
+            case 'real*8'
+                ftype = 'double';
+        end
+    end
+    byt = bytes.(ftype);
+else
+    if any(strcmpi(fname, {'wetu', 'wetv', 'wetz'}))
+        OPT.ftype = 'integer';
+    end
+    
+    byt = bytes.(OPT.ftype);
+end
 
 %% determine dimensions
 
@@ -135,11 +155,27 @@ else
         
         ads = [d.wave_angle d.sediment_classes d.bed_layers d.sediment_classes*d.bed_layers];
         
-        cat = { {'cgx' 'cgy' 'cx' 'cy' 'ctheta' 'ee' 'thet' 'costhet' 'sinthet' 'sigt' 'rr'} ...
-                {'dzbed'} ...
-                {'ccg' 'ccbg' 'Tsg' 'Susg' 'Svsg' 'Subg' 'Svbg' 'ceqbg' 'ceqsg' 'ero' 'depo_im' 'depo_ex'} ...
-                {'pbbed'} ...
-        };
+        if ~isempty(xbout)
+            % read variable names from xbeach source code
+            cat = {};
+            
+            idx = find(([xbout.ndims] == 3));
+            dim = reshape([xbout(idx).dims], 3, length(idx));
+            cat{1} = {xbout(idx(strcmpi(dim(3,:), 'ntheta'))).name};
+            cat{2} = {xbout(idx(strcmpi(dim(3,:), 'max(nd,2)'))).name};
+            cat{3} = {xbout(idx(strcmpi(dim(3,:), 'ngd'))).name};
+            
+            idx = find(([xbout.ndims] == 4));
+            dim = reshape([xbout(idx).dims], 4, length(idx));
+            cat{4} = {xbout(idx(strcmpi(dim(3,:), 'max(nd,2)')&strcmpi(dim(4,:), 'ngd'))).name};
+        else
+            % user default variable names
+            cat = { {'cgx' 'cgy' 'cx' 'cy' 'ctheta' 'ee' 'thet' 'costhet' 'sinthet' 'sigt' 'rr'} ...
+                    {'dzbed'} ...
+                    {'ccg' 'ccbg' 'Tsg' 'Susg' 'Svsg' 'Subg' 'Svbg' 'ceqbg' 'ceqsg' 'ero' 'depo_im' 'depo_ex'} ...
+                    {'pbbed'} ...
+            };
+        end
     
         i = ismember(ads, f.bytes/byt/prod(dims));
 
