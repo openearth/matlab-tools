@@ -103,7 +103,7 @@ switch type
             'fnyq', 1 ...
         );
     
-        instat = 4;
+        instat = 'jons';
     case 'vardens'
         OPT = struct( ...
             'type', type, ...
@@ -112,7 +112,7 @@ switch type
             'vardens', [] ...
         );
     
-        instat = 41;
+        instat = 'vardens';
 end
 
 OPT.type = type;
@@ -154,7 +154,7 @@ if l == 1
 end
 
 % include swtable, if necessary
-if instat == 4
+if strcmpi(instat, 'jons')
     swtable = xb_empty();
     fpath = fullfile(fileparts(which(mfilename)), 'RF_table.txt');
     if exist(fpath, 'file')

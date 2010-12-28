@@ -1,5 +1,5 @@
-function [xgr zgr] = xb_generate_xgrid(xin, zin, varargin)
-%XB_GENERATE_XGRID  Creates a model grid in x-direction based on bathymetry
+function [xgr zgr] = xb_grid_xgrid(xin, zin, varargin)
+%XB_GRID_XGRID  Creates a model grid in x-direction based on bathymetry
 %
 %   Function to interpolate (no extrapolation) profile measurements to
 %   cross shore consant or varying grid for an XBeach profile model. Cross
@@ -10,7 +10,7 @@ function [xgr zgr] = xb_generate_xgrid(xin, zin, varargin)
 %   constraints.
 %
 %   Syntax:
-%   [xgr zgr] = xb_generate_xgrid(xin, zin, varargin)
+%   [xgr zgr] = xb_grid_xgrid(xin, zin, varargin)
 %
 %   Input:
 %   xin   = vector with cross-shore coordinates; increasing from zero
@@ -35,9 +35,9 @@ function [xgr zgr] = xb_generate_xgrid(xin, zin, varargin)
 %   zgr   = bed elevations
 %
 %   Example
-%   [xgr zgr] = xb_generate_xgrid([0:1:200], 0.1*[0:1:200]-15);
+%   [xgr zgr] = xb_grid_xgrid([0:1:200], 0.1*[0:1:200]-15);
 %
-%   See also xb_generate_grid, xb_generate_ygrid
+%   See also xb_generate_grid, xb_grid_ygrid
 
 %% Copyright notice
 %   --------------------------------------------------------------------

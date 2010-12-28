@@ -13,8 +13,8 @@ function xb = xb_generate_grid(varargin)
 %   varargin  = x:          x-coordinates of bathymetry
 %               y:          y-coordinates of bathymetry
 %               z:          z-coordinates of bathymetry
-%               xgrid:      options for xb_generate_xgrid
-%               ygrid:      options for xb_generate_ygrid
+%               xgrid:      options for xb_grid_xgrid
+%               ygrid:      options for xb_grid_ygrid
 %               rotate:     boolean flag that determines whether the
 %                           coastline is located in line with y-axis
 %               crop:       either a boolean indicating if grid should be
@@ -33,7 +33,7 @@ function xb = xb_generate_grid(varargin)
 %   Example
 %   xb = xb_generate_grid('x', x, 'y', y, 'z', z)
 %
-%   See also xb_generate_xgrid, xb_generate_ygrid, xb_generate_model
+%   See also xb_grid_xgrid, xb_grid_ygrid, xb_generate_model
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -177,8 +177,8 @@ z_d_cs = z_d_cs(notnan);
 
 %% create xbeach grid
 
-[x_xb z_xb] = xb_generate_xgrid(x_d, z_d_cs, OPT.xgrid{:});
-[y_xb] = xb_generate_ygrid(y_d, OPT.ygrid{:});
+[x_xb z_xb] = xb_grid_xgrid(x_d, z_d_cs, OPT.xgrid{:});
+[y_xb] = xb_grid_ygrid(y_d, OPT.ygrid{:});
 
 [xgrid ygrid] = meshgrid(x_xb, y_xb);
 

@@ -1,5 +1,5 @@
-function ygr = xb_generate_ygrid(yin, varargin)
-%XB_GENERATE_YGRID  Creates a model grid in y-direction based on minimum and maximum cell size and area of interest
+function ygr = xb_grid_ygrid(yin, varargin)
+%XB_GRID_YGRID  Creates a model grid in y-direction based on minimum and maximum cell size and area of interest
 %
 %   Generates a model grid in y-direction using two grid cellsizes. The
 %   minimum grid cellsize is used for the area of interest. The maximum is
@@ -9,7 +9,7 @@ function ygr = xb_generate_ygrid(yin, varargin)
 %   a distance of 100m in the center of the model.
 %
 %   Syntax:
-%   ygr = xb_generate_ygrid(yin, varargin)
+%   ygr = xb_grid_ygrid(yin, varargin)
 %
 %   Input:
 %   yin       = range of y-coordinates to be included in the grid
@@ -29,9 +29,9 @@ function ygr = xb_generate_ygrid(yin, varargin)
 %   ygr       = generated grid in y_direction
 %
 %   Example
-%   ygr = xb_generate_ygrid(yin)
+%   ygr = xb_grid_ygrid(yin)
 %
-%   See also xb_generate_grid, xb_generate_xgrid
+%   See also xb_generate_grid, xb_grid_xgrid
 
 %% Copyright notice
 %   --------------------------------------------------------------------
