@@ -184,7 +184,7 @@ else
         exe_path, OPT.ssh_user, OPT.ssh_host, OPT.ssh_pass, rpath, rpath);
 end
 
-% [retcode messages] = system(cmd);
+[retcode messages] = system(cmd);
 
 % extract job number and name
 if retcode == 0

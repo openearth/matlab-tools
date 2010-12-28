@@ -69,6 +69,7 @@ function xb = xb_run(xb, varargin)
 %% read options
 
 OPT = struct( ...
+    'name', ['xb_' datestr(now, 'YYYYmmddHHMMSS')], ...
     'binary', '', ...
     'nodes', 1, ...
     'netcdf', false, ...
@@ -109,13 +110,31 @@ if isunix()
     if OPT.nodes > 1
         error('MPI support is not yet implemented, sorry!'); % TODO
     else
-        [retcode messages] = system(['cd ' OPT.path ' && ' OPT.binary]);
+        % start xbeach
+        [r messages] = system(['cd ' OPT.path ' && ' OPT.binary]);
+        
+        % get current running xbeach instances
+        [r tasklist] = system(['ps | grep -i xbeach$']);
+        re = regexp(tasklist, '\n(?<pid>\d+)\s+', 'names');
+        pids = cellfun(@str2num, {re.pid});
+        
+        % determine new instance
+        pid = pids(end);
     end
 else
     if OPT.nodes > 1
         error('MPI support is not yet implemented, sorry!'); % TODO
     else
-        [retcode messages] = system(['cd ' OPT.path ' && start ' OPT.binary]);
+        % start xbeach
+        [r messages] = system(['cd ' OPT.path ' && start ' OPT.binary]);
+        
+        % get current running xbeach instances
+        [r tasklist] = system('tasklist /FI "IMAGENAME eq xbeach.exe"');
+        re = regexp(tasklist, 'xbeach.exe\s+(?<pid>\d+)', 'names');
+        pids = cellfun(@str2num, {re.pid});
+        
+        % determine new instance
+        pid = pids(end);
     end
 end
 
@@ -124,8 +143,8 @@ end
 xb = xb_empty();
 xb = xb_set(xb, ...
     'path', abspath(fpath), ...
-    'id', 0, ...
-    'name', '', ...
+    'id', pid, ...
+    'name', OPT.name, ...
     'nodes', OPT.nodes, ...
     'binary', OPT.binary, ...
     'netcdf', OPT.netcdf, ...

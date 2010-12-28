@@ -92,7 +92,14 @@ if xb_exist(xb, 'ssh')
     end
 else
     % local job
-    error('Local job check not yet implemented, sorry!');
+    
+    id = xb_get(xb, 'id');
+    
+    % get current running xbeach instances
+    [r tasklist] = system('tasklist /FI "IMAGENAME eq xbeach.exe"');
+    if regexp(tasklist, ['xbeach.exe\s+' num2str(id) '\s+'], 'start')
+    	runs = true;
+    end
 end
 
 %% start timer
@@ -114,4 +121,10 @@ function repeatCheck(obj, event, xb)
 if ~xb_check_run(xb)
     stop(obj); delete(obj);
     disp([upper(mfilename) ': Job ' xb_get(xb, 'name') ' (' num2str(xb_get(xb, 'id')) ') finished']);
+    
+    % halleluja
+    try
+        load handel;
+        sound(y,Fs);
+    end
 end
