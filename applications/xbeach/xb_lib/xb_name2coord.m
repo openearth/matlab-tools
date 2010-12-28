@@ -73,32 +73,46 @@ OPT = setproperty(OPT, varargin{:});
 
 %% retrieve latlon coordinate data from google maps
 
+x = []; y = [];
+
 xml = xmlread(['http://maps.google.com/maps/geo?q=' name '&output=xml&oe=utf8']);
 
-xml = xml.getElementsByTagName('kml').item(0);
-xml = xml.getElementsByTagName('Response').item(0);
-xml = xml.getElementsByTagName('Placemark').item(0);
-xml = xml.getElementsByTagName('Point').item(0);
+if xml.hasChildNodes
+    xml = xml.getElementsByTagName('kml');
+    xml = xml.item(0).getElementsByTagName('Response');
+    xml = xml.item(0).getElementsByTagName('Placemark');
 
-coords = xml.getElementsByTagName('coordinates').item(0);
-coords = char(coords.item(0).getData);
-coords = str2double(regexp(coords, ',' , 'split'));
+    if xml.getLength > 0
+        if xml.getLength > 1
+            address = char(xml.item(0).getElementsByTagName('address').item(0).item(0).getData);
+            warning(['Multiple name matches, using first match [' address ']']);
+        end
+        
+        xml = xml.item(0).getElementsByTagName('Point');
 
-x = coords(1);
-y = coords(2);
+        coords = xml.item(0).getElementsByTagName('coordinates').item(0);
+        coords = char(coords.item(0).getData);
+        coords = str2double(regexp(coords, ',' , 'split'));
+
+        x = coords(1);
+        y = coords(2);
+    end
+end
 
 %% convert coordinates
 
-switch OPT.type
-    case 'RD'
-        [x y] = convertCoordinates(x,y,'CS1.code',4326,'CS2.code',28992);
-    case 'WGS84'
-        % do nothing
-    otherwise
-        warning(['Coordinate type unknown, using WGS84 [' OPT.type ']']);
-end
+if ~isempty(x) && ~isempty(y)
+    switch OPT.type
+        case 'RD'
+            [x y] = convertCoordinates(x,y,'CS1.code',4326,'CS2.code',28992);
+        case 'WGS84'
+            % do nothing
+        otherwise
+            warning(['Coordinate type unknown, using WGS84 [' OPT.type ']']);
+    end
 
-if nargout <= 1
-    x = [x y];
+    if nargout <= 1
+        x = [x y];
+    end
 end
 

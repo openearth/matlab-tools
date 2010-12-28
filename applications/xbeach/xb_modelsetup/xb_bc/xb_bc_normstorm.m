@@ -80,7 +80,8 @@ function [h Hs Tp] = xb_bc_normstorm(varargin)
 OPT = struct( ...
     'freq', 1e-4, ...
     'loc_type', 'RD', ...
-    'loc', [] ...
+    'loc', [], ...
+    'threshold', 5e4 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -125,7 +126,11 @@ Tp = alpha+beta.*Hs([1 3]);
 %% interpolate to specific location
 
 if ischar(OPT.loc)
-    OPT.loc = xb_name2coord(OPT.loc);
+    name = [OPT.loc ', Nederland'];
+    OPT.loc = xb_name2coord([name ', Nederland']);
+    if isempty(OPT.loc)
+        warning(['Location not found [' name ']']);
+    end
 end
 
 if ~isempty(OPT.loc) && length(OPT.loc) == 2
@@ -141,7 +146,12 @@ if ~isempty(OPT.loc) && length(OPT.loc) == 2
     end
     
     % interpolate data
-    h = interp2line(x, y, h, OPT.loc(1), OPT.loc(2));
-    Hs = interp2line(x, y, Hs, OPT.loc(1), OPT.loc(2));
-    Tp = interp2line(x([1 3]), y([1 3]), Tp, OPT.loc(1), OPT.loc(2));
+    [h xc yc d1] = interp2line(x, y, h, OPT.loc(1), OPT.loc(2));
+    [Hs xc yc d2] = interp2line(x, y, Hs, OPT.loc(1), OPT.loc(2));
+    [Tp xc yc d3] = interp2line(x([1 3]), y([1 3]), Tp, OPT.loc(1), OPT.loc(2));
+    
+    if any([d1 d2 d3] > OPT.threshold)
+        warning(['Requested location exceeded the threshold distance from the known data [' ...
+            num2str(max([d1 d2 d3])) ' > ' num2str(OPT.threshold) ']']);
+    end
 end
