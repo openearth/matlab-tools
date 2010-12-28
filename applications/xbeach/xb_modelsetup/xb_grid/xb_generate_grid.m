@@ -13,6 +13,11 @@ function xb = xb_generate_grid(varargin)
 %   varargin  = x:          x-coordinates of bathymetry
 %               y:          y-coordinates of bathymetry
 %               z:          z-coordinates of bathymetry
+%               ne:         vector or matrix of the size of z containing
+%                           either booleans indicating if a cell is
+%                           non-erodable or a numeric value indicating the
+%                           thickness of the erodable layer on top of a
+%                           non-erodable layer
 %               xgrid:      options for xb_grid_xgrid
 %               ygrid:      options for xb_grid_ygrid
 %               rotate:     boolean flag that determines whether the
@@ -26,6 +31,8 @@ function xb = xb_generate_grid(varargin)
 %                           perform
 %               posdwn:     boolean flag that determines whether positive
 %                           z-direction is down
+%               zdepth:     extent of model below mean sea level, which is
+%                           used if non-erodable layers are defined
 %
 %   Output:
 %   xb        = XBeach structure array
@@ -82,12 +89,14 @@ OPT = struct( ...
     'x', [0 2550 2724.9 2775 2805 3030.6], ...
     'y', [], ...
     'z', [-20 -3 0 3 15 15], ...
+    'ne', [false false true(1,4)], ...
     'xgrid', {{}}, ...
     'ygrid', {{}}, ...
     'rotate', true, ...
     'crop', true, ...
     'finalise', true, ...
-    'posdwn', false ...
+    'posdwn', false, ...
+    'zdepth', 100 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -99,6 +108,7 @@ if isempty(OPT.y); OPT.y = 0; end;
 x_w = OPT.x;
 y_w = OPT.y;
 z_w = OPT.z;
+ne_w = OPT.ne;
 
 % make sure coordinates are matrices
 if isvector(x_w) && isvector(y_w)
@@ -186,6 +196,17 @@ z_d_cs = z_d_cs(notnan);
 if isvector(z_w)
     % 1D grid
     zgrid = repmat(z_xb, length(y_xb), 1);
+    
+    % interpolate non-erodable layers
+    if ~isempty(OPT.ne)
+        negrid = interp1(x_d, ne_w, x_xb);
+        if islogical(OPT.ne)
+            idx = ~logical(round(negrid));
+            negrid(idx) = OPT.zdepth+zgrid(idx);
+            negrid(~idx) = 0;
+        end
+        negrid = repmat(negrid, length(y_xb), 1);
+    end
 else
     % 2D grid
     
@@ -194,6 +215,16 @@ else
     
     % interpolate elevation data to xbeach grid
     zgrid = interp2(x_w, y_w, z_w, x_xb_w, y_xb_w);
+    
+    % interpolate non-erodable layers
+    if ~isempty(OPT.ne)
+        negrid = interp2(x_w, y_w, ne_w, x_xb_w, y_xb_w);
+        if islogical(OPT.ne)
+            idx = ~logical(round(negrid));
+            negrid(idx) = OPT.zdepth+zgrid(idx);
+            negrid(~idx) = 0;
+        end
+    end
 end
 
 % interpolate nan's
@@ -217,6 +248,24 @@ elseif OPT.finalise
     [xgrid, ygrid, zgrid] = xb_grid_finalise(xgrid, ygrid, zgrid);
 end
 
+% adapt nelayer to finalised grid
+if ~isempty(OPT.ne)
+    d1 = size(zgrid, 1) - size(negrid, 1); d11 = floor(d1/2); d12 = ceil(d1/2);
+    d2 = size(zgrid, 2) - size(negrid, 2); d21 = floor(d2/2); d22 = ceil(d2/2);
+    
+    if d1 < 0
+        negrid = negrid(d11+1:end-d12,:);
+    elseif d1 > 0
+        negrid = [repmat(negrid(1,:), d11, 1) ; negrid ; repmat(negrid(end,:), d12, 1)];
+    end
+    
+    if d2 < 0
+        negrid = negrid(:,d21+1:end-d22);
+    elseif d2 > 0
+        negrid = [repmat(negrid(:,1), 1, d21) negrid repmat(negrid(:,end), 1, d12)];
+    end
+end
+
 % determine size
 nx = size(zgrid, 2)-1;
 ny = size(zgrid, 1)-1;
@@ -229,6 +278,7 @@ end
 
 bathy = xb_empty();
 bathy = xb_set(bathy, 'xfile', xgrid, 'yfile', ygrid, 'depfile', zgrid);
+if ~isempty(OPT.ne); bathy = xb_set(bathy, 'ne_layer', negrid); end;
 bathy = xb_meta(bathy, mfilename, 'bathymetry');
 
 xb = xb_empty();
