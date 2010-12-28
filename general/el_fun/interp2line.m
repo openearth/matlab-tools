@@ -1,4 +1,4 @@
-function [zc xc yc] = interp2line(x, y, z, x0, y0, varargin)
+function [zc xc yc d] = interp2line(x, y, z, x0, y0, varargin)
 %INTERP2LINE  One line description goes here.
 %
 %   More detailed description goes here.
@@ -58,38 +58,75 @@ function [zc xc yc] = interp2line(x, y, z, x0, y0, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% determine nearest point
+%% read options
 
-xy = [x ; y];
-xy0 = [x0 ; y0];
+OPT = struct( ...
+    'plot', false ...
+);
 
-d = Inf; R = [Inf Inf];
-for i = 1:size(xy,2)-1
-    Ri = (  dot(xy0-xy(:,i+1), xy(:,i)-xy(:,i+1)) * xy(:,i) + ...
-            dot(xy0-xy(:,i), xy(:,i+1)-xy(:,i)) * xy(:,i+1)  ) / ...
-            dot(xy(:,i+1)-xy(:,i), xy(:,i+1)-xy(:,i));
+OPT = setproperty(OPT, varargin{:});
 
-    if norm(Ri - xy0) < d
-        if (i == 1 && Ri(1) <= max(xy(1,i:i+1)) && Ri(2) <= max(xy(2,i:i+1))) || ...
-            (   Ri(1) >= min(xy(1,i:i+1)) && Ri(2) >= min(xy(2,i:i+1)) && ...
-                Ri(1) <= max(xy(1,i:i+1)) && Ri(2) <= max(xy(2,i:i+1))  ) || ...
-            (i == length(x)-1 && Ri(1) >= min(xy(1,i:i+1)) && Ri(2) >= min(xy(2,i:i+1)))
-            d = norm(Ri - xy0);
+%% check input
 
-            R = Ri;
-            L1 = sqrt(sum((xy(:,i)-R).^2));
-            L2 = sqrt(sum((xy(:,i+1)-R).^2));
-            L = L1 + L2;
-
-            xc = R(1);
-            yc = R(2);
-            zc = z(i)*L2/L+z(i+1)*L1/L;
-        end
-    end
+if ~isvector(x) || ~isvector(y) || ~isvector(z)
+    error('Input should be all vectors');
 end
 
-% figure; hold on;
-% plot(x,y,'-ok');
-% plot(x0,y0,'or');
-% plot(xc,yc,'og');
-% axis equal;
+if size(x,1) > size(x,2); x = x'; end;
+if size(y,1) > size(y,2); y = y'; end;
+if size(z,1) > size(z,2); z = z'; end;
+
+%% determine nearest point
+
+dims = [2 1 length(x)-1];
+
+% determine line segments
+P0 = reshape([x0 ; y0]*ones(1, length(x)-1), dims);
+P1 = reshape([x(1:end-1) ; y(1:end-1)], dims);
+P2 = reshape([x(2:end) ; y(2:end)], dims);
+
+% find perpendicular crossings with line segments
+R = (   ones(2,1)*squeeze(dot(P0-P2, P1-P2))' .* squeeze(P1) + ...
+        ones(2,1)*squeeze(dot(P0-P1, P2-P1))' .* squeeze(P2)  ) ./ ...
+        (ones(2,1)*squeeze(dot(P2-P1, P2-P1))');
+
+% determine length of segments and relative location of crossings
+L0 = sqrt(sum((squeeze(P1)-squeeze(P2)).^2));
+L1 = sqrt(sum((squeeze(P1)-R).^2));
+L2 = sqrt(sum((squeeze(P2)-R).^2));
+L = L1 + L2;
+
+% find crossings that are within segments
+idx = find(abs(L - L0) < 1e-10);
+
+if isempty(idx)
+    % no perpendicular point found, take closest known point
+    d = sqrt(sum(([x ; y]-[x0 ; y0]*ones(1, length(x))).^2));
+    idx = find(d == min(d), 1);
+    
+    d = d(idx);
+    xc = x(idx);
+    yc = y(idx);
+    zc = z(idx);
+else
+    d = sqrt(sum((squeeze(P0)-R).^2));
+    
+    if length(idx) > 1
+        idx = idx(find(d(idx) == min(d(idx)), 1));
+    end
+    
+    d = d(idx);
+    xc = R(1,idx);
+    yc = R(2,idx);
+    zc = z(idx)*L2(idx)/L(idx)+z(idx+1)*L1(idx)/L(idx);
+end
+
+%% plot
+
+if OPT.plot
+    figure; hold on;
+    plot3(x,y,z,'-or');
+    plot3(x,y,0*z,'-ok');
+    plot3([x0 xc],[y0 yc],[0 0],'-ob');
+    plot3([xc xc],[yc yc],[0 zc],'-og');
+end
