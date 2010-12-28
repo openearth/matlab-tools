@@ -1,21 +1,33 @@
 function [zc xc yc d] = interp2line(x, y, z, x0, y0, varargin)
-%INTERP2LINE  One line description goes here.
+%INTERP2LINE  Interpolates on a 3D line using the closest point on the line
 %
-%   More detailed description goes here.
+%   Determines the point closest to a given point on the given curve. Then
+%   find the z-value of that point by linear interpolation.
 %
 %   Syntax:
-%   varargout = interp2line(varargin)
+%   [zc xc yc d] = interp2line(x, y, z, x0, y0, varargin)
 %
 %   Input:
-%   varargin  =
+%   x           = x-coordinates of line
+%   y           = y-coordinates of line
+%   z           = z-coordinates of line
+%   x0          = x-coordinate of point
+%   y0          = y-coordinate of point
+%   varargin    = plot:     boolean to determine whether result should be
+%                           plotted or not
 %
 %   Output:
-%   varargout =
+%   zc          = z-coordinate of interpolation point on line
+%   xc          = x-coordinate of interpolation point on line
+%   yc          = y-coordinate of interpolation point on line
+%   d           = distance from given point to interpolation point on line
 %
 %   Example
-%   interp2line
+%   z0 = interp2line(x,y,z,x0,y0);
+%   z0 = interp2line(x,y,z,x0,y0,'plot',true);
+%   [zc xc yc d] = interp2line(x,y,z,x0,y0);
 %
-%   See also 
+%   See also interp1 interp2
 
 %% Copyright notice
 %   --------------------------------------------------------------------

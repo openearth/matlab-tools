@@ -14,10 +14,12 @@ function [h Hs Tp] = xb_bc_normstorm(varargin)
 %   [h Hs Tp] = xb_bc_normstorm(varargin)
 %
 %   Input:
-%   varargin  = freq:   Normative frequency of occurrence
-%               loc:    Location along Dutch coast (RD/WGS84 coordinates or
-%                       location name)
+%   varargin  = freq:       Normative frequency of occurrence
+%               loc:        Location along Dutch coast (RD/WGS84
+%                           coordinates or location name)
 %               loc_type:   Type of coordinates to use (RD/WGS84)
+%               threshold:  Threshold interpolation distance to show
+%                           warning
 %
 %   Output:
 %   h         = Normative surge level above MSL
