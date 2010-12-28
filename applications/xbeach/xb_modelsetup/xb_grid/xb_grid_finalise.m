@@ -24,6 +24,8 @@ function [x y z] = xb_grid_finalise(x, y, z, varargin)
 %                                                   boundary
 %                               landward_polder:    add polder at -5 at
 %                                                   landward side of model
+%                               seaward_extend:     extend seaward border
+%                                                   to a certain depth
 %
 %                 cells:    number of cells to use in each action
 %
@@ -84,7 +86,8 @@ function [x y z] = xb_grid_finalise(x, y, z, varargin)
 OPT = struct( ...
     'actions', {{'lateral_extend' 'seaward_flatten'}}, ...
     'n', 3, ...
-    'zoff', -20, ...
+    'z0', 5, ...
+    'zmin', -20, ...
     'slope', 1/50 ...
 );
 
@@ -95,73 +98,71 @@ OPT = setproperty(OPT, varargin{:});
 for i = 1:length(OPT.actions)
     action = OPT.actions{i};
     
-    switch action
-        case 'lateral_extend'
-            if min(size(z)) > 3
-                [x y z] = lateral_extend(x, y, z, OPT);
-            end
-        case 'lateral_sandwalls'
-            if min(size(z)) > 3
-                [x y z] = lateral_sandwalls(x, y, z, OPT);
-            end
-        case 'seaward_flatten'
-            [x y z] = seaward_flatten(x, y, z, OPT);
-        case 'seaward_extend'
-            [x y z] = seaward_extend(x, y, z, OPT);
-        case 'landward_polder'
-            [x y z] = landward_polder(x, y, z, OPT);
-        otherwise
-            warning(['Ignoring non-existing grid finalisation option [' action ']']);
+    if exist(action, 'file') == 2 && nargin(action) == 4
+        [x y z] = eval([action '(x, y, z, OPT);']);
+    else
+        warning(['Ignoring non-existing grid finalisation option [' action ']']);
     end
 end
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function [x y z] = lateral_extend(x, y, z, OPT)
-    dy1 = y(2,1)-y(1,1);
-    dy2 = y(end,1)-y(end-1,1);
-    
-    x = [ones(OPT.n,1)*x(1,:) ; x ; ones(OPT.n,1)*x(end,:)];
-    y = [(y(1,1)-[OPT.n*dy1:-dy1:dy1])'*ones(1,size(y,2)) ; y ; (y(end,1)+[dy2:dy2:OPT.n*dy2])'*ones(1,size(y,2))];
-    z = [ones(OPT.n,1)*z(1,:) ; z ; ones(OPT.n,1)*z(end,:)];
+    if min(size(z)) > 3
+        n = OPT.n;
+        
+        dy1 = y(2,1)-y(1,1);
+        dy2 = y(end,1)-y(end-1,1);
+
+        x = [ones(n,1)*x(1,:) ; x ; ones(n,1)*x(end,:)];
+        y = [(y(1,1)-[n*dy1:-dy1:dy1])'*ones(1,size(y,2)) ; y ; (y(end,1)+[dy2:dy2:n*dy2])'*ones(1,size(y,2))];
+        z = [ones(n,1)*z(1,:) ; z ; ones(n,1)*z(end,:)];
+    end
 
 function [x y z] = lateral_sandwalls(x, y, z, OPT)
-    z0 = 5;
-    z1 = 0; z2 = 0;
-    for i = 1:size(z,2)
-        if z(1,i) > z0 || z1 > 0
-            z1 = max(z1,z(1,i));
-            z(1:OPT.n,i) = interp1(y([1 OPT.n+1],i),[z1 z(OPT.n+1,i)],y(1:OPT.n,i));
-        end
-        if z(end,i) > z0 || z2 > 0
-            z2 = max(z2,z(end,i));
-            z(end-OPT.n+1:end,i) = interp1(y([end end-OPT.n],i),[z2 z(end-OPT.n,i)],y(end-OPT.n+1:end,i));
+    if min(size(z)) > 3
+        n = OPT.n;
+        z0 = OPT.z0;
+        
+        z1 = 0; z2 = 0;
+        for i = 1:size(z,2)
+            if z(1,i) > z0 || z1 > 0
+                z1 = max(z1,z(1,i));
+                z(1:n,i) = interp1(y([1 n+1],i),[z1 z(n+1,i)],y(1:n,i));
+            end
+            if z(end,i) > z0 || z2 > 0
+                z2 = max(z2,z(end,i));
+                z(end-n+1:end,i) = interp1(y([end end-n],i),[z2 z(end-n,i)],y(end-n+1:end,i));
+            end
         end
     end
 
 function [x y z] = seaward_flatten(x, y, z, OPT)
+    n = OPT.n;
+    
     z0 = min(z(:,1));
     
     z(:,1) = z0;
     for i = 1:size(z,1)
-        z(i,2:OPT.n) = interp1(x(i,[1 OPT.n+1]),[z0 z(i,OPT.n+1)],x(i,2:OPT.n));
+        z(i,2:n) = interp1(x(i,[1 n+1]),[z0 z(i,n+1)],x(i,2:n));
     end
 
 function [x y z] = landward_polder(x, y, z, OPT)
-    z0 = -5;
+    n = OPT.n;
+    z0 = -OPT.z0;
     
     for i = 1:size(z,1)
-        z(i,end-OPT.n:end) = interp1(x(i,[end-OPT.n end]),[z0 z(i,end)],x(i,end-OPT.n:end));
-        z(i,end-2*OPT.n-1:end-OPT.n-1) = interp1(x(i,[end-2*OPT.n-1 end-OPT.n-1]),[z(i,end-2*OPT.n-1) z0],x(i,end-2*OPT.n-1:end-OPT.n-1));
+        z(i,end-n:end) = interp1(x(i,[end-n end]),[z0 z(i,end)],x(i,end-n:end));
+        z(i,end-2*n-1:end-n-1) = interp1(x(i,[end-2*n-1 end-n-1]),[z(i,end-2*n-1) z0],x(i,end-2*n-1:end-n-1));
     end
 
 function [xn yn zn] = seaward_extend(x, y, z, OPT)
 
 z0 = max(z(:,1));
 dxoff = x(1,2)-x(1,1);
-dn = ceil(max(z0-OPT.zoff,0)/(OPT.slope*dxoff))+OPT.n;
+dn = ceil(max(z0-OPT.zmin,0)/(OPT.slope*dxoff))+OPT.n;
 zt = NaN*zeros(size(x,1), size(x,2)+OPT.n);
-zt(:,1:OPT.n) = OPT.zoff;
+zt(:,1:OPT.n) = OPT.zmin;
 zt(:,OPT.n+1:end) = z; 
 % extended xbeach grid
 xn = [ x(1,1)-[-1:-1:-dn]*dxoff x(1,:)+dn*dxoff ]; 
