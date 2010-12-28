@@ -1,5 +1,5 @@
 function varargout=nc_varget_range2d(ncfile,varnames,polygon,varargin)
-%NC_VARGET_RANGE2D  get a subset from x/y matrices based on polygon
+%NC_VARGET_RANGE2D  get a subset from 2d x/y matrices based on polygon
 %
 % NC_VARGET_RANGE2D finds a contigous subset in a coordinate matrices x,y
 % based on two limits for x and y. This speeds up for intance the request of a
