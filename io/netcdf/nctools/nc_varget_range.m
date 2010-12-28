@@ -88,7 +88,11 @@ end
 OPT = setproperty(OPT,varargin{:});
 
 OPT.lim       = lim; % [datenum(1950,1,2,2,40,0) datenum(1950,1,2,2,40,0)];
-n1            = fileinfo.Dimension(findstrinstruct(fileinfo.Dimension,'Name','time')).Length;
+n1            = fileinfo.Dataset(find(strcmp({fileinfo.Dataset.Name},varname))).Size;
+if numel(n1) > 1
+    error(['Selected variable has more than 1 dimension: ' varname ' has ' num2str(numel(n1)) ' dimensions.']);
+    return
+end
 di            = max(ceil(n1/OPT.chunksize),1); % max as there is isinf(chunksize)
 chunk         = [1:di:n1];
 
