@@ -141,4 +141,6 @@ if OPT.plot
     plot3(x,y,0*z,'-ok');
     plot3([x0 xc],[y0 yc],[0 0],'-ob');
     plot3([xc xc],[yc yc],[0 zc],'-og');
+    grid on; box on;
+    view(30,30);
 end

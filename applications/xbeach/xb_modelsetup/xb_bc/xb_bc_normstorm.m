@@ -153,11 +153,16 @@ if OPT.plot
     plot3(x, y, h, '-or');
     plot3(x, y, Hs, '-og');
     plot3(x([1 3]), y([1 3]), Tp, '-ob');
-    plot3(x, y, 0*h, '-k');
-    plot3(x, y, 0*Hs, '-k');
-    plot3(x([1 3]), y([1 3]), 0*Tp, '-k');
+    
+    hl = nc_plot_coastline;
+    set(hl, 'Color', [.8 .8 .8]);
+    
+    plot(x, y, '-k');
+    plot(x, y, '-k');
+    plot(x([1 3]), y([1 3]), '-k');
+    
     grid on; box on;
-    view(30,30);
+    view(10,80);
     legend({'Water level' 'Significant wave height' 'Peak wave period'},'Location','NorthEast');
 end
 
