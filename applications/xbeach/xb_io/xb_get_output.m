@@ -128,4 +128,6 @@ if exist(fpath, 'file')
 
         i = i + 1;
     end
+    
+    fclose(fid);
 end

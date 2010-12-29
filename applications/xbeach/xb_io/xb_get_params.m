@@ -357,3 +357,5 @@ for i=1:length(params_array)
         end
     end
 end
+
+fclose(fid);
