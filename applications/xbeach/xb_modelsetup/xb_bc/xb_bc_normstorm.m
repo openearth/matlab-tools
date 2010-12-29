@@ -20,6 +20,8 @@ function [h Hs Tp] = xb_bc_normstorm(varargin)
 %               loc_type:   Type of coordinates to use (RD/WGS84)
 %               threshold:  Threshold interpolation distance to show
 %                           warning
+%               plot:       Boolean indicating whether interpolation result
+%                           should be plotted
 %
 %   Output:
 %   h         = Normative surge level above MSL
@@ -83,7 +85,8 @@ OPT = struct( ...
     'freq', 1e-4, ...
     'loc_type', 'RD', ...
     'loc', [], ...
-    'threshold', 5e4 ...
+    'threshold', 5e4, ...
+    'plot', false ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -135,23 +138,42 @@ if ischar(OPT.loc)
     end
 end
 
+% convert coordinates
+switch OPT.loc_type
+    case 'RD'
+        [x y] = convertCoordinates(x,y,'CS1.code',4326,'CS2.code',28992);
+    case 'WGS84'
+        % do nothing
+    otherwise
+        warning(['Coordinate type unknown, using WGS84 [' OPT.loc_type ']']);
+end
+
+if OPT.plot
+    figure; hold on;
+    plot3(x, y, h, '-or');
+    plot3(x, y, Hs, '-og');
+    plot3(x([1 3]), y([1 3]), Tp, '-ob');
+    plot3(x, y, 0*h, '-k');
+    plot3(x, y, 0*Hs, '-k');
+    plot3(x([1 3]), y([1 3]), 0*Tp, '-k');
+    grid on; box on;
+    view(30,30);
+    legend({'Water level' 'Significant wave height' 'Peak wave period'},'Location','NorthEast');
+end
+
 if ~isempty(OPT.loc) && length(OPT.loc) == 2
     
-    % convert coordinates
-    switch OPT.loc_type
-        case 'RD'
-            [x y] = convertCoordinates(x,y,'CS1.code',4326,'CS2.code',28992);
-        case 'WGS84'
-            % do nothing
-        otherwise
-            warning(['Coordinate type unknown, using WGS84 [' OPT.loc_type ']']);
-    end
-    
     % interpolate data
-    [h xc yc d1] = interp2line(x, y, h, OPT.loc(1), OPT.loc(2));
-    [Hs xc yc d2] = interp2line(x, y, Hs, OPT.loc(1), OPT.loc(2));
-    [Tp xc yc d3] = interp2line(x([1 3]), y([1 3]), Tp, OPT.loc(1), OPT.loc(2));
+    [h xc1 yc1 d1] = interp2line(x, y, h, OPT.loc(1), OPT.loc(2));
+    [Hs xc2 yc2 d2] = interp2line(x, y, Hs, OPT.loc(1), OPT.loc(2));
+    [Tp xc3 yc3 d3] = interp2line(x([1 3]), y([1 3]), Tp, OPT.loc(1), OPT.loc(2));
     
+    if OPT.plot
+        plot3([OPT.loc(1) xc1 xc1], [OPT.loc(2) yc1 yc1], [0 0 h], '-ok');
+        plot3([OPT.loc(1) xc2 xc2], [OPT.loc(2) yc2 yc2], [0 0 Hs], '-ok');
+        plot3([OPT.loc(1) xc3 xc3], [OPT.loc(2) yc3 yc3], [0 0 Tp], '-ok');
+    end
+
     if any([d1 d2 d3] > OPT.threshold)
         warning(['Requested location exceeded the threshold distance from the known data [' ...
             num2str(max([d1 d2 d3])) ' > ' num2str(OPT.threshold) ']']);

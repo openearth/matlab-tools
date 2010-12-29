@@ -22,7 +22,7 @@ function xb = xb_swap(xb, varargin)
 %
 %   Example
 %   xb = xb_swap(xb)
-%   xb = xb_swap(xb, 'order', 'xyt', 'force')
+%   xb = xb_swap(xb, 'order', 'xyt', 'force', true)
 %
 %   See also xb_read_output
 
