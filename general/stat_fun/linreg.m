@@ -1,28 +1,31 @@
-function k = xb_disper(w, h, g)
-%XB_DISPER  Linear dispersion relation.
+function [a, b, r2, r, k2] = linreg(x, y)
+%LINREG  Calculates linear regression through a series of points
 %
-%   absolute error in k*h < 5.0e-16 for all k*h
+%   Calculates linear regression through a series of points
 %
 %   Syntax:
-%   k = xb_disper(w, h, g)
+%   [a, b, r2, r, k2] = linreg(x, y)
 %
 %   Input:
-%   w = 2*pi/T, were T is wave period
-%   h = water depth
-%   g = gravity constant
+%   x           = x-coordinates
+%   y           = y-coordinates
 %
 %   Output:
-%   k = wave number
+%   a           = linear regression parameter of coastline (y=a+b*x)
+%   b           = linear regression parameter of coastline (y=a+b*x)
 %
 %   Example
-%   k = xb_disper(2*pi/5,5,9.81);
-%
-%   See also 
+%   [a b] = linreg(x, y)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
-%       G. Klopman, Delft Hydraulics, 6 Dec 1994
+%   Copyright (C) 2010 Deltares
+%       Bas Hoonhout
+%
+%       bas.hoonhout@deltares.nl	
+%
+%       Rotterdamseweg 185
+%       2629HD Delft
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -45,8 +48,8 @@ function k = xb_disper(w, h, g)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 19 Nov 2010
-% Created with Matlab version: 7.4.0.287 (R2007a)
+% Created: 13 Dec 2010
+% Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
 % $Date$
@@ -55,28 +58,35 @@ function k = xb_disper(w, h, g)
 % $HeadURL$
 % $Keywords: $
 
-%%
-if nargin < 3,
-  g = 9.81;
-end;
+%% linear regression
 
-w2 = (w.^2) .* h ./ g;
-q  = w2 ./ (1 - exp (-(w2.^(5/4)))) .^ (2/5);
+% Number of known points
+n = length(x);
 
-for j=1:2,
-  thq     = tanh(q);
-  thq2    = 1 - thq.^2;
-  a       = (1 - q .* thq) .* thq2;
-  b       = thq + q .* thq2;
-  c       = q .* thq - w2;
-  arg     = (b.^2) - 4 .* a .* c;
-  arg     = (-b + sqrt(arg)) ./ (2 * a);
-  iq      = find (abs(a.*c) < 1.0e-8 * (b.^2));
-  arg(iq) = - c(iq) ./ b(iq);
-  q       = q + arg;
-end;
+% Initialization
+j = 0; k = 0; l = 0; m = 0; r2 = 0;
 
-k = sign(w) .* q ./ h;
+% Accumulate intermediate sums
+j = sum(x);
+k = sum(y);
+l = sum(x.^2);
+m = sum(y.^2);
+r2 = sum(x.*y);
 
-ik    = isnan (k);
-k(ik) = zeros(size(k(ik)));
+% Compute curve coefficients
+b = (n*r2 - k*j)/(n*l - j^2);
+a = (k - b*j)/n;
+
+% Compute regression analysis
+j = b*(r2 - j*k/n);
+m = m - k^2/n;
+k = m - j;
+
+% Coefficient of determination
+r2 = j/m;
+
+% Coefficient of correlation
+r = sqrt(r2);
+
+% Std. error of estimate
+k2 = sqrt(k/(n-2));

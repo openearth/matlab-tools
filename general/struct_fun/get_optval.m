@@ -1,23 +1,22 @@
-function opt = xb_set_optval(var, val, varargin)
-%XB_SET_OPTVAL  Sets a value in a name/value cell array
+function val = get_optval(var, varargin)
+%GET_OPTVAL  Retrieves a value from a name/value cell array, if it exists
 %
-%   Sets a value in a name/value cell array
+%   Retrieves a value from a opt cell array, if it exists
 %
 %   Syntax:
-%   opt = xb_set_optval(var, val, varargin)
+%   val = get_optval(var, varargin)
 %
 %   Input:
-%   var         = name variable to be set
-%   val         = value of variable to be set
+%   var         = name variable to be retrieved
 %   varargin    = name/value pairs in cell array
 %
 %   Output:
-%   opt         = cell array with name/value pairs
+%   val         = value of requested variable
 %
 %   Example
-%   opt = xb_set_optval(var, val, varargin)
+%   val = get_optval(var, varargin)
 %
-%   See also xb_get_optval
+%   See also get_optval
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -63,17 +62,14 @@ function opt = xb_set_optval(var, val, varargin)
 %% read settings
 
 if length(varargin) == 1 && iscell(varargin)
-    opt = varargin{1};
-else
-    opt = varargin;
+    varargin = varargin{1};
 end
 
-%% set opt value
+%% get opt value
 
-i = find(strcmpi(var, opt))+1;
-if length(opt) >= i
-    opt{i} = val;
-else
-    opt = [opt {var val}];
+val = [];
+
+i = find(strcmpi(var, varargin))+1;
+if length(varargin) >= i
+    val = varargin{i};
 end
-

@@ -1,23 +1,23 @@
-function [a, b, r2, r, k2] = xb_linreg(x, y)
-%XB_LINREG  Calculates linear regression through a series of points
+function opt = set_optval(var, val, varargin)
+%SET_OPTVAL  Sets a value in a name/value cell array
 %
-%   Calculates linear regression through a series of points
+%   Sets a value in a name/value cell array
 %
 %   Syntax:
-%   [a, b, r2, r, k2] = xb_linreg(x, y)
+%   opt = set_optval(var, val, varargin)
 %
 %   Input:
-%   x           = x-coordinates
-%   y           = y-coordinates
+%   var         = name variable to be set
+%   val         = value of variable to be set
+%   varargin    = name/value pairs in cell array
 %
 %   Output:
-%   a           = linear regression parameter of coastline (y=a+b*x)
-%   b           = linear regression parameter of coastline (y=a+b*x)
+%   opt         = cell array with name/value pairs
 %
 %   Example
-%   [a b] = xb_linreg(x, y)
+%   opt = set_optval(var, val, varargin)
 %
-%   See also xb_get_coastline
+%   See also set_optval
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -50,7 +50,7 @@ function [a, b, r2, r, k2] = xb_linreg(x, y)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 13 Dec 2010
+% Created: 17 Dec 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -60,35 +60,20 @@ function [a, b, r2, r, k2] = xb_linreg(x, y)
 % $HeadURL$
 % $Keywords: $
 
-%% linear regression
+%% read settings
 
-% Number of known points
-n = length(x);
+if length(varargin) == 1 && iscell(varargin)
+    opt = varargin{1};
+else
+    opt = varargin;
+end
 
-% Initialization
-j = 0; k = 0; l = 0; m = 0; r2 = 0;
+%% set opt value
 
-% Accumulate intermediate sums
-j = sum(x);
-k = sum(y);
-l = sum(x.^2);
-m = sum(y.^2);
-r2 = sum(x.*y);
+i = find(strcmpi(var, opt))+1;
+if length(opt) >= i
+    opt{i} = val;
+else
+    opt = [opt {var val}];
+end
 
-% Compute curve coefficients
-b = (n*r2 - k*j)/(n*l - j^2);
-a = (k - b*j)/n;
-
-% Compute regression analysis
-j = b*(r2 - j*k/n);
-m = m - k^2/n;
-k = m - j;
-
-% Coefficient of determination
-r2 = j/m;
-
-% Coefficient of correlation
-r = sqrt(r2);
-
-% Std. error of estimate
-k2 = sqrt(k/(n-2));

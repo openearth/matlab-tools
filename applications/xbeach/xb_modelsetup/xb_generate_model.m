@@ -107,14 +107,14 @@ tide = xb_generate_tide(OPT.tide{:});
 tp = xb_bc_extracttp(waves);
 wl = xb_bc_extractwl(tide);
 
-xgrid = xb_get_optval('xgrid', OPT.bathy);
-if isempty(xb_get_optval('Tm', xgrid))
-    xgrid = xb_set_optval('Tm', tp, xgrid);
+xgrid = get_optval('xgrid', OPT.bathy);
+if isempty(get_optval('Tm', xgrid))
+    xgrid = set_optval('Tm', tp, xgrid);
 end
-if isempty(xb_get_optval('wl', xgrid))
-    xgrid = xb_set_optval('wl', wl, xgrid);
+if isempty(get_optval('wl', xgrid))
+    xgrid = set_optval('wl', wl, xgrid);
 end
-OPT.bathy = xb_set_optval('xgrid', xgrid, OPT.bathy);
+OPT.bathy = set_optval('xgrid', xgrid, OPT.bathy);
 
 bathy = xb_generate_grid(OPT.bathy{:});
 

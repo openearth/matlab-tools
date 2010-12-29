@@ -1,12 +1,12 @@
-function [x y] = xb_name2coord(name, varargin)
-%XB_NAME2COORD  Converts a location name to a coordinate using Google Maps
+function [x y] = str2coord(name, varargin)
+%STR2COORD  Converts a location string to a coordinate using Google Maps
 %
-%   Converts a location name to a coordinate using Google Maps. By default,
-%   RD locations are returned. Another option is to return WGS84
+%   Converts a location string to a coordinate using Google Maps. By
+%   default, RD locations are returned. Another option is to return WGS84
 %   coordinates.
 %
 %   Syntax:
-%   [x y] = xb_name2coord(name, varargin)
+%   [x y] = str2coord(name, varargin)
 %
 %   Input:
 %   name      = Name of the location
@@ -17,10 +17,8 @@ function [x y] = xb_name2coord(name, varargin)
 %   y         = y-coordinate of location
 %
 %   Example
-%   [x y] = xb_name2coord('Delft')
-%   [x y] = xb_name2coord('Bijenkorf Amsterdam')
-%
-%   See also xb_bc_normstorm
+%   [x y] = str2coord('Delft')
+%   [x y] = str2coord('Bijenkorf Amsterdam')
 
 %% Copyright notice
 %   --------------------------------------------------------------------

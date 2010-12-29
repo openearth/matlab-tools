@@ -36,7 +36,7 @@ function [h Hs Tp] = xb_bc_normstorm(varargin)
 %   [h Hs Tp] = xb_bc_normstorm('loc', 'Hoek van Holland')
 %   [h Hs Tp] = xb_bc_normstorm('loc', 'Den Hoorn, Terschelling', 'freq', 1/4000)
 %
-%   See also xb_bc_stormsurge, xb_name2coord, interp2line
+%   See also xb_bc_stormsurge, str2coord, interp2line
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -132,7 +132,7 @@ Tp = alpha+beta.*Hs([1 3]);
 
 if ischar(OPT.loc)
     name = [OPT.loc ', Nederland'];
-    OPT.loc = xb_name2coord([name ', Nederland']);
+    OPT.loc = str2coord([name ', Nederland']);
     if isempty(OPT.loc)
         warning(['Location not found [' name ']']);
     end

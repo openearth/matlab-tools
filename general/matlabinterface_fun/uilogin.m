@@ -1,10 +1,10 @@
-function [username password] = xb_login()
-%XB_PASSWORD  Prompts for a username and password using a dialog
+function [username password] = uilogin()
+%UILOGIN  Prompts for a username and password using a dialog
 %
 %   Prompts for a username and password and returns password string
 %
 %   Syntax:
-%   [username password] = xb_password()
+%   [username password] = uilogin()
 %
 %   Input:
 %   none
@@ -14,9 +14,9 @@ function [username password] = xb_login()
 %   password    = password string
 %
 %   Example
-%   [username password] = xb_password;
+%   [username password] = uilogin;
 %
-%   See also xb_run_remote
+%   See also uicontrol
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -70,22 +70,30 @@ pos = [(s(3)-w)/2 (s(4)-h)/2 w h];
 dlg = dialog('Name', 'Login', 'pos', pos);
 
 uicontrol(dlg, 'style', 'text', 'units', 'pixels', ...
-    'pos',[20 50 60 15], 'Horiz', 'Left', ...
-    'string','Username:');
+    'pos', [20 50 60 15], 'Horiz', 'Left', ...
+    'string', 'Username:');
 
 uicontrol(dlg, 'style', 'text', 'units', 'pixels', ...
-    'pos',[20 20 60 15], 'Horiz', 'Left', ...
-    'string','Password:');
+    'pos', [20 20 60 15], 'Horiz', 'Left', ...
+    'string', 'Password:');
 
-user = actxcontrol('Forms.TextBox.1', [100 50 120 20], dlg);
-pass = actxcontrol('Forms.TextBox.1', [100 20 120 20], dlg);
+user = javax.swing.JTextField();
+user = javacomponent(user, [100 50 120 20], dlg);
+set(user, 'KeyPressedCallback', {@submit, dlg});
+user.setFocusable(true);
+drawnow;
+
+pass = javax.swing.JPasswordField();
+pass = javacomponent(pass, [100 20 120 20], dlg);
+set(pass, 'KeyPressedCallback', {@submit, dlg});
+pass.setFocusable(true);
+drawnow;
 
 uicontrol(dlg, 'style', 'PushButton', ...
     'pos', [240 20 40 20], 'string', 'OK', ...
-    'callback', 'uiresume');
+    'callback', 'uiresume', 'KeyPressFcn', {@submit, dlg});
 
-set(pass, 'PasswordChar', '*');
-set(dlg, 'UserData', 0);
+user.requestFocus;
 
 uiwait(dlg);
 
@@ -100,3 +108,17 @@ end
 if ishandle(dlg)
     close(dlg);
 end
+
+%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function submit(obj, event, dlg)
+    if isjava(event)
+        key = get(event, 'keyCode');
+    else
+        key = event.Key;
+    end
+    
+    switch key
+        case {10 'return'}
+            uiresume(dlg);
+    end

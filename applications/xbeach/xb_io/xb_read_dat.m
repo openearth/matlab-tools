@@ -4,7 +4,7 @@ function xb = xb_read_dat(fname, varargin)
 %   Reads DAT formatted output files from XBeach in the form of an XBeach
 %   structure. Specific variables can be requested in the varargin by means
 %   of an exact match, dos-like filtering or regular expressions (see
-%   xb_filter)
+%   strfilter)
 %
 %   Syntax:
 %   xb = xb_read_dat(fname, varargin)
@@ -34,7 +34,7 @@ function xb = xb_read_dat(fname, varargin)
 %   xb = xb_read_dat('.', 'vars', '/_mean$')
 %   xb = xb_read_dat('path_to_model/', 'vars', {'H', 'u*', '/_min$'})
 %
-%   See also xb_read_output, xb_read_netcdf, xb_filter
+%   See also xb_read_output, xb_read_netcdf, strfilter
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -126,7 +126,7 @@ for i = 1:length(names)
     varname = names(i).name(1:length(names(i).name)-4);
     
     % skip, if not requested
-    if ~isempty(OPT.vars) && ~any(xb_filter(varname, OPT.vars)); continue; end;
+    if ~isempty(OPT.vars) && ~any(strfilter(varname, OPT.vars)); continue; end;
     if any(strcmpi(varname, {'xy', 'dims'})); continue; end;
     
     filename = [varname '.dat'];

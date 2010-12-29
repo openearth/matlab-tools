@@ -81,7 +81,7 @@ if isempty(y); y = 0; end;
 [xc yc] = xb_get_coastline(x, y, z);
 
 % get linear regression line from coastline
-[a b] = xb_linreg(xc, yc);
+[a b] = linreg(xc, yc);
 
 %% determine rotation
 

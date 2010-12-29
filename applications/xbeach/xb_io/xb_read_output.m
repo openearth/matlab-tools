@@ -5,7 +5,7 @@ function variables = xb_read_output(fname, varargin)
 %   xb_read_dat or xb_read_netcdf function. This function only determines
 %   which one to use. Specific variables can be requested in the varargin
 %   by means of an exact match, dos-like filtering or regular expressions
-%   (see xb_filter)
+%   (see strfilter)
 %
 %   Syntax:
 %   varargout = xb_read_output(fname, varargin)

@@ -109,7 +109,7 @@ if OPT.vardx == 0
 elseif OPT.vardx == 1
     
     % prepare
-    k       = xb_disper(2*pi/OPT.Tm, -zin(1), OPT.g);
+    k       = disper(2*pi/OPT.Tm, -zin(1), OPT.g);
     Llong   = 7*2*pi/k;
     x       = xin;
     hin     = max(OPT.wl-zin,0.01);

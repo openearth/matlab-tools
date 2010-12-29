@@ -4,7 +4,7 @@ function variables = xb_read_netcdf(fname, varargin)
 %   Reads NetCDF formatted output file from XBeach in the form of an
 %   XBeach structure. Specific variables can be requested in the varargin
 %   by means of an exact match, dos-like filtering or regular expressions
-%   (see xb_filter)
+%   (see strfilter)
 %
 %   Syntax:
 %   variables = xb_read_netcdf(fname, varargin)
@@ -28,7 +28,7 @@ function variables = xb_read_netcdf(fname, varargin)
 %   xb = xb_read_netcdf('xboutput.nc', 'vars', '/_mean$')
 %   xb = xb_read_netcdf('path_to_model/xboutput.nc', 'vars', {'H', 'u*', '/_min$'})
 %
-%   See also xb_read_output, xb_read_dat, xb_filter
+%   See also xb_read_output, xb_read_dat, strfilter
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -108,7 +108,7 @@ variables = xb_set(variables, 'DIMS', xb);
 % read all variables that match filters
 c = 2;
 for i = 1:length({info.Dataset.Name})
-    if ~isempty(OPT.vars) && ~any(xb_filter(info.Dataset(i).Name, OPT.vars)); continue; end;
+    if ~isempty(OPT.vars) && ~any(strfilter(info.Dataset(i).Name, OPT.vars)); continue; end;
     
     [start len stride] = xb_index(info.Dataset(i).Size, OPT.start, OPT.length, OPT.stride);
     

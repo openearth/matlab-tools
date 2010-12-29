@@ -10,7 +10,7 @@ function xb_show(xb, varargin)
 %   xb          = XBeach structure array
 %   varargin    = Variables to be included, by default all variables are
 %                 included. Filters can be used select multiple variables
-%                 at once (exact match, dos-like, regexp, see xb_filter).
+%                 at once (exact match, dos-like, regexp, see strfilter).
 %                 If a nested XBeach structure array is specifically
 %                 requested (exact match), an extra xb_show is fired
 %                 showing the contents of the nested struct.
@@ -26,7 +26,7 @@ function xb_show(xb, varargin)
 %   xb_show(xb, 'bcfile')
 %   xb_show(xb, 'bcfile', 'zs')
 %
-%   See also xb_set, xb_get, xb_empty, xb_filter
+%   See also xb_set, xb_get, xb_empty, strfilter
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -112,7 +112,7 @@ if ~isempty(vars)
     format = '%-15s %-10s %-10s %-10s %-10s %-30s\n';
     fprintf(format, 'variable', 'size', 'bytes', 'class', 'units', 'value');
     for i = 1:length(xb.data)
-        if ~any(xb_filter(xb.data(i).name, vars)); continue; end;
+        if ~any(strfilter(xb.data(i).name, vars)); continue; end;
 
         var = xb_get(xb, xb.data(i).name);
         info = whos('var');

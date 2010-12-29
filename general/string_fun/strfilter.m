@@ -1,5 +1,5 @@
-function matches = xb_filter(vars, filters)
-%XB_FILTER  Find matches between strings and different kind of filters
+function matches = strfilter(vars, filters)
+%STRFILTER  Find matches between strings and different kind of filters
 %
 %   Find matches between strings and different kind of filters. A string or
 %   cell array of strings is compared to a filterstring or cell array of
@@ -11,7 +11,7 @@ function matches = xb_filter(vars, filters)
 %   an / and may end with the same character.
 %
 %   Syntax:
-%   matches = xb_filter(vars, filters)
+%   matches = strfilter(vars, filters)
 %
 %   Input:
 %   vars    = string or cell array with strings
@@ -22,10 +22,10 @@ function matches = xb_filter(vars, filters)
 %             a match is found
 %
 %   Example
-%   matches = xb_filter(vars, filters)
-%   if ~any(xb_filter(vars, filters)); continue; end;
+%   matches = strfilter(vars, filters)
+%   if ~any(strfilter(vars, filters)); continue; end;
 %
-%   See also xb_show, xb_read_output
+%   See also regexp
 
 %% Copyright notice
 %   --------------------------------------------------------------------

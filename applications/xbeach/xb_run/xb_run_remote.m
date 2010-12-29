@@ -170,7 +170,7 @@ fclose(fid);
 %% prompt for password
 
 if OPT.ssh_prompt
-    [OPT.ssh_user OPT.ssh_pass] = xb_login;
+    [OPT.ssh_user OPT.ssh_pass] = uilogin;
 end
 
 %% run model
@@ -190,8 +190,12 @@ end
 if retcode == 0
     s = regexp(messages, 'Your job (?<id>\d+) \("(?<name>.+)"\) has been submitted', 'names');
 
-    job_id = str2num(s.id);
-    job_name = s.name;
+    if ~isempty(s)
+        job_id = str2num(s.id);
+        job_name = s.name;
+    else
+        error(['Submitting remote job failed [' cmd ']']);
+    end
 else
     error(['Submitting remote job failed [' cmd ']']);
 end

@@ -1,32 +1,26 @@
-function val = xb_get_optval(var, varargin)
-%XB_GET_OPTVAL  Retrieves a value from a name/value cell array, if it exists
+function k = disper(w, h, g)
+%DISPER  Linear dispersion relation.
 %
-%   Retrieves a value from a opt cell array, if it exists
+%   absolute error in k*h < 5.0e-16 for all k*h
 %
 %   Syntax:
-%   val = xb_get_optval(var, varargin)
+%   k = disper(w, h, g)
 %
 %   Input:
-%   var         = name variable to be retrieved
-%   varargin    = name/value pairs in cell array
+%   w = 2*pi/T, were T is wave period
+%   h = water depth
+%   g = gravity constant
 %
 %   Output:
-%   val         = value of requested variable
+%   k = wave number
 %
 %   Example
-%   val = xb_get_optval(var, varargin)
-%
-%   See also xb_set_optval
+%   k = disper(2*pi/5,5,9.81);
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 Deltares
-%       Bas Hoonhout
-%
-%       bas.hoonhout@deltares.nl	
-%
-%       Rotterdamseweg 185
-%       2629HD Delft
+%   Copyright (C) 2010 <COMPANY>
+%       G. Klopman, Delft Hydraulics, 6 Dec 1994
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -49,8 +43,8 @@ function val = xb_get_optval(var, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 17 Dec 2010
-% Created with Matlab version: 7.9.0.529 (R2009b)
+% Created: 19 Nov 2010
+% Created with Matlab version: 7.4.0.287 (R2007a)
 
 % $Id$
 % $Date$
@@ -59,17 +53,28 @@ function val = xb_get_optval(var, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% read settings
+%%
+if nargin < 3,
+  g = 9.81;
+end;
 
-if length(varargin) == 1 && iscell(varargin)
-    varargin = varargin{1};
-end
+w2 = (w.^2) .* h ./ g;
+q  = w2 ./ (1 - exp (-(w2.^(5/4)))) .^ (2/5);
 
-%% get opt value
+for j=1:2,
+  thq     = tanh(q);
+  thq2    = 1 - thq.^2;
+  a       = (1 - q .* thq) .* thq2;
+  b       = thq + q .* thq2;
+  c       = q .* thq - w2;
+  arg     = (b.^2) - 4 .* a .* c;
+  arg     = (-b + sqrt(arg)) ./ (2 * a);
+  iq      = find (abs(a.*c) < 1.0e-8 * (b.^2));
+  arg(iq) = - c(iq) ./ b(iq);
+  q       = q + arg;
+end;
 
-val = [];
+k = sign(w) .* q ./ h;
 
-i = find(strcmpi(var, varargin))+1;
-if length(varargin) >= i
-    val = varargin{i};
-end
+ik    = isnan (k);
+k(ik) = zeros(size(k(ik)));
