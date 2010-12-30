@@ -76,9 +76,23 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
+%% check input
+
+if isvector(x) && isvector(y)
+    [x y] = meshgrid(x, y);
+end
+
+if isvector(xi) && isvector(yi)
+    [xi yi] = meshgrid(xi, yi);
+end
+
 %% interpolate grids
 
-angle = atan(diff(y([1 end],1))/diff(x([1 end],1)))/pi*180-90;
+if diff(x([1 end],1)) ~= 0
+    angle = atan(diff(y([1 end],1))/diff(x([1 end],1)))/pi*180-90;
+else
+    angle = 0;
+end
     
 if angle == 0
     % non-rotated grid, simply interpolate

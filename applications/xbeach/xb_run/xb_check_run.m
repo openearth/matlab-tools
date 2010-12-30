@@ -90,7 +90,7 @@ if xb_exist(xb, 'ssh')
     if ~isempty(regexp(messages, ['(^|\n)\s*' num2str(id) '\s'], 'once'))
         runs = true;
     end
-else
+elseif xb_exist(xb, 'id')
     % local job
     
     id = xb_get(xb, 'id');
@@ -104,7 +104,7 @@ end
 
 %% start timer
 
-if OPT.repeat
+if OPT.repeat && runs
      t = timer( ...
          'TimerFcn', {@repeatCheck,xb}, ...
          'ExecutionMode', 'fixedDelay', ...

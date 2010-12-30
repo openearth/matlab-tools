@@ -10,7 +10,8 @@ function [xr yr] = xb_grid_rotate(x, y, alpha, varargin)
 %   x           = x-coordinates of bathymetric grid
 %   y           = y-coordinates of bathymetric grid
 %   alpha       = rotation angle
-%   varargin    = units:    input units (degrees/radians)
+%   varargin    = origin:   origin for rotation
+%                 units:    input units (degrees/radians)
 %
 %   Output:
 %   xr          = x-coordinates of rotated grid
