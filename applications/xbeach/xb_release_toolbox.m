@@ -60,9 +60,23 @@ function varargout = xb_release_toolbox(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
-folders = {fileparts(which(mfilename))};
+%% release
+
+% select xb_* diretories only
+fdir = fileparts(which(mfilename));
+fdirs = dir(fullfile(fdir, 'xb_*'));
+folders = {fdirs.name};
+folders = folders([fdirs.isdir]);
+
+% select all files and oetsettings
+ffiles = dir(fdir);
+files = {ffiles.name};
+files = [{'oetsettings'} files{~[ffiles.isdir]}];
+
+% release toolbox
 oetrelease(...
-    'targetdir'     , fullfile('F:', ['release_' datestr(now, 'ddmmmyyyy')]),...
-    'zipfilename'   , tempname,...
-    'folders'       , folders);
+    'targetdir'     , fullfile('F:', ['release_' datestr(now, 'ddmmmyyyy')]), ...
+    'zipfilename'   , tempname, ...
+    'folders'       , folders, ...
+    'files'         , files, ...
+    'omitdirs'      , {'svn' '_old' '_bak'});

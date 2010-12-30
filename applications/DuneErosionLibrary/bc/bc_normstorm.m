@@ -1,5 +1,5 @@
-function [h Hs Tp] = xb_bc_normstorm(varargin)
-%XB_BC_NORMSTORM  Returns normative storm conditions for the Dutch coast (WL|Delft Hydraulics, 2007, project H4357, product 3)
+function [h Hs Tp] = bc_normstorm(varargin)
+%BC_NORMSTORM  Returns normative storm conditions for the Dutch coast (WL|Delft Hydraulics, 2007, project H4357, product 3)
 %
 %   Returns normative storm conditions for the Dutch coast (WL|Delft
 %   Hydraulics, 2007, project H4357, product 3) given a certain frequency
@@ -11,7 +11,7 @@ function [h Hs Tp] = xb_bc_normstorm(varargin)
 %   location is provided, results for all known point is given.
 %
 %   Syntax:
-%   [h Hs Tp] = xb_bc_normstorm(varargin)
+%   [h Hs Tp] = bc_normstorm(varargin)
 %
 %   Input:
 %   varargin  = freq:       Normative frequency of occurrence
@@ -29,14 +29,14 @@ function [h Hs Tp] = xb_bc_normstorm(varargin)
 %   Tp        = Normative wave period
 %
 %   Example
-%   [h Hs Tp] = xb_bc_normstorm()
-%   [h Hs Tp] = xb_bc_normstorm('freq', 1/4000)
-%   [h Hs Tp] = xb_bc_normstorm('loc', [68780 443840])
-%   [h Hs Tp] = xb_bc_normstorm('loc', [4.1323 51.9763], 'loc_type', 'WGS84')
-%   [h Hs Tp] = xb_bc_normstorm('loc', 'Hoek van Holland')
-%   [h Hs Tp] = xb_bc_normstorm('loc', 'Den Hoorn, Terschelling', 'freq', 1/4000)
+%   [h Hs Tp] = bc_normstorm()
+%   [h Hs Tp] = bc_normstorm('freq', 1/4000)
+%   [h Hs Tp] = bc_normstorm('loc', [68780 443840])
+%   [h Hs Tp] = bc_normstorm('loc', [4.1323 51.9763], 'loc_type', 'WGS84')
+%   [h Hs Tp] = bc_normstorm('loc', 'Hoek van Holland')
+%   [h Hs Tp] = bc_normstorm('loc', 'Den Hoorn, Terschelling', 'freq', 1/4000)
 %
-%   See also xb_bc_stormsurge, str2coord, interp2line
+%   See also bc_stormsurge, str2coord, interp2line
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -72,11 +72,11 @@ function [h Hs Tp] = xb_bc_normstorm(varargin)
 % Created: 24 Dec 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 %% read options

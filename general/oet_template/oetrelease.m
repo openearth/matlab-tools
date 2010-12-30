@@ -73,7 +73,8 @@ OPT = struct(...
     'zipfilename'   , tempname,...
     'folders'       , cd,...
     'files'         , 'oetsettings',...
-    'omitextensions', {{'.asv' '.m~'}});
+    'omitextensions', {{'.asv' '.m~'}},...
+    'omitdirs'      , {{'svn'}});
  
 if odd(nargin)
    OPT = setproperty(OPT, varargin{2:end});
@@ -90,7 +91,7 @@ end
    
    files = {};
    for i = 1:length(OPT.folders)
-       [dirs dircont tempfiles] = dirlisting(OPT.folders{i}, 'svn');
+       [dirs dircont tempfiles] = dirlisting(OPT.folders{i}, OPT.omitdirs);
        files(end+1:end+length(tempfiles)) = tempfiles;
    end
 
@@ -133,10 +134,14 @@ end
 
    for i = 1:length(files)
        mkpath(fileparts(files{i}))
-       destinationfile = strrep(files{i}, oetroot, [OPT.targetdir filesep]);
+       destinationfile = strrep(abspath(files{i}), oetroot, [OPT.targetdir filesep]);
        mkpath(fileparts(destinationfile))
        if ~exist(destinationfile, 'file')
-           copyfile(files{i}, destinationfile)
+           try
+                copyfile(files{i}, destinationfile)
+           catch
+               fprintf(2, 'File "%s" cannot be copied\n', files{i})
+           end
        end
    end
 

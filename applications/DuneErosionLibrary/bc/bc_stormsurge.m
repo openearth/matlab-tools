@@ -1,10 +1,10 @@
-function [to h dtwo Ho To] = xb_bc_stormsurge(varargin)
-%XB_GENERATE_STORMSURGE  Generates storm surge hydrograph as described in Steetzel, 1993.
+function [to h dtwo Ho To] = bc_stormsurge(varargin)
+%BC_STORMSURGE  Generates storm surge hydrograph as described in Steetzel, 1993.
 %
-%   More detailed description goes here.
+%   Generates storm surge hydrograph as described in Steetzel, 1993.
 %
 %   Syntax:
-%   varargout = Untitled(varargin)
+%   [to h dtwo Ho To] = bc_stormsurge(varargin)
 %
 %   Input:
 %   varargin  =
@@ -13,18 +13,19 @@ function [to h dtwo Ho To] = xb_bc_stormsurge(varargin)
 %   varargout =
 %
 %   Example
-%   Untitled
+%   [to h dtwo Ho To] = bc_stormsurge
 %
-%   See also 
+%   See also bc_normstorm
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
+%   Copyright (C) 2010 Deltares
 %       Jaap van Thiel de Vries
 %
-%       <EMAIL>	
+%       jaap.vanthieldevries@deltares.nl
 %
-%       <ADDRESS>
+%       Rotterdamseweg 185
+%       2629HD Delft
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
