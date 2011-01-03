@@ -40,6 +40,5 @@ function detran_saveData
 if nam==0
     return
 end
-fullName=fillExtension([pat nam],'mat');
 data=get(fig,'userdata');
-save(fullName,'data');
+save([pat nam],'data');

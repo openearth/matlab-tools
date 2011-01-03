@@ -47,8 +47,7 @@ pores=detran_getPoreVolume;
 CS=period.*data.transectData(:,1)./(1-pores);
 
 [namL,patL]=uiputfile('*.int','Save transports of reduced climate to');
-[patL,namL]=fileparts([patL namL]);
-tekal('write',fillExtension([patL filesep namL],'int'),[[1:length(CS)]' CS]);
+tekal('write',[patL filesep namL],[[1:length(CS)]' CS]);
 
 if get(findobj(fig,'tag','detran_plotGrossBox'),'Value')==1
     CSPlus=period.*data.transectData(:,2)./(1-pores);
