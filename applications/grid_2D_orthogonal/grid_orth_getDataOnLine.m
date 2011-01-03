@@ -44,7 +44,8 @@ function [crossing_x,crossing_y,crossing_z,crossing_d] = grid_orth_getDataOnLine
 % $Revision$
 
 %% input
-if X(1,1)>X(1,end)
+
+if mean(nanmean(diff(X,[],2)))<0;
     X = fliplr(X);
     Y = fliplr(Y);
     if length(size(Z))==3
@@ -54,7 +55,7 @@ if X(1,1)>X(1,end)
     end
 end
 
-if Y(1,1)>Y(end,1)
+if mean(nanmean(diff(Y,[],1)))<0;
     X = flipud(X);
     Y = flipud(Y);
     if length(size(Z))==3

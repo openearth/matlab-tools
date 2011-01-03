@@ -59,13 +59,8 @@ function testresult = grid_orth_getDataOnLine_test()
 
 MTestCategory.DataAccess;
 
-% test 1 and 2 are examples
-tr(1) = test3;
-tr(2) = test4;
-tr(3) = test5;
-tr(4) = test6;
-
-testresult = all(tr);
+% test 1 and 2 are examples/illustrations, and produce figures as result
+testresult = all([test3, test4, test5, test6]);
 
 end
 
@@ -259,6 +254,34 @@ for ii = 1:5
 end
 
 testresult = all(testresult);
+
+%% $PublishResult
+
+end
+
+function testresult = test7()
+%% $Description 
+
+%% $RunCode
+[X,Y] = meshgrid([1:20],[1:20]);
+X = flipud(X);
+Y = flipud(Y);
+alpha = -4/180*pi;
+X = Y*sin(alpha)+X*cos(alpha);
+Y= -X*sin(alpha)+Y*cos(alpha);
+Y(end,1) = nan;
+X(end,1) = nan;
+
+xi = [10.5 18.7];
+yi = [4.1 15.5];
+
+[crossing_x,crossing_y,crossing_z]=grid_orth_getDataOnLine(X,Y,repmat(1,size(X)),[10.5 18.7],[4.1 15.5]);
+
+figure;grid_plot(X,Y,'k');hold on;
+plot(xi,yi,'b');
+plot(crossing_x,crossing_y,'or');
+
+testresult = 1;
 
 %% $PublishResult
 
