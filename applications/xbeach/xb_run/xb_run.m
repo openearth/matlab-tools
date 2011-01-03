@@ -123,7 +123,15 @@ if isunix()
     end
 else
     if OPT.nodes > 1
-        error('MPI support is not yet implemented, sorry!'); % TODO
+        apps = get_app_list;
+        
+        if any(strfilter(apps, '*MPICH2*'))
+            error('MPICH2 installed, but not supported yet');
+        elseif any(strfilter(apps, '*OpenMI*'))
+            error('OpenMI installed, but not supported yet');
+        else
+            error('No supported MPI application installed');
+        end
     else
         % start xbeach
         [r messages] = system(['cd ' OPT.path ' && start ' OPT.binary]);
