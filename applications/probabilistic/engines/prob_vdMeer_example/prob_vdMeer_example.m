@@ -1,19 +1,18 @@
-function [resultMC resultFORM] = prob_vdMeer_example(varargin)
+function [resultMC resultFORM] = prob_vdMeer_example
 %PROB_VDMEER_EXAMPLE  example of probabilistic calculation with van der Meer formula
 %
-%   More detailed description goes here.
+%   Example of probabilistic Monte Carlo and FORM routines applied to the
+%   van der Meer formula.
 %
 %   Syntax:
-%   varargout = prob_vdMeer_example(varargin)
-%
-%   Input:
-%   varargin  =
+%   [resultMC resultFORM] = prob_vdMeer_example
 %
 %   Output:
-%   varargout =
+%   resultMC   = structure with Monte Carlo results
+%   resultFORM = structure with FORM results
 %
 %   Example
-%   prob_vdMeer_example
+%   [resultMC resultFORM] = prob_vdMeer_example
 %
 %   See also 
 
@@ -61,9 +60,9 @@ function [resultMC resultFORM] = prob_vdMeer_example(varargin)
 % $Keywords: $
 
 %% define the stochasts
-% create a structure with fields 'Name', 'Distr' and 'Params'
+% create a structure with fields 'Name', 'Distr', 'Params' and 'propertyName'
 stochast = struct(...
-    'Name', {
+    'Name', { % define the stochastic variable names:
     'RhoS'...       % [kg/m3] RhoS density sediment
     'RhoW'...       % [kg/m3] RhoW density water
     'TanAlfa'...    % [-] TanAlfa  slope of structure
@@ -75,7 +74,7 @@ stochast = struct(...
     'D'...          % [m] D        stone size
     'Cpl'		    % [-] Cpl      constant in vdMeer formula
     },...
-    'Distr', {
+    'Distr', { % define the probability distribution functions
     @norm_inv...       % [kg/m3] RhoS density sediment
     @norm_inv...       % [kg/m3] RhoW density water
     @norm_inv...       % [-] TanAlfa  slope of structure
@@ -87,7 +86,7 @@ stochast = struct(...
     @norm_inv...       % [m] D        stone size
     @norm_inv...	   % [-] Cpl      constant in vdMeer formula
     },...
-    'Params', {
+    'Params', { % define the parameters of the probability distribution functions
     {2650 100}...   % [kg/m3] RhoS density sediment
     {1030 5}...     % [kg/m3] RhoW density water
     {0.25 0.0125}...% [-] TanAlfa  slope of structure
@@ -98,24 +97,43 @@ stochast = struct(...
     {3.83 1}...     % [m] H        significant wave height
     {0.6 0.05}...   % [m] D        stone size
     {6.2 0.43}...	% [-] Cpl      constant in vdMeer formula
+    },...
+    'propertyName', { % specify here to call the z-function with propertyname-propertyvalue pairs
+    true...       % [kg/m3] RhoS density sediment
+    true...       % [kg/m3] RhoW density water
+    true...       % [-] TanAlfa  slope of structure
+    true...       % [-] Steep    wave steepness
+    true...       % [-] P        notional permeability
+    true...       % [-] S        damage number
+    true...       % [-] N        number of waves
+    true...       % [m] H        significant wave height
+    true...       % [m] D        stone size
+    true...	      % [-] Cpl      constant in vdMeer formula
     } ...
     );
 
 %% main matter: running the calculation
 % run the calculation using Monte Carlo
-resultMC = MC(stochast,...
+resultMC = MC(...
+    'stochast', stochast,...
     'NrSamples', 3e4,...
     'x2zFunction', @prob_vdMeer_example_x2z);
 
 % run the calculation using FORM
-resultFORM = FORM(stochast,...
+resultFORM = FORM(...
+    'stochast', stochast,...
     'x2zFunction', @prob_vdMeer_example_x2z);
 
 %% Z-function
-function z = prob_vdMeer_example_x2z(samples, Resistance, varargin)
+function z = prob_vdMeer_example_x2z(varargin)
 
-%%
-g = 9.81;                               %[m/s2]
+%% create samples-structure based on input arguments
+samples = struct(varargin{:});
+
+%% calculate z-values
+% pre-allocate z
+z = nan(size(samples.RhoS));
+% loop through all samples and derive z-values
 for i = 1:length(samples.RhoS)
     Delta = (samples.RhoS(i) - samples.RhoW(i)) / samples.RhoW(i);    % [-] relative density
     Ksi = samples.TanAlfa(i)/sqrt(samples.Steep(i));      % [-] Iribarren number
